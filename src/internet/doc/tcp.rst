@@ -938,6 +938,7 @@ The following enum represents the mode of ECN:
     {
       ClassicEcn,  //!< ECN functionality as described in RFC 3168.
       DctcpEcn,    //!< ECN functionality as described in RFC 8257. Note: this mode is specific to DCTCP.
+      EcnPp,       //!< ECN++ to reinforce ClassicEcn and mark ECT in TCP control packets.
     } EcnMode_t;
 
 The following are some important ECN parameters:
@@ -1071,6 +1072,91 @@ The following issues are yet to be addressed:
 3. Support for separately handling the enabling of ECN on the incoming and
    outgoing TCP sessions (e.g. a TCP may perform ECN echoing but not set the
    ECT codepoints on its outbound data segments).
+
+ECN++: Adding Explicit Congestion Notification (ECN) to TCP Control Packets
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Classic ECN (RFC 3168) specifies ECN support solely for TCP data packets. ECN++
+extends the ECN support for TCP control packets: SYN, SYN/ACK, pure ACK, Window
+probe, FIN, RST and Retransmitted packets.
+
+More information about ECN++ is available in the Internet draft:
+https://tools.ietf.org/html/draft-ietf-tcpm-generalized-ecn-02
+
+Current implementation of ECN++ is based on this Internet draft and is referred
+as ``EcnPp``.
+
+Enabling ECN++
+^^^^^^^^^^^^^^
+
+By default, support for ECN++ is disabled in TCP sockets. To enable, change the
+value of the attribute ``ns3::TcpSocketBase::EcnMode`` from NoEcn to EcnPp.
+
+::
+
+  Config::SetDefault ("ns3::TcpSocketBase::EcnMode", StringValue ("EcnPp"))
+
+
+ECN Support for SYN/ACK packets
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. The sender of SYN/ACK packet sets ECT(0) in IP header.
+
+2. If the sender of SYN/ACK packet gets congestion feedback, it uses ECN+ for
+congestion response i.e., it reduces the initial congestion window from 10
+segments to 1 segment.
+
+3. If the sender of SYN/ACK faces a timeout, it will re-send SYN/ACK with
+ECT(0) in IP header.
+
+ECN Support for Window probe packets
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. The sender of Window probe packet sets ECT(0) in IP header.
+
+2. If the sender of Window probe packets gets congestion feedback, there are
+two situations: (a) receiver window is still zero, so the next data packet
+is still a Window probe packet and (b) receiver window is open, so the sender
+can send out data packets. However, the former is a rare case because if we
+get congestion feedback for a Window probe packet, it means that the Window
+probe packet was accepted by the receiving window.
+
+3. The congestion response is postponed until the new data packet is sent.
+
+ECN Support for FIN and RST packets
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. The sender of FIN and RST packets sets ECT(0) in IP header.
+
+2. The congestion feedback and congestion response for FIN and RST is not
+required because after the sender sends FIN or RST packet, no further data
+is sent.
+
+ECN Support for Re-XMT packets
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. The sender of Re-XMT packets sets ECT(0) in IP header.
+
+2. The congestion response for Re-XMT packet is same as usual data packets.
+The sender postpones the congestion response till a new data packet is sent.
+
+Limitations of ECN++ implementation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Version 05 of the ECN++ Internet draft 
+(https://tools.ietf.org/html/draft-ietf-tcpm-generalized-ecn-05) specifies the 
+following guidelines to decide marking of pure ACKs: 
+
+1. At the sender's side, whether a TCP implementation sets ECT on a Pure ACK 
+depends on whether or not Accurate ECN feedback has been successfully 
+negotiated. If AccECN has not been successfully negotiated for a connection, 
+ECT must not be set on Pure ACKs by either end. For the ECN++ experiment, 
+if AccECN has been successfully negotiated, either end of the connection will 
+set ECT on Pure ACKs.
+
+2. At the receiver's side, any TCP implementation should accept receipt of a pure ACK 
+with a non-zero ECN field, despite current RFCs precluding the sending of such packets.
+
+Since the current ns-3 implementation of ECN++ follows version 02 of the draft, 
+the scenario of marking pure ACKs is not handled yet.
 
 Validation
 ++++++++++

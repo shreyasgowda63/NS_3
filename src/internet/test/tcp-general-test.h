@@ -595,9 +595,17 @@ protected:
    * \brief Forcefully set the ecn use on
    *
    * \param who socket to force
-   * \param useEcn Mode of ECN. Currently Off and On are supported.
+   * \param useEcn Use of ECN. Currently Off and On are supported.
    */
   void SetUseEcn (SocketWho who, TcpSocketState::UseEcn_t useEcn);
+
+    /**
+   * \brief Forcefully set the ecn mode
+   *
+   * \param who socket to force
+   * \param ecnMode Mode of ECN. Currently ClassicEcn, DctcpEcn and EcnPp are supported.
+   */
+  void SetEcnMode (SocketWho who, TcpSocketState::EcnMode_t ecnMode);
 
   /**
    * \brief Forcefully set the initial ssth

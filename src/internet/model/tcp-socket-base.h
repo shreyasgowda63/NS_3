@@ -547,6 +547,13 @@ public:
    */
   void SetUseEcn (TcpSocketState::UseEcn_t useEcn);
 
+  /**
+   * \brief Set ECN mode on the socket
+   *
+   * \param ecnMode Mode of ECN. Currently ClassicEcn, DctcpEcn, EcnPp are supported.
+   */
+  void SetEcnMode (TcpSocketState::EcnMode_t ecnMode);
+
   // Necessary implementations of null functions from ns3::Socket
   virtual enum SocketErrno GetErrno (void) const;    // returns m_errno
   virtual enum SocketType GetSocketType (void) const; // returns socket type
@@ -1181,8 +1188,9 @@ protected:
   /**
    * \brief Add Tags for the Socket
    * \param p Packet
+   * \param withEct mark ECT forcefully, by default is false
    */
-  void AddSocketTags (const Ptr<Packet> &p) const;
+  void AddSocketTags (const Ptr<Packet> &p, bool withEct = false) const;
 
   /**
    * Get the current value of the receiver's offered window (RCV.WND)
