@@ -32,6 +32,7 @@
 #include "ns3/data-rate.h"
 #include "ns3/node.h"
 #include "ns3/tcp-socket-state.h"
+#include "tcp-accecn-data.h"
 
 namespace ns3 {
 
@@ -363,6 +364,46 @@ public:
   TracedCallback<Time, Time> m_lastRttTrace;
 
   /**
+   * \brief Callback pointer for AccEcn s.e0b trace chaining
+   */
+  TracedCallback<uint32_t, uint32_t> m_accEcnE0bSTrace;
+
+  /**
+   * \brief Callback pointer for AccEcn s.e1b trace chaining
+   */
+  TracedCallback<uint32_t, uint32_t> m_accEcnE1bSTrace;
+
+  /**
+   * \brief Callback pointer for AccEcn s.ceb trace chaining
+   */
+  TracedCallback<uint32_t, uint32_t> m_accEcnCebSTrace;
+
+  /**
+   * \brief Callback pointer for AccEcn s.cep trace chaining
+   */
+  TracedCallback<uint32_t, uint32_t> m_accEcnCepSTrace;
+
+  /**
+ * \brief Callback pointer for AccEcn r.e0b trace chaining
+ */
+  TracedCallback<uint32_t, uint32_t> m_accEcnE0bRTrace;
+
+  /**
+   * \brief Callback pointer for AccEcn r.e1b trace chaining
+   */
+  TracedCallback<uint32_t, uint32_t> m_accEcnE1bRTrace;
+
+  /**
+   * \brief Callback pointer for AccEcn r.ceb trace chaining
+   */
+  TracedCallback<uint32_t, uint32_t> m_accEcnCebRTrace;
+
+  /**
+   * \brief Callback pointer for AccEcn r.cep trace chaining
+   */
+  TracedCallback<uint32_t, uint32_t> m_accEcnCepRTrace;
+
+  /**
    * \brief Callback function to hook to TcpSocketState congestion window
    * \param oldValue old cWnd value
    * \param newValue new cWnd value
@@ -428,6 +469,62 @@ public:
   void UpdateRtt (Time oldValue, Time newValue);
 
   /**
+  * \brief Callback function to hook to TcpAccEcnData e0bR
+  * \param oldValue old r.e0b of AccEcn data value
+  * \param newValue new r.e0b of AccEcn data value
+  */
+  void UpdateAccEcnE0bR (uint32_t oldValue, uint32_t newValue);
+
+  /**
+  * \brief Callback function to hook to TcpAccEcnData e1bR
+  * \param oldValue old r.e1b of AccEcn data value
+  * \param newValue new r.e1b of AccEcn data value
+  */
+  void UpdateAccEcnE1bR (uint32_t oldValue, uint32_t newValue);
+
+  /**
+  * \brief Callback function to hook to TcpAccEcnData cebR
+  * \param oldValue old r.ceb of AccEcn data value
+  * \param newValue new r.ceb of AccEcn data value
+  */
+  void UpdateAccEcnCebR (uint32_t oldValue, uint32_t newValue);
+
+  /**
+  * \brief Callback function to hook to TcpAccEcnData cepR
+  * \param oldValue old r.cep of AccEcn data value
+  * \param newValue new r.cep of AccEcn data value
+  */
+  void UpdateAccEcnCepR (uint32_t oldValue, uint32_t newValue);
+
+  /**
+  * \brief Callback function to hook to TcpAccEcnData e0bS
+  * \param oldValue old s.e0b of AccEcn data value
+  * \param newValue new s.e0b of AccEcn data value
+  */
+  void UpdateAccEcnE0bS (uint32_t oldValue, uint32_t newValue);
+
+  /**
+  * \brief Callback function to hook to TcpAccEcnData e1bS
+  * \param oldValue old s.e1b of AccEcn data value
+  * \param newValue new s.e1b of AccEcn data value
+  */
+  void UpdateAccEcnE1bS (uint32_t oldValue, uint32_t newValue);
+
+  /**
+  * \brief Callback function to hook to TcpAccEcnData cebS
+  * \param oldValue old s.ceb of AccEcn data value
+  * \param newValue new s.ceb of AccEcn data value
+  */
+  void UpdateAccEcnCebS (uint32_t oldValue, uint32_t newValue);
+
+  /**
+  * \brief Callback function to hook to TcpAccEcnData cepS
+  * \param oldValue old s.cep of AccEcn data value
+  * \param newValue new s.cep of AccEcn data value
+  */
+  void UpdateAccEcnCepS (uint32_t oldValue, uint32_t newValue);
+
+  /**
    * \brief Install a congestion control algorithm on this socket
    *
    * \param algo Algorithm to be installed
@@ -486,6 +583,11 @@ public:
     }
 
   /**
+   * \brief Literal names of ECN Mode for use in log messages
+   */
+  static const char* const EcnModeName[TcpSocketState::AccEcn + 1];
+
+  /**
    * \brief Checks if TOS has no ECN codepoints
    *
    * \param tos the TOS byte to check
@@ -539,6 +641,42 @@ public:
     {
       return ((tos & 0xfc) | codePoint);
     }
+    
+  /**
+   * \brief Set Ace field for tcp flags
+   *
+   * \return tcp flags with ace field setting
+   */
+  inline uint16_t SetAceFlags (uint8_t ace) const
+    {
+      uint16_t aceFlags = static_cast<uint16_t> (ace & 0x7);
+      return (aceFlags << 6);
+    }
+
+  /**
+   * \brief Get Ace field from tcp flags
+   *
+   * \return Ace field in tcp flags
+   */
+  inline uint8_t GetAceFlags (uint16_t flags) const
+    {
+      uint8_t ace = (flags >> 6) & 0x7;
+      return ace;
+    }
+
+  /**
+   * \brief Encode Ace field from r.cep
+   *
+   * \return 3 bit ace to set into tcp flags
+   */
+  uint8_t EncodeAceFlags (uint32_t cepR) const;
+
+  /**
+   * \brief decode s.cep from ace field
+   *
+   * \return s.cep
+   */
+   uint32_t DecodeAceFlags (uint8_t ace, uint32_t newlyAckedB, bool newlyAckedT) const;
 
   /**
    * \brief Set ECN mode of use on the socket
@@ -766,7 +904,7 @@ protected:
    *
    * \param flags the packet's flags
    */
-  virtual void SendEmptyPacket (uint8_t flags);
+  virtual void SendEmptyPacket (uint16_t flags);
 
   /**
    * \brief Send reset and tear down this socket
@@ -1131,7 +1269,7 @@ protected:
    * \param option SACK option from the header
    * \returns the number of bytes sacked by this option
    */
-  uint32_t ProcessOptionSack(const Ptr<const TcpOption> option);
+  uint32_t ProcessOptionSack (const Ptr<const TcpOption> option);
 
   /**
    * \brief Add the SACK PERMITTED option to the header
@@ -1206,6 +1344,48 @@ protected:
    */
   SequenceNumber32 GetHighRxAck (void) const;
 
+  /** 
+   * \brief Check ECN state in IP header for ipv4
+   * \param header Ipv4 Header
+   * \param tcpHeader TCP Header
+   * \param tcpPayloadSize TCP payload size
+   */
+  void CheckEcnInIpv4 (const Ipv4Header& header, const TcpHeader& tcpHeader, uint32_t tcpPayloadSize);
+
+  /**
+   * \brief Check ECN state in IP header for ipv6
+   * \param header Ipv6 Header
+   * \param tcpHeader TCP Header
+   * \param tcpPayloadSize TCP payload size
+   */
+  void CheckEcnInIpv6 (const Ipv6Header& header, const TcpHeader& tcpHeader, uint32_t tcpPayloadSize);
+
+  void DecodeAccEcnData (const TcpHeader& tcpHeader);
+
+  /**
+   * \brief Check ECN flag in TCP header when received SYN packet
+   * \param tcpHeader TCP Header
+   */
+  void CheckEcnRvdSyn (const TcpHeader& tcpHeader);
+
+  /**
+   * \brief Check ECN flag in TCP header when received SYN/ACK packet
+   * \param tcpHeader TCP Header
+   */
+  void CheckEcnRvdSynAck (const TcpHeader& tcpHeader);
+
+  /**
+   * \brief Check ECN flag in TCP header when received last Ack in 3-way handshake
+   * \param tcpHeader TCP Header
+   */
+  void CheckEcnRvdLastAck (const TcpHeader& tcpHeader);
+
+  /**
+   * Check ECN state whether ECE is set in TCP header
+   * \param tcpHeader TCP Header
+   * \return true means ECE is set, false means no ECE set
+   */
+  bool IsEcnRvdEce (const TcpHeader& tcpHeader);
 protected:
   // Counters and events
   EventId           m_retxEvent     {}; //!< Retransmission event
@@ -1309,6 +1489,7 @@ protected:
   Timer m_pacingTimer {Timer::CANCEL_ON_DESTROY}; //!< Pacing Event
 
   // Parameters related to Explicit Congestion Notification
+  Ptr<TcpAccEcnData>            m_accEcnData;
   TracedValue<SequenceNumber32> m_ecnEchoSeq {0};      //!< Sequence number of the last received ECN Echo
   TracedValue<SequenceNumber32> m_ecnCESeq   {0};      //!< Sequence number of the last received Congestion Experienced
   TracedValue<SequenceNumber32> m_ecnCWRSeq  {0};      //!< Sequence number of the last sent CWR

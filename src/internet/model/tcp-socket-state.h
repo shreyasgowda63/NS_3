@@ -131,7 +131,8 @@ public:
     {
       ClassicEcn,  //!< ECN functionality as described in RFC 3168.
       DctcpEcn,    //!< ECN functionality as described in RFC 8257. Note: this mode is specific to DCTCP.
-      EcnPp        //!< ECN++ to reinforce ClassicEcn, marking ECT in control packets
+      EcnPp,       //!< ECN++ to reinforce ClassicEcn, marking ECT in control packets
+      AccEcn       //!< More Accurate ECN, by default the function of ECN++ is enabled in AccEcn
     } EcnMode_t;
 
    /**
@@ -145,8 +146,10 @@ public:
     ECN_CE_RCVD,      /**< Last packet received had CE bit set in IP header                                              */
     ECN_SENDING_ECE,  /**< Receiver sends an ACK with ECE bit set in TCP header                                          */
     ECN_ECE_RCVD,     /**< Last ACK received had ECE bit set in TCP header                                               */
-    ECN_CWR_SENT      /**< Sender has reduced the congestion window, and sent a packet with CWR bit set in TCP header.
+    ECN_CWR_SENT,     /**< Sender has reduced the congestion window, and sent a packet with CWR bit set in TCP header.
                         *  This state is used for tracing.                                                               */
+    ECN_ECT0_RCVD,    /**< Last packet received had ECT0 bit set in IP header, only used in AccECN                       */
+    ECN_ECT1_RCVD     /**< Last packet received had ECT1 bit set in IP header, only used in AccECN                       */
   } EcnState_t;
 
   /**
@@ -157,7 +160,7 @@ public:
   /**
    * \brief Literal names of ECN states for use in log messages
    */
-  static const char* const EcnStateName[TcpSocketState::ECN_CWR_SENT + 1];
+  static const char* const EcnStateName[TcpSocketState::ECN_ECT1_RCVD + 1];
 
   // Congestion control
   TracedValue<uint32_t>  m_cWnd             {0}; //!< Congestion window
@@ -172,7 +175,8 @@ public:
 
   TracedValue<TcpCongState_t> m_congState {CA_OPEN}; //!< State in the Congestion state machine
 
-  TracedValue<EcnState_t> m_ecnState {ECN_DISABLED}; //!< Current ECN State, represented as combination of EcnState values
+  TracedValue<EcnState_t> m_ecnState        {ECN_DISABLED};  //!< Current ECN State, represented as combination of EcnState values
+  bool                    m_isEcnBitFlipped {false}; //!< record whether ECN bit flipped in IP header, only used in AccEcn
 
   TracedValue<SequenceNumber32> m_highTxMark     {0}; //!< Highest seqno ever sent, regardless of ReTx
   TracedValue<SequenceNumber32> m_nextTxSequence {0}; //!< Next seqnum to be sent (SND.NXT), ReTx pushes it back
@@ -217,7 +221,7 @@ public:
     return m_ssThresh / m_segmentSize;
   }
 
-  Callback <void, uint8_t> m_sendEmptyPacketCallback;
+  Callback <void, uint16_t> m_sendEmptyPacketCallback;
 };
 
 namespace TracedValueCallback {
