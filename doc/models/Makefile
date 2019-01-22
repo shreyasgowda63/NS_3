@@ -1,5 +1,7 @@
 EPSTOPDF = epstopdf
 DIA = dia
+SEQDIAG = seqdiag
+DOT = dot
 CONVERT = convert
 
 SRC = ../../src
@@ -99,7 +101,7 @@ SOURCES = \
 # list all model library figure files that need to be copied to 
 # $SOURCETEMP/figures.  For each figure to be included in all
 # documentation formats (html, latex...) the following formats are supported: 
-#  1) a single .dia file (preferred option, because it can be edited)
+#  1) a single .dia/.seqdiag/.dot file (preferred option, because it can be edited)
 #  2) a single .eps file
 #  3) both a .pdf and .png file
 SOURCEFIGS = \
@@ -187,30 +189,18 @@ SOURCEFIGS = \
 	$(SRC)/lte/doc/source/figures/ca-ue-data-plane.dia \
 	$(SRC)/lte/doc/source/figures/ca-ue-ctrl-plane.dia \
 	$(SRC)/lte/doc/source/figures/lte-strongest-cell-handover-algorithm.eps \
-	$(SRC)/lte/doc/source/figures/lte-phy-interference.pdf \
-	$(SRC)/lte/doc/source/figures/lte-phy-interference.png \
-	$(SRC)/lte/doc/source/figures/helpers.pdf \
-	$(SRC)/lte/doc/source/figures/helpers.png \
-	$(SRC)/lte/doc/source/figures/mac-random-access-contention.pdf \
-	$(SRC)/lte/doc/source/figures/mac-random-access-contention.png \
-	$(SRC)/lte/doc/source/figures/mac-random-access-noncontention.pdf \
-	$(SRC)/lte/doc/source/figures/mac-random-access-noncontention.png \
-	$(SRC)/lte/doc/source/figures/rrc-connection-establishment.pdf \
-	$(SRC)/lte/doc/source/figures/rrc-connection-establishment.png \
-	$(SRC)/lte/doc/source/figures/rrc-connection-reconfiguration.pdf \
-	$(SRC)/lte/doc/source/figures/rrc-connection-reconfiguration.png \
-	$(SRC)/lte/doc/source/figures/rrc-connection-reconfiguration-handover.pdf \
-	$(SRC)/lte/doc/source/figures/rrc-connection-reconfiguration-handover.png \
-	$(SRC)/lte/doc/source/figures/nas-attach.pdf \
-	$(SRC)/lte/doc/source/figures/nas-attach.png \
-	$(SRC)/lte/doc/source/figures/ca-downlink-bsr.pdf \
-	$(SRC)/lte/doc/source/figures/ca-downlink-bsr.png \
-	$(SRC)/lte/doc/source/figures/ca-setup-radio-bearer.pdf \
-	$(SRC)/lte/doc/source/figures/ca-setup-radio-bearer.png \
-	$(SRC)/lte/doc/source/figures/lte-enb-rrc-states.pdf \
-	$(SRC)/lte/doc/source/figures/lte-enb-rrc-states.png \
-	$(SRC)/lte/doc/source/figures/lte-ue-rrc-states.pdf \
-	$(SRC)/lte/doc/source/figures/lte-ue-rrc-states.png \
+	$(SRC)/lte/doc/source/figures/lte-phy-interference.seqdiag \
+	$(SRC)/lte/doc/source/figures/helpers.seqdiag \
+	$(SRC)/lte/doc/source/figures/mac-random-access-contention.seqdiag \
+	$(SRC)/lte/doc/source/figures/mac-random-access-noncontention.seqdiag \
+	$(SRC)/lte/doc/source/figures/rrc-connection-establishment.seqdiag \
+	$(SRC)/lte/doc/source/figures/rrc-connection-reconfiguration.seqdiag \
+	$(SRC)/lte/doc/source/figures/rrc-connection-reconfiguration-handover.seqdiag \
+	$(SRC)/lte/doc/source/figures/nas-attach.seqdiag \
+	$(SRC)/lte/doc/source/figures/ca-downlink-bsr.seqdiag \
+	$(SRC)/lte/doc/source/figures/ca-setup-radio-bearer.seqdiag \
+	$(SRC)/lte/doc/source/figures/lte-enb-rrc-states.dot \
+	$(SRC)/lte/doc/source/figures/lte-ue-rrc-states.dot \
 	$(SRC)/lte/doc/source/figures/fading_pedestrian.pdf \
 	$(SRC)/lte/doc/source/figures/fading_pedestrian.png \
 	$(SRC)/lte/doc/source/figures/fading_vehicular.pdf \
@@ -263,8 +253,7 @@ SOURCEFIGS = \
 	$(SRC)/lte/doc/source/figures/carrier-aggregation-impact.png \
 	$(SRC)/lte/doc/source/figures/carrier-aggregation-mac-impact.pdf \
 	$(SRC)/lte/doc/source/figures/carrier-aggregation-mac-impact.png \
-	$(SRC)/lte/doc/source/figures/ca-uplink-bsr.pdf \
-	$(SRC)/lte/doc/source/figures/ca-uplink-bsr.png \
+	$(SRC)/lte/doc/source/figures/ca-uplink-bsr.seqdiag \
 	$(SRC)/lte/doc/source/figures/ca-test-example-ul.pdf \
 	$(SRC)/lte/doc/source/figures/ca-test-example-ul.png \
 	$(SRC)/lte/doc/source/figures/ca-test-example-dl.pdf \
@@ -273,8 +262,7 @@ SOURCEFIGS = \
 	$(SRC)/lte/doc/source/figures/lte-ffr-scheduling.dia \
 	$(SRC)/lte/doc/source/figures/lte-handover-campaign-rem.pdf \
 	$(SRC)/lte/doc/source/figures/lte-handover-campaign-rem.png \
-	$(SRC)/lte/doc/source/figures/lte-legacy-handover-algorithm.pdf \
-	$(SRC)/lte/doc/source/figures/lte-legacy-handover-algorithm.png \
+	$(SRC)/lte/doc/source/figures/lte-legacy-handover-algorithm.dot \
 	$(SRC)/uan/doc/auvmobility-classes.dia \
 	$(SRC)/netanim/doc/figures/PacketStatistics.png \
 	$(SRC)/netanim/doc/figures/PacketStatistics.pdf \
@@ -408,6 +396,27 @@ IMAGES_EPS = \
 	$(FIGURES)/ca-ue-data-plane.eps \
 	$(FIGURES)/ca-ue-ctrl-plane.eps \
 
+# specify .seqdiag figures from which .png and .pdf figures need to be generated
+IMAGES_SEQDIAG = \
+	$(FIGURES)/lte-phy-interference.seqdiag \
+	$(FIGURES)/helpers.seqdiag \
+	$(FIGURES)/mac-random-access-contention.seqdiag \
+	$(FIGURES)/mac-random-access-noncontention.seqdiag \
+	$(FIGURES)/rrc-connection-establishment.seqdiag \
+	$(FIGURES)/rrc-connection-reconfiguration.seqdiag \
+	$(FIGURES)/rrc-connection-reconfiguration-handover.seqdiag \
+	$(FIGURES)/nas-attach.seqdiag \
+	$(FIGURES)/ca-downlink-bsr.seqdiag \
+	$(FIGURES)/ca-setup-radio-bearer.seqdiag \
+	$(FIGURES)/ca-uplink-bsr.seqdiag
+
+# specify .dot figures from which .png and .pdf figures need to be generated
+IMAGES_DOT = \
+	$(FIGURES)/lte-enb-rrc-states.dot \
+	$(FIGURES)/lte-ue-rrc-states.dot \
+	$(FIGURES)/lte-legacy-handover-algorithm.dot
+
+
 # rescale pdf figures as necessary
 $(FIGURES)/testbed.pdf_width = 5in
 $(FIGURES)/emulated-channel.pdf_width = 6in
@@ -465,8 +474,8 @@ $(FIGURES)/nist-frame-success-rate-n.pdf_width = 12cm
 $(FIGURES)/nist-frame-success-rate-ac.pdf_width = 12cm
 $(FIGURES)/nist-frame-success-rate-ax.pdf_width = 12cm
 
-IMAGES_PNG = ${IMAGES_EPS:.eps=.png}
-IMAGES_PDF = ${IMAGES_EPS:.eps=.pdf}
+IMAGES_PNG = ${IMAGES_EPS:.eps=.png} ${IMAGES_SEQDIAG:.seqdiag=.png} ${IMAGES_DOT:.dot=.png}
+IMAGES_PDF = ${IMAGES_EPS:.eps=.pdf} ${IMAGES_SEQDIAG:.seqdiag=.pdf} ${IMAGES_DOT:.dot=.pdf}
 
 IMAGES = $(IMAGES_EPS) $(IMAGES_PNG) $(IMAGES_PDF)
 
@@ -484,10 +493,29 @@ RESCALE = ../../utils/rescale-pdf.sh
 	@echo convert $(notdir $<)
 	@$(CONVERT) $< $@ >/dev/null
 
+%.png : %.seqdiag
+	@echo seqdiag $(notdir $<)
+	@$(SEQDIAG) -Tpng --no-transparency -o $@ $<
+
+%.png : %.dot
+	@echo dot $(notdir $<)
+	@$(DOT) -Tpng -o$@ $<
+
 %.pdf : %.eps
 	@echo epstopdf $(notdir $<)
 	@$(EPSTOPDF) $< -o=$@ >/dev/null
 	@if test x$($@_width) != x; then $(RESCALE) $($@_width) $@ ; fi
+
+%.pdf : %.seqdiag
+	@echo seqdiag $(notdir $<)
+	@$(SEQDIAG) -Tpdf -o $@ $<
+	@if test x$($@_width) != x; then $(RESCALE) $($@_width) $@ ; fi
+
+%.pdf : %.dot
+	@echo dot $(notdir $<)
+	@$(DOT) -Tpdf -o $@ $<
+	@if test x$($@_width) != x; then $(RESCALE) $($@_width) $@ ; fi
+
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
