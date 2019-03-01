@@ -572,6 +572,12 @@ public:
   uint32_t m_sndFack;    //!< Sequence number of the forward most acknowledgement
   uint32_t m_retranData; //!< Number of outstanding retransmitted bytes
 
+  // DSACK related variables
+  bool m_isDsack                   {false};  //!< Boolean variable to check if a duplicate packet has arrived
+  SequenceNumber32 m_dsackFirst    {0};      //!< First Sequence number of DSACK block
+  SequenceNumber32 m_dsackSecond   {0};      //!< Second Sequence number of DSACK block
+
+
 protected:
   // Implementing ns3::TcpSocket -- Attribute get/set
   // inherited, no need to doc
@@ -1128,6 +1134,13 @@ protected:
    */
   void AddOptionSack (TcpHeader& header);
 
+  /**
+   * \brief Add the DSACK block to the header
+   *
+   * \param header TcpHeader where the method should add the option
+   */
+  void AddDsack (TcpHeader& header);
+
   /** \brief Process the timestamp option from other side
    *
    * Get the timestamp and the echo, then save timestamp (which will
@@ -1247,6 +1260,7 @@ protected:
   uint32_t m_timestampToEcho  {0};    //!< Timestamp to echo
 
   bool    m_fackEnabled       {false};//!< FACK option disabled
+  bool    m_dsackEnabled      {false};//!< DSACK option disabled
 
   EventId m_sendPendingDataEvent {}; //!< micro-delay event to send pending data
 

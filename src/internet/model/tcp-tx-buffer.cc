@@ -766,6 +766,11 @@ TcpTxBuffer::Update (const TcpOptionSack::SackList &list)
 
   bool modified = false;
 
+  if (m_sentList.size () == 0)
+    {
+      return false;
+    }
+
   for (auto option_it = list.begin (); option_it != list.end (); ++option_it)
     {
       PacketList::iterator item_it = m_sentList.begin ();
