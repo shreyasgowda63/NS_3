@@ -161,14 +161,23 @@ public:
    * \brief Get the number of values stored in the array
    * \return the values array size
    */
-  uint32_t GetValuesN () const;
+  uint32_t GetValuesN () const { return m_values.size (); }
 
   /**
    * \brief Get the value element at the position
    * \param pos position
-   * \return the value element in that position (with bounds checking)
+   * \return the value element in that position
    */
-  const double & ValuesAt (uint32_t pos) const;
+  double ValuesAt (uint32_t pos) const { return m_values.at (pos); }
+
+  /**
+   * \brief Calculate the average of the stored values
+   *
+   * The calculation is not taking into consideration the values
+   * that are 0.0.
+   * \return the aritmetic mean of the stored values
+   */
+  double GetAverage () const;
 
   /**
    *  addition operator

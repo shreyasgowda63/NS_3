@@ -416,6 +416,25 @@ SpectrumValue::Copy () const
 }
 
 
+double
+SpectrumValue::GetAverage () const
+{
+  Values::const_iterator it1 = ConstValuesBegin ();
+  double sum = 0.0;
+  uint32_t elements = 0;
+  while (it1 != ConstValuesEnd ())
+    {
+      if (*it1 != 0.0)
+        {
+          sum += *it1;
+          ++elements;
+        }
+      ++it1;
+    }
+
+  return sum / elements;
+}
+
 /**
  * \brief Output stream operator
  * \param os output stream
@@ -692,17 +711,8 @@ SpectrumValue::operator>> (int n) const
   return res;
 }
 
-uint32_t
-SpectrumValue::GetValuesN () const
-{
-  return m_values.size ();
-}
 
-const double &
-SpectrumValue::ValuesAt (uint32_t pos) const
-{
-  return m_values.at (pos);
-}
+
 
 } // namespace ns3
 
