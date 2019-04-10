@@ -53,3 +53,8 @@ def build(bld):
                                  ['point-to-point', 'internet', 'applications'])
 
     obj.source = 'dsack-example.cc'
+
+    obj = bld.create_ns3_program('rack-example',
+                                 ['point-to-point', 'internet', 'applications'])
+
+    obj.source = 'rack-example.cc'
