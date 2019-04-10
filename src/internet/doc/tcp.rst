@@ -46,9 +46,9 @@ Vegas, Scalable, Veno, Binary Increase Congestion Control (BIC), Yet Another
 HighSpeed TCP (YeAH), Illinois, H-TCP, Low Extra Delay Background Transport
 (LEDBAT) and TCP Low Priority (TCP-LP) also supported. The model also supports
 Selective Acknowledgements (SACK), Forward Acknowledgement (FACK), Duplicate
-Selective Acknowledgement (DSACK), Proportional Rate Reduction (PRR) and
-Explicit Congestion Notification (ECN). Multipath-TCP is not yet supported in
-the |ns3| releases.
+Selective Acknowledgement (DSACK), Recent Acknowledgement (RACK), Proportional
+Rate Reduction (PRR) and Explicit Congestion Notification (ECN). Multipath-TCP
+is not yet supported in the |ns3| releases.
 
 Model history
 +++++++++++++
@@ -952,6 +952,7 @@ section below on :ref:`Writing-tcp-tests`.
 * **tcp-endpoint-bug2211-test:** A test for an issue that was causing stack overflow
 * **tcp-fack-test:** Unit test on FACK
 * **tcp-dsack-test:** Unit test on DSACK
+* **tcp-rack-test:** Unit test on RACK
 * **tcp-fast-retr-test:** Fast Retransmit testing
 * **tcp-header:** Unit tests on the TCP header
 * **tcp-highspeed-test:** Unit tests on the Highspeed congestion control
@@ -1136,6 +1137,47 @@ SACK blocks can be used to specify additional non-contiguous blocks of data, as
 specified in RFC 2018 (SACK).
 
 More information (RFC 2883): https://www.rfc-editor.org/rfc/pdfrfc/rfc2883.txt.pdf
+
+Recent Acknowledgement (RACK)
++++++++++++++++++++++++++++++
+Recent Acknowledgement (RACK) is a TCP packet loss detection technique proposed
+by Google. It uses the notion of time to detect packet losses instead of packet
+or sequence counting approaches like Fast Retransmit and other non-standard
+techniques.
+
+Recent Acknowledgment (RACK) is a sender side TCP algorithm and does not
+require modifications at the TCP receiver. RACK works based on the idea that if
+a packet is delivered out-of-order at the receiver, all the unacknowledged
+packets which were sent chronologically before that packet are either lost or
+reordered. RACK decides whether a packet is lost or reordered by deriving
+inferences from the most recently delivered packet's transmission time and the
+information obtained in SACK options.
+
+On arrival of every ACK, RACK calculates the current Round
+Trip Time (RTT) in the network. Besides, RACK uses a time period
+called reordering window which is an estimate of the time the sender
+should wait for the potential reordering events to settle before
+marking a certain packet as lost.
+
+Thus,
+
+.. math :: current_time > xmit_ts + latest_RTT + reo_wnd,
+where xmit_ts = latest transmission time of the most recent packet delivered
+      reo_wnd = reordering window
+
+The reordering window is calculated as below:
+
+.. math :: reo_wnd = min_RTT / 4 * reo_wnd_incr
+.. math :: reo_wnd = min(reo_wnd, SRTT)
+where, reo_wnd_incr =  multiplier applied to adjust reordering window
+       SRTT = Smoothened RTT
+
+The following unit test have been written to validate the implementation of RACK:
+
+* Enable SACK automatically if RACK is enabled and SACk is disabled
+* Enter Recovery phase on detecting packet loss according to RACK.
+
+More information : https://tools.ietf.org/html/draft-ietf-tcpm-rack-04
 
 Loss Recovery Algorithms
 ++++++++++++++++++++++++
