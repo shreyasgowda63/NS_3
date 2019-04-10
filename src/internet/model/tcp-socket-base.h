@@ -47,6 +47,7 @@ class RttEstimator;
 class TcpRxBuffer;
 class TcpTxBuffer;
 class TcpOption;
+class TcpRack;
 class Ipv4Interface;
 class Ipv6Interface;
 
@@ -574,8 +575,12 @@ public:
 
   // DSACK related variables
   bool m_isDsack                   {false};  //!< Boolean variable to check if a duplicate packet has arrived
+  bool             m_dsackSeen     {false};  //!< Check if DSACK is received
   SequenceNumber32 m_dsackFirst    {0};      //!< First Sequence number of DSACK block
   SequenceNumber32 m_dsackSecond   {0};      //!< Second Sequence number of DSACK block
+
+  // Variable to check if packets are reordered
+  bool m_reorder                 {false};
 
 
 protected:
@@ -1016,6 +1021,11 @@ protected:
   void DupAck ();
 
   /**
+   * \brief RACK Loss Detection
+   */
+  void RackLoss ();
+
+  /**
    * \brief Enter the CA_RECOVERY, and retransmit the head
    */
   void EnterRecovery ();
@@ -1261,6 +1271,7 @@ protected:
 
   bool    m_fackEnabled       {false};//!< FACK option disabled
   bool    m_dsackEnabled      {false};//!< DSACK option disabled
+  bool    m_rackEnabled       {false};//!< RACK option enabled
 
   EventId m_sendPendingDataEvent {}; //!< micro-delay event to send pending data
 
@@ -1273,6 +1284,9 @@ protected:
   Ptr<TcpSocketState>    m_tcb;               //!< Congestion control information
   Ptr<TcpCongestionOps>  m_congestionControl; //!< Congestion control
   Ptr<TcpRecoveryOps>    m_recoveryOps;       //!< Recovery Algorithm
+
+  // RACK related variables
+  Ptr<TcpRack>           m_rack;
 
   // Guesses over the other connection end
   bool m_isFirstPartialAck {true}; //!< First partial ACK during RECOVERY
