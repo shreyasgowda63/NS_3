@@ -26,6 +26,7 @@
 #include "ns3/simulator.h"
 #include "ns3/socket-factory.h"
 #include "ns3/packet.h"
+#include "ns3/priority-queue.h"  // Include FlowSizeTag class
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/tcp-socket-factory.h"
@@ -64,6 +65,15 @@ BulkSendApplication::GetTypeId (void)
                    TypeIdValue (TcpSocketFactory::GetTypeId ()),
                    MakeTypeIdAccessor (&BulkSendApplication::m_tid),
                    MakeTypeIdChecker ())
+    .AddAttribute ("IncludeFlowSize", "The type of protocol to use.",
+                   TypeIdValue (TcpSocketFactory::GetTypeId ()),
+                   MakeTypeIdAccessor (&BulkSendApplication::m_tid),
+                   MakeTypeIdChecker ())    
+    .AddAttribute ("FlowSizeTagInclude",
+                   "Whether or to include the FlowSizeTag in the packets",
+                   BooleanValue (false),
+                   MakeBooleanAccessor (&BulkSendApplication::m_flowSizeTagInclude),
+                   MakeBooleanChecker ()) 
     .AddTraceSource ("Tx", "A new packet is created and is sent",
                      MakeTraceSourceAccessor (&BulkSendApplication::m_txTrace),
                      "ns3::Packet::TracedCallback")
@@ -194,6 +204,12 @@ void BulkSendApplication::SendData (void)
 
       NS_LOG_LOGIC ("sending packet at " << Simulator::Now ());
       Ptr<Packet> packet = Create<Packet> (toSend);
+      if (m_flowSizeTagInclude)
+        {
+          FlowSizeTag flowSizeTag;
+          flowSizeTag.SetFlowSize (m_maxBytes);
+          packet->AddPacketTag (flowSizeTag);
+        }
       int actual = m_socket->Send (packet);
       if (actual > 0)
         {

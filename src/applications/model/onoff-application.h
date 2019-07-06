@@ -163,6 +163,7 @@ private:
   EventId         m_startStopEvent;     //!< Event id for next start or stop event
   EventId         m_sendEvent;    //!< Event id of pending "send packet" event
   TypeId          m_tid;          //!< Type of the socket used
+  bool            m_flowSizeTagInclude;  //!< Whether to include the flow size tag in the packets  
 
   /// Traced Callback: transmitted packets.
   TracedCallback<Ptr<const Packet> > m_txTrace;
