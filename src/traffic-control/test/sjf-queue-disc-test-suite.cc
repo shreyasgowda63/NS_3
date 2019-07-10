@@ -22,7 +22,7 @@
 
 #include "ns3/log.h"
 #include "ns3/packet.h"
-#include "ns3/priority-queue.h"
+#include "ns3/flow-size-prio-queue.h"
 #include "ns3/sjf-queue-disc.h"
 #include "ns3/simulator.h"
 #include "ns3/string.h"
@@ -127,6 +127,7 @@ SjfQueueDiscTestCase::DoRun (void)
    * Test 1: Check that packets with different flow size tag values are dequeued in the non-decreasing order.
    */
   std::vector<uint64_t> flowSizeVec = {10000, 20000, 5000, 300000, 16000};
+  // The expected flow size tag values for the dequeued items (refFlowSizeVec) is the sorted flowSizeVec in the non-decreasing order
   std::vector<uint64_t> refFlowSizeVec = {5000, 10000, 16000, 20000, 300000};
   
   // Generate items with different flow size tag values based on flowSizeVec
@@ -174,6 +175,7 @@ SjfQueueDiscTestCase::DoRun (void)
     
   /*
    * Test 3: Check that when the queue disc size is full, the default drop tail policy is applied.
+   * That is, any new incoming packet will be dropped regardless of its tag value.
    */
   NS_TEST_EXPECT_MSG_EQ (qdiscSjfDefault->GetInternalQueue (0)->GetNPackets (), 0, "The queue disc should be empty currently.");
   // Fill the qdisc with 10p (max size) with itemId 0~9 and flow size tag specificed in  flowSizeVecFull

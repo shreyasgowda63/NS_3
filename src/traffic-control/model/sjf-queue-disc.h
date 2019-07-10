@@ -33,12 +33,12 @@ namespace ns3 {
  * A queue disc implementing the SJF (Shortest Job First) policy. The ideal scheduling
  * policy assumes that the flow size is known a priori. The packets are tagged with the 
  * meta data of the flow size in bytes. The internal queue structure is PriorityQueue
- * and during DoEnqueue, packets are sorted based on the flow size tag and the packet 
- * belonging to the shortest flow is served first. If several packets are with the same 
- * shortest tag value, then they are served with FIFO (First In First Out) policy. 
- * During DoDequeue, the priority drop policy is applied so that the packet with the largest 
- * tag value is dropped. Similarly, if several packets are with the largest tag value, 
- * the last coming packet is dropped.
+ * and during FlowSizePrioQueue::DoEnqueue, packets are sorted based on the flow size 
+ * tag and the packet belonging to the shortest flow is served first. If several packets
+ * are with the same shortest tag value, then they are served with FIFO (First In First Out) policy. 
+ * During FlowSizePrioQueue::DoEnqueue, the priority drop policy is applied so that the 
+ * packet with the largest tag value is dropped. Similarly, if several packets are with 
+ * the largest tag value, the last coming packet is dropped.
  * 
  * Notice that the end hosts need to tag the packets with the corresponding flow size information.
  * It assumes that the flow size information is known exactly by the application or estimated roughly

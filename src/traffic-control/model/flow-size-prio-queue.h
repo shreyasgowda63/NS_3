@@ -20,8 +20,8 @@
  *          Dizhi Zhou, Mohit P. Tahiliani, Tom Henderson
 */
 
-#ifndef PRIORITY_QUEUE_H
-#define PRIORITY_QUEUE_H
+#ifndef FLOW_SIZE_PRIO_QUEUE_H
+#define FLOW_SIZE_PRIO_QUEUE_H
 
 #include "ns3/queue.h"
 #include "ns3/tag.h"
@@ -79,7 +79,7 @@ private:
  * so that the QueueDiscItems are sorted in non-decreasing order in terms of the flow size tag
  * value. If the queue is full, the enqueue packet will be dropped by default.
  */
-class PriorityQueue : public Queue<QueueDiscItem>
+class FlowSizePrioQueue : public Queue<QueueDiscItem>
 {
 public:
   /**
@@ -87,8 +87,8 @@ public:
    * \return the object TypeId
    */
   static TypeId GetTypeId (void);
-  PriorityQueue ();
-  ~PriorityQueue ();
+  FlowSizePrioQueue ();
+  ~FlowSizePrioQueue ();
 
   /**
    * Enqueue the given QueueDiscItem with insertion sort based on the flow size tag value.
@@ -134,4 +134,4 @@ private:
 
 } // namespace ns3
 
-#endif /* PRIORITY_QUEUE_H */
+#endif /* FLOW_SIZE_PRIO_QUEUE_H */

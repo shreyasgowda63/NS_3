@@ -22,7 +22,7 @@
 
 #include "ns3/log.h"
 #include "ns3/object-factory.h"
-#include "priority-queue.h"
+#include "flow-size-prio-queue.h"
 #include "sjf-queue-disc.h"
 
 namespace ns3 {
@@ -109,7 +109,6 @@ SjfQueueDisc::DoPeek (void)
   if (!item)
     {
       NS_LOG_LOGIC ("Queue empty");
-      return 0;
     }
 
   return item;
@@ -127,20 +126,20 @@ SjfQueueDisc::CheckConfig (void)
 
   if (GetNPacketFilters () > 0)
     {
-      NS_LOG_ERROR ("SjfQueueDisc needs no packet filter");
+      NS_LOG_ERROR ("SjfQueueDisc cannot have packet filter");
       return false;
     }
 
   if (GetNInternalQueues () == 0)
     {
       // Add a PriorityQueue
-      AddInternalQueue (CreateObjectWithAttributes<PriorityQueue>
+      AddInternalQueue (CreateObjectWithAttributes<FlowSizePrioQueue>
                           ("MaxSize", QueueSizeValue (GetMaxSize ())));
     }
 
   if (GetNInternalQueues () != 1)
     {
-      NS_LOG_ERROR ("SjfQueueDisc needs 1 internal PriorityQueue");
+      NS_LOG_ERROR ("SjfQueueDisc needs exactly 1 internal FlowSizePriorityQueue");
       return false;
     }
 

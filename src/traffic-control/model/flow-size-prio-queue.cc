@@ -22,11 +22,11 @@
 
 #include "ns3/log.h"
 #include "ns3/object-factory.h"
-#include "priority-queue.h"
+#include "flow-size-prio-queue.h"
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("PriorityQueue");
+NS_LOG_COMPONENT_DEFINE ("FlowSizePrioQueue");
 
 NS_OBJECT_ENSURE_REGISTERED (FlowSizeTag);
 
@@ -87,31 +87,31 @@ FlowSizeTag::Print (std::ostream &os) const
   os << "FLOW_SIZE = " << m_flowSize;
 }
 
-NS_OBJECT_ENSURE_REGISTERED (PriorityQueue);
+NS_OBJECT_ENSURE_REGISTERED (FlowSizePrioQueue);
 NS_OBJECT_TEMPLATE_CLASS_DEFINE (Queue, QueueDiscItem);
 
 TypeId
-PriorityQueue::GetTypeId (void)
+FlowSizePrioQueue::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::PriorityQueue")
+  static TypeId tid = TypeId ("ns3::FlowSizePrioQueue")
     .SetParent<Queue<QueueDiscItem> > ()
     .SetGroupName ("TrafficControl")
-    .AddConstructor<PriorityQueue> ()
+    .AddConstructor<FlowSizePrioQueue> ()
   ;
   return tid;
 }
 
-PriorityQueue::PriorityQueue ()
-  : NS_LOG_TEMPLATE_DEFINE ("PriorityQueue")
+FlowSizePrioQueue::FlowSizePrioQueue ()
+  : NS_LOG_TEMPLATE_DEFINE ("FlowSizePrioQueue")
 {
 }
 
-PriorityQueue::~PriorityQueue ()
+FlowSizePrioQueue::~FlowSizePrioQueue ()
 {
 }
 
 bool
-PriorityQueue::Enqueue (Ptr<QueueDiscItem> item)
+FlowSizePrioQueue::Enqueue (Ptr<QueueDiscItem> item)
 {
   // Get the flow size priority value
   FlowSizeTag flowSizeTag;
@@ -122,9 +122,10 @@ PriorityQueue::Enqueue (Ptr<QueueDiscItem> item)
   }
   else {
     // Some packets originate directly from L3 & L4 rather than application layer, these packets
-    // are signal packets and are prioritized with the top priority.
+    // are signal packets and are prioritized with the top priority. Also, it could be that the 
+    // application layer fails to tag the packets.
     newFlowSize = 0;
-    NS_LOG_INFO ("FlowSizeTag not found. Signal packet detected.");
+    NS_LOG_INFO ("FlowSizeTag not found.");
   }
 
   // If empty, directly enqueue the item
@@ -151,7 +152,7 @@ PriorityQueue::Enqueue (Ptr<QueueDiscItem> item)
 }
 
 Ptr<QueueDiscItem>
-PriorityQueue::Dequeue (void)
+FlowSizePrioQueue::Dequeue (void)
 {
   NS_LOG_FUNCTION (this);
 
@@ -167,14 +168,14 @@ PriorityQueue::Dequeue (void)
 }
 
 Ptr<const QueueDiscItem>
-PriorityQueue::Peek (void) const
+FlowSizePrioQueue::Peek (void) const
 {
   NS_LOG_FUNCTION (this);
   return DoPeek (begin ());
 }
 
 Ptr<QueueDiscItem>
-PriorityQueue::Remove (void)
+FlowSizePrioQueue::Remove (void)
 {
   NS_LOG_FUNCTION (this);
   Ptr<QueueDiscItem> item = DoRemove (begin ());
