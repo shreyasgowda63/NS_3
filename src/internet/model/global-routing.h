@@ -55,9 +55,10 @@
  * ns3::GlobalRouteManager::PopulateRoutingTables (), prior to the 
  * ns3::Simulator::Run() call.
  *
- * There are two attributes of Ipv4GlobalRouting that govern behavior.
+ * There are three attributes of Ipv4GlobalRouting that govern behavior.
  * - Ipv4GlobalRouting::RandomEcmpRouting
  * - Ipv4GlobalRouting::RespondToInterfaceEvents
+ * - Ipv4GlobalRouting::FlowBasedEcmpRouting
  *
  * \section impl Implementation
  *

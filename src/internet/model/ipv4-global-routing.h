@@ -232,12 +232,17 @@ protected:
   void DoDispose (void);
 
 private:
-  /// Set to true if packets are randomly routed among ECMP; set to false for using only one route consistently
+  /// Choose the next-hop selection algorithm, if all options are set to be false, use only one route consistently
+  /// Set to true if packets are randomly routed among ECMP
   bool m_randomEcmpRouting;
+  /// Set to true if packets are routed among ECMP based on the 5-tuple flow hash value
+  bool m_flowBasedEcmpRouting;
   /// Set to true if this interface should respond to interface events by globallly recomputing routes 
   bool m_respondToInterfaceEvents;
   /// A uniform random number generator for randomly routing packets among ECMP 
   Ptr<UniformRandomVariable> m_rand;
+  /// Perturbation value for the hash function
+  uint32_t m_perturbation;
 
   /// container of Ipv4RoutingTableEntry (routes to hosts)
   typedef std::list<Ipv4RoutingTableEntry *> HostRoutes;
@@ -261,12 +266,23 @@ private:
   typedef std::list<Ipv4RoutingTableEntry *>::iterator ASExternalRoutesI;
 
   /**
-   * \brief Lookup in the forwarding table for destination.
+   * \brief Lookup in the forwarding table for destination based on the signature.
+   * We extend the previous local method LookupGlobal without affecting any existing functionalities
+   * in order to support the next hop selection based on the flowHash value.      
    * \param dest destination address
    * \param oif output interface if any (put 0 otherwise)
+   * \param flowHash the hash value for the flow of the packet if any (put 0 otherwise)
    * \return Ipv4Route to route the packet to reach dest address
    */
-  Ptr<Ipv4Route> LookupGlobal (Ipv4Address dest, Ptr<NetDevice> oif = 0);
+  Ptr<Ipv4Route> LookupGlobal (Ipv4Address dest, Ptr<NetDevice> oif = 0, uint32_t flowHash = 0);
+
+  /**
+   * \brief Get the hash value over the packet header fields (5-tuple).
+   * \param p the target packet
+   * \param header the target Ipv4Header
+   * \return hash value
+   */
+  uint32_t CalculateFlowHash (Ptr<const Packet> p, const Ipv4Header &header);
 
   HostRoutes m_hostRoutes;             //!< Routes to hosts
   NetworkRoutes m_networkRoutes;       //!< Routes to networks

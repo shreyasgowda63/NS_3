@@ -216,7 +216,7 @@ at time 5 seconds::
                        &Ipv4GlobalRoutingHelper::RecomputeRoutingTables);
 
 
-There are two attributes that govern the behavior. The first is
+There are three attributes that govern the behavior. The first is
 Ipv4GlobalRouting::RandomEcmpRouting. If set to true, packets are randomly
 routed across equal-cost multipath routes. If set to false (default), only one
 route is consistently used. The second is
@@ -225,6 +225,14 @@ recompute the global routes upon Interface notification events (up/down, or
 add/remove address). If set to false (default), routing may break unless the
 user manually calls RecomputeRoutingTables() after such events. The default is
 set to false to preserve legacy |ns3| program behavior.
+The third is Ipv4GlobalRouting::FlowBasedEcmpRouting. If set to true, a hash function
+is performed over the packet header fields that identify a flow (5-tuple, i.e., 
+source IP, source port, destination IP, destination port, transport protocol type). 
+One of the N next hops is selected based on the modulo-N formula: 
+selectIndex = flowHash % N. It does not keep a record of flow states.
+Compared with per packet ECMP, flow based ECMP is more friendly to TCP since it avoids
+packet reordering, however, when large flows collide on the same path, it will 
+degrade the network performances severely.
 
 Global Routing Implementation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

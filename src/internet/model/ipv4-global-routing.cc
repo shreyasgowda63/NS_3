@@ -28,6 +28,9 @@
 #include "ns3/ipv4-routing-table-entry.h"
 #include "ns3/boolean.h"
 #include "ns3/node.h"
+#include "ns3/tcp-header.h"
+#include "ns3/udp-header.h"
+#include "ns3/uinteger.h"
 #include "ipv4-global-routing.h"
 #include "global-route-manager.h"
 
@@ -44,10 +47,20 @@ Ipv4GlobalRouting::GetTypeId (void)
     .SetParent<Object> ()
     .SetGroupName ("Internet")
     .AddAttribute ("RandomEcmpRouting",
-                   "Set to true if packets are randomly routed among ECMP; set to false for using only one route consistently",
+                   "Set to true if packets are randomly routed among ECMP",
                    BooleanValue (false),
                    MakeBooleanAccessor (&Ipv4GlobalRouting::m_randomEcmpRouting),
                    MakeBooleanChecker ())
+    .AddAttribute ("FlowBasedEcmpRouting",
+                   "Set to true if packets are routed among ECMP based on the 5-tuple flow hash value",
+                   BooleanValue (false),
+                   MakeBooleanAccessor (&Ipv4GlobalRouting::m_flowBasedEcmpRouting),
+                   MakeBooleanChecker ())
+    .AddAttribute ("Perturbation",
+                   "The salt used as an additional input to the hash function used to calculation the 5-tuple flow hash",
+                   UintegerValue (0),
+                   MakeUintegerAccessor (&Ipv4GlobalRouting::m_perturbation),
+                   MakeUintegerChecker<uint32_t> ())                             
     .AddAttribute ("RespondToInterfaceEvents",
                    "Set to true if you want to dynamically recompute the global routes upon Interface notification events (up/down, or add/remove address)",
                    BooleanValue (false),
@@ -59,9 +72,13 @@ Ipv4GlobalRouting::GetTypeId (void)
 
 Ipv4GlobalRouting::Ipv4GlobalRouting () 
   : m_randomEcmpRouting (false),
+    m_flowBasedEcmpRouting (false),
     m_respondToInterfaceEvents (false)
 {
   NS_LOG_FUNCTION (this);
+  NS_ASSERT_MSG((m_randomEcmpRouting && m_flowBasedEcmpRouting) == false, 
+                "At most one of the two attributes (m_randomEcmpRouting, m_flowBasedEcmpRouting) is true. \
+                 If both attributes are set to be false, use only one route consistently");
 
   m_rand = CreateObject<UniformRandomVariable> ();
 }
@@ -137,7 +154,7 @@ Ipv4GlobalRouting::AddASExternalRouteTo (Ipv4Address network,
 
 
 Ptr<Ipv4Route>
-Ipv4GlobalRouting::LookupGlobal (Ipv4Address dest, Ptr<NetDevice> oif)
+Ipv4GlobalRouting::LookupGlobal (Ipv4Address dest, Ptr<NetDevice> oif, uint32_t flowHash)
 {
   NS_LOG_FUNCTION (this << dest << oif);
   NS_LOG_LOGIC ("Looking for route for destination " << dest);
@@ -224,6 +241,10 @@ Ipv4GlobalRouting::LookupGlobal (Ipv4Address dest, Ptr<NetDevice> oif)
         {
           selectIndex = m_rand->GetInteger (0, allRoutes.size ()-1);
         }
+      else if (m_flowBasedEcmpRouting) 
+        {
+          selectIndex = flowHash % allRoutes.size();
+        }        
       else 
         {
           selectIndex = 0;
@@ -451,6 +472,57 @@ Ipv4GlobalRouting::PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::Uni
   *os << std::endl;
 }
 
+uint32_t 
+Ipv4GlobalRouting::CalculateFlowHash (Ptr<const Packet> p, const Ipv4Header &header)
+{
+  // Get the 5-tuple as the hash function input (as in Ipv4QueueDiscItem::Hash)
+  Ipv4Address src = header.GetSource ();
+  Ipv4Address dest = header.GetDestination ();
+  uint8_t prot = header.GetProtocol ();
+  uint16_t fragOffset = header.GetFragmentOffset ();
+
+  TcpHeader tcpHdr;
+  UdpHeader udpHdr;
+  uint16_t srcPort = 0;
+  uint16_t destPort = 0;
+
+  if (prot == 6 && fragOffset == 0) // TCP
+    {
+      p->PeekHeader (tcpHdr);
+      srcPort = tcpHdr.GetSourcePort ();
+      destPort = tcpHdr.GetDestinationPort ();
+    }
+  else if (prot == 17 && fragOffset == 0) // UDP
+    {
+      p->PeekHeader (udpHdr);
+      srcPort = udpHdr.GetSourcePort ();
+      destPort = udpHdr.GetDestinationPort ();
+    }
+  if (prot != 6 && prot != 17)
+    {
+      NS_LOG_WARN ("Unknown transport protocol, no port number included in hash computation");
+    }
+
+  /* serialize the 5-tuple and the perturbation in buf */
+  uint8_t buf[17];
+  src.Serialize (buf);
+  dest.Serialize (buf + 4);
+  buf[8] = prot;
+  buf[9] = (srcPort >> 8) & 0xff;
+  buf[10] = srcPort & 0xff;
+  buf[11] = (destPort >> 8) & 0xff;
+  buf[12] = destPort & 0xff;
+  buf[13] = (m_perturbation >> 24) & 0xff;
+  buf[14] = (m_perturbation >> 16) & 0xff;
+  buf[15] = (m_perturbation >> 8) & 0xff;
+  buf[16] = m_perturbation & 0xff;
+
+  // We calculate murmur3 because it is already available in ns-3
+  uint32_t hash = Hash32 ((char*) buf, 17);
+  NS_LOG_LOGIC ("The flow hash signature of the packet: " << hash);
+  return hash; 
+}
+
 Ptr<Ipv4Route>
 Ipv4GlobalRouting::RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr)
 {
@@ -468,7 +540,18 @@ Ipv4GlobalRouting::RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<Net
 // See if this is a unicast packet we have a route for.
 //
   NS_LOG_LOGIC ("Unicast destination- looking up");
-  Ptr<Ipv4Route> rtentry = LookupGlobal (header.GetDestination (), oif);
+  Ptr<Ipv4Route> rtentry;
+  // Get the flowHash value when m_flowBasedEcmpRouting is set true
+  if (m_flowBasedEcmpRouting) 
+    {
+      uint32_t hash = CalculateFlowHash (p, header);
+      rtentry = LookupGlobal (header.GetDestination (), oif, hash);
+    }
+  else
+    {
+      // The previous local function LookupGlobal is called unaffected if m_flowBasedEcmpRouting is set to be false
+      rtentry = LookupGlobal (header.GetDestination (), oif);
+    }
   if (rtentry)
     {
       sockerr = Socket::ERROR_NOTERROR;
@@ -517,7 +600,18 @@ Ipv4GlobalRouting::RouteInput  (Ptr<const Packet> p, const Ipv4Header &header, P
     }
   // Next, try to find a route
   NS_LOG_LOGIC ("Unicast destination- looking up global route");
-  Ptr<Ipv4Route> rtentry = LookupGlobal (header.GetDestination ());
+  Ptr<Ipv4Route> rtentry;
+  // Get the flowHash value when m_flowBasedEcmpRouting is set true
+  if (m_flowBasedEcmpRouting) 
+    {
+      uint32_t hash = CalculateFlowHash (p, header);
+      rtentry = LookupGlobal (header.GetDestination (), 0, hash);
+    }
+  else
+    {
+      // The previous local function LookupGlobal is called unaffected if m_flowBasedEcmpRouting is set to be false
+      rtentry = LookupGlobal (header.GetDestination ());
+    }  
   if (rtentry != 0)
     {
       NS_LOG_LOGIC ("Found unicast destination- calling unicast callback");
