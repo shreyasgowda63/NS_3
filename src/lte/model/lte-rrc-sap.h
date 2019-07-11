@@ -98,6 +98,7 @@ public:
     enum direction
     {
       AM,
+      TM,
       UM_BI_DIRECTIONAL,
       UM_UNI_DIRECTIONAL_UL,
       UM_UNI_DIRECTIONAL_DL

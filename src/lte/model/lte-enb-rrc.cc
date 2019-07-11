@@ -475,6 +475,10 @@ UeManager::SetupDataRadioBearer (EpsBearer bearer, uint8_t bearerId, uint32_t gt
     {
       drbInfo->m_rlcConfig.choice =  LteRrcSap::RlcConfig::AM;
     }
+  else if (rlcTypeId == LteRlcTm::GetTypeId ())
+    {
+      drbInfo->m_rlcConfig.choice =  LteRrcSap::RlcConfig::TM;
+    }
   else
     {
       drbInfo->m_rlcConfig.choice =  LteRrcSap::RlcConfig::UM_BI_DIRECTIONAL;
@@ -1703,6 +1707,7 @@ LteEnbRrc::GetTypeId (void)
                    MakeEnumChecker (RLC_SM_ALWAYS, "RlcSmAlways",
                                     RLC_UM_ALWAYS, "RlcUmAlways",
                                     RLC_AM_ALWAYS, "RlcAmAlways",
+                                    RLC_TM_ALWAYS, "RlcTmAlways",
                                     PER_BASED,     "PacketErrorRateBased"))
     .AddAttribute ("SystemInformationPeriodicity",
                    "The interval for sending system information (Time value)",
@@ -2867,6 +2872,10 @@ LteEnbRrc::GetRlcType (EpsBearer bearer)
 
     case RLC_AM_ALWAYS:
       return LteRlcAm::GetTypeId ();
+      break;
+
+    case RLC_TM_ALWAYS:
+      return LteRlcTm::GetTypeId ();
       break;
 
     case PER_BASED:
