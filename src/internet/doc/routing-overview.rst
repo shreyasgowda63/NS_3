@@ -216,23 +216,35 @@ at time 5 seconds::
                        &Ipv4GlobalRoutingHelper::RecomputeRoutingTables);
 
 
-There are three attributes that govern the behavior. The first is
-Ipv4GlobalRouting::RandomEcmpRouting. If set to true, packets are randomly
-routed across equal-cost multipath routes. If set to false (default), only one
-route is consistently used. The second is
-Ipv4GlobalRouting::RespondToInterfaceEvents. If set to true, dynamically
+There are two attributes that govern the behavior. The first is Ipv4GlobalRouting::EcmpRoutingMode. 
+There are four route selection algorithms supported. 
+Default EcmpRoutingMode is specified when only one route is consistently used.
+When RandomEcmpRouting is selected, packets are randomly routed across equal-cost multipath routes. 
+For FlowBasedEcmpRouting, a hash function is performed over the packet header fields that identify a flow 
+(5-tuple, i.e., source IP, source port, destination IP, destination port, transport protocol type). 
+One of the N next hops is selected based on the modulo-N formula: 
+selected index = flow hash % N. It does not keep a record of flow states.
+Compared with per packet ECMP, flow based ECMP is more friendly to TCP since it avoids
+packet reordering, however, when large flows collide on the same path, it will 
+degrade the network performances severely.
+The last option is FlowletEcmpRouting. An internal table is maintained which maps a flow signature 
+to the last time point when a packet from the flow arrived. 
+If a new packet comes with the time difference larger than the flowlet 
+timeout value (specified by Ipv4GlobalRouting::FlowletTimeout attribute), 
+then it is considered as the first packet of the new flowlet and updates the table with a new selected route index. 
+Same thing happens if the packet is the first packet from the flow. 
+If the time difference is smaller than the flowlet timeout value, it is still considered as part of the same flowlet 
+and forwarded to the previous interface recorded by the flowlet table. 
+Notice that if flowlet timeout value equals to zero, the behavior of flowlet switching would be the same as packet based ecmp 
+since each packet would be considered as a new flowlet and a random route is assigned for each packet.
+One could also specify the desired Ipv4GlobalRouting::Perturbation attribute (default 0) when using 
+FlowBasedEcmpRouting mode and FlowletEcmpRouting mode.
+
+The second is Ipv4GlobalRouting::RespondToInterfaceEvents. If set to true, dynamically
 recompute the global routes upon Interface notification events (up/down, or
 add/remove address). If set to false (default), routing may break unless the
 user manually calls RecomputeRoutingTables() after such events. The default is
 set to false to preserve legacy |ns3| program behavior.
-The third is Ipv4GlobalRouting::FlowBasedEcmpRouting. If set to true, a hash function
-is performed over the packet header fields that identify a flow (5-tuple, i.e., 
-source IP, source port, destination IP, destination port, transport protocol type). 
-One of the N next hops is selected based on the modulo-N formula: 
-selectIndex = flowHash % N. It does not keep a record of flow states.
-Compared with per packet ECMP, flow based ECMP is more friendly to TCP since it avoids
-packet reordering, however, when large flows collide on the same path, it will 
-degrade the network performances severely.
 
 Global Routing Implementation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

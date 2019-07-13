@@ -31,6 +31,9 @@
 #include "ns3/tcp-header.h"
 #include "ns3/udp-header.h"
 #include "ns3/uinteger.h"
+#include "ns3/enum.h"
+#include "ns3/udp-l4-protocol.h"
+#include "ns3/tcp-l4-protocol.h"
 #include "ipv4-global-routing.h"
 #include "global-route-manager.h"
 
@@ -46,16 +49,19 @@ Ipv4GlobalRouting::GetTypeId (void)
   static TypeId tid = TypeId ("ns3::Ipv4GlobalRouting")
     .SetParent<Object> ()
     .SetGroupName ("Internet")
-    .AddAttribute ("RandomEcmpRouting",
-                   "Set to true if packets are randomly routed among ECMP",
-                   BooleanValue (false),
-                   MakeBooleanAccessor (&Ipv4GlobalRouting::m_randomEcmpRouting),
-                   MakeBooleanChecker ())
-    .AddAttribute ("FlowBasedEcmpRouting",
-                   "Set to true if packets are routed among ECMP based on the 5-tuple flow hash value",
-                   BooleanValue (false),
-                   MakeBooleanAccessor (&Ipv4GlobalRouting::m_flowBasedEcmpRouting),
-                   MakeBooleanChecker ())
+    .AddAttribute ("EcmpRoutingMode",
+                   "The mode of the next-hop selection algorithm",
+                   EnumValue (Ipv4GlobalRouting::Default),
+                   MakeEnumAccessor (&Ipv4GlobalRouting::m_ecmpRoutingMode),
+                   MakeEnumChecker (Ipv4GlobalRouting::Default, "Default",
+                                    Ipv4GlobalRouting::RandomEcmpRouting, "RandomEcmpRouting",
+                                    Ipv4GlobalRouting::FlowBasedEcmpRouting, "FlowBasedEcmpRouting",
+                                    Ipv4GlobalRouting::FlowletEcmpRouting, "FlowletEcmpRouting"))    
+    .AddAttribute ("FlowletTimeout",
+                   "Set the flowlet timeout value used to differentiate the flowlets within a flow.",
+                   TimeValue (MilliSeconds (0)),
+                   MakeTimeAccessor (&Ipv4GlobalRouting::m_flowletTimeout),
+                   MakeTimeChecker ())                                  
     .AddAttribute ("Perturbation",
                    "The salt used as an additional input to the hash function used to calculation the 5-tuple flow hash",
                    UintegerValue (0),
@@ -71,15 +77,9 @@ Ipv4GlobalRouting::GetTypeId (void)
 }
 
 Ipv4GlobalRouting::Ipv4GlobalRouting () 
-  : m_randomEcmpRouting (false),
-    m_flowBasedEcmpRouting (false),
-    m_respondToInterfaceEvents (false)
+  : m_respondToInterfaceEvents (false)
 {
   NS_LOG_FUNCTION (this);
-  NS_ASSERT_MSG((m_randomEcmpRouting && m_flowBasedEcmpRouting) == false, 
-                "At most one of the two attributes (m_randomEcmpRouting, m_flowBasedEcmpRouting) is true. \
-                 If both attributes are set to be false, use only one route consistently");
-
   m_rand = CreateObject<UniformRandomVariable> ();
 }
 
@@ -237,14 +237,42 @@ Ipv4GlobalRouting::LookupGlobal (Ipv4Address dest, Ptr<NetDevice> oif, uint32_t 
       // ECMP routing is enabled, or always select the first route
       // consistently if random ECMP routing is disabled
       uint32_t selectIndex;
-      if (m_randomEcmpRouting)
+      if (m_ecmpRoutingMode == Default)
         {
           selectIndex = m_rand->GetInteger (0, allRoutes.size ()-1);
         }
-      else if (m_flowBasedEcmpRouting) 
+      else if (m_ecmpRoutingMode == FlowBasedEcmpRouting) 
         {
           selectIndex = flowHash % allRoutes.size();
-        }        
+        }
+      else if (m_ecmpRoutingMode == FlowletEcmpRouting)
+        {
+          double now = Simulator::Now ().GetSeconds ();
+          std::unordered_map<uint32_t, std::pair<double, uint32_t>>::iterator iter = m_flowletTable.find(flowHash);
+          // If the packet is the first packet of the flow
+          if (iter == m_flowletTable.end())
+            {
+              selectIndex = m_rand->GetInteger (0, allRoutes.size ()-1);
+              m_flowletTable.insert (std::make_pair (flowHash, std::make_pair (now, selectIndex)));
+            }
+          // Otherwise, compare the time difference with the flowlet timeout value
+          else
+            {
+              // If the time difference is smaller than the flowlet timeout value
+              if ((now - iter->second.first) < m_flowletTimeout.GetSeconds ())
+                {
+                  iter->second.first = now;
+                  selectIndex = iter->second.second;
+                }
+              // Otherwise, randomly pick a new route
+              else
+                {
+                  iter->second.first = now;
+                  selectIndex = m_rand->GetInteger (0, allRoutes.size ()-1);
+                  iter->second.second = selectIndex;                  
+                }
+            }
+        }       
       else 
         {
           selectIndex = 0;
@@ -479,26 +507,38 @@ Ipv4GlobalRouting::CalculateFlowHash (Ptr<const Packet> p, const Ipv4Header &hea
   Ipv4Address src = header.GetSource ();
   Ipv4Address dest = header.GetDestination ();
   uint8_t prot = header.GetProtocol ();
-  uint16_t fragOffset = header.GetFragmentOffset ();
 
   TcpHeader tcpHdr;
   UdpHeader udpHdr;
   uint16_t srcPort = 0;
   uint16_t destPort = 0;
 
-  if (prot == 6 && fragOffset == 0) // TCP
+  if (prot == ns3::TcpL4Protocol::PROT_NUMBER) // TCP
     {
-      p->PeekHeader (tcpHdr);
-      srcPort = tcpHdr.GetSourcePort ();
-      destPort = tcpHdr.GetDestinationPort ();
+      if (p->PeekHeader (tcpHdr))
+        {
+          srcPort = tcpHdr.GetSourcePort ();
+          destPort = tcpHdr.GetDestinationPort ();
+        }
+      else
+        {
+          NS_LOG_WARN ("TcpHeader not found when specified protocol is TCP!");
+        }
     }
-  else if (prot == 17 && fragOffset == 0) // UDP
+  else if (prot == ns3::UdpL4Protocol::PROT_NUMBER) // UDP
     {
-      p->PeekHeader (udpHdr);
-      srcPort = udpHdr.GetSourcePort ();
-      destPort = udpHdr.GetDestinationPort ();
+      if (p->PeekHeader (udpHdr))
+        {
+          srcPort = udpHdr.GetSourcePort ();
+          destPort = udpHdr.GetDestinationPort ();
+        }
+      else
+        {
+          NS_LOG_WARN ("UdpHeader not found when specified protocol is UDP!");
+        }
+      
     }
-  if (prot != 6 && prot != 17)
+  else
     {
       NS_LOG_WARN ("Unknown transport protocol, no port number included in hash computation");
     }
@@ -517,7 +557,7 @@ Ipv4GlobalRouting::CalculateFlowHash (Ptr<const Packet> p, const Ipv4Header &hea
   buf[15] = (m_perturbation >> 8) & 0xff;
   buf[16] = m_perturbation & 0xff;
 
-  // We calculate murmur3 because it is already available in ns-3
+  // CRC16 is recommended, yet we calculate murmur3 because it is already available in ns-3
   uint32_t hash = Hash32 ((char*) buf, 17);
   NS_LOG_LOGIC ("The flow hash signature of the packet: " << hash);
   return hash; 
@@ -541,8 +581,8 @@ Ipv4GlobalRouting::RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<Net
 //
   NS_LOG_LOGIC ("Unicast destination- looking up");
   Ptr<Ipv4Route> rtentry;
-  // Get the flowHash value when m_flowBasedEcmpRouting is set true
-  if (m_flowBasedEcmpRouting) 
+  // Get the flowHash value when m_flowBasedEcmpRouting or m_flowletEcmpRouting is set true
+  if (m_ecmpRoutingMode == FlowBasedEcmpRouting || m_ecmpRoutingMode == FlowletEcmpRouting) 
     {
       uint32_t hash = CalculateFlowHash (p, header);
       rtentry = LookupGlobal (header.GetDestination (), oif, hash);
@@ -601,8 +641,8 @@ Ipv4GlobalRouting::RouteInput  (Ptr<const Packet> p, const Ipv4Header &header, P
   // Next, try to find a route
   NS_LOG_LOGIC ("Unicast destination- looking up global route");
   Ptr<Ipv4Route> rtentry;
-  // Get the flowHash value when m_flowBasedEcmpRouting is set true
-  if (m_flowBasedEcmpRouting) 
+  // Get the flowHash value when m_flowBasedEcmpRouting or m_flowletEcmpRouting is set true
+  if (m_ecmpRoutingMode == FlowBasedEcmpRouting || m_ecmpRoutingMode == FlowletEcmpRouting) 
     {
       uint32_t hash = CalculateFlowHash (p, header);
       rtentry = LookupGlobal (header.GetDestination (), 0, hash);

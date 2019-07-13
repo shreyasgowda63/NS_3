@@ -22,6 +22,7 @@
 
 #include <list>
 #include <stdint.h>
+#include <unordered_map>
 #include "ns3/ipv4-address.h"
 #include "ns3/ipv4-header.h"
 #include "ns3/ptr.h"
@@ -39,7 +40,6 @@ class Ipv4Header;
 class Ipv4RoutingTableEntry;
 class Ipv4MulticastRoutingTableEntry;
 class Node;
-
 
 /**
  * \ingroup ipv4
@@ -228,21 +228,23 @@ public:
    */
   int64_t AssignStreams (int64_t stream);
 
+  // Mode of the next-hop selection algorithm
+  enum EcmpRoutingMode
+  {
+    Default = 0,  // Use only one route consistently
+    RandomEcmpRouting,  // Packets are randomly routed among ECMP
+    FlowBasedEcmpRouting,  // Packets are routed among ECMP based on the 5-tuple flow hash value
+    FlowletEcmpRouting  // Packets are routed among ECMP based on the flowlet switching
+  };
+
 protected:
   void DoDispose (void);
 
-private:
-  /// Choose the next-hop selection algorithm, if all options are set to be false, use only one route consistently
-  /// Set to true if packets are randomly routed among ECMP
-  bool m_randomEcmpRouting;
-  /// Set to true if packets are routed among ECMP based on the 5-tuple flow hash value
-  bool m_flowBasedEcmpRouting;
+private:    
   /// Set to true if this interface should respond to interface events by globallly recomputing routes 
   bool m_respondToInterfaceEvents;
   /// A uniform random number generator for randomly routing packets among ECMP 
   Ptr<UniformRandomVariable> m_rand;
-  /// Perturbation value for the hash function
-  uint32_t m_perturbation;
 
   /// container of Ipv4RoutingTableEntry (routes to hosts)
   typedef std::list<Ipv4RoutingTableEntry *> HostRoutes;
@@ -266,9 +268,8 @@ private:
   typedef std::list<Ipv4RoutingTableEntry *>::iterator ASExternalRoutesI;
 
   /**
-   * \brief Lookup in the forwarding table for destination based on the signature.
-   * We extend the previous local method LookupGlobal without affecting any existing functionalities
-   * in order to support the next hop selection based on the flowHash value.      
+   * \brief Lookup in the forwarding table for destination based on the signatures.
+   * The method returns the Ipv4Route for the selected mode of route selection algorithm.
    * \param dest destination address
    * \param oif output interface if any (put 0 otherwise)
    * \param flowHash the hash value for the flow of the packet if any (put 0 otherwise)
@@ -287,8 +288,13 @@ private:
   HostRoutes m_hostRoutes;             //!< Routes to hosts
   NetworkRoutes m_networkRoutes;       //!< Routes to networks
   ASExternalRoutes m_ASexternalRoutes; //!< External routes imported
-
   Ptr<Ipv4> m_ipv4; //!< associated IPv4 instance
+
+  uint32_t m_perturbation;  //!< Perturbation value for the hash function, it is an optional configuration attribute and can be used to control different hash outcomes for different inputs
+  EcmpRoutingMode m_ecmpRoutingMode;  //!< Mode of the next-hop selection algorithm
+  Time m_flowletTimeout;  //!< Store the configured flowlet timeout value used for flowlet switching
+  std::unordered_map<uint32_t, std::pair<double, uint32_t>> m_flowletTable;  //!< Map the flow signature to the arrival time (in second) of the last seen packet in the flowlet and the selected path index
+
 };
 
 } // Namespace ns3
