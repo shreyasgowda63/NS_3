@@ -94,6 +94,13 @@ public:
    */
   virtual uint32_t Hash (uint32_t perturbation) const;
 
+  /**
+   * \brief Computes the total bytes of udp/tcp header and ipv6 header
+   *
+   * \return the total bytes of the the headers
+   */
+  virtual uint32_t GetHeaderBytes () const;
+
 private:
   /**
    * \brief Default constructor

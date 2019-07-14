@@ -146,4 +146,11 @@ QueueDiscItem::Hash (uint32_t perturbation) const
   return 0;
 }
 
+uint32_t
+QueueDiscItem::GetHeaderBytes () const
+{
+  NS_LOG_WARN ("The GetHeaderBytes method should be redefined by subclasses");
+  return 0;
+}
+
 } // namespace ns3

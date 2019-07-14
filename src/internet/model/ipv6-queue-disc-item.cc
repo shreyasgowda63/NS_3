@@ -164,4 +164,21 @@ Ipv6QueueDiscItem::Hash (uint32_t perturbation) const
   return hash;
 }
 
+uint32_t
+Ipv6QueueDiscItem::GetHeaderBytes () const
+{
+  uint32_t bytesHeaderSum = 0;
+  Ipv6Header ipv6Hdr;
+  bytesHeaderSum += GetPacket()->PeekHeader(ipv6Hdr);
+
+  TcpHeader tcpHdr;
+  bytesHeaderSum += GetPacket()->PeekHeader(tcpHdr);
+  UdpHeader udpHdr;
+  bytesHeaderSum += GetPacket()->PeekHeader(udpHdr);
+
+  NS_LOG_DEBUG ("Total L3 and L4 header bytes: " << std::to_string(bytesHeaderSum));
+
+  return bytesHeaderSum;
+}
+
 } // namespace ns3

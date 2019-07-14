@@ -26,7 +26,7 @@
 #include "ns3/simulator.h"
 #include "ns3/socket-factory.h"
 #include "ns3/packet.h"
-#include "ns3/priority-queue.h"  // Include FlowSizeTag class
+#include "ns3/priority-queue.h"
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/tcp-socket-factory.h"
@@ -65,10 +65,11 @@ BulkSendApplication::GetTypeId (void)
                    TypeIdValue (TcpSocketFactory::GetTypeId ()),
                    MakeTypeIdAccessor (&BulkSendApplication::m_tid),
                    MakeTypeIdChecker ())
-    .AddAttribute ("IncludeFlowSize", "The type of protocol to use.",
-                   TypeIdValue (TcpSocketFactory::GetTypeId ()),
-                   MakeTypeIdAccessor (&BulkSendApplication::m_tid),
-                   MakeTypeIdChecker ())    
+    .AddAttribute ("FlowSizeTagInclude",
+                   "Whether or not to include the FlowSizeTag in the packets (should be set true if using SJF algorithm)",
+                   BooleanValue (false),
+                   MakeBooleanAccessor (&BulkSendApplication::m_flowSizeTagInclude),
+                   MakeBooleanChecker ())                         
     .AddAttribute ("FlowSizeTagInclude",
                    "Whether or to include the FlowSizeTag in the packets",
                    BooleanValue (false),
@@ -207,7 +208,15 @@ void BulkSendApplication::SendData (void)
       if (m_flowSizeTagInclude)
         {
           FlowSizeTag flowSizeTag;
-          flowSizeTag.SetFlowSize (m_maxBytes);
+          if (m_maxBytes == 0)
+            {
+              // When m_maxBytes equals to 0, it means unlimited data.
+              flowSizeTag.SetFlowSize (UINT64_MAX);
+            }
+          else
+            {
+              flowSizeTag.SetFlowSize (m_maxBytes);
+            }
           packet->AddPacketTag (flowSizeTag);
         }
       int actual = m_socket->Send (packet);

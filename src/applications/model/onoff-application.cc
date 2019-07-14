@@ -34,7 +34,7 @@
 #include "ns3/socket.h"
 #include "ns3/simulator.h"
 #include "ns3/socket-factory.h"
-#include "ns3/priority-queue.h"  // Include FlowSizeTag class
+#include "ns3/priority-queue.h"
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
@@ -90,10 +90,10 @@ OnOffApplication::GetTypeId (void)
                    // This should check for SocketFactory as a parent
                    MakeTypeIdChecker ())
     .AddAttribute ("FlowSizeTagInclude",
-                   "Whether or to include the FlowSizeTag in the packets",
+                   "Whether or not to include the FlowSizeTag in the packets (should be set true if using SJF algorithm)",
                    BooleanValue (false),
                    MakeBooleanAccessor (&OnOffApplication::m_flowSizeTagInclude),
-                   MakeBooleanChecker ())                    
+                   MakeBooleanChecker ())                      
     .AddTraceSource ("Tx", "A new packet is created and is sent",
                      MakeTraceSourceAccessor (&OnOffApplication::m_txTrace),
                      "ns3::Packet::TracedCallback")
@@ -293,9 +293,17 @@ void OnOffApplication::SendPacket ()
   if (m_flowSizeTagInclude)
     {
       FlowSizeTag flowSizeTag;
-      flowSizeTag.SetFlowSize (m_maxBytes);
+      if (m_maxBytes == 0)
+        {
+          // When m_maxBytes equals to 0, it means unlimited data.
+          flowSizeTag.SetFlowSize (UINT64_MAX);
+        }
+      else
+        {
+          flowSizeTag.SetFlowSize (m_maxBytes);
+        }
       packet->AddPacketTag (flowSizeTag);
-    }
+    }    
   m_socket->Send (packet);
   m_totBytes += m_pktSize;
   Address localAddress;

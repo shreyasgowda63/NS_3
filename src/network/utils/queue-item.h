@@ -226,6 +226,16 @@ public:
    */
   virtual uint32_t Hash (uint32_t perturbation = 0) const;
 
+  /**
+   * \brief Computes the total bytes of target headers
+   *
+   * This method just returns 0. Subclasses should implement the computation
+   * for the interested header bytes, such as total bytes for L3/L4 headers.
+   *
+   * \return the total bytes of the target headers
+   */
+  virtual uint32_t GetHeaderBytes () const;
+
 private:
   /**
    * \brief Default constructor
