@@ -2869,7 +2869,7 @@ The goal of these ``mixins`` is to make it easy to add a consistent
 PCAP trace facility to protocols.  We want all of the various flavors
 of PCAP tracing to work the same across all protocols, so the methods
 of these helpers are inherited by stack helpers.  Take a look at
-``src/network/helper/trace-helper.h`` if you want to follow the
+``src/internet/helper/internet-trace-helper.h`` if you want to follow the
 discussion while looking at real code.
 
 In this section we will be illustrating the methods as applied to the
@@ -3045,7 +3045,7 @@ ASCII
 ~~~~~
 
 The behavior of the ASCII trace helpers is substantially similar to
-the PCAP case.  Take a look at ``src/network/helper/trace-helper.h``
+the PCAP case.  Take a look at ``src/internet/helper/internet-trace-helper.h``
 if you want to follow the discussion while looking at real code.
 
 In this section we will be illustrating the methods as applied to the
