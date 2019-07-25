@@ -233,9 +233,7 @@ Ipv4GlobalRouting::LookupGlobal (Ipv4Address dest, Ptr<NetDevice> oif, uint32_t 
     }
   if (allRoutes.size () > 0 ) // if route(s) is found
     {
-      // pick up one of the routes uniformly at random if random
-      // ECMP routing is enabled, or always select the first route
-      // consistently if random ECMP routing is disabled
+      // Pick up one of the routes according to the specified m_ecmpRoutingMode
       uint32_t selectIndex;
       switch (m_ecmpRoutingMode)
         {
