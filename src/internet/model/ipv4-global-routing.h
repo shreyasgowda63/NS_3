@@ -231,7 +231,7 @@ public:
   // Mode of the next-hop selection algorithm
   enum EcmpRoutingMode
   {
-    Default = 0,  // Use only one route consistently
+    FixedRoute = 0,  // Use only one route consistently
     RandomEcmpRouting,  // Packets are randomly routed among ECMP
     FlowBasedEcmpRouting,  // Packets are routed among ECMP based on the 5-tuple flow hash value
     FlowletEcmpRouting  // Packets are routed among ECMP based on the flowlet switching
@@ -293,7 +293,7 @@ private:
   uint32_t m_perturbation;  //!< Perturbation value for the hash function, it is an optional configuration attribute and can be used to control different hash outcomes for different inputs
   EcmpRoutingMode m_ecmpRoutingMode;  //!< Mode of the next-hop selection algorithm
   Time m_flowletTimeout;  //!< Store the configured flowlet timeout value used for flowlet switching
-  std::unordered_map<uint32_t, std::pair<double, uint32_t>> m_flowletTable;  //!< Map the flow signature to the arrival time (in second) of the last seen packet in the flowlet and the selected path index
+  std::unordered_map<uint32_t, std::pair<double, uint32_t>> m_flowletTable;  //!< Map the 5-tuple hash signature to the arrival time (in second) of the last seen packet in the flowlet and the selected path index
 
 };
 

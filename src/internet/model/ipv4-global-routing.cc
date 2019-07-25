@@ -51,9 +51,9 @@ Ipv4GlobalRouting::GetTypeId (void)
     .SetGroupName ("Internet")
     .AddAttribute ("EcmpRoutingMode",
                    "The mode of the next-hop selection algorithm",
-                   EnumValue (Ipv4GlobalRouting::Default),
+                   EnumValue (Ipv4GlobalRouting::FixedRoute),
                    MakeEnumAccessor (&Ipv4GlobalRouting::m_ecmpRoutingMode),
-                   MakeEnumChecker (Ipv4GlobalRouting::Default, "Default",
+                   MakeEnumChecker (Ipv4GlobalRouting::FixedRoute, "FixedRoute",
                                     Ipv4GlobalRouting::RandomEcmpRouting, "RandomEcmpRouting",
                                     Ipv4GlobalRouting::FlowBasedEcmpRouting, "FlowBasedEcmpRouting",
                                     Ipv4GlobalRouting::FlowletEcmpRouting, "FlowletEcmpRouting"))    
@@ -237,45 +237,45 @@ Ipv4GlobalRouting::LookupGlobal (Ipv4Address dest, Ptr<NetDevice> oif, uint32_t 
       // ECMP routing is enabled, or always select the first route
       // consistently if random ECMP routing is disabled
       uint32_t selectIndex;
-      if (m_ecmpRoutingMode == Default)
+      switch (m_ecmpRoutingMode)
         {
-          selectIndex = m_rand->GetInteger (0, allRoutes.size ()-1);
-        }
-      else if (m_ecmpRoutingMode == FlowBasedEcmpRouting) 
-        {
-          selectIndex = flowHash % allRoutes.size();
-        }
-      else if (m_ecmpRoutingMode == FlowletEcmpRouting)
-        {
-          double now = Simulator::Now ().GetSeconds ();
-          std::unordered_map<uint32_t, std::pair<double, uint32_t>>::iterator iter = m_flowletTable.find(flowHash);
-          // If the packet is the first packet of the flow
-          if (iter == m_flowletTable.end())
-            {
-              selectIndex = m_rand->GetInteger (0, allRoutes.size ()-1);
-              m_flowletTable.insert (std::make_pair (flowHash, std::make_pair (now, selectIndex)));
-            }
-          // Otherwise, compare the time difference with the flowlet timeout value
-          else
-            {
-              // If the time difference is smaller than the flowlet timeout value
-              if ((now - iter->second.first) < m_flowletTimeout.GetSeconds ())
-                {
-                  iter->second.first = now;
-                  selectIndex = iter->second.second;
-                }
-              // Otherwise, randomly pick a new route
-              else
-                {
-                  iter->second.first = now;
-                  selectIndex = m_rand->GetInteger (0, allRoutes.size ()-1);
-                  iter->second.second = selectIndex;                  
-                }
-            }
-        }       
-      else 
-        {
-          selectIndex = 0;
+          case FixedRoute:
+            selectIndex = 0;
+            break;
+          case RandomEcmpRouting:
+            selectIndex = m_rand->GetInteger (0, allRoutes.size ()-1);
+            break;
+          case FlowBasedEcmpRouting:
+            selectIndex = flowHash % allRoutes.size();
+            break;
+          case FlowletEcmpRouting:
+            double now = Simulator::Now ().GetSeconds ();
+            std::unordered_map<uint32_t, std::pair<double, uint32_t>>::iterator iter = m_flowletTable.find(flowHash);
+            // If the packet is the first packet of the flow
+            if (iter == m_flowletTable.end())
+              {
+                // Pick a path at random for each flowlet
+                selectIndex = m_rand->GetInteger (0, allRoutes.size ()-1);
+                m_flowletTable.insert (std::make_pair (flowHash, std::make_pair (now, selectIndex)));
+              }
+            // Otherwise, compare the time difference with the flowlet timeout value
+            else
+              {
+                // If the time difference is smaller than the flowlet timeout value
+                if ((now - iter->second.first) < m_flowletTimeout.GetSeconds ())
+                  {
+                    iter->second.first = now;
+                    selectIndex = iter->second.second;
+                  }
+                // Otherwise, randomly pick a new route
+                else
+                  {
+                    iter->second.first = now;
+                    selectIndex = m_rand->GetInteger (0, allRoutes.size ()-1);
+                    iter->second.second = selectIndex;                  
+                  }
+              }
+            break;
         }
       Ipv4RoutingTableEntry* route = allRoutes.at (selectIndex); 
       // create a Ipv4Route object from the selected routing table entry
@@ -581,16 +581,20 @@ Ipv4GlobalRouting::RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<Net
 //
   NS_LOG_LOGIC ("Unicast destination- looking up");
   Ptr<Ipv4Route> rtentry;
-  // Get the flowHash value when m_flowBasedEcmpRouting or m_flowletEcmpRouting is set true
-  if (m_ecmpRoutingMode == FlowBasedEcmpRouting || m_ecmpRoutingMode == FlowletEcmpRouting) 
+  // Get the flowHash value when FlowBasedEcmpRouting or FlowletEcmpRouting is set
+  switch (m_ecmpRoutingMode)
     {
-      uint32_t hash = CalculateFlowHash (p, header);
-      rtentry = LookupGlobal (header.GetDestination (), oif, hash);
-    }
-  else
-    {
-      // The previous local function LookupGlobal is called unaffected if m_flowBasedEcmpRouting is set to be false
-      rtentry = LookupGlobal (header.GetDestination (), oif);
+      case FlowBasedEcmpRouting:
+        uint32_t hash = CalculateFlowHash (p, header);
+        rtentry = LookupGlobal (header.GetDestination (), oif, hash);        
+        break;
+      case FlowletEcmpRouting:
+        uint32_t hash = CalculateFlowHash (p, header);
+        rtentry = LookupGlobal (header.GetDestination (), oif, hash);
+        break;
+      default:
+        rtentry = LookupGlobal (header.GetDestination (), oif);
+        break;        
     }
   if (rtentry)
     {
@@ -641,17 +645,21 @@ Ipv4GlobalRouting::RouteInput  (Ptr<const Packet> p, const Ipv4Header &header, P
   // Next, try to find a route
   NS_LOG_LOGIC ("Unicast destination- looking up global route");
   Ptr<Ipv4Route> rtentry;
-  // Get the flowHash value when m_flowBasedEcmpRouting or m_flowletEcmpRouting is set true
-  if (m_ecmpRoutingMode == FlowBasedEcmpRouting || m_ecmpRoutingMode == FlowletEcmpRouting) 
+  // Get the flowHash value when FlowBasedEcmpRouting or FlowletEcmpRouting is set
+  switch (m_ecmpRoutingMode)
     {
-      uint32_t hash = CalculateFlowHash (p, header);
-      rtentry = LookupGlobal (header.GetDestination (), 0, hash);
+      case FlowBasedEcmpRouting:
+        uint32_t hash = CalculateFlowHash (p, header);
+        rtentry = LookupGlobal (header.GetDestination (), 0, hash);        
+        break;
+      case FlowletEcmpRouting:
+        uint32_t hash = CalculateFlowHash (p, header);
+        rtentry = LookupGlobal (header.GetDestination (), 0, hash);
+        break;
+      default:
+        rtentry = LookupGlobal (header.GetDestination ());
+        break;        
     }
-  else
-    {
-      // The previous local function LookupGlobal is called unaffected if m_flowBasedEcmpRouting is set to be false
-      rtentry = LookupGlobal (header.GetDestination ());
-    }  
   if (rtentry != 0)
     {
       NS_LOG_LOGIC ("Found unicast destination- calling unicast callback");
