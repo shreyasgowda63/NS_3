@@ -46,17 +46,15 @@
 namespace ns3 {
 
 /**
- * \ingroup point-to-point-layout
+ * \ingroup data-center
  *
  * \brief A helper to make it easier to create a leaf spine topology
- * with p2p links
  */
 class LeafSpineHelper
 {
 public:
   /**
-   * Create a LeafSpineHelper in order to easily create
-   * the IP layer leaf spine topology using point-to-point (p2p) links
+   * Create a LeafSpineHelper in order to easily create the IP layer leaf spine topology
    *
    * \param numSpine total number of spine switches in leaf spine
    * \param numLeaf total number of leaf switches in leaf spine
@@ -71,58 +69,55 @@ public:
   ~LeafSpineHelper ();
 
   /**
-   * \param index the index to the target leaf switch
+   * \param col the column address of the target leaf switch
    *
-   * \returns a pointer to the leaf switch specified by the
-   *          index
+   * \returns a pointer to the leaf switch specified by the column address
    */
-  Ptr<Node> GetLeafNode (uint32_t index) const;
+  Ptr<Node> GetLeafNode (uint32_t col) const;
 
   /**
-   * \param index the index of the desired spine switch
+   * \param col the column address of the desired spine switch
    *
-   * \returns a pointer to the spine switch specified by the
-   *          index
+   * \returns a pointer to the spine switch specified by the column address
    */
-  Ptr<Node> GetSpineNode (uint32_t index) const;
+  Ptr<Node> GetSpineNode (uint32_t col) const;
 
   /**
-   * \param index the index of the desired server
+   * \param col the column address of the desired server
    *
-   * \returns a pointer to the server specified by the
-   *          index
+   * \returns a pointer to the server specified by the column address
    */
-  Ptr<Node> GetServerNode (uint32_t index) const;
+  Ptr<Node> GetServerNode (uint32_t col) const;
 
   /**
    * This returns an IPv4 address at the spine switch specified by
-   * spineIndex and the interfaceIndex. Technically, a spine switch will 
+   * col and the interfaceIndex. Technically, a spine switch will 
    * have multiple interfaces connected to each leaf switches in the spine leaf; 
    * therefore, it also has multiple IPv4 addresses. 
    * The interfaceIndex is marked from 0 to m_numLeaf-1 left to right according to 
    * the leaf spine diagram.
    *
-   * \param spineIndex the index of the desired spine switch
+   * \param col the column address of the desired spine switch
    * \param interfaceIndex the index of the desired network interface
    *
    * \returns Ipv4Address of the target interfaces of the spine switch
    */
-  Ipv4Address GetSpineIpv4Address (uint32_t spineIndex, uint32_t interfaceIndex) const;
+  Ipv4Address GetSpineIpv4Address (uint32_t col, uint32_t interfaceIndex) const;
 
   /**
    * This returns an IPv4 address container at the spine switch specified by
-   * leafIndex. Technically, a leaf switch will have multiple interfaces connected to each 
+   * col. Technically, a leaf switch will have multiple interfaces connected to each 
    * leaf switches in the spine leaf; therefore, it also has multiple IPv4 addresses.
    *
-   * \param leafIndex the index of the desired spine switch
+   * \param col the column address of the desired spine switch
    *
    * \returns Ipv4InterfaceContainer storing all interfaces for the target spine switch
    */
-  Ipv4InterfaceContainer GetSpineIpv4Interfaces (uint32_t spineIndex) const;
+  Ipv4InterfaceContainer GetSpineIpv4Interfaces (uint32_t col) const;
 
   /**
    * This returns an IPv4 address at the leaf switch specified by
-   * leafIndex and the interfaceIndex. Technically, a leaf switch will 
+   * col and the interfaceIndex. Technically, a leaf switch will 
    * have multiple interfaces connected to each spine switches in the spine leaf
    * and each server belonging to the leaf switch; therefore, it also has multiple 
    * IPv4 addresses. The interfaceIndex is marked from 0 to m_numServerPerLeaf-1
@@ -130,31 +125,31 @@ public:
    * to m_numServerPerLeaf to m_numServerPerLeaf+m_numSpine-1 for each interface connected
    * to the spine switches left to right according to the leaf spine diagram.
    *
-   * \param leafIndex the index of the desired leaf switch
+   * \param col the column address of the desired leaf switch
    * \param interfaceIndex the index of the desired network interface
    *
    * \returns Ipv4Address of the target interfaces of the leaf switch
    */  
-  Ipv4Address GetLeafIpv4Address (uint32_t leafIndex, uint32_t interfaceIndex) const;
+  Ipv4Address GetLeafIpv4Address (uint32_t col, uint32_t interfaceIndex) const;
 
   /**
    * This returns an IPv4 address container at the leaf switch specified by
-   * leafIndex. Technically, a leaf switch will have multiple interfaces connected to each 
+   * col. Technically, a leaf switch will have multiple interfaces connected to each 
    * spine switches in the spine leaf and each server belonging to the leaf switch; 
    * therefore, it also has multiple IPv4 addresses.
    *
-   * \param leafIndex the index of the desired leaf switch
+   * \param col the column address of the desired leaf switch
    *
    * \returns Ipv4InterfaceContainer storing all interfaces for the target leaf switch
    */
-  Ipv4InterfaceContainer GetLeafIpv4Interfaces (uint32_t leafIndex) const;
+  Ipv4InterfaceContainer GetLeafIpv4Interfaces (uint32_t col) const;
 
   /**
    * This returns an IPv4 address at the server specified by
-   * the serverIndex. There is only one interface for each server 
+   * the col. There is only one interface for each server 
    * connected to the leaf switch (a.k.a. ToR switch).
    *
-   * \param serverIndex the index of the desired server.
+   * \param col the column address of the desired server.
    *
    * \returns Ipv4Address of the target server.
    */
@@ -162,33 +157,33 @@ public:
 
   /**
    * This returns an IPv6 address at the spine switch specified by
-   * spineIndex and the interfaceIndex. Technically, a spine switch will 
+   * col and the interfaceIndex. Technically, a spine switch will 
    * have multiple interfaces connected to each leaf switches in the spine leaf; 
    * therefore, it also has multiple IPv6 addresses. 
    * The interfaceIndex is marked from 0 to m_numLeaf-1 left to right according 
    * to the leaf spine diagram.
    *
-   * \param spineIndex the index of the desired spine switch
+   * \param col the column address of the desired spine switch
    * \param interfaceIndex the index of the desired network interface
    *
    * \returns Ipv6Address of the target interfaces of the spine switch
    */
-  Ipv6Address GetSpineIpv6Address (uint32_t spineIndex, uint32_t interfaceIndex) const;
+  Ipv6Address GetSpineIpv6Address (uint32_t col, uint32_t interfaceIndex) const;
 
   /**
    * This returns an IPv6 address container at the spine switch specified by
-   * leafIndex. Technically, a leaf switch will have multiple interfaces connected to each 
+   * col. Technically, a leaf switch will have multiple interfaces connected to each 
    * leaf switches in the spine leaf; therefore, it also has multiple IPv6 addresses.
    *
-   * \param leafIndex the index of the desired spine switch
+   * \param col the column address of the desired spine switch
    *
    * \returns Ipv6InterfaceContainer storing all interfaces for the target spine switch
    */
-  Ipv6InterfaceContainer GetSpineIpv6Interfaces (uint32_t spineIndex) const;
+  Ipv6InterfaceContainer GetSpineIpv6Interfaces (uint32_t col) const;
 
   /**
    * This returns an IPv6 address at the leaf switch specified by
-   * leafIndex and the interfaceIndex. Technically, a leaf switch will 
+   * col and the interfaceIndex. Technically, a leaf switch will 
    * have multiple interfaces connected to each spine switches in the spine leaf
    * and each server belonging to the leaf switch; therefore, it also has multiple 
    * IPv6 addresses. The interfaceIndex is marked from 0 to m_numServerPerLeaf-1
@@ -196,35 +191,35 @@ public:
    * to m_numServerPerLeaf to m_numServerPerLeaf+m_numSpine-1 for each interface connected
    * to the spine switches left to right according to the leaf spine diagram.
    *
-   * \param leafIndex the index of the desired leaf switch
+   * \param col the column address of the desired leaf switch
    * \param interfaceIndex the index of the desired network interface
    *
    * \returns Ipv6Address of the target interfaces of the leaf switch
    */
-  Ipv6Address GetLeafIpv6Address (uint32_t leafIndex, uint32_t interfaceIndex) const;
+  Ipv6Address GetLeafIpv6Address (uint32_t col, uint32_t interfaceIndex) const;
 
   /**
    * This returns an IPv6 address container at the leaf switch specified by
-   * leafIndex. Technically, a leaf switch will have multiple interfaces connected to each 
+   * col. Technically, a leaf switch will have multiple interfaces connected to each 
    * spine switches in the spine leaf and each server belonging to the leaf switch; 
    * therefore, it also has multiple IPv6 addresses.
    *
-   * \param leafIndex the index of the desired leaf switch
+   * \param col the column address of the desired leaf switch
    *
    * \returns Ipv6InterfaceContainer storing all interfaces for the target leaf switch
    */
-  Ipv6InterfaceContainer GetLeafIpv6Interfaces (uint32_t leafIndex) const;
+  Ipv6InterfaceContainer GetLeafIpv6Interfaces (uint32_t col) const;
 
   /**
    * This returns an IPv6 address at the server specified by
-   * the serverIndex. There is only one interface for each server 
+   * the col. There is only one interface for each server 
    * connected to the leaf switch (a.k.a. ToR switch).
    *
-   * \param serverIndex the index of the desired server.
+   * \param serverIndex the column address of the desired server.
    *
    * \returns Ipv6Address of the target server.
    */
-  Ipv6Address GetServerIpv6Address (uint32_t serverIndex) const;
+  Ipv6Address GetServerIpv6Address (uint32_t col) const;
 
   /**
    * \returns total number of spine switches
@@ -259,13 +254,13 @@ public:
                      InternetStackHelper stackServer);
 
   /**
-   * \param helperServerleaf the layer 2 helper which is used to install
-   *                          on every server to leaf switch links
-   * \param helperLeafSpine the layer 2 helper which is used to install
-   *                          on every links between spine switches and leaf switches
+   * \param helperEdge the layer 2 helper which is used to install
+   *                   on every server to leaf switch links
+   * \param helperCore the layer 2 helper which is used to install
+   *                   on every links between spine switches and leaf switches
    */
   template <typename T>
-  void InstallNetDevices (T helperServerleaf, T helperLeafSpine);
+  void InstallNetDevices (T helperEdge, T helperCore);
 
   /**
    * \param tchSpine a TrafficControlHelper which is used to install
@@ -332,8 +327,8 @@ private:
 
 template <typename T>
 void
-LeafSpineHelper::InstallNetDevices (T helperServerLeaf,
-                                    T helperLeafSpine)
+LeafSpineHelper::InstallNetDevices (T helperEdge,
+                                    T helperCore)
 {
   /*
     There are four types of NetDevice:
@@ -348,7 +343,7 @@ LeafSpineHelper::InstallNetDevices (T helperServerLeaf,
     {
       for (uint32_t j = 0; j < m_numServerPerLeaf; j++)
         {
-          NetDeviceContainer ndc = helperServerLeaf.Install (m_servers.Get (serverId), m_leafSwitches.Get (i));
+          NetDeviceContainer ndc = helperEdge.Install (m_servers.Get (serverId), m_leafSwitches.Get (i));
           m_serverDevices[serverId].Add (ndc.Get (0));
           m_leafDevices[i].Add (ndc.Get (1));
           serverId += 1;
@@ -360,7 +355,7 @@ LeafSpineHelper::InstallNetDevices (T helperServerLeaf,
     {
       for (uint32_t j = 0; j < m_numLeaf; j++)
         {
-            NetDeviceContainer ndc = helperLeafSpine.Install (m_leafSwitches.Get (j),
+            NetDeviceContainer ndc = helperCore.Install (m_leafSwitches.Get (j),
                                                            m_spineSwitches.Get (i));
             m_leafDevices[j].Add (ndc.Get (0));
             m_spineDevices[i].Add (ndc.Get (1));

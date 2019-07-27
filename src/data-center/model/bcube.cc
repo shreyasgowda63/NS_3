@@ -16,91 +16,94 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors: Shravya K.S. <shravya.ks0@gmail.com>
- *
+ * Modified by Liangcheng Yu <liangcheng.yu46@gmail.com>
+ * GSoC 2019 project Mentors:
+ *          Dizhi Zhou <dizhizhou@hotmail.com>
+ *          Mohit P. Tahiliani <tahiliani.nitk@gmail.com>
+ *          Tom Henderson <tomh@tomh.org>
  */
 
 // Implement an object to create a BCube topology.
 
-#include "ns3/string.h"
-#include "ns3/vector.h"
-#include "ns3/log.h"
-
-#include "ns3/point-to-point-bcube.h"
-#include "ns3/point-to-point-helper.h"
-#include "ns3/point-to-point-net-device.h"
+#include "ns3/bcube.h"
+#include "ns3/constant-position-mobility-model.h"
 #include "ns3/internet-stack-helper.h"
 #include "ns3/ipv4-address-generator.h"
 #include "ns3/ipv6-address-generator.h"
-#include "ns3/constant-position-mobility-model.h"
+#include "ns3/log.h"
+#include "ns3/point-to-point-helper.h"
+#include "ns3/point-to-point-net-device.h"
+#include "ns3/string.h"
+#include "ns3/vector.h"
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("PointToPointBCubeHelper");
+NS_LOG_COMPONENT_DEFINE ("BCubeHelper");
 
-PointToPointBCubeHelper::PointToPointBCubeHelper (uint32_t nLevels,
-                                                  uint32_t nServers,
-                                                  PointToPointHelper p2pHelper)
-  : m_numLevels (nLevels),
+BCubeHelper::BCubeHelper (uint32_t nLevels,
+                          uint32_t nServers)
+  : m_l2Installed (false),
+    m_numLevels (nLevels),
     m_numServers (nServers)
 {
   // Bounds check
-  if (nServers < 1)
+  if (nServers < N_SERVER_MIN)
     {
       NS_FATAL_ERROR ("Insufficient number of servers for BCube.");
     }
-  uint32_t numLevelSwitches = pow (nServers, nLevels);
-  m_levelSwitchDevices.resize ((nLevels + 1) * numLevelSwitches);
-  m_switchInterfaces.resize ((nLevels + 1) * numLevelSwitches);
+
+  m_numLevelSwitches = pow (nServers, nLevels);
+  m_levelSwitchDevices.resize ((nLevels + 1) * m_numLevelSwitches);
+  m_switchInterfaces.resize ((nLevels + 1) * m_numLevelSwitches);
 
   // Number of servers = pow (nServers, nLevels + 1)
   //                   = nServers * pow (nServers, nLevels)
   //                   = nServers * numLevelSwitches
-  m_servers.Create (nServers * numLevelSwitches);
+  m_servers.Create (nServers * m_numLevelSwitches);
 
   // Number of switches = (nLevels + 1) * pow (nServers, nLevels)
   //                    = (nLevels + 1) * numLevelSwitches
-  m_switches.Create ((nLevels + 1) * numLevelSwitches);
-
-  InternetStackHelper stack;
-
-  uint32_t switchColId;
-  // Configure the levels in BCube topology
-  for (uint32_t level = 0; level < nLevels + 1; level++)
-    {
-      switchColId = 0;
-      uint32_t val1 = pow (nServers, level);
-      uint32_t val2 = val1 * nServers;
-      // Configure the position of switches at each level of the topology
-      for (uint32_t switches = 0; switches < numLevelSwitches; switches++)
-        {
-          uint32_t serverIndex = switches % val1 + switches / val1 * val2;
-          // Connect nServers to every switch
-          for (uint32_t servers = serverIndex; servers < (serverIndex + val2); servers += val1)
-            {
-              NetDeviceContainer nd = p2pHelper.Install (m_servers.Get (servers),
-                                                         m_switches.Get (level * numLevelSwitches + switchColId));
-              m_levelSwitchDevices[level * numLevelSwitches + switchColId].Add (nd.Get (0));
-              m_levelSwitchDevices[level * numLevelSwitches + switchColId].Add (nd.Get (1));
-            }
-          switchColId += 1;
-        }
-    }
+  m_switches.Create ((nLevels + 1) * m_numLevelSwitches);
 }
 
-PointToPointBCubeHelper::~PointToPointBCubeHelper ()
+BCubeHelper::~BCubeHelper ()
 {
 }
 
 void
-PointToPointBCubeHelper::InstallStack (InternetStackHelper stack)
+BCubeHelper::InstallStack (InternetStackHelper stack)
 {
+  if (!m_l2Installed)
+    {
+      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+    }
+  
   stack.Install (m_servers);
   stack.Install (m_switches);
 }
 
 void
-PointToPointBCubeHelper::BoundingBox (double ulx, double uly,
-                                      double lrx, double lry)
+BCubeHelper::InstallTrafficControl (TrafficControlHelper tchSwitch,
+                                    TrafficControlHelper tchServer)
+{
+  if (!m_l2Installed)
+    {
+      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+    }
+
+  for (uint32_t i = 0; i < m_levelSwitchDevices.size (); ++i)
+    {
+      for (uint32_t j = 0; j < m_levelSwitchDevices[i].GetN (); j += 2)
+        {
+          tchServer.Install (m_levelSwitchDevices[i].Get (j));
+          tchSwitch.Install (m_levelSwitchDevices[i].Get (j + 1));
+        }
+    }        
+}
+
+void
+BCubeHelper::BoundingBox (double ulx, double uly,
+                          double lrx, double lry)
 {
   NS_LOG_FUNCTION (this << ulx << uly << lrx << lry);
   double xDist;
@@ -177,8 +180,13 @@ PointToPointBCubeHelper::BoundingBox (double ulx, double uly,
 }
 
 void
-PointToPointBCubeHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask)
+BCubeHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask)
 {
+  if (!m_l2Installed)
+    {
+      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+    }
+
   NS_LOG_FUNCTION (this << network << mask);
   Ipv4AddressGenerator::Init (network, mask);
   Ipv4Address v4network;
@@ -199,8 +207,13 @@ PointToPointBCubeHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask
 }
 
 void
-PointToPointBCubeHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
+BCubeHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
 {
+  if (!m_l2Installed)
+    {
+      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+    }
+
   NS_LOG_FUNCTION (this << addrBase << prefix);
   Ipv6AddressGenerator::Init (addrBase, prefix);
   Ipv6Address v6network;
@@ -221,42 +234,42 @@ PointToPointBCubeHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix p
 }
 
 Ipv4Address
-PointToPointBCubeHelper::GetServerIpv4Address (uint32_t i) const
+BCubeHelper::GetServerIpv4Address (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_serverInterfaces.GetAddress (i);
 }
 
 Ipv4Address
-PointToPointBCubeHelper::GetSwitchIpv4Address (uint32_t i, uint32_t j) const
+BCubeHelper::GetSwitchIpv4Address (uint32_t i, uint32_t j) const
 {
   NS_LOG_FUNCTION (this << i << j);
   return m_switchInterfaces[i].GetAddress (j);
 }
 
 Ipv6Address
-PointToPointBCubeHelper::GetServerIpv6Address (uint32_t i) const
+BCubeHelper::GetServerIpv6Address (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_serverInterfaces6.GetAddress (i, 1);
 }
 
 Ipv6Address
-PointToPointBCubeHelper::GetSwitchIpv6Address (uint32_t i, uint32_t j) const
+BCubeHelper::GetSwitchIpv6Address (uint32_t i, uint32_t j) const
 {
   NS_LOG_FUNCTION (this << i << j);
   return m_switchInterfaces6[i].GetAddress (j, 1);
 }
 
 Ptr<Node>
-PointToPointBCubeHelper::GetServerNode (uint32_t i) const
+BCubeHelper::GetServerNode (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_servers.Get (i);
 }
 
 Ptr<Node>
-PointToPointBCubeHelper::GetSwitchNode (uint32_t i, uint32_t j) const
+BCubeHelper::GetSwitchNode (uint32_t i, uint32_t j) const
 {
   NS_LOG_FUNCTION (this << i << j);
   uint32_t numLevelSwitches = pow (m_numServers, m_numLevels);

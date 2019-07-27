@@ -274,151 +274,151 @@ LeafSpineHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
 }
 
 Ipv4Address
-LeafSpineHelper::GetServerIpv4Address (uint32_t serverIndex) const
+LeafSpineHelper::GetServerIpv4Address (uint32_t i) const
 {
-  if (serverIndex >= (m_numServerPerLeaf * m_numLeaf))
+  if (i >= (m_numServerPerLeaf * m_numLeaf))
     {
       NS_FATAL_ERROR ("Server index exceeds the maximum " << std::to_string(m_numServerPerLeaf * m_numLeaf-1) << ".");
     }
-  return m_serverInterfaces[serverIndex].GetAddress (0);
+  return m_serverInterfaces[i].GetAddress (0);
 }
 
 Ipv4Address
-LeafSpineHelper::GetLeafIpv4Address (uint32_t leafIndex, uint32_t interfaceIndex) const
+LeafSpineHelper::GetLeafIpv4Address (uint32_t i, uint32_t j) const
 {
-  if (leafIndex >= m_numLeaf)
+  if (i >= m_numLeaf)
     {
       NS_FATAL_ERROR ("Leaf switch index exceeds the maximum" << std::to_string(m_numLeaf - 1) << ".");
     }
-  if (interfaceIndex >= m_numServerPerLeaf + m_numSpine)
+  if (j >= m_numServerPerLeaf + m_numSpine)
     {
       NS_FATAL_ERROR ("Leaf switch interface index exceeds the maximum" << std::to_string(m_numServerPerLeaf + m_numSpine - 1) << ".");
     }  
-  return m_leafInterfaces[leafIndex].GetAddress (interfaceIndex);
+  return m_leafInterfaces[i].GetAddress (j);
 }
 
 Ipv4InterfaceContainer
-LeafSpineHelper::GetLeafIpv4Interfaces (uint32_t leafIndex) const
+LeafSpineHelper::GetLeafIpv4Interfaces (uint32_t i) const
 {
-  if (leafIndex >= m_numLeaf)
+  if (i >= m_numLeaf)
     {
       NS_FATAL_ERROR ("Leaf switch index exceeds the maximum" << std::to_string(m_numLeaf - 1) << ".");
     }
-  return m_leafInterfaces[leafIndex];  
+  return m_leafInterfaces[i];  
 }
 
 Ipv4Address
-LeafSpineHelper::GetSpineIpv4Address (uint32_t spineIndex, uint32_t interfaceIndex) const
+LeafSpineHelper::GetSpineIpv4Address (uint32_t i, uint32_t j) const
 {
-  if (spineIndex >= m_numSpine)
+  if (i >= m_numSpine)
     {
       NS_FATAL_ERROR ("Spine switch index exceeds the maximum" << std::to_string(m_numSpine - 1) << ".");
     }
-  if (interfaceIndex >= m_numLeaf)
+  if (j >= m_numLeaf)
     {
       NS_FATAL_ERROR ("Spine switch interface index exceeds the maximum" << std::to_string(m_numLeaf -1) << ".");
     }    
-  return m_spineInterfaces[spineIndex].GetAddress (interfaceIndex);
+  return m_spineInterfaces[i].GetAddress (j);
 }
 
 Ipv4InterfaceContainer
-LeafSpineHelper::GetSpineIpv4Interfaces (uint32_t spineIndex) const
+LeafSpineHelper::GetSpineIpv4Interfaces (uint32_t i) const
 {
-  if (spineIndex >= m_numSpine)
+  if (i >= m_numSpine)
     {
       NS_FATAL_ERROR ("Spine switch index exceeds the maximum" << std::to_string(m_numSpine - 1) << ".");
     }
-  return m_spineInterfaces[spineIndex];  
+  return m_spineInterfaces[i];  
 }
 
 Ipv6Address
-LeafSpineHelper::GetServerIpv6Address (uint32_t serverIndex) const
+LeafSpineHelper::GetServerIpv6Address (uint32_t i) const
 {
-  if (serverIndex >= m_numServerPerLeaf * m_numLeaf)
+  if (i >= m_numServerPerLeaf * m_numLeaf)
     {
       NS_FATAL_ERROR ("Server index exceeds the maximum" << std::to_string(m_numServerPerLeaf * m_numLeaf - 1) << ".");
     }
-  return m_serverInterfaces6[serverIndex].GetAddress (0, 1);
+  return m_serverInterfaces6[i].GetAddress (0, 1);
 }
 
 Ipv6Address
-LeafSpineHelper::GetLeafIpv6Address (uint32_t leafIndex, uint32_t interfaceIndex) const
+LeafSpineHelper::GetLeafIpv6Address (uint32_t i, uint32_t j) const
 {
-  if (leafIndex >= m_numLeaf)
+  if (i >= m_numLeaf)
     {
       NS_FATAL_ERROR ("Leaf switch index exceeds the maximum" << std::to_string(m_numLeaf - 1) << ".");
     }
-  if (interfaceIndex >= m_numServerPerLeaf + m_numSpine)
+  if (j >= m_numServerPerLeaf + m_numSpine)
     {
       NS_FATAL_ERROR ("Leaf switch interface index exceeds the maximum" << std::to_string(m_numServerPerLeaf + m_numSpine - 1) << ".");
     }
-  return m_leafInterfaces6[leafIndex].GetAddress (interfaceIndex, 1);
+  return m_leafInterfaces6[i].GetAddress (j, 1);
 }
 
 Ipv6InterfaceContainer
-LeafSpineHelper::LeafSpineHelper::GetLeafIpv6Interfaces (uint32_t leafIndex) const
+LeafSpineHelper::LeafSpineHelper::GetLeafIpv6Interfaces (uint32_t i) const
 {
-  if (leafIndex >= m_numLeaf)
+  if (i >= m_numLeaf)
     {
       NS_FATAL_ERROR ("Leaf switch index exceeds the maximum" << std::to_string(m_numLeaf - 1) << ".");
     }
-  return m_leafInterfaces6[leafIndex];  
+  return m_leafInterfaces6[i];  
 }
 
 Ipv6Address
-LeafSpineHelper::GetSpineIpv6Address (uint32_t spineIndex, uint32_t interfaceIndex) const
+LeafSpineHelper::GetSpineIpv6Address (uint32_t i, uint32_t j) const
 {
-  if (spineIndex >= m_numSpine)
+  if (i >= m_numSpine)
     {
       NS_FATAL_ERROR ("Spine switch index exceeds the maximum" << std::to_string(m_numSpine - 1) << ".");
     }
-  if (interfaceIndex >= m_numLeaf)
+  if (j >= m_numLeaf)
     {
       NS_FATAL_ERROR ("Spine switch interface index exceeds the maximum" << std::to_string(m_numLeaf - 1) << ".");
     }
-  return m_spineInterfaces6[spineIndex].GetAddress (interfaceIndex, 1);
+  return m_spineInterfaces6[i].GetAddress (j, 1);
 }
 
 Ipv6InterfaceContainer
-LeafSpineHelper::GetSpineIpv6Interfaces (uint32_t spineIndex) const
+LeafSpineHelper::GetSpineIpv6Interfaces (uint32_t i) const
 {
-  if (spineIndex >= m_numSpine)
+  if (i >= m_numSpine)
     {
       NS_FATAL_ERROR ("Spine switch index exceeds the maximum" << std::to_string(m_numSpine - 1) << ".");
     }
-  return m_spineInterfaces6[spineIndex];  
+  return m_spineInterfaces6[i];  
 }
 
 Ptr<Node>
-LeafSpineHelper::GetServerNode (uint32_t index) const
+LeafSpineHelper::GetServerNode (uint32_t i) const
 {
-  if (index >= m_numServerPerLeaf * m_numLeaf)
+  if (i >= m_numServerPerLeaf * m_numLeaf)
     {
       NS_FATAL_ERROR ("Server index exceeds the maximum" << std::to_string(m_numServerPerLeaf * m_numLeaf - 1) << ".");
     }
-  return m_servers.Get (index);
+  return m_servers.Get (i);
 }
 
 Ptr<Node>
-LeafSpineHelper::GetLeafNode (uint32_t index) const
+LeafSpineHelper::GetLeafNode (uint32_t i) const
 {
-  if (index >= m_numLeaf)
+  if (i >= m_numLeaf)
     {
       NS_FATAL_ERROR ("Leaf switch index exceeds the maximum" << std::to_string(m_numLeaf - 1) << ".");
       return 0;
     }
-  return m_leafSwitches.Get (index);
+  return m_leafSwitches.Get (i);
 }
 
 Ptr<Node>
-LeafSpineHelper::GetSpineNode (uint32_t index) const
+LeafSpineHelper::GetSpineNode (uint32_t i) const
 {
-  if (index >= m_numSpine)
+  if (i >= m_numSpine)
     {
       NS_FATAL_ERROR ("Spine switch index exceeds the maximum" << std::to_string(m_numSpine - 1) << ".");
       return 0;
     }    
-  return m_spineSwitches.Get (index);
+  return m_spineSwitches.Get (i);
 }
 
 uint32_t

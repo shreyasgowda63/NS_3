@@ -10,12 +10,16 @@ def build(bld):
     module = bld.create_ns3_module('data-center', ['internet', 'point-to-point', 'mobility', 'csma', 'netanim'])
     module.source = [
         'model/leaf-spine.cc',
+        'model/fat-tree.cc',
+        'model/bcube.cc',
         ]
 
     headers = bld(features='ns3header')
     headers.module = 'data-center'
     headers.source = [
         'model/leaf-spine.h',
+        'model/fat-tree.h',
+        'model/bcube.h',
         ]
 
     if bld.env.ENABLE_EXAMPLES:

@@ -16,7 +16,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors: Shravya K.S. <shravya.ks0@gmail.com>
- *
+ * Modified by Liangcheng Yu <liangcheng.yu46@gmail.com>
+ * GSoC 2019 project Mentors:
+ *          Dizhi Zhou <dizhizhou@hotmail.com>
+ *          Mohit P. Tahiliani <tahiliani.nitk@gmail.com>
+ *          Tom Henderson <tomh@tomh.org>
  */
 
 // Implement an object to create a Fat tree topology.
@@ -25,7 +29,7 @@
 #include "ns3/vector.h"
 #include "ns3/log.h"
 
-#include "ns3/point-to-point-fat-tree.h"
+#include "ns3/fat-tree.h"
 #include "ns3/point-to-point-helper.h"
 #include "ns3/point-to-point-net-device.h"
 #include "ns3/internet-stack-helper.h"
@@ -35,11 +39,11 @@
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("PointToPointFatTreeHelper");
+NS_LOG_COMPONENT_DEFINE ("FatTreeHelper");
 
-PointToPointFatTreeHelper::PointToPointFatTreeHelper (uint32_t numPods,
-                                                      PointToPointHelper p2pHelper)
-  : m_numPods (numPods)
+FatTreeHelper::FatTreeHelper (uint32_t numPods)
+  : m_l2Installed (false),
+    m_numPods (numPods)
 {
   // Bounds check
   if (numPods == 0)
@@ -50,75 +54,33 @@ PointToPointFatTreeHelper::PointToPointFatTreeHelper (uint32_t numPods,
     {
       NS_FATAL_ERROR ("Number of pods should be even in FatTree.");
     }
-
-  uint32_t numEdgeSwitches = numPods / 2;
-  uint32_t numAggregateSwitches = numPods / 2;            // number of aggregate switches in a pod
-  uint32_t numGroups = numPods / 2;                       // number of group of core switches
-  uint32_t numCoreSwitches = numPods / 2;                 // number of core switches in a group
-  uint32_t numServers = numPods * numPods * numPods / 4;  // number of servers in the entire network
-  m_edgeSwitchDevices.resize (numPods * numEdgeSwitches);
-  m_aggregateSwitchDevices.resize (numPods * numAggregateSwitches);
+  uint32_t numEdgeSwitches = m_numPods / 2;
+  uint32_t numAggregateSwitches = m_numPods / 2;            // number of aggregate switches in a pod
+  uint32_t numGroups = m_numPods / 2;                       // number of group of core switches
+  uint32_t numCoreSwitches = m_numPods / 2;                 // number of core switches in a group
+  uint32_t numServers = m_numPods * m_numPods * m_numPods / 4;  // number of servers in the entire network
+  m_edgeSwitchDevices.resize (m_numPods * numEdgeSwitches);
+  m_aggregateSwitchDevices.resize (m_numPods * numAggregateSwitches);
   m_coreSwitchDevices.resize (numGroups * numCoreSwitches);
 
   m_servers.Create (numServers);
-  m_edgeSwitches.Create (numEdgeSwitches * numPods);
-  m_aggregateSwitches.Create (numAggregateSwitches * numPods);
-  m_coreSwitches.Create (numCoreSwitches * numGroups);
-
-  InternetStackHelper stack;
-
-  // Connect servers to edge switches
-  uint32_t hostId = 0;
-  for (uint32_t i = 0; i < numPods * numPods / 2; i++)
-    {
-      for (uint32_t j = 0; j < numEdgeSwitches; j++)
-        {
-          NetDeviceContainer nd = p2pHelper.Install (m_servers.Get (hostId), m_edgeSwitches.Get (i));
-          m_edgeSwitchDevices[i].Add (nd.Get (0));
-          m_edgeSwitchDevices[i].Add (nd.Get (1));
-          hostId += 1;
-        }
-    }
-
-  // Connect edge switches to aggregate switches
-  for (uint32_t i = 0; i < numPods; i++)
-    {
-      for (uint32_t j = 0; j < numAggregateSwitches; j++)
-        {
-          for (uint32_t k = 0; k < numEdgeSwitches; k++)
-            {
-              NetDeviceContainer nd = p2pHelper.Install (m_edgeSwitches.Get (i * numEdgeSwitches + k),
-                                                         m_aggregateSwitches.Get (i * numAggregateSwitches + j));
-              m_aggregateSwitchDevices[i * numAggregateSwitches + j].Add (nd.Get (0));
-              m_aggregateSwitchDevices[i * numAggregateSwitches + j].Add (nd.Get (1));
-            }
-        }
-    }
-
-  // Connect aggregate switches to core switches
-  for (uint32_t i = 0; i < numGroups; i++)
-    {
-      for (uint32_t j = 0; j < numCoreSwitches; j++)
-        {
-          for (uint32_t k = 0; k < numPods; k++)
-            {
-              NetDeviceContainer nd = p2pHelper.Install (m_aggregateSwitches.Get (k * numAggregateSwitches + i),
-                                                         m_coreSwitches.Get (i * numCoreSwitches + j));
-              m_coreSwitchDevices[i * numCoreSwitches + j].Add (nd.Get (0));
-              m_coreSwitchDevices[i * numCoreSwitches + j].Add (nd.Get (1));
-            }
-        }
-    }
-
+  m_edgeSwitches.Create (numEdgeSwitches * m_numPods);
+  m_aggregateSwitches.Create (numAggregateSwitches * m_numPods);
+  m_coreSwitches.Create (numCoreSwitches * numGroups);    
 }
 
-PointToPointFatTreeHelper::~PointToPointFatTreeHelper ()
+FatTreeHelper::~FatTreeHelper ()
 {
 }
 
 void
-PointToPointFatTreeHelper::InstallStack (InternetStackHelper stack)
+FatTreeHelper::InstallStack (InternetStackHelper stack)
 {
+  if (!m_l2Installed)
+    {
+      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+    }
+
   stack.Install (m_servers);
   stack.Install (m_edgeSwitches);
   stack.Install (m_aggregateSwitches);
@@ -126,7 +88,35 @@ PointToPointFatTreeHelper::InstallStack (InternetStackHelper stack)
 }
 
 void
-PointToPointFatTreeHelper::BoundingBox (double ulx, double uly,
+FatTreeHelper::InstallTrafficControl (TrafficControlHelper tchSwitch,
+                                      TrafficControlHelper tchServer)
+{
+  if (!m_l2Installed)
+    {
+      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+    }
+
+  for (uint32_t i = 0; i < m_edgeSwitchDevices.size (); ++i)
+    {
+      for (uint32_t j = 0; j < m_edgeSwitchDevices[i].GetN (); j += 2)
+        {
+          tchServer.Install (m_edgeSwitchDevices[i].Get (j));
+          tchSwitch.Install (m_edgeSwitchDevices[i].Get (j + 1));
+        }
+    }    
+  for (std::vector<NetDeviceContainer>::iterator it = m_coreSwitchDevices.begin() ; it != m_coreSwitchDevices.end(); it++)
+    {
+      tchServer.Install (*it);
+    } 
+
+  for (std::vector<NetDeviceContainer>::iterator it = m_edgeSwitchDevices.begin() ; it != m_edgeSwitchDevices.end(); it++)
+    {
+      tchSwitch.Install (*it);
+    }
+}
+
+void
+FatTreeHelper::BoundingBox (double ulx, double uly,
                                         double lrx, double lry)
 {
   NS_LOG_FUNCTION (this << ulx << uly << lrx << lry);
@@ -238,8 +228,13 @@ PointToPointFatTreeHelper::BoundingBox (double ulx, double uly,
 }
 
 void
-PointToPointFatTreeHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask)
+FatTreeHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask)
 {
+  if (!m_l2Installed)
+    {
+      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+    }
+
   NS_LOG_FUNCTION (this << network << mask);
   Ipv4AddressGenerator::Init (network, mask);
   Ipv4Address v4network;
@@ -286,8 +281,13 @@ PointToPointFatTreeHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask ma
 }
 
 void
-PointToPointFatTreeHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
+FatTreeHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
 {
+  if (!m_l2Installed)
+    {
+      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+    }
+
   NS_LOG_FUNCTION (this << addrBase << prefix);
   Ipv6AddressGenerator::Init (addrBase, prefix);
   Ipv6Address v6network;
@@ -335,84 +335,84 @@ PointToPointFatTreeHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix
 }
 
 Ipv4Address
-PointToPointFatTreeHelper::GetServerIpv4Address (uint32_t i) const
+FatTreeHelper::GetServerIpv4Address (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_serverInterfaces.GetAddress (i);
 }
 
 Ipv4Address
-PointToPointFatTreeHelper::GetEdgeSwitchIpv4Address (uint32_t i) const
+FatTreeHelper::GetEdgeSwitchIpv4Address (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_edgeSwitchInterfaces.GetAddress (i);
 }
 
 Ipv4Address
-PointToPointFatTreeHelper::GetAggregateSwitchIpv4Address (uint32_t i) const
+FatTreeHelper::GetAggregateSwitchIpv4Address (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_aggregateSwitchInterfaces.GetAddress (i);
 }
 
 Ipv4Address
-PointToPointFatTreeHelper::GetCoreSwitchIpv4Address (uint32_t i) const
+FatTreeHelper::GetCoreSwitchIpv4Address (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_coreSwitchInterfaces.GetAddress (i);
 }
 
 Ipv6Address
-PointToPointFatTreeHelper::GetServerIpv6Address (uint32_t i) const
+FatTreeHelper::GetServerIpv6Address (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_serverInterfaces6.GetAddress (i, 1);
 }
 
 Ipv6Address
-PointToPointFatTreeHelper::GetEdgeSwitchIpv6Address (uint32_t i) const
+FatTreeHelper::GetEdgeSwitchIpv6Address (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_edgeSwitchInterfaces6.GetAddress (i, 1);
 }
 
 Ipv6Address
-PointToPointFatTreeHelper::GetAggregateSwitchIpv6Address (uint32_t i) const
+FatTreeHelper::GetAggregateSwitchIpv6Address (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_aggregateSwitchInterfaces6.GetAddress (i, 1);
 }
 
 Ipv6Address
-PointToPointFatTreeHelper::GetCoreSwitchIpv6Address (uint32_t i) const
+FatTreeHelper::GetCoreSwitchIpv6Address (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_coreSwitchInterfaces6.GetAddress (i, 1);
 }
 
 Ptr<Node>
-PointToPointFatTreeHelper::GetServerNode (uint32_t i) const
+FatTreeHelper::GetServerNode (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_servers.Get (i);
 }
 
 Ptr<Node>
-PointToPointFatTreeHelper::GetEdgeSwitchNode (uint32_t i) const
+FatTreeHelper::GetEdgeSwitchNode (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_edgeSwitches.Get (i);
 }
 
 Ptr<Node>
-PointToPointFatTreeHelper::GetAggregateSwitchNode (uint32_t i) const
+FatTreeHelper::GetAggregateSwitchNode (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_aggregateSwitches.Get (i);
 }
 
 Ptr<Node>
-PointToPointFatTreeHelper::GetCoreSwitchNode (uint32_t i) const
+FatTreeHelper::GetCoreSwitchNode (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_coreSwitches.Get (i);

@@ -5,7 +5,7 @@ BCube topology
 --------------
 
 BCube is a server-centric network topology designed to meet the requirements of 
-Modular Data Centres. It consists of servers with multiple network ports connected 
+Modular Data Centers. It consists of servers with multiple network ports connected 
 to multiple layers of COTS (commodity off-the-shelf) mini-switches. Servers act as 
 not only end hosts, but also relay nodes for each other. BCube supports various 
 bandwidth-intensive applications by speeding-up one-to-one, one-to-several, and 
@@ -30,27 +30,31 @@ The construction of a BCubek is as follows. We number the n BCubek−1s from 0 t
 and the servers in each BCubek−1 from 0 to n^k − 1. We then connect the level-k port 
 of the i-th server (i ∈ [0, n^k − 1]) in the j-th BCubek−1 (j ∈ [0, n − 1]) to the j-th 
 port of the i-th level-k switch. The links in BCube are bidirectional. In ns-3, all the
-links  are created and configured using the associated ``PointToPointHelper`` object.
+links are created and configured using the associated layer 2 helper object.
 
 The BCube construction guarantees that switches only connect to servers and never 
-directly  connect to other switches. As a direct consequence, we can treat the switches 
+directly connect to other switches. As a direct consequence, we can treat the switches 
 as dummy crossbars that connect several neighboring servers and let servers relay traffic 
 for each other. 
 
-Using the PointToPointBCube
+Using the BCube
 ----------------------------
 
-The PointToPointBCubeHelper object can be instantiated by following statement.
-  PointToPointBCubeHelper bcube (nLevels, nServers, pointToPointRouter);
+The BCubeHelper object can be instantiated by following statement.
+  BCubeHelper bcube (nLevels, nServers);
   where,
   nLevels is number of levels (k)
   nServers is number of servers (n)
-  pointToPointRouter is a ``PointToPointHelper`` object 
 
 Examples
 ========
-.
-The BCube topology example is found at ``src/netanim/examples/bcube-animation.cc``.
+
+The BCube topology example could be found at ``src/netanim/examples/bcube-animation.cc``.
+
+.. sourcecode:: bash
+
+   $ ./waf configure --enable-examples
+   $ NS_LOG="BCubeAnimation" ./waf --run "bcube-animation"
 
 References
 **********

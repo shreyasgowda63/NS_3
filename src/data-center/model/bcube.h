@@ -16,56 +16,56 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors: Shravya K.S. <shravya.ks0@gmail.com>
- *
+ * Modified by Liangcheng Yu <liangcheng.yu46@gmail.com>
+ * GSoC 2019 project Mentors:
+ *          Dizhi Zhou <dizhizhou@hotmail.com>
+ *          Mohit P. Tahiliani <tahiliani.nitk@gmail.com>
+ *          Tom Henderson <tomh@tomh.org>
  */
 
 // Define an object to create a BCube topology.
 
-#ifndef POINT_TO_POINT_BCUBE_HELPER_H
-#define POINT_TO_POINT_BCUBE_HELPER_H
+#ifndef BCUBE_HELPER_H
+#define BCUBE_HELPER_H
+
+#define N_SERVER_MIN 1
 
 #include <vector>
 
+#include "csma-helper.h"
 #include "internet-stack-helper.h"
-#include "point-to-point-helper.h"
 #include "ipv4-address-helper.h"
 #include "ipv6-address-helper.h"
 #include "ipv4-interface-container.h"
 #include "ipv6-interface-container.h"
 #include "net-device-container.h"
+#include "point-to-point-helper.h"
+#include "traffic-control-helper.h"
 
 namespace ns3 {
 
 /**
- * \ingroup point-to-point-layout
+ * \ingroup data-center
  *
  * \brief A helper to make it easier to create a BCube topology
- * with p2p links
  */
-class PointToPointBCubeHelper
+class BCubeHelper
 {
 public:
   /**
-   * Create a PointToPointBCubeHelper in order to easily create
-   * BCube topologies using p2p links
+   * Create a BCubeHelper in order to easily create BCube topologies
    *
    * \param nLevels total number of levels in BCube
-   *
    * \param nServers total number of servers in one BCube
-   *
-   * \param pointToPoint the PointToPointHelper which is used
-   *                     to connect all of the nodes together
-   *                     in the BCube
+   * 
    */
-  PointToPointBCubeHelper (uint32_t nLevels,
-                           uint32_t nServers,
-                           PointToPointHelper pointToPoint);
+  BCubeHelper (uint32_t nLevels,
+               uint32_t nServers);
 
-  ~PointToPointBCubeHelper ();
+  ~BCubeHelper ();
 
   /**
    * \param row the row address of the desired switch
-   *
    * \param col the column address of the desired switch
    *
    * \returns a pointer to the switch specified by the
@@ -154,6 +154,22 @@ public:
   void InstallStack (InternetStackHelper stack);
 
   /**
+   * \param helper the layer 2 helper which is used to install
+   *               on every server to switch links in the BCube
+   */
+  template <typename T>
+  void InstallNetDevices (T helper);
+
+  /**
+   * \param tchSwitch a TrafficControlHelper which is used to install
+   *                   on every switches in the BCube
+   * \param tchServer a TrafficControlHelper which is used to install
+   *                    on every servers in the BCube
+   */
+  void InstallTrafficControl (TrafficControlHelper tchSwitch,
+                              TrafficControlHelper tchServer);
+
+  /**
    * Assigns IPv4 addresses to all the interfaces of switch
    *
    * \param network an IPv4 address representing the network portion
@@ -185,8 +201,10 @@ public:
   void BoundingBox (double ulx, double uly, double lrx, double lry);
 
 private:
+  bool     m_l2Installed;                                       //!< If layer 2 components are installed
   uint32_t m_numLevels;                                         //!< number of levels (k)
   uint32_t m_numServers;                                        //!< number of servers (n)
+  uint32_t m_numLevelSwitches;                                  //!< number of level switches
   std::vector<NetDeviceContainer> m_levelSwitchDevices;         //!< Net Device container for servers and switches
   std::vector<Ipv4InterfaceContainer> m_switchInterfaces;       //!< IPv4 interfaces of switch
   Ipv4InterfaceContainer m_serverInterfaces;                    //!< IPv4 interfaces of server
@@ -196,6 +214,35 @@ private:
   NodeContainer m_servers;                                      //!< all the servers in the BCube
 };
 
+template <typename T>
+void
+BCubeHelper::InstallNetDevices (T helper)
+{
+  uint32_t switchColId;
+  // Configure the levels in BCube topology
+  for (uint32_t level = 0; level < m_numLevels + 1; level++)
+    {
+      switchColId = 0;
+      uint32_t val1 = pow (m_numServers, level);
+      uint32_t val2 = val1 * m_numServers;
+      // Configure the position of switches at each level of the topology
+      for (uint32_t switches = 0; switches < m_numLevelSwitches; switches++)
+        {
+          uint32_t serverIndex = switches % val1 + switches / val1 * val2;
+          // Connect nServers to every switch
+          for (uint32_t servers = serverIndex; servers < (serverIndex + val2); servers += val1)
+            {
+              NetDeviceContainer nd = helper.Install (m_servers.Get (servers),
+                                                      m_switches.Get (level * m_numLevelSwitches + switchColId));
+              m_levelSwitchDevices[level * m_numLevelSwitches + switchColId].Add (nd.Get (0));
+              m_levelSwitchDevices[level * m_numLevelSwitches + switchColId].Add (nd.Get (1));
+            }
+          switchColId += 1;
+        }
+    }
+  m_l2Installed = true;
+}
+
 } // namespace ns3
 
-#endif /* POINT_TO_POINT_BCUBE_HELPER_H */
+#endif /* BCUBE_HELPER_H */

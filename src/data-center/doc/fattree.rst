@@ -4,12 +4,12 @@
 FatTree topology
 --------------
 
-Fattree topolgy is a scalable, commodity data center network architecture.Fattree
+Fattree topolgy is a scalable, commodity data center network architecture. Fattree
 architecture handles the oversubscription and cross section bandwidth problem faced 
-by the legacy three-tier Data Centre Network architecture. Fattree employs commodity 
+by the legacy three-tier Data Center Network architecture. Fattree employs commodity 
 network switches based architecture using Clos topology. Fat tree has identical 
 bandwidth at any bisections. The fat tree topology offers 1:1 oversubscription ratio 
-and full bisection bandwidth. Each layer has the same aggregated bandwidth.It can be 
+and full bisection bandwidth. Each layer has the same aggregated bandwidth. It can be 
 built using cheap devices with uniform capacity. Each port supports same speed as end 
 host. All devices can transmit at line speed if packets are distributed uniform along 
 available paths. It provides great scalability as k-port switch supports k^3/4 servers.
@@ -24,21 +24,25 @@ of (k/2)^2 servers and 2 layers of k/2 k-port switches(edge switches and aggrega
 switches). Each edge switch connects to k/2 servers & k/2 aggregation switches. Each 
 aggregation switch connects to k/2 edge and k/2 core switches. There are (k/2)^2 core 
 switches and each core switch connects to k pods. In ns-3, all the links  are created 
-and configured using the associated ``PointToPointHelper`` object.
+and configured using the associated layer 2 helper object.
 
-Using the PointToPointFatTree
+Using the FatTree
 ----------------------------
 
 The PointToPointFatTreeHelper object can be instantiated by following statement.
-  PointToPointFatTreeHelper fattree (nPods, pointToPointRouter);
+  FatTreeHelper fattree (nPods);
   where,
   nLevels is number of pods (k)
-  pointToPointRouter is a ``PointToPointHelper`` object 
 
 Examples
 ========
-.
-The FatTree topology example is found at ``src/netanim/examples/fattree-animation.cc``.
+
+The FatTree topology example could be found at ``src/netanim/examples/fat-tree-animation.cc``.
+
+.. sourcecode:: bash
+
+   $ ./waf configure --enable-examples
+   $ NS_LOG="FatTreeAnimation" ./waf --run "fat-tree-animation"
 
 References
 **********
