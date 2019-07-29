@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c)
+ * Copyright (c) Liangcheng Yu <liangcheng.yu46@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -59,7 +59,7 @@ main (int argc, char *argv[])
 
   NS_LOG_INFO ("Configuration and command line parameter parsing.");
   CommandLine cmd;
-  cmd.AddValue ("queueDiscName", "Run MlfqQueueDisc or FifoQueueDisc", expQueueDiscName);
+  cmd.AddValue ("queueDiscName", "Run MlfqQueueDisc or FifoQueueDisc or SjfQueueDisc", expQueueDiscName);
   cmd.AddValue ("socketType", "Specify TcpSocketFactory or UdpSocketFactory", socketType);
   cmd.Parse (argc, argv);
 
@@ -80,6 +80,7 @@ main (int argc, char *argv[])
     {
       socketTypeName = "ns3::TcpSocketFactory";
       Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (1448));
+      // Wait 1 packet before sending a TCP ACK
       Config::SetDefault ("ns3::TcpSocket::DelAckCount", UintegerValue (1));
     }
   else
@@ -119,8 +120,7 @@ main (int argc, char *argv[])
     {
       // Use the default configuration: 2 priorities and default threshold 20000 bytes
       tchLeaf.SetRootQueueDisc ("ns3::MlfqQueueDisc");
-      // Config::SetDefault ("ns3::MlfqQueueDisc::ThresholdVector", ThresholdVectorValue (ThresholdVector{10000}));
-      // Counting the header bytes improves the performances
+      // Uncomment the line below to eliminate the header bytes when counting. Differences are trivial in this simple simulation setting.
       // Config::SetDefault ("ns3::MlfqQueueDisc::HeaderBytesInclude", BooleanValue (false));
       /*
       * PrioQueueDisc needs to be compliant with MlfqQueueDisc configurations,
@@ -206,9 +206,17 @@ main (int argc, char *argv[])
 
   /* 
     Calculate the per-flow Flow Completion Time (FCT) and the average FCT.
+
+    ===
+    SjfQueueDisc: Average flow completion time: 0.347087s
+    MlfqQueueDisc: Average flow completion time: 0.396029s
+    FifoQueueDisc: Average flow completion time: 0.468533s
+    ===
+
+    This example demonstrates the benefits of using SjfQueueDisc or MlfqQueueDisc to reduce the average FCT.
     Compared with FIFO, MLFQ and SJF trades the FCT of the long flow for the FCT of short flows
     and obtains a smaller average FCT. SJF obtains a even smaller average FCT compared with MLFQ 
-    since it offers more fined-grained priority differentiation with PriorityQueue rather than 
+    since it offers more fined-grained priority differentiation with FlowSizePrioQueue rather than 
     a limited number of FIFO queues.
   */
   NS_LOG_INFO ("Calculate the flow completion time.");

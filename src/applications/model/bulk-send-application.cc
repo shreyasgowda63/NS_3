@@ -70,11 +70,6 @@ BulkSendApplication::GetTypeId (void)
                    BooleanValue (false),
                    MakeBooleanAccessor (&BulkSendApplication::m_flowSizeTagInclude),
                    MakeBooleanChecker ())                         
-    .AddAttribute ("FlowSizeTagInclude",
-                   "Whether or to include the FlowSizeTag in the packets",
-                   BooleanValue (false),
-                   MakeBooleanAccessor (&BulkSendApplication::m_flowSizeTagInclude),
-                   MakeBooleanChecker ()) 
     .AddTraceSource ("Tx", "A new packet is created and is sent",
                      MakeTraceSourceAccessor (&BulkSendApplication::m_txTrace),
                      "ns3::Packet::TracedCallback")

@@ -132,7 +132,7 @@ SjfQueueDisc::CheckConfig (void)
 
   if (GetNInternalQueues () == 0)
     {
-      // Add a PriorityQueue
+      // Add a priority queue (implemented by FlowSizePrioQueue)
       AddInternalQueue (CreateObjectWithAttributes<FlowSizePrioQueue>
                           ("MaxSize", QueueSizeValue (GetMaxSize ())));
     }

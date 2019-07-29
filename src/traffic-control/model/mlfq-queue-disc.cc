@@ -129,7 +129,7 @@ FlowPrioPacketFilter::DoClassify (Ptr<QueueDiscItem> item) const
       NS_LOG_DEBUG ("FlowPriorityTag not found.");
       return -1;
     }
-  NS_LOG_DEBUG("Flow priority value of the packet: "<< priorityTag.GetPriority() << ".");
+  NS_LOG_DEBUG("Flow priority value of the packet: "<< std::to_string(priorityTag.GetPriority()) << ".");
   // Convert uint8_t priority value (0~15) to int32_t
   return static_cast<int32_t>(priorityTag.GetPriority());
 }
@@ -225,20 +225,29 @@ MlfqQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
   if (item->GetPacket() == 0)
     {
       NS_LOG_DEBUG ("Null packet in the queue disc item.");
+      return false;
     }
+  // IP header bytes are not counted in packetSize of the item
   uint32_t packetSize = item->GetPacket()->GetSize();
-  NS_LOG_LOGIC ("Size of the packet be enqueued: " << packetSize);
-  uint32_t payloadSize;
+  uint32_t payloadSize;  // Bytes actually counted in the hash table
+  uint8_t bytesHeader = 0;
   if (m_headerBytesInclude)
     {
-      NS_LOG_INFO ("Traffic control layer is protocol agnostic, we include the header bytes by default.");
-      payloadSize = packetSize;
+      NS_LOG_INFO ("We include L3, L4 header bytes by default.");
+      if (item->GetUint8Value (QueueDiscItem::L3_HEADER_LENGTH, bytesHeader))
+        {
+          NS_LOG_DEBUG ("L3 header length: " << std::to_string(bytesHeader));
+        }      
+      payloadSize = packetSize + bytesHeader;
     }
   else
     {
       NS_LOG_INFO ("Only the payload size is considered when counting.");
-      uint32_t bytesHeaderSum = item->GetHeaderBytes ();
-      payloadSize = packetSize - bytesHeaderSum;
+      if (item->GetUint8Value (QueueDiscItem::L4_HEADER_LENGTH, bytesHeader))
+        {
+          NS_LOG_DEBUG ("L4 header length: " << std::to_string(bytesHeader));
+        }      
+      payloadSize = packetSize - bytesHeader;
     }
   NS_LOG_LOGIC ("Payload size : " << payloadSize);
   
@@ -270,8 +279,10 @@ MlfqQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
       m_hashToBytes.at(h) = 0;
     }
   // \todo In the case of large scale simulation (where large number of flows are present), if the flow finishes, 
-  // the corresponding flow entry should be removed from the table. This would require the upper layer protocol 
+  // the corresponding flow entry should be removed from the table ideally. This would require the upper layer protocol 
   // to notify TC layer about the flow completion event or adding a timer to delete the entry when timeout.
+  // If the flow is not removed and there is another future flow with the same hash value (collision), the new flow will 
+  // potentially be with the lower priority than it should be.
 
   /*
     We use the custom PacketTag to store the priority value (max 16) since the tagging method for MLFQ

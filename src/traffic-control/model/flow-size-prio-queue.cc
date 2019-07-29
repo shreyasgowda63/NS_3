@@ -128,13 +128,7 @@ FlowSizePrioQueue::Enqueue (Ptr<QueueDiscItem> item)
     NS_LOG_INFO ("FlowSizeTag not found.");
   }
 
-  // If empty, directly enqueue the item
-  if (IsEmpty()) {
-    m_flowSizePriorities.insert(m_flowSizePriorities.begin(), newFlowSize);
-    return DoEnqueue (end (), item);
-  }
-
-  // Otherwise, insert the QueueDiscItem and the corresponding flow size tag value with insertion sort
+  // Insert the QueueDiscItem and the corresponding flow size tag value with insertion sort
   auto itemIterator = begin ();
   for (auto priorityIterator = m_flowSizePriorities.cbegin(); priorityIterator != m_flowSizePriorities.cend(); ++priorityIterator)
   {
@@ -148,6 +142,7 @@ FlowSizePrioQueue::Enqueue (Ptr<QueueDiscItem> item)
   
   // If the flow size tag value is not smaller than any others, insert the item and the tag value at the end
   m_flowSizePriorities.insert(m_flowSizePriorities.end(), newFlowSize);
+  NS_LOG_LOGIC ("Enqueued " << item);
   return DoEnqueue (end (), item);
 }
 

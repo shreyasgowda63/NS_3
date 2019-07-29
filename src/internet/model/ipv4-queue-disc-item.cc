@@ -106,6 +106,31 @@ Ipv4QueueDiscItem::GetUint8Value (QueueItem::Uint8Values field, uint8_t& value) 
       value = m_header.GetTos ();
       ret = true;
       break;
+    case L3_HEADER_LENGTH:
+      value = m_header.GetSerializedSize ();
+      ret = true;
+      break;
+    case L4_HEADER_LENGTH:
+      uint8_t prot = m_header.GetProtocol ();
+      TcpHeader tcpHdr;
+      UdpHeader udpHdr;
+      if (prot == 6) // TCP
+        {
+          GetPacket ()->PeekHeader (tcpHdr);
+          value = tcpHdr.GetSerializedSize ();
+          ret = true;
+        }
+      else if (prot == 17) // UDP
+        {
+          GetPacket ()->PeekHeader (udpHdr);
+          value = udpHdr.GetSerializedSize ();
+          ret = true;
+        }
+      if (prot != 6 && prot != 17)
+        {
+          NS_LOG_WARN ("Unknown transport protocol, no L4 bytes are counted.");
+        }    
+      break;  
     }
 
   return ret;
@@ -164,23 +189,6 @@ Ipv4QueueDiscItem::Hash (uint32_t perturbation) const
   NS_LOG_DEBUG ("Hash value " << hash);
 
   return hash;
-}
-
-uint32_t
-Ipv4QueueDiscItem::GetHeaderBytes () const
-{
-  uint32_t bytesHeaderSum = 0;
-  Ipv4Header ipv4Hdr;
-  bytesHeaderSum += GetPacket()->PeekHeader(ipv4Hdr);
-
-  TcpHeader tcpHdr;
-  bytesHeaderSum += GetPacket()->PeekHeader(tcpHdr);
-  UdpHeader udpHdr;
-  bytesHeaderSum += GetPacket()->PeekHeader(udpHdr);
-
-  NS_LOG_DEBUG ("Total L3 and L4 header bytes: " << std::to_string(bytesHeaderSum));
-
-  return bytesHeaderSum;
 }
 
 } // namespace ns3

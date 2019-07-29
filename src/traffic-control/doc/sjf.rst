@@ -9,9 +9,9 @@ Model Description
 
 SjfQueueDisc implements a Shortest-Job-First (SJF) policy. The packet from the flow with the
 smallest flow size tag value is prioritized during dequeue. The internal queue data structure of 
-SjfQueueDisc is PriorityQueue which sorts the packet based on the flow size tag value. The packet
-with the smallest flow size tag value is at the front of the queue and will be served first. Packets
-of the same flow size tag value will be sorted based on the First-In-First-Out (FIFO) policy.
+SjfQueueDisc is the priority queue (implemented by FlowSizePrioQueue) which sorts the packet based on the flow size tag value. 
+The packet with the smallest flow size tag value is at the front of the queue and will be served first. 
+Packets of the same flow size tag value will be sorted based on the First-In-First-Out (FIFO) policy.
 
 SJF is an ideal algorithm: it assumes that the source applications know the total flow size a priori and
 such information would be tagged to the packets prior transmission.
@@ -23,7 +23,7 @@ SjfQueueDisc would function as the simple FifoQueueDisc since all packets would 
 Attributes
 ==========
 
-The MlfqQueueDisc class holds the following attribute:
+The SjfQueueDisc class holds the following attribute:
 
 * ``MaxSize:`` The maximum number of packets/bytes the queue disc can hold. The default value is 1000 packets.
 
@@ -35,7 +35,7 @@ An example of SJF scheduling is given as `mlfq-sjf-example.cc` located in ``src/
 .. sourcecode:: bash
 
    $ ./waf configure --enable-examples
-   $ ./waf --run "mlfq-example --PrintHelp"
+   $ ./waf --run "mlfq-sjf-example --PrintHelp"
    $ # Run SjfQueueDisc
    $ NS_LOG="MlfqSjfExample" ./waf --run "mlfq-sjf-example --queueDiscName=SjfQueueDisc"
 
@@ -63,4 +63,5 @@ or
 .. sourcecode:: bash
 
   $ ./waf configure --enable-tests
-  $ NS_LOG="SjfQueueDisc:PriorityQueue" ./waf --run "test-runner --suite=sjf-queue-disc"
+  $ # Run the tests logging FlowSizePrioQueue and SjfQueueDisc
+  $ NS_LOG="SjfQueueDisc:FlowSizePrioQueue" ./waf --run "test-runner --suite=sjf-queue-disc"
