@@ -4,7 +4,7 @@
 	========================================================================================
 	Translated for portuguese by the students of the inter-institutional doctorate program of IME-USP/UTFPR-CM.
 	
-	Traduzido para o portuguï¿½s pelos alunos do programa de doutorado inter institucional do Instituto de Matemï¿½tica e Estatï¿½stica da Universidade de Sï¿½o Paulo --- IME-USP em parceria com a Universidade Tecnolï¿½gica Federal do Paranï¿½ - Campus Campo Mourï¿½o --- UTFPR-CM:
+	Traduzido para o português pelos alunos do programa de doutorado inter institucional do Instituto de Matemática e Estatística da Universidade de São Paulo --- IME-USP em parceria com a Universidade Tecnológica Federal do Paraná - Campus Campo Mourão --- UTFPR-CM:
 	
 	* Frank Helbert (frank@ime.usp.br);
 	* Luiz Arthur Feitosa dos Santos (luizsan@ime.usp.br);
@@ -20,7 +20,7 @@ Rastreamento
 ..
 	Background
 
-Introduï¿½ï¿½o
+Introdução
 **********
 
 ..
@@ -31,11 +31,11 @@ Introduï¿½ï¿½o
 	somehow developing an output mechanism that conveys exactly (and perhaps only) 
 	the information wanted.
 
-Como abordado na seï¿½ï¿½o Usando o Sistema de Rastreamento, o objetivo principal de uma
-simulaï¿½ï¿½o no |ns3| ï¿½ a geraï¿½ï¿½o de saï¿½da para estudo. Hï¿½ duas estratï¿½gias bï¿½sicas: 
-usar mecanismos predefinidos de saï¿½da e processar o conteï¿½do para extrair informaï¿½ï¿½es
-relevantes; ou desenvolver mecanismos de saï¿½da que resultam somente ou exatamente na
-informaï¿½ï¿½o pretendida.
+Como abordado na seção Usando o Sistema de Rastreamento, o objetivo principal de uma
+simulação no |ns3| é a geração de saída para estudo. Há duas estratégias básicas: 
+usar mecanismos predefinidos de saída e processar o conteúdo para extrair informações
+relevantes; ou desenvolver mecanismos de saída que resultam somente ou exatamente na
+informação pretendida.
 
 ..
 	Using pre-defined bulk output mechanisms has the advantage of not requiring any
@@ -47,17 +47,17 @@ informaï¿½ï¿½o pretendida.
 	of interest in does not exist in any of the pre-defined output mechanisms,
 	this approach fails.
 
-Usar mecanismos predefinidos de saï¿½da possui a vantagem de nï¿½o necessitar modificaï¿½ï¿½es 
-no |ns3|, mas requer programaï¿½ï¿½o. Geralmente, as mensagens de saï¿½da do pcap ou ``NS_LOG``
-sï¿½o coletadas durante a execuï¿½ï¿½o da simulaï¿½ï¿½o e processadas separadamente por cï¿½digos (`scripts`) que usam `grep`, `sed` ou `awk` para reduzir e transformar os dados para uma forma mais simples de gerenciar. Hï¿½ o custo do desenvolvimento de programas para realizar as transformaï¿½ï¿½es e em algumas situaï¿½ï¿½es a informaï¿½ï¿½o de interesse pode nï¿½o estar contida em nenhuma das saï¿½das, logo, a abordagem falha.
+Usar mecanismos predefinidos de saída possui a vantagem de não necessitar modificações 
+no |ns3|, mas requer programação. Geralmente, as mensagens de saída do pcap ou ``NS_LOG``
+são coletadas durante a execução da simulação e processadas separadamente por códigos (`scripts`) que usam `grep`, `sed` ou `awk` para reduzir e transformar os dados para uma forma mais simples de gerenciar. Há o custo do desenvolvimento de programas para realizar as transformações e em algumas situações a informação de interesse pode não estar contida em nenhuma das saídas, logo, a abordagem falha.
 
 ..
 	If you need to add some tidbit of information to the pre-defined bulk mechanisms,
 	this can certainly be done; and if you use one of the |ns3| mechanisms, 
 	you may get your code added as a contribution.
 
-Se precisarmos adicionar o mï¿½nimo de informaï¿½ï¿½o para os mecanismos predefinidos de saï¿½da, isto certamente pode ser feito e se usarmos os mecanismos do |ns3|, podemos
-ter nosso cï¿½digo adicionado como uma contribuiï¿½ï¿½o.
+Se precisarmos adicionar o mínimo de informação para os mecanismos predefinidos de saída, isto certamente pode ser feito e se usarmos os mecanismos do |ns3|, podemos
+ter nosso código adicionado como uma contribuição.
 
 ..
 	|ns3| provides another mechanism, called Tracing, that avoids some of the 
@@ -75,13 +75,13 @@ ter nosso cï¿½digo adicionado como uma contribuiï¿½ï¿½o.
 	to understand in |ns3|.
 
 O |ns3| fornece outro mecanismo, chamado Rastreamento (*Tracing*), que evita alguns dos
-problemas associados com os mecanismos de saï¿½da predefinidos. Hï¿½ vï¿½rias vantagens. Primeiro, reduï¿½ï¿½o da quantidade de dados para gerenciar (em simulaï¿½ï¿½es grandes, armazenar toda saï¿½da no disco pode gerar gargalos de Entrada/Saï¿½da). Segundo, o formato da saï¿½da pode ser controlado diretamente evitando o pï¿½s-processamento com cï¿½digos `sed` ou `awk`. Se desejar,
-a saï¿½da pode ser processada diretamente para um formato reconhecido pelo `gnuplot`, por exemplo. Podemos adicionar ganchos ("`hooks`") no nï¿½cleo, os quais podem ser acessados por outros usuï¿½rios, mas que nï¿½o produzirï¿½o nenhuma informaï¿½ï¿½o exceto que sejam explicitamente solicitados a produzir. Por essas razï¿½es, acreditamos que o sistema de rastreamento do |ns3| ï¿½ a melhor forma de obter informaï¿½ï¿½es fora da simulaï¿½ï¿½o, portanto ï¿½ um dos mais importantes mecanismos para ser compreendido no |ns3|.
+problemas associados com os mecanismos de saída predefinidos. Há várias vantagens. Primeiro, redução da quantidade de dados para gerenciar (em simulações grandes, armazenar toda saída no disco pode gerar gargalos de Entrada/Saída). Segundo, o formato da saída pode ser controlado diretamente evitando o pós-processamento com códigos `sed` ou `awk`. Se desejar,
+a saída pode ser processada diretamente para um formato reconhecido pelo `gnuplot`, por exemplo. Podemos adicionar ganchos ("`hooks`") no núcleo, os quais podem ser acessados por outros usuários, mas que não produzirão nenhuma informação exceto que sejam explicitamente solicitados a produzir. Por essas razões, acreditamos que o sistema de rastreamento do |ns3| é a melhor forma de obter informações fora da simulação, portanto é um dos mais importantes mecanismos para ser compreendido no |ns3|.
 
 ..
 	Blunt Instruments
 
-Mï¿½todos Simples
+Métodos Simples
 +++++++++++++++
 
 ..
@@ -89,8 +89,8 @@ Mï¿½todos Simples
 	straightforward way is to just directly print the information to the standard 
 	output, as in,
 
-Hï¿½ vï¿½rias formas de obter informaï¿½ï¿½o apï¿½s a finalizaï¿½ï¿½o de um programa. A mais direta
-ï¿½ imprimir a informaï¿½ï¿½o na saï¿½da padrï¿½o, como no exemplo,
+Há várias formas de obter informação após a finalização de um programa. A mais direta
+é imprimir a informação na saída padrão, como no exemplo,
 
 ::
 
@@ -111,7 +111,7 @@ Hï¿½ vï¿½rias formas de obter informaï¿½ï¿½o apï¿½s a finalizaï¿½ï¿½o de um prog
 	complete control of your own |ns3| branch.  This will probably not turn 
 	out to be very satisfactory in the long term, though.
 
-Ninguï¿½m impedirï¿½ que editemos o nï¿½cleo do |ns3| e adicionemos cï¿½digos de impressï¿½o. Isto ï¿½ simples de fazer, alï¿½m disso temos controle e acesso total ao cï¿½digo fonte do |ns3|. Entretanto, pensando no futuro, isto nï¿½o ï¿½ muito interessante.
+Ninguém impedirá que editemos o núcleo do |ns3| e adicionemos códigos de impressão. Isto é simples de fazer, além disso temos controle e acesso total ao código fonte do |ns3|. Entretanto, pensando no futuro, isto não é muito interessante.
 
 ..
 	As the number of print statements increases in your programs, the task of 
@@ -123,7 +123,7 @@ Ninguï¿½m impedirï¿½ que editemos o nï¿½cleo do |ns3| e adicionemos cï¿½digos de
 	mechanism.  In order to avoid that, one of the first things you might consider
 	is using ``NS_LOG`` itself.
 
-Conforme aumentarmos o nï¿½mero de comandos de impressï¿½o em nossos programas, ficarï¿½ mais difï¿½cil tratar a grande quantidade de saï¿½das. Eventualmente, precisaremos controlar de alguma maneira qual a informaï¿½ï¿½o serï¿½ impressa; talvez habilitando ou nï¿½o determinadas categorias de saï¿½das, ou aumentando ou diminuindo a quantidade de informaï¿½ï¿½o desejada. Se continuarmos com esse processo, descobriremos depois de um tempo que, reimplementamos o mecanismo ``NS_LOG``. Para evitar isso, utilize o prï¿½prio ``NS_LOG``.
+Conforme aumentarmos o número de comandos de impressão em nossos programas, ficará mais difícil tratar a grande quantidade de saídas. Eventualmente, precisaremos controlar de alguma maneira qual a informação será impressa; talvez habilitando ou não determinadas categorias de saídas, ou aumentando ou diminuindo a quantidade de informação desejada. Se continuarmos com esse processo, descobriremos depois de um tempo que, reimplementamos o mecanismo ``NS_LOG``. Para evitar isso, utilize o próprio ``NS_LOG``.
 
 ..
 	We mentioned above that one way to get information out of |ns3| is to 
@@ -134,12 +134,12 @@ Conforme aumentarmos o nï¿½mero de comandos de impressï¿½o em nossos programas, 
 	print statements since it follows |ns3| coding conventions and could 
 	potentially be useful to other people as a patch to the existing core.
 
-Como abordado anteriormente, uma maneira de obter informaï¿½ï¿½o de saï¿½da do |ns3| ï¿½ 
-processar a saï¿½da do ``NS_LOG``, filtrando as informaï¿½ï¿½es relevantes. Se a informaï¿½ï¿½o
-nï¿½o estï¿½ presente nos registros existentes, pode-se editar o nï¿½cleo do |ns3| e 
-adicionar ao fluxo de saï¿½da a informaï¿½ï¿½o desejada. Claro, isto ï¿½ muito melhor
-que adicionar comandos de impressï¿½o, desde que seguindo as convenï¿½ï¿½es de codificaï¿½ï¿½o
-do |ns3|, alï¿½m do que isto poderia ser potencialmente ï¿½til a outras pessoas.
+Como abordado anteriormente, uma maneira de obter informação de saída do |ns3| é 
+processar a saída do ``NS_LOG``, filtrando as informações relevantes. Se a informação
+não está presente nos registros existentes, pode-se editar o núcleo do |ns3| e 
+adicionar ao fluxo de saída a informação desejada. Claro, isto é muito melhor
+que adicionar comandos de impressão, desde que seguindo as convenções de codificação
+do |ns3|, além do que isto poderia ser potencialmente útil a outras pessoas.
 
 ..
 	Let's pick a random example.  If you wanted to add more logging to the 
@@ -148,7 +148,7 @@ do |ns3|, alï¿½m do que isto poderia ser potencialmente ï¿½til a outras pessoas.
 	there is no log message for the no ack case.  You could simply add one, 
 	changing the code from:
 
-Vamos analisar um exemplo, adicionando mais informaï¿½ï¿½es de registro ao `socket` TCP do arquivo ``tcp-socket-base.cc``, para isto vamos acrescentando uma nova mensagem de registro na implementaï¿½ï¿½o. Observe que em ``TcpSocketBase::ReceivedAck()`` nï¿½o existem mensagem de registro para casos sem o ACK, entï¿½o vamos adicionar uma da seguinte forma:
+Vamos analisar um exemplo, adicionando mais informações de registro ao `socket` TCP do arquivo ``tcp-socket-base.cc``, para isto vamos acrescentando uma nova mensagem de registro na implementação. Observe que em ``TcpSocketBase::ReceivedAck()`` não existem mensagem de registro para casos sem o ACK, então vamos adicionar uma da seguinte forma:
 
 ::
 
@@ -158,16 +158,16 @@ Vamos analisar um exemplo, adicionando mais informaï¿½ï¿½es de registro ao `sock
   {
     NS_LOG_FUNCTION (this << tcpHeader);
 
-    // ACK Recebido. Compara o nï¿½mero ACK com o mais alto seqno nï¿½o confirmado
+    // ACK Recebido. Compara o número ACK com o mais alto seqno não confirmado
     if (0 == (tcpHeader.GetFlags () & TcpHeader::ACK))
-      { // Ignora se nï¿½o hï¿½ flag ACK 
+      { // Ignora se não há flag ACK 
       }
     ...
 
 .. 
 	to add a new ``NS_LOG_LOGIC`` in the appropriate statement:
 
-para adicionar um novo ``NS_LOG_LOGIC`` na sentenï¿½a apropriada:
+para adicionar um novo ``NS_LOG_LOGIC`` na sentença apropriada:
 
 ::
 
@@ -177,9 +177,9 @@ para adicionar um novo ``NS_LOG_LOGIC`` na sentenï¿½a apropriada:
   {
     NS_LOG_FUNCTION (this << tcpHeader);
 
-    // ACK Recebido. Compara o nï¿½mero ACK com o mais alto seqno nï¿½o confirmado
+    // ACK Recebido. Compara o número ACK com o mais alto seqno não confirmado
     if (0 == (tcpHeader.GetFlags () & TcpHeader::ACK))
-      { // Ignora se nï¿½o hï¿½ flag ACK 
+      { // Ignora se não há flag ACK 
         NS_LOG_LOGIC ("TcpSocketBase " << this << " sem flag ACK");
       }
     ...
@@ -192,9 +192,9 @@ para adicionar um novo ``NS_LOG_LOGIC`` na sentenï¿½a apropriada:
 	though you have some control over what is output by the logging system, you 
 	only have control down to the log component level.  
 
-Isto pode parecer simples e satisfatï¿½rio a primeira vista, mas lembre-se que nï¿½s escreveremos
-cï¿½digo para adicionar ao ``NS_LOG`` e para processar a saï¿½da com a finalidade de isolar
-a informaï¿½ï¿½o de interesse. Isto porque o controle ï¿½ limitado ao nï¿½vel do componente de registro.
+Isto pode parecer simples e satisfatório a primeira vista, mas lembre-se que nós escreveremos
+código para adicionar ao ``NS_LOG`` e para processar a saída com a finalidade de isolar
+a informação de interesse. Isto porque o controle é limitado ao nível do componente de registro.
 
 ..
 	If you are adding code to an existing module, you will also have to live with the
@@ -204,7 +204,7 @@ a informaï¿½ï¿½o de interesse. Isto porque o controle ï¿½ limitado ao nï¿½vel do
 	may be forced to save huge log files to disk and process them down to a few lines
 	whenever you want to do anything.
 
-Se cada desenvolvedor adicionar cï¿½digos de saï¿½da para um mï¿½dulo existente, logo conviveremos com a saï¿½da que outro desenvolvedor achou interessante. ï¿½ descobriremos que para obter uma pequena quantidade de informaï¿½ï¿½o, precisaremos produzir uma volumosa quantidade de mensagens sem nenhuma relevï¿½ncia (devido aos comandos de saï¿½da de vï¿½rios desenvolvedores). Assim seremos forï¿½ados a gerar arquivos de registros gigantescos no disco e processï¿½-los para obter poucas linhas de nosso interesse.
+Se cada desenvolvedor adicionar códigos de saída para um módulo existente, logo conviveremos com a saída que outro desenvolvedor achou interessante. É descobriremos que para obter uma pequena quantidade de informação, precisaremos produzir uma volumosa quantidade de mensagens sem nenhuma relevância (devido aos comandos de saída de vários desenvolvedores). Assim seremos forçados a gerar arquivos de registros gigantescos no disco e processá-los para obter poucas linhas de nosso interesse.
 
 ..
 	Since there are no guarantees in |ns3| about the stability of ``NS_LOG``
@@ -213,13 +213,13 @@ Se cada desenvolvedor adicionar cï¿½digos de saï¿½da para um mï¿½dulo existente,
 	output, you may find other messages being added or deleted which may affect your
 	parsing code.
 
-Como nï¿½o hï¿½ nenhuma garantia no |ns3| sobre a estabilidade da saï¿½da do ``NS_LOG``, podemos descobrir que partes do registro de saï¿½da, que dependï¿½amos, desapareceram ou mudaram entre versï¿½es. Se dependermos da estrutura da saï¿½da, podemos encontrar outras mensagens sendo adicionadas ou removidas que podem afetar seu cï¿½digo de processamento.
+Como não há nenhuma garantia no |ns3| sobre a estabilidade da saída do ``NS_LOG``, podemos descobrir que partes do registro de saída, que dependíamos, desapareceram ou mudaram entre versões. Se dependermos da estrutura da saída, podemos encontrar outras mensagens sendo adicionadas ou removidas que podem afetar seu código de processamento.
 
 ..
 	For these reasons, we consider prints to ``std::cout`` and NS_LOG messages 
 	to be quick and dirty ways to get more information out of |ns3|.
 
-Por estas razï¿½es, devemos considerar o uso do ``std::cout`` e as mensagens ``NS_LOG`` como formas rï¿½pidas e porï¿½m sujas de obter informaï¿½ï¿½o da saï¿½da no |ns3|.
+Por estas razões, devemos considerar o uso do ``std::cout`` e as mensagens ``NS_LOG`` como formas rápidas e porém sujas de obter informação da saída no |ns3|.
 
 ..
 	It is desirable to have a stable facility using stable APIs that allow one to 
@@ -229,27 +229,27 @@ Por estas razï¿½es, devemos considerar o uso do ``std::cout`` e as mensagens ``N
 	of interest changed or an interesting event happened so the user doesn't have 
 	to actively poke around in the system looking for things.
 
-Na grande maioria dos casos desejamos ter um mecanismo estï¿½vel, usando APIs que permitam acessar o nï¿½cleo do sistema e obter somente informaï¿½ï¿½es interessantes. Isto deve ser possï¿½vel sem que exista a necessidade de alterar e recompilar o nï¿½cleo do sistema. Melhor ainda seria se um sistema notificasse o usuï¿½rio quando um item de interesse fora modificado ou um evento de interesse aconteceu, pois o usuï¿½rio nï¿½o teria que constantemente vasculhar o sistema procurando por coisas.
+Na grande maioria dos casos desejamos ter um mecanismo estável, usando APIs que permitam acessar o núcleo do sistema e obter somente informações interessantes. Isto deve ser possível sem que exista a necessidade de alterar e recompilar o núcleo do sistema. Melhor ainda seria se um sistema notificasse o usuário quando um item de interesse fora modificado ou um evento de interesse aconteceu, pois o usuário não teria que constantemente vasculhar o sistema procurando por coisas.
 
 ..
 	The |ns3| tracing system is designed to work along those lines and is 
 	well-integrated with the Attribute and Config subsystems allowing for relatively
 	simple use scenarios.
 
-O sistema de rastreamento do |ns3| ï¿½ projetado para trabalhar seguindo essas premissas e ï¿½ 
-integrado com os subsistemas de Atributos (*Attribute*) e Configuraï¿½ï¿½o (*Config*) permitindo cenï¿½rios de uso simples.
+O sistema de rastreamento do |ns3| é projetado para trabalhar seguindo essas premissas e é 
+integrado com os subsistemas de Atributos (*Attribute*) e Configuração (*Config*) permitindo cenários de uso simples.
 
 .. 
 	Overview
 
-Visï¿½o Geral
+Visão Geral
 ***********
 
 ..
 	The ns-3 tracing system is built on the concepts of independent tracing sources
 	and tracing sinks; along with a uniform mechanism for connecting sources to sinks.
 
-O sistema de rastreamento do |ns3| ï¿½ baseado no conceito independente origem do rastreamento e destino do rastreamento. O |ns3| utiliza um mecanismo uniforme para conectar origens a destinos.
+O sistema de rastreamento do |ns3| é baseado no conceito independente origem do rastreamento e destino do rastreamento. O |ns3| utiliza um mecanismo uniforme para conectar origens a destinos.
 
 ..
 	Trace sources are entities that can signal events that happen in a simulation and 
@@ -259,7 +259,7 @@ O sistema de rastreamento do |ns3| ï¿½ baseado no conceito independente origem d
 	when an interesting state change happens in a model.  For example, the congestion
 	window of a TCP model is a prime candidate for a trace source.
 
-As origens do rastreamento (*trace source*) sï¿½o entidades que podem assinalar eventos que ocorrem na simulaï¿½ï¿½o e fornecem acesso a dados de baixo nï¿½vel. Por exemplo, uma origem do rastreamento poderia indicar quando um pacote ï¿½ recebido por um dispositivo de rede e prove acesso ao conteï¿½do do pacote aos interessados no destino do rastreamento. Uma origem do rastreamento pode tambï¿½m indicar quando uma mudanï¿½a de estado ocorre em um modelo. Por exemplo, a janela de congestionamento do modelo TCP ï¿½ um forte candidato para uma origem do rastreamento.
+As origens do rastreamento (*trace source*) são entidades que podem assinalar eventos que ocorrem na simulação e fornecem acesso a dados de baixo nível. Por exemplo, uma origem do rastreamento poderia indicar quando um pacote é recebido por um dispositivo de rede e prove acesso ao conteúdo do pacote aos interessados no destino do rastreamento. Uma origem do rastreamento pode também indicar quando uma mudança de estado ocorre em um modelo. Por exemplo, a janela de congestionamento do modelo TCP é um forte candidato para uma origem do rastreamento.
 
 ..
 	Trace sources are not useful by themselves; they must be connected to other pieces
@@ -269,7 +269,7 @@ As origens do rastreamento (*trace source*) sï¿½o entidades que podem assinalar 
 	allows for large numbers of trace sources to be scattered around the system in 
 	places which model authors believe might be useful.  
 
-A origem do rastreamento nï¿½o sï¿½o ï¿½teis sozinhas; elas devem ser conectadas a outras partes de cï¿½digo que fazem algo ï¿½til com a informaï¿½ï¿½o provida pela origem. As entidades que consomem a informaï¿½ï¿½o de rastreamento sï¿½o chamadas de destino do rastreamento (*trace sinks*). As origens de rastreamento sï¿½o geradores de eventos e destinos de rastreamento sï¿½o consumidores. Esta divisï¿½o explï¿½cita permite que inï¿½meras origens de rastreamento estejam dispersas no sistema em locais que os autores do modelo acreditam ser ï¿½teis.
+A origem do rastreamento não são úteis sozinhas; elas devem ser conectadas a outras partes de código que fazem algo útil com a informação provida pela origem. As entidades que consomem a informação de rastreamento são chamadas de destino do rastreamento (*trace sinks*). As origens de rastreamento são geradores de eventos e destinos de rastreamento são consumidores. Esta divisão explícita permite que inúmeras origens de rastreamento estejam dispersas no sistema em locais que os autores do modelo acreditam ser úteis.
 
 ..
 	There can be zero or more consumers of trace events generated by a trace source.  
@@ -278,7 +278,7 @@ A origem do rastreamento nï¿½o sï¿½o ï¿½teis sozinhas; elas devem ser conectadas
 	happily coexist with other code doing something entirely different from the same
 	information.
 
-Pode haver zero ou mais consumidores de eventos de rastreamento gerados por uma origem do rastreamento. Podemos pensar em uma origem do rastreamento como um tipo de ligaï¿½ï¿½o de informaï¿½ï¿½o ponto-para-multiponto. Seu cï¿½digo buscaria por eventos de rastreamento de uma parte especï¿½fica do cï¿½digo do nï¿½cleo e poderia coexistir com outro cï¿½digo que faz algo inteiramente diferente com a mesma informaï¿½ï¿½o.
+Pode haver zero ou mais consumidores de eventos de rastreamento gerados por uma origem do rastreamento. Podemos pensar em uma origem do rastreamento como um tipo de ligação de informação ponto-para-multiponto. Seu código buscaria por eventos de rastreamento de uma parte específica do código do núcleo e poderia coexistir com outro código que faz algo inteiramente diferente com a mesma informação.
 
 ..
 	Unless a user connects a trace sink to one of these sources, nothing is output.  By
@@ -289,12 +289,12 @@ Pode haver zero ou mais consumidores de eventos de rastreamento gerados por uma 
 	citizen may allow other users to provide new utilities that are perhaps very useful
 	overall, without making any changes to the |ns3| core.  
 
-Ao menos que um usuï¿½rio conecte um destino do rastreamento a uma destas origens, nenhuma saï¿½da ï¿½ produzida. Usando o sistema de rastreamento, todos conectados em uma mesma origem do rastreamento estï¿½o obtendo a informaï¿½ï¿½o que desejam do sistema. Um usuï¿½rio nï¿½o afeta os outros alterando a informaï¿½ï¿½o provida pela origem. Se acontecer de adicionarmos uma origem do rastreamento, seu trabalho como um bom cidadï¿½o utilizador de cï¿½digo livre pode permitir que outros usuï¿½rios forneï¿½am novas utilidades para todos, sem fazer qualquer modificaï¿½ï¿½o no nï¿½cleo do |ns3|.
+Ao menos que um usuário conecte um destino do rastreamento a uma destas origens, nenhuma saída é produzida. Usando o sistema de rastreamento, todos conectados em uma mesma origem do rastreamento estão obtendo a informação que desejam do sistema. Um usuário não afeta os outros alterando a informação provida pela origem. Se acontecer de adicionarmos uma origem do rastreamento, seu trabalho como um bom cidadão utilizador de código livre pode permitir que outros usuários forneçam novas utilidades para todos, sem fazer qualquer modificação no núcleo do |ns3|.
 	
 .. 
 	A Simple Low-Level Example
 
-Um Exemplo Simples de Baixo Nï¿½vel
+Um Exemplo Simples de Baixo Nível
 +++++++++++++++++++++++++++++++++
 
 ..
@@ -303,7 +303,7 @@ Um Exemplo Simples de Baixo Nï¿½vel
 	example, so we have to take a small detour right away.
 
 Vamos gastar alguns minutos para entender um exemplo de rastreamento simples. Primeiramente
-precisamos compreender o conceito de *callbacks* para entender o que estï¿½ acontecendo
+precisamos compreender o conceito de *callbacks* para entender o que está acontecendo
 no exemplo.
 
 *Callbacks*
@@ -317,15 +317,15 @@ no exemplo.
 	variable.  The relationship between function and pointer-to-function pointer is 
 	really no different that that of object and pointer-to-object.
 
-O objetivo do sistema de *Callback*, no |ns3|, ï¿½ permitir a uma parte do cï¿½digo invocar
-uma funï¿½ï¿½o (ou mï¿½todo em C++) sem qualquer dependï¿½ncia entre mï¿½dulos. Isto ï¿½ utilizado para prover algum tipo de indireï¿½ï¿½o -- desta forma tratamos o endereï¿½o da chamada de funï¿½ï¿½o como uma variï¿½vel. Esta variï¿½vel ï¿½ denominada variï¿½vel de ponteiro-para-funï¿½ï¿½o. O relacionamento entre funï¿½ï¿½o e ponteiro-para-funï¿½ï¿½o nï¿½o ï¿½ tï¿½o diferente que de um objeto e ponteiro-para-objeto.
+O objetivo do sistema de *Callback*, no |ns3|, é permitir a uma parte do código invocar
+uma função (ou método em C++) sem qualquer dependência entre módulos. Isto é utilizado para prover algum tipo de indireção -- desta forma tratamos o endereço da chamada de função como uma variável. Esta variável é denominada variável de ponteiro-para-função. O relacionamento entre função e ponteiro-para-função não é tão diferente que de um objeto e ponteiro-para-objeto.
 
 ..
 	In C the canonical example of a pointer-to-function is a 
 	pointer-to-function-returning-integer (PFI).  For a PFI taking one int parameter,
 	this could be declared like,
 
-Em C, o exemplo clï¿½ssico de um ponteiro-para-funï¿½ï¿½o ï¿½ um ponteiro-para-funï¿½ï¿½o-retornando-inteiro (PFI). Para um PFI ter um parï¿½metro inteiro, poderia ser declarado como,
+Em C, o exemplo clássico de um ponteiro-para-função é um ponteiro-para-função-retornando-inteiro (PFI). Para um PFI ter um parâmetro inteiro, poderia ser declarado como,
 
 ::
 
@@ -337,7 +337,7 @@ Em C, o exemplo clï¿½ssico de um ponteiro-para-funï¿½ï¿½o ï¿½ um ponteiro-para-f
 	you have to have a function with a matching signature.  In this case, you could
 	provide a function that looks like,
 
-O cï¿½digo descreve uma variï¿½vel nomeada como "pfi" que ï¿½ inicializada com o valor 0. Se quisermos inicializar este ponteiro com um valor significante, temos que ter uma funï¿½ï¿½o com uma assinatura idï¿½ntica. Neste caso, poderï¿½amos prover uma funï¿½ï¿½o como,
+O código descreve uma variável nomeada como "pfi" que é inicializada com o valor 0. Se quisermos inicializar este ponteiro com um valor significante, temos que ter uma função com uma assinatura idêntica. Neste caso, poderíamos prover uma função como,
 
 ::
 
@@ -347,7 +347,7 @@ O cï¿½digo descreve uma variï¿½vel nomeada como "pfi" que ï¿½ inicializada com o
 	If you have this target, you can initialize the variable to point to your
 	function:
 
-Dessa forma, podemos inicializar a variï¿½vel apontando para uma funï¿½ï¿½o:
+Dessa forma, podemos inicializar a variável apontando para uma função:
 
 ::
 
@@ -357,7 +357,7 @@ Dessa forma, podemos inicializar a variï¿½vel apontando para uma funï¿½ï¿½o:
 	You can then call MyFunction indirectly using the more suggestive form of
 	the call,
 
-Podemos entï¿½o chamar ``MyFunction`` indiretamente, usando uma forma mais clara da chamada,
+Podemos então chamar ``MyFunction`` indiretamente, usando uma forma mais clara da chamada,
 
 ::
 
@@ -369,7 +369,7 @@ Podemos entï¿½o chamar ``MyFunction`` indiretamente, usando uma forma mais clara
 	people take advantage of the fact that the compiler knows what is going on
 	and will just use a shorter form,
 
-ï¿½ uma forma mais clara, pois ï¿½ como se estivï¿½ssemos dereferenciando o ponteiro da funï¿½ï¿½o como dereferenciamos qualquer outro ponteiro. Tipicamente, todavia, usa-se uma forma mais curta pois o compilador sabe o que estï¿½ fazendo,
+É uma forma mais clara, pois é como se estivéssemos dereferenciando o ponteiro da função como dereferenciamos qualquer outro ponteiro. Tipicamente, todavia, usa-se uma forma mais curta pois o compilador sabe o que está fazendo,
 
 ::
 
@@ -380,7 +380,7 @@ Podemos entï¿½o chamar ``MyFunction`` indiretamente, usando uma forma mais clara
 	smart enough to know to call through the variable ``pfi`` indirectly to
 	the function ``MyFunction``.
 
-Esta forma ï¿½ como se estivessemos chamando uma funï¿½ï¿½o nomeada "pfi", mas o compilador reconhece que ï¿½ uma chamada indireta da funï¿½ï¿½o ``MyFunction`` por meio da variï¿½vel ``pfi``.
+Esta forma é como se estivessemos chamando uma função nomeada "pfi", mas o compilador reconhece que é uma chamada indireta da função ``MyFunction`` por meio da variável ``pfi``.
 
 ..
 	Conceptually, this is almost exactly how the tracing system will work.
@@ -393,7 +393,7 @@ Esta forma ï¿½ como se estivessemos chamando uma funï¿½ï¿½o nomeada "pfi", mas o
 	parameters (the call to "pfi" above passed one parameter to the target function
 	``MyFunction``.
 
-Conceitualmente, ï¿½ quase exatamente como o sistema de rastreamento funciona. Basicamente, uma origem do rastreamento *ï¿½* um *callback*. Quando um destino do rastreamento expressa interesse em receber eventos de rastreamento, ela adiciona a *callback* para a lista de *callbacks*  mantida internamente pela origem do rastreamento. Quando um evento de interesse ocorre, a origem do rastreamento invoca seu ``operator()`` provendo zero ou mais parï¿½metros. O ``operator()`` eventualmente percorre o sistema e faz uma chamada indireta com zero ou mais parï¿½metros.
+Conceitualmente, é quase exatamente como o sistema de rastreamento funciona. Basicamente, uma origem do rastreamento *é* um *callback*. Quando um destino do rastreamento expressa interesse em receber eventos de rastreamento, ela adiciona a *callback* para a lista de *callbacks*  mantida internamente pela origem do rastreamento. Quando um evento de interesse ocorre, a origem do rastreamento invoca seu ``operator()`` provendo zero ou mais parâmetros. O ``operator()`` eventualmente percorre o sistema e faz uma chamada indireta com zero ou mais parâmetros.
 	
 ..
 	The important difference that the tracing system adds is that for each trace
@@ -402,18 +402,18 @@ Conceitualmente, ï¿½ quase exatamente como o sistema de rastreamento funciona. B
 	sink expresses interest in notifications from a trace source, it basically just
 	arranges to add its own function to the callback list.
 
-Uma diferenï¿½a importante ï¿½ que o sistema de rastreamento adiciona para cada origem do rastreamento uma lista interna de *callbacks*. Ao invï¿½s de apenas fazer uma chamada indireta, uma origem do rastreamento pode invocar qualquer nï¿½mero de *callbacks*. Quando um destino do rastreamento expressa interesse em notificaï¿½ï¿½es de uma origem, ela adiciona sua prï¿½pria funï¿½ï¿½o para a lista de *callback*.
+Uma diferença importante é que o sistema de rastreamento adiciona para cada origem do rastreamento uma lista interna de *callbacks*. Ao invés de apenas fazer uma chamada indireta, uma origem do rastreamento pode invocar qualquer número de *callbacks*. Quando um destino do rastreamento expressa interesse em notificações de uma origem, ela adiciona sua própria função para a lista de *callback*.
 
 ..
 	If you are interested in more details about how this is actually arranged in 
 	|ns3|, feel free to peruse the Callback section of the manual.
 
-Estando interessado em mais detalhes sobre como ï¿½ organizado o sistema de *callback* no |ns3|, leia a seï¿½ï¿½o *Callback* do manual.
+Estando interessado em mais detalhes sobre como é organizado o sistema de *callback* no |ns3|, leia a seção *Callback* do manual.
 
 .. 
 	Example Code
 
-Cï¿½digo de Exemplo
+Código de Exemplo
 ~~~~~~~~~~~~~~~~~
 
 ..
@@ -421,7 +421,7 @@ Cï¿½digo de Exemplo
 	of tracing that can be assembled.  You can find this code in the tutorial
 	directory as ``fourth.cc``.  Let's walk through it.
 
-Analisaremos uma implementaï¿½ï¿½o simples de um exemplo de rastreamento. Este cï¿½digo estï¿½ no diretï¿½rio do tutorial, no arquivo ``fourth.cc``.
+Analisaremos uma implementação simples de um exemplo de rastreamento. Este código está no diretório do tutorial, no arquivo ``fourth.cc``.
 
 ::
 
@@ -457,7 +457,7 @@ Analisaremos uma implementaï¿½ï¿½o simples de um exemplo de rastreamento. Este c
 	for those systems explicitly.  You could use the core module header, but this
 	illustrates how simple this all really is.  
 
-A maior parte deste cï¿½digo deve ser familiar, pois como jï¿½ abordado, o sistema de rastreamento faz uso constante dos sistemas Objeto (*Object*) e Atributos (*Attribute*), logo ï¿½ necessï¿½rio incluï¿½-los. As duas primeiras inclusï¿½es (*include*) declaram explicitamente estes dois sistemas. Poderï¿½amos usar o cabeï¿½alho (*header*) do mï¿½dulo nï¿½cleo, este exemplo ï¿½ simples.
+A maior parte deste código deve ser familiar, pois como já abordado, o sistema de rastreamento faz uso constante dos sistemas Objeto (*Object*) e Atributos (*Attribute*), logo é necessário incluí-los. As duas primeiras inclusões (*include*) declaram explicitamente estes dois sistemas. Poderíamos usar o cabeçalho (*header*) do módulo núcleo, este exemplo é simples.
 
 ..
 	The file, ``traced-value.h`` brings in the required declarations for tracing
@@ -468,13 +468,13 @@ A maior parte deste cï¿½digo deve ser familiar, pois como jï¿½ abordado, o siste
 	of operators that are pre-defined for plain-old-data (POD) types.  Operator=, 
 	operator++, operator---, operator+, operator==, etc.
 
-O arquivo ``traced-value.h`` ï¿½ uma declaraï¿½ï¿½o obrigatï¿½ria para rastreamento de dados que usam passagem por valor. Na passagem por valor ï¿½ passada uma cï¿½pia do objeto e nï¿½o um endereï¿½o. Com a finalidade de usar passagem por valor, precisa-se de um objeto com um construtor de cï¿½pia associado e um operador de atribuiï¿½ï¿½o. O conjunto de operadores predefinidos para tipos de dados primitivos (*plain-old-data*) sï¿½o ++, ---, +, ==, etc.
+O arquivo ``traced-value.h`` é uma declaração obrigatória para rastreamento de dados que usam passagem por valor. Na passagem por valor é passada uma cópia do objeto e não um endereço. Com a finalidade de usar passagem por valor, precisa-se de um objeto com um construtor de cópia associado e um operador de atribuição. O conjunto de operadores predefinidos para tipos de dados primitivos (*plain-old-data*) são ++, ---, +, ==, etc.
 
 ..
 	What this all really means is that you will be able to trace changes to a C++
 	object made using those operators.
 
-Isto significa que somos capazes de rastrear alteraï¿½ï¿½es em um objeto C++ usando estes operadores.
+Isto significa que somos capazes de rastrear alterações em um objeto C++ usando estes operadores.
 
 ..
 	Since the tracing system is integrated with Attributes, and Attributes work
@@ -482,7 +482,7 @@ Isto significa que somos capazes de rastrear alteraï¿½ï¿½es em um objeto C++ usa
 	to live in.  The next code snippet declares and defines a simple Object we can
 	work with.
 
-Como o sistema de rastreamento ï¿½ integrado com Atributos e este trabalham com Objetos, deve obrigatoriamente existir um ``Object`` |ns3| para cada origem do rastreamento. O prï¿½ximo cï¿½digo define e declara um Objeto.
+Como o sistema de rastreamento é integrado com Atributos e este trabalham com Objetos, deve obrigatoriamente existir um ``Object`` |ns3| para cada origem do rastreamento. O próximo código define e declara um Objeto.
 
 ::
 
@@ -509,7 +509,7 @@ Como o sistema de rastreamento ï¿½ integrado com Atributos e este trabalham com 
 	The two important lines of code, above, with respect to tracing are the 
 	``.AddTraceSource`` and the ``TracedValue`` declaration of ``m_myInt``.
 
-As duas linhas mais importantes com relaï¿½ï¿½o ao rastreamento sï¿½o ``.AddTraceSource`` e a declaraï¿½ï¿½o ``TracedValue`` do ``m_myInt``.
+As duas linhas mais importantes com relação ao rastreamento são ``.AddTraceSource`` e a declaração ``TracedValue`` do ``m_myInt``.
 
 
 ..
@@ -518,7 +518,7 @@ As duas linhas mais importantes com relaï¿½ï¿½o ao rastreamento sï¿½o ``.AddTrac
 	declaration provides the infrastructure that overloads the operators mentioned 
 	above and drives the callback process.
 
-O mï¿½todo ``.AddTraceSource`` provï¿½ a "ligaï¿½ï¿½o" usada para conectar a origem do rastreamento com o mundo externo, por meio do sistema de configuraï¿½ï¿½o. A declaraï¿½ï¿½o ``TracedValue`` provï¿½ a infraestrutura que sobrecarrega os operadores abordados anteriormente e  gerencia o processo de *callback*.
+O método ``.AddTraceSource`` provê a "ligação" usada para conectar a origem do rastreamento com o mundo externo, por meio do sistema de configuração. A declaração ``TracedValue`` provê a infraestrutura que sobrecarrega os operadores abordados anteriormente e  gerencia o processo de *callback*.
 
 ::
 
@@ -533,13 +533,13 @@ O mï¿½todo ``.AddTraceSource`` provï¿½ a "ligaï¿½ï¿½o" usada para conectar a ori
 	function.  Once it is connected, this function will be called whenever one of the
 	overloaded operators of the ``TracedValue`` is executed.
 
-Esta ï¿½ a definiï¿½ï¿½o do destino do rastreamento. Isto corresponde diretamente a funï¿½ï¿½o de *callback*. Uma vez que estï¿½ conectada, esta funï¿½ï¿½o serï¿½ chamada sempre que um dos operadores sobrecarregados de ``TracedValue`` ï¿½ executado.
+Esta é a definição do destino do rastreamento. Isto corresponde diretamente a função de *callback*. Uma vez que está conectada, esta função será chamada sempre que um dos operadores sobrecarregados de ``TracedValue`` é executado.
 
 ..
 	We have now seen the trace source and the trace sink.  What remains is code to
 	connect the source to the sink.
 
-Nï¿½s temos a origem e o destino do rastreamento. O restante ï¿½ o cï¿½digo para conectar a origem ao destino.
+Nós temos a origem e o destino do rastreamento. O restante é o código para conectar a origem ao destino.
 
 ::
 
@@ -555,7 +555,7 @@ Nï¿½s temos a origem e o destino do rastreamento. O restante ï¿½ o cï¿½digo para
 ..
 	Here we first create the Object in which the trace source lives.
 
-Criamos primeiro o Objeto no qual estï¿½ a origem do rastreamento.
+Criamos primeiro o Objeto no qual está a origem do rastreamento.
 
 ..
 	The next step, the ``TraceConnectWithoutContext``, forms the connection
@@ -567,7 +567,7 @@ Criamos primeiro o Objeto no qual estï¿½ a origem do rastreamento.
 	to by the "MyInteger" Attribute.  After this association is made, the trace
 	source will "fire" your provided callback function.
 
-No prï¿½ximo passo, o ``TraceConnectWithoutContext`` conecta a origem ao destino do rastreamento. Observe que a funï¿½ï¿½o ``MakeCallback`` cria o objeto *callback* e associa com a funï¿½ï¿½o ``IntTrace``. ``TraceConnectWithoutContext`` faz a associaï¿½ï¿½o entre a sua funï¿½ï¿½o e o ``operator()``, sobrecarregado a variï¿½vel rastreada referenciada pelo Atributo ``"MyInteger"``. Depois disso, a origem do rastreamento "dispararï¿½" sua funï¿½ï¿½o de callback.
+No próximo passo, o ``TraceConnectWithoutContext`` conecta a origem ao destino do rastreamento. Observe que a função ``MakeCallback`` cria o objeto *callback* e associa com a função ``IntTrace``. ``TraceConnectWithoutContext`` faz a associação entre a sua função e o ``operator()``, sobrecarregado a variável rastreada referenciada pelo Atributo ``"MyInteger"``. Depois disso, a origem do rastreamento "disparará" sua função de callback.
 
 ..
 	The code to make all of this happen is, of course, non-trivial, but the essence
@@ -581,7 +581,7 @@ No prï¿½ximo passo, o ``TraceConnectWithoutContext`` conecta a origem ao destino
 	connect your function to the trace source, which is specified by Attribute
 	name.
 
-O cï¿½digo para fazer isto acontecer nï¿½o ï¿½ trivial, mas a essï¿½ncia ï¿½ a mesma que se a origem do rastreamento chamasse a funï¿½ï¿½o ``pfi()`` do exemplo anterior. A declaraï¿½ï¿½o ``TracedValue<int32_t> m_myInt;`` no Objeto ï¿½ responsï¿½vel pela mï¿½gica dos operadores sobrecarregados que usarï¿½o o ``operator()`` para invocar o *callback*  com os parï¿½metros desejados. O mï¿½todo ``.AddTraceSource`` conecta o *callback* ao sistema de configuraï¿½ï¿½o, e ``TraceConnectWithoutContext`` conecta sua funï¿½ï¿½o a fonte de rastreamento, a qual ï¿½ especificada por um nome 
+O código para fazer isto acontecer não é trivial, mas a essência é a mesma que se a origem do rastreamento chamasse a função ``pfi()`` do exemplo anterior. A declaração ``TracedValue<int32_t> m_myInt;`` no Objeto é responsável pela mágica dos operadores sobrecarregados que usarão o ``operator()`` para invocar o *callback*  com os parâmetros desejados. O método ``.AddTraceSource`` conecta o *callback* ao sistema de configuração, e ``TraceConnectWithoutContext`` conecta sua função a fonte de rastreamento, a qual é especificada por um nome 
 Atributo.
 
 .. 
@@ -602,7 +602,7 @@ Finalmente a linha,
 	should be interpreted as an invocation of ``operator=`` on the member 
 	variable ``m_myInt`` with the integer ``1234`` passed as a parameter.
 
-deveria ser interpretada como uma invocaï¿½ï¿½o do operador ``=`` na variï¿½vel membro ``m_myInt`` com o inteiro ``1234`` passado como parï¿½metro.
+deveria ser interpretada como uma invocação do operador ``=`` na variável membro ``m_myInt`` com o inteiro ``1234`` passado como parâmetro.
 
 ..
 	It turns out that this operator is defined (by ``TracedValue``) to execute
@@ -610,7 +610,7 @@ deveria ser interpretada como uma invocaï¿½ï¿½o do operador ``=`` na variï¿½vel 
 	an old value and a new value for the integer in question.  That is exactly 
 	the function signature for the callback function we provided --- ``IntTrace``.
 
-Por sua vez este operador ï¿½ definido (por ``TracedValue``) para executar um *callback* que retorna ``void`` e possui dois inteiros como parï¿½metros --- um valor antigo e um novo valor para o inteiro em questï¿½o. Isto ï¿½ exatamente a assinatura da funï¿½ï¿½o para a funï¿½ï¿½o de *callback* que nï¿½s fornecemos --- ``IntTrace``.
+Por sua vez este operador é definido (por ``TracedValue``) para executar um *callback* que retorna ``void`` e possui dois inteiros como parâmetros --- um valor antigo e um novo valor para o inteiro em questão. Isto é exatamente a assinatura da função para a função de *callback* que nós fornecemos --- ``IntTrace``.
 
 ..
 	To summarize, a trace source is, in essence, a variable that holds a list of
@@ -621,7 +621,7 @@ Por sua vez este operador ï¿½ definido (por ``TracedValue``) para executar um *c
 	results in the trace sink callbacks registering interest in the source being 
 	called with the parameters provided by the source.
 
-Para resumir, uma origem do rastreamento ï¿½, em essï¿½ncia, uma variï¿½vel que mantï¿½m uma lista de *callbacks*. Um destino do rastreamento ï¿½ uma funï¿½ï¿½o usada como alvo da *callback*. O Atributo e os sistemas de informaï¿½ï¿½o de tipo de objeto sï¿½o usados para fornecer uma maneira de conectar origens e destinos do rastreamento. O aï¿½ï¿½o de "acionar" uma origem do rastreamento ï¿½ executar um operador na origem, que dispara os *callbacks*. Isto resulta na execuï¿½ï¿½o das *callbacks* dos destinos do rastreamento registrados na origem com os parï¿½metros providos pela origem.
+Para resumir, uma origem do rastreamento é, em essência, uma variável que mantém uma lista de *callbacks*. Um destino do rastreamento é uma função usada como alvo da *callback*. O Atributo e os sistemas de informação de tipo de objeto são usados para fornecer uma maneira de conectar origens e destinos do rastreamento. O ação de "acionar" uma origem do rastreamento é executar um operador na origem, que dispara os *callbacks*. Isto resulta na execução das *callbacks* dos destinos do rastreamento registrados na origem com os parâmetros providos pela origem.
 
 .. 
 	If you now build and run this example,
@@ -636,7 +636,7 @@ Se compilarmos e executarmos este exemplo,
 	you will see the output from the ``IntTrace`` function execute as soon as the
 	trace source is hit:
 
-observaremos que a saï¿½da da funï¿½ï¿½o ``IntTrace`` ï¿½ processada logo apï¿½s a execuï¿½ï¿½o da
+observaremos que a saída da função ``IntTrace`` é processada logo após a execução da
 origem do rastreamento:
 
 ::
@@ -649,12 +649,12 @@ origem do rastreamento:
 	The function ``IntTrace`` then printed this to the standard output.  No 
 	problem.
 
-Quando executamos o cï¿½digo,  ``myObject->m_myInt = 1234;`` a origem do rastreamento disparou e automaticamente forneceu os valores anteriores e posteriores para o destino do rastreamento. A funï¿½ï¿½o ``IntTrace`` entï¿½o imprimiu na saï¿½da padrï¿½o, sem maiores problemas.
+Quando executamos o código,  ``myObject->m_myInt = 1234;`` a origem do rastreamento disparou e automaticamente forneceu os valores anteriores e posteriores para o destino do rastreamento. A função ``IntTrace`` então imprimiu na saída padrão, sem maiores problemas.
 
 .. 
 	Using the Config Subsystem to Connect to Trace Sources
 
-Usando o Subsistema de Configuraï¿½ï¿½o para Conectar as Origens de Rastreamento
+Usando o Subsistema de Configuração para Conectar as Origens de Rastreamento
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 ..
@@ -665,14 +665,14 @@ Usando o Subsistema de Configuraï¿½ï¿½o para Conectar as Origens de Rastreamento
 	where we hooked the "CourseChange" event when we were playing with 
 	``third.cc``.
 
-A chamada ``TraceConnectWithoutContext`` apresentada anteriormente ï¿½ raramente usada no sistema. Geralmente, o subsistema ``Config`` ï¿½ usado para selecionar uma origem do rastreamento no sistema usando um caminho de configuraï¿½ï¿½o (*config path*). Nï¿½s estudamos um exemplo onde ligamos o evento "CourseChange", quando estï¿½vamos brincando com ``third.cc``.
+A chamada ``TraceConnectWithoutContext`` apresentada anteriormente é raramente usada no sistema. Geralmente, o subsistema ``Config`` é usado para selecionar uma origem do rastreamento no sistema usando um caminho de configuração (*config path*). Nós estudamos um exemplo onde ligamos o evento "CourseChange", quando estávamos brincando com ``third.cc``.
 
 ..
 	Recall that we defined a trace sink to print course change information from the
 	mobility models of our simulation.  It should now be a lot more clear to you 
 	what this function is doing.
 
-Nï¿½s definimos um destino do rastreamento para imprimir a informaï¿½ï¿½o de mudanï¿½a de rota dos modelos de mobilidade de nossa simulaï¿½ï¿½o. Agora estï¿½ mais claro o que estï¿½ funï¿½ï¿½o realizava.
+Nós definimos um destino do rastreamento para imprimir a informação de mudança de rota dos modelos de mobilidade de nossa simulação. Agora está mais claro o que está função realizava.
 
 ::
 
@@ -690,7 +690,7 @@ Nï¿½s definimos um destino do rastreamento para imprimir a informaï¿½ï¿½o de mud
 	arranged a connection between the pre-defined trace source and the new trace 
 	sink:
 
-Quando conectamos a origem do rastreamento "CourseChange" para o destino do rastreamento anteriormente, usamos o que ï¿½ chamado de caminho de configuraï¿½ï¿½o ("`Config Path`") para especificar a origem e o novo destino do rastreamento.
+Quando conectamos a origem do rastreamento "CourseChange" para o destino do rastreamento anteriormente, usamos o que é chamado de caminho de configuração ("`Config Path`") para especificar a origem e o novo destino do rastreamento.
 
 ::
 
@@ -707,7 +707,7 @@ Quando conectamos a origem do rastreamento "CourseChange" para o destino do rast
 	number returned by the ``GetId()`` is "7".  In this case, the path
 	above turns out to be,
 
-Para entendermos melhor o cï¿½digo, suponha que o nï¿½mero do nï¿½ retornado por ``GetId()`` ï¿½ "7". Neste caso, o caminho seria,
+Para entendermos melhor o código, suponha que o número do nó retornado por ``GetId()`` é "7". Neste caso, o caminho seria,
 
 ::
 
@@ -724,10 +724,10 @@ Para entendermos melhor o cï¿½digo, suponha que o nï¿½mero do nï¿½ retornado por
 	used to call GetId() on.  We could have used this Ptr<Node> directly to call
 	a connect method directly:
 
-O ï¿½ltimo segmento de um caminho de configuraï¿½ï¿½o deve ser um Atributo de um 
-Objeto. Na verdade, se tï¿½nhamos um ponteiro para o Objeto que tem o Atributo
-"CourseChange" ``, poderï¿½amos escrever como no exemplo anterior.
-Nï¿½s jï¿½ sabemos que guardamos tipicamente ponteiros para outros nï¿½s em um ``NodeContainer``. No exemplo ``third.cc``, os nï¿½s de rede de interesse estï¿½o armazenados no ``wifiStaNodes`` ``NodeContainer``. De fato enquanto colocamos o caminho junto usamos este contï¿½iner para obter um ``Ptr<Node>``, usado na chamada ``GetId()``. Poderï¿½amos usar diretamente o ``Ptr<Node>`` para chamar um mï¿½todo de conexï¿½o.
+O último segmento de um caminho de configuração deve ser um Atributo de um 
+Objeto. Na verdade, se tínhamos um ponteiro para o Objeto que tem o Atributo
+"CourseChange" ``, poderíamos escrever como no exemplo anterior.
+Nós já sabemos que guardamos tipicamente ponteiros para outros nós em um ``NodeContainer``. No exemplo ``third.cc``, os nós de rede de interesse estão armazenados no ``wifiStaNodes`` ``NodeContainer``. De fato enquanto colocamos o caminho junto usamos este contêiner para obter um ``Ptr<Node>``, usado na chamada ``GetId()``. Poderíamos usar diretamente o ``Ptr<Node>`` para chamar um método de conexão.
 
 ::
 
@@ -739,7 +739,7 @@ Nï¿½s jï¿½ sabemos que guardamos tipicamente ponteiros para outros nï¿½s em um `
 	be delivered along with the Callback parameters (which will be explained below) so we 
 	could actually use the following equivalent code,
 
-No exemplo ``third.cc``, queremos um "contexto" adicional para ser encaminhado com os parï¿½metros do *callback* (os quais sï¿½o explicados a seguir) entï¿½o podemos usar o cï¿½digo equivalente,
+No exemplo ``third.cc``, queremos um "contexto" adicional para ser encaminhado com os parâmetros do *callback* (os quais são explicados a seguir) então podemos usar o código equivalente,
 
 ::
 
@@ -751,7 +751,7 @@ No exemplo ``third.cc``, queremos um "contexto" adicional para ser encaminhado c
 	``Config::Connect`` actually do find a Ptr<Object> and call the appropriate
 	TraceConnect method at the lowest level.
 
-Acontece que o cï¿½digo interno para ``Config::ConnectWithoutContext`` e ``Config::Connect`` permite localizar um Ptr<Object> e chama o mï¿½todo ``TraceConnect``, no nï¿½vel mais baixo.
+Acontece que o código interno para ``Config::ConnectWithoutContext`` e ``Config::Connect`` permite localizar um Ptr<Object> e chama o método ``TraceConnect``, no nível mais baixo.
 
 ..
 	The ``Config`` functions take a path that represents a chain of ``Object`` 
@@ -764,7 +764,7 @@ Acontece que o cï¿½digo interno para ``Config::ConnectWithoutContext`` e ``Confi
 	``TraceConnectWithoutContext`` method on the final Object.  Let's see what 
 	happens in a bit more detail when the above path is walked.
 
-As funï¿½ï¿½es ``Config`` aceitam um caminho que representa uma cadeia de ponteiros de Objetos. Cada segmento do caminho corresponde a um Atributo Objeto. O ï¿½ltimo segmento ï¿½ o Atributo de interesse e os seguimentos anteriores devem ser definidos para conter ou encontrar Objetos. O  cï¿½digo ``Config`` processa o caminho atï¿½ obter o segmento final. Entï¿½o, interpreta o ï¿½ltimo segmento como um Atributo no ï¿½ltimo Objeto ele encontrou no caminho. Entï¿½o as funï¿½ï¿½es ``Config`` chamam o mï¿½todo ``TraceConnect`` ou ``TraceConnectWithoutContext`` adequado no Objeto final.
+As funções ``Config`` aceitam um caminho que representa uma cadeia de ponteiros de Objetos. Cada segmento do caminho corresponde a um Atributo Objeto. O último segmento é o Atributo de interesse e os seguimentos anteriores devem ser definidos para conter ou encontrar Objetos. O  código ``Config`` processa o caminho até obter o segmento final. Então, interpreta o último segmento como um Atributo no último Objeto ele encontrou no caminho. Então as funções ``Config`` chamam o método ``TraceConnect`` ou ``TraceConnectWithoutContext`` adequado no Objeto final.
 
 Vamos analisar com mais detalhes o processo descrito.
 
@@ -776,7 +776,7 @@ Vamos analisar com mais detalhes o processo descrito.
 	list of nodes created during the simulation.  This reference is actually a 
 	``Ptr<Node>`` and so is a subclass of an ``ns3::Object``.  
 
-O primeiro caractere "/" no caminho faz referï¿½ncia a um *namespace*. Um dos *namespaces* predefinidos no sistema de configuraï¿½ï¿½o ï¿½ "NodeList" que ï¿½ uma lista de todos os nï¿½s na simulaï¿½ï¿½o. Itens na lista sï¿½o referenciados por ï¿½ndices , logo "/NodeList/7" refere-se ao oitavo nï¿½ na lista de nï¿½s criados durante a simulaï¿½ï¿½o. Esta referï¿½ncia ï¿½ um ``Ptr<Node>``, por consequï¿½ncia ï¿½ uma subclasse de um ``ns3::Object``.
+O primeiro caractere "/" no caminho faz referência a um *namespace*. Um dos *namespaces* predefinidos no sistema de configuração é "NodeList" que é uma lista de todos os nós na simulação. Itens na lista são referenciados por índices , logo "/NodeList/7" refere-se ao oitavo nó na lista de nós criados durante a simulação. Esta referência é um ``Ptr<Node>``, por consequência é uma subclasse de um ``ns3::Object``.
 
 ..
 	As described in the Object Model section of the |ns3| manual, we support
@@ -784,7 +784,7 @@ O primeiro caractere "/" no caminho faz referï¿½ncia a um *namespace*. Um dos *n
 	Objects without any programming.  Each Object in an Aggregation can be reached 
 	from the other Objects.  
 
-Como descrito na seï¿½ï¿½o Modelo de Objeto do manual |ns3|, hï¿½ suporte para Agregaï¿½ï¿½o de Objeto. Isto permite realizar associaï¿½ï¿½o entre diferentes Objetos sem qualquer programaï¿½ï¿½o. Cada Objeto em uma Agregaï¿½ï¿½o pode ser acessado a partir de outros Objetos.
+Como descrito na seção Modelo de Objeto do manual |ns3|, há suporte para Agregação de Objeto. Isto permite realizar associação entre diferentes Objetos sem qualquer programação. Cada Objeto em uma Agregação pode ser acessado a partir de outros Objetos.
 
 ..
 	The next path segment being walked begins with the "$" character.  This 
@@ -797,7 +797,7 @@ Como descrito na seï¿½ï¿½o Modelo de Objeto do manual |ns3|, hï¿½ suporte para A
 	associated mobility model --- which is of type "$ns3::MobilityModel".  If you
 	are familiar with ``GetObject``, we have asked the system to do the following:
 
-O prï¿½ximo segmento no caminho inicia com o carï¿½cter "$". O cifrï¿½o indica ao sistema de configuraï¿½ï¿½o que uma chamada ``GetObject`` deveria ser realizada procurando o tipo especificado em seguida. ï¿½ diferente do que o ``MobilityHelper`` usou em ``third.cc`` gerenciar a Agregaï¿½ï¿½o, ou associar, um modelo de mobilidade para cada dos nï¿½s de rede sem fio. Quando adicionamos o "$", significa que estamos pedindo por outro Objeto que tinha sido presumidamente agregado anteriormente. Podemos pensar nisso como ponteiro de comutaï¿½ï¿½o do ``Ptr<Node>`` original como especificado por "/NodeList/7" para os modelos de mobilidade associados --- quais sï¿½o do tipo "$ns3::MobilityModel". Se estivermos familiarizados com ``GetObject``, solicitamos ao sistema para fazer o 
+O próximo segmento no caminho inicia com o carácter "$". O cifrão indica ao sistema de configuração que uma chamada ``GetObject`` deveria ser realizada procurando o tipo especificado em seguida. É diferente do que o ``MobilityHelper`` usou em ``third.cc`` gerenciar a Agregação, ou associar, um modelo de mobilidade para cada dos nós de rede sem fio. Quando adicionamos o "$", significa que estamos pedindo por outro Objeto que tinha sido presumidamente agregado anteriormente. Podemos pensar nisso como ponteiro de comutação do ``Ptr<Node>`` original como especificado por "/NodeList/7" para os modelos de mobilidade associados --- quais são do tipo "$ns3::MobilityModel". Se estivermos familiarizados com ``GetObject``, solicitamos ao sistema para fazer o 
 seguinte:
 
 ::
@@ -811,7 +811,7 @@ seguinte:
 	``src/mobility/model/mobility-model.cc`` and searching for "CourseChange" in your
 	favorite editor.  You should find,
 
-Estamos no ï¿½ltimo Objeto do caminho e neste verificamos os Atributos daquele Objeto. A classe ``MobilityModel`` define um Atributo chamado "CourseChange". Observando o cï¿½digo fonte em ``src/mobility/model/mobility-model.cc`` e procurando por "CourseChange", encontramos,
+Estamos no último Objeto do caminho e neste verificamos os Atributos daquele Objeto. A classe ``MobilityModel`` define um Atributo chamado "CourseChange". Observando o código fonte em ``src/mobility/model/mobility-model.cc`` e procurando por "CourseChange", encontramos,
 
 ::
 
@@ -828,7 +828,7 @@ o qual parece muito familiar neste momento.
 	If you look for the corresponding declaration of the underlying traced variable 
 	in ``mobility-model.h`` you will find
 
-Se procurarmos por declaraï¿½ï¿½es semelhantes das variï¿½veis rastreadas em ``mobility-model.h``
+Se procurarmos por declarações semelhantes das variáveis rastreadas em ``mobility-model.h``
 encontraremos,
 
 ::
@@ -840,14 +840,14 @@ encontraremos,
 	as a special list of Callbacks that can be hooked using the Config functions 
 	described above.
 
-A declaraï¿½ï¿½o de tipo ``TracedCallback`` identifica ``m_courseChangeTrace`` como um lista especial de *callbacks* que pode ser ligada usando as funï¿½ï¿½es de Configuraï¿½ï¿½o descritas anteriormente.
+A declaração de tipo ``TracedCallback`` identifica ``m_courseChangeTrace`` como um lista especial de *callbacks* que pode ser ligada usando as funções de Configuração descritas anteriormente.
 
 ..
 	The ``MobilityModel`` class is designed to be a base class providing a common
 	interface for all of the specific subclasses.  If you search down to the end of 
 	the file, you will see a method defined called ``NotifyCourseChange()``:
 
-A classe ``MobilityModel`` ï¿½ projetada para ser a classe base provendo uma interface comum para todas as subclasses. No final do arquivo, encontramos um mï¿½todo chamado ``NotifyCourseChange()``:
+A classe ``MobilityModel`` é projetada para ser a classe base provendo uma interface comum para todas as subclasses. No final do arquivo, encontramos um método chamado ``NotifyCourseChange()``:
 
 ::
 
@@ -864,10 +864,10 @@ A classe ``MobilityModel`` ï¿½ projetada para ser a classe base provendo uma int
 	Callbacks, calling all of the trace sinks that have registered interest in the
 	trace source by calling a Config function.
 
-Classes derivadas chamarï¿½o este mï¿½todo toda vez que fizerem uma alteraï¿½ï¿½o na rota para 
-suportar rastreamento. Este mï¿½todo invoca ``operator()`` em ``m_courseChangeTrace``, 
-que invocarï¿½ todos os *callbacks* registrados, chamando todos os *trace sinks* que tem 
-interesse registrado na origem do rastreamento usando a funï¿½ï¿½o de Configuraï¿½ï¿½o.
+Classes derivadas chamarão este método toda vez que fizerem uma alteração na rota para 
+suportar rastreamento. Este método invoca ``operator()`` em ``m_courseChangeTrace``, 
+que invocará todos os *callbacks* registrados, chamando todos os *trace sinks* que tem 
+interesse registrado na origem do rastreamento usando a função de Configuração.
 
 ..
 	So, in the ``third.cc`` example we looked at, whenever a course change is 
@@ -879,13 +879,13 @@ interesse registrado na origem do rastreamento usando a funï¿½ï¿½o de Configuraï
 	the config path.  Therefore, the ``CourseChange`` function that was hooked 
 	from Node number seven will be the only Callback called.
 
-No exemplo ``third.cc`` nï¿½s vimos que sempre que uma mudanï¿½a de rota ï¿½ realizada em uma das instï¿½ncias ``RandomWalk2dMobilityModel`` instaladas, haverï¿½ uma chamada ``NotifyCourseChange()`` da classe base ``MobilityModel``. Como observado, isto invoca ``operator()`` em ``m_courseChangeTrace``, que por sua vez, chama qualquer destino do rastreamento registrados. No exemplo, o ï¿½nico cï¿½digo que registrou interesse foi aquele que forneceu o caminho de configuraï¿½ï¿½o. Consequentemente, a funï¿½ï¿½o ``CourseChange`` que foi ligado no Node de nï¿½mero sete serï¿½ a ï¿½nica *callback* chamada.
+No exemplo ``third.cc`` nós vimos que sempre que uma mudança de rota é realizada em uma das instâncias ``RandomWalk2dMobilityModel`` instaladas, haverá uma chamada ``NotifyCourseChange()`` da classe base ``MobilityModel``. Como observado, isto invoca ``operator()`` em ``m_courseChangeTrace``, que por sua vez, chama qualquer destino do rastreamento registrados. No exemplo, o único código que registrou interesse foi aquele que forneceu o caminho de configuração. Consequentemente, a função ``CourseChange`` que foi ligado no Node de número sete será a única *callback* chamada.
 
 ..
 	The final piece of the puzzle is the "context".  Recall that we saw an output 
 	looking something like the following from ``third.cc``:
 
-A peï¿½a final do quebra-cabeï¿½a ï¿½ o "contexto". Lembre-se da saï¿½da de ``third.cc``:
+A peça final do quebra-cabeça é o "contexto". Lembre-se da saída de ``third.cc``:
 
 ::
 
@@ -899,7 +899,7 @@ A peï¿½a final do quebra-cabeï¿½a ï¿½ o "contexto". Lembre-se da saï¿½da de ``th
 	source is actually the one that fired the Callback.  An easy way is to request a 
 	trace context when you ``Config::Connect``.
 
-A primeira parte da saï¿½da ï¿½ o contexto. ï¿½ simplesmente o caminho pelo qual o cï¿½digo de configuraï¿½ï¿½o localizou a origem do rastreamento. No caso, poderï¿½amos ter qualquer nï¿½mero de origens de rastreamento no sistema correspondendo a qualquer nï¿½mero de nï¿½s com modelos de mobilidade. ï¿½ necessï¿½rio uma maneira de identificar qual origem do rastreamento disparou o *callback*. Uma forma simples ï¿½ solicitar um contexto de rastreamento quando ï¿½ usado o ``Config::Connect``.
+A primeira parte da saída é o contexto. É simplesmente o caminho pelo qual o código de configuração localizou a origem do rastreamento. No caso, poderíamos ter qualquer número de origens de rastreamento no sistema correspondendo a qualquer número de nós com modelos de mobilidade. É necessário uma maneira de identificar qual origem do rastreamento disparou o *callback*. Uma forma simples é solicitar um contexto de rastreamento quando é usado o ``Config::Connect``.
 
 .. 
 	How to Find and Connect Trace Sources, and Discover Callback Signatures
@@ -921,20 +921,20 @@ Como Localizar e Conectar Origens de Rastreamento, e Descobrir Assinaturas de *C
 	The fourth question is, "okay, I typed that all in and got this incredibly bizarre
 	error message, what in the world does it mean"?
 
-As questï¿½es que inevitavelmente os novos usuï¿½rios do sistema de Rastreamento fazem, sï¿½o:
+As questões que inevitavelmente os novos usuários do sistema de Rastreamento fazem, são:
 
-1. "Eu sei que existem origens do rastreamento no nï¿½cleo da simulaï¿½ï¿½o, mas como 
-   eu descubro quais estï¿½o disponï¿½veis para mim?"
-2. "Eu encontrei uma origem do rastreamento, como eu defino o caminho de configuraï¿½ï¿½o para 
+1. "Eu sei que existem origens do rastreamento no núcleo da simulação, mas como 
+   eu descubro quais estão disponíveis para mim?"
+2. "Eu encontrei uma origem do rastreamento, como eu defino o caminho de configuração para 
    usar quando eu conectar a origem?"
 3. "Eu encontrei uma origem do rastreamento, como eu  defino o tipo de retorno e os 
-   argumentos formais da minha funï¿½ï¿½o de *callback*?"
+   argumentos formais da minha função de *callback*?"
 4. "Eu fiz tudo corretamente e obtive uma mensagem de erro bizarra, o que isso significa?"
 
 .. 
 	What Trace Sources are Available?
 
-Quais Origens de Rastreamento sï¿½o Disponibilizadas
+Quais Origens de Rastreamento são Disponibilizadas
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 
 ..
@@ -948,9 +948,9 @@ Quais Origens de Rastreamento sï¿½o Disponibilizadas
 	If you select the "API Documentation" link, you will be
 	taken to the |ns3| API documentation page.
 
-A resposta ï¿½ encontrada no Doxygen do |ns3|. Acesse o sï¿½tio Web do projeto, `ns-3 project <http://www.nsnam.org>`_, em seguida, "Documentation" na barra de navegaï¿½ï¿½o. Logo apï¿½s, "Latest Release" e "API Documentation".
+A resposta é encontrada no Doxygen do |ns3|. Acesse o sítio Web do projeto, `ns-3 project <http://www.nsnam.org>`_, em seguida, "Documentation" na barra de navegação. Logo após, "Latest Release" e "API Documentation".
 
-Acesse o item "Modules" na documentaï¿½ï¿½o do NS-3. Agora, selecione o item "C++ Constructs Used by All Modules". Serï¿½o exibidos quatro tï¿½picos extremamente ï¿½teis:
+Acesse o item "Modules" na documentação do NS-3. Agora, selecione o item "C++ Constructs Used by All Modules". Serão exibidos quatro tópicos extremamente úteis:
 
 * The list of all trace sources
 * The list of all attributes
@@ -962,13 +962,13 @@ Acesse o item "Modules" na documentaï¿½ï¿½o do NS-3. Agora, selecione o item "C+
 	ahead and select that link.  You will see, perhaps not too surprisingly, a
 	list of all of the trace sources available in the |ns3| core.
 
-Estamos interessados em "*the list of all trace sources*" - a lista de todas origens do rastreamento. Selecionando este item, ï¿½ exibido uma lista com todas origens disponï¿½veis no nï¿½cleo do |ns3|.
+Estamos interessados em "*the list of all trace sources*" - a lista de todas origens do rastreamento. Selecionando este item, é exibido uma lista com todas origens disponíveis no núcleo do |ns3|.
 
 ..
 	As an example, scroll down to ``ns3::MobilityModel``.  You will find
 	an entry for
 
-Como exemplo, ``ns3::MobilityModel``, terï¿½ uma entrada para
+Como exemplo, ``ns3::MobilityModel``, terá uma entrada para
 
 ::
 
@@ -978,7 +978,7 @@ Como exemplo, ``ns3::MobilityModel``, terï¿½ uma entrada para
 	You should recognize this as the trace source we used in the ``third.cc``
 	example.  Perusing this list will be helpful.
 
-No caso, esta foi a origem do rastreamento usada no exemplo ``third.cc``, esta lista serï¿½ muito ï¿½til.
+No caso, esta foi a origem do rastreamento usada no exemplo ``third.cc``, esta lista será muito útil.
 
 .. 
 	What String do I use to Connect?
@@ -991,7 +991,7 @@ Qual String eu uso para Conectar?
 	who has already figured it out,  You should always try to copy someone else's
 	working code before you start to write your own.  Try something like:
 
-A forma mais simples ï¿½ procurar na base de cï¿½digo do |ns3| por alguï¿½m que jï¿½ fez uso do caminho de configuraï¿½ï¿½o que precisamos para ligar a fonte de rastreamento. Sempre deverï¿½amos primeiro copiar um cï¿½digo que funciona antes de escrever nosso prï¿½prio cï¿½digo. Tente usar os comandos:
+A forma mais simples é procurar na base de código do |ns3| por alguém que já fez uso do caminho de configuração que precisamos para ligar a fonte de rastreamento. Sempre deveríamos primeiro copiar um código que funciona antes de escrever nosso próprio código. Tente usar os comandos:
 
 ::
 
@@ -1002,7 +1002,7 @@ A forma mais simples ï¿½ procurar na base de cï¿½digo do |ns3| por alguï¿½m que 
 	case, ``./ns-3-dev/examples/wireless/mixed-wireless.cc`` has something
 	just waiting for you to use:
 
-e poderemos encontrar um cï¿½digo operacional que atenda nossas necessidades. Por exemplo, neste caso, ``./ns-3-dev/examples/wireless/mixed-wireless.cc`` tem algo que podemos usar:
+e poderemos encontrar um código operacional que atenda nossas necessidades. Por exemplo, neste caso, ``./ns-3-dev/examples/wireless/mixed-wireless.cc`` tem algo que podemos usar:
 
 ::
 
@@ -1014,7 +1014,7 @@ e poderemos encontrar um cï¿½digo operacional que atenda nossas necessidades. Po
 	from the |ns3| Doxygen.  It will probably be simplest just to walk 
 	through the "CourseChanged" example.
 
-Se nï¿½o localizamos nenhum exemplo na distribuiï¿½ï¿½o, podemos tentar o Doxygen do |ns3|. ï¿½ provavelmente mais simples que percorrer o exemplo "CourseChanged".
+Se não localizamos nenhum exemplo na distribuição, podemos tentar o Doxygen do |ns3|. É provavelmente mais simples que percorrer o exemplo "CourseChanged".
 
 ..
 	Let's assume that you have just found the "CourseChanged" trace source in 
@@ -1027,14 +1027,14 @@ Se nï¿½o localizamos nenhum exemplo na distribuiï¿½ï¿½o, podemos tentar o Doxyge
 	You should now be looking at the "ns3::RandomWalk2dMobilityModel Class 
 	Reference".
 
-Suponha que encontramos a origem do rastreamento "CourseChanged" na "The list of all trace sources" e queremos resolver como nos conectar a ela. Vocï¿½ sabe que estï¿½ usando um ``ns3::RandomWalk2dMobilityModel``. Logo, acesse o item "Class List" na documentaï¿½ï¿½o do |ns3|. Serï¿½ exibida a lista de todas as classes. Selecione a entrada para ``ns3::RandomWalk2dMobilityModel`` para exibir a documentaï¿½ï¿½o da classe.
+Suponha que encontramos a origem do rastreamento "CourseChanged" na "The list of all trace sources" e queremos resolver como nos conectar a ela. Você sabe que está usando um ``ns3::RandomWalk2dMobilityModel``. Logo, acesse o item "Class List" na documentação do |ns3|. Será exibida a lista de todas as classes. Selecione a entrada para ``ns3::RandomWalk2dMobilityModel`` para exibir a documentação da classe.
 
 ..
 	If you now scroll down to the "Member Function Documentation" section, you
 	will see documentation for the ``GetTypeId`` function.  You constructed one
 	of these in the simple tracing example above:
 
-Acesse a seï¿½ï¿½o "Member Function Documentation" e obterï¿½ a documentaï¿½ï¿½o para a funï¿½ï¿½o ``GetTypeId``. Vocï¿½ construiu uma dessas em um exemplo anterior:
+Acesse a seção "Member Function Documentation" e obterá a documentação para a função ``GetTypeId``. Você construiu uma dessas em um exemplo anterior:
 	
 ::
 
@@ -1056,13 +1056,13 @@ Acesse a seï¿½ï¿½o "Member Function Documentation" e obterï¿½ a documentaï¿½ï¿½o
 	place where you should start looking for information about the way to 
 	connect. 
 
-Como abordado, este cï¿½digo conecta os sistemas *Config* e Atributos ï¿½ origem do rastreamento. ï¿½ tambï¿½m o local onde devemos iniciar a busca por informaï¿½ï¿½o sobre como conectar.
+Como abordado, este código conecta os sistemas *Config* e Atributos à origem do rastreamento. É também o local onde devemos iniciar a busca por informação sobre como conectar.
 
 ..
 	You are looking at the same information for the RandomWalk2dMobilityModel; and
 	the information you want is now right there in front of you in the Doxygen:
 
-Vocï¿½ estï¿½ observando a mesma informaï¿½ï¿½o para ``RandomWalk2dMobilityModel``; e a informaï¿½ï¿½o que vocï¿½ precisa estï¿½ explï¿½cita no Doxygen:
+Você está observando a mesma informação para ``RandomWalk2dMobilityModel``; e a informação que você precisa está explícita no Doxygen:
 	
 ::
 
@@ -1076,7 +1076,7 @@ Vocï¿½ estï¿½ observando a mesma informaï¿½ï¿½o para ``RandomWalk2dMobilityModel
 	Object.  Compare the string above with the string we actually used in the 
 	example code:
 
-A documentaï¿½ï¿½o apresenta como obter o Objeto ``RandomWalk2dMobilityModel``. Compare o texto anterior com o texto que nï¿½s usamos no cï¿½digo do exemplo:
+A documentação apresenta como obter o Objeto ``RandomWalk2dMobilityModel``. Compare o texto anterior com o texto que nós usamos no código do exemplo:
 
 ::
 
@@ -1091,8 +1091,8 @@ A documentaï¿½ï¿½o apresenta como obter o Objeto ``RandomWalk2dMobilityModel``. 
 	both of these operations for you.  It turns out that the actual Attribute you are
 	going to be looking for is found in the base class as we have seen.
 
-A diferenï¿½a ï¿½ que hï¿½ duas chamadas ``GetObject`` inclusas no texto da documentaï¿½ï¿½o. A primeira, para ``$ns3::MobilityModel`` solicita a agregaï¿½ï¿½o para a classe base. A segunda, para ``$ns3::RandomWalk2dMobilityModel`` ï¿½ usada como *cast* da classe base para a 
-implementaï¿½ï¿½o concreta da classe.  
+A diferença é que há duas chamadas ``GetObject`` inclusas no texto da documentação. A primeira, para ``$ns3::MobilityModel`` solicita a agregação para a classe base. A segunda, para ``$ns3::RandomWalk2dMobilityModel`` é usada como *cast* da classe base para a 
+implementação concreta da classe.  
 
 .. 
 	Look further down in the ``GetTypeId`` doxygen.  You will find,
@@ -1115,7 +1115,7 @@ Analisando ainda mais o ``GetTypeId`` no Doxygen, temos
 	the base class.  Therefore the additional ``GetObject`` is not required and
 	you simply use the path:
 
-Isto ï¿½ exatamente o que precisamos saber. A origem do rastreamento de interesse ï¿½ encontrada em ``ns3::MobilityModel``.  O interessante ï¿½ que pela documentaï¿½ï¿½o nï¿½o ï¿½ necessï¿½rio o *cast* extra para obter a classe concreta, pois a origem do rastreamento estï¿½ na classe base. Por consequï¿½ncia, o ``GetObject`` adicional nï¿½o ï¿½ necessï¿½rio e podemos usar o caminho:
+Isto é exatamente o que precisamos saber. A origem do rastreamento de interesse é encontrada em ``ns3::MobilityModel``.  O interessante é que pela documentação não é necessário o *cast* extra para obter a classe concreta, pois a origem do rastreamento está na classe base. Por consequência, o ``GetObject`` adicional não é necessário e podemos usar o caminho:
 
 ::
 
@@ -1124,7 +1124,7 @@ Isto ï¿½ exatamente o que precisamos saber. A origem do rastreamento de interess
 .. 
 	which perfectly matches the example path:
 
-que ï¿½ idï¿½ntico ao caminho do exemplo:
+que é idêntico ao caminho do exemplo:
 
 ::
 
@@ -1133,7 +1133,7 @@ que ï¿½ idï¿½ntico ao caminho do exemplo:
 .. 
 	What Return Value and Formal Arguments?
 
-Quais sï¿½o os Argumentos Formais e o Valor de Retorno?
+Quais são os Argumentos Formais e o Valor de Retorno?
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 ..
@@ -1141,7 +1141,7 @@ Quais sï¿½o os Argumentos Formais e o Valor de Retorno?
 	who has already figured it out,  You should always try to copy someone else's
 	working code.  Try something like:
 
-A forma mais simples ï¿½ procurar na base de cï¿½digo do |ns3| por um cï¿½digo existente. Vocï¿½ sempre deveria primeiro copiar um cï¿½digo que funciona antes de escrever seu prï¿½prio. Tente usar os comandos:
+A forma mais simples é procurar na base de código do |ns3| por um código existente. Você sempre deveria primeiro copiar um código que funciona antes de escrever seu próprio. Tente usar os comandos:
 	
 ::
 
@@ -1152,7 +1152,7 @@ A forma mais simples ï¿½ procurar na base de cï¿½digo do |ns3| por um cï¿½digo e
 	case, ``./ns-3-dev/examples/wireless/mixed-wireless.cc`` has something
 	just waiting for you to use.  You will find
 
-e vocï¿½ poderï¿½ encontrar cï¿½digo operacional. Por exemplo, neste caso, ``./ns-3-dev/examples/wireless/mixed-wireless.cc`` tem cï¿½digo para ser reaproveitado.
+e você poderá encontrar código operacional. Por exemplo, neste caso, ``./ns-3-dev/examples/wireless/mixed-wireless.cc`` tem código para ser reaproveitado.
 
 ::
 
@@ -1163,8 +1163,8 @@ e vocï¿½ poderï¿½ encontrar cï¿½digo operacional. Por exemplo, neste caso, ``./n
 	as a result of your grep.  The ``MakeCallback`` should indicate to you that
 	there is a callback function there which you can use.  Sure enough, there is:
 
-como resultado, ``MakeCallback`` indicaria que hï¿½ uma funï¿½ï¿½o *callback* que pode ser usada.
-Para reforï¿½ar:
+como resultado, ``MakeCallback`` indicaria que há uma função *callback* que pode ser usada.
+Para reforçar:
 
 ::
 
@@ -1184,7 +1184,7 @@ Acredite em Minha Palavra
 	If there are no examples to work from, this can be, well, challenging to 
 	actually figure out from the source code.
 
-Se nï¿½o hï¿½ exemplos, pode ser desafiador descobrir por meio da anï¿½lise do cï¿½digo fonte.
+Se não há exemplos, pode ser desafiador descobrir por meio da análise do código fonte.
 
 ..
 	Before embarking on a walkthrough of the code, I'll be kind and just tell you
@@ -1194,7 +1194,7 @@ Se nï¿½o hï¿½ exemplos, pode ser desafiador descobrir por meio da anï¿½lise do c
 	current example, this is in ``mobility-model.h``, where we have previously
 	found:
 
-Antes de aventurar-se no cï¿½digo, diremos algo importante: O valor de retorno de sua *callback* sempre serï¿½ *void*. A lista de parï¿½metros formais para uma ``TracedCallback`` pode ser encontrada no lista de parï¿½metro padrï¿½o na declaraï¿½ï¿½o. Recorde do exemplo atual, isto estï¿½ em ``mobility-model.h``, onde encontramos:
+Antes de aventurar-se no código, diremos algo importante: O valor de retorno de sua *callback* sempre será *void*. A lista de parâmetros formais para uma ``TracedCallback`` pode ser encontrada no lista de parâmetro padrão na declaração. Recorde do exemplo atual, isto está em ``mobility-model.h``, onde encontramos:
 
 ::
 
@@ -1207,7 +1207,7 @@ Antes de aventurar-se no cï¿½digo, diremos algo importante: O valor de retorno d
 	This tells you that you need a function that returns void and takes a
 	a ``Ptr<const MobilityModel>``.  For example,
 
-Nï¿½o hï¿½ uma correspondï¿½ncia de um-para-um entre a lista de parï¿½metro padrï¿½o na declaraï¿½ï¿½o e os argumentos formais da funï¿½ï¿½o *callback*. Aqui, hï¿½ um parï¿½metro padrï¿½o, que ï¿½ um ``Ptr<const MobilityModel>``. Isto significa que precisamos de uma funï¿½ï¿½o que retorna *void* e possui um parï¿½metro ``Ptr<const MobilityModel>``. Por exemplo,
+Não há uma correspondência de um-para-um entre a lista de parâmetro padrão na declaração e os argumentos formais da função *callback*. Aqui, há um parâmetro padrão, que é um ``Ptr<const MobilityModel>``. Isto significa que precisamos de uma função que retorna *void* e possui um parâmetro ``Ptr<const MobilityModel>``. Por exemplo,
 
 ::
 
@@ -1222,7 +1222,7 @@ Nï¿½o hï¿½ uma correspondï¿½ncia de um-para-um entre a lista de parï¿½metro padr
 	you want a context, you need to ``Config::Connect`` and use a Callback 
 	function that takes a string context, then the required argument.
 
-Isto ï¿½ tudo que precisamos para ``Config::ConnectWithoutContext``. Se vocï¿½ quer um contexto, use ``Config::Connect`` e uma funï¿½ï¿½o *callback* que possui como um parï¿½metro uma `string` de contexto, seguido pelo argumento.
+Isto é tudo que precisamos para ``Config::ConnectWithoutContext``. Se você quer um contexto, use ``Config::Connect`` e uma função *callback* que possui como um parâmetro uma `string` de contexto, seguido pelo argumento.
 
 ::
 
@@ -1236,7 +1236,7 @@ Isto ï¿½ tudo que precisamos para ``Config::ConnectWithoutContext``. Se vocï¿½ q
 	If you want to ensure that your ``CourseChangeCallback`` is only visible
 	in your local file, you can add the keyword ``static`` and come up with:
 
-Para garantir que ``CourseChangeCallback`` seja somente visï¿½vel em seu arquivo, vocï¿½ pode adicionar a palavra chave ``static``, como no exemplo:
+Para garantir que ``CourseChangeCallback`` seja somente visível em seu arquivo, você pode adicionar a palavra chave ``static``, como no exemplo:
 
 ::
 
@@ -1249,7 +1249,7 @@ Para garantir que ``CourseChangeCallback`` seja somente visï¿½vel em seu arquivo
 .. 
 	which is exactly what we used in the ``third.cc`` example.
 
-exatamente o que ï¿½ usado no exemplo ``third.cc``.
+exatamente o que é usado no exemplo ``third.cc``.
 
 ..
 	The Hard Way
@@ -1263,7 +1263,7 @@ A Forma Complicada
 	this, you will have a very good handle on a lot of the |ns3| low level
 	idioms.
 
-Esta seï¿½ï¿½o ï¿½ opcional. Pode ser bem penosa para aqueles que conhecem poucos detalhes de tipos parametrizados de dados (*templates*). Entretanto, se continuarmos nessa seï¿½ï¿½o, mergulharemos em detalhes de baixo nï¿½vel do |ns3|.
+Esta seção é opcional. Pode ser bem penosa para aqueles que conhecem poucos detalhes de tipos parametrizados de dados (*templates*). Entretanto, se continuarmos nessa seção, mergulharemos em detalhes de baixo nível do |ns3|.
 
 ..
 	So, again, let's figure out what signature of callback function is required for
@@ -1271,14 +1271,14 @@ Esta seï¿½ï¿½o ï¿½ opcional. Pode ser bem penosa para aqueles que conhecem pouco
 	to do this once.  After you get through this, you will be able to just look at
 	a ``TracedCallback`` and understand it.
 
-Vamos novamente descobrir qual assinatura da funï¿½ï¿½o de *callback* ï¿½ necessï¿½ria para o Atributo "CourseChange". Isto pode ser doloroso, mas precisamos fazï¿½-lo apenas uma vez. Depois de tudo, vocï¿½ serï¿½ capaz de entender um ``TracedCallback``.
+Vamos novamente descobrir qual assinatura da função de *callback* é necessária para o Atributo "CourseChange". Isto pode ser doloroso, mas precisamos fazê-lo apenas uma vez. Depois de tudo, você será capaz de entender um ``TracedCallback``.
 
 ..
 	The first thing we need to look at is the declaration of the trace source.
 	Recall that this is in ``mobility-model.h``, where we have previously
 	found:
 
-Primeiro, verificamos a declaraï¿½ï¿½o da origem do rastreamento. Recorde que isto estï¿½ em ``mobility-model.h``:
+Primeiro, verificamos a declaração da origem do rastreamento. Recorde que isto está em ``mobility-model.h``:
 	
 ::
 
@@ -1290,7 +1290,7 @@ Primeiro, verificamos a declaraï¿½ï¿½o da origem do rastreamento. Recorde que is
 	``TracedCallback<>`` is.  If you have absolutely no idea where this might
 	be found, grep is your friend.	
 
-Esta declaraï¿½ï¿½o ï¿½ para um *template*. O parï¿½metro do *template* estï¿½ entre ``<>``, logo estamos interessados em descobrir o que ï¿½ ``TracedCallback<>``. Se nï¿½o tem nenhuma ideia de onde pode ser encontrado, use o utilitï¿½rio *grep*.
+Esta declaração é para um *template*. O parâmetro do *template* está entre ``<>``, logo estamos interessados em descobrir o que é ``TracedCallback<>``. Se não tem nenhuma ideia de onde pode ser encontrado, use o utilitário *grep*.
 
 ..
 	We are probably going to be interested in some kind of declaration in the 
@@ -1298,7 +1298,7 @@ Esta declaraï¿½ï¿½o ï¿½ para um *template*. O parï¿½metro do *template* estï¿½ e
 	we know this declaration is going to have to be in some kind of header file,
 	so just grep for it using:
 
-Estamos interessados em uma declaraï¿½ï¿½o similar no cï¿½digo fonte do |ns3|, logo buscamos no diretï¿½rio ``src``. Entï¿½o, sabemos que esta declaraï¿½ï¿½o tem um arquivo de cabeï¿½alho, e procuramos por ele usando:
+Estamos interessados em uma declaração similar no código fonte do |ns3|, logo buscamos no diretório ``src``. Então, sabemos que esta declaração tem um arquivo de cabeçalho, e procuramos por ele usando:
 
 ::
 
@@ -1310,7 +1310,7 @@ Estamos interessados em uma declaraï¿½ï¿½o similar no cï¿½digo fonte do |ns3|, l
 	through more and start scanning through it.  On the first page, you will see
 	some very suspiciously template-looking stuff.
 
-Obteremos 124 linhas, com este comando. Analisando a saï¿½da, encontramos alguns *templates* que podem ser ï¿½teis.
+Obteremos 124 linhas, com este comando. Analisando a saída, encontramos alguns *templates* que podem ser úteis.
 
 ::
 
@@ -1334,7 +1334,7 @@ Obteremos 124 linhas, com este comando. Analisando a saï¿½da, encontramos alguns
 	look at ``mobility-model.h`` and see that there is a line which confirms
 	this hunch:
 
-Observamos que todas linhas sï¿½o do arquivo de cabeï¿½alho ``traced-callback.h``, logo ele parece muito promissor. Para confirmar, verifique o arquivo ``mobility-model.h``  e procure uma linha que corrobore esta suspeita.
+Observamos que todas linhas são do arquivo de cabeçalho ``traced-callback.h``, logo ele parece muito promissor. Para confirmar, verifique o arquivo ``mobility-model.h``  e procure uma linha que corrobore esta suspeita.
 
 ::
 
@@ -1346,18 +1346,18 @@ Observamos que todas linhas sï¿½o do arquivo de cabeï¿½alho ``traced-callback.h`
 	include of ``traced-callback.h`` and inferring that this must be the file
 	you want.
 
-Observando as inclusï¿½es em ``mobility-model.h``, verifica-se a inclusï¿½o do ``traced-callback.h`` e conclui-se que este deve ser o arquivo.
+Observando as inclusões em ``mobility-model.h``, verifica-se a inclusão do ``traced-callback.h`` e conclui-se que este deve ser o arquivo.
 
 ..
 	In either case, the next step is to take a look at ``src/core/model/traced-callback.h``
 	in your favorite editor to see what is happening.
 
-O prï¿½ximo passo ï¿½ analisar o arquivo ``src/core/model/traced-callback.h`` e entender sua funcionalidade.
+O próximo passo é analisar o arquivo ``src/core/model/traced-callback.h`` e entender sua funcionalidade.
 
 .. 
 	You will see a comment at the top of the file that should be comforting:
 
-Hï¿½ um comentï¿½rio no topo do arquivo que deveria ser animador:
+Há um comentário no topo do arquivo que deveria ser animador:
 
 ::
 
@@ -1373,7 +1373,7 @@ Isto deveria ser familiar e confirma que estamos no caminho correto.
 .. 
 	Just after this comment, you will find,
 
-Depois deste comentï¿½rio, encontraremos
+Depois deste comentário, encontraremos
 
 ::
 
@@ -1390,7 +1390,7 @@ Depois deste comentï¿½rio, encontraremos
 	type parameters with default values.  Go back and compare this with the 
 	declaration you are trying to understand:
 
-Isto significa que TracedCallback ï¿½ uma classe genï¿½rica (*templated class*). Possui oito possï¿½veis tipos de parï¿½metros com valores padrï¿½es. Retorne e compare com a declaraï¿½ï¿½o que vocï¿½ estï¿½ tentando entender:
+Isto significa que TracedCallback é uma classe genérica (*templated class*). Possui oito possíveis tipos de parâmetros com valores padrões. Retorne e compare com a declaração que você está tentando entender:
 
 ::
 
@@ -1405,7 +1405,7 @@ Isto significa que TracedCallback ï¿½ uma classe genï¿½rica (*templated class*).
 	and ``ConnectWithoutContext`` functions.  If you scroll down, you will see
 	a ``ConnectWithoutContext`` method here:
 
-O ``typename T1`` na declaraï¿½ï¿½o da classe corresponde a ``Ptr<const MobilityModel>`` da declaraï¿½ï¿½o anterior. Todos os outros parï¿½metros sï¿½o padrï¿½es. Observe que o construtor nï¿½o contribui com muita informaï¿½ï¿½o. O ï¿½nico lugar onde hï¿½ uma conexï¿½o entre a funï¿½ï¿½o *callback* e o sistema de rastreamento ï¿½ nas funï¿½ï¿½es ``Connect`` e ``ConnectWithoutContext``. Como mostrado a seguir:
+O ``typename T1`` na declaração da classe corresponde a ``Ptr<const MobilityModel>`` da declaração anterior. Todos os outros parâmetros são padrões. Observe que o construtor não contribui com muita informação. O único lugar onde há uma conexão entre a função *callback* e o sistema de rastreamento é nas funções ``Connect`` e ``ConnectWithoutContext``. Como mostrado a seguir:
 	
 ::
 
@@ -1426,7 +1426,7 @@ O ``typename T1`` na declaraï¿½ï¿½o da classe corresponde a ``Ptr<const Mobility
 	the declaration above, the compiler will replace ``T1`` with 
 	``Ptr<const MobilityModel>``.  
 
-Vocï¿½ estï¿½ no olho do furaï¿½ï¿½o. Quando o *template* ï¿½ instanciado pela declaraï¿½ï¿½o anterior, o compilador substitui ``T1`` por ``Ptr<const MobilityModel>``.
+Você está no olho do furação. Quando o *template* é instanciado pela declaração anterior, o compilador substitui ``T1`` por ``Ptr<const MobilityModel>``.
 
 ::
 
@@ -1447,14 +1447,14 @@ Vocï¿½ estï¿½ no olho do furaï¿½ï¿½o. Quando o *template* ï¿½ instanciado pela d
 	Using the same grep trick as we used to find ``TracedCallback``, you will be
 	able to find that the file ``./core/callback.h`` is the one we need to look at.
 
-Podemos observar a implementaï¿½ï¿½o de tudo que foi explicado atï¿½ este ponto. O cï¿½digo cria uma *callback* do tipo adequado e atribui sua funï¿½ï¿½o para ela. Isto ï¿½ equivalente a ``pfi = MyFunction`` discutida anteriormente. O cï¿½digo entï¿½o adiciona a *callback* para a lista de *callbacks* para esta origem. O que nï¿½o observamos ainda ï¿½ a definiï¿½ï¿½o da *callback*. Usando o utilitï¿½rio *grep* podemos encontrar o arquivo ``./core/callback.h`` e verificar a definiï¿½ï¿½o.
+Podemos observar a implementação de tudo que foi explicado até este ponto. O código cria uma *callback* do tipo adequado e atribui sua função para ela. Isto é equivalente a ``pfi = MyFunction`` discutida anteriormente. O código então adiciona a *callback* para a lista de *callbacks* para esta origem. O que não observamos ainda é a definição da *callback*. Usando o utilitário *grep* podemos encontrar o arquivo ``./core/callback.h`` e verificar a definição.
 
 ..
 	If you look down through the file, you will see a lot of probably almost
 	incomprehensible template code.  You will eventually come to some Doxygen for
 	the Callback template class, though.  Fortunately, there is some English:
 
-No arquivo hï¿½ muito cï¿½digo incompreensï¿½vel. Felizmente hï¿½ algum em Inglï¿½s. 
+No arquivo há muito código incompreensível. Felizmente há algum em Inglês. 
 
 ::
 
@@ -1476,7 +1476,7 @@ No arquivo hï¿½ muito cï¿½digo incompreensï¿½vel. Felizmente hï¿½ algum em Inglï
 .. 
 	We are trying to figure out what the
 
-Nï¿½s estamos tentando descobrir o que significa a declaraï¿½ï¿½o 
+Nós estamos tentando descobrir o que significa a declaração 
 
 ::
 
@@ -1488,14 +1488,14 @@ Nï¿½s estamos tentando descobrir o que significa a declaraï¿½ï¿½o
 	Callback.  The second (non-optional) parameter, ``Ptr<const MobilityModel>``
 	represents the first argument to the callback.
 
-Agora entendemos que o primeiro parï¿½metro, ``void``, indica o tipo de retorno da *callback*. O segundo parï¿½metro, ``Ptr<const MobilityModel>`` representa o primeiro argumento da *callback*.
+Agora entendemos que o primeiro parâmetro, ``void``, indica o tipo de retorno da *callback*. O segundo parâmetro, ``Ptr<const MobilityModel>`` representa o primeiro argumento da *callback*.
 
 ..
 	The Callback in question is your function to receive the trace events.  From
 	this you can infer that you need a function that returns ``void`` and takes
 	a ``Ptr<const MobilityModel>``.  For example,
 
-A *callback* em questï¿½o ï¿½ a sua funï¿½ï¿½o que recebe os eventos de rastreamento. Logo, podemos deduzir que precisamos de uma funï¿½ï¿½o que retorna ``void`` e possui um parï¿½metro ``Ptr<const MobilityModel>``. Por exemplo,
+A *callback* em questão é a sua função que recebe os eventos de rastreamento. Logo, podemos deduzir que precisamos de uma função que retorna ``void`` e possui um parâmetro ``Ptr<const MobilityModel>``. Por exemplo,
 
 ::
 
@@ -1511,7 +1511,7 @@ A *callback* em questï¿½o ï¿½ a sua funï¿½ï¿½o que recebe os eventos de rastream
 	function that takes a string context.  This is because the ``Connect``
 	function will provide the context for you.  You'll need:
 
-Isto ï¿½ tudo que precisamos no ``Config::ConnectWithoutContext``. Se vocï¿½ quer um contexto, use ``Config::Connect`` e uma funï¿½ï¿½o *callback* que possui como um parï¿½metro uma `string` de contexto, seguido pelo argumento.
+Isto é tudo que precisamos no ``Config::ConnectWithoutContext``. Se você quer um contexto, use ``Config::Connect`` e uma função *callback* que possui como um parâmetro uma `string` de contexto, seguido pelo argumento.
 
 ::
 
@@ -1525,8 +1525,8 @@ Isto ï¿½ tudo que precisamos no ``Config::ConnectWithoutContext``. Se vocï¿½ que
 	If you want to ensure that your ``CourseChangeCallback`` is only visible
 	in your local file, you can add the keyword ``static`` and come up with:
 
-Se queremos garantir que ``CourseChangeCallback`` ï¿½ visï¿½vel somente 
-em seu arquivo, vocï¿½ pode adicionar a palavra chave ``static``, como no exemplo:
+Se queremos garantir que ``CourseChangeCallback`` é visível somente 
+em seu arquivo, você pode adicionar a palavra chave ``static``, como no exemplo:
 
 ::
 
@@ -1540,7 +1540,7 @@ em seu arquivo, vocï¿½ pode adicionar a palavra chave ``static``, como no exempl
 	which is exactly what we used in the ``third.cc`` example.  Perhaps you
 	should now go back and reread the previous section (Take My Word for It).
 
-o que ï¿½ exatamente usado no exemplo ``third.cc``. Talvez seja interessante reler a seï¿½ï¿½o (Acredite em Minha Palavra).
+o que é exatamente usado no exemplo ``third.cc``. Talvez seja interessante reler a seção (Acredite em Minha Palavra).
 
 ..
 	If you are interested in more details regarding the implementation of 
@@ -1548,7 +1548,7 @@ o que ï¿½ exatamente usado no exemplo ``third.cc``. Talvez seja interessante rel
 	of the most frequently used constructs in the low-level parts of |ns3|.
 	It is, in my opinion, a quite elegant thing.
 
-Hï¿½ mais detalhes sobre a implementaï¿½ï¿½o de *callbacks* no manual do |ns3|. Elas estï¿½o entre os mais usados construtores das partes de baixo-nï¿½vel do |ns3|. Em minha opiniï¿½o, algo bastante elegante.
+Há mais detalhes sobre a implementação de *callbacks* no manual do |ns3|. Elas estão entre os mais usados construtores das partes de baixo-nível do |ns3|. Em minha opinião, algo bastante elegante.
 
 .. 
 	What About TracedValue?
@@ -1564,7 +1564,7 @@ E quanto a TracedValue?
 	will just point you at the correct file, ``src/core/model/traced-value.h`` and
 	to the important piece of code:
 
-No inï¿½cio desta seï¿½ï¿½o, nï¿½s apresentamos uma parte de cï¿½digo simples que usou um ``TracedValue<int32_t>`` para demonstrar o bï¿½sico sobre cï¿½digo de rastreamento. Nï¿½s desprezamos os mï¿½todos para encontrar o tipo de retorno e os argumentos formais para o ``TracedValue``. Acelerando o processo, indicamos o arquivo ``src/core/model/traced-value.h`` e a parte relevante do cï¿½digo:
+No início desta seção, nós apresentamos uma parte de código simples que usou um ``TracedValue<int32_t>`` para demonstrar o básico sobre código de rastreamento. Nós desprezamos os métodos para encontrar o tipo de retorno e os argumentos formais para o ``TracedValue``. Acelerando o processo, indicamos o arquivo ``src/core/model/traced-value.h`` e a parte relevante do código:
 
 ::
 
@@ -1596,14 +1596,14 @@ No inï¿½cio desta seï¿½ï¿½o, nï¿½s apresentamos uma parte de cï¿½digo simples qu
 	the first being the current value of the ``TracedValue``; and the second 
 	being the new value being set.
 
-Verificamos que ``TracedValue`` ï¿½ uma classe parametrizada. No caso simples do inï¿½cio da seï¿½ï¿½o, o nome do tipo ï¿½ int32_t. Isto significa que  a variï¿½vel membro sendo rastreada (``m_v`` na seï¿½ï¿½o privada da classe) serï¿½ ``int32_t m_v``. O mï¿½todo ``Set`` possui um argumento ``const int32_t &v``. Vocï¿½ deveria ser capaz de entender que o cï¿½digo ``Set`` disparï¿½ o *callback* ``m_cb`` com dois parï¿½metros: o primeiro sendo o valor atual do ``TracedValue``; e o segundo sendo o novo valor.
+Verificamos que ``TracedValue`` é uma classe parametrizada. No caso simples do início da seção, o nome do tipo é int32_t. Isto significa que  a variável membro sendo rastreada (``m_v`` na seção privada da classe) será ``int32_t m_v``. O método ``Set`` possui um argumento ``const int32_t &v``. Você deveria ser capaz de entender que o código ``Set`` dispará o *callback* ``m_cb`` com dois parâmetros: o primeiro sendo o valor atual do ``TracedValue``; e o segundo sendo o novo valor.
 
 ..
 	The callback, ``m_cb`` is declared as a ``TracedCallback<T, T>`` which
 	will correspond to a ``TracedCallback<int32_t, int32_t>`` when the class is 
 	instantiated.
 
-A *callback* ``m_cb`` ï¿½ declarada como um ``TracedCallback<T, T>`` que corresponderï¿½ a um ``TracedCallback<int32_t, int32_t>`` quando a classe ï¿½ instanciada.
+A *callback* ``m_cb`` é declarada como um ``TracedCallback<T, T>`` que corresponderá a um ``TracedCallback<int32_t, int32_t>`` quando a classe é instanciada.
 
 ..
 	Recall that the callback target of a TracedCallback always returns ``void``.  
@@ -1612,7 +1612,7 @@ A *callback* ``m_cb`` ï¿½ declarada como um ``TracedCallback<T, T>`` que corresp
 	function.  Therefore the callback will need to have a function signature that 
 	looks like:
 
-Lembre-se que o destino da *callback* de um TracedCallback sempre retorna ``void``. Lembre tambï¿½m que hï¿½ uma correspondï¿½ncia de um-para-um entre a lista de parï¿½metros polimï¿½rfica e os argumentos formais da funï¿½ï¿½o *callback*. Logo, a *callback* precisa ter uma assinatura de funï¿½ï¿½o similar a:
+Lembre-se que o destino da *callback* de um TracedCallback sempre retorna ``void``. Lembre também que há uma correspondência de um-para-um entre a lista de parâmetros polimórfica e os argumentos formais da função *callback*. Logo, a *callback* precisa ter uma assinatura de função similar a:
 
 ::
 
@@ -1626,7 +1626,7 @@ Lembre-se que o destino da *callback* de um TracedCallback sempre retorna ``void
 	It probably won't surprise you that this is exactly what we provided in that 
 	simple example we covered so long ago:
 
-Isto ï¿½ exatamente o que nï¿½s apresentamos no exemplo simples abordado anteriormente.
+Isto é exatamente o que nós apresentamos no exemplo simples abordado anteriormente.
 
 ::
 
@@ -1651,12 +1651,12 @@ Um Exemplo Real
 	transmitted."  Let's just recreate the cwnd part of that plot in |ns3|
 	using the tracing system and ``gnuplot``.
 
-Vamos fazer um exemplo retirado do livro "TCP/IP Illustrated, Volume 1: The Protocols" escrito por W. Richard Stevens. Localizei na pï¿½gina 366 do livro um grï¿½fico da janela de congestionamento e nï¿½meros de sequï¿½ncia versus tempo. Stevens denomina de "Figure 21.10. Value of cwnd and send sequence number while data is being transmitted." Vamos recriar a parte *cwnd* daquele grï¿½fico em |ns3| usando o sistema de rastreamento e ``gnuplot``.
+Vamos fazer um exemplo retirado do livro "TCP/IP Illustrated, Volume 1: The Protocols" escrito por W. Richard Stevens. Localizei na página 366 do livro um gráfico da janela de congestionamento e números de sequência versus tempo. Stevens denomina de "Figure 21.10. Value of cwnd and send sequence number while data is being transmitted." Vamos recriar a parte *cwnd* daquele gráfico em |ns3| usando o sistema de rastreamento e ``gnuplot``.
 
 .. 
 	Are There Trace Sources Available?
 
-Hï¿½ Fontes de Rastreamento Disponibilizadas?
+Há Fontes de Rastreamento Disponibilizadas?
 +++++++++++++++++++++++++++++++++++++++++++
 
 ..
@@ -1666,7 +1666,7 @@ Hï¿½ Fontes de Rastreamento Disponibilizadas?
 	in the |ns3| Doxygen in the "C++ Constructs Used by All Modules" Module section.  If you scroll
 	through the list, you will eventually find:
 
-Primeiro devemos pensar sobre como queremos obter os dados de saï¿½da. O que ï¿½ que  nï¿½s precisamos rastrear? Consultamos entï¿½o *"The list of all trace sources"* para sabermos o que temos para trabalhar. Essa seï¿½ï¿½o encontra-se na documentaï¿½ï¿½o na seï¿½ï¿½o *"Module"*, no item *"C++ Constructs Used by All Modules"*. Procurando na lista, encontraremos:
+Primeiro devemos pensar sobre como queremos obter os dados de saída. O que é que  nós precisamos rastrear? Consultamos então *"The list of all trace sources"* para sabermos o que temos para trabalhar. Essa seção encontra-se na documentação na seção *"Module"*, no item *"C++ Constructs Used by All Modules"*. Procurando na lista, encontraremos:
 
 ::
 
@@ -1679,7 +1679,7 @@ Primeiro devemos pensar sobre como queremos obter os dados de saï¿½da. O que ï¿½
 	variants are in files such as ``src/internet/model/tcp-newreno.cc``.  
 	If you don't know this a priori, you can use the recursive grep trick:
 
-A maior parte da implementaï¿½ï¿½o do TCP no |ns3| estï¿½ no arquivo ``src/internet/model/tcp-socket-base.cc`` enquanto variantes do controle de congestionamento estï¿½o em arquivos como ``src/internet/model/tcp-newreno.cc``. Se nï¿½o sabe a priori dessa informaï¿½ï¿½o, use:
+A maior parte da implementação do TCP no |ns3| está no arquivo ``src/internet/model/tcp-socket-base.cc`` enquanto variantes do controle de congestionamento estão em arquivos como ``src/internet/model/tcp-newreno.cc``. Se não sabe a priori dessa informação, use:
 
 ::
 
@@ -1688,13 +1688,13 @@ A maior parte da implementaï¿½ï¿½o do TCP no |ns3| estï¿½ no arquivo ``src/inter
 .. 
 	You will find page after page of instances of tcp pointing you to that file. 
 
-Haverï¿½ pï¿½ginas de respostas apontando para aquele arquivo.
+Haverá páginas de respostas apontando para aquele arquivo.
 
 ..
 	If you open ``src/internet/model/tcp-newreno.cc`` in your favorite 
 	editor, you will see right up at the top of the file, the following declarations:
 
-No inï¿½cio do arquivo ``src/internet/model/tcp-newreno.cc`` hï¿½ as seguintes declaraï¿½ï¿½es:
+No início do arquivo ``src/internet/model/tcp-newreno.cc`` há as seguintes declarações:
 
 ::
 
@@ -1716,7 +1716,7 @@ No inï¿½cio do arquivo ``src/internet/model/tcp-newreno.cc`` hï¿½ as seguintes d
 	file ``src/internet/model/tcp-newreno.h``.  If you open this file in your
 	favorite editor, you will find:
 
-Isto deveria guiï¿½-lo para localizar a declaraï¿½ï¿½o de ``m_cWnd`` no arquivo de cabeï¿½alho ``src/internet/model/tcp-newreno.h``. Temos nesse arquivo:
+Isto deveria guiá-lo para localizar a declaração de ``m_cWnd`` no arquivo de cabeçalho ``src/internet/model/tcp-newreno.h``. Temos nesse arquivo:
 
 ::
 
@@ -1729,14 +1729,14 @@ Isto deveria guiï¿½-lo para localizar a declaraï¿½ï¿½o de ``m_cWnd`` no arquivo 
 	trace source that we saw in the simple example at the start of this section,
 	except that we are talking about ``uint32_t`` instead of ``int32_t``.
 
-Vocï¿½ deveria entender este cï¿½digo. Se nï¿½s temos um ponteiro para ``TcpNewReno``, podemos fazer ``TraceConnect`` para a origem do rastreamento "CongestionWindow" se fornecermos uma *callback* adequada. ï¿½ o mesmo tipo de origem do rastreamento que nï¿½s abordamos no exemplo simples no inï¿½cio da seï¿½ï¿½o, exceto que estamos usando ``uint32_t`` ao invï¿½s de ``int32_t``.
+Você deveria entender este código. Se nós temos um ponteiro para ``TcpNewReno``, podemos fazer ``TraceConnect`` para a origem do rastreamento "CongestionWindow" se fornecermos uma *callback* adequada. É o mesmo tipo de origem do rastreamento que nós abordamos no exemplo simples no início da seção, exceto que estamos usando ``uint32_t`` ao invés de ``int32_t``.
 
 ..
 	We now know that we need to provide a callback that returns void and takes 
 	two ``uint32_t`` parameters, the first being the old value and the second 
 	being the new value:
 
-Precisamos prover uma *callback* que retorne ``void`` e receba dois parï¿½metros ``uint32_t``, o primeiro representando o valor antigo e o segundo o novo valor:
+Precisamos prover uma *callback* que retorne ``void`` e receba dois parâmetros ``uint32_t``, o primeiro representando o valor antigo e o segundo o novo valor:
 
 ::
 
@@ -1749,7 +1749,7 @@ Precisamos prover uma *callback* que retorne ``void`` e receba dois parï¿½metros
 .. 
 	What Script to Use?
 
-Qual cï¿½digo Usar?
+Qual código Usar?
 +++++++++++++++++
 
 ..
@@ -1758,7 +1758,7 @@ Qual cï¿½digo Usar?
 	is to find some code that already hooks the "CongestionWindow" trace source
 	and see if we can modify it.  As usual, grep is your friend:
 
-ï¿½ sempre melhor localizar e modificar um cï¿½digo operacional que iniciar do zero. Portanto, vamos procurar uma origem do rastreamento da "CongestionWindow" e verificar se ï¿½ possï¿½vel modificar. Para tal, usamos novamente o *grep*:
+É sempre melhor localizar e modificar um código operacional que iniciar do zero. Portanto, vamos procurar uma origem do rastreamento da "CongestionWindow" e verificar se é possível modificar. Para tal, usamos novamente o *grep*:
 
 ::
 
@@ -1779,7 +1779,7 @@ Encontramos alguns candidatos:
 	very good bet.  Open ``src/test/ns3tcp/ns3tcp-cwnd-test-suite.cc`` in your
 	favorite editor and search for "CongestionWindow".  You will find,
 
-Nï¿½s nï¿½o visitamos nenhum cï¿½digo de teste ainda, entï¿½o vamos fazer isto agora. Cï¿½digo de teste ï¿½ pequeno, logo ï¿½ uma ï¿½tima escolha. Acesse o arquivo ``src/test/ns3tcp/ns3tcp-cwnd-test-suite.cc`` e localize "CongestionWindow". Como resultado, temos
+Nós não visitamos nenhum código de teste ainda, então vamos fazer isto agora. Código de teste é pequeno, logo é uma ótima escolha. Acesse o arquivo ``src/test/ns3tcp/ns3tcp-cwnd-test-suite.cc`` e localize "CongestionWindow". Como resultado, temos
 
 ::
 
@@ -1800,13 +1800,13 @@ Nï¿½s nï¿½o visitamos nenhum cï¿½digo de teste ainda, entï¿½o vamos fazer isto a
 	porting this test back to a native |ns3| script --
 	``examples/tutorial/fifth.cc``.  
 
-Como abordado, temos uma origem do rastreamento  "CongestionWindow"; entï¿½o ela aponta para ``TcpNewReno``, poderï¿½amos alterar o ``TraceConnect`` para o que nï¿½s desejamos. Vamos extrair o cï¿½digo que precisamos desta funï¿½ï¿½o (``Ns3TcpCwndTestCase1::DoRun (void)``). Se vocï¿½ observar, perceberï¿½ que parece como um cï¿½digo |ns3|. E descobre-se exatamente que realmente ï¿½ um cï¿½digo. ï¿½ um cï¿½digo executado pelo `framework` de teste, logo podemos apenas colocï¿½-lo no ``main`` ao invï¿½s de ``DoRun``.  A traduï¿½ï¿½o deste teste para um cï¿½digo nativo do |ns3| ï¿½ apresentada no arquivo ``examples/tutorial/fifth.cc``.
+Como abordado, temos uma origem do rastreamento  "CongestionWindow"; então ela aponta para ``TcpNewReno``, poderíamos alterar o ``TraceConnect`` para o que nós desejamos. Vamos extrair o código que precisamos desta função (``Ns3TcpCwndTestCase1::DoRun (void)``). Se você observar, perceberá que parece como um código |ns3|. E descobre-se exatamente que realmente é um código. É um código executado pelo `framework` de teste, logo podemos apenas colocá-lo no ``main`` ao invés de ``DoRun``.  A tradução deste teste para um código nativo do |ns3| é apresentada no arquivo ``examples/tutorial/fifth.cc``.
 
 
 .. 
 	A Common Problem and Solution
 
-Um Problema Comum e a Soluï¿½ï¿½o
+Um Problema Comum e a Solução
 +++++++++++++++++++++++++++++
 
 ..
@@ -1817,7 +1817,7 @@ Um Problema Comum e a Soluï¿½ï¿½o
 	to call it.  Although this may seem obvious when stated this way, it does
 	trip up many people trying to use the system for the first time.
 
-O exemplo ``fifth.cc`` demonstra um importante regra que devemos entender antes de usar qualquer tipo de  Atributo: devemos garantir que o alvo de um comando ``Config`` existe antes de tentar usï¿½-lo. ï¿½ a mesma ideia que um objeto nï¿½o pode ser usado sem ser primeiro instanciado. Embora pareï¿½a ï¿½bvio, muitas pessoas erram ao usar o sistema pela primeira vez.
+O exemplo ``fifth.cc`` demonstra um importante regra que devemos entender antes de usar qualquer tipo de  Atributo: devemos garantir que o alvo de um comando ``Config`` existe antes de tentar usá-lo. É a mesma ideia que um objeto não pode ser usado sem ser primeiro instanciado. Embora pareça óbvio, muitas pessoas erram ao usar o sistema pela primeira vez.
 
 ..
 	Let's return to basics for a moment.  There are three basic time periods that
@@ -1832,7 +1832,7 @@ O exemplo ``fifth.cc`` demonstra um importante regra que devemos entender antes 
 	called "Teardown Time," which is when the structures and objects created 
 	during setup and taken apart and released.
 
-Hï¿½ trï¿½s fases bï¿½sicas em qualquer cï¿½digo |ns3|. A primeira ï¿½ a chamada de "Configuration Time" ou "Setup Time" e ocorre durante a execuï¿½ï¿½o da funï¿½ï¿½o ``main``, mas antes da chamada ``Simulator::Run``. O segunda fase ï¿½ chamada de "Simulation Time" e ï¿½ quando o ``Simulator::Run`` estï¿½ executando seus eventos. Apï¿½s completar a execuï¿½ï¿½o da simulaï¿½ï¿½o, ``Simulator::Run`` devolve o controle a funï¿½ï¿½o ``main``. Quando isto acontece, o cï¿½digo entra na terceira fase, o "Teardown Time", que  ï¿½ quando estruturas e objetos criados durante a configuraï¿½ï¿½o sï¿½o analisados e liberados.
+Há três fases básicas em qualquer código |ns3|. A primeira é a chamada de "Configuration Time" ou "Setup Time" e ocorre durante a execução da função ``main``, mas antes da chamada ``Simulator::Run``. O segunda fase é chamada de "Simulation Time" e é quando o ``Simulator::Run`` está executando seus eventos. Após completar a execução da simulação, ``Simulator::Run`` devolve o controle a função ``main``. Quando isto acontece, o código entra na terceira fase, o "Teardown Time", que  é quando estruturas e objetos criados durante a configuração são analisados e liberados.
 
 ..
 	Perhaps the most common mistake made in trying to use the tracing system is 
@@ -1854,15 +1854,15 @@ Hï¿½ trï¿½s fases bï¿½sicas em qualquer cï¿½digo |ns3|. A primeira ï¿½ a chamada
 	the ``MyApp`` ``Application``, the entire purpose of which is to take 
 	a ``Socket`` as a parameter.  
 
-Talvez o erro mais comum em tentar usar o sistema de rastreamento ï¿½ supor que entidades construï¿½das dinamicamente durante a fase de simulaï¿½ï¿½o estï¿½o acessï¿½veis durante  a fase de configuraï¿½ï¿½o. Em particular, um ``Socket`` |ns3| ï¿½ um objeto dinï¿½mico frequentemente criado por Aplicaï¿½ï¿½es (``Applications``) para comunicaï¿½ï¿½o entre nï¿½s de redes.  Uma Aplicaï¿½ï¿½o |ns3| tem um "Start Time" e "Stop Time" associado a ela. Na maioria dos casos, uma Aplicaï¿½ï¿½o nï¿½o tentar criar um objeto dinï¿½mico atï¿½ que seu mï¿½todo ``StartApplication`` ï¿½ chamado
-em algum "Start Time". Isto ï¿½ para garantir que a simulaï¿½ï¿½o estï¿½ completamente configurada antes que a aplicaï¿½ï¿½o tente fazer alguma coisa (o que aconteceria se tentasse conectar a um nï¿½ que nï¿½o existisse durante a fase de configuraï¿½ï¿½o). A resposta para esta questï¿½o ï¿½:
+Talvez o erro mais comum em tentar usar o sistema de rastreamento é supor que entidades construídas dinamicamente durante a fase de simulação estão acessíveis durante  a fase de configuração. Em particular, um ``Socket`` |ns3| é um objeto dinâmico frequentemente criado por Aplicações (``Applications``) para comunicação entre nós de redes.  Uma Aplicação |ns3| tem um "Start Time" e "Stop Time" associado a ela. Na maioria dos casos, uma Aplicação não tentar criar um objeto dinâmico até que seu método ``StartApplication`` é chamado
+em algum "Start Time". Isto é para garantir que a simulação está completamente configurada antes que a aplicação tente fazer alguma coisa (o que aconteceria se tentasse conectar a um nó que não existisse durante a fase de configuração). A resposta para esta questão é:
 	
-1. criar um evento no simulador que ï¿½ executado depois que o objeto dinï¿½mico 
-   ï¿½ criado e ativar o rastreador quando aquele evento ï¿½ executado; ou 
-2. criar o objeto dinï¿½mico na fase de configuraï¿½ï¿½o, ativï¿½-lo,
-   e passar o objeto para o sistema usar durante a fase de simulaï¿½ï¿½o. 
+1. criar um evento no simulador que é executado depois que o objeto dinâmico 
+   é criado e ativar o rastreador quando aquele evento é executado; ou 
+2. criar o objeto dinâmico na fase de configuração, ativá-lo,
+   e passar o objeto para o sistema usar durante a fase de simulação. 
 
-Nï¿½s consideramos a segunda abordagem no exemplo ``fifth.cc``. A decisï¿½o implicou na criaï¿½ï¿½o da Aplicaï¿½ï¿½o ``MyApp``, com o propï¿½sito de passar um ``Socket`` como parï¿½metro.
+Nós consideramos a segunda abordagem no exemplo ``fifth.cc``. A decisão implicou na criação da Aplicação ``MyApp``, com o propósito de passar um ``Socket`` como parâmetro.
 
 .. 
 	A fifth.cc Walkthrough
@@ -1876,7 +1876,7 @@ Analisando o exemplo fifth.cc
 	favorite editor.  You should see some familiar looking code:
 
 Agora, vamos analisar o programa exemplo detalhando o teste da janela de congestionamento.
-Segue o cï¿½digo do arquivo localizado em ``examples/tutorial/fifth.cc``:
+Segue o código do arquivo localizado em ``examples/tutorial/fifth.cc``:
 
 ::
 
@@ -1912,8 +1912,8 @@ Segue o cï¿½digo do arquivo localizado em ``examples/tutorial/fifth.cc``:
 	the network illustration and a comment addressing the problem described above
 	with ``Socket``.
 
-Todo o cï¿½digo apresentado jï¿½ foi discutido. As prï¿½ximas linhas sï¿½o comentï¿½rios apresentando
-a estrutura da rede e comentï¿½rios abordando o problema descrito com o ``Socket``.
+Todo o código apresentado já foi discutido. As próximas linhas são comentários apresentando
+a estrutura da rede e comentários abordando o problema descrito com o ``Socket``.
 
 ::
 
@@ -1959,7 +1959,7 @@ a estrutura da rede e comentï¿½rios abordando o problema descrito com o ``Socket
 	The next part is the declaration of the ``MyApp`` ``Application`` that
 	we put together to allow the ``Socket`` to be created at configuration time.
 
-A prï¿½xima parte ï¿½ a declaraï¿½ï¿½o da Aplicaï¿½ï¿½o ``MyApp`` que permite que o ``Socket`` seja criado na fase de configuraï¿½ï¿½o.
+A próxima parte é a declaração da Aplicação ``MyApp`` que permite que o ``Socket`` seja criado na fase de configuração.
 
 ::
 
@@ -1998,12 +1998,12 @@ A prï¿½xima parte ï¿½ a declaraï¿½ï¿½o da Aplicaï¿½ï¿½o ``MyApp`` que permite qu
 	automatically called when ``MyApp`` is required to start and stop sending
 	data during the simulation.
 
-A classe ``MyApp`` herda a classe ``Application`` do |ns3|. Acesse  o arquivo ``src/network/model/application.h`` se estiver interessado sobre detalhes dessa heranï¿½a. A classe ``MyApp`` ï¿½ obrigada sobrescrever os mï¿½todos ``StartApplication`` e ``StopApplication``. Estes mï¿½todos sï¿½o automaticamente chamado quando ``MyApp`` ï¿½ solicitada iniciar e parar de enviar dados durante a simulaï¿½ï¿½o.
+A classe ``MyApp`` herda a classe ``Application`` do |ns3|. Acesse  o arquivo ``src/network/model/application.h`` se estiver interessado sobre detalhes dessa herança. A classe ``MyApp`` é obrigada sobrescrever os métodos ``StartApplication`` e ``StopApplication``. Estes métodos são automaticamente chamado quando ``MyApp`` é solicitada iniciar e parar de enviar dados durante a simulação.
 
 .. 
 	How Applications are Started and Stopped (optional)
 
-Como Aplicaï¿½ï¿½es sï¿½o Iniciadas e Paradas (Opcional)
+Como Aplicações são Iniciadas e Paradas (Opcional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ..
@@ -2015,14 +2015,14 @@ Como Aplicaï¿½ï¿½es sï¿½o Iniciadas e Paradas (Opcional)
 	planning on implementing new models, you probably want to understand this
 	section.
 
-Nesta seï¿½ï¿½o ï¿½ explicado como eventos tem inï¿½cio no sistema. ï¿½ uma explicaï¿½ï¿½o mais detalhada e nï¿½o ï¿½ necessï¿½ria se nï¿½o planeja entender detalhes do sistema. ï¿½ interessante, por outro lado, pois aborda como partes do |ns3| trabalham e mostra alguns detalhes de implementaï¿½ï¿½o importantes. Se vocï¿½ planeja implementar novos modelos, entï¿½o deve entender essa seï¿½ï¿½o.
+Nesta seção é explicado como eventos tem início no sistema. É uma explicação mais detalhada e não é necessária se não planeja entender detalhes do sistema. É interessante, por outro lado, pois aborda como partes do |ns3| trabalham e mostra alguns detalhes de implementação importantes. Se você planeja implementar novos modelos, então deve entender essa seção.
 
 ..
 	The most common way to start pumping events is to start an ``Application``.
 	This is done as the result of the following (hopefully) familar lines of an 
 	|ns3| script:
 
-A maneira mais comum de iniciar eventos ï¿½ iniciar uma Aplicaï¿½ï¿½o. Segue as linhas de um cï¿½digo |ns3| que faz exatamente isso:
+A maneira mais comum de iniciar eventos é iniciar uma Aplicação. Segue as linhas de um código |ns3| que faz exatamente isso:
 
 ::
 
@@ -2034,7 +2034,7 @@ A maneira mais comum de iniciar eventos ï¿½ iniciar uma Aplicaï¿½ï¿½o. Segue as 
 	The application container code (see ``src/network/helper/application-container.h`` if
 	you are interested) loops through its contained applications and calls,
 
-O cï¿½digo do contï¿½iner aplicaï¿½ï¿½o (``src/network/helper/application-container.h``) itera pelas aplicaï¿½ï¿½es no contï¿½iner e chama,
+O código do contêiner aplicação (``src/network/helper/application-container.h``) itera pelas aplicações no contêiner e chama,
 
 ::
 
@@ -2066,7 +2066,7 @@ como um resultado da chamada  ``apps.Stop``.
 	``MyApp::SendPacket``.  ``MyApp::StopApplication`` stops generating
 	packets by cancelling any pending send events and closing the socket.
 
-O ï¿½ltimo resultado destas chamadas queremos ter o simulador executando chamadas em nossa ``Applications`` para controlar o inicio e a parada. No caso ``MyApp``, herda da classe ``Application`` e sobrescreve ``StartApplication`` e ``StopApplication``. Estas sï¿½o as funï¿½ï¿½es invocadas pelo simulador no momento certo. No caso de ``MyApp``, o ``MyApp::StartApplication`` faz o ``Bind`` e ``Connect`` no `socket`, em seguida, inicia o fluxo de dados chamando ``MyApp::SendPacket``. ``MyApp::StopApplication`` interrompe a geraï¿½ï¿½o de pacotes cancelando qualquer evento pendente de envio e tambï¿½m fechando o socket.
+O último resultado destas chamadas queremos ter o simulador executando chamadas em nossa ``Applications`` para controlar o inicio e a parada. No caso ``MyApp``, herda da classe ``Application`` e sobrescreve ``StartApplication`` e ``StopApplication``. Estas são as funções invocadas pelo simulador no momento certo. No caso de ``MyApp``, o ``MyApp::StartApplication`` faz o ``Bind`` e ``Connect`` no `socket`, em seguida, inicia o fluxo de dados chamando ``MyApp::SendPacket``. ``MyApp::StopApplication`` interrompe a geração de pacotes cancelando qualquer evento pendente de envio e também fechando o socket.
 
 ..
 	One of the nice things about |ns3| is that you can completely 
@@ -2074,7 +2074,7 @@ O ï¿½ltimo resultado destas chamadas queremos ter o simulador executando chamada
 	"automagically" called by the simulator at the correct time.  But since
 	we have already ventured deep into |ns3| already, let's go for it.
 
-Uma das coisas legais sobre o |ns3| ï¿½ que podemos ignorar completamente os detalhes de implementaï¿½ï¿½o de como sua Aplicaï¿½ï¿½o ï¿½ "automaticamente" chamada pelo simulador no momento correto. De qualquer forma, detalhamos como isso acontece a seguir.
+Uma das coisas legais sobre o |ns3| é que podemos ignorar completamente os detalhes de implementação de como sua Aplicação é "automaticamente" chamada pelo simulador no momento correto. De qualquer forma, detalhamos como isso acontece a seguir.
 
 ..
 	If you look at ``src/network/model/application.cc`` you will find that the
@@ -2084,14 +2084,14 @@ Uma das coisas legais sobre o |ns3| ï¿½ que podemos ignorar completamente os det
 	end.
 
 Se observarmos em ``src/network/model/application.cc``, descobriremos que o 
-mï¿½todo ``SetStartTime`` de uma ``Application`` apenas altera a variï¿½vel ``m_startTime`` e o mï¿½todo ``SetStopTime`` apenas altera a variï¿½vel ``m_stopTime``.  
+método ``SetStartTime`` de uma ``Application`` apenas altera a variável ``m_startTime`` e o método ``SetStopTime`` apenas altera a variável ``m_stopTime``.  
 
 ..
 	The key to picking up the trail again is to know that there is a global 
 	list of all of the nodes in the system.  Whenever you create a node in 
 	a simulation, a pointer to that node is added to the global ``NodeList``.
 
-Para continuar e entender o processo, precisamos saber que hï¿½ uma lista global de todos os nï¿½s no sistema. Sempre que vocï¿½ cria um nï¿½ em uma simulaï¿½ï¿½o, um ponteiro para aquele nï¿½ ï¿½ adicionado para a lista global ``NodeList``.
+Para continuar e entender o processo, precisamos saber que há uma lista global de todos os nós no sistema. Sempre que você cria um nó em uma simulação, um ponteiro para aquele nó é adicionado para a lista global ``NodeList``.
 
 ..
 	Take a look at ``src/network/model/node-list.cc`` and search for 
@@ -2100,7 +2100,7 @@ Para continuar e entender o processo, precisamos saber que hï¿½ uma lista global
 	idom in |ns3|.  So, take a look at ``NodeListPriv::Add``.  There
 	you will find,
 
-Observe em ``src/network/model/node-list.cc`` e procure por ``NodeList::Add``. A implementaï¿½ï¿½o ``public static`` chama uma implementaï¿½ï¿½o privada denominada ``NodeListPriv::Add``. Isto ï¿½ comum no |ns3|. Entï¿½o, observe ``NodeListPriv::Add`` e encontrarï¿½,
+Observe em ``src/network/model/node-list.cc`` e procure por ``NodeList::Add``. A implementação ``public static`` chama uma implementação privada denominada ``NodeListPriv::Add``. Isto é comum no |ns3|. Então, observe ``NodeListPriv::Add`` e encontrará,
 
 ::
 
@@ -2115,7 +2115,7 @@ Observe em ``src/network/model/node-list.cc`` e procure por ``NodeList::Add``. A
 	the simulation has started, not a call for action telling the ``Node``
 	to start doing something.
 
-Isto significa que sempre que um ``Node`` ï¿½ criado em uma simulaï¿½ï¿½o, como uma implicaï¿½ï¿½o, uma chamada para o mï¿½todo ``Start`` do nï¿½ ï¿½ agendada para que ocorra no tempo zero. Isto nï¿½o significa que o nï¿½ vai iniciar fazendo alguma coisa, pode ser interpretado como uma chamada informacional no ``Node`` dizendo a ele que a simulaï¿½ï¿½o teve inï¿½cio, nï¿½o uma chamada para aï¿½ï¿½o dizendo ao ``Node`` iniciar alguma coisa.
+Isto significa que sempre que um ``Node`` é criado em uma simulação, como uma implicação, uma chamada para o método ``Start`` do nó é agendada para que ocorra no tempo zero. Isto não significa que o nó vai iniciar fazendo alguma coisa, pode ser interpretado como uma chamada informacional no ``Node`` dizendo a ele que a simulação teve início, não uma chamada para ação dizendo ao ``Node`` iniciar alguma coisa.
 
 ..
 	So, ``NodeList::Add`` indirectly schedules a call to ``Node::Start``
@@ -2126,7 +2126,7 @@ Isto significa que sempre que um ``Node`` ï¿½ criado em uma simulaï¿½ï¿½o, como 
 	the simulation starts, and objects of class ``Node`` are just one kind
 	of those objects.
 
-Entï¿½o, o ``NodeList::Add`` indiretamente agenda uma chamada para ``Node::Start`` no tempo zero, para informar ao novo nï¿½ que a simulaï¿½ï¿½o foi iniciada. Se olharmos em ``src/network/model/node.h`` nï¿½o acharemos um mï¿½todo chamado ``Node::Start``. Acontece que o mï¿½todo ``Start`` ï¿½ herdado da classe ``Object``. Todos objetos no sistema podem ser avisados que a simulaï¿½ï¿½o iniciou e objetos da classe ``Node`` sï¿½o exemplos.
+Então, o ``NodeList::Add`` indiretamente agenda uma chamada para ``Node::Start`` no tempo zero, para informar ao novo nó que a simulação foi iniciada. Se olharmos em ``src/network/model/node.h`` não acharemos um método chamado ``Node::Start``. Acontece que o método ``Start`` é herdado da classe ``Object``. Todos objetos no sistema podem ser avisados que a simulação iniciou e objetos da classe ``Node`` são exemplos.
 
 ..
 	Take a look at ``src/core/model/object.cc`` next and search for ``Object::Start``.
@@ -2140,8 +2140,8 @@ Entï¿½o, o ``NodeList::Add`` indiretamente agenda uma chamada para ``Node::Start
 	something like ``MethodName`` for the public API and ``DoMethodName`` for
 	the private API.
 
-Observe em seguida ``src/core/model/object.cc``. Localize por ``Object::Start``. Este cï¿½digo nï¿½o ï¿½ tï¿½o simples como vocï¿½ esperava desde que ``Objects`` |ns3| suportam agregaï¿½ï¿½o. O cï¿½digo em ``Object::Start`` entï¿½o percorre todos os objetos que estï¿½o agregados e chama o mï¿½todo ``DoStart`` de cada um. Este ï¿½ uma outra prï¿½tica muito comum em |ns3|. Hï¿½ um mï¿½todo pï¿½blica na API, que permanece constante entre implementaï¿½ï¿½es, que chama um mï¿½todo de implementaï¿½ï¿½o privada que ï¿½ herdado e implementado por subclasses. Os nomes sï¿½o tipicamente
-algo como ``MethodName`` para os da API pï¿½blica e ``DoMethodName`` para os da API privada.
+Observe em seguida ``src/core/model/object.cc``. Localize por ``Object::Start``. Este código não é tão simples como você esperava desde que ``Objects`` |ns3| suportam agregação. O código em ``Object::Start`` então percorre todos os objetos que estão agregados e chama o método ``DoStart`` de cada um. Este é uma outra prática muito comum em |ns3|. Há um método pública na API, que permanece constante entre implementações, que chama um método de implementação privada que é herdado e implementado por subclasses. Os nomes são tipicamente
+algo como ``MethodName`` para os da API pública e ``DoMethodName`` para os da API privada.
 
 ..
 	This tells us that we should look for a ``Node::DoStart`` method in 
@@ -2150,7 +2150,7 @@ algo como ``MethodName`` para os da API pï¿½blica e ``DoMethodName`` para os da 
 	in the node and then all of the applications in the node calling 
 	``device->Start`` and ``application->Start`` respectively.
 
-Logo, deverï¿½amos procurar por um mï¿½todo ``Node::DoStart`` em  ``src/network/model/node.cc``. Ao localizar o mï¿½todo, descobrirï¿½ um mï¿½todo que percorre todos os dispositivos e aplicaï¿½ï¿½es no nï¿½ chamando respectivamente ``device->Start`` e ``application->Start``.
+Logo, deveríamos procurar por um método ``Node::DoStart`` em  ``src/network/model/node.cc``. Ao localizar o método, descobrirá um método que percorre todos os dispositivos e aplicações no nó chamando respectivamente ``device->Start`` e ``application->Start``.
 
 ..
 	You may already know that classes ``Device`` and ``Application`` both
@@ -2158,7 +2158,7 @@ Logo, deverï¿½amos procurar por um mï¿½todo ``Node::DoStart`` em  ``src/network/
 	what happens when ``Application::DoStart`` is called.  Take a look at
 	``src/network/model/application.cc`` and you will find:
 
-As classes ``Device`` e ``Application`` herdam da classe ``Object``, entï¿½o o prï¿½ximo passo ï¿½ entender o que acontece quando ``Application::DoStart`` ï¿½ executado. Observe o cï¿½digo em ``src/network/model/application.cc``:
+As classes ``Device`` e ``Application`` herdam da classe ``Object``, então o próximo passo é entender o que acontece quando ``Application::DoStart`` é executado. Observe o código em ``src/network/model/application.cc``:
 
 ::
 
@@ -2195,27 +2195,27 @@ As classes ``Device`` e ``Application`` herdam da classe ``Object``, entï¿½o o p
 	These calls are designed to start and stop the flow of data from the 
 	``Application``
 
-Aqui finalizamos nosso detalhamento. Ao implementar uma Aplicaï¿½ï¿½o do |ns3|, sua nova aplicaï¿½ï¿½o herda da classe ``Application``. Vocï¿½ sobrescreve os mï¿½todos ``StartApplication`` e ``StopApplication`` e provï¿½ mecanismos para iniciar e finalizar o fluxo de dados de sua nova ``Application``. Quando um ``Node`` ï¿½ criado na simulaï¿½ï¿½o, ele ï¿½ adicionado a uma lista global ``NodeList``. A aï¿½ï¿½o de adicionar um nï¿½ na lista faz com que um evento do simulador seja agendado para o tempo zero e que chama o mï¿½todo ``Node::Start`` do ``Node`` recentemente adicionado para ser chamado quando a simulaï¿½ï¿½o inicia. Como um ``Node`` herda de ``Object``,
-a chamada invoca o mï¿½todo ``Object::Start`` no ``Node``, o qual, por sua vez, chama os mï¿½todos ``DoStart`` em todos os ``Objects`` agregados ao ``Node`` (pense em modelos mï¿½veis).  Como o ``Node`` ``Object`` 
-tem sobrescritos ``DoStart``, o mï¿½todo ï¿½ chamado quando a simulaï¿½ï¿½o inicia. O mï¿½todo ``Node::DoStart`` chama o mï¿½todo ``Start`` de todas as ``Applications`` no nï¿½. Por sua vez, ``Applications`` sï¿½o tambï¿½m ``Objects``, o que resulta na invocaï¿½ï¿½o do ``Application::DoStart``.  Quando ``Application::DoStart`` ï¿½ chamada, ela agenda eventos para as chamadas ``StartApplication`` e ``StopApplication`` na ``Application``. Estas chamadas sï¿½o projetadas para iniciar e parar o fluxo de dados da ``Application``.
+Aqui finalizamos nosso detalhamento. Ao implementar uma Aplicação do |ns3|, sua nova aplicação herda da classe ``Application``. Você sobrescreve os métodos ``StartApplication`` e ``StopApplication`` e provê mecanismos para iniciar e finalizar o fluxo de dados de sua nova ``Application``. Quando um ``Node`` é criado na simulação, ele é adicionado a uma lista global ``NodeList``. A ação de adicionar um nó na lista faz com que um evento do simulador seja agendado para o tempo zero e que chama o método ``Node::Start`` do ``Node`` recentemente adicionado para ser chamado quando a simulação inicia. Como um ``Node`` herda de ``Object``,
+a chamada invoca o método ``Object::Start`` no ``Node``, o qual, por sua vez, chama os métodos ``DoStart`` em todos os ``Objects`` agregados ao ``Node`` (pense em modelos móveis).  Como o ``Node`` ``Object`` 
+tem sobrescritos ``DoStart``, o método é chamado quando a simulação inicia. O método ``Node::DoStart`` chama o método ``Start`` de todas as ``Applications`` no nó. Por sua vez, ``Applications`` são também ``Objects``, o que resulta na invocação do ``Application::DoStart``.  Quando ``Application::DoStart`` é chamada, ela agenda eventos para as chamadas ``StartApplication`` e ``StopApplication`` na ``Application``. Estas chamadas são projetadas para iniciar e parar o fluxo de dados da ``Application``.
 
 ..
 	This has been another fairly long journey, but it only has to be made once, and
 	you now understand another very deep piece of |ns3|.
 
-Apï¿½s essa longa jornada, vocï¿½ pode entende melhor outra parte do |ns3|.
+Após essa longa jornada, você pode entende melhor outra parte do |ns3|.
 
 ..
 	The MyApp Application
 
-A Aplicaï¿½ï¿½o MyApp
+A Aplicação MyApp
 ~~~~~~~~~~~~~~~~~
 
 ..
 	The ``MyApp`` ``Application`` needs a constructor and a destructor,
 	of course:
 
-A Aplicaï¿½ï¿½o ``MyApp`` precisa de um construtor e um destrutor,
+A Aplicação ``MyApp`` precisa de um construtor e um destrutor,
 
 ::
 
@@ -2240,7 +2240,7 @@ A Aplicaï¿½ï¿½o ``MyApp`` precisa de um construtor e um destrutor,
 	The existence of the next bit of code is the whole reason why we wrote this
 	``Application`` in the first place.
 
-O cï¿½digo seguinte ï¿½ a principal razï¿½o da existï¿½ncia desta Aplicaï¿½ï¿½o.
+O código seguinte é a principal razão da existência desta Aplicação.
 
 ::
 
@@ -2264,7 +2264,7 @@ O cï¿½digo seguinte ï¿½ a principal razï¿½o da existï¿½ncia desta Aplicaï¿½ï¿½o.
 	its "CongestionWindow" trace source before passing it to the ``Setup``
 	method.
 
-Neste cï¿½digo inicializamos os atributos da classe. Do ponto de vista do rastreamento, a mais importante ï¿½ ``Ptr<Socket> socket`` que deve ser passado para a aplicaï¿½ï¿½o durante o fase de configuraï¿½ï¿½o. Lembre-se que vamos criar o ``Socket`` como um ``TcpSocket`` (que ï¿½ implementado por ``TcpNewReno``) e associar sua origem do rastreamento de sua *"CongestionWindow"* antes de passï¿½-lo no mï¿½todo ``Setup``.
+Neste código inicializamos os atributos da classe. Do ponto de vista do rastreamento, a mais importante é ``Ptr<Socket> socket`` que deve ser passado para a aplicação durante o fase de configuração. Lembre-se que vamos criar o ``Socket`` como um ``TcpSocket`` (que é implementado por ``TcpNewReno``) e associar sua origem do rastreamento de sua *"CongestionWindow"* antes de passá-lo no método ``Setup``.
 
 ::
 
@@ -2290,7 +2290,7 @@ Neste cï¿½digo inicializamos os atributos da classe. Do ponto de vista do rastre
 	functioning network to complete.  After the ``Connect``, the ``Application`` 
 	then starts creating simulation events by calling ``SendPacket``.
 
-Este cï¿½digo sobrescreve ``Application::StartApplication`` que serï¿½ chamado automaticamente pelo simulador para iniciar a  ``Application`` no momento certo. Observamos que ï¿½ realizada uma operaï¿½ï¿½o ``Socket`` ``Bind``. Se vocï¿½ conhece Sockets de Berkeley isto nï¿½o ï¿½ uma novidade. ï¿½ responsï¿½vel pelo conexï¿½o no lado do cliente, ou seja, o ``Connect`` estabelece uma  conexï¿½o usando TCP no endereï¿½o ``m_peer``. Por isso, precisamos de uma infraestrutura funcional de rede antes de executar a fase de simulaï¿½ï¿½o. Depois do ``Connect``, a ``Application`` inicia a criaï¿½ï¿½o dos eventos de simulaï¿½ï¿½o chamando ``SendPacket``.
+Este código sobrescreve ``Application::StartApplication`` que será chamado automaticamente pelo simulador para iniciar a  ``Application`` no momento certo. Observamos que é realizada uma operação ``Socket`` ``Bind``. Se você conhece Sockets de Berkeley isto não é uma novidade. É responsável pelo conexão no lado do cliente, ou seja, o ``Connect`` estabelece uma  conexão usando TCP no endereço ``m_peer``. Por isso, precisamos de uma infraestrutura funcional de rede antes de executar a fase de simulação. Depois do ``Connect``, a ``Application`` inicia a criação dos eventos de simulação chamando ``SendPacket``.
 
 ::
 
@@ -2320,15 +2320,15 @@ Este cï¿½digo sobrescreve ``Application::StartApplication`` que serï¿½ chamado a
 	quiet the ``Application`` we ``Close`` the socket which tears down the TCP 
 	connection.
 
-A todo instante um evento da simulaï¿½ï¿½o ï¿½ agendado, isto ï¿½, um ``Event`` ï¿½ criado. Se o ``Event`` ï¿½ uma execuï¿½ï¿½o pendente ou estï¿½ executando, seu mï¿½todo ``IsRunning`` retornarï¿½ ``true``. Neste cï¿½digo, se ``IsRunning()`` retorna verdadeiro (`true`), nï¿½s cancelamos (``Cancel``) o evento, e por consequï¿½ncia, ï¿½ removido da fila de eventos do simulador. Dessa forma, interrompemos a cadeia de eventos que a 
-``Application`` estï¿½ usando para enviar seus ``Packets``. A Aplicaï¿½ï¿½o nï¿½o enviarï¿½ mais pacotes e em seguida fechamos (``Close``) o `socket` encerrando a conexï¿½o TCP.
+A todo instante um evento da simulação é agendado, isto é, um ``Event`` é criado. Se o ``Event`` é uma execução pendente ou está executando, seu método ``IsRunning`` retornará ``true``. Neste código, se ``IsRunning()`` retorna verdadeiro (`true`), nós cancelamos (``Cancel``) o evento, e por consequência, é removido da fila de eventos do simulador. Dessa forma, interrompemos a cadeia de eventos que a 
+``Application`` está usando para enviar seus ``Packets``. A Aplicação não enviará mais pacotes e em seguida fechamos (``Close``) o `socket` encerrando a conexão TCP.
 
 ..
 	The socket is actually deleted in the destructor when the ``m_socket = 0`` is
 	executed.  This removes the last reference to the underlying Ptr<Socket> which 
 	causes the destructor of that Object to be called.
 
-O socket ï¿½ deletado no destrutor quando ``m_socket = 0`` ï¿½ executado. Isto remove a ï¿½ltima referï¿½ncia para Ptr<Socket>  que ocasiona o destrutor daquele Objeto ser chamado.
+O socket é deletado no destrutor quando ``m_socket = 0`` é executado. Isto remove a última referência para Ptr<Socket>  que ocasiona o destrutor daquele Objeto ser chamado.
 
 ..
 	Recall that ``StartApplication`` called ``SendPacket`` to start the 
@@ -2355,7 +2355,7 @@ Lembre-se que ``StartApplication`` chamou ``SendPacket`` para iniciar a cadeia d
 	and then does a ``Send`` which, if you know Berkeley Sockets, is probably 
 	just what you expected to see.
 
-Este cï¿½digo apenas cria um pacote (``Packet``) e entï¿½o envia (``Send``).
+Este código apenas cria um pacote (``Packet``) e então envia (``Send``).
 
 ..
 	It is the responsibility of the ``Application`` to keep scheduling the 
@@ -2363,7 +2363,7 @@ Este cï¿½digo apenas cria um pacote (``Packet``) e entï¿½o envia (``Send``).
 	transmit event (a ``SendPacket``) until the ``Application`` decides it
 	has sent enough.
 
-ï¿½ responsabilidade da ``Application`` gerenciar o agendamento da cadeia de eventos, entï¿½o, a chamada ``ScheduleTx`` agenda outro evento de transmissï¿½o (um ``SendPacket``) atï¿½ que a ``Application`` decida que enviou o suficiente.
+É responsabilidade da ``Application`` gerenciar o agendamento da cadeia de eventos, então, a chamada ``ScheduleTx`` agenda outro evento de transmissão (um ``SendPacket``) até que a ``Application`` decida que enviou o suficiente.
 
 ::
 
@@ -2388,7 +2388,7 @@ Este cï¿½digo apenas cria um pacote (``Packet``) e entï¿½o envia (``Send``).
 	transport the data.  If you set the data rate of an ``Application`` to the same
 	data rate as your underlying ``Channel`` you will eventually get a buffer overflow.
 
-Enquanto a ``Application`` estï¿½ executando, ``ScheduleTx`` agendarï¿½ um novo evento, que chama ``SendPacket`` novamente. Verifica-se que a taxa de transmissï¿½o ï¿½ sempre a mesma, ou seja, ï¿½ a taxa que a ``Application`` produz os bits. Nï¿½o considera nenhuma sobrecarga de protocolos ou canais fï¿½sicos no transporte dos dados. Se alterarmos a taxa de transmissï¿½o da ``Application`` para a mesma taxa dos canais fï¿½sicos,  poderemos
+Enquanto a ``Application`` está executando, ``ScheduleTx`` agendará um novo evento, que chama ``SendPacket`` novamente. Verifica-se que a taxa de transmissão é sempre a mesma, ou seja, é a taxa que a ``Application`` produz os bits. Não considera nenhuma sobrecarga de protocolos ou canais físicos no transporte dos dados. Se alterarmos a taxa de transmissão da ``Application`` para a mesma taxa dos canais físicos,  poderemos
 ter um estouro de *buffer*.
 
 .. 
@@ -2402,7 +2402,7 @@ Destino do Rastreamento
 	congestion window has been updated.  The next piece of code implements the 
 	corresponding trace sink:
 
-O foco deste exercï¿½cio ï¿½ obter notificaï¿½ï¿½es (*callbacks*) do TCP indicando a modificaï¿½ï¿½o da janela de congestionamento. O cï¿½digo a seguir implementa o destino do rastreamento.
+O foco deste exercício é obter notificações (*callbacks*) do TCP indicando a modificação da janela de congestionamento. O código a seguir implementa o destino do rastreamento.
 
 ::
 
@@ -2419,13 +2419,13 @@ O foco deste exercï¿½cio ï¿½ obter notificaï¿½ï¿½es (*callbacks*) do TCP indican
 	could load the resulting output into a graphics program (gnuplot or Excel) and
 	immediately see a nice graph of the congestion window behavior over time.
 
-Esta funï¿½ï¿½o registra o tempo de simulaï¿½ï¿½o atual e o novo valor da janela de congestionamento toda vez que ï¿½ modificada. Poderï¿½amos usar essa saï¿½da para construir um grï¿½fico  do comportamento da janela de congestionamento com relaï¿½ï¿½o ao tempo.
+Esta função registra o tempo de simulação atual e o novo valor da janela de congestionamento toda vez que é modificada. Poderíamos usar essa saída para construir um gráfico  do comportamento da janela de congestionamento com relação ao tempo.
 
 ..
 	We added a new trace sink to show where packets are dropped.  We are going to 
 	add an error model to this code also, so we wanted to demonstrate this working.
 
-Nï¿½s adicionamos um novo destino do rastreamento para mostrar onde pacotes sï¿½o perdidos. Vamos adicionar um modelo de erro.
+Nós adicionamos um novo destino do rastreamento para mostrar onde pacotes são perdidos. Vamos adicionar um modelo de erro.
 
 ::
 
@@ -2447,7 +2447,7 @@ Nï¿½s adicionamos um novo destino do rastreamento para mostrar onde pacotes sï¿½
 	callback target should be a function that returns void and takes a single
 	parameter which is a ``Ptr<const Packet>`` -- just what we have above.
 
-Este destino do rastreamento serï¿½ conectado a origem do rastreamento "PhyRxDrop" do ``NetDevice`` ponto-a-ponto. Esta origem do rastreamento dispara quando um pacote ï¿½ removido da camada fï¿½sica de um ``NetDevice``. Se olharmos rapidamente ``src/point-to-point/model/point-to-point-net-device.cc`` verificamos que a origem do rastreamento refere-se a ``PointToPointNetDevice::m_phyRxDropTrace``. E se procurarmos em ``src/point-to-point/model/point-to-point-net-device.h`` por essa variï¿½vel, encontraremos que ela estï¿½ declarada como uma ``TracedCallback<Ptr<const Packet> >``. Isto significa que nosso *callback* deve ser uma funï¿½ï¿½o que retorna ``void`` e tem um ï¿½nico parï¿½metro ``Ptr<const Packet>``.
+Este destino do rastreamento será conectado a origem do rastreamento "PhyRxDrop" do ``NetDevice`` ponto-a-ponto. Esta origem do rastreamento dispara quando um pacote é removido da camada física de um ``NetDevice``. Se olharmos rapidamente ``src/point-to-point/model/point-to-point-net-device.cc`` verificamos que a origem do rastreamento refere-se a ``PointToPointNetDevice::m_phyRxDropTrace``. E se procurarmos em ``src/point-to-point/model/point-to-point-net-device.h`` por essa variável, encontraremos que ela está declarada como uma ``TracedCallback<Ptr<const Packet> >``. Isto significa que nosso *callback* deve ser uma função que retorna ``void`` e tem um único parâmetro ``Ptr<const Packet>``.
 
 
 .. 
@@ -2459,7 +2459,7 @@ O Programa Principal
 .. 
 	The following code should be very familiar to you by now:
 
-O cï¿½digo a seguir corresponde ao inï¿½cio da funï¿½ï¿½o principal:
+O código a seguir corresponde ao início da função principal:
 
 ::
 
@@ -2480,8 +2480,8 @@ O cï¿½digo a seguir corresponde ao inï¿½cio da funï¿½ï¿½o principal:
 	This creates two nodes with a point-to-point channel between them, just as
 	shown in the illustration at the start of the file.
 
-Sï¿½o criados dois nï¿½s ligados por um canal ponto-a-ponto, como mostrado na ilustraï¿½ï¿½o
-no inï¿½cio do arquivo.
+São criados dois nós ligados por um canal ponto-a-ponto, como mostrado na ilustração
+no início do arquivo.
 
 ..
 	The next few lines of code show something new.  If we trace a connection that
@@ -2491,15 +2491,15 @@ no inï¿½cio do arquivo.
 	interesting behaviors of the congestion window.
 
 
-Nas prï¿½ximas linhas, temos um cï¿½digo com algumas informaï¿½ï¿½es novas. Se nï¿½s 
+Nas próximas linhas, temos um código com algumas informações novas. Se nós 
 
-rastrearmos uma conexï¿½o que comporta-se perfeitamente, terminamos com um
+rastrearmos uma conexão que comporta-se perfeitamente, terminamos com um
 
 janela de congestionamento que aumenta monoliticamente. Para observarmos um
 
-comportamento interessante, introduzimos erros que causarï¿½o perda de pacotes,
+comportamento interessante, introduzimos erros que causarão perda de pacotes,
 
-duplicaï¿½ï¿½o de ACK's e assim, introduz comportamentos mais interessantes a
+duplicação de ACK's e assim, introduz comportamentos mais interessantes a
 
 janela de congestionamento.
 
@@ -2510,7 +2510,7 @@ janela de congestionamento.
 	to introduce errors into a ``Channel`` at a given *rate*. 
 
 
-O |ns3| provï¿½ objetos de um modelo de erros (``ErrorModel``) que pode ser adicionado aos canais (``Channels``). Nï¿½s usamos o ``RateErrorModel`` que permite introduzir erros no canal dada uma *taxa*.
+O |ns3| provê objetos de um modelo de erros (``ErrorModel``) que pode ser adicionado aos canais (``Channels``). Nós usamos o ``RateErrorModel`` que permite introduzir erros no canal dada uma *taxa*.
 
 ::
 
@@ -2530,7 +2530,7 @@ O |ns3| provï¿½ objetos de um modelo de erros (``ErrorModel``) que pode ser adic
 	model used by the point-to-point ``NetDevice``.  This will give us some
 	retransmissions and make our plot a little more interesting.
 
-O cï¿½digo instancia um objeto ``RateErrorModel``. Para simplificar usamos a funï¿½ï¿½o ``CreateObjectWithAttributes`` que instancia e configura os Atributos. O Atributo "RanVar" foi configurado para uma variï¿½vel randï¿½mica que gera uma distribuiï¿½ï¿½o uniforme entre 0 e 1. O Atributo "ErrorRate" tambï¿½m foi alterado. Por fim, configuramos o modelo erro no ``NetDevice`` ponto-a-ponto modificando o atributo "ReceiveErrorModel".  Isto causarï¿½ retransmissï¿½es e o grï¿½fico ficarï¿½ mais interessante.
+O código instancia um objeto ``RateErrorModel``. Para simplificar usamos a função ``CreateObjectWithAttributes`` que instancia e configura os Atributos. O Atributo "RanVar" foi configurado para uma variável randômica que gera uma distribuição uniforme entre 0 e 1. O Atributo "ErrorRate" também foi alterado. Por fim, configuramos o modelo erro no ``NetDevice`` ponto-a-ponto modificando o atributo "ReceiveErrorModel".  Isto causará retransmissões e o gráfico ficará mais interessante.
 
 ::
 
@@ -2546,14 +2546,14 @@ O cï¿½digo instancia um objeto ``RateErrorModel``. Para simplificar usamos a fun
 	nodes and creates interfaces and assigns IP addresses for the point-to-point
 	devices.
 
-Neste cï¿½digo configura a pilha de protocolos da internet nos dois nï¿½s de rede, cria interfaces e associa endereï¿½os IP para os dispositivos ponto-a-ponto.
+Neste código configura a pilha de protocolos da internet nos dois nós de rede, cria interfaces e associa endereços IP para os dispositivos ponto-a-ponto.
 
 ..
 	Since we are using TCP, we need something on the destination node to receive
 	TCP connections and data.  The ``PacketSink`` ``Application`` is commonly
 	used in |ns3| for that purpose.
 
-Como estamos usando TCP, precisamos de um nï¿½ de destino para receber as conexï¿½es e os dados.  O ``PacketSink`` ``Application``  ï¿½ comumente usado no |ns3| para este propï¿½sito.
+Como estamos usando TCP, precisamos de um nó de destino para receber as conexões e os dados.  O ``PacketSink`` ``Application``  é comumente usado no |ns3| para este propósito.
 
 ::
 
@@ -2568,7 +2568,7 @@ Como estamos usando TCP, precisamos de um nï¿½ de destino para receber as conexï
 .. 
 	This should all be familiar, with the exception of,
 
-Este cï¿½digo deveria ser familiar, com exceï¿½ï¿½o de,
+Este código deveria ser familiar, com exceção de,
 
 ::
 
@@ -2585,19 +2585,19 @@ Este cï¿½digo deveria ser familiar, com exceï¿½ï¿½o de,
 	can then be used, in turn, to create instances of the Objects created by the 
 	factory.
 
-Este cï¿½digo instancia um ``PacketSinkHelper`` e cria sockets usando a classe ``ns3::TcpSocketFactory``. Esta classe implementa o padrï¿½o de projeto "fï¿½brica de objetos". Dessa forma, em vez de criar os objetos diretamente, fornecemos ao ``PacketSinkHelper`` um texto que especifica um ``TypeId`` usado para criar
-um objeto que, por sua vez, pode ser usado para criar instï¿½ncias de Objetos criados pela implementaï¿½ï¿½o da fï¿½brica de objetos.
+Este código instancia um ``PacketSinkHelper`` e cria sockets usando a classe ``ns3::TcpSocketFactory``. Esta classe implementa o padrão de projeto "fábrica de objetos". Dessa forma, em vez de criar os objetos diretamente, fornecemos ao ``PacketSinkHelper`` um texto que especifica um ``TypeId`` usado para criar
+um objeto que, por sua vez, pode ser usado para criar instâncias de Objetos criados pela implementação da fábrica de objetos.
 
 ..
 	The remaining parameter tells the ``Application`` which address and port it
 	should ``Bind`` to.
 
-O parï¿½metro seguinte especifica o endereï¿½o e a porta para o mapeamento.
+O parâmetro seguinte especifica o endereço e a porta para o mapeamento.
 
 .. 
 	The next two lines of code will create the socket and connect the trace source.
 
-As prï¿½ximas duas linhas do cï¿½digo criam o `socket` e conectam a origem do rastreamento.
+As próximas duas linhas do código criam o `socket` e conectam a origem do rastreamento.
 
 ::
 
@@ -2613,14 +2613,14 @@ As prï¿½ximas duas linhas do cï¿½digo criam o `socket` e conectam a origem do ra
 	``PacketSinkHelper`` call above, and uses an explicit C++ type instead of 
 	one referred to by a string.  Otherwise, it is conceptually the same thing.
 
-A primeira declaraï¿½ï¿½o chama a funï¿½ï¿½o estï¿½tica ``Socket::CreateSocket`` e passa um ``Node`` e um ``TypeId`` para o objeto fï¿½brica usado para criar o `socket`. 
+A primeira declaração chama a função estática ``Socket::CreateSocket`` e passa um ``Node`` e um ``TypeId`` para o objeto fábrica usado para criar o `socket`. 
 
 ..
 	Once the ``TcpSocket`` is created and attached to the ``Node``, we can
 	use ``TraceConnectWithoutContext`` to connect the CongestionWindow trace 
 	source to our trace sink.
 
-Uma vez que o ``TcpSocket`` ï¿½ criado e adicionado ao ``Node``, nï¿½s usamos ``TraceConnectWithoutContext`` para conectar a origem do rastreamento "CongestionWindow" para o nosso destino do rastreamento.
+Uma vez que o ``TcpSocket`` é criado e adicionado ao ``Node``, nós usamos ``TraceConnectWithoutContext`` para conectar a origem do rastreamento "CongestionWindow" para o nosso destino do rastreamento.
 
 ..
 	Recall that we coded an ``Application`` so we could take that ``Socket``
@@ -2629,7 +2629,7 @@ Uma vez que o ``TcpSocket`` ï¿½ criado e adicionado ao ``Node``, nï¿½s usamos ``
 	create a helper to manage the ``Application`` so we are going to have to 
 	create and install it "manually".  This is actually quite easy:
 
-Codificamos uma ``Application`` entï¿½o podemos obter um ``Socket`` (durante a fase de configuraï¿½ï¿½o) e usar na fase de simulaï¿½ï¿½o. Temos agora que instanciar a ``Application``. Para tal, segue os passos:
+Codificamos uma ``Application`` então podemos obter um ``Socket`` (durante a fase de configuração) e usar na fase de simulação. Temos agora que instanciar a ``Application``. Para tal, segue os passos:
 
 ::
 
@@ -2646,19 +2646,19 @@ Codificamos uma ``Application`` entï¿½o podemos obter um ``Socket`` (durante a f
 	at each send event, how many send events to generate and the rate at which
 	to produce data from those events.
 
-A primeira linha cria um Objeto do tipo ``MyApp`` -- nossa ``Application``. A segunda linha especifica o `socket`, o endereï¿½o de conexï¿½o, a quantidade de dados a ser enviada em cada evento, a quantidade de eventos de transmissï¿½o a ser gerados e a taxa de produï¿½ï¿½o de dados para estes eventos.
+A primeira linha cria um Objeto do tipo ``MyApp`` -- nossa ``Application``. A segunda linha especifica o `socket`, o endereço de conexão, a quantidade de dados a ser enviada em cada evento, a quantidade de eventos de transmissão a ser gerados e a taxa de produção de dados para estes eventos.
 
 	Next, we manually add the ``MyApp Application`` to the source node
 	and explicitly call the ``Start`` and ``Stop`` methods on the 
 	``Application`` to tell it when to start and stop doing its thing.
 
-Depois, adicionamos a ``MyApp Application`` para o nï¿½ origem e chamamos os mï¿½todos ``Start`` e ``Stop`` para dizer quando e iniciar e parar a simulaï¿½ï¿½o.
+Depois, adicionamos a ``MyApp Application`` para o nó origem e chamamos os métodos ``Start`` e ``Stop`` para dizer quando e iniciar e parar a simulação.
 
 ..
 	We need to actually do the connect from the receiver point-to-point ``NetDevice``
 	to our callback now.
 
-Precisamos agora fazer a conexï¿½o entre o receptor com nossa *callback*.
+Precisamos agora fazer a conexão entre o receptor com nossa *callback*.
 
 ::
 
@@ -2669,13 +2669,13 @@ Precisamos agora fazer a conexï¿½o entre o receptor com nossa *callback*.
 	``Node NetDevice`` from its container and connecting the trace source defined
 	by the attribute "PhyRxDrop" on that device to the trace sink ``RxDrop``.
 
-Estamos obtendo uma referï¿½ncia para o ``Node NetDevice`` receptor e conectando a origem do rastreamento pelo Atributo "PhyRxDrop" do dispositivo no destino do rastreamento ``RxDrop``.
+Estamos obtendo uma referência para o ``Node NetDevice`` receptor e conectando a origem do rastreamento pelo Atributo "PhyRxDrop" do dispositivo no destino do rastreamento ``RxDrop``.
 
 ..
 	Finally, we tell the simulator to override any ``Applications`` and just
 	stop processing events at 20 seconds into the simulation.
 
-Finalmente, dizemos ao simulador para sobrescrever qualquer ``Applications`` e parar o processamento de eventos em 20 segundos na simulaï¿½ï¿½o.
+Finalmente, dizemos ao simulador para sobrescrever qualquer ``Applications`` e parar o processamento de eventos em 20 segundos na simulação.
 
 ::
 
@@ -2692,14 +2692,14 @@ Finalmente, dizemos ao simulador para sobrescrever qualquer ``Applications`` e p
 	creating the ``Application`` and teaching it how to connect and send
 	data actually happens during this function call.
 
-Lembre-se que quando ``Simulator::Run`` ï¿½ chamado, a fase de configuraï¿½ï¿½o termina e a fase de simulaï¿½ï¿½o inicia. Todo o processo descrito anteriormente ocorre durante a chamada dessa funï¿½ï¿½o.
+Lembre-se que quando ``Simulator::Run`` é chamado, a fase de configuração termina e a fase de simulação inicia. Todo o processo descrito anteriormente ocorre durante a chamada dessa função.
 
 ..
 	As soon as ``Simulator::Run`` returns, the simulation is complete and
 	we enter the teardown phase.  In this case, ``Simulator::Destroy`` takes
 	care of the gory details and we just return a success code after it completes.
 
-Apï¿½s o retorno do ``Simulator::Run``, a simulaï¿½ï¿½o ï¿½ terminada e entramos na fase de finalizaï¿½ï¿½o. Neste caso, ``Simulator::Destroy`` executa a tarefa pesada e nï¿½s apenas retornamos o cï¿½digo de sucesso.
+Após o retorno do ``Simulator::Run``, a simulação é terminada e entramos na fase de finalização. Neste caso, ``Simulator::Destroy`` executa a tarefa pesada e nós apenas retornamos o código de sucesso.
 
 .. 
 	Running fifth.cc
@@ -2712,7 +2712,7 @@ Executando fifth.cc
 	your distribution (in debug mode since it uses NS_LOG -- recall that optimized
 	builds optimize out NS_LOGs) it will be waiting for you to run.
 
-O arquivo ``fifth.cc`` ï¿½ distribuï¿½do no cï¿½digo fonte, no diretï¿½rio ``examples/tutorial``. Para executar:
+O arquivo ``fifth.cc`` é distribuído no código fonte, no diretório ``examples/tutorial``. Para executar:
 
 ::
 
@@ -2737,7 +2737,7 @@ O arquivo ``fifth.cc`` ï¿½ distribuï¿½do no cï¿½digo fonte, no diretï¿½rio ``exa
 	sure you can't wait to see the results of all of this work.  Let's redirect that
 	output to a file called ``cwnd.dat``:
 
-Podemos observar o lado negativo de usar "prints" de qualquer tipo no rastreamento. Temos mensagens ``waf`` sendo impressas sobre a informaï¿½ï¿½o relevante. Vamos resolver esse problema, mas primeiro vamos verificar o resultado redirecionando a saï¿½da para um arquivo ``cwnd.dat``:
+Podemos observar o lado negativo de usar "prints" de qualquer tipo no rastreamento. Temos mensagens ``waf`` sendo impressas sobre a informação relevante. Vamos resolver esse problema, mas primeiro vamos verificar o resultado redirecionando a saída para um arquivo ``cwnd.dat``:
 
 ::
 
@@ -2749,13 +2749,13 @@ Podemos observar o lado negativo de usar "prints" de qualquer tipo no rastreamen
 	``TraceConnectWithoutContext("PhyRxDrop", MakeCallback (&RxDrop));`` in the
 	script to get rid of the drop prints just as easily. 
 
-Removemos as mensagens do ``waf`` e deixamos somente os dados rastreados.  Pode-se tambï¿½m comentar as mensagens de "RxDrop...".
+Removemos as mensagens do ``waf`` e deixamos somente os dados rastreados.  Pode-se também comentar as mensagens de "RxDrop...".
 
 ..
 	You can now run gnuplot (if you have it installed) and tell it to generate some 
 	pretty pictures:
 
-Agora podemos executar o gnuplot (se instalado) e gerar um grï¿½fico:
+Agora podemos executar o gnuplot (se instalado) e gerar um gráfico:
 
 ::
 
@@ -2768,16 +2768,16 @@ Agora podemos executar o gnuplot (se instalado) e gerar um grï¿½fico:
 	You should now have a graph of the congestion window versus time sitting in the 
 	file "cwnd.png" that looks like:
 
-Devemos obter um grï¿½fico da janela de congestionamento pelo tempo no arquivo "cwnd.png", similar ao grï¿½fico 7.1:
+Devemos obter um gráfico da janela de congestionamento pelo tempo no arquivo "cwnd.png", similar ao gráfico 7.1:
 
 figure:: figures/cwnd.png
 
-   Grï¿½fico da janela de congestionamento versus tempo.
+   Gráfico da janela de congestionamento versus tempo.
 
 .. 
 	Using Mid-Level Helpers
 
-Usando Auxiliares Intermediï¿½rios
+Usando Auxiliares Intermediários
 ++++++++++++++++++++++++++++++++
 
 ..
@@ -2790,7 +2790,7 @@ Usando Auxiliares Intermediï¿½rios
 	that exhibits all of the problems we purport to fix with the |ns3| tracing
 	system!  You would be correct.  But, bear with us.  We're not done yet.
 
-Na seï¿½ï¿½o anterior, mostramos como adicionar uma origem do rastreamento e obter informaï¿½ï¿½es de interesse fora da simulaï¿½ï¿½o. Entretanto, no inï¿½cio do capï¿½tulo foi comentado que imprimir informaï¿½ï¿½es na saï¿½da padrï¿½o nï¿½o ï¿½ uma boa prï¿½tica. Alï¿½m disso, comentamos que nï¿½o ï¿½ interessante realizar processamento sobre a saï¿½da para isolar a informaï¿½ï¿½o de interesse. Podemos pensar que perdemos muito tempo em um exemplo que apresenta todos os problemas que propomos resolver usando o sistema de rastreamento do |ns3|. Vocï¿½ estaria correto, mas nï¿½s ainda nï¿½o terminamos.
+Na seção anterior, mostramos como adicionar uma origem do rastreamento e obter informações de interesse fora da simulação. Entretanto, no início do capítulo foi comentado que imprimir informações na saída padrão não é uma boa prática. Além disso, comentamos que não é interessante realizar processamento sobre a saída para isolar a informação de interesse. Podemos pensar que perdemos muito tempo em um exemplo que apresenta todos os problemas que propomos resolver usando o sistema de rastreamento do |ns3|. Você estaria correto, mas nós ainda não terminamos.
 
 ..
 	One of the most important things we want to do is to is to have the ability to 
@@ -2799,7 +2799,7 @@ Na seï¿½ï¿½o anterior, mostramos como adicionar uma origem do rastreamento e obt
 	the mid-level trace helpers provided in |ns3| to do just that and complete
 	the picture.
 
-Uma da coisas mais importantes que queremos fazer ï¿½ controlar a quantidade de saï¿½da da simulaï¿½ï¿½o. Nï¿½s podemos usar assistentes de rastreamento intermediï¿½rios fornecido pelo |ns3| para alcanï¿½ar com sucesso esse objetivo.
+Uma da coisas mais importantes que queremos fazer é controlar a quantidade de saída da simulação. Nós podemos usar assistentes de rastreamento intermediários fornecido pelo |ns3| para alcançar com sucesso esse objetivo.
 
 ..
 	We provide a script that writes the cwnd change and drop events developed in 
@@ -2807,7 +2807,7 @@ Uma da coisas mais importantes que queremos fazer ï¿½ controlar a quantidade de 
 	stored as a tab-separated ASCII file and the drop events are stored in a pcap
 	file.  The changes to make this happen are quite small.
 
-Fornecemos um cï¿½digo que separa em arquivos distintos no disco os eventos de modificaï¿½ï¿½o da janela e os eventos de remoï¿½ï¿½o. As alteraï¿½ï¿½es em cwnd sï¿½o armazenadas em um arquivo ASCII separadas por TAB e os eventos de remoï¿½ï¿½o sï¿½o armazenados em um arquivo *pcap*. As alteraï¿½ï¿½es para obter esse resultado sï¿½o pequenas.
+Fornecemos um código que separa em arquivos distintos no disco os eventos de modificação da janela e os eventos de remoção. As alterações em cwnd são armazenadas em um arquivo ASCII separadas por TAB e os eventos de remoção são armazenados em um arquivo *pcap*. As alterações para obter esse resultado são pequenas.
 
 .. 
 	A sixth.cc Walkthrough
@@ -2823,7 +2823,7 @@ Analisando sixth.cc
 	a single line to each sink that writes the traced information to a stream
 	representing a file.
 
-Vamos verificar as mudanï¿½as do arquivo ``fifth.cc`` para o  ``sixth.cc``. Verificamos a primeira mudanï¿½a em ``CwndChange``. Notamos que as assinaturas para o destino do rastreamento foram alteradas e que foi adicionada uma linha para cada um que escreve a informaï¿½ï¿½o rastreada para um fluxo (*stream*) representando um arquivo
+Vamos verificar as mudanças do arquivo ``fifth.cc`` para o  ``sixth.cc``. Verificamos a primeira mudança em ``CwndChange``. Notamos que as assinaturas para o destino do rastreamento foram alteradas e que foi adicionada uma linha para cada um que escreve a informação rastreada para um fluxo (*stream*) representando um arquivo
 
 ::
 
@@ -2854,7 +2854,7 @@ Vamos verificar as mudanï¿½as do arquivo ``fifth.cc`` para o  ``sixth.cc``. Veri
 	that obey value semantics.  Further notice that we have added the following 
 	line in the ``CwndChange`` trace sink implementation:
 
-Um parï¿½metro "stream" foi adicionado para o destino do rastreamento ``CwndChange``. Este ï¿½ um objeto que armazena (mantï¿½m seguramente vivo) um fluxo de saï¿½da em C++. Isto resulta em um objeto muito simples, mas que gerï¿½ncia problemas no ciclo de vida para fluxos e resolve um problema que mesmo programadores experientes de C++ tem dificuldades. Resulta que o construtor de cï¿½pia para o fluxo de saï¿½da (*ostream*) ï¿½ marcado como privado. Isto significa que fluxos de saï¿½da nï¿½o seguem a semï¿½ntica de passagem por valor e nï¿½o podem ser usados em mecanismos que necessitam que o fluxo seja copiado. Isto inclui o sistema de *callback* do |ns3|. Alï¿½m disso, adicionamos a seguinte linha:
+Um parâmetro "stream" foi adicionado para o destino do rastreamento ``CwndChange``. Este é um objeto que armazena (mantém seguramente vivo) um fluxo de saída em C++. Isto resulta em um objeto muito simples, mas que gerência problemas no ciclo de vida para fluxos e resolve um problema que mesmo programadores experientes de C++ tem dificuldades. Resulta que o construtor de cópia para o fluxo de saída (*ostream*) é marcado como privado. Isto significa que fluxos de saída não seguem a semântica de passagem por valor e não podem ser usados em mecanismos que necessitam que o fluxo seja copiado. Isto inclui o sistema de *callback* do |ns3|. Além disso, adicionamos a seguinte linha:
 
 ::
 
@@ -2877,7 +2877,7 @@ que substitui ``std::cout`` por ``*stream->GetStream ()``
 	carrying around a ``std::ofstream`` for you, and you can use it here like 
 	any other output stream.
 
-Isto demostra que o ``Ptr<OutputStreamWrapper>`` estï¿½ apenas encapsulando um ``std::ofstream``, logo pode ser usado como qualquer outro fluxo de saï¿½da.
+Isto demostra que o ``Ptr<OutputStreamWrapper>`` está apenas encapsulando um ``std::ofstream``, logo pode ser usado como qualquer outro fluxo de saída.
 
 ..
 	A similar situation happens in ``RxDrop`` except that the object being 
@@ -2885,7 +2885,7 @@ Isto demostra que o ``Ptr<OutputStreamWrapper>`` estï¿½ apenas encapsulando um `
 	is a one-liner in the trace sink to write a timestamp and the contents of the 
 	packet being dropped to the pcap file:
 
-Uma situaï¿½ï¿½o similar ocorre em ``RxDrop``, exceto que o objeto passado (``Ptr<PcapFileWrapper>``) representa um arquivo pcap. Hï¿½ uma linha no *trace sink* para escrever um marcador de tempo (*timestamp*) eo conteï¿½do do pacote perdido para o arquivo pcap.
+Uma situação similar ocorre em ``RxDrop``, exceto que o objeto passado (``Ptr<PcapFileWrapper>``) representa um arquivo pcap. Há uma linha no *trace sink* para escrever um marcador de tempo (*timestamp*) eo conteúdo do pacote perdido para o arquivo pcap.
 
 ::
 
@@ -2896,7 +2896,7 @@ Uma situaï¿½ï¿½o similar ocorre em ``RxDrop``, exceto que o objeto passado (``Pt
 	them somewhere and also cause them to be passed to the trace sinks.  If you 
 	look in the ``main`` function, you will find new code to do just that:
 
-ï¿½ claro, se nï¿½s temos objetos representando os dois arquivos, precisamos criï¿½-los em algum lugar e tambï¿½m passï¿½-los aos *trace sinks*. Se observarmos a funï¿½ï¿½o ``main``, temos o cï¿½digo:
+É claro, se nós temos objetos representando os dois arquivos, precisamos criá-los em algum lugar e também passá-los aos *trace sinks*. Se observarmos a função ``main``, temos o código:
 
 ::
 
@@ -2921,7 +2921,7 @@ Uma situaï¿½ï¿½o similar ocorre em ``RxDrop``, exceto que o objeto passado (``Pt
 	functions to make using text (ASCII) files easy.  We are just going to 
 	illustrate the use of the file stream creation function here.
 
-Na primeira seï¿½ï¿½o do cï¿½digo, criamos o arquivo de rastreamento ASCII e o objeto responsï¿½vel para gerenciï¿½-lo. Em seguida, usando uma das formas da funï¿½ï¿½o para criaï¿½ï¿½o da *callback* permitimos o objeto ser passado para o destino do rastreamento. As classes assistentes para rastreamento ASCII fornecem um vasto conjunto de funï¿½ï¿½es para facilitar a manipulaï¿½ï¿½o de arquivos texto. Neste exemplo, focamos apenas na criaï¿½ï¿½o do arquivo para o fluxo de saï¿½da.
+Na primeira seção do código, criamos o arquivo de rastreamento ASCII e o objeto responsável para gerenciá-lo. Em seguida, usando uma das formas da função para criação da *callback* permitimos o objeto ser passado para o destino do rastreamento. As classes assistentes para rastreamento ASCII fornecem um vasto conjunto de funções para facilitar a manipulação de arquivos texto. Neste exemplo, focamos apenas na criação do arquivo para o fluxo de saída.
 
 ..
 	The ``CreateFileStream{}`` function is basically going to instantiate
@@ -2929,8 +2929,8 @@ Na primeira seï¿½ï¿½o do cï¿½digo, criamos o arquivo de rastreamento ASCII e o o
 	This ofstream is packaged up in an |ns3| object for lifetime management
 	and copy constructor issue resolution.
 
-A funï¿½ï¿½o ``CreateFileStream()`` instancia um objeto ``std::ofstream`` e cria  um novo arquivo. O fluxo de saï¿½da ``ofstream`` ï¿½ encapsulado em um objeto do |ns3| para gerenciamento do ciclo de vida e para resolver o
-problema do construtor de cï¿½pia.
+A função ``CreateFileStream()`` instancia um objeto ``std::ofstream`` e cria  um novo arquivo. O fluxo de saída ``ofstream`` é encapsulado em um objeto do |ns3| para gerenciamento do ciclo de vida e para resolver o
+problema do construtor de cópia.
 
 ..
 	We then take this |ns3| object representing the file and pass it to
@@ -2938,7 +2938,7 @@ problema do construtor de cï¿½pia.
 	``MakeCallback()``, but it "binds" a new value to the callback.  This
 	value is added to the callback before it is called.
 
-Entï¿½o pegamos o objeto que representa o arquivo e passamos para ``MakeBoundCallback()``. Esta funï¿½ï¿½o cria um *callback* como ``MakeCallback()``, mas "associa" um novo valor para o *callback*. Este valor ï¿½ adicionado ao *callback* antes de sua invocaï¿½ï¿½o.
+Então pegamos o objeto que representa o arquivo e passamos para ``MakeBoundCallback()``. Esta função cria um *callback* como ``MakeCallback()``, mas "associa" um novo valor para o *callback*. Este valor é adicionado ao *callback* antes de sua invocação.
 
 ..
 	Essentially, ``MakeBoundCallback(&CwndChange, stream)`` causes the trace 
@@ -2947,14 +2947,14 @@ Entï¿½o pegamos o objeto que representa o arquivo e passamos para ``MakeBoundCal
 	signature of the ``CwndChange`` sink to match the one shown above, which
 	includes the "extra" parameter ``Ptr<OutputStreamWrapper> stream``.
 
-Essencialmente, ``MakeBoundCallback(&CwndChange, stream)`` faz com que a origem do rastreamento adicione um parï¿½metro extra "fluxo" apï¿½s a lista formal de parï¿½metros antes de invocar o *callback*. Esta mudanï¿½a estï¿½ de acordo com o apresentado anteriormente, a qual inclui o parï¿½metro ``Ptr<OutputStreamWrapper> stream``.
+Essencialmente, ``MakeBoundCallback(&CwndChange, stream)`` faz com que a origem do rastreamento adicione um parâmetro extra "fluxo" após a lista formal de parâmetros antes de invocar o *callback*. Esta mudança está de acordo com o apresentado anteriormente, a qual inclui o parâmetro ``Ptr<OutputStreamWrapper> stream``.
 
 ..
 	In the second section of code in the snippet above, we instantiate a 
 	``PcapHelper`` to do the same thing for our pcap trace file that we did
 	with the ``AsciiTraceHelper``. The line of code,
 
-Na segunda seï¿½ï¿½o de cï¿½digo, instanciamos um ``PcapHelper`` para fazer a mesma coisa para o arquivo de rastreamento pcap. A linha de cï¿½digo,
+Na segunda seção de código, instanciamos um ``PcapHelper`` para fazer a mesma coisa para o arquivo de rastreamento pcap. A linha de código,
 
 ::
 
@@ -2975,19 +2975,19 @@ Na segunda seï¿½ï¿½o de cï¿½digo, instanciamos um ``PcapHelper`` para fazer a me
 	the list.  The entries in the list match those in ``bpf.h`` but we duplicate
 	them to avoid a pcap source dependence.
 
-cria um arquivo pcap chamado "sixth.pcap" no modo "w" (escrita). O parï¿½metro final ï¿½ o "tipo da ligaï¿½ï¿½o de dados" do arquivo pcap. As opï¿½ï¿½es estï¿½o definidas em ``bpf.h``. Neste caso, ``DLT_PPP`` indica que o arquivo pcap deverï¿½ conter pacotes prefixado com cabeï¿½alhos ponto-a-ponto. Isto ï¿½ verdade pois os pacotes estï¿½o chegando de nosso `driver` de dispositivo ponto-a-ponto. Outros tipos de ligaï¿½ï¿½o de dados comuns sï¿½o DLT_EN10MB (10 MB Ethernet) apropriado para dispositivos CSMA e DLT_IEEE802_11 (IEEE 802.11) apropriado para dispositivos sem fio. O arquivo ``src/network/helper/trace-helper.h"`` define uma lista com os tipos. As entradas na lista sï¿½o idï¿½nticas as definidas em ``bpf.h``, pois foram duplicadas para evitar um dependï¿½ncia com o pcap.
+cria um arquivo pcap chamado "sixth.pcap" no modo "w" (escrita). O parâmetro final é o "tipo da ligação de dados" do arquivo pcap. As opções estão definidas em ``bpf.h``. Neste caso, ``DLT_PPP`` indica que o arquivo pcap deverá conter pacotes prefixado com cabeçalhos ponto-a-ponto. Isto é verdade pois os pacotes estão chegando de nosso `driver` de dispositivo ponto-a-ponto. Outros tipos de ligação de dados comuns são DLT_EN10MB (10 MB Ethernet) apropriado para dispositivos CSMA e DLT_IEEE802_11 (IEEE 802.11) apropriado para dispositivos sem fio. O arquivo ``src/network/helper/trace-helper.h"`` define uma lista com os tipos. As entradas na lista são idênticas as definidas em ``bpf.h``, pois foram duplicadas para evitar um dependência com o pcap.
 
 ..
 	A |ns3| object representing the pcap file is returned from ``CreateFile``
 	and used in a bound callback exactly as it was in the ascii case.
 
-Um objeto |ns3| representando o arquivo pcap ï¿½ retornado de ``CreateFile`` e usado em uma *callback* exatamente como no caso ASCII.
+Um objeto |ns3| representando o arquivo pcap é retornado de ``CreateFile`` e usado em uma *callback* exatamente como no caso ASCII.
 
 ..
 	An important detour:  It is important to notice that even though both of these 
 	objects are declared in very similar ways,
 
-ï¿½ importante observar que ambos objetos sï¿½o declarados de maneiras muito similares,
+É importante observar que ambos objetos são declarados de maneiras muito similares,
 
 ::
 
@@ -3003,7 +3003,7 @@ Um objeto |ns3| representando o arquivo pcap ï¿½ retornado de ``CreateFile`` e u
 	Remember to always look at the object you are referencing before making any
 	assumptions about the "powers" that object may have.  
 
-Mas os objetos internos sï¿½o inteiramente diferentes. Por exemplo, o Ptr<PcapFileWrapper> ï¿½ um ponteiro para um objeto |ns3| que suporta ``Attributes`` e ï¿½ integrado dentro do sistema de configuraï¿½ï¿½o. O Ptr<OutputStreamWrapper>, por outro lado, ï¿½ um ponteiro para uma referï¿½ncia para um simples objeto contado. Lembre-se sempre de analisar o objeto que vocï¿½ estï¿½ referenciando antes de fazer suposiï¿½ï¿½es sobre os "poderes" que o objeto pode ter.
+Mas os objetos internos são inteiramente diferentes. Por exemplo, o Ptr<PcapFileWrapper> é um ponteiro para um objeto |ns3| que suporta ``Attributes`` e é integrado dentro do sistema de configuração. O Ptr<OutputStreamWrapper>, por outro lado, é um ponteiro para uma referência para um simples objeto contado. Lembre-se sempre de analisar o objeto que você está referenciando antes de fazer suposições sobre os "poderes" que o objeto pode ter.
 
 ..
 	For example, take a look at ``src/network/utils/pcap-file-wrapper.h`` in the 
@@ -3020,7 +3020,7 @@ Por exemplo, acesse o arquivo ``src/network/utils/pcap-file-wrapper.h`` e observ
 	its inheritance.  Then look at ``src/network/model/output-stream-wrapper.h`` and 
 	notice,
 
-que a classe ``PcapFileWrapper`` ï¿½ um ``Object`` |ns3| por heranï¿½a. Jï¿½ no arquivo ``src/network/model/output-stream-wrapper.h``, observe,
+que a classe ``PcapFileWrapper`` é um ``Object`` |ns3| por herança. Já no arquivo ``src/network/model/output-stream-wrapper.h``, observe,
 
 ::
 
@@ -3030,14 +3030,14 @@ que a classe ``PcapFileWrapper`` ï¿½ um ``Object`` |ns3| por heranï¿½a. Jï¿½ no 
 	that this object is not an |ns3| Object at all, it is "merely" a
 	C++ object that happens to support intrusive reference counting.
 
-que nï¿½o ï¿½ um ``Object`` |ns3|, mas um objeto C++ que suporta contagem de referï¿½ncia.
+que não é um ``Object`` |ns3|, mas um objeto C++ que suporta contagem de referência.
 
 ..
 	The point here is that just because you read Ptr<something> it does not necessarily
 	mean that "something" is an |ns3| Object on which you can hang |ns3|
 	``Attributes``, for example.
 
-A questï¿½o ï¿½ que se vocï¿½ tem um Ptr<alguma_coisa>, nï¿½o necessariamente significa que "alguma_coisa" ï¿½ um ``Object`` |ns3|, no qual vocï¿½ pode modificar ``Attributes``, por exemplo.
+A questão é que se você tem um Ptr<alguma_coisa>, não necessariamente significa que "alguma_coisa" é um ``Object`` |ns3|, no qual você pode modificar ``Attributes``, por exemplo.
 
 ..
 	Now, back to the example.  If you now build and run this example,
@@ -3052,7 +3052,7 @@ Voltando ao exemplo. Se compilarmos e executarmos o exemplo,
 	you will see the same messages appear as when you ran "fifth", but two new 
 	files will appear in the top-level directory of your |ns3| distribution.
 
-Veremos as mesmas mensagens do "fifth", mas dois novos arquivos aparecerï¿½o no diretï¿½rio base de sua distribuiï¿½ï¿½o do |ns3|.
+Veremos as mesmas mensagens do "fifth", mas dois novos arquivos aparecerão no diretório base de sua distribuição do |ns3|.
 
 ::
 
@@ -3062,7 +3062,7 @@ Veremos as mesmas mensagens do "fifth", mas dois novos arquivos aparecerï¿½o no 
 	Since "sixth.cwnd" is an ASCII text file, you can view it with ``cat``
 	or your favorite file viewer.
 
-Como "sixth.cwnd" ï¿½ um arquivo texto ASCII, vocï¿½ pode visualizar usando *cat* ou um editor de texto.
+Como "sixth.cwnd" é um arquivo texto ASCII, você pode visualizar usando *cat* ou um editor de texto.
 
 ::
 
@@ -3077,13 +3077,13 @@ Como "sixth.cwnd" ï¿½ um arquivo texto ASCII, vocï¿½ pode visualizar usando *cat
 	new congestion window suitable for directly importing into your plot program.
 	There are no extraneous prints in the file, no parsing or editing is required.
 	
-Cada linha tem um marcador de tempo, o valor da janela de congestionamento e o valor da nova janela de congestionamento separados por tabulaï¿½ï¿½o, para importar diretamente para seu programa de plotagem de grï¿½ficos.
-Nï¿½o hï¿½ nenhuma outra informaï¿½ï¿½o alï¿½m da rastreada, logo nï¿½o ï¿½ necessï¿½rio processamento ou ediï¿½ï¿½o do arquivo.
+Cada linha tem um marcador de tempo, o valor da janela de congestionamento e o valor da nova janela de congestionamento separados por tabulação, para importar diretamente para seu programa de plotagem de gráficos.
+Não há nenhuma outra informação além da rastreada, logo não é necessário processamento ou edição do arquivo.
 
 ..
 	Since "sixth.pcap" is a pcap file, you can view it with ``tcpdump``.
 
-Como "sixth.pcap" ï¿½ um arquivo pcap, vocï¿½ pode visualizar usando o ``tcpdump`` ou ``wireshark``.
+Como "sixth.pcap" é um arquivo pcap, você pode visualizar usando o ``tcpdump`` ou ``wireshark``.
 
 ::
 
@@ -3099,7 +3099,7 @@ Como "sixth.pcap" ï¿½ um arquivo pcap, vocï¿½ pode visualizar usando o ``tcpdump
 	are no other packets present in the file and there is nothing else present to
 	make life difficult.
 
-Vocï¿½ tem um arquivo pcap com os pacotes que foram descartados na simulaï¿½ï¿½o. Nï¿½o hï¿½ nenhum outro pacote presente no arquivo e nada mais para dificultar sua anï¿½lise.
+Você tem um arquivo pcap com os pacotes que foram descartados na simulação. Não há nenhum outro pacote presente no arquivo e nada mais para dificultar sua análise.
 
 ..
 	It's been a long journey, but we are now at a point where we can appreciate the
@@ -3108,7 +3108,7 @@ Vocï¿½ tem um arquivo pcap com os pacotes que foram descartados na simulaï¿½ï¿½o
 	files usable with commonly known tools.  We did this without modifying any of the
 	core code involved, and we did this in only 18 lines of code:
 
-Foi uma longa jornada, mas agora entendemos porque o sistema de rastreamento ï¿½ interessante. Nï¿½s obtemos e armazenamos importantes eventos da implementaï¿½ï¿½o do TCP e do `driver` de dispositivo. E nï¿½o modificamos nenhuma linha do cï¿½digo do nï¿½cleo do |ns3|, e ainda fizemos isso com apenas 18 linhas de cï¿½digo:
+Foi uma longa jornada, mas agora entendemos porque o sistema de rastreamento é interessante. Nós obtemos e armazenamos importantes eventos da implementação do TCP e do `driver` de dispositivo. E não modificamos nenhuma linha do código do núcleo do |ns3|, e ainda fizemos isso com apenas 18 linhas de código:
 
 ::
 
@@ -3156,12 +3156,12 @@ Usando Classes Assistentes para Rastreamento
 	sections, primarily "Building Topologies," we have seen several varieties
 	of the trace helper methods designed for use inside other (device) helpers.
 
-As classes assistentes (*trace helpers*) de rastreamento do |ns3| proveem um ambiente rico para configurar, selecionar e escrever diferentes eventos de rastreamento para arquivos. Nas seï¿½ï¿½es anteriores, primeiramente em "Construindo Topologias", nï¿½s vimos diversas formas de mï¿½todos assistentes para rastreamento projetados para uso dentro de outras classes assistentes.
+As classes assistentes (*trace helpers*) de rastreamento do |ns3| proveem um ambiente rico para configurar, selecionar e escrever diferentes eventos de rastreamento para arquivos. Nas seções anteriores, primeiramente em "Construindo Topologias", nós vimos diversas formas de métodos assistentes para rastreamento projetados para uso dentro de outras classes assistentes.
 
 ..
 	Perhaps you will recall seeing some of these variations: 
 
-Segue alguns desses mï¿½todos jï¿½ estudados:
+Segue alguns desses métodos já estudados:
 
 ::
 
@@ -3176,7 +3176,7 @@ Segue alguns desses mï¿½todos jï¿½ estudados:
 	and take a look at the "big picture".
 
 
-O que nï¿½o parece claro ï¿½ que hï¿½ um modelo consistente para todos os mï¿½todos relacionados ï¿½ rastreamento encontrados no sistema. Apresentaremos uma visï¿½o geral desse modelo.
+O que não parece claro é que há um modelo consistente para todos os métodos relacionados à rastreamento encontrados no sistema. Apresentaremos uma visão geral desse modelo.
 
 ..
 	There are currently two primary use cases of the tracing helpers in |ns3|:
@@ -3188,7 +3188,7 @@ O que nï¿½o parece claro ï¿½ que hï¿½ um modelo consistente para todos os mï¿½to
 	Following naturally from this, the files created follow a 
 	<prefix>-<node>-<device> naming convention.  
 
-Hï¿½ dois casos de uso primï¿½rios de classes assistentes em |ns3|: Classes assistentes de dispositivo e classes assistentes de protocolo. Classes assistentes de dispositivo tratam o problema de especificar quais rastreamentos deveriam ser habilitados no domï¿½nio do nï¿½ de rede. Por exemplo, poderï¿½amos querer especificar que o rastreamento pcap deveria ser ativado em um dispositivo particular de um nï¿½ especï¿½fico. Isto ï¿½ o que define o modelo conceitual de dispositivo no |ns3| e tambï¿½m os modelos conceituais de vï¿½rias classes assistentes de dispositivos. Baseado nisso, os arquivos criados seguem a convenï¿½ï¿½o de nome `<prefixo>-<nï¿½>-<dispositivo>`.
+Há dois casos de uso primários de classes assistentes em |ns3|: Classes assistentes de dispositivo e classes assistentes de protocolo. Classes assistentes de dispositivo tratam o problema de especificar quais rastreamentos deveriam ser habilitados no domínio do nó de rede. Por exemplo, poderíamos querer especificar que o rastreamento pcap deveria ser ativado em um dispositivo particular de um nó específico. Isto é o que define o modelo conceitual de dispositivo no |ns3| e também os modelos conceituais de várias classes assistentes de dispositivos. Baseado nisso, os arquivos criados seguem a convenção de nome `<prefixo>-<nó>-<dispositivo>`.
 
 ..
 	Protocol helpers look at the problem of specifying which traces should be
@@ -3197,7 +3197,7 @@ Hï¿½ dois casos de uso primï¿½rios de classes assistentes em |ns3|: Classes assi
 	stack helpers.  Naturally, the trace files should follow a 
 	<prefix>-<protocol>-<interface> naming convention.
 
-As classes assistentes de protocolos tratam o problema de especificar quais rastreamentos deveriam ser ativados no protocolo e interface. Isto ï¿½ definido pelo modelo conceitual de pilha de protocolo do |ns3| e tambï¿½m pelos modelos conceituais de classes assistentes de pilha de rede. Baseado nisso, os arquivos criados seguem a convenï¿½ï¿½o de nome `<prefixo>-<protocolo>-<interface>`.
+As classes assistentes de protocolos tratam o problema de especificar quais rastreamentos deveriam ser ativados no protocolo e interface. Isto é definido pelo modelo conceitual de pilha de protocolo do |ns3| e também pelos modelos conceituais de classes assistentes de pilha de rede. Baseado nisso, os arquivos criados seguem a convenção de nome `<prefixo>-<protocolo>-<interface>`.
 
 ..
 	The trace helpers therefore fall naturally into a two-dimensional taxonomy.
@@ -3205,7 +3205,7 @@ As classes assistentes de protocolos tratam o problema de especificar quais rast
 	but we do strive to make them all work as similarly as possible; and whenever
 	possible there are analogs for all methods in all classes.
 
-As classes assistentes consequentemente encaixam-se em uma taxinomia bi-dimensional. Hï¿½ pequenos detalhes que evitam todas as classes comportarem-se da mesma forma, mas fizemos parecer que trabalham tï¿½o similarmente quanto possï¿½vel e quase sempre hï¿½ similares para todos mï¿½todos em todas as classes.
+As classes assistentes consequentemente encaixam-se em uma taxinomia bi-dimensional. Há pequenos detalhes que evitam todas as classes comportarem-se da mesma forma, mas fizemos parecer que trabalham tão similarmente quanto possível e quase sempre há similares para todos métodos em todas as classes.
 
 ::
 
@@ -3222,7 +3222,7 @@ As classes assistentes consequentemente encaixam-se em uma taxinomia bi-dimensio
 	is inherited by a subclass.  Inheriting from a mixin is not considered a form 
 	of specialization but is really a way to collect functionality. 
 
-Usamos uma abordagem chamada ``mixin`` para adicionar funcionalidade de rastreamento para nossas classes assistentes. Uma ``mixin`` ï¿½ uma classe que provï¿½ funcionalidade para aquela que ï¿½ herdada por uma subclasse. Herdar de um ``mixin`` nï¿½o ï¿½ considerado uma forma de especializaï¿½ï¿½o mas ï¿½ realmente uma maneira de colecionar funcionalidade.
+Usamos uma abordagem chamada ``mixin`` para adicionar funcionalidade de rastreamento para nossas classes assistentes. Uma ``mixin`` é uma classe que provê funcionalidade para aquela que é herdada por uma subclasse. Herdar de um ``mixin`` não é considerado uma forma de especialização mas é realmente uma maneira de colecionar funcionalidade.
 
 ..
 	Let's take a quick look at all four of these cases and their respective 
@@ -3244,14 +3244,14 @@ Classes Assistentes de Dispositivo para Rastreamento Pcap
 	``src/network/helper/trace-helper.h`` if you want to follow the discussion while 
 	looking at real code.
 
-O objetivo destes assistentes ï¿½ simplificar a adiï¿½ï¿½o de um utilitï¿½rio de rastreamento pcap consistente para um dispositivo |ns3|. Queremos que opere da mesma forma entre todos os dispositivos, logo os mï¿½todos destes assistentes sï¿½o herdados por classes assistentes de dispositivo. Observe o arquivo ``src/network/helper/trace-helper.h`` para entender a discussï¿½o do cï¿½digo a seguir.
+O objetivo destes assistentes é simplificar a adição de um utilitário de rastreamento pcap consistente para um dispositivo |ns3|. Queremos que opere da mesma forma entre todos os dispositivos, logo os métodos destes assistentes são herdados por classes assistentes de dispositivo. Observe o arquivo ``src/network/helper/trace-helper.h`` para entender a discussão do código a seguir.
 
 ..
 	The class ``PcapHelperForDevice`` is a ``mixin`` provides the high level 
 	functionality for using pcap tracing in an |ns3| device.  Every device 
 	must implement a single virtual method inherited from this class.
 
-A classe ``PcapHelperForDevice`` ï¿½ um ``mixin`` que provï¿½ a funcionalidade de alto nï¿½vel para usar rastreamento pcap em um dispositivo |ns3|. Todo dispositivo deve implementar um ï¿½nico mï¿½todo virtual herdado dessa classe.
+A classe ``PcapHelperForDevice`` é um ``mixin`` que provê a funcionalidade de alto nível para usar rastreamento pcap em um dispositivo |ns3|. Todo dispositivo deve implementar um único método virtual herdado dessa classe.
 
 ::
 
@@ -3264,7 +3264,7 @@ A classe ``PcapHelperForDevice`` ï¿½ um ``mixin`` que provï¿½ a funcionalidade d
 	``PcapUserHelperForDevice`` reduce to calling this single device-dependent
 	implementation method.  For example, the lowest level pcap method,
 
-A assinatura deste mï¿½todo reflete a visï¿½o do dispositivo da situaï¿½ï¿½o neste nï¿½vel. Todos os mï¿½todos pï¿½blicos herdados da classe ``PcapUserHelperForDevice`` sï¿½o reduzidos a chamada da implementaï¿½ï¿½o deste simples mï¿½todo dependente de dispositivo. Por exemplo, o nï¿½vel mais baixo do mï¿½todo pcap,
+A assinatura deste método reflete a visão do dispositivo da situação neste nível. Todos os métodos públicos herdados da classe ``PcapUserHelperForDevice`` são reduzidos a chamada da implementação deste simples método dependente de dispositivo. Por exemplo, o nível mais baixo do método pcap,
 
 ::
 
@@ -3279,12 +3279,12 @@ A assinatura deste mï¿½todo reflete a visï¿½o do dispositivo da situaï¿½ï¿½o nes
 	and these methods will all work in the same way across devices if the device 
 	implements ``EnablePcapInternal`` correctly.
 
-chamaremos diretamente a implementaï¿½ï¿½o do dispositivo de ``EnablePcapInternal``. Todos os outros mï¿½todos de rastreamento pcap pï¿½blicos desta implementaï¿½ï¿½o sï¿½o para prover funcionalidade adicional em nï¿½vel de usuï¿½rio. Para o usuï¿½rio, isto significa que todas as classes assistentes de dispositivo no sistema terï¿½o todos os mï¿½todos de rastreamento pcap disponï¿½veis; e estes mï¿½todos trabalharï¿½o da mesma forma entre dispositivos se o dispositivo implementar corretamente ``EnablePcapInternal``.
+chamaremos diretamente a implementação do dispositivo de ``EnablePcapInternal``. Todos os outros métodos de rastreamento pcap públicos desta implementação são para prover funcionalidade adicional em nível de usuário. Para o usuário, isto significa que todas as classes assistentes de dispositivo no sistema terão todos os métodos de rastreamento pcap disponíveis; e estes métodos trabalharão da mesma forma entre dispositivos se o dispositivo implementar corretamente ``EnablePcapInternal``.
 
 .. 
 	Pcap Tracing Device Helper Methods
 
-Mï¿½todos da Classe Assistente de Dispositivo para Rastreamento Pcap
+Métodos da Classe Assistente de Dispositivo para Rastreamento Pcap
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
@@ -3308,7 +3308,7 @@ Mï¿½todos da Classe Assistente de Dispositivo para Rastreamento Pcap
 	to include all traffic seen by the device (and if the device supports a 
 	promiscuous mode) simply add a true parameter to any of the calls above.  For example,
 
-Em cada mï¿½todo apresentado existe um parï¿½metro padrï¿½o chamado ``promiscuous`` que ï¿½ definido para o valor "false". Este parï¿½metro indica que o rastreamento nï¿½o deveria coletar dados em modo promï¿½scuo. Se quisermos incluir todo trï¿½fego visto pelo dispositivo devemos modificar o valor para "true". Por exemplo,
+Em cada método apresentado existe um parâmetro padrão chamado ``promiscuous`` que é definido para o valor "false". Este parâmetro indica que o rastreamento não deveria coletar dados em modo promíscuo. Se quisermos incluir todo tráfego visto pelo dispositivo devemos modificar o valor para "true". Por exemplo,
 
 ::
 
@@ -3319,19 +3319,19 @@ Em cada mï¿½todo apresentado existe um parï¿½metro padrï¿½o chamado ``promiscuou
 ..
 	will enable promiscuous mode captures on the ``NetDevice`` specified by ``nd``.
 
-ativarï¿½ o modo de captura promï¿½scuo no ``NetDevice`` especificado por ``nd``.
+ativará o modo de captura promíscuo no ``NetDevice`` especificado por ``nd``.
 
 ..
 	The first two methods also include a default parameter called ``explicitFilename``
 	that will be discussed below.
 
-Os  dois primeiros mï¿½todos tambï¿½m incluem um parï¿½metro padrï¿½o chamado ``explicitFilename`` que serï¿½ abordado a seguir.
+Os  dois primeiros métodos também incluem um parâmetro padrão chamado ``explicitFilename`` que será abordado a seguir.
 
 ..
 	You are encouraged to peruse the Doxygen for class ``PcapHelperForDevice``
 	to find the details of these methods; but to summarize ...
 
-ï¿½ interessante procurar maiores detalhes dos mï¿½todos da classe ``PcapHelperForDevice`` no Doxygen; mas para resumir ...
+É interessante procurar maiores detalhes dos métodos da classe ``PcapHelperForDevice`` no Doxygen; mas para resumir ...
 
 ..
 	You can enable pcap tracing on a particular node/net-device pair by providing a
@@ -3339,7 +3339,7 @@ Os  dois primeiros mï¿½todos tambï¿½m incluem um parï¿½metro padrï¿½o chamado ``
 	implicit since the net device must belong to exactly one ``Node``.
 	For example, 
 
-Podemos ativar o rastreamento pcap em um par nï¿½/dispositivo-rede especï¿½fico provendo um ``Ptr<NetDevice>`` para um mï¿½todo ``EnablePcap``. O ``Ptr<Node>`` ï¿½ implï¿½cito, pois o dispositivo de rede deve estar em um ``Node``. Por exemplo,
+Podemos ativar o rastreamento pcap em um par nó/dispositivo-rede específico provendo um ``Ptr<NetDevice>`` para um método ``EnablePcap``. O ``Ptr<Node>`` é implícito, pois o dispositivo de rede deve estar em um ``Node``. Por exemplo,
 
 ::
 
@@ -3354,8 +3354,8 @@ Podemos ativar o rastreamento pcap em um par nï¿½/dispositivo-rede especï¿½fico 
 	string.  Again, the ``<Node>`` is implicit since the named net device must 
 	belong to exactly one ``Node``.  For example, 
 
-Podemos ativar o rastreamento pcap em um par nï¿½/dispositivo-rede passando uma ``std::string`` que representa um nome de serviï¿½o para um mï¿½todo ``EnablePcap``. O ``Ptr<NetDevice>`` ï¿½ buscado a partir do nome da `string`.
-Novamente, o ``Ptr<Node>`` ï¿½ implï¿½cito pois o dispositivo de rede deve estar em um ``Node``. 
+Podemos ativar o rastreamento pcap em um par nó/dispositivo-rede passando uma ``std::string`` que representa um nome de serviço para um método ``EnablePcap``. O ``Ptr<NetDevice>`` é buscado a partir do nome da `string`.
+Novamente, o ``Ptr<Node>`` é implícito pois o dispositivo de rede deve estar em um ``Node``. 
 
 ::
 
@@ -3372,7 +3372,7 @@ Novamente, o ``Ptr<Node>`` ï¿½ implï¿½cito pois o dispositivo de rede deve estar
 	implicit since the found net device must belong to exactly one ``Node``.
 	For example, 
 
-Podemos ativar o rastreamento pcap em uma coleï¿½ï¿½o de pares nï¿½s/dispositivos usando um ``NetDeviceContainer``. Para cada ``NetDevice`` no contï¿½iner o tipo ï¿½ verificado. Para cada dispositivo com o tipo adequado, o rastreamento serï¿½ ativado. Por exemplo,
+Podemos ativar o rastreamento pcap em uma coleção de pares nós/dispositivos usando um ``NetDeviceContainer``. Para cada ``NetDevice`` no contêiner o tipo é verificado. Para cada dispositivo com o tipo adequado, o rastreamento será ativado. Por exemplo,
 
 ::
 
@@ -3388,7 +3388,7 @@ Podemos ativar o rastreamento pcap em uma coleï¿½ï¿½o de pares nï¿½s/dispositivo
 	device of the proper type (the same type as is managed by the device helper), 
 	tracing is enabled.
 
-Podemos ativar o rastreamento em uma coleï¿½ï¿½o de pares nï¿½/dispositivo-rede usando um ``NodeContainer``. Para cada ``Node`` no ``NodeContainer`` seus ``NetDevices`` sï¿½o percorridos e verificados segundo o tipo. Para cada dispositivo com o tipo adequado, o rastreamento ï¿½ ativado.
+Podemos ativar o rastreamento em uma coleção de pares nó/dispositivo-rede usando um ``NodeContainer``. Para cada ``Node`` no ``NodeContainer`` seus ``NetDevices`` são percorridos e verificados segundo o tipo. Para cada dispositivo com o tipo adequado, o rastreamento é ativado.
 
 ::
 
@@ -3401,7 +3401,7 @@ Podemos ativar o rastreamento em uma coleï¿½ï¿½o de pares nï¿½/dispositivo-rede 
 	with explicit ``Ptr``.  Each ``Node`` in the system has an integer node ID
 	and each device connected to a node has an integer device ID.
 
-Podemos ativar o rastreamento pcap usando o nï¿½mero identificador (`ID`) do nï¿½ e do dispositivo. Todo ``Node`` no sistema tem um valor inteiro indicando o `ID` do nï¿½ e todo dispositivo conectado ao nï¿½ tem um valor inteiro indicando o `ID` do dispositivo.
+Podemos ativar o rastreamento pcap usando o número identificador (`ID`) do nó e do dispositivo. Todo ``Node`` no sistema tem um valor inteiro indicando o `ID` do nó e todo dispositivo conectado ao nó tem um valor inteiro indicando o `ID` do dispositivo.
 
 ::
 
@@ -3420,7 +3420,7 @@ Por fim, podemos ativar rastreamento pcap para todos os dispositivos no sistema,
 .. 
 	Pcap Tracing Device Helper Filename Selection
 
-Seleï¿½ï¿½o de um Nome de Arquivo para o Rastreamento Pcap da Classe Assistente de Dispositivo
+Seleção de um Nome de Arquivo para o Rastreamento Pcap da Classe Assistente de Dispositivo
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ..
@@ -3428,7 +3428,7 @@ Seleï¿½ï¿½o de um Nome de Arquivo para o Rastreamento Pcap da Classe Assistente 
 	filename by the implementation method.  By convention, pcap traces in the 
 	|ns3| system are of the form "<prefix>-<node id>-<device id>.pcap"
 
-Implï¿½cito nas descriï¿½ï¿½es de mï¿½todos anteriores ï¿½ a construï¿½ï¿½o do nome de arquivo por meio do mï¿½todo da implementaï¿½ï¿½o. Por convenï¿½ï¿½o, rastreamento pcap no |ns3| usa a forma "<prefixo>-<id do nï¿½>-<id do dispositivo>.pcap"
+Implícito nas descrições de métodos anteriores é a construção do nome de arquivo por meio do método da implementação. Por convenção, rastreamento pcap no |ns3| usa a forma "<prefixo>-<id do nó>-<id do dispositivo>.pcap"
 
 ..
 	As previously mentioned, every node in the system will have a system-assigned
@@ -3437,7 +3437,7 @@ Implï¿½cito nas descriï¿½ï¿½es de mï¿½todos anteriores ï¿½ a construï¿½ï¿½o do n
 	of enabling tracing on the first device of node 21 using the prefix "prefix"
 	would be "prefix-21-1.pcap".
 	
-Como mencionado, todo nï¿½ no sistema terï¿½ um `id` de nï¿½ associado; e todo dispositivo terï¿½ um ï¿½ndice de interface (tambï¿½m chamado de id do dispositivo) relativo ao seu nï¿½. Por padrï¿½o, entï¿½o, um arquivo pcap criado como um resultado de ativar rastreamento no primeiro dispositivo do nï¿½ 21 usando o prefixo "prefix" seria "prefix-21-1.pcap".
+Como mencionado, todo nó no sistema terá um `id` de nó associado; e todo dispositivo terá um índice de interface (também chamado de id do dispositivo) relativo ao seu nó. Por padrão, então, um arquivo pcap criado como um resultado de ativar rastreamento no primeiro dispositivo do nó 21 usando o prefixo "prefix" seria "prefix-21-1.pcap".
 
 ..
 	You can always use the |ns3| object name service to make this more clear.
@@ -3447,12 +3447,12 @@ Como mencionado, todo nï¿½ no sistema terï¿½ um `id` de nï¿½ associado; e todo d
 	device, your pcap file name will automatically pick this up and be called
 	"prefix-server-eth0.pcap".
 
-Sempre podemos usar o serviï¿½o de nome de objeto do |ns3| para tornar isso mais claro. Por exemplo, se vocï¿½ usa o serviï¿½o para associar o nome "server" ao nï¿½ 21, o arquivo pcap resultante automaticamente serï¿½, "prefix-server-1.pcap" e se vocï¿½ tambï¿½m associar o nome "eth0" ao dispositivo, seu nome do arquivo pcap automaticamente serï¿½ denominado "prefix-server-eth0.pcap".
+Sempre podemos usar o serviço de nome de objeto do |ns3| para tornar isso mais claro. Por exemplo, se você usa o serviço para associar o nome "server" ao nó 21, o arquivo pcap resultante automaticamente será, "prefix-server-1.pcap" e se você também associar o nome "eth0" ao dispositivo, seu nome do arquivo pcap automaticamente será denominado "prefix-server-eth0.pcap".
 
 .. 
 	Finally, two of the methods shown above,
 
-Finalmente, dois dos mï¿½todos mostrados, 
+Finalmente, dois dos métodos mostrados, 
 
 ::
 
@@ -3467,14 +3467,14 @@ Finalmente, dois dos mï¿½todos mostrados,
 	you to create an explicit filename.  This option is only available in the 
 	methods which enable pcap tracing on a single device.  
 
-tem um parï¿½metro padrï¿½o ``explicitFilename``. Quando modificado para verdadeiro, este parï¿½metro desabilita o mecanismo automï¿½tico de completar o nome do arquivo e permite criarmos um nome de arquivo abertamente. Esta opï¿½ï¿½o estï¿½ disponï¿½vel nos mï¿½todos que ativam o rastreamento pcap em um ï¿½nico dispositivo.
+tem um parâmetro padrão ``explicitFilename``. Quando modificado para verdadeiro, este parâmetro desabilita o mecanismo automático de completar o nome do arquivo e permite criarmos um nome de arquivo abertamente. Esta opção está disponível nos métodos que ativam o rastreamento pcap em um único dispositivo.
 
 ..
 	For example, in order to arrange for a device helper to create a single 
 	promiscuous pcap capture file of a specific name ("my-pcap-file.pcap") on a
 	given device, one could:
 
-Por exemplo, com a finalidade providenciar uma classe assistente de dispositivo para criar um ï¿½nico arquivo de captura pcap no modo promï¿½scuo com um nome especï¿½fico ("my-pcap-file.pcap") em um determinado dispositivo:
+Por exemplo, com a finalidade providenciar uma classe assistente de dispositivo para criar um único arquivo de captura pcap no modo promíscuo com um nome específico ("my-pcap-file.pcap") em um determinado dispositivo:
 	
 ::
 
@@ -3486,7 +3486,7 @@ Por exemplo, com a finalidade providenciar uma classe assistente de dispositivo 
 	The first ``true`` parameter enables promiscuous mode traces and the second
 	tells the helper to interpret the ``prefix`` parameter as a complete filename.
 
-O primeiro parï¿½metro ``true`` habilita o modo de rastreamento promï¿½scuo e o segundo faz com que o parï¿½metro ``prefix`` seja interpretado como um nome de arquivo completo.
+O primeiro parâmetro ``true`` habilita o modo de rastreamento promíscuo e o segundo faz com que o parâmetro ``prefix`` seja interpretado como um nome de arquivo completo.
 
 .. 
 	Ascii Tracing Device Helpers
@@ -3499,14 +3499,14 @@ Classes Assistentes de Dispositivo para Rastreamento ASCII
 	the pcap version.  Take a look at ``src/network/helper/trace-helper.h`` if you want to 
 	follow the discussion while looking at real code.
 
-O comportamento do assistente  de rastreamento ASCII ``mixin`` ï¿½ similar a versï¿½o do pcap. Acesse o arquivo ``src/network/helper/trace-helper.h`` para compreender melhor o funcionamento dessa classe assistente.
+O comportamento do assistente  de rastreamento ASCII ``mixin`` é similar a versão do pcap. Acesse o arquivo ``src/network/helper/trace-helper.h`` para compreender melhor o funcionamento dessa classe assistente.
 
 ..
 	The class ``AsciiTraceHelperForDevice`` adds the high level functionality for 
 	using ascii tracing to a device helper class.  As in the pcap case, every device
 	must implement a single virtual method inherited from the ascii trace ``mixin``.
 
-A classe ``AsciiTraceHelperForDevice`` adiciona funcionalidade em alto nï¿½vel para usar o rastreamento ASCII para uma classe assistente de dispositivo. Como no caso do pcap, todo dispositivo deve implementar um mï¿½todo herdado do rastreador ASCII ``mixin``.
+A classe ``AsciiTraceHelperForDevice`` adiciona funcionalidade em alto nível para usar o rastreamento ASCII para uma classe assistente de dispositivo. Como no caso do pcap, todo dispositivo deve implementar um método herdado do rastreador ASCII ``mixin``.
 
 ::
 
@@ -3521,7 +3521,7 @@ A classe ``AsciiTraceHelperForDevice`` adiciona funcionalidade em alto nï¿½vel p
 	dependent implementation method.  For example, the lowest level ascii trace
 	methods,
 
-A assinatura deste mï¿½todo reflete a visï¿½o do dispositivo da situaï¿½ï¿½o neste nï¿½vel; e tambï¿½m o fato que o assistente pode ser escrito para um fluxo de saï¿½da compartilhado. Todos os mï¿½todos pï¿½blicos associados ao rastreamento ASCII herdam da classe ``AsciiTraceHelperForDevice`` resumem-se a chamada deste ï¿½nico mï¿½todo dependente de implementaï¿½ï¿½o. Por exemplo, os mï¿½todos de rastreamento ASCII de mais baixo nï¿½vel,
+A assinatura deste método reflete a visão do dispositivo da situação neste nível; e também o fato que o assistente pode ser escrito para um fluxo de saída compartilhado. Todos os métodos públicos associados ao rastreamento ASCII herdam da classe ``AsciiTraceHelperForDevice`` resumem-se a chamada deste único método dependente de implementação. Por exemplo, os métodos de rastreamento ASCII de mais baixo nível,
 
 ::
 
@@ -3538,13 +3538,13 @@ A assinatura deste mï¿½todo reflete a visï¿½o do dispositivo da situaï¿½ï¿½o nes
 	will all work in the same way across devices if the devices implement 
 	``EnablAsciiInternal`` correctly.
 
-chamarï¿½o uma implementaï¿½ï¿½o de ``EnableAsciiInternal`` diretamente, passando um prefixo ou fluxo vï¿½lido. Todos os outros mï¿½todos pï¿½blicos serï¿½o construï¿½dos a partir destas funï¿½ï¿½es de baixo nï¿½vel para fornecer funcionalidades adicionais em nï¿½vel de usuï¿½rio. Para o usuï¿½rio, isso significa que todos os assistentes de
-dispositivo no sistema terï¿½o todos os mï¿½todos de rastreamento ASCII disponï¿½veis e estes mï¿½todos trabalharï¿½o do mesmo modo em todos os dispositivos se estes implementarem ``EnableAsciiInternal``.
+chamarão uma implementação de ``EnableAsciiInternal`` diretamente, passando um prefixo ou fluxo válido. Todos os outros métodos públicos serão construídos a partir destas funções de baixo nível para fornecer funcionalidades adicionais em nível de usuário. Para o usuário, isso significa que todos os assistentes de
+dispositivo no sistema terão todos os métodos de rastreamento ASCII disponíveis e estes métodos trabalharão do mesmo modo em todos os dispositivos se estes implementarem ``EnableAsciiInternal``.
 
 .. 
 	Ascii Tracing Device Helper Methods
 
-Mï¿½todos da Classe Assistente de Dispositivo para Rastreamento  ASCII
+Métodos da Classe Assistente de Dispositivo para Rastreamento  ASCII
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
@@ -3575,7 +3575,7 @@ Mï¿½todos da Classe Assistente de Dispositivo para Rastreamento  ASCII
 	You are encouraged to peruse the Doxygen for class ``AsciiTraceHelperForDevice``
 	to find the details of these methods; but to summarize ...
 
-Para maiores detalhes sobre os mï¿½todos ï¿½ interessante consultar a documentaï¿½ï¿½o para a classe ``AsciiTraceHelperForDevice``; mas para resumir ...
+Para maiores detalhes sobre os métodos é interessante consultar a documentação para a classe ``AsciiTraceHelperForDevice``; mas para resumir ...
 
 ..
 	There are twice as many methods available for ascii tracing as there were for
@@ -3586,7 +3586,7 @@ Para maiores detalhes sobre os mï¿½todos ï¿½ interessante consultar a documentaï
 	replaced by a mechanism to refer to a common file; and the number of API methods
 	is doubled to allow all combinations.
 
-Hï¿½ duas vezes mais mï¿½todos disponï¿½veis para rastreamento ASCII que para rastreamento pcap. Isto ocorre pois para o modelo pcap os rastreamentos de cada par nï¿½/dispositivo-rede sï¿½o escritos para um ï¿½nico arquivo, enquanto que no ASCII todo as as informaï¿½ï¿½es sï¿½o escritas para um arquivo comum. Isto significa que o mecanismo de geraï¿½ï¿½o de nomes de arquivos `<prefixo>-<nï¿½>-<dispositivo>` ï¿½ substituï¿½do por um mecanismo para referenciar um arquivo comum; e o nï¿½mero de mï¿½todos da API ï¿½ duplicado para permitir todas as combinaï¿½ï¿½es.
+Há duas vezes mais métodos disponíveis para rastreamento ASCII que para rastreamento pcap. Isto ocorre pois para o modelo pcap os rastreamentos de cada par nó/dispositivo-rede são escritos para um único arquivo, enquanto que no ASCII todo as as informações são escritas para um arquivo comum. Isto significa que o mecanismo de geração de nomes de arquivos `<prefixo>-<nó>-<dispositivo>` é substituído por um mecanismo para referenciar um arquivo comum; e o número de métodos da API é duplicado para permitir todas as combinações.
 
 ..
 	Just as in pcap tracing, you can enable ascii tracing on a particular 
@@ -3594,7 +3594,7 @@ Hï¿½ duas vezes mais mï¿½todos disponï¿½veis para rastreamento ASCII que para ra
 	method.  The ``Ptr<Node>`` is implicit since the net device must belong to 
 	exactly one ``Node``.  For example, 
 
-Assim como no rastreamento pcap, podemos ativar o rastreamento ASCII em um par nï¿½/dispositivo-rede passando um ``Ptr<NetDevice>`` para  um mï¿½todo ``EnableAscii``. O ``Ptr<Node>`` ï¿½ implï¿½cito pois o dispositivo de rede deve pertencer a exatamente um ``Node``. Por exemplo,
+Assim como no rastreamento pcap, podemos ativar o rastreamento ASCII em um par nó/dispositivo-rede passando um ``Ptr<NetDevice>`` para  um método ``EnableAscii``. O ``Ptr<Node>`` é implícito pois o dispositivo de rede deve pertencer a exatamente um ``Node``. Por exemplo,
 
 ::
 
@@ -3606,7 +3606,7 @@ Assim como no rastreamento pcap, podemos ativar o rastreamento ASCII em um par n
 	The first four methods also include a default parameter called ``explicitFilename``
 	that operate similar to equivalent parameters in the pcap case.
 
-Os primeiros quatro mï¿½todos tambï¿½m incluem um parï¿½metro padrï¿½o ``explicitFilename`` que opera similar aos parï¿½metros no caso do pcap.
+Os primeiros quatro métodos também incluem um parâmetro padrão ``explicitFilename`` que opera similar aos parâmetros no caso do pcap.
 
 ..
 	In this case, no trace contexts are written to the ascii trace file since they
@@ -3614,7 +3614,7 @@ Os primeiros quatro mï¿½todos tambï¿½m incluem um parï¿½metro padrï¿½o ``explici
 	the same rules as described in the pcap section, except that the file will
 	have the suffix ".tr" instead of ".pcap".
 
-Neste caso, nenhum contexto de rastreamento ï¿½ escrito para o arquivo ASCII pois seriam redundantes. O sistema pegarï¿½ o nome do arquivo para ser criado usando as mesmas regras como descritas na seï¿½ï¿½o pcap, exceto que o arquivo terï¿½ o extensï¿½o ".tr" ao invï¿½s de ".pcap".
+Neste caso, nenhum contexto de rastreamento é escrito para o arquivo ASCII pois seriam redundantes. O sistema pegará o nome do arquivo para ser criado usando as mesmas regras como descritas na seção pcap, exceto que o arquivo terá o extensão ".tr" ao invés de ".pcap".
 
 ..
 	If you want to enable ascii tracing on more than one net device and have all 
@@ -3622,7 +3622,7 @@ Neste caso, nenhum contexto de rastreamento ï¿½ escrito para o arquivo ASCII poi
 	refer to a single file.  We have already seen this in the "cwnd" example
 	above:
 
-Para habilitar o rastreamento ASCII em mais de um dispositivo de rede e ter todos os dados de rastreamento enviados para um ï¿½nico arquivo, pode-se usar um objeto para referenciar um ï¿½nico arquivo. Nï¿½s jï¿½ verificamos isso no exemplo "cwnd":
+Para habilitar o rastreamento ASCII em mais de um dispositivo de rede e ter todos os dados de rastreamento enviados para um único arquivo, pode-se usar um objeto para referenciar um único arquivo. Nós já verificamos isso no exemplo "cwnd":
 
 ::
 
@@ -3641,7 +3641,7 @@ Para habilitar o rastreamento ASCII em mais de um dispositivo de rede e ter todo
 	user is completely specifying the file name, the string should include the ",tr"
 	for consistency.
 
-Neste caso, os contextos sï¿½o escritos para o arquivo ASCII quando ï¿½ necessï¿½rio distinguir os dados de rastreamento de dois dispositivos. ï¿½ interessante usar no nome do arquivo a extensï¿½o ".tr" por motivos de consistï¿½ncia.
+Neste caso, os contextos são escritos para o arquivo ASCII quando é necessário distinguir os dados de rastreamento de dois dispositivos. É interessante usar no nome do arquivo a extensão ".tr" por motivos de consistência.
 
 ..
 	You can enable ascii tracing on a particular node/net-device pair by providing a
@@ -3650,7 +3650,7 @@ Neste caso, os contextos sï¿½o escritos para o arquivo ASCII quando ï¿½ necessï¿
 	string.  Again, the ``<Node>`` is implicit since the named net device must 
 	belong to exactly one ``Node``.  For example, 
 
-Podemos habilitar o rastreamento ASCII em um par nï¿½/dispositivo-rede especï¿½fico passando ao mï¿½todo ``EnableAscii`` uma ``std::string`` representando um nome no serviï¿½o de nomes de objetos. O ``Ptr<NetDevice>`` ï¿½ obtido a partir do nome. Novamente, o ``<Node>`` ï¿½ implï¿½cito pois o dispositivo de rede deve pertencer a exatamente um ``Node``. Por exemplo,
+Podemos habilitar o rastreamento ASCII em um par nó/dispositivo-rede específico passando ao método ``EnableAscii`` uma ``std::string`` representando um nome no serviço de nomes de objetos. O ``Ptr<NetDevice>`` é obtido a partir do nome. Novamente, o ``<Node>`` é implícito pois o dispositivo de rede deve pertencer a exatamente um ``Node``. Por exemplo,
 
 ::
 
@@ -3668,7 +3668,7 @@ Podemos habilitar o rastreamento ASCII em um par nï¿½/dispositivo-rede especï¿½f
 	file.  Since all of the EnableAscii functions are overloaded to take a stream wrapper,
 	you can use that form as well:
 
-Isto resultaria em dois nomes de arquivos - "prefix-client-eth0.tr" e "prefix-server-eth0.tr" - com os rastreamentos de cada dispositivo em  seu arquivo respectivo. Como todas as funï¿½ï¿½es do ``EnableAscii`` sï¿½o sobrecarregadas para suportar um *stream wrapper*, podemos usar da seguinte forma tambï¿½m:
+Isto resultaria em dois nomes de arquivos - "prefix-client-eth0.tr" e "prefix-server-eth0.tr" - com os rastreamentos de cada dispositivo em  seu arquivo respectivo. Como todas as funções do ``EnableAscii`` são sobrecarregadas para suportar um *stream wrapper*, podemos usar da seguinte forma também:
 
 ::
 
@@ -3688,7 +3688,7 @@ Isto resultaria em dois nomes de arquivos - "prefix-client-eth0.tr" e "prefix-se
 	contains all of the trace events for both devices.  The events would be 
 	disambiguated by trace context strings.
 
-Isto resultaria em um ï¿½nico arquivo chamado "trace-file-name.tr" que contï¿½m todosos eventos rastreados para ambos os dispositivos. Os eventos seriam diferenciados por `strings` de contexto.
+Isto resultaria em um único arquivo chamado "trace-file-name.tr" que contém todosos eventos rastreados para ambos os dispositivos. Os eventos seriam diferenciados por `strings` de contexto.
 
 ..
 	You can enable ascii tracing on a collection of node/net-device pairs by 
@@ -3698,7 +3698,7 @@ Isto resultaria em um ï¿½nico arquivo chamado "trace-file-name.tr" que contï¿½m 
 	implicit since the found net device must belong to exactly one ``Node``.
 	For example, 
 
-Podemos habilitar o rastreamento ASCII em um coleï¿½ï¿½o de pares nï¿½/dispositivo-rede fornecendo um ``NetDeviceContainer``. Para cada ``NetDevice`` no contï¿½iner o tipo ï¿½ verificado. Para cada dispositivo de um tipo adequado (o mesmo tipo que ï¿½ gerenciado por uma classe assistente de dispositivo), o rastreamento ï¿½ habilitado. Novamente, o ``<Node>`` ï¿½ implï¿½cito pois o dispositivo de rede encontrado deve pertencer a exatamente um ``Node``. 
+Podemos habilitar o rastreamento ASCII em um coleção de pares nó/dispositivo-rede fornecendo um ``NetDeviceContainer``. Para cada ``NetDevice`` no contêiner o tipo é verificado. Para cada dispositivo de um tipo adequado (o mesmo tipo que é gerenciado por uma classe assistente de dispositivo), o rastreamento é habilitado. Novamente, o ``<Node>`` é implícito pois o dispositivo de rede encontrado deve pertencer a exatamente um ``Node``. 
 
 ::
 
@@ -3711,9 +3711,9 @@ Podemos habilitar o rastreamento ASCII em um coleï¿½ï¿½o de pares nï¿½/dispositi
 	follows the <prefix>-<node id>-<device id>.tr convention.  Combining all of the
 	traces into a single file is accomplished similarly to the examples above:
 
-Isto resultaria em vï¿½rios arquivos de rastreamento ASCII sendo criados, cada um seguindo a convenï¿½ï¿½o ``<prefixo>-<id do nï¿½>-<id do dispositivo>.tr``.
+Isto resultaria em vários arquivos de rastreamento ASCII sendo criados, cada um seguindo a convenção ``<prefixo>-<id do nó>-<id do dispositivo>.tr``.
 
-Para obtermos um ï¿½nico arquivo terï¿½amos:
+Para obtermos um único arquivo teríamos:
 
 ::
 
@@ -3732,7 +3732,7 @@ Para obtermos um ï¿½nico arquivo terï¿½amos:
 	device of the proper type (the same type as is managed by the device helper), 
 	tracing is enabled.
 
-Podemos habilitar o rastreamento ASCII em um coleï¿½ï¿½o de pares nï¿½/dispositivo-rede fornecendo um ``NodeContainer``. Para cada ``Node`` no ``NodeContainer``, os seus ``NetDevices`` sï¿½o percorridos. Para cada ``NetDevice`` associado a cada nï¿½ no contï¿½iner, o tipo do dispositivo ï¿½ verificado. Para cada dispositivo do tipo adequado (o mesmo tipo que ï¿½ gerenciado pelo assistente de dispositivo), o rastreamento ï¿½ habilitado.
+Podemos habilitar o rastreamento ASCII em um coleção de pares nó/dispositivo-rede fornecendo um ``NodeContainer``. Para cada ``Node`` no ``NodeContainer``, os seus ``NetDevices`` são percorridos. Para cada ``NetDevice`` associado a cada nó no contêiner, o tipo do dispositivo é verificado. Para cada dispositivo do tipo adequado (o mesmo tipo que é gerenciado pelo assistente de dispositivo), o rastreamento é habilitado.
 
 ::
 
@@ -3745,14 +3745,14 @@ Podemos habilitar o rastreamento ASCII em um coleï¿½ï¿½o de pares nï¿½/dispositi
 	follows the <prefix>-<node id>-<device id>.tr convention.  Combining all of the
 	traces into a single file is accomplished similarly to the examples above:
 		
-Isto resultaria em vï¿½rios arquivos ASCII sendo criados, cada um seguindo a convenï¿½ï¿½o ``<prefixo>-<id do nï¿½>-<id do dispositivo>.tr``.
+Isto resultaria em vários arquivos ASCII sendo criados, cada um seguindo a convenção ``<prefixo>-<id do nó>-<id do dispositivo>.tr``.
 
 ..
 	You can enable pcap tracing on the basis of node ID and device ID as well as
 	with explicit ``Ptr``.  Each ``Node`` in the system has an integer node ID
 	and each device connected to a node has an integer device ID.
 	
-Podemos habilitar o rastreamento pcap na base da `ID` do nï¿½ e `ID` do dispositivo tï¿½o bem como com um ``Ptr``. Cada ``Node`` no sistema possui um nï¿½mero identificador inteiro associado ao nï¿½ e cada dispositivo conectado possui um nï¿½mero identificador inteiro associado ao dispositivo.
+Podemos habilitar o rastreamento pcap na base da `ID` do nó e `ID` do dispositivo tão bem como com um ``Ptr``. Cada ``Node`` no sistema possui um número identificador inteiro associado ao nó e cada dispositivo conectado possui um número identificador inteiro associado ao dispositivo.
 
 ::
 
@@ -3761,7 +3761,7 @@ Podemos habilitar o rastreamento pcap na base da `ID` do nï¿½ e `ID` do disposit
 ..
 	Of course, the traces can be combined into a single file as shown above.
 
-Os rastreamentos podem ser combinados em um ï¿½nico arquivo como mostrado acima.
+Os rastreamentos podem ser combinados em um único arquivo como mostrado acima.
 
 ..
 	Finally, you can enable pcap tracing for all devices in the system, with the
@@ -3780,12 +3780,12 @@ Finalmente, podemos habilitar o rastreamento ASCII para todos os dispositivos no
 	all of the traces into a single file is accomplished similarly to the examples
 	above.
 
-Isto resultaria em vï¿½rios arquivos ASCII sendo criados, um para cada dispositivo no sistema do tipo gerenciado pelo assistente. Todos estes arquivos seguiriam a convenï¿½ï¿½o ``<prefixo>-<id do nï¿½>-<id do dispositivo>.tr``.
+Isto resultaria em vários arquivos ASCII sendo criados, um para cada dispositivo no sistema do tipo gerenciado pelo assistente. Todos estes arquivos seguiriam a convenção ``<prefixo>-<id do nó>-<id do dispositivo>.tr``.
 
 .. 
 	Ascii Tracing Device Helper Filename Selection
 
-Selecionando Nome de Arquivo para as Saï¿½das ASCII
+Selecionando Nome de Arquivo para as Saídas ASCII
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ..
@@ -3793,7 +3793,7 @@ Selecionando Nome de Arquivo para as Saï¿½das ASCII
 	complete filenames by the implementation method.  By convention, ascii traces
 	in the |ns3| system are of the form "<prefix>-<node id>-<device id>.tr"
 
-Implï¿½cito nas descriï¿½ï¿½es de mï¿½todos anteriores ï¿½ a construï¿½ï¿½o do nome de arquivo por meio do mï¿½todo da implementaï¿½ï¿½o. Por convenï¿½ï¿½o, rastreamento ASCII no |ns3| usa a forma "``<prefixo>-<id do nï¿½>-<id do dispositivo>.tr``".
+Implícito nas descrições de métodos anteriores é a construção do nome de arquivo por meio do método da implementação. Por convenção, rastreamento ASCII no |ns3| usa a forma "``<prefixo>-<id do nó>-<id do dispositivo>.tr``".
 
 ..
 	As previously mentioned, every node in the system will have a system-assigned
@@ -3802,7 +3802,7 @@ Implï¿½cito nas descriï¿½ï¿½es de mï¿½todos anteriores ï¿½ a construï¿½ï¿½o do n
 	of enabling tracing on the first device of node 21, using the prefix "prefix",
 	would be "prefix-21-1.tr".
 
-Como mencionado, todo nï¿½ no sistema terï¿½ um `id` de nï¿½ associado; e todo dispositivo terï¿½ um ï¿½ndice de interface (tambï¿½m chamado de id do dispositivo) relativo ao seu nï¿½. Por padrï¿½o, entï¿½o, um arquivo ASCII criado como um resultado de ativar rastreamento no primeiro dispositivo do nï¿½ 21 usando o prefixo "prefix" seria "prefix-21-1.tr".
+Como mencionado, todo nó no sistema terá um `id` de nó associado; e todo dispositivo terá um índice de interface (também chamado de id do dispositivo) relativo ao seu nó. Por padrão, então, um arquivo ASCII criado como um resultado de ativar rastreamento no primeiro dispositivo do nó 21 usando o prefixo "prefix" seria "prefix-21-1.tr".
 
 ..
 	You can always use the |ns3| object name service to make this more clear.
@@ -3812,7 +3812,7 @@ Como mencionado, todo nï¿½ no sistema terï¿½ um `id` de nï¿½ associado; e todo d
 	device, your ascii trace file name will automatically pick this up and be called
 	"prefix-server-eth0.tr".
 
-Sempre podemos usar o serviï¿½o de nome de objeto do |ns3| para tornar isso mais claro. Por exemplo, se usarmos o serviï¿½o para associar o nome ``server`` ao nï¿½ 21, o arquivo ASCII resultante automaticamente serï¿½, ``prefix-server-1.tr`` e se tambï¿½m associarmos o nome ``eth0`` ao dispositivo, o nome do arquivo ASCII automaticamente serï¿½ denominado ``prefix-server-eth0.tr``.
+Sempre podemos usar o serviço de nome de objeto do |ns3| para tornar isso mais claro. Por exemplo, se usarmos o serviço para associar o nome ``server`` ao nó 21, o arquivo ASCII resultante automaticamente será, ``prefix-server-1.tr`` e se também associarmos o nome ``eth0`` ao dispositivo, o nome do arquivo ASCII automaticamente será denominado ``prefix-server-eth0.tr``.
 
 ..
 	Several of the methods have a default parameter called ``explicitFilename``.
@@ -3820,7 +3820,7 @@ Sempre podemos usar o serviï¿½o de nome de objeto do |ns3| para tornar isso mais
 	mechanism and allows you to create an explicit filename.  This option is only
 	available in the methods which take a prefix and enable tracing on a single device.  
 	
-Diversos mï¿½todos tem um parï¿½metro padrï¿½o ``explicitFilename``. Quando modificado para verdadeiro, este parï¿½metro desabilita o mecanismo automï¿½tico de completar o nome do arquivo e permite criarmos um nome de arquivo abertamente. Esta opï¿½ï¿½o estï¿½ disponï¿½vel nos mï¿½todos que possuam um prefixo e ativem o rastreamento em um ï¿½nico dispositivo.
+Diversos métodos tem um parâmetro padrão ``explicitFilename``. Quando modificado para verdadeiro, este parâmetro desabilita o mecanismo automático de completar o nome do arquivo e permite criarmos um nome de arquivo abertamente. Esta opção está disponível nos métodos que possuam um prefixo e ativem o rastreamento em um único dispositivo.
 
 .. 
 	Pcap Tracing Protocol Helpers
@@ -3832,10 +3832,10 @@ Classes Assistentes de Protocolo para Rastreamento Pcap
 	The goal of these ``mixins`` is to make it easy to add a consistent pcap trace
 	facility to protocols.  We want all of the various flavors of pcap tracing to 
 	work the same across all protocols, so the methods of these helpers are 
-	inherited by stack helpers.  Take a look at ``src/internet/helper/internet-trace-helper.h``
+	inherited by stack helpers.  Take a look at ``src/network/helper/trace-helper.h``
 	if you want to follow the discussion while looking at real code.
 
-O objetivo destes ``mixins`` ï¿½ facilitar a adiï¿½ï¿½o de um mecanismo consistente para da facilidade de rastreamento para protocolos. Queremos que todos os mecanismos de rastreamento para todos os protocolos operem de mesma forma, logo os mï¿½todos dessas classe assistentes sï¿½o herdados por assistentes de pilha. Acesse ``src/internet/helper/internet-trace-helper.h`` para acompanhar o conteï¿½do discutido nesta seï¿½ï¿½o.
+O objetivo destes ``mixins`` é facilitar a adição de um mecanismo consistente para da facilidade de rastreamento para protocolos. Queremos que todos os mecanismos de rastreamento para todos os protocolos operem de mesma forma, logo os métodos dessas classe assistentes são herdados por assistentes de pilha. Acesse ``src/network/helper/trace-helper.h`` para acompanhar o conteúdo discutido nesta seção.
 
 ..
 	In this section we will be illustrating the methods as applied to the protocol
@@ -3843,7 +3843,7 @@ O objetivo destes ``mixins`` ï¿½ facilitar a adiï¿½ï¿½o de um mecanismo consiste
 	appropriate type.  For example, use a ``Ptr<Ipv6>`` instead of a
 	``Ptr<Ipv4>`` and call ``EnablePcapIpv6`` instead of ``EnablePcapIpv4``.
 
-Nesta seï¿½ï¿½o ilustraremos os mï¿½todos aplicados ao protocolo ``Ipv4``. Para especificar rastreamentos em protocolos similares, basta substituir pelo tipo apropriado. Por exemplo, use um ``Ptr<Ipv6>`` ao invï¿½s de um ``Ptr<Ipv4>`` e chame um ``EnablePcapIpv6`` ao invï¿½s de ``EnablePcapIpv4``.
+Nesta seção ilustraremos os métodos aplicados ao protocolo ``Ipv4``. Para especificar rastreamentos em protocolos similares, basta substituir pelo tipo apropriado. Por exemplo, use um ``Ptr<Ipv6>`` ao invés de um ``Ptr<Ipv4>`` e chame um ``EnablePcapIpv6`` ao invés de ``EnablePcapIpv4``.
 
 ..
 	The class ``PcapHelperForIpv4`` provides the high level functionality for
@@ -3854,7 +3854,7 @@ Nesta seï¿½ï¿½o ilustraremos os mï¿½todos aplicados ao protocolo ``Ipv4``. Para 
 	are required to disambiguate class ``Ipv4`` from ``Ipv6`` which are both 
 	derived from class ``Object``, and methods that share the same signature.
 
-A classe ``PcapHelperForIpv4`` provï¿½ funcionalidade de alto nï¿½vel para usar rastreamento no protocolo ``Ipv4``. Cada classe assistente de protocolo devem implementar um mï¿½todo herdado desta. Haverï¿½ uma implementaï¿½ï¿½o separada para ``Ipv6``, por exemplo, mas a diferenï¿½a serï¿½ apenas nos nomes dos mï¿½todos e assinaturas. Nomes de mï¿½todos diferentes sï¿½o necessï¿½rio para distinguir a classe ``Ipv4`` da ``Ipv6``, pois ambas sï¿½o derivadas da classe ``Object``, logo os mï¿½todos compartilham a mesma assinatura.
+A classe ``PcapHelperForIpv4`` provê funcionalidade de alto nível para usar rastreamento no protocolo ``Ipv4``. Cada classe assistente de protocolo devem implementar um método herdado desta. Haverá uma implementação separada para ``Ipv6``, por exemplo, mas a diferença será apenas nos nomes dos métodos e assinaturas. Nomes de métodos diferentes são necessário para distinguir a classe ``Ipv4`` da ``Ipv6``, pois ambas são derivadas da classe ``Object``, logo os métodos compartilham a mesma assinatura.
 
 ::
 
@@ -3867,7 +3867,7 @@ A classe ``PcapHelperForIpv4`` provï¿½ funcionalidade de alto nï¿½vel para usar 
 	``PcapHelperForIpv4`` reduce to calling this single device-dependent
 	implementation method.  For example, the lowest level pcap method,
 
-A assinatura desse mï¿½todo reflete a visï¿½o do protocolo e interface da situaï¿½ï¿½o neste nï¿½vel. Todos os mï¿½todos herdados da classe ``PcapHelperForIpv4`` resumem-se a chamada deste ï¿½nico mï¿½todo dependente de dispositivo. Por exemplo, o mï¿½todo do pcap de mais baixo nï¿½vel, 
+A assinatura desse método reflete a visão do protocolo e interface da situação neste nível. Todos os métodos herdados da classe ``PcapHelperForIpv4`` resumem-se a chamada deste único método dependente de dispositivo. Por exemplo, o método do pcap de mais baixo nível, 
 
 ::
 
@@ -3882,13 +3882,13 @@ A assinatura desse mï¿½todo reflete a visï¿½o do protocolo e interface da situaï
 	available; and these methods will all work in the same way across 
 	protocols if the helper implements ``EnablePcapIpv4Internal`` correctly.
 
-chamarï¿½ a implementaï¿½ï¿½o de dispositivo de ``EnablePcapIpv4Internal`` diretamente. Todos os outros mï¿½todos pï¿½blicos de rastreamento pcap  sï¿½o construï¿½dos a partir desta implementaï¿½ï¿½o para prover funcionalidades adicionais em nï¿½vel do usuï¿½rio. Para o usuï¿½rio, isto significa que todas as classes assistentes de dispositivo no sistema terï¿½o todos os mï¿½todos de rastreamento pcap disponï¿½veis; e estes mï¿½todos trabalharï¿½o da mesma forma entre dispositivos se o dispositivo implementar corretamente ``EnablePcapIpv4Internal``.
+chamará a implementação de dispositivo de ``EnablePcapIpv4Internal`` diretamente. Todos os outros métodos públicos de rastreamento pcap  são construídos a partir desta implementação para prover funcionalidades adicionais em nível do usuário. Para o usuário, isto significa que todas as classes assistentes de dispositivo no sistema terão todos os métodos de rastreamento pcap disponíveis; e estes métodos trabalharão da mesma forma entre dispositivos se o dispositivo implementar corretamente ``EnablePcapIpv4Internal``.
 
 
 .. 
 	Pcap Tracing Protocol Helper Methods
 
-Mï¿½todos da Classe Assistente de Protocolo para Rastreamento Pcap
+Métodos da Classe Assistente de Protocolo para Rastreamento Pcap
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ..
@@ -3897,12 +3897,12 @@ Mï¿½todos da Classe Assistente de Protocolo para Rastreamento Pcap
 	``Node`` and ``NetDevice`` pair constraints, we use protocol and interface
 	constraints.
 
-Estes mï¿½todos sï¿½o projetados para terem correspondï¿½ncia de um-para-um com o ``Node`` e ``NetDevice``. Ao invï¿½s de restriï¿½ï¿½es de pares ``Node`` e ``NetDevice``, usamos restriï¿½ï¿½es de protocolo e interface.
+Estes métodos são projetados para terem correspondência de um-para-um com o ``Node`` e ``NetDevice``. Ao invés de restrições de pares ``Node`` e ``NetDevice``, usamos restrições de protocolo e interface.
 
 .. 
 	Note that just like in the device version, there are six methods:
 
-Note que como na versï¿½o de dispositivo, hï¿½ seis mï¿½todos:
+Note que como na versão de dispositivo, há seis métodos:
 
 ::
 
@@ -3920,13 +3920,13 @@ Note que como na versï¿½o de dispositivo, hï¿½ seis mï¿½todos:
 	You are encouraged to peruse the Doxygen for class ``PcapHelperForIpv4``
 	to find the details of these methods; but to summarize ...
 
-Para maiores detalhes sobre estes mï¿½todos ï¿½ interessante consultar na documentaï¿½ï¿½o da classe ``PcapHelperForIpv4``, mas para resumir ...
+Para maiores detalhes sobre estes métodos é interessante consultar na documentação da classe ``PcapHelperForIpv4``, mas para resumir ...
 
 ..
 	You can enable pcap tracing on a particular protocol/interface pair by providing a
 	``Ptr<Ipv4>`` and ``interface`` to an ``EnablePcap`` method.  For example, 
 
-Podemos habilitar o rastreamento pcap em um par protocolo/interface  passando um ``Ptr<Ipv4>`` e ``interface`` para um mï¿½todo ``EnablePcap``. Por exemplo,
+Podemos habilitar o rastreamento pcap em um par protocolo/interface  passando um ``Ptr<Ipv4>`` e ``interface`` para um método ``EnablePcap``. Por exemplo,
 
 ::
 
@@ -3940,7 +3940,7 @@ Podemos habilitar o rastreamento pcap em um par protocolo/interface  passando um
 	``EnablePcap`` method.  The ``Ptr<Ipv4>`` is looked up from the name
 	string.  For example, 
 
-Podemos ativar o rastreamento pcap em um par protocolo/interface passando uma ``std::string`` que representa um nome de serviï¿½o para um mï¿½todo ``EnablePcapIpv4``. O ``Ptr<Ipv4>`` ï¿½ buscado a partir do nome da `string`.
+Podemos ativar o rastreamento pcap em um par protocolo/interface passando uma ``std::string`` que representa um nome de serviço para um método ``EnablePcapIpv4``. O ``Ptr<Ipv4>`` é buscado a partir do nome da `string`.
 Por exemplo,
 
 ::
@@ -3956,7 +3956,7 @@ Por exemplo,
 	proper type (the same type as is managed by the device helper), tracing is 
 	enabled for the corresponding interface.  For example, 
 
-Podemos ativar o rastreamento pcap em uma coleï¿½ï¿½o de pares protocolo/interface usando um ``Ipv4InterfaceContainer``. Para cada par``Ipv4``/interface no contï¿½iner o tipo do protocolo ï¿½ verificado. Para cada protocolo do tipo adequado, o rastreamento ï¿½ ativado para a interface correspondente. Por exemplo,
+Podemos ativar o rastreamento pcap em uma coleção de pares protocolo/interface usando um ``Ipv4InterfaceContainer``. Para cada par``Ipv4``/interface no contêiner o tipo do protocolo é verificado. Para cada protocolo do tipo adequado, o rastreamento é ativado para a interface correspondente. Por exemplo,
 
 
 ::
@@ -3977,7 +3977,7 @@ Podemos ativar o rastreamento pcap em uma coleï¿½ï¿½o de pares protocolo/interfa
 	the appropriate protocol is found.  For each protocol, its interfaces are 
 	enumerated and tracing is enabled on the resulting pairs.  For example,
 
-Podemos ativar o rastreamento em uma coleï¿½ï¿½o de pares protocolo/interface usando um ``NodeContainer``. Para cada ``Node`` no ``NodeContainer`` o protocolo apropriado ï¿½ encontrado. Para cada protocolo, suas interfaces sï¿½o enumeradas e o rastreamento ï¿½ ativado nos pares resultantes. Por exemplo,
+Podemos ativar o rastreamento em uma coleção de pares protocolo/interface usando um ``NodeContainer``. Para cada ``Node`` no ``NodeContainer`` o protocolo apropriado é encontrado. Para cada protocolo, suas interfaces são enumeradas e o rastreamento é ativado nos pares resultantes. Por exemplo,
 
 ::
 
@@ -3991,7 +3991,7 @@ Podemos ativar o rastreamento em uma coleï¿½ï¿½o de pares protocolo/interface us
 	protocol is looked up in the node.  The resulting protocol and interface are
 	used to specify the resulting trace source.
 
-Pode ativar o rastreamento pcap usando o nï¿½mero identificador do nï¿½ e da interface. Neste caso, o `ID` do nï¿½ ï¿½ traduzido para um ``Ptr<Node>`` e o protocolo apropriado ï¿½ buscado no nï¿½. O protocolo e interface resultante sï¿½o usados para especificar a origem do rastreamento resultante.
+Pode ativar o rastreamento pcap usando o número identificador do nó e da interface. Neste caso, o `ID` do nó é traduzido para um ``Ptr<Node>`` e o protocolo apropriado é buscado no nó. O protocolo e interface resultante são usados para especificar a origem do rastreamento resultante.
 
 
 ::
@@ -4012,7 +4012,7 @@ Por fim, podemos ativar rastreamento pcap para todas as interfaces no sistema, d
 .. 
 	Pcap Tracing Protocol Helper Filename Selection
 
-Seleï¿½ï¿½o de um Nome de Arquivo para o Rastreamento Pcap da Classe Assistente de Protocolo
+Seleção de um Nome de Arquivo para o Rastreamento Pcap da Classe Assistente de Protocolo
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ..
@@ -4027,7 +4027,7 @@ Seleï¿½ï¿½o de um Nome de Arquivo para o Rastreamento Pcap da Classe Assistente 
 	collisions in automatically chosen trace file names.  For this reason, the
 	file name convention is changed for protocol traces.
 
-Implï¿½cito nas descriï¿½ï¿½es de mï¿½todos anterior ï¿½ a construï¿½ï¿½o do nome de arquivo por meio do mï¿½todo da implementaï¿½ï¿½o. Por convenï¿½ï¿½o, rastreamento pcap no |ns3| usa a forma ``<prefixo>-<id do nï¿½>-<id do dispositivo>.pcap``. No caso de rastreamento de protocolos, hï¿½ uma correspondï¿½ncia de um-para-um entre protocolos e ``Nodes``. Isto porque ``Objects`` de protocolo sï¿½o agregados a `Node Objects``. Como nï¿½o hï¿½ um `id` global de protocolo no sistema, usamos o `ID` do nï¿½ na nomeaï¿½ï¿½o do arquivo. Consequentemente hï¿½ possibilidade de colisï¿½o de nomes quando usamos o sistema automï¿½tico de nomes. Por esta razï¿½o, a convenï¿½ï¿½o de nome de arquivo ï¿½ modificada para rastreamentos de protocolos.
+Implícito nas descrições de métodos anterior é a construção do nome de arquivo por meio do método da implementação. Por convenção, rastreamento pcap no |ns3| usa a forma ``<prefixo>-<id do nó>-<id do dispositivo>.pcap``. No caso de rastreamento de protocolos, há uma correspondência de um-para-um entre protocolos e ``Nodes``. Isto porque ``Objects`` de protocolo são agregados a `Node Objects``. Como não há um `id` global de protocolo no sistema, usamos o `ID` do nó na nomeação do arquivo. Consequentemente há possibilidade de colisão de nomes quando usamos o sistema automático de nomes. Por esta razão, a convenção de nome de arquivo é modificada para rastreamentos de protocolos.
 
 ..
 	As previously mentioned, every node in the system will have a system-assigned
@@ -4037,14 +4037,14 @@ Implï¿½cito nas descriï¿½ï¿½es de mï¿½todos anterior ï¿½ a construï¿½ï¿½o do nom
 	"<prefix>-n<node id>-i<interface id>.pcap" for trace file naming in protocol
 	helpers.
 
-Como mencionado, todo nï¿½ no sistema terï¿½ um `id` de nï¿½ associado. Como hï¿½ uma correspondï¿½ncia de um-para-um entre instï¿½ncias de protocolo e instï¿½ncias de nï¿½, usamos o `id` de nï¿½. Cada interface tem um `id` de interface relativo ao seu protocolo. Usamos a convenï¿½ï¿½o "<prefixo>-n<id do nï¿½>-i<id da interface>.pcap" para especificar o nome do arquivo de rastreamento para as classes assistentes de protocolo.
+Como mencionado, todo nó no sistema terá um `id` de nó associado. Como há uma correspondência de um-para-um entre instâncias de protocolo e instâncias de nó, usamos o `id` de nó. Cada interface tem um `id` de interface relativo ao seu protocolo. Usamos a convenção "<prefixo>-n<id do nó>-i<id da interface>.pcap" para especificar o nome do arquivo de rastreamento para as classes assistentes de protocolo.
 
 ..
 	Therefore, by default, a pcap trace file created as a result of enabling tracing
 	on interface 1 of the Ipv4 protocol of node 21 using the prefix "prefix"
 	would be "prefix-n21-i1.pcap".
 
-Consequentemente, por padrï¿½o, uma arquivo pcap criado como um resultado da ativaï¿½ï¿½o de rastreamento na interface 1 do protocolo ipv4 do nï¿½ 21 usando o prefixo ``prefix`` seria ``prefix-n21-i1.pcap``.
+Consequentemente, por padrão, uma arquivo pcap criado como um resultado da ativação de rastreamento na interface 1 do protocolo ipv4 do nó 21 usando o prefixo ``prefix`` seria ``prefix-n21-i1.pcap``.
 
 ..
 	You can always use the |ns3| object name service to make this more clear.
@@ -4052,7 +4052,7 @@ Consequentemente, por padrï¿½o, uma arquivo pcap criado como um resultado da ati
 	to the Ptr<Ipv4> on node 21, the resulting pcap trace file name will 
 	automatically become, "prefix-nserverIpv4-i1.pcap".
 
-Sempre podemos usar o serviï¿½o de nomes de objetos do |ns3| para tornar isso mais claro. Por exemplo, se usamos o serviï¿½o de nomes  para associar o nome "serverIpv4" ao Ptr<Ipv4> no nï¿½ 21, o nome de arquivo resultante seria ``prefix-nserverIpv4-i1.pcap``.
+Sempre podemos usar o serviço de nomes de objetos do |ns3| para tornar isso mais claro. Por exemplo, se usamos o serviço de nomes  para associar o nome "serverIpv4" ao Ptr<Ipv4> no nó 21, o nome de arquivo resultante seria ``prefix-nserverIpv4-i1.pcap``.
 
 ..
 	Several of the methods have a default parameter called ``explicitFilename``.
@@ -4060,7 +4060,7 @@ Sempre podemos usar o serviï¿½o de nomes de objetos do |ns3| para tornar isso ma
 	mechanism and allows you to create an explicit filename.  This option is only
 	available in the methods which take a prefix and enable tracing on a single device.  
 
-Diversos mï¿½todos tem um parï¿½metro padrï¿½o ``explicitFilename``. Quando modificado para verdadeiro, este parï¿½metro desabilita o mecanismo automï¿½tico de completar o nome do arquivo e permite criarmos um nome de arquivo abertamente. Esta opï¿½ï¿½o estï¿½ disponï¿½vel nos mï¿½todos que  ativam o rastreamento pcap em um ï¿½nico dispositivo.
+Diversos métodos tem um parâmetro padrão ``explicitFilename``. Quando modificado para verdadeiro, este parâmetro desabilita o mecanismo automático de completar o nome do arquivo e permite criarmos um nome de arquivo abertamente. Esta opção está disponível nos métodos que  ativam o rastreamento pcap em um único dispositivo.
 
 .. 
 	Ascii Tracing Protocol Helpers
@@ -4070,10 +4070,10 @@ Classes Assistentes de Protocolo para Rastreamento ASCII
 
 ..
 	The behavior of the ascii trace helpers is substantially similar to the pcap
-	case.  Take a look at ``src/internet/helper/internet-trace-helper.h`` if you want to 
+	case.  Take a look at ``src/network/helper/trace-helper.h`` if you want to 
 	follow the discussion while looking at real code.
 
-O comportamento dos assistentes de rastreamento ASCII ï¿½ similar ao do pcap. Acesse o arquivo ``src/internet/helper/internet-trace-helper.h`` para compreender melhor o funcionamento dessa classe assistente.
+O comportamento dos assistentes de rastreamento ASCII é similar ao do pcap. Acesse o arquivo ``src/network/helper/trace-helper.h`` para compreender melhor o funcionamento dessa classe assistente.
 
 ..
 	In this section we will be illustrating the methods as applied to the protocol
@@ -4081,14 +4081,14 @@ O comportamento dos assistentes de rastreamento ASCII ï¿½ similar ao do pcap. Ac
 	appropriate type.  For example, use a ``Ptr<Ipv6>`` instead of a
 	``Ptr<Ipv4>`` and call ``EnableAsciiIpv6`` instead of ``EnableAsciiIpv4``.
 
-Nesta seï¿½ï¿½o apresentamos os mï¿½todos aplicados ao protocolo ``Ipv4``. Para protocolos similares apenas substitua para o tipo apropriado. Por exemplo, use um ``Ptr<Ipv6>`` ao invï¿½s de um  ``Ptr<Ipv4>`` e chame ``EnableAsciiIpv6`` ao invï¿½s de ``EnableAsciiIpv4``.
+Nesta seção apresentamos os métodos aplicados ao protocolo ``Ipv4``. Para protocolos similares apenas substitua para o tipo apropriado. Por exemplo, use um ``Ptr<Ipv6>`` ao invés de um  ``Ptr<Ipv4>`` e chame ``EnableAsciiIpv6`` ao invés de ``EnableAsciiIpv4``.
 
 ..
 	The class ``AsciiTraceHelperForIpv4`` adds the high level functionality
 	for using ascii tracing to a protocol helper.  Each protocol that enables these
 	methods must implement a single virtual method inherited from this class.
 
-A classe ``AsciiTraceHelperForIpv4`` adiciona funcionalidade de alto nï¿½vel para usar rastreamento ASCII para um assistente de protocolo. Todo protocolo que usa estes mï¿½todos deve implementar um mï¿½todo herdado desta classe. 
+A classe ``AsciiTraceHelperForIpv4`` adiciona funcionalidade de alto nível para usar rastreamento ASCII para um assistente de protocolo. Todo protocolo que usa estes métodos deve implementar um método herdado desta classe. 
 
 ::
 
@@ -4106,7 +4106,7 @@ A classe ``AsciiTraceHelperForIpv4`` adiciona funcionalidade de alto nï¿½vel par
 	dependent implementation method.  For example, the lowest level ascii trace
 	methods,
 
-A assinatura deste mï¿½todo reflete a visï¿½o central do protocolo e interface da situaï¿½ï¿½o neste nï¿½vel; e tambï¿½m o fato que o assistente pode ser escrito para um fluxo de saï¿½da compartilhado. Todos os mï¿½todos pï¿½blicos herdados desta classe ``PcapAndAsciiTraceHelperForIpv4`` resumem-se a chamada deste ï¿½nico mï¿½todo dependente de implementaï¿½ï¿½o. Por exemplo, os mï¿½todos de rastreamento ASCII de mais baixo nï¿½vel,
+A assinatura deste método reflete a visão central do protocolo e interface da situação neste nível; e também o fato que o assistente pode ser escrito para um fluxo de saída compartilhado. Todos os métodos públicos herdados desta classe ``PcapAndAsciiTraceHelperForIpv4`` resumem-se a chamada deste único método dependente de implementação. Por exemplo, os métodos de rastreamento ASCII de mais baixo nível,
 
 ::
 
@@ -4124,13 +4124,13 @@ A assinatura deste mï¿½todo reflete a visï¿½o central do protocolo e interface d
 	will all work in the same way across protocols if the protocols implement 
 	``EnablAsciiIpv4Internal`` correctly.
 
-chamarï¿½o uma implementaï¿½ï¿½o de ``EnableAsciiIpv4Internal`` diretamente, passando um prefixo ou fluxo vï¿½lido. Todos os outros mï¿½todos pï¿½blicos serï¿½o construï¿½dos a partir destas funï¿½ï¿½es de baixo nï¿½vel para fornecer funcionalidades adicionais em nï¿½vel de usuï¿½rio. Para o usuï¿½rio, isso significa que todos os assistentes de protocolos no sistema terï¿½o todos os mï¿½todos de rastreamento ASCII disponï¿½veis e estes mï¿½todos trabalharï¿½o do mesmo modo em todos os protocolos se estes implementarem ``EnableAsciiIpv4Internal``.
+chamarão uma implementação de ``EnableAsciiIpv4Internal`` diretamente, passando um prefixo ou fluxo válido. Todos os outros métodos públicos serão construídos a partir destas funções de baixo nível para fornecer funcionalidades adicionais em nível de usuário. Para o usuário, isso significa que todos os assistentes de protocolos no sistema terão todos os métodos de rastreamento ASCII disponíveis e estes métodos trabalharão do mesmo modo em todos os protocolos se estes implementarem ``EnableAsciiIpv4Internal``.
 
 
 .. 
 	Ascii Tracing Protocol Helper Methods
 
-Mï¿½todos da Classe Assistente de Protocolo para Rastreamento ASCII
+Métodos da Classe Assistente de Protocolo para Rastreamento ASCII
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
@@ -4163,7 +4163,7 @@ Mï¿½todos da Classe Assistente de Protocolo para Rastreamento ASCII
 	You are encouraged to peruse the Doxygen for class ``PcapAndAsciiHelperForIpv4``
 	to find the details of these methods; but to summarize ...
 
-Para maiores detalhes sobre os mï¿½todos consulte na documentaï¿½ï¿½o a classe ``PcapAndAsciiHelperForIpv4``; mas para resumir ...
+Para maiores detalhes sobre os métodos consulte na documentação a classe ``PcapAndAsciiHelperForIpv4``; mas para resumir ...
 
 ..
 	There are twice as many methods available for ascii tracing as there were for
@@ -4174,7 +4174,7 @@ Para maiores detalhes sobre os mï¿½todos consulte na documentaï¿½ï¿½o a classe `
 	file name generation mechanism is replaced by a mechanism to refer to a common 
 	file; and the number of API methods is doubled to allow all combinations.
 
-Hï¿½ duas vezes mais mï¿½todos disponï¿½veis para rastreamento ASCII que para rastreamento pcap. Isto ocorre pois para o modelo pcap os rastreamentos de cada par protocolo/interface sï¿½o escritos para um ï¿½nico arquivo, enquanto que no ASCII todo as as informaï¿½ï¿½es sï¿½o escritas para um arquivo comum. Isto significa que o mecanismo de geraï¿½ï¿½o de nomes de arquivos "<prefixo>-n<id do nï¿½>-i<interface>" ï¿½ substituï¿½do por um mecanismo para referenciar um arquivo comum; e o nï¿½mero de mï¿½todos da API ï¿½ duplicado para permitir todas as combinaï¿½ï¿½es.
+Há duas vezes mais métodos disponíveis para rastreamento ASCII que para rastreamento pcap. Isto ocorre pois para o modelo pcap os rastreamentos de cada par protocolo/interface são escritos para um único arquivo, enquanto que no ASCII todo as as informações são escritas para um arquivo comum. Isto significa que o mecanismo de geração de nomes de arquivos "<prefixo>-n<id do nó>-i<interface>" é substituído por um mecanismo para referenciar um arquivo comum; e o número de métodos da API é duplicado para permitir todas as combinações.
 
 ..
 	Just as in pcap tracing, you can enable ascii tracing on a particular 
@@ -4182,7 +4182,7 @@ Hï¿½ duas vezes mais mï¿½todos disponï¿½veis para rastreamento ASCII que para ra
 	to an ``EnableAscii`` method.
 	For example, 
 
-Assim, como no rastreamento pcap, podemos ativar o rastreamento ASCII em um par protocolo/interface passando um ``Ptr<Ipv4>`` e uma ``interface`` para  um mï¿½todo ``EnableAsciiIpv4``. Por exemplo,
+Assim, como no rastreamento pcap, podemos ativar o rastreamento ASCII em um par protocolo/interface passando um ``Ptr<Ipv4>`` e uma ``interface`` para  um método ``EnableAsciiIpv4``. Por exemplo,
 
 
 ::
@@ -4197,7 +4197,7 @@ Assim, como no rastreamento pcap, podemos ativar o rastreamento ASCII em um par 
 	the same rules as described in the pcap section, except that the file will
 	have the suffix ".tr" instead of ".pcap".
 
-Neste caso, nenhum contexto de rastreamento ï¿½ escrito para o arquivo ASCII pois seriam redundantes. O sistema pegarï¿½ o nome do arquivo para ser criado usando as mesmas regras como descritas na seï¿½ï¿½o pcap, exceto que o arquivo terï¿½ o extensï¿½o ``.tr`` ao invï¿½s de ``.pcap``.
+Neste caso, nenhum contexto de rastreamento é escrito para o arquivo ASCII pois seriam redundantes. O sistema pegará o nome do arquivo para ser criado usando as mesmas regras como descritas na seção pcap, exceto que o arquivo terá o extensão ``.tr`` ao invés de ``.pcap``.
 
 ..
 	If you want to enable ascii tracing on more than one interface and have all 
@@ -4205,7 +4205,7 @@ Neste caso, nenhum contexto de rastreamento ï¿½ escrito para o arquivo ASCII poi
 	refer to a single file.  We have already something similar to this in the
 	"cwnd" example above:
 
-Para habilitar o rastreamento ASCII em mais de uma interface e ter todos os dados de rastreamento enviados para um ï¿½nico arquivo, pode-se usar um objeto para referenciar um ï¿½nico arquivo. Nï¿½s jï¿½ verificamos isso no exemplo "cwnd":
+Para habilitar o rastreamento ASCII em mais de uma interface e ter todos os dados de rastreamento enviados para um único arquivo, pode-se usar um objeto para referenciar um único arquivo. Nós já verificamos isso no exemplo "cwnd":
 
 ::
 
@@ -4224,7 +4224,7 @@ Para habilitar o rastreamento ASCII em mais de uma interface e ter todos os dado
 	the user is completely specifying the file name, the string should include the
 	",tr" for consistency.
 
-Neste caso, os contextos sï¿½o escritos para o arquivo ASCII quando ï¿½ necessï¿½rio distinguir os dados de rastreamento de duas interfaces. ï¿½ interessante usar no nome do arquivo a extensï¿½o ``.tr`` por motivos de consistï¿½ncia.
+Neste caso, os contextos são escritos para o arquivo ASCII quando é necessário distinguir os dados de rastreamento de duas interfaces. É interessante usar no nome do arquivo a extensão ``.tr`` por motivos de consistência.
 
 ..
 	You can enable ascii tracing on a particular protocol by providing a 
@@ -4234,7 +4234,7 @@ Neste caso, os contextos sï¿½o escritos para o arquivo ASCII quando ï¿½ necessï¿
 	is a one-to-one correspondence between protocol instances and nodes,
 	For example, 
 
-Pode habilitar o rastreamento ASCII em protocolo especï¿½fico passando ao mï¿½todo ``EnableAsciiIpv4`` uma ``std::string`` representando um nome no serviï¿½o de nomes de objetos. O ``Ptr<Ipv4>`` ï¿½ obtido a partir do nome. O ``<Node>`` ï¿½ implï¿½cito, pois hï¿½ uma correspondï¿½ncia de um-para-um entre instancias de protocolos e nï¿½s. Por exemplo,
+Pode habilitar o rastreamento ASCII em protocolo específico passando ao método ``EnableAsciiIpv4`` uma ``std::string`` representando um nome no serviço de nomes de objetos. O ``Ptr<Ipv4>`` é obtido a partir do nome. O ``<Node>`` é implícito, pois há uma correspondência de um-para-um entre instancias de protocolos e nós. Por exemplo,
 
 ::
 
@@ -4250,7 +4250,7 @@ Pode habilitar o rastreamento ASCII em protocolo especï¿½fico passando ao mï¿½to
 	trace file.  Since all of the EnableAscii functions are overloaded to take a 
 	stream wrapper, you can use that form as well:
 
-Isto resultaria em dois nomes de arquivos ``prefix-nnode1Ipv4-i1.tr`` e ``prefix-nnode2Ipv4-i1.tr``, com os rastreamentos de cada interface em  seu arquivo respectivo. Como todas as funï¿½ï¿½es do ``EnableAsciiIpv4`` sï¿½o sobrecarregadas para suportar um *stream wrapper*, podemos usar da seguinte forma tambï¿½m:
+Isto resultaria em dois nomes de arquivos ``prefix-nnode1Ipv4-i1.tr`` e ``prefix-nnode2Ipv4-i1.tr``, com os rastreamentos de cada interface em  seu arquivo respectivo. Como todas as funções do ``EnableAsciiIpv4`` são sobrecarregadas para suportar um *stream wrapper*, podemos usar da seguinte forma também:
 
 
 ::
@@ -4269,7 +4269,7 @@ Isto resultaria em dois nomes de arquivos ``prefix-nnode1Ipv4-i1.tr`` e ``prefix
 	contains all of the trace events for both interfaces.  The events would be 
 	disambiguated by trace context strings.
 
-Isto resultaria em um ï¿½nico arquivo chamado ``trace-file-name.tr`` que contï¿½m todos os eventos rastreados para ambas as interfaces. Os eventos seriam diferenciados por `strings` de contexto.
+Isto resultaria em um único arquivo chamado ``trace-file-name.tr`` que contém todos os eventos rastreados para ambas as interfaces. Os eventos seriam diferenciados por `strings` de contexto.
 
 .. 
 	You can enable ascii tracing on a collection of protocol/interface pairs by 
@@ -4279,7 +4279,7 @@ Isto resultaria em um ï¿½nico arquivo chamado ``trace-file-name.tr`` que contï¿½
 	there is a one-to-one correspondence between each protocol and its node.
 	For example, 
 
-Podemos habilitar o rastreamento ASCII em um coleï¿½ï¿½o de pares protocolo/interface provendo um ``Ipv4InterfaceContainer``. Para cada protocolo no contï¿½iner o tipo ï¿½ verificado. Para cada protocolo do tipo adequado (o mesmo tipo que ï¿½ gerenciado por uma classe assistente de protocolo), o rastreamento ï¿½ habilitado para a interface correspondente. Novamente, o ``<Node>`` ï¿½ implï¿½cito, pois hï¿½ uma correspondï¿½ncia de um-para-um entre protocolo e seu nï¿½. Por exemplo,
+Podemos habilitar o rastreamento ASCII em um coleção de pares protocolo/interface provendo um ``Ipv4InterfaceContainer``. Para cada protocolo no contêiner o tipo é verificado. Para cada protocolo do tipo adequado (o mesmo tipo que é gerenciado por uma classe assistente de protocolo), o rastreamento é habilitado para a interface correspondente. Novamente, o ``<Node>`` é implícito, pois há uma correspondência de um-para-um entre protocolo e seu nó. Por exemplo,
 
 
 ::
@@ -4300,9 +4300,9 @@ Podemos habilitar o rastreamento ASCII em um coleï¿½ï¿½o de pares protocolo/inte
 	follows the <prefix>-n<node id>-i<interface>.tr convention.  Combining all of the
 	traces into a single file is accomplished similarly to the examples above:
 
-Isto resultaria em vï¿½rios arquivos de rastreamento ASCII sendo criados, cada um seguindo a convenï¿½ï¿½o ``<prefixo>-n<id do nï¿½>-i<interface>.tr``. 
+Isto resultaria em vários arquivos de rastreamento ASCII sendo criados, cada um seguindo a convenção ``<prefixo>-n<id do nó>-i<interface>.tr``. 
 
-Para obtermos um ï¿½nico arquivo terï¿½amos:
+Para obtermos um único arquivo teríamos:
 
 ::
 
@@ -4325,7 +4325,7 @@ Para obtermos um ï¿½nico arquivo terï¿½amos:
 	the appropriate protocol is found.  For each protocol, its interfaces are 
 	enumerated and tracing is enabled on the resulting pairs.  For example,
 
-Podemos habilitar o rastreamento ASCII em uma coleï¿½ï¿½o de pares protocolo/interface provendo um `NodeContainer``. Para cada ``Node`` no ``NodeContainer`` os protocolos apropriados sï¿½o encontrados. Para cada protocolo, sua interface ï¿½ enumerada e o rastreamento ï¿½ habilitado nos pares. Por exemplo,
+Podemos habilitar o rastreamento ASCII em uma coleção de pares protocolo/interface provendo um `NodeContainer``. Para cada ``Node`` no ``NodeContainer`` os protocolos apropriados são encontrados. Para cada protocolo, sua interface é enumerada e o rastreamento é habilitado nos pares. Por exemplo,
 
 ::
 
@@ -4339,7 +4339,7 @@ Podemos habilitar o rastreamento ASCII em uma coleï¿½ï¿½o de pares protocolo/int
 	protocol is looked up in the node.  The resulting protocol and interface are
 	used to specify the resulting trace source.
 
-Podemos habilitar o rastreamento pcap usando o nï¿½mero identificador do nï¿½ e nï¿½mero identificador do dispositivo. Neste caso, o `ID` do nï¿½ ï¿½ traduzido para um ``Ptr<Node>`` e o protocolo apropriado ï¿½ procurado no nï¿½ de rede. O protocolo e interface resultantes sï¿½o usados para especificar a origem do rastreamento.
+Podemos habilitar o rastreamento pcap usando o número identificador do nó e número identificador do dispositivo. Neste caso, o `ID` do nó é traduzido para um ``Ptr<Node>`` e o protocolo apropriado é procurado no nó de rede. O protocolo e interface resultantes são usados para especificar a origem do rastreamento.
 
 ::
 
@@ -4348,7 +4348,7 @@ Podemos habilitar o rastreamento pcap usando o nï¿½mero identificador do nï¿½ e 
 .. 
 	Of course, the traces can be combined into a single file as shown above.
 
-Os rastreamentos podem ser combinados em um ï¿½nico arquivo como mostrado anteriormente.
+Os rastreamentos podem ser combinados em um único arquivo como mostrado anteriormente.
 
 .. 
 	Finally, you can enable ascii tracing for all interfaces in the system, with
@@ -4367,14 +4367,14 @@ Finalmente, podemos habilitar o rastreamento ASCII para todas as interfaces no s
 	convention.  Combining all of the traces into a single file is accomplished 
 	similarly to the examples above.
 
-Isto resultaria em vï¿½rios arquivos ASCII sendo criados, um para cada interface no sistema relacionada ao protocolo do tipo gerenciado pela classe assistente.Todos estes arquivos seguiriam a convenï¿½ï¿½o
+Isto resultaria em vários arquivos ASCII sendo criados, um para cada interface no sistema relacionada ao protocolo do tipo gerenciado pela classe assistente.Todos estes arquivos seguiriam a convenção
 ``<prefix>-n<id do node>-i<interface>.tr``.
 
 
 .. 
 	Ascii Tracing Protocol Helper Filename Selection
 
-Seleï¿½ï¿½o de Nome de Arquivo para Rastreamento ASCII da Classe Assistente de Protocolo 
+Seleção de Nome de Arquivo para Rastreamento ASCII da Classe Assistente de Protocolo 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ..
@@ -4382,7 +4382,7 @@ Seleï¿½ï¿½o de Nome de Arquivo para Rastreamento ASCII da Classe Assistente de P
 	complete filenames by the implementation method.  By convention, ascii traces
 	in the |ns3| system are of the form "<prefix>-<node id>-<device id>.tr"
 
-Implï¿½cito nas descriï¿½ï¿½es de mï¿½todos anteriores ï¿½ a construï¿½ï¿½o do nome do arquivo por meio do mï¿½todo da implementaï¿½ï¿½o. Por convenï¿½ï¿½o, rastreamento ASCII no sistema |ns3| sï¿½o da forma ``<prefix>-<id node>-<id do dispositivo>.tr``.
+Implícito nas descrições de métodos anteriores é a construção do nome do arquivo por meio do método da implementação. Por convenção, rastreamento ASCII no sistema |ns3| são da forma ``<prefix>-<id node>-<id do dispositivo>.tr``.
 
 ..
 	As previously mentioned, every node in the system will have a system-assigned
@@ -4394,7 +4394,7 @@ Implï¿½cito nas descriï¿½ï¿½es de mï¿½todos anteriores ï¿½ a construï¿½ï¿½o do n
 	would be "prefix-n21-i1.tr".  Use the prefix to disambiguate multiple protocols
 	per node.
 
-Como mencionado, todo nï¿½ no sistema terï¿½ um nï¿½mero identificador de nï¿½ associado. Como hï¿½ uma correspondï¿½ncia de um-para-um entre instï¿½ncias de protocolo e instï¿½ncias de nï¿½, usamos o `ID` de nï¿½. Cada interface em um protocolo terï¿½ um ï¿½ndice de interface (tambï¿½m chamando apenas de interface) relativo ao seu protocolo. Por padrï¿½o, entï¿½o, um arquivo de rastreamento ASCII criado a partir do rastreamento no primeiro dispositivo do nï¿½ 21, usando o prefixo "prefix", seria ``prefix-n21-i1.tr``. O uso de prefixo distingue mï¿½ltiplos protocolos por nï¿½.
+Como mencionado, todo nó no sistema terá um número identificador de nó associado. Como há uma correspondência de um-para-um entre instâncias de protocolo e instâncias de nó, usamos o `ID` de nó. Cada interface em um protocolo terá um índice de interface (também chamando apenas de interface) relativo ao seu protocolo. Por padrão, então, um arquivo de rastreamento ASCII criado a partir do rastreamento no primeiro dispositivo do nó 21, usando o prefixo "prefix", seria ``prefix-n21-i1.tr``. O uso de prefixo distingue múltiplos protocolos por nó.
 
 ..
 	You can always use the |ns3| object name service to make this more clear.
@@ -4402,7 +4402,7 @@ Como mencionado, todo nï¿½ no sistema terï¿½ um nï¿½mero identificador de nï¿½ a
 	to the protocol on node 21, and also specify interface one, the resulting ascii 
 	trace file name will automatically become, "prefix-nserverIpv4-1.tr".
 
-Sempre podemos usar o serviï¿½o de nomes de objetos do |ns3| para tornar isso mais claro. Por exemplo, se usarmos o serviï¿½o de nomes para associar o nome "serverIpv4" ao Ptr<Ipv4> no nï¿½ 21, o nome de arquivo resultante seria ``prefix-nserverIpv4-i1.tr``.
+Sempre podemos usar o serviço de nomes de objetos do |ns3| para tornar isso mais claro. Por exemplo, se usarmos o serviço de nomes para associar o nome "serverIpv4" ao Ptr<Ipv4> no nó 21, o nome de arquivo resultante seria ``prefix-nserverIpv4-i1.tr``.
 
 ..
 	Several of the methods have a default parameter called ``explicitFilename``.
@@ -4410,13 +4410,13 @@ Sempre podemos usar o serviï¿½o de nomes de objetos do |ns3| para tornar isso ma
 	mechanism and allows you to create an explicit filename.  This option is only
 	available in the methods which take a prefix and enable tracing on a single device.  
 
-Diversos mï¿½todos tem um parï¿½metro padrï¿½o ``explicitFilename``. Quando modificado para verdadeiro, este parï¿½metro desabilita o mecanismo automï¿½tico de completar o nome do arquivo e permite criarmos um nome de arquivo abertamente. Esta opï¿½ï¿½o estï¿½ disponï¿½vel nos mï¿½todos que  ativam o rastreamento em um ï¿½nico dispositivo.
+Diversos métodos tem um parâmetro padrão ``explicitFilename``. Quando modificado para verdadeiro, este parâmetro desabilita o mecanismo automático de completar o nome do arquivo e permite criarmos um nome de arquivo abertamente. Esta opção está disponível nos métodos que  ativam o rastreamento em um único dispositivo.
 
 
 .. 
 	Summary
 
-Consideraï¿½ï¿½es Finais
+Considerações Finais
 ********************
 
 ..
@@ -4424,7 +4424,7 @@ Consideraï¿½ï¿½es Finais
 	levels to customize the kinds of information that can be extracted from 
 	simulations.  
 
-O |ns3| inclui um ambiente completo para permitir usuï¿½rios de diversos nï¿½veis  personalizar os tipos de informaï¿½ï¿½o para serem extraï¿½das de suas simulaï¿½ï¿½es.
+O |ns3| inclui um ambiente completo para permitir usuários de diversos níveis  personalizar os tipos de informação para serem extraídas de suas simulações.
 
 ..
 	There are high-level helper functions that allow users to simply control the 
@@ -4434,7 +4434,7 @@ O |ns3| inclui um ambiente completo para permitir usuï¿½rios de diversos nï¿½vei
 	users to alter the system to present new and previously unexported information
 	in a way that will be immediately accessible to users at higher levels.
 
-Existem funï¿½ï¿½es assistentes de alto nï¿½vel que permitem ao usuï¿½rio o controle de um coleï¿½ï¿½o de saï¿½das predefinidas para uma granularidade mais fina. Existem funï¿½ï¿½es assistentes de nï¿½vel intermediï¿½rio que permitem usuï¿½rios mais sofisticados personalizar como as informaï¿½ï¿½es sï¿½o extraï¿½das e armazenadas; e existem funï¿½ï¿½es de baixo nï¿½vel que permitem usuï¿½rios avanï¿½ados alterarem o sistema para apresentar novas ou informaï¿½ï¿½es que nï¿½o eram exportadas.
+Existem funções assistentes de alto nível que permitem ao usuário o controle de um coleção de saídas predefinidas para uma granularidade mais fina. Existem funções assistentes de nível intermediário que permitem usuários mais sofisticados personalizar como as informações são extraídas e armazenadas; e existem funções de baixo nível que permitem usuários avançados alterarem o sistema para apresentar novas ou informações que não eram exportadas.
 
 ..
 	This is a very comprehensive system, and we realize that it is a lot to 
@@ -4444,5 +4444,5 @@ Existem funï¿½ï¿½es assistentes de alto nï¿½vel que permitem ao usuï¿½rio o cont
 	probably the case that understanding the rest of the |ns3| system will
 	be quite simple once you have mastered the tracing system
 
-Este ï¿½ um sistema muito abrangente e percebemos que ï¿½ muita informaï¿½ï¿½o para digerir, especialmente para novos usuï¿½rios ou aqueles que nï¿½o estï¿½o intimamente familiarizados com C++ e suas expressï¿½es idiomï¿½ticas. Consideramos o sistema de rastreamento uma parte muito importante do |ns3|, assim recomendamos que familiarizem-se o mï¿½ximo possï¿½vel com ele. Compreender o restante do sistema |ns3| ï¿½ bem simples, uma vez que dominamos o sistema de rastreamento.
+Este é um sistema muito abrangente e percebemos que é muita informação para digerir, especialmente para novos usuários ou aqueles que não estão intimamente familiarizados com C++ e suas expressões idiomáticas. Consideramos o sistema de rastreamento uma parte muito importante do |ns3|, assim recomendamos que familiarizem-se o máximo possível com ele. Compreender o restante do sistema |ns3| é bem simples, uma vez que dominamos o sistema de rastreamento.
 
