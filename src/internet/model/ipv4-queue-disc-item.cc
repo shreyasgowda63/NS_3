@@ -165,7 +165,7 @@ Ipv4QueueDiscItem::Hash (uint32_t perturbation) const
       srcPort = udpHdr.GetSourcePort ();
       destPort = udpHdr.GetDestinationPort ();
     }
-  else
+  if (prot != TcpL4Protocol::PROT_NUMBER && prot != UdpL4Protocol::PROT_NUMBER)
     {
       NS_LOG_WARN ("Unknown transport protocol, no port number included in hash computation");
     }
