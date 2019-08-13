@@ -18,9 +18,8 @@
  * Authors: Shravya K.S. <shravya.ks0@gmail.com>
  * Modified by Liangcheng Yu <liangcheng.yu46@gmail.com>
  * GSoC 2019 project Mentors:
- *          Dizhi Zhou <dizhizhou@hotmail.com>
- *          Mohit P. Tahiliani <tahiliani.nitk@gmail.com>
- *          Tom Henderson <tomh@tomh.org>
+ *          Dizhi Zhou, Mohit P. Tahiliani, Tom Henderson
+ * 
  */
 
 // Implement an object to create a BCube topology.
@@ -234,46 +233,46 @@ BCubeHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
 }
 
 Ipv4Address
-BCubeHelper::GetServerIpv4Address (uint32_t i) const
+BCubeHelper::GetServerIpv4Address (uint32_t col) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_serverInterfaces.GetAddress (i);
+  NS_LOG_FUNCTION (this << col);
+  return m_serverInterfaces.GetAddress (col);
 }
 
 Ipv4Address
-BCubeHelper::GetSwitchIpv4Address (uint32_t i, uint32_t j) const
+BCubeHelper::GetSwitchIpv4Address (uint32_t row, uint32_t col) const
 {
-  NS_LOG_FUNCTION (this << i << j);
-  return m_switchInterfaces[i].GetAddress (j);
+  NS_LOG_FUNCTION (this << row << col);
+  return m_switchInterfaces[row].GetAddress (col);
 }
 
 Ipv6Address
-BCubeHelper::GetServerIpv6Address (uint32_t i) const
+BCubeHelper::GetServerIpv6Address (uint32_t col) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_serverInterfaces6.GetAddress (i, 1);
+  NS_LOG_FUNCTION (this << col);
+  return m_serverInterfaces6.GetAddress (col, 1);
 }
 
 Ipv6Address
-BCubeHelper::GetSwitchIpv6Address (uint32_t i, uint32_t j) const
+BCubeHelper::GetSwitchIpv6Address (uint32_t row, uint32_t col) const
 {
-  NS_LOG_FUNCTION (this << i << j);
-  return m_switchInterfaces6[i].GetAddress (j, 1);
+  NS_LOG_FUNCTION (this << row << col);
+  return m_switchInterfaces6[row].GetAddress (col, 1);
 }
 
 Ptr<Node>
-BCubeHelper::GetServerNode (uint32_t i) const
+BCubeHelper::GetServerNode (uint32_t col) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_servers.Get (i);
+  NS_LOG_FUNCTION (this << col);
+  return m_servers.Get (col);
 }
 
 Ptr<Node>
-BCubeHelper::GetSwitchNode (uint32_t i, uint32_t j) const
+BCubeHelper::GetSwitchNode (uint32_t row, uint32_t col) const
 {
-  NS_LOG_FUNCTION (this << i << j);
+  NS_LOG_FUNCTION (this << row << col);
   uint32_t numLevelSwitches = pow (m_numServers, m_numLevels);
-  return m_switches.Get (i * numLevelSwitches + j);
+  return m_switches.Get (row * numLevelSwitches + col);
 }
 
 } // namespace ns3

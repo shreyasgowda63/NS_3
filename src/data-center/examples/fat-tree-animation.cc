@@ -18,10 +18,8 @@
  * Authors: Shravya K.S. <shravya.ks0@gmail.com>
  * Modified by Liangcheng Yu <liangcheng.yu46@gmail.com>
  * GSoC 2019 project Mentors:
- *          Dizhi Zhou <dizhizhou@hotmail.com>
- *          Mohit P. Tahiliani <tahiliani.nitk@gmail.com>
- *          Tom Henderson <tomh@tomh.org>
- * 
+ *          Dizhi Zhou, Mohit P. Tahiliani, Tom Henderson
+ *
  */
 
 #include <iostream>

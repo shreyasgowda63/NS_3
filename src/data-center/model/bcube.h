@@ -18,9 +18,8 @@
  * Authors: Shravya K.S. <shravya.ks0@gmail.com>
  * Modified by Liangcheng Yu <liangcheng.yu46@gmail.com>
  * GSoC 2019 project Mentors:
- *          Dizhi Zhou <dizhizhou@hotmail.com>
- *          Mohit P. Tahiliani <tahiliani.nitk@gmail.com>
- *          Tom Henderson <tomh@tomh.org>
+ *          Dizhi Zhou, Mohit P. Tahiliani, Tom Henderson
+ * 
  */
 
 // Define an object to create a BCube topology.
@@ -33,6 +32,7 @@
 #include <vector>
 
 #include "csma-helper.h"
+#include "fatal-error.h"
 #include "internet-stack-helper.h"
 #include "ipv4-address-helper.h"
 #include "ipv6-address-helper.h"
@@ -218,6 +218,12 @@ template <typename T>
 void
 BCubeHelper::InstallNetDevices (T helper)
 {
+  if (m_l2Installed)
+    {
+      NS_FATAL_ERROR ("NetDevices installed already!");
+      return;
+    }  
+
   uint32_t switchColId;
   // Configure the levels in BCube topology
   for (uint32_t level = 0; level < m_numLevels + 1; level++)

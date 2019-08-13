@@ -17,10 +17,9 @@
  *
  * Authors: Liangcheng Yu <liangcheng.yu46@gmail.com>
  * GSoC 2019 project Mentors:
- *          Dizhi Zhou <dizhizhou@hotmail.com>
- *          Mohit P. Tahiliani <tahiliani.nitk@gmail.com>
- *          Tom Henderson <tomh@tomh.org>
-*/
+ *          Dizhi Zhou, Mohit P. Tahiliani, Tom Henderson
+ * 
+ */
 
 // Define an object to create a leaf spine topology.
 
@@ -34,6 +33,7 @@
 #include <vector>
 
 #include "csma-helper.h"
+#include "fatal-error.h"
 #include "internet-stack-helper.h"
 #include "ipv4-address-helper.h"
 #include "ipv4-interface-container.h"
@@ -149,11 +149,11 @@ public:
    * the col. There is only one interface for each server 
    * connected to the leaf switch (a.k.a. ToR switch).
    *
-   * \param col the column address of the desired server.
+   * \param col the column address of the desired server
    *
-   * \returns Ipv4Address of the target server.
+   * \returns Ipv4Address of the target server
    */
-  Ipv4Address GetServerIpv4Address (uint32_t serverIndex) const;
+  Ipv4Address GetServerIpv4Address (uint32_t col) const;
 
   /**
    * This returns an IPv6 address at the spine switch specified by
@@ -215,9 +215,9 @@ public:
    * the col. There is only one interface for each server 
    * connected to the leaf switch (a.k.a. ToR switch).
    *
-   * \param serverIndex the column address of the desired server.
+   * \param col the column address of the desired server
    *
-   * \returns Ipv6Address of the target server.
+   * \returns Ipv6Address of the target server
    */
   Ipv6Address GetServerIpv6Address (uint32_t col) const;
 
@@ -330,6 +330,12 @@ void
 LeafSpineHelper::InstallNetDevices (T helperEdge,
                                     T helperCore)
 {
+  if (m_l2Installed)
+    {
+      NS_FATAL_ERROR ("NetDevices installed already!");
+      return;
+    }   
+
   /*
     There are four types of NetDevice:
     - Server towards the leaf switch (ToR switch)

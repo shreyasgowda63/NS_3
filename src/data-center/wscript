@@ -12,6 +12,7 @@ def build(bld):
         'model/leaf-spine.cc',
         'model/fat-tree.cc',
         'model/bcube.cc',
+        'model/dcell.cc',
         ]
 
     headers = bld(features='ns3header')
@@ -20,6 +21,7 @@ def build(bld):
         'model/leaf-spine.h',
         'model/fat-tree.h',
         'model/bcube.h',
+        'model/dcell.h',
         ]
 
     if bld.env.ENABLE_EXAMPLES:

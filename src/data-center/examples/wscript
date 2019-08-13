@@ -12,3 +12,7 @@ def build(bld):
     obj = bld.create_ns3_program('bcube-animation',
                                  ['netanim', 'data-center', 'applications', 'nix-vector-routing', 'csma'])
     obj.source = 'bcube-animation.cc'    
+
+    obj = bld.create_ns3_program('dcell-animation',
+                                 ['netanim', 'data-center', 'applications', 'nix-vector-routing', 'csma'])
+    obj.source = 'dcell-animation.cc'    

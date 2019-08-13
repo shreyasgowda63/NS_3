@@ -18,9 +18,8 @@
  * Authors: Shravya K.S. <shravya.ks0@gmail.com>
  * Modified by Liangcheng Yu <liangcheng.yu46@gmail.com>
  * GSoC 2019 project Mentors:
- *          Dizhi Zhou <dizhizhou@hotmail.com>
- *          Mohit P. Tahiliani <tahiliani.nitk@gmail.com>
- *          Tom Henderson <tomh@tomh.org>
+ *          Dizhi Zhou, Mohit P. Tahiliani, Tom Henderson
+ * 
  */
 
 // Implement an object to create a Fat tree topology.
@@ -335,87 +334,87 @@ FatTreeHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
 }
 
 Ipv4Address
-FatTreeHelper::GetServerIpv4Address (uint32_t i) const
+FatTreeHelper::GetServerIpv4Address (uint32_t col) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_serverInterfaces.GetAddress (i);
+  NS_LOG_FUNCTION (this << col);
+  return m_serverInterfaces.GetAddress (col);
 }
 
 Ipv4Address
-FatTreeHelper::GetEdgeSwitchIpv4Address (uint32_t i) const
+FatTreeHelper::GetEdgeSwitchIpv4Address (uint32_t col) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_edgeSwitchInterfaces.GetAddress (i);
+  NS_LOG_FUNCTION (this << col);
+  return m_edgeSwitchInterfaces.GetAddress (col);
 }
 
 Ipv4Address
-FatTreeHelper::GetAggregateSwitchIpv4Address (uint32_t i) const
+FatTreeHelper::GetAggregateSwitchIpv4Address (uint32_t col) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_aggregateSwitchInterfaces.GetAddress (i);
+  NS_LOG_FUNCTION (this << col);
+  return m_aggregateSwitchInterfaces.GetAddress (col);
 }
 
 Ipv4Address
-FatTreeHelper::GetCoreSwitchIpv4Address (uint32_t i) const
+FatTreeHelper::GetCoreSwitchIpv4Address (uint32_t row) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_coreSwitchInterfaces.GetAddress (i);
+  NS_LOG_FUNCTION (this << row);
+  return m_coreSwitchInterfaces.GetAddress (row);
 }
 
 Ipv6Address
-FatTreeHelper::GetServerIpv6Address (uint32_t i) const
+FatTreeHelper::GetServerIpv6Address (uint32_t row) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_serverInterfaces6.GetAddress (i, 1);
+  NS_LOG_FUNCTION (this << row);
+  return m_serverInterfaces6.GetAddress (row, 1);
 }
 
 Ipv6Address
-FatTreeHelper::GetEdgeSwitchIpv6Address (uint32_t i) const
+FatTreeHelper::GetEdgeSwitchIpv6Address (uint32_t row) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_edgeSwitchInterfaces6.GetAddress (i, 1);
+  NS_LOG_FUNCTION (this << row);
+  return m_edgeSwitchInterfaces6.GetAddress (row, 1);
 }
 
 Ipv6Address
-FatTreeHelper::GetAggregateSwitchIpv6Address (uint32_t i) const
+FatTreeHelper::GetAggregateSwitchIpv6Address (uint32_t row) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_aggregateSwitchInterfaces6.GetAddress (i, 1);
+  NS_LOG_FUNCTION (this << row);
+  return m_aggregateSwitchInterfaces6.GetAddress (row, 1);
 }
 
 Ipv6Address
-FatTreeHelper::GetCoreSwitchIpv6Address (uint32_t i) const
+FatTreeHelper::GetCoreSwitchIpv6Address (uint32_t row) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_coreSwitchInterfaces6.GetAddress (i, 1);
+  NS_LOG_FUNCTION (this << row);
+  return m_coreSwitchInterfaces6.GetAddress (row, 1);
 }
 
 Ptr<Node>
-FatTreeHelper::GetServerNode (uint32_t i) const
+FatTreeHelper::GetServerNode (uint32_t row) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_servers.Get (i);
+  NS_LOG_FUNCTION (this << row);
+  return m_servers.Get (row);
 }
 
 Ptr<Node>
-FatTreeHelper::GetEdgeSwitchNode (uint32_t i) const
+FatTreeHelper::GetEdgeSwitchNode (uint32_t row) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_edgeSwitches.Get (i);
+  NS_LOG_FUNCTION (this << row);
+  return m_edgeSwitches.Get (row);
 }
 
 Ptr<Node>
-FatTreeHelper::GetAggregateSwitchNode (uint32_t i) const
+FatTreeHelper::GetAggregateSwitchNode (uint32_t row) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_aggregateSwitches.Get (i);
+  NS_LOG_FUNCTION (this << row);
+  return m_aggregateSwitches.Get (row);
 }
 
 Ptr<Node>
-FatTreeHelper::GetCoreSwitchNode (uint32_t i) const
+FatTreeHelper::GetCoreSwitchNode (uint32_t row) const
 {
-  NS_LOG_FUNCTION (this << i);
-  return m_coreSwitches.Get (i);
+  NS_LOG_FUNCTION (this << row);
+  return m_coreSwitches.Get (row);
 }
 
 } // namespace ns3

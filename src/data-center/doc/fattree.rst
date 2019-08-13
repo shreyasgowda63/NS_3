@@ -29,7 +29,7 @@ and configured using the associated layer 2 helper object.
 Using the FatTree
 ----------------------------
 
-The PointToPointFatTreeHelper object can be instantiated by following statement.
+The FatTreeHelper object can be instantiated by following statement.
   FatTreeHelper fattree (nPods);
   where,
   nLevels is number of pods (k)

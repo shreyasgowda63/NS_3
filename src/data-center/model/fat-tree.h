@@ -18,9 +18,8 @@
  * Authors: Shravya K.S. <shravya.ks0@gmail.com>
  * Modified by Liangcheng Yu <liangcheng.yu46@gmail.com>
  * GSoC 2019 project Mentors:
- *          Dizhi Zhou <dizhizhou@hotmail.com>
- *          Mohit P. Tahiliani <tahiliani.nitk@gmail.com>
- *          Tom Henderson <tomh@tomh.org> 
+ *          Dizhi Zhou, Mohit P. Tahiliani, Tom Henderson
+ * 
  */
 
 // Define an object to create a Fat tree topology.
@@ -31,6 +30,7 @@
 #include <vector>
 
 #include "csma-helper.h"
+#include "fatal-error.h"
 #include "internet-stack-helper.h"
 #include "ipv4-address-helper.h"
 #include "ipv6-address-helper.h"
@@ -281,6 +281,12 @@ void
 FatTreeHelper::InstallNetDevices (T helperEdge,
                                   T helperCore)
 {
+  if (m_l2Installed)
+    {
+      NS_FATAL_ERROR ("NetDevices installed already!");
+      return;
+    }  
+
   uint32_t numEdgeSwitches = m_numPods / 2;
   uint32_t numAggregateSwitches = m_numPods / 2;            // number of aggregate switches in a pod
   uint32_t numGroups = m_numPods / 2;                       // number of group of core switches

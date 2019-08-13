@@ -15,14 +15,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Authors: Shravya K.S. <shravya.ks0@gmail.com>
- * Modified by Liangcheng Yu <liangcheng.yu46@gmail.com>
+ * Authors: Liangcheng Yu <liangcheng.yu46@gmail.com>
  * GSoC 2019 project Mentors:
- *          Dizhi Zhou <dizhizhou@hotmail.com>
- *          Mohit P. Tahiliani <tahiliani.nitk@gmail.com>
- *          Tom Henderson <tomh@tomh.org>
+ *          Dizhi Zhou, Mohit P. Tahiliani, Tom Henderson
  * 
-*/
+ */
 
 #include <iostream>
 
