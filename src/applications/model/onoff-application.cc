@@ -34,7 +34,7 @@
 #include "ns3/socket.h"
 #include "ns3/simulator.h"
 #include "ns3/socket-factory.h"
-#include "ns3/priority-queue.h"
+#include "ns3/flow-size-prio-queue.h"
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
