@@ -582,14 +582,15 @@ Ipv4GlobalRouting::RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<Net
   NS_LOG_LOGIC ("Unicast destination- looking up");
   Ptr<Ipv4Route> rtentry;
   // Get the flowHash value when FlowBasedEcmpRouting or FlowletEcmpRouting is set
+  uint32_t hash = 0;
   switch (m_ecmpRoutingMode)
     {
       case FlowBasedEcmpRouting:
-        uint32_t hash = CalculateFlowHash (p, header);
+        hash = CalculateFlowHash (p, header);
         rtentry = LookupGlobal (header.GetDestination (), oif, hash);        
         break;
       case FlowletEcmpRouting:
-        uint32_t hash = CalculateFlowHash (p, header);
+        hash = CalculateFlowHash (p, header);
         rtentry = LookupGlobal (header.GetDestination (), oif, hash);
         break;
       default:
@@ -646,14 +647,15 @@ Ipv4GlobalRouting::RouteInput  (Ptr<const Packet> p, const Ipv4Header &header, P
   NS_LOG_LOGIC ("Unicast destination- looking up global route");
   Ptr<Ipv4Route> rtentry;
   // Get the flowHash value when FlowBasedEcmpRouting or FlowletEcmpRouting is set
+  uint32_t hash = 0;
   switch (m_ecmpRoutingMode)
     {
       case FlowBasedEcmpRouting:
-        uint32_t hash = CalculateFlowHash (p, header);
+        hash = CalculateFlowHash (p, header);
         rtentry = LookupGlobal (header.GetDestination (), 0, hash);        
         break;
       case FlowletEcmpRouting:
-        uint32_t hash = CalculateFlowHash (p, header);
+        hash = CalculateFlowHash (p, header);
         rtentry = LookupGlobal (header.GetDestination (), 0, hash);
         break;
       default:
