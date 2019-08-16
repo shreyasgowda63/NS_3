@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c)
+ * Copyright (c) 2019 Liangcheng Yu
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -80,8 +80,8 @@ public:
   /**
    * This returns a set of IPv4 interfaces of the mini-switch specified by
    * the index address. Technically, a mini-switch will have
-   * m_numServers interfaces in each DCell; therefore, it also has
-   * m_numServers IPv4 addresses. This method returns the Ipv4InterfaceContainer
+   * m_numServersDCell0 interfaces in each DCell; therefore, it also has
+   * m_numServersDCell0 IPv4 addresses. This method returns the Ipv4InterfaceContainer
    * for all the interfaces towards the servers in the DCell0. 
    *
    * \param index the index of the desired mini-switch for the corresponding DCell0
@@ -94,8 +94,8 @@ public:
   /**
    * This returns a set of IPv6 interfaces of the mini-switch specified by
    * the index address. Technically, a mini-switch will have
-   * m_numServers interfaces in each DCell; therefore, it also has
-   * m_numServers IPv6 addresses. This method returns the Ipv6InterfaceContainer
+   * m_numServersDCell0 interfaces in each DCell; therefore, it also has
+   * m_numServersDCell0 IPv6 addresses. This method returns the Ipv6InterfaceContainer
    * for all the interfaces towards the servers in the DCell0. 
    *
    * \param index the index of the desired mini-switch for the corresponding DCell0
@@ -169,8 +169,8 @@ public:
 
   /**
    * This returns an IPv4 address at the mini-switch specified by
-   * the index and serverId. Each mini-switch connets to m_numServers servers,
-   * therefore, there are m_numServers interfaces inside DCell0 grouped 
+   * the index and serverId. Each mini-switch connets to m_numServersDCell0 servers,
+   * therefore, there are m_numServersDCell0 interfaces inside DCell0 grouped 
    * by the mini-switch.
    *
    * \param index the index of the target mini-switch
@@ -182,8 +182,8 @@ public:
 
   /**
    * This returns an IPv6 address at the mini-switch specified by
-   * the index and serverId. Each mini-switch connets to m_numServers servers,
-   * therefore, there are m_numServers interfaces inside DCell0 grouped 
+   * the index and serverId. Each mini-switch connets to m_numServersDCell0 servers,
+   * therefore, there are m_numServersDCell0 interfaces inside DCell0 grouped 
    * by the mini-switch.
    *
    * \param index the index of the target mini-switch
@@ -198,14 +198,6 @@ public:
    *              on every node in the DCell
    */
   void InstallStack (InternetStackHelper stack);
-
-  /**
-   * \param k the level of the target DCell
-   * 
-   * \returns the parameter pair: number of servers in the DCell of 
-   * level k and the number of DCells of level k-1
-   */
-  std::pair<uint32_t, uint32_t> GetServerDcellByLevel  (uint32_t k);
 
   /**
    * \param helper the layer 2 helper which is used to install
@@ -256,16 +248,18 @@ public:
 
 private:
   bool     m_l2Installed;                                       //!< If layer 2 components are installed
-  uint32_t m_numLevels;                                         //!< number of levels (k)
-  uint32_t m_numServers;                                        //!< number of servers at Dcell0 (n)
+  uint32_t m_numLevels;                                         //!< number of levels
+  uint32_t m_numServersDCell0;                                  //!< number of servers at Dcell0
   NodeContainer m_servers;                                      //!< all the servers in the DCell
   NodeContainer m_switches;                                     //!< all the switches in the DCell
   std::vector<NetDeviceContainer> m_serverDevices;              //!< Net Device container for servers
   std::vector<NetDeviceContainer> m_switchDevices;              //!< Net Device container for switches
   std::vector<Ipv4InterfaceContainer> m_switchInterfaces;       //!< IPv4 interfaces of switches
-  std::vector<Ipv4InterfaceContainer> m_serverInterfaces;                    //!< IPv4 interfaces of servers
+  std::vector<Ipv4InterfaceContainer> m_serverInterfaces;       //!< IPv4 interfaces of servers
   std::vector<Ipv6InterfaceContainer> m_switchInterfaces6;      //!< IPv6 interfaces of switches
-  std::vector<Ipv6InterfaceContainer> m_serverInterfaces6;                   //!< IPv6 interfaces of servers
+  std::vector<Ipv6InterfaceContainer> m_serverInterfaces6;      //!< IPv6 interfaces of servers
+  std::vector<uint32_t> m_numServersByLevel;                    //!< number of servers for each DCell level
+
 };
 
 template <typename T>
@@ -279,14 +273,14 @@ DCellHelper::InstallNetDevices (T helper)
     }  
 
   // Connect servers to the mini-switches
-  uint32_t numDcell0 = GetServerDcellByLevel (m_numLevels).first/m_numServers;
+  uint32_t numDcell0 = m_numServersByLevel[m_numLevels]/m_numServersDCell0;
   for (uint32_t switchId = 0; switchId < numDcell0; switchId++)
     {
-      for (uint32_t serverId = 0; serverId < m_numServers; serverId++)
+      for (uint32_t serverId = 0; serverId < m_numServersDCell0; serverId++)
         {
-          NetDeviceContainer nd = helper.Install (m_servers.Get (switchId*m_numServers+serverId),
+          NetDeviceContainer nd = helper.Install (m_servers.Get (switchId*m_numServersDCell0+serverId),
                                                   m_switches.Get (switchId));
-          m_serverDevices[switchId*m_numServers+serverId].Add (nd.Get (0));
+          m_serverDevices[switchId*m_numServersDCell0+serverId].Add (nd.Get (0));
           m_switchDevices[switchId].Add (nd.Get (1));
         }
     }
@@ -297,9 +291,9 @@ DCellHelper::InstallNetDevices (T helper)
   for (uint32_t level = 1; level <= m_numLevels; level++)
     {
       // Number of servers for each DCell at level-1
-      numServers = GetServerDcellByLevel (level-1).first;
+      numServers = m_numServersByLevel[level-1];
       // Number of DCells at level-1
-      numDcells = GetServerDcellByLevel (m_numLevels).first / numServers;
+      numDcells = m_numServersByLevel[m_numLevels] / numServers;
       for (uint32_t i = 0; i < numDcells; i++)
         {
           for (uint32_t j = i+1; j < numDcells; j++)

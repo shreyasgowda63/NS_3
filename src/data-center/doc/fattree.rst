@@ -12,7 +12,7 @@ bandwidth at any bisections. The fat tree topology offers 1:1 oversubscription r
 and full bisection bandwidth. Each layer has the same aggregated bandwidth. It can be 
 built using cheap devices with uniform capacity. Each port supports same speed as end 
 host. All devices can transmit at line speed if packets are distributed uniform along 
-available paths. It provides great scalability as k-port switch supports k^3/4 servers.
+available paths. It provides great scalability as k-port switch supports k^3/4 servers ([Ref1]_).
 
 Construction of FatTree
 ---------------------
@@ -24,7 +24,7 @@ of (k/2)^2 servers and 2 layers of k/2 k-port switches(edge switches and aggrega
 switches). Each edge switch connects to k/2 servers & k/2 aggregation switches. Each 
 aggregation switch connects to k/2 edge and k/2 core switches. There are (k/2)^2 core 
 switches and each core switch connects to k pods. In ns-3, all the links  are created 
-and configured using the associated layer 2 helper object.
+and configured using the associated layer 2 helper object ([Ref1]_).
 
 Using the FatTree
 ----------------------------
@@ -47,4 +47,4 @@ The FatTree topology example could be found at ``src/netanim/examples/fat-tree-a
 References
 **********
 
-Link to the Paper: http://ccr.sigcomm.org/online/files/p63-alfares.pdf
+.. [Ref1] Al-Fares, Mohammad, Alexander Loukissas, and Amin Vahdat. "A scalable, commodity data center network architecture." ACM SIGCOMM Computer Communication Review. Vol. 38. No. 4. ACM, 2008; Available online at `<http://ccr.sigcomm.org/online/files/p63-alfares.pdf>`_.

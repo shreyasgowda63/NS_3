@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c)
+ * Copyright (c) 2019 Liangcheng Yu
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -44,7 +44,7 @@ DCellHelper::DCellHelper (uint32_t nLevels,
                           uint32_t nServers)
   : m_l2Installed (false),
     m_numLevels (nLevels),
-    m_numServers (nServers)
+    m_numServersDCell0 (nServers)
 {
   // Bounds check
   if (nServers < N_SERVER_MIN)
@@ -52,14 +52,27 @@ DCellHelper::DCellHelper (uint32_t nLevels,
       NS_FATAL_ERROR ("Insufficient number of servers for DCell.");
     }
   
-  m_servers.Create (GetServerDcellByLevel (nLevels).first);
-  m_switches.Create (GetServerDcellByLevel (nLevels).first/nServers);
-  m_serverDevices.resize (GetServerDcellByLevel (nLevels).first);
-  m_switchDevices.resize (GetServerDcellByLevel (nLevels).first/nServers);
-  m_serverInterfaces.resize (GetServerDcellByLevel (nLevels).first);
-  m_serverInterfaces6.resize (GetServerDcellByLevel (nLevels).first);
-  m_switchInterfaces.resize (GetServerDcellByLevel (nLevels).first/nServers);
-  m_switchInterfaces6.resize (GetServerDcellByLevel (nLevels).first/nServers);
+  // Calculate and store the number of servers for each DCell level
+  uint32_t numServers = 0;
+  uint32_t numDcells = 0;
+  m_numServersByLevel.resize (m_numLevels+1);
+  m_numServersByLevel[0] = m_numServersDCell0;
+  for (uint32_t level = 1; level <= m_numLevels; level++)
+    {
+      numDcells = m_numServersByLevel[level-1] + 1;
+      numServers = numDcells * m_numServersByLevel[level-1];
+      m_numServersByLevel[level] = numServers;
+    }
+
+  m_servers.Create (m_numServersByLevel[nLevels]);
+  m_switches.Create (m_numServersByLevel[nLevels]/nServers);
+  m_serverDevices.resize (m_numServersByLevel[nLevels]);
+  m_switchDevices.resize (m_numServersByLevel[nLevels]/nServers);
+  m_serverInterfaces.resize (m_numServersByLevel[nLevels]);
+  m_serverInterfaces6.resize (m_numServersByLevel[nLevels]);
+  m_switchInterfaces.resize (m_numServersByLevel[nLevels]/nServers);
+  m_switchInterfaces6.resize (m_numServersByLevel[nLevels]/nServers);
+
 }
 
 DCellHelper::~DCellHelper ()
@@ -121,8 +134,8 @@ DCellHelper::BoundingBox (double ulx, double uly,
       yDist = uly - lry;
     }
 
-  uint32_t numServers = GetServerDcellByLevel (m_numLevels).first;
-  uint32_t numSwitches = GetServerDcellByLevel (m_numLevels).first/m_numServers;
+  uint32_t numServers = m_numServersByLevel[m_numLevels];
+  uint32_t numSwitches = m_numServersByLevel[m_numLevels]/m_numServersDCell0;
 
   // Place the servers at the border of the smaller circle
   double serverRadUnit = 2*3.14159265/numServers;
@@ -151,8 +164,8 @@ DCellHelper::BoundingBox (double ulx, double uly,
   // Place the switches at the border of the larger circle
   for (uint32_t i = 0; i < numSwitches; ++i)
     {
-      xLoc = xCenter + cos (switchRadUnit*(i)+serverRadUnit*(m_numServers/2)) * rSwitch;
-      yLoc = yCenter + sin (switchRadUnit*(i)+serverRadUnit*(m_numServers/2)) * rSwitch;
+      xLoc = xCenter + cos (switchRadUnit*(i)+serverRadUnit*(m_numServersDCell0/2)) * rSwitch;
+      yLoc = yCenter + sin (switchRadUnit*(i)+serverRadUnit*(m_numServersDCell0/2)) * rSwitch;
       Ptr<Node> node = m_switches.Get (i);
       Ptr<ConstantPositionMobilityModel> loc = node->GetObject<ConstantPositionMobilityModel> ();
       if (loc == 0)
@@ -162,23 +175,6 @@ DCellHelper::BoundingBox (double ulx, double uly,
         }
       Vector locVec (xLoc, yLoc, 0);
       loc->SetPosition (locVec);
-    }
-}
-
-std::pair<uint32_t, uint32_t>
-DCellHelper::GetServerDcellByLevel (uint32_t k)
-{
-  uint32_t numServers = 0;
-  uint32_t numDcells = 0;  
-  if (k == 0)
-    {
-      return std::make_pair (m_numServers, 1);
-    }
-  else
-    {
-      numDcells = GetServerDcellByLevel (k - 1).first + 1;
-      numServers = numDcells * GetServerDcellByLevel (k - 1).first;
-      return std::make_pair (numServers, numDcells);
     }
 }
 
@@ -196,15 +192,15 @@ DCellHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask)
   Ipv4AddressHelper addrHelper;
 
   // Assign ip for the links between servers and mini-switches
-  uint32_t numDcell0 = GetServerDcellByLevel (m_numLevels).first/m_numServers;
+  uint32_t numDcell0 = m_numServersByLevel[m_numLevels]/m_numServersDCell0;
   for (uint32_t switchId = 0; switchId < numDcell0; switchId++)
     {
       v4network = Ipv4AddressGenerator::NextNetwork (mask);
       addrHelper.SetBase (v4network, mask);
-      for (uint32_t serverId = 0; serverId < m_numServers; serverId++)
+      for (uint32_t serverId = 0; serverId < m_numServersDCell0; serverId++)
         {
-          Ipv4InterfaceContainer ic = addrHelper.Assign (m_serverDevices[switchId*m_numServers+serverId].Get (0));
-          m_serverInterfaces[switchId*m_numServers+serverId].Add (ic);
+          Ipv4InterfaceContainer ic = addrHelper.Assign (m_serverDevices[switchId*m_numServersDCell0+serverId].Get (0));
+          m_serverInterfaces[switchId*m_numServersDCell0+serverId].Add (ic);
           ic = addrHelper.Assign (m_switchDevices[switchId].Get (serverId));
           m_switchInterfaces[switchId].Add (ic);                                        
         }
@@ -216,9 +212,9 @@ DCellHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask)
   for (uint32_t level = 1; level <= m_numLevels; level++)
     {
       // Number of servers for each DCell at level-1
-      numServers = GetServerDcellByLevel (level-1).first;
+      numServers = m_numServersByLevel[level-1];
       // Number of DCells at level-1
-      numDcells = GetServerDcellByLevel (m_numLevels).first / numServers;
+      numDcells = m_numServersByLevel[m_numLevels] / numServers;
       for (uint32_t i = 0; i < numDcells; i++)
         {
           v4network = Ipv4AddressGenerator::NextNetwork (mask);
@@ -248,15 +244,15 @@ DCellHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
   Ipv6AddressHelper addrHelper;
 
   // Assign ip for the links between servers and mini-switches
-  uint32_t numDcell0 = GetServerDcellByLevel (m_numLevels).first/m_numServers;
+  uint32_t numDcell0 = m_numServersByLevel[m_numLevels]/m_numServersDCell0;
   for (uint32_t switchId = 0; switchId < numDcell0; switchId++)
     {
       v6network = Ipv6AddressGenerator::NextNetwork (prefix);
       addrHelper.SetBase (v6network, prefix);
-      for (uint32_t serverId = 0; serverId < m_numServers; serverId++)
+      for (uint32_t serverId = 0; serverId < m_numServersDCell0; serverId++)
         {
-          Ipv6InterfaceContainer ic = addrHelper.Assign (m_serverDevices[switchId*m_numServers+serverId].Get (0));
-          m_serverInterfaces6[switchId*m_numServers+serverId].Add (ic);
+          Ipv6InterfaceContainer ic = addrHelper.Assign (m_serverDevices[switchId*m_numServersDCell0+serverId].Get (0));
+          m_serverInterfaces6[switchId*m_numServersDCell0+serverId].Add (ic);
           ic = addrHelper.Assign (m_switchDevices[switchId].Get (serverId));
           m_switchInterfaces6[switchId].Add (ic);                                        
         }
@@ -268,9 +264,9 @@ DCellHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
   for (uint32_t level = 1; level <= m_numLevels; level++)
     {
       // Number of servers for each DCell at level-1
-      numServers = GetServerDcellByLevel (level-1).first;
+      numServers = m_numServersByLevel[level-1];
       // Number of DCells at level-1
-      numDcells = GetServerDcellByLevel (m_numLevels).first / numServers;
+      numDcells = m_numServersByLevel[m_numLevels] / numServers;
       for (uint32_t i = 0; i < numDcells; i++)
         {
           v6network = Ipv6AddressGenerator::NextNetwork (prefix);

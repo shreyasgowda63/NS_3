@@ -17,7 +17,7 @@ Therefore, the number of level k-1 DCell in a DCellk, (i.e., g_{k}), and the tot
 t_{k}) follow the following equations:
 g_{k} = t_{k-1} + 1;
 t_{k} = g_{k} * t_{k-1}
-for k > 0. DCell0 is a special case when g_{0} = 1 and t_{0} = n, with n being the number of servers in a DCell0.
+for k > 0. DCell0 is a special case when g_{0} = 1 and t_{0} = n, with n being the number of servers in a DCell0 ([Ref1]_).
 
 .. figure:: figures/dcell-animation.*
    :align: center
@@ -47,4 +47,4 @@ The DCell topology example could be found at ``src/netanim/examples/dcell-animat
 References
 **********
 
-Link to the Paper: http://www.sigcomm.org/sites/default/files/ccr/papers/2008/October/1402946-1402968.pdf
+.. [Ref1] Guo, Chuanxiong, et al. "Dcell: a scalable and fault-tolerant network structure for data centers." ACM SIGCOMM Computer Communication Review. Vol. 38. No. 4. ACM, 2008; Available online at `<http://www.sigcomm.org/sites/default/files/ccr/papers/2008/October/1402946-1402968.pdf>`_.

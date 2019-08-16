@@ -13,7 +13,7 @@ one-to-all traffic patterns, and by providing high network capacity for all-to-a
 traffic. BCube exhibits graceful performance degradation as the server and/or switch 
 failure rate increases. This property is of special importance for shipping-container 
 data centers, since once the container is sealed and operational, it becomes very 
-difficult to repair or replace its components.
+difficult to repair or replace its components ([Ref1]_).
 
 Construction of BCube
 ---------------------
@@ -35,7 +35,7 @@ links are created and configured using the associated layer 2 helper object.
 The BCube construction guarantees that switches only connect to servers and never 
 directly connect to other switches. As a direct consequence, we can treat the switches 
 as dummy crossbars that connect several neighboring servers and let servers relay traffic 
-for each other. 
+for each other ([Ref1]_). 
 
 Using the BCube
 ----------------------------
@@ -59,4 +59,4 @@ The BCube topology example could be found at ``src/netanim/examples/bcube-animat
 References
 **********
 
-Link to the Paper: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/comm136-guo.pdf
+.. [Ref1] Guo, Chuanxiong, et al. "BCube: a high performance, server-centric network architecture for modular data centers." ACM SIGCOMM Computer Communication Review 39.4 (2009): 63-74; Available online at `<https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/comm136-guo.pdf>`_.
