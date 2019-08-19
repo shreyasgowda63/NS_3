@@ -53,14 +53,12 @@ DCellHelper::DCellHelper (uint32_t nLevels,
     }
   
   // Calculate and store the number of servers for each DCell level
-  uint32_t numServers = 0;
-  uint32_t numDcells = 0;
   m_numServersByLevel.resize (m_numLevels+1);
   m_numServersByLevel[0] = m_numServersDCell0;
   for (uint32_t level = 1; level <= m_numLevels; level++)
     {
-      numDcells = m_numServersByLevel[level-1] + 1;
-      numServers = numDcells * m_numServersByLevel[level-1];
+      uint32_t numDcells = m_numServersByLevel[level-1] + 1;
+      uint32_t numServers = numDcells * m_numServersByLevel[level-1];
       m_numServersByLevel[level] = numServers;
     }
 
