@@ -31,6 +31,7 @@
 #include <vector>
 
 #include "csma-helper.h"
+#include "dcn-topology.h"
 #include "fatal-error.h"
 #include "internet-stack-helper.h"
 #include "ipv4-address-helper.h"
@@ -48,7 +49,7 @@ namespace ns3 {
  *
  * \brief A helper to make it easier to create a DCell topology
  */
-class DCellHelper
+class DCellHelper : public DcnTopologyHelper
 {
 public:
   /**
@@ -194,56 +195,22 @@ public:
   Ipv6Address GetSwitchIpv6Address (uint32_t index, uint32_t serverId) const;
 
   /**
-   * \param stack an InternetStackHelper which is used to install
-   *              on every node in the DCell
-   */
-  void InstallStack (InternetStackHelper stack);
-
-  /**
    * \param helper the layer 2 helper which is used to install
    *               on every links in the DCell
    */
   template <typename T>
   void InstallNetDevices (T helper);
 
-  /**
-   * \param tchSwitch a TrafficControlHelper which is used to install
-   *                   on every switches in the DCell
-   * \param tchServer a TrafficControlHelper which is used to install
-   *                    on every servers in the DCell
-   */
+  // Inherited from the base class
+  void InstallStack (InternetStackHelper stack);
+
   void InstallTrafficControl (TrafficControlHelper tchSwitch,
                               TrafficControlHelper tchServer);
 
-  /**
-   * Assigns IPv4 addresses to all the interfaces of the switches and servers
-   *
-   * \param network an IPv4 address representing the network portion
-   *                of the IPv4 address
-   *
-   * \param mask the mask length
-   */
   void AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask);
 
-  /**
-   * Assigns IPv6 addresses to all the interfaces of the switches and servers
-   *
-   * \param network an IPv6 address representing the network portion
-   *                of the IPv6 address
-   *
-   * \param prefix the prefix length
-   */
   void AssignIpv6Addresses (Ipv6Address network, Ipv6Prefix prefix);
 
-  /**
-   * Sets up the node canvas locations for every node in the DCell.
-   * This is needed for use with the animation interface
-   *
-   * \param ulx upper left x value
-   * \param uly upper left y value
-   * \param lrx lower right x value
-   * \param lry lower right y value
-   */
   void BoundingBox (double ulx, double uly, double lrx, double lry);
 
 private:
@@ -268,7 +235,7 @@ DCellHelper::InstallNetDevices (T helper)
 {
   if (m_l2Installed)
     {
-      NS_FATAL_ERROR ("NetDevices installed already!");
+      NS_FATAL_ERROR (MSG_NETDEVICES_CONFLICT);
       return;
     }  
 

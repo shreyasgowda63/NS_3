@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c)
+ * Copyright (c) Liangcheng Yu 2019
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -84,17 +84,17 @@ int main (int argc, char *argv[])
   Ipv4ListRoutingHelper list;
   list.Add (globalRouting, 0);
   // Use packet spraying
-  Config::SetDefault ("ns3::Ipv4GlobalRouting::RandomEcmpRouting", BooleanValue(true));
+  Config::SetDefault ("ns3::Ipv4GlobalRouting::EcmpRoutingMode", EnumValue (Ipv4GlobalRouting::RandomEcmpRouting));
   stack.SetRoutingHelper (list);
 
   // Install Stack
-  p2pLeafSpineHelper.InstallStack (stack, stack, stack);
+  p2pLeafSpineHelper.InstallStack (stack);
 
   // Configure traffic control layer for all nodes
   TrafficControlHelper tchGlobal;
   uint16_t handle = tchGlobal.SetRootQueueDisc ("ns3::PfifoFastQueueDisc");
   tchGlobal.AddInternalQueues (handle, 3, "ns3::DropTailQueue", "MaxSize", StringValue ("1000p"));
-  p2pLeafSpineHelper.InstallTrafficControl (tchGlobal, tchGlobal, tchGlobal);
+  p2pLeafSpineHelper.InstallTrafficControl (tchGlobal, tchGlobal);
 
   p2pLeafSpineHelper.AssignIpv4Addresses (Ipv4Address ("10.0.0.0"),Ipv4Mask ("255.255.255.0"));
 

@@ -136,7 +136,7 @@ int main (int argc, char *argv[])
 	stack.SetRoutingHelper(list);      
 
   // Install Stack
-  p2pLeafSpineHelper.InstallStack (stack, stack, stack);
+  p2pLeafSpineHelper.InstallStack (stack);
 
   // Configure scheduling methods for all nodes
   // Large buffer size for conveniences given that the priority drop policy is not applied
@@ -171,7 +171,7 @@ int main (int argc, char *argv[])
     {
       NS_LOG_INFO("edgeQueueDiscName out of the scope!");
     }
-  p2pLeafSpineHelper.InstallTrafficControl (tchCore, tchCore, tchEdge);  
+  p2pLeafSpineHelper.InstallTrafficControl (tchCore, tchEdge);  
 
   // Assign ipv4 addresses
   p2pLeafSpineHelper.AssignIpv4Addresses (Ipv4Address ("10.0.0.0"), Ipv4Mask ("255.255.255.0"));

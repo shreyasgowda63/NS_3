@@ -82,7 +82,7 @@ DCellHelper::InstallStack (InternetStackHelper stack)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
   
   stack.Install (m_servers);
@@ -95,7 +95,7 @@ DCellHelper::InstallTrafficControl (TrafficControlHelper tchSwitch,
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   for (std::vector<NetDeviceContainer>::iterator it = m_switchDevices.begin() ; it != m_switchDevices.end(); it++)
@@ -181,7 +181,7 @@ DCellHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   NS_LOG_FUNCTION (this << network << mask);
@@ -233,7 +233,7 @@ DCellHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   NS_LOG_FUNCTION (this << addrBase << prefix);

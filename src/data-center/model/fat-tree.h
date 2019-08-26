@@ -30,6 +30,7 @@
 #include <vector>
 
 #include "csma-helper.h"
+#include "dcn-topology.h"
 #include "fatal-error.h"
 #include "internet-stack-helper.h"
 #include "ipv4-address-helper.h"
@@ -47,7 +48,7 @@ namespace ns3 {
  *
  * \brief A helper to make it easier to create a Fat tree topology
  */
-class FatTreeHelper
+class FatTreeHelper : public DcnTopologyHelper
 {
 public:
   /**
@@ -202,12 +203,6 @@ public:
   Ipv6Address GetServerIpv6Address (uint32_t col) const;
 
   /**
-   * \param stack an InternetStackHelper which is used to install
-   *              on every node in the Fat tree
-   */
-  void InstallStack (InternetStackHelper stack);
-
-  /**
    * \param helperEdge the layer 2 helper which is used to install
    *                   on every edge links (server to edge switch links)
    * \param helperCore the layer 2 helper which is used to install
@@ -216,44 +211,16 @@ public:
   template <typename T>
   void InstallNetDevices (T helperEdge, T helperCore);
 
-  /**
-   * \param tchSwitch a TrafficControlHelper which is used to install
-   *                   on every switches in the Fat tree
-   * \param tchServer a TrafficControlHelper which is used to install
-   *                    on every servers in the Fat tree
-   */
+  // Inherited from the base class
+  void InstallStack (InternetStackHelper stack);
+
   void InstallTrafficControl (TrafficControlHelper tchSwitch,
                               TrafficControlHelper tchServer);
 
-  /**
-   * Assigns IPv4 addresses to all the interfaces of switches and servers
-   *
-   * \param network an IPv4 address representing the network portion
-   *                of the IPv4 address
-   *
-   * \param mask the mask length
-   */
   void AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask);
 
-  /**
-   * Assigns IPv6 addresses to all the interfaces of the switches and servers
-   *
-   * \param network an IPv6 address representing the network portion
-   *                of the IPv6 address
-   *
-   * \param prefix the prefix length
-   */
   void AssignIpv6Addresses (Ipv6Address network, Ipv6Prefix prefix);
 
-  /**
-   * Sets up the node canvas locations for every node in the Fat tree.
-   * This is needed for use with the animation interface
-   *
-   * \param ulx upper left x value
-   * \param uly upper left y value
-   * \param lrx lower right x value
-   * \param lry lower right y value
-   */
   void BoundingBox (double ulx, double uly, double lrx, double lry);
 
 private:
@@ -283,7 +250,7 @@ FatTreeHelper::InstallNetDevices (T helperEdge,
 {
   if (m_l2Installed)
     {
-      NS_FATAL_ERROR ("NetDevices installed already!");
+      NS_FATAL_ERROR (MSG_NETDEVICES_CONFLICT);
       return;
     }  
 

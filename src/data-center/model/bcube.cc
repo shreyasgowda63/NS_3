@@ -74,7 +74,7 @@ BCubeHelper::InstallStack (InternetStackHelper stack)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
   
   stack.Install (m_servers);
@@ -87,7 +87,7 @@ BCubeHelper::InstallTrafficControl (TrafficControlHelper tchSwitch,
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   for (uint32_t i = 0; i < m_levelSwitchDevices.size (); ++i)
@@ -132,7 +132,7 @@ BCubeHelper::BoundingBox (double ulx, double uly,
 
   // Place the servers
   double xLoc = 0.0;
-  double yLoc = yDist / 2;
+  double yLoc = yDist;
   for (uint32_t i = 0; i < numServers; ++i)
     {
       Ptr<Node> node = m_servers.Get (i);
@@ -183,7 +183,7 @@ BCubeHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   NS_LOG_FUNCTION (this << network << mask);
@@ -210,7 +210,7 @@ BCubeHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   NS_LOG_FUNCTION (this << addrBase << prefix);

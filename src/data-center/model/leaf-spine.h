@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c)
+ * Copyright (c) Liangcheng Yu 2019
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -33,6 +33,7 @@
 #include <vector>
 
 #include "csma-helper.h"
+#include "dcn-topology.h"
 #include "fatal-error.h"
 #include "internet-stack-helper.h"
 #include "ipv4-address-helper.h"
@@ -50,7 +51,7 @@ namespace ns3 {
  *
  * \brief A helper to make it easier to create a leaf spine topology
  */
-class LeafSpineHelper
+class LeafSpineHelper : public DcnTopologyHelper
 {
 public:
   /**
@@ -59,8 +60,6 @@ public:
    * \param numSpine total number of spine switches in leaf spine
    * \param numLeaf total number of leaf switches in leaf spine
    * \param numServerPerLeaf number of servers under each leaf switch in leaf spine
-   * \param p2pServerLeaf the PointToPointHelper used to connect servers to leaf switches
-   * \param p2pLeafSpine the PointToPointHelper used to connect spine switches to leaf switches
    */
   LeafSpineHelper (uint32_t numSpine,
                    uint32_t numLeaf,
@@ -242,18 +241,6 @@ public:
   uint32_t  TotalCount () const;
 
   /**
-   * \param stackSpine an InternetStackHelper which is used to install
-   *                   on every spine switches in the leaf spine
-   * \param stackLeaf  an InternetStackHelper which is used to install 
-   *                   on every leaf switches in the leaf spine
-   * \param stackServer an InternetStackHelper which is used to install
-   *                    on every servers in the leaf spine
-   */
-  void InstallStack (InternetStackHelper stackSpine,
-                     InternetStackHelper stackLeaf,
-                     InternetStackHelper stackServer);
-
-  /**
    * \param helperEdge the layer 2 helper which is used to install
    *                   on every server to leaf switch links
    * \param helperCore the layer 2 helper which is used to install
@@ -262,47 +249,16 @@ public:
   template <typename T>
   void InstallNetDevices (T helperEdge, T helperCore);
 
-  /**
-   * \param tchSpine a TrafficControlHelper which is used to install
-   *                   on every spine switches in the leaf spine
-   * \param tchLeaf  a TrafficControlHelper which is used to install 
-   *                   on every leaf switches in the leaf spine
-   * \param tchServer a TrafficControlHelper which is used to install
-   *                    on every servers in the leaf spine
-   */
-  void InstallTrafficControl (TrafficControlHelper tchSpine,
-                              TrafficControlHelper tchLeaf,
+  // Inherited from the base class
+  void InstallStack (InternetStackHelper stack);
+
+  void InstallTrafficControl (TrafficControlHelper tchSwitch,
                               TrafficControlHelper tchServer);
 
-  /**
-   * Assigns IPv4 addresses to all the interfaces of switches and servers
-   *
-   * \param network an IPv4 address representing the network portion
-   *                of the IPv4 address
-   *
-   * \param mask the mask length
-   */
   void AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask);
 
-  /**
-   * Assigns IPv6 addresses to all the interfaces of the switches and servers
-   *
-   * \param network an IPv6 address representing the network portion
-   *                of the IPv6 address
-   *
-   * \param prefix the prefix length
-   */
   void AssignIpv6Addresses (Ipv6Address network, Ipv6Prefix prefix);
 
-  /**
-   * Sets up the node canvas locations for every node in the leaf spine.
-   * This is needed for use with the animation interface
-   *
-   * \param ulx upper left x value
-   * \param uly upper left y value
-   * \param lrx lower right x value
-   * \param lry lower right y value
-   */
   void BoundingBox (double ulx, double uly, double lrx, double lry);
 
 private:
@@ -332,7 +288,7 @@ LeafSpineHelper::InstallNetDevices (T helperEdge,
 {
   if (m_l2Installed)
     {
-      NS_FATAL_ERROR ("NetDevices installed already!");
+      NS_FATAL_ERROR (MSG_NETDEVICES_CONFLICT);
       return;
     }   
 

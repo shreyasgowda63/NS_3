@@ -77,7 +77,7 @@ FatTreeHelper::InstallStack (InternetStackHelper stack)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   stack.Install (m_servers);
@@ -92,7 +92,7 @@ FatTreeHelper::InstallTrafficControl (TrafficControlHelper tchSwitch,
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   for (uint32_t i = 0; i < m_edgeSwitchDevices.size (); ++i)
@@ -141,15 +141,15 @@ FatTreeHelper::BoundingBox (double ulx, double uly,
   uint32_t numServers = m_numPods * m_numPods * m_numPods / 4;
   uint32_t numSwitches = m_numPods * m_numPods / 2;
 
-  double xServerAdder = xDist / numServers;
-  double xEdgeSwitchAdder = xDist / numSwitches;
-  double xAggregateSwitchAdder =  xDist / numSwitches;
-  double xCoreSwitchAdder = xDist / (numSwitches / 2);
-  double  yAdder = yDist / 4;  // 3 layers of switches and 1 layer of servers
+  double xServerAddr = xDist / numServers;
+  double xEdgeSwitchAddr = xDist / numSwitches;
+  double xAggregateSwitchAddr = xDist / numSwitches;
+  double xCoreSwitchAddr = xDist / (numSwitches / 2);
+  double yAddr = yDist / 4;  // 3 layers of switches and 1 layer of servers
 
   // Place the servers
   double xLoc = 0.0;
-  double yLoc = yDist / 2;
+  double yLoc = yDist;
   for (uint32_t i = 0; i < numServers; ++i)
     {
       Ptr<Node> node = m_servers.Get (i);
@@ -163,18 +163,18 @@ FatTreeHelper::BoundingBox (double ulx, double uly,
       loc->SetPosition (locVec);
       if (i % 2 == 0)
         {
-          xLoc += 3 * xServerAdder;
+          xLoc += 3 * xServerAddr;
         }
       else
         {
-          xLoc += 1.1 * xServerAdder;
+          xLoc += 1.1 * xServerAddr;
         }
     }
 
-  yLoc -= yAdder;
+  yLoc -= yAddr;
 
   // Place the edge switches
-  xLoc = xEdgeSwitchAdder;
+  xLoc = xEdgeSwitchAddr;
   for (uint32_t i = 0; i < numSwitches; ++i)
     {
       Ptr<Node> node = m_edgeSwitches.Get (i);
@@ -186,13 +186,13 @@ FatTreeHelper::BoundingBox (double ulx, double uly,
         }
       Vector locVec (xLoc, yLoc, 0);
       loc->SetPosition (locVec);
-      xLoc += 2 * xEdgeSwitchAdder;
+      xLoc += 2 * xEdgeSwitchAddr;
     }
 
-  yLoc -= yAdder;
+  yLoc -= yAddr;
 
   // Place the aggregate switches
-  xLoc = xAggregateSwitchAdder;
+  xLoc = xAggregateSwitchAddr;
   for (uint32_t i = 0; i < numSwitches; ++i)
     {
       Ptr<Node> node = m_aggregateSwitches.Get (i);
@@ -204,13 +204,13 @@ FatTreeHelper::BoundingBox (double ulx, double uly,
         }
       Vector locVec (xLoc, yLoc, 0);
       loc->SetPosition (locVec);
-      xLoc += 2 * xAggregateSwitchAdder;
+      xLoc += 2 * xAggregateSwitchAddr;
     }
 
-  yLoc -= yAdder;
+  yLoc -= yAddr;
 
   // Place the core switches
-  xLoc = xCoreSwitchAdder;
+  xLoc = xCoreSwitchAddr;
   for (uint32_t i = 0; i < numSwitches / 2; ++i)
     {
       Ptr<Node> node = m_coreSwitches.Get (i);
@@ -222,7 +222,7 @@ FatTreeHelper::BoundingBox (double ulx, double uly,
         }
       Vector locVec (xLoc, yLoc, 0);
       loc->SetPosition (locVec);
-      xLoc += 2 * xCoreSwitchAdder;
+      xLoc += 2 * xCoreSwitchAddr;
     }
 }
 
@@ -231,7 +231,7 @@ FatTreeHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   NS_LOG_FUNCTION (this << network << mask);
@@ -284,7 +284,7 @@ FatTreeHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   NS_LOG_FUNCTION (this << addrBase << prefix);

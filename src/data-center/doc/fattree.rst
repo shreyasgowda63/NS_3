@@ -26,6 +26,13 @@ aggregation switch connects to k/2 edge and k/2 core switches. There are (k/2)^2
 switches and each core switch connects to k pods. In ns-3, all the links  are created 
 and configured using the associated layer 2 helper object ([Ref1]_).
 
+.. figure:: figures/fat-tree-animation.*
+   :align: center
+   :width: 500px
+   :height: 400px
+
+   An Example of FatTree Topology with k=4
+
 Using the FatTree
 ----------------------------
 

@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c)
+ * Copyright (c) Liangcheng Yu 2019
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -77,37 +77,34 @@ LeafSpineHelper::~LeafSpineHelper ()
 }
 
 void
-LeafSpineHelper::InstallStack (InternetStackHelper stackSpine,
-                               InternetStackHelper stackLeaf,
-                               InternetStackHelper stackServer)
+LeafSpineHelper::InstallStack (InternetStackHelper stack)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
-  stackSpine.Install (m_spineSwitches);
-  stackLeaf.Install (m_leafSwitches);
-  stackServer.Install (m_servers);
+  stack.Install (m_spineSwitches);
+  stack.Install (m_leafSwitches);
+  stack.Install (m_servers);
 }
 
 void
-LeafSpineHelper::InstallTrafficControl (TrafficControlHelper tchSpine,
-                                        TrafficControlHelper tchLeaf,
+LeafSpineHelper::InstallTrafficControl (TrafficControlHelper tchSwitch,
                                         TrafficControlHelper tchServer)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   for (std::vector<NetDeviceContainer>::iterator it = m_spineDevices.begin() ; it != m_spineDevices.end(); it++)
   {
-    tchSpine.Install (*it);
+    tchSwitch.Install (*it);
   }
   for (std::vector<NetDeviceContainer>::iterator it = m_leafDevices.begin() ; it != m_leafDevices.end(); it++)
   {
-    tchLeaf.Install (*it);
+    tchSwitch.Install (*it);
   }
   for (std::vector<NetDeviceContainer>::iterator it = m_serverDevices.begin() ; it != m_serverDevices.end(); it++)
   {
@@ -203,7 +200,7 @@ LeafSpineHelper::AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   Ipv4AddressGenerator::Init (network, mask);
@@ -240,7 +237,7 @@ LeafSpineHelper::AssignIpv6Addresses (Ipv6Address addrBase, Ipv6Prefix prefix)
 {
   if (!m_l2Installed)
     {
-      NS_LOG_WARN ("Please install NetDevices with the target L2 helper!");
+      NS_LOG_WARN (MSG_NETDEVICES_MISSING);
     }
 
   Ipv6AddressGenerator::Init (addrBase, prefix);
