@@ -65,7 +65,7 @@ public:
                    uint32_t numLeaf,
                    uint32_t numServerPerLeaf);
 
-  ~LeafSpineHelper ();
+  virtual ~LeafSpineHelper ();
 
   /**
    * \param col the column address of the target leaf switch
@@ -250,10 +250,10 @@ public:
   void InstallNetDevices (T helperEdge, T helperCore);
 
   // Inherited from the base class
-  void InstallStack (InternetStackHelper stack);
+  void InstallStack (InternetStackHelper& stack);
 
-  void InstallTrafficControl (TrafficControlHelper tchSwitch,
-                              TrafficControlHelper tchServer);
+  void InstallTrafficControl (TrafficControlHelper& tchSwitch,
+                              TrafficControlHelper& tchServer);
 
   void AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask);
 

@@ -63,7 +63,7 @@ public:
   BCubeHelper (uint32_t nLevels,
                uint32_t nServers);
 
-  ~BCubeHelper ();
+  virtual ~BCubeHelper ();
 
   /**
    * \param row the row address of the desired switch
@@ -156,10 +156,10 @@ public:
   void InstallNetDevices (T helper);
 
   // Inherited from the base class
-  void InstallStack (InternetStackHelper stack);
+  void InstallStack (InternetStackHelper& stack);
 
-  void InstallTrafficControl (TrafficControlHelper tchSwitch,
-                              TrafficControlHelper tchServer);
+  void InstallTrafficControl (TrafficControlHelper& tchSwitch,
+                              TrafficControlHelper& tchServer);
 
   void AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask);
 

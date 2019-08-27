@@ -21,7 +21,7 @@
  * 
  */
 
-// Define a base class to create a data center networking topology
+// Define the base class for data center network topology generators.
 
 #ifndef DCN_TOPOLOGY_HELPER_H
 #define DCN_TOPOLOGY_HELPER_H
@@ -47,13 +47,13 @@ class DcnTopologyHelper
 public:
   DcnTopologyHelper ();
 
-  ~DcnTopologyHelper ();
+  virtual ~DcnTopologyHelper ();
 
   /**
    * \param stack an InternetStackHelper which is used to install
    *              on every node in the topology
    */
-  virtual void InstallStack (InternetStackHelper stack) = 0;
+  virtual void InstallStack (InternetStackHelper& stack) = 0;
 
   /**
    * \param tchSwitch a TrafficControlHelper which is used to install
@@ -61,8 +61,8 @@ public:
    * \param tchServer a TrafficControlHelper which is used to install
    *                    on every servers in the topology
    */
-  virtual void InstallTrafficControl (TrafficControlHelper tchSwitch,
-                                      TrafficControlHelper tchServer) = 0;
+  virtual void InstallTrafficControl (TrafficControlHelper& tchSwitch,
+                                      TrafficControlHelper& tchServer) = 0;
 
   /**
    * Assigns IPv4 addresses to all the interfaces of switches and servers

@@ -77,7 +77,7 @@ LeafSpineHelper::~LeafSpineHelper ()
 }
 
 void
-LeafSpineHelper::InstallStack (InternetStackHelper stack)
+LeafSpineHelper::InstallStack (InternetStackHelper& stack)
 {
   if (!m_l2Installed)
     {
@@ -90,8 +90,8 @@ LeafSpineHelper::InstallStack (InternetStackHelper stack)
 }
 
 void
-LeafSpineHelper::InstallTrafficControl (TrafficControlHelper tchSwitch,
-                                        TrafficControlHelper tchServer)
+LeafSpineHelper::InstallTrafficControl (TrafficControlHelper& tchSwitch,
+                                        TrafficControlHelper& tchServer)
 {
   if (!m_l2Installed)
     {

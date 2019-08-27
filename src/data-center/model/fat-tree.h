@@ -59,7 +59,7 @@ public:
    */
   FatTreeHelper (uint32_t numPods);
 
-  ~FatTreeHelper ();
+  virtual ~FatTreeHelper ();
 
   /**
    * \param col the column address of the desired edge switch
@@ -212,10 +212,10 @@ public:
   void InstallNetDevices (T helperEdge, T helperCore);
 
   // Inherited from the base class
-  void InstallStack (InternetStackHelper stack);
+  void InstallStack (InternetStackHelper& stack);
 
-  void InstallTrafficControl (TrafficControlHelper tchSwitch,
-                              TrafficControlHelper tchServer);
+  void InstallTrafficControl (TrafficControlHelper& tchSwitch,
+                              TrafficControlHelper& tchServer);
 
   void AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask);
 

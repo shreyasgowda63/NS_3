@@ -73,7 +73,7 @@ FatTreeHelper::~FatTreeHelper ()
 }
 
 void
-FatTreeHelper::InstallStack (InternetStackHelper stack)
+FatTreeHelper::InstallStack (InternetStackHelper& stack)
 {
   if (!m_l2Installed)
     {
@@ -87,8 +87,8 @@ FatTreeHelper::InstallStack (InternetStackHelper stack)
 }
 
 void
-FatTreeHelper::InstallTrafficControl (TrafficControlHelper tchSwitch,
-                                      TrafficControlHelper tchServer)
+FatTreeHelper::InstallTrafficControl (TrafficControlHelper& tchSwitch,
+                                      TrafficControlHelper& tchServer)
 {
   if (!m_l2Installed)
     {

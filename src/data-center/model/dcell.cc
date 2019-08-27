@@ -78,7 +78,7 @@ DCellHelper::~DCellHelper ()
 }
 
 void
-DCellHelper::InstallStack (InternetStackHelper stack)
+DCellHelper::InstallStack (InternetStackHelper& stack)
 {
   if (!m_l2Installed)
     {
@@ -90,8 +90,8 @@ DCellHelper::InstallStack (InternetStackHelper stack)
 }
 
 void
-DCellHelper::InstallTrafficControl (TrafficControlHelper tchSwitch,
-                                    TrafficControlHelper tchServer)
+DCellHelper::InstallTrafficControl (TrafficControlHelper& tchSwitch,
+                                    TrafficControlHelper& tchServer)
 {
   if (!m_l2Installed)
     {

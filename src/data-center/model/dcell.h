@@ -62,7 +62,7 @@ public:
   DCellHelper (uint32_t nLevels,
                uint32_t nServers);
 
-  ~DCellHelper ();
+  virtual ~DCellHelper ();
 
   /**
    * \param index the index of the desired mini-switch for the corresponding DCell0
@@ -202,10 +202,10 @@ public:
   void InstallNetDevices (T helper);
 
   // Inherited from the base class
-  void InstallStack (InternetStackHelper stack);
+  void InstallStack (InternetStackHelper& stack);
 
-  void InstallTrafficControl (TrafficControlHelper tchSwitch,
-                              TrafficControlHelper tchServer);
+  void InstallTrafficControl (TrafficControlHelper& tchSwitch,
+                              TrafficControlHelper& tchServer);
 
   void AssignIpv4Addresses (Ipv4Address network, Ipv4Mask mask);
 

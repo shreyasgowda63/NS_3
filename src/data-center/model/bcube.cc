@@ -70,7 +70,7 @@ BCubeHelper::~BCubeHelper ()
 }
 
 void
-BCubeHelper::InstallStack (InternetStackHelper stack)
+BCubeHelper::InstallStack (InternetStackHelper& stack)
 {
   if (!m_l2Installed)
     {
@@ -82,8 +82,8 @@ BCubeHelper::InstallStack (InternetStackHelper stack)
 }
 
 void
-BCubeHelper::InstallTrafficControl (TrafficControlHelper tchSwitch,
-                                    TrafficControlHelper tchServer)
+BCubeHelper::InstallTrafficControl (TrafficControlHelper& tchSwitch,
+                                    TrafficControlHelper& tchServer)
 {
   if (!m_l2Installed)
     {
