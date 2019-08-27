@@ -88,7 +88,7 @@ public:
    */
   static TypeId GetTypeId (void);
   FlowSizePrioQueue ();
-  ~FlowSizePrioQueue ();
+  virtual ~FlowSizePrioQueue ();
 
   /**
    * Enqueue the given QueueDiscItem with insertion sort based on the flow size tag value.
