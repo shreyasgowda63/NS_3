@@ -80,12 +80,9 @@ BCubeHelper::BCubeHelper (const BCubeHelper& helper)
   m_switches (helper.m_switches),
   m_servers (helper.m_servers)  
 {
-  for (int i = 0; i < helper.m_levelSwitchDevices.size(); i++) 
-    m_levelSwitchDevices.push_back(helper.m_levelSwitchDevices[i]); 
-  for (int i = 0; i < helper.m_switchInterfaces.size(); i++) 
-    m_switchInterfaces.push_back(helper.m_switchInterfaces[i]);  
-  for (int i = 0; i < helper.m_switchInterfaces6.size(); i++) 
-    m_switchInterfaces6.push_back(helper.m_switchInterfaces6[i]); 
+  m_levelSwitchDevices = helper.m_levelSwitchDevices; 
+  m_switchInterfaces = helper.m_switchInterfaces;  
+  m_switchInterfaces6 = helper.m_switchInterfaces6; 
 }
 
 void

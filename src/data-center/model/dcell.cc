@@ -85,20 +85,13 @@ DCellHelper::DCellHelper (const DCellHelper& helper)
   m_servers (helper.m_servers),
   m_switches (helper.m_switches)
 {
-  for (int i = 0; i < helper.m_serverDevices.size(); i++) 
-    m_serverDevices.push_back(helper.m_serverDevices[i]); 
-  for (int i = 0; i < helper.m_switchDevices.size(); i++) 
-    m_switchDevices.push_back(helper.m_switchDevices[i]);  
-  for (int i = 0; i < helper.m_switchInterfaces.size(); i++) 
-    m_switchInterfaces.push_back(helper.m_switchInterfaces[i]); 
-  for (int i = 0; i < helper.m_serverInterfaces.size(); i++) 
-    m_serverInterfaces.push_back(helper.m_serverInterfaces[i]); 
-  for (int i = 0; i < helper.m_switchInterfaces6.size(); i++) 
-    m_switchInterfaces6.push_back(helper.m_switchInterfaces6[i]);  
-  for (int i = 0; i < helper.m_serverInterfaces6.size(); i++) 
-    m_serverInterfaces6.push_back(helper.m_serverInterfaces6[i]);
-  for (int i = 0; i < helper.m_numServersByLevel.size(); i++) 
-    m_numServersByLevel.push_back(helper.m_numServersByLevel[i]);  
+  m_serverDevices =  helper.m_serverDevices; 
+  m_switchDevices =  helper.m_switchDevices;  
+  m_switchInterfaces =  helper.m_switchInterfaces; 
+  m_serverInterfaces =  helper.m_serverInterfaces; 
+  m_switchInterfaces6 =  helper.m_switchInterfaces6;  
+  m_serverInterfaces6 =  helper.m_serverInterfaces6;
+  m_numServersByLevel =  helper.m_numServersByLevel;  
 }
 
 void

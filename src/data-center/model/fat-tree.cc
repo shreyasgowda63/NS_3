@@ -86,12 +86,9 @@ FatTreeHelper::FatTreeHelper (const FatTreeHelper& helper)
   m_coreSwitches (helper.m_coreSwitches),
   m_servers (helper.m_servers)  
 {
-  for (int i = 0; i < helper.m_edgeSwitchDevices.size(); i++) 
-    m_edgeSwitchDevices.push_back(helper.m_edgeSwitchDevices[i]); 
-  for (int i = 0; i < helper.m_aggregateSwitchDevices.size(); i++) 
-    m_aggregateSwitchDevices.push_back(helper.m_aggregateSwitchDevices[i]);  
-  for (int i = 0; i < helper.m_coreSwitchDevices.size(); i++) 
-    m_coreSwitchDevices.push_back(helper.m_coreSwitchDevices[i]); 
+  m_edgeSwitchDevices = helper.m_edgeSwitchDevices; 
+  m_aggregateSwitchDevices = helper.m_aggregateSwitchDevices;  
+  m_coreSwitchDevices = helper.m_coreSwitchDevices; 
 }
 
 FatTreeHelper::~FatTreeHelper ()
