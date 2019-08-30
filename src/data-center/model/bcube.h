@@ -65,6 +65,8 @@ public:
 
   virtual ~BCubeHelper ();
 
+  BCubeHelper (const BCubeHelper& helper);
+
   /**
    * \param row the row address of the desired switch
    * \param col the column address of the desired switch

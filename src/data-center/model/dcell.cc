@@ -77,6 +77,30 @@ DCellHelper::~DCellHelper ()
 {
 }
 
+DCellHelper::DCellHelper (const DCellHelper& helper)
+: DcnTopologyHelper (helper),
+  m_l2Installed (helper.m_l2Installed),
+  m_numLevels (helper.m_numLevels),
+  m_numServersDCell0 (helper.m_numServersDCell0),
+  m_servers (helper.m_servers),
+  m_switches (helper.m_switches)
+{
+  for (int i = 0; i < helper.m_serverDevices.size(); i++) 
+    m_serverDevices.push_back(helper.m_serverDevices[i]); 
+  for (int i = 0; i < helper.m_switchDevices.size(); i++) 
+    m_switchDevices.push_back(helper.m_switchDevices[i]);  
+  for (int i = 0; i < helper.m_switchInterfaces.size(); i++) 
+    m_switchInterfaces.push_back(helper.m_switchInterfaces[i]); 
+  for (int i = 0; i < helper.m_serverInterfaces.size(); i++) 
+    m_serverInterfaces.push_back(helper.m_serverInterfaces[i]); 
+  for (int i = 0; i < helper.m_switchInterfaces6.size(); i++) 
+    m_switchInterfaces6.push_back(helper.m_switchInterfaces6[i]);  
+  for (int i = 0; i < helper.m_serverInterfaces6.size(); i++) 
+    m_serverInterfaces6.push_back(helper.m_serverInterfaces6[i]);
+  for (int i = 0; i < helper.m_numServersByLevel.size(); i++) 
+    m_numServersByLevel.push_back(helper.m_numServersByLevel[i]);  
+}
+
 void
 DCellHelper::InstallStack (InternetStackHelper& stack)
 {

@@ -76,6 +76,38 @@ LeafSpineHelper::~LeafSpineHelper ()
 {
 }
 
+LeafSpineHelper::LeafSpineHelper (const LeafSpineHelper& helper)
+: DcnTopologyHelper (helper),
+  m_l2Installed (helper.m_l2Installed),
+  m_numSpine (helper.m_numSpine),
+  m_numLeaf (helper.m_numLeaf),
+  m_numServerPerLeaf (helper.m_numServerPerLeaf),
+  m_spineSwitches (helper.m_spineSwitches),
+  m_leafSwitches (helper.m_leafSwitches),
+  m_servers (helper.m_servers)
+{
+  for (int i = 0; i < helper.m_serverDevices.size(); i++) 
+    m_serverDevices.push_back(helper.m_serverDevices[i]); 
+  for (int i = 0; i < helper.m_leafDevices.size(); i++) 
+    m_leafDevices.push_back(helper.m_leafDevices[i]);  
+  for (int i = 0; i < helper.m_leafDevices.size(); i++) 
+    m_leafDevices.push_back(helper.m_leafDevices[i]); 
+  for (int i = 0; i < helper.m_serverDevices.size(); i++) 
+    m_serverDevices.push_back(helper.m_serverDevices[i]); 
+  for (int i = 0; i < helper.m_spineInterfaces.size(); i++) 
+    m_spineInterfaces.push_back(helper.m_spineInterfaces[i]);  
+  for (int i = 0; i < helper.m_serverInterfaces6.size(); i++) 
+    m_serverInterfaces6.push_back(helper.m_serverInterfaces6[i]);
+  for (int i = 0; i < helper.m_leafInterfaces.size(); i++) 
+    m_leafInterfaces.push_back(helper.m_leafInterfaces[i]); 
+  for (int i = 0; i < helper.m_serverInterfaces.size(); i++) 
+    m_serverInterfaces.push_back(helper.m_serverInterfaces[i]); 
+  for (int i = 0; i < helper.m_spineInterfaces6.size(); i++) 
+    m_spineInterfaces6.push_back(helper.m_spineInterfaces6[i]);             
+  for (int i = 0; i < helper.m_leafInterfaces6.size(); i++) 
+    m_leafInterfaces6.push_back(helper.m_leafInterfaces6[i]);  
+}
+
 void
 LeafSpineHelper::InstallStack (InternetStackHelper& stack)
 {

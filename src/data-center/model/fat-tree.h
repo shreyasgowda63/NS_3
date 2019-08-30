@@ -61,6 +61,8 @@ public:
 
   virtual ~FatTreeHelper ();
 
+  FatTreeHelper (const FatTreeHelper& helper);
+
   /**
    * \param col the column address of the desired edge switch
    *

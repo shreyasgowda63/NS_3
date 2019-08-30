@@ -67,6 +67,8 @@ public:
 
   virtual ~LeafSpineHelper ();
 
+  LeafSpineHelper (const LeafSpineHelper& helper);
+
   /**
    * \param col the column address of the target leaf switch
    *

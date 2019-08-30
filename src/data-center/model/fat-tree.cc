@@ -29,6 +29,7 @@
 #include "ns3/log.h"
 
 #include "ns3/fat-tree.h"
+#include "ns3/object.h"
 #include "ns3/point-to-point-helper.h"
 #include "ns3/point-to-point-net-device.h"
 #include "ns3/internet-stack-helper.h"
@@ -66,6 +67,31 @@ FatTreeHelper::FatTreeHelper (uint32_t numPods)
   m_edgeSwitches.Create (numEdgeSwitches * m_numPods);
   m_aggregateSwitches.Create (numAggregateSwitches * m_numPods);
   m_coreSwitches.Create (numCoreSwitches * numGroups);    
+}
+
+FatTreeHelper::FatTreeHelper (const FatTreeHelper& helper)
+: DcnTopologyHelper (helper),
+  m_l2Installed (helper.m_l2Installed),
+  m_numPods (helper.m_numPods),
+  m_edgeSwitchInterfaces (helper.m_edgeSwitchInterfaces),
+  m_aggregateSwitchInterfaces (helper.m_aggregateSwitchInterfaces),
+  m_coreSwitchInterfaces (helper.m_coreSwitchInterfaces),
+  m_serverInterfaces (helper.m_serverInterfaces),
+  m_edgeSwitchInterfaces6 (helper.m_edgeSwitchInterfaces6),
+  m_aggregateSwitchInterfaces6 (helper.m_aggregateSwitchInterfaces6),
+  m_coreSwitchInterfaces6 (helper.m_coreSwitchInterfaces6),
+  m_serverInterfaces6 (helper.m_serverInterfaces6),
+  m_edgeSwitches (helper.m_edgeSwitches),
+  m_aggregateSwitches (helper.m_aggregateSwitches),
+  m_coreSwitches (helper.m_coreSwitches),
+  m_servers (helper.m_servers)  
+{
+  for (int i = 0; i < helper.m_edgeSwitchDevices.size(); i++) 
+    m_edgeSwitchDevices.push_back(helper.m_edgeSwitchDevices[i]); 
+  for (int i = 0; i < helper.m_aggregateSwitchDevices.size(); i++) 
+    m_aggregateSwitchDevices.push_back(helper.m_aggregateSwitchDevices[i]);  
+  for (int i = 0; i < helper.m_coreSwitchDevices.size(); i++) 
+    m_coreSwitchDevices.push_back(helper.m_coreSwitchDevices[i]); 
 }
 
 FatTreeHelper::~FatTreeHelper ()

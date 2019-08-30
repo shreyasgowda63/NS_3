@@ -69,6 +69,25 @@ BCubeHelper::~BCubeHelper ()
 {
 }
 
+BCubeHelper::BCubeHelper (const BCubeHelper& helper)
+: DcnTopologyHelper (helper),
+  m_l2Installed (helper.m_l2Installed),
+  m_numLevels (helper.m_numLevels),
+  m_numServers (helper.m_numServers),
+  m_numLevelSwitches (helper.m_numLevelSwitches),
+  m_serverInterfaces (helper.m_serverInterfaces),
+  m_serverInterfaces6 (helper.m_serverInterfaces6),
+  m_switches (helper.m_switches),
+  m_servers (helper.m_servers)  
+{
+  for (int i = 0; i < helper.m_levelSwitchDevices.size(); i++) 
+    m_levelSwitchDevices.push_back(helper.m_levelSwitchDevices[i]); 
+  for (int i = 0; i < helper.m_switchInterfaces.size(); i++) 
+    m_switchInterfaces.push_back(helper.m_switchInterfaces[i]);  
+  for (int i = 0; i < helper.m_switchInterfaces6.size(); i++) 
+    m_switchInterfaces6.push_back(helper.m_switchInterfaces6[i]); 
+}
+
 void
 BCubeHelper::InstallStack (InternetStackHelper& stack)
 {

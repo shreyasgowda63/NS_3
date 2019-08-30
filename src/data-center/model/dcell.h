@@ -64,6 +64,8 @@ public:
 
   virtual ~DCellHelper ();
 
+  DCellHelper (const DCellHelper& helper);
+
   /**
    * \param index the index of the desired mini-switch for the corresponding DCell0
    *
