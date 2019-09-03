@@ -42,10 +42,7 @@ class Socket;
  * zero). Once the lower layer send buffer is
  * filled, it waits until space is free to
  * send more data, essentially keeping a
- * constant flow of data. Only SOCK_STREAM 
- * and SOCK_SEQPACKET sockets are supported. 
- * For example, TCP sockets can be used, but 
- * UDP sockets can not be used.
+ * constant flow of data.
  */
 
 /**
@@ -59,10 +56,7 @@ class Socket;
  * zero). Once the lower layer send buffer is
  * filled, it waits until space is free to
  * send more data, essentially keeping a
- * constant flow of data. Only SOCK_STREAM
- * and SOCK_SEQPACKET sockets are supported.
- * For example, TCP sockets can be used, but
- * UDP sockets can not be used.
+ * constant flow of data.
  *
  */
 class BulkSendApplication : public Application
