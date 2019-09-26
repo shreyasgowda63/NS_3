@@ -113,7 +113,7 @@ Ipv4ListRouting::RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDe
       route = (*i).second->RouteOutput (p, header, oif, sockerr);
       if (route)
         {
-          NS_LOG_LOGIC ("Found route " << *route);
+          NS_LOG_LOGIC ("Found route " << route);
           sockerr = Socket::ERROR_NOTERROR;
           return route;
         }
@@ -139,35 +139,23 @@ Ipv4ListRouting::RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<
   NS_ASSERT (m_ipv4->GetInterfaceForDevice (idev) >= 0);
   uint32_t iif = m_ipv4->GetInterfaceForDevice (idev); 
 
-  Ipv4Address dst = header.GetDestination ();
-  retVal = m_ipv4->IsDestinationAddress (dst, iif);
+  retVal = m_ipv4->IsDestinationAddress (header.GetDestination (), iif);
   if (retVal == true)
     {
-      NS_LOG_LOGIC ("Address "<< dst << " is a match for local delivery");
+      NS_LOG_LOGIC ("Address "<< header.GetDestination () << " is a match for local delivery");
+      if (header.GetDestination ().IsMulticast ())
+        {
           Ptr<Packet> packetCopy = p->Copy ();
           lcb (packetCopy, header, iif);
-
-      // if the destination is unicast return here
-      if (!dst.IsMulticast () && !dst.IsBroadcast ())
-        {
-          uint32_t i;
-          for (i = 0; i < m_ipv4->GetNAddresses (iif); i++)
-            {
-              Ipv4InterfaceAddress ifAddr = m_ipv4->GetAddress (iif, i);
-              if (dst.IsSubnetDirectedBroadcast (ifAddr.GetMask ()) &&
-                  (dst.CombineMask (ifAddr.GetMask ()) ==
-                  ifAddr.GetLocal ().CombineMask (ifAddr.GetMask ())))
-                {
-                  NS_LOG_LOGIC ("Address " << dst << " is subnet-directed broadcast");
-                  break;
-                }
+          retVal = true;
+          // Fall through
         }
-          // dst is not multicast, broadcast, or subnet-directed broadcast
-          if (i == m_ipv4->GetNAddresses (iif))
-            return true;
+      else
+        {
+          lcb (p, header, iif);
+          return true;
         }
     }
-
   // Check if input device supports IP forwarding
   if (m_ipv4->IsForwarding (iif) == false)
     {
@@ -183,8 +171,9 @@ Ipv4ListRouting::RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<
     {
       downstreamLcb = MakeNullCallback<void, Ptr<const Packet>, const Ipv4Header &, uint32_t > ();
     }
-  for (auto rprotoIter = m_routingProtocols.cbegin ();
-       rprotoIter != m_routingProtocols.cend ();
+  for (Ipv4RoutingProtocolList::const_iterator rprotoIter =
+         m_routingProtocols.begin ();
+       rprotoIter != m_routingProtocols.end ();
        rprotoIter++)
     {
       if ((*rprotoIter).second->RouteInput (p, header, idev, ucb, mcb, downstreamLcb, ecb))
