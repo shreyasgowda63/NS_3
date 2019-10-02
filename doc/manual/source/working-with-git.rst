@@ -170,7 +170,7 @@ To switch between branches, remove the -b option. You should now see:
     * master
      [name_of_your_new_branch]
      remotes/origin/master
-     remotes/upstream/master
+     remotes/nsnam/master
 
 Edit and commit the modifications
 *********************************
