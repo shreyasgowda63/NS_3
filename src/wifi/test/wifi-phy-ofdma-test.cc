@@ -55,7 +55,8 @@ static const uint8_t DEFAULT_CHANNEL_NUMBER = 36;
 static const uint32_t DEFAULT_FREQUENCY = 5180; // MHz
 static const WifiPhyBand DEFAULT_WIFI_BAND = WIFI_PHY_BAND_5GHZ;
 static const uint16_t DEFAULT_CHANNEL_WIDTH = 20; // MHz
-static const uint16_t DEFAULT_GUARD_WIDTH = DEFAULT_CHANNEL_WIDTH; // MHz (expanded to channel width to model spectrum mask)
+static const uint32_t GRANULARITY = 78125; //Hz
+static const bool USE_GUARD_BAND = false; /*ignore guard band for tests*/
 
 /**
  * HE PHY slightly modified so as to return a given
@@ -154,10 +155,9 @@ public:
    */
   void StartTx (Ptr<WifiPpdu> ppdu) override;
   /**
-   * \param currentChannelWidth channel width of the current transmission (MHz)
-   * \return the width of the guard band (MHz) set to 2
+   * \return \c false to avoid including guard bands
    */
-  uint16_t GetGuardBandwidth (uint16_t currentChannelWidth) const override;
+  bool IncludeAdjacentChannelPower (void) const override;
 
   /**
    * Set the global PPDU UID counter.
@@ -270,12 +270,10 @@ OfdmaSpectrumWifiPhy::GetCurrentPreambleEvents (void)
   return m_currentPreambleEvents;
 }
 
-uint16_t
-OfdmaSpectrumWifiPhy::GetGuardBandwidth (uint16_t currentChannelWidth) const
+bool
+OfdmaSpectrumWifiPhy::IncludeAdjacentChannelPower (void) const
 {
-  // return a small enough value to avoid having too much out of band transmission
-  // knowing that slopes are not configurable yet.
-  return 1;
+  return false;
 }
 
 Ptr<Event>
@@ -430,7 +428,7 @@ private:
   uint32_t m_countRxBytesSta2;   ///< count RX bytes for STA 2
   uint32_t m_countRxBytesSta3;   ///< count RX bytes for STA 3
 
-  Ptr<SpectrumWifiPhy> m_phyAp;           ///< PHY of AP
+  Ptr<OfdmaSpectrumWifiPhy> m_phyAp;      ///< PHY of AP
   Ptr<OfdmaSpectrumWifiPhy> m_phySta1;    ///< PHY of STA 1
   Ptr<OfdmaSpectrumWifiPhy> m_phySta2;    ///< PHY of STA 2
   Ptr<OfdmaSpectrumWifiPhy> m_phySta3;    ///< PHY of STA 3
@@ -659,7 +657,7 @@ TestDlOfdmaPhyTransmission::DoSetup (void)
   
   Ptr<Node> apNode = CreateObject<Node> ();
   Ptr<WifiNetDevice> apDev = CreateObject<WifiNetDevice> ();
-  m_phyAp = CreateObject<SpectrumWifiPhy> ();
+  m_phyAp = CreateObject<OfdmaSpectrumWifiPhy> (0);
   m_phyAp->CreateWifiSpectrumPhyInterface (apDev);
   m_phyAp->ConfigureStandardAndBand (WIFI_PHY_STANDARD_80211ax, WIFI_PHY_BAND_5GHZ);
   Ptr<ErrorRateModel> error = CreateObject<NistErrorRateModel> ();
@@ -1483,7 +1481,7 @@ TestMultipleHeTbPreambles::RxHeTbPpdu (uint64_t uid, uint16_t staId, double txPo
   uint32_t centerFrequency = m_phy->GetHePhy ()->GetCenterFrequencyForNonOfdmaPart (txVector, staId);
   uint16_t ruWidth = HeRu::GetBandwidth (txVector.GetRu (staId).ruType);
   uint16_t channelWidth = ruWidth < 20 ? 20 : ruWidth;
-  Ptr<SpectrumValue> rxPsd = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, txPowerWatts, m_phy->GetGuardBandwidth (channelWidth));
+  Ptr<SpectrumValue> rxPsd = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, GRANULARITY, txPowerWatts, USE_GUARD_BAND);
   Ptr<WifiSpectrumSignalParameters> rxParams = Create<WifiSpectrumSignalParameters> ();
   rxParams->psd = rxPsd;
   rxParams->txPhy = 0;
@@ -1496,7 +1494,7 @@ TestMultipleHeTbPreambles::RxHeTbPpdu (uint64_t uid, uint16_t staId, double txPo
   Ptr<HePpdu> ppduOfdma = DynamicCast<HePpdu> (ppdu->Copy ()); //since flag will be modified
   ppduOfdma->SetTxPsdFlag (HePpdu::PSD_HE_TB_OFDMA_PORTION);
   WifiSpectrumBand band = m_phy->GetHePhy ()->GetRuBandForRx (txVector, staId);
-  Ptr<SpectrumValue> rxPsdOfdma = WifiSpectrumValueHelper::CreateHeMuOfdmTxPowerSpectralDensity (DEFAULT_FREQUENCY, DEFAULT_CHANNEL_WIDTH, txPowerWatts, DEFAULT_GUARD_WIDTH, band);
+  Ptr<SpectrumValue> rxPsdOfdma = WifiSpectrumValueHelper::CreateHeMuOfdmTxPowerSpectralDensity (DEFAULT_FREQUENCY, DEFAULT_CHANNEL_WIDTH, GRANULARITY, txPowerWatts, USE_GUARD_BAND, band);
   Ptr<WifiSpectrumSignalParameters> rxParamsOfdma = Create<WifiSpectrumSignalParameters> ();
   rxParamsOfdma->psd = rxPsd;
   rxParamsOfdma->txPhy = 0;

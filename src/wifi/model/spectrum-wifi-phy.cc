@@ -26,6 +26,7 @@
 #include "ns3/log.h"
 #include "ns3/double.h"
 #include "ns3/boolean.h"
+#include "ns3/enum.h"
 #include "ns3/wifi-net-device.h"
 #include "ns3/node.h"
 #include "ns3/simulator.h"
@@ -68,6 +69,14 @@ SpectrumWifiPhy::GetTypeId (void)
                    DoubleValue (-40.0),
                    MakeDoubleAccessor (&SpectrumWifiPhy::m_txMaskOuterBandMaximumRejection),
                    MakeDoubleChecker<double> ())
+    .AddAttribute ("BandSpacing",
+                   "Granularity to use for frequency modeling."
+                   "Subcarrier spacing enables precise modeling while channel spacing reduces"
+                   "processing time.",
+                   EnumValue (SUBCARRIER_SPACING),
+                   MakeEnumAccessor (&SpectrumWifiPhy::m_bandSpacing),
+                   MakeEnumChecker (SUBCARRIER_SPACING, "SubcarrierSpacing",
+                                    CHANNEL_SPACING, "ChannelSpacing"))
     .AddTraceSource ("SignalArrival",
                      "Signal arrival",
                      MakeTraceSourceAccessor (&SpectrumWifiPhy::m_signalCb),
@@ -133,7 +142,8 @@ SpectrumWifiPhy::GetRxSpectrumModel ()
         {
           uint16_t channelWidth = GetChannelWidth ();
           NS_LOG_DEBUG ("Creating spectrum model from frequency/width pair of (" << GetFrequency () << ", " << channelWidth << ")");
-          m_rxSpectrumModel = WifiSpectrumValueHelper::GetSpectrumModel (GetFrequency (), channelWidth, GetBandBandwidth (), GetGuardBandwidth (channelWidth));
+          m_rxSpectrumModel = WifiSpectrumValueHelper::GetSpectrumModel (GetFrequency (), channelWidth, GetGranularity (),
+                                                                         IncludeAdjacentChannelPower ());
           UpdateInterferenceHelperBands ();
         }
     }
@@ -220,7 +230,8 @@ SpectrumWifiPhy::ResetSpectrumModel (void)
   NS_LOG_DEBUG ("Run-time change of spectrum model from frequency/width pair of (" << GetFrequency () << ", " << channelWidth << ")");
   // Replace existing spectrum model with new one, and must call AddRx ()
   // on the SpectrumChannel to provide this new spectrum model to it
-  m_rxSpectrumModel = WifiSpectrumValueHelper::GetSpectrumModel (GetFrequency (), channelWidth, GetBandBandwidth (), GetGuardBandwidth (channelWidth));
+  m_rxSpectrumModel = WifiSpectrumValueHelper::GetSpectrumModel (GetFrequency (), channelWidth, GetGranularity (),
+                                                                 IncludeAdjacentChannelPower ());
   m_channel->AddRx (m_wifiSpectrumPhyInterface);
   UpdateInterferenceHelperBands ();
 }
@@ -289,12 +300,14 @@ SpectrumWifiPhy::StartRx (Ptr<SpectrumSignalParameters> rxParams)
   // This is done per 20 MHz channel band.
   uint16_t channelWidth = GetChannelWidth ();
   double totalRxPowerW = 0;
+  uint32_t granularity = GetGranularity ();
+  bool includeAdjacentChannelPower = IncludeAdjacentChannelPower();
   RxPowerWattPerChannelBand rxPowerW;
 
   if ((channelWidth == 5) || (channelWidth == 10))
     {
       WifiSpectrumBand filteredBand = GetBand (channelWidth);
-      Ptr<SpectrumValue> filter = WifiSpectrumValueHelper::CreateRfFilter (GetFrequency (), channelWidth, GetBandBandwidth (), GetGuardBandwidth (channelWidth), filteredBand);
+      Ptr<SpectrumValue> filter = WifiSpectrumValueHelper::CreateRfFilter (GetFrequency (), channelWidth, granularity, includeAdjacentChannelPower, filteredBand);
       SpectrumValue filteredSignal = (*filter) * (*receivedSignalPsd);
       NS_LOG_DEBUG ("Signal power received (watts) before antenna gain: " << Integral (filteredSignal));
       double rxPowerPerBandW = Integral (filteredSignal) * DbToRatio (GetRxGain ());
@@ -309,7 +322,7 @@ SpectrumWifiPhy::StartRx (Ptr<SpectrumSignalParameters> rxParams)
         {
           NS_ASSERT (channelWidth >= bw);
           WifiSpectrumBand filteredBand = GetBand (bw, i);
-          Ptr<SpectrumValue> filter = WifiSpectrumValueHelper::CreateRfFilter (GetFrequency (), channelWidth, GetBandBandwidth (), GetGuardBandwidth (channelWidth), filteredBand);
+          Ptr<SpectrumValue> filter = WifiSpectrumValueHelper::CreateRfFilter (GetFrequency (), channelWidth, granularity, includeAdjacentChannelPower, filteredBand);
           SpectrumValue filteredSignal = (*filter) * (*receivedSignalPsd);
           NS_LOG_DEBUG ("Signal power received (watts) before antenna gain for " << bw << " MHz channel band " << +i << ": " << Integral (filteredSignal));
           double rxPowerPerBandW = Integral (filteredSignal) * DbToRatio (GetRxGain ());
@@ -322,7 +335,7 @@ SpectrumWifiPhy::StartRx (Ptr<SpectrumSignalParameters> rxParams)
   for (uint8_t i = 0; i < (channelWidth / 20); i++)
     {
       WifiSpectrumBand filteredBand = GetBand (20, i);
-      Ptr<SpectrumValue> filter = WifiSpectrumValueHelper::CreateRfFilter (GetFrequency (), channelWidth, GetBandBandwidth (), GetGuardBandwidth (channelWidth), filteredBand);
+      Ptr<SpectrumValue> filter = WifiSpectrumValueHelper::CreateRfFilter (GetFrequency (), channelWidth, granularity, includeAdjacentChannelPower, filteredBand);
       SpectrumValue filteredSignal = (*filter) * (*receivedSignalPsd);
       NS_LOG_DEBUG ("Signal power received (watts) before antenna gain for 20 MHz channel band " << +i << ": " << Integral (filteredSignal));
       double rxPowerPerBandW = Integral (filteredSignal) * DbToRatio (GetRxGain ());
@@ -331,12 +344,13 @@ SpectrumWifiPhy::StartRx (Ptr<SpectrumSignalParameters> rxParams)
       NS_LOG_DEBUG ("Signal power received after antenna gain for 20 MHz channel band " << +i << ": " << rxPowerPerBandW << " W (" << WToDbm (rxPowerPerBandW) << " dBm)");
     }
   
-  if (GetPhyStandard () >= WIFI_PHY_STANDARD_80211ax)
+  if (m_bandSpacing == SUBCARRIER_SPACING // OFDMA is supported only for subcarrier-spacing-based granularity
+      && GetPhyStandard () >= WIFI_PHY_STANDARD_80211ax)
     {
       NS_ASSERT (!m_ruBands[channelWidth].empty ());
       for (const auto& bandRuPair : m_ruBands[channelWidth])
         {
-          Ptr<SpectrumValue> filter = WifiSpectrumValueHelper::CreateRfFilter (GetFrequency (), channelWidth, GetBandBandwidth (), GetGuardBandwidth (channelWidth), bandRuPair.first);
+          Ptr<SpectrumValue> filter = WifiSpectrumValueHelper::CreateRfFilter (GetFrequency (), channelWidth, granularity, includeAdjacentChannelPower, bandRuPair.first);
           SpectrumValue filteredSignal = (*filter) * (*receivedSignalPsd);
           NS_LOG_DEBUG ("Signal power received (watts) before antenna gain for RU with type " << bandRuPair.second.ruType << " and index " << bandRuPair.second.index << " -> (" << bandRuPair.first.first << "; " << bandRuPair.first.second <<  "): " << Integral (filteredSignal));
           double rxPowerPerBandW = Integral (filteredSignal) * DbToRatio (GetRxGain ());
@@ -444,9 +458,13 @@ SpectrumWifiPhy::Transmit (Ptr<WifiSpectrumSignalParameters> txParams)
 }
 
 uint32_t
-SpectrumWifiPhy::GetBandBandwidth (void) const
+SpectrumWifiPhy::GetGranularity (void) const
 {
-  uint32_t bandBandwidth = 0;
+  if (m_bandSpacing == CHANNEL_SPACING)
+    {
+      return WifiSpectrumValueHelper::GetGranularityForChannelSpacing (GetFrequency ());
+    }
+  uint32_t granularity = 0;
   switch (GetPhyStandard ())
     {
     case WIFI_PHY_STANDARD_80211a:
@@ -455,39 +473,48 @@ SpectrumWifiPhy::GetBandBandwidth (void) const
     case WIFI_PHY_STANDARD_80211n:
     case WIFI_PHY_STANDARD_80211ac:
       // Use OFDM subcarrier width of 312.5 KHz as band granularity
-      bandBandwidth = 312500;
+      granularity = 312500;
       break;
     case WIFI_PHY_STANDARD_80211p:
       if (GetChannelWidth () == 5)
         {
           // Use OFDM subcarrier width of 78.125 KHz as band granularity
-          bandBandwidth = 78125;
+          granularity = 78125;
         }
       else
         {
           // Use OFDM subcarrier width of 156.25 KHz as band granularity
-          bandBandwidth = 156250;
+          granularity = 156250;
         }
       break;
     case WIFI_PHY_STANDARD_80211ax:
       // Use OFDM subcarrier width of 78.125 KHz as band granularity
-      bandBandwidth = 78125;
+      granularity = 78125;
       break;
     default:
       NS_FATAL_ERROR ("Standard unknown: " << GetPhyStandard ());
       break;
     }
-  return bandBandwidth;
+  return granularity;
+}
+
+bool
+SpectrumWifiPhy::IncludeAdjacentChannelPower (void) const
+{
+  return m_bandSpacing == SUBCARRIER_SPACING; // include guard bands for subcarrier spacing only
 }
 
 uint16_t
 SpectrumWifiPhy::GetGuardBandwidth (uint16_t currentChannelWidth) const
 {
-  uint16_t guardBandwidth = 0;
+  if (!IncludeAdjacentChannelPower ())
+    {
+      return 0;
+    }
   if (currentChannelWidth == 22)
     {
       //handle case of DSSS transmission
-      guardBandwidth = 10;
+      return 10;
     }
   else
     {
@@ -497,28 +524,33 @@ SpectrumWifiPhy::GetGuardBandwidth (uint16_t currentChannelWidth) const
       //each PHY specification of 802.11-2016 standard. It thus ultimately corresponds
       //to the currently considered channel bandwidth (which can be different from
       //supported channel width).
-      guardBandwidth = currentChannelWidth;
+      return currentChannelWidth;
     }
-  return guardBandwidth;
 }
 
 WifiSpectrumBand
 SpectrumWifiPhy::GetBand (uint16_t bandWidth, uint8_t bandIndex)
 {
   uint16_t channelWidth = GetChannelWidth ();
-  uint32_t bandBandwidth = GetBandBandwidth ();
-  size_t numBandsInChannel = static_cast<size_t> (channelWidth * 1e6 / bandBandwidth);
-  size_t numBandsInBand = static_cast<size_t> (bandWidth * 1e6 / bandBandwidth);
-  if (numBandsInBand % 2 == 0)
-    {
-      numBandsInChannel += 1; // symmetry around center frequency
-    }
-  size_t totalNumBands = GetRxSpectrumModel ()->GetNumBands ();
-  NS_ASSERT_MSG ((numBandsInChannel % 2 == 1) && (totalNumBands % 2 == 1), "Should have odd number of bands");
   NS_ASSERT_MSG ((bandIndex * bandWidth) < channelWidth, "Band index is out of bound");
+  uint32_t granularity = GetGranularity ();
+  size_t numBandsInChannel = static_cast<size_t> (channelWidth * 1e6 / granularity);
+  size_t numBandsInBand = static_cast<size_t> (bandWidth * 1e6 / granularity);
+  size_t totalNumBands = GetRxSpectrumModel ()->GetNumBands ();
+
+  if (m_bandSpacing == SUBCARRIER_SPACING)
+    {
+      if (numBandsInBand % 2 == 0)
+        {
+          numBandsInChannel += 1; // symmetry around center frequency
+        }
+      NS_ASSERT_MSG ((numBandsInChannel % 2 == 1) && (totalNumBands % 2 == 1), "Should have odd number of bands");
+    }
+
   WifiSpectrumBand band;
   band.first = ((totalNumBands - numBandsInChannel) / 2) + (bandIndex * numBandsInBand);
-  if (band.first >= totalNumBands / 2)
+  if (m_bandSpacing == SUBCARRIER_SPACING
+      && band.first >= totalNumBands / 2)
     {
       //step past DC
       band.first += 1;
@@ -532,7 +564,7 @@ SpectrumWifiPhy::ConvertHeRuSubcarriers (uint16_t bandWidth, uint16_t guardBandw
                                          HeRu::SubcarrierRange range, uint8_t bandIndex) const
 {
   WifiSpectrumBand convertedSubcarriers;
-  uint32_t nGuardBands = static_cast<uint32_t> (((2 * guardBandwidth * 1e6) / GetBandBandwidth ()) + 0.5);
+  uint32_t nGuardBands = static_cast<uint32_t> (((2 * guardBandwidth * 1e6) / GetGranularity ()) + 0.5);
   uint32_t centerFrequencyIndex = 0;
   switch (bandWidth)
     {
@@ -553,7 +585,7 @@ SpectrumWifiPhy::ConvertHeRuSubcarriers (uint16_t bandWidth, uint16_t guardBandw
       break;
     }
 
-  size_t numBandsInBand = static_cast<size_t> (bandWidth * 1e6 / GetBandBandwidth ());
+  size_t numBandsInBand = static_cast<size_t> (bandWidth * 1e6 / GetGranularity ());
   centerFrequencyIndex += numBandsInBand * bandIndex;
 
   convertedSubcarriers.first = centerFrequencyIndex + range.first;

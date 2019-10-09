@@ -244,7 +244,8 @@ DsssPhy::GetTxPowerSpectralDensity (double txPowerW, Ptr<const WifiPpdu> ppdu) c
   uint16_t channelWidth = txVector.GetChannelWidth ();
   NS_LOG_FUNCTION (this << centerFrequency << channelWidth << txPowerW);
   NS_ABORT_MSG_IF (channelWidth != 22, "Invalid channel width for DSSS");
-  Ptr<SpectrumValue> v = WifiSpectrumValueHelper::CreateDsssTxPowerSpectralDensity (centerFrequency, txPowerW, GetGuardBandwidth (channelWidth));
+  Ptr<SpectrumValue> v = WifiSpectrumValueHelper::CreateDsssTxPowerSpectralDensity (centerFrequency, GetGranularity (),
+                                                                                    txPowerW, IncludeAdjacentChannelPower ());
   return v;
 }
 

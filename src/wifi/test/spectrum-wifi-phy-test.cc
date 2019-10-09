@@ -40,7 +40,8 @@ NS_LOG_COMPONENT_DEFINE ("SpectrumWifiPhyBasicTest");
 static const uint8_t CHANNEL_NUMBER = 36;
 static const uint32_t FREQUENCY = 5180; // MHz
 static const uint16_t CHANNEL_WIDTH = 20; // MHz
-static const uint16_t GUARD_WIDTH = CHANNEL_WIDTH; // MHz (expanded to channel width to model spectrum mask)
+static const uint32_t GRANULARITY = 312500; //Hz
+static const bool USE_GUARD_BAND = true; /*consider guard band*/
 
 class ExtSpectrumWifiPhy : public SpectrumWifiPhy
 {
@@ -133,7 +134,8 @@ SpectrumWifiPhyBasicTest::MakeSignal (double txPowerWatts)
 
   Ptr<WifiPpdu> ppdu = Create<OfdmPpdu> (psdu, txVector, WIFI_PHY_BAND_5GHZ, m_uid++);
 
-  Ptr<SpectrumValue> txPowerSpectrum = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (FREQUENCY, CHANNEL_WIDTH, txPowerWatts, GUARD_WIDTH);
+  Ptr<SpectrumValue> txPowerSpectrum = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (FREQUENCY, CHANNEL_WIDTH, GRANULARITY,
+                                                                                                  txPowerWatts, USE_GUARD_BAND);
   Ptr<WifiSpectrumSignalParameters> txParams = Create<WifiSpectrumSignalParameters> ();
   txParams->psd = txPowerSpectrum;
   txParams->txPhy = 0;

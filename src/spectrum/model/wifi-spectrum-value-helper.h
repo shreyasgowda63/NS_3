@@ -51,18 +51,23 @@ public:
   /**
    * Return a SpectrumModel instance corresponding to the center frequency
    * and channel width.  The spectrum model spans the channel width
-   * +/- the guard bands (i.e. the model will span (channelWidth +
-   * 2 * guardBandwidth) MHz of bandwidth).
+   * + the guard bands (i.e. the model will span (3 * channelWidth) MHz
+   * of bandwidth), if the \p includeAdjacentChannelPower is set to true.
+   * DSSS 22 MHz bands will be truncated to 20 MHz if granularity is
+   * based on channel spacing (i.e. 5 MHz in 2.4 GHz frequency band) rather
+   * than subcarrier spacing.
    *
    * \param centerFrequency center frequency (MHz)
    * \param channelWidth channel width (MHz)
-   * \param bandBandwidth width of each band (Hz)
-   * \param guardBandwidth width of the guard band (MHz)
+   * \param granularity granularity of each band (Hz)
+   * \param includeAdjacentChannelPower true if additional bands should be considered for out-of-band emission modeling,
+   *                                    false otherwise
    *
    * \return the static SpectrumModel instance corresponding to the
-   * given carrier frequency and channel width configuration.
+   *         given carrier frequency and channel width configuration.
    */
-  static Ptr<SpectrumModel> GetSpectrumModel (uint32_t centerFrequency, uint16_t channelWidth, uint32_t bandBandwidth, uint16_t guardBandwidth);
+  static Ptr<SpectrumModel> GetSpectrumModel (uint32_t centerFrequency, uint16_t channelWidth, uint32_t granularity,
+                                              bool includeAdjacentChannelPower);
 
   /**
    * Create a transmit power spectral density corresponding to DSSS
@@ -73,11 +78,14 @@ public:
    * \note There is no channel width parameter; this method assumes 22 MHz
    *
    * \param centerFrequency center frequency (MHz)
+   * \param granularity granularity of each band (Hz)
    * \param txPowerW  transmit power (W) to allocate
-   * \param guardBandwidth width of the guard band (MHz)
+   * \param includeAdjacentChannelPower true if additional bands should be considered for out-of-band emission modeling,
+   *                                    false otherwise
    * \returns a pointer to a newly allocated SpectrumValue representing the DSSS Transmit Power Spectral Density in W/Hz
    */
-  static Ptr<SpectrumValue> CreateDsssTxPowerSpectralDensity (uint32_t centerFrequency, double txPowerW, uint16_t guardBandwidth);
+  static Ptr<SpectrumValue> CreateDsssTxPowerSpectralDensity (uint32_t centerFrequency, uint32_t granularity,
+                                                              double txPowerW, bool includeAdjacentChannelPower);
 
   /**
    * Create a transmit power spectral density corresponding to OFDM
@@ -86,14 +94,17 @@ public:
    *
    * \param centerFrequency center frequency (MHz)
    * \param channelWidth channel width (MHz)
+   * \param granularity granularity of each band (Hz)
    * \param txPowerW  transmit power (W) to allocate
-   * \param guardBandwidth width of the guard band (MHz)
+   * \param includeAdjacentChannelPower true if additional bands should be considered for out-of-band emission modeling,
+   *                                    false otherwise
    * \param minInnerBandDbr the minimum relative power in the inner band (in dBr)
    * \param minOuterbandDbr the minimum relative power in the outer band (in dBr)
    * \param lowestPointDbr maximum relative power of the outermost subcarriers of the guard band (in dBr)
    * \return a pointer to a newly allocated SpectrumValue representing the OFDM Transmit Power Spectral Density in W/Hz for each Band
    */
-  static Ptr<SpectrumValue> CreateOfdmTxPowerSpectralDensity (uint32_t centerFrequency, uint16_t channelWidth, double txPowerW, uint16_t guardBandwidth,
+  static Ptr<SpectrumValue> CreateOfdmTxPowerSpectralDensity (uint32_t centerFrequency, uint16_t channelWidth,
+                                                              uint32_t granularity, double txPowerW, bool includeAdjacentChannelPower,
                                                               double minInnerBandDbr = -20, double minOuterbandDbr = -28, double lowestPointDbr = -40);
 
   /**
@@ -103,14 +114,17 @@ public:
    *
    * \param centerFrequency center frequency (MHz)
    * \param channelWidth channel width (MHz)
+   * \param granularity granularity of each band (Hz)
    * \param txPowerW  transmit power (W) to allocate
-   * \param guardBandwidth width of the guard band (MHz)
+   * \param includeAdjacentChannelPower true if additional bands should be considered for out-of-band emission modeling,
+   *                                    false otherwise
    * \param minInnerBandDbr the minimum relative power in the inner band (in dBr)
    * \param minOuterbandDbr the minimum relative power in the outer band (in dBr)
    * \param lowestPointDbr maximum relative power of the outermost subcarriers of the guard band (in dBr)
    * \return a pointer to a newly allocated SpectrumValue representing the HT OFDM Transmit Power Spectral Density in W/Hz for each Band
    */
-  static Ptr<SpectrumValue> CreateHtOfdmTxPowerSpectralDensity (uint32_t centerFrequency, uint16_t channelWidth, double txPowerW, uint16_t guardBandwidth,
+  static Ptr<SpectrumValue> CreateHtOfdmTxPowerSpectralDensity (uint32_t centerFrequency, uint16_t channelWidth,
+                                                                uint32_t granularity, double txPowerW, bool includeAdjacentChannelPower,
                                                                 double minInnerBandDbr = -20, double minOuterbandDbr = -28, double lowestPointDbr = -40);
 
   /**
@@ -120,14 +134,17 @@ public:
    *
    * \param centerFrequency center frequency (MHz)
    * \param channelWidth channel width (MHz)
+   * \param granularity granularity of each band (Hz)
    * \param txPowerW  transmit power (W) to allocate
-   * \param guardBandwidth width of the guard band (MHz)
+   * \param includeAdjacentChannelPower true if additional bands should be considered for out-of-band emission modeling,
+   *                                    false otherwise
    * \param minInnerBandDbr the minimum relative power in the inner band (in dBr)
    * \param minOuterbandDbr the minimum relative power in the outer band (in dBr)
    * \param lowestPointDbr maximum relative power of the outermost subcarriers of the guard band (in dBr)
    * \return a pointer to a newly allocated SpectrumValue representing the HE OFDM Transmit Power Spectral Density in W/Hz for each Band
    */
-  static Ptr<SpectrumValue> CreateHeOfdmTxPowerSpectralDensity (uint32_t centerFrequency, uint16_t channelWidth, double txPowerW, uint16_t guardBandwidth,
+  static Ptr<SpectrumValue> CreateHeOfdmTxPowerSpectralDensity (uint32_t centerFrequency, uint16_t channelWidth,
+                                                                uint32_t granularity, double txPowerW, bool includeAdjacentChannelPower,
                                                                 double minInnerBandDbr = -20, double minOuterbandDbr = -28, double lowestPointDbr = -40);
 
   /**
@@ -137,24 +154,30 @@ public:
    *
    * \param centerFrequency center frequency (MHz)
    * \param channelWidth channel width (MHz)
+   * \param granularity granularity of each band (Hz)
    * \param txPowerW  transmit power (W) to allocate
-   * \param guardBandwidth width of the guard band (MHz)
+   * \param includeAdjacentChannelPower true if additional bands should be considered for out-of-band emission modeling,
+   *                                    false otherwise
    * \param ru the RU band used by the STA
    * \return a pointer to a newly allocated SpectrumValue representing the HE OFDM Transmit Power Spectral Density on the RU used by the STA in W/Hz for each Band
    */
-  static Ptr<SpectrumValue> CreateHeMuOfdmTxPowerSpectralDensity (uint32_t centerFrequency, uint16_t channelWidth, double txPowerW, uint16_t guardBandwidth, WifiSpectrumBand ru);
+  static Ptr<SpectrumValue> CreateHeMuOfdmTxPowerSpectralDensity (uint32_t centerFrequency, uint16_t channelWidth, uint32_t granularity,
+                                                                  double txPowerW, bool includeAdjacentChannelPower,
+                                                                  WifiSpectrumBand ru);
 
   /**
    * Create a power spectral density corresponding to the noise
    *
    * \param centerFrequency center frequency (MHz)
    * \param channelWidth channel width (MHz)
-   * \param bandBandwidth width of each band (Hz)
+   * \param granularity granularity of each band (Hz)
    * \param noiseFigure the noise figure in dB w.r.t. a reference temperature of 290K
-   * \param guardBandwidth width of the guard band (MHz)
+   * \param includeAdjacentChannelPower true if additional bands should be considered for out-of-band emission modeling,
+   *                                    false otherwise
    * \return a pointer to a newly allocated SpectrumValue representing the noise Power Spectral Density in W/Hz for each Band
    */
-  static Ptr<SpectrumValue> CreateNoisePowerSpectralDensity (uint32_t centerFrequency, uint16_t channelWidth, uint32_t bandBandwidth, double noiseFigure, uint16_t guardBandwidth);
+  static Ptr<SpectrumValue> CreateNoisePowerSpectralDensity (uint32_t centerFrequency, uint16_t channelWidth, uint32_t granularity,
+                                                             double noiseFigure, bool includeAdjacentChannelPower);
 
   /**
    * Create a thermal noise power spectral density
@@ -170,14 +193,16 @@ public:
    *
    * \param centerFrequency the center frequency (MHz)
    * \param totalChannelWidth the total channel width (MHz)
-   * \param bandBandwidth the width of each band (MHz)
-   * \param guardBandwidth the width of the guard band (MHz)
+   * \param granularity the granularity of each band (Hz)
+   * \param includeAdjacentChannelPower true if additional bands should be considered for out-of-band emission modeling,
+   *                                    false otherwise
    * \param band the pair of start and stop indexes that defines the band to be filtered
    *
    * \return a pointer to a SpectrumValue representing the RF filter applied
-   * to an received power spectral density
+   *         to a received power spectral density
    */
-  static Ptr<SpectrumValue> CreateRfFilter (uint32_t centerFrequency, uint16_t totalChannelWidth, uint32_t bandBandwidth, uint16_t guardBandwidth, WifiSpectrumBand band);
+  static Ptr<SpectrumValue> CreateRfFilter (uint32_t centerFrequency, uint16_t totalChannelWidth, uint32_t granularity, bool includeAdjacentChannelPower,
+                                            WifiSpectrumBand band);
 
   /**
    * Create a transmit power spectral density corresponding to OFDM
@@ -215,7 +240,6 @@ public:
    * \param minInnerBandDbr the minimum relative power in the inner band (i.e. -20 dBr in the figure above)
    * \param minOuterbandDbr the minimum relative power in the outer band (i.e. -28 dBr in the figure above)
    * \param lowestPointDbr maximum relative power of the outermost subcarriers of the guard band (in dBr)
-   * \return a pointer to a newly allocated SpectrumValue representing the HT OFDM Transmit Power Spectral Density in W/Hz for each Band
    */
   static void CreateSpectrumMaskForOfdm (Ptr<SpectrumValue> c, std::vector <WifiSpectrumBand> allocatedSubBands, WifiSpectrumBand maskBand,
                                          double txPowerPerBandW, uint32_t nGuardBands, uint32_t innerSlopeWidth,
@@ -240,6 +264,32 @@ public:
    * \return the equivalent Watts for the given dBm
    */
   static double DbmToW (double dbm);
+
+  /**
+   * Define the granularity to use for channel spacing-based modeling.
+   * 5 MHz granularity is used for 2.4 GHz and 11p-specific 5.8-5.9 GHz bands.
+   * 20 MHz granularity is used otherwise.
+   *
+   * \param centerFrequency center frequency (MHz)
+   * \return the granularity of each band (Hz)
+   */
+  static uint32_t GetGranularityForChannelSpacing (uint32_t centerFrequency);
+
+private:
+  /**
+   * Create a transmit power spectral density for channel spacing granularity.
+   * Channel width may vary between 160, 80, 40, 20, 10, and 5 MHz.
+   * 20 MHz channel width should be used for DSSS.
+   * OFDMA is not supported yet.
+   *
+   * \param centerFrequency center frequency (MHz)
+   * \param channelWidth channel width (MHz)
+   * \param granularity the granularity of each band (Hz)
+   * \param txPowerW  transmit power (W) to allocate
+   * \return a pointer to a newly allocated SpectrumValue representing the simplified Transmit Power Spectral Density in W/Hz for each Band
+   */
+  static Ptr<SpectrumValue> CreateTxPowerSpectralDensityForChannelSpacingGranularity (uint32_t centerFrequency, uint16_t channelWidth,
+                                                                                      uint32_t granularity, double txPowerW);
 };
 
 /**
