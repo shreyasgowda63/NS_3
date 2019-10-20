@@ -112,6 +112,11 @@ TypeId FqCoDelQueueDisc::GetTypeId (void)
     .SetParent<QueueDisc> ()
     .SetGroupName ("TrafficControl")
     .AddConstructor<FqCoDelQueueDisc> ()
+    .AddAttribute ("UseEcn",
+                   "True to use ECN (packets are marked instead of being dropped)",
+                   BooleanValue (true),
+                   MakeBooleanAccessor (&FqCoDelQueueDisc::m_useEcn),
+                   MakeBooleanChecker ())
     .AddAttribute ("Interval",
                    "The CoDel algorithm interval for each FQCoDel queue",
                    StringValue ("100ms"),
@@ -205,6 +210,12 @@ FqCoDelQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
       NS_LOG_DEBUG ("Creating a new flow queue with index " << h);
       flow = m_flowFactory.Create<FqCoDelFlow> ();
       Ptr<QueueDisc> qd = m_queueDiscFactory.Create<QueueDisc> ();
+      // If CoDel, Set UseEcn value of CoDelQueueDisc to match this QueueDisc
+      Ptr<CoDelQueueDisc> codel = qd->GetObject<CoDelQueueDisc> ();
+      if (codel)
+        {
+          codel->SetAttribute ("UseEcn", BooleanValue (m_useEcn));
+        }
       qd->Initialize ();
       flow->SetQueueDisc (qd);
       flow->SetIndex (h);

@@ -153,6 +153,7 @@ private:
    */
   uint32_t FqCoDelDrop (void);
 
+  bool m_useEcn;             //!< True if ECN is used (packets are marked instead of being dropped)
   std::string m_interval;    //!< CoDel interval attribute
   std::string m_target;      //!< CoDel target attribute
   uint32_t m_quantum;        //!< Deficit assigned to flows at each round
