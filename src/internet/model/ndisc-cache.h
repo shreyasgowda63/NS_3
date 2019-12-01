@@ -89,7 +89,7 @@ public:
    * \param dst destination address.
    * \return the entry if found, 0 otherwise.
    */
-  NdiscCache::Entry* Lookup (Ipv6Address dst);
+  virtual NdiscCache::Entry* Lookup (Ipv6Address dst);
 
   /**
    * \brief Lookup in the cache for a MAC address.
@@ -103,7 +103,7 @@ public:
    * \param to address to add
    * \return an new Entry
    */
-  NdiscCache::Entry* Add (Ipv6Address to);
+  virtual NdiscCache::Entry* Add (Ipv6Address to);
 
   /**
    * \brief Delete an entry.
@@ -161,6 +161,8 @@ public:
      * \param nd The NdiscCache this entry belongs to.
      */
     Entry (NdiscCache* nd);
+
+    virtual ~Entry() = default;
 
     /**
      * \brief Changes the state to this entry to INCOMPLETE.
@@ -342,6 +344,12 @@ public:
      */
     void SetIpv6Address (Ipv6Address ipv6Address);
 
+protected:
+    /**
+     * \brief the NdiscCache associated.
+     */
+    NdiscCache* m_ndCache;
+
 private:
     /**
      * \brief The IPv6 address.
@@ -365,11 +373,6 @@ private:
      * \brief The state of the entry.
      */
     NdiscCacheEntryState_e m_state;
-
-    /**
-     * \brief the NdiscCache associated.
-     */
-    NdiscCache* m_ndCache;
 
     /**
      * \brief The MAC address.
@@ -402,7 +405,12 @@ private:
     uint8_t m_nsRetransmit;
   };
 
-private:
+protected:
+  /**
+   * \brief Dispose this object.
+   */
+  void DoDispose ();
+
   /**
    * \brief Neighbor Discovery Cache container
    */
@@ -411,6 +419,14 @@ private:
    * \brief Neighbor Discovery Cache container iterator
    */
   typedef sgi::hash_map<Ipv6Address, NdiscCache::Entry *, Ipv6AddressHash>::iterator CacheI;
+
+  /**
+   * \brief A list of Entry.
+   */
+  Cache m_ndCache;
+
+
+private:
 
   /**
    * \brief Copy constructor.
@@ -428,11 +444,6 @@ private:
   NdiscCache& operator= (NdiscCache const &);
 
   /**
-   * \brief Dispose this object.
-   */
-  void DoDispose ();
-
-  /**
    * \brief The NetDevice.
    */
   Ptr<NetDevice> m_device;
@@ -446,11 +457,6 @@ private:
    * \brief the icmpv6 L4 protocol for this cache.
    */
   Ptr<Icmpv6L4Protocol> m_icmpv6;
-
-  /**
-   * \brief A list of Entry.
-   */
-  Cache m_ndCache;
 
   /**
    * \brief Max number of packet stored in m_waiting.

@@ -20,9 +20,14 @@
 
 #include "ns3/log.h"
 #include "ns3/sixlowpan-net-device.h"
+#include "ns3/sixlowpan-nd-protocol.h"
+#include "ns3/mac16-address.h"
+#include "ns3/mac64-address.h"
 #include "ns3/net-device.h"
 #include "ns3/node.h"
 #include "ns3/names.h"
+#include "ns3/ipv6-l3-protocol.h"
+#include "ns3/boolean.h"
 #include "sixlowpan-helper.h"
 
 namespace ns3 {
@@ -62,7 +67,71 @@ NetDeviceContainer SixLowPanHelper::Install (const NetDeviceContainer c)
       devs.Add (dev);
       node->AddDevice (dev);
       dev->SetNetDevice (device);
+
+      Ptr<Ipv6L3Protocol> ipv6 = node->GetObject<Ipv6L3Protocol> ();
+      int32_t interfaceId = ipv6->GetInterfaceForDevice (dev);
+
+      if (interfaceId == -1)
+        {
+          interfaceId = ipv6->AddInterface (dev);
+        }
+
+      Ptr<SixLowPanNdProtocol> sixLowPanNdProtocol = node->GetObject<SixLowPanNdProtocol> ();
+      if (!sixLowPanNdProtocol)
+        {
+          sixLowPanNdProtocol = CreateObject<SixLowPanNdProtocol> ();
+          sixLowPanNdProtocol->SetAttribute ("DAD", BooleanValue (false));
+          node->AggregateObject (sixLowPanNdProtocol);
+        }
+      ipv6->Insert (sixLowPanNdProtocol, interfaceId);
+      ipv6->SetForwarding (interfaceId, true);
+
+      Address devAddr = device->GetAddress ();
+      Ipv6Address linkLocalAddr;
+      if (Mac16Address::IsMatchingType(devAddr))
+        {
+          linkLocalAddr = Ipv6Address::MakeAutoconfiguredLinkLocalAddress(Mac16Address::ConvertFrom (device->GetAddress ()));
+        }
+      else if (Mac64Address::IsMatchingType(devAddr))
+        {
+          linkLocalAddr = Ipv6Address::MakeAutoconfiguredLinkLocalAddress(Mac64Address::ConvertFrom (device->GetAddress ()));
+        }
+      else if (Mac48Address::IsMatchingType(devAddr))
+        {
+          linkLocalAddr = Ipv6Address::MakeAutoconfiguredLinkLocalAddress(Mac48Address::ConvertFrom (device->GetAddress ()));
+        }
+      else
+        {
+          NS_ABORT_MSG ("SixLowPanNdProtocol -- failed to found a link local address from MAC address " << devAddr);
+        }
+      Simulator::Schedule (Time (MilliSeconds (1)),
+                           &Icmpv6L4Protocol::SendRS, sixLowPanNdProtocol, linkLocalAddr, Ipv6Address::GetAllRoutersMulticast (), devAddr);
+
     }
+  return devs;
+}
+
+NetDeviceContainer SixLowPanHelper::Install6LowPanBorderRouter (const Ptr<NetDevice> nd)
+{
+  NS_LOG_FUNCTION (this);
+
+  NetDeviceContainer devs;
+
+  Ptr<Node> node = nd->GetNode ();
+  NS_LOG_LOGIC ("**** Install 6LoWPAN on node " << node->GetId ());
+
+  Ptr<SixLowPanNetDevice> dev = m_deviceFactory.Create<SixLowPanNetDevice> ();
+  node->AddDevice (dev);
+  dev->SetNetDevice (nd);
+
+  Ptr<Ipv6L3Protocol> ipv6 = node->GetObject<Ipv6L3Protocol> ();
+  int32_t interfaceId = ipv6->GetInterfaceForDevice (dev);
+  Ptr<SixLowPanNdProtocol> sixLowPanNdProtocol = CreateObject<SixLowPanNdProtocol> ();
+  sixLowPanNdProtocol->SetAttribute ("Border", BooleanValue (true));
+  ipv6->SetForwarding (interfaceId, true);
+  node->AggregateObject (sixLowPanNdProtocol);
+  ipv6->Insert (sixLowPanNdProtocol, interfaceId);
+
   return devs;
 }
 
