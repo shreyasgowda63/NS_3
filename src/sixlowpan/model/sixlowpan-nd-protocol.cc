@@ -773,8 +773,8 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   Ptr<NdiscCache> cache = FindCache (sixDevice);
   // sgi::hash_map<Ipv6Address, NdiscCache::Entry *, Ipv6AddressHash> ndiscCache = cache->GetNdiscCache ();
 
-  uint32_t version;
-  Ipv6Address border;
+  uint32_t version = 0;
+  Ipv6Address border = Ipv6Address::GetAny ();
 
   packet->RemoveHeader (raHeader);
 
@@ -790,7 +790,6 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   Icmpv6OptionPrefixInformation prefixHdr;
   Icmpv6OptionSixLowPanContext contextHdr;
 
-  // \todo check the stop condiiton
   while (next == true)
     {
       uint8_t type = 0;
@@ -820,6 +819,17 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
           next = false;
           break;
       }
+      if (packet->GetSize () == 0)
+        {
+          next = false;
+        }
+    }
+
+  // \todo all RAs should have an ABRO ?
+
+  if (border == Ipv6Address::GetAny ())
+    {
+      return;
     }
 
   ra = sixCache->RaEntryLookup (border);
