@@ -66,7 +66,7 @@ Timer::~Timer ()
     }
   else if (m_flags & REMOVE_ON_DESTROY)
     {
-      Simulator::Remove (m_event);
+      m_event.Cancel ();
     }
   delete m_impl;
 }
