@@ -79,7 +79,7 @@ SimulatorEventsTestCase::EventB (int b)
     {
       m_b = true;
     }
-  Simulator::Remove (m_idC);
+  Simulator::Cancel (m_idC);
   Simulator::Schedule (MicroSeconds (10), &SimulatorEventsTestCase::EventD, this, 4);
 }
 
@@ -143,9 +143,9 @@ SimulatorEventsTestCase::DoRun (void)
   EventId anotherId = anId;
   NS_TEST_EXPECT_MSG_EQ (!(anId.IsExpired () || anotherId.IsExpired ()), true, "Event should not have expired yet.");
 
-  Simulator::Remove (anId);
-  NS_TEST_EXPECT_MSG_EQ (anId.IsExpired (), true, "Event was removed: it is now expired");
-  NS_TEST_EXPECT_MSG_EQ (anotherId.IsExpired (), true, "Event was removed: it is now expired");
+  Simulator::Cancel (anId);
+  NS_TEST_EXPECT_MSG_EQ (anId.IsExpired (), true, "Event was canceled: it is now expired");
+  NS_TEST_EXPECT_MSG_EQ (anotherId.IsExpired (), true, "Event was canceled: it is now expired");
 
   m_destroy = false;
   m_destroyId = Simulator::ScheduleDestroy (&SimulatorEventsTestCase::destroy, this);
@@ -155,7 +155,7 @@ SimulatorEventsTestCase::DoRun (void)
 
   m_destroyId = Simulator::ScheduleDestroy (&SimulatorEventsTestCase::destroy, this);
   NS_TEST_EXPECT_MSG_EQ (!m_destroyId.IsExpired (), true, "Event should not have expired yet");
-  Simulator::Remove (m_destroyId);
+  Simulator::Cancel (m_destroyId);
   NS_TEST_EXPECT_MSG_EQ (m_destroyId.IsExpired (), true, "Event was canceled: should have expired now");
 
   m_destroyId = Simulator::ScheduleDestroy (&SimulatorEventsTestCase::destroy, this);

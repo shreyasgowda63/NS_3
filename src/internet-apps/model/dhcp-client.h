@@ -156,7 +156,7 @@ private:
   /**
    * \brief Remove the current DHCP information and restart the process
    */
-  void RemoveAndStart ();
+  void CancelAndStart ();
 
   uint8_t m_state;                       //!< State of the DHCP client
   Ptr<NetDevice> m_device;               //!< NetDevice pointer
