@@ -122,7 +122,7 @@ LrWpanErrorDistanceTestCase::DoRun (void)
   dev1->SetAddress (Mac16Address ("00:02"));
   Ptr<SingleModelSpectrumChannel> channel = CreateObject<SingleModelSpectrumChannel> ();
   Ptr<LogDistancePropagationLossModel> model = CreateObject<LogDistancePropagationLossModel> ();
-  channel->AddPropagationLossModel (model);
+  channel->SetPropagationLossModel (model);
   dev0->SetChannel (channel);
   dev1->SetChannel (channel);
   n0->AddDevice (dev0);

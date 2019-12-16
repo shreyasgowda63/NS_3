@@ -419,7 +419,7 @@ TestInterBssConstantObssPdAlgo::RunOne (void)
   phy.DisablePreambleDetectionModel ();
   Ptr<MultiModelSpectrumChannel> channel = CreateObject<MultiModelSpectrumChannel> ();
   channel->SetPropagationDelayModel (CreateObject<ConstantSpeedPropagationDelayModel> ());
-  channel->AddPropagationLossModel (lossModel);
+  channel->SetPropagationLossModel (lossModel);
   phy.SetChannel (channel);
   phy.Set ("TxPowerStart", DoubleValue (m_txPowerDbm));
   phy.Set ("TxPowerEnd", DoubleValue (m_txPowerDbm));

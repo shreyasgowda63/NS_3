@@ -120,7 +120,7 @@ LrWpanEdTestCase::DoRun (void)
   Ptr<SingleModelSpectrumChannel> channel = CreateObject<SingleModelSpectrumChannel> ();
   Ptr<FixedRssLossModel> propModel = CreateObject<FixedRssLossModel> ();
   Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
-  channel->AddPropagationLossModel (propModel);
+  channel->SetPropagationLossModel (propModel);
   channel->SetPropagationDelayModel (delayModel);
 
   dev0->SetChannel (channel);

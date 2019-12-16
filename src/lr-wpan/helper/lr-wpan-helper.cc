@@ -68,7 +68,7 @@ LrWpanHelper::LrWpanHelper (void)
   m_channel = CreateObject<SingleModelSpectrumChannel> ();
 
   Ptr<LogDistancePropagationLossModel> lossModel = CreateObject<LogDistancePropagationLossModel> ();
-  m_channel->AddPropagationLossModel (lossModel);
+  m_channel->SetPropagationLossModel (lossModel);
 
   Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
   m_channel->SetPropagationDelayModel (delayModel);
@@ -85,7 +85,7 @@ LrWpanHelper::LrWpanHelper (bool useMultiModelSpectrumChannel)
       m_channel = CreateObject<SingleModelSpectrumChannel> ();
     }
   Ptr<LogDistancePropagationLossModel> lossModel = CreateObject<LogDistancePropagationLossModel> ();
-  m_channel->AddPropagationLossModel (lossModel);
+  m_channel->SetPropagationLossModel (lossModel);
 
   Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
   m_channel->SetPropagationDelayModel (delayModel);

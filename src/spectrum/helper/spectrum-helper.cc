@@ -157,8 +157,8 @@ Ptr<SpectrumChannel>
 SpectrumChannelHelper::Create (void) const
 {
   Ptr<SpectrumChannel> channel = (m_channel.Create ())->GetObject<SpectrumChannel> ();
-  channel->AddSpectrumPropagationLossModel (m_spectrumPropagationLossModel);
-  channel->AddPropagationLossModel (m_propagationLossModel);
+  channel->SetSpectrumPropagationLossModel (m_spectrumPropagationLossModel);
+  channel->SetPropagationLossModel (m_propagationLossModel);
   Ptr<PropagationDelayModel> delay = m_propagationDelay.Create<PropagationDelayModel> ();
   channel->SetPropagationDelayModel (delay);
   return channel;

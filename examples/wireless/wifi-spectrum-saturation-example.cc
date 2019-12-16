@@ -182,7 +182,7 @@ int main (int argc, char *argv[])
             = CreateObject<MultiModelSpectrumChannel> ();
           Ptr<FriisPropagationLossModel> lossModel
             = CreateObject<FriisPropagationLossModel> ();
-          spectrumChannel->AddPropagationLossModel (lossModel);
+          spectrumChannel->SetPropagationLossModel (lossModel);
 
           Ptr<ConstantSpeedPropagationDelayModel> delayModel
             = CreateObject<ConstantSpeedPropagationDelayModel> ();

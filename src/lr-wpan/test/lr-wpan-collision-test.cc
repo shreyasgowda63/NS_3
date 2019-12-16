@@ -94,7 +94,7 @@ LrWpanCollisionTestCase::DoRun (void)
   Ptr<SingleModelSpectrumChannel> channel = CreateObject<SingleModelSpectrumChannel> ();
   Ptr<LogDistancePropagationLossModel> propModel = CreateObject<LogDistancePropagationLossModel> ();
   Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
-  channel->AddPropagationLossModel (propModel);
+  channel->SetPropagationLossModel (propModel);
   channel->SetPropagationDelayModel (delayModel);
 
   dev0->SetChannel (channel);

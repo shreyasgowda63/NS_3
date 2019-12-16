@@ -1456,7 +1456,7 @@ Bug2843TestCase::DoRun (void)
   Ptr<MultiModelSpectrumChannel> spectrumChannel = CreateObject<MultiModelSpectrumChannel> ();
   Ptr<FriisPropagationLossModel> lossModel = CreateObject<FriisPropagationLossModel> ();
   lossModel->SetFrequency (5.180e9);
-  spectrumChannel->AddPropagationLossModel (lossModel);
+  spectrumChannel->SetPropagationLossModel (lossModel);
 
   Ptr<ConstantSpeedPropagationDelayModel> delayModel
     = CreateObject<ConstantSpeedPropagationDelayModel> ();

@@ -235,14 +235,14 @@ LteHelper::ChannelModelInitialization (void)
   if (dlSplm != 0)
     {
       NS_LOG_LOGIC (this << " using a SpectrumPropagationLossModel in DL");
-      m_downlinkChannel->AddSpectrumPropagationLossModel (dlSplm);
+      m_downlinkChannel->SetSpectrumPropagationLossModel (dlSplm);
     }
   else
     {
       NS_LOG_LOGIC (this << " using a PropagationLossModel in DL");
       Ptr<PropagationLossModel> dlPlm = m_downlinkPathlossModel->GetObject<PropagationLossModel> ();
       NS_ASSERT_MSG (dlPlm != 0, " " << m_downlinkPathlossModel << " is neither PropagationLossModel nor SpectrumPropagationLossModel");
-      m_downlinkChannel->AddPropagationLossModel (dlPlm);
+      m_downlinkChannel->SetPropagationLossModel (dlPlm);
     }
 
   m_uplinkPathlossModel = m_pathlossModelFactory.Create ();
@@ -250,21 +250,38 @@ LteHelper::ChannelModelInitialization (void)
   if (ulSplm != 0)
     {
       NS_LOG_LOGIC (this << " using a SpectrumPropagationLossModel in UL");
-      m_uplinkChannel->AddSpectrumPropagationLossModel (ulSplm);
+      m_uplinkChannel->SetSpectrumPropagationLossModel (ulSplm);
     }
   else
     {
       NS_LOG_LOGIC (this << " using a PropagationLossModel in UL");
       Ptr<PropagationLossModel> ulPlm = m_uplinkPathlossModel->GetObject<PropagationLossModel> ();
       NS_ASSERT_MSG (ulPlm != 0, " " << m_uplinkPathlossModel << " is neither PropagationLossModel nor SpectrumPropagationLossModel");
-      m_uplinkChannel->AddPropagationLossModel (ulPlm);
+      m_uplinkChannel->SetPropagationLossModel (ulPlm);
     }
   if (!m_fadingModelType.empty ())
     {
       m_fadingModel = m_fadingModelFactory.Create<SpectrumPropagationLossModel> ();
       m_fadingModel->Initialize ();
-      m_downlinkChannel->AddSpectrumPropagationLossModel (m_fadingModel);
-      m_uplinkChannel->AddSpectrumPropagationLossModel (m_fadingModel);
+      if (dlSplm != 0)
+        {
+          // Downlink model is a SpectrumPropagationLossModel, modify it.
+          dlSplm->SetNext (m_fadingModel);
+        }
+      else
+        {
+          m_downlinkChannel->SetSpectrumPropagationLossModel (m_fadingModel);
+        }
+
+      if (ulSplm != 0)
+        {
+          // Uplink model is a SpectrumPropagationLossModel, modify it.
+          ulSplm->SetNext (m_fadingModel);
+        }
+      else
+        {
+          m_uplinkChannel->SetSpectrumPropagationLossModel (m_fadingModel);
+        }
     }
 }
 

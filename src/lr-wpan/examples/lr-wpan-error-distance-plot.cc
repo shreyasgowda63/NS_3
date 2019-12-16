@@ -98,7 +98,7 @@ int main (int argc, char *argv[])
   dev1->SetAddress (Mac16Address ("00:02"));
   Ptr<MultiModelSpectrumChannel> channel = CreateObject<MultiModelSpectrumChannel> ();
   Ptr<LogDistancePropagationLossModel> model = CreateObject<LogDistancePropagationLossModel> ();
-  channel->AddPropagationLossModel (model);
+  channel->SetPropagationLossModel (model);
   dev0->SetChannel (channel);
   dev1->SetChannel (channel);
   n0->AddDevice (dev0);

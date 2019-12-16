@@ -188,7 +188,7 @@ int main (int argc, char *argv[])
           Ptr<FriisPropagationLossModel> lossModel
             = CreateObject<FriisPropagationLossModel> ();
           lossModel->SetFrequency (5.180e9);
-          spectrumChannel->AddPropagationLossModel (lossModel);
+          spectrumChannel->SetPropagationLossModel (lossModel);
 
           Ptr<ConstantSpeedPropagationDelayModel> delayModel
             = CreateObject<ConstantSpeedPropagationDelayModel> ();

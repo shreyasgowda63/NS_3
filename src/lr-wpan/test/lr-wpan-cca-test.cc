@@ -209,7 +209,7 @@ LrWpanCcaTestCase::DoRun (void)
   propModel->SetReference (1.0, 40.0641); // Reference loss at 1m distance for 2405 MHz (channel 11)
   propModel->SetPathLossExponent (2); // Free space path loss exponent
   Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
-  channel->AddPropagationLossModel (propModel);
+  channel->SetPropagationLossModel (propModel);
   channel->SetPropagationDelayModel (delayModel);
 
   dev0->SetChannel (channel);

@@ -114,24 +114,16 @@ SpectrumChannel::GetTypeId (void)
 }
 
 void
-SpectrumChannel::AddPropagationLossModel (Ptr<PropagationLossModel> loss)
+SpectrumChannel::SetPropagationLossModel (Ptr<PropagationLossModel> loss)
 {
   NS_LOG_FUNCTION (this << loss);
-  if (m_propagationLoss)
-    {
-      loss->SetNext (m_propagationLoss);
-    }
   m_propagationLoss = loss;
 }
 
 void
-SpectrumChannel::AddSpectrumPropagationLossModel (Ptr<SpectrumPropagationLossModel> loss)
+SpectrumChannel::SetSpectrumPropagationLossModel (Ptr<SpectrumPropagationLossModel> loss)
 {
   NS_LOG_FUNCTION (this << loss);
-  if (m_spectrumPropagationLoss)
-    {
-      loss->SetNext (m_spectrumPropagationLoss);
-    }
   m_spectrumPropagationLoss = loss;
 }
 
