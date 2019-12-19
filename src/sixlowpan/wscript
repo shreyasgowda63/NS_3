@@ -7,14 +7,11 @@ def build(bld):
         'model/sixlowpan-net-device.cc',
         'model/sixlowpan-header.cc',
         'model/sixlowpan-ndisc-cache.cc',
-        'model/sixlowpan-ndisc-ra-options.cc',
         'model/sixlowpan-nd-header.cc',
-        'model/sixlowpan-nd-prefix.cc',
         'model/sixlowpan-nd-protocol.cc',
-        'model/sixlowpan-nd-context.cc',
         'model/sixlowpan-nd-dad-entry.cc',
-        'model/sixlowpan-nd-interface.cc',
-        'model/sixlowpan-radvd.cc',
+        'model/sixlowpan-nd-context.cc',
+        'model/sixlowpan-nd-prefix.cc',
         'helper/sixlowpan-helper.cc',
         ]
 
@@ -31,14 +28,11 @@ def build(bld):
         'model/sixlowpan-net-device.h',
         'model/sixlowpan-header.h',
         'model/sixlowpan-ndisc-cache.h',
-        'model/sixlowpan-ndisc-ra-options.h',
         'model/sixlowpan-nd-header.h',
-        'model/sixlowpan-nd-prefix.h',
         'model/sixlowpan-nd-protocol.h',
-        'model/sixlowpan-nd-context.h',
         'model/sixlowpan-nd-dad-entry.h',
-        'model/sixlowpan-nd-interface.h',
-        'model/sixlowpan-radvd.h',
+        'model/sixlowpan-nd-context.h',
+        'model/sixlowpan-nd-prefix.h',
         'helper/sixlowpan-helper.h',
         ]
 

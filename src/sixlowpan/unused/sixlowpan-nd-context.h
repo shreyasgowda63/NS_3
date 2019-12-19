@@ -18,31 +18,24 @@
  * Author: Alessio Bonadio <alessio.bonadio@gmail.com>
  */
 
-#ifndef SIXLOW_ND_CONTEXT_H
-#define SIXLOW_ND_CONTEXT_H
+#ifndef SIXLOWPAN_ND_CONTEXT_H
+#define SIXLOWPAN_ND_CONTEXT_H
 
 #include <stdint.h>
 
-#include "ns3/nstime.h"
 #include "ns3/ipv6-address.h"
 #include "ns3/simple-ref-count.h"
-#include "ns3/output-stream-wrapper.h"
 
 namespace ns3
 {
 
 /**
- * \ingroup sixlowpan
- * \brief 6LoWPAN context container for 6LoWPAN ND.
+ * \ingroup sixlowradvd
+ * \brief 6LoWPAN context for sixlowradvd application.
  */
 class SixLowPanNdContext : public SimpleRefCount<SixLowPanNdContext>
 {
 public:
-  /**
-   * \brief Constructor.
-   */
-  SixLowPanNdContext ();
-
   /**
    * \brief Constructor.
    * \param flagC compression flag
@@ -52,11 +45,8 @@ public:
    */
   SixLowPanNdContext (bool flagC, uint8_t cid, uint16_t time, Ipv6Prefix context);
 
-  /**
-   * \brief Destructor.
-   */
   ~SixLowPanNdContext ();
-
+  
   /**
    * \brief Get the context length.
    * \return context length value
@@ -102,7 +92,7 @@ public:
   /**
    * \brief Set the valid lifetime.
    * \param time the valid lifetime value (units of 60 seconds)
-   */
+   */ 
   void SetValidTime (uint16_t time);
 
   /**
@@ -116,22 +106,6 @@ public:
    * \param prefix the context prefix value
    */
   void SetContextPrefix (Ipv6Prefix context);
-
-  /**
-   * \brief Print the 6LoWPAN context.
-   * \param stream the ostream the 6LoWPAN context is printed to
-   */
-  void PrintContext (Ptr<OutputStreamWrapper> stream);
-
-  /**
-   * \brief Function called when valid lifetime timeout.
-   */
-  void ValidTimeout ();
-
-  /**
-   * \brief Function called when router lifetime timeout.
-   */
-  void RouterTimeout ();
 
 private:
   /**
@@ -158,13 +132,8 @@ private:
    * \brief The context prefix value.
    */
   Ipv6Prefix m_context;
-
-  /**
-   * \brief Context set time.
-   */
-  Time m_setTime;
 };
 
 } /* namespace ns3 */
 
-#endif /* SIXLOW_ND_CONTEXT_H */
+#endif /* SIXLOWPAN_ND_CONTEXT_H */

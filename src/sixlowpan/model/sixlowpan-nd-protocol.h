@@ -28,6 +28,9 @@
 namespace ns3 {
 
 class SixLowPanNdiscCache;
+class SixLowPanNdPrefix;
+class SixLowPanNdContext;
+class SixLowPanNetDevice;
 
 /**
  * \ingroup sixlowpan
@@ -193,6 +196,10 @@ public:
    */
   void RetransmitRS (Ipv6Address src, Ipv6Address dst, Address linkAddr);
 
+  void AddAdvertisedPrefix (Ptr<SixLowPanNetDevice>, Ptr<SixLowPanNdPrefix>);
+
+  void AddAdvertisedContext (Ptr<SixLowPanNetDevice>, Ptr<SixLowPanNdContext>);
+
 protected:
   /**
    * \brief Dispose this object.
@@ -200,6 +207,246 @@ protected:
   virtual void DoDispose ();
 
 private:
+
+
+  /**
+   * \class SixLowPanRaEntry
+   * \brief RA advertised from routers for 6LoWPAN ND.
+   */
+  class SixLowPanRaEntry : public SimpleRefCount<SixLowPanRaEntry>
+  {
+  public:
+    SixLowPanRaEntry ();
+
+    ~SixLowPanRaEntry ();
+
+    /**
+     * \brief Get list of prefixes advertised for this interface.
+     * \return list of IPv6 prefixes
+     */
+    std::map<Ipv6Address, Ptr<SixLowPanNdPrefix> > GetPrefixes () const;
+
+    /**
+     * \brief Add a prefix to advertise on interface.
+     * \param prefix prefix to advertise
+     */
+    void AddPrefix (Ptr<SixLowPanNdPrefix> prefix);
+
+    /**
+     * \brief Remove a prefix.
+     * \param prefix prefix to remove
+     */
+    void RemovePrefix (Ptr<SixLowPanNdPrefix> prefix);
+
+    /**
+     * \brief Get list of 6LoWPAN contexts advertised for this interface.
+     * \return list of 6LoWPAN contexts
+     */
+    std::map<uint8_t, Ptr<SixLowPanNdContext> > GetContexts () const;
+
+    /**
+     * \brief Add a 6LoWPAN context to advertise on interface.
+     * \param context 6LoWPAN context to advertise
+     */
+    void AddContext (Ptr<SixLowPanNdContext> context);
+
+    /**
+     * \brief Remove a 6LoWPAN context.
+     * \param context 6LoWPAN context to remove
+     */
+    void RemoveContext (Ptr<SixLowPanNdContext> context);
+
+    /**
+     * \brief Is managed flag enabled ?
+     * \return managed flag
+     */
+    bool IsManagedFlag () const;
+
+    /**
+     * \brief Set managed flag
+     * \param managedFlag value
+     */
+    void SetManagedFlag (bool managedFlag);
+
+    /**
+     * \brief Is "other config" flag enabled ?
+     * \return other config flag
+     */
+    bool IsOtherConfigFlag () const;
+
+    /**
+     * \brief Is "home agent" flag enabled ?
+     * \return "home agent" flag
+     */
+    bool IsHomeAgentFlag () const;
+
+    /**
+     * \brief Set "home agent" flag.
+     * \param homeAgentFlag value
+     */
+    void SetHomeAgentFlag (bool homeAgentFlag);
+
+    /**
+     * \brief Set "other config" flag
+     * \param otherConfigFlag value
+     */
+    void SetOtherConfigFlag (bool otherConfigFlag);
+
+    /**
+     * \brief Get reachable time.
+     * \return reachable time
+     */
+    uint32_t GetReachableTime () const;
+
+    /**
+     * \brief Set reachable time.
+     * \param time reachable time
+     */
+    void SetReachableTime (uint32_t itme);
+
+    /**
+     * \brief Get router lifetime.
+     * \return router lifetime
+     */
+    uint32_t GetRouterLifeTime () const;
+
+    /**
+     * \brief Set router lifetime.
+     * \param time router lifetime
+     */
+    void SetRouterLifeTime (uint32_t time);
+
+    /**
+     * \brief Get retransmission timer.
+     * \return retransmission timer
+     */
+    uint32_t GetRetransTimer () const;
+
+    /**
+     * \brief Set retransmission timer.
+     * \param timer retransmission timer
+     */
+    void SetRetransTimer (uint32_t timer);
+
+    /**
+     * \brief Get current hop limit.
+     * \return current hop limit for the link
+     */
+    uint8_t GetCurHopLimit () const;
+
+    /**
+     * \brief Set current hop limit.
+     * \param curHopLimit current hop limit for the link
+     */
+    void SetCurHopLimit (uint8_t curHopLimit);
+
+    /**
+     * \brief Get version value (ABRO).
+     * \return the version value
+     */
+    uint32_t GetVersion () const;
+
+    /**
+     * \brief Set version value (ABRO).
+     * \param version the version value
+     */
+    void SetVersion (uint32_t version);
+
+    /**
+     * \brief Get valid lifetime value (ABRO).
+     * \return the valid lifetime (units of 60 seconds)
+     */
+    uint16_t GetValidTime () const;
+
+    /**
+     * \brief Set valid lifetime value (ABRO).
+     * \param time the valid lifetime (units of 60 seconds)
+     */
+    void SetValidTime (uint16_t time);
+
+    /**
+     * \brief Get Border Router address (ABRO).
+     * \return the Border Router address
+     */
+    Ipv6Address GetBorderAddress () const;
+
+    /**
+     * \brief Set Border Router address (ABRO).
+     * \param border the Border Router address
+     */
+    void SetBorderAddress (Ipv6Address border);
+
+  private:
+    /**
+     * \brief List of prefixes advertised.
+     */
+    std::map<Ipv6Address, Ptr<SixLowPanNdPrefix> > m_prefixes;
+
+    /**
+     * \brief List of 6LoWPAN contexts advertised.
+     */
+    std::map<uint8_t, Ptr<SixLowPanNdContext> > m_contexts;
+
+    /**
+     * \brief Managed flag. If true host use the stateful protocol for address autoconfiguration.
+     */
+    bool m_managedFlag;
+
+    /**
+     * \brief Other configuration flag. If true host use stateful protocol for other (non-address) information.
+     */
+    bool m_otherConfigFlag;
+
+    /**
+     * \brief Flag to add HA (home agent) flag in RA.
+     */
+    bool m_homeAgentFlag;
+
+    /**
+     * \brief Reachable time in milliseconds.
+     */
+    uint32_t m_reachableTime;
+
+    /**
+     * \brief Retransmission timer in milliseconds.
+     */
+    uint32_t m_retransTimer;
+
+    /**
+     * \brief Current hop limit (TTL).
+     */
+    uint32_t m_curHopLimit;
+
+    /**
+     * \brief Router life time in seconds.
+     */
+    uint32_t m_routerLifeTime;
+
+    /**
+     * \brief Version value for ABRO.
+     */
+    uint32_t m_version;
+
+    /**
+     * \brief Valid lifetime value for ABRO (units of 60 seconds).
+     */
+    uint16_t m_validTime;
+
+    /**
+     * \brief Border Router address for ABRO.
+     */
+    Ipv6Address m_border;
+  };
+
+  /**
+   *  Role of the node: 6LN, 6LR, 6LBR
+   */
+  enum SixLowPanNodeStatus_e
+  {
+    SixLowPanNode,
+    SixLowPanRouter,
+    SixLowPanBorderRouter
+  };
 
   /**
    * \brief Use multihop DAD mechanism
@@ -235,6 +482,14 @@ private:
    * \brief Is a 6LoWPAN Border router.
    */
   bool m_border;
+
+  /**
+   * \brief Status of the node
+   */
+  SixLowPanNodeStatus_e m_nodeRole;
+
+  std::map<Ipv6Address, Ptr<SixLowPanRaEntry> > m_raCache; //!< Router Advertisement cached entries (if the node is a 6LR)
+  std::map<Ptr<SixLowPanNetDevice>, Ptr<SixLowPanRaEntry> > m_raEntries; //!< Router Advertisement entries (if the node is a 6LBR)
 
   /**
    * \brief Receive NS for 6LoWPAN ND method.

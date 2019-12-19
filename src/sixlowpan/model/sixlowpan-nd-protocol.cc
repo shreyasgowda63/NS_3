@@ -38,15 +38,16 @@
 #include "ns3/sgi-hashmap.h"
 #include "ns3/ipv6-l3-protocol.h"
 #include "ns3/ipv6-interface.h"
+#include "ns3/packet.h"
+#include "ns3/integer.h"
+#include "ns3/nstime.h"
 
 #include "sixlowpan-nd-protocol.h"
 #include "sixlowpan-ndisc-cache.h"
-#include "sixlowpan-ndisc-ra-options.h"
+#include "sixlowpan-nd-context.h"
+#include "sixlowpan-nd-prefix.h"
 #include "sixlowpan-nd-header.h"
 #include "sixlowpan-net-device.h"
-#include "src/network/model/packet.h"
-#include "src/core/model/integer.h"
-#include "src/core/model/nstime.h"
 
 namespace ns3 {
 
@@ -243,10 +244,8 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
 
   Ptr<SixLowPanNdiscCache> sixCache = DynamicCast<SixLowPanNdiscCache> (FindCache (interface->GetDevice ()));
   NS_ASSERT_MSG (sixCache, "Can not find a SixLowPanNdiscCache");
-  std::map<Ipv6Address, SixLowPanNdiscCache::SixLowPanRaEntry *> raCache = sixCache->GetRaCache ();
 
-  for (std::map<Ipv6Address, SixLowPanNdiscCache::SixLowPanRaEntry *>::iterator it = raCache.begin ();
-      it != raCache.end (); it++)
+  for (auto iter = m_raCache.begin (); iter != m_raCache.end (); iter++)
     {
       Icmpv6RA raHdr;
       Ipv6Header ipHeader;
@@ -254,19 +253,19 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
       Ptr<Packet> p = Create<Packet> ();
 
       /* set RA header information */
-      raHdr.SetFlagM (it->second->IsManagedFlag ());
-      raHdr.SetFlagO (it->second->IsOtherConfigFlag ());
-      raHdr.SetFlagH (it->second->IsHomeAgentFlag ());
-      raHdr.SetCurHopLimit (it->second->GetCurHopLimit ());
-      raHdr.SetLifeTime (it->second->GetRouterLifeTime ());
-      raHdr.SetReachableTime (it->second->GetReachableTime ());
-      raHdr.SetRetransmissionTime (it->second->GetRetransTimer ());
+      raHdr.SetFlagM (iter->second->IsManagedFlag ());
+      raHdr.SetFlagO (iter->second->IsOtherConfigFlag ());
+      raHdr.SetFlagH (iter->second->IsHomeAgentFlag ());
+      raHdr.SetCurHopLimit (iter->second->GetCurHopLimit ());
+      raHdr.SetLifeTime (iter->second->GetRouterLifeTime ());
+      raHdr.SetReachableTime (iter->second->GetReachableTime ());
+      raHdr.SetRetransmissionTime (iter->second->GetRetransTimer ());
 
       /* Add ABRO */
       Icmpv6OptionAuthoritativeBorderRouter abroHdr;
-      abroHdr.SetVersion (it->second->GetVersion ());
-      abroHdr.SetValidTime (it->second->GetValidTime ());
-      abroHdr.SetRouterAddress (it->second->GetBorderAddress ());
+      abroHdr.SetVersion (iter->second->GetVersion ());
+      abroHdr.SetValidTime (iter->second->GetValidTime ());
+      abroHdr.SetRouterAddress (iter->second->GetBorderAddress ());
       p->AddHeader (abroHdr);
 
       /* Add SLLAO */
@@ -275,8 +274,8 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
       p->AddHeader (llaHdr);
 
       /* Add PIOs */
-      std::map<Ipv6Address, Ptr<SixLowPanPrefix> > prefixes = it->second->GetPrefixes ();
-      for (std::map<Ipv6Address, Ptr<SixLowPanPrefix> >::iterator jt = prefixes.begin (); jt != prefixes.end (); jt++)
+      std::map<Ipv6Address, Ptr<SixLowPanNdPrefix> > prefixes = iter->second->GetPrefixes ();
+      for (std::map<Ipv6Address, Ptr<SixLowPanNdPrefix> >::iterator jt = prefixes.begin (); jt != prefixes.end (); jt++)
         {
           Icmpv6OptionPrefixInformation prefixHdr;
           prefixHdr.SetPrefixLength (jt->second->GetPrefixLength ());
@@ -288,8 +287,8 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
         }
 
       /* Add 6COs */
-      std::map<uint8_t, Ptr<SixLowPanContext> > contexts = it->second->GetContexts ();
-      for (std::map<uint8_t, Ptr<SixLowPanContext> >::iterator i = contexts.begin (); i != contexts.end (); i++)
+      std::map<uint8_t, Ptr<SixLowPanNdContext> > contexts = iter->second->GetContexts ();
+      for (std::map<uint8_t, Ptr<SixLowPanNdContext> >::iterator i = contexts.begin (); i != contexts.end (); i++)
         {
           Icmpv6OptionSixLowPanContext sixHdr;
           sixHdr.SetContextLen (i->second->GetContextLen ());
@@ -527,8 +526,6 @@ void SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const 
       SixLowPanNdiscCache::SixLowPanEntry* neighborEntry = 0;
       neighborEntry = dynamic_cast <SixLowPanNdiscCache::SixLowPanEntry*> (neighborCache->Lookup (src));
 
-      std::map<Ipv6Address, SixLowPanNdiscCache::SixLowPanRaEntry *> raCache = neighborCache->GetRaCache ();
-
       if (!neighborEntry) /* no entry, creating */
         {
           if (aroHdr.GetRegTime () != 0)
@@ -542,10 +539,9 @@ void SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const 
               if (m_multihopDad) /* multihop DAD used */
                 {
                   neighborEntry->MarkTentative ();
-                  for (std::map<Ipv6Address, SixLowPanNdiscCache::SixLowPanRaEntry *>::iterator it = raCache.begin ();
-                      it != raCache.end (); it++)
+                  for (auto iter = m_raCache.begin (); iter != m_raCache.end (); iter++)
                     {
-                      Ipv6Address destination = it->second->GetBorderAddress ();
+                      Ipv6Address destination = iter->second->GetBorderAddress ();
                       SendSixLowPanDAR (interface->GetAddressMatchingDestination (destination).GetAddress (), destination,
                                         aroHdr.GetRegTime (), aroHdr.GetEui64 (), src);
                     }
@@ -573,10 +569,9 @@ void SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const 
 
               if (m_multihopDad)
                 {
-                  for (std::map<Ipv6Address, SixLowPanNdiscCache::SixLowPanRaEntry *>::iterator it = raCache.begin ();
-                      it != raCache.end (); it++)
+                  for (auto iter = m_raCache.begin (); iter != m_raCache.end (); iter++)
                     {
-                      Ipv6Address destination = it->second->GetBorderAddress ();
+                      Ipv6Address destination = iter->second->GetBorderAddress ();
 
                       /* Send request to update entry from DAD table */
                       SendSixLowPanDAR (interface->GetAddressMatchingDestination (destination).GetAddress (), destination,
@@ -590,10 +585,9 @@ void SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const 
             {
               if (m_multihopDad)
                 {
-                  for (std::map<Ipv6Address, SixLowPanNdiscCache::SixLowPanRaEntry *>::iterator it = raCache.begin ();
-                      it != raCache.end (); it++)
+                  for (auto iter = m_raCache.begin (); iter != m_raCache.end (); iter++)
                     {
-                      Ipv6Address destination = it->second->GetBorderAddress ();
+                      Ipv6Address destination = iter->second->GetBorderAddress ();
 
                       /* Send request to remove entry from DAD table */
                       SendSixLowPanDAR (interface->GetAddressMatchingDestination (destination).GetAddress (), destination,
@@ -751,6 +745,11 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
 {
   NS_LOG_FUNCTION (this << packet << src << dst << interface);
 
+  if (m_nodeRole == SixLowPanNode)
+    {
+      return;
+    }
+
   m_rsRetransmit = 0;
   m_receivedRA = true;
 
@@ -768,10 +767,8 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   bool next = true;
   Ptr<SixLowPanNdiscCache> sixCache = DynamicCast<SixLowPanNdiscCache> (FindCache (sixDevice));
   NS_ASSERT_MSG (sixCache, "Can not find a SixLowPanNdiscCache");
-  SixLowPanNdiscCache::SixLowPanRaEntry* ra = 0;
 
   Ptr<NdiscCache> cache = FindCache (sixDevice);
-  // sgi::hash_map<Ipv6Address, NdiscCache::Entry *, Ipv6AddressHash> ndiscCache = cache->GetNdiscCache ();
 
   uint32_t version = 0;
   Ipv6Address border = Ipv6Address::GetAny ();
@@ -832,147 +829,61 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
       return;
     }
 
-  ra = sixCache->RaEntryLookup (border);
-  if (!ra) // Create a new entry
+  if (m_nodeRole == SixLowPanRouter)
     {
-      ra = sixCache->AddRaEntry (border);
-      ra->SetManagedFlag (raHeader.GetFlagM ());
-      ra->SetOtherConfigFlag (raHeader.GetFlagO ());
-      ra->SetHomeAgentFlag (raHeader.GetFlagH ());
-      ra->SetReachableTime (raHeader.GetReachableTime ());
-      ra->SetRouterLifeTime (raHeader.GetLifeTime ());
-      ra->SetRetransTimer (raHeader.GetRetransmissionTime ());
-      ra->SetCurHopLimit (raHeader.GetCurHopLimit ());
-      ra->SetVersion (version);
-      ra->SetValidTime (abrHdr.GetValidTime ());
-
-//      for (std::list<Icmpv6OptionPrefixInformation>::iterator it = prefixList.begin (); it != prefixList.end (); it++)
-//        {
-//          Ptr<SixLowPanPrefix> prefix = new SixLowPanPrefix;
-//          prefix->SetPrefixLength ((*it).GetPrefixLength ());
-//          prefix->SetFlags ((*it).GetFlags ());
-//          prefix->SetValidLifeTime ((*it).GetValidTime ());
-//          prefix->SetPreferredLifeTime ((*it).GetPreferredTime ());
-//          prefix->SetPrefix ((*it).GetPrefix ());
-//
-//          ra->AddPrefix (prefix);
-//
-//          ipv6->AddAutoconfiguredAddress (ipv6->GetInterfaceForDevice (sixDevice),
-//                                          (*it).GetPrefix (),(*it).GetPrefixLength (),
-//                                          (*it).GetFlags (), (*it).GetValidTime (),
-//                                          (*it).GetPreferredTime (), defaultRouter);
-//
-//          for (sgi::hash_map<Ipv6Address, NdiscCache::Entry *, Ipv6AddressHash>::iterator k = ndiscCache.begin ();
-//              k != ndiscCache.end (); k++)
-//            {
-//              if (k->second->IsRouter ())
-//                {
-//                  SendSixLowPanARO (sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
-//                                    k->second->GetIpv6Address (), m_regTime, Mac64Address::ConvertFrom (addr),
-//                                    addr);
-//
-//                  Simulator::Schedule (Time (Minutes (m_regTime - m_advance)), &SixLowPanNdProtocol::RetransmitARO, this,
-//                                       sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
-//                                       k->second->GetIpv6Address (), m_regTime, Mac64Address::ConvertFrom (addr),
-//                                       addr);
-//                }
-//            }
-//        }
-      // \todo quiet compiler
-      NS_ASSERT (m_regTime);
-
-      for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin (); jt != contextList.end (); jt++)
+      auto it = m_raCache.find (border);
+      if (it == m_raCache.end ()) // Can't find the entry, create a new one
         {
-          Ptr<SixLowPanContext> context = new SixLowPanContext;
-          context->SetCid ((*jt).GetCid ());
-          context->SetFlagC ((*jt).IsFlagC ());
-          context->SetValidTime ((*jt).GetValidTime ());
-          context->SetContextPrefix ((*jt).GetContextPrefix ());
+          Ptr<SixLowPanRaEntry> ra = Create<SixLowPanRaEntry> ();
+          m_raCache[border] = ra;
+          ra->SetManagedFlag (raHeader.GetFlagM ());
+          ra->SetOtherConfigFlag (raHeader.GetFlagO ());
+          ra->SetHomeAgentFlag (raHeader.GetFlagH ());
+          ra->SetReachableTime (raHeader.GetReachableTime ());
+          ra->SetRouterLifeTime (raHeader.GetLifeTime ());
+          ra->SetRetransTimer (raHeader.GetRetransmissionTime ());
+          ra->SetCurHopLimit (raHeader.GetCurHopLimit ());
+          ra->SetVersion (version);
+          ra->SetValidTime (abrHdr.GetValidTime ());
 
-          ra->AddContext (context);
-        }
-    }
-  else if (ra && version > (ra->GetVersion ())) // Update existing entry from 6LBR with new information
-    {
-      ra->SetManagedFlag (raHeader.GetFlagM ());
-      ra->SetOtherConfigFlag (raHeader.GetFlagO ());
-      ra->SetHomeAgentFlag (raHeader.GetFlagH ());
-      ra->SetReachableTime (raHeader.GetReachableTime ());
-      ra->SetRouterLifeTime (raHeader.GetLifeTime ());
-      ra->SetRetransTimer (raHeader.GetRetransmissionTime ());
-      ra->SetCurHopLimit (raHeader.GetCurHopLimit ());
-      ra->SetVersion (version);
-      ra->SetValidTime (abrHdr.GetValidTime ());
+          //      for (std::list<Icmpv6OptionPrefixInformation>::iterator it = prefixList.begin (); it != prefixList.end (); it++)
+          //        {
+          //          Ptr<SixLowPanPrefix> prefix = new SixLowPanPrefix;
+          //          prefix->SetPrefixLength ((*it).GetPrefixLength ());
+          //          prefix->SetFlags ((*it).GetFlags ());
+          //          prefix->SetValidLifeTime ((*it).GetValidTime ());
+          //          prefix->SetPreferredLifeTime ((*it).GetPreferredTime ());
+          //          prefix->SetPrefix ((*it).GetPrefix ());
+          //
+          //          ra->AddPrefix (prefix);
+          //
+          //          ipv6->AddAutoconfiguredAddress (ipv6->GetInterfaceForDevice (sixDevice),
+          //                                          (*it).GetPrefix (),(*it).GetPrefixLength (),
+          //                                          (*it).GetFlags (), (*it).GetValidTime (),
+          //                                          (*it).GetPreferredTime (), defaultRouter);
+          //
+          //          for (sgi::hash_map<Ipv6Address, NdiscCache::Entry *, Ipv6AddressHash>::iterator k = ndiscCache.begin ();
+          //              k != ndiscCache.end (); k++)
+          //            {
+          //              if (k->second->IsRouter ())
+          //                {
+          //                  SendSixLowPanARO (sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
+          //                                    k->second->GetIpv6Address (), m_regTime, Mac64Address::ConvertFrom (addr),
+          //                                    addr);
+          //
+          //                  Simulator::Schedule (Time (Minutes (m_regTime - m_advance)), &SixLowPanNdProtocol::RetransmitARO, this,
+          //                                       sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
+          //                                       k->second->GetIpv6Address (), m_regTime, Mac64Address::ConvertFrom (addr),
+          //                                       addr);
+          //                }
+          //            }
+          //        }
+          // \todo quiet compiler
+          NS_ASSERT (m_regTime);
 
-      for (std::list<Icmpv6OptionPrefixInformation>::iterator it = prefixList.begin (); it != prefixList.end (); it++)
-        {
-          if (ra->GetPrefixes ().find ((*it).GetPrefix ()) == ra->GetPrefixes ().end ()) /* prefix NOT found */
+          for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin (); jt != contextList.end (); jt++)
             {
-              Ptr<SixLowPanPrefix> prefix = new SixLowPanPrefix;
-              prefix->SetPrefixLength ((*it).GetPrefixLength ());
-              prefix->SetFlags ((*it).GetFlags ());
-              prefix->SetValidLifeTime ((*it).GetValidTime ());
-              prefix->SetPreferredLifeTime ((*it).GetPreferredTime ());
-              prefix->SetPrefix ((*it).GetPrefix ());
-
-              ra->AddPrefix (prefix);
-
-              ipv6->AddAutoconfiguredAddress (ipv6->GetInterfaceForDevice (sixDevice),
-                                              (*it).GetPrefix (), (*it).GetPrefixLength (),
-                                              (*it).GetFlags (), (*it).GetValidTime (),
-                                              (*it).GetPreferredTime (), defaultRouter);
-//              for (sgi::hash_map<Ipv6Address, NdiscCache::Entry *, Ipv6AddressHash>::iterator kt = ndiscCache.begin ();
-//                  kt != ndiscCache.end (); kt++)
-//                {
-//                  if (kt->second->IsRouter ())
-//                    {
-//                      SendSixLowPanARO (sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
-//                                        kt->second->GetIpv6Address (), m_regTime,
-//                                        Mac64Address::ConvertFrom (addr), addr);
-//
-//                      Simulator::Schedule (Time (Minutes (m_regTime - m_advance)), &SixLowPanNdProtocol::RetransmitARO, this,
-//                                           sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
-//                                           kt->second->GetIpv6Address (), m_regTime, Mac64Address::ConvertFrom (addr),
-//                                           addr);
-//                    }
-//                }
-            }
-          else /* prefix found, updating! */
-            {
-              Ptr<SixLowPanPrefix> prefix = (ra->GetPrefixes().find((*it).GetPrefix ()))->second;
-
-              prefix->SetPrefixLength ((*it).GetPrefixLength ());
-              prefix->SetFlags ((*it).GetFlags ());
-              prefix->SetValidLifeTime ((*it).GetValidTime ());
-              prefix->SetPreferredLifeTime ((*it).GetPreferredTime ());
-
-              ipv6->AddAutoconfiguredAddress (ipv6->GetInterfaceForDevice (sixDevice),
-                                              (*it).GetPrefix (), (*it).GetPrefixLength (),
-                                              (*it).GetFlags (), (*it).GetValidTime (),
-                                              (*it).GetPreferredTime (), defaultRouter);
-//              for (sgi::hash_map<Ipv6Address, NdiscCache::Entry *, Ipv6AddressHash>::iterator lt = ndiscCache.begin ();
-//                  lt != ndiscCache.end (); lt++)
-//                {
-//                  if (lt->second->IsRouter ())
-//                    {
-//                      SendSixLowPanARO (sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
-//                                        lt->second->GetIpv6Address (), m_regTime, Mac64Address::ConvertFrom (addr),
-//                                        addr);
-//
-//                      Simulator::Schedule (Time (Minutes (m_regTime - m_advance)), &SixLowPanNdProtocol::RetransmitARO, this,
-//                                           sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
-//                                           lt->second->GetIpv6Address (), m_regTime, Mac64Address::ConvertFrom (addr),
-//                                           addr);
-//                    }
-//                }
-            }
-        }
-
-      for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin (); jt != contextList.end (); jt++)
-        {
-          if (ra->GetContexts ().find ((*jt).GetCid ()) == ra->GetContexts ().end ()) /* context NOT found */
-            {
-              Ptr<SixLowPanContext> context = new SixLowPanContext;
+              Ptr<SixLowPanNdContext> context = new SixLowPanNdContext;
               context->SetCid ((*jt).GetCid ());
               context->SetFlagC ((*jt).IsFlagC ());
               context->SetValidTime ((*jt).GetValidTime ());
@@ -980,37 +891,138 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
 
               ra->AddContext (context);
             }
-          else
+        }
+      else
+        {
+          Ptr<SixLowPanRaEntry> ra = it->second;
+          if (version > (ra->GetVersion ())) // Update existing entry from 6LBR with new information
             {
-              Ptr<SixLowPanContext> context = (ra->GetContexts ().find ((*jt).GetCid ()))->second;
+              ra->SetManagedFlag (raHeader.GetFlagM ());
+              ra->SetOtherConfigFlag (raHeader.GetFlagO ());
+              ra->SetHomeAgentFlag (raHeader.GetFlagH ());
+              ra->SetReachableTime (raHeader.GetReachableTime ());
+              ra->SetRouterLifeTime (raHeader.GetLifeTime ());
+              ra->SetRetransTimer (raHeader.GetRetransmissionTime ());
+              ra->SetCurHopLimit (raHeader.GetCurHopLimit ());
+              ra->SetVersion (version);
+              ra->SetValidTime (abrHdr.GetValidTime ());
 
-              context->SetFlagC ((*jt).IsFlagC ());
-              context->SetValidTime ((*jt).GetValidTime ());
-              context->SetContextPrefix ((*jt).GetContextPrefix ());
+              for (std::list<Icmpv6OptionPrefixInformation>::iterator it = prefixList.begin (); it != prefixList.end (); it++)
+                {
+                  if (ra->GetPrefixes ().find ((*it).GetPrefix ()) == ra->GetPrefixes ().end ()) /* prefix NOT found */
+                    {
+                      Ptr<SixLowPanNdPrefix> prefix = new SixLowPanNdPrefix;
+                      prefix->SetPrefixLength ((*it).GetPrefixLength ());
+                      prefix->SetFlags ((*it).GetFlags ());
+                      prefix->SetValidLifeTime ((*it).GetValidTime ());
+                      prefix->SetPreferredLifeTime ((*it).GetPreferredTime ());
+                      prefix->SetPrefix ((*it).GetPrefix ());
+
+                      ra->AddPrefix (prefix);
+
+                      ipv6->AddAutoconfiguredAddress (ipv6->GetInterfaceForDevice (sixDevice),
+                                                      (*it).GetPrefix (), (*it).GetPrefixLength (),
+                                                      (*it).GetFlags (), (*it).GetValidTime (),
+                                                      (*it).GetPreferredTime (), defaultRouter);
+                      //              for (sgi::hash_map<Ipv6Address, NdiscCache::Entry *, Ipv6AddressHash>::iterator kt = ndiscCache.begin ();
+                      //                  kt != ndiscCache.end (); kt++)
+                      //                {
+                      //                  if (kt->second->IsRouter ())
+                      //                    {
+                      //                      SendSixLowPanARO (sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
+                      //                                        kt->second->GetIpv6Address (), m_regTime,
+                      //                                        Mac64Address::ConvertFrom (addr), addr);
+                      //
+                      //                      Simulator::Schedule (Time (Minutes (m_regTime - m_advance)), &SixLowPanNdProtocol::RetransmitARO, this,
+                      //                                           sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
+                      //                                           kt->second->GetIpv6Address (), m_regTime, Mac64Address::ConvertFrom (addr),
+                      //                                           addr);
+                      //                    }
+                      //                }
+                    }
+                  else /* prefix found, updating! */
+                    {
+                      Ptr<SixLowPanNdPrefix> prefix = (ra->GetPrefixes().find((*it).GetPrefix ()))->second;
+
+                      prefix->SetPrefixLength ((*it).GetPrefixLength ());
+                      prefix->SetFlags ((*it).GetFlags ());
+                      prefix->SetValidLifeTime ((*it).GetValidTime ());
+                      prefix->SetPreferredLifeTime ((*it).GetPreferredTime ());
+
+                      ipv6->AddAutoconfiguredAddress (ipv6->GetInterfaceForDevice (sixDevice),
+                                                      (*it).GetPrefix (), (*it).GetPrefixLength (),
+                                                      (*it).GetFlags (), (*it).GetValidTime (),
+                                                      (*it).GetPreferredTime (), defaultRouter);
+                      //              for (sgi::hash_map<Ipv6Address, NdiscCache::Entry *, Ipv6AddressHash>::iterator lt = ndiscCache.begin ();
+                      //                  lt != ndiscCache.end (); lt++)
+                      //                {
+                      //                  if (lt->second->IsRouter ())
+                      //                    {
+                      //                      SendSixLowPanARO (sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
+                      //                                        lt->second->GetIpv6Address (), m_regTime, Mac64Address::ConvertFrom (addr),
+                      //                                        addr);
+                      //
+                      //                      Simulator::Schedule (Time (Minutes (m_regTime - m_advance)), &SixLowPanNdProtocol::RetransmitARO, this,
+                      //                                           sixDevice->MakeGlobalAddressFromMac(addr, (*it).GetPrefix ()),
+                      //                                           lt->second->GetIpv6Address (), m_regTime, Mac64Address::ConvertFrom (addr),
+                      //                                           addr);
+                      //                    }
+                      //                }
+                    }
+                }
+
+              for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin (); jt != contextList.end (); jt++)
+                {
+                  if (ra->GetContexts ().find ((*jt).GetCid ()) == ra->GetContexts ().end ()) /* context NOT found */
+                    {
+                      Ptr<SixLowPanNdContext> context = new SixLowPanNdContext;
+                      context->SetCid ((*jt).GetCid ());
+                      context->SetFlagC ((*jt).IsFlagC ());
+                      context->SetValidTime ((*jt).GetValidTime ());
+                      context->SetContextPrefix ((*jt).GetContextPrefix ());
+
+                      ra->AddContext (context);
+                    }
+                  else
+                    {
+                      Ptr<SixLowPanNdContext> context = (ra->GetContexts ().find ((*jt).GetCid ()))->second;
+
+                      context->SetFlagC ((*jt).IsFlagC ());
+                      context->SetValidTime ((*jt).GetValidTime ());
+                      context->SetContextPrefix ((*jt).GetContextPrefix ());
+                    }
+                }
+            }
+          else  // Old information, not updating
+            {
+              return;
             }
         }
+      uint32_t t = raHeader.GetLifeTime ();
+
+      for (std::list<Icmpv6OptionPrefixInformation>::iterator it = prefixList.begin (); it != prefixList.end (); it++)
+        {
+          t = t < ((*it).GetValidTime ()) ? t : ((*it).GetValidTime ());
+        }
+      for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin (); jt != contextList.end (); jt++)
+        {
+          t = (60 * ((*jt).GetValidTime ())) < t ? (60 * ((*jt).GetValidTime ())) : t;
+        }
+
+      t -= (60 * m_advance);
+
+      Simulator::Schedule (Time (Seconds (t - 1)), &SixLowPanNdProtocol::SetReceivedRA, this, false);
+      Simulator::Schedule (Time (Seconds (t)), &SixLowPanNdProtocol::RetransmitRS, this,
+                           interface->GetLinkLocalAddress ().GetAddress (), src, addr);
     }
-  else  // Old information, not updating
+  else if (m_nodeRole == SixLowPanBorderRouter)
     {
-      return;
+      // do something logical
     }
-
-  uint32_t t = raHeader.GetLifeTime ();
-
-  for (std::list<Icmpv6OptionPrefixInformation>::iterator it = prefixList.begin (); it != prefixList.end (); it++)
+  else
     {
-      t = t < ((*it).GetValidTime ()) ? t : ((*it).GetValidTime ());
+      NS_ABORT_MSG ("The node is in an unknown state");
     }
-  for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin (); jt != contextList.end (); jt++)
-    {
-      t = (60 * ((*jt).GetValidTime ())) < t ? (60 * ((*jt).GetValidTime ())) : t;
-    }
-
-  t -= (60 * m_advance);
-
-  Simulator::Schedule (Time (Seconds (t - 1)), &SixLowPanNdProtocol::SetReceivedRA, this, false);
-  Simulator::Schedule (Time (Seconds (t)), &SixLowPanNdProtocol::RetransmitRS, this,
-                       interface->GetLinkLocalAddress ().GetAddress (), src, addr);
 }
 /// \todo da finire!! (controlla codice, controlla regTime)
 
@@ -1156,6 +1168,204 @@ void SixLowPanNdProtocol::SetReceivedRA (bool received)
 {
   NS_LOG_FUNCTION (this << received);
   m_receivedRA = received;
+}
+
+void SixLowPanNdProtocol::AddAdvertisedPrefix (Ptr<SixLowPanNetDevice> interface, Ptr<SixLowPanNdPrefix> prefix)
+{
+  m_raEntries[interface]->AddPrefix (prefix);
+}
+
+void SixLowPanNdProtocol::AddAdvertisedContext (Ptr<SixLowPanNetDevice> interface, Ptr<SixLowPanNdContext> context)
+{
+  m_raEntries[interface]->AddContext (context);
+}
+
+//
+// SixLowPanRaEntry class
+//
+
+//NS_LOG_COMPONENT_DEFINE ("SixLowPanRaEntry");
+
+SixLowPanNdProtocol::SixLowPanRaEntry::SixLowPanRaEntry ()
+{
+  NS_LOG_FUNCTION (this);
+}
+
+SixLowPanNdProtocol::SixLowPanRaEntry::~SixLowPanRaEntry ()
+{
+  NS_LOG_FUNCTION (this);
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::AddPrefix (Ptr<SixLowPanNdPrefix> prefix)
+{
+  NS_LOG_FUNCTION (this << prefix);
+  m_prefixes.insert (std::pair<Ipv6Address, Ptr<SixLowPanNdPrefix> > (prefix->GetPrefix (), prefix));
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::RemovePrefix (Ptr<SixLowPanNdPrefix> prefix)
+{
+  NS_LOG_FUNCTION_NOARGS ();
+
+  for (std::map<Ipv6Address, Ptr<SixLowPanNdPrefix> >::iterator it = m_prefixes.begin (); it != m_prefixes.end (); it++)
+    {
+      if (it->second == prefix)
+        {
+          m_prefixes.erase (it);
+          return;
+        }
+    }
+}
+
+std::map<Ipv6Address, Ptr<SixLowPanNdPrefix> > SixLowPanNdProtocol::SixLowPanRaEntry::GetPrefixes () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_prefixes;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::AddContext (Ptr<SixLowPanNdContext> context)
+{
+  NS_LOG_FUNCTION (this << context);
+  m_contexts.insert (std::pair<uint8_t, Ptr<SixLowPanNdContext> > (context->GetCid (), context));
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::RemoveContext (Ptr<SixLowPanNdContext> context)
+{
+  NS_LOG_FUNCTION_NOARGS ();
+
+  for (std::map<uint8_t, Ptr<SixLowPanNdContext> >::iterator it = m_contexts.begin (); it != m_contexts.end (); it++)
+    {
+      if (it->second == context)
+        {
+          m_contexts.erase (it);
+          return;
+        }
+    }
+}
+
+std::map<uint8_t, Ptr<SixLowPanNdContext> > SixLowPanNdProtocol::SixLowPanRaEntry::GetContexts () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_contexts;
+}
+
+bool SixLowPanNdProtocol::SixLowPanRaEntry::IsManagedFlag () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_managedFlag;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetManagedFlag (bool managedFlag)
+{
+  NS_LOG_FUNCTION (this << managedFlag);
+  m_managedFlag = managedFlag;
+}
+
+bool SixLowPanNdProtocol::SixLowPanRaEntry::IsOtherConfigFlag () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_otherConfigFlag;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetOtherConfigFlag (bool otherConfigFlag)
+{
+  NS_LOG_FUNCTION (this << otherConfigFlag);
+  m_otherConfigFlag = otherConfigFlag;
+}
+
+bool SixLowPanNdProtocol::SixLowPanRaEntry::IsHomeAgentFlag () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_homeAgentFlag;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetHomeAgentFlag (bool homeAgentFlag)
+{
+  NS_LOG_FUNCTION (this << homeAgentFlag);
+  m_homeAgentFlag = homeAgentFlag;
+}
+
+uint32_t SixLowPanNdProtocol::SixLowPanRaEntry::GetReachableTime () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_reachableTime;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetReachableTime (uint32_t time)
+{
+  NS_LOG_FUNCTION (this << time);
+  m_reachableTime = time;
+}
+
+uint32_t SixLowPanNdProtocol::SixLowPanRaEntry::GetRouterLifeTime () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_routerLifeTime;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetRouterLifeTime (uint32_t time)
+{
+  NS_LOG_FUNCTION (this << time);
+  m_routerLifeTime = time;
+}
+
+uint32_t SixLowPanNdProtocol::SixLowPanRaEntry::GetRetransTimer () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_retransTimer;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetRetransTimer (uint32_t timer)
+{
+  NS_LOG_FUNCTION (this << timer);
+  m_retransTimer = timer;
+}
+
+uint8_t SixLowPanNdProtocol::SixLowPanRaEntry::GetCurHopLimit () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_curHopLimit;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetCurHopLimit (uint8_t curHopLimit)
+{
+  NS_LOG_FUNCTION (this << curHopLimit);
+  m_curHopLimit = curHopLimit;
+}
+
+uint32_t SixLowPanNdProtocol::SixLowPanRaEntry::GetVersion () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_version;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetVersion (uint32_t version)
+{
+  NS_LOG_FUNCTION (this << version);
+  m_version = version;
+}
+
+uint16_t SixLowPanNdProtocol::SixLowPanRaEntry::GetValidTime () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_validTime;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetValidTime (uint16_t time)
+{
+  NS_LOG_FUNCTION (this << time);
+  m_validTime = time;
+}
+
+Ipv6Address SixLowPanNdProtocol::SixLowPanRaEntry::GetBorderAddress () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_border;
+}
+
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetBorderAddress (Ipv6Address border)
+{
+  NS_LOG_FUNCTION (this << border);
+  m_border = border;
 }
 
 } /* namespace ns3 */

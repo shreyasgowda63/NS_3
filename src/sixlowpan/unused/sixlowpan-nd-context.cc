@@ -19,20 +19,14 @@
  */
 
 #include <ns3/log.h>
-#include "ns3/simulator.h"
 
 #include "sixlowpan-nd-context.h"
+
 
 namespace ns3
 {
 
-NS_LOG_COMPONENT_DEFINE ("SixLowPanNdContext");
-
-
-SixLowPanNdContext::SixLowPanNdContext ()
-{
-  NS_LOG_FUNCTION (this);
-}
+NS_LOG_COMPONENT_DEFINE ("SixLowPanRadvdContext");
 
 SixLowPanNdContext::SixLowPanNdContext (bool flagC, uint8_t cid, uint16_t time, Ipv6Prefix context)
   : m_c (flagC),
@@ -42,7 +36,7 @@ SixLowPanNdContext::SixLowPanNdContext (bool flagC, uint8_t cid, uint16_t time, 
 {
   NS_LOG_FUNCTION (this << flagC << static_cast<uint32_t> (cid) << time << context);
 
-  m_setTime = Simulator::Now ();
+  m_length = context.GetPrefixLength ();
 }
 
 SixLowPanNdContext::~SixLowPanNdContext ()
@@ -90,20 +84,13 @@ void SixLowPanNdContext::SetCid (uint8_t cid)
 uint16_t SixLowPanNdContext::GetValidTime () const
 {
   NS_LOG_FUNCTION (this);
-
-  double time = Simulator::Now ().GetMinutes () - m_setTime.GetMinutes ();
-
-  return m_validTime - static_cast<uint16_t> (time);
+  return m_validTime;
 }
 
 void SixLowPanNdContext::SetValidTime (uint16_t time)
 {
   NS_LOG_FUNCTION (this << time);
   m_validTime = time;
-
-  m_setTime = Simulator::Now ();
-
-  Simulator::Schedule (Time (Minutes (time)), &SixLowPanNdContext::ValidTimeout, this);
 }
 
 Ipv6Prefix SixLowPanNdContext::GetContextPrefix () const
@@ -117,43 +104,5 @@ void SixLowPanNdContext::SetContextPrefix (Ipv6Prefix context)
   NS_LOG_FUNCTION (this << context);
   m_context = context;
 }
-
-void SixLowPanNdContext::PrintContext (Ptr<OutputStreamWrapper> stream)
-{
-  NS_LOG_FUNCTION (this << stream);
-  std::ostream* os = stream->GetStream ();
-
-  *os << " Context Length: " << GetContextLen ();
-
-  if (IsFlagC ())
-    {
-      *os << " Compression flag: true ";
-    }
-  else
-    {
-      *os << " Compression flag: false ";
-    }
-
-  *os << " Context Identifier: " << GetCid ();
-  *os << " Valid Lifetime: " << GetValidTime ();
-  *os << " Context Prefix: " << GetContextPrefix ();
-}
-
-void SixLowPanNdContext::ValidTimeout ()
-{
-  NS_LOG_FUNCTION_NOARGS ();
-
-  m_c = false;
-
-  Simulator::Schedule (Time (Seconds (2 * 1000 /*m_entry->GetRouterLifeTime ()*/)), &SixLowPanNdContext::RouterTimeout, this);
-} /// \todo da finire!!!
-
-void SixLowPanNdContext::RouterTimeout ()
-{
-  NS_LOG_FUNCTION_NOARGS ();
-
-  //m_entry->RemoveContext (this);
-  return;
-} /// \todo da finire!!!
 
 } /* namespace ns3 */

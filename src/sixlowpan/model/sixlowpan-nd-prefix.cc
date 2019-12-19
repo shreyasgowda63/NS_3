@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2019 Università di Firenze, Italy
+ * Copyright (c) 2015 Università di Firenze, Italy
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,26 +15,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Tommaso Pecorella <tommaso.pecorella@unifi.it>
+ * Author: Alessio Bonadio <alessio.bonadio@gmail.com>
  */
 
-#include "sixlowpan-nd-prefix.h"
 #include <ns3/log.h>
+#include "ns3/simulator.h"
+
+#include "sixlowpan-nd-prefix.h"
 
 namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE ("SixLowPanNdPrefix");
 
-SixLowPanNdPrefix::SixLowPanNdPrefix (Ipv6Address network, uint8_t prefixLength, uint32_t preferredLifeTime, uint32_t validLifeTime, bool autonomousFlag, bool routerAddrFlag)
-  : m_network (network),
-    m_prefixLength (prefixLength),
-    m_preferredLifeTime (preferredLifeTime),
-    m_validLifeTime (validLifeTime),
-    m_autonomousFlag (autonomousFlag),
-    m_routerAddrFlag (routerAddrFlag)
+SixLowPanNdPrefix::SixLowPanNdPrefix ()
 {
-  NS_LOG_FUNCTION (this << network << prefixLength << preferredLifeTime << validLifeTime << autonomousFlag << routerAddrFlag);
+  NS_LOG_FUNCTION (this);
+}
+
+SixLowPanNdPrefix::SixLowPanNdPrefix (Ipv6Address prefix, uint8_t prefixLen, uint32_t prefTime, uint32_t validTime, uint8_t flags)
+  : m_prefix (prefix),
+    m_prefixLength (prefixLen),
+    m_preferredLifeTime (prefTime),
+    m_validLifeTime (validTime),
+    m_flags (flags)
+{
+  NS_LOG_FUNCTION (this << prefix << prefixLen << prefTime << validTime << flags);
+
+  m_setValidTime = Simulator::Now ();
+  m_setPrefTime = Simulator::Now ();
 }
 
 SixLowPanNdPrefix::~SixLowPanNdPrefix ()
@@ -42,16 +51,16 @@ SixLowPanNdPrefix::~SixLowPanNdPrefix ()
   NS_LOG_FUNCTION (this);
 }
 
-Ipv6Address SixLowPanNdPrefix::GetNetwork () const
+Ipv6Address SixLowPanNdPrefix::GetPrefix () const
 {
   NS_LOG_FUNCTION (this);
-  return m_network;
+  return m_prefix;
 }
 
-void SixLowPanNdPrefix::SetNetwork (Ipv6Address network)
+void SixLowPanNdPrefix::SetPrefix (Ipv6Address prefix)
 {
-  NS_LOG_FUNCTION (this << network);
-  m_network = network;
+  NS_LOG_FUNCTION (this << prefix);
+  m_prefix = prefix;
 }
 
 uint8_t SixLowPanNdPrefix::GetPrefixLength () const
@@ -60,59 +69,91 @@ uint8_t SixLowPanNdPrefix::GetPrefixLength () const
   return m_prefixLength;
 }
 
-void SixLowPanNdPrefix::SetPrefixLength (uint8_t prefixLength)
+void SixLowPanNdPrefix::SetPrefixLength (uint8_t prefixLen)
 {
-  NS_LOG_FUNCTION (this << prefixLength);
-  m_prefixLength = prefixLength;
+  NS_LOG_FUNCTION (this << prefixLen);
+  m_prefixLength = prefixLen;
 }
 
 uint32_t SixLowPanNdPrefix::GetValidLifeTime () const
 {
   NS_LOG_FUNCTION (this);
-  return m_validLifeTime;
+  double time = Simulator::Now ().GetSeconds () - m_setValidTime.GetSeconds ();
+
+  return m_validLifeTime - static_cast<uint32_t> (time);
 }
 
-void SixLowPanNdPrefix::SetValidLifeTime (uint32_t validLifeTime)
+void SixLowPanNdPrefix::SetValidLifeTime (uint32_t validTime)
 {
-  NS_LOG_FUNCTION (this << validLifeTime);
-  m_validLifeTime = validLifeTime;
+  NS_LOG_FUNCTION (this << validTime);
+  m_validLifeTime = validTime;
+
+  m_setValidTime = Simulator::Now ();
 }
 
 uint32_t SixLowPanNdPrefix::GetPreferredLifeTime () const
 {
   NS_LOG_FUNCTION (this);
-  return m_preferredLifeTime;
+  double time = Simulator::Now ().GetSeconds () - m_setPrefTime.GetSeconds ();
+
+  return m_preferredLifeTime - static_cast<uint32_t> (time);
 }
 
-void SixLowPanNdPrefix::SetPreferredLifeTime (uint32_t preferredLifeTime)
+void SixLowPanNdPrefix::SetPreferredLifeTime (uint32_t prefTime)
 {
-  NS_LOG_FUNCTION (this << preferredLifeTime);
-  m_preferredLifeTime = preferredLifeTime;
+  NS_LOG_FUNCTION (this << prefTime);
+  m_preferredLifeTime = prefTime;
+
+  m_setPrefTime = Simulator::Now ();
 }
 
-bool SixLowPanNdPrefix::IsAutonomousFlag () const
-{
-  NS_LOG_FUNCTION (this);
-  return m_autonomousFlag; 
-}
-
-void SixLowPanNdPrefix::SetAutonomousFlag (bool autonomousFlag)
-{
-  NS_LOG_FUNCTION (this << autonomousFlag);
-  m_autonomousFlag = autonomousFlag;
-}
-
-bool SixLowPanNdPrefix::IsRouterAddrFlag () const
+uint8_t SixLowPanNdPrefix::GetFlags () const
 {
   NS_LOG_FUNCTION (this);
-  return m_routerAddrFlag;
+  return m_flags;
 }
 
-void SixLowPanNdPrefix::SetRouterAddrFlag (bool routerAddrFlag)
+void SixLowPanNdPrefix::SetFlags (uint8_t flags)
 {
-  NS_LOG_FUNCTION (this << routerAddrFlag);
-  m_routerAddrFlag = routerAddrFlag;
+  NS_LOG_FUNCTION (this << flags);
+  m_flags = flags;
+}
+
+void SixLowPanNdPrefix::PrintPrefix (Ptr<OutputStreamWrapper> stream)
+{
+  NS_LOG_FUNCTION (this << stream);
+  std::ostream* os = stream->GetStream ();
+
+  *os << " Prefix Length: " << GetPrefixLength ();
+
+  if (GetFlags () & (1 << 7))
+    {
+      *os << " On-link flag: true ";
+    }
+  else
+    {
+      *os << " On-link flag: false ";
+    }
+  if (GetFlags () & (1 << 6))
+    {
+      *os << " Autonomous flag: true ";
+    }
+      else
+    {
+      *os << " Autonomous flag: false ";
+    }
+  if (GetFlags () & (1 << 5))
+    {
+      *os << " Router address flag: true ";
+    }
+  else
+    {
+      *os << " Router address flag: false ";
+    }
+
+  *os << " Valid Lifetime: " << GetValidLifeTime ();
+  *os << " Preferred Lifetime: " << GetPreferredLifeTime ();
+  *os << " Prefix: " << GetPrefix ();
 }
 
 } /* namespace ns3 */
-

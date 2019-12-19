@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2019 Università di Firenze, Italy
+ * Copyright (c) 2015 Università di Firenze, Italy
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,55 +15,60 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Tommaso Pecorella <tommaso.pecorella@unifi.it>
+ * Author: Alessio Bonadio <alessio.bonadio@gmail.com>
  */
 
-#ifndef SIXLOWPANND_PREFIX_H
-#define SIXLOWPANND_PREFIX_H
+#ifndef SIXLOW_ND_PREFIX_H
+#define SIXLOW_ND_PREFIX_H
 
 #include <stdint.h>
 
+#include "ns3/nstime.h"
 #include "ns3/ipv6-address.h"
 #include "ns3/simple-ref-count.h"
+#include "ns3/output-stream-wrapper.h"
 
 namespace ns3
 {
 
 /**
  * \ingroup sixlowpan
- * \brief Router prefix for SixLowPan-ND application.
+ * \brief Router prefix container for 6LoWPAN ND.
  */
 class SixLowPanNdPrefix : public SimpleRefCount<SixLowPanNdPrefix>
 {
 public:
   /**
    * \brief Constructor.
-   * \param network network prefix advertised
-   * \param prefixLength prefix length ( 0 < x <= 128)
-   * \param preferredLifeTime preferred life time in seconds (default 7 days)
-   * \param validLifeTime valid life time in seconds (default 30 days)
-   * \param onLinkFlag on link flag
-   * \param autonomousFlag autonomous link flag
-   * \param routerAddrFlag router address flag (for Mobile IPv6)
    */
-  SixLowPanNdPrefix (Ipv6Address network, uint8_t prefixLength, uint32_t preferredLifeTime = 604800, uint32_t validLifeTime = 2592000, bool autonomousFlag = true, bool routerAddrFlag = false);
+  SixLowPanNdPrefix ();
+
+  /**
+   * \brief Constructor.
+   * \param prefix network prefix advertised
+   * \param prefixLen prefix length ( 0 < x <= 128)
+   * \param prefTime preferred life time in seconds (default 7 days)
+   * \param validTime valid life time in seconds (default 30 days)
+   * \param flags the flags (L = 128, A = 64, R = 32)
+   */
+  SixLowPanNdPrefix (Ipv6Address prefix, uint8_t prefixLen, uint32_t prefTime, uint32_t validTime, uint8_t flags);
 
   /**
    * \brief Destructor.
    */
   ~SixLowPanNdPrefix ();
 
-  /**
+   /**
    * \brief Get network prefix.
    * \return network prefix
    */
-  Ipv6Address GetNetwork () const;
+  Ipv6Address GetPrefix () const;
 
   /**
    * \brief Set network prefix.
    * \param network network prefix
    */
-  void SetNetwork (Ipv6Address network);
+  void SetPrefix (Ipv6Address prefix);
 
   /**
    * \brief Get prefix length.
@@ -73,9 +78,9 @@ public:
 
   /**
    * \brief Set prefix length.
-   * \param prefixLength prefix length
+   * \param prefixLen prefix length
    */
-  void SetPrefixLength (uint8_t prefixLength);
+  void SetPrefixLength (uint8_t prefixLen);
 
   /**
    * \brief Get preferred lifetime.
@@ -85,9 +90,9 @@ public:
 
   /**
    * \brief Set preferred lifetime.
-   * \param preferredLifeTime lifetime
+   * \param prefTime lifetime
    */
-  void SetPreferredLifeTime (uint32_t preferredLifeTime);
+  void SetPreferredLifeTime (uint32_t prefTime);
 
   /**
    * \brief Get valid lifetime.
@@ -97,39 +102,33 @@ public:
 
   /**
    * \brief Set valid lifetime.
-   * \param validLifeTime lifetime
+   * \param validTime lifetime
    */
-  void SetValidLifeTime (uint32_t validLifeTime);
+  void SetValidLifeTime (uint32_t validTime);
 
   /**
-   * \brief Is autonomous flag ?
-   * \return true if autonomous is activated, false otherwise
+   * \brief Get the flags.
+   * \return the flags (L = 128, A = 64, R = 32)
    */
-  bool IsAutonomousFlag () const;
+  uint8_t GetFlags () const;
 
   /**
-   * \brief Set autonomous flag.
-   * \param autonomousFlag value
+   * \brief Set the flags.
+   * \param flags the flags to set (L = 128, A = 64, R = 32)
    */
-  void SetAutonomousFlag (bool autonomousFlag);
+  void SetFlags (uint8_t flags);
 
   /**
-   * \brief Is router address flag ?
-   * \return true if router address is activated, false otherwise
+   * \brief Print the prefix
+   * \param stream the ostream the prefix is printed to
    */
-  bool IsRouterAddrFlag () const;
-
-  /**
-   * \brief Set router address flag.
-   * \param routerAddrFlag value
-   */
-  void SetRouterAddrFlag (bool routerAddrFlag);
+  void PrintPrefix (Ptr<OutputStreamWrapper> stream);
 
 private:
   /**
    * \brief Network prefix.
    */
-  Ipv6Address m_network;
+  Ipv6Address m_prefix;
 
   /**
    * \brief Prefix length.
@@ -147,18 +146,21 @@ private:
   uint32_t m_validLifeTime;
 
   /**
-   * \brief Autonomous flag, it is used for autonomous address configuration (\RFC{2462}).
+   * \brief Flags.
    */
-  bool m_autonomousFlag;
+  uint8_t m_flags;
 
   /**
-   * \brief Router address flag, indicates that router address is sent instead 
-   * of network prefix as is required by Mobile IPv6.
+   * \brief Prefix valid lifetime set time.
    */
-  bool m_routerAddrFlag;
+  Time m_setValidTime;
+
+  /**
+   * \brief Prefix preferred lifetime set time.
+   */
+  Time m_setPrefTime;
 };
 
 } /* namespace ns3 */
 
-#endif /* SIXLOWPANND_PREFIX_H */
-
+#endif /* SIXLOW_ND_PREFIX_H */
