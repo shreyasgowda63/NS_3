@@ -196,9 +196,19 @@ public:
    */
   void RetransmitRS (Ipv6Address src, Ipv6Address dst, Address linkAddr);
 
-  void AddAdvertisedPrefix (Ptr<SixLowPanNetDevice>, Ptr<SixLowPanNdPrefix>);
+  /**
+   * \brief Add a prefix to be announced on an interface (6LBR)
+   * \param interface interface to be used for announcement
+   * \param prefix announced prefix
+   */
+  void AddAdvertisedPrefix (Ptr<SixLowPanNetDevice> interface, Ptr<SixLowPanNdPrefix> prefix);
 
-  void AddAdvertisedContext (Ptr<SixLowPanNetDevice>, Ptr<SixLowPanNdContext>);
+  /**
+   * \brief Add a context to be announced on an interface (6LBR)
+   * \param interface interface to be used for announcement
+   * \param context announced context
+   */
+  void AddAdvertisedContext (Ptr<SixLowPanNetDevice> interface, Ptr<SixLowPanNdContext> context);
 
 protected:
   /**
