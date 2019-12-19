@@ -127,7 +127,6 @@ NetDeviceContainer SixLowPanHelper::Install6LowPanBorderRouter (const Ptr<NetDev
   Ptr<Ipv6L3Protocol> ipv6 = node->GetObject<Ipv6L3Protocol> ();
   int32_t interfaceId = ipv6->GetInterfaceForDevice (dev);
   Ptr<SixLowPanNdProtocol> sixLowPanNdProtocol = CreateObject<SixLowPanNdProtocol> ();
-  sixLowPanNdProtocol->SetAttribute ("Border", BooleanValue (true));
   ipv6->SetForwarding (interfaceId, true);
   node->AggregateObject (sixLowPanNdProtocol);
   ipv6->Insert (sixLowPanNdProtocol, interfaceId);

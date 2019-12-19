@@ -489,11 +489,6 @@ private:
   uint16_t m_advance;
 
   /**
-   * \brief Is a 6LoWPAN Border router.
-   */
-  bool m_border;
-
-  /**
    * \brief Status of the node
    */
   SixLowPanNodeStatus_e m_nodeRole;
