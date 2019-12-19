@@ -1166,35 +1166,35 @@ void SixLowPanNdProtocol::SetReceivedRA (bool received)
   m_receivedRA = received;
 }
 
-//void SixLowPanNdProtocol::AddAdvertisedRa (Ptr<SixLowPanNetDevice> interface, something)
+//void SixLowPanNdProtocol::AddAdvertisedRaParams (Ptr<SixLowPanNetDevice> device, something)
 //{
 
 // if (m_nodeRole != SixLowPanRouter)
 //   NS_ABORT_MSG ("Can not chenge from a 6LR to a 6LBR -- check your timings");
 // m_nodeRole = SixLowPanBorderRouter;
 //
-//  m_raEntries[interface] ....;
+//  m_raEntries[device] ....;
 // All the parameters of a RA
 //}
 
-void SixLowPanNdProtocol::AddAdvertisedPrefix (Ptr<SixLowPanNetDevice> interface, Ptr<SixLowPanNdPrefix> prefix)
+void SixLowPanNdProtocol::AddAdvertisedPrefix (Ptr<SixLowPanNetDevice> device, Ptr<SixLowPanNdPrefix> prefix)
 {
-  if (m_raEntries.find (interface) == m_raEntries.end ())
+  if (m_raEntries.find (device) == m_raEntries.end ())
     {
       NS_LOG_LOGIC ("Not adding a prefix to a non-configured interface");
       return;
     }
-  m_raEntries[interface]->AddPrefix (prefix);
+  m_raEntries[device]->AddPrefix (prefix);
 }
 
-void SixLowPanNdProtocol::AddAdvertisedContext (Ptr<SixLowPanNetDevice> interface, Ptr<SixLowPanNdContext> context)
+void SixLowPanNdProtocol::AddAdvertisedContext (Ptr<SixLowPanNetDevice> device, Ptr<SixLowPanNdContext> context)
 {
-  if (m_raEntries.find (interface) == m_raEntries.end ())
+  if (m_raEntries.find (device) == m_raEntries.end ())
     {
       NS_LOG_LOGIC ("Not adding a context to a non-configured interface");
       return;
     }
-  m_raEntries[interface]->AddContext (context);
+  m_raEntries[device]->AddContext (context);
 }
 
 //

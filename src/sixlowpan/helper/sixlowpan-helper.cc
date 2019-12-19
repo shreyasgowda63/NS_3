@@ -118,19 +118,17 @@ NetDeviceContainer SixLowPanHelper::Install6LowPanBorderRouter (const Ptr<NetDev
   NetDeviceContainer devs;
 
   Ptr<Node> node = nd->GetNode ();
-  NS_LOG_LOGIC ("**** Install 6LoWPAN on node " << node->GetId ());
+  NS_LOG_LOGIC ("**** Install 6LoWPAN Border Router on node " << node->GetId ());
 
-  Ptr<SixLowPanNetDevice> dev = m_deviceFactory.Create<SixLowPanNetDevice> ();
-  node->AddDevice (dev);
-  dev->SetNetDevice (nd);
+  Ptr<SixLowPanNdProtocol> sixLowPanNdProtocol = node->GetObject<SixLowPanNdProtocol> ();
+  if (!sixLowPanNdProtocol)
+    {
+      NS_ABORT_MSG ("Can not initialize a 6LBR on a node because i can not find 6LoWPAN-ND protocol");
+    }
 
-  Ptr<Ipv6L3Protocol> ipv6 = node->GetObject<Ipv6L3Protocol> ();
-  int32_t interfaceId = ipv6->GetInterfaceForDevice (dev);
-  Ptr<SixLowPanNdProtocol> sixLowPanNdProtocol = CreateObject<SixLowPanNdProtocol> ();
-  ipv6->SetForwarding (interfaceId, true);
-  node->AggregateObject (sixLowPanNdProtocol);
-  ipv6->Insert (sixLowPanNdProtocol, interfaceId);
-
+//  sixLowPanNdProtocol->AddAdvertisedRaParams (nd, );
+//  sixLowPanNdProtocol->AddAdvertisedContext (nd, );
+//  sixLowPanNdProtocol->AddAdvertisedPrefix (nd, );
   return devs;
 }
 

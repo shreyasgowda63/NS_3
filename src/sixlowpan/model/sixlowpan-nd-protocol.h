@@ -198,17 +198,17 @@ public:
 
   /**
    * \brief Add a prefix to be announced on an interface (6LBR)
-   * \param interface interface to be used for announcement
+   * \param device device to be used for announcement
    * \param prefix announced prefix
    */
-  void AddAdvertisedPrefix (Ptr<SixLowPanNetDevice> interface, Ptr<SixLowPanNdPrefix> prefix);
+  void AddAdvertisedPrefix (Ptr<SixLowPanNetDevice> device, Ptr<SixLowPanNdPrefix> prefix);
 
   /**
    * \brief Add a context to be announced on an interface (6LBR)
-   * \param interface interface to be used for announcement
+   * \param device device to be used for announcement
    * \param context announced context
    */
-  void AddAdvertisedContext (Ptr<SixLowPanNetDevice> interface, Ptr<SixLowPanNdContext> context);
+  void AddAdvertisedContext (Ptr<SixLowPanNetDevice> device, Ptr<SixLowPanNdContext> context);
 
 protected:
   /**
