@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: George F. Riley<riley@ece.gatech.edu>
+ * Modification: Liangcheng Yu<liangcheng.yu46@gmail.com> // Add the interface to set traffic control layer
  */
 
 // Implement an object to create a dumbbell topology.
@@ -128,6 +129,16 @@ void PointToPointDumbbellHelper::InstallStack (InternetStackHelper stack)
   stack.Install (m_leftLeaf);
   stack.Install (m_rightLeaf);
 }
+
+void PointToPointDumbbellHelper::InstallTrafficControl (TrafficControlHelper tcHelperEdge,
+                                                        TrafficControlHelper tcHelperCore)
+{
+  m_leftLeafQueueDiscs = tcHelperEdge.Install(m_leftLeafDevices);
+  m_rightLeafQueueDiscs = tcHelperEdge.Install(m_rightLeafDevices);
+  m_routerQueueDiscs = tcHelperCore.Install(m_routerDevices);
+  m_leftRouterQueueDiscs = tcHelperCore.Install(m_leftRouterDevices);
+  m_rightRouterQueueDiscs = tcHelperCore.Install(m_rightRouterDevices);
+}                                  
 
 void PointToPointDumbbellHelper::AssignIpv4Addresses (Ipv4AddressHelper leftIp,
                                                       Ipv4AddressHelper rightIp,

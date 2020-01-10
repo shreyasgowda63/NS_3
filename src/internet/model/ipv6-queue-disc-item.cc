@@ -19,7 +19,9 @@
 #include "ns3/log.h"
 #include "ipv6-queue-disc-item.h"
 #include "ns3/tcp-header.h"
+#include "ns3/tcp-l4-protocol.h"
 #include "ns3/udp-header.h"
+#include "ns3/udp-l4-protocol.h"
 
 namespace ns3 {
 
@@ -105,7 +107,32 @@ Ipv6QueueDiscItem::GetUint8Value (QueueItem::Uint8Values field, uint8_t& value) 
       value = m_header.GetTrafficClass ();
       ret = true;
       break;
-    }
+    case L3_HEADER_LENGTH:
+      value = m_header.GetSerializedSize ();
+      ret = true;
+      break;
+    case L4_HEADER_LENGTH:
+      uint8_t prot = m_header.GetNextHeader ();
+      TcpHeader tcpHdr;
+      UdpHeader udpHdr;
+      if (prot == TcpL4Protocol::PROT_NUMBER) // TCP
+        {
+          GetPacket ()->PeekHeader (tcpHdr);
+          value = tcpHdr.GetSerializedSize ();
+          ret = true;
+        }
+      else if (prot == UdpL4Protocol::PROT_NUMBER) // UDP
+        {
+          GetPacket ()->PeekHeader (udpHdr);
+          value = udpHdr.GetSerializedSize ();
+          ret = true;
+        }
+      else
+        {
+          NS_LOG_WARN ("Unknown transport protocol, no L4 bytes are counted.");
+        }    
+      break; 
+    }    
 
   return ret;
 }
@@ -124,19 +151,19 @@ Ipv6QueueDiscItem::Hash (uint32_t perturbation) const
   uint16_t srcPort = 0;
   uint16_t destPort = 0;
 
-  if (prot == 6) // TCP
+  if (prot == TcpL4Protocol::PROT_NUMBER) // TCP
     {
       GetPacket ()->PeekHeader (tcpHdr);
       srcPort = tcpHdr.GetSourcePort ();
       destPort = tcpHdr.GetDestinationPort ();
     }
-  else if (prot == 17) // UDP
+  else if (prot == UdpL4Protocol::PROT_NUMBER) // UDP
     {
       GetPacket ()->PeekHeader (udpHdr);
       srcPort = udpHdr.GetSourcePort ();
       destPort = udpHdr.GetDestinationPort ();
     }
-  if (prot != 6 && prot != 17)
+  if (prot != TcpL4Protocol::PROT_NUMBER && prot != UdpL4Protocol::PROT_NUMBER)
     {
       NS_LOG_WARN ("Unknown transport protocol, no port number included in hash computation");
     }

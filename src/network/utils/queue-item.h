@@ -75,7 +75,9 @@ public:
    */
   enum Uint8Values
     {
-      IP_DSFIELD
+      IP_DSFIELD,
+      L3_HEADER_LENGTH,
+      L4_HEADER_LENGTH
     };
 
   /**

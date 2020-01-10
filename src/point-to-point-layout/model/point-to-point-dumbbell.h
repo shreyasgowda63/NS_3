@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: George F. Riley<riley@ece.gatech.edu>
+ * Modification: Liangcheng Yu<liangcheng.yu46@gmail.com> // Add the interface to set traffic control layer
  */
 
 // Define an object to create a dumbbell topology.
@@ -29,6 +30,7 @@
 #include "internet-stack-helper.h"
 #include "ipv4-interface-container.h"
 #include "ipv6-interface-container.h"
+#include "ns3/traffic-control-helper.h"
 
 namespace ns3 {
 
@@ -135,6 +137,15 @@ public:
   void      InstallStack (InternetStackHelper stack);
 
   /**
+   * \param tcHelperEdge an TrafficControlHelper to install QueueDisc at network edges
+   *              in the dumbbell
+   * \param tcHelperCore an TrafficControlHelper to install QueueDisc at network cores
+   *              in the dumbbell 
+   */
+  void      InstallTrafficControl (TrafficControlHelper tcHelperEdge,
+                                   TrafficControlHelper tcHelperCore);
+
+  /**
    * \param leftIp Ipv4AddressHelper to assign Ipv4 addresses to the
    *               interfaces on the left side of the dumbbell
    *
@@ -175,6 +186,11 @@ private:
   NetDeviceContainer     m_routerDevices;       //!< Routers NetDevices
   NetDeviceContainer     m_leftRouterDevices;     //!< Left router NetDevices
   NetDeviceContainer     m_rightRouterDevices;    //!< Right router NetDevices
+  QueueDiscContainer     m_leftLeafQueueDiscs;    //!< Left leaf QueueDiscs
+  QueueDiscContainer     m_rightLeafQueueDiscs;    //!< Right leaf QueueDiscs
+  QueueDiscContainer     m_routerQueueDiscs;    //!< Router QueueDiscs
+  QueueDiscContainer     m_leftRouterQueueDiscs;    //!< Left router QueueDiscs
+  QueueDiscContainer     m_rightRouterQueueDiscs;    //!< Right router QueueDiscs
   Ipv4InterfaceContainer m_leftLeafInterfaces;    //!< Left Leaf interfaces (IPv4)
   Ipv4InterfaceContainer m_leftRouterInterfaces;  //!< Left router interfaces (IPv4)
   Ipv4InterfaceContainer m_rightLeafInterfaces;   //!< Right Leaf interfaces (IPv4)

@@ -26,6 +26,7 @@
 #include "ns3/simulator.h"
 #include "ns3/socket-factory.h"
 #include "ns3/packet.h"
+#include "ns3/flow-size-prio-queue.h"
 #include "ns3/uinteger.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/tcp-socket-factory.h"
@@ -64,6 +65,11 @@ BulkSendApplication::GetTypeId (void)
                    TypeIdValue (TcpSocketFactory::GetTypeId ()),
                    MakeTypeIdAccessor (&BulkSendApplication::m_tid),
                    MakeTypeIdChecker ())
+    .AddAttribute ("FlowSizeTagInclude",
+                   "Whether or not to include the FlowSizeTag in the packets (should be set true if using SJF algorithm)",
+                   BooleanValue (false),
+                   MakeBooleanAccessor (&BulkSendApplication::m_flowSizeTagInclude),
+                   MakeBooleanChecker ())                         
     .AddTraceSource ("Tx", "A new packet is created and is sent",
                      MakeTraceSourceAccessor (&BulkSendApplication::m_txTrace),
                      "ns3::Packet::TracedCallback")
@@ -194,6 +200,20 @@ void BulkSendApplication::SendData (void)
 
       NS_LOG_LOGIC ("sending packet at " << Simulator::Now ());
       Ptr<Packet> packet = Create<Packet> (toSend);
+      if (m_flowSizeTagInclude)
+        {
+          FlowSizeTag flowSizeTag;
+          if (m_maxBytes == 0)
+            {
+              // When m_maxBytes equals to 0, it means unlimited data.
+              flowSizeTag.SetFlowSize (UINT64_MAX);
+            }
+          else
+            {
+              flowSizeTag.SetFlowSize (m_maxBytes);
+            }
+          packet->AddPacketTag (flowSizeTag);
+        }
       int actual = m_socket->Send (packet);
       if (actual > 0)
         {

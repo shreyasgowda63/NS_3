@@ -118,7 +118,7 @@ private:
   uint64_t        m_maxBytes;     //!< Limit total number of bytes sent
   uint64_t        m_totBytes;     //!< Total bytes sent so far
   TypeId          m_tid;          //!< The type of protocol to use.
-
+  bool            m_flowSizeTagInclude;  //!< Whether to include the flow size tag in the packets
   /// Traced Callback: sent packets
   TracedCallback<Ptr<const Packet> > m_txTrace;
 
