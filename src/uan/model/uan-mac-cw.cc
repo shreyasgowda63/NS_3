@@ -37,8 +37,8 @@ UanMacCw::UanMacCw ()
   : UanMac (),
   m_phy (0),
   m_pktTx (0),
-  m_state (IDLE),
   m_txNotified (false),
+  m_state (IDLE),
   m_cleared (false)
 
 {
