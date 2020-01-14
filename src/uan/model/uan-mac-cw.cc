@@ -115,13 +115,9 @@ UanMacCw::Enqueue (Ptr<Packet> packet, uint16_t protocolNumber, const Address &d
   switch (m_state)
     {
     case CCABUSY:
-<<<<<<< HEAD
       NS_LOG_DEBUG ("Time " << Now ().As (Time::S) << " MAC " << GetAddress () << " Starting enqueue CCABUSY");
       if (m_txEndEvent.IsRunning ())
-=======
-      NS_LOG_DEBUG ("Time " << Simulator::Now ().GetSeconds () << " MAC " << GetAddress () << " Starting enqueue CCABUSY");
       if (m_txNotified == true)
->>>>>>> EndTx moved to PhyListener
         {
           NS_LOG_DEBUG ("State is TX");
         }
@@ -262,7 +258,11 @@ UanMacCw::NotifyTxStart (Time duration)
 {
   m_txNotified = true;
 
+<<<<<<< HEAD
   NS_LOG_DEBUG ("Time " << Now ().As (Time::S) << " Tx Start Notified");
+=======
+  NS_LOG_DEBUG ("Time " << Simulator::Now ().GetSeconds () << " Tx Start Notified");
+>>>>>>> EndTx moved to PhyListener
 
   if (m_state == RUNNING)
     {
@@ -270,6 +270,14 @@ UanMacCw::NotifyTxStart (Time duration)
       m_state = CCABUSY;
       SaveTimer ();
     }
+}
+
+void
+UanMacCw::NotifyTxEnd (void)
+{
+  EndTx ();
+
+  m_txNotified = false;
 }
 
 void
