@@ -35,10 +35,11 @@ NS_OBJECT_ENSURE_REGISTERED (UanMacCw);
 
 UanMacCw::UanMacCw ()
   : UanMac (),
-    m_phy (0),
-    m_pktTx (0),
-    m_state (IDLE),
-    m_cleared (false)
+  m_phy (0),
+  m_pktTx (0),
+  m_txNotified (false),
+  m_state (IDLE),
+  m_cleared (false)
 
 {
   m_rv = CreateObject<UniformRandomVariable> ();
@@ -63,7 +64,7 @@ UanMacCw::Clear ()
       m_phy = 0;
     }
   m_sendEvent.Cancel ();
-  m_txEndEvent.Cancel ();
+  m_txNotified = false;
 }
 
 void
@@ -254,22 +255,24 @@ UanMacCw::NotifyCcaEnd (void)
 void
 UanMacCw::NotifyTxStart (Time duration)
 {
+  m_txNotified = true;
 
-  if (m_txEndEvent.IsRunning ())
-    {
-      Simulator::Cancel (m_txEndEvent);
-    }
+  NS_LOG_DEBUG ("Time " << Now ().As (Time::S) << " Tx Start Notified");
 
-  m_txEndEvent = Simulator::Schedule (duration, &UanMacCw::EndTx, this);
-  NS_LOG_DEBUG ("Time " << Now ().As (Time::S) << " scheduling TxEndEvent with delay " << duration.As (Time::S));
   if (m_state == RUNNING)
     {
       NS_ASSERT (0);
       m_state = CCABUSY;
       SaveTimer ();
-
     }
+}
 
+void
+UanMacCw::NotifyTxEnd (void)
+{
+  EndTx ();
+
+  m_txNotified = false;
 }
 
 int64_t
