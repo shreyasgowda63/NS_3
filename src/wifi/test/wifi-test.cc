@@ -1247,7 +1247,7 @@ Bug2222TestCase::DoRun (void)
   //Generate same backoff for AC_VI and AC_VO
   //The below combination will work
   RngSeedManager::SetSeed (1);
-  RngSeedManager::SetRun (2);
+  RngSeedManager::SetRun (16);
   int64_t streamNumber = 100;
 
   NodeContainer wifiNodes;
@@ -1299,8 +1299,8 @@ Bug2222TestCase::DoRun (void)
   clientLowPriority->SetAttribute ("Priority", UintegerValue (4)); //AC_VI
   clientLowPriority->SetRemote (socket);
   wifiNodes.Get (0)->AddApplication (clientLowPriority);
-  clientLowPriority->SetStartTime (Seconds (1.0));
-  clientLowPriority->SetStopTime (Seconds (2.0));
+  clientLowPriority->SetStartTime (Seconds (0.0));
+  clientLowPriority->SetStopTime (Seconds (1.0));
 
   Ptr<PacketSocketClient> clientHighPriority = CreateObject<PacketSocketClient> ();
   clientHighPriority->SetAttribute ("PacketSize", UintegerValue (1460));
@@ -1308,18 +1308,18 @@ Bug2222TestCase::DoRun (void)
   clientHighPriority->SetAttribute ("Priority", UintegerValue (6)); //AC_VO
   clientHighPriority->SetRemote (socket);
   wifiNodes.Get (0)->AddApplication (clientHighPriority);
-  clientHighPriority->SetStartTime (Seconds (1.0));
-  clientHighPriority->SetStopTime (Seconds (2.0));
+  clientHighPriority->SetStartTime (Seconds (0.0));
+  clientHighPriority->SetStopTime (Seconds (1.0));
 
   Ptr<PacketSocketServer> server = CreateObject<PacketSocketServer> ();
   server->SetLocal (socket);
   wifiNodes.Get (1)->AddApplication (server);
-  server->SetStartTime (Seconds (1.0));
-  server->SetStopTime (Seconds (2.0));
+  server->SetStartTime (Seconds (0.0));
+  server->SetStopTime (Seconds (1.0));
 
   Config::Connect ("/NodeList/*/DeviceList/*/RemoteStationManager/MacTxDataFailed", MakeCallback (&Bug2222TestCase::TxDataFailedTrace, this));
 
-  Simulator::Stop (Seconds (2.0));
+  Simulator::Stop (Seconds (1.0));
   Simulator::Run ();
   Simulator::Destroy ();
 
@@ -1954,14 +1954,14 @@ private:
    */
   void RunSubtest (PointerValue apErrorModel, PointerValue staErrorModel);
 
-  uint8_t m_receivedNormalMpduCount; ///< Count received normal MPDU packets on STA
-  uint8_t m_receivedAmpduCount;      ///< Count received A-MPDU packets on STA
-  uint8_t m_droppedActionCount;      ///< Count dropped ADDBA request/response
-  uint8_t m_addbaEstablishedCount;   ///< Count number of times ADDBA state machine is in established state
-  uint8_t m_addbaPendingCount;       ///< Count number of times ADDBA state machine is in pending state
-  uint8_t m_addbaRejectedCount;      ///< Count number of times ADDBA state machine is in rejected state
-  uint8_t m_addbaNoReplyCount;       ///< Count number of times ADDBA state machine is in no_reply state
-  uint8_t m_addbaResetCount;         ///< Count number of times ADDBA state machine is in reset state
+  uint16_t m_receivedNormalMpduCount; ///< Count received normal MPDU packets on STA
+  uint16_t m_receivedAmpduCount;      ///< Count received A-MPDU packets on STA
+  uint16_t m_droppedActionCount;      ///< Count dropped ADDBA request/response
+  uint16_t m_addbaEstablishedCount;   ///< Count number of times ADDBA state machine is in established state
+  uint16_t m_addbaPendingCount;       ///< Count number of times ADDBA state machine is in pending state
+  uint16_t m_addbaRejectedCount;      ///< Count number of times ADDBA state machine is in rejected state
+  uint16_t m_addbaNoReplyCount;       ///< Count number of times ADDBA state machine is in no_reply state
+  uint16_t m_addbaResetCount;         ///< Count number of times ADDBA state machine is in reset state
 };
 
 Bug2470TestCase::Bug2470TestCase ()
@@ -2096,8 +2096,10 @@ Bug2470TestCase::RunSubtest (PointerValue apErrorModel, PointerValue staErrorMod
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/$ns3::WifiPhy/PhyRxDrop", MakeCallback (&Bug2470TestCase::RxDropCallback, this));
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/$ns3::RegularWifiMac/BE_Txop/BlockAckManager/AgreementState", MakeCallback (&Bug2470TestCase::AddbaStateChangedCallback, this));
 
-  Simulator::Schedule (Seconds (0.5), &Bug2470TestCase::SendPacketBurst, this, 5, apDevice.Get (0), staDevice.Get (0)->GetAddress ());
-  Simulator::Schedule (Seconds (0.8), &Bug2470TestCase::SendPacketBurst, this, 5, apDevice.Get (0), staDevice.Get (0)->GetAddress ());
+  Simulator::Schedule (Seconds (0.5), &Bug2470TestCase::SendPacketBurst, this, 1, apDevice.Get (0), staDevice.Get (0)->GetAddress ());
+  Simulator::Schedule (Seconds (0.5) + MicroSeconds (5), &Bug2470TestCase::SendPacketBurst, this, 4, apDevice.Get (0), staDevice.Get (0)->GetAddress ());
+  Simulator::Schedule (Seconds (0.8), &Bug2470TestCase::SendPacketBurst, this, 1, apDevice.Get (0), staDevice.Get (0)->GetAddress ());
+  Simulator::Schedule (Seconds (0.8) + MicroSeconds (5), &Bug2470TestCase::SendPacketBurst, this, 4, apDevice.Get (0), staDevice.Get (0)->GetAddress ());
 
   Simulator::Stop (Seconds (1.0));
   Simulator::Run ();
@@ -2153,7 +2155,7 @@ Bug2470TestCase::DoRun (void)
   // Block ADDBA request 3 times (== maximum number of MAC frame transmissions in the ADDBA response timeout interval)
   blackList.push_back (4);
   blackList.push_back (5);
-  blackList.push_back (6);
+  blackList.push_back (8);
   apPem->SetList (blackList);
 
   {

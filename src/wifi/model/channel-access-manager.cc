@@ -242,21 +242,6 @@ ChannelAccessManager::IsBusy (void) const
   return false;
 }
 
-bool
-ChannelAccessManager::IsWithinAifs (Ptr<Txop> state) const
-{
-  NS_LOG_FUNCTION (this << state);
-  Time ifsEnd = GetAccessGrantStart () + (state->GetAifsn () * m_slot);
-  if (ifsEnd > Simulator::Now ())
-    {
-      NS_LOG_DEBUG ("IsWithinAifs () true; ifsEnd is at " << ifsEnd.GetSeconds ());
-      return true;
-    }
-  NS_LOG_DEBUG ("IsWithinAifs () false; ifsEnd was at " << ifsEnd.GetSeconds ());
-  return false;
-}
-
-
 void
 ChannelAccessManager::RequestAccess (Ptr<Txop> state, bool isCfPeriod)
 {
@@ -277,41 +262,24 @@ ChannelAccessManager::RequestAccess (Ptr<Txop> state, bool isCfPeriod)
       m_accessTimeout = Simulator::Schedule (delay, &ChannelAccessManager::DoGrantPcfAccess, this, state);
       return;
     }
+  /*
+   * EDCAF operations shall be performed at slot boundaries (Sec. 10.22.2.4 of 802.11-2016)
+   */
+  Time accessGrantStart = GetAccessGrantStart () + (state->GetAifsn () * m_slot);
+
+  if (state->IsQosTxop () && state->GetBackoffStart () > accessGrantStart)
+    {
+      // The backoff start time reported by the EDCAF is more recent than the last
+      // time the medium was busy plus an AIFS, hence we need to align it to the
+      // next slot boundary.
+      Time diff = state->GetBackoffStart () - accessGrantStart;
+      uint32_t nIntSlots = (diff / m_slot).GetHigh () + 1;
+      state->UpdateBackoffSlotsNow (0, accessGrantStart + (nIntSlots * m_slot));
+    }
+
   UpdateBackoff ();
   NS_ASSERT (!state->IsAccessRequested ());
   state->NotifyAccessRequested ();
-  // If currently transmitting; end of transmission (ACK or no ACK) will cause
-  // a later access request if needed from EndTxNoAck, GotAck, or MissedAck
-  Time lastTxEnd = m_lastTxStart + m_lastTxDuration;
-  if (lastTxEnd > Simulator::Now ())
-    {
-      NS_LOG_DEBUG ("Internal collision (currently transmitting)");
-      state->NotifyInternalCollision ();
-      DoRestartAccessTimeoutIfNeeded ();
-      return;
-    }
-  /**
-   * If there is a collision, generate a backoff
-   * by notifying the collision to the user.
-   */
-  if (state->GetBackoffSlots () == 0)
-    {
-      if (IsBusy ())
-        {
-          NS_LOG_DEBUG ("medium is busy: collision");
-          // someone else has accessed the medium; generate a backoff.
-          state->NotifyCollision ();
-          DoRestartAccessTimeoutIfNeeded ();
-          return;
-        }
-      else if (IsWithinAifs (state))
-        {
-          NS_LOG_DEBUG ("busy within AIFS");
-          state->NotifyCollision ();
-          DoRestartAccessTimeoutIfNeeded ();
-          return;
-        }
-    }
   DoGrantDcfAccess ();
   DoRestartAccessTimeoutIfNeeded ();
 }
@@ -445,6 +413,7 @@ ChannelAccessManager::GetBackoffStartFor (Ptr<Txop> state)
   NS_LOG_FUNCTION (this << state);
   Time mostRecentEvent = MostRecent ({state->GetBackoffStart (),
                                      GetAccessGrantStart () + (state->GetAifsn () * m_slot)});
+  NS_LOG_DEBUG ("Backoff start: " << mostRecentEvent.As (Time::US));
 
   return mostRecentEvent;
 }
@@ -453,9 +422,10 @@ Time
 ChannelAccessManager::GetBackoffEndFor (Ptr<Txop> state)
 {
   NS_LOG_FUNCTION (this << state);
-  NS_LOG_DEBUG ("Backoff start: " << GetBackoffStartFor (state).As (Time::US) <<
-                " end: " << (GetBackoffStartFor (state) + state->GetBackoffSlots () * m_slot).As (Time::US));
-  return GetBackoffStartFor (state) + (state->GetBackoffSlots () * m_slot);
+  Time backoffEnd = GetBackoffStartFor (state) + (state->GetBackoffSlots () * m_slot);
+  NS_LOG_DEBUG ("Backoff end: " << backoffEnd.As (Time::US));
+
+  return backoffEnd;
 }
 
 void
