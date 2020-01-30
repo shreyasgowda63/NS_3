@@ -122,6 +122,21 @@ bool operator < (const Vector3D &a, const Vector3D &b)
   return std::tie (a.x, a.y, a.z) <
          std::tie (b.x, b.y, b.z);
 }
+bool operator <= (const Vector3D &a, const Vector3D &b)
+{
+  return std::tie (a.x, a.y, a.z) <=
+         std::tie (b.x, b.y, b.z);
+}
+bool operator > (const Vector3D &a, const Vector3D &b)
+{
+  return std::tie (a.x, a.y, a.z) >
+         std::tie (b.x, b.y, b.z);
+}
+bool operator >= (const Vector3D &a, const Vector3D &b)
+{
+  return std::tie (a.x, a.y, a.z) >=
+         std::tie (b.x, b.y, b.z);
+}
 Vector3D
 operator + (const Vector3D &a, const Vector3D &b)
 {
@@ -131,6 +146,15 @@ Vector3D
 operator - (const Vector3D &a, const Vector3D &b)
 {
   return Vector3D (a.x - b.x, a.y - b.y, a.z - b.z);
+}
+bool operator == (const Vector3D &a, const Vector3D &b)
+{
+  return std::tie (a.x, a.y, a.z) ==
+         std::tie (b.x, b.y, b.z);
+}
+bool operator != (const Vector3D &a, const Vector3D &b)
+{
+  return ! (a == b);
 }
 std::ostream &operator << (std::ostream &os, const Vector2D &vector)
 {
@@ -152,6 +176,21 @@ bool operator < (const Vector2D &a, const Vector2D &b)
   return std::tie (a.x, a.y) <
          std::tie (b.x, b.y);
 }
+bool operator <= (const Vector2D &a, const Vector2D &b)
+{
+  return std::tie (a.x, a.y) <=
+         std::tie (b.x, b.y);
+}
+bool operator > (const Vector2D &a, const Vector2D &b)
+{
+  return std::tie (a.x, a.y) >
+         std::tie (b.x, b.y);
+}
+bool operator >= (const Vector2D &a, const Vector2D &b)
+{
+  return std::tie (a.x, a.y) >=
+         std::tie (b.x, b.y);
+}
 Vector2D
 operator + (const Vector2D &a, const Vector2D &b)
 {
@@ -161,6 +200,15 @@ Vector2D
 operator - (const Vector2D &a, const Vector2D &b)
 {
   return Vector2D (a.x - b.x, a.y - b.y);
+}
+bool operator == (const Vector2D &a, const Vector2D &b)
+{
+  return std::tie (a.x, a.y) ==
+         std::tie (b.x, b.y);
+}
+bool operator != (const Vector2D &a, const Vector2D &b)
+{
+  return ! (a == b);
 }
 
 } // namespace ns3
