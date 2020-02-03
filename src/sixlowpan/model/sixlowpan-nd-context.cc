@@ -41,8 +41,6 @@ SixLowPanNdContext::SixLowPanNdContext (bool flagC, uint8_t cid, uint16_t time, 
     m_context (context)
 {
   NS_LOG_FUNCTION (this << flagC << static_cast<uint32_t> (cid) << time << context);
-
-  m_setTime = Simulator::Now ();
 }
 
 SixLowPanNdContext::~SixLowPanNdContext ()
@@ -53,13 +51,7 @@ SixLowPanNdContext::~SixLowPanNdContext ()
 uint8_t SixLowPanNdContext::GetContextLen () const
 {
   NS_LOG_FUNCTION (this);
-  return m_length;
-}
-
-void SixLowPanNdContext::SetContextLen (uint8_t length)
-{
-  NS_LOG_FUNCTION (this << static_cast<uint32_t> (length));
-  m_length = length;
+  return m_context.GetPrefixLength ();
 }
 
 bool SixLowPanNdContext::IsFlagC () const
@@ -91,19 +83,13 @@ uint16_t SixLowPanNdContext::GetValidTime () const
 {
   NS_LOG_FUNCTION (this);
 
-  double time = Simulator::Now ().GetMinutes () - m_setTime.GetMinutes ();
-
-  return m_validTime - static_cast<uint16_t> (time);
+  return m_validTime;
 }
 
 void SixLowPanNdContext::SetValidTime (uint16_t time)
 {
   NS_LOG_FUNCTION (this << time);
   m_validTime = time;
-
-  m_setTime = Simulator::Now ();
-
-  Simulator::Schedule (Time (Minutes (time)), &SixLowPanNdContext::ValidTimeout, this);
 }
 
 Ipv6Prefix SixLowPanNdContext::GetContextPrefix () const
@@ -138,22 +124,5 @@ void SixLowPanNdContext::PrintContext (Ptr<OutputStreamWrapper> stream)
   *os << " Valid Lifetime: " << GetValidTime ();
   *os << " Context Prefix: " << GetContextPrefix ();
 }
-
-void SixLowPanNdContext::ValidTimeout ()
-{
-  NS_LOG_FUNCTION_NOARGS ();
-
-  m_c = false;
-
-  Simulator::Schedule (Time (Seconds (2 * 1000 /*m_entry->GetRouterLifeTime ()*/)), &SixLowPanNdContext::RouterTimeout, this);
-} /// \todo da finire!!!
-
-void SixLowPanNdContext::RouterTimeout ()
-{
-  NS_LOG_FUNCTION_NOARGS ();
-
-  //m_entry->RemoveContext (this);
-  return;
-} /// \todo da finire!!!
 
 } /* namespace ns3 */

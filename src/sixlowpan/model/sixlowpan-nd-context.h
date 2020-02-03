@@ -64,12 +64,6 @@ public:
   uint8_t GetContextLen () const;
 
   /**
-   * \brief Set the context length.
-   * \param length the context length value
-   */
-  void SetContextLen (uint8_t length);
-
-  /**
    * \brief Is compression flag ?
    * \return true if context is valid for use in compression, false otherwise
    */
@@ -123,22 +117,7 @@ public:
    */
   void PrintContext (Ptr<OutputStreamWrapper> stream);
 
-  /**
-   * \brief Function called when valid lifetime timeout.
-   */
-  void ValidTimeout ();
-
-  /**
-   * \brief Function called when router lifetime timeout.
-   */
-  void RouterTimeout ();
-
 private:
-  /**
-   * \brief The context length value.
-   */
-  uint8_t m_length;
-
   /**
    * \brief The compression flag, indicates that this context is valid for use in compression.
    */
@@ -158,11 +137,6 @@ private:
    * \brief The context prefix value.
    */
   Ipv6Prefix m_context;
-
-  /**
-   * \brief Context set time.
-   */
-  Time m_setTime;
 };
 
 } /* namespace ns3 */
