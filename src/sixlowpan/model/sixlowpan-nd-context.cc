@@ -30,17 +30,21 @@ NS_LOG_COMPONENT_DEFINE ("SixLowPanNdContext");
 
 
 SixLowPanNdContext::SixLowPanNdContext ()
+  : m_c (false),
+    m_cid (0),
+    m_validTime (Seconds(0)),
+    m_context (Ipv6Prefix ())
 {
   NS_LOG_FUNCTION (this);
 }
 
-SixLowPanNdContext::SixLowPanNdContext (bool flagC, uint8_t cid, uint16_t time, Ipv6Prefix context)
+SixLowPanNdContext::SixLowPanNdContext (bool flagC, uint8_t cid, Time time, Ipv6Prefix context)
   : m_c (flagC),
     m_cid (cid),
-    m_validTime (time),
     m_context (context)
 {
   NS_LOG_FUNCTION (this << flagC << static_cast<uint32_t> (cid) << time << context);
+  SetValidTime (time);
 }
 
 SixLowPanNdContext::~SixLowPanNdContext ()
@@ -79,16 +83,27 @@ void SixLowPanNdContext::SetCid (uint8_t cid)
   m_cid = cid;
 }
 
-uint16_t SixLowPanNdContext::GetValidTime () const
+Time SixLowPanNdContext::GetValidTime () const
 {
   NS_LOG_FUNCTION (this);
 
   return m_validTime;
 }
 
-void SixLowPanNdContext::SetValidTime (uint16_t time)
+void SixLowPanNdContext::SetValidTime (Time time)
 {
   NS_LOG_FUNCTION (this << time);
+
+  uint64_t timeInMillisecs = time.GetMilliSeconds ();
+  uint64_t remainder = timeInMillisecs % 60000;
+
+  if (remainder)
+    {
+      NS_LOG_WARN ("ValidTime must be a multiple of 60 seconds, increasing to the next valid value ");
+      m_validTime += MilliSeconds (60000-remainder);
+      return;
+    }
+
   m_validTime = time;
 }
 

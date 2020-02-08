@@ -47,11 +47,11 @@ public:
    * \brief Constructor.
    * \param prefix network prefix advertised
    * \param prefixLen prefix length ( 0 < x <= 128)
-   * \param prefTime preferred life time in seconds (default 7 days)
-   * \param validTime valid life time in seconds (default 30 days)
+   * \param prefTime preferred life time (default 7 days)
+   * \param validTime valid life time (default 30 days)
    * \param flags the flags (L = 128, A = 64, R = 32)
    */
-  SixLowPanNdPrefix (Ipv6Address prefix, uint8_t prefixLen, uint32_t prefTime, uint32_t validTime, uint8_t flags);
+  SixLowPanNdPrefix (Ipv6Address prefix, uint8_t prefixLen, Time prefTime, Time validTime, uint8_t flags);
 
   /**
    * \brief Destructor.
@@ -86,25 +86,25 @@ public:
    * \brief Get preferred lifetime.
    * \return lifetime
    */
-  uint32_t GetPreferredLifeTime () const;
+  Time GetPreferredLifeTime () const;
 
   /**
    * \brief Set preferred lifetime.
    * \param prefTime lifetime
    */
-  void SetPreferredLifeTime (uint32_t prefTime);
+  void SetPreferredLifeTime (Time prefTime);
 
   /**
    * \brief Get valid lifetime.
    * \return lifetime
    */
-  uint32_t GetValidLifeTime () const;
+  Time GetValidLifeTime () const;
 
   /**
    * \brief Set valid lifetime.
    * \param validTime lifetime
    */
-  void SetValidLifeTime (uint32_t validTime);
+  void SetValidLifeTime (Time validTime);
 
   /**
    * \brief Get the flags.
@@ -138,27 +138,17 @@ private:
   /**
    * \brief Preferred time.
    */
-  uint32_t m_preferredLifeTime;
+  Time m_preferredLifeTime;
 
   /**
    * \brief Valid time.
    */
-  uint32_t m_validLifeTime;
+  Time m_validLifeTime;
 
   /**
    * \brief Flags.
    */
   uint8_t m_flags;
-
-  /**
-   * \brief Prefix valid lifetime set time.
-   */
-  Time m_setValidTime;
-
-  /**
-   * \brief Prefix preferred lifetime set time.
-   */
-  Time m_setPrefTime;
 };
 
 } /* namespace ns3 */

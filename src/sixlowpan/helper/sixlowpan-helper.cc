@@ -28,6 +28,9 @@
 #include "ns3/names.h"
 #include "ns3/ipv6-l3-protocol.h"
 #include "ns3/boolean.h"
+#include "ns3/sixlowpan-nd-context.h"
+#include "ns3/sixlowpan-nd-prefix.h"
+#include "ns3/sixlowpan-nd-prefix.h"
 #include "sixlowpan-helper.h"
 
 namespace ns3 {
@@ -113,7 +116,7 @@ NetDeviceContainer SixLowPanHelper::Install (const NetDeviceContainer c)
 
 NetDeviceContainer SixLowPanHelper::Install6LowPanBorderRouter (const Ptr<NetDevice> nd)
 {
-  NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this << nd);
 
   NetDeviceContainer devs;
 
@@ -123,7 +126,7 @@ NetDeviceContainer SixLowPanHelper::Install6LowPanBorderRouter (const Ptr<NetDev
   Ptr<SixLowPanNdProtocol> sixLowPanNdProtocol = node->GetObject<SixLowPanNdProtocol> ();
   if (!sixLowPanNdProtocol)
     {
-      NS_ABORT_MSG ("Can not initialize a 6LBR on a node because i can not find 6LoWPAN-ND protocol");
+      NS_ABORT_MSG ("Can not initialize a 6LBR on a node because I can not find 6LoWPAN-ND protocol");
     }
 
 //  sixLowPanNdProtocol->AddAdvertisedRaParams (nd, );
@@ -131,6 +134,41 @@ NetDeviceContainer SixLowPanHelper::Install6LowPanBorderRouter (const Ptr<NetDev
 //  sixLowPanNdProtocol->AddAdvertisedPrefix (nd, );
   return devs;
 }
+
+void SixLowPanHelper::AddAdvertisedContext (const Ptr<NetDevice> nd, Ipv6Prefix context)
+{
+  NS_LOG_FUNCTION (this << nd << context);
+
+  Ptr<Node> node = nd->GetNode ();
+
+  Ptr<SixLowPanNetDevice> sixLowPanNetDevice = DynamicCast<SixLowPanNetDevice> (nd);
+  if (sixLowPanNetDevice)
+    {
+
+      Ptr<SixLowPanNdProtocol> sixLowPanNdProtocol = node->GetObject<SixLowPanNdProtocol> ();
+      if (!sixLowPanNdProtocol)
+        {
+          NS_ABORT_MSG ("Can not add a Context to a 6LBR on a node because I can not find 6LoWPAN-ND protocol");
+        }
+
+      sixLowPanNdProtocol->AddAdvertisedContext (sixLowPanNetDevice, context);
+    }
+}
+
+void SixLowPanHelper::RemoveAdvertisedContext (const Ptr<NetDevice> nd, Ipv6Prefix context)
+{
+  NS_LOG_FUNCTION (this << nd << context);
+
+  Ptr<Node> node = nd->GetNode ();
+
+  Ptr<SixLowPanNdProtocol> sixLowPanNdProtocol = node->GetObject<SixLowPanNdProtocol> ();
+  if (!sixLowPanNdProtocol)
+    {
+      NS_ABORT_MSG ("Can not remove a Context to a 6LBR on a node because I can not find 6LoWPAN-ND protocol");
+    }
+  // sixLowPanNdProtocol.RemoveAdvertisedContext (context);
+}
+
 
 int64_t SixLowPanHelper::AssignStreams (NetDeviceContainer c, int64_t stream)
 {

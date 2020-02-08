@@ -33,7 +33,7 @@ SixLowPanNdPrefix::SixLowPanNdPrefix ()
   NS_LOG_FUNCTION (this);
 }
 
-SixLowPanNdPrefix::SixLowPanNdPrefix (Ipv6Address prefix, uint8_t prefixLen, uint32_t prefTime, uint32_t validTime, uint8_t flags)
+SixLowPanNdPrefix::SixLowPanNdPrefix (Ipv6Address prefix, uint8_t prefixLen, Time prefTime, Time validTime, uint8_t flags)
   : m_prefix (prefix),
     m_prefixLength (prefixLen),
     m_preferredLifeTime (prefTime),
@@ -41,9 +41,6 @@ SixLowPanNdPrefix::SixLowPanNdPrefix (Ipv6Address prefix, uint8_t prefixLen, uin
     m_flags (flags)
 {
   NS_LOG_FUNCTION (this << prefix << prefixLen << prefTime << validTime << flags);
-
-  m_setValidTime = Simulator::Now ();
-  m_setPrefTime = Simulator::Now ();
 }
 
 SixLowPanNdPrefix::~SixLowPanNdPrefix ()
@@ -75,36 +72,29 @@ void SixLowPanNdPrefix::SetPrefixLength (uint8_t prefixLen)
   m_prefixLength = prefixLen;
 }
 
-uint32_t SixLowPanNdPrefix::GetValidLifeTime () const
+Time SixLowPanNdPrefix::GetValidLifeTime () const
 {
   NS_LOG_FUNCTION (this);
-  double time = Simulator::Now ().GetSeconds () - m_setValidTime.GetSeconds ();
 
-  return m_validLifeTime - static_cast<uint32_t> (time);
+  return m_validLifeTime;
 }
 
-void SixLowPanNdPrefix::SetValidLifeTime (uint32_t validTime)
+void SixLowPanNdPrefix::SetValidLifeTime (Time validTime)
 {
   NS_LOG_FUNCTION (this << validTime);
   m_validLifeTime = validTime;
-
-  m_setValidTime = Simulator::Now ();
 }
 
-uint32_t SixLowPanNdPrefix::GetPreferredLifeTime () const
+Time SixLowPanNdPrefix::GetPreferredLifeTime () const
 {
   NS_LOG_FUNCTION (this);
-  double time = Simulator::Now ().GetSeconds () - m_setPrefTime.GetSeconds ();
-
-  return m_preferredLifeTime - static_cast<uint32_t> (time);
+  return m_preferredLifeTime;
 }
 
-void SixLowPanNdPrefix::SetPreferredLifeTime (uint32_t prefTime)
+void SixLowPanNdPrefix::SetPreferredLifeTime (Time prefTime)
 {
   NS_LOG_FUNCTION (this << prefTime);
   m_preferredLifeTime = prefTime;
-
-  m_setPrefTime = Simulator::Now ();
 }
 
 uint8_t SixLowPanNdPrefix::GetFlags () const

@@ -108,6 +108,28 @@ public:
   NetDeviceContainer Install6LowPanBorderRouter (const Ptr<NetDevice> nd);
 
   /**
+   * \brief Add a new prefix to be advertised by 6LoWPAN-ND.
+   * \param [in] nd The NetDevice.
+   * \param prefix announced IPv6 prefix
+   * \param prefixLength announced IPv6 prefix length
+   */
+  void AddAdvertisedPrefix (const Ptr<NetDevice> nd, Ipv6Address prefix, uint32_t prefixLength);
+
+  /**
+   * \brief Add a new context to be advertised by 6LoWPAN-ND.
+   * \param [in] nd The NetDevice.
+   * \param context announced IPv6 context
+   */
+  void AddAdvertisedContext (const Ptr<NetDevice> nd, Ipv6Prefix context);
+
+  /**
+   * \brief Remove a context advertised by 6LoWPAN-ND.
+   * \param [in] nd The NetDevice.
+   * \param context announced IPv6 context
+   */
+  void RemoveAdvertisedContext (const Ptr<NetDevice> nd, Ipv6Prefix context);
+
+  /**
   * Assign a fixed random variable stream number to the random variables
   * used by this model. Return the number of streams (possibly zero) that
   * have been assigned. The Install() method should have previously been

@@ -204,11 +204,18 @@ public:
   void AddAdvertisedPrefix (Ptr<SixLowPanNetDevice> device, Ptr<SixLowPanNdPrefix> prefix);
 
   /**
-   * \brief Add a context to be announced on an interface (6LBR)
-   * \param device device to be used for announcement
-   * \param context announced context
+   * \brief Add a context to be advertised on an interface (6LBR)
+   * \param device device to be used for advertisement
+   * \param context advertised context
    */
-  void AddAdvertisedContext (Ptr<SixLowPanNetDevice> device, Ptr<SixLowPanNdContext> context);
+  void AddAdvertisedContext (Ptr<SixLowPanNetDevice> device, Ipv6Prefix context);
+
+  /**
+   * \brief Remove a context to be advertised on an interface (6LBR)
+   * \param device device to be used for advertisement
+   * \param context advertised context
+   */
+  void RemoveAdvertisedContext (Ptr<SixLowPanNetDevice> device, Ipv6Prefix context);
 
 protected:
   /**
@@ -493,6 +500,8 @@ private:
    */
   SixLowPanNodeStatus_e m_nodeRole;
 
+  uint32_t m_version; //!< ABRO Version
+  Time m_contextValidLifeTime; //!< Default Context Valid Lifetime
   std::map<Ipv6Address, Ptr<SixLowPanRaEntry> > m_raCache; //!< Router Advertisement cached entries (if the node is a 6LR)
   std::map<Ptr<SixLowPanNetDevice>, Ptr<SixLowPanRaEntry> > m_raEntries; //!< Router Advertisement entries (if the node is a 6LBR)
 

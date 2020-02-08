@@ -47,10 +47,10 @@ public:
    * \brief Constructor.
    * \param flagC compression flag
    * \param cid context identifier ( 0 <= x <= 15)
-   * \param time valid lifetime of context (units of 60 seconds)
+   * \param time valid lifetime of context
    * \param context 6LoWPAN context advertised
    */
-  SixLowPanNdContext (bool flagC, uint8_t cid, uint16_t time, Ipv6Prefix context);
+  SixLowPanNdContext (bool flagC, uint8_t cid, Time time, Ipv6Prefix context);
 
   /**
    * \brief Destructor.
@@ -89,15 +89,27 @@ public:
 
   /**
    * \brief Get the valid lifetime.
-   * \return valid lifetime value (units of 60 seconds)
+   * \return valid lifetime value
    */
-  uint16_t GetValidTime () const;
+  Time GetValidTime () const;
 
   /**
    * \brief Set the valid lifetime.
-   * \param time the valid lifetime value (units of 60 seconds)
+   * \param time the valid lifetime value
    */
-  void SetValidTime (uint16_t time);
+  void SetValidTime (Time time);
+
+  /**
+   * \brief Set the last update time.
+   * \param time tthe last update time
+   */
+  void SetLastUpdateTime (Time time);
+
+  /**
+   * \brief Get the last update time.
+   * \return the last update time
+   */
+  Time GetLastUpdateTime ();
 
   /**
    * \brief Get the 6LoWPAN context prefix.
@@ -129,9 +141,14 @@ private:
   uint8_t m_cid;
 
   /**
-   * \brief The valid lifetime value (units of 60 seconds).
+   * \brief The valid lifetime value.
    */
-  uint16_t m_validTime;
+  Time m_validTime;
+
+  /**
+   * \brief The context last update time.
+   */
+  Time m_lastUpdateTime;
 
   /**
    * \brief The context prefix value.

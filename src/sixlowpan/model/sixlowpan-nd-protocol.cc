@@ -76,6 +76,7 @@ SixLowPanNdProtocol::SixLowPanNdProtocol ()
   m_rsRetransmit = 0;
   m_aroRetransmit = 0;
   m_nodeRole = SixLowPanNode;
+  m_version = 0;
 }
 
 SixLowPanNdProtocol::~SixLowPanNdProtocol ()
@@ -97,6 +98,10 @@ TypeId SixLowPanNdProtocol::GetTypeId ()
                     UintegerValue (5),
                     MakeUintegerAccessor (&SixLowPanNdProtocol::m_advance),
                     MakeUintegerChecker<uint16_t> ())
+    .AddAttribute ("DefaultContextValidLifeTime", "The default context valid lifetime.",
+                   TimeValue (Minutes (10)),
+                   MakeTimeAccessor (&SixLowPanNdProtocol::m_contextValidLifeTime),
+                   MakeTimeChecker ())
     ;
   return tid;
 }
@@ -278,8 +283,8 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
           Icmpv6OptionPrefixInformation prefixHdr;
           prefixHdr.SetPrefixLength (jt->second->GetPrefixLength ());
           prefixHdr.SetFlags (jt->second->GetFlags ());
-          prefixHdr.SetValidTime (jt->second->GetValidLifeTime ());
-          prefixHdr.SetPreferredTime (jt->second->GetPreferredLifeTime ());
+          prefixHdr.SetValidTime (jt->second->GetValidLifeTime ().GetSeconds ());
+          prefixHdr.SetPreferredTime (jt->second->GetPreferredLifeTime ().GetSeconds ());
           prefixHdr.SetPrefix (jt->second->GetPrefix ());
           p->AddHeader (prefixHdr);
         }
@@ -289,12 +294,20 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
       for (std::map<uint8_t, Ptr<SixLowPanNdContext> >::iterator i = contexts.begin (); i != contexts.end (); i++)
         {
           Icmpv6OptionSixLowPanContext sixHdr;
+          sixHdr.SetContextPrefix (i->second->GetContextPrefix ());
           sixHdr.SetContextLen (i->second->GetContextLen ());
           sixHdr.SetFlagC (i->second->IsFlagC ());
           sixHdr.SetCid (i->second->GetCid ());
-          sixHdr.SetValidTime (i->second->GetValidTime ());
-          sixHdr.SetContextPrefix (i->second->GetContextPrefix ());
-          p->AddHeader (sixHdr);
+
+          Time difference = Simulator::Now () - i->second->GetLastUpdateTime ();
+          double updatedValidTime = i->second->GetValidTime ().GetMinutes () - floor (difference.GetMinutes ());
+
+          // we want to advertise only contexts with a remaining validity time greater than 1 minute.
+          if (updatedValidTime > 1)
+            {
+              sixHdr.SetValidTime (updatedValidTime);
+              p->AddHeader (sixHdr);
+            }
         }
 
       raHdr.CalculatePseudoHeaderChecksum (src, dst, p->GetSize () + raHdr.GetSerializedSize (), PROT_NUMBER);
@@ -891,8 +904,9 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
           Ptr<SixLowPanNdContext> context = new SixLowPanNdContext;
           context->SetCid ((*jt).GetCid ());
           context->SetFlagC ((*jt).IsFlagC ());
-          context->SetValidTime ((*jt).GetValidTime ());
+          context->SetValidTime (Minutes ((*jt).GetValidTime ()));
           context->SetContextPrefix ((*jt).GetContextPrefix ());
+          context->SetLastUpdateTime (Simulator::Now ());
 
           ra->AddContext (context);
         }
@@ -919,8 +933,8 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
                   Ptr<SixLowPanNdPrefix> prefix = new SixLowPanNdPrefix;
                   prefix->SetPrefixLength ((*it).GetPrefixLength ());
                   prefix->SetFlags ((*it).GetFlags ());
-                  prefix->SetValidLifeTime ((*it).GetValidTime ());
-                  prefix->SetPreferredLifeTime ((*it).GetPreferredTime ());
+                  prefix->SetValidLifeTime (Seconds ((*it).GetValidTime ()));
+                  prefix->SetPreferredLifeTime (Seconds ((*it).GetPreferredTime ()));
                   prefix->SetPrefix ((*it).GetPrefix ());
 
                   ra->AddPrefix (prefix);
@@ -951,8 +965,8 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
 
                   prefix->SetPrefixLength ((*it).GetPrefixLength ());
                   prefix->SetFlags ((*it).GetFlags ());
-                  prefix->SetValidLifeTime ((*it).GetValidTime ());
-                  prefix->SetPreferredLifeTime ((*it).GetPreferredTime ());
+                  prefix->SetValidLifeTime (Seconds ((*it).GetValidTime ()));
+                  prefix->SetPreferredLifeTime (Seconds ((*it).GetPreferredTime ()));
 
                   ipv6->AddAutoconfiguredAddress (ipv6->GetInterfaceForDevice (sixDevice),
                                                   (*it).GetPrefix (), (*it).GetPrefixLength (),
@@ -983,8 +997,9 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
                   Ptr<SixLowPanNdContext> context = new SixLowPanNdContext;
                   context->SetCid ((*jt).GetCid ());
                   context->SetFlagC ((*jt).IsFlagC ());
-                  context->SetValidTime ((*jt).GetValidTime ());
+                  context->SetValidTime (Minutes ((*jt).GetValidTime ()));
                   context->SetContextPrefix ((*jt).GetContextPrefix ());
+                  context->SetLastUpdateTime (Simulator::Now ());
 
                   ra->AddContext (context);
                 }
@@ -993,8 +1008,9 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
                   Ptr<SixLowPanNdContext> context = (ra->GetContexts ().find ((*jt).GetCid ()))->second;
 
                   context->SetFlagC ((*jt).IsFlagC ());
-                  context->SetValidTime ((*jt).GetValidTime ());
+                  context->SetValidTime (Minutes ((*jt).GetValidTime ()));
                   context->SetContextPrefix ((*jt).GetContextPrefix ());
+                  context->SetLastUpdateTime (Simulator::Now ());
                 }
             }
         }
@@ -1003,6 +1019,9 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
           return;
         }
     }
+
+  // \todo Da cambiare di brutto
+
   uint32_t t = raHeader.GetLifeTime ();
 
   for (std::list<Icmpv6OptionPrefixInformation>::iterator it = prefixList.begin (); it != prefixList.end (); it++)
@@ -1020,7 +1039,6 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   Simulator::Schedule (Time (Seconds (t)), &SixLowPanNdProtocol::RetransmitRS, this,
                        interface->GetLinkLocalAddress ().GetAddress (), src, addr);
 }
-/// \todo da finire!! (controlla codice, controlla regTime)
 
 void SixLowPanNdProtocol::HandleSixLowPanDAC (Ptr<Packet> packet, Ipv6Address const &src, Ipv6Address const &dst,
                                               Ptr<Ipv6Interface> interface)
@@ -1179,6 +1197,8 @@ void SixLowPanNdProtocol::SetReceivedRA (bool received)
 
 void SixLowPanNdProtocol::AddAdvertisedPrefix (Ptr<SixLowPanNetDevice> device, Ptr<SixLowPanNdPrefix> prefix)
 {
+  NS_LOG_FUNCTION (device << prefix);
+
   if (m_raEntries.find (device) == m_raEntries.end ())
     {
       NS_LOG_LOGIC ("Not adding a prefix to a non-configured interface");
@@ -1187,15 +1207,72 @@ void SixLowPanNdProtocol::AddAdvertisedPrefix (Ptr<SixLowPanNetDevice> device, P
   m_raEntries[device]->AddPrefix (prefix);
 }
 
-void SixLowPanNdProtocol::AddAdvertisedContext (Ptr<SixLowPanNetDevice> device, Ptr<SixLowPanNdContext> context)
+void SixLowPanNdProtocol::AddAdvertisedContext (Ptr<SixLowPanNetDevice> device, Ipv6Prefix context)
 {
+  NS_LOG_FUNCTION (device << context);
+
   if (m_raEntries.find (device) == m_raEntries.end ())
     {
       NS_LOG_LOGIC ("Not adding a context to a non-configured interface");
       return;
     }
-  m_raEntries[device]->AddContext (context);
+  auto contextMap = m_raEntries[device]->GetContexts ();
+
+  bool found = false;
+  for (auto iter=contextMap.begin (); iter!=contextMap.end (); iter++)
+    {
+      if (iter->second->GetContextPrefix () == context)
+        {
+          found = true;
+          break;
+        }
+    }
+  if (found)
+    {
+      NS_LOG_WARN ("Not adding an already existing context - remove the old one first " << context);
+      return;
+    }
+
+  uint8_t unusedCid;
+  for (unusedCid=0; unusedCid<16; unusedCid++)
+    {
+      if (contextMap.count(unusedCid) == 0)
+        {
+          break;
+        }
+    }
+
+  Ptr<SixLowPanNdContext> newContext = Create<SixLowPanNdContext> (true, unusedCid, m_contextValidLifeTime, context);
+  newContext->SetLastUpdateTime (Simulator::Now ());
+
+  m_raEntries[device]->AddContext (newContext);
 }
+
+
+void SixLowPanNdProtocol::RemoveAdvertisedContext (Ptr<SixLowPanNetDevice> device, Ipv6Prefix context)
+{
+  NS_LOG_FUNCTION (device << context);
+
+  if (m_raEntries.find (device) == m_raEntries.end ())
+    {
+      NS_LOG_LOGIC ("Not adding a context to a non-configured interface");
+      return;
+    }
+
+  auto contextMap = m_raEntries[device]->GetContexts ();
+
+  for (auto iter=contextMap.begin (); iter!=contextMap.end (); iter++)
+    {
+      if (iter->second->GetContextPrefix () == context)
+        {
+          m_raEntries[device]->RemoveContext (iter->second);
+          return;
+        }
+    }
+  NS_LOG_WARN ("Not removing a non-existing context " << context);
+
+}
+
 
 //
 // SixLowPanRaEntry class
