@@ -107,6 +107,18 @@ void SixLowPanNdContext::SetValidTime (Time time)
   m_validTime = time;
 }
 
+void SixLowPanNdContext::SetLastUpdateTime (Time time)
+{
+  NS_LOG_FUNCTION (this << time);
+  m_lastUpdateTime = time;
+}
+
+Time SixLowPanNdContext::GetLastUpdateTime ()
+{
+  NS_LOG_FUNCTION (this);
+  return m_lastUpdateTime;
+}
+
 Ipv6Prefix SixLowPanNdContext::GetContextPrefix () const
 {
   NS_LOG_FUNCTION (this);
