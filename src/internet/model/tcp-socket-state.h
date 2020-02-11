@@ -21,6 +21,7 @@
 #include "ns3/data-rate.h"
 #include "ns3/traced-value.h"
 #include "ns3/sequence-number.h"
+#include "tcp-rx-buffer.h"
 
 namespace ns3 {
 
@@ -98,6 +99,39 @@ public:
     CA_EVENT_NON_DELAYED_ACK, /**< Non-delayed ack is sent */
   } TcpCAEvent_t;
 
+  /**
+   * \brief Parameter value related to ECN enable/disable functionality
+   *        similar to sysctl for tcp_ecn. Currently value 2 from
+   *        https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt
+   *        is not implemented.
+   */
+  typedef enum
+    {
+      Off        = 0,   //!< Disable
+      On         = 1,   //!< Enable
+      AcceptOnly = 2,   //!< Enable only when the peer endpoint is ECN capable
+    } UseEcn_t;
+
+  /**
+   * \brief ECN code points
+   */
+  typedef enum
+    {
+      NotECT   = 0,   //!< Unmarkable
+      Ect1     = 1,   //!< Markable
+      Ect0     = 2,   //!< Markable
+      CongExp  = 3,   //!< Marked
+    } EcnCodePoint_t;
+
+  /**
+   * \brief ECN Modes
+   */
+  typedef enum
+    {
+      ClassicEcn,  //!< ECN functionality as described in RFC 3168.
+      DctcpEcn,    //!< ECN functionality as described in RFC 8257. Note: this mode is specific to DCTCP.
+    } EcnMode_t;
+
    /**
    * \brief Definition of the Ecn state machine
    *
@@ -154,6 +188,13 @@ public:
   TracedValue<uint32_t>  m_bytesInFlight {0};        //!< Bytes in flight
   TracedValue<Time>      m_lastRtt {Seconds (0.0)};  //!< Last RTT sample collected
 
+  Ptr<TcpRxBuffer>       m_rxBuffer;                 //!< Rx buffer (reordering buffer)
+
+  EcnMode_t              m_ecnMode {ClassicEcn}; //!< ECN mode
+  UseEcn_t               m_useEcn {Off};         //!< Socket ECN capability
+
+  EcnCodePoint_t         m_ectCodePoint {Ect0};  //!< ECT code point to use
+
   /**
    * \brief Get cwnd in segments rather than bytes
    *
@@ -173,6 +214,8 @@ public:
   {
     return m_ssThresh / m_segmentSize;
   }
+
+  Callback <void, uint8_t> m_sendEmptyPacketCallback;
 };
 
 namespace TracedValueCallback {
