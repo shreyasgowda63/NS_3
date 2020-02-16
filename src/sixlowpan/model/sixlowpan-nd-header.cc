@@ -485,7 +485,7 @@ void Icmpv6OptionSixLowPanContext::Print (std::ostream& os) const
       << (uint32_t)GetLength () << " context length = "
       << (uint32_t)m_contextLen << " flag C = " << m_c << " CID = "
       << (uint32_t)m_cid << " lifetime = " << m_validTime
-      << " context prefix = " << m_prefix << ")";
+      << " context prefix = " << m_prefix.ConvertToIpv6Address () << "/" << +m_prefix.GetPrefixLength () << ")";
 }
 
 uint32_t Icmpv6OptionSixLowPanContext::GetSerializedSize () const

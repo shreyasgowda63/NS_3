@@ -77,13 +77,15 @@ int main (int argc, char** argv)
   SixLowPanHelper sixlowpan;
   NetDeviceContainer devices = sixlowpan.Install (lrwpanDevices); 
 
+  sixlowpan.Set6LowPanBorderRouter (devices.Get (0));
+  sixlowpan.SetAdvertisedPrefix (devices.Get (0), Ipv6Prefix ("2001:2::"));
+  sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:1::"));
+  sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:2::"));
+
   Ipv6AddressHelper ipv6;
   ipv6.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));
   Ipv6InterfaceContainer deviceInterfaces;
   deviceInterfaces = ipv6.Assign (devices);
-  // check if addresses are assigned
-  //std::cout<< deviceInterfaces.GetAddress(0,1)<<std::endl;
-  //std::cout<< deviceInterfaces.GetAddress(1,1)<<std::endl;
    
   uint32_t packetSize = 10;
   uint32_t maxPacketCount = 5;

@@ -197,11 +197,17 @@ public:
   void RetransmitRS (Ipv6Address src, Ipv6Address dst, Address linkAddr);
 
   /**
-   * \brief Add a prefix to be announced on an interface (6LBR)
+   * \brief Set an interface to be used as a 6LBR
+   * \param device device to be used for announcement
+   */
+  void SetInterfaceAs6lbr (Ptr<SixLowPanNetDevice> device);
+
+  /**
+   * \brief Set a prefix to be announced on an interface (6LBR)
    * \param device device to be used for announcement
    * \param prefix announced prefix
    */
-  void AddAdvertisedPrefix (Ptr<SixLowPanNetDevice> device, Ptr<SixLowPanNdPrefix> prefix);
+  void SetAdvertisedPrefix (Ptr<SixLowPanNetDevice> device, Ipv6Prefix prefix);
 
   /**
    * \brief Add a context to be advertised on an interface (6LBR)
@@ -216,6 +222,12 @@ public:
    * \param context advertised context
    */
   void RemoveAdvertisedContext (Ptr<SixLowPanNetDevice> device, Ipv6Prefix context);
+
+  /**
+   * \brief Checks if an interface is set as 6LBR
+   * \return true if the interface is configured as a 6LBR
+   */
+  bool IsBorderRouterOnInterface (Ptr<SixLowPanNetDevice> device) const;
 
 protected:
   /**
@@ -238,22 +250,16 @@ private:
     ~SixLowPanRaEntry ();
 
     /**
-     * \brief Get list of prefixes advertised for this interface.
-     * \return list of IPv6 prefixes
+     * \brief Get the prefix advertised for this interface.
+     * \return the IPv6 prefix
      */
-    std::map<Ipv6Address, Ptr<SixLowPanNdPrefix> > GetPrefixes () const;
+    Ptr<SixLowPanNdPrefix> GetPrefix () const;
 
     /**
-     * \brief Add a prefix to advertise on interface.
+     * \brief Set the prefix to advertise on interface.
      * \param prefix prefix to advertise
      */
-    void AddPrefix (Ptr<SixLowPanNdPrefix> prefix);
-
-    /**
-     * \brief Remove a prefix.
-     * \param prefix prefix to remove
-     */
-    void RemovePrefix (Ptr<SixLowPanNdPrefix> prefix);
+    void SetPrefix (Ptr<SixLowPanNdPrefix> prefix);
 
     /**
      * \brief Get list of 6LoWPAN contexts advertised for this interface.
@@ -395,9 +401,9 @@ private:
 
   private:
     /**
-     * \brief List of prefixes advertised.
+     * \brief Advertised Prefix.
      */
-    std::map<Ipv6Address, Ptr<SixLowPanNdPrefix> > m_prefixes;
+    Ptr<SixLowPanNdPrefix> m_prefix;
 
     /**
      * \brief List of 6LoWPAN contexts advertised.
@@ -501,7 +507,14 @@ private:
   SixLowPanNodeStatus_e m_nodeRole;
 
   uint32_t m_version; //!< ABRO Version
+
+  Time m_routerLifeTime; //!< Default Router Lifetime
+
+  Time m_pioPreferredLifeTime; //!< Default Prefix Information Preferred Lifetime
+  Time m_pioValidLifeTime; //!< Default Prefix Information Valid Lifetime
+
   Time m_contextValidLifeTime; //!< Default Context Valid Lifetime
+
   std::map<Ipv6Address, Ptr<SixLowPanRaEntry> > m_raCache; //!< Router Advertisement cached entries (if the node is a 6LR)
   std::map<Ptr<SixLowPanNetDevice>, Ptr<SixLowPanRaEntry> > m_raEntries; //!< Router Advertisement entries (if the node is a 6LBR)
 

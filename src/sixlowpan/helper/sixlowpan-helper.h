@@ -81,39 +81,18 @@ public:
   NetDeviceContainer Install (NetDeviceContainer c);
 
   /**
-   * \brief Install the SixLoWPAN Border Router stack on top of an existing NetDevice.
-   *
-   * This function requires a set of properly configured NetDevices
-   * passed in as the parameter "c". The new NetDevices will have to
-   * be used instead of the original ones. In this way these
-   * SixLoWPAN devices will behave as shims between the NetDevices
-   * passed in and IPv6.
-   *
-   * Note that only IPv6 (and related protocols, such as ICMPv6) can
-   * be transmitted over a 6LoWPAN interface.
-   * Any other protocol (e.g., IPv4) will be discarded by 6LoWPAN.
-   *
-   * Other protocols (e.g., IPv4) could be used on the original NetDevices
-   * with some limitations.
-   * See the manual for a complete discussion.
-   *
-   * \note IPv6 stack must be installed \a after SixLoWPAN,
-   * using the SixLoWPAN NetDevices. See the example in the
-   * examples directory.
-   *
+   * \brief Set a device to act as a 6LBR.
    *
    * \param [in] nd The NetDevice.
-   * \return A container with the newly created SixLowPanNetDevices.
    */
-  NetDeviceContainer Install6LowPanBorderRouter (const Ptr<NetDevice> nd);
+  void Set6LowPanBorderRouter (const Ptr<NetDevice> nd);
 
   /**
    * \brief Add a new prefix to be advertised by 6LoWPAN-ND.
    * \param [in] nd The NetDevice.
    * \param prefix announced IPv6 prefix
-   * \param prefixLength announced IPv6 prefix length
    */
-  void AddAdvertisedPrefix (const Ptr<NetDevice> nd, Ipv6Address prefix, uint32_t prefixLength);
+  void SetAdvertisedPrefix (const Ptr<NetDevice> nd, Ipv6Prefix prefix);
 
   /**
    * \brief Add a new context to be advertised by 6LoWPAN-ND.
