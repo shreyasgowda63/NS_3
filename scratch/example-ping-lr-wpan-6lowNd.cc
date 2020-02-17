@@ -41,6 +41,8 @@ int main (int argc, char** argv)
   CommandLine cmd;
   cmd.Parse (argc, argv);
   
+  Packet::EnablePrinting ();
+
 #if 0
   LogComponentEnable ("Ping6Application", LOG_LEVEL_ALL);
   LogComponentEnable ("LrWpanMac",LOG_LEVEL_ALL);
@@ -78,9 +80,9 @@ int main (int argc, char** argv)
   NetDeviceContainer devices = sixlowpan.Install (lrwpanDevices); 
 
   sixlowpan.Set6LowPanBorderRouter (devices.Get (0));
-  sixlowpan.SetAdvertisedPrefix (devices.Get (0), Ipv6Prefix ("2001:2::"));
-  sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:1::"));
-  sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:2::"));
+  sixlowpan.SetAdvertisedPrefix (devices.Get (0), Ipv6Prefix ("2001:2::", 64));
+  sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:1::", 64));
+//  sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:2::", 64));
 
   Ipv6AddressHelper ipv6;
   ipv6.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));

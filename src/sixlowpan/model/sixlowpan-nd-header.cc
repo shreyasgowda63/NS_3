@@ -476,6 +476,7 @@ void Icmpv6OptionSixLowPanContext::SetContextPrefix (Ipv6Prefix prefix)
 {
   NS_LOG_FUNCTION (this << prefix);
   m_prefix = prefix;
+  m_contextLen = prefix.GetPrefixLength ();
 }
 
 void Icmpv6OptionSixLowPanContext::Print (std::ostream& os) const
@@ -491,7 +492,7 @@ void Icmpv6OptionSixLowPanContext::Print (std::ostream& os) const
 uint32_t Icmpv6OptionSixLowPanContext::GetSerializedSize () const
 {
   NS_LOG_FUNCTION (this);
-  uint8_t nb = GetLength() * 8;
+  uint8_t nb = GetLength () * 8;
   return nb;
 }
 
@@ -516,7 +517,14 @@ void Icmpv6OptionSixLowPanContext::Serialize (Buffer::Iterator start) const
   i.WriteU16 (m_validTime);
 
   m_prefix.GetBytes (buf);
-  i.Write (buf, 16);
+  if (m_contextLen <= 64)
+    {
+      i.Write (buf, 8);
+    }
+  else
+    {
+      i.Write (buf, 16);
+    }
 }
 
 uint32_t Icmpv6OptionSixLowPanContext::Deserialize (Buffer::Iterator start)
@@ -542,8 +550,24 @@ uint32_t Icmpv6OptionSixLowPanContext::Deserialize (Buffer::Iterator start)
   i.Next (2);
   m_validTime = i.ReadNtohU16 ();
 
-  i.Read (buf, 16);
-  m_prefix = Ipv6Prefix (buf);
+  if (GetContextLen () <= 64)
+    {
+      i.Read (buf, 8);
+    }
+  else
+    {
+      i.Read (buf, 16);
+    }
+  m_prefix = Ipv6Prefix (buf, GetContextLen ());
+
+  if (m_contextLen > 64)
+    {
+      SetLength (3);
+    }
+  else
+    {
+      SetLength (2);
+    }
 
   return GetSerializedSize ();
 }
