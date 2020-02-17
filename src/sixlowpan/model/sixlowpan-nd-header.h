@@ -353,12 +353,6 @@ public:
   uint8_t GetContextLen () const;
 
   /**
-   * \brief Set the context length field.
-   * \param cLen the context length value
-   */
-  void SetContextLen (uint8_t cLen);
-
-  /**
    * \brief Is compression flag ?
    * \return true if context is valid for use in compression, false otherwise
    */

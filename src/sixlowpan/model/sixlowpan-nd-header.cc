@@ -422,13 +422,6 @@ uint8_t Icmpv6OptionSixLowPanContext::GetContextLen () const
   return m_contextLen;
 }
 
-void Icmpv6OptionSixLowPanContext::SetContextLen (uint8_t cLen)
-{
-  NS_LOG_FUNCTION (this << static_cast<uint32_t> (cLen));
-  NS_ASSERT (cLen <= 128);
-  m_contextLen = cLen;
-}
-
 bool Icmpv6OptionSixLowPanContext::IsFlagC () const
 {
   NS_LOG_FUNCTION (this);
@@ -477,6 +470,15 @@ void Icmpv6OptionSixLowPanContext::SetContextPrefix (Ipv6Prefix prefix)
   NS_LOG_FUNCTION (this << prefix);
   m_prefix = prefix;
   m_contextLen = prefix.GetPrefixLength ();
+
+  if (prefix.GetPrefixLength () > 64)
+    {
+      SetLength (3);
+    }
+  else
+    {
+      SetLength (2);
+    }
 }
 
 void Icmpv6OptionSixLowPanContext::Print (std::ostream& os) const
@@ -538,7 +540,7 @@ uint32_t Icmpv6OptionSixLowPanContext::Deserialize (Buffer::Iterator start)
 
   SetType (i.ReadU8 ());
   SetLength (i.ReadU8 ());
-  SetContextLen (i.ReadU8 ());
+  m_contextLen = i.ReadU8 ();
 
   bitfield = i.ReadU8 ();
   m_c = false;
@@ -558,7 +560,7 @@ uint32_t Icmpv6OptionSixLowPanContext::Deserialize (Buffer::Iterator start)
     {
       i.Read (buf, 16);
     }
-  m_prefix = Ipv6Prefix (buf, GetContextLen ());
+  m_prefix = Ipv6Prefix (buf, m_contextLen);
 
   if (m_contextLen > 64)
     {

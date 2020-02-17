@@ -82,7 +82,7 @@ int main (int argc, char** argv)
   sixlowpan.Set6LowPanBorderRouter (devices.Get (0));
   sixlowpan.SetAdvertisedPrefix (devices.Get (0), Ipv6Prefix ("2001:2::", 64));
   sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:1::", 64));
-//  sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:2::", 64));
+  sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:2::", 64));
 
   Ipv6AddressHelper ipv6;
   ipv6.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));

@@ -261,8 +261,6 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
 {
   NS_LOG_FUNCTION (this << src << dst << interface);
 
-  std::cout << "SendSixLowPanRA" << std::endl;
-
   Ptr<SixLowPanNdiscCache> sixCache = DynamicCast<SixLowPanNdiscCache> (FindCache (interface->GetDevice ()));
   NS_ASSERT_MSG (sixCache, "Can not find a SixLowPanNdiscCache");
 
@@ -311,7 +309,6 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
         {
           Icmpv6OptionSixLowPanContext sixHdr;
           sixHdr.SetContextPrefix (i->second->GetContextPrefix ());
-          sixHdr.SetContextLen (i->second->GetContextLen ());
           sixHdr.SetFlagC (i->second->IsFlagC ());
           sixHdr.SetCid (i->second->GetCid ());
 
@@ -337,7 +334,6 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
 
       /* send RA */
       NS_LOG_LOGIC ("Send RA to " << dst);
-      std::cout << "Send RA to " << dst << std::endl;
 
       interface->Send (p, ipHeader, dst);
     }
@@ -384,14 +380,12 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
       prefixHdr.SetPrefix (prefix->GetPrefix ());
       p->AddHeader (prefixHdr);
 
-      std::cout << "**** " << prefixHdr << std::endl;
       /* Add 6COs */
       std::map<uint8_t, Ptr<SixLowPanNdContext> > contexts = iter->second->GetContexts ();
       for (std::map<uint8_t, Ptr<SixLowPanNdContext> >::iterator i = contexts.begin (); i != contexts.end (); i++)
         {
           Icmpv6OptionSixLowPanContext sixHdr;
           sixHdr.SetContextPrefix (i->second->GetContextPrefix ());
-          sixHdr.SetContextLen (i->second->GetContextLen ());
           sixHdr.SetFlagC (i->second->IsFlagC ());
           sixHdr.SetCid (i->second->GetCid ());
 
@@ -417,8 +411,6 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
 
       /* send RA */
       NS_LOG_LOGIC ("Send RA to " << dst);
-      std::cout << "Send RA to " << dst << std::endl;
-      std::cout << "Sending " << *p << std::endl;
 
       interface->Send (p, ipHeader, dst);
     }
@@ -861,8 +853,6 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   m_rsRetransmit = 0;
   m_receivedRA = true;
 
-  std::cout << "HandleSixLowPanRA start" << std::endl;
-
   Ptr<SixLowPanNetDevice> sixDevice = DynamicCast<SixLowPanNetDevice> (interface->GetDevice());
   NS_ASSERT_MSG (sixDevice != NULL, "SixLowPanNdProtocol cannot be installed on device different from SixLowPanNetDevice");
 
@@ -904,9 +894,6 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
 
       uint8_t oldSize = packet->GetSize ();
 
-      std::cout << "HandleSixLowPanRA packet type " << +type << " size " << +oldSize << std::endl;
-      std::cout << "Packet to decode: " << *packet << std::endl;
-
       switch (type)
       {
         case Icmpv6Header::ICMPV6_OPT_PREFIX:
@@ -914,9 +901,7 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
           prefixList.push_back (prefixHdr);
           break;
         case Icmpv6Header::ICMPV6_OPT_SIXLOWPAN_CONTEXT:
-          std::cout << "removed " << packet->RemoveHeader (contextHdr) << " bytes" << std::endl;;
           contextList.push_back (contextHdr);
-          std::cout << "Removed a Context Option - " << contextHdr << std::endl;
           break;
         case Icmpv6Header::ICMPV6_OPT_AUTHORITATIVE_BORDER_ROUTER:
           packet->RemoveHeader (abrHdr);
@@ -939,11 +924,7 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
 
       if (oldSize == packet->GetSize ())
         exit (0);
-
-      std::cout << "HandleSixLowPanRA packet size " << packet->GetSize () << std::endl;
-
     }
-  std::cout << "HandleSixLowPanRA packet decoded" << std::endl;
 
   if (prefixList.size () != 1)
     {
@@ -1068,8 +1049,6 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   Simulator::Schedule (Time (Seconds (t - 1)), &SixLowPanNdProtocol::SetReceivedRA, this, false);
   Simulator::Schedule (Time (Seconds (t)), &SixLowPanNdProtocol::RetransmitRS, this,
                        interface->GetLinkLocalAddress ().GetAddress (), src, addr);
-
-  std::cout << "HandleSixLowPanRA end" << std::endl;
 }
 
 void SixLowPanNdProtocol::HandleSixLowPanDAC (Ptr<Packet> packet, Ipv6Address const &src, Ipv6Address const &dst,
@@ -1249,12 +1228,9 @@ void SixLowPanNdProtocol::SetAdvertisedPrefix (Ptr<SixLowPanNetDevice> device, I
 {
   NS_LOG_FUNCTION (device << prefix);
 
-  std::cout << "SixLowPanNdProtocol::AddAdvertisedPrefix" << std::endl;
-
   if (m_raEntries.find (device) == m_raEntries.end ())
     {
       NS_LOG_LOGIC ("Not adding a prefix to a non-configured interface");
-      std::cout << "Not adding a prefix to a non-configured interface" << std::endl;
       return;
     }
 
@@ -1268,12 +1244,9 @@ void SixLowPanNdProtocol::AddAdvertisedContext (Ptr<SixLowPanNetDevice> device, 
 {
   NS_LOG_FUNCTION (device << context);
 
-  std::cout << "SixLowPanNdProtocol::AddAdvertisedContext" << std::endl;
-
   if (m_raEntries.find (device) == m_raEntries.end ())
     {
       NS_LOG_LOGIC ("Not adding a context to a non-configured interface");
-      std::cout << "Not adding a prefix to a non-configured interface" << std::endl;
       return;
     }
   auto contextMap = m_raEntries[device]->GetContexts ();
