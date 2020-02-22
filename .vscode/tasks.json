@@ -6,7 +6,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "./waf",
+            "command": "./waf build",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -21,5 +21,14 @@
                 "isDefault": true
             }
         }
-    ]
+    ],
+    "windows": {
+        "options": {
+            "shell": {
+                "executable": "${env:windir}\\system32\\bash.exe",
+                "args": ["-c"]
+            },
+            "cwd": "${workspaceFolder}"
+        },
+    }
 }
