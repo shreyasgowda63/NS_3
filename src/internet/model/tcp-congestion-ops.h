@@ -19,8 +19,8 @@
 #ifndef TCPCONGESTIONOPS_H
 #define TCPCONGESTIONOPS_H
 
-#include "ns3/tcp-socket-state.h"
-#include "ns3/tcp-rate-ops.h"
+#include "tcp-rate-ops.h"
+#include "tcp-socket-state.h"
 
 namespace ns3 {
 
@@ -73,6 +73,16 @@ public:
    * \return A string identifying the name
    */
   virtual std::string GetName () const = 0;
+
+  /**
+   * \brief Set configuration required by congestion control algorithm
+   *
+   * \param tcb internal congestion state
+   */
+  virtual void Init (Ptr<TcpSocketState> tcb)
+    {
+      NS_UNUSED (tcb);
+    }
 
   /**
    * \brief Get the slow start threshold after a loss event
@@ -178,6 +188,13 @@ public:
                             const TcpRateOps::TcpRateConnection &rc,
                             const TcpRateOps::TcpRateSample &rs);
 
+  /**
+   * \brief Reduces congestion window on receipt of ECN Echo Flag
+   *
+   * \param tcb internal congestion state
+   */
+  virtual void ReduceCwnd (Ptr<TcpSocketState> tcb) = 0;
+
   // Present in Linux but not in ns-3 yet:
   /* call when ack arrives (optional) */
   //     void (*in_ack_event)(struct sock *sk, u32 flags);
@@ -226,7 +243,7 @@ public:
   virtual void IncreaseWindow (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked);
   virtual uint32_t GetSsThresh (Ptr<const TcpSocketState> tcb,
                                 uint32_t bytesInFlight);
-
+  virtual void ReduceCwnd (Ptr<TcpSocketState> tcb);
   virtual Ptr<TcpCongestionOps> Fork ();
 
 protected:

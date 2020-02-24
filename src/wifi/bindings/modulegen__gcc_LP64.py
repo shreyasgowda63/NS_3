@@ -2134,10 +2134,6 @@ def register_Ns3BlockAckAgreement_methods(root_module, cls):
     cls.add_method('SetTimeout', 
                    'void', 
                    [param('uint16_t', 'timeout')])
-    ## block-ack-agreement.h (module 'wifi'): void ns3::BlockAckAgreement::SetWinEnd(uint16_t seq) [member function]
-    cls.add_method('SetWinEnd', 
-                   'void', 
-                   [param('uint16_t', 'seq')])
     return
 
 def register_Ns3BlockAckCache_methods(root_module, cls):
@@ -3373,7 +3369,7 @@ def register_Ns3Ipv4Address_methods(root_module, cls):
     cls.add_method('IsEqual', 
                    'bool', 
                    [param('ns3::Ipv4Address const &', 'other')], 
-                   is_const=True)
+                   is_const=True, deprecated=True)
     ## ipv4-address.h (module 'network'): bool ns3::Ipv4Address::IsLocalMulticast() const [member function]
     cls.add_method('IsLocalMulticast', 
                    'bool', 
@@ -3465,7 +3461,7 @@ def register_Ns3Ipv4Mask_methods(root_module, cls):
     cls.add_method('IsEqual', 
                    'bool', 
                    [param('ns3::Ipv4Mask', 'other')], 
-                   is_const=True)
+                   is_const=True, deprecated=True)
     ## ipv4-address.h (module 'network'): bool ns3::Ipv4Mask::IsMatch(ns3::Ipv4Address a, ns3::Ipv4Address b) const [member function]
     cls.add_method('IsMatch', 
                    'bool', 
@@ -3497,10 +3493,11 @@ def register_Ns3Ipv6Address_methods(root_module, cls):
     cls.add_constructor([param('ns3::Ipv6Address const &', 'addr')])
     ## ipv6-address.h (module 'network'): ns3::Ipv6Address::Ipv6Address(ns3::Ipv6Address const * addr) [constructor]
     cls.add_constructor([param('ns3::Ipv6Address const *', 'addr')])
-    ## ipv6-address.h (module 'network'): ns3::Ipv6Address ns3::Ipv6Address::CombinePrefix(ns3::Ipv6Prefix const & prefix) [member function]
+    ## ipv6-address.h (module 'network'): ns3::Ipv6Address ns3::Ipv6Address::CombinePrefix(ns3::Ipv6Prefix const & prefix) const [member function]
     cls.add_method('CombinePrefix', 
                    'ns3::Ipv6Address', 
-                   [param('ns3::Ipv6Prefix const &', 'prefix')])
+                   [param('ns3::Ipv6Prefix const &', 'prefix')], 
+                   is_const=True)
     ## ipv6-address.h (module 'network'): static ns3::Ipv6Address ns3::Ipv6Address::ConvertFrom(ns3::Address const & address) [member function]
     cls.add_method('ConvertFrom', 
                    'ns3::Ipv6Address', 
@@ -3556,6 +3553,11 @@ def register_Ns3Ipv6Address_methods(root_module, cls):
                    'ns3::Ipv6Address', 
                    [], 
                    is_static=True)
+    ## ipv6-address.h (module 'network'): bool ns3::Ipv6Address::HasPrefix(ns3::Ipv6Prefix const & prefix) const [member function]
+    cls.add_method('HasPrefix', 
+                   'bool', 
+                   [param('ns3::Ipv6Prefix const &', 'prefix')], 
+                   is_const=True)
     ## ipv6-address.h (module 'network'): bool ns3::Ipv6Address::IsAllHostsMulticast() const [member function]
     cls.add_method('IsAllHostsMulticast', 
                    'bool', 
@@ -3585,7 +3587,7 @@ def register_Ns3Ipv6Address_methods(root_module, cls):
     cls.add_method('IsEqual', 
                    'bool', 
                    [param('ns3::Ipv6Address const &', 'other')], 
-                   is_const=True)
+                   is_const=True, deprecated=True)
     ## ipv6-address.h (module 'network'): bool ns3::Ipv6Address::IsIpv4MappedAddress() const [member function]
     cls.add_method('IsIpv4MappedAddress', 
                    'bool', 
@@ -3711,6 +3713,10 @@ def register_Ns3Ipv6Prefix_methods(root_module, cls):
     cls.add_constructor([param('uint8_t *', 'prefix')])
     ## ipv6-address.h (module 'network'): ns3::Ipv6Prefix::Ipv6Prefix(char const * prefix) [constructor]
     cls.add_constructor([param('char const *', 'prefix')])
+    ## ipv6-address.h (module 'network'): ns3::Ipv6Prefix::Ipv6Prefix(uint8_t * prefix, uint8_t prefixLength) [constructor]
+    cls.add_constructor([param('uint8_t *', 'prefix'), param('uint8_t', 'prefixLength')])
+    ## ipv6-address.h (module 'network'): ns3::Ipv6Prefix::Ipv6Prefix(char const * prefix, uint8_t prefixLength) [constructor]
+    cls.add_constructor([param('char const *', 'prefix'), param('uint8_t', 'prefixLength')])
     ## ipv6-address.h (module 'network'): ns3::Ipv6Prefix::Ipv6Prefix(uint8_t prefix) [constructor]
     cls.add_constructor([param('uint8_t', 'prefix')])
     ## ipv6-address.h (module 'network'): ns3::Ipv6Prefix::Ipv6Prefix(ns3::Ipv6Prefix const & prefix) [constructor]
@@ -3727,6 +3733,11 @@ def register_Ns3Ipv6Prefix_methods(root_module, cls):
                    'ns3::Ipv6Prefix', 
                    [], 
                    is_static=True)
+    ## ipv6-address.h (module 'network'): uint8_t ns3::Ipv6Prefix::GetMinimumPrefixLength() const [member function]
+    cls.add_method('GetMinimumPrefixLength', 
+                   'uint8_t', 
+                   [], 
+                   is_const=True)
     ## ipv6-address.h (module 'network'): static ns3::Ipv6Prefix ns3::Ipv6Prefix::GetOnes() [member function]
     cls.add_method('GetOnes', 
                    'ns3::Ipv6Prefix', 
@@ -3746,7 +3757,7 @@ def register_Ns3Ipv6Prefix_methods(root_module, cls):
     cls.add_method('IsEqual', 
                    'bool', 
                    [param('ns3::Ipv6Prefix const &', 'other')], 
-                   is_const=True)
+                   is_const=True, deprecated=True)
     ## ipv6-address.h (module 'network'): bool ns3::Ipv6Prefix::IsMatch(ns3::Ipv6Address a, ns3::Ipv6Address b) const [member function]
     cls.add_method('IsMatch', 
                    'bool', 
@@ -3757,6 +3768,10 @@ def register_Ns3Ipv6Prefix_methods(root_module, cls):
                    'void', 
                    [param('std::ostream &', 'os')], 
                    is_const=True)
+    ## ipv6-address.h (module 'network'): void ns3::Ipv6Prefix::SetPrefixLength(uint8_t prefixLength) [member function]
+    cls.add_method('SetPrefixLength', 
+                   'void', 
+                   [param('uint8_t', 'prefixLength')])
     return
 
 def register_Ns3LogComponent_methods(root_module, cls):
@@ -5337,6 +5352,11 @@ def register_Ns3Vector2D_methods(root_module, cls):
     cls.add_binary_comparison_operator('<')
     cls.add_binary_numeric_operator('-', root_module['ns3::Vector2D'], root_module['ns3::Vector2D'], param('ns3::Vector2D const &', 'right'))
     cls.add_binary_numeric_operator('+', root_module['ns3::Vector2D'], root_module['ns3::Vector2D'], param('ns3::Vector2D const &', 'right'))
+    cls.add_binary_comparison_operator('!=')
+    cls.add_binary_comparison_operator('==')
+    cls.add_binary_comparison_operator('>=')
+    cls.add_binary_comparison_operator('>')
+    cls.add_binary_comparison_operator('<=')
     ## vector.h (module 'core'): ns3::Vector2D::Vector2D(ns3::Vector2D const & arg0) [constructor]
     cls.add_constructor([param('ns3::Vector2D const &', 'arg0')])
     ## vector.h (module 'core'): ns3::Vector2D::Vector2D(double _x, double _y) [constructor]
@@ -5359,6 +5379,11 @@ def register_Ns3Vector3D_methods(root_module, cls):
     cls.add_binary_comparison_operator('<')
     cls.add_binary_numeric_operator('-', root_module['ns3::Vector3D'], root_module['ns3::Vector3D'], param('ns3::Vector3D const &', 'right'))
     cls.add_binary_numeric_operator('+', root_module['ns3::Vector3D'], root_module['ns3::Vector3D'], param('ns3::Vector3D const &', 'right'))
+    cls.add_binary_comparison_operator('!=')
+    cls.add_binary_comparison_operator('==')
+    cls.add_binary_comparison_operator('>=')
+    cls.add_binary_comparison_operator('>')
+    cls.add_binary_comparison_operator('<=')
     ## vector.h (module 'core'): ns3::Vector3D::Vector3D(ns3::Vector3D const & arg0) [constructor]
     cls.add_constructor([param('ns3::Vector3D const &', 'arg0')])
     ## vector.h (module 'core'): ns3::Vector3D::Vector3D(double _x, double _y, double _z) [constructor]
@@ -19993,9 +20018,9 @@ def register_Ns3SpectrumWifiPhy_methods(root_module, cls):
     cls.add_method('CreateWifiSpectrumPhyInterface', 
                    'void', 
                    [param('ns3::Ptr< ns3::NetDevice >', 'device')])
-    ## spectrum-wifi-phy.h (module 'wifi'): double ns3::SpectrumWifiPhy::GetBandBandwidth() const [member function]
+    ## spectrum-wifi-phy.h (module 'wifi'): uint32_t ns3::SpectrumWifiPhy::GetBandBandwidth() const [member function]
     cls.add_method('GetBandBandwidth', 
-                   'double', 
+                   'uint32_t', 
                    [], 
                    is_const=True)
     ## spectrum-wifi-phy.h (module 'wifi'): uint16_t ns3::SpectrumWifiPhy::GetCenterFrequencyForChannelWidth(ns3::WifiTxVector txVector) const [member function]

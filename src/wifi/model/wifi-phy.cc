@@ -2539,6 +2539,11 @@ WifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector)
   Time txDuration = CalculateTxDuration (packet->GetSize (), txVector, GetFrequency ());
   NS_ASSERT (txDuration.IsStrictlyPositive ());
 
+  if (m_currentEvent != 0)
+    {
+      MaybeCcaBusyDuration (); //needed to keep busy state afterwards
+    }
+
   if (m_endPreambleDetectionEvent.IsRunning ())
     {
       m_endPreambleDetectionEvent.Cancel ();
@@ -2681,16 +2686,7 @@ WifiPhy::StartReceiveHeader (Ptr<Event> event, Time rxDuration)
       NotifyRxBegin (event->GetPacket ());
 
       m_timeLastPreambleDetected = Simulator::Now ();
-
       WifiTxVector txVector = event->GetTxVector ();
-
-      if (txVector.GetNss () > GetMaxSupportedRxSpatialStreams ())
-        {
-          NS_LOG_DEBUG ("Packet reception could not be started because not enough RX antennas");
-          NotifyRxDrop (event->GetPacket (), UNSUPPORTED_SETTINGS);
-          MaybeCcaBusyDuration ();
-          return;
-        }
 
       if ((txVector.GetMode ().GetModulationClass () == WIFI_MOD_CLASS_HT) && (txVector.GetPreambleType () == WIFI_PREAMBLE_HT_GF))
         {
@@ -2710,6 +2706,7 @@ WifiPhy::StartReceiveHeader (Ptr<Event> event, Time rxDuration)
       NS_LOG_DEBUG ("Drop packet because PHY preamble detection failed");
       NotifyRxDrop (event->GetPacket (), PREAMBLE_DETECT_FAILURE);
       m_interference.NotifyRxEnd ();
+      m_currentEvent = 0;
     }
   // Like CCA-SD, CCA-ED is governed by the 4μs CCA window to flag CCA-BUSY
   // for any received signal greater than the CCA-ED threshold.
@@ -3001,6 +2998,7 @@ WifiPhy::StartReceivePayload (Ptr<Event> event)
     {
       InterferenceHelper::SnrPer snrPer;
       snrPer = m_interference.CalculateHtPhyHeaderSnrPer (event);
+      NS_LOG_DEBUG ("snr(dB)=" << RatioToDb (snrPer.snr) << ", per=" << snrPer.per);
       canReceivePayload = (m_random->GetValue () > snrPer.per);
     }
   else
@@ -3010,7 +3008,22 @@ WifiPhy::StartReceivePayload (Ptr<Event> event)
     }
   if (canReceivePayload) //plcp reception succeeded
     {
-      if (IsModeSupported (txMode) || IsMcsSupported (txMode))
+      if (txVector.GetNss () > GetMaxSupportedRxSpatialStreams ())
+        {
+          NS_LOG_DEBUG ("Packet reception could not be started because not enough RX antennas");
+          NotifyRxDrop (event->GetPacket (), UNSUPPORTED_SETTINGS);
+        }
+      else if ((txVector.GetChannelWidth () >= 40) && (txVector.GetChannelWidth () > GetChannelWidth ()))
+        {
+          NS_LOG_DEBUG ("Packet reception could not be started because not enough channel width");
+          NotifyRxDrop (event->GetPacket (), UNSUPPORTED_SETTINGS);
+        }
+      else if (!IsModeSupported (txMode) && !IsMcsSupported (txMode))
+        {
+          NS_LOG_DEBUG ("Drop packet because it was sent using an unsupported mode (" << txMode << ")");
+          NotifyRxDrop (event->GetPacket (), UNSUPPORTED_SETTINGS);
+        }
+      else
         {
           Time payloadDuration = event->GetEndTime () - event->GetStartTime () - CalculatePlcpPreambleAndHeaderDuration (txVector);
           m_endRxEvent = Simulator::Schedule (payloadDuration, &WifiPhy::EndReceive, this, event);
@@ -3022,11 +3035,7 @@ WifiPhy::StartReceivePayload (Ptr<Event> event)
               params.bssColor = event->GetTxVector ().GetBssColor ();
               NotifyEndOfHePreamble (params);
             }
-        }
-      else //mode is not allowed
-        {
-          NS_LOG_DEBUG ("Drop packet because it was sent using an unsupported mode (" << txMode << ")");
-          NotifyRxDrop (event->GetPacket (), UNSUPPORTED_SETTINGS);
+          return;
         }
     }
   else //plcp reception failed
@@ -3034,6 +3043,9 @@ WifiPhy::StartReceivePayload (Ptr<Event> event)
       NS_LOG_DEBUG ("Drop packet because HT PHY header reception failed");
       NotifyRxDrop (event->GetPacket (), SIG_A_FAILURE);
     }
+  m_interference.NotifyRxEnd ();
+  m_currentEvent = 0;
+  MaybeCcaBusyDuration ();
 }
 
 void
@@ -3101,6 +3113,7 @@ WifiPhy::EndReceive (Ptr<Event> event)
 
   m_interference.NotifyRxEnd ();
   m_currentEvent = 0;
+  MaybeCcaBusyDuration ();
 }
 
 std::pair<bool, SignalNoiseDbm>
