@@ -1,0 +1,6 @@
+# Ignore everything by default, except the ones specified below
+*
+!.gitignore
+!c_cpp_properties.json
+!launch.json
+!tasks.json
