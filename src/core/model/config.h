@@ -114,6 +114,15 @@ bool SetGlobalFailSafe (std::string name, const AttributeValue &value);
 void ConnectWithoutContext (std::string path, const CallbackBase &cb);
 /**
  * \ingroup config
+ * \copydoc Config::ConnectWithoutContext()
+ * \returns \c true if at least one connection could be made.
+ *
+ * This function will not warn if the path doesn't exist,
+ * unlike ConnectWithoutContext().
+ */
+bool ConnectWithoutContextFailSafe (std::string path, const CallbackBase &cb);
+/**
+ * \ingroup config
  * \param [in] path A path to match trace sources.
  * \param [in] cb The callback to disconnect to the matching trace sources.
  *
@@ -131,6 +140,15 @@ void DisconnectWithoutContext (std::string path, const CallbackBase &cb);
  * context string upon trace event notification.
  */
 void Connect (std::string path, const CallbackBase &cb);
+/**
+ * \ingroup config
+ * \copydoc Config::Connect()
+ * \returns \c true if at least one connection could be made.
+ *
+ * This function will not warn if the path doesn't exist,
+ * unlike Connect().
+ */
+bool ConnectFailSafe (std::string path, const CallbackBase &cb);
 /**
  * \ingroup config
  * \param [in] path A path to match trace sources.
@@ -214,6 +232,15 @@ public:
    */
   void Connect (std::string name, const CallbackBase &cb);
   /**
+   * \copydoc Connect()
+   * \returns \c true if at least one connection could be made.
+   *
+   * This function will not warn if the path doesn't exist,
+   * unlike Connect().
+   * \sa ns3::ConfigConnectFailSafe
+   */
+  bool ConnectFailSafe (std::string path, const CallbackBase &cb);
+  /**
    * \param [in] name The name of the trace source to connect to
    * \param [in] cb The sink to connect to the trace source
    *
@@ -222,6 +249,15 @@ public:
    * \sa ns3::Config::ConnectWithoutContext
    */
   void ConnectWithoutContext (std::string name, const CallbackBase &cb);
+  /**
+   * \copydoc ConnectWithoutContext()
+   * \returns \c true if at least one connection could be made.
+   *
+   * This function will not warn if the path doesn't exist,
+   * unlike Connect().
+   * \sa ns3::ConfigConnectWithoutContext
+   */
+  bool ConnectWithoutContextFailSafe (std::string path, const CallbackBase &cb);
   /**
    * \param [in] name The name of the trace source to disconnect from
    * \param [in] cb The sink to disconnect from the trace source
