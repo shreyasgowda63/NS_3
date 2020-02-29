@@ -24,6 +24,7 @@
 #include "ns3/log.h"
 #include "ns3/ptr.h"
 #include "ns3/assert.h"
+#include "ns3/abort.h"
 #include "ns3/packet.h"
 #include "ns3/node.h"
 #include "ns3/boolean.h"
@@ -853,6 +854,9 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   m_rsRetransmit = 0;
   m_receivedRA = true;
 
+  std::cout << "** begin ** SixLowPanNdProtocol::HandleSixLowPanRA" << std::endl;
+
+
   Ptr<SixLowPanNetDevice> sixDevice = DynamicCast<SixLowPanNetDevice> (interface->GetDevice());
   NS_ASSERT_MSG (sixDevice != NULL, "SixLowPanNdProtocol cannot be installed on device different from SixLowPanNetDevice");
 
@@ -861,7 +865,7 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   Icmpv6RA raHeader;
   Ptr<Ipv6L3Protocol> ipv6 = GetNode ()->GetObject<Ipv6L3Protocol> ();
 
-  Icmpv6OptionAuthoritativeBorderRouter abrHdr; /* ABRO */
+  Icmpv6OptionAuthoritativeBorderRouter abroHdr; /* ABRO */
   Icmpv6OptionLinkLayerAddress llaHdr (1); /* SLLAO */
 
   bool next = true;
@@ -892,8 +896,6 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
       uint8_t type = 0;
       packet->CopyData (&type, sizeof(type));
 
-      uint8_t oldSize = packet->GetSize ();
-
       switch (type)
       {
         case Icmpv6Header::ICMPV6_OPT_PREFIX:
@@ -901,19 +903,20 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
           prefixList.push_back (prefixHdr);
           break;
         case Icmpv6Header::ICMPV6_OPT_SIXLOWPAN_CONTEXT:
+          packet->RemoveHeader (contextHdr);
           contextList.push_back (contextHdr);
           break;
         case Icmpv6Header::ICMPV6_OPT_AUTHORITATIVE_BORDER_ROUTER:
-          packet->RemoveHeader (abrHdr);
-          version = abrHdr.GetVersion ();
-          border = abrHdr.GetRouterAddress ();
+          packet->RemoveHeader (abroHdr);
+          version = abroHdr.GetVersion ();
+          border = abroHdr.GetRouterAddress ();
           break;
         case Icmpv6Header::ICMPV6_OPT_LINK_LAYER_SOURCE:
           packet->RemoveHeader (llaHdr);
           ReceiveLLA (llaHdr, src, dst, interface); // generates an entry in NDISC table with m_router = true
           break;
         default:
-          /* Unknown option, quit */
+          /* Unknown option, stop processing */
           next = false;
           break;
       }
@@ -921,14 +924,12 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
         {
           next = false;
         }
-
-      if (oldSize == packet->GetSize ())
-        exit (0);
     }
 
   if (prefixList.size () != 1)
     {
       // RAs should contain one (and only one) PIO
+      NS_LOG_LOGIC ("SixLowPanNdProtocol::HandleSixLowPanRA - wrong number of PIOs in the RA (" << prefixList.size () << ") - ignoring RA");
       return;
     }
 
@@ -936,12 +937,15 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
 
   if (border == Ipv6Address::GetAny ())
     {
+      NS_LOG_LOGIC ("SixLowPanNdProtocol::HandleSixLowPanRA - border router address is set to Any, - ignoring RA");
       return;
     }
 
   auto it = m_raCache.find (border);
   if (it == m_raCache.end ()) // Can't find the entry, create a new one
     {
+      NS_LOG_LOGIC ("SixLowPanNdProtocol new RA, adding it to the cache");
+
       Ptr<SixLowPanRaEntry> ra = Create<SixLowPanRaEntry> ();
       m_raCache[border] = ra;
       ra->SetManagedFlag (raHeader.GetFlagM ());
@@ -952,7 +956,8 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
       ra->SetRetransTimer (raHeader.GetRetransmissionTime ());
       ra->SetCurHopLimit (raHeader.GetCurHopLimit ());
       ra->SetVersion (version);
-      ra->SetValidTime (abrHdr.GetValidTime ());
+      ra->SetValidTime (abroHdr.GetValidTime ());
+      ra->SetBorderAddress (abroHdr.GetRouterAddress ());
 
       NS_ASSERT (m_regTime);
 
@@ -967,12 +972,37 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
 
           ra->AddContext (context);
         }
+
+      Ptr<SixLowPanNdPrefix> prefix = Create<SixLowPanNdPrefix> ();
+      prefix->SetPrefix (prefixHdr.GetPrefix ());
+      prefix->SetPrefixLength (prefixHdr.GetPrefixLength ());
+      prefix->SetPreferredLifeTime (Seconds (prefixHdr.GetPreferredTime ()));
+      prefix->SetValidLifeTime (Seconds (prefixHdr.GetValidTime ()));
+
+      ra->SetPrefix (prefix);
+
+      ipv6->AddAutoconfiguredAddress (ipv6->GetInterfaceForDevice (sixDevice),
+                                      prefixHdr.GetPrefix (), prefixHdr.GetPrefixLength (),
+                                      prefixHdr.GetFlags (), prefixHdr.GetValidTime (),
+                                      prefixHdr.GetPreferredTime (), defaultRouter);
+
+      // \todo Now mark it as tentative and start an address registration.
+
     }
-  else
+  else // found an entry, try to update it.
     {
       Ptr<SixLowPanRaEntry> ra = it->second;
       if (version > (it->second->GetVersion ())) // Update existing entry from 6LBR with new information
         {
+          for (std::list<Icmpv6OptionPrefixInformation>::iterator iter = prefixList.begin (); iter != prefixList.end (); iter++)
+            {
+              if (ra->GetPrefix ()->GetPrefix () != (*iter).GetPrefix () ) /* prefix NOT matching */
+                {
+                  NS_LOG_WARN ("A 6LBR is advertising a prefix different than the one we already had. Ignoring");
+                  return;
+                }
+            }
+
           it->second->SetManagedFlag (raHeader.GetFlagM ());
           it->second->SetOtherConfigFlag (raHeader.GetFlagO ());
           it->second->SetHomeAgentFlag (raHeader.GetFlagH ());
@@ -981,25 +1011,8 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
           it->second->SetRetransTimer (raHeader.GetRetransmissionTime ());
           it->second->SetCurHopLimit (raHeader.GetCurHopLimit ());
           it->second->SetVersion (version);
-          it->second->SetValidTime (abrHdr.GetValidTime ());
-
-          for (std::list<Icmpv6OptionPrefixInformation>::iterator iter = prefixList.begin (); iter != prefixList.end (); iter++)
-            {
-              if (ra->GetPrefix ()->GetPrefix () != (*iter).GetPrefix () ) /* prefix NOT matching */
-                {
-                  NS_LOG_WARN ("A 6LBR is advertising a prefix different than the one we already had. Ignoring");
-                  return;
-                }
-              else /* prefix found, updating! */
-                {
-                  Ptr<SixLowPanNdPrefix> prefix = ra->GetPrefix ();
-
-                  prefix->SetPrefixLength ((*iter).GetPrefixLength ());
-                  prefix->SetFlags ((*iter).GetFlags ());
-                  prefix->SetValidLifeTime (Seconds ((*iter).GetValidTime ()));
-                  prefix->SetPreferredLifeTime (Seconds ((*iter).GetPreferredTime ()));
-                }
-            }
+          it->second->SetValidTime (abroHdr.GetValidTime ());
+          it->second->SetBorderAddress (abroHdr.GetRouterAddress ());
 
           for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin (); jt != contextList.end (); jt++)
             {
@@ -1024,10 +1037,13 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
                   context->SetLastUpdateTime (Simulator::Now ());
                 }
             }
-        }
-      else  // Old information, not updating
-        {
-          return;
+
+          // this is to update the address timers.
+          ipv6->AddAutoconfiguredAddress (ipv6->GetInterfaceForDevice (sixDevice),
+                                          prefixHdr.GetPrefix (), prefixHdr.GetPrefixLength (),
+                                          prefixHdr.GetFlags (), prefixHdr.GetValidTime (),
+                                          prefixHdr.GetPreferredTime (), defaultRouter);
+
         }
     }
 
@@ -1221,6 +1237,21 @@ void SixLowPanNdProtocol::SetInterfaceAs6lbr (Ptr<SixLowPanNetDevice> device)
 
   newRa->SetRouterLifeTime (routerLifetime);
 
+  Ptr<Ipv6L3Protocol> ipv6 = GetNode ()->GetObject<Ipv6L3Protocol> ();
+  int32_t interfaceId = ipv6->GetInterfaceForDevice (device);
+  Ipv6Address borderAddress = Ipv6Address::GetAny ();
+  for (auto i=0; i<ipv6->GetNAddresses (interfaceId); i++)
+    {
+      if (ipv6->GetAddress (interfaceId, i).GetScope () == Ipv6InterfaceAddress::GLOBAL)
+        {
+          borderAddress = ipv6->GetAddress (interfaceId, i).GetAddress ();
+          continue;
+        }
+    }
+  NS_ABORT_MSG_IF (borderAddress == Ipv6Address::GetAny (), "Can not set a 6LBR because I can't find a global address associated with the interface");
+  newRa->SetBorderAddress (borderAddress);
+  newRa->SetVersion (0x66);
+
   m_raEntries[device] = newRa;
 }
 
@@ -1235,7 +1266,7 @@ void SixLowPanNdProtocol::SetAdvertisedPrefix (Ptr<SixLowPanNetDevice> device, I
     }
 
   Ptr<SixLowPanNdPrefix> newPrefix = Create<SixLowPanNdPrefix> (prefix.ConvertToIpv6Address (), prefix.GetPrefixLength (),
-                                                                m_pioPreferredLifeTime, m_pioValidLifeTime, 0);
+                                                                m_pioPreferredLifeTime, m_pioValidLifeTime, 64);
 
   m_raEntries[device]->SetPrefix (newPrefix);
 }

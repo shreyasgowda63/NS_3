@@ -213,7 +213,7 @@ uint32_t Icmpv6DuplicateAddress::Deserialize (Buffer::Iterator start)
   m_eui64.CopyFrom (buf1);
 
   i.Read (buf2, 16);
-  m_regAddress.Deserialize (buf2);
+  m_regAddress = Ipv6Address::Deserialize (buf2);
 
   return GetSerializedSize ();
 }
@@ -712,7 +712,7 @@ uint32_t Icmpv6OptionAuthoritativeBorderRouter::Deserialize (Buffer::Iterator st
   m_validTime = i.ReadU16 ();
 
   i.Read (buf, 16);
-  m_routerAddress.Deserialize (buf);
+  m_routerAddress = Ipv6Address::Deserialize (buf);
 
   return GetSerializedSize ();
 }
