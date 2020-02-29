@@ -50,7 +50,9 @@ public:
   virtual void Serialize (Buffer::Iterator start) const;
   virtual uint32_t Deserialize (Buffer::Iterator start);
   virtual void Print (std::ostream &os) const;
-
+/**
+ * \return 0
+ */
   virtual uint32_t GetMessageSize (void) const;
 
   /**
@@ -99,7 +101,9 @@ public:
    * \param iesLength the IEs length
    */
   void SetIesLength (uint16_t iesLength);
-
+  /**
+   * \brief Calculates MessageLength
+   */
   void ComputeMessageLength (void);
 
   /// Interface Type enumeration
@@ -116,9 +120,9 @@ public:
   /// FTEID structure
   struct Fteid_t
   {
-    InterfaceType_t interfaceType;
-    Ipv4Address addr;
-    uint32_t teid;
+    InterfaceType_t interfaceType; ///< interfaceType
+    Ipv4Address addr; ///< addr : an ipv4 address
+    uint32_t teid; ///< teid
   };
 
   /// Message Type enumeration
@@ -173,61 +177,149 @@ protected:
   /**
    * Deserialize the GTP-C header in the GTP-C messages
    * \param i the buffer iterator
+   * \return GtpcHeader::GetSerializedSize () or 0 as per the execution of conditional statements
    */
   uint32_t PreDeserialize (Buffer::Iterator &i);
 
 };
 
-
+/**
+ * GtpcIes Class
+ */
 class GtpcIes
 {
 public:
+ /**
+  * Cause_t enumeration
+  */ 
   enum Cause_t
   {
     RESERVED          = 0,
     REQUEST_ACCEPTED  = 16,
   };
 
-  const uint32_t serializedSizeImsi = 12;
-  const uint32_t serializedSizeCause = 6;
-  const uint32_t serializedSizeEbi = 5;
-  const uint32_t serializedSizeBearerQos = 26;
-  const uint32_t serializedSizePacketFilter = 3 + 9 + 9 + 5 + 5 + 3;
+  const uint32_t serializedSizeImsi = 12; ///< serializedSizeImsi initialized as 12
+  const uint32_t serializedSizeCause = 6; ///< serializedSizeCause initialized as 6
+  const uint32_t serializedSizeEbi = 5; ///< serializedSizeEbi initialized as 5
+  const uint32_t serializedSizeBearerQos = 26; ///< serializedSizeBearerQos initialized as 26
+  const uint32_t serializedSizePacketFilter = 3 + 9 + 9 + 5 + 5 + 3; ///< serializedSizePacketFilter
+   /**
+   * \return (5 + packetFilters.size () * serializedSizePacketFilter)
+   * \param packetFilters
+   */  
   uint32_t GetSerializedSizeBearerTft (std::list<EpcTft::PacketFilter> packetFilters) const;
-  const uint32_t serializedSizeUliEcgi = 12;
-  const uint32_t serializedSizeFteid = 13;
-  const uint32_t serializedSizeBearerContextHeader = 4;
+  const uint32_t serializedSizeUliEcgi = 12; ///< serializedSizeUliEcgi initialized as 12
+  const uint32_t serializedSizeFteid = 13; ///< serializedSizeFteid initialized as 13
+  const uint32_t serializedSizeBearerContextHeader = 4; ///< serializedSizeBearerContextHeader initialized as 4
 
-
+/**
+ * \param i : the buffer iterator 
+ * \param imsi
+ */
   void SerializeImsi (Buffer::Iterator &i, uint64_t imsi) const;
+   /**
+   * \return serializedSizeImsi
+   * \param i : the buffer iterator 
+   * \param imsi
+   */ 
   uint32_t DeserializeImsi (Buffer::Iterator &i, uint64_t &imsi);
-
+/**
+ * \param i : the buffer iterator 
+ * \param cause
+ */
   void SerializeCause (Buffer::Iterator &i, Cause_t cause) const;
+  /**
+   * \return serializedSizeCause
+   * \param i : the buffer iterator 
+   * \param cause
+   */
   uint32_t DeserializeCause (Buffer::Iterator &i, Cause_t &cause);
-
+/**
+ * \param i : the buffer iterator 
+ * \param  epsBearerId
+ */
   void SerializeEbi (Buffer::Iterator &i, uint8_t epsBearerId) const;
+  /**
+   * \return serializedSizeEbi
+   * \param i : the buffer iterator 
+   * \param epsBearerId
+   */
   uint32_t DeserializeEbi (Buffer::Iterator &i, uint8_t &epsBearerId);
-
+/**
+ * \param i : the buffer iterator 
+ * \param data
+ */
   void WriteHtonU40 (Buffer::Iterator &i, uint64_t data) const;
+  /**
+   * \return retval
+   * \param i : the buffer iterator
+   */
   uint64_t ReadNtohU40 (Buffer::Iterator &i);
-
+/**
+ * \brief Serializes Bearer Qos
+ * \param i : the buffer iterator 
+ * \param bearerQos
+ */
   void SerializeBearerQos (Buffer::Iterator &i, EpsBearer bearerQos) const;
+  /**
+   * \param i : the buffer iterator 
+   * \param bearerQos
+   * \brief Deserializes Bearer Qos
+   * \return serializedSizeBearerQos
+   */
   uint32_t DeserializeBearerQos (Buffer::Iterator &i, EpsBearer &bearerQos);
-
+/**
+ * \brief Deserializes Bearer Qos
+ * \param i : the buffer iterator 
+ * \param packetFilters
+ */
   void SerializeBearerTft (Buffer::Iterator &i, std::list<EpcTft::PacketFilter> packetFilters) const;
+  /**
+   * \return GetSerializedSizeBearerTft
+   * \param i : the buffer iterator 
+   * \param epcTft
+   */
   uint32_t DeserializeBearerTft (Buffer::Iterator &i, Ptr<EpcTft> epcTft);
-
+/**
+ * \brief Serializes UliEcgi
+ * \param i : the buffer iterator 
+ * \param uliEcgi
+ */
   void SerializeUliEcgi (Buffer::Iterator &i, uint32_t uliEcgi) const;
+   /**
+   * \return  serializedSizeUliEcgi
+   * \param i : the buffer iterator 
+   * \param uliEcgi
+   */ 
   uint32_t DeserializeUliEcgi (Buffer::Iterator &i, uint32_t &uliEcgi);
-
+/**
+ * \param i : the buffer iterator  
+ * \param fteid
+ */
   void SerializeFteid (Buffer::Iterator &i, GtpcHeader::Fteid_t fteid) const;
+/**
+   * \return serializedSizeFteid
+   * \param i : the buffer iterator  
+   * \param fteid
+   */
   uint32_t DeserializeFteid (Buffer::Iterator &i, GtpcHeader::Fteid_t &fteid);
-
+/**
+   * \param i : the buffer iterator 
+   * \param length
+   */
   void SerializeBearerContextHeader (Buffer::Iterator &i, uint16_t length) const;
+ /**
+ * \param i : the buffer iterator 
+ * \param  length
+ * \brief DeSerializes Bearer Context Header
+ * \return serializedSizeBearerContextHeader
+ */
   uint32_t DeserializeBearerContextHeader (Buffer::Iterator &i, uint16_t &length);
 };
 
-
+/**
+ * GtpcCreateSessionRequestMessage Class
+ */
 class GtpcCreateSessionRequestMessage : public GtpcHeader, public GtpcIes
 {
 public:
@@ -243,17 +335,43 @@ public:
   virtual void Serialize (Buffer::Iterator start) const;
   virtual uint32_t Deserialize (Buffer::Iterator start);
   virtual void Print (std::ostream &os) const;
+  /**
+   * \brief Gets the size of messages
+   * \return serializedSize
+   */
   virtual uint32_t GetMessageSize (void) const;
 
+
+
+
+
+/**
+ * \return imsi the unique UE identifier
+ */
   uint64_t GetImsi () const;
+/**
+ * \param imsi (International mobile subscriber identity)
+ */
   void SetImsi (uint64_t imsi);
-
+/**
+ * \return m_uliEcgi
+ */  
   uint32_t GetUliEcgi () const;
+/**
+ * \brief assigns value to m_uliEcgi
+ * \param uliEcgi 
+ */
   void SetUliEcgi (uint32_t uliEcgi);
-
+/**
+ * \return  m_senderCpFteid
+ */
   GtpcHeader::Fteid_t GetSenderCpFteid () const;
+/**
+ * \param fteid
+ * \brief Gets value of m_senderCpFteid
+ */
   void SetSenderCpFteid (GtpcHeader::Fteid_t fteid);
-
+/// BearerContextToBeCreated Structure
   struct BearerContextToBeCreated
   {
     GtpcHeader::Fteid_t sgwS5uFteid; ///< FTEID
@@ -261,19 +379,29 @@ public:
     Ptr<EpcTft> tft; ///< traffic flow template
     EpsBearer bearerLevelQos; ///< bearer QOS level
   };
-
+/**
+ * \brief gets bearer contexts to be created
+ * \return m_bearerContextsToBeCreated 
+ */
   std::list<BearerContextToBeCreated> GetBearerContextsToBeCreated () const;
+/**
+ * \param bearerContexts
+ */
   void SetBearerContextsToBeCreated (std::list<BearerContextToBeCreated> bearerContexts);
 
 private:
-  uint64_t m_imsi;
-  uint32_t m_uliEcgi;
-  GtpcHeader::Fteid_t m_senderCpFteid;
+  uint64_t m_imsi; ///< imsi (International mobile subscriber identity)
+  uint32_t m_uliEcgi; ///< uliEcgi (E-UTRAN Cell Global Identifier)
+  GtpcHeader::Fteid_t m_senderCpFteid; ///< senderCpFteid
 
-  std::list<BearerContextToBeCreated> m_bearerContextsToBeCreated;
+  std::list<BearerContextToBeCreated> m_bearerContextsToBeCreated; ///< Bearer contexts to be created
 };
 
 
+
+/**
+ * GtpcCreateSessionResponseMessage
+ */
 class GtpcCreateSessionResponseMessage : public GtpcHeader, public GtpcIes
 {
 public:
@@ -289,14 +417,35 @@ public:
   virtual void Serialize (Buffer::Iterator start) const;
   virtual uint32_t Deserialize (Buffer::Iterator start);
   virtual void Print (std::ostream &os) const;
+/**
+ * \return serializedSize
+ */
   virtual uint32_t GetMessageSize (void) const;
 
+/**
+ * \return m_cause
+ */
   Cause_t GetCause () const;
+/**
+ * \brief assigns m_cause = cause
+ * \param cause
+ */
+
+/**
+ * \brief assigns m_cause = cause
+ */
   void SetCause (Cause_t cause);
-
+/**
+ * \brief m_senderCpFteid
+ * \return m_senderCpFteid
+ */
   GtpcHeader::Fteid_t GetSenderCpFteid () const;
+/**
+  * \param fteid
+  * \brief assigns m_senderCpFteid = fteid
+  */
   void SetSenderCpFteid (GtpcHeader::Fteid_t fteid);
-
+///BearerContextCreated structure
   struct BearerContextCreated
   {
     uint8_t epsBearerId; ///< EPS bearer ID
@@ -305,18 +454,28 @@ public:
     GtpcHeader::Fteid_t fteid; ///< FTEID
     EpsBearer bearerLevelQos; ///< Bearer QOS level
   };
-
+/**
+ * \return m_bearerContextsCreated
+ */
   std::list<BearerContextCreated> GetBearerContextsCreated () const;
+  /**
+   * \param bearerContexts
+   * \brief Sets created bearer contexts
+   */
   void SetBearerContextsCreated (std::list<BearerContextCreated> bearerContexts);
 
 private:
-  Cause_t m_cause;
-  GtpcHeader::Fteid_t m_senderCpFteid;
+  Cause_t m_cause; ///< m_cause
+  GtpcHeader::Fteid_t m_senderCpFteid; ///< m_senderCpFteid
 
-  std::list<BearerContextCreated> m_bearerContextsCreated;
+  std::list<BearerContextCreated> m_bearerContextsCreated; ///< Created Bearer Contexts
 };
 
 
+
+/** 
+ * GtpcModifyBearerRequestMessage Class
+ */
 class GtpcModifyBearerRequestMessage : public GtpcHeader, public GtpcIes
 {
 public:
@@ -333,30 +492,52 @@ public:
   virtual uint32_t Deserialize (Buffer::Iterator start);
   virtual void Print (std::ostream &os) const;
   virtual uint32_t GetMessageSize (void) const;
-
-  uint64_t GetImsi () const;
+/**
+ * \return m_imsi
+ */
+  uint64_t GetImsi () const; ///< GetImsi
+  /**
+   * \brief assigns m_imsi = imsi
+   * \param imsi
+   */
   void SetImsi (uint64_t imsi);
-
-  uint32_t GetUliEcgi () const;
+/**
+ * \return m_uliEcgi
+ */
+  uint32_t GetUliEcgi () const; ///< GetUliEcgi
+  /**
+   * \brief  assigns m_uliEcgi = uliEcgi
+   * \param uliEcgi
+   */
   void SetUliEcgi (uint32_t uliEcgi);
 
+  ///BearerContextToBeModified structure
   struct BearerContextToBeModified
   {
     uint8_t epsBearerId; ///< EPS bearer ID
     GtpcHeader::Fteid_t fteid; ///< FTEID
   };
-
+/**
+ * \return m_bearerContextsToBeModified
+ */
   std::list<BearerContextToBeModified> GetBearerContextsToBeModified () const;
+  /**
+   * \brief assigns m_bearerContextsToBeModified = bearerContexts
+   * \param bearerContexts
+   */
   void SetBearerContextsToBeModified (std::list<BearerContextToBeModified> bearerContexts);
 
 private:
-  uint64_t m_imsi;
-  uint32_t m_uliEcgi;
+  uint64_t m_imsi; ///< m_imsi
+  uint32_t m_uliEcgi; ///< m_uliEcgi
 
-  std::list<BearerContextToBeModified> m_bearerContextsToBeModified;
+  std::list<BearerContextToBeModified> m_bearerContextsToBeModified; ///< m_bearerContextsToBeModified
 };
 
 
+/**
+ * GtpcModifyBearerResponseMessage Class
+ */
 class GtpcModifyBearerResponseMessage : public GtpcHeader, public GtpcIes
 {
 public:
@@ -373,14 +554,22 @@ public:
   virtual uint32_t Deserialize (Buffer::Iterator start);
   virtual void Print (std::ostream &os) const;
   virtual uint32_t GetMessageSize (void) const;
-
+/**
+ * \return m_cause
+ */
   Cause_t GetCause () const;
+  /**
+   * \brief assigns m_cause = cause
+   * \param cause
+   */
   void SetCause (Cause_t cause);
 
 private:
-  Cause_t m_cause;
+  Cause_t m_cause; ///< m_cause
 };
-
+/**
+ * GtpcDeleteBearerCommandMessage Class
+ */
 
 class GtpcDeleteBearerCommandMessage : public GtpcHeader, public GtpcIes
 {
@@ -397,21 +586,33 @@ public:
   virtual void Serialize (Buffer::Iterator start) const;
   virtual uint32_t Deserialize (Buffer::Iterator start);
   virtual void Print (std::ostream &os) const;
+  /**
+   * \return serializedSize as  m_bearerContexts.size () * (serializedSizeBearerContextHeader + serializedSizeEbi)
+   */
   virtual uint32_t GetMessageSize (void) const;
-
+/// BearerContext structure
   struct BearerContext
   {
     uint8_t m_epsBearerId; ///< EPS bearer ID
   };
-
+/**
+ * \return  m_bearerContexts
+ */
   std::list<BearerContext> GetBearerContexts () const;
+  /**
+   * \param bearerContexts
+   * \brief assigns m_bearerContexts = bearerContexts
+   */
   void SetBearerContexts (std::list<BearerContext> bearerContexts);
 
 private:
-  std::list<BearerContext> m_bearerContexts;
+  std::list<BearerContext> m_bearerContexts; ///< m_bearerContexts
 };
 
 
+/**
+ * GtpcDeleteBearerRequestMessage Class
+ */
 class GtpcDeleteBearerRequestMessage : public GtpcHeader, public GtpcIes
 {
 public:
@@ -427,16 +628,26 @@ public:
   virtual void Serialize (Buffer::Iterator start) const;
   virtual uint32_t Deserialize (Buffer::Iterator start);
   virtual void Print (std::ostream &os) const;
+  /**
+   * \return serializedSize as m_epsBearerIds.size () * serializedSizeEbi
+   */
   virtual uint32_t GetMessageSize (void) const;
-
+/**
+ * \return m_epsBearerIds
+ */
   std::list<uint8_t> GetEpsBearerIds () const;
+/**
+ * \param epsBearerIds
+ */
   void SetEpsBearerIds (std::list<uint8_t> epsBearerIds);
 
 private:
-  std::list<uint8_t> m_epsBearerIds;
+  std::list<uint8_t> m_epsBearerIds; ///< m_epsBearerIds
 };
 
-
+/**
+ * GtpcDeleteBearerResponseMessage Class
+ */
 class GtpcDeleteBearerResponseMessage : public GtpcHeader, public GtpcIes
 {
 public:
@@ -452,17 +663,32 @@ public:
   virtual void Serialize (Buffer::Iterator start) const;
   virtual uint32_t Deserialize (Buffer::Iterator start);
   virtual void Print (std::ostream &os) const;
+/**
+ * \return serializedSize as serializedSizeCause + m_epsBearerIds.size () * serializedSizeEbi
+ */
   virtual uint32_t GetMessageSize (void) const;
-
+/**
+ * \return m_cause
+ */
   Cause_t GetCause () const;
+  /**
+ * \brief assigns m_cause = cause
+ * \param cause
+ */
   void SetCause (Cause_t cause);
-
+/**
+ * \return  m_epsBearerIds
+ */
   std::list<uint8_t> GetEpsBearerIds () const;
+  /**
+ * \return m_epsBearerIds.size () * serializedSizeEbi
+ * \param epsBearerIds
+ */
   void SetEpsBearerIds (std::list<uint8_t> epsBearerIds);
 
 private:
-  Cause_t m_cause;
-  std::list<uint8_t> m_epsBearerIds;
+  Cause_t m_cause; ///< m_cause
+  std::list<uint8_t> m_epsBearerIds; ///< m_epsBearerIds
 };
 
 } // namespace ns3

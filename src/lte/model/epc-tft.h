@@ -198,7 +198,9 @@ public:
   std::list<PacketFilter> GetPacketFilters () const;
 
 private:
-
+/**
+ * \return m_filters
+ */
   std::list<PacketFilter> m_filters; ///< packet filter list
   uint8_t m_numFilters; ///< number of packet filters applied to this TFT
   
