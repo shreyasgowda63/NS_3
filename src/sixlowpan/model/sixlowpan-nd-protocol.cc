@@ -284,9 +284,9 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
 
       /* Add ABRO */
       Icmpv6OptionAuthoritativeBorderRouter abroHdr;
-      abroHdr.SetVersion (iter->second->GetVersion ());
-      abroHdr.SetValidTime (iter->second->GetValidTime ());
-      abroHdr.SetRouterAddress (iter->second->GetBorderAddress ());
+      abroHdr.SetVersion (iter->second->GetAbroVersion ());
+      abroHdr.SetValidTime (iter->second->GetAbroValidTime ());
+      abroHdr.SetRouterAddress (iter->second->GetAbroBorderRouterAddress ());
       p->AddHeader (abroHdr);
 
       /* Add SLLAO */
@@ -361,9 +361,9 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
 
       /* Add ABRO */
       Icmpv6OptionAuthoritativeBorderRouter abroHdr;
-      abroHdr.SetVersion (iter->second->GetVersion ());
-      abroHdr.SetValidTime (iter->second->GetValidTime ());
-      abroHdr.SetRouterAddress (iter->second->GetBorderAddress ());
+      abroHdr.SetVersion (iter->second->GetAbroVersion ());
+      abroHdr.SetValidTime (iter->second->GetAbroValidTime ());
+      abroHdr.SetRouterAddress (iter->second->GetAbroBorderRouterAddress ());
       p->AddHeader (abroHdr);
 
       /* Add SLLAO */
@@ -644,7 +644,7 @@ void SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const 
                   neighborEntry->MarkTentative ();
                   for (auto iter = m_raCache.begin (); iter != m_raCache.end (); iter++)
                     {
-                      Ipv6Address destination = iter->second->GetBorderAddress ();
+                      Ipv6Address destination = iter->second->GetAbroBorderRouterAddress ();
                       SendSixLowPanDAR (interface->GetAddressMatchingDestination (destination).GetAddress (), destination,
                                         aroHdr.GetRegTime (), aroHdr.GetEui64 (), src);
                     }
@@ -674,7 +674,7 @@ void SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const 
                 {
                   for (auto iter = m_raCache.begin (); iter != m_raCache.end (); iter++)
                     {
-                      Ipv6Address destination = iter->second->GetBorderAddress ();
+                      Ipv6Address destination = iter->second->GetAbroBorderRouterAddress ();
 
                       /* Send request to update entry from DAD table */
                       SendSixLowPanDAR (interface->GetAddressMatchingDestination (destination).GetAddress (), destination,
@@ -690,7 +690,7 @@ void SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const 
                 {
                   for (auto iter = m_raCache.begin (); iter != m_raCache.end (); iter++)
                     {
-                      Ipv6Address destination = iter->second->GetBorderAddress ();
+                      Ipv6Address destination = iter->second->GetAbroBorderRouterAddress ();
 
                       /* Send request to remove entry from DAD table */
                       SendSixLowPanDAR (interface->GetAddressMatchingDestination (destination).GetAddress (), destination,
@@ -955,9 +955,9 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
       ra->SetRouterLifeTime (raHeader.GetLifeTime ());
       ra->SetRetransTimer (raHeader.GetRetransmissionTime ());
       ra->SetCurHopLimit (raHeader.GetCurHopLimit ());
-      ra->SetVersion (version);
-      ra->SetValidTime (abroHdr.GetValidTime ());
-      ra->SetBorderAddress (abroHdr.GetRouterAddress ());
+      ra->SetAbroVersion (version);
+      ra->SetAbroValidTime (abroHdr.GetValidTime ());
+      ra->SeAbrotBorderRouterAddress (abroHdr.GetRouterAddress ());
 
       NS_ASSERT (m_regTime);
 
@@ -992,7 +992,7 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   else // found an entry, try to update it.
     {
       Ptr<SixLowPanRaEntry> ra = it->second;
-      if (version > (it->second->GetVersion ())) // Update existing entry from 6LBR with new information
+      if (version > (it->second->GetAbroVersion ())) // Update existing entry from 6LBR with new information
         {
           for (std::list<Icmpv6OptionPrefixInformation>::iterator iter = prefixList.begin (); iter != prefixList.end (); iter++)
             {
@@ -1010,9 +1010,9 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
           it->second->SetRouterLifeTime (raHeader.GetLifeTime ());
           it->second->SetRetransTimer (raHeader.GetRetransmissionTime ());
           it->second->SetCurHopLimit (raHeader.GetCurHopLimit ());
-          it->second->SetVersion (version);
-          it->second->SetValidTime (abroHdr.GetValidTime ());
-          it->second->SetBorderAddress (abroHdr.GetRouterAddress ());
+          it->second->SetAbroVersion (version);
+          it->second->SetAbroValidTime (abroHdr.GetValidTime ());
+          it->second->SeAbrotBorderRouterAddress (abroHdr.GetRouterAddress ());
 
           for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin (); jt != contextList.end (); jt++)
             {
@@ -1249,8 +1249,8 @@ void SixLowPanNdProtocol::SetInterfaceAs6lbr (Ptr<SixLowPanNetDevice> device)
         }
     }
   NS_ABORT_MSG_IF (borderAddress == Ipv6Address::GetAny (), "Can not set a 6LBR because I can't find a global address associated with the interface");
-  newRa->SetBorderAddress (borderAddress);
-  newRa->SetVersion (0x66);
+  newRa->SeAbrotBorderRouterAddress (borderAddress);
+  newRa->SetAbroVersion (0x66);
 
   m_raEntries[device] = newRa;
 }
@@ -1479,37 +1479,37 @@ void SixLowPanNdProtocol::SixLowPanRaEntry::SetCurHopLimit (uint8_t curHopLimit)
   m_curHopLimit = curHopLimit;
 }
 
-uint32_t SixLowPanNdProtocol::SixLowPanRaEntry::GetVersion () const
+uint32_t SixLowPanNdProtocol::SixLowPanRaEntry::GetAbroVersion () const
 {
   NS_LOG_FUNCTION (this);
   return m_version;
 }
 
-void SixLowPanNdProtocol::SixLowPanRaEntry::SetVersion (uint32_t version)
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetAbroVersion (uint32_t version)
 {
   NS_LOG_FUNCTION (this << version);
   m_version = version;
 }
 
-uint16_t SixLowPanNdProtocol::SixLowPanRaEntry::GetValidTime () const
+uint16_t SixLowPanNdProtocol::SixLowPanRaEntry::GetAbroValidTime () const
 {
   NS_LOG_FUNCTION (this);
   return m_validTime;
 }
 
-void SixLowPanNdProtocol::SixLowPanRaEntry::SetValidTime (uint16_t time)
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetAbroValidTime (uint16_t time)
 {
   NS_LOG_FUNCTION (this << time);
   m_validTime = time;
 }
 
-Ipv6Address SixLowPanNdProtocol::SixLowPanRaEntry::GetBorderAddress () const
+Ipv6Address SixLowPanNdProtocol::SixLowPanRaEntry::GetAbroBorderRouterAddress () const
 {
   NS_LOG_FUNCTION (this);
   return m_border;
 }
 
-void SixLowPanNdProtocol::SixLowPanRaEntry::SetBorderAddress (Ipv6Address border)
+void SixLowPanNdProtocol::SixLowPanRaEntry::SeAbrotBorderRouterAddress (Ipv6Address border)
 {
   NS_LOG_FUNCTION (this << border);
   m_border = border;

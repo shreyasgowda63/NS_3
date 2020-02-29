@@ -367,37 +367,37 @@ private:
      * \brief Get version value (ABRO).
      * \return the version value
      */
-    uint32_t GetVersion () const;
+    uint32_t GetAbroVersion () const;
 
     /**
      * \brief Set version value (ABRO).
      * \param version the version value
      */
-    void SetVersion (uint32_t version);
+    void SetAbroVersion (uint32_t version);
 
     /**
      * \brief Get valid lifetime value (ABRO).
      * \return the valid lifetime (units of 60 seconds)
      */
-    uint16_t GetValidTime () const;
+    uint16_t GetAbroValidTime () const;
 
     /**
      * \brief Set valid lifetime value (ABRO).
      * \param time the valid lifetime (units of 60 seconds)
      */
-    void SetValidTime (uint16_t time);
+    void SetAbroValidTime (uint16_t time);
 
     /**
      * \brief Get Border Router address (ABRO).
      * \return the Border Router address
      */
-    Ipv6Address GetBorderAddress () const;
+    Ipv6Address GetAbroBorderRouterAddress () const;
 
     /**
      * \brief Set Border Router address (ABRO).
      * \param border the Border Router address
      */
-    void SetBorderAddress (Ipv6Address border);
+    void SeAbrotBorderRouterAddress (Ipv6Address border);
 
   private:
     /**
