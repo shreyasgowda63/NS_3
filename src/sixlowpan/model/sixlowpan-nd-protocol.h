@@ -24,6 +24,8 @@
 #include "ns3/ipv6-address.h"
 #include "ns3/ip-l4-protocol.h"
 #include "ns3/icmpv6-l4-protocol.h"
+#include "ns3/icmpv6-l4-protocol.h"
+#include "sixlowpan-nd-header.h"
 
 namespace ns3 {
 
@@ -379,13 +381,13 @@ private:
      * \brief Get valid lifetime value (ABRO).
      * \return the valid lifetime (units of 60 seconds)
      */
-    uint16_t GetAbroValidTime () const;
+    uint16_t GetAbroValidLifeTime () const;
 
     /**
      * \brief Set valid lifetime value (ABRO).
      * \param time the valid lifetime (units of 60 seconds)
      */
-    void SetAbroValidTime (uint16_t time);
+    void SetAbroValidLifeTime (uint16_t time);
 
     /**
      * \brief Get Border Router address (ABRO).
@@ -397,7 +399,20 @@ private:
      * \brief Set Border Router address (ABRO).
      * \param border the Border Router address
      */
-    void SeAbrotBorderRouterAddress (Ipv6Address border);
+    void SeAbroBorderRouterAddress (Ipv6Address border);
+
+    /**
+     * \brief Parse an ABRO and records the appropriate params.
+     * \param abro the Authoritative Border Router Option header
+     * \return true if the parsing was correct.
+     */
+    bool ParseAbro (Icmpv6OptionAuthoritativeBorderRouter abro);
+
+    /**
+     * \brief Build an ABRO header.
+     * \return the Authoritative Border Router Option header
+     */
+    Icmpv6OptionAuthoritativeBorderRouter MakeAbro ();
 
   private:
     /**
@@ -448,17 +463,17 @@ private:
     /**
      * \brief Version value for ABRO.
      */
-    uint32_t m_version;
+    uint32_t m_abroVersion;
 
     /**
      * \brief Valid lifetime value for ABRO (units of 60 seconds).
      */
-    uint16_t m_validTime;
+    uint16_t m_abroValidLifeTime;
 
     /**
      * \brief Border Router address for ABRO.
      */
-    Ipv6Address m_border;
+    Ipv6Address m_abroBorderRouter;
   };
 
   /**
@@ -514,6 +529,8 @@ private:
   Time m_pioValidLifeTime; //!< Default Prefix Information Valid Lifetime
 
   Time m_contextValidLifeTime; //!< Default Context Valid Lifetime
+
+  Time m_abroValidLifeTime; //!< Default ABRO Valid Lifetime
 
   std::map<Ipv6Address, Ptr<SixLowPanRaEntry> > m_raCache; //!< Router Advertisement cached entries (if the node is a 6LR)
   std::map<Ptr<SixLowPanNetDevice>, Ptr<SixLowPanRaEntry> > m_raEntries; //!< Router Advertisement entries (if the node is a 6LBR)

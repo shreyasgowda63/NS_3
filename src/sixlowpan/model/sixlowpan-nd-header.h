@@ -509,23 +509,23 @@ public:
    * \brief Get the valid lifetime field.
    * \return valid lifetime value (units of 60 seconds)
    */
-  uint16_t GetValidTime () const;
+  uint16_t GetValidLifeTime () const;
 
   /**
    * \brief Set the valid lifetime field.
    * \param time the valid lifetime value (units of 60 seconds)
    */
-  void SetValidTime (uint16_t time);
+  void SetValidLifeTime (uint16_t time);
 
   /**
-   * \brief Get the 6LB router address field.
-   * \return 6LB router address value
+   * \brief Get the 6LBR address field.
+   * \return 6LBR address value
    */
   Ipv6Address GetRouterAddress () const;
 
   /**
-   * \brief Set the 6LB router address field.
-   * \param router the 6LB router address value
+   * \brief Set the 6LBR address field.
+   * \param router the 6LBR address value
    */
   void SetRouterAddress (Ipv6Address router);
 
@@ -566,7 +566,7 @@ private:
   uint16_t m_validTime;
 
   /**
-   * \brief The 6LB router address value.
+   * \brief The 6LBR address value.
    */
   Ipv6Address m_routerAddress;
 

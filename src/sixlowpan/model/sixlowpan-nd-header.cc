@@ -630,13 +630,13 @@ void Icmpv6OptionAuthoritativeBorderRouter::SetVersion (uint32_t version)
   m_version = version;
 }
 
-uint16_t Icmpv6OptionAuthoritativeBorderRouter::GetValidTime () const
+uint16_t Icmpv6OptionAuthoritativeBorderRouter::GetValidLifeTime () const
 {
   NS_LOG_FUNCTION (this);
   return m_validTime;
 }
 
-void Icmpv6OptionAuthoritativeBorderRouter::SetValidTime (uint16_t time)
+void Icmpv6OptionAuthoritativeBorderRouter::SetValidLifeTime (uint16_t time)
 {
   NS_LOG_FUNCTION (this << time);
   m_validTime = time;

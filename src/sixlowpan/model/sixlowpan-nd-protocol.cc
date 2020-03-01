@@ -111,9 +111,13 @@ TypeId SixLowPanNdProtocol::GetTypeId ()
                    TimeValue (Minutes (10)),
                    MakeTimeAccessor (&SixLowPanNdProtocol::m_pioValidLifeTime),
                    MakeTimeChecker ())
-    .AddAttribute ("DefaultContextValidLifeTime", "The default Context valid lifetime.",
+    .AddAttribute ("DefaultContextValidLifeTime", "The default Context valid lifetime [minutes].",
                    TimeValue (Minutes (10)),
                    MakeTimeAccessor (&SixLowPanNdProtocol::m_contextValidLifeTime),
+                   MakeTimeChecker ())
+    .AddAttribute ("DefaultAbroValidLifeTime", "The default ABRO Valid lifetime [minutes].",
+                   TimeValue (Minutes (10)),
+                   MakeTimeAccessor (&SixLowPanNdProtocol::m_abroValidLifeTime),
                    MakeTimeChecker ())
     ;
   return tid;
@@ -283,10 +287,7 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
       raHdr.SetRetransmissionTime (iter->second->GetRetransTimer ());
 
       /* Add ABRO */
-      Icmpv6OptionAuthoritativeBorderRouter abroHdr;
-      abroHdr.SetVersion (iter->second->GetAbroVersion ());
-      abroHdr.SetValidTime (iter->second->GetAbroValidTime ());
-      abroHdr.SetRouterAddress (iter->second->GetAbroBorderRouterAddress ());
+      Icmpv6OptionAuthoritativeBorderRouter abroHdr = iter->second->MakeAbro ();
       p->AddHeader (abroHdr);
 
       /* Add SLLAO */
@@ -360,10 +361,7 @@ void SixLowPanNdProtocol::SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr
       raHdr.SetRetransmissionTime (iter->second->GetRetransTimer ());
 
       /* Add ABRO */
-      Icmpv6OptionAuthoritativeBorderRouter abroHdr;
-      abroHdr.SetVersion (iter->second->GetAbroVersion ());
-      abroHdr.SetValidTime (iter->second->GetAbroValidTime ());
-      abroHdr.SetRouterAddress (iter->second->GetAbroBorderRouterAddress ());
+      Icmpv6OptionAuthoritativeBorderRouter abroHdr = iter->second->MakeAbro ();
       p->AddHeader (abroHdr);
 
       /* Add SLLAO */
@@ -955,9 +953,7 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
       ra->SetRouterLifeTime (raHeader.GetLifeTime ());
       ra->SetRetransTimer (raHeader.GetRetransmissionTime ());
       ra->SetCurHopLimit (raHeader.GetCurHopLimit ());
-      ra->SetAbroVersion (version);
-      ra->SetAbroValidTime (abroHdr.GetValidTime ());
-      ra->SeAbrotBorderRouterAddress (abroHdr.GetRouterAddress ());
+      ra->ParseAbro (abroHdr);
 
       NS_ASSERT (m_regTime);
 
@@ -1010,9 +1006,7 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
           it->second->SetRouterLifeTime (raHeader.GetLifeTime ());
           it->second->SetRetransTimer (raHeader.GetRetransmissionTime ());
           it->second->SetCurHopLimit (raHeader.GetCurHopLimit ());
-          it->second->SetAbroVersion (version);
-          it->second->SetAbroValidTime (abroHdr.GetValidTime ());
-          it->second->SeAbrotBorderRouterAddress (abroHdr.GetRouterAddress ());
+          it->second->ParseAbro (abroHdr);
 
           for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin (); jt != contextList.end (); jt++)
             {
@@ -1231,7 +1225,7 @@ void SixLowPanNdProtocol::SetInterfaceAs6lbr (Ptr<SixLowPanNetDevice> device)
 
   newRa->SetReachableTime (0); // unspecified by this router
 
-  uint64_t routerLifetime = ceil (m_routerLifeTime.GetSeconds ());
+  uint64_t routerLifetime = ceil (m_routerLifeTime.GetMinutes ());
   if (routerLifetime > 0xffff)
     routerLifetime = 0xffff;
 
@@ -1249,8 +1243,9 @@ void SixLowPanNdProtocol::SetInterfaceAs6lbr (Ptr<SixLowPanNetDevice> device)
         }
     }
   NS_ABORT_MSG_IF (borderAddress == Ipv6Address::GetAny (), "Can not set a 6LBR because I can't find a global address associated with the interface");
-  newRa->SeAbrotBorderRouterAddress (borderAddress);
+  newRa->SeAbroBorderRouterAddress (borderAddress);
   newRa->SetAbroVersion (0x66);
+  newRa->SetAbroValidLifeTime (m_abroValidLifeTime.GetSeconds());
 
   m_raEntries[device] = newRa;
 }
@@ -1482,37 +1477,62 @@ void SixLowPanNdProtocol::SixLowPanRaEntry::SetCurHopLimit (uint8_t curHopLimit)
 uint32_t SixLowPanNdProtocol::SixLowPanRaEntry::GetAbroVersion () const
 {
   NS_LOG_FUNCTION (this);
-  return m_version;
+  return m_abroVersion;
 }
 
 void SixLowPanNdProtocol::SixLowPanRaEntry::SetAbroVersion (uint32_t version)
 {
   NS_LOG_FUNCTION (this << version);
-  m_version = version;
+  m_abroVersion = version;
 }
 
-uint16_t SixLowPanNdProtocol::SixLowPanRaEntry::GetAbroValidTime () const
+uint16_t SixLowPanNdProtocol::SixLowPanRaEntry::GetAbroValidLifeTime () const
 {
   NS_LOG_FUNCTION (this);
-  return m_validTime;
+  return m_abroValidLifeTime;
 }
 
-void SixLowPanNdProtocol::SixLowPanRaEntry::SetAbroValidTime (uint16_t time)
+void SixLowPanNdProtocol::SixLowPanRaEntry::SetAbroValidLifeTime (uint16_t time)
 {
   NS_LOG_FUNCTION (this << time);
-  m_validTime = time;
+  m_abroValidLifeTime = time;
 }
 
 Ipv6Address SixLowPanNdProtocol::SixLowPanRaEntry::GetAbroBorderRouterAddress () const
 {
   NS_LOG_FUNCTION (this);
-  return m_border;
+  return m_abroBorderRouter;
 }
 
-void SixLowPanNdProtocol::SixLowPanRaEntry::SeAbrotBorderRouterAddress (Ipv6Address border)
+void SixLowPanNdProtocol::SixLowPanRaEntry::SeAbroBorderRouterAddress (Ipv6Address border)
 {
   NS_LOG_FUNCTION (this << border);
-  m_border = border;
+  m_abroBorderRouter = border;
+}
+
+bool SixLowPanNdProtocol::SixLowPanRaEntry::ParseAbro (Icmpv6OptionAuthoritativeBorderRouter abro)
+{
+  Ipv6Address addr = abro.GetRouterAddress ();
+  if (addr == Ipv6Address::GetAny ())
+    {
+      return false;
+    }
+  m_abroBorderRouter = addr;
+
+  m_abroVersion = abro.GetVersion ();
+  m_abroValidLifeTime = abro.GetValidLifeTime ();
+  return true;
+}
+
+Icmpv6OptionAuthoritativeBorderRouter SixLowPanNdProtocol::SixLowPanRaEntry::MakeAbro ()
+{
+  Icmpv6OptionAuthoritativeBorderRouter abro;
+
+  abro.SetRouterAddress (m_abroBorderRouter);
+  abro.SetValidLifeTime (m_abroValidLifeTime);
+  abro.SetVersion (m_abroVersion);
+
+  return abro;
 }
 
 } /* namespace ns3 */
