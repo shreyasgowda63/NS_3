@@ -26,37 +26,51 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE ("FirstScriptExample");
 
+
 int
 main (int argc, char *argv[])
 {
+
   CommandLine cmd;
   cmd.Parse (argc, argv);
 
-  // Set LocalTime Simulator Impl
-
+  //Set LocalTime Simulator Impl
+  GlobalValue::Bind ("SimulatorImplementationType", 
+                     StringValue ("ns3::LocalTimeSimulatorImpl"));
   
   Time::SetResolution (Time::NS);
+  
   LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_INFO);
   LogComponentEnable ("UdpEchoServerApplication", LOG_LEVEL_INFO);
-  
-  //LogComponentEnable ("LocalTimeSimulatorImpl", LOG_INFO);
+  //LogComponentEnable ("PerfectClockModelImpl",LOG_LEVEL_INFO);
 
-  
-  std::cout << "Hola" << std::endl;
 
   NodeContainer nodes;
   nodes.Create (2);
 
   //Aggregate clock 
 
-  Ptr<PerfectClockModelImpl> clockImpl = CreateObject <PerfectClockModelImpl> ();
-  Ptr<LocalClock> clock = CreateObject<LocalClock> (clockImpl);
+  Ptr<PerfectClockModelImpl> clockImpl0 = CreateObject <PerfectClockModelImpl> ();
+  Ptr<PerfectClockModelImpl> clockImpl1 = CreateObject <PerfectClockModelImpl> ();
+  clockImpl0 -> SetAttribute ("Frequency", DoubleValue (2));
+
+  clockImpl1 -> SetAttribute ("Frequency", DoubleValue (1));
+
+  //Config::SetDefault ("ns3::LocalClock::ClockModelImpl", PointerValue (clockImpl0));
+  
+  Ptr<LocalClock> clock0 = CreateObject<LocalClock> ();
+  Ptr<LocalClock> clock1 = CreateObject<LocalClock> ();
+
+  clock0 -> SetAttribute ("ClockModelImpl", PointerValue (clockImpl0));
+  clock1 -> SetAttribute ("ClockModelImpl", PointerValue (clockImpl1));
 
   Ptr<Node> n1 = nodes.Get (0);
   Ptr<Node> n2 = nodes.Get (1); 
 
-  n1 -> AggregateObject (clock);
-  
+  n1 -> AggregateObject (clock0);
+  n2 -> AggregateObject (clock1);
+
+
   PointToPointHelper pointToPoint;
   pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("5Mbps"));
   pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
@@ -75,27 +89,21 @@ main (int argc, char *argv[])
   UdpEchoServerHelper echoServer (9);
 
   ApplicationContainer serverApps = echoServer.Install (nodes.Get (1));
-  serverApps.Start (Seconds (1.0));
-  serverApps.Stop (Seconds (10.0));
+  serverApps.Start (Seconds (2.0));
+  serverApps.Stop (Seconds (500.0));
 
   UdpEchoClientHelper echoClient (interfaces.GetAddress (1), 9);
-  echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
-  echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+  echoClient.SetAttribute ("MaxPackets", UintegerValue (10));
+  echoClient.SetAttribute ("Interval", TimeValue (Seconds (5.0)));
   echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
 
   ApplicationContainer clientApps = echoClient.Install (nodes.Get (0));
   clientApps.Start (Seconds (2.0));
-  clientApps.Stop (Seconds (10.0));
+  clientApps.Stop (Seconds (500.0));
+
+  
 
   Simulator::Run ();
-
-  std::cout << "Simulation Running" << std::endl;
-
-  Ptr <SimulatorImpl> simImpl = Simulator::GetImplementation ();
-
-  TypeId tid = simImpl -> GetTypeId ();
-  std::cout << tid.GetName() << std::endl;
-
   Simulator::Destroy ();
-  return 0;
 }
+
