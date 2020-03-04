@@ -80,8 +80,7 @@ public:
     * \param mmeUeS1Id in practice, we use the IMSI
     * \param enbUeS1Id in practice, we use the RNTI
     * \param erabToBeReleaseIndication, List of bearers to be deactivated
-    *
-    */
+  */
   virtual void ErabReleaseIndication (uint64_t mmeUeS1Id, uint16_t enbUeS1Id, std::list<ErabToBeReleasedIndication> erabToBeReleaseIndication ) = 0;
 
   /**
