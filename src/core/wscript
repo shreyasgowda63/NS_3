@@ -215,6 +215,7 @@ def build(bld):
         'model/node-printer.cc',
         'model/time-printer.cc',
         'model/show-progress.cc',
+        'model/smart-event.cc',
         ]
 
     core_test = bld.create_ns3_module_test_library('core')
@@ -331,6 +332,7 @@ def build(bld):
         'model/node-printer.h',
         'model/time-printer.h',
         'model/show-progress.h',
+        'model/smart-event.h',
         ]
 
     if sys.platform == 'win32':
