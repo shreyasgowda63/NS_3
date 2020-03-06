@@ -41,11 +41,11 @@
 #include "ns3/spectrum-wifi-helper.h"
 #include "ns3/multi-model-spectrum-channel.h"
 #include "ns3/wifi-spectrum-signal-parameters.h"
-#include "ns3/wifi-phy-tag.h"
 #include "ns3/yans-wifi-phy.h"
 #include "ns3/mgt-headers.h"
 #include "ns3/ht-configuration.h"
-#include "ns3/wifi-phy-header.h"
+#include "ns3/wifi-ppdu.h"
+#include "ns3/wifi-psdu.h"
 
 using namespace ns3;
 
@@ -460,7 +460,6 @@ DcfImmediateAccessBroadcastTestCase::NotifyPhyTxBegin (Ptr<const Packet> p, doub
 {
   if (m_numSentPackets == 0)
     {
-      NS_ASSERT_MSG (Simulator::Now () == Time (Seconds (1)), "Packet 0 not transmitted at 1 second");
       m_numSentPackets++;
       m_firstTransmissionTime = Simulator::Now ();
     }
@@ -536,13 +535,17 @@ DcfImmediateAccessBroadcastTestCase::DoRun (void)
   Simulator::Run ();
   Simulator::Destroy ();
 
+  // First packet is transmitted a DIFS after the packet is queued. A DIFS
+  // is 2 slots (2 * 9 = 18 us) plus a SIFS (16 us), i.e., 34 us
+  Time expectedFirstTransmissionTime = Seconds (1.0) + MicroSeconds (34);
+
   //First packet has 1408 us of transmit time.   Slot time is 9 us.
   //Backoff is 1 slots.  SIFS is 16 us.  DIFS is 2 slots = 18 us.
   //Should send next packet at 1408 us + (1 * 9 us) + 16 us + (2 * 9) us
   //1451 us after the first one.
   uint32_t expectedWait1 = 1408 + (1 * 9) + 16 + (2 * 9);
-  Time expectedSecondTransmissionTime = MicroSeconds (expectedWait1) + MilliSeconds (1000);
-  NS_TEST_ASSERT_MSG_EQ (m_firstTransmissionTime, MilliSeconds (1000), "The first transmission time not correct!");
+  Time expectedSecondTransmissionTime = expectedFirstTransmissionTime + MicroSeconds (expectedWait1);
+  NS_TEST_ASSERT_MSG_EQ (m_firstTransmissionTime, expectedFirstTransmissionTime, "The first transmission time not correct!");
 
   NS_TEST_ASSERT_MSG_EQ (m_secondTransmissionTime, expectedSecondTransmissionTime, "The second transmission time not correct!");
 }
@@ -1368,7 +1371,7 @@ private:
    */
   void SendPacketBurst (uint8_t numPackets, Ptr<NetDevice> sourceDevice, Address& destination) const;
 
-  uint16_t m_channelWidth;
+  uint16_t m_channelWidth; ///< channel width (in MHz)
 };
 
 Bug2843TestCase::Bug2843TestCase ()
@@ -1391,28 +1394,11 @@ Bug2843TestCase::StoreDistinctTuple (std::string context,  Ptr<SpectrumSignalPar
 
   // Get channel bandwidth and modulation class
   Ptr<const WifiSpectrumSignalParameters> wifiTxParams = DynamicCast<WifiSpectrumSignalParameters> (txParams);
-  Ptr<Packet> packet = wifiTxParams->packet->Copy ();
-  WifiPhyTag tag;
-  if (!packet->RemovePacketTag (tag))
-    {
-      NS_FATAL_ERROR ("Received Wi-Fi Signal with no WifiPhyTag");
-      return;
-    }
 
-  WifiModulationClass modulationClass = tag.GetModulation ();
-  WifiPreamble preamble = tag.GetPreambleType ();
-  if ((modulationClass != WIFI_MOD_CLASS_HT) || (preamble != WIFI_PREAMBLE_HT_GF))
-    {
-      LSigHeader sig;
-      packet->RemoveHeader (sig);
-      m_channelWidth = 20;
-    }
-  if (modulationClass == WIFI_MOD_CLASS_VHT)
-    {
-      VhtSigHeader vhtSig;
-      packet->RemoveHeader (vhtSig);
-      m_channelWidth = vhtSig.GetChannelWidth ();
-    }
+  Ptr<WifiPpdu> ppdu = Copy (wifiTxParams->ppdu);
+  WifiTxVector txVector = ppdu->GetTxVector ();
+  m_channelWidth = txVector.GetChannelWidth ();
+  WifiModulationClass modulationClass = txVector.GetMode ().GetModulationClass ();
 
   // Build a tuple and check if seen before (if so store it)
   FreqWidthSubbandModulationTuple tupleForCurrentTx = std::make_tuple (startingFreq, m_channelWidth, numBands, modulationClass);
