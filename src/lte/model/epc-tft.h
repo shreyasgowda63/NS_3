@@ -195,7 +195,7 @@ public:
 		  uint8_t typeOfService);
 
 /**
- * \return m_filters : A list of PacketFilter added to the Traffic Flow Template
+ * \return A list of PacketFilter added to the Traffic Flow Template
  */
   std::list<PacketFilter> GetPacketFilters () const;
 
