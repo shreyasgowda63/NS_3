@@ -92,78 +92,13 @@ public:
   template <typename MEM_PTR, typename OBJ_PTR>
   void SetFunction (MEM_PTR memPtr, OBJ_PTR objPtr);
 
-
   /**
    * Set the arguments to be used when invoking the expire function.
+   * \tparam Ts \deduced Type of the arguments.
+   * \param [in] a the arguments
    */
-  /**@{*/
-  /**
-   * \tparam T1 \deduced Type of the first argument.
-   * \param [in] a1 The first argument
-   */
-  template <typename T1>
-  void SetArguments (T1 a1);
-  /**
-   * \tparam T1 \deduced Type of the first argument.
-   * \tparam T2 \deduced Type of the second argument.
-   * \param [in] a1 the first argument
-   * \param [in] a2 the second argument
-   */
-  template <typename T1, typename T2>
-  void SetArguments (T1 a1, T2 a2);
-  /**
-   * \tparam T1 \deduced Type of the first argument.
-   * \tparam T2 \deduced Type of the second argument.
-   * \tparam T3 \deduced Type of the third argument.
-   * \param [in] a1 the first argument
-   * \param [in] a2 the second argument
-   * \param [in] a3 the third argument
-   */
-  template <typename T1, typename T2, typename T3>
-  void SetArguments (T1 a1, T2 a2, T3 a3);
-  /**
-   * \tparam T1 \deduced Type of the first argument.
-   * \tparam T2 \deduced Type of the second argument.
-   * \tparam T3 \deduced Type of the third argument.
-   * \tparam T4 \deduced Type of the fourth argument.
-   * \param [in] a1 the first argument
-   * \param [in] a2 the second argument
-   * \param [in] a3 the third argument
-   * \param [in] a4 the fourth argument
-   */
-  template <typename T1, typename T2, typename T3, typename T4>
-  void SetArguments (T1 a1, T2 a2, T3 a3, T4 a4);
-  /**
-   * \tparam T1 \deduced Type of the first argument.
-   * \tparam T2 \deduced Type of the second argument.
-   * \tparam T3 \deduced Type of the third argument.
-   * \tparam T4 \deduced Type of the fourth argument.
-   * \tparam T5 \deduced Type of the fifth argument.
-   * \param [in] a1 the first argument
-   * \param [in] a2 the second argument
-   * \param [in] a3 the third argument
-   * \param [in] a4 the fourth argument
-   * \param [in] a5 the fifth argument
-   */
-  template <typename T1, typename T2, typename T3, typename T4, typename T5>
-  void SetArguments (T1 a1, T2 a2, T3 a3, T4 a4, T5 a5);
-  /**
-   * \tparam T1 \deduced Type of the first argument.
-   * \tparam T2 \deduced Type of the second argument.
-   * \tparam T3 \deduced Type of the third argument.
-   * \tparam T4 \deduced Type of the fourth argument.
-   * \tparam T5 \deduced Type of the fifth argument.
-   * \tparam T6 \deduced Type of the sixth argument.
-   * \param [in] a1 the first argument
-   * \param [in] a2 the second argument
-   * \param [in] a3 the third argument
-   * \param [in] a4 the fourth argument
-   * \param [in] a5 the fifth argument
-   * \param [in] a6 the sixth argument
-   */
-  template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
-  void SetArguments (T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6);
-  /**@}*/
+  template <typename... Ts>
+  void SetArguments (Ts&&... a);
 
 private:
   /** Internal callback invoked when the timer expires. */
@@ -208,75 +143,16 @@ SmartEvent::SetFunction (MEM_PTR memPtr, OBJ_PTR objPtr)
   m_impl = MakeTimerImpl (memPtr, objPtr);
 }
 
-template <typename T1>
+template <typename... Ts>
 void 
-SmartEvent::SetArguments (T1 a1)
+SmartEvent::SetArguments (Ts&&... a)
 {
   if (m_impl == 0)
     {
       NS_FATAL_ERROR ("You cannot set the arguments of a SmartEvent before setting its function.");
       return;
     }
-  m_impl->SetArgs (a1);
-}
-template <typename T1, typename T2>
-void 
-SmartEvent::SetArguments (T1 a1, T2 a2)
-{
-  if (m_impl == 0)
-    {
-      NS_FATAL_ERROR ("You cannot set the arguments of a SmartEvent before setting its function.");
-      return;
-    }
-  m_impl->SetArgs (a1, a2);
-}
-
-template <typename T1, typename T2, typename T3>
-void 
-SmartEvent::SetArguments (T1 a1, T2 a2, T3 a3)
-{
-  if (m_impl == 0)
-    {
-      NS_FATAL_ERROR ("You cannot set the arguments of a SmartEvent before setting its function.");
-      return;
-    }
-  m_impl->SetArgs (a1, a2, a3);
-}
-
-template <typename T1, typename T2, typename T3, typename T4>
-void 
-SmartEvent::SetArguments (T1 a1, T2 a2, T3 a3, T4 a4)
-{
-  if (m_impl == 0)
-    {
-      NS_FATAL_ERROR ("You cannot set the arguments of a SmartEvent before setting its function.");
-      return;
-    }
-  m_impl->SetArgs (a1, a2, a3, a4);
-}
-
-template <typename T1, typename T2, typename T3, typename T4, typename T5>
-void 
-SmartEvent::SetArguments (T1 a1, T2 a2, T3 a3, T4 a4, T5 a5)
-{
-  if (m_impl == 0)
-    {
-      NS_FATAL_ERROR ("You cannot set the arguments of a SmartEvent before setting its function.");
-      return;
-    }
-  m_impl->SetArgs (a1, a2, a3, a4, a5);
-}
-
-template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
-void 
-SmartEvent::SetArguments (T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6)
-{
-  if (m_impl == 0)
-    {
-      NS_FATAL_ERROR ("You cannot set the arguments of a SmartEvent before setting its function.");
-      return;
-    }
-  m_impl->SetArgs (a1, a2, a3, a4, a5, a6);
+  m_impl->SetArgs (a...);
 }
 
 } // namespace ns3
