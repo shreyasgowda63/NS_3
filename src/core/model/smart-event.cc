@@ -61,11 +61,11 @@ SmartEvent::SetNewExpiration (Time delay)
       m_event = Simulator::Schedule (delay, &SmartEvent::Expire, this);
       m_end = end;
     }
-  else if (delayUntilExpiration > delay) // event might be delayed
+  else if (delay > delayUntilExpiration) // event might be delayed
     {
       m_end = std::max (end, m_end);
     }
-  else if (delayUntilExpiration < delay) // event must be rescheduled
+  else if (delay < delayUntilExpiration) // event must be rescheduled
     {
       m_event.Cancel ();
       m_end = end;

@@ -242,6 +242,7 @@ def build(bld):
         'test/watchdog-test-suite.cc',
         'test/hash-test-suite.cc',
         'test/type-id-test-suite.cc',
+        'test/smart-event-test-suite.cc',
         ]
 
     headers = bld(features='ns3header')
