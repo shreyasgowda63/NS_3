@@ -105,13 +105,13 @@ SmartEventTestCase::DoRun (void)
   NS_TEST_ASSERT_MSG_EQ (m_expiredTime[0], Seconds (10), "The normal timer did not expire at the expected time ?");
   NS_TEST_ASSERT_MSG_EQ (m_expiredArgument[0], 10, "We did not get the right argument for the normal timer");
 
-//  NS_TEST_ASSERT_MSG_EQ (m_expired[1], true, "The delayed timer did not expire ??");
-//  NS_TEST_ASSERT_MSG_EQ (m_expiredTime[1], Seconds (20), "The delayed timer did not expire at the expected time ?");
-//  NS_TEST_ASSERT_MSG_EQ (m_expiredArgument[1], 20, "We did not get the right argument for the delayed timer");
-//
-//  NS_TEST_ASSERT_MSG_EQ (m_expired[2], true, "The shrunken timer did not expire ??");
-//  NS_TEST_ASSERT_MSG_EQ (m_expiredTime[2], Seconds (5), "The shrunken timer did not expire at the expected time ?");
-//  NS_TEST_ASSERT_MSG_EQ (m_expiredArgument[2], 30, "We did not get the right argument for the shrunken timer");
+  NS_TEST_ASSERT_MSG_EQ (m_expired[1], true, "The delayed timer did not expire ??");
+  NS_TEST_ASSERT_MSG_EQ (m_expiredTime[1], Seconds (20), "The delayed timer did not expire at the expected time ?");
+  NS_TEST_ASSERT_MSG_EQ (m_expiredArgument[1], 20, "We did not get the right argument for the delayed timer");
+
+  NS_TEST_ASSERT_MSG_EQ (m_expired[2], true, "The shrunken timer did not expire ??");
+  NS_TEST_ASSERT_MSG_EQ (m_expiredTime[2], Seconds (5), "The shrunken timer did not expire at the expected time ?");
+  NS_TEST_ASSERT_MSG_EQ (m_expiredArgument[2], 30, "We did not get the right argument for the shrunken timer");
 }
 
 
