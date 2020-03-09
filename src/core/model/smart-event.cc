@@ -79,6 +79,18 @@ SmartEvent::Cancel (void)
 {
   NS_LOG_FUNCTION (this);
   m_isCanceled = true;
+  Simulator::Remove (m_event);
+}
+
+bool
+SmartEvent::IsRunning (void)
+{
+  NS_LOG_FUNCTION (this);
+  if (m_isCanceled)
+    {
+      return false;
+    }
+  return !m_event.IsExpired ();
 }
 
 void

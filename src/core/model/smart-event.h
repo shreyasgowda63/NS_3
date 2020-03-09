@@ -70,6 +70,12 @@ public:
   void Cancel ();
 
   /**
+   * Checks if the SmartEvent is running (i.e., not canceled and not expired).
+   * \returns \c true if the event is running, \c false otherwise.
+   */
+  bool IsRunning ();
+
+  /**
    * Set the function to execute when the timer expires.
    *
    * \param [in] fn The function
