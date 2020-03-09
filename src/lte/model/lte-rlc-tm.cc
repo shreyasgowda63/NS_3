@@ -122,30 +122,36 @@ LteRlcTm::DoNotifyTxOpportunity (LteMacSapUser::TxOpportunityParameters txOpPara
       return;
     }
 
-  Ptr<Packet> packet = m_txBuffer.begin ()->m_pdu->Copy ();
+  uint32_t used = 0;
 
-  if (txOpParams.bytes < packet->GetSize ())
+  while (m_txBuffer.size () > 0 && used < txOpParams.bytes)
     {
-      NS_LOG_WARN ("TX opportunity too small = " << txOpParams.bytes <<
-                   " (PDU size: " << packet->GetSize () << ")");
-      return;
+      Ptr<Packet> packet = m_txBuffer.begin ()->m_pdu->Copy ();
+
+      if (txOpParams.bytes - used < packet->GetSize ())
+        {
+          NS_LOG_DEBUG ("TX opportunity too small = " << txOpParams.bytes <<
+                       " (PDU size: " << packet->GetSize () << ")");
+          return;
+        }
+
+      m_txBufferSize -= packet->GetSize ();
+      m_txBuffer.erase (m_txBuffer.begin ());
+      used += packet->GetSize ();
+
+      m_txPdu (m_rnti, m_lcid, packet->GetSize ());
+
+      // Send RLC PDU to MAC layer
+      LteMacSapProvider::TransmitPduParameters params;
+      params.pdu = packet;
+      params.rnti = m_rnti;
+      params.lcid = m_lcid;
+      params.layer = txOpParams.layer;
+      params.harqProcessId = txOpParams.harqId;
+      params.componentCarrierId = txOpParams.componentCarrierId;
+
+      m_macSapProvider->TransmitPdu (params);
     }
-
-  m_txBufferSize -= packet->GetSize ();
-  m_txBuffer.erase (m_txBuffer.begin ());
-
-  m_txPdu (m_rnti, m_lcid, packet->GetSize ());
-
-  // Send RLC PDU to MAC layer
-  LteMacSapProvider::TransmitPduParameters params;
-  params.pdu = packet;
-  params.rnti = m_rnti;
-  params.lcid = m_lcid;
-  params.layer = txOpParams.layer;
-  params.harqProcessId = txOpParams.harqId;
-  params.componentCarrierId = txOpParams.componentCarrierId;
-
-  m_macSapProvider->TransmitPdu (params);
 
   if (! m_txBuffer.empty ())
     {

@@ -1472,7 +1472,7 @@ LteUeRrc::ApplyRadioResourceConfigDedicated (LteRrcSap::RadioResourceConfigDedic
       if (drbMapIt == m_drbMap.end ())
         {
           NS_LOG_INFO ("New Data Radio Bearer");
-        
+
           TypeId rlcTypeId;
           if (m_useRlcSm)
             {
@@ -1482,17 +1482,21 @@ LteUeRrc::ApplyRadioResourceConfigDedicated (LteRrcSap::RadioResourceConfigDedic
             {
               switch (dtamIt->rlcConfig.choice)
                 {
-                case LteRrcSap::RlcConfig::AM: 
+                case LteRrcSap::RlcConfig::AM:
                   rlcTypeId = LteRlcAm::GetTypeId ();
                   break;
-          
-                case LteRrcSap::RlcConfig::UM_BI_DIRECTIONAL: 
+
+                case LteRrcSap::RlcConfig::TM:
+                  rlcTypeId = LteRlcTm::GetTypeId ();
+                  break;
+
+                case LteRrcSap::RlcConfig::UM_BI_DIRECTIONAL:
                   rlcTypeId = LteRlcUm::GetTypeId ();
                   break;
-          
+
                 default:
                   NS_FATAL_ERROR ("unsupported RLC configuration");
-                  break;                
+                  break;
                 }
             }
   

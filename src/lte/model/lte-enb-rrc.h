@@ -1040,6 +1040,7 @@ public:
   enum LteEpsBearerToRlcMapping_t {RLC_SM_ALWAYS = 1,
                                    RLC_UM_ALWAYS = 2,
                                    RLC_AM_ALWAYS = 3,
+                                   RLC_TM_ALWAYS = 5,
                                    PER_BASED = 4};
 
   /**
