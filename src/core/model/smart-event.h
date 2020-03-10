@@ -106,6 +106,31 @@ public:
   template <typename... Ts>
   void SetArguments (Ts&&... a);
 
+  /**
+   * Set the function to execute when the timer expires along with its arguments.
+   *
+   * \param [in] fn The function
+   * \param [in] a the arguments
+   *
+   * Store this function, and arguments in this Timer for later use by Timer::Schedule.
+   */
+  template <typename FN, typename... Ts>
+  void SetFunctionAndArguments (FN fn, Ts&&... a);
+
+  /**
+   * Set the function to execute when the timer expires along with its arguments.
+   *
+   * \tparam MEM_PTR \deduced Class method function type.
+   * \tparam OBJ_PTR \deduced Class type containing the function.
+   * \param [in] memPtr The member function pointer
+   * \param [in] objPtr The pointer to object
+   * \param [in] a the arguments
+   *
+   * Store this function, object, and arguments in this Timer for later use by Timer::Schedule.
+   */
+  template <typename MEM_PTR, typename OBJ_PTR, typename... Ts>
+  void SetFunctionAndArguments (MEM_PTR memPtr, OBJ_PTR objPtr, Ts&&... a);
+
 private:
   /** Internal callback invoked when the timer expires. */
   void Expire (void);
@@ -141,6 +166,7 @@ SmartEvent::SetFunction (FN fn)
   delete m_impl;
   m_impl = MakeTimerImpl (fn);
 }
+
 template <typename MEM_PTR, typename OBJ_PTR>
 void 
 SmartEvent::SetFunction (MEM_PTR memPtr, OBJ_PTR objPtr)
@@ -160,6 +186,25 @@ SmartEvent::SetArguments (Ts&&... a)
     }
   m_impl->SetArgs (a...);
 }
+
+template <typename FN, typename... Ts>
+void
+SmartEvent::SetFunctionAndArguments (FN fn, Ts&&... a)
+{
+  delete m_impl;
+  m_impl = MakeTimerImpl (fn);
+  m_impl->SetArgs (a...);
+}
+
+template <typename MEM_PTR, typename OBJ_PTR, typename... Ts>
+void
+SmartEvent::SetFunctionAndArguments (MEM_PTR memPtr, OBJ_PTR objPtr, Ts&&... a)
+{
+  delete m_impl;
+  m_impl = MakeTimerImpl (memPtr, objPtr);
+  m_impl->SetArgs (a...);
+}
+
 
 } // namespace ns3
 
