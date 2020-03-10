@@ -73,11 +73,13 @@ allows to choose between Block Ack policy and Implicit Block Ack Request policy 
 allows to request an acknowledgment after a configurable number of MPDUs have been
 transmitted.</li>
 <li>The MaxSize attribute is removed from the QueueBase base class and moved to subclasses. A new MaxSize attribute is therefore added to the DropTailQueue class, while the MaxQueueSize attribute of the WifiMacQueue class is renamed as MaxSize for API consistency.</li>
+<li>The applications have now a "EnableE2EStats" attribute.</li>
 </ul>
 <h2>Changes to existing API:</h2>
 <ul>
 <li>The internal TCP API for <b>TcpCongestionOps</b> has been extended to support the <b>CongControl</b> method to allow for delivery rate estimation feedback to the congestion control mechanism.</li>
 <li>Functions <b>LteEnbPhy::ReceiveUlHarqFeedback</b> and <b>LteUePhy::ReceiveLteDlHarqFeedback</b> are renamed to <b>LteEnbPhy::ReportUlHarqFeedback</b> and <b>LteUePhy::EnqueueDlHarqFeedback</b>, respectively to avoid confusion about their functionality. <b>LteHelper</b> is updated accordingly.</li>
+<li>Now on, instead of <b>uint8_t</b>, <b>uint16_t</b> would be used to store a bandwidth value in LTE.</li>
 </ul>
 <h2>Changes to build system:</h2>
 <ul>
