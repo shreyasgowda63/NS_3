@@ -31,7 +31,6 @@
 #include "ns3/sequence-number.h"
 #include "ns3/data-rate.h"
 #include "ns3/node.h"
-#include "ns3/smart-event.h"
 #include "ns3/tcp-socket-state.h"
 
 namespace ns3 {
@@ -1180,7 +1179,7 @@ protected:
   // Counters and events
   EventId           m_retxEvent     {}; //!< Retransmission event
   EventId           m_lastAckEvent  {}; //!< Last ACK timeout event
-  SmartEvent        m_delAckSmartEvent; //!< Delayed ACK smart timeout event
+  EventId           m_delAckEvent   {}; //!< Delayed ACK timeout event
   EventId           m_persistEvent  {}; //!< Persist event: Send 1 byte to probe for a non-zero Rx window
   EventId           m_timewaitEvent {}; //!< TIME_WAIT expiration event: Move this socket to CLOSED state
 
