@@ -168,7 +168,7 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
 
   if (withAck)
     {
-      m_delAckEvent.Cancel ();
+      m_delAckSmartEvent.Cancel ();
       m_delAckCount = 0;
     }
 

@@ -119,7 +119,7 @@ private:
   /** The absolute time when the timer will expire. */
   Time m_end;
   /** The SmartEvent is canceled. */
-  bool m_isCanceled;
+  bool m_cancelled;
 };
 
 } // namespace ns3

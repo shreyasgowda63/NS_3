@@ -253,6 +253,8 @@ TcpSocketBase::TcpSocketBase (void)
 
   m_tcb->m_sendEmptyPacketCallback = MakeCallback (&TcpSocketBase::SendEmptyPacket, this);
 
+  m_delAckSmartEvent.SetFunction (&TcpSocketBase::DelAckTimeout, this);
+
   bool ok;
 
   ok = m_tcb->TraceConnectWithoutContext ("CongestionWindow",
@@ -381,6 +383,8 @@ TcpSocketBase::TcpSocketBase (const TcpSocketBase& sock)
     {
       m_tcb->m_sendEmptyPacketCallback = MakeCallback (&TcpSocketBase::SendEmptyPacket, this);
     }
+
+  m_delAckSmartEvent.SetFunction (&TcpSocketBase::DelAckTimeout, this);
 
   bool ok;
 
@@ -2602,7 +2606,7 @@ TcpSocketBase::SendEmptyPacket (uint8_t flags)
 
   if (flags & TcpHeader::ACK)
     { // If sending an ACK, cancel the delay ACK as well
-      m_delAckEvent.Cancel ();
+      m_delAckSmartEvent.Cancel ();
       m_delAckCount = 0;
       if (m_highTxAck < header.GetAckNumber ())
         {
@@ -2916,7 +2920,7 @@ TcpSocketBase::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize, bool with
 
   if (withAck)
     {
-      m_delAckEvent.Cancel ();
+      m_delAckSmartEvent.Cancel ();
       m_delAckCount = 0;
     }
 
@@ -3333,7 +3337,7 @@ TcpSocketBase::ReceivedData (Ptr<Packet> p, const TcpHeader& tcpHeader)
     { // In-sequence packet: ACK if delayed ack count allows
       if (++m_delAckCount >= m_delAckMaxCount)
         {
-          m_delAckEvent.Cancel ();
+          m_delAckSmartEvent.Cancel ();
           m_delAckCount = 0;
           m_congestionControl->CwndEvent (m_tcb, TcpSocketState::CA_EVENT_NON_DELAYED_ACK);
           if (m_tcb->m_ecnState == TcpSocketState::ECN_CE_RCVD || m_tcb->m_ecnState == TcpSocketState::ECN_SENDING_ECE)
@@ -3348,17 +3352,15 @@ TcpSocketBase::ReceivedData (Ptr<Packet> p, const TcpHeader& tcpHeader)
               SendEmptyPacket (TcpHeader::ACK);
             }
         }
-      else if (!m_delAckEvent.IsExpired ())
+      else
         {
           m_congestionControl->CwndEvent (m_tcb, TcpSocketState::CA_EVENT_DELAYED_ACK);
+          if (!m_delAckSmartEvent.IsRunning ())
+            {
+              m_delAckSmartEvent.SetNewExpiration (m_delAckTimeout);
+              NS_LOG_LOGIC (this << " scheduled delayed ACK at " <<
+                            (Simulator::Now () + m_delAckTimeout).GetSeconds ());
         }
-      else if (m_delAckEvent.IsExpired ())
-        {
-          m_congestionControl->CwndEvent (m_tcb, TcpSocketState::CA_EVENT_DELAYED_ACK);
-          m_delAckEvent = Simulator::Schedule (m_delAckTimeout,
-                                               &TcpSocketBase::DelAckTimeout, this);
-          NS_LOG_LOGIC (this << " scheduled delayed ACK at " <<
-                        (Simulator::Now () + Simulator::GetDelayLeft (m_delAckEvent)).GetSeconds ());
         }
     }
 }
@@ -3720,11 +3722,11 @@ TcpSocketBase::CancelAllTimers ()
 {
   m_retxEvent.Cancel ();
   m_persistEvent.Cancel ();
-  m_delAckEvent.Cancel ();
   m_lastAckEvent.Cancel ();
   m_timewaitEvent.Cancel ();
   m_sendPendingDataEvent.Cancel ();
   m_pacingTimer.Cancel ();
+  m_delAckSmartEvent.Cancel ();
 }
 
 /* Move TCP to Time_Wait state and schedule a transition to Closed state */

@@ -35,7 +35,7 @@ SmartEvent::SmartEvent ()
   : m_impl (0),
     m_event (),
     m_end (MicroSeconds (0)),
-    m_isCanceled (false)
+    m_cancelled (false)
 {
   NS_LOG_FUNCTION_NOARGS ();
 }
@@ -54,7 +54,7 @@ SmartEvent::SetNewExpiration (Time delay)
   Time end = Now () + delay;
   Time delayUntilExpiration = Simulator::GetDelayLeft (m_event);
 
-  m_isCanceled = false;
+  m_cancelled = false;
 
   if (!m_event.IsRunning ()) // no event running, create one
     {
@@ -78,15 +78,14 @@ void
 SmartEvent::Cancel (void)
 {
   NS_LOG_FUNCTION (this);
-  m_isCanceled = true;
-  Simulator::Remove (m_event);
+  m_cancelled = true;
 }
 
 bool
 SmartEvent::IsRunning (void)
 {
   NS_LOG_FUNCTION (this);
-  if (m_isCanceled)
+  if (m_cancelled)
     {
       return false;
     }
@@ -98,7 +97,7 @@ SmartEvent::Expire (void)
 {
   NS_LOG_FUNCTION (this);
 
-  if (m_isCanceled)
+  if (m_cancelled)
     {
       return;
     }
