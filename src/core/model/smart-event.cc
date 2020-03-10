@@ -55,20 +55,15 @@ SmartEvent::SetNewExpiration (Time delay)
   Time delayUntilExpiration = Simulator::GetDelayLeft (m_event);
 
   m_cancelled = false;
+  m_end = end;
 
-  if (!m_event.IsRunning ()) // no event running, create one
+  if (!m_event.IsRunning ()) // No pending event, create one
     {
       m_event = Simulator::Schedule (delay, &SmartEvent::Expire, this);
-      m_end = end;
     }
-  else if (delay > delayUntilExpiration) // event might be delayed
-    {
-      m_end = std::max (end, m_end);
-    }
-  else if (delay < delayUntilExpiration) // event must be rescheduled
+  else if (delay < delayUntilExpiration) // Event scheduled before the end of the actual one -  it must be recreated
     {
       m_event.Cancel ();
-      m_end = end;
       m_event = Simulator::Schedule (delay, &SmartEvent::Expire, this);
     }
   return;
@@ -82,7 +77,7 @@ SmartEvent::Cancel (void)
 }
 
 bool
-SmartEvent::IsRunning (void)
+SmartEvent::IsPending (void)
 {
   NS_LOG_FUNCTION (this);
   if (m_cancelled)

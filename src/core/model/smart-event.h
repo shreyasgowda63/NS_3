@@ -70,10 +70,10 @@ public:
   void Cancel ();
 
   /**
-   * Checks if the SmartEvent is running (i.e., not canceled and not expired).
-   * \returns \c true if the event is running, \c false otherwise.
+   * Checks if the SmartEvent is pending (i.e., not canceled and not expired).
+   * \returns \c true if the event is pending, \c false otherwise.
    */
-  bool IsRunning ();
+  bool IsPending ();
 
   /**
    * Set the function to execute when the timer expires.

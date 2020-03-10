@@ -117,6 +117,66 @@ SmartEventTestCase::DoRun (void)
 
 /**
  * \ingroup timer-tests
+ *  SmartEvent test
+ */
+class SmartEventSelfRearmTestCase : public TestCase
+{
+public:
+  /** Constructor. */
+  SmartEventSelfRearmTestCase ();
+  virtual void DoRun (void);
+  /**
+   * Function to invoke when SmartEvent expires.
+   * \param index The SmartEvent index
+   * \param value The argument passed.
+   */
+  void Expire (int value);
+  bool m_expired;         //!< Flag for expired SmartEvent
+  Time m_expiredTime;     //!< Time when SmartEvent expired
+  int m_expiredArgument;  //!< Argument supplied to expired SmartEvent
+  SmartEvent m_rearming;  //|< Self.rearming SmartEvent.
+};
+
+SmartEventSelfRearmTestCase::SmartEventSelfRearmTestCase()
+  : TestCase ("Check that we can self-rearm a SmartEvent")
+{
+}
+
+void
+SmartEventSelfRearmTestCase::Expire (int value)
+{
+  if (value < 3)
+    {
+      m_rearming.SetArguments (value+1);
+      m_rearming.SetNewExpiration (Seconds (10));
+      return;
+    }
+  m_expired = true;
+  m_expiredTime = Simulator::Now ();
+  m_expiredArgument = value;
+}
+
+void
+SmartEventSelfRearmTestCase::DoRun (void)
+{
+  m_expired = false;
+  m_expiredArgument = 0;
+  m_expiredTime = Seconds (0);
+
+  m_rearming.SetFunction (&SmartEventSelfRearmTestCase::Expire, this);
+  m_rearming.SetArguments (0);
+  m_rearming.SetNewExpiration (Seconds (10));
+
+  Simulator::Run ();
+  Simulator::Destroy ();
+
+  NS_TEST_ASSERT_MSG_EQ (m_expired, true, "The timer did not expire ??");
+  NS_TEST_ASSERT_MSG_EQ (m_expiredTime, Seconds (40), "The timer did not expire at the expected time ?");
+  NS_TEST_ASSERT_MSG_EQ (m_expiredArgument, 3, "We did not get the right argument");
+}
+
+/**
+ * \ingroup timer-tests
  *  SmartEvent test suite
  */
 class SmartEventTestSuite : public TestSuite
@@ -127,6 +187,7 @@ public:
     : TestSuite ("smart-event")
   {
     AddTestCase (new SmartEventTestCase ());
+    AddTestCase (new SmartEventSelfRearmTestCase ());
   }
 };
 
