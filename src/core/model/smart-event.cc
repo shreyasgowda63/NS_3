@@ -35,7 +35,7 @@ SmartEvent::SmartEvent ()
   : m_impl (0),
     m_event (),
     m_end (MicroSeconds (0)),
-    m_cancelled (false)
+    m_cancelled (true)
 {
   NS_LOG_FUNCTION_NOARGS ();
 }
