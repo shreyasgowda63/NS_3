@@ -1245,7 +1245,7 @@ TcpSocketSmallAcks::SendEmptyPacket (uint8_t flags)
 
   if (flags & TcpHeader::ACK)
     { // If sending an ACK, cancel the delay ACK as well
-      m_delAckSmartEvent.Cancel ();
+      m_delAckEvent.Cancel ();
       m_delAckCount = 0;
     }
   if (m_retxEvent.IsExpired () && (hasSyn || hasFin) && !isAck )
