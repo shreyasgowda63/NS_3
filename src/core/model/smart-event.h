@@ -99,14 +99,6 @@ public:
   void SetFunction (MEM_PTR memPtr, OBJ_PTR objPtr);
 
   /**
-   * Set the arguments to be used when invoking the expire function.
-   * \tparam Ts \deduced Type of the arguments.
-   * \param [in] a the arguments
-   */
-  template <typename... Ts>
-  void SetArguments (Ts&&... a);
-
-  /**
    * Set the function to execute when the timer expires along with its arguments.
    *
    * \param [in] fn The function
@@ -115,7 +107,7 @@ public:
    * Store this function, and arguments in this Timer for later use by Timer::Schedule.
    */
   template <typename FN, typename... Ts>
-  void SetFunctionAndArguments (FN fn, Ts&&... a);
+  void SetFunction (FN fn, Ts&&... a);
 
   /**
    * Set the function to execute when the timer expires along with its arguments.
@@ -129,7 +121,15 @@ public:
    * Store this function, object, and arguments in this Timer for later use by Timer::Schedule.
    */
   template <typename MEM_PTR, typename OBJ_PTR, typename... Ts>
-  void SetFunctionAndArguments (MEM_PTR memPtr, OBJ_PTR objPtr, Ts&&... a);
+  void SetFunction (MEM_PTR memPtr, OBJ_PTR objPtr, Ts&&... a);
+
+  /**
+   * Set the arguments to be used when invoking the expire function.
+   * \tparam Ts \deduced Type of the arguments.
+   * \param [in] a the arguments
+   */
+  template <typename... Ts>
+  void SetArguments (Ts&&... a);
 
 private:
   /** Internal callback invoked when the timer expires. */
@@ -175,21 +175,9 @@ SmartEvent::SetFunction (MEM_PTR memPtr, OBJ_PTR objPtr)
   m_impl = MakeTimerImpl (memPtr, objPtr);
 }
 
-template <typename... Ts>
-void 
-SmartEvent::SetArguments (Ts&&... a)
-{
-  if (m_impl == 0)
-    {
-      NS_FATAL_ERROR ("You cannot set the arguments of a SmartEvent before setting its function.");
-      return;
-    }
-  m_impl->SetArgs (a...);
-}
-
 template <typename FN, typename... Ts>
 void
-SmartEvent::SetFunctionAndArguments (FN fn, Ts&&... a)
+SmartEvent::SetFunction (FN fn, Ts&&... a)
 {
   delete m_impl;
   m_impl = MakeTimerImpl (fn);
@@ -198,10 +186,22 @@ SmartEvent::SetFunctionAndArguments (FN fn, Ts&&... a)
 
 template <typename MEM_PTR, typename OBJ_PTR, typename... Ts>
 void
-SmartEvent::SetFunctionAndArguments (MEM_PTR memPtr, OBJ_PTR objPtr, Ts&&... a)
+SmartEvent::SetFunction (MEM_PTR memPtr, OBJ_PTR objPtr, Ts&&... a)
 {
   delete m_impl;
   m_impl = MakeTimerImpl (memPtr, objPtr);
+  m_impl->SetArgs (a...);
+}
+
+template <typename... Ts>
+void
+SmartEvent::SetArguments (Ts&&... a)
+{
+  if (m_impl == 0)
+    {
+      NS_FATAL_ERROR ("You cannot set the arguments of a SmartEvent before setting its function.");
+      return;
+    }
   m_impl->SetArgs (a...);
 }
 
