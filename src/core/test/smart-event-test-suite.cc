@@ -134,7 +134,7 @@ public:
   bool m_expired;         //!< Flag for expired SmartEvent
   Time m_expiredTime;     //!< Time when SmartEvent expired
   int m_expiredArgument;  //!< Argument supplied to expired SmartEvent
-  SmartEvent m_rearming;  //|< Self.rearming SmartEvent.
+  SmartEvent m_rearming;  //!< Self.rearming SmartEvent.
 };
 
 SmartEventSelfRearmTestCase::SmartEventSelfRearmTestCase()
