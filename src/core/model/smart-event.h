@@ -114,6 +114,7 @@ public:
    *
    * \tparam MEM_PTR \deduced Class method function type.
    * \tparam OBJ_PTR \deduced Class type containing the function.
+   * \tparam Ts \deduced Type of the arguments.
    * \param [in] memPtr The member function pointer
    * \param [in] objPtr The pointer to object
    * \param [in] a the arguments
