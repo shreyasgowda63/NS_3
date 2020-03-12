@@ -138,17 +138,10 @@ public:
 private:
   /** Internal callback invoked when the timer expires. */
   void Expire (void);
-  /**
-   * The timer implementation, which contains the bound callback
-   * function and arguments.
-   */
-  TimerImpl *m_impl;
-  /** The future event scheduled to expire the timer. */
-  EventId m_event;
-  /** The absolute time when the timer will expire. */
-  Time m_end;
-  /** The SmartEvent is canceled. */
-  bool m_cancelled;
+  TimerImpl *m_impl; ///< The timer implementation, which contains the bound callback function and arguments.
+  EventId m_event;   ///< The future event scheduled to expire the timer.
+  Time m_end;        ///< The absolute time at which the timer will expire.
+  bool m_cancelled;  ///< Whether the SmartEvent is canceled.
 };
 
 } // namespace ns3
