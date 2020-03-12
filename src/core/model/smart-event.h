@@ -59,7 +59,7 @@ public:
    * \param [in] delay The SmartEvent delay
    *
    * After a call to this method, the SmartEvent will not be triggered
-   * until the delay specified has been expired. This operation is
+   * until the delay specified has expired. This operation is
    * sometimes named "re-arming" a SmartEvent in some operating systems.
    */
   void SetNewExpiration (Time delay);
