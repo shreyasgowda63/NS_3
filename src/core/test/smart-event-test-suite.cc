@@ -163,8 +163,7 @@ SmartEventSelfRearmTestCase::DoRun (void)
   m_expiredArgument = 0;
   m_expiredTime = Seconds (0);
 
-  m_rearming.SetFunction (&SmartEventSelfRearmTestCase::Expire, this);
-  m_rearming.SetArguments (0);
+  m_rearming.SetFunction (&SmartEventSelfRearmTestCase::Expire, this, 0);
   m_rearming.SetNewExpiration (Seconds (10));
 
   Simulator::Run ();
