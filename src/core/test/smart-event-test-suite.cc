@@ -147,7 +147,7 @@ SmartEventSelfRearmTestCase::Expire (int value)
 {
   if (value < 3)
     {
-      m_rearming.SetArguments (value+1);
+      m_rearming.SetArguments (value + 1);
       m_rearming.SetNewExpiration (Seconds (10));
       return;
     }
