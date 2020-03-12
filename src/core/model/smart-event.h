@@ -102,6 +102,8 @@ public:
   /**
    * Set the function to execute when the timer expires along with its arguments.
    *
+   * \tparam FN \deduced Type of the function.
+   * \tparam Ts \deduced Type of the arguments.
    * \param [in] fn The function
    * \param [in] a the arguments
    *
