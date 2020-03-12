@@ -79,7 +79,6 @@ SmartEvent::Cancel (void)
 bool
 SmartEvent::IsPending (void)
 {
-  NS_LOG_FUNCTION (this);
   if (m_cancelled)
     {
       return false;
