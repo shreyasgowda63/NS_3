@@ -127,7 +127,6 @@ public:
   virtual void DoRun (void);
   /**
    * Function to invoke when SmartEvent expires.
-   * \param index The SmartEvent index
    * \param value The argument passed.
    */
   void Expire (int value);
