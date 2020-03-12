@@ -78,6 +78,7 @@ public:
   /**
    * Set the function to execute when the timer expires.
    *
+   * \tparam FN \deduced Type of the function.
    * \param [in] fn The function
    *
    * Store this function in this Timer for later use by Timer::Schedule.
