@@ -96,7 +96,7 @@ SmartEventTestCase::DoRun (void)
   advanced.SetFunction (&SmartEventTestCase::Expire, this);
   advanced.SetArguments (2, 30);
   advanced.SetNewExpiration (Seconds (10));
-  Simulator::Schedule (Seconds ( 2), &SmartEvent::SetNewExpiration, &advanced, Seconds (3));
+  Simulator::Schedule (Seconds (2), &SmartEvent::SetNewExpiration, &advanced, Seconds (3));
 
   Simulator::Run ();
   Simulator::Destroy ();
