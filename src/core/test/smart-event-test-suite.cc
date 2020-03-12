@@ -90,7 +90,7 @@ SmartEventTestCase::DoRun (void)
   delayed.SetFunction (&SmartEventTestCase::Expire, this);
   delayed.SetArguments (1, 20);
   delayed.SetNewExpiration (Seconds (10));
-  Simulator::Schedule (Seconds ( 5), &SmartEvent::SetNewExpiration, &delayed, Seconds (15));
+  Simulator::Schedule (Seconds (5), &SmartEvent::SetNewExpiration, &delayed, Seconds (15));
 
   SmartEvent advanced;
   advanced.SetFunction (&SmartEventTestCase::Expire, this);
