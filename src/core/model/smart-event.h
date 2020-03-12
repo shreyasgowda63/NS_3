@@ -206,4 +206,4 @@ SmartEvent::SetArguments (Ts&&... a)
 } // namespace ns3
 
 
-#endif /* SmartEvent_H */
+#endif /* SMARTEVENT_H */
