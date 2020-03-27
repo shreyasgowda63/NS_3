@@ -281,9 +281,10 @@ PacketSocket::GetMinMtu (PacketSocketAddress ad) const
   else
     {
       uint32_t minMtu = 0xffff;
-      for (uint32_t i = 0; i < m_node->GetNDevices (); i++)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = m_node->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          Ptr<NetDevice> device = m_node->GetDevice (i);
+          Ptr<NetDevice> device = it->second;
           minMtu = std::min (minMtu, (uint32_t)device->GetMtu ());
         }
       return minMtu;
@@ -354,9 +355,10 @@ PacketSocket::SendTo (Ptr<Packet> p, uint32_t flags, const Address &address)
     }
   else
     {
-      for (uint32_t i = 0; i < m_node->GetNDevices (); i++)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = m_node->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          Ptr<NetDevice> device = m_node->GetDevice (i);
+          Ptr<NetDevice> device = it->second;
           if (!device->Send (p, dest, ad.GetProtocol ()))
             {
               NS_LOG_LOGIC ("error: NetDevice::Send error");

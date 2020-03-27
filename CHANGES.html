@@ -80,6 +80,7 @@ transmitted.</li>
 <li>The internal TCP API for <b>TcpCongestionOps</b> has been extended to support the <b>CongControl</b> method to allow for delivery rate estimation feedback to the congestion control mechanism.</li>
 <li>Functions <b>LteEnbPhy::ReceiveUlHarqFeedback</b> and <b>LteUePhy::ReceiveLteDlHarqFeedback</b> are renamed to <b>LteEnbPhy::ReportUlHarqFeedback</b> and <b>LteUePhy::EnqueueDlHarqFeedback</b>, respectively to avoid confusion about their functionality. <b>LteHelper</b> is updated accordingly.</li>
 <li>Now on, instead of <b>uint8_t</b>, <b>uint16_t</b> would be used to store a bandwidth value in LTE.</li>
+<li><b>Node::RemoveDevice(Ptr<NetDevice> device)</b> is now supported, to allow for dynamic removal of (typically, virtual) devices.  However, in order to keep the ifIndex values stable despite possible removal of a lower-numbered device, the list of NetDevices can no longer be iterated by calling <b>Node::GetNDevices ()</b> and then iterating the device index to that number.  Instead, <b>Node::GetDeviceMap()</b> can be used to export a const reference to a std::map that can be iterated for all devices.</li>
 </ul>
 <h2>Changes to build system:</h2>
 <ul>

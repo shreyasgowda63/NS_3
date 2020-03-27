@@ -104,6 +104,9 @@ public:
 
   /**
    * \param index ifIndex of the device 
+   *
+   * The ifIndex is typically set by the Node::AddDevice() method; setting
+   * it outside of that method may result in undefined behavior.
    */
   virtual void SetIfIndex (const uint32_t index) = 0;
   /**

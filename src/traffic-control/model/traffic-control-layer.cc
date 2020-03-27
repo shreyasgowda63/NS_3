@@ -120,11 +120,12 @@ TrafficControlLayer::ScanDevices (void)
   NS_ASSERT_MSG (m_node, "Cannot run ScanDevices without an aggregated node");
 
   NS_LOG_DEBUG ("Scanning devices on node " << m_node->GetId ());
-  for (uint32_t i = 0; i < m_node->GetNDevices (); i++)
+  const std::map<uint32_t, Ptr<NetDevice> >& devices = m_node->GetDeviceMap ();
+  for (auto it = devices.begin (); it != devices.end (); it++)
     {
       NS_LOG_DEBUG ("Scanning devices on node " << m_node->GetId ());
-      Ptr<NetDevice> dev = m_node->GetDevice (i);
-      NS_LOG_DEBUG ("Checking device " << i << " with pointer " << dev << " of type " << dev->GetInstanceTypeId ().GetName ());
+      Ptr<NetDevice> dev = it->second;
+      NS_LOG_DEBUG ("Checking device " << it->first << " with pointer " << dev << " of type " << dev->GetInstanceTypeId ().GetName ());
 
       // note: there may be no NetDeviceQueueInterface aggregated to the device
       Ptr<NetDeviceQueueInterface> ndqi = dev->GetObject<NetDeviceQueueInterface> ();

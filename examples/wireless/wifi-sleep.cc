@@ -210,9 +210,10 @@ int main (int argc, char *argv[])
 
       Ptr<WifiNetDevice> wnd;
 
-      for (uint32_t i = 0; i < (*n)->GetNDevices (); ++i)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = (*n)->GetDeviceMap ();
+      for (auto i = devices.begin (); i != devices.end (); ++i)
         {
-          wnd = (*n)->GetDevice (i)->GetObject<WifiNetDevice> ();
+          wnd = i->second->GetObject<WifiNetDevice> ();
           // if it is a WifiNetDevice
           if (wnd != 0)
             {

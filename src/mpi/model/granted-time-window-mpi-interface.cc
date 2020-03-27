@@ -260,10 +260,10 @@ GrantedTimeWindowMpiInterface::ReceiveMessages ()
       // Find the correct node/device to schedule receive event
       Ptr<Node> pNode = NodeList::GetNode (node);
       Ptr<MpiReceiver> pMpiRec = 0;
-      uint32_t nDevices = pNode->GetNDevices ();
-      for (uint32_t i = 0; i < nDevices; ++i)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = pNode->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          Ptr<NetDevice> pThisDev = pNode->GetDevice (i);
+          Ptr<NetDevice> pThisDev = it->second;
           if (pThisDev->GetIfIndex () == dev)
             {
               pMpiRec = pThisDev->GetObject<MpiReceiver> ();

@@ -187,9 +187,10 @@ DistributedSimulatorImpl::CalculateLookAhead (void)
               continue;
             }
 
-          for (uint32_t i = 0; i < (*iter)->GetNDevices (); ++i)
+          const std::map<uint32_t, Ptr<NetDevice> >& devices = (*iter)->GetDeviceMap ();
+          for (auto it = devices.begin (); it != devices.end (); it++)
             {
-              Ptr<NetDevice> localNetDevice = (*iter)->GetDevice (i);
+              Ptr<NetDevice> localNetDevice = it->second;
               // only works for p2p links currently
               if (!localNetDevice->IsPointToPoint ())
                 {

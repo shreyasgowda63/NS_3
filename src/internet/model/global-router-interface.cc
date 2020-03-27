@@ -625,20 +625,13 @@ GlobalRouter::DiscoverLSAs ()
   pLSA->SetNode (node);
 
   //
-  // Ask the node for the number of net devices attached. This isn't necessarily 
-  // equal to the number of links to adjacent nodes (other routers) as the number
-  // of devices may include those for stub networks (e.g., ethernets, etc.) and 
-  // bridge devices also take up an "extra" net device.
-  //
-  uint32_t numDevices = node->GetNDevices ();
-
-  //
   // Iterate through the devices on the node and walk the channel to see what's
   // on the other side of the standalone devices..
   //
-  for (uint32_t i = 0; i < numDevices; ++i)
+  const std::map<uint32_t, Ptr<NetDevice> >& devices = node->GetDeviceMap ();
+  for (auto it = devices.begin (); it != devices.end (); it++)
     {
-      Ptr<NetDevice> ndLocal = node->GetDevice (i);
+      Ptr<NetDevice> ndLocal = it->second;
 
       if (DynamicCast <LoopbackNetDevice> (ndLocal))
         {
@@ -1762,7 +1755,6 @@ GlobalRouter::NetDeviceIsBridged (Ptr<NetDevice> nd) const
   NS_LOG_FUNCTION (this << nd);
 
   Ptr<Node> node = nd->GetNode ();
-  uint32_t nDevices = node->GetNDevices ();
 
   //
   // There is no bit on a net device that says it is being bridged, so we have
@@ -1770,14 +1762,15 @@ GlobalRouter::NetDeviceIsBridged (Ptr<NetDevice> nd) const
   // find a bridge, we need to look through its bridge ports (the devices it
   // bridges) to see if we find the device in question.
   //
-  for (uint32_t i = 0; i < nDevices; ++i)
+  const std::map<uint32_t, Ptr<NetDevice> >& devices = node->GetDeviceMap ();
+  for (auto it = devices.begin (); it != devices.end (); it++)
     {
-      Ptr<NetDevice> ndTest = node->GetDevice (i);
-      NS_LOG_LOGIC ("Examine device " << i << " " << ndTest);
+      Ptr<NetDevice> ndTest = it->second;
+      NS_LOG_LOGIC ("Examine device " << it->first << " " << ndTest);
 
       if (ndTest->IsBridge ())
         {
-          NS_LOG_LOGIC ("device " << i << " is a bridge net device");
+          NS_LOG_LOGIC ("device " << it->first << " is a bridge net device");
           Ptr<BridgeNetDevice> bnd = ndTest->GetObject<BridgeNetDevice> ();
           NS_ABORT_MSG_UNLESS (bnd, "GlobalRouter::DiscoverLSAs (): GetObject for <BridgeNetDevice> failed");
 

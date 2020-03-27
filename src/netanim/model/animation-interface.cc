@@ -1598,10 +1598,10 @@ AnimationInterface::ConnectLte ()
     {
       Ptr<Node> n = *i;
       NS_ASSERT (n);
-      uint32_t nDevices = n->GetNDevices ();
-      for (uint32_t devIndex = 0; devIndex < nDevices; ++devIndex)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = n->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          Ptr <NetDevice> nd = n->GetDevice (devIndex);
+          Ptr <NetDevice> nd = it->second;
           if (!nd)
             {
               continue;
@@ -1609,13 +1609,13 @@ AnimationInterface::ConnectLte ()
           Ptr<LteUeNetDevice> lteUeNetDevice = DynamicCast<LteUeNetDevice> (nd);
           if (lteUeNetDevice)
             {
-              ConnectLteUe (n, lteUeNetDevice, devIndex);
+              ConnectLteUe (n, lteUeNetDevice, it->first);
               continue;
             }
           Ptr<LteEnbNetDevice> lteEnbNetDevice = DynamicCast<LteEnbNetDevice> (nd);
           if (lteEnbNetDevice)
             {
-              ConnectLteEnb (n, lteEnbNetDevice, devIndex);
+              ConnectLteEnb (n, lteEnbNetDevice, it->first);
             }
         }
 
@@ -1946,10 +1946,10 @@ AnimationInterface::WriteLinkProperties ()
       Ptr<Node> n = *i;
       UpdatePosition (n);
       uint32_t n1Id = n->GetId ();
-      uint32_t nDev = n->GetNDevices ();  // Number of devices
-      for (uint32_t i = 0; i < nDev; ++i)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = n->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          Ptr<NetDevice> dev = n->GetDevice (i);
+          Ptr<NetDevice> dev = it->second;
           NS_ASSERT (dev);
           Ptr<Channel>   ch = dev->GetChannel ();
           std::string channelType = "Unknown channel";

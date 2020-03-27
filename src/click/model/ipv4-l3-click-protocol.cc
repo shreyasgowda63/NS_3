@@ -326,9 +326,10 @@ Ipv4L3ClickProtocol::SetupLoopback (void)
   Ptr<Ipv4Interface> interface = CreateObject<Ipv4Interface> ();
   Ptr<LoopbackNetDevice> device = 0;
   // First check whether an existing LoopbackNetDevice exists on the node
-  for (uint32_t i = 0; i < m_node->GetNDevices (); i++)
+  const std::map<uint32_t, Ptr<NetDevice> >& devices = m_node->GetDeviceMap ();
+  for (auto it = devices.begin (); it != devices.end (); it++)
     {
-      if ((device = DynamicCast<LoopbackNetDevice> (m_node->GetDevice (i))))
+      if (device = DynamicCast<LoopbackNetDevice> (it->second))
         {
           break;
         }
@@ -622,7 +623,7 @@ Ipv4L3ClickProtocol::SetForwarding (uint32_t i, bool val)
 void
 Ipv4L3ClickProtocol::SetPromisc (uint32_t i)
 {
-  NS_ASSERT (i <= m_node->GetNDevices ());
+  NS_ASSERT (m_node->GetDevice (i));
   Ptr<NetDevice> netdev = GetNetDevice (i);
   NS_ASSERT (netdev);
   Ptr<Node> node = GetObject<Node> ();

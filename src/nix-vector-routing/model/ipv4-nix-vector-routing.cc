@@ -207,22 +207,21 @@ Ipv4NixVectorRouting::BuildNixVectorLocal (Ptr<NixVector> nixVector)
 {
   NS_LOG_FUNCTION_NOARGS ();
 
-  uint32_t numberOfDevices = m_node->GetNDevices ();
-
   // here we are building a nix vector to 
   // ourself, so we need to find the loopback 
   // interface and add that to the nix vector
   Ipv4Address loopback ("127.0.0.1");
-  for (uint32_t i = 0; i < numberOfDevices; i++)
+  const std::map<uint32_t, Ptr<NetDevice> >& devices = m_node->GetDeviceMap ();
+  for (auto it = devices.begin (); it != devices.end (); it++)
     {
-      uint32_t interfaceIndex = (m_ipv4)->GetInterfaceForDevice (m_node->GetDevice (i));
+      uint32_t interfaceIndex = (m_ipv4)->GetInterfaceForDevice (it->second);
       Ipv4InterfaceAddress ifAddr = m_ipv4->GetAddress (interfaceIndex, 0);
       if (ifAddr.GetLocal () == loopback)
         {
           NS_LOG_LOGIC ("Adding loopback to nix.");
-          NS_LOG_LOGIC ("Adding Nix: " << i << " with " << nixVector->BitCount (numberOfDevices) 
+          NS_LOG_LOGIC ("Adding Nix: " << it->first << " with " << nixVector->BitCount (m_node->GetNDevices ())
                                        << " bits, for node " << m_node->GetId ());
-          nixVector->AddNeighborIndex (i, nixVector->BitCount (numberOfDevices));
+          nixVector->AddNeighborIndex (it->first, nixVector->BitCount (m_node->GetNDevices()));
           return true;
         }
     }
@@ -246,18 +245,18 @@ Ipv4NixVectorRouting::BuildNixVector (const std::vector< Ptr<Node> > & parentVec
 
   Ptr<Node> parentNode = parentVector.at (dest);
 
-  uint32_t numberOfDevices = parentNode->GetNDevices ();
   uint32_t destId = 0;
   uint32_t totalNeighbors = 0;
 
   // scan through the net devices on the parent node
   // and then look at the nodes adjacent to them
-  for (uint32_t i = 0; i < numberOfDevices; i++)
+  const std::map<uint32_t, Ptr<NetDevice> >& devices = parentNode->GetDeviceMap ();
+  for (auto it = devices.begin (); it != devices.end (); it++)
     {
       // Get a net device from the node
       // as well as the channel, and figure
       // out the adjacent net devices
-      Ptr<NetDevice> localNetDevice = parentNode->GetDevice (i);
+      Ptr<NetDevice> localNetDevice = it->second;
       if (localNetDevice->IsBridge ())
         {
           continue;
@@ -373,17 +372,17 @@ Ipv4NixVectorRouting::GetNodeByIp (Ipv4Address dest)
 uint32_t
 Ipv4NixVectorRouting::FindTotalNeighbors (void)
 {
-  uint32_t numberOfDevices = m_node->GetNDevices ();
   uint32_t totalNeighbors = 0;
 
   // scan through the net devices on the parent node
   // and then look at the nodes adjacent to them
-  for (uint32_t i = 0; i < numberOfDevices; i++)
+  const std::map<uint32_t, Ptr<NetDevice> >& devices = m_node->GetDeviceMap ();
+  for (auto it = devices.begin (); it != devices.end (); it++)
     {
       // Get a net device from the node
       // as well as the channel, and figure
       // out the adjacent net devices
-      Ptr<NetDevice> localNetDevice = m_node->GetDevice (i);
+      Ptr<NetDevice> localNetDevice = it->second;
       Ptr<Channel> channel = localNetDevice->GetChannel ();
       if (channel == 0)
         {
@@ -444,18 +443,18 @@ Ipv4NixVectorRouting::NetDeviceIsBridged (Ptr<NetDevice> nd) const
 uint32_t
 Ipv4NixVectorRouting::FindNetDeviceForNixIndex (uint32_t nodeIndex, Ipv4Address & gatewayIp)
 {
-  uint32_t numberOfDevices = m_node->GetNDevices ();
   uint32_t index = 0;
   uint32_t totalNeighbors = 0;
 
   // scan through the net devices on the parent node
   // and then look at the nodes adjacent to them
-  for (uint32_t i = 0; i < numberOfDevices; i++)
+  const std::map<uint32_t, Ptr<NetDevice> >& devices = m_node->GetDeviceMap ();
+  for (auto it = devices.begin (); it != devices.end (); it++)
     {
       // Get a net device from the node
       // as well as the channel, and figure
       // out the adjacent net devices
-      Ptr<NetDevice> localNetDevice = m_node->GetDevice (i);
+      Ptr<NetDevice> localNetDevice = it->second;
       Ptr<Channel> channel = localNetDevice->GetChannel ();
       if (channel == 0)
         {
@@ -471,7 +470,7 @@ Ipv4NixVectorRouting::FindNetDeviceForNixIndex (uint32_t nodeIndex, Ipv4Address 
       if (nodeIndex < (totalNeighbors + netDeviceContainer.GetN ()))
         {
           // found the proper net device
-          index = i;
+          index = it->first;
           Ptr<NetDevice> gatewayDevice = netDeviceContainer.Get (nodeIndex-totalNeighbors);
           Ptr<Node> gatewayNode = gatewayDevice->GetNode ();
           Ptr<Ipv4> ipv4 = gatewayNode->GetObject<Ipv4> ();
@@ -853,17 +852,18 @@ Ipv4NixVectorRouting::BFS (uint32_t numberOfNodes, Ptr<Node> source,
         {
           // Iterate over the current node's adjacent vertices
           // and push them into the queue
-          for (uint32_t i = 0; i < (currNode->GetNDevices ()); i++)
+          const std::map<uint32_t, Ptr<NetDevice> >& devices = currNode->GetDeviceMap ();
+          for (auto it = devices.begin (); it != devices.end (); it++)
             {
               // Get a net device from the node
               // as well as the channel, and figure
               // out the adjacent net device
-              Ptr<NetDevice> localNetDevice = currNode->GetDevice (i);
+              Ptr<NetDevice> localNetDevice = it->second;
 
               // make sure that we can go this way
               if (ipv4)
                 {
-                  uint32_t interfaceIndex = (ipv4)->GetInterfaceForDevice (currNode->GetDevice (i));
+                  uint32_t interfaceIndex = (ipv4)->GetInterfaceForDevice (currNode->GetDevice (it->first));
                   if (!(ipv4->IsUp (interfaceIndex)))
                     {
                       NS_LOG_LOGIC ("Ipv4Interface is down");

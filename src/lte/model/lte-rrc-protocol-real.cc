@@ -269,12 +269,10 @@ LteUeRrcProtocolReal::SetEnbRrcSapProvider ()
        ++i)
     {
       Ptr<Node> node = *i;
-      int nDevs = node->GetNDevices ();
-      for (int j = 0; 
-           (j < nDevs) && (!found);
-           j++)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = node->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end () && (!found); it++)
         {
-          enbDev = node->GetDevice (j)->GetObject <LteEnbNetDevice> ();
+          enbDev = it->second->GetObject <LteEnbNetDevice> ();
           if (enbDev == 0)
             {
               continue;
@@ -465,10 +463,10 @@ LteEnbRrcProtocolReal::DoSetupUe (uint16_t rnti, LteEnbRrcSapUser::SetupUeParame
   // for (NodeList::Iterator i = NodeList::Begin (); (i != listEnd) && (found == false); i++)
   //   {
   //     Ptr<Node> node = *i;
-  //     int nDevs = node->GetNDevices ();
-  //     for (int j = 0; j < nDevs; j++)
+  //     const std::map<uint32_t, Ptr<NetDevice> >& devices = node->GetDeviceMap ();
+  //     for (auto it = devices.begin (); it != devices.end (); it++)
   //       {
-  //         Ptr<LteUeNetDevice> ueDev = node->GetDevice (j)->GetObject <LteUeNetDevice> ();
+  //         Ptr<LteUeNetDevice> ueDev = it->second->GetObject <LteUeNetDevice> ();
   //         if (!ueDev)
   //           {
   //             continue;
@@ -538,10 +536,10 @@ LteEnbRrcProtocolReal::DoSendSystemInformation (uint16_t cellId, LteRrcSap::Syst
   for (NodeList::Iterator i = NodeList::Begin (); i != NodeList::End (); ++i)
     {
       Ptr<Node> node = *i;
-      int nDevs = node->GetNDevices ();
-      for (int j = 0; j < nDevs; ++j)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = node->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          Ptr<LteUeNetDevice> ueDev = node->GetDevice (j)->GetObject <LteUeNetDevice> ();
+          Ptr<LteUeNetDevice> ueDev = it->second->GetObject <LteUeNetDevice> ();
           if (ueDev != 0)
             {
               Ptr<LteUeRrc> ueRrc = ueDev->GetRrc ();

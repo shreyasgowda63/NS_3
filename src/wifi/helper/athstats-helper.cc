@@ -90,9 +90,10 @@ AthstatsHelper::EnableAthstats (std::string filename, NodeContainer n)
   for (NodeContainer::Iterator i = n.Begin (); i != n.End (); ++i)
     {
       Ptr<Node> node = *i;
-      for (std::size_t j = 0; j < node->GetNDevices (); ++j)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = node->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          devs.Add (node->GetDevice (j));
+          devs.Add (it->second);
         }
     }
   EnableAthstats (filename, devs);

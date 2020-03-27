@@ -427,9 +427,10 @@ PcapHelperForDevice::EnablePcap (std::string prefix, NodeContainer n, bool promi
   for (NodeContainer::Iterator i = n.Begin (); i != n.End (); ++i)
     {
       Ptr<Node> node = *i;
-      for (uint32_t j = 0; j < node->GetNDevices (); ++j)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = node->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          devs.Add (node->GetDevice (j));
+          devs.Add (it->second);
         }
     }
   EnablePcap (prefix, devs, promiscuous);
@@ -454,7 +455,7 @@ PcapHelperForDevice::EnablePcap (std::string prefix, uint32_t nodeid, uint32_t d
           continue;
         }
 
-      NS_ABORT_MSG_IF (deviceid >= node->GetNDevices (), "PcapHelperForDevice::EnablePcap(): Unknown deviceid = " 
+      NS_ABORT_MSG_UNLESS (node->GetDevice (deviceid), "PcapHelperForDevice::EnablePcap(): Unknown deviceid = " 
                        << deviceid);
       Ptr<NetDevice> nd = node->GetDevice (deviceid);
       EnablePcap (prefix, nd, promiscuous);
@@ -571,9 +572,10 @@ AsciiTraceHelperForDevice::EnableAsciiImpl (Ptr<OutputStreamWrapper> stream, std
   for (NodeContainer::Iterator i = n.Begin (); i != n.End (); ++i)
     {
       Ptr<Node> node = *i;
-      for (uint32_t j = 0; j < node->GetNDevices (); ++j)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = node->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          devs.Add (node->GetDevice (j));
+          devs.Add (it->second);
         }
     }
   EnableAsciiImpl (stream, prefix, devs);
@@ -640,7 +642,7 @@ AsciiTraceHelperForDevice::EnableAsciiImpl (
           continue;
         }
 
-      NS_ABORT_MSG_IF (deviceid >= node->GetNDevices (), 
+      NS_ABORT_MSG_UNLESS (node->GetDevice (deviceid), 
                        "AsciiTraceHelperForDevice::EnableAscii(): Unknown deviceid = " << deviceid);
 
       Ptr<NetDevice> nd = node->GetDevice (deviceid);

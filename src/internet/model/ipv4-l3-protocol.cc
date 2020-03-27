@@ -348,9 +348,10 @@ Ipv4L3Protocol::SetupLoopback (void)
   Ptr<Ipv4Interface> interface = CreateObject<Ipv4Interface> ();
   Ptr<LoopbackNetDevice> device = 0;
   // First check whether an existing LoopbackNetDevice exists on the node
-  for (uint32_t i = 0; i < m_node->GetNDevices (); i++)
+  const std::map<uint32_t, Ptr<NetDevice> >& devices = m_node->GetDeviceMap ();
+  for (auto it = devices.begin (); it != devices.end (); it++)
     {
-      if ((device = DynamicCast<LoopbackNetDevice> (m_node->GetDevice (i))))
+      if (device = DynamicCast<LoopbackNetDevice> (it->second))
         {
           break;
         }

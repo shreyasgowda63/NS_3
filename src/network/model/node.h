@@ -22,6 +22,7 @@
 #define NODE_H
 
 #include <vector>
+#include <map>
 
 #include "ns3/object.h"
 #include "ns3/callback.h"
@@ -98,22 +99,50 @@ public:
    * \brief Associate a NetDevice to this node.
    *
    * \param device NetDevice to associate to this node.
-   * \returns the index of the NetDevice into the Node's list of
-   *          NetDevice.
+   * \returns the ifIndex of the NetDevice
+   *
+   * The ifIndex value is a persistent name for the device, analogous to
+   * the ifIndex identifier on a real system (see RFC 2863, Section 3.1.5).
+   * Each call to AddDevice() will result in a different ifIndex value,
+   * even if for the same NetDevice.  Passing a null pointer to this method
+   * will terminate the simulation.  The first ifIndex value assigned
+   * will be 0.
    */
   uint32_t AddDevice (Ptr<NetDevice> device);
   /**
-   * \brief Retrieve the index-th NetDevice associated to this node.
+   * \brief Remove a NetDevice from this node.
    *
-   * \param index the index of the requested NetDevice
-   * \returns the requested NetDevice.
+   * \param device NetDevice to remove from this node.
+   * \returns true if the operation was successful
+   *
+   * This method simply disassociates the device from the node object; any
+   * other operations (such as disassociating the device from a channel
+   * object) are the responsibility of the client.
    */
-  Ptr<NetDevice> GetDevice (uint32_t index) const;
+  bool RemoveDevice (Ptr<NetDevice> device);
+  /**
+   * \brief Retrieve the NetDevice by ifIndex value
+   *
+   * \param index the ifIndex of the requested NetDevice
+   * \returns the requested NetDevice, or a null pointer if not found.
+   */
+  Ptr<NetDevice> GetDevice (uint32_t ifIndex) const;
   /**
    * \returns the number of NetDevice instances associated
    *          to this Node.
    */
   uint32_t GetNDevices (void) const;
+  /**
+   * \brief Access a reference to a map of all NetDevice instances associated
+   * with a node
+   *
+   * Use this method if you need to iterate over all NetDevices on a Node,
+   * because the range of valid ifIndex values may not be contiguous.
+   *
+   * \returns a reference to a map of all NetDevice instances associated
+   *          to this Node.
+   */
+  const std::map<uint32_t, Ptr<NetDevice> >& GetDeviceMap (void) const;
 
   /**
    * \brief Associate an Application to this Node.
@@ -187,6 +216,10 @@ public:
    */
   typedef Callback<void,Ptr<NetDevice> > DeviceAdditionListener;
   /**
+   * A callback invoked whenever a device is removed from a node.
+   */
+  typedef Callback<void,Ptr<NetDevice> > DeviceRemovalListener;
+  /**
    * \param listener the listener to add
    *
    * Add a new listener to the list of listeners for the device-added
@@ -201,8 +234,20 @@ public:
    * device-added event.
    */
   void UnregisterDeviceAdditionListener (DeviceAdditionListener listener);
-
-
+  /**
+   * \param listener the listener to add
+   *
+   * Add a new listener to the list of listeners for the device-removal
+   * event.
+   */
+  void RegisterDeviceRemovalListener (DeviceRemovalListener listener);
+  /**
+   * \param listener the listener to remove
+   *
+   * Remove an existing listener from the list of listeners for the 
+   * device-removal event.
+   */
+  void UnregisterDeviceRemovalListener (DeviceRemovalListener listener);
 
   /**
    * \returns true if checksums are enabled, false otherwise.
@@ -225,6 +270,11 @@ private:
    * \param device the added device to notify.
    */
   void NotifyDeviceAdded (Ptr<NetDevice> device);
+  /**
+   * \brief Notifies all the DeviceRemovalListener about the new device removed.
+   * \param device the removed device to notify.
+   */
+  void NotifyDeviceRemoved (Ptr<NetDevice> device);
 
   /**
    * \brief Receive a packet from a device in non-promiscuous mode.
@@ -281,13 +331,17 @@ private:
   typedef std::vector<struct Node::ProtocolHandlerEntry> ProtocolHandlerList;
   /// Typedef for NetDevice addition listeners container
   typedef std::vector<DeviceAdditionListener> DeviceAdditionListenerList;
+  /// Typedef for NetDevice removal listeners container
+  typedef std::vector<DeviceRemovalListener> DeviceRemovalListenerList;
 
   uint32_t    m_id;         //!< Node id for this node
   uint32_t    m_sid;        //!< System id for this node
-  std::vector<Ptr<NetDevice> > m_devices; //!< Devices associated to this node
+  uint32_t    m_nextIfIndex; //!< Next ifIndex value to assign
+  std::map<uint32_t, Ptr<NetDevice> > m_devices; //!< Devices associated to this node
   std::vector<Ptr<Application> > m_applications; //!< Applications associated to this node
   ProtocolHandlerList m_handlers; //!< Protocol handlers in the node
   DeviceAdditionListenerList m_deviceAdditionListeners; //!< Device addition listeners in the node
+  DeviceRemovalListenerList m_deviceRemovalListeners; //!< Device removal listeners in the node
 };
 
 } // namespace ns3

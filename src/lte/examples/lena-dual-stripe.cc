@@ -195,10 +195,10 @@ PrintGnuplottableUeListToFile (std::string filename)
   for (NodeList::Iterator it = NodeList::Begin (); it != NodeList::End (); ++it)
     {
       Ptr<Node> node = *it;
-      int nDevs = node->GetNDevices ();
-      for (int j = 0; j < nDevs; j++)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = node->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          Ptr<LteUeNetDevice> uedev = node->GetDevice (j)->GetObject <LteUeNetDevice> ();
+          Ptr<LteUeNetDevice> uedev = it->second->GetObject <LteUeNetDevice> ();
           if (uedev)
             {
               Vector pos = node->GetObject<MobilityModel> ()->GetPosition ();
@@ -223,10 +223,10 @@ PrintGnuplottableEnbListToFile (std::string filename)
   for (NodeList::Iterator it = NodeList::Begin (); it != NodeList::End (); ++it)
     {
       Ptr<Node> node = *it;
-      int nDevs = node->GetNDevices ();
-      for (int j = 0; j < nDevs; j++)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = node->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          Ptr<LteEnbNetDevice> enbdev = node->GetDevice (j)->GetObject <LteEnbNetDevice> ();
+          Ptr<LteEnbNetDevice> enbdev = it->second->GetObject <LteEnbNetDevice> ();
           if (enbdev)
             {
               Vector pos = node->GetObject<MobilityModel> ()->GetPosition ();

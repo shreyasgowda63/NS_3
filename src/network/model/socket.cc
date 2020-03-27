@@ -333,9 +333,10 @@ Socket::BindToNetDevice (Ptr<NetDevice> netdevice)
   if (netdevice != 0)
     {
       bool found = false;
-      for (uint32_t i = 0; i < GetNode ()->GetNDevices (); i++)
+      const std::map<uint32_t, Ptr<NetDevice> >& devices = GetNode ()->GetDeviceMap ();
+      for (auto it = devices.begin (); it != devices.end (); it++)
         {
-          if (GetNode ()->GetDevice (i) == netdevice)
+          if (it->second == netdevice)
             {
               found = true;
               break;
