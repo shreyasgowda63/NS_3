@@ -104,7 +104,6 @@ extern "C" {
 //PDB preprocessor symbol 'I' conflicts with
 // `#define I _Complex_I` in <complex>
 // Substitute a less generic symbol here
-       'I       '
 #define cairo_I  cairo_private
 
 #if !HAVE_UINT64_T
