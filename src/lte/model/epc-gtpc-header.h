@@ -51,11 +51,10 @@ public:
   virtual uint32_t Deserialize (Buffer::Iterator start);
   virtual void Print (std::ostream &os) const;
 /**
- * \return 0
+ * \returns size of the message 
  */
   virtual uint32_t GetMessageSize (void) const;
-
-  /**
+/**
    * Get message type
    * \returns the message type
    */
@@ -66,7 +65,7 @@ public:
    */
   uint16_t GetMessageLength () const;
   /**
-   * Get TEID
+   * Get TEID Tunnel End Point Identifier
    * \returns the TEID
    */
   uint32_t GetTeid () const;
@@ -75,8 +74,7 @@ public:
    * \returns the sequence number
    */
   uint32_t GetSequenceNumber () const;
-
-  /**
+/**
    * Set message type
    * \param messageType the message type
    */
@@ -87,7 +85,7 @@ public:
    */
   void SetMessageLength (uint16_t messageLength);
   /**
-   * Set TEID
+   * Set TEID Tunnel End Point Identifier
    * \param teid the TEID
    */
   void SetTeid (uint32_t teid);
@@ -105,10 +103,11 @@ public:
    * \brief Calculates MessageLength
    */
   void ComputeMessageLength (void);
-
+  
   /// Interface Type enumeration
   enum InterfaceType_t
   {
+    /// Enumerators
     S1U_ENB_GTPU  = 0,
     S5_SGW_GTPU   = 4,
     S5_PGW_GTPU   = 5,
@@ -116,18 +115,19 @@ public:
     S5_PGW_GTPC   = 7,
     S11_MME_GTPC  = 10,
   };
-
+  
   /// FTEID structure
   struct Fteid_t
   {
     InterfaceType_t interfaceType; ///< interfaceType
-    Ipv4Address addr; ///< addr : an ipv4 address
-    uint32_t teid; ///< teid
+    Ipv4Address addr; ///< addr - an ipv4 address
+    uint32_t teid; ///< teid - Tunnel End Point Identifier
   };
 
   /// Message Type enumeration
   enum MessageType_t
   {
+    /// Enumerators
     Reserved                  = 0,
     CreateSessionRequest      = 32,
     CreateSessionResponse     = 33,
@@ -143,7 +143,7 @@ public:
 
 private:
   /**
-   * TEID flag.
+   * TEID Tunnel End Point Identifier flag.
    * This flag indicates if TEID field is present or not
    */
   bool m_teidFlag;
@@ -184,18 +184,16 @@ protected:
 };
 
 /**
- * GtpcIes Class
+ * \brief A class for GPRS Tunnelling Protocol -C's Internet Enhanced Services
  */
 class GtpcIes
 {
 public:
- /**
-  * Cause_t enumeration
-  */ 
+ /// Cause value type enumeration
   enum Cause_t
   {
-    RESERVED          = 0,
-    REQUEST_ACCEPTED  = 16,
+    RESERVED          = 0, ///< RESERVED Enumerator
+    REQUEST_ACCEPTED  = 16, ///< REQUEST_ACCEPTED Enumerator
   };
 
   const uint32_t serializedSizeImsi = 12; ///< serializedSizeImsi initialized as 12
@@ -213,112 +211,111 @@ public:
   const uint32_t serializedSizeBearerContextHeader = 4; ///< serializedSizeBearerContextHeader initialized as 4
 
 /**
- * \param i : the buffer iterator 
- * \param imsi
+ * \param i  the buffer iterator 
+ * \param imsi International mobile subscriber identity
  */
   void SerializeImsi (Buffer::Iterator &i, uint64_t imsi) const;
    /**
    * \return serializedSizeImsi
-   * \param i : the buffer iterator 
-   * \param imsi
+   * \param i  the buffer iterator 
+   * \param imsi International mobile subscriber identity
    */ 
   uint32_t DeserializeImsi (Buffer::Iterator &i, uint64_t &imsi);
 /**
- * \param i : the buffer iterator 
- * \param cause
+ * \param i  the buffer iterator 
+ * \param cause the cause value
  */
   void SerializeCause (Buffer::Iterator &i, Cause_t cause) const;
   /**
    * \return serializedSizeCause
-   * \param i : the buffer iterator 
-   * \param cause
+   * \param i  the buffer iterator 
+   * \param cause the cause value
    */
   uint32_t DeserializeCause (Buffer::Iterator &i, Cause_t &cause);
 /**
- * \param i : the buffer iterator 
- * \param  epsBearerId
+ * \param i the buffer iterator 
+ * \param  epsBearerId Evolved system packet bearer identifier
  */
   void SerializeEbi (Buffer::Iterator &i, uint8_t epsBearerId) const;
   /**
    * \return serializedSizeEbi
-   * \param i : the buffer iterator 
-   * \param epsBearerId
+   * \param i  the buffer iterator 
+   * \param epsBearerId Evolved system packet bearer identifier
    */
   uint32_t DeserializeEbi (Buffer::Iterator &i, uint8_t &epsBearerId);
 /**
- * \param i : the buffer iterator 
+ * \param i  the buffer iterator 
  * \param data
  */
   void WriteHtonU40 (Buffer::Iterator &i, uint64_t data) const;
   /**
    * \return retval
-   * \param i : the buffer iterator
+   * \param i  the buffer iterator
    */
   uint64_t ReadNtohU40 (Buffer::Iterator &i);
 /**
  * \brief Serializes Bearer Qos
- * \param i : the buffer iterator 
- * \param bearerQos
+ * \param i  the buffer iterator 
+ * \param bearerQos bearer Quality of service
  */
   void SerializeBearerQos (Buffer::Iterator &i, EpsBearer bearerQos) const;
   /**
-   * \param i : the buffer iterator 
-   * \param bearerQos
+   * \param i  the buffer iterator 
+   * \param bearerQos bearer Quality of service
    * \brief Deserializes Bearer Qos
    * \return serializedSizeBearerQos
    */
   uint32_t DeserializeBearerQos (Buffer::Iterator &i, EpsBearer &bearerQos);
 /**
  * \brief Deserializes Bearer Qos
- * \param i : the buffer iterator 
+ * \param i  the buffer iterator 
  * \param packetFilters
  */
   void SerializeBearerTft (Buffer::Iterator &i, std::list<EpcTft::PacketFilter> packetFilters) const;
   /**
    * \return GetSerializedSizeBearerTft
-   * \param i : the buffer iterator 
-   * \param epcTft
+   * \param i  the buffer iterator 
+   * \param epcTft Evolved Packet Core Traffic Flow Template
    */
   uint32_t DeserializeBearerTft (Buffer::Iterator &i, Ptr<EpcTft> epcTft);
 /**
  * \brief Serializes UliEcgi
- * \param i : the buffer iterator 
- * \param uliEcgi
+ * \param i  the buffer iterator 
+ * \param uliEcgi User Location Information E-UTRAN Cell Global Identifier
  */
   void SerializeUliEcgi (Buffer::Iterator &i, uint32_t uliEcgi) const;
    /**
    * \return  serializedSizeUliEcgi
-   * \param i : the buffer iterator 
-   * \param uliEcgi
+   * \param i  the buffer iterator 
+   * \param uliEcgi User Location Information E-UTRAN Cell Global Identifier
    */ 
   uint32_t DeserializeUliEcgi (Buffer::Iterator &i, uint32_t &uliEcgi);
 /**
- * \param i : the buffer iterator  
- * \param fteid
+ * \param i  the buffer iterator  
+ * \param fteid Fully Qualified Tunnel End Point Identifier
  */
   void SerializeFteid (Buffer::Iterator &i, GtpcHeader::Fteid_t fteid) const;
 /**
    * \return serializedSizeFteid
-   * \param i : the buffer iterator  
-   * \param fteid
+   * \param i  the buffer iterator  
+   * \param fteid Fully Qualified Tunnel End Point Identifier
    */
   uint32_t DeserializeFteid (Buffer::Iterator &i, GtpcHeader::Fteid_t &fteid);
 /**
-   * \param i : the buffer iterator 
+   * \param i  the buffer iterator 
    * \param length
    */
   void SerializeBearerContextHeader (Buffer::Iterator &i, uint16_t length) const;
  /**
- * \param i : the buffer iterator 
+ * \param i  the buffer iterator 
  * \param  length
  * \brief DeSerializes Bearer Context Header
  * \return serializedSizeBearerContextHeader
  */
   uint32_t DeserializeBearerContextHeader (Buffer::Iterator &i, uint16_t &length);
 };
-
 /**
- * GtpcCreateSessionRequestMessage Class
+ * \brief A class for GPRS Tunnelling Protocol -C's session request message creation
  */
 class GtpcCreateSessionRequestMessage : public GtpcHeader, public GtpcIes
 {
@@ -340,26 +337,21 @@ public:
    * \return serializedSize
    */
   virtual uint32_t GetMessageSize (void) const;
-
-
-
-
-
 /**
- * \return imsi the unique UE identifier
+ * \return imsi the unique UE identifier- International mobile subscriber identity
  */
   uint64_t GetImsi () const;
 /**
- * \param imsi (International mobile subscriber identity)
+ * \param imsi International mobile subscriber identity
  */
   void SetImsi (uint64_t imsi);
 /**
- * \return m_uliEcgi
+ * \return m_uliEcgi User Location Information E-UTRAN Cell Global Identifier
  */  
   uint32_t GetUliEcgi () const;
 /**
  * \brief assigns value to m_uliEcgi
- * \param uliEcgi 
+ * \param uliEcgi m_uliEcgi User Location Information E-UTRAN Cell Global Identifier
  */
   void SetUliEcgi (uint32_t uliEcgi);
 /**
@@ -367,7 +359,7 @@ public:
  */
   GtpcHeader::Fteid_t GetSenderCpFteid () const;
 /**
- * \param fteid
+ * \param fteid Fully Qualified Tunnel End Point Identifier
  * \brief Gets value of m_senderCpFteid
  */
   void SetSenderCpFteid (GtpcHeader::Fteid_t fteid);
@@ -390,8 +382,8 @@ public:
   void SetBearerContextsToBeCreated (std::list<BearerContextToBeCreated> bearerContexts);
 
 private:
-  uint64_t m_imsi; ///< imsi (International mobile subscriber identity)
-  uint32_t m_uliEcgi; ///< uliEcgi (E-UTRAN Cell Global Identifier)
+  uint64_t m_imsi; ///< imsi International mobile subscriber identity
+  uint32_t m_uliEcgi; ///< uliEcgi E-UTRAN Cell Global Identifier
   GtpcHeader::Fteid_t m_senderCpFteid; ///< senderCpFteid
 
   std::list<BearerContextToBeCreated> m_bearerContextsToBeCreated; ///< Bearer contexts to be created
@@ -400,7 +392,7 @@ private:
 
 
 /**
- * GtpcCreateSessionResponseMessage
+ * \brief A class for GPRS Tunnelling Protocol -C's session response message creation
  */
 class GtpcCreateSessionResponseMessage : public GtpcHeader, public GtpcIes
 {
@@ -423,16 +415,12 @@ public:
   virtual uint32_t GetMessageSize (void) const;
 
 /**
- * \return m_cause
+ * \return m_cause the cause value
  */
   Cause_t GetCause () const;
 /**
  * \brief assigns m_cause = cause
- * \param cause
- */
-
-/**
- * \brief assigns m_cause = cause
+ * \param cause the cause value
  */
   void SetCause (Cause_t cause);
 /**
@@ -441,7 +429,7 @@ public:
  */
   GtpcHeader::Fteid_t GetSenderCpFteid () const;
 /**
-  * \param fteid
+  * \param fteid Fully Qualified Tunnel End Point Identifier
   * \brief assigns m_senderCpFteid = fteid
   */
   void SetSenderCpFteid (GtpcHeader::Fteid_t fteid);
@@ -449,7 +437,7 @@ public:
   struct BearerContextCreated
   {
     uint8_t epsBearerId; ///< EPS bearer ID
-    uint8_t cause; ///< Cause
+    uint8_t cause; ///< Cause the cause value
     Ptr<EpcTft> tft; ///< Bearer traffic flow template
     GtpcHeader::Fteid_t fteid; ///< FTEID
     EpsBearer bearerLevelQos; ///< Bearer QOS level
@@ -465,7 +453,7 @@ public:
   void SetBearerContextsCreated (std::list<BearerContextCreated> bearerContexts);
 
 private:
-  Cause_t m_cause; ///< m_cause
+  Cause_t m_cause; ///< m_cause the cause value
   GtpcHeader::Fteid_t m_senderCpFteid; ///< m_senderCpFteid
 
   std::list<BearerContextCreated> m_bearerContextsCreated; ///< Created Bearer Contexts
@@ -474,7 +462,7 @@ private:
 
 
 /** 
- * GtpcModifyBearerRequestMessage Class
+ * \brief A class for GPRS Tunnelling Protocol -C's Bearer request message modification
  */
 class GtpcModifyBearerRequestMessage : public GtpcHeader, public GtpcIes
 {
@@ -493,28 +481,28 @@ public:
   virtual void Print (std::ostream &os) const;
   virtual uint32_t GetMessageSize (void) const;
 /**
- * \return m_imsi
+ * \return m_imsi International mobile subscriber identity
  */
   uint64_t GetImsi () const; ///< GetImsi
   /**
    * \brief assigns m_imsi = imsi
-   * \param imsi
+   * \param imsi International mobile subscriber identity
    */
   void SetImsi (uint64_t imsi);
 /**
- * \return m_uliEcgi
+ * \return m_uliEcgi User Location Information E-UTRAN Cell Global Identifier
  */
   uint32_t GetUliEcgi () const; ///< GetUliEcgi
   /**
    * \brief  assigns m_uliEcgi = uliEcgi
-   * \param uliEcgi
+   * \param uliEcgi User Location Information E-UTRAN Cell Global Identifier
    */
   void SetUliEcgi (uint32_t uliEcgi);
 
   ///BearerContextToBeModified structure
   struct BearerContextToBeModified
   {
-    uint8_t epsBearerId; ///< EPS bearer ID
+    uint8_t epsBearerId; ///< Evolved system packet bearer identifiers
     GtpcHeader::Fteid_t fteid; ///< FTEID
   };
 /**
@@ -528,15 +516,15 @@ public:
   void SetBearerContextsToBeModified (std::list<BearerContextToBeModified> bearerContexts);
 
 private:
-  uint64_t m_imsi; ///< m_imsi
-  uint32_t m_uliEcgi; ///< m_uliEcgi
+  uint64_t m_imsi; ///< m_imsi International mobile subscriber identity
+  uint32_t m_uliEcgi; ///< m_uliEcgi User Location Information E-UTRAN Cell Global Identifier
 
   std::list<BearerContextToBeModified> m_bearerContextsToBeModified; ///< m_bearerContextsToBeModified
 };
 
 
 /**
- * GtpcModifyBearerResponseMessage Class
+ * \brief A class for GPRS Tunnelling Protocol -C's bearer response message modification
  */
 class GtpcModifyBearerResponseMessage : public GtpcHeader, public GtpcIes
 {
@@ -555,20 +543,20 @@ public:
   virtual void Print (std::ostream &os) const;
   virtual uint32_t GetMessageSize (void) const;
 /**
- * \return m_cause
+ * \return m_cause the cause value
  */
   Cause_t GetCause () const;
   /**
    * \brief assigns m_cause = cause
-   * \param cause
+   * \param cause the cause value
    */
   void SetCause (Cause_t cause);
 
 private:
-  Cause_t m_cause; ///< m_cause
+  Cause_t m_cause; ///< m_cause the cause value
 };
 /**
- * GtpcDeleteBearerCommandMessage Class
+ * \brief A class for GPRS Tunnelling Protocol -C's bearer command message deletion
  */
 
 class GtpcDeleteBearerCommandMessage : public GtpcHeader, public GtpcIes
@@ -593,7 +581,7 @@ public:
 /// BearerContext structure
   struct BearerContext
   {
-    uint8_t m_epsBearerId; ///< EPS bearer ID
+    uint8_t m_epsBearerId; ///< Evolved system packet bearer identifiers
   };
 /**
  * \return  m_bearerContexts
@@ -611,7 +599,7 @@ private:
 
 
 /**
- * GtpcDeleteBearerRequestMessage Class
+ * \brief A class for GPRS Tunnelling Protocol -C's bearer request message deletion
  */
 class GtpcDeleteBearerRequestMessage : public GtpcHeader, public GtpcIes
 {
@@ -633,20 +621,20 @@ public:
    */
   virtual uint32_t GetMessageSize (void) const;
 /**
- * \return m_epsBearerIds
+ * \return m_epsBearerIds Evolved system packet bearer identifiers
  */
   std::list<uint8_t> GetEpsBearerIds () const;
 /**
- * \param epsBearerIds
+ * \param epsBearerIds Evolved system packet bearer identifiers
  */
   void SetEpsBearerIds (std::list<uint8_t> epsBearerIds);
 
 private:
-  std::list<uint8_t> m_epsBearerIds; ///< m_epsBearerIds
+  std::list<uint8_t> m_epsBearerIds; ///< Evolved system packet bearer identifiers
 };
 
 /**
- * GtpcDeleteBearerResponseMessage Class
+ * \brief A class for GPRS Tunnelling Protocol -C's bearer response message deletion
  */
 class GtpcDeleteBearerResponseMessage : public GtpcHeader, public GtpcIes
 {
@@ -668,27 +656,27 @@ public:
  */
   virtual uint32_t GetMessageSize (void) const;
 /**
- * \return m_cause
+ * \return m_cause the cause value
  */
   Cause_t GetCause () const;
   /**
  * \brief assigns m_cause = cause
- * \param cause
+ * \param cause the cause value
  */
   void SetCause (Cause_t cause);
 /**
- * \return  m_epsBearerIds
+ * \return  m_epsBearerIds (Evolved system packet bearer identifiers)
  */
   std::list<uint8_t> GetEpsBearerIds () const;
   /**
  * \return m_epsBearerIds.size () * serializedSizeEbi
- * \param epsBearerIds
+ * \param epsBearerIds Evolved system packet bearer identifiers
  */
   void SetEpsBearerIds (std::list<uint8_t> epsBearerIds);
 
 private:
-  Cause_t m_cause; ///< m_cause
-  std::list<uint8_t> m_epsBearerIds; ///< m_epsBearerIds
+  Cause_t m_cause; ///< m_cause the cause value
+  std::list<uint8_t> m_epsBearerIds; ///< Evolved system packet bearer identifiers
 };
 
 } // namespace ns3
