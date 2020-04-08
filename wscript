@@ -1058,11 +1058,7 @@ def build(bld):
         bld.env['PRINT_BUILT_MODULES_AT_END'] = False 
 
     if Options.options.doxygen_no_build:
-        _doxygen(bld)
-        raise SystemExit(0)
-
-    if Options.options.docset_build:
-        _docset(bld)
+        _doxygen(bld, skip_pid=True)
         raise SystemExit(0)
 
     if Options.options.run_no_build:
@@ -1232,15 +1228,9 @@ class Ns3ShellContext(Context.Context):
         wutils.run_argv([shell], env, os_env)
 
 
-def _doxygen(bld):
+def _print_introspected_doxygen(bld):
     env = wutils.bld.env
     proc_env = wutils.get_proc_env()
-
-    if not env['DOXYGEN']:
-        Logs.error("waf configure did not detect doxygen in the system -> cannot build api docs.")
-        raise SystemExit(1)
-        return
-
     try:
         program_obj = wutils.find_program('print-introspected-doxygen', env)
     except ValueError: 
@@ -1256,6 +1246,8 @@ def _doxygen(bld):
                    "generating doxygen docs...")
         raise SystemExit(1)
 
+    Logs.info("Running print-introspected-doxygen")
+
     # Create a header file with the introspected information.
     doxygen_out = open(os.path.join('doc', 'introspected-doxygen.h'), 'w')
     if subprocess.Popen([prog], stdout=doxygen_out, env=proc_env).wait():
@@ -1267,6 +1259,18 @@ def _doxygen(bld):
     if subprocess.Popen([prog, '--output-text'], stdout=text_out, env=proc_env).wait():
         raise SystemExit(1)
     text_out.close()
+
+def _doxygen(bld, skip_pid=False):
+    env = wutils.bld.env
+    proc_env = wutils.get_proc_env()
+
+    if not env['DOXYGEN']:
+        Logs.error("waf configure did not detect doxygen in the system -> cannot build api docs.")
+        raise SystemExit(1)
+        return
+
+    if not skip_pid:
+        _print_introspected_doxygen(bld)
 
     _getVersion()
     doxygen_config = os.path.join('doc', 'doxygen.conf')

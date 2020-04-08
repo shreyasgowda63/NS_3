@@ -35,7 +35,6 @@ def copy_file(filename):
 # generate a temporary configuration file
 def uncrustify_config_file(level):
     level2 = """
-nl_collapse_empty_body=False
 nl_if_brace=Add
 nl_brace_else=Add
 nl_elseif_brace=Add
@@ -46,17 +45,20 @@ nl_for_brace=Add
 nl_brace_while=Add
 nl_switch_brace=Add
 nl_after_case=True
-nl_namespace_brace=Remove
+nl_namespace_brace=ignore
 nl_after_brace_open=True
 nl_class_leave_one_liners=False
 nl_enum_leave_one_liners=False
 nl_func_leave_one_liners=False
 nl_if_leave_one_liners=False
 nl_class_colon=Ignore
-nl_after_access_spec=1
+nl_before_access_spec=2
+nl_after_access_spec=0
+indent_access_spec=-indent_columns
 nl_after_semicolon=True
 pos_class_colon=Lead
 pos_class_comma=Trail
+indent_constr_colon=true
 pos_bool=Lead
 nl_class_init_args=Add
 nl_template_class=Add
@@ -82,6 +84,7 @@ mod_remove_extra_semicolon=True
 #code_width=128
 #ls_for_split_full=True
 #ls_func_split_full=True
+nl_cpp_lambda_leave_one_liners=True
 """
     level1 = """
 # extra spaces here and there
@@ -109,7 +112,7 @@ nl_class_leave_one_liners=True
 nl_enum_leave_one_liners=True
 nl_func_leave_one_liners=True
 nl_assign_leave_one_liners=True
-#nl_collapse_empty_body=False
+nl_collapse_empty_body=True
 nl_getset_leave_one_liners=True
 nl_if_leave_one_liners=True
 nl_fdef_brace=Ignore
@@ -118,15 +121,18 @@ indent_with_tabs=0
 indent_namespace=false
 indent_columns=2
 indent_brace=2
-indent_case_brace=2
+indent_case_brace=indent_columns
 indent_class=true
 indent_class_colon=True
+indent_switch_case=indent_columns
 # alignment
 indent_align_assign=False
 align_left_shift=True
 # comment reformating disabled
 cmt_reflow_mode=1 # do not touch comments at all
 cmt_indent_multi=False # really, do not touch them
+disable_processing_cmt= " *NS_CHECK_STYLE_OFF*"
+enable_processing_cmt=  " *NS_CHECK_STYLE_ON*"
 """
     [tmp,pathname] = tempfile.mkstemp()
     dst = open(pathname, 'w')
@@ -441,7 +447,8 @@ def indent(source, debug, level):
         uncrust = subprocess.Popen(['uncrustify', '-c', cfg, '-f', source, '-o', output],
                                    stdin = subprocess.PIPE,
                                    stdout = subprocess.PIPE,
-                                   stderr = subprocess.PIPE)
+                                   stderr = subprocess.PIPE,
+                                   text = True)
         (out, err) = uncrust.communicate('')
         if debug:
             sys.stderr.write(out)
@@ -481,7 +488,8 @@ def indent(source, debug, level):
     patch = subprocess.Popen(['patch', '-p1', '-i', final_diff, output],
                              stdin = subprocess.PIPE,
                              stdout = subprocess.PIPE,
-                             stderr = subprocess.PIPE)
+                             stderr = subprocess.PIPE,
+                             text = True)
     (out, err) = patch.communicate('')
     if debug:
         sys.stderr.write(out)
