@@ -372,18 +372,15 @@ TrafficControlLayer::Send (Ptr<NetDevice> device, Ptr<QueueDiscItem> item)
   if (ndi == m_netDevices.end () || ndi->second.m_rootQueueDisc == 0)
     {
       // The device has no attached queue disc, thus add the header to the packet and
-      // send it directly to the device if the selected queue is not stopped
-      if (!devQueueIface || !devQueueIface->GetTxQueue (txq)->IsStopped ())
+      // send it directly to the device
+      item->AddHeader ();
+      // a single queue device makes no use of the priority tag
+      if (!devQueueIface || devQueueIface->GetNTxQueues () == 1)
         {
-          item->AddHeader ();
-          // a single queue device makes no use of the priority tag
-          if (!devQueueIface || devQueueIface->GetNTxQueues () == 1)
-            {
-              SocketPriorityTag priorityTag;
-              item->GetPacket ()->RemovePacketTag (priorityTag);
-            }
-          device->Send (item->GetPacket (), item->GetAddress (), item->GetProtocol ());
+          SocketPriorityTag priorityTag;
+          item->GetPacket ()->RemovePacketTag (priorityTag);
         }
+      device->Send (item->GetPacket (), item->GetAddress (), item->GetProtocol ());
     }
   else
     {
