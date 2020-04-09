@@ -339,9 +339,7 @@ packet to schedule this.  The second event to schedule is
 have been received and the payload is about to start.
 
 The next event at ``StartReceivePayload ()`` checks, using the interference
-helper and error model, whether the header was successfully decoded, and if so,
-a ``PhyRxPayloadBegin`` callback (equivalent to the PHY-RXSTART primitive)
-is triggered.
+helper and error model, whether the header was successfully decoded. 
 The PHY header is often transmitted
 at a lower modulation rate than is the payload.  The portion of the packet
 corresponding to the PHY header is evaluated for probability of error
