@@ -816,7 +816,7 @@ MacLow::ReceiveOk (Ptr<WifiMacQueueItem> mpdu, double rxSnr, WifiTxVector txVect
             {
               NS_LOG_DEBUG ("rx RTS from=" << hdr.GetAddr2 () << ", schedule CTS");
               NS_ASSERT (m_sendCtsEvent.IsExpired ());
-              m_stationManager->ReportRxOk (hdr.GetAddr2 (), &hdr,
+              m_stationManager->ReportRxOk (hdr.GetAddr2 (),
                                             rxSnr, txVector.GetMode ());
               m_sendCtsEvent = Simulator::Schedule (GetSifs (),
                                                     &MacLow::SendCtsAfterRts, this,
@@ -845,9 +845,9 @@ MacLow::ReceiveOk (Ptr<WifiMacQueueItem> mpdu, double rxSnr, WifiTxVector txVect
 
       SnrTag tag;
       packet->RemovePacketTag (tag);
-      m_stationManager->ReportRxOk (m_currentPacket->GetAddr1 (), &m_currentPacket->GetHeader (0),
+      m_stationManager->ReportRxOk (m_currentPacket->GetAddr1 (),
                                     rxSnr, txVector.GetMode ());
-      m_stationManager->ReportRtsOk (m_currentPacket->GetAddr1 (), &m_currentPacket->GetHeader (0),
+      m_stationManager->ReportRtsOk (m_currentPacket->GetAddr1 (),
                                      rxSnr, txVector.GetMode (), tag.Get ());
 
       m_ctsTimeoutEvent.Cancel ();
@@ -868,7 +868,7 @@ MacLow::ReceiveOk (Ptr<WifiMacQueueItem> mpdu, double rxSnr, WifiTxVector txVect
       //When fragmentation is used, only update manager when the last fragment is acknowledged
       if (!m_txParams.HasNextPacket ())
         {
-          m_stationManager->ReportRxOk (m_currentPacket->GetAddr1 (), &m_currentPacket->GetHeader (0),
+          m_stationManager->ReportRxOk (m_currentPacket->GetAddr1 (),
                                         rxSnr, txVector.GetMode ());
           m_stationManager->ReportDataOk (m_currentPacket->GetAddr1 (), &m_currentPacket->GetHeader (0),
                                           rxSnr, txVector.GetMode (), tag.Get (),
@@ -1032,7 +1032,7 @@ MacLow::ReceiveOk (Ptr<WifiMacQueueItem> mpdu, double rxSnr, WifiTxVector txVect
               m_cfAckInfo.expectCfAck = false;
             }
         }
-      m_stationManager->ReportRxOk (hdr.GetAddr2 (), &hdr,
+      m_stationManager->ReportRxOk (hdr.GetAddr2 (),
                                     rxSnr, txVector.GetMode ());
       if (hdr.IsQosData () && ReceiveMpdu (mpdu))
         {
@@ -1245,7 +1245,7 @@ WifiTxVector
 MacLow::GetRtsTxVector (Ptr<const WifiMacQueueItem> item) const
 {
   Mac48Address to = item->GetHeader ().GetAddr1 ();
-  return m_stationManager->GetRtsTxVector (to, &item->GetHeader (), item->GetPacket ());
+  return m_stationManager->GetRtsTxVector (to, item->GetPacket ());
 }
 
 WifiTxVector
@@ -1750,7 +1750,7 @@ MacLow::CtsTimeout (void)
   /// \todo should check that there was no RX start before now.
   /// we should restart a new CTS timeout now until the expected
   /// end of RX if there was a RX start before now.
-  m_stationManager->ReportRtsFailed (m_currentPacket->GetAddr1 (), &m_currentPacket->GetHeader (0));
+  m_stationManager->ReportRtsFailed (m_currentPacket->GetAddr1 ());
 
   Ptr<QosTxop> qosTxop = DynamicCast<QosTxop> (m_currentTxop);
   if (qosTxop != 0)

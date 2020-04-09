@@ -654,11 +654,11 @@ void QosTxop::NotifyInternalCollision (void)
           if (!NeedRtsRetransmission (packet, header))
             {
               resetTxop = true;
-              m_stationManager->ReportFinalRtsFailed (header.GetAddr1 (), &header);
+              m_stationManager->ReportFinalRtsFailed (header.GetAddr1 ());
             }
           else
             {
-              m_stationManager->ReportRtsFailed (header.GetAddr1 (), &header);
+              m_stationManager->ReportRtsFailed (header.GetAddr1 ());
             }
         }
       else if (header.GetAddr1 () == Mac48Address::GetBroadcast ())
@@ -715,7 +715,7 @@ QosTxop::NotifyMissedCts (std::list<Ptr<WifiMacQueueItem>> mpduList)
   if (!NeedRtsRetransmission (m_currentPacket, m_currentHdr))
     {
       NS_LOG_DEBUG ("Cts Fail");
-      m_stationManager->ReportFinalRtsFailed (m_currentHdr.GetAddr1 (), &m_currentHdr);
+      m_stationManager->ReportFinalRtsFailed (m_currentHdr.GetAddr1 ());
       if (!m_txFailedCallback.IsNull ())
         {
           m_txFailedCallback (m_currentHdr);
@@ -934,7 +934,7 @@ QosTxop::MissedBlockAck (uint8_t nMpdus)
     {
       if (GetAmpduExist (m_currentHdr.GetAddr1 ()))
         {
-          m_stationManager->ReportAmpduTxStatus (m_currentHdr.GetAddr1 (), tid, 0, nMpdus, 0, 0);
+          m_stationManager->ReportAmpduTxStatus (m_currentHdr.GetAddr1 (), 0, nMpdus, 0, 0);
         }
       // implicit BAR and do not use BAR after missed BlockAck, hence try to retransmit data frames
       if (!NeedDataRetransmission (m_currentPacket, m_currentHdr))
@@ -1441,7 +1441,7 @@ QosTxop::PushFront (Ptr<const Packet> packet, const WifiMacHeader &hdr)
 {
   NS_LOG_FUNCTION (this << packet << &hdr);
   WifiMacTrailer fcs;
-  m_stationManager->PrepareForQueue (hdr.GetAddr1 (), &hdr, packet);
+  m_stationManager->PrepareForQueue (hdr.GetAddr1 (), packet);
   m_queue->PushFront (Create<WifiMacQueueItem> (packet, hdr));
   StartAccessIfNeeded ();
 }

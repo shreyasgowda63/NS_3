@@ -59,7 +59,6 @@ struct WifiRemoteStation
   WifiRemoteStationState *m_state;  //!< Remote station state
   uint32_t m_ssrc;                  //!< STA short retry count
   uint32_t m_slrc;                  //!< STA long retry count
-  uint8_t m_tid;                    //!< traffic ID
 };
 
 /**
@@ -656,7 +655,6 @@ public:
 
   /**
    * \param address remote address
-   * \param header MAC header
    * \param packet the packet to queue
    *
    * This method is typically invoked just before queuing a packet for transmission.
@@ -664,8 +662,7 @@ public:
    * is set to false, in which case, the TX parameters of the packet are calculated and stored in
    * the packet as a tag. These TX parameters are later retrieved from GetDadaMode and GetRtsMode.
    */
-  void PrepareForQueue (Mac48Address address, const WifiMacHeader *header,
-                        Ptr<const Packet> packet);
+  void PrepareForQueue (Mac48Address address, Ptr<const Packet> packet);
 
   /**
    * \param address remote address
@@ -678,14 +675,12 @@ public:
                                 Ptr<const Packet> packet);
   /**
    * \param address remote address
-   * \param header MAC header
    * \param packet the packet to send
    *
    * \return the TXVECTOR to use to send the RTS prior to the
    *         transmission of the data packet itself.
    */
-  WifiTxVector GetRtsTxVector (Mac48Address address, const WifiMacHeader *header,
-                               Ptr<const Packet> packet);
+  WifiTxVector GetRtsTxVector (Mac48Address address, Ptr<const Packet> packet);
   /**
    * \param header MAC header
    * \param packet the packet to send
@@ -709,9 +704,8 @@ public:
    * attempt expires.
    *
    * \param address the address of the receiver
-   * \param header MAC header of the DATA packet
    */
-  void ReportRtsFailed (Mac48Address address, const WifiMacHeader *header);
+  void ReportRtsFailed (Mac48Address address);
   /**
    * Should be invoked whenever the AckTimeout associated to a transmission
    * attempt expires.
@@ -728,13 +722,11 @@ public:
    * the receiver put a SnrTag in the CTS.
    *
    * \param address the address of the receiver
-   * \param header MAC header of the DATA packet
    * \param ctsSnr the SNR of the CTS we received
    * \param ctsMode the WifiMode the receiver used to send the CTS
    * \param rtsSnr the SNR of the RTS we sent
    */
-  void ReportRtsOk (Mac48Address address, const WifiMacHeader *header,
-                    double ctsSnr, WifiMode ctsMode, double rtsSnr);
+  void ReportRtsOk (Mac48Address address, double ctsSnr, WifiMode ctsMode, double rtsSnr);
   /**
    * Should be invoked whenever we receive the ACK associated to a data packet
    * we just sent.
@@ -754,9 +746,8 @@ public:
    * NeedRetransmission returns false
    *
    * \param address the address of the receiver
-   * \param header MAC header of the DATA packet
    */
-  void ReportFinalRtsFailed (Mac48Address address, const WifiMacHeader *header);
+  void ReportFinalRtsFailed (Mac48Address address);
   /**
    * Should be invoked after calling ReportDataFailed if
    * NeedRetransmission returns false
@@ -772,25 +763,22 @@ public:
    * received or when a BlockAckTimeout has elapsed.
    *
    * \param address the address of the receiver
-   * \param tid TID of the DATA packet
    * \param nSuccessfulMpdus number of successfully transmitted MPDUs.
    * A value of 0 means that the Block ACK was missed.
    * \param nFailedMpdus number of unsuccessfully transmitted MPDUs.
    * \param rxSnr received SNR of the block ack frame itself
    * \param dataSnr data SNR reported by remote station
    */
-  void ReportAmpduTxStatus (Mac48Address address, uint8_t tid, uint8_t nSuccessfulMpdus, uint8_t nFailedMpdus, double rxSnr, double dataSnr);
+  void ReportAmpduTxStatus (Mac48Address address, uint8_t nSuccessfulMpdus, uint8_t nFailedMpdus, double rxSnr, double dataSnr);
 
   /**
    * \param address remote address
-   * \param header MAC header
    * \param rxSnr the SNR of the packet received
    * \param txMode the transmission mode used for the packet received.
    *
    * Should be invoked whenever a packet is successfully received.
    */
-  void ReportRxOk (Mac48Address address, const WifiMacHeader *header,
-                   double rxSnr, WifiMode txMode);
+  void ReportRxOk (Mac48Address address, double rxSnr, WifiMode txMode);
 
   /**
    * \param header MAC header
@@ -1239,25 +1227,13 @@ private:
    */
   WifiRemoteStationState* LookupState (Mac48Address address) const;
   /**
-   * Return the station associated with the given address and TID.
+   * Return the station associated with the given address.
    *
    * \param address the address of the station
-   * \param tid the TID
    *
    * \return WifiRemoteStation corresponding to the address
    */
-  WifiRemoteStation* Lookup (Mac48Address address, uint8_t tid) const;
-  /// Find a remote station by its remote address and TID taken from MAC header
-  /**
-   * Return the station associated with the given address and MAC header.
-   * It simply gets TID from the MAC header and calls Lookup with TID.
-   *
-   * \param address the address of the station
-   * \param header MAC header
-   *
-   * \return WifiRemoteStation corresponding to the address
-   */
-  WifiRemoteStation* Lookup (Mac48Address address, const WifiMacHeader *header) const;
+  WifiRemoteStation* Lookup (Mac48Address address) const;
 
   /**
    * Actually sets the fragmentation threshold, it also checks the validity of

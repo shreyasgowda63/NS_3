@@ -319,7 +319,7 @@ Txop::Queue (Ptr<Packet> packet, const WifiMacHeader &hdr)
   // remove the priority tag attached, if any
   SocketPriorityTag priorityTag;
   packet->RemovePacketTag (priorityTag);
-  m_stationManager->PrepareForQueue (hdr.GetAddr1 (), &hdr, packet);
+  m_stationManager->PrepareForQueue (hdr.GetAddr1 (), packet);
   if (m_channelAccessManager->NeedBackoffUponAccess (this))
     {
       GenerateBackoff ();
@@ -614,7 +614,7 @@ Txop::MissedCts (void)
   if (!NeedRtsRetransmission (m_currentPacket, m_currentHdr))
     {
       NS_LOG_DEBUG ("Cts Fail");
-      m_stationManager->ReportFinalRtsFailed (m_currentHdr.GetAddr1 (), &m_currentHdr);
+      m_stationManager->ReportFinalRtsFailed (m_currentHdr.GetAddr1 ());
       if (!m_txFailedCallback.IsNull ())
         {
           m_txFailedCallback (m_currentHdr);
