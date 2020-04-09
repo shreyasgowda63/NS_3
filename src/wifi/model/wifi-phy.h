@@ -54,16 +54,64 @@ enum WifiPhyRxfailureReason
 {
   UNKNOWN = 0,
   UNSUPPORTED_SETTINGS,
-  NOT_ALLOWED,
-  ERRONEOUS_FRAME,
-  MPDU_WITHOUT_PHY_HEADER,
+  CHANNEL_SWITCHING,
+  RXING,
+  TXING,
+  SLEEPING,
+  BUSY_DECODING_PREAMBLE,
   PREAMBLE_DETECT_FAILURE,
+  RECEPTION_ABORTED_BY_TX,
   L_SIG_FAILURE,
   SIG_A_FAILURE,
   PREAMBLE_DETECTION_PACKET_SWITCH,
   FRAME_CAPTURE_PACKET_SWITCH,
   OBSS_PD_CCA_RESET
 };
+
+/**
+* \brief Stream insertion operator.
+*
+* \param os the stream
+* \param reason the failure reason
+* \returns a reference to the stream
+*/
+inline std::ostream& operator<< (std::ostream& os, WifiPhyRxfailureReason reason)
+{
+  switch (reason)
+    {
+    case UNSUPPORTED_SETTINGS:
+      return (os << "UNSUPPORTED_SETTINGS");
+    case CHANNEL_SWITCHING:
+      return (os << "CHANNEL_SWITCHING");
+    case RXING:
+      return (os << "RXING");
+    case TXING:
+      return (os << "TXING");
+    case SLEEPING:
+      return (os << "SLEEPING");
+    case BUSY_DECODING_PREAMBLE:
+      return (os << "BUSY_DECODING_PREAMBLE");
+    case PREAMBLE_DETECT_FAILURE:
+      return (os << "PREAMBLE_DETECT_FAILURE");
+    case RECEPTION_ABORTED_BY_TX:
+      return (os << "RECEPTION_ABORTED_BY_TX");
+    case L_SIG_FAILURE:
+      return (os << "L_SIG_FAILURE");
+    case SIG_A_FAILURE:
+      return (os << "SIG_A_FAILURE");
+    case PREAMBLE_DETECTION_PACKET_SWITCH:
+      return (os << "PREAMBLE_DETECTION_PACKET_SWITCH");
+    case FRAME_CAPTURE_PACKET_SWITCH:
+      return (os << "FRAME_CAPTURE_PACKET_SWITCH");
+    case OBSS_PD_CCA_RESET:
+      return (os << "OBSS_PD_CCA_RESET");
+    case UNKNOWN:
+    default:
+      NS_FATAL_ERROR ("Unknown reason");
+      return (os << "UNKNOWN");
+    }
+}
+
 
 /// SignalNoiseDbm structure
 struct SignalNoiseDbm
@@ -153,9 +201,8 @@ public:
    * Start receiving the PHY header of a PPDU (i.e. after the end of receiving the preamble).
    *
    * \param event the event holding incoming PPDU's information
-   * \param headerPayloadDuration the duration needed for the reception of the header and PSDU of the PPDU
    */
-  void StartReceiveHeader (Ptr<Event> event, Time headerPayloadDuration);
+  void StartReceiveHeader (Ptr<Event> event);
 
   /**
    * Continue receiving the PHY header of a PPDU (i.e. after the end of receiving the non-HT header part).
@@ -177,6 +224,13 @@ public:
    * \param event the corresponding event of the first time the packet arrives (also storing packet and TxVector information)
    */
   void EndReceive (Ptr<Event> event);
+
+  /**
+   * Reset PHY at the end of the packet under reception after it has failed the PHY header.
+   *
+   * \param event the corresponding event of the first time the packet arrives (also storing packet and TxVector information)
+   */
+  void ResetReceive (Ptr<Event> event);
 
   /**
    * For HE receptions only, check and possibly modify the transmit power restriction state at
@@ -257,6 +311,12 @@ public:
    * \return the start time of the last received packet
    */
   Time GetLastRxStartTime (void) const;
+  /**
+   * Return the end time of the last received packet.
+   *
+   * \return the end time of the last received packet
+   */
+  Time GetLastRxEndTime (void) const;
 
   /**
    * \param size the number of bytes in the packet to send
@@ -1301,6 +1361,14 @@ public:
   typedef void (* EndOfHePreambleCallback)(HePreambleParameters params);
 
   /**
+   * TracedCallback signature for start of PSDU reception events.
+   *
+   * \param txVector the TXVECTOR decoded from the PHY header
+   * \param psduDuration the duration of the PSDU
+   */
+  typedef void (* PhyRxPayloadBeginTracedCallback)(WifiTxVector txVector, Time psduDuration);
+
+  /**
    * Assign a fixed random variable stream number to the random variables
    * used by this model. Return the number of streams (possibly zero) that
    * have been assigned.
@@ -1674,6 +1742,7 @@ protected:
   EventId m_endPhyRxEvent;             //!< the end of PHY receive event
   EventId m_endPreambleDetectionEvent; //!< the end of preamble detection event
 
+  EventId m_endTxEvent;                //!< the end of transmit event
 
 private:
   /**
@@ -1852,6 +1921,22 @@ private:
    * \see class CallBackTraceSource
    */
   TracedCallback<Ptr<const Packet> > m_phyRxBeginTrace;
+
+  /**
+   * The trace source fired when the reception of the PHY payload (PSDU) begins.
+   *
+   * This traced callback models the behavior of the PHY-RXSTART
+   * primitive which is launched upon correct decoding of
+   * the PHY header and support of modes within.
+   * We thus assume that it is sent just before starting
+   * the decoding of the payload, since it's there that
+   * support of the header's content is checked. In addition,
+   * it's also at that point that the correct decoding of
+   * HT-SIG, VHT-SIGs, and HE-SIGs are checked.
+   *
+   * \see class CallBackTraceSource
+   */
+  TracedCallback<WifiTxVector, Time> m_phyRxPayloadBeginTrace;
 
   /**
    * The trace source fired when a packet ends the reception process from

@@ -154,6 +154,12 @@ public:
    * \return the time the last RX start.
    */
   Time GetLastRxStartTime (void) const;
+  /**
+   * Return the time the last RX end.
+   *
+   * \return the time the last RX end.
+   */
+  Time GetLastRxEndTime (void) const;
 
   /**
    * Switch state to TX for the given duration.
@@ -210,10 +216,8 @@ public:
   void SwitchFromSleep (Time duration);
   /**
    * Abort current reception
-   *
-   * \param failure flag to indicate whether RX abortion is due to a failure
    */
-  void SwitchFromRxAbort (bool failure);
+  void SwitchFromRxAbort (void);
   /**
    * Switch to off mode.
    */
