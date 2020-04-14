@@ -447,12 +447,11 @@ def indent(source, debug, level):
         uncrust = subprocess.Popen(['uncrustify', '-c', cfg, '-f', source, '-o', output],
                                    stdin = subprocess.PIPE,
                                    stdout = subprocess.PIPE,
-                                   stderr = subprocess.PIPE,
-                                   text = True)
+                                   stderr = subprocess.PIPE)
         (out, err) = uncrust.communicate('')
         if debug:
-            sys.stderr.write(out)
-            sys.stderr.write(err)
+            sys.stderr.write(out.decode("utf-8"))
+            sys.stderr.write(err.decode("utf-8"))
     except OSError:
         raise Exception ('uncrustify not installed')
     # generate a diff file
@@ -488,12 +487,11 @@ def indent(source, debug, level):
     patch = subprocess.Popen(['patch', '-p1', '-i', final_diff, output],
                              stdin = subprocess.PIPE,
                              stdout = subprocess.PIPE,
-                             stderr = subprocess.PIPE,
-                             text = True)
+                             stderr = subprocess.PIPE)
     (out, err) = patch.communicate('')
     if debug:
-        sys.stderr.write(out)
-        sys.stderr.write(err)
+        sys.stderr.write(out.decode("utf-8"))
+        sys.stderr.write(err.decode("utf-8"))
     return output
  
 
