@@ -101,37 +101,23 @@ BridgeNetDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort, Ptr<const Packe
   Mac48Address src48 = Mac48Address::ConvertFrom (src);
   Mac48Address dst48 = Mac48Address::ConvertFrom (dst);
 
-  if (!m_promiscRxCallback.IsNull ())
-    {
-      m_promiscRxCallback (this, packet, protocol, src, dst, packetType);
-    }
-
   switch (packetType)
     {
     case PACKET_HOST:
       if (dst48 == m_address)
-        {
           Learn (src48, incomingPort);
-          m_rxCallback (this, packet, protocol, src);
-        }
       break;
 
     case PACKET_BROADCAST:
     case PACKET_MULTICAST:
-      m_rxCallback (this, packet, protocol, src);
       ForwardBroadcast (incomingPort, packet, protocol, src48, dst48);
       break;
 
     case PACKET_OTHERHOST:
       if (dst48 == m_address)
-        {
           Learn (src48, incomingPort);
-          m_rxCallback (this, packet, protocol, src);
-        }
       else
-        {
           ForwardUnicast (incomingPort, packet, protocol, src48, dst48);
-        }
       break;
     }
 }
