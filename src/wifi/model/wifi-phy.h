@@ -222,8 +222,9 @@ public:
    * The last symbol of the PPDU has arrived.
    *
    * \param event the corresponding event of the first time the packet arrives (also storing packet and TxVector information)
+   * \param dropped flag to indicate PPDU has been dropped because of unsupported PHY settings
    */
-  void EndReceive (Ptr<Event> event);
+  void EndReceive (Ptr<Event> event, bool dropped);
 
   /**
    * Reset PHY at the end of the packet under reception after it has failed the PHY header.

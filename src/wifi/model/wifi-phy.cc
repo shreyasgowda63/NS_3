@@ -2723,18 +2723,6 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, double rxPowerW)
       return;
     }
 
-  if (!txVector.GetModeInitialized ())
-    {
-      //If SetRate method was not called above when filling in txVector, this means the PHY does support the rate indicated in PHY SIG headers
-      NS_LOG_DEBUG ("drop packet because of unsupported RX mode");
-      NotifyRxDrop (psdu, UNSUPPORTED_SETTINGS);
-      if (endRx > (Simulator::Now () + m_state->GetDelayUntilIdle ()))
-        {
-          MaybeCcaBusyDuration ();
-        }
-      return;
-    }
-
   switch (m_state->GetState ())
     {
     case WifiPhyState::SWITCHING:
@@ -2871,50 +2859,53 @@ WifiPhy::StartReceivePayload (Ptr<Event> event)
   Time payloadDuration = event->GetEndTime () - event->GetStartTime () - CalculatePhyPreambleAndHeaderDuration (txVector);
   if (canReceivePayload) //PHY reception succeeded
     {
+      m_state->SwitchToRx (payloadDuration);
+      m_phyRxPayloadBeginTrace (txVector, payloadDuration); //this callback (equivalent to PHY-RXSTART primitive) is triggered only if headers have been correctly decoded and that the mode within is supported
+      bool dropped = false;
       if (txVector.GetNss () > GetMaxSupportedRxSpatialStreams ())
         {
-          NS_LOG_DEBUG ("Packet reception could not be started because not enough RX antennas");
+          NS_LOG_DEBUG ("PSDU dropped because not enough RX antennas");
           NotifyRxDrop (event->GetPsdu (), UNSUPPORTED_SETTINGS);
+          dropped = true;
         }
       else if ((txVector.GetChannelWidth () >= 40) && (txVector.GetChannelWidth () > GetChannelWidth ()))
         {
-          NS_LOG_DEBUG ("Packet reception could not be started because not enough channel width");
+          NS_LOG_DEBUG ("PSDU dropped because not enough channel width");
           NotifyRxDrop (event->GetPsdu (), UNSUPPORTED_SETTINGS);
+          dropped = true;
         }
-      else if (!IsModeSupported (txMode) && !IsMcsSupported (txMode))
+      else if (!txVector.GetModeInitialized () || (!IsModeSupported (txMode) && !IsMcsSupported (txMode)))
         {
-          NS_LOG_DEBUG ("Drop packet because it was sent using an unsupported mode (" << txMode << ")");
+          NS_LOG_DEBUG ("PSDU dropped because it was sent using an unsupported mode (" << txMode << ")");
           NotifyRxDrop (event->GetPsdu (), UNSUPPORTED_SETTINGS);
+          dropped = true;
         }
       else
         {
-          m_state->SwitchToRx (payloadDuration);
-          m_endRxEvent = Simulator::Schedule (payloadDuration, &WifiPhy::EndReceive, this, event);
           NS_LOG_DEBUG ("Receiving PSDU");
-          m_phyRxPayloadBeginTrace (txVector, payloadDuration); //this callback (equivalent to PHY-RXSTART primitive) is triggered only if headers have been correctly decoded and that the mode within is supported
-          if (txMode.GetModulationClass () == WIFI_MOD_CLASS_HE)
-            {
-              HePreambleParameters params;
-              params.rssiW = event->GetRxPowerW ();
-              params.bssColor = event->GetTxVector ().GetBssColor ();
-              NotifyEndOfHePreamble (params);
-            }
-          return;
+        }
+      m_endRxEvent = Simulator::Schedule (payloadDuration, &WifiPhy::EndReceive, this, event, dropped);
+      if (txMode.GetModulationClass () == WIFI_MOD_CLASS_HE)
+        {
+          HePreambleParameters params;
+          params.rssiW = event->GetRxPowerW ();
+          params.bssColor = event->GetTxVector ().GetBssColor ();
+          NotifyEndOfHePreamble (params);
         }
     }
   else //PHY reception failed
     {
-      NS_LOG_DEBUG ("Drop packet because HT PHY header reception failed");
+      NS_LOG_DEBUG ("RX dropped because HT PHY header reception failed");
       NotifyRxDrop (event->GetPsdu (), SIG_A_FAILURE);
+      m_endRxEvent = Simulator::Schedule (payloadDuration, &WifiPhy::ResetReceive, this, event);
     }
-  m_endRxEvent = Simulator::Schedule (payloadDuration, &WifiPhy::ResetReceive, this, event);
 }
 
 void
-WifiPhy::EndReceive (Ptr<Event> event)
+WifiPhy::EndReceive (Ptr<Event> event, bool dropped)
 {
   Time psduDuration = event->GetEndTime () - event->GetStartTime ();
-  NS_LOG_FUNCTION (this << *event << psduDuration);
+  NS_LOG_FUNCTION (this << *event << psduDuration << dropped);
   NS_ASSERT (GetLastRxEndTime () == Simulator::Now ());
   NS_ASSERT (event->GetEndTime () == Simulator::Now ());
 
@@ -2927,50 +2918,53 @@ WifiPhy::EndReceive (Ptr<Event> event)
   bool receptionOkAtLeastForOneMpdu = false;
   std::pair<bool, SignalNoiseDbm> rxInfo;
   WifiTxVector txVector = event->GetTxVector ();
-  size_t nMpdus = psdu->GetNMpdus ();
-  if (nMpdus > 1)
+  if (!dropped)
     {
-      //Extract all MPDUs of the A-MPDU to compute per-MPDU PER stats
-      Time remainingAmpduDuration = psduDuration;
-      MpduType mpdutype = FIRST_MPDU_IN_AGGREGATE;
-      auto mpdu = psdu->begin ();
-      uint32_t totalAmpduSize = 0;
-      double totalAmpduNumSymbols = 0.0;
-      for (size_t i = 0; i < nMpdus && mpdu != psdu->end (); ++mpdu)
+      size_t nMpdus = psdu->GetNMpdus ();
+      if (nMpdus > 1)
         {
-          Time mpduDuration = GetPayloadDuration (psdu->GetAmpduSubframeSize (i), txVector,
-                                                  GetFrequency (), mpdutype, true, totalAmpduSize, totalAmpduNumSymbols);
-          remainingAmpduDuration -= mpduDuration;
-          if (i == (nMpdus - 1) && !remainingAmpduDuration.IsZero ()) //no more MPDU coming
+          //Extract all MPDUs of the A-MPDU to compute per-MPDU PER stats
+          Time remainingAmpduDuration = psduDuration;
+          MpduType mpdutype = FIRST_MPDU_IN_AGGREGATE;
+          auto mpdu = psdu->begin ();
+          uint32_t totalAmpduSize = 0;
+          double totalAmpduNumSymbols = 0.0;
+          for (size_t i = 0; i < nMpdus && mpdu != psdu->end (); ++mpdu)
             {
-              mpduDuration += remainingAmpduDuration; //apply a correction just in case rounding had induced slight shift
+              Time mpduDuration = GetPayloadDuration (psdu->GetAmpduSubframeSize (i), txVector,
+                                                      GetFrequency (), mpdutype, true, totalAmpduSize, totalAmpduNumSymbols);
+              remainingAmpduDuration -= mpduDuration;
+              if (i == (nMpdus - 1) && !remainingAmpduDuration.IsZero ()) //no more MPDU coming
+                {
+                  mpduDuration += remainingAmpduDuration; //apply a correction just in case rounding had induced slight shift
+                }
+              rxInfo = GetReceptionStatus (Create<WifiPsdu> (*mpdu, false),
+                                           event, relativeStart, mpduDuration);
+              NS_LOG_DEBUG ("Extracted MPDU #" << i << ": duration: " << mpduDuration.GetNanoSeconds () << "ns" <<
+                            ", correct reception: " << rxInfo.first <<
+                            ", Signal/Noise: " << rxInfo.second.signal << "/" << rxInfo.second.noise << "dBm");
+              signalNoise = rxInfo.second; //same information for all MPDUs
+              statusPerMpdu.push_back (rxInfo.first);
+              receptionOkAtLeastForOneMpdu |= rxInfo.first;
+
+              //Prepare next iteration
+              ++i;
+              relativeStart += mpduDuration;
+              mpdutype = (i == (nMpdus - 1)) ? LAST_MPDU_IN_AGGREGATE : MIDDLE_MPDU_IN_AGGREGATE;
             }
-          rxInfo = GetReceptionStatus (Create<WifiPsdu> (*mpdu, false),
-                                       event, relativeStart, mpduDuration);
-          NS_LOG_DEBUG ("Extracted MPDU #" << i << ": duration: " << mpduDuration.GetNanoSeconds () << "ns" <<
-                        ", correct reception: " << rxInfo.first <<
-                        ", Signal/Noise: " << rxInfo.second.signal << "/" << rxInfo.second.noise << "dBm");
+        }
+      else
+        {
+          rxInfo = GetReceptionStatus (psdu, event, relativeStart, psduDuration);
           signalNoise = rxInfo.second; //same information for all MPDUs
           statusPerMpdu.push_back (rxInfo.first);
-          receptionOkAtLeastForOneMpdu |= rxInfo.first;
-
-          //Prepare next iteration
-          ++i;
-          relativeStart += mpduDuration;
-          mpdutype = (i == (nMpdus - 1)) ? LAST_MPDU_IN_AGGREGATE : MIDDLE_MPDU_IN_AGGREGATE;
+          receptionOkAtLeastForOneMpdu = rxInfo.first;
         }
-    }
-  else
-    {
-      rxInfo = GetReceptionStatus (psdu, event, relativeStart, psduDuration);
-      signalNoise = rxInfo.second; //same information for all MPDUs
-      statusPerMpdu.push_back (rxInfo.first);
-      receptionOkAtLeastForOneMpdu = rxInfo.first;
     }
 
   NotifyRxEnd (psdu);
 
-  if (receptionOkAtLeastForOneMpdu)
+  if (!dropped && receptionOkAtLeastForOneMpdu)
     {
       NotifyMonitorSniffRx (psdu, GetFrequency (), txVector, signalNoise, statusPerMpdu);
       m_state->SwitchFromRxEndOk (Copy (psdu), snr, txVector, statusPerMpdu);
