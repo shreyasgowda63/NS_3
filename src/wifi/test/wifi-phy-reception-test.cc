@@ -38,6 +38,7 @@
 #include "ns3/mpdu-aggregator.h"
 #include "ns3/wifi-psdu.h"
 #include "ns3/wifi-ppdu.h"
+#include "ns3/yans-wifi-phy.h"
 
 using namespace ns3;
 
@@ -1248,7 +1249,7 @@ TestPhyHeadersReception::DoRun (void)
   double rxPowerDbm = -50;
   
   // CASE 1: send one packet followed by a second one with same power between the end of the 4us preamble detection window
-  // and the start of L-SIG of the first packet: reception should be aborted since L-SIG/R-LSIG cannot be decoded (SNR too low).
+  // and the start of L-SIG of the first packet: reception should be aborted since L-SIG/RL-SIG cannot be decoded (SNR too low).
 
   Simulator::Schedule (Seconds (1.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (1.0) + MicroSeconds (10), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
@@ -1261,7 +1262,7 @@ TestPhyHeadersReception::DoRun (void)
   Simulator::Schedule (Seconds (1.0) + NanoSeconds (162800), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
   // CASE 2: send one packet followed by a second one 3 dB weaker between the end of the 4us preamble detection window
-  // and the start of L-SIG of the first packet: reception should not be aborted since L-SIG/R-LSIG can be decoded (SNR high enough).
+  // and the start of L-SIG of the first packet: reception should not be aborted since L-SIG/RL-SIG can be decoded (SNR high enough).
 
   Simulator::Schedule (Seconds (2.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (2.0) + MicroSeconds (10), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm - 3);
@@ -1277,7 +1278,7 @@ TestPhyHeadersReception::DoRun (void)
   Simulator::Schedule (Seconds (2.0) + NanoSeconds (162799), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   Simulator::Schedule (Seconds (2.0) + NanoSeconds (162800), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
-  // CASE 3: send one packet followed by a second one with same power between the end of R-LSIG and the start of HE-SIG of the first packet:
+  // CASE 3: send one packet followed by a second one with same power between the end of RL-SIG and the start of HE-SIG of the first packet:
   // PHY header reception should not succeed but PHY should stay in RX state for the duration estimated from L-SIG.
 
   Simulator::Schedule (Seconds (3.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
@@ -1291,7 +1292,7 @@ TestPhyHeadersReception::DoRun (void)
   Simulator::Schedule (Seconds (3.0) + NanoSeconds (177799), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   Simulator::Schedule (Seconds (3.0) + NanoSeconds (177800), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
-  // CASE 4: send one packet followed by a second one 3 dB weaker between the end of R-LSIG and the start of HE-SIG of the first packet:
+  // CASE 4: send one packet followed by a second one 3 dB weaker between the end of RL-SIG and the start of HE-SIG of the first packet:
   // PHY header reception should succeed.
   
   Simulator::Schedule (Seconds (4.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
@@ -1312,24 +1313,24 @@ TestPhyHeadersReception::DoRun (void)
   rxPowerDbm = -70;
 
   // CASE 5: send one packet followed by a second one with same power between the end of the 4us preamble detection window
-  // and the start of L-SIG of the first packet: reception should be aborted since L-SIG/R-LSIG cannot be decoded (SNR too low).
+  // and the start of L-SIG of the first packet: reception should be aborted since L-SIG/RL-SIG cannot be decoded (SNR too low).
   
   Simulator::Schedule (Seconds (5.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (5.0) + MicroSeconds (10), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   // At 10 us, STA PHY STATE should be CCA_BUSY.
   Simulator::Schedule (Seconds (5.0) + MicroSeconds (10.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
-  // At 24us (end of R-LSIG), STA PHY STATE should go to IDLE because L-SIG/R-LSIG reception failed and the total energy is below CCA-ED.
+  // At 24us (end of RL-SIG), STA PHY STATE should go to IDLE because L-SIG/RL-SIG reception failed and the total energy is below CCA-ED.
   Simulator::Schedule (Seconds (5.0) + NanoSeconds (23999), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY); //TODO: to be checked with Leonardo
   Simulator::Schedule (Seconds (5.0) + NanoSeconds (24000), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
   // CASE 6: send one packet followed by a second one 3 dB weaker between the end of the 4us preamble detection window
-  // and the start of L-SIG of the first packet: reception should not be aborted since L-SIG/R-LSIG can be decoded (SNR high enough).
+  // and the start of L-SIG of the first packet: reception should not be aborted since L-SIG/RL-SIG can be decoded (SNR high enough).
 
   Simulator::Schedule (Seconds (6.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (6.0) + MicroSeconds (10), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm - 3);
   // At 10 us, STA PHY STATE should be CCA_BUSY.
   Simulator::Schedule (Seconds (6.0) + MicroSeconds (10.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
-  // At 24us (end of R-LSIG), STA PHY STATE should be unchanged because L-SIG reception should have succeeded.
+  // At 24us (end of RL-SIG), STA PHY STATE should be unchanged because L-SIG/RL-SIG reception should have succeeded.
   Simulator::Schedule (Seconds (6.0) + MicroSeconds (24.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   // At 44 us (end of HE-SIG), STA PHY STATE should move to RX since the PHY header reception should have succeeded.
   Simulator::Schedule (Seconds (6.0) + NanoSeconds (43999), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
@@ -1338,14 +1339,14 @@ TestPhyHeadersReception::DoRun (void)
   Simulator::Schedule (Seconds (6.0) + NanoSeconds (152799), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::RX);
   Simulator::Schedule (Seconds (6.0) + NanoSeconds (152800), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
-  // CASE 7: send one packet followed by a second one with same power between the end of R-LSIG and the start of HE-SIG of the first packet:
+  // CASE 7: send one packet followed by a second one with same power between the end of RL-SIG and the start of HE-SIG of the first packet:
   // PHY header reception should not succeed but PHY should stay in RX state for the duration estimated from L-SIG.
 
   Simulator::Schedule (Seconds (7.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (7.0) + MicroSeconds (25), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   // At 10 us, STA PHY STATE should be CCA_BUSY.
   Simulator::Schedule (Seconds (7.0) + MicroSeconds (10.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
-  // At 24us (end of R-LSIG), STA PHY STATE should be unchanged because L-SIG reception should have succeeded.
+  // At 24us (end of RL-SIG), STA PHY STATE should be unchanged because L-SIG/RL-SIG reception should have succeeded.
   Simulator::Schedule (Seconds (7.0) + MicroSeconds (24.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   // At 44 us (end of HE-SIG), STA PHY STATE should be not have moved to RX since reception of HE-SIG should have failed.
   Simulator::Schedule (Seconds (7.0) + MicroSeconds (44.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
@@ -1353,14 +1354,14 @@ TestPhyHeadersReception::DoRun (void)
   Simulator::Schedule (Seconds (7.0) + NanoSeconds (152799), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   Simulator::Schedule (Seconds (7.0) + NanoSeconds (152800), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
-  // CASE 8: send one packet followed by a second one 3 dB weaker between the end of R-LSIG and the start of HE-SIG of the first packet:
+  // CASE 8: send one packet followed by a second one 3 dB weaker between the end of RL-SIG and the start of HE-SIG of the first packet:
   // PHY header reception should succeed.
 
   Simulator::Schedule (Seconds (8.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (8.0) + MicroSeconds (25), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm - 3);
   // At 10 us, STA PHY STATE should be CCA_BUSY.
   Simulator::Schedule (Seconds (8.0) + MicroSeconds (10.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
-  // At 24us (end of R-LSIG), STA PHY STATE should be unchanged because L-SIG reception should have succeeded.
+  // At 24us (end of RL-SIG), STA PHY STATE should be unchanged because L-SIG/RL-SIG reception should have succeeded.
   Simulator::Schedule (Seconds (8.0) + MicroSeconds (24.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   // At 44 us (end of HE-SIG), STA PHY STATE should move to RX since the PHY header reception should have succeeded.
   Simulator::Schedule (Seconds (8.0) + NanoSeconds (43999), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
@@ -2278,6 +2279,356 @@ TestAmpduReception::DoRun (void)
  * \ingroup wifi-test
  * \ingroup tests
  *
+ * \brief Test reception when RX PHY does not have the same settings as TX PHY
+ */
+class TestPhyReceptionCoexistence : public TestCase
+{
+public:
+  TestPhyReceptionCoexistence ();
+  virtual ~TestPhyReceptionCoexistence ();
+
+private:
+  virtual void DoSetup (void);
+  virtual void DoRun (void);
+
+  /**
+   * Spectrum wifi receive success function
+   * \param psdu the PSDU
+   * \param snr the SNR
+   * \param txVector the transmit vector
+   * \param statusPerMpdu reception status per MPDU
+   */
+  void RxSuccess (Ptr<WifiPsdu> psdu, double snr, WifiTxVector txVector, std::vector<bool> statusPerMpdu);
+  /**
+   * Spectrum wifi receive failure function
+   * \param psdu the PSDU
+   */
+  void RxFailure (Ptr<WifiPsdu> psdu);
+  /**
+   * RX dropped function
+   * \param p the packet
+   * \param reason the reason
+   */
+  void RxDropped (Ptr<const Packet> p, WifiPhyRxfailureReason reason);
+
+  /**
+   * Receive PPDU function
+   * \param phy the RX PHY object
+   * \param mode the WifiMode used to transmit the PPDU
+   * \param channelWidth the channel width (in MHz) used to transmit the PPDU
+   * \param rxPowerDbm the RX power (in dBm)
+   */
+  void ReceivePpdu (Ptr<YansWifiPhy> phy, WifiMode mode, uint16_t channelWidth, double rxPowerDbm);
+
+  /**
+   * Schedule now to check  the PHY state
+   * \param phy the RX PHY object
+   * \param expectedState the expected PHY state
+   */
+  void CheckPhyState (Ptr<YansWifiPhy> phy, WifiPhyState expectedState);
+  /**
+   * Check the PHY state now
+   * \param phy the RX PHY object
+   * \param expectedState the expected PHY state
+   */
+  void DoCheckPhyState (Ptr<YansWifiPhy> phy, WifiPhyState expectedState);
+
+  /**
+   * Check the number of received packets
+   * \param expectedSuccessCount the expected number of successfully received packets
+   * \param expectedFailureCount the expected number of unsuccessfully received packets
+   */
+  void CheckRxPacketCount (uint32_t expectedSuccessCount, uint32_t expectedFailureCount);
+  /**
+   * Check the RX failure reason and reset it after the check
+   * \param expectedFailureReason the expected RX failure reason
+   */
+  void CheckRxFailureReasonAndReset (WifiPhyRxfailureReason expectedFailureReason);
+
+  Ptr<YansWifiPhy> m_nonHtPhy;              ///< non-HT PHY
+  Ptr<YansWifiPhy> m_htPhy;                 ///< HT PHY
+  Ptr<YansWifiPhy> m_vhtPhy;                ///< VHT PHY
+  Ptr<YansWifiPhy> m_hePhy;                 ///< HE PHY
+  uint32_t m_countRxSuccess;                ///< count RX success
+  uint32_t m_countRxFailure;                ///< count RX failure
+  WifiPhyRxfailureReason m_rxFailureReason; ///< Hold the last RX failure reason
+};
+
+TestPhyReceptionCoexistence::TestPhyReceptionCoexistence ()
+: TestCase ("PHY reception tests for coexistence scenarios"),
+  m_countRxSuccess (0),
+  m_countRxFailure (0),
+  m_rxFailureReason (UNKNOWN)
+{
+}
+
+TestPhyReceptionCoexistence::~TestPhyReceptionCoexistence ()
+{
+  m_nonHtPhy = 0;
+  m_htPhy = 0;
+  m_vhtPhy = 0;
+  m_hePhy = 0;
+}
+
+void
+TestPhyReceptionCoexistence::RxSuccess (Ptr<WifiPsdu> psdu, double snr, WifiTxVector txVector, std::vector<bool> statusPerMpdu)
+{
+  NS_LOG_FUNCTION (this << *psdu << snr << txVector);
+  m_countRxSuccess++;
+}
+
+void
+TestPhyReceptionCoexistence::RxFailure (Ptr<WifiPsdu> psdu)
+{
+  NS_LOG_FUNCTION (this << *psdu);
+  m_countRxFailure++;
+}
+
+void
+TestPhyReceptionCoexistence::RxDropped (Ptr<const Packet> p, WifiPhyRxfailureReason reason)
+{
+  NS_LOG_FUNCTION (this << p << reason);
+  m_rxFailureReason = reason;
+}
+
+void
+TestPhyReceptionCoexistence::ReceivePpdu (Ptr<YansWifiPhy> phy, WifiMode mode, uint16_t channelWidth, double rxPowerDbm)
+{
+  WifiTxVector txVector = WifiTxVector (mode, 0, GetPreambleForTransmission (mode.GetModulationClass (), false, false), 800, 1, 1, 0, channelWidth, false, false);
+
+  Ptr<Packet> pkt = Create<Packet> (1000);
+  WifiMacHeader hdr;
+
+  hdr.SetType (WIFI_MAC_QOSDATA);
+  hdr.SetQosTid (0);
+
+  Ptr<WifiPsdu> psdu = Create<WifiPsdu> (pkt, hdr);
+  Time txDuration = phy->CalculateTxDuration (psdu->GetSize (), txVector, phy->GetFrequency ());
+
+  Ptr<WifiPpdu> ppdu = Create<WifiPpdu> (psdu, txVector, txDuration, FREQUENCY);
+
+  phy->StartReceivePreamble (ppdu, DbmToW (rxPowerDbm));
+}
+
+void
+TestPhyReceptionCoexistence::CheckPhyState (Ptr<YansWifiPhy> phy, WifiPhyState expectedState)
+{
+  //This is needed to make sure PHY state will be checked as the last event if a state change occured at the exact same time as the check
+  Simulator::ScheduleNow (&TestPhyReceptionCoexistence::DoCheckPhyState, this, phy, expectedState);
+}
+
+void
+TestPhyReceptionCoexistence::DoCheckPhyState (Ptr<YansWifiPhy> phy, WifiPhyState expectedState)
+{
+  WifiPhyState currentState;
+  PointerValue ptr;
+  phy->GetAttribute ("State", ptr);
+  Ptr <WifiPhyStateHelper> state = DynamicCast <WifiPhyStateHelper> (ptr.Get<WifiPhyStateHelper> ());
+  currentState = state->GetState ();
+  NS_LOG_FUNCTION (this << currentState);
+  NS_TEST_ASSERT_MSG_EQ (currentState, expectedState, "PHY State " << currentState << " does not match expected state " << expectedState << " at " << Simulator::Now ());
+}
+
+void
+TestPhyReceptionCoexistence::CheckRxPacketCount (uint32_t expectedSuccessCount, uint32_t expectedFailureCount)
+{
+  NS_TEST_ASSERT_MSG_EQ (m_countRxSuccess, expectedSuccessCount, "The number of successful receptions does not match");
+  NS_TEST_ASSERT_MSG_EQ (m_countRxFailure, expectedFailureCount, "The number of unsuccessful receptions does not match");
+}
+
+void
+TestPhyReceptionCoexistence::CheckRxFailureReasonAndReset (WifiPhyRxfailureReason expectedFailureReason)
+{
+  NS_TEST_ASSERT_MSG_EQ (m_rxFailureReason, expectedFailureReason, "The RX failure reason does not match");
+  m_rxFailureReason = UNKNOWN;
+}
+
+void
+TestPhyReceptionCoexistence::DoSetup (void)
+{
+  //non-HT PHY
+  m_nonHtPhy = CreateObject<YansWifiPhy> ();
+  m_nonHtPhy->ConfigureStandard (WIFI_PHY_STANDARD_80211a);
+  Ptr<ErrorRateModel> error = CreateObject<NistErrorRateModel> ();
+  m_nonHtPhy->SetErrorRateModel (error);
+  m_nonHtPhy->SetChannelNumber (36);
+  m_nonHtPhy->SetFrequency (5180);
+  m_nonHtPhy->SetReceiveOkCallback (MakeCallback (&TestPhyReceptionCoexistence::RxSuccess, this));
+  m_nonHtPhy->SetReceiveErrorCallback (MakeCallback (&TestPhyReceptionCoexistence::RxFailure, this));
+  m_nonHtPhy->TraceConnectWithoutContext ("PhyRxDrop", MakeCallback (&TestPhyReceptionCoexistence::RxDropped, this));
+
+  //HT PHY
+  m_htPhy = CreateObject<YansWifiPhy> ();
+  m_htPhy->ConfigureStandard (WIFI_PHY_STANDARD_80211n_5GHZ);
+  m_htPhy->SetErrorRateModel (error);
+  m_htPhy->SetChannelWidth (20);
+  m_htPhy->SetChannelNumber (36);
+  m_htPhy->SetFrequency (5180);
+  m_htPhy->SetReceiveOkCallback (MakeCallback (&TestPhyReceptionCoexistence::RxSuccess, this));
+  m_htPhy->SetReceiveErrorCallback (MakeCallback (&TestPhyReceptionCoexistence::RxFailure, this));
+  m_htPhy->TraceConnectWithoutContext ("PhyRxDrop", MakeCallback (&TestPhyReceptionCoexistence::RxDropped, this));
+
+  //VHT PHY
+  m_vhtPhy = CreateObject<YansWifiPhy> ();
+  m_vhtPhy->ConfigureStandard (WIFI_PHY_STANDARD_80211ac);
+  m_vhtPhy->SetErrorRateModel (error);
+  m_vhtPhy->SetChannelWidth (40);
+  m_vhtPhy->SetChannelNumber (38);
+  m_vhtPhy->SetFrequency (5190);
+  m_vhtPhy->SetReceiveOkCallback (MakeCallback (&TestPhyReceptionCoexistence::RxSuccess, this));
+  m_vhtPhy->SetReceiveErrorCallback (MakeCallback (&TestPhyReceptionCoexistence::RxFailure, this));
+  m_vhtPhy->TraceConnectWithoutContext ("PhyRxDrop", MakeCallback (&TestPhyReceptionCoexistence::RxDropped, this));
+
+  //HE PHY
+  m_hePhy = CreateObject<YansWifiPhy> ();
+  m_hePhy->ConfigureStandard (WIFI_PHY_STANDARD_80211ax_5GHZ);
+  m_hePhy->SetErrorRateModel (error);
+  m_hePhy->SetChannelWidth (20);
+  m_hePhy->SetChannelNumber (36);
+  m_hePhy->SetFrequency (5180);
+  m_hePhy->SetReceiveOkCallback (MakeCallback (&TestPhyReceptionCoexistence::RxSuccess, this));
+  m_hePhy->SetReceiveErrorCallback (MakeCallback (&TestPhyReceptionCoexistence::RxFailure, this));
+  m_hePhy->TraceConnectWithoutContext ("PhyRxDrop", MakeCallback (&TestPhyReceptionCoexistence::RxDropped, this));
+}
+
+void
+TestPhyReceptionCoexistence::DoRun (void)
+{
+  RngSeedManager::SetSeed (1);
+  RngSeedManager::SetRun (1);
+  int64_t streamNumber = 0;
+
+  m_nonHtPhy->AssignStreams (streamNumber);
+  m_htPhy->AssignStreams (streamNumber);
+  m_vhtPhy->AssignStreams (streamNumber);
+  m_hePhy->AssignStreams (streamNumber);
+
+
+  //CASE 1: non-HT PHY receives a HT PPDU
+
+  Simulator::Schedule (Seconds (1.0), &TestPhyReceptionCoexistence::ReceivePpdu, this, m_nonHtPhy, WifiPhy::GetHtMcs7 (), 20, -50);
+  Simulator::Schedule (Seconds (1.0) + MicroSeconds (10.0), &TestPhyReceptionCoexistence::CheckPhyState, this, m_nonHtPhy, WifiPhyState::CCA_BUSY);
+  // At 20us (end of L-SIG), STA PHY STATE should move to RX since the non-HT PHY header reception should have succeeded.
+  Simulator::Schedule (Seconds (1.0) + NanoSeconds (19999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_nonHtPhy, WifiPhyState::CCA_BUSY);
+  Simulator::Schedule (Seconds (1.0) + NanoSeconds (20000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_nonHtPhy, WifiPhyState::RX);
+  // Since it takes 164us to transmit the packet, PHY should be back to IDLE at time 164us
+  Simulator::Schedule (Seconds (1.0) + NanoSeconds (163999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_nonHtPhy, WifiPhyState::RX);
+  Simulator::Schedule (Seconds (1.0) + NanoSeconds (164000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_nonHtPhy, WifiPhyState::IDLE);
+  // Packet should not have been successfully received because of an unsupported WifiMode
+  Simulator::Schedule (Seconds (1.1), &TestPhyReceptionCoexistence::CheckRxPacketCount, this, 0, 1);
+  Simulator::Schedule (Seconds (1.1), &TestPhyReceptionCoexistence::CheckRxFailureReasonAndReset, this, UNSUPPORTED_SETTINGS);
+
+
+  //CASE 2: 20 MHz HT PHY receives a 20 MHz VHT PPDU
+
+  Simulator::Schedule (Seconds (2.0), &TestPhyReceptionCoexistence::ReceivePpdu, this, m_htPhy, WifiPhy::GetVhtMcs7 (), 20, -50);
+  Simulator::Schedule (Seconds (2.0) + MicroSeconds (10.0), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::CCA_BUSY);
+  // At 20us (end of L-SIG), STA PHY STATE should move to RX since HT PHY will treat VHT PPDU as non-HT and will start RX after L-SIG
+  Simulator::Schedule (Seconds (2.0) + NanoSeconds (19999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::CCA_BUSY);
+  Simulator::Schedule (Seconds (2.0) + NanoSeconds (20000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::RX);
+  // Since it takes 164us to transmit the packet, PHY should be back to IDLE at time 164us
+  Simulator::Schedule (Seconds (2.0) + NanoSeconds (163999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::RX);
+  Simulator::Schedule (Seconds (2.0) + NanoSeconds (164000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::IDLE);
+  // Packet should not have been successfully received because of an unsupported WifiMode
+  Simulator::Schedule (Seconds (2.1), &TestPhyReceptionCoexistence::CheckRxPacketCount, this, 0, 2);
+  Simulator::Schedule (Seconds (2.1), &TestPhyReceptionCoexistence::CheckRxFailureReasonAndReset, this, UNSUPPORTED_SETTINGS);
+
+
+  //CASE 3: 40 MHz VHT PHY receives a 40 MHz HE PPDU
+
+  Simulator::Schedule (Seconds (3.0), &TestPhyReceptionCoexistence::ReceivePpdu, this, m_vhtPhy, WifiPhy::GetHeMcs7 (), 40, -50);
+  Simulator::Schedule (Seconds (3.0) + MicroSeconds (10.0), &TestPhyReceptionCoexistence::CheckPhyState, this, m_vhtPhy, WifiPhyState::CCA_BUSY);
+  // At 20us (end of L-SIG), STA PHY STATE should move to RX since HT PHY will treat HE PPDU as non-HT and will start RX after L-SIG
+  Simulator::Schedule (Seconds (3.0) + NanoSeconds (19999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_vhtPhy, WifiPhyState::CCA_BUSY);
+  Simulator::Schedule (Seconds (3.0) + NanoSeconds (20000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_vhtPhy, WifiPhyState::RX);
+  // Since it takes 98.4us to transmit the packet, PHY should be back to IDLE at time 98.4us
+  Simulator::Schedule (Seconds (3.0) + NanoSeconds (98399), &TestPhyReceptionCoexistence::CheckPhyState, this, m_vhtPhy, WifiPhyState::RX);
+  Simulator::Schedule (Seconds (3.0) + NanoSeconds (98400), &TestPhyReceptionCoexistence::CheckPhyState, this, m_vhtPhy, WifiPhyState::IDLE);
+  // Packet should not have been successfully received because of an unsupported WifiMode
+  Simulator::Schedule (Seconds (3.1), &TestPhyReceptionCoexistence::CheckRxPacketCount, this, 0, 3);
+  Simulator::Schedule (Seconds (3.1), &TestPhyReceptionCoexistence::CheckRxFailureReasonAndReset, this, UNSUPPORTED_SETTINGS);
+
+
+  //CASE 4: 20 MHz HT PHY receives a 40 MHz HT PPDU
+
+  Simulator::Schedule (Seconds (4.0), &TestPhyReceptionCoexistence::ReceivePpdu, this, m_htPhy, WifiPhy::GetHtMcs7 (), 40, -50);
+  Simulator::Schedule (Seconds (4.0) + MicroSeconds (10.0), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::CCA_BUSY);
+  // At 36us (end of HT-SIG), STA PHY STATE should move to RX since the PHY header reception should have succeeded.
+  Simulator::Schedule (Seconds (4.0) + NanoSeconds (35999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::CCA_BUSY);
+  Simulator::Schedule (Seconds (4.0) + NanoSeconds (36000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::RX);
+  // Since it takes 100us to transmit the packet, PHY should be back to IDLE at time 164us
+  Simulator::Schedule (Seconds (4.0) + NanoSeconds (99999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::RX);
+  Simulator::Schedule (Seconds (4.0) + NanoSeconds (100000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::IDLE);
+  // Packet should not have been successfully received because of an unsupported channel width
+  Simulator::Schedule (Seconds (4.1), &TestPhyReceptionCoexistence::CheckRxPacketCount, this, 0, 4);
+  Simulator::Schedule (Seconds (4.1), &TestPhyReceptionCoexistence::CheckRxFailureReasonAndReset, this, UNSUPPORTED_SETTINGS);
+
+
+  //CASE 5: 40 MHz VHT PHY receives an 80 MHz VHT PPDU
+
+  Simulator::Schedule (Seconds (5.0), &TestPhyReceptionCoexistence::ReceivePpdu, this, m_vhtPhy, WifiPhy::GetVhtMcs7 (), 80, -50);
+  Simulator::Schedule (Seconds (5.0) + MicroSeconds (10.0), &TestPhyReceptionCoexistence::CheckPhyState, this, m_vhtPhy, WifiPhyState::CCA_BUSY);
+  // At 36us (end of VHT-SIG-A), STA PHY STATE should move to RX since the PHY header reception should have succeeded.
+  Simulator::Schedule (Seconds (5.0) + NanoSeconds (35999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_vhtPhy, WifiPhyState::CCA_BUSY);
+  Simulator::Schedule (Seconds (5.0) + NanoSeconds (36000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_vhtPhy, WifiPhyState::RX);
+  // Since it takes 68us to transmit the packet, PHY should be back to IDLE at time 68us
+  Simulator::Schedule (Seconds (5.0) + NanoSeconds (67999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_vhtPhy, WifiPhyState::RX);
+  Simulator::Schedule (Seconds (5.0) + NanoSeconds (68000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_vhtPhy, WifiPhyState::IDLE);
+  // Packet should not have been successfully received because of an unsupported channel width
+  Simulator::Schedule (Seconds (5.1), &TestPhyReceptionCoexistence::CheckRxPacketCount, this, 0, 5);
+  Simulator::Schedule (Seconds (5.1), &TestPhyReceptionCoexistence::CheckRxFailureReasonAndReset, this, UNSUPPORTED_SETTINGS);
+
+
+  //CASE 6: 20 MHz HE PHY receives a 20 MHz HT PPDU
+
+  Simulator::Schedule (Seconds (6.0), &TestPhyReceptionCoexistence::ReceivePpdu, this, m_hePhy, WifiPhy::GetHtMcs7 (), 20, -50);
+  Simulator::Schedule (Seconds (6.0) + MicroSeconds (10.0), &TestPhyReceptionCoexistence::CheckPhyState, this, m_hePhy, WifiPhyState::CCA_BUSY);
+  // At 36us (end of HT-SIG), STA PHY STATE should move to RX since the PHY header reception should have succeeded.
+  Simulator::Schedule (Seconds (6.0) + NanoSeconds (35999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_hePhy, WifiPhyState::CCA_BUSY);
+  Simulator::Schedule (Seconds (6.0) + NanoSeconds (36000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_hePhy, WifiPhyState::RX);
+  // Since it takes 164us to transmit the packet, PHY should be back to IDLE at time 164us
+  Simulator::Schedule (Seconds (6.0) + NanoSeconds (163999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_hePhy, WifiPhyState::RX);
+  Simulator::Schedule (Seconds (6.0) + NanoSeconds (164000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_hePhy, WifiPhyState::IDLE);
+  // Packet should have been successfully received
+  Simulator::Schedule (Seconds (6.1), &TestPhyReceptionCoexistence::CheckRxPacketCount, this, 1, 5);
+
+
+  //CASE 7: 20 MHz HE PHY receives a non-HT PPDU
+
+  Simulator::Schedule (Seconds (7.0), &TestPhyReceptionCoexistence::ReceivePpdu, this, m_hePhy, WifiPhy::GetOfdmRate54Mbps (), 20, -50);
+  Simulator::Schedule (Seconds (7.0) + MicroSeconds (10.0), &TestPhyReceptionCoexistence::CheckPhyState, this, m_hePhy, WifiPhyState::CCA_BUSY);
+  // At 20us (end of L-SIG), STA PHY STATE should move to RX since the PHY header reception should have succeeded.
+  Simulator::Schedule (Seconds (7.0) + NanoSeconds (19999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_hePhy, WifiPhyState::CCA_BUSY);
+  Simulator::Schedule (Seconds (7.0) + NanoSeconds (20000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_hePhy, WifiPhyState::RX);
+  // Since it takes 176us to transmit the packet, PHY should be back to IDLE at time 176us
+  Simulator::Schedule (Seconds (7.0) + NanoSeconds (175999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_hePhy, WifiPhyState::RX);
+  Simulator::Schedule (Seconds (7.0) + NanoSeconds (176000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_hePhy, WifiPhyState::IDLE);
+  // Packet should have been successfully received
+  Simulator::Schedule (Seconds (7.1), &TestPhyReceptionCoexistence::CheckRxPacketCount, this, 2, 5);
+
+
+  //CASE 8: 20 MHz HT PHY receives a non-HT PPDU
+
+  Simulator::Schedule (Seconds (8.0), &TestPhyReceptionCoexistence::ReceivePpdu, this, m_htPhy, WifiPhy::GetOfdmRate54Mbps (), 20, -50);
+  Simulator::Schedule (Seconds (8.0) + MicroSeconds (10.0), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::CCA_BUSY);
+  // At 20us (end of L-SIG), STA PHY STATE should move to RX since the PHY header reception should have succeeded.
+  Simulator::Schedule (Seconds (8.0) + NanoSeconds (19999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::CCA_BUSY);
+  Simulator::Schedule (Seconds (8.0) + NanoSeconds (20000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::RX);
+  // Since it takes 176us to transmit the packet, PHY should be back to IDLE at time 176us
+  Simulator::Schedule (Seconds (8.0) + NanoSeconds (175999), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::RX);
+  Simulator::Schedule (Seconds (8.0) + NanoSeconds (176000), &TestPhyReceptionCoexistence::CheckPhyState, this, m_htPhy, WifiPhyState::IDLE);
+  // Packet should have been successfully received
+  Simulator::Schedule (Seconds (8.1), &TestPhyReceptionCoexistence::CheckRxPacketCount, this, 3, 5);
+
+
+  Simulator::Run ();
+  Simulator::Destroy ();
+}
+
+/**
+ * \ingroup wifi-test
+ * \ingroup tests
+ *
  * \brief wifi PHY reception Test Suite
  */
 class WifiPhyReceptionTestSuite : public TestSuite
@@ -2294,6 +2645,7 @@ WifiPhyReceptionTestSuite::WifiPhyReceptionTestSuite ()
   AddTestCase (new TestSimpleFrameCaptureModel, TestCase::QUICK);
   AddTestCase (new TestPhyHeadersReception, TestCase::QUICK);
   AddTestCase (new TestAmpduReception, TestCase::QUICK);
+  AddTestCase (new TestPhyReceptionCoexistence, TestCase::QUICK);
 }
 
 static WifiPhyReceptionTestSuite wifiPhyReceptionTestSuite; ///< the test suite

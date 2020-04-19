@@ -2646,7 +2646,7 @@ WifiPhy::StartReceiveHeader (Ptr<Event> event)
           Time remainingPreambleAndNonHtHeaderDuration = GetPhyPreambleDuration (txVector) + GetPhyHeaderDuration (txVector) - GetPreambleDetectionDuration ();
           if ((txVector.GetMode ().GetModulationClass () == WIFI_MOD_CLASS_HE) && (GetStandard () < WIFI_PHY_STANDARD_80211ax_2_4GHZ))
             {
-              //No R-LSIG if not HE STA, in that case next decision is done after L-SIG
+              //No RL-SIG expected for non-HE STA, in that case next decision is done after L-SIG
               remainingPreambleAndNonHtHeaderDuration -= MicroSeconds (4);
             }
           m_state->SwitchMaybeToCcaBusy (remainingPreambleAndNonHtHeaderDuration);
