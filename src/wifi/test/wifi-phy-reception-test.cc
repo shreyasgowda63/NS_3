@@ -1248,7 +1248,7 @@ TestPhyHeadersReception::DoRun (void)
   double rxPowerDbm = -50;
   
   // CASE 1: send one packet followed by a second one with same power between the end of the 4us preamble detection window
-  // and the start of L-SIG of the first packet: reception should be aborted since L-SIG cannot be decoded (SNR too low).
+  // and the start of L-SIG of the first packet: reception should be aborted since L-SIG/R-LSIG cannot be decoded (SNR too low).
 
   Simulator::Schedule (Seconds (1.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (1.0) + MicroSeconds (10), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
@@ -1261,7 +1261,7 @@ TestPhyHeadersReception::DoRun (void)
   Simulator::Schedule (Seconds (1.0) + NanoSeconds (162800), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
   // CASE 2: send one packet followed by a second one 3 dB weaker between the end of the 4us preamble detection window
-  // and the start of L-SIG of the first packet: reception should not be aborted since L-SIG can be decoded (SNR high enough).
+  // and the start of L-SIG of the first packet: reception should not be aborted since L-SIG/R-LSIG can be decoded (SNR high enough).
 
   Simulator::Schedule (Seconds (2.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (2.0) + MicroSeconds (10), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm - 3);
@@ -1277,7 +1277,7 @@ TestPhyHeadersReception::DoRun (void)
   Simulator::Schedule (Seconds (2.0) + NanoSeconds (162799), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   Simulator::Schedule (Seconds (2.0) + NanoSeconds (162800), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
-  // CASE 3: send one packet followed by a second one with same power between the end of L-SIG and the start of HE-SIG of the first packet:
+  // CASE 3: send one packet followed by a second one with same power between the end of R-LSIG and the start of HE-SIG of the first packet:
   // PHY header reception should not succeed but PHY should stay in RX state for the duration estimated from L-SIG.
 
   Simulator::Schedule (Seconds (3.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
@@ -1291,7 +1291,7 @@ TestPhyHeadersReception::DoRun (void)
   Simulator::Schedule (Seconds (3.0) + NanoSeconds (177799), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   Simulator::Schedule (Seconds (3.0) + NanoSeconds (177800), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
-  // CASE 4: send one packet followed by a second one 3 dB weaker between the end of L-SIG and the start of HE-SIG of the first packet:
+  // CASE 4: send one packet followed by a second one 3 dB weaker between the end of R-LSIG and the start of HE-SIG of the first packet:
   // PHY header reception should succeed.
   
   Simulator::Schedule (Seconds (4.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
@@ -1312,24 +1312,24 @@ TestPhyHeadersReception::DoRun (void)
   rxPowerDbm = -70;
 
   // CASE 5: send one packet followed by a second one with same power between the end of the 4us preamble detection window
-  // and the start of L-SIG of the first packet: reception should be aborted since L-SIG cannot be decoded (SNR too low).
+  // and the start of L-SIG of the first packet: reception should be aborted since L-SIG/R-LSIG cannot be decoded (SNR too low).
   
   Simulator::Schedule (Seconds (5.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (5.0) + MicroSeconds (10), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   // At 10 us, STA PHY STATE should be CCA_BUSY.
   Simulator::Schedule (Seconds (5.0) + MicroSeconds (10.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
-  // At 24us (end of L-SIG), STA PHY STATE should go to IDLE because L-SIG reception failed and the total energy is below CCA-ED.
-  Simulator::Schedule (Seconds (5.0) + NanoSeconds (23999), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
+  // At 24us (end of R-LSIG), STA PHY STATE should go to IDLE because L-SIG/R-LSIG reception failed and the total energy is below CCA-ED.
+  Simulator::Schedule (Seconds (5.0) + NanoSeconds (23999), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY); //TODO: to be checked with Leonardo
   Simulator::Schedule (Seconds (5.0) + NanoSeconds (24000), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
   // CASE 6: send one packet followed by a second one 3 dB weaker between the end of the 4us preamble detection window
-  // and the start of L-SIG of the first packet: reception should not be aborted since L-SIG can be decoded (SNR high enough).
+  // and the start of L-SIG of the first packet: reception should not be aborted since L-SIG/R-LSIG can be decoded (SNR high enough).
 
   Simulator::Schedule (Seconds (6.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (6.0) + MicroSeconds (10), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm - 3);
   // At 10 us, STA PHY STATE should be CCA_BUSY.
   Simulator::Schedule (Seconds (6.0) + MicroSeconds (10.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
-  // At 24us (end of L-SIG), STA PHY STATE should be unchanged because L-SIG reception should have succeeded.
+  // At 24us (end of R-LSIG), STA PHY STATE should be unchanged because L-SIG reception should have succeeded.
   Simulator::Schedule (Seconds (6.0) + MicroSeconds (24.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   // At 44 us (end of HE-SIG), STA PHY STATE should move to RX since the PHY header reception should have succeeded.
   Simulator::Schedule (Seconds (6.0) + NanoSeconds (43999), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
@@ -1338,14 +1338,14 @@ TestPhyHeadersReception::DoRun (void)
   Simulator::Schedule (Seconds (6.0) + NanoSeconds (152799), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::RX);
   Simulator::Schedule (Seconds (6.0) + NanoSeconds (152800), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
-  // CASE 7: send one packet followed by a second one with same power between the end of L-SIG and the start of HE-SIG of the first packet:
+  // CASE 7: send one packet followed by a second one with same power between the end of R-LSIG and the start of HE-SIG of the first packet:
   // PHY header reception should not succeed but PHY should stay in RX state for the duration estimated from L-SIG.
 
   Simulator::Schedule (Seconds (7.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (7.0) + MicroSeconds (25), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   // At 10 us, STA PHY STATE should be CCA_BUSY.
   Simulator::Schedule (Seconds (7.0) + MicroSeconds (10.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
-  // At 24us (end of L-SIG), STA PHY STATE should be unchanged because L-SIG reception should have succeeded.
+  // At 24us (end of R-LSIG), STA PHY STATE should be unchanged because L-SIG reception should have succeeded.
   Simulator::Schedule (Seconds (7.0) + MicroSeconds (24.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   // At 44 us (end of HE-SIG), STA PHY STATE should be not have moved to RX since reception of HE-SIG should have failed.
   Simulator::Schedule (Seconds (7.0) + MicroSeconds (44.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
@@ -1353,14 +1353,14 @@ TestPhyHeadersReception::DoRun (void)
   Simulator::Schedule (Seconds (7.0) + NanoSeconds (152799), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   Simulator::Schedule (Seconds (7.0) + NanoSeconds (152800), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::IDLE);
 
-  // CASE 8: send one packet followed by a second one 3 dB weaker between the end of L-SIG and the start of HE-SIG of the first packet:
+  // CASE 8: send one packet followed by a second one 3 dB weaker between the end of R-LSIG and the start of HE-SIG of the first packet:
   // PHY header reception should succeed.
 
   Simulator::Schedule (Seconds (8.0), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm);
   Simulator::Schedule (Seconds (8.0) + MicroSeconds (25), &TestPhyHeadersReception::SendPacket, this, rxPowerDbm - 3);
   // At 10 us, STA PHY STATE should be CCA_BUSY.
   Simulator::Schedule (Seconds (8.0) + MicroSeconds (10.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
-  // At 24us (end of L-SIG), STA PHY STATE should be unchanged because L-SIG reception should have succeeded.
+  // At 24us (end of R-LSIG), STA PHY STATE should be unchanged because L-SIG reception should have succeeded.
   Simulator::Schedule (Seconds (8.0) + MicroSeconds (24.0), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);
   // At 44 us (end of HE-SIG), STA PHY STATE should move to RX since the PHY header reception should have succeeded.
   Simulator::Schedule (Seconds (8.0) + NanoSeconds (43999), &TestPhyHeadersReception::CheckPhyState, this, WifiPhyState::CCA_BUSY);

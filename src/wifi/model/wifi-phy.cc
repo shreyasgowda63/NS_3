@@ -2036,7 +2036,7 @@ WifiPhy::GetPhyHeaderDuration (WifiTxVector txVector)
     case WIFI_PREAMBLE_HE_ER_SU:
     case WIFI_PREAMBLE_HE_MU:
     case WIFI_PREAMBLE_HE_TB:
-      //LSIG + R-LSIG
+      //LSIG + RL-SIG
       return MicroSeconds (8);
     case WIFI_PREAMBLE_HT_GF:
       return MicroSeconds (0);
@@ -2633,7 +2633,7 @@ WifiPhy::StartReceiveHeader (Ptr<Event> event)
       m_timeLastPreambleDetected = Simulator::Now ();
       WifiTxVector txVector = event->GetTxVector ();
 
-      if ((txVector.GetMode ().GetModulationClass () == WIFI_MOD_CLASS_HT) && (txVector.GetPreambleType () == WIFI_PREAMBLE_HT_GF))
+      if (txVector.GetPreambleType () == WIFI_PREAMBLE_HT_GF)
         {
           //No non-HT PHY header for HT GF
           Time remainingPreambleHeaderDuration = CalculatePhyPreambleAndHeaderDuration (txVector) - GetPreambleDetectionDuration ();
@@ -2644,6 +2644,11 @@ WifiPhy::StartReceiveHeader (Ptr<Event> event)
         {
           //Schedule end of non-HT PHY header
           Time remainingPreambleAndNonHtHeaderDuration = GetPhyPreambleDuration (txVector) + GetPhyHeaderDuration (txVector) - GetPreambleDetectionDuration ();
+          if ((txVector.GetMode ().GetModulationClass () == WIFI_MOD_CLASS_HE) && (GetStandard () < WIFI_PHY_STANDARD_80211ax_2_4GHZ))
+            {
+              //No R-LSIG if not HE STA, in that case next decision is done after L-SIG
+              remainingPreambleAndNonHtHeaderDuration -= MicroSeconds (4);
+            }
           m_state->SwitchMaybeToCcaBusy (remainingPreambleAndNonHtHeaderDuration);
           m_endPhyRxEvent = Simulator::Schedule (remainingPreambleAndNonHtHeaderDuration, &WifiPhy::ContinueReceiveHeader, this, event);
         }
@@ -2677,10 +2682,21 @@ WifiPhy::ContinueReceiveHeader (Ptr<Event> event)
     {
       NS_LOG_DEBUG ("Received non-HT PHY header");
       WifiTxVector txVector = event->GetTxVector ();
-      Time remainingRxDuration = event->GetEndTime () - Simulator::Now ();
-      m_state->SwitchMaybeToCcaBusy (remainingRxDuration);
-      Time remainingPreambleHeaderDuration = CalculatePhyPreambleAndHeaderDuration (txVector) - GetPhyPreambleDuration (txVector) - GetPhyHeaderDuration (txVector);
-      m_endPhyRxEvent = Simulator::Schedule (remainingPreambleHeaderDuration, &WifiPhy::StartReceivePayload, this, event);
+      Time remainingPreambleHeaderDuration = Seconds (0);
+      //In case of incompatibility, received signal is handled as non-HT
+      if (((txVector.GetMode ().GetModulationClass () == WIFI_MOD_CLASS_HT) && (GetStandard () >= WIFI_PHY_STANDARD_80211n_2_4GHZ)) ||
+          ((txVector.GetMode ().GetModulationClass () == WIFI_MOD_CLASS_VHT) && (GetStandard () >= WIFI_PHY_STANDARD_80211ac)) ||
+          ((txVector.GetMode ().GetModulationClass () == WIFI_MOD_CLASS_HE) && (GetStandard () >= WIFI_PHY_STANDARD_80211ax_2_4GHZ)))
+        {
+          Time remainingPreambleHeaderDuration = CalculatePhyPreambleAndHeaderDuration (txVector) - GetPhyPreambleDuration (txVector) - GetPhyHeaderDuration (txVector);
+          m_state->SwitchMaybeToCcaBusy (remainingPreambleHeaderDuration);
+          m_endPhyRxEvent = Simulator::Schedule (remainingPreambleHeaderDuration, &WifiPhy::StartReceivePayload, this, event);
+        }
+      else
+        {
+          NS_LOG_DEBUG ("non-HT signal");
+          StartReceivePayload (event);
+        }
     }
   else //non-HT PHY header reception failed
     {
@@ -2856,7 +2872,7 @@ WifiPhy::StartReceivePayload (Ptr<Event> event)
       //If we are here, this means non-HT PHY header was already successfully received
       canReceivePayload = true;
     }
-  Time payloadDuration = event->GetEndTime () - event->GetStartTime () - CalculatePhyPreambleAndHeaderDuration (txVector);
+  Time payloadDuration = event->GetEndTime () - Simulator::Now ();
   if (canReceivePayload) //PHY reception succeeded
     {
       m_state->SwitchToRx (payloadDuration);
@@ -2897,6 +2913,7 @@ WifiPhy::StartReceivePayload (Ptr<Event> event)
     {
       NS_LOG_DEBUG ("RX dropped because HT PHY header reception failed");
       NotifyRxDrop (event->GetPsdu (), SIG_A_FAILURE);
+      m_state->SwitchMaybeToCcaBusy (payloadDuration);
       m_endRxEvent = Simulator::Schedule (payloadDuration, &WifiPhy::ResetReceive, this, event);
     }
 }
