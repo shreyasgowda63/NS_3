@@ -463,6 +463,11 @@ template <typename T>
 Ptr<T>
 Object::GetObject () const
 {
+  // Don't search aggregate buffer if GetObject<Object> is called (issue #190)
+  if (T::GetTypeId () == Object::GetTypeId ())
+    {
+      return Ptr<T> (static_cast<T *> (const_cast<Object *> (this)));
+    }
   // This is an optimization: if the cast works (which is likely),
   // things will be pretty fast.
   T *result = dynamic_cast<T *> (m_aggregates->buffer[0]);
