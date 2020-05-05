@@ -28,7 +28,6 @@
 #include "ns3/wimax-net-device.h"
 #include "ns3/bs-net-device.h"
 #include "ns3/ss-net-device.h"
-#include "ns3/ss-link-manager.h"
 #include "ns3/wimax-channel.h"
 #include "ns3/simple-ofdm-wimax-channel.h"
 #include "ns3/wimax-phy.h"
@@ -522,13 +521,13 @@ WimaxHelper::EnableAsciiInternal (Ptr<OutputStreamWrapper> stream,
       if (ssNetDev)
         {
           SubscriberStationNetDevice::AsciiTraceCallback EnqueueCb = MakeBoundCallback (&AsciiTraceHelper::DefaultEnqueueSinkWithContext, theStream);
-          ssNetDev->GetLinkManager ()->SetAsciiTxQueueEnqueueCallback (EnqueueCb);
+          ssNetDev->SetAsciiTxQueueEnqueueCallback (EnqueueCb);
 
           SubscriberStationNetDevice::AsciiTraceCallback DequeueCb = MakeBoundCallback (&AsciiTraceHelper::DefaultDequeueSinkWithContext, theStream);
-          ssNetDev->GetLinkManager ()->SetAsciiTxQueueDequeueCallback (DequeueCb);
+          ssNetDev->SetAsciiTxQueueDequeueCallback (DequeueCb);
 
           SubscriberStationNetDevice::AsciiTraceCallback DropCb = MakeBoundCallback (&AsciiTraceHelper::DefaultDropSinkWithContext, theStream);
-          ssNetDev->GetLinkManager ()->SetAsciiTxQueueDropCallback (DequeueCb);
+          ssNetDev->SetAsciiTxQueueDropCallback (DropCb);
         }
 
       return;
@@ -536,7 +535,7 @@ WimaxHelper::EnableAsciiInternal (Ptr<OutputStreamWrapper> stream,
 
   //
   // If we are provided an OutputStreamWrapper, we are expected to use it, and
-  // to providd a context.  We are free to come up with our own context if we
+  // to provide a context.  We are free to come up with our own context if we
   // want, and use the AsciiTraceHelper Hook*WithContext functions, but for
   // compatibility and simplicity, we just use Config::Connect and let it deal
   // with the context.
@@ -570,13 +569,13 @@ WimaxHelper::EnableAsciiInternal (Ptr<OutputStreamWrapper> stream,
   if (ssNetDev)
     {
       SubscriberStationNetDevice::AsciiTraceCallback EnqueueCb = MakeBoundCallback (&AsciiTraceHelper::DefaultEnqueueSinkWithContext, stream);
-      ssNetDev->GetLinkManager ()->SetAsciiTxQueueEnqueueCallback (EnqueueCb);
+      ssNetDev->SetAsciiTxQueueEnqueueCallback (EnqueueCb);
 
       SubscriberStationNetDevice::AsciiTraceCallback DequeueCb = MakeBoundCallback (&AsciiTraceHelper::DefaultDequeueSinkWithContext, stream);
-      ssNetDev->GetLinkManager ()->SetAsciiTxQueueDequeueCallback (DequeueCb);
+      ssNetDev->SetAsciiTxQueueDequeueCallback (DequeueCb);
 
       SubscriberStationNetDevice::AsciiTraceCallback DropCb = MakeBoundCallback (&AsciiTraceHelper::DefaultDropSinkWithContext, stream);
-      ssNetDev->GetLinkManager ()->SetAsciiTxQueueDropCallback (DequeueCb);
+      ssNetDev->SetAsciiTxQueueDropCallback (DropCb);
     }
 }
 

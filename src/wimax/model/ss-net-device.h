@@ -346,6 +346,24 @@ public:
   /// Callback for logging packets on ASCII traces
   typedef Callback<void, std::string, Ptr<const Packet> > AsciiTraceCallback;
 
+  /**
+   * Set the Enqueue callback for ASCII tracing
+   * \param cb callback for ASCII tracing
+   */
+  void SetAsciiTxQueueEnqueueCallback (AsciiTraceCallback cb);
+
+  /**
+   * Set the Dequeue callback for ASCII tracing
+   * \param cb callback for ASCII tracing
+   */
+  void SetAsciiTxQueueDequeueCallback (AsciiTraceCallback cb);
+
+  /**
+   * Set the Drop callback for ASCII tracing
+   * \param cb callback for ASCII tracing
+   */
+  void SetAsciiTxQueueDropCallback (AsciiTraceCallback cb);
+
 private:
   /**
    * Get default lost DL map interval
@@ -487,6 +505,13 @@ private:
    * \see class CallBackTraceSource
    */
   TracedCallback<Ptr<const Packet> > m_ssRxDropTrace;
+
+  /// Bound callback to perform ASCII logging for Enqueue events
+  SubscriberStationNetDevice::AsciiTraceCallback m_asciiTxQueueEnqueueCb;
+  /// Bound callback to perform ASCII logging for Dequeue events
+  SubscriberStationNetDevice::AsciiTraceCallback m_asciiTxQueueDequeueCb;
+  /// Bound callback to perform ASCII logging for Drop events
+  SubscriberStationNetDevice::AsciiTraceCallback m_asciiTxQueueDropCb;
 };
 
 } // namespace ns3
