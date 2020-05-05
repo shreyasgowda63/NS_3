@@ -40,7 +40,6 @@ class SSScheduler;
 class SSLinkManager;
 class SsServiceFlowManager;
 class IpcsClassifier;
-class OutputStreamWrapper;
 
 /**
  * \ingroup wimax
