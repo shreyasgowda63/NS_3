@@ -40,6 +40,7 @@ class SSScheduler;
 class SSLinkManager;
 class SsServiceFlowManager;
 class IpcsClassifier;
+class OutputStreamWrapper;
 
 /**
  * \ingroup wimax
@@ -341,6 +342,9 @@ public:
    * \param sfm service flow manager to be used
    */
   void SetServiceFlowManager (Ptr<SsServiceFlowManager> sfm);
+
+  /// Callback for logging packets on ASCII traces
+  typedef Callback<void, std::string, Ptr<const Packet> > AsciiTraceCallback;
 
 private:
   /**

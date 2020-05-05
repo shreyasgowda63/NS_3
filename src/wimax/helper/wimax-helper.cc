@@ -28,6 +28,7 @@
 #include "ns3/wimax-net-device.h"
 #include "ns3/bs-net-device.h"
 #include "ns3/ss-net-device.h"
+#include "ns3/ss-link-manager.h"
 #include "ns3/wimax-channel.h"
 #include "ns3/simple-ofdm-wimax-channel.h"
 #include "ns3/wimax-phy.h"
@@ -510,8 +511,22 @@ WimaxHelper::EnableAsciiInternal (Ptr<OutputStreamWrapper> stream,
 
       EnableAsciiForConnection (theStream, nodeid, deviceid, (char*) "WimaxNetDevice", (char*) "InitialRangingConnection");
       EnableAsciiForConnection (theStream, nodeid, deviceid, (char*) "WimaxNetDevice", (char*) "BroadcastConnection");
-      EnableAsciiForConnection (theStream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "BasicConnection");
-      EnableAsciiForConnection (theStream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "PrimaryConnection");
+
+      Ptr<SubscriberStationNetDevice> ssNetDev = DynamicCast<SubscriberStationNetDevice> (nd);
+      if (ssNetDev)
+        {
+          SubscriberStationNetDevice::AsciiTraceCallback EnqueueCb = MakeBoundCallback (&AsciiTraceHelper::DefaultEnqueueSinkWithContext, theStream);
+          ssNetDev->GetLinkManager ()->SetAsciiTxQueueEnqueueCallback (EnqueueCb);
+
+          SubscriberStationNetDevice::AsciiTraceCallback DequeueCb = MakeBoundCallback (&AsciiTraceHelper::DefaultDequeueSinkWithContext, theStream);
+          ssNetDev->GetLinkManager ()->SetAsciiTxQueueDequeueCallback (DequeueCb);
+
+          SubscriberStationNetDevice::AsciiTraceCallback DropCb = MakeBoundCallback (&AsciiTraceHelper::DefaultDropSinkWithContext, theStream);
+          ssNetDev->GetLinkManager ()->SetAsciiTxQueueDropCallback (DequeueCb);
+        }
+
+      // EnableAsciiForConnection (theStream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "BasicConnection");
+      // EnableAsciiForConnection (theStream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "PrimaryConnection");
       return;
     }
 
@@ -540,8 +555,22 @@ WimaxHelper::EnableAsciiInternal (Ptr<OutputStreamWrapper> stream,
 
   EnableAsciiForConnection (stream, nodeid, deviceid, (char*) "WimaxNetDevice", (char*) "InitialRangingConnection");
   EnableAsciiForConnection (stream, nodeid, deviceid, (char*) "WimaxNetDevice", (char*) "BroadcastConnection");
-  EnableAsciiForConnection (stream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "BasicConnection");
-  EnableAsciiForConnection (stream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "PrimaryConnection");
+
+  Ptr<SubscriberStationNetDevice> ssNetDev = DynamicCast<SubscriberStationNetDevice> (nd);
+  if (ssNetDev)
+    {
+      SubscriberStationNetDevice::AsciiTraceCallback EnqueueCb = MakeBoundCallback (&AsciiTraceHelper::DefaultEnqueueSinkWithContext, stream);
+      ssNetDev->GetLinkManager ()->SetAsciiTxQueueEnqueueCallback (EnqueueCb);
+
+      SubscriberStationNetDevice::AsciiTraceCallback DequeueCb = MakeBoundCallback (&AsciiTraceHelper::DefaultDequeueSinkWithContext, stream);
+      ssNetDev->GetLinkManager ()->SetAsciiTxQueueDequeueCallback (DequeueCb);
+
+      SubscriberStationNetDevice::AsciiTraceCallback DropCb = MakeBoundCallback (&AsciiTraceHelper::DefaultDropSinkWithContext, stream);
+      ssNetDev->GetLinkManager ()->SetAsciiTxQueueDropCallback (DequeueCb);
+    }
+
+//  EnableAsciiForConnection (stream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "BasicConnection");
+//  EnableAsciiForConnection (stream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "PrimaryConnection");
 
 }
 

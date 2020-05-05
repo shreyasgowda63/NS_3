@@ -131,6 +131,11 @@ public:
   void ScheduleScanningRestart (Time interval,
                                 SubscriberStationNetDevice::EventType eventType,
                                 bool deleteUlParameters, EventId &eventId);
+
+  void SetAsciiTxQueueEnqueueCallback (SubscriberStationNetDevice::AsciiTraceCallback cb);
+  void SetAsciiTxQueueDequeueCallback (SubscriberStationNetDevice::AsciiTraceCallback cb);
+  void SetAsciiTxQueueDropCallback (SubscriberStationNetDevice::AsciiTraceCallback cb);
+
 private:
   /// type conversion operator 
   SSLinkManager (const SSLinkManager &);
@@ -210,6 +215,10 @@ private:
 
   EventId m_waitForRngRspEvent; ///< wait for rang response event
   EventId m_dlMapSyncTimeoutEvent; ///< DL map sync timeout event
+
+  SubscriberStationNetDevice::AsciiTraceCallback m_asciiTxQueueEnqueueCb;
+  SubscriberStationNetDevice::AsciiTraceCallback m_asciiTxQueueDequeueCb;
+  SubscriberStationNetDevice::AsciiTraceCallback m_asciiTxQueueDropCb;
 };
 
 } // namespace ns3

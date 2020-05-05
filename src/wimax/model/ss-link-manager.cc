@@ -28,6 +28,7 @@
 #include "ns3/log.h"
 #include "ns3/pointer.h"
 #include "ns3/enum.h"
+#include "ns3/config.h"
 #include "burst-profile-manager.h"
 #include "service-flow-manager.h"
 
@@ -72,6 +73,9 @@ SSLinkManager::SSLinkManager (Ptr<SubscriberStationNetDevice> ss)
 SSLinkManager::~SSLinkManager (void)
 {
   m_ss = 0;
+  m_asciiTxQueueEnqueueCb.Nullify ();
+  m_asciiTxQueueDequeueCb.Nullify ();
+  m_asciiTxQueueDropCb.Nullify ();
 }
 
 
@@ -369,11 +373,49 @@ SSLinkManager::PerformRanging (Cid cid,
           return;
         }
 
-      m_ss->SetBasicConnection (CreateObject<WimaxConnection> (rngrsp.GetBasicCid (),
-                                                               Cid::BASIC));
+      Ptr<WimaxConnection> basicConnection = CreateObject<WimaxConnection> (rngrsp.GetBasicCid (), Cid::BASIC);
+      m_ss->SetBasicConnection (basicConnection);
+      if (!m_asciiTxQueueEnqueueCb.IsNull ())
+        {
+          std::ostringstream oss;
+          oss << "/NodeList/" << m_ss->GetNode ()->GetId () << "/DeviceList/" << m_ss->GetIfIndex () << "/$ns3::SubscriberStationNetDevice/BasicConnection/TxQueue/Enqueue";
+          Config::Connect (oss.str (), m_asciiTxQueueEnqueueCb);
+        }
+      if (!m_asciiTxQueueDequeueCb.IsNull ())
+        {
+          std::ostringstream oss;
+          oss << "/NodeList/" << m_ss->GetNode ()->GetId () << "/DeviceList/" << m_ss->GetIfIndex () << "/$ns3::SubscriberStationNetDevice/BasicConnection/TxQueue/Dequeue";
+          Config::Connect (oss.str (), m_asciiTxQueueDequeueCb);
+        }
+      if (!m_asciiTxQueueDropCb.IsNull ())
+        {
+          std::ostringstream oss;
+          oss << "/NodeList/" << m_ss->GetNode ()->GetId () << "/DeviceList/" << m_ss->GetIfIndex () << "/$ns3::SubscriberStationNetDevice/BasicConnection/TxQueue/Drop";
+          Config::Connect (oss.str (), m_asciiTxQueueDropCb);
+        }
 
-      m_ss->SetPrimaryConnection (CreateObject<WimaxConnection> (rngrsp.GetPrimaryCid (),
-                                                                 Cid::PRIMARY));
+      Ptr<WimaxConnection> primaryConnection = CreateObject<WimaxConnection> (rngrsp.GetPrimaryCid (), Cid::PRIMARY);
+      m_ss->SetPrimaryConnection (primaryConnection);
+      if (!m_asciiTxQueueEnqueueCb.IsNull ())
+        {
+          std::ostringstream oss;
+          oss << "/NodeList/" << m_ss->GetNode ()->GetId () << "/DeviceList/" << m_ss->GetIfIndex () << "/$ns3::SubscriberStationNetDevice/PrimaryConnection/TxQueue/Enqueue";
+          Config::Connect (oss.str (), m_asciiTxQueueEnqueueCb);
+
+        }
+      if (!m_asciiTxQueueDequeueCb.IsNull ())
+        {
+          std::ostringstream oss;
+          oss << "/NodeList/" << m_ss->GetNode ()->GetId () << "/DeviceList/" << m_ss->GetIfIndex () << "/$ns3::SubscriberStationNetDevice/PrimaryConnection/TxQueue/Dequeue";
+          Config::Connect (oss.str (), m_asciiTxQueueDequeueCb);
+        }
+      if (!m_asciiTxQueueDropCb.IsNull ())
+        {
+          std::ostringstream oss;
+          oss << "/NodeList/" << m_ss->GetNode ()->GetId () << "/DeviceList/" << m_ss->GetIfIndex () << "/$ns3::SubscriberStationNetDevice/PrimaryConnection/TxQueue/Drop";
+          Config::Connect (oss.str (), m_asciiTxQueueDropCb);
+        }
+
       m_ss->SetAreManagementConnectionsAllocated (true);
     }
   else
@@ -502,5 +544,24 @@ SSLinkManager::ScheduleScanningRestart (Time interval,
   m_ss->SetTimer (Simulator::Schedule (interval, &SSLinkManager::StartScanning,
                                        this, eventType, deleteUlParameters), eventId);
 }
+
+void
+SSLinkManager::SetAsciiTxQueueEnqueueCallback (SubscriberStationNetDevice::AsciiTraceCallback cb)
+{
+  m_asciiTxQueueEnqueueCb = cb;
+}
+
+void
+SSLinkManager::SetAsciiTxQueueDequeueCallback (SubscriberStationNetDevice::AsciiTraceCallback cb)
+{
+  m_asciiTxQueueDequeueCb = cb;
+}
+
+void
+SSLinkManager::SetAsciiTxQueueDropCallback (SubscriberStationNetDevice::AsciiTraceCallback cb)
+{
+  m_asciiTxQueueDropCb = cb;
+}
+
 
 } // namespace ns3

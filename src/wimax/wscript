@@ -85,6 +85,7 @@ def build(bld):
             'model/send-params.h',
             'model/service-flow.h',
             'model/ss-manager.h',
+            'model/ss-link-manager.h',
             'model/connection-manager.h',
             'model/wimax-mac-header.h',
             'model/wimax-mac-queue.h',
