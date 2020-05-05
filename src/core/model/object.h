@@ -479,6 +479,14 @@ Object::GetObject () const
   return 0;
 }
 
+template
+<>
+inline Ptr<Object>
+Object::GetObject () const
+{
+  return Ptr<Object> (const_cast<Object *> (this));
+}
+
 template <typename T>
 Ptr<T>
 Object::GetObject (TypeId tid) const
@@ -489,6 +497,21 @@ Object::GetObject (TypeId tid) const
       return Ptr<T> (static_cast<T *> (PeekPointer (found)));
     }
   return 0;
+}
+
+template
+<>
+inline Ptr<Object>
+Object::GetObject (TypeId tid) const
+{
+  if (tid == Object::GetTypeId ())
+    {
+      return Ptr<Object> (const_cast<Object *> (this));
+    }
+  else
+    {
+      return DoGetObject (tid);
+    }
 }
 
 /*************************************************************************
