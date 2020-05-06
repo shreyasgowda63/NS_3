@@ -42,7 +42,6 @@ private:
   virtual void DoRun (void);
   void ReceivePacket (Ptr<Socket> socket);
   static void GenerateTraffic (Ptr<Socket> socket, uint32_t pktSize, uint32_t pktCount, Time pktInterval);
-  void PrintEndSync (std::string context, uint32_t dataRate, double snr, double per);
   double WifiSimpleInterference (std::string phyMode, double Prss, double Irss, double delta, uint32_t PpacketSize, 
                                  uint32_t IpacketSize, bool verbose, InternetStackHelper internet, WifiPhyStandard wifiStandard);
   double m_PER;
@@ -91,15 +90,6 @@ WifiInterferenceTestCase::GenerateTraffic (Ptr<Socket> socket, uint32_t pktSize,
     {
       socket->Close ();
     }
-}
-
-void 
-WifiInterferenceTestCase::PrintEndSync (std::string context, uint32_t dataRate, double snr, double per)
-{
-  NS_LOG_UNCOND ("EndSync:  Received frame with dataRate=" << dataRate << ", SNR=" << snr << ", PER =" << per);
-  m_PER = per;
-  m_SNR = snr;
-  m_DataRate = dataRate;
 }
 
 double 
@@ -208,7 +198,6 @@ WifiInterferenceTestCase::WifiSimpleInterference (std::string phyMode,double Prs
   InetSocketAddress interferingAddr = InetSocketAddress (Ipv4Address ("255.255.255.255"), 49000);
   interferer->Connect (interferingAddr);
 
-  Config::Connect ("/NodeList/0/DeviceList/0/$ns3::WifiNetDevice/Phy/$ns3::YansWifiPhy/EndSync", MakeCallback (&WifiInterferenceTestCase::PrintEndSync, this)); 
   // Tracing
 //  wifiPhy.EnablePcap ("wifi-simple-interference", devices.Get (0));
 
