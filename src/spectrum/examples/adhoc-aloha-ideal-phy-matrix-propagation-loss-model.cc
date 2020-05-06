@@ -80,7 +80,13 @@ public:
    * \param rxPhy the receiving PHY
    * \param lossDb the loss in dB
    */
-  void UpdatePathloss (std::string context, Ptr<SpectrumPhy> txPhy, Ptr<SpectrumPhy> rxPhy, double lossDb);
+  void UpdatePathloss (std::string context,
+                       Ptr<const MobilityModel> txPhyMobilityModel,
+                       Ptr<const MobilityModel> rxPhyMbilityModel,
+                       double txAntennaGain,
+                       double rxAntennaGain,
+                       double propagationGainDb,
+                       double pathLossDb);
 
   /** 
    * print the stored pathloss values to standard output
@@ -94,13 +100,16 @@ private:
 
 void
 GlobalPathlossDatabase::UpdatePathloss (std::string context, 
-                                        Ptr<SpectrumPhy> txPhy, 
-                                        Ptr<SpectrumPhy> rxPhy, 
-                                        double lossDb)
+                                        Ptr<const MobilityModel> txPhyMobilityModel,
+                                        Ptr<const MobilityModel> rxPhyMbilityModel,
+                                        double txAntennaGain,
+                                        double rxAntennaGain,
+                                        double propagationGainDb,
+                                        double pathLossDb)
 {
-  uint32_t txNodeId = txPhy->GetMobility ()->GetObject<Node> ()->GetId ();
-  uint32_t rxNodeId = rxPhy->GetMobility ()->GetObject<Node> ()->GetId ();
-  m_pathlossMap[txNodeId][rxNodeId] = lossDb;
+  uint32_t txNodeId = txPhyMobilityModel->GetObject<Node> ()->GetId ();
+  uint32_t rxNodeId = rxPhyMbilityModel->GetObject<Node> ()->GetId ();
+  m_pathlossMap[txNodeId][rxNodeId] = pathLossDb;
 }
 
 void 
@@ -195,7 +204,7 @@ int main (int argc, char** argv)
   Config::Connect ("/NodeList/*/DeviceList/*/Phy/RxEndOk", MakeCallback (&PhyRxEndOkTrace));
 
   GlobalPathlossDatabase globalPathlossDatabase;
-  Config::Connect ("/ChannelList/*/PropagationLoss",
+  Config::ConnectFailSafe ("/ChannelList/*/Gain",
                    MakeCallback (&GlobalPathlossDatabase::UpdatePathloss, &globalPathlossDatabase));
 
   g_rxBytes = 0;
@@ -207,7 +216,6 @@ int main (int argc, char** argv)
       globalPathlossDatabase.Print ();
 
       double throughputBps = (g_rxBytes * 8.0) / simDuration;
-      std::cout << "throughput:       " << throughputBps << std::endl;
       std::cout << "throughput:       " << std::setw (20) << std::fixed << throughputBps << " bps" << std::endl;
       std::cout << "phy rate  :       "   << std::setw (20) << std::fixed << phyRate*1.0 << " bps" << std::endl; 
       double rxPowerW = txPowerW / (std::pow (10.0, lossDb/10.0));
