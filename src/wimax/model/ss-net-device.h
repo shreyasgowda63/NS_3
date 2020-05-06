@@ -506,11 +506,11 @@ private:
   TracedCallback<Ptr<const Packet> > m_ssRxDropTrace;
 
   /// Bound callback to perform ASCII logging for Enqueue events
-  SubscriberStationNetDevice::AsciiTraceCallback m_asciiTxQueueEnqueueCb;
+  AsciiTraceCallback m_asciiTxQueueEnqueueCb;
   /// Bound callback to perform ASCII logging for Dequeue events
-  SubscriberStationNetDevice::AsciiTraceCallback m_asciiTxQueueDequeueCb;
+  AsciiTraceCallback m_asciiTxQueueDequeueCb;
   /// Bound callback to perform ASCII logging for Drop events
-  SubscriberStationNetDevice::AsciiTraceCallback m_asciiTxQueueDropCb;
+  AsciiTraceCallback m_asciiTxQueueDropCb;
 };
 
 } // namespace ns3

@@ -512,7 +512,7 @@ WimaxHelper::EnableAsciiInternal (Ptr<OutputStreamWrapper> stream,
       EnableAsciiForConnection (theStream, nodeid, deviceid, (char*) "WimaxNetDevice", (char*) "BroadcastConnection");
 
       // The following connections can not be made right away because the BasicConnection and the PrimaryConnection are created later.
-      // We defer the creation to the LinkManager
+      // We defer the creation to the SubscriberStationNetDevice
 
       // EnableAsciiForConnection (theStream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "BasicConnection");
       // EnableAsciiForConnection (theStream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "PrimaryConnection");
@@ -560,7 +560,7 @@ WimaxHelper::EnableAsciiInternal (Ptr<OutputStreamWrapper> stream,
   EnableAsciiForConnection (stream, nodeid, deviceid, (char*) "WimaxNetDevice", (char*) "BroadcastConnection");
 
   // The following connections can not be made right away because the BasicConnection and the PrimaryConnection are created later.
-  // We defer the creation to the LinkManager
+  // We defer the creation to the SubscriberStationNetDevice
 
   // EnableAsciiForConnection (stream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "BasicConnection");
   // EnableAsciiForConnection (stream, nodeid, deviceid, (char*) "SubscriberStationNetDevice", (char*) "PrimaryConnection");
