@@ -655,8 +655,10 @@ public:
   /**
    * \brief Returns the mean parameter for the Pareto distribution returned by this RNG stream.
    * \return The mean parameter for the Pareto distribution returned by this RNG stream.
+   * \deprated This method will go away in future release of ns-3.
+   * See GetScale.
    */
-  NS_DEPRECATED
+  NS_DEPRECATED_3_27
   double GetMean (void) const;
 
   /**

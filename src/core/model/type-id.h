@@ -436,9 +436,10 @@ public:
    * \param [in] accessor A pointer to a TraceSourceAccessor which can be
    *             used to connect/disconnect sinks to this trace source.
    * \returns this TypeId instance.
-   * \deprecated
+   * \deprecated This method will go away in future release of ns-3.
+   * See AddTraceSource(std::string,std::string,Ptr<const TraceSourceAccessor>,callback,SupportLevel,std::string)
    */
-  NS_DEPRECATED
+  NS_DEPRECATED_3_26
   TypeId AddTraceSource (std::string name,
                          std::string help,
                          Ptr<const TraceSourceAccessor> accessor);
