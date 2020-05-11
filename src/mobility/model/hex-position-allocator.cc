@@ -48,11 +48,13 @@ NS_OBJECT_ENSURE_REGISTERED (HexagonalPositionAllocator);
 class HexagonalPositionAllocator::Hex
 {
 public:
-  union {
+  union
+  {
     /** Vector-like access to indices. */
     const std::array<int, 3> v;
     /** Component-wise access. */
-    struct {
+    struct
+    {
       const int q;  /**< North and east coordinate. */
       const int r;  /**< South coordinate.          */
       const int s;  /**< North and west coordinate. */
@@ -65,19 +67,19 @@ public:
   /**
    * Construct from two indices \pname{q}, \pname{r}.
    * The third coordinate is computed from the two arguments.
-   * \param [in] q The north/east coordinate.
-   * \param [in] r The south coordinate.
+   * \param [in] qq The north/east coordinate.
+   * \param [in] rr The south coordinate.
    */
-  Hex (const int q, const int r);
+  Hex (const int qq, const int rr);
 
   /**
    * \brief Construct from three indices \pname{q}, \pname{r}, \pname{s}.
    * This will assert if the invariant `q + r + s == 0` does not hold.
-   * \param [in] q The north/east coordinate.
-   * \param [in] r The south coordinate.
-   * \param [in] s The north/west coordinate.
+   * \param [in] qq The north/east coordinate.
+   * \param [in] rr The south coordinate.
+   * \param [in] ss The north/west coordinate.
    */
-  Hex (const int q, const int r, const int s);
+  Hex (const int qq, const int rr, const int ss);
 
   /**
    * Neighbor direction indicators.
@@ -85,8 +87,9 @@ public:
   // Note: the order is important,
   // since it drives how we walk around rings,
   // starting at the east most point.
-  // See Populate
-  enum Direction {
+  // See Populate()
+  enum Direction
+  {
     NW = 0, /**< Towards the north-west.     */
     W,      /**< Towards the west.           */
     SW,     /**< Towards the southwest.      */
@@ -179,7 +182,7 @@ operator + (const HexagonalPositionAllocator::Hex & a,
  * Subtraction of Hex indices.
  * \param [in] a Right operand.
  * \param [in] b Right operand.
- * \returns The "sum" of Hex indices
+ * \returns The "difference" of Hex indices
  */
 HexagonalPositionAllocator::Hex
 operator - (const HexagonalPositionAllocator::Hex & a,
@@ -221,14 +224,14 @@ HexagonalPositionAllocator::Hex::Hex (void)
   NS_LOG_FUNCTION (this << "0,0,0");
 }
 
-HexagonalPositionAllocator::Hex::Hex (const int q, const int r)
-  : v {q, r, -q - r}
+HexagonalPositionAllocator::Hex::Hex (const int qq, const int rr)
+  : v {qq, rr, -qq - rr}
 {
   NS_LOG_FUNCTION (this << q << r << s);
 }
 
-HexagonalPositionAllocator::Hex::Hex (const int q, const int r, const int s)
-  : v {q, r, s}
+HexagonalPositionAllocator::Hex::Hex (const int qq, const int rr, const int ss)
+  : v {qq, rr, ss}
 {
   NS_LOG_FUNCTION (this << q << r << s);
   NS_ASSERT_MSG (q + r + s == 0, "Hex index invariant not satisfied: "
@@ -237,7 +240,7 @@ HexagonalPositionAllocator::Hex::Hex (const int q, const int r, const int s)
 
 /* static */
 HexagonalPositionAllocator::Hex
-HexagonalPositionAllocator::Hex::GetDirection (const HexagonalPositionAllocator::Hex::Direction d)
+HexagonalPositionAllocator::Hex::GetDirection (const Direction d)
 {
   // Order of these vectors has to match the order of the enum declarations
   static const std::array<Hex, 6> Directions
@@ -259,11 +262,11 @@ HexagonalPositionAllocator::Hex::Next (const HexagonalPositionAllocator::Hex::Di
   int di = static_cast<int> (d);
   int nd = di + 1;
   NS_LOG_INFO ("dir: " << di << ", nex dir: " << nd );
-  return static_cast<HexagonalPositionAllocator::Hex::Direction> (nd);
+  return static_cast<Direction> (nd);
 }
 
 HexagonalPositionAllocator::Hex
-HexagonalPositionAllocator::Hex::Neighbor (const HexagonalPositionAllocator::Hex::Direction d) const
+HexagonalPositionAllocator::Hex::Neighbor (const Direction d) const
 {
   return (*this) + GetDirection (d);
 }
@@ -272,7 +275,7 @@ int
 HexagonalPositionAllocator::Hex::Length (void) const
 {
   NS_LOG_FUNCTION_NOARGS ();
-  return std::max ({std::abs (q), std::abs (r), std::abs (s) });
+  return std::max ( {std::abs (q), std::abs (r), std::abs (s)} );
 }
 
 int
@@ -296,16 +299,16 @@ HexagonalPositionAllocator::GetTypeId (void)
     .SetGroupName ("Mobility")
     .AddConstructor<HexagonalPositionAllocator> ()
     .AddAttribute ("Spacing",
-                   "The distance between points in the hexagonal grid.",
+                   "The distance between points in the hexagonal grid, in meters.",
                    DoubleValue (1000),
                    MakeDoubleAccessor (&HexagonalPositionAllocator::SetSpacing),
                    MakeDoubleChecker<double> ())
     .AddAttribute ("Rings", "The number of rings making up the entire grid.",
                    UintegerValue (1),
                    MakeUintegerAccessor (&HexagonalPositionAllocator::m_rings),
-                   MakeUintegerChecker<int> ())
+                   MakeUintegerChecker<int> (0))
     .AddAttribute ("Z",
-                   "The z coordinate of all the positions allocated.",
+                   "The z coordinate of all the positions allocated, in meters..",
                    DoubleValue (0.0),
                    MakeDoubleAccessor (&HexagonalPositionAllocator::m_z),
                    MakeDoubleChecker<double> ())

@@ -56,19 +56,20 @@ public:
 
   /**
    * Set the distance between the hexagon centers, in meters.
-   * \param [in] s Distance between adjacent hexagons.
+   * \param [in] s Distance between adjacent hexagons, in meters
    */
   void SetSpacing (const double s);
 
   /**
-   * Get the spacing between node points in the grid.
+   * Get the spacing between node points in the grid, in meters.
    * \return The distance in meters between grid points.
    */
   double GetSpacing (void) const;
 
   /**
    * \brief Set the overall size of the grid, in numbers of rings.
-   * The central node is notionally in ring 0. Ring 1 contains 6 additional nodes.
+   * The central node is notionally in ring 0.
+   * Ring 1 contains 6 additional nodes.
    * 
    * The total number of grid points will be `1 + 3 r (r + 1)`.
    * You can also get the total number of grid points with GetN
@@ -92,13 +93,13 @@ public:
    * \brief Get the physical distance to a corner of the grid from the center,
    * in meters.
    * \return The radius of the overall grid, from the center to any
-   *         of the corner points.
+   *         of the corner points, in meters.
    */
   double GetRadius (void) const;
 
   /**
-   * Set the \c z height of the grid points.
-   * \param [in] z The z height of the grid points.
+   * Set the \c z height of the grid points, in meters.
+   * \param [in] z The z height of the grid points in meters.
    */
   void SetZ (double z);
 
@@ -106,7 +107,8 @@ public:
   virtual Vector GetNext (void) const;
   virtual int64_t AssignStreams (int64_t stream);
 
-  // Forward declaration
+  // Forward declaration.
+  // Needs to be public for operators declared in the .cc file
   class Hex;
 
 private:

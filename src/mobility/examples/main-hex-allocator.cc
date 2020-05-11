@@ -52,17 +52,17 @@ main (int argc, char** argv)
   cmd.AddValue ("rings",   "number of rings", rings);
   cmd.AddValue ("gnuplot", "generate Gnuplot script", gnuplot);
   cmd.Parse (argc, argv);
-  
+
   HexagonalPositionAllocator h;
   h.SetSpacing (spacing);
   h.SetRings (rings);
-  
+
   std::cout << "HexagonalPositionAllocator:"
-	    << "\n    Spacing:        " << h.GetSpacing ()
-	    << "\n    Rings:          " << h.GetRings ()
-	    << "\n    Total nodes:    " << h.GetN ()
-	    << "\n    Overall radius: " << h.GetRadius ()
-	    << "\n" << std::endl;
+            << "\n    Spacing:        " << h.GetSpacing ()
+            << "\n    Rings:          " << h.GetRings ()
+            << "\n    Total nodes:    " << h.GetN ()
+            << "\n    Overall radius: " << h.GetRadius ()
+            << "\n" << std::endl;
 
   std::cout << "Index           X           Y           Z"
             << std::fixed << std::setprecision (1)
@@ -104,11 +104,11 @@ main (int argc, char** argv)
       g.AppendExtra ("set key off");
       g.AppendExtra ("set style line 1 pointtype 7 pointsize 2");
       g.AddDataset (d);
-      
+
 
       std::string gnuFile = plotName + ".plt";
       std::cout << "\nWriting Gnuplot file: " << gnuFile << std::endl;
-      std::ofstream gnuStream ( gnuFile);
+      std::ofstream gnuStream (gnuFile);
       g.GenerateOutput (gnuStream);
       gnuStream.close ();
 
