@@ -153,14 +153,14 @@ private:
   double m_z;
 
   /**
-   * Compute the space coordinates from the Hex index.
-   * \param [in] h The Hex index.
+   * Compute the space coordinates from the Hex coordinates.
+   * \param [in] h The Hex coordinates.
    * \returns The spatial coordinate Vector, in meters.
    */
   Vector3D ToSpace (const Hex & h) const;
 
   /**
-   * Get the grid index of a space point.
+   * Get the hex grid coordinates of a space point.
    * \param v [in] The space point as a Vector, in meters.
    * \returns the Hex node closest to the input space point.
    */

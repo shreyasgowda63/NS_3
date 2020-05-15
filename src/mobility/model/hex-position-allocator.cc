@@ -80,7 +80,7 @@ public:
    * \param [in] q The north/east coordinate.
    * \param [in] r The south coordinate.
    */
-  Hex (const index_type q, const index_type r);
+  Hex (const coord_type q, const coord_type r);
 
   /**
    * \brief Construct from three indices \pname{q}, \pname{r}, \pname{s}.
@@ -89,7 +89,7 @@ public:
    * \param [in] r The south coordinate.
    * \param [in] s The north/west coordinate.
    */
-  Hex (const index_type  q, const index_type  r, const index_type  s);
+  Hex (const coord_type  q, const coord_type  r, const coord_type  s);
 
   /**
    * Neighbor direction indicators.
@@ -124,24 +124,24 @@ public:
   static enum Direction Next (const enum Direction d);
 
   /**
-   * Get the neigbor index in the given direction.
+   * Get the neigbor coordinates in the given direction.
    * \param [in] d The direction to move in.
    * \returns The Hex indices to that neighbor.
    */
   Hex Neighbor (const enum Direction d) const;
 
   /**
-   * Length of this Hex coordinate, in index units.
+   * Length of this Hex coordinate, in coordinate units.
    * \returns This length.
    */
-  index_type Length (void) const;
+  coord_type Length (void) const;
 
   /**
-   * Distance to another node point, in index units.
+   * Distance to another node point, in coordinate units.
    * \param [in] a The other node point.
-   * \returns The distance in index units.
+   * \returns The distance in coordinate units.
    */
-  index_type Distance (const Hex & a) const;
+  coord_type Distance (const Hex & a) const;
 
 };  // class HexagonalPositionAllocator::Hex
 
@@ -206,10 +206,10 @@ operator - (const Hex & a, const Hex & b)
  * Scaling of Hex indices.
  * \param [in] h The Hex operand
  * \param [in] a The scale operand.
- * \returns The hex index scaled by the factor.
+ * \returns The hex coordiante scaled by the (integer) factor.
  */
 Hex
-operator * (const Hex & h, Hex::index_type a)
+operator * (const Hex & h, Hex::coord_type a)
 {
   return Hex {h.q * a, h.r * a, h.s * a};
 }
@@ -218,7 +218,7 @@ operator * (const Hex & h, Hex::index_type a)
  * \relates Hex
  * Output streamer for Hex indices.
  * \param os The output stream.
- * \param h The Hex index.
+ * \param h The Hex coordinate.
  * \returns The output stream.
  */
 std::ostream &
@@ -234,17 +234,17 @@ Hex::Hex (void)
   NS_LOG_FUNCTION (this << "0,0,0");
 }
 
-Hex::Hex (const index_type q, const index_type r)
+Hex::Hex (const coord_type q, const coord_type r)
   : v {q, r, -q - r}
 {
   NS_LOG_FUNCTION (this << q << r << s);
 }
 
-Hex::Hex (const index_type q, const index_type r, const index_type s)
+Hex::Hex (const coord_type q, const coord_type r, const coord_type s)
   : v {q, r, s}
 {
   NS_LOG_FUNCTION (this << q << r << s);
-  NS_ASSERT_MSG (q + r + s == 0, "Hex index invariant not satisfied: "
+  NS_ASSERT_MSG (q + r + s == 0, "Hex coordinate invariant not satisfied: "
                  << q << "," << r << "," << s);
 }
 
@@ -269,8 +269,8 @@ Hex::GetDirection (const Hex::Direction d)
 Hex::Direction
 Hex::Next (const Hex::Direction d)
 {
-  index_type di = static_cast<index_type> (d);
-  index_type nd = di + 1;
+  coord_type di = static_cast<coord_type> (d);
+  coord_type nd = di + 1;
   NS_LOG_INFO ("dir: " << di << ", nex dir: " << nd );
   return static_cast<Hex::Direction> (nd);
 }
@@ -281,7 +281,7 @@ Hex::Neighbor (const Direction d) const
   return (*this) + GetDirection (d);
 }
 
-Hex::index_type
+Hex::coord_type
 Hex::Length (void) const
 {
   NS_LOG_FUNCTION_NOARGS ();
@@ -290,7 +290,7 @@ Hex::Length (void) const
   return l;
 }
 
-Hex::index_type
+Hex::coord_type
 Hex::Distance (const Hex & a) const
 {
   NS_LOG_FUNCTION (this << a);
@@ -438,8 +438,8 @@ HexagonalPositionAllocator::ClosestGridPoint (const Vector3D & v) const
       sr = -qr - rr;
     }
 
-  auto q = static_cast<Hex::index_type> (qr);
-  auto r = static_cast<Hex::index_type> (rr);
+  auto q = static_cast<Hex::coord_type> (qr);
+  auto r = static_cast<Hex::coord_type> (rr);
 
   Hex h {q, r};
   return h;
