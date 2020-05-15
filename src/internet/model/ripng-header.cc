@@ -59,11 +59,7 @@ uint32_t RipNgRte::GetSerializedSize () const
 
 void RipNgRte::Serialize (Buffer::Iterator i) const
 {
-  uint8_t tmp[16];
-
-  m_prefix.Serialize (tmp);
-  i.Write (tmp, 16);
-
+  m_prefix.Serialize (i);
   i.WriteHtonU16 (m_tag);
   i.WriteU8 (m_prefixLen);
   i.WriteU8 (m_metric);
@@ -71,10 +67,7 @@ void RipNgRte::Serialize (Buffer::Iterator i) const
 
 uint32_t RipNgRte::Deserialize (Buffer::Iterator i)
 {
-  uint8_t tmp[16];
-
-  i.Read (tmp, 16);
-  m_prefix.Set (tmp);
+  m_prefix.Deserialize (i);
   m_tag = i.ReadNtohU16 ();
   m_prefixLen = i.ReadU8 ();
   m_metric = i.ReadU8 ();

@@ -116,7 +116,7 @@ InetSocketAddress::ConvertTo (void) const
 {
   NS_LOG_FUNCTION (this);
   uint8_t buf[7];
-  m_ipv4.Serialize (buf);
+  m_ipv4.CopyTo (buf);
   buf[4] = m_port & 0xff;
   buf[5] = (m_port >> 8) & 0xff;
   buf[6] = m_tos;
@@ -129,7 +129,8 @@ InetSocketAddress::ConvertFrom (const Address &address)
   NS_ASSERT (address.CheckCompatible (GetType (), 7));
   uint8_t buf[7];
   address.CopyTo (buf);
-  Ipv4Address ipv4 = Ipv4Address::Deserialize (buf);
+  Ipv4Address ipv4;
+  ipv4.CopyFrom (buf, 4);
   uint16_t port = buf[4] | (buf[5] << 8);
   uint8_t tos = buf[6];
   InetSocketAddress inet (ipv4, port);

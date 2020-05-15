@@ -1744,21 +1744,19 @@ void
 PbbMessageIpv4::SerializeOriginatorAddress (Buffer::Iterator &start) const
 {
   NS_LOG_FUNCTION (this << &start);
-  uint8_t* buffer = new uint8_t[GetAddressLength () + 1];
-  Ipv4Address::ConvertFrom (GetOriginatorAddress ()).Serialize (buffer);
-  start.Write (buffer, GetAddressLength () + 1);
-  delete[] buffer;
+
+  Ipv4Address ipv4 = Ipv4Address::ConvertFrom (GetOriginatorAddress ());
+  ipv4.Serialize (start);
 }
 
 Address
 PbbMessageIpv4::DeserializeOriginatorAddress (Buffer::Iterator &start) const
 {
   NS_LOG_FUNCTION (this << &start);
-  uint8_t* buffer = new uint8_t[GetAddressLength () + 1];
-  start.Read (buffer, GetAddressLength () + 1);
-  Address result = Ipv4Address::Deserialize (buffer);
-  delete[] buffer;
-  return result;
+
+  Ipv4Address ipv4;
+  ipv4.Deserialize (start);
+  return ipv4;
 }
 
 void
@@ -1800,21 +1798,19 @@ void
 PbbMessageIpv6::SerializeOriginatorAddress (Buffer::Iterator &start) const
 {
   NS_LOG_FUNCTION (this << &start);
-  uint8_t* buffer = new uint8_t[GetAddressLength () + 1];
-  Ipv6Address::ConvertFrom (GetOriginatorAddress ()).Serialize (buffer);
-  start.Write (buffer, GetAddressLength () + 1);
-  delete[] buffer;
+
+  Ipv6Address ipv6 = Ipv6Address::ConvertFrom (GetOriginatorAddress ());
+  ipv6.Serialize (start);
 }
 
 Address
 PbbMessageIpv6::DeserializeOriginatorAddress (Buffer::Iterator &start) const
 {
   NS_LOG_FUNCTION (this << &start);
-  uint8_t* buffer = new uint8_t[GetAddressLength () + 1];
-  start.Read (buffer, GetAddressLength () + 1);
-  Address res = Ipv6Address::Deserialize (buffer);
-  delete[] buffer;
-  return res;
+
+  Ipv6Address ipv6;
+  ipv6.Deserialize (start);
+  return ipv6;
 }
 
 void
@@ -2586,14 +2582,17 @@ void
 PbbAddressBlockIpv4::SerializeAddress (uint8_t *buffer, ConstAddressIterator iter) const
 {
   NS_LOG_FUNCTION (this << &buffer << &iter);
-  Ipv4Address::ConvertFrom (*iter).Serialize (buffer);
+  Ipv4Address addr = Ipv4Address::ConvertFrom (*iter);
+  addr.CopyTo (buffer);
 }
 
 Address
 PbbAddressBlockIpv4::DeserializeAddress (uint8_t *buffer) const
 {
   NS_LOG_FUNCTION (this << &buffer);
-  return Ipv4Address::Deserialize (buffer);
+  Ipv4Address ipv4;
+  ipv4.CopyFrom (buffer, 4);
+  return ipv4;
 }
 
 void
@@ -2626,14 +2625,17 @@ void
 PbbAddressBlockIpv6::SerializeAddress (uint8_t *buffer, ConstAddressIterator iter) const
 {
   NS_LOG_FUNCTION (this << &buffer << &iter);
-  Ipv6Address::ConvertFrom (*iter).Serialize (buffer);
+  Ipv6Address addr = Ipv6Address::ConvertFrom (*iter);
+  addr.CopyTo (buffer);
 }
 
 Address
 PbbAddressBlockIpv6::DeserializeAddress (uint8_t *buffer) const
 {
   NS_LOG_FUNCTION (this << &buffer);
-  return Ipv6Address::Deserialize (buffer);
+  Ipv6Address ipv6;
+  ipv6.CopyFrom (buffer, 16);
+  return ipv6;
 }
 
 void

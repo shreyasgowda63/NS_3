@@ -101,8 +101,8 @@ ArpQueueDiscItem::Hash (uint32_t perturbation) const
   /* serialize the addresses and the perturbation in buf */
   uint8_t tmp = 8 + macSrc.GetLength () + macDst.GetLength ();
   uint8_t buf[tmp + 5];
-  ipv4Src.Serialize (buf);
-  ipv4Dst.Serialize (buf + 4);
+  ipv4Src.CopyTo (buf);
+  ipv4Dst.CopyTo (buf + 4);
   macSrc.CopyTo (buf + 8);
   macDst.CopyTo (buf + 8 + macSrc.GetLength ());
   buf[tmp] = type;

@@ -125,9 +125,9 @@ Ipv4PacketInfoTag::Serialize (TagBuffer i) const
 {
   NS_LOG_FUNCTION (this << &i);
   uint8_t buf[4];
-  m_addr.Serialize (buf);
+  m_addr.CopyTo (buf);
   i.Write (buf, 4);
-  m_spec_dst.Serialize (buf);
+  m_spec_dst.CopyTo (buf);
   i.Write (buf, 4);
   i.WriteU32 (m_ifindex);
   i.WriteU8 (m_ttl);
@@ -138,9 +138,9 @@ Ipv4PacketInfoTag::Deserialize (TagBuffer i)
   NS_LOG_FUNCTION (this<< &i);
   uint8_t buf[4];
   i.Read (buf, 4);
-  m_addr = Ipv4Address::Deserialize (buf);
+  m_addr.CopyFrom (buf, 4);
   i.Read (buf, 4);
-  m_spec_dst = Ipv4Address::Deserialize (buf);
+  m_spec_dst.CopyFrom (buf, 4);
   m_ifindex = i.ReadU32 ();
   m_ttl = i.ReadU8 ();
 }

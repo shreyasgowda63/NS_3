@@ -26,6 +26,7 @@
 #include "ns3/address.h"
 #include "ns3/attribute-helper.h"
 #include "ns3/deprecated.h"
+#include "ns3/buffer.h"
 
 namespace ns3 {
 
@@ -89,20 +90,74 @@ public:
   {
     return m_address == other.m_address;
   }
+
   /**
    * Serialize this address to a 4-byte buffer
    *
    * \param buf output buffer to which this address gets overwritten with this
    * Ipv4Address
+   *
+   * Deprecated.
+   * Use `Ipv4Address::Serialize (Buffer::Iterator start)` or
+   * `Ipv4Address::CopyTo (uint8_t buffer[4])`
    */
+  NS_DEPRECATED_3_31
   void Serialize (uint8_t buf[4]) const;
+
   /**
    * \param buf buffer to read address from
    * \return an Ipv4Address
    * 
    * The input address is expected to be in network byte order format.
+   *
+   * Deprecated.
+   * Use `Ipv4Address::Deserialize (Buffer::Iterator start)` or
+   * `Ipv4Address::CopyFrom (const uint8_t *buffer, uint8_t len)`
    */
+  NS_DEPRECATED_3_31
   static Ipv4Address Deserialize (const uint8_t buf[4]);
+
+  /**
+   * \brief Copy the IPv4 address bytes into a buffer.
+   * \param buffer buffer to copy the address bytes to.
+   * \returns the number of bytes copied.
+   */
+  uint32_t CopyTo (uint8_t buffer[4]) const;
+
+  /**
+   * \param buffer pointer to a buffer of bytes which contain
+   *        a serialized representation of the address in network
+   *        byte order.
+   * \param len length of buffer. Must be greater than 4.
+   * \returns the number of bytes copied.
+   *
+   * Copy the IPv4 address bytes from buffer.
+   * The buffer must be at least 4 bytes, and only the first 4 bytes are considered.
+   */
+  uint32_t CopyFrom (const uint8_t *buffer, uint8_t len);
+
+  /**
+   * \returns the expected size of the Ipv4Address (i.e., 4 bytes).
+   *
+   * This method returns the size of the IPv4 address in bytes.
+   */
+  uint32_t GetSerializedSize (void) const;
+
+  /**
+   * \param start a reference to Buffer::Iterator where the address should be written to.
+   *
+   * This method serializes an Ipv4Address into a buffer.
+   */
+  void Serialize (Buffer::Iterator &start) const;
+
+  /**
+   * \param start a reference to Buffer::Iterator where the address should be read from.
+   * \returns the number of bytes read.
+   *
+   * This method reads an Ipv4Address from a buffer.
+   */
+  uint32_t Deserialize (Buffer::Iterator &start);
+
   /**
    * \brief Print this address to the given output stream
    *

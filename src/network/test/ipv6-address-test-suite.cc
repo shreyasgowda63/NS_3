@@ -49,7 +49,7 @@ Ipv6AddressTestCase::DoRun (void)
 {
   Ipv6Address ip = Ipv6Address ("2001:db8::1");
   uint8_t ipBytes[16];
-  ip.Serialize (ipBytes);
+  ip.CopyTo (ipBytes);
   NS_TEST_ASSERT_MSG_EQ (ipBytes[0], 0x20, "Failed string conversion");
   NS_TEST_ASSERT_MSG_EQ (ipBytes[1], 0x01, "Failed string conversion");
   NS_TEST_ASSERT_MSG_EQ (ipBytes[2], 0x0d, "Failed string conversion");
@@ -57,7 +57,7 @@ Ipv6AddressTestCase::DoRun (void)
   NS_TEST_ASSERT_MSG_EQ (ipBytes[15], 1, "Failed string conversion");
 
   ip = Ipv6Address ("2001:db8:1::1");
-  ip.Serialize (ipBytes);
+  ip.CopyTo (ipBytes);
   NS_TEST_ASSERT_MSG_EQ (ipBytes[0], 0x20, "Failed string conversion");
   NS_TEST_ASSERT_MSG_EQ (ipBytes[1], 0x01, "Failed string conversion");
   NS_TEST_ASSERT_MSG_EQ (ipBytes[2], 0x0d, "Failed string conversion");
@@ -67,7 +67,7 @@ Ipv6AddressTestCase::DoRun (void)
 
   // Zero padding
   ip = Ipv6Address ("2001:0db8:0001::1");
-  ip.Serialize (ipBytes);
+  ip.CopyTo (ipBytes);
   NS_TEST_ASSERT_MSG_EQ (ipBytes[0], 0x20, "Failed string conversion");
   NS_TEST_ASSERT_MSG_EQ (ipBytes[1], 0x01, "Failed string conversion");
   NS_TEST_ASSERT_MSG_EQ (ipBytes[2], 0x0d, "Failed string conversion");
@@ -76,7 +76,7 @@ Ipv6AddressTestCase::DoRun (void)
   NS_TEST_ASSERT_MSG_EQ (ipBytes[15], 1, "Failed string conversion");
 
   ip = Ipv6Address ("2001:db8:0:1::1");
-  ip.Serialize (ipBytes);
+  ip.CopyTo (ipBytes);
   NS_TEST_ASSERT_MSG_EQ (ipBytes[0], 0x20, "Failed string conversion");
   NS_TEST_ASSERT_MSG_EQ (ipBytes[1], 0x01, "Failed string conversion");
   NS_TEST_ASSERT_MSG_EQ (ipBytes[2], 0x0d, "Failed string conversion");
@@ -85,7 +85,7 @@ Ipv6AddressTestCase::DoRun (void)
   NS_TEST_ASSERT_MSG_EQ (ipBytes[15], 1, "Failed string conversion");
 
   ip = Ipv6Address ("2001:db8:0:1:0:0:0:1");
-  ip.Serialize (ipBytes);
+  ip.CopyTo (ipBytes);
   NS_TEST_ASSERT_MSG_EQ (ipBytes[0], 0x20, "Failed string conversion");
   NS_TEST_ASSERT_MSG_EQ (ipBytes[1], 0x01, "Failed string conversion");
   NS_TEST_ASSERT_MSG_EQ (ipBytes[2], 0x0d, "Failed string conversion");

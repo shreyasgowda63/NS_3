@@ -204,7 +204,7 @@ Mac48Address::GetMulticast (Ipv4Address multicastGroup)
   // Now we need to pull the raw bits out of the Ipv4 destination address.
   //
   uint8_t ipBuffer[4];
-  multicastGroup.Serialize (ipBuffer);
+  multicastGroup.CopyTo (ipBuffer);
 
   //
   // RFC 1112 says that an Ipv4 host group address is mapped to an EUI-48
@@ -234,7 +234,7 @@ Mac48Address Mac48Address::GetMulticast (Ipv6Address addr)
   /* a MAC multicast IPv6 address is like 33:33 and the four low bytes */
   /* for 2001:db8::2fff:fe11:ac10 => 33:33:FE:11:AC:10 */
   etherAddr.CopyTo (etherBuffer);
-  addr.Serialize (ipBuffer);
+  addr.CopyTo (ipBuffer);
 
   etherBuffer[2] = ipBuffer[12];
   etherBuffer[3] = ipBuffer[13];

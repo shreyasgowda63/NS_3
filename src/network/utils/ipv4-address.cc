@@ -325,6 +325,7 @@ Ipv4Address::Serialize (uint8_t buf[4]) const
   buf[2] = (m_address >> 8) & 0xff;
   buf[3] = (m_address >> 0) & 0xff;
 }
+
 Ipv4Address 
 Ipv4Address::Deserialize (const uint8_t buf[4])
 {
@@ -341,6 +342,59 @@ Ipv4Address::Deserialize (const uint8_t buf[4])
   ipv4.m_initialized = true;
 
   return ipv4;
+}
+
+uint32_t
+Ipv4Address::CopyTo (uint8_t buffer[4]) const
+{
+  NS_LOG_FUNCTION (this << &buffer);
+  buffer[0] = (m_address >> 24) & 0xff;
+  buffer[1] = (m_address >> 16) & 0xff;
+  buffer[2] = (m_address >> 8) & 0xff;
+  buffer[3] = (m_address >> 0) & 0xff;
+
+  return 4;
+}
+
+uint32_t
+Ipv4Address::CopyFrom (const uint8_t *buffer, uint8_t len)
+{
+  NS_LOG_FUNCTION (buffer << len);
+
+  NS_ASSERT_MSG (len >=4, "Ipv4Address::CopyFrom - buffer length must be at least 4 bytes, instead was " << len);
+
+  m_address = 0;
+  m_address |= buffer[0];
+  m_address <<= 8;
+  m_address |= buffer[1];
+  m_address <<= 8;
+  m_address |= buffer[2];
+  m_address <<= 8;
+  m_address |= buffer[3];
+  m_initialized = true;
+
+  return 4;
+}
+
+uint32_t
+Ipv4Address::GetSerializedSize (void) const
+{
+  return 4;
+}
+
+
+void
+Ipv4Address::Serialize (Buffer::Iterator &start) const
+{
+  start.WriteHtonU32 (m_address);
+}
+
+uint32_t
+Ipv4Address::Deserialize (Buffer::Iterator &start)
+{
+  m_address = start.ReadNtohU32 ();
+
+  return 4;
 }
 
 void 
@@ -369,7 +423,7 @@ Ipv4Address::ConvertTo (void) const
 {
   NS_LOG_FUNCTION (this);
   uint8_t buf[4];
-  Serialize (buf);
+  CopyTo (buf);
   return Address (GetType (), buf, 4);
 }
 
@@ -380,7 +434,11 @@ Ipv4Address::ConvertFrom (const Address &address)
   NS_ASSERT (address.CheckCompatible (GetType (), 4));
   uint8_t buf[4];
   address.CopyTo (buf);
-  return Deserialize (buf);
+
+  Ipv4Address ipv4Addr;
+  ipv4Addr.CopyFrom (buf, 4);
+
+  return ipv4Addr;
 }
 
 uint8_t 

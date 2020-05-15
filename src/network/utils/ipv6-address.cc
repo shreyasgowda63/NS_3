@@ -349,12 +349,50 @@ Ipv6Address Ipv6Address::Deserialize (const uint8_t buf[16])
   return ipv6;
 }
 
+uint32_t Ipv6Address::CopyTo (uint8_t buffer[16]) const
+{
+  NS_LOG_FUNCTION (this << &buffer);
+  memcpy (buffer, m_address, 16);
+
+  return 16;
+}
+
+uint32_t Ipv6Address::CopyFrom (const uint8_t *buffer, uint8_t len)
+{
+  NS_LOG_FUNCTION (buffer << len);
+
+  NS_ASSERT_MSG (len >=16, "Ipv6Address::CopyFrom - buffer length must be at least 16 bytes, instead was " << len);
+
+  memcpy (m_address, buffer, 16);
+  m_initialized = true;
+
+  return 4;
+}
+
+uint32_t Ipv6Address::GetSerializedSize (void) const
+{
+  return 16;
+}
+
+
+void Ipv6Address::Serialize (Buffer::Iterator &start) const
+{
+  start.Write (m_address, 16);
+}
+
+uint32_t Ipv6Address::Deserialize (Buffer::Iterator &start)
+{
+  start.Read (m_address, 16);
+
+  return 16;
+}
+
 Ipv6Address Ipv6Address::MakeIpv4MappedAddress(Ipv4Address addr)
 {
   NS_LOG_FUNCTION (addr);
   uint8_t buf[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                       0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00 };
-  addr.Serialize (&buf[12]);
+  addr.CopyTo (&buf[12]);
   return (Ipv6Address (buf));
 }
 
@@ -364,8 +402,8 @@ Ipv4Address Ipv6Address::GetIpv4MappedAddress() const
   uint8_t buf[16];
   Ipv4Address v4Addr;
 
-  Serialize (buf);
-  v4Addr = Ipv4Address::Deserialize (&buf[12]);
+  CopyTo (buf);
+  v4Addr.CopyFrom (&buf[12], 4);
   return (v4Addr);
 }
 
@@ -588,7 +626,7 @@ Ipv6Address Ipv6Address::MakeSolicitedAddress (Ipv6Address addr)
   uint8_t buf2[16];
   Ipv6Address ret;
 
-  addr.Serialize (buf2);
+  addr.CopyTo (buf2);
 
   memset (buf, 0x00, sizeof (buf));
   buf[0] = 0xff;
@@ -760,14 +798,11 @@ Ipv6Address Ipv6Address::CombinePrefix (Ipv6Prefix const& prefix) const
 bool Ipv6Address::IsSolicitedMulticast () const
 {
   NS_LOG_FUNCTION (this);
-  uint8_t buf[16];
 
-  Serialize (buf);
-
-  if (buf[0] == 0xff && 
-      buf[1] == 0x02 &&
-      buf[11] == 0x01 &&
-      buf[12] == 0xff)
+  if (m_address[0] == 0xff &&
+      m_address[1] == 0x02 &&
+      m_address[11] == 0x01 &&
+      m_address[12] == 0xff)
     {
       return true;
     }
@@ -838,7 +873,7 @@ Address Ipv6Address::ConvertTo (void) const
 {
   NS_LOG_FUNCTION (this);
   uint8_t buf[16];
-  Serialize (buf);
+  CopyTo (buf);
   return Address (GetType (), buf, 16);
 }
 
@@ -848,7 +883,7 @@ Ipv6Address Ipv6Address::ConvertFrom (const Address &address)
   NS_ASSERT (address.CheckCompatible (GetType (), 16));
   uint8_t buf[16];
   address.CopyTo (buf);
-  return Deserialize (buf);
+  return Ipv6Address (buf);
 }
 
 uint8_t Ipv6Address::GetType (void)

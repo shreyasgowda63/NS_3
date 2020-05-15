@@ -564,7 +564,6 @@ uint32_t Ipv6ExtensionLooseRoutingHeader::GetSerializedSize () const
 void Ipv6ExtensionLooseRoutingHeader::Serialize (Buffer::Iterator start) const
 {
   Buffer::Iterator i = start;
-  uint8_t buff[16];
 
   uint8_t addressNum = m_routersAddress.size ();
 
@@ -576,8 +575,7 @@ void Ipv6ExtensionLooseRoutingHeader::Serialize (Buffer::Iterator start) const
 
   for (VectorIpv6Address_t::const_iterator it = m_routersAddress.begin (); it != m_routersAddress.end (); it++)
     {
-      it->Serialize (buff);
-      i.Write (buff, 16);
+      it->Serialize (i);
     }
 }
 

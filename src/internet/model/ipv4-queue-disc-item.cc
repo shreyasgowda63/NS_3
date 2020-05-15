@@ -145,8 +145,8 @@ Ipv4QueueDiscItem::Hash (uint32_t perturbation) const
 
   /* serialize the 5-tuple and the perturbation in buf */
   uint8_t buf[17];
-  src.Serialize (buf);
-  dest.Serialize (buf + 4);
+  src.CopyTo (buf);
+  dest.CopyTo (buf + 4);
   buf[8] = prot;
   buf[9] = (srcPort >> 8) & 0xff;
   buf[10] = srcPort & 0xff;

@@ -145,9 +145,9 @@ Ipv4FlowProbeTag::Serialize (TagBuffer buf) const
   buf.WriteU32 (m_packetSize);
 
   uint8_t tBuf[4];
-  m_src.Serialize (tBuf);
+  m_src.CopyTo (tBuf);
   buf.Write (tBuf, 4);
-  m_dst.Serialize (tBuf);
+  m_dst.CopyTo (tBuf);
   buf.Write (tBuf, 4);
 }
 void 
@@ -159,9 +159,9 @@ Ipv4FlowProbeTag::Deserialize (TagBuffer buf)
 
   uint8_t tBuf[4];
   buf.Read (tBuf, 4);
-  m_src = Ipv4Address::Deserialize (tBuf);
+  m_src.CopyFrom (tBuf, 4);
   buf.Read (tBuf, 4);
-  m_dst = Ipv4Address::Deserialize (tBuf);
+  m_dst.CopyFrom (tBuf, 4);
 }
 void 
 Ipv4FlowProbeTag::Print (std::ostream &os) const

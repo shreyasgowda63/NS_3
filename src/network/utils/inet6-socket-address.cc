@@ -101,9 +101,9 @@ Address Inet6SocketAddress::ConvertTo (void) const
 {
   NS_LOG_FUNCTION (this);
   uint8_t buf[18];
-  m_ipv6.Serialize (buf);
-  buf[16]=m_port & 0xff;
-  buf[17]=(m_port >> 8) &0xff;
+  m_ipv6.CopyTo (buf);
+  buf[16] = m_port & 0xff;
+  buf[17] = (m_port >> 8) &0xff;
   return Address (GetType (), buf, 18);
 }
 
@@ -113,8 +113,9 @@ Inet6SocketAddress Inet6SocketAddress::ConvertFrom (const Address &addr)
   NS_ASSERT (addr.CheckCompatible (GetType (), 18));
   uint8_t buf[18];
   addr.CopyTo (buf);
-  Ipv6Address ipv6=Ipv6Address::Deserialize (buf);
-  uint16_t port= buf[16] | (buf[17] << 8);
+  Ipv6Address ipv6;
+  ipv6.CopyFrom (buf, 16);
+  uint16_t port = buf[16] | (buf[17] << 8);
   return Inet6SocketAddress (ipv6, port);
 }
 

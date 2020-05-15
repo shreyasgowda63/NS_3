@@ -152,16 +152,13 @@ void Icmpv6Header::CalculatePseudoHeaderChecksum (Ipv6Address src, Ipv6Address d
   NS_LOG_FUNCTION (this << src << dst << length << static_cast<uint32_t> (protocol));
 
   Buffer buf = Buffer (40);
-  uint8_t tmp[16];
   Buffer::Iterator it;
 
   buf.AddAtStart (40);
   it = buf.Begin ();
 
-  src.Serialize (tmp);
-  it.Write (tmp, 16); /* source IPv6 address */
-  dst.Serialize (tmp);
-  it.Write (tmp, 16); /* destination IPv6 address */
+  src.Serialize (it);
+  dst.Serialize (it);
   it.WriteU16 (0); /* length */
   it.WriteU8 (length >> 8); /* length */
   it.WriteU8 (length & 0xff); /* length */
@@ -259,7 +256,6 @@ uint32_t Icmpv6NS::GetSerializedSize () const
 void Icmpv6NS::Serialize (Buffer::Iterator start) const
 {
   NS_LOG_FUNCTION (this << &start);
-  uint8_t buff_target[16];
   uint16_t checksum = 0;
   Buffer::Iterator i = start;
 
@@ -267,8 +263,7 @@ void Icmpv6NS::Serialize (Buffer::Iterator start) const
   i.WriteU8 (GetCode ());
   i.WriteU16 (0);
   i.WriteHtonU32 (m_reserved);
-  m_target.Serialize (buff_target);
-  i.Write (buff_target, 16);
+  m_target.Serialize (i);
 
   if (m_calcChecksum)
     {
@@ -406,7 +401,6 @@ uint32_t Icmpv6NA::GetSerializedSize () const
 void Icmpv6NA::Serialize (Buffer::Iterator start) const
 {
   NS_LOG_FUNCTION (this << &start);
-  uint8_t buff_target[16];
   uint16_t checksum = 0;
   Buffer::Iterator i = start;
   uint32_t reserved = m_reserved;
@@ -431,8 +425,7 @@ void Icmpv6NA::Serialize (Buffer::Iterator start) const
     }
 
   i.WriteHtonU32 (reserved);
-  m_target.Serialize (buff_target);
-  i.Write (buff_target, 16);
+  m_target.Serialize (i);
 
   if (m_calcChecksum)
     {
@@ -876,7 +869,6 @@ uint32_t Icmpv6Redirection::GetSerializedSize () const
 void Icmpv6Redirection::Serialize (Buffer::Iterator start) const 
 {
   NS_LOG_FUNCTION (this << &start);
-  uint8_t buff[16];
   uint16_t checksum = 0;
   Buffer::Iterator i = start;
 
@@ -885,11 +877,8 @@ void Icmpv6Redirection::Serialize (Buffer::Iterator start) const
   i.WriteU16 (checksum);
   i.WriteU32 (m_reserved);
 
-  m_target.Serialize (buff);
-  i.Write (buff, 16);
-
-  m_destination.Serialize (buff);
-  i.Write (buff, 16);
+  m_target.Serialize (i);
+  m_destination.Serialize (i);
 
   if (m_calcChecksum)
     {

@@ -352,7 +352,6 @@ uint32_t DsrOptionRreqHeader::GetSerializedSize () const
 void DsrOptionRreqHeader::Serialize (Buffer::Iterator start) const
 {
   Buffer::Iterator i = start;
-  uint8_t buff[4];
 
   i.WriteU8 (GetType ());
   i.WriteU8 (GetLength ());
@@ -361,28 +360,22 @@ void DsrOptionRreqHeader::Serialize (Buffer::Iterator start) const
 
   for (VectorIpv4Address_t::const_iterator it = m_ipv4Address.begin (); it != m_ipv4Address.end (); it++)
     {
-      it->Serialize (buff);
-      i.Write (buff, 4);
+      it->Serialize (i);
     }
 }
 
 uint32_t DsrOptionRreqHeader::Deserialize (Buffer::Iterator start)
 {
   Buffer::Iterator i = start;
-  uint8_t buff[4];
 
   SetType (i.ReadU8 ());
   SetLength (i.ReadU8 ());
   m_identification = i.ReadNtohU16 ();
   ReadFrom (i, m_target);
 
-  uint8_t index = 0;
   for (std::vector<Ipv4Address>::iterator it = m_ipv4Address.begin (); it != m_ipv4Address.end (); it++)
     {
-      i.Read (buff, 4);
-      m_address = it->Deserialize (buff);
-      SetNodeAddress (index, m_address);
-      ++index;
+      it->Deserialize (i);
     }
 
   return GetSerializedSize ();
@@ -474,7 +467,6 @@ uint32_t DsrOptionRrepHeader::GetSerializedSize () const
 void DsrOptionRrepHeader::Serialize (Buffer::Iterator start) const
 {
   Buffer::Iterator i = start;
-  uint8_t buff[4];
 
   i.WriteU8 (GetType ());
   i.WriteU8 (GetLength ());
@@ -483,28 +475,22 @@ void DsrOptionRrepHeader::Serialize (Buffer::Iterator start) const
 
   for (VectorIpv4Address_t::const_iterator it = m_ipv4Address.begin (); it != m_ipv4Address.end (); it++)
     {
-      it->Serialize (buff);
-      i.Write (buff, 4);
+      it->Serialize (i);
     }
 }
 
 uint32_t DsrOptionRrepHeader::Deserialize (Buffer::Iterator start)
 {
   Buffer::Iterator i = start;
-  uint8_t buff[4];
 
   SetType (i.ReadU8 ());
   SetLength (i.ReadU8 ());
   i.ReadU8 ();
   i.ReadU8 ();
 
-  uint8_t index = 0;
   for (std::vector<Ipv4Address>::iterator it = m_ipv4Address.begin (); it != m_ipv4Address.end (); it++)
     {
-      i.Read (buff, 4);
-      m_address = it->Deserialize (buff);
-      SetNodeAddress (index, m_address);
-      ++index;
+      it->Deserialize (i);
     }
 
   return GetSerializedSize ();
@@ -617,7 +603,6 @@ uint32_t DsrOptionSRHeader::GetSerializedSize () const
 void DsrOptionSRHeader::Serialize (Buffer::Iterator start) const
 {
   Buffer::Iterator i = start;
-  uint8_t buff[4];
 
   i.WriteU8 (GetType ());
   i.WriteU8 (GetLength ());
@@ -626,28 +611,22 @@ void DsrOptionSRHeader::Serialize (Buffer::Iterator start) const
 
   for (VectorIpv4Address_t::const_iterator it = m_ipv4Address.begin (); it != m_ipv4Address.end (); it++)
     {
-      it->Serialize (buff);
-      i.Write (buff, 4);
+      it->Serialize (i);
     }
 }
 
 uint32_t DsrOptionSRHeader::Deserialize (Buffer::Iterator start)
 {
   Buffer::Iterator i = start;
-  uint8_t buff[4];
 
   SetType (i.ReadU8 ());
   SetLength (i.ReadU8 ());
   m_salvage = i.ReadU8 ();
   m_segmentsLeft = i.ReadU8 ();
 
-  uint8_t index = 0;
   for (std::vector<Ipv4Address>::iterator it = m_ipv4Address.begin (); it != m_ipv4Address.end (); it++)
     {
-      i.Read (buff, 4);
-      m_address = it->Deserialize (buff);
-      SetNodeAddress (index, m_address);
-      ++index;
+      it->Deserialize (i);
     }
 
   return GetSerializedSize ();

@@ -934,6 +934,8 @@ uint32_t SixLowPanIphc::GetSerializedSize () const
 void SixLowPanIphc::Serialize (Buffer::Iterator start) const
 {
   Buffer::Iterator i = start;
+  uint8_t tempByte;
+  uint8_t tempBuffer[16];
 
   i.WriteHtonU16 (m_baseFormat);
 
@@ -944,28 +946,27 @@ void SixLowPanIphc::Serialize (Buffer::Iterator start) const
   // Traffic Class and Flow Label
   switch ( GetTf () )
     {
-      uint8_t temp;
     case TF_FULL:
-      temp = (m_ecn << 6) | m_dscp;
-      i.WriteU8 (temp);
-      temp = m_flowLabel >> 16;
-      i.WriteU8 (temp);
-      temp = (m_flowLabel >> 8) & 0xff;
-      i.WriteU8 (temp);
-      temp = m_flowLabel & 0xff;
-      i.WriteU8 (temp);
+      tempByte = (m_ecn << 6) | m_dscp;
+      i.WriteU8 (tempByte);
+      tempByte = m_flowLabel >> 16;
+      i.WriteU8 (tempByte);
+      tempByte = (m_flowLabel >> 8) & 0xff;
+      i.WriteU8 (tempByte);
+      tempByte = m_flowLabel & 0xff;
+      i.WriteU8 (tempByte);
       break;
     case TF_DSCP_ELIDED:
-      temp = (m_ecn << 6) | (m_flowLabel >> 16 );
-      i.WriteU8 (temp);
-      temp = (m_flowLabel >> 8) & 0xff;
-      i.WriteU8 (temp);
-      temp = m_flowLabel & 0xff;
-      i.WriteU8 (temp);
+      tempByte = (m_ecn << 6) | (m_flowLabel >> 16 );
+      i.WriteU8 (tempByte);
+      tempByte = (m_flowLabel >> 8) & 0xff;
+      i.WriteU8 (tempByte);
+      tempByte = m_flowLabel & 0xff;
+      i.WriteU8 (tempByte);
       break;
     case TF_FL_ELIDED:
-      temp = (m_ecn << 6) | m_dscp;
-      i.WriteU8 (temp);
+      tempByte = (m_ecn << 6) | m_dscp;
+      i.WriteU8 (tempByte);
       break;
     default:
       break;
@@ -981,24 +982,22 @@ void SixLowPanIphc::Serialize (Buffer::Iterator start) const
       i.WriteU8 (m_hopLimit);
     }
   // Source Address
+
   switch (GetSam () )
     {
-      uint8_t temp[16];
     case HC_INLINE:
       if ( GetSac () == false )
         {
-          uint8_t temp[16];
-          m_srcAddress.Serialize (temp);
-          i.Write (temp, 16);
+          m_srcAddress.Serialize (i);
         }
       break;
     case HC_COMPR_64:
-      m_srcAddress.Serialize (temp);
-      i.Write (temp + 8, 8);
+      m_srcAddress.CopyTo (tempBuffer);
+      i.Write (tempBuffer + 8, 8);
       break;
     case HC_COMPR_16:
-      m_srcAddress.Serialize (temp);
-      i.Write (temp + 14, 2);
+      m_srcAddress.CopyTo (tempBuffer);
+      i.Write (tempBuffer + 14, 2);
       break;
     case HC_COMPR_0:
     default:
@@ -1007,23 +1006,21 @@ void SixLowPanIphc::Serialize (Buffer::Iterator start) const
   // Destination Address
   if ( GetM () == false)
     {
-      uint8_t temp[16];
       switch (GetDam () )
         {
         case HC_INLINE:
           if ( GetDac () == false )
             {
-              m_dstAddress.Serialize (temp);
-              i.Write (temp, 16);
+              m_dstAddress.Serialize (i);
             }
           break;
         case HC_COMPR_64:
-          m_dstAddress.Serialize (temp);
-          i.Write (temp + 8, 8);
+          m_dstAddress.CopyTo (tempBuffer);
+          i.Write (tempBuffer + 8, 8);
           break;
         case HC_COMPR_16:
-          m_dstAddress.Serialize (temp);
-          i.Write (temp + 14, 2);
+          m_dstAddress.CopyTo (tempBuffer);
+          i.Write (tempBuffer + 14, 2);
           break;
         case HC_COMPR_0:
         default:
@@ -1034,42 +1031,40 @@ void SixLowPanIphc::Serialize (Buffer::Iterator start) const
     {
       switch (GetDam () )
         {
-          uint8_t temp[16];
         case HC_INLINE:
           if ( GetDac () == false )
             {
-              m_dstAddress.Serialize (temp);
-              i.Write (temp, 16);
+              m_dstAddress.Serialize (i);
             }
           else
             {
-              m_dstAddress.Serialize (temp);
-              i.Write (temp + 1, 2);
-              i.Write (temp + 12, 4);
+              m_dstAddress.CopyTo (tempBuffer);
+              i.Write (tempBuffer + 1, 2);
+              i.Write (tempBuffer + 12, 4);
             }
           break;
         case HC_COMPR_64:
           if ( GetDac () == false )
             {
-              m_dstAddress.Serialize (temp);
-              i.Write (temp + 1, 1);
-              i.Write (temp + 11, 5);
+              m_dstAddress.CopyTo (tempBuffer);
+              i.Write (tempBuffer + 1, 1);
+              i.Write (tempBuffer + 11, 5);
             }
           break;
         case HC_COMPR_16:
           if ( GetDac () == false )
             {
-              m_dstAddress.Serialize (temp);
-              i.Write (temp + 1, 1);
-              i.Write (temp + 13, 3);
+              m_dstAddress.CopyTo (tempBuffer);
+              i.Write (tempBuffer + 1, 1);
+              i.Write (tempBuffer + 13, 3);
             }
           break;
         case HC_COMPR_0:
         default:
           if ( GetDac () == false )
             {
-              m_dstAddress.Serialize (temp);
-              i.WriteU8 (temp[15]);
+              m_dstAddress.CopyTo (tempBuffer);
+              i.WriteU8 (tempBuffer[15]);
             }
           break;
         }
@@ -1079,6 +1074,8 @@ void SixLowPanIphc::Serialize (Buffer::Iterator start) const
 uint32_t SixLowPanIphc::Deserialize (Buffer::Iterator start)
 {
   Buffer::Iterator i = start;
+  uint8_t tempByte;
+  uint8_t tempBuffer[16];
 
   m_baseFormat = i.ReadNtohU16 ();
 
@@ -1089,31 +1086,30 @@ uint32_t SixLowPanIphc::Deserialize (Buffer::Iterator start)
   // Traffic Class and Flow Label
   switch ( GetTf () )
     {
-      uint8_t temp;
     case TF_FULL:
-      temp = i.ReadU8 ();
-      m_ecn = temp >> 6;
-      m_dscp = temp & 0x3F;
-      temp = i.ReadU8 ();
-      m_flowLabel = temp;
-      temp = i.ReadU8 ();
-      m_flowLabel = (m_flowLabel << 8) | temp;
-      temp = i.ReadU8 ();
-      m_flowLabel = (m_flowLabel << 8) | temp;
+      tempByte = i.ReadU8 ();
+      m_ecn = tempByte >> 6;
+      m_dscp = tempByte & 0x3F;
+      tempByte = i.ReadU8 ();
+      m_flowLabel = tempByte;
+      tempByte = i.ReadU8 ();
+      m_flowLabel = (m_flowLabel << 8) | tempByte;
+      tempByte = i.ReadU8 ();
+      m_flowLabel = (m_flowLabel << 8) | tempByte;
       break;
     case TF_DSCP_ELIDED:
-      temp = i.ReadU8 ();
-      m_ecn = temp >> 6;
-      m_flowLabel = temp & 0x3F;
-      temp = i.ReadU8 ();
-      m_flowLabel = (m_flowLabel << 8) | temp;
-      temp = i.ReadU8 ();
-      m_flowLabel = (m_flowLabel << 8) | temp;
+      tempByte = i.ReadU8 ();
+      m_ecn = tempByte >> 6;
+      m_flowLabel = tempByte & 0x3F;
+      tempByte = i.ReadU8 ();
+      m_flowLabel = (m_flowLabel << 8) | tempByte;
+      tempByte = i.ReadU8 ();
+      m_flowLabel = (m_flowLabel << 8) | tempByte;
       break;
     case TF_FL_ELIDED:
-      temp = i.ReadU8 ();
-      m_ecn = temp >> 6;
-      m_dscp = temp & 0x3F;
+      tempByte = i.ReadU8 ();
+      m_ecn = tempByte >> 6;
+      m_dscp = tempByte & 0x3F;
       break;
     default:
       break;
@@ -1144,29 +1140,27 @@ uint32_t SixLowPanIphc::Deserialize (Buffer::Iterator start)
   // Source Address
   switch (GetSam () )
     {
-      uint8_t temp[16];
     case HC_INLINE:
       if ( GetSac () == false )
         {
-          i.Read (temp, 16);
-          m_srcAddress = Ipv6Address::Deserialize (temp);
+          m_srcAddress.Deserialize (i);
         }
       break;
     case HC_COMPR_64:
-      memset (temp, 0x00, sizeof (temp));
-      i.Read (temp + 8, 8);
-      temp[0] = 0xfe;
-      temp[1] = 0x80;
-      m_srcAddress = Ipv6Address::Deserialize (temp);
+      memset (tempBuffer, 0x00, sizeof (tempBuffer));
+      i.Read (tempBuffer + 8, 8);
+      tempBuffer[0] = 0xfe;
+      tempBuffer[1] = 0x80;
+      m_srcAddress.CopyFrom (tempBuffer, 16);
       break;
     case HC_COMPR_16:
-      memset (temp, 0x00, sizeof (temp));
-      i.Read (temp + 14, 2);
-      temp[0] = 0xfe;
-      temp[1] = 0x80;
-      temp[11] = 0xff;
-      temp[12] = 0xfe;
-      m_srcAddress = Ipv6Address::Deserialize (temp);
+      memset (tempBuffer, 0x00, sizeof (tempBuffer));
+      i.Read (tempBuffer + 14, 2);
+      tempBuffer[0] = 0xfe;
+      tempBuffer[1] = 0x80;
+      tempBuffer[11] = 0xff;
+      tempBuffer[12] = 0xfe;
+      m_srcAddress.CopyFrom (tempBuffer, 16);
       break;
     case HC_COMPR_0:
     default:
@@ -1179,31 +1173,29 @@ uint32_t SixLowPanIphc::Deserialize (Buffer::Iterator start)
   // Destination Address
   if ( GetM () == false)
     {
-      uint8_t temp[16];
       switch (GetDam () )
         {
         case HC_INLINE:
           if ( GetDac () == false )
             {
-              i.Read (temp, 16);
-              m_dstAddress = Ipv6Address::Deserialize (temp);
+              m_dstAddress.Deserialize (i);
             }
           break;
         case HC_COMPR_64:
-          memset (temp, 0x00, sizeof (temp));
-          i.Read (temp + 8, 8);
-          temp[0] = 0xfe;
-          temp[1] = 0x80;
-          m_dstAddress = Ipv6Address::Deserialize (temp);
+          memset (tempBuffer, 0x00, sizeof (tempBuffer));
+          i.Read (tempBuffer + 8, 8);
+          tempBuffer[0] = 0xfe;
+          tempBuffer[1] = 0x80;
+          m_dstAddress.CopyFrom (tempBuffer, 16);
           break;
         case HC_COMPR_16:
-          memset (temp, 0x00, sizeof (temp));
-          i.Read (temp + 14, 2);
-          temp[0] = 0xfe;
-          temp[1] = 0x80;
-          temp[11] = 0xff;
-          temp[12] = 0xfe;
-          m_dstAddress = Ipv6Address::Deserialize (temp);
+          memset (tempBuffer, 0x00, sizeof (tempBuffer));
+          i.Read (tempBuffer + 14, 2);
+          tempBuffer[0] = 0xfe;
+          tempBuffer[1] = 0x80;
+          tempBuffer[11] = 0xff;
+          tempBuffer[12] = 0xfe;
+          m_dstAddress.CopyFrom (tempBuffer, 16);
           break;
         case HC_COMPR_0:
         default:
@@ -1214,51 +1206,49 @@ uint32_t SixLowPanIphc::Deserialize (Buffer::Iterator start)
     {
       switch (GetDam () )
         {
-          uint8_t temp[16];
         case HC_INLINE:
           if ( GetDac () == false )
             {
-              i.Read (temp, 16);
-              m_dstAddress = Ipv6Address::Deserialize (temp);
+              m_dstAddress.Deserialize (i);
             }
           else
             {
-              memset (temp, 0x00, sizeof (temp));
-              i.Read (temp + 1, 2);
-              i.Read (temp + 12, 4);
-              temp[0] = 0xff;
-              m_dstAddress = Ipv6Address::Deserialize (temp);
+              memset (tempBuffer, 0x00, sizeof (tempBuffer));
+              i.Read (tempBuffer + 1, 2);
+              i.Read (tempBuffer + 12, 4);
+              tempBuffer[0] = 0xff;
+              m_dstAddress.CopyFrom (tempBuffer, 16);
             }
           break;
         case HC_COMPR_64:
           if ( GetDac () == false )
             {
-              memset (temp, 0x00, sizeof (temp));
-              i.Read (temp + 1, 1);
-              i.Read (temp + 11, 5);
-              temp[0] = 0xff;
-              m_dstAddress = Ipv6Address::Deserialize (temp);
+              memset (tempBuffer, 0x00, sizeof (tempBuffer));
+              i.Read (tempBuffer + 1, 1);
+              i.Read (tempBuffer + 11, 5);
+              tempBuffer[0] = 0xff;
+              m_dstAddress.CopyFrom (tempBuffer, 16);
             }
           break;
         case HC_COMPR_16:
           if ( GetDac () == false )
             {
-              memset (temp, 0x00, sizeof (temp));
-              i.Read (temp + 1, 1);
-              i.Read (temp + 13, 3);
-              temp[0] = 0xff;
-              m_dstAddress = Ipv6Address::Deserialize (temp);
+              memset (tempBuffer, 0x00, sizeof (tempBuffer));
+              i.Read (tempBuffer + 1, 1);
+              i.Read (tempBuffer + 13, 3);
+              tempBuffer[0] = 0xff;
+              m_dstAddress.CopyFrom (tempBuffer, 16);
             }
           break;
         case HC_COMPR_0:
         default:
           if ( GetDac () == false )
             {
-              memset (temp, 0x00, sizeof (temp));
-              temp[15] = i.ReadU8 ();
-              temp[0] = 0xff;
-              temp[1] = 0x02;
-              m_dstAddress = Ipv6Address::Deserialize (temp);
+              memset (tempBuffer, 0x00, sizeof (tempBuffer));
+              tempBuffer[15] = i.ReadU8 ();
+              tempBuffer[0] = 0xff;
+              tempBuffer[1] = 0x02;
+              m_dstAddress.CopyFrom (tempBuffer, 16);
             }
           break;
         }
