@@ -56,22 +56,22 @@ NS_OBJECT_ENSURE_REGISTERED (HexagonalPositionAllocator);
 class HexagonalPositionAllocator::Hex
 {
 public:
-  typedef std::make_signed<std::size_t>::type index_type;
+  typedef std::make_signed<std::size_t>::type coord_type;
   
-  union
+  union 
   {
     /** Vector-like access to indices. */
-    const std::array<index_type, 3> v;
+    const std::array<coord_type, 3> v;
     /** Component-wise access. */
-    struct
+    struct 
     {
-      const index_type q;  /**< North and east coordinate. */
-      const index_type r;  /**< South coordinate.          */
-      const index_type s;  /**< North and west coordinate. */
+      const coord_type q;  /**< North and east coordinate. */
+      const coord_type r;  /**< South coordinate.          */
+      const coord_type s;  /**< North and west coordinate. */
     };  // struct
   };  // union
 
-  /** Default constructor; this is the index for the center node. */
+  /** Default constructor; this is the coordinate for the center node. */
   Hex (void);
 
   /**
@@ -97,8 +97,8 @@ public:
   // Note: the order is important,
   // since it drives how we walk around rings,
   // starting at the east most point.
-  // See Populate()
-  enum Direction
+  // See Populate
+  enum Direction 
   {
     NW = 0, /**< Towards the north-west.     */
     W,      /**< Towards the west.           */
@@ -320,7 +320,7 @@ HexagonalPositionAllocator::GetTypeId (void)
     .AddAttribute ("Rings", "The number of rings making up the entire grid.",
                    UintegerValue (1),
                    MakeUintegerAccessor (&HexagonalPositionAllocator::m_rings),
-                   MakeUintegerChecker<int> (0))
+                   MakeUintegerChecker<int> (1))
     .AddAttribute ("Z",
                    "The z coordinate of all the positions allocated, in meters..",
                    DoubleValue (0.0),

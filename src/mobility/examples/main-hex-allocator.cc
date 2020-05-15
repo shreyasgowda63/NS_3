@@ -19,12 +19,14 @@
  */
 
 #include "ns3/hex-position-allocator.h"
-#include "ns3/gnuplot.h"
-#include "ns3/command-line.h"
+#include "ns3/position-filter.h"
 
-#include <cstdlib>    // system()
+#include "ns3/command-line.h"
+#include "ns3/double.h"
+#include "ns3/vector.h"
+#include "ns3/gnuplot.h"
+
 #include <fstream>
-#include <sstream>
 #include <iostream>
 #include <iomanip>
 
@@ -44,32 +46,42 @@ main (int argc, char** argv)
 {
 
   double spacing = 1000;
-  int rings = 2;
+  std::size_t rings = 3;
+  std::size_t npoints = 100;
+  bool invert = false;
   bool gnuplot = false;
 
-  CommandLine cmd (__FILE__);
-  cmd.AddValue ("isd",     "inter-site distance, in meters", spacing);
-  cmd.AddValue ("rings",   "number of rings", rings);
+  CommandLine cmd;
+  cmd.AddValue ("spacing", "Distance between nodes, in meters", spacing);
+  cmd.AddValue ("rings",   "Number of rings", rings);
+  cmd.AddValue ("npoints",
+                "Number of uniformly random points to sample within the layout",
+                npoints);
+  cmd.AddValue ("invert", "Invert the meaning of \"inside\" when filtering",
+                invert);
   cmd.AddValue ("gnuplot", "generate Gnuplot script", gnuplot);
   cmd.Parse (argc, argv);
 
-  HexagonalPositionAllocator h;
-  h.SetSpacing (spacing);
-  h.SetRings (rings);
-
+  auto h = CreateObject<HexagonalPositionAllocator> ();
+  h->SetSpacing (spacing);
+  h->SetRings (rings);
+  
   std::cout << "HexagonalPositionAllocator:"
-            << "\n    Spacing:        " << h.GetSpacing ()
-            << "\n    Rings:          " << h.GetRings ()
-            << "\n    Total nodes:    " << h.GetN ()
-            << "\n    Overall radius: " << h.GetRadius ()
-            << "\n" << std::endl;
+	    << "\n    Spacing:          " << h->GetSpacing ()
+	    << "\n    Rings:            " << h->GetRings ()
+	    << "\n    Total nodes:      " << h->GetN ()
+	    << "\n    Overall radius:   " << h->GetRadius ()
+            << "\nParameters for random sampling and filtering: "
+            << "\n    Number of points: " << npoints
+            << "\n    Filtering:        " << (invert ? "Inverse" : "Normal")
+	    << "\n" << std::endl;
 
-  std::cout << "Index           X           Y           Z"
+  std::cout << "Node Index      X           Y           Z"
             << std::fixed << std::setprecision (1)
             << std::endl;
-  for (std::size_t i = 0; i < h.GetN (); ++i)
+  for (std::size_t i = 0; i < h->GetN (); ++i)
     {
-      auto p = h.GetNext ();
+      auto p = h->GetNext ();
       std::cout << std::setw ( 5) << i
                 << std::setw (12) << p.x
                 << std::setw (12) << p.y
@@ -77,7 +89,79 @@ main (int argc, char** argv)
                 << std::endl;
     }
 
+  // Get some samples to test FromSpace ()
+  auto rnd = CreateObject<UniformDiscPositionAllocator> ();
+  rnd->SetRho (h->GetRadius ());
+  double maxRange = h->GetSpacing () / std::sqrt (3.0);
 
+
+  std::cout << "\nRandom positions, no filtering:\n"
+            << "Max disc radius:   " << h->GetRadius () << "\n"
+            << "Max allowed range: " << maxRange << "\n"
+            << "NOTE:  some points will be outside the layout since "
+            << "the random disc covers more area than the layout hexagon.\n"
+            << "Random                   Nearest Node            "
+            << "Delta                   Length       Range  Inside"
+            << std::fixed << std::setprecision (1)
+            << std::endl;
+  std::size_t w = 8;
+  
+  for (std::size_t i = 0; i < npoints; ++i)
+    {
+      Vector3D v = rnd->GetNext();
+      Vector3D e = h->FromSpace (v);
+      Vector3D delta = v - e;
+      bool inRange = (delta.GetLength () < maxRange);
+      bool inLayout = h->IsInside (v);
+
+      std::cout << std::setw (w) << v.x << std::setw (w) << v.y << std::setw (w) << v.z
+                << std::setw (w) << e.x << std::setw (w) << e.y << std::setw (w) << e.z
+                << std::setw (w) << delta.x << std::setw (w) << delta.y << std::setw (w) << delta.z
+                << std::setw (w) << delta.GetLength ()
+                << (inRange  ? "\tok" : "\tFAR")
+                << (inLayout ? "\tok" : "\tOUT")
+                << std::endl;
+    }
+
+  
+  auto hpf = MakePositionAllocatorFilter (h);
+  
+  auto fpa = CreateObject<FilteredPositionAllocator> ();
+  fpa->SetPositionAllocator (rnd);
+  fpa->SetPositionFilter (hpf);
+  fpa->SetInvert (invert);
+
+  std::cout << "\nRandom positions, WITH filtering:\n"
+            << "Max disc radius:   " << h->GetRadius () << "\n"
+            << "Max allowed range: " << maxRange << "\n"
+            << "Invert or normal filtering: " << (invert ? "invert" : "normal") << "\n"
+            << "NOTE:  In "
+            << (invert ?
+                "Inverse filtering ALL points should be " :
+                "Normal filtering there should be NO points ")
+            << "outside the layout.\n"
+            << "Random                   Nearest Node            "
+            << "Delta                   Length       Range  Inside"
+            << std::fixed << std::setprecision (1)
+            << std::endl;
+
+  for (std::size_t i = 0; i < npoints; ++i)
+    {
+      Vector3D v = fpa->GetNext();
+      Vector3D e = h->FromSpace (v);
+      Vector3D delta = v - e;
+      bool inRange = (delta.GetLength () < maxRange);
+      bool inLayout = h->IsInside (v);
+
+      std::cout << std::setw (w) << v.x << std::setw (w) << v.y << std::setw (w) << v.z
+                << std::setw (w) << e.x << std::setw (w) << e.y << std::setw (w) << e.z
+                << std::setw (w) << delta.x << std::setw (w) << delta.y << std::setw (w) << delta.z
+                << std::setw (w) << delta.GetLength ()
+                << (inRange  ? "\tok" : "\tFAR")
+                << (inLayout ? "\tok" : "\tOUT")
+                << std::endl;
+    }
+  
   if (gnuplot)
     {
       std::string plotName ("main-hex-allocator");
@@ -86,9 +170,9 @@ main (int argc, char** argv)
       d.SetExtra ("linestyle 1");
 
       // HexPositionAllocator repeats the point set
-      for (std::size_t i = 0; i < h.GetN (); ++i)
+      for (std::size_t i = 0; i < h->GetN (); ++i)
         {
-          auto p = h.GetNext ();
+          auto p = h->GetNext ();
           d.Add (p.x, p.y);
         }
 
@@ -97,7 +181,7 @@ main (int argc, char** argv)
       g.SetTerminal ("png");
       g.SetExtra ("set size square");
       // Get a reasonable range
-      double r = 1.05 * h.GetRadius ();
+      double r = 1.05 * h->GetRadius ();
       std::stringstream ss;
       ss << "set xrange [-" << r << ":" << r << "]";
       g.AppendExtra (ss.str ());

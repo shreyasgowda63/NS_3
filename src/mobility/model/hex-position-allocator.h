@@ -113,10 +113,10 @@ public:
   /**
    * Get the nearest hex grid point from an arbitrary point.
    * \param v [in] The space point as a Vector, in meters.
-   * \returns The index of the nearest hex grid point.
+   * \returns The position of the nearest hex grid point.
    */
   Vector3D FromSpace (const Vector3D & v) const;
-  
+
   /**
    * Check if a point is within the layout.
    * A point is within the layout if the nearest grid point
