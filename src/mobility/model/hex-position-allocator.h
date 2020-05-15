@@ -21,8 +21,15 @@
 #define HEX_POSITION_ALLOCATOR_H
 
 #include "position-allocator.h"
+#include "ns3/vector.h"
 
 #include <cmath>  // sqrt
+
+/**
+ * \file
+ * \ingroup mobility
+ * Declaration of class ns3::HexagonalPositionAllocator.
+ */
 
 
 namespace ns3 {
@@ -75,13 +82,13 @@ public:
    * You can also get the total number of grid points with GetN
    * \param [in] r The number of rings in the grid.
    */
-  void SetRings (int r);
+  void SetRings (std::size_t r);
 
   /**
    * Get the number of rings in the grid.
    * \returns The number of rings in the grid.
    */
-  int GetRings (void) const;
+  std::size_t GetRings (void) const;
 
   /**
    * Get the total number of points in the grid.
@@ -103,8 +110,24 @@ public:
    */
   void SetZ (double z);
 
+  /**
+   * Get the nearest hex grid point from an arbitrary point.
+   * \param v [in] The space point as a Vector, in meters.
+   * \returns The index of the nearest hex grid point.
+   */
+  Vector3D FromSpace (const Vector3D & v) const;
+  
+  /**
+   * Check if a point is within the layout.
+   * A point is within the layout if the nearest grid point
+   * is part of the layout.
+   * \param v [in] The space point as a Vector, in meters.
+   * \returns \c true if the point is within the layout.
+   */
+  bool IsInside (const Vector3D & v) const;
+
   // Inherited
-  virtual Vector GetNext (void) const;
+  virtual Vector3D GetNext (void) const;
   virtual int64_t AssignStreams (int64_t stream);
 
   // Forward declaration.
@@ -124,7 +147,7 @@ private:
   double m_hexSize;
 
   /** Size of the overall grid, in rings. */
-  int m_rings;
+  std::size_t m_rings;
 
   /** \c z coordinate of the positions, in meters. */
   double m_z;
@@ -135,6 +158,13 @@ private:
    * \returns The spatial coordinate Vector, in meters.
    */
   Vector3D ToSpace (const Hex & h) const;
+
+  /**
+   * Get the grid index of a space point.
+   * \param v [in] The space point as a Vector, in meters.
+   * \returns the Hex node closest to the input space point.
+   */
+  Hex ClosestGridPoint (const Vector3D & v) const;
 
   /**
    * Populate the underlying PositionAllocator on the first call
