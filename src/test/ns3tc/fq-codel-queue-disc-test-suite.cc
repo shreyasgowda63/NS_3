@@ -22,6 +22,7 @@
 #include "ns3/test.h"
 #include "ns3/simulator.h"
 #include "ns3/fq-codel-queue-disc.h"
+#include "ns3/codel-queue-disc.h"
 #include "ns3/ipv4-header.h"
 #include "ns3/ipv4-packet-filter.h"
 #include "ns3/ipv4-queue-disc-item.h"
@@ -513,6 +514,137 @@ FqCoDelQueueDiscUDPFlowsSeparation::DoRun (void)
   Simulator::Destroy ();
 }
 
+/**
+ * This class tests ECN marking
+ */
+class FqCoDelQueueDiscECNMarking : public TestCase
+{
+public:
+  FqCoDelQueueDiscECNMarking ();
+  virtual ~FqCoDelQueueDiscECNMarking ();
+
+private:
+  virtual void DoRun (void);
+  void AddPacket (Ptr<FqCoDelQueueDisc> queue, Ipv4Header hdr, u_int32_t nPkt, u_int32_t nPktEnqueued, u_int32_t nQueueFlows);
+  void Dequeue (Ptr<FqCoDelQueueDisc> queue, uint32_t nPkt);
+  void DequeueWithDelay (Ptr<FqCoDelQueueDisc> queue, double delay, uint32_t nPkt);
+};
+
+FqCoDelQueueDiscECNMarking::FqCoDelQueueDiscECNMarking ()
+  : TestCase ("Test ECN marking")
+{
+}
+
+FqCoDelQueueDiscECNMarking::~FqCoDelQueueDiscECNMarking ()
+{
+}
+
+void
+FqCoDelQueueDiscECNMarking::AddPacket (Ptr<FqCoDelQueueDisc> queue, Ipv4Header hdr, u_int32_t nPkt, u_int32_t nPktEnqueued, u_int32_t nQueueFlows)
+{
+  Address dest;
+  Ptr<Packet> p = Create<Packet> (100);
+  Ptr<Ipv4QueueDiscItem> item = Create<Ipv4QueueDiscItem> (p, dest, 0, hdr);
+  for (uint32_t i = 0; i < nPkt; i++)
+    {
+      queue->Enqueue (item);
+    }
+  NS_TEST_EXPECT_MSG_EQ (queue->GetNQueueDiscClasses (), nQueueFlows, "unexpected number of flow queues");
+  NS_TEST_EXPECT_MSG_EQ (queue->GetNPackets (), nPktEnqueued, "unexpected number of enqueued packets");
+}
+
+void
+FqCoDelQueueDiscECNMarking::Dequeue (Ptr<FqCoDelQueueDisc> queue, uint32_t nPkt)
+{
+  for (uint32_t i = 0; i < nPkt; i++)
+    {
+      Ptr<QueueDiscItem> item = queue->Dequeue ();
+    }
+}
+
+void
+FqCoDelQueueDiscECNMarking::DequeueWithDelay (Ptr<FqCoDelQueueDisc> queue, double delay, uint32_t nPkt)
+{
+  for (uint32_t i = 0; i < nPkt; i++)
+    {
+      Simulator::Schedule (Time (Seconds ((i + 1) * delay)), &FqCoDelQueueDiscECNMarking::Dequeue, this, queue, 1);
+    }
+}
+
+void
+FqCoDelQueueDiscECNMarking::DoRun (void)
+{
+  Ptr<FqCoDelQueueDisc> queueDisc = CreateObjectWithAttributes<FqCoDelQueueDisc> ("MaxSize", StringValue ("10240p"), "UseEcn", BooleanValue (true));
+
+  queueDisc->SetQuantum (1514);
+  queueDisc->Initialize ();
+
+  Ipv4Header hdr;
+  hdr.SetPayloadSize (100);
+  hdr.SetSource (Ipv4Address ("10.10.1.1"));
+  hdr.SetDestination (Ipv4Address ("10.10.1.2"));
+  hdr.SetProtocol (7);
+
+  // Add 20 packets from the first flow
+  Simulator::Schedule (Time (Seconds (0)), &FqCoDelQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 20, 1);
+
+  // Add 20 packets from second flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.10"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCoDelQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 40, 2);
+
+  // Add 20 packets from third flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.20"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCoDelQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 60, 3);
+
+  // Add 20 ECT0 (ECN capable) packets from fourth flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.30"));
+  hdr.SetEcn (Ipv4Header::ECN_ECT0);
+  Simulator::Schedule (Time (Seconds (0)), &FqCoDelQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 80, 4);
+
+  // Add 20 ECT0 (ECN capable) packets from fifth flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.40"));
+  hdr.SetEcn (Ipv4Header::ECN_ECT0);
+  Simulator::Schedule (Time (Seconds (0)), &FqCoDelQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 100, 5);
+
+  //Dequeue 60 packets with delay 0.1 to induce packet drops and keep some remaining packets in each queue
+  DequeueWithDelay (queueDisc, 0.1, 60);
+  Simulator::Run ();
+  Simulator::Stop (Seconds (8.0));
+  Ptr<CoDelQueueDisc> q0 = queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetObject <CoDelQueueDisc> ();
+  Ptr<CoDelQueueDisc> q1 = queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetObject <CoDelQueueDisc> ();
+  Ptr<CoDelQueueDisc> q2 = queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetObject <CoDelQueueDisc> ();
+  Ptr<CoDelQueueDisc> q3 = queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetObject <CoDelQueueDisc> ();
+  Ptr<CoDelQueueDisc> q4 = queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetObject <CoDelQueueDisc> ();
+
+  //Ensure there are some remaining packets in the flow queues to check for flow queues with ECN capable packets
+  NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
+  NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
+  NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
+  NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
+  NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
+
+  // Ensure flow queue 3 and 4 have ECN capable packets
+  Ptr<const Ipv4QueueDiscItem> pktQ3 = DynamicCast<const Ipv4QueueDiscItem> (q3->Peek ());
+  NS_TEST_EXPECT_MSG_NE (pktQ3->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
+  Ptr<const Ipv4QueueDiscItem> pktQ4 = DynamicCast<const Ipv4QueueDiscItem> (q4->Peek ());
+  NS_TEST_EXPECT_MSG_NE (pktQ4->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
+
+  // As packets in flow queues are not ECN capable
+  NS_TEST_EXPECT_MSG_NE (q0->GetStats ().GetNDroppedPackets (CoDelQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should be some dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNMarkedPackets (CoDelQueueDisc::TARGET_EXCEEDED_MARK), 0, "There should not be any marked packets");
+  NS_TEST_EXPECT_MSG_NE (q1->GetStats ().GetNDroppedPackets (CoDelQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should be some dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNMarkedPackets (CoDelQueueDisc::TARGET_EXCEEDED_MARK), 0, "There should not be any marked packets");
+  NS_TEST_EXPECT_MSG_NE (q2->GetStats ().GetNDroppedPackets (CoDelQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should be some dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNMarkedPackets (CoDelQueueDisc::TARGET_EXCEEDED_MARK), 0, "There should not be any marked packets");
+  // As packets in flow queues are ECN capable
+  NS_TEST_EXPECT_MSG_NE (q3->GetStats ().GetNMarkedPackets (CoDelQueueDisc::TARGET_EXCEEDED_MARK), 0, "There should be some marked packets");
+  NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNDroppedPackets (CoDelQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  NS_TEST_EXPECT_MSG_NE (q4->GetStats ().GetNMarkedPackets (CoDelQueueDisc::TARGET_EXCEEDED_MARK), 0, "There should be some marked packets");
+  NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNDroppedPackets (CoDelQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+
+  Simulator::Destroy ();
+}
+
 class FqCoDelQueueDiscTestSuite : public TestSuite
 {
 public:
@@ -527,6 +659,7 @@ FqCoDelQueueDiscTestSuite::FqCoDelQueueDiscTestSuite ()
   AddTestCase (new FqCoDelQueueDiscDeficit, TestCase::QUICK);
   AddTestCase (new FqCoDelQueueDiscTCPFlowsSeparation, TestCase::QUICK);
   AddTestCase (new FqCoDelQueueDiscUDPFlowsSeparation, TestCase::QUICK);
+  AddTestCase (new FqCoDelQueueDiscECNMarking, TestCase::QUICK);
 }
 
 static FqCoDelQueueDiscTestSuite fqCoDelQueueDiscTestSuite;
