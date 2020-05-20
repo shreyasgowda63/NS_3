@@ -337,6 +337,18 @@ public:
     (uint16_t rnti, uint16_t cellId, double rsrp, double rsrq,
      bool isServingCell, uint8_t componentCarrierId);
 
+  /**
+   * TracedCallback signature for Ul Phy resource blocks.
+   */
+  typedef void (* UlPhyResourceBlocksTracedCallback)
+      (const std::vector<int>&);
+
+  /**
+   * TracedCallback signature for spectral value.
+   */
+  typedef void (* PowerSpectralDensityTracedCallback)
+      (uint16_t nodeNumber, Ptr<SpectrumValue>);
+
 private:
 
   /**
@@ -779,6 +791,20 @@ private:
    * PhyTransmissionStatParameters.
    */
   TracedCallback<PhyTransmissionStatParameters> m_ulPhyTransmission;
+
+  /**
+   * The `ReportUlPhyResourceBlocks` trace source. Contains trace information
+   * regarding PHY stats from UL Resource Blocks. Exporting a node id and
+   * vector of ints.
+   */
+  TracedCallback< uint16_t, const std::vector<int>& > m_reportUlPhyResourceBlocks;
+
+  /**
+   * The `ReportsPowerSpectralDensity` trace source. Contains trace information
+   * regarding Power Spectral Density.  Exporting the node id and a pointer
+   * to Spectrum Values.
+   */
+  TracedCallback< uint16_t, Ptr<SpectrumValue> > m_reportPowerSpectralDensity;
 
   
   Ptr<SpectrumValue> m_noisePsd; ///< Noise power spectral density for
