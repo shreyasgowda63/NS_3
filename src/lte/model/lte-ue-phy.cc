@@ -694,27 +694,6 @@ LteUePhy::GenerateCqiRsrpRsrq (const SpectrumValue& sinr)
 
 } // end of void LteUePhy::GenerateCtrlCqiReport (const SpectrumValue& sinr)
 
-double
-LteUePhy::ComputeAvgSinr (const SpectrumValue& sinr)
-{
-  NS_LOG_FUNCTION (this);
-
-  // averaged SINR among RBs
-  double sum = 0.0;
-  uint8_t rbNum = 0;
-  Values::const_iterator it;
-
-  for (it = sinr.ConstValuesBegin (); it != sinr.ConstValuesEnd (); it++)
-    {
-      sum += (*it);
-      rbNum++;
-    }
-
-  double avrgSinr = (rbNum > 0) ? (sum / rbNum) : DBL_MAX;
-
-  return avrgSinr;
-}
-
 void
 LteUePhy::GenerateDataCqiReport (const SpectrumValue& sinr)
 {

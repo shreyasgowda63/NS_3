@@ -1562,7 +1562,7 @@ void
 LteHelper::EnableUlPhyTraces (void)
 {
   NS_LOG_FUNCTION_NOARGS ();
-  Config::Connect ("/NodeList/*/DeviceList/*/ComponentCarrierMap/*/LteEnbPhy/ReportUeSinr",
+  Config::Connect ("/NodeList/*/DeviceList/*/ComponentCarrierMap/*/LteEnbPhy/ReportUlCtrlSinr",
                    MakeBoundCallback (&PhyStatsCalculator::ReportUeSinr, m_phyStats));
   Config::Connect ("/NodeList/*/DeviceList/*/ComponentCarrierMap/*/LteEnbPhy/ReportInterference",
                    MakeBoundCallback (&PhyStatsCalculator::ReportInterference, m_phyStats));

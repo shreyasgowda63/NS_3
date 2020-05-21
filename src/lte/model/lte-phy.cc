@@ -23,6 +23,7 @@
 #include <ns3/object-factory.h>
 #include <ns3/log.h>
 #include <cmath>
+#include <cfloat>
 #include <ns3/simulator.h>
 #include "ns3/spectrum-error-model.h"
 #include "lte-phy.h"
@@ -264,6 +265,25 @@ uint8_t
 LtePhy::GetComponentCarrierId ()
 {
   return m_componentCarrierId;
+}
+
+double
+LtePhy::ComputeAvgSinr (const SpectrumValue &sinr)
+{
+  // averaged SINR among RBs
+  double sum = 0.0;
+  uint8_t rbNum = 0;
+  Values::const_iterator it;
+
+  for (it = sinr.ConstValuesBegin (); it != sinr.ConstValuesEnd (); it++)
+    {
+      sum += (*it);
+      rbNum++;
+    }
+
+  double avrgSinr = (rbNum > 0) ? (sum / rbNum) : DBL_MAX;
+
+  return avrgSinr;
 }
 
 } // namespace ns3

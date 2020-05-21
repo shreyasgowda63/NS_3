@@ -207,9 +207,9 @@ LteEnbPhy::GetTypeId (void)
                    MakeUintegerAccessor (&LteEnbPhy::SetMacChDelay, 
                                          &LteEnbPhy::GetMacChDelay),
                    MakeUintegerChecker<uint8_t> ())
-    .AddTraceSource ("ReportUeSinr",
+    .AddTraceSource ("ReportUlCtrlSinr",
                      "Report UEs' averaged linear SINR",
-                     MakeTraceSourceAccessor (&LteEnbPhy::m_reportUeSinr),
+                     MakeTraceSourceAccessor (&LteEnbPhy::m_reportUlCtrlSinr),
                      "ns3::LteEnbPhy::ReportUeSinrTracedCallback")
     .AddAttribute ("UeSinrSamplePeriod",
                    "The sampling period for reporting UEs' SINR stats.",
@@ -241,6 +241,10 @@ LteEnbPhy::GetTypeId (void)
                    PointerValue (),
                    MakePointerAccessor (&LteEnbPhy::GetUlSpectrumPhy),
                    MakePointerChecker <LteSpectrumPhy> ())
+    .AddTraceSource ("ReportUlDataSinr",
+                     "SINR statistics for UL data transmissions.",
+                     MakeTraceSourceAccessor (&LteEnbPhy::m_reportUlDataSinr),
+                     "ns3::LteEnbPhy::ReportUeSinrTracedCallback")
   ;
   return tid;
 }
@@ -888,6 +892,8 @@ LteEnbPhy::CreatePuschCqiReport (const SpectrumValue& sinr)
       ulcqi.m_ulCqi.m_sinr.push_back (sinrFp);
       i++;
     }
+
+  m_reportUlDataSinr (m_cellId, ComputeAvgSinr (sinr), (uint16_t) m_componentCarrierId);
   return (ulcqi);
 	
 }
@@ -1073,7 +1079,7 @@ LteEnbPhy::CreateSrsReport (uint16_t rnti, double srs)
   (*it).second++;
   if ((*it).second == m_srsSamplePeriod)
     {
-      m_reportUeSinr (m_cellId, rnti, srs, (uint16_t) m_componentCarrierId);
+      m_reportUlCtrlSinr (m_cellId, rnti, srs, (uint16_t) m_componentCarrierId);
       (*it).second = 0;
     }
 }
