@@ -603,13 +603,6 @@ private:
    * If equals to 0, no layer 3 filtering is applicable.
    */
   void DoSetRsrpFilterCoefficient (uint8_t rsrpFilterCoefficient);
-  /**
-   * \brief Compute average SINR among the RBs
-   *
-   * \param sinr
-   * \return the average SINR value
-   */
-  double ComputeAvgSinr (const SpectrumValue& sinr);
 
   // UE PHY SAP methods 
   virtual void DoSendMacPdu (Ptr<Packet> p);

@@ -487,7 +487,7 @@ private:
    * The `ReportUeSinr` trace source. Reporting the linear average of SRS SINR.
    * Exporting cell ID, RNTI, SINR in linear unit and ComponentCarrierId
    */
-  TracedCallback<uint16_t, uint16_t, double, uint8_t> m_reportUeSinr;
+  TracedCallback<uint16_t, uint16_t, double, uint8_t> m_reportUlCtrlSinr;
   /**
    * The `UeSinrSamplePeriod` trace source. The sampling period for reporting
    * UEs' SINR stats.
@@ -517,6 +517,13 @@ private:
    * PhyTransmissionStatParameters.
    */
   TracedCallback<PhyTransmissionStatParameters> m_dlPhyTransmission;
+
+  /**
+   * The `ReportUlDataSinr` trace source. Trace information regarding
+   * average SINR (see TS 36.214). Exporting cell ID, and
+   * SINR. Moreover it reports the m_componentCarrierId.
+   */
+  TracedCallback<uint16_t, double, uint16_t> m_reportUlDataSinr;
 
 }; // end of `class LteEnbPhy`
 

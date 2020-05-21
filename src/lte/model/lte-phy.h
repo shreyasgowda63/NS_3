@@ -227,6 +227,14 @@ public:
   */
   uint8_t GetComponentCarrierId ();
 
+  /**
+   * \brief Compute average SINR among the RBs
+   *
+   * \param sinr
+   * \return the average SINR value
+   */
+  static double ComputeAvgSinr (const SpectrumValue& sinr);
+
 protected:
   /// Pointer to the NetDevice where this PHY layer is attached.
   Ptr<LteNetDevice> m_netDevice;

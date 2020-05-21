@@ -76,6 +76,7 @@ transmitted.</li>
 <li>The MaxSize attribute is removed from the QueueBase base class and moved to subclasses. A new MaxSize attribute is therefore added to the DropTailQueue class, while the MaxQueueSize attribute of the WifiMacQueue class is renamed as MaxSize for API consistency.</li>
 <li>The applications have now a "EnableE2EStats" attribute.</li>
 <li>Added a new trace source <b>PhyRxPayloadBegin</b> in WifiPhy for tracing begin of PSDU reception.</li>
+<li>Added a new trace source <b>ReportUlDataSinr</b> in LteEnbPhy.</li>
 </ul>
 <h2>Changes to existing API:</h2>
 <ul>
@@ -84,6 +85,7 @@ transmitted.</li>
 <li>Functions <b>LteEnbPhy::ReceiveUlHarqFeedback</b> and <b>LteUePhy::ReceiveLteDlHarqFeedback</b> are renamed to <b>LteEnbPhy::ReportUlHarqFeedback</b> and <b>LteUePhy::EnqueueDlHarqFeedback</b>, respectively to avoid confusion about their functionality. <b>LteHelper</b> is updated accordingly.</li>
 <li>Now on, instead of <b>uint8_t</b>, <b>uint16_t</b> would be used to store a bandwidth value in LTE.</li>
 <li>The preferred way to declare instances of <b>CommandLine</b> is now through a macro: <b>COMMANDLINE (cmd)</b>.  This enables us to add the <b>CommandLine::Usage()</b> message to the Doxygen for the program.</li>
+<li>LteEnbPhy trace source <b>ReportUeSinr</b> renamed in <b>ReportUlCtrlSinr.</b></li>
 </ul>
 <h2>Changes to build system:</h2>
 <ul>
