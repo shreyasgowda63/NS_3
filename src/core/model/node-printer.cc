@@ -45,11 +45,11 @@ DefaultNodePrinter (std::ostream &os)
 {
   if (Simulator::GetContext () == Simulator::NO_CONTEXT)
     {
-      os << "-1";
+      os << "node=-1";
     }
   else
     {
-      os << Simulator::GetContext ();
+      os << "node=" << Simulator::GetContext ();
     }
 }
 

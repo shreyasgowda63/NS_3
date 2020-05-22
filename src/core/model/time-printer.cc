@@ -54,7 +54,7 @@ DefaultTimePrinter (std::ostream &os)
       // default C++ precision of 5
       os << std::setprecision (5);
     }
-  os << Simulator::Now ().As (Time::S);
+  os << "time_s=" << Simulator::Now ().GetSeconds ();
 
   os << std::setprecision (oldPrecision);
   os.flags (ff); // Restore stream flags

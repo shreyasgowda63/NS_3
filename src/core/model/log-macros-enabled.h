@@ -83,12 +83,11 @@
  * \internal
  * Logging implementation macro; should not be called directly.
  */
-#define NS_LOG_APPEND_LEVEL_PREFIX(level)                       \
-  if (g_log.IsEnabled (ns3::LOG_PREFIX_LEVEL))                  \
-    {                                                           \
-      std::clog << "[" << g_log.GetLevelLabel (level) << "] ";  \
-    }                                                           \
-
+#define NS_LOG_APPEND_LEVEL_PREFIX(level)                          \
+  if (g_log.IsEnabled (ns3::LOG_PREFIX_LEVEL))                     \
+    {                                                              \
+      std::clog << "level=" << g_log.GetLevelLabel (level) << ' '; \
+    }
 
 #ifndef NS_LOG_APPEND_CONTEXT
 /**
