@@ -442,7 +442,7 @@ WifiPhy::DoInitialize (void)
   m_isConstructed = true;
   if (m_frequencyChannelNumberInitialized == true)
     {
-      NS_LOG_DEBUG ("Frequency already initialized");
+      NS_LOG_DEBUG ("tag=frequency_already_initialized msg=\"Frequency already initialized\"");
       return;
     }
   InitializeFrequencyChannelNumber ();
@@ -903,7 +903,8 @@ WifiPhy::ConfigureDefaultsForStandard (WifiPhyStandard standard)
       break;
     case WIFI_PHY_STANDARD_UNSPECIFIED:
     default:
-      NS_LOG_WARN ("Configuring unspecified standard; performing no action");
+      NS_LOG_WARN ("tag=unspecified_standard"
+                   " msg=\"Configuring unspecified standard; performing no action\"");
       break;
     }
 }
@@ -1162,7 +1163,8 @@ WifiPhy::DefineChannelNumber (uint8_t channelNumber, WifiPhyStandard standard, u
   it = m_channelToFrequencyWidth.find (p);
   if (it != m_channelToFrequencyWidth.end ())
     {
-      NS_LOG_DEBUG ("channel number/standard already defined; returning false");
+      NS_LOG_DEBUG ("tag=channel_already_defined"
+                    " msg=\"Channel number/standard already defined; returning false\"");
       return false;
     }
   FrequencyWidthPair f = std::make_pair (frequency, channelWidth);
@@ -1188,12 +1190,15 @@ WifiPhy::FindChannelNumberForFrequencyWidth (uint16_t frequency, uint16_t width)
     }
   if (found)
     {
-      NS_LOG_DEBUG ("Found, returning " << +it->first.first);
+      NS_LOG_DEBUG ("tag=channel_for_frequency_width_found"
+                    " msg=\"Channel found\""
+                    " channel=" << +it->first.first);
       return (it->first.first);
     }
   else
     {
-      NS_LOG_DEBUG ("Not found, returning 0");
+      NS_LOG_DEBUG ("tag=channel_for_frequency_width_not_found"
+                    " msg=\"Channel not found, returning 0\"");
       return 0;
     }
 }
@@ -1209,16 +1214,20 @@ WifiPhy::ConfigureChannelForStandard (WifiPhyStandard standard)
       // If Frequency is already set, then see whether a ChannelNumber can
       // be found that matches Frequency and ChannelWidth. If so, configure
       // the ChannelNumber to that channel number. If not, set ChannelNumber to zero.
-      NS_LOG_DEBUG ("Frequency set; checking whether a channel number corresponds");
+      NS_LOG_DEBUG ("tag=frequency_set"
+                    " msg=\"Frequency set; checking whether a channel number corresponds\"");
       uint8_t channelNumberSearched = FindChannelNumberForFrequencyWidth (GetFrequency (), GetChannelWidth ());
       if (channelNumberSearched)
         {
-          NS_LOG_DEBUG ("Channel number found; setting to " << +channelNumberSearched);
+          NS_LOG_DEBUG ("tag=channel_for_standard_found"
+                        " msg=\"Channel number found\""
+                        " channel=" << +channelNumberSearched);
           SetChannelNumber (channelNumberSearched);
         }
       else
         {
-          NS_LOG_DEBUG ("Channel number not found; setting to zero");
+          NS_LOG_DEBUG ("tag=channel_for_standard_not_found"
+                        " msg=\"Channel number not found; setting to zero\"");
           SetChannelNumber (0);
         }
     }
@@ -1227,12 +1236,14 @@ WifiPhy::ConfigureChannelForStandard (WifiPhyStandard standard)
       // If the channel number is known for this particular standard or for
       // the unspecified standard, configure using the known values;
       // otherwise, this is a configuration error
-      NS_LOG_DEBUG ("Configuring for channel number " << +GetChannelNumber ());
+      NS_LOG_DEBUG ("tag=configure_channel_for_channel_number"
+                    " msg=\"Configuring channel for channel number\""
+                    " channel=" << +GetChannelNumber ());
       FrequencyWidthPair f = GetFrequencyWidthForChannelNumberStandard (GetChannelNumber (), standard);
       if (f.first == 0)
         {
           // the specific pair of number/standard is not known
-          NS_LOG_DEBUG ("Falling back to check WIFI_PHY_STANDARD_UNSPECIFIED");
+          NS_LOG_DEBUG ("tag=standard_unspecified_fallback msg=\"Falling back to check WIFI_PHY_STANDARD_UNSPECIFIED\"");
           f = GetFrequencyWidthForChannelNumberStandard (GetChannelNumber (), WIFI_PHY_STANDARD_UNSPECIFIED);
         }
       if (f.first == 0)
@@ -1241,7 +1252,10 @@ WifiPhy::ConfigureChannelForStandard (WifiPhyStandard standard)
         }
       else
         {
-          NS_LOG_DEBUG ("Setting frequency to " << f.first << "; width to " << +f.second);
+          NS_LOG_DEBUG ("tag=set_frequency_width"
+                        " msg=\"Setting width and frequency\""
+                        " frequency_mhz=" << f.first <<
+                        " width_mhz=" << +f.second);
           SetFrequency (f.first);
           SetChannelWidth (f.second);
         }
@@ -1317,19 +1331,24 @@ WifiPhy::SetFrequency (uint16_t frequency)
   NS_LOG_FUNCTION (this << frequency);
   if (m_isConstructed == false)
     {
-      NS_LOG_DEBUG ("Saving frequency configuration for initialization");
+      NS_LOG_DEBUG ("tag=save_frequency_for_initialization"
+                    " msg=\"Saving frequency configuration for initialization\""
+                    " frequency_mhz=" << frequency);
       m_initialFrequency = frequency;
       return;
     }
   if (GetFrequency () == frequency)
     {
-      NS_LOG_DEBUG ("No frequency change requested");
+      NS_LOG_DEBUG ("tag=no_frequency_change"
+                    " msg=\"No frequency change requested\""
+                    " frequency_mhz=" << frequency);
       return;
     }
   if (frequency == 0)
     {
       DoFrequencySwitch (0);
-      NS_LOG_DEBUG ("Setting frequency and channel number to zero");
+      NS_LOG_DEBUG ("tag=set_frequency_zero"
+                    " msg=\"Setting frequency and channel number to zero\"");
       m_channelCenterFrequency = 0;
       m_channelNumber = 0;
       return;
@@ -1340,31 +1359,31 @@ WifiPhy::SetFrequency (uint16_t frequency)
   uint8_t nch = FindChannelNumberForFrequencyWidth (frequency, GetChannelWidth ());
   if (nch != 0)
     {
-      NS_LOG_DEBUG ("Setting frequency " << frequency << " corresponds to channel " << +nch);
-      if (DoFrequencySwitch (frequency))
-        {
-          NS_LOG_DEBUG ("Channel frequency switched to " << frequency << "; channel number to " << +nch);
-          m_channelCenterFrequency = frequency;
-          m_channelNumber = nch;
-        }
-      else
-        {
-          NS_LOG_DEBUG ("Suppressing reassignment of frequency");
-        }
+      NS_LOG_DEBUG ("tag=set_frequency_channel"
+                    " msg=\"Setting frequency corresponding to channel\""
+                    " frequency_mhz=" << frequency <<
+                    " channel=" << +nch);
     }
   else
     {
-      NS_LOG_DEBUG ("Channel number is unknown for frequency " << frequency);
-      if (DoFrequencySwitch (frequency))
-        {
-          NS_LOG_DEBUG ("Channel frequency switched to " << frequency << "; channel number to " << 0);
-          m_channelCenterFrequency = frequency;
-          m_channelNumber = 0;
-        }
-      else
-        {
-          NS_LOG_DEBUG ("Suppressing reassignment of frequency");
-        }
+      NS_LOG_DEBUG ("tag=unknown_channel_for_frequency"
+                    " msg=\"Channel number is unknown for frequency\""
+                    " frequency_mhz=" << frequency);
+    }
+
+  if (DoFrequencySwitch (frequency))
+    {
+      NS_LOG_DEBUG ("tag=channel_frequency_switch"
+                    " msg=\"Channel frequency switched\""
+                    " frequency_mhz=" << frequency <<
+                    " channel=" << +nch);
+      m_channelCenterFrequency = frequency;
+      m_channelNumber = nch;
+    }
+  else
+    {
+      NS_LOG_DEBUG ("tag=suppress_frequency_reassignment"
+                    " msg=\"Suppressing reassignment of frequency\"");
     }
 }
 
@@ -1492,13 +1511,17 @@ WifiPhy::SetChannelNumber (uint8_t nch)
   NS_LOG_FUNCTION (this << +nch);
   if (m_isConstructed == false)
     {
-      NS_LOG_DEBUG ("Saving channel number configuration for initialization");
+      NS_LOG_DEBUG ("tag=save_channel_for_initialization"
+                    " msg=\"Saving channel number configuration for initialization\""
+                    " channel=" << +nch);
       m_initialChannelNumber = nch;
       return;
     }
   if (GetChannelNumber () == nch)
     {
-      NS_LOG_DEBUG ("No channel change requested");
+      NS_LOG_DEBUG ("tag=no_channel_change"
+                    " msg=\"No channel change requested\""
+                    " channel=" << +nch);
       return;
     }
   if (nch == 0)
@@ -1507,7 +1530,8 @@ WifiPhy::SetChannelNumber (uint8_t nch)
       // number for the requested frequency.  There is no need to call
       // DoChannelSwitch () because DoFrequencySwitch () should have been
       // called by the client
-      NS_LOG_DEBUG ("Setting channel number to zero");
+      NS_LOG_DEBUG ("tag=set_channel_zero"
+                    " msg=\"Setting channel number to zero\"");
       m_channelNumber = 0;
       return;
     }
@@ -1523,7 +1547,10 @@ WifiPhy::SetChannelNumber (uint8_t nch)
     {
       if (DoChannelSwitch (nch))
         {
-          NS_LOG_DEBUG ("Setting frequency to " << f.first << "; width to " << +f.second);
+         NS_LOG_DEBUG ("tag=channel_frequency_width_switch"
+                       " msg=\"Setting channel frequency and width\""
+                        " frequency_mhz=" << f.first <<
+                        " width_mhz=" << f.second);
           m_channelCenterFrequency = f.first;
           SetChannelWidth (f.second);
           m_channelNumber = nch;
@@ -1531,7 +1558,7 @@ WifiPhy::SetChannelNumber (uint8_t nch)
       else
         {
           // Subclass may have suppressed (e.g. waiting for state change)
-          NS_LOG_DEBUG ("Channel switch suppressed");
+          NS_LOG_DEBUG ("tag=suppress_channel_switch msg=\"Channel switch suppressed\"");
         }
     }
   else
@@ -1554,7 +1581,9 @@ WifiPhy::DoChannelSwitch (uint8_t nch)
   if (!IsInitialized ())
     {
       //this is not channel switch, this is initialization
-      NS_LOG_DEBUG ("initialize to channel " << +nch);
+      NS_LOG_DEBUG ("tag=initialize_channel"
+                    " msg=\"Initialize to channel\""
+                    " channel=" << +nch);
       return true;
     }
 
@@ -1562,14 +1591,16 @@ WifiPhy::DoChannelSwitch (uint8_t nch)
   switch (m_state->GetState ())
     {
     case WifiPhyState::RX:
-      NS_LOG_DEBUG ("drop packet because of channel switching while reception");
+      NS_LOG_DEBUG ("tag=channel_switch_drop"
+                    " msg=\"Drop packet because of channel switching while reception\"");
       m_endPhyRxEvent.Cancel ();
       m_endRxEvent.Cancel ();
       m_endPreambleDetectionEvent.Cancel ();
       goto switchChannel;
       break;
     case WifiPhyState::TX:
-      NS_LOG_DEBUG ("channel switching postponed until end of current transmission");
+      NS_LOG_DEBUG ("tag=channel_switch_postpone"
+                    " msg=\"Channel switching postponed until end of current transmission\"");
       Simulator::Schedule (GetDelayUntilIdle (), &WifiPhy::SetChannelNumber, this, nch);
       break;
     case WifiPhyState::CCA_BUSY:
@@ -1582,7 +1613,8 @@ WifiPhy::DoChannelSwitch (uint8_t nch)
       goto switchChannel;
       break;
     case WifiPhyState::SLEEP:
-      NS_LOG_DEBUG ("channel switching ignored in sleep mode");
+      NS_LOG_DEBUG ("tag=channel_switch_sleep"
+                    " msg=\"Channel switching ignored in sleep mode\"");
       break;
     default:
       NS_ASSERT (false);
@@ -1593,7 +1625,10 @@ WifiPhy::DoChannelSwitch (uint8_t nch)
 
 switchChannel:
 
-  NS_LOG_DEBUG ("switching channel " << +GetChannelNumber () << " -> " << +nch);
+  NS_LOG_DEBUG ("tag=switch_channel"
+                " msg=\"Switching channel\""
+                " from=" << +GetChannelNumber () <<
+                " to=" << +nch);
   m_state->SwitchToChannelSwitching (GetChannelSwitchDelay ());
   m_interference.EraseEvents ();
   /*
@@ -1614,7 +1649,9 @@ WifiPhy::DoFrequencySwitch (uint16_t frequency)
   if (!IsInitialized ())
     {
       //this is not channel switch, this is initialization
-      NS_LOG_DEBUG ("start at frequency " << frequency);
+      NS_LOG_DEBUG ("tag=start_frequency"
+                    " msg=\"Start at frequency\""
+                    " frequency_mhz=" << frequency);
       return true;
     }
 
@@ -1622,14 +1659,16 @@ WifiPhy::DoFrequencySwitch (uint16_t frequency)
   switch (m_state->GetState ())
     {
     case WifiPhyState::RX:
-      NS_LOG_DEBUG ("drop packet because of channel/frequency switching while reception");
+      NS_LOG_DEBUG ("tag=frequency_switch_drop"
+                    " msg=\"Drop packet because of channel/frequency switching while reception\"");
       m_endPhyRxEvent.Cancel ();
       m_endRxEvent.Cancel ();
       m_endPreambleDetectionEvent.Cancel ();
       goto switchFrequency;
       break;
     case WifiPhyState::TX:
-      NS_LOG_DEBUG ("channel/frequency switching postponed until end of current transmission");
+      NS_LOG_DEBUG ("tag=frequency_switch_postpone"
+                    " msg=\"Channel/frequency switching postponed until end of current transmission\"");
       Simulator::Schedule (GetDelayUntilIdle (), &WifiPhy::SetFrequency, this, frequency);
       break;
     case WifiPhyState::CCA_BUSY:
@@ -1642,7 +1681,8 @@ WifiPhy::DoFrequencySwitch (uint16_t frequency)
       goto switchFrequency;
       break;
     case WifiPhyState::SLEEP:
-      NS_LOG_DEBUG ("frequency switching ignored in sleep mode");
+      NS_LOG_DEBUG ("tag=frequency_switch_sleep"
+                    " msg=\"Frequency switching ignored in sleep mode\"");
       break;
     default:
       NS_ASSERT (false);
@@ -1653,7 +1693,10 @@ WifiPhy::DoFrequencySwitch (uint16_t frequency)
 
 switchFrequency:
 
-  NS_LOG_DEBUG ("switching frequency " << GetFrequency () << " -> " << frequency);
+  NS_LOG_DEBUG ("tag=frequency_switch"
+                " msg=\"Switching frequency\""
+                " frequency_old_mhz=" << GetFrequency () <<
+                " frequency_mhz=" << frequency);
   m_state->SwitchToChannelSwitching (GetChannelSwitchDelay ());
   m_interference.EraseEvents ();
   /*
@@ -1675,24 +1718,29 @@ WifiPhy::SetSleepMode (void)
   switch (m_state->GetState ())
     {
     case WifiPhyState::TX:
-      NS_LOG_DEBUG ("setting sleep mode postponed until end of current transmission");
+      NS_LOG_DEBUG ("tag=sleep_postpone_tx"
+                    " msg=\"Setting sleep mode postponed until end of current transmission\"");
       Simulator::Schedule (GetDelayUntilIdle (), &WifiPhy::SetSleepMode, this);
       break;
     case WifiPhyState::RX:
-      NS_LOG_DEBUG ("setting sleep mode postponed until end of current reception");
+      NS_LOG_DEBUG ("tag=sleep_postpone_rx"
+                    " msg=\"Setting sleep mode postponed until end of current reception\"");
       Simulator::Schedule (GetDelayUntilIdle (), &WifiPhy::SetSleepMode, this);
       break;
     case WifiPhyState::SWITCHING:
-      NS_LOG_DEBUG ("setting sleep mode postponed until end of channel switching");
+      NS_LOG_DEBUG ("tag=sleep_postpone_switching"
+                    " msg=\"Setting sleep mode postponed until end of channel switching\"");
       Simulator::Schedule (GetDelayUntilIdle (), &WifiPhy::SetSleepMode, this);
       break;
     case WifiPhyState::CCA_BUSY:
     case WifiPhyState::IDLE:
-      NS_LOG_DEBUG ("setting sleep mode");
+      NS_LOG_DEBUG ("tag=sleep_idle"
+                    " msg=\"Setting sleep mode\"");
       m_state->SwitchToSleep ();
       break;
     case WifiPhyState::SLEEP:
-      NS_LOG_DEBUG ("already in sleep mode");
+      NS_LOG_DEBUG ("tag=sleep_sleep"
+                    " msg=\"Already in sleep mode\"");
       break;
     default:
       NS_ASSERT (false);
@@ -1725,12 +1773,12 @@ WifiPhy::ResumeFromSleep (void)
     case WifiPhyState::CCA_BUSY:
     case WifiPhyState::SWITCHING:
       {
-        NS_LOG_DEBUG ("not in sleep mode, there is nothing to resume");
+        NS_LOG_DEBUG ("tag=not_sleep msg=\"Not in sleep mode, there is nothing to resume\"");
         break;
       }
     case WifiPhyState::SLEEP:
       {
-        NS_LOG_DEBUG ("resuming from sleep mode");
+        NS_LOG_DEBUG ("tag=resume_from_sleep msg=\"Resuming from sleep mode\"");
         Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW);
         m_state->SwitchFromSleep (delayUntilCcaEnd);
         break;
@@ -1756,12 +1804,12 @@ WifiPhy::ResumeFromOff (void)
     case WifiPhyState::SWITCHING:
     case WifiPhyState::SLEEP:
       {
-        NS_LOG_DEBUG ("not in off mode, there is nothing to resume");
+        NS_LOG_DEBUG ("tag=not_off msg=\"Not in off mode, there is nothing to resume\"");
         break;
       }
     case WifiPhyState::OFF:
       {
-        NS_LOG_DEBUG ("resuming from off mode");
+        NS_LOG_DEBUG ("tag=resume_from_off msg=\"Resuming from off mode\"");
         Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW);
         m_state->SwitchFromOff (delayUntilCcaEnd);
         break;
@@ -2557,7 +2605,7 @@ WifiPhy::Send (Ptr<const WifiPsdu> psdu, WifiTxVector txVector)
 
   if (m_state->IsStateSleep ())
     {
-      NS_LOG_DEBUG ("Dropping packet because in sleep mode");
+      NS_LOG_DEBUG ("tag=drop_sleep msg=\"Dropping packet because in sleep mode\"");
       NotifyTxDrop (psdu);
       return;
     }
@@ -2578,16 +2626,16 @@ WifiPhy::Send (Ptr<const WifiPsdu> psdu, WifiTxVector txVector)
 
   if (m_powerRestricted)
     {
-      NS_LOG_DEBUG ("Transmitting with power restriction");
+      NS_LOG_DEBUG ("tag=power_restriction msg=\"Transmitting with power restriction\"");
     }
   else
     {
-      NS_LOG_DEBUG ("Transmitting without power restriction");
+      NS_LOG_DEBUG ("tag=no_power_restriction msg=\"Transmitting without power restriction\"");
     }
 
   if (m_state->GetState () == WifiPhyState::OFF)
     {
-      NS_LOG_DEBUG ("Transmission canceled because device is OFF");
+      NS_LOG_DEBUG ("tag=tx_off msg=\"Transmission canceled because device is OFF\"");
       return;
     }
 
@@ -2624,7 +2672,10 @@ WifiPhy::StartReceiveHeader (Ptr<Event> event)
 
   InterferenceHelper::SnrPer snrPer = m_interference.CalculateNonHtPhyHeaderSnrPer (event);
   double snr = snrPer.snr;
-  NS_LOG_DEBUG ("snr(dB)=" << RatioToDb (snrPer.snr) << ", per=" << snrPer.per);
+  NS_LOG_DEBUG ("tag=start_rx_header"
+                " msg=\"Start receive header\""
+                " snr_db=" << RatioToDb (snrPer.snr) <<
+                " per=" << snrPer.per);
 
   if (!m_preambleDetectionModel || (m_preambleDetectionModel->IsPreambleDetected (event->GetRxPowerW (), snr, m_channelWidth)))
     {
@@ -2650,7 +2701,7 @@ WifiPhy::StartReceiveHeader (Ptr<Event> event)
     }
   else
     {
-      NS_LOG_DEBUG ("Drop packet because PHY preamble detection failed");
+      NS_LOG_DEBUG ("tag=preamble_detection_failed msg=\"Drop packet because PHY preamble detection failed\"");
       NotifyRxDrop (event->GetPsdu (), PREAMBLE_DETECT_FAILURE);
       m_interference.NotifyRxEnd ();
       m_currentEvent = 0;
@@ -2675,7 +2726,7 @@ WifiPhy::ContinueReceiveHeader (Ptr<Event> event)
 
   if (m_random->GetValue () > snrPer.per) //non-HT PHY header reception succeeded
     {
-      NS_LOG_DEBUG ("Received non-HT PHY header");
+      NS_LOG_DEBUG ("tag=rx_header_nonht msg=\"Received non-HT PHY header\"");
       WifiTxVector txVector = event->GetTxVector ();
       Time remainingRxDuration = event->GetEndTime () - Simulator::Now ();
       m_state->SwitchMaybeToCcaBusy (remainingRxDuration);
@@ -2684,7 +2735,7 @@ WifiPhy::ContinueReceiveHeader (Ptr<Event> event)
     }
   else //non-HT PHY header reception failed
     {
-      NS_LOG_DEBUG ("Abort reception because non-HT PHY header reception failed");
+      NS_LOG_DEBUG ("tag=abort_header_nonht msg=\"Abort reception because non-HT PHY header reception failed\"");
       AbortCurrentReception (L_SIG_FAILURE);
       if (event->GetEndTime () > (Simulator::Now () + m_state->GetDelayUntilIdle ()))
         {
@@ -2705,7 +2756,7 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, double rxPowerW)
 
   if (m_state->GetState () == WifiPhyState::OFF)
     {
-      NS_LOG_DEBUG ("Cannot start RX because device is OFF");
+      NS_LOG_DEBUG ("tag=rx_off msg=\"Cannot start RX because device is OFF\"");
       if (endRx > (Simulator::Now () + m_state->GetDelayUntilIdle ()))
         {
           MaybeCcaBusyDuration ();
@@ -2715,7 +2766,7 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, double rxPowerW)
 
   if (ppdu->IsTruncatedTx ())
     {
-      NS_LOG_DEBUG ("Packet reception stopped because transmitter has been switched off");
+      NS_LOG_DEBUG ("tag=truncated_rx_preamble msg=\"Packet reception stopped because transmitter has been switched off\"");
       if (endRx > (Simulator::Now () + m_state->GetDelayUntilIdle ()))
         {
           MaybeCcaBusyDuration ();
@@ -2726,7 +2777,7 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, double rxPowerW)
   if (!txVector.GetModeInitialized ())
     {
       //If SetRate method was not called above when filling in txVector, this means the PHY does support the rate indicated in PHY SIG headers
-      NS_LOG_DEBUG ("drop packet because of unsupported RX mode");
+      NS_LOG_DEBUG ("tag=unsupported_rx_preamble msg=\"Drop packet because of unsupported RX mode\"");
       NotifyRxDrop (psdu, UNSUPPORTED_SETTINGS);
       if (endRx > (Simulator::Now () + m_state->GetDelayUntilIdle ()))
         {
@@ -2738,7 +2789,7 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, double rxPowerW)
   switch (m_state->GetState ())
     {
     case WifiPhyState::SWITCHING:
-      NS_LOG_DEBUG ("drop packet because of channel switching");
+      NS_LOG_DEBUG ("tag=drop_switching msg=\"Drop packet because of channel switching\"");
       NotifyRxDrop (psdu, CHANNEL_SWITCHING);
       /*
        * Packets received on the upcoming channel are added to the event list
@@ -2761,13 +2812,14 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, double rxPowerW)
           && m_frameCaptureModel->CaptureNewFrame (m_currentEvent, event))
         {
           AbortCurrentReception (FRAME_CAPTURE_PACKET_SWITCH);
-          NS_LOG_DEBUG ("Switch to new packet");
+          NS_LOG_DEBUG ("tag=capture_rx msg=\"Switch to new packet\"");
           StartRx (event, rxPowerW);
         }
       else
         {
-          NS_LOG_DEBUG ("Drop packet because already in Rx (power=" <<
-                        rxPowerW << "W)");
+          NS_LOG_DEBUG ("tag=drop_already_rx"
+                        " msg=\"Drop packet because already in Rx\""
+                        " power_w=" << rxPowerW);
           NotifyRxDrop (psdu, RXING);
           if (endRx > (Simulator::Now () + m_state->GetDelayUntilIdle ()))
             {
@@ -2777,8 +2829,9 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, double rxPowerW)
         }
       break;
     case WifiPhyState::TX:
-      NS_LOG_DEBUG ("Drop packet because already in Tx (power=" <<
-                    rxPowerW << "W)");
+      NS_LOG_DEBUG ("tag=drop_already_tx"
+                    " msg=\"Drop packet because already in Tx\""
+                    " power_w=" << rxPowerW);
       NotifyRxDrop (psdu, TXING);
       if (endRx > (Simulator::Now () + m_state->GetDelayUntilIdle ()))
         {
@@ -2794,13 +2847,14 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, double rxPowerW)
               && m_frameCaptureModel->CaptureNewFrame (m_currentEvent, event))
             {
               AbortCurrentReception (FRAME_CAPTURE_PACKET_SWITCH);
-              NS_LOG_DEBUG ("Switch to new packet");
+              NS_LOG_DEBUG ("tag=capture_cca_busy msg=\"Switch to new packet\"");
               StartRx (event, rxPowerW);
             }
           else
             {
-              NS_LOG_DEBUG ("Drop packet because already in Rx (power=" <<
-                            rxPowerW << "W)");
+              NS_LOG_DEBUG ("drop_cca_busy"
+                            " msg=\"Drop packet because already in Rx\""
+                            " power_w=" << rxPowerW);
               NotifyRxDrop (psdu, RXING);
               if (endRx > (Simulator::Now () + m_state->GetDelayUntilIdle ()))
                 {
@@ -2818,7 +2872,7 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, double rxPowerW)
       StartRx (event, rxPowerW);
       break;
     case WifiPhyState::SLEEP:
-      NS_LOG_DEBUG ("Drop packet because in sleep mode");
+      NS_LOG_DEBUG ("tag=drop_sleep msg=\"Drop packet because in sleep mode\"");
       NotifyRxDrop (psdu, SLEEPING);
       if (endRx > (Simulator::Now () + m_state->GetDelayUntilIdle ()))
         {
@@ -2860,7 +2914,9 @@ WifiPhy::StartReceivePayload (Ptr<Event> event)
     {
       InterferenceHelper::SnrPer snrPer;
       snrPer = m_interference.CalculateHtPhyHeaderSnrPer (event);
-      NS_LOG_DEBUG ("snr(dB)=" << RatioToDb (snrPer.snr) << ", per=" << snrPer.per);
+      NS_LOG_DEBUG ("tag=rx_payload_ht"
+                    " snr_db=" << RatioToDb (snrPer.snr) <<
+                    " per=" << snrPer.per);
       canReceivePayload = (m_random->GetValue () > snrPer.per);
     }
   else
@@ -2873,24 +2929,30 @@ WifiPhy::StartReceivePayload (Ptr<Event> event)
     {
       if (txVector.GetNss () > GetMaxSupportedRxSpatialStreams ())
         {
-          NS_LOG_DEBUG ("Packet reception could not be started because not enough RX antennas");
+          NS_LOG_DEBUG ("tag=drop_not_enough_rx_antennas"
+                        " msg=\"Packet reception could not be started because not enough RX antennas\""
+                        " nss=" << +txVector.GetNss () <<
+                        " nss_max=" << +GetMaxSupportedRxSpatialStreams ());
           NotifyRxDrop (event->GetPsdu (), UNSUPPORTED_SETTINGS);
         }
       else if ((txVector.GetChannelWidth () >= 40) && (txVector.GetChannelWidth () > GetChannelWidth ()))
         {
-          NS_LOG_DEBUG ("Packet reception could not be started because not enough channel width");
+          NS_LOG_DEBUG ("tag=drop_not_enough_channel_width"
+                        " msg=\"Packet reception could not be started because not enough channel width\"");
           NotifyRxDrop (event->GetPsdu (), UNSUPPORTED_SETTINGS);
         }
       else if (!IsModeSupported (txMode) && !IsMcsSupported (txMode))
         {
-          NS_LOG_DEBUG ("Drop packet because it was sent using an unsupported mode (" << txMode << ")");
+          NS_LOG_DEBUG ("tag=drop_unsupported_mode"
+                        " msg=\"Drop packet because it was sent using an unsupported mode\""
+                        " mode=" << txMode);
           NotifyRxDrop (event->GetPsdu (), UNSUPPORTED_SETTINGS);
         }
       else
         {
           m_state->SwitchToRx (payloadDuration);
           m_endRxEvent = Simulator::Schedule (payloadDuration, &WifiPhy::EndReceive, this, event);
-          NS_LOG_DEBUG ("Receiving PSDU");
+          NS_LOG_DEBUG ("tag=rx_psdu msg=\"Receiving PSDU\"");
           m_phyRxPayloadBeginTrace (txVector, payloadDuration); //this callback (equivalent to PHY-RXSTART primitive) is triggered only if headers have been correctly decoded and that the mode within is supported
           if (txMode.GetModulationClass () == WIFI_MOD_CLASS_HE)
             {
@@ -2904,7 +2966,8 @@ WifiPhy::StartReceivePayload (Ptr<Event> event)
     }
   else //PHY reception failed
     {
-      NS_LOG_DEBUG ("Drop packet because HT PHY header reception failed");
+      NS_LOG_DEBUG ("tag=ht_header_drop"
+                    " msg=\"Drop packet because HT PHY header reception failed\"");
       NotifyRxDrop (event->GetPsdu (), SIG_A_FAILURE);
     }
   m_endRxEvent = Simulator::Schedule (payloadDuration, &WifiPhy::ResetReceive, this, event);
@@ -2947,9 +3010,13 @@ WifiPhy::EndReceive (Ptr<Event> event)
             }
           rxInfo = GetReceptionStatus (Create<WifiPsdu> (*mpdu, false),
                                        event, relativeStart, mpduDuration);
-          NS_LOG_DEBUG ("Extracted MPDU #" << i << ": duration: " << mpduDuration.GetNanoSeconds () << "ns" <<
-                        ", correct reception: " << rxInfo.first <<
-                        ", Signal/Noise: " << rxInfo.second.signal << "/" << rxInfo.second.noise << "dBm");
+          NS_LOG_DEBUG ("tag=extract_mpdu"
+                        " msg=\"Extracted MPDU\""
+                        " i=" << i <<
+                        " duration_ns=" << mpduDuration.GetNanoSeconds () <<
+                        " correct_reception=" << rxInfo.first <<
+                        " signal_dbm=" << rxInfo.second.signal <<
+                        " noise_dbm=" << rxInfo.second.noise);
           signalNoise = rxInfo.second; //same information for all MPDUs
           statusPerMpdu.push_back (rxInfo.first);
           receptionOkAtLeastForOneMpdu |= rxInfo.first;
@@ -2992,9 +3059,13 @@ WifiPhy::GetReceptionStatus (Ptr<const WifiPsdu> psdu, Ptr<Event> event, Time re
   InterferenceHelper::SnrPer snrPer;
   snrPer = m_interference.CalculatePayloadSnrPer (event, std::make_pair (relativeMpduStart, relativeMpduStart + mpduDuration));
 
-  NS_LOG_DEBUG ("mode=" << (event->GetTxVector ().GetMode ().GetDataRate (event->GetTxVector ())) <<
-                ", snr(dB)=" << RatioToDb (snrPer.snr) << ", per=" << snrPer.per << ", size=" << psdu->GetSize () <<
-                ", relativeStart = " << relativeMpduStart.GetNanoSeconds () << "ns, duration = " << mpduDuration.GetNanoSeconds () << "ns");
+  NS_LOG_DEBUG ("tag=rx_status"
+                " mode=" << (event->GetTxVector ().GetMode ().GetDataRate (event->GetTxVector ())) <<
+                " snr_db=" << RatioToDb (snrPer.snr) <<
+                " per=" << snrPer.per <<
+                " size_bytes=" << psdu->GetSize () <<
+                " relative_start_ns=" << relativeMpduStart.GetNanoSeconds () <<
+                " duration_ns=" << mpduDuration.GetNanoSeconds ());
 
   // There are two error checks: PER and receive error model check.
   // PER check models is typical for Wi-Fi and is based on signal modulation;
@@ -3006,12 +3077,16 @@ WifiPhy::GetReceptionStatus (Ptr<const WifiPsdu> psdu, Ptr<Event> event, Time re
   if (m_random->GetValue () > snrPer.per &&
       !(m_postReceptionErrorModel && m_postReceptionErrorModel->IsCorrupt (psdu->GetPacket ()->Copy ())))
     {
-      NS_LOG_DEBUG ("Reception succeeded: " << psdu);
+      NS_LOG_DEBUG ("tag=rx_succeeded"
+                    " msg=\"Reception succeeded\""
+                    " psdu=" << psdu);
       return std::make_pair (true, signalNoise);
     }
   else
     {
-      NS_LOG_DEBUG ("Reception failed: " << psdu);
+      NS_LOG_DEBUG ("tag=rx_failed"
+                    " msg=\"Reception failed\""
+                    " psdu=" << psdu);
       return std::make_pair (false, signalNoise);
     }
 }
@@ -4098,7 +4173,9 @@ WifiPhy::SwitchMaybeToCcaBusy (void)
   Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW);
   if (!delayUntilCcaEnd.IsZero ())
     {
-      NS_LOG_DEBUG ("Calling SwitchMaybeToCcaBusy for " << delayUntilCcaEnd.As (Time::S));
+      NS_LOG_DEBUG ("tag=call_switch_maybe_to_cca_busy"
+                    " msg=\"Calling SwitchMaybeToCcaBusy\""
+                    " delay_until_cca_end_s" << delayUntilCcaEnd.GetSeconds ());
       m_state->SwitchMaybeToCcaBusy (delayUntilCcaEnd);
     }
 }
@@ -4166,7 +4243,9 @@ WifiPhy::StartRx (Ptr<Event> event, double rxPowerW)
 {
   NS_LOG_FUNCTION (this << *event << rxPowerW);
 
-  NS_LOG_DEBUG ("sync to signal (power=" << rxPowerW << "W)");
+  NS_LOG_DEBUG ("tag=sync_to_signal"
+                " msg=\"Sync to signal with power {power_w}\""
+                " power_w=" << rxPowerW);
   m_interference.NotifyRxStart (); //We need to notify it now so that it starts recording events
 
   if (!m_endPreambleDetectionEvent.IsRunning ())
@@ -4177,7 +4256,9 @@ WifiPhy::StartRx (Ptr<Event> event, double rxPowerW)
     }
   else if ((m_frameCaptureModel != 0) && (rxPowerW > m_currentEvent->GetRxPowerW ()))
     {
-      NS_LOG_DEBUG ("Received a stronger signal during preamble detection: drop current packet and switch to new packet");
+      NS_LOG_DEBUG ("tag=frame_capture"
+                    " msg=\"received a stronger signal during preamble detection: drop current "
+                    "packet and switch to new packet\"");
       NotifyRxDrop (m_currentEvent->GetPsdu (), PREAMBLE_DETECTION_PACKET_SWITCH);
       m_interference.NotifyRxEnd ();
       m_endPreambleDetectionEvent.Cancel ();
@@ -4188,7 +4269,8 @@ WifiPhy::StartRx (Ptr<Event> event, double rxPowerW)
     }
   else
     {
-      NS_LOG_DEBUG ("Drop packet because RX is already decoding preamble");
+      NS_LOG_DEBUG ("tag=frame_drop"
+                    " msg=\"Drop packet because RX is already decoding preamble\"");
       NotifyRxDrop (event->GetPsdu (), BUSY_DECODING_PREAMBLE);
       return;
     }
