@@ -73,8 +73,8 @@
 #define NS_LOG_APPEND_FUNC_PREFIX                               \
   if (g_log.IsEnabled (ns3::LOG_PREFIX_FUNC))                   \
     {                                                           \
-      std::clog << g_log.Name () << ":"                         \
-                << __FUNCTION__ << "(): ";                      \
+      std::clog << "component=" << g_log.Name ()                \
+                << " func=" << __FUNCTION__ << " ";             \
     }                                                           \
 
 /**
