@@ -416,14 +416,18 @@ ApWifiMac::GetSupportedRates (void) const
     {
       WifiMode mode = m_phy->GetMode (i);
       uint64_t modeDataRate = mode.GetDataRate (m_phy->GetChannelWidth ());
-      NS_LOG_DEBUG ("Adding supported rate of " << modeDataRate);
+      NS_LOG_DEBUG ("tag=add_supported_rate"
+                    " msg=\"Adding supported rate\""
+                    " rate_bps=" << modeDataRate);
       rates.AddSupportedRate (modeDataRate);
       //Add rates that are part of the BSSBasicRateSet (manufacturer dependent!)
       //here we choose to add the mandatory rates to the BSSBasicRateSet,
       //except for 802.11b where we assume that only the non HR-DSSS rates are part of the BSSBasicRateSet
       if (mode.IsMandatory () && (mode.GetModulationClass () != WIFI_MOD_CLASS_HR_DSSS))
         {
-          NS_LOG_DEBUG ("Adding basic mode " << mode.GetUniqueName ());
+          NS_LOG_DEBUG ("tag=add_basic_mode"
+                        " msg=\"Adding basic mode\""
+                        " mode=" << mode.GetUniqueName ());
           m_stationManager->AddBasicMode (mode);
         }
     }
@@ -432,7 +436,9 @@ ApWifiMac::GetSupportedRates (void) const
     {
       WifiMode mode = m_stationManager->GetBasicMode (j);
       uint64_t modeDataRate = mode.GetDataRate (m_phy->GetChannelWidth ());
-      NS_LOG_DEBUG ("Setting basic rate " << mode.GetUniqueName ());
+      NS_LOG_DEBUG ("tag=set_basic_rate"
+                    " msg=\"Setting basic rate\""
+                    " mode=" << mode.GetUniqueName ());
       rates.SetBasicRate (modeDataRate);
     }
   //If it is a HT AP, then add the BSSMembershipSelectorSet
@@ -600,7 +606,9 @@ ApWifiMac::GetHtOperation (void) const
           if (dataRate > maxSupportedRate)
             {
               maxSupportedRate = dataRate;
-              NS_LOG_DEBUG ("Updating maxSupportedRate to " << maxSupportedRate);
+              NS_LOG_DEBUG ("tag=update_max_supported_rate"
+                            " msg=\"Updating maxSupportedRate\""
+                            " max_supported_rate=" << maxSupportedRate);
             }
         }
       uint8_t maxSpatialStream = m_phy->GetMaxSupportedTxSpatialStreams ();
@@ -978,7 +986,9 @@ ApWifiMac::TxOk (const WifiMacHeader &hdr)
   if ((hdr.IsAssocResp () || hdr.IsReassocResp ())
       && m_stationManager->IsWaitAssocTxOk (hdr.GetAddr1 ()))
     {
-      NS_LOG_DEBUG ("associated with sta=" << hdr.GetAddr1 ());
+      NS_LOG_DEBUG ("tag=assoc_response"
+                    " msg=\"Associated with STA\""
+                    " sta_addr=" << hdr.GetAddr1 ());
       m_stationManager->RecordGotAssocTxOk (hdr.GetAddr1 ());
     }
   else if (hdr.IsBeacon () && GetPcfSupported ())
@@ -1007,7 +1017,9 @@ ApWifiMac::TxFailed (const WifiMacHeader &hdr)
   if ((hdr.IsAssocResp () || hdr.IsReassocResp ())
       && m_stationManager->IsWaitAssocTxOk (hdr.GetAddr1 ()))
     {
-      NS_LOG_DEBUG ("association failed with sta=" << hdr.GetAddr1 ());
+      NS_LOG_DEBUG ("tag=assoc_failed"
+                    " msg=\"Association failed with STA\""
+                    " sta_addr=" << hdr.GetAddr1 ());
       m_stationManager->RecordGotAssocTxFailed (hdr.GetAddr1 ());
     }
   else if (hdr.IsCfPoll ())
@@ -1035,12 +1047,17 @@ ApWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
           Mac48Address to = hdr->GetAddr3 ();
           if (to == GetAddress ())
             {
-              NS_LOG_DEBUG ("frame for me from=" << from);
+              NS_LOG_DEBUG ("tag=rx_frame_for_ap"
+                            " msg=\"Frame for me\""
+                            " from=" << from);
               if (hdr->IsQosData ())
                 {
                   if (hdr->IsQosAmsdu ())
                     {
-                      NS_LOG_DEBUG ("Received A-MSDU from=" << from << ", size=" << packet->GetSize ());
+                      NS_LOG_DEBUG ("tag=rx_amsdu"
+                                    " msg=\"Received A-MSDU\""
+                                    " from=" << from <<
+                                    " size=" << packet->GetSize ());
                       DeaggregateAmsduAndForward (mpdu);
                       packet = 0;
                     }
@@ -1057,7 +1074,10 @@ ApWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
           else if (to.IsGroup ()
                    || m_stationManager->IsAssociated (to))
             {
-              NS_LOG_DEBUG ("forwarding frame from=" << from << ", to=" << to);
+              NS_LOG_DEBUG ("tag=forward_frame"
+                            " msg=\"Forwarding frame\""
+                            " from=" << from <<
+                            " to=" << to);
               Ptr<Packet> copy = packet->Copy ();
 
               //If the frame we are forwarding is of type QoS Data,
@@ -1103,7 +1123,9 @@ ApWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
           Ssid ssid = probeRequestHeader.GetSsid ();
           if (ssid == GetSsid () || ssid.IsBroadcast ())
             {
-              NS_LOG_DEBUG ("Probe request received from " << from << ": send probe response");
+              NS_LOG_DEBUG ("tag=rx_probe_request"
+                            " msg=\"Probe request received, send probe response\""
+                            " from=" << from);
               SendProbeResp (from);
             }
           return;
@@ -1112,7 +1134,9 @@ ApWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
         {
           if (hdr->IsAssocReq ())
             {
-              NS_LOG_DEBUG ("Association request received from " << from);
+              NS_LOG_DEBUG ("tag=rx_assoc_request"
+                            " msg=\"Association request received\""
+                            " from=" << from);
               //first, verify that the the station's supported
               //rate set is compatible with our Basic Rate set
               MgtAssocRequestHeader assocReq;
@@ -1219,12 +1243,15 @@ ApWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
                 }
               if (problem)
                 {
-                  NS_LOG_DEBUG ("One of the Basic Rate set mode is not supported by the station: send association response with an error status");
+                  NS_LOG_DEBUG ("tag=assoc_basic_rate_not_supported"
+                                " msg=\"One of the Basic Rate set mode is not supported by the "
+                                "station: send association response with an error status\"");
                   SendAssocResp (hdr->GetAddr2 (), false, false);
                 }
               else
                 {
-                  NS_LOG_DEBUG ("The Basic Rate set modes are supported by the station");
+                  NS_LOG_DEBUG ("tag=assoc_basic_rate_set_supported"
+                                " msg=\"The Basic Rate set modes are supported by the station\"");
                   //record all its supported modes in its associated WifiRemoteStation
                   for (uint8_t j = 0; j < m_phy->GetNModes (); j++)
                     {
@@ -1301,14 +1328,17 @@ ApWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
                       m_nonErpStations.push_back (hdr->GetAddr2 ());
                       m_nonErpStations.unique ();
                     }
-                  NS_LOG_DEBUG ("Send association response with success status");
+                  NS_LOG_DEBUG ("tag=send_assoc_response_success"
+                                " msg=\"Send association response with success status\"");
                   SendAssocResp (hdr->GetAddr2 (), true, false);
                 }
               return;
             }
           else if (hdr->IsReassocReq ())
             {
-              NS_LOG_DEBUG ("Reassociation request received from " << from);
+              NS_LOG_DEBUG ("tag=rx_reassoc_request"
+                            " msg=\"Reassociation request received\""
+                            " from=" << from);
               //first, verify that the the station's supported
               //rate set is compatible with our Basic Rate set
               MgtReassocRequestHeader reassocReq;
@@ -1415,12 +1445,15 @@ ApWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
                 }
               if (problem)
                 {
-                  NS_LOG_DEBUG ("One of the Basic Rate set mode is not supported by the station: send reassociation response with an error status");
+                  NS_LOG_DEBUG ("tag=reassoc_basic_rate_not_supported"
+                                " msg=\"One of the Basic Rate set mode is not supported by the "
+                                "station: send reassociation response with an error status\"");
                   SendAssocResp (hdr->GetAddr2 (), false, true);
                 }
               else
                 {
-                  NS_LOG_DEBUG ("The Basic Rate set modes are supported by the station");
+                  NS_LOG_DEBUG ("tag=reassoc_basic_rate_set_supported"
+                                " msg=\"The Basic Rate set modes are supported by the station\"");
                   //update all its supported modes in its associated WifiRemoteStation
                   for (uint8_t j = 0; j < m_phy->GetNModes (); j++)
                     {
@@ -1489,14 +1522,17 @@ ApWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
                       m_nonErpStations.push_back (hdr->GetAddr2 ());
                       m_nonErpStations.unique ();
                     }
-                  NS_LOG_DEBUG ("Send reassociation response with success status");
+                  NS_LOG_DEBUG ("tag=send_reassoc_response_success"
+                                " msg=\"Send reassociation response with success status\"");
                   SendAssocResp (hdr->GetAddr2 (), true, true);
                 }
               return;
             }
           else if (hdr->IsDisassociation ())
             {
-              NS_LOG_DEBUG ("Disassociation received from " << from);
+              NS_LOG_DEBUG ("tag=rx_disassociation"
+                            " msg=\"Disassociation received\""
+                            " from=" << from);
               m_stationManager->RecordDisassociated (from);
               for (std::map<uint16_t, Mac48Address>::const_iterator j = m_staList.begin (); j != m_staList.end (); j++)
                 {
@@ -1556,7 +1592,10 @@ ApWifiMac::DeaggregateAmsduAndForward (Ptr<WifiMacQueueItem> mpdu)
         {
           Mac48Address from = i.second.GetSourceAddr ();
           Mac48Address to = i.second.GetDestinationAddr ();
-          NS_LOG_DEBUG ("forwarding QoS frame from=" << from << ", to=" << to);
+          NS_LOG_DEBUG ("tag=forward_qos"
+                        " msg=\"Forwarding QoS frame\""
+                        " from=" << from <<
+                        " to=" << to);
           ForwardDown (i.first->Copy (), from, to, mpdu->GetHeader ().GetQosTid ());
         }
     }
@@ -1573,12 +1612,17 @@ ApWifiMac::DoInitialize (void)
       if (m_enableBeaconJitter)
         {
           Time jitter = MicroSeconds (static_cast<int64_t> (m_beaconJitter->GetValue (0, 1) * (GetBeaconInterval ().GetMicroSeconds ())));
-          NS_LOG_DEBUG ("Scheduling initial beacon for access point " << GetAddress () << " at time " << jitter);
+          NS_LOG_DEBUG ("tag=schedule_initial_beacon_jitter"
+                        " msg=\"Scheduling initial beacon with jitter\""
+                        " ap_addr=" << GetAddress () <<
+                        " jitter_us=" << jitter.ToDouble (Time::US));
           m_beaconEvent = Simulator::Schedule (jitter, &ApWifiMac::SendOneBeacon, this);
         }
       else
         {
-          NS_LOG_DEBUG ("Scheduling initial beacon for access point " << GetAddress () << " at time 0");
+          NS_LOG_DEBUG ("tag=schedule_initial_beacon_no_jitter"
+                        " msg=\"Scheduling initial beacon without jitter\""
+                        " ap_addr=" << GetAddress ());
           m_beaconEvent = Simulator::ScheduleNow (&ApWifiMac::SendOneBeacon, this);
         }
     }
