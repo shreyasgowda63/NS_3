@@ -214,13 +214,16 @@ Time::SetResolution (enum Unit unit, struct Resolution *resolution,
           quotient = coefficient[(int) unit] / coefficient[i];
           NS_ASSERT (quotient * coefficient[i] == coefficient[(int) unit]);
         }
-      NS_LOG_DEBUG ("SetResolution for unit " << (int) unit <<
-                    " loop iteration " << i <<
-                    " has shift " << shift << " has quotient " << quotient);
       int64_t factor = static_cast<int64_t> (std::pow (10, std::fabs (shift)) * quotient);
       double realFactor = std::pow (10, (double) shift)
         * static_cast<double> (coefficient[i]) / coefficient[(int) unit];
-      NS_LOG_DEBUG ("SetResolution factor " << factor << " real factor " << realFactor);
+      NS_LOG_DEBUG ("tag=set_resolution"
+                    " unit=" << (int) unit <<
+                    " loop_iteration=" << i <<
+                    " shift=" << shift <<
+                    " quotient=" << quotient <<
+                    " factor=" << factor <<
+                    " real_factor=" << realFactor);
       struct Information *info = &resolution->info[i];
       info->factor = factor;
       // here we could equivalently check for realFactor == 1.0 but it's better
