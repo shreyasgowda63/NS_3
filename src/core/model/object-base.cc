@@ -85,12 +85,16 @@ ObjectBase::ConstructSelf (const AttributeConstructionList &attributes)
   do
     {
       // loop over all attributes in object type
-      NS_LOG_DEBUG ("construct tid=" << tid.GetName () << ", params=" << tid.GetAttributeN ());
+      NS_LOG_DEBUG ("tag=construct_self"
+                    " object=" << tid.GetName () <<
+                    " params=" << tid.GetAttributeN ());
       for (uint32_t i = 0; i < tid.GetAttributeN (); i++)
         {
           struct TypeId::AttributeInformation info = tid.GetAttribute (i);
-          NS_LOG_DEBUG ("try to construct \"" << tid.GetName () << "::" <<
-                        info.name << "\"");
+          NS_LOG_DEBUG ("tag=construct_attribute"
+                        " msg=\"Try to construct attribute\""
+                        " object=" << tid.GetName () <<
+                        " attribute=" << info.name);
           // is this attribute stored in this AttributeConstructionList instance ?
           Ptr<AttributeValue> value = attributes.Find (info.checker);
           // See if this attribute should not be set here in the
@@ -145,8 +149,10 @@ ObjectBase::ConstructSelf (const AttributeConstructionList &attributes)
                         {
                           if (DoSet (info.accessor, info.checker, StringValue (envval)))
                             {
-                              NS_LOG_DEBUG ("construct \"" << tid.GetName () << "::" <<
-                                            info.name << "\" from env var");
+                              NS_LOG_DEBUG ("tag=construct_env_var"
+                                            " msg=\"Construct attribute from environment variable\""
+                                            " object=" << tid.GetName () <<
+                                            " attribute=" << info.name);
                               break;
                             }
                         }
@@ -157,8 +163,10 @@ ObjectBase::ConstructSelf (const AttributeConstructionList &attributes)
 
           // No matching attribute value so we try to set the default value.
           DoSet (info.accessor, info.checker, *info.initialValue);
-          NS_LOG_DEBUG ("construct \"" << tid.GetName () << "::" <<
-                        info.name << "\" from initial value.");
+          NS_LOG_DEBUG ("tag=construct_default"
+                        " msg=\"Construct attribute from initial value\""
+                        " object=" << tid.GetName () <<
+                        " attribute=" << info.name);
         }
       tid = tid.GetParent ();
     }
