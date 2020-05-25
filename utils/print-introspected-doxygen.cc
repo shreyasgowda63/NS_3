@@ -971,6 +971,41 @@ PrintTypeIdBlocks (std::ostream & os)
 
 }  // PrintTypeIdBlocks
 
+ void
+ PrintTypeIdBlock (std::ostream & os, const TypeId tid)
+ {
+   NS_LOG_FUNCTION_NOARGS ();
+ 
+   NameMap nameMap = GetNameMap ();
+ 
+   // Iterate over the map, which will print the class names in
+   // alphabetical order.
+   for (auto item : nameMap)
+     {
+       // Handle only real TypeIds
+       if (item.second < 0)
+         {
+           continue ;
+         }
+       // Get the class's index out of the map;
+       TypeId tid = TypeId::GetRegistered (item.second);
+       std::string name = tid.GetName ();
+       
+       std::cout << commentStart << std::endl;
+       
+       std::cout << classStart << name << std::endl;
+       std::cout << std::endl;
+ 
+       PrintConfigPaths (std::cout, tid);
+       PrintAttributes (std::cout, tid);
+       PrintTraceSources (std::cout, tid);
+       PrintSize (std::cout, tid);
+       
+       std::cout << commentStop << std::endl;
+     }  // for class documentation
+ 
+ }  // PrintTypeIdBlock
+
 
 /***************************************************************
  *        Lists of All things
@@ -1577,14 +1612,30 @@ int main (int argc, char *argv[])
 {
   NS_LOG_FUNCTION_NOARGS ();
   bool outputText = false;
+  std::string typeId;
 
   CommandLine cmd;
   cmd.Usage ("Generate documentation for all ns-3 registered types, "
 	     "trace sources, attributes and global variables.");
   cmd.AddValue ("output-text", "format output as plain text", outputText);
+  cmd.AddValue ("TypeId", "Print docs for just the given TypeId", typeId);
   cmd.Parse (argc, argv);
     
   SetMarkup (outputText);
+  TypeId tid;
+
+  bool validTypeId = TypeId::LookupByNameFailSafe (typeId, &tid);
+   if (!validTypeId)
+   {
+      std::cerr << "Invalid TypeId name: " << typeId << std::endl;
+      std::cerr << cmd;
+      exit (1);
+   }
+   else
+   {
+      PrintTypeIdBlock (std::cout, tid);
+      return 0;
+   }
 
 
   // Create a Node, to force linking and instantiation of our TypeIds
