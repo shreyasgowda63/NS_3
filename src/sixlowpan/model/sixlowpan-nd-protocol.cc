@@ -1234,7 +1234,7 @@ void SixLowPanNdProtocol::SetInterfaceAs6lbr (Ptr<SixLowPanNetDevice> device)
   Ptr<Ipv6L3Protocol> ipv6 = GetNode ()->GetObject<Ipv6L3Protocol> ();
   int32_t interfaceId = ipv6->GetInterfaceForDevice (device);
   Ipv6Address borderAddress = Ipv6Address::GetAny ();
-  for (auto i=0; i<ipv6->GetNAddresses (interfaceId); i++)
+  for (uint32_t i=0; i<ipv6->GetNAddresses (interfaceId); i++)
     {
       if (ipv6->GetAddress (interfaceId, i).GetScope () == Ipv6InterfaceAddress::GLOBAL)
         {
