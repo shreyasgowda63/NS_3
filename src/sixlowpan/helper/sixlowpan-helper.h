@@ -79,6 +79,7 @@ public:
    * \return A container with the newly created SixLowPanNetDevices.
    */
   NetDeviceContainer Install (NetDeviceContainer c);
+  NetDeviceContainer InstallSixLowPanBorderRouter (NetDeviceContainer c, Ipv6Address baseAddr);
 
   /**
    * \brief Set a device to act as a 6LBR.
@@ -122,6 +123,9 @@ public:
   int64_t AssignStreams (NetDeviceContainer c, int64_t stream);
 
 private:
+
+  NetDeviceContainer InstallInternal (NetDeviceContainer c, bool borderRouter);
+
   ObjectFactory m_deviceFactory; //!< Object factory.
 };
 

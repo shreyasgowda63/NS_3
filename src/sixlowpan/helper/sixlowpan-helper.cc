@@ -28,6 +28,7 @@
 #include "ns3/names.h"
 #include "ns3/ipv6-l3-protocol.h"
 #include "ns3/boolean.h"
+#include "ns3/ipv6-address-helper.h"
 #include "ns3/sixlowpan-nd-context.h"
 #include "ns3/sixlowpan-nd-prefix.h"
 #include "ns3/sixlowpan-nd-prefix.h"
@@ -52,7 +53,7 @@ void SixLowPanHelper::SetDeviceAttribute (std::string n1,
   m_deviceFactory.Set (n1, v1);
 }
 
-NetDeviceContainer SixLowPanHelper::Install (const NetDeviceContainer c)
+NetDeviceContainer SixLowPanHelper::InstallInternal (const NetDeviceContainer c, bool borderRouter)
 {
   NS_LOG_FUNCTION (this);
 
@@ -107,9 +108,12 @@ NetDeviceContainer SixLowPanHelper::Install (const NetDeviceContainer c)
         {
           NS_ABORT_MSG ("SixLowPanNdProtocol -- failed to found a link local address from MAC address " << devAddr);
         }
-      Simulator::Schedule (Time (MilliSeconds (1)),
-                           &Icmpv6L4Protocol::SendRS, sixLowPanNdProtocol, linkLocalAddr, Ipv6Address::GetAllRoutersMulticast (), devAddr);
 
+      if (!borderRouter)
+        {
+          Simulator::Schedule (Time (MilliSeconds (1)),
+                               &Icmpv6L4Protocol::SendRS, sixLowPanNdProtocol, linkLocalAddr, Ipv6Address::GetAllRoutersMulticast (), devAddr);
+        }
     }
   return devs;
 }
@@ -142,6 +146,35 @@ void SixLowPanHelper::Set6LowPanBorderRouter (const Ptr<NetDevice> nd)
 
   return;
 }
+
+
+NetDeviceContainer SixLowPanHelper::Install (NetDeviceContainer c)
+{
+  NetDeviceContainer devices;
+
+  devices = InstallInternal (c, false);
+  Ipv6AddressHelper ipv6;
+  Ipv6InterfaceContainer deviceInterfaces;
+  deviceInterfaces = ipv6.AssignWithoutAddress (devices);
+
+  return devices;
+}
+
+NetDeviceContainer SixLowPanHelper::InstallSixLowPanBorderRouter (NetDeviceContainer c, Ipv6Address baseAddr)
+{
+  NetDeviceContainer devices;
+
+  devices = InstallInternal (c, true);
+
+  Ipv6AddressHelper ipv6;
+  ipv6.SetBase (baseAddr, Ipv6Prefix (64));
+  Ipv6InterfaceContainer deviceInterfaces;
+  deviceInterfaces = ipv6.Assign (devices.Get (0));
+
+  return devices;
+
+}
+
 
 void SixLowPanHelper::SetAdvertisedPrefix (const Ptr<NetDevice> nd, Ipv6Prefix prefix)
 {

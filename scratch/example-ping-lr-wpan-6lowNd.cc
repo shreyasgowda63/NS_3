@@ -16,6 +16,23 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Tommaso Pecorella <tommaso.pecorella@unifi.it>
+           Adnan Rashid <adnan.rashid@unifi.it>
+// Network topology
+//
+//    n0(6LBR)
+//  +---------+
+//  | UDP     |         n1
+//  +---------+    +---------+
+//  | IPv6    |    | IPv6    |
+//  +---------+    +---------+
+//  | 6LoWPAN |    | 6LoWPAN |
+//  +---------+    +---------+
+//  | lr-wpan |    | lr-wpan |
+//  +---------+    +---------+
+//      ||             ||
+//       ===============
+//
+
  */
 
 
@@ -77,33 +94,52 @@ int main (int argc, char** argv)
   internetv6.Install (nodes);
 
   SixLowPanHelper sixlowpan;
-  NetDeviceContainer devices = sixlowpan.Install (lrwpanDevices); 
-
+  NetDeviceContainer devices = sixlowpan.InstallSixLowPanBorderRouter (lrwpanDevices.Get (0), "2001:2::");
+  devices.Add (sixlowpan.Install (lrwpanDevices.Get (1)));
+//
+//  Ipv6AddressHelper ipv6;
+//  ipv6.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));
+//  Ipv6InterfaceContainer deviceInterfaces;
+//  deviceInterfaces = ipv6.Assign (devices.Get (0));
+//
+//  deviceInterfaces.Add (ipv6.AssignWithoutAddress (devices.Get (1)));
+//
   sixlowpan.Set6LowPanBorderRouter (devices.Get (0));
   sixlowpan.SetAdvertisedPrefix (devices.Get (0), Ipv6Prefix ("2001:2::", 64));
   sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:1::", 64));
   sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001:2::", 64));
 
-  Ipv6AddressHelper ipv6;
-  ipv6.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));
-  Ipv6InterfaceContainer deviceInterfaces;
-  deviceInterfaces = ipv6.Assign (devices);
+//std::cout<<"6LBR-Node-0"<<std::endl;
+//std::cout<<"MAC Address = "<<devices.Get(0)->GetAddress()<<std::endl;
+//std::cout<<"Link-local Multicast Address = "<<deviceInterfaces.GetLinkLocalAddress(0)<<std::endl;
+//std::cout<<"IPv6 Global Unicast Address = "<<deviceInterfaces.GetAddress(0,1)<<std::endl<<std::endl;
+//
+//
+//std::cout<<"6LR-Node-1"<<std::endl;
+//std::cout<<"MAC Address = "<<devices.Get(1)->GetAddress()<<std::endl;
+//std::cout<<"Link-local Multicast Address = "<<deviceInterfaces.GetLinkLocalAddress(1)<<std::endl;
+//std::cout<<"IPv6 Global Unicast Address of 6LR Node-1 = "<<deviceInterfaces.GetAddress(1,1)<<std::endl;
+
+
    
   uint32_t packetSize = 10;
   uint32_t maxPacketCount = 5;
   Time interPacketInterval = Seconds (1.);
   Ping6Helper ping6;
 
-  ping6.SetLocal (deviceInterfaces.GetAddress (0, 1));
-  ping6.SetRemote (deviceInterfaces.GetAddress (1, 1));
+  ping6.SetLocal ("2001:2::ff:fe00:1");
+  ping6.SetRemote ("2001:2::ff:fe00:2");
+  
+  // ping6.SetLocal (deviceInterfaces.GetAddress (0, 1));
+  // ping6.SetRemote (deviceInterfaces.GetAddress (1, 1));
 
   ping6.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
   ping6.SetAttribute ("Interval", TimeValue (interPacketInterval));
   ping6.SetAttribute ("PacketSize", UintegerValue (packetSize));
   ApplicationContainer apps = ping6.Install (nodes.Get (0));
 
-  apps.Start (Seconds (1.0));
-  apps.Stop (Seconds (10.0));
+  apps.Start (Seconds (5.0));
+  apps.Stop (Seconds (20.0));
 
   AsciiTraceHelper ascii;
   lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("Ping-6LoW-lr-wpan.tr"));
