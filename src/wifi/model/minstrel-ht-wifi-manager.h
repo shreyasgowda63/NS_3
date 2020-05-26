@@ -230,14 +230,15 @@ private:
   void DoReportRtsOk (WifiRemoteStation *station,
                       double ctsSnr, WifiMode ctsMode, double rtsSnr);
   void DoReportDataOk (WifiRemoteStation *station,
-                       double ackSnr, WifiMode ackMode, double dataSnr);
+                       double ackSnr, WifiMode ackMode,
+                       double dataSnr, uint16_t dataChannelWidth);
   void DoReportFinalRtsFailed (WifiRemoteStation *station);
   void DoReportFinalDataFailed (WifiRemoteStation *station);
   WifiTxVector DoGetDataTxVector (WifiRemoteStation *station);
   WifiTxVector DoGetRtsTxVector (WifiRemoteStation *station);
   void DoReportAmpduTxStatus (WifiRemoteStation *station,
                               uint8_t nSuccessfulMpdus, uint8_t nFailedMpdus,
-                              double rxSnr, double dataSnr);
+                              double rxSnr, double dataSnr, uint16_t dataChannelWidth);
   bool IsLowLatency (void) const;
   bool DoNeedRetransmission (WifiRemoteStation *st, Ptr<const Packet> packet, bool normally);
 

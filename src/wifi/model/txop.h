@@ -274,10 +274,11 @@ public:
    * \param blockAck BlockAck header.
    * \param recipient address of the recipient.
    * \param rxSnr SNR of the BlockAck itself in linear scale.
-   * \param txMode wifi mode.
    * \param dataSnr reported data SNR from the peer in linear scale.
+   * \param dataChannelWidth channel width (in MHz) used to send the Data.
    */
-  virtual void GotBlockAck (const CtrlBAckResponseHeader *blockAck, Mac48Address recipient, double rxSnr, WifiMode txMode, double dataSnr);
+  virtual void GotBlockAck (const CtrlBAckResponseHeader *blockAck, Mac48Address recipient,
+                            double rxSnr, double dataSnr, uint16_t dataChannelWidth);
   /**
    * Event handler when a BlockAck timeout has occurred.
    * \param nMpdus the number of MPDUs sent in the A-MPDU transmission that results in a BlockAck timeout.
