@@ -111,7 +111,10 @@ NetDeviceContainer SixLowPanHelper::InstallInternal (const NetDeviceContainer c,
 
       if (!borderRouter)
         {
-          Simulator::Schedule (Time (MilliSeconds (1)),
+          Ptr<UniformRandomVariable> uniformRandomVariable = CreateObject<UniformRandomVariable> ();;
+          Time jitter = Time (MilliSeconds (uniformRandomVariable->GetInteger (0, 100)));
+
+          Simulator::Schedule (jitter,
                                &Icmpv6L4Protocol::SendRS, sixLowPanNdProtocol, linkLocalAddr, Ipv6Address::GetAllRoutersMulticast (), devAddr);
         }
     }
