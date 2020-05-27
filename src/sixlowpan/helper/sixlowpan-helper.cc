@@ -88,34 +88,10 @@ NetDeviceContainer SixLowPanHelper::InstallInternal (const NetDeviceContainer c,
           node->AggregateObject (sixLowPanNdProtocol);
         }
       ipv6->Insert (sixLowPanNdProtocol, interfaceId);
-      ipv6->SetForwarding (interfaceId, true);
 
-      Address devAddr = device->GetAddress ();
-      Ipv6Address linkLocalAddr;
-      if (Mac16Address::IsMatchingType(devAddr))
+      if (borderRouter)
         {
-          linkLocalAddr = Ipv6Address::MakeAutoconfiguredLinkLocalAddress(Mac16Address::ConvertFrom (device->GetAddress ()));
-        }
-      else if (Mac64Address::IsMatchingType(devAddr))
-        {
-          linkLocalAddr = Ipv6Address::MakeAutoconfiguredLinkLocalAddress(Mac64Address::ConvertFrom (device->GetAddress ()));
-        }
-      else if (Mac48Address::IsMatchingType(devAddr))
-        {
-          linkLocalAddr = Ipv6Address::MakeAutoconfiguredLinkLocalAddress(Mac48Address::ConvertFrom (device->GetAddress ()));
-        }
-      else
-        {
-          NS_ABORT_MSG ("SixLowPanNdProtocol -- failed to found a link local address from MAC address " << devAddr);
-        }
-
-      if (!borderRouter)
-        {
-          Ptr<UniformRandomVariable> uniformRandomVariable = CreateObject<UniformRandomVariable> ();;
-          Time jitter = Time (MilliSeconds (uniformRandomVariable->GetInteger (0, 100)));
-
-          Simulator::Schedule (jitter,
-                               &Icmpv6L4Protocol::SendRS, sixLowPanNdProtocol, linkLocalAddr, Ipv6Address::GetAllRoutersMulticast (), devAddr);
+          ipv6->SetForwarding (interfaceId, true);
         }
     }
   return devs;

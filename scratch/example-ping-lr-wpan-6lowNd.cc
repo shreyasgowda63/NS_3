@@ -67,6 +67,9 @@ int main (int argc, char** argv)
   LogComponentEnable ("LrWpanNetDevice", LOG_LEVEL_ALL);
   LogComponentEnable ("SixLowPanNetDevice", LOG_LEVEL_ALL);
 #endif
+  LogComponentEnable ("Ipv6Interface", LOG_LEVEL_ALL);
+  LogComponentEnable ("Icmpv6L4Protocol", LOG_LEVEL_ALL);
+
 
   NodeContainer nodes;
   nodes.Create(2);
