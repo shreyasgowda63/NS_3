@@ -858,7 +858,7 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   Ptr<SixLowPanNetDevice> sixDevice = DynamicCast<SixLowPanNetDevice> (interface->GetDevice());
   NS_ASSERT_MSG (sixDevice != NULL, "SixLowPanNdProtocol cannot be installed on device different from SixLowPanNetDevice");
 
-  Address addr = sixDevice->GetAddress ();
+  Address macAddr = sixDevice->GetAddress ();
 
   Icmpv6RA raHeader;
   Ptr<Ipv6L3Protocol> ipv6 = GetNode ()->GetObject<Ipv6L3Protocol> ();
@@ -977,10 +977,18 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
 
       ra->SetPrefix (prefix);
 
-      ipv6->AddAutoconfiguredAddress (ipv6->GetInterfaceForDevice (sixDevice),
+      int32_t interfaceId = ipv6->GetInterfaceForDevice (sixDevice);
+      Ptr<Ipv6Interface> ipInterface = ipv6->GetInterface (interfaceId);
+
+      Ipv6Address newIpAddr = Ipv6Address::MakeAutoconfiguredAddress (macAddr, prefixHdr.GetPrefix ());
+
+      // \todo the following is wrong, as it marks the address as Tentative-Optimistic, and start using it.
+      ipv6->AddAutoconfiguredAddress (interfaceId,
                                       prefixHdr.GetPrefix (), prefixHdr.GetPrefixLength (),
                                       prefixHdr.GetFlags (), prefixHdr.GetValidTime (),
                                       prefixHdr.GetPreferredTime (), defaultRouter);
+
+      ipInterface->SetState (newIpAddr, Ipv6InterfaceAddress::TENTATIVE);
 
       // \todo Now mark it as tentative and start an address registration.
 
@@ -1058,7 +1066,7 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
 
   Simulator::Schedule (Time (Seconds (t - 1)), &SixLowPanNdProtocol::SetReceivedRA, this, false);
   Simulator::Schedule (Time (Seconds (t)), &SixLowPanNdProtocol::RetransmitRS, this,
-                       interface->GetLinkLocalAddress ().GetAddress (), src, addr);
+                       interface->GetLinkLocalAddress ().GetAddress (), src, macAddr);
 }
 
 void SixLowPanNdProtocol::HandleSixLowPanDAC (Ptr<Packet> packet, Ipv6Address const &src, Ipv6Address const &dst,

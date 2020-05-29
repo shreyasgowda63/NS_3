@@ -91,7 +91,7 @@ int main (int argc, char** argv)
   NetDeviceContainer lrwpanDevices = lrWpanHelper.Install(nodes);
 
   // Fake PAN association and short address assignment.
-  lrWpanHelper.AssociateToPan (lrwpanDevices, 0);
+  lrWpanHelper.AssociateToPan (lrwpanDevices, 1);
 
   InternetStackHelper internetv6;
   internetv6.Install (nodes);
@@ -130,8 +130,10 @@ int main (int argc, char** argv)
   Time interPacketInterval = Seconds (1.);
   Ping6Helper ping6;
 
-  ping6.SetLocal ("2001:2::ff:fe00:1");
-  ping6.SetRemote ("2001:2::ff:fe00:2");
+  // ping6.SetLocal ("2001:2::ff:fe00:1");
+  // ping6.SetRemote ("2001:2::ff:fe00:2");
+  ping6.SetLocal ("2001:2::1:ff:fe00:1");
+  ping6.SetRemote ("2001:2::1:ff:fe00:2");
   
   // ping6.SetLocal (deviceInterfaces.GetAddress (0, 1));
   // ping6.SetRemote (deviceInterfaces.GetAddress (1, 1));
