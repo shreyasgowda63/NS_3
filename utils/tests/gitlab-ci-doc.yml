@@ -20,7 +20,7 @@ doxygen:
   extends: .doc
   script:
 #    - mkdir -p public/doxygen
-     - doc/doxygen.warnings.report.sh
+     - doc/doxygen.warnings.report.sh -f "$(git diff --name-only  --diff-filter=d | tr '\n' ' ' | sed 's/ $//g;s/ /\\\|/g')"
 #    - mv doc/html/ public/doxygen
   artifacts:
     paths:
