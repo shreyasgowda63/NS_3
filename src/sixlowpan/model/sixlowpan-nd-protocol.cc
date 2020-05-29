@@ -33,6 +33,7 @@
 #include "ns3/mac64-address.h"
 #include "ns3/mac48-address.h"
 #include "ns3/mac16-address.h"
+#include "ns3/ndisc-cache.h"
 #include "ns3/pointer.h"
 #include "ns3/uinteger.h"
 #include "ns3/string.h"
@@ -853,7 +854,11 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   m_receivedRA = true;
 
   std::cout << "** begin ** SixLowPanNdProtocol::HandleSixLowPanRA" << std::endl;
+  std::cout << "   the RA was from " << src << std::endl;
 
+//  ** begin ** SixLowPanNdProtocol::HandleSixLowPanRA
+//  the RA was from            fe80::ff:fe00:1
+//  the RA was (for real) from fe80::1:ff:fe00:1
 
   Ptr<SixLowPanNetDevice> sixDevice = DynamicCast<SixLowPanNetDevice> (interface->GetDevice());
   NS_ASSERT_MSG (sixDevice != NULL, "SixLowPanNdProtocol cannot be installed on device different from SixLowPanNetDevice");
@@ -889,6 +894,9 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   Icmpv6OptionPrefixInformation prefixHdr;
   Icmpv6OptionSixLowPanContext contextHdr;
 
+  bool hasAbro = false;
+  bool hasOptLinkLayerSource = false;
+
   while (next == true)
     {
       uint8_t type = 0;
@@ -908,10 +916,12 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
           packet->RemoveHeader (abroHdr);
           version = abroHdr.GetVersion ();
           border = abroHdr.GetRouterAddress ();
+          hasAbro = true;
           break;
         case Icmpv6Header::ICMPV6_OPT_LINK_LAYER_SOURCE:
           packet->RemoveHeader (llaHdr);
           ReceiveLLA (llaHdr, src, dst, interface); // generates an entry in NDISC table with m_router = true
+          hasOptLinkLayerSource = true;
           break;
         default:
           /* Unknown option, stop processing */
@@ -930,12 +940,22 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
       NS_LOG_LOGIC ("SixLowPanNdProtocol::HandleSixLowPanRA - wrong number of PIOs in the RA (" << prefixList.size () << ") - ignoring RA");
       return;
     }
-
-  // \todo all RAs should have an ABRO ?
+  if (hasOptLinkLayerSource == false)
+    {
+      // RAs should contain one (and only one) PIO
+      NS_LOG_LOGIC ("SixLowPanNdProtocol::HandleSixLowPanRA - no Option LinkLayerSource -  ignoring RA");
+      return;
+    }
+  if (hasAbro == false)
+    {
+      // RAs should contain one (and only one) PIO
+      NS_LOG_LOGIC ("SixLowPanNdProtocol::HandleSixLowPanRA - no ABRO -  ignoring RA");
+      return;
+    }
 
   if (border == Ipv6Address::GetAny ())
     {
-      NS_LOG_LOGIC ("SixLowPanNdProtocol::HandleSixLowPanRA - border router address is set to Any, - ignoring RA");
+      NS_LOG_LOGIC ("SixLowPanNdProtocol::HandleSixLowPanRA - border router address is set to Any - ignoring RA");
       return;
     }
 
@@ -982,13 +1002,27 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
 
       Ipv6Address newIpAddr = Ipv6Address::MakeAutoconfiguredAddress (macAddr, prefixHdr.GetPrefix ());
 
+      uint8_t addrBuffer[16];
+      newIpAddr.GetBytes (addrBuffer);
+      Mac64Address eui64;
+      eui64.CopyFrom (addrBuffer+8);
+
+
+
       // \todo the following is wrong, as it marks the address as Tentative-Optimistic, and start using it.
       ipv6->AddAutoconfiguredAddress (interfaceId,
                                       prefixHdr.GetPrefix (), prefixHdr.GetPrefixLength (),
                                       prefixHdr.GetFlags (), prefixHdr.GetValidTime (),
                                       prefixHdr.GetPreferredTime (), defaultRouter);
 
-      ipInterface->SetState (newIpAddr, Ipv6InterfaceAddress::TENTATIVE);
+      // ipInterface->SetState (newIpAddr, Ipv6InterfaceAddress::TENTATIVE);
+      SendSixLowPanARO (newIpAddr, src, m_regTime, eui64, macAddr);
+
+
+
+//      assert failed. cond="index >= 0", msg="Can not find an outgoing interface for a packet with src 2001:2::1:ff:fe00:2 and dst fe80::ff:fe00:1", file=../src/internet/model/ipv6-l3-protocol.cc, line=888
+//      libc++abi.dylib: terminating
+
 
       // \todo Now mark it as tentative and start an address registration.
 
