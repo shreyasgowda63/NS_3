@@ -1026,17 +1026,11 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
       Mac64Address eui64;
       eui64.CopyFrom (addrBuffer+8);
 
-      // \todo the following is wrong, as it marks the address as Tentative-Optimistic, and start using it.
-//      ipv6->AddAutoconfiguredAddress (interfaceId,
-//                                      prefixHdr.GetPrefix (), prefixHdr.GetPrefixLength (),
-//                                      prefixHdr.GetFlags (), prefixHdr.GetValidTime (),
-//                                      prefixHdr.GetPreferredTime (), defaultRouter);
-
-
-      ipInterface->SetState (newIpAddr, Ipv6InterfaceAddress::TENTATIVE);
       SendSixLowPanNsWithAro (newIpAddr, src, m_regTime, eui64, macAddr, sixDevice);
+      // \todo
+      // The address is not even registered in the interface - any packet sent to it will be discarded.
+      // We now need to prepare for a registration result (any result) and to retransmit the registration.
 
-      // \todo Now mark it as tentative and start an address registration.
 
     }
   else // found an entry, try to update it.
