@@ -223,7 +223,7 @@ void SixLowPanNdProtocol::SendSixLowPanARO (Ipv6Address src, Ipv6Address dst, ui
   NS_ASSERT_MSG (!dst.IsMulticast (), "Destination address must not be a multicast address in ARO messages.");
 
   Ptr<Packet> p = Create<Packet> ();
-  Icmpv6NS ns (Ipv6Address::GetZero ());
+  Icmpv6NS ns (dst);
 
   /* ARO (request) + SLLAO */
   Icmpv6OptionAddressRegistration arOption (time, eui);
