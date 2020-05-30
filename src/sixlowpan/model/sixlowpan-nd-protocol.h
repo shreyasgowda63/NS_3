@@ -132,9 +132,10 @@ public:
    * \param time registration lifetime (ARO)
    * \param eui EUI-64 (ARO)
    * \param linkAddr link-layer address (SLLAO)
+   * \param sixDevice SixLowPan NetDevice
    */
-  void SendSixLowPanARO (Ipv6Address src, Ipv6Address dst, uint16_t time, Mac64Address eui,
-                         Address linkAddr);
+  void SendSixLowPanNsWithAro (Ipv6Address src, Ipv6Address dst, uint16_t time, Mac64Address eui,
+                               Address linkAddr, Ptr<NetDevice> sixDevice);
 
   /**
    * \brief Send a NA for 6LoWPAN ND (+ ARO).
@@ -143,9 +144,10 @@ public:
    * \param status status (ARO)
    * \param time registration lifetime (ARO)
    * \param eui EUI-64 (ARO)
+   * \param sixDevice SixLowPan NetDevice
    */
-  void SendSixLowPanARO (Ipv6Address src, Ipv6Address dst, uint8_t status, uint16_t time,
-                         Mac64Address eui);
+  void SendSixLowPanNaWithAro (Ipv6Address src, Ipv6Address dst, uint8_t status, uint16_t time,
+                               Mac64Address eui, Ptr<NetDevice> sixDevice);
 
   /**
    * \brief Send a RA for 6LoWPAN ND (+ PIO, 6CO, ABRO, SLLAO).
@@ -186,9 +188,10 @@ public:
    * \param time registration lifetime (ARO)
    * \param eui EUI-64 (ARO)
    * \param linkAddr link-layer address (SLLAO)
+   * \param sixDevice SixLowPan NetDevice
    */
   void RetransmitARO (Ipv6Address src, Ipv6Address dst, uint16_t time, Mac64Address eui,
-                      Address linkAddr);
+                      Address linkAddr, Ptr<NetDevice> sixDevice);
 
   /**
    * \brief Function called to send RS + SLLAO.

@@ -524,7 +524,6 @@ protected:
    */
   CacheList m_cacheList;
 
-private:
   /**
    * \brief Neighbor Discovery node constants: max multicast solicitations.
    */

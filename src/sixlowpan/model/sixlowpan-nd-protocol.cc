@@ -212,8 +212,8 @@ void SixLowPanNdProtocol::SendNS (Ipv6Address src, Ipv6Address dst, Ipv6Address 
   */
 }
 
-void SixLowPanNdProtocol::SendSixLowPanARO (Ipv6Address src, Ipv6Address dst, uint16_t time,
-                                            Mac64Address eui, Address linkAddr)
+void SixLowPanNdProtocol::SendSixLowPanNsWithAro (Ipv6Address src, Ipv6Address dst, uint16_t time,
+                                            Mac64Address eui, Address linkAddr, Ptr<NetDevice> sixDevice)
 {
   NS_LOG_FUNCTION (this << src << dst << time << eui << linkAddr);
 
@@ -233,14 +233,35 @@ void SixLowPanNdProtocol::SendSixLowPanARO (Ipv6Address src, Ipv6Address dst, ui
 
   p->AddHeader (arOption);
   p->AddHeader (llOption);
-  ns.CalculatePseudoHeaderChecksum (src, dst, p->GetSize () + ns.GetSerializedSize (), PROT_NUMBER);
-  p->AddHeader (ns);
 
-  SendMessage (p, src, dst, 255);
+  Ptr<Ipv6L3Protocol> ipv6 = m_node->GetObject<Ipv6L3Protocol> ();
+  NS_ASSERT (ipv6 != 0 && ipv6->GetRoutingProtocol () != 0);
+  Ipv6Header header;
+  SocketIpv6HopLimitTag tag;
+  Socket::SocketErrno err;
+  Ptr<Ipv6Route> route;
+
+  header.SetDestinationAddress (dst);
+  route = ipv6->GetRoutingProtocol ()->RouteOutput (p, header, sixDevice, err);
+
+  if (route != 0)
+    {
+      NS_LOG_LOGIC ("Route exists");
+      tag.SetHopLimit (255);
+      p->AddPacketTag (tag);
+
+      ns.CalculatePseudoHeaderChecksum (src, dst, p->GetSize () + ns.GetSerializedSize (), PROT_NUMBER);
+      p->AddHeader (ns);
+      m_downTarget (p, src, dst, PROT_NUMBER, route);
+    }
+  else
+    {
+      NS_LOG_WARN ("drop icmp message");
+    }
 }
 
-void SixLowPanNdProtocol::SendSixLowPanARO (Ipv6Address src, Ipv6Address dst, uint8_t status,
-                                            uint16_t time, Mac64Address eui)
+void SixLowPanNdProtocol::SendSixLowPanNaWithAro (Ipv6Address src, Ipv6Address dst, uint8_t status,
+                                            uint16_t time, Mac64Address eui, Ptr<NetDevice> sixDevice)
 {
   NS_LOG_FUNCTION (this << src << dst << static_cast<uint32_t> (status) << time << eui);
   Ptr<Packet> p = Create<Packet> ();
@@ -652,8 +673,8 @@ void SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const 
               else  /* multihop DAD NOT used */
                 {
                   neighborEntry->MarkRegistered (aroHdr.GetRegTime ());
-                  SendSixLowPanARO (interface->GetLinkLocalAddress ().GetAddress (), src, 0, aroHdr.GetRegTime (),
-                                    aroHdr.GetEui64 ());
+                  SendSixLowPanNaWithAro (interface->GetLinkLocalAddress ().GetAddress (), src, 0, aroHdr.GetRegTime (),
+                                    aroHdr.GetEui64 (), sixDevice);
                   return;
                 }
             }
@@ -666,8 +687,8 @@ void SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const 
               neighborEntry->SetMacAddress (llaHdr.GetAddress ());
               neighborEntry->MarkReachable ();
               neighborEntry->MarkRegistered (aroHdr.GetRegTime ());
-              SendSixLowPanARO (interface->GetLinkLocalAddress ().GetAddress (), src, 0, aroHdr.GetRegTime (),
-                                aroHdr.GetEui64 ());
+              SendSixLowPanNaWithAro (interface->GetLinkLocalAddress ().GetAddress (), src, 0, aroHdr.GetRegTime (),
+                                aroHdr.GetEui64 (), sixDevice);
 
               if (m_multihopDad)
                 {
@@ -705,19 +726,19 @@ void SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const 
         {
           if (m_multihopDad && neighborEntry->IsRegistered ())
             {
-              SendSixLowPanARO (interface->GetLinkLocalAddress ().GetAddress (),
+              SendSixLowPanNaWithAro (interface->GetLinkLocalAddress ().GetAddress (),
                                 Ipv6Address::MakeAutoconfiguredLinkLocalAddress (aroHdr.GetEui64 ()),
                                 // sixDevice->MakeLinkLocalAddressFromMac (aroHdr.GetEui64 ()),
                                 1,
-                                aroHdr.GetRegTime (), aroHdr.GetEui64 ());
+                                aroHdr.GetRegTime (), aroHdr.GetEui64 (), sixDevice);
             }
           else if (!m_multihopDad)
             {
-              SendSixLowPanARO (interface->GetLinkLocalAddress ().GetAddress (),
+              SendSixLowPanNaWithAro (interface->GetLinkLocalAddress ().GetAddress (),
                                 Ipv6Address::MakeAutoconfiguredLinkLocalAddress (aroHdr.GetEui64 ()),
                                 // sixDevice->MakeLinkLocalAddressFromMac (aroHdr.GetEui64 ()),
                                 1,
-                                aroHdr.GetRegTime (), aroHdr.GetEui64 ());
+                                aroHdr.GetRegTime (), aroHdr.GetEui64 (), sixDevice);
             }
           return;
         }
@@ -758,7 +779,7 @@ void SixLowPanNdProtocol::HandleSixLowPanNA (Ptr<Packet> packet, Ipv6Address con
           /* schedule a new ARO to maintain NCE in routers */
 
           Simulator::Schedule (Time (Minutes (aroHdr.GetRegTime () - m_advance)), &SixLowPanNdProtocol::RetransmitARO, this,
-                               dst, src, aroHdr.GetRegTime (), aroHdr.GetEui64 (), interface->GetDevice ()->GetAddress ());
+                               dst, src, aroHdr.GetRegTime (), aroHdr.GetEui64 (), interface->GetDevice ()->GetAddress (), interface->GetDevice ());
         }
       else /* status NOT 0, fail! */
         {
@@ -857,8 +878,6 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
   std::cout << "   the RA was from " << src << std::endl;
 
 //  ** begin ** SixLowPanNdProtocol::HandleSixLowPanRA
-//  the RA was from            fe80::ff:fe00:1
-//  the RA was (for real) from fe80::1:ff:fe00:1
 
   Ptr<SixLowPanNetDevice> sixDevice = DynamicCast<SixLowPanNetDevice> (interface->GetDevice());
   NS_ASSERT_MSG (sixDevice != NULL, "SixLowPanNdProtocol cannot be installed on device different from SixLowPanNetDevice");
@@ -1007,22 +1026,15 @@ void SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address con
       Mac64Address eui64;
       eui64.CopyFrom (addrBuffer+8);
 
-
-
       // \todo the following is wrong, as it marks the address as Tentative-Optimistic, and start using it.
-      ipv6->AddAutoconfiguredAddress (interfaceId,
-                                      prefixHdr.GetPrefix (), prefixHdr.GetPrefixLength (),
-                                      prefixHdr.GetFlags (), prefixHdr.GetValidTime (),
-                                      prefixHdr.GetPreferredTime (), defaultRouter);
-
-      // ipInterface->SetState (newIpAddr, Ipv6InterfaceAddress::TENTATIVE);
-      SendSixLowPanARO (newIpAddr, src, m_regTime, eui64, macAddr);
+//      ipv6->AddAutoconfiguredAddress (interfaceId,
+//                                      prefixHdr.GetPrefix (), prefixHdr.GetPrefixLength (),
+//                                      prefixHdr.GetFlags (), prefixHdr.GetValidTime (),
+//                                      prefixHdr.GetPreferredTime (), defaultRouter);
 
 
-
-//      assert failed. cond="index >= 0", msg="Can not find an outgoing interface for a packet with src 2001:2::1:ff:fe00:2 and dst fe80::ff:fe00:1", file=../src/internet/model/ipv6-l3-protocol.cc, line=888
-//      libc++abi.dylib: terminating
-
+      ipInterface->SetState (newIpAddr, Ipv6InterfaceAddress::TENTATIVE);
+      SendSixLowPanNsWithAro (newIpAddr, src, m_regTime, eui64, macAddr, sixDevice);
 
       // \todo Now mark it as tentative and start an address registration.
 
@@ -1130,8 +1142,8 @@ void SixLowPanNdProtocol::HandleSixLowPanDAC (Ptr<Packet> packet, Ipv6Address co
             {
               entry->MarkRegistered (dacHdr.GetRegTime ());
 
-              SendSixLowPanARO (dst, dacHdr.GetRegAddress (), dacHdr.GetStatus (), dacHdr.GetRegTime (),
-                                dacHdr.GetEui64 ());
+              SendSixLowPanNaWithAro (dst, dacHdr.GetRegAddress (), dacHdr.GetStatus (), dacHdr.GetRegTime (),
+                                dacHdr.GetEui64 (), sixDevice);
             }
           else /* remove the tentative entry, send ARO with error code */
             {
@@ -1140,7 +1152,7 @@ void SixLowPanNdProtocol::HandleSixLowPanDAC (Ptr<Packet> packet, Ipv6Address co
               Ipv6Address address = Ipv6Address::MakeAutoconfiguredLinkLocalAddress (dacHdr.GetEui64 ());
               // Ipv6Address address = sixDevice->MakeLinkLocalAddressFromMac (dacHdr.GetEui64 ());
 
-              SendSixLowPanARO (dst, address, dacHdr.GetStatus (), dacHdr.GetRegTime (), dacHdr.GetEui64 ());
+              SendSixLowPanNaWithAro (dst, address, dacHdr.GetStatus (), dacHdr.GetRegTime (), dacHdr.GetEui64 (), sixDevice);
             }
         }
       else
@@ -1173,7 +1185,7 @@ Ptr<NdiscCache> SixLowPanNdProtocol::CreateCache (Ptr<NetDevice> device, Ptr<Ipv
 }
 
 void SixLowPanNdProtocol::RetransmitARO (Ipv6Address src, Ipv6Address dst, uint16_t time,
-                                         Mac64Address eui, Address linkAddr)
+                                         Mac64Address eui, Address linkAddr, Ptr<NetDevice> sixDevice)
 {
   NS_LOG_FUNCTION (this << src << dst << time << eui << linkAddr);
 
@@ -1183,13 +1195,13 @@ void SixLowPanNdProtocol::RetransmitARO (Ipv6Address src, Ipv6Address dst, uint1
     {
       m_aroRetransmit++;
 
-      SendSixLowPanARO (src, dst, time, eui, linkAddr);
+      SendSixLowPanNsWithAro (src, dst, time, eui, linkAddr, sixDevice);
 
       TimeValue retransmissionTime;
       GetAttribute ("RetransmissionTime", retransmissionTime);
 
       Simulator::Schedule (retransmissionTime.Get (), &SixLowPanNdProtocol::RetransmitARO, this,
-                           src, dst, time, eui, linkAddr);
+                           src, dst, time, eui, linkAddr, sixDevice);
       return;
     }
   else
