@@ -2120,5 +2120,149 @@ std::ostream & operator << (std::ostream & os, const SixLowPanMesh & h)
   return os;
 }
 
+/*
+ * SixLowPanCio
+ */
+NS_OBJECT_ENSURE_REGISTERED (SixLowPanCio);
+
+SixLowPanCio::SixLowPanCio ()
+{
+  m_capabilityOptionField = 0;
+}
+
+TypeId SixLowPanCio::GetTypeId (void)
+{
+  static TypeId tid = TypeId ("ns3::SixLowPanCio")
+    .SetParent<Header> ()
+    .SetGroupName ("SixLowPan")
+    .AddConstructor<SixLowPanCio> ();
+  return tid;
+}
+
+TypeId SixLowPanCio::GetInstanceTypeId (void) const
+{
+  return GetTypeId ();
+}
+
+void SixLowPanCio::Print (std::ostream & os) const
+{
+  os << "Option field: |";
+
+  if (m_capabilityOptionField & D)
+    {
+      os << "D";
+    }
+  else
+    {
+      os << " ";
+    }
+
+  if (m_capabilityOptionField & L)
+    {
+      os << "L";
+    }
+  else
+    {
+      os << " ";
+    }
+
+  if (m_capabilityOptionField & B)
+    {
+      os << "B";
+    }
+  else
+    {
+      os << " ";
+    }
+
+  if (m_capabilityOptionField & P)
+    {
+      os << "P";
+    }
+  else
+    {
+      os << " ";
+    }
+
+  if (m_capabilityOptionField & E)
+    {
+      os << "E";
+    }
+  else
+    {
+      os << " ";
+    }
+
+  if (m_capabilityOptionField & G)
+    {
+      os << "G";
+    }
+  else
+    {
+      os << " ";
+    }
+  os << "|";
+}
+
+uint32_t SixLowPanCio::GetSerializedSize () const
+{
+  return 8;
+}
+
+void SixLowPanCio::Serialize (Buffer::Iterator start) const
+{
+  Buffer::Iterator i = start;
+
+  i.WriteU8 (36); // ND option type
+  i.WriteU8 (1);  // ND option length (1 = 8 octects)
+
+  i.WriteU16 (m_capabilityOptionField);
+  i.WriteU32 (0);
+}
+
+uint32_t SixLowPanCio::Deserialize (Buffer::Iterator start)
+{
+  Buffer::Iterator i = start;
+  uint8_t temp;
+
+  temp = i.ReadU8 ();
+  if (temp != 36)
+    {
+      return 0;
+    }
+
+  temp = i.ReadU8 ();
+  if (temp != 1)
+    {
+      return 0;
+    }
+
+  m_capabilityOptionField = i.ReadU16 ();
+  i.ReadU32 ();
+
+  return GetSerializedSize ();
+}
+
+void SixLowPanCio::SetOption (SixLowPanCapability_e option)
+{
+  m_capabilityOptionField |= option;
+}
+
+bool SixLowPanCio::CheckOption (SixLowPanCapability_e option) const
+{
+  if (m_capabilityOptionField & option)
+    {
+      return true;
+    }
+
+  return false;
+}
+
+std::ostream & operator << (std::ostream & os, const SixLowPanCio & h)
+{
+  h.Print (os);
+  return os;
+}
+
 }
 

@@ -1398,6 +1398,88 @@ private:
  */
 std::ostream & operator<< (std::ostream & os, SixLowPanMesh const &header);
 
+/**
+ * \ingroup sixlowpan
+ * \brief 6LoWPAN Capability Indication Option - see \RFC{7400}.
+ */
+class SixLowPanCio : public Header
+{
+public:
+  SixLowPanCio (void);
+
+  /**
+   * \brief Get the type ID.
+   * \return The object TypeId.
+   */
+  static TypeId GetTypeId (void);
+
+  /**
+   * \brief Return the instance type identifier.
+   * \return Instance type ID.
+   */
+  virtual TypeId GetInstanceTypeId (void) const;
+
+  virtual void Print (std::ostream& os) const;
+
+  /**
+   * \brief Get the serialized size of the packet.
+   * \return Size.
+   */
+  virtual uint32_t GetSerializedSize (void) const;
+
+  /**
+   * \brief Serialize the packet.
+   * \param [in] start Buffer iterator.
+   */
+  virtual void Serialize (Buffer::Iterator start) const;
+
+  /**
+   * \brief Deserialize the packet.
+   * \param [in] start Buffer iterator.
+   * \return Size of the packet.
+   */
+  virtual uint32_t Deserialize (Buffer::Iterator start);
+
+  /**
+   * \brief The Capability field bit.
+   */
+  enum SixLowPanCapability_e
+  {
+    G = 0x01, /**< Generic Header Compression (GHC) capable (see \RFC{7400}) */
+    E = 0x02, /**< The node is an IPv6 ND Registrar (see \RFC{8505}) */
+    P = 0x04, /**< The node is a Routing Registrar (see \RFC{8505}) */
+    B = 0x08, /**< The node is a 6LBR (see \RFC{8505}) */
+    L = 0x10, /**< The node is a 6LR (see \RFC{8505}) */
+    D = 0x20, /**< The 6LBR supports EDAR and EDAC messages (see \RFC{8505}) */
+  };
+
+  /**
+   * \brief Set an option.
+   * \param [in] option The option to be set.
+   */
+  void SetOption (SixLowPanCapability_e option);
+
+  /**
+   * \brief Checks an option.
+   * \param [in] option The option to be checked.
+   * \return True if the option is set, false otherwise.
+   */
+  bool CheckOption (SixLowPanCapability_e option) const;
+
+
+private:
+  uint16_t m_capabilityOptionField; //!< Capability options bitfield.
+};
+
+/**
+ * \brief Stream insertion operator.
+ *
+ * \param [in] os The reference to the output stream.
+ * \param [in] header The Mesh Extension Header.
+ * \returns The reference to the output stream.
+ */
+std::ostream & operator<< (std::ostream & os, SixLowPanCio const &header);
+
 }
 
 #endif /* SIXLOWPANHEADER_H_ */
