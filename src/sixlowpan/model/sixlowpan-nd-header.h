@@ -182,37 +182,53 @@ private:
 
 /**
  * \ingroup sixlowpan
- * \class Icmpv6OptionAddressRegistration
- * \brief ICMPv6 Address Registration Option header.
+ * \class Icmpv6OptionExtendedAddressRegistration
+ * \brief ICMPv6 Extended Address Registration Option header \RFC{8505}.
  */
-class Icmpv6OptionAddressRegistration : public Icmpv6OptionHeader
+class Icmpv6OptionExtendedAddressRegistration : public Icmpv6OptionHeader
 {
 public:
+  enum regStatus
+  {
+    Success,
+    Duplicate_Address,
+    Neighbor_Cache_Full,
+    Moved,
+    Removed,
+    Validation_Requested,
+    Duplicate_Source_Address,
+    Invalid_Source_Address,
+    Registered_Address_Topologically_Incorrect,
+    SixLBR_Registry_Saturated,
+    Validation_Failed
+  };
 
   /**
    * \brief Constructor.
    */
-  Icmpv6OptionAddressRegistration ();
+  Icmpv6OptionExtendedAddressRegistration ();
 
   /**
    * \brief Constructor.
    * \param time the registration lifetime (units of 60 seconds)
-   * \param eui the EUI-64
+   * \param rovr the ROVR value
+   * \param rovrLength the ROVR length
    */
-  Icmpv6OptionAddressRegistration (uint16_t time, Mac64Address eui);
+  Icmpv6OptionExtendedAddressRegistration (uint16_t time, uint8_t* rovr, uint8_t rovrLength);
 
   /**
    * \brief Constructor.
    * \param status the status value
    * \param time the registration lifetime (units of 60 seconds)
-   * \param eui the EUI-64
+   * \param rovr the ROVR value
+   * \param rovrLength the ROVR length
    */
-  Icmpv6OptionAddressRegistration (uint8_t status, uint16_t time, Mac64Address eui);
+  Icmpv6OptionExtendedAddressRegistration (uint8_t status, uint16_t time, uint8_t* rovr, uint8_t rovrLength);
 
   /**
    * \brief Destructor.
    */
-  virtual ~Icmpv6OptionAddressRegistration ();
+  virtual ~Icmpv6OptionExtendedAddressRegistration ();
 
   /**
    * \brief Get the UID of this class.
@@ -251,16 +267,24 @@ public:
   void SetRegTime (uint16_t time);
 
   /**
-   * \brief Get the EUI-64 field.
-   * \return EUI-64 value
+   * \brief Get the ROVR field length.
+   * \return the ROVR length [bytes]
    */
-  Mac64Address GetEui64 () const;
+  uint8_t GetRovrLength () const;
 
   /**
-   * \brief Set the EUI-64 field.
-   * \param eui the EUI-64 value
+   * \brief Get the ROVR field.
+   * \param[out] rovr The ROVR field
+   * \return the ROVR length [bytes]
    */
-  void SetEui64 (Mac64Address eui);
+  uint8_t GetRovr (uint8_t* rovr) const;
+
+  /**
+   * \brief Set the ROVR field.
+   * \param rovr the ROVR value
+   * \param rovrLength the ROVR length
+   */
+  void SetRovr (uint8_t* rovr, uint8_t rovrLength);
 
   /**
    * \brief Print informations.
@@ -300,9 +324,14 @@ private:
   uint16_t m_regTime;
 
   /**
-   * \brief The EUI-64 value.
+   * \brief The ROVR value.
    */
-  Mac64Address m_eui64;
+  uint8_t m_rovr[32];
+
+  /**
+   * \brief The ROVR value length [bytes].
+   */
+  uint8_t m_rovrLength;
 
 };
 
@@ -573,5 +602,6 @@ private:
 };
 
 } /* namespace ns3 */
+
 
 #endif /* SIXLOWPAN_ND_HEADER_H */

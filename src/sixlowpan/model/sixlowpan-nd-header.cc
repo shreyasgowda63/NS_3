@@ -219,114 +219,129 @@ uint32_t Icmpv6DuplicateAddress::Deserialize (Buffer::Iterator start)
 }
 
 
-NS_OBJECT_ENSURE_REGISTERED (Icmpv6OptionAddressRegistration);
+NS_OBJECT_ENSURE_REGISTERED (Icmpv6OptionExtendedAddressRegistration);
 
-Icmpv6OptionAddressRegistration::Icmpv6OptionAddressRegistration ()
+Icmpv6OptionExtendedAddressRegistration::Icmpv6OptionExtendedAddressRegistration ()
 {
   NS_LOG_FUNCTION (this);
   SetType (Icmpv6Header::ICMPV6_OPT_ADDRESS_REGISTRATION);
-  SetLength (2);
+  SetLength (1);
   m_status = 0;
   m_regTime = 0;
-  m_eui64 = Mac64Address ("00:00:00:00:00:00:00:00");
+  m_rovrLength = 0;
 }
 
-Icmpv6OptionAddressRegistration::Icmpv6OptionAddressRegistration (uint16_t time, Mac64Address eui)
+Icmpv6OptionExtendedAddressRegistration::Icmpv6OptionExtendedAddressRegistration (uint16_t time, uint8_t* rovr, uint8_t rovrLength)
 {
   NS_LOG_FUNCTION (this);
   SetType (Icmpv6Header::ICMPV6_OPT_ADDRESS_REGISTRATION);
-  SetLength (2);
+  SetLength (1+rovrLength/8);
   m_status = 0;
   m_regTime = time;
-  m_eui64 = eui;
+  SetRovr (rovr, rovrLength);
 }
 
-Icmpv6OptionAddressRegistration::Icmpv6OptionAddressRegistration (uint8_t status, uint16_t time, Mac64Address eui)
+Icmpv6OptionExtendedAddressRegistration::Icmpv6OptionExtendedAddressRegistration (uint8_t status, uint16_t time, uint8_t* rovr, uint8_t rovrLength)
 {
   NS_LOG_FUNCTION (this);
   SetType (Icmpv6Header::ICMPV6_OPT_ADDRESS_REGISTRATION);
-  SetLength (2);
+  SetLength (1+rovrLength/8);
   m_status = status;
   m_regTime = time;
-  m_eui64 = eui;
+  SetRovr (rovr, rovrLength);
 }
 
-Icmpv6OptionAddressRegistration::~Icmpv6OptionAddressRegistration ()
+Icmpv6OptionExtendedAddressRegistration::~Icmpv6OptionExtendedAddressRegistration ()
 {
   NS_LOG_FUNCTION (this);
 }
 
-TypeId Icmpv6OptionAddressRegistration::GetTypeId ()
+TypeId Icmpv6OptionExtendedAddressRegistration::GetTypeId ()
 {
   static TypeId tid = TypeId ("ns3::Icmpv6OptionAddressRegistration")
         .SetParent<Icmpv6OptionHeader> ()
         .SetGroupName ("Internet")
-        .AddConstructor<Icmpv6OptionAddressRegistration> ()
+        .AddConstructor<Icmpv6OptionExtendedAddressRegistration> ()
         ;
   return tid;
 }
 
-TypeId Icmpv6OptionAddressRegistration::GetInstanceTypeId () const
+TypeId Icmpv6OptionExtendedAddressRegistration::GetInstanceTypeId () const
 {
   NS_LOG_FUNCTION (this);
   return GetTypeId ();
 }
 
-uint8_t Icmpv6OptionAddressRegistration::GetStatus () const
+uint8_t Icmpv6OptionExtendedAddressRegistration::GetStatus () const
 {
   NS_LOG_FUNCTION (this);
   return m_status;
 }
 
-void Icmpv6OptionAddressRegistration::SetStatus (uint8_t status)
+void Icmpv6OptionExtendedAddressRegistration::SetStatus (uint8_t status)
 {
   NS_LOG_FUNCTION (this << static_cast<uint32_t> (status));
   m_status = status;
 }
 
-uint16_t Icmpv6OptionAddressRegistration::GetRegTime () const
+uint16_t Icmpv6OptionExtendedAddressRegistration::GetRegTime () const
 {
   NS_LOG_FUNCTION (this);
   return m_regTime;
 }
 
-void Icmpv6OptionAddressRegistration::SetRegTime (uint16_t time)
+void Icmpv6OptionExtendedAddressRegistration::SetRegTime (uint16_t time)
 {
   NS_LOG_FUNCTION (this << time);
   m_regTime = time;
 }
 
-Mac64Address Icmpv6OptionAddressRegistration::GetEui64 () const
+uint8_t Icmpv6OptionExtendedAddressRegistration::GetRovr (uint8_t* rovr) const
 {
   NS_LOG_FUNCTION (this);
-  return m_eui64;
+  memcpy (rovr, m_rovr, m_rovrLength);
+  return m_rovrLength;
 }
 
-void Icmpv6OptionAddressRegistration::SetEui64 (Mac64Address eui)
+void Icmpv6OptionExtendedAddressRegistration::SetRovr (uint8_t* rovr, uint8_t rovrLength)
 {
-  NS_LOG_FUNCTION (this << eui);
-  m_eui64 = eui;
+  NS_LOG_FUNCTION (this);
+
+  NS_ASSERT_MSG ((rovrLength == 8) || (rovrLength == 16) ||
+                 (rovrLength == 24) || (rovrLength == 32), "ROVR length must be 64, 128, 192, or 256 bits");
+  m_rovrLength = rovrLength;
+  memcpy (m_rovr, rovr, rovrLength);
 }
 
-void Icmpv6OptionAddressRegistration::Print (std::ostream& os) const
+void Icmpv6OptionExtendedAddressRegistration::Print (std::ostream& os) const
 {
   NS_LOG_FUNCTION (this << &os);
-  os << "( type = " << (uint32_t)GetType () << " length = " << (uint32_t)GetLength () << " status " << (uint32_t)m_status << " lifetime " << m_regTime << " EUI-64 " << m_eui64 << ")";
+
+  std::ios oldState(nullptr);
+  oldState.copyfmt(os);
+
+  os << "( type = " << (uint32_t)GetType () << " length = " << (uint32_t)GetLength ()
+     << " status " << (uint32_t)m_status << " lifetime " << m_regTime
+     << " ROVR len " << m_rovrLength;
+  for (uint8_t index = 0; index < m_rovrLength; index++)
+    {
+      os << std::hex << m_rovr[index];
+    }
+  os << ")";
+
+  os.copyfmt(oldState);
 }
 
-uint32_t Icmpv6OptionAddressRegistration::GetSerializedSize () const
+uint32_t Icmpv6OptionExtendedAddressRegistration::GetSerializedSize () const
 {
   NS_LOG_FUNCTION (this);
-  return 16;
+  return 8 + m_rovrLength;
 }
 
-void Icmpv6OptionAddressRegistration::Serialize (Buffer::Iterator start) const
+void Icmpv6OptionExtendedAddressRegistration::Serialize (Buffer::Iterator start) const
 {
   NS_LOG_FUNCTION (this << &start);
   Buffer::Iterator i = start;
-  uint8_t buf[8];
-
-  memset (buf, 0x00, sizeof (buf));
 
   i.WriteU8 (GetType ());
   i.WriteU8 (GetLength ());
@@ -335,26 +350,23 @@ void Icmpv6OptionAddressRegistration::Serialize (Buffer::Iterator start) const
   i.WriteU16 (0);
   i.WriteU16 (m_regTime);
 
-  m_eui64.CopyTo (buf);
-  i.Write (buf, 8);
+  i.Write (m_rovr, m_rovrLength);
 }
 
-uint32_t Icmpv6OptionAddressRegistration::Deserialize (Buffer::Iterator start)
+uint32_t Icmpv6OptionExtendedAddressRegistration::Deserialize (Buffer::Iterator start)
 {
   NS_LOG_FUNCTION (this << &start);
   Buffer::Iterator i = start;
-  uint8_t buf[8];
-
-  memset (buf, 0x00, sizeof (buf));
 
   SetType (i.ReadU8 ());
   SetLength (i.ReadU8 ());
+  m_rovrLength = (GetLength ()-1) * 8;
+
   m_status = i.ReadU8 ();
   i.Next (3);
   m_regTime = i.ReadU16 ();
 
-  i.Read (buf, 8);
-  m_eui64.CopyFrom (buf);
+  i.Read (m_rovr, m_rovrLength);
 
   return GetSerializedSize ();
 }
