@@ -2127,13 +2127,15 @@ NS_OBJECT_ENSURE_REGISTERED (SixLowPanCio);
 
 SixLowPanCio::SixLowPanCio ()
 {
+  SetType (Icmpv6Header::ICMPV6_OPT_SIXLOWPAN_CAPABILITY);
+  SetLength (1);
   m_capabilityOptionField = 0;
 }
 
 TypeId SixLowPanCio::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::SixLowPanCio")
-    .SetParent<Header> ()
+    .SetParent<Icmpv6Header> ()
     .SetGroupName ("SixLowPan")
     .AddConstructor<SixLowPanCio> ();
   return tid;
@@ -2146,7 +2148,7 @@ TypeId SixLowPanCio::GetInstanceTypeId (void) const
 
 void SixLowPanCio::Print (std::ostream & os) const
 {
-  os << "Option field: |";
+  os << "( type = " << (uint32_t)GetType () << " Option field: ";
 
   if (m_capabilityOptionField & D)
     {
@@ -2201,7 +2203,7 @@ void SixLowPanCio::Print (std::ostream & os) const
     {
       os << " ";
     }
-  os << "|";
+  os << " )";
 }
 
 uint32_t SixLowPanCio::GetSerializedSize () const
@@ -2213,8 +2215,8 @@ void SixLowPanCio::Serialize (Buffer::Iterator start) const
 {
   Buffer::Iterator i = start;
 
-  i.WriteU8 (36); // ND option type
-  i.WriteU8 (1);  // ND option length (1 = 8 octects)
+  i.WriteU8 (GetType ());
+  i.WriteU8 (GetLength ());
 
   i.WriteU16 (m_capabilityOptionField);
   i.WriteU32 (0);
@@ -2223,20 +2225,9 @@ void SixLowPanCio::Serialize (Buffer::Iterator start) const
 uint32_t SixLowPanCio::Deserialize (Buffer::Iterator start)
 {
   Buffer::Iterator i = start;
-  uint8_t temp;
 
-  temp = i.ReadU8 ();
-  if (temp != 36)
-    {
-      return 0;
-    }
-
-  temp = i.ReadU8 ();
-  if (temp != 1)
-    {
-      return 0;
-    }
-
+  SetType (i.ReadU8 ());
+  SetLength (i.ReadU8 ());
   m_capabilityOptionField = i.ReadU16 ();
   i.ReadU32 ();
 

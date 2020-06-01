@@ -24,6 +24,7 @@
 
 #include "ns3/header.h"
 #include "ns3/ipv6-address.h"
+#include "ns3/icmpv6-header.h"
 
 namespace ns3 {
 
@@ -1402,7 +1403,7 @@ std::ostream & operator<< (std::ostream & os, SixLowPanMesh const &header);
  * \ingroup sixlowpan
  * \brief 6LoWPAN Capability Indication Option - see \RFC{7400}.
  */
-class SixLowPanCio : public Header
+class SixLowPanCio : public Icmpv6OptionHeader
 {
 public:
   SixLowPanCio (void);
