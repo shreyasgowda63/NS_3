@@ -255,12 +255,12 @@ class (``|prefix_level``).
 
    $ NS_LOG="*=all|prefix_level" ./waf --run scratch-simulator
    Scratch Simulator
-   [ERROR] error message
-   [WARN] warn message
-   [DEBUG] debug message
-   [INFO] info message
-   [FUNCT] function message
-   [LOGIC] logic message
+   level=ERROR error message
+   level=WARN warn message
+   level=DEBUG debug message
+   level=INFO info message
+   level=FUNCT function message
+   level=LOGIC logic message
 
 Time Prefix
 ###########
@@ -313,6 +313,89 @@ for all log components.  These are all equivalent:
 Be advised:  even the trivial ``scratch-simulator`` produces over
 46K lines of output with ``NS_LOG="***"``!
 
+Log message format
+******************
+
+|ns3| is in the process of transition to structured logging. For that,
+logfmt_ format is used. Prefixes are always printed in logfmt style
+style, while the message itself may be in logfmt or free form.
+
+A typical logfmt message looks like this::
+
+   time_s=0.527784687 node=1 component=WifiPhy func=StartRx level=DEBUG tag=sync_to_signal msg="Sync to signal with power {power_w}" power_w=6.8767e-09
+
+Here ``time_s`` key is the time prefix ("s" stands for "seconds"
+unit), ``node`` key is the node prefix, ``component`` and ``func`` are
+parts of function prefix and ``level`` is the level prefix. The rest
+is the message itself.
+
+By covention, messages contain ``tag`` key to help filter out a
+particular message within a function and a ``msg`` key with a
+human-readable description. Other keys, such as ``power_w``, are
+specific to a particular message type.
+
+However, legacy messages may not follow logfmt style::
+
+   time_s=0.547681921 node=0 component=FqCoDelQueueDisc func=DoEnqueue level=DEBUG Packet enqueued into flow 686; flow index 1
+
+This message can still be parsed as logfmt message, but flow number
+cannot be easily extracted.
+
+Parsing logs
+============
+
+Logs may change over time without notice, and no backward
+compatibility is guaranteed. However, it may still be useful to
+automatically process logs for debugging purposes.
+
+For example, it is possible to run
+
+.. sourcecode:: bash
+
+   $ NS_LOG="WifiPhy=level|func|debug|prefix_node|prefix_time" ./waf --run "wifi-rate-adaptation-distance --steps=5" 2>out.log
+
+Collected log can then be processed with agrind_ to select interesting
+messages and convert them to `JSON Lines <http://jsonlines.org/>`_ format,
+
+.. sourcecode:: bash
+
+ $ agrind <out.log '* | logfmt | where tag=sync_to_signal' -o json >out.jsonl
+
+Pandas can load JSON lines format, so it is possible to plot values
+with the following script:
+
+.. sourcecode:: python
+
+  import numpy as np
+  import pandas as pd
+  from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+  from matplotlib.figure import Figure
+
+
+  data_frame = pd.read_json("out.jsonl", lines=True)
+
+  figure = Figure()
+  ax = figure.add_subplot()
+
+  for node, df in data_frame.query('tag == "sync_to_signal"').groupby("node"):
+      ax.plot(
+          df["time_s"],
+          30.0 + np.log10(0.1 * df["power_w"]),
+          ["x", "+"][node],
+          label=f"Node {node}",
+      )
+
+  ax.set_xlabel("Time, s")
+  ax.set_ylabel("Power, dBm")
+  ax.legend()
+  ax.grid()
+
+  canvas = FigureCanvas(figure)
+  canvas.print_figure("out.png")
+
+.. _logfmt: https://www.brandur.org/logfmt
+
+.. _agrind: https://github.com/rcoh/angle-grinder
 
 How to add logging to your code
 *******************************
