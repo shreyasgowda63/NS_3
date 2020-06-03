@@ -6,8 +6,8 @@ import wutils
 
 int64x64 = {
     # implementation name: [define, env, highprec]
-    'default': ['INT64X64_USE_128',    'INT64X64_USE_128',    '128-bit integer'], 
-    'int128':  ['INT64X64_USE_128',    'INT64X64_USE_128',    '128-bit integer'], 
+    'default': ['INT64X64_USE_128',    'INT64X64_USE_128',    '128-bit integer'],
+    'int128':  ['INT64X64_USE_128',    'INT64X64_USE_128',    '128-bit integer'],
     'cairo':   ['INT64X64_USE_CAIRO',  'INT64X64_USE_CAIRO',  'cairo 128-bit integer'],
     'double':  ['INT64X64_USE_DOUBLE', 'INT64X64_USE_DOUBLE', 'long double'],
     }
@@ -35,7 +35,7 @@ def options(opt):
                          % ", ".join([repr(p) for p in list(int64x64.keys())])),
                    choices=list(int64x64.keys()),
                    dest='int64x64_impl')
-                   
+
     opt.add_option('--disable-pthread',
                    help=('Whether to enable the use of POSIX threads'),
                    action="store_true", default=False,
@@ -49,7 +49,7 @@ def configure(conf):
 
         code_snip_type='''
         #include <stdint.h>
-        
+
         int main(int argc, char **argv) {
 	(void)argc; (void)argv;
 	if ((uint128_t *) 0) return 0;
@@ -63,7 +63,7 @@ def configure(conf):
 
         code_snip_type='''
         #include <stdint.h>
-        
+
         int main(int argc, char **argv) {
 	(void)argc; (void)argv;
 	if ((__uint128_t *) 0) return 0;
@@ -78,7 +78,7 @@ def configure(conf):
             int64x64_impl = 'int128'
         else:
             int64x64_impl = 'cairo'
-        
+
     def_flag, env_flag, highprec = int64x64[int64x64_impl]
     # Add a tag confirming default choice
     if Options.options.int64x64_impl == 'default':
@@ -147,7 +147,7 @@ int main ()
                                      "threading not enabled")
         conf.env["ENABLE_REAL_TIME"] = conf.env['ENABLE_THREADING']
 
-    conf.write_config_header('ns3/core-config.h', top=True)
+    conf.write_config_header('include/ns3/core-config.h', top=True)
 
 def build(bld):
     bld.install_files('${INCLUDEDIR}/%s%s/ns3' % (wutils.APPNAME, wutils.VERSION), '../../ns3/core-config.h')
@@ -218,7 +218,7 @@ def build(bld):
 
     if (bld.env['ENABLE_EXAMPLES']):
         core.source.append('model/example-as-test.cc')
-            
+
     core_test = bld.create_ns3_module_test_library('core')
     core_test.source = [
         'test/attribute-test-suite.cc',

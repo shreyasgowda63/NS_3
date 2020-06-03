@@ -11,7 +11,7 @@ def configure(conf):
     conf.report_optional_feature("SQLiteStats", "SQLite stats support",
                                  conf.env['SQLITE_STATS'] and conf.env['SEMAPHORE_ENABLED'],
                                  "library 'sqlite3' and/or semaphore.h not found")
-    conf.write_config_header('ns3/stats-config.h', top=True)
+    conf.write_config_header('include/ns3/stats-config.h', top=True)
 
 def build(bld):
     obj = bld.create_ns3_module('stats', ['core'])
@@ -35,7 +35,7 @@ def build(bld):
         'model/time-series-adaptor.cc',
         'model/file-aggregator.cc',
         'model/gnuplot-aggregator.cc',
-        'model/get-wildcard-matches.cc', 
+        'model/get-wildcard-matches.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('stats')
@@ -50,7 +50,7 @@ def build(bld):
         module_test.source.extend([
         #   'test/stats-examples-test-suite.cc',
             ])
-    
+
     headers = bld(features='ns3header')
     headers.module = 'stats'
     headers.source = [

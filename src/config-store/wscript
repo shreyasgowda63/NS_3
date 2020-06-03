@@ -31,7 +31,7 @@ def configure(conf):
                                      "library 'gtk+-3.0 >= 3.0' not found")
 
         # Bug 2936 -Wparentheses issue for gcc >= 8
-        if conf.env['ENABLE_GTK']: 
+        if conf.env['ENABLE_GTK']:
             if conf.env['CXX_NAME'] in ['gcc']:
                 if tuple(map(int, conf.env['CC_VERSION'])) >= gcc_version_gtkplus_warning_issue:
                     conf.env.append_value('CXXFLAGS', '-Wno-parentheses')
@@ -48,7 +48,7 @@ def configure(conf):
                                  conf.env['ENABLE_LIBXML2'],
                                  "library 'libxml-2.0 >= 2.7' not found")
 
-    conf.write_config_header('ns3/config-store-config.h', top=True)
+    conf.write_config_header('include/ns3/config-store-config.h', top=True)
 
 
 def build(bld):
