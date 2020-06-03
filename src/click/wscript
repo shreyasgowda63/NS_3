@@ -3,6 +3,7 @@
 import os
 
 from waflib import Options
+import wutils
 
 
 def options(opt):
@@ -18,7 +19,7 @@ def configure(conf):
         conf.report_optional_feature("nsclick", "NS-3 Click Integration", False,
                                      "disabled by user request")
         return
-        
+
     if Options.options.with_nsclick:
         if os.path.isdir(Options.options.with_nsclick):
             conf.msg("Checking for libnsclick.so location", ("%s (given)" % Options.options.with_nsclick))
@@ -27,7 +28,7 @@ def configure(conf):
         # bake.py uses ../../build, while ns-3-dev uses ../click.
         lib_to_check = 'libnsclick.so'
         nsclick_bake_build_dir = os.path.join('..', '..', 'build')
-        nsclick_bake_lib_dir = os.path.join(nsclick_bake_build_dir, 'lib')
+        nsclick_bake_lib_dir = os.path.join(nsclick_bake_build_dir, wutils.NS3_LIB_DIR)
         nsclick_dir = os.path.join('..','click')
         if os.path.exists(os.path.join(nsclick_bake_lib_dir, lib_to_check)):
             conf.msg("Checking for click location",("%s (guessed)" % nsclick_bake_build_dir))

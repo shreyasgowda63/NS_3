@@ -13,6 +13,8 @@ from waflib.Errors import WafError
 APPNAME=None
 VERSION=None
 bld=None
+NS3_LIB_DIR=None
+NS3_INCLUDE_DIR=None
 
 
 
@@ -56,7 +58,7 @@ def find_program(program_name, env):
         if not (obj.path.abspath().startswith(launch_dir)
                 or obj.path.get_bld().abspath().startswith(launch_dir)):
             continue
-        
+
         name1 = obj.name
         name2 = os.path.join(relpath(obj.path.abspath(), launch_dir), obj.name)
         names = [name1, name2]
@@ -82,7 +84,7 @@ def get_proc_env(os_env=None):
         Logs.warn(("Don't know how to configure "
                         "dynamic library path for the platform %r;"
                         " assuming it's LD_LIBRARY_PATH.") % (sys.platform,))
-        pathvar = 'LD_LIBRARY_PATH'        
+        pathvar = 'LD_LIBRARY_PATH'
 
     proc_env = dict(os.environ)
     if os_env is not None:

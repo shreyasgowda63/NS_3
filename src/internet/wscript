@@ -3,6 +3,7 @@ import os
 import sys
 
 from waflib import Options, Logs, Utils, Task
+import wutils
 
 
 # Required NSC version
@@ -44,7 +45,7 @@ def configure(conf):
         # bake.py uses ../../build, while ns-3-dev uses ../nsc,
         # and ns-3 release uses ../NSC_RELEASE_NAME
         nsc_bake_build_dir = os.path.join('..', '..', 'build')
-        nsc_bake_lib_dir = os.path.join(nsc_bake_build_dir, 'lib')
+        nsc_bake_lib_dir = os.path.join(nsc_bake_build_dir, wutils.NS3_LIB_DIR)
         nsc_dir = os.path.join('..', "nsc")
         nsc_release_dir = os.path.join('..', NSC_RELEASE_NAME)
         if os.path.exists(os.path.join(nsc_bake_lib_dir, lib_to_check)):
@@ -66,7 +67,7 @@ def configure(conf):
         conf.report_optional_feature("nsc", "Network Simulation Cradle", False,
                                      "NSC not found (see option --with-nsc)")
         return
-    
+
     if Utils.unversioned_sys_platform() in ['linux', 'freebsd']:
         arch = os.uname()[4]
     else:
@@ -78,7 +79,7 @@ def configure(conf):
         conf.check_nonfatal(mandatory=True, lib='dl', define_name='HAVE_DL', uselib_store='DL')
         ok = True
     conf.msg('Checking for NSC supported architecture ' + (arch or ''), ok)
-    
+
     if not ok:
         conf.env['NSC_ENABLED'] = False
         conf.report_optional_feature("nsc", "Network Simulation Cradle", False,
@@ -152,7 +153,7 @@ def build(bld):
         'model/tcp-vegas.cc',
         'model/tcp-congestion-ops.cc',
         'model/tcp-westwood.cc',
-        'model/tcp-scalable.cc', 
+        'model/tcp-scalable.cc',
         'model/tcp-veno.cc',
         'model/tcp-bic.cc',
         'model/tcp-yeah.cc',

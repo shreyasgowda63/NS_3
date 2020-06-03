@@ -40,7 +40,7 @@ def options(opt):
                          " --run and --shell; moreover, only works in some"
                          " specific platforms, such as Linux and Solaris)"),
                    action="store_true", dest='enable_rpath', default=False)
-    
+
     opt.add_option('--enable-modules',
                    help=("Build only these modules (and dependencies)"),
                    dest='enable_modules')
@@ -53,7 +53,7 @@ def options(opt):
 def configure(conf):
     # Append blddir to the module path before recursing into modules
     blddir = os.path.abspath(os.path.join(conf.bldnode.abspath(), conf.variant))
-    conf.env.append_value('NS3_MODULE_PATH', blddir + "/lib")
+    conf.env.append_value('NS3_MODULE_PATH', os.path.join(blddir, wutils.NS3_LIB_DIR))
 
     for module in all_modules:
         conf.recurse(module, mandatory=False)
@@ -82,8 +82,8 @@ def create_ns3_module(bld, name, dependencies=(), test=False):
         module = bld(features='cxx cxxstlib ns3module')
     else:
         module = bld(features='cxx cxxshlib ns3module')
-    module.target = '%s/lib/ns%s-%s%s' % (bld.srcnode.path_from(module.path), wutils.VERSION,
-                                       name, bld.env.BUILD_SUFFIX)
+    module.target = '%s/%s/ns%s-%s%s' % (bld.srcnode.path_from(module.path), wutils.NS3_LIB_DIR,
+                                        wutils.VERSION, name, bld.env.BUILD_SUFFIX)
     linkflags = []
     cxxflags = []
     ccflags = []
@@ -110,7 +110,7 @@ def create_ns3_module(bld, name, dependencies=(), test=False):
     module.is_static = static
     module.vnum = wutils.VNUM
     # Add the proper path to the module's name.
-    # Set the libraries this module depends on.  
+    # Set the libraries this module depends on.
     module.module_deps = list(dependencies)
 
     module.install_path = "${LIBDIR}"
@@ -129,7 +129,7 @@ def create_ns3_module(bld, name, dependencies=(), test=False):
 
     module.pcfilegen = bld(features='ns3pcfile')
     module.pcfilegen.module = module.name
-    
+
     return module
 
 @TaskGen.feature("ns3testlib")
@@ -157,11 +157,11 @@ def create_ns3_module_test_library(bld, name):
     # Add this module and test library to the list.
     bld.env.append_value('NS3_MODULES_WITH_TEST_LIBRARIES', [(library.module_name, library.name)])
 
-    # Set the include path from the build directory to modules. 
+    # Set the include path from the build directory to modules.
     relative_path_from_build_to_here = bld.path.path_from(bld.bldnode)
     include_flag = '-I' + relative_path_from_build_to_here
     library.env.append_value('CXXFLAGS', include_flag)
-    library.env.append_value('CCFLAGS',  include_flag)
+    library.env.append_value('CCFLAGS', include_flag)
 
     return library
 
@@ -235,7 +235,7 @@ def ns3_python_bindings(bld):
             '${PYTHON}']
     #if debug:
     #    argv.extend(["-m", "pdb"])
-    
+
     argv.extend(['${SRC[0]}', module_abs_src_path, apidefs, extension_name, '${TGT[0]}'])
 
     argv.extend(['2>', '${TGT[2]}']) # 2> ns3modulegen.log
@@ -305,7 +305,7 @@ def build(bld):
     bld.create_ns3_module_test_library = types.MethodType(create_ns3_module_test_library, bld)
     bld.create_obj = types.MethodType(create_obj, bld)
     bld.ns3_python_bindings = types.MethodType(ns3_python_bindings, bld)
-    
+
     # Remove these modules from the list of all modules.
     for not_built in bld.env['MODULES_NOT_BUILT']:
 
@@ -377,7 +377,7 @@ class ns3pcfile(Task.Task):
         return self._listify(self.env['CXXFLAGS_%s' % dep])
 
     def _defines(self, dep):
-        return [self.env['DEFINES_ST'] % define for define in self.env['DEFINES_%s' % dep]] 
+        return [self.env['DEFINES_ST'] % define for define in self.env['DEFINES_%s' % dep]]
 
     def _includes(self, dep):
         includes = self.env['INCLUDES_%s' % dep]
@@ -422,7 +422,7 @@ Requires: %s\
 
     def run(self):
         output_filename = self.outputs[0].abspath()
-        self._generate_pcfile(self.module.name, 
+        self._generate_pcfile(self.module.name,
                               self.module.to_list(self.module.use),
                               self.env, output_filename, self.module)
 
@@ -446,7 +446,7 @@ def apply(self):
 def apply_ns3header(self):
     if self.module is None:
         raise WafError("'module' missing on ns3headers object %s" % self)
-    ns3_dir_node = self.bld.path.find_or_declare("include/ns3")
+    ns3_dir_node = self.bld.path.find_or_declare(wutils.NS3_INCLUDE_DIR)
     for filename in set(self.to_list(self.source)):
         src_node = self.path.find_resource(filename)
         if src_node is None:
@@ -539,7 +539,7 @@ class ns3header(Task.Task):
 def apply_ns3privateheader(self):
     if self.module is None:
         raise WafError("'module' missing on ns3headers object %s" % self)
-    ns3_dir_node = self.bld.path.find_or_declare("include/ns3/private")
+    ns3_dir_node = self.bld.path.find_or_declare(os.path.join(wutils.NS3_INCLUDE_DIR, 'private'))
     for filename in set(self.to_list(self.source)):
         src_node = self.path.find_resource(filename)
         if src_node is None:
@@ -712,7 +712,7 @@ class gen_ns3_module_header(Task.Task):
 @TaskGen.after_method('process_rule')
 def apply_ns3moduleheader(self):
     ## get all of the ns3 headers
-    ns3_dir_node = self.bld.path.find_or_declare("include/ns3")
+    ns3_dir_node = self.bld.path.find_or_declare(wutils.NS3_INCLUDE_DIR)
     all_headers_inputs = []
     found_the_module = False
     for ns3headers in self.bld.all_task_gen:

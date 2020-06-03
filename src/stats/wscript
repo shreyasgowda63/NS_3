@@ -1,5 +1,7 @@
 ## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
 
+import wutils
+
 def configure(conf):
     have_sqlite3 = conf.check_cfg(package='sqlite3', uselib_store='SQLITE3',
                                   args=['--cflags', '--libs'],
@@ -11,7 +13,7 @@ def configure(conf):
     conf.report_optional_feature("SQLiteStats", "SQLite stats support",
                                  conf.env['SQLITE_STATS'] and conf.env['SEMAPHORE_ENABLED'],
                                  "library 'sqlite3' and/or semaphore.h not found")
-    conf.write_config_header('include/ns3/stats-config.h', top=True)
+    conf.write_config_header(wutils.NS3_INCLUDE_DIR + '/stats-config.h', top=True)
 
 def build(bld):
     obj = bld.create_ns3_module('stats', ['core'])

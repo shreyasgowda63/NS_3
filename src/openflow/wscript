@@ -3,6 +3,7 @@
 import os
 from waflib import Logs, Options
 from waflib.Errors import WafError
+import wutils
 
 def options(opt):
     opt.add_option('--with-openflow',
@@ -22,7 +23,7 @@ def configure(conf):
         # Add this module to the list of modules that won't be built
         # if they are enabled.
         conf.env['MODULES_NOT_BUILT'].append('openflow')
-        return 
+        return
 
     present_boost_libs = []
     for boost_lib_name in conf.env['LIB_BOOST']:
@@ -40,7 +41,7 @@ def configure(conf):
         # Add this module to the list of modules that won't be built
         # if they are enabled.
         conf.env['MODULES_NOT_BUILT'].append('openflow')
-        return 
+        return
 
     if Options.options.with_openflow:
         if os.path.isdir(Options.options.with_openflow):
@@ -50,7 +51,7 @@ def configure(conf):
         # bake.py uses ../../build, while ns-3-dev uses ../openflow.
         lib_to_check = 'libopenflow.a'
         openflow_bake_build_dir = os.path.join('..', '..', 'build')
-        openflow_bake_lib_dir = os.path.join(openflow_bake_build_dir, 'lib')
+        openflow_bake_lib_dir = os.path.join(openflow_bake_build_dir, wutils.NS3_LIB_DIR)
         openflow_dir = os.path.join('..','openflow')
         if os.path.exists(os.path.join(openflow_bake_lib_dir, lib_to_check)):
             conf.msg("Checking for OpenFlow location",("%s (guessed)" % openflow_bake_build_dir))
@@ -68,7 +69,7 @@ def configure(conf):
         # Add this module to the list of modules that won't be built
         # if they are enabled.
         conf.env['MODULES_NOT_BUILT'].append('openflow')
-        return 
+        return
 
     test_code = '''
 #include "openflow/openflow.h"
@@ -119,19 +120,19 @@ int main()
 
     conf.env['DL'] = conf.check(mandatory=True, lib='dl', define_name='DL', uselib_store='DL')
     conf.env['XML2'] = conf.check(mandatory=True, lib='xml2', define_name='XML2', uselib_store='XML2')
-    
+
     conf.env.append_value('NS3_MODULE_PATH',os.path.abspath(os.path.join(conf.env['WITH_OPENFLOW'],'build','default')))
     conf.env.append_value('NS3_MODULE_PATH',os.path.abspath(os.path.join(conf.env['WITH_OPENFLOW'],'lib')))
-    
+
     conf.env['INCLUDES_OPENFLOW'] = [
         os.path.abspath(os.path.join(conf.env['WITH_OPENFLOW'],'include'))]
     conf.env['LIBPATH_OPENFLOW'] = [
         os.path.abspath(os.path.join(conf.env['WITH_OPENFLOW'],'build','default')),
         os.path.abspath(os.path.join(conf.env['WITH_OPENFLOW'],'lib'))]
-    
+
     conf.env['DEFINES_OPENFLOW'] = ['NS3_OPENFLOW']
 
-    conf.env['OPENFLOW'] = conf.check_nonfatal(fragment=test_code, lib='openflow', 
+    conf.env['OPENFLOW'] = conf.check_nonfatal(fragment=test_code, lib='openflow',
                                                libpath=conf.env['LIBPATH_OPENFLOW'],
                                                use='OPENFLOW DL XML2')
     conf.env.append_value('LIB_OPENFLOW', 'dl')
