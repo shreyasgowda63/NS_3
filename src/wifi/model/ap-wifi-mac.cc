@@ -1057,7 +1057,7 @@ ApWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
                       NS_LOG_DEBUG ("tag=rx_amsdu"
                                     " msg=\"Received A-MSDU\""
                                     " from=" << from <<
-                                    " size=" << packet->GetSize ());
+                                    " size_B=" << packet->GetSize ());
                       DeaggregateAmsduAndForward (mpdu);
                       packet = 0;
                     }
