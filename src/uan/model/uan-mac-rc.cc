@@ -366,7 +366,7 @@ UanMacRc::ReceiveOkFromPhy (Ptr<Packet> pkt, double sinr, UanTxMode mode)
 
         Time winDelay = ctsg.GetWindowTime ();
 
-        if (winDelay > Time (0))
+        if (winDelay > 0)
           {
             m_rtsBlocked = false;
             Simulator::Schedule (winDelay, &UanMacRc::BlockRtsing, this);
@@ -481,9 +481,16 @@ UanMacRc::ScheduleData (const UanHeaderRcCts &ctsh, const UanHeaderRcCtsGlobal &
 
       pkt->AddHeader (ch);
       Time eventTime = startDelay + frameDelay;
-      if (eventTime < Time (0))
+      if (eventTime < 0)
         {
-          NS_FATAL_ERROR ("Scheduling error resulted in very negative data transmission time! eventTime = " << eventTime.As (Time::S));
+          if (eventTime > -0.001)
+            {
+              eventTime = Time ();
+            }
+          else
+            {
+              NS_FATAL_ERROR ("Scheduling error resulted in very negative data transmission time! eventTime = " << eventTime.As (Time::S));
+            }
         }
       NS_LOG_DEBUG (Now ().As (Time::S) << 
                     " Node " << Mac8Address::ConvertFrom (GetAddress ()) << 

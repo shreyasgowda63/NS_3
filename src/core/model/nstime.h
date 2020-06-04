@@ -530,7 +530,7 @@ public:
 
 
   /** Cast to int64x64_t */
-  explicit inline operator int64x64_t () const
+  inline operator int64x64_t () const
   {
     return int64x64_t (m_data);
   }
