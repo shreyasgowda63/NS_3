@@ -22,6 +22,8 @@ def register_types(module):
     
     ## log.h (module 'core'): ns3::LogLevel [enumeration]
     module.add_enum('LogLevel', ['LOG_NONE', 'LOG_ERROR', 'LOG_LEVEL_ERROR', 'LOG_WARN', 'LOG_LEVEL_WARN', 'LOG_DEBUG', 'LOG_LEVEL_DEBUG', 'LOG_INFO', 'LOG_LEVEL_INFO', 'LOG_FUNCTION', 'LOG_LEVEL_FUNCTION', 'LOG_LOGIC', 'LOG_LEVEL_LOGIC', 'LOG_ALL', 'LOG_LEVEL_ALL', 'LOG_PREFIX_FUNC', 'LOG_PREFIX_TIME', 'LOG_PREFIX_NODE', 'LOG_PREFIX_LEVEL', 'LOG_PREFIX_ALL'])
+    ## ascii-file.h (module 'core'): ns3::AsciiFile [class]
+    module.add_class('AsciiFile')
     ## attribute-construction-list.h (module 'core'): ns3::AttributeConstructionList [class]
     module.add_class('AttributeConstructionList')
     ## attribute-construction-list.h (module 'core'): ns3::AttributeConstructionList::Item [struct]
@@ -132,6 +134,8 @@ def register_types(module):
     module.add_class('SystemMutex')
     ## system-wall-clock-ms.h (module 'core'): ns3::SystemWallClockMs [class]
     module.add_class('SystemWallClockMs')
+    ## system-wall-clock-timestamp.h (module 'core'): ns3::SystemWallClockTimestamp [class]
+    module.add_class('SystemWallClockTimestamp')
     ## nstime.h (module 'core'): ns3::TimeWithUnit [class]
     module.add_class('TimeWithUnit')
     ## timer.h (module 'core'): ns3::Timer [class]
@@ -511,6 +515,12 @@ def register_types_ns3_TracedValueCallback(module):
     typehandlers.add_type_alias('void ( * ) ( uint32_t, uint32_t )', 'ns3::TracedValueCallback::Uint32')
     typehandlers.add_type_alias('void ( * ) ( uint32_t, uint32_t )*', 'ns3::TracedValueCallback::Uint32*')
     typehandlers.add_type_alias('void ( * ) ( uint32_t, uint32_t )&', 'ns3::TracedValueCallback::Uint32&')
+    typehandlers.add_type_alias('void ( * ) ( int64_t, int64_t )', 'ns3::TracedValueCallback::Int64')
+    typehandlers.add_type_alias('void ( * ) ( int64_t, int64_t )*', 'ns3::TracedValueCallback::Int64*')
+    typehandlers.add_type_alias('void ( * ) ( int64_t, int64_t )&', 'ns3::TracedValueCallback::Int64&')
+    typehandlers.add_type_alias('void ( * ) ( uint64_t, uint64_t )', 'ns3::TracedValueCallback::Uint64')
+    typehandlers.add_type_alias('void ( * ) ( uint64_t, uint64_t )*', 'ns3::TracedValueCallback::Uint64*')
+    typehandlers.add_type_alias('void ( * ) ( uint64_t, uint64_t )&', 'ns3::TracedValueCallback::Uint64&')
     typehandlers.add_type_alias('void ( * ) ( double, double )', 'ns3::TracedValueCallback::Double')
     typehandlers.add_type_alias('void ( * ) ( double, double )*', 'ns3::TracedValueCallback::Double*')
     typehandlers.add_type_alias('void ( * ) ( double, double )&', 'ns3::TracedValueCallback::Double&')
@@ -527,6 +537,7 @@ def register_types_ns3_tests(module):
     
 
 def register_methods(root_module):
+    register_Ns3AsciiFile_methods(root_module, root_module['ns3::AsciiFile'])
     register_Ns3AttributeConstructionList_methods(root_module, root_module['ns3::AttributeConstructionList'])
     register_Ns3AttributeConstructionListItem_methods(root_module, root_module['ns3::AttributeConstructionList::Item'])
     register_Ns3CallbackBase_methods(root_module, root_module['ns3::CallbackBase'])
@@ -568,6 +579,7 @@ def register_methods(root_module):
     register_Ns3SystemCondition_methods(root_module, root_module['ns3::SystemCondition'])
     register_Ns3SystemMutex_methods(root_module, root_module['ns3::SystemMutex'])
     register_Ns3SystemWallClockMs_methods(root_module, root_module['ns3::SystemWallClockMs'])
+    register_Ns3SystemWallClockTimestamp_methods(root_module, root_module['ns3::SystemWallClockTimestamp'])
     register_Ns3TimeWithUnit_methods(root_module, root_module['ns3::TimeWithUnit'])
     register_Ns3Timer_methods(root_module, root_module['ns3::Timer'])
     register_Ns3TimerImpl_methods(root_module, root_module['ns3::TimerImpl'])
@@ -671,6 +683,38 @@ def register_methods(root_module):
     register_Ns3HashFunctionMurmur3_methods(root_module, root_module['ns3::Hash::Function::Murmur3'])
     return
 
+def register_Ns3AsciiFile_methods(root_module, cls):
+    ## ascii-file.h (module 'core'): ns3::AsciiFile::AsciiFile() [constructor]
+    cls.add_constructor([])
+    ## ascii-file.h (module 'core'): bool ns3::AsciiFile::Fail() const [member function]
+    cls.add_method('Fail', 
+                   'bool', 
+                   [], 
+                   is_const=True)
+    ## ascii-file.h (module 'core'): bool ns3::AsciiFile::Eof() const [member function]
+    cls.add_method('Eof', 
+                   'bool', 
+                   [], 
+                   is_const=True)
+    ## ascii-file.h (module 'core'): void ns3::AsciiFile::Open(std::string const & filename, std::ios_base::openmode mode) [member function]
+    cls.add_method('Open', 
+                   'void', 
+                   [param('std::string const &', 'filename'), param('std::ios_base::openmode', 'mode')])
+    ## ascii-file.h (module 'core'): void ns3::AsciiFile::Close() [member function]
+    cls.add_method('Close', 
+                   'void', 
+                   [])
+    ## ascii-file.h (module 'core'): void ns3::AsciiFile::Read(std::string & line) [member function]
+    cls.add_method('Read', 
+                   'void', 
+                   [param('std::string &', 'line')])
+    ## ascii-file.h (module 'core'): static bool ns3::AsciiFile::Diff(std::string const & f1, std::string const & f2, uint64_t & lineNumber) [member function]
+    cls.add_method('Diff', 
+                   'bool', 
+                   [param('std::string const &', 'f1'), param('std::string const &', 'f2'), param('uint64_t &', 'lineNumber')], 
+                   is_static=True)
+    return
+
 def register_Ns3AttributeConstructionList_methods(root_module, cls):
     ## attribute-construction-list.h (module 'core'): ns3::AttributeConstructionList::AttributeConstructionList(ns3::AttributeConstructionList const & arg0) [constructor]
     cls.add_constructor([param('ns3::AttributeConstructionList const &', 'arg0')])
@@ -733,10 +777,10 @@ def register_Ns3CommandLine_methods(root_module, cls):
     cls.add_constructor([param('std::string const', 'filename')])
     ## command-line.h (module 'core'): ns3::CommandLine::CommandLine(ns3::CommandLine const & cmd) [constructor]
     cls.add_constructor([param('ns3::CommandLine const &', 'cmd')])
-    ## command-line.h (module 'core'): void ns3::CommandLine::AddValue(std::string const & name, std::string const & help, ns3::Callback<bool, std::basic_string<char>, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty> callback) [member function]
+    ## command-line.h (module 'core'): void ns3::CommandLine::AddValue(std::string const & name, std::string const & help, ns3::Callback<bool, std::basic_string<char>, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty> callback, std::string const defaultValue="") [member function]
     cls.add_method('AddValue', 
                    'void', 
-                   [param('std::string const &', 'name'), param('std::string const &', 'help'), param('ns3::Callback< bool, std::basic_string< char >, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty >', 'callback')])
+                   [param('std::string const &', 'name'), param('std::string const &', 'help'), param('ns3::Callback< bool, std::basic_string< char >, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty >', 'callback'), param('std::string const', 'defaultValue', default_value='""')])
     ## command-line.h (module 'core'): void ns3::CommandLine::AddValue(std::string const & name, std::string const & attributePath) [member function]
     cls.add_method('AddValue', 
                    'void', 
@@ -1366,30 +1410,26 @@ def register_Ns3RngStream_methods(root_module, cls):
     return
 
 def register_Ns3ShowProgress_methods(root_module, cls):
+    ## show-progress.h (module 'core'): ns3::ShowProgress::ShowProgress(ns3::ShowProgress const & arg0) [constructor]
+    cls.add_constructor([param('ns3::ShowProgress const &', 'arg0')])
     ## show-progress.h (module 'core'): ns3::ShowProgress::ShowProgress(ns3::Time const interval=ns3::Seconds(1.), std::ostream & os=std::cout) [constructor]
     cls.add_constructor([param('ns3::Time const', 'interval', default_value='ns3::Seconds(1.)'), param('std::ostream &', 'os', default_value='std::cout')])
     ## show-progress.h (module 'core'): void ns3::ShowProgress::SetInterval(ns3::Time const interval) [member function]
     cls.add_method('SetInterval', 
                    'void', 
                    [param('ns3::Time const', 'interval')])
-    ## show-progress.h (module 'core'): void ns3::ShowProgress::SetTimePrinter(ns3::TimePrinter lp) [member function]
-    cls.add_method('SetTimePrinter', 
-                   'void', 
-                   [param('void ( * ) ( std::ostream & )', 'lp')])
     ## show-progress.h (module 'core'): void ns3::ShowProgress::SetStream(std::ostream & os) [member function]
     cls.add_method('SetStream', 
                    'void', 
                    [param('std::ostream &', 'os')])
-    ## show-progress.h (module 'core'): void ns3::ShowProgress::Start() [member function]
-    cls.add_method('Start', 
+    ## show-progress.h (module 'core'): void ns3::ShowProgress::SetTimePrinter(ns3::TimePrinter lp) [member function]
+    cls.add_method('SetTimePrinter', 
                    'void', 
-                   [])
+                   [param('void ( * ) ( std::ostream & )', 'lp')])
     ## show-progress.h (module 'core'): void ns3::ShowProgress::SetVerbose(bool verbose) [member function]
     cls.add_method('SetVerbose', 
                    'void', 
                    [param('bool', 'verbose')])
-    ## show-progress.h (module 'core'): ns3::ShowProgress::ShowProgress(ns3::ShowProgress const & arg0) [constructor]
-    cls.add_constructor([param('ns3::ShowProgress const &', 'arg0')])
     return
 
 def register_Ns3SimpleRefCount__Ns3Object_Ns3ObjectBase_Ns3ObjectDeleter_methods(root_module, cls):
@@ -1568,6 +1608,32 @@ def register_Ns3SystemWallClockMs_methods(root_module, cls):
     cls.add_method('Start', 
                    'void', 
                    [])
+    return
+
+def register_Ns3SystemWallClockTimestamp_methods(root_module, cls):
+    ## system-wall-clock-timestamp.h (module 'core'): ns3::SystemWallClockTimestamp::SystemWallClockTimestamp(ns3::SystemWallClockTimestamp const & arg0) [constructor]
+    cls.add_constructor([param('ns3::SystemWallClockTimestamp const &', 'arg0')])
+    ## system-wall-clock-timestamp.h (module 'core'): ns3::SystemWallClockTimestamp::SystemWallClockTimestamp() [constructor]
+    cls.add_constructor([])
+    ## system-wall-clock-timestamp.h (module 'core'): time_t ns3::SystemWallClockTimestamp::GetInterval() const [member function]
+    cls.add_method('GetInterval', 
+                   'time_t', 
+                   [], 
+                   is_const=True)
+    ## system-wall-clock-timestamp.h (module 'core'): time_t ns3::SystemWallClockTimestamp::GetLast() const [member function]
+    cls.add_method('GetLast', 
+                   'time_t', 
+                   [], 
+                   is_const=True)
+    ## system-wall-clock-timestamp.h (module 'core'): void ns3::SystemWallClockTimestamp::Stamp() [member function]
+    cls.add_method('Stamp', 
+                   'void', 
+                   [])
+    ## system-wall-clock-timestamp.h (module 'core'): std::string ns3::SystemWallClockTimestamp::ToString() const [member function]
+    cls.add_method('ToString', 
+                   'std::string', 
+                   [], 
+                   is_const=True)
     return
 
 def register_Ns3TimeWithUnit_methods(root_module, cls):
@@ -5493,6 +5559,10 @@ def register_functions_ns3_SystemPath(module, root_module):
     module.add_function('Append', 
                         'std::string', 
                         [param('std::string', 'left'), param('std::string', 'right')])
+    ## system-path.h (module 'core'): bool ns3::SystemPath::Exists(std::string const path) [free function]
+    module.add_function('Exists', 
+                        'bool', 
+                        [param('std::string const', 'path')])
     ## system-path.h (module 'core'): std::string ns3::SystemPath::FindSelfDirectory() [free function]
     module.add_function('FindSelfDirectory', 
                         'std::string', 
