@@ -230,6 +230,8 @@ public:
    *
    * This form is required to generate Doxygen documentation of the
    * arguments and options.
+   *
+   * \param [in] filename The source file name.
    */
   CommandLine (const std::string filename);
   /**
@@ -284,13 +286,16 @@ public:
    * \param [in] help The help text used by \c --help
    * \param [in] callback A Callback function that will be invoked to parse and
    *   store the value.
+   * \param [in] defaultValue Optional default value for argument.
    *
    * The callback should have the signature
    * CommandLine::Callback
    */
   void AddValue (const std::string &name,
                  const std::string &help,
-                 ns3::Callback<bool, std::string> callback);
+                 ns3::Callback<bool, std::string> callback,
+                 const std::string defaultValue = "");
+
 
   /**
    * Add a program argument as a shorthand for an Attribute.
@@ -435,7 +440,8 @@ private:
   };  // class UserItem
 
   /**
-   * Extension of Item for strings.
+   * \ingroup commandline
+   * \brief Extension of Item for strings.
    */
   class StringItem : public Item
   {
@@ -455,6 +461,10 @@ private:
   class CallbackItem : public Item
   {
   public:
+    // Inherited
+    bool HasDefault (void) const;
+    std::string GetDefault (void) const;
+
     /**
      * Parse from a string.
      *
@@ -463,6 +473,7 @@ private:
      */
     virtual bool Parse (const std::string value);
     ns3::Callback<bool, std::string> m_callback;  /**< The Callback */
+    std::string m_default;  /**< The default value, as a string, if it exists. */
   };  // class CallbackItem
 
 
@@ -566,18 +577,34 @@ namespace CommandLineHelper {
 
 /**
  * \ingroup commandlinehelper
- * \brief Helpers to specialize CommandLine::UserItem::Parse() on bool
+ * \brief Helpers to specialize CommandLine::UserItem::Parse()
  *
  * \param [in] value The argument name
  * \param [out] val The argument location
+ * \tparam \deduced T The type being specialized
  * \return \c true if parsing was successful
- * @{
  */
 template <typename T>
 bool UserItemParse (const std::string value, T & val);
+/**
+ * \brief Specialization of CommandLine::UserItem to \c bool
+ *
+ * \param [in] value The argument name
+ * \param [out] val The boolean variable to set
+ * \return \c true if parsing was successful
+ */
 template <>
 bool UserItemParse<bool> (const std::string value, bool & val);
-/**@}*/
+/**
+ * \brief Specialization of CommandLine::UserItem to \c uint8_t
+ * to distinguish from \c char
+ *
+ * \param [in] value The argument name
+ * \param [out] val The \c uint8_t variable to set
+ * \return \c true if parsing was successful
+ */
+template <>
+bool UserItemParse<uint8_t> (const std::string value, uint8_t & val);
 
 /**
  * \ingroup commandlinehelper
@@ -594,7 +621,6 @@ std::string GetDefault<bool> (const bool & val);
 /**@}*/
 
 }  // namespace CommandLineHelper
-
 
 
 } // namespace ns3

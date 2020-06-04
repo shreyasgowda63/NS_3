@@ -200,6 +200,10 @@ def options(opt):
                          ' argument is the path to the python program, optionally followed'
                          ' by command-line options that are passed to the program.'),
                    type="string", default='', dest='pyrun_no_build')
+    opt.add_option('--gdb',
+                   help=('Change the default command template to run programs and unit tests with gdb'),
+                   action="store_true", default=False,
+                   dest='gdb')
     opt.add_option('--valgrind',
                    help=('Change the default command template to run programs and unit tests with valgrind'),
                    action="store_true", default=False,
@@ -551,8 +555,6 @@ def configure(conf):
         elif not_built_name in conf.env['NS3_ENABLED_CONTRIBUTED_MODULES']:
             conf.env['NS3_ENABLED_CONTRIBUTED_MODULES'].remove(not_built_name)
 
-    conf.recurse('src/mpi')
-
     # for suid bits
     try:
         conf.find_program('sudo', var='SUDO')
@@ -771,6 +773,9 @@ def register_ns3_script(bld, name, dependencies=('core',)):
 def add_examples_programs(bld):
     env = bld.env
     if env['ENABLE_EXAMPLES']:
+        # Add a define, so this is testable from code
+        env.append_value('DEFINES', 'NS3_ENABLE_EXAMPLES')
+
         try:
             for dir in os.listdir('examples'):
                 if dir.startswith('.') or dir == 'CVS':

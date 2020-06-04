@@ -338,7 +338,7 @@ TcpSocketBase::TcpSocketBase (const TcpSocketBase& sock)
     m_isFirstPartialAck (sock.m_isFirstPartialAck),
     m_txTrace (sock.m_txTrace),
     m_rxTrace (sock.m_rxTrace),
-    m_pacingTimer (Timer::REMOVE_ON_DESTROY),
+    m_pacingTimer (Timer::CANCEL_ON_DESTROY),
     m_ecnEchoSeq (sock.m_ecnEchoSeq),
     m_ecnCESeq (sock.m_ecnCESeq),
     m_ecnCWRSeq (sock.m_ecnCWRSeq)
@@ -2577,7 +2577,9 @@ TcpSocketBase::SendEmptyPacket (uint8_t flags)
         { // No more connection retries, give up
           NS_LOG_LOGIC ("Connection failed.");
           m_rtt->Reset (); //According to recommendation -> RFC 6298
-          CloseAndNotify ();
+          NotifyConnectionFailed ();
+          m_state = CLOSED;
+          DeallocateEndPoint ();
           return;
         }
       else
@@ -3479,21 +3481,14 @@ TcpSocketBase::ReTxTimeout ()
 
   if (m_state == SYN_SENT)
     {
-      if (m_synCount > 0)
+      NS_ASSERT (m_synCount > 0);
+      if (m_tcb->m_useEcn == TcpSocketState::On)
         {
-          if (m_tcb->m_useEcn != TcpSocketState::Off)
-            {
-              SendEmptyPacket (TcpHeader::SYN | TcpHeader::ECE | TcpHeader::CWR);
-            }
-          else
-            {
-              SendEmptyPacket (TcpHeader::SYN);
-            }
-          m_tcb->m_ecnState = TcpSocketState::ECN_DISABLED;
+          SendEmptyPacket (TcpHeader::SYN | TcpHeader::ECE | TcpHeader::CWR);
         }
       else
         {
-          NotifyConnectionFailed ();
+          SendEmptyPacket (TcpHeader::SYN);
         }
       return;
     }
@@ -4277,7 +4272,7 @@ TcpSocketBase::SafeSubtraction (uint32_t a, uint32_t b)
 void
 TcpSocketBase::NotifyPacingPerformed (void)
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
   NS_LOG_INFO ("Performing Pacing");
   SendPendingData (m_connected);
 }

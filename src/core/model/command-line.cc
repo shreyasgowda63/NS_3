@@ -339,11 +339,6 @@ CommandLine::PrintDoxygenUsage (void) const
 {
   NS_LOG_FUNCTION (this);
 
-  {
-    char buf[1024];
-    std::string cwd= getcwd (buf, 1024);
-  }
-  
   const char * envVar = std::getenv ("NS_COMMANDLINE_INTROSPECTION");
   if (envVar == 0 || std::strlen (envVar) == 0)
     {
@@ -386,14 +381,14 @@ CommandLine::PrintDoxygenUsage (void) const
          << "<dl>\n";
       for (auto i : m_options)
         {
-          os << "  <dt>\\c --" << i->m_name << "</dt>\n"
+          os << "  <dt>\\c --" << i->m_name << " </dt>\n"
              << "    <dd>" << i->m_help;
 
           if ( i->HasDefault ())
             {
               os << " [" << i->GetDefault () << "]";
             }
-          os << "</dd>\n";
+          os << " </dd>\n";
         }
       os << "</dl>\n";
     }
@@ -405,14 +400,14 @@ CommandLine::PrintDoxygenUsage (void) const
          << "<dl>\n";
       for (auto i : nonOptions)
         {
-          os << "  <dt> \\c " << i->m_name << "</dt>\n"
+          os << "  <dt> \\c " << i->m_name << " </dt>\n"
              << "    <dd>" << i->m_help;
 
           if ( i->HasDefault ())
             {
               os << " [" << i->GetDefault () << "]";
             }
-          os << "</dd>\n";
+          os << " </dd>\n";
         }
       os << "</dl>\n";
     }
@@ -644,6 +639,18 @@ CommandLine::HandleArgument (const std::string &name, const std::string &value) 
 }
 
 bool
+CommandLine::CallbackItem::HasDefault (void) const
+{
+  return m_default != "";
+}
+
+std::string
+CommandLine::CallbackItem::GetDefault (void) const
+{
+  return m_default;
+}
+
+bool
 CommandLine::CallbackItem::Parse (const std::string value)
 {
   NS_LOG_FUNCTION (this);
@@ -654,13 +661,16 @@ CommandLine::CallbackItem::Parse (const std::string value)
 void
 CommandLine::AddValue (const std::string &name,
                        const std::string &help,
-                       ns3::Callback<bool, std::string> callback)
+                       ns3::Callback<bool, std::string> callback,
+                       std::string defaultValue /* = "" */)
+
 {
   NS_LOG_FUNCTION (this << &name << &help << &callback);
   CallbackItem *item = new CallbackItem ();
   item->m_name = name;
   item->m_help = help;
   item->m_callback = callback;
+  item->m_default = defaultValue;
   m_options.push_back (item);
 }
 
@@ -798,7 +808,7 @@ CommandLineHelper::UserItemParse<bool> (const std::string value, bool & val)
       val = true;
       return true;
     }
-  else if ( (src == "false") || (src == "f"))
+  else if ( (src == "false") || (src == "f") )
     {
       val = false;
       return true;
@@ -811,6 +821,38 @@ CommandLineHelper::UserItemParse<bool> (const std::string value, bool & val)
       return !iss.bad () && !iss.fail ();
     }
 }
+
+template <>
+bool
+CommandLineHelper::UserItemParse<uint8_t> (const std::string value, uint8_t & val)
+{
+  uint8_t oldVal = val;
+  long newVal;
+
+  try
+    {
+      newVal = std::stoi (value);
+    }
+  catch (std::invalid_argument & ia)
+    {
+      NS_LOG_WARN ("invalid argument: " << ia.what ());
+      val = oldVal;
+      return false;
+    }
+  catch (std::out_of_range & oor)
+    {
+      NS_LOG_WARN ("out of range: " << oor.what ());
+      val = oldVal;
+      return false;
+    }
+  if (newVal < 0 || newVal > 255)
+    {
+      return false;
+    }
+  val = newVal;
+  return true;
+}
+
 
 std::ostream &
 operator << (std::ostream & os, const CommandLine & cmd)
