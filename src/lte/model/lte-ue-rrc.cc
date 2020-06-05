@@ -693,6 +693,7 @@ LteUeRrc::DoNotifyRandomAccessSuccessful ()
           }
 
         SwitchToState (CONNECTED_NORMALLY);
+        m_radioLinkFailureDetected.Cancel();
         m_cmacSapProvider.at (0)->NotifyConnectionSuccessful (); //RA successful during handover
         m_handoverEndOkTrace (m_imsi, m_cellId, m_rnti);
       }
