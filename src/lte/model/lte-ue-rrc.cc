@@ -3288,14 +3288,11 @@ LteUeRrc::SaveScellUeMeasurements (uint16_t sCellId, double rsrp, double rsrq,
 void
 LteUeRrc::RadioLinkFailureDetected ()
 {
-  if (m_radioLinkFailureDetected.IsRunning ())
-  {
-    NS_LOG_FUNCTION (this << m_imsi << m_rnti);
-    m_radioLinkFailureTrace (m_imsi, m_cellId, m_rnti);
-    SwitchToState (CONNECTED_PHY_PROBLEM);
-    m_rrcSapUser->SendIdealUeContextRemoveRequest (m_rnti);
-    m_asSapUser->NotifyConnectionReleased ();
-  } 
+  NS_LOG_FUNCTION (this << m_imsi << m_rnti);
+  m_radioLinkFailureTrace (m_imsi, m_cellId, m_rnti);
+  SwitchToState (CONNECTED_PHY_PROBLEM);
+  m_rrcSapUser->SendIdealUeContextRemoveRequest (m_rnti);
+  m_asSapUser->NotifyConnectionReleased ();
 }
 
 void
