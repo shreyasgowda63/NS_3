@@ -897,6 +897,12 @@ LrWpanMac::CheckQueue ()
         {
           m_setMacState = Simulator::ScheduleNow (&LrWpanMac::SetLrWpanMacState, this, MAC_CSMA);
         }
+      else
+        {
+    	  // The MAC is in the Beacon period or the Inactive Period
+    	  // m_txPkt is set to 0 so the packet can be pull from the queue again during an active period
+          m_txPkt = 0;
+        }
     }
 }
 
@@ -1778,6 +1784,12 @@ uint8_t
 LrWpanMac::GetMacMaxFrameRetries (void) const
 {
   return m_macMaxFrameRetries;
+}
+
+void
+LrWpanMac::PrintTransmitQueueSize (void)
+{
+  NS_LOG_DEBUG("Transit Queue Size: "<<m_txQueue.size());
 }
 
 void
