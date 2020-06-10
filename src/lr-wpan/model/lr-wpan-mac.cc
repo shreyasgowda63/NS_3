@@ -897,12 +897,6 @@ LrWpanMac::CheckQueue ()
           m_txPkt = txQElement->txQPkt;
           m_setMacState = Simulator::ScheduleNow (&LrWpanMac::SetLrWpanMacState, this, MAC_CSMA);
         }
-      else
-        {
-    	  // The MAC is in the Beacon period or the Inactive Period
-    	  // m_txPkt is set to 0 so the packet can be pull from the queue again during an active period
-          m_txPkt = 0;
-        }
     }
 }
 
