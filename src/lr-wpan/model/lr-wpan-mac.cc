@@ -888,20 +888,14 @@ LrWpanMac::CheckQueue ()
 {
   NS_LOG_FUNCTION (this);
   // Pull a packet from the queue and start sending if we are not already sending.
-  if (m_lrWpanMacState == MAC_IDLE && !m_txQueue.empty () && m_txPkt == 0 && !m_setMacState.IsRunning ())
+  if (m_lrWpanMacState == MAC_IDLE && !m_txQueue.empty () && !m_setMacState.IsRunning ())
     {
-      TxQueueElement *txQElement = m_txQueue.front ();
-      m_txPkt = txQElement->txQPkt;
       //TODO: this should check if the node is a coordinator and using the outcoming superframe not just the PAN coordinator
       if (m_csmaCa->IsUnSlottedCsmaCa () || (m_outSuperframeStatus == CAP && m_panCoor) || m_incSuperframeStatus == CAP)
         {
+          TxQueueElement *txQElement = m_txQueue.front ();
+          m_txPkt = txQElement->txQPkt;
           m_setMacState = Simulator::ScheduleNow (&LrWpanMac::SetLrWpanMacState, this, MAC_CSMA);
-        }
-      else
-        {
-    	  // The MAC is in the Beacon period or the Inactive Period
-    	  // m_txPkt is set to 0 so the packet can be pull from the queue again during an active period
-          m_txPkt = 0;
         }
     }
 }
