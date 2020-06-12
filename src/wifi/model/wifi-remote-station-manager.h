@@ -715,12 +715,12 @@ public:
    * \param ackSnr the SNR of the ACK we received
    * \param ackMode the WifiMode the receiver used to send the ACK
    * \param dataSnr the SNR of the DATA we sent
-   * \param dataChannelWidth the channel width (in MHz) of the DATA we sent
+   * \param dataTxVector the TXVECTOR of the DATA we sent
    * \param packetSize the size of the DATA packet
    */
   void ReportDataOk (Mac48Address address, const WifiMacHeader *header,
                      double ackSnr, WifiMode ackMode,
-                     double dataSnr, uint16_t dataChannelWidth,
+                     double dataSnr, WifiTxVector dataTxVector,
                      uint32_t packetSize);
   /**
    * Should be invoked after calling ReportRtsFailed if
@@ -750,10 +750,10 @@ public:
    * \param nFailedMpdus number of unsuccessfully transmitted MPDUs
    * \param rxSnr received SNR of the block ack frame itself
    * \param dataSnr data SNR reported by remote station
-   * \param dataChannelWidth the channel width (in MHz) of the A-MPDU initially sent to the remote station
+   * \param dataTxVector the TXVECTOR of the MPDUs we sent
    */
   void ReportAmpduTxStatus (Mac48Address address, uint8_t nSuccessfulMpdus, uint8_t nFailedMpdus,
-                            double rxSnr, double dataSnr, uint16_t dataChannelWidth);
+                            double rxSnr, double dataSnr, WifiTxVector dataTxVector);
 
   /**
    * \param address remote address
@@ -1155,10 +1155,10 @@ private:
    * \param ackMode the WifiMode the receiver used to send the ACK
    * \param dataSnr the SNR of the DATA we sent
    * \param dataChannelWidth the channel width (in MHz) of the DATA we sent
+   * \param dataNss the number of spatial streams used to send the DATA
    */
-  virtual void DoReportDataOk (WifiRemoteStation *station,
-                               double ackSnr, WifiMode ackMode,
-                               double dataSnr, uint16_t dataChannelWidth) = 0;
+  virtual void DoReportDataOk (WifiRemoteStation *station, double ackSnr, WifiMode ackMode,
+                               double dataSnr, uint16_t dataChannelWidth, uint8_t dataNss) = 0;
   /**
    * This method is a pure virtual method that must be implemented by the sub-class.
    * This allows different types of WifiRemoteStationManager to respond differently,
@@ -1196,9 +1196,10 @@ private:
    * \param rxSnr received SNR of the block ack frame itself
    * \param dataSnr data SNR reported by remote station
    * \param dataChannelWidth the channel width (in MHz) of the A-MPDU we sent
+   * \param dataNss the number of spatial streams used to send the A-MPDU
    */
   virtual void DoReportAmpduTxStatus (WifiRemoteStation *station, uint8_t nSuccessfulMpdus, uint8_t nFailedMpdus,
-                                      double rxSnr, double dataSnr, uint16_t dataChannelWidth);
+                                      double rxSnr, double dataSnr, uint16_t dataChannelWidth, uint8_t dataNss);
 
   /**
    * Return the state of the station associated with the given address.
