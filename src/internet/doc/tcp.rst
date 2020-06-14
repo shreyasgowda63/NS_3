@@ -987,6 +987,81 @@ environment. Some differences were noted:
 More information about DCTCP is available in the RFC 8257:
 https://tools.ietf.org/html/rfc8257
 
+Prague
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+TCP Prague is a new congestion control proposed as part of the Low 
+Latency, Low Loss and Scalable Throughput (L4S) architecture. An important 
+aspect of this architecture is to tackle the problems that arise when
+a "scalable" congestion control such as DCTCP is used in the internet. 
+Among other features such as Accurate ECN feedback and Dual-Queue Coupled 
+AQM, this architecture proposes several modifications over DCTCP that 
+are collectively implemented in TCP Prague. 
+
+At the time of this addition, TCP Prague does not have an IETF draft.
+The L4S Team is currently testing their Prague implementation in Linux, and
+ns-3 Prague aims to align with their work. 
+
+The following aspects are common to the implementations of Prague in ns-3
+and Linux:
+
+* Use ECN to express congestion in the network and enable ECT(1) codepoint.
+* Use pacing and incorporate a dynamically changing pacing rate depending
+  on cWnd and RTT.
+* Similar to DCTCP, use an exponential weighted moving average (:math:`\alpha`)
+  denoting the fraction of packets marked. In response to an ECE mark, the
+  sender reduces its cWnd by a factor of (1 - (:math:`\alpha`) / 2). However,
+  this reduction is carried out by subtracting one segment from cWnd per RTT.
+* Use Appropriate Byte Counting (refer to the documentation on ns-3 Linux 
+  Reno) during Slow Start and Congestion Avoidance.
+* Update cWnd, (:math:`\alpha`) and pacing rate for every ACK received by 
+  the sender, instead of once every RTT.
+* Scale cWnd incrase during Congestion Avoidance to reduce RTT dependence and
+  prevent Prague from occupying most of the shared bandwidth when coexisting with
+  classic congestion controls such as Reno.
+
+The implementation of Prague in ns-3 lacks the following features present in
+Linux:
+
+* Use a modified cWnd reduction when Prague coexists with a classic congestion
+  control and encounters a bottleneck in a single shared queue supporting 
+  classic ECN AQM.
+
+As noted earlier, it is equally important to consider other features along with
+modifications over DCTCP, in order to deploy Prague in the internet. Currently,
+ns-3 does not support Accurate ECN feedback. Dual-Queue Coupled AQM is also absent
+in mainline ns-3, but is maintained in a separate repository:
+https://gitlab.com/tomhenderson/ns-3-dev/-/tree/hackathon/master .  
+
+To validate the Prague model in ns-3, we used the l4s-evaluation suite: 
+https://gitlab.com/tomhend/modules/l4s-evaluation/-/tree/hackathon/master 
+This suite implements scenarios that were proposed by Pete Heist to 
+compare SCE against L4S, both of which try to use the ECT(1) bit in the IP 
+header for different purposes: 
+https://github.com/heistp/sce-l4s-ect1#scenario-1-one-flow
+
+We ran experiments following the topology specified in one-flow scenario
+linked above, in both ns-3 and Linux namespaces. This topology consists
+of a Prague sender, five routers and a Prague receiver. The bottleneck 
+bandwidth and RTT are configurable parameters. These experiments validated 
+the alignment of Prague implementation in ns-3 with that of Linux. To 
+reproduce these results in ns-3, the l4s-evaluation suite linked above has 
+further details. Following figure shows the variation of congestion window
+and throughput in Prague for a bottleneck bandwidth of 50Mbps and an RTT
+of 20ms. 
+
+.. _fig-one-flow-ns3-prague-vs-linux-namespaces-prague:
+
+.. figure:: figures/one-flow-ns3-prague-vs-linux-namespaces-prague.*
+   :align: center
+
+   TCP Prague in ns-3  v/s TCP Prague in Linux namespaces
+
+
+A more elaborate description of the work involved in adding TCP Prague to ns-3
+is documented here: 
+https://deepakkavoor.github.io/gsoc-2020-prague/
+
 Support for Explicit Congestion Notification (ECN)
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 

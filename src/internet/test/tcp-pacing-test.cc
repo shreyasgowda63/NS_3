@@ -23,6 +23,7 @@
 #include "ns3/config.h"
 #include "ns3/test.h"
 #include "tcp-general-test.h"
+#include "ns3/tcp-prague.h"
 
 using namespace ns3;
 

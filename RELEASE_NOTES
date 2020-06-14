@@ -77,6 +77,7 @@ New user-visible features
 - (traffic-control) Add ECN and L4S support for CoDel, FqCoDel, Cobalt queues
 - (wifi) Add 6 GHz band support for 802.11ax
 - (wifi) RIFS support has been removed from the model
+- (tcp) Added TcpPrague congestion control (aligns with Linux Prague congestion control).
 
 Bugs fixed
 ----------

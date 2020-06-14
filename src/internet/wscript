@@ -231,6 +231,7 @@ def build(bld):
         'model/rip.cc',
         'model/rip-header.cc',
         'helper/rip-helper.cc',
+        'model/tcp-prague.cc',
         ]
 
     internet_test = bld.create_ns3_module_test_library('internet')
@@ -306,6 +307,7 @@ def build(bld):
         'test/tcp-dctcp-test.cc',
         'test/tcp-syn-connection-failed-test.cc',
         'test/tcp-pacing-test.cc',
+        'test/tcp-prague-test.cc'
         ]
     # Tests encapsulating example programs should be listed here
     if (bld.env['ENABLE_EXAMPLES']):
@@ -437,6 +439,7 @@ def build(bld):
         'model/rip.h',
         'model/rip-header.h',
         'helper/rip-helper.h',
+        'model/tcp-prague.h',
        ]
 
     if bld.env['NSC_ENABLED']:
