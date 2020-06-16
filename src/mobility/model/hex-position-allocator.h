@@ -43,9 +43,9 @@ namespace ns3 {
  * The implementation used here closely follows the excellent article
  * "Hexagonal Grids", https://www.redblobgames.com/grids/hexagons/#basics
  *
- * In the language of that article, this generates points
- * in a hexagonal grid in "pointy-topped" orientation.
- * The overall layout is itself a hexagon.
+ * In the language of that article, this position allocator can generate
+ * points from either a "flat top" layout, or a "point top" layout,
+ * via the "Orientation" attribute.
  */
 class HexagonalPositionAllocator : public PositionAllocator
 {
@@ -111,6 +111,12 @@ public:
   void SetZ (double z);
 
   /**
+   * Get the \c z height of the grid points, in meters.
+   * \returns The z height of the grid points, in meters.
+   */
+  double GetZ (void) const;
+
+  /**
    * Get the nearest hex grid point from an arbitrary point.
    * \param v [in] The space point as a Vector, in meters.
    * \returns The position of the nearest hex grid point.
@@ -126,14 +132,28 @@ public:
    */
   bool IsInside (const Vector3D & v) const;
 
+  /** Which orientation for the hexagons. */
+  enum Orientation {
+    /** Flat topped: two edges aligned with the x-axis. */
+    FlatTop,
+    /** Pointy topped: two edges aligned with the y-axis */
+    PointyTop
+  };
+    
+  /**
+   * Set the orientation
+   * \param [in] o The orientation.
+   */
+  void SetOrientation (enum Orientation o);
+  
   // Inherited
   virtual Vector3D GetNext (void) const;
   virtual int64_t AssignStreams (int64_t stream);
 
-  // Forward declaration.
-  // Needs to be public for operators declared in the .cc file
+  // Forward declarations, need to be public :(
   class Hex;
-
+  struct Orienter;
+  
 private:
 
   /** Keep the hexagonal points in a ListPositionAllocator */
@@ -151,6 +171,9 @@ private:
 
   /** \c z coordinate of the positions, in meters. */
   double m_z;
+
+  /** The Orienter helper. */
+  const Orienter * m_orienter;
 
   /**
    * Compute the space coordinates from the Hex coordinates.

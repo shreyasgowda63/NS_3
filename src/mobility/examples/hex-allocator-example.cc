@@ -21,9 +21,7 @@
 #include "ns3/hex-position-allocator.h"
 #include "ns3/position-filter.h"
 
-#include "ns3/command-line.h"
-#include "ns3/double.h"
-#include "ns3/vector.h"
+#include "ns3/core-module.h"
 #include "ns3/gnuplot.h"
 
 #include <fstream>
@@ -39,6 +37,21 @@
 
 using namespace ns3;
 
+// There is a patch to provide this natively.
+// Remove this when that patch is merged.
+
+std::string
+GetDefaultOrientation (void)
+{
+  using Hex = HexagonalPositionAllocator;
+  
+  struct TypeId::AttributeInformation info;
+  Hex::GetTypeId ().LookupAttributeByName ("Orientation", &info);
+  std::string orientation
+    = DynamicCast<const EnumValue> (info.initialValue)
+    ->SerializeToString (MakeEnumChecker (Hex::FlatTop, "FlatTop", Hex::PointyTop, "PointyTop"));
+  return orientation;
+}  
 
 
 int
@@ -51,12 +64,14 @@ main (int argc, char** argv)
   bool invert = false;
   bool gnuplot = false;
 
-  CommandLine cmd;
+  CommandLine cmd (__FILE__);
   cmd.AddValue ("spacing", "Distance between nodes, in meters", spacing);
   cmd.AddValue ("rings",   "Number of rings", rings);
   cmd.AddValue ("npoints",
                 "Number of uniformly random points to sample within the layout",
                 npoints);
+  cmd.AddValue ("orientation",
+                "ns3::HexagonalPositionAllocator::Orientation");
   cmd.AddValue ("invert", "Invert the meaning of \"inside\" when filtering",
                 invert);
   cmd.AddValue ("gnuplot", "generate Gnuplot script", gnuplot);
@@ -65,8 +80,11 @@ main (int argc, char** argv)
   auto h = CreateObject<HexagonalPositionAllocator> ();
   h->SetSpacing (spacing);
   h->SetRings (rings);
-  
+
+  std::string orientation = GetDefaultOrientation ();
+
   std::cout << "HexagonalPositionAllocator:"
+            << "\n    Orientation:      " << orientation
 	    << "\n    Spacing:          " << h->GetSpacing ()
 	    << "\n    Rings:            " << h->GetRings ()
 	    << "\n    Total nodes:      " << h->GetN ()
@@ -100,8 +118,9 @@ main (int argc, char** argv)
             << "Max allowed range: " << maxRange << "\n"
             << "NOTE:  some points will be outside the layout since "
             << "the random disc covers more area than the layout hexagon.\n"
+            << "All points should be within range of the nearest grid point, however.\n"
             << "Random                   Nearest Node            "
-            << "Delta                   Length       Range  Inside"
+            << "Delta                  Distance  In Range   Inside"
             << std::fixed << std::setprecision (1)
             << std::endl;
   std::size_t w = 8;
@@ -141,7 +160,7 @@ main (int argc, char** argv)
                 "Normal filtering there should be NO points ")
             << "outside the layout.\n"
             << "Random                   Nearest Node            "
-            << "Delta                   Length       Range  Inside"
+            << "Delta                  Distance  In Range   Inside"
             << std::fixed << std::setprecision (1)
             << std::endl;
 
@@ -164,7 +183,7 @@ main (int argc, char** argv)
   
   if (gnuplot)
     {
-      std::string plotName ("main-hex-allocator");
+      std::string plotName ("hex-allocator");
       Gnuplot2dDataset d;
       d.SetStyle (Gnuplot2dDataset::POINTS);
       d.SetExtra ("linestyle 1");

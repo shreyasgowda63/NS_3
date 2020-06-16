@@ -34,15 +34,15 @@
 /**
  * \file
  * \ingroup mobility
- * ns3::HexagonalPositionAllocator and ns3::HexagonalPositionAllocator::Hex
+ * ns3::HexagonalPositionAllocator and Hex
  * implementation.
  */
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("HexPositionAllocator");
-
 NS_OBJECT_ENSURE_REGISTERED (HexagonalPositionAllocator);
+
+NS_LOG_COMPONENT_DEFINE ("HexPositionAllocator");
 
 /**
  * \ingroup mobility
@@ -93,6 +93,8 @@ public:
 
   /**
    * Neighbor direction indicators.
+   * The symbol names are for PointyTop orientation;
+   * the FlatTop compass directions are given in parentheses.
    */
   // Note: the order is important,
   // since it drives how we walk around rings,
@@ -100,14 +102,19 @@ public:
   // See Populate
   enum Direction 
   {
-    NW = 0, /**< Towards the north-west.     */
-    W,      /**< Towards the west.           */
-    SW,     /**< Towards the southwest.      */
-    SE,     /**< Towards the southeast.      */
-    E,      /**< Towards the east.           */
-    NE,     /**< Towards the north-east.     */
+    NW = 0, /**< Towards the northwest (northwest). */
+    W,      /**< Towards the west (southwest)       */
+    SW,     /**< Towards the southwest (sout).      */
+    SE,     /**< Towards the southeast (southeast). */
+    E,      /**< Towards the east (northeast).      */
+    NE,     /**< Towards the north-east (north).    */
     end     /**< Out of range flag; see Next */
   };
+
+  typedef std::array<Hex, 6> Direction_t;
+
+  /** The movement directions. */
+  static const Direction_t * m_directions;
 
   /**
    * Get the offet in the given direction.
@@ -143,90 +150,49 @@ public:
    */
   coord_type Distance (const Hex & a) const;
 
+  /**
+   * Hex equality operator.
+   * \param [in] other Right operand.
+   * \returns \c true if the operands are equal.
+   */
+  bool operator == (const Hex & other);
+  
+  /**
+   * Hex inequality operator.
+   * \param [in] other Right operand.
+   * \returns \c true if the operands are not equal.
+   */
+  bool operator != (const Hex & other);
+
+  /**
+   * Addition of Hex indices.
+   * \param [in] other Right operand.
+   * \returns The "sum" of Hex indices
+   */
+  Hex operator + (const Hex & other);
+  
+  /**
+   * Subtraction of Hex indices.
+   * \param [in] other Right operand.
+   * \returns The "sum" of Hex indices
+   */
+  Hex operator - (const Hex & other);
+  
+  /**
+   * Scaling of Hex indices.
+   * \param [in] scale The scale operand.
+   * \returns The hex coordiante scaled by the (integer) factor.
+   */
+  Hex operator * (Hex::coord_type scale);
+  
 };  // class HexagonalPositionAllocator::Hex
 
-
-// Simplify following declarations  
+// Simplify the following definitions
 using Hex = HexagonalPositionAllocator::Hex;
+
+/* static */
+const Hex::Direction_t * Hex::m_directions;
   
-/**
- * \relates HexagonalPositionAllocator::Hex
- * Hex equality operator.
- * \param [in] a Right operand.
- * \param [in] b Right operand.
- * \returns \c true if the operands are equal.
- */
-bool
-operator == (const Hex & a, const Hex & b)
-{
-  return a.v == b.v;
-}
-
-/**
- * \relates Hex
- * Hex inequality operator.
- * \param [in] a Right operand.
- * \param [in] b Right operand.
- * \returns \c true if the operands are not equal.
- */
-bool
-operator != (const Hex & a, const Hex & b)
-{
-  return a.v != b.v;
-}
-
-/**
- * \relates Hex
- * Addition of Hex indices.
- * \param [in] a Right operand.
- * \param [in] b Right operand.
- * \returns The "sum" of Hex indices
- */
-Hex
-operator + (const Hex & a, const Hex & b)
-{
-  return Hex {a.q + b.q, a.r + b.r, a.s + b.s};
-}
-
-/**
- * \relates Hex
- * Subtraction of Hex indices.
- * \param [in] a Right operand.
- * \param [in] b Right operand.
- * \returns The "sum" of Hex indices
- */
-Hex
-operator - (const Hex & a, const Hex & b)
-{
-  return Hex {a.q - b.q, a.r - b.r, a.s - b.s};
-}
-
-/**
- * \relates Hex
- * Scaling of Hex indices.
- * \param [in] h The Hex operand
- * \param [in] a The scale operand.
- * \returns The hex coordiante scaled by the (integer) factor.
- */
-Hex
-operator * (const Hex & h, Hex::coord_type a)
-{
-  return Hex {h.q * a, h.r * a, h.s * a};
-}
-
-/**
- * \relates Hex
- * Output streamer for Hex indices.
- * \param os The output stream.
- * \param h The Hex coordinate.
- * \returns The output stream.
- */
-std::ostream &
-operator << (std::ostream & os, Hex & h)
-{
-  os << "Hex (" << h.q << "," << h.r << "," << h.s << ")";
-  return os;
-}
 
 Hex::Hex (void)
   : v {0, 0, 0}
@@ -248,21 +214,33 @@ Hex::Hex (const coord_type q, const coord_type r, const coord_type s)
                  << q << "," << r << "," << s);
 }
 
+// Order of these vectors has to match the order of the enum declarations
+const Hex::Direction_t
+PointyDirections {
+  Hex ( 0, -1,  1),  // NW
+  Hex (-1,  0,  1),  // W
+  Hex (-1,  1,  0),  // SW
+  Hex ( 0,  1, -1),  // SE
+  Hex ( 1,  0, -1),  // E
+  Hex ( 1, -1,  0)   // NE
+};
+
+const Hex::Direction_t
+FlatDirections {
+  Hex (-1,  0,  1),  // NW, symbol NW
+  Hex (-1,  1,  0),  // SW, symbol W 
+  Hex ( 0,  1, -1),  // S,  symbol SW
+  Hex ( 1,  0, -1),  // SE, symbol SE
+  Hex ( 1, -1,  0),  // NE, symbol E 
+  Hex ( 0, -1,  1)   // N,  symbol NE
+};
+
+
 /* static */
 Hex
 Hex::GetDirection (const Hex::Direction d)
 {
-  // Order of these vectors has to match the order of the enum declarations
-  static const std::array<Hex, 6> Directions
-  {
-    Hex ( 0, -1,  1),  // NW
-    Hex (-1,  0,  1),  // W
-    Hex (-1,  1,  0),  // SW
-    Hex ( 0,  1, -1),  // SE
-    Hex ( 1,  0, -1),  // E
-    Hex ( 1, -1,  0)   // NE
-  };
-  return Directions[static_cast<std::size_t> (d)];
+  return (*m_directions)[static_cast<std::size_t> (d)];
 }
 
 /* static */
@@ -278,7 +256,8 @@ Hex::Next (const Hex::Direction d)
 Hex
 Hex::Neighbor (const Direction d) const
 {
-  return (*this) + GetDirection (d);
+  Hex h = *this;
+  return h + GetDirection (d);
 }
 
 Hex::coord_type
@@ -294,15 +273,52 @@ Hex::coord_type
 Hex::Distance (const Hex & a) const
 {
   NS_LOG_FUNCTION (this << a);
-  return ((*this) - a).Length ();
+  Hex h = *this;
+  return (h - a).Length ();
 }
 
-/** Layout vectors for transforming to/from real coordinates. @{ */
-static const ns3::Vector2D xBasis {std::sqrt (3.0),   std::sqrt (3) / 2.0 };
-static const ns3::Vector2D yBasis {      0,                 3/2.0         };
-static const ns3::Vector2D qBasis {std::sqrt (3.0) / 3.0,  -1/3.0         };
-static const ns3::Vector2D rBasis {      0,                 2/3.0         };
-/**@}*/
+bool
+Hex::operator == (const Hex & other)
+{
+  return v == other.v;
+}
+
+bool
+Hex::operator != (const Hex & other)
+{
+  return v != other.v;
+}
+
+Hex
+Hex::operator + (const Hex & other)
+{
+  return Hex {q + other.q, r + other.r, s + other.s};
+}
+
+Hex
+Hex::operator - (const Hex & other)
+{
+  return Hex {q - other.q, r - other.r, s - other.s};
+}
+
+Hex
+Hex::operator * (Hex::coord_type scale)
+{
+  return Hex (q * scale, r * scale, s * scale);
+}
+
+/**
+ * \relates HexagonalPositionAllocator::Hex
+ * Output streamer for Hex indices.
+ * \param os The output stream.
+ * \returns The output stream.
+ */
+std::ostream &
+operator << (std::ostream & os, const Hex & h)
+{
+  os << "Hex (" << h.q << "," << h.r << "," << h.s << ")";
+  return os;
+}
 
 
 TypeId 
@@ -326,6 +342,11 @@ HexagonalPositionAllocator::GetTypeId (void)
                    DoubleValue (0.0),
                    MakeDoubleAccessor (&HexagonalPositionAllocator::m_z),
                    MakeDoubleChecker<double> ())
+    .AddAttribute ("Orientation",
+                   "The hexagon orientation.",
+                   EnumValue (FlatTop),
+                   MakeEnumAccessor (&HexagonalPositionAllocator::SetOrientation),
+                   MakeEnumChecker (FlatTop, "FlatTop", PointyTop, "PointyTop"))
   ;
   return tid;
 }
@@ -340,6 +361,7 @@ HexagonalPositionAllocator::~HexagonalPositionAllocator ()
 {
   NS_LOG_FUNCTION (this);
 }
+
 
 void
 HexagonalPositionAllocator::SetSpacing (const double s)
@@ -380,38 +402,153 @@ HexagonalPositionAllocator::GetN (void) const
   return n;
 }
 
-double
-HexagonalPositionAllocator::GetRadius (void) const
-{
-  NS_LOG_FUNCTION (this);
-  // The grid point farthest east
-  Hex east {Hex::GetDirection (Hex::Direction::E) * m_rings};
-  Vector3D point = ToSpace (east)
-    // plus the distance to the corner of the east node
-    + Vector3D (m_hexSize * std::sqrt (3.0) / 2, 0, 0);
-  auto l = point.GetLength ();
-  NS_LOG_INFO ("radius: " << l);
-  return l;
-}
-
 void
 HexagonalPositionAllocator::SetZ (double z)
 {
   m_z = z;
 }
 
+double
+HexagonalPositionAllocator::GetZ (void) const
+{
+  return m_z;
+}
+  
+Vector3D
+HexagonalPositionAllocator::FromSpace (const Vector & v) const
+{
+  NS_LOG_FUNCTION (v);
+  Hex h = ClosestGridPoint (v);
+  Vector3D p = ToSpace (h);
+  return p;
+}
+
+bool
+HexagonalPositionAllocator::IsInside (const Vector3D & v) const
+{
+  NS_LOG_FUNCTION (v);
+  Hex h = ClosestGridPoint (v);
+  auto l = static_cast<std::size_t> (h.Length ());
+  bool inside =  l <=  m_rings;
+  return inside;
+}
+  
+struct HexagonalPositionAllocator::Orienter
+{
+  Orienter (ns3::Vector2D x, ns3::Vector2D y,
+            ns3::Vector2D q, ns3::Vector2D r,
+            Hex::Direction initial)
+    : xBasis (x),
+      yBasis (y),
+      qBasis (q),
+      rBasis (r),
+      initial (initial)
+  {}
+  
+  ns3::Vector2D xBasis;
+  ns3::Vector2D yBasis;
+  ns3::Vector2D qBasis;
+  ns3::Vector2D rBasis;
+  Hex::Direction initial;
+  
+};  // struct Orienter
+
+/** Orienter for pointy topped hexagons */
+const HexagonalPositionAllocator::Orienter
+PointyOrienter ({std::sqrt (3.),      std::sqrt (3) / 2 },
+                {     0,                  -3/2.0        },
+                {std::sqrt (3.) / 3,       1/3.0        },
+                {     0,                  -2/3.0        },
+                Hex::E);
+
+
+/** Orienter for flat topped hexagons */
+const HexagonalPositionAllocator::Orienter
+FlatOrienter   ({     3/2.,                 0.              },
+                { -std::sqrt (3.) / 2., -std::sqrt (3.)     },
+                {     2/3.,                 0               },
+                {    -1/3.,             -std::sqrt(3.) / 3. },
+                Hex::E);
+
+
+void
+HexagonalPositionAllocator::SetOrientation (enum Orientation o)
+{
+  if (o == FlatTop)
+    {
+      m_orienter = & FlatOrienter;
+      Hex::m_directions = &FlatDirections;
+    }
+  else
+    {
+      m_orienter = & PointyOrienter;
+      Hex::m_directions = &PointyDirections;
+    }
+}
+  
+double
+HexagonalPositionAllocator::GetRadius (void) const
+{
+  NS_LOG_FUNCTION (this);
+  
+  // The grid point farthest to the east
+  Hex edge = Hex ().Neighbor (m_orienter->initial) * m_rings;
+  Vector3D point = ToSpace (edge);
+  // Get the right offset to the corner
+  if (m_orienter == & PointyOrienter)
+    {
+      // Vector arithmetic is sadly lacking...
+      point = point + Vector3D (m_hexSize * std::sqrt (3.0) / 2,
+                                m_hexSize * 1 / 2.,
+                                0);
+    }
+  else
+    {
+      point = point + Vector3D (m_hexSize * 1 / 2.,
+                                m_hexSize * std::sqrt (3.0) / 2,
+                                0);
+    }
+  auto l = point.GetLength ();
+  NS_LOG_INFO ("radius: " << l);
+  return l;
+}
+
+Vector
+HexagonalPositionAllocator::GetNext (void) const
+{
+  if (!m_populated)
+    {
+      PopulateAllocator ();
+    }
+  return m_list.GetNext ();
+}
+
+int64_t
+HexagonalPositionAllocator::AssignStreams (int64_t stream)
+{
+  NS_LOG_FUNCTION (this);
+  return 0;
+}
+
+Vector3D
+HexagonalPositionAllocator::ToSpace (const Hex & h) const
+{
+  NS_LOG_FUNCTION (h);
+  double x = (m_orienter->xBasis.x * h.q  + m_orienter->xBasis.y * h.r) * m_hexSize;
+  double y = (m_orienter->yBasis.x * h.q  + m_orienter->yBasis.y * h.r) * m_hexSize;
+  return Vector3D (x, y, m_z);
+}
+
 Hex
 HexagonalPositionAllocator::ClosestGridPoint (const Vector3D & v) const
 {
-  NS_LOG_FUNCTION (v);
-  
   // Scale to dimensionless units
   double px = v.x / m_hexSize;
   double py = v.y / m_hexSize;
 
   // Apply the inverse rotation matrix
-  double qd = qBasis.x * px + qBasis.y * py;
-  double rd = rBasis.x * py + rBasis.y * py;
+  double qd = m_orienter->qBasis.x * px + m_orienter->qBasis.y * py;
+  double rd = m_orienter->rBasis.x * px + m_orienter->rBasis.y * py;
   double sd = -qd - rd;
 
   // Round
@@ -442,37 +579,16 @@ HexagonalPositionAllocator::ClosestGridPoint (const Vector3D & v) const
   auto r = static_cast<Hex::coord_type> (rr);
 
   Hex h {q, r};
+  
+  NS_LOG_FUNCTION (v <<
+                   " p " << px << py <<
+                   " d " << qd << rd << sd <<
+                   " r " << qr << rr << sr <<
+                   " h " << q  <<  r);
+  
   return h;
 }
   
-Vector3D
-HexagonalPositionAllocator::FromSpace (const Vector & v) const
-{
-  NS_LOG_FUNCTION (v);
-  Hex h = ClosestGridPoint (v);
-  Vector3D p = ToSpace (h);
-  return p;
-}
-
-bool
-HexagonalPositionAllocator::IsInside (const Vector3D & v) const
-{
-  NS_LOG_FUNCTION (v);
-  Hex h = ClosestGridPoint (v);
-  auto l = static_cast<std::size_t> (h.Length ());
-  bool inside =  l <  m_rings + 1;
-  return inside;
-}
-  
-Vector3D
-HexagonalPositionAllocator::ToSpace (const Hex & h) const
-{
-  NS_LOG_FUNCTION (h);
-  double x = (xBasis.x * h.q  + xBasis.y * h.r) * m_hexSize;
-  double y = (yBasis.x * h.q  + yBasis.y * h.r) * m_hexSize;
-  return Vector3D (x, y, m_z);
-}
-
 void
 HexagonalPositionAllocator::PopulateAllocator (void) const
 {
@@ -490,16 +606,18 @@ HexagonalPositionAllocator::PopulateAllocator (void) const
 
   // Central grid point
   nodes.emplace_back (Hex ());
-  Vector3D p = ToSpace (nodes[0]);
-  NS_LOG_INFO ("center: " << p);
+  Vector3D p = ToSpace (nodes.back ());
   m_list.Add (p);
+  Vector3D pp = FromSpace (p);
+  NS_LOG_INFO ("Node[" << nodes.size () - 1 << "]: " <<
+               nodes.back () << " " << p << " --> " << pp);
 
   // Each ring
   for (std::size_t r = 1; r <= m_rings; ++r)
     {
       NS_LOG_LOGIC ("ring:   " << r);
-      // Start in the east
-      nodes.emplace_back (Hex ().Neighbor (Hex::Direction::E) * r);
+      // Start in the initial direction
+      nodes.emplace_back (Hex ().Neighbor (m_orienter->initial) * r);
       for ( auto d = Hex::Direction::NW;
             d != Hex::Direction::end;
             d = Hex::Next (d)
@@ -510,8 +628,10 @@ HexagonalPositionAllocator::PopulateAllocator (void) const
           for (std::size_t i = 0; i < r; ++i)
             {
               Vector3D p = ToSpace (nodes.back ()); 
-              NS_LOG_INFO ("        " << p);
               m_list.Add (p);
+              pp = FromSpace (p);
+              NS_LOG_INFO ("Node[" << nodes.size () - 1 << "]: " <<
+                           nodes.back () << " " << p << " --> " << pp);
               nodes.emplace_back (nodes.back ().Neighbor (d));
             }
         }
@@ -523,23 +643,6 @@ HexagonalPositionAllocator::PopulateAllocator (void) const
     }
   NS_LOG_INFO ("total points: " << m_list.GetSize ());
   m_populated = true;
-}
-
-Vector
-HexagonalPositionAllocator::GetNext (void) const
-{
-  if (!m_populated)
-    {
-      PopulateAllocator ();
-    }
-  return m_list.GetNext ();
-}
-
-int64_t
-HexagonalPositionAllocator::AssignStreams (int64_t stream)
-{
-  NS_LOG_FUNCTION (this);
-  return 0;
 }
 
 }  // namespace ns3
