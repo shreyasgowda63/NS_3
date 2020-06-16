@@ -19,8 +19,6 @@
 #include "ns3/internet-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/applications-module.h"
-#include "ns3/local-clock.h"
-#include "ns3/perfect-clock-model-impl.h"
 
 // Default Network Topology
 //
@@ -38,32 +36,14 @@ main (int argc, char *argv[])
 {
   CommandLine cmd (__FILE__);
   cmd.Parse (argc, argv);
-
-  // Set LocalTime Simulator Impl
-
   
   Time::SetResolution (Time::NS);
   LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_INFO);
   LogComponentEnable ("UdpEchoServerApplication", LOG_LEVEL_INFO);
-  
-  //LogComponentEnable ("LocalTimeSimulatorImpl", LOG_INFO);
-
-  
-  std::cout << "Hola" << std::endl;
 
   NodeContainer nodes;
   nodes.Create (2);
 
-  //Aggregate clock 
-
-  Ptr<PerfectClockModelImpl> clockImpl = CreateObject <PerfectClockModelImpl> ();
-  Ptr<LocalClock> clock = CreateObject<LocalClock> (clockImpl);
-
-  Ptr<Node> n1 = nodes.Get (0);
-  Ptr<Node> n2 = nodes.Get (1); 
-
-  n1 -> AggregateObject (clock);
-  
   PointToPointHelper pointToPoint;
   pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("5Mbps"));
   pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
@@ -95,14 +75,6 @@ main (int argc, char *argv[])
   clientApps.Stop (Seconds (10.0));
 
   Simulator::Run ();
-
-  std::cout << "Simulation Running" << std::endl;
-
-  Ptr <SimulatorImpl> simImpl = Simulator::GetImplementation ();
-
-  TypeId tid = simImpl -> GetTypeId ();
-  std::cout << tid.GetName() << std::endl;
-
   Simulator::Destroy ();
   return 0;
 }
