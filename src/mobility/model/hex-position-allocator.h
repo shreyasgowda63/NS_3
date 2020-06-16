@@ -25,6 +25,7 @@
 
 #include <array>
 #include <cmath>  // sqrt
+#include <map>
 
 /**
  * \file
@@ -118,11 +119,22 @@ public:
   double GetZ (void) const;
 
   /**
-   * Get the nearest hex grid point from an arbitrary point.
+   * Get the index of the grid point closest to an arbitrary point.
+   * If the nearest grid point is outside the actual grid this returns -1.
+   * \param v [in] The space point as a Vector, in meters.
+   * \return The index of the nearest grid point, in the order
+   *         returned by GetNext.
+   */
+  long long int GetIndex (const Vector3D & v) const;
+ 
+  /**
+   * Get the positon of the nearest grid point from an arbitrary point.
+   * If one cached the points returned by GetNext, this function
+   * returns the grid point at `GetIndex (p)` in the cache.
    * \param v [in] The space point as a Vector, in meters.
    * \returns The position of the nearest hex grid point.
    */
-  Vector3D FromSpace (const Vector3D & v) const;
+  Vector3D GetNearestGridPoint (const Vector3D & v) const;
 
   /**
    * Check if a point is within the layout.
@@ -162,6 +174,15 @@ private:
   mutable ListPositionAllocator m_list;
 
   /**
+   * Invert from a node position to its "index" in the
+   * position allocator list.
+   */
+  // Using ordered map, instead of unordered_map,
+  // since Vector3D doesn't specialize std::hash
+  // mutable: see note at m_populated
+  mutable std::map<Vector3D, std::size_t> m_nodeLookup;
+
+  /**
    * Size of the underlying hexagon, in meters.
    * This is the distance from hexagon center to any corner.
    */
@@ -195,7 +216,7 @@ private:
    * \param v [in] The space point as a Vector, in meters.
    * \returns the Hex node closest to the input space point.
    */
-  Hex ClosestGridPoint (const Vector3D & v) const;
+  Hex NearestHexPoint (const Vector3D & v) const;
 
   /**
    * Populate the underlying PositionAllocator on the first call

@@ -410,19 +410,32 @@ HexagonalPositionAllocator::GetZ (void) const
 }
   
 Vector3D
-HexagonalPositionAllocator::FromSpace (const Vector & v) const
+HexagonalPositionAllocator::GetNearestGridPoint (const Vector & v) const
 {
   NS_LOG_FUNCTION (v);
-  Hex h = ClosestGridPoint (v);
+  Hex h = NearestHexPoint (v);
   Vector3D p = ToSpace (h);
   return p;
+}
+
+long long int
+HexagonalPositionAllocator::GetIndex (const Vector3D & v) const
+{
+  std::size_t index = -1;
+  Vector3D p = GetNearestGridPoint (v);
+  auto it = m_nodeLookup.find (p);
+  if (it != m_nodeLookup.end ())
+    {
+      index = it->second;
+    }
+  return index;
 }
 
 bool
 HexagonalPositionAllocator::IsInside (const Vector3D & v) const
 {
   NS_LOG_FUNCTION (v);
-  Hex h = ClosestGridPoint (v);
+  Hex h = NearestHexPoint (v);
   auto l = static_cast<std::size_t> (h.Length ());
   bool inside =  l <=  m_rings;
   return inside;
@@ -535,7 +548,7 @@ HexagonalPositionAllocator::ToSpace (const Hex & h) const
 }
 
 Hex
-HexagonalPositionAllocator::ClosestGridPoint (const Vector3D & v) const
+HexagonalPositionAllocator::NearestHexPoint (const Vector3D & v) const
 {
   // Scale to dimensionless units
   double px = v.x / m_hexSize;
@@ -603,7 +616,7 @@ HexagonalPositionAllocator::PopulateAllocator (void) const
   nodes.emplace_back (Hex ());
   Vector3D p = ToSpace (nodes.back ());
   m_list.Add (p);
-  Vector3D pp = FromSpace (p);
+  Vector3D pp = GetNearestGridPoint (p);
   NS_LOG_INFO ("Node[" << nodes.size () - 1 << "]: " <<
                nodes.back () << " " << p << " --> " << pp);
 
@@ -624,7 +637,7 @@ HexagonalPositionAllocator::PopulateAllocator (void) const
             {
               Vector3D p = ToSpace (nodes.back ()); 
               m_list.Add (p);
-              pp = FromSpace (p);
+              pp = GetNearestGridPoint (p);
               NS_LOG_INFO ("Node[" << nodes.size () - 1 << "]: " <<
                            nodes.back () << " " << p << " --> " << pp);
               nodes.emplace_back (nodes.back ().Neighbor (m_directions, d));
