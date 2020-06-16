@@ -22,6 +22,13 @@
 #include "ns3/local-clock.h"
 #include "ns3/perfect-clock-model-impl.h"
 
+// Default Network Topology
+//
+//       10.1.1.0
+// n0 -------------- n1
+//    point-to-point
+//
+ 
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE ("FirstScriptExample");
@@ -29,7 +36,7 @@ NS_LOG_COMPONENT_DEFINE ("FirstScriptExample");
 int
 main (int argc, char *argv[])
 {
-  CommandLine cmd;
+  CommandLine cmd (__FILE__);
   cmd.Parse (argc, argv);
 
   // Set LocalTime Simulator Impl
