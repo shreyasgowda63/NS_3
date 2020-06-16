@@ -21,7 +21,10 @@
 #include "ns3/hex-position-allocator.h"
 #include "ns3/position-filter.h"
 
-#include "ns3/core-module.h"
+#include "ns3/command-line.h"
+#include "ns3/double.h"
+#include "ns3/enum.h"
+#include "ns3/vector.h"
 #include "ns3/gnuplot.h"
 
 #include <fstream>
@@ -37,9 +40,58 @@
 
 using namespace ns3;
 
-// There is a patch to provide this natively.
-// Remove this when that patch is merged.
+void
+RandomPositionTable (Ptr<PositionAllocator> r, std::size_t npoints,
+                     Ptr<HexagonalPositionAllocator> h)
+{
+  std::cout << "\n"
+            << "Random Position           "
+            << "Nearest Node                    "
+            << "Delta                   "
+            << "Length "
+            << "Range   "
+            << "Inside"
+            << "\n"
+            << "       X       Y       Z  Index "
+            << "       X       Y       Z"
+            << "       X       Y       Z "
+            << "\n"
+            << " ------- ------- -------  ------"
+            << " ------- ------- -------"
+            << "  ------ ------- -------"
+            << "  ------ ------- ------- "
+            << "\n"
+            << std::fixed << std::setprecision (1)
+            << std::endl;
+  
+  double maxRange = h->GetSpacing () / std::sqrt (3.0);
+  std::size_t w = 8;
+  
+  for (std::size_t i = 0; i < npoints; ++i)
+    {
+      Vector3D v = r->GetNext();
+      Vector3D e = h->GetNearestGridPoint (v);
+      auto index = h->GetIndex (v);
+      Vector3D delta = v - e;
+      bool inRange = (delta.GetLength () < maxRange);
+      bool inLayout = h->IsInside (v);
 
+      std::cout << std::setw (w) << v.x << std::setw (w) << v.y << std::setw (w) << v.z
+                << std::setw (w) << index
+                << std::setw (w) << e.x << std::setw (w) << e.y << std::setw (w) << e.z
+                << std::setw (w) << delta.x << std::setw (w) << delta.y << std::setw (w) << delta.z
+                << std::setw (w) << delta.GetLength ()
+                << (inRange  ? "      ok" : "     FAR")
+                << (inLayout ? "      ok" : "     OUT")
+                << std::endl;
+
+    }  // for npoints
+
+}  // RandomPostionTable
+
+
+// There is a patch to provide this natively.
+// Remove this function when that patch is merged.
 std::string
 GetDefaultOrientation (void)
 {
@@ -85,16 +137,18 @@ main (int argc, char** argv)
 
   std::cout << "HexagonalPositionAllocator:"
             << "\n    Orientation:      " << orientation
-	    << "\n    Spacing:          " << h->GetSpacing ()
+	    << "\n    Spacing:          " << h->GetSpacing () << " m"
 	    << "\n    Rings:            " << h->GetRings ()
 	    << "\n    Total nodes:      " << h->GetN ()
-	    << "\n    Overall radius:   " << h->GetRadius ()
-            << "\nParameters for random sampling and filtering: "
+	    << "\n    Overall radius:   " << h->GetRadius () << " m"
+            << "\n\nParameters for random sampling and filtering: "
             << "\n    Number of points: " << npoints
             << "\n    Filtering:        " << (invert ? "Inverse" : "Normal")
 	    << "\n" << std::endl;
 
-  std::cout << "Node Index      X           Y           Z"
+  std::cout << "Node   Position\n"
+            << "Index           X           Y           Z\n"
+            << "-----  ----------  ----------  ----------\n"
             << std::fixed << std::setprecision (1)
             << std::endl;
   for (std::size_t i = 0; i < h->GetN (); ++i)
@@ -107,15 +161,15 @@ main (int argc, char** argv)
                 << std::endl;
     }
 
-  // Get some samples to test FromSpace ()
+  // Get some samples to test GetNearestGridPoint (), without filtering
   auto rnd = CreateObject<UniformDiscPositionAllocator> ();
   rnd->SetRho (h->GetRadius ());
   double maxRange = h->GetSpacing () / std::sqrt (3.0);
 
 
   std::cout << "\nRandom positions, no filtering:\n"
-            << "Max disc radius:   " << h->GetRadius () << "\n"
-            << "Max allowed range: " << maxRange << "\n"
+            << "Max disc radius:   " << h->GetRadius () << "m\n"
+            << "Max allowed range: " << maxRange << "m\n"
             << "NOTE:  some points will be outside the layout since "
             << "the random disc covers more area than the layout hexagon.\n"
             << "All points should be within range of the nearest grid point, however.\n"
@@ -123,28 +177,11 @@ main (int argc, char** argv)
             << "Delta                  Distance  In Range   Inside"
             << std::fixed << std::setprecision (1)
             << std::endl;
-  std::size_t w = 8;
-  
-  for (std::size_t i = 0; i < npoints; ++i)
-    {
-      Vector3D v = rnd->GetNext();
-      Vector3D e = h->FromSpace (v);
-      Vector3D delta = v - e;
-      bool inRange = (delta.GetLength () < maxRange);
-      bool inLayout = h->IsInside (v);
+  RandomPositionTable (rnd, npoints, h);
 
-      std::cout << std::setw (w) << v.x << std::setw (w) << v.y << std::setw (w) << v.z
-                << std::setw (w) << e.x << std::setw (w) << e.y << std::setw (w) << e.z
-                << std::setw (w) << delta.x << std::setw (w) << delta.y << std::setw (w) << delta.z
-                << std::setw (w) << delta.GetLength ()
-                << (inRange  ? "\tok" : "\tFAR")
-                << (inLayout ? "\tok" : "\tOUT")
-                << std::endl;
-    }
 
-  
+  // Demonstrate filtering
   auto hpf = MakePositionAllocatorFilter (h);
-  
   auto fpa = CreateObject<FilteredPositionAllocator> ();
   fpa->SetPositionAllocator (rnd);
   fpa->SetPositionFilter (hpf);
@@ -163,23 +200,7 @@ main (int argc, char** argv)
             << "Delta                  Distance  In Range   Inside"
             << std::fixed << std::setprecision (1)
             << std::endl;
-
-  for (std::size_t i = 0; i < npoints; ++i)
-    {
-      Vector3D v = fpa->GetNext();
-      Vector3D e = h->FromSpace (v);
-      Vector3D delta = v - e;
-      bool inRange = (delta.GetLength () < maxRange);
-      bool inLayout = h->IsInside (v);
-
-      std::cout << std::setw (w) << v.x << std::setw (w) << v.y << std::setw (w) << v.z
-                << std::setw (w) << e.x << std::setw (w) << e.y << std::setw (w) << e.z
-                << std::setw (w) << delta.x << std::setw (w) << delta.y << std::setw (w) << delta.z
-                << std::setw (w) << delta.GetLength ()
-                << (inRange  ? "\tok" : "\tFAR")
-                << (inLayout ? "\tok" : "\tOUT")
-                << std::endl;
-    }
+  RandomPositionTable (fpa, npoints, h);
   
   if (gnuplot)
     {
