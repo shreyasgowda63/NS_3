@@ -181,7 +181,7 @@ main (int argc, char *argv[])
     if (j==0)
     {
       newFreq = 1.1;
-      //init_offset = Time::FromDouble ((freq - newFreq)* i, Time::S) - init_offset; //Adjust offset
+      init_offset = Time::FromDouble ((freq - newFreq)* i, Time::S) - init_offset; //Adjust offset
       freq = newFreq; //With this freq node1 runs faster than global clock
       j=1; 
       std::cout << "OFFSET" << init_offset << std::endl;
