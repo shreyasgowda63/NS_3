@@ -85,7 +85,9 @@ Time
 PerfectClockModelImpl::LocalToGlobalTime (Time localTime)
 {
   NS_LOG_FUNCTION (this << localTime);
-  Time globalTime = Time (((localTime).GetDouble () - m_offset) / m_frequency) ;
+  NS_LOG_DEBUG ("LocalTime " << localTime << "OFFSET" << m_offset);
+  Time globalTime =  Time ((localTime - m_offset).GetDouble () / m_frequency) ;
+  NS_LOG_DEBUG ("Result " << globalTime);
   return globalTime;
 }
 
