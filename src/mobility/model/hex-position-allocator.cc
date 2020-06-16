@@ -27,7 +27,6 @@
 #include "ns3/enum.h"
 #include "ns3/log.h"
 
-#include <array>
 #include <algorithm>  // max
 #include <cmath>      // round
 
@@ -113,15 +112,13 @@ public:
 
   typedef std::array<Hex, 6> Direction_t;
 
-  /** The movement directions. */
-  static const Direction_t * m_directions;
-
   /**
    * Get the offet in the given direction.
    * \param [in] d The direction to move
    * \returns The Hex to move in the requested direction.
    */
-  static Hex GetDirection (const enum Direction d);
+  static Hex GetDirection (Direction_t const * directions,
+                           const enum Direction d);
 
   /**
    * Get the next direction to walk around a ring.
@@ -135,7 +132,8 @@ public:
    * \param [in] d The direction to move in.
    * \returns The Hex indices to that neighbor.
    */
-  Hex Neighbor (const enum Direction d) const;
+  Hex Neighbor (Direction_t const * directions,
+                const enum Direction d) const;
 
   /**
    * Length of this Hex coordinate, in coordinate units.
@@ -190,9 +188,6 @@ public:
 // Simplify the following definitions
 using Hex = HexagonalPositionAllocator::Hex;
 
-/* static */
-const Hex::Direction_t * Hex::m_directions;
-  
 
 Hex::Hex (void)
   : v {0, 0, 0}
@@ -238,9 +233,9 @@ FlatDirections {
 
 /* static */
 Hex
-Hex::GetDirection (const Hex::Direction d)
+Hex::GetDirection (Direction_t const * directions, const Hex::Direction d)
 {
-  return (*m_directions)[static_cast<std::size_t> (d)];
+  return (*directions)[static_cast<std::size_t> (d)];
 }
 
 /* static */
@@ -254,10 +249,10 @@ Hex::Next (const Hex::Direction d)
 }
 
 Hex
-Hex::Neighbor (const Direction d) const
+Hex::Neighbor (Direction_t const * directions, const Direction d) const
 {
   Hex h = *this;
-  return h + GetDirection (d);
+  return h + GetDirection (directions, d);
 }
 
 Hex::coord_type
@@ -477,12 +472,12 @@ HexagonalPositionAllocator::SetOrientation (enum Orientation o)
   if (o == FlatTop)
     {
       m_orienter = & FlatOrienter;
-      Hex::m_directions = &FlatDirections;
+      m_directions = &FlatDirections;
     }
   else
     {
       m_orienter = & PointyOrienter;
-      Hex::m_directions = &PointyDirections;
+      m_directions = &PointyDirections;
     }
 }
   
@@ -492,7 +487,7 @@ HexagonalPositionAllocator::GetRadius (void) const
   NS_LOG_FUNCTION (this);
   
   // The grid point farthest to the east
-  Hex edge = Hex ().Neighbor (m_orienter->initial) * m_rings;
+  Hex edge = Hex ().Neighbor (m_directions, m_orienter->initial) * m_rings;
   Vector3D point = ToSpace (edge);
   // Get the right offset to the corner
   if (m_orienter == & PointyOrienter)
@@ -617,7 +612,7 @@ HexagonalPositionAllocator::PopulateAllocator (void) const
     {
       NS_LOG_LOGIC ("ring:   " << r);
       // Start in the initial direction
-      nodes.emplace_back (Hex ().Neighbor (m_orienter->initial) * r);
+      nodes.emplace_back (Hex ().Neighbor (m_directions, m_orienter->initial) * r);
       for ( auto d = Hex::Direction::NW;
             d != Hex::Direction::end;
             d = Hex::Next (d)
@@ -632,7 +627,7 @@ HexagonalPositionAllocator::PopulateAllocator (void) const
               pp = FromSpace (p);
               NS_LOG_INFO ("Node[" << nodes.size () - 1 << "]: " <<
                            nodes.back () << " " << p << " --> " << pp);
-              nodes.emplace_back (nodes.back ().Neighbor (d));
+              nodes.emplace_back (nodes.back ().Neighbor (m_directions, d));
             }
         }
       if (m_list.GetSize () > N)

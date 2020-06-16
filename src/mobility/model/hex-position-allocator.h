@@ -23,6 +23,7 @@
 #include "position-allocator.h"
 #include "ns3/vector.h"
 
+#include <array>
 #include <cmath>  // sqrt
 
 /**
@@ -175,6 +176,13 @@ private:
   /** The Orienter helper. */
   const Orienter * m_orienter;
 
+  /** Type for holding moving directions. */
+  typedef std::array<Hex, 6> Direction_t;
+  
+  /** The movement directions. */
+  const Direction_t * m_directions;
+
+  
   /**
    * Compute the space coordinates from the Hex coordinates.
    * \param [in] h The Hex coordinates.
