@@ -88,11 +88,13 @@ private:
    */
   CodelQueueDiscTestItem &operator = (const CodelQueueDiscTestItem &);
   bool m_ecnCapablePacket; ///< ECN capable packet?
+  bool m_isMarked;         ///< Packet is marked?
 };
 
 CodelQueueDiscTestItem::CodelQueueDiscTestItem (Ptr<Packet> p, const Address & addr, bool ecnCapable)
   : QueueDiscItem (p, addr, ecnCapable),
-    m_ecnCapablePacket (ecnCapable)
+    m_ecnCapablePacket (ecnCapable), m_isMarked (false)
+
 {
 }
 
@@ -108,8 +110,9 @@ CodelQueueDiscTestItem::AddHeader (void)
 bool
 CodelQueueDiscTestItem::Mark (void)
 {
-  if (m_ecnCapablePacket)
+  if (m_ecnCapablePacket && !m_isMarked)
     {
+      m_isMarked = true;
       return true;
     }
   return false;
@@ -915,7 +918,7 @@ CoDelQueueDiscBasicMark::Dequeue (Ptr<CoDelQueueDisc> queue, uint32_t modeSize, 
                                         "So there should be only 1 more packet dequeued.");
                   NS_TEST_EXPECT_MSG_EQ (currentDropCount, 0, "There should not be any packet drops");
                   NS_TEST_EXPECT_MSG_EQ (currentTargetMarkCount, 1, "There should be 1 target exceeded marked packet");
-                  NS_TEST_EXPECT_MSG_EQ (currentCeThreshMarkCount, 2, "There should be 2 CE threshold exceeded marked packets");
+                  NS_TEST_EXPECT_MSG_EQ (currentCeThreshMarkCount, 1, "There should be 1 CE threshold exceeded marked packets");
                 }
             }
           else if (initialTargetMarkCount > 0)
@@ -931,7 +934,7 @@ CoDelQueueDiscBasicMark::Dequeue (Ptr<CoDelQueueDisc> queue, uint32_t modeSize, 
                                         "So there should be only 1 more packet dequeued");
                   NS_TEST_EXPECT_MSG_EQ (currentDropCount, 0, "There should not be any packet drops");
                   NS_TEST_EXPECT_MSG_EQ (currentTargetMarkCount, 1, "There should still be only 1 target exceeded marked packet from the last dequeue");
-                  NS_TEST_EXPECT_MSG_EQ (currentCeThreshMarkCount, 3, "There should be 3 CE threshold exceeded marked packets");
+                  NS_TEST_EXPECT_MSG_EQ (currentCeThreshMarkCount, 2, "There should be 2 CE threshold exceeded marked packets");
                 }
               else if (currentTime.GetMicroSeconds () >= initialDropNext)
                 {
@@ -943,7 +946,7 @@ CoDelQueueDiscBasicMark::Dequeue (Ptr<CoDelQueueDisc> queue, uint32_t modeSize, 
                                         "The number of packets dequeued equals to the number of times m_dropNext is updated plus initial dequeue");
                   NS_TEST_EXPECT_MSG_EQ (currentDropCount, m_dropNextCount, "The number of drops equals to the number of times m_dropNext is updated");
                   NS_TEST_EXPECT_MSG_EQ (currentTargetMarkCount, 1, "There should still be only 1 target exceeded marked packet");
-                  NS_TEST_EXPECT_MSG_EQ (currentCeThreshMarkCount, 3, "There should still be 3 CE threshold exceeded marked packet as packets are not ecnCapable");
+                  NS_TEST_EXPECT_MSG_EQ (currentCeThreshMarkCount, 2, "There should still be 3 CE threshold exceeded marked packet as packets are not ecnCapable");
                 }
             }
         }
