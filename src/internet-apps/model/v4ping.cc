@@ -60,7 +60,11 @@ V4Ping::GetTypeId (void)
     .AddTraceSource ("Rtt",
                      "The rtt calculated by the ping.",
                      MakeTraceSourceAccessor (&V4Ping::m_traceRtt),
-                     "ns3::Time::TracedCallback");
+                     "ns3::Time::TracedCallback")
+    .AddTraceSource ("Rx",
+                     "Reception report of an ICMP echo response",
+                     MakeTraceSourceAccessor (&V4Ping::m_rxTrace),
+                     "ns3::V4Ping::RxTracedCallback")
   ;
   return tid;
 }
@@ -165,6 +169,7 @@ V4Ping::Receive (Ptr<Socket> socket)
                                     << " ttl=" << (unsigned)ipv4.GetTtl ()
                                     << " time=" << delta.As (Time::MS) << "\n";
                         }
+                      m_rxTrace (from, echo.GetSequenceNumber (), ipv4.GetTtl (), delta);
                     }
                 }
               delete[] buf;
