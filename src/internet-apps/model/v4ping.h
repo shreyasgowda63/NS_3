@@ -107,6 +107,8 @@ private:
   uint16_t m_seq;
   /// TracedCallback for RTT measured by ICMP ECHOs
   TracedCallback<Time> m_traceRtt;
+  /// TracedCallback for ICMP echo response
+  TracedCallback<const Address &, uint16_t, uint8_t, Time > m_rxTrace;
   /// produce ping-style output if true
   bool m_verbose;
   /// received packets counter
@@ -119,6 +121,18 @@ private:
   EventId m_next;
   /// All sent but not answered packets. Map icmp seqno -> when sent
   std::map<uint16_t, Time> m_sent;
+
+    /**
+    * TracedCallback signature for ICMP echo response.
+    *
+    * \param [in] address The address
+    * \param [in] seq The ICMP echo response sequence number
+    * \param [in] ttl The time to live
+    * \param [in] time The measured round trip time
+    */
+  typedef void (* RxTracedCallback)
+      (const Address &address, uint16_t seq, uint8_t ttl, Time time);
+
 };
 
 } // namespace ns3
