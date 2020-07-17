@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2005,2006 INRIA
+ * Copyright (c) 2020 EPFL
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Authors: Guillermo Aguirre <guillermo.aguirrerodrigo@epfl.ch> Ludovic Thomas <ludovic.thomas@epfl.ch>
+ * Authors: Guillermo Aguirre <guillermo.aguirrerodrigo@epfl.ch>
+ *          Ludovic Thomas <ludovic.thomas@epfl.ch>
  */
 #ifndef PERFECT_CLOCK_MODEL_IMPL_H
 #define PERFECT_CLOCK_MODEL_IMPL_H
@@ -27,12 +28,12 @@ namespace ns3 {
 /**
  * \file Clock
  * ns3::PerfectClockModelImpl declaration
- * 
- * @brief This class represents a perfect clock modelling. 
+ *
+ * @brief This class represents a perfect clock modelling.
  * The mapping between the local time and global time is set by an affine function.
  * The slope of the function is determined by the frequency value differece. So if for example the frequency is set to 2.
  * Local clock will be two times slower that the global time. When local time says 2 global time will be saying 4.
- * Also a initial offest is possible to set up. So LT = f*GT + offset 
+ * Also a initial offest is possible to set up. So LT = f*GT + offset
  */
 
 class PerfectClockModelImpl : public ClockModel

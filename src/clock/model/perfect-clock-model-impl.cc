@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2005,2006 INRIA
+ * Copyright (c) 2020 EPFL
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Authors: Guillermo Aguirre <guillermo.aguirrerodrigo@epfl.ch> Ludovic Thomas <ludovic.thomas@epfl.ch>
+ * Authors: Guillermo Aguirre <guillermo.aguirrerodrigo@epfl.ch>
+ *          Ludovic Thomas <ludovic.thomas@epfl.ch>
  */
 
 
@@ -40,17 +41,17 @@ PerfectClockModelImpl::GetTypeId (void)
     .SetGroupName ("Clock")
     .AddConstructor<PerfectClockModelImpl> ()
     .AddAttribute ("Frequency", "Frequency difference between clocks",
-                  DoubleValue(1),
-                  MakeDoubleAccessor (&PerfectClockModelImpl::m_frequency),
-                  MakeDoubleChecker <double> ())
+                   DoubleValue (1),
+                   MakeDoubleAccessor (&PerfectClockModelImpl::m_frequency),
+                   MakeDoubleChecker <double> ())
     .AddAttribute ("Offset", "Offset between clocks",
-                  TimeValue(Seconds (0)),
-                  MakeTimeAccessor (&PerfectClockModelImpl::m_offset),
-                  MakeTimeChecker ()) 
+                   TimeValue (Seconds (0)),
+                   MakeTimeAccessor (&PerfectClockModelImpl::m_offset),
+                   MakeTimeChecker ())
   ;
   return tid;
 }
- 
+
 PerfectClockModelImpl::PerfectClockModelImpl ()
 {
   NS_LOG_FUNCTION (this);
@@ -62,47 +63,47 @@ PerfectClockModelImpl::~PerfectClockModelImpl ()
   NS_LOG_FUNCTION (this);
 }
 
-Time 
+Time
 PerfectClockModelImpl::GetLocalTime ()
 {
   NS_LOG_FUNCTION (this);
   Time localTime;
-  Time globalTime = Simulator::Now () ;
-  localTime = GlobalToLocalTime(globalTime);
+  Time globalTime = Simulator::Now ();
+  localTime = GlobalToLocalTime (globalTime);
   NS_LOG_DEBUG ("LOCALTIME " << localTime);
   return localTime;
 }
 
-Time 
+Time
 PerfectClockModelImpl::GlobalToLocalTime (Time globalTime)
 {
-  NS_LOG_FUNCTION(this << globalTime);
-  Time localTime = Time ((globalTime).GetDouble () * m_frequency) + m_offset; 
+  NS_LOG_FUNCTION (this << globalTime);
+  Time localTime = Time ((globalTime).GetDouble () * m_frequency) + m_offset;
   return localTime;
 }
 
-Time 
+Time
 PerfectClockModelImpl::LocalToGlobalTime (Time localTime)
 {
   NS_LOG_FUNCTION (this << localTime);
   NS_LOG_DEBUG ("LocalTime " << localTime << "OFFSET" << m_offset);
-  Time globalTime =  Time ((localTime - m_offset).GetDouble () / m_frequency) ;
+  Time globalTime =  Time ((localTime - m_offset).GetDouble () / m_frequency);
   NS_LOG_DEBUG ("Result " << globalTime);
   return globalTime;
 }
 
-Time 
+Time
 PerfectClockModelImpl::GlobalToLocalDelay (Time globaldDelay)
 {
-  NS_LOG_FUNCTION (this << globaldDelay); 
+  NS_LOG_FUNCTION (this << globaldDelay);
   Time localDelay;
-  Time globalTime = Simulator::Now();
+  Time globalTime = Simulator::Now ();
   Time localAbsTime = GlobalToLocalTime (globaldDelay + globalTime);
   localDelay = localAbsTime - GetLocalTime ();
   return localDelay;
 }
 
-Time 
+Time
 PerfectClockModelImpl::LocalToGlobalDelay (Time localDelay)
 {
   NS_LOG_FUNCTION (this << localDelay);

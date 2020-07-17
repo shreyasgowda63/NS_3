@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2005,2006 INRIA
+ * Copyright (c) 2020 EPFL
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Authors: Guillermo Aguirre <guillermo.aguirrerodrigo@epfl.ch> Ludovic Thomas <ludovic.thomas@epfl.ch> 
+ * Authors: Guillermo Aguirre <guillermo.aguirrerodrigo@epfl.ch>
+ *          Ludovic Thomas <ludovic.thomas@epfl.ch>
  */
 
 
@@ -30,16 +31,13 @@
 #include "ns3/node-list.h"
 #include "ns3/node.h"
 
-
-   
-
 /**
  * \file
  * \ingroup simulator
  * ns3::LocalTimeSimulatorImpl implementation
  */
 
-namespace ns3{
+namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("LocalTimeSimulatorImpl");
 
@@ -56,7 +54,7 @@ LocalTimeSimulatorImpl::GetTypeId (void)
   return tid;
 }
 
-LocalTimeSimulatorImpl::LocalTimeSimulatorImpl()
+LocalTimeSimulatorImpl::LocalTimeSimulatorImpl ()
 {
   NS_LOG_FUNCTION (this);
   NS_LOG_DEBUG ("Local Time Simulator implementation created");
@@ -73,7 +71,7 @@ LocalTimeSimulatorImpl::LocalTimeSimulatorImpl()
   m_unscheduledEvents = 0;
   m_eventCount = 0;
   m_eventsWithContextEmpty = true;
-  m_main = SystemThread::Self();
+  m_main = SystemThread::Self ();
 }
 
 LocalTimeSimulatorImpl::~LocalTimeSimulatorImpl ()
@@ -100,7 +98,7 @@ void
 LocalTimeSimulatorImpl::Destroy ()
 {
   NS_LOG_FUNCTION (this);
-  while (!m_destroyEvents.empty ()) 
+  while (!m_destroyEvents.empty ())
     {
       Ptr<EventImpl> ev = m_destroyEvents.front ().PeekEventImpl ();
       m_destroyEvents.pop_front ();
@@ -130,7 +128,7 @@ LocalTimeSimulatorImpl::SetScheduler (ObjectFactory schedulerFactory)
 }
 
 // System ID for non-distributed simulation is always zero
-uint32_t 
+uint32_t
 LocalTimeSimulatorImpl::GetSystemId (void) const
 {
   return 0;
@@ -139,25 +137,25 @@ LocalTimeSimulatorImpl::GetSystemId (void) const
 void
 LocalTimeSimulatorImpl::ProcessOneEvent (void)
 {
-  NS_LOG_FUNCTION (this); 
+  NS_LOG_FUNCTION (this);
 
   Scheduler::Event next = m_events->RemoveNext ();
 
   //Do not process events that have been cancelled by a node due to clock update
-  CancelEventsMap::iterator it = m_cancelEventMap.begin();
-  while(it != m_cancelEventMap.end ())
-  {
-    if (it->first == next.key.m_uid)
+  CancelEventsMap::iterator it = m_cancelEventMap.begin ();
+  while (it != m_cancelEventMap.end ())
     {
-      m_unscheduledEvents--;
-      if (it->second.GetTs () < m_currentTs)
-      {
-        m_cancelEventMap.erase (it);
-      }
-      return;
+      if (it->first == next.key.m_uid)
+        {
+          m_unscheduledEvents--;
+          if (it->second.GetTs () < m_currentTs)
+            {
+              m_cancelEventMap.erase (it);
+            }
+          return;
+        }
+      it++;
     }
-    it++;
-  }
 
   NS_ASSERT (next.key.m_ts >= m_currentTs);
   m_unscheduledEvents--;
@@ -167,15 +165,14 @@ LocalTimeSimulatorImpl::ProcessOneEvent (void)
   m_currentTs = next.key.m_ts;
 
   //avoid 4294967295 context
-  if ( next.key.m_context == uint32_t(4294967295))
-  {
-    NS_LOG_DEBUG ("The context doens't correspond to a node -> Application stop event");
-  }
+  if ( next.key.m_context == uint32_t (4294967295))
+    {
+      NS_LOG_DEBUG ("The context doens't correspond to a node -> Application stop event");
+    }
   else
-  {
-    m_currentContext = next.key.m_context;
-  }
-  
+    {
+      m_currentContext = next.key.m_context;
+    }
   m_currentUid = next.key.m_uid;
   NS_LOG_DEBUG ("EXECUTING EVENT ID " << m_currentUid);
   next.impl->Invoke ();
@@ -183,7 +180,7 @@ LocalTimeSimulatorImpl::ProcessOneEvent (void)
   ProcessEventsWithContext ();
 }
 
-bool 
+bool
 LocalTimeSimulatorImpl::IsFinished (void) const
 {
   return m_events->IsEmpty () || m_stop;
@@ -201,21 +198,21 @@ LocalTimeSimulatorImpl::ProcessEventsWithContext (void)
   EventsWithContext eventsWithContext;
   {
     CriticalSection cs (m_eventsWithContextMutex);
-    m_eventsWithContext.swap(eventsWithContext);
+    m_eventsWithContext.swap (eventsWithContext);
     m_eventsWithContextEmpty = true;
   }
   while (!eventsWithContext.empty ())
     {
-       EventWithContext event = eventsWithContext.front ();
-       eventsWithContext.pop_front ();
-       Scheduler::Event ev;
-       ev.impl = event.event;
-       ev.key.m_ts = m_currentTs + event.timestamp;
-       ev.key.m_context = event.context;
-       ev.key.m_uid = m_uid;
-       m_uid++;
-       m_unscheduledEvents++;
-       m_events->Insert (ev);
+      EventWithContext event = eventsWithContext.front ();
+      eventsWithContext.pop_front ();
+      Scheduler::Event ev;
+      ev.impl = event.event;
+      ev.key.m_ts = m_currentTs + event.timestamp;
+      ev.key.m_context = event.context;
+      ev.key.m_uid = m_uid;
+      m_uid++;
+      m_unscheduledEvents++;
+      m_events->Insert (ev);
     }
 }
 
@@ -224,11 +221,11 @@ LocalTimeSimulatorImpl::Run (void)
 {
   NS_LOG_FUNCTION (this);
   // Set the current threadId as the main threadId
-  m_main = SystemThread::Self();
+  m_main = SystemThread::Self ();
   ProcessEventsWithContext ();
   m_stop = false;
 
-  while (!m_events->IsEmpty () && !m_stop) 
+  while (!m_events->IsEmpty () && !m_stop)
     {
       ProcessOneEvent ();
     }
@@ -237,14 +234,14 @@ LocalTimeSimulatorImpl::Run (void)
   NS_ASSERT (!m_events->IsEmpty () || m_unscheduledEvents == 0);
 }
 
-void 
+void
 LocalTimeSimulatorImpl::Stop (void)
 {
   NS_LOG_FUNCTION (this);
   m_stop = true;
 }
 
-void 
+void
 LocalTimeSimulatorImpl::Stop (Time const &delay)
 {
   NS_LOG_FUNCTION (this << delay.GetTimeStep ());
@@ -259,38 +256,38 @@ LocalTimeSimulatorImpl::Schedule (Time const &localDelay, EventImpl *event)
   Time tAbsolute;
 
   //Avoid context that do not correspond to any node
-  if ( m_currentContext == uint32_t(4294967295))                                                                                                
-  {
-    tAbsolute = CalculateAbsoluteTime (localDelay);
-  }
-  else
-  {                           
-    // Obtain nodes clock from the context
-    Ptr <Node>  n = NodeList::GetNode (m_currentContext);
-    Ptr <LocalClock> clock = n -> GetObject <LocalClock> ();
-    if (clock == nullptr)
+  if ( m_currentContext == uint32_t (4294967295))
     {
-      //If there is no clock attach we create a perfectClock (localTime = globalTime)
-      Ptr<PerfectClockModelImpl> perfectClock = CreateObject<PerfectClockModelImpl> ();
-      clock = CreateObject<LocalClock> ();
-      clock -> SetAttribute ("ClockModel", PointerValue (perfectClock));
-      n -> AggregateObject (clock);
+      tAbsolute = CalculateAbsoluteTime (localDelay);
     }
-    Time globalTimeDelay = clock -> LocalToGlobalDelay (localDelay);
-    tAbsolute = CalculateAbsoluteTime (globalTimeDelay);
-    //Insert eventId in the list of scheduled events by the node.
-    EventId eventId = EventId(event, tAbsolute.GetTimeStep (), GetContext (), m_uid);
-    Time localTimeStamp = clock -> GetLocalTime () + localDelay;
-    clock -> InsertEvent (eventId);
-  }
+  else
+    {
+      // Obtain nodes clock from the context
+      Ptr <Node>  n = NodeList::GetNode (m_currentContext);
+      Ptr <LocalClock> clock = n->GetObject <LocalClock> ();
+      if (clock == nullptr)
+        {
+          //If there is no clock attach we create a perfectClock (localTime = globalTime)
+          Ptr<PerfectClockModelImpl> perfectClock = CreateObject<PerfectClockModelImpl> ();
+          clock = CreateObject<LocalClock> ();
+          clock->SetAttribute ("ClockModel", PointerValue (perfectClock));
+          n->AggregateObject (clock);
+        }
+      Time globalTimeDelay = clock->LocalToGlobalDelay (localDelay);
+      tAbsolute = CalculateAbsoluteTime (globalTimeDelay);
+      //Insert eventId in the list of scheduled events by the node.
+      EventId eventId = EventId (event, tAbsolute.GetTimeStep (), GetContext (), m_uid);
+      Time localTimeStamp = clock->GetLocalTime () + localDelay;
+      clock->InsertEvent (eventId);
+    }
 
   Scheduler::Event ev = InsertScheduler (event,tAbsolute);
   EventId eventId = EventId (event, ev.key.m_ts, ev.key.m_context, ev.key.m_uid);
-  NS_LOG_DEBUG("SCHEDULE EVENT  " << eventId.GetUid ());
+  NS_LOG_DEBUG ("SCHEDULE EVENT  " << eventId.GetUid ());
   return eventId;
 }
 
-Scheduler::Event 
+Scheduler::Event
 LocalTimeSimulatorImpl::InsertScheduler (EventImpl *event, Time tAbsolute)
 {
   Scheduler::Event ev;
@@ -306,7 +303,7 @@ LocalTimeSimulatorImpl::InsertScheduler (EventImpl *event, Time tAbsolute)
 
 Time
 LocalTimeSimulatorImpl::CalculateAbsoluteTime (Time delay)
-{ 
+{
   NS_ASSERT_MSG (delay.IsPositive (), "LocalTimeSimulatorImpl::Schedule(): Negative delay");
   Time tAbsolute = delay + TimeStep (m_currentTs);
   return tAbsolute;
@@ -315,8 +312,8 @@ void
 LocalTimeSimulatorImpl::ScheduleWithContext (uint32_t context, Time const &delay, EventImpl *event)
 {
   NS_LOG_FUNCTION (this << context << delay.GetTimeStep () << event);
-    
-  Time time = Simulator::Now() + delay ;
+
+  Time time = Simulator::Now () + delay;
 
   if (SystemThread::Equals (m_main))
     {
@@ -340,7 +337,7 @@ LocalTimeSimulatorImpl::ScheduleWithContext (uint32_t context, Time const &delay
       ev.event = event;
       {
         CriticalSection cs (m_eventsWithContextMutex);
-        m_eventsWithContext.push_back(ev);
+        m_eventsWithContext.push_back (ev);
         m_eventsWithContextEmpty = false;
       }
     }
@@ -372,7 +369,7 @@ LocalTimeSimulatorImpl::Now (void) const
   return TimeStep (m_currentTs);
 }
 
-Time 
+Time
 LocalTimeSimulatorImpl::GetDelayLeft (const EventId &id) const
 {
   if (IsExpired (id))
@@ -417,7 +414,7 @@ LocalTimeSimulatorImpl::Remove (const EventId &id)
   m_unscheduledEvents--;
 }
 
-void 
+void
 LocalTimeSimulatorImpl::Cancel (const EventId &id)
 {
   NS_LOG_FUNCTION (this);
@@ -433,7 +430,7 @@ LocalTimeSimulatorImpl::CancelRescheduling (const EventId &id, const EventId &ne
   NS_LOG_FUNCTION (this);
   if (!IsExpired (id))
     {
-      NS_LOG_DEBUG("CANCEL DUE TO RESCHEDULING EVENT " << id.GetUid ());
+      NS_LOG_DEBUG ("CANCEL DUE TO RESCHEDULING EVENT " << id.GetUid ());
       m_cancelEventMap.insert (std::make_pair (id.GetUid (), newId));
     }
 }
@@ -444,8 +441,8 @@ LocalTimeSimulatorImpl::IsExpired (const EventId &id) const
   NS_LOG_FUNCTION (this);
   if (id.GetUid () == 2)
     {
-      if (id.PeekEventImpl () == 0 ||
-          id.PeekEventImpl ()->IsCancelled ())
+      if (id.PeekEventImpl () == 0
+          || id.PeekEventImpl ()->IsCancelled ())
         {
           return true;
         }
@@ -461,29 +458,29 @@ LocalTimeSimulatorImpl::IsExpired (const EventId &id) const
     }
 
   //Check the maping between events to ensure that events are expired. Event1 has been reschedule with the same implbut different time  Event2.
-  //When as for Event1 (that is been "cancacelled") need to know if Event2 is cancel. 
+  //When as for Event1 (that is been "cancacelled") need to know if Event2 is cancel.
 
-  CancelEventsMap::const_iterator it = m_cancelEventMap.begin();
+  CancelEventsMap::const_iterator it = m_cancelEventMap.begin ();
   while (it != m_cancelEventMap.end ())
-  {
-    if (it ->first == id.GetUid ())
     {
-      if (!it->second.IsExpired ())
-      {
-        return false;
-      }
-      else
-      {
-        return true;
-      }   
+      if (it->first == id.GetUid ())
+        {
+          if (!it->second.IsExpired ())
+            {
+              return false;
+            }
+          else
+            {
+              return true;
+            }
+        }
+      it++;
     }
-    it++;
-  }
-  if (id.PeekEventImpl () == 0 ||
-      id.GetTs () < m_currentTs ||
-      (id.GetTs () == m_currentTs &&
-       id.GetUid () <= m_currentUid) ||
-      id.PeekEventImpl ()->IsCancelled ()) 
+  if (id.PeekEventImpl () == 0
+      || id.GetTs () < m_currentTs
+      || (id.GetTs () == m_currentTs
+          && id.GetUid () <= m_currentUid)
+      || id.PeekEventImpl ()->IsCancelled ())
     {
       return true;
     }
@@ -493,7 +490,7 @@ LocalTimeSimulatorImpl::IsExpired (const EventId &id) const
     }
 }
 
-Time 
+Time
 LocalTimeSimulatorImpl::GetMaximumSimulationTime (void) const
 {
   return TimeStep (0x7fffffffffffffffLL);

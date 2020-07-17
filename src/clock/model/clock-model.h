@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2005,2006 INRIA
+ * Copyright (c) 2020 EPFL
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Authors: Guillermo Aguirre <guillermo.aguirrerodrigo@epfl.ch> Ludovic Thomas <ludovic.thomas@epfl.ch>
+ * Authors: Guillermo Aguirre <guillermo.aguirrerodrigo@epfl.ch>
+ *          Ludovic Thomas <ludovic.thomas@epfl.ch>
  */
 #ifndef CLOCK_MODEL_H
 #define CLOCK_MODEL_H
@@ -30,11 +31,11 @@
  * ns3:ClockModel interface declaration
  */
 
-namespace ns3{
+namespace ns3 {
 /**
 * \ingroup clock
-* Clock model 
-*/ 
+* Clock model
+*/
 class ClockModel : public Object
 {
 public:
@@ -54,7 +55,6 @@ public:
   virtual Time GlobalToLocalDelay (Time globaldDelay) = 0;
   /**  \copydoc ClockModel::GlobalToLocalAbs  */
   virtual Time LocalToGlobalDelay (Time localdelay) = 0;
-  
 };
 }// namespace ns3
 

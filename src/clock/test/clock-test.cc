@@ -34,11 +34,11 @@ public:
   bool m_a;
   bool m_destroy;
   EventId m_destroyId;
-  
+
   virtual ~EventSchedulTestCase ();
   virtual void DoRun (void);
   virtual void DoSetup ();
- 
+
   Ptr<Node> m_node;
   Ptr<ClockModel> m_clock;
   Ptr<LocalClock> clock0;
@@ -47,34 +47,32 @@ public:
 };
 
 /**
-* This test aim to check that events are scheduled according to a global time shifted 
-* from a local time. 
-* This test work just with the perfect clock impl, however is not the purpose of this test to evaluate the perfomance of the 
+* This test aim to check that events are scheduled according to a global time shifted
+* from a local time.
+* This test work just with the perfect clock impl, however is not the purpose of this test to evaluate the perfomance of the
 * clock implementation itself. The purpose is to validate that the node is able to schedule event with it's own notion of time and reshcedule them
 * when it is needed. Also check the good perfomance of the interface.
-* 
+*
 */
 
 EventSchedulTestCase::EventSchedulTestCase (
   std::string descr,
   ObjectFactory schedulerFactory
-)
-: TestCase ("Check that basic event handling is working with " + 
+  )
+  : TestCase ("Check that basic event handling is working with " +
               schedulerFactory.GetTypeId ().GetName ()),
     m_schedulerFactory (schedulerFactory)
-{
-}
+{}
 EventSchedulTestCase::~EventSchedulTestCase ()
-{
-}
+{}
 
-void 
+void
 EventSchedulTestCase::EventA ()
 {
   m_a = true;
 }
 
-void 
+void
 EventSchedulTestCase::EventB (Time globalTime)
 {
   ScheduleCheck (globalTime);
@@ -91,10 +89,10 @@ void
 EventSchedulTestCase::EventD ()
 {
   EventId id = Simulator::Schedule (Seconds (3), &EventSchedulTestCase::EventC, this);
-  Simulator::ScheduleWithContext (0, Time (id.GetTs ())-Simulator::Now (), &EventSchedulTestCase::NotExpired, this, id);
+  Simulator::ScheduleWithContext (0, Time (id.GetTs ()) - Simulator::Now (), &EventSchedulTestCase::NotExpired, this, id);
 }
 
-void 
+void
 EventSchedulTestCase::Send (Time t, Time checkTime)
 {
   Simulator::Schedule (t, &EventSchedulTestCase::EventB, this, checkTime);
@@ -118,13 +116,13 @@ EventSchedulTestCase::CreateNode ()
   m_node = CreateObject<Node> ();
   clock0 = CreateObject<LocalClock> ();
   m_clock = CreateObject<PerfectClockModelImpl> ();
-  m_clock -> SetAttribute ("Frequency", DoubleValue (0.5));
-  m_clock -> SetAttribute ("Offset", TimeValue (Seconds (0)));
-  clock0 -> SetAttribute ("ClockModel", PointerValue (m_clock));
-  m_node -> AggregateObject (clock0);
+  m_clock->SetAttribute ("Frequency", DoubleValue (0.5));
+  m_clock->SetAttribute ("Offset", TimeValue (Seconds (0)));
+  clock0->SetAttribute ("ClockModel", PointerValue (m_clock));
+  m_node->AggregateObject (clock0);
 }
 
-void 
+void
 EventSchedulTestCase::ScheduleCheck (Time globalTime)
 {
   std::cout << " Expected at "  << globalTime << Simulator::Now () << "(node/sim)" << std::endl;
@@ -136,9 +134,9 @@ EventSchedulTestCase::NewFrequency (double freq, Time offset)
 {
   std::cout << "Event New freq at " << Simulator::Now () << std::endl;
   Ptr<ClockModel> newClock = CreateObject<PerfectClockModelImpl> ();
-  newClock -> SetAttribute ("Frequency", DoubleValue (freq));
-  newClock -> SetAttribute ("Offset", TimeValue (offset));
-  clock0 -> SetClock (newClock);
+  newClock->SetAttribute ("Frequency", DoubleValue (freq));
+  newClock->SetAttribute ("Offset", TimeValue (offset));
+  clock0->SetClock (newClock);
 }
 
 void
@@ -146,15 +144,15 @@ EventSchedulTestCase::destroy (void)
 {
   if (m_destroyId.IsExpired ())
     {
-      m_destroy = true; 
+      m_destroy = true;
     }
 }
 void
 EventSchedulTestCase::DoSetup ()
-{  
-  GlobalValue::Bind ("SimulatorImplementationType", 
+{
+  GlobalValue::Bind ("SimulatorImplementationType",
                      StringValue ("ns3::LocalTimeSimulatorImpl"));
-  
+
   // Create node and add perfect clock
   CreateNode ();
   uint32_t id = 0;
@@ -165,7 +163,7 @@ EventSchedulTestCase::DoSetup ()
   Time offset = Seconds (0);
 
   Simulator::SetScheduler (m_schedulerFactory);
- //These events are scheduled without the clock freq, because are scheduled before run
+  //These events are scheduled without the clock freq, because are scheduled before run
 
   //Set the context-> This case 1 node, so context = 0
   Simulator::ScheduleWithContext (id, Seconds (1), &EventSchedulTestCase::EventA, this);
@@ -181,7 +179,7 @@ EventSchedulTestCase::DoSetup ()
   //Check that the scheduled events that have been reschedule are still active even if their origial time has elapsed. This is the case
   // when an application schedule an event but that event is reshedule. A new event is created with the same implementation
   // but the original event is not update with the new time. However if the application ask if it is expired the simulator should take into account
-  // the new event generated. 
+  // the new event generated.
 
   //Event d1 in local time 7 expected at global time 10 but reshedule at global time 13 due to the clock update
   EventId d1 = Simulator::Schedule (Seconds (4), &EventSchedulTestCase::EventD, this);
@@ -192,8 +190,8 @@ EventSchedulTestCase::DoSetup ()
 
   //Schedule new clock with new offset
   Simulator::Schedule (Seconds (7), &EventSchedulTestCase::NewFrequency, this, newfreq, offset);
- 
-  // Basic check, similar to the test of default implementation 
+
+  // Basic check, similar to the test of default implementation
   NS_TEST_EXPECT_MSG_EQ (!a.IsExpired (), true, "Event a expired when it shouldn't");
   NS_TEST_EXPECT_MSG_EQ (!b.IsExpired (), true, "Event a expired when it shouldn't");
   NS_TEST_EXPECT_MSG_EQ (!c.IsExpired (), true, "Event c should not have expired");
@@ -233,7 +231,7 @@ EventSchedulTestCase::DoSetup ()
   NS_TEST_EXPECT_MSG_EQ (m_destroyId.IsExpired (), true, "Event should have expired now");
   NS_TEST_EXPECT_MSG_EQ (m_destroy, true, "Event should have run");
   Simulator::Run ();
-  
+
 
 
 
@@ -252,13 +250,11 @@ class LocalSimulatorTestSuite : public TestSuite
 {
 public:
   LocalSimulatorTestSuite ()
-  :TestSuite ("clock-test", UNIT)
+    : TestSuite ("clock-test", UNIT)
   {
     ObjectFactory factory;
     factory.SetTypeId (ListScheduler::GetTypeId ());
 
     AddTestCase (new EventSchedulTestCase ("Check basic event handling is working", factory), TestCase::QUICK);
   }
-}g_localSimulatorTestSuite;
-
-
+} g_localSimulatorTestSuite;
