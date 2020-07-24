@@ -448,8 +448,8 @@ bool CobaltQueueDisc::CobaltShouldDrop (Ptr<QueueDiscItem> item, int64_t now)
   bool next_due = m_count && schedule >= 0;
   bool isMarked = false;
 
-  // If L4S mode is enabled then check for ECT1 packets and skip CoDel steps,
-  // and use marking based on CE Threshold
+  // If L4S mode is enabled then check for ECT1 packets and mark based on CE threshold,
+  // and skip CoDel steps.
   if (item && m_useL4s)
     {
       uint8_t tosByte = 0;
