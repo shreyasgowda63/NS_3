@@ -448,8 +448,9 @@ bool CobaltQueueDisc::CobaltShouldDrop (Ptr<QueueDiscItem> item, int64_t now)
   bool next_due = m_count && schedule >= 0;
   bool isMarked = false;
 
-  // If L4S mode is enabled then check for ECT1 packets and mark based on CE threshold,
-  // and skip CoDel steps.
+  // If L4S mode is enabled then check if the packet is ECT1 and
+  // if sojourn is greater than CE threshold then the packet is marked.
+  // If packet is marked succesfully then the CoDel steps can be skipped.
   if (item && m_useL4s)
     {
       uint8_t tosByte = 0;
@@ -505,8 +506,10 @@ bool CobaltQueueDisc::CobaltShouldDrop (Ptr<QueueDiscItem> item, int64_t now)
           next_due = m_count && schedule >= 0;
         }
     }
-  // If CE threshold is enabled then isMarked flag is determine whether 
-  // packet is marked and suppress a second attempt at marking.
+
+  // If CE threshold is enabled then isMarked flag is used to determine whether
+  // packet is marked and if the packet is marked then a second attempt at marking should be suppressed.
+  // If UseL4S attribute is enabled then ECT0 packets should not be marked.
   if (!isMarked && !m_useL4s && m_useEcn && CoDelTimeAfter (sojournTime, Time2CoDel (m_ceThreshold)) && Mark (item, CE_THRESHOLD_EXCEEDED_MARK))
     {
       NS_LOG_LOGIC ("Marking due to CeThreshold " << m_ceThreshold.GetSeconds ());

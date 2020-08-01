@@ -449,6 +449,7 @@ FqCobaltQueueDisc::CheckConfig (void)
       return false;
     }
 
+  // If UseL4S attribute is enabled then CE threshold must be set.
   if (m_useL4s)
     {
       NS_ABORT_MSG_IF (m_ceThreshold == Time::Max(), "CE threshold not set");
