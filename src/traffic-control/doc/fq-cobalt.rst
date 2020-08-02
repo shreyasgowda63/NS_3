@@ -26,7 +26,7 @@ The source code for the FqCobalt queue disc is located in the directory
 ``src/traffic-control/model`` and consists of 2 files `fq-cobalt-queue-disc.h`
 and `fq-cobalt-queue-disc.cc` defining a FqCobaltQueueDisc class and a helper
 FqCobaltFlow class. The code was ported to |ns3| based on Linux kernel code
-implemented by |||Jonathan Morton||| """not sure"""
+implemented by Jonathan Morton.
 Set associative hashing is also based on the Linux kernel `CAKE <https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8475045>`_ queue management code. 
 Set associative hashing is used to reduce the number of hash collisions in 
 comparison to choosing queues normally with a simple hash. For a given number of 
@@ -67,6 +67,7 @@ queue disc.
 References
 ==========
 
+.. [CAK16] https://github.com/torvalds/linux/blob/master/net/sched/sch_cake.c , Implementation of CAKE in Linux
 
 Attributes
 ==========

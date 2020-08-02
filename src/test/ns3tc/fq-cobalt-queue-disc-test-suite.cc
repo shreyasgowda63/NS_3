@@ -527,339 +527,295 @@ FqCobaltQueueDiscUDPFlowsSeparation::DoRun (void)
 
 /**
  * This class tests ECN marking
+ * The test is divided into 3 sub test cases.
+ * 1) CE threshold disabled
+ * This test enqueues 100 packets in the beginning of the test and dequeues 60 (some packets are dropped too) packets with the
+ * delay of 110ms. This test checks that ECT0 packets are marked and are marked appropriately and NotECT packets are dropped.
+ * 
+ * 2) CE threshold enabled.
+ * This test enqueues 100 packets in the beginning of the test and dequeues 60 packets with delay of 1ms. This test checks that
+ * the ECT0 packets are marked appropriately at CE threshold.
+ * 
+ * 3) CE threshold enabled with higher queue delay.
+ * This test is similar to the 2nd sub test cases just with higher queue delay and aims to test that the packets are not
+ * marked twice
  * Any future classifier options (e.g. SetAssociativehash) should be disabled to prevent a hash collision on this test case.
  */
-// class FqCobaltQueueDiscECNMarking : public TestCase
-// {
-// public:
-//   FqCobaltQueueDiscECNMarking ();
-//   virtual ~FqCobaltQueueDiscECNMarking ();
+class FqCobaltQueueDiscEcnMarking : public TestCase
+{
+public:
+  FqCobaltQueueDiscEcnMarking ();
+  virtual ~FqCobaltQueueDiscEcnMarking ();
 
-// private:
-//   virtual void DoRun (void);
-//   void AddPacket (Ptr<FqCobaltQueueDisc> queue, Ipv4Header hdr, u_int32_t nPkt, u_int32_t nPktEnqueued, u_int32_t nQueueFlows);
-//   void Dequeue (Ptr<FqCobaltQueueDisc> queue, uint32_t nPkt);
-//   void DequeueWithDelay (Ptr<FqCobaltQueueDisc> queue, double delay, uint32_t nPkt);
-// };
+private:
+  virtual void DoRun (void);
+  void AddPacket (Ptr<FqCobaltQueueDisc> queue, Ipv4Header hdr, u_int32_t nPkt, u_int32_t nPktEnqueued, u_int32_t nQueueFlows);
+  void Dequeue (Ptr<FqCobaltQueueDisc> queue, uint32_t nPkt);
+  void DequeueWithDelay (Ptr<FqCobaltQueueDisc> queue, double delay, uint32_t nPkt);
+  void DropNextTracer (int64_t oldVal, int64_t newVal);
+  uint32_t m_dropNextCount;    ///< count the number of times m_dropNext is recalculated
+};
 
-// FqCobaltQueueDiscECNMarking::FqCobaltQueueDiscECNMarking ()
-//   : TestCase ("Test ECN marking")
-// {
-// }
+FqCobaltQueueDiscEcnMarking::FqCobaltQueueDiscEcnMarking ()
+  : TestCase ("Test ECN marking")
+{
+  m_dropNextCount = 0;
+}
 
-// FqCobaltQueueDiscECNMarking::~FqCobaltQueueDiscECNMarking ()
-// {
-// }
+FqCobaltQueueDiscEcnMarking::~FqCobaltQueueDiscEcnMarking ()
+{
+}
 
-// void
-// FqCobaltQueueDiscECNMarking::AddPacket (Ptr<FqCobaltQueueDisc> queue, Ipv4Header hdr, u_int32_t nPkt, u_int32_t nPktEnqueued, u_int32_t nQueueFlows)
-// {
-//   Address dest;
-//   Ptr<Packet> p = Create<Packet> (100);
-//   for (uint32_t i = 0; i < nPkt; i++)
-//     {
-//       Ptr<Ipv4QueueDiscItem> item = Create<Ipv4QueueDiscItem> (p, dest, 0, hdr);
-//       queue->Enqueue (item);
-//     }
-//   NS_TEST_EXPECT_MSG_EQ (queue->GetNQueueDiscClasses (), nQueueFlows, "unexpected number of flow queues");
-//   NS_TEST_EXPECT_MSG_EQ (queue->GetNPackets (), nPktEnqueued, "unexpected number of enqueued packets");
-// }
+void
+FqCobaltQueueDiscEcnMarking::AddPacket (Ptr<FqCobaltQueueDisc> queue, Ipv4Header hdr, u_int32_t nPkt, u_int32_t nPktEnqueued, u_int32_t nQueueFlows)
+{
+  Address dest;
+  Ptr<Packet> p = Create<Packet> (100);
+  for (uint32_t i = 0; i < nPkt; i++)
+    {
+      Ptr<Ipv4QueueDiscItem> item = Create<Ipv4QueueDiscItem> (p, dest, 0, hdr);
+      queue->Enqueue (item);
+    }
+  NS_TEST_EXPECT_MSG_EQ (queue->GetNQueueDiscClasses (), nQueueFlows, "unexpected number of flow queues");
+  NS_TEST_EXPECT_MSG_EQ (queue->GetNPackets (), nPktEnqueued, "unexpected number of enqueued packets");
+}
 
-// void
-// FqCobaltQueueDiscECNMarking::Dequeue (Ptr<FqCobaltQueueDisc> queue, uint32_t nPkt)
-// {
-//   // Ptr<CobaltQueueDisc> q0 = queue->GetQueueDiscClass (0)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   // Ptr<CobaltQueueDisc> q1 = queue->GetQueueDiscClass (1)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   // Ptr<CobaltQueueDisc> q2 = queue->GetQueueDiscClass (2)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   // Ptr<CobaltQueueDisc> q3 = queue->GetQueueDiscClass (3)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   // Ptr<CobaltQueueDisc> q4 = queue->GetQueueDiscClass (4)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   // std::cout << q0->GetNPackets () << "  "<< q1->GetNPackets () << "  "<< q2->GetNPackets () << "  "
-//   // << q3->GetNPackets () << "  "<< q4->GetNPackets () << "  " << q0->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP)
-//   // << q1->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP) << "  "
-//   // << q2->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP)<< "  "
-//   // << q3->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP)<< "  "
-//   // << q4->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP)<< "           "
-//   // << q0->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK) << "  "
-//   // << q1->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK) << "  "
-//   // << q2->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK)<< "  "
-//   // << q3->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK)<< "  "
-//   // << q4->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK)<< "  "
-//   // << std::endl;
-//   // std::cout << q0->GetNPackets () << "  " << q1->GetNPackets () << "  " << q2->GetNPackets () << "  "<< q3->GetNPackets ()<<"       "  
-//   // <<q0->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP)<< "  " 
-//   // <<q1->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP) << "  "
-//   // <<q2->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP) << "  "
-//   // <<q3->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP) << "          "
-//   // << q0->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK) << "  "
-//   // << q1->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK) << "  "
-//   // << q2->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK) << "  "
-//   // << q3->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK) << "  "
-//   //  << std::endl;
-//   for (uint32_t i = 0; i < nPkt; i++)
-//     {
-//       Ptr<QueueDiscItem> item = queue->Dequeue ();
-//     }
-// }
+void
+FqCobaltQueueDiscEcnMarking::Dequeue (Ptr<FqCobaltQueueDisc> queue, uint32_t nPkt)
+{
+  Ptr<CobaltQueueDisc> q3 = queue->GetQueueDiscClass (3)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
 
-// void
-// FqCobaltQueueDiscECNMarking::DequeueWithDelay (Ptr<FqCobaltQueueDisc> queue, double delay, uint32_t nPkt)
-// {
-//   for (uint32_t i = 0; i < nPkt; i++)
-//     {
-//       Simulator::Schedule (Time (Seconds ((i + 1) * delay)), &FqCobaltQueueDiscECNMarking::Dequeue, this, queue, 1);
-//     }
-// }
+  // Trace DropNext after the first dequeue as m_dropNext value is set after the first dequeue
+  if (q3->GetNPackets () == 19)
+    {
+      q3->TraceConnectWithoutContext ("DropNext", MakeCallback (&FqCobaltQueueDiscEcnMarking::DropNextTracer, this));
+    }
 
-// void
-// FqCobaltQueueDiscECNMarking::DoRun (void)
-// {
-//   // Test is divided into 3 sub test cases:
-//   // 1) CeThreshold disabled
-//   // 2) CeThreshold enabled
-//   // 3) Same as 2 but with higher queue delay
+  for (uint32_t i = 0; i < nPkt; i++)
+    {
+      Ptr<QueueDiscItem> item = queue->Dequeue ();
+    }
+}
 
-//   // Test case 1, CeThreshold disabled
-//   Ptr<FqCobaltQueueDisc> queueDisc = CreateObjectWithAttributes<FqCobaltQueueDisc> ("MaxSize", StringValue ("10240p"), "UseEcn", BooleanValue (true),
-//                                                                                   "Perturbation", UintegerValue (0));
+void
+FqCobaltQueueDiscEcnMarking::DequeueWithDelay (Ptr<FqCobaltQueueDisc> queue, double delay, uint32_t nPkt)
+{
+  for (uint32_t i = 0; i < nPkt; i++)
+    {
+      Simulator::Schedule (Time (Seconds ((i + 1) * delay)), &FqCobaltQueueDiscEcnMarking::Dequeue, this, queue, 1);
+    }
+}
 
-//   queueDisc->SetQuantum (1514);
-//   queueDisc->Initialize ();
-//   Ipv4Header hdr;
-//   hdr.SetPayloadSize (100);
-//   hdr.SetSource (Ipv4Address ("10.10.1.1"));
-//   hdr.SetDestination (Ipv4Address ("10.10.1.2"));
-//   hdr.SetProtocol (7);
-//   hdr.SetEcn (Ipv4Header::ECN_ECT0);
+void
+FqCobaltQueueDiscEcnMarking::DropNextTracer (int64_t oldVal, int64_t newVal)
+{
+  NS_UNUSED (oldVal);
+  NS_UNUSED (newVal);
+  m_dropNextCount++;
+}
 
-//   // Add 20 ECT0 (ECN capable) packets from the first flow
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 20, 1);
+void
+FqCobaltQueueDiscEcnMarking::DoRun (void)
+{
+  // Test is divided into 3 sub test cases:
+  // 1) CeThreshold disabled
+  // 2) CeThreshold enabled
+  // 3) Same as 2 but with higher queue delay
 
-//   // Add 20 ECT0 (ECN capable) packets from second flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.10"));
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 40, 2);
+  // Test case 1, CeThreshold disabled
+  Ptr<FqCobaltQueueDisc> queueDisc = CreateObjectWithAttributes<FqCobaltQueueDisc> ("MaxSize", StringValue ("10240p"), "UseEcn", BooleanValue (true),
+                                                                                  "Perturbation", UintegerValue (0));
 
-//   // Add 20 ECT0 (ECN capable) packets from third flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.20"));
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 60, 3);
+  queueDisc->SetQuantum (1514);
+  queueDisc->Initialize ();
+  Ipv4Header hdr;
+  hdr.SetPayloadSize (100);
+  hdr.SetSource (Ipv4Address ("10.10.1.1"));
+  hdr.SetDestination (Ipv4Address ("10.10.1.2"));
+  hdr.SetProtocol (7);
+  hdr.SetEcn (Ipv4Header::ECN_ECT0);
 
-//   // Add 20 NotECT packets from fourth flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.30"));
-//   hdr.SetEcn (Ipv4Header::ECN_NotECT);
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 80, 4);
+  // Add 20 ECT0 (ECN capable) packets from the first flow
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 20, 1);
 
-//   // Add 20 NotECT packets from fifth flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.40"));
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 100, 5);
+  // Add 20 ECT0 (ECN capable) packets from second flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.10"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 40, 2);
 
-//   //Dequeue 60 packets with delay 110ms to induce packet drops and keep some remaining packets in each queue
-//   DequeueWithDelay (queueDisc, 0.11, 60);
-//   Simulator::Run ();
-//   Simulator::Stop (Seconds (8.0));
-//   Ptr<CobaltQueueDisc> q0 = queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   Ptr<CobaltQueueDisc> q1 = queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   Ptr<CobaltQueueDisc> q2 = queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-  // Ptr<CobaltQueueDisc> q3 = queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-  // Ptr<CobaltQueueDisc> q4 = queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  // Add 20 ECT0 (ECN capable) packets from third flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.20"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 60, 3);
+
+  // Add 20 NotECT packets from fourth flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.30"));
+  hdr.SetEcn (Ipv4Header::ECN_NotECT);
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 80, 4);
+
+  // Add 20 NotECT packets from fifth flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.40"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 100, 5);
+
+  //Dequeue 60 packets with delay 110ms to induce packet drops and keep some remaining packets in each queue
+  DequeueWithDelay (queueDisc, 0.11, 60);
+  Simulator::Run ();
+  Simulator::Stop (Seconds (8.0));
+  Ptr<CobaltQueueDisc> q0 = queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  Ptr<CobaltQueueDisc> q1 = queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  Ptr<CobaltQueueDisc> q2 = queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  Ptr<CobaltQueueDisc> q3 = queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  Ptr<CobaltQueueDisc> q4 = queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+
+ // As packets in flow queues are ECN capable
+  NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 19, "There should be 19 marked packets."
+                        "As there is no CoDel minBytes parameter so all the packets apart from the first one gets marked. As q3 and q4 have"
+                        "NotEct packets and the queue delay is much higher than 5ms so the queue gets empty pretty quickly so more"
+                        "packets from q0 can be dequeued.");
+  NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 16, "There should be 16 marked packets"
+                        "As there is no CoDel minBytes parameter so all the packets apart from the first one until no more packets are dequeued"
+                        "are marked.");
+  NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 12, "There should be 12 marked packets"
+                        "Each packet size is 120 bytes and the quantum is 1500 bytes so in the first turn (1514/120 = 12.61) 13 packets are"
+                        "dequeued and apart from the first one, all the packets are marked.");
+  NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
   
+  // As packets in flow queues are not ECN capable
+  NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), m_dropNextCount, "The number of drops should"
+                        "be equal to the number of times m_dropNext is updated");
+  NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 0, "There should not be any marked packets");
+  NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), m_dropNextCount, "The number of drops should"
+                        "be equal to the number of times m_dropNext is updated");
+  NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 0, "There should not be any marked packets");
 
-  //Ensure there are some remaining packets in the flow queues to check for flow queues with ECN capable packets
-  // NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-  // NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-  // NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-  // NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-  // NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
+  Simulator::Destroy ();
 
-//  // As packets in flow queues are ECN capable
-//   NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 6, "There should be 6 marked packets"
-//                         "with 20 packets, total bytes in the queue = 120 * 20 = 2400. First packet dequeues at 110ms which is greater than"
-//                         "test's default target value 5ms. Sojourn time has just gone above target from below, need to stay above for at"
-//                         "least q->interval before packet can be dropped. Second packet dequeues at 220ms which is greater than last dequeue"
-//                         "time plus q->interval(test default 100ms) so the packet is marked. Third packet dequeues at 330ms and the sojourn"
-//                         "time stayed above the target and dropnext value is less than 320 hence the packet is marked. 4 subsequent packets"
-//                         "are marked as the sojourn time stays above the target. With 8th dequeue number of bytes in queue = 120 * 12 = 1440"
-//                         "which is less m_minBytes(test's default value 1500 bytes) hence the packets stop getting marked");
-//   NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
-//   NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 6, "There should be 6 marked packets");
-//   NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
-//   NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 6, "There should be 6 marked packets");
-//   NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  // Test case 2, CeThreshold set to 2ms
+  queueDisc = CreateObjectWithAttributes<FqCobaltQueueDisc> ("MaxSize", StringValue ("10240p"), "UseEcn", BooleanValue (true),
+                                                                                   "CeThreshold", TimeValue (MilliSeconds (2)));
+  queueDisc->SetQuantum (1514);
+  queueDisc->Initialize ();
   
-//   // As packets in flow queues are not ECN capable
-//   NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 4, "There should be 4 dropped packets"
-//                         "with 20 packets, total bytes in the queue = 120 * 20 = 2400. First packet dequeues at 110ms which is greater than"
-//                         "test's default target value 5ms. Sojourn time has just gone above target from below, need to stay above for at"
-//                         "least q->interval before packet can be dropped. Second packet dequeues at 220ms which is greater than last dequeue"
-//                         "time plus q->interval(test default 100ms) so packet is dropped and next is dequeued. 4th packet dequeues at 330ms"
-//                         "and the sojourn time stayed above the target and dropnext value is less than 320 hence the packet is dropped and next"
-//                         "packet is dequeued. 6th packet dequeues at 440ms and 2 more packets are dropped as dropnext value is increased twice."
-//                         "12 Packets remaining in the queue, total number of bytes int the queue = 120 * 12 = 1440 which is less"
-//                         "m_minBytes(test's default value 1500 bytes) hence the packets stop getting dropped");
-//   NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 0, "There should not be any marked packets");
-//   NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 4, "There should be 4 dropped packets");
-//   NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 0, "There should not be any marked packets");
-//   // Ensure flow queue 0,1 and 2 have ECN capable packets
-//   // Peek () changes the stats of the queue and that is reason to be keep this test at last
-//   Ptr<const Ipv4QueueDiscItem> pktQ0 = DynamicCast<const Ipv4QueueDiscItem> (q0->Peek ());
-//   NS_TEST_EXPECT_MSG_NE (pktQ0->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
-//   Ptr<const Ipv4QueueDiscItem> pktQ1 = DynamicCast<const Ipv4QueueDiscItem> (q1->Peek ());
-//   NS_TEST_EXPECT_MSG_NE (pktQ1->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
-//   Ptr<const Ipv4QueueDiscItem> pktQ2 = DynamicCast<const Ipv4QueueDiscItem> (q2->Peek ());
-//   NS_TEST_EXPECT_MSG_NE (pktQ2->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
+  // Add 20 ECT0 (ECN capable) packets from first flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.2"));
+  hdr.SetEcn (Ipv4Header::ECN_ECT0);
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 20, 1);
 
-//   Simulator::Destroy ();
+  // Add 20 ECT0 (ECN capable) packets from second flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.10"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 40, 2);
 
-//   // Test case 2, CeThreshold set to 2ms
-//   queueDisc = CreateObjectWithAttributes<FqCobaltQueueDisc> ("MaxSize", StringValue ("10240p"), "UseEcn", BooleanValue (true),
-//                                                                                    "CeThreshold", TimeValue (MilliSeconds (2)));
-//   queueDisc->SetQuantum (1514);
-//   queueDisc->Initialize ();
+  // Add 20 ECT0 (ECN capable) packets from third flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.20"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 60, 3);
+
+  // Add 20 NotECT packets from fourth flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.30"));
+  hdr.SetEcn (Ipv4Header::ECN_NotECT);
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 80, 4);
+
+  // Add 20 NotECT packets from fifth flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.40"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 100, 5);
+
+  //Dequeue 60 packets with delay 0.1ms to induce packet drops and keep some remaining packets in each queue
+  DequeueWithDelay (queueDisc, 0.0001, 60);
+  Simulator::Run ();
+  Simulator::Stop (Seconds (8.0));
+  q0 = queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  q1 = queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  q2 = queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  q3 = queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  q4 = queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+
+  // As packets in flow queues are ECN capable
+  NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 0, "There should not be any marked packets"
+                        "with quantum of 1514, 13 packets of size 120 bytes can be dequeued. sojourn time of 13th packet is 1.3ms which is"
+                        "less than CE threshold");
+  NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 6, "There should be 6 marked packets"
+                        "with quantum of 1514, 13 packets of size 120 bytes can be dequeued. sojourn time of 8th packet is 2.1ms which is greater"
+                        "than CE threshold and subsequent packet also have sojourn time more 8th packet hence remaining packet are marked.");
+  NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 13, "There should be 13 marked packets"
+                        "with quantum of 1514, 13 packets of size 120 bytes can be dequeued and all of them have sojourn time more than CE threshold");
+
+  // As packets in flow queues are not ECN capable
+  NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 0, "There should not be any marked packets");
+  NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 0, "There should not be any marked packets");
+  NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 1, "There should 1 dropped packet. As the queue"
+                        "delay for the first dequeue is greater than the target (5ms), Cobalt overloads the m_dropNext field as an activity timeout"
+                        "and dropNext is to set to the current Time value so on the next dequeue a packet is dropped.");
+
+  Simulator::Destroy ();
+
+  // Test case 3, CeThreshold set to 2ms with higher queue delay. This test is mainly to check that the packets are not getting marked twice.
+  queueDisc = CreateObjectWithAttributes<FqCobaltQueueDisc> ("MaxSize", StringValue ("10240p"), "UseEcn", BooleanValue (true),
+                                                                                   "CeThreshold", TimeValue (MilliSeconds (2)));
+  queueDisc->SetQuantum (1514);
+  queueDisc->Initialize ();
   
-//   // Add 20 ECT0 (ECN capable) packets from first flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.2"));
-//   hdr.SetEcn (Ipv4Header::ECN_ECT0);
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 20, 1);
+  // Add 20 ECT0 (ECN capable) packets from first flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.2"));
+  hdr.SetEcn (Ipv4Header::ECN_ECT0);
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 20, 1);
 
-//   // Add 20 ECT0 (ECN capable) packets from second flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.10"));
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 40, 2);
+  // Add 20 ECT0 (ECN capable) packets from second flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.10"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 40, 2);
 
-//   // Add 20 ECT0 (ECN capable) packets from third flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.20"));
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 60, 3);
+  // Add 20 ECT0 (ECN capable) packets from third flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.20"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 60, 3);
 
-//   // Add 20 NotECT packets from fourth flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.30"));
-//   hdr.SetEcn (Ipv4Header::ECN_NotECT);
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 80, 4);
+  // Add 20 NotECT packets from fourth flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.30"));
+  hdr.SetEcn (Ipv4Header::ECN_NotECT);
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 80, 4);
 
-//   // Add 20 NotECT packets from fifth flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.40"));
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 100, 5);
+  // Add 20 NotECT packets from fifth flow
+  hdr.SetDestination (Ipv4Address ("10.10.1.40"));
+  Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscEcnMarking::AddPacket, this, queueDisc, hdr, 20, 100, 5);
 
-//   //Dequeue 60 packets with delay 0.1ms to induce packet drops and keep some remaining packets in each queue
-//   DequeueWithDelay (queueDisc, 0.0001, 60);
-//   Simulator::Run ();
-//   Simulator::Stop (Seconds (8.0));
-//   q0 = queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   q1 = queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   q2 = queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   q3 = queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   q4 = queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  // Reset m_dropNextCount value;
+  m_dropNextCount = 0;
 
-//   //Ensure there are some remaining packets in the flow queues to check for flow queues with ECN capable packets
-//   NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-//   NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-//   NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-//   NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-//   NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
+  //Dequeue 60 packets with delay 110ms to induce packet drops and keep some remaining packets in each queue
+  DequeueWithDelay (queueDisc, 0.110, 60);
+  Simulator::Run ();
+  Simulator::Stop (Seconds (8.0));
+  q0 = queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  q1 = queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  q2 = queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  q3 = queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
+  q4 = queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
 
-//   // As packets in flow queues are ECN capable
-//   NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
-//   NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 0, "There should not be any marked packets"
-//                         "with quantum of 1514, 13 packets of size 120 bytes can be dequeued. sojourn time of 13th packet is 1.3ms which is"
-//                         "less than CE threshold");
-//   NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
-//   NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 6, "There should be 6 marked packets"
-//                         "with quantum of 1514, 13 packets of size 120 bytes can be dequeued. sojourn time of 8th packet is 2.1ms which is greater"
-//                         "than CE threshold and subsequent packet also have sojourn time more 8th packet hence remaining packet are marked.");
-//   NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
-//   NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 13, "There should be 13 marked packets"
-//                         "with quantum of 1514, 13 packets of size 120 bytes can be dequeued and all of them have sojourn time more than CE threshold");
+  // As packets in flow queues are ECN capable
+  NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK) + 
+                         q0->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 20 - q0->GetNPackets (), "Number of CE threshold"
+                        " exceeded marks plus Number of Target exceeded marks should be equal to total number of packets dequeued");
+  NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK) + 
+                         q1->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 20 - q1->GetNPackets (), "Number of CE threshold"
+                        " exceeded marks plus Number of Target exceeded marks should be equal to total number of packets dequeued");
+  NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK) + 
+                         q2->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 20 - q2->GetNPackets (), "Number of CE threshold"
+                        " exceeded marks plus Number of Target exceeded marks should be equal to total number of packets dequeued");
 
-//   // As packets in flow queues are not ECN capable
-//   NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 0, "There should not be any marked packets");
-//   NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
-//   NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 0, "There should not be any marked packets");
-//   NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
+  // As packets in flow queues are not ECN capable
+  NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 0, "There should not be any marked packets");
+  NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), m_dropNextCount, "The number of drops should"
+                        "be equal to the number of times m_dropNext is updated");
+  NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 0, "There should not be any marked packets");
+  NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), m_dropNextCount, "The number of drops should"
+                        "be equal to the number of times m_dropNext is updated");
 
-//   // Ensure flow queue 0,1 and 2 have ECN capable packets
-//   // Peek () changes the stats of the queue and that is reason to be keep this test at last
-//   pktQ0 = DynamicCast<const Ipv4QueueDiscItem> (q0->Peek ());
-//   NS_TEST_EXPECT_MSG_NE (pktQ0->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
-//   pktQ1 = DynamicCast<const Ipv4QueueDiscItem> (q1->Peek ());
-//   NS_TEST_EXPECT_MSG_NE (pktQ1->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
-//   pktQ2 = DynamicCast<const Ipv4QueueDiscItem> (q2->Peek ());
-//   NS_TEST_EXPECT_MSG_NE (pktQ2->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
-
-//   Simulator::Destroy ();
-
-//   // Test case 3, CeThreshold set to 2ms with higher queue delay
-//   queueDisc = CreateObjectWithAttributes<FqCobaltQueueDisc> ("MaxSize", StringValue ("10240p"), "UseEcn", BooleanValue (true),
-//                                                                                    "CeThreshold", TimeValue (MilliSeconds (2)));
-//   queueDisc->SetQuantum (1514);
-//   queueDisc->Initialize ();
-  
-//   // Add 20 ECT0 (ECN capable) packets from first flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.2"));
-//   hdr.SetEcn (Ipv4Header::ECN_ECT0);
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 20, 1);
-
-//   // Add 20 ECT0 (ECN capable) packets from second flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.10"));
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 40, 2);
-
-//   // Add 20 ECT0 (ECN capable) packets from third flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.20"));
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 60, 3);
-
-//   // Add 20 NotECT packets from fourth flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.30"));
-//   hdr.SetEcn (Ipv4Header::ECN_NotECT);
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 80, 4);
-
-//   // Add 20 NotECT packets from fifth flow
-//   hdr.SetDestination (Ipv4Address ("10.10.1.40"));
-//   Simulator::Schedule (Time (Seconds (0)), &FqCobaltQueueDiscECNMarking::AddPacket, this, queueDisc, hdr, 20, 100, 5);
-
-//   //Dequeue 60 packets with delay 110ms to induce packet drops and keep some remaining packets in each queue
-//   DequeueWithDelay (queueDisc, 0.110, 60);
-//   Simulator::Run ();
-//   Simulator::Stop (Seconds (8.0));
-//   q0 = queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   q1 = queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   q2 = queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   q3 = queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-//   q4 = queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetObject <CobaltQueueDisc> ();
-
-//   //Ensure there are some remaining packets in the flow queues to check for flow queues with ECN capable packets
-//   NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (0)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-//   NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (1)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-//   NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (2)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-//   NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (3)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-//   NS_TEST_EXPECT_MSG_NE (queueDisc->GetQueueDiscClass (4)->GetQueueDisc ()->GetNPackets (), 0, "There should be some remaining packets");
-
-//   // As packets in flow queues are ECN capable
-//   NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
-//   NS_TEST_EXPECT_MSG_EQ (q0->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK) + 
-//                          q0->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 20 - q0->GetNPackets (), "Number of CE threshold"
-//                         " exceeded marks plus Number of Target exceeded marks should be equal to total number of packets dequeued");
-//   NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
-//   NS_TEST_EXPECT_MSG_EQ (q1->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK) + 
-//                          q1->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 20 - q1->GetNPackets (), "Number of CE threshold"
-//                         " exceeded marks plus Number of Target exceeded marks should be equal to total number of packets dequeued");
-//   NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not be any dropped packets");
-//   NS_TEST_EXPECT_MSG_EQ (q2->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK) + 
-//                          q2->GetStats ().GetNMarkedPackets (CobaltQueueDisc::FORCED_MARK), 20 - q2->GetNPackets (), "Number of CE threshold"
-//                         " exceeded marks plus Number of Target exceeded marks should be equal to total number of packets dequeued");
-
-//   // As packets in flow queues are not ECN capable
-//   NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 0, "There should not be any marked packets");
-//   NS_TEST_EXPECT_MSG_EQ (q3->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 4, "There should be 4 dropped packets"
-//                          " As queue delay is same as in test case 1, number of dropped packets should also be same");
-//   NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNMarkedPackets (CobaltQueueDisc::CE_THRESHOLD_EXCEEDED_MARK), 0, "There should not be any marked packets");
-//   NS_TEST_EXPECT_MSG_EQ (q4->GetStats ().GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 4, "There should be 4 dropped packets");
-
-//   // Ensure flow queue 0,1 and 2 have ECN capable packets
-//   // Peek () changes the stats of the queue and that is reason to be keep this test at last
-//   pktQ0 = DynamicCast<const Ipv4QueueDiscItem> (q0->Peek ());
-//   NS_TEST_EXPECT_MSG_NE (pktQ0->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
-//   pktQ1 = DynamicCast<const Ipv4QueueDiscItem> (q1->Peek ());
-//   NS_TEST_EXPECT_MSG_NE (pktQ1->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
-//   pktQ2 = DynamicCast<const Ipv4QueueDiscItem> (q2->Peek ());
-//   NS_TEST_EXPECT_MSG_NE (pktQ2->GetHeader ().GetEcn (), Ipv4Header::ECN_NotECT,"flow queue should have ECT0 packets");
-
-//   Simulator::Destroy ();
-// }
+  Simulator::Destroy ();
+}
 
 /*
  * This class tests linear probing, collision response, and set
@@ -979,7 +935,14 @@ FqCobaltQueueDiscSetLinearProbing::DoRun (void)
 
 
 /**
- * This class tests L4S mode
+ * This class tests L4S mode. This test is divided to sub test one without hash collisions and so ECT0 and ECT1 flows are
+ * classified into different flows.
+ * Sub Test 1
+ * 70 packets are enqueued into both the flows with the delay of 0.5ms between two enqueues, and dequeued with the delay of 
+ * 1ms between two dequeues.
+ * Sub Test 2
+ * 140(70 ECT0 + 70 ECT1) packets are enqueued such that ECT1 packets are enqueued at 0.5ms, 1.5ms, 2.5ms and so on, and ECT0 packets are
+ * enqueued are enqueued at 1ms, 2ms, 3ms and so on
  * Any future classifier options (e.g. SetAssociativehash) should be disabled to prevent a hash collision on this test case.
  */
 class FqCobaltQueueDiscL4sMode : public TestCase
@@ -1152,7 +1115,7 @@ FqCobaltQueueDiscTestSuite::FqCobaltQueueDiscTestSuite ()
   AddTestCase (new FqCobaltQueueDiscDeficit, TestCase::QUICK);
   AddTestCase (new FqCobaltQueueDiscTCPFlowsSeparation, TestCase::QUICK);
   AddTestCase (new FqCobaltQueueDiscUDPFlowsSeparation, TestCase::QUICK);
-  // AddTestCase (new FqCobaltQueueDiscECNMarking, TestCase::QUICK);
+  AddTestCase (new FqCobaltQueueDiscEcnMarking, TestCase::QUICK);
   AddTestCase (new FqCobaltQueueDiscSetLinearProbing, TestCase::QUICK);
   AddTestCase (new FqCobaltQueueDiscL4sMode, TestCase::QUICK);
 }
