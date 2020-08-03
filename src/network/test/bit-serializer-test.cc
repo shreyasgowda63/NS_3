@@ -32,14 +32,16 @@ using namespace ns3;
  *
  * \brief Bit serialization test
  */
-class BitSerializerTest : public TestCase {
+class BitSerializerTest : public TestCase
+{
 public:
   virtual void DoRun (void);
   BitSerializerTest ();
 };
 
 BitSerializerTest::BitSerializerTest ()
-  : TestCase ("BitSerializer") {
+  : TestCase ("BitSerializer")
+{
 }
 
 void BitSerializerTest::DoRun ()
@@ -73,14 +75,16 @@ void BitSerializerTest::DoRun ()
  *
  * \brief Bit deserialization test
  */
-class BitDeserializerTest : public TestCase {
+class BitDeserializerTest : public TestCase
+{
 public:
   virtual void DoRun (void);
   BitDeserializerTest ();
 };
 
 BitDeserializerTest::BitDeserializerTest ()
-  : TestCase ("BitDeserializer") {
+  : TestCase ("BitDeserializer")
+{
 }
 
 void BitDeserializerTest::DoRun ()
@@ -90,7 +94,7 @@ void BitDeserializerTest::DoRun ()
   test[0] = 0xab;
   test[1] = 0xc0;
 
-  testBitDeserializer.PushBytes (test,2);
+  testBitDeserializer.PushBytes (test, 2);
   uint16_t nibble1 = testBitDeserializer.GetBits (7);
   uint16_t nibble2 = testBitDeserializer.GetBits (3);
   uint16_t nibble3 = testBitDeserializer.GetBits (2);

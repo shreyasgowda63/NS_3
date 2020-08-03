@@ -74,7 +74,7 @@ public:
 
   /**
    * Get the bytes representation of the blob.
-   * Not that this operation  \b automatically add the
+   * Note that this operation  \b automatically add the
    * needed padding at the end (or start) of the blob.
    *
    * \warning {This operation clears the stored data.}
@@ -85,7 +85,7 @@ public:
 
   /**
    * Get the bytes representation of the blob.
-   * Not that this operation  \b automatically add the
+   * Note that this operation  \b automatically add the
    * needed padding at the end (or start) of the blob.
    *
    * \warning {This operation clears the stored data.}

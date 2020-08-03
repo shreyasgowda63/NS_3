@@ -65,6 +65,9 @@ public:
 
   /**
    * Pops a given number of bits from the blob front.
+   *
+   * The maximum number of bits to be deserialized in one single call is 64.
+   *
    * \param size The number of bits to pop.
    */
   uint64_t GetBits (uint8_t size);
@@ -77,7 +80,7 @@ private:
 
   std::deque<bool> m_blob; //!< Blob of bits ready to be deserialized.
   std::vector<uint8_t> m_bytesBlob;  //!< Blob of bytes to be deserialized.
-  bool m_deserializing; //!< True if the deserialization did start alredy.
+  bool m_deserializing; //!< True if the deserialization did start already.
 };
 
 } // namespace ns3

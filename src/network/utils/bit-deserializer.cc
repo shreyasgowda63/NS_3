@@ -21,7 +21,7 @@
 #include <iostream>
 #include "bit-deserializer.h"
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/abort.h"
 
 namespace ns3 {
 
@@ -29,18 +29,21 @@ NS_LOG_COMPONENT_DEFINE ("BitDeserializer");
 
 BitDeserializer::BitDeserializer ()
 {
+  NS_LOG_FUNCTION (this);
   m_deserializing = false;
 }
 
 void BitDeserializer::PushBytes (std::vector<uint8_t> bytes)
 {
-  NS_ASSERT_MSG (!m_deserializing, "Can't add bytes after deserialization started");
+  NS_LOG_FUNCTION (this << bytes);
+  NS_ABORT_MSG_IF (!m_deserializing, "Can't add bytes after deserialization started");
   m_bytesBlob.insert (m_bytesBlob.end (), bytes.begin (), bytes.end ());
 }
 
 void BitDeserializer::PushBytes (uint8_t* bytes, uint32_t size)
 {
-  NS_ASSERT_MSG (!m_deserializing, "Can't add bytes after deserialization started");
+  NS_LOG_FUNCTION (this << bytes << size);
+  NS_ABORT_MSG_IF (!m_deserializing, "Can't add bytes after deserialization started");
   for (uint32_t index = 0; index < size; index++)
     {
       m_bytesBlob.push_back (bytes[index]);
@@ -49,17 +52,19 @@ void BitDeserializer::PushBytes (uint8_t* bytes, uint32_t size)
 
 void BitDeserializer::PushByte (uint8_t byte)
 {
-  NS_ASSERT_MSG (!m_deserializing, "Can't add bytes after deserialization started");
+  NS_LOG_FUNCTION (this << +byte);
+  NS_ABORT_MSG_IF (!m_deserializing, "Can't add bytes after deserialization started");
   m_bytesBlob.push_back (byte);
 }
 
 uint64_t BitDeserializer::GetBits (uint8_t size)
 {
+  NS_LOG_FUNCTION (this << +size);
   uint8_t result = 0;
   PrepareDeserialization ();
 
-  NS_ASSERT_MSG (size <= 64, "Number of requested bits exceeds 64");
-  NS_ASSERT_MSG (size <= m_blob.size (), "Number of requested bits exceeds blob size");
+  NS_ABORT_MSG_IF (size <= 64, "Number of requested bits exceeds 64");
+  NS_ABORT_MSG_IF (size <= m_blob.size (), "Number of requested bits exceeds blob size");
 
   for (uint8_t i = 0; i < size; i++)
     {
@@ -72,6 +77,7 @@ uint64_t BitDeserializer::GetBits (uint8_t size)
 
 void BitDeserializer::PrepareDeserialization ()
 {
+  NS_LOG_FUNCTION (this);
   if (m_deserializing == false)
     {
       m_deserializing = true;
