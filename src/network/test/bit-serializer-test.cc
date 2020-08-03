@@ -54,7 +54,7 @@ void BitSerializerTest::DoRun ()
 
   std::vector<uint8_t> result = testBitSerializer1.GetBytes ();
   NS_TEST_EXPECT_MSG_EQ ((result[0] == 0xab) && (result[1] == 0xc0), true,
-                         "Incorrect serialization " << result[0] << result[1] << " instead of " << int(0xab) << " " << int(0xc0));
+                         "Incorrect serialization " << std::hex << +result[0] << +result[1] << " instead of " << int(0xab) << " " << int(0xc0) << std::dec);
 
   BitSerializer testBitSerializer2;
 
@@ -66,7 +66,7 @@ void BitSerializerTest::DoRun ()
 
   result = testBitSerializer2.GetBytes ();
   NS_TEST_EXPECT_MSG_EQ ((result[0] == 0x0a) && (result[1] == 0xbc), true,
-                         "Incorrect serialization " << result[0] << result[1] << " instead of " << int(0x0a) << " " << int(0xbc));
+                         "Incorrect serialization " << std::hex << +result[0] << +result[1] << " instead of " << int(0x0a) << " " << int(0xbc) << std::dec);
 }
 
 /**
@@ -100,9 +100,10 @@ void BitDeserializerTest::DoRun ()
   uint16_t nibble3 = testBitDeserializer.GetBits (2);
 
   bool result = (nibble1 == 0x55) && (nibble2 == 0x7) && (nibble3 == 0x0);
+
   NS_TEST_EXPECT_MSG_EQ (result, true,
-                         "Incorrect deserialization " << nibble1 << " " << nibble2 << " " << nibble3 <<
-                         " << instead of " << " " << int(0x55) << " " << int(0x7) << " " << int(0x0));
+                         "Incorrect deserialization " << std::hex << nibble1 << " " << nibble2 << " " << nibble3 <<
+                         " << instead of " << " " << int(0x55) << " " << int(0x7) << " " << int(0x0) << std::dec);
 }
 
 /**

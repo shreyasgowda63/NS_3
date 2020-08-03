@@ -76,7 +76,7 @@ int main ()
 //  if you deserialize too many bits you'll get an assert.
 //  uint8_t errorNibble = testBitDeserializer.GetBits (6);
 
-  std::cout << "Result:    " << std::hex << +nibble1 << " " << +nibble2 << " " << +nibble3 << " " << std::endl;
+  std::cout << "Result:    " << std::hex << nibble1 << " " << +nibble2 << " " << +nibble3 << " " << std::endl;
   std::cout << "Expecting: 55 7 0" << std::endl;
 
   return 0;
