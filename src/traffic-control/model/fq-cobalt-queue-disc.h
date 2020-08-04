@@ -179,6 +179,7 @@ private:
   double m_increment;        //!< increment value for marking probability
   double m_decrement;        //!< decrement value for marking probability
   double m_Pdrop;            //!< Drop Probability
+  Time m_blueThreshold;      //!< Threshold to enable blue enhancement
 
   std::list<Ptr<FqCobaltFlow> > m_newFlows;    //!< The list of new flows
   std::list<Ptr<FqCobaltFlow> > m_oldFlows;    //!< The list of old flows

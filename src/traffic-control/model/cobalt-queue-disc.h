@@ -230,6 +230,7 @@ private:
   bool m_useEcn;                          //!< True if ECN is used (packets are marked instead of being dropped)
   Time m_ceThreshold;                     //!< Threshold above which to CE mark
   bool m_useL4s;                          //!< True if L4S is used (ECT1 packets are marked at CE threshold)
+  Time m_blueThreshold;                   //!< Threshold to enable blue enhancement
 
   // Blue parameters
   // Maintained by Cobalt

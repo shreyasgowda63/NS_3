@@ -183,6 +183,11 @@ TypeId FqCobaltQueueDisc::GetTypeId (void)
                    DoubleValue (1. / 4096),
                    MakeDoubleAccessor (&FqCobaltQueueDisc::m_decrement),
                    MakeDoubleChecker<double> ())
+    .AddAttribute ("BlueThreshold",
+                   "The Threshold after which Blue is enabled",
+                   TimeValue (MilliSeconds (400)),
+                   MakeTimeAccessor (&FqCobaltQueueDisc::m_blueThreshold),
+                   MakeTimeChecker ())
   ;
   return tid;
 }
@@ -290,6 +295,7 @@ FqCobaltQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
           cobalt->SetAttribute ("UseEcn", BooleanValue (m_useEcn));
           cobalt->SetAttribute ("CeThreshold", TimeValue (m_ceThreshold));
           cobalt->SetAttribute ("UseL4s", BooleanValue (m_useL4s));
+          cobalt->SetAttribute ("BlueThreshold", TimeValue (m_blueThreshold));
         }
       qd->Initialize ();
       flow->SetQueueDisc (qd);

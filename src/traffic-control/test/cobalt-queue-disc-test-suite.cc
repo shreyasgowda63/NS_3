@@ -144,6 +144,8 @@ CobaltQueueDiscBasicEnqueueDequeue::DoRun (void)
                          "Verify that we can actually set the attribute Interval");
   NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("Target", StringValue ("4ms")), true,
                          "Verify that we can actually set the attribute Target");
+  NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("BlueThreshold", TimeValue (Time::Max ())), true,
+                         "Disable Blue enhancement");
 
   if (m_mode == QueueSizeUnit::BYTES)
     {
@@ -272,7 +274,8 @@ CobaltQueueDiscDropTest::RunDropTest (QueueSizeUnit mode)
   queue = CreateObject<CobaltQueueDisc> ();
   NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("MaxSize", QueueSizeValue (QueueSize (mode, modeSize * 100))),
                          true, "Verify that we can actually set the attribute MaxSize");
-
+  NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("BlueThreshold", TimeValue (Time::Max ())), true,
+                         "Disable Blue enhancement");
   queue->Initialize ();
 
   if (mode == QueueSizeUnit::BYTES)
@@ -411,7 +414,8 @@ CobaltQueueDiscMarkTest::DoRun (void)
                          true, "Verify that we can actually set the attribute MaxSize");
   NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("UseEcn", BooleanValue (false)),
                          true, "Verify that we can actually set the attribute UseEcn");
-
+  NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("BlueThreshold", TimeValue (Time::Max ())), true,
+                         "Disable Blue enhancement");
   queue->Initialize ();
 
   // Not-ECT traffic to induce packet drop
@@ -436,7 +440,8 @@ CobaltQueueDiscMarkTest::DoRun (void)
                          true, "Verify that we can actually set the attribute MaxSize");
   NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("UseEcn", BooleanValue (true)),
                          true, "Verify that we can actually set the attribute UseEcn");
-
+  NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("BlueThreshold", TimeValue (Time::Max ())), true,
+                         "Disable Blue enhancement");
   queue->Initialize ();
 
   // ECN capable traffic
@@ -466,7 +471,8 @@ CobaltQueueDiscMarkTest::DoRun (void)
                          true, "Verify that we can actually set the attribute MaxSize");
   NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("UseEcn", BooleanValue (true)),
                          true, "Verify that we can actually set the attribute UseEcn");
-
+  NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("BlueThreshold", TimeValue (Time::Max ())), true,
+                         "Disable Blue enhancement");
   queue->Initialize ();
 
   // First 3 packets in the queue are ecnCapable
@@ -637,9 +643,11 @@ CobaltQueueDiscMarkTest::Dequeue (Ptr<CobaltQueueDisc> queue, uint32_t modeSize,
     }
 }
 
-
 /**
- * This class tests CE Threshold marking
+ * \ingroup traffic-control-test
+ * \ingroup tests
+ *
+ * \brief Test 4: Cobalt Queue Disc CE Threshold marking Test Item
  */
 class CobaltQueueDiscCeThresholdTest : public TestCase
 {
@@ -761,7 +769,8 @@ CobaltQueueDiscCeThresholdTest::DoRun (void)
                          true, "Verify that we can actually set the attribute UseEcn");
   NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("CeThreshold", TimeValue (MilliSeconds (1))),
                          true, "Verify that we can actually set the attribute UseEcn");
-
+  NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("BlueThreshold", TimeValue (Time::Max ())), true,
+                         "Disable Blue enhancement");
   queue->Initialize ();
 
   // Enqueue 11 packets every 1ms
@@ -792,6 +801,138 @@ CobaltQueueDiscCeThresholdTest::DoRun (void)
   Simulator::Destroy ();
 }
 
+
+/**
+ * \ingroup traffic-control-test
+ * \ingroup tests
+ *
+ * \brief Test 5: Cobalt Queue Disc Enhanced Blue Test Item
+ * This test checks that the Blue Enhancement is working correctly. This test checks that Pdrop should increase as expected with
+ * a certain number of dropped packets which is fixed by assigning a stream to the uniform random variable.
+ * This test case is divided into 2 sub test cases
+ * 1) With Blue Enhancement enabled, the test checks that Pdrop should increase as expected with
+ *    a certain number of dropped packets which is fixed by assigning a stream to the uniform random variable.
+ * 2) Without Blue Enhancement, Pdrop should remain zero and there should not be any dropped packets as ECN is enabled.
+ */
+class CobaltQueueDiscEnhancedBlueTest : public TestCase
+{
+public:
+  CobaltQueueDiscEnhancedBlueTest (QueueSizeUnit mode);
+  virtual ~CobaltQueueDiscEnhancedBlueTest ();
+
+private:
+  virtual void DoRun (void);
+  /**
+   * Enqueue function
+   * \param queue the queue disc
+   * \param size the size
+   * \param nPkt the number of packets
+   */
+  void Enqueue (Ptr<CobaltQueueDisc> queue, uint32_t size, uint32_t nPkt);
+  /**
+   * \brief Dequeue function
+   * \param queue the queue disc
+   */
+  void Dequeue (Ptr<CobaltQueueDisc> queue);
+  /**
+   * \brief Dequeue with delay function
+   * \param queue the queue disc
+   * \param nPkt the number of packets
+   * \param delay the delay between the enqueueing of the packets
+   */
+  void DequeueWithDelay (Ptr<CobaltQueueDisc> queue, uint32_t nPkt, Time delay);
+  QueueSizeUnit m_mode; ///< mode
+};
+
+CobaltQueueDiscEnhancedBlueTest::CobaltQueueDiscEnhancedBlueTest (QueueSizeUnit mode)
+  : TestCase ("Enhanced Blue tests verification for both packets and bytes mode")
+{
+  m_mode = mode;
+}
+
+CobaltQueueDiscEnhancedBlueTest::~CobaltQueueDiscEnhancedBlueTest ()
+{
+}
+
+void
+CobaltQueueDiscEnhancedBlueTest::DoRun (void)
+
+{
+  uint32_t pktSize = 1500;
+  uint32_t modeSize = 0;
+  Ptr<CobaltQueueDisc> queue = CreateObject<CobaltQueueDisc> ();
+
+  if (m_mode == QueueSizeUnit::BYTES)
+    {
+      modeSize = pktSize;
+    }
+  else if (m_mode == QueueSizeUnit::PACKETS)
+    {
+      modeSize = 1;
+    }
+  queue->Initialize ();
+  queue->AssignStreams (1);
+  Enqueue (queue, modeSize, 200);
+  DequeueWithDelay (queue, 100, MilliSeconds (10));
+
+  Simulator::Stop (Seconds (8.0));
+  Simulator::Run ();
+
+  QueueDisc::Stats st = queue->GetStats ();
+
+  // The Pdrop value should increase, from it's default value of zero
+  NS_TEST_EXPECT_MSG_EQ (queue->GetPdrop (), 0.234375, "Pdrop should be increased by 1/256 for every packet whose sojourn time is above 400ms."
+                        " From the 41st dequeue until the last one, sojourn time is above 400ms, so 60 packets have sojourn time above 400ms"
+                        "hence Pdrop should be increased 60*(1/256) which is 0.234375");
+  NS_TEST_EXPECT_MSG_EQ (st.GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 49, "There should a fixed number of drops (49 here)");
+  Simulator::Destroy ();
+
+
+  queue = CreateObject<CobaltQueueDisc> ();
+  NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("UseEcn", BooleanValue (true)),
+                         true, "Verify that we can actually set the attribute UseEcn");
+  NS_TEST_EXPECT_MSG_EQ (queue->SetAttributeFailSafe ("BlueThreshold", TimeValue (Time::Max ())), true,
+                         "Disable Blue enhancement");
+  queue->Initialize ();
+  Enqueue (queue, modeSize, 200);
+  DequeueWithDelay (queue, 100, MilliSeconds (10));
+
+  Simulator::Stop (Seconds (8.0));
+  Simulator::Run ();
+
+  st = queue->GetStats ();
+
+  NS_TEST_EXPECT_MSG_EQ (queue->GetPdrop (), 0, "Pdrop should be zero");
+  NS_TEST_EXPECT_MSG_EQ (st.GetNDroppedPackets (CobaltQueueDisc::TARGET_EXCEEDED_DROP), 0, "There should not any dropped packets");
+  Simulator::Destroy ();
+}
+
+void
+CobaltQueueDiscEnhancedBlueTest::Enqueue (Ptr<CobaltQueueDisc> queue, uint32_t size, uint32_t nPkt)
+{
+  Address dest;
+  for (uint32_t i = 0; i < nPkt; i++)
+    {
+      queue->Enqueue (Create<CobaltQueueDiscTestItem> (Create<Packet> (size), dest, 0, true));
+    }
+}
+
+void
+CobaltQueueDiscEnhancedBlueTest::Dequeue (Ptr<CobaltQueueDisc> queue)
+{
+  Ptr<QueueDiscItem> item = queue->Dequeue ();
+}
+
+void
+CobaltQueueDiscEnhancedBlueTest::DequeueWithDelay (Ptr<CobaltQueueDisc> queue, uint32_t nPkt, Time delay)
+{
+  for (uint32_t i = 0; i < nPkt; i++)
+    {
+      Simulator::Schedule (Time (Seconds ((i + 1) * delay.GetSeconds ())), &CobaltQueueDiscEnhancedBlueTest::Dequeue, this, queue);
+    }
+}
+
+
 static class CobaltQueueDiscTestSuite : public TestSuite
 {
 public:
@@ -809,5 +950,8 @@ public:
     // Test 4: CE threshold marking test
     AddTestCase (new CobaltQueueDiscCeThresholdTest (PACKETS), TestCase::QUICK);
     AddTestCase (new CobaltQueueDiscCeThresholdTest (BYTES), TestCase::QUICK);
+    // Test 4: Blue enhancement test
+    AddTestCase (new CobaltQueueDiscEnhancedBlueTest (PACKETS), TestCase::QUICK);
+    AddTestCase (new CobaltQueueDiscEnhancedBlueTest (BYTES), TestCase::QUICK);
   }
 } g_cobaltQueueTestSuite; ///< the test suite

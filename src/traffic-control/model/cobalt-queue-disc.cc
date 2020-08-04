@@ -94,6 +94,11 @@ TypeId CobaltQueueDisc::GetTypeId (void)
                    BooleanValue (false),
                    MakeBooleanAccessor (&CobaltQueueDisc::m_useL4s),
                    MakeBooleanChecker ())
+    .AddAttribute ("BlueThreshold",
+                   "The Threshold after which Blue is enabled",
+                   TimeValue (MilliSeconds (400)),
+                   MakeTimeAccessor (&CobaltQueueDisc::m_blueThreshold),
+                   MakeTimeChecker ())
     .AddTraceSource ("Count",
                      "Cobalt count",
                      MakeTraceSourceAccessor (&CobaltQueueDisc::m_count),
@@ -514,6 +519,14 @@ bool CobaltQueueDisc::CobaltShouldDrop (Ptr<QueueDiscItem> item, int64_t now)
     {
       NS_LOG_LOGIC ("Marking due to CeThreshold " << m_ceThreshold.GetSeconds ());
     }
+  
+  // Enable Blue Enhancement if sojourn time is greater than blueThreshold and its been m_target time until the last time blue was updated
+  if (CoDelTimeAfter (sojournTime, Time2CoDel (m_blueThreshold)) && CoDelTimeAfter ((now - m_lastUpdateTimeBlue), Time2CoDel (m_target)))
+    {
+      m_Pdrop = min (m_Pdrop + m_increment, (double)1.0);
+      m_lastUpdateTimeBlue = now;
+    }
+
   /* Simple BLUE implementation. Lack of ECN is deliberate. */
   if (m_Pdrop)
     {
