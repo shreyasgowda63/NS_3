@@ -517,17 +517,9 @@ CommandLine::PrintGlobals (std::ostream &os) const
 }
 
 void
-CommandLine::PrintAttributes (std::ostream &os, const std::string &type) const
+CommandLine::PrintAttributeList (std::ostream &os, const TypeId tid) const
 {
   NS_LOG_FUNCTION (this);
-
-  TypeId tid;
-  if (!TypeId::LookupByNameFailSafe (type, &tid))
-    {
-      NS_FATAL_ERROR ("Unknown type=" << type << " in --PrintAttributes");
-    }
-
-  os << "Attributes for TypeId " << tid.GetName () << std::endl;
 
   // Sort output
   std::vector<std::string> attributes;
@@ -548,6 +540,35 @@ CommandLine::PrintAttributes (std::ostream &os, const std::string &type) const
        ++it)
     {
       os << *it;
+    }
+}
+
+void
+CommandLine::PrintAttributes (std::ostream &os, const std::string &type) const
+{
+  NS_LOG_FUNCTION (this);
+
+  TypeId tid;
+  if (!TypeId::LookupByNameFailSafe (type, &tid))
+    {
+      NS_FATAL_ERROR ("Unknown type=" << type << " in --PrintAttributes");
+    }
+
+  os << "Attributes for TypeId " << tid.GetName () << std::endl;
+  PrintAttributeList (os, tid);
+
+  //Parent Attributes
+  if (tid.GetParent () != tid)
+    {
+      os << "Parent Attributes for TypeId " << tid.GetName () << std::endl;
+      TypeId tmp = tid.GetParent ();
+      while (tmp.GetParent () != tmp)
+        {
+          os << "    Attributes for parent TypeId " << tmp.GetName () << std::endl;
+
+          PrintAttributeList (os, tmp);
+          tmp = tmp.GetParent ();
+        }
     }
 }
 
