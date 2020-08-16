@@ -28,82 +28,84 @@
 
 namespace ns3 {
 
- /**
-  * This enum is the implementation of RFC 2863
-  * operational states. More details can be found here:
-  * https://tools.ietf.org/html/rfc2863
-  * https://www.kernel.org/doc/Documentation/networking/operstates.txt
-  */
-  enum class OperationalState {
 
-  /** 
-   * Used for devices where RFC 2863 operational states are not
-   * implemented in their device drivers in Linux kernel. In ns-3, devices
-   * that does not use RFC 2863 operational states do not aggregate 
-   * NetDeviceState object with them. This state is therefore not needed.
-   * 
-   * IF_OPER_UNKNOWN,
-   */
-
-  /** 
-   * Can be used to denote removed netdevices. Not used
-   * in linux kernel. (Removed devices disappear.)
-   * 
-   * IF_OPER_NOTPRESENT,
-   */
-  
-  /**
-   * Carrier is down on a non-stacked device.
-   */
-  IF_OPER_DOWN,
-
-  /**
-   * Useful only in stacked interfaces. An interface stacked on
-   * another interface that is in IF_OPER_DOWN show this state.
-   * (eg. VLAN)
-   */
-	IF_OPER_LOWERLAYERDOWN,
-
-  /** 
-   * Unused in Linux kernel. Testing mode; not
-   * relevant in ns-3.
-   * 
-   * IF_OPER_TESTING,
-   */
-
-  /**
-   * Interface is L1 up, but waiting for an external event, for eg. for a
-   * protocol to establish such as 802.1X.
-   */
-	IF_OPER_DORMANT,
-
-  /**
-   * Carrier is detected and the device can be used.
-   */
-  IF_OPER_UP,
-};
 
 /**
- * \ingroup netdevice
+ * \ingroup network
  * \brief Administrative and Operational state of NetDevice.
  *
  * This class holds the implementation of administrative state and
  * operational state of a NetDevice. Operational state is  based on
  * the states mentioned in RFC 2863: The Interfaces Group MIB.
  * This class can be subclassed to provide implementations specific to
- * NetDevices. However, anyone wanting to use this architecture should 
+ * NetDevices. However, anyone wanting to use this architecture should
  * use public APIs in the base class itself. This implementation is not
- * a necessary part of NetDevice. In other words, this is an optional feature. 
- * 
+ * a necessary part of NetDevice. In other words, this is an optional feature.
+ *
  * Upper layers such as IP that are interested in keeping track of states
  * of NetDevice can connect to callbacks in this class.
- * 
+ *
  */
 class NetDeviceState : public Object
 {
 public:
 
-  friend class NetDevice;
+  /**
+* \brief This enum is the implementation of RFC 2863
+* operational states.
+*
+* More details can be found here:
+* https://tools.ietf.org/html/rfc2863
+* https://www.kernel.org/doc/Documentation/networking/operstates.txt
+*/
+  enum OperationalState
+  {
+    /**
+     * Used for devices where RFC 2863 operational states are not
+     * implemented in their device drivers in Linux kernel. In ns-3, devices
+     * that does not use RFC 2863 operational states do not aggregate
+     * NetDeviceState object with them. This state is therefore not needed.
+     *
+     * IF_OPER_UNKNOWN,
+     */
+
+    /**
+     * Can be used to denote removed netdevices. Not used
+     * in linux kernel. (Removed devices disappear.)
+     *
+     * IF_OPER_NOTPRESENT,
+     */
+
+    /**
+     * Carrier is down on a non-stacked device.
+     */
+    IF_OPER_DOWN,
+
+    /**
+     * Useful only in stacked interfaces. An interface stacked on
+     * another interface that is in IF_OPER_DOWN show this state.
+     * (eg. VLAN)
+     */
+    IF_OPER_LOWERLAYERDOWN,
+
+    /**
+     * Unused in Linux kernel. Testing mode; not
+     * relevant in ns-3.
+     *
+     * IF_OPER_TESTING,
+     */
+
+    /**
+     * Interface is L1 up, but waiting for an external event, for eg. for a
+     * protocol to establish such as 802.1X.
+     */
+    IF_OPER_DORMANT,
+
+    /**
+     * Carrier is detected and the device can be used.
+     */
+    IF_OPER_UP,
+  };
 
   /**
    * \brief Get the type ID.
@@ -116,18 +118,18 @@ public:
   /**
    * \brief Register for receiving notifications on changes
    *  in adminstrative state of a NetDevice.
-   * 
+   *
    *  This callback registration requires no context.
    * \param callback the callback to be added
    */
   void RegisterAdministrativeStateNotifierWithoutContext (Callback<void, bool> callback);
 
   /**
-   * \brief Unregister from receiving notifictions on changes
+   * \brief Unregister from receiving notifications on changes
    *  in adminstrative state of a NetDevice. This function
    *  removes the callback that was added without providing
    *  context.
-   * 
+   *
    * \param callback the callback to be removed
    */
   void UnRegisterAdministrativeStateNotifierWithoutContext (Callback<void, bool> callback);
@@ -137,89 +139,104 @@ public:
    *  in adminstrative state of a NetDevice. This
    *  function appends callback to the chain with
    *  a context.
-   * 
+   *
    * \param callback the callback to be added
    * \param contextPath Context path to provide when invoking the Callback.
    */
   void RegisterAdministrativeStateNotifierWithContext (Callback<void, bool> callback,
-                                                  std::string contextPath);
+                                                       std::string contextPath);
 
   /**
    * \brief UnRegister from receiving notifications
    *  on changes in adminstrative state of a NetDevice.
    *  This function removes the given callback from the
    *  chain which was connected with a context.
-   * 
+   *
    * \param callback the callback to be added
    * \param contextPath Context path which was used to connect the Callback.
    */
-  void UnRegisterAdministrativeStateNotifierWithContext (Callback<void, bool> callback, 
-                                                    std::string contextPath);
+  void UnRegisterAdministrativeStateNotifierWithContext (Callback<void, bool> callback,
+                                                         std::string contextPath);
 
   /**
    * \brief Register for receiving notifications on changes
    *  in RFC 2863 operational state of a NetDevice.
-   * 
+   *
    *  This callback registration requires no context.
    * \param callback the callback to be added
    */
   void RegisterOperationalStateNotifierWithoutContext (Callback<void, OperationalState> callback);
 
   /**
-   * \brief Unregister from receiving notifictions on changes
+   * \brief Unregister from receiving notifications on changes
    *  in RFC 2863 operational state of a NetDevice. This function
    *  removes the callback that was added without providing
    *  context.
-   * 
+   *
    * \param callback the callback to be removed
    */
   void UnRegisterOperationalStateNotifierWithoutContext (Callback<void, OperationalState> callback);
 
   /**
    * \brief Register for notifications on changes
-   *  in adminstrative state of a NetDevice. This
-   *  function appends callback to the chain with
+   *  in RFC 2863 operational state of a NetDevice.
+   *  This function appends callback to the chain with
    *  a context.
-   * 
+   *
    * \param callback the callback to be added
    * \param contextPath Context path to provide when invoking the Callback.
    */
   void RegisterOperationalStateNotifierWithContext (Callback<void, OperationalState> callback,
-                                                  std::string contextPath);
-
-   /**
-   * \brief UnRegister from receiving notifications
-   *  on changes in RFC 2863 operational state
-   *  of a NetDevice. This function removes the given
-   *  callback from the chain which was connected with
-   *  a context.
-   * 
-   * \param callback the callback to be added
-   * \param contextPath Context path which was used to connect the Callback.
-   */
-  void UnRegisterOperationalStateNotifierWithContext (Callback<void, OperationalState> callback, 
-                                                    std::string contextPath); 
+                                                    std::string contextPath);
 
   /**
-   * \return RFC 2863 operational state of 
+  * \brief UnRegister from receiving notifications
+  *  on changes in RFC 2863 operational state
+  *  of a NetDevice. This function removes the given
+  *  callback from the chain which was connected with
+  *  a context.
+  *
+  * \param callback the callback to be added
+  * \param contextPath Context path which was used to connect the Callback.
+  */
+  void UnRegisterOperationalStateNotifierWithContext (Callback<void, OperationalState> callback,
+                                                      std::string contextPath);
+
+  /**
+   * \return RFC 2863 operational state of
    * the NetDevice.
    */
   OperationalState GetOperationalState (void) const;
 
   /**
+   * \brief Set RFC 2863 operational state of the device.
+   * This method even though public is intended to be
+   * used only by associated NetDevice and Channel used
+   * by that NetDevice.
+   *
+   * /param opState the state to be set.
+   */
+  void SetOperationalState (OperationalState opState);
+
+  /**
    * \return the administrative state of the NetDevice.
    */
-  bool IsUp () const;
+  bool IsUp (void) const;
+
+  /**
+   * \return true if operational state is IF_OPER_UP.
+   */
+  bool IsOperational (void) const;
 
   /**
    * Bring up a NetDevice; Device is now
-   * administratively up. 
+   * administratively up.
    */
   void SetUp (void);
 
   /**
-   * Bring down a NetDevice. Device is now 
-   * administratively down. 
+   * Bring down a NetDevice. Device is now
+   * administratively down.
    */
   void SetDown (void);
 
@@ -240,13 +257,6 @@ private:
   virtual void DoSetDown (void) = 0;
 
 protected:
-
-  /**
-   * \brief Set RFC 2863 operational state of the device. 
-   *   
-   * /param opState the state to be set.
-   */
-  void SetOperationalState (OperationalState opState);
 
   /**
    * Represents IFF_UP in net_device_flags enum

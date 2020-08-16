@@ -57,7 +57,7 @@ and operational state of a NetDevice. Administrative state reflects whether
 the user wants to use the NetDevice or not. In Linux, this state is the
 result of ``ip`` or ``ifconfig`` command. For eg: ``ip link set eno1 up`` or
 ``ip link set down`` using ``ip`` command. UP state means the user wants to
-use the device for data transmission and DOWN state means the user does't want
+use the device for data transmission and DOWN state means the user doesn't want
 to use this device. A NetDevice's administrative state can change to UP 
 in two ways:
 
@@ -68,7 +68,7 @@ To mimic an explicit management action in ns-3, user can use ``SetUp ()`` functi
 the NetDevice to UP state and  ``SetDown()`` to bring the NetDevice to DOWN state.
 When a Device transitions to UP state, whether or not the operational state will
 change is dependent on the type of NetDevice in question. For eg. In CsmaNetDevice,
-if the channel is attached, then operational state can be changed to up immediately
+if the channel is attached, then operational state will change to UP immediately
 whereas in PointToPointNetDevice, operational state changes when the device is
 connected and there is an active device on other end as well. When a device is brought
 to DOWN state, the operational state also changes to DOWN state. 
@@ -86,21 +86,20 @@ The transitions shown in the figure are listed below:
   to NetDevice object if the NetDevice wants to make use of features in
   NetDeviceState class. Helper classes take care of these tasks.
   NetDeviceState is initialized administratively UP state at the beginning of the
-  since we want to use the simulation since we want to use the NetDevice
-  from the get-go.
+  simulation since we want to use the NetDevice from the get-go.
 
   Note: The INVALID state shown in the diagram is not a real state. When
   a NetDevice is created, it is not attached to any node. That is
-  represented as INVALID state here. At this point :cpp:class:'NetDevice::GetNode(void)'
+  represented as INVALID state here. At this point :cpp:class:'NetDevice::GetNode (void)'
   will return NULL.
 
 * Activate Device: This event is triggered by :cpp:class:'NetDeviceState::SetUp ()'
   in NetDeviceState class. This function acts as an administrative command.
   When one wants to bring up a NetDevice in the middle of simulation, this
-  function can be used.
+  function can be used. At the start of the simulation, NetDevices are 
+  administratively UP so need explicitly call :cpp:class:'NetDeviceState::SetUp ()'.
 
-* Deactivate Device: This event is triggered by
-  :cpp:class:'NetDeviceState::SetDown ()' in 
+* Deactivate Device: This event is triggered by :cpp:class:'NetDeviceState::SetDown ()' in 
   NetDeviceState class. A user wanting to bring down a NetDevice can use this
   function.
 
@@ -124,19 +123,20 @@ below:
 
 * IF_OPER_UP: A NetDevice transitions to this state when a 
   channel (carrier) gets attached to it. The device is now UP and RUNNING. 
-  In other words, UP and RUNNING state flags in :cpp:class:'NetDeviceState'
-  is set.
 
 * IF_OPER_DOWN: A NetDevice transitions to this state when the
   device loses its channel (carrier). The device is now UP but not 
-  RUNNING. RUNNING state flag is cleared.
+  RUNNING.
 
 * IF_OPER_DORMANT: Interface is L1 up, but waiting for an external event,
   for eg. for a protocol to establish such as 802.1X.
 
 * IF_OPER_LOWERLAYERDOWN: Useful only in stacked interfaces. An interface
-  stacked on another interface that is in IF_OPER_DOWN show this state.
+  stacked on another interface that is in IF_OPER_DOWN shows this state.
   (eg. VLAN)
+
+The below mentioned operational states are part of RFC 2863 but are not used
+due to reasons specified aganist them:
 
 * IF_OPER_UNKNOWN:  Used for devices where RFC 2863 operational states are not
   implemented in their device drivers in Linux kernel. In ns-3, devices
@@ -153,5 +153,5 @@ If a device is UP and in IF_OPER_UP  state, it means that the device is
 administratively enabled and notionally connected to a carrier and is 
 ready to transmit and receive packets.
 
-A device is not usable by higher layers if it not administratively
-UP or IF_OPER_UP state flags are not present. 
+A device is not usable by higher layers if it is not administratively
+UP or if the device is not in IF_OPER_UP operational state.

@@ -44,39 +44,37 @@ NetDeviceState::GetTypeId (void)
 
 NetDeviceState::NetDeviceState ()
   : m_administrativeState (false),
-    m_operationalState (OperationalState::IF_OPER_DOWN)
+    m_operationalState (IF_OPER_DOWN)
 {
   NS_LOG_FUNCTION (this);
 }
 
 
 void
-NetDeviceState::RegisterAdministrativeStateNotifierWithoutContext (Callback<void, bool>
-                                                                   callback)
+NetDeviceState::RegisterAdministrativeStateNotifierWithoutContext (Callback<void, bool> callback)
 {
   NS_LOG_FUNCTION (&callback);
   m_administrativeStateChangeCallback.ConnectWithoutContext (callback);
 }
 
 void
-NetDeviceState::UnRegisterAdministrativeStateNotifierWithoutContext (Callback<void,
-                                                                              bool> callback)
+NetDeviceState::UnRegisterAdministrativeStateNotifierWithoutContext (Callback<void, bool> callback)
 {
   NS_LOG_FUNCTION (&callback);
   m_administrativeStateChangeCallback.DisconnectWithoutContext (callback);
 }
 
 void
-NetDeviceState::RegisterAdministrativeStateNotifierWithContext (Callback<void, bool>
-                                                                callback, std::string contextPath)
+NetDeviceState::RegisterAdministrativeStateNotifierWithContext (Callback<void, bool> callback,
+                                                                std::string contextPath)
 {
   NS_LOG_FUNCTION (this << &callback << contextPath);
   m_administrativeStateChangeCallback.Connect (callback, contextPath);
 }
 
 void
-NetDeviceState::UnRegisterAdministrativeStateNotifierWithContext (Callback<void, bool>
-                                                                  callback, std::string contextPath)
+NetDeviceState::UnRegisterAdministrativeStateNotifierWithContext (Callback<void, bool> callback,
+                                                                  std::string contextPath)
 {
   NS_LOG_FUNCTION (this << &callback << contextPath);
   m_administrativeStateChangeCallback.Disconnect (callback, contextPath);
@@ -116,22 +114,39 @@ void
 NetDeviceState::SetUp (void)
 {
   NS_LOG_FUNCTION (this);
+  // If Device is already enabled, then return.
+  if (m_administrativeState)
+    {
+      NS_LOG_WARN ("Device is already enabled.");
+      return;
+    }
+
   DoSetUp ();
+
   m_administrativeState = true;
-  NS_LOG_INFO ("NetDevice has been set administratively UP.");
-  m_stateChangeTrace(true, GetOperationalState ());
   m_administrativeStateChangeCallback (true);
+  NS_LOG_INFO ("NetDevice has been set administratively UP.");
+
+  m_stateChangeTrace (true, GetOperationalState ());
 }
 
 void
 NetDeviceState::SetDown (void)
 {
   NS_LOG_FUNCTION (this);
+  // If device is already disabled, then return.
+  if (!m_administrativeState)
+    {
+      return;
+    }
+
   DoSetDown ();
+
   m_administrativeState = false;
   NS_LOG_INFO ("NetDevice has been set administratively DOWN.");
+  m_administrativeStateChangeCallback (false);
+
   m_stateChangeTrace (false, GetOperationalState ());
-  m_administrativeStateChangeCallback (true);
 }
 
 void
@@ -139,47 +154,32 @@ NetDeviceState::SetOperationalState (OperationalState opState)
 {
   NS_LOG_FUNCTION (this);
 
-  if (!m_administrativeState)
+  switch (opState)
     {
-      NS_LOG_WARN ("Device is not administratively UP; Not setting operational state.");
-      return;
-    }
+      case IF_OPER_UP:
+      case IF_OPER_DOWN:
+      case IF_OPER_DORMANT:
+      case IF_OPER_LOWERLAYERDOWN:
+        if (opState != m_operationalState)
+          {
+            NS_LOG_INFO ("Operational state of the device is changed to " << opState);
+            m_operationalState = opState;
+            m_operationalStateChangeCallback (opState);
+            m_stateChangeTrace (IsUp (), opState);
+          }
+        else
+          {
+            NS_LOG_WARN ("Device is already in OperationalState: " << opState );
+          }
+        break;
 
-  if (opState == OperationalState::IF_OPER_UP
-      && !(m_operationalState == OperationalState::IF_OPER_UP))
-    {
-      NS_LOG_INFO ("Operational state of the device is changed to IF_OPER_UP.");
-      m_operationalState = OperationalState::IF_OPER_UP;
-      m_operationalStateChangeCallback (OperationalState::IF_OPER_UP);
-    }
-  else if (opState == OperationalState::IF_OPER_DOWN
-           && !(m_operationalState == OperationalState::IF_OPER_DOWN))
-    {
-      NS_LOG_INFO ("Operational state of the device is changed to IF_OPER_DOWN.");
-      m_operationalState = OperationalState::IF_OPER_DOWN;
-      m_operationalStateChangeCallback (OperationalState::IF_OPER_DOWN);
-    }
-  else if (opState == OperationalState::IF_OPER_DORMANT
-           && !(m_operationalState == OperationalState::IF_OPER_DORMANT))
-    {
-      NS_LOG_INFO ("Operational state of the device is changed to IF_OPER_DORMANT.");
-      m_operationalState = OperationalState::IF_OPER_DORMANT;
-      m_operationalStateChangeCallback (OperationalState::IF_OPER_DORMANT);
-    }
-  else if (opState == OperationalState::IF_OPER_LOWERLAYERDOWN
-           && !(m_operationalState == OperationalState::IF_OPER_DORMANT))
-    {
-      NS_LOG_INFO ("Operational state of the device is changed to IF_OPER_DORMANT.");
-      m_operationalState = OperationalState::IF_OPER_LOWERLAYERDOWN;
-      m_operationalStateChangeCallback (OperationalState::IF_OPER_LOWERLAYERDOWN);
-    }
-  else
-    {
-      NS_LOG_WARN ("Device is already in the specified state or given state is invalid.");
+      default:
+        NS_LOG_WARN ("Given state: " << opState << " is invalid.");
+        break;
     }
 }
 
-OperationalState
+NetDeviceState::OperationalState
 NetDeviceState::GetOperationalState (void) const
 {
   return m_operationalState;
@@ -189,6 +189,12 @@ bool
 NetDeviceState::IsUp () const
 {
   return m_administrativeState;
+}
+
+bool
+NetDeviceState::IsOperational () const
+{
+  return m_operationalState == IF_OPER_UP;
 }
 
 } // namespace ns3
