@@ -117,9 +117,15 @@ operational states. A Netdevice has the following operational states:
 
 These operational states are based on the implementation of operational
 states in Linux based on operational states mentioned in 
-RFC 2863: The Interfaces Group MIB. Some of the operational states are 
-not used. A short description of each operational state can be found 
-below:
+RFC 2863: The Interfaces Group MIB. More information on operational
+states can be found in below links:
+
+* https://tools.ietf.org/html/rfc2863
+* https://www.kernel.org/doc/Documentation/networking/operstates.txt
+
+
+Some of the operational states are not used. A short description
+of each operational state can be found below:
 
 * IF_OPER_UP: A NetDevice transitions to this state when a 
   channel (carrier) gets attached to it. The device is now UP and RUNNING. 

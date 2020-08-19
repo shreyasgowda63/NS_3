@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Ananthakrishnan S <ananthakrishnan190@gmail.com>
+ * Authors: Ananthakrishnan S <ananthakrishnan190@gmail.com>
+ *         Tom Henderson <tomh@tomh.org>
  */
 
 #ifndef NET_DEVICE_STATE_H
@@ -28,83 +29,60 @@
 
 namespace ns3 {
 
-
-
 /**
  * \ingroup network
  * \brief Administrative and Operational state of NetDevice.
  *
  * This class holds the implementation of administrative state and
- * operational state of a NetDevice. Operational state is  based on
+ * operational state of a NetDevice. Operational state is based on
  * the states mentioned in RFC 2863: The Interfaces Group MIB.
+ * Administrative state is represented by a boolean variable (up or down).
  * This class can be subclassed to provide implementations specific to
  * NetDevices. However, anyone wanting to use this architecture should
  * use public APIs in the base class itself. This implementation is not
  * a necessary part of NetDevice. In other words, this is an optional feature.
  *
  * Upper layers such as IP that are interested in keeping track of states
- * of NetDevice can connect to callbacks in this class.
- *
+ * of NetDevice can connect to traced callbacks in this class.
  */
 class NetDeviceState : public Object
 {
 public:
 
-  /**
-* \brief This enum is the implementation of RFC 2863
-* operational states.
-*
-* More details can be found here:
-* https://tools.ietf.org/html/rfc2863
-* https://www.kernel.org/doc/Documentation/networking/operstates.txt
-*/
+ /**
+  * \brief This enum is the implementation of RFC 2863 operational states.
+  *
+  * More details can be found here:
+  * https://tools.ietf.org/html/rfc2863
+  * 
+  * The numbers assigned to the members in the enum is according to the 
+  * documentation in the below link:
+  * https://www.kernel.org/doc/Documentation/networking/operstates.txt
+  */
   enum OperationalState
   {
     /**
-     * Used for devices where RFC 2863 operational states are not
-     * implemented in their device drivers in Linux kernel. In ns-3, devices
-     * that does not use RFC 2863 operational states do not aggregate
-     * NetDeviceState object with them. This state is therefore not needed.
-     *
-     * IF_OPER_UNKNOWN,
-     */
-
-    /**
-     * Can be used to denote removed netdevices. Not used
-     * in linux kernel. (Removed devices disappear.)
-     *
-     * IF_OPER_NOTPRESENT,
-     */
-
-    /**
      * Carrier is down on a non-stacked device.
      */
-    IF_OPER_DOWN,
+    IF_OPER_DOWN = 2,
 
     /**
      * Useful only in stacked interfaces. An interface stacked on
      * another interface that is in IF_OPER_DOWN show this state.
      * (eg. VLAN)
      */
-    IF_OPER_LOWERLAYERDOWN,
-
-    /**
-     * Unused in Linux kernel. Testing mode; not
-     * relevant in ns-3.
-     *
-     * IF_OPER_TESTING,
-     */
+    IF_OPER_LOWERLAYERDOWN = 3,
 
     /**
      * Interface is L1 up, but waiting for an external event, for eg. for a
      * protocol to establish such as 802.1X.
      */
-    IF_OPER_DORMANT,
+    IF_OPER_DORMANT = 5,
 
     /**
      * Carrier is detected and the device can be used.
      */
-    IF_OPER_UP,
+    IF_OPER_UP = 6,
   };
 
   /**
@@ -113,98 +91,13 @@ public:
    */
   static TypeId GetTypeId (void);
 
+  /**
+   * \brief Constructor
+   */
   NetDeviceState ();
 
   /**
-   * \brief Register for receiving notifications on changes
-   *  in adminstrative state of a NetDevice.
-   *
-   *  This callback registration requires no context.
-   * \param callback the callback to be added
-   */
-  void RegisterAdministrativeStateNotifierWithoutContext (Callback<void, bool> callback);
-
-  /**
-   * \brief Unregister from receiving notifications on changes
-   *  in adminstrative state of a NetDevice. This function
-   *  removes the callback that was added without providing
-   *  context.
-   *
-   * \param callback the callback to be removed
-   */
-  void UnRegisterAdministrativeStateNotifierWithoutContext (Callback<void, bool> callback);
-
-  /**
-   * \brief Register for notifications on changes
-   *  in adminstrative state of a NetDevice. This
-   *  function appends callback to the chain with
-   *  a context.
-   *
-   * \param callback the callback to be added
-   * \param contextPath Context path to provide when invoking the Callback.
-   */
-  void RegisterAdministrativeStateNotifierWithContext (Callback<void, bool> callback,
-                                                       std::string contextPath);
-
-  /**
-   * \brief UnRegister from receiving notifications
-   *  on changes in adminstrative state of a NetDevice.
-   *  This function removes the given callback from the
-   *  chain which was connected with a context.
-   *
-   * \param callback the callback to be added
-   * \param contextPath Context path which was used to connect the Callback.
-   */
-  void UnRegisterAdministrativeStateNotifierWithContext (Callback<void, bool> callback,
-                                                         std::string contextPath);
-
-  /**
-   * \brief Register for receiving notifications on changes
-   *  in RFC 2863 operational state of a NetDevice.
-   *
-   *  This callback registration requires no context.
-   * \param callback the callback to be added
-   */
-  void RegisterOperationalStateNotifierWithoutContext (Callback<void, OperationalState> callback);
-
-  /**
-   * \brief Unregister from receiving notifications on changes
-   *  in RFC 2863 operational state of a NetDevice. This function
-   *  removes the callback that was added without providing
-   *  context.
-   *
-   * \param callback the callback to be removed
-   */
-  void UnRegisterOperationalStateNotifierWithoutContext (Callback<void, OperationalState> callback);
-
-  /**
-   * \brief Register for notifications on changes
-   *  in RFC 2863 operational state of a NetDevice.
-   *  This function appends callback to the chain with
-   *  a context.
-   *
-   * \param callback the callback to be added
-   * \param contextPath Context path to provide when invoking the Callback.
-   */
-  void RegisterOperationalStateNotifierWithContext (Callback<void, OperationalState> callback,
-                                                    std::string contextPath);
-
-  /**
-  * \brief UnRegister from receiving notifications
-  *  on changes in RFC 2863 operational state
-  *  of a NetDevice. This function removes the given
-  *  callback from the chain which was connected with
-  *  a context.
-  *
-  * \param callback the callback to be added
-  * \param contextPath Context path which was used to connect the Callback.
-  */
-  void UnRegisterOperationalStateNotifierWithContext (Callback<void, OperationalState> callback,
-                                                      std::string contextPath);
-
-  /**
-   * \return RFC 2863 operational state of
-   * the NetDevice.
+   * \return RFC 2863 operational state of the NetDevice.
    */
   OperationalState GetOperationalState (void) const;
 
@@ -219,26 +112,27 @@ public:
   void SetOperationalState (OperationalState opState);
 
   /**
-   * \return the administrative state of the NetDevice.
+   * \brief Check the administrative state of the NetDevice
+   * \return true if the administrative state of the NetDevice is up.
    */
   bool IsUp (void) const;
 
   /**
-   * \return true if operational state is IF_OPER_UP.
-   */
-  bool IsOperational (void) const;
-
-  /**
-   * Bring up a NetDevice; Device is now
-   * administratively up.
+   * Set the NetDevice to an (administratively) up state.
    */
   void SetUp (void);
 
   /**
-   * Bring down a NetDevice. Device is now
-   * administratively down.
+   * Set the NetDevice to an (administratively) down state.
    */
   void SetDown (void);
+
+  /**
+   * TracedCallback signature for state changes
+   * \param [in] isUp Whether the administrative state is up
+   * \param [in] opState The operational state of the device
+   */
+  typedef void (* StateChangedTracedCallback) (bool isUp, OperationalState opState);
 
 private:
 
@@ -247,14 +141,21 @@ private:
    *  actions needed to bring up a NetDevice similar to calling
    *  ndo_open () from dev_open () in Linux.
    */
-  virtual void DoSetUp (void) = 0;
+  virtual void DoSetUp (void);
 
   /**
    * \brief This method is used to take care of device specific
    *  actions needed to bring down a NetDevice similar to calling
    *  ndo_stop () from inside dev_close () in Linux.
    */
-  virtual void DoSetDown (void) = 0;
+  virtual void DoSetDown (void);
+
+  /**
+   * \brief This method is used to take care of device specific
+   *  actions needed to change operational state (if needed).
+   * \param opState OperationalState to set
+   */
+  virtual void DoSetOperationalState (OperationalState opState);
 
 protected:
 
@@ -263,7 +164,7 @@ protected:
    * in Linux. Used to store the administrative
    * state of the NetDevice.
    */
-  bool m_administrativeState;
+  bool m_isUp;
 
   /**
    * RFC 2863 operational state of the device.
@@ -271,23 +172,39 @@ protected:
   OperationalState m_operationalState;
 
   /**
-   * List of callbacks to fire when adminstrative state
-   * of a NetDevice changes.
-   */
-  TracedCallback<bool> m_administrativeStateChangeCallback;
-
-  /**
-   * List of callbacks to fire when operational state
-   * of a NetDevice changes.
-   */
-  TracedCallback<OperationalState> m_operationalStateChangeCallback;
-
-  /**
    * Traced callback for tracing device states.
    */
-  TracedCallback< bool, OperationalState> m_stateChangeTrace;
-
+  TracedCallback<bool, OperationalState> m_stateChangeTrace;
 };
 
+/**
+* \brief Stream insertion operator.
+*
+* \param os the stream
+* \param state the RFC 2863 operational state
+* \returns a reference to the stream
+*/
+inline std::ostream& operator<< (std::ostream& os, NetDeviceState::OperationalState state)
+{
+  switch (state)
+    {
+      case NetDeviceState::IF_OPER_DOWN:
+        return (os << "IF_OPER_DOWN");
+
+      case NetDeviceState::IF_OPER_UP:
+        return (os << "IF_OPER_UP");
+
+      case NetDeviceState::IF_OPER_DORMANT:
+        return (os << "IF_OPER_DORMANT");
+
+      case NetDeviceState::IF_OPER_LOWERLAYERDOWN:
+        return (os << "IF_OPER_LOWERLAYERDOWN");
+
+      default:
+        return (os << "INVALID STATE");
+    }
+}
+
 } // namespace ns3
+
 #endif /* NET_DEVICE_STATE_H */
