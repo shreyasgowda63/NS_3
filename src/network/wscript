@@ -79,6 +79,7 @@ def build(bld):
         'test/drop-tail-queue-test-suite.cc',
         'test/error-model-test-suite.cc',
         'test/ipv6-address-test-suite.cc',
+        'test/net-device-state-test-suite.cc',
         'test/packetbb-test-suite.cc',
         'test/packet-test-suite.cc',
         'test/packet-metadata-test.cc',

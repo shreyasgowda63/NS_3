@@ -62,7 +62,8 @@ public:
   enum OperationalState
   {
     /**
-     * Carrier is down on a non-stacked device.
+     * Carrier is down on a non-stacked device or device
+     * is admin down.
      */
     IF_OPER_DOWN = 2,
 
@@ -124,6 +125,8 @@ public:
 
   /**
    * Set the NetDevice to an (administratively) down state.
+   * This method also sets the operational state of the 
+   * device to IF_OPER_DOWN. 
    */
   void SetDown (void);
 
