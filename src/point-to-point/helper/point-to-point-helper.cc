@@ -25,6 +25,7 @@
 #include "ns3/packet.h"
 #include "ns3/point-to-point-channel.h"
 #include "ns3/point-to-point-net-device.h"
+#include "ns3/point-to-point-net-device-state.h"
 #include "ns3/simulator.h"
 
 #ifdef NS3_MPI
@@ -246,11 +247,23 @@ PointToPointHelper::Install(Ptr<Node> a, Ptr<Node> b)
     a->AddDevice(devA);
     Ptr<Queue<Packet>> queueA = m_queueFactory.Create<Queue<Packet>>();
     devA->SetQueue(queueA);
+
+    Ptr<PointToPointNetDeviceState> netDevStateA = CreateObject<PointToPointNetDeviceState> ();
+    netDevStateA->SetDevice (devA);
+    devA->AggregateObject (netDevStateA);
+
     Ptr<PointToPointNetDevice> devB = m_deviceFactory.Create<PointToPointNetDevice>();
     devB->SetAddress(Mac48Address::Allocate());
     b->AddDevice(devB);
     Ptr<Queue<Packet>> queueB = m_queueFactory.Create<Queue<Packet>>();
     devB->SetQueue(queueB);
+
+    Ptr<PointToPointNetDeviceState> netDevStateB = CreateObject<PointToPointNetDeviceState> ();
+    netDevStateB->SetDevice (devB);
+    devB->AggregateObject (netDevStateB);
+
+    b->AddDevice (devB);
+    
     if (m_enableFlowControl)
     {
         // Aggregate NetDeviceQueueInterface objects
@@ -327,6 +340,30 @@ PointToPointHelper::Install(std::string aName, std::string bName)
     Ptr<Node> a = Names::Find<Node>(aName);
     Ptr<Node> b = Names::Find<Node>(bName);
     return Install(a, b);
+}
+
+void
+PointToPointHelper::SetDeviceUp (const Time &delay, Ptr<NetDevice> netDevice)
+{
+  Ptr<PointToPointNetDevice> ppnd = StaticCast<PointToPointNetDevice> (netDevice);
+  Ptr<PointToPointNetDeviceState> ppnds = ppnd->GetObject<PointToPointNetDeviceState> ();
+  if (!ppnds)
+    {
+      return;
+    }
+  Simulator::Schedule (delay, &PointToPointNetDeviceState::SetUp, ppnds);
+}
+
+void
+PointToPointHelper::SetDeviceDown (const Time &delay, Ptr<NetDevice> netDevice)
+{
+  Ptr<PointToPointNetDevice> ppnd = StaticCast<PointToPointNetDevice> (netDevice);
+  Ptr<PointToPointNetDeviceState> ppnds = ppnd->GetObject<PointToPointNetDeviceState> ();
+  if (!ppnds)
+    {
+      return;
+    }
+  Simulator::Schedule (delay, &PointToPointNetDeviceState::SetDown, ppnds);
 }
 
 } // namespace ns3

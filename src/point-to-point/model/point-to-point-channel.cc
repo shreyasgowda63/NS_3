@@ -18,8 +18,8 @@
 #include "point-to-point-channel.h"
 
 #include "point-to-point-net-device.h"
-
-#include "ns3/log.h"
+#include "point-to-point-net-device-state.h"
+#include "ns3/trace-source-accessor.h"
 #include "ns3/packet.h"
 #include "ns3/simulator.h"
 #include "ns3/trace-source-accessor.h"
@@ -82,7 +82,58 @@ PointToPointChannel::Attach(Ptr<PointToPointNetDevice> device)
         m_link[1].m_dst = m_link[0].m_src;
         m_link[0].m_state = IDLE;
         m_link[1].m_state = IDLE;
+
+        Ptr<PointToPointNetDeviceState> stateA = m_link[0].m_src->GetObject<PointToPointNetDeviceState> ();
+        Ptr<PointToPointNetDeviceState> stateB = m_link[1].m_src->GetObject<PointToPointNetDeviceState> ();
+
+        stateA->SetOperationalState (NetDeviceState::IF_OPER_UP);
+        stateB->SetOperationalState (NetDeviceState::IF_OPER_UP);
     }
+}
+
+void
+PointToPointChannel::Detach (Ptr<PointToPointNetDevice> device)
+{
+  NS_LOG_FUNCTION (this << &device);
+
+  if (m_nDevices == 0)
+    {
+      // No devices are attached to the channel.
+      return;
+    }
+
+  // Both devices are attached to the channel.
+  if (m_nDevices == N_DEVICES)
+    {
+      m_link[0].m_state = INITIALIZING;
+      m_link[1].m_state = INITIALIZING;
+
+      Ptr<PointToPointNetDeviceState> stateA = m_link[0].m_src->GetObject<PointToPointNetDeviceState> ();
+      Ptr<PointToPointNetDeviceState> stateB = m_link[1].m_src->GetObject<PointToPointNetDeviceState> ();
+      stateA->SetOperationalState (NetDeviceState::IF_OPER_DOWN);
+      stateB->SetOperationalState (NetDeviceState::IF_OPER_DOWN);
+
+      if (m_link[0].m_src == device)
+        {
+          m_link[0].m_src = m_link[1].m_src;
+          m_link[0].m_dst = m_link[1].m_dst;
+          m_link[1].m_src = 0;
+          m_link[1].m_dst = 0;
+        }
+      else
+        {
+          m_link[1].m_src = 0;
+          m_link[1].m_dst = 0;
+          m_link[0].m_dst = 0;
+        }
+    }
+  else
+    {
+      // Only 1 device is connected and it is now detached.
+      m_link[0].m_src = 0;
+    }
+
+  m_nDevices--;
 }
 
 bool

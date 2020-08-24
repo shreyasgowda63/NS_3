@@ -16,7 +16,7 @@
  */
 
 #include "point-to-point-net-device.h"
-
+#include "point-to-point-net-device-state.h"
 #include "point-to-point-channel.h"
 #include "ppp-header.h"
 
@@ -297,6 +297,16 @@ PointToPointNetDevice::TransmitComplete()
     TransmitStart(p);
 }
 
+void
+PointToPointNetDevice::TransmitAbort (void)
+{
+    NS_LOG_FUNCTION (this);
+    m_transmitCompleteEvent.Cancel ();
+    m_macTxDropTrace (m_currentPkt);
+    m_currentPkt = 0;
+    m_txMachineState = READY;
+}
+
 bool
 PointToPointNetDevice::Attach(Ptr<PointToPointChannel> ch)
 {
@@ -312,6 +322,27 @@ PointToPointNetDevice::Attach(Ptr<PointToPointChannel> ch)
     // is not done for now.
     //
     NotifyLinkUp();
+    return true;
+}
+
+bool
+PointToPointNetDevice::Detach (Ptr<PointToPointChannel> ch)
+{
+    NS_LOG_FUNCTION (this << &ch);
+
+    /* If the a transmit complete event is running, we need to cancel it
+    * and drop the current packet.
+    */
+    if(m_transmitCompleteEvent.IsRunning ())
+    {
+        m_transmitCompleteEvent.Cancel ();
+        m_macTxDropTrace (m_currentPkt);
+        m_currentPkt = 0;
+        m_txMachineState = READY;
+    }
+
+    m_channel->Detach (this);
+    m_channel = 0;
     return true;
 }
 
@@ -334,6 +365,21 @@ PointToPointNetDevice::Receive(Ptr<Packet> packet)
 {
     NS_LOG_FUNCTION(this << packet);
     uint16_t protocol = 0;
+
+    Ptr<PointToPointNetDeviceState> devState = GetObject<PointToPointNetDeviceState> ();
+  
+    if (!devState->IsUp ())
+    {
+        NS_LOG_WARN ("PointToPointNetDevice::Receive (): This PointToPointNetDevice is administratively down. Dropping packet");
+        m_macRxDropTrace (packet);
+        return;
+    }
+    else if (devState->GetOperationalState () != NetDeviceState::IF_OPER_UP)
+    {
+        NS_LOG_WARN ("PointToPointNetDevice::Receive (): This PointToPointNetDevice is not operational. Dropping packet");
+        m_macRxDropTrace (packet);
+        return;
+    }
 
     if (m_receiveErrorModel && m_receiveErrorModel->IsCorrupt(packet))
     {
@@ -397,6 +443,15 @@ PointToPointNetDevice::NotifyLinkUp()
     NS_LOG_FUNCTION(this);
     m_linkUp = true;
     m_linkChangeCallbacks();
+}
+
+void
+PointToPointNetDevice::NotifyLinkDown ()
+{
+    NS_LOG_FUNCTION (this);
+    m_linkUp = false;
+    m_queue->Flush ();
+    m_linkChangeCallbacks ();
 }
 
 void
@@ -516,13 +571,18 @@ PointToPointNetDevice::Send(Ptr<Packet> packet, const Address& dest, uint16_t pr
     NS_LOG_LOGIC("p=" << packet << ", dest=" << &dest);
     NS_LOG_LOGIC("UID is " << packet->GetUid());
 
-    //
-    // If IsLinkUp() is false it means there is no channel to send any packet
-    // over so we just hit the drop trace on the packet and return an error.
-    //
-    if (IsLinkUp() == false)
+    Ptr<PointToPointNetDeviceState> devState = GetObject<PointToPointNetDeviceState> ();
+    
+    if (!devState->IsUp ())
     {
-        m_macTxDropTrace(packet);
+        NS_LOG_WARN ("PointToPointNetDevice::Send (): This PointToPointNetDevice is administratively down. Dropping packet");
+        m_macTxDropTrace (packet);
+        return false;
+    }
+    else if (devState->GetOperationalState () != NetDeviceState::IF_OPER_UP)
+    {
+        NS_LOG_WARN ("PointToPointNetDevice::Send (): This PointToPointNetDevice is not operational. Dropping packet");
+        m_macTxDropTrace (packet);
         return false;
     }
 
