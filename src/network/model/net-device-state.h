@@ -29,6 +29,7 @@
 
 namespace ns3 {
 
+
 /**
  * \ingroup network
  * \brief Administrative and Operational state of NetDevice.
@@ -49,16 +50,16 @@ class NetDeviceState : public Object
 {
 public:
 
- /**
-  * \brief This enum is the implementation of RFC 2863 operational states.
-  *
-  * More details can be found here:
-  * https://tools.ietf.org/html/rfc2863
-  * 
-  * The numbers assigned to the members in the enum is according to the 
-  * documentation in the below link:
-  * https://www.kernel.org/doc/Documentation/networking/operstates.txt
-  */
+  /**
+   * \brief This enum is the implementation of RFC 2863 operational states.
+   *
+   * More details can be found here:
+   * https://tools.ietf.org/html/rfc2863
+   *
+   * The numbers assigned to the members in the enum is according to the
+   * documentation in the below link:
+   * https://www.kernel.org/doc/Documentation/networking/operstates.txt
+   */
   enum OperationalState
   {
     /**
@@ -125,8 +126,8 @@ public:
 
   /**
    * Set the NetDevice to an (administratively) down state.
-   * This method also sets the operational state of the 
-   * device to IF_OPER_DOWN. 
+   * This method also sets the operational state of the
+   * device to IF_OPER_DOWN.
    */
   void SetDown (void);
 
@@ -161,6 +162,9 @@ private:
   virtual void DoSetOperationalState (OperationalState opState);
 
 protected:
+
+  // Implementation of virtual function.
+  virtual void DoInitialize (void);
 
   /**
    * Represents IFF_UP in net_device_flags enum

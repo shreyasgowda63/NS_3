@@ -52,25 +52,25 @@ registered there.
 NetDevice States and Behavior
 *****************************
 This section is aimed at giving a general guideline on how NetDevices behave 
-when certain events happen. Linux distingushes between the administrative state
+when certain events happen. Linux distinguishes between the administrative state
 and operational state of a NetDevice. Administrative state reflects whether
 the user wants to use the NetDevice or not. In Linux, this state is the
-result of ``ip`` or ``ifconfig`` command. For eg: ``ip link set eno1 up`` or
+result of ``ip`` or ``ifconfig`` command. For example, ``ip link set eno1 up`` or
 ``ip link set down`` using ``ip`` command. UP state means the user wants to
 use the device for data transmission and DOWN state means the user doesn't want
 to use this device. A NetDevice's administrative state can change to UP 
 in two ways:
 
-* By means of explicit management action i.e by the use of a command such as ``ip``.
+* By means of explicit management action i.e. by the use of a command such as ``ip``.
 * As a result of the system's initialization process.
 
 To mimic an explicit management action in ns-3, user can use ``SetUp ()`` function to bring
 the NetDevice to UP state and  ``SetDown()`` to bring the NetDevice to DOWN state.
 When a Device transitions to UP state, whether or not the operational state will
-change is dependent on the type of NetDevice in question. For eg. In CsmaNetDevice,
-if the channel is attached, then operational state will change to UP immediately
+change is dependent on the type of NetDevice in question. For example in CsmaNetDevice,
+if the channel is attached then operational state will change to UP immediately
 whereas in PointToPointNetDevice, operational state changes when the device is
-connected and there is an active device on other end as well. When a device is brought
+connected and there is an active device on other the end as well. When a device is brought
 to DOWN state, the operational state also changes to DOWN state. 
 
   
@@ -135,14 +135,14 @@ of each operational state can be found below:
   RUNNING.
 
 * IF_OPER_DORMANT: Interface is L1 up, but waiting for an external event,
-  for eg. for a protocol to establish such as 802.1X.
+  for example for a protocol to establish such as 802.1X.
 
 * IF_OPER_LOWERLAYERDOWN: Useful only in stacked interfaces. An interface
-  stacked on another interface that is in IF_OPER_DOWN shows this state.
-  (eg. VLAN)
+  stacked on another interface that is in IF_OPER_DOWN shows this state
+  (for example, VLAN).
 
 The below mentioned operational states are part of RFC 2863 but are not used
-due to reasons specified aganist them:
+due to reasons specified against them:
 
 * IF_OPER_UNKNOWN:  Used for devices where RFC 2863 operational states are not
   implemented in their device drivers in Linux kernel. In ns-3, devices

@@ -64,8 +64,8 @@ NetDeviceStateTest::DoRun (void)
   state->TraceConnectWithoutContext ("StateChange", MakeCallback (&NetDeviceStateTest::Listener2, this));
 
   // Check the expected initial state
-  NS_TEST_EXPECT_MSG_EQ (state->IsUp (), false, "NetDeviceState created in up state");
-  NS_TEST_EXPECT_MSG_EQ (state->GetOperationalState (), NetDeviceState::OperationalState::IF_OPER_DOWN, 
+  NS_TEST_EXPECT_MSG_EQ (state->IsUp (), true, "NetDeviceState created in down state");
+  NS_TEST_EXPECT_MSG_EQ (state->GetOperationalState (), NetDeviceState::IF_OPER_DOWN, 
     "State created in operational state other than down");
 
   // Check the operation of state transitions
@@ -74,10 +74,10 @@ NetDeviceStateTest::DoRun (void)
   state->SetDown ();
   NS_TEST_EXPECT_MSG_EQ (state->IsUp (), false, "NetDeviceState failed to transition to down");
   state->SetOperationalState (NetDeviceState::OperationalState::IF_OPER_UP);
-  NS_TEST_EXPECT_MSG_EQ (state->GetOperationalState (), NetDeviceState::OperationalState::IF_OPER_UP, 
+  NS_TEST_EXPECT_MSG_EQ (state->GetOperationalState (), NetDeviceState::IF_OPER_UP, 
     "State failed to transition to operational up");
-  NS_TEST_EXPECT_MSG_EQ (m_listener1Count, 3, "Expected three transitions");
-  NS_TEST_EXPECT_MSG_EQ (m_listener2Count, 3, "Expected three transitions");
+  NS_TEST_EXPECT_MSG_EQ (m_listener1Count, 2, "Expected three transitions");
+  NS_TEST_EXPECT_MSG_EQ (m_listener2Count, 2, "Expected three transitions");
 }
 
 void

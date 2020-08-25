@@ -34,6 +34,7 @@ NetDeviceState::GetTypeId (void)
   static TypeId tid = TypeId ("ns3::NetDeviceState")
     .SetParent<Object> ()
     .SetGroupName ("Network")
+    .AddConstructor <NetDeviceState>()
     .AddTraceSource ("StateChange",
                      "Trace source indicating a state change in the NetDevice",
                      MakeTraceSourceAccessor (&NetDeviceState::m_stateChangeTrace),
@@ -43,10 +44,21 @@ NetDeviceState::GetTypeId (void)
 }
 
 NetDeviceState::NetDeviceState ()
-  : m_isUp (false),
+  : m_isUp (true),
     m_operationalState (IF_OPER_DOWN)
 {
   NS_LOG_FUNCTION (this);
+}
+
+void
+NetDeviceState::DoInitialize (void)
+{
+  NS_LOG_FUNCTION (this);
+  /* Administrative state is initialized as UP in the constructor.
+   * The TracedCallback for this very first change is called from here.
+   * This is done here so that no listeners would miss this callback trigger.
+  */
+  m_stateChangeTrace (m_isUp, m_operationalState);
 }
 
 void
@@ -58,8 +70,8 @@ NetDeviceState::SetUp (void)
       NS_LOG_WARN ("Device is already up.");
       return;
     }
-  DoSetUp ();
   m_isUp = true;
+  DoSetUp ();
   m_stateChangeTrace (true, m_operationalState);
 }
 
