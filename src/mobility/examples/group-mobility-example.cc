@@ -25,7 +25,7 @@
 
 using namespace ns3;
 
-NS_LOG_COMPONENT_DEFINE ("ScratchSimulator");
+NS_LOG_COMPONENT_DEFINE ("GroupMobilityExample");
 
 void
 PrintPosition(Ptr<Node> node)
@@ -34,13 +34,19 @@ PrintPosition(Ptr<Node> node)
   NS_LOG_UNCOND(node->GetId() << " Position +****************************** " << model->GetPosition() << " at time " << Simulator::Now().GetSeconds());
 }
 
-
+/**
+ * This is an example on how to use the GroupSecondaryMobilityModel class.
+ */
 int 
 main (int argc, char *argv[])
 {
   // LogComponentEnable("GroupSecondaryMobilityModel", LOG_LEVEL_LOGIC);
-  LogComponentEnable("GroupMobilityHelper", LOG_LEVEL_LOGIC);
-  LogComponentEnable("MobilityHelper", LOG_LEVEL_LOGIC);
+  LogComponentEnable ("GroupMobilityExample", LOG_LEVEL_LOGIC);
+  LogComponentEnable ("GroupMobilityHelper", LOG_LEVEL_LOGIC);
+  LogComponentEnable ("MobilityHelper", LOG_LEVEL_LOGIC);
+
+  CommandLine cmd (__FILE__);
+  cmd.Parse (argc, argv);
 
   MobilityHelper mobility;
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
