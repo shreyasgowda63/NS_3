@@ -60,20 +60,20 @@ public:
    * Get a pointer to the associated MobilityHelper
    * \return a pointer to the MobilityHelper
    */
-  MobilityHelper* GetMobilityHelper();
+  MobilityHelper* GetMobilityHelper ();
 
   /**
    * Set a pointer to the associated MobilityHelper
    * \param a pointer to the MobilityHelper
    */
-  void SetMobilityHelper(MobilityHelper* helper);
+  void SetMobilityHelper (MobilityHelper* helper);
 
   /**
    * Install the secondary mobility model in the nodes passed as parameter
    * \param nodes a NodeContainer with the secondary nodes
    * \return a NodeContainer with the primary and the secondary
    */
-  NodeContainer InstallGroupMobility(NodeContainer nodes);
+  NodeContainer InstallGroupMobility (NodeContainer nodes);
 
 protected:
   MobilityHelper* m_mobilityHelper; //!< the MobilityHelper used to configure the primary

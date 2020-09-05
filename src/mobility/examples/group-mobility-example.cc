@@ -28,16 +28,16 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE ("GroupMobilityExample");
 
 void
-PrintPosition(Ptr<Node> node)
+PrintPosition (Ptr<Node> node)
 {
   Ptr<MobilityModel> model = node->GetObject<MobilityModel> ();
-  NS_LOG_UNCOND(node->GetId() << " Position +****************************** " << model->GetPosition() << " at time " << Simulator::Now().GetSeconds());
+  NS_LOG_UNCOND (node->GetId () << " Position +****************************** " << model->GetPosition () << " at time " << Simulator::Now ().GetSeconds ());
 }
 
 /**
  * This is an example on how to use the GroupSecondaryMobilityModel class.
  */
-int 
+int
 main (int argc, char *argv[])
 {
   // LogComponentEnable("GroupSecondaryMobilityModel", LOG_LEVEL_LOGIC);
@@ -53,30 +53,30 @@ main (int argc, char *argv[])
                              "Bounds", RectangleValue (Rectangle (0, 100, -75, 75)));
   Ptr<ListPositionAllocator> position = CreateObject<ListPositionAllocator> ();
   position->Add (Vector (50, 73, 1));
-  mobility.SetPositionAllocator(position);
+  mobility.SetPositionAllocator (position);
 
   MobilityHelper mobility2;
   mobility2.SetMobilityModel ("ns3::GaussMarkovMobilityModel",
-                             "Bounds", BoxValue (Box (0, 100, -75, 75, 0.4, 1.7)));
+                              "Bounds", BoxValue (Box (0, 100, -75, 75, 0.4, 1.7)));
   Ptr<ListPositionAllocator> position2 = CreateObject<ListPositionAllocator> ();
   position2->Add (Vector (0, 10, 1.5));
-  mobility2.SetPositionAllocator(position2);
+  mobility2.SetPositionAllocator (position2);
 
   NodeContainer group1;
-  group1.Create(10);
+  group1.Create (10);
 
   NodeContainer group2;
-  group2.Create(4);
+  group2.Create (4);
 
   Ptr<GroupMobilityHelper> groupMobility = CreateObject<GroupMobilityHelper>();
-  groupMobility->SetAttribute("PathDeviationRandomVariable", 
-    StringValue("ns3::NormalRandomVariable[Mean=0.0|Variance=1|Bound=20]"));
+  groupMobility->SetAttribute ("PathDeviationRandomVariable",
+                               StringValue ("ns3::NormalRandomVariable[Mean=0.0|Variance=1|Bound=20]"));
 
-  groupMobility->SetMobilityHelper(&mobility);
-  NodeContainer allNodes1 = groupMobility->InstallGroupMobility(group1);
+  groupMobility->SetMobilityHelper (&mobility);
+  NodeContainer allNodes1 = groupMobility->InstallGroupMobility (group1);
 
-  groupMobility->SetMobilityHelper(&mobility2);
-  NodeContainer allNodes2 = groupMobility->InstallGroupMobility(group2);
+  groupMobility->SetMobilityHelper (&mobility2);
+  NodeContainer allNodes2 = groupMobility->InstallGroupMobility (group2);
 
   AsciiTraceHelper ascii;
   MobilityHelper::EnableAsciiAll (ascii.CreateFileStream ("mobility-trace-example.mob"));
@@ -84,21 +84,21 @@ main (int argc, char *argv[])
   double simTimeSeconds = 2000;
 
   double numPrints = 1000;
-  for(int i = 0; i < numPrints; i++)
-  {
-    for(auto nodeIt = group1.Begin(); nodeIt != group1.End(); ++nodeIt)
+  for (int i = 0; i < numPrints; i++)
     {
-      Simulator::Schedule(Seconds(i*simTimeSeconds/numPrints), &PrintPosition, (*nodeIt));
+      for (auto nodeIt = group1.Begin (); nodeIt != group1.End (); ++nodeIt)
+        {
+          Simulator::Schedule (Seconds (i * simTimeSeconds / numPrints), &PrintPosition, (*nodeIt));
+        }
+      Simulator::Schedule (Seconds (i * simTimeSeconds / numPrints), &PrintPosition, allNodes1.Get (0));
+      for (auto nodeIt = group2.Begin (); nodeIt != group2.End (); ++nodeIt)
+        {
+          Simulator::Schedule (Seconds (i * simTimeSeconds / numPrints), &PrintPosition, (*nodeIt));
+        }
+      Simulator::Schedule (Seconds (i * simTimeSeconds / numPrints), &PrintPosition, allNodes2.Get (0));
     }
-   Simulator::Schedule(Seconds(i*simTimeSeconds/numPrints), &PrintPosition, allNodes1.Get(0));
-    for(auto nodeIt = group2.Begin(); nodeIt != group2.End(); ++nodeIt)
-    {
-      Simulator::Schedule(Seconds(i*simTimeSeconds/numPrints), &PrintPosition, (*nodeIt));
-    }
-    Simulator::Schedule(Seconds(i*simTimeSeconds/numPrints), &PrintPosition, allNodes2.Get(0));
-  }
 
-  Simulator::Stop(Seconds(simTimeSeconds));
+  Simulator::Stop (Seconds (simTimeSeconds));
   Simulator::Run ();
   Simulator::Destroy ();
 }

@@ -97,40 +97,40 @@ main (int argc, char *argv[])
 
   MobilityHelper mobility;
   mobility.SetMobilityModel ("ns3::RandomWalk2dOutdoorMobilityModel",
-                             "Bounds", RectangleValue (Rectangle (-10, maxAxisX+40, -10, maxAxisY+40)));
+                             "Bounds", RectangleValue (Rectangle (-10, maxAxisX + 40, -10, maxAxisY + 40)));
   Ptr<ListPositionAllocator> position = CreateObject<ListPositionAllocator> ();
   position->Add (Vector (-1, -1, 1));
-  mobility.SetPositionAllocator(position);
+  mobility.SetPositionAllocator (position);
 
   MobilityHelper mobility2;
   mobility2.SetMobilityModel ("ns3::RandomWalk2dOutdoorMobilityModel",
-                             "Bounds", RectangleValue (Rectangle (-10, maxAxisX+40, -10, maxAxisY+40)));
+                              "Bounds", RectangleValue (Rectangle (-10, maxAxisX + 40, -10, maxAxisY + 40)));
   Ptr<ListPositionAllocator> position2 = CreateObject<ListPositionAllocator> ();
   position2->Add (Vector (-1, maxAxisY, 1));
-  mobility2.SetPositionAllocator(position2);
+  mobility2.SetPositionAllocator (position2);
 
   NodeContainer group1;
-  group1.Create(10);
+  group1.Create (10);
 
   NodeContainer group2;
-  group2.Create(4);
+  group2.Create (4);
 
   Ptr<GroupMobilityHelper> groupMobility = CreateObject<GroupMobilityHelper>();
-  groupMobility->SetAttribute("GroupSecondaryMobilityModel", 
-    StringValue("ns3::GroupSecondaryOutdoorMobilityModel"));
-  groupMobility->SetAttribute("PathDeviationRandomVariable", 
-    StringValue("ns3::NormalRandomVariable[Mean=0.0|Variance=1|Bound=20]"));
+  groupMobility->SetAttribute ("GroupSecondaryMobilityModel",
+                               StringValue ("ns3::GroupSecondaryOutdoorMobilityModel"));
+  groupMobility->SetAttribute ("PathDeviationRandomVariable",
+                               StringValue ("ns3::NormalRandomVariable[Mean=0.0|Variance=1|Bound=20]"));
 
-  groupMobility->SetMobilityHelper(&mobility);
-  NodeContainer allNodes1 = groupMobility->InstallGroupMobility(group1);
+  groupMobility->SetMobilityHelper (&mobility);
+  NodeContainer allNodes1 = groupMobility->InstallGroupMobility (group1);
 
-  groupMobility->SetMobilityHelper(&mobility2);
-  NodeContainer allNodes2 = groupMobility->InstallGroupMobility(group2);
+  groupMobility->SetMobilityHelper (&mobility2);
+  NodeContainer allNodes2 = groupMobility->InstallGroupMobility (group2);
 
   AsciiTraceHelper ascii;
   MobilityHelper::EnableAsciiAll (ascii.CreateFileStream ("mobility-trace-example.mob"));
 
-  Simulator::Stop(Seconds(1e4));
+  Simulator::Stop (Seconds (1e4));
   Simulator::Run ();
   Simulator::Destroy ();
 }
