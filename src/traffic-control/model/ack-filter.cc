@@ -103,7 +103,6 @@ AckFilter::AckFilterSackCompare (Ptr<QueueDiscItem> item_a, Ptr<QueueDiscItem> i
   return bytes_b > bytes_a ? 1 : 0;
 }
 
-
 bool
 AckFilter::AckFilterMayDrop (Ptr<QueueDiscItem> item, uint32_t tstamp,uint32_t tsecr) const
 {
@@ -135,7 +134,6 @@ AckFilter::AckFilterMayDrop (Ptr<QueueDiscItem> item, uint32_t tstamp,uint32_t t
 bool
 AckFilter::AckFilterMain (Ptr<Queue<QueueDiscItem>> Qu, Ptr<QueueDiscItem> item) const
 {
-
   Ptr<Queue<QueueDiscItem> > queue =  Qu;
   bool hastimestamp;
   uint32_t tstamp, tsecr;
@@ -149,9 +147,10 @@ AckFilter::AckFilterMain (Ptr<Queue<QueueDiscItem>> Qu, Ptr<QueueDiscItem> item)
   Ptr<QueueDiscItem> head = *(queue->begin ());
   auto pos = queue->begin();
   
-  if(queue->IsEmpty()){
-    return false;
-  }
+  if(queue->IsEmpty())
+    {
+      return false;
+    }
    
   if (tail->GetL4Protocol () != 6)
     {
@@ -180,9 +179,10 @@ AckFilter::AckFilterMain (Ptr<Queue<QueueDiscItem>> Qu, Ptr<QueueDiscItem> item)
       tail->GetSourceL3address (src2);
       (*check)->GetDestL3address (dst1);
       tail->GetDestL3address (dst2);
-      if(src1!=src2 || dst1!=dst2) {
-        continue;
-      }
+      if(src1!=src2 || dst1!=dst2)
+        {
+          continue;
+        }
       if ((*check)->GetL4Protocol () != 6 || ((*check)->TcpSourcePort () != tail->TcpSourcePort ()) || ((*check)->TcpDestinationPort () != tail->TcpDestinationPort ()))
         {
           continue;
@@ -190,83 +190,83 @@ AckFilter::AckFilterMain (Ptr<Queue<QueueDiscItem>> Qu, Ptr<QueueDiscItem> item)
 
       Ptr<QueueDiscItem> item = *check;
     
-/* Check TCP options and flags, don't drop ACKs with segment
-   * data, and don't drop ACKs with a higher cumulative ACK
-   * counter than the triggering packet. Check ACK seqno here to
-   * avoid parsing SACK options of packets we are going to exclude
-   * anyway.
-   */
-if (!AckFilterMayDrop ( *check,tstamp,tsecr) ||
-      (*check)->GetAckSeqHeader ()> tail->GetAckSeqHeader ())
-    {
-      std::cout<<(*check)->GetAckSeqHeader () << " " << tail->GetAckSeqHeader () << std::endl;
-      continue;
+	  /* Check TCP options and flags, don't drop ACKs with segment
+	   * data, and don't drop ACKs with a higher cumulative ACK
+	   * counter than the triggering packet. Check ACK seqno here to
+	   * avoid parsing SACK options of packets we are going to exclude
+	   * anyway.
+	   */
+	  if (!AckFilterMayDrop ( *check,tstamp,tsecr) ||
+	      (*check)->GetAckSeqHeader ()> tail->GetAckSeqHeader ())
+	    {
+	      std::cout<<(*check)->GetAckSeqHeader () << " " << tail->GetAckSeqHeader () << std::endl;
+	      continue;
+	    }
+	   
+
+	  /* Check SACK options. The triggering packet must SACK more data
+	   * than the ACK under consideration, or SACK the same range but
+	   * have a larger cumulative ACK counter. The latter is a
+	   * pathological case, but is contained in the following check
+	   * anyway, just to be safe.
+	   */
+	  int sack_comp = AckFilterSackCompare(*check, tail);
+
+	  if ((sack_comp < 0 ||
+	      (*check)->GetAckSeqHeader () == tail->GetAckSeqHeader ()) &&
+	       (sack_comp == 0))
+	      {
+	        continue;
+	      }
+
+	  /* At this point we have found an eligible pure ACK to drop; if
+	   * we are in aggressive mode, we are done. Otherwise, keep
+	   * searching unless this is the second eligible ACK we
+	   * found.
+	   *
+	   * Since we want to drop ACK closest to the head of the queue,
+	   * save the first eligible ACK we find, even if we need to loop
+	   * again.
+	   */
+	  if (!elig_ack)
+	    {	   
+	      pos = check;
+	   	  elig_ack = *check;
+	      elig_ack_prev = *prev;
+	      uint8_t flag_check;
+	      (*check)->GetUint8Value (QueueItem::TCP_FLAGS,flag_check);
+	      elig_flags = (flag_check & (TcpHeader::ECE | TcpHeader::CWR));
+	    }
+
+	  if (num_found++ > 0)
+	    {
+	      goto found;
+	    }
     }
-   
 
-  /* Check SACK options. The triggering packet must SACK more data
-   * than the ACK under consideration, or SACK the same range but
-   * have a larger cumulative ACK counter. The latter is a
-   * pathological case, but is contained in the following check
-   * anyway, just to be safe.
+  /* We made it through the queue without finding two eligible ACKs . If
+   * we found a single eligible ACK we can drop it in aggressive mode if
+   * we can guarantee that this does not interfere with ECN flag
+   * information. We ensure this by dropping it only if the enqueued
+   * packet is consecutive with the eligible ACK, and their flags match.
    */
-int sack_comp = AckFilterSackCompare(*check, tail);
-
-  if ((sack_comp < 0 ||
-      (*check)->GetAckSeqHeader () == tail->GetAckSeqHeader ()) &&
-       (sack_comp == 0))
-      {
-        continue;
-      }
-
-  /* At this point we have found an eligible pure ACK to drop; if
-   * we are in aggressive mode, we are done. Otherwise, keep
-   * searching unless this is the second eligible ACK we
-   * found.
-   *
-   * Since we want to drop ACK closest to the head of the queue,
-   * save the first eligible ACK we find, even if we need to loop
-   * again.
-   */
-  if (!elig_ack) {
-   
-   pos = check;
-   elig_ack = *check;
-   elig_ack_prev = *prev;
-   uint8_t flag_check;
-   (*check)->GetUint8Value (QueueItem::TCP_FLAGS,flag_check);
-   elig_flags = (flag_check & (TcpHeader::ECE | TcpHeader::CWR));
-
-  }
-
-  if (num_found++ > 0)
-  {
-   goto found;
-  }
- }
-
- /* We made it through the queue without finding two eligible ACKs . If
-  * we found a single eligible ACK we can drop it in aggressive mode if
-  * we can guarantee that this does not interfere with ECN flag
-  * information. We ensure this by dropping it only if the enqueued
-  * packet is consecutive with the eligible ACK, and their flags match.
-  */
   uint8_t flag_tail;
-      (tail)->GetUint8Value (QueueItem::TCP_FLAGS,flag_tail);
+  (tail)->GetUint8Value (QueueItem::TCP_FLAGS,flag_tail);
       
   if (elig_ack && (elig_flags == (flag_tail & (TcpHeader::ECE | TcpHeader::CWR))))
-  {
-     goto found;
-  }
+    {
+      goto found;
+    }
 
-found:
- if (elig_ack_prev){
-   queue->DoRemove(pos);
-   std::cout<<"Removing packet with sequence number " << elig_ack->GetAckSeqHeader() << std::endl;
-   return true;
- }
+  found:
+    if (elig_ack_prev)
+      {
+   	    queue->DoRemove(pos);
+	    std::cout<<"Removing packet with sequence number " << elig_ack->GetAckSeqHeader() << std::endl;
+        return true;
+ 	  }
 
- return false;
+  return false;
 
  //else
   //flow->head = elig_ack->next;

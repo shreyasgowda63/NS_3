@@ -302,7 +302,7 @@ public:
 
   /// Const iterator.
   typedef typename std::list<Ptr<Item> >::const_iterator ConstIterator;
-    /// Iterator.
+  /// Iterator.
   typedef typename std::list<Ptr<Item> >::iterator Iterator;
 
   /**

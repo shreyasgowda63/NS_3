@@ -60,7 +60,6 @@ QueueItem::GetAckSeqHeader (void)
   return SequenceNumber32 (0);
 }
 
-
 bool
 QueueItem::GetUint8Value (QueueItem::Uint8Values field, uint8_t& value) const
 {

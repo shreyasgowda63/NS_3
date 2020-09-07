@@ -340,7 +340,7 @@ CobaltQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
       NS_LOG_LOGIC ("Queue full -- dropping pkt");
       int64_t now = CoDelGetTime ();
       // Call this to update Blue's drop probability
-      CobaltQueueFull (now); 
+      CobaltQueueFull (now);
       DropBeforeEnqueue (item, OVERLIMIT_DROP);
       return false;
     }

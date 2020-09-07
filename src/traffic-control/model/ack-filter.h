@@ -19,16 +19,9 @@ public:
    * \return the object TypeId
    */
   static TypeId GetTypeId (void);
-
-public:
   /**
-   * \brief Get the type ID.
-   * \return the object TypeId
+   * \brief AckFilter constructor
    */
-//  static TypeId GetTypeId (void);
-/**
- * \brief AckFilter constructor
- */
   AckFilter ();
 
   virtual ~AckFilter ();
