@@ -744,6 +744,7 @@ AckFilterUdpEnqueueTest::DoRun (void)
   AddPacket (p2, queue, hdr);
   NS_TEST_EXPECT_MSG_EQ (queue->GetCurrentSize ().GetValue (), 2 * modeSize, "There should be two packet in queue, two packets means it wasnt dropped");
   }
+ 
 
 
  
@@ -1340,31 +1341,24 @@ CobaltBasicSynAckTest::DoRun (void)
   NS_TEST_EXPECT_MSG_EQ (queue->GetCurrentSize ().GetValue (), 2 * modeSize, "There should be two packet in queue");
   }
 
-
 static class CobaltQueueDiscTestSuite : public TestSuite
 {
 public:
   CobaltQueueDiscTestSuite ()
     : TestSuite ("cobalt-queue-disc", UNIT)
   {
-    // Test 1: simple enqueue/dequeue with no drops
     AddTestCase (new CobaltQueueDiscBasicEnqueueDequeue (PACKETS), TestCase::QUICK);
     AddTestCase (new CobaltQueueDiscBasicEnqueueDequeue (BYTES), TestCase::QUICK);
-    // Test 2: Drop test
     AddTestCase (new CobaltQueueDiscDropTest (), TestCase::QUICK);
     // Test 3: Mark test
     AddTestCase (new CobaltQueueDiscMarkTest (PACKETS), TestCase::QUICK);
     AddTestCase (new CobaltQueueDiscMarkTest (BYTES), TestCase::QUICK);
     // Test 3: Drop test
     AddTestCase (new CobaltBasicSynAckTest (PACKETS), TestCase::QUICK);
-    // Test 4:
     AddTestCase (new AckFilterEceCwrFlagTest(PACKETS), TestCase::QUICK);
-    // Test 5:
     AddTestCase (new AckFilterSackPermittedTest(PACKETS), TestCase::QUICK);
-
     AddTestCase (new AckFilterUdpEnqueueTest(PACKETS), TestCase::QUICK);
     AddTestCase (new AckFilterUrgFlagTest(PACKETS), TestCase::QUICK);
     AddTestCase (new AckFilterDropHeadTest(PACKETS), TestCase::QUICK);
-
   }
 } g_cobaltQueueTestSuite; ///< the test suite
