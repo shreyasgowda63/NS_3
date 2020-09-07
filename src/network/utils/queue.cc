@@ -61,7 +61,6 @@ QueueBase::QueueBase () :
   m_nTotalDroppedPacketsAfterDequeue (0)
 {
   NS_LOG_FUNCTION (this);
-  m_maxSize = QueueSize (QueueSizeUnit::PACKETS, std::numeric_limits<uint32_t>::max ());
 }
 
 QueueBase::~QueueBase ()
