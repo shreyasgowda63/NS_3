@@ -1355,7 +1355,7 @@ public:
     // Test 3: Mark test
     AddTestCase (new CobaltQueueDiscMarkTest (PACKETS), TestCase::QUICK);
     AddTestCase (new CobaltQueueDiscMarkTest (BYTES), TestCase::QUICK);
-    // Test 3: Drop test
+    
     AddTestCase (new CobaltBasicSynAckTest (PACKETS), TestCase::QUICK);
     AddTestCase (new AckFilterEceCwrFlagTest(PACKETS), TestCase::QUICK);
     AddTestCase (new AckFilterSackPermittedTest(PACKETS), TestCase::QUICK);
