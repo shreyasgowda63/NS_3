@@ -108,16 +108,16 @@ Ipv6QueueDiscItem::GetUint8Value (QueueItem::Uint8Values field, uint8_t& value) 
     case TCP_FLAGS:
       uint8_t prot = m_header.GetNextHeader ();
       if (prot == 6)
-      {
-        TcpHeader tcpHdr;
-        GetPacket ()->PeekHeader (tcpHdr);
-        value = tcpHdr.GetFlags ();
-        ret = true;
-       }
-       else
-       {
-        ret = false;
-       }
+        {
+          TcpHeader tcpHdr;
+          GetPacket ()->PeekHeader (tcpHdr);
+          value = tcpHdr.GetFlags ();
+          ret = true;
+        }
+      else
+        {
+          ret = false;
+        }
       break;
     }
 

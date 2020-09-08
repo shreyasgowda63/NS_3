@@ -721,9 +721,9 @@ AckFilterUdpEnqueueTest::DoRun (void)
 
   Ptr<Packet> p1, p2;
   p1 = Create<Packet> (pktSize);
-  p1->AddHeader(udpHdr);
+  p1->AddHeader (udpHdr);
   p2 = Create<Packet> (pktSize);
-  p2->AddHeader(udpHdr);
+  p2->AddHeader (udpHdr);
 
   Ipv4Header hdr;
   hdr.SetPayloadSize (100);
@@ -737,19 +737,12 @@ AckFilterUdpEnqueueTest::DoRun (void)
   hdr1.SetDestination (Ipv4Address ("10.10.1.3"));
   hdr1.SetProtocol (6);
 
-
   NS_TEST_EXPECT_MSG_EQ (queue->GetCurrentSize ().GetValue (), 0 * modeSize, "There should be no packets in queue");
   AddPacket (p1, queue, hdr);
   NS_TEST_EXPECT_MSG_EQ (queue->GetCurrentSize ().GetValue (), 1 * modeSize, "There should be one packet in queue");
   AddPacket (p2, queue, hdr);
   NS_TEST_EXPECT_MSG_EQ (queue->GetCurrentSize ().GetValue (), 2 * modeSize, "There should be two packet in queue, two packets means it wasnt dropped");
-  }
-
-
- 
-
-
- 
+}
 
   /**
    * Enqueued a TCP packet with only ACK Flag enabled and
@@ -830,49 +823,49 @@ AckFilterDropHeadTest::DoRun (void)
   tcpHdr1.SetFlags (TcpHeader::SYN);
   SequenceNumber32 num1 (1);
   tcpHdr1.SetAckNumber (num1);
-  tcpHdr1.SetSourcePort(22);
-  tcpHdr1.SetDestinationPort(25);
+  tcpHdr1.SetSourcePort (22);
+  tcpHdr1.SetDestinationPort (25);
 
   TcpHeader tcpHdr2;
   tcpHdr2.SetFlags (TcpHeader::ACK);
   SequenceNumber32 num2 (1501);
   tcpHdr2.SetAckNumber (num2);
-  tcpHdr2.SetSourcePort(22);
-  tcpHdr2.SetDestinationPort(25);
+  tcpHdr2.SetSourcePort (22);
+  tcpHdr2.SetDestinationPort (25);
 
   TcpHeader tcpHdr3;
   tcpHdr3.SetFlags (TcpHeader::ACK);
   SequenceNumber32 num3 (1502);
   tcpHdr3.SetAckNumber (num3);
-  tcpHdr3.SetSourcePort(22);
-  tcpHdr3.SetDestinationPort(25);
+  tcpHdr3.SetSourcePort (22);
+  tcpHdr3.SetDestinationPort (25);
 
   TcpHeader tcpHdr4;
   tcpHdr4.SetFlags (TcpHeader::ACK);
   SequenceNumber32 num4 (1503);
   tcpHdr4.SetAckNumber (num4);
-  tcpHdr4.SetSourcePort(22);
-  tcpHdr4.SetDestinationPort(25);
+  tcpHdr4.SetSourcePort (22);
+  tcpHdr4.SetDestinationPort (25);
 
   TcpHeader tcpHdr5;
   tcpHdr5.SetFlags (TcpHeader::FIN);
   SequenceNumber32 num5 (1504);
   tcpHdr5.SetAckNumber (num5);
-  tcpHdr5.SetSourcePort(22);
-  tcpHdr5.SetDestinationPort(25);
+  tcpHdr5.SetSourcePort (22);
+  tcpHdr5.SetDestinationPort (25);
 
 
   Ptr<Packet> p1, p2, p3, p4, p5;
   p1 = Create<Packet> (pktSize);
-  p1->AddHeader(tcpHdr1);
+  p1->AddHeader (tcpHdr1);
   p2 = Create<Packet> (pktSize);
-  p2->AddHeader(tcpHdr2);
+  p2->AddHeader (tcpHdr2);
   p3 = Create<Packet> (pktSize);
-  p3->AddHeader(tcpHdr3);
+  p3->AddHeader (tcpHdr3);
   p4 = Create<Packet> (pktSize);
-  p4->AddHeader(tcpHdr4);
+  p4->AddHeader (tcpHdr4);
   p5 = Create<Packet> (pktSize);
-  p5->AddHeader(tcpHdr5);
+  p5->AddHeader (tcpHdr5);
 
   Ipv4Header hdr;
   hdr.SetPayloadSize (100);
@@ -902,10 +895,7 @@ AckFilterDropHeadTest::DoRun (void)
 
   AddPacket (p5, queue, hdr);
   NS_TEST_EXPECT_MSG_EQ (queue->GetCurrentSize ().GetValue (), 4 * modeSize, "There should be four packet in queue");
-
- }
-
-
+}
 
   /**
    * Enqueue pkt with ece, cwr flag and then check that it's being dropped
@@ -983,21 +973,21 @@ AckFilterEceCwrFlagTest::DoRun (void)
   tcpHdr1.SetFlags (TcpHeader::ACK|TcpHeader::ECE|TcpHeader::CWR);
   SequenceNumber32 num1 (1);
   tcpHdr1.SetAckNumber (num1);
-  tcpHdr1.SetSourcePort(22);
-  tcpHdr1.SetDestinationPort(25);
+  tcpHdr1.SetSourcePort (22);
+  tcpHdr1.SetDestinationPort (25);
 
   TcpHeader tcpHdr2;
   tcpHdr2.SetFlags (TcpHeader::ACK|TcpHeader::ECE|TcpHeader::CWR);
   SequenceNumber32 num2 (1501);
   tcpHdr2.SetAckNumber (num2);
-  tcpHdr2.SetSourcePort(22);
-  tcpHdr2.SetDestinationPort(25);
+  tcpHdr2.SetSourcePort (22);
+  tcpHdr2.SetDestinationPort (25);
 
   Ptr<Packet> p1, p2;
   p1 = Create<Packet> (pktSize);
-  p1->AddHeader(tcpHdr1);
+  p1->AddHeader (tcpHdr1);
   p2 = Create<Packet> (pktSize);
-  p2->AddHeader(tcpHdr2);
+  p2->AddHeader (tcpHdr2);
 
   Ipv4Header hdr;
   hdr.SetPayloadSize (100);
@@ -1018,11 +1008,10 @@ AckFilterEceCwrFlagTest::DoRun (void)
   NS_TEST_EXPECT_MSG_EQ (queue->GetCurrentSize ().GetValue (), 1 * modeSize, "There should be one packet in queue, the first packet was dropped");
   }
   
-    /**
+ /**
    * Enqueue pkt with ece, cwr flag and SACK_PERMITTED enabled. Then check that it isn't being dropped
    * because of another ack (also with ece, cwr) of higher number.
    */
-
 
 class AckFilterSackPermittedTest : public TestCase
 {
@@ -1095,28 +1084,27 @@ AckFilterSackPermittedTest::DoRun (void)
   SequenceNumber32 num1 (1);
   tcpHdr1.SetAckNumber (num1);
   tcpHdr1.AppendOption(TcpOption::CreateOption(TcpOption::SACKPERMITTED));
-  tcpHdr1.SetSourcePort(22);
-  tcpHdr1.SetDestinationPort(25);
+  tcpHdr1.SetSourcePort (22);
+  tcpHdr1.SetDestinationPort (25);
 
   TcpHeader tcpHdr2;
   tcpHdr2.SetFlags (TcpHeader::ACK|TcpHeader::ECE|TcpHeader::CWR);
   SequenceNumber32 num2 (1501);
   tcpHdr2.SetAckNumber (num2);
-  tcpHdr2.SetSourcePort(22);
-  tcpHdr2.SetDestinationPort(25);
+  tcpHdr2.SetSourcePort (22);
+  tcpHdr2.SetDestinationPort (25);
 
   Ptr<Packet> p1, p2;
   p1 = Create<Packet> (pktSize);
-  p1->AddHeader(tcpHdr1);
+  p1->AddHeader (tcpHdr1);
   p2 = Create<Packet> (pktSize);
-  p2->AddHeader(tcpHdr2);
+  p2->AddHeader (tcpHdr2);
 
   Ipv4Header hdr;
   hdr.SetPayloadSize (100);
   hdr.SetSource (Ipv4Address ("10.10.1.1"));
   hdr.SetDestination (Ipv4Address ("10.10.1.2"));
   hdr.SetProtocol (6);
-
 
   NS_TEST_EXPECT_MSG_EQ (queue->GetCurrentSize ().GetValue (), 0 * modeSize, "There should be no packets in queue");
   AddPacket (p1, queue, hdr);
@@ -1202,10 +1190,10 @@ AckFilterUrgFlagTest::DoRun (void)
   tcpHdr1.SetFlags (flags1);
   SequenceNumber32 num1 (1);
   tcpHdr1.SetAckNumber (num1);
-  tcpHdr1.SetSourcePort(22);
-  tcpHdr1.SetDestinationPort(25);
-  tcpHdr1.SetSourcePort(22);
-  tcpHdr1.SetDestinationPort(25);
+  tcpHdr1.SetSourcePort (22);
+  tcpHdr1.SetDestinationPort (25);
+  tcpHdr1.SetSourcePort (22);
+  tcpHdr1.SetDestinationPort (25);
 
 
   TcpHeader tcpHdr2;
@@ -1213,24 +1201,22 @@ AckFilterUrgFlagTest::DoRun (void)
   tcpHdr2.SetFlags (flags2);
   SequenceNumber32 num2 (1501);
   tcpHdr2.SetAckNumber (num2);
-  tcpHdr2.SetSourcePort(22);
-  tcpHdr2.SetDestinationPort(25);
-  tcpHdr2.SetSourcePort(22);
-  tcpHdr2.SetDestinationPort(25);
+  tcpHdr2.SetSourcePort (22);
+  tcpHdr2.SetDestinationPort (25);
+  tcpHdr2.SetSourcePort (22);
+  tcpHdr2.SetDestinationPort (25);
 
   Ipv4Header hdr;
   hdr.SetPayloadSize (100);
   hdr.SetSource (Ipv4Address ("10.10.1.1"));
   hdr.SetDestination (Ipv4Address ("10.10.1.2"));
-  hdr.SetProtocol (6);
-
-  
+  hdr.SetProtocol (6);  
 
   Ptr<Packet> p1, p2;
   p1 = Create<Packet> (pktSize);
-  p1->AddHeader(tcpHdr1);
+  p1->AddHeader (tcpHdr1);
   p2 = Create<Packet> (pktSize);
-  p2->AddHeader(tcpHdr2);
+  p2->AddHeader (tcpHdr2);
 
 
   NS_TEST_EXPECT_MSG_EQ (queue->GetCurrentSize ().GetValue (), 0 * modeSize, "There should be no packets in queue");
@@ -1319,16 +1305,16 @@ CobaltBasicSynAckTest::DoRun (void)
   tcpHdr.SetFlags (flags);
   SequenceNumber32 num1 (1);
   tcpHdr.SetAckNumber (num1);
-  tcpHdr.SetSourcePort(22);
-  tcpHdr.SetDestinationPort(25);
+  tcpHdr.SetSourcePort (22);
+  tcpHdr.SetDestinationPort (25);
 
   Ptr<Packet> p1, p2;
   p1 = Create<Packet> (pktSize);
-  p1->AddHeader(tcpHdr);
+  p1->AddHeader (tcpHdr);
   flags|=TcpHeader::ACK;
   tcpHdr.SetFlags (flags);
   p2 = Create<Packet> (pktSize);
-  p2->AddHeader(tcpHdr);
+  p2->AddHeader (tcpHdr);
 
   Ipv4Header hdr;
   hdr.SetPayloadSize (100);
@@ -1349,8 +1335,10 @@ public:
   CobaltQueueDiscTestSuite ()
     : TestSuite ("cobalt-queue-disc", UNIT)
   {
+    // Test 1: simple enqueue/dequeue with no drops
     AddTestCase (new CobaltQueueDiscBasicEnqueueDequeue (PACKETS), TestCase::QUICK);
     AddTestCase (new CobaltQueueDiscBasicEnqueueDequeue (BYTES), TestCase::QUICK);
+    // Test 2: Drop test
     AddTestCase (new CobaltQueueDiscDropTest (), TestCase::QUICK);
     // Test 3: Mark test
     AddTestCase (new CobaltQueueDiscMarkTest (PACKETS), TestCase::QUICK);

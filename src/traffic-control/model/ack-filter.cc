@@ -23,7 +23,6 @@ TypeId AckFilter::GetTypeId (void)
   return tid;
 }
 
-
 AckFilter::AckFilter ()
 {
   NS_LOG_FUNCTION (this);
