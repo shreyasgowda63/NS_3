@@ -345,12 +345,11 @@ CobaltQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
       return false;
     }
 
-  // bool retval = GetInternalQueue (0)->Enqueue (item);
   Ptr<Queue<QueueDiscItem>> queue = GetInternalQueue (0);
   bool retval;
   if(m_useAckFilter){
     AckFilter ack;
-    retval = ack.AckFilterMain(queue, item);
+    ack.AckFilterMain(queue, item);
   }
   retval = GetInternalQueue (0)->Enqueue (item);
  

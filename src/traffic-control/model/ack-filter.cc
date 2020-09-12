@@ -33,7 +33,7 @@ AckFilter::~AckFilter ()
   NS_LOG_FUNCTION (this);
 }
 
-int
+int32_t
 AckFilter::AckFilterSackCompare (Ptr<QueueDiscItem> item_a, Ptr<QueueDiscItem> item_b) const
 {
   if (item_a->HasTcpOption (TcpOption::SACK) && !(item_b->HasTcpOption (TcpOption::SACK)))
@@ -75,9 +75,6 @@ AckFilter::AckFilterSackCompare (Ptr<QueueDiscItem> item_a, Ptr<QueueDiscItem> i
           SequenceNumber32 start_b, end_b;
           start_b = it_b->first;
           end_b = it_b->second;
-          if (first)
-            {
-            }
           bytes_b += end_b - start_b;
           if (!(start_b > start_a) && !(end_b < end_a))
             {
@@ -140,7 +137,7 @@ AckFilter::AckFilterMain (Ptr<Queue<QueueDiscItem>> Qu, Ptr<QueueDiscItem> item)
   Ipv4Header pk1 , pk2 ;
   Ptr<QueueDiscItem> elig_ack = NULL, elig_ack_prev= NULL;
   uint32_t elig_flags=0;
-  int num_found=0;
+  int32_t num_found=0;
   Ptr<QueueDiscItem> tail = item;
   
   Ptr<QueueDiscItem> head = *(queue->begin ());
@@ -209,7 +206,7 @@ AckFilter::AckFilterMain (Ptr<Queue<QueueDiscItem>> Qu, Ptr<QueueDiscItem> item)
 	   * pathological case, but is contained in the following check
 	   * anyway, just to be safe.
 	   */
-	  int sack_comp = AckFilterSackCompare(*check, tail);
+	  int32_t sack_comp = AckFilterSackCompare(*check, tail);
 
 	  if ((sack_comp < 0 ||
 	      (*check)->GetAckSeqHeader () == tail->GetAckSeqHeader ()) &&

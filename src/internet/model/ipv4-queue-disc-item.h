@@ -37,8 +37,7 @@ namespace ns3 {
  * Header and payload are kept separate to allow the queue disc to manipulate
  * the header, which is added to the packet when the packet is dequeued.
  */
-class Ipv4QueueDiscItem : public QueueDiscItem
-{
+class Ipv4QueueDiscItem : public QueueDiscItem {
 public:
   /**
    * \brief Create an IPv4 queue disc item containing an IPv4 packet.
