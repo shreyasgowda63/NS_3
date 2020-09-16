@@ -29,8 +29,10 @@
 #include "ns3/socket-factory.h"
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
+#include "ns3/boolean.h"
 
 #include "udp-echo-server.h"
+#include "seq-ts-echo-header.h"
 
 namespace ns3 {
 
@@ -49,6 +51,11 @@ UdpEchoServer::GetTypeId (void)
                    UintegerValue (9),
                    MakeUintegerAccessor (&UdpEchoServer::m_port),
                    MakeUintegerChecker<uint16_t> ())
+    .AddAttribute ("EnableSeqTsEchoHeader",
+                   "Enable use of SeqTsEchoHeader for sequence number and timestamps",
+                   BooleanValue (false),
+                   MakeBooleanAccessor (&UdpEchoServer::m_enableSeqTsEchoHeader),
+                   MakeBooleanChecker ())
     .AddTraceSource ("Rx", "A packet has been received",
                      MakeTraceSourceAccessor (&UdpEchoServer::m_rxTrace),
                      "ns3::Packet::TracedCallback")
@@ -180,6 +187,14 @@ UdpEchoServer::HandleRead (Ptr<Socket> socket)
 
       packet->RemoveAllPacketTags ();
       packet->RemoveAllByteTags ();
+      if (m_enableSeqTsEchoHeader)
+        {
+          SeqTsEchoHeader header;
+          packet->RemoveHeader (header);
+          header.SetTsEchoReply (header.GetTsValue ());
+          header.SetTsValue (Simulator::Now ());
+          packet->AddHeader (header);
+        }
 
       NS_LOG_LOGIC ("Echoing packet");
       socket->SendTo (packet, 0, from);
