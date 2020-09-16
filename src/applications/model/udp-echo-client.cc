@@ -26,8 +26,10 @@
 #include "ns3/socket-factory.h"
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
+#include "ns3/boolean.h"
 #include "ns3/trace-source-accessor.h"
 #include "udp-echo-client.h"
+#include "seq-ts-echo-header.h"
 
 namespace ns3 {
 
@@ -67,6 +69,11 @@ UdpEchoClient::GetTypeId (void)
                    MakeUintegerAccessor (&UdpEchoClient::SetDataSize,
                                          &UdpEchoClient::GetDataSize),
                    MakeUintegerChecker<uint32_t> ())
+    .AddAttribute ("EnableSeqTsEchoHeader",
+                   "Enable use of SeqTsEchoHeader for sequence number and timestamps",
+                   BooleanValue (false),
+                   MakeBooleanAccessor (&UdpEchoClient::m_enableSeqTsEchoHeader),
+                   MakeBooleanChecker ())
     .AddTraceSource ("Tx", "A new packet is created and is sent",
                      MakeTraceSourceAccessor (&UdpEchoClient::m_txTrace),
                      "ns3::Packet::TracedCallback")
@@ -79,6 +86,9 @@ UdpEchoClient::GetTypeId (void)
     .AddTraceSource ("RxWithAddresses", "A packet has been received",
                      MakeTraceSourceAccessor (&UdpEchoClient::m_rxTraceWithAddresses),
                      "ns3::Packet::TwoAddressTracedCallback")
+    .AddTraceSource ("RxWithSeqTsEchoHeader", "A packet has been received",
+                     MakeTraceSourceAccessor (&UdpEchoClient::m_rxTraceWithSeqTsEcho),
+                     "ns3::UdpEchoClient::SeqTsEchoCallback")
   ;
   return tid;
 }
@@ -91,6 +101,7 @@ UdpEchoClient::UdpEchoClient ()
   m_sendEvent = EventId ();
   m_data = 0;
   m_dataSize = 0;
+  m_enableSeqTsEchoHeader = false;
 }
 
 UdpEchoClient::~UdpEchoClient()
@@ -331,7 +342,19 @@ UdpEchoClient::Send (void)
       // this case, we don't worry about it either.  But we do allow m_size
       // to have a value different from the (zero) m_dataSize.
       //
-      p = Create<Packet> (m_size);
+      if (m_enableSeqTsEchoHeader)
+        {
+          SeqTsEchoHeader header;
+          header.SetSeq (m_sent);
+          header.SetTsValue (Simulator::Now ());
+          NS_ABORT_IF (m_size < header.GetSerializedSize ());
+          p = Create<Packet> (m_size - header.GetSerializedSize ());
+          p->AddHeader (header);
+        }
+      else
+        {
+          p = Create<Packet> (m_size);
+        }
     }
   Address localAddress;
   m_socket->GetSockName (localAddress);
@@ -400,6 +423,14 @@ UdpEchoClient::HandleRead (Ptr<Socket> socket)
       socket->GetSockName (localAddress);
       m_rxTrace (packet);
       m_rxTraceWithAddresses (packet, from, localAddress);
+      if (m_enableSeqTsEchoHeader)
+        {
+          SeqTsEchoHeader header;
+          packet->RemoveHeader (header);
+          NS_LOG_DEBUG ("Seq=" << header.GetSeq () << " TsValue=" << header.GetTsValue ().As (Time::S) << " TsEchoReply=" << header.GetTsEchoReply ().As (Time::S));
+	  header.SetTsValue(Simulator::Now () - header.GetTsEchoReply ());
+          m_rxTraceWithSeqTsEcho (packet, from, localAddress, header);
+        }
     }
 }
 

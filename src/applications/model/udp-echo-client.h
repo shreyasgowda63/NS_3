@@ -24,11 +24,13 @@
 #include "ns3/ptr.h"
 #include "ns3/ipv4-address.h"
 #include "ns3/traced-callback.h"
+#include "ns3/seq-ts-echo-header.h"
 
 namespace ns3 {
 
 class Socket;
 class Packet;
+class SeqTsEchoHeader;
 
 /**
  * \ingroup udpecho
@@ -130,6 +132,17 @@ public:
    */
   void SetFill (uint8_t *fill, uint32_t fillSize, uint32_t dataSize);
 
+  /**
+   * TracedCallback signature for a reception with addresses and SeqTsEchoHeader
+   *
+   * \param p The packet received (without the SeqTsEcho header)
+   * \param from From address
+   * \param to Local address
+   * \param header The SeqTsEcho header
+   */
+  typedef void (* SeqTsEchoCallback)(Ptr<const Packet> p, const Address &from, const Address & to,
+                                   const SeqTsEchoHeader &header);
+
 protected:
   virtual void DoDispose (void);
 
@@ -169,6 +182,7 @@ private:
   Address m_peerAddress; //!< Remote peer address
   uint16_t m_peerPort; //!< Remote peer port
   EventId m_sendEvent; //!< Event to send the next packet
+  bool m_enableSeqTsEchoHeader; //!< Enable or disable use of SeqTsEchoHeader
 
   /// Callbacks for tracing the packet Tx events
   TracedCallback<Ptr<const Packet> > m_txTrace;
@@ -181,6 +195,9 @@ private:
   
   /// Callbacks for tracing the packet Rx events, includes source and destination addresses
   TracedCallback<Ptr<const Packet>, const Address &, const Address &> m_rxTraceWithAddresses;
+
+  /// Callback for tracing the packet Rx events, includes source, destination, the packet sent, and header
+  TracedCallback<Ptr<const Packet>, const Address &, const Address &, const SeqTsEchoHeader &> m_rxTraceWithSeqTsEcho;
 
 };
 
