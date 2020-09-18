@@ -264,14 +264,6 @@ AckFilter::AckFilterMain (Ptr<Queue<QueueDiscItem>> Qu, Ptr<QueueDiscItem> item)
 
   return false;
 
- //else
-  //flow->head = elig_ack->next;
-
-
- //skb_mark_not_on_list(elig_ack);
-
- //return elig_ack;
-
 }
 
 }

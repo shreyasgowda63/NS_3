@@ -1345,6 +1345,7 @@ public:
     AddTestCase (new CobaltQueueDiscMarkTest (BYTES), TestCase::QUICK);
     
     AddTestCase (new CobaltBasicSynAckTest (PACKETS), TestCase::QUICK);
+    // Tests to validate the funcitoning of Ack-Filter feature
     AddTestCase (new AckFilterEceCwrFlagTest(PACKETS), TestCase::QUICK);
     AddTestCase (new AckFilterSackPermittedTest(PACKETS), TestCase::QUICK);
     AddTestCase (new AckFilterUdpEnqueueTest(PACKETS), TestCase::QUICK);
