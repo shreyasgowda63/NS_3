@@ -1,0 +1,43 @@
+# -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+def build(bld):
+
+    if 'mpi' in bld.env['MODULES_NOT_BUILT']:
+        dependencies = ['mobility', 'core']
+    else:
+        dependencies = ['mobility', 'mpi', 'core']
+        
+    module = bld.create_ns3_module('simple-distributed', dependencies)
+
+    module.source = [
+        'model/channel-delay-model.cc',
+        'model/channel-error-model.cc',
+        'model/simple-distributed-channel.cc',
+        'model/simple-distributed-net-device.cc',
+        'model/simple-distributed-tag.cc',
+        'helper/simple-distributed-helper.cc',
+        ]
+
+    module_test = bld.create_ns3_module_test_library('simple-distributed')
+    module_test.source = [
+        'test/simple-distributed-test-suite.cc',
+        ]
+
+    if ( bld.env['ENABLE_EXAMPLES'] and (not('mpi' in bld.env['NS3_MODULES'])) ):
+        module_test.source.append('test/simple-distributed-parallel-test-suite.cc')
+
+    headers = bld(features='ns3header')
+    headers.module = 'simple-distributed'
+    headers.source = [
+        'model/channel-delay-model.h',
+        'model/channel-error-model.h',
+        'model/simple-distributed-channel.h',
+        'model/simple-distributed-net-device.h',
+        'helper/simple-distributed-helper.h',
+        ]
+
+    if bld.env.ENABLE_EXAMPLES:
+        bld.recurse('examples')
+
+    # bld.ns3_python_bindings()
+

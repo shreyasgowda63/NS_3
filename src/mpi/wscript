@@ -59,7 +59,7 @@ def build(bld):
     headers.source = [
         'model/mpi-receiver.h',
         'model/mpi-interface.h',
-        'model/parallel-communication-interface.h', 
+        'model/parallel-communication-interface.h'
         ]
 
     if bld.env['ENABLE_MPI']:

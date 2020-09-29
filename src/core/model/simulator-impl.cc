@@ -42,4 +42,18 @@ SimulatorImpl::GetTypeId (void)
   return tid;
 }
 
+void
+SimulatorImpl::BoundLookahead (const Time lookahead)
+{
+  NS_LOG_FUNCTION (this << lookahead);
+  // Method is only required for conservative parallel DES implementations so provide a default that does nothing.
+}
+
+Time
+SimulatorImpl::GetLookahead (void) const
+{
+  NS_LOG_FUNCTION_NOARGS ();
+  return Time::Max();
+}
+
 } // namespace ns3

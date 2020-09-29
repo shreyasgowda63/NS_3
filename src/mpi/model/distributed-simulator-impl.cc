@@ -73,7 +73,7 @@ LbtsMessage::IsFinished ()
   return m_isFinished;
 }
 
-Time DistributedSimulatorImpl::m_lookAhead = Seconds (-1);
+Time DistributedSimulatorImpl::m_lookAhead = Time::Max ();
 
 TypeId
 DistributedSimulatorImpl::GetTypeId (void)
@@ -158,74 +158,6 @@ DistributedSimulatorImpl::CalculateLookAhead (void)
 {
   NS_LOG_FUNCTION (this);
 
-  if (MpiInterface::GetSize () <= 1)
-    {
-      m_lookAhead = Seconds (0);
-    }
-  else
-    {
-      if (m_lookAhead == Seconds (-1))
-        {
-          m_lookAhead = GetMaximumSimulationTime ();
-        }
-      // else it was already set by SetLookAhead
-
-      NodeContainer c = NodeContainer::GetGlobal ();
-      for (NodeContainer::Iterator iter = c.Begin (); iter != c.End (); ++iter)
-        {
-          if ((*iter)->GetSystemId () != MpiInterface::GetSystemId ())
-            {
-              continue;
-            }
-
-          for (uint32_t i = 0; i < (*iter)->GetNDevices (); ++i)
-            {
-              Ptr<NetDevice> localNetDevice = (*iter)->GetDevice (i);
-              // only works for p2p links currently
-              if (!localNetDevice->IsPointToPoint ())
-                {
-                  continue;
-                }
-              Ptr<Channel> channel = localNetDevice->GetChannel ();
-              if (channel == 0)
-                {
-                  continue;
-                }
-
-              // grab the adjacent node
-              Ptr<Node> remoteNode;
-              if (channel->GetDevice (0) == localNetDevice)
-                {
-                  remoteNode = (channel->GetDevice (1))->GetNode ();
-                }
-              else
-                {
-                  remoteNode = (channel->GetDevice (0))->GetNode ();
-                }
-
-              // if it's not remote, don't consider it
-              if (remoteNode->GetSystemId () == MpiInterface::GetSystemId ())
-                {
-                  continue;
-                }
-
-              // compare delay on the channel with current value of
-              // m_lookAhead.  if delay on channel is smaller, make
-              // it the new lookAhead.
-              TimeValue delay;
-              channel->GetAttribute ("Delay", delay);
-
-              if (delay.Get () < m_lookAhead)
-                {
-                  m_lookAhead = delay.Get ();
-                }
-            }
-        }
-    }
-
-  // m_lookAhead is now set
-  m_grantedTime = m_lookAhead;
-
   /*
    * Compute the maximum inter-task latency and use that value
    * for tasks with no inter-task links.
@@ -265,22 +197,9 @@ DistributedSimulatorImpl::CalculateLookAhead (void)
   if (m_lookAhead == GetMaximumSimulationTime () && recvbuf != 0)
     {
       m_lookAhead = Time (recvbuf);
-      m_grantedTime = m_lookAhead;
     }
-}
 
-void
-DistributedSimulatorImpl::SetMaximumLookAhead (const Time lookAhead)
-{
-  if (lookAhead > Time (0))
-    {
-      NS_LOG_FUNCTION (this << lookAhead);
-      m_lookAhead = lookAhead;
-    }
-  else
-    {
-      NS_LOG_WARN ("attempted to set look ahead negative: " << lookAhead);
-    }
+  m_grantedTime = m_lookAhead;
 }
 
 void
@@ -371,7 +290,7 @@ DistributedSimulatorImpl::Run (void)
       // is finished then continue to participate in allgather
       // synchronizations with other tasks until all tasks have
       // completed.
-      if (nextTime > m_grantedTime || IsLocalFinished () )
+      if (nextTime >= m_grantedTime || IsLocalFinished () )
         {
           // Can't process next event, calculate a new LBTS
           // First receive any pending messages
@@ -423,7 +342,7 @@ DistributedSimulatorImpl::Run (void)
 
       // Execute next event if it is within the current time window.
       // Local task may be completed.
-      if ( (nextTime <= m_grantedTime) && (!IsLocalFinished ()) )
+      if ( (nextTime < m_grantedTime) && (!IsLocalFinished ()) )
         { // Safe to process
           ProcessOneEvent ();
         }
@@ -618,9 +537,7 @@ DistributedSimulatorImpl::IsExpired (const EventId &id) const
 Time
 DistributedSimulatorImpl::GetMaximumSimulationTime (void) const
 {
-  /// \todo I am fairly certain other compilers use other non-standard
-  /// post-fixes to indicate 64 bit constants.
-  return TimeStep (0x7fffffffffffffffLL);
+  return Time::Max ();
 }
 
 uint32_t
@@ -633,6 +550,20 @@ uint64_t
 DistributedSimulatorImpl::GetEventCount (void) const
 {
   return m_eventCount;
+}
+
+void
+DistributedSimulatorImpl::BoundLookahead (Time lookAhead)
+{
+  NS_LOG_FUNCTION(lookAhead);
+  m_lookAhead = Min(m_lookAhead, lookAhead);
+}
+
+Time
+DistributedSimulatorImpl::GetLookahead (void) const
+{
+  NS_LOG_FUNCTION_NOARGS ();
+  return m_lookAhead;
 }
 
 } // namespace ns3

@@ -311,16 +311,19 @@ Simulator::GetEventCount (void)
 uint32_t
 Simulator::GetSystemId (void)
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  return GetImpl ()->GetSystemId ();
+}
 
-  if (*PeekImpl () != 0)
-    {
-      return GetImpl ()->GetSystemId ();
-    }
-  else
-    {
-      return 0;
-    }
+void
+Simulator::BoundLookahead (const Time lookahead)
+{
+  GetImpl ()->BoundLookahead (lookahead);
+}
+
+Time
+Simulator::GetLookahead (void)
+{
+  return GetImpl ()->GetLookahead ();
 }
 
 void
