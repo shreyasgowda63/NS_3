@@ -473,7 +473,7 @@ CsmaNetDevice::TransmitStart (void)
   // Now we have to sense the state of the medium and either start transmitting
   // if it is idle, or backoff our transmission if someone else is on the wire.
   //
-  if (m_channel->GetState () != IDLE)
+  if (m_channel->GetState (m_deviceId) != IDLE)
     {
       //
       // The channel is busy -- backoff and rechedule TransmitStart() unless
@@ -586,7 +586,7 @@ CsmaNetDevice::TransmitCompleteEvent (void)
   // the transmitter after the interframe gap.
   //
   NS_ASSERT_MSG (m_txMachineState == BUSY, "CsmaNetDevice::transmitCompleteEvent(): Must be BUSY if transmitting");
-  NS_ASSERT (m_channel->GetState () == TRANSMITTING);
+  NS_ASSERT (m_channel->GetState (m_deviceId) == TRANSMITTING);
   m_txMachineState = GAP;
 
   //
@@ -597,7 +597,8 @@ CsmaNetDevice::TransmitCompleteEvent (void)
   NS_LOG_LOGIC ("m_currentPkt=" << m_currentPkt);
   NS_LOG_LOGIC ("Pkt UID is " << m_currentPkt->GetUid () << ")");
 
-  m_channel->TransmitEnd (); 
+  m_channel->TransmitEnd (m_deviceId);
+
   m_phyTxEndTrace (m_currentPkt);
   m_currentPkt = 0;
 

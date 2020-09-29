@@ -17,6 +17,11 @@ def build(bld):
         'helper/csma-helper.h',
         ]
 
+    csma_test = bld.create_ns3_module_test_library('csma')
+    csma_test.source = [
+        'test/test-csma-full-duplex.cc',
+        ]
+
     if bld.env['ENABLE_EXAMPLES']:
         bld.recurse('examples')
 
