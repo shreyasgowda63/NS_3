@@ -56,7 +56,7 @@ SimpleDistributedChannel::GetTypeId (void)
                    MakeTimeAccessor (&SimpleDistributedChannel::m_delay),
                    MakeTimeChecker ())
     .AddAttribute ("DataRate",
-                   "The default data rate for the channel. Zero means infinite",
+                   "The default data rate for the channel. Zero means infinite bandwidth",
                    DataRateValue (DataRate ("0b/s")),
                    MakeDataRateAccessor (&SimpleDistributedChannel::m_dataRate),
                    MakeDataRateChecker ())
