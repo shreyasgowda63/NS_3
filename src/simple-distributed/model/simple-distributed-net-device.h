@@ -61,7 +61,9 @@ class NetDeviceQueueInterface;
  *
  * By default net device does not add any delay to the packets; delays
  * may be added by setting the "Delay" and "DataRate" attributes
- * and/or setting the "DelayModel" on the net device.
+ * and/or setting the "DelayModel" on the net device.  There is also
+ * the possibility to add an ErrorModel if you want to force losses on
+ * the device.
  *
  * The total transmission delay from the net device is computed as: Delay
  * + PacketSize * DataRate.
@@ -70,8 +72,7 @@ class NetDeviceQueueInterface;
  * SimpleDistributedChannel; the delay contributions from both the
  * channel and net device are added.
  *
- * This device assumes 48-bit mac addressing; there is also the possibility to
- * add an ErrorModel if you want to force losses on the device.
+ * This device assumes 48-bit mac addressing.
  *
  * The device can be installed on a node through the SimpleDistributedNetDeviceHelper.
  * In case of manual creation, the user is responsible for assigning an unique
@@ -94,9 +95,9 @@ public:
    * and then forwards them by calling its rx callback method
    *
    * \param packet Packet received on the channel
-   * \param protocol protocol number
-   * \param to address packet should be sent to
-   * \param from address packet was sent from
+   * \param protocol Protocol number
+   * \param to Address packet should be sent to
+   * \param from Address packet was sent from
    */
   void Receive (Ptr<Packet> packet, uint16_t protocol, Mac48Address to, Mac48Address from);
 
@@ -112,7 +113,7 @@ public:
   /**
    * Attach a queue to the SimpleDistributedNetDevice.
    *
-   * \param queue Ptr to the new queue.
+   * \param queue The new queue
    */
   void SetQueue (Ptr<Queue<Packet> > queue);
 
@@ -130,37 +131,9 @@ public:
    * the packet receive chain.
    *
    * \see ErrorModel
-   * \param em Ptr to the ErrorModel.
+   * \param errorModel The ErrorModel
    */
-  void SetReceiveErrorModel (Ptr<ErrorModel> em);
-
-  // inherited from NetDevice base class.
-  virtual void SetIfIndex (const uint32_t index);
-  virtual uint32_t GetIfIndex (void) const;
-  virtual Ptr<Channel> GetChannel (void) const;
-  virtual void SetAddress (Address address);
-  virtual Address GetAddress (void) const;
-  virtual bool SetMtu (const uint16_t mtu);
-  virtual uint16_t GetMtu (void) const;
-  virtual bool IsLinkUp (void) const;
-  virtual void AddLinkChangeCallback (Callback<void> callback);
-  virtual bool IsBroadcast (void) const;
-  virtual Address GetBroadcast (void) const;
-  virtual bool IsMulticast (void) const;
-  virtual Address GetMulticast (Ipv4Address multicastGroup) const;
-  virtual bool IsPointToPoint (void) const;
-  virtual bool IsBridge (void) const;
-  virtual bool Send (Ptr<Packet> packet, const Address& dest, uint16_t protocolNumber);
-  virtual bool SendFrom (Ptr<Packet> packet, const Address& source, const Address& dest, uint16_t protocolNumber);
-  virtual Ptr<Node> GetNode (void) const;
-  virtual void SetNode (Ptr<Node> node);
-  virtual bool NeedsArp (void) const;
-  virtual void SetReceiveCallback (NetDevice::ReceiveCallback cb);
-
-  virtual Address GetMulticast (Ipv6Address addr) const;
-
-  virtual void SetPromiscReceiveCallback (PromiscReceiveCallback cb);
-  virtual bool SupportsSendFrom (void) const;
+  void SetReceiveErrorModel (Ptr<ErrorModel> errorModel);
 
   /**
    * Receive a packet from a connected a remote channel.
@@ -170,7 +143,6 @@ public:
    * \param p Ptr to the received packet.
    */
   void ReceiveRemote (Ptr<Packet> p);
-
 
   /**
    * Get the delay used for transmission of packets.
@@ -206,21 +178,67 @@ public:
    */
   void SetInterframeGap (Time t);
 
+  // inherited from NetDevice base class.
+  virtual void SetIfIndex (const uint32_t index);
+  virtual uint32_t GetIfIndex (void) const;
+  virtual Ptr<Channel> GetChannel (void) const;
+  virtual void SetAddress (Address address);
+  virtual Address GetAddress (void) const;
+  virtual bool SetMtu (const uint16_t mtu);
+  virtual uint16_t GetMtu (void) const;
+  virtual bool IsLinkUp (void) const;
+  virtual void AddLinkChangeCallback (Callback<void> callback);
+  virtual bool IsBroadcast (void) const;
+  virtual Address GetBroadcast (void) const;
+  virtual bool IsMulticast (void) const;
+  virtual Address GetMulticast (Ipv4Address multicastGroup) const;
+  virtual bool IsPointToPoint (void) const;
+  virtual bool IsBridge (void) const;
+  virtual bool Send (Ptr<Packet> packet, const Address& dest, uint16_t protocolNumber);
+  virtual bool SendFrom (Ptr<Packet> packet, const Address& source, const Address& dest, uint16_t protocolNumber);
+  virtual Ptr<Node> GetNode (void) const;
+  virtual void SetNode (Ptr<Node> node);
+  virtual bool NeedsArp (void) const;
+  virtual void SetReceiveCallback (NetDevice::ReceiveCallback cb);
+  virtual Address GetMulticast (Ipv6Address addr) const;
+  virtual void SetPromiscReceiveCallback (PromiscReceiveCallback cb);
+  virtual bool SupportsSendFrom (void) const;
+
 protected:
   virtual void DoDispose (void);
 
 private:
+
+  /**
+   * Add a standard header to the packet.
+   * 
+   * Since simple distributed is a made-up technology is has no
+   * header.  For easier processing of sniffers (e.g. writing to a
+   * PCAP file) a header is added to packets passed to trace
+   * callbacks.
+   */
   void AddHeader (Ptr<Packet> p,   Mac48Address source,  Mac48Address dest,  uint16_t protocolNumber);
 
+  /**
+   * Process incoming packets.
+   *
+   * In order to enforce a deterministic ordering on incoming remote
+   * packets the packets at each timestep are first queued then
+   * ProcessRemote will sort and schedule the receive events.  The
+   * incoming MPI messages from remote ranks can arrive in a
+   * non-deterministic ordering.
+   *
+   * \note The ordering is currently biased.
+   */
   void ProcessRemote (void);
+
+  static const uint16_t DEFAULT_MTU = 1500; //!< Default MTU
 
   Ptr<SimpleDistributedChannel> m_channel; //!< the channel the device is connected to
   NetDevice::ReceiveCallback m_rxCallback; //!< Receive callback
   NetDevice::PromiscReceiveCallback m_promiscCallback; //!< Promiscuous receive callback
   Ptr<Node> m_node; //!< Node this netDevice is associated to
   Ptr<NetDeviceQueueInterface> m_queueInterface;   //!< NetDevice queue interface
-
-  static const uint16_t DEFAULT_MTU = 1500; //!< Default MTU
 
   uint16_t m_mtu;   //!< MTU
   uint32_t m_ifIndex; //!< Interface index

@@ -151,8 +151,7 @@ public:
    * \param txTime Transmit time
    */
   virtual void Send (Ptr<Packet> p, uint16_t protocol, Mac48Address to, Mac48Address from,
-                     Ptr<SimpleDistributedNetDevice> sender,
-                     Time txTime);
+                     Ptr<SimpleDistributedNetDevice> sender, Time txTime);
 
   /**
    * Attached a net device to the channel.
@@ -219,7 +218,9 @@ private:
   friend class SimpleDistributedNetDevice;
 
   /**
-   *  Packet send to a destination device.
+   * Packet send to a destination device.
+   *
+   * Used internally to avoid duplicating send code.
    *
    * \param p Packet to be sent
    * \param protocol Protocol number
@@ -247,11 +248,11 @@ private:
    * The sum from the two methods is the amount of time the packet
    * will be delayed in the channel.  
    *
-   * \return delay packet delay time
+   * \return delay Packet delay time
    * \param pkt Packet to be sent
-   * \param to address to send packet to
-   * \param from address the packet is coming from
-   * \param sender netdevice who sent the packet
+   * \param to Address to send packet to
+   * \param from Address the packet is coming from
+   * \param sender Netdevice who sent the packet
    */
   Time TransmitDelaySendSide (Ptr<Packet> pkt,
                               Mac48Address to,
@@ -267,8 +268,8 @@ private:
    * The sum from the two methods is the amount of time the packet
    * will be delayed in the channel.  
    *
-   * \return delay packet delay time
-   * \param pkt packet to be sent
+   * \return delay Packet delay time
+   * \param pkt Packet to be sent
    * \param srcNodeId NodeId of the sender node
    * \param srcPosition Position of the sender node
    * \param dstDevice  Receiving NetDevice
