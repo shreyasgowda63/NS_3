@@ -54,6 +54,7 @@ public:
 namespace ns3 {
 
 class SimpleDistributedNetDevice;
+class MobilityModel;
 class ChannelErrorModel;
 class ChannelDelayModel;
 class Packet;
@@ -142,12 +143,12 @@ public:
    * 
    * Broadcasting and promiscuous modes do not currently scale well.
    *
-   * \param p packet to be sent
-   * \param protocol protocol number
-   * \param to address to send packet to
-   * \param from address the packet is coming from
-   * \param sender netdevice who sent the packet
-   *
+   * \param p Packet to be sent
+   * \param protocol Protocol number
+   * \param to Address to send packet to
+   * \param from Address the packet is coming from
+   * \param sender Source netdevice who sent the packet
+   * \param txTime Transmit time
    */
   virtual void Send (Ptr<Packet> p, uint16_t protocol, Mac48Address to, Mac48Address from,
                      Ptr<SimpleDistributedNetDevice> sender,
@@ -216,6 +217,27 @@ public:
 
 private:
   friend class SimpleDistributedNetDevice;
+
+  /**
+   *  Packet send to a destination device.
+   *
+   * \param p Packet to be sent
+   * \param protocol Protocol number
+   * \param to Address to send packet to
+   * \param from Address the packet is coming from
+   * \param srcDevice Source netdevice who sent the packet
+   * \param dstDevice Destination netdevice to receive the packet
+   * \param srcMobilityModel Source mobility model
+   * \param txTime Transmit time
+   *
+   */
+  void Send (Ptr<Packet> p, uint16_t protocol,
+             Mac48Address to, Mac48Address from,
+             Ptr<SimpleDistributedNetDevice> srcDevice,
+             Ptr<SimpleDistributedNetDevice> dstDevice,
+             Ptr<MobilityModel> srcMobilityModel,
+             Time txTime);
+
   /**
    * Compute packet specific delay between a source and destination on sender rank.
    * 
