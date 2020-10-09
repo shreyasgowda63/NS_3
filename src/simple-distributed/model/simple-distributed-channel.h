@@ -31,25 +31,6 @@
 #include <unordered_map>
 #include <functional>
 
-namespace std {
-template <>
-class hash<ns3::Mac48Address>
-{
-public:
-  size_t operator() (const ns3::Mac48Address &mac48Address ) const
-  {
-    union
-    {
-      uint64_t hash = 0;
-      uint8_t macValues[8];
-    } hashConvert;
-
-    // Note putting 6 values from 48 bit address into low order bytes.
-    mac48Address.CopyTo (&hashConvert.macValues[2]);
-    return std::hash<uint64_t> ()(hashConvert.hash);
-  }
-};
-}
 
 namespace ns3 {
 
@@ -292,14 +273,35 @@ private:
    */
   DataRate m_dataRate; //!< The device nominal data rate.
 
-  /**
+  /*
    * Two data structures are used for keeping track of the attached net devices since there
-   * are two common access method, by index and by MAC address
+   * are two common access method, by index and by MAC address.
    */
-  typedef std::unordered_map<Mac48Address, Ptr<SimpleDistributedNetDevice> > DeviceMap;
+
+  /**
+   * Hashing functor for Mac48Address.
+   */
+  class Mac48AddressHash
+  {
+  public:
+    size_t operator() (const ns3::Mac48Address &mac48Address ) const
+    {
+      union
+      {
+        uint64_t hash = 0;
+        uint8_t macValues[8];
+      } hashConvert;
+      
+      // Note putting 6 values from 48 bit address into low order bytes.
+      mac48Address.CopyTo (&hashConvert.macValues[2]);
+      return std::hash<uint64_t> ()(hashConvert.hash);
+    }
+  };
+  typedef std::unordered_map<Mac48Address, Ptr<SimpleDistributedNetDevice>, Mac48AddressHash> DeviceMap;
   DeviceMap m_devicesMap; //!< devices connected by the channel; lookup by MAC address
 
-  std::vector<Ptr<SimpleDistributedNetDevice> > m_devicesVector; //!< devices connected by the channel; lookup by index
+  typedef std::vector<Ptr<SimpleDistributedNetDevice> > DeviceVector;
+  DeviceVector m_devicesVector; //!< devices connected by the channel; lookup by index
 
   bool m_promiscuous = false;  //!< Is the device in promiscuous mode.  If enabled performance will be negatively impacted; messages need to be sent to all ranks
 
