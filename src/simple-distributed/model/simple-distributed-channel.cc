@@ -92,6 +92,81 @@ SimpleDistributedChannel::SimpleDistributedChannel ()
   NS_LOG_FUNCTION (this);
 }
 
+
+void
+SimpleDistributedChannel::Send (Ptr<Packet> p, uint16_t protocol,
+                                Mac48Address to, Mac48Address from,
+                                Ptr<SimpleDistributedNetDevice> srcDevice,
+                                Ptr<SimpleDistributedNetDevice> dstDevice,
+                                Ptr<MobilityModel> srcMobilityModel,
+                                Time txTime
+                                )
+{
+  NS_LOG_FUNCTION (this << p << protocol << to << from << srcDevice << dstDevice << srcMobilityModel << txTime);
+  
+  auto dstNode = dstDevice->GetNode ();
+  auto mySysId = Simulator::GetSystemId ();
+  auto remoteSysId = dstNode->GetSystemId ();
+
+  // Check if within specified distance.
+  Ptr<MobilityModel> dstMobilityModel = dstNode->GetObject<MobilityModel> ();
+
+  if (m_distance > 0 && dstMobilityModel && srcMobilityModel)
+    {
+      double distanceToDst = srcMobilityModel->GetDistanceFrom (dstMobilityModel);
+      if (distanceToDst > m_distance)
+        {
+          NS_LOG_LOGIC("Dropping packet due to distance " << p);
+          return;
+        }
+    }
+
+  // Calculate delay from channel, added to delay from the net device
+  Time delay = txTime + TransmitDelaySendSide(p, to, from, srcDevice);
+
+  Vector srcPosition (0,0,0);
+  auto srcNode = srcDevice->GetNode ();
+  if (srcMobilityModel)
+    {
+      srcPosition = srcMobilityModel->GetPosition ();
+    }
+  
+  
+  if (mySysId == remoteSysId)
+    {
+      
+      if (m_errorModel && m_errorModel->IsCorrupt (p, srcNode -> GetId (), srcPosition, dstDevice))
+        {
+          m_phyRxDropTrace (p);
+          return;
+        }
+      
+      delay += TransmitDelayReceiveSide(p, srcNode -> GetId (), srcPosition, dstDevice);
+      
+      NS_LOG_LOGIC("Schedule receive for node " << dstNode->GetId () << " delay " << delay);
+      Simulator::ScheduleWithContext (dstNode->GetId (), delay,
+                                      &SimpleDistributedNetDevice::Receive, dstDevice, p->Copy (), protocol, to, from);
+    }
+  else
+    {
+#ifdef NS3_MPI
+      auto sendPacket = p->Copy ();
+      SimpleDistributedTag tag(from, srcNode->GetId (), srcPosition, to, protocol);
+      sendPacket->AddPacketTag (tag);
+      
+      // Calculate the rxTime (absolute)
+      Time rxTime = Simulator::Now () + delay;
+      // A performance enhancement for broadcasts would be to send the
+      // to an MPI rank and then all net devices on the channel to
+      // avoid multiple MPI messages to the same rank.  This would
+      // require some changes to MpiInterface.
+      MpiInterface::SendPacket (sendPacket, rxTime, dstNode->GetId (), dstDevice->GetIfIndex ());
+#else
+      NS_ASSERT_MSG (mySysId == remoteSysId, "If MPI is not used in compilation; all nodes must be on same rank.");
+#endif
+  }
+}  
+
 void
 SimpleDistributedChannel::Send (Ptr<Packet> p, uint16_t protocol,
                                 Mac48Address to, Mac48Address from,
@@ -105,6 +180,7 @@ SimpleDistributedChannel::Send (Ptr<Packet> p, uint16_t protocol,
 
   if (m_promiscuous || to.IsBroadcast ())
     {
+      // Send to all devices on the channel.
       for (std::vector<Ptr<SimpleDistributedNetDevice> >::const_iterator i = m_devicesVector.begin (); i != m_devicesVector.end (); ++i)
         {
           Ptr<SimpleDistributedNetDevice> dstDevice = *i;
@@ -112,152 +188,28 @@ SimpleDistributedChannel::Send (Ptr<Packet> p, uint16_t protocol,
             {
               continue;
             }
-          auto dstNode = dstDevice->GetNode ();
-          auto mySysId = Simulator::GetSystemId ();
-          auto remoteSysId = dstNode->GetSystemId ();
 
-
-          // FIXME what about multicast?
-          // Check if within specified distance.
-          Ptr<MobilityModel> dstMobilityModel = dstNode->GetObject<MobilityModel> ();
-
-          if (m_distance > 0 && dstMobilityModel && srcMobilityModel)
-            {
-              double distanceToDst = srcMobilityModel->GetDistanceFrom (dstMobilityModel);
-              if (distanceToDst > m_distance)
-                {
-                  NS_LOG_LOGIC("Dropping packet due to distance " << p);
-                  continue;
-                }
-            }
-
-          // Calculate delay from channel, added to delay from the net device
-          Time delay = txTime + TransmitDelaySendSide(p, to, from, sender);
-
-          Vector srcPosition (0,0,0);
-          auto srcNode = sender->GetNode ();
-          Ptr<MobilityModel> srcMobilityModel = srcNode->GetObject<MobilityModel> ();
-          if (srcMobilityModel)
-            {
-              srcPosition = srcMobilityModel->GetPosition ();
-            }
-
-
-          if (mySysId == remoteSysId)
-            {
-
-              if (m_errorModel && m_errorModel->IsCorrupt (p,
-                                                           srcNode -> GetId (),
-                                                           srcPosition,
-                                                           dstDevice))
-                {
-                  m_phyRxDropTrace (p);
-                  continue;
-                }
-
-              delay += TransmitDelayReceiveSide(p,
-                                                srcNode -> GetId (),
-                                                srcPosition,
-                                                dstDevice);
-
-              NS_LOG_LOGIC("Schedule receive for node " << dstNode->GetId () << " delay " << delay);
-              Simulator::ScheduleWithContext (dstNode->GetId (), delay,
-                                              &SimpleDistributedNetDevice::Receive, dstDevice, p->Copy (), protocol, to, from);
-            }
-          else
-#ifdef NS3_MPI
-            {
-              auto sendPacket = p->Copy ();
-              SimpleDistributedTag tag(from, srcNode->GetId (), srcPosition, to, protocol);
-              sendPacket->AddPacketTag (tag);
-
-              // Calculate the rxTime (absolute)
-              Time rxTime = Simulator::Now () + delay;
-              MpiInterface::SendPacket (sendPacket, rxTime, dstNode->GetId (), dstDevice->GetIfIndex ());
-            }
-#else
-            {
-              NS_ASSERT_MSG (mySysId == remoteSysId, "If MPI is not used in compilation; all nodes must be on same rank.");
-            }
-#endif
+          Send (p, protocol,
+                to, from,
+                sender,
+                dstDevice,
+                srcMobilityModel,
+                txTime
+                );
         }
     }
-  else // not promiscuous || broadcast
+  else 
     {
+      // not promiscuous || broadcast only send to the destination
       DeviceMap::const_iterator got = m_devicesMap.find (to);
       Ptr<SimpleDistributedNetDevice> dstDevice = got->second;
 
-      auto dstNode = dstDevice->GetNode ();
-      auto mySysId = Simulator::GetSystemId ();
-      auto remoteSysId = dstNode->GetSystemId ();
-
-      // Check if within specified distance.
-      Ptr<MobilityModel> dstMobilityModel = dstNode->GetObject<MobilityModel> ();
-      // FIXME better error reporting? or assert?
-
-      // Default is to send
-      double distanceToDst = m_distance;
-      if (m_distance > 0 && dstMobilityModel && srcMobilityModel)
-        {
-          distanceToDst = srcMobilityModel->GetDistanceFrom (dstMobilityModel);
-        }
-
-      if (distanceToDst <= m_distance)
-        {
-          // Calculate delay from channel, added to delay from the net device
-          Time delay = txTime + TransmitDelaySendSide(p, to, from, sender);
-          
-          Vector srcPosition (0,0,0);
-          auto srcNode = sender->GetNode ();
-          Ptr<MobilityModel> srcMobilityModel = srcNode->GetObject<MobilityModel> ();
-          if (srcMobilityModel)
-            {
-              srcPosition = srcMobilityModel->GetPosition ();
-            }
-          
-          if (mySysId == remoteSysId)
-            {
-              if (m_errorModel && m_errorModel->IsCorrupt (p,
-                                                           srcNode -> GetId (),
-                                                           srcPosition,
-                                                           dstDevice))
-                {
-                  m_phyRxDropTrace (p);
-                }
-              else
-                {
-                  delay += TransmitDelayReceiveSide(p,
-                                                    srcNode -> GetId (),
-                                                    srcPosition,
-                                                    dstDevice);
-                  
-                  NS_LOG_LOGIC("Schedule receive for node " << dstNode->GetId () << " delay " << delay);
-                  Simulator::ScheduleWithContext (dstNode->GetId (), delay,
-                                                  &SimpleDistributedNetDevice::Receive, dstDevice, p->Copy (), protocol, to, from);
-                }
-            }
-          else
-#ifdef NS3_MPI
-            {
-              auto sendPacket = p->Copy ();
-              
-              SimpleDistributedTag tag(from, srcNode->GetId (), srcPosition, to, protocol);
-              sendPacket->AddPacketTag (tag);
-              
-              // Calculate the rxTime (absolute)
-              Time rxTime = Simulator::Now () + delay;
-              MpiInterface::SendPacket (sendPacket, rxTime, dstNode->GetId (), dstDevice->GetIfIndex ());
-            }
-#else
-          {
-            NS_ASSERT_MSG (mySysId == remoteSysId, "If MPI is not used in compilation; all nodes must be on same rank.");
-          }
-#endif
-        }
-      else
-        {
-          NS_LOG_LOGIC("Dropping packet due to distance " << p);
-        }
+      Send (p, protocol,
+            to, from,
+            sender, dstDevice,
+            srcMobilityModel,
+            txTime
+            );
     }
 }
 
@@ -354,15 +306,6 @@ Time SimpleDistributedChannel::TransmitDelayReceiveSide (Ptr<Packet> p,
 
   if (m_delayModel)
     {
-      // Get sender position
-      // Vector srcPosition (0,0,0);
-      // auto srcNode = sender->GetNode ();
-      //Ptr<MobilityModel> srcMobilityModel = srcNode->GetObject<MobilityModel> ();
-      // if (srcMobilityModel)
-      // {
-      // srcPosition = srcMobilityModel->GetPosition ();
-      //}
-
       delay += m_delayModel->ComputeDelay (p, srcNodeId, srcPosition, dstDevice);
     }
   
