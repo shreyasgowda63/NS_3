@@ -32,7 +32,7 @@ network between the attached net devices.
 
 The delay model has a delay component that can be specified at the
 sending net device and a delay component specified in the channel.
-The delay model was designed to be abstract and generic delay that can
+The delay model was designed to be an abstract and generic delay that can
 include node location effects.  The channel model does not directly
 represent any specific real network technology.
 
