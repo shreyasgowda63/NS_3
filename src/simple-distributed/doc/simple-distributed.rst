@@ -9,7 +9,7 @@ Overview of the SimpleDistributed model
 
 The |ns3| simple distributed model is a model of a very abstract fully
 connected network which enables nodes to be distributed across
-proccessors.  A motivating use case was a desire to simulate large
+processors.  A motivating use case was a desire to simulate large
 wireless networks in parallel.  It can be used where you want to
 achieve parallelism and can tolerate a very abstract channel model
 without represenstaion of interference.  The model is similiar to
@@ -48,7 +48,7 @@ The SimpleDistributedChannel provides following Attributes:
 
 * Delay:      An ns3::Time specifying the propagation delay for the channel.
 * DataRate:   An ns3::Rate specifying the propagation delay for the channel.
-* DelayModel: An ns3::ChannelDelayModel to enable a user specified method of popogation delay on the channel.
+* DelayModel: An ns3::ChannelDelayModel to enable a user specified method of propagation delay on the channel.
 
 The full network delay is computed using the net device and channel values::
 
@@ -57,9 +57,9 @@ Time totalDelay = netdevice.Delay + netdevice.Rate(packet) +
    DelayModel.ComputeDelay (packet, sourcePosition, destinationNetDevice);
 
 Most use cases will not require all the attributes, the complexity is
-present to enable to support a wide verity of use cases with a single
-numeric model.  Delay and rate atttributes not required for a specific
-model should be set to 0.
+present to support a wide veriety of use cases with a single numeric
+model.  Delay and rate attributes not required for a specific model
+should be set to 0.
 
 Using the SimpleDistributedNetDevice
 ************************************
@@ -78,10 +78,10 @@ helper. You just ask this helper to create as many computers (we call them
   NodeContainer nodes;
   nodes.Create (2);
 
-Once you have your nodes, you need to instantiate a ``SimpleDistrubedHelper`` and
+Once you have your nodes, you need to instantiate a `` SimpleDistributedHelper`` and
 set any attributes you may want to change. Note that since this is a::
 
-  SimleDistributedHelper simpleDistributed;
+  SimpleDistributedHelper simpleDistributed;
   simpleDistributed.SetDeviceAttribute ("DataRate", StringValue ("5Mbps"));
   simpleDistributed.SetChannelAttribute ("Delay", StringValue ("2ms"));
  
@@ -125,7 +125,7 @@ The upper-level (MAC) trace hooks for the SimpleDistributedNetDevice are, in fac
 exactly these three trace sources on the single transmit queue of the device.  
 
 The m_traceEnqueue event is triggered when a packet is placed on the transmit
-queue. This happens at the time that ns3::PointtoPointNetDevice::Send or 
+queue. This happens at the time that ns3::PointTtoPointNetDevice::Send or 
 ns3::SimpleDistributedNetDevice::SendFrom is called by a higher layer to queue a 
 packet for transmission. An Enqueue trace event firing should be interpreted
 as only indicating that a higher level protocol has sent a packet to the device.
@@ -139,13 +139,18 @@ that functions much  like a transmit complete interrupt service routine. An
 Dequeue trace event firing may be viewed as indicating that the
 SimpleDistributedNetDevice has begun transmitting a packet.
 
+The m_traceDrop event is fired when a packet cannot be enqueued on the
+transmit queue because it is full. This event only fires if the queue
+is full and we do not overload this event to indicate that the
+SimpleDistributedChannel is "full."
+
+
 Lower-Level (PHY) Hooks
 +++++++++++++++++++++++
 
 Similar to the upper level trace hooks, there are trace hooks available at the
 lower levels of the net device. We call these the PHY hooks. These events fire
-from the device methods that talk directly to the 
-SimpleDistrubedChannel.
+from the device methods that talk directly to the SimpleDistributedChannel.
 
 The trace source m_dropTrace is called to indicate a packet that is dropped by
 the device. This happens when a packet is discarded as corrupt due to a receive
