@@ -53,34 +53,21 @@ SimpleDistributedHelper::SimpleDistributedHelper ()
   m_pointToPointMode = false;
 }
 
+template <typename... Args>
 void 
-SimpleDistributedHelper::SetQueue (std::string type,
-                                 std::string n1, const AttributeValue &v1,
-                                 std::string n2, const AttributeValue &v2,
-                                 std::string n3, const AttributeValue &v3,
-                                 std::string n4, const AttributeValue &v4)
+SimpleDistributedHelper::SetQueue (std::string type, Args&&... args)
 {
   QueueBase::AppendItemTypeIfNotPresent (type, "Packet");
 
   m_queueFactory.SetTypeId (type);
-  m_queueFactory.Set (n1, v1);
-  m_queueFactory.Set (n2, v2);
-  m_queueFactory.Set (n3, v3);
-  m_queueFactory.Set (n4, v4);
+  m_channelFactory.Set (args...);
 }
 
-void
-SimpleDistributedHelper::SetChannel (std::string type,
-                                   std::string n1, const AttributeValue &v1,
-                                   std::string n2, const AttributeValue &v2,
-                                   std::string n3, const AttributeValue &v3,
-                                   std::string n4, const AttributeValue &v4)
+template <typename... Args>
+void SimpleDistributedHelper::SetChannel (std::string type, Args&&... args)
 {
   m_channelFactory.SetTypeId (type);
-  m_channelFactory.Set (n1, v1);
-  m_channelFactory.Set (n2, v2);
-  m_channelFactory.Set (n3, v3);
-  m_channelFactory.Set (n4, v4);
+  m_channelFactory.Set (args...);
 }
 
 void
