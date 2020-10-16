@@ -54,49 +54,35 @@ public:
    * This method allows one to set the type of the queue that is automatically
    * created when the device is created and attached to a node.
    *
-   * \param type the type of queue
-   * \param n1 the name of the attribute to set on the queue
-   * \param v1 the value of the attribute to set on the queue
-   * \param n2 the name of the attribute to set on the queue
-   * \param v2 the value of the attribute to set on the queue
-   * \param n3 the name of the attribute to set on the queue
-   * \param v3 the value of the attribute to set on the queue
-   * \param n4 the name of the attribute to set on the queue
-   * \param v4 the value of the attribute to set on the queue
+   * The args sequence can be made of any number of pairs, each consisting of a
+   * name (of std::string type) followed by a value (of const AttributeValue & type).
    *
    * Set the type of queue to create and associated to each
    * SimpleNetDevice created through SimpleDistributedHelper::Install.
+   *
+   * \param type the type of queue
+   * \param [in] args A sequence of name-value pairs of additional attributes to set.
+   *
    */
-  void SetQueue (std::string type,
-                 std::string n1 = "", const AttributeValue &v1 = EmptyAttributeValue (),
-                 std::string n2 = "", const AttributeValue &v2 = EmptyAttributeValue (),
-                 std::string n3 = "", const AttributeValue &v3 = EmptyAttributeValue (),
-                 std::string n4 = "", const AttributeValue &v4 = EmptyAttributeValue ());
+  template <typename... Args>
+  void SetQueue (std::string type, Args&&... args);
 
   /**
    * Each net device must have a channel to pass packets through.
    * This method allows one to set the type of the channel that is automatically
    * created when the device is created and attached to a node.
    *
-   * \param type the type of queue
-   * \param n1 the name of the attribute to set on the queue
-   * \param v1 the value of the attribute to set on the queue
-   * \param n2 the name of the attribute to set on the queue
-   * \param v2 the value of the attribute to set on the queue
-   * \param n3 the name of the attribute to set on the queue
-   * \param v3 the value of the attribute to set on the queue
-   * \param n4 the name of the attribute to set on the queue
-   * \param v4 the value of the attribute to set on the queue
+   * The args sequence can be made of any number of pairs, each consisting of a
+   * name (of std::string type) followed by a value (of const AttributeValue & type).
    *
    * Set the type of channel to create and associated to each
    * SimpleNetDevice created through SimpleDistributedHelper::Install.
+   *
+   * \param type the type of queue
+   * \param [in] args A sequence of name-value pairs of additional attributes to set.
    */
-  void SetChannel (std::string type,
-                   std::string n1 = "", const AttributeValue &v1 = EmptyAttributeValue (),
-                   std::string n2 = "", const AttributeValue &v2 = EmptyAttributeValue (),
-                   std::string n3 = "", const AttributeValue &v3 = EmptyAttributeValue (),
-                   std::string n4 = "", const AttributeValue &v4 = EmptyAttributeValue ());
-
+  template <typename... Args>
+  void SetChannel (std::string type, Args&&... args);
 
   /**
    * \param n1 the name of the attribute to set
@@ -108,11 +94,11 @@ public:
   void SetDeviceAttribute (std::string n1, const AttributeValue &v1);
 
   /**
-   * \param n1 the name of the attribute to set
-   * \param v1 the value of the attribute to set
-   *
    * Set these attributes on each ns3::CsmaChannel created
    * by SimpleDistributedHelper::Install
+   *
+   * \param n1 the name of the attribute to set
+   * \param v1 the value of the attribute to set
    */
   void SetChannelAttribute (std::string n1, const AttributeValue &v1);
 
