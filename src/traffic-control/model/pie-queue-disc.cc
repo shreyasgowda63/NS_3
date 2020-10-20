@@ -111,17 +111,27 @@ TypeId PieQueueDisc::GetTypeId (void)
                    "ECN marking threshold (RFC 8033 suggests 0.1 (i.e., 10%) default)",
                    DoubleValue (0.1),
                    MakeDoubleAccessor (&PieQueueDisc::m_markEcnTh),
-                   MakeDoubleChecker<double> (0,1))
+                   MakeDoubleChecker<double> (0, 1))
     .AddAttribute ("UseDerandomization",
                    "Enable/Disable Derandomization feature mentioned in RFC 8033",
                    BooleanValue (false),
                    MakeBooleanAccessor (&PieQueueDisc::m_useDerandomization),
                    MakeBooleanChecker ())
+    .AddAttribute ("CeThreshold",
+                   "The FqPie CE threshold for marking packets",
+                   TimeValue (Time::Max ()),
+                   MakeTimeAccessor (&PieQueueDisc::m_ceThreshold),
+                   MakeTimeChecker ())
     .AddAttribute ("ActiveThreshold",
                    "Threshold for activating PIE (disabled by default)",
                    TimeValue (Time::Max ()),
                    MakeTimeAccessor (&PieQueueDisc::m_activeThreshold),
                    MakeTimeChecker ())
+    .AddAttribute ("UseL4s",
+                   "True to use L4S (only ECT1 packets are marked at CE threshold)",
+                   BooleanValue (false),
+                   MakeBooleanAccessor (&PieQueueDisc::m_useL4s),
+                   MakeBooleanChecker ())
   ;
 
   return tid;
@@ -169,6 +179,24 @@ PieQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
   NS_LOG_FUNCTION (this << item);
 
   QueueSize nQueued = GetCurrentSize ();
+  // If L4S is enabled, then check if the packet is ECT1, and if it is then set isEct true
+  bool isEct1 = false;
+  if (item && m_useL4s)
+    {
+      uint8_t tosByte = 0;
+      if (item->GetUint8Value (QueueItem::IP_DSFIELD, tosByte) && (((tosByte & 0x3) == 1) || (tosByte & 0x3) == 3))
+        {
+          if ((tosByte & 0x3) == 1)
+            {
+              NS_LOG_DEBUG ("Enqueueing ECT1 packet " << static_cast<uint16_t> (tosByte & 0x3));
+            }
+          else 
+            {
+              NS_LOG_DEBUG ("Enqueueing CE packet " << static_cast<uint16_t> (tosByte & 0x3));
+            }
+          isEct1 = true; 
+        }
+    }
 
   if (nQueued + item > GetMaxSize ())
     {
@@ -177,7 +205,9 @@ PieQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
       m_accuProb = 0;
       return false;
     }
-  else if ((m_activeThreshold == Time::Max () || m_active) && DropEarly (item, nQueued.GetValue ()))
+    // isEct1 will be true only if L4S enabled as well as the packet is ECT1.
+    // If L4S is enabled and packet is ECT1 then directly enqueue the packet.
+  else if (!isEct1 && (m_activeThreshold == Time::Max () || m_active) && DropEarly (item, nQueued.GetValue ()))
     {
       if (!m_useEcn || m_dropProb >= m_markEcnTh || !Mark (item, UNFORCED_MARK))
         {
@@ -451,6 +481,29 @@ PieQueueDisc::DoDequeue ()
   Ptr<QueueDiscItem> item = GetInternalQueue (0)->Dequeue ();
   double now = Simulator::Now ().GetSeconds ();
   uint32_t pktSize = item->GetSize ();
+
+  // If L4S is enabled and packet is ECT1, then check if delay is greater than CE threshold and if it is then mark the packet,
+  // and skip PIE steps, and return the item.
+  if (item && m_useL4s)
+    {
+      uint8_t tosByte = 0;
+      if (item->GetUint8Value (QueueItem::IP_DSFIELD, tosByte) && (((tosByte & 0x3) == 1) || (tosByte & 0x3) == 3))
+        {
+          if ((tosByte & 0x3) == 1)
+            {
+              NS_LOG_DEBUG ("ECT1 packet " << static_cast<uint16_t> (tosByte & 0x3));
+            }
+          else 
+            {
+              NS_LOG_DEBUG ("CE packet " << static_cast<uint16_t> (tosByte & 0x3));
+            }
+          if (Time (Seconds (now - item->GetTimeStamp ().GetSeconds ())) > m_ceThreshold && Mark (item, CE_THRESHOLD_EXCEEDED_MARK))
+            {
+              NS_LOG_LOGIC ("Marking due to CeThreshold " << m_ceThreshold.GetSeconds ());
+            }
+          return item;
+        }
+    }  
 
   // if not in a measurement cycle and the queue has built up to dq_threshold,
   // start the measurement cycle

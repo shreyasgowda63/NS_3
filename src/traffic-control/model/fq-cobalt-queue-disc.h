@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2016 Universita' degli Studi di Napoli Federico II
+ * Copyright (c) 2020 NITK Surathkal
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,37 +15,51 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Authors: Pasquale Imputato <p.imputato@gmail.com>
- *          Stefano Avallone <stefano.avallone@unina.it>
+ * Authors: Bhaskar Kataria <bhaskar.k7920@gmail.com>
+ *          Tom Henderson <tomhend@u.washington.edu> 
+ *          Mohit P. Tahiliani <tahiliani@nitk.edu.in>
+ *          Vivek Jain <jain.vivek.anand@gmail.com>
+ *          Ankit Deepak <adadeepak8@gmail.com>
  */
 
-#ifndef FQ_CODEL_QUEUE_DISC
-#define FQ_CODEL_QUEUE_DISC
+#ifndef FQ_COBALT_QUEUE_DISC
+#define FQ_COBALT_QUEUE_DISC
 
 #include "ns3/fq-queue-disc.h"
-
 namespace ns3 {
 
 /**
  * \ingroup traffic-control
  *
- * \brief A flow queue used by the FqCoDel queue disc
+ * \brief A FqCobalt packet queue disc
  */
 
-class FqCoDelQueueDisc : public FqQueueDisc{
+class FqCobaltQueueDisc : public FqQueueDisc {
 public:
   /**
-   * \brief FqCoDelQueueDisc constructor
+   * \brief Get the type ID.
+   * \return the object TypeId
    */
-  FqCoDelQueueDisc ();
-
-  virtual ~FqCoDelQueueDisc ();
   static TypeId GetTypeId (void);
+  /**
+   * \brief FqCobaltQueueDisc constructor
+   */
+  FqCobaltQueueDisc ();
+
+  virtual ~FqCobaltQueueDisc ();
+
 private:
-   void InitializeParams (void);
+  virtual void InitializeParams (void);
   std::string m_interval;    //!< CoDel interval attribute
   std::string m_target;      //!< CoDel target attribute
+  double m_increment;        //!< increment value for marking probability
+  double m_decrement;        //!< decrement value for marking probability
+  double m_Pdrop;            //!< Drop Probability
+  Time m_blueThreshold;      //!< Threshold to enable blue enhancement
+
 };
+
 } // namespace ns3
 
-#endif /* FQ_CODEL_QUEUE_DISC */
+#endif /* FQ_COBALT_QUEUE_DISC */
+
