@@ -94,7 +94,7 @@ SimpleDistributedParallelTestCase::GetCommandTemplate (void) const
 std::string
 SimpleDistributedParallelTestCase::GetPostProcessingCommand (void) const
 {
-  std::string command ("| sort ");
+  std::string command ("| grep TEST | sort ");
   return command;
 }
 
