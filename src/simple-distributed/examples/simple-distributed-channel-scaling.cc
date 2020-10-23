@@ -748,7 +748,7 @@ main (int argc, char *argv[])
       else
         {
           passed &= false;
-          std::cout << "FAILED : transmission delays != expected; " << g_receviedSumTime << "!=" << expectedSumTxTime << "\n";
+          std::cout << "TEST : FAILED : transmission delays != expected; " << g_receviedSumTime << "!=" << expectedSumTxTime << "\n";
         }
 
       if( g_receivedPacketNumber == expectedNumberOfPacketsRecvd)
@@ -757,12 +757,12 @@ main (int argc, char *argv[])
       else
         {
           passed &= false;
-          std::cout << "FAILED : number of packets received != expected; " << g_receivedPacketNumber << "!=" << expectedNumberOfPacketsRecvd << "\n";
+          std::cout << "TEST : FAILED : number of packets received != expected; " << g_receivedPacketNumber << "!=" << expectedNumberOfPacketsRecvd << "\n";
         }
 
       if(passed)
         {
-          std::cout << "PASSED\n";
+          std::cout << "TEST : PASSED\n";
         }
     }
 
