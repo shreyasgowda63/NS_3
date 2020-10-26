@@ -134,8 +134,10 @@ Ptr<NetDevice>
 SimpleNetDeviceHelper::InstallPriv (Ptr<Node> node, Ptr<SimpleChannel> channel) const
 {
   Ptr<SimpleNetDevice> device = m_deviceFactory.Create<SimpleNetDevice> ();
+  Ptr<NetDeviceState> netDevState = CreateObject<NetDeviceState> ();
   device->SetAttribute ("PointToPointMode", BooleanValue (m_pointToPointMode));
   device->SetAddress (Mac48Address::Allocate ());
+  device->AggregateObject(netDevState);
   node->AddDevice (device);
   device->SetChannel (channel);
   Ptr<Queue<Packet> > queue = m_queueFactory.Create<Queue<Packet> > ();

@@ -84,10 +84,10 @@ NetDeviceState::SetDown (void)
       NS_LOG_WARN ("Device is already down.");
       return;
     }
-  DoSetDown ();
   SetOperationalState (IF_OPER_DOWN);
   m_isUp = false;
   m_stateChangeTrace (false, m_operationalState);
+  DoSetDown ();
 }
 
 void
@@ -120,6 +120,8 @@ void
 NetDeviceState::DoSetUp (void)
 {
   // Subclasses may override for device-specific actions
+  NS_LOG_FUNCTION (this);
+  SetOperationalState (IF_OPER_UP);
 }
 
 void

@@ -167,6 +167,12 @@ protected:
   virtual void DoInitialize (void);
 
   /**
+   * Traced callback for tracing device states.
+   */
+  TracedCallback<bool, OperationalState> m_stateChangeTrace;
+
+  private:
+  /**
    * Represents IFF_UP in net_device_flags enum
    * in Linux. Used to store the administrative
    * state of the NetDevice.
@@ -178,10 +184,7 @@ protected:
    */
   OperationalState m_operationalState;
 
-  /**
-   * Traced callback for tracing device states.
-   */
-  TracedCallback<bool, OperationalState> m_stateChangeTrace;
+  
 };
 
 /**
