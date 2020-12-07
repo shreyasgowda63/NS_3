@@ -72,7 +72,8 @@ public:
   {
     DROP_FRAGMENT_TIMEOUT = 1, /**< Fragment timeout exceeded */
     DROP_FRAGMENT_BUFFER_FULL, /**< Fragment buffer size exceeded */
-    DROP_UNKNOWN_EXTENSION /**< Unsupported compression kind */
+    DROP_UNKNOWN_EXTENSION, /**< Unsupported compression kind */
+    DROP_SATETFUL_DECOMPRESSION_PROBLEM, /**< Decompression failed due to missing or expired context */
   };
 
   /**
@@ -161,7 +162,7 @@ public:
                                       uint32_t ifindex);
 
   /**
-   * TracedCallback signature for
+   * TracedCallback signature fo packet drop events
    *
    * \param [in] reason The reason for the drop.
    * \param [in] packet The packet.
@@ -175,6 +176,19 @@ public:
                                       Ptr<const Packet> packet,
                                       Ptr<SixLowPanNetDevice> sixNetDevice,
                                       uint32_t ifindex);
+
+  /**
+   * Add, remove, or update contexts used in the compression/decompression.
+   *
+   * \param [in] contextId context id (most be between 0 and 15 included)
+   * \param [in] contextPrefix context prefix to be used in compression/decompression
+   * \param [in] contextLength context prefix length
+   * \param [in] compressionAllowed compression and decompression allowed (true), decompression only (false)
+   * \param [in] validLifetime validity time
+   *
+   * Note that an entry with a zero validUntil will be immediately removed.
+   */
+  void UpdateContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime);
 
 protected:
   virtual void DoDispose (void);
@@ -311,8 +325,9 @@ private:
    * \param [in] packet The packet to be compressed.
    * \param [in] src The MAC source address.
    * \param [in] dst The MAC destination address.
+   * \return true if the packet can not be decompressed due to wrong context informations.
    */
-  void DecompressLowPanIphc (Ptr<Packet> packet, Address const &src, Address const &dst);
+  bool DecompressLowPanIphc (Ptr<Packet> packet, Address const &src, Address const &dst);
 
   /**
    * \brief Compress the headers according to NHC compression.
@@ -331,9 +346,9 @@ private:
    * \param [in] dst The MAC destination address.
    * \param [in] srcAddress The IPv6 source address.
    * \param [in] dstAddress The IPv6 destination address.
-   * \return The decompressed header type.
+   * \return A std::pair containing the decompressed header type and a flag - true if the packet can not be decompressed due to wrong context informations.
    */
-  uint8_t DecompressLowPanNhc (Ptr<Packet> packet, Address const &src, Address const &dst, Ipv6Address srcAddress, Ipv6Address dstAddress);
+  std::pair<uint8_t, bool> DecompressLowPanNhc (Ptr<Packet> packet, Address const &src, Address const &dst, Ipv6Address srcAddress, Ipv6Address dstAddress);
 
   /**
    * \brief Compress the headers according to NHC compression.
@@ -548,6 +563,36 @@ private:
   uint32_t m_compressionThreshold; //!< Minimum L2 payload size.
 
   Ptr<UniformRandomVariable> m_rng; //!< Rng for the fragments tag.
+
+  /**
+   * Structure holding the informations for a context (used in compression and decompression)
+   */
+  struct ContextEntry
+  {
+    Ipv6Prefix contextPrefix;    //!< context prefix to be used in compression/decompression
+    bool compressionAllowed;     //!< compression and decompression allowed (true), decompression only (false)
+    Time validLifetime;          //!< validity period
+  };
+
+  std::map<uint8_t, ContextEntry> m_contextTable; //!< Table of the contexts used in compression/decompression
+
+  /**
+   * \brief Finds if the given unicast address matches a context for compression
+   *
+   * \param[in] address the address to check
+   * \param[out] the context found
+   * \return true if a valid context has been found
+   */
+  bool FindUnicastCompressionContext (Ipv6Address address, uint8_t& contextId);
+
+  /**
+   * \brief Finds if the given multicast address matches a context for compression
+   *
+   * \param[in] address the address to check
+   * \param[out] the context found
+   * \return true if a valid context has been found
+   */
+  bool FindMulticastCompressionContext (Ipv6Address address, uint8_t& contextId);
 };
 
 } // namespace ns3

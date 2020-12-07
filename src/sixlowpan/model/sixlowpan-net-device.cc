@@ -339,8 +339,14 @@ void SixLowPanNetDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort,
       isPktDecompressed = true;
       break;
     case SixLowPanDispatch::LOWPAN_IPHC:
-      DecompressLowPanIphc (copyPkt, realSrc, realDst);
-      isPktDecompressed = true;
+      if (DecompressLowPanIphc (copyPkt, realSrc, realDst))
+        {
+          m_dropTrace (DROP_SATETFUL_DECOMPRESSION_PROBLEM, copyPkt, m_node->GetObject<SixLowPanNetDevice> (), GetIfIndex ());
+        }
+      else
+        {
+          isPktDecompressed = true;
+        }
       break;
     default:
       NS_LOG_DEBUG ("Unsupported 6LoWPAN encoding: dropping.");
@@ -1029,12 +1035,12 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
       Ipv6Address checker = Ipv6Address ("fe80:0000:0000:0000:0000:00ff:fe00:1");
       checker.GetBytes (unicastAddrCheckerBuf);
 
-      // \todo Add the check of SAC if there is context-based compression
-      // Set the Source Address
-      iphcHeader.SetSrcAddress (srcAddr);
-
       Ipv6Address mySrcAddr = Ipv6Address::MakeAutoconfiguredLinkLocalAddress (src);
       NS_LOG_LOGIC ("Checking source compression: " << mySrcAddr << " - " << srcAddr );
+
+      uint8_t serializedSrcAddress[16];
+      uint8_t srcInlinePart[16] = {};
+      srcAddr.Serialize (serializedSrcAddress);
 
       if ( mySrcAddr == srcAddr )
         {
@@ -1042,14 +1048,19 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
         }
       else if (memcmp (addressBuf, unicastAddrCheckerBuf, 14) == 0)
         {
+          memcpy (srcInlinePart, serializedSrcAddress+14, 2);
+          iphcHeader.SetSrcInlinePart (srcInlinePart);
           iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_16);
         }
       else if ( srcAddr.IsLinkLocal () )
         {
+          memcpy (srcInlinePart, serializedSrcAddress+8, 8);
+          iphcHeader.SetSrcInlinePart (srcInlinePart);
           iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_64);
         }
       else
         {
+          iphcHeader.SetSrcInlinePart (serializedSrcAddress);
           iphcHeader.SetSam (SixLowPanIphc::HC_INLINE);
         }
 
@@ -1070,12 +1081,12 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
       Ipv6Address dstAddr = ipHeader.GetDestinationAddress ();
       dstAddr.GetBytes (addressBuf);
 
-      // \todo Add the check of DAC if there is context-based compression
-      // Set the Destination Address
-      iphcHeader.SetDstAddress (dstAddr);
-
       Ipv6Address myDstAddr = Ipv6Address::MakeAutoconfiguredLinkLocalAddress (dst);
       NS_LOG_LOGIC ("Checking destination compression: " << myDstAddr << " - " << dstAddr );
+
+      uint8_t serializedDstAddress[16];
+      uint8_t dstInlinePart[16] = {};
+      dstAddr.Serialize (serializedDstAddress);
 
       if ( !iphcHeader.GetM () )
       // Unicast address
@@ -1086,14 +1097,19 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
             }
           else if (memcmp (addressBuf, unicastAddrCheckerBuf, 14) == 0)
             {
+              memcpy (dstInlinePart, serializedDstAddress+14, 2);
+              iphcHeader.SetDstInlinePart (dstInlinePart);
               iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_16);
             }
           else if ( dstAddr.IsLinkLocal () )
             {
+              memcpy (dstInlinePart, serializedDstAddress+8, 8);
+              iphcHeader.SetDstInlinePart (dstInlinePart);
               iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_64);
             }
           else
             {
+              iphcHeader.SetDstInlinePart (serializedDstAddress);
               iphcHeader.SetDam (SixLowPanIphc::HC_INLINE);
             }
         }
@@ -1107,6 +1123,8 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
           // The address takes the form ff02::00XX.
           if ( memcmp (addressBuf, multicastAddrCheckerBuf, 15) == 0 )
             {
+              memcpy (dstInlinePart, serializedDstAddress+15, 1);
+              iphcHeader.SetDstInlinePart (dstInlinePart);
               iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_0);
             }
           // The address takes the form ffXX::00XX:XXXX.
@@ -1114,6 +1132,9 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
           else if ( (addressBuf[0] == multicastAddrCheckerBuf[0])
                     && (memcmp (addressBuf + 2, multicastAddrCheckerBuf + 2, 11) == 0) )
             {
+              memcpy (dstInlinePart, serializedDstAddress+1, 1);
+              memcpy (dstInlinePart+1, serializedDstAddress+13, 3);
+              iphcHeader.SetDstInlinePart (dstInlinePart);
               iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_16);
             }
           // The address takes the form ffXX::00XX:XXXX:XXXX.
@@ -1121,10 +1142,14 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
           else if ( (addressBuf[0] == multicastAddrCheckerBuf[0])
                     && (memcmp (addressBuf + 2, multicastAddrCheckerBuf + 2, 9) == 0) )
             {
+              memcpy (dstInlinePart, serializedDstAddress+1, 1);
+              memcpy (dstInlinePart+1, serializedDstAddress+11, 5);
+              iphcHeader.SetDstInlinePart (dstInlinePart);
               iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_64);
             }
           else
             {
+              iphcHeader.SetDstInlinePart (serializedDstAddress);
               iphcHeader.SetDam (SixLowPanIphc::HC_INLINE);
             }
         }
@@ -1163,7 +1188,7 @@ SixLowPanNetDevice::CanCompressLowPanNhc (uint8_t nextHeader)
   return ret;
 }
 
-void
+bool
 SixLowPanNetDevice::DecompressLowPanIphc (Ptr<Packet> packet, Address const &src, Address const &dst)
 {
   NS_LOG_FUNCTION (this << *packet << src << dst);
@@ -1181,29 +1206,99 @@ SixLowPanNetDevice::DecompressLowPanIphc (Ptr<Packet> packet, Address const &src
   // Source address
   if ( encoding.GetSac () )
     {
+      // Source address compression uses stateful, context-based compression.
       if ( encoding.GetSam () == SixLowPanIphc::HC_INLINE )
         {
           ipHeader.SetSourceAddress ( Ipv6Address::GetAny () );
         }
       else
         {
-          NS_ABORT_MSG ("SAC option not yet implemented");
+          uint8_t contextId = encoding.GetSac ();
+          if (m_contextTable.find (contextId) == m_contextTable.end ())
+            {
+              NS_LOG_LOGIC ("Unknown Source compression context (" << +contextId << "), dropping packet");
+              return true;
+            }
+          if (m_contextTable[contextId].validLifetime < Simulator::Now ())
+            {
+              NS_LOG_LOGIC ("Expired Source compression context (" << +contextId << "), dropping packet");
+              return true;
+           }
+
+          uint8_t contexPrefix[16];
+          m_contextTable[contextId].contextPrefix.GetBytes(contexPrefix);
+          uint8_t contextLength = m_contextTable[contextId].contextPrefix.GetPrefixLength ();
+
+          uint8_t srcAddress[16] = { };
+          if ( encoding.GetSam () == SixLowPanIphc::HC_COMPR_64 )
+            {
+              memcpy (srcAddress +8, encoding.GetSrcInlinePart (), 8);
+            }
+          else if ( encoding.GetSam () == SixLowPanIphc::HC_COMPR_16 )
+            {
+              srcAddress[11] = 0xff;
+              srcAddress[12] = 0xfe;
+              memcpy (srcAddress +14, encoding.GetSrcInlinePart (), 2);
+            }
+          else // SixLowPanIphc::HC_COMPR_0
+            {
+              Ipv6Address::MakeAutoconfiguredLinkLocalAddress (src).GetBytes (srcAddress);
+            }
+
+          uint8_t bytesToCopy = contextLength / 8;
+          uint8_t bitsToCopy = contextLength % 8;
+
+          // Do not combine the prefix - we want to override the bytes.
+          for (uint8_t i=0; i<bytesToCopy; i++)
+            {
+              srcAddress[i] = contexPrefix[i];
+            }
+          if (bitsToCopy)
+            {
+              uint8_t addressBitMask = (1<<(8-bitsToCopy))-1;
+              uint8_t prefixBitMask = ~addressBitMask;
+              srcAddress[bytesToCopy] = (contexPrefix[bytesToCopy] & prefixBitMask) | (srcAddress[bytesToCopy] & addressBitMask);
+            }
+          ipHeader.SetSourceAddress ( Ipv6Address::Deserialize (srcAddress) );
         }
     }
   else
     {
-      if ( encoding.GetSam () == SixLowPanIphc::HC_COMPR_0 )
+      // Source address compression uses stateless compression.
+
+      if ( encoding.GetSam () == SixLowPanIphc::HC_INLINE )
+        {
+          uint8_t srcAddress[16] = { };
+          memcpy (srcAddress, encoding.GetSrcInlinePart (), 16);
+          ipHeader.SetSourceAddress ( Ipv6Address::Deserialize (srcAddress) );
+        }
+      else if ( encoding.GetSam () == SixLowPanIphc::HC_COMPR_64 )
+        {
+          uint8_t srcAddress[16] = { };
+          memcpy (srcAddress +8, encoding.GetSrcInlinePart (), 8);
+          srcAddress[0] = 0xfe;
+          srcAddress[1] = 0x80;
+          ipHeader.SetSourceAddress ( Ipv6Address::Deserialize (srcAddress) );
+        }
+      else if ( encoding.GetSam () == SixLowPanIphc::HC_COMPR_16 )
+        {
+          uint8_t srcAddress[16] = { };
+          memcpy (srcAddress +14, encoding.GetSrcInlinePart (), 2);
+          srcAddress[0] = 0xfe;
+          srcAddress[1] = 0x80;
+          srcAddress[11] = 0xff;
+          srcAddress[12] = 0xfe;
+          ipHeader.SetSourceAddress ( Ipv6Address::Deserialize (srcAddress) );
+        }
+      else // SixLowPanIphc::HC_COMPR_0
         {
           ipHeader.SetSourceAddress (Ipv6Address::MakeAutoconfiguredLinkLocalAddress (src));
-        }
-      else
-        {
-          ipHeader.SetSourceAddress ( encoding.GetSrcAddress () );
         }
     }
   // Destination address
   if ( encoding.GetDac () )
     {
+      // Destination address compression uses stateful, context-based compression.
       if ((encoding.GetDam () == SixLowPanIphc::HC_INLINE  && !encoding.GetM ())
           || (encoding.GetDam () == SixLowPanIphc::HC_COMPR_64  && encoding.GetM ())
           || (encoding.GetDam () == SixLowPanIphc::HC_COMPR_16  && encoding.GetM ())
@@ -1211,20 +1306,139 @@ SixLowPanNetDevice::DecompressLowPanIphc (Ptr<Packet> packet, Address const &src
         {
           NS_ABORT_MSG ("Reserved code found");
         }
+
+      uint8_t contextId = encoding.GetDac ();
+      if (m_contextTable.find (contextId) == m_contextTable.end ())
+        {
+          NS_LOG_LOGIC ("Unknown Destination compression context (" << +contextId << "), dropping packet");
+          return true;
+        }
+      if (m_contextTable[contextId].validLifetime < Simulator::Now ())
+        {
+          NS_LOG_LOGIC ("Expired Destination compression context (" << +contextId << "), dropping packet");
+          return true;
+       }
+
+      uint8_t contexPrefix[16];
+      m_contextTable[contextId].contextPrefix.GetBytes(contexPrefix);
+      uint8_t contextLength = m_contextTable[contextId].contextPrefix.GetPrefixLength ();
+
+      if (encoding.GetM () == false)
+        {
+          // unicast
+          uint8_t dstAddress[16] = { };
+          if ( encoding.GetDam () == SixLowPanIphc::HC_COMPR_64 )
+            {
+              memcpy (dstAddress +8, encoding.GetDstInlinePart (), 8);
+            }
+          else if ( encoding.GetDam () == SixLowPanIphc::HC_COMPR_16 )
+            {
+              dstAddress[11] = 0xff;
+              dstAddress[12] = 0xfe;
+              memcpy (dstAddress +14, encoding.GetDstInlinePart (), 2);
+            }
+          else // SixLowPanIphc::HC_COMPR_0
+            {
+              Ipv6Address::MakeAutoconfiguredLinkLocalAddress (src).GetBytes (dstAddress);
+            }
+
+          uint8_t bytesToCopy = m_contextTable[contextId].contextPrefix.GetPrefixLength () / 8;
+          uint8_t bitsToCopy = contextLength % 8;
+
+          // Do not combine the prefix - we want to override the bytes.
+          for (uint8_t i=0; i<bytesToCopy; i++)
+            {
+              dstAddress[i] = contexPrefix[i];
+            }
+          if (bitsToCopy)
+            {
+              uint8_t addressBitMask = (1<<(8-bitsToCopy))-1;
+              uint8_t prefixBitMask = ~addressBitMask;
+              dstAddress[bytesToCopy] = (contexPrefix[bytesToCopy] & prefixBitMask) | (dstAddress[bytesToCopy] & addressBitMask);
+            }
+          ipHeader.SetDestinationAddress ( Ipv6Address::Deserialize (dstAddress) );
+        }
       else
         {
-          NS_ABORT_MSG ("DAC option not yet implemented");
+          // multicast
+          // Just one possibility: ffXX:XXLL:PPPP:PPPP:PPPP:PPPP:XXXX:XXXX
+          uint8_t dstAddress[16] = { };
+          dstAddress[0] = 0xff;
+          memcpy (dstAddress +1, encoding.GetDstInlinePart (), 2);
+          dstAddress[3] = contextLength;
+          memcpy (dstAddress +4, contexPrefix, 8);
+          memcpy (dstAddress +12, encoding.GetDstInlinePart ()+2, 4);
+          ipHeader.SetDestinationAddress ( Ipv6Address::Deserialize (dstAddress) );
         }
     }
   else
     {
-      if ( !encoding.GetM () && encoding.GetDam () == SixLowPanIphc::HC_COMPR_0 )
+      // Destination address compression uses stateless compression.
+      if (encoding.GetM () == false)
         {
-          ipHeader.SetDestinationAddress (Ipv6Address::MakeAutoconfiguredLinkLocalAddress (dst));
-        }
+          // unicast
+          if ( encoding.GetDam () == SixLowPanIphc::HC_INLINE )
+             {
+               uint8_t dstAddress[16] = { };
+               memcpy (dstAddress, encoding.GetDstInlinePart (), 16);
+               ipHeader.SetDestinationAddress ( Ipv6Address::Deserialize (dstAddress) );
+             }
+          else if ( encoding.GetDam () == SixLowPanIphc::HC_COMPR_64 )
+            {
+              uint8_t dstAddress[16] = { };
+              memcpy (dstAddress +8, encoding.GetDstInlinePart (), 8);
+              dstAddress[0] = 0xfe;
+              dstAddress[1] = 0x80;
+              ipHeader.SetDestinationAddress ( Ipv6Address::Deserialize (dstAddress) );
+            }
+          else if ( encoding.GetDam () == SixLowPanIphc::HC_COMPR_16 )
+            {
+              uint8_t dstAddress[16] = { };
+              memcpy (dstAddress +14, encoding.GetDstInlinePart (), 2);
+              dstAddress[0] = 0xfe;
+              dstAddress[1] = 0x80;
+              dstAddress[11] = 0xff;
+              dstAddress[12] = 0xfe;
+              ipHeader.SetDestinationAddress ( Ipv6Address::Deserialize (dstAddress) );
+            }
+          else // SixLowPanIphc::HC_COMPR_0
+            {
+              ipHeader.SetDestinationAddress (Ipv6Address::MakeAutoconfiguredLinkLocalAddress (dst));
+            }
+         }
       else
         {
-          ipHeader.SetDestinationAddress ( encoding.GetDstAddress () );
+          // multicast
+          if ( encoding.GetDam () == SixLowPanIphc::HC_INLINE )
+            {
+              uint8_t dstAddress[16] = { };
+              memcpy (dstAddress, encoding.GetDstInlinePart (), 16);
+              ipHeader.SetDestinationAddress ( Ipv6Address::Deserialize (dstAddress) );
+            }
+          else if ( encoding.GetDam () == SixLowPanIphc::HC_COMPR_64 )
+            {
+              uint8_t dstAddress[16] = { };
+              dstAddress[0] = 0xff;
+              memcpy (dstAddress +1, encoding.GetDstInlinePart (), 1);
+              memcpy (dstAddress +11, encoding.GetDstInlinePart ()+1, 5);
+              ipHeader.SetDestinationAddress ( Ipv6Address::Deserialize (dstAddress) );
+            }
+          else if ( encoding.GetDam () == SixLowPanIphc::HC_COMPR_16 )
+            {
+              uint8_t dstAddress[16] = { };
+              dstAddress[0] = 0xff;
+              memcpy (dstAddress +1, encoding.GetDstInlinePart (), 1);
+              memcpy (dstAddress +13, encoding.GetDstInlinePart ()+1, 3);
+              ipHeader.SetDestinationAddress ( Ipv6Address::Deserialize (dstAddress) );
+            }
+          else // SixLowPanIphc::HC_COMPR_0
+            {
+              uint8_t dstAddress[16] = { };
+              dstAddress[0] = 0xff;
+              dstAddress[1] = 0x02;
+              memcpy (dstAddress+15, encoding.GetDstInlinePart (), 1);
+              ipHeader.SetDestinationAddress ( Ipv6Address::Deserialize (dstAddress) );
+            }
         }
     }
 
@@ -1272,7 +1486,15 @@ SixLowPanNetDevice::DecompressLowPanIphc (Ptr<Packet> packet, Address const &src
         }
       else
         {
-          ipHeader.SetNextHeader (DecompressLowPanNhc (packet, src, dst, ipHeader.GetSourceAddress (), ipHeader.GetDestinationAddress ()));
+          std::pair <uint8_t, bool> retval = DecompressLowPanNhc (packet, src, dst, ipHeader.GetSourceAddress (), ipHeader.GetDestinationAddress ());
+          if ( retval.second == true )
+            {
+              return true;
+            }
+          else
+            {
+              ipHeader.SetNextHeader (retval.first);
+            }
         }
     }
   else
@@ -1286,6 +1508,7 @@ SixLowPanNetDevice::DecompressLowPanIphc (Ptr<Packet> packet, Address const &src
 
   NS_LOG_DEBUG ( "Rebuilt packet: " << *packet << " Size " << packet->GetSize () );
 
+  return false;
 }
 
 uint32_t
@@ -1547,7 +1770,7 @@ SixLowPanNetDevice::CompressLowPanNhc (Ptr<Packet> packet, uint8_t headerType, A
   return size;
 }
 
-uint8_t
+std::pair <uint8_t, bool>
 SixLowPanNetDevice::DecompressLowPanNhc (Ptr<Packet> packet, Address const &src, Address const &dst, Ipv6Address srcAddress, Ipv6Address dstAddress)
 {
   NS_LOG_FUNCTION (this << *packet);
@@ -1592,7 +1815,7 @@ SixLowPanNetDevice::DecompressLowPanNhc (Ptr<Packet> packet, Address const &src,
             }
           else
             {
-              blobData [0] = DecompressLowPanNhc (packet, src, dst, srcAddress, dstAddress);
+              blobData [0] = DecompressLowPanNhc (packet, src, dst, srcAddress, dstAddress).first;
             }
         }
       else
@@ -1644,7 +1867,7 @@ SixLowPanNetDevice::DecompressLowPanNhc (Ptr<Packet> packet, Address const &src,
             }
           else
             {
-              blobData [0] = DecompressLowPanNhc (packet, src, dst, srcAddress, dstAddress);
+              blobData [0] = DecompressLowPanNhc (packet, src, dst, srcAddress, dstAddress).first;
             }
         }
       else
@@ -1676,7 +1899,7 @@ SixLowPanNetDevice::DecompressLowPanNhc (Ptr<Packet> packet, Address const &src,
             }
           else
             {
-              blobData [0] = DecompressLowPanNhc (packet, src, dst, srcAddress, dstAddress);
+              blobData [0] = DecompressLowPanNhc (packet, src, dst, srcAddress, dstAddress).first;
             }
         }
       else
@@ -1710,7 +1933,7 @@ SixLowPanNetDevice::DecompressLowPanNhc (Ptr<Packet> packet, Address const &src,
             }
           else
             {
-              blobData [0] = DecompressLowPanNhc (packet, src, dst, srcAddress, dstAddress);
+              blobData [0] = DecompressLowPanNhc (packet, src, dst, srcAddress, dstAddress).first;
             }
         }
       else
@@ -1749,7 +1972,11 @@ SixLowPanNetDevice::DecompressLowPanNhc (Ptr<Packet> packet, Address const &src,
       break;
     case SixLowPanNhcExtension::EID_IPv6_H:
       actualHeaderType = Ipv6Header::IPV6_IPV6;
-      DecompressLowPanIphc (packet, src, dst);
+      if (DecompressLowPanIphc (packet, src, dst))
+        {
+          m_dropTrace (DROP_SATETFUL_DECOMPRESSION_PROBLEM, packet, m_node->GetObject<SixLowPanNetDevice> (), GetIfIndex ());
+          return std::pair<uint8_t, bool> (0, true);
+        }
       break;
     default:
       NS_ABORT_MSG ("Trying to decode unknown Extension Header");
@@ -1757,7 +1984,7 @@ SixLowPanNetDevice::DecompressLowPanNhc (Ptr<Packet> packet, Address const &src,
     }
 
   NS_LOG_DEBUG ( "Rebuilt packet: " << *packet << " Size " << packet->GetSize () );
-  return actualHeaderType;
+  return std::pair<uint8_t, bool> (actualHeaderType, false);
 }
 
 uint32_t
@@ -2003,7 +2230,11 @@ bool SixLowPanNetDevice::ProcessFragment (Ptr<Packet>& packet, Address const &sr
           DecompressLowPanHc1 (p, src, dst);
           break;
         case SixLowPanDispatch::LOWPAN_IPHC:
-          DecompressLowPanIphc (p, src, dst);
+          if (DecompressLowPanIphc (p, src, dst))
+            {
+              m_dropTrace (DROP_SATETFUL_DECOMPRESSION_PROBLEM, p, m_node->GetObject<SixLowPanNetDevice> (), GetIfIndex ());
+              return false;
+            }
           break;
         default:
           NS_FATAL_ERROR ("Unsupported 6LoWPAN encoding, exiting.");
@@ -2282,6 +2513,114 @@ void SixLowPanNetDevice::HandleTimeout (void)
   m_timeoutEvent = Simulator::Schedule (difference, &SixLowPanNetDevice::HandleTimeout, this);
 
   return;
+}
+
+void SixLowPanNetDevice::UpdateContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime)
+{
+  NS_LOG_FUNCTION (this << +contextId << contextPrefix << compressionAllowed << validLifetime);
+
+  if (contextId > 15)
+    {
+      NS_LOG_LOGIC ("Invalid context ID (" << +contextId << "), ignoring");
+      return;
+    }
+
+  if (m_contextTable.find (contextId) == m_contextTable.end ())
+    {
+      NS_LOG_LOGIC ("Context not found (" << +contextId << "), ignoring");
+      return;
+    }
+
+  if (validLifetime == Time(0))
+    {
+      NS_LOG_LOGIC ("Context (" << +contextId << "), removed (validity time is zero)");
+      m_contextTable.erase (contextId);
+      return;
+    }
+
+  m_contextTable[contextId].contextPrefix = contextPrefix;
+  m_contextTable[contextId].compressionAllowed = compressionAllowed;
+  m_contextTable[contextId].validLifetime = validLifetime;
+
+  return;
+}
+
+bool SixLowPanNetDevice::FindUnicastCompressionContext (Ipv6Address address, uint8_t& contextId)
+{
+  for (const auto& iter: m_contextTable)
+    {
+      ContextEntry context = iter.second;
+
+      if ( (context.compressionAllowed == true) && (context.validLifetime < Simulator::Now ()) )
+        {
+          if (address.HasPrefix (context.contextPrefix))
+            {
+              contextId = iter.first;
+              return true;
+            }
+        }
+    }
+  return false;
+}
+
+bool SixLowPanNetDevice::FindMulticastCompressionContext (Ipv6Address address, uint8_t& contextId)
+{
+  // The only allowed context-based compressed multicast address is in the form
+  // ffXX:XXLL:PPPP:PPPP:PPPP:PPPP:XXXX:XXXX
+
+  for (const auto& iter: m_contextTable)
+    {
+      ContextEntry context = iter.second;
+
+      if ( (context.compressionAllowed == true) && (context.validLifetime < Simulator::Now ()) )
+        {
+          uint8_t contextLength = context.contextPrefix.GetPrefixLength ();
+
+          if (contextLength <= 64) // only 64-bit prefixes or less are allowed.
+            {
+              uint8_t contextBytes[16];
+              uint8_t addressBytes[16];
+
+              context.contextPrefix.GetBytes (contextBytes);
+              address.GetBytes (addressBytes);
+
+              if (addressBytes[3] == contextLength &&
+                  addressBytes[4] == contextBytes[0] &&
+                  addressBytes[5] == contextBytes[1] &&
+                  addressBytes[6] == contextBytes[2] &&
+                  addressBytes[7] == contextBytes[3] &&
+                  addressBytes[8] == contextBytes[4] &&
+                  addressBytes[9] == contextBytes[5] &&
+                  addressBytes[10] == contextBytes[6] &&
+                  addressBytes[11] == contextBytes[7])
+                {
+                  contextId = iter.first;
+                  return true;
+                }
+            }
+        }
+    }
+  return false;
+}
+
+Ipv6Address CleanPrefix (Ipv6Address address, Ipv6Prefix prefix)
+{
+  uint8_t addressBytes[16];
+  address.GetBytes (addressBytes);
+  uint8_t prefixLength = prefix.GetPrefixLength ();
+
+  uint8_t bytesToClean = prefixLength / 8;
+  uint8_t bitsToClean = prefixLength % 8;
+  for (uint8_t i=0; i<bytesToClean; i++)
+    {
+      addressBytes[i] = 0;
+    }
+  uint8_t cleanupMask = (1<<bitsToClean)-1;
+  addressBytes[bytesToClean] &= cleanupMask;
+
+  Ipv6Address cleanedAddress = Ipv6Address::Deserialize (addressBytes);
+
+  return cleanedAddress;
 }
 
 }

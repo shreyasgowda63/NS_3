@@ -983,22 +983,17 @@ void SixLowPanIphc::Serialize (Buffer::Iterator start) const
   // Source Address
   switch (GetSam () )
     {
-      uint8_t temp[16];
     case HC_INLINE:
-      if ( GetSac () == false )
+      if ( GetSac () == 0 )
         {
-          uint8_t temp[16];
-          m_srcAddress.Serialize (temp);
-          i.Write (temp, 16);
+          i.Write (m_srcInlinePart, 16);
         }
       break;
     case HC_COMPR_64:
-      m_srcAddress.Serialize (temp);
-      i.Write (temp + 8, 8);
+      i.Write (m_srcInlinePart, 8);
       break;
     case HC_COMPR_16:
-      m_srcAddress.Serialize (temp);
-      i.Write (temp + 14, 2);
+      i.Write (m_srcInlinePart, 2);
       break;
     case HC_COMPR_0:
     default:
@@ -1007,23 +1002,17 @@ void SixLowPanIphc::Serialize (Buffer::Iterator start) const
   // Destination Address
   if ( GetM () == false)
     {
-      uint8_t temp[16];
+      // unicast
       switch (GetDam () )
         {
         case HC_INLINE:
-          if ( GetDac () == false )
-            {
-              m_dstAddress.Serialize (temp);
-              i.Write (temp, 16);
-            }
+          i.Write (m_dstInlinePart, 16);
           break;
         case HC_COMPR_64:
-          m_dstAddress.Serialize (temp);
-          i.Write (temp + 8, 8);
+          i.Write (m_dstInlinePart, 8);
           break;
         case HC_COMPR_16:
-          m_dstAddress.Serialize (temp);
-          i.Write (temp + 14, 2);
+          i.Write (m_dstInlinePart, 2);
           break;
         case HC_COMPR_0:
         default:
@@ -1032,45 +1021,22 @@ void SixLowPanIphc::Serialize (Buffer::Iterator start) const
     }
   else
     {
+      // multicast
       switch (GetDam () )
         {
-          uint8_t temp[16];
         case HC_INLINE:
-          if ( GetDac () == false )
-            {
-              m_dstAddress.Serialize (temp);
-              i.Write (temp, 16);
-            }
-          else
-            {
-              m_dstAddress.Serialize (temp);
-              i.Write (temp + 1, 2);
-              i.Write (temp + 12, 4);
-            }
+          i.Write (m_dstInlinePart, 16);
           break;
         case HC_COMPR_64:
-          if ( GetDac () == false )
-            {
-              m_dstAddress.Serialize (temp);
-              i.Write (temp + 1, 1);
-              i.Write (temp + 11, 5);
-            }
+          i.Write (m_dstInlinePart, 6);
           break;
         case HC_COMPR_16:
-          if ( GetDac () == false )
-            {
-              m_dstAddress.Serialize (temp);
-              i.Write (temp + 1, 1);
-              i.Write (temp + 13, 3);
-            }
+          i.Write (m_dstInlinePart, 4);
           break;
         case HC_COMPR_0:
-        default:
-          if ( GetDac () == false )
-            {
-              m_dstAddress.Serialize (temp);
-              i.WriteU8 (temp[15]);
-            }
+          i.Write (m_dstInlinePart, 1);
+          break;
+       default:
           break;
         }
     }
@@ -1085,6 +1051,10 @@ uint32_t SixLowPanIphc::Deserialize (Buffer::Iterator start)
   if ( GetCid () )
     {
       m_srcdstContextId = i.ReadU8 ();
+    }
+  else
+    {
+      m_srcdstContextId = 0;
     }
   // Traffic Class and Flow Label
   switch ( GetTf () )
@@ -1142,68 +1112,41 @@ uint32_t SixLowPanIphc::Deserialize (Buffer::Iterator start)
 
     }
   // Source Address
+  memset (m_srcInlinePart, 0x00, sizeof (m_srcInlinePart));
   switch (GetSam () )
     {
-      uint8_t temp[16];
     case HC_INLINE:
-      if ( GetSac () == false )
+      if ( GetSac () == 0 )
         {
-          i.Read (temp, 16);
-          m_srcAddress = Ipv6Address::Deserialize (temp);
+          i.Read (m_srcInlinePart, 16);
         }
       break;
     case HC_COMPR_64:
-      memset (temp, 0x00, sizeof (temp));
-      i.Read (temp + 8, 8);
-      temp[0] = 0xfe;
-      temp[1] = 0x80;
-      m_srcAddress = Ipv6Address::Deserialize (temp);
+      i.Read (m_srcInlinePart, 8);
       break;
     case HC_COMPR_16:
-      memset (temp, 0x00, sizeof (temp));
-      i.Read (temp + 14, 2);
-      temp[0] = 0xfe;
-      temp[1] = 0x80;
-      temp[11] = 0xff;
-      temp[12] = 0xfe;
-      m_srcAddress = Ipv6Address::Deserialize (temp);
+      i.Read (m_srcInlinePart, 2);
       break;
     case HC_COMPR_0:
     default:
       break;
     }
-  if ( GetSac () == true )
-    {
-      PostProcessSac ();
-    }
+
   // Destination Address
+  memset (m_dstInlinePart, 0x00, sizeof (m_dstInlinePart));
   if ( GetM () == false)
     {
-      uint8_t temp[16];
+      // unicast
       switch (GetDam () )
         {
         case HC_INLINE:
-          if ( GetDac () == false )
-            {
-              i.Read (temp, 16);
-              m_dstAddress = Ipv6Address::Deserialize (temp);
-            }
+          i.Read (m_dstInlinePart, 16);
           break;
         case HC_COMPR_64:
-          memset (temp, 0x00, sizeof (temp));
-          i.Read (temp + 8, 8);
-          temp[0] = 0xfe;
-          temp[1] = 0x80;
-          m_dstAddress = Ipv6Address::Deserialize (temp);
+          i.Read (m_dstInlinePart, 8);
           break;
         case HC_COMPR_16:
-          memset (temp, 0x00, sizeof (temp));
-          i.Read (temp + 14, 2);
-          temp[0] = 0xfe;
-          temp[1] = 0x80;
-          temp[11] = 0xff;
-          temp[12] = 0xfe;
-          m_dstAddress = Ipv6Address::Deserialize (temp);
+          i.Read (m_dstInlinePart, 2);
           break;
         case HC_COMPR_0:
         default:
@@ -1212,61 +1155,26 @@ uint32_t SixLowPanIphc::Deserialize (Buffer::Iterator start)
     }
   else
     {
+      // multicast
       switch (GetDam () )
         {
-          uint8_t temp[16];
         case HC_INLINE:
-          if ( GetDac () == false )
-            {
-              i.Read (temp, 16);
-              m_dstAddress = Ipv6Address::Deserialize (temp);
-            }
-          else
-            {
-              memset (temp, 0x00, sizeof (temp));
-              i.Read (temp + 1, 2);
-              i.Read (temp + 12, 4);
-              temp[0] = 0xff;
-              m_dstAddress = Ipv6Address::Deserialize (temp);
-            }
+          i.Read (m_dstInlinePart, 16);
           break;
         case HC_COMPR_64:
-          if ( GetDac () == false )
-            {
-              memset (temp, 0x00, sizeof (temp));
-              i.Read (temp + 1, 1);
-              i.Read (temp + 11, 5);
-              temp[0] = 0xff;
-              m_dstAddress = Ipv6Address::Deserialize (temp);
-            }
+          i.Read (m_dstInlinePart, 6);
           break;
         case HC_COMPR_16:
-          if ( GetDac () == false )
-            {
-              memset (temp, 0x00, sizeof (temp));
-              i.Read (temp + 1, 1);
-              i.Read (temp + 13, 3);
-              temp[0] = 0xff;
-              m_dstAddress = Ipv6Address::Deserialize (temp);
-            }
+          i.Read (m_dstInlinePart, 4);
           break;
         case HC_COMPR_0:
+          i.Read (m_dstInlinePart, 1);
+          break;
         default:
-          if ( GetDac () == false )
-            {
-              memset (temp, 0x00, sizeof (temp));
-              temp[15] = i.ReadU8 ();
-              temp[0] = 0xff;
-              temp[1] = 0x02;
-              m_dstAddress = Ipv6Address::Deserialize (temp);
-            }
           break;
         }
     }
-  if ( GetDac () == true )
-    {
-      PostProcessDac ();
-    }
+
   return GetSerializedSize ();
 }
 
@@ -1336,6 +1244,17 @@ SixLowPanIphc::HeaderCompression_e SixLowPanIphc::GetSam (void) const
   return HeaderCompression_e ((m_baseFormat >> 4) & 0x3);
 }
 
+const uint8_t* SixLowPanIphc::GetSrcInlinePart (void) const
+{
+  return m_srcInlinePart;
+}
+
+void SixLowPanIphc::SetSrcInlinePart (uint8_t srcInlinePart[16])
+{
+  memcpy (m_srcInlinePart, srcInlinePart, 16);
+  return;
+}
+
 void SixLowPanIphc::SetM (bool mField)
 {
   uint16_t field = mField;
@@ -1367,6 +1286,17 @@ void SixLowPanIphc::SetDam (HeaderCompression_e damField)
 SixLowPanIphc::HeaderCompression_e SixLowPanIphc::GetDam (void) const
 {
   return HeaderCompression_e (m_baseFormat & 0x3);
+}
+
+const uint8_t* SixLowPanIphc::GetDstInlinePart (void) const
+{
+  return m_dstInlinePart;
+}
+
+void SixLowPanIphc::SetDstInlinePart (uint8_t dstInlinePart[16])
+{
+  memcpy (m_dstInlinePart, dstInlinePart, 16);
+  return;
 }
 
 void SixLowPanIphc::SetSrcContextId (uint8_t srcContextId)
@@ -1442,38 +1372,6 @@ void SixLowPanIphc::SetHopLimit (uint8_t hopLimit)
 uint8_t SixLowPanIphc::GetHopLimit (void) const
 {
   return m_hopLimit;
-}
-
-void SixLowPanIphc::SetSrcAddress (Ipv6Address srcAddress)
-{
-  m_srcAddress = srcAddress;
-}
-
-Ipv6Address SixLowPanIphc::GetSrcAddress () const
-{
-  return m_srcAddress;
-}
-
-void SixLowPanIphc::SetDstAddress (Ipv6Address dstAddress)
-{
-  m_dstAddress = dstAddress;
-}
-
-Ipv6Address SixLowPanIphc::GetDstAddress () const
-{
-  return m_dstAddress;
-}
-
-void SixLowPanIphc::PostProcessSac ()
-{
-  NS_ABORT_MSG ("Unsupported; Context destination is not implemented");
-  return;
-}
-
-void SixLowPanIphc::PostProcessDac ()
-{
-  NS_ABORT_MSG ("Unsupported; Context destination is not implemented");
-  return;
 }
 
 std::ostream & operator << (std::ostream & os, const SixLowPanIphc & h)
