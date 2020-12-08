@@ -178,17 +178,56 @@ public:
                                       uint32_t ifindex);
 
   /**
-   * Add, remove, or update contexts used in the compression/decompression.
+   * Add, remove, or update a context used in IPHC stateful compression.
    *
-   * \param [in] contextId context id (most be between 0 and 15 included)
-   * \param [in] contextPrefix context prefix to be used in compression/decompression
-   * \param [in] contextLength context prefix length
-   * \param [in] compressionAllowed compression and decompression allowed (true), decompression only (false)
-   * \param [in] validLifetime validity time
+   * A context with a zero validLifetime will be immediately removed.
    *
-   * Note that an entry with a zero validUntil will be immediately removed.
+   * \param [in] contextId context id (most be between 0 and 15 included).
+   * \param [in] contextPrefix context prefix to be used in compression/decompression.
+   * \param [in] compressionAllowed compression and decompression allowed (true), decompression only (false).
+   * \param [in] validLifetime validity time (relative to the actual time).
+   *
    */
-  void UpdateContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime);
+  void AddContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime);
+
+  /**
+   * Get a context used in IPHC stateful compression.
+   *
+   * \param [in] contextId context id (most be between 0 and 15 included).
+   * \param [out] contextPrefix context prefix to be used in compression/decompression.
+   * \param [out] compressionAllowed compression and decompression allowed (true), decompression only (false).
+   * \param [out] validLifetime validity time (relative to the actual time).
+   *
+   * \return false if the context has not been found.
+   *
+   */
+  bool GetContext (uint8_t contextId, Ipv6Prefix& contextPrefix, bool& compressionAllowed, Time& validLifetime);
+
+  /**
+   * Renew a context used in IPHC stateful compression.
+   *
+   * The context will have its lifetime extended and its validity for compression re-enabled.
+   *
+   * \param [in] contextId context id (most be between 0 and 15 included).
+   * \param [in] validLifetime validity time (relative to the actual time).
+   */
+  void RenewContext (uint8_t contextId, Time validLifetime);
+
+  /**
+   * Invalidate a context used in IPHC stateful compression.
+   *
+   * An invalid context will not be used for compression but it will be used for decompression.
+   *
+   * \param [in] contextId context id (most be between 0 and 15 included).
+   */
+  void InvalidateContext (uint8_t contextId);
+
+  /**
+   * Remove a context used in IPHC stateful compression.
+   *
+   * \param [in] contextId context id (most be between 0 and 15 included).
+   */
+  void RemoveContext (uint8_t contextId);
 
 protected:
   virtual void DoDispose (void);

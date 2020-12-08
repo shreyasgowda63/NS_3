@@ -2629,7 +2629,7 @@ void SixLowPanNetDevice::HandleTimeout (void)
   return;
 }
 
-void SixLowPanNetDevice::UpdateContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime)
+void SixLowPanNetDevice::AddContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime)
 {
   NS_LOG_FUNCTION (this << +contextId << contextPrefix << compressionAllowed << validLifetime);
 
@@ -2654,8 +2654,91 @@ void SixLowPanNetDevice::UpdateContext (uint8_t contextId, Ipv6Prefix contextPre
 
   m_contextTable[contextId].contextPrefix = contextPrefix;
   m_contextTable[contextId].compressionAllowed = compressionAllowed;
-  m_contextTable[contextId].validLifetime = validLifetime;
+  m_contextTable[contextId].validLifetime = Simulator::Now () + validLifetime;
 
+  return;
+}
+
+bool SixLowPanNetDevice::GetContext (uint8_t contextId, Ipv6Prefix& contextPrefix, bool& compressionAllowed, Time& validLifetime)
+{
+  NS_LOG_FUNCTION (this << +contextId);
+
+  if (contextId > 15)
+    {
+      NS_LOG_LOGIC ("Invalid context ID (" << +contextId << "), ignoring");
+      return false;
+    }
+
+  if (m_contextTable.find (contextId) == m_contextTable.end ())
+    {
+      NS_LOG_LOGIC ("Context not found (" << +contextId << "), ignoring");
+      return false;
+    }
+
+  contextPrefix = m_contextTable[contextId].contextPrefix;
+  compressionAllowed = m_contextTable[contextId].compressionAllowed;
+  validLifetime = m_contextTable[contextId].validLifetime;
+
+  return true;
+}
+
+void SixLowPanNetDevice::RenewContext (uint8_t contextId, Time validLifetime)
+{
+  NS_LOG_FUNCTION (this << +contextId << validLifetime);
+
+  if (contextId > 15)
+    {
+      NS_LOG_LOGIC ("Invalid context ID (" << +contextId << "), ignoring");
+      return;
+    }
+
+  if (m_contextTable.find (contextId) == m_contextTable.end ())
+    {
+      NS_LOG_LOGIC ("Context not found (" << +contextId << "), ignoring");
+      return;
+    }
+  m_contextTable[contextId].compressionAllowed = true;
+  m_contextTable[contextId].validLifetime = Simulator::Now () + validLifetime;
+  return;
+}
+
+
+void SixLowPanNetDevice::InvalidateContext (uint8_t contextId)
+{
+  NS_LOG_FUNCTION (this << +contextId);
+
+  if (contextId > 15)
+    {
+      NS_LOG_LOGIC ("Invalid context ID (" << +contextId << "), ignoring");
+      return;
+    }
+
+  if (m_contextTable.find (contextId) == m_contextTable.end ())
+    {
+      NS_LOG_LOGIC ("Context not found (" << +contextId << "), ignoring");
+      return;
+    }
+  m_contextTable[contextId].compressionAllowed = false;
+  return;
+}
+
+void SixLowPanNetDevice::RemoveContext (uint8_t contextId)
+{
+  NS_LOG_FUNCTION (this << +contextId);
+
+  if (contextId > 15)
+    {
+      NS_LOG_LOGIC ("Invalid context ID (" << +contextId << "), ignoring");
+      return;
+    }
+
+  if (m_contextTable.find (contextId) == m_contextTable.end ())
+    {
+      NS_LOG_LOGIC ("Context not found (" << +contextId << "), ignoring");
+      return;
+    }
+
+  m_contextTable.erase (contextId);
   return;
 }
 
