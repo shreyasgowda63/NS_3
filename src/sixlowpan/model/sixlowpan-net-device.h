@@ -593,6 +593,18 @@ private:
    * \return true if a valid context has been found
    */
   bool FindMulticastCompressionContext (Ipv6Address address, uint8_t& contextId);
+
+  /**
+   * \brief Clean an address from its prefix.
+   *
+   * This function is used to find the relevant bits to be sent in stateful IPHC compression.
+   * Only the pefix length is used - the address prefix is assumed to be matching the prefix.
+   *
+   * \param address the address to be cleaned
+   * \param the prefix to remove
+   * \return An address with the prefix zeroed.
+   */
+  Ipv6Address CleanPrefix (Ipv6Address address, Ipv6Prefix prefix);
 };
 
 } // namespace ns3

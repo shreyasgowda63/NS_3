@@ -1249,9 +1249,11 @@ const uint8_t* SixLowPanIphc::GetSrcInlinePart (void) const
   return m_srcInlinePart;
 }
 
-void SixLowPanIphc::SetSrcInlinePart (uint8_t srcInlinePart[16])
+void SixLowPanIphc::SetSrcInlinePart (uint8_t srcInlinePart[16], uint8_t size)
 {
-  memcpy (m_srcInlinePart, srcInlinePart, 16);
+  NS_ASSERT_MSG (size <= 16,  "Src inline part too large");
+
+  memcpy (m_srcInlinePart, srcInlinePart, size);
   return;
 }
 
@@ -1293,9 +1295,11 @@ const uint8_t* SixLowPanIphc::GetDstInlinePart (void) const
   return m_dstInlinePart;
 }
 
-void SixLowPanIphc::SetDstInlinePart (uint8_t dstInlinePart[16])
+void SixLowPanIphc::SetDstInlinePart (uint8_t dstInlinePart[16], uint8_t size)
 {
-  memcpy (m_dstInlinePart, dstInlinePart, 16);
+  NS_ASSERT_MSG (size <= 16,  "Dst inline part too large");
+
+  memcpy (m_dstInlinePart, dstInlinePart, size);
   return;
 }
 

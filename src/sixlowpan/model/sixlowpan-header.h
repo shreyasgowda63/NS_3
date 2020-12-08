@@ -771,8 +771,9 @@ public:
   /**
    * brief Set the source address inline part
    * \param srcInlinePart The inline portion of the compressed source address (16 bytes)
+   * \param size The number of inline bytes
    */
-  void SetSrcInlinePart (uint8_t srcInlinePart[16]);
+  void SetSrcInlinePart (uint8_t srcInlinePart[16], uint8_t size);
 
   /**
    * brief Get the source address inline part
@@ -819,8 +820,9 @@ public:
   /**
    * brief Set the destination address inline part
    * \param dstInlinePart The inline portion of the compressed destination address (16 bytes)
+   * \param size The number of inline bytes
    */
-  void SetDstInlinePart (uint8_t dstInlinePart[16]);
+  void SetDstInlinePart (uint8_t dstInlinePart[16], uint8_t size);
 
   /**
    * brief Get the destination address inline part
