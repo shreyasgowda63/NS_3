@@ -57,7 +57,7 @@ def configure(conf):
 
     conf.load('versioning', ['waf-tools'])
 
-    conf.require_boost('core', 'ns-3 core module', optional=True);
+    conf.require_boost_incs('core', 'ns-3 core module', required=False);
 
     int64x64_impl = Options.options.int64x64_impl
     if int64x64_impl == 'default' or int64x64_impl == 'int128':
