@@ -930,7 +930,6 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
   SixLowPanIphc iphcHeader;
   uint32_t size = 0;
 
-
   if ( packet->PeekHeader (ipHeader) != 0 )
     {
       packet->RemoveHeader (ipHeader);
@@ -997,7 +996,6 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
           iphcHeader.SetNh (false);
           iphcHeader.SetNextHeader (nextHeader);
         }
-
 
       // Set the HLIM field
       if (ipHeader.GetHopLimit () == 1)
@@ -1155,6 +1153,7 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
               else
                 {
                   Ipv6Address cleanedAddr = CleanPrefix (dstAddr, m_contextTable[dstContextId].contextPrefix);
+
                   uint8_t serializedCleanedAddress[16];
                   cleanedAddr.Serialize (serializedCleanedAddress);
 
@@ -1277,7 +1276,6 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
 
       return size;
     }
-
   return 0;
 }
 
@@ -2631,17 +2629,11 @@ void SixLowPanNetDevice::HandleTimeout (void)
 
 void SixLowPanNetDevice::AddContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime)
 {
-  NS_LOG_FUNCTION (this << +contextId << contextPrefix << compressionAllowed << validLifetime);
+  NS_LOG_FUNCTION (this << +contextId << Ipv6Address::GetOnes ().CombinePrefix (contextPrefix) << contextPrefix << compressionAllowed << validLifetime.As (Time::S));
 
   if (contextId > 15)
     {
       NS_LOG_LOGIC ("Invalid context ID (" << +contextId << "), ignoring");
-      return;
-    }
-
-  if (m_contextTable.find (contextId) == m_contextTable.end ())
-    {
-      NS_LOG_LOGIC ("Context not found (" << +contextId << "), ignoring");
       return;
     }
 
@@ -2684,7 +2676,7 @@ bool SixLowPanNetDevice::GetContext (uint8_t contextId, Ipv6Prefix& contextPrefi
 
 void SixLowPanNetDevice::RenewContext (uint8_t contextId, Time validLifetime)
 {
-  NS_LOG_FUNCTION (this << +contextId << validLifetime);
+  NS_LOG_FUNCTION (this << +contextId << validLifetime.As (Time::S));
 
   if (contextId > 15)
     {
@@ -2744,14 +2736,20 @@ void SixLowPanNetDevice::RemoveContext (uint8_t contextId)
 
 bool SixLowPanNetDevice::FindUnicastCompressionContext (Ipv6Address address, uint8_t& contextId)
 {
+  NS_LOG_FUNCTION (this << address);
+
   for (const auto& iter: m_contextTable)
     {
       ContextEntry context = iter.second;
 
-      if ( (context.compressionAllowed == true) && (context.validLifetime < Simulator::Now ()) )
+      if ( (context.compressionAllowed == true) && (context.validLifetime > Simulator::Now ()) )
         {
+
           if (address.HasPrefix (context.contextPrefix))
             {
+              NS_LOG_LOGIC ("Fount context " << +contextId << " " <<
+                            Ipv6Address::GetOnes ().CombinePrefix (context.contextPrefix) << context.contextPrefix << " matching");
+
               contextId = iter.first;
               return true;
             }
@@ -2762,6 +2760,8 @@ bool SixLowPanNetDevice::FindUnicastCompressionContext (Ipv6Address address, uin
 
 bool SixLowPanNetDevice::FindMulticastCompressionContext (Ipv6Address address, uint8_t& contextId)
 {
+  NS_LOG_FUNCTION (this << address);
+
   // The only allowed context-based compressed multicast address is in the form
   // ffXX:XXLL:PPPP:PPPP:PPPP:PPPP:XXXX:XXXX
 
@@ -2769,7 +2769,7 @@ bool SixLowPanNetDevice::FindMulticastCompressionContext (Ipv6Address address, u
     {
       ContextEntry context = iter.second;
 
-      if ( (context.compressionAllowed == true) && (context.validLifetime < Simulator::Now ()) )
+      if ( (context.compressionAllowed == true) && (context.validLifetime > Simulator::Now ()) )
         {
           uint8_t contextLength = context.contextPrefix.GetPrefixLength ();
 
@@ -2791,6 +2791,9 @@ bool SixLowPanNetDevice::FindMulticastCompressionContext (Ipv6Address address, u
                   addressBytes[10] == contextBytes[6] &&
                   addressBytes[11] == contextBytes[7])
                 {
+                  NS_LOG_LOGIC ("Fount context " << +contextId << " " <<
+                                Ipv6Address::GetOnes ().CombinePrefix (context.contextPrefix) << context.contextPrefix << " matching");
+
                   contextId = iter.first;
                   return true;
                 }
@@ -2812,8 +2815,11 @@ Ipv6Address SixLowPanNetDevice::CleanPrefix (Ipv6Address address, Ipv6Prefix pre
     {
       addressBytes[i] = 0;
     }
-  uint8_t cleanupMask = (1<<bitsToClean)-1;
-  addressBytes[bytesToClean] &= cleanupMask;
+  if (bitsToClean)
+    {
+      uint8_t cleanupMask = (1<<bitsToClean)-1;
+      addressBytes[bytesToClean] &= cleanupMask;
+    }
 
   Ipv6Address cleanedAddress = Ipv6Address::Deserialize (addressBytes);
 

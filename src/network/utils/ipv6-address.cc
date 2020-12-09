@@ -399,7 +399,7 @@ Ipv6Address Ipv6Address::MakeAutoconfiguredAddress (Address addr, Ipv6Address pr
 
 Ipv6Address Ipv6Address::MakeAutoconfiguredAddress (Address addr, Ipv6Prefix prefix)
 {
-  Ipv6Address ipv6PrefixAddr = Ipv6Address::GetAny ().CombinePrefix(prefix);
+  Ipv6Address ipv6PrefixAddr = Ipv6Address::GetOnes ().CombinePrefix(prefix);
   return MakeAutoconfiguredAddress (addr, ipv6PrefixAddr);
 }
 

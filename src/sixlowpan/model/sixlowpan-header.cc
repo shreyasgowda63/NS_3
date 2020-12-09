@@ -793,6 +793,7 @@ SixLowPanIphc::SixLowPanIphc ()
 {
   // 011x xxxx xxxx xxxx
   m_baseFormat = 0x6000;
+  m_srcdstContextId = 0;
 }
 
 SixLowPanIphc::SixLowPanIphc (uint8_t dispatch)
@@ -800,6 +801,7 @@ SixLowPanIphc::SixLowPanIphc (uint8_t dispatch)
   // 011x xxxx xxxx xxxx
   m_baseFormat = dispatch;
   m_baseFormat <<= 8;
+  m_srcdstContextId = 0;
 }
 
 TypeId SixLowPanIphc::GetTypeId (void)
@@ -818,7 +820,48 @@ TypeId SixLowPanIphc::GetInstanceTypeId (void) const
 
 void SixLowPanIphc::Print (std::ostream & os) const
 {
-  os << "Compression kind: " << +m_baseFormat;
+  switch ( GetTf () )
+    {
+    case TF_FULL:
+      os << "TF_FULL(" << +m_ecn << ", " << +m_dscp << ", " << m_flowLabel << ")";
+      break;
+    case TF_DSCP_ELIDED:
+      os << "TF_DSCP_ELIDED(" << +m_ecn << ", " << m_flowLabel << ")";
+      break;
+    case TF_FL_ELIDED:
+      os << "TF_FL_ELIDED(" << +m_ecn << ", " << +m_dscp << ")";
+      break;
+    default:
+      os << "TF_ELIDED";
+      break;
+    }
+
+  GetNh () ? os << " NH(1)" : os << " NH(0)";
+
+  switch ( GetHlim () )
+    {
+    case HLIM_INLINE:
+      os << " HLIM_INLINE(" << +m_hopLimit << ")";
+      break;
+    case HLIM_COMPR_1:
+      os << " HLIM_COMPR_1(1)";
+      break;
+    case HLIM_COMPR_64:
+      os << " HLIM_COMPR_64(64)";
+      break;
+    default:
+      os << " HLIM_COMPR_255(255)";
+      break;
+    }
+
+  GetCid () ? os << " CID(" << +m_srcdstContextId << ")" : os << " CID(0)";
+
+  GetSac () ? os << " SAC(1)" : os << " SAC(0)";
+  os << " SAM (" << GetSam () << ")";
+
+  GetM () ? os << " M(1)" : os << " M(0)";
+  GetDac () ? os << " DAC(1)" : os << " DAC(0)";
+  os << " DAM (" << GetDam () << ")";
 }
 
 uint32_t SixLowPanIphc::GetSerializedSize () const
