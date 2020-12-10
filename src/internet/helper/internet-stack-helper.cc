@@ -40,6 +40,8 @@
 #include "ns3/ipv4-list-routing-helper.h"
 #include "ns3/ipv4-static-routing-helper.h"
 #include "ns3/ipv4-global-routing-helper.h"
+#include "ns3/ipv4-interface.h"
+#include "ns3/arp-cache.h"
 #include "ns3/ipv6-static-routing-helper.h"
 #include "ns3/ipv6-extension.h"
 #include "ns3/ipv6-extension-demux.h"
@@ -1212,5 +1214,181 @@ InternetStackHelper::EnableAsciiIpv6Internal (
 
   g_interfaceStreamMapIpv6[std::make_pair (ipv6, interface)] = stream;
 }
+
+
+void
+InternetStackHelper::AddPermanentArpEntry (Ptr<NetDevice> netDevice, Ipv4Address ipv4Address, Address macAddress)
+{
+  Ptr<Node> node = netDevice->GetNode ();
+  if (!node)
+    {
+      NS_LOG_INFO ("Call to add ARP cache entry, but NetDevice is not associated with a node");
+      return;
+    }
+
+  Ptr<Ipv4L3Protocol> ipv4 = node->GetObject<Ipv4L3Protocol> ();
+  if (!ipv4)
+    {
+      NS_LOG_INFO ("Call to add ARP cache entry, but IPv4 not found in the node");
+      return;
+    }
+
+  int32_t interface = ipv4->GetInterfaceForDevice (netDevice);
+  if (interface == -1)
+    {
+      NS_LOG_INFO ("Call to add ARP cache entry, but no Ipv4Interface can be found for the target NetDevice");
+      return;
+    }
+
+  Ptr<Ipv4Interface> ipv4Interface = ipv4->GetInterface (interface);
+  Ptr<ArpCache> arpCache = ipv4Interface->GetArpCache ();
+  if (!arpCache)
+    {
+      NS_LOG_INFO ("Call to add ARP cache entry, but no ArpCache can be found for the target NetDevice");
+      return;
+    }
+
+  ArpCache::Entry* entry;
+  entry = arpCache->Lookup (ipv4Address);
+  if (!entry)
+    {
+      entry = arpCache->Add (ipv4Address);
+    }
+  entry->SetMacAddress (macAddress);
+  entry->MarkPermanent ();
+  return;
+}
+
+void
+InternetStackHelper::RemoveArpEntry (Ptr<NetDevice> netDevice, Ipv4Address ipv4Address)
+{
+  Ptr<Node> node = netDevice->GetNode ();
+  if (!node)
+    {
+      NS_LOG_INFO ("Call to remove ARP cache entry, but NetDevice is not associated with a node");
+      return;
+    }
+
+  Ptr<Ipv4L3Protocol> ipv4 = node->GetObject<Ipv4L3Protocol> ();
+  if (!ipv4)
+    {
+      NS_LOG_INFO ("Call to remove ARP cache entry, but IPv4 not found in the node");
+      return;
+    }
+
+  int32_t interface = ipv4->GetInterfaceForDevice (netDevice);
+  if (interface == -1)
+    {
+      NS_LOG_INFO ("Call to remove ARP cache entry, but no Ipv4Interface can be found for the target NetDevice");
+      return;
+    }
+
+  Ptr<Ipv4Interface> ipv4Interface = ipv4->GetInterface (interface);
+  Ptr<ArpCache> arpCache = ipv4Interface->GetArpCache ();
+  if (!arpCache)
+    {
+      NS_LOG_INFO ("Call to remove ARP cache entry, but no ArpCache can be found for the target NetDevice");
+      return;
+    }
+
+  ArpCache::Entry* entry;
+  entry = arpCache->Lookup (ipv4Address);
+  if (!entry)
+    {
+      arpCache->Remove (entry);
+      return;
+    }
+
+  NS_LOG_INFO ("Call to remove ARP cache entry, but no entry has been found");
+  return;
+}
+
+void
+InternetStackHelper::AddPermanentNdiscEntry (Ptr<NetDevice> netDevice, Ipv6Address ipv6Address, Address macAddress)
+{
+  Ptr<Node> node = netDevice->GetNode ();
+  if (!node)
+    {
+      NS_LOG_INFO ("Call to add NDISC cache entry, but NetDevice is not associated with a node");
+      return;
+    }
+
+  Ptr<Ipv6L3Protocol> ipv6 = node->GetObject<Ipv6L3Protocol> ();
+  if (!ipv6)
+    {
+      NS_LOG_INFO ("Call to add NDISC cache entry, but IPv6 not found in the node");
+      return;
+    }
+
+  int32_t interface = ipv6->GetInterfaceForDevice (netDevice);
+  if (interface == -1)
+    {
+      NS_LOG_INFO ("Call to add NDISC cache entry, but no Ipv6Interface can be found for the target NetDevice");
+      return;
+    }
+
+  Ptr<Ipv6Interface> ipv6Interface = ipv6->GetInterface (interface);
+  Ptr<NdiscCache> ndiscCache = ipv6Interface->GetNdiscCache ();
+  if (!ndiscCache)
+    {
+      NS_LOG_INFO ("Call to add NDISC cache entry, but no NdiscCache can be found for the target NetDevice");
+      return;
+    }
+
+  NdiscCache::Entry* entry;
+  entry = ndiscCache->Lookup (ipv6Address);
+  if (!entry)
+    {
+      entry = ndiscCache->Add (ipv6Address);
+    }
+  entry->SetMacAddress (macAddress);
+  entry->MarkPermanent ();
+  return;
+}
+
+void
+InternetStackHelper::RemoveNdiscEntry (Ptr<NetDevice> netDevice, Ipv6Address ipv6Address)
+{
+  Ptr<Node> node = netDevice->GetNode ();
+  if (!node)
+    {
+      NS_LOG_INFO ("Call to remove NDISC cache entry, but NetDevice is not associated with a node");
+      return;
+    }
+
+  Ptr<Ipv6L3Protocol> ipv6 = node->GetObject<Ipv6L3Protocol> ();
+  if (!ipv6)
+    {
+      NS_LOG_INFO ("Call to remove NDISC cache entry, but IPv6 not found in the node");
+      return;
+    }
+
+  int32_t interface = ipv6->GetInterfaceForDevice (netDevice);
+  if (interface == -1)
+    {
+      NS_LOG_INFO ("Call to remove NDISC cache entry, but no Ipv6Interface can be found for the target NetDevice");
+      return;
+    }
+
+  Ptr<Ipv6Interface> ipv6Interface = ipv6->GetInterface (interface);
+  Ptr<NdiscCache> ndiscCache = ipv6Interface->GetNdiscCache ();
+  if (!ndiscCache)
+    {
+      NS_LOG_INFO ("Call to remove NDISC cache entry, but no NdiscCache can be found for the target NetDevice");
+      return;
+    }
+
+  NdiscCache::Entry* entry;
+  entry = ndiscCache->Lookup (ipv6Address);
+  if (!entry)
+    {
+      ndiscCache->Remove (entry);
+      return;
+    }
+
+  NS_LOG_INFO ("Call to remove NDISC cache entry, but no entry has been found");
+  return;
+}
+
 
 } // namespace ns3
