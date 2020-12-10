@@ -196,7 +196,6 @@ void SixLowPanNetDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort,
                                             PacketType packetType)
 {
   NS_LOG_FUNCTION (this << incomingPort << packet << protocol << src << dst);
-  NS_LOG_DEBUG ("UID is " << packet->GetUid ());
 
   uint8_t dispatchRawVal = 0;
   SixLowPanDispatch::Dispatch_e dispatchVal;
@@ -707,6 +706,8 @@ SixLowPanNetDevice::CompressLowPanHc1 (Ptr<Packet> packet, Address const &src, A
   SixLowPanHc1 hc1Header;
   uint32_t size = 0;
 
+  NS_LOG_DEBUG ( "Original packet: " << *packet << " Size " << packet->GetSize () );
+
   if ( packet->PeekHeader (ipHeader) != 0 )
     {
       packet->RemoveHeader (ipHeader);
@@ -918,7 +919,7 @@ SixLowPanNetDevice::DecompressLowPanHc1 (Ptr<Packet> packet, Address const &src,
 
   packet->AddHeader (ipHeader);
 
-  NS_LOG_DEBUG ( "Rebuilt packet: " << *packet << " Size " << packet->GetSize () );
+  NS_LOG_DEBUG ( "Rebuilt packet:  " << *packet << " Size " << packet->GetSize () );
 }
 
 uint32_t
@@ -929,6 +930,8 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
   Ipv6Header ipHeader;
   SixLowPanIphc iphcHeader;
   uint32_t size = 0;
+
+  NS_LOG_DEBUG ( "Original packet: " << *packet << " Size " << packet->GetSize () );
 
   if ( packet->PeekHeader (ipHeader) != 0 )
     {
@@ -1168,7 +1171,6 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
                     {
                       iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_64);
                       iphcHeader.SetDstInlinePart (serializedCleanedAddress+8, 8);
-
                     }
                 }
             }
@@ -1325,7 +1327,7 @@ SixLowPanNetDevice::DecompressLowPanIphc (Ptr<Packet> packet, Address const &src
         }
       else
         {
-          uint8_t contextId = encoding.GetSac ();
+          uint8_t contextId = encoding.GetSrcContextId ();
           if (m_contextTable.find (contextId) == m_contextTable.end ())
             {
               NS_LOG_LOGIC ("Unknown Source compression context (" << +contextId << "), dropping packet");
@@ -1419,7 +1421,7 @@ SixLowPanNetDevice::DecompressLowPanIphc (Ptr<Packet> packet, Address const &src
           NS_ABORT_MSG ("Reserved code found");
         }
 
-      uint8_t contextId = encoding.GetDac ();
+      uint8_t contextId = encoding.GetDstContextId ();
       if (m_contextTable.find (contextId) == m_contextTable.end ())
         {
           NS_LOG_LOGIC ("Unknown Destination compression context (" << +contextId << "), dropping packet");
@@ -1618,7 +1620,7 @@ SixLowPanNetDevice::DecompressLowPanIphc (Ptr<Packet> packet, Address const &src
 
   packet->AddHeader (ipHeader);
 
-  NS_LOG_DEBUG ( "Rebuilt packet: " << *packet << " Size " << packet->GetSize () );
+  NS_LOG_DEBUG ( "Rebuilt packet:  " << *packet << " Size " << packet->GetSize () );
 
   return false;
 }
