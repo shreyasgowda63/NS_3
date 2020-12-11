@@ -26,14 +26,16 @@ Other than that, the module strictly follows :rfc:`4944` and :rfc:`6282`, with t
 following exceptions:
 
 * HC2 encoding is not supported
-* IPHC's SAC and DAC are not supported
 
 The HC2 encoding is not supported, as it has been superseded by IPHC and NHC
 compression type (\ :rfc:`6282`).
 
-IPHC SAC and DAC are not yet supported, as they do require :rfc:`6775` 
+IPHC sateful (context-based) compression is supported,but since :rfc:`6775`   
 ("Neighbor Discovery Optimization for IPv6 over Low-Power Wireless Personal Area Networks (6LoWPANs)")
-for full compliance. It is planned to support them in the future.
+is not yet implemented, it is necessary to add the context to the nodes manually.
+
+This is possible though the ``SixLowPanHelper::AddContext`` function.
+Mind that installing different contexts in different nodes will lead to decompression failures.
 
 NetDevice
 #########
