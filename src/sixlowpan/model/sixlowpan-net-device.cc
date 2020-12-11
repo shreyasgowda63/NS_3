@@ -1025,92 +1025,96 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
       iphcHeader.SetSac (false);
       iphcHeader.SetDac (false);
 
-      Ipv6Address srcAddr = ipHeader.GetSourceAddress ();
-      uint8_t srcContextId;
 
       Ipv6Address checker = Ipv6Address ("fe80:0000:0000:0000:0000:00ff:fe00:1");
       uint8_t unicastAddrCheckerBuf[16];
       checker.GetBytes (unicastAddrCheckerBuf);
       uint8_t addressBuf[16];
 
-      // The "::" address is compressed as a fake stateful compression.
-      if (srcAddr == Ipv6Address::GetAny ())
+      // This is just to limit the scope of some variables.
+      if (true)
         {
-          // No context information is needed.
-          iphcHeader.SetSam (SixLowPanIphc::HC_INLINE);
-          iphcHeader.SetSac (true);
-        }
-      // Check if the address can be compressed with stateful compression
-      else if ( FindUnicastCompressionContext (srcAddr, srcContextId) )
-        {
-          // We can do stateful compression.
-          NS_LOG_LOGIC ("Checking stateful source compression: " << srcAddr );
+          Ipv6Address srcAddr = ipHeader.GetSourceAddress ();
+          uint8_t srcContextId;
 
-          iphcHeader.SetSac (true);
-          if (srcContextId != 0)
+          // The "::" address is compressed as a fake stateful compression.
+          if (srcAddr == Ipv6Address::GetAny ())
             {
-              // the default context is zero, no need to explicit it if it's zero
-              iphcHeader.SetSrcContextId (srcContextId);
-              iphcHeader.SetCid (true);
+              // No context information is needed.
+              iphcHeader.SetSam (SixLowPanIphc::HC_INLINE);
+              iphcHeader.SetSac (true);
             }
-
-          // Note that a context might include parts of the EUI-64 (i.e., be as long as 128 bits).
-          if (Ipv6Address::MakeAutoconfiguredAddress (src, m_contextTable[srcContextId].contextPrefix) == srcAddr)
+          // Check if the address can be compressed with stateful compression
+          else if ( FindUnicastCompressionContext (srcAddr, srcContextId) )
             {
-              iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_0);
-            }
-          else
-            {
-              Ipv6Address cleanedAddr = CleanPrefix (srcAddr, m_contextTable[srcContextId].contextPrefix);
-              uint8_t serializedCleanedAddress[16];
-              cleanedAddr.Serialize (serializedCleanedAddress);
+              // We can do stateful compression.
+              NS_LOG_LOGIC ("Checking stateful source compression: " << srcAddr );
 
-              if ( serializedCleanedAddress[8] == 0x00 && serializedCleanedAddress[9] == 0x00 &&
-                   serializedCleanedAddress[10] == 0x00 && serializedCleanedAddress[11] == 0xff &&
-                   serializedCleanedAddress[12] == 0xfe && serializedCleanedAddress[13] == 0x00 )
+              iphcHeader.SetSac (true);
+              if (srcContextId != 0)
                 {
-                  iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_16);
-                  iphcHeader.SetSrcInlinePart (serializedCleanedAddress+14, 2);
+                  // the default context is zero, no need to explicit it if it's zero
+                  iphcHeader.SetSrcContextId (srcContextId);
+                  iphcHeader.SetCid (true);
+                }
+
+              // Note that a context might include parts of the EUI-64 (i.e., be as long as 128 bits).
+              if (Ipv6Address::MakeAutoconfiguredAddress (src, m_contextTable[srcContextId].contextPrefix) == srcAddr)
+                {
+                  iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_0);
                 }
               else
                 {
-                  iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_64);
-                  iphcHeader.SetSrcInlinePart (serializedCleanedAddress+8, 8);
+                  Ipv6Address cleanedAddr = CleanPrefix (srcAddr, m_contextTable[srcContextId].contextPrefix);
+                  uint8_t serializedCleanedAddress[16];
+                  cleanedAddr.Serialize (serializedCleanedAddress);
 
+                  if ( serializedCleanedAddress[8] == 0x00 && serializedCleanedAddress[9] == 0x00 &&
+                      serializedCleanedAddress[10] == 0x00 && serializedCleanedAddress[11] == 0xff &&
+                      serializedCleanedAddress[12] == 0xfe && serializedCleanedAddress[13] == 0x00 )
+                    {
+                      iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_16);
+                      iphcHeader.SetSrcInlinePart (serializedCleanedAddress+14, 2);
+                    }
+                  else
+                    {
+                      iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_64);
+                      iphcHeader.SetSrcInlinePart (serializedCleanedAddress+8, 8);
+
+                    }
                 }
-            }
-        }
-      else
-        {
-          // We must do stateless compression.
-          NS_LOG_LOGIC ("Checking stateless source compression: " << srcAddr );
-
-          srcAddr.GetBytes (addressBuf);
-
-          uint8_t serializedSrcAddress[16];
-          srcAddr.Serialize (serializedSrcAddress);
-
-          if ( srcAddr == Ipv6Address::MakeAutoconfiguredLinkLocalAddress (src) )
-            {
-              iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_0);
-            }
-          else if (memcmp (addressBuf, unicastAddrCheckerBuf, 14) == 0)
-            {
-              iphcHeader.SetSrcInlinePart (serializedSrcAddress+14, 2);
-              iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_16);
-            }
-          else if ( srcAddr.IsLinkLocal () )
-            {
-              iphcHeader.SetSrcInlinePart (serializedSrcAddress+8, 8);
-              iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_64);
             }
           else
             {
-              iphcHeader.SetSrcInlinePart (serializedSrcAddress, 16);
-              iphcHeader.SetSam (SixLowPanIphc::HC_INLINE);
+              // We must do stateless compression.
+              NS_LOG_LOGIC ("Checking stateless source compression: " << srcAddr );
+
+              srcAddr.GetBytes (addressBuf);
+
+              uint8_t serializedSrcAddress[16];
+              srcAddr.Serialize (serializedSrcAddress);
+
+              if ( srcAddr == Ipv6Address::MakeAutoconfiguredLinkLocalAddress (src) )
+                {
+                  iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_0);
+                }
+              else if (memcmp (addressBuf, unicastAddrCheckerBuf, 14) == 0)
+                {
+                  iphcHeader.SetSrcInlinePart (serializedSrcAddress+14, 2);
+                  iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_16);
+                }
+              else if ( srcAddr.IsLinkLocal () )
+                {
+                  iphcHeader.SetSrcInlinePart (serializedSrcAddress+8, 8);
+                  iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_64);
+                }
+              else
+                {
+                  iphcHeader.SetSrcInlinePart (serializedSrcAddress, 16);
+                  iphcHeader.SetSam (SixLowPanIphc::HC_INLINE);
+                }
             }
         }
-
 
       // Set the M field
       if (ipHeader.GetDestinationAddress ().IsMulticast ())
@@ -1122,149 +1126,153 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
           iphcHeader.SetM (false);
         }
 
-      Ipv6Address dstAddr = ipHeader.GetDestinationAddress ();
-      dstAddr.GetBytes (addressBuf);
-
-      NS_LOG_LOGIC ("Checking destination compression: " << dstAddr );
-
-      uint8_t serializedDstAddress[16];
-      dstAddr.Serialize (serializedDstAddress);
-
-      if ( !iphcHeader.GetM () )
+      // This is just to limit the scope of some variables.
+      if (true)
         {
-          // Unicast address
+          Ipv6Address dstAddr = ipHeader.GetDestinationAddress ();
+          dstAddr.GetBytes (addressBuf);
 
-          uint8_t dstContextId;
-          if ( FindUnicastCompressionContext (dstAddr, dstContextId) )
+          NS_LOG_LOGIC ("Checking destination compression: " << dstAddr );
+
+          uint8_t serializedDstAddress[16];
+          dstAddr.Serialize (serializedDstAddress);
+
+          if ( !iphcHeader.GetM () )
             {
-              // We can do stateful compression.
-              NS_LOG_LOGIC ("Checking stateful destination compression: " << dstAddr );
+              // Unicast address
 
-              iphcHeader.SetDac (true);
-              if (dstContextId != 0)
+              uint8_t dstContextId;
+              if ( FindUnicastCompressionContext (dstAddr, dstContextId) )
                 {
-                  // the default context is zero, no need to explicit it if it's zero
-                  iphcHeader.SetDstContextId (dstContextId);
-                  iphcHeader.SetCid (true);
-                }
+                  // We can do stateful compression.
+                  NS_LOG_LOGIC ("Checking stateful destination compression: " << dstAddr );
 
-              // Note that a context might include parts of the EUI-64 (i.e., be as long as 128 bits).
-              if (Ipv6Address::MakeAutoconfiguredAddress (dst, m_contextTable[dstContextId].contextPrefix) == dstAddr)
-                {
-                  iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_0);
-                }
-              else
-                {
-                  Ipv6Address cleanedAddr = CleanPrefix (dstAddr, m_contextTable[dstContextId].contextPrefix);
-
-                  uint8_t serializedCleanedAddress[16];
-                  cleanedAddr.Serialize (serializedCleanedAddress);
-
-                  if ( serializedCleanedAddress[8] == 0x00 && serializedCleanedAddress[9] == 0x00 &&
-                       serializedCleanedAddress[10] == 0x00 && serializedCleanedAddress[11] == 0xff &&
-                       serializedCleanedAddress[12] == 0xfe && serializedCleanedAddress[13] == 0x00 )
+                  iphcHeader.SetDac (true);
+                  if (dstContextId != 0)
                     {
-                      iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_16);
-                      iphcHeader.SetDstInlinePart (serializedCleanedAddress+14, 2);
+                      // the default context is zero, no need to explicit it if it's zero
+                      iphcHeader.SetDstContextId (dstContextId);
+                      iphcHeader.SetCid (true);
+                    }
+
+                  // Note that a context might include parts of the EUI-64 (i.e., be as long as 128 bits).
+                  if (Ipv6Address::MakeAutoconfiguredAddress (dst, m_contextTable[dstContextId].contextPrefix) == dstAddr)
+                    {
+                      iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_0);
                     }
                   else
                     {
+                      Ipv6Address cleanedAddr = CleanPrefix (dstAddr, m_contextTable[dstContextId].contextPrefix);
+
+                      uint8_t serializedCleanedAddress[16];
+                      cleanedAddr.Serialize (serializedCleanedAddress);
+
+                      if ( serializedCleanedAddress[8] == 0x00 && serializedCleanedAddress[9] == 0x00 &&
+                          serializedCleanedAddress[10] == 0x00 && serializedCleanedAddress[11] == 0xff &&
+                          serializedCleanedAddress[12] == 0xfe && serializedCleanedAddress[13] == 0x00 )
+                        {
+                          iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_16);
+                          iphcHeader.SetDstInlinePart (serializedCleanedAddress+14, 2);
+                        }
+                      else
+                        {
+                          iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_64);
+                          iphcHeader.SetDstInlinePart (serializedCleanedAddress+8, 8);
+                        }
+                    }
+                }
+              else
+                {
+                  if ( dstAddr == Ipv6Address::MakeAutoconfiguredLinkLocalAddress (dst) )
+                    {
+                      iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_0);
+                    }
+                  else if (memcmp (addressBuf, unicastAddrCheckerBuf, 14) == 0)
+                    {
+                      iphcHeader.SetDstInlinePart (serializedDstAddress+14, 2);
+                      iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_16);
+                    }
+                  else if ( dstAddr.IsLinkLocal () )
+                    {
+                      iphcHeader.SetDstInlinePart (serializedDstAddress+8, 8);
                       iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_64);
-                      iphcHeader.SetDstInlinePart (serializedCleanedAddress+8, 8);
+                    }
+                  else
+                    {
+                      iphcHeader.SetDstInlinePart (serializedDstAddress, 16);
+                      iphcHeader.SetDam (SixLowPanIphc::HC_INLINE);
                     }
                 }
             }
           else
             {
-              if ( dstAddr == Ipv6Address::MakeAutoconfiguredLinkLocalAddress (dst) )
-                {
-                  iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_0);
-                }
-              else if (memcmp (addressBuf, unicastAddrCheckerBuf, 14) == 0)
-                {
-                  iphcHeader.SetDstInlinePart (serializedDstAddress+14, 2);
-                  iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_16);
-                }
-              else if ( dstAddr.IsLinkLocal () )
-                {
-                  iphcHeader.SetDstInlinePart (serializedDstAddress+8, 8);
-                  iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_64);
-                }
-              else
-                {
-                  iphcHeader.SetDstInlinePart (serializedDstAddress, 16);
-                  iphcHeader.SetDam (SixLowPanIphc::HC_INLINE);
-                }
-            }
-        }
-      else
-        {
-          // Multicast address
+              // Multicast address
 
-          uint8_t dstContextId;
-          if ( FindMulticastCompressionContext (dstAddr, dstContextId) )
-            {
-              // Stateful compression (only one possible case)
-
-              // ffXX:XXLL:PPPP:PPPP:PPPP:PPPP:XXXX:XXXX
-              uint8_t dstInlinePart[6] = {};
-              dstInlinePart[0] = serializedDstAddress[1];
-              dstInlinePart[1] = serializedDstAddress[2];
-              dstInlinePart[2] = serializedDstAddress[12];
-              dstInlinePart[3] = serializedDstAddress[13];
-              dstInlinePart[4] = serializedDstAddress[14];
-              dstInlinePart[5] = serializedDstAddress[15];
-
-              iphcHeader.SetDac (true);
-              if (dstContextId != 0)
+              uint8_t dstContextId;
+              if ( FindMulticastCompressionContext (dstAddr, dstContextId) )
                 {
-                  // the default context is zero, no need to explicit it if it's zero
-                  iphcHeader.SetDstContextId (dstContextId);
-                  iphcHeader.SetCid (true);
-                }
-              iphcHeader.SetDstInlinePart (dstInlinePart, 6);
-              iphcHeader.SetDam (SixLowPanIphc::HC_INLINE);
-            }
-          else
-            {
-              // Stateless compression
+                  // Stateful compression (only one possible case)
 
-              uint8_t multicastAddrCheckerBuf[16];
-              Ipv6Address multicastCheckAddress = Ipv6Address ("ff02::1");
-              multicastCheckAddress.GetBytes (multicastAddrCheckerBuf);
-
-              // The address takes the form ff02::00XX.
-              if ( memcmp (addressBuf, multicastAddrCheckerBuf, 15) == 0 )
-                {
-                  iphcHeader.SetDstInlinePart (serializedDstAddress+15, 1);
-                  iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_0);
-                }
-              // The address takes the form ffXX::00XX:XXXX.
-              //                            ffXX:0000:0000:0000:0000:0000:00XX:XXXX.
-              else if ( (addressBuf[0] == multicastAddrCheckerBuf[0])
-                  && (memcmp (addressBuf + 2, multicastAddrCheckerBuf + 2, 11) == 0) )
-                {
-                  uint8_t dstInlinePart[4] = {};
-                  memcpy (dstInlinePart, serializedDstAddress+1, 1);
-                  memcpy (dstInlinePart+1, serializedDstAddress+13, 3);
-                  iphcHeader.SetDstInlinePart (dstInlinePart, 4);
-                  iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_16);
-                }
-              // The address takes the form ffXX::00XX:XXXX:XXXX.
-              //                            ffXX:0000:0000:0000:0000:00XX:XXXX:XXXX.
-              else if ( (addressBuf[0] == multicastAddrCheckerBuf[0])
-                  && (memcmp (addressBuf + 2, multicastAddrCheckerBuf + 2, 9) == 0) )
-                {
+                  // ffXX:XXLL:PPPP:PPPP:PPPP:PPPP:XXXX:XXXX
                   uint8_t dstInlinePart[6] = {};
-                  memcpy (dstInlinePart, serializedDstAddress+1, 1);
-                  memcpy (dstInlinePart+1, serializedDstAddress+11, 5);
+                  dstInlinePart[0] = serializedDstAddress[1];
+                  dstInlinePart[1] = serializedDstAddress[2];
+                  dstInlinePart[2] = serializedDstAddress[12];
+                  dstInlinePart[3] = serializedDstAddress[13];
+                  dstInlinePart[4] = serializedDstAddress[14];
+                  dstInlinePart[5] = serializedDstAddress[15];
+
+                  iphcHeader.SetDac (true);
+                  if (dstContextId != 0)
+                    {
+                      // the default context is zero, no need to explicit it if it's zero
+                      iphcHeader.SetDstContextId (dstContextId);
+                      iphcHeader.SetCid (true);
+                    }
                   iphcHeader.SetDstInlinePart (dstInlinePart, 6);
-                  iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_64);
+                  iphcHeader.SetDam (SixLowPanIphc::HC_INLINE);
                 }
               else
                 {
-                  iphcHeader.SetDstInlinePart (serializedDstAddress, 16);
-                  iphcHeader.SetDam (SixLowPanIphc::HC_INLINE);
+                  // Stateless compression
+
+                  uint8_t multicastAddrCheckerBuf[16];
+                  Ipv6Address multicastCheckAddress = Ipv6Address ("ff02::1");
+                  multicastCheckAddress.GetBytes (multicastAddrCheckerBuf);
+
+                  // The address takes the form ff02::00XX.
+                  if ( memcmp (addressBuf, multicastAddrCheckerBuf, 15) == 0 )
+                    {
+                      iphcHeader.SetDstInlinePart (serializedDstAddress+15, 1);
+                      iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_0);
+                    }
+                  // The address takes the form ffXX::00XX:XXXX.
+                  //                            ffXX:0000:0000:0000:0000:0000:00XX:XXXX.
+                  else if ( (addressBuf[0] == multicastAddrCheckerBuf[0])
+                      && (memcmp (addressBuf + 2, multicastAddrCheckerBuf + 2, 11) == 0) )
+                    {
+                      uint8_t dstInlinePart[4] = {};
+                      memcpy (dstInlinePart, serializedDstAddress+1, 1);
+                      memcpy (dstInlinePart+1, serializedDstAddress+13, 3);
+                      iphcHeader.SetDstInlinePart (dstInlinePart, 4);
+                      iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_16);
+                    }
+                  // The address takes the form ffXX::00XX:XXXX:XXXX.
+                  //                            ffXX:0000:0000:0000:0000:00XX:XXXX:XXXX.
+                  else if ( (addressBuf[0] == multicastAddrCheckerBuf[0])
+                      && (memcmp (addressBuf + 2, multicastAddrCheckerBuf + 2, 9) == 0) )
+                    {
+                      uint8_t dstInlinePart[6] = {};
+                      memcpy (dstInlinePart, serializedDstAddress+1, 1);
+                      memcpy (dstInlinePart+1, serializedDstAddress+11, 5);
+                      iphcHeader.SetDstInlinePart (dstInlinePart, 6);
+                      iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_64);
+                    }
+                  else
+                    {
+                      iphcHeader.SetDstInlinePart (serializedDstAddress, 16);
+                      iphcHeader.SetDam (SixLowPanIphc::HC_INLINE);
+                    }
                 }
             }
         }
