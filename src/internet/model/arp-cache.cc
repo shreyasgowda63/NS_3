@@ -244,6 +244,12 @@ void
 ArpCache::Flush (void)
 {
   NS_LOG_FUNCTION (this);
+
+  if (Simulator::Now () == Time())
+    {
+      return;
+    }
+
   for (CacheI i = m_arpCache.begin (); i != m_arpCache.end (); i++)
     {
       delete (*i).second;

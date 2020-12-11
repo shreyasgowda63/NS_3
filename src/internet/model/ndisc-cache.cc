@@ -154,6 +154,11 @@ void NdiscCache::Flush ()
 {
   NS_LOG_FUNCTION (this);
 
+  if (Simulator::Now () == Time())
+    {
+      return;
+    }
+
   for (CacheI i = m_ndCache.begin (); i != m_ndCache.end (); i++)
     {
       delete (*i).second; /* delete the pointer NdiscCache::Entry */
