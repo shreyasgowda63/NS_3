@@ -1461,7 +1461,7 @@ SixLowPanNetDevice::DecompressLowPanIphc (Ptr<Packet> packet, Address const &src
             }
           else // SixLowPanIphc::HC_COMPR_0
             {
-              Ipv6Address::MakeAutoconfiguredLinkLocalAddress (src).GetBytes (dstAddress);
+              Ipv6Address::MakeAutoconfiguredLinkLocalAddress (dst).GetBytes (dstAddress);
             }
 
           uint8_t bytesToCopy = m_contextTable[contextId].contextPrefix.GetPrefixLength () / 8;
