@@ -931,7 +931,7 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
   SixLowPanIphc iphcHeader;
   uint32_t size = 0;
 
-  NS_LOG_DEBUG ( "Original packet: " << *packet << " Size " << packet->GetSize () );
+  NS_LOG_DEBUG ( "Original packet: " << *packet << " Size " << packet->GetSize () << " src: " << src << " dst: " << dst);
 
   if ( packet->PeekHeader (ipHeader) != 0 )
     {
@@ -1149,7 +1149,7 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
                 }
 
               // Note that a context might include parts of the EUI-64 (i.e., be as long as 128 bits).
-              if (Ipv6Address::MakeAutoconfiguredAddress (src, m_contextTable[dstContextId].contextPrefix) == dstAddr)
+              if (Ipv6Address::MakeAutoconfiguredAddress (dst, m_contextTable[dstContextId].contextPrefix) == dstAddr)
                 {
                   iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_0);
                 }
