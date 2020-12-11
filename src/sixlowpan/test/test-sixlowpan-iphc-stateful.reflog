@@ -1,0 +1,49 @@
+RegisterProtocolHandler for ns3::LrWpanNetDevice
+RegisterProtocolHandler for ns3::LrWpanNetDevice
+Device 0: address 0 02:01:00:00:00:01 -> fe80::1:ff:fe00:1
+Device 0: address 1 02:01:00:00:00:01 -> 2001:2::1:ff:fe00:1
+Device 1: address 0 02:01:00:00:00:02 -> fe80::1:ff:fe00:2
+Device 1: address 1 02:01:00:00:00:02 -> 2001:2::1:ff:fe00:2
+2001:2::/64
+Original packet:  Size 50 src: 02-06-02:01:00:00:00:01 dst: 02-06-02:01:00:00:00:02
+IPHC Compression - IPHC header size = 3
+IPHC Compression - packet size = 10
+Packet after IPHC compression: 
+SixLowPanNetDevice::Send 0 
+Packet received: 
+Packet length: 13
+Dispatches: 122 - 96
+removed 3 bytes - pkt is 
+Rebuilt packet:   Size 50
+Packet decompressed length: 50
+Packet decompressed received: 
+Original packet:  Size 50 src: 02-06-02:01:00:00:00:01 dst: 02-06-02:01:00:00:00:02
+IPHC Compression - IPHC header size = 6
+IPHC Compression - packet size = 10
+Packet after IPHC compression: 
+SixLowPanNetDevice::Send 0 
+Packet received: 
+Packet length: 16
+Dispatches: 122 - 96
+removed 6 bytes - pkt is 
+Rebuilt packet:   Size 50
+Packet decompressed length: 50
+Packet decompressed received: 
+Original packet:  Size 50 src: 02-06-02:01:00:00:00:01 dst: 02-06-02:01:00:00:00:02
+IPHC Compression - IPHC header size = 12
+IPHC Compression - packet size = 10
+Packet after IPHC compression: 
+SixLowPanNetDevice::Send 0 
+Packet received: 
+Packet length: 22
+Dispatches: 122 - 96
+removed 12 bytes - pkt is 
+Rebuilt packet:   Size 50
+Packet decompressed length: 50
+Packet decompressed received: 
+NDISC Cache of node 0 at time 9
+2001:2::1:ff:fe00:2 dev 2 lladdr 02-06-02:01:00:00:00:02 PERMANENT
+fe80::1:ff:fe00:2 dev 2 lladdr 02-06-02:01:00:00:00:02 PERMANENT
+NDISC Cache of node 1 at time 9
+2001:2::1:ff:fe00:1 dev 2 lladdr 02-06-02:01:00:00:00:01 PERMANENT
+fe80::1:ff:fe00:1 dev 2 lladdr 02-06-02:01:00:00:00:01 PERMANENT
