@@ -41,9 +41,3 @@ removed 12 bytes - pkt is
 Rebuilt packet:   Size 50
 Packet decompressed length: 50
 Packet decompressed received: 
-NDISC Cache of node 0 at time 9
-2001:2::1:ff:fe00:2 dev 2 lladdr 02-06-02:01:00:00:00:02 PERMANENT
-fe80::1:ff:fe00:2 dev 2 lladdr 02-06-02:01:00:00:00:02 PERMANENT
-NDISC Cache of node 1 at time 9
-2001:2::1:ff:fe00:1 dev 2 lladdr 02-06-02:01:00:00:00:01 PERMANENT
-fe80::1:ff:fe00:1 dev 2 lladdr 02-06-02:01:00:00:00:01 PERMANENT
