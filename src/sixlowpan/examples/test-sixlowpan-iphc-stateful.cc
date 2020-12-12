@@ -144,11 +144,6 @@ int main (int argc, char** argv)
     {
       lrWpanHelper.EnablePcapAll (std::string ("6LoW-lr-wpan-IPHC-stateful"), true);
     }
-  if (enableLSixlowLogLevelInfo)
-    {
-      Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> (&std::cout);
-      Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds(9), routingStream);
-    }
 
   if (enableLSixlowLogLevelInfo)
     {
