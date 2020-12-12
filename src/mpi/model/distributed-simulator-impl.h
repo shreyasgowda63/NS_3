@@ -138,22 +138,9 @@ public:
   virtual uint32_t GetSystemId (void) const;
   virtual uint32_t GetContext (void) const;
   virtual uint64_t GetEventCount (void) const;
+  virtual void BoundLookahead (const Time lookAhead);
+  virtual Time GetLookahead (void) const;
 
-  /**
-   * Add additional bound to lookahead constraints.
-   *
-   * This may be used if there are additional constraints on lookahead
-   * in addition to the minimum inter rank latency time.  For example
-   * when running ns-3 in a co-simulation setting the other simulators
-   * may have tighter lookahead constraints.
-   * 
-   * The method may be invoked more than once, the minimum time will
-   * be used to constrain lookahead.
-   *
-   * \param [in] lookAhead The maximum lookahead; must be > 0.
-   */
-  virtual void BoundLookAhead (const Time lookAhead);
-  
 private:
   // Inherited from Object
   virtual void DoDispose (void);

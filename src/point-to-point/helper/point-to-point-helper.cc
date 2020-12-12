@@ -280,6 +280,10 @@ PointToPointHelper::Install (Ptr<Node> a, Ptr<Node> b)
       mpiRecB->SetReceiveCallback (MakeCallback (&PointToPointNetDevice::Receive, devB));
       devA->AggregateObject (mpiRecA);
       devB->AggregateObject (mpiRecB);
+
+      TimeValue delay;
+      channel->GetAttribute ("Delay", delay);
+      Simulator::BoundLookahead (delay.Get ());
     }
 #else
   channel = m_channelFactory.Create<PointToPointChannel> ();

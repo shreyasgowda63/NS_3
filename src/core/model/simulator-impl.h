@@ -101,7 +101,10 @@ public:
   virtual uint32_t GetContext (void) const = 0;
   /** \copydoc Simulator::GetEventCount */
   virtual uint64_t GetEventCount (void) const = 0;
-
+  /** \copydoc Simulator::BoundLookahead */
+  virtual void BoundLookahead (const Time lookahead);
+  /** \copydoc Simulator::GetLookahead */
+  virtual Time GetLookahead (void) const;
 };
 
 } // namespace ns3
