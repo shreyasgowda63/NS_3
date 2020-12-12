@@ -1183,6 +1183,8 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
                 }
               else
                 {
+                  NS_LOG_LOGIC ("Checking stateless destination compression: " << dstAddr );
+
                   if ( dstAddr == Ipv6Address::MakeAutoconfiguredLinkLocalAddress (dst) )
                     {
                       iphcHeader.SetDam (SixLowPanIphc::HC_COMPR_0);
