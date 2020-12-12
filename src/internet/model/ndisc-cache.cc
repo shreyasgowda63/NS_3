@@ -154,10 +154,10 @@ void NdiscCache::Flush ()
 {
   NS_LOG_FUNCTION (this);
 
-  if (Simulator::Now () == Time())
-    {
-      return;
-    }
+  if (m_interface->GetDevice ()->IsLinkUp () == true)
+      {
+        return;
+      }
 
   for (CacheI i = m_ndCache.begin (); i != m_ndCache.end (); i++)
     {
