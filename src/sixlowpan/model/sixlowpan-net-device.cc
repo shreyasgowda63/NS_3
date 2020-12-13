@@ -1059,6 +1059,7 @@ SixLowPanNetDevice::CompressLowPanIphc (Ptr<Packet> packet, Address const &src, 
                 }
 
               // Note that a context might include parts of the EUI-64 (i.e., be as long as 128 bits).
+
               if (Ipv6Address::MakeAutoconfiguredAddress (src, m_contextTable[srcContextId].contextPrefix) == srcAddr)
                 {
                   iphcHeader.SetSam (SixLowPanIphc::HC_COMPR_0);

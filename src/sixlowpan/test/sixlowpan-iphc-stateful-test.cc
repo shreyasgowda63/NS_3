@@ -32,6 +32,7 @@
 #include "ns3/icmpv6-l4-protocol.h"
 
 #include "ns3/sixlowpan-net-device.h"
+#include "ns3/sixlowpan-header.h"
 #include "ns3/sixlowpan-helper.h"
 #include "ns3/mock-net-device.h"
 
@@ -55,8 +56,19 @@ using namespace ns3;
  */
 class SixlowpanIphcStatefulImplTest : public TestCase
 {
-  std::vector<Ptr<Packet>> m_txPackets; //!< Transmitted packets
-  std::vector<Ptr<Packet>> m_rxPackets; //!< Received packets
+  /**
+   * \brief Structure to hold the Rx/Tx packets.
+   */
+  typedef struct
+  {
+    Ptr<Packet> packet;   /**< Packet data */
+    Address src;   /**< Source address */
+    Address dst;   /**< Destination address */
+  } Data;
+
+
+  std::vector<Data> m_txPackets; //!< Transmitted packets
+  std::vector<Data> m_rxPackets; //!< Received packets
 
   bool ReceiveFromMockDevice (Ptr<NetDevice> device, Ptr<const Packet> packet, uint16_t protocol,
                               Address const &source, Address const &destination, NetDevice::PacketType packetType);
@@ -65,6 +77,9 @@ class SixlowpanIphcStatefulImplTest : public TestCase
                                           Address const &source, Address const &destination, NetDevice::PacketType packetType);
 
   void SendOnePacket (NetDeviceContainer devices, Ipv6Address from, Ipv6Address to);
+
+  NetDeviceContainer m_mockDevices; //!< MockNetDevice container
+  NetDeviceContainer m_sixDevices; //!< SixLowPanNetDevice container
 
 public:
   virtual void DoRun (void);
@@ -80,16 +95,17 @@ bool
 SixlowpanIphcStatefulImplTest::ReceiveFromMockDevice (Ptr<NetDevice> device, Ptr<const Packet> packet, uint16_t protocol,
                                                       Address const &source, Address const &destination, NetDevice::PacketType packetType)
 {
-  std::cout << "MockDevice Received at " << device << " from " << source << " to " << destination << " - " << *packet << std::endl;
+  Data incomingPkt;
+  incomingPkt.packet = packet->Copy ();
+  incomingPkt.src = source;
+  incomingPkt.dst = destination;
+  m_txPackets.push_back (incomingPkt);
 
-  m_txPackets.push_back(packet);
-
-  Ptr<Packet> pkt = packet->Copy ();
-  Ptr<MockNetDevice> mockDev = DynamicCast<MockNetDevice> (device);
+  Ptr<MockNetDevice> mockDev = DynamicCast<MockNetDevice> (m_mockDevices.Get(1));
   if (mockDev)
     {
       uint32_t id = mockDev->GetNode ()->GetId ();
-      Simulator::ScheduleWithContext (id, Time(1), &MockNetDevice::Receive, mockDev, pkt, protocol, destination, source, packetType);
+      Simulator::ScheduleWithContext (id, Time(1), &MockNetDevice::Receive, mockDev, incomingPkt.packet, protocol, destination, source, packetType);
     }
   return true;
 }
@@ -98,9 +114,11 @@ bool
 SixlowpanIphcStatefulImplTest::PromiscReceiveFromSixLowPanDevice (Ptr<NetDevice> device, Ptr<const Packet> packet, uint16_t protocol,
                                                                   Address const &source, Address const &destination, NetDevice::PacketType packetType)
 {
-  std::cout << "SixLowPanDevice Promisc Received at " << device << " from " << source << " to " << destination << " - " << *packet << std::endl;
-
-  m_rxPackets.push_back(packet);
+  Data incomingPkt;
+  incomingPkt.packet = packet->Copy ();
+  incomingPkt.src = source;
+  incomingPkt.dst = destination;
+  m_rxPackets.push_back (incomingPkt);
 
   return true;
 }
@@ -118,40 +136,42 @@ SixlowpanIphcStatefulImplTest::SendOnePacket (NetDeviceContainer devices, Ipv6Ad
   pkt->AddHeader (ipHdr);
 
   devices.Get (0)->Send (pkt, Mac48Address ("00:00:00:00:00:02"), 0);
-//   devices.Get (0)->Send (pkt, Mac48Address::ConvertFrom (devices.Get (1)->GetAddress ()), 0);
 }
 
 void
 SixlowpanIphcStatefulImplTest::DoRun (void)
 {
   NodeContainer nodes;
-  nodes.Create(1);
-  Ptr<Node> node = nodes.Get (0);
+  nodes.Create(2);
 
-  Ptr<MockNetDevice> netDevice = CreateObject<MockNetDevice> ();
-  node->AddDevice (netDevice);
-  netDevice->SetNode (node);
-  netDevice->SetAddress (Mac48Address ("00:00:00:00:00:01"));
-  netDevice->SetMtu (150);
-  netDevice->SetSendCallback ( MakeCallback (&SixlowpanIphcStatefulImplTest::ReceiveFromMockDevice, this) );
-  NetDeviceContainer mockDevices;
-  mockDevices.Add (netDevice);
+  // First node, setup NetDevices.
+  Ptr<MockNetDevice> mockNetDevice0 = CreateObject<MockNetDevice> ();
+  nodes.Get (0)->AddDevice (mockNetDevice0);
+  mockNetDevice0->SetNode (nodes.Get (0));
+  mockNetDevice0->SetAddress (Mac48Address ("00:00:00:00:00:01"));
+  mockNetDevice0->SetMtu (150);
+  mockNetDevice0->SetSendCallback ( MakeCallback (&SixlowpanIphcStatefulImplTest::ReceiveFromMockDevice, this) );
+  m_mockDevices.Add (mockNetDevice0);
+
+  // Second node, setup NetDevices.
+  Ptr<MockNetDevice> mockNetDevice1 = CreateObject<MockNetDevice> ();
+  nodes.Get (1)->AddDevice (mockNetDevice1);
+  mockNetDevice1->SetNode (nodes.Get (1));
+  mockNetDevice1->SetAddress (Mac48Address ("00:00:00:00:00:02"));
+  mockNetDevice1->SetMtu (150);
+  m_mockDevices.Add (mockNetDevice1);
 
   InternetStackHelper internetv6;
   internetv6.Install (nodes);
 
   SixLowPanHelper sixlowpan;
-  NetDeviceContainer devices = sixlowpan.Install (mockDevices);
-  devices.Get (0)->SetPromiscReceiveCallback ( MakeCallback (&SixlowpanIphcStatefulImplTest::PromiscReceiveFromSixLowPanDevice, this) );
+  m_sixDevices = sixlowpan.Install (m_mockDevices);
+  m_sixDevices.Get (1)->SetPromiscReceiveCallback ( MakeCallback (&SixlowpanIphcStatefulImplTest::PromiscReceiveFromSixLowPanDevice, this) );
 
   Ipv6AddressHelper ipv6;
   ipv6.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));
   Ipv6InterfaceContainer deviceInterfaces;
-  deviceInterfaces = ipv6.Assign (devices);
-
-  std::cout << "Device 0: address 0 " << Mac48Address::ConvertFrom (devices.Get (0)->GetAddress ()) << " -> "  << deviceInterfaces.GetAddress (0, 0) << std::endl;
-  std::cout << "Device 0: address 1 " << Mac48Address::ConvertFrom (devices.Get (0)->GetAddress ()) << " -> "  << deviceInterfaces.GetAddress (0, 1) << std::endl;
-
+  deviceInterfaces = ipv6.Assign (m_sixDevices);
 
   // This is a hack to prevent Router Solicitations and Duplicate Address Detection being sent.
   for (auto i = nodes.Begin (); i != nodes.End (); i++)
@@ -170,43 +190,104 @@ SixlowpanIphcStatefulImplTest::DoRun (void)
         }
     }
 
-  sixlowpan.AddContext (devices, 0, Ipv6Prefix ("2001:2::", 64), Time (Minutes (30)));
-  sixlowpan.AddContext (devices, 1, Ipv6Prefix ("2001:1::", 64), Time (Minutes (30)));
+  sixlowpan.AddContext (m_sixDevices, 0, Ipv6Prefix ("2001:2::", 64), Time (Minutes (30)));
+  sixlowpan.AddContext (m_sixDevices, 1, Ipv6Prefix ("2001:1::", 64), Time (Minutes (30)));
 
-//  Simulator::Schedule (Seconds (1), SendOnePacket, devices, deviceInterfaces,
-//                       Ipv6Address::GetAny (),
-//                       deviceInterfaces.GetAddress (1, 1));
+  Ipv6Address srcElided = deviceInterfaces.GetAddress (0, 1);
+  Ipv6Address dstElided = Ipv6Address::MakeAutoconfiguredAddress (Mac48Address ("00:00:00:00:00:02"), Ipv6Prefix ("2001:2::", 64));
 
-  Simulator::Schedule (Seconds (2), &SixlowpanIphcStatefulImplTest::SendOnePacket, this, devices,
-                       deviceInterfaces.GetAddress (0, 1),
+  Simulator::Schedule (Seconds (1), &SixlowpanIphcStatefulImplTest::SendOnePacket, this, m_sixDevices,
+                       Ipv6Address::GetAny (),
+                       dstElided);
+
+  Simulator::Schedule (Seconds (2), &SixlowpanIphcStatefulImplTest::SendOnePacket, this, m_sixDevices,
+                       Ipv6Address ("2001:2::f00d:f00d:cafe:cafe"),
                        Ipv6Address ("2001:1::0000:00ff:fe00:cafe"));
 
-  Simulator::Schedule (Seconds (4), &SixlowpanIphcStatefulImplTest::SendOnePacket, this, devices,
-                       deviceInterfaces.GetAddress (0, 1),
+  Simulator::Schedule (Seconds (3), &SixlowpanIphcStatefulImplTest::SendOnePacket, this, m_sixDevices,
+                       Ipv6Address ("2001:1::0000:00ff:fe00:cafe"),
                        Ipv6Address ("2001:1::f00d:f00d:cafe:cafe"));
 
-  // 64-bit inline source address test is not possible because LrWpanNetDevice can not send packets using the 64-bit address.
+  Simulator::Schedule (Seconds (4), &SixlowpanIphcStatefulImplTest::SendOnePacket, this, m_sixDevices,
+                       srcElided,
+                       Ipv6Address ("2001:1::f00d:f00d:cafe:cafe"));
 
   Simulator::Stop (Seconds (10));
 
   Simulator::Run ();
   Simulator::Destroy ();
 
-
   // ------ Now the tests ------------
 
-  // Unicast test
-//  SendData (txSocket, "2001:0100::1");
-//  NS_TEST_EXPECT_MSG_EQ (m_receivedPacket->GetSize (), 180, "trivial");
-//  uint8_t rxBuffer [180];
-//  uint8_t txBuffer [180] = "\"Can you tell me where my country lies?\" \\ said the unifaun to his true love's eyes. \\ \"It lies with me!\" cried the Queen of Maybe \\ - for her merchandise, he traded in his prize.";
-//  m_receivedPacket->CopyData (rxBuffer, 180);
-//  NS_TEST_EXPECT_MSG_EQ (memcmp (rxBuffer, txBuffer, 180), 0, "trivial");
-//
-//  m_receivedPacket->RemoveAllByteTags ();
-//
-//  Simulator::Destroy ();
+  SixLowPanIphc iphcHdr;
+  Ipv6Header ipv6Hdr;
 
+  // first packet sent, expected CID(0) SAC(1) SAM (0) M(0) DAC(1) DAM (3)
+  m_txPackets[0].packet->RemoveHeader (iphcHdr);
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetCid (), false, "CID should be false, is true");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSac (), true, "SAC should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSam (), SixLowPanIphc::HC_INLINE, "SAM should be HC_INLINE, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetM (), false, "M should be false, is true");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDac (), true, "DAC should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSrcContextId (), 0, "Src context should be 0, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDstContextId (), 0, "Dst context should be 0, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDam (), SixLowPanIphc::HC_COMPR_0, "DAM should be HC_COMPR_0, it is not");
+
+  // first packet received, expected :: -> dstElided
+  m_rxPackets[0].packet->RemoveHeader (ipv6Hdr);
+  NS_TEST_EXPECT_MSG_EQ (ipv6Hdr.GetSourceAddress (), Ipv6Address::GetAny (), "Src address wrongly rebuilt");
+  NS_TEST_EXPECT_MSG_EQ (ipv6Hdr.GetDestinationAddress (), dstElided, "Dst address wrongly rebuilt");
+
+  // second packet sent, expected CID(1) SAC(1) SAM (1) M(0) DAC(1) DAM (2)
+  m_txPackets[1].packet->RemoveHeader (iphcHdr);
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetCid (), true, "CID should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSac (), true, "SAC should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSam (), SixLowPanIphc::HC_COMPR_64, "SAM should be HC_COMPR_64, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetM (), false, "M should be false, is true");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDac (), true, "DAC should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSrcContextId (), 0, "Src context should be 0, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDstContextId (), 1, "Dst context should be 1, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDam (), SixLowPanIphc::HC_COMPR_16, "DAM should be HC_COMPR_16, it is not");
+
+  // second packet received, expected 2001:2::f00d:f00d:cafe:cafe -> 2001:1::0000:00ff:fe00:cafe
+  m_rxPackets[1].packet->RemoveHeader (ipv6Hdr);
+  NS_TEST_EXPECT_MSG_EQ (ipv6Hdr.GetSourceAddress (), Ipv6Address ("2001:2::f00d:f00d:cafe:cafe"), "Src address wrongly rebuilt");
+  NS_TEST_EXPECT_MSG_EQ (ipv6Hdr.GetDestinationAddress (), Ipv6Address ("2001:1::0000:00ff:fe00:cafe"), "Dst address wrongly rebuilt");
+
+  // third packet sent, expected CID(17) SAC(1) SAM (2) M(0) DAC(1) DAM (1)
+  m_txPackets[2].packet->RemoveHeader (iphcHdr);
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetCid (), true, "CID should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSac (), true, "SAC should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSam (), SixLowPanIphc::HC_COMPR_16, "SAM should be HC_COMPR_16, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetM (), false, "M should be false, is true");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDac (), true, "DAC should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSrcContextId (), 1, "Src context should be 1, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDstContextId (), 1, "Dst context should be 1, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDam (), SixLowPanIphc::HC_COMPR_64, "DAM should be HC_COMPR_64, it is not");
+
+  // third packet received, expected 2001:1::0000:00ff:fe00:cafe -> 2001:1::f00d:f00d:cafe:cafe
+  m_rxPackets[2].packet->RemoveHeader (ipv6Hdr);
+  NS_TEST_EXPECT_MSG_EQ (ipv6Hdr.GetSourceAddress (), Ipv6Address ("2001:1::0000:00ff:fe00:cafe"), "Src address wrongly rebuilt");
+  NS_TEST_EXPECT_MSG_EQ (ipv6Hdr.GetDestinationAddress (), Ipv6Address ("2001:1::f00d:f00d:cafe:cafe"), "Dst address wrongly rebuilt");
+
+  // fourth packet sent, expected CID(1) SAC(1) SAM (3) M(0) DAC(1) DAM (1)
+  m_txPackets[3].packet->RemoveHeader (iphcHdr);
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetCid (), true, "CID should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSac (), true, "SAC should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSam (), SixLowPanIphc::HC_COMPR_0, "SAM should be HC_COMPR_0, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetM (), false, "M should be false, is true");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDac (), true, "DAC should be true, is false");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetSrcContextId (), 0, "Src context should be 0, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDstContextId (), 1, "Dst context should be 1, it is not");
+  NS_TEST_EXPECT_MSG_EQ (iphcHdr.GetDam (), SixLowPanIphc::HC_COMPR_64, "DAM should be HC_COMPR_64, it is not");
+
+  // fourth packet received, expected srcElided -> 2001:1::f00d:f00d:cafe:cafe
+  m_rxPackets[3].packet->RemoveHeader (ipv6Hdr);
+  NS_TEST_EXPECT_MSG_EQ (ipv6Hdr.GetSourceAddress (), srcElided, "Src address wrongly rebuilt");
+  NS_TEST_EXPECT_MSG_EQ (ipv6Hdr.GetDestinationAddress (), Ipv6Address ("2001:1::f00d:f00d:cafe:cafe"), "Dst address wrongly rebuilt");
+
+  m_rxPackets.clear ();
+  m_txPackets.clear ();
 }
 
 
