@@ -334,10 +334,20 @@ void SixLowPanNetDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort,
       }
       break;
     case SixLowPanDispatch::LOWPAN_HC1:
+      if (m_useIphc)
+        {
+          m_dropTrace (DROP_DISALLOWED_COMPRESSION, copyPkt, m_node->GetObject<SixLowPanNetDevice> (), GetIfIndex ());
+          return;
+        }
       DecompressLowPanHc1 (copyPkt, realSrc, realDst);
       isPktDecompressed = true;
       break;
     case SixLowPanDispatch::LOWPAN_IPHC:
+      if (!m_useIphc)
+        {
+          m_dropTrace (DROP_DISALLOWED_COMPRESSION, copyPkt, m_node->GetObject<SixLowPanNetDevice> (), GetIfIndex ());
+          return;
+        }
       if (DecompressLowPanIphc (copyPkt, realSrc, realDst))
         {
           m_dropTrace (DROP_SATETFUL_DECOMPRESSION_PROBLEM, copyPkt, m_node->GetObject<SixLowPanNetDevice> (), GetIfIndex ());
