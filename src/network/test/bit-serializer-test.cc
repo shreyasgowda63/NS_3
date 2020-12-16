@@ -54,7 +54,7 @@ void BitSerializerTest::DoRun ()
 
   std::vector<uint8_t> result = testBitSerializer1.GetBytes ();
   NS_TEST_EXPECT_MSG_EQ ((result[0] == 0xab) && (result[1] == 0xc0), true,
-                         "Incorrect serialization " << std::hex << +result[0] << +result[1] << " instead of " << int(0xab) << " " << int(0xc0) << std::dec);
+                         "Incorrect serialization " << std::hex << +result[0] << +result[1] << " instead of " << 0xab << " " << 0xc0 << std::dec);
 
   BitSerializer testBitSerializer2;
 
@@ -66,7 +66,7 @@ void BitSerializerTest::DoRun ()
 
   result = testBitSerializer2.GetBytes ();
   NS_TEST_EXPECT_MSG_EQ ((result[0] == 0x0a) && (result[1] == 0xbc), true,
-                         "Incorrect serialization " << std::hex << +result[0] << +result[1] << " instead of " << int(0x0a) << " " << int(0xbc) << std::dec);
+                         "Incorrect serialization " << std::hex << +result[0] << +result[1] << " instead of " << 0x0a << " " << 0xbc << std::dec);
 }
 
 /**
@@ -89,21 +89,42 @@ BitDeserializerTest::BitDeserializerTest ()
 
 void BitDeserializerTest::DoRun ()
 {
-  BitDeserializer testBitDeserializer;
-  uint8_t test[2];
-  test[0] = 0xab;
-  test[1] = 0xc0;
+  uint16_t nibble1;
+  uint16_t nibble2;
+  uint16_t nibble3;
+  bool result;
 
-  testBitDeserializer.PushBytes (test, 2);
-  uint16_t nibble1 = testBitDeserializer.GetBits (7);
-  uint16_t nibble2 = testBitDeserializer.GetBits (3);
-  uint16_t nibble3 = testBitDeserializer.GetBits (2);
+  BitDeserializer testBitDeserializer1;
+  uint8_t test1[2];
+  test1[0] = 0xab;
+  test1[1] = 0xc0;
 
-  bool result = (nibble1 == 0x55) && (nibble2 == 0x7) && (nibble3 == 0x0);
+  testBitDeserializer1.PushBytes (test1, 2);
+  nibble1 = testBitDeserializer1.GetBits (7);
+  nibble2 = testBitDeserializer1.GetBits (3);
+  nibble3 = testBitDeserializer1.GetBits (2);
+  result = (nibble1 == 0x55) && (nibble2 == 0x7) && (nibble3 == 0x0);
 
   NS_TEST_EXPECT_MSG_EQ (result, true,
                          "Incorrect deserialization " << std::hex << nibble1 << " " << nibble2 << " " << nibble3 <<
-                         " << instead of " << " " << int(0x55) << " " << int(0x7) << " " << int(0x0) << std::dec);
+                         " << instead of " << " " << 0x55 << " " << 0x7 << " " << 0x0 << std::dec);
+
+  BitDeserializer testBitDeserializer2;
+  std::vector<uint8_t> test2;
+  test2.push_back (0xab);
+  test2.push_back (0xc0);
+
+  testBitDeserializer2.PushBytes (test2);
+  nibble1 = testBitDeserializer2.GetBits (7);
+  nibble2 = testBitDeserializer2.GetBits (3);
+  nibble3 = testBitDeserializer2.GetBits (2);
+
+  result = (nibble1 == 0x55) && (nibble2 == 0x7) && (nibble3 == 0x0);
+
+  NS_TEST_EXPECT_MSG_EQ (result, true,
+                         "Incorrect deserialization " << std::hex << nibble1 << " " << nibble2 << " " << nibble3 <<
+                         " << instead of " << " " << 0x55 << " " << 0x7 << " " << 0x0 << std::dec);
+
 }
 
 /**
