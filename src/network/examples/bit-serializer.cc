@@ -83,7 +83,7 @@ int main ()
   result = testBitSerializer2.GetBytes ();
 
   std::cout << "Result:    ";
-  for (uint8_t i=0; i<result.size (); i++)
+  for (uint8_t i = 0; i < result.size (); i++)
     {
       std::cout << std::hex << int(result[i]) << " ";
     }

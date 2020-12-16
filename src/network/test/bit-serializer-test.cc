@@ -41,8 +41,7 @@ public:
 
 BitSerializerTest::BitSerializerTest ()
   : TestCase ("BitSerializer")
-{
-}
+{}
 
 void BitSerializerTest::DoRun ()
 {
@@ -84,8 +83,7 @@ public:
 
 BitDeserializerTest::BitDeserializerTest ()
   : TestCase ("BitDeserializer")
-{
-}
+{}
 
 void BitDeserializerTest::DoRun ()
 {
