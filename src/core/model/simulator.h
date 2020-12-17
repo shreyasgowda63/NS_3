@@ -374,6 +374,31 @@ public:
   template <typename... Us, typename... Ts>
   static EventId ScheduleDestroy (void (*f)(Us...), Ts&&... args);
 
+  /**
+   * Save something held in Ptr<> until Simulator::Destroy.
+   * This enables constructs such as
+   *
+   * \code
+   *     if (verbose)
+   *     {
+   *       Ptr<Foo> f = Create<Foo> ();
+   *       // Configure f...
+   *       SaveUntilDestroy (f);
+   *     }
+   * \endcode
+   *
+   * Normally \c f would be destroyed at the end of the block.  
+   * With SaveUntilDestroy it persists until ScheduleDestroy is called, 
+   * enabling \c f to perform some useful function during the simulation
+   * without having to be declared outside the block, but only enabled 
+   * inside the block.
+   *
+   * \param [in] p The instance.  Typically this will be 
+   * an Object or ObjectBase.
+   */
+  template <typename T>
+  static EventId SaveUntilDestroy (Ptr<T> p);
+
   /** @} */  // Schedule events to run when Simulator:Destroy() is called.
 
   /**
@@ -613,6 +638,19 @@ EventId
 Simulator::ScheduleDestroy (void (*f)(Us...), Ts&&... args)
 {
   return DoScheduleDestroy (MakeEvent (f, std::forward<Ts> (args)...));
+}
+
+template <typename T>
+EventId
+Simulator::SaveUntilDestroy (Ptr<T> p)
+{
+  return Simulator::ScheduleDestroy (
+
+    [ p ] () 
+    { 
+      NS_UNUSED (p); 
+    }
+                                     );
 }
 
 } // namespace ns3
