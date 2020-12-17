@@ -33,6 +33,7 @@
 
 #include "event-id.h"
 #include "nstime.h"
+#include "simple-ref-count.h"
 #include "system-wall-clock-ms.h"
 #include "system-wall-clock-timestamp.h"
 #include "time-printer.h"
@@ -92,19 +93,28 @@ namespace ns3 {
  * 
  * https://mailman.isi.edu/pipermail/ns-developers/2009-January/005039.html
  */
-class ShowProgress
+class ShowProgress : public SimpleRefCount <ShowProgress>
 {
 public:
   /**
    * Constructor.
    * \param [in] interval The target wallclock interval to show progress.
+   * \param [in] enable Should we actually generate output
    * \param [in] os The stream to print on.
    */
   ShowProgress (const Time interval = Seconds (1.0),
+                bool enable = true,
                 std::ostream & os = std::cout);
 
   /** Destructor. */
   ~ShowProgress (void);
+
+  /**
+   * Enable (or disable) output.
+   * \param [in] enable Turn out output if \c true.
+   * \returns The previous state.
+   */
+  bool Enable (bool enable);
 
   /**
    * Set the target update interval, in wallclock time.
@@ -189,6 +199,7 @@ private:
 
   TimePrinter m_printer;      //!< The TimePrinter to use
   std::ostream *m_os;         //!< The output stream to use.
+  bool m_enabled;             //!< Output enabled.
   bool m_verbose;             //!< Verbose mode flag
   uint64_t m_repCount;        //!< Number of CheckProgress events
 

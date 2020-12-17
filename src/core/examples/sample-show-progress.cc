@@ -117,31 +117,37 @@ main (int argc, char ** argv)
   Time stop = Seconds (100);
   Time interval = Seconds (10);
   Time wait = MilliSeconds (10);
+  bool enable = true;
   bool verbose = false;
 
   CommandLine cmd (__FILE__);
   cmd.AddValue ("stop", "Simulation duration in virtual time.", stop);
   cmd.AddValue ("interval", "Approximate reporting interval, in wall clock time.", interval);
   cmd.AddValue ("wait", "Wallclock time to burn on each event.", wait);
+  cmd.AddValue ("enable", "Enable/disable the progress output.", enable);
   cmd.AddValue ("verbose", "Turn on verbose progress message.", verbose);
   cmd.Parse (argc, argv);
 
   std::cout << "\n"
             << cmd.GetName () << ":\n"
             << "\n"
+            << "output enabled:            " << (enable ? "yes" : "no")
             << "verbose progress message:  " << (verbose ? "on\n" : "off\n")
             << "target reporting interval: " << interval.As (Time::S) << "\n"
             << "average event sleep time:  " << wait.As (Time::MS)    << "\n"
             << "total simulation run time: " << stop.As (Time::S)
-            << std::endl;
+            << std::endl << std::endl;
 
   Ptr<Hold> h = Create<Hold> (wait, interval);
   h->Event ();
 
-  Simulator::Stop (stop);
-  ShowProgress spinner (interval);
-  spinner.SetVerbose (verbose);
+  if (enable)
+    {
+      auto spinner = Create<ShowProgress> (interval, enable);
+      spinner->SetVerbose (verbose);
+    }
 
+  Simulator::Stop (stop);
   Simulator::Run ();
   Simulator::Destroy ();
 
