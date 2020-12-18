@@ -37,7 +37,7 @@ TrickleTimer::TrickleTimer (Time minInterval, uint8_t doublings, uint16_t redund
 {
   NS_LOG_FUNCTION_NOARGS ();
 
-  NS_ASSERT_MSG (std::exp2 (doublings) > std::numeric_limits<uint64_t>::max(), "Doublings value too large");
+  NS_ASSERT_MSG (std::exp2 (doublings) < std::numeric_limits<uint64_t>::max(), "Doublings value too large " << std::exp2 (doublings) << " > " << std::numeric_limits<uint64_t>::max());
 
   m_minInterval = minInterval;
   m_ticks = std::exp2 (doublings);
