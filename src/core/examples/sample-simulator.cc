@@ -121,7 +121,7 @@ int main (int argc, char *argv[])
     [] ()
     {
       std::cout << "Code within a lambda expression at time " 
-                << Simulator::Now ().GetSeconds () 
+                << Simulator::Now ().As (Time::S)
                 << std::endl;
     });
 
