@@ -52,10 +52,8 @@ public:
    * Function to invoke when TrickleTimer expires.
    * \param arg The argument passed.
    */
-  void ExpireTimer (int arg);
-  bool m_expired;         //!< Flag for expired TrickleTimer
+  void ExpireTimer (void);
   std::vector<Time> m_expiredTimes;     //!< Time when TrickleTimer expired
-  int  m_expiredArgument; //!< Argument supplied to expired TrickleTimer
 
   /**
    * Function to signal that the transient is over
@@ -89,36 +87,30 @@ TrickleTimerTestCase::TrickleTimerTestCase ()
 {}
 
 void
-TrickleTimerTestCase::ExpireTimer (int arg)
+TrickleTimerTestCase::ExpireTimer (void)
 {
   if (m_enableDataCollection==false)
     {
       return;
     }
 
-  m_expired = true;
   m_expiredTimes.push_back (Simulator::Now ());
-  m_expiredArgument = arg;
 }
 
 void
 TrickleTimerTestCase::TransientOver (void)
 {
-  std::cout << "Transient is over" << std::endl;
   m_enableDataCollection = true;
 }
 
 void
 TrickleTimerTestCase::TestSteadyState (Time unit)
 {
-  m_expired = false;
-  m_expiredArgument = 0;
   m_expiredTimes.clear ();
   m_enableDataCollection = false;
 
   TrickleTimer trickle (unit, 4, 1);
   trickle.SetFunction (&TrickleTimerTestCase::ExpireTimer, this);
-  trickle.SetArguments (1);
   trickle.Enable ();
   trickle.Reset ();
 
@@ -146,14 +138,11 @@ TrickleTimerTestCase::TestSteadyState (Time unit)
 void
 TrickleTimerTestCase::TestRedundancy (Time unit)
 {
-  m_expired = false;
-  m_expiredArgument = 0;
   m_expiredTimes.clear ();
   m_enableDataCollection = false;
 
   TrickleTimer trickle (unit, 4, 1);
   trickle.SetFunction (&TrickleTimerTestCase::ExpireTimer, this);
-  trickle.SetArguments (1);
   trickle.Enable ();
   trickle.Reset ();
 
