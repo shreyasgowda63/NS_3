@@ -62,6 +62,25 @@ public:
    */
   void TransientOver (void);
 
+  /**
+   * Test the steady-state
+   * \param unit Minimum interval
+   */
+  void TestSteadyState (Time unit);
+
+  /**
+   * Test the redundancy suppression
+   * \param unit Minimum interval
+   */
+  void TestRedundancy (Time unit);
+
+  /**
+   * Inject in the timer a consistent event
+   * \param interval Interval
+   * \param tricklePtr Pointer to the TrickleTimer
+   */
+  void ConsistentEvent (Time unit, TrickleTimer* tricklePtr);
+
   bool m_enableDataCollection;     //!< Collect data if true
 };
 
@@ -80,8 +99,6 @@ TrickleTimerTestCase::ExpireTimer (int arg)
   m_expired = true;
   m_expiredTimes.push_back (Simulator::Now ());
   m_expiredArgument = arg;
-
-  // std::cout << Simulator::Now ().GetSeconds () << std::endl;
 }
 
 void
@@ -92,14 +109,12 @@ TrickleTimerTestCase::TransientOver (void)
 }
 
 void
-TrickleTimerTestCase::DoRun (void)
+TrickleTimerTestCase::TestSteadyState (Time unit)
 {
   m_expired = false;
   m_expiredArgument = 0;
-//  m_expiredTime = Seconds (0);
+  m_expiredTimes.clear ();
   m_enableDataCollection = false;
-//  Time unit = Time (1);
-  Time unit = Seconds (1);
 
   TrickleTimer trickle (unit, 4, 1);
   trickle.SetFunction (&TrickleTimerTestCase::ExpireTimer, this);
@@ -109,10 +124,7 @@ TrickleTimerTestCase::DoRun (void)
 
   // The transient is over at (exp2(doublings +1) -1) * MinInterval (worst case).
   Simulator::Schedule (unit*31, &TrickleTimerTestCase::TransientOver, this);
-//  trickle.Ping (MicroSeconds (10));
-//  Simulator::Schedule (MicroSeconds ( 5), &Watchdog::Ping, &watchdog, MicroSeconds (20));
-//  Simulator::Schedule (MicroSeconds (20), &Watchdog::Ping, &watchdog, MicroSeconds ( 2));
-//  Simulator::Schedule (MicroSeconds (23), &Watchdog::Ping, &watchdog, MicroSeconds (17));
+
   Simulator::Stop (unit * 50000);
 
   Simulator::Run ();
@@ -120,21 +132,57 @@ TrickleTimerTestCase::DoRun (void)
 
   std::vector<Time> expirationFrequency;
 
-  std::cout << "got " << m_expiredTimes.size () << " elements" << std::endl;
-
   expirationFrequency.resize (m_expiredTimes.size ());
   std::adjacent_difference (m_expiredTimes.begin (), m_expiredTimes.end (), expirationFrequency.begin ());
   expirationFrequency.erase (expirationFrequency.begin ());
 
-  Time min = *std::min_element (expirationFrequency.begin (), expirationFrequency.end ());
-  Time max = *std::max_element (expirationFrequency.begin (), expirationFrequency.end ());
+  int64x64_t min = (*std::min_element (expirationFrequency.begin (), expirationFrequency.end ()))/unit;
+  int64x64_t max = (*std::max_element (expirationFrequency.begin (), expirationFrequency.end ()))/unit;
 
-  std::cout << "min is " << min/unit << " - max is " << max/unit << std::endl;
+  NS_TEST_EXPECT_MSG_GT_OR_EQ (min.GetDouble (), 8, "Timer did fire too fast ??");
+  NS_TEST_EXPECT_MSG_LT_OR_EQ (max.GetDouble (), 24, "Timer did fire too slow ??");
+}
 
-//  std::cout << m_expired << " at " << m_expiredTime << " with arg " << m_expiredArgument << std::endl;
-//  NS_TEST_ASSERT_MSG_EQ (m_expired, true, "The timer did not expire ??");
-//  NS_TEST_ASSERT_MSG_EQ (m_expiredTime, MicroSeconds (40), "The timer did not expire at the expected time ?");
-//  NS_TEST_ASSERT_MSG_EQ (m_expiredArgument, 1, "We did not get the right argument");
+void
+TrickleTimerTestCase::TestRedundancy (Time unit)
+{
+  m_expired = false;
+  m_expiredArgument = 0;
+  m_expiredTimes.clear ();
+  m_enableDataCollection = false;
+
+  TrickleTimer trickle (unit, 4, 1);
+  trickle.SetFunction (&TrickleTimerTestCase::ExpireTimer, this);
+  trickle.SetArguments (1);
+  trickle.Enable ();
+  trickle.Reset ();
+
+  // The transient is over at (exp2(doublings +1) -1) * MinInterval (worst case).
+  Simulator::Schedule (unit*31, &TrickleTimerTestCase::TransientOver, this);
+  Simulator::Schedule (unit*31, &TrickleTimerTestCase::ConsistentEvent, this, unit*8, &trickle);
+
+  Simulator::Stop (unit * 50000);
+
+  Simulator::Run ();
+  Simulator::Destroy ();
+
+  NS_TEST_EXPECT_MSG_EQ (m_expiredTimes.size (), 0, "Timer did fire while being suppressed ??");
+}
+
+void
+TrickleTimerTestCase::ConsistentEvent (Time unit, TrickleTimer* tricklePtr)
+{
+  tricklePtr->ConsistentEvent ();
+  Simulator::Schedule (unit, &TrickleTimerTestCase::ConsistentEvent, this, unit, tricklePtr);
+}
+
+
+void
+TrickleTimerTestCase::DoRun (void)
+{
+  TestSteadyState (Time (1));
+  TestSteadyState (Seconds (1));
+  TestRedundancy (Seconds (1));
 }
 
 

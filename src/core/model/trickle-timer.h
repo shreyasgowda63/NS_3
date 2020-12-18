@@ -42,6 +42,8 @@ class TimerImpl;
  * A Trickle Timer is a timer that varies its frequency between a minimum
  * and a maximum, depending on events. It is typically used to exchange
  * information in a highly robust, energy efficient, simple, and scalable manner.
+ *
+ * Please refer to \RFC6206} for a full description.
  */
 class TrickleTimer
 {
