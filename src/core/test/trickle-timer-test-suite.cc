@@ -50,7 +50,6 @@ public:
   virtual void DoRun (void);
   /**
    * Function to invoke when TrickleTimer expires.
-   * \param arg The argument passed.
    */
   void ExpireTimer (void);
   std::vector<Time> m_expiredTimes;     //!< Time when TrickleTimer expired
