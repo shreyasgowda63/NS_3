@@ -440,6 +440,9 @@ Ipv4RawSocketImpl::ForwardUp (Ptr<const Packet> p, Ipv4Header ipHeader, Ptr<Ipv4
         {
           Ipv4PacketInfoTag tag;
           copy->RemovePacketTag (tag);
+          tag.SetAddress (ipHeader.GetDestination ());
+          tag.SetLocalAddress (Ipv4Address::GetAny ());
+          tag.SetTtl (ipHeader.GetTtl ());
           tag.SetRecvIf (incomingInterface->GetDevice ()->GetIfIndex ());
           copy->AddPacketTag (tag);
         }
