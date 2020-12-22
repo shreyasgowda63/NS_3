@@ -1012,7 +1012,6 @@ UdpSocketImpl::ForwardUp (Ptr<Packet> packet, Ipv4Header header, uint16_t port,
       Ipv4PacketInfoTag tag;
       packet->RemovePacketTag (tag);
       tag.SetAddress (header.GetDestination ());
-      tag.SetLocalAddress (Ipv4Address::GetAny ());
       tag.SetTtl (header.GetTtl ());
       tag.SetRecvIf (incomingInterface->GetDevice ()->GetIfIndex ());
       packet->AddPacketTag (tag);
