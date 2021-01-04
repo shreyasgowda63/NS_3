@@ -5,14 +5,18 @@
 Fq queue disc
 ------------------
 
-This chapter describes the Fq ([Hoe16]_) queue disc base class implementation in |ns3|.
+This chapter describes the flow queue (Fq) ([Hoe16]_) queue disc base class implementation in |ns3|.
 
 Queue discs using Fq classifies incoming packets into different queues (by default, 1024
 queues are created), which are served according to a modified Deficit Round
 Robin (DRR) queue scheduler. Each queue is managed by the their respective 
 AQM algorithm, for example FqCoDel is managed by CoDel AQM algorithm. Fq queue disc uses Fifo at each queue.
-Fq queue discs distinguishes between "new" queues (which don't build up a standing
-queue) and "old" queues, that have queued enough data to be around for more
+In Linux, Fq as a scheduler is not separated from the CoDel drop/mark policy; it is a combined algorithm.
+However, in developing FQ variants for other AQM policies (PIE, Cobalt, etc.), we refactored the support
+for the scheduler (FQ) to reduce code duplication.  It is possible to instantiate ns-3 Fq (FqFifo) queue
+discs but we expect that most users will be interested in a subclass that couples FQ with a more
+advanced AQM such as CoDel or PIE. Fq queue discs distinguishes between "new" queues (which don't build 
+up a standing queue) and "old" queues, that have queued enough data to be around for more
 than one iteration of the round-robin scheduler.
 
 Model Description
@@ -59,7 +63,7 @@ configured.
 References
 ==========
 
-.. [Hoe16] T. Hoeiland-Joergensen, P. McKenney, D. Taht, J. Gettys and E. Dumazet, The FlowQueue-CoDel Packet Scheduler and Active Queue Management Algorithm, IETF draft.  Available online at `<https://tools.ietf.org/html/draft-ietf-aqm-fq-codel>`_
+.. [Hoe16] T. Hoeiland-Joergensen, P. McKenney, D. Taht, J. Gettys and E. Dumazet, The FlowQueue-CoDel Packet Scheduler and Active Queue Management Algorithm, IETF RFC.  Available online at `<https://tools.ietf.org/html/rfc8290`_
 
 .. [Buf16] Bufferbloat.net.  Available online at `<http://www.bufferbloat.net/>`_.
 
@@ -70,7 +74,7 @@ Attributes
 The key attributes that the FqQueueDisc class holds include the following:
 
 * ``UseEcn:`` True to use ECN (packets are marked instead of being dropped)
-* ``MaxSize:`` The limit on the maximum number of packets stored by the AQM.
+* ``MaxSize:`` The limit on the maximum number of packets stored by the AQMs/stored by the AQM/stored by the aggregate queue (all flows).
 * ``Flows:`` The number of flow queues managed by Fq.
 * ``DropBatchSize:`` The maximum number of packets dropped from the fat flow.
 * ``Perturbation:`` The salt used as an additional input to the hash function used to classify packets.

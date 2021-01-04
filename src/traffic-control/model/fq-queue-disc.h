@@ -1,3 +1,25 @@
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/*
+ * Copyright (c) 2016 Universita' degli Studi di Napoli Federico II
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Authors: Pasquale Imputato <p.imputato@gmail.com>
+ *          Stefano Avallone <stefano.avallone@unina.it>
+ * 
+ * Copyright 2020 Bhaskar Kataria <bhaskar.k7920@gmail.com> (refactoring to FQ base class)
+*/
 #ifndef FQ_QUEUE_DISC
 #define FQ_QUEUE_DISC
 
@@ -76,7 +98,7 @@ public:
   uint32_t GetIndex (void) const;
 
 private:
-  int32_t m_deficit;    //!< the deficit for this flow
+  int32_t m_deficit;    //!< the deficit (in bytes) for this flow
   FlowStatus m_status;  //!< the status of this flow
   uint32_t m_index;     //!< the index for this flow
 };
@@ -86,6 +108,8 @@ private:
  * \ingroup traffic-control
  *
  * \brief A Fq packet queue disc
+ * \sa ns3::FqCoDelQueueDisc
+ * \sa ns3::FqPieQueueDisc
  */
 
 class FqQueueDisc : public QueueDisc {
