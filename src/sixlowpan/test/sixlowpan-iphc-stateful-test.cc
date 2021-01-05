@@ -34,7 +34,7 @@
 #include "ns3/sixlowpan-net-device.h"
 #include "ns3/sixlowpan-header.h"
 #include "ns3/sixlowpan-helper.h"
-#include "ns3/mock-net-device.h"
+#include "mock-net-device.h"
 
 #include <string>
 #include <limits>
