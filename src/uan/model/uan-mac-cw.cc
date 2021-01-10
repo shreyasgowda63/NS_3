@@ -258,11 +258,7 @@ UanMacCw::NotifyTxStart (Time duration)
 {
   m_txNotified = true;
 
-<<<<<<< HEAD
   NS_LOG_DEBUG ("Time " << Now ().As (Time::S) << " Tx Start Notified");
-=======
-  NS_LOG_DEBUG ("Time " << Simulator::Now ().GetSeconds () << " Tx Start Notified");
->>>>>>> EndTx moved to PhyListener
 
   if (m_state == RUNNING)
     {
