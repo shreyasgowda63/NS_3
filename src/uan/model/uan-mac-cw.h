@@ -142,8 +142,8 @@ private:
   uint16_t m_pktTxProt;
   /** Scheduled SendPacket event. */
   EventId m_sendEvent;
-  /** Tx has been notified from Phy. */
-  bool m_txNotified;
+  /** Tx is ongoing */
+  bool m_txOngoing;
   /** Current state. */
   State m_state;
 

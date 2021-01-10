@@ -37,7 +37,7 @@ UanMacCw::UanMacCw ()
   : UanMac (),
   m_phy (0),
   m_pktTx (0),
-  m_txNotified (false),
+  m_txOngoing (false),
   m_state (IDLE),
   m_cleared (false)
 
@@ -64,7 +64,7 @@ UanMacCw::Clear ()
       m_phy = 0;
     }
   m_sendEvent.Cancel ();
-  m_txNotified = false;
+  m_txOngoing = false;
 }
 
 void
@@ -116,7 +116,7 @@ UanMacCw::Enqueue (Ptr<Packet> packet, uint16_t protocolNumber, const Address &d
     {
     case CCABUSY:
       NS_LOG_DEBUG ("Time " << Now ().As (Time::S) << " MAC " << GetAddress () << " Starting enqueue CCABUSY");
-      if (m_txNotified == true)
+      if (m_txOngoing == true)
         {
           NS_LOG_DEBUG ("State is TX");
         }
@@ -255,7 +255,7 @@ UanMacCw::NotifyCcaEnd (void)
 void
 UanMacCw::NotifyTxStart (Time duration)
 {
-  m_txNotified = true;
+  m_txOngoing = true;
 
   NS_LOG_DEBUG ("Time " << Now ().As (Time::S) << " Tx Start Notified");
 
@@ -272,7 +272,7 @@ UanMacCw::NotifyTxEnd (void)
 {
   EndTx ();
 
-  m_txNotified = false;
+  m_txOngoing = false;
 }
 
 int64_t
