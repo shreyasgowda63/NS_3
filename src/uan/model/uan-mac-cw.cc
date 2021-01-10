@@ -116,7 +116,6 @@ UanMacCw::Enqueue (Ptr<Packet> packet, uint16_t protocolNumber, const Address &d
     {
     case CCABUSY:
       NS_LOG_DEBUG ("Time " << Now ().As (Time::S) << " MAC " << GetAddress () << " Starting enqueue CCABUSY");
-      if (m_txEndEvent.IsRunning ())
       if (m_txNotified == true)
         {
           NS_LOG_DEBUG ("State is TX");
@@ -266,22 +265,6 @@ UanMacCw::NotifyTxStart (Time duration)
       m_state = CCABUSY;
       SaveTimer ();
     }
-}
-
-void
-UanMacCw::NotifyTxEnd (void)
-{
-  EndTx ();
-
-  m_txNotified = false;
-}
-
-void
-UanMacCw::NotifyTxEnd (void)
-{
-  EndTx ();
-
-  m_txNotified = false;
 }
 
 void
