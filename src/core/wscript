@@ -396,7 +396,7 @@ def build(bld):
         'model/time-printer.h',
         'model/show-progress.h',
         'helper/csv-reader.h',
-        'model/length.h'
+        'model/length.h',
         'model/sim-event.h',
         'model/event-stream.h',
         ]
