@@ -67,14 +67,14 @@ MapScheduler::Insert (const Event &ev)
 }
 
 bool
-MapScheduler::IsEmpty (void) const
+MapScheduler::DoIsEmpty (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_list.empty ();
 }
 
 Scheduler::Event
-MapScheduler::PeekNext (void) const
+MapScheduler::DoPeekNext (void) const
 {
   NS_LOG_FUNCTION (this);
   EventMapCI i = m_list.begin ();
@@ -86,8 +86,9 @@ MapScheduler::PeekNext (void) const
   NS_LOG_DEBUG (this << ev.impl << ev.key.m_ts << ev.key.m_uid);
   return ev;
 }
+
 Scheduler::Event
-MapScheduler::RemoveNext (void)
+MapScheduler::DoRemoveNext (void)
 {
   NS_LOG_FUNCTION (this);
   EventMapI i = m_list.begin ();
@@ -101,7 +102,7 @@ MapScheduler::RemoveNext (void)
 }
 
 void
-MapScheduler::Remove (const Event &ev)
+MapScheduler::DoRemove (const Event &ev)
 {
   NS_LOG_FUNCTION (this << ev.impl << ev.key.m_ts << ev.key.m_uid);
   EventMapI i = m_list.find (ev.key);
