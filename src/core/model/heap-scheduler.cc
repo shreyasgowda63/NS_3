@@ -143,7 +143,7 @@ HeapScheduler::Smallest (std::size_t a, std::size_t b) const
 }
 
 bool
-HeapScheduler::IsEmpty (void) const
+HeapScheduler::DoIsEmpty (void) const
 {
   NS_LOG_FUNCTION (this);
   return (m_heap.size () == 1) ? true : false;
@@ -207,13 +207,13 @@ HeapScheduler::Insert (const Event &ev)
 }
 
 Scheduler::Event
-HeapScheduler::PeekNext (void) const
+HeapScheduler::DoPeekNext (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_heap[Root ()];
 }
 Scheduler::Event
-HeapScheduler::RemoveNext (void)
+HeapScheduler::DoRemoveNext (void)
 {
   NS_LOG_FUNCTION (this);
   Event next = m_heap[Root ()];
@@ -225,7 +225,7 @@ HeapScheduler::RemoveNext (void)
 
 
 void
-HeapScheduler::Remove (const Event &ev)
+HeapScheduler::DoRemove (const Event &ev)
 {
   NS_LOG_FUNCTION (this << &ev);
   std::size_t uid = ev.key.m_uid;
