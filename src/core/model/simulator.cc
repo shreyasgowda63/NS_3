@@ -133,9 +133,9 @@ static SimulatorImpl * GetImpl (void)
 
 //
 // Note: we call LogSetTimePrinter _after_ creating the implementation
-// object because the act of creation can trigger calls to the logging 
-// framework which would call the TimePrinter function which would call 
-// Simulator::Now which would call Simulator::GetImpl, and, thus, get us 
+// object because the act of creation can trigger calls to the logging
+// framework which would call the TimePrinter function which would call
+// Simulator::Now which would call Simulator::GetImpl, and, thus, get us
 // in an infinite recursion until the stack explodes.
 //
       LogSetTimePrinter (&DefaultTimePrinter);
@@ -176,19 +176,19 @@ Simulator::SetScheduler (ObjectFactory schedulerFactory)
 void
 Simulator::SetEventStream (ObjectFactory factory)
 {
-    NS_LOG_FUNCTION (factory);
+  NS_LOG_FUNCTION (factory);
 
-    GetImpl ()->SetEventStream (factory);
+  GetImpl ()->SetEventStream (factory);
 }
 
-bool 
+bool
 Simulator::IsFinished (void)
 {
   NS_LOG_FUNCTION_NOARGS ();
   return GetImpl ()->IsFinished ();
 }
 
-void 
+void
 Simulator::Run (void)
 {
   NS_LOG_FUNCTION_NOARGS ();

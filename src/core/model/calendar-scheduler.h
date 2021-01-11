@@ -200,7 +200,7 @@ private:
    * \param [in] bucket The bucket to draw from.
    * \return The next event from the \c bucket.
    */
-  Scheduler::Event & (*NextEvent) (Bucket & bucket);
+  Scheduler::Event & (*NextEvent)(Bucket & bucket);
   /**
    * Ordering function to identify the insertion point, according to \c m_reverse.
    * \param [in] newEvent The new event being inserted.

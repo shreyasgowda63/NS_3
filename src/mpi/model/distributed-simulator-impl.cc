@@ -48,8 +48,7 @@ NS_LOG_COMPONENT_DEFINE ("DistributedSimulatorImpl");
 NS_OBJECT_ENSURE_REGISTERED (DistributedSimulatorImpl);
 
 LbtsMessage::~LbtsMessage ()
-{
-}
+{}
 
 Time
 LbtsMessage::GetSmallestTime ()
@@ -85,7 +84,7 @@ LbtsMessage::IsFinished ()
  * user supplied time via BoundLookAhead and the
  * minimum latency network between ranks.
  */
-Time DistributedSimulatorImpl::m_lookAhead = Time::Max();
+Time DistributedSimulatorImpl::m_lookAhead = Time::Max ();
 
 TypeId
 DistributedSimulatorImpl::GetTypeId (void)
@@ -282,7 +281,7 @@ DistributedSimulatorImpl::BoundLookAhead (const Time lookAhead)
   if (lookAhead > Time (0))
     {
       NS_LOG_FUNCTION (this << lookAhead);
-      m_lookAhead = Min(m_lookAhead, lookAhead);
+      m_lookAhead = Min (m_lookAhead, lookAhead);
     }
   else
     {
@@ -314,11 +313,11 @@ DistributedSimulatorImpl::SetEventStream (ObjectFactory factory)
   NS_LOG_FUNCTION (this << factory);
 
   NS_ASSERT_MSG (m_events != 0, "SetScheduler() must be called before "
-                   "calling SetEventStream()");
+                 "calling SetEventStream()");
 
   if (m_events)
     {
-        m_events->SetEventStream (factory.Create<EventStream> ());
+      m_events->SetEventStream (factory.Create<EventStream> ());
     }
 }
 
@@ -402,7 +401,7 @@ DistributedSimulatorImpl::Run (void)
           // And check for send completes
           GrantedTimeWindowMpiInterface::TestSendComplete ();
           // Finally calculate the lbts
-          LbtsMessage lMsg (GrantedTimeWindowMpiInterface::GetRxCount (), GrantedTimeWindowMpiInterface::GetTxCount (), 
+          LbtsMessage lMsg (GrantedTimeWindowMpiInterface::GetRxCount (), GrantedTimeWindowMpiInterface::GetTxCount (),
                             m_myId, IsLocalFinished (), nextTime);
           m_pLBTS[m_myId] = lMsg;
           MPI_Allgather (&lMsg, sizeof (LbtsMessage), MPI_BYTE, m_pLBTS,
@@ -429,7 +428,7 @@ DistributedSimulatorImpl::Run (void)
           // Global halting condition is all nodes have empty queue's and
           // no messages are in-flight.
           m_globalFinished &= totRx == totTx;
-          
+
           if (totRx == totTx)
             {
               // If lookahead is infinite then granted time should be as well.

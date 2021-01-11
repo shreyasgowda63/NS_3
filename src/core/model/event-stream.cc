@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Mathew Bielejeski <bielejeski1@gmail.com> 
+ * Author: Mathew Bielejeski <bielejeski1@gmail.com>
  */
 
 #include "event-stream.h"
@@ -65,134 +65,134 @@ FifoEventStream::GetTypeId ()
     .SetGroupName ("Core")
     .AddConstructor<FifoEventStream> ()
     .AddAttribute ("StreamSize",
-                    "The maximum number of events that the stream can hold",
-                    UintegerValue (128),
-                    MakeUintegerAccessor (&FifoEventStream::GetStreamSize,
-                                          &FifoEventStream::SetStreamSize),
-                    MakeUintegerChecker<uint32_t> (1))
+                   "The maximum number of events that the stream can hold",
+                   UintegerValue (128),
+                   MakeUintegerAccessor (&FifoEventStream::GetStreamSize,
+                                         &FifoEventStream::SetStreamSize),
+                   MakeUintegerChecker<uint32_t> (1))
   ;
   return tid;
 }
 
 FifoEventStream::FifoEventStream ()
-    :   m_streamSize (128),
-        m_head (0),
-        m_tail (0), 
-        m_count (0),
-        m_buffer (m_streamSize)
-        
+  :   m_streamSize (128),
+    m_head (0),
+    m_tail (0),
+    m_count (0),
+    m_buffer (m_streamSize)
+
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 }
 
 FifoEventStream::~FifoEventStream ()
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 }
 
 void
 FifoEventStream::SetStreamSize (uint32_t newSize)
 {
-    NS_LOG_FUNCTION (this << newSize);
+  NS_LOG_FUNCTION (this << newSize);
 
-    NS_ASSERT_MSG (IsEmpty () == true,
-                    "Stream must be empty when changing the stream size");
+  NS_ASSERT_MSG (IsEmpty () == true,
+                 "Stream must be empty when changing the stream size");
 
-    if (IsEmpty ())
+  if (IsEmpty ())
     {
-        m_streamSize = newSize;
-        m_buffer.resize (m_streamSize);
-        m_head = 0;
-        m_tail = 0;
+      m_streamSize = newSize;
+      m_buffer.resize (m_streamSize);
+      m_head = 0;
+      m_tail = 0;
     }
 }
 
 uint32_t
 FifoEventStream::GetStreamSize () const
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    return m_streamSize;
+  return m_streamSize;
 }
 
-bool 
+bool
 FifoEventStream::IsEmpty () const
 {
-    NS_LOG_FUNCTION (this << m_count);
+  NS_LOG_FUNCTION (this << m_count);
 
-    return m_count == 0; 
+  return m_count == 0;
 }
 
-bool 
+bool
 FifoEventStream::IsFull () const
 {
-    NS_LOG_FUNCTION (this << m_count << m_streamSize);
+  NS_LOG_FUNCTION (this << m_count << m_streamSize);
 
-    return m_count == m_streamSize; 
+  return m_count == m_streamSize;
 }
 
 bool
 FifoEventStream::Insert (SimEvent ev)
 {
-    NS_LOG_FUNCTION (this << ev);
+  NS_LOG_FUNCTION (this << ev);
 
-    if (IsFull ())
+  if (IsFull ())
     {
-        NS_LOG_LOGIC ("Attempted to insert event " << ev << " to a stream that is full");
-        return false;
+      NS_LOG_LOGIC ("Attempted to insert event " << ev << " to a stream that is full");
+      return false;
     }
 
-    m_buffer[m_tail] = ev;
-    m_tail = (m_tail + 1) % m_streamSize;
-    ++m_count;
+  m_buffer[m_tail] = ev;
+  m_tail = (m_tail + 1) % m_streamSize;
+  ++m_count;
 
-    return true;
+  return true;
 }
 
-const SimEvent& 
+const SimEvent&
 FifoEventStream::Peek () const
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    NS_ASSERT_MSG (!IsEmpty (), "Attempted to peek the next event from an empty stream");
+  NS_ASSERT_MSG (!IsEmpty (), "Attempted to peek the next event from an empty stream");
 
-    return m_buffer[m_head]; 
+  return m_buffer[m_head];
 }
 
-SimEvent 
+SimEvent
 FifoEventStream::Next ()
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    NS_ASSERT_MSG (!IsEmpty (), "Attempted to get the next event from an empty stream");
+  NS_ASSERT_MSG (!IsEmpty (), "Attempted to get the next event from an empty stream");
 
-    SimEvent ev = m_buffer[m_head]; 
+  SimEvent ev = m_buffer[m_head];
 
-    m_head = (m_head + 1) % m_streamSize;
-    --m_count;
+  m_head = (m_head + 1) % m_streamSize;
+  --m_count;
 
-    return ev;
+  return ev;
 }
 
-bool 
+bool
 FifoEventStream::Remove (const SimEventKey& key)
 {
-    NS_LOG_FUNCTION (this << key);
+  NS_LOG_FUNCTION (this << key);
 
-    auto pos = m_head;
-    for( uint32_t i = 0; i < m_count; ++i) 
+  auto pos = m_head;
+  for ( uint32_t i = 0; i < m_count; ++i)
     {
-        pos = (pos + i) % m_streamSize;
-        auto& ev = m_buffer[pos];
+      pos = (pos + i) % m_streamSize;
+      auto& ev = m_buffer[pos];
 
-        if ( ev.key == key )
+      if ( ev.key == key )
         {
-            ev.impl->Cancel ();
-            return true;
+          ev.impl->Cancel ();
+          return true;
         }
     }
 
-    return false;
+  return false;
 }
 
 /*============================================
@@ -210,54 +210,54 @@ RandomEventStream::GetTypeId ()
     .SetGroupName ("Core")
     .AddConstructor<RandomEventStream> ()
     .AddAttribute ("StreamSize",
-                    "The maximum number of events that the stream can hold", 
-                    UintegerValue (100),
-                    MakeUintegerAccessor (&RandomEventStream::GetStreamSize,
-                                          &RandomEventStream::SetStreamSize),
-                    MakeUintegerChecker<uint32_t> (2))
+                   "The maximum number of events that the stream can hold",
+                   UintegerValue (100),
+                   MakeUintegerAccessor (&RandomEventStream::GetStreamSize,
+                                         &RandomEventStream::SetStreamSize),
+                   MakeUintegerChecker<uint32_t> (2))
     .AddAttribute ("Random",
-                    "The source of randomness used to shuffle events in a tie set. "
-                    "The maximum value should be equal to or greater than the buffer "
-                    "size",
-                    StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"),
-                    MakePointerAccessor (&RandomEventStream::SetRandomSource),
-                    MakePointerChecker<RandomVariableStream> ())
+                   "The source of randomness used to shuffle events in a tie set. "
+                   "The maximum value should be equal to or greater than the buffer "
+                   "size",
+                   StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"),
+                   MakePointerAccessor (&RandomEventStream::SetRandomSource),
+                   MakePointerChecker<RandomVariableStream> ())
   ;
   return tid;
 }
 
 RandomEventStream::RandomEventStream ()
-    :   m_buffer (),
-        m_random ()
-        
+  :   m_buffer (),
+    m_random ()
+
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 }
 
 RandomEventStream::~RandomEventStream ()
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 }
 
 void
 RandomEventStream::SetRandomSource (Ptr<RandomVariableStream> rand)
 {
-    NS_LOG_FUNCTION (this << rand->GetInstanceTypeId().GetName ());
+  NS_LOG_FUNCTION (this << rand->GetInstanceTypeId ().GetName ());
 
-    m_random = rand; 
+  m_random = rand;
 }
 
 void
 RandomEventStream::SetStreamSize (uint32_t newSize)
 {
-    NS_LOG_FUNCTION (this << newSize);
+  NS_LOG_FUNCTION (this << newSize);
 
-    NS_ASSERT_MSG (IsEmpty () == true,
-                    "The stream must be empty when changing the stream size");
+  NS_ASSERT_MSG (IsEmpty () == true,
+                 "The stream must be empty when changing the stream size");
 
-    if (IsEmpty ())
+  if (IsEmpty ())
     {
-        m_streamSize = newSize;
+      m_streamSize = newSize;
     }
 
 }
@@ -265,100 +265,100 @@ RandomEventStream::SetStreamSize (uint32_t newSize)
 uint32_t
 RandomEventStream::GetStreamSize () const
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    return m_streamSize;
+  return m_streamSize;
 }
 
-bool 
+bool
 RandomEventStream::IsEmpty () const
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    return m_buffer.empty (); 
+  return m_buffer.empty ();
 }
 
-bool 
+bool
 RandomEventStream::IsFull () const
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    return m_buffer.size () == m_streamSize; 
+  return m_buffer.size () == m_streamSize;
 }
 
 bool
 RandomEventStream::Insert (SimEvent ev)
 {
-    NS_LOG_FUNCTION (this << ev);
+  NS_LOG_FUNCTION (this << ev);
 
-    if (IsFull ())
+  if (IsFull ())
     {
-        NS_LOG_LOGIC ("Attempted to insert event " << ev << " to a stream that is full");
-        return false;
+      NS_LOG_LOGIC ("Attempted to insert event " << ev << " to a stream that is full");
+      return false;
     }
 
-    m_buffer.emplace_back (std::move(ev)); 
+  m_buffer.emplace_back (std::move (ev));
 
-    if( m_buffer.size () > 1 )
+  if ( m_buffer.size () > 1 )
     {
-        uint32_t currPos = m_buffer.size () - 1;
+      uint32_t currPos = m_buffer.size () - 1;
 
-        //pick a random event 
-        uint32_t newPos = m_random->GetInteger () % m_buffer.size ();
+      //pick a random event
+      uint32_t newPos = m_random->GetInteger () % m_buffer.size ();
 
-        if (newPos != currPos)
+      if (newPos != currPos)
         {
-            NS_LOG_LOGIC ("Swapping events at positions " << newPos 
-                          << " and " << currPos);
+          NS_LOG_LOGIC ("Swapping events at positions " << newPos
+                                                        << " and " << currPos);
 
-            //swap places with the new event
-            std::swap (m_buffer[currPos], m_buffer[newPos]);
+          //swap places with the new event
+          std::swap (m_buffer[currPos], m_buffer[newPos]);
         }
     }
 
-    return true;
+  return true;
 }
 
-const SimEvent& 
+const SimEvent&
 RandomEventStream::Peek () const
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    NS_ASSERT_MSG (!IsEmpty (), "Attempted to peek the next event from an empty stream");
+  NS_ASSERT_MSG (!IsEmpty (), "Attempted to peek the next event from an empty stream");
 
-    return m_buffer.front (); 
+  return m_buffer.front ();
 }
 
-SimEvent 
+SimEvent
 RandomEventStream::Next ()
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    NS_ASSERT_MSG (!IsEmpty (), "Attempted to get the next event from an empty stream");
+  NS_ASSERT_MSG (!IsEmpty (), "Attempted to get the next event from an empty stream");
 
-    SimEvent ev = m_buffer.front ();
+  SimEvent ev = m_buffer.front ();
 
-    m_buffer.pop_front ();
+  m_buffer.pop_front ();
 
-    return ev;
+  return ev;
 }
 
-bool 
+bool
 RandomEventStream::Remove (const SimEventKey& key)
 {
-    NS_LOG_FUNCTION (this << key);
+  NS_LOG_FUNCTION (this << key);
 
-    //Unfortunately we have to perform a linear scan to find the event
-    for( auto& event : m_buffer ) 
+  //Unfortunately we have to perform a linear scan to find the event
+  for ( auto& event : m_buffer )
     {
-        if ( event.key == key )
+      if ( event.key == key )
         {
-            event.impl->Cancel ();
-            return true;
+          event.impl->Cancel ();
+          return true;
         }
     }
 
-    return false;
+  return false;
 }
 
 }   //  ns3 namespace

@@ -205,7 +205,7 @@ RealtimeSimulatorImpl::ProcessOneEvent (void)
   // time of the next event with the wall clock time of the synchronizer.
   //
 
-  for (;;)
+  for (;; )
     {
       uint64_t tsDelay = 0;
       uint64_t tsNext = 0;

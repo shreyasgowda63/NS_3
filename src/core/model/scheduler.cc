@@ -41,11 +41,11 @@ NS_LOG_COMPONENT_DEFINE ("Scheduler");
 NS_OBJECT_ENSURE_REGISTERED (Scheduler);
 
 Scheduler::Scheduler ()
-    :   m_currentTimestamp (0),
-        m_stream ()   
-       
+  :   m_currentTimestamp (0),
+    m_stream ()
+
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 }
 
 Scheduler::~Scheduler ()
@@ -72,113 +72,113 @@ Scheduler::GetTypeId (void)
 bool
 Scheduler::IsEmpty () const
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    return DoIsEmpty () && m_stream->IsEmpty ();
+  return DoIsEmpty () && m_stream->IsEmpty ();
 }
 
 const Scheduler::Event&
 Scheduler::PeekNext () const
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    NS_ASSERT_MSG(!IsEmpty (), "Called PeekNext() when no events are available");
+  NS_ASSERT_MSG (!IsEmpty (), "Called PeekNext() when no events are available");
 
-    if (m_stream->IsEmpty ())
+  if (m_stream->IsEmpty ())
     {
-        //hack to call non const function inside const function 
-        const_cast<Scheduler*>(this)->FillStream ();
+      //hack to call non const function inside const function
+      const_cast<Scheduler*> (this)->FillStream ();
     }
 
-    return m_stream->Peek ();
+  return m_stream->Peek ();
 }
 
 Scheduler::Event
 Scheduler::RemoveNext ()
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    NS_ASSERT_MSG(!IsEmpty (), "Called RemoveNext() when no events are available");
+  NS_ASSERT_MSG (!IsEmpty (), "Called RemoveNext() when no events are available");
 
-    if (m_stream->IsEmpty ())
+  if (m_stream->IsEmpty ())
     {
-        FillStream ();
+      FillStream ();
     }
 
-    return m_stream->Next (); 
+  return m_stream->Next ();
 }
 
 void
 Scheduler::Remove (const Event& ev)
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    bool found = m_stream->Remove (ev.key);
+  bool found = m_stream->Remove (ev.key);
 
-    if (!found)
+  if (!found)
     {
-        //not in the event stream, try the event source
-        DoRemove (ev);
+      //not in the event stream, try the event source
+      DoRemove (ev);
     }
 }
 
 void
 Scheduler::SetEventStream (Ptr<EventStream> stream)
 {
-    NS_LOG_FUNCTION (this << stream);
+  NS_LOG_FUNCTION (this << stream);
 
-    NS_ASSERT_MSG(stream, "EventStream cannot be a null pointer");
+  NS_ASSERT_MSG (stream, "EventStream cannot be a null pointer");
 
-    while (m_stream && !m_stream->IsEmpty ())
+  while (m_stream && !m_stream->IsEmpty ())
     {
-        if (stream->IsFull ())
+      if (stream->IsFull ())
         {
-            //no more room in the new stream, add the events back to
-            //the event store 
-            Insert (m_stream->Next ());
+          //no more room in the new stream, add the events back to
+          //the event store
+          Insert (m_stream->Next ());
         }
-        else
+      else
         {
-            stream->Insert (m_stream->Next ());
+          stream->Insert (m_stream->Next ());
         }
     }
 
-    m_stream = stream;
+  m_stream = stream;
 }
 
 void
 Scheduler::FillStream ()
 {
-    NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this);
 
-    while (!m_stream->IsFull ())
+  while (!m_stream->IsFull ())
     {
-        if (DoIsEmpty ())
+      if (DoIsEmpty ())
         {
-            NS_LOG_LOGIC ("Event store is empty");
-            return;
+          NS_LOG_LOGIC ("Event store is empty");
+          return;
         }
 
-        const auto& ev = DoPeekNext ();
-        const auto& key = ev.key;
+      const auto& ev = DoPeekNext ();
+      const auto& key = ev.key;
 
-        if ( key.m_ts != m_currentTimestamp)
+      if ( key.m_ts != m_currentTimestamp)
         {
-            //dont add events with a new timestamp until all of the events with
-            //the current timestamp have been processed 
-            if (!m_stream->IsEmpty ())
+          //dont add events with a new timestamp until all of the events with
+          //the current timestamp have been processed
+          if (!m_stream->IsEmpty ())
             {
-                NS_LOG_LOGIC ("No more events with timestamp " << m_currentTimestamp);
-                return;
+              NS_LOG_LOGIC ("No more events with timestamp " << m_currentTimestamp);
+              return;
             }
 
-            NS_LOG_LOGIC ("Updating filter timestamp from " << m_currentTimestamp
-                          << " to " << key.m_ts);
+          NS_LOG_LOGIC ("Updating filter timestamp from " << m_currentTimestamp
+                                                          << " to " << key.m_ts);
 
-            m_currentTimestamp = key.m_ts;
+          m_currentTimestamp = key.m_ts;
         }
 
-        m_stream->Insert (DoRemoveNext ());
+      m_stream->Insert (DoRemoveNext ());
     }
 }
 

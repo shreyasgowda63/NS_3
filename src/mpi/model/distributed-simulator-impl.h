@@ -48,8 +48,7 @@ public:
       m_rxCount (0),
       m_myId (0),
       m_isFinished (false)
-  {
-  }
+  {}
 
   /**
    * \param rxc received count
@@ -64,8 +63,7 @@ public:
       m_myId (id),
       m_smallestTime (t),
       m_isFinished (isFinished)
-  {
-  }
+  {}
 
   ~LbtsMessage ();
 
@@ -91,8 +89,8 @@ public:
   bool IsFinished ();
 
 private:
-  uint32_t m_txCount;         /**< Count of transmitted messages. */ 
-  uint32_t m_rxCount;         /**< Count of received messages. */ 
+  uint32_t m_txCount;         /**< Count of transmitted messages. */
+  uint32_t m_rxCount;         /**< Count of received messages. */
   uint32_t m_myId;            /**< System Id of the rank sending this LBTS. */
   Time     m_smallestTime;    /**< Earliest next event timestamp. */
   bool     m_isFinished;      /**< \c true when this rank has no more events. */
@@ -147,14 +145,14 @@ public:
    * in addition to the minimum inter rank latency time.  For example
    * when running ns-3 in a co-simulation setting the other simulators
    * may have tighter lookahead constraints.
-   * 
+   *
    * The method may be invoked more than once, the minimum time will
    * be used to constrain lookahead.
    *
    * \param [in] lookAhead The maximum lookahead; must be > 0.
    */
   virtual void BoundLookAhead (const Time lookAhead);
-  
+
 private:
   // Inherited from Object
   virtual void DoDispose (void);
@@ -201,10 +199,10 @@ private:
   /** Flag calling for the end of the simulation. */
   bool m_stop;
   /** Are all parallel instances completed. */
-  bool m_globalFinished;     
+  bool m_globalFinished;
   /** The event priority queue. */
   Ptr<Scheduler> m_events;
-  
+
   /** Next event unique id. */
   uint32_t m_uid;
   /** Unique id of the current event. */

@@ -78,7 +78,7 @@ public:
   // Inherited
   virtual void Insert (const Scheduler::Event &ev);
 
- private:
+private:
   // Inherited
   virtual bool DoIsEmpty (void) const;
   virtual Scheduler::Event DoPeekNext (void) const;
@@ -91,10 +91,10 @@ private:
    * Custom priority_queue which supports remove,
    * and returns entries in _increasing_ time order.
    */
-  class EventPriorityQueue :
-    public std::priority_queue<Scheduler::Event,
-                               std::vector <Scheduler::Event>,
-                               std::greater<Scheduler::Event> >
+  class EventPriorityQueue
+    : public std::priority_queue<Scheduler::Event,
+                                 std::vector <Scheduler::Event>,
+                                 std::greater<Scheduler::Event> >
   {
   public:
 
@@ -102,8 +102,8 @@ private:
      * \copydoc PriorityQueueScheduler::Remove()
      * \returns \c true if the event was found, false otherwise.
      */
-    bool remove(const Scheduler::Event &ev);
-    
+    bool remove (const Scheduler::Event &ev);
+
   };  // class EventPriorityQueue
 
   /** The event queue. */

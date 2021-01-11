@@ -21,7 +21,7 @@
 /**
  * \file
  * \ingroup mpi
- * Declaration of class ns3::NullMessageSimulatorImpl. 
+ * Declaration of class ns3::NullMessageSimulatorImpl.
  */
 
 
@@ -99,7 +99,7 @@ private:
   friend class RemoteChannelBundleManager;
 
   /**
-   * Non blocking receive of pending messages.  
+   * Non blocking receive of pending messages.
    */
   void HandleArrivingMessagesNonBlocking (void);
 
@@ -179,7 +179,7 @@ private:
    * for the specified bundle at regular intervals.   Will canceled
    * and rescheduled when packets are sent.
    */
-  void NullMessageEventHandler(RemoteChannelBundle* bundle);
+  void NullMessageEventHandler (RemoteChannelBundle* bundle);
 
   /** Container type for the events to run at Simulator::Destroy(). */
   typedef std::list<EventId> DestroyEvents;

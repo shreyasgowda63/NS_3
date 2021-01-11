@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Mathew Bielejeski <bielejeski1@gmail.com> 
+ * Author: Mathew Bielejeski <bielejeski1@gmail.com>
  */
 
 #ifndef SIMULATOR_EVENT_H_
@@ -35,7 +35,7 @@
 namespace ns3 {
 
 /**
- * \ingroup scheduler 
+ * \ingroup scheduler
  * \defgroup event Events
  */
 
@@ -77,14 +77,14 @@ struct SimEvent
 inline std::ostream&
 operator << (std::ostream& stream, const SimEventKey& key)
 {
-    stream << key.m_ts << ' ' << key.m_uid << ' ' << key.m_context;
+  stream << key.m_ts << ' ' << key.m_uid << ' ' << key.m_context;
 
-    return stream;
+  return stream;
 }
 
 /**
  * \relates SimEventKey
- * \brief Less than operator for event keys 
+ * \brief Less than operator for event keys
  *
  * Note the invariants which this function must provide:
  * - irreflexibility: f (x,x) is false
@@ -96,14 +96,14 @@ operator << (std::ostream& stream, const SimEventKey& key)
  * \returns \c true if \c a < \c b
  */
 inline bool operator< (const SimEventKey &a,
-                        const SimEventKey &b)
+                       const SimEventKey &b)
 {
-    if (a.m_ts == b.m_ts)
+  if (a.m_ts == b.m_ts)
     {
-        return a.m_uid < b.m_uid;
+      return a.m_uid < b.m_uid;
     }
 
-    return a.m_ts < b.m_ts;
+  return a.m_ts < b.m_ts;
 }
 
 /**
@@ -117,11 +117,11 @@ inline bool operator< (const SimEventKey &a,
  * \returns \c true if \c a == \c b
  */
 inline bool operator== (const SimEventKey &a,
-                         const SimEventKey &b)
+                        const SimEventKey &b)
 {
-    return a.m_ts == b.m_ts
-            && a.m_uid == b.m_uid
-            && a.m_context == b.m_context;
+  return a.m_ts == b.m_ts
+         && a.m_uid == b.m_uid
+         && a.m_context == b.m_context;
 }
 
 /**
@@ -133,19 +133,19 @@ inline bool operator== (const SimEventKey &a,
  * \returns \c true if \c a > \c b
  */
 inline bool operator> (const SimEventKey &a,
-                        const SimEventKey &b)
+                       const SimEventKey &b)
 {
-    if (a.m_ts == b.m_ts)
+  if (a.m_ts == b.m_ts)
     {
-        return a.m_uid > b.m_uid;
+      return a.m_uid > b.m_uid;
     }
 
-    return a.m_ts > b.m_ts;
+  return a.m_ts > b.m_ts;
 }
 
 /**
  * \relates SimEvent
- * \brief Output stream operator for events 
+ * \brief Output stream operator for events
  *
  * \param stream The output stream
  * \param key The event to print
@@ -155,9 +155,9 @@ inline bool operator> (const SimEventKey &a,
 inline std::ostream&
 operator << (std::ostream& stream, const SimEvent& ev)
 {
-    stream << ev.key << ' ' << ev.impl; 
+  stream << ev.key << ' ' << ev.impl;
 
-    return stream;
+  return stream;
 }
 
 /**
@@ -169,7 +169,7 @@ operator << (std::ostream& stream, const SimEvent& ev)
  * \returns \c true if \c a.key < \c b.key
  */
 inline bool operator< (const SimEvent &a,
-                        const SimEvent &b)
+                       const SimEvent &b)
 {
   return a.key < b.key;
 }
@@ -183,7 +183,7 @@ inline bool operator< (const SimEvent &a,
  * \returns \c true if \c a.key > \c b.key
  */
 inline bool operator> (const SimEvent &a,
-                        const SimEvent &b)
+                       const SimEvent &b)
 {
   return a.key > b.key;
 }

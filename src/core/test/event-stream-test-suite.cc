@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author:  Mathew Bielejeski <bielejeski1@llnl.gov> 
+ * Author:  Mathew Bielejeski <bielejeski1@llnl.gov>
  */
 
 #include "ns3/core-module.h"
@@ -27,418 +27,417 @@
 
 namespace ns3 {
 
-    NS_LOG_COMPONENT_DEFINE ("EventStreamTestSuite");
+NS_LOG_COMPONENT_DEFINE ("EventStreamTestSuite");
 
 /**
- * A function that does nothing.  Used for the event implementation 
+ * A function that does nothing.  Used for the event implementation
  */
-void noop()
+void noop ()
 {}
 
 class EventStreamTestCase : public TestCase
 {
 public:
-    EventStreamTestCase (const std::string& name, ObjectFactory streamFactory)
-        :   TestCase (name),
-            m_uid (0),
-            m_timestamp (0),
-            m_factory (streamFactory)
-    {}
+  EventStreamTestCase (const std::string& name, ObjectFactory streamFactory)
+    :   TestCase (name),
+      m_uid (0),
+      m_timestamp (0),
+      m_factory (streamFactory)
+  {}
 
-    virtual ~EventStreamTestCase ()
-    {}
+  virtual ~EventStreamTestCase ()
+  {}
 
 protected:
-    SimEvent MakeEvent ();
-    SimEvent MakeEvent (uint64_t timestamp);
-    Ptr<EventStream> MakeStream () const;
+  SimEvent MakeEvent ();
+  SimEvent MakeEvent (uint64_t timestamp);
+  Ptr<EventStream> MakeStream () const;
 
-    virtual void DoSetup ();
-    virtual void DoTeardown ();
-    virtual void DoRun ();
-
+  virtual void DoSetup ();
+  virtual void DoTeardown ();
+  virtual void DoRun ();
 
 private:
-    void TestDefaultConstructedStreamIsEmpty ();
-    void TestStreamIsNotEmptyAfterInsert ();
-    void TestStreamIsNotEmptyAfterPeek ();
-    void TestStreamIsEmptyAfterNext ();
-    void TestRemoveReturnsTrueWhenMatchIsFound ();
-    void TestRemoveReturnsFalseWhenMatchIsNotFound ();
-    void TestStreamIsEmptyAfterRemove ();
+  void TestDefaultConstructedStreamIsEmpty ();
+  void TestStreamIsNotEmptyAfterInsert ();
+  void TestStreamIsNotEmptyAfterPeek ();
+  void TestStreamIsEmptyAfterNext ();
+  void TestRemoveReturnsTrueWhenMatchIsFound ();
+  void TestRemoveReturnsFalseWhenMatchIsNotFound ();
+  void TestStreamIsEmptyAfterRemove ();
 
-    uint32_t m_uid;
-    uint64_t m_timestamp;
-    ObjectFactory m_factory;
-    std::unique_ptr<EventGarbageCollector> m_garbage;
+  uint32_t m_uid;
+  uint64_t m_timestamp;
+  ObjectFactory m_factory;
+  std::unique_ptr<EventGarbageCollector> m_garbage;
 };
 
 SimEvent
-EventStreamTestCase::MakeEvent () 
+EventStreamTestCase::MakeEvent ()
 {
-    return MakeEvent(m_timestamp);
+  return MakeEvent (m_timestamp);
 }
 
 SimEvent
-EventStreamTestCase::MakeEvent (uint64_t timestamp) 
+EventStreamTestCase::MakeEvent (uint64_t timestamp)
 {
-    SimEvent ev;
-    ev.key.m_ts = timestamp;
-    ev.key.m_uid = m_uid++;
-    ev.key.m_context = 0;
+  SimEvent ev;
+  ev.key.m_ts = timestamp;
+  ev.key.m_uid = m_uid++;
+  ev.key.m_context = 0;
 
-    ev.impl = ns3::MakeEvent (&noop);
+  ev.impl = ns3::MakeEvent (&noop);
 
-    EventId id(ev.impl, ev.key.m_ts, ev.key.m_context, ev.key.m_uid);
-    m_garbage->Track (id);
+  EventId id (ev.impl, ev.key.m_ts, ev.key.m_context, ev.key.m_uid);
+  m_garbage->Track (id);
 
-    return ev;
+  return ev;
 }
 
 Ptr<EventStream>
 EventStreamTestCase::MakeStream () const
 {
-    return m_factory.Create<EventStream> ();
+  return m_factory.Create<EventStream> ();
 }
 
 void
 EventStreamTestCase::TestDefaultConstructedStreamIsEmpty ()
 {
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), true,
-                            "Default constructed stream is not empty");
+  NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), true,
+                         "Default constructed stream is not empty");
 }
 
 void
 EventStreamTestCase::TestStreamIsNotEmptyAfterInsert ()
 {
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    stream->Insert (MakeEvent ());
+  stream->Insert (MakeEvent ());
 
-    NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), false,
-                            "Stream with events is empty");
+  NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), false,
+                         "Stream with events is empty");
 }
 
 void
 EventStreamTestCase::TestStreamIsNotEmptyAfterPeek ()
 {
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    stream->Insert (MakeEvent ());
+  stream->Insert (MakeEvent ());
 
-    NS_TEST_EXPECT_MSG_EQ (stream->IsEmpty (), false,
-                            "Stream is empty after inserting an event");
+  NS_TEST_EXPECT_MSG_EQ (stream->IsEmpty (), false,
+                         "Stream is empty after inserting an event");
 
-    stream->Peek ();
+  stream->Peek ();
 
-    NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), false,
-                            "Stream is empty after calling Peek");
+  NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), false,
+                         "Stream is empty after calling Peek");
 }
 
 void
 EventStreamTestCase::TestStreamIsEmptyAfterNext ()
 {
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    stream->Insert (MakeEvent ());
+  stream->Insert (MakeEvent ());
 
-    NS_TEST_EXPECT_MSG_EQ (stream->IsEmpty (), false,
-                            "Stream is empty after inserting an event");
+  NS_TEST_EXPECT_MSG_EQ (stream->IsEmpty (), false,
+                         "Stream is empty after inserting an event");
 
-    stream->Next ();
+  stream->Next ();
 
-    NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), true,
-                            "Stream is not empty after calling Next");
+  NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), true,
+                         "Stream is not empty after calling Next");
 }
 
-void 
+void
 EventStreamTestCase::TestRemoveReturnsTrueWhenMatchIsFound ()
 {
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    auto event = MakeEvent ();
-    stream->Insert (event);
+  auto event = MakeEvent ();
+  stream->Insert (event);
 
-    NS_TEST_EXPECT_MSG_EQ (stream->IsEmpty (), false,
-                            "Stream is empty after inserting an event");
+  NS_TEST_EXPECT_MSG_EQ (stream->IsEmpty (), false,
+                         "Stream is empty after inserting an event");
 
-    auto removed = stream->Remove (event.key);
+  auto removed = stream->Remove (event.key);
 
-    NS_TEST_ASSERT_MSG_EQ (removed, true,
-                            "Event key was not found in stream");
+  NS_TEST_ASSERT_MSG_EQ (removed, true,
+                         "Event key was not found in stream");
 }
 
-void 
+void
 EventStreamTestCase::TestRemoveReturnsFalseWhenMatchIsNotFound ()
 {
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    auto event = MakeEvent ();
-    stream->Insert (event);
+  auto event = MakeEvent ();
+  stream->Insert (event);
 
-    NS_TEST_EXPECT_MSG_EQ (stream->IsEmpty (), false,
-                            "Stream is empty after inserting an event");
+  NS_TEST_EXPECT_MSG_EQ (stream->IsEmpty (), false,
+                         "Stream is empty after inserting an event");
 
-    auto badKey = event.key;
-    badKey.m_ts = 1;
+  auto badKey = event.key;
+  badKey.m_ts = 1;
 
-    auto removed = stream->Remove (badKey);
+  auto removed = stream->Remove (badKey);
 
-    NS_TEST_ASSERT_MSG_EQ (removed, false,
-                            "Bad event key was found in stream");
+  NS_TEST_ASSERT_MSG_EQ (removed, false,
+                         "Bad event key was found in stream");
 }
 
-void 
+void
 EventStreamTestCase::TestStreamIsEmptyAfterRemove ()
 {
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    auto event = MakeEvent ();
+  auto event = MakeEvent ();
 
-    stream->Insert (event);
+  stream->Insert (event);
 
-    NS_TEST_EXPECT_MSG_EQ (stream->IsEmpty (), false,
-                            "Stream is empty after inserting an event");
+  NS_TEST_EXPECT_MSG_EQ (stream->IsEmpty (), false,
+                         "Stream is empty after inserting an event");
 
-    auto removed = stream->Remove (event.key);
+  auto removed = stream->Remove (event.key);
 
-    NS_TEST_EXPECT_MSG_EQ (removed, true,
-                            "Event key was not found in stream");
+  NS_TEST_EXPECT_MSG_EQ (removed, true,
+                         "Event key was not found in stream");
 
-    NS_TEST_ASSERT_MSG_EQ (event.impl->IsCancelled (), true,
-                            "Event was found but not cancelled");
+  NS_TEST_ASSERT_MSG_EQ (event.impl->IsCancelled (), true,
+                         "Event was found but not cancelled");
 }
 
 void
 EventStreamTestCase::DoSetup ()
 {
-    m_timestamp = 1e9;
-    m_uid = 1;
+  m_timestamp = 1e9;
+  m_uid = 1;
 
-    m_garbage.reset (new EventGarbageCollector ());
+  m_garbage.reset (new EventGarbageCollector ());
 }
 
 void
 EventStreamTestCase::DoTeardown ()
 {
-    //deleting the eventgarbagecollector will clean up all of the events
-    m_garbage.reset ();
+  //deleting the eventgarbagecollector will clean up all of the events
+  m_garbage.reset ();
 }
 
 void
 EventStreamTestCase::DoRun ()
 {
-    TestDefaultConstructedStreamIsEmpty ();
-    TestStreamIsNotEmptyAfterInsert ();
-    TestStreamIsNotEmptyAfterPeek ();
-    TestRemoveReturnsTrueWhenMatchIsFound ();
-    TestRemoveReturnsFalseWhenMatchIsNotFound ();
-    TestStreamIsEmptyAfterRemove ();
+  TestDefaultConstructedStreamIsEmpty ();
+  TestStreamIsNotEmptyAfterInsert ();
+  TestStreamIsNotEmptyAfterPeek ();
+  TestRemoveReturnsTrueWhenMatchIsFound ();
+  TestRemoveReturnsFalseWhenMatchIsNotFound ();
+  TestStreamIsEmptyAfterRemove ();
 }
 
 class FifoEventStreamTestCase : public EventStreamTestCase
 {
 public:
-    FifoEventStreamTestCase()
-        :   EventStreamTestCase ("fifo-event-stream",
-                                 ObjectFactory ("ns3::FifoEventStream"))
-    {}
+  FifoEventStreamTestCase ()
+    :   EventStreamTestCase ("fifo-event-stream",
+                             ObjectFactory ("ns3::FifoEventStream"))
+  {}
 
-    virtual ~FifoEventStreamTestCase ()
-    {}
+  virtual ~FifoEventStreamTestCase ()
+  {}
 
 protected:
-    void TestEventsRemovedInSameOrderAsInsertion ();
-    void TestStreamIsFullAfterAddingTooManyEvents ();
-    void TestStreamIsNotFullAfterRemovingEvents ();
+  void TestEventsRemovedInSameOrderAsInsertion ();
+  void TestStreamIsFullAfterAddingTooManyEvents ();
+  void TestStreamIsNotFullAfterRemovingEvents ();
 
-    virtual void DoRun ();
+  virtual void DoRun ();
 };
 
 void
 FifoEventStreamTestCase::TestEventsRemovedInSameOrderAsInsertion ()
 {
-    const uint32_t eventCount = 10;
+  const uint32_t eventCount = 10;
 
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    std::vector<SimEvent> events;
+  std::vector<SimEvent> events;
 
-    for (uint32_t i = 0; i < eventCount; ++i)
+  for (uint32_t i = 0; i < eventCount; ++i)
     {
-        events.push_back(MakeEvent ());
+      events.push_back (MakeEvent ());
 
-        stream->Insert (events.back ());
+      stream->Insert (events.back ());
     }
 
-    for (uint32_t i = 0; i < eventCount; ++i)
+  for (uint32_t i = 0; i < eventCount; ++i)
     {
-        auto event = stream->Next ();
+      auto event = stream->Next ();
 
-        NS_TEST_ASSERT_MSG_EQ (event.key, events[i].key,
-                                "Event not removed in the same order as insertion");
+      NS_TEST_ASSERT_MSG_EQ (event.key, events[i].key,
+                             "Event not removed in the same order as insertion");
     }
 
-    NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), true,
-                            "Stream is not empty after removing all events");
+  NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), true,
+                         "Stream is not empty after removing all events");
 }
 
-void 
+void
 FifoEventStreamTestCase::TestStreamIsFullAfterAddingTooManyEvents ()
 {
-    const uint32_t streamSize = 10;
+  const uint32_t streamSize = 10;
 
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    Ptr<FifoEventStream> fifoStream = stream->GetObject <FifoEventStream> ();
-    fifoStream->SetStreamSize (streamSize);
+  Ptr<FifoEventStream> fifoStream = stream->GetObject <FifoEventStream> ();
+  fifoStream->SetStreamSize (streamSize);
 
-    NS_TEST_EXPECT_MSG_EQ (stream->IsFull (), false,
-                            "Stream is full before adding any events");
+  NS_TEST_EXPECT_MSG_EQ (stream->IsFull (), false,
+                         "Stream is full before adding any events");
 
-    for (uint32_t i = 0; i < streamSize; ++i)
+  for (uint32_t i = 0; i < streamSize; ++i)
     {
-        stream->Insert (MakeEvent ());
+      stream->Insert (MakeEvent ());
     }
 
-    NS_TEST_ASSERT_MSG_EQ (stream->IsFull (), true,
-                            "Stream is not full after adding events"); 
+  NS_TEST_ASSERT_MSG_EQ (stream->IsFull (), true,
+                         "Stream is not full after adding events");
 }
 
-void 
+void
 FifoEventStreamTestCase::TestStreamIsNotFullAfterRemovingEvents ()
 {
-    const uint32_t streamSize = 10;
+  const uint32_t streamSize = 10;
 
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    Ptr<FifoEventStream> fifoStream = stream->GetObject <FifoEventStream> ();
-    fifoStream->SetStreamSize (streamSize);
+  Ptr<FifoEventStream> fifoStream = stream->GetObject <FifoEventStream> ();
+  fifoStream->SetStreamSize (streamSize);
 
-    NS_TEST_EXPECT_MSG_EQ (stream->IsFull (), false,
-                            "Stream is full before adding any events");
+  NS_TEST_EXPECT_MSG_EQ (stream->IsFull (), false,
+                         "Stream is full before adding any events");
 
-    for (uint32_t i = 0; i < streamSize; ++i)
+  for (uint32_t i = 0; i < streamSize; ++i)
     {
-        stream->Insert (MakeEvent ());
+      stream->Insert (MakeEvent ());
     }
 
-    NS_TEST_EXPECT_MSG_EQ (stream->IsFull (), true,
-                            "Stream is not full after adding events"); 
+  NS_TEST_EXPECT_MSG_EQ (stream->IsFull (), true,
+                         "Stream is not full after adding events");
 
-    stream->Next ();
+  stream->Next ();
 
-    NS_TEST_ASSERT_MSG_EQ (stream->IsFull (), false,
-                            "Stream is still full after removing an event"); 
+  NS_TEST_ASSERT_MSG_EQ (stream->IsFull (), false,
+                         "Stream is still full after removing an event");
 }
 
 void
 FifoEventStreamTestCase::DoRun ()
 {
-    //first run the parent test cases
-    EventStreamTestCase::DoRun ();
+  //first run the parent test cases
+  EventStreamTestCase::DoRun ();
 
-    //now run test cases specific to this type of event stream
-    TestEventsRemovedInSameOrderAsInsertion ();
-    TestStreamIsFullAfterAddingTooManyEvents ();
-    TestStreamIsNotFullAfterRemovingEvents ();
+  //now run test cases specific to this type of event stream
+  TestEventsRemovedInSameOrderAsInsertion ();
+  TestStreamIsFullAfterAddingTooManyEvents ();
+  TestStreamIsNotFullAfterRemovingEvents ();
 }
 
 class RandomEventStreamTestCase : public EventStreamTestCase
 {
 public:
-    RandomEventStreamTestCase()
-        :   EventStreamTestCase ("random-event-stream",
-                                 ObjectFactory ("ns3::RandomEventStream"))
-    {}
+  RandomEventStreamTestCase ()
+    :   EventStreamTestCase ("random-event-stream",
+                             ObjectFactory ("ns3::RandomEventStream"))
+  {}
 
-    virtual ~RandomEventStreamTestCase ()
-    {}
+  virtual ~RandomEventStreamTestCase ()
+  {}
 
 protected:
-    void TestEventsRemovedInRandomOrder ();
+  void TestEventsRemovedInRandomOrder ();
 
-    virtual void DoRun ();
+  virtual void DoRun ();
 
 };
 
 void
 RandomEventStreamTestCase::TestEventsRemovedInRandomOrder ()
 {
-    const uint32_t eventCount = 10;
+  const uint32_t eventCount = 10;
 
-    auto stream = MakeStream ();
+  auto stream = MakeStream ();
 
-    std::map<SimEventKey, uint32_t> insertOrder;
+  std::map<SimEventKey, uint32_t> insertOrder;
 
-    for (uint32_t i = 0; i < eventCount; ++i)
+  for (uint32_t i = 0; i < eventCount; ++i)
     {
-        auto event = MakeEvent ();
-        insertOrder[event.key] = i;
+      auto event = MakeEvent ();
+      insertOrder[event.key] = i;
 
-        stream->Insert (event);
+      stream->Insert (event);
 
-        NS_LOG_DEBUG ("Insertion: key=(" << event.key << "), position=" << i);
+      NS_LOG_DEBUG ("Insertion: key=(" << event.key << "), position=" << i);
     }
 
-    std::map<SimEventKey, uint32_t> removalOrder;
+  std::map<SimEventKey, uint32_t> removalOrder;
 
-    for (uint32_t i = 0; i < eventCount; ++i)
+  for (uint32_t i = 0; i < eventCount; ++i)
     {
-        auto event = stream->Next ();
+      auto event = stream->Next ();
 
-        auto iter = insertOrder.find(event.key);
+      auto iter = insertOrder.find (event.key);
 
-        NS_TEST_ASSERT_MSG_EQ ( (iter != insertOrder.end()), true,
-                                "Event was not found in list of inserted events");
+      NS_TEST_ASSERT_MSG_EQ ( (iter != insertOrder.end ()), true,
+                              "Event was not found in list of inserted events");
 
-        removalOrder[event.key] = i;
+      removalOrder[event.key] = i;
 
-        NS_LOG_DEBUG ("Removal: key=(" << iter->first << "), insert position=" 
-                      << iter->second << ", removal position=" << i);
+      NS_LOG_DEBUG ("Removal: key=(" << iter->first << "), insert position="
+                                     << iter->second << ", removal position=" << i);
     }
 
 
-    NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), true,
-                            "Stream is not empty after removing all events");
+  NS_TEST_ASSERT_MSG_EQ (stream->IsEmpty (), true,
+                         "Stream is not empty after removing all events");
 
 
 
-    NS_TEST_ASSERT_MSG_EQ ( (removalOrder != insertOrder), true,
-                            "Events were removed in same order as inserted");
+  NS_TEST_ASSERT_MSG_EQ ( (removalOrder != insertOrder), true,
+                          "Events were removed in same order as inserted");
 }
 
 void
 RandomEventStreamTestCase::DoRun ()
 {
-    //first run the parent test cases
-    EventStreamTestCase::DoRun ();
+  //first run the parent test cases
+  EventStreamTestCase::DoRun ();
 
-    //now run test cases specific to this type of event stream
-    TestEventsRemovedInRandomOrder ();
+  //now run test cases specific to this type of event stream
+  TestEventsRemovedInRandomOrder ();
 }
 
 
 class EventStreamTestSuite : public TestSuite
 {
 public:
-    EventStreamTestSuite ()
-        :   TestSuite("event-stream")
-    {
-        RegisterTests ();
-    }
+  EventStreamTestSuite ()
+    :   TestSuite ("event-stream")
+  {
+    RegisterTests ();
+  }
 
 private:
-    void RegisterTests ();
+  void RegisterTests ();
 };
 
 void
 EventStreamTestSuite::RegisterTests ()
 {
-    AddTestCase (new FifoEventStreamTestCase (), TestCase::QUICK);
-    AddTestCase (new RandomEventStreamTestCase (), TestCase::QUICK);
+  AddTestCase (new FifoEventStreamTestCase (), TestCase::QUICK);
+  AddTestCase (new RandomEventStreamTestCase (), TestCase::QUICK);
 }
 
 EventStreamTestSuite gEventStreamTests;

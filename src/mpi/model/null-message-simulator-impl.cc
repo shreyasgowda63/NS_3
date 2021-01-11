@@ -134,7 +134,7 @@ NullMessageSimulatorImpl::Destroy ()
         }
     }
 
-  RemoteChannelBundleManager::Destroy();
+  RemoteChannelBundleManager::Destroy ();
   MpiInterface::Destroy ();
 }
 
@@ -235,11 +235,11 @@ NullMessageSimulatorImpl::SetEventStream (ObjectFactory factory)
   NS_LOG_FUNCTION (this << factory);
 
   NS_ASSERT_MSG (m_events != 0, "SetScheduler() must be called before "
-                   "calling SetEventStream()");
+                 "calling SetEventStream()");
 
   if (m_events)
     {
-        m_events->SetEventStream (factory.Create<EventStream> ());
+      m_events->SetEventStream (factory.Create<EventStream> ());
     }
 }
 
@@ -286,8 +286,8 @@ NullMessageSimulatorImpl::ScheduleNullMessageEvent (Ptr<RemoteChannelBundle> bun
 
   Time delay (m_schedulerTune * bundle->GetDelay ().GetTimeStep ());
 
-  bundle->SetEventId (Simulator::Schedule (delay, &NullMessageSimulatorImpl::NullMessageEventHandler, 
-                                           this, PeekPointer(bundle)));
+  bundle->SetEventId (Simulator::Schedule (delay, &NullMessageSimulatorImpl::NullMessageEventHandler,
+                                           this, PeekPointer (bundle)));
 }
 
 void
@@ -299,8 +299,8 @@ NullMessageSimulatorImpl::RescheduleNullMessageEvent (Ptr<RemoteChannelBundle> b
 
   Time delay (m_schedulerTune * bundle->GetDelay ().GetTimeStep ());
 
-  bundle->SetEventId (Simulator::Schedule (delay, &NullMessageSimulatorImpl::NullMessageEventHandler, 
-                                           this, PeekPointer(bundle)));
+  bundle->SetEventId (Simulator::Schedule (delay, &NullMessageSimulatorImpl::NullMessageEventHandler,
+                                           this, PeekPointer (bundle)));
 }
 
 void
@@ -434,7 +434,7 @@ NullMessageSimulatorImpl::ScheduleWithContext (uint32_t context, Time const &del
 {
   NS_LOG_FUNCTION (this << context << delay.GetTimeStep () << m_currentTs << event);
 
-  Time tAbsolute(m_currentTs + delay.GetTimeStep ());
+  Time tAbsolute (m_currentTs + delay.GetTimeStep ());
 
   NS_ASSERT (tAbsolute.IsPositive ());
   NS_ASSERT (tAbsolute >= TimeStep (m_currentTs));
@@ -599,7 +599,7 @@ Time NullMessageSimulatorImpl::CalculateGuaranteeTime (uint32_t nodeSysId)
   return Min (NullMessageSimulatorImpl::GetInstance ()->Next (), GetSafeTime ()) + bundle->GetDelay ();
 }
 
-void NullMessageSimulatorImpl::NullMessageEventHandler(RemoteChannelBundle* bundle)
+void NullMessageSimulatorImpl::NullMessageEventHandler (RemoteChannelBundle* bundle)
 {
   NS_LOG_FUNCTION (this << bundle);
 

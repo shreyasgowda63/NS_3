@@ -115,10 +115,10 @@ public:
    * Set the event stream  type with an ObjectFactory
    * \param factory The configured ObjectFactory
    *
-   * The event stream can be changed at any time.  The new event stream 
-   * will reorder events that were in the old event stream.  
-   * 
-   */ 
+   * The event stream can be changed at any time.  The new event stream
+   * will reorder events that were in the old event stream.
+   *
+   */
   static void SetEventStream (ObjectFactory factory);
 
   /**
@@ -237,10 +237,10 @@ public:
    * @returns The id for the scheduled event.
    */
   template <typename FUNC,
-            typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl>>::value,int>::type = 0,
+            typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl> >::value,int>::type = 0,
             typename std::enable_if<!std::is_function<typename std::remove_pointer<FUNC>::type>::value,int>::type = 0,
             typename... Ts>
-  static EventId Schedule (Time const &delay, FUNC f, Ts&&... args);
+  static EventId Schedule (Time const &delay, FUNC f, Ts&& ... args);
 
   /**
    * Schedule an event to expire after @p delay.
@@ -258,7 +258,7 @@ public:
    * @returns The id for the scheduled event.
    */
   template <typename... Us, typename... Ts>
-  static EventId Schedule (Time const &delay, void (*f)(Us...), Ts&&... args);
+  static EventId Schedule (Time const &delay, void (*f)(Us...), Ts&& ... args);
   /** @} */  // Schedule events (in the same context) to run at a future time.
 
   /**
@@ -283,10 +283,10 @@ public:
    * @param [in] args Arguments to pass to MakeEvent.
    */
   template <typename FUNC,
-            typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl>>::value,int>::type = 0,
+            typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl> >::value,int>::type = 0,
             typename std::enable_if<!std::is_function<typename std::remove_pointer<FUNC>::type>::value,int>::type = 0,
             typename... Ts>
-  static void ScheduleWithContext (uint32_t context, Time const &delay, FUNC f, Ts&&... args);
+  static void ScheduleWithContext (uint32_t context, Time const &delay, FUNC f, Ts&& ... args);
 
   /**
    * Schedule an event with the given context.
@@ -301,7 +301,7 @@ public:
    * @param [in] args Arguments to pass to the invoked function.
    */
   template <typename... Us, typename... Ts>
-  static void ScheduleWithContext (uint32_t context, Time const &delay, void (*f)(Us...), Ts&&... args);
+  static void ScheduleWithContext (uint32_t context, Time const &delay, void (*f)(Us...), Ts&& ... args);
   /** @} */  // Schedule events (in a different context) to run now or at a future time.
 
   /**
@@ -323,10 +323,10 @@ public:
    * @return The EventId of the scheduled event.
    */
   template <typename FUNC,
-            typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl>>::value,int>::type = 0,
+            typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl> >::value,int>::type = 0,
             typename std::enable_if<!std::is_function<typename std::remove_pointer<FUNC>::type>::value,int>::type = 0,
             typename... Ts>
-  static EventId ScheduleNow (FUNC f, Ts&&... args);
+  static EventId ScheduleNow (FUNC f, Ts&& ... args);
 
   /**
    * Schedule an event to expire Now. All events scheduled to
@@ -340,7 +340,7 @@ public:
    * @return The EventId of the scheduled event.
    */
   template <typename... Us, typename... Ts>
-  static EventId ScheduleNow (void (*f)(Us...), Ts&&... args);
+  static EventId ScheduleNow (void (*f)(Us...), Ts&& ... args);
 
   /** @} */  // Schedule events (in the same context) to run now.
 
@@ -364,10 +364,10 @@ public:
    * @return The EventId of the scheduled event.
    */
   template <typename FUNC,
-            typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl>>::value,int>::type = 0,
+            typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl> >::value,int>::type = 0,
             typename std::enable_if<!std::is_function<typename std::remove_pointer<FUNC>::type>::value,int>::type = 0,
             typename... Ts>
-  static EventId ScheduleDestroy (FUNC f, Ts&&... args);
+  static EventId ScheduleDestroy (FUNC f, Ts&& ... args);
 
   /**
    * Schedule an event to run at the end of the simulation, when Simulator::Destroy() is called.
@@ -382,7 +382,7 @@ public:
    * @return The EventId of the scheduled event.
    */
   template <typename... Us, typename... Ts>
-  static EventId ScheduleDestroy (void (*f)(Us...), Ts&&... args);
+  static EventId ScheduleDestroy (void (*f)(Us...), Ts&& ... args);
 
   /** @} */  // Schedule events to run when Simulator:Destroy() is called.
 
@@ -561,68 +561,68 @@ namespace ns3 {
 // out of class definition, so makes two entries in the member list.  Ugh
 
 template <typename FUNC,
-          typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl>>::value,int>::type,
+          typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl> >::value,int>::type,
           typename std::enable_if<!std::is_function<typename std::remove_pointer<FUNC>::type>::value,int>::type,
           typename... Ts>
-EventId Simulator::Schedule (Time const &delay, FUNC f, Ts&&... args)
+EventId Simulator::Schedule (Time const &delay, FUNC f, Ts&& ... args)
 {
-  return DoSchedule (delay, MakeEvent (f, std::forward<Ts> (args)...));
+  return DoSchedule (delay, MakeEvent (f, std::forward<Ts> (args) ...));
 }
 
 template <typename... Us, typename... Ts>
-EventId Simulator::Schedule (Time const &delay, void (*f)(Us...), Ts&&... args)
+EventId Simulator::Schedule (Time const &delay, void (*f)(Us...), Ts&& ... args)
 {
-  return DoSchedule (delay, MakeEvent (f, std::forward<Ts> (args)...));
+  return DoSchedule (delay, MakeEvent (f, std::forward<Ts> (args) ...));
 }
 
 template <typename FUNC,
-          typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl>>::value,int>::type,
+          typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl> >::value,int>::type,
           typename std::enable_if<!std::is_function<typename std::remove_pointer<FUNC>::type>::value,int>::type,
           typename... Ts>
-void Simulator::ScheduleWithContext (uint32_t context, Time const &delay, FUNC f, Ts&&... args)
+void Simulator::ScheduleWithContext (uint32_t context, Time const &delay, FUNC f, Ts&& ... args)
 {
-  return ScheduleWithContext (context, delay, MakeEvent (f, std::forward<Ts> (args)...));
+  return ScheduleWithContext (context, delay, MakeEvent (f, std::forward<Ts> (args) ...));
 }
 
 template <typename... Us, typename... Ts>
-void Simulator::ScheduleWithContext (uint32_t context, Time const &delay, void (*f)(Us...), Ts&&... args)
+void Simulator::ScheduleWithContext (uint32_t context, Time const &delay, void (*f)(Us...), Ts&& ... args)
 {
-  return ScheduleWithContext (context, delay, MakeEvent (f, std::forward<Ts> (args)...));
+  return ScheduleWithContext (context, delay, MakeEvent (f, std::forward<Ts> (args) ...));
 }
 
 template <typename FUNC,
-          typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl>>::value,int>::type,
+          typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl> >::value,int>::type,
           typename std::enable_if<!std::is_function<typename std::remove_pointer<FUNC>::type>::value,int>::type,
           typename... Ts>
 EventId
-Simulator::ScheduleNow (FUNC f, Ts&&... args)
+Simulator::ScheduleNow (FUNC f, Ts&& ... args)
 {
-  return DoScheduleNow (MakeEvent (f, std::forward<Ts> (args)...));
+  return DoScheduleNow (MakeEvent (f, std::forward<Ts> (args) ...));
 }
 
 template <typename... Us, typename... Ts>
 EventId
-Simulator::ScheduleNow (void (*f)(Us...), Ts&&... args)
+Simulator::ScheduleNow (void (*f)(Us...), Ts&& ... args)
 {
-  return DoScheduleNow (MakeEvent (f, std::forward<Ts> (args)...));
+  return DoScheduleNow (MakeEvent (f, std::forward<Ts> (args) ...));
 }
 
 
 template <typename FUNC,
-          typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl>>::value,int>::type,
+          typename std::enable_if<!std::is_convertible<FUNC, Ptr<EventImpl> >::value,int>::type,
           typename std::enable_if<!std::is_function<typename std::remove_pointer<FUNC>::type>::value,int>::type,
           typename... Ts>
 EventId
-Simulator::ScheduleDestroy (FUNC f, Ts&&... args)
+Simulator::ScheduleDestroy (FUNC f, Ts&& ... args)
 {
-  return DoScheduleDestroy (MakeEvent (f, std::forward<Ts> (args)...));
+  return DoScheduleDestroy (MakeEvent (f, std::forward<Ts> (args) ...));
 }
 
 template <typename... Us, typename... Ts>
 EventId
-Simulator::ScheduleDestroy (void (*f)(Us...), Ts&&... args)
+Simulator::ScheduleDestroy (void (*f)(Us...), Ts&& ... args)
 {
-  return DoScheduleDestroy (MakeEvent (f, std::forward<Ts> (args)...));
+  return DoScheduleDestroy (MakeEvent (f, std::forward<Ts> (args) ...));
 }
 
 } // namespace ns3

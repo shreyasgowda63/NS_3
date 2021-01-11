@@ -89,13 +89,13 @@ PriorityQueueScheduler::DoRemoveNext (void)
 }
 
 bool
-PriorityQueueScheduler::EventPriorityQueue::remove(const Scheduler::Event &ev)
+PriorityQueueScheduler::EventPriorityQueue::remove (const Scheduler::Event &ev)
 {
-  auto it = std::find(this->c.begin(), this->c.end(), ev);
-  if (it != this->c.end())
+  auto it = std::find (this->c.begin (), this->c.end (), ev);
+  if (it != this->c.end ())
     {
-      this->c.erase(it);
-      std::make_heap(this->c.begin(), this->c.end(), this->comp);
+      this->c.erase (it);
+      std::make_heap (this->c.begin (), this->c.end (), this->comp);
       return true;
     }
   else
