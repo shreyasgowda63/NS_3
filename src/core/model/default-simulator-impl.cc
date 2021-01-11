@@ -22,6 +22,7 @@
 #include "default-simulator-impl.h"
 #include "scheduler.h"
 #include "event-impl.h"
+#include "event-stream.h"
 
 #include "ptr.h"
 #include "pointer.h"
@@ -126,6 +127,20 @@ DefaultSimulatorImpl::SetScheduler (ObjectFactory schedulerFactory)
         }
     }
   m_events = scheduler;
+}
+
+void
+DefaultSimulatorImpl::SetEventStream (ObjectFactory factory)
+{
+    NS_LOG_FUNCTION (this << factory);
+
+    NS_ASSERT_MSG (m_events != 0, "SetScheduler() must be called before calling "
+                    "SetEventStream()");
+
+    if (m_events)
+    {
+        m_events->SetEventStream (factory.Create<EventStream> ());
+    }
 }
 
 // System ID for non-distributed simulation is always zero
