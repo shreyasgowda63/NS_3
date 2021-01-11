@@ -30,6 +30,7 @@
 #include "ns3/simulator.h"
 #include "ns3/scheduler.h"
 #include "ns3/event-impl.h"
+#include "ns3/event-stream.h"
 #include "ns3/channel.h"
 #include "ns3/node-container.h"
 #include "ns3/ptr.h"
@@ -305,6 +306,20 @@ DistributedSimulatorImpl::SetScheduler (ObjectFactory schedulerFactory)
         }
     }
   m_events = scheduler;
+}
+
+void
+DistributedSimulatorImpl::SetEventStream (ObjectFactory factory)
+{
+  NS_LOG_FUNCTION (this << factory);
+
+  NS_ASSERT_MSG (m_events != 0, "SetScheduler() must be called before "
+                   "calling SetEventStream()");
+
+  if (m_events)
+    {
+        m_events->SetEventStream (factory.Create<EventStream> ());
+    }
 }
 
 void
