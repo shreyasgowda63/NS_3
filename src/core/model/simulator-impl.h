@@ -95,6 +95,14 @@ public:
    * before we start to use it.
    */
   virtual void SetScheduler (ObjectFactory schedulerFactory) = 0;
+
+  /**
+   * Set the event stream to use when ordering events with the same timestamp
+   *
+   * \param factory A factory configured to create EventStream objects
+   */
+  virtual void SetEventStream (ObjectFactory factory) = 0;
+
   /** \copydoc Simulator::GetSystemId */
   virtual uint32_t GetSystemId () const = 0;
   /** \copydoc Simulator::GetContext */
