@@ -112,6 +112,16 @@ public:
   static void SetScheduler (ObjectFactory schedulerFactory);
 
   /**
+   * Set the event stream  type with an ObjectFactory
+   * \param factory The configured ObjectFactory
+   *
+   * The event stream can be changed at any time.  The new event stream 
+   * will reorder events that were in the old event stream.  
+   * 
+   */ 
+  static void SetEventStream (ObjectFactory factory);
+
+  /**
    * Execute the events scheduled with ScheduleDestroy().
    *
    * This method is typically invoked at the end of a simulation
