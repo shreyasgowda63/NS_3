@@ -79,6 +79,11 @@ static GlobalValue g_schedTypeImpl = GlobalValue ("SchedulerType",
                                                   TypeIdValue (MapScheduler::GetTypeId ()),
                                                   MakeTypeIdChecker ());
 
+static GlobalValue g_eventStream = GlobalValue ("EventStreamType",
+                                                "The object class to use for ordering events with the same timestamp",
+                                                TypeIdValue (FifoEventStream::GetTypeId ()),
+                                                MakeTypeIdChecker ());
+
 /**
  * \ingroup simulator
  * \brief Get the static SimulatorImpl instance.

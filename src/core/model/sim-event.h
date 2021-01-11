@@ -176,6 +176,19 @@ inline bool operator< (const SimEvent &a,
 
 /**
  * \relates SimEvent
+ * \brief Greater than operator for events
+ *
+ * \param [in] a The first event.
+ * \param [in] b The second event.
+ * \returns \c true if \c a.key > \c b.key
+ */
+inline bool operator> (const SimEvent &a,
+                        const SimEvent &b)
+{
+  return a.key > b.key;
+}
+/**
+ * \relates SimEvent
  * \brief Equality operator for events
  *
  * \param [in] a The first event.
