@@ -66,21 +66,21 @@ PriorityQueueScheduler::Insert (const Event &ev)
 }
 
 bool
-PriorityQueueScheduler::IsEmpty (void) const
+PriorityQueueScheduler::DoIsEmpty (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_queue.empty ();
 }
 
 Scheduler::Event
-PriorityQueueScheduler::PeekNext (void) const
+PriorityQueueScheduler::DoPeekNext (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_queue.top ();
 }
 
 Scheduler::Event
-PriorityQueueScheduler::RemoveNext (void)
+PriorityQueueScheduler::DoRemoveNext (void)
 {
   NS_LOG_FUNCTION (this);
   Scheduler::Event ev = m_queue.top ();
@@ -105,7 +105,7 @@ PriorityQueueScheduler::EventPriorityQueue::remove(const Scheduler::Event &ev)
 }
 
 void
-PriorityQueueScheduler::Remove (const Scheduler::Event &ev)
+PriorityQueueScheduler::DoRemove (const Scheduler::Event &ev)
 {
   NS_LOG_FUNCTION (this);
   m_queue.remove (ev);

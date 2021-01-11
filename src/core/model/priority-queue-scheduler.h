@@ -77,10 +77,13 @@ public:
 
   // Inherited
   virtual void Insert (const Scheduler::Event &ev);
-  virtual bool IsEmpty (void) const;
-  virtual Scheduler::Event PeekNext (void) const;
-  virtual Scheduler::Event RemoveNext (void);
-  virtual void Remove (const Scheduler::Event &ev);
+
+ private:
+  // Inherited
+  virtual bool DoIsEmpty (void) const;
+  virtual Scheduler::Event DoPeekNext (void) const;
+  virtual Scheduler::Event DoRemoveNext (void);
+  virtual void DoRemove (const Scheduler::Event &ev);
 
 private:
 
