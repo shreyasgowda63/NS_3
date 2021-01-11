@@ -69,21 +69,23 @@ ListScheduler::Insert (const Event &ev)
     }
   m_events.push_back (ev);
 }
+
 bool
-ListScheduler::IsEmpty (void) const
+ListScheduler::DoIsEmpty (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_events.empty ();
 }
+
 Scheduler::Event
-ListScheduler::PeekNext (void) const
+ListScheduler::DoPeekNext (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_events.front ();
 }
 
 Scheduler::Event
-ListScheduler::RemoveNext (void)
+ListScheduler::DoRemoveNext (void)
 {
   NS_LOG_FUNCTION (this);
   Event next = m_events.front ();
@@ -92,7 +94,7 @@ ListScheduler::RemoveNext (void)
 }
 
 void
-ListScheduler::Remove (const Event &ev)
+ListScheduler::DoRemove (const Event &ev)
 {
   NS_LOG_FUNCTION (this << &ev);
   for (EventsI i = m_events.begin (); i != m_events.end (); i++)
