@@ -21,6 +21,7 @@
 #include "wall-clock-synchronizer.h"
 #include "scheduler.h"
 #include "event-impl.h"
+#include "event-stream.h"
 #include "synchronizer.h"
 
 #include "ptr.h"
@@ -163,6 +164,22 @@ RealtimeSimulatorImpl::SetScheduler (ObjectFactory schedulerFactory)
       }
     m_events = scheduler;
   }
+}
+
+void
+RealtimeSimulatorImpl::SetEventStream (ObjectFactory factory)
+{
+  NS_LOG_FUNCTION (this << factory);
+
+  CriticalSection cs (m_mutex);
+
+  NS_ASSERT_MSG (m_events != 0, "SetScheduler() must be called before "
+                 "calling SetEventStream()");
+
+  if (m_events)
+    {
+      m_events->SetEventStream (factory.Create<EventStream> ());
+    }
 }
 
 void
