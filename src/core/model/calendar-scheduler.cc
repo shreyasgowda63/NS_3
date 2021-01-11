@@ -172,13 +172,14 @@ CalendarScheduler::Insert (const Event &ev)
   ResizeUp ();
 }
 bool
-CalendarScheduler::IsEmpty (void) const
+CalendarScheduler::DoIsEmpty (void) const
 {
   NS_LOG_FUNCTION (this);
   return m_qSize == 0;
 }
+
 Scheduler::Event
-CalendarScheduler::PeekNext (void) const
+CalendarScheduler::DoPeekNext (void) const
 {
   NS_LOG_FUNCTION (this);
   NS_ASSERT (!IsEmpty ());
@@ -189,6 +190,7 @@ CalendarScheduler::PeekNext (void) const
   minEvent.key.m_ts = UINT64_MAX;
   minEvent.key.m_uid = UINT32_MAX;
   minEvent.key.m_context = 0;
+
   do
     {
       if (!m_buckets[i].empty ())
@@ -213,7 +215,7 @@ CalendarScheduler::PeekNext (void) const
 }
 
 Scheduler::Event
-CalendarScheduler::DoRemoveNext (void)
+CalendarScheduler::RemoveNextInternal (void)
 {
   NS_LOG_FUNCTION (this);
 
@@ -260,12 +262,12 @@ CalendarScheduler::DoRemoveNext (void)
 }
 
 Scheduler::Event
-CalendarScheduler::RemoveNext (void)
+CalendarScheduler::DoRemoveNext (void)
 {
   NS_LOG_FUNCTION (this << m_lastBucket << m_bucketTop);
   NS_ASSERT (!IsEmpty ());
 
-  Scheduler::Event ev = DoRemoveNext ();
+  Scheduler::Event ev = RemoveNextInternal ();
   NS_LOG_LOGIC ("remove ts=" << ev.key.m_ts <<
                 ", key=" << ev.key.m_uid <<
                 ", from bucket=" << m_lastBucket);
@@ -275,7 +277,7 @@ CalendarScheduler::RemoveNext (void)
 }
 
 void
-CalendarScheduler::Remove (const Event &ev)
+CalendarScheduler::DoRemove (const Event &ev)
 {
   NS_LOG_FUNCTION (this << &ev);
   NS_ASSERT (!IsEmpty ());
