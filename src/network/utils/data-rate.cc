@@ -196,6 +196,39 @@ DataRate::DataRate(uint64_t bps)
   NS_LOG_FUNCTION (this << bps);
 }
 
+DataRate DataRate::operator + (uint64_t rhs)
+{
+  return DataRate::DataRate(m_bps + rhs);
+}
+
+DataRate& DataRate::operator += (uint64_t rhs)
+{
+  m_bps += rhs;
+  return *this;
+}
+
+DataRate DataRate::operator - (uint64_t rhs)
+{
+  return DataRate::DataRate(m_bps - rhs);
+}
+
+DataRate& DataRate::operator -= (uint64_t rhs)
+{
+  m_bps -= rhs;
+  return *this;
+}
+
+DataRate DataRate::operator * (uint64_t rhs)
+{
+  return DataRate::DataRate(m_bps * rhs);
+}
+
+DataRate DataRate::operator *= (uint64_t rhs)
+{
+  m_bps *= rhs;
+  return *this;
+}
+
 bool DataRate::operator < (const DataRate& rhs) const
 {
   return m_bps<rhs.m_bps;

@@ -119,6 +119,47 @@ public:
   DataRate (std::string rate);
 
   /**
+   * \return DataRate object with m_bps added with rhs
+   * 
+   * \param rhs the integer to add to this datarate
+   */
+  DataRate operator + (uint64_t rhs);
+
+  /**
+   * \return the same DataRate object with m_bps added with rhs
+   * 
+   * \param rhs the integer to add to this datarate
+   */
+  DataRate& operator += (uint64_t rhs);
+
+  /**
+   * \return DataRate object with m_bps subtracted by rhs
+   * 
+   * \param rhs the integer to subracted from this datarate
+   */
+  DataRate operator - (uint64_t rhs);
+
+  /**
+   * \return the same DataRate object with m_bps subtracted by rhs
+   * 
+   * \param rhs the integer to subtract from this datarate
+   */
+  DataRate& operator -= (uint64_t rhs);
+
+  /**
+   * \return DataRate object with m_bps multiplied by rhs
+   * 
+   * \param rhs the integer to multiply to this datarate
+   */
+  DataRate operator * (uint64_t rhs);
+
+  /**
+   * \return the same DataRate object with m_bps multiplied by rhs
+   * 
+   * \param rhs the integer to mutlipy to this datarate
+   */
+  DataRate& operator *= (uint64_t rhs);
+  /**
    * \return true if this rate is less than rhs
    *
    * \param rhs the datarate to compare to this datarate
