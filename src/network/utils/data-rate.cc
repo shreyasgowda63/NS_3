@@ -198,7 +198,7 @@ DataRate::DataRate(uint64_t bps)
 
 DataRate DataRate::operator + (uint64_t rhs)
 {
-  return DataRate::DataRate(m_bps + rhs);
+  return new DataRate(m_bps + rhs);
 }
 
 DataRate& DataRate::operator += (uint64_t rhs)
@@ -209,7 +209,7 @@ DataRate& DataRate::operator += (uint64_t rhs)
 
 DataRate DataRate::operator - (uint64_t rhs)
 {
-  return DataRate::DataRate(m_bps - rhs);
+  return new DataRate(m_bps - rhs);
 }
 
 DataRate& DataRate::operator -= (uint64_t rhs)
@@ -220,10 +220,10 @@ DataRate& DataRate::operator -= (uint64_t rhs)
 
 DataRate DataRate::operator * (uint64_t rhs)
 {
-  return DataRate::DataRate(m_bps * rhs);
+  return new DataRate(m_bps * rhs);
 }
 
-DataRate DataRate::operator *= (uint64_t rhs)
+DataRate& DataRate::operator *= (uint64_t rhs)
 {
   m_bps *= rhs;
   return *this;
