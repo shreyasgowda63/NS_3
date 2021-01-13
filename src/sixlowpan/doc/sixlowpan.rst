@@ -23,14 +23,10 @@ standpoint, as it does extend it beyond the original scope by supporting also
 other kinds of networks.
 
 Other than that, the module strictly follows :rfc:`4944` and :rfc:`6282`, with the
-following exceptions:
-
-* HC2 encoding is not supported
-
-The HC2 encoding is not supported, as it has been superseded by IPHC and NHC
+exception that HC2 encoding is not supported, as it has been superseded by IPHC and NHC
 compression type (\ :rfc:`6282`).
 
-IPHC sateful (context-based) compression is supported,but since :rfc:`6775`   
+IPHC sateful (context-based) compression is supported but, since :rfc:`6775`   
 ("Neighbor Discovery Optimization for IPv6 over Low-Power Wireless Personal Area Networks (6LoWPANs)")
 is not yet implemented, it is necessary to add the context to the nodes manually.
 
@@ -119,8 +115,9 @@ Scope and Limitations
 Contex-based compression
 ########################
 
-The present implementation does not support context-based (stateful) compression.
-This limitation will be removed in the future.
+IPHC sateful (context-based) compression is supported but, since :rfc:`6775`   
+("Neighbor Discovery Optimization for IPv6 over Low-Power Wireless Personal Area Networks (6LoWPANs)")
+is not yet implemented, it is necessary to add the context to the nodes manually.
 
 6LoWPAM-ND
 ##########
