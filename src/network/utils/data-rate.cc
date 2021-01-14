@@ -196,34 +196,34 @@ DataRate::DataRate(uint64_t bps)
   NS_LOG_FUNCTION (this << bps);
 }
 
-DataRate DataRate::operator + (uint64_t rhs)
+DataRate DataRate::operator + (DataRate rhs)
 {
-  return DataRate(m_bps + rhs);
+  return DataRate(m_bps + rhs.m_bps);
 }
 
-DataRate& DataRate::operator += (uint64_t rhs)
+DataRate& DataRate::operator += (DataRate rhs)
 {
-  m_bps += rhs;
+  m_bps += rhs.m_bps;
   return *this;
 }
 
-DataRate DataRate::operator - (uint64_t rhs)
+DataRate DataRate::operator - (DataRate rhs)
 {
-  return DataRate(m_bps - rhs);
+  return DataRate(m_bps - rhs.m_bps);
 }
 
-DataRate& DataRate::operator -= (uint64_t rhs)
+DataRate& DataRate::operator -= (DataRate rhs)
 {
-  m_bps -= rhs;
+  m_bps -= rhs.m_bps;
   return *this;
 }
 
-DataRate DataRate::operator * (uint64_t rhs)
+DataRate DataRate::operator * (double rhs)
 {
   return DataRate(m_bps * rhs);
 }
 
-DataRate& DataRate::operator *= (uint64_t rhs)
+DataRate& DataRate::operator *= (double rhs)
 {
   m_bps *= rhs;
   return *this;

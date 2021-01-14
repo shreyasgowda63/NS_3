@@ -123,42 +123,42 @@ public:
    * 
    * \param rhs the integer to add to this datarate
    */
-  DataRate operator + (uint64_t rhs);
+  DataRate operator + (DataRate rhs);
 
   /**
    * \return the same DataRate object with m_bps added with rhs
    * 
    * \param rhs the integer to add to this datarate
    */
-  DataRate& operator += (uint64_t rhs);
+  DataRate& operator += (DataRate rhs);
 
   /**
    * \return DataRate object with m_bps subtracted by rhs
    * 
    * \param rhs the integer to subracted from this datarate
    */
-  DataRate operator - (uint64_t rhs);
+  DataRate operator - (DataRate rhs);
 
   /**
    * \return the same DataRate object with m_bps subtracted by rhs
    * 
    * \param rhs the integer to subtract from this datarate
    */
-  DataRate& operator -= (uint64_t rhs);
+  DataRate& operator -= (DataRate rhs);
 
   /**
    * \return DataRate object with m_bps multiplied by rhs
    * 
    * \param rhs the integer to multiply to this datarate
    */
-  DataRate operator * (uint64_t rhs);
+  DataRate operator * (double rhs);
 
   /**
    * \return the same DataRate object with m_bps multiplied by rhs
    * 
    * \param rhs the integer to mutlipy to this datarate
    */
-  DataRate& operator *= (uint64_t rhs);
+  DataRate& operator *= (double rhs);
   /**
    * \return true if this rate is less than rhs
    *
