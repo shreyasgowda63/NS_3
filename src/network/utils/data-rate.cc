@@ -22,6 +22,7 @@
 #include "ns3/nstime.h"
 #include "ns3/fatal-error.h"
 #include "ns3/log.h"
+#include <assert.h>
 
 namespace ns3 {
 
@@ -209,11 +210,13 @@ DataRate& DataRate::operator += (DataRate rhs)
 
 DataRate DataRate::operator - (DataRate rhs)
 {
+  assert(m_bps >= rhs.m_bps);
   return DataRate(m_bps - rhs.m_bps);
 }
 
 DataRate& DataRate::operator -= (DataRate rhs)
 {
+  assert(m_bps >= rhs.m_bps);
   m_bps -= rhs.m_bps;
   return *this;
 }
@@ -224,6 +227,17 @@ DataRate DataRate::operator * (double rhs)
 }
 
 DataRate& DataRate::operator *= (double rhs)
+{
+  m_bps *= rhs;
+  return *this;
+}
+
+DataRate DataRate::operator * (uint64_t rhs)
+{
+  return DataRate(m_bps * rhs);
+}
+
+DataRate& DataRate::operator *= (uint64_t rhs)
 {
   m_bps *= rhs;
   return *this;

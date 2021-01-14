@@ -149,16 +149,32 @@ public:
   /**
    * \return DataRate object with m_bps multiplied by rhs
    * 
-   * \param rhs the integer to multiply to this datarate
+   * \param rhs the double to multiply to this datarate
    */
   DataRate operator * (double rhs);
 
   /**
    * \return the same DataRate object with m_bps multiplied by rhs
    * 
-   * \param rhs the integer to mutlipy to this datarate
+   * \param rhs the double to mutlipy to this datarate
    */
   DataRate& operator *= (double rhs);
+
+  /**
+   * \return the DataRate object with m_bps multiplied by rhs
+   * 
+   * \param rhs the uint64_t to mutlipy to this datarate
+   */
+  DataRate operator * (uint64_t rhs);
+
+  /**
+   * \return the same DataRate object with m_bps multiplied by rhs
+   * 
+   * \param rhs the uint64_t to mutlipy to this datarate
+   */
+  DataRate& operator *= (uint64_t rhs);
+
+
   /**
    * \return true if this rate is less than rhs
    *
