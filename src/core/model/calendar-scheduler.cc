@@ -355,7 +355,7 @@ CalendarScheduler::CalculateNewWidth (void)
   // gather requested events
   for (uint32_t i = 0; i < nSamples; i++)
     {
-      samples.push_back (DoRemoveNext ());
+      samples.push_back (RemoveNextInternal ());
     }
   // put them back
   for (std::list<Scheduler::Event>::const_iterator i = samples.begin ();
