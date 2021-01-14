@@ -84,10 +84,17 @@ Scheduler::PeekNext () const
 
   NS_ASSERT_MSG (!IsEmpty (), "Called PeekNext() when no events are available");
 
+  static Event ev;
+
   if (m_stream->IsEmpty ())
     {
+#if 0
       //hack to call non const function inside const function
-      const_cast<Scheduler*> (this)->FillStream ();
+      //const_cast<Scheduler*> (this)->FillStream ();
+#else
+      ev = DoPeekNext ();
+      return ev;
+#endif
     }
 
   return m_stream->Peek ();
