@@ -28,7 +28,7 @@ def configure(conf):
         conf.env['ENABLE_GTK'] = have_gtk
         conf.report_optional_feature("GtkConfigStore", "GtkConfigStore",
                                      conf.env['ENABLE_GTK'],
-                                     "library 'gtk+-3 >= 3.2' not found")
+                                     "library 'gtk+-3 >= 3.22' not found")
 
     have_libxml2 = conf.check_cfg(package='libxml-2.0 >= 2.7',
                                   args=['--cflags', '--libs'], uselib_store='LIBXML2',
