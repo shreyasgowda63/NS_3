@@ -571,14 +571,15 @@ DistributedSimulatorImpl::GetEventCount (void) const
 void
 DistributedSimulatorImpl::BoundLookahead (const Time lookAhead)
 {
+  NS_LOG_FUNCTION (this << lookAhead);
+  
   if (lookAhead > Time (0))
     {
-      NS_LOG_FUNCTION (this << lookAhead);
       m_lookAhead = Min(m_lookAhead, lookAhead);
     }
   else
     {
-      NS_LOG_WARN ("attempted to set lookahead to a negative time: " << lookAhead);
+      NS_LOG_WARN ("attempted to bound lookahead to a negative time: " << lookAhead);
     }
 }
 
