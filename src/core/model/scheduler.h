@@ -185,25 +185,30 @@ public:
   virtual void Insert (const Event &ev) = 0;
 
   /**
-   * Test if the schedule is empty.
+   * Test if the scheduler is empty.
    *
-   * \returns \c true if the event list is empty and \c false otherwise.
+   * \returns \c true if there are no more events to process and \c false otherwise.
    */
   bool IsEmpty (void) const;
 
   /**
-   * Get a pointer to the next event.
+   * Get the next event without removing it.
    *
-   * This method cannot be invoked if the list is empty.
+   * \warning This method cannot be invoked if the list is empty.
    *
-   * \returns A pointer to the next earliest event. The caller
-   *      takes ownership of the returned pointer.
+   * \returns A copy of the next event. 
    */
-  const Event& PeekNext (void) const;
+  const Event PeekNext (void) const;
   /**
    * Remove the earliest event from the event list.
    *
-   * This method cannot be invoked if the list is empty.
+   * \warning This method cannot be invoked if the list is empty.
+   *
+   * \warning In most cases the event returned by RemoveNext will match the one
+   * returned by PeekNext, i.e. PeekNext() == RemoveNext().  In some simulator
+   * implementations, it is possible for events to be added between the call to 
+   * PeekNext and the call to RemoveNext.  In those situations, the event returned
+   * by RemoveNext may be different than the one previously returned by PeekNext.
    *
    * \return The Event.
    */
@@ -211,35 +216,44 @@ public:
   /**
    * Remove a specific event from the event list.
    *
-   * This method cannot be invoked if the list is empty.
-   *
    * \param [in] ev The event to remove
    */
   void Remove (const Event &ev);
 
+  /**
+   * Change the EventStream implementation to use
+   *
+   * The EventStream is used by the Scheduler as a staging space for a set
+   * of events that have the same timestamp.  The EventStream implementation is
+   * free to modify the collection of events in any way it desires, from changing
+   * the order of events to adding or deleting events.  Calling PeekNext
+   * and RemoveNext pulls events from the EventStream.  When the stream is
+   * empty, the scheduler will fill it with the next set of events. 
+   *
+   * \param stream The new EventSet implementation
+   */
   void SetEventStream (Ptr<EventStream> stream);
 
 private:
   /**
-   * Test if the schedule is empty.
+   * Test if the scheduler is empty.
    *
-   * \returns \c true if the event list is empty and \c false otherwise.
+   * \returns \c true if there are no more events to process and \c false otherwise.
    */
   virtual bool DoIsEmpty (void) const = 0;
 
   /**
    * Get a pointer to the next event.
    *
-   * This method cannot be invoked if the list is empty.
+   * \warning This method cannot be invoked if the list is empty.
    *
-   * \returns A pointer to the next earliest event. The caller
-   *      takes ownership of the returned pointer.
+   * \returns A copy of the next event. 
    */
   virtual Event DoPeekNext (void) const = 0;
   /**
    * Remove the earliest event from the event list.
    *
-   * This method cannot be invoked if the list is empty.
+   * \warning This method cannot be invoked if the list is empty.
    *
    * \return The Event.
    */
@@ -247,16 +261,17 @@ private:
   /**
    * Remove a specific event from the event list.
    *
-   * This method cannot be invoked if the list is empty.
-   *
    * \param [in] ev The event to remove
    */
   virtual void DoRemove (const Event &ev) = 0;
 
-  void FillStream ();
+  /**
+   * Fill the event set with events from the underlying implementation
+   */
+  void FillEventStream ();
 
   uint64_t m_currentTimestamp;   //!< Timestamp of events in m_stream
-  Ptr<EventStream> m_stream;
+  Ptr<EventStream> m_stream;   //!< Next set of events
 };
 
 } // namespace ns3

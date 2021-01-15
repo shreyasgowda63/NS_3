@@ -77,24 +77,17 @@ Scheduler::IsEmpty () const
   return DoIsEmpty () && m_stream->IsEmpty ();
 }
 
-const Scheduler::Event&
+const Scheduler::Event
 Scheduler::PeekNext () const
 {
   NS_LOG_FUNCTION (this);
 
   NS_ASSERT_MSG (!IsEmpty (), "Called PeekNext() when no events are available");
 
-  static Event ev;
 
   if (m_stream->IsEmpty ())
     {
-#if 0
-      //hack to call non const function inside const function
-      //const_cast<Scheduler*> (this)->FillStream ();
-#else
-      ev = DoPeekNext ();
-      return ev;
-#endif
+      return DoPeekNext ();
     }
 
   return m_stream->Peek ();
@@ -109,7 +102,7 @@ Scheduler::RemoveNext ()
 
   if (m_stream->IsEmpty ())
     {
-      FillStream ();
+      FillEventStream ();
     }
 
   return m_stream->Next ();
@@ -154,7 +147,7 @@ Scheduler::SetEventStream (Ptr<EventStream> stream)
 }
 
 void
-Scheduler::FillStream ()
+Scheduler::FillEventStream ()
 {
   NS_LOG_FUNCTION (this);
 
