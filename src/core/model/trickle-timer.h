@@ -43,13 +43,38 @@ class TimerImpl;
  * and a maximum, depending on events. It is typically used to exchange
  * information in a highly robust, energy efficient, simple, and scalable manner.
  *
- * Please refer to \RFC6206} for a full description.
+ * The Trickle Timer has three parameters:
+ *   - minInterval Minimum interval.
+ *   - doublings Number of doublings to reach the maximum interval.
+ *   - redundancy Redundancy constant.
+ *
+ * The timer *period* is variable. It starts at minInterval, and it doubles
+ * the period length up to maxInterval = std::exp2 (doublings) * minInterval.
+ *
+ * The period is reset to minInterval when an *inconsistent* event is detected
+ * (see `TrickleTimer::InconsistentEvent`).
+ *
+ * The actual function fired by the timer is *not* called when a period expires.
+ * Rather, it is called in random moment between half of the actual period,
+ * and the end of actual the period.
+ * Moreover, the function is *not* fired if the timer did detect in the actual
+ * period a number of *consistent* events (see `TrickleTimer::ConsistentEvent`)
+ * greater than the redundancy constant. Setting the redundancy constant to zero
+ * disables this feature.
+ *
+ * The Trickle Timer is mainly used to self-regulate the transmission of periodic
+ * information (e.g., Router Advertisements) in wireless networks - and
+ * particularly in LLNs. In these contexts the frequency of the timer is adjusted
+ * according to, e.g., RS multicast messages. Moreover, the redundancy constant
+ * can be used to avoid congestion in high density networks.
+ *
+ * Please refer to \RFC{6206} for a full description and discussion of the Trickle Timer.
  */
 class TrickleTimer
 {
 public:
   /** Constructor. */
-  TrickleTimer () = delete; // will never be generated
+  TrickleTimer ();
 
   /**
    * Constructor.
@@ -78,6 +103,54 @@ public:
   int64_t AssignStreams (int64_t streamNum);
 
   /**
+   * \brief Set the timer parameters.
+   *
+   * The maximum interval is set to std::exp2 (doublings) * minInterval.
+   *
+   * \param minInterval Minimum interval.
+   * \param doublings Number of doublings to reach the maximum interval.
+   * \param redundancy Redundancy constant.
+   *
+   * A zero value in the redundancy constant means that the suppression
+   * algorithm is disabled.
+   *
+   */
+  void SetParameters (Time minInterval, uint8_t doublings, uint16_t redundancy);
+
+  /**
+   * \brief Get the MinInterval of the timer.
+   * \return The MinInterval
+   */
+  Time GetMinInterval (void) const;
+
+  /**
+   * \brief Get the MaxInterval of the timer.
+   *
+   * The timer MaxInterval is always std::exp2 (doublings) * minInterval
+   * \return The MaxInterval
+   */
+  Time GetMaxInterval (void) const;
+
+  /**
+   * \brief Get the doublings of the timer.
+   * \return The doublings
+   */
+  uint8_t GetDoublings (void) const;
+
+  /**
+   * \brief Get the Redundancy constant of the timer.
+   * \return The Redundancy
+   */
+  uint16_t GetRedundancy (void) const;
+
+  /**
+   * \returns The amount of time left until this timer expires.
+   *
+   * This method returns zero if the timer has never been started.
+   */
+  Time GetDelayLeft (void) const;
+
+  /**
    * \brief Enable the timer.
    */
   void Enable ();
@@ -96,6 +169,13 @@ public:
    * \brief Reset the timer.
    */
   void Reset ();
+
+  /**
+   * \brief Stop the timer.
+   *
+   * This will reset the timer and cancel all the pending events.
+   */
+  void Stop ();
 
   /**
    * Set the function to execute when the timer expires.
@@ -157,7 +237,7 @@ private:
   Time m_maxInterval;    //!< Maximum interval
   uint16_t m_redundancy; //!< Redundancy constant.
 
-  uint64_t m_ticks;       //|< Interval span.
+  uint64_t m_ticks;       //!< Interval span (i.e., exp2(doublings)).
   Time m_currentInterval; //!< Current interval.
   uint16_t m_counter;     //!< Event counter.
 

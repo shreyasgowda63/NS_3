@@ -31,6 +31,12 @@
  * \ingroup timer-tests
  *
  * Trickle Timer test suite.
+ *
+ * This test checks that the timer, in steady-state mode (i.e., after
+ * the transient period) have a frequency between [I/2, I + I/2].
+ *
+ * The test also checks that the redundancy works, i.e., if the timer
+ * receives enough "consistent" events it will suppress its output.
  */
 
 namespace ns3 {
