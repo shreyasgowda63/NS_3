@@ -119,56 +119,66 @@ public:
   DataRate (std::string rate);
 
   /**
-   * \return DataRate object with m_bps added with rhs
+   * \return the DataRate representing the sum of this object with rhs
    * 
-   * \param rhs the integer to add to this datarate
+   * \param the DataRate to add to this DataRate
    */
   DataRate operator + (DataRate rhs);
 
   /**
-   * \return the same DataRate object with m_bps added with rhs
+   * \return the DataRate representing the sum of this object with rhs
    * 
-   * \param rhs the integer to add to this datarate
+   * \param the DataRate to add to this DataRate
    */
   DataRate& operator += (DataRate rhs);
 
   /**
-   * \return DataRate object with m_bps subtracted by rhs
+   * \return the DataRate representing the difference of this object with rhs
    * 
-   * \param rhs the integer to subracted from this datarate
+   * \param the DataRate to subtract from this DataRate
    */
   DataRate operator - (DataRate rhs);
 
   /**
-   * \return the same DataRate object with m_bps subtracted by rhs
+   * \return the DataRate representing the difference of this object with rhs
    * 
-   * \param rhs the integer to subtract from this datarate
+   * \param the DataRate to subtract from this DataRate
    */
   DataRate& operator -= (DataRate rhs);
 
   /**
-   * \return DataRate object with m_bps multiplied by rhs
+   * \brief Scales the DataRate
+   * 
+   * \return DataRate object representing the product of this object with rhs 
    * 
    * \param rhs the double to multiply to this datarate
    */
   DataRate operator * (double rhs);
 
   /**
-   * \return the same DataRate object with m_bps multiplied by rhs
+   *  \brief Scales the DataRate
+   * 
+   * Multiplies with double and is re-casted to an int 
+   * 
+   * \return DataRate object representing the product of this object with rhs
    * 
    * \param rhs the double to mutlipy to this datarate
    */
   DataRate& operator *= (double rhs);
 
   /**
-   * \return the DataRate object with m_bps multiplied by rhs
+   *  \brief Scales the DataRate
+   * 
+   * Multiplies with double and is re-casted to an int
+   * 
+   * \return DataRate object representing the product of this object with rhs
    * 
    * \param rhs the uint64_t to mutlipy to this datarate
    */
   DataRate operator * (uint64_t rhs);
 
   /**
-   * \return the same DataRate object with m_bps multiplied by rhs
+   * \return DataRate object representing the product of this object with rhs
    * 
    * \param rhs the uint64_t to mutlipy to this datarate
    */
