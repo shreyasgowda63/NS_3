@@ -1027,7 +1027,7 @@ void SixLowPanIphc::Serialize (Buffer::Iterator start) const
   switch (GetSam () )
     {
     case HC_INLINE:
-      if ( GetSac () == 0 )
+      if ( GetSac () == false )
         {
           i.Write (m_srcInlinePart, 16);
         }
@@ -1159,7 +1159,7 @@ uint32_t SixLowPanIphc::Deserialize (Buffer::Iterator start)
   switch (GetSam () )
     {
     case HC_INLINE:
-      if ( GetSac () == 0 )
+      if ( GetSac () == false )
         {
           i.Read (m_srcInlinePart, 16);
         }
