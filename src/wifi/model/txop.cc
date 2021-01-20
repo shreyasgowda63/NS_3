@@ -89,7 +89,7 @@ Txop::Txop ()
     m_cwMax (0),
     m_cw (0),
     m_backoff (0),
-    m_accessRequested (false),
+    m_access (NOT_REQUESTED),
     m_backoffSlots (0),
     m_backoffStart (Seconds (0.0)),
     m_currentPacket (0)
@@ -191,7 +191,6 @@ Txop::SetMinCw (uint32_t minCw)
   if (changed == true)
     {
       ResetCw ();
-      m_cwTrace = GetCw ();
     }
 }
 
@@ -204,7 +203,6 @@ Txop::SetMaxCw (uint32_t maxCw)
   if (changed == true)
     {
       ResetCw ();
-      m_cwTrace = GetCw ();
     }
 }
 
@@ -219,6 +217,7 @@ Txop::ResetCw (void)
 {
   NS_LOG_FUNCTION (this);
   m_cw = m_cwMin;
+  m_cwTrace = m_cw;
 }
 
 void
@@ -227,6 +226,7 @@ Txop::UpdateFailedCw (void)
   NS_LOG_FUNCTION (this);
   //see 802.11-2012, section 9.19.2.5
   m_cw = std::min ( 2 * (m_cw + 1) - 1, m_cwMax);
+  m_cwTrace = m_cw;
 }
 
 uint32_t
@@ -342,7 +342,7 @@ Txop::RestartAccessIfNeeded (void)
   NS_LOG_FUNCTION (this);
   if ((m_currentPacket != 0
        || !m_queue->IsEmpty ())
-      && !IsAccessRequested ()
+      && m_access == NOT_REQUESTED
       && !m_low->IsCfPeriod ())
     {
       m_channelAccessManager->RequestAccess (this);
@@ -355,7 +355,7 @@ Txop::StartAccessIfNeeded (void)
   NS_LOG_FUNCTION (this);
   if (m_currentPacket == 0
       && !m_queue->IsEmpty ()
-      && !IsAccessRequested ()
+      && m_access == NOT_REQUESTED
       && !m_low->IsCfPeriod ())
     {
       m_channelAccessManager->RequestAccess (this);
@@ -373,7 +373,6 @@ Txop::DoInitialize ()
 {
   NS_LOG_FUNCTION (this);
   ResetCw ();
-  m_cwTrace = GetCw ();
   GenerateBackoff ();
 }
 
@@ -381,22 +380,21 @@ bool
 Txop::NeedRtsRetransmission (Ptr<const Packet> packet, const WifiMacHeader &hdr)
 {
   NS_LOG_FUNCTION (this);
-  return m_stationManager->NeedRetransmission (hdr.GetAddr1 (), &hdr, packet);
+  return m_stationManager->NeedRetransmission (Create<const WifiMacQueueItem> (packet, hdr));
 }
 
 bool
 Txop::NeedDataRetransmission (Ptr<const Packet> packet, const WifiMacHeader &hdr)
 {
   NS_LOG_FUNCTION (this);
-  return m_stationManager->NeedRetransmission (hdr.GetAddr1 (), &hdr, packet);
+  return m_stationManager->NeedRetransmission (Create<const WifiMacQueueItem> (packet, hdr));
 }
 
 bool
 Txop::NeedFragmentation (void) const
 {
   NS_LOG_FUNCTION (this);
-  return m_stationManager->NeedFragmentation (m_currentHdr.GetAddr1 (), &m_currentHdr,
-                                              m_currentPacket);
+  return m_stationManager->NeedFragmentation (Create<const WifiMacQueueItem> (m_currentPacket, m_currentHdr));
 }
 
 void
@@ -410,32 +408,32 @@ uint32_t
 Txop::GetFragmentSize (void) const
 {
   NS_LOG_FUNCTION (this);
-  return m_stationManager->GetFragmentSize (m_currentHdr.GetAddr1 (), &m_currentHdr,
-                                            m_currentPacket, m_fragmentNumber);
+  return m_stationManager->GetFragmentSize (Create<const WifiMacQueueItem> (m_currentPacket,
+                                            m_currentHdr), m_fragmentNumber);
 }
 
 bool
 Txop::IsLastFragment (void) const
 {
   NS_LOG_FUNCTION (this);
-  return m_stationManager->IsLastFragment (m_currentHdr.GetAddr1 (), &m_currentHdr,
-                                           m_currentPacket, m_fragmentNumber);
+  return m_stationManager->IsLastFragment (Create<const WifiMacQueueItem> (m_currentPacket,
+                                           m_currentHdr), m_fragmentNumber);
 }
 
 uint32_t
 Txop::GetNextFragmentSize (void) const
 {
   NS_LOG_FUNCTION (this);
-  return m_stationManager->GetFragmentSize (m_currentHdr.GetAddr1 (), &m_currentHdr,
-                                            m_currentPacket, m_fragmentNumber + 1);
+  return m_stationManager->GetFragmentSize (Create<const WifiMacQueueItem> (m_currentPacket,
+                                            m_currentHdr), m_fragmentNumber + 1);
 }
 
 uint32_t
 Txop::GetFragmentOffset (void) const
 {
   NS_LOG_FUNCTION (this);
-  return m_stationManager->GetFragmentOffset (m_currentHdr.GetAddr1 (), &m_currentHdr,
-                                              m_currentPacket, m_fragmentNumber);
+  return m_stationManager->GetFragmentOffset (Create<const WifiMacQueueItem> (m_currentPacket,
+                                              m_currentHdr), m_fragmentNumber);
 }
 
 Ptr<Packet>
@@ -459,25 +457,53 @@ Txop::GetFragmentPacket (WifiMacHeader *hdr)
   return fragment;
 }
 
-bool
-Txop::IsAccessRequested (void) const
+Txop::ChannelAccessStatus
+Txop::GetAccessStatus (void) const
 {
-  return m_accessRequested;
+  return m_access;
 }
 
 void
 Txop::NotifyAccessRequested (void)
 {
   NS_LOG_FUNCTION (this);
-  m_accessRequested = true;
+  m_access = REQUESTED;
+}
+
+void
+Txop::NotifyChannelAccessed (void)
+{
+  NS_LOG_FUNCTION (this);
+  m_access = GRANTED;
+}
+
+void
+Txop::NotifyChannelReleased (void)
+{
+  NS_LOG_FUNCTION (this);
+  m_access = NOT_REQUESTED;
+  GenerateBackoff ();
+  if (HasFramesToTransmit ())
+    {
+      Simulator::ScheduleNow (&Txop::RequestAccess, this);
+    }
+}
+
+void
+Txop::RequestAccess (void)
+{
+  if (m_access == NOT_REQUESTED)
+    {
+      m_channelAccessManager->RequestAccess (this);
+    }
 }
 
 void
 Txop::NotifyAccessGranted (void)
 {
   NS_LOG_FUNCTION (this);
-  NS_ASSERT (m_accessRequested);
-  m_accessRequested = false;
+//   NS_ASSERT (m_access == REQUESTED); FEM may have changed m_access to GRANTED
+  m_access = NOT_REQUESTED;
   if (m_currentPacket == 0)
     {
       if (m_queue->IsEmpty ())
@@ -615,7 +641,7 @@ Txop::MissedCts (void)
   if (!NeedRtsRetransmission (m_currentPacket, m_currentHdr))
     {
       NS_LOG_DEBUG ("Cts Fail");
-      m_stationManager->ReportFinalRtsFailed (m_currentHdr.GetAddr1 (), &m_currentHdr);
+      m_stationManager->ReportFinalRtsFailed (m_currentHdr);
       if (!m_txFailedCallback.IsNull ())
         {
           m_txFailedCallback (m_currentHdr);
@@ -623,12 +649,10 @@ Txop::MissedCts (void)
       //to reset the Txop.
       m_currentPacket = 0;
       ResetCw ();
-      m_cwTrace = GetCw ();
     }
   else
     {
       UpdateFailedCw ();
-      m_cwTrace = GetCw ();
     }
   GenerateBackoff ();
   RestartAccessIfNeeded ();
@@ -652,7 +676,6 @@ Txop::GotAck (void)
        */
       m_currentPacket = 0;
       ResetCw ();
-      m_cwTrace = GetCw ();
       GenerateBackoff ();
       RestartAccessIfNeeded ();
     }
@@ -670,8 +693,8 @@ Txop::MissedAck (void)
   if (!NeedDataRetransmission (m_currentPacket, m_currentHdr))
     {
       NS_LOG_DEBUG ("Ack Fail");
-      m_stationManager->ReportFinalDataFailed (m_currentHdr.GetAddr1 (), &m_currentHdr,
-                                               m_currentPacket->GetSize ());
+      m_stationManager->ReportFinalDataFailed (Create<const WifiMacQueueItem> (m_currentPacket,
+                                               m_currentHdr));
       if (!m_txFailedCallback.IsNull ())
         {
           m_txFailedCallback (m_currentHdr);
@@ -679,16 +702,14 @@ Txop::MissedAck (void)
       //to reset the Txop.
       m_currentPacket = 0;
       ResetCw ();
-      m_cwTrace = GetCw ();
     }
   else
     {
       NS_LOG_DEBUG ("Retransmit");
-      m_stationManager->ReportDataFailed (m_currentHdr.GetAddr1 (), &m_currentHdr,
-                                          m_currentPacket->GetSize ());
+      m_stationManager->ReportDataFailed (Create<const WifiMacQueueItem> (m_currentPacket,
+                                          m_currentHdr));
       m_currentHdr.SetRetry ();
       UpdateFailedCw ();
-      m_cwTrace = GetCw ();
     }
   GenerateBackoff ();
   RestartAccessIfNeeded ();
@@ -718,8 +739,8 @@ Txop::MissedCfPollResponse (bool expectedCfAck)
       if (!NeedDataRetransmission (m_currentPacket, m_currentHdr))
         {
           NS_LOG_DEBUG ("Ack Fail");
-          m_stationManager->ReportFinalDataFailed (m_currentHdr.GetAddr1 (), &m_currentHdr,
-                                                   m_currentPacket->GetSize ());
+          m_stationManager->ReportFinalDataFailed (Create<const WifiMacQueueItem> (m_currentPacket,
+                                                   m_currentHdr));
           m_currentPacket = 0;
         }
       else
@@ -770,7 +791,6 @@ Txop::EndTxNoAck (void)
   NS_LOG_DEBUG ("a transmission that did not require an ACK just finished");
   m_currentPacket = 0;
   ResetCw ();
-  m_cwTrace = GetCw ();
   GenerateBackoff ();
   if (!m_txOkCallback.IsNull ())
     {
@@ -788,8 +808,8 @@ Txop::SendCfFrame (WifiMacType frameType, Mac48Address addr)
     {
       if (!NeedDataRetransmission (m_currentPacket, m_currentHdr))
         {
-          m_stationManager->ReportFinalDataFailed (m_currentHdr.GetAddr1 (), &m_currentHdr,
-                                                   m_currentPacket->GetSize ());
+          m_stationManager->ReportFinalDataFailed (Create<const WifiMacQueueItem> (m_currentPacket,
+                                                   m_currentHdr));
           m_currentPacket = 0;
         }
       else

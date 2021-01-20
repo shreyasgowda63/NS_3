@@ -876,10 +876,8 @@ WifiHelper::Install (const WifiPhyHelper &phyHelper,
           device->SetHeConfiguration (heConfiguration);
         }
       Ptr<WifiRemoteStationManager> manager = m_stationManager.Create<WifiRemoteStationManager> ();
-      Ptr<WifiMac> mac = macHelper.Create (device);
+      Ptr<WifiMac> mac = macHelper.Create (device, m_standard);
       Ptr<WifiPhy> phy = phyHelper.Create (node, device);
-      mac->SetAddress (Mac48Address::Allocate ());
-      mac->ConfigureStandard (m_standard);
       phy->ConfigureStandardAndBand (it->second.phyStandard, it->second.phyBand);
       device->SetMac (mac);
       device->SetPhy (phy);
@@ -899,51 +897,29 @@ WifiHelper::Install (const WifiPhyHelper &phyHelper,
         {
           Ptr<NetDeviceQueueInterface> ndqi;
           BooleanValue qosSupported;
-          PointerValue ptr;
           Ptr<WifiMacQueue> wmq;
-          Ptr<WifiAckPolicySelector> ackSelector;
 
           rmac->GetAttributeFailSafe ("QosSupported", qosSupported);
           if (qosSupported.Get ())
             {
               ndqi = CreateObjectWithAttributes<NetDeviceQueueInterface> ("NTxQueues",
                                                                           UintegerValue (4));
-
-              rmac->GetAttributeFailSafe ("BE_Txop", ptr);
-              ackSelector = m_ackPolicySelector[AC_BE].Create<WifiAckPolicySelector> ();
-              ackSelector->SetQosTxop (ptr.Get<QosTxop> ());
-              ptr.Get<QosTxop> ()->SetAckPolicySelector (ackSelector);
-              wmq = ptr.Get<QosTxop> ()->GetWifiMacQueue ();
-              ndqi->GetTxQueue (0)->ConnectQueueTraces (wmq);
-
-              rmac->GetAttributeFailSafe ("BK_Txop", ptr);
-              ackSelector = m_ackPolicySelector[AC_BK].Create<WifiAckPolicySelector> ();
-              ackSelector->SetQosTxop (ptr.Get<QosTxop> ());
-              ptr.Get<QosTxop> ()->SetAckPolicySelector (ackSelector);
-              wmq = ptr.Get<QosTxop> ()->GetWifiMacQueue ();
-              ndqi->GetTxQueue (1)->ConnectQueueTraces (wmq);
-
-              rmac->GetAttributeFailSafe ("VI_Txop", ptr);
-              ackSelector = m_ackPolicySelector[AC_VI].Create<WifiAckPolicySelector> ();
-              ackSelector->SetQosTxop (ptr.Get<QosTxop> ());
-              ptr.Get<QosTxop> ()->SetAckPolicySelector (ackSelector);
-              wmq = ptr.Get<QosTxop> ()->GetWifiMacQueue ();
-              ndqi->GetTxQueue (2)->ConnectQueueTraces (wmq);
-
-              rmac->GetAttributeFailSafe ("VO_Txop", ptr);
-              ackSelector = m_ackPolicySelector[AC_VO].Create<WifiAckPolicySelector> ();
-              ackSelector->SetQosTxop (ptr.Get<QosTxop> ());
-              ptr.Get<QosTxop> ()->SetAckPolicySelector (ackSelector);
-              wmq = ptr.Get<QosTxop> ()->GetWifiMacQueue ();
-              ndqi->GetTxQueue (3)->ConnectQueueTraces (wmq);
+              for (auto& ac : {AC_BE, AC_BK, AC_VI, AC_VO})
+                {
+                  Ptr<QosTxop> qosTxop = rmac->GetQosTxop (ac);
+                  auto ackSelector = m_ackPolicySelector[ac].Create<WifiAckPolicySelector> ();
+                  ackSelector->SetQosTxop (qosTxop);
+                  qosTxop->SetAckPolicySelector (ackSelector);
+                  wmq = qosTxop->GetWifiMacQueue ();
+                  ndqi->GetTxQueue (static_cast<std::size_t> (ac))->ConnectQueueTraces (wmq);
+                }
               ndqi->SetSelectQueueCallback (m_selectQueueCallback);
             }
           else
             {
               ndqi = CreateObject<NetDeviceQueueInterface> ();
 
-              rmac->GetAttributeFailSafe ("Txop", ptr);
-              wmq = ptr.Get<Txop> ()->GetWifiMacQueue ();
+              wmq = rmac->GetTxop ()->GetWifiMacQueue ();
               ndqi->GetTxQueue (0)->ConnectQueueTraces (wmq);
             }
           device->AggregateObject (ndqi);
@@ -1026,7 +1002,10 @@ WifiHelper::EnableLogComponents (void)
   LogComponentEnable ("ThresholdPreambleDetectionModel", LOG_LEVEL_ALL);
   LogComponentEnable ("Txop", LOG_LEVEL_ALL);
   LogComponentEnable ("VhtConfiguration", LOG_LEVEL_ALL);
+  LogComponentEnable ("WifiAckManager", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiAckPolicySelector", LOG_LEVEL_ALL);
+  LogComponentEnable ("WifiDefaultAckManager", LOG_LEVEL_ALL);
+  LogComponentEnable ("WifiDefaultProtectionManager", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiMac", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiMacQueue", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiMacQueueItem", LOG_LEVEL_ALL);
@@ -1034,12 +1013,14 @@ WifiHelper::EnableLogComponents (void)
   LogComponentEnable ("WifiPhyStateHelper", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiPhy", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiPpdu", LOG_LEVEL_ALL);
+  LogComponentEnable ("WifiProtectionManager", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiPsdu", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiRadioEnergyModel", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiRemoteStationManager", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiSpectrumPhyInterface", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiSpectrumSignalParameters", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiTxCurrentModel", LOG_LEVEL_ALL);
+  LogComponentEnable ("WifiTxParameters", LOG_LEVEL_ALL);
   LogComponentEnable ("YansErrorRateModel", LOG_LEVEL_ALL);
   LogComponentEnable ("YansWifiChannel", LOG_LEVEL_ALL);
   LogComponentEnable ("YansWifiPhy", LOG_LEVEL_ALL);
