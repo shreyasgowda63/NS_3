@@ -40,6 +40,7 @@ class WifiPhy;
 class WifiMac;
 class WifiMacHeader;
 class Packet;
+class WifiMacQueueItem;
 class WifiTxVector;
 
 struct WifiRemoteStationState;
@@ -669,6 +670,15 @@ public:
    */
   WifiTxVector GetRtsTxVector (Mac48Address address);
   /**
+   * Return a TXVECTOR for the CTS frame given the destination and the mode of the RTS
+   * used by the sender.
+   *
+   * \param to the MAC address of the CTS receiver
+   * \param rtsTxMode the mode of the RTS used by the sender
+   * \return TXVECTOR for the CTS
+   */
+  WifiTxVector GetCtsTxVector (Mac48Address to, WifiMode rtsTxMode) const;
+  /**
    * Since CTS-to-self parameters are not dependent on the station,
    * it is implemented in wifi remote station manager
    *
@@ -676,72 +686,84 @@ public:
    *         transmission of the data packet itself.
    */
   WifiTxVector GetCtsToSelfTxVector (void);
+  /**
+   * Return a TXVECTOR for the Ack frame given the destination and the mode of the Data
+   * used by the sender.
+   *
+   * \param to the MAC address of the Ack receiver
+   * \param dataTxMode the mode of the Data used by the sender
+   * \return TXVECTOR for the Ack
+   */
+  WifiTxVector GetAckTxVector (Mac48Address to, WifiMode dataTxMode) const;
+  /**
+   * Return a TXVECTOR for the BlockAck frame given the destination and the mode of the Data
+   * used by the sender.
+   *
+   * \param to the MAC address of the BlockAck receiver
+   * \param dataTxMode the mode of the Data used by the sender
+   * \return TXVECTOR for the BlockAck
+   */
+  WifiTxVector GetBlockAckTxVector (Mac48Address to, WifiMode dataTxMode) const;
+  /**
+   * Get control answer mode function.
+   *
+   * \param reqMode request mode
+   * \return control answer mode
+   */
+  WifiMode GetControlAnswerMode (WifiMode reqMode) const;
 
   /**
    * Should be invoked whenever the RtsTimeout associated to a transmission
    * attempt expires.
    *
-   * \param address the address of the receiver
    * \param header MAC header of the DATA packet
    */
-  void ReportRtsFailed (Mac48Address address, const WifiMacHeader *header);
+  void ReportRtsFailed (const WifiMacHeader& header);
   /**
    * Should be invoked whenever the AckTimeout associated to a transmission
    * attempt expires.
    *
-   * \param address the address of the receiver
-   * \param header MAC header of the DATA packet
-   * \param packetSize the size of the DATA packet
+   * \param mpdu the MPDU whose transmission failed
    */
-  void ReportDataFailed (Mac48Address address, const WifiMacHeader *header,
-                         uint32_t packetSize);
+  void ReportDataFailed (Ptr<const WifiMacQueueItem> mpdu);
   /**
    * Should be invoked whenever we receive the CTS associated to an RTS
    * we just sent. Note that we also get the SNR of the RTS we sent since
    * the receiver put a SnrTag in the CTS.
    *
-   * \param address the address of the receiver
    * \param header MAC header of the DATA packet
    * \param ctsSnr the SNR of the CTS we received
    * \param ctsMode the WifiMode the receiver used to send the CTS
    * \param rtsSnr the SNR of the RTS we sent
    */
-  void ReportRtsOk (Mac48Address address, const WifiMacHeader *header,
+  void ReportRtsOk (const WifiMacHeader& header,
                     double ctsSnr, WifiMode ctsMode, double rtsSnr);
   /**
    * Should be invoked whenever we receive the ACK associated to a data packet
    * we just sent.
    *
-   * \param address the address of the receiver
-   * \param header MAC header of the DATA packet
+   * \param mpdu the MPDU
    * \param ackSnr the SNR of the ACK we received
    * \param ackMode the WifiMode the receiver used to send the ACK
    * \param dataSnr the SNR of the DATA we sent
    * \param dataTxVector the TXVECTOR of the DATA we sent
-   * \param packetSize the size of the DATA packet
    */
-  void ReportDataOk (Mac48Address address, const WifiMacHeader *header,
-                     double ackSnr, WifiMode ackMode,
-                     double dataSnr, WifiTxVector dataTxVector,
-                     uint32_t packetSize);
+  void ReportDataOk (Ptr<const WifiMacQueueItem> mpdu, double ackSnr,
+                     WifiMode ackMode, double dataSnr, WifiTxVector dataTxVector);
   /**
    * Should be invoked after calling ReportRtsFailed if
    * NeedRetransmission returns false
    *
-   * \param address the address of the receiver
    * \param header MAC header of the DATA packet
    */
-  void ReportFinalRtsFailed (Mac48Address address, const WifiMacHeader *header);
+  void ReportFinalRtsFailed (const WifiMacHeader& header);
   /**
    * Should be invoked after calling ReportDataFailed if
    * NeedRetransmission returns false
    *
-   * \param address the address of the receiver
-   * \param header MAC header of the DATA packet
-   * \param packetSize the size of the DATA packet
+   * \param mpdu the MPDU which was discarded
    */
-  void ReportFinalDataFailed (Mac48Address address, const WifiMacHeader *header,
-                              uint32_t packetSize);
+  void ReportFinalDataFailed (Ptr<const WifiMacQueueItem> mpdu);
   /**
    * Typically called per A-MPDU, either when a Block ACK was successfully
    * received or when a BlockAckTimeout has elapsed.
@@ -785,55 +807,40 @@ public:
   bool NeedCtsToSelf (WifiTxVector txVector);
 
   /**
-   * \param address remote address
-   * \param header MAC header
-   * \param packet the packet to send
+   * \param mpdu the MPDU to send
    *
    * \return true if we want to resend a packet after a failed transmission attempt,
    *         false otherwise.
    */
-  bool NeedRetransmission (Mac48Address address, const WifiMacHeader *header,
-                           Ptr<const Packet> packet);
+  bool NeedRetransmission (Ptr<const WifiMacQueueItem> mpdu);
   /**
-   * \param address remote address
-   * \param header MAC header
-   * \param packet the packet to send
+   * \param mpdu the MPDU to send
    *
    * \return true if this packet should be fragmented,
    *         false otherwise.
    */
-  bool NeedFragmentation (Mac48Address address, const WifiMacHeader *header,
-                          Ptr<const Packet> packet);
+  bool NeedFragmentation (Ptr<const WifiMacQueueItem> mpdu);
   /**
-   * \param address remote address
-   * \param header MAC header
-   * \param packet the packet to send
+   * \param mpdu the MPDU to send
    * \param fragmentNumber the fragment index of the next fragment to send (starts at zero).
    *
    * \return the size of the corresponding fragment.
    */
-  uint32_t GetFragmentSize (Mac48Address address, const WifiMacHeader *header,
-                            Ptr<const Packet> packet, uint32_t fragmentNumber);
+  uint32_t GetFragmentSize (Ptr<const WifiMacQueueItem> mpdu, uint32_t fragmentNumber);
   /**
-   * \param address remote address
-   * \param header MAC header
-   * \param packet the packet to send
+   * \param mpdu the packet to send
    * \param fragmentNumber the fragment index of the next fragment to send (starts at zero).
    *
    * \return the offset within the original packet where this fragment starts.
    */
-  uint32_t GetFragmentOffset (Mac48Address address, const WifiMacHeader *header,
-                              Ptr<const Packet> packet, uint32_t fragmentNumber);
+  uint32_t GetFragmentOffset (Ptr<const WifiMacQueueItem> mpdu, uint32_t fragmentNumber);
   /**
-   * \param address remote address
-   * \param header MAC header
-   * \param packet the packet to send
+   * \param mpdu the packet to send
    * \param fragmentNumber the fragment index of the next fragment to send (starts at zero).
    *
    * \return true if this is the last fragment, false otherwise.
    */
-  bool IsLastFragment (Mac48Address address, const WifiMacHeader *header,
-                       Ptr<const Packet> packet, uint32_t fragmentNumber);
+  bool IsLastFragment (Ptr<const WifiMacQueueItem> mpdu, uint32_t fragmentNumber);
 
   /**
    * \return the default transmission power
@@ -1243,12 +1250,11 @@ private:
   /**
    * Return the number of fragments needed for the given packet.
    *
-   * \param header MAC header
-   * \param packet the packet to be fragmented
+   * \param mpdu the packet to be fragmented
    *
    * \return the number of fragments needed
    */
-  uint32_t GetNFragments (const WifiMacHeader *header, Ptr<const Packet> packet);
+  uint32_t GetNFragments (Ptr<const WifiMacQueueItem> mpdu);
 
   /**
    * This is a pointer to the WifiPhy associated with this

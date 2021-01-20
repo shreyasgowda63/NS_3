@@ -95,6 +95,16 @@ public:
   typedef Callback <void, Ptr<const Packet> > TxDropped;
 
   /**
+   * Enumeration for channel access status
+   */
+  enum ChannelAccessStatus
+  {
+    NOT_REQUESTED = 0,
+    REQUESTED,
+    GRANTED
+  };
+
+  /**
    * Check for QoS TXOP.
    *
    * \returns true if QoS TXOP.
@@ -205,6 +215,19 @@ public:
    * \return the TXOP limit.
    */
   Time GetTxopLimit (void) const;
+  /**
+   * Update the value of the CW variable to take into account
+   * a transmission success or a transmission abort (stop transmission
+   * of a packet after the maximum number of retransmissions has been
+   * reached). By default, this resets the CW variable to minCW.
+   */
+  void ResetCw (void);
+  /**
+   * Update the value of the CW variable to take into account
+   * a transmission failure. By default, this triggers a doubling
+   * of CW (capped by maxCW).
+   */
+  void UpdateFailedCw (void);
 
   /**
    * When a channel switching occurs, enqueued packets are removed.
@@ -317,6 +340,17 @@ public:
   virtual void TerminateTxop (void);
 
   /**
+   * Called by the FrameExchangeManager to notify that channel access has
+   * been granted.
+   */
+  virtual void NotifyChannelAccessed (void);
+  /**
+   * Called by the FrameExchangeManager to notify the completion of the transmissions.
+   * This method generates a new backoff and restarts access if needed.
+   */
+  virtual void NotifyChannelReleased (void);
+
+  /**
    * Check if the next PCF transmission can fit in the remaining CFP duration.
    *
    * \return true if the next PCF transmission can fit in the remaining CFP duration,
@@ -337,10 +371,9 @@ public:
   int64_t AssignStreams (int64_t stream);
 
   /**
-   * \returns true if access has been requested for this function and
-   *          has not been granted already, false otherwise.
+   * \return the current channel access status.
    */
-  virtual bool IsAccessRequested (void) const;
+  virtual ChannelAccessStatus GetAccessStatus (void) const;
 
   /**
    * \param nSlots the number of slots of the backoff.
@@ -388,25 +421,16 @@ protected:
    * Request access from Txop if needed.
    */
   virtual void StartAccessIfNeeded (void);
+  /**
+   * Request access to the ChannelAccessManager
+   */
+  void RequestAccess (void);
 
   /**
    * \returns the current value of the CW variable. The initial value is
    *          minCW.
    */
   uint32_t GetCw (void) const;
-  /**
-   * Update the value of the CW variable to take into account
-   * a transmission success or a transmission abort (stop transmission
-   * of a packet after the maximum number of retransmissions has been
-   * reached). By default, this resets the CW variable to minCW.
-   */
-  void ResetCw (void);
-  /**
-   * Update the value of the CW variable to take into account
-   * a transmission failure. By default, this triggers a doubling
-   * of CW (capped by maxCW).
-   */
-  void UpdateFailedCw (void);
   /**
    * Return the current number of backoff slots.
    *
@@ -512,12 +536,12 @@ protected:
   Ptr<WifiRemoteStationManager> m_stationManager;   //!< the wifi remote station manager
   Ptr<UniformRandomVariable> m_rng;                 //!< the random stream
 
-  uint32_t m_cwMin;        //!< the minimum contention window
-  uint32_t m_cwMax;        //!< the maximum contention window
-  uint32_t m_cw;           //!< the current contention window
-  uint32_t m_backoff;      //!< the current backoff
-  bool m_accessRequested;  //!< flag whether channel access is already requested
-  uint32_t m_backoffSlots; //!< the number of backoff slots
+  uint32_t m_cwMin;              //!< the minimum contention window
+  uint32_t m_cwMax;              //!< the maximum contention window
+  uint32_t m_cw;                 //!< the current contention window
+  uint32_t m_backoff;            //!< the current backoff
+  ChannelAccessStatus m_access;  //!< channel access status
+  uint32_t m_backoffSlots;       //!< the number of backoff slots
   /**
    * the backoffStart variable is used to keep track of the
    * time at which a backoff was started or the time at which
