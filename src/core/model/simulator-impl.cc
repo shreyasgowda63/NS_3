@@ -46,13 +46,16 @@ void
 SimulatorImpl::BoundLookahead (const Time lookahead)
 {
   NS_LOG_FUNCTION (this << lookahead);
-  // Method is only required for conservative parallel DES implementations so provide a default that does nothing.
+  // This method is only useful conservative parallel DES implementations
+  // A default that does nothing for non-parallel implementations.
 }
 
 Time
 SimulatorImpl::GetLookahead (void) const
 {
   NS_LOG_FUNCTION_NOARGS ();
+  // For non-parallel DES implementations there is no lookahead needed so return infinity, time
+  // advancement does not require lookahead constraints.
   return Time::Max();
 }
 
