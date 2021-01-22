@@ -73,7 +73,7 @@ public:
   /**
    * Check if the set has space to insert more events
    *
-   * \return \c true if the set has space to hold another event, \c false
+   * \return \c true if the set cannot hold any more events, \c false
    * otherwise
    */
   virtual bool IsFull () const = 0;
