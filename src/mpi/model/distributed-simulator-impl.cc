@@ -30,7 +30,7 @@
 #include "ns3/simulator.h"
 #include "ns3/scheduler.h"
 #include "ns3/event-impl.h"
-#include "ns3/event-stream.h"
+#include "ns3/event-set.h"
 #include "ns3/channel.h"
 #include "ns3/node-container.h"
 #include "ns3/ptr.h"
@@ -308,16 +308,16 @@ DistributedSimulatorImpl::SetScheduler (ObjectFactory schedulerFactory)
 }
 
 void
-DistributedSimulatorImpl::SetEventStream (ObjectFactory factory)
+DistributedSimulatorImpl::SetEventSet (ObjectFactory factory)
 {
   NS_LOG_FUNCTION (this << factory);
 
   NS_ASSERT_MSG (m_events != 0, "SetScheduler() must be called before "
-                 "calling SetEventStream()");
+                 "calling SetEventSet()");
 
   if (m_events)
     {
-      m_events->SetEventStream (factory.Create<EventStream> ());
+      m_events->SetEventSet (factory.Create<EventSet> ());
     }
 }
 
