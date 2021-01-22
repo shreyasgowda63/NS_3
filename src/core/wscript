@@ -259,7 +259,7 @@ def build(bld):
         'model/system-wall-clock-timestamp.cc',
         'helper/csv-reader.cc',
         'model/length.cc',
-        'model/event-stream.cc'
+        'model/event-set.cc'
         ]
 
     if (bld.env['ENABLE_EXAMPLES']):
@@ -398,7 +398,7 @@ def build(bld):
         'helper/csv-reader.h',
         'model/length.h',
         'model/sim-event.h',
-        'model/event-stream.h',
+        'model/event-set.h',
         ]
 
     if (bld.env['ENABLE_EXAMPLES']):
