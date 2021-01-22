@@ -37,6 +37,7 @@ public:
   void EventC (int c);
   void EventD (int d);
   void Eventfoo0 (void);
+  void EventCounter ();
   uint64_t NowUs (void);
   void destroy (void);
   bool m_b;
@@ -46,6 +47,7 @@ public:
   EventId m_idC;
   bool m_destroy;
   EventId m_destroyId;
+  uint32_t m_visited;
   ObjectFactory m_schedulerFactory;
 };
 
@@ -108,6 +110,12 @@ SimulatorEventsTestCase::Eventfoo0 (void)
 {}
 
 void
+SimulatorEventsTestCase::EventCounter ()
+{
+    ++m_visited;
+}
+
+void
 SimulatorEventsTestCase::destroy (void)
 {
   if (m_destroyId.IsExpired ())
@@ -168,6 +176,24 @@ SimulatorEventsTestCase::DoRun (void)
   Simulator::Destroy ();
   NS_TEST_EXPECT_MSG_EQ (m_destroyId.IsExpired (), true, "Event should have expired now");
   NS_TEST_EXPECT_MSG_EQ (m_destroy, true, "Event should have run");
+
+  //insert a whole bunch of events and make sure they all run
+  m_visited = 0;
+  uint32_t maxEvents = 100;
+  for (uint32_t i = 0; i < maxEvents; ++i)
+  {
+    //we want a combination of events with the same timestamp and different timestamps
+    Time delay = Seconds (1 + (i >> 2));  
+
+    Simulator::Schedule (delay, &SimulatorEventsTestCase::EventCounter, this);
+  }
+
+  Simulator::Run ();
+
+  NS_TEST_EXPECT_MSG_EQ (m_visited, maxEvents,
+                         "One or more scheduled events did not run");
+
+  Simulator::Destroy ();
 }
 
 class SimulatorTemplateTestCase : public TestCase
