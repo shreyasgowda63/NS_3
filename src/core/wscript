@@ -292,7 +292,7 @@ def build(bld):
         'test/hash-test-suite.cc',
         'test/type-id-test-suite.cc',
         'test/length-test-suite.cc',
-        'test/event-stream-test-suite.cc'
+        'test/event-set-test-suite.cc'
         ]
 
     if (bld.env['ENABLE_EXAMPLES']):
