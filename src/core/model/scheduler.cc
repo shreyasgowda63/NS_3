@@ -22,7 +22,7 @@
 #include "assert.h"
 #include "log.h"
 #include "event-impl.h"
-#include "event-stream.h"
+#include "event-set.h"
 #include "pointer.h"
 #include "string.h"
 
@@ -42,7 +42,7 @@ NS_OBJECT_ENSURE_REGISTERED (Scheduler);
 
 Scheduler::Scheduler ()
   :   m_currentTimestamp (0),
-    m_stream ()
+    m_eventSet ()
 
 {
   NS_LOG_FUNCTION (this);
@@ -74,7 +74,7 @@ Scheduler::IsEmpty () const
 {
   NS_LOG_FUNCTION (this);
 
-  return DoIsEmpty () && m_stream->IsEmpty ();
+  return DoIsEmpty () && m_eventSet->IsEmpty ();
 }
 
 const Scheduler::Event
@@ -85,12 +85,12 @@ Scheduler::PeekNext () const
   NS_ASSERT_MSG (!IsEmpty (), "Called PeekNext() when no events are available");
 
 
-  if (m_stream->IsEmpty ())
+  if (m_eventSet->IsEmpty ())
     {
       return DoPeekNext ();
     }
 
-  return m_stream->Peek ();
+  return m_eventSet->Peek ();
 }
 
 Scheduler::Event
@@ -100,12 +100,12 @@ Scheduler::RemoveNext ()
 
   NS_ASSERT_MSG (!IsEmpty (), "Called RemoveNext() when no events are available");
 
-  if (m_stream->IsEmpty ())
+  if (m_eventSet->IsEmpty ())
     {
       FillEventStream ();
     }
 
-  return m_stream->Next ();
+  return m_eventSet->Next ();
 }
 
 void
@@ -113,7 +113,7 @@ Scheduler::Remove (const Event& ev)
 {
   NS_LOG_FUNCTION (this);
 
-  bool found = m_stream->Remove (ev.key);
+  bool found = m_eventSet->Remove (ev.key);
 
   if (!found)
     {
@@ -129,21 +129,21 @@ Scheduler::SetEventStream (Ptr<EventStream> stream)
 
   NS_ASSERT_MSG (stream, "EventStream cannot be a null pointer");
 
-  while (m_stream && !m_stream->IsEmpty ())
+  while (m_eventSet && !m_eventSet->IsEmpty ())
     {
       if (stream->IsFull ())
         {
           //no more room in the new stream, add the events back to
           //the event store
-          Insert (m_stream->Next ());
+          Insert (m_eventSet->Next ());
         }
       else
         {
-          stream->Insert (m_stream->Next ());
+          stream->Insert (m_eventSet->Next ());
         }
     }
 
-  m_stream = stream;
+  m_eventSet = stream;
 }
 
 void
@@ -151,7 +151,7 @@ Scheduler::FillEventStream ()
 {
   NS_LOG_FUNCTION (this);
 
-  while (!m_stream->IsFull ())
+  while (!m_eventSet->IsFull ())
     {
       if (DoIsEmpty ())
         {
@@ -166,7 +166,7 @@ Scheduler::FillEventStream ()
         {
           //dont add events with a new timestamp until all of the events with
           //the current timestamp have been processed
-          if (!m_stream->IsEmpty ())
+          if (!m_eventSet->IsEmpty ())
             {
               NS_LOG_LOGIC ("No more events with timestamp " << m_currentTimestamp);
               return;
@@ -178,7 +178,7 @@ Scheduler::FillEventStream ()
           m_currentTimestamp = key.m_ts;
         }
 
-      m_stream->Insert (DoRemoveNext ());
+      m_eventSet->Insert (DoRemoveNext ());
     }
 }
 

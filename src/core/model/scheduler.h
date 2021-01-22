@@ -39,7 +39,7 @@
 namespace ns3 {
 
 class EventImpl;
-class EventStream;
+class EventSet;
 
 /**
  * \ingroup core
@@ -221,18 +221,18 @@ public:
   void Remove (const Event &ev);
 
   /**
-   * Change the EventStream implementation to use
+   * Change the EventSet implementation to use
    *
-   * The EventStream is used by the Scheduler as a staging space for a set
-   * of events that have the same timestamp.  The EventStream implementation is
+   * The EventSet is used by the Scheduler as a staging space for a set
+   * of events that have the same timestamp.  The EventSet implementation is
    * free to modify the collection of events in any way it desires, from changing
    * the order of events to adding or deleting events.  Calling PeekNext
-   * and RemoveNext pulls events from the EventStream.  When the stream is
+   * and RemoveNext pulls events from the EventSet.  When the set is
    * empty, the scheduler will fill it with the next set of events. 
    *
-   * \param stream The new EventSet implementation
+   * \param eventSet The new EventSet implementation
    */
-  void SetEventStream (Ptr<EventStream> stream);
+  void SetEventSet (Ptr<EventSet> eventSet);
 
 private:
   /**
@@ -268,10 +268,10 @@ private:
   /**
    * Fill the event set with events from the underlying implementation
    */
-  void FillEventStream ();
+  void FillEventSet ();
 
-  uint64_t m_currentTimestamp;   //!< Timestamp of events in m_stream
-  Ptr<EventStream> m_stream;   //!< Next set of events
+  uint64_t m_currentTimestamp;   //!< Timestamp of events in m_eventSet
+  Ptr<EventSet> m_eventSet;   //!< Next set of events
 };
 
 } // namespace ns3
