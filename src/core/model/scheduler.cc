@@ -59,12 +59,12 @@ Scheduler::GetTypeId (void)
   static TypeId tid = TypeId ("ns3::Scheduler")
     .SetParent<Object> ()
     .SetGroupName ("Core")
-    .AddAttribute ("EventStream",
+    .AddAttribute ("EventSet",
                    "Class which controls the ordering of events with the "
                    "same timestamp",
-                   StringValue ("ns3::FifoEventStream"),
-                   MakePointerAccessor (&Scheduler::SetEventStream),
-                   MakePointerChecker<EventStream> ())
+                   StringValue ("ns3::FifoEventSet"),
+                   MakePointerAccessor (&Scheduler::SetEventSet),
+                   MakePointerChecker<EventSet> ())
   ;
   return tid;
 }
@@ -102,7 +102,7 @@ Scheduler::RemoveNext ()
 
   if (m_eventSet->IsEmpty ())
     {
-      FillEventStream ();
+      FillEventSet ();
     }
 
   return m_eventSet->Next ();
@@ -117,37 +117,37 @@ Scheduler::Remove (const Event& ev)
 
   if (!found)
     {
-      //not in the event stream, try the event source
+      //not in the event set, try the event source
       DoRemove (ev);
     }
 }
 
 void
-Scheduler::SetEventStream (Ptr<EventStream> stream)
+Scheduler::SetEventSet (Ptr<EventSet> eventSet)
 {
-  NS_LOG_FUNCTION (this << stream);
+  NS_LOG_FUNCTION (this << eventSet);
 
-  NS_ASSERT_MSG (stream, "EventStream cannot be a null pointer");
+  NS_ASSERT_MSG (eventSet, "EventSet cannot be a null pointer");
 
   while (m_eventSet && !m_eventSet->IsEmpty ())
     {
-      if (stream->IsFull ())
+      if (eventSet->IsFull ())
         {
-          //no more room in the new stream, add the events back to
+          //no more room in the new set, add the events back to
           //the event store
           Insert (m_eventSet->Next ());
         }
       else
         {
-          stream->Insert (m_eventSet->Next ());
+          eventSet->Insert (m_eventSet->Next ());
         }
     }
 
-  m_eventSet = stream;
+  m_eventSet = eventSet;
 }
 
 void
-Scheduler::FillEventStream ()
+Scheduler::FillEventSet ()
 {
   NS_LOG_FUNCTION (this);
 

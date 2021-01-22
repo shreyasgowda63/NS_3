@@ -24,7 +24,7 @@
 #include "map-scheduler.h"
 #include "event-impl.h"
 #include "des-metrics.h"
-#include "event-stream.h"
+#include "event-set.h"
 
 #include "ptr.h"
 #include "string.h"
@@ -79,9 +79,9 @@ static GlobalValue g_schedTypeImpl = GlobalValue ("SchedulerType",
                                                   TypeIdValue (MapScheduler::GetTypeId ()),
                                                   MakeTypeIdChecker ());
 
-static GlobalValue g_eventStream = GlobalValue ("EventStreamType",
+static GlobalValue g_eventSet = GlobalValue ("EventSetType",
                                                 "The object class to use for ordering events with the same timestamp",
-                                                TypeIdValue (FifoEventStream::GetTypeId ()),
+                                                TypeIdValue (FifoEventSet::GetTypeId ()),
                                                 MakeTypeIdChecker ());
 
 /**
@@ -125,10 +125,10 @@ static SimulatorImpl * GetImpl (void)
 
         (*pimpl)->SetScheduler (factory);
 
-        g_eventStream.GetValue (s);
+        g_eventSet.GetValue (s);
         factory.SetTypeId (s.Get ());
 
-        (*pimpl)->SetEventStream (factory);
+        (*pimpl)->SetEventSet (factory);
       }
 
 //
@@ -174,11 +174,11 @@ Simulator::SetScheduler (ObjectFactory schedulerFactory)
 }
 
 void
-Simulator::SetEventStream (ObjectFactory factory)
+Simulator::SetEventSet (ObjectFactory factory)
 {
   NS_LOG_FUNCTION (factory);
 
-  GetImpl ()->SetEventStream (factory);
+  GetImpl ()->SetEventSet (factory);
 }
 
 bool

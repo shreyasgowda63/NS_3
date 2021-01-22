@@ -22,7 +22,7 @@
 #include "default-simulator-impl.h"
 #include "scheduler.h"
 #include "event-impl.h"
-#include "event-stream.h"
+#include "event-set.h"
 
 #include "ptr.h"
 #include "pointer.h"
@@ -130,16 +130,16 @@ DefaultSimulatorImpl::SetScheduler (ObjectFactory schedulerFactory)
 }
 
 void
-DefaultSimulatorImpl::SetEventStream (ObjectFactory factory)
+DefaultSimulatorImpl::SetEventSet (ObjectFactory factory)
 {
   NS_LOG_FUNCTION (this << factory);
 
   NS_ASSERT_MSG (m_events != 0, "SetScheduler() must be called before calling "
-                 "SetEventStream()");
+                 "SetEventSet()");
 
   if (m_events)
     {
-      m_events->SetEventStream (factory.Create<EventStream> ());
+      m_events->SetEventSet (factory.Create<EventSet> ());
     }
 }
 

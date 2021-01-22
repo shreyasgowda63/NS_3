@@ -112,14 +112,14 @@ public:
   static void SetScheduler (ObjectFactory schedulerFactory);
 
   /**
-   * Set the event stream  type with an ObjectFactory
+   * Set the event set type with an ObjectFactory
    * \param factory The configured ObjectFactory
    *
-   * The event stream can be changed at any time.  The new event stream
-   * will reorder events that were in the old event stream.
+   * The event set can be changed at any time.  The new event set 
+   * will reorder events that were in the old event set.
    *
    */
-  static void SetEventStream (ObjectFactory factory);
+  static void SetEventSet (ObjectFactory factory);
 
   /**
    * Execute the events scheduled with ScheduleDestroy().
