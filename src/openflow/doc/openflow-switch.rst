@@ -130,6 +130,8 @@ Usage
 The OFSID requires libxml2 (for MPLS FIB xml file parsing), libdl (for address fault checking), 
 and boost (for assert) libraries to be installed.
 
+Your script might need these libraries. The openflow module does not automatically add them.
+
 Building OFSID
 ==============
 
@@ -147,8 +149,9 @@ To do this:
 
    From the "openflow" directory, run::
      
-     $ ./waf configure
+     $ ./waf configure --prefix=./build
      $ ./waf build
+     $ ./waf install
 
 2. Your OFSID is now built into a libopenflow.a library!
    To link to an ns-3 build with this OpenFlow switch module, run from the ns-3-dev
