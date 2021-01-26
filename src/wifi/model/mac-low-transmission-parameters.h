@@ -54,11 +54,13 @@ public:
    */
   void EnableBlockAck (BlockAckType type);
   /**
-   * Schedule the transmission of a BlockAckRequest of the given type.
+   * A BlockAckRequest of the given type will be transmitted, followed by a
+   * BlockAck of the given type.
    *
-   * \param type the BlockAckRequest type
+   * \param barType the Block Ack Request type
+   * \param baType the type of the Block Ack solicited by the Block Ack Request
    */
-  void EnableBlockAckRequest (BlockAckType type);
+  void EnableBlockAckRequest (BlockAckReqType barType, BlockAckType baType);
   /**
    * Send a RTS, and wait CTSTimeout for a CTS. If we get a
    * CTS on time, call MacLowTransmissionListener::GotCts
@@ -123,7 +125,7 @@ public:
    *
    * Only call this method if a BlockAckRequest must be sent.
    */
-  BlockAckType GetBlockAckRequestType (void) const;
+  BlockAckReqType GetBlockAckRequestType (void) const;
   /**
    * \returns true if RTS should be sent and CTS waited for before
    *          sending data, false otherwise.
@@ -140,27 +142,24 @@ public:
 
 private:
   friend std::ostream &operator << (std::ostream &os, const MacLowTransmissionParameters &params);
-  uint32_t m_nextSize; //!< the next size
-  /// wait Ack enumerated type
-  enum
+  /// Struct storing the type of Ack to wait for
+  struct WaitAckType
   {
-    ACK_NONE,
-    ACK_NORMAL,
-    BLOCK_ACK_BASIC,
-    BLOCK_ACK_COMPRESSED,
-    BLOCK_ACK_EXTENDED_COMPRESSED,
-    BLOCK_ACK_MULTI_TID
-  } m_waitAck; //!< wait Ack
-  /// send BAR enumerated type
-  enum
+    enum {NONE, NORMAL, BLOCK_ACK} m_type;
+    BlockAckType m_baType;
+  };
+  /// Struct storing the type of BAR to send
+  struct SendBarType
   {
-    BLOCK_ACK_REQUEST_NONE,
-    BLOCK_ACK_REQUEST_BASIC,
-    BLOCK_ACK_REQUEST_COMPRESSED,
-    BLOCK_ACK_REQUEST_EXTENDED_COMPRESSED,
-    BLOCK_ACK_REQUEST_MULTI_TID
-  } m_sendBar; //!< send BAR
-  bool m_sendRts; //!< send an RTS?
+    enum {NONE, BLOCK_ACK_REQ} m_type;
+    BlockAckReqType m_barType;
+    BlockAckType m_baType;
+  };
+
+  uint32_t m_nextSize;                              //!< the next size
+  WaitAckType m_waitAck;                            //!< type of Ack to wait for
+  SendBarType m_sendBar;                            //!< type of BAR to send
+  bool m_sendRts;                                   //!< whether to send an RTS or not
 };
 
 /**

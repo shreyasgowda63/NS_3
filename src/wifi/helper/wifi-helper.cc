@@ -964,6 +964,7 @@ WifiHelper::EnableLogComponents (void)
   LogComponentEnable ("AparfWifiManager", LOG_LEVEL_ALL);
   LogComponentEnable ("ArfWifiManager", LOG_LEVEL_ALL);
   LogComponentEnable ("BlockAckAgreement", LOG_LEVEL_ALL);
+  LogComponentEnable ("RecipientBlockAckAgreement", LOG_LEVEL_ALL);
   LogComponentEnable ("BlockAckCache", LOG_LEVEL_ALL);
   LogComponentEnable ("BlockAckManager", LOG_LEVEL_ALL);
   LogComponentEnable ("CaraWifiManager", LOG_LEVEL_ALL);
@@ -975,7 +976,9 @@ WifiHelper::EnableLogComponents (void)
   LogComponentEnable ("DsssErrorRateModel", LOG_LEVEL_ALL);
   LogComponentEnable ("FrameExchangeManager", LOG_LEVEL_ALL);
   LogComponentEnable ("HeConfiguration", LOG_LEVEL_ALL);
+  LogComponentEnable ("HeFrameExchangeManager", LOG_LEVEL_ALL);
   LogComponentEnable ("HtConfiguration", LOG_LEVEL_ALL);
+  LogComponentEnable ("HtFrameExchangeManager", LOG_LEVEL_ALL);
   LogComponentEnable ("IdealWifiManager", LOG_LEVEL_ALL);
   LogComponentEnable ("InfrastructureWifiMac", LOG_LEVEL_ALL);
   LogComponentEnable ("InterferenceHelper", LOG_LEVEL_ALL);
@@ -1004,6 +1007,7 @@ WifiHelper::EnableLogComponents (void)
   LogComponentEnable ("ThresholdPreambleDetectionModel", LOG_LEVEL_ALL);
   LogComponentEnable ("Txop", LOG_LEVEL_ALL);
   LogComponentEnable ("VhtConfiguration", LOG_LEVEL_ALL);
+  LogComponentEnable ("VhtFrameExchangeManager", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiAckManager", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiAckPolicySelector", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiDefaultAckManager", LOG_LEVEL_ALL);
