@@ -25,7 +25,6 @@
 #include "wifi-phy.h"
 #include "mac-rx-middle.h"
 #include "mac-tx-middle.h"
-#include "mac-low.h"
 #include "msdu-aggregator.h"
 #include "mpdu-aggregator.h"
 #include "mgt-headers.h"
@@ -37,6 +36,7 @@
 #include <algorithm>
 #include <cmath>
 #include "he-frame-exchange-manager.h"
+#include "channel-access-manager.h"
 
 namespace ns3 {
 
@@ -55,15 +55,9 @@ RegularWifiMac::RegularWifiMac ()
 
   m_txMiddle = Create<MacTxMiddle> ();
 
-  m_low = CreateObject<MacLow> ();
-  m_low->SetRxCallback (MakeCallback (&MacRxMiddle::Receive, m_rxMiddle));
-  m_low->SetMac (this);
-
   m_channelAccessManager = CreateObject<ChannelAccessManager> ();
-  m_channelAccessManager->SetupLow (m_low);
 
   m_txop = CreateObject<Txop> ();
-  m_txop->SetMacLow (m_low);
   m_txop->SetChannelAccessManager (m_channelAccessManager);
   m_txop->SetTxMiddle (m_txMiddle);
   m_txop->SetTxOkCallback (MakeCallback (&RegularWifiMac::TxOk, this));
@@ -103,9 +97,6 @@ RegularWifiMac::DoDispose ()
 
   m_rxMiddle = 0;
   m_txMiddle = 0;
-
-  m_low->Dispose ();
-  m_low = 0;
 
   m_phy = 0;
   m_stationManager = 0;
@@ -182,7 +173,6 @@ RegularWifiMac::SetWifiRemoteStationManager (const Ptr<WifiRemoteStationManager>
 {
   NS_LOG_FUNCTION (this << stationManager);
   m_stationManager = stationManager;
-  m_low->SetWifiRemoteStationManager (stationManager);
   m_txop->SetWifiRemoteStationManager (stationManager);
   for (EdcaQueues::const_iterator i = m_edca.begin (); i != m_edca.end (); ++i)
     {
@@ -481,7 +471,6 @@ RegularWifiMac::SetupEdcaQueue (AcIndex ac)
   NS_ASSERT (m_edca.find (ac) == m_edca.end ());
 
   Ptr<QosTxop> edca = CreateObject<QosTxop> ();
-  edca->SetMacLow (m_low);
   edca->SetChannelAccessManager (m_channelAccessManager);
   edca->SetTxMiddle (m_txMiddle);
   edca->SetTxOkCallback (MakeCallback (&RegularWifiMac::TxOk, this));
@@ -551,7 +540,6 @@ RegularWifiMac::SetWifiPhy (const Ptr<WifiPhy> phy)
   NS_LOG_FUNCTION (this << phy);
   m_phy = phy;
   m_channelAccessManager->SetupPhyListener (phy);
-  m_low->SetPhy (phy);
   NS_ASSERT (m_feManager != 0);
   m_feManager->SetWifiPhy (phy);
 }
@@ -567,7 +555,8 @@ void
 RegularWifiMac::ResetWifiPhy (void)
 {
   NS_LOG_FUNCTION (this);
-  m_low->ResetPhy ();
+  NS_ASSERT (m_feManager != 0);
+  m_feManager->ResetPhy ();
   m_channelAccessManager->RemovePhyListener (m_phy);
   m_phy = 0;
 }
@@ -670,20 +659,20 @@ void
 RegularWifiMac::SetCtsToSelfSupported (bool enable)
 {
   NS_LOG_FUNCTION (this);
-  m_low->SetCtsToSelfSupported (enable);
+  m_ctsToSelfSupported = enable;
 }
 
 void
 RegularWifiMac::SetAddress (Mac48Address address)
 {
   NS_LOG_FUNCTION (this << address);
-  m_low->SetAddress (address);
+  m_address = address;
 }
 
 Mac48Address
 RegularWifiMac::GetAddress (void) const
 {
-  return m_low->GetAddress ();
+  return m_address;
 }
 
 void
@@ -703,7 +692,7 @@ void
 RegularWifiMac::SetBssid (Mac48Address bssid)
 {
   NS_LOG_FUNCTION (this << bssid);
-  m_low->SetBssid (bssid);
+  m_bssid = bssid;
   if (m_feManager)
     {
       m_feManager->SetBssid (bssid);
@@ -713,13 +702,14 @@ RegularWifiMac::SetBssid (Mac48Address bssid)
 Mac48Address
 RegularWifiMac::GetBssid (void) const
 {
-  return m_low->GetBssid ();
+  return m_bssid;
 }
 
 void
 RegularWifiMac::SetPromisc (void)
 {
-  m_low->SetPromisc ();
+  NS_ASSERT (m_feManager != 0);
+  m_feManager->SetPromisc ();
 }
 
 void
@@ -833,9 +823,11 @@ RegularWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
                   {
                     //This DELBA frame was sent by the originator, so
                     //this means that an ingoing established
-                    //agreement exists in MacLow and we need to
+                    //agreement exists in HtFrameExchangeManager and we need to
                     //destroy it.
-                    m_low->DestroyBlockAckAgreement (from, delBaHdr.GetTid ());
+                    NS_ASSERT (m_feManager != 0);
+                    Ptr<HtFrameExchangeManager> htFem = StaticCast<HtFrameExchangeManager> (m_feManager);
+                    htFem->DestroyBlockAckAgreement (from, delBaHdr.GetTid ());
                   }
                 else
                   {
@@ -1122,7 +1114,6 @@ RegularWifiMac::ConfigureStandard (WifiStandard standard)
     case WIFI_STANDARD_80211ax_5GHZ:
     case WIFI_STANDARD_80211ax_6GHZ:
       {
-        EnableAggregation ();
         SetQosSupported (true);
         cwmin = 15;
         cwmax = 1023;
@@ -1131,7 +1122,6 @@ RegularWifiMac::ConfigureStandard (WifiStandard standard)
     case WIFI_STANDARD_80211ax_2_4GHZ:
     case WIFI_STANDARD_80211n_2_4GHZ:
       {
-        EnableAggregation ();
         SetQosSupported (true);
       }
     case WIFI_STANDARD_80211g:
@@ -1182,32 +1172,6 @@ RegularWifiMac::TxFailed (const WifiMacHeader &hdr)
 {
   NS_LOG_FUNCTION (this << hdr);
   m_txErrCallback (hdr);
-}
-
-void
-RegularWifiMac::EnableAggregation (void)
-{
-  NS_LOG_FUNCTION (this);
-  if (m_low->GetMsduAggregator () == 0)
-    {
-      Ptr<MsduAggregator> msduAggregator = CreateObject<MsduAggregator> ();
-      msduAggregator->SetWifiMac (this);
-      m_low->SetMsduAggregator (msduAggregator);
-    }
-  if (m_low->GetMpduAggregator () == 0)
-    {
-      Ptr<MpduAggregator> mpduAggregator = CreateObject<MpduAggregator> ();
-      mpduAggregator->SetWifiMac (this);
-      m_low->SetMpduAggregator (mpduAggregator);
-    }
-}
-
-void
-RegularWifiMac::DisableAggregation (void)
-{
-  NS_LOG_FUNCTION (this);
-  m_low->SetMsduAggregator (0);
-  m_low->SetMpduAggregator (0);
 }
 
 } //namespace ns3

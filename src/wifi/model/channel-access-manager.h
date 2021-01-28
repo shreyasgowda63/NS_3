@@ -31,7 +31,6 @@ namespace ns3 {
 class WifiPhy;
 class PhyListener;
 class Txop;
-class MacLow;
 class FrameExchangeManager;
 
 /**
@@ -68,12 +67,6 @@ public:
    */
   void RemovePhyListener (Ptr<WifiPhy> phy);
   /**
-   * Set up listener for MacLow events.
-   *
-   * \param low the MacLow to listen to
-   */
-  void SetupLow (Ptr<MacLow> low);
-  /**
    * Set up the Frame Exchange Manager.
    *
    * \param feManager the Frame Exchange Manager
@@ -103,14 +96,13 @@ public:
 
   /**
    * \param txop a Txop
-   * \param isCfPeriod flag whether it is called during the CF period
    *
    * Notify the ChannelAccessManager that a specific Txop needs access to the
    * medium. The ChannelAccessManager is then responsible for starting an access
-   * timer and, invoking Txop::DoNotifyAccessGranted when the access
+   * timer and, invoking FrameExchangeManager::StartTransmission when the access
    * is granted if it ever gets granted.
    */
-  void RequestAccess (Ptr<Txop> txop, bool isCfPeriod = false);
+  void RequestAccess (Ptr<Txop> txop);
 
   /**
    * Access will never be granted to the medium _before_
@@ -268,12 +260,6 @@ private:
    * Grant access to Txop using DCF/EDCF contention rules
    */
   void DoGrantDcfAccess (void);
-  /**
-   * Grant access to Txop using PCF preemption
-   *
-   * \param txop the Txop
-   */
-  void DoGrantPcfAccess (Ptr<Txop> txop);
 
   /**
    * Return the Short Interframe Space (SIFS) for this PHY.
