@@ -84,6 +84,7 @@ int main()
   return 0;
 }
 '''
+    conf.env['HAVE_DL'] = conf.check(mandatory=True, lib='dl', define_name='HAVE_DL', uselib_store='DL')
 
     conf.env.append_value('NS3_MODULE_PATH',os.path.abspath(os.path.join(conf.env['WITH_OPENFLOW'],'build')))
     conf.env.append_value('NS3_MODULE_PATH',os.path.abspath(os.path.join(conf.env['WITH_OPENFLOW'],'lib')))
@@ -98,7 +99,7 @@ int main()
 
     conf.env['OPENFLOW'] = conf.check_nonfatal(fragment=test_code, lib='openflow', 
                                                libpath=conf.env['LIBPATH_OPENFLOW'],
-                                               use='OPENFLOW')
+                                               use='OPENFLOW DL')
     conf.env.append_value('LIB_OPENFLOW', 'dl')
     conf.report_optional_feature("openflow", "NS-3 OpenFlow Integration",
                                  conf.env['OPENFLOW'], "openflow library not found")
@@ -131,9 +132,9 @@ def build(bld):
         #   'test/openflow-examples-test-suite.cc',
             ])
     
-    if bld.env['OPENFLOW']:
-        obj.use.extend('OPENFLOW'.split())
-        obj_test.use.extend('OPENFLOW'.split())
+    if bld.env['OPENFLOW'] and bld.env['HAVE_DL']:
+        obj.use.extend('OPENFLOW DL'.split())
+        obj_test.use.extend('OPENFLOW DL'.split())
 
     headers = bld(features='ns3header')
     headers.module = 'openflow'
