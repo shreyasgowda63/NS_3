@@ -151,6 +151,13 @@ public:
   Time GetDelayLeft (void) const;
 
   /**
+   * \returns The amount of time left until this timer interval expires.
+   *
+   * This method returns zero if the timer has never been started.
+   */
+  Time GetIntervalLeft (void) const;
+
+  /**
    * \brief Enable the timer.
    */
   void Enable ();

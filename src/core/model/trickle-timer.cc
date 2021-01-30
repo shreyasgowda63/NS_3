@@ -128,6 +128,20 @@ TrickleTimer::GetDelayLeft (void) const
   return TimeStep (0);
 }
 
+Time
+TrickleTimer::GetIntervalLeft (void) const
+{
+  NS_LOG_FUNCTION (this);
+
+  if (m_intervalExpiration.IsRunning ())
+    {
+      return Simulator::GetDelayLeft (m_intervalExpiration);
+    }
+
+  return TimeStep (0);
+}
+
+
 void
 TrickleTimer::Enable ()
 {
