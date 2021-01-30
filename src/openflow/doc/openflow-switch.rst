@@ -127,10 +127,7 @@ References
 Usage
 *****
 
-The OFSID requires libxml2 (for MPLS FIB xml file parsing), libdl (for address fault checking), 
-and boost (for assert) libraries to be installed.
-
-Your script might need libxml2 (for MPLS FIB xml file parsing). The openflow module does not automatically add it.
+The OFSID requires libxml2 (for MPLS FIB xml file parsing), and libdl (for address fault checking).
 
 Building OFSID
 ==============
