@@ -186,9 +186,13 @@ void
 DataRateTestCase2::DoRun ()
 {
   AdditionTest("1Mb/s", "3Mb/s", "4Mb/s");
-  SubtractionTest("5Gb/s", "2Gb/s", "3Gb/s");
+  AdditionTest("1Gb/s", "1b/s", "1000000001b/s");
+  SubtractionTest("1Mb/s", "1b/s", "999999b/s");
+  SubtractionTest("2Gb/s", "2Gb/s", "0Gb/s");
   MultiplicationIntTest("5Gb/s", 2, "10Gb/s");
-  MultiplicationDoubleTest("6Gb/s", 0.001, "6Mb/s");
+  MultiplicationIntTest("4Mb/s", 1000, "4Gb/s");
+  MultiplicationDoubleTest("1Gb/s", 0.001, "1Mb/s");
+  MultiplicationDoubleTest("6Gb/s", 1.0/7.0, "857142857.14b/s");
 }
 
 class DataRateTestSuite : public TestSuite
