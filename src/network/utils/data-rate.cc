@@ -22,7 +22,6 @@
 #include "ns3/nstime.h"
 #include "ns3/fatal-error.h"
 #include "ns3/log.h"
-#include <assert.h>
 
 namespace ns3 {
 
@@ -210,13 +209,13 @@ DataRate& DataRate::operator += (DataRate rhs)
 
 DataRate DataRate::operator - (DataRate rhs)
 {
-  assert(m_bps >= rhs.m_bps);
+  NS_ASSERT_MSG(m_bps >= rhs.m_bps, "Data Rate cannot be negative.");
   return DataRate(m_bps - rhs.m_bps);
 }
 
 DataRate& DataRate::operator -= (DataRate rhs)
 {
-  assert(m_bps >= rhs.m_bps);
+  NS_ASSERT_MSG(m_bps >= rhs.m_bps, "Data Rate cannot be negative.");
   m_bps -= rhs.m_bps;
   return *this;
 }

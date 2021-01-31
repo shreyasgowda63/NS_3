@@ -149,6 +149,8 @@ public:
   /**
    * \brief Scales the DataRate
    * 
+   * Multiplies with double and is re-casted to an int
+   * 
    * \return DataRate object representing the product of this object with rhs 
    * 
    * \param rhs the double to multiply to this datarate
@@ -168,8 +170,6 @@ public:
 
   /**
    *  \brief Scales the DataRate
-   * 
-   * Multiplies with double and is re-casted to an int
    * 
    * \return DataRate object representing the product of this object with rhs
    * 
