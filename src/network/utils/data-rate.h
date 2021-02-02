@@ -158,29 +158,31 @@ public:
   DataRate operator * (double rhs);
 
   /**
-   *  \brief Scales the DataRate
+   * \brief Scales the DataRate
    * 
    * Multiplies with double and is re-casted to an int 
    * 
    * \return DataRate object representing the product of this object with rhs
    * 
-   * \param rhs the double to mutlipy to this datarate
+   * \param rhs the double to multipy to this datarate
    */
   DataRate& operator *= (double rhs);
 
   /**
-   *  \brief Scales the DataRate
+   * \brief Scales the DataRate
    * 
    * \return DataRate object representing the product of this object with rhs
    * 
-   * \param rhs the uint64_t to mutlipy to this datarate
+   * \param rhs the uint64_t to multipy to this datarate
    */
   DataRate operator * (uint64_t rhs);
 
   /**
+   * \brief Scales the DataRate
+   * 
    * \return DataRate object representing the product of this object with rhs
    * 
-   * \param rhs the uint64_t to mutlipy to this datarate
+   * \param rhs the uint64_t to multipy to this datarate
    */
   DataRate& operator *= (uint64_t rhs);
 
