@@ -23,13 +23,14 @@
 
 #include "ns3/channel.h"
 
+#include "ns3/traced-callback.h"
+
 namespace ns3 {
 
 class NetDevice;
 class PropagationLossModel;
 class PropagationDelayModel;
 class YansWifiPhy;
-class Packet;
 class Time;
 class WifiPpdu;
 
@@ -45,6 +46,11 @@ class WifiPpdu;
 class YansWifiChannel : public Channel
 {
 public:
+  /**
+   * A vector of pointers to YansWifiPhy.
+   */
+  typedef std::vector<Ptr<YansWifiPhy > > PhyList; // was YansWifiPhy
+
   /**
    * \brief Get the type ID.
    * \return the object TypeId
@@ -63,7 +69,7 @@ public:
    *
    * \param phy the YansWifiPhy to be added to the PHY list
    */
-  void Add (Ptr<YansWifiPhy> phy);
+  virtual void Add (Ptr<YansWifiPhy> phy);
 
   /**
    * \param loss the new propagation loss model.
@@ -84,7 +90,7 @@ public:
    * attempts to deliver the PPDU to all other YansWifiPhy objects
    * on the channel (except for the sender).
    */
-  void Send (Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, double txPowerDbm) const;
+  void Send (Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, double txPowerDbm);
 
   /**
    * Assign a fixed random variable stream number to the random variables
@@ -99,11 +105,8 @@ public:
 
 
 private:
-  /**
-   * A vector of pointers to YansWifiPhy.
-   */
-  typedef std::vector<Ptr<YansWifiPhy> > PhyList;
 
+  virtual const PhyList getPhyList (Ptr<YansWifiPhy> sender);
   /**
    * This method is scheduled by Send for each associated YansWifiPhy.
    * The method then calls the corresponding YansWifiPhy that the first
@@ -113,11 +116,23 @@ private:
    * \param ppdu the PPDU being sent
    * \param txPowerDbm the TX power associated to the packet being sent (dBm)
    */
-  static void Receive (Ptr<YansWifiPhy> receiver, Ptr<WifiPpdu> ppdu, double txPowerDbm);
+  void Receive (Ptr<YansWifiPhy> receiver, Ptr<WifiPpdu> ppdu, double txPowerDbm);
 
+protected:
   PhyList m_phyList;                   //!< List of YansWifiPhys connected to this YansWifiChannel
+private:
   Ptr<PropagationLossModel> m_loss;    //!< Propagation loss model
   Ptr<PropagationDelayModel> m_delay;  //!< Propagation delay model
+
+  TracedCallback<
+          Ptr<YansWifiPhy> /*sender*/,
+          Ptr<const WifiPpdu> /*packet*/,
+          double /*txPowerDbm*/> m_send_trace;
+
+  TracedCallback<
+          Ptr<YansWifiPhy> /*receiver*/,
+          Ptr<const WifiPpdu> /*packet*/,
+          double /*txPowerDbm*/> m_receive_trace;
 };
 
 } //namespace ns3

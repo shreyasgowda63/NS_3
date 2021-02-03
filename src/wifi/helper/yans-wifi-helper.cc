@@ -159,8 +159,8 @@ YansWifiPhyHelper::Create (Ptr<Node> node, Ptr<NetDevice> device) const
       Ptr<PreambleDetectionModel> capture = m_preambleDetectionModel.Create<PreambleDetectionModel> ();
       phy->SetPreambleDetectionModel (capture);
     }
-  phy->SetChannel (m_channel);
   phy->SetDevice (device);
+  phy->SetChannel (m_channel);
   return phy;
 }
 

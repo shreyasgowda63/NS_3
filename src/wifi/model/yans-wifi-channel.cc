@@ -22,6 +22,7 @@
 #include "ns3/log.h"
 #include "ns3/pointer.h"
 #include "ns3/net-device.h"
+#include "ns3/wifi-net-device.h"
 #include "ns3/node.h"
 #include "ns3/propagation-loss-model.h"
 #include "ns3/propagation-delay-model.h"
@@ -82,13 +83,22 @@ YansWifiChannel::SetPropagationDelayModel (const Ptr<PropagationDelayModel> dela
   m_delay = delay;
 }
 
+const YansWifiChannel::PhyList
+YansWifiChannel::getPhyList (const Ptr<YansWifiPhy>)
+{
+  return m_phyList;
+}
+
 void
-YansWifiChannel::Send (Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, double txPowerDbm) const
+YansWifiChannel::Send (Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, double txPowerDbm)
 {
   NS_LOG_FUNCTION (this << sender << ppdu << txPowerDbm);
+  m_send_trace (sender, ppdu, txPowerDbm);
   Ptr<MobilityModel> senderMobility = sender->GetMobility ();
   NS_ASSERT (senderMobility != 0);
-  for (PhyList::const_iterator i = m_phyList.begin (); i != m_phyList.end (); i++)
+  auto list = getPhyList(sender);
+  // const std::vector<Ptr<YansWifiPhy> >* phys = &list;
+  for (PhyList::const_iterator i = list.begin (); i != list.end (); i++)
     {
       if (sender != (*i))
         {
@@ -116,7 +126,7 @@ YansWifiChannel::Send (Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, double
             }
 
           Simulator::ScheduleWithContext (dstNode,
-                                          delay, &YansWifiChannel::Receive,
+                                          delay, &YansWifiChannel::Receive, this,
                                           (*i), copy, rxPowerDbm);
         }
     }
@@ -128,11 +138,13 @@ YansWifiChannel::Receive (Ptr<YansWifiPhy> phy, Ptr<WifiPpdu> ppdu, double rxPow
   NS_LOG_FUNCTION (phy << ppdu << rxPowerDbm);
   // Do no further processing if signal is too weak
   // Current implementation assumes constant RX power over the PPDU duration
+  // Also no longer contributes to noise profile
   if ((rxPowerDbm + phy->GetRxGain ()) < phy->GetRxSensitivity ())
     {
       NS_LOG_INFO ("Received signal too weak to process: " << rxPowerDbm << " dBm");
       return;
     }
+  m_receive_trace(phy, ppdu, rxPowerDbm);
   RxPowerWattPerChannelBand rxPowerW;
   rxPowerW.insert ({std::make_pair (0, 0), (DbmToW (rxPowerDbm + phy->GetRxGain ()))}); //dummy band for YANS
   phy->StartReceivePreamble (ppdu, rxPowerW, ppdu->GetTxDuration ());
