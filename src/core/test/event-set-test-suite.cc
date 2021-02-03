@@ -419,6 +419,71 @@ RandomEventSetTestCase::DoRun ()
   TestEventsRemovedInRandomOrder ();
 }
 
+//====================================
+//
+// LifoEventSetTestCase
+//
+//====================================
+class LifoEventSetTestCase : public EventSetTestCase
+{
+public:
+  LifoEventSetTestCase ()
+    :   EventSetTestCase ("lifo-event-set",
+                             ObjectFactory ("ns3::LifoEventSet"))
+  {}
+
+  virtual ~LifoEventSetTestCase ()
+  {}
+
+protected:
+  void TestEventsRemovedInLifoOrder ();
+
+  virtual void DoRun ();
+
+};
+
+void
+LifoEventSetTestCase::TestEventsRemovedInLifoOrder ()
+{
+  const uint32_t eventCount = 10;
+
+  auto eventSet = MakeSet ();
+
+  std::vector<SimEventKey> insertOrder;
+
+  for (uint32_t i = 0; i < eventCount; ++i)
+    {
+      auto event = MakeEvent ();
+      insertOrder.push_back (event.key);
+
+      eventSet->Insert (event);
+    }
+
+  auto iter = insertOrder.rbegin ();
+  for (uint32_t i = 0; i < eventCount; ++i)
+    {
+      auto event = eventSet->Next ();
+
+      NS_TEST_ASSERT_MSG_EQ (event.key, *iter,
+                             "LifoEventSet did not return an event in LIFO order");
+
+      ++iter;
+    }
+
+
+  NS_TEST_ASSERT_MSG_EQ (eventSet->IsEmpty (), true,
+                         "LifoEventSet is not empty after removing all events");
+}
+
+void
+LifoEventSetTestCase::DoRun ()
+{
+  //first run the parent test cases
+  EventSetTestCase::DoRun ();
+
+  //now run test cases specific to this type of event set
+  TestEventsRemovedInLifoOrder ();
+}
 
 class EventSetTestSuite : public TestSuite
 {
@@ -437,6 +502,7 @@ void
 EventSetTestSuite::RegisterTests ()
 {
   AddTestCase (new FifoEventSetTestCase (), TestCase::QUICK);
+  AddTestCase (new LifoEventSetTestCase (), TestCase::QUICK);
   AddTestCase (new RandomEventSetTestCase (), TestCase::QUICK);
 }
 
