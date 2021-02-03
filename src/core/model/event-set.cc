@@ -26,6 +26,7 @@
 #include "string.h"
 #include "uinteger.h"
 
+#include <algorithm>
 #include <array>
 #include <limits>
 #include <sstream>
@@ -197,6 +198,149 @@ FifoEventSet::Remove (const SimEventKey& key)
 
 /*============================================
  *
+ * LifoEventSet
+ *
+ *============================================*/
+NS_OBJECT_ENSURE_REGISTERED (LifoEventSet);
+
+TypeId
+LifoEventSet::GetTypeId ()
+{
+  static TypeId tid = TypeId ("ns3::LifoEventSet")
+    .SetParent<EventSet> ()
+    .SetGroupName ("Core")
+    .AddConstructor<LifoEventSet> ()
+    .AddAttribute ("MaxSize",
+                   "The maximum number of events that the set can hold",
+                   UintegerValue (512),
+                   MakeUintegerAccessor (&LifoEventSet::GetMaxSize,
+                                         &LifoEventSet::SetMaxSize),
+                   MakeUintegerChecker<uint32_t> (1))
+  ;
+  return tid;
+}
+
+LifoEventSet::LifoEventSet ()
+  :   m_maxSize (512),
+    m_head (0),
+    m_tail (0),
+    m_count (0),
+    m_buffer (m_maxSize)
+
+{
+  NS_LOG_FUNCTION (this);
+}
+
+LifoEventSet::~LifoEventSet ()
+{
+  NS_LOG_FUNCTION (this);
+}
+
+void
+LifoEventSet::SetMaxSize (uint32_t newSize)
+{
+  NS_LOG_FUNCTION (this << newSize);
+
+  NS_ASSERT_MSG (IsEmpty () == true,
+                 "Set must be empty before changing the maximum size");
+
+  if (IsEmpty ())
+    {
+      m_maxSize = newSize;
+      m_buffer.resize (m_maxSize);
+      m_head = 0;
+      m_tail = 0;
+    }
+}
+
+uint32_t
+LifoEventSet::GetMaxSize () const
+{
+  NS_LOG_FUNCTION (this);
+
+  return m_maxSize;
+}
+
+bool
+LifoEventSet::IsEmpty () const
+{
+  NS_LOG_FUNCTION (this << m_count);
+
+  return m_count == 0;
+}
+
+bool
+LifoEventSet::IsFull () const
+{
+  NS_LOG_FUNCTION (this << m_count << m_maxSize);
+
+  return m_count == m_maxSize;
+}
+
+bool
+LifoEventSet::Insert (SimEvent ev)
+{
+  NS_LOG_FUNCTION (this << ev);
+
+  if (IsFull ())
+    {
+      NS_LOG_LOGIC ("Attempted to insert event " << ev << " to a set that is full");
+      return false;
+    }
+
+  m_buffer[m_tail] = ev;
+  ++m_tail;
+  ++m_count;
+
+  return true;
+}
+
+const SimEvent&
+LifoEventSet::Peek () const
+{
+  NS_LOG_FUNCTION (this);
+
+  NS_ASSERT_MSG (!IsEmpty (), "Attempted to peek the next event from an empty set");
+
+  return m_buffer[m_tail - 1];
+}
+
+SimEvent
+LifoEventSet::Next ()
+{
+  NS_LOG_FUNCTION (this);
+
+  NS_ASSERT_MSG (!IsEmpty (), "Attempted to get the next event from an empty set");
+
+  --m_tail;
+  --m_count;
+
+  return m_buffer[m_tail];
+}
+
+bool
+LifoEventSet::Remove (const SimEventKey& key)
+{
+  NS_LOG_FUNCTION (this << key);
+
+  auto iter = std::find_if(m_buffer.begin (), m_buffer.end (),
+                            [&key](const SimEvent& ev)
+                            {
+                                return key == ev.key;
+                            });
+  
+  if (iter == m_buffer.end ())
+  {
+      return false;
+  }
+
+  iter->impl->Cancel ();
+
+  return true;
+}
+
+/*============================================
+ *
  * RandomEventSet
  *
  *============================================*/
@@ -227,8 +371,9 @@ RandomEventSet::GetTypeId ()
 }
 
 RandomEventSet::RandomEventSet ()
-  :   m_buffer (),
-    m_random ()
+  :   m_maxSize (100),
+      m_buffer (m_maxSize),
+      m_random ()
 
 {
   NS_LOG_FUNCTION (this);

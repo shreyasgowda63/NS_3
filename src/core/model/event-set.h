@@ -196,6 +196,79 @@ private:
 };  // class FifoEventSet
 
 /**
+ * An event set implementation that returns events in the reverse 
+ * order they were inserted (last in, first out)
+ */
+class LifoEventSet : public EventSet
+{
+public:
+  /**
+   * Get the TypeId of this Object
+   *
+   * \return The TypeId of this class
+   */
+  static TypeId GetTypeId ();
+
+  /**
+   * Default Constructor
+   */
+  LifoEventSet ();
+
+  /**
+   * Destructor
+   */
+  virtual ~LifoEventSet ();
+
+  /**
+   * Set the maximum number of events that the set can hold
+   *
+   * \param newSize The maximum number of events the set can hold
+   */
+  void SetMaxSize (uint32_t newSize);
+
+  /**
+   * Get the maximum number of events that the set can hold
+   */
+  uint32_t GetMaxSize () const;
+
+  virtual bool IsEmpty () const;
+  virtual bool IsFull () const;
+  virtual bool Insert (SimEvent ev);
+  virtual const SimEvent& Peek () const;
+  virtual SimEvent Next ();
+  virtual bool Remove (const SimEventKey& key);
+
+private:
+  // A collection of simulation events
+  using Buffer = std::vector<SimEvent>;
+
+  /**
+   * Maximum size of the set
+   */
+  uint32_t m_maxSize;
+
+  /**
+   * Location of the next event in the set
+   */
+  std::size_t m_head;
+
+  /**
+   * Location of the last event in the set
+   */
+  std::size_t m_tail;
+
+  /**
+   * Number of events in the set
+   */
+  uint32_t m_count;
+
+  /**
+   * Storage area for events
+   */
+  Buffer m_buffer;
+};  // class LifoEventSet
+
+/**
  * An event set implementation that returns events in a random order
  */
 class RandomEventSet : public EventSet
