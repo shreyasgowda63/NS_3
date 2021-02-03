@@ -372,7 +372,7 @@ RandomEventSet::GetTypeId ()
 
 RandomEventSet::RandomEventSet ()
   :   m_maxSize (100),
-      m_buffer (m_maxSize),
+      m_buffer (),
       m_random ()
 
 {
@@ -398,7 +398,7 @@ RandomEventSet::SetMaxSize (uint32_t newSize)
   NS_LOG_FUNCTION (this << newSize);
 
   NS_ASSERT_MSG (IsEmpty () == true,
-                 "The set must be empty when changing the maximum size");
+                 "The set must be empty before changing the maximum size");
 
   if (IsEmpty ())
     {
