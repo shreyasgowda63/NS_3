@@ -98,9 +98,12 @@ void
 PositionAware::SetDeltaPosition (const double& delta_position)
 {
   m_deltaPosition = delta_position;
-  if (m_positionChangeScheduled || m_timeoutScheduled)
+  if (IsInitialized ())
     {
-      ScheduleNext ();
+      if (m_positionChangeScheduled || m_timeoutScheduled)
+        {
+          ScheduleNext ();
+        }
     }
 }
 
@@ -111,13 +114,16 @@ PositionAware::GetTimeout () const
 }
 
 void
-PositionAware::SetTimeout (const Time& timeout)
+PositionAware::SetTimeout (const Time &timeout)
 {
   m_timeoutTimer.SetDelay (timeout);
   m_timeout = timeout;
-  if (m_positionChangeScheduled || m_timeoutScheduled)
+  if (IsInitialized ())
     {
-      ScheduleNext ();
+      if (m_positionChangeScheduled || m_timeoutScheduled)
+        {
+          ScheduleNext ();
+        }
     }
 }
 
@@ -367,6 +373,13 @@ PositionAware::NotifyNewAggregate ()
       NS_LOG_DEBUG ("Already Aggregated");
     }
   Object::NotifyNewAggregate ();
+}
+
+void
+PositionAware::DoInitialize() {
+  if(!IsInitialized()) {
+    ScheduleNext();
+  }
 }
 
 } //namespace ns3

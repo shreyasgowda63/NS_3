@@ -79,7 +79,9 @@ public:
 protected:
   /** Overriden so we can automatically add callback to MobilityModel for
    * course change notification */
-  virtual void NotifyNewAggregate (void);
+  void NotifyNewAggregate (void) override;
+  void DoInitialize() override;
+  
 
 private:
   /** Used for MobilityModel callback

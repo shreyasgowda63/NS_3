@@ -44,6 +44,7 @@ This document is written in `reStructuredText <http://docutils.sourceforge.net/r
    point-to-point
    position-aware
    propagation
+   spatial-index
    spectrum
    sixlowpan
    topology
