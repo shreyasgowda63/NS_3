@@ -16,6 +16,7 @@ The mobility support in |ns3| includes:
 - a set of mobility models which are used to track and maintain the *current* cartesian position and speed of an object.
 - a "course change notifier" trace source which can be used to register listeners to the course changes of a mobility model
 - a number of helper classes which are used to place nodes and setup mobility models (including parsers for some mobility definition formats).
+- a :ref:`PositionAware`<position-aware> object that allows for events when mobility models moves a set distance from reference
 
 Model Description
 *****************

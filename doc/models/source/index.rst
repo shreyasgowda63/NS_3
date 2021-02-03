@@ -42,6 +42,7 @@ This document is written in `reStructuredText <http://docutils.sourceforge.net/r
    olsr
    openflow-switch
    point-to-point
+   position-aware
    propagation
    spectrum
    sixlowpan
