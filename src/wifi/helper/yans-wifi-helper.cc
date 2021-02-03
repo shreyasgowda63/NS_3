@@ -19,6 +19,10 @@
  *          Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "yans-wifi-helper.h"
+#include "ns3/yans-wifi-channel-si.h"
+
+#include "ns3/boolean.h"
 #include "ns3/log.h"
 #include "ns3/names.h"
 #include "ns3/propagation-loss-model.h"
@@ -27,8 +31,6 @@
 #include "ns3/frame-capture-model.h"
 #include "ns3/preamble-detection-model.h"
 #include "ns3/yans-wifi-phy.h"
-#include "yans-wifi-helper.h"
-
 namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("YansWifiHelper");
@@ -97,7 +99,13 @@ YansWifiChannelHelper::SetPropagationDelay (std::string type,
 Ptr<YansWifiChannel>
 YansWifiChannelHelper::Create (void) const
 {
-  Ptr<YansWifiChannel> channel = CreateObject<YansWifiChannel> ();
+  Ptr<YansWifiChannel> channel = nullptr;
+  if(!m_enableClipping) {
+    channel = CreateObject<YansWifiChannel> ();
+  } else {
+    channel = CreateObject<YansWifiChannelSpatialIndex> ();
+    channel->SetAttribute("EnableSpatialIndexing",BooleanValue(true));
+  }
   Ptr<PropagationLossModel> prev = 0;
   for (std::vector<ObjectFactory>::const_iterator i = m_propagationLoss.begin (); i != m_propagationLoss.end (); ++i)
     {

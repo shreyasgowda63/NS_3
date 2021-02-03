@@ -20,7 +20,6 @@
  *          Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
-#include "ns3/node.h"
 #include "ns3/log.h"
 #include "yans-wifi-phy.h"
 #include "yans-wifi-channel.h"
@@ -100,28 +99,6 @@ YansWifiPhy::GetTxMaskRejectionParams (void) const
 {
   NS_ABORT_MSG ("Tx mask rejection params not relevant for Yans");
   return std::make_tuple (0.0, 0.0, 0.0);
-}
-
-void
-YansWifiPhy::GetPhysForNodes(std::vector<Ptr<const Node> >& nodes, std::vector<Ptr<YansWifiPhy> >& phys)
-{
-  for(unsigned int i=0; i<nodes.size(); i++)
-    {
-      for(unsigned int j=0; j<nodes[i]->GetNDevices(); j++)
-        {
-          Ptr<WifiNetDevice> nd = nodes[i]->GetDevice(j)->GetObject<WifiNetDevice>();
-          if(nd != 0)
-            {
-              Ptr<YansWifiPhy> phy = nd->GetPhy()->GetObject<YansWifiPhy>();
-              if(phy != 0)
-                {
-                  //if(phy->DbmToW(rxPowerDbm+phy->m_rxGainDb) < phy->m_edThresholdW)  //consider whether to add this optimization?  todo
-                  phys.push_back(phy);
-                  //}
-                }
-            }
-        }
-    }
 }
 
 } //namespace ns3

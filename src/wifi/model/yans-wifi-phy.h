@@ -25,10 +25,6 @@
 
 #include "wifi-phy.h"
 
-#include "ns3/node.h"
-
-#include <vector>
-
 namespace ns3 {
 
 class YansWifiChannel;
@@ -72,9 +68,6 @@ public:
    * \param channel the YansWifiChannel this YansWifiPhy is to be connected to
    */
   void SetChannel (const Ptr<YansWifiChannel> channel);
-
-
-  void GetPhysForNodes(std::vector<Ptr<const Node> >& nodes, std::vector<Ptr<YansWifiPhy> >& phys);
 
 protected:
   // Inherited
