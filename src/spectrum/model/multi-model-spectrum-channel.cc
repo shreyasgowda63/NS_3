@@ -213,15 +213,27 @@ MultiModelSpectrumChannel::FindAndEventuallyAddTxSpectrumModel (Ptr<const Spectr
   return txInfoIterator;
 }
 
+bool
+MultiModelSpectrumChannel::ProcessTxParams(Ptr<SpectrumSignalParameters> txParams)
+{
+  NS_ASSERT_MSG (txParams->psd, "NULL txPsd");
+  NS_ASSERT_MSG (txParams->txPhy, "NULL txPhy");
+
+  auto txParamsTrace = txParams->Copy (); // copy it since traced value cannot be const (because of potential underlying DynamicCasts)
+  m_txSigParamsTrace (txParamsTrace);
+  return true;
+}
+
+bool
+MultiModelSpectrumChannel::CheckValidPhy(Ptr<SpectrumPhy> phy) {
+  return phy != nullptr;
+}
+
 void
 MultiModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
 {
   NS_LOG_FUNCTION (this << txParams);
-
-  NS_ASSERT (txParams->txPhy);
-  NS_ASSERT (txParams->psd);
-  Ptr<SpectrumSignalParameters> txParamsTrace = txParams->Copy (); // copy it since traced value cannot be const (because of potential underlying DynamicCasts)
-  m_txSigParamsTrace (txParamsTrace);
+  if(!ProcessTxParams(txParams)) return;
 
   Ptr<MobilityModel> txMobility = txParams->txPhy->GetMobility ();
   SpectrumModelUid_t txSpectrumModelUid = txParams->psd->GetSpectrumModelUid ();
@@ -264,6 +276,7 @@ MultiModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
            rxPhyIterator != rxInfoIterator->second.m_rxPhys.end ();
            ++rxPhyIterator)
         {
+          if(!CheckValidPhy(*rxPhyIterator)) continue;
           NS_ASSERT_MSG ((*rxPhyIterator)->GetRxSpectrumModel ()->GetUid () == rxSpectrumModelUid,
                          "SpectrumModel change was not notified to MultiModelSpectrumChannel (i.e., AddRx should be called again after model is changed)");
 

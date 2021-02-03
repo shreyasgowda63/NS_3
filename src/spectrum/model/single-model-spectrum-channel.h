@@ -39,8 +39,9 @@ namespace ns3 {
  */
 class SingleModelSpectrumChannel : public SpectrumChannel
 {
-
 public:
+  /// Container: SpectrumPhy objects
+  typedef std::vector<Ptr<SpectrumPhy>> PhyList;
   SingleModelSpectrumChannel ();
 
   /**
@@ -58,11 +59,18 @@ public:
   virtual std::size_t GetNDevices (void) const;
   virtual Ptr<NetDevice> GetDevice (std::size_t i) const;
 
-  /// Container: SpectrumPhy objects
-  typedef std::vector<Ptr<SpectrumPhy> > PhyList;
-
 private:
   virtual void DoDispose ();
+protected:
+  /** Useful method for child classes to preprocess txparams at start of tx while
+   * reusing parent startTx
+   * \param txParams The params that are being used
+   * \return False aborts transmit */
+  virtual bool ProcessTxParams (Ptr<SpectrumSignalParameters> txParams);
+  /** Useful method for child classes to filter phys while reusing parent send
+   * \param phy The phy to check
+   * \return True if valid, false cancels reception scheduling */
+  virtual bool CheckValidPhy (Ptr<SpectrumPhy> phy);
 
   /**
    * Used internally to reschedule transmission after the propagation delay.
@@ -72,6 +80,7 @@ private:
    */
   void StartRx (Ptr<SpectrumSignalParameters> params, Ptr<SpectrumPhy> receiver);
 
+protected:
   /**
    * List of SpectrumPhy instances attached to the channel.
    */

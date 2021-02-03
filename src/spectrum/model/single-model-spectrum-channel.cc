@@ -78,11 +78,28 @@ SingleModelSpectrumChannel::AddRx (Ptr<SpectrumPhy> phy)
   m_phyList.push_back (phy);
 }
 
+bool
+SingleModelSpectrumChannel::ProcessTxParams (Ptr<SpectrumSignalParameters> txParams)
+{
+  NS_ASSERT_MSG (txParams->psd, "NULL txPsd");
+  NS_ASSERT_MSG (txParams->txPhy, "NULL txPhy");
+  auto txParamsTrace = txParams->Copy (); // copy it since traced value cannot be const (because of potential underlying DynamicCasts)
+  m_txSigParamsTrace (txParamsTrace);
+  return true;
+}
+
+bool
+SingleModelSpectrumChannel::CheckValidPhy (Ptr<SpectrumPhy> phy)
+{
+  return phy != nullptr;
+}
 
 void
 SingleModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
 {
   NS_LOG_FUNCTION (this << txParams->psd << txParams->duration << txParams->txPhy);
+  if (!ProcessTxParams (txParams)) return;
+
   NS_ASSERT_MSG (txParams->psd, "NULL txPsd");
   NS_ASSERT_MSG (txParams->txPhy, "NULL txPhy");
 
@@ -101,15 +118,13 @@ SingleModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
       NS_ASSERT (*(txParams->psd->GetSpectrumModel ()) == *m_spectrumModel);
     }
 
-
-
-
   Ptr<MobilityModel> senderMobility = txParams->txPhy->GetMobility ();
 
   for (PhyList::const_iterator rxPhyIterator = m_phyList.begin ();
        rxPhyIterator != m_phyList.end ();
        ++rxPhyIterator)
     {
+      if(!CheckValidPhy(*rxPhyIterator)) continue;
       if ((*rxPhyIterator) != txParams->txPhy)
         {
           Time delay  = MicroSeconds (0);
