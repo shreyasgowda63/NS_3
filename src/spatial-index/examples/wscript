@@ -4,9 +4,6 @@ def build(bld):
     if not bld.env['ENABLE_EXAMPLES']:
         return;
 
-    obj = bld.create_ns3_program('spatial-index-example', ['spatial-index', 'network'])
-    obj.source = 'spatial-index-example.cc'
-
     obj = bld.create_ns3_program('clipping-example', ['spatial-index', 'network', 'propagation', 'wifi', 'internet', 'applications'])
     obj.source = 'clipping-example.cc'
 
