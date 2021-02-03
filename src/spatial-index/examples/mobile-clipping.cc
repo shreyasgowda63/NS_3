@@ -5,13 +5,13 @@
 #include "ns3/core-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/mobility-helper.h"
-//#include "ns3/multi-model-spectrum-channel-si.h"
+#include "ns3/multi-model-spectrum-channel-si.h"
 #include "ns3/multi-model-spectrum-channel.h"
 #include "ns3/node-container.h"
 #include "ns3/position-aware-helper.h"
 #include "ns3/rectangle.h"
 #include "ns3/wifi-module.h"
-//#include "ns3/single-model-spectrum-channel.h"
+#include "ns3/single-model-spectrum-channel.h"
 #include <chrono> //for timer
 #include <bits/stdc++.h>
 
@@ -133,25 +133,25 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
       }
       wifiPhy.SetChannel (channel);
     }
-  // else if (wifi_type == "ns3::SpectrumWifiPhy")
-  //   {
-  //     Ptr<MultiModelSpectrumChannel> spectrumChannel = nullptr;   //multi model
-  //     if(!clipping_enabled) {
-  //       spectrumChannel = CreateObject<MultiModelSpectrumChannel> ();
-  //     }
-  //     else {
-  //       spectrumChannel = CreateObject<MultiModelSpectrumChannelSpatialIndex> () ;
-  //       spectrumChannel->SetAttribute ("EnableSpatialIndexing", BooleanValue (true));
-  //       spectrumChannel->SetAttribute ("ReceiveClipRange", DoubleValue (clip_range));
-  //     }
-  //     spectrumChannel->AddPropagationLossModel (lossModel);
+  else if (wifi_type == "ns3::SpectrumWifiPhy")
+    {
+      Ptr<MultiModelSpectrumChannel> spectrumChannel = nullptr;   //multi model
+      if(!clipping_enabled) {
+        spectrumChannel = CreateObject<MultiModelSpectrumChannel> ();
+      }
+      else {
+        spectrumChannel = CreateObject<MultiModelSpectrumChannelSpatialIndex> () ;
+        spectrumChannel->SetAttribute ("EnableSpatialIndexing", BooleanValue (true));
+        spectrumChannel->SetAttribute ("ReceiveClipRange", DoubleValue (clip_range));
+      }
+      spectrumChannel->AddPropagationLossModel (lossModel);
 
-  //     Ptr<ConstantSpeedPropagationDelayModel> delayModel
-  //       = CreateObject<ConstantSpeedPropagationDelayModel> ();
-  //     spectrumChannel->SetPropagationDelayModel (delayModel);
+      Ptr<ConstantSpeedPropagationDelayModel> delayModel
+        = CreateObject<ConstantSpeedPropagationDelayModel> ();
+      spectrumChannel->SetPropagationDelayModel (delayModel);
 
-  //     spectrumPhy.SetChannel (spectrumChannel);
-    // }
+      spectrumPhy.SetChannel (spectrumChannel);
+    }
   else
     {
       NS_FATAL_ERROR ("Unsupported WiFi type " << wifi_type);
@@ -165,10 +165,10 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
     {
       devices = wifi.Install (wifiPhy, wifiMac, nodes);
     }
-  // else if(wifi_type == "ns3::SpectrumWifiPhy")
-  //   {
-  //     devices = wifi.Install (spectrumPhy, wifiMac, nodes);
-  //   }
+  else if(wifi_type == "ns3::SpectrumWifiPhy")
+    {
+      devices = wifi.Install (spectrumPhy, wifiMac, nodes);
+    }
 
   //Install Internet Stack
   InternetStackHelper stack;

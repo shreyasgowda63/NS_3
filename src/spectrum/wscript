@@ -2,7 +2,7 @@
 
 def build(bld):
 
-    module = bld.create_ns3_module('spectrum', ['propagation', 'antenna'])
+    module = bld.create_ns3_module('spectrum', ['propagation', 'antenna', 'spatial-index'])
     module.source = [
         'model/spectrum-model.cc',
         'model/spectrum-value.cc',
@@ -14,7 +14,9 @@ def build(bld):
         'model/spectrum-phy.cc',
         'model/spectrum-channel.cc',
         'model/single-model-spectrum-channel.cc',
+        'model/single-model-spectrum-channel-si.cc',
         'model/multi-model-spectrum-channel.cc',
+        'model/multi-model-spectrum-channel-si.cc',
         'model/spectrum-interference.cc',
         'model/spectrum-error-model.cc',
         'model/spectrum-model-ism2400MHz-res1MHz.cc',
@@ -70,7 +72,9 @@ def build(bld):
         'model/spectrum-phy.h',
         'model/spectrum-channel.h',
         'model/single-model-spectrum-channel.h',
+        'model/single-model-spectrum-channel-si.h',
         'model/multi-model-spectrum-channel.h',
+        'model/multi-model-spectrum-channel-si.h',
         'model/spectrum-interference.h',
         'model/spectrum-error-model.h',
         'model/spectrum-model-ism2400MHz-res1MHz.h',
