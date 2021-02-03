@@ -9,9 +9,7 @@
 #include "ns3/multi-model-spectrum-channel.h"
 #include "ns3/node-container.h"
 #include "ns3/position-aware-helper.h"
-#include "ns3/spatial-index-helper.h"
 #include "ns3/wifi-module.h"
-//#include "ns3/single-model-spectrum-channel.h"
 #include <chrono> //for timer
 
 using namespace ns3;
@@ -37,8 +35,10 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
   NodeContainer nodes;
   nodes.Create(width*width);
 
-  double node_separation = 757.0;
-  double clip_range = 1070.0;
+  // for ns-3 versions 3.29 and earlier
+  // use 757 for node_separation and 1070 for clip_range below.
+  double node_separation = 367.0;
+  double clip_range = 519.0;
 
   MobilityHelper mobility;
   mobility.SetPositionAllocator("ns3::GridPositionAllocator",
@@ -70,7 +70,7 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
   wifiMac.SetType("ns3::AdhocWifiMac");
 
   SpectrumWifiPhyHelper spectrumPhy = SpectrumWifiPhyHelper::Default ();
-  Ptr<MultiModelSpectrumChannel> spectrumChannel = nullptr; // multi model
+  Ptr<MultiModelSpectrumChannel> spectrumChannel = nullptr;
   if (!clipping_enabled)
   {
     spectrumChannel = CreateObject<MultiModelSpectrumChannel> ();
@@ -81,6 +81,7 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
     spectrumChannel->SetAttribute ("EnableSpatialIndexing", BooleanValue (true));
     spectrumChannel->SetAttribute ("ReceiveClipRange", DoubleValue (clip_range));
   }
+  spectrumChannel->AddPropagationLossModel(CreateObject<FriisPropagationLossModel>());
   Ptr<ConstantSpeedPropagationDelayModel> delayModel
     = CreateObject<ConstantSpeedPropagationDelayModel> ();
   spectrumChannel->SetPropagationDelayModel (delayModel);
@@ -90,7 +91,9 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
 
   //Create Devices
   WifiHelper wifi;
-  wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager", "DataMode", StringValue("OfdmRate6Mbps"), "RtsCtsThreshold", UintegerValue(0));
+  wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager", "DataMode",
+                               StringValue("OfdmRate6Mbps"),
+                               "RtsCtsThreshold", UintegerValue(0));
   NetDeviceContainer devices = wifi.Install(spectrumPhy, wifiMac, nodes);
 
   //Install Internet Stack
@@ -105,14 +108,15 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
   ApplicationContainer p;
   ApplicationContainer s;
   int port = 100;
-  UdpClientHelper ping_app(Ipv4Address("255.255.255.255"),port); //ping everyone
+  UdpClientHelper ping_app(Ipv4Address("255.255.255.255"),port); //broadcast
   UdpServerHelper serv_app(port);
   ping_app.SetAttribute("Interval",TimeValue(Seconds(100)));
   ping_app.SetAttribute("MaxPackets",UintegerValue(1000000));
   p.Add(ping_app.Install(nodes));
   for(unsigned int i=0; i<p.GetN(); i++)
     {
-      p.Get(i)->SetStartTime(Seconds(i*.01)); //offset start times slightly to avoid collisions
+      //offset start times slightly to avoid collisions
+      p.Get(i)->SetStartTime(Seconds(i*.01));
     }
   s.Add(serv_app.Install(nodes));
 
@@ -130,57 +134,12 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
   Simulator::Run();
   auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = finish-start;
-  std::cout << "Run time = " << elapsed.count() << " seconds" << std::endl; //dur/1000.0 << " seconds" << std::endl;
-  //  std::cout << "Number of packets received:" << server->GetReceived() << std::endl;
+  std::cout << "Run time = " << elapsed.count() << " seconds" << std::endl;
   std::vector<unsigned int> received;
   for(unsigned int i=0; i<p.GetN(); i++)
     {
       received.push_back(DynamicCast<UdpServer>(s.Get(i))->GetReceived());
     }
-  /*
-  bool correct = true;
-  unsigned int dropped = 0;
-  unsigned int extra = 0;
-  unsigned int total_expected = 0;
-  std::vector<unsigned int> errorNodes;
-  for(unsigned int i=0; i<p.GetN(); i++)
-    {
-      unsigned int expected = 4;
-      if(i == 0 || i == width-1 || i == (width*width)-1 ||
-         i == width*(width-1))
-        {
-          expected = 2; //corners
-        }
-      else if((i+1)%width == 0 || i%width == 0 || i < width-1 ||
-              i > width*(width-1))
-        {
-          expected = 3; //edges
-        }
-      total_expected += expected;
-      unsigned int num_received = DynamicCast<UdpServer>(s.Get(i))->GetReceived();
-      if(num_received != expected)
-        {
-          correct = false;
-          errorNodes.push_back(i);
-          if(num_received < expected)
-            {
-              dropped+=expected-num_received;
-            }
-          else
-            {
-              extra+=num_received-expected;
-            }
-        }
-    }
-  if(!correct)
-    {
-      std::cout << "Different number of packets than expected received at at nodes: ";
-      for(int i=0; i<errorNodes.size(); i++)
-        {
-          std::cout << errorNodes[i] << " ";
-        }
-      std::cout << std::endl;
-      }*/
   Simulator::Destroy ();
   return std::make_pair(elapsed.count(), received);
 }

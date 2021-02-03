@@ -13,7 +13,7 @@
 #include "ns3/wifi-module.h"
 #include "ns3/single-model-spectrum-channel.h"
 #include <chrono> //for timer
-#include <bits/stdc++.h>
+#include <iomanip>
 
 using namespace ns3;
 
@@ -59,7 +59,8 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
   NodeContainer nodes;
   nodes.Create(width*width);
 
-  double node_separation = 757.0; //before moving
+  //for ns-3 versions 3.29 and earlier use 757 for node_separation
+  double node_separation = 367.0; //before moving
 
   MobilityHelper mobility;
   mobility.SetPositionAllocator("ns3::GridPositionAllocator",
@@ -231,7 +232,8 @@ main (int argc, char *argv[])
 
   unsigned int width = 32;
   double total_time = 100;
-  double clip_range = 1070.0;
+  //for ns-3 version 3.29 and earlier use 1070.0 for default clip_range
+  double clip_range = 519.0;
   std::string wifi_type  = "ns3::YansWifiPhy";
   std::string loss_model = "friis";
 
@@ -243,6 +245,9 @@ main (int argc, char *argv[])
   cmd.AddValue ("loss_model", "model to use for packet loss. range or friis", loss_model);
   cmd.Parse (argc,argv);
 
+  // LogComponentEnable ("PositionAware", LOG_LEVEL_FUNCTION);
+  LogComponentEnable ("SpatialIndexing", LOG_LEVEL_WARN);
+  LogComponentEnable ("KDTree", LOG_LEVEL_WARN);
   /*  std::cout << "In the following simulation a grid of " << width*width <<
     " nodes will be created, and each node will send a UDP packet to the" <<
     " broadcast address over a Spectrum Wifi Channel.  However the" <<
@@ -252,6 +257,9 @@ main (int argc, char *argv[])
     " as receive events are only placed on the queue for nodes within the" <<
     " chosen clipping range, yielding the same results in much less time." <<
     std::endl << std::endl;*/
+  std::cout << "Wifi Type: " << wifi_type << std::endl;
+  std::cout << "Clip Range: " << clip_range << std::endl;
+  std::cout << "Loss Model: " << loss_model << std::endl;
   std::cout << "Simulating " << width*width << " mobile nodes." << std::endl;
   std::cout << "Simulating with clipping enabled..." << std::endl;
   std::pair<double, std::vector<unsigned int> > vals1 = run(width, total_time, true, clip_range, wifi_type, loss_model, verbose);
