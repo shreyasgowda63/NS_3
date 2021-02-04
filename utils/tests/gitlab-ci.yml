@@ -39,7 +39,7 @@ stages:
     - export CCACHE_DIR=${PWD}/$CCACHE_BASEDIR_VALUE
     - CXX="ccache $COMPILER" ./waf configure --enable-examples --enable-tests -d $MODE
     - ./waf
-    - if [$MODE != "debug"]; then ./test.py; fi
+    - if [ "$MODE" != "debug" ]; then ./test.py; fi
   cache:
     key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
