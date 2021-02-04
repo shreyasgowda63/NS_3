@@ -156,6 +156,53 @@ class EventSet;
  * calling EventId::Ref and SimpleRefCount::Unref at the right time.
  * Typically, EventId::Ref is called before Insert and SimpleRefCount::Unref is called
  * after a call to one of the Remove methods.
+ *
+ * ## Event Order ##
+ *
+ * The order that events are returned by the Scheduler is dependent on two factors:
+ *
+ * 1. The specific SchedulerImpl used
+ * 2. The EventSet implementation used by the Scheduler
+ *
+ * The SchedulerImpl controls how scheduled events are stored and is responsible
+ * for deciding how events with the same timestamp are ordered.
+ *
+ * ### Event Set ###
+ *
+ * An EventSet is a class which holds a collection of events that have the
+ * same timestamp.  The purpose of the EventSet is to provide finer grained
+ * control over how events with the same timestamp are ordered.
+ *
+ * Currently there are three implementations of the EventSet, each of which
+ * orders events in a different way.
+ *
+ * * FifoEventSet
+ * * LifoEventSet
+ * * RandomEventSet
+ *
+ * Custom implementations are possible by deriving a class from the EventSet
+ * base class.
+ *
+ * #### FifoEventSet ####
+ *
+ * The FifoEventSet does not make any changes to the event order.  It returns
+ * events in the same order that they are pulled from the event list. This
+ * class is the default implementation used by the scheduler.
+ *
+ * #### LifoEventSet ####
+ *
+ * The LifoEventSet returns events in the reverse of the insertion order.  The
+ * last event inserted is the first one removed.
+ *
+ * #### RandomEventSet ####
+ *
+ * The RandomEventSet shuffles the events in an event set and returns them in
+ * a random order.
+ *
+ * This implementation is useful for testing a model with different event
+ * orderings to ensure that the model does not depend on a specific
+ * ordering of events.
+ *
  */
 class Scheduler : public Object
 {
@@ -196,7 +243,7 @@ public:
    *
    * \warning This method cannot be invoked if the list is empty.
    *
-   * \returns A copy of the next event. 
+   * \returns A copy of the next event.
    */
   const Event PeekNext (void) const;
   /**
@@ -206,7 +253,7 @@ public:
    *
    * \warning In most cases the event returned by RemoveNext will match the one
    * returned by PeekNext, i.e. PeekNext() == RemoveNext().  In some simulator
-   * implementations, it is possible for events to be added between the call to 
+   * implementations, it is possible for events to be added between the call to
    * PeekNext and the call to RemoveNext.  In those situations, the event returned
    * by RemoveNext may be different than the one previously returned by PeekNext.
    *
@@ -228,7 +275,7 @@ public:
    * free to modify the collection of events in any way it desires, from changing
    * the order of events to adding or deleting events.  Calling PeekNext
    * and RemoveNext pulls events from the EventSet.  When the set is
-   * empty, the scheduler will fill it with the next set of events. 
+   * empty, the scheduler will fill it with the next set of events.
    *
    * \param eventSet The new EventSet implementation
    */
@@ -247,7 +294,7 @@ private:
    *
    * \warning This method cannot be invoked if the list is empty.
    *
-   * \returns A copy of the next event. 
+   * \returns A copy of the next event.
    */
   virtual Event DoPeekNext (void) const = 0;
   /**

@@ -147,9 +147,11 @@ public:
   virtual ~FifoEventSet ();
 
   /**
-   * Set the maximum number of events that the set can hold
+   * Set the maximum number of events that can be stored in the set
    *
-   * \param newSize The maximum number of events the set can hold
+   * \pre IsEmpty must be true
+   *
+   * \param newSize The maximum number of events that can be stored in the set
    */
   void SetMaxSize (uint32_t newSize);
 
@@ -196,8 +198,8 @@ private:
 };  // class FifoEventSet
 
 /**
- * An event set implementation that returns events in the reverse 
- * order they were inserted (last in, first out)
+ * An event set implementation that returns events in the reverse of their
+ * insertions order (last in, first out)
  */
 class LifoEventSet : public EventSet
 {
@@ -220,9 +222,11 @@ public:
   virtual ~LifoEventSet ();
 
   /**
-   * Set the maximum number of events that the set can hold
+   * Set the maximum number of events that can be stored in the set
    *
-   * \param newSize The maximum number of events the set can hold
+   * \pre IsEmpty() must be true
+   *
+   * \param newSize The maximum number of events that can be stored in the set
    */
   void SetMaxSize (uint32_t newSize);
 
@@ -239,7 +243,9 @@ public:
   virtual bool Remove (const SimEventKey& key);
 
 private:
-  // A collection of simulation events
+  /**
+   * A collection of simulation events
+   */
   using Buffer = std::vector<SimEvent>;
 
   /**
@@ -248,12 +254,12 @@ private:
   uint32_t m_maxSize;
 
   /**
-   * Location of the next event in the set
+   * Location of the first event inserted in the set
    */
   std::size_t m_head;
 
   /**
-   * Location of the last event in the set
+   * Location of the last event inserted in the set
    */
   std::size_t m_tail;
 
@@ -270,6 +276,20 @@ private:
 
 /**
  * An event set implementation that returns events in a random order
+ *
+ * This implementation uses a RandomVariableStream to randomize the order
+ * of the events inserted into the set.
+ *
+ * When an event is inserted into the set, the position of an existing event
+ * in the buffer is selected at random using a RandomVariableStream.  The
+ * event currently occupying that selected position is moved to the end of
+ * buffer and the new event is inserted into the vacated spot.
+ *
+ * The default RandomVariableStream used by this class is UniformRandomVariable
+ * with the maximum value set to the maximum set size.
+ *
+ * RandomEventSet::SetRandomSource can be used to change the random
+ * variable implementation used to shuffle events.
  */
 class RandomEventSet : public EventSet
 {
@@ -292,6 +312,14 @@ public:
    */
   virtual ~RandomEventSet ();
 
+  /**
+   * Set the random number generator to use for shuffling events
+   *
+   * The maximum integer returned by \p rand should be greater than or
+   * equal to the value returned by GetMaxSize.
+   *
+   * \param rand The RandomVariableStream implementation to use
+   */
   void SetRandomSource (Ptr<RandomVariableStream> rand);
 
   /**
@@ -315,10 +343,24 @@ public:
   virtual bool Remove (const SimEventKey& key);
 
 private:
+  /**
+   * A collection of simulation events
+   */
   using Buffer = std::deque<SimEvent>;
 
+  /**
+   * The maximum number of events that can be held in the set before it is full
+   */
   uint32_t m_maxSize;
+
+  /**
+   * Buffer that holds the events in a random order
+   */
   Buffer m_buffer;
+
+  /**
+   * Source of randomness used to shuffle the events
+   */
   Ptr<RandomVariableStream> m_random;
 };  // class RandomEventSet
 
