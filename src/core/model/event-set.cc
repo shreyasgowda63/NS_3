@@ -67,7 +67,7 @@ FifoEventSet::GetTypeId ()
     .AddConstructor<FifoEventSet> ()
     .AddAttribute ("MaxSize",
                    "The maximum number of events that the set can hold",
-                   UintegerValue (128),
+                   UintegerValue (512),
                    MakeUintegerAccessor (&FifoEventSet::GetMaxSize,
                                          &FifoEventSet::SetMaxSize),
                    MakeUintegerChecker<uint32_t> (1))
@@ -76,7 +76,7 @@ FifoEventSet::GetTypeId ()
 }
 
 FifoEventSet::FifoEventSet ()
-  :   m_maxSize (128),
+  :   m_maxSize (512),
     m_head (0),
     m_tail (0),
     m_count (0),
@@ -355,15 +355,15 @@ RandomEventSet::GetTypeId ()
     .AddConstructor<RandomEventSet> ()
     .AddAttribute ("MaxSize",
                    "The maximum number of events that the set can hold",
-                   UintegerValue (100),
+                   UintegerValue (512),
                    MakeUintegerAccessor (&RandomEventSet::GetMaxSize,
                                          &RandomEventSet::SetMaxSize),
                    MakeUintegerChecker<uint32_t> (2))
     .AddAttribute ("Random",
                    "The source of randomness used to shuffle events in a tie set. "
-                   "The maximum value should be equal to or greater than the buffer "
-                   "size",
-                   StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"),
+                   "The maximum value should be greater than or equal to the "
+                   "buffer size",
+                   StringValue ("ns3::UniformRandomVariable[Min=0|Max=512]"),
                    MakePointerAccessor (&RandomEventSet::SetRandomSource),
                    MakePointerChecker<RandomVariableStream> ())
   ;
@@ -371,7 +371,7 @@ RandomEventSet::GetTypeId ()
 }
 
 RandomEventSet::RandomEventSet ()
-  :   m_maxSize (100),
+  :   m_maxSize (512),
       m_buffer (),
       m_random ()
 
