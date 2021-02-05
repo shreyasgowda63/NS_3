@@ -183,6 +183,12 @@ class EventSet;
  * Custom implementations are possible by deriving a class from the EventSet
  * base class.
  *
+ * Calls to PeekNext and RemoveNext pull events from the EventSet instance
+ * held by the Scheduler.  When the EventSet is empty, the Scheduler will fill
+ * it with more events from the event list until the set is full or the next
+ * event in the event list has a different timestamp than the events currently
+ * in the EventSet.
+ *
  * #### FifoEventSet ####
  *
  * The FifoEventSet does not make any changes to the event order.  It returns
