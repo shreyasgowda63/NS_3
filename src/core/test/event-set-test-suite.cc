@@ -366,7 +366,8 @@ protected:
 void
 RandomEventSetTestCase::TestEventsRemovedInRandomOrder ()
 {
-  const uint32_t eventCount = 10;
+  const uint32_t eventCount = 100;
+  const uint64_t timestamp = 1000;
 
   auto eventSet = MakeSet ();
 
@@ -374,7 +375,7 @@ RandomEventSetTestCase::TestEventsRemovedInRandomOrder ()
 
   for (uint32_t i = 0; i < eventCount; ++i)
     {
-      auto event = MakeEvent ();
+      auto event = MakeEvent (timestamp);
       insertOrder[event.key] = i;
 
       eventSet->Insert (event);
@@ -445,7 +446,8 @@ protected:
 void
 LifoEventSetTestCase::TestEventsRemovedInLifoOrder ()
 {
-  const uint32_t eventCount = 10;
+  const uint32_t eventCount = 100;
+  const uint64_t timestamp = 1000;
 
   auto eventSet = MakeSet ();
 
@@ -453,7 +455,7 @@ LifoEventSetTestCase::TestEventsRemovedInLifoOrder ()
 
   for (uint32_t i = 0; i < eventCount; ++i)
     {
-      auto event = MakeEvent ();
+      auto event = MakeEvent (timestamp);
       insertOrder.push_back (event.key);
 
       eventSet->Insert (event);
