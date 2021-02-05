@@ -442,23 +442,20 @@ RandomEventSet::Insert (SimEvent ev)
       return false;
     }
 
-  m_buffer.emplace_back (std::move (ev));
-
-  if ( m_buffer.size () > 1 )
+  if ( !m_buffer.empty () )
     {
-      uint32_t currPos = m_buffer.size () - 1;
+      //pick a random event to swap
+      uint32_t position = m_random->GetInteger () % m_buffer.size ();
 
-      //pick a random event
-      uint32_t newPos = m_random->GetInteger () % m_buffer.size ();
+      //move the event at the current position to the back of the line
+      m_buffer.emplace_back (std::move (m_buffer[position]));
 
-      if (newPos != currPos)
-        {
-          NS_LOG_LOGIC ("Swapping events at positions " << newPos
-                                                        << " and " << currPos);
-
-          //swap places with the new event
-          std::swap (m_buffer[currPos], m_buffer[newPos]);
-        }
+      //insert the new event at the random position
+      m_buffer[position] = std::move (ev);
+    }
+  else
+    {
+        m_buffer.emplace_back (std::move (ev));
     }
 
   return true;
