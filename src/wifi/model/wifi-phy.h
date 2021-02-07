@@ -211,7 +211,7 @@ public:
    * Start receiving the PHY preamble of a PPDU (i.e. the first bit of the preamble has arrived).
    *
    * \param ppdu the arriving PPDU
-   * \param rxPowersW the receive power in W per 20 MHz channel band
+   * \param rxPowersW the receive power in W per band
    */
   void StartReceivePreamble (Ptr<WifiPpdu> ppdu, RxPowerWattPerChannelBand rxPowersW);
 
@@ -235,6 +235,15 @@ public:
    * \param event the event holding incoming PPDU's information
    */
   void StartReceivePayload (Ptr<Event> event);
+
+  /**
+   * Start receiving the PSDU (i.e. the first symbol of the PSDU has arrived) of an UL-OFDMA transmission.
+   * This function is called upon the RX event corresponding to the OFDMA part of the UL MU PPDU.
+   *
+   * \param ppdu the arriving PPDU
+   * \param rxPowersW the receive power in W per band
+   */
+  void StartReceiveOfdmaPayload (Ptr<WifiPpdu> ppdu, RxPowerWattPerChannelBand rxPowersW);
 
   /**
    * The last symbol of the PPDU has arrived.
@@ -1807,8 +1816,10 @@ protected:
    * state of interference tracker.  In this model, CCA becomes busy when
    * the aggregation of all signals as tracked by the InterferenceHelper
    * class is higher than the CcaEdThreshold
+   *
+   * \param channelWidth the channel width in MHz used for RSSI measurement
    */
-  void SwitchMaybeToCcaBusy (void);
+  void SwitchMaybeToCcaBusy (uint16_t channelWidth);
 
   /**
    * Return the STA ID that has been assigned to the station this PHY belongs to.
@@ -1818,6 +1829,16 @@ protected:
    * \return the STA ID
    */
   virtual uint16_t GetStaId (const Ptr<const WifiPpdu> ppdu) const;
+
+  /**
+   * Return the channel width used to measure the RSSI.
+   * This corresponds to the primary channel unless it corresponds to the
+   * HE TB PPDU solicited by the AP.
+   *
+   * \param ppdu the PPDU that is being received
+   * \param the channel width (in MHz) used for RSSI measurement
+   */
+  uint16_t GetMeasurementChannelWidth (const Ptr<const WifiPpdu> ppdu) const;
 
   /**
    * Get the start band index and the stop band index for a given band
@@ -1838,6 +1859,26 @@ protected:
    */
   virtual WifiSpectrumBand ConvertHeRuSubcarriers (uint16_t channelWidth, HeRu::SubcarrierRange range) const;
 
+  /**
+   * Get the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
+   *
+   * \param txVector the TXVECTOR used for the transmission
+   * \param staId the STA-ID of the recipient
+   *
+   * \return the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
+   */
+  WifiSpectrumBand GetRuBand (WifiTxVector txVector, uint16_t staId);
+
+  /**
+   * Get the band used to transmit the non-OFDMA part of an HE TB PPDU.
+   *
+   * \param txVector the TXVECTOR used for the transmission
+   * \param staId the STA-ID of the station taking part of the UL MU
+   *
+   * \return the spectrum band used to transmit the non-OFDMA part of an HE TB PPDU
+   */
+  WifiSpectrumBand GetNonOfdmaBand (WifiTxVector txVector, uint16_t staId);
+
   InterferenceHelper m_interference;   //!< Pointer to InterferenceHelper
   Ptr<UniformRandomVariable> m_random; //!< Provides uniform random variables.
   Ptr<WifiPhyStateHelper> m_state;     //!< Pointer to WifiPhyStateHelper
@@ -1845,14 +1886,18 @@ protected:
   uint32_t m_txMpduReferenceNumber;    //!< A-MPDU reference number to identify all transmitted subframes belonging to the same received A-MPDU
   uint32_t m_rxMpduReferenceNumber;    //!< A-MPDU reference number to identify all received subframes belonging to the same received A-MPDU
 
-  EventId m_endRxEvent;                //!< the end of receive event
   EventId m_endPhyRxEvent;             //!< the end of PHY receive event
   EventId m_endTxEvent;                //!< the end of transmit event
 
+  std::vector <EventId> m_endRxEvents; //!< the end of receive events (only one unless UL MU reception)
   std::vector <EventId> m_endPreambleDetectionEvents; //!< the end of preamble detection events
+  Ptr<Event> m_currentEvent; //!< Hold the current event
   std::map <std::pair<uint64_t /* UID*/, WifiPreamble>, Ptr<Event> > m_currentPreambleEvents; //!< store event associated to a PPDU (that has a unique ID and preamble combination) whose preamble is being received
 
   uint64_t m_previouslyRxPpduUid;      //!< UID of the previously received PPDU (reused by HE TB PPDUs), reset to UINT64_MAX upon transmission
+  uint64_t m_previouslyTxPpduUid;      //!< UID of the previously sent PPDU, used by AP to recognize response HE TB PPDUs
+
+  uint64_t m_currentHeTbPpduUid;       //!< UID of the HE TB PPDU being received
 
   static uint64_t m_globalPpduUid;     //!< Global counter of the PPDU UID
 
@@ -1963,8 +2008,9 @@ private:
 
   /**
    * Eventually switch to CCA busy
+   * \param channelWidth the channel width in MHz used for RSSI measurement
    */
-  void MaybeCcaBusyDuration (void);
+  void MaybeCcaBusyDuration (uint16_t channelWidth);
 
   /**
    * Starting receiving the PPDU after having detected the medium is idle or after a reception switch.
@@ -2014,24 +2060,15 @@ private:
   Ptr<const WifiPsdu> GetAddressedPsduInPpdu (Ptr<const WifiPpdu> ppdu) const;
 
   /**
-   * Get the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
-   *
-   * \param txVector the TXVECTOR used for the transmission
-   * \param staId the STA-ID of the recipient
-   *
-   * \return the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
-   */
-  WifiSpectrumBand GetRuBand (WifiTxVector txVector, uint16_t staId);
-
-  /**
    * Drop the PPDU and the corresponding preamble detection event, but keep CCA busy
    * state after the completion of the currently processed event.
    *
    * \param ppdu the incoming PPDU
    * \param reason the reason the PPDU is dropped
    * \param endRx the end of the incoming PPDU's reception
+   * \param measurementChannelWidth the measurement width (in MHz) to consider for the PPDU
    */
-  void DropPreambleEvent (Ptr<const WifiPpdu> ppdu, WifiPhyRxfailureReason reason, Time endRx);
+  void DropPreambleEvent (Ptr<const WifiPpdu> ppdu, WifiPhyRxfailureReason reason, Time endRx, uint16_t measurementChannelWidth);
 
   /**
    * The trace source fired when a packet begins the transmission process on
@@ -2225,17 +2262,25 @@ private:
   Ptr<NetDevice>     m_device;   //!< Pointer to the device
   Ptr<MobilityModel> m_mobility; //!< Pointer to the mobility model
 
-  Ptr<Event> m_currentEvent;                            //!< Hold the current event
   Ptr<FrameCaptureModel> m_frameCaptureModel;           //!< Frame capture model
   Ptr<PreambleDetectionModel> m_preambleDetectionModel; //!< Preamble detection model
   Ptr<WifiRadioEnergyModel> m_wifiRadioEnergyModel;     //!< Wifi radio energy model
   Ptr<ErrorModel> m_postReceptionErrorModel;            //!< Error model for receive packet events
   Time m_timeLastPreambleDetected;                      //!< Record the time the last preamble was detected
 
-  std::vector<bool> m_statusPerMpdu; //!<  current reception status per MPDU that is filled in as long as MPDUs are being processed by the PHY in case of an A-MPDU
-  SignalNoiseDbm m_signalNoise;      //!< latest signal power and noise power in dBm (noise power includes the noise figure)
+  std::vector <EventId> m_endOfMpduEvents; //!< the end of MPDU events (only used for A-MPDUs)
 
-  Callback<void> m_capabilitiesChangedCallback;         //!< Callback when PHY capabilities changed
+  /**
+   * A pair of a UID and STA_ID
+   */
+  typedef std::pair <uint64_t /* uid */, uint16_t /* staId */> UidStaIdPair;
+
+  std::map<UidStaIdPair, std::vector<bool> > m_statusPerMpduMap; //!< Map of the current reception status per MPDU that is filled in as long as MPDUs are being processed by the PHY in case of an A-MPDU
+  std::map<UidStaIdPair, SignalNoiseDbm> m_signalNoiseMap; //!< Map of the latest signal power and noise power in dBm (noise power includes the noise figure)
+
+  bool m_ofdmaStarted; //!< Flag whether the reception of the OFDMA part has started (only used for UL-OFDMA)
+
+  Callback<void> m_capabilitiesChangedCallback; //!< Callback when PHY capabilities changed
 };
 
 } //namespace ns3

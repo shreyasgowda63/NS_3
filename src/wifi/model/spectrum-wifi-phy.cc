@@ -28,8 +28,8 @@
 #include "ns3/boolean.h"
 #include "ns3/net-device.h"
 #include "ns3/node.h"
+#include "ns3/simulator.h"
 #include "spectrum-wifi-phy.h"
-#include "wifi-spectrum-signal-parameters.h"
 #include "wifi-spectrum-phy-interface.h"
 #include "wifi-utils.h"
 #include "wifi-ppdu.h"
@@ -344,20 +344,53 @@ SpectrumWifiPhy::StartRx (Ptr<SpectrumSignalParameters> rxParams)
     {
       NS_LOG_INFO ("Received non Wi-Fi signal");
       m_interference.AddForeignSignal (rxDuration, rxPowerW);
-      SwitchMaybeToCcaBusy ();
+      SwitchMaybeToCcaBusy (GetMeasurementChannelWidth (nullptr));
       return;
     }
   if (wifiRxParams && m_disableWifiReception)
     {
       NS_LOG_INFO ("Received Wi-Fi signal but blocked from syncing");
       m_interference.AddForeignSignal (rxDuration, rxPowerW);
-      SwitchMaybeToCcaBusy ();
+      SwitchMaybeToCcaBusy (GetMeasurementChannelWidth (nullptr));
       return;
     }
 
   NS_LOG_INFO ("Received Wi-Fi signal");
   Ptr<WifiPpdu> ppdu = Copy (wifiRxParams->ppdu);
-  StartReceivePreamble (ppdu, rxPowerW);
+  if (ppdu->GetTxVector ().GetPreambleType () == WIFI_PREAMBLE_HE_TB
+      && wifiRxParams->txPsdFlag == PSD_HE_TB_OFDMA_PORTION)
+    {
+      if (m_currentHeTbPpduUid == ppdu->GetUid () && m_currentEvent != 0)
+        {
+          //AP and STA already received non-OFDMA part, handle OFDMA payload reception
+          StartReceiveOfdmaPayload (ppdu, rxPowerW);
+        }
+      else
+        {
+          //PHY receives the OFDMA payload while having dropped the preamble
+          NS_LOG_INFO ("Consider UL-OFDMA part of the HE TB PPDU as interference since device dropped the preamble");
+          m_interference.Add (ppdu, ppdu->GetTxVector (), rxDuration, rxPowerW);
+          auto it = m_currentPreambleEvents.find (std::make_pair(ppdu->GetUid (), ppdu->GetPreamble ()));
+          if (it != m_currentPreambleEvents.end ())
+            {
+              m_currentPreambleEvents.erase (it);
+            }
+          if (m_currentPreambleEvents.empty ())
+            {
+              Reset ();
+            }
+
+          if (rxDuration > m_state->GetDelayUntilIdle ())
+            {
+              //that packet will be noise _after_ the completion of the OFDMA part of the HE TB PPDUs
+              SwitchMaybeToCcaBusy (GetMeasurementChannelWidth (ppdu));
+            }
+        }
+    }
+  else
+    {
+      StartReceivePreamble (ppdu, rxPowerW);
+    }
 }
 
 Ptr<AntennaModel>
@@ -383,11 +416,14 @@ SpectrumWifiPhy::CreateWifiSpectrumPhyInterface (Ptr<NetDevice> device)
 }
 
 Ptr<SpectrumValue>
-SpectrumWifiPhy::GetTxPowerSpectralDensity (uint16_t centerFrequency, uint16_t channelWidth, double txPowerW, WifiModulationClass modulationClass) const
+SpectrumWifiPhy::GetTxPowerSpectralDensity (double txPowerW, Ptr<WifiPpdu> ppdu, TxPsdFlag flag /* = PSD_NON_HE_TB */)
 {
-  NS_LOG_FUNCTION (centerFrequency << channelWidth << txPowerW);
+  WifiTxVector txVector = ppdu->GetTxVector ();
+  uint16_t centerFrequency = GetCenterFrequencyForChannelWidth (txVector);
+  uint16_t channelWidth = txVector.GetChannelWidth ();
+  NS_LOG_FUNCTION (centerFrequency << channelWidth << txPowerW << flag);
   Ptr<SpectrumValue> v;
-  switch (modulationClass)
+  switch (ppdu->GetModulation ())
     {
     case WIFI_MOD_CLASS_OFDM:
     case WIFI_MOD_CLASS_ERP_OFDM:
@@ -405,11 +441,27 @@ SpectrumWifiPhy::GetTxPowerSpectralDensity (uint16_t centerFrequency, uint16_t c
                                                                        m_txMaskInnerBandMinimumRejection, m_txMaskOuterBandMinimumRejection, m_txMaskOuterBandMaximumRejection);
       break;
     case WIFI_MOD_CLASS_HE:
-      v = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, txPowerW, GetGuardBandwidth (channelWidth),
-                                                                       m_txMaskInnerBandMinimumRejection, m_txMaskOuterBandMinimumRejection, m_txMaskOuterBandMaximumRejection);
+      if (flag == PSD_HE_TB_OFDMA_PORTION)
+        {
+          WifiSpectrumBand band = GetRuBand (txVector, GetStaId (ppdu));
+          v = WifiSpectrumValueHelper::CreateHeMuOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, txPowerW, GetGuardBandwidth (channelWidth), band);
+        }
+      else
+        {
+          if (flag == PSD_HE_TB_NON_OFDMA_PORTION)
+            {
+              //non-OFDMA portion is sent only on the 20 MHz channels covering the RU
+              uint16_t staId = GetStaId (ppdu);
+              centerFrequency = GetCenterFrequencyForNonOfdmaPart (txVector, staId);
+              uint16_t ruWidth = HeRu::GetBandwidth (txVector.GetRu (staId).ruType);
+              channelWidth = ruWidth < 20 ? 20 : ruWidth;
+            }
+          v = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, txPowerW, GetGuardBandwidth (channelWidth),
+                                                                           m_txMaskInnerBandMinimumRejection, m_txMaskOuterBandMinimumRejection, m_txMaskOuterBandMaximumRejection);
+        }
       break;
     default:
-      NS_FATAL_ERROR ("modulation class unknown: " << modulationClass);
+      NS_FATAL_ERROR ("modulation class unknown");
       break;
     }
   return v;
@@ -430,6 +482,28 @@ SpectrumWifiPhy::GetCenterFrequencyForChannelWidth (WifiTxVector txVector) const
   return centerFrequencyForSupportedWidth;
 }
 
+uint16_t
+SpectrumWifiPhy::GetCenterFrequencyForNonOfdmaPart (WifiTxVector txVector, uint16_t staId) const
+{
+  NS_LOG_FUNCTION (this << txVector << staId);
+  NS_ASSERT (txVector.GetPreambleType () == WIFI_PREAMBLE_HE_TB);
+  uint16_t centerFrequency = GetCenterFrequencyForChannelWidth (txVector);
+  uint16_t currentWidth = txVector.GetChannelWidth ();
+
+  HeRu::RuSpec ru = txVector.GetRu (staId);
+  uint16_t ruWidth = HeRu::GetBandwidth (ru.ruType);
+  uint16_t nonOfdmaWidth = ruWidth < 20 ? 20 : ruWidth;
+  if (nonOfdmaWidth != currentWidth)
+    {
+      //Obtain the index of the non-OFDMA portion
+      HeRu::RuSpec nonOfdmaRu = HeRu::FindOverlappingRu (currentWidth, ru, HeRu::GetRuType (nonOfdmaWidth));
+
+      uint16_t startingFrequency = centerFrequency - (currentWidth / 2);
+      centerFrequency = startingFrequency + nonOfdmaWidth * (nonOfdmaRu.index - 1) + nonOfdmaWidth / 2;
+    }
+  return centerFrequency;
+}
+
 void
 SpectrumWifiPhy::StartTx (Ptr<WifiPpdu> ppdu)
 {
@@ -438,16 +512,64 @@ SpectrumWifiPhy::StartTx (Ptr<WifiPpdu> ppdu)
   double txPowerDbm = GetTxPowerForTransmission (txVector) + GetTxGain ();
   NS_LOG_DEBUG ("Start transmission: signal power before antenna gain=" << txPowerDbm << "dBm");
   double txPowerWatts = DbmToW (txPowerDbm);
-  Ptr<SpectrumValue> txPowerSpectrum = GetTxPowerSpectralDensity (GetCenterFrequencyForChannelWidth (txVector), txVector.GetChannelWidth (), txPowerWatts, ppdu->GetModulation ());
-  Ptr<WifiSpectrumSignalParameters> txParams = Create<WifiSpectrumSignalParameters> ();
-  txParams->duration = ppdu->GetTxDuration ();
-  txParams->psd = txPowerSpectrum;
   NS_ASSERT_MSG (m_wifiSpectrumPhyInterface, "SpectrumPhy() is not set; maybe forgot to call CreateWifiSpectrumPhyInterface?");
+  if (txVector.GetPreambleType () == WIFI_PREAMBLE_HE_TB)
+    {
+      //non-OFDMA part
+      Time nonOfdmaDuration = CalculatePhyPreambleAndHeaderDuration (txVector); //consider that HE-STF and HE-LTFs are also part of the non-OFDMA part
+      Ptr<SpectrumValue> txPowerSpectrum = GetTxPowerSpectralDensity (txPowerWatts, ppdu, PSD_HE_TB_NON_OFDMA_PORTION);
+      Ptr<WifiSpectrumSignalParameters> txParams = Create<WifiSpectrumSignalParameters> ();
+      txParams->duration = nonOfdmaDuration;
+      txParams->psd = txPowerSpectrum;
+      txParams->txPhy = m_wifiSpectrumPhyInterface->GetObject<SpectrumPhy> ();
+      txParams->txAntenna = m_antenna;
+      txParams->ppdu = ppdu;
+      txParams->txPsdFlag = PSD_HE_TB_NON_OFDMA_PORTION;
+      NS_LOG_DEBUG ("Starting non-OFDMA transmission with power " << WToDbm (txPowerWatts) << " dBm on channel " << +GetChannelNumber () << " for " << txParams->duration.GetMicroSeconds () << " us");
+      NS_LOG_DEBUG ("Starting non-OFDMA transmission with integrated spectrum power " << WToDbm (Integral (*txPowerSpectrum)) << " dBm; spectrum model Uid: " << txPowerSpectrum->GetSpectrumModel ()->GetUid ());
+      Transmit (txParams);
+
+      //OFDMA part
+      Simulator::Schedule (nonOfdmaDuration, &SpectrumWifiPhy::StartOfdmaTx, this, ppdu, txPowerWatts);
+    }
+  else
+    {
+      Ptr<SpectrumValue> txPowerSpectrum = GetTxPowerSpectralDensity (txPowerWatts, ppdu);
+      Ptr<WifiSpectrumSignalParameters> txParams = Create<WifiSpectrumSignalParameters> ();
+      txParams->duration = ppdu->GetTxDuration ();
+      txParams->psd = txPowerSpectrum;
+      txParams->txPhy = m_wifiSpectrumPhyInterface->GetObject<SpectrumPhy> ();
+      txParams->txAntenna = m_antenna;
+      txParams->ppdu = ppdu;
+      NS_LOG_DEBUG ("Starting transmission with power " << WToDbm (txPowerWatts) << " dBm on channel " << +GetChannelNumber () << " for " << txParams->duration.GetMicroSeconds () << " us");
+      NS_LOG_DEBUG ("Starting transmission with integrated spectrum power " << WToDbm (Integral (*txPowerSpectrum)) << " dBm; spectrum model Uid: " << txPowerSpectrum->GetSpectrumModel ()->GetUid ());
+      Transmit (txParams);
+    }
+}
+
+void
+SpectrumWifiPhy::StartOfdmaTx (Ptr<WifiPpdu> ppdu, double txPowerWatts)
+{
+  NS_LOG_FUNCTION (this << ppdu << txPowerWatts);
+  NS_ASSERT (ppdu->IsUlMu ());
+  Ptr<SpectrumValue> txPowerSpectrum = GetTxPowerSpectralDensity (txPowerWatts, ppdu, PSD_HE_TB_OFDMA_PORTION);
+  Ptr<WifiSpectrumSignalParameters> txParams = Create<WifiSpectrumSignalParameters> ();
+  WifiTxVector txVector = ppdu->GetTxVector ();
+  txParams->duration = ppdu->GetTxDuration () - CalculatePhyPreambleAndHeaderDuration (txVector);
+  txParams->psd = txPowerSpectrum;
   txParams->txPhy = m_wifiSpectrumPhyInterface->GetObject<SpectrumPhy> ();
   txParams->txAntenna = m_antenna;
   txParams->ppdu = ppdu;
-  NS_LOG_DEBUG ("Starting transmission with power " << WToDbm (txPowerWatts) << " dBm on channel " << +GetChannelNumber ());
-  NS_LOG_DEBUG ("Starting transmission with integrated spectrum power " << WToDbm (Integral (*txPowerSpectrum)) << " dBm; spectrum model Uid: " << txPowerSpectrum->GetSpectrumModel ()->GetUid ());
+  txParams->txPsdFlag = PSD_HE_TB_OFDMA_PORTION;
+  NS_LOG_DEBUG ("Starting OFDMA transmission with power " << WToDbm (txPowerWatts) << " dBm on channel " << +GetChannelNumber () << " for " << txParams->duration.GetMicroSeconds () << " us");
+  NS_LOG_DEBUG ("Starting OFDMA transmission with integrated spectrum power " << WToDbm (Integral (*txPowerSpectrum)) << " dBm; spectrum model Uid: " << txPowerSpectrum->GetSpectrumModel ()->GetUid ());
+  Transmit (txParams);
+}
+
+void
+SpectrumWifiPhy::Transmit (Ptr<WifiSpectrumSignalParameters> txParams)
+{
+  NS_LOG_FUNCTION (this << txParams);
   m_channel->StartTx (txParams);
 }
 

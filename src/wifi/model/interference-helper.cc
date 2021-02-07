@@ -181,10 +181,10 @@ InterferenceHelper::~InterferenceHelper ()
 }
 
 Ptr<Event>
-InterferenceHelper::Add (Ptr<const WifiPpdu> ppdu, WifiTxVector txVector, Time duration, RxPowerWattPerChannelBand rxPowerW)
+InterferenceHelper::Add (Ptr<const WifiPpdu> ppdu, WifiTxVector txVector, Time duration, RxPowerWattPerChannelBand rxPowerW, bool isStartOfdmaRxing)
 {
   Ptr<Event> event = Create<Event> (ppdu, txVector, duration, rxPowerW);
-  AppendEvent (event);
+  AppendEvent (event, isStartOfdmaRxing);
   return event;
 }
 
@@ -265,9 +265,9 @@ InterferenceHelper::GetEnergyDuration (double energyW, WifiSpectrumBand band)
 }
 
 void
-InterferenceHelper::AppendEvent (Ptr<Event> event)
+InterferenceHelper::AppendEvent (Ptr<Event> event, bool isStartOfdmaRxing)
 {
-  NS_LOG_FUNCTION (this << event);
+  NS_LOG_FUNCTION (this << event << isStartOfdmaRxing);
   RxPowerWattPerChannelBand rxPowerWattPerChannelBand = event->GetRxPowerWPerBand ();
   for (auto const& it : rxPowerWattPerChannelBand)
     {
@@ -283,6 +283,13 @@ InterferenceHelper::AppendEvent (Ptr<Event> event)
           m_firstPowerPerBand.find (band)->second = previousPowerStart;
           // Always leave the first zero power noise event in the list
           ni_it->second.erase (++(ni_it->second.begin ()), GetNextPosition (event->GetStartTime (), band));
+        }
+      else if (isStartOfdmaRxing)
+        {
+          //When the first UL-OFDMA payload is received, we need to set m_firstPowerPerBand
+          //so that it takes into account interferences that arrived between the start of the
+          //UL MU transmission and the start of UL-OFDMA payload.
+          m_firstPowerPerBand.find (band)->second = previousPowerStart;
         }
       auto first = AddNiChangeEvent (event->GetStartTime (), NiChange (previousPowerStart, event), band);
       auto last = AddNiChangeEvent (event->GetEndTime (), NiChange (previousPowerEnd, event), band);
@@ -406,10 +413,19 @@ InterferenceHelper::CalculatePayloadPer (Ptr<const Event> event, uint16_t channe
   Time previous = j->first;
   WifiMode payloadMode = txVector.GetMode (staId);
   WifiPreamble preamble = txVector.GetPreambleType ();
-  Time phyHeaderStart = j->first + WifiPhy::GetPhyPreambleDuration (txVector); //PPDU start time + preamble
-  Time phyHtSigHeaderStart = phyHeaderStart + WifiPhy::GetPhyHeaderDuration (txVector); //PPDU start time + preamble + L-SIG
-  Time phyTrainingSymbolsStart = phyHtSigHeaderStart + WifiPhy::GetPhyHtSigHeaderDuration (preamble) + WifiPhy::GetPhySigA1Duration (preamble) + WifiPhy::GetPhySigA2Duration (preamble); //PPDU start time + preamble + L-SIG + HT-SIG or SIG-A
-  Time phyPayloadStart = phyTrainingSymbolsStart + WifiPhy::GetPhyTrainingSymbolDuration (txVector) + WifiPhy::GetPhySigBDuration (txVector); //PPDU start time + preamble + L-SIG + HT-SIG or SIG-A + Training + SIG-B
+  Time phyPayloadStart;
+  if (!event->GetPpdu ()->IsUlMu ())
+    {
+      Time phyHeaderStart = j->first + WifiPhy::GetPhyPreambleDuration (txVector); //PPDU start time + preamble
+      Time phyHtSigHeaderStart = phyHeaderStart + WifiPhy::GetPhyHeaderDuration (txVector); //PPDU start time + preamble + L-SIG
+      Time phyTrainingSymbolsStart = phyHtSigHeaderStart + WifiPhy::GetPhyHtSigHeaderDuration (preamble) + WifiPhy::GetPhySigA1Duration (preamble) + WifiPhy::GetPhySigA2Duration (preamble); //PPDU start time + preamble + L-SIG + HT-SIG or SIG-A
+      phyPayloadStart = phyTrainingSymbolsStart + WifiPhy::GetPhyTrainingSymbolDuration (txVector) + WifiPhy::GetPhySigBDuration (txVector); //PPDU start time + preamble + L-SIG + HT-SIG or SIG-A + Training + SIG-B
+    }
+  else
+    {
+      //j->first corresponds to the start of the UL-OFDMA payload
+      phyPayloadStart = j->first;
+    }
   Time windowStart = phyPayloadStart + window.first;
   Time windowEnd = phyPayloadStart + window.second;
   double noiseInterferenceW = m_firstPowerPerBand.find (band)->second;
@@ -445,11 +461,11 @@ InterferenceHelper::CalculatePayloadPer (Ptr<const Event> event, uint16_t channe
 }
 
 double
-InterferenceHelper::CalculateNonHtPhyHeaderPer (Ptr<const Event> event, NiChangesPerBand *nis, WifiSpectrumBand band) const
+InterferenceHelper::CalculateNonHtPhyHeaderPer (Ptr<const Event> event, NiChangesPerBand *nis,
+                                                uint16_t channelWidth, WifiSpectrumBand band) const
 {
   NS_LOG_FUNCTION (this << band.first << band.second);
   const WifiTxVector txVector = event->GetTxVector ();
-  uint16_t channelWidth = txVector.GetChannelWidth () >= 40 ? 20 : txVector.GetChannelWidth (); //calculate PER on the 20 MHz primary channel for L-SIG
   double psr = 1.0; /* Packet Success Rate */
   auto ni_it = nis->find (band)->second;
   auto j = ni_it.begin ();
@@ -560,11 +576,11 @@ InterferenceHelper::CalculateNonHtPhyHeaderPer (Ptr<const Event> event, NiChange
 }
 
 double
-InterferenceHelper::CalculateHtPhyHeaderPer (Ptr<const Event> event, NiChangesPerBand *nis, WifiSpectrumBand band) const
+InterferenceHelper::CalculateHtPhyHeaderPer (Ptr<const Event> event, NiChangesPerBand *nis,
+                                             uint16_t channelWidth, WifiSpectrumBand band) const
 {
   NS_LOG_FUNCTION (this << band.first << band.second);
   const WifiTxVector txVector = event->GetTxVector ();
-  uint16_t channelWidth = txVector.GetChannelWidth () >= 40 ? 20 : txVector.GetChannelWidth (); //calculate PER on the 20 MHz primary channel for PHY headers
   double psr = 1.0; /* Packet Success Rate */
   auto ni_it = nis->find (band)->second;
   auto j = ni_it.begin ();
@@ -863,19 +879,10 @@ InterferenceHelper::CalculateSnr (Ptr<Event> event, uint16_t channelWidth, uint8
 }
 
 struct InterferenceHelper::SnrPer
-InterferenceHelper::CalculateNonHtPhyHeaderSnrPer (Ptr<Event> event, WifiSpectrumBand band) const
+InterferenceHelper::CalculateNonHtPhyHeaderSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band) const
 {
-  NS_LOG_FUNCTION (this << band.first << band.second);
+  NS_LOG_FUNCTION (this << channelWidth << band.first << band.second);
   NiChangesPerBand ni;
-  uint16_t channelWidth;
-  if (event->GetTxVector ().GetChannelWidth () >= 40)
-    {
-      channelWidth = 20; //calculate PER on the 20 MHz primary channel for L-SIG
-    }
-  else
-    {
-      channelWidth = event->GetTxVector ().GetChannelWidth ();
-    }
   double noiseInterferenceW = CalculateNoiseInterferenceW (event, &ni, band);
   double snr = CalculateSnr (event->GetRxPowerW (band),
                              noiseInterferenceW,
@@ -885,7 +892,7 @@ InterferenceHelper::CalculateNonHtPhyHeaderSnrPer (Ptr<Event> event, WifiSpectru
   /* calculate the SNIR at the start of the PHY header and accumulate
    * all SNIR changes in the SNIR vector.
    */
-  double per = CalculateNonHtPhyHeaderPer (event, &ni, band);
+  double per = CalculateNonHtPhyHeaderPer (event, &ni, channelWidth, band);
 
   struct SnrPer snrPer;
   snrPer.snr = snr;
@@ -894,19 +901,10 @@ InterferenceHelper::CalculateNonHtPhyHeaderSnrPer (Ptr<Event> event, WifiSpectru
 }
 
 struct InterferenceHelper::SnrPer
-InterferenceHelper::CalculateHtPhyHeaderSnrPer (Ptr<Event> event, WifiSpectrumBand band) const
+InterferenceHelper::CalculateHtPhyHeaderSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band) const
 {
   NS_LOG_FUNCTION (this << band.first << band.second);
   NiChangesPerBand ni;
-  uint16_t channelWidth;
-  if (event->GetTxVector ().GetChannelWidth () >= 40)
-    {
-      channelWidth = 20; //calculate PER on the 20 MHz primary channel for PHY headers
-    }
-  else
-    {
-      channelWidth = event->GetTxVector ().GetChannelWidth ();
-    }
   double noiseInterferenceW = CalculateNoiseInterferenceW (event, &ni, band);
   double snr = CalculateSnr (event->GetRxPowerW (band),
                              noiseInterferenceW,
@@ -916,7 +914,7 @@ InterferenceHelper::CalculateHtPhyHeaderSnrPer (Ptr<Event> event, WifiSpectrumBa
   /* calculate the SNIR at the start of the PHY header and accumulate
    * all SNIR changes in the SNIR vector.
    */
-  double per = CalculateHtPhyHeaderPer (event, &ni, band);
+  double per = CalculateHtPhyHeaderPer (event, &ni, channelWidth, band);
   
   struct SnrPer snrPer;
   snrPer.snr = snr;
