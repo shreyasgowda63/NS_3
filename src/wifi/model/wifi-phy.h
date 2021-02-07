@@ -62,6 +62,7 @@ enum WifiPhyRxfailureReason
   RECEPTION_ABORTED_BY_TX,
   L_SIG_FAILURE,
   SIG_A_FAILURE,
+  SIG_B_FAILURE,
   PREAMBLE_DETECTION_PACKET_SWITCH,
   FRAME_CAPTURE_PACKET_SWITCH,
   OBSS_PD_CCA_RESET,
@@ -132,8 +133,8 @@ struct MpduInfo
   uint32_t mpduRefNumber; ///< MPDU ref number
 };
 
-/// Parameters for receive HE preamble
-struct HePreambleParameters
+/// Parameters for received HE-SIG-A for OBSS_PD based SR
+struct HeSigAParameters
 {
   double rssiW; ///< RSSI in W
   uint8_t bssColor; ///< BSS color
@@ -230,6 +231,24 @@ public:
   void ContinueReceiveHeader (Ptr<Event> event);
 
   /**
+   * The last common PHY header of the current PPDU has been received.
+   *
+   * The last common PHY header is:
+   *  - the non-HT header if the PPDU is non-HT
+   *  - the HT or SIG-A header otherwise
+   *
+   * \param event the event holding incoming PPDU's information
+   */
+  void EndReceiveCommonHeader (Ptr<Event> event);
+
+  /**
+   * The SIG-B of the current MU PPDU has been received.
+   *
+   * \param event the event holding incoming PPDU's information
+   */
+  void EndReceiveSigB (Ptr<Event> event);
+
+  /**
    * Start receiving the PSDU (i.e. the first symbol of the PSDU has arrived).
    *
    * \param event the event holding incoming PPDU's information
@@ -240,10 +259,9 @@ public:
    * Start receiving the PSDU (i.e. the first symbol of the PSDU has arrived) of an UL-OFDMA transmission.
    * This function is called upon the RX event corresponding to the OFDMA part of the UL MU PPDU.
    *
-   * \param ppdu the arriving PPDU
-   * \param rxPowersW the receive power in W per band
+   * \param event the event holding incoming OFDMA part of the PPDU's information
    */
-  void StartReceiveOfdmaPayload (Ptr<WifiPpdu> ppdu, RxPowerWattPerChannelBand rxPowersW);
+  void StartReceiveOfdmaPayload (Ptr<Event> event);
 
   /**
    * The last symbol of the PPDU has arrived.
@@ -394,6 +412,12 @@ public:
    * \return the total amount of time this PHY will stay busy for the transmission of the PHY preamble and PHY header.
    */
   static Time CalculatePhyPreambleAndHeaderDuration (WifiTxVector txVector);
+  /**
+   * \param txVector the transmission parameters used for the HE TB PPDU
+   *
+   * \return the duration of the non-OFDMA portion of the HE TB PPDU.
+   */
+  static Time CalculateNonOfdmaDurationForHeTb (WifiTxVector txVector);
   /**
    *
    * \return the preamble detection duration, which is the time correlation needs to detect the start of an incoming frame.
@@ -1483,19 +1507,19 @@ public:
   typedef void (* PsduTxBeginCallback)(WifiConstPsduMap psduMap, WifiTxVector txVector, double txPowerW);
 
   /**
-   * Public method used to fire a EndOfHePreamble trace once both HE SIG fields have been received, as well as training fields.
+   * Public method used to fire a EndOfHeSigA trace once HE-SIG-A field has been received.
    *
-   * \param params the HE preamble parameters
+   * \param params the HE-SIG-A parameters
    */
-  void NotifyEndOfHePreamble (HePreambleParameters params);
+  void NotifyEndOfHeSigA (HeSigAParameters params);
 
   /**
    * TracedCallback signature for end of HE-SIG-A events.
    *
    *
-   * \param params the HE preamble parameters
+   * \param params the HE-SIG-A parameters
    */
-  typedef void (* EndOfHePreambleCallback)(HePreambleParameters params);
+  typedef void (* EndOfHeSigACallback)(HeSigAParameters params);
 
   /**
    * TracedCallback signature for start of PSDU reception events.
@@ -1779,6 +1803,16 @@ public:
    */
   void NotifyChannelAccessRequested (void);
 
+  /**
+   * Get the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
+   *
+   * \param txVector the TXVECTOR used for the transmission
+   * \param staId the STA-ID of the recipient
+   *
+   * \return the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
+   */
+  WifiSpectrumBand GetRuBand (WifiTxVector txVector, uint16_t staId);
+
 
 protected:
   // Inherited
@@ -1860,16 +1894,6 @@ protected:
   virtual WifiSpectrumBand ConvertHeRuSubcarriers (uint16_t channelWidth, HeRu::SubcarrierRange range) const;
 
   /**
-   * Get the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
-   *
-   * \param txVector the TXVECTOR used for the transmission
-   * \param staId the STA-ID of the recipient
-   *
-   * \return the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
-   */
-  WifiSpectrumBand GetRuBand (WifiTxVector txVector, uint16_t staId);
-
-  /**
    * Get the band used to transmit the non-OFDMA part of an HE TB PPDU.
    *
    * \param txVector the TXVECTOR used for the transmission
@@ -1891,6 +1915,9 @@ protected:
 
   std::vector <EventId> m_endRxEvents; //!< the end of receive events (only one unless UL MU reception)
   std::vector <EventId> m_endPreambleDetectionEvents; //!< the end of preamble detection events
+
+  std::map <uint16_t /* STA-ID */, EventId> m_beginOfdmaPayloadRxEvents; //!< the beginning of the OFDMA payload reception events (indexed by STA-ID)
+
   Ptr<Event> m_currentEvent; //!< Hold the current event
   std::map <std::pair<uint64_t /* UID*/, WifiPreamble>, Ptr<Event> > m_currentPreambleEvents; //!< store event associated to a PPDU (that has a unique ID and preamble combination) whose preamble is being received
 
@@ -2071,6 +2098,17 @@ private:
   void DropPreambleEvent (Ptr<const WifiPpdu> ppdu, WifiPhyRxfailureReason reason, Time endRx, uint16_t measurementChannelWidth);
 
   /**
+   * Schedule StartReceivePayload if the mode in the SIG and the number of
+   * spatial streams are supported.
+   *
+   * \param event the event holding the incoming PPDU's information
+   * \param timeToPayloadStart the time left till payload start
+   * \return \c true if the reception of the payload has been scheduled,
+   *         \c false otherwise
+   */
+  bool ScheduleStartReceivePayload (Ptr<Event> event, Time timeToPayloadStart);
+
+  /**
    * The trace source fired when a packet begins the transmission process on
    * the medium.
    *
@@ -2169,11 +2207,11 @@ private:
   TracedCallback<Ptr<const Packet>, uint16_t /* frequency (MHz) */, WifiTxVector, MpduInfo, uint16_t /* STA-ID*/> m_phyMonitorSniffTxTrace;
 
   /**
-   * A trace source that indicates the end of both HE SIG fields as well as training fields for received 802.11ax packets
+   * A trace source that indicates the end of HE SIG-A field for received 802.11ax PPDUs
    *
    * \see class CallBackTraceSource
    */
-  TracedCallback<HePreambleParameters> m_phyEndOfHePreambleTrace;
+  TracedCallback<HeSigAParameters> m_phyEndOfHeSigATrace;
 
   /**
    * This vector holds the set of transmission modes that this
@@ -2277,8 +2315,6 @@ private:
 
   std::map<UidStaIdPair, std::vector<bool> > m_statusPerMpduMap; //!< Map of the current reception status per MPDU that is filled in as long as MPDUs are being processed by the PHY in case of an A-MPDU
   std::map<UidStaIdPair, SignalNoiseDbm> m_signalNoiseMap; //!< Map of the latest signal power and noise power in dBm (noise power includes the noise figure)
-
-  bool m_ofdmaStarted; //!< Flag whether the reception of the OFDMA part has started (only used for UL-OFDMA)
 
   Callback<void> m_capabilitiesChangedCallback; //!< Callback when PHY capabilities changed
 };
