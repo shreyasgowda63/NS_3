@@ -29,6 +29,7 @@
 #include "interference-helper.h"
 #include "wifi-phy-state-helper.h"
 #include "wifi-ppdu.h"
+#include "wifi-spectrum-signal-parameters.h"
 
 namespace ns3 {
 
@@ -138,6 +139,13 @@ struct HeSigAParameters
 {
   double rssiW; ///< RSSI in W
   uint8_t bssColor; ///< BSS color
+};
+
+/// RxSignalInfo structure containing info on the received signal
+struct RxSignalInfo
+{
+  double snr;  ///< SNR in linear scale
+  double rssi; ///< RSSI in dBm
 };
 
 /**
@@ -300,8 +308,13 @@ public:
 
   /**
    * \param ppdu the PPDU to send
+   * \param txPowerLevel the power level to use
+   *
+   * Note that now that the content of the TXVECTOR is stored in the WifiPpdu through PHY headers,
+   * the calling method has to specify the TX power level to use upon transmission.
+   * Indeed the TXVECTOR obtained from WifiPpdu does not have this information set.
    */
-  virtual void StartTx (Ptr<WifiPpdu> ppdu) = 0;
+  virtual void StartTx (Ptr<WifiPpdu> ppdu, uint8_t txPowerLevel) = 0;
 
   /**
    * Put in sleep mode.
@@ -1788,12 +1801,16 @@ public:
    */
   void ResetCca (bool powerRestricted, double txPowerMaxSiso = 0, double txPowerMaxMimo = 0);
   /**
-   * Compute the transmit power (in dBm) for the next transmission.
+   * Compute the transmit power for the next transmission.
+   * The returned power will satisfy the power density constraints
+   * after addition of antenna gain.
    *
    * \param txVector the TXVECTOR
+   * \param staId the STA-ID of the transmitting station, only applicable for HE TB PPDU
+   * \param flag flag indicating the type of Tx PSD to build
    * \return the transmit power in dBm for the next transmission
    */
-  double GetTxPowerForTransmission (WifiTxVector txVector) const;
+  double GetTxPowerForTransmission (WifiTxVector txVector, uint16_t staId = SU_STA_ID, TxPsdFlag flag = PSD_NON_HE_TB) const;
   /**
    * Notify the PHY that an access to the channel was requested.
    * This is typically called by the channel access manager to
@@ -1811,7 +1828,16 @@ public:
    *
    * \return the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
    */
-  WifiSpectrumBand GetRuBand (WifiTxVector txVector, uint16_t staId);
+  WifiSpectrumBand GetRuBand (WifiTxVector txVector, uint16_t staId) const;
+  /**
+   * Get the band used to transmit the non-OFDMA part of an HE TB PPDU.
+   *
+   * \param txVector the TXVECTOR used for the transmission
+   * \param staId the STA-ID of the station taking part of the UL MU
+   *
+   * \return the spectrum band used to transmit the non-OFDMA part of an HE TB PPDU
+   */
+  WifiSpectrumBand GetNonOfdmaBand (WifiTxVector txVector, uint16_t staId) const;
 
 
 protected:
@@ -1892,16 +1918,6 @@ protected:
    * This is a helper function to convert HE RU subcarriers, which are relative to the center frequency subcarrier, to the indexes used by the Spectrum model.
    */
   virtual WifiSpectrumBand ConvertHeRuSubcarriers (uint16_t channelWidth, HeRu::SubcarrierRange range) const;
-
-  /**
-   * Get the band used to transmit the non-OFDMA part of an HE TB PPDU.
-   *
-   * \param txVector the TXVECTOR used for the transmission
-   * \param staId the STA-ID of the station taking part of the UL MU
-   *
-   * \return the spectrum band used to transmit the non-OFDMA part of an HE TB PPDU
-   */
-  WifiSpectrumBand GetNonOfdmaBand (WifiTxVector txVector, uint16_t staId);
 
   InterferenceHelper m_interference;   //!< Pointer to InterferenceHelper
   Ptr<UniformRandomVariable> m_random; //!< Provides uniform random variables.
@@ -2277,6 +2293,7 @@ private:
   double   m_txPowerBaseDbm;      //!< Minimum transmission power (dBm)
   double   m_txPowerEndDbm;       //!< Maximum transmission power (dBm)
   uint8_t  m_nTxPower;            //!< Number of available transmission power levels
+  double m_powerDensityLimit;     //!< the power density limit (dBm/MHz)
 
   bool m_powerRestricted;        //!< Flag whether transmit power is restricted by OBSS PD SR
   double m_txPowerMaxSiso;       //!< SISO maximum transmit power due to OBSS PD SR power restriction (dBm)
@@ -2318,6 +2335,13 @@ private:
 
   Callback<void> m_capabilitiesChangedCallback; //!< Callback when PHY capabilities changed
 };
+
+/**
+ * \param os           output stream
+ * \param rxSignalInfo received signal info to stringify
+ * \return output stream
+ */
+std::ostream& operator<< (std::ostream& os, RxSignalInfo rxSignalInfo);
 
 } //namespace ns3
 

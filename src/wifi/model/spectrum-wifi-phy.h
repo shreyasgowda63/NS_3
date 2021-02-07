@@ -31,7 +31,6 @@
 #include "ns3/spectrum-model.h"
 #include "ns3/wifi-spectrum-value-helper.h"
 #include "wifi-phy.h"
-#include "wifi-spectrum-signal-parameters.h"
 
 namespace ns3 {
 
@@ -63,7 +62,7 @@ public:
   virtual ~SpectrumWifiPhy ();
 
   // Implementation of pure virtual method.
-  void StartTx (Ptr<WifiPpdu> ppdu);
+  void StartTx (Ptr<WifiPpdu> ppdu, uint8_t txPowerLevel);
   Ptr<Channel> GetChannel (void) const;
 
   /**
