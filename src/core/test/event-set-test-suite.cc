@@ -357,23 +357,22 @@ public:
   {}
 
 protected:
-  void TestEventsRemovedInRandomOrder ();
+  void TestEventsRemovedInRandomOrder (uint32_t numEvents);
 
   virtual void DoRun ();
 
 };
 
 void
-RandomEventSetTestCase::TestEventsRemovedInRandomOrder ()
+RandomEventSetTestCase::TestEventsRemovedInRandomOrder (uint32_t numEvents)
 {
-  const uint32_t eventCount = 100;
   const uint64_t timestamp = 1000;
 
   auto eventSet = MakeSet ();
 
   std::map<SimEventKey, uint32_t> insertOrder;
 
-  for (uint32_t i = 0; i < eventCount; ++i)
+  for (uint32_t i = 0; i < numEvents; ++i)
     {
       auto event = MakeEvent (timestamp);
       insertOrder[event.key] = i;
@@ -385,7 +384,7 @@ RandomEventSetTestCase::TestEventsRemovedInRandomOrder ()
 
   std::map<SimEventKey, uint32_t> removalOrder;
 
-  for (uint32_t i = 0; i < eventCount; ++i)
+  for (uint32_t i = 0; i < numEvents; ++i)
     {
       auto event = eventSet->Next ();
 
@@ -417,7 +416,8 @@ RandomEventSetTestCase::DoRun ()
   EventSetTestCase::DoRun ();
 
   //now run test cases specific to this type of event set 
-  TestEventsRemovedInRandomOrder ();
+  TestEventsRemovedInRandomOrder (5);
+  TestEventsRemovedInRandomOrder (100);
 }
 
 //====================================
