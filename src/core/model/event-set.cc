@@ -222,13 +222,12 @@ LifoEventSet::GetTypeId ()
 
 LifoEventSet::LifoEventSet ()
   :   m_maxSize (512),
-    m_head (0),
-    m_tail (0),
-    m_count (0),
-    m_buffer (m_maxSize)
+    m_buffer ()
 
 {
   NS_LOG_FUNCTION (this);
+
+  m_buffer.reserve (m_maxSize);
 }
 
 LifoEventSet::~LifoEventSet ()
@@ -247,9 +246,7 @@ LifoEventSet::SetMaxSize (uint32_t newSize)
   if (IsEmpty ())
     {
       m_maxSize = newSize;
-      m_buffer.resize (m_maxSize);
-      m_head = 0;
-      m_tail = 0;
+      m_buffer.reserve (m_maxSize);
     }
 }
 
@@ -264,17 +261,17 @@ LifoEventSet::GetMaxSize () const
 bool
 LifoEventSet::IsEmpty () const
 {
-  NS_LOG_FUNCTION (this << m_count);
+  NS_LOG_FUNCTION (this << m_buffer.empty ());
 
-  return m_count == 0;
+  return m_buffer.empty ();
 }
 
 bool
 LifoEventSet::IsFull () const
 {
-  NS_LOG_FUNCTION (this << m_count << m_maxSize);
+  NS_LOG_FUNCTION (this << m_buffer.size () << m_maxSize);
 
-  return m_count == m_maxSize;
+  return m_buffer.size () == m_maxSize;
 }
 
 bool
@@ -288,9 +285,7 @@ LifoEventSet::Insert (SimEvent ev)
       return false;
     }
 
-  m_buffer[m_tail] = ev;
-  ++m_tail;
-  ++m_count;
+  m_buffer.emplace_back (std::move (ev));
 
   return true;
 }
@@ -302,7 +297,7 @@ LifoEventSet::Peek () const
 
   NS_ASSERT_MSG (!IsEmpty (), "Attempted to peek the next event from an empty set");
 
-  return m_buffer[m_tail - 1];
+  return *m_buffer.rbegin ();
 }
 
 SimEvent
@@ -312,10 +307,10 @@ LifoEventSet::Next ()
 
   NS_ASSERT_MSG (!IsEmpty (), "Attempted to get the next event from an empty set");
 
-  --m_tail;
-  --m_count;
+  SimEvent ev = *m_buffer.rbegin ();
+  m_buffer.pop_back ();
 
-  return m_buffer[m_tail];
+  return ev;
 }
 
 bool
@@ -455,6 +450,7 @@ RandomEventSet::Insert (SimEvent ev)
     }
   else
     {
+        //only one item, just add it to the buffer
         m_buffer.emplace_back (std::move (ev));
     }
 

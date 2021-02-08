@@ -254,21 +254,6 @@ private:
   uint32_t m_maxSize;
 
   /**
-   * Location of the first event inserted in the set
-   */
-  std::size_t m_head;
-
-  /**
-   * Location of the last event inserted in the set
-   */
-  std::size_t m_tail;
-
-  /**
-   * Number of events in the set
-   */
-  uint32_t m_count;
-
-  /**
    * Storage area for events
    */
   Buffer m_buffer;
