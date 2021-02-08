@@ -445,11 +445,16 @@ RandomEventSet::Insert (SimEvent ev)
       //pick a random event to swap
       uint32_t position = m_random->GetInteger () % m_buffer.size ();
 
+      NS_LOG_INFO ("Moving event from position " << position << " to "
+                    << m_buffer.size ());
+
       //move the event at the current position to the back of the line
       m_buffer.emplace_back (std::move (m_buffer[position]));
 
       //insert the new event at the random position
       m_buffer[position] = std::move (ev);
+
+      NS_LOG_INFO ("Inserting new event at position " << position);
     }
   else
     {
