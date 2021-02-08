@@ -372,6 +372,8 @@ RandomEventSet::RandomEventSet ()
 
 {
   NS_LOG_FUNCTION (this);
+
+  m_buffer.reserve (m_maxSize);
 }
 
 RandomEventSet::~RandomEventSet ()
@@ -398,6 +400,7 @@ RandomEventSet::SetMaxSize (uint32_t newSize)
   if (IsEmpty ())
     {
       m_maxSize = newSize;
+      m_buffer.reserve (m_maxSize);
     }
 
 }
@@ -464,7 +467,7 @@ RandomEventSet::Peek () const
 
   NS_ASSERT_MSG (!IsEmpty (), "Attempted to peek the next event from an empty set");
 
-  return m_buffer.front ();
+  return *m_buffer.rbegin ();
 }
 
 SimEvent
@@ -474,9 +477,9 @@ RandomEventSet::Next ()
 
   NS_ASSERT_MSG (!IsEmpty (), "Attempted to get the next event from an empty set");
 
-  SimEvent ev = m_buffer.front ();
+  SimEvent ev = *m_buffer.rbegin ();
 
-  m_buffer.pop_front ();
+  m_buffer.pop_back ();
 
   return ev;
 }

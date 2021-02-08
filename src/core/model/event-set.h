@@ -331,7 +331,7 @@ private:
   /**
    * A collection of simulation events
    */
-  using Buffer = std::deque<SimEvent>;
+  using Buffer = std::vector<SimEvent>;
 
   /**
    * The maximum number of events that can be held in the set before it is full
