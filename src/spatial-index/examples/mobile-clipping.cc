@@ -41,24 +41,13 @@ void output_received(std::vector<unsigned int> received, unsigned int width)
 {
   for(unsigned int i=0; i<received.size(); i++)
     {
-      std::cout << std::setw(3) << received[i]; //tried color? "\033[1;31" << received[i] << "\033[0m";
+      std::cout << std::setw(3) << received[i];
       if((i+1)%width==0)
         {
           std::cout << std::endl;
         }
     }
 }
-
-/*static void
-CourseChange (std::string foo, Ptr<const MobilityModel> mobility)
-{
-  Vector pos = mobility->GetPosition ();
-  //Vector vel = mobility->GetVelocity ();
-  std::cout << Simulator::Now ().GetSeconds() << ", " << mobility->GetObject<Node>()->GetId() << ", " << pos.x << ", " << pos.y << std::endl;// << ", model=" << mobility << ", POS: x=" << pos.x << ", y=" << pos.y
-  //            << ", z=" << pos.z << "; VEL:" << vel.x << ", y=" << vel.y
-  //          << ", z=" << vel.z << std::endl;
-  }*/
-
 
 std::pair<double, std::vector<unsigned int> > run(unsigned int width,
                                                   double total_time,
@@ -93,8 +82,8 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
 
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                              "Mode", StringValue ("Time"),
-                             "Time", StringValue ("2s"),
-                             "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=100.0]"), //was 1.0
+                             "Time", StringValue ("15s"),
+                             "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=5.0]"),
                              "Direction", PointerValue(rndDir),
                              "Bounds", RectangleValue(Rectangle(-node_separation, width*node_separation, -node_separation, width*node_separation)));
   mobility.Install(nodes);
@@ -113,23 +102,22 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
       PositionAwareHelper pos_aware;
       pos_aware.Install(nodes);
 
-      // messages are clipped so that any transmissions other than to direct
-      // (non diagonal)neighbors aren't processed
-      // Config::SetDefault("ns3::Channel::ReceiveClipRange", DoubleValue(clip_range));
-      // Config::SetDefault("ns3::Channel::EnableSpatialIndexing", BooleanValue(true));
     }
 
 
   WifiMacHelper wifiMac = WifiMacHelper();
   wifiMac.SetType("ns3::AdhocWifiMac");
 
-  YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default ();
-  SpectrumWifiPhyHelper spectrumPhy = SpectrumWifiPhyHelper::Default ();
+  YansWifiPhyHelper wifiPhy;
+  wifiPhy.SetErrorRateModel ("ns3::NistErrorRateModel");
+  SpectrumWifiPhyHelper spectrumPhy;
+  spectrumPhy.SetErrorRateModel ("ns3::NistErrorRateModel");
+  
 
   Ptr<PropagationLossModel> lossModel;
   if(loss_model == "range") {
-    Ptr<PropagationLossModel> lossModel = CreateObject<RangePropagationLossModel>();
-    lossModel->SetAttribute("MaxRange", DoubleValue(1000.0)); //what should value be? todo
+    lossModel = CreateObject<RangePropagationLossModel>();
+    lossModel->SetAttribute("MaxRange", DoubleValue(518.0));
   }
   else if(loss_model == "friis"){
     lossModel = CreateObject<FriisPropagationLossModel>();
@@ -140,7 +128,7 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
 
   if (wifi_type == "ns3::YansWifiPhy")
     {
-      YansWifiChannelHelper wifiChannel;// = YansWifiChannelHelper::Default ();
+      YansWifiChannelHelper wifiChannel;
       wifiChannel.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
       if (clipping_enabled)
       {
@@ -179,7 +167,9 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
     }
   //Create Devices
   WifiHelper wifi;
-  wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager", "DataMode", StringValue("OfdmRate6Mbps"), "RtsCtsThreshold", UintegerValue(0));
+  wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager", "DataMode",
+                               StringValue("OfdmRate6Mbps"),
+                               "RtsCtsThreshold", UintegerValue(0));
 
   NetDeviceContainer devices;
   if (wifi_type == "ns3::YansWifiPhy")
@@ -203,16 +193,16 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
   ApplicationContainer p;
   ApplicationContainer s;
   int port = 100;
-  UdpClientHelper ping_app(Ipv4Address("255.255.255.255"),port); //ping everyone
+  UdpClientHelper ping_app(Ipv4Address("255.255.255.255"),port); //ping all
   UdpServerHelper serv_app(port);
   ping_app.SetAttribute("Interval",TimeValue(Seconds(100)));
   ping_app.SetAttribute("MaxPackets",UintegerValue(1000000));
   p.Add(ping_app.Install(nodes));
   for(unsigned int i=0; i<p.GetN(); i++)
     {
-      //p.Get(i)->SetStartTime(Seconds(i*.01));
-      p.Get(i)->SetStartTime(Seconds(10+(i*.1)));//.09)); //*.01)); //offset start times slightly to avoid collisions
-    } //remove 50 above?
+      //offset start times slightly to avoid collisions
+      p.Get(i)->SetStartTime(Seconds(10+(i*.01)));
+    }
   s.Add(serv_app.Install(nodes));
 
   //Config::Connect ("/NodeList/*/$ns3::MobilityModel/CourseChange",
@@ -233,8 +223,7 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
   Simulator::Run();
   auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = finish-start;
-  std::cout << "Run time = " << elapsed.count() << " seconds" << std::endl; //dur/1000.0 << " seconds" << std::endl;
-  //  std::cout << "Number of packets received:" << server->GetReceived() << std::endl;
+  std::cout << "Run time = " << elapsed.count() << " seconds" << std::endl;
   std::vector<unsigned int> received;
   for(unsigned int i=0; i<p.GetN(); i++)
     {
@@ -254,7 +243,7 @@ main (int argc, char *argv[])
   double total_time = 100;
   //for ns-3 version 3.29 and earlier use 1070.0 for default clip_range
   double clip_range = 519.0;
-  std::string wifi_type  = "ns3::YansWifiPhy";
+  std::string wifi_type  = "ns3::SpectrumWifiPhy";
   std::string loss_model = "friis";
 
   CommandLine cmd;
@@ -268,23 +257,25 @@ main (int argc, char *argv[])
   // LogComponentEnable ("PositionAware", LOG_LEVEL_FUNCTION);
   LogComponentEnable ("SpatialIndexing", LOG_LEVEL_WARN);
   LogComponentEnable ("KDTree", LOG_LEVEL_WARN);
-  /*  std::cout << "In the following simulation a grid of " << width*width <<
-    " nodes will be created, and each node will send a UDP packet to the" <<
-    " broadcast address over a Spectrum Wifi Channel.  However the" <<
-    " distances between nodes have been stategically set such that the" <<
-    " wifi packets will only successfully propagate to direct neighbors" <<
-    " (not diagonal).  With clipping simulation time is drastically reduced" <<
-    " as receive events are only placed on the queue for nodes within the" <<
-    " chosen clipping range, yielding the same results in much less time." <<
-    std::endl << std::endl;*/
+  std::cout << "In the following simulation " << width*width <<
+    " nodes will be created, with their starting positions on a grid." <<
+    " Nodes will select a random direction of" <<
+    " travel every 15 seconds and travel in that direction at 5 m/s." <<
+    " During the simulation Each node will send a UDP packet to the" <<
+    " broadcast address over a" <<
+    " Wifi Channel.  The identical motions are repeated with and without" <<
+    " clipping enabled, and the speedup using clipping and fidelity are" <<
+    " computed.  With clipping enabled the simulation time is drastically" <<
+    " reduced as receive events are only placed on the queue for nodes" <<
+    " within the clipping range, yielding nearly the same, if not"
+    " identical results in much less time." <<
+    std::endl << std::endl;
   std::cout << "Wifi Type: " << wifi_type << std::endl;
   std::cout << "Clip Range: " << clip_range << std::endl;
   std::cout << "Loss Model: " << loss_model << std::endl;
   std::cout << "Simulating " << width*width << " mobile nodes." << std::endl;
   std::cout << "Simulating with clipping enabled..." << std::endl;
   std::pair<double, std::vector<unsigned int> > vals1 = run(width, total_time, true, clip_range, wifi_type, loss_model, verbose);
-  //int pktsReceived = accumulate(received.begin(), received.end(), 0);
-  //std::cout <<"Total received = " << pktsReceived << std::endl;
   double dur_with_clip = vals1.first;
   std::vector<unsigned int> received_with_clip = vals1.second;
   std::cout << std::endl <<
@@ -311,7 +302,6 @@ main (int argc, char *argv[])
   std::cout << "Speedup = " << dur_no_clip/dur_with_clip << std::endl;
   std::cout << "Fidelity:" << (num_same / double(received_with_clip.size()))*100 << "%" << std::endl;
   std::cout << "(above is percentage of nodes receiving the same number of packets with clipping enabled as they do otherwise)" << std::endl;
-  //std::cout <<      "Incorrectly clipped % = " << std::endl;
   return 0;
 }
 

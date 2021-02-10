@@ -89,7 +89,9 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
   WifiMacHelper wifiMac = WifiMacHelper();
   wifiMac.SetType("ns3::AdhocWifiMac");
 
-  SpectrumWifiPhyHelper spectrumPhy = SpectrumWifiPhyHelper::Default ();
+  SpectrumWifiPhyHelper spectrumPhy;
+  spectrumPhy.SetErrorRateModel ("ns3::NistErrorRateModel");
+  
   Ptr<MultiModelSpectrumChannel> spectrumChannel = nullptr;
   if (!clipping_enabled)
   {
