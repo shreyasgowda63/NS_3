@@ -39,7 +39,7 @@
 #include "he-configuration.h"
 #include "mpdu-aggregator.h"
 #include "wifi-psdu.h"
-#include "wifi-ppdu.h"
+#include "he-ppdu.h"
 #include "ap-wifi-mac.h"
 #include "dsss-phy.h"
 #include "erp-ofdm-phy.h"
@@ -2228,7 +2228,8 @@ WifiPhy::Send (WifiConstPsduMap psdus, WifiTxVector txVector)
     }
   m_previouslyRxPpduUid = UINT64_MAX; //reset to use it only once
   m_previouslyTxPpduUid = uid; //to be able to identify solicited HE TB PPDUs
-  Ptr<WifiPpdu> ppdu = Create<WifiPpdu> (psdus, txVector, txDuration, GetPhyBand (), uid);
+
+  Ptr<WifiPpdu> ppdu = GetPhyEntity (txVector.GetModulationClass ())->BuildPpdu (psdus, txVector, txDuration, GetPhyBand (), uid);
 
   if (m_wifiRadioEnergyModel != 0 && m_wifiRadioEnergyModel->GetMaximumTimeInState (WifiPhyState::TX) < txDuration)
     {
@@ -2418,7 +2419,7 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, RxPowerWattPerChannelBand rxP
     [] (const std::pair<WifiSpectrumBand, double>& p1, const std::pair<WifiSpectrumBand, double>& p2) {
       return p1.second < p2.second;
     });
-  NS_LOG_FUNCTION (this << *ppdu << it->second);
+  NS_LOG_FUNCTION (this << ppdu << it->second);
   WifiTxVector txVector = ppdu->GetTxVector ();
   Time rxDuration = ppdu->GetTxDuration ();
 
@@ -2427,7 +2428,7 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, RxPowerWattPerChannelBand rxP
   //If a preamble is received after the preamble detection window, it is stored anyway because this is needed for HE TB PPDUs in
   //order to properly update the received power in InterferenceHelper. The map is cleaned anyway at the end of the current reception.
   auto uidPreamblePair = std::make_pair (ppdu->GetUid (), ppdu->GetPreamble ());
-  if (ppdu->IsUlMu ())
+  if (ppdu->GetType () == WIFI_PPDU_TYPE_UL_MU)
     {
       rxDuration = CalculateNonOfdmaDurationForHeTb (txVector); //the OFDMA part of the transmission will be added later on
       auto it = m_currentPreambleEvents.find (uidPreamblePair);
@@ -2576,7 +2577,7 @@ WifiPhy::StartReceivePreamble (Ptr<WifiPpdu> ppdu, RxPowerWattPerChannelBand rxP
 void
 WifiPhy::DropPreambleEvent (Ptr<const WifiPpdu> ppdu, WifiPhyRxfailureReason reason, Time endRx, uint16_t measurementChannelWidth)
 {
-  NS_LOG_FUNCTION (this << *ppdu << reason << endRx << measurementChannelWidth);
+  NS_LOG_FUNCTION (this << ppdu << reason << endRx << measurementChannelWidth);
   NotifyRxDrop (GetAddressedPsduInPpdu (ppdu), reason);
   auto it = m_currentPreambleEvents.find (std::make_pair (ppdu->GetUid (), ppdu->GetPreamble ()));
   if (it != m_currentPreambleEvents.end ())
@@ -2614,7 +2615,7 @@ WifiPhy::StartReceiveOfdmaPayload (Ptr<Event> event)
     [] (const std::pair<WifiSpectrumBand, double>& p1, const std::pair<WifiSpectrumBand, double>& p2) {
       return p1.second < p2.second;
     });
-  NS_LOG_FUNCTION (this << event << *ppdu << it->second);
+  NS_LOG_FUNCTION (this << event << ppdu << it->second);
   NS_ASSERT (m_currentEvent != 0);
   auto itEvent = m_beginOfdmaPayloadRxEvents.find (GetStaId (ppdu));
   /**
@@ -2664,7 +2665,7 @@ WifiPhy::EndReceiveCommonHeader (Ptr<Event> event)
           NotifyRxDrop (psdu, UNSUPPORTED_SETTINGS);
         }
 
-      if (ppdu->IsDlMu ()) //Final decision on content of DL MU is reported to end of SIG-B (unless the PPDU is filtered)
+      if (ppdu->GetType () == WIFI_PPDU_TYPE_DL_MU) //Final decision on content of DL MU is reported to end of SIG-B (unless the PPDU is filtered)
         {
           if (psdu) //a valid pointer is returned only if BSS colors match
             {
@@ -2689,7 +2690,7 @@ WifiPhy::EndReceiveCommonHeader (Ptr<Event> event)
         }
       else
         {
-          NS_ASSERT (ppdu->IsUlMu ());
+          NS_ASSERT (ppdu->GetType () == WIFI_PPDU_TYPE_UL_MU);
           NS_LOG_DEBUG ("No PSDU addressed to that PHY in the received MU PPDU. The PPDU is filtered.");
           filteredOut = true;
           m_phyRxPayloadBeginTrace (txVector, NanoSeconds (0)); //this callback (equivalent to PHY-RXSTART primitive) is also triggered for filtered PPDUs
@@ -2735,7 +2736,7 @@ WifiPhy::EndReceiveSigB (Ptr<Event> event)
   NS_ASSERT (m_endPhyRxEvent.IsExpired ());
   Ptr<const WifiPpdu> ppdu = event->GetPpdu ();
   WifiTxVector txVector = event->GetTxVector ();
-  NS_ASSERT (ppdu->IsDlMu ());
+  NS_ASSERT (ppdu->GetType () == WIFI_PPDU_TYPE_DL_MU);
 
   Time timeBetweenSigBAndPayload = (ppdu->GetModulation () == WIFI_MOD_CLASS_VHT) ? //SIG-B just before payload for VHT whereas before training for HE
                                    NanoSeconds (0) :
@@ -2982,7 +2983,7 @@ WifiPhy::EndReceive (Ptr<Event> event)
   WifiTxVector txVector = event->GetTxVector ();
   Time psduDuration = ppdu->GetTxDuration () - CalculatePhyPreambleAndHeaderDuration (txVector);
   NS_LOG_FUNCTION (this << *event << psduDuration);
-  if (!ppdu->IsUlMu ())
+  if (ppdu->GetType () != WIFI_PPDU_TYPE_UL_MU)
     {
       NS_ASSERT (GetLastRxEndTime () == Simulator::Now ());
     }
@@ -3025,7 +3026,7 @@ WifiPhy::EndReceive (Ptr<Event> event)
       m_state->SwitchFromRxEndError (Copy (psdu), snr);
     }
 
-  if (ppdu->IsUlMu ())
+  if (ppdu->GetType () == WIFI_PPDU_TYPE_UL_MU)
     {
       for (auto it = m_endRxEvents.begin (); it != m_endRxEvents.end (); )
         {
@@ -3170,7 +3171,7 @@ WifiPhy::ResetReceive (Ptr<Event> event)
 {
   NS_LOG_FUNCTION (this << *event);
   Ptr<const WifiPpdu> ppdu = event->GetPpdu ();
-  if (!ppdu->IsUlMu ())
+  if (ppdu->GetType () != WIFI_PPDU_TYPE_UL_MU)
     {
       NS_ASSERT (event->GetEndTime () == Simulator::Now ());
     }
@@ -3524,54 +3525,60 @@ Ptr<const WifiPsdu>
 WifiPhy::GetAddressedPsduInPpdu (Ptr<const WifiPpdu> ppdu) const
 {
   Ptr<const WifiPsdu> psdu;
-  if (!ppdu->IsMu ())
+  switch (ppdu->GetType ())
     {
-      psdu = ppdu->GetPsdu ();
-    }
-  else if (ppdu->IsUlMu ())
-    {
-      uint8_t bssColor = 0;
-      Ptr<WifiNetDevice> device = DynamicCast<WifiNetDevice> (GetDevice ());
-      if (device)
+      case WIFI_PPDU_TYPE_UL_MU:
         {
-          Ptr<HeConfiguration> heConfiguration = device->GetHeConfiguration ();
-          if (heConfiguration)
+          uint8_t bssColor = 0;
+          Ptr<WifiNetDevice> device = DynamicCast<WifiNetDevice> (GetDevice ());
+          if (device)
             {
-              UintegerValue bssColorAttribute;
-              heConfiguration->GetAttribute ("BssColor", bssColorAttribute);
-              bssColor = bssColorAttribute.Get ();
+              Ptr<HeConfiguration> heConfiguration = device->GetHeConfiguration ();
+              if (heConfiguration)
+                {
+                  UintegerValue bssColorAttribute;
+                  heConfiguration->GetAttribute ("BssColor", bssColorAttribute);
+                  bssColor = bssColorAttribute.Get ();
+                }
             }
+          //TODO Move this to HePhy
+          psdu = DynamicCast<const HePpdu> (ppdu)->GetPsdu (bssColor);
         }
-      psdu = ppdu->GetPsdu (bssColor);
-    }
-  else //DL MU
-    {
-      uint8_t bssColor = 0;
-      Ptr<WifiNetDevice> device = DynamicCast<WifiNetDevice> (GetDevice ());
-      if (device)
+        break;
+      case WIFI_PPDU_TYPE_DL_MU:
         {
-          Ptr<HeConfiguration> heConfiguration = device->GetHeConfiguration ();
-          if (heConfiguration)
+          uint8_t bssColor = 0;
+          Ptr<WifiNetDevice> device = DynamicCast<WifiNetDevice> (GetDevice ());
+          if (device)
             {
-              UintegerValue bssColorAttribute;
-              heConfiguration->GetAttribute ("BssColor", bssColorAttribute);
-              bssColor = bssColorAttribute.Get ();
+              Ptr<HeConfiguration> heConfiguration = device->GetHeConfiguration ();
+              if (heConfiguration)
+                {
+                  UintegerValue bssColorAttribute;
+                  heConfiguration->GetAttribute ("BssColor", bssColorAttribute);
+                  bssColor = bssColorAttribute.Get ();
+                }
             }
+          //TODO Move this to HePhy
+          psdu = DynamicCast<const HePpdu> (ppdu)->GetPsdu (bssColor, GetStaId (ppdu));
         }
-      psdu = ppdu->GetPsdu (bssColor, GetStaId (ppdu));
+        break;
+      case WIFI_PPDU_TYPE_SU:
+      default:
+        psdu = ppdu->GetPsdu ();
     }
-    return psdu;
+   return psdu;
 }
 
 uint16_t
 WifiPhy::GetStaId (const Ptr<const WifiPpdu> ppdu) const
 {
   uint16_t staId = SU_STA_ID;
-  if (ppdu->IsUlMu ())
+  if (ppdu->GetType () == WIFI_PPDU_TYPE_UL_MU)
     {
       staId = ppdu->GetStaId ();
     }
-  else if (ppdu->IsDlMu ())
+  else if (ppdu->GetType () == WIFI_PPDU_TYPE_DL_MU)
     {
       Ptr<WifiNetDevice> device = DynamicCast<WifiNetDevice> (GetDevice ());
       if (device)
