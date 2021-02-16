@@ -28,7 +28,6 @@
 #include "wifi-phy.h"
 #include "error-rate-model.h"
 #include "wifi-utils.h"
-#include "he-ppdu.h" //TODO: remove this once code ported to HePhy
 #include "wifi-psdu.h"
 
 namespace ns3 {
@@ -545,7 +544,7 @@ InterferenceHelper::CalculatePhyHeaderPer (Ptr<const Event> event, NiChangesPerB
   return 1 - psr;
 }
 
-struct InterferenceHelper::SnrPer
+struct PhyEntity::SnrPer
 InterferenceHelper::CalculatePayloadSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band,
                                             uint16_t staId, std::pair<Time, Time> relativeMpduStartStop) const
 {
@@ -562,10 +561,7 @@ InterferenceHelper::CalculatePayloadSnrPer (Ptr<Event> event, uint16_t channelWi
    */
   double per = CalculatePayloadPer (event, channelWidth, &ni, band, staId, relativeMpduStartStop);
 
-  struct SnrPer snrPer;
-  snrPer.snr = snr;
-  snrPer.per = per;
-  return snrPer;
+  return PhyEntity::SnrPer (snr, per);
 }
 
 double
@@ -580,7 +576,7 @@ InterferenceHelper::CalculateSnr (Ptr<Event> event, uint16_t channelWidth, uint8
   return snr;
 }
 
-struct InterferenceHelper::SnrPer
+struct PhyEntity::SnrPer
 InterferenceHelper::CalculatePhyHeaderSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band,
                                               WifiPpduField header) const
 {
@@ -597,10 +593,7 @@ InterferenceHelper::CalculatePhyHeaderSnrPer (Ptr<Event> event, uint16_t channel
    */
   double per = CalculatePhyHeaderPer (event, &ni, channelWidth, band, header);
   
-  struct SnrPer snrPer;
-  snrPer.snr = snr;
-  snrPer.per = per;
-  return snrPer;
+  return PhyEntity::SnrPer (snr, per);
 }
 
 void

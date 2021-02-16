@@ -23,7 +23,6 @@
 #define VHT_PHY_H
 
 #include "ht-phy.h"
-#include <tuple>
 
 /**
  * \file
@@ -68,8 +67,7 @@ public:
   virtual Time GetLSigDuration (WifiPreamble preamble) const override;
   virtual Time GetTrainingDuration (WifiTxVector txVector,
                                     uint8_t nDataLtf, uint8_t nExtensionLtf = 0) const override;
-  virtual Ptr<WifiPpdu> BuildPpdu (const WifiConstPsduMap & psdus, WifiTxVector txVector,
-                                   Time ppduDuration, WifiPhyBand band, uint64_t uid) const override;
+  virtual Ptr<WifiPpdu> BuildPpdu (const WifiConstPsduMap & psdus, WifiTxVector txVector, Time ppduDuration) override;
 
   /**
    * \return the WifiMode used for the SIG-A field
@@ -171,6 +169,50 @@ protected:
   WifiMode GetHtSigMode (void) const override;
   Time GetHtSigDuration (void) const override;
   virtual uint8_t GetNumberBccEncoders (WifiTxVector txVector) const override;
+  virtual PhyFieldRxStatus DoEndReceiveField (WifiPpduField field, Ptr<Event> event) override;
+  virtual bool IsAllConfigSupported (WifiPpduField field, Ptr<const WifiPpdu> ppdu) const override;
+
+  /**
+   * End receiving the SIG-A, perform VHT-specific actions, and
+   * provide the status of the reception.
+   *
+   * Child classes can perform amendment-specific actions by specializing
+   * \see ProcessSigA.
+   *
+   * \param event the event holding incoming PPDU's information
+   * \return status of the reception of the SIG-A
+   */
+  PhyFieldRxStatus EndReceiveSigA (Ptr<Event> event);
+  /**
+   * End receiving the SIG-B, perform VHT-specific actions, and
+   * provide the status of the reception.
+   *
+   * Child classes can perform amendment-specific actions by specializing
+   * \see ProcessSigB.
+   *
+   * \param event the event holding incoming PPDU's information
+   * \return status of the reception of the SIG-B
+   */
+  PhyFieldRxStatus EndReceiveSigB (Ptr<Event> event);
+
+  /**
+   * Process SIG-A, perform amendment-specific actions, and
+   * provide an updated status of the reception.
+   *
+   * \param event the event holding incoming PPDU's information
+   * \param status the status of the reception of the correctly received SIG-A after the configuration support check
+   * \return the updated status of the reception of the SIG-A
+   */
+  virtual PhyFieldRxStatus ProcessSigA (Ptr<Event> event, PhyFieldRxStatus status);
+  /**
+   * Process SIG-B, perform amendment-specific actions, and
+   * provide an updated status of the reception.
+   *
+   * \param event the event holding incoming PPDU's information
+   * \param status the status of the reception of the correctly received SIG-B after the configuration support check
+   * \return the updated status of the reception of the SIG-B
+   */
+  virtual PhyFieldRxStatus ProcessSigB (Ptr<Event> event, PhyFieldRxStatus status);
 
 private:
   // Inherited

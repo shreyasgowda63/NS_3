@@ -24,6 +24,8 @@
 #include "dsss-ppdu.h"
 #include "wifi-psdu.h"
 #include "wifi-phy.h" //only used for static mode constructor
+#include "wifi-utils.h"
+#include "ns3/simulator.h"
 #include "ns3/log.h"
 
 namespace ns3 {
@@ -154,10 +156,58 @@ DsssPhy::GetPayloadDuration (uint32_t size, WifiTxVector txVector, WifiPhyBand /
 }
 
 Ptr<WifiPpdu>
-DsssPhy::BuildPpdu (const WifiConstPsduMap & psdus, WifiTxVector txVector,
-                    Time ppduDuration, WifiPhyBand /* band */, uint64_t uid) const
+DsssPhy::BuildPpdu (const WifiConstPsduMap & psdus, WifiTxVector txVector, Time ppduDuration)
 {
-  return Create<DsssPpdu> (psdus.begin ()->second, txVector, ppduDuration, uid);
+  NS_LOG_FUNCTION (this << psdus << txVector << ppduDuration);
+  return Create<DsssPpdu> (psdus.begin ()->second, txVector, ppduDuration,
+                           ObtainNextUid (txVector));
+}
+
+PhyEntity::PhyFieldRxStatus
+DsssPhy::DoEndReceiveField (WifiPpduField field, Ptr<Event> event)
+{
+  NS_LOG_FUNCTION (this << field << *event);
+  if (field == WIFI_PPDU_FIELD_NON_HT_HEADER)
+    {
+      return EndReceiveHeader (event); //PHY header or short PHY header
+    }
+  return PhyEntity::DoEndReceiveField (field, event);
+}
+
+PhyEntity::PhyFieldRxStatus
+DsssPhy::EndReceiveHeader (Ptr<Event> event)
+{
+  NS_LOG_FUNCTION (this << *event);
+  SnrPer snrPer = GetPhyHeaderSnrPer (WIFI_PPDU_FIELD_NON_HT_HEADER, event);
+  NS_LOG_DEBUG ("Long/Short PHY header: SNR(dB)=" << RatioToDb (snrPer.snr) << ", PER=" << snrPer.per);
+  PhyFieldRxStatus status (GetRandomValue () > snrPer.per);
+  if (status.isSuccess)
+    {
+      NS_LOG_DEBUG ("Received long/short PHY header");
+      if (!IsConfigSupported (event->GetPpdu ()))
+        {
+          status = PhyFieldRxStatus (false, UNSUPPORTED_SETTINGS, DROP);
+        }
+    }
+  else
+    {
+      NS_LOG_DEBUG ("Abort reception because long/short PHY header reception failed");
+      status.reason = L_SIG_FAILURE;
+      status.actionIfFailure = ABORT;
+    }
+  return status;
+}
+
+Ptr<SpectrumValue>
+DsssPhy::GetTxPowerSpectralDensity (double txPowerW, Ptr<const WifiPpdu> ppdu) const
+{
+  WifiTxVector txVector = ppdu->GetTxVector ();
+  uint16_t centerFrequency = GetCenterFrequencyForChannelWidth (txVector);
+  uint16_t channelWidth = txVector.GetChannelWidth ();
+  NS_LOG_FUNCTION (this << centerFrequency << channelWidth << txPowerW);
+  NS_ABORT_MSG_IF (channelWidth != 22, "Invalid channel width for DSSS");
+  Ptr<SpectrumValue> v = WifiSpectrumValueHelper::CreateDsssTxPowerSpectralDensity (centerFrequency, txPowerW, GetGuardBandwidth (channelWidth));
+  return v;
 }
 
 void

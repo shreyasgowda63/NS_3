@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors: Rediet <getachew.redieteab@orange.com>
- *          Sébastien Deronne <sebastien.deronne@gmail.com> (for logic ported from wifi-phy)
+ *          Sébastien Deronne <sebastien.deronne@gmail.com> (for logic ported from wifi-phy and spectrum-wifi-phy)
  */
 
 #ifndef HE_PHY_H
@@ -24,11 +24,13 @@
 
 #include "vht-phy.h"
 #include "wifi-phy-band.h"
+#include "ns3/callback.h"
 
 /**
  * \file
  * \ingroup wifi
- * Declaration of ns3::HePhy class.
+ * Declaration of ns3::HePhy class
+ * and ns3::HeSigAParameters struct.
  */
 
 namespace ns3 {
@@ -37,6 +39,15 @@ namespace ns3 {
  * This defines the BSS membership value for HE PHY.
  */
 #define HE_PHY 125
+
+/**
+ * Parameters for received HE-SIG-A for OBSS_PD based SR
+ */
+struct HeSigAParameters
+{
+  double rssiW;     ///< RSSI in W
+  uint8_t bssColor; ///< BSS color
+};
 
 /**
  * \brief PHY entity for HE (11ax)
@@ -49,6 +60,13 @@ namespace ns3 {
 class HePhy : public VhtPhy
 {
 public:
+  /**
+   * Callback upon end of HE-SIG-A
+   *
+   * arg1: Parameters of HE-SIG-A
+   */
+  typedef Callback<void, HeSigAParameters> EndOfHeSigACallback;
+
   /**
    * Constructor for HE PHY
    *
@@ -71,8 +89,21 @@ public:
                                     uint8_t nDataLtf, uint8_t nExtensionLtf = 0) const override;
   Time GetSigADuration (WifiPreamble preamble) const override;
   Time GetSigBDuration (WifiTxVector txVector) const override;
-  virtual Ptr<WifiPpdu> BuildPpdu (const WifiConstPsduMap & psdus, WifiTxVector txVector,
-                                   Time ppduDuration, WifiPhyBand band, uint64_t uid) const override;
+  virtual Ptr<WifiPpdu> BuildPpdu (const WifiConstPsduMap & psdus, WifiTxVector txVector, Time ppduDuration) override;
+  Ptr<const WifiPsdu> GetAddressedPsduInPpdu (Ptr<const WifiPpdu> ppdu) const override;
+  void StartReceivePreamble (Ptr<WifiPpdu> ppdu, RxPowerWattPerChannelBand rxPowersW,
+                             Time rxDuration) override;
+  void CancelAllEvents (void) override;
+  virtual uint16_t GetStaId (const Ptr<const WifiPpdu> ppdu) const override;
+  uint16_t GetMeasurementChannelWidth (const Ptr<const WifiPpdu> ppdu) const override;
+  void StartTx (Ptr<WifiPpdu> ppdu) override;
+  uint16_t GetTransmissionChannelWidth (Ptr<const WifiPpdu> ppdu) const override;
+  Time CalculateTxDuration (WifiConstPsduMap psduMap, WifiTxVector txVector, WifiPhyBand band) const override;
+
+  /**
+   * \return the BSS color of this PHY.
+   */
+  uint8_t GetBssColor (void) const;
 
   /**
    * \param ppduDuration the duration of the HE TB PPDU
@@ -80,7 +111,7 @@ public:
    *
    * \return the L-SIG length value corresponding to that HE TB PPDU duration.
    */
-  uint16_t ConvertHeTbPpduDurationToLSigLength (Time ppduDuration, WifiPhyBand band) const;
+  static uint16_t ConvertHeTbPpduDurationToLSigLength (Time ppduDuration, WifiPhyBand band);
   /**
    * \param length the L-SIG length value
    * \param txVector the TXVECTOR used for the transmission of this HE TB PPDU
@@ -88,13 +119,64 @@ public:
    *
    * \return the duration of the HE TB PPDU corresponding to that L-SIG length value.
    */
-  Time ConvertLSigLengthToHeTbPpduDuration (uint16_t length, WifiTxVector txVector, WifiPhyBand band) const;
+  static Time ConvertLSigLengthToHeTbPpduDuration (uint16_t length, WifiTxVector txVector, WifiPhyBand band);
   /**
    * \param txVector the transmission parameters used for the HE TB PPDU
    *
    * \return the duration of the non-OFDMA portion of the HE TB PPDU.
    */
   Time CalculateNonOfdmaDurationForHeTb (WifiTxVector txVector) const;
+
+  /**
+   * Get the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
+   *
+   * \param txVector the TXVECTOR used for the transmission
+   * \param staId the STA-ID of the recipient
+   *
+   * \return the RU band used to transmit a PSDU to a given STA in a HE MU PPDU
+   */
+  WifiSpectrumBand GetRuBand (WifiTxVector txVector, uint16_t staId) const;
+  /**
+   * Get the band used to transmit the non-OFDMA part of an HE TB PPDU.
+   *
+   * \param txVector the TXVECTOR used for the transmission
+   * \param staId the STA-ID of the station taking part of the UL MU
+   *
+   * \return the spectrum band used to transmit the non-OFDMA part of an HE TB PPDU
+   */
+  WifiSpectrumBand GetNonOfdmaBand (WifiTxVector txVector, uint16_t staId) const;
+
+  /**
+   * \return the UID of the HE TB PPDU being received
+   */
+  uint64_t GetCurrentHeTbPpduUid (void) const;
+
+  /**
+   * Get the center frequency of the non-OFDMA part of the current TxVector for the
+   * given STA-ID.
+   * Note this method is only to be used for UL MU.
+   *
+   * \param txVector the TXVECTOR that has the RU allocation
+   * \param staId the STA-ID of the station taking part of the UL MU
+   * \return the center frequency in MHz corresponding to the non-OFDMA part of the HE TB PPDU
+   */
+  uint16_t GetCenterFrequencyForNonOfdmaPart (WifiTxVector txVector, uint16_t staId) const;
+
+  /**
+   * Set a callback for a end of HE-SIG-A.
+   *
+   * \param callback the EndOfHeSigACallback to set
+   */
+  void SetEndOfHeSigACallback (EndOfHeSigACallback callback);
+
+  /**
+   * Fire a EndOfHeSigA callback (if connected) once HE-SIG-A field has been received.
+   * This method is scheduled immediatly after end of HE-SIG-A, once
+   * field processing is finished.
+   *
+   * \param params the HE-SIG-A parameters
+   */
+  void NotifyEndOfHeSigA (HeSigAParameters params);
 
   /**
    * Initialize all HE modes.
@@ -181,6 +263,35 @@ public:
    * \return MCS 11 from HE MCS values
    */
   static WifiMode GetHeMcs11 (void);
+
+protected:
+  // Inherited
+  PhyFieldRxStatus ProcessSigA (Ptr<Event> event, PhyFieldRxStatus status) override;
+  PhyFieldRxStatus ProcessSigB (Ptr<Event> event, PhyFieldRxStatus status) override;
+  Ptr<Event> DoGetEvent (Ptr<const WifiPpdu> ppdu, RxPowerWattPerChannelBand rxPowersW) override;
+  virtual bool IsConfigSupported (Ptr<const WifiPpdu> ppdu) const override;
+  virtual void DoStartReceivePayload (Ptr<Event> event) override;
+  std::pair<uint16_t, WifiSpectrumBand> GetChannelWidthAndBand (WifiTxVector txVector, uint16_t staId) const override;
+  void DoEndReceivePayload (Ptr<const WifiPpdu> ppdu) override;
+  void DoResetReceive (Ptr<Event> event) override;
+  void DoAbortCurrentReception (WifiPhyRxfailureReason reason) override;
+  uint64_t ObtainNextUid (const WifiTxVector& txVector) override;
+  virtual Ptr<SpectrumValue> GetTxPowerSpectralDensity (double txPowerW, Ptr<const WifiPpdu> ppdu) const override;
+
+  /**
+   * Start receiving the PSDU (i.e. the first symbol of the PSDU has arrived) of an UL-OFDMA transmission.
+   * This function is called upon the RX event corresponding to the OFDMA part of the UL MU PPDU.
+   *
+   * \param event the event holding incoming OFDMA part of the PPDU's information
+   */
+  void StartReceiveOfdmaPayload (Ptr<Event> event);
+
+  uint64_t m_previouslyTxPpduUid;  //!< UID of the previously sent PPDU, used by AP to recognize response HE TB PPDUs
+  uint64_t m_currentHeTbPpduUid;   //!< UID of the HE TB PPDU being received
+
+  std::map <uint16_t /* STA-ID */, EventId> m_beginOfdmaPayloadRxEvents; //!< the beginning of the OFDMA payload reception events (indexed by STA-ID)
+
+  EndOfHeSigACallback m_endOfHeSigACallback; //!< end of HE-SIG-A callback
 
 private:
   // Inherited

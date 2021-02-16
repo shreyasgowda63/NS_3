@@ -61,8 +61,7 @@ public:
   Time GetPayloadDuration (uint32_t size, WifiTxVector txVector, WifiPhyBand band, MpduType mpdutype,
                            bool incFlag, uint32_t &totalAmpduSize, double &totalAmpduNumSymbols,
                            uint16_t staId) const override;
-  Ptr<WifiPpdu> BuildPpdu (const WifiConstPsduMap & psdus, WifiTxVector txVector,
-                           Time ppduDuration, WifiPhyBand band, uint64_t uid) const override;
+  Ptr<WifiPpdu> BuildPpdu (const WifiConstPsduMap & psdus, WifiTxVector txVector, Time ppduDuration) override;
 
   /**
    * Initialize all HR/DSSS modes.
@@ -110,6 +109,10 @@ public:
   static WifiMode GetDsssRate11Mbps (void);
 
 private:
+  // Inherited
+  PhyFieldRxStatus DoEndReceiveField (WifiPpduField field, Ptr<Event> event) override;
+  Ptr<SpectrumValue> GetTxPowerSpectralDensity (double txPowerW, Ptr<const WifiPpdu> ppdu) const override;
+
   /**
    * \param txVector the transmission parameters
    * \return the WifiMode used for the PHY header field
@@ -128,6 +131,15 @@ private:
    * \return the duration of the PHY header field
    */
   Time GetHeaderDuration (WifiTxVector txVector) const;
+
+  /**
+   * End receiving the header, perform DSSS-specific actions, and
+   * provide the status of the reception.
+   *
+   * \param event the event holding incoming PPDU's information
+   * \return status of the reception of the header
+   */
+  PhyFieldRxStatus EndReceiveHeader (Ptr<Event> event);
 
   static const PpduFormats m_dsssPpduFormats; //!< DSSS and HR/DSSS PPDU formats
 }; //class DsssPhy

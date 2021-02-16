@@ -21,7 +21,6 @@
 #ifndef INTERFERENCE_HELPER_H
 #define INTERFERENCE_HELPER_H
 
-#include "ns3/wifi-spectrum-value-helper.h"
 #include "phy-entity.h"
 
 namespace ns3 {
@@ -29,11 +28,6 @@ namespace ns3 {
 class WifiPpdu;
 class WifiPsdu;
 class ErrorRateModel;
-
-/**
- * A map of the received power (Watts) for each band
- */
-typedef std::map <WifiSpectrumBand, double> RxPowerWattPerChannelBand;
 
 /**
  * \ingroup wifi
@@ -137,19 +131,6 @@ std::ostream& operator<< (std::ostream& os, const Event &event);
 class InterferenceHelper
 {
 public:
-  /**
-   * Signal event for a PPDU.
-   */
-
-  /**
-   * A struct for both SNR and PER
-   */
-  struct SnrPer
-  {
-    double snr; ///< SNR in linear scale
-    double per; ///< PER
-  };
-
   InterferenceHelper ();
   ~InterferenceHelper ();
 
@@ -209,7 +190,7 @@ public:
    * \param txVector the TXVECTOR
    * \param duration the PPDU duration
    * \param rxPower received power per band (W)
-   * \param isStartOfdmaRxing flag whether the event corresponds to the start of the OFDMA payload reception (only used for UL-OFDMA)
+   * \param isStartOfdmaRxing flag whether the event corresponds to the start of the OFDMA payload reception (only used for UL-OFDMA) //TODO simplify this once WifiPpdu is subclassed by adding an attribute
    *
    * \return Event
    */
@@ -236,7 +217,7 @@ public:
    *
    * \return struct of SNR and PER (with PER being evaluated over the provided time window)
    */
-  struct InterferenceHelper::SnrPer CalculatePayloadSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band,
+  struct PhyEntity::SnrPer CalculatePayloadSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band,
                                                             uint16_t staId, std::pair<Time, Time> relativeMpduStartStop) const;
   /**
    * Calculate the SNIR for the event (starting from now until the event end).
@@ -260,7 +241,7 @@ public:
    *
    * \return struct of SNR and PER
    */
-  struct InterferenceHelper::SnrPer CalculatePhyHeaderSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band,
+  struct PhyEntity::SnrPer CalculatePhyHeaderSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band,
                                                               WifiPpduField header) const;
 
   /**
