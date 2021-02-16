@@ -386,10 +386,6 @@ WifiPhyHelper::GetRadiotapHeader (
         }
 
       mcsKnown |= RadiotapHeader::MCS_KNOWN_HT_FORMAT;
-      if (preamble == WIFI_PREAMBLE_HT_GF)
-        {
-          mcsFlags |= RadiotapHeader::MCS_FLAGS_HT_GREENFIELD;
-        }
 
       mcsKnown |= RadiotapHeader::MCS_KNOWN_NESS;
       if (txVector.GetNess () & 0x01) //bit 1
@@ -789,9 +785,6 @@ WifiHelper::SetStandard (WifiPhyStandard standard)
       return;
     case WIFI_PHY_STANDARD_80211g:
       m_standard = WIFI_STANDARD_80211g;
-      return;
-    case WIFI_PHY_STANDARD_holland:
-      m_standard = WIFI_STANDARD_holland;
       return;
     // remove the next value from WifiPhyStandard when deprecation ends
     case WIFI_PHY_STANDARD_80211n_2_4GHZ:

@@ -409,33 +409,18 @@ TxDurationTest::DoRun (void)
     && CheckTxDuration (1536, HtPhy::GetHtMcs7 (), 20, 800, WIFI_PREAMBLE_HT_MF, MicroSeconds (228))
     && CheckTxDuration (76, HtPhy::GetHtMcs7 (), 20, 800, WIFI_PREAMBLE_HT_MF, MicroSeconds (48))
     && CheckTxDuration (14, HtPhy::GetHtMcs7 (), 20, 800, WIFI_PREAMBLE_HT_MF, MicroSeconds (40))
-    && CheckTxDuration (1536, HtPhy::GetHtMcs7 (), 20, 800, WIFI_PREAMBLE_HT_GF, MicroSeconds (216))
-    && CheckTxDuration (76, HtPhy::GetHtMcs7 (), 20, 800, WIFI_PREAMBLE_HT_GF, MicroSeconds (36))
-    && CheckTxDuration (14, HtPhy::GetHtMcs7 (), 20, 800, WIFI_PREAMBLE_HT_GF, MicroSeconds (28))
     && CheckTxDuration (1536, HtPhy::GetHtMcs0 (), 20, 400, WIFI_PREAMBLE_HT_MF, NanoSeconds (1742400))
     && CheckTxDuration (76, HtPhy::GetHtMcs0 (), 20, 400, WIFI_PREAMBLE_HT_MF, MicroSeconds (126))
     && CheckTxDuration (14, HtPhy::GetHtMcs0 (), 20, 400, WIFI_PREAMBLE_HT_MF, NanoSeconds (57600))
-    && CheckTxDuration (1536,HtPhy::GetHtMcs0 (), 20, 400, WIFI_PREAMBLE_HT_GF, NanoSeconds (1730400))
-    && CheckTxDuration (76, HtPhy::GetHtMcs0 (), 20, 400, WIFI_PREAMBLE_HT_GF, MicroSeconds (114))
-    && CheckTxDuration (14, HtPhy::GetHtMcs0 (), 20, 400, WIFI_PREAMBLE_HT_GF, NanoSeconds (45600))
     && CheckTxDuration (1536, HtPhy::GetHtMcs6 (), 20, 400, WIFI_PREAMBLE_HT_MF, NanoSeconds (226800))
     && CheckTxDuration (76, HtPhy::GetHtMcs6 (), 20, 400, WIFI_PREAMBLE_HT_MF, NanoSeconds (46800))
     && CheckTxDuration (14, HtPhy::GetHtMcs6 (), 20, 400, WIFI_PREAMBLE_HT_MF, NanoSeconds (39600))
-    && CheckTxDuration (1536, HtPhy::GetHtMcs6 (), 20, 400, WIFI_PREAMBLE_HT_GF, NanoSeconds (214800))
-    && CheckTxDuration (76, HtPhy::GetHtMcs6 (), 20, 400, WIFI_PREAMBLE_HT_GF, NanoSeconds (34800))
-    && CheckTxDuration (14, HtPhy::GetHtMcs6 (), 20, 400, WIFI_PREAMBLE_HT_GF, NanoSeconds (27600))
     && CheckTxDuration (1536, HtPhy::GetHtMcs7 (), 40, 800, WIFI_PREAMBLE_HT_MF, MicroSeconds (128))
     && CheckTxDuration (76, HtPhy::GetHtMcs7 (), 40, 800, WIFI_PREAMBLE_HT_MF, MicroSeconds (44))
     && CheckTxDuration (14, HtPhy::GetHtMcs7 (), 40, 800, WIFI_PREAMBLE_HT_MF, MicroSeconds (40))
-    && CheckTxDuration (1536, HtPhy::GetHtMcs7 (), 40, 800, WIFI_PREAMBLE_HT_GF, MicroSeconds (116))
-    && CheckTxDuration (76, HtPhy::GetHtMcs7 (), 40, 800, WIFI_PREAMBLE_HT_GF, MicroSeconds (32))
-    && CheckTxDuration (14, HtPhy::GetHtMcs7 (), 40, 800, WIFI_PREAMBLE_HT_GF, MicroSeconds (28))
     && CheckTxDuration (1536, HtPhy::GetHtMcs7 (), 40, 400, WIFI_PREAMBLE_HT_MF, NanoSeconds (118800))
     && CheckTxDuration (76, HtPhy::GetHtMcs7 (), 40, 400, WIFI_PREAMBLE_HT_MF, NanoSeconds (43200))
-    && CheckTxDuration (14, HtPhy::GetHtMcs7 (), 40, 400, WIFI_PREAMBLE_HT_MF, NanoSeconds (39600))
-    && CheckTxDuration (1536, HtPhy::GetHtMcs7 (), 40, 400, WIFI_PREAMBLE_HT_GF, NanoSeconds (106800))
-    && CheckTxDuration (76, HtPhy::GetHtMcs7 (), 40, 400, WIFI_PREAMBLE_HT_GF, NanoSeconds (31200))
-    && CheckTxDuration (14, HtPhy::GetHtMcs7 (), 40, 400, WIFI_PREAMBLE_HT_GF, NanoSeconds (27600));
+    && CheckTxDuration (14, HtPhy::GetHtMcs7 (), 40, 400, WIFI_PREAMBLE_HT_MF, NanoSeconds (39600));
 
   NS_TEST_EXPECT_MSG_EQ (retval, true, "an 802.11n duration failed");
 
@@ -794,10 +779,9 @@ PhyHeaderSectionsTest::DoRun (void)
   // 11a (OFDM)
   txVector.SetPreambleType (WIFI_PREAMBLE_LONG);
 
-  // -> one iteration per variant: default, Holland, 10 MHz, and 5 MHz
+  // -> one iteration per variant: default, 10 MHz, and 5 MHz
   std::map<OfdmPhyVariant, std::size_t> variants { //number to use to deduce rate and BW info for each variant
     { OFDM_PHY_DEFAULT, 1},
-    { OFDM_PHY_HOLLAND, 1},
     { OFDM_PHY_10_MHZ,  2},
     { OFDM_PHY_5_MHZ,   4}
   };
@@ -867,29 +851,6 @@ PhyHeaderSectionsTest::DoRun (void)
   txVector.SetNess (1);
   sections[WIFI_PPDU_FIELD_TRAINING] = { { ppduStart + MicroSeconds (28),
                                            ppduStart + MicroSeconds (52) }, // 1 HT-STF + 5 HT-LTFs (4 data + 1 extension)
-                                         htSigMode };
-  CheckPhyHeaderSections (phyEntity->GetPhyHeaderSections (txVector, ppduStart), sections);
-
-  // -> HT-GF format for 1 SS and no ESS
-  txVector.SetPreambleType (WIFI_PREAMBLE_HT_GF);
-  txVector.SetNss (1);
-  txVector.SetNess (0);
-  sections = { { WIFI_PPDU_FIELD_PREAMBLE, { { ppduStart,
-                                               ppduStart + MicroSeconds (16) },
-                                             nonHtMode } },
-               { WIFI_PPDU_FIELD_HT_SIG, { { ppduStart + MicroSeconds (16),
-                                             ppduStart + MicroSeconds (24) },
-                                           htSigMode } },
-               { WIFI_PPDU_FIELD_TRAINING, { { ppduStart + MicroSeconds (24),
-                                               ppduStart + MicroSeconds (24) }, // sole HT-LTF already in preamble
-                                             htSigMode } } };
-  CheckPhyHeaderSections (phyEntity->GetPhyHeaderSections (txVector, ppduStart), sections);
-
-  // -> HT-GF format for 2 SS and 2 ESS
-  txVector.SetNss (2);
-  txVector.SetNess (2);
-  sections[WIFI_PPDU_FIELD_TRAINING] = { { ppduStart + MicroSeconds (24),
-                                           ppduStart + MicroSeconds (36) }, // 3 HT-LTFs (1 data, since 1 already in preamble, + 2 extension)
                                          htSigMode };
   CheckPhyHeaderSections (phyEntity->GetPhyHeaderSections (txVector, ppduStart), sections);
 

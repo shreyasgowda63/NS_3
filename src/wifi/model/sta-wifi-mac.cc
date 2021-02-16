@@ -28,8 +28,8 @@
 #include "mgt-headers.h"
 #include "snr-tag.h"
 #include "wifi-net-device.h"
-#include "ht-configuration.h"
-#include "he-configuration.h"
+#include "ns3/ht-configuration.h"
+#include "ns3/he-configuration.h"
 
 namespace ns3 {
 
@@ -782,15 +782,6 @@ StaWifiMac::UpdateApInfoFromBeacon (MgtBeaconHeader beacon, Mac48Address apAddr,
       else
         {
           m_stationManager->AddStationHtCapabilities (apAddr, htCapabilities);
-          HtOperation htOperation = beacon.GetHtOperation ();
-          if (htOperation.GetNonGfHtStasPresent ())
-            {
-              m_stationManager->SetUseGreenfieldProtection (true);
-            }
-          else
-            {
-              m_stationManager->SetUseGreenfieldProtection (false);
-            }
         }
     }
   if (GetVhtSupported ())
@@ -969,15 +960,6 @@ StaWifiMac::UpdateApInfoFromAssocResp (MgtAssocResponseHeader assocResp, Mac48Ad
       else
         {
           m_stationManager->AddStationHtCapabilities (apAddr, htCapabilities);
-          HtOperation htOperation = assocResp.GetHtOperation ();
-          if (htOperation.GetNonGfHtStasPresent ())
-            {
-              m_stationManager->SetUseGreenfieldProtection (true);
-            }
-          else
-            {
-              m_stationManager->SetUseGreenfieldProtection (false);
-            }
         }
     }
   if (GetVhtSupported ())

@@ -28,7 +28,7 @@
 #include "table-based-error-rate-model.h"
 #include "wifi-utils.h"
 #include "wifi-tx-vector.h"
-#include "dsss-error-rate-model.h"
+#include "ns3/dsss-error-rate-model.h"
 #include "yans-error-rate-model.h"
 
 static const double SNR_PRECISION = 2;
@@ -140,7 +140,7 @@ TableBasedErrorRateModel::GetMcsForMode (WifiMode mode)
 }
 
 double
-TableBasedErrorRateModel::DoGetChunkSuccessRate (WifiMode mode, WifiTxVector txVector, double snr, uint64_t nbits) const
+TableBasedErrorRateModel::DoGetChunkSuccessRate (WifiMode mode, const WifiTxVector& txVector, double snr, uint64_t nbits) const
 {
   NS_LOG_FUNCTION (this << mode << txVector << snr << nbits);
   uint64_t size = std::max<uint64_t> (1, (nbits / 8));
