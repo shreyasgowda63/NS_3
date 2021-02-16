@@ -95,7 +95,7 @@ VhtPhy::BuildModeList (void)
   for (uint8_t index = 0; index <= m_maxSupportedMcsIndexPerSs; ++index)
     {
       NS_LOG_LOGIC ("Add VhtMcs" << +index << " to list");
-      m_modeList.emplace_back (GetVhtMcs (index));
+      m_modeList.emplace_back (CreateVhtMcs (index));
     }
 }
 
@@ -327,112 +327,177 @@ VhtPhy::InitializeModes (void)
 WifiMode
 VhtPhy::GetVhtMcs (uint8_t index)
 {
+#define CASE(x) \
+case x: \
+  return GetVhtMcs ## x (); \
+
   switch (index)
     {
-      case 0:
-        return GetVhtMcs0 ();
-      case 1:
-        return GetVhtMcs1 ();
-      case 2:
-        return GetVhtMcs2 ();
-      case 3:
-        return GetVhtMcs3 ();
-      case 4:
-        return GetVhtMcs4 ();
-      case 5:
-        return GetVhtMcs5 ();
-      case 6:
-        return GetVhtMcs6 ();
-      case 7:
-        return GetVhtMcs7 ();
-      case 8:
-        return GetVhtMcs8 ();
-      case 9:
-        return GetVhtMcs9 ();
+      CASE ( 0)
+      CASE ( 1)
+      CASE ( 2)
+      CASE ( 3)
+      CASE ( 4)
+      CASE ( 5)
+      CASE ( 6)
+      CASE ( 7)
+      CASE ( 8)
+      CASE ( 9)
       default:
         NS_ABORT_MSG ("Inexistent index (" << +index << ") requested for VHT");
         return WifiMode ();
     }
+#undef CASE
 }
 
-WifiMode
-VhtPhy::GetVhtMcs0 (void)
-{
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("VhtMcs0", 0, WIFI_MOD_CLASS_VHT);
-  return mcs;
-}
+#define GET_VHT_MCS(x) \
+WifiMode \
+VhtPhy::GetVhtMcs ## x (void) \
+{ \
+  static WifiMode mcs = CreateVhtMcs (x); \
+  return mcs; \
+} \
+
+GET_VHT_MCS (0);
+GET_VHT_MCS (1);
+GET_VHT_MCS (2);
+GET_VHT_MCS (3);
+GET_VHT_MCS (4);
+GET_VHT_MCS (5);
+GET_VHT_MCS (6);
+GET_VHT_MCS (7);
+GET_VHT_MCS (8);
+GET_VHT_MCS (9);
+#undef GET_VHT_MCS
 
 WifiMode
-VhtPhy::GetVhtMcs1 (void)
+VhtPhy::CreateVhtMcs (uint8_t index)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("VhtMcs1", 1, WIFI_MOD_CLASS_VHT);
-  return mcs;
+  NS_ASSERT_MSG (index <= 9, "VhtMcs index must be <= 9!");
+  return WifiModeFactory::CreateWifiMcs ("VhtMcs" + std::to_string (index),
+                                         index,
+                                         WIFI_MOD_CLASS_VHT,
+                                         MakeBoundCallback (&GetCodeRate, index),
+                                         MakeBoundCallback (&GetConstellationSize, index),
+                                         MakeBoundCallback (&GetPhyRate, index),
+                                         MakeBoundCallback (&GetDataRate, index),
+                                         MakeCallback (&GetDataRateFromTxVector),
+                                         MakeBoundCallback (&GetNonHtReferenceRate, index),
+                                         MakeBoundCallback (&IsModeAllowed, index));
 }
 
-WifiMode
-VhtPhy::GetVhtMcs2 (void)
+WifiCodeRate
+VhtPhy::GetCodeRate (uint8_t mcsValue)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("VhtMcs2", 2, WIFI_MOD_CLASS_VHT);
-  return mcs;
+  switch (mcsValue)
+    {
+      case 8:
+        return WIFI_CODE_RATE_3_4;
+      case 9:
+        return WIFI_CODE_RATE_5_6;
+      default:
+        return HtPhy::GetCodeRate (mcsValue);
+    }
 }
 
-WifiMode
-VhtPhy::GetVhtMcs3 (void)
+uint16_t
+VhtPhy::GetConstellationSize (uint8_t mcsValue)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("VhtMcs3", 3, WIFI_MOD_CLASS_VHT);
-  return mcs;
+  switch (mcsValue)
+    {
+      case 8:
+      case 9:
+        return 256;
+      default:
+        return HtPhy::GetConstellationSize (mcsValue);
+    }
 }
 
-WifiMode
-VhtPhy::GetVhtMcs4 (void)
+uint64_t
+VhtPhy::GetPhyRate (uint8_t mcsValue, uint16_t channelWidth, uint16_t guardInterval, uint8_t nss)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("VhtMcs4", 4, WIFI_MOD_CLASS_VHT);
-  return mcs;
+  WifiCodeRate codeRate = GetCodeRate (mcsValue);
+  uint64_t dataRate = GetDataRate (mcsValue, channelWidth, guardInterval, nss);
+  return HtPhy::CalculatePhyRate (codeRate, dataRate);
 }
 
-WifiMode
-VhtPhy::GetVhtMcs5 (void)
+uint64_t
+VhtPhy::GetDataRateFromTxVector (WifiTxVector txVector, uint16_t /* staId */)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("VhtMcs5", 5, WIFI_MOD_CLASS_VHT);
-  return mcs;
+  return GetDataRate (txVector.GetMode ().GetMcsValue (),
+                      txVector.GetChannelWidth (),
+                      txVector.GetGuardInterval (),
+                      txVector.GetNss ());
 }
 
-WifiMode
-VhtPhy::GetVhtMcs6 (void)
+uint64_t
+VhtPhy::GetDataRate (uint8_t mcsValue, uint16_t channelWidth, uint16_t guardInterval, uint8_t nss)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("VhtMcs6", 6, WIFI_MOD_CLASS_VHT);
-  return mcs;
+  NS_ASSERT (guardInterval == 800 || guardInterval == 400);
+  NS_ASSERT (nss <= 8);
+  NS_ASSERT_MSG (IsModeAllowed (mcsValue, channelWidth, nss), "VHT MCS " << +mcsValue << " forbidden at " << channelWidth << " MHz when NSS is " << +nss);
+  return HtPhy::CalculateDataRate (3.2, guardInterval,
+                                   GetUsableSubcarriers (channelWidth),
+                                   static_cast<uint16_t> (log2 (GetConstellationSize (mcsValue))),
+                                   HtPhy::GetCodeRatio (GetCodeRate (mcsValue)), nss);
 }
 
-WifiMode
-VhtPhy::GetVhtMcs7 (void)
+uint16_t
+VhtPhy::GetUsableSubcarriers (uint16_t channelWidth)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("VhtMcs7", 7, WIFI_MOD_CLASS_VHT);
-  return mcs;
+  switch (channelWidth)
+    {
+      case 80:
+        return 234;
+      case 160:
+        return 468;
+      default:
+        return HtPhy::GetUsableSubcarriers (channelWidth);
+    }
 }
 
-WifiMode
-VhtPhy::GetVhtMcs8 (void)
+uint64_t
+VhtPhy::GetNonHtReferenceRate (uint8_t mcsValue)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("VhtMcs8", 8, WIFI_MOD_CLASS_VHT);
-  return mcs;
+  WifiCodeRate codeRate = GetCodeRate (mcsValue);
+  uint16_t constellationSize = GetConstellationSize (mcsValue);
+  return CalculateNonHtReferenceRate (codeRate, constellationSize);
 }
 
-WifiMode
-VhtPhy::GetVhtMcs9 (void)
+uint64_t
+VhtPhy::CalculateNonHtReferenceRate (WifiCodeRate codeRate, uint16_t constellationSize)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("VhtMcs9", 9, WIFI_MOD_CLASS_VHT);
-  return mcs;
+  uint64_t dataRate;
+  switch (constellationSize)
+    {
+      case 256:
+        if (codeRate == WIFI_CODE_RATE_3_4 || codeRate == WIFI_CODE_RATE_5_6)
+          {
+            dataRate = 54000000;
+          }
+        else
+          {
+            NS_FATAL_ERROR ("Trying to get reference rate for a MCS with wrong combination of coding rate and modulation");
+          }
+        break;
+      default:
+        dataRate = HtPhy::CalculateNonHtReferenceRate (codeRate, constellationSize);
+    }
+  return dataRate;
+}
+
+bool
+VhtPhy::IsModeAllowed (uint8_t mcsValue, uint16_t channelWidth, uint8_t nss)
+{
+  if (mcsValue == 9 && channelWidth == 20 && nss != 3)
+    {
+      return false;
+    }
+  if (mcsValue == 6 && channelWidth == 80 && nss == 3)
+    {
+      return false;
+    }
+  return true;
 }
 
 } //namespace ns3

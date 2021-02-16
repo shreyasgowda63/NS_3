@@ -42,6 +42,34 @@ const PhyEntity::PpduFormats OfdmPhy::m_ofdmPpduFormats {
                           WIFI_PPDU_FIELD_NON_HT_HEADER, //SIG
                           WIFI_PPDU_FIELD_DATA } }
 };
+
+const PhyEntity::ModulationLookupTable OfdmPhy::m_ofdmModulationLookupTable {
+  // Unique name                Code rate           Constellation size
+  { "OfdmRate6Mbps",          { WIFI_CODE_RATE_1_2, 2 } },  // 20 MHz
+  { "OfdmRate9Mbps",          { WIFI_CODE_RATE_3_4, 2 } },  //  |
+  { "OfdmRate12Mbps",         { WIFI_CODE_RATE_1_2, 4 } },  //  V
+  { "OfdmRate18Mbps",         { WIFI_CODE_RATE_3_4, 4 } },
+  { "OfdmRate24Mbps",         { WIFI_CODE_RATE_1_2, 16 } },
+  { "OfdmRate36Mbps",         { WIFI_CODE_RATE_3_4, 16 } },
+  { "OfdmRate48Mbps",         { WIFI_CODE_RATE_2_3, 64 } },
+  { "OfdmRate54Mbps",         { WIFI_CODE_RATE_3_4, 64 } },
+  { "OfdmRate3MbpsBW10MHz",   { WIFI_CODE_RATE_1_2, 2 } },  // 10 MHz
+  { "OfdmRate4_5MbpsBW10MHz", { WIFI_CODE_RATE_3_4, 2 } },  //  |
+  { "OfdmRate6MbpsBW10MHz",   { WIFI_CODE_RATE_1_2, 4 } },  //  V
+  { "OfdmRate9MbpsBW10MHz",   { WIFI_CODE_RATE_3_4, 4 } },
+  { "OfdmRate12MbpsBW10MHz",  { WIFI_CODE_RATE_1_2, 16 } },
+  { "OfdmRate18MbpsBW10MHz",  { WIFI_CODE_RATE_3_4, 16 } },
+  { "OfdmRate24MbpsBW10MHz",  { WIFI_CODE_RATE_2_3, 64 } },
+  { "OfdmRate27MbpsBW10MHz",  { WIFI_CODE_RATE_3_4, 64 } },
+  { "OfdmRate1_5MbpsBW5MHz",  { WIFI_CODE_RATE_1_2, 2 } },  //  5 MHz
+  { "OfdmRate2_25MbpsBW5MHz", { WIFI_CODE_RATE_3_4, 2 } },  //  |
+  { "OfdmRate3MbpsBW5MHz",    { WIFI_CODE_RATE_1_2, 4 } },  //  V
+  { "OfdmRate4_5MbpsBW5MHz",  { WIFI_CODE_RATE_3_4, 4 } },
+  { "OfdmRate6MbpsBW5MHz",    { WIFI_CODE_RATE_1_2, 16 } },
+  { "OfdmRate9MbpsBW5MHz",    { WIFI_CODE_RATE_3_4, 16 } },
+  { "OfdmRate12MbpsBW5MHz",   { WIFI_CODE_RATE_2_3, 64 } },
+  { "OfdmRate13_5MbpsBW5MHz", { WIFI_CODE_RATE_3_4, 64 } }
+};
 /* *NS_CHECK_STYLE_ON* */
 
 OfdmPhy::OfdmPhy (OfdmPhyVariant variant /* = OFDM_PHY_DEFAULT */, bool buildModeList /* = true */)
@@ -421,301 +449,155 @@ OfdmPhy::GetOfdmRatesBpsList (void)
   /* *NS_CHECK_STYLE_ON* */
 }
 
+#define GET_OFDM_MODE(x, f) \
+WifiMode \
+OfdmPhy::Get ## x (void) \
+{ \
+  static WifiMode mode = CreateOfdmMode (#x, f); \
+  return mode; \
+} \
 
 // 20 MHz channel rates (default)
-
-WifiMode
-OfdmPhy::GetOfdmRate6Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate6Mbps",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     2);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate9Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate9Mbps",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     2);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate12Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate12Mbps",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     4);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate18Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate18Mbps",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     4);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate24Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate24Mbps",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     16);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate36Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate36Mbps",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     16);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate48Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate48Mbps",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_2_3,
-                                     64);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate54Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate54Mbps",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     64);
-  return mode;
-}
-
-
+GET_OFDM_MODE (OfdmRate6Mbps,  true );
+GET_OFDM_MODE (OfdmRate9Mbps,  false);
+GET_OFDM_MODE (OfdmRate12Mbps, true );
+GET_OFDM_MODE (OfdmRate18Mbps, false);
+GET_OFDM_MODE (OfdmRate24Mbps, true );
+GET_OFDM_MODE (OfdmRate36Mbps, false);
+GET_OFDM_MODE (OfdmRate48Mbps, false);
+GET_OFDM_MODE (OfdmRate54Mbps, false);
 // 10 MHz channel rates
-
-WifiMode
-OfdmPhy::GetOfdmRate3MbpsBW10MHz (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate3MbpsBW10MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     2);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate4_5MbpsBW10MHz (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate4_5MbpsBW10MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     2);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate6MbpsBW10MHz (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate6MbpsBW10MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     4);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate9MbpsBW10MHz (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate9MbpsBW10MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     4);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate12MbpsBW10MHz (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate12MbpsBW10MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     16);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate18MbpsBW10MHz (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate18MbpsBW10MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     16);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate24MbpsBW10MHz (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate24MbpsBW10MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_2_3,
-                                     64);
-  return mode;
-}
-
-WifiMode
-OfdmPhy::GetOfdmRate27MbpsBW10MHz (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate27MbpsBW10MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     64);
-  return mode;
-}
-
-
+GET_OFDM_MODE (OfdmRate3MbpsBW10MHz,   true );
+GET_OFDM_MODE (OfdmRate4_5MbpsBW10MHz, false);
+GET_OFDM_MODE (OfdmRate6MbpsBW10MHz,   true );
+GET_OFDM_MODE (OfdmRate9MbpsBW10MHz,   false);
+GET_OFDM_MODE (OfdmRate12MbpsBW10MHz,  true );
+GET_OFDM_MODE (OfdmRate18MbpsBW10MHz,  false);
+GET_OFDM_MODE (OfdmRate24MbpsBW10MHz,  false);
+GET_OFDM_MODE (OfdmRate27MbpsBW10MHz,  false);
 // 5 MHz channel rates
+GET_OFDM_MODE (OfdmRate1_5MbpsBW5MHz,  true );
+GET_OFDM_MODE (OfdmRate2_25MbpsBW5MHz, false);
+GET_OFDM_MODE (OfdmRate3MbpsBW5MHz,    true );
+GET_OFDM_MODE (OfdmRate4_5MbpsBW5MHz,  false);
+GET_OFDM_MODE (OfdmRate6MbpsBW5MHz,    true );
+GET_OFDM_MODE (OfdmRate9MbpsBW5MHz,    false);
+GET_OFDM_MODE (OfdmRate12MbpsBW5MHz,   false);
+GET_OFDM_MODE (OfdmRate13_5MbpsBW5MHz, false);
+#undef GET_OFDM_MODE
 
 WifiMode
-OfdmPhy::GetOfdmRate1_5MbpsBW5MHz (void)
+OfdmPhy::CreateOfdmMode (std::string uniqueName, bool isMandatory)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate1_5MbpsBW5MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     2);
-  return mode;
+  // Check whether uniqueName is in lookup table
+  const auto it = m_ofdmModulationLookupTable.find (uniqueName);
+  NS_ASSERT_MSG (it != m_ofdmModulationLookupTable.end (), "OFDM mode cannot be created because it is not in the lookup table!");
+
+  return WifiModeFactory::CreateWifiMode (uniqueName,
+                                          WIFI_MOD_CLASS_OFDM,
+                                          isMandatory,
+                                          MakeBoundCallback (&GetCodeRate, uniqueName),
+                                          MakeBoundCallback (&GetConstellationSize, uniqueName),
+                                          MakeBoundCallback (&GetPhyRate, uniqueName),
+                                          MakeBoundCallback (&GetDataRate, uniqueName),
+                                          MakeCallback (&GetDataRateFromTxVector),
+                                          MakeCallback (&IsModeAllowed));
 }
 
-WifiMode
-OfdmPhy::GetOfdmRate2_25MbpsBW5MHz (void)
+WifiCodeRate
+OfdmPhy::GetCodeRate (const std::string& name)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate2_25MbpsBW5MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     2);
-  return mode;
+  return m_ofdmModulationLookupTable.at (name).first;
 }
 
-WifiMode
-OfdmPhy::GetOfdmRate3MbpsBW5MHz (void)
+uint16_t
+OfdmPhy::GetConstellationSize (const std::string& name)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate3MbpsBW5MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     4);
-  return mode;
+  return m_ofdmModulationLookupTable.at (name).second;
 }
 
-WifiMode
-OfdmPhy::GetOfdmRate4_5MbpsBW5MHz (void)
+uint64_t
+OfdmPhy::GetPhyRate (const std::string& name, uint16_t channelWidth, uint16_t guardInterval, uint8_t nss)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate4_5MbpsBW5MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     4);
-  return mode;
+  WifiCodeRate codeRate = GetCodeRate (name);
+  uint64_t dataRate = GetDataRate (name, channelWidth, guardInterval, nss);
+  return CalculatePhyRate (codeRate, dataRate);
 }
 
-WifiMode
-OfdmPhy::GetOfdmRate6MbpsBW5MHz (void)
+uint64_t
+OfdmPhy::CalculatePhyRate (WifiCodeRate codeRate, uint64_t dataRate)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate6MbpsBW5MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     16);
-  return mode;
+  return (dataRate / GetCodeRatio (codeRate));
 }
 
-WifiMode
-OfdmPhy::GetOfdmRate9MbpsBW5MHz (void)
+double
+OfdmPhy::GetCodeRatio (WifiCodeRate codeRate)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate9MbpsBW5MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     16);
-  return mode;
+  switch (codeRate)
+    {
+      case WIFI_CODE_RATE_3_4:
+        return (3.0 / 4.0);
+      case WIFI_CODE_RATE_2_3:
+        return (2.0 / 3.0);
+      case WIFI_CODE_RATE_1_2:
+        return (1.0 / 2.0);
+      case WIFI_CODE_RATE_UNDEFINED:
+      default:
+        NS_FATAL_ERROR ("trying to get code ratio for undefined coding rate");
+        return 0;
+    }
 }
 
-WifiMode
-OfdmPhy::GetOfdmRate12MbpsBW5MHz (void)
+uint64_t
+OfdmPhy::GetDataRateFromTxVector (WifiTxVector txVector, uint16_t /* staId */)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate12MbpsBW5MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_2_3,
-                                     64);
-  return mode;
+  return GetDataRate (txVector.GetMode ().GetUniqueName (),
+                      txVector.GetChannelWidth (),
+                      txVector.GetGuardInterval (),
+                      txVector.GetNss ());
 }
 
-WifiMode
-OfdmPhy::GetOfdmRate13_5MbpsBW5MHz (void)
+uint64_t
+OfdmPhy::GetDataRate (const std::string& name, uint16_t channelWidth, uint16_t guardInterval, uint8_t nss)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("OfdmRate13_5MbpsBW5MHz",
-                                     WIFI_MOD_CLASS_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     64);
-  return mode;
+  WifiCodeRate codeRate = GetCodeRate (name);
+  uint16_t constellationSize = GetConstellationSize (name);
+  return CalculateDataRate (codeRate, constellationSize, channelWidth, guardInterval, nss);
+}
+
+uint64_t
+OfdmPhy::CalculateDataRate (WifiCodeRate codeRate, uint16_t constellationSize, uint16_t channelWidth, uint16_t /* guardInterval */, uint8_t /* nss */)
+{
+  double symbolDuration = 3.2; //in us
+  uint16_t guardInterval = 800; //in ns
+  if (channelWidth == 10)
+    {
+      symbolDuration = 6.4;
+      guardInterval = 1600;
+    }
+  else if (channelWidth == 5)
+    {
+      symbolDuration = 12.8;
+      guardInterval = 3200;
+    }
+  return CalculateDataRate (symbolDuration, guardInterval,
+                            48, static_cast<uint16_t> (log2 (constellationSize)),
+                            GetCodeRatio (codeRate));
+}
+
+uint64_t
+OfdmPhy::CalculateDataRate (double symbolDuration, uint16_t guardInterval,
+                            uint16_t usableSubCarriers, uint16_t numberOfBitsPerSubcarrier,
+                            double codingRate)
+{
+  double symbolRate = (1 / (symbolDuration + (static_cast<double> (guardInterval) / 1000))) * 1e6;
+  return lrint (ceil (symbolRate * usableSubCarriers * numberOfBitsPerSubcarrier * codingRate));
+}
+
+bool
+OfdmPhy::IsModeAllowed (uint16_t /* channelWidth */, uint8_t /* nss */)
+{
+  return true;
 }
 
 } //namespace ns3

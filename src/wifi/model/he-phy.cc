@@ -97,7 +97,7 @@ HePhy::BuildModeList (void)
   for (uint8_t index = 0; index <= m_maxSupportedMcsIndexPerSs; ++index)
     {
       NS_LOG_LOGIC ("Add HeMcs" << +index << " to list");
-      m_modeList.emplace_back (GetHeMcs (index));
+      m_modeList.emplace_back (CreateHeMcs (index));
     }
 }
 
@@ -946,132 +946,186 @@ HePhy::InitializeModes (void)
 WifiMode
 HePhy::GetHeMcs (uint8_t index)
 {
+#define CASE(x) \
+case x: \
+  return GetHeMcs ## x (); \
+
   switch (index)
     {
-      case 0:
-        return GetHeMcs0 ();
-      case 1:
-        return GetHeMcs1 ();
-      case 2:
-        return GetHeMcs2 ();
-      case 3:
-        return GetHeMcs3 ();
-      case 4:
-        return GetHeMcs4 ();
-      case 5:
-        return GetHeMcs5 ();
-      case 6:
-        return GetHeMcs6 ();
-      case 7:
-        return GetHeMcs7 ();
-      case 8:
-        return GetHeMcs8 ();
-      case 9:
-        return GetHeMcs9 ();
-      case 10:
-        return GetHeMcs10 ();
-      case 11:
-        return GetHeMcs11 ();
+      CASE ( 0)
+      CASE ( 1)
+      CASE ( 2)
+      CASE ( 3)
+      CASE ( 4)
+      CASE ( 5)
+      CASE ( 6)
+      CASE ( 7)
+      CASE ( 8)
+      CASE ( 9)
+      CASE (10)
+      CASE (11)
       default:
         NS_ABORT_MSG ("Inexistent index (" << +index << ") requested for HE");
         return WifiMode ();
     }
+#undef CASE
 }
 
-WifiMode
-HePhy::GetHeMcs0 (void)
-{
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs0", 0, WIFI_MOD_CLASS_HE);
-  return mcs;
-}
+#define GET_HE_MCS(x) \
+WifiMode \
+HePhy::GetHeMcs ## x (void) \
+{ \
+  static WifiMode mcs = CreateHeMcs (x); \
+  return mcs; \
+} \
+
+GET_HE_MCS (0);
+GET_HE_MCS (1);
+GET_HE_MCS (2);
+GET_HE_MCS (3);
+GET_HE_MCS (4);
+GET_HE_MCS (5);
+GET_HE_MCS (6);
+GET_HE_MCS (7);
+GET_HE_MCS (8);
+GET_HE_MCS (9);
+GET_HE_MCS (10);
+GET_HE_MCS (11);
+#undef GET_HE_MCS
 
 WifiMode
-HePhy::GetHeMcs1 (void)
+HePhy::CreateHeMcs (uint8_t index)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs1", 1, WIFI_MOD_CLASS_HE);
-  return mcs;
+  NS_ASSERT_MSG (index <= 11, "HeMcs index must be <= 11!");
+  return WifiModeFactory::CreateWifiMcs ("HeMcs" + std::to_string (index),
+                                         index,
+                                         WIFI_MOD_CLASS_HE,
+                                         MakeBoundCallback (&GetCodeRate, index),
+                                         MakeBoundCallback (&GetConstellationSize, index),
+                                         MakeBoundCallback (&GetPhyRate, index),
+                                         MakeBoundCallback (&GetDataRate, index),
+                                         MakeCallback (&GetDataRateFromTxVector),
+                                         MakeBoundCallback (&GetNonHtReferenceRate, index),
+                                         MakeCallback (&IsModeAllowed));
 }
 
-WifiMode
-HePhy::GetHeMcs2 (void)
+WifiCodeRate
+HePhy::GetCodeRate (uint8_t mcsValue)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs2", 2, WIFI_MOD_CLASS_HE);
-  return mcs;
+  switch (mcsValue)
+    {
+      case 10:
+        return WIFI_CODE_RATE_3_4;
+      case 11:
+        return WIFI_CODE_RATE_5_6;
+      default:
+        return VhtPhy::GetCodeRate (mcsValue);
+    }
 }
 
-WifiMode
-HePhy::GetHeMcs3 (void)
+uint16_t
+HePhy::GetConstellationSize (uint8_t mcsValue)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs3", 3, WIFI_MOD_CLASS_HE);
-  return mcs;
+  switch (mcsValue)
+    {
+      case 10:
+      case 11:
+        return 1024;
+      default:
+        return VhtPhy::GetConstellationSize (mcsValue);
+    }
 }
 
-WifiMode
-HePhy::GetHeMcs4 (void)
+uint64_t
+HePhy::GetPhyRate (uint8_t mcsValue, uint16_t channelWidth, uint16_t guardInterval, uint8_t nss)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs4", 4, WIFI_MOD_CLASS_HE);
-  return mcs;
+  WifiCodeRate codeRate = GetCodeRate (mcsValue);
+  uint64_t dataRate = GetDataRate (mcsValue, channelWidth, guardInterval, nss);
+  return HtPhy::CalculatePhyRate (codeRate, dataRate);
 }
 
-WifiMode
-HePhy::GetHeMcs5 (void)
+uint64_t
+HePhy::GetDataRateFromTxVector (WifiTxVector txVector, uint16_t staId /* = SU_STA_ID */)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs5", 5, WIFI_MOD_CLASS_HE);
-  return mcs;
+  uint16_t bw = txVector.GetChannelWidth ();
+  if (txVector.IsMu ())
+    {
+      bw = HeRu::GetBandwidth (txVector.GetRu (staId).ruType);
+    }
+  return HePhy::GetDataRate (txVector.GetMode (staId).GetMcsValue (),
+                             bw,
+                             txVector.GetGuardInterval (),
+                             txVector.GetNss (staId));
 }
 
-WifiMode
-HePhy::GetHeMcs6 (void)
+uint64_t
+HePhy::GetDataRate (uint8_t mcsValue, uint16_t channelWidth, uint16_t guardInterval, uint8_t nss)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs6", 6, WIFI_MOD_CLASS_HE);
-  return mcs;
+  NS_ASSERT (guardInterval == 800 || guardInterval == 1600 || guardInterval == 3200);
+  NS_ASSERT (nss <= 8);
+  return HtPhy::CalculateDataRate (12.8, guardInterval,
+                                   GetUsableSubcarriers (channelWidth),
+                                   static_cast<uint16_t> (log2 (GetConstellationSize (mcsValue))),
+                                   HtPhy::GetCodeRatio (GetCodeRate (mcsValue)), nss);
 }
 
-WifiMode
-HePhy::GetHeMcs7 (void)
+uint16_t
+HePhy::GetUsableSubcarriers (uint16_t channelWidth)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs7", 7, WIFI_MOD_CLASS_HE);
-  return mcs;
+  switch (channelWidth)
+    {
+      case 2: //26-tone RU
+        return 24;
+      case 4: //52-tone RU
+        return 48;
+      case 8: //106-tone RU
+        return 102;
+      case 20:
+      default:
+        return 234;
+      case 40:
+        return 468;
+      case 80:
+        return 980;
+      case 160:
+        return 1960;
+    }
 }
 
-WifiMode
-HePhy::GetHeMcs8 (void)
+uint64_t
+HePhy::GetNonHtReferenceRate (uint8_t mcsValue)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs8", 8, WIFI_MOD_CLASS_HE);
-  return mcs;
+  WifiCodeRate codeRate = GetCodeRate (mcsValue);
+  uint16_t constellationSize = GetConstellationSize (mcsValue);
+  return CalculateNonHtReferenceRate (codeRate, constellationSize);
 }
 
-WifiMode
-HePhy::GetHeMcs9 (void)
+uint64_t
+HePhy::CalculateNonHtReferenceRate (WifiCodeRate codeRate, uint16_t constellationSize)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs9", 9, WIFI_MOD_CLASS_HE);
-  return mcs;
+  uint64_t dataRate;
+  switch (constellationSize)
+    {
+      case 1024:
+        if (codeRate == WIFI_CODE_RATE_3_4 || codeRate == WIFI_CODE_RATE_5_6)
+          {
+            dataRate = 54000000;
+          }
+        else
+          {
+            NS_FATAL_ERROR ("Trying to get reference rate for a MCS with wrong combination of coding rate and modulation");
+          }
+        break;
+      default:
+        dataRate = VhtPhy::CalculateNonHtReferenceRate (codeRate, constellationSize);
+    }
+  return dataRate;
 }
 
-WifiMode
-HePhy::GetHeMcs10 (void)
+bool
+HePhy::IsModeAllowed (uint16_t /* channelWidth */, uint8_t /* nss */)
 {
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs10", 10, WIFI_MOD_CLASS_HE);
-  return mcs;
-}
-
-WifiMode
-HePhy::GetHeMcs11 (void)
-{
-  static WifiMode mcs =
-    WifiModeFactory::CreateWifiMcs ("HeMcs11", 11, WIFI_MOD_CLASS_HE);
-  return mcs;
+  return true;
 }
 
 } //namespace ns3

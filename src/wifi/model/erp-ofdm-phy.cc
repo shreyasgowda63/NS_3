@@ -35,6 +35,20 @@ NS_LOG_COMPONENT_DEFINE ("ErpOfdmPhy");
  *       ERP-OFDM PHY (IEEE 802.11-2016, clause 18)
  *******************************************************/
 
+/* *NS_CHECK_STYLE_OFF* */
+const PhyEntity::ModulationLookupTable ErpOfdmPhy::m_erpOfdmModulationLookupTable {
+  // Unique name           Code rate           Constellation size
+  { "ErpOfdmRate6Mbps",  { WIFI_CODE_RATE_1_2, 2 } },
+  { "ErpOfdmRate9Mbps",  { WIFI_CODE_RATE_3_4, 2 } },
+  { "ErpOfdmRate12Mbps", { WIFI_CODE_RATE_1_2, 4 } },
+  { "ErpOfdmRate18Mbps", { WIFI_CODE_RATE_3_4, 4 } },
+  { "ErpOfdmRate24Mbps", { WIFI_CODE_RATE_1_2, 16 } },
+  { "ErpOfdmRate36Mbps", { WIFI_CODE_RATE_3_4, 16 } },
+  { "ErpOfdmRate48Mbps", { WIFI_CODE_RATE_2_3, 64 } },
+  { "ErpOfdmRate54Mbps", { WIFI_CODE_RATE_3_4, 64 } }
+};
+/* *NS_CHECK_STYLE_ON* */
+
 ErpOfdmPhy::ErpOfdmPhy ()
   : OfdmPhy (OFDM_PHY_DEFAULT, false) //don't add OFDM modes to list
 {
@@ -121,100 +135,84 @@ ErpOfdmPhy::GetErpOfdmRatesBpsList (void)
   return OfdmPhy::GetOfdmRatesBpsList ().at (20);
 }
 
-WifiMode
-ErpOfdmPhy::GetErpOfdmRate6Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("ErpOfdmRate6Mbps",
-                                     WIFI_MOD_CLASS_ERP_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     2);
-  return mode;
-}
+#define GET_ERP_OFDM_MODE(x, f) \
+WifiMode \
+ErpOfdmPhy::Get ## x (void) \
+{ \
+  static WifiMode mode = CreateErpOfdmMode (#x, f); \
+  return mode; \
+} \
+
+GET_ERP_OFDM_MODE (ErpOfdmRate6Mbps,  true );
+GET_ERP_OFDM_MODE (ErpOfdmRate9Mbps,  false);
+GET_ERP_OFDM_MODE (ErpOfdmRate12Mbps, true );
+GET_ERP_OFDM_MODE (ErpOfdmRate18Mbps, false);
+GET_ERP_OFDM_MODE (ErpOfdmRate24Mbps, true );
+GET_ERP_OFDM_MODE (ErpOfdmRate36Mbps, false);
+GET_ERP_OFDM_MODE (ErpOfdmRate48Mbps, false);
+GET_ERP_OFDM_MODE (ErpOfdmRate54Mbps, false);
+#undef GET_ERP_OFDM_MODE
 
 WifiMode
-ErpOfdmPhy::GetErpOfdmRate9Mbps (void)
+ErpOfdmPhy::CreateErpOfdmMode (std::string uniqueName, bool isMandatory)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("ErpOfdmRate9Mbps",
-                                     WIFI_MOD_CLASS_ERP_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     2);
-  return mode;
+  // Check whether uniqueName is in lookup table
+  const auto it = m_erpOfdmModulationLookupTable.find (uniqueName);
+  NS_ASSERT_MSG (it != m_erpOfdmModulationLookupTable.end (), "ERP-OFDM mode cannot be created because it is not in the lookup table!");
+
+  return WifiModeFactory::CreateWifiMode (uniqueName,
+                                          WIFI_MOD_CLASS_ERP_OFDM,
+                                          isMandatory,
+                                          MakeBoundCallback (&GetCodeRate, uniqueName),
+                                          MakeBoundCallback (&GetConstellationSize, uniqueName),
+                                          MakeBoundCallback (&GetPhyRate, uniqueName),
+                                          MakeBoundCallback (&GetDataRate, uniqueName),
+                                          MakeCallback (&GetDataRateFromTxVector),
+                                          MakeCallback (&IsModeAllowed));
 }
 
-WifiMode
-ErpOfdmPhy::GetErpOfdmRate12Mbps (void)
+WifiCodeRate
+ErpOfdmPhy::GetCodeRate (const std::string& name)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("ErpOfdmRate12Mbps",
-                                     WIFI_MOD_CLASS_ERP_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     4);
-  return mode;
+  return m_erpOfdmModulationLookupTable.at (name).first;
 }
 
-WifiMode
-ErpOfdmPhy::GetErpOfdmRate18Mbps (void)
+uint16_t
+ErpOfdmPhy::GetConstellationSize (const std::string& name)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("ErpOfdmRate18Mbps",
-                                     WIFI_MOD_CLASS_ERP_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     4);
-  return mode;
+  return m_erpOfdmModulationLookupTable.at (name).second;
 }
 
-WifiMode
-ErpOfdmPhy::GetErpOfdmRate24Mbps (void)
+uint64_t
+ErpOfdmPhy::GetPhyRate (const std::string& name, uint16_t channelWidth, uint16_t guardInterval, uint8_t nss)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("ErpOfdmRate24Mbps",
-                                     WIFI_MOD_CLASS_ERP_OFDM,
-                                     true,
-                                     WIFI_CODE_RATE_1_2,
-                                     16);
-  return mode;
+  WifiCodeRate codeRate = GetCodeRate (name);
+  uint16_t constellationSize = GetConstellationSize (name);
+  uint64_t dataRate = OfdmPhy::CalculateDataRate (codeRate, constellationSize, channelWidth, guardInterval, nss);
+  return OfdmPhy::CalculatePhyRate (codeRate, dataRate);
 }
 
-WifiMode
-ErpOfdmPhy::GetErpOfdmRate36Mbps (void)
+uint64_t
+ErpOfdmPhy::GetDataRateFromTxVector (WifiTxVector txVector, uint16_t /* staId */)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("ErpOfdmRate36Mbps",
-                                     WIFI_MOD_CLASS_ERP_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     16);
-  return mode;
+  return GetDataRate (txVector.GetMode ().GetUniqueName (),
+                      txVector.GetChannelWidth (),
+                      txVector.GetGuardInterval (),
+                      txVector.GetNss ());
 }
 
-WifiMode
-ErpOfdmPhy::GetErpOfdmRate48Mbps (void)
+uint64_t
+ErpOfdmPhy::GetDataRate (const std::string& name, uint16_t channelWidth, uint16_t guardInterval, uint8_t nss)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("ErpOfdmRate48Mbps",
-                                     WIFI_MOD_CLASS_ERP_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_2_3,
-                                     64);
-  return mode;
+  WifiCodeRate codeRate = GetCodeRate (name);
+  uint16_t constellationSize = GetConstellationSize (name);
+  return OfdmPhy::CalculateDataRate (codeRate, constellationSize, channelWidth, guardInterval, nss);
 }
 
-WifiMode
-ErpOfdmPhy::GetErpOfdmRate54Mbps (void)
+bool
+ErpOfdmPhy::IsModeAllowed (uint16_t /* channelWidth */, uint8_t /* nss */)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("ErpOfdmRate54Mbps",
-                                     WIFI_MOD_CLASS_ERP_OFDM,
-                                     false,
-                                     WIFI_CODE_RATE_3_4,
-                                     64);
-  return mode;
+  return true;
 }
 
 } //namespace ns3

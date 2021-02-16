@@ -45,6 +45,14 @@ const PhyEntity::PpduFormats DsssPhy::m_dsssPpduFormats {
                            WIFI_PPDU_FIELD_NON_HT_HEADER, //Short PHY header
                            WIFI_PPDU_FIELD_DATA } }
 };
+
+const PhyEntity::ModulationLookupTable DsssPhy::m_dsssModulationLookupTable {
+  // Unique name         Code rate                 Constellation size
+  { "DsssRate1Mbps",   { WIFI_CODE_RATE_UNDEFINED, 2 } },
+  { "DsssRate2Mbps",   { WIFI_CODE_RATE_UNDEFINED, 4 } },
+  { "DsssRate5_5Mbps", { WIFI_CODE_RATE_UNDEFINED, 16 } },
+  { "DsssRate11Mbps",  { WIFI_CODE_RATE_UNDEFINED, 256 } }
+};
 /* *NS_CHECK_STYLE_ON* */
 
 DsssPhy::DsssPhy ()
@@ -249,57 +257,89 @@ DsssPhy::GetDsssRatesBpsList (void)
   /* *NS_CHECK_STYLE_ON* */
 }
 
+#define GET_DSSS_MODE(x, m) \
+WifiMode \
+DsssPhy::Get ## x (void) \
+{ \
+  static WifiMode mode = CreateDsssMode (#x, WIFI_MOD_CLASS_ ## m); \
+  return mode; \
+} \
+
 // Clause 15 rates (DSSS)
-
-WifiMode
-DsssPhy::GetDsssRate1Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("DsssRate1Mbps",
-                                     WIFI_MOD_CLASS_DSSS,
-                                     true,
-                                     WIFI_CODE_RATE_UNDEFINED,
-                                     2);
-  return mode;
-}
-
-WifiMode
-DsssPhy::GetDsssRate2Mbps (void)
-{
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("DsssRate2Mbps",
-                                     WIFI_MOD_CLASS_DSSS,
-                                     true,
-                                     WIFI_CODE_RATE_UNDEFINED,
-                                     4);
-  return mode;
-}
-
-
+GET_DSSS_MODE (DsssRate1Mbps,   DSSS);
+GET_DSSS_MODE (DsssRate2Mbps,   DSSS);
 // Clause 16 rates (HR/DSSS)
+GET_DSSS_MODE (DsssRate5_5Mbps, HR_DSSS);
+GET_DSSS_MODE (DsssRate11Mbps,  HR_DSSS);
+#undef GET_DSSS_MODE
 
 WifiMode
-DsssPhy::GetDsssRate5_5Mbps (void)
+DsssPhy::CreateDsssMode (std::string uniqueName,
+                         WifiModulationClass modClass)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("DsssRate5_5Mbps",
-                                     WIFI_MOD_CLASS_HR_DSSS,
-                                     true,
-                                     WIFI_CODE_RATE_UNDEFINED,
-                                     16);
-  return mode;
+  // Check whether uniqueName is in lookup table
+  const auto it = m_dsssModulationLookupTable.find (uniqueName);
+  NS_ASSERT_MSG (it != m_dsssModulationLookupTable.end (), "DSSS or HR/DSSS mode cannot be created because it is not in the lookup table!");
+  NS_ASSERT_MSG (modClass == WIFI_MOD_CLASS_DSSS || modClass == WIFI_MOD_CLASS_HR_DSSS, "DSSS or HR/DSSS mode must be either WIFI_MOD_CLASS_DSSS or WIFI_MOD_CLASS_HR_DSSS!");
+
+  return WifiModeFactory::CreateWifiMode (uniqueName,
+                                          modClass,
+                                          true,
+                                          MakeBoundCallback (&GetCodeRate, uniqueName),
+                                          MakeBoundCallback (&GetConstellationSize, uniqueName),
+                                          MakeBoundCallback (&GetDataRate, uniqueName, modClass),
+                                          MakeBoundCallback (&GetDataRate, uniqueName, modClass), //PhyRate is equivalent to DataRate
+                                          MakeCallback (&GetDataRateFromTxVector),
+                                          MakeCallback (&IsModeAllowed));
 }
 
-WifiMode
-DsssPhy::GetDsssRate11Mbps (void)
+WifiCodeRate
+DsssPhy::GetCodeRate (const std::string& name)
 {
-  static WifiMode mode =
-    WifiModeFactory::CreateWifiMode ("DsssRate11Mbps",
-                                     WIFI_MOD_CLASS_HR_DSSS,
-                                     true,
-                                     WIFI_CODE_RATE_UNDEFINED,
-                                     256);
-  return mode;
+  return m_dsssModulationLookupTable.at (name).first;
+}
+
+uint16_t
+DsssPhy::GetConstellationSize (const std::string& name)
+{
+  return m_dsssModulationLookupTable.at (name).second;
+}
+
+uint64_t
+DsssPhy::GetDataRateFromTxVector (WifiTxVector txVector, uint16_t /* staId */)
+{
+  WifiMode mode = txVector.GetMode ();
+  return DsssPhy::GetDataRate (mode.GetUniqueName (),
+                               mode.GetModulationClass (),
+                               22, 0, 1); //dummy values since unused
+}
+
+uint64_t
+DsssPhy::GetDataRate (const std::string& name, WifiModulationClass modClass, uint16_t /* channelWidth */, uint16_t /* guardInterval */, uint8_t /* nss */)
+{
+  uint16_t constellationSize = GetConstellationSize (name);
+  uint16_t divisor = 0;
+  if (modClass == WIFI_MOD_CLASS_DSSS)
+    {
+      divisor = 11;
+    }
+  else if (modClass == WIFI_MOD_CLASS_HR_DSSS)
+    {
+      divisor = 8;
+    }
+  else
+    {
+      NS_FATAL_ERROR ("Incorrect modulation class, must specify either WIFI_MOD_CLASS_DSSS or WIFI_MOD_CLASS_HR_DSSS!");
+    }
+  uint16_t numberOfBitsPerSubcarrier = static_cast<uint16_t> (log2 (constellationSize));
+  uint64_t dataRate = ((11000000 / divisor) * numberOfBitsPerSubcarrier);
+  return dataRate;
+}
+
+bool
+DsssPhy::IsModeAllowed (uint16_t /* channelWidth */, uint8_t /* nss */)
+{
+  return true;
 }
 
 } //namespace ns3
