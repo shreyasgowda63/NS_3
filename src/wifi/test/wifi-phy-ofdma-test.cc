@@ -34,13 +34,14 @@
 #include "ns3/wifi-mac-header.h"
 #include "ns3/wifi-net-device.h"
 #include "ns3/wifi-psdu.h"
-#include "ns3/wifi-ppdu.h"
+#include "ns3/he-ppdu.h"
 #include "ns3/wifi-utils.h"
 #include "ns3/ap-wifi-mac.h"
 #include "ns3/sta-wifi-mac.h"
 #include "ns3/he-configuration.h"
 #include "ns3/ctrl-headers.h"
 #include "ns3/threshold-preamble-detection-model.h"
+#include "ns3/he-phy.h"
 #include "ns3/waveform-generator.h"
 #include "ns3/non-communicating-net-device.h"
 #include "ns3/spectrum-wifi-helper.h"
@@ -55,6 +56,70 @@ static const uint32_t DEFAULT_FREQUENCY = 5180; // MHz
 static const uint16_t DEFAULT_CHANNEL_WIDTH = 20; // MHz
 static const uint16_t DEFAULT_GUARD_WIDTH = DEFAULT_CHANNEL_WIDTH; // MHz (expanded to channel width to model spectrum mask)
 
+/**
+ * HE PHY slightly modified so as to return a given
+ * STA-ID in case of DL MU for OfdmaSpectrumWifiPhy.
+ */
+class OfdmaTestHePhy : public HePhy
+{
+public:
+  /**
+   * Constructor
+   *
+   * \param staId the ID of the STA to which this PHY belongs to
+   */
+  OfdmaTestHePhy (uint16_t staId);
+  virtual ~OfdmaTestHePhy ();
+
+  /**
+   * Return the STA ID that has been assigned to the station this PHY belongs to.
+   * This is typically called for MU PPDUs, in order to pick the correct PSDU.
+   *
+   * \param ppdu the PPDU for which the STA ID is requested
+   * \return the STA ID
+   */
+  uint16_t GetStaId (const Ptr<const WifiPpdu> ppdu) const override;
+
+  /**
+   * Set the global PPDU UID counter.
+   *
+   * \param uid the value to which the global PPDU UID counter should be set
+   */
+  void SetGlobalPpduUid (uint64_t uid);
+
+private:
+  uint16_t m_staId; ///< ID of the STA to which this PHY belongs to
+}; //class OfdmaTestHePhy
+
+OfdmaTestHePhy::OfdmaTestHePhy (uint16_t staId)
+  : HePhy (),
+    m_staId (staId)
+{
+}
+
+OfdmaTestHePhy::~OfdmaTestHePhy ()
+{
+}
+
+uint16_t
+OfdmaTestHePhy::GetStaId (const Ptr<const WifiPpdu> ppdu) const
+{
+  if (ppdu->GetType () == WIFI_PPDU_TYPE_DL_MU)
+    {
+      return m_staId;
+    }
+  return HePhy::GetStaId (ppdu);
+}
+
+void
+OfdmaTestHePhy::SetGlobalPpduUid (uint64_t uid)
+{
+  m_globalPpduUid = uid;
+}
+
+/**
+ * SpectrumWifiPhy used for testing OFDMA.
+ */
 class OfdmaSpectrumWifiPhy : public SpectrumWifiPhy
 {
 public:
@@ -71,6 +136,10 @@ public:
   OfdmaSpectrumWifiPhy (uint16_t staId);
   virtual ~OfdmaSpectrumWifiPhy ();
 
+  // Inherited
+  virtual void DoInitialize (void) override;
+  virtual void DoDispose (void) override;
+
   using WifiPhy::Reset;
 
   /**
@@ -82,9 +151,8 @@ public:
 
   /**
    * \param ppdu the PPDU to send
-   * \param txPowerLevel the power level to use
    */
-  void StartTx (Ptr<WifiPpdu> ppdu, uint8_t txPowerLevel) override;
+  void StartTx (Ptr<WifiPpdu> ppdu) override;
   /**
    * \param currentChannelWidth channel width of the current transmission (MHz)
    * \return the width of the guard band (MHz) set to 2
@@ -124,13 +192,15 @@ public:
    */
   Time GetEnergyDuration (double energyW, WifiSpectrumBand band);
 
-private:
-  // Inherited
-  uint16_t GetStaId (const Ptr<const WifiPpdu> ppdu) const override;
+  /**
+   * \return a const pointer to the HE PHY instance
+   */
+  Ptr<const HePhy> GetHePhy (void) const;
 
-  uint16_t m_staId; ///< ID of the STA to which this PHY belongs to
+private:
+  Ptr<OfdmaTestHePhy> m_ofdmTestHePhy; ///< Pointer to HE PHY instance used for OFDMA test
   TracedCallback<uint64_t> m_phyTxPpduUidTrace; //!< Callback providing UID of the PPDU that is about to be transmitted
-};
+}; //class OfdmaSpectrumWifiPhy
 
 TypeId
 OfdmaSpectrumWifiPhy::GetTypeId (void)
@@ -147,29 +217,35 @@ OfdmaSpectrumWifiPhy::GetTypeId (void)
 }
 
 OfdmaSpectrumWifiPhy::OfdmaSpectrumWifiPhy (uint16_t staId)
-  : SpectrumWifiPhy (),
-    m_staId (staId)
+  : SpectrumWifiPhy ()
 {
+  m_ofdmTestHePhy = Create<OfdmaTestHePhy> (staId);
+  m_ofdmTestHePhy->SetOwner (this);
 }
 
 OfdmaSpectrumWifiPhy::~OfdmaSpectrumWifiPhy()
 {
 }
 
-uint16_t
-OfdmaSpectrumWifiPhy::GetStaId (const Ptr<const WifiPpdu> ppdu) const
+void
+OfdmaSpectrumWifiPhy::DoInitialize (void)
 {
-  if (ppdu->IsDlMu ())
-    {
-      return m_staId;
-    }
-  return SpectrumWifiPhy::GetStaId (ppdu);
+  //Replace HE PHY instance with test instance
+  m_phyEntities[WIFI_MOD_CLASS_HE] = m_ofdmTestHePhy;
+  SpectrumWifiPhy::DoInitialize ();
+}
+
+void
+OfdmaSpectrumWifiPhy::DoDispose (void)
+{
+  m_ofdmTestHePhy = 0;
+  SpectrumWifiPhy::DoDispose ();
 }
 
 void
 OfdmaSpectrumWifiPhy::SetPpduUid (uint64_t uid)
 {
-  m_globalPpduUid = uid;
+  m_ofdmTestHePhy->SetGlobalPpduUid (uid);
   m_previouslyRxPpduUid = uid;
 }
 
@@ -180,10 +256,10 @@ OfdmaSpectrumWifiPhy::SetTriggerFrameUid (uint64_t uid)
 }
 
 void
-OfdmaSpectrumWifiPhy::StartTx (Ptr<WifiPpdu> ppdu, uint8_t txPowerLevel)
+OfdmaSpectrumWifiPhy::StartTx (Ptr<WifiPpdu> ppdu)
 {
   m_phyTxPpduUidTrace (ppdu->GetUid ());
-  SpectrumWifiPhy::StartTx (ppdu, txPowerLevel);
+  SpectrumWifiPhy::StartTx (ppdu);
 }
 
 std::map <std::pair<uint64_t, WifiPreamble>, Ptr<Event> > &
@@ -212,6 +288,12 @@ OfdmaSpectrumWifiPhy::GetEnergyDuration (double energyW, WifiSpectrumBand band)
   return m_interference.GetEnergyDuration (energyW, band);
 }
 
+Ptr<const HePhy>
+OfdmaSpectrumWifiPhy::GetHePhy (void) const
+{
+  return DynamicCast<const HePhy> (GetPhyEntity (WIFI_MOD_CLASS_HE));
+}
+
 /**
  * \ingroup wifi-test
  * \ingroup tests
@@ -226,6 +308,7 @@ public:
 
 private:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
   virtual void DoRun (void);
 
   /**
@@ -392,7 +475,7 @@ TestDlOfdmaPhyTransmission::SendMuPpdu (uint16_t rxStaId1, uint16_t rxStaId2)
 {
   NS_LOG_FUNCTION (this << rxStaId1 << rxStaId2);
   WifiConstPsduMap psdus;
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_MU, 800, 1, 1, 0, m_channelWidth, false, false);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_MU, 800, 1, 1, 0, m_channelWidth, false, false);
   HeRu::RuType ruType = HeRu::RU_106_TONE;
   if (m_channelWidth == 20)
     {
@@ -420,7 +503,7 @@ TestDlOfdmaPhyTransmission::SendMuPpdu (uint16_t rxStaId1, uint16_t rxStaId2)
   ru1.ruType = ruType;
   ru1.index = 1;
   txVector.SetRu (ru1, rxStaId1);
-  txVector.SetMode (WifiPhy::GetHeMcs7 (), rxStaId1);
+  txVector.SetMode (HePhy::GetHeMcs7 (), rxStaId1);
   txVector.SetNss (1, rxStaId1);
 
   HeRu::RuSpec ru2;
@@ -428,7 +511,7 @@ TestDlOfdmaPhyTransmission::SendMuPpdu (uint16_t rxStaId1, uint16_t rxStaId2)
   ru2.ruType = ruType;
   ru2.index = 2;
   txVector.SetRu (ru2, rxStaId2);
-  txVector.SetMode (WifiPhy::GetHeMcs9 (), rxStaId2);
+  txVector.SetMode (HePhy::GetHeMcs9 (), rxStaId2);
   txVector.SetNss (1, rxStaId2);
 
   Ptr<Packet> pkt1 = Create<Packet> (1000);
@@ -469,11 +552,6 @@ TestDlOfdmaPhyTransmission::StopInterference (void)
 
 TestDlOfdmaPhyTransmission::~TestDlOfdmaPhyTransmission ()
 {
-  m_phyAp = 0;
-  m_phySta1 = 0;
-  m_phySta2 = 0;
-  m_phySta3 = 0;
-  m_phyInterferer = 0;
 }
 
 void
@@ -647,6 +725,21 @@ TestDlOfdmaPhyTransmission::DoSetup (void)
   m_phyInterferer->SetChannel (spectrumChannel);
   m_phyInterferer->SetDutyCycle (1);
   interfererNode->AddDevice (interfererDev);
+}
+
+void
+TestDlOfdmaPhyTransmission::DoTeardown (void)
+{
+  m_phyAp->Dispose ();
+  m_phyAp = 0;
+  m_phySta1->Dispose ();
+  m_phySta1 = 0;
+  m_phySta2->Dispose ();
+  m_phySta2 = 0;
+  m_phySta3->Dispose ();
+  m_phySta3 = 0;
+  m_phyInterferer->Dispose ();
+  m_phyInterferer = 0;
 }
 
 void
@@ -872,6 +965,7 @@ public:
 
 private:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
   virtual void DoRun (void);
 
   /**
@@ -934,9 +1028,6 @@ TestUlOfdmaPpduUid::TestUlOfdmaPpduUid ()
 
 TestUlOfdmaPpduUid::~TestUlOfdmaPpduUid ()
 {
-  m_phyAp = 0;
-  m_phySta1 = 0;
-  m_phySta2 = 0;
 }
 
 void
@@ -1003,6 +1094,17 @@ TestUlOfdmaPpduUid::DoSetup (void)
 }
 
 void
+TestUlOfdmaPpduUid::DoTeardown (void)
+{
+  m_phyAp->Dispose ();
+  m_phyAp = 0;
+  m_phySta1->Dispose ();
+  m_phySta1 = 0;
+  m_phySta2->Dispose ();
+  m_phySta2 = 0;
+}
+
+void
 TestUlOfdmaPpduUid::CheckUid (uint16_t staId, uint64_t expectedUid)
 {
   uint64_t uid;
@@ -1060,7 +1162,7 @@ void
 TestUlOfdmaPpduUid::SendMuPpdu (void)
 {
   WifiConstPsduMap psdus;
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_MU, 800, 1, 1, 0, DEFAULT_CHANNEL_WIDTH, false, false);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_MU, 800, 1, 1, 0, DEFAULT_CHANNEL_WIDTH, false, false);
 
   uint16_t rxStaId1 = 1;
   HeRu::RuSpec ru1;
@@ -1068,7 +1170,7 @@ TestUlOfdmaPpduUid::SendMuPpdu (void)
   ru1.ruType = HeRu::RU_106_TONE;
   ru1.index = 1;
   txVector.SetRu (ru1, rxStaId1);
-  txVector.SetMode (WifiPhy::GetHeMcs7 (), rxStaId1);
+  txVector.SetMode (HePhy::GetHeMcs7 (), rxStaId1);
   txVector.SetNss (1, rxStaId1);
 
   uint16_t rxStaId2 = 2;
@@ -1077,7 +1179,7 @@ TestUlOfdmaPpduUid::SendMuPpdu (void)
   ru2.ruType = HeRu::RU_106_TONE;
   ru2.index = 2;
   txVector.SetRu (ru2, rxStaId2);
-  txVector.SetMode (WifiPhy::GetHeMcs9 (), rxStaId2);
+  txVector.SetMode (HePhy::GetHeMcs9 (), rxStaId2);
   txVector.SetNss (1, rxStaId2);
 
   Ptr<Packet> pkt1 = Create<Packet> (1000);
@@ -1106,7 +1208,7 @@ TestUlOfdmaPpduUid::SendTbPpdu (void)
 {
   WifiConstPsduMap psdus1;
   WifiConstPsduMap psdus2;
-  WifiTxVector txVector1 = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_TB, 800, 1, 1, 0, DEFAULT_CHANNEL_WIDTH, false, false);
+  WifiTxVector txVector1 = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_TB, 800, 1, 1, 0, DEFAULT_CHANNEL_WIDTH, false, false);
   WifiTxVector txVector2 = txVector1;
 
   uint16_t rxStaId1 = 1;
@@ -1115,7 +1217,7 @@ TestUlOfdmaPpduUid::SendTbPpdu (void)
   ru1.ruType = HeRu::RU_106_TONE;
   ru1.index = 1;
   txVector1.SetRu (ru1, rxStaId1);
-  txVector1.SetMode (WifiPhy::GetHeMcs7 (), rxStaId1);
+  txVector1.SetMode (HePhy::GetHeMcs7 (), rxStaId1);
   txVector1.SetNss (1, rxStaId1);
 
   Ptr<Packet> pkt1 = Create<Packet> (1000);
@@ -1133,7 +1235,7 @@ TestUlOfdmaPpduUid::SendTbPpdu (void)
   ru2.ruType = HeRu::RU_106_TONE;
   ru2.index = 2;
   txVector2.SetRu (ru2, rxStaId2);
-  txVector2.SetMode (WifiPhy::GetHeMcs9 (), rxStaId2);
+  txVector2.SetMode (HePhy::GetHeMcs9 (), rxStaId2);
   txVector2.SetNss (1, rxStaId2);
 
   Ptr<Packet> pkt2 = Create<Packet> (1500);
@@ -1151,8 +1253,8 @@ TestUlOfdmaPpduUid::SendTbPpdu (void)
                                                      m_phySta1->GetPhyBand (), rxStaId2);
   Time txDuration = std::max (txDuration1, txDuration2);
 
-  txVector1.SetLength (m_phySta1->ConvertHeTbPpduDurationToLSigLength (txDuration, m_phySta1->GetPhyBand ()));
-  txVector2.SetLength (m_phySta2->ConvertHeTbPpduDurationToLSigLength (txDuration, m_phySta2->GetPhyBand ()));
+  txVector1.SetLength (HePhy::ConvertHeTbPpduDurationToLSigLength (txDuration, m_phySta1->GetPhyBand ()));
+  txVector2.SetLength (HePhy::ConvertHeTbPpduDurationToLSigLength (txDuration, m_phySta2->GetPhyBand ()));
 
   m_phySta1->Send (psdus1, txVector1);
   m_phySta2->Send (psdus2, txVector2);
@@ -1162,7 +1264,7 @@ void
 TestUlOfdmaPpduUid::SendSuPpdu (uint16_t txStaId)
 {
   WifiConstPsduMap psdus;
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, DEFAULT_CHANNEL_WIDTH, false, false);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, DEFAULT_CHANNEL_WIDTH, false, false);
 
   Ptr<Packet> pkt = Create<Packet> (1000);
   WifiMacHeader hdr;
@@ -1243,6 +1345,7 @@ public:
 
 private:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
   virtual void DoRun (void);
 
   /**
@@ -1308,7 +1411,6 @@ TestMultipleHeTbPreambles::TestMultipleHeTbPreambles ()
 
 TestMultipleHeTbPreambles::~TestMultipleHeTbPreambles ()
 {
-  m_phy = 0;
 }
 
 void
@@ -1351,14 +1453,14 @@ void
 TestMultipleHeTbPreambles::RxHeTbPpdu (uint64_t uid, uint16_t staId, double txPowerWatts, size_t payloadSize)
 {
   WifiConstPsduMap psdus;
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_TB, 800, 1, 1, 0, DEFAULT_CHANNEL_WIDTH, false, false);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_TB, 800, 1, 1, 0, DEFAULT_CHANNEL_WIDTH, false, false);
 
   HeRu::RuSpec ru;
   ru.primary80MHz = false;
   ru.ruType = HeRu::RU_106_TONE;
   ru.index = staId;
   txVector.SetRu (ru, staId);
-  txVector.SetMode (WifiPhy::GetHeMcs7 (), staId);
+  txVector.SetMode (HePhy::GetHeMcs7 (), staId);
   txVector.SetNss (1, staId);
 
   Ptr<Packet> pkt = Create<Packet> (payloadSize);
@@ -1371,11 +1473,12 @@ TestMultipleHeTbPreambles::RxHeTbPpdu (uint64_t uid, uint16_t staId, double txPo
   psdus.insert (std::make_pair (staId, psdu));
 
   Time ppduDuration = m_phy->CalculateTxDuration (psdu->GetSize (), txVector, m_phy->GetPhyBand (), staId);
-  Ptr<WifiPpdu> ppdu = Create<WifiPpdu> (psdus, txVector, ppduDuration, WIFI_PHY_BAND_5GHZ, uid);
+  Ptr<HePpdu> ppdu = Create<HePpdu> (psdus, txVector, ppduDuration, WIFI_PHY_BAND_5GHZ, uid,
+                                     HePpdu::PSD_HE_TB_NON_OFDMA_PORTION);
 
   //Send non-OFDMA part
-  Time nonOfdmaDuration = WifiPhy::CalculateNonOfdmaDurationForHeTb (txVector);
-  uint32_t centerFrequency = m_phy->GetCenterFrequencyForNonOfdmaPart (txVector, staId);
+  Time nonOfdmaDuration = m_phy->GetHePhy ()->CalculateNonOfdmaDurationForHeTb (txVector);
+  uint32_t centerFrequency = m_phy->GetHePhy ()->GetCenterFrequencyForNonOfdmaPart (txVector, staId);
   uint16_t ruWidth = HeRu::GetBandwidth (txVector.GetRu (staId).ruType);
   uint16_t channelWidth = ruWidth < 20 ? 20 : ruWidth;
   Ptr<SpectrumValue> rxPsd = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, txPowerWatts, m_phy->GetGuardBandwidth (channelWidth));
@@ -1384,19 +1487,19 @@ TestMultipleHeTbPreambles::RxHeTbPpdu (uint64_t uid, uint16_t staId, double txPo
   rxParams->txPhy = 0;
   rxParams->duration = nonOfdmaDuration;
   rxParams->ppdu = ppdu;
-  rxParams->txPsdFlag = PSD_HE_TB_NON_OFDMA_PORTION;
 
   m_phy->StartRx (rxParams);
 
   //Schedule OFDMA part
-  WifiSpectrumBand band = m_phy->GetRuBand (txVector, staId);
+  Ptr<HePpdu> ppduOfdma = DynamicCast<HePpdu> (ppdu->Copy ()); //since flag will be modified
+  ppduOfdma->SetTxPsdFlag (HePpdu::PSD_HE_TB_OFDMA_PORTION);
+  WifiSpectrumBand band = m_phy->GetHePhy ()->GetRuBand (txVector, staId);
   Ptr<SpectrumValue> rxPsdOfdma = WifiSpectrumValueHelper::CreateHeMuOfdmTxPowerSpectralDensity (DEFAULT_FREQUENCY, DEFAULT_CHANNEL_WIDTH, txPowerWatts, DEFAULT_GUARD_WIDTH, band);
   Ptr<WifiSpectrumSignalParameters> rxParamsOfdma = Create<WifiSpectrumSignalParameters> ();
   rxParamsOfdma->psd = rxPsd;
   rxParamsOfdma->txPhy = 0;
   rxParamsOfdma->duration = ppduDuration - nonOfdmaDuration;
-  rxParamsOfdma->ppdu = ppdu;
-  rxParamsOfdma->txPsdFlag = PSD_HE_TB_OFDMA_PORTION;
+  rxParamsOfdma->ppdu = ppduOfdma;
   Simulator::Schedule (nonOfdmaDuration, &TestMultipleHeTbPreambles::RxHeTbPpduOfdmaPart, this, rxParamsOfdma);
 }
 
@@ -1434,6 +1537,13 @@ TestMultipleHeTbPreambles::DoSetup (void)
   preambleDetectionModel->SetAttribute ("Threshold", DoubleValue (4));
   preambleDetectionModel->SetAttribute ("MinimumRssi", DoubleValue (-82));
   m_phy->SetPreambleDetectionModel (preambleDetectionModel);
+}
+
+void
+TestMultipleHeTbPreambles::DoTeardown (void)
+{
+  m_phy->Dispose ();
+  m_phy = 0;
 }
 
 void
@@ -1547,6 +1657,7 @@ public:
 
 private:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
   virtual void DoRun (void);
 
   /**
@@ -1747,7 +1858,7 @@ TestUlOfdmaPhyTransmission::SendHeSuPpdu (uint16_t txStaId, std::size_t payloadS
   NS_LOG_FUNCTION (this << txStaId << payloadSize << uid << +bssColor);
   WifiConstPsduMap psdus;
 
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, m_channelWidth, false, false, false, bssColor);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, m_channelWidth, false, false, false, bssColor);
 
   Ptr<Packet> pkt = Create<Packet> (payloadSize);
   WifiMacHeader hdr;
@@ -1785,7 +1896,7 @@ TestUlOfdmaPhyTransmission::SendHeSuPpdu (uint16_t txStaId, std::size_t payloadS
 WifiTxVector
 TestUlOfdmaPhyTransmission::GetTxVectorForHeTbPpdu (uint16_t txStaId, std::size_t index, uint8_t bssColor) const
 {
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_TB, 800, 1, 1, 0, m_channelWidth, false, false, false, bssColor);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_TB, 800, 1, 1, 0, m_channelWidth, false, false, false, bssColor);
 
   HeRu::RuType ruType = HeRu::RU_106_TONE;
   if (m_channelWidth == 20)
@@ -1821,7 +1932,7 @@ TestUlOfdmaPhyTransmission::GetTxVectorForHeTbPpdu (uint16_t txStaId, std::size_
   ru.ruType = ruType;
   ru.index = index;
   txVector.SetRu (ru, txStaId);
-  txVector.SetMode (WifiPhy::GetHeMcs7 (), txStaId);
+  txVector.SetMode (HePhy::GetHeMcs7 (), txStaId);
   txVector.SetNss (1, txStaId);
   return txVector;
 }
@@ -1860,7 +1971,7 @@ TestUlOfdmaPhyTransmission::SendHeTbPpdu (uint16_t txStaId, std::size_t index, s
     }
 
   Time txDuration = phy->CalculateTxDuration (psdu->GetSize (), txVector, phy->GetPhyBand (), txStaId);
-  txVector.SetLength (phy->ConvertHeTbPpduDurationToLSigLength (txDuration, phy->GetPhyBand ()));
+  txVector.SetLength (HePhy::ConvertHeTbPpduDurationToLSigLength (txDuration, phy->GetPhyBand ()));
 
   phy->SetPpduUid (uid);
   phy->Send (psdus, txVector);
@@ -1884,11 +1995,6 @@ TestUlOfdmaPhyTransmission::StopInterference (void)
 
 TestUlOfdmaPhyTransmission::~TestUlOfdmaPhyTransmission ()
 {
-  m_phyAp = 0;
-  m_phySta1 = 0;
-  m_phySta2 = 0;
-  m_phySta3 = 0;
-  m_phyInterferer = 0;
 }
 
 void
@@ -2132,6 +2238,21 @@ TestUlOfdmaPhyTransmission::DoSetup (void)
 }
 
 void
+TestUlOfdmaPhyTransmission::DoTeardown (void)
+{
+  m_phyAp->Dispose ();
+  m_phyAp = 0;
+  m_phySta1->Dispose ();
+  m_phySta1 = 0;
+  m_phySta2->Dispose ();
+  m_phySta2 = 0;
+  m_phySta3->Dispose ();
+  m_phySta3 = 0;
+  m_phyInterferer->Dispose ();
+  m_phyInterferer = 0;
+}
+
+void
 TestUlOfdmaPhyTransmission::LogScenario (std::string log) const
 {
   NS_LOG_INFO (log);
@@ -2178,13 +2299,14 @@ TestUlOfdmaPhyTransmission::SchedulePowerMeasurementChecks (Time delay, double r
   Time detectionDuration = WifiPhy::GetPreambleDetectionDuration ();
   WifiTxVector txVectorSta1 = GetTxVectorForHeTbPpdu (1, 1, 0);
   WifiTxVector txVectorSta2 = GetTxVectorForHeTbPpdu (2, 2, 0);
-  Time nonOfdmaDuration = m_phyAp->CalculateNonOfdmaDurationForHeTb (txVectorSta2);
-  NS_ASSERT (nonOfdmaDuration == m_phyAp->CalculateNonOfdmaDurationForHeTb (txVectorSta1));
+  Ptr<const HePhy> hePhy = m_phyAp->GetHePhy ();
+  Time nonOfdmaDuration = hePhy->CalculateNonOfdmaDurationForHeTb (txVectorSta2);
+  NS_ASSERT (nonOfdmaDuration == hePhy->CalculateNonOfdmaDurationForHeTb (txVectorSta1));
 
   std::vector<double> rxPowerNonOfdma { rxPowerNonOfdmaRu1, rxPowerNonOfdmaRu2 };
-  std::vector<WifiSpectrumBand> nonOfdmaBand { m_phyAp->GetNonOfdmaBand (txVectorSta1, 1), m_phyAp->GetNonOfdmaBand (txVectorSta2, 2) };
+  std::vector<WifiSpectrumBand> nonOfdmaBand { hePhy->GetNonOfdmaBand (txVectorSta1, 1), hePhy->GetNonOfdmaBand (txVectorSta2, 2) };
   std::vector<double> rxPowerOfdma { rxPowerOfdmaRu1, rxPowerOfdmaRu2 };
-  std::vector<WifiSpectrumBand> ofdmaBand { m_phyAp->GetRuBand (txVectorSta1, 1), m_phyAp->GetRuBand (txVectorSta2, 2) };
+  std::vector<WifiSpectrumBand> ofdmaBand { hePhy->GetRuBand (txVectorSta1, 1), hePhy->GetRuBand (txVectorSta2, 2) };
 
   for (uint8_t i = 0; i < 2; ++i)
     {
@@ -2685,6 +2807,7 @@ public:
 
 private:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
   virtual void DoRun (void);
 
   /**
@@ -2791,14 +2914,14 @@ TestPhyPaddingExclusion::SendHeTbPpdu (uint16_t txStaId, std::size_t index, std:
 {
   WifiConstPsduMap psdus;
 
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_TB, 800, 1, 1, 0, DEFAULT_CHANNEL_WIDTH, false, false, 1);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_TB, 800, 1, 1, 0, DEFAULT_CHANNEL_WIDTH, false, false, 1);
 
   HeRu::RuSpec ru;
   ru.primary80MHz = false;
   ru.ruType = HeRu::RU_106_TONE;
   ru.index = index;
   txVector.SetRu (ru, txStaId);
-  txVector.SetMode (WifiPhy::GetHeMcs7 (), txStaId);
+  txVector.SetMode (HePhy::GetHeMcs7 (), txStaId);
   txVector.SetNss (1, txStaId);
 
   Ptr<Packet> pkt = Create<Packet> (payloadSize);
@@ -2823,7 +2946,7 @@ TestPhyPaddingExclusion::SendHeTbPpdu (uint16_t txStaId, std::size_t index, std:
       phy = m_phySta2;
     }
 
-  txVector.SetLength (phy->ConvertHeTbPpduDurationToLSigLength (txDuration, phy->GetPhyBand ()));
+  txVector.SetLength (HePhy::ConvertHeTbPpduDurationToLSigLength (txDuration, phy->GetPhyBand ()));
 
   phy->SetPpduUid (0);
   phy->Send (psdus, txVector);
@@ -2846,10 +2969,6 @@ TestPhyPaddingExclusion::StopInterference (void)
 
 TestPhyPaddingExclusion::~TestPhyPaddingExclusion ()
 {
-  m_phyAp = 0;
-  m_phySta1 = 0;
-  m_phySta2 = 0;
-  m_phyInterferer = 0;
 }
 
 void
@@ -3018,6 +3137,19 @@ TestPhyPaddingExclusion::DoSetup (void)
 }
 
 void
+TestPhyPaddingExclusion::DoTeardown (void)
+{
+  m_phyAp->Dispose ();
+  m_phyAp = 0;
+  m_phySta1->Dispose ();
+  m_phySta1 = 0;
+  m_phySta2->Dispose ();
+  m_phySta2 = 0;
+  m_phyInterferer->Dispose ();
+  m_phyInterferer = 0;
+}
+
+void
 TestPhyPaddingExclusion::DoRun (void)
 {
   Time expectedPpduDuration = NanoSeconds (279200);
@@ -3094,6 +3226,7 @@ public:
 
 private:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
   virtual void DoRun (void);
 
   /**
@@ -3199,7 +3332,7 @@ TestUlOfdmaPowerControl::SendMuBar (std::vector <uint16_t> staIds)
   //Build MU-BAR trigger frame
   CtrlTriggerHeader muBar;
   muBar.SetType (MU_BAR_TRIGGER);
-  muBar.SetUlLength (WifiPhy::ConvertHeTbPpduDurationToLSigLength (MicroSeconds (120), WIFI_PHY_BAND_5GHZ));
+  muBar.SetUlLength (HePhy::ConvertHeTbPpduDurationToLSigLength (MicroSeconds (128), WIFI_PHY_BAND_5GHZ));
   muBar.SetMoreTF (true);
   muBar.SetCsRequired (true);
   muBar.SetUlBandwidth (DEFAULT_CHANNEL_WIDTH);
@@ -3243,7 +3376,7 @@ TestUlOfdmaPowerControl::SendMuBar (std::vector <uint16_t> staIds)
     }
 
   WifiConstPsduMap psdus;
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0,
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0,
                                         DEFAULT_CHANNEL_WIDTH, false, false, false, m_bssColor);
 
   Ptr<Packet> bar = Create<Packet> ();
@@ -3376,6 +3509,19 @@ TestUlOfdmaPowerControl::DoSetup (void)
   lossModel->SetDefaultLoss (50.0);
   lossModel->SetLoss (apNode->GetObject<MobilityModel> (), staNodes.Get (1)->GetObject<MobilityModel> (),
                       56.0, true); //+6 dB between AP <-> STA 2 compared to AP <-> STA 1
+}
+
+void
+TestUlOfdmaPowerControl::DoTeardown (void)
+{
+  m_phyAp->Dispose ();
+  m_phyAp = 0;
+  m_apDev->Dispose ();
+  m_apDev = 0;
+  m_sta1Dev->Dispose ();
+  m_sta1Dev = 0;
+  m_sta2Dev->Dispose ();
+  m_sta2Dev = 0;
 }
 
 void

@@ -36,7 +36,8 @@
 #include "ns3/wifi-mac-queue-item.h"
 #include "ns3/mpdu-aggregator.h"
 #include "ns3/wifi-psdu.h"
-#include "ns3/wifi-ppdu.h"
+#include "ns3/he-ppdu.h"
+#include "ns3/he-phy.h"
 
 using namespace ns3;
 
@@ -61,6 +62,7 @@ public:
 
 protected:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
   Ptr<SpectrumWifiPhy> m_phy; ///< Phy
   /**
    * Send packet function
@@ -118,7 +120,7 @@ TestThresholdPreambleDetectionWithoutFrameCapture::TestThresholdPreambleDetectio
 void
 TestThresholdPreambleDetectionWithoutFrameCapture::SendPacket (double rxPowerDbm)
 {
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
 
   Ptr<Packet> pkt = Create<Packet> (1000);
   WifiMacHeader hdr;
@@ -129,7 +131,7 @@ TestThresholdPreambleDetectionWithoutFrameCapture::SendPacket (double rxPowerDbm
   Ptr<WifiPsdu> psdu = Create<WifiPsdu> (pkt, hdr);
   Time txDuration = m_phy->CalculateTxDuration (psdu->GetSize (), txVector, m_phy->GetPhyBand ());
 
-  Ptr<WifiPpdu> ppdu = Create<WifiPpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
+  Ptr<WifiPpdu> ppdu = Create<HePpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
 
   Ptr<SpectrumValue> txPowerSpectrum = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (FREQUENCY, CHANNEL_WIDTH, DbmToW (rxPowerDbm), GUARD_WIDTH);
 
@@ -204,6 +206,13 @@ TestThresholdPreambleDetectionWithoutFrameCapture::DoSetup (void)
   preambleDetectionModel->SetAttribute ("Threshold", DoubleValue (4));
   preambleDetectionModel->SetAttribute ("MinimumRssi", DoubleValue (-82));
   m_phy->SetPreambleDetectionModel (preambleDetectionModel);
+}
+
+void
+TestThresholdPreambleDetectionWithoutFrameCapture::DoTeardown (void)
+{
+  m_phy->Dispose ();
+  m_phy = 0;
 }
 
 void
@@ -418,6 +427,7 @@ public:
 
 protected:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
   Ptr<SpectrumWifiPhy> m_phy; ///< Phy
   /**
    * Send packet function
@@ -475,7 +485,7 @@ TestThresholdPreambleDetectionWithFrameCapture::TestThresholdPreambleDetectionWi
 void
 TestThresholdPreambleDetectionWithFrameCapture::SendPacket (double rxPowerDbm)
 {
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
   
   Ptr<Packet> pkt = Create<Packet> (1000);
   WifiMacHeader hdr;
@@ -486,7 +496,7 @@ TestThresholdPreambleDetectionWithFrameCapture::SendPacket (double rxPowerDbm)
   Ptr<WifiPsdu> psdu = Create<WifiPsdu> (pkt, hdr);
   Time txDuration = m_phy->CalculateTxDuration (psdu->GetSize (), txVector, m_phy->GetPhyBand ());
 
-  Ptr<WifiPpdu> ppdu = Create<WifiPpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
+  Ptr<WifiPpdu> ppdu = Create<HePpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
 
   Ptr<SpectrumValue> txPowerSpectrum = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (FREQUENCY, CHANNEL_WIDTH, DbmToW (rxPowerDbm), GUARD_WIDTH);
 
@@ -566,6 +576,13 @@ TestThresholdPreambleDetectionWithFrameCapture::DoSetup (void)
   frameCaptureModel->SetAttribute ("Margin", DoubleValue (5));
   frameCaptureModel->SetAttribute ("CaptureWindow", TimeValue (MicroSeconds (16)));
   m_phy->SetFrameCaptureModel (frameCaptureModel);
+}
+
+void
+TestThresholdPreambleDetectionWithFrameCapture::DoTeardown (void)
+{
+  m_phy->Dispose ();
+  m_phy = 0;
 }
 
 void
@@ -915,6 +932,7 @@ public:
 
 protected:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
 
 private:
   virtual void DoRun (void);
@@ -985,7 +1003,7 @@ TestSimpleFrameCaptureModel::TestSimpleFrameCaptureModel ()
 void
 TestSimpleFrameCaptureModel::SendPacket (double rxPowerDbm, uint32_t packetSize)
 {
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs0 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs0 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
   
   Ptr<Packet> pkt = Create<Packet> (packetSize);
   WifiMacHeader hdr;
@@ -996,7 +1014,7 @@ TestSimpleFrameCaptureModel::SendPacket (double rxPowerDbm, uint32_t packetSize)
   Ptr<WifiPsdu> psdu = Create<WifiPsdu> (pkt, hdr);
   Time txDuration = m_phy->CalculateTxDuration (psdu->GetSize (), txVector, m_phy->GetPhyBand ());
 
-  Ptr<WifiPpdu> ppdu = Create<WifiPpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
+  Ptr<WifiPpdu> ppdu = Create<HePpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
 
   Ptr<SpectrumValue> txPowerSpectrum = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (FREQUENCY, CHANNEL_WIDTH, DbmToW (rxPowerDbm), GUARD_WIDTH);
 
@@ -1100,6 +1118,13 @@ TestSimpleFrameCaptureModel::DoSetup (void)
 }
 
 void
+TestSimpleFrameCaptureModel::DoTeardown (void)
+{
+  m_phy->Dispose ();
+  m_phy = 0;
+}
+
+void
 TestSimpleFrameCaptureModel::DoRun (void)
 {
   RngSeedManager::SetSeed (1);
@@ -1160,6 +1185,7 @@ public:
 
 protected:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
   Ptr<SpectrumWifiPhy> m_phy; ///< Phy
   /**
    * Send packet function
@@ -1193,7 +1219,7 @@ TestPhyHeadersReception::TestPhyHeadersReception ()
 void
 TestPhyHeadersReception::SendPacket (double rxPowerDbm)
 {
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs7 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
 
   Ptr<Packet> pkt = Create<Packet> (1000);
   WifiMacHeader hdr;
@@ -1204,7 +1230,7 @@ TestPhyHeadersReception::SendPacket (double rxPowerDbm)
   Ptr<WifiPsdu> psdu = Create<WifiPsdu> (pkt, hdr);
   Time txDuration = m_phy->CalculateTxDuration (psdu->GetSize (), txVector, m_phy->GetPhyBand ());
 
-  Ptr<WifiPpdu> ppdu = Create<WifiPpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
+  Ptr<WifiPpdu> ppdu = Create<HePpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
 
   Ptr<SpectrumValue> txPowerSpectrum = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (FREQUENCY, CHANNEL_WIDTH, DbmToW (rxPowerDbm), GUARD_WIDTH);
 
@@ -1251,6 +1277,13 @@ TestPhyHeadersReception::DoSetup (void)
   m_phy->SetErrorRateModel (error);
   m_phy->SetChannelNumber (CHANNEL_NUMBER);
   m_phy->SetFrequency (FREQUENCY);
+}
+
+void
+TestPhyHeadersReception::DoTeardown (void)
+{
+  m_phy->Dispose ();
+  m_phy = 0;
 }
 
 void
@@ -1404,6 +1437,7 @@ public:
 
 protected:
   virtual void DoSetup (void);
+  virtual void DoTeardown (void);
 
 private:
   virtual void DoRun (void);
@@ -1703,7 +1737,7 @@ TestAmpduReception::CheckPhyState (WifiPhyState expectedState)
 void
 TestAmpduReception::SendAmpduWithThreeMpdus (double rxPowerDbm, uint32_t referencePacketSize)
 {
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs0 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, true);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs0 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, true);
 
   WifiMacHeader hdr;
   hdr.SetType (WIFI_MAC_QOSDATA);
@@ -1719,7 +1753,7 @@ TestAmpduReception::SendAmpduWithThreeMpdus (double rxPowerDbm, uint32_t referen
   
   Time txDuration = m_phy->CalculateTxDuration (psdu->GetSize (), txVector, m_phy->GetPhyBand ());
 
-  Ptr<WifiPpdu> ppdu = Create<WifiPpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
+  Ptr<WifiPpdu> ppdu = Create<HePpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
 
   Ptr<SpectrumValue> txPowerSpectrum = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (FREQUENCY, CHANNEL_WIDTH, DbmToW (rxPowerDbm), GUARD_WIDTH);
 
@@ -1754,6 +1788,13 @@ TestAmpduReception::DoSetup (void)
   frameCaptureModel->SetAttribute ("Margin", DoubleValue (5));
   frameCaptureModel->SetAttribute ("CaptureWindow", TimeValue (MicroSeconds (16)));
   m_phy->SetFrameCaptureModel (frameCaptureModel);
+}
+
+void
+TestAmpduReception::DoTeardown (void)
+{
+  m_phy->Dispose ();
+  m_phy = 0;
 }
 
 void

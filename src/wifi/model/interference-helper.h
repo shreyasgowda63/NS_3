@@ -21,21 +21,13 @@
 #ifndef INTERFERENCE_HELPER_H
 #define INTERFERENCE_HELPER_H
 
-#include "ns3/nstime.h"
-#include "ns3/wifi-spectrum-value-helper.h"
-#include "wifi-tx-vector.h"
-#include <map>
+#include "phy-entity.h"
 
 namespace ns3 {
 
 class WifiPpdu;
 class WifiPsdu;
 class ErrorRateModel;
-
-/**
- * A map of the received power (Watts) for each band
- */
-typedef std::map <WifiSpectrumBand, double> RxPowerWattPerChannelBand;
 
 /**
  * \ingroup wifi
@@ -53,7 +45,7 @@ public:
    * \param duration duration of the PPDU
    * \param rxPower the received power per band (W)
    */
-  Event (Ptr<const WifiPpdu> ppdu, WifiTxVector txVector, Time duration, RxPowerWattPerChannelBand rxPower);
+  Event (Ptr<const WifiPpdu> ppdu, const WifiTxVector& txVector, Time duration, RxPowerWattPerChannelBand rxPower);
   ~Event ();
 
   /**
@@ -139,19 +131,6 @@ std::ostream& operator<< (std::ostream& os, const Event &event);
 class InterferenceHelper
 {
 public:
-  /**
-   * Signal event for a PPDU.
-   */
-
-  /**
-   * A struct for both SNR and PER
-   */
-  struct SnrPer
-  {
-    double snr; ///< SNR in linear scale
-    double per; ///< PER
-  };
-
   InterferenceHelper ();
   ~InterferenceHelper ();
 
@@ -211,11 +190,11 @@ public:
    * \param txVector the TXVECTOR
    * \param duration the PPDU duration
    * \param rxPower received power per band (W)
-   * \param isStartOfdmaRxing flag whether the event corresponds to the start of the OFDMA payload reception (only used for UL-OFDMA)
+   * \param isStartOfdmaRxing flag whether the event corresponds to the start of the OFDMA payload reception (only used for UL-OFDMA) //TODO simplify this once WifiPpdu is subclassed by adding an attribute
    *
    * \return Event
    */
-  Ptr<Event> Add (Ptr<const WifiPpdu> ppdu, WifiTxVector txVector, Time duration, RxPowerWattPerChannelBand rxPower, bool isStartOfdmaRxing = false);
+  Ptr<Event> Add (Ptr<const WifiPpdu> ppdu, const WifiTxVector& txVector, Time duration, RxPowerWattPerChannelBand rxPower, bool isStartOfdmaRxing = false);
 
   /**
    * Add a non-Wifi signal to interference helper.
@@ -238,7 +217,7 @@ public:
    *
    * \return struct of SNR and PER (with PER being evaluated over the provided time window)
    */
-  struct InterferenceHelper::SnrPer CalculatePayloadSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band,
+  struct PhyEntity::SnrPer CalculatePayloadSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band,
                                                             uint16_t staId, std::pair<Time, Time> relativeMpduStartStop) const;
   /**
    * Calculate the SNIR for the event (starting from now until the event end).
@@ -252,27 +231,18 @@ public:
    */
   double CalculateSnr (Ptr<Event> event, uint16_t channelWidth, uint8_t nss, WifiSpectrumBand band) const;
   /**
-   * Calculate the SNIR at the start of the non-HT PHY header and accumulate
+   * Calculate the SNIR at the start of the PHY header and accumulate
    * all SNIR changes in the SNIR vector.
    *
    * \param event the event corresponding to the first time the corresponding PPDU arrives
    * \param channelWidth the channel width (in MHz) for header measurement
    * \param band identify the band used by the PSDU
+   * \param header the PHY header to consider
    *
    * \return struct of SNR and PER
    */
-  struct InterferenceHelper::SnrPer CalculateNonHtPhyHeaderSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band) const;
-  /**
-   * Calculate the SNIR at the start of the HT PHY header and accumulate
-   * all SNIR changes in the SNIR vector.
-   *
-   * \param event the event corresponding to the first time the corresponding PPDU arrives
-   * \param channelWidth the channel width (in MHz) for header measurement
-   * \param band identify the band used by the PSDU
-   *
-   * \return struct of SNR and PER
-   */
-  struct InterferenceHelper::SnrPer CalculateHtPhyHeaderSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band) const;
+  struct PhyEntity::SnrPer CalculatePhyHeaderSnrPer (Ptr<Event> event, uint16_t channelWidth, WifiSpectrumBand band,
+                                                              WifiPpduField header) const;
 
   /**
    * Notify that RX has started.
@@ -321,7 +291,7 @@ protected:
    *
    * \return the success rate
    */
-  double CalculateChunkSuccessRate (double snir, Time duration, WifiMode mode, WifiTxVector txVector) const;
+  double CalculateChunkSuccessRate (double snir, Time duration, WifiMode mode, const WifiTxVector& txVector) const;
 
 
 private:
@@ -403,7 +373,7 @@ private:
    *
    * \return the success rate
    */
-  double CalculatePayloadChunkSuccessRate (double snir, Time duration, WifiTxVector txVector, uint16_t staId) const;
+  double CalculatePayloadChunkSuccessRate (double snir, Time duration, const WifiTxVector& txVector, uint16_t staId) const;
   /**
    * Calculate the error rate of the given PHY payload only in the provided time
    * window (thus enabling per MPDU PER information). The PHY payload can be divided into
@@ -421,31 +391,34 @@ private:
   double CalculatePayloadPer (Ptr<const Event> event, uint16_t channelWidth, NiChangesPerBand *nis, WifiSpectrumBand band,
                               uint16_t staId, std::pair<Time, Time> window) const;
   /**
-   * Calculate the error rate of the non-HT PHY header. The non-HT PHY header
+   * Calculate the error rate of the PHY header. The PHY header
    * can be divided into multiple chunks (e.g. due to interference from other transmissions).
    *
    * \param event the event
    * \param nis the NiChanges
    * \param channelWidth the channel width (in MHz) for header measurement
    * \param band the band
-   *
-   * \return the error rate of the non-HT PHY header
-   */
-  double CalculateNonHtPhyHeaderPer (Ptr<const Event> event, NiChangesPerBand *nis,
-                                     uint16_t channelWidth, WifiSpectrumBand band) const;
-  /**
-   * Calculate the error rate of the HT PHY header. TheHT PHY header
-   * can be divided into multiple chunks (e.g. due to interference from other transmissions).
-   *
-   * \param event the event
-   * \param nis the NiChanges
-   * \param channelWidth the channel width (in MHz) for header measurement
-   * \param band the band
+   * \param header the PHY header to consider
    *
    * \return the error rate of the HT PHY header
    */
-  double CalculateHtPhyHeaderPer (Ptr<const Event> event, NiChangesPerBand *nis,
-                                  uint16_t channelWidth, WifiSpectrumBand band) const;
+  double CalculatePhyHeaderPer (Ptr<const Event> event, NiChangesPerBand *nis,
+                                uint16_t channelWidth, WifiSpectrumBand band,
+                                WifiPpduField header) const;
+  /**
+   * Calculate the success rate of the PHY header sections for the provided event.
+   *
+   * \param event the event
+   * \param nis the NiChanges
+   * \param channelWidth the channel width (in MHz) for header measurement
+   * \param band the band
+   * \param phyHeaderSections the map of PHY header sections (\see PhyEntity::PhyHeaderSections)
+   *
+   * \return the success rate of the PHY header sections
+   */
+  double CalculatePhyHeaderSectionPsr (Ptr<const Event> event, NiChangesPerBand *nis,
+                                       uint16_t channelWidth, WifiSpectrumBand band,
+                                       PhyEntity::PhyHeaderSections phyHeaderSections) const;
 
   double m_noiseFigure;                                    //!< noise figure (linear)
   Ptr<ErrorRateModel> m_errorRateModel;                    //!< error rate model

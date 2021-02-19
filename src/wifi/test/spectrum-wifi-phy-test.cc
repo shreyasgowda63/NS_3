@@ -29,8 +29,9 @@
 #include "ns3/log.h"
 #include "ns3/wifi-net-device.h"
 #include "ns3/wifi-psdu.h"
-#include "ns3/wifi-ppdu.h"
+#include "ns3/ofdm-ppdu.h"
 #include "ns3/wifi-utils.h"
+#include "ns3/he-phy.h" //includes OFDM PHY
 
 using namespace ns3;
 
@@ -119,7 +120,7 @@ SpectrumWifiPhyBasicTest::SpectrumWifiPhyBasicTest (std::string name)
 Ptr<SpectrumSignalParameters>
 SpectrumWifiPhyBasicTest::MakeSignal (double txPowerWatts)
 {
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetOfdmRate6Mbps (), 0, WIFI_PREAMBLE_LONG, 800, 1, 1, 0, 20, false);
+  WifiTxVector txVector = WifiTxVector (OfdmPhy::GetOfdmRate6Mbps (), 0, WIFI_PREAMBLE_LONG, 800, 1, 1, 0, 20, false);
 
   Ptr<Packet> pkt = Create<Packet> (1000);
   WifiMacHeader hdr;
@@ -130,7 +131,7 @@ SpectrumWifiPhyBasicTest::MakeSignal (double txPowerWatts)
   Ptr<WifiPsdu> psdu = Create<WifiPsdu> (pkt, hdr);
   Time txDuration = m_phy->CalculateTxDuration (psdu->GetSize (), txVector, m_phy->GetPhyBand ());
 
-  Ptr<WifiPpdu> ppdu = Create<WifiPpdu> (psdu, txVector, txDuration, WIFI_PHY_BAND_5GHZ, m_uid++);
+  Ptr<WifiPpdu> ppdu = Create<OfdmPpdu> (psdu, txVector, WIFI_PHY_BAND_5GHZ, m_uid++);
 
   Ptr<SpectrumValue> txPowerSpectrum = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (FREQUENCY, CHANNEL_WIDTH, txPowerWatts, GUARD_WIDTH);
   Ptr<WifiSpectrumSignalParameters> txParams = Create<WifiSpectrumSignalParameters> ();
@@ -319,7 +320,7 @@ SpectrumWifiPhyListenerTest::DoRun (void)
   Simulator::Run ();
 
   NS_TEST_ASSERT_MSG_EQ (m_count, 1, "Didn't receive right number of packets");
-  NS_TEST_ASSERT_MSG_EQ (m_listener->m_notifyMaybeCcaBusyStart, 3, "Didn't receive NotifyMaybeCcaBusyStart (preamble deteted + L-SIG received + common PHY header(s) received)");
+  NS_TEST_ASSERT_MSG_EQ (m_listener->m_notifyMaybeCcaBusyStart, 2, "Didn't receive NotifyMaybeCcaBusyStart (once preamble is detected + prolonged by L-SIG reception, then switched to Rx by at the beginning of data)");
   NS_TEST_ASSERT_MSG_EQ (m_listener->m_notifyRxStart, 1, "Didn't receive NotifyRxStart");
   NS_TEST_ASSERT_MSG_EQ (m_listener->m_notifyRxEndOk, 1, "Didn't receive NotifyRxEnd");
 
@@ -390,7 +391,7 @@ SpectrumWifiPhyFilterTest::SpectrumWifiPhyFilterTest (std::string name)
 void
 SpectrumWifiPhyFilterTest::SendPpdu (void)
 {
-  WifiTxVector txVector = WifiTxVector (WifiPhy::GetHeMcs0 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, m_txChannelWidth, false, false);
+  WifiTxVector txVector = WifiTxVector (HePhy::GetHeMcs0 (), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, m_txChannelWidth, false, false);
   Ptr<Packet> pkt = Create<Packet> (1000);
   WifiMacHeader hdr;
   hdr.SetType (WIFI_MAC_QOSDATA);

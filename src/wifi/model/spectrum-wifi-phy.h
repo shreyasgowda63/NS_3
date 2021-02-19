@@ -29,13 +29,12 @@
 #include "ns3/antenna-model.h"
 #include "ns3/spectrum-channel.h"
 #include "ns3/spectrum-model.h"
-#include "ns3/wifi-spectrum-value-helper.h"
 #include "wifi-phy.h"
 
 namespace ns3 {
 
 class WifiSpectrumPhyInterface;
-class WifiPpdu;
+struct WifiSpectrumSignalParameters;
 
 /**
  * \brief 802.11 PHY layer model
@@ -62,8 +61,10 @@ public:
   virtual ~SpectrumWifiPhy ();
 
   // Implementation of pure virtual method.
-  void StartTx (Ptr<WifiPpdu> ppdu, uint8_t txPowerLevel);
-  Ptr<Channel> GetChannel (void) const;
+  void StartTx (Ptr<WifiPpdu> ppdu) override;
+  Ptr<Channel> GetChannel (void) const override;
+  virtual uint16_t GetGuardBandwidth (uint16_t currentChannelWidth) const override;
+  std::tuple<double, double, double> GetTxMaskRejectionParams (void) const override;
 
   /**
    * Set the SpectrumChannel this SpectrumWifiPhy is to be connected to.
@@ -79,16 +80,6 @@ public:
    * \param rxParams Input signal parameters
    */
   void StartRx (Ptr<SpectrumSignalParameters> rxParams);
-
-  /**
-   * Get the center frequency of the channel corresponding the current TxVector rather than
-   * that of the supported channel width.
-   * Consider that this "primary channel" is on the lower part for the time being.
-   *
-   * \param txVector the TXVECTOR that has the channel width that is to be used
-   * \return the center frequency in MHz corresponding to the channel width to be used
-   */
-  uint16_t GetCenterFrequencyForChannelWidth (WifiTxVector txVector) const;
 
   /**
    * Method to encapsulate the creation of the WifiSpectrumPhyInterface
@@ -129,30 +120,6 @@ public:
   uint32_t GetBandBandwidth (void) const;
 
   /**
-   * \param currentChannelWidth channel width of the current transmission (MHz)
-   * \return the width of the guard band (MHz)
-   *
-   * Note: in order to properly model out of band transmissions for OFDM, the guard
-   * band has been configured so as to expand the modeled spectrum up to the
-   * outermost referenced point in "Transmit spectrum mask" sections' PSDs of
-   * each PHY specification of 802.11-2016 standard. It thus ultimately corresponds
-   * to the current channel bandwidth (which can be different from devices max
-   * channel width).
-   */
-  virtual uint16_t GetGuardBandwidth (uint16_t currentChannelWidth) const;
-
-  /**
-   * Get the center frequency of the non-OFDMA part of the current TxVector for the
-   * given STA-ID.
-   * Note this method is only to be used for UL MU.
-   *
-   * \param txVector the TXVECTOR that has the RU allocation
-   * \param staId the STA-ID of the station taking part of the UL MU
-   * \return the center frequency in MHz corresponding to the non-OFDMA part of the HE TB PPDU
-   */
-  uint16_t GetCenterFrequencyForNonOfdmaPart (WifiTxVector txVector, uint16_t staId) const;
-
-  /**
    * Callback invoked when the PHY model starts to process a signal
    *
    * \param signalType Whether signal is WiFi (true) or foreign (false)
@@ -164,17 +131,23 @@ public:
 
   // The following four methods call to the base WifiPhy class method
   // but also generate a new SpectrumModel if called during runtime
-  virtual void SetChannelNumber (uint8_t id);
-  virtual void SetFrequency (uint16_t freq);
-  virtual void SetChannelWidth (uint16_t channelwidth);
-  virtual void ConfigureStandardAndBand (WifiPhyStandard standard, WifiPhyBand band);
+  virtual void SetChannelNumber (uint8_t id) override;
+  virtual void SetFrequency (uint16_t freq) override;
+  virtual void SetChannelWidth (uint16_t channelwidth) override;
+  virtual void ConfigureStandardAndBand (WifiPhyStandard standard, WifiPhyBand band) override;
 
-
+  /**
+   * This function is sending the signal to the Spectrum channel
+   * after finishing the configuration of the transmit parameters.
+   *
+   * \param txParams the parameters to be provided to the Spectrum channel
+   */
+  void Transmit (Ptr<WifiSpectrumSignalParameters> txParams);
 
 protected:
   // Inherited
-  void DoDispose (void);
-  void DoInitialize (void);
+  void DoDispose (void) override;
+  void DoInitialize (void) override;
 
   /**
    * Get the start band index and the stop band index for a given band
@@ -184,21 +157,10 @@ protected:
    *
    * \return a pair of start and stop indexes that defines the band
    */
-  WifiSpectrumBand GetBand (uint16_t bandWidth, uint8_t bandIndex = 0);
+  WifiSpectrumBand GetBand (uint16_t bandWidth, uint8_t bandIndex = 0) override;
 
 
 private:
-  /**
-   * \param txPowerW power in W to spread across the bands
-   * \param ppdu the PPDU that will be transmitted
-   * \param flag flag indicating the type of Tx PSD to build
-   * \return Pointer to SpectrumValue
-   *
-   * This is a helper function to create the right TX PSD corresponding
-   * to the standard in use.
-   */
-  Ptr<SpectrumValue> GetTxPowerSpectralDensity (double txPowerW, Ptr<WifiPpdu> ppdu, TxPsdFlag flag = PSD_NON_HE_TB);
-
   /**
    * \param channelWidth the total channel width (MHz) used for the OFDMA transmission
    * \param range the subcarrier range of the HE RU
@@ -206,22 +168,7 @@ private:
    *
    * This is a helper function to convert HE RU subcarriers, which are relative to the center frequency subcarrier, to the indexes used by the Spectrum model.
    */
-  WifiSpectrumBand ConvertHeRuSubcarriers (uint16_t channelWidth, HeRu::SubcarrierRange range) const;
-
-  /**
-   * This function is called to send the OFDMA part of a PPDU.
-   *
-   * \param ppdu the PPDU to send
-   * \param txPowerWatts the transmit power in watts
-   */
-  void StartOfdmaTx (Ptr<WifiPpdu> ppdu, double txPowerWatts);
-
-  /**
-   * This function is sending the signal to the Spectrum channel
-   *
-   * \param txParams the parameters to be provided to the Spectrum channel
-   */
-  void Transmit (Ptr<WifiSpectrumSignalParameters> txParams);
+  WifiSpectrumBand ConvertHeRuSubcarriers (uint16_t channelWidth, HeRu::SubcarrierRange range) const override;
 
   /**
    * Perform run-time spectrum model change

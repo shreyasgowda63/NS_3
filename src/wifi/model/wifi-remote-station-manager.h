@@ -30,9 +30,9 @@
 #include "wifi-utils.h"
 #include "qos-utils.h"
 #include "wifi-remote-station-info.h"
-#include "ht-capabilities.h"
-#include "vht-capabilities.h"
-#include "he-capabilities.h"
+#include "ns3/ht-capabilities.h"
+#include "ns3/vht-capabilities.h"
+#include "ns3/he-capabilities.h"
 
 namespace ns3 {
 
@@ -268,12 +268,6 @@ public:
    */
   bool GetPcfSupported (void) const;
   /**
-   * Return whether the device has HT Greenfield support enabled.
-   *
-   * \return true if HT Grenfield support is enabled, false otherwise
-   */
-  bool GetGreenfieldSupported (void) const;
-  /**
    * Return whether the device has LDPC support enabled.
    *
    * \return true if LDPC support is enabled, false otherwise
@@ -317,19 +311,6 @@ public:
    *         false otherwise
    */
   bool GetUseNonHtProtection (void) const;
-  /**
-   * Enable or disable protection for stations that do not support HT Greenfield format.
-   *
-   * \param enable enable or disable protection for stations that do not support HT Greenfield format
-   */
-  void SetUseGreenfieldProtection (bool enable);
-  /**
-   * Return whether protection for stations that do not support HT Greenfield format is enabled.
-   *
-   * \return true if protection for stations that do not support HT Greenfield is enabled,
-   *         false otherwise
-   */
-  bool GetUseGreenfieldProtection (void) const;
   /**
    * Enable or disable short PHY preambles.
    *
@@ -404,15 +385,6 @@ public:
    * \return the basic mode at the given index
    */
   WifiMode GetNonErpBasicMode (uint8_t i) const;
-  /**
-   * Return whether the station supports Greenfield or not.
-   *
-   * \param address the address of the station
-   *
-   * \return true if Greenfield is supported by the station,
-   *         false otherwise
-   */
-  bool GetGreenfieldSupported (Mac48Address address) const;
   /**
    * Return whether the station supports LDPC or not.
    *
@@ -773,7 +745,7 @@ public:
    * \param dataSnr data SNR reported by remote station
    * \param dataTxVector the TXVECTOR of the MPDUs we sent
    */
-  void ReportAmpduTxStatus (Mac48Address address, uint8_t nSuccessfulMpdus, uint8_t nFailedMpdus,
+  void ReportAmpduTxStatus (Mac48Address address, uint16_t nSuccessfulMpdus, uint16_t nFailedMpdus,
                             double rxSnr, double dataSnr, WifiTxVector dataTxVector);
 
   /**
@@ -873,14 +845,6 @@ public:
    * \return the maximum number of spatial streams supported by the PHY layer
    */
   uint8_t GetMaxNumberOfTransmitStreams (void) const;
-  /**
-   * \returns whether HT greenfield should be used for a given destination address.
-   *
-   * \param dest the destination address
-   *
-   * \return whether HT greenfield should be used for a given destination address
-   */
-  bool UseGreenfieldForDestination (Mac48Address dest) const;
   /**
    * \returns whether LDPC should be used for a given destination address.
    *
@@ -1054,15 +1018,6 @@ protected:
    *         false otherwise
    */
   bool GetAggregation (const WifiRemoteStation *station) const;
-  /**
-   * Return whether the station supports Greenfield or not.
-   *
-   * \param station the station being queried
-   *
-   * \return true if Greenfield is supported by the station,
-   *         false otherwise
-   */
-  bool GetGreenfield (const WifiRemoteStation *station) const;
 
   /**
    * Return the number of supported streams the station has.
@@ -1222,7 +1177,7 @@ private:
    * \param dataChannelWidth the channel width (in MHz) of the A-MPDU we sent
    * \param dataNss the number of spatial streams used to send the A-MPDU
    */
-  virtual void DoReportAmpduTxStatus (WifiRemoteStation *station, uint8_t nSuccessfulMpdus, uint8_t nFailedMpdus,
+  virtual void DoReportAmpduTxStatus (WifiRemoteStation *station, uint16_t nSuccessfulMpdus, uint16_t nFailedMpdus,
                                       double rxSnr, double dataSnr, uint16_t dataChannelWidth, uint8_t dataNss);
 
   /**
@@ -1307,7 +1262,6 @@ private:
   WifiMode m_nonUnicastMode;      //!< Transmission mode for non-unicast Data frames
   bool m_useNonErpProtection;     //!< flag if protection for non-ERP stations against ERP transmissions is enabled
   bool m_useNonHtProtection;      //!< flag if protection for non-HT stations against HT transmissions is enabled
-  bool m_useGreenfieldProtection; //!< flag if protection for stations that do not support HT Greenfield format is enabled
   bool m_shortPreambleEnabled;    //!< flag if short PHY preamble is enabled
   bool m_shortSlotTimeEnabled;    //!< flag if short slot time is enabled
   ProtectionMode m_erpProtectionMode; //!< Protection mode for ERP stations when non-ERP stations are detected
