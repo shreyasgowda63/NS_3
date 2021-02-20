@@ -431,10 +431,18 @@ AttributeTestCase<BooleanValue>::DoRun (void)
   ok = CheckGetCodePaths (p, "TestBoolName", "true", BooleanValue (true));
   NS_TEST_ASSERT_MSG_EQ (ok, true, "Attribute not set properly by default value");
 
-  // 
-  // Set the default value for a Deprecated Attribute to check error message generation
-  // 
+  std::string expected ("Attribute 'TestDeprecated' is deprecated: DEPRECATED test working.\n");
+  // Temporarily redirect std::cerr to a stringstream
+  std::stringstream buffer;
+  std::streambuf *oldBuffer = std::cerr.rdbuf (buffer.rdbuf());
+  // Cause the deprecation warning to be sent to the stringstream
   Config::SetDefault ("ns3::AttributeObjectTest::TestDeprecated", BooleanValue (true));
+
+  // Compare the obtained actual string with the expected string.
+  NS_TEST_ASSERT_MSG_EQ (buffer.str (), expected, "Deprecated attribute not working");
+  // Restore cerr to its original stream buffer
+  std::cerr.rdbuf (oldBuffer);
+
 
 
   //
