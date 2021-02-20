@@ -47,7 +47,7 @@
 # 'docs @ fd0f27a10eff'
 #
 
-me=`basename $0`
+me=$(basename "$0")
 function say
 {
     echo "$me: $*"
@@ -71,7 +71,7 @@ EOF
 
 # script arguments
 say
-say using doxygen: $(which doxygen) $(doxygen --version)
+say using doxygen: "$(which doxygen)" "$(doxygen --version)"
 public=0
 nsnam=0
 daily=0
@@ -93,7 +93,7 @@ while getopts :pndth option ; do
 done
 
 # Hostname, fully qualified, e.g. nsnam-www.coe-hosted.gatech.edu
-HOST=`hostname`
+HOST=$(hostname)
 NSNAM="nsnam-www.coe-hosted.gatech.edu"
 
 # Build directory
@@ -121,7 +121,7 @@ fi
 
 if [[ ($public == 1) || \
     ("${NS3_WWW_URLS:-}" == "public") || \
-    ( ($HOST == $NSNAM) && ($PWD =~ $DAILY) ) ]] ; then
+    ( ($HOST == "$NSNAM") && ($PWD =~ $DAILY) ) ]] ; then
     PUBLIC=1
     say "building public docs for nsnam.org"
 else
@@ -140,10 +140,10 @@ outf="doc/ns3_html_theme/static/ns3_version.js"
 # 'git describe HEAD --tags' will return a string such as either
 # 'ns-3.29-159-xxx' (if we are at a distance from the last release tag) or
 # 'ns-3.29' if we are at the tag.
-distance=`git describe HEAD --tags | cut -d '-' -f 3- | cut -d '-' -f 1`
+distance=$(git describe HEAD --tags | cut -d '-' -f 3- | cut -d '-' -f 1)
 
-if [ $distance -eq 1 ]; then
-    version=`git describe HEAD --tags | cut -d '-' -f 2`
+if [ "$distance" -eq 1 ]; then
+    version=$(git describe HEAD --tags | cut -d '-' -f 2)
     say "at version $version"
 
 elif [ $tag -eq 1 ]; then
@@ -152,7 +152,7 @@ elif [ $tag -eq 1 ]; then
     vers_href=
 
 else
-    version=`git describe HEAD --tags | cut -d '-' -f 3- | cut -d '-' -f 2 | cut -c 2-`
+    version=$(git describe HEAD --tags | cut -d '-' -f 3- | cut -d '-' -f 2 | cut -c 2-)
     # Check for uncommitted changes
     changes=0
     if [ "$(git status --porcelain)" ]; then
@@ -191,27 +191,29 @@ if [ $PUBLIC -eq 1 ]; then
     echo "var ns3_doxy  = \"doxygen/\";"                     >> $outf
     
 else
-    repo=`basename $PWD`
-    echo "// ns3_version.js:  automatically generated"       >  $outf
-    echo "//  private urls"                                  >> $outf
-    echo "var ns3_host = \"file://$PWD/\";"                  >> $outf
-    echo "var ns3_version = \"$repo @ $version$dirty\";"     >> $outf
-    echo "var ns3_release = \"doc/\";"                       >> $outf
-    echo "var ns3_local = \"build/\";"                       >> $outf
-    echo "var ns3_doxy  = \"html/\";"                        >> $outf
+    repo=$(basename "$PWD")
+    {
+    echo "// ns3_version.js:  automatically generated"
+    echo "//  private urls"
+    echo "var ns3_host = \"file://$PWD/\";"
+    echo "var ns3_version = \"$repo @ $version$dirty\";"
+    echo "var ns3_release = \"doc/\";"
+    echo "var ns3_local = \"build/\";"
+    echo "var ns3_doxy  = \"html/\";"
+    } > $outf
 fi
 
 # Copy to html directories
 # This seems not always done automatically
 # by Sphinx when rebuilding
-cd doc 2>&1 >/dev/null
+cd doc >/dev/null 2>&1
 for d in {manual,models,tutorial}/build/{single,}html/_static/ ; do
     if [ ! -d $d ]; then
 	mkdir -p $d
     fi
     cp ns3_html_theme/static/ns3_version.js $d
 done
-cd - 2>&1 >/dev/null
+cd - >/dev/null 2>&1
 
 # Show what was done
 say
