@@ -194,7 +194,7 @@ else
     repo=`basename $PWD`
     echo "// ns3_version.js:  automatically generated"       >  $outf
     echo "//  private urls"                                  >> $outf
-    echo "var ns3_host = \"file://$PWD/\";"                  >  $outf
+    echo "var ns3_host = \"file://$PWD/\";"                  >> $outf
     echo "var ns3_version = \"$repo @ $version$dirty\";"     >> $outf
     echo "var ns3_release = \"doc/\";"                       >> $outf
     echo "var ns3_local = \"build/\";"                       >> $outf
