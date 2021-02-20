@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Get the current repo name and version
 # to format urls appropriately via Javascript
