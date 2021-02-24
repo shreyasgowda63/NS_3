@@ -196,6 +196,8 @@ public:
   virtual ssize_t Write (uint8_t *buffer, size_t length);
 
 protected:
+  virtual void DoInitialialize (void);
+
   virtual void DoDispose (void);
 
   /**
