@@ -88,7 +88,7 @@ MultiModelSpectrumChannelSpatialIndex::AddRx (Ptr<SpectrumPhy> phy)
   MultiModelSpectrumChannel::AddRx(phy);
   NS_LOG_FUNCTION (this << phy);
   auto m = phy->GetMobility ();
-  auto n = m->GetObject<Node> (); // TODO: convert spatial indexing to objects?
+  auto n = m->GetObject<Node> (); 
   m_spatialIndex->remove(n); //apparently re-adding phy's is a thing in multi-model?
   m_spatialIndex->add (n, m->GetPosition ());
 }

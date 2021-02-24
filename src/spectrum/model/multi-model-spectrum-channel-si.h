@@ -28,10 +28,10 @@
 
 namespace ns3 {
 
-/**
- * \ingroup spectrum
- *
-*/
+/** @brief Implementation that using spatial indexing to clip reception events based on range
+ * This range can be varied to balance between fidelity and simulation scalability
+ * \ingroup spectrum spatial-index
+ */
 class MultiModelSpectrumChannelSpatialIndex : public MultiModelSpectrumChannel
 {
 

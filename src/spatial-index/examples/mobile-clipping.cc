@@ -123,7 +123,7 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
     lossModel = CreateObject<FriisPropagationLossModel>();
   }
   else {
-    NS_FATAL_ERROR("Unsupported propogation loss model:" << loss_model);
+    NS_FATAL_ERROR("Unsupported propagation loss model:" << loss_model);
   }
 
   if (wifi_type == "ns3::YansWifiPhy")
@@ -205,10 +205,6 @@ std::pair<double, std::vector<unsigned int> > run(unsigned int width,
     }
   s.Add(serv_app.Install(nodes));
 
-  //Config::Connect ("/NodeList/*/$ns3::MobilityModel/CourseChange",
-  //                MakeCallback (&CourseChange)); //remove
-
-
   s.Start (Seconds (0));
   p.Stop (Seconds(total_time));
   s.Stop (Seconds(total_time));
@@ -254,7 +250,6 @@ main (int argc, char *argv[])
   cmd.AddValue ("loss_model", "model to use for packet loss. range or friis", loss_model);
   cmd.Parse (argc,argv);
 
-  // LogComponentEnable ("PositionAware", LOG_LEVEL_FUNCTION);
   LogComponentEnable ("SpatialIndexing", LOG_LEVEL_WARN);
   LogComponentEnable ("KDTree", LOG_LEVEL_WARN);
   std::cout << "In the following simulation " << width*width <<

@@ -50,7 +50,6 @@ PositionAware::~PositionAware ( )
 TypeId
 PositionAware::GetTypeId ( void)
 {
-  //NS_LOG_FUNCTION_NOARGS ( );
   static TypeId tid = TypeId ( "ns3::PositionAware")
       .SetParent<Object> ( )
       .AddConstructor<PositionAware> ( )
@@ -237,7 +236,7 @@ PositionAware::ScheduleNext ( )
 {
   NS_LOG_FUNCTION ( this);
   //update position, m_speed should be same as set by changecourse
-  m_last_position = mobility_ptr->GetPosition ( );
+  m_last_position = m_mobility_ptr->GetPosition ( );
   m_last_event = Simulator::Now();
   //Assume that this is called by HandleTimeout or HandlePosition
   //Don't assume timer or position change is repeated
@@ -303,16 +302,14 @@ PositionAware::NotifyNewAggregate ( )
   if ( false == m_aggregated){
     Ptr<Node> node = GetObject<Node> ( );
     NS_LOG_DEBUG ( "Node: " << node->GetId ( ));
-    mobility_ptr = GetObject<MobilityModel> ( );
-    NS_ASSERT_MSG ( 0 != mobility_ptr,
+    m_mobility_ptr = GetObject<MobilityModel> ( );
+    NS_ASSERT_MSG ( 0 != m_mobility_ptr,
                    "Must install Mobility before PostionAware");
-    mobility_ptr->TraceConnectWithoutContext ( "CourseChange",
+    m_mobility_ptr->TraceConnectWithoutContext ( "CourseChange",
                                               MakeCallback ( &PositionAware::CourseChange,
                                                             this)
                                              );
-    //m_last_position = mobility_ptr->GetPosition ( );
-    //m_last_event = Simulator::Now();
-    m_speed = CalculateDistance ( Vector ( ),mobility_ptr->GetVelocity ( ));
+    m_speed = CalculateDistance ( Vector ( ),m_mobility_ptr->GetVelocity ( ));
     ScheduleNext ( );
     m_aggregated = true;
   }

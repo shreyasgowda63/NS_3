@@ -32,14 +32,12 @@ namespace ns3{
 
 PositionAwareHelper::PositionAwareHelper()
 {
-  //position_aware_factory_.SetTypeId("ns3::PositionAware");
   SetTimeout(Seconds(10));
   SetDistance(100);
 }
 
 PositionAwareHelper::PositionAwareHelper(const Time& _t, const double& _d)
 {
-  //position_aware_factory_.SetTypeId("ns3::PositionAware");
   SetTimeout(_t);
   SetDistance(_d);
 }
@@ -50,24 +48,22 @@ PositionAwareHelper::~PositionAwareHelper()
 
 void PositionAwareHelper::SetTimeout(const Time& _t)
 {
-  //position_aware_factory_.Set("Timeout",TimeValue(_t));
-  timeout_ = _t;
+  m_timeout = _t;
 }
 
 Time PositionAwareHelper::GetTimeout() const
 {
-  return timeout_;
+  return m_timeout;
 }
 
 void PositionAwareHelper::SetDistance(const double& _d)
 {
-  //position_aware_factory_.Set("Distance",DoubleValue(_d));
-  distance_ = _d;
+  m_distance = _d;
 }
 
 double PositionAwareHelper::GetDistance() const
 {
-  return distance_;
+  return m_distance;
 }
 
 void PositionAwareHelper::Install(Ptr<Node> _node) const
@@ -78,8 +74,8 @@ void PositionAwareHelper::Install(Ptr<Node> _node) const
   NS_ASSERT_MSG(0 == object->GetObject<PositionAware>() ,
                 "PositionAware Already installed");
   Ptr<PositionAware> position_aware = CreateObject<PositionAware>();//position_aware_factory_.Create()->GetObject<PositionAware>();
-  position_aware->SetDistance(distance_);
-  position_aware->SetTimeout(timeout_);
+  position_aware->SetDistance(m_distance);
+  position_aware->SetTimeout(m_timeout);
   object->AggregateObject(position_aware);
 }
 

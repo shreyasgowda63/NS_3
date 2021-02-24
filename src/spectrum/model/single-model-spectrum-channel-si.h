@@ -28,14 +28,9 @@
 
 namespace ns3 {
 
-
-
-/**
- * \ingroup spectrum
- *
- * \brief SpectrumChannel implementation which handles a single spectrum model
- *
- * All SpectrumPhy layers attached to this SpectrumChannel
+/** @brief Implementation that using spatial indexing to clip reception events based on range
+ * This range can be varied to balance between fidelity and simulation scalability
+ * \ingroup spectrum spatial-index
  */
 class SingleModelSpectrumChannelSpatialIndex : public SingleModelSpectrumChannel
 {

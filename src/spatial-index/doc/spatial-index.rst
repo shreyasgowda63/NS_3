@@ -1,4 +1,4 @@
-Example Module Documentation
+Spatial Index
 ----------------------------
 
 .. include:: replace.txt
@@ -10,89 +10,65 @@ Example Module Documentation
    ============= Subsection (#.#.#)
    ############# Paragraph (no number)
 
-This is a suggested outline for adding new module documentation to |ns3|.
-See ``src/click/doc/click.rst`` for an example.
-
-The introductory paragraph is for describing what this code is trying to
-model.
-
-For consistency (italicized formatting), please use |ns3| to refer to
-ns-3 in the documentation (and likewise, |ns2| for ns-2).  These macros
-are defined in the file ``replace.txt``.
+The Spatial Index Module stores the positions of mobile nodes in a
+spatial index, enabling quick spatial queries.  This capability
+is used in conjunction with the Position Aware Module to enable "clipping"
+where receive events are only scheduled on nodes within some given range
+of a transmitting node.  However, this functionality may be useful in other
+contexts as well.
 
 Model Description
 *****************
 
 The source code for the new module lives in the directory ``src/spatial-index``.
 
-Add here a basic description of what is being modeled.
-
 Design
 ======
 
-Briefly describe the software design of the model and how it fits into
-the existing ns-3 architecture.
+The base class (SpatialIndexing) can be inherrited by various spatial
+indexing implementations.  Currently the k-d-tree and brute force implementations
+are provided.  The brute force implementation is only for comparison and
+can be used to demonstrate the benefit of using a spatial index.
 
-Scope and Limitations
-=====================
-
-What can the model do?  What can it not do?  Please use this section to
-describe the scope and limitations of the model.
+Nodes can be added, removed from, and updated in the spatial index, and each
+implementation provides methods for these.  When called, the getNodesInRange()
+method returns a vector of pointers to Nodes that are within the given range of
+the given position.  Since nodes are stored in a spatial index, this is an
+efficient operation.
 
 References
 ==========
 
-Add academic citations here, such as if you published a paper on this
-model, or if readers should read a particular specification or other work.
+For information on k-d trees and spatial indexing see:
+* Bentley, J. L. (1975). "Multidimensional binary search trees used for associative searching". Communications of the ACM. 18 (9): 509–517. doi:10.1145/361002.361007
+* https://gistbok.ucgis.org/bok-topics/spatial-indexing
 
-Usage
-*****
+For details on the theory behind this implementation see:
+* A. Ganti, U. Onunkwo, B. Van Leeuwen, M. P. Scoggin and R. Schroeppel, "A Novel Approach to Exponential Speedup of Simulation Events in Wireless Networks," 2018 International Conference on Computing, Networking and Communications (ICNC), Maui, HI, 2018, pp. 682-688, doi: 10.1109/ICCNC.2018.8390357.
 
-This section is principally concerned with the usage of your model, using
-the public API.  Focus first on most common usage patterns, then go
-into more advanced topics.
-
-Building New Module
+Dependencies
 ===================
 
-Include this subsection only if there are special build instructions or
-platform limitations.
-
-Helpers
-=======
-
-What helper API will users typically use?  Describe it here.
-
-Attributes
-==========
-
-What classes hold attributes, and what are the key ones worth mentioning?
-
-Output
-======
-
-What kind of data does the model generate?  What are the key trace
-sources?   What kind of logging output can be enabled?
-
-Advanced Usage
-==============
-
-Go into further details (such as using the API outside of the helpers)
-in additional sections, as needed.
+This Module uses an implementation of k-d tree included in the module source.
 
 Examples
 ========
 
-What examples using this new code are available?  Describe them here.
-
-Troubleshooting
-===============
-
-Add any tips for avoiding pitfalls, etc.
-
-Validation
-**********
-
-Describe how the model has been tested/validated.  What tests run in the
-test suite?  How much API and code is covered by the tests?  Again,
-references to outside published work may help here.
+Two examples of using spatial-index for clipping are provided:
+* clipping-example simulates a grid of nodes with each node will sending a
+  UDP packet to the broadcast address over a Spectrum Wifi Channel.  The
+  distances between nodes have been stategically set such that the
+  wifi packets will only successfully propagate to direct neighbors
+  (not diagonal).  With clipping enabled simulation time is drastically reduced
+  as receive events are only placed on the queue for nodes within the
+  chosen clipping range, yielding the same results in much less time.
+* mobile-clipping siulates nodes with their starting positions on a similar
+  grid.  The nodes are mobile, however, and select a random direction of
+  travel every 15 seconds and travel in that direction at 5 m/s.
+  During the simulation Each node will send a UDP packet to the
+  broadcast address over a Wifi Channel.  The identical motions are repeated
+  with and without clipping enabled, and the speedup using clipping and
+  fidelity are computed.  With clipping enabled the simulation time is
+  drastically reduced as receive events are only placed on the queue for nodes
+  within the clipping range, yielding nearly the same, if not identical results
+  in much less time.

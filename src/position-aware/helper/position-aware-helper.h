@@ -29,25 +29,75 @@
 
 namespace ns3{
 class PositionAware;
-
+/** @ingroup PositionAware 
+ * @brief Helper for creating/installing position aware objects
+ */
 class PositionAwareHelper
 {
  public:
   PositionAwareHelper();
+  /**
+   * @brief Construct a new Position Aware Helper object with a given radius and timeout
+   * 
+   * @param _t desired timeout
+   * @param _d desired radius
+   */
   PositionAwareHelper(const Time& _t,const double& _d);
   ~PositionAwareHelper();
+  /**
+   * @brief Set the Timeout
+   * 
+   * @param _t timeout
+   */
   void SetTimeout(const Time& _t);
+  /**
+   * @brief Get the Timeout
+   * 
+   * @return Time 
+   */
   Time GetTimeout() const;
+  /**
+   * @brief Set the Distance
+   * 
+   * @param _d distance
+   */
   void SetDistance(const double& _d);
+  /**
+   * @brief Get the Distance
+   * 
+   * @return double 
+   */
   double GetDistance() const;
+  /**
+   * @brief Installs position aware on single node
+   * 
+   * @param _node node to install on
+   */
   void Install(Ptr<Node> _node) const;
+  /**
+   * @brief Installs position aware on a single node by name
+   * @note Mobility must be installed first
+   * 
+   * @param _node_name 
+   */
   void Install(std::string& _node_name) const;
+  /**
+   * @brief Installs position aware on all nodes in a node container
+   * @note Mobility must be installed first
+   * 
+   * @param _container 
+   */
   void Install(NodeContainer _container) const;
+  /**
+   * @brief Installs position aware on all nodes create so far
+   * @note Mobility must be installed first
+   * 
+   */
   void InstallAll(void);
  private:
 //  ObjectFactory position_aware_factory_;
-  Time timeout_;
-  double distance_;
+  Time m_timeout;
+  double m_distance;
 };
 
 }//namespace ns3

@@ -138,6 +138,7 @@ protected:
    * \return True if valid, false cancels reception scheduling */
   virtual bool CheckValidPhy (Ptr<SpectrumPhy> phy);
 
+private:
   /**
    * This method checks if m_rxSpectrumModelInfoMap contains an entry
    * for the given TX SpectrumModel. If such entry exists, it returns

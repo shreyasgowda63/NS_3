@@ -32,7 +32,14 @@
 #include "ns3/vector.h"
 
 namespace ns3 {
-
+/** @ingroup PositionAware 
+ * @brief Buffer position updates with space and time thresholds
+ *
+ * Instances of this class trace the CourseChanges of a node's mobility model.
+ * When a node has moved more than a given distance from a given reference
+ * position, or a given amount of time has passed since the last
+ * PositionChange, a PositionChange is announced.
+ */
 class PositionAware : public Object
 {
  protected:
@@ -63,7 +70,7 @@ class PositionAware : public Object
   /** Set reference position
    * @param _position Reference position */
   void SetPosition (const Vector& _position);
-  inline Ptr<MobilityModel> GetMobilityModelPointer () const {return mobility_ptr;}
+  inline Ptr<MobilityModel> GetMobilityModelPointer () const {return m_mobility_ptr;}
  protected:
   /** Overriden so we can automatically add callback to MobilityModel for
    * course change notification */
@@ -78,7 +85,7 @@ class PositionAware : public Object
   /** Determines if a m_timeout or position change should be scheduled based on
    * current m_speed and m_timeout */
   void ScheduleNext ();
-  /** Unschedules a position change event in the case of a course change */
+  /** Unschedule a position change event in the case of a course change */
   void CancelPositionChange ();
   /** Cancels timer in the case of a course change */
   void CancelTimeout ();
@@ -105,7 +112,7 @@ class PositionAware : public Object
   /// Indicates a m_timeout event is currently scheduled
   bool m_timeout_scheduled;
   /// Pointer to mobility object for easy access
-  Ptr<MobilityModel> mobility_ptr;
+  Ptr<MobilityModel> m_mobility_ptr;
   /// Callback stack for position change events
   TracedCallback<Ptr<const PositionAware> > m_position_change_trace;
   /// Callback stack for m_timeout events
@@ -114,6 +121,6 @@ class PositionAware : public Object
   EventId m_scheduled_event;
   bool m_aggregated;
 };
-}//namesapce ns3
+}//namespace ns3
 
 #endif//POSITION_AWARE_H

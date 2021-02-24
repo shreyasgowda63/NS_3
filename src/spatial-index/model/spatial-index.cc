@@ -28,7 +28,7 @@
 namespace ns3 {
 NS_LOG_COMPONENT_DEFINE ("SpatialIndexing");
 void
-SpatialIndexing::add (Ptr<const Node> _node, const Vector &position) {
+SpatialIndexing::add (Ptr<const Node> _node, const Vector &_position) {
   auto p = _node->GetObject<PositionAware>();
   if(nullptr == p) {
     NS_LOG_WARN("Using Spatial Indexing when Position Aware is not installed");
@@ -38,18 +38,18 @@ SpatialIndexing::add (Ptr<const Node> _node, const Vector &position) {
   p->TraceConnectWithoutContext (
       "Timeout", MakeCallback (&SpatialIndexing::HandlePositionChange, this));
   }
-  doAdd(_node,position);
+  doAdd(_node,_position);
 }
 
 void SpatialIndexing::AddIfInRange (
-    std::pair<ns3::Ptr<const ns3::Node>, ns3::Vector> nodeVec,
-    const Vector &                                    position,
-    double                                            range_squared,
-    std::vector<Ptr<const Node>> &                    nodes)
+    std::pair<ns3::Ptr<const ns3::Node>, ns3::Vector> _nodeVec,
+    const Vector &                                    _position,
+    double                                            _range_squared,
+    std::vector<Ptr<const Node>> &                    _nodes)
 {
-  if(CalculateDistanceSquared(nodeVec.second, position) <= range_squared)
+  if(CalculateDistanceSquared(_nodeVec.second, _position) <= _range_squared)
     {
-    nodes.push_back(nodeVec.first);
+    _nodes.push_back(_nodeVec.first);
     }
 }
 

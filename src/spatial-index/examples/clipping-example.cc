@@ -182,7 +182,7 @@ main (int argc, char *argv[])
   std::cout << "In the following simulation a grid of " << width*width <<
     " nodes will be created, and each node will send a UDP packet to the" <<
     " broadcast address over a Spectrum Wifi Channel.  However the" <<
-    " distances between nodes have been stategically set such that the" <<
+    " distances between nodes have been strategically set such that the" <<
     " wifi packets will only successfully propagate to direct neighbors" <<
     " (not diagonal).  With clipping simulation time is drastically reduced" <<
     " as receive events are only placed on the queue for nodes within the" <<

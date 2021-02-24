@@ -105,11 +105,6 @@ SingleModelSpectrumChannelSpatialIndex::ProcessTxParams (Ptr<SpectrumSignalParam
   return true;
 }
 
-// bool
-// operator< (const ns3::Ptr<ns3::Node> _lhs, ns3::Ptr<const ns3::Node>)
-// {
-//   return _lhs.
-// }
 bool
 SingleModelSpectrumChannelSpatialIndex::CheckValidPhy (Ptr<SpectrumPhy> phy)
 {

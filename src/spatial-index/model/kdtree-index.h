@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KDTREE_INDEX_H
-#define KDTREE_INDEX_H
+#ifndef K_D_TREE_INDEX_H
+#define K_D_TREE_INDEX_H
 
 #include "spatial-index.h"
 
@@ -51,28 +51,55 @@ struct hash<KeyT>
 
 namespace ns3 {
 
+  /**
+   * \ingroup spatial-index
+   *
+   * \brief Spatial index implementation using a k-d-tree.
+   */
   class KDTreeSpatialIndexing : public ns3::SpatialIndexing
   {
   public:
     KDTreeSpatialIndexing();
     ~KDTreeSpatialIndexing();
-
-    void doAdd(Ptr<const Node> _node, const Vector& position)    override;
-    //size_t
+    /**
+     * @brief k-d-tree implementation of add, begins tracking of node
+     * 
+     * @param _node The node to track
+     * @param _position The position at time of insertion
+     */
+    void doAdd(Ptr<const Node> _node, const Vector& _position)    override;
+    /**
+     * @brief k-d-tree implementation of remove, stop tracking node
+     * 
+     * @param _node The node to remove from spatial indexing
+     */
     void remove(Ptr<const Node> _node)                         override;
-    void update(Ptr<const Node> _node, const Vector& position) override;
-    std::vector<Ptr<const Node> > getNodesInRange(double _range, const Vector& position, const Ptr<const Node> sourceNode) override;
+    /**
+     * @brief k-d-tree implementation of update
+     * Includes some optimizations over basic remove and add. 
+     * @param _node The node to update the position of
+     * @param _position the new position to use
+     */
+    void update(Ptr<const Node> _node, const Vector& _position) override;
+    /**
+     * @brief k-d-tree implementation of get nodes in range. gets the nodes within a specified range
+     * 
+     * @param _range range to use
+     * @param _position reference position
+     * @param _sourceNode node to filter from results
+     * @return std::vector<Ptr<const Node> > list of nodes within range
+     */
+    std::vector<Ptr<const Node> > getNodesInRange(double _range, const Vector& _position, const Ptr<const Node> _sourceNode) override;
  private:
     void ProcessUpdates();
-    void HandlePositionChange(Ptr<const PositionAware> position_aware) override;
-    void* m_tree; //why void*?
-    uint64_t m_tree_size=0;
-    std::unordered_map<KeyT, Vector> m_referencePositions;
-    //MinHeap::MinHeap m_min_heap;
-    std::unordered_map<KeyT, size_t> m_nodesToUpdate;
+    void HandlePositionChange(Ptr<const PositionAware> _position_aware) override;
+    void* m_tree; ///< K-D-tree structure
+    uint64_t m_tree_size=0; ///< local track of entries in K-D-tree
+    std::unordered_map<KeyT, Vector> m_referencePositions; ///< Map of positions nodes were inserted with
+    std::unordered_map<KeyT, size_t> m_nodesToUpdate; ///< List of nodes that need their position updated before a query is valid
   };
 
 }
 
-#endif /* KDTREE_INDEX_H */
+#endif /* K_D_TREE_INDEX_H */
 

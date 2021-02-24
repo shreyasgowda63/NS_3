@@ -44,9 +44,9 @@ public:
   void Create ();
   void Run ();
 
-  Vector3D lastPosition;
-  Time lastTime;
-  NodeContainer nodes_;
+  Vector3D m_lastPosition;
+  Time m_lastTime;
+  NodeContainer m_nodes;
 };
 
 int
@@ -62,30 +62,30 @@ void
 PositionChange::Create ()
 {
   std::cout << "Creating Nodes" << std::endl;
-  nodes_.Create (2);
+  m_nodes.Create (2);
 
   std::cout << "Installing Mobility" << std::endl;
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator");
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  mobility.Install (nodes_.Get (0));
+  mobility.Install (m_nodes.Get (0));
   mobility.SetMobilityModel ("ns3::ConstantVelocityMobilityModel");
-  mobility.Install (nodes_.Get (1));
-  nodes_.Get (1)->GetObject<ConstantVelocityMobilityModel> ()->SetVelocity (
+  mobility.Install (m_nodes.Get (1));
+  m_nodes.Get (1)->GetObject<ConstantVelocityMobilityModel> ()->SetVelocity (
       ns3::Vector3D (100.0, 0.0, 0.0));
 
   std::cout << "Install Position Aware" << std::endl;
   PositionAwareHelper position_aware (Seconds (4), 50.0);
-  position_aware.Install (nodes_);
+  position_aware.Install (m_nodes);
 
   std::cout << "Connecting Callbacks" << std::endl;
-  nodes_.Get (0)->GetObject<PositionAware> ()->TraceConnectWithoutContext (
+  m_nodes.Get (0)->GetObject<PositionAware> ()->TraceConnectWithoutContext (
       "Timeout", MakeCallback (&ThisType::TimeoutCallback, this));
-  nodes_.Get (1)->GetObject<PositionAware> ()->TraceConnectWithoutContext (
+  m_nodes.Get (1)->GetObject<PositionAware> ()->TraceConnectWithoutContext (
       "PositionChange", MakeCallback (&ThisType::PositionChangeCallback, this));
 
-  lastPosition = nodes_.Get (1)->GetObject<MobilityModel> ()->GetPosition ();
-  lastTime = ns3::Time ("0s");
+  m_lastPosition = m_nodes.Get (1)->GetObject<MobilityModel> ()->GetPosition ();
+  m_lastTime = ns3::Time ("0s");
 }
 
 void
@@ -103,12 +103,11 @@ PositionChange::PositionChangeCallback (Ptr<const PositionAware> _position_aware
   Ptr<MobilityModel> mobility = _position_aware->GetObject<MobilityModel> ();
   std::cout << "[Node " << node->GetId () << "]"
             << " Position Change: " << mobility->GetPosition () << std::endl;
-  if (50.0 != CalculateDistance (lastPosition, mobility->GetPosition ()))
+  if (50.0 != CalculateDistance (m_lastPosition, mobility->GetPosition ()))
     {
-      std::cerr << "Position change error" << std::endl;
-      exit (-2);
+      NS_FATAL_ERROR("Position change error");
     }
-  lastPosition = mobility->GetPosition ();
+  m_lastPosition = mobility->GetPosition ();
 }
 
 void
@@ -118,10 +117,10 @@ PositionChange::TimeoutCallback (Ptr<const PositionAware> _position_aware)
   Ptr<MobilityModel> mobility = _position_aware->GetObject<MobilityModel> ();
   std::cout << "[Node " << node->GetId () << "]"
             << " Timeout" << std::endl;
-  if (Seconds (4) != Simulator::Now () - lastTime)
+  if (Seconds (4) != Simulator::Now () - m_lastTime)
     {
       std::cerr << "Timeout at wrong time" << std::endl;
       exit (-1);
     }
-  lastTime = Simulator::Now ();
+  m_lastTime = Simulator::Now ();
 }
