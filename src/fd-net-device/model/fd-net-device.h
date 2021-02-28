@@ -196,7 +196,11 @@ public:
   virtual ssize_t Write (uint8_t *buffer, size_t length);
 
 protected:
-  virtual void DoInitialialize (void);
+  virtual void DoInitialize (void);
+  
+  /**
+   * Method Initialization for start and stop attributes.
+   */
 
   virtual void DoDispose (void);
 
