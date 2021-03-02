@@ -195,7 +195,11 @@ FdNetDevice::DoInitialize (void)
 {
   NS_LOG_FUNCTION (this);
   Start (m_tStart);
-  Stop (m_tStop);
+  if (m_tStop != Seconds (0))
+    {
+        Stop (m_tStop);
+    }
+
   NetDevice::DoInitialize ();
 }
 
