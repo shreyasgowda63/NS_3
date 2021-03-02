@@ -239,7 +239,7 @@ FdNetDevice::Stop (Time tStop)
 {
   NS_LOG_FUNCTION (tStop);
   Simulator::Cancel (m_stopEvent);
-  m_startEvent = Simulator::Schedule (tStop, &FdNetDevice::StopDevice, this);
+  m_stopEvent = Simulator::Schedule (tStop, &FdNetDevice::StopDevice, this);
 }
 
 void
