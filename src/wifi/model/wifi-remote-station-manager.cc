@@ -499,7 +499,7 @@ WifiRemoteStationManager::GetDataTxVector (const WifiMacHeader &header)
       v.SetTxPowerLevel (m_defaultTxPowerLevel);
       v.SetChannelWidth (GetChannelWidthForTransmission (mode, m_wifiPhy->GetChannelWidth ()));
       v.SetGuardInterval (ConvertGuardIntervalToNanoSeconds (mode, DynamicCast<WifiNetDevice> (m_wifiPhy->GetDevice ())));
-      v.SetNTx (1);
+      v.SetNTx (GetNumberOfAntennas ());
       v.SetNss (1);
       v.SetNess (0);
       return v;
@@ -566,7 +566,7 @@ WifiRemoteStationManager::GetCtsToSelfTxVector (void)
                        defaultPreamble,
                        ConvertGuardIntervalToNanoSeconds (defaultMode, DynamicCast<WifiNetDevice> (m_wifiPhy->GetDevice ())),
                        GetNumberOfAntennas (),
-                       GetMaxNumberOfTransmitStreams (),
+                       1,
                        0,
                        GetChannelWidthForTransmission (defaultMode, m_wifiPhy->GetChannelWidth ()),
                        false);
@@ -585,7 +585,7 @@ WifiRemoteStationManager::GetRtsTxVector (Mac48Address address)
         v.SetTxPowerLevel (m_defaultTxPowerLevel);
         v.SetChannelWidth (GetChannelWidthForTransmission (mode, m_wifiPhy->GetChannelWidth ()));
         v.SetGuardInterval (ConvertGuardIntervalToNanoSeconds (mode, DynamicCast<WifiNetDevice> (m_wifiPhy->GetDevice ())));
-        v.SetNTx (1);
+        v.SetNTx (GetNumberOfAntennas ());
         v.SetNss (1);
         v.SetNess (0);
         return v;
