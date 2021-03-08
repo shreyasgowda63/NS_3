@@ -156,7 +156,7 @@ LteStatsCalculator::FindImsiFromEnbRlcPath (std::string path)
     }
   else
     {
-      NS_FATAL_ERROR ("Lookup " << ueMapPath << " got no matches");
+      return 0;
     }
 }
 
@@ -179,9 +179,8 @@ LteStatsCalculator::FindImsiFromUePhy (std::string path)
     }
   else
     {
-      NS_FATAL_ERROR ("Lookup " << ueRlcPath << " got no matches");
+      return 0;
     }
-  return 0;
 }
 
 
@@ -203,7 +202,7 @@ LteStatsCalculator::FindImsiFromLteNetDevice (std::string path)
     }
   else
     {
-      NS_FATAL_ERROR ("Lookup " << path << " got no matches");
+      return 0;
     }
 }
 
