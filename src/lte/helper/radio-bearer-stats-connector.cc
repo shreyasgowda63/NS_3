@@ -228,13 +228,13 @@ RadioBearerStatsConnector::ConnectTracesSrb0 (std::string context, uint64_t imsi
       arg->imsi = imsi;
       arg->cellId = cellId;
       arg->stats = m_rlcStats;
-      Config::Connect (ueRrcPath + "/Srb0/LteRlc/TxPDU",
+      Config::ConnectFailSafe (ueRrcPath + "/Srb0/LteRlc/TxPDU",
                        MakeBoundCallback (&UlTxPduCallback, arg));
-      Config::Connect (ueRrcPath + "/Srb0/LteRlc/RxPDU",
+      Config::ConnectFailSafe (ueRrcPath + "/Srb0/LteRlc/RxPDU",
                        MakeBoundCallback (&DlRxPduCallback, arg));
-      Config::Connect (ueManagerPath + "/Srb0/LteRlc/TxPDU",
+      Config::ConnectFailSafe (ueManagerPath + "/Srb0/LteRlc/TxPDU",
                        MakeBoundCallback (&DlTxPduCallback, arg));
-      Config::Connect (ueManagerPath + "/Srb0/LteRlc/RxPDU",
+      Config::ConnectFailSafe (ueManagerPath + "/Srb0/LteRlc/RxPDU",
                        MakeBoundCallback (&UlRxPduCallback, arg));
     }
 }
@@ -258,13 +258,13 @@ RadioBearerStatsConnector::ConnectTracesSrb1 (std::string context, uint64_t imsi
       arg->imsi = imsi;
       arg->cellId = cellId;
       arg->stats = m_rlcStats;
-      Config::Connect (ueRrcPath + "/Srb1/LteRlc/TxPDU",
+      Config::ConnectFailSafe (ueRrcPath + "/Srb1/LteRlc/TxPDU",
                        MakeBoundCallback (&UlTxPduCallback, arg));
-      Config::Connect (ueRrcPath + "/Srb1/LteRlc/RxPDU",
+      Config::ConnectFailSafe (ueRrcPath + "/Srb1/LteRlc/RxPDU",
                        MakeBoundCallback (&DlRxPduCallback, arg));
-      Config::Connect (ueManagerPath + "/Srb1/LteRlc/TxPDU",
+      Config::ConnectFailSafe (ueManagerPath + "/Srb1/LteRlc/TxPDU",
                        MakeBoundCallback (&DlTxPduCallback, arg));
-      Config::Connect (ueManagerPath + "/Srb1/LteRlc/RxPDU",
+      Config::ConnectFailSafe (ueManagerPath + "/Srb1/LteRlc/RxPDU",
                        MakeBoundCallback (&UlRxPduCallback, arg));
     }
   if (m_pdcpStats)
@@ -273,13 +273,13 @@ RadioBearerStatsConnector::ConnectTracesSrb1 (std::string context, uint64_t imsi
       arg->imsi = imsi;
       arg->cellId = cellId;
       arg->stats = m_pdcpStats;
-      Config::Connect (ueRrcPath + "/Srb1/LtePdcp/TxPDU",
+      Config::ConnectFailSafe (ueRrcPath + "/Srb1/LtePdcp/TxPDU",
                        MakeBoundCallback (&UlTxPduCallback, arg));
-      Config::Connect (ueRrcPath + "/Srb1/LtePdcp/RxPDU",
+      Config::ConnectFailSafe (ueRrcPath + "/Srb1/LtePdcp/RxPDU",
                        MakeBoundCallback (&DlRxPduCallback, arg));
-      Config::Connect (ueManagerPath + "/Srb1/LtePdcp/TxPDU",
+      Config::ConnectFailSafe (ueManagerPath + "/Srb1/LtePdcp/TxPDU",
                        MakeBoundCallback (&DlTxPduCallback, arg));
-      Config::Connect (ueManagerPath + "/Srb1/LtePdcp/RxPDU",
+      Config::ConnectFailSafe (ueManagerPath + "/Srb1/LtePdcp/RxPDU",
                        MakeBoundCallback (&UlRxPduCallback, arg));
     }
 }
@@ -298,9 +298,9 @@ RadioBearerStatsConnector::ConnectTracesDrbEnb (std::string context, uint64_t im
       arg->imsi = imsi;
       arg->cellId = cellId;
       arg->stats = m_rlcStats;
-      Config::Connect (basePath + "/LteRlc/TxPDU",
+      Config::ConnectFailSafe (basePath + "/LteRlc/TxPDU",
                        MakeBoundCallback (&DlTxPduCallback, arg));
-      Config::Connect (basePath + "/LteRlc/RxPDU",
+      Config::ConnectFailSafe (basePath + "/LteRlc/RxPDU",
                        MakeBoundCallback (&UlRxPduCallback, arg));
     }
   if (m_pdcpStats)
@@ -334,9 +334,9 @@ RadioBearerStatsConnector::ConnectTracesDrbUe (std::string context, uint64_t ims
       arg->imsi = imsi;
       arg->cellId = cellId;
       arg->stats = m_rlcStats;
-      Config::Connect (basePath + "/LteRlc/TxPDU",
+      Config::ConnectFailSafe (basePath + "/LteRlc/TxPDU",
                        MakeBoundCallback (&UlTxPduCallback, arg));
-      Config::Connect (basePath + "/LteRlc/RxPDU",
+      Config::ConnectFailSafe (basePath + "/LteRlc/RxPDU",
                        MakeBoundCallback (&DlRxPduCallback, arg));
     }
   if (m_pdcpStats)

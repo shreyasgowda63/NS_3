@@ -190,7 +190,8 @@ MacStatsCalculator::DlSchedulingCallback (Ptr<MacStatsCalculator> macStats, std:
   else
     {
       imsi = FindImsiFromEnbRlcPath (pathAndRnti.str ());
-      macStats->SetImsiPath (pathAndRnti.str (), imsi);
+      if(imsi)
+        macStats->SetImsiPath (pathAndRnti.str (), imsi);
     }
   uint16_t cellId = 0;
   if (macStats->ExistsCellIdPath (pathAndRnti.str ()) == true)
@@ -201,9 +202,9 @@ MacStatsCalculator::DlSchedulingCallback (Ptr<MacStatsCalculator> macStats, std:
     {
       cellId = FindCellIdFromEnbRlcPath (pathAndRnti.str ());
       macStats->SetCellIdPath (pathAndRnti.str (), cellId);
-    }
-
-  macStats->DlScheduling (cellId, imsi, dlSchedulingCallbackInfo);
+    }  
+  if(imsi)
+    macStats->DlScheduling (cellId, imsi, dlSchedulingCallbackInfo);
 }
 
 void
@@ -224,7 +225,8 @@ MacStatsCalculator::UlSchedulingCallback (Ptr<MacStatsCalculator> macStats, std:
   else
     {
       imsi = FindImsiFromEnbRlcPath (pathAndRnti.str ());
-      macStats->SetImsiPath (pathAndRnti.str (), imsi);
+      if(imsi)
+        macStats->SetImsiPath (pathAndRnti.str (), imsi);
     }
   uint16_t cellId = 0;
   if (macStats->ExistsCellIdPath (pathAndRnti.str ()) == true)
@@ -236,8 +238,8 @@ MacStatsCalculator::UlSchedulingCallback (Ptr<MacStatsCalculator> macStats, std:
       cellId = FindCellIdFromEnbRlcPath (pathAndRnti.str ());
       macStats->SetCellIdPath (pathAndRnti.str (), cellId);
     }
-
-  macStats->UlScheduling (cellId, imsi, frameNo, subframeNo, rnti, mcs, size, componentCarrierId);
+  if(imsi)
+    macStats->UlScheduling (cellId, imsi, frameNo, subframeNo, rnti, mcs, size, componentCarrierId);
 }
 
 

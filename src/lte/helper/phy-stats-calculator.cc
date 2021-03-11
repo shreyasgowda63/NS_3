@@ -237,10 +237,12 @@ PhyStatsCalculator::ReportCurrentCellRsrpSinrCallback (Ptr<PhyStatsCalculator> p
   else
     {
       imsi = FindImsiFromLteNetDevice (pathUePhy);
-      phyStats->SetImsiPath (pathUePhy, imsi);
+      if(imsi)
+        phyStats->SetImsiPath (pathUePhy, imsi);
     }
-
-  phyStats->ReportCurrentCellRsrpSinr (cellId, imsi, rnti, rsrp, sinr, componentCarrierId);
+  
+  if(imsi)
+    phyStats->ReportCurrentCellRsrpSinr (cellId, imsi, rnti, rsrp, sinr, componentCarrierId);
 }
 
 void
@@ -261,10 +263,12 @@ PhyStatsCalculator::ReportUeSinr (Ptr<PhyStatsCalculator> phyStats, std::string 
   else
     {
       imsi = FindImsiFromEnbMac (pathEnbMac, rnti);
-      phyStats->SetImsiPath (pathAndRnti.str (), imsi);
+      if(imsi)
+        phyStats->SetImsiPath (pathAndRnti.str (), imsi);
     }
 
-  phyStats->ReportUeSinr (cellId, imsi, rnti, sinrLinear, componentCarrierId);
+  if(imsi)
+    phyStats->ReportUeSinr (cellId, imsi, rnti, sinrLinear, componentCarrierId);
 }
 
 void
