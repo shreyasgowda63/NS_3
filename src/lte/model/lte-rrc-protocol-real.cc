@@ -450,7 +450,9 @@ LteEnbRrcProtocolReal::SetUeRrcSapProvider (uint16_t rnti, LteUeRrcSapProvider* 
   it = m_enbRrcSapProviderMap.find (rnti);
   // assign UE RRC only if the RNTI is found at eNB
   if(it != m_enbRrcSapProviderMap.end ())
-    it->second = p;
+    {
+      it->second = p;
+    }
 }
 
 void 
