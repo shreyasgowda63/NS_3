@@ -2495,7 +2495,7 @@ LteEnbRrc::DoRecvHandoverRequest (EpcX2SapUser::HandoverRequestParams req)
     {
       NS_LOG_INFO (this << " failed to allocate a preamble for non-contention based RA => cannot accept HO");
       RemoveUe (rnti);
-      NS_FATAL_ERROR ("should trigger HO Preparation Failure, but it is not implemented");
+      NS_LOG_WARN ("should trigger HO Preparation Failure, but it is not implemented");
       return;
     }
 
@@ -2664,7 +2664,7 @@ LteEnbRrc::DoRecvUeData (EpcX2SapUser::UeDataParams params)
     }
   else
     {
-      NS_FATAL_ERROR ("X2-U data received but no X2uTeidInfo found");
+      NS_LOG_WARN ("X2-U data received but no X2uTeidInfo found");
     }
 }
 
