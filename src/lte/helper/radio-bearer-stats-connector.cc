@@ -228,6 +228,7 @@ RadioBearerStatsConnector::ConnectTracesSrb0 (std::string context, uint64_t imsi
       arg->imsi = imsi;
       arg->cellId = cellId;
       arg->stats = m_rlcStats;
+      // Connect FailSafe to ensure that no error is thrown out on UE path removal due to RLF.
       Config::ConnectFailSafe (ueRrcPath + "/Srb0/LteRlc/TxPDU",
                        MakeBoundCallback (&UlTxPduCallback, arg));
       Config::ConnectFailSafe (ueRrcPath + "/Srb0/LteRlc/RxPDU",
@@ -258,6 +259,7 @@ RadioBearerStatsConnector::ConnectTracesSrb1 (std::string context, uint64_t imsi
       arg->imsi = imsi;
       arg->cellId = cellId;
       arg->stats = m_rlcStats;
+      // Connect FailSafe to ensure that no error is thrown out on UE path removal due to RLF.
       Config::ConnectFailSafe (ueRrcPath + "/Srb1/LteRlc/TxPDU",
                        MakeBoundCallback (&UlTxPduCallback, arg));
       Config::ConnectFailSafe (ueRrcPath + "/Srb1/LteRlc/RxPDU",
@@ -273,6 +275,7 @@ RadioBearerStatsConnector::ConnectTracesSrb1 (std::string context, uint64_t imsi
       arg->imsi = imsi;
       arg->cellId = cellId;
       arg->stats = m_pdcpStats;
+      // Connect FailSafe to ensure that no error is thrown out on UE path removal due to RLF.
       Config::ConnectFailSafe (ueRrcPath + "/Srb1/LtePdcp/TxPDU",
                        MakeBoundCallback (&UlTxPduCallback, arg));
       Config::ConnectFailSafe (ueRrcPath + "/Srb1/LtePdcp/RxPDU",
@@ -298,6 +301,7 @@ RadioBearerStatsConnector::ConnectTracesDrbEnb (std::string context, uint64_t im
       arg->imsi = imsi;
       arg->cellId = cellId;
       arg->stats = m_rlcStats;
+      // Connect FailSafe to ensure that no error is thrown out on UE path removal due to RLF.
       Config::ConnectFailSafe (basePath + "/LteRlc/TxPDU",
                        MakeBoundCallback (&DlTxPduCallback, arg));
       Config::ConnectFailSafe (basePath + "/LteRlc/RxPDU",
@@ -334,6 +338,7 @@ RadioBearerStatsConnector::ConnectTracesDrbUe (std::string context, uint64_t ims
       arg->imsi = imsi;
       arg->cellId = cellId;
       arg->stats = m_rlcStats;
+      // Connect FailSafe to ensure that no error is thrown out on UE path removal due to RLF.
       Config::ConnectFailSafe (basePath + "/LteRlc/TxPDU",
                        MakeBoundCallback (&UlTxPduCallback, arg));
       Config::ConnectFailSafe (basePath + "/LteRlc/RxPDU",
