@@ -190,7 +190,7 @@ MacStatsCalculator::DlSchedulingCallback (Ptr<MacStatsCalculator> macStats, std:
   else
     {
       imsi = FindImsiFromEnbRlcPath (pathAndRnti.str ());
-      if(imsi)
+      if (imsi)
         macStats->SetImsiPath (pathAndRnti.str (), imsi);
     }
   uint16_t cellId = 0;
@@ -203,7 +203,7 @@ MacStatsCalculator::DlSchedulingCallback (Ptr<MacStatsCalculator> macStats, std:
       cellId = FindCellIdFromEnbRlcPath (pathAndRnti.str ());
       macStats->SetCellIdPath (pathAndRnti.str (), cellId);
     }  
-  if(imsi)
+  if (imsi)
     macStats->DlScheduling (cellId, imsi, dlSchedulingCallbackInfo);
 }
 
@@ -225,7 +225,7 @@ MacStatsCalculator::UlSchedulingCallback (Ptr<MacStatsCalculator> macStats, std:
   else
     {
       imsi = FindImsiFromEnbRlcPath (pathAndRnti.str ());
-      if(imsi)
+      if (imsi)
         macStats->SetImsiPath (pathAndRnti.str (), imsi);
     }
   uint16_t cellId = 0;
@@ -238,7 +238,7 @@ MacStatsCalculator::UlSchedulingCallback (Ptr<MacStatsCalculator> macStats, std:
       cellId = FindCellIdFromEnbRlcPath (pathAndRnti.str ());
       macStats->SetCellIdPath (pathAndRnti.str (), cellId);
     }
-  if(imsi)
+  if (imsi)
     macStats->UlScheduling (cellId, imsi, frameNo, subframeNo, rnti, mcs, size, componentCarrierId);
 }
 
