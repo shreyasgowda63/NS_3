@@ -218,10 +218,10 @@ PhyRxStatsCalculator::UlPhyReceptionCallback (Ptr<PhyRxStatsCalculator> phyRxSta
   else
     {
       imsi = FindImsiFromEnbRlcPath (pathAndRnti.str ());
-      if(imsi)
+      if (imsi)
         phyRxStats->SetImsiPath (pathAndRnti.str (), imsi);
     }
-  if(imsi) 
+  if (imsi) 
     {
       params.m_imsi = imsi;
       phyRxStats->UlPhyReception (params);
