@@ -258,7 +258,7 @@ def options(opt):
                    dest='enable_desmetrics')
     opt.add_option('--cxx-standard',
                    help=('Compile NS-3 with the given C++ standard'),
-                   type='string', default='-std=c++11', dest='cxx_standard')
+                   type='string', dest='cxx_standard')
     opt.add_option('--enable-asserts',
                    help=('Enable the asserts regardless of the compile mode'),
                    action="store_true", default=False,
@@ -481,12 +481,40 @@ def configure(conf):
                 conf.report_optional_feature("static", "Static build", False,
                                              "Link flag -Wl,--whole-archive,-Bstatic does not work")
 
-    # Enables C++-11 support by default, unless user specified another option
-    # Warn the user if the CXX Standard flag provided was not recognized  
-    if conf.check_compilation_flag(Options.options.cxx_standard):
-        env.append_value('CXXFLAGS', Options.options.cxx_standard)
+    # Checks if Env CXX Standard flag is available or if user specifed the same
+    # Warn the user if there is a conflict and fallback to Env CXX Standard flag
+    # If none are specified, Enables C++-11 support by default, unless user specified another option
+    # If Env CXX Standard flag is not recognized, user specified option is tried.
+    # Warn the user if the CXX Standard flag provided was not recognized 
+    cxx_standard = ""
+    for flag in env['CXXFLAGS']:
+        if flag[:8] == "-std=c++":
+            cxx_standard = flag
+
+    if not cxx_standard and Options.options.cxx_standard:
+        cxx_standard = Options.options.cxx_standard
+    elif cxx_standard and Options.options.cxx_standard and cxx_standard != Options.options.cxx_standard:
+        Logs.warn("Env CXX Standard flag (" + cxx_standard + ") does not match the user-specified CXX Standard flag (" + 
+            Options.options.cxx_standard + "), using env CXX Standard flag")
+    elif not cxx_standard and not Options.options.cxx_standard:
+        cxx_standard = "-std=c++11"
+
+    if conf.check_compilation_flag(cxx_standard):
+        if cxx_standard not in env['CXXFLAGS']:
+            env.append_value('CXXFLAGS', cxx_standard)
+    elif Options.options.cxx_standard and Options.options.cxx_standard != cxx_standard:
+        Logs.warn("Env CXX Standard flag " + cxx_standard + " was not recognized, trying user-specified CXX Standard flag " + Options.options.cxx_standard)
+        print(Options.options.cxx_standard)
+        if cxx_standard in env['CXXFLAGS']:
+                env['CXXFLAGS'].remove(cxx_standard)
+        if conf.check_compilation_flag(Options.options.cxx_standard):
+            env.append_value('CXXFLAGS', Options.options.cxx_standard)
+        else:
+            Logs.warn("User-specified CXX Standard flag " + Options.options.cxx_standard + " was not recognized, using compiler's default")
     else:
-        Logs.warn("CXX Standard flag " + Options.options.cxx_standard + " was not recognized, using compiler's default")
+        Logs.warn("CXX Standard flag " + cxx_standard + " was not recognized, using compiler's default")
+        if cxx_standard in env['CXXFLAGS']:
+            env['CXXFLAGS'].remove(cxx_standard)
 
     # Find Boost libraries by modules
     conf.env['REQUIRED_BOOST_LIBS'] = []
