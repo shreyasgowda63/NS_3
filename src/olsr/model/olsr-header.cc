@@ -135,7 +135,8 @@ PacketHeader::GetSerializedSize (void) const
 void
 PacketHeader::Print (std::ostream &os) const
 {
-  /// \todo
+  os << "Packet length: " << +m_packetLength
+	<< " Packet sequence number: " << +m_packetSequenceNumber;
 }
 
 void
@@ -213,7 +214,8 @@ MessageHeader::GetSerializedSize (void) const
 void
 MessageHeader::Print (std::ostream &os) const
 {
-  /// \todo
+  os << "Message type " << m_messageType << " Time to live " << +m_timeToLive
+     << " Source address: ipv4 " << m_originatorAddress << " Message sequence number " << +m_messageSequenceNumber;
 }
 
 void
@@ -294,7 +296,11 @@ MessageHeader::Mid::GetSerializedSize (void) const
 void
 MessageHeader::Mid::Print (std::ostream &os) const
 {
-  /// \todo
+  for (std::vector<Ipv4Address>::const_iterator iter = this->interfaceAddresses.begin ();
+	   iter != this->interfaceAddresses.end (); iter++)
+	{
+		os << iter->Get() << " ";
+	}
 }
 
 void
