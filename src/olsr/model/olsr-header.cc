@@ -135,6 +135,7 @@ PacketHeader::GetSerializedSize (void) const
 void
 PacketHeader::Print (std::ostream &os) const
 {
+  os << "Packet Length: "<< (uint32_t)GetPacketLength () << "Packet Sequence Number"<< (uint32_t)GetPacketSequenceNumber ();
   /// \todo
 }
 
@@ -213,7 +214,7 @@ MessageHeader::GetSerializedSize (void) const
 void
 MessageHeader::Print (std::ostream &os) const
 {
-  /// \todo
+  os << "Message Type: "<< (uint32_t)GetMessageType () << "Validity Time"<< GetVTime () << "Originator Address"<<GetOriginatorAddress ()<<"Time to live"<<GetTimeToLive ()<<"The hop count"<<GetHopCount ()<<"Message Sequence Number "<<(uint32_t)GetMessageSequenceNumber () ;
 }
 
 void
@@ -294,6 +295,12 @@ MessageHeader::Mid::GetSerializedSize (void) const
 void
 MessageHeader::Mid::Print (std::ostream &os) const
 {
+  for (std::vector<Ipv4Address>::const_iterator iter = this->interfaceAddresses.begin ();
+       iter != this->interfaceAddresses.end (); iter++)
+    {
+      os << " "<< iter->Get ();
+    }
+  
   /// \todo
 }
 
@@ -348,6 +355,17 @@ MessageHeader::Hello::GetSerializedSize (void) const
 void
 MessageHeader::Hello::Print (std::ostream &os) const
 {
+  os<<""<<GetHTime ();
+  for (std::vector<LinkMessage>::const_iterator iter = this->linkMessages.begin ();
+       iter != this->linkMessages.end (); iter++)
+    {
+      const LinkMessage &lm = *iter;
+      for (std::vector<Ipv4Address>::const_iterator neigh_iter = lm.neighborInterfaceAddresses.begin ();
+           neigh_iter != lm.neighborInterfaceAddresses.end (); neigh_iter++)
+        {
+          os<< " "<<neigh_iter->Get ();
+        }
+    }
   /// \todo
 }
 
@@ -431,6 +449,12 @@ MessageHeader::Tc::GetSerializedSize (void) const
 void
 MessageHeader::Tc::Print (std::ostream &os) const
 {
+
+  for (std::vector<Ipv4Address>::const_iterator iter = this->neighborAddresses.begin ();
+       iter != this->neighborAddresses.end (); iter++)
+    {
+      os<<""<<iter->Get ();
+    }
   /// \todo
 }
 
@@ -517,4 +541,5 @@ MessageHeader::Hna::Deserialize (Buffer::Iterator start, uint32_t messageSize)
 
 }
 }  // namespace olsr, ns3
+
 
