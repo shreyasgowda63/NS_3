@@ -25,8 +25,10 @@
  */
 
 #include "lte-enb-rrc.h"
+#include "lte-enb-net-device.h"
 
 #include <ns3/fatal-error.h>
+#include <ns3/node.h>
 #include <ns3/log.h>
 #include <ns3/abort.h>
 
@@ -3093,6 +3095,19 @@ LteEnbRrc::IsRandomAccessCompleted (uint16_t rnti)
       break;
 
     }
+}
+
+
+void
+LteEnbRrc::SetLteEnbNetDevice (Ptr<LteEnbNetDevice> device)
+{
+  m_lteEnbNetDevice = device;
+}
+
+Ptr<LteEnbNetDevice>
+LteEnbRrc::GetLteEnbNetDevice (void) const
+{
+  return m_lteEnbNetDevice;
 }
 
 

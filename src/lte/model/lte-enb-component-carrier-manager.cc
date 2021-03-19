@@ -20,6 +20,7 @@
  */
 
 #include "lte-enb-component-carrier-manager.h"
+#include "lte-enb-net-device.h"
 #include <ns3/log.h>
 
 namespace ns3 {
@@ -128,6 +129,19 @@ LteEnbComponentCarrierManager::SetNumberOfComponentCarriers (uint16_t noOfCompon
   m_noOfComponentCarriers = noOfComponentCarriers;
   //Set the number of component carriers in eNB RRC
   m_ccmRrcSapUser->SetNumberOfComponentCarriers (noOfComponentCarriers);
+}
+
+
+void
+LteEnbComponentCarrierManager::SetLteEnbNetDevice (Ptr<LteEnbNetDevice> device)
+{
+  m_lteEnbNetDevice = device;
+}
+
+Ptr<LteEnbNetDevice>
+LteEnbComponentCarrierManager::GetLteEnbNetDevice (void) const
+{
+  return m_lteEnbNetDevice;
 }
 
 } // end of namespace ns3

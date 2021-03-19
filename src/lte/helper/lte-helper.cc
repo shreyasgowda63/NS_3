@@ -687,9 +687,11 @@ LteHelper::InstallSingleEnbDevice (Ptr<Node> n)
   dev->SetNode (n);
   dev->SetAttribute ("CellId", UintegerValue (cellId));
   dev->SetAttribute ("LteEnbComponentCarrierManager", PointerValue (ccmEnbManager));
+  ccmEnbManager->SetLteEnbNetDevice (dev);  
   dev->SetCcMap (ccMap);
   std::map<uint8_t,Ptr<ComponentCarrierBaseStation> >::iterator it = ccMap.begin ();
-  dev->SetAttribute ("LteEnbRrc", PointerValue (rrc)); 
+  dev->SetAttribute ("LteEnbRrc", PointerValue (rrc));
+  rrc->SetLteEnbNetDevice (dev);
   dev->SetAttribute ("LteHandoverAlgorithm", PointerValue (handoverAlgorithm));
   dev->SetAttribute ("LteFfrAlgorithm", PointerValue (DynamicCast<ComponentCarrierEnb> (it->second)->GetFfrAlgorithm ()));
 
@@ -922,8 +924,11 @@ LteHelper::InstallSingleUeDevice (Ptr<Node> n)
   dev->SetAttribute ("Imsi", UintegerValue (imsi));
   dev->SetCcMap (ueCcMap);
   dev->SetAttribute ("LteUeRrc", PointerValue (rrc));
+  rrc->SetLteUeNetDevice (dev);
   dev->SetAttribute ("EpcUeNas", PointerValue (nas));
+  nas->SetLteUeNetDevice (dev);
   dev->SetAttribute ("LteUeComponentCarrierManager", PointerValue (ccmUe));
+  ccmUe->SetLteUeNetDevice (dev);
   // \todo The UE identifier should be dynamically set by the EPC
   // when the default PDP context is created. This is a simplification.
   dev->SetAddress (Mac64Address::Allocate ());

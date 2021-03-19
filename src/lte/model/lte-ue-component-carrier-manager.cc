@@ -20,6 +20,9 @@
  */
 
 #include "lte-ue-component-carrier-manager.h"
+#include "lte-ue-net-device.h"
+
+#include <ns3/node.h>
 #include <ns3/log.h>
 
 namespace ns3 {
@@ -51,6 +54,7 @@ void
 LteUeComponentCarrierManager::DoDispose ()
 {
   NS_LOG_FUNCTION (this);
+  m_lteUeNetDevice = nullptr;
 }
 
 void
@@ -100,6 +104,19 @@ LteUeComponentCarrierManager::SetNumberOfComponentCarriers (uint8_t noOfComponen
   m_noOfComponentCarriers = noOfComponentCarriers;
   //Set the number of component carriers in UE RRC
   m_ccmRrcSapUser->SetNumberOfComponentCarriers(noOfComponentCarriers);
+}
+
+
+void
+LteUeComponentCarrierManager::SetLteUeNetDevice (Ptr<LteUeNetDevice> device)
+{
+  m_lteUeNetDevice = device;
+}
+
+Ptr<LteUeNetDevice>
+LteUeComponentCarrierManager::GetLteUeNetDevice (void) const
+{
+  return m_lteUeNetDevice;
 }
 
 

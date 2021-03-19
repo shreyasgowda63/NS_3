@@ -40,6 +40,7 @@ class LteUeCcmRrcSapProvider;
 
 class LteMacSapUser;
 class LteMacSapProvider;
+class LteUeNetDevice;
 
 
 /**
@@ -96,6 +97,18 @@ public:
    */
   void SetNumberOfComponentCarriers (uint8_t noOfComponentCarriers);
 
+  /**
+   * \param pointer to LteUeNetDevice holding this LTE UE CC Manager
+   * Stores pointer to LTE UE net device that hold this LTE UE CC Manager.
+  */
+  void SetLteUeNetDevice (Ptr<LteUeNetDevice> device);
+
+  /**
+   * Returns pointer to LteUeNetDevice that holds this LTE UE CC Manager.
+   * \return pointer to LteUeNetDevice that holds this LTE UE CC Manager
+  */
+  Ptr<LteUeNetDevice>  GetLteUeNetDevice (void) const;
+
 protected:
 
   // inherited from Object
@@ -108,6 +121,8 @@ protected:
   std::map<uint8_t, std::map<uint8_t, LteMacSapProvider*> > m_componentCarrierLcMap; //!< Flow configuration per flow Id of this UE.
   uint16_t m_noOfComponentCarriers; //!<// The number of component carriers that this UE can support.
   std::map <uint8_t, LteMacSapProvider*> m_macSapProvidersMap; //!< Map of pointers to SAP to interfaces of the MAC instance if the flows of this UE.
+
+  Ptr<LteUeNetDevice> m_lteUeNetDevice; //< UE net device referencing this LTE UE CC Manager
 
 }; // end of class LteUeComponentCarrierManager
 
