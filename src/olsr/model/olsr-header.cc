@@ -215,7 +215,7 @@ void
 MessageHeader::Print (std::ostream &os) const
 {
   os
-  << "Message Type: "<< m_messageType << "Validity Time: " << m_vTime 
+  << "Message Type: "<< m_messageType << "Validity Time: " << GetVTime ()
   << "Originator Address: " << m_originatorAddress << "Time to live: " << +m_timeToLive 
   << "The hop count: " << +m_hopCount << "Message Sequence Number: " << m_messageSequenceNumber;
 }
@@ -521,7 +521,8 @@ MessageHeader::Hna::Print (std::ostream &os) const
   << " Network addresses: " << " Netmask: ";
   for (size_t n = 0; n < this->associations.size (); ++n)
     {
-      os<< " " << this->associations[n].address << " " << this->associations[n].mask;
+      os
+      << " " << this->associations[n].address << " " << this->associations[n].mask;
     }
 }
 
