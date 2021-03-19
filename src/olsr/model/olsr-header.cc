@@ -135,8 +135,8 @@ PacketHeader::GetSerializedSize (void) const
 void
 PacketHeader::Print (std::ostream &os) const
 {
-  os << "Packet Length: "<< (uint32_t)GetPacketLength () << "Packet Sequence Number"<< (uint32_t)GetPacketSequenceNumber ();
-  /// \todo
+  os 
+  << "Packet Length: " << m_packetLength << "Packet Sequence Number: " << m_packetSequenceNumber;
 }
 
 void
@@ -214,7 +214,10 @@ MessageHeader::GetSerializedSize (void) const
 void
 MessageHeader::Print (std::ostream &os) const
 {
-  os << "Message Type: "<< (uint32_t)GetMessageType () << "Validity Time"<< GetVTime () << "Originator Address"<<GetOriginatorAddress ()<<"Time to live"<<GetTimeToLive ()<<"The hop count"<<GetHopCount ()<<"Message Sequence Number "<<(uint32_t)GetMessageSequenceNumber () ;
+  os
+  << "Message Type: "<< m_messageType << "Validity Time: " << m_vTime 
+  << "Originator Address: " << m_originatorAddress << "Time to live: " << +m_timeToLive 
+  << "The hop count: " << +m_hopCount << "Message Sequence Number: " << m_messageSequenceNumber;
 }
 
 void
@@ -295,13 +298,15 @@ MessageHeader::Mid::GetSerializedSize (void) const
 void
 MessageHeader::Mid::Print (std::ostream &os) const
 {
+  os
+  << "OLSR Interface addresses: ";
   for (std::vector<Ipv4Address>::const_iterator iter = this->interfaceAddresses.begin ();
        iter != this->interfaceAddresses.end (); iter++)
     {
-      os << " "<< iter->Get ();
+      os 
+      << " " << iter->Get ();
     }
   
-  /// \todo
 }
 
 void
@@ -355,15 +360,19 @@ MessageHeader::Hello::GetSerializedSize (void) const
 void
 MessageHeader::Hello::Print (std::ostream &os) const
 {
-  os<<""<<GetHTime ();
+  os
+  << "" << GetHTime ();
   for (std::vector<LinkMessage>::const_iterator iter = this->linkMessages.begin ();
        iter != this->linkMessages.end (); iter++)
     {
       const LinkMessage &lm = *iter;
+      os
+      << " Link Code " << lm.linkCode << "Neighbor Interface Addresses: ";
       for (std::vector<Ipv4Address>::const_iterator neigh_iter = lm.neighborInterfaceAddresses.begin ();
            neigh_iter != lm.neighborInterfaceAddresses.end (); neigh_iter++)
         {
-          os<< " "<<neigh_iter->Get ();
+          os
+          << " " << neigh_iter->Get ();
         }
     }
   /// \todo
@@ -449,13 +458,14 @@ MessageHeader::Tc::GetSerializedSize (void) const
 void
 MessageHeader::Tc::Print (std::ostream &os) const
 {
-
+  os
+  << "Advertised Neighbor Main Addresses: ";
   for (std::vector<Ipv4Address>::const_iterator iter = this->neighborAddresses.begin ();
        iter != this->neighborAddresses.end (); iter++)
     {
-      os<<""<<iter->Get ();
+      os
+      << " " << iter->Get ();
     }
-  /// \todo
 }
 
 void
@@ -507,7 +517,12 @@ MessageHeader::Hna::GetSerializedSize (void) const
 void
 MessageHeader::Hna::Print (std::ostream &os) const
 {
-  /// \todo
+  os
+  << " Network addresses: " << " Netmask: ";
+  for (size_t n = 0; n < this->associations.size (); ++n)
+    {
+      os<< " " << this->associations[n].address << " " << this->associations[n].mask;
+    }
 }
 
 void
