@@ -354,7 +354,19 @@ MessageHeader::Hello::GetSerializedSize (void) const
 void
 MessageHeader::Hello::Print (std::ostream &os) const
 {
-  /// \todo
+  for (std::vector<LinkMessage>::const_iterator iter = this->linkMessages.begin ();
+	   iter != this->linkMessages.end (); iter++)
+	{
+	  const LinkMessage &lm = *iter;
+	  os << "Link code : " << lm.linkCode << "\n";
+	  os << "Neighbor interface addresses for " << lm.linkCode << " are: ";
+	  for (std::vector<Ipv4Address>::const_iterator neigh_iter = lm.neighborInterfaceAddresses.begin ();
+		   neigh_iter != lm.neighborInterfaceAddresses.end (); neigh_iter++)
+		{
+		  os << neigh_iter->Get () << ", ";
+		}
+	  os << "\n";
+	}
 }
 
 void
@@ -437,7 +449,13 @@ MessageHeader::Tc::GetSerializedSize (void) const
 void
 MessageHeader::Tc::Print (std::ostream &os) const
 {
-  /// \todo
+  os << "Advertised neighbor sequence number: " << +ansn << "\n";
+  os << "Advertised neighbor addresses: ";
+  for (std::vector<Ipv4Address>::const_iterator iter = this->neighborAddresses.begin ();
+	   iter != this->neighborAddresses.end (); iter++)
+	{
+	  os << iter->Get () << ", ";
+	}
 }
 
 void
@@ -489,7 +507,12 @@ MessageHeader::Hna::GetSerializedSize (void) const
 void
 MessageHeader::Hna::Print (std::ostream &os) const
 {
-  /// \todo
+  os << "Network address, " << "Netmask \n";
+  for (size_t n = 0; n < this->associations.size (); ++n)
+	{
+	  os << this->associations[n].address.Get () << ", "
+		 << this->associations[n].mask.Get () << "\n";
+	}
 }
 
 void
