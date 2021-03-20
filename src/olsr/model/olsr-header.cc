@@ -135,8 +135,8 @@ PacketHeader::GetSerializedSize (void) const
 void
 PacketHeader::Print (std::ostream &os) const
 {
-  os << "Packet length: " << +m_packetLength
-	<< " Packet sequence number: " << +m_packetSequenceNumber;
+  os << "Packet length: " << m_packetLength
+	<< " Packet sequence number: " << m_packetSequenceNumber;
 }
 
 void
@@ -215,7 +215,7 @@ void
 MessageHeader::Print (std::ostream &os) const
 {
   os << "Message type " << m_messageType << " Time to live " << +m_timeToLive
-     << " Source address: ipv4 " << m_originatorAddress << " Message sequence number " << +m_messageSequenceNumber;
+     << " Source address: ipv4 " << m_originatorAddress << " Message sequence number " << m_messageSequenceNumber;
 }
 
 void
@@ -360,7 +360,7 @@ MessageHeader::Hello::Print (std::ostream &os) const
 	  const LinkMessage &lm = *iter;
 	  os << "Link code : " << lm.linkCode << "\n";
 	  os << "Neighbor interface addresses for " << lm.linkCode << " are: ";
-	  for (std::vector<Ipv4Address>::const_iterator neigh_iter = lm.neighborInterfaceAddresses.begin ();
+	  for (std::vector<Ipv4Address>::const_iterator neigh_iter = lm.neighborInterfaceAddresses.begin();
 		   neigh_iter != lm.neighborInterfaceAddresses.end (); neigh_iter++)
 		{
 		  os << neigh_iter->Get () << ", ";
@@ -449,7 +449,7 @@ MessageHeader::Tc::GetSerializedSize (void) const
 void
 MessageHeader::Tc::Print (std::ostream &os) const
 {
-  os << "Advertised neighbor sequence number: " << +ansn << "\n";
+  os << "Advertised neighbor sequence number: " << ansn << "\n";
   os << "Advertised neighbor addresses: ";
   for (std::vector<Ipv4Address>::const_iterator iter = this->neighborAddresses.begin ();
 	   iter != this->neighborAddresses.end (); iter++)
@@ -510,8 +510,8 @@ MessageHeader::Hna::Print (std::ostream &os) const
   os << "Network address, " << "Netmask \n";
   for (size_t n = 0; n < this->associations.size (); ++n)
 	{
-	  os << this->associations[n].address.Get () << ", "
-		 << this->associations[n].mask.Get () << "\n";
+	  os << this->associations[n].address << ", "
+		 << this->associations[n].mask<< "\n";
 	}
 }
 
