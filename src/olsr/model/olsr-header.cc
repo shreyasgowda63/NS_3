@@ -296,11 +296,10 @@ MessageHeader::Mid::GetSerializedSize (void) const
 void
 MessageHeader::Mid::Print (std::ostream &os) const
 {
-  for (std::vector<Ipv4Address>::const_iterator iter = this->interfaceAddresses.begin ();
-	   iter != this->interfaceAddresses.end (); iter++)
-	{
-		os << iter->Get() << " ";
-	}
+  for (const auto& iAddr : interfaceAddresses)
+  {
+	os << iAddr << ", ";
+  }
 }
 
 void
@@ -354,19 +353,17 @@ MessageHeader::Hello::GetSerializedSize (void) const
 void
 MessageHeader::Hello::Print (std::ostream &os) const
 {
-  for (std::vector<LinkMessage>::const_iterator iter = this->linkMessages.begin ();
-	   iter != this->linkMessages.end (); iter++)
-	{
-	  const LinkMessage &lm = *iter;
-	  os << "Link code : " << lm.linkCode << "\n";
-	  os << "Neighbor interface addresses for " << lm.linkCode << " are: ";
-	  for (std::vector<Ipv4Address>::const_iterator neigh_iter = lm.neighborInterfaceAddresses.begin();
-		   neigh_iter != lm.neighborInterfaceAddresses.end (); neigh_iter++)
-		{
-		  os << neigh_iter->Get () << ", ";
-		}
-	  os << "\n";
-	}
+  for (const auto& ilinkMessage : linkMessages)
+  	{
+  	  const LinkMessage &lm = ilinkMessage;
+  	  os << "Link code : " << lm.linkCode << "\n";
+  	  os << "Neighbor interface addresses for " << lm.linkCode << " are: ";
+  	  for (const auto& neigh_iter : lm.neighborInterfaceAddresses)
+  		{
+  		  os << neigh_iter << ", ";
+  		}
+  	  os << "\n";
+  	}
 }
 
 void
@@ -451,11 +448,10 @@ MessageHeader::Tc::Print (std::ostream &os) const
 {
   os << "Advertised neighbor sequence number: " << ansn << "\n";
   os << "Advertised neighbor addresses: ";
-  for (std::vector<Ipv4Address>::const_iterator iter = this->neighborAddresses.begin ();
-	   iter != this->neighborAddresses.end (); iter++)
-	{
-	  os << iter->Get () << ", ";
-	}
+  for (const auto& iAddr : neighborAddresses)
+    {
+	  os << iAddr << ", ";
+    }
 }
 
 void
@@ -508,11 +504,11 @@ void
 MessageHeader::Hna::Print (std::ostream &os) const
 {
   os << "Network address, " << "Netmask \n";
-  for (size_t n = 0; n < this->associations.size (); ++n)
-	{
-	  os << this->associations[n].address << ", "
-		 << this->associations[n].mask<< "\n";
-	}
+  for (const auto& iAssoc : associations)
+  	{
+  	  os << iAssoc.address << ", "
+  	     << iAssoc.mask << "\n";
+  	}
 }
 
 void
