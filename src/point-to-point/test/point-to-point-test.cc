@@ -25,6 +25,8 @@
 #include "ns3/point-to-point-channel.h"
 #include "ns3/net-device-queue-interface.h"
 
+#include <string>
+
 using namespace ns3;
 
 /**
@@ -47,12 +49,25 @@ public:
   virtual void DoRun (void);
 
 private:
+  
+  Ptr<const Packet> m_recvdPacket; //!< received packet
   /**
    * \brief Send one packet to the device specified
    *
    * \param device NetDevice to send to
    */
   void SendOnePacket (Ptr<PointToPointNetDevice> device);
+  /**
+   * \brief Callback function which sets the recvdPacket parameter
+   *
+   * \param dev The receiving device.
+   * \param pkt The received packet.
+   * \param mode The protocol mode used.
+   * \param sender The sender address.
+   * 
+   * \return A boolean indicating packet handled properly.
+   */
+  bool RxPacket (Ptr<NetDevice> dev, Ptr<const Packet> pkt, uint16_t mode, const Address &sender);
 };
 
 PointToPointTest::PointToPointTest ()
@@ -63,8 +78,17 @@ PointToPointTest::PointToPointTest ()
 void
 PointToPointTest::SendOnePacket (Ptr<PointToPointNetDevice> device)
 {
-  Ptr<Packet> p = Create<Packet> ();
+  uint8_t buffer [] = "\"Can you tell me where my country lies?\" \\ said the unifaun to his true love's eyes. \\ \"It lies with me!\" cried the Queen of Maybe \\ - for her merchandise, he traded in his prize.";
+
+  Ptr<Packet> p = Create<Packet> (buffer, 180);
   device->Send (p, device->GetBroadcast (), 0x800);
+}
+
+bool
+PointToPointTest::RxPacket (Ptr<NetDevice> dev, Ptr<const Packet> pkt, uint16_t mode, const Address &sender)
+{
+  m_recvdPacket = pkt;
+  return true;
 }
 
 
@@ -86,11 +110,20 @@ PointToPointTest::DoRun (void)
 
   a->AddDevice (devA);
   b->AddDevice (devB);
-
+  
+  devB->SetReceiveCallback (MakeCallback (&PointToPointTest::RxPacket,
+                                          this));
+  
   Simulator::Schedule (Seconds (1.0), &PointToPointTest::SendOnePacket, this, devA);
 
   Simulator::Run ();
 
+
+  uint8_t rxBuffer [180];
+  uint8_t txBuffer [180] = "\"Can you tell me where my country lies?\" \\ said the unifaun to his true love's eyes. \\ \"It lies with me!\" cried the Queen of Maybe \\ - for her merchandise, he traded in his prize.";
+  m_recvdPacket->CopyData (rxBuffer, 180);
+  NS_TEST_EXPECT_MSG_EQ (memcmp (rxBuffer, txBuffer, 180), 0, "trivial");
+  
   Simulator::Destroy ();
 }
 
