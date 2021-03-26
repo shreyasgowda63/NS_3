@@ -54,9 +54,11 @@ private:
   /**
    * \brief Send one packet to the device specified
    *
-   * \param device NetDevice to send to
+   * \param device NetDevice to send to.
+   * \param buffer Payload content of the packet.
+   * \param size Size of the payload.
    */
-  void SendOnePacket (Ptr<PointToPointNetDevice> device);
+  void SendOnePacket (Ptr<PointToPointNetDevice> device, uint8_t const *buffer, uint32_t size);
   /**
    * \brief Callback function which sets the recvdPacket parameter
    *
@@ -76,11 +78,9 @@ PointToPointTest::PointToPointTest ()
 }
 
 void
-PointToPointTest::SendOnePacket (Ptr<PointToPointNetDevice> device)
+PointToPointTest::SendOnePacket (Ptr<PointToPointNetDevice> device, uint8_t const *buffer, uint32_t size)
 {
-  uint8_t buffer [] = "\"Can you tell me where my country lies?\" \\ said the unifaun to his true love's eyes. \\ \"It lies with me!\" cried the Queen of Maybe \\ - for her merchandise, he traded in his prize.";
-
-  Ptr<Packet> p = Create<Packet> (buffer, 180);
+  Ptr<Packet> p = Create<Packet> (buffer, size);
   device->Send (p, device->GetBroadcast (), 0x800);
 }
 
@@ -113,16 +113,19 @@ PointToPointTest::DoRun (void)
   
   devB->SetReceiveCallback (MakeCallback (&PointToPointTest::RxPacket,
                                           this));
+  uint8_t txBuffer [] = "\"Can you tell me where my country lies?\" \\ said the unifaun to his true love's eyes. \\ \"It lies with me!\" cried the Queen of Maybe \\ - for her merchandise, he traded in his prize.";
+  size_t txBufferSize = sizeof(txBuffer);
   
-  Simulator::Schedule (Seconds (1.0), &PointToPointTest::SendOnePacket, this, devA);
+  Simulator::Schedule (Seconds (1.0), &PointToPointTest::SendOnePacket, this, devA, txBuffer, txBufferSize);
 
   Simulator::Run ();
 
+  NS_TEST_EXPECT_MSG_EQ (m_recvdPacket->GetSize (), txBufferSize, "trivial");
 
-  uint8_t rxBuffer [180];
-  uint8_t txBuffer [180] = "\"Can you tell me where my country lies?\" \\ said the unifaun to his true love's eyes. \\ \"It lies with me!\" cried the Queen of Maybe \\ - for her merchandise, he traded in his prize.";
-  m_recvdPacket->CopyData (rxBuffer, 180);
-  NS_TEST_EXPECT_MSG_EQ (memcmp (rxBuffer, txBuffer, 180), 0, "trivial");
+  uint8_t rxBuffer [devA->GetMtu()];
+  
+  m_recvdPacket->CopyData (rxBuffer, txBufferSize);
+  NS_TEST_EXPECT_MSG_EQ (memcmp (rxBuffer, txBuffer, txBufferSize), 0, "trivial");
   
   Simulator::Destroy ();
 }
