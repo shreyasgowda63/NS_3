@@ -122,7 +122,7 @@ PointToPointTest::DoRun (void)
 
   NS_TEST_EXPECT_MSG_EQ (m_recvdPacket->GetSize (), txBufferSize, "trivial");
 
-  uint8_t rxBuffer [devA->GetMtu()];
+  uint8_t rxBuffer [1500]; // As large as the P2P MTU size, assuming that the user didn't change it.
   
   m_recvdPacket->CopyData (rxBuffer, txBufferSize);
   NS_TEST_EXPECT_MSG_EQ (memcmp (rxBuffer, txBuffer, txBufferSize), 0, "trivial");
