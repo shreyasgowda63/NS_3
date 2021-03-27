@@ -107,6 +107,7 @@ ApWifiMac::~ApWifiMac ()
 {
   NS_LOG_FUNCTION (this);
   m_staList.clear ();
+  m_addressIdMap.clear ();
   m_nonErpStations.clear ();
   m_nonHtStations.clear ();
 }
@@ -746,6 +747,7 @@ ApWifiMac::SendAssocResp (Mac48Address to, bool success, bool isReassoc)
         {
           aid = GetNextAssociationId ();
           m_staList.insert (std::make_pair (aid, to));
+          m_addressIdMap.insert (std::make_pair (to, aid));
         }
       assoc.SetAssociationId (aid);
     }
@@ -1359,6 +1361,7 @@ ApWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
                   if (j->second == from)
                     {
                       m_staList.erase (j);
+                      m_addressIdMap.erase (from);
                       break;
                     }
                 }
@@ -1454,6 +1457,24 @@ ApWifiMac::GetNextAssociationId (void)
     }
   NS_FATAL_ERROR ("No free association ID available!");
   return 0;
+}
+
+const std::map<uint16_t, Mac48Address>&
+ApWifiMac::GetStaList (void) const
+{
+  return m_staList;
+}
+
+uint16_t
+ApWifiMac::GetAssociationId (Mac48Address addr) const
+{
+  auto it = m_addressIdMap.find (addr);
+
+  if (it == m_addressIdMap.end ())
+    {
+      return SU_STA_ID;
+    }
+  return it->second;
 }
 
 uint8_t

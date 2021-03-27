@@ -109,6 +109,20 @@ public:
   int64_t AssignStreams (int64_t stream);
 
   /**
+   * Get a const reference to the map of associated stations. Each station is
+   * specified by an (association ID, MAC address) pair. Make sure not to use
+   * the returned reference after that this object has been deallocated.
+   *
+   * \return a const reference to the map of associated stations
+   */
+  const std::map<uint16_t, Mac48Address>& GetStaList (void) const;
+  /**
+   * \param addr the address of the associated station
+   * \return the Association ID allocated by the AP to the station, SU_STA_ID if unallocated
+   */
+  uint16_t GetAssociationId (Mac48Address addr) const;
+
+  /**
    * Return the value of the Queue Size subfield of the last QoS Data or QoS Null
    * frame received from the station with the given MAC address and belonging to
    * the given TID.
@@ -293,6 +307,8 @@ private:
   Ptr<UniformRandomVariable> m_beaconJitter; //!< UniformRandomVariable used to randomize the time of the first beacon
   bool m_enableBeaconJitter;                 //!< Flag whether the first beacon should be generated at random time
   std::map<uint16_t, Mac48Address> m_staList; //!< Map of all stations currently associated to the AP with their association ID
+  //!< Maps MAC addresses of associated stations to their association ID
+  std::unordered_map<Mac48Address, uint16_t, WifiAddressHash> m_addressIdMap;
   std::list<Mac48Address> m_nonErpStations;  //!< List of all non-ERP stations currently associated to the AP
   std::list<Mac48Address> m_nonHtStations;   //!< List of all non-HT stations currently associated to the AP
   bool m_enableNonErpProtection;             //!< Flag whether protection mechanism is used or not when non-ERP STAs are present within the BSS

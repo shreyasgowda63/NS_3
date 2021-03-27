@@ -350,6 +350,14 @@ WifiPhy::GetTypeId (void)
                    MakeUintegerAccessor (&WifiPhy::GetChannelWidth,
                                          &WifiPhy::SetChannelWidth),
                    MakeUintegerChecker<uint16_t> (5, 160))
+    .AddAttribute ("Primary20MHzIndex",
+                   "The index of the primary 20 MHz channel within the operating channel "
+                   "(0 indicates the 20 MHz subchannel with the lowest center frequency). "
+                   "This attribute is only valid if the width of the operating channel is "
+                   "a multiple of 20 MHz.",
+                   UintegerValue (0),
+                   MakeUintegerAccessor (&WifiPhy::SetPrimary20Index),
+                   MakeUintegerChecker<uint8_t> (0, 7))
     .AddAttribute ("RxSensitivity",
                    "The energy of a received signal should be higher than "
                    "this threshold (dBm) for the PHY to detect the signal.",
@@ -559,6 +567,7 @@ WifiPhy::WifiPhy ()
     m_initialFrequency (0),
     m_initialChannelNumber (0),
     m_initialChannelWidth (0),
+    m_initialPrimary20Index (0),
     m_sifs (Seconds (0)),
     m_slot (Seconds (0)),
     m_pifs (Seconds (0)),
@@ -1077,6 +1086,7 @@ WifiPhy::ConfigureStandardAndBand (WifiPhyStandard standard, WifiPhyBand band)
       m_operatingChannel.Set (m_initialChannelNumber, m_initialFrequency, m_initialChannelWidth,
                               m_standard, m_band);
     }
+  m_operatingChannel.SetPrimary20Index (m_initialPrimary20Index);
 
   switch (standard)
     {
@@ -1221,6 +1231,23 @@ uint16_t
 WifiPhy::GetChannelWidth (void) const
 {
   return m_operatingChannel.GetWidth ();
+}
+
+void
+WifiPhy::SetPrimary20Index (uint8_t index)
+{
+  NS_LOG_FUNCTION (this << +index);
+
+  if (!m_operatingChannel.IsSet ())
+    {
+      // ConfigureStandardAndBand has not been called yet, so store the primary20
+      // index into m_initialPrimary20Index
+      NS_LOG_DEBUG ("Saving primary20 index configuration for initialization");
+      m_initialPrimary20Index = index;
+      return;
+    }
+
+  m_operatingChannel.SetPrimary20Index (index);
 }
 
 void
@@ -1498,7 +1525,7 @@ WifiPhy::ResumeFromSleep (void)
     case WifiPhyState::SLEEP:
       {
         NS_LOG_DEBUG ("resuming from sleep mode");
-        Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW, GetBand (GetMeasurementChannelWidth (nullptr)));
+        Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW, GetPrimaryBand (GetMeasurementChannelWidth (nullptr)));
         m_state->SwitchFromSleep (delayUntilCcaEnd);
         break;
       }
@@ -1529,7 +1556,7 @@ WifiPhy::ResumeFromOff (void)
     case WifiPhyState::OFF:
       {
         NS_LOG_DEBUG ("resuming from off mode");
-        Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW, GetBand (GetMeasurementChannelWidth (nullptr)));
+        Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW, GetPrimaryBand (GetMeasurementChannelWidth (nullptr)));
         m_state->SwitchFromOff (delayUntilCcaEnd);
         break;
       }
@@ -1873,7 +1900,7 @@ WifiPhy::MaybeCcaBusyDuration (uint16_t channelWidth)
   //not going to be able to synchronize on it
   //In this model, CCA becomes busy when the aggregation of all signals as
   //tracked by the InterferenceHelper class is higher than the CcaBusyThreshold
-  Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW, GetBand (channelWidth));
+  Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW, GetPrimaryBand (channelWidth));
   if (!delayUntilCcaEnd.IsZero ())
     {
       m_state->SwitchMaybeToCcaBusy (delayUntilCcaEnd);
@@ -1881,7 +1908,8 @@ WifiPhy::MaybeCcaBusyDuration (uint16_t channelWidth)
 }
 
 WifiSpectrumBand
-WifiPhy::ConvertHeRuSubcarriers (uint16_t channelWidth, HeRu::SubcarrierRange range) const
+WifiPhy::ConvertHeRuSubcarriers (uint16_t bandWidth, uint16_t guardBandwidth,
+                                 HeRu::SubcarrierRange range, uint8_t bandIndex) const
 {
   NS_ASSERT_MSG (false, "802.11ax can only be used with SpectrumWifiPhy");
   WifiSpectrumBand convertedSubcarriers;
@@ -2114,7 +2142,7 @@ WifiPhy::SwitchMaybeToCcaBusy (uint16_t channelWidth)
   //not going to be able to synchronize on it
   //In this model, CCA becomes busy when the aggregation of all signals as
   //tracked by the InterferenceHelper class is higher than the CcaBusyThreshold
-  Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW, GetBand (channelWidth));
+  Time delayUntilCcaEnd = m_interference.GetEnergyDuration (m_ccaEdThresholdW, GetPrimaryBand (channelWidth));
   if (!delayUntilCcaEnd.IsZero ())
     {
       NS_LOG_DEBUG ("Calling SwitchMaybeToCcaBusy for " << delayUntilCcaEnd.As (Time::S));
@@ -2169,9 +2197,16 @@ WifiPhy::ResetCca (bool powerRestricted, double txPowerMaxSiso, double txPowerMa
   m_powerRestricted = powerRestricted;
   m_txPowerMaxSiso = txPowerMaxSiso;
   m_txPowerMaxMimo = txPowerMaxMimo;
-  NS_ASSERT ((m_currentEvent->GetEndTime () - Simulator::Now ()).IsPositive ());
-  Simulator::Schedule (m_currentEvent->GetEndTime () - Simulator::Now (), &WifiPhy::EndReceiveInterBss, this);
-  AbortCurrentReception (OBSS_PD_CCA_RESET);
+  // This method might be called multiple times when receiving TB PPDUs with a BSS color
+  // different than the one of the receiver. The first time this method is called, the call
+  // to AbortCurrentReception sets m_currentEvent to 0. Therefore, we need to check whether
+  // m_currentEvent is not 0 before executing the instructions below.
+  if (m_currentEvent != 0)
+    {
+      NS_ASSERT ((m_currentEvent->GetEndTime () - Simulator::Now ()).IsPositive ());
+      Simulator::Schedule (m_currentEvent->GetEndTime () - Simulator::Now (), &WifiPhy::EndReceiveInterBss, this);
+      AbortCurrentReception (OBSS_PD_CCA_RESET);
+    }
 }
 
 double
@@ -2233,6 +2268,17 @@ WifiPhy::GetBand (uint16_t /*bandWidth*/, uint8_t /*bandIndex*/)
   band.first = 0;
   band.second = 0;
   return band;
+}
+
+WifiSpectrumBand
+WifiPhy::GetPrimaryBand (uint16_t bandWidth)
+{
+  if (GetChannelWidth () % 20 != 0)
+    {
+      return GetBand (bandWidth);
+    }
+
+  return GetBand (bandWidth, m_operatingChannel.GetPrimaryChannelIndex (bandWidth));
 }
 
 int64_t

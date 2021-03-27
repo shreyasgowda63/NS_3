@@ -244,7 +244,7 @@ PhyEntity::SnrPer
 PhyEntity::GetPhyHeaderSnrPer (WifiPpduField field, Ptr<Event> event) const
 {
   uint16_t measurementChannelWidth = GetMeasurementChannelWidth (event->GetPpdu ());
-  return m_wifiPhy->m_interference.CalculatePhyHeaderSnrPer (event, measurementChannelWidth, m_wifiPhy->GetBand (measurementChannelWidth),
+  return m_wifiPhy->m_interference.CalculatePhyHeaderSnrPer (event, measurementChannelWidth, m_wifiPhy->GetPrimaryBand (measurementChannelWidth),
                                                              field);
 }
 
@@ -712,7 +712,7 @@ std::pair<uint16_t, WifiSpectrumBand>
 PhyEntity::GetChannelWidthAndBand (const WifiTxVector& txVector, uint16_t /* staId */) const
 {
   uint16_t channelWidth = std::min (m_wifiPhy->GetChannelWidth (), txVector.GetChannelWidth ());
-  return std::make_pair (channelWidth, m_wifiPhy->GetBand (channelWidth));
+  return std::make_pair (channelWidth, m_wifiPhy->GetPrimaryBand (channelWidth));
 }
 
 const std::map <std::pair<uint64_t, WifiPreamble>, Ptr<Event> > &
@@ -796,7 +796,7 @@ PhyEntity::EndPreambleDetectionPeriod (Ptr<Event> event)
 
   //calculate PER on the measurement channel for PHY headers
   uint16_t measurementChannelWidth = GetMeasurementChannelWidth (event->GetPpdu ());
-  auto measurementBand = m_wifiPhy->GetBand (measurementChannelWidth);
+  auto measurementBand = m_wifiPhy->GetPrimaryBand (measurementChannelWidth);
   double maxRxPowerW = -1; //in case current event may not be sent on measurement channel (rxPowerW would be equal to 0)
   Ptr<Event> maxEvent;
   NS_ASSERT (!m_wifiPhy->m_currentPreambleEvents.empty ());
@@ -990,7 +990,7 @@ PhyEntity::GetRandomValue (void) const
 double
 PhyEntity::GetRxPowerWForPpdu (Ptr<Event> event) const
 {
-  return event->GetRxPowerW (m_wifiPhy->GetBand (GetMeasurementChannelWidth (event->GetPpdu ())));
+  return event->GetRxPowerW (m_wifiPhy->GetPrimaryBand (GetMeasurementChannelWidth (event->GetPpdu ())));
 }
 
 Ptr<const Event>
@@ -1016,15 +1016,8 @@ uint16_t
 PhyEntity::GetCenterFrequencyForChannelWidth (const WifiTxVector& txVector) const
 {
   NS_LOG_FUNCTION (this << txVector);
-  uint16_t centerFrequencyForSupportedWidth = m_wifiPhy->GetFrequency ();
-  uint16_t supportedWidth = m_wifiPhy->GetChannelWidth ();
-  uint16_t currentWidth = txVector.GetChannelWidth ();
-  if (currentWidth != supportedWidth)
-    {
-      uint16_t startingFrequency = centerFrequencyForSupportedWidth - (supportedWidth / 2);
-      return startingFrequency + (currentWidth / 2); // primary channel is in the lower part (for the time being)
-    }
-  return centerFrequencyForSupportedWidth;
+
+  return m_wifiPhy->GetOperatingChannel ().GetPrimaryChannelCenterFrequency (txVector.GetChannelWidth ());
 }
 
 void
@@ -1076,6 +1069,28 @@ PhyEntity::CalculateTxDuration (WifiConstPsduMap psduMap, const WifiTxVector& tx
   NS_ASSERT (psduMap.size () == 1);
   const auto & it = psduMap.begin ();
   return WifiPhy::CalculateTxDuration (it->second->GetSize (), txVector, band, it->first);
+}
+
+bool
+PhyEntity::CanReceivePpdu (Ptr<WifiPpdu> ppdu, uint16_t txCenterFreq) const
+{
+  NS_LOG_FUNCTION (this << ppdu << txCenterFreq);
+
+  uint16_t txChannelWidth = ppdu->GetTxVector ().GetChannelWidth ();
+  uint16_t minTxFreq = txCenterFreq - txChannelWidth / 2;
+  uint16_t maxTxFreq = txCenterFreq + txChannelWidth / 2;
+
+  // if the channel width is a multiple of 20 MHz, then we consider the primary20 channel
+  uint16_t width = (m_wifiPhy->GetChannelWidth () % 20 == 0 ? 20 : m_wifiPhy->GetChannelWidth ());
+  uint16_t minP20Freq = m_wifiPhy->GetOperatingChannel ().GetPrimaryChannelCenterFrequency (width) - width / 2;
+  uint16_t maxP20Freq = m_wifiPhy->GetOperatingChannel ().GetPrimaryChannelCenterFrequency (width) + width / 2;
+
+  if (minTxFreq > minP20Freq || maxTxFreq < maxP20Freq)
+    {
+      NS_LOG_INFO ("Received PPDU does not overlap with the primary20 channel");
+      return false;
+    }
+  return true;
 }
 
 } //namespace ns3

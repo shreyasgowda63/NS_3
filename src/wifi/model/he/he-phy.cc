@@ -525,21 +525,14 @@ HePhy::ProcessSigA (Ptr<Event> event, PhyFieldRxStatus status)
           m_currentHeTbPpduUid = ppdu->GetUid (); //to be able to correctly schedule start of OFDMA payload
         }
 
-      //Check if PPDU is filtered only if the SIG-A content is supported
-      if (ppdu->GetType () == WIFI_PPDU_TYPE_DL_MU) //Final decision on content of DL MU is reported to end of SIG-B (unless the PPDU is filtered)
+      //Check if PPDU is filtered based on the BSS color
+      uint8_t bssColor = GetBssColor ();
+      if (bssColor != 0 && bssColor != event->GetTxVector ().GetBssColor ())
         {
-          uint8_t bssColor = GetBssColor ();
-          if (bssColor != 0 && bssColor != event->GetTxVector ().GetBssColor ())
-            {
-              NS_LOG_DEBUG ("The BSS color of this DL MU PPDU does not match the device's. The PPDU is filtered.");
-              return PhyFieldRxStatus (false, FILTERED, ABORT);
-            }
+          NS_LOG_DEBUG ("The BSS color of this PPDU (" << +event->GetTxVector ().GetBssColor () << ") does not match the device's (" << +bssColor << "). The PPDU is filtered.");
+          return PhyFieldRxStatus (false, FILTERED, ABORT);
         }
-      else if (GetAddressedPsduInPpdu (ppdu))
-        {
-          //We are here because the SU or UL MU is addressed to the PPDU, so keep status to success
-        }
-      else
+      if (ppdu->GetType () != WIFI_PPDU_TYPE_DL_MU && !GetAddressedPsduInPpdu (ppdu)) //Final decision on STA-ID correspondence of DL MU is delayed to end of SIG-B
         {
           NS_ASSERT (ppdu->GetType () == WIFI_PPDU_TYPE_UL_MU);
           NS_LOG_DEBUG ("No PSDU addressed to that PHY in the received MU PPDU. The PPDU is filtered.");
@@ -724,7 +717,7 @@ HePhy::GetChannelWidthAndBand (const WifiTxVector& txVector, uint16_t staId) con
   if (txVector.IsMu ())
     {
       return std::make_pair (HeRu::GetBandwidth (txVector.GetRu (staId).ruType),
-                             GetRuBand (txVector, staId));
+                             GetRuBandForRx (txVector, staId));
     }
   else
     {
@@ -733,7 +726,7 @@ HePhy::GetChannelWidthAndBand (const WifiTxVector& txVector, uint16_t staId) con
 }
 
 WifiSpectrumBand
-HePhy::GetRuBand (const WifiTxVector& txVector, uint16_t staId) const
+HePhy::GetRuBandForTx (const WifiTxVector& txVector, uint16_t staId) const
 {
   NS_ASSERT (txVector.IsMu ());
   WifiSpectrumBand band;
@@ -742,7 +735,27 @@ HePhy::GetRuBand (const WifiTxVector& txVector, uint16_t staId) const
   NS_ASSERT (channelWidth <= m_wifiPhy->GetChannelWidth ());
   HeRu::SubcarrierGroup group = HeRu::GetSubcarrierGroup (channelWidth, ru.ruType, ru.index);
   HeRu::SubcarrierRange range = std::make_pair (group.front ().first, group.back ().second);
-  band = m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, range);
+  // for a TX spectrum, the guard bandwidth is a function of the transmission channel width
+  // and the spectrum width equals the transmission channel width (hence bandIndex equals 0)
+  band = m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, GetGuardBandwidth (channelWidth),
+                                            range, 0);
+  return band;
+}
+
+WifiSpectrumBand
+HePhy::GetRuBandForRx (const WifiTxVector& txVector, uint16_t staId) const
+{
+  NS_ASSERT (txVector.IsMu ());
+  WifiSpectrumBand band;
+  HeRu::RuSpec ru = txVector.GetRu (staId);
+  uint16_t channelWidth = txVector.GetChannelWidth ();
+  NS_ASSERT (channelWidth <= m_wifiPhy->GetChannelWidth ());
+  HeRu::SubcarrierGroup group = HeRu::GetSubcarrierGroup (channelWidth, ru.ruType, ru.index);
+  HeRu::SubcarrierRange range = std::make_pair (group.front ().first, group.back ().second);
+  // for an RX spectrum, the guard bandwidth is a function of the operating channel width
+  // and the spectrum width equals the operating channel width
+  band = m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, GetGuardBandwidth (m_wifiPhy->GetChannelWidth ()),
+                                            range, m_wifiPhy->GetOperatingChannel ().GetPrimaryChannelIndex (channelWidth));
   return band;
 }
 
@@ -754,15 +767,27 @@ HePhy::GetNonOfdmaBand (const WifiTxVector& txVector, uint16_t staId) const
   NS_ASSERT (channelWidth <= m_wifiPhy->GetChannelWidth ());
 
   HeRu::RuSpec ru = txVector.GetRu (staId);
-  uint16_t ruWidth = HeRu::GetBandwidth (ru.ruType);
-  uint16_t nonOfdmaWidth = ruWidth < 20 ? 20 : ruWidth;
+  uint16_t nonOfdmaWidth = GetNonOfdmaWidth (ru);
 
   // Find the RU that encompasses the non-OFDMA part of the HE TB PPDU for the STA-ID
   HeRu::RuSpec nonOfdmaRu = HeRu::FindOverlappingRu (channelWidth, ru, HeRu::GetRuType (nonOfdmaWidth));
 
   HeRu::SubcarrierGroup groupPreamble = HeRu::GetSubcarrierGroup (channelWidth, nonOfdmaRu.ruType, nonOfdmaRu.index);
   HeRu::SubcarrierRange range = std::make_pair (groupPreamble.front ().first, groupPreamble.back ().second);
-  return m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, range);
+  return m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, GetGuardBandwidth (m_wifiPhy->GetChannelWidth ()), range,
+                                            m_wifiPhy->GetOperatingChannel ().GetPrimaryChannelIndex (channelWidth));
+}
+
+uint16_t
+HePhy::GetNonOfdmaWidth (HeRu::RuSpec ru) const
+{
+  if (ru.ruType == HeRu::RU_26_TONE && ru.index == 19)
+    {
+      // the center 26-tone RU in an 80 MHz channel is not fully covered by
+      // any 20 MHz channel, but only by an 80 MHz channel
+      return 80;
+    }
+  return std::max<uint16_t> (HeRu::GetBandwidth (ru.ruType), 20);
 }
 
 uint64_t
@@ -821,7 +846,7 @@ HePhy::GetTxPowerSpectralDensity (double txPowerW, Ptr<const WifiPpdu> ppdu) con
   Ptr<SpectrumValue> v;
   if (flag == HePpdu::PSD_HE_TB_OFDMA_PORTION)
     {
-      WifiSpectrumBand band = GetRuBand (txVector, GetStaId (hePpdu));
+      WifiSpectrumBand band = GetRuBandForTx (txVector, GetStaId (hePpdu));
       v = WifiSpectrumValueHelper::CreateHeMuOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, txPowerW, GetGuardBandwidth (channelWidth), band);
     }
   else
@@ -850,8 +875,7 @@ HePhy::GetCenterFrequencyForNonOfdmaPart (const WifiTxVector& txVector, uint16_t
   uint16_t currentWidth = txVector.GetChannelWidth ();
 
   HeRu::RuSpec ru = txVector.GetRu (staId);
-  uint16_t ruWidth = HeRu::GetBandwidth (ru.ruType);
-  uint16_t nonOfdmaWidth = ruWidth < 20 ? 20 : ruWidth;
+  uint16_t nonOfdmaWidth = GetNonOfdmaWidth (ru);
   if (nonOfdmaWidth != currentWidth)
     {
       //Obtain the index of the non-OFDMA portion
@@ -905,6 +929,19 @@ HePhy::GetTransmissionChannelWidth (Ptr<const WifiPpdu> ppdu) const
     {
       return PhyEntity::GetTransmissionChannelWidth (ppdu);
     }
+}
+
+bool
+HePhy::CanReceivePpdu (Ptr<WifiPpdu> ppdu, uint16_t txCenterFreq) const
+{
+  NS_LOG_FUNCTION (this << ppdu << txCenterFreq);
+
+  if (ppdu->GetTxVector ().IsUlMu ())
+    {
+      // APs are able to receive TB PPDUs sent on a band other than the primary20 channel
+      return true;
+    }
+  return VhtPhy::CanReceivePpdu (ppdu, txCenterFreq);
 }
 
 Time
