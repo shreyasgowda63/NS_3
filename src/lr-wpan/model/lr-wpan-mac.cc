@@ -904,9 +904,13 @@ LrWpanMac::CheckQueue ()
       //TODO: this should check if the node is a coordinator and using the outcoming superframe not just the PAN coordinator
       if (m_csmaCa->IsUnSlottedCsmaCa () || (m_outSuperframeStatus == CAP && m_panCoor) || m_incSuperframeStatus == CAP)
         {
-          TxQueueElement *txQElement = m_txQueue.front ();
-          m_txPkt = txQElement->txQPkt;
-          m_setMacState = Simulator::ScheduleNow (&LrWpanMac::SetLrWpanMacState, this, MAC_CSMA);
+    	  // check MAC is not in a IFS
+    	  if (!m_ifsEvent.IsRunning())
+    	    {
+              TxQueueElement *txQElement = m_txQueue.front ();
+              m_txPkt = txQElement->txQPkt;
+              m_setMacState = Simulator::ScheduleNow (&LrWpanMac::SetLrWpanMacState, this, MAC_CSMA);
+    	    }
         }
     }
 }
@@ -1689,7 +1693,13 @@ LrWpanMac::PlmeSetTRXStateConfirm (LrWpanPhyEnumeration status)
   else if (m_lrWpanMacState == MAC_IDLE)
     {
       NS_ASSERT (status == IEEE_802_15_4_PHY_RX_ON || status == IEEE_802_15_4_PHY_SUCCESS || status == IEEE_802_15_4_PHY_TRX_OFF);
-      // Do nothing special when going idle.
+
+      if (status == IEEE_802_15_4_PHY_RX_ON || status == IEEE_802_15_4_PHY_SUCCESS)
+        {
+          // Check if there is not messages to transmit when going idle
+          CheckQueue ();
+        }
+
     }
   else if (m_lrWpanMacState == MAC_ACK_PENDING)
     {
@@ -1826,7 +1836,7 @@ LrWpanMac::GetMacMaxFrameRetries (void) const
 void
 LrWpanMac::PrintTransmitQueueSize (void)
 {
-  NS_LOG_DEBUG ("Transit Queue Size: " << m_txQueue.size ());
+  NS_LOG_DEBUG ("Transmit Queue Size: " << m_txQueue.size ());
 }
 
 void
