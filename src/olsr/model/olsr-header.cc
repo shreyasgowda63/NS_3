@@ -358,7 +358,7 @@ MessageHeader::Hello::Print (std::ostream &os) const
   for (const auto& ilinkMessage : linkMessages)
   	{
   	  const LinkMessage &lm = ilinkMessage;
-  	  os << "Link code : " << lm.linkCode << "\n";
+  	  os << "Link code: " << lm.linkCode << "\n";
   	  os << "Neighbor interface addresses for " << lm.linkCode << " are: ";
   	  for (const auto& neigh_iter : lm.neighborInterfaceAddresses)
   		{
