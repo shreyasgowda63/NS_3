@@ -214,8 +214,10 @@ MessageHeader::GetSerializedSize (void) const
 void
 MessageHeader::Print (std::ostream &os) const
 {
-  os << "Message type " << m_messageType << " Time to live " << +m_timeToLive
-     << " Source address: ipv4 " << m_originatorAddress << " Message sequence number " << m_messageSequenceNumber;
+  os << "Message type: " << m_messageType << " Time to live: " << +m_timeToLive
+     << " Originator address: " << m_originatorAddress << " Message sequence number: "
+	 << m_messageSequenceNumber << " Validity time: " << +m_vTime << " Hop count: "
+	 << +m_hopCount << " Message size: " << m_messageSize;
 }
 
 void
@@ -364,6 +366,9 @@ MessageHeader::Hello::Print (std::ostream &os) const
   		}
   	  os << "\n";
   	}
+
+  os << "Hello emission interval: " << +hTime
+     << " Willingness of the node: " << +willingness;
 }
 
 void
