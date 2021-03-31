@@ -64,6 +64,18 @@ PointToPointRemoteChannel::TransmitStart (
 
   IsInitialized ();
 
+  auto systemId = MpiInterface::GetSystemId ();
+  Ptr<Node> srcNode = src->GetNode ();
+
+  if (srcNode->GetSystemId () != systemId)
+  {
+      NS_LOG_WARN ("Rank " << systemId << " is attempting to send a packet for "
+                    " node " << srcNode->GetId () << " which is a member of rank "
+                    << srcNode->GetSystemId () << ", packet will not be sent");
+
+      return false;
+  }
+
   uint32_t wire = src == GetSource (0) ? 0 : 1;
   Ptr<PointToPointNetDevice> dst = GetDestination (wire);
 
