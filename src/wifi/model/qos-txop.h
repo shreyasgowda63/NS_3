@@ -105,6 +105,7 @@ public:
   void NotifyInternalCollision (void);
   virtual void NotifyChannelAccessed (Time txopDuration);
   void NotifyChannelReleased (void);
+  void SetDroppedMpduCallback (DroppedMpdu callback);
 
   /**
    * Set type of station with the given type.
@@ -398,19 +399,6 @@ public:
    * \param mpdu the MPDU
    */
   void AssignSequenceNumber (Ptr<WifiMacQueueItem> mpdu) const;
-
-  /**
-   * The packet we sent was successfully received by the receiver.
-   *
-   * \param hdr the header of the packet that we successfully sent.
-   */
-  void BaTxOk (const WifiMacHeader &hdr);
-  /**
-   * The packet we sent was successfully received by the receiver.
-   *
-   * \param hdr the header of the packet that we failed to sent.
-   */
-  void BaTxFailed (const WifiMacHeader &hdr);
 
   /**
    * Set the Queue Size subfield of the QoS Control field of the given QoS data frame.

@@ -60,9 +60,8 @@ RegularWifiMac::RegularWifiMac ()
   m_txop = CreateObject<Txop> ();
   m_txop->SetChannelAccessManager (m_channelAccessManager);
   m_txop->SetTxMiddle (m_txMiddle);
-  m_txop->SetTxOkCallback (MakeCallback (&RegularWifiMac::TxOk, this));
-  m_txop->SetTxFailedCallback (MakeCallback (&RegularWifiMac::TxFailed, this));
-  m_txop->SetTxDroppedCallback (MakeCallback (&RegularWifiMac::NotifyTxDrop, this));
+  m_txop->SetDroppedMpduCallback (MakeCallback (&DroppedMpduTracedCallback::operator(),
+                                                &m_droppedMpduCallback));
 
   //Construct the EDCAFs. The ordering is important - highest
   //priority (Table 9-1 UP-to-AC mapping; IEEE 802.11-2012) must be created
@@ -152,6 +151,14 @@ RegularWifiMac::SetupFrameExchangeManager (void)
   m_feManager->SetMacRxMiddle (m_rxMiddle);
   m_feManager->SetAddress (GetAddress ());
   m_feManager->SetBssid (GetBssid ());
+  m_feManager->GetWifiTxTimer ().SetMpduResponseTimeoutCallback (MakeCallback (&MpduResponseTimeoutTracedCallback::operator(),
+                                                                               &m_mpduResponseTimeoutCallback));
+  m_feManager->GetWifiTxTimer ().SetPsduResponseTimeoutCallback (MakeCallback (&PsduResponseTimeoutTracedCallback::operator(),
+                                                                               &m_psduResponseTimeoutCallback));
+  m_feManager->SetDroppedMpduCallback (MakeCallback (&DroppedMpduTracedCallback::operator(),
+                                                     &m_droppedMpduCallback));
+  m_feManager->SetAckedMpduCallback (MakeCallback (&MpduTracedCallback::operator(),
+                                                   &m_ackedMpduCallback));
   m_channelAccessManager->SetupFrameExchangeManager (m_feManager);
   if (GetQosSupported ())
     {
@@ -461,9 +468,12 @@ RegularWifiMac::SetupEdcaQueue (AcIndex ac)
   Ptr<QosTxop> edca = CreateObject<QosTxop> ();
   edca->SetChannelAccessManager (m_channelAccessManager);
   edca->SetTxMiddle (m_txMiddle);
-  edca->SetTxOkCallback (MakeCallback (&RegularWifiMac::TxOk, this));
-  edca->SetTxFailedCallback (MakeCallback (&RegularWifiMac::TxFailed, this));
-  edca->SetTxDroppedCallback (MakeCallback (&RegularWifiMac::NotifyTxDrop, this));
+  edca->GetBaManager ()->SetTxOkCallback (MakeCallback (&MpduTracedCallback::operator(),
+                                                        &m_ackedMpduCallback));
+  edca->GetBaManager ()->SetTxFailedCallback (MakeCallback (&MpduTracedCallback::operator(),
+                                                            &m_nackedMpduCallback));
+  edca->SetDroppedMpduCallback (MakeCallback (&DroppedMpduTracedCallback::operator(),
+                                              &m_droppedMpduCallback));
   edca->SetAccessCategory (ac);
   edca->CompleteConfig ();
 
@@ -1080,11 +1090,43 @@ RegularWifiMac::GetTypeId (void)
     .AddTraceSource ("TxOkHeader",
                      "The header of successfully transmitted packet.",
                      MakeTraceSourceAccessor (&RegularWifiMac::m_txOkCallback),
-                     "ns3::WifiMacHeader::TracedCallback")
+                     "ns3::WifiMacHeader::TracedCallback",
+                     TypeId::OBSOLETE,
+                     "Use the AckedMpdu trace instead.")
     .AddTraceSource ("TxErrHeader",
                      "The header of unsuccessfully transmitted packet.",
                      MakeTraceSourceAccessor (&RegularWifiMac::m_txErrCallback),
-                     "ns3::WifiMacHeader::TracedCallback")
+                     "ns3::WifiMacHeader::TracedCallback",
+                     TypeId::OBSOLETE,
+                     "Depending on the failure type, use the NAckedMpdu trace, the "
+                     "DroppedMpdu trace or one of the traces associated with TX timeouts.")
+    .AddTraceSource ("AckedMpdu",
+                     "An MPDU that was successfully acknowledged, via either a "
+                     "Normal Ack or a Block Ack.",
+                     MakeTraceSourceAccessor (&RegularWifiMac::m_ackedMpduCallback),
+                     "ns3::WifiMacQueueItem::TracedCallback")
+    .AddTraceSource ("NAckedMpdu",
+                     "An MPDU that was negatively acknowledged via a Block Ack.",
+                     MakeTraceSourceAccessor (&RegularWifiMac::m_nackedMpduCallback),
+                     "ns3::WifiMacQueueItem::TracedCallback")
+    .AddTraceSource ("DroppedMpdu",
+                     "An MPDU that was dropped for the given reason (see WifiMacDropReason).",
+                     MakeTraceSourceAccessor (&RegularWifiMac::m_droppedMpduCallback),
+                     "ns3::RegularWifiMac::DroppedMpduCallback")
+    .AddTraceSource ("MpduResponseTimeout",
+                     "An MPDU whose response was not received before the timeout, along with "
+                     "an identifier of the type of timeout (see WifiTxTimer::Reason) and the "
+                     "TXVECTOR used to transmit the MPDU. This trace source is fired when a "
+                     "CTS is missing after an RTS or a Normal Ack is missing after an MPDU.",
+                     MakeTraceSourceAccessor (&RegularWifiMac::m_mpduResponseTimeoutCallback),
+                     "ns3::RegularWifiMac::MpduResponseTimeoutCallback")
+    .AddTraceSource ("PsduResponseTimeout",
+                     "A PSDU whose response was not received before the timeout, along with "
+                     "an identifier of the type of timeout (see WifiTxTimer::Reason) and the "
+                     "TXVECTOR used to transmit the PSDU. This trace source is fired when a "
+                     "BlockAck is missing after an A-MPDU or a BlockAckReq.",
+                     MakeTraceSourceAccessor (&RegularWifiMac::m_psduResponseTimeoutCallback),
+                     "ns3::RegularWifiMac::PsduResponseTimeoutCallback")
   ;
   return tid;
 }
@@ -1145,20 +1187,6 @@ RegularWifiMac::ConfigureContentionWindow (uint32_t cwMin, uint32_t cwMax)
     {
       ConfigureDcf (i->second, cwMin, cwMax, isDsssOnly, i->first);
     }
-}
-
-void
-RegularWifiMac::TxOk (const WifiMacHeader &hdr)
-{
-  NS_LOG_FUNCTION (this << hdr);
-  m_txOkCallback (hdr);
-}
-
-void
-RegularWifiMac::TxFailed (const WifiMacHeader &hdr)
-{
-  NS_LOG_FUNCTION (this << hdr);
-  m_txErrCallback (hdr);
 }
 
 } //namespace ns3
