@@ -904,13 +904,13 @@ LrWpanMac::CheckQueue ()
       //TODO: this should check if the node is a coordinator and using the outcoming superframe not just the PAN coordinator
       if (m_csmaCa->IsUnSlottedCsmaCa () || (m_outSuperframeStatus == CAP && m_panCoor) || m_incSuperframeStatus == CAP)
         {
-    	  // check MAC is not in a IFS
-    	  if (!m_ifsEvent.IsRunning())
-    	    {
+          // check MAC is not in a IFS
+          if (!m_ifsEvent.IsRunning ())
+            {
               TxQueueElement *txQElement = m_txQueue.front ();
               m_txPkt = txQElement->txQPkt;
               m_setMacState = Simulator::ScheduleNow (&LrWpanMac::SetLrWpanMacState, this, MAC_CSMA);
-    	    }
+            }
         }
     }
 }
