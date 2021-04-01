@@ -193,7 +193,9 @@ PhyTxStatsCalculator::DlPhyTransmissionCallback (Ptr<PhyTxStatsCalculator> phyTx
     {
       imsi = FindImsiFromEnbRlcPath (pathAndRnti.str ());
       if (imsi)
-        phyTxStats->SetImsiPath (pathAndRnti.str (), imsi);
+        {
+          phyTxStats->SetImsiPath (pathAndRnti.str (), imsi);
+        }
     }
   if (imsi) 
     {
@@ -219,7 +221,9 @@ PhyTxStatsCalculator::UlPhyTransmissionCallback (Ptr<PhyTxStatsCalculator> phyTx
     {
       imsi = FindImsiFromLteNetDevice (pathUePhy);
       if (imsi)
-        phyTxStats->SetImsiPath (pathAndRnti.str (), imsi);
+        {
+          phyTxStats->SetImsiPath (pathAndRnti.str (), imsi);
+        }
     }
   if (imsi)
     {
