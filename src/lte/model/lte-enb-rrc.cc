@@ -2445,11 +2445,12 @@ LteEnbRrc::DoRecvIdealUeContextRemoveRequest (uint16_t rnti)
   NS_LOG_FUNCTION (this << rnti);
   // TODO: remove after merge of ho_failure branch
   // check if the RNTI to be removed is not stale
-  if (HasUeManager (rnti)){
-    GetUeManager (rnti)->RecvIdealUeContextRemoveRequest (rnti);
-    // delete the UE context at the eNB
-    RemoveUe (rnti);
-  }
+  if (HasUeManager (rnti))
+    {
+      GetUeManager (rnti)->RecvIdealUeContextRemoveRequest (rnti);
+      // delete the UE context at the eNB
+      RemoveUe (rnti);
+    }
 }
 
 void
