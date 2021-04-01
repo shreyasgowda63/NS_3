@@ -193,7 +193,9 @@ PhyRxStatsCalculator::DlPhyReceptionCallback (Ptr<PhyRxStatsCalculator> phyRxSta
     {
       imsi = FindImsiFromLteNetDevice (pathUePhy);
       if (imsi)
-        phyRxStats->SetImsiPath (pathAndRnti.str (), imsi);
+        {
+          phyRxStats->SetImsiPath (pathAndRnti.str (), imsi);
+        }
     }
   if (imsi) 
     {
@@ -219,7 +221,9 @@ PhyRxStatsCalculator::UlPhyReceptionCallback (Ptr<PhyRxStatsCalculator> phyRxSta
     {
       imsi = FindImsiFromEnbRlcPath (pathAndRnti.str ());
       if (imsi)
-        phyRxStats->SetImsiPath (pathAndRnti.str (), imsi);
+        {
+          phyRxStats->SetImsiPath (pathAndRnti.str (), imsi);
+        }
     }
   if (imsi) 
     {
