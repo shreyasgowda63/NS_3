@@ -3548,8 +3548,8 @@ TcpSocketBase::EstimateRtt (const TcpHeader& tcpHeader)
               m = TcpOptionTS::ElapsedTimeFromTsValue (ts->GetEcho ());
               if (m.IsZero ())
                 {
-                  NS_LOG_LOGIC ("TcpSocketBase::EstimateRtt - RTT calculated from TcpOption::TS is zero, using non-TS RTT estimation.");
-                  m = Simulator::Now () - h.time; // Elapsed time
+                  NS_LOG_LOGIC ("TcpSocketBase::EstimateRtt - RTT calculated from TcpOption::TS is zero, approximating to 1us.");
+                  m = MicroSeconds (1);
                 }
             }
           else
