@@ -30,6 +30,8 @@
 #include "ns3/inet-socket-address.h"
 #include "ns3/epc-gtpu-header.h"
 #include "ns3/epc-pgw-application.h"
+#include "ns3/icmpv6-header.h"
+#include "ns3/icmpv6-l4-protocol.h"
 
 namespace ns3 {
 
@@ -200,23 +202,46 @@ EpcPgwApplication::RecvFromTunDevice (Ptr<Packet> packet, const Address& source,
       Ipv6Address ueAddr =  ipv6Header.GetDestinationAddress ();
       NS_LOG_LOGIC ("packet addressed to UE " << ueAddr);
 
-      // find corresponding UeInfo address
-      std::map<Ipv6Address, Ptr<UeInfo> >::iterator it = m_ueInfoByAddrMap6.find (ueAddr);
-      if (it == m_ueInfoByAddrMap6.end ())
-        {
-          NS_LOG_WARN ("unknown UE address " << ueAddr);
-        }
-      else
-        {
-          Ipv4Address sgwAddr = it->second->GetSgwAddr ();
-          uint32_t teid = it->second->Classify (packet, protocolNumber);
+      // check if packet destination is multicast address for packets in same link
+      if(ueAddr == "ff02::01") {
+        std::map<uint64_t, ns3::Ptr<ns3::EpcPgwApplication::UeInfo>>::iterator itr;
+
+        // send a copy of the original packet to all UEs
+        for (itr = m_ueInfoByImsiMap.begin (); itr != m_ueInfoByImsiMap.end (); ++itr) {
+          Ipv4Address sgwAddr = itr->second->GetSgwAddr ();
+          Ptr<Packet> copy = packet->Copy ();
+          uint32_t teid = itr->second->Classify (copy, protocolNumber);
           if (teid == 0)
             {
               NS_LOG_WARN ("no matching bearer for this packet");
             }
           else
             {
-              SendToS5uSocket (packet, sgwAddr, teid);
+              SendToS5uSocket (copy, sgwAddr, teid);
+            }
+        }
+      }
+
+      // find corresponding UeInfo address
+      else 
+        {
+          std::map<Ipv6Address, Ptr<UeInfo> >::iterator it = m_ueInfoByAddrMap6.find (ueAddr);
+          if (it == m_ueInfoByAddrMap6.end ())
+            {
+              NS_LOG_WARN ("unknown UE address " << ueAddr);
+            }
+          else
+            {
+              Ipv4Address sgwAddr = it->second->GetSgwAddr ();
+              uint32_t teid = it->second->Classify (packet, protocolNumber);
+              if (teid == 0)
+                {
+                  NS_LOG_WARN ("no matching bearer for this packet");
+                }
+              else
+                {
+                  SendToS5uSocket (packet, sgwAddr, teid);
+                }
             }
         }
     }
@@ -447,6 +472,20 @@ EpcPgwApplication::SendToTunDevice (Ptr<Packet> packet, uint32_t teid)
   else if (ipType == 0x06)
     {
       protocol = 0x86DD;
+
+      Ipv6Header ip6hdr;
+      packet->PeekHeader (ip6hdr);
+
+      uint8_t nxtHdrNo;
+      nxtHdrNo = ip6hdr.GetNextHeader ();
+
+      // Handle Icmpv6 packets in application
+      if ( nxtHdrNo == Ipv6Header::IPV6_ICMPV6 )
+        {
+          Ptr<Packet> pkt = packet->Copy ();
+          pkt->RemoveHeader (ip6hdr);
+          HandleICMPv6 (pkt, ip6hdr, teid);
+        }
     }
   else
     {
@@ -506,5 +545,109 @@ EpcPgwApplication::SetUeAddress6 (uint64_t imsi, Ipv6Address ueAddr)
   m_ueInfoByAddrMap6[ueAddr] = ueit->second;
   ueit->second->SetUeAddr6 (ueAddr);
 }
+
+void
+EpcPgwApplication::HandleICMPv6 (Ptr<Packet> packet, Ipv6Header const &header, uint8_t teid)
+{
+  NS_LOG_FUNCTION (this << packet << header.GetSourceAddress () << header.GetDestinationAddress () << teid);
+  Ptr<Packet> p = packet->Copy ();
+
+  uint8_t type;
+  p->CopyData (&type, sizeof(type));
+
+  switch (type)
+    {
+    case Icmpv6Header::ICMPV6_ND_ROUTER_SOLICITATION:
+    case Icmpv6Header::ICMPV6_ND_ROUTER_ADVERTISEMENT:
+    case Icmpv6Header::ICMPV6_ND_NEIGHBOR_ADVERTISEMENT:
+    case Icmpv6Header::ICMPV6_ND_REDIRECTION:
+    case Icmpv6Header::ICMPV6_ECHO_REQUEST:
+    case Icmpv6Header::ICMPV6_ECHO_REPLY:
+    case Icmpv6Header::ICMPV6_ERROR_DESTINATION_UNREACHABLE:
+    case Icmpv6Header::ICMPV6_ERROR_PACKET_TOO_BIG:
+    case Icmpv6Header::ICMPV6_ERROR_TIME_EXCEEDED:
+    case Icmpv6Header::ICMPV6_ERROR_PARAMETER_ERROR:
+    /// \todo implement as needed
+      break;
+    case Icmpv6Header::ICMPV6_ND_NEIGHBOR_SOLICITATION:
+      HandleNS (p, header.GetSourceAddress (), header.GetDestinationAddress (), teid);
+      break;
+    default:
+      NS_LOG_LOGIC ("Unknown ICMPv6 message type=" << type);
+      break;
+    }
+}
+
+void EpcPgwApplication::HandleNS (Ptr<Packet> packet, Ipv6Address const &src, Ipv6Address const &dst, uint8_t teid)
+{
+  NS_LOG_FUNCTION (this << packet << src << dst << teid);
+  Icmpv6NS nsHeader ("::");
+  Ipv6InterfaceAddress ifaddr;
+  
+  packet->RemoveHeader (nsHeader);
+
+  Ipv6Address target = nsHeader.GetIpv6Target ();
+
+  std::map<Ipv6Address, Ptr<UeInfo> >::iterator it = m_ueInfoByAddrMap6.find (target);
+  
+  if (it == m_ueInfoByAddrMap6.end ())
+    {
+      // If there isn't a mapping for the target we set one
+      SetUeAddress6 (teid, target);
+    }
+  else
+    {
+      // NA stuff here
+
+      std::map<uint64_t, Ptr<UeInfo> >::iterator itr = m_ueInfoByImsiMap.find (teid);
+      Ipv4Address sgwAddr = itr->second->GetSgwAddr ();
+
+      Ptr<Ipv6L3Protocol> ipv6 = m_tunDevice->GetNode ()->GetObject<Ipv6L3Protocol> ();
+
+      uint8_t flags = 1;
+
+      if (ipv6->IsForwarding (ipv6->GetInterfaceForDevice (m_tunDevice)))
+        {
+          flags += 4; /* R flag */
+        }
+
+      /* create the NA packet */
+      Ptr<Packet> p = Create<Packet> ();
+      Ipv6Header ipHeader;
+      Icmpv6NA na;
+      Icmpv6OptionLinkLayerAddress llOption (0, m_tunDevice->GetAddress ());  /* we give our mac address in response */
+      Ipv6Address dest ("FF02::1");
+      Ipv6Address source = dst;
+      NS_LOG_LOGIC ("Send NA ( from " <<  source << " to " << dest << ")");
+
+      p->AddHeader (llOption);
+      na.SetIpv6Target (target);
+
+      if ((flags & 1))
+        {
+          na.SetFlagO (true);
+        }
+      if ((flags & 2) && source != Ipv6Address::GetAny ())
+        {
+          na.SetFlagS (true);
+        }
+      if ((flags & 4))
+        {
+          na.SetFlagR (true);
+        }
+
+      na.CalculatePseudoHeaderChecksum (source, dest, p->GetSize () + na.GetSerializedSize (), Icmpv6L4Protocol::PROT_NUMBER);
+      p->AddHeader (na);
+
+      ipHeader.SetSourceAddress (source);
+      ipHeader.SetDestinationAddress (dest);
+      ipHeader.SetNextHeader (Icmpv6L4Protocol::PROT_NUMBER);
+      ipHeader.SetPayloadLength (p->GetSize ());
+      ipHeader.SetHopLimit (255);
+
+      p->AddHeader (ipHeader);
+      SendToS5uSocket (p, sgwAddr, teid);
+    }
+  }
 
 }  // namespace ns3
