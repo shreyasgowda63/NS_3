@@ -17,10 +17,10 @@
 #include "ns3/log.h"
 #include "ns3/random-variable-stream.h"
 #include "intel-rate-wifi-manager.h"
-#include "wifi-tx-vector.h"
-#include "wifi-utils.h"
-#include "wifi-mac.h"
-#include "wifi-phy.h"
+#include "ns3/wifi-tx-vector.h"
+#include "ns3/wifi-utils.h"
+#include "ns3/wifi-mac.h"
+#include "ns3/wifi-phy.h"
 
 #include <iomanip>
 #include <iostream>
