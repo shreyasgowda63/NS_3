@@ -14,7 +14,7 @@
 #ifndef INTEL_RATE_WIFI_MANAGER_H
 #define INTEL_RATE_WIFI_MANAGER_H
 
-#include "wifi-remote-station-manager.h"
+#include "ns3/wifi-remote-station-manager.h"
 
 namespace ns3 {
 
