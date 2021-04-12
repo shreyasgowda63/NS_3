@@ -870,14 +870,13 @@ namespace ns3 {
 	{
 		WifiModeList vhtMcsList;
 		Ptr<WifiPhy> phy = GetPhy ();
-		for (uint8_t i = 0; i < phy->GetNMcs (); i++)
-		{
-			WifiMode mode = phy->GetMcs (i);
-			if (mode.GetModulationClass () == WIFI_MOD_CLASS_VHT)
+		for (const auto &mode : phy->GetMcsList ())
 			{
-				vhtMcsList.push_back (mode);
+				if (mode.GetModulationClass () == WIFI_MOD_CLASS_VHT)
+					{
+						vhtMcsList.push_back (mode);
+					}
 			}
-		}
 		return vhtMcsList;
 	}
 
@@ -885,14 +884,13 @@ namespace ns3 {
 	{
 		WifiModeList htMcsList;
 		Ptr<WifiPhy> phy = GetPhy ();
-		for (uint8_t i = 0; i < phy->GetNMcs (); i++)
-		{
-			WifiMode mode = phy->GetMcs (i);
-			if (mode.GetModulationClass () == WIFI_MOD_CLASS_HT)
+		for (const auto &mode : phy->GetMcsList ())
 			{
-				htMcsList.push_back (mode);
+				if (mode.GetModulationClass () == WIFI_MOD_CLASS_HT)
+					{
+						htMcsList.push_back (mode);
+					}
 			}
-		}
 		return htMcsList;
 	}
 
