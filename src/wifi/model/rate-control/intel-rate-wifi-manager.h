@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef CONSTANT_RATE_WIFI_MANAGER_H
-#define CONSTANT_RATE_WIFI_MANAGER_H
+#ifndef INTEL_RATE_WIFI_MANAGER_H
+#define INTEL_RATE_WIFI_MANAGER_H
 
 #include "wifi-remote-station-manager.h"
 
@@ -91,4 +91,4 @@ private:
 
 } //namespace ns3
 
-#endif /* CONSTANT_RATE_WIFI_MANAGER_H */
+#endif /* INTEL_RATE_WIFI_MANAGER_H */
