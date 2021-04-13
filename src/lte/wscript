@@ -195,6 +195,7 @@ def build(bld):
         'test/lte-test-ipv6-routing.cc',
         'test/lte-test-carrier-aggregation-configuration.cc',
         'test/lte-test-radio-link-failure.cc',
+        'test/lte-test-ipv6-dynamic-addr.cc'
         ]
 
     # Tests encapsulating example programs should be listed here
