@@ -192,11 +192,16 @@ PhyRxStatsCalculator::DlPhyReceptionCallback (Ptr<PhyRxStatsCalculator> phyRxSta
   else
     {
       imsi = FindImsiFromLteNetDevice (pathUePhy);
-      phyRxStats->SetImsiPath (pathAndRnti.str (), imsi);
+      if (imsi)
+        {
+          phyRxStats->SetImsiPath (pathAndRnti.str (), imsi);
+        }
     }
-
-  params.m_imsi = imsi;
-  phyRxStats->DlPhyReception (params);
+  if (imsi) 
+    {
+      params.m_imsi = imsi;
+      phyRxStats->DlPhyReception (params);
+    }
 }
 
 void
@@ -215,11 +220,16 @@ PhyRxStatsCalculator::UlPhyReceptionCallback (Ptr<PhyRxStatsCalculator> phyRxSta
   else
     {
       imsi = FindImsiFromEnbRlcPath (pathAndRnti.str ());
-      phyRxStats->SetImsiPath (pathAndRnti.str (), imsi);
+      if (imsi)
+        {
+          phyRxStats->SetImsiPath (pathAndRnti.str (), imsi);
+        }
     }
-
-  params.m_imsi = imsi;
-  phyRxStats->UlPhyReception (params);
+  if (imsi) 
+    {
+      params.m_imsi = imsi;
+      phyRxStats->UlPhyReception (params);
+    }
 }
 
 } // namespace ns3
