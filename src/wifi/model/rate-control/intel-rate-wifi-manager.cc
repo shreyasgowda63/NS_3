@@ -962,7 +962,7 @@ namespace ns3 {
     NS_LOG_FUNCTION (this << st << ackSnr << ackMode << dataSnr);
   }
 
-  void IntelWifiManager::DoReportAmpduTxStatus (WifiRemoteStation *st, uint8_t nSuccessfulMpdus, uint8_t nFailedMpdus, double rxSnr, double dataSnr, uint16_t dataChannelWidth, uint8_t dataNss) {
+  void IntelWifiManager::DoReportAmpduTxStatus (WifiRemoteStation *st, uint16_t nSuccessfulMpdus, uint16_t nFailedMpdus, double rxSnr, double dataSnr, uint16_t dataChannelWidth, uint8_t dataNss) {
     IntelWifiRemoteStation *station = (IntelWifiRemoteStation *) st;
     station->state.tx(nSuccessfulMpdus, nFailedMpdus, true);
   }
