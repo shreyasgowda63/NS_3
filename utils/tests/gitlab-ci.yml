@@ -41,7 +41,10 @@ stages:
     - ./waf
     - if [ "$MODE" != "debug" ]; then ./test.py --nowaf; fi
   cache:
-    key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+    # Use a single key for ccache directory so it is shared between
+    # all jobs and branches.  ccache itself makes sure not to reuse
+    # the cache if input files, compiler toolchain or options change.
+    key: "ccache"
     paths:
       - $CCACHE_BASEDIR_VALUE/
   timeout: 9h
