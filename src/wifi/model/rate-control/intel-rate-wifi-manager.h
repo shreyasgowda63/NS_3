@@ -85,7 +85,6 @@ private:
   int MAX_HT_GROUP_RATES = 8;     //!< Number of rates (or MCS) per HT group.
   int MAX_VHT_GROUP_RATES = 10;   //!< Number of rates (or MCS) per VHT group.
 
-  WifiMode m_dataMode; //!< Wifi mode for unicast DATA frames
   WifiMode m_ctlMode;  //!< Wifi mode for RTS frames
 };
 

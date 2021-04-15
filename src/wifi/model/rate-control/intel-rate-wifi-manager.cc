@@ -853,10 +853,6 @@ namespace ns3 {
         .SetParent<WifiRemoteStationManager> ()
         .SetGroupName ("Wifi")
         .AddConstructor<IntelWifiManager> ()
-        .AddAttribute ("DataMode", "The transmission mode to use for every data packet transmission",
-            StringValue ("OfdmRate6Mbps"),
-            MakeWifiModeAccessor (&IntelWifiManager::m_dataMode),
-            MakeWifiModeChecker ())
         .AddAttribute ("ControlMode", "The transmission mode to use for every RTS packet transmission.",
             StringValue ("OfdmRate6Mbps"),
             MakeWifiModeAccessor (&IntelWifiManager::m_ctlMode),
