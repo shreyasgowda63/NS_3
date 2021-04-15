@@ -979,12 +979,12 @@ namespace ns3 {
     NS_LOG_FUNCTION (this << st);
     IntelWifiRemoteStation *station = (IntelWifiRemoteStation *) st;
     std::tuple<ns3::WifiMode, int, int, int, int, int, bool, bool> parameters = station->state.getTxVector(GetHtSupported(), GetVhtSupported());
-    return WifiTxVector (std::get<0>(parameters), GetDefaultTxPowerLevel (), GetPreambleForTransmission (std::get<0>(parameters).GetModulationClass (), (std::get<1>(parameters)==400), false), std::get<1>(parameters), std::get<2>(parameters), std::get<3>(parameters), std::get<4>(parameters), std::get<5>(parameters), std::get<6>(parameters), std::get<7>(parameters));
+    return WifiTxVector (std::get<0>(parameters), GetDefaultTxPowerLevel (), GetPreambleForTransmission (std::get<0>(parameters).GetModulationClass (), (std::get<1>(parameters)==400)), std::get<1>(parameters), std::get<2>(parameters), std::get<3>(parameters), std::get<4>(parameters), std::get<5>(parameters), std::get<6>(parameters), std::get<7>(parameters));
   }
 
   WifiTxVector IntelWifiManager::DoGetRtsTxVector (WifiRemoteStation *st) {
     NS_LOG_FUNCTION (this << st);
     if (DEBUG) std::cout << "Warning: RTS/CTS not yet fully supported.\n";
-    return WifiTxVector (m_ctlMode, GetDefaultTxPowerLevel (), GetPreambleForTransmission (m_ctlMode.GetModulationClass (), GetShortPreambleEnabled (), UseGreenfieldForDestination (GetAddress (st))), ConvertGuardIntervalToNanoSeconds (m_ctlMode, GetShortGuardIntervalSupported (st), NanoSeconds (GetGuardInterval (st))), 1, 1, 0, GetChannelWidthForTransmission (m_ctlMode, GetChannelWidth (st)), GetAggregation (st), false);
+    return WifiTxVector (m_ctlMode, GetDefaultTxPowerLevel (), GetPreambleForTransmission (m_ctlMode.GetModulationClass (), GetShortPreambleEnabled ()), ConvertGuardIntervalToNanoSeconds (m_ctlMode, GetShortGuardIntervalSupported (st), NanoSeconds (GetGuardInterval (st))), 1, 1, 0, GetChannelWidthForTransmission (m_ctlMode, GetChannelWidth (st)), GetAggregation (st), false);
   }
 }
