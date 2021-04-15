@@ -987,8 +987,4 @@ namespace ns3 {
     if (DEBUG) std::cout << "Warning: RTS/CTS not yet fully supported.\n";
     return WifiTxVector (m_ctlMode, GetDefaultTxPowerLevel (), GetPreambleForTransmission (m_ctlMode.GetModulationClass (), GetShortPreambleEnabled (), UseGreenfieldForDestination (GetAddress (st))), ConvertGuardIntervalToNanoSeconds (m_ctlMode, GetShortGuardIntervalSupported (st), NanoSeconds (GetGuardInterval (st))), 1, 1, 0, GetChannelWidthForTransmission (m_ctlMode, GetChannelWidth (st)), GetAggregation (st), false);
   }
-
-  bool IntelWifiManager::IsLowLatency (void) const {
-    return true;
-  }
 }

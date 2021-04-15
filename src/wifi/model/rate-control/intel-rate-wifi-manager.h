@@ -55,7 +55,6 @@ private:
   void DoReportFinalDataFailed (WifiRemoteStation *station);
   WifiTxVector DoGetDataTxVector (WifiRemoteStation *station);
   WifiTxVector DoGetRtsTxVector (WifiRemoteStation *station);
-  bool IsLowLatency (void) const;
 
   void CheckInit (WifiRemoteStation *station);
 
