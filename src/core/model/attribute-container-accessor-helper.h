@@ -88,11 +88,10 @@ struct is_container : std::integral_constant<bool, has_const_iterator<T>::value 
  *
  * DoMakeAccessorHelperOne specialization for member containers
  *
- * The template parameter list contains an extra parameter that
- * disambiguates the templated Ptr type from container types by
- * looking for begin/end methods and iterator in the type.  Any class
- * that supports iteration will be treated as a container including
- * all the STL container types.
+ * The template parameter list contains an extra parameter that is
+ * intended to disambiguate an attribute container from any other
+ * templated attribute, e.g Ptr or Callback.  Disambiguation is based
+ * on begin/end and iterator.
  *
  * \tparam V  \explicit The specific AttributeValue type to use to represent
  *            the Attribute.
