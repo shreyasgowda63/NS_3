@@ -25,6 +25,7 @@
 #include "lr-wpan-spectrum-value-helper.h"
 #include "lr-wpan-error-model.h"
 #include "lr-wpan-net-device.h"
+#include "lr-wpan-radio-energy-model.h"
 #include <ns3/log.h>
 #include <ns3/abort.h>
 #include <ns3/simulator.h>
@@ -695,6 +696,14 @@ LrWpanPhy::PlmeSetTRXStateRequest (LrWpanPhyEnumeration state)
                 && (state != IEEE_802_15_4_PHY_TX_ON) );
 
   NS_LOG_LOGIC ("Trying to set m_trxState from " << m_trxState << " to " << state);
+
+  // Check if energy is currently turned off
+  if (m_energyOff && state != IEEE_802_15_4_PHY_TRX_OFF && state != IEEE_802_15_4_PHY_FORCE_TRX_OFF)
+    {
+      NS_LOG_LOGIC ("Can't set state because energy is turned off!");
+      return;
+    }
+
   // this method always overrides previous state setting attempts
   if (!m_setTRXState.IsExpired ())
     {
@@ -1448,6 +1457,42 @@ LrWpanPhy::AssignStreams (int64_t stream)
   NS_LOG_FUNCTION (this);
   m_random->SetStream (stream);
   return 1;
+}
+
+void
+LrWpanPhy::SetEnergyOff ()
+{
+  NS_LOG_FUNCTION (this);
+  NS_LOG_DEBUG ("Turning off the energy supply for this device with current state being "
+                << m_trxState << " and pending state being " << m_trxStatePending);
+  m_energyOff = true;
+  // Set Phy state to off
+  PlmeSetTRXStateRequest (IEEE_802_15_4_PHY_FORCE_TRX_OFF);
+
+  // Set Mac state to idle (if present)
+  Ptr<LrWpanNetDevice> dev = m_device->GetObject<LrWpanNetDevice> ();
+  if (dev != NULL)
+    {
+      dev->GetMac ()->SetLrWpanMacState (MAC_IDLE);
+    }
+}
+
+void
+LrWpanPhy::SetEnergyOn ()
+{
+  NS_LOG_FUNCTION (this);
+  NS_LOG_DEBUG ("Turning the energy supply for this device back on");
+  m_energyOff = false;
+
+  // Set Phy state to idle
+  PlmeSetTRXStateRequest (IEEE_802_15_4_PHY_RX_ON);
+}
+
+bool
+LrWpanPhy::IsOn ()
+{
+  NS_LOG_FUNCTION (this);
+  return !m_energyOff;
 }
 
 } // namespace ns3

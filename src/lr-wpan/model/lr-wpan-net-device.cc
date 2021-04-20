@@ -392,6 +392,14 @@ LrWpanNetDevice::Send (Ptr<Packet> packet, const Address& dest, uint16_t protoco
   // inventing a fake ethertype and packet tag for McpsDataRequest
   NS_LOG_FUNCTION (this << packet << dest << protocolNumber);
 
+  // Directly return false if the connected PHY is not turend on (i.e., can't send)
+  if (!m_phy->IsOn ())
+    {
+      NS_LOG_INFO ("LrWpanNetDevice: Can't send because connected LrWpanPhy is not turned on "
+                   "(energy depleted).");
+      return false;
+    }
+
   if (packet->GetSize () > GetMtu ())
     {
       NS_LOG_ERROR ("Fragmentation is needed for this packet, drop the packet ");
