@@ -135,7 +135,8 @@ PacketHeader::GetSerializedSize (void) const
 void
 PacketHeader::Print (std::ostream &os) const
 {
-  /// \todo
+  os << "Packet length: " << m_packetLength
+	<< " Packet sequence number: " << m_packetSequenceNumber;
 }
 
 void
@@ -213,7 +214,10 @@ MessageHeader::GetSerializedSize (void) const
 void
 MessageHeader::Print (std::ostream &os) const
 {
-  /// \todo
+  os << "Message type: " << m_messageType << " Time to live: " << +m_timeToLive
+     << " Originator address: " << m_originatorAddress << " Message sequence number: "
+	 << m_messageSequenceNumber << " Validity time: " << +m_vTime << " Hop count: "
+	 << +m_hopCount << " Message size: " << m_messageSize;
 }
 
 void
@@ -294,7 +298,10 @@ MessageHeader::Mid::GetSerializedSize (void) const
 void
 MessageHeader::Mid::Print (std::ostream &os) const
 {
-  /// \todo
+  for (const auto& iAddr : interfaceAddresses)
+  {
+	os << iAddr << ", ";
+  }
 }
 
 void
@@ -348,7 +355,20 @@ MessageHeader::Hello::GetSerializedSize (void) const
 void
 MessageHeader::Hello::Print (std::ostream &os) const
 {
-  /// \todo
+  for (const auto& ilinkMessage : linkMessages)
+  	{
+  	  const LinkMessage &lm = ilinkMessage;
+  	  os << "Link code: " << lm.linkCode << "\n";
+  	  os << "Neighbor interface addresses for " << lm.linkCode << " are: ";
+  	  for (const auto& neigh_iter : lm.neighborInterfaceAddresses)
+  		{
+  		  os << neigh_iter << ", ";
+  		}
+  	  os << "\n";
+  	}
+
+  os << "Hello emission interval: " << +hTime
+     << " Willingness of the node: " << +willingness;
 }
 
 void
@@ -431,7 +451,12 @@ MessageHeader::Tc::GetSerializedSize (void) const
 void
 MessageHeader::Tc::Print (std::ostream &os) const
 {
-  /// \todo
+  os << "Advertised neighbor sequence number: " << ansn << "\n";
+  os << "Advertised neighbor addresses: ";
+  for (const auto& iAddr : neighborAddresses)
+    {
+	  os << iAddr << ", ";
+    }
 }
 
 void
@@ -483,7 +508,12 @@ MessageHeader::Hna::GetSerializedSize (void) const
 void
 MessageHeader::Hna::Print (std::ostream &os) const
 {
-  /// \todo
+  os << "Network address, " << "Netmask \n";
+  for (const auto& iAssoc : associations)
+  	{
+  	  os << iAssoc.address << ", "
+  	     << iAssoc.mask << "\n";
+  	}
 }
 
 void
