@@ -57,7 +57,6 @@ NdiscCache::NdiscCache ()
 NdiscCache::~NdiscCache ()
 {
   NS_LOG_FUNCTION (this);
-  Flush ();
 }
 
 void NdiscCache::DoDispose ()
