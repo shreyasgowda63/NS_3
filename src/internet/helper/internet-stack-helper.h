@@ -222,40 +222,6 @@ public:
   */
   int64_t AssignStreams (NodeContainer c, int64_t stream);
 
-  /**
-   * Add a permanent ARP entry in the ARP cache relative to a NetDevice.
-   *
-   * \param netDevice the NetDevice whose ARP cache is to modify.
-   * \param ipv4Address the IPv4 address to add to the cache.
-   * \param macAddress the MAC address to add to the cache.
-   */
-  void AddPermanentArpEntry (Ptr<NetDevice> netDevice, Ipv4Address ipv4Address, Address macAddress);
-
-  /**
-   * Remove an ARP entry from the ARP cache relative to a NetDevice.
-   *
-   * \param netDevice the NetDevice whose ARP cache is to modify.
-   * \param ipv4Address the IPv4 address to add to the cache.
-   */
-  void RemoveArpEntry (Ptr<NetDevice> netDevice, Ipv4Address ipv4Address);
-
-  /**
-   * Add a permanent NDISC entry in the NDISC cache relative to a NetDevice.
-   *
-   * \param netDevice the NetDevice whose ARP cache is to modify.
-   * \param ipv6Address the IPv6 address to add to the cache.
-   * \param macAddress the MAC address to add to the cache.
-   */
-  void AddPermanentNdiscEntry (Ptr<NetDevice> netDevice, Ipv6Address ipv6Address, Address macAddress);
-
-  /**
-   * Remove a NDISC entry from the NDISC cache relative to a NetDevice.
-   *
-   * \param netDevice the NetDevice whose ARP cache is to modify.
-   * \param ipv6Address the IPv6 address to add to the cache.
-   */
-  void RemoveNdiscEntry (Ptr<NetDevice> netDevice, Ipv6Address ipv6Address);
-
 private:
   /**
    * @brief Enable pcap output the indicated Ipv4 and interface pair.
