@@ -100,7 +100,18 @@ void
 ArpCache::DoDispose (void)
 {
   NS_LOG_FUNCTION (this);
-  Flush ();
+
+  for (CacheI i = m_arpCache.begin (); i != m_arpCache.end (); i++)
+    {
+      delete (*i).second;
+    }
+  m_arpCache.erase (m_arpCache.begin (), m_arpCache.end ());
+  if (m_waitReplyTimer.IsRunning ())
+    {
+      NS_LOG_LOGIC ("Stopping WaitReplyTimer at " << Simulator::Now ().GetSeconds () << " due to ArpCache flush");
+      m_waitReplyTimer.Cancel ();
+    }
+
   m_device = 0;
   m_interface = 0;
   if (!m_waitReplyTimer.IsRunning ())
