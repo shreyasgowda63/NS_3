@@ -257,9 +257,9 @@ ArpCache::Flush (void)
   NS_LOG_FUNCTION (this);
 
   if (m_interface->GetDevice ()->IsLinkUp () == true)
-      {
-        return;
-      }
+    {
+      return;
+    }
 
   for (CacheI i = m_arpCache.begin (); i != m_arpCache.end (); i++)
     {

@@ -159,9 +159,9 @@ void NdiscCache::Flush ()
   NS_LOG_FUNCTION (this);
 
   if (m_interface->GetDevice ()->IsLinkUp () == true)
-      {
-        return;
-      }
+    {
+      return;
+    }
 
   for (CacheI i = m_ndCache.begin (); i != m_ndCache.end (); i++)
     {
