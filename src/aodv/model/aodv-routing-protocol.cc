@@ -226,7 +226,9 @@ RoutingProtocol::GetTypeId (void)
     .AddAttribute ("NextHopWait", "Period of our waiting for the neighbour's RREP_ACK = 10 ms + NodeTraversalTime",
                    TimeValue (MilliSeconds (50)),
                    MakeTimeAccessor (&RoutingProtocol::m_nextHopWait),
-                   MakeTimeChecker ())
+                   MakeTimeChecker (),
+                   TypeId::DEPRECATED,
+                   "It can be altered chnaging the NodeTraversalTime as specified in AODV RFC.")
     .AddAttribute ("ActiveRouteTimeout", "Period of time during which the route is considered to be valid",
                    TimeValue (Seconds (3)),
                    MakeTimeAccessor (&RoutingProtocol::m_activeRouteTimeout),
@@ -252,11 +254,15 @@ RoutingProtocol::GetTypeId (void)
     .AddAttribute ("NetTraversalTime", "Estimate of the average net traversal time = 2 * NodeTraversalTime * NetDiameter",
                    TimeValue (Seconds (2.8)),
                    MakeTimeAccessor (&RoutingProtocol::m_netTraversalTime),
-                   MakeTimeChecker ())
+                   MakeTimeChecker (),
+                   TypeId::DEPRECATED, 
+                   "It can be altered changing the NodeTraversalTime or NetDiameter as sepcified in AODV RFC.")
     .AddAttribute ("PathDiscoveryTime", "Estimate of maximum time needed to find route in network = 2 * NetTraversalTime",
                    TimeValue (Seconds (5.6)),
                    MakeTimeAccessor (&RoutingProtocol::m_pathDiscoveryTime),
-                   MakeTimeChecker ())
+                   MakeTimeChecker (),
+                   TypeId::DEPRECATED,
+                   "It can be altered changing the NetTraversalTime as specified in AODV RFC.")
     .AddAttribute ("MaxQueueLen", "Maximum number of packets that we allow a routing protocol to buffer.",
                    UintegerValue (64),
                    MakeUintegerAccessor (&RoutingProtocol::SetMaxQueueLen,
@@ -2128,8 +2134,114 @@ RoutingProtocol::DoInitialize (void)
       startTime = m_uniformRandomVariable->GetInteger (0, 100);
       NS_LOG_DEBUG ("Starting at time " << startTime << "ms");
       m_htimer.Schedule (MilliSeconds (startTime));
+      SetParams();
     }
   Ipv4RoutingProtocol::DoInitialize ();
+}
+
+void
+RoutingProtocol::SetBlackListTimeout()
+{
+  if(m_blackListTimeout == Seconds(0))
+  { 
+    Ipv4Header hdr;
+    if(hdr.GetTtl() < m_ttlThreshold) //if expanding ring search is used
+    {
+      m_blackListTimeout = (((m_ttlThreshold - m_ttlStart)/m_ttlIncrement) + 1 + m_rreqRetries) * m_netTraversalTime;
+    }
+    else 
+    {
+      m_blackListTimeout = m_rreqRetries * m_netTraversalTime;
+    }
+  }
+}
+
+void
+RoutingProtocol::SetParams()
+{
+  if(m_rreqRetries != 2)     //if condition true, then, user has changed the parameter
+  {
+    SetBlackListTimeout();
+  }
+
+  if(m_blackListTimeout != Seconds(5.6))
+  {
+    SetBlackListTimeout();
+  }
+
+  if(m_netDiameter != 35)
+  {
+    if(m_netDiameter == 0)
+    {
+      m_netDiameter = 35;  
+    }
+    m_netTraversalTime = 2 * m_nodeTraversalTime * m_netDiameter;
+    m_blackListTimeout = m_rreqRetries * m_netTraversalTime;
+    m_pathDiscoveryTime = 2 * m_netTraversalTime;
+  }
+  
+  if(m_nodeTraversalTime != MilliSeconds(40))
+  {
+    if(m_nodeTraversalTime == MilliSeconds(0))
+    {
+      m_nodeTraversalTime = MilliSeconds(40);
+    }
+    m_netTraversalTime = 2 * m_nodeTraversalTime * m_netDiameter;
+    m_blackListTimeout = m_rreqRetries * m_netTraversalTime;
+    m_pathDiscoveryTime = 2 * m_netTraversalTime;
+    m_nextHopWait = m_nodeTraversalTime + MilliSeconds(10);
+  }
+
+  if(m_myRouteTimeout != Seconds(11.2))
+  {
+    if(m_myRouteTimeout == Seconds(0))
+    {
+      m_myRouteTimeout = Seconds(11.2);
+    }
+    else if(m_myRouteTimeout < 2 * m_activeRouteTimeout)
+    {
+      m_myRouteTimeout = 2 * m_activeRouteTimeout;
+    }
+  }
+
+  if(m_activeRouteTimeout != Seconds(3))
+  {
+    if(m_activeRouteTimeout == Seconds(0))
+    {
+      m_activeRouteTimeout = Seconds(3);
+    }
+
+    NS_ASSERT(m_activeRouteTimeout > m_allowedHelloLoss * m_helloInterval);
+    m_deletePeriod = (5 * std::max (m_activeRouteTimeout, m_helloInterval));
+    m_myRouteTimeout = 2 * m_activeRouteTimeout;
+  }
+
+  if(m_deletePeriod != Seconds(15))
+  {
+    if(m_deletePeriod == Seconds(0))
+    {
+      m_deletePeriod = Seconds(15);
+    }
+    else if(m_deletePeriod < m_activeRouteTimeout)
+    {
+      m_deletePeriod = m_activeRouteTimeout;
+    }
+  }
+
+  if(m_ttlStart < 2)
+  {
+    m_ttlStart = 2;
+  }
+
+  if(m_helloInterval != Seconds(1))
+  {
+    if(m_helloInterval == Seconds(0))
+    {
+      m_helloInterval = Seconds(1);
+    }
+    
+    m_deletePeriod = (5 * std::max (m_activeRouteTimeout, m_helloInterval));
+  }
 }
 
 } //namespace aodv
