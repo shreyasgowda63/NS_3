@@ -449,6 +449,14 @@ private:
    * \param ... The variable arguments
    */
   void DoCheck (Ptr<const Packet> p, const char *file, int line, uint32_t n, ...);
+  /**
+   * Checks the packet and its data
+   * \param p The packet
+   * \param file The file name
+   * \param line The line number
+   * \param n The number of variable arguments
+   * \param ... The variable arguments
+   */
   void DoCheckData (Ptr<const Packet> p, const char *file, int line, uint32_t n, ...);
 };
 
@@ -716,6 +724,8 @@ PacketTest::DoRun (void)
     p1->Serialize (buffer, serializedSize);
 
     Ptr<Packet> p2 = Create<Packet> (buffer, serializedSize, true);
+    
+    delete [] buffer;
 
     ATestTag<10> a2;
     ATestTag<11> b2;
@@ -748,7 +758,9 @@ PacketTest::DoRun (void)
     p1->Serialize (buffer, serializedSize);
 
     Ptr<Packet> p2 = Create<Packet> (buffer, serializedSize, true);
-
+    
+    delete [] buffer;
+    
     CHECK_DATA (p2, 3, E_DATA (10, 0, 1000, 65), E_DATA (11, 0, 1000, 66), E_DATA (12, 0, 1000, 67));
   }
 

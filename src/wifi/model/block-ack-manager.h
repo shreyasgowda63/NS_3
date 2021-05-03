@@ -28,6 +28,7 @@
 #include "originator-block-ack-agreement.h"
 #include "block-ack-type.h"
 #include "wifi-mac-queue-item.h"
+#include "wifi-tx-vector.h"
 
 namespace ns3 {
 
@@ -50,16 +51,16 @@ struct Bar
 {
   Bar ();
   /**
-   * Store a BlockAckRequest along with the corresponding TID.
+   * Store a BlockAckRequest along with the corresponding TID or a MU-BAR Trigger Frame.
    *
    * \param bar the BAR
    * \param tid the Traffic ID
    * \param skipIfNoDataQueued true to hold this BAR if there is no data queued
    */
   Bar (Ptr<const WifiMacQueueItem> bar, uint8_t tid, bool skipIfNoDataQueued = false);
-  Ptr<const WifiMacQueueItem> bar;  ///< BlockAckRequest
-  uint8_t tid;                      ///< TID
-  bool skipIfNoDataQueued;          ///< do not send if there is no data queued
+  Ptr<const WifiMacQueueItem> bar;  ///< BlockAckRequest or MU-BAR Trigger Frame
+  uint8_t tid;                      ///< TID (unused if MU-BAR)
+  bool skipIfNoDataQueued;          ///< do not send if there is no data queued (unused if MU-BAR)
 };
 
 
@@ -137,10 +138,12 @@ public:
   /**
    * \param respHdr Relative Add block ack response (action frame).
    * \param recipient Address of peer station involved in block ack mechanism.
+   * \param startingSeq the updated starting sequence number
    *
    * Invoked upon receipt of a ADDBA response frame from <i>recipient</i>.
    */
-  void UpdateAgreement (const MgtAddBaResponseHeader *respHdr, Mac48Address recipient);
+  void UpdateAgreement (const MgtAddBaResponseHeader *respHdr, Mac48Address recipient,
+                        uint16_t startingSeq);
   /**
    * \param mpdu MPDU to store.
    *
@@ -149,13 +152,19 @@ public:
    */
   void StorePacket (Ptr<WifiMacQueueItem> mpdu);
   /**
-   * Returns the next BlockAckRequest to send, if any.
+   * Returns the next BlockAckRequest or MU-BAR Trigger Frame to send, if any.
+   * If the given recipient is not the broadcast address and the given TID is less
+   * than 8, then only return a BlockAckRequest, if any, addressed to that recipient
+   * and for the given TID.
    *
    * \param remove true if the BAR has to be removed from the queue
+   * \param tid the TID
+   * \param recipient the recipient of the BAR
    *
    * \return the next BAR to be sent, if any
    */
-  Ptr<const WifiMacQueueItem> GetBar (bool remove = true);
+  Ptr<const WifiMacQueueItem> GetBar (bool remove = true, uint8_t tid = 8,
+                                      Mac48Address recipient = Mac48Address::GetBroadcast ());
   /**
    * Returns true if there are packets that need of retransmission or at least a
    * BAR is scheduled. Returns false otherwise.
@@ -283,15 +292,8 @@ public:
   void SetTxMiddle (const Ptr<MacTxMiddle> txMiddle);
 
   /**
-   * \param bAckType Type of BlockAck
-   *
-   * See ctrl-headers.h for more details.
-   */
-  void SetBlockAckType (BlockAckType bAckType);
-
-  /**
-   * Set BlockAck inactivity callback
-   * \param callback the BlockAck inactivity callback function
+   * Set block ack inactivity callback
+   * \param callback the block ack inactivity callback function
    */
   void SetBlockAckInactivityCallback (Callback<void, Mac48Address, uint8_t, bool> callback);
   /**
@@ -340,6 +342,24 @@ public:
    */
   uint16_t GetRecipientBufferSize (Mac48Address recipient, uint8_t tid) const;
   /**
+   * This function returns the type of Block Acks sent to the recipient.
+   *
+   * \param recipient MAC address of recipient
+   * \param tid Traffic ID
+   *
+   * \returns the type of Block Acks sent to the recipient
+   */
+  BlockAckReqType GetBlockAckReqType (Mac48Address recipient, uint8_t tid) const;
+  /**
+   * This function returns the type of Block Acks sent by the recipient.
+   *
+   * \param recipient MAC address
+   * \param tid Traffic ID
+   *
+   * \returns the type of Block Acks sent by the recipient
+   */
+  BlockAckType GetBlockAckType (Mac48Address recipient, uint8_t tid) const;
+  /**
    * This function returns the starting sequence number of the transmit window.
    *
    * \param tid Traffic ID
@@ -350,15 +370,13 @@ public:
   uint16_t GetOriginatorStartingSequence (Mac48Address recipient, uint8_t tid) const;
 
   /**
-   * typedef for a callback to invoke when a
-   * packet transmission was completed successfully.
+   * typedef for a callback to invoke when an MPDU is successfully ack'ed.
    */
-  typedef Callback <void, const WifiMacHeader&> TxOk;
+  typedef Callback <void, Ptr<const WifiMacQueueItem>> TxOk;
   /**
-   * typedef for a callback to invoke when a
-   * packet transmission was failed.
+   * typedef for a callback to invoke when an MPDU is negatively ack'ed.
    */
-  typedef Callback <void, const WifiMacHeader&> TxFailed;
+  typedef Callback <void, Ptr<const WifiMacQueueItem>> TxFailed;
   /**
    * \param callback the callback to invoke when a
    * packet transmission was completed successfully.
@@ -506,7 +524,6 @@ private:
   std::list<Bar> m_bars; ///< list of BARs
 
   uint8_t m_blockAckThreshold; ///< block ack threshold
-  BlockAckType m_blockAckType; ///< BlockAck type
   Ptr<MacTxMiddle> m_txMiddle; ///< the MacTxMiddle
   Mac48Address m_address;      ///< address
   Ptr<WifiMacQueue> m_queue;   ///< queue

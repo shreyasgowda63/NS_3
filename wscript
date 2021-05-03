@@ -364,6 +364,10 @@ def print_config(env, phase='configure'):
         print("%-30s: %s%s%s" % (caption, Logs.colors(color), status, Logs.colors('NORMAL')))
 
 def configure(conf):
+    # Waf does not work correctly if the absolute path contains whitespaces
+    if (re.search(r"\s", os.getcwd ())):
+        conf.fatal('Waf does not support whitespace in the path to current working directory: %s' % os.getcwd())
+
     conf.load('relocation', tooldir=['waf-tools'])
 
     # attach some extra methods
@@ -763,7 +767,7 @@ def create_ns3_program(bld, name, dependencies=('core',)):
     program.target = "%s%s-%s%s" % (wutils.APPNAME, wutils.VERSION, name, bld.env.BUILD_SUFFIX)
     # Each of the modules this program depends on has its own library.
     program.ns3_module_dependencies = ['ns3-'+dep for dep in dependencies]
-    program.includes = "#"
+    program.includes = Context.out_dir
     #make a copy here to prevent additions to program.use from polluting program.ns3_module_dependencies
     program.use = program.ns3_module_dependencies.copy()
     if program.env['ENABLE_STATIC_NS3']:

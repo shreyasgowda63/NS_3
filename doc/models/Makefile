@@ -90,7 +90,9 @@ SOURCES = \
 	$(SRC)/traffic-control/doc/codel.rst \
 	$(SRC)/traffic-control/doc/cobalt.rst \
 	$(SRC)/traffic-control/doc/fq-codel.rst \
+	$(SRC)/traffic-control/doc/fq-cobalt.rst \
 	$(SRC)/traffic-control/doc/pie.rst \
+	$(SRC)/traffic-control/doc/fq-pie.rst \
 	$(SRC)/traffic-control/doc/mq.rst \
 	$(SRC)/spectrum/doc/spectrum.rst \
 	$(SRC)/netanim/doc/animation.rst \
@@ -123,10 +125,21 @@ SOURCEFIGS = \
 	$(SRC)/internet/doc/routing.dia \
 	$(SRC)/internet/doc/routing-specialization.dia \
 	$(SRC)/internet/doc/figures/tcp-state-machine.png \
+	$(SRC)/internet/doc/figures/dctcp-10ms-50mbps-tcp-throughput.pdf \
+	$(SRC)/internet/doc/figures/dctcp-10ms-50mbps-tcp-throughput.png \
+	$(SRC)/internet/doc/figures/dctcp-80ms-50mbps-tcp-throughput.pdf \
+	$(SRC)/internet/doc/figures/dctcp-80ms-50mbps-tcp-throughput.png \
+	$(SRC)/internet/doc/figures/cubic-50ms-50mbps-tcp-cwnd-no-ecn.pdf \
+	$(SRC)/internet/doc/figures/cubic-50ms-50mbps-tcp-cwnd-no-ecn.png \
+	$(SRC)/internet/doc/figures/cubic-50ms-50mbps-tcp-cwnd-ecn.pdf \
+	$(SRC)/internet/doc/figures/cubic-50ms-50mbps-tcp-cwnd-ecn.png \
 	$(SRC)/internet/doc/figures/dce-linux-reno-vs-ns3-linux-reno.png \
 	$(SRC)/internet/doc/figures/dce-linux-reno-vs-ns3-new-reno.png \
 	$(SRC)/internet/doc/figures/ns3-new-reno-vs-ns3-linux-reno.png \
 	$(SRC)/wifi/doc/source/figures/WifiArchitecture.dia \
+	$(SRC)/wifi/doc/source/figures/PhyEntityHierarchy.dia \
+	$(SRC)/wifi/doc/source/figures/WifiPpduHierarchy.dia \
+	$(SRC)/wifi/doc/source/figures/FemHierarchy.dia \
 	$(SRC)/wifi/doc/source/figures/snir.dia \
 	$(SRC)/wifi/doc/source/figures/clear-channel.eps \
 	$(SRC)/wifi/doc/source/figures/nist-frame-success-rate.eps \
@@ -344,6 +357,9 @@ IMAGES_EPS = \
 	$(FIGURES)/routing.eps \
 	$(FIGURES)/routing-specialization.eps \
 	$(FIGURES)/WifiArchitecture.eps \
+	$(FIGURES)/PhyEntityHierarchy.eps \
+	$(FIGURES)/WifiPpduHierarchy.eps \
+	$(FIGURES)/FemHierarchy.eps \
 	$(FIGURES)/snir.eps \
 	$(FIGURES)/WimaxArchitecture.eps \
 	$(FIGURES)/epc-ctrl-arch.eps \

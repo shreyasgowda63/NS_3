@@ -7,7 +7,7 @@ import shutil
 import types
 import warnings
 
-from waflib import TaskGen, Task, Options, Build, Utils
+from waflib import TaskGen, Task, Options, Build, Utils, Context
 from waflib.Errors import WafError
 import wutils
 
@@ -125,8 +125,8 @@ def create_ns3_module(bld, name, dependencies=(), test=False):
     module.is_ns3_module = True
     module.ns3_dir_location = bld.path.path_from(bld.srcnode)
 
-    module.env.append_value("INCLUDES", '#')
-
+    module.env.append_value("INCLUDES", Context.out_dir)
+    
     module.pcfilegen = bld(features='ns3pcfile')
     module.pcfilegen.module = module.name
     
@@ -278,6 +278,7 @@ def ns3_python_bindings(bld):
             pymod.env.append_value('LINKFLAGS', '-Wl,-Bdynamic,--no-whole-archive')
     defines = list(pymod.env['DEFINES'])
     defines.extend(['NS_DEPRECATED=', 'NS3_DEPRECATED_H'])
+    defines.extend(['NS_DEPRECATED_3_34=', 'NS3_DEPRECATED_H'])
     defines.extend(['NS_DEPRECATED_3_32=', 'NS3_DEPRECATED_H'])
     defines.extend(['NS_DEPRECATED_3_31=', 'NS3_DEPRECATED_H'])
     defines.extend(['NS_DEPRECATED_3_30=', 'NS3_DEPRECATED_H'])
@@ -287,14 +288,10 @@ def ns3_python_bindings(bld):
         except ValueError:
             pass
     pymod.env['DEFINES'] = defines
-    pymod.includes = '# bindings'
+    # The following string should lead to includes of 
+    # '-I.', '-Isrc/core/bindings' when compiling module_helpers.cc
+    pymod.includes = Context.out_dir + ' ' + Context.out_dir + '/src/core/bindings'
     pymod.install_path = '${PYTHONARCHDIR}/ns'
-
-    # Workaround to a WAF bug, remove this when ns-3 upgrades to WAF > 1.6.10
-    # https://www.nsnam.org/bugzilla/show_bug.cgi?id=1335
-    # http://code.google.com/p/waf/issues/detail?id=1098
-    if Utils.unversioned_sys_platform() == 'darwin':
-        pymod.mac_bundle = True
 
     return pymod
 
