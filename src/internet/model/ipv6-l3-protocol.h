@@ -449,6 +449,25 @@ public:
    */
   bool IsRegisteredMulticastAddress (Ipv6Address address, uint32_t interface) const;
 
+  /**
+   * L4 reachability hint.
+   *
+   * This function signals the NDISC cache that a L4-L7 protocol did receive a
+   * confirmation about the reachability of a remote host.
+   * The result is to extend the rechability timer of the NDISC Neighbor Cache
+   * Entry (NCE) if the NCE is in REACHABLE state, and to set the NCE status to
+   * REACHABLE if the NCE is in STALE, DELAY, or PROBE status.
+   *
+   * Note that, since NDISC caches are different for each interface, it is
+   * needed to specify what is the interface that generated this
+   * reachanbility confirmation.
+   *
+   * \param ipInterfaceIndex the IP-level interface index of the NDISC cache to modify
+   * \param address the address of the remote host
+   *
+   * \returns true if the NCE has been found and modified, false otherwise.
+   *
+   */
   bool ReachabilityHint (uint32_t ipInterfaceIndex, Ipv6Address address);
 
 protected:
