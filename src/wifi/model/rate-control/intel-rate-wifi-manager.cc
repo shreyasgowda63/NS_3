@@ -161,10 +161,6 @@ class TheoreticalThroughputTable {
     aggregation agg;
     std::vector<int> throughputs;
 
-    bool match(column_mode mode, bandwidth bw, guard_interval gi, aggregation agg) {
-      return ((mode == this->mode) && (bw == this -> bw) && (gi == this->gi) && (agg == this->agg));
-    }
-
     TheoreticalThroughputTable(column_mode mode, bandwidth bw, guard_interval gi, aggregation agg, std::vector<int> throughputs) {
       this->mode = mode;
       this->bw = bw;
