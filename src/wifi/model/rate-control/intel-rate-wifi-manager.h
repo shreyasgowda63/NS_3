@@ -1,29 +1,39 @@
-/******************************************************************************
- *
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/*
  * Copyright(c) 2005 - 2014 Intel Corporation. All rights reserved.
  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
  * Copyright(c) 2018 - 2019 Intel Corporation
  * Copyright(c) 2019 - Rémy Grünblatt <remy@grunblatt.org>
+ * Copyright(c) 2021 - Alexander Krotov <krotov@iitp.ru>
  *
- * Contact Information:
- * Rémy Grünblatt <remy@grunblatt.org>
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation;
  *
- *****************************************************************************/
-
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Authors: Rémy Grünblatt <remy@grunblatt.org>
+ *          Alexander Krotov <krotov@iitp.ru>
+ */
 #ifndef INTEL_RATE_WIFI_MANAGER_H
 #define INTEL_RATE_WIFI_MANAGER_H
 
+#include "ns3/traced-value.h"
 #include "ns3/wifi-remote-station-manager.h"
 
 namespace ns3 {
 
 /**
  * \ingroup wifi
- * \brief use constant rates for data and RTS transmissions
- *
- * This class uses always the same transmission rate for every
- * packet sent.
+ * \brief Intel rate control from Linux.
  */
 class IntelWifiManager : public WifiRemoteStationManager
 {
@@ -35,7 +45,6 @@ public:
   static TypeId GetTypeId (void);
   IntelWifiManager ();
   virtual ~IntelWifiManager ();
-
 
 private:
   //overridden from base class
@@ -85,6 +94,8 @@ private:
   int MAX_VHT_GROUP_RATES = 10;   //!< Number of rates (or MCS) per VHT group.
 
   WifiMode m_ctlMode;  //!< Wifi mode for RTS frames
+
+  TracedValue<uint64_t> m_currentRate; //!< Trace rate changes
 };
 
 } //namespace ns3
