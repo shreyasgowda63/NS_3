@@ -986,6 +986,11 @@ State::RateScaling ()
 
           m_oldColumnParameters = std::make_tuple (m_mode, m_antennas, m_guardInterval, m_index, m_bandwidth);
 
+          if (std::get<0>(newColumnParameters) == ColumnMode::LEGACY)
+            {
+              m_bandwidth = BW_20;
+            }
+
           int nextIndex = GetNextIndex (newColumnParameters);
 
           m_columnScaling = true;
