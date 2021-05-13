@@ -17,6 +17,7 @@
  *
  * Author: Tommaso Pecorella <tommaso.pecorella@unifi.it>
  *         Michele Muccio <michelemuccio@virgilio.it>
+ *          Adnan Rashid <adnanrashidpk@gmail.com>
  */
 
 #ifndef SIXLOWPAN_NET_DEVICE_H
@@ -187,9 +188,10 @@ public:
    * \param [in] contextPrefix context prefix to be used in compression/decompression.
    * \param [in] compressionAllowed compression and decompression allowed (true), decompression only (false).
    * \param [in] validLifetime validity time (relative to the actual time).
+   * \param [in] source IPv6 address of the source of the context (typically a 6LBR)
    *
    */
-  void AddContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime);
+  void AddContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime, Ipv6Address source = Ipv6Address::GetAny ());
 
   /**
    * Get a context used in IPHC stateful compression.
@@ -255,6 +257,7 @@ private:
    * \param [in] source The source address.
    * \param [in] destination The destination address.
    * \param [in] packetType The packet kind (e.g., HOST, BROADCAST, etc.).
+   * \return The IPv6 link-local address.
    */
   void ReceiveFromDevice (Ptr<NetDevice> device, Ptr<const Packet> packet, uint16_t protocol,
                           Address const &source, Address const &destination, PacketType packetType);
@@ -298,6 +301,19 @@ private:
    * in a future release.
    */
   TracedCallback<Ptr<const Packet>, Ptr<SixLowPanNetDevice>, uint32_t> m_txTrace;
+
+  /**
+     * \brief Callback to trace TX (transmission) packets.
+     *
+     * Data passed:
+     * \li Packet received (including 6LoWPAN header)
+     * \li Ptr to SixLowPanNetDevice
+     * \li interface index
+     * \deprecated The non-const \c Ptr<SixLowPanNetDevice> argument
+     * is deprecated and will be changed to \c Ptr<const SixLowPanNetDevice>
+     * in a future release.
+     */
+  TracedCallback<Ptr<const Packet>, Ptr<SixLowPanNetDevice>, uint32_t> m_txPreTrace;
 
   /**
    * \brief Callback to trace RX (reception) packets.
@@ -612,6 +628,7 @@ private:
     Ipv6Prefix contextPrefix;    //!< context prefix to be used in compression/decompression
     bool compressionAllowed;     //!< compression and decompression allowed (true), decompression only (false)
     Time validLifetime;          //!< validity period
+    Ipv6Address source;          //!< Source of the context ("::" if from the Helper)
   };
 
   std::map<uint8_t, ContextEntry> m_contextTable; //!< Table of the contexts used in compression/decompression
@@ -620,7 +637,7 @@ private:
    * \brief Finds if the given unicast address matches a context for compression
    *
    * \param[in] address the address to check
-   * \param[out] contextId the context found
+   * \param[out] the context found
    * \return true if a valid context has been found
    */
   bool FindUnicastCompressionContext (Ipv6Address address, uint8_t& contextId);
@@ -629,7 +646,7 @@ private:
    * \brief Finds if the given multicast address matches a context for compression
    *
    * \param[in] address the address to check
-   * \param[out] contextId the context found
+   * \param[out] the context found
    * \return true if a valid context has been found
    */
   bool FindMulticastCompressionContext (Ipv6Address address, uint8_t& contextId);
@@ -638,10 +655,10 @@ private:
    * \brief Clean an address from its prefix.
    *
    * This function is used to find the relevant bits to be sent in stateful IPHC compression.
-   * Only the pefix length is used - the address prefix is assumed to be matching the prefix.
+   * Only the prefix length is used - the address prefix is assumed to be matching the prefix.
    *
    * \param address the address to be cleaned
-   * \param prefix the prefix to remove
+   * \param the prefix to remove
    * \return An address with the prefix zeroed.
    */
   Ipv6Address CleanPrefix (Ipv6Address address, Ipv6Prefix prefix);
