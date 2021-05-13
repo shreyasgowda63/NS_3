@@ -67,7 +67,7 @@ public:
 
   /**
    * \brief Set network prefix.
-   * \param network network prefix
+   * \param prefix network prefix
    */
   void SetPrefix (Ipv6Address prefix);
 
