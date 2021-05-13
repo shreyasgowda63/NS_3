@@ -33,7 +33,7 @@ namespace ns3
 {
 
 /**
- * \infroup sixlowpan
+ * \ingroup sixlowpan
  * \class SixLowPanNdiscCache
  * \brief Neighbor Discovery cache for 6LoWPAN ND. Keeps also RAs, prefixes and contexts.
  */
@@ -202,10 +202,10 @@ private:
  * \brief Stream insertion operator.
  *
  * \param os the reference to the output stream
- * \param entry the NdiscCache::Entry
+ * \param entry the SixLowPanNdiscCache::SixLowPanEntry
  * \returns the reference to the output stream
  */
-std::ostream & operator << (std::ostream& os, SixLowPanNdiscCache::Entry const& entry);
+std::ostream & operator << (std::ostream& os, SixLowPanNdiscCache::SixLowPanEntry const& entry);
 
 
 } /* namespace ns3 */

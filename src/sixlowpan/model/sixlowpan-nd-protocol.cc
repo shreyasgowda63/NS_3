@@ -1196,7 +1196,7 @@ bool
 SixLowPanNdProtocol::ScreeningRas (Ptr<SixLowPanRaEntry> ra)
 {
   auto it = m_raCache.find (ra->GetAbroBorderRouterAddress ()); //Check 6LBR address in the m_raCache if found
-  if (it == m_raCache.end ())
+  if (it != m_raCache.end ())
     {
       if (ra->GetAbroVersion() < it->second->GetAbroVersion ()) //Check New Version < Old Verion
         {
@@ -1207,7 +1207,7 @@ SixLowPanNdProtocol::ScreeningRas (Ptr<SixLowPanRaEntry> ra)
           if(ra->GetPrefixes()==it->second->GetPrefixes()&&
               ra->GetContexts()==it->second->GetContexts())
             {
-            return true;
+              return true;
             }
         }
     }
@@ -1320,7 +1320,7 @@ SixLowPanNdProtocol::AddressRegistrationSuccess (Ipv6Address registrar, Lollipop
 
   if (m_addressPendingRegistrationIsNew == false)
     {
-      SixLowPanRegisteredAddresses regAddr = m_registeredAddresses.front ();
+      SixLowPanRegisteredAddress regAddr = m_registeredAddresses.front ();
       regAddr.registrationTimeout = Now () + Minutes (m_regTime);
       m_registeredAddresses.pop_front ();
       m_registeredAddresses.push_back (regAddr);
@@ -1379,7 +1379,7 @@ SixLowPanNdProtocol::AddressRegistrationSuccess (Ipv6Address registrar, Lollipop
 
             }
 
-          SixLowPanRegisteredAddresses newRegisteredAddr;
+          SixLowPanRegisteredAddress newRegisteredAddr;
           newRegisteredAddr.registrationTimeout = Now () + Minutes (m_regTime);
           newRegisteredAddr.registeredAddr = m_addressPendingRegistration;
           newRegisteredAddr.registrar = m_pendingRas.front ().source;

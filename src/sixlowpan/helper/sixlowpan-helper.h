@@ -138,8 +138,8 @@ public:
    * The context is used only in IPHC compression and decompression.
    *
    * \param [in] c The NetDevice container.
-   * \param [in] id The context id (must be less than 16).
-   * \param [in] prefix The context prefix.
+   * \param [in] contextId The context id (must be less than 16).
+   * \param [in] context The context prefix.
    * \param [in] validity the context validity time (relative to the actual time).
    */
   void AddContext (NetDeviceContainer c, uint8_t contextId, Ipv6Prefix context, Time validity);
@@ -150,7 +150,7 @@ public:
    * The context will have its lifetime extended and its validity for compression re-enabled.
    *
    * \param [in] c The NetDevice container.
-   * \param [in] id The context id (must be less than 16).
+   * \param [in] contextId The context id (must be less than 16).
    * \param [in] validity the context validity time (relative to the actual time).
    */
   void RenewContext (NetDeviceContainer c, uint8_t contextId, Time validity);
@@ -165,7 +165,7 @@ public:
    * can not be used for decompression whie packets are traveling the network.
    *
    * \param [in] c The NetDevice container.
-   * \param [in] id The context id (must be less than 16).
+   * \param [in] contextId The context id (must be less than 16).
    */
   void InvalidateContext (NetDeviceContainer c, uint8_t contextId);
 
@@ -175,7 +175,7 @@ public:
    * The context is removed immediately from the contexts in the devices.
    *
    * \param [in] c The NetDevice container.
-   * \param [in] id The context id (must be less than 16).
+   * \param [in] contextId The context id (must be less than 16).
    */
   void RemoveContext (NetDeviceContainer c, uint8_t contextId);
 

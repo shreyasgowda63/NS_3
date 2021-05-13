@@ -17,7 +17,7 @@
  *
  * Author: Tommaso Pecorella <tommaso.pecorella@unifi.it>
  *         Michele Muccio <michelemuccio@virgilio.it>
- *          Adnan Rashid <adnanrashidpk@gmail.com>
+ *         Adnan Rashid <adnanrashidpk@gmail.com>
  */
 
 #ifndef SIXLOWPAN_NET_DEVICE_H
@@ -257,7 +257,6 @@ private:
    * \param [in] source The source address.
    * \param [in] destination The destination address.
    * \param [in] packetType The packet kind (e.g., HOST, BROADCAST, etc.).
-   * \return The IPv6 link-local address.
    */
   void ReceiveFromDevice (Ptr<NetDevice> device, Ptr<const Packet> packet, uint16_t protocol,
                           Address const &source, Address const &destination, PacketType packetType);
@@ -637,7 +636,7 @@ private:
    * \brief Finds if the given unicast address matches a context for compression
    *
    * \param[in] address the address to check
-   * \param[out] the context found
+   * \param[out] contextId the context found
    * \return true if a valid context has been found
    */
   bool FindUnicastCompressionContext (Ipv6Address address, uint8_t& contextId);
@@ -646,7 +645,7 @@ private:
    * \brief Finds if the given multicast address matches a context for compression
    *
    * \param[in] address the address to check
-   * \param[out] the context found
+   * \param[out] contextId the context found
    * \return true if a valid context has been found
    */
   bool FindMulticastCompressionContext (Ipv6Address address, uint8_t& contextId);
@@ -658,7 +657,7 @@ private:
    * Only the prefix length is used - the address prefix is assumed to be matching the prefix.
    *
    * \param address the address to be cleaned
-   * \param the prefix to remove
+   * \param prefix the prefix to remove
    * \return An address with the prefix zeroed.
    */
   Ipv6Address CleanPrefix (Ipv6Address address, Ipv6Prefix prefix);

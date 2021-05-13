@@ -46,6 +46,9 @@ class SixLowPanNdProtocol : public Icmpv6L4Protocol
 {
 public:
 
+  /**
+   * 6LoWPAN-ND EARO registration status codes
+   */
   enum RegStatus_e
   {
     SUCCESS = 0x0, //!< Success
@@ -117,7 +120,8 @@ public:
   virtual ~SixLowPanNdProtocol ();
 
   /**
-   * \brief Interface ID
+   * \brief Get the type ID.
+   * \return The object TypeId.
    */
   static TypeId GetTypeId ();
 
@@ -181,7 +185,7 @@ public:
    */
   void SendSixLowPanRA (Ipv6Address src, Ipv6Address dst, Ptr<Ipv6Interface> interface);
 
-  /**
+  /*
    * \brief Send a DAR for 6LoWPAN ND.
    * \param src source IPv6 address
    * \param dst destination IPv6 address
@@ -196,7 +200,7 @@ public:
    * \brief Function called to send RS + SLLAO.
    * \param src source IPv6 address
    * \param dst destination IPv6 address
-   * \param linkAddress link-layer address (SLLAO)
+   * \param linkAddr link-layer address (SLLAO)
    */
   void RetransmitRS (Ipv6Address src, Ipv6Address dst, Address linkAddr);
 
@@ -229,6 +233,7 @@ public:
 
   /**
    * \brief Checks if an interface is set as 6LBR
+   * \param device the interface to check
    * \return true if the interface is configured as a 6LBR
    */
   bool IsBorderRouterOnInterface (Ptr<SixLowPanNetDevice> device) const;
@@ -365,7 +370,7 @@ private:
      * \brief Set reachable time.
      * \param time reachable time
      */
-    void SetReachableTime (uint32_t itme);
+    void SetReachableTime (uint32_t time);
 
     /**
      * \brief Get router lifetime.
@@ -574,7 +579,7 @@ private:
 
   /**
    * \brief Receive NS for 6LoWPAN ND method.
-   * \param p the packet.
+   * \param packet the packet.
    * \param src source address.
    * \param dst destination address.
    * \param interface the interface from which the packet is coming.
@@ -584,7 +589,7 @@ private:
 
   /**
    * \brief Receive NA for 6LoWPAN ND method.
-   * \param p the packet
+   * \param packet the packet
    * \param src source address
    * \param dst destination address
    * \param interface the interface from which the packet is coming
@@ -594,7 +599,7 @@ private:
 
   /**
    * \brief Receive RS for 6LoWPAN ND method.
-   * \param p the packet
+   * \param packet the packet
    * \param src source address
    * \param dst destination address
    * \param interface the interface from which the packet is coming
@@ -604,7 +609,7 @@ private:
 
   /**
    * \brief Receive RA for 6LoWPAN ND method.
-   * \param p the packet
+   * \param packet the packet
    * \param src source address
    * \param dst destination address
    * \param interface the interface from which the packet is coming
@@ -612,9 +617,9 @@ private:
   void HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address const &src, Ipv6Address const &dst,
                           Ptr<Ipv6Interface> interface);
 
-  /**
+  /*
    * \brief Receive DAC for 6LoWPAN ND method.
-   * \param p the packet
+   * \param packet the packet
    * \param src source address
    * \param dst destination address
    * \param interface the interface from which the packet is coming
@@ -630,10 +635,11 @@ private:
   void BuildRovrForDevice (Ptr<NetDevice> device);
 
   /**
-   * Duplicate RA's
-   * \param address source address of the RA message
+   * Check an RA for consistency with the ones in the RA cache
+   * \param ra the RA to check
+   * \returns true if the RA is not consistent (must be discarded)
    */
-  bool ScreeningRas(Ptr<SixLowPanRaEntry> ra);
+  bool ScreeningRas (Ptr<SixLowPanRaEntry> ra);
 
   /**
    * Address re-registration procedure
@@ -706,13 +712,13 @@ private:
     Ipv6Address registrar; //!< Registering node (lladdr of 6LR or 6LBR for a lladdr, gaddr of 6LBR for gaddr)
     Address registrarMacAddr; //!< Registering node MAC address
     Ptr<Ipv6Interface> interface; //!< Interface used for the registration
-  } SixLowPanRegisteredAddresses;
+  } SixLowPanRegisteredAddress;
 
   Ipv6Address m_addressPendingRegistration;  //!< Address being Registered.
   bool m_addressPendingRegistrationIsNew;  //!< Address being Registered is new (true) of a reregistration (false)
 
   std::list<SixLowPanPendingRa> m_pendingRas; //!< RA waiting for processing (addresses registration).
-  std::list<SixLowPanRegisteredAddresses> m_registeredAddresses;
+  std::list<SixLowPanRegisteredAddress> m_registeredAddresses; //!< Addresses that have been registered.
 
 };
 
