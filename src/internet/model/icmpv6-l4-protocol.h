@@ -127,7 +127,7 @@ public:
    * by setting the node in the ICMPv6 stack and adding ICMPv6 factory to
    * IPv6 stack connected to the node.
    */
-  void NotifyNewAggregate ();
+  virtual void NotifyNewAggregate ();
 
   /**
    * \brief Get the protocol number.
@@ -332,7 +332,7 @@ public:
    * \param hardwareDestination hardware address
    * \return true if the address is in the ND cache, the hardwareDestination is updated.
    */
-  bool Lookup (Ipv6Address dst, Ptr<NetDevice> device, Ptr<NdiscCache> cache, Address* hardwareDestination);
+  virtual bool Lookup (Ipv6Address dst, Ptr<NetDevice> device, Ptr<NdiscCache> cache, Address* hardwareDestination);
 
   /**
    * \brief Lookup in the ND cache for the IPv6 address (similar as ARP protocol).
@@ -346,7 +346,7 @@ public:
    * \param hardwareDestination hardware address
    * \return true if the address is in the ND cache, the hardwareDestination is updated.
    */
-  bool Lookup (Ptr<Packet> p, const Ipv6Header & ipHeader, Ipv6Address dst, Ptr<NetDevice> device, Ptr<NdiscCache> cache, Address* hardwareDestination);
+  virtual bool Lookup (Ptr<Packet> p, const Ipv6Header & ipHeader, Ipv6Address dst, Ptr<NetDevice> device, Ptr<NdiscCache> cache, Address* hardwareDestination);
 
   /**
    * \brief Send a Router Solicitation.
@@ -523,7 +523,6 @@ protected:
    */
   CacheList m_cacheList;
 
-private:
   /**
    * \brief Neighbor Discovery node constants: max multicast solicitations.
    */
