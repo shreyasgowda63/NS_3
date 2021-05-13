@@ -105,7 +105,7 @@ public:
 
   /**
    * \brief Set the transaction ID field.
-   * \param time the transaction ID value
+   * \param tid the transaction ID value
    */
   void SetTransaction_ID (uint8_t tid);
 
@@ -220,20 +220,6 @@ private:
 class Icmpv6OptionSixLowPanExtendedAddressRegistration : public Icmpv6OptionHeader
 {
 public:
-  enum regStatus
-  {
-    SIXLOWPAN_EARO_SUCCESS,
-    SIXLOWPAN_EARO_DUPLICATE_ADDRESS,
-    SIXLOWPAN_EARO_NEIGHBOR_CACHE_FULL,
-    SIXLOWPAN_EARO_MOVED,
-    SIXLOWPAN_EARO_REMOVED,
-    SIXLOWPAN_EARO_VALIDATION_REQUESTED,
-    SIXLOWPAN_EARO_DUPLICATE_SOURCE_ADDRESS,
-    SIXLOWPAN_EARO_INVALID_SOURCE_ADDRESS,
-    SIXLOWPAN_EARO_REGISTERED_ADDRESS_TOPOLOGICALLY_INCORRECT,
-    SIXLOWPAN_EARO_SIXLBR_REGISTRY_SATURATED,
-    SIXLOWPAN_EARO_VALIDATION_FAILED
-  };
 
   /**
    * \brief Constructor.
@@ -306,7 +292,7 @@ public:
 
   /**
    * \brief Set the I-TwoBit  field.
-   * \param I the TwoBit  value
+   * \param twobits the TwoBit  value
    */
   void SetI (uint8_t twobits);
 
@@ -330,7 +316,7 @@ public:
 
   /**
    * \brief Set the transaction ID field.
-   * \param time the transaction ID value
+   * \param tid the transaction ID value
    */
   void SetTransactionId (uint8_t tid);
 

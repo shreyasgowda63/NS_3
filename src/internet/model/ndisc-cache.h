@@ -355,7 +355,7 @@ public:
      *
      * \param os the output stream to which this Ipv6Address is printed
      */
-    void Print (std::ostream &os) const;
+    virtual void Print (std::ostream &os) const;
 
 protected:
     /**

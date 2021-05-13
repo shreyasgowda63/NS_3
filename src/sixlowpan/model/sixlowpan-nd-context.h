@@ -121,7 +121,7 @@ public:
 
   /**
    * \brief Set the 6LoWPAN context prefix.
-   * \param prefix the context prefix value
+   * \param context the context prefix value
    */
   void SetContextPrefix (Ipv6Prefix context);
 
