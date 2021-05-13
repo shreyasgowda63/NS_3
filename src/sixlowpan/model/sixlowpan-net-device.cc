@@ -17,6 +17,7 @@
  *
  * Author: Tommaso Pecorella <tommaso.pecorella@unifi.it>
  *         Michele Muccio <michelemuccio@virgilio.it>
+ *         Adnan Rashid <adnanrashidpk@gmail.com>
  */
 
 #include <algorithm>
@@ -109,6 +110,11 @@ TypeId SixLowPanNetDevice::GetTypeId (void)
                      "Send - packet (including 6LoWPAN header), "
                      "SixLoWPanNetDevice Ptr, interface index.",
                      MakeTraceSourceAccessor (&SixLowPanNetDevice::m_txTrace),
+                     "ns3::SixLowPanNetDevice::RxTxTracedCallback")
+    .AddTraceSource ("TxPre",
+                     "Send - packet (including 6LoWPAN header), "
+                     "SixLoWPanNetDevice Ptr, interface index.",
+                     MakeTraceSourceAccessor (&SixLowPanNetDevice::m_txPreTrace),
                      "ns3::SixLowPanNetDevice::RxTxTracedCallback")
     .AddTraceSource ("Rx",
                      "Receive - packet (including 6LoWPAN header), "
@@ -543,6 +549,8 @@ bool SixLowPanNetDevice::DoSend (Ptr<Packet> packet,
 {
   NS_LOG_FUNCTION (this << *packet << src << dest << protocolNumber << doSendFrom);
   NS_ASSERT_MSG ( m_netDevice != 0, "Sixlowpan: can't find any lower-layer protocol " << m_netDevice );
+
+  m_txPreTrace (packet, m_node->GetObject<SixLowPanNetDevice> (), GetIfIndex ());
 
   Ptr<Packet> origPacket = packet->Copy ();
   uint32_t origHdrSize = 0;
@@ -2656,7 +2664,7 @@ void SixLowPanNetDevice::HandleTimeout (void)
   return;
 }
 
-void SixLowPanNetDevice::AddContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime)
+void SixLowPanNetDevice::AddContext (uint8_t contextId, Ipv6Prefix contextPrefix, bool compressionAllowed, Time validLifetime, Ipv6Address source)
 {
   NS_LOG_FUNCTION (this << +contextId << Ipv6Address::GetOnes ().CombinePrefix (contextPrefix) << contextPrefix << compressionAllowed << validLifetime.As (Time::S));
 
@@ -2664,6 +2672,15 @@ void SixLowPanNetDevice::AddContext (uint8_t contextId, Ipv6Prefix contextPrefix
     {
       NS_LOG_LOGIC ("Invalid context ID (" << +contextId << "), ignoring");
       return;
+    }
+
+  if (m_contextTable.find (contextId) != m_contextTable.end())
+    {
+      if (m_contextTable[contextId].source != source)
+        {
+          NS_ABORT_MSG ("Context " << contextId << ") can not be modified. New context is from " <<
+                        source << " old context is from " << m_contextTable[contextId].source);
+        }
     }
 
   if (validLifetime == Time(0))
@@ -2676,6 +2693,7 @@ void SixLowPanNetDevice::AddContext (uint8_t contextId, Ipv6Prefix contextPrefix
   m_contextTable[contextId].contextPrefix = contextPrefix;
   m_contextTable[contextId].compressionAllowed = compressionAllowed;
   m_contextTable[contextId].validLifetime = Simulator::Now () + validLifetime;
+  m_contextTable[contextId].source = source;
 
   return;
 }
