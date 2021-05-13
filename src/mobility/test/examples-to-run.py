@@ -11,6 +11,7 @@ cpp_examples = [
     ("main-grid-topology", "True", "True"),
     ("main-random-topology", "True", "True"),
     ("main-random-walk", "True", "True"),
+    ("position-change-test", "True", "True"),
 ]
 
 # A list of Python examples to run in order to ensure that they remain
