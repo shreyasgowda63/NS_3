@@ -110,10 +110,24 @@ SixLowCallback (std::string path, Ptr<const Packet> packet, Ptr<SixLowPanNetDevi
 
 int main (int argc, char** argv)
 {
-  CommandLine cmd;
-  cmd.Parse (argc, argv);
+	bool useMeshUnder = false;
+	std::string useUdpFrom = "";
+	std::string usePingOn = "";
+	double stopTime = 50000;
 
-  Packet::EnablePrinting ();
+	CommandLine cmd;
+	cmd.AddValue ("Mesh", "Use mesh-under in the network", useMeshUnder);
+	cmd.AddValue ("Udp", "Send one UDP packet from (6LBR, 6LN, nothing)", useUdpFrom);
+	cmd.AddValue ("Ping", "Install Ping app on (6LBR, 6LN, nothing)", usePingOn);
+	cmd.AddValue ("StopTime", "Simulation stop time (seconds)", stopTime);
+	cmd.Parse (argc, argv);
+
+	if (useMeshUnder)
+	{
+		Config::SetDefault ("ns3::SixLowPanNetDevice::UseMeshUnder", BooleanValue (true));
+	}
+
+	Packet::EnablePrinting ();
 
 #if 0
   LogComponentEnable ("Ping6Application", LOG_LEVEL_ALL);
