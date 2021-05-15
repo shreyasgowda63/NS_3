@@ -150,7 +150,8 @@ SixLowPanNdProtocol::AssignStreams (int64_t stream)
 {
   NS_LOG_FUNCTION (this << stream);
   m_addressRegistrationJitter->SetStream (stream);
-  return 1;
+  m_rsRetransmissionDelay->SetStream (stream+1);
+  return 2;
 }
 
 void
@@ -160,6 +161,8 @@ SixLowPanNdProtocol::DoInitialize ()
     {
       m_nodeRole = SixLowPanBorderRouter;
     }
+
+  m_rsRetransmissionDelay = CreateObject<UniformRandomVariable> ();
 
   Icmpv6L4Protocol::DoInitialize ();
 }
@@ -1557,13 +1560,15 @@ SixLowPanNdProtocol::RetransmitRS (Ipv6Address src, Ipv6Address dst, Address lin
   else
     {
       // We are in backoff mode.
-
       retransmissionInterval = retransmissionInterval*2;
       if (retransmissionInterval > m_maxRtrSolicitationInterval)
         {
           retransmissionInterval = m_maxRtrSolicitationInterval;
         }
-      m_retransmitRsEvent = Simulator::Schedule (m_maxRtrSolicitationInterval,
+      Time randomDelay = Seconds (m_rsRetransmissionDelay->GetValue (m_rtrSolicitationInterval.GetSeconds (),
+                                                                     retransmissionInterval.GetSeconds ()));
+
+      m_retransmitRsEvent = Simulator::Schedule (randomDelay,
                                                  &SixLowPanNdProtocol::RetransmitRS, this, src,
                                                  dst, linkAddr, retransmission, retransmissionInterval);
       return;

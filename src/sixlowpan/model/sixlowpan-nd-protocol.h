@@ -719,6 +719,8 @@ private:
   Time m_maxRtrSolicitationInterval;      //!< Maximum RS Retransmission interval
   Time m_currentRtrSolicitationInterval;  //!< Current RS Retransmission interval
   uint8_t m_maxRtrSolicitations;          //!< Maximum RS Retransmission number before starting an exponentional backoff
+  Ptr<UniformRandomVariable> m_rsRetransmissionDelay; //!< Random variable for RS retransmissions.
+
 };
 
 } /* namespace ns3 */
