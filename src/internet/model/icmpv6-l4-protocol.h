@@ -319,7 +319,7 @@ public:
    * \param interface the interface
    * \param addr the IPv6 address
    */
-  void FunctionDadTimeout (Ipv6Interface* interface, Ipv6Address addr);
+  virtual void FunctionDadTimeout (Ipv6Interface* interface, Ipv6Address addr);
 
   /**
    * \brief Lookup in the ND cache for the IPv6 address

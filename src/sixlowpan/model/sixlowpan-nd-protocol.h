@@ -147,6 +147,7 @@ public:
 
   virtual bool Lookup (Ptr<Packet> p, const Ipv6Header & ipHeader, Ipv6Address dst, Ptr<NetDevice> device, Ptr<NdiscCache> cache, Address* hardwareDestination);
 
+  virtual void FunctionDadTimeout (Ipv6Interface* interface, Ipv6Address addr);
 
   /**
    * \brief Send a NS for 6LoWPAN ND (+ EARO, SLLAO).
@@ -201,8 +202,10 @@ public:
    * \param src source IPv6 address
    * \param dst destination IPv6 address
    * \param linkAddr link-layer address (SLLAO)
+   * \param retransmission RS retransmission number
+   * \param retransmissionInterval RS retransmission interval
    */
-  void RetransmitRS (Ipv6Address src, Ipv6Address dst, Address linkAddr);
+  void RetransmitRS (Ipv6Address src, Ipv6Address dst, Address linkAddr, uint8_t retransmission, Time retransmissionInterval);
 
   /**
    * \brief Set an interface to be used as a 6LBR
@@ -541,15 +544,6 @@ private:
     SixLowPanBorderRouter   //!< a 6LBR
   };
 
-  /**
-   * \brief Number of RS retransmission.
-   */
-  uint8_t m_rsRetransmit;
-
-  /**
-   * \brief Number of NS (EARO) retransmission.
-   */
-  uint8_t m_earoRetransmit;
 
   /**
    * \brief The amount of time (units of 60 seconds) that the router should retain the NCE for the node.
@@ -720,6 +714,11 @@ private:
   std::list<SixLowPanPendingRa> m_pendingRas; //!< RA waiting for processing (addresses registration).
   std::list<SixLowPanRegisteredAddress> m_registeredAddresses; //!< Addresses that have been registered.
 
+  // RS retry backoff
+  Time m_rtrSolicitationInterval;         //!< RS Retransmission interval
+  Time m_maxRtrSolicitationInterval;      //!< Maximum RS Retransmission interval
+  Time m_currentRtrSolicitationInterval;  //!< Current RS Retransmission interval
+  uint8_t m_maxRtrSolicitations;          //!< Maximum RS Retransmission number before starting an exponentional backoff
 };
 
 } /* namespace ns3 */

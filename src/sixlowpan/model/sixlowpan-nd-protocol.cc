@@ -72,8 +72,6 @@ SixLowPanNdProtocol::SixLowPanNdProtocol () : Icmpv6L4Protocol ()
 {
   NS_LOG_FUNCTION (this);
 
-  m_rsRetransmit = 0;
-  m_earoRetransmit = 0;
   m_nodeRole = SixLowPanNode;
 }
 
@@ -98,8 +96,7 @@ SixLowPanNdProtocol::GetTypeId ()
                    StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=10.0]"),
                    MakePointerAccessor (&SixLowPanNdProtocol::m_addressRegistrationJitter),
                    MakePointerChecker<RandomVariableStream> ())
-    .AddAttribute ("RegistrationLifeTime",
-                   "The amount of time (units of 60 seconds) that the router should retain "
+    .AddAttribute ("RegistrationLifeTime", "The amount of time (units of 60 seconds) that the router should retain "
                    "the NCE for the node.",
                    UintegerValue (20), MakeUintegerAccessor (&SixLowPanNdProtocol::m_regTime),
                    MakeUintegerChecker<uint16_t> ())
@@ -111,26 +108,35 @@ SixLowPanNdProtocol::GetTypeId ()
                    TimeValue (Minutes (60)),
                    MakeTimeAccessor (&SixLowPanNdProtocol::m_routerLifeTime),
                    MakeTimeChecker (Time (0), Seconds (0xffff)))
-    .AddAttribute ("DefaultPrefixInformationPreferredLifeTime",
-                   "The default Prefix Information preferred lifetime.",
+    .AddAttribute ("DefaultPrefixInformationPreferredLifeTime", "The default Prefix Information preferred lifetime.",
                    TimeValue (Minutes (10)),
                    MakeTimeAccessor (&SixLowPanNdProtocol::m_pioPreferredLifeTime),
                    MakeTimeChecker ())
-    .AddAttribute ("DefaultPrefixInformationValidLifeTime",
-                   "The default Prefix Information valid lifetime.",
+    .AddAttribute ("DefaultPrefixInformationValidLifeTime", "The default Prefix Information valid lifetime.",
                    TimeValue (Minutes (10)),
                    MakeTimeAccessor (&SixLowPanNdProtocol::m_pioValidLifeTime),
                    MakeTimeChecker ())
-    .AddAttribute ("DefaultContextValidLifeTime",
-                   "The default Context valid lifetime [minutes].",
+    .AddAttribute ("DefaultContextValidLifeTime", "The default Context valid lifetime.",
                    TimeValue (Minutes (10)),
                    MakeTimeAccessor (&SixLowPanNdProtocol::m_contextValidLifeTime),
                    MakeTimeChecker ())
-    .AddAttribute ("DefaultAbroValidLifeTime", "The default ABRO Valid lifetime [minutes].",
+    .AddAttribute ("DefaultAbroValidLifeTime", "The default ABRO Valid lifetime.",
                    TimeValue (Minutes (10)),
                    MakeTimeAccessor (&SixLowPanNdProtocol::m_abroValidLifeTime),
+                   MakeTimeChecker ())
+    .AddAttribute ("MaxRtrSolicitations", "Maximum number of RS before starting a backoff.",
+                   UintegerValue (3), MakeUintegerAccessor (&SixLowPanNdProtocol::m_maxRtrSolicitations),
+                   MakeUintegerChecker<uint8_t> (1))
+    .AddAttribute ("RtrSolicitationInterval", "Time between two RS before stating the backoff.",
+                   TimeValue (Seconds (10)),
+                   MakeTimeAccessor (&SixLowPanNdProtocol::m_rtrSolicitationInterval),
+                   MakeTimeChecker ())
+    .AddAttribute ("MaxRtrSolicitationInterval", "Maximum Time between two RS (after the backoff).",
+                   TimeValue (Seconds (60)),
+                   MakeTimeAccessor (&SixLowPanNdProtocol::m_maxRtrSolicitationInterval),
                    MakeTimeChecker ());
-  return tid;
+
+    return tid;
 }
 
 TypeId
@@ -712,7 +718,6 @@ SixLowPanNdProtocol::HandleSixLowPanNA (Ptr<Packet> packet, Ipv6Address const &s
 //-----------------
   if (hasEaro)
     {
-      m_earoRetransmit = 0;
       if (earoHdr.GetStatus () == SUCCESS)           /* status=0, success! */
         {
           if (earoHdr.GetRovr () != m_rovrContainer[interface->GetDevice ()])
@@ -801,7 +806,12 @@ SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address const &s
 {
   NS_LOG_FUNCTION (this << packet << src << dst << interface);
 
-  m_rsRetransmit = 0;
+  if (m_retransmitRsEvent.IsRunning ())
+    {
+      m_retransmitRsEvent.Cancel ();
+    }
+
+  std::cout << m_node->GetId() << " " << Now ().As (Time::S) <<  " HandleSixLowPanRA" << std::endl;
 
   Ptr<SixLowPanNetDevice> sixDevice = DynamicCast<SixLowPanNetDevice> (interface->GetDevice ());
   NS_ASSERT_MSG (sixDevice != NULL, "SixLowPanNdProtocol cannot be installed on device different from SixLowPanNetDevice");
@@ -1030,24 +1040,24 @@ if (m_nodeRole == SixLowPanNode || m_nodeRole == SixLowPanNodeOnly)
 
   // \todo Da cambiare di brutto
 
-  uint32_t t = raHeader.GetLifeTime ();
-
-  for (std::list<Icmpv6OptionPrefixInformation>::iterator it = prefixList.begin ();
-       it != prefixList.end (); it++)
-    {
-      t = t < ((*it).GetValidTime ()) ? t : ((*it).GetValidTime ());
-    }
-  for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin ();
-       jt != contextList.end (); jt++)
-    {
-      t = (60 * ((*jt).GetValidTime ())) < t ? (60 * ((*jt).GetValidTime ())) : t;
-    }
-
-  t -= (60 * m_advance);
-
-  m_retransmitRsEvent.Cancel ();
-  m_retransmitRsEvent = Simulator::Schedule (Time (Seconds (t)), &SixLowPanNdProtocol::RetransmitRS, this,
-                                             interface->GetLinkLocalAddress ().GetAddress (), src, macAddr);
+//  uint32_t t = raHeader.GetLifeTime ();
+//
+//  for (std::list<Icmpv6OptionPrefixInformation>::iterator it = prefixList.begin ();
+//       it != prefixList.end (); it++)
+//    {
+//      t = t < ((*it).GetValidTime ()) ? t : ((*it).GetValidTime ());
+//    }
+//  for (std::list<Icmpv6OptionSixLowPanContext>::iterator jt = contextList.begin ();
+//       jt != contextList.end (); jt++)
+//    {
+//      t = (60 * ((*jt).GetValidTime ())) < t ? (60 * ((*jt).GetValidTime ())) : t;
+//    }
+//
+//  t -= (60 * m_advance);
+//
+//  m_retransmitRsEvent.Cancel ();
+//  m_retransmitRsEvent = Simulator::Schedule (Time (Seconds (t)), &SixLowPanNdProtocol::RetransmitRS, this,
+//                                             interface->GetLinkLocalAddress ().GetAddress (), src, macAddr, 1, m_rtrSolicitationInterval);
 
   if (m_addressRegistrationTimeoutEvent.IsRunning ())
     {
@@ -1058,7 +1068,7 @@ if (m_nodeRole == SixLowPanNode || m_nodeRole == SixLowPanNodeOnly)
     {
       m_addressRegistrationCounter = 0;
       Time delay = MilliSeconds (m_addressRegistrationJitter->GetValue ());
-      std::cout << Now ().As (Time::S) << " Scheduled address registration in " << delay.As (Time::S) << std::endl;
+      // std::cout << m_node->GetId() << " " << Now ().As (Time::S) <<  " Scheduled address registration in " << delay.As (Time::S) << std::endl;
 
       m_addressRegistrationEvent = Simulator::Schedule (delay, &SixLowPanNdProtocol::AddressRegistration, this);
     }
@@ -1159,6 +1169,22 @@ SixLowPanNdProtocol::Lookup (Ptr<Packet> p, const Ipv6Header & ipHeader, Ipv6Add
   return Icmpv6L4Protocol::Lookup (p, ipHeader, dst, device, cache, hardwareDestination);
 }
 
+void
+SixLowPanNdProtocol::FunctionDadTimeout (Ipv6Interface* interface, Ipv6Address addr)
+{
+  // We actually want to override the immediate send of an RS.
+  Icmpv6L4Protocol::FunctionDadTimeout (interface, addr);
+
+
+  if (!interface->IsForwarding () && addr.IsLinkLocal ())
+    {
+      Address linkAddr = interface->GetDevice ()->GetAddress ();
+
+      m_retransmitRsEvent = Simulator::Schedule (m_rtrSolicitationInterval,
+                                                 &SixLowPanNdProtocol::RetransmitRS, this, addr,
+                                                 Ipv6Address::GetAllRoutersMulticast (), linkAddr, 1, m_rtrSolicitationInterval);
+    }
+}
 
 void
 SixLowPanNdProtocol::BuildRovrForDevice (Ptr<NetDevice> device)
@@ -1503,40 +1529,46 @@ SixLowPanNdProtocol::AddressRegistrationTimeout (Ipv6Address addressBeingRegiste
 }
 
 void
-SixLowPanNdProtocol::RetransmitRS (Ipv6Address src, Ipv6Address dst, Address linkAddr)
+SixLowPanNdProtocol::RetransmitRS (Ipv6Address src, Ipv6Address dst, Address linkAddr, uint8_t retransmission, Time retransmissionInterval)
 {
   NS_LOG_FUNCTION (this << src << dst << linkAddr);
 
   NS_ABORT_MSG_IF (src == Ipv6Address::GetAny (),
                    "An unspecified source address MUST NOT be used in RS messages");
 
-  if (m_rsRetransmit < MAX_RTR_SOLICITATIONS)
+  if (retransmission > 1)
     {
-      m_rsRetransmit++;
-
       SendRS (src, dst, linkAddr);
+    }
 
-      m_retransmitRsEvent = Simulator::Schedule (Time (Seconds (RTR_SOLICITATION_INTERVAL)),
+  if (retransmission <= m_maxRtrSolicitations)
+    {
+      retransmission++;
+    }
+
+  if (retransmission < m_maxRtrSolicitations)
+    {
+      // We are not yet in backoff mode.
+      m_retransmitRsEvent = Simulator::Schedule (m_rtrSolicitationInterval,
                                                  &SixLowPanNdProtocol::RetransmitRS, this, src,
-                                                 dst, linkAddr);
+                                                 dst, linkAddr, retransmission, retransmissionInterval);
       return;
     }
   else
     {
-      m_rsRetransmit++;
+      // We are in backoff mode.
 
-      Ipv6Address destination = Ipv6Address::GetAllRoutersMulticast ();
-
-      SendRS (src, destination, linkAddr);
-
-      m_retransmitRsEvent = Simulator::Schedule (Time (Seconds (MAX_RTR_SOLICITATION_INTERVAL)),
+      retransmissionInterval = retransmissionInterval*2;
+      if (retransmissionInterval > m_maxRtrSolicitationInterval)
+        {
+          retransmissionInterval = m_maxRtrSolicitationInterval;
+        }
+      m_retransmitRsEvent = Simulator::Schedule (m_maxRtrSolicitationInterval,
                                                  &SixLowPanNdProtocol::RetransmitRS, this, src,
-                                                 destination, linkAddr);
-      /* inserire truncated binary exponential backoff */
+                                                 dst, linkAddr, retransmission, retransmissionInterval);
       return;
     }
 }
-/// \todo da finire!! (truncated binary exponential backoff)
 
 void
 SixLowPanNdProtocol::SetInterfaceAs6lbr (Ptr<SixLowPanNetDevice> device)
