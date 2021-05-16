@@ -36,6 +36,7 @@
  */
 
 #include <fstream>
+#include <map>
 #include "ns3/core-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/internet-apps-module.h"
@@ -52,48 +53,61 @@
 #include "ns3/gnuplot.h"
 
 using namespace ns3;
-using namespace std;
 
 
 uint32_t pktCount = 0;
 uint64_t pktTotalSize = 0;
-uint32_t cicle = 10;
-uint32_t nowMax = 1;
+uint32_t ackCount = 0;
+uint64_t ackTotalSize = 0;
+uint32_t unkCount = 0;
+uint64_t unkTotalSize = 0;
+
+std::map<uint8_t, uint32_t> icmpTypeCount;
+uint32_t udpCount = 0;
+uint32_t otherL4Count = 0;
+
+void
+PrintResults (Time interval)
+{
+  std::cout << Now().GetSeconds () << "\t";
+  std::cout << pktCount << "\t" << pktTotalSize << "\t";
+  std::cout << ackCount << "\t" << ackTotalSize << "\t";
+  std::cout << unkCount << "\t" << unkTotalSize << std::endl;
+
+  pktCount = 0;
+  pktTotalSize = 0;
+  ackCount = 0;
+  ackTotalSize = 0;
+  unkCount = 0;
+  unkTotalSize = 0;
+
+  Simulator::Schedule (interval, &PrintResults, interval);
+}
+
 
 void
 PhyCallback (std::string path, Ptr<const Packet> packet)
 {
+  LrWpanMacHeader lrWpanHdr;
+  Ptr<Packet> pktCpy = packet->Copy ();
+  pktCpy->RemoveHeader (lrWpanHdr);
 
-  uint32_t nowMaxLocal = std::floor (Now().GetSeconds () / 10) + 1;
-
-  if ( nowMaxLocal != nowMax)
+  if (lrWpanHdr.IsAcknowledgment ())
     {
-      if (pktCount)
-//        std::cout << "Time " << "\t" << "Packet Count " << "\t" << " Total Size "<< std::endl;
-      std::cout << (nowMax)*10 << "\t" << pktCount << "\t" << pktTotalSize << std::endl;
-      nowMax = nowMaxLocal;
-
-      pktCount = 0;
-      pktTotalSize = 0;
+      ackCount ++;
+      ackTotalSize += packet->GetSize ();
     }
-  pktCount ++;
-  pktTotalSize += packet->GetSize ();
-
-//  if (Now().GetSeconds () > 10)
-//    std::cout << Now ().As (Time::S) << " Tx packet of size " << packet->GetSize () << " - " << *packet << std::endl;
-
-//  std::cout << Now ().As (Time::S) << " - " << packet->GetSize () << std::endl;
-
-//  LrWpanMacHeader lrWpanHdr;
-//  Ptr<Packet> pktCpy = packet->Copy ();
-//  pktCpy->RemoveHeader (lrWpanHdr);
-//
-//  if (lrWpanHdr.IsAcknowledgment ())
-//    std::cout << Now ().As (Time::S)<< " Tx ACK of size " << packet->GetSize () << std::endl;
-//  else if (lrWpanHdr.IsData ())
-//    std::cout << Now ().As (Time::S) << " Tx packet of size " << packet->GetSize () << " - " << *pktCpy << std::endl;
-//  else
-//    std::cout << Now ().As (Time::S) << " Tx OTHER of size " << packet->GetSize () << std::endl;
+  else if (lrWpanHdr.IsData ())
+    {
+      pktCount ++;
+      pktTotalSize += packet->GetSize ();
+    }
+  else
+    {
+      unkCount ++;
+      unkTotalSize += packet->GetSize ();
+      std::cout << *packet << std::endl;
+    }
 }
 
 // Here you see only the packets that IP did send to 6LoWPAN.
@@ -103,8 +117,24 @@ PhyCallback (std::string path, Ptr<const Packet> packet)
 void
 SixLowCallback (std::string path, Ptr<const Packet> packet, Ptr<SixLowPanNetDevice> netDev, uint32_t index)
 {
+  Ipv6Header ipv6Hdr;
+  Ptr<Packet> pktCpy = packet->Copy ();
+  pktCpy->RemoveHeader (ipv6Hdr);
+  if (ipv6Hdr.GetNextHeader () == UdpL4Protocol::PROT_NUMBER)
+    {
+      udpCount ++;
+    }
+  else if (ipv6Hdr.GetNextHeader () == Icmpv6L4Protocol::PROT_NUMBER)
+    {
+      Icmpv6Header icmpHdr;
+      pktCpy->RemoveHeader (icmpHdr);
+      icmpTypeCount[icmpHdr.GetType ()] ++;
+    }
+  else
+    {
+      otherL4Count ++;
+    }
 
-//  std::cout << "adnan" <<path << std::endl;
 //  std::cout << Now ().As (Time::S) << " Tx something of size (Packets that IP did send to 6LoWPAN) " << packet->GetSize () << " - " << *packet << std::endl;
 }
 
@@ -114,12 +144,14 @@ int main (int argc, char** argv)
 	std::string useUdpFrom = "";
 	std::string usePingOn = "";
 	double stopTime = 50000;
+	Time interval = Seconds (100);
 
 	CommandLine cmd;
 	cmd.AddValue ("Mesh", "Use mesh-under in the network", useMeshUnder);
 	cmd.AddValue ("Udp", "Send one UDP packet from (6LBR, 6LN, nothing)", useUdpFrom);
 	cmd.AddValue ("Ping", "Install Ping app on (6LBR, 6LN, nothing)", usePingOn);
-	cmd.AddValue ("StopTime", "Simulation stop time (seconds)", stopTime);
+  cmd.AddValue ("StopTime", "Simulation stop time (seconds)", stopTime);
+  cmd.AddValue ("Interval", "Sampling interval", interval);
 	cmd.Parse (argc, argv);
 
 	if (useMeshUnder)
@@ -152,6 +184,11 @@ int main (int argc, char** argv)
                                  "LayoutType", StringValue ("RowFirst"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.Install (lo_nodes);
+
+  // this means that the registration is valid for 2 days (and the re-registration is performed after 1 day).
+  Config::SetDefault ("ns3::SixLowPanNdProtocol::RegistrationLifeTime", UintegerValue (2880));
+  // Config::SetDefault ("ns3::Icmpv6L4Protocol::SolicitationJitter", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=1000.0]"));
+
 
   LrWpanHelper lrWpanHelper;
   // Add and install the LrWpanNetDevice for each node
@@ -247,14 +284,26 @@ int main (int argc, char** argv)
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::SixLowPanNetDevice/TxPre",
                     MakeCallback (&SixLowCallback));
 
-  Simulator::Stop (Seconds (50000));
+//  Simulator::Schedule (interval, &PrintResults, interval);
+
+  Simulator::Stop (Seconds (50001));
   Simulator::Run ();
 
-  Ptr<Packet> foo = Create<Packet> ();
-  PhyCallback ("foobar", foo);
-  std::cout << "End of simulation at " << Now ().As (Time::S) << std::endl;
+//  Ptr<Packet> foo = Create<Packet> ();
+//  PhyCallback ("foobar", foo);
+//  std::cout << "End of simulation at " << Now ().As (Time::S) << std::endl;
 
   Simulator::Destroy ();
+
+//  std::cout << "Udp: " << udpCount << std::endl;
+//  std::cout << "Other L4: " << otherL4Count << std::endl;
+//  for (auto const& x : icmpTypeCount)
+//  {
+//      std::cout << +x.first
+//                << ':'
+//                << x.second
+//                << std::endl;
+//  }
 
 };
 
