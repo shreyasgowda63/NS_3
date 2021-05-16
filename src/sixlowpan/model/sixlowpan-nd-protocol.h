@@ -655,11 +655,8 @@ private:
 
   /**
    * Address registration timeout handler
-   *
-   * \param addressBeingRegistered address being registered
-   * \param registrar address registrar
    */
-  void AddressRegistrationTimeout (Ipv6Address addressBeingRegistered, Ipv6Address registrar);
+  void AddressRegistrationTimeout ();
 
   uint8_t m_addressRegistrationCounter; //!< Number of retries of an address registration.
 
@@ -701,15 +698,29 @@ private:
    */
   typedef struct
   {
-    Time registrationTimeout; //!< Registration expiration time.
+    Time registrationTimeout; //!< Registration expiration time
     Ipv6Address registeredAddr; //!< Registered address
+    Ipv6Address abroAddress; //!< Address of the ABRO (always global)
     Ipv6Address registrar; //!< Registering node (lladdr of 6LR or 6LBR for a lladdr, gaddr of 6LBR for gaddr)
     Address registrarMacAddr; //!< Registering node MAC address
     Ptr<Ipv6Interface> interface; //!< Interface used for the registration
   } SixLowPanRegisteredAddress;
 
-  Ipv6Address m_addressPendingRegistration;  //!< Address being Registered.
-  bool m_addressPendingRegistrationIsNew;  //!< Address being Registered is new (true) of a reregistration (false)
+  /**
+   * Structure holding data of the address being registered
+   */
+  typedef struct
+  {
+    bool isValid; //!< The data are valid (for timeouts and retransmissions)
+    Ipv6Address addressPendingRegistration;  //!< Address being Registered
+    Ipv6Address abroAddress; //!< Address of the ABRO (always global)
+    Ipv6Address registrar; //!< Registering node address (always link-local)
+    Address registrarMacAddr; //!< Registering node MAC address
+    bool newRegistration; //!< new registration (true) or re-registration (false)
+    Ptr<NetDevice> sixDevice; //!< The SixLowPanNetDevice to use for the registration
+  } AddressPendingRegistration;
+
+  AddressPendingRegistration m_addrPendingReg;  //!< Address being Registered
 
   std::list<SixLowPanPendingRa> m_pendingRas; //!< RA waiting for processing (addresses registration).
   std::list<SixLowPanRegisteredAddress> m_registeredAddresses; //!< Addresses that have been registered.
