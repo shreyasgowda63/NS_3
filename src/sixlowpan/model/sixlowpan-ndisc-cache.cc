@@ -187,6 +187,9 @@ void SixLowPanNdiscCache::SixLowPanEntry::MarkRegistered (uint16_t time)
   NS_LOG_FUNCTION (this);
   m_type = REGISTERED;
 
+//  Ptr<Node> node = m_ndCache->GetDevice ()->GetNode ();
+//  std::cout << "++++ " << node->GetId () << " + " << Now ().As (Time::S) << " MarkRegistered - " << *this << std::endl;
+
   if (m_tentativeTimer.IsRunning ())
     {
       m_tentativeTimer.Cancel ();
@@ -243,8 +246,8 @@ void SixLowPanNdiscCache::SixLowPanEntry::FunctionTimeout ()
 {
   NS_LOG_FUNCTION (this);
 
-  std::cout << "**** " << Now ().As (Time::S) << " timeout - removing entry " << *this << std::endl;
   Ptr<Node> node = m_ndCache->GetDevice ()->GetNode ();
+//  std::cout << "**** " << node->GetId () << " * " << Now ().As (Time::S) << " timeout - removing entry " << *this << std::endl;
 
   Ptr<Ipv6L3Protocol> ipv6l3Protocol = node->GetObject<Ipv6L3Protocol> ();
   ipv6l3Protocol->GetRoutingProtocol ()->NotifyRemoveRoute (GetIpv6Address (), Ipv6Prefix (128), Ipv6Address::GetAny (),
