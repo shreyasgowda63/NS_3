@@ -23,6 +23,9 @@
 
 #include "ns3/channel.h"
 
+#include "ns3/traced-callback.h"
+#include "ns3/spatial-index.h"
+
 namespace ns3 {
 
 class NetDevice;
@@ -46,6 +49,11 @@ class YansWifiChannel : public Channel
 {
 public:
   /**
+   * A vector of pointers to YansWifiPhy.
+   */
+  typedef std::vector<Ptr<YansWifiPhy > > PhyList; // was YansWifiPhy
+
+  /**
    * \brief Get the type ID.
    * \return the object TypeId
    */
@@ -62,7 +70,7 @@ public:
    *
    * \param phy the YansWifiPhy to be added to the PHY list
    */
-  void Add (Ptr<YansWifiPhy> phy);
+  virtual void Add (Ptr<YansWifiPhy> phy);
 
   /**
    * \param loss the new propagation loss model.
@@ -83,7 +91,7 @@ public:
    * attempts to deliver the PPDU to all other YansWifiPhy objects
    * on the channel (except for the sender).
    */
-  void Send (Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, double txPowerDbm) const;
+  void Send (Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, double txPowerDbm);
 
   /**
    * Assign a fixed random variable stream number to the random variables
@@ -98,11 +106,14 @@ public:
 
 
 private:
-  /**
-   * A vector of pointers to YansWifiPhy.
-   */
-  typedef std::vector<Ptr<YansWifiPhy> > PhyList;
 
+  /**
+   * \brief Get the list of phys for the specified sender
+   * 
+   * \param sender The sender
+   * \return const PhyList 
+   */
+  virtual const PhyList getPhyList (Ptr<YansWifiPhy> sender);
   /**
    * This method is scheduled by Send for each associated YansWifiPhy.
    * The method then calls the corresponding YansWifiPhy that the first
@@ -112,11 +123,35 @@ private:
    * \param ppdu the PPDU being sent
    * \param txPowerDbm the TX power associated to the packet being sent (dBm)
    */
-  static void Receive (Ptr<YansWifiPhy> receiver, Ptr<WifiPpdu> ppdu, double txPowerDbm);
+  void Receive (Ptr<YansWifiPhy> receiver, Ptr<WifiPpdu> ppdu, double txPowerDbm);
+   /**
+   * @brief Get applicable phys for a given node
+   * 
+   * @param nodes 
+   * @param phys 
+   */
+  static void GetPhysForNodes (std::vector<Ptr<const Object>> &nodes, std::vector<Ptr<YansWifiPhy>> &phys);
 
+protected:
   PhyList m_phyList;                   //!< List of YansWifiPhys connected to this YansWifiChannel
+private:
   Ptr<PropagationLossModel> m_loss;    //!< Propagation loss model
   Ptr<PropagationDelayModel> m_delay;  //!< Propagation delay model
+
+  /// Callback to be notified of send events
+  TracedCallback<
+          Ptr<YansWifiPhy> /*sender*/,
+          Ptr<const WifiPpdu> /*packet*/,
+          double /*txPowerDbm*/> m_send_trace;
+  /// Callback to be notified of reception events;
+  TracedCallback<
+          Ptr<YansWifiPhy> /*receiver*/,
+          Ptr<const WifiPpdu> /*packet*/,
+          double /*txPowerDbm*/> m_receive_trace;
+
+  bool                 m_spatialIndexingEnabled; ///<Enable clipping based on spatial indexing
+  double               m_receive_clip_range;     ///<Range to clip at
+  Ptr<SpatialIndexing> m_spatialIndex;           ///<Pointer to spatial indexing method to use
 };
 
 } //namespace ns3

@@ -18,19 +18,25 @@
  * Author: Mathieu Lacage, <mathieu.lacage@sophia.inria.fr>
  */
 
-#include "ns3/simulator.h"
-#include "ns3/log.h"
-#include "ns3/pointer.h"
-#include "ns3/net-device.h"
-#include "ns3/node.h"
-#include "ns3/propagation-loss-model.h"
-#include "ns3/propagation-delay-model.h"
-#include "ns3/mobility-model.h"
 #include "yans-wifi-channel.h"
-#include "yans-wifi-phy.h"
-#include "wifi-utils.h"
+
 #include "wifi-ppdu.h"
 #include "wifi-psdu.h"
+#include "wifi-utils.h"
+#include "yans-wifi-phy.h"
+
+#include "ns3/boolean.h"
+#include "ns3/double.h"
+#include "ns3/kdtree-index.h"
+#include "ns3/log.h"
+#include "ns3/mobility-model.h"
+#include "ns3/net-device.h"
+#include "ns3/node.h"
+#include "ns3/pointer.h"
+#include "ns3/propagation-delay-model.h"
+#include "ns3/propagation-loss-model.h"
+#include "ns3/simulator.h"
+#include "ns3/wifi-net-device.h"
 
 namespace ns3 {
 
@@ -41,25 +47,36 @@ NS_OBJECT_ENSURE_REGISTERED (YansWifiChannel);
 TypeId
 YansWifiChannel::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::YansWifiChannel")
-    .SetParent<Channel> ()
-    .SetGroupName ("Wifi")
-    .AddConstructor<YansWifiChannel> ()
-    .AddAttribute ("PropagationLossModel", "A pointer to the propagation loss model attached to this channel.",
-                   PointerValue (),
-                   MakePointerAccessor (&YansWifiChannel::m_loss),
-                   MakePointerChecker<PropagationLossModel> ())
-    .AddAttribute ("PropagationDelayModel", "A pointer to the propagation delay model attached to this channel.",
-                   PointerValue (),
-                   MakePointerAccessor (&YansWifiChannel::m_delay),
-                   MakePointerChecker<PropagationDelayModel> ())
-  ;
+  static TypeId tid =
+      TypeId ("ns3::YansWifiChannel")
+          .SetParent<Channel> ()
+          .SetGroupName ("Wifi")
+          .AddConstructor<YansWifiChannel> ()
+          .AddAttribute ("PropagationLossModel",
+                         "A pointer to the propagation loss model attached to this channel.",
+                         PointerValue (), MakePointerAccessor (&YansWifiChannel::m_loss),
+                         MakePointerChecker<PropagationLossModel> ())
+          .AddAttribute ("PropagationDelayModel",
+                         "A pointer to the propagation delay model attached to this channel.",
+                         PointerValue (), MakePointerAccessor (&YansWifiChannel::m_delay),
+                         MakePointerChecker<PropagationDelayModel> ())
+          .AddAttribute ("ReceiveClipRange", "Range at which to clip reception event scheduling",
+                         DoubleValue (0),
+                         MakeDoubleAccessor (&YansWifiChannel::m_receive_clip_range),
+                         MakeDoubleChecker<double> ())
+          .AddAttribute (
+              "EnableSpatialIndexing",
+              "If true, enable spatial indexing for faster wireless simulations.",
+              BooleanValue (false), // TODO later may want to change default to true
+              MakeBooleanAccessor (&YansWifiChannel::m_spatialIndexingEnabled),
+              MakeBooleanChecker ());
   return tid;
 }
 
 YansWifiChannel::YansWifiChannel ()
 {
   NS_LOG_FUNCTION (this);
+  m_spatialIndex = new KDTreeSpatialIndexing ();
 }
 
 YansWifiChannel::~YansWifiChannel ()
@@ -82,13 +99,33 @@ YansWifiChannel::SetPropagationDelayModel (const Ptr<PropagationDelayModel> dela
   m_delay = delay;
 }
 
+const YansWifiChannel::PhyList
+YansWifiChannel::getPhyList (const Ptr<YansWifiPhy> sender)
+{
+  if (m_spatialIndexingEnabled)
+    {
+      std::vector<Ptr<YansWifiPhy>> phyList;
+      // passing a pointer to the sendingNode was supposed to optimize by not sending that node back
+      // in the phys, however, it may actually take longer now.  NOTE consider reverting.
+      std::vector<Ptr<const Object>> nodes = m_spatialIndex->GetNodesInRange (
+          m_receive_clip_range, sender->GetMobility ()->GetPosition (),
+          sender->GetDevice ()->GetNode ());
+      GetPhysForNodes (nodes, phyList); // NOTE: can we optimize this to avoid copying?
+      return phyList;
+    }
+  return m_phyList;
+}
+
 void
-YansWifiChannel::Send (Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, double txPowerDbm) const
+YansWifiChannel::Send (Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, double txPowerDbm)
 {
   NS_LOG_FUNCTION (this << sender << ppdu << txPowerDbm);
+  m_send_trace (sender, ppdu, txPowerDbm);
   Ptr<MobilityModel> senderMobility = sender->GetMobility ();
   NS_ASSERT (senderMobility != 0);
-  for (PhyList::const_iterator i = m_phyList.begin (); i != m_phyList.end (); i++)
+  auto list = getPhyList(sender);
+  // const std::vector<Ptr<YansWifiPhy> >* phys = &list;
+  for (PhyList::const_iterator i = list.begin (); i != list.end (); i++)
     {
       if (sender != (*i))
         {
@@ -116,7 +153,7 @@ YansWifiChannel::Send (Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, double
             }
 
           Simulator::ScheduleWithContext (dstNode,
-                                          delay, &YansWifiChannel::Receive,
+                                          delay, &YansWifiChannel::Receive, this,
                                           (*i), copy, rxPowerDbm);
         }
     }
@@ -128,11 +165,13 @@ YansWifiChannel::Receive (Ptr<YansWifiPhy> phy, Ptr<WifiPpdu> ppdu, double rxPow
   NS_LOG_FUNCTION (phy << ppdu << rxPowerDbm);
   // Do no further processing if signal is too weak
   // Current implementation assumes constant RX power over the PPDU duration
+  // Also no longer contributes to noise profile
   if ((rxPowerDbm + phy->GetRxGain ()) < phy->GetRxSensitivity ())
     {
       NS_LOG_INFO ("Received signal too weak to process: " << rxPowerDbm << " dBm");
       return;
     }
+  m_receive_trace(phy, ppdu, rxPowerDbm);
   RxPowerWattPerChannelBand rxPowerW;
   rxPowerW.insert ({std::make_pair (0, 0), (DbmToW (rxPowerDbm + phy->GetRxGain ()))}); //dummy band for YANS
   phy->StartReceivePreamble (ppdu, rxPowerW, ppdu->GetTxDuration ());
@@ -155,6 +194,14 @@ YansWifiChannel::Add (Ptr<YansWifiPhy> phy)
 {
   NS_LOG_FUNCTION (this << phy);
   m_phyList.push_back (phy);
+  BooleanValue indexingDenabled;
+  GetAttribute ("EnableSpatialIndexing", indexingDenabled);
+  if (m_spatialIndexingEnabled || indexingDenabled)
+    {
+      auto m = phy->GetMobility ();
+      auto n = m->GetObject<Node> (); //TODO: convert spatial indexing to objects?
+      m_spatialIndex->Add (n, m->GetPosition ());
+    }
 }
 
 int64_t
@@ -164,6 +211,28 @@ YansWifiChannel::AssignStreams (int64_t stream)
   int64_t currentStream = stream;
   currentStream += m_loss->AssignStreams (stream);
   return (currentStream - stream);
+}
+
+void
+YansWifiChannel::GetPhysForNodes (std::vector<Ptr<const Object>> &nodes,
+                                              std::vector<Ptr<YansWifiPhy>> &phys)
+{
+  for (unsigned int i = 0; i < nodes.size (); i++)
+    {
+      auto node = nodes[i]->GetObject<const Node>();
+      for (unsigned int j = 0; j < node->GetNDevices (); j++)
+        {
+          Ptr<WifiNetDevice> nd = node->GetDevice (j)->GetObject<WifiNetDevice> ();
+          if (nd != 0)
+            {
+              Ptr<YansWifiPhy> phy = nd->GetPhy ()->GetObject<YansWifiPhy> ();
+              if (phy != 0)
+                {
+                  phys.push_back (phy);
+                }
+            }
+        }
+    }
 }
 
 } //namespace ns3

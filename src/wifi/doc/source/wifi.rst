@@ -8,3 +8,4 @@
     wifi-user
     wifi-testing
     wifi-references
+    wifi-clipping

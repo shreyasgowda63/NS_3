@@ -23,6 +23,7 @@
 #include "ns3/log.h"
 #include "yans-wifi-phy.h"
 #include "yans-wifi-channel.h"
+#include "wifi-net-device.h"
 
 namespace ns3 {
 

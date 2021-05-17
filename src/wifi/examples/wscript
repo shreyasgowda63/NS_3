@@ -27,3 +27,9 @@ def build(bld):
     obj = bld.create_ns3_program('wifi-bianchi',
         ['wifi', 'applications', 'internet-apps' ])
     obj.source = 'wifi-bianchi.cc'
+
+    obj = bld.create_ns3_program('clipping-yans-static', ['spatial-index', 'network', 'propagation', 'wifi', 'internet', 'applications'])
+    obj.source = 'clipping-yans-static.cc'
+
+    obj = bld.create_ns3_program('clipping-yans-mobile', ['spatial-index', 'network', 'propagation', 'wifi', 'internet', 'applications'])
+    obj.source = 'clipping-yans-mobile.cc'

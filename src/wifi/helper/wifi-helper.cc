@@ -807,6 +807,7 @@ WifiHelper::Install (const WifiPhyHelper &phyHelper,
           Ptr<HeConfiguration> heConfiguration = CreateObject<HeConfiguration> ();
           device->SetHeConfiguration (heConfiguration);
         }
+      device->SetNode(node);
       Ptr<WifiRemoteStationManager> manager = m_stationManager.Create<WifiRemoteStationManager> ();
       Ptr<WifiPhy> phy = phyHelper.Create (node, device);
       phy->ConfigureStandardAndBand (it->second.phyStandard, it->second.phyBand);
