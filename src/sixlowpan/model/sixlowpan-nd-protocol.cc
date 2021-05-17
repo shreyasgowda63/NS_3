@@ -1368,7 +1368,7 @@ SixLowPanNdProtocol::AddressRegistrationSuccess (Ipv6Address registrar, Lollipop
               i.registrar == registrar)
             {
               NS_LOG_LOGIC ("Received a successful address registration for an address that we did already register. Increase the registration timeout");
-              std::cout << "Received a successful address registration for an address that we did already register. Increase the registration timeout" << std::endl;
+              //std::cout << "Received a successful address registration for an address that we did already register. Increase the registration timeout" << std::endl;
               return;
             }
         }

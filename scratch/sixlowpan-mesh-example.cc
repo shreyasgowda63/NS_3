@@ -31,10 +31,11 @@
  *          | lr-wpan |      | lr-wpan |      | lr-wpan |
  *          +---------+      +---------+      +---------+
  *              ||               ||               ||
- *               ================   ===============
+ *                ===============  ===============
+ *
+ * ./waf --run "scratch/sixlowpan-mesh-example.cc --Mesh --Ping=6LN --LLA --StopTime=2000 --Interval=100"
  *
  */
-
 #include <fstream>
 #include <map>
 #include "ns3/core-module.h"
@@ -51,9 +52,9 @@
 #include "ns3/energy-module.h"
 #include "ns3/wifi-module.h"
 #include "ns3/gnuplot.h"
+#include "ns3/applications-module.h"
 
 using namespace ns3;
-
 
 uint32_t pktCount = 0;
 uint64_t pktTotalSize = 0;
@@ -83,7 +84,6 @@ PrintResults (Time interval)
 
   Simulator::Schedule (interval, &PrintResults, interval);
 }
-
 
 void
 PhyCallback (std::string path, Ptr<const Packet> packet)
@@ -135,23 +135,27 @@ SixLowCallback (std::string path, Ptr<const Packet> packet, Ptr<SixLowPanNetDevi
       otherL4Count ++;
     }
 
-//  std::cout << Now ().As (Time::S) << " Tx something of size (Packets that IP did send to 6LoWPAN) " << packet->GetSize () << " - " << *packet << std::endl;
+//std::cout << Now ().As (Time::S) << " Tx something of size (Packets that IP did send to 6LoWPAN) " << packet->GetSize () << " - " << *packet << std::endl;
 }
 
 int main (int argc, char** argv)
 {
 	bool useMeshUnder = false;
+	bool useLLA = false;
+	bool useGUA = false;
 	std::string useUdpFrom = "";
 	std::string usePingOn = "";
-	double stopTime = 50000;
+	double stopTime;
 	Time interval = Seconds (100);
 
 	CommandLine cmd;
 	cmd.AddValue ("Mesh", "Use mesh-under in the network", useMeshUnder);
 	cmd.AddValue ("Udp", "Send one UDP packet from (6LBR, 6LN, nothing)", useUdpFrom);
 	cmd.AddValue ("Ping", "Install Ping app on (6LBR, 6LN, nothing)", usePingOn);
-  cmd.AddValue ("StopTime", "Simulation stop time (seconds)", stopTime);
-  cmd.AddValue ("Interval", "Sampling interval", interval);
+	cmd.AddValue ("LLA", "Use link-local addresses for the communication", useLLA);
+	cmd.AddValue ("GUA", "Use global addresses for the communication", useGUA);
+	cmd.AddValue ("StopTime", "Simulation stop time (seconds)", stopTime);
+	cmd.AddValue ("Interval", "Sampling interval", interval);
 	cmd.Parse (argc, argv);
 
 	if (useMeshUnder)
@@ -217,56 +221,125 @@ int main (int argc, char** argv)
         sixlowpan.InstallSixLowPanNdNode (devices.Get (var));
     }
 
+ //*********************************ICMPV6 Ping testing*********************************
+  if (usePingOn != "")
+    {
+      uint32_t packetSize = 10;
+      uint32_t maxPacketCount = 100;
+      Time interPacketInterval = Seconds (1.);
+      Ping6Helper ping6;
 
-//  uint32_t packetSize = 10;
-//  uint32_t maxPacketCount = 500;
-//  Time interPacketInterval = Seconds (1.);
-//  Ping6Helper ping6;
-//
-//  //************Communication from 6LN(n1)---to---6LN(n2)************
-//
-//  //GUA-to-GUA---------------------------------working
-//    ping6.SetLocal ("2001::ff:fe00:2");
-//    ping6.SetRemote ("2001::ff:fe00:3");
-//
-//  //LLA-to-LLA---------------------------------Working
-////    ping6.SetLocal ("fe80::ff:fe00:2");
-////    ping6.SetRemote ("fe80::ff:fe00:3");
-//
-//  //GUA-to-LLA---------------------------------working
-////    ping6.SetLocal ("2001::ff:fe00:2");
-////    ping6.SetRemote ("fe80::ff:fe00:3");
-//
-//  //LLA-to-GUA---------------------------------Working
-////    ping6.SetLocal ("fe80::ff:fe00:2");
-////    ping6.SetRemote ("2001::ff:fe00:3");
-//
-//  //************Communication from 6LN(n2)---to---6LN(n1)************
-//
-//  // GUA-to-GUA---------------------------------Working
-////    ping6.SetLocal ("2001::ff:fe00:3");
-////    ping6.SetRemote ("2001::ff:fe00:2");
-//
-//  //LLA-to-LLA---------------------------------Working
-////    ping6.SetLocal ("fe80::ff:fe00:3");
-////    ping6.SetRemote ("fe80::ff:fe00:2");
-//
-//  //GUA-to-LLA---------------------------------Working
-////    ping6.SetLocal ("2001::ff:fe00:3");
-////    ping6.SetRemote ("fe80::ff:fe00:2");
-//
-//  //LLA-to-GUA---------------------------------Working
-////    ping6.SetLocal ("fe80::ff:fe00:3");
-////    ping6.SetRemote ("2001::ff:fe00:2");
-//
-//
-//  ping6.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
-//  ping6.SetAttribute ("Interval", TimeValue (interPacketInterval));
-//  ping6.SetAttribute ("PacketSize", UintegerValue (packetSize));
-//  ApplicationContainer apps = ping6.Install (lo_nodes.Get (1)); // always the SetLocal node index
-//
-//  apps.Start (Seconds (5.0));
-//  apps.Stop (Seconds (100.0));
+      ping6.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+      ping6.SetAttribute ("Interval", TimeValue (interPacketInterval));
+      ping6.SetAttribute ("PacketSize", UintegerValue (packetSize));
+      ApplicationContainer apps;
+
+      // 6LBR addresses: "2001::ff:fe00:5" - "fe80::ff:fe00:5"
+      // 6LN addresses: "2001::ff:fe00:1" - "fe80::ff:fe00:1"
+
+      if (usePingOn == "6LBR")
+        {
+          if (useGUA!=false)
+            {
+              ping6.SetLocal ("2001::ff:fe00:5");
+              ping6.SetRemote ("2001::ff:fe00:1");
+              apps.Add (ping6.Install (lo_nodes.Get (4)));
+            }
+          else
+            {
+              ping6.SetLocal ("fe80::ff:fe00:5");
+              ping6.SetRemote ("fe80::ff:fe00:1");
+              apps.Add (ping6.Install (lo_nodes.Get (4)));
+            }
+        }
+      else if (usePingOn == "6LN")
+            {
+              if(useGUA!=false)
+                {
+                  ping6.SetLocal ("2001::ff:fe00:5");
+                  ping6.SetRemote ("2001::ff:fe00:1");
+                  apps.Add (ping6.Install (lo_nodes.Get (4)));
+                }
+              else
+                {
+                  ping6.SetLocal ("fe80::ff:fe00:5");
+                  ping6.SetRemote ("fe80::ff:fe00:1");
+                  apps.Add (ping6.Install (lo_nodes.Get (4)));
+                }
+            }
+      else
+        {
+          std::cout << "PING: invalid option\n";
+          exit (0);
+        }
+      apps.Start (Seconds(1.5));
+      apps.Stop (Seconds (stopTime-1));
+    }
+
+  //*********************************UDP testing*********************************
+  if (useUdpFrom != "")
+    {
+      uint16_t port = 4000;
+      UdpServerHelper server (port);
+      ApplicationContainer udpServerApps = server.Install (lo_nodes);
+      udpServerApps.Start (Seconds (0.0));
+      udpServerApps.Stop (Seconds(stopTime - 1));
+
+      uint32_t MaxPacketSize = 12;
+      Time interPacketInterval = Seconds (0.05);
+      uint32_t maxPacketCount = 2;
+
+      // Server IP and port number
+      UdpClientHelper client;
+      client.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+      client.SetAttribute ("Interval", TimeValue (interPacketInterval));
+      client.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
+      ApplicationContainer udpClientApps;
+
+      if (useUdpFrom == "6LBR")
+        {
+          if(useGUA==false)
+            {
+              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("2001::ff:fe00:2")));
+              client.SetAttribute ("RemotePort", UintegerValue (port));
+              udpClientApps.Add (client.Install (lo_nodes.Get (0)));
+            }
+          else
+            {
+              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("fe80::ff:fe00:2")));
+              client.SetAttribute ("RemotePort", UintegerValue (port));
+              udpClientApps.Add (client.Install (lo_nodes.Get (0)));
+            }
+        }
+      else if (useUdpFrom == "6LN")
+        {
+          if(useGUA==false)
+            {
+              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("2001::ff:fe00:1")));
+              client.SetAttribute ("RemotePort", UintegerValue (port));
+              udpClientApps.Add (client.Install (lo_nodes.Get (1)));
+            }
+          else
+            {
+              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("fe80::ff:fe00:1")));
+              client.SetAttribute ("RemotePort", UintegerValue (port));
+              udpClientApps.Add (client.Install (lo_nodes.Get (1)));
+            }
+        }
+      else
+        {
+          std::cout << "UDP app: invalid option\n";
+          exit (0);
+        }
+      udpClientApps.Start (Seconds (5.0));
+      udpClientApps.Stop (Seconds(stopTime - 1));
+    }
+
+
+  if (useUdpFrom != "" && usePingOn != "")
+    {
+      std::cout<< "****------------------Ping or UDP Applications are not running------------------****"<<std::endl;
+    }
 
   AsciiTraceHelper ascii;
   lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
@@ -284,9 +357,9 @@ int main (int argc, char** argv)
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::SixLowPanNetDevice/TxPre",
                     MakeCallback (&SixLowCallback));
 
-//  Simulator::Schedule (interval, &PrintResults, interval);
+  Simulator::Schedule (interval, &PrintResults, interval);
 
-  Simulator::Stop (Seconds (50001));
+  Simulator::Stop (Seconds (stopTime));
   Simulator::Run ();
 
 //  Ptr<Packet> foo = Create<Packet> ();
