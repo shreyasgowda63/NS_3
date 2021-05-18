@@ -946,6 +946,7 @@ WifiHelper::EnableLogComponents (void)
   LogComponentEnable ("HtPhy", LOG_LEVEL_ALL);
   LogComponentEnable ("HtPpdu", LOG_LEVEL_ALL);
   LogComponentEnable ("IdealWifiManager", LOG_LEVEL_ALL);
+  LogComponentEnable ("IntelWifiManager", LOG_LEVEL_ALL);
   LogComponentEnable ("InterferenceHelper", LOG_LEVEL_ALL);
   LogComponentEnable ("MacRxMiddle", LOG_LEVEL_ALL);
   LogComponentEnable ("MacTxMiddle", LOG_LEVEL_ALL);
