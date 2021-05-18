@@ -273,7 +273,6 @@ int main (int argc, char** argv)
                     apps.Add (ping6.Install (lo_nodes.Get (4)));
                   }
               }
-        Received a successful address registration for an address that we did already register. Increase the registration timeout
         else
           {
             std::cout << "PING: invalid option\n";
