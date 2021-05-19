@@ -25,6 +25,7 @@ This document is written in `reStructuredText <http://docutils.sourceforge.net/r
    brite
    buildings
    click
+   clipping
    csma
    dsdv
    dsr
