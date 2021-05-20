@@ -77,6 +77,13 @@ ConstantVelocityHelper::SetVelocity (const Vector &vel)
 }
 
 void
+ConstantVelocityHelper::SetVelocityOnly (const Vector &vel)
+{
+  NS_LOG_FUNCTION (this << vel);
+  m_velocity = vel;
+}
+
+void
 ConstantVelocityHelper::Update (void) const
 {
   NS_LOG_FUNCTION (this);
