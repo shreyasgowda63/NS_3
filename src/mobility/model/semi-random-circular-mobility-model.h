@@ -28,78 +28,80 @@
 #include "mobility-model.h"
 #include "constant-velocity-helper.h"
 
-namespace ns3{
+namespace ns3
+
+{
 /**
  * \ingroup mobility
  * \brief Semi random circular mobility model.
  *
- * Each node selects a turning radius from the beginning, 
- * uses the radius as the circular orbit, selects a rotation angle 
- * and movement speed, after reaching the destination, pauses 
- * for a random time, and continues to select a new rotation angle and speed. 
- * After a round of movement, select a new turning radius and Speed, 
+ * Each node selects a turning radius from the beginning,
+ * uses the radius as the circular orbit, selects a rotation angle
+ * and movement speed, after reaching the destination, pauses
+ * for a random time, and continues to select a new rotation angle and speed.
+ * After a round of movement, select a new turning radius and Speed,
  * move to the new position in a uniform linear motion, switch to the new track,
  * and continue to move according to the original rules.
  *
- * The SRCM model is suitable for simulating UAVs hovering over a specific location gathering information. 
+ * The SRCM model is suitable for simulating UAVs hovering over a specific location gathering information.
  *
  */
-class SemiRandomCircularMobilityModel: public MobilityModel
+class SemiRandomCircularMobilityModel : public MobilityModel
 {
 public:
-    /**
-     * Register this type with the TypeId system.
-     * \return the object TypeId
-     */
-    static TypeId GetTypeId (void);
-    SemiRandomCircularMobilityModel(void);
+  /**
+   * Register this type with the TypeId system.
+   * \return the object TypeId
+   */
+  static TypeId GetTypeId (void);
+  SemiRandomCircularMobilityModel (void);
 
 private:
-    //virtual void DoDispose (void);
-    virtual void DoInitialize (void);
-    void DoInitializePrivate(void);
+  //virtual void DoDispose (void);
+  virtual void DoInitialize (void);
+  void DoInitializePrivate (void);
 
-    /**
-     * After pause or after init, select a new turing angle and begin walk.
-     */
-    void DoWalk();
-    /**
-     * Within a truning angle, move the default interval, maybe finish moving a circle or finish moving a turning angle.
-     */
-    void MoveInterval(double lastTimeValue, double moveTime, bool finishCircle);
-    /**
-     * After moving a turning angle, pause and select a new turning angle, continue to move.
-     */
-    void PauseAndDowalk();
-    /**
-     * After finish moving a circle, pause and reset a new turning radius.
-     */
-    void PauseAndResetTurnRadius();
-    /**
-     * Do reset turning radius, and move to the new track with the default interval.
-     */
-    void ResetTurnRadius(double distance, bool beginReset);
-    /**
-     * Within a turning angle, calculate actual move interval for the next step, and check if the node has finished move a circle.
-     */
-    double CalculateMoveTime(double& lastTimeValue, bool& finishCircle);
+  /**
+   * After pause or after init, select a new turing angle and begin walk.
+   */
+  void DoWalk ();
+  /**
+   * Within a truning angle, move the default interval, maybe finish moving a circle or finish moving a turning angle.
+   */
+  void MoveInterval (double lastTimeValue, double moveTime, bool finishCircle);
+  /**
+   * After moving a turning angle, pause and select a new turning angle, continue to move.
+   */
+  void PauseAndDowalk ();
+  /**
+   * After finish moving a circle, pause and reset a new turning radius.
+   */
+  void PauseAndResetTurnRadius ();
+  /**
+   * Do reset turning radius, and move to the new track with the default interval.
+   */
+  void ResetTurnRadius (double distance, bool beginReset);
+  /**
+   * Within a turning angle, calculate actual move interval for the next step, and check if the node has finished move a circle.
+   */
+  double CalculateMoveTime (double& lastTimeValue, bool& finishCircle);
 
-    virtual Vector DoGetPosition (void) const;
-    virtual void DoSetPosition (const Vector &position);
-    virtual Vector DoGetVelocity (void) const;
-    virtual int64_t DoAssignStreams (int64_t stream);
+  virtual Vector DoGetPosition (void) const;
+  virtual void DoSetPosition (const Vector &position);
+  virtual Vector DoGetVelocity (void) const;
+  virtual int64_t DoAssignStreams (int64_t stream);
 
-    Ptr<UniformRandomVariable> m_angle; //!< random variable to generate turning angle
-    Ptr<RandomVariableStream> m_speed; //!< random variable to generate speeds
-    Ptr<RandomVariableStream> m_pause; //!< random variable to generate pauses
-    Ptr<RandomVariableStream> m_radius; //!< random variable to generate truning radius
-    EventId m_event; //!< event ID of next scheduled event
-    ConstantVelocityHelper m_helper; //!< helper for velocity computations
-    double m_r; //!< actual turning radius
-    double m_a; //!< actual turing angle
-    double m_interval; //!< move interval
-    double m_s; //!< actual moving speed
-    Vector m_startVector; //!< Initial turning radius vector on current track
+  Ptr<RandomVariableStream> m_angle;   //!< random variable to generate turning angle(degree)
+  Ptr<RandomVariableStream> m_speed;   //!< random variable to generate speeds
+  Ptr<RandomVariableStream> m_pause;   //!< random variable to generate pauses
+  Ptr<RandomVariableStream> m_radius;   //!< random variable to generate truning radius
+  EventId m_event;   //!< event ID of next scheduled event
+  ConstantVelocityHelper m_helper;   //!< helper for velocity computations
+  double m_r;   //!< actual turning radius
+  double m_a;   //!< actual turing angle(radian)
+  double m_interval;   //!< move interval
+  double m_s;   //!< actual moving speed
+  Vector m_startVector;   //!< Initial turning radius vector on current track
 };
 
 }
