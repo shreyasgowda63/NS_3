@@ -350,9 +350,9 @@ HeRu::FindOverlappingRu (uint16_t bw, RuSpec referenceRu, RuType searchedRuType)
       numRusPer80Mhz = numRus;
     }
 
-  std::size_t index = 1;
   for (const auto primary80Mhz : primary80MhzFlags)
     {
+      std::size_t index = 1;
       searchedRu.primary80MHz = primary80Mhz;
       for (std::size_t indexPer80Mhz = 1; indexPer80Mhz <= numRusPer80Mhz; ++indexPer80Mhz, ++index)
         {
