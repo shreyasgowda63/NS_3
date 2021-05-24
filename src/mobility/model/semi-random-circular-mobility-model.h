@@ -38,8 +38,8 @@ namespace ns3
  * Each node selects a turning radius from the beginning,
  * uses the radius as the circular orbit, selects a rotation angle
  * and movement speed, after reaching the destination, pauses
- * for a random time, and continues to select a new rotation angle and speed.
- * After a round of movement, select a new turning radius and Speed,
+ * for a random time, and continues to select new rotation angle and speed.
+ * After a round of movement, select new turning radius, flying height and Speed,
  * move to the new position in a uniform linear motion, switch to the new track,
  * and continue to move according to the original rules.
  *
@@ -102,7 +102,6 @@ private:
   double m_a;   //!< actual turing angle(radian)
   double m_interval;   //!< move interval
   double m_s;   //!< actual moving speed
-  double m_h;   //!< actual flying height
   Vector m_startVector;   //!< Initial turning radius vector on current track
 };
 

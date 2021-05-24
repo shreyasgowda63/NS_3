@@ -92,7 +92,7 @@ SemiRandomCircularMobilityModel::DoInitializePrivate (void)
   m_startVector.y = initPos.y;
   m_startVector.z = 0.0;
   m_r = m_startVector.GetLength ();
-  m_h = initPos.z;
+  m_startVector.z = initPos.z;
   m_a = 0.0;
   DoWalk ();
 }
@@ -223,7 +223,7 @@ SemiRandomCircularMobilityModel::ResetTurnRadiusAndHeight (double distance, bool
       double newRadius = m_radius->GetValue ();
       double newHeight = m_height->GetValue ();
       const Vector newStartPos (m_startVector.x / m_r * newRadius, m_startVector.y / m_r * newRadius, newHeight);
-      const Vector oldToNew (newStartPos.x - m_startVector.x, newStartPos.y - m_startVector.y, newHeight - m_h);
+      const Vector oldToNew (newStartPos.x - m_startVector.x, newStartPos.y - m_startVector.y, newHeight - m_startVector.z);
 
       m_s = m_speed->GetValue ();
       const Vector velocity (oldToNew.x / oldToNew.GetLength () * m_s,
@@ -233,12 +233,9 @@ SemiRandomCircularMobilityModel::ResetTurnRadiusAndHeight (double distance, bool
 
       m_helper.Unpause ();
       //NotifyCourseChange ();
-      m_startVector.z = m_h;
       distance = CalculateDistance (m_startVector, newStartPos);
       m_r = newRadius;
       m_startVector = newStartPos;
-      m_h = newHeight;
-      //m_startVector.z = 0.0;
     }
   else
     {
