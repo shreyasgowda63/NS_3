@@ -78,9 +78,9 @@ private:
    */
   void PauseAndResetTurnRadius ();
   /**
-   * Do reset turning radius, and move to the new track with the default interval.
+   * Do reset turning radius and flying height, then move to the new track with the default interval.
    */
-  void ResetTurnRadius (double distance, bool beginReset);
+  void ResetTurnRadiusAndHeight (double distance, bool beginReset);
   /**
    * Within a turning angle, calculate actual move interval for the next step, and check if the node has finished move a circle.
    */
@@ -95,12 +95,14 @@ private:
   Ptr<RandomVariableStream> m_speed;   //!< random variable to generate speeds
   Ptr<RandomVariableStream> m_pause;   //!< random variable to generate pauses
   Ptr<RandomVariableStream> m_radius;   //!< random variable to generate truning radius
+  Ptr<RandomVariableStream> m_height;   //!< random variable to generate flying height
   EventId m_event;   //!< event ID of next scheduled event
   ConstantVelocityHelper m_helper;   //!< helper for velocity computations
   double m_r;   //!< actual turning radius
   double m_a;   //!< actual turing angle(radian)
   double m_interval;   //!< move interval
   double m_s;   //!< actual moving speed
+  double m_h;   //!< actual flying height
   Vector m_startVector;   //!< Initial turning radius vector on current track
 };
 

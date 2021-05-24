@@ -33,7 +33,8 @@ NS_OBJECT_ENSURE_REGISTERED (SemiRandomCircularMobilityModel);
 
 SemiRandomCircularMobilityModel::SemiRandomCircularMobilityModel () :
   m_interval (0.1)
-{}
+{
+}
 
 TypeId
 SemiRandomCircularMobilityModel::GetTypeId (void)
@@ -57,6 +58,10 @@ SemiRandomCircularMobilityModel::GetTypeId (void)
     .AddAttribute ("TuringRadius", "A random variable to control the radius (m).",
                    StringValue ("ns3::UniformRandomVariable[Min=0.01|Max=200.0]"),
                    MakePointerAccessor (&SemiRandomCircularMobilityModel::m_radius),
+                   MakePointerChecker<RandomVariableStream> ())
+    .AddAttribute ("FlyingHeight", "A random variable to control the flying height (m).",
+                   StringValue ("ns3::UniformRandomVariable[Min=80.0|Max=100.0]"),
+                   MakePointerAccessor (&SemiRandomCircularMobilityModel::m_height),
                    MakePointerChecker<RandomVariableStream> ())
   ;
   return tid;
@@ -83,9 +88,11 @@ void
 SemiRandomCircularMobilityModel::DoInitializePrivate (void)
 {
   Vector initPos = m_helper.GetCurrentPosition ();
-  m_startVector = initPos;
-  const Vector o (0.0,0.0,0.0);
-  m_r = CalculateDistance (o, initPos);
+  m_startVector.x = initPos.x;
+  m_startVector.y = initPos.y;
+  m_startVector.z = 0.0;
+  m_r = m_startVector.GetLength ();
+  m_h = initPos.z;
   m_a = 0.0;
   DoWalk ();
 }
@@ -202,11 +209,11 @@ SemiRandomCircularMobilityModel::PauseAndResetTurnRadius ()
   m_helper.Pause ();
   Time pause = Seconds (m_pause->GetValue ());
   m_event.Cancel ();
-  m_event = Simulator::Schedule (pause, &SemiRandomCircularMobilityModel::ResetTurnRadius, this, 0.0, true);
+  m_event = Simulator::Schedule (pause, &SemiRandomCircularMobilityModel::ResetTurnRadiusAndHeight, this, 0.0, true);
 }
 
 void
-SemiRandomCircularMobilityModel::ResetTurnRadius (double distance, bool beginReset)
+SemiRandomCircularMobilityModel::ResetTurnRadiusAndHeight (double distance, bool beginReset)
 {
   //Pause:update lasttime but not notify
   m_helper.Update ();
@@ -214,29 +221,24 @@ SemiRandomCircularMobilityModel::ResetTurnRadius (double distance, bool beginRes
     {
       m_a = 0.0;
       double newRadius = m_radius->GetValue ();
-      const Vector newStartPos (m_startVector.x / m_r * newRadius, m_startVector.y / m_r * newRadius, 0.0);
+      double newHeight = m_height->GetValue ();
+      const Vector newStartPos (m_startVector.x / m_r * newRadius, m_startVector.y / m_r * newRadius, newHeight);
+      const Vector oldToNew (newStartPos.x - m_startVector.x, newStartPos.y - m_startVector.y, newHeight - m_h);
 
       m_s = m_speed->GetValue ();
-      if (newRadius > m_r)
-        {
-          const Vector velocity (m_startVector.x / m_r * m_s,
-                                 m_startVector.y / m_r * m_s,
-                                 0.0);
-          m_helper.SetVelocityOnly (velocity);
-        }
-      else
-        {
-          const Vector velocity (-m_startVector.x / m_r * m_s,
-                                 -m_startVector.y / m_r * m_s,
-                                 0.0);
-          m_helper.SetVelocityOnly (velocity);
-        }
+      const Vector velocity (oldToNew.x / oldToNew.GetLength () * m_s,
+                             oldToNew.y / oldToNew.GetLength () * m_s,
+                             oldToNew.z / oldToNew.GetLength () * m_s);
+      m_helper.SetVelocityOnly (velocity);
 
       m_helper.Unpause ();
       //NotifyCourseChange ();
+      m_startVector.z = m_h;
       distance = CalculateDistance (m_startVector, newStartPos);
       m_r = newRadius;
       m_startVector = newStartPos;
+      m_h = newHeight;
+      //m_startVector.z = 0.0;
     }
   else
     {
@@ -261,7 +263,7 @@ SemiRandomCircularMobilityModel::ResetTurnRadius (double distance, bool beginRes
           distance -= m_interval * m_s;
         }
       m_event.Cancel ();
-      m_event = Simulator::Schedule (Seconds (moveTime), &SemiRandomCircularMobilityModel::ResetTurnRadius, this, distance, false);
+      m_event = Simulator::Schedule (Seconds (moveTime), &SemiRandomCircularMobilityModel::ResetTurnRadiusAndHeight, this, distance, false);
     }
 }
 
