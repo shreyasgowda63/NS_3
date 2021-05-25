@@ -56,9 +56,14 @@ const PhyEntity::ModulationLookupTable DsssPhy::m_dsssModulationLookupTable {
 };
 /* *NS_CHECK_STYLE_ON* */
 
-// DSSS rates in bits per second
+/// DSSS rates in bits per second
 static const std::array<uint64_t, 4> s_dsssRatesBpsList = {1000000,  2000000, 5500000, 11000000};
 
+/**
+ * Get the array of possible DSSS rates.
+ *
+ * \return the DSSS rates in bits per second
+ */
 const std::array<uint64_t, 4>& GetDsssRatesBpsList (void)
 {
   return s_dsssRatesBpsList;
@@ -261,14 +266,14 @@ DsssPhy::Get ## x (void) \
 { \
   static WifiMode mode = CreateDsssMode (#x, WIFI_MOD_CLASS_ ## m); \
   return mode; \
-} \
+}; \
 
 // Clause 15 rates (DSSS)
-GET_DSSS_MODE (DsssRate1Mbps,   DSSS);
-GET_DSSS_MODE (DsssRate2Mbps,   DSSS);
+GET_DSSS_MODE (DsssRate1Mbps,   DSSS)
+GET_DSSS_MODE (DsssRate2Mbps,   DSSS)
 // Clause 16 rates (HR/DSSS)
-GET_DSSS_MODE (DsssRate5_5Mbps, HR_DSSS);
-GET_DSSS_MODE (DsssRate11Mbps,  HR_DSSS);
+GET_DSSS_MODE (DsssRate5_5Mbps, HR_DSSS)
+GET_DSSS_MODE (DsssRate11Mbps,  HR_DSSS)
 #undef GET_DSSS_MODE
 
 WifiMode
