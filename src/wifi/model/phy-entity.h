@@ -433,6 +433,14 @@ public:
   virtual uint16_t GetMeasurementChannelWidth (const Ptr<const WifiPpdu> ppdu) const;
 
   /**
+   * Return the channel width used in the reception spectrum model.
+   *
+   * \param txVector the TXVECTOR of the PPDU that is being received
+   * \return the channel width (in MHz) used for RxSpectrumModel
+   */
+  virtual uint16_t GetRxChannelWidth (const WifiTxVector& txVector) const;
+
+  /**
    * This function is called by SpectrumWifiPhy to send
    * the PPDU while performing amendment-specific actions.
    * \see SpectrumWifiPhy::StartTx
@@ -728,14 +736,14 @@ protected:
    * Create an event using WifiPhy's InterferenceHelper class.
    * Wrapper used by child classes.
    *
-   * \copydoc InterferenceHelper::Add(Ptr<const WifiPpdu>, WifiTxVector, Time, RxPowerWattPerChannelBand, bool)
+   * \copydoc InterferenceHelper::Add
    */
   Ptr<Event> CreateInterferenceEvent (Ptr<const WifiPpdu> ppdu, const WifiTxVector& txVector, Time duration, RxPowerWattPerChannelBand rxPower, bool isStartOfdmaRxing = false);
   /**
    * Update an event in WifiPhy's InterferenceHelper class.
    * Wrapper used by child classes.
    *
-   * \copydoc InterferenceHelper::UpdateEvent(Ptr<Event>, RxPowerWattPerChannelBand)
+   * \copydoc InterferenceHelper::UpdateEvent
    */
   void UpdateInterferenceEvent (Ptr<Event> event, RxPowerWattPerChannelBand rxPower);
   /**
