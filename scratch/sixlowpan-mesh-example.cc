@@ -156,6 +156,7 @@ int main (int argc, char** argv)
 	bool useMeshUnder = false;
 	bool useLLA = false;
 	bool useGUA = false;
+	bool printNeighborCache = false;
 	std::string useUdpFrom = "";
 	std::string usePingOn = "";
 	double stopTime;
@@ -165,6 +166,7 @@ int main (int argc, char** argv)
 	cmd.AddValue ("Mesh", "Use mesh-under in the network", useMeshUnder);
 	cmd.AddValue ("Udp", "Send one UDP packet from (6LBR, 6LN, nothing)", useUdpFrom);
 	cmd.AddValue ("Ping", "Install Ping app on (6LBR, 6LN, nothing)", usePingOn);
+	cmd.AddValue ("NeighborCache", "Print the neighbor cache entries", printNeighborCache);
 	cmd.AddValue ("LLA", "Use link-local addresses for the communication", useLLA);
 	cmd.AddValue ("GUA", "Use global addresses for the communication", useGUA);
 	cmd.AddValue ("StopTime", "Simulation stop time (seconds)", stopTime);
@@ -355,12 +357,12 @@ int main (int argc, char** argv)
   lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
   lrWpanHelper.EnablePcapAll (std::string ("sixlowpan-mesh-example"), true);
 
-//  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
-//  for (int var = 0; var < 4; ++var)
-//  {
-//	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
+  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
+  for (int var = 0; var < 4; ++var)
+  {
+	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
 //	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
-//  }
+  }
 
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
                     MakeCallback (&PhyCallback));
