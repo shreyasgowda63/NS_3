@@ -86,6 +86,7 @@
 
 
 namespace ns3 {
+class Time;
 
 /**
  *  Logging severity classes and levels.
@@ -135,6 +136,7 @@ enum LogLevel
  * \param [in] level The logging level.
  */
 void LogComponentEnable (char const *name, enum LogLevel level);
+void LogComponentEnable (std::string name, enum LogLevel level);
 
 /**
  * Enable the logging output for all registered log components.
@@ -157,6 +159,7 @@ void LogComponentEnableAll (enum LogLevel level);
  * \param [in] level The logging level.
  */
 void LogComponentDisable (char const *name, enum LogLevel level);
+void LogComponentDisable (std::string name, enum LogLevel level);
 
 /**
  * Disable all logging for all components.
@@ -432,6 +435,8 @@ private:
   std::string m_name;    //!< LogComponent name.
   std::string m_file;    //!< File defining this LogComponent.
 
+  static Time m_tLogStart;
+  static Time m_tLogEnd;
 };  // class LogComponent
 
 /**

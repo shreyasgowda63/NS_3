@@ -189,7 +189,7 @@ Time::Time (const std::string& s)
         }
       else
         {
-          NS_ABORT_MSG ("Can't Parse Time " << s);
+          throw std::runtime_error ("Can't Parse Time " + s);
         }
     }
   else
