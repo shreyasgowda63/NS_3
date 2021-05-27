@@ -67,13 +67,18 @@ std::map<uint8_t, uint32_t> icmpTypeCount;
 uint32_t udpCount = 0;
 uint32_t otherL4Count = 0;
 
+uint32_t unicastcount = 0;
+uint32_t multicastcount = 0;
+
 void
 PrintResults (Time interval)
 {
-  std::cout << Now().GetSeconds () << "\t";
-  std::cout << pktCount << "\t" << pktTotalSize << "\t";
-  std::cout << ackCount << "\t" << ackTotalSize << "\t";
-  std::cout << unkCount << "\t" << unkTotalSize << std::endl;
+	std::cout << Now().GetSeconds () << "\t";
+	std::cout << pktCount << "\t" << pktTotalSize << "\t";
+	std::cout << ackCount << "\t" << ackTotalSize << "\t";
+	std::cout << unkCount << "\t" << unkTotalSize << "\t";
+	std::cout << unicastcount << "\t" <<multicastcount << "\t";
+	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
 
   pktCount = 0;
   pktTotalSize = 0;
@@ -118,23 +123,32 @@ PhyCallback (std::string path, Ptr<const Packet> packet)
 void
 SixLowCallback (std::string path, Ptr<const Packet> packet, Ptr<SixLowPanNetDevice> netDev, uint32_t index)
 {
-  Ipv6Header ipv6Hdr;
-  Ptr<Packet> pktCpy = packet->Copy ();
-  pktCpy->RemoveHeader (ipv6Hdr);
-  if (ipv6Hdr.GetNextHeader () == UdpL4Protocol::PROT_NUMBER)
-    {
-      udpCount ++;
-    }
-  else if (ipv6Hdr.GetNextHeader () == Icmpv6L4Protocol::PROT_NUMBER)
-    {
-      Icmpv6Header icmpHdr;
-      pktCpy->RemoveHeader (icmpHdr);
-      icmpTypeCount[icmpHdr.GetType ()] ++;
-    }
-  else
-    {
-      otherL4Count ++;
-    }
+	Ipv6Header ipv6Hdr;
+	Ipv6Address address;
+	Ptr<Packet> pktCpy = packet->Copy ();
+	pktCpy->RemoveHeader (ipv6Hdr);
+	if (ipv6Hdr.GetNextHeader () == UdpL4Protocol::PROT_NUMBER)
+	{
+		udpCount ++;
+	}
+	else if (ipv6Hdr.GetNextHeader () == Icmpv6L4Protocol::PROT_NUMBER)
+	{
+		Icmpv6Header icmpHdr;
+		pktCpy->RemoveHeader (icmpHdr);
+		icmpTypeCount[icmpHdr.GetType ()] ++;
+	}
+	else
+	{
+		otherL4Count ++;
+	}
+	if (ipv6Hdr.GetDestinationAddress().IsMulticast ())
+	{
+		multicastcount++;
+	}
+	else
+	{
+		unicastcount++;
+	}
 
 //std::cout << Now ().As (Time::S) << " Tx something of size (Packets that IP did send to 6LoWPAN) " << packet->GetSize () << " - " << *packet << std::endl;
 }
@@ -144,6 +158,7 @@ int main (int argc, char** argv)
 	bool useMeshUnder = false;
 	bool useLLA = false;
 	bool useGUA = false;
+	bool printNeighborCache = false;
 	std::string useUdpFrom = "";
 	std::string usePingOn = "";
 	double stopTime;
@@ -153,6 +168,7 @@ int main (int argc, char** argv)
 	cmd.AddValue ("Mesh", "Use mesh-under in the network", useMeshUnder);
 	cmd.AddValue ("Udp", "Send one UDP packet from (6LBR, 6LN, nothing)", useUdpFrom);
 	cmd.AddValue ("Ping", "Install Ping app on (6LBR, 6LN, nothing)", usePingOn);
+	cmd.AddValue ("NeighborCache", "Print the neighbor cache entries", printNeighborCache);
 	cmd.AddValue ("LLA", "Use link-local addresses for the communication", useLLA);
 	cmd.AddValue ("GUA", "Use global addresses for the communication", useGUA);
 	cmd.AddValue ("StopTime", "Simulation stop time (seconds)", stopTime);

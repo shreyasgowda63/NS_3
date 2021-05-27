@@ -126,7 +126,7 @@ int main (int argc, char** argv)
   sixlowpan.InstallSixLowPanNdBorderRouter (devices.Get (0), "2001::");
   sixlowpan.InstallSixLowPanNdNode (devices.Get (1));
 
-//  sixlowpan.Set6LowPanBorderRouter (devices.Get (0));
+  //  sixlowpan.Set6LowPanBorderRouter (devices.Get (0));
   sixlowpan.SetAdvertisedPrefix (devices.Get (0), Ipv6Prefix ("2001::", 64));
   //  sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2002::", 64));
   sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001::", 64));
