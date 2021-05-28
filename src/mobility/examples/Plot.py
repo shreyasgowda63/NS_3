@@ -11,19 +11,11 @@ def read_file(file_path):
     return data
 
 
-
 def plotfig(X, Y, Z):
     fig = plt.figure()
     ax = Axes3D(fig)
     ax.scatter3D(X, Y, Z, cmap='blue')
     ax.plot3D(X, Y, Z, 'green')
-    plt.show()
-
-
-def plot2d(X, Y):
-    fig = plt.figure()
-    #plt.scatter(X, Y, cmap='blue')
-    plt.plot(X, Y, 'green')
     plt.show()
 
 
@@ -78,10 +70,7 @@ if __name__ == "__main__":
     Y = np.asarray(Y)
     Z = np.asarray(Z)
 
-
-
-    plot2d(X,Y)
-    #plotfig(X, Y, Z)
+    plotfig(X, Y, Z)
 
     #plotgif(X, Y, Z)
 
