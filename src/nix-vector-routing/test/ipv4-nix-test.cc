@@ -33,9 +33,13 @@
 #include "ns3/ipv4-nix-vector-helper.h"
 
 using namespace ns3;
+/**
+ * \ingroup nix-vector-routing
+ * \defgroup nix-vector-routing-test Nix-Vector Routing Tests
+ */
 
 /**
- * \ingroup internet-test
+ * \ingroup nix-vector-routing-test
  * \ingroup tests
  *
  * The topology is of the form:
@@ -63,6 +67,8 @@ class Ipv4NixVectorRoutingTest : public TestCase
    * \param to Destination address.
    */
   void SendData (Ptr<Socket> socket, std::string to);
+
+  void DoCheckRoutePath (std::string actual_path, std::string expected_path);
 
 public:
   virtual void DoRun (void);
@@ -105,8 +111,6 @@ Ipv4NixVectorRoutingTest::SendData (Ptr<Socket> socket, std::string to)
   m_receivedPacket = Create<Packet> ();
   Simulator::ScheduleWithContext (socket->GetNode ()->GetId (), Seconds (60),
                                   &Ipv4NixVectorRoutingTest::DoSendData, this, socket, to);
-  Simulator::Stop (Seconds (66));
-  Simulator::Run ();
 }
 
 void
@@ -184,7 +188,23 @@ Ipv4NixVectorRoutingTest::DoRun (void)
   txSocket->SetAllowBroadcast (true);
 
   SendData (txSocket, "10.1.3.2");
+
+  std::ostringstream food;
+  Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> (&food);
+  nixRouting.PrintRoutingPathAt (Seconds (3), nSrcnA.Get (0), iCiDst.GetAddress (1), routingStream);
+
+  std::string path_nSrc_nA_nC_nDst = "Time: +3s, Nix Routing\n"
+                                     "Route Path: (Node 0 to Node 4, Nix Vector: 01001)\n"
+                                     "10.1.0.1 (Node 0)   ---->   10.1.0.2 (Node 1)\n"
+                                     "10.1.4.1 (Node 1)   ---->   10.1.4.2 (Node 3)\n"
+                                     "10.1.3.1 (Node 3)   ---->   10.1.3.2 (Node 4)\n\n";
+
+  Simulator::Stop (Seconds (66));
+  Simulator::Run ();
+
   NS_TEST_EXPECT_MSG_EQ (m_receivedPacket->GetSize (), 123, "IPv4 Nix-Vector Routing should work.");
+  std::cout << food.str () << "\n";
+  NS_TEST_EXPECT_MSG_EQ (food.str (), path_nSrc_nA_nC_nDst, "Routing Path is incorrect.");
 
   Simulator::Destroy ();
 }
