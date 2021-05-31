@@ -70,8 +70,11 @@ public:
  */
 static PrintList g_printList;
 
-static Time m_tLogStart = Time::Min ();
-static Time m_tLogEnd = Time::Max ();
+Time LogComponent::m_tLogStart = Time::Min ();
+Time LogComponent::m_tLogEnd = Time::Max ();
+std::list<std::pair<LogComponent, LogLevel>> LogComponent::m_envLogs;
+bool LogComponent::m_envLogsCollected = false;
+bool LogComponent::m_envLogsActivated = false;
 
 /* static */
 LogComponent::ComponentList *
@@ -137,6 +140,105 @@ GetLogComponent (const std::string name)
       NS_FATAL_ERROR ("Log component \"" << name << "\" does not exist.");
   }
   return *ret;
+}
+
+LogLevel
+GetLogLevel (const std::string levelStr)
+{
+  int level = 0;
+  std::string::size_type cur_lev;
+  std::string::size_type next_lev = -1;
+  bool pre_pipe = true; // before the first '|', enables positional 'all', '*'
+  do
+    {
+      cur_lev = next_lev + 1;
+      next_lev = levelStr.find ("|", cur_lev);
+      std::string lev = levelStr.substr (cur_lev, next_lev - cur_lev);
+      if (lev == "error")
+        {
+          level |= LOG_ERROR;
+        }
+      else if (lev == "warn")
+        {
+          level |= LOG_WARN;
+        }
+      else if (lev == "debug")
+        {
+          level |= LOG_DEBUG;
+        }
+      else if (lev == "info")
+        {
+          level |= LOG_INFO;
+        }
+      else if (lev == "function")
+        {
+          level |= LOG_FUNCTION;
+        }
+      else if (lev == "logic")
+        {
+          level |= LOG_LOGIC;
+        }
+      else if (pre_pipe && ((lev == "all") || (lev == "*")))
+        {
+          level |= LOG_LEVEL_ALL;
+        }
+      else if ((lev == "prefix_func") || (lev == "func"))
+        {
+          level |= LOG_PREFIX_FUNC;
+        }
+      else if ((lev == "prefix_time") || (lev == "time"))
+        {
+          level |= LOG_PREFIX_TIME;
+        }
+      else if ((lev == "prefix_node") || (lev == "node"))
+        {
+          level |= LOG_PREFIX_NODE;
+        }
+      else if ((lev == "prefix_level") || (lev == "level"))
+        {
+          level |= LOG_PREFIX_LEVEL;
+        }
+      else if ((lev == "prefix_all") || (!pre_pipe && ((lev == "all") || (lev == "*"))))
+        {
+          level |= LOG_PREFIX_ALL;
+        }
+      else if (lev == "level_error")
+        {
+          level |= LOG_LEVEL_ERROR;
+        }
+      else if (lev == "level_warn")
+        {
+          level |= LOG_LEVEL_WARN;
+        }
+      else if (lev == "level_debug")
+        {
+          level |= LOG_LEVEL_DEBUG;
+        }
+      else if (lev == "level_info")
+        {
+          level |= LOG_LEVEL_INFO;
+        }
+      else if (lev == "level_function")
+        {
+          level |= LOG_LEVEL_FUNCTION;
+        }
+      else if (lev == "level_logic")
+        {
+          level |= LOG_LEVEL_LOGIC;
+        }
+      else if (lev == "level_all")
+        {
+          level |= LOG_LEVEL_ALL;
+        }
+      else if (lev == "**")
+        {
+          level |= LOG_LEVEL_ALL | LOG_PREFIX_ALL;
+        }
+
+      pre_pipe = false;
+  } while (next_lev != std::string::npos);
+
+  return (enum LogLevel) level;
 }
 
 void
@@ -399,11 +501,11 @@ LogComponentEnable (char const *name, enum LogLevel level)
     }
 }
 
-void
-LogComponentEnable (std::string name, enum LogLevel level)
-{
-  LogComponentEnable (name.c_str (), level);
-}
+// void
+// LogComponentEnable (std::string name, enum LogLevel level)
+// {
+//   LogComponentEnable (name.c_str (), level);
+// }
 
 void
 LogComponentEnableAll (enum LogLevel level)
@@ -420,6 +522,7 @@ void
 LogComponentDisable (char const *name, enum LogLevel level)
 {
   LogComponent::ComponentList *components = LogComponent::GetComponentList ();
+  std::cout << "Looking for component: " << std::string (name) << std::endl;
   for (LogComponent::ComponentList::const_iterator i = components->begin ();
        i != components->end (); i++)
     {
@@ -431,11 +534,11 @@ LogComponentDisable (char const *name, enum LogLevel level)
     }
 }
 
-void
-LogComponentDisable (std::string name, enum LogLevel level)
-{
-  LogComponentDisable (name.c_str (), level);
-}
+// void
+// LogComponentDisable (std::string name, enum LogLevel level)
+// {
+//   LogComponentDisable (name.c_str (), level);
+// }
 
 void
 LogComponentDisableAll (enum LogLevel level)
@@ -581,14 +684,14 @@ CheckEnvironmentVariables (void)
               Time t (tmp);
               if (!tLogStartSet)
                 {
-                  m_tLogStart = t; // TODO check simulator now
-                  dtLogStart = m_tLogStart - Simulator::Now ();
+                  LogComponent::m_tLogStart = t; // TODO check simulator now
+                  dtLogStart = LogComponent::m_tLogStart - Simulator::Now ();
                   tLogStartSet = true;
                 }
               else
                 {
-                  m_tLogEnd = t;
-                  dtLogEnd = m_tLogEnd - Simulator::Now ();
+                  LogComponent::m_tLogEnd = t;
+                  dtLogEnd = LogComponent::m_tLogEnd - Simulator::Now ();
                 }
               isTimeField = true;
           } catch (std::runtime_error &e)
@@ -602,29 +705,37 @@ CheckEnvironmentVariables (void)
               component = tmp;
               if (ComponentExists (component) || component == "*" || component == "***")
                 {
-                  LogComponent lc = GetLogComponent (component);
-                  LogLevel level = LOG_ALL; // TODO extract log level from current log component
+                  if (!LogComponent::m_envLogsCollected)
+                    {
+                      LogComponent::m_envLogs.push_back (
+                          std::make_pair (GetLogComponent (component), LOG_ALL));
+                    }
 
-                  if (Simulator::Now () < m_tLogStart)
-                    {
-                      lc.Disable (LOG_ALL);
-                      std::cout << "Enabling and disabling " << component
-                                << " (c_str: " << component.c_str () << ")" << std::endl;
-                      Simulator::Schedule (dtLogStart, &LogComponentEnable, component, level);
-                      Simulator::Schedule (dtLogEnd, &LogComponentDisable, component, level);
-                    }
-                  else if (m_tLogStart <= Simulator::Now () && Simulator::Now () < m_tLogEnd)
-                    {
-                      std::cout << "Disabling " << component
-                                << " (c_str: " << component.c_str () << ")" << std::endl;
-                      Simulator::Schedule (dtLogEnd, &LogComponentDisable, component,
-                                           level);
-                    }
-                  else
-                    {
-                      lc.Disable (LOG_ALL);
-                    }
-                  return;
+                  // LogComponent lc = GetLogComponent (component);
+                  // LogLevel level = LOG_ALL; // TODO extract log level from current log component
+
+                  // if (dtLogEnd.IsPositive())
+                  //   {
+                  //     Simulator::Schedule (dtLogEnd, &LogComponentDisableAll, level);
+                  //   }
+
+                  // if (Simulator::Now () < m_tLogStart)
+                  //   {
+                  //     lc.Disable (LOG_ALL);
+                  //     std::cout << "Enabling and disabling " << component
+                  //               << " (c_str: " << component.c_str () << ")" << std::endl;
+                  //     Simulator::Schedule (dtLogStart, &LogComponentEnable, lc.Name(), level);
+                  //     Simulator::Schedule (dtLogEnd, &LogComponentDisable, lc.Name(), level);
+                  //   }
+                  // else if (m_tLogStart <= Simulator::Now () && Simulator::Now () < m_tLogEnd)
+                  //   {
+                  //     Simulator::Schedule (dtLogEnd, &LogComponentDisableAll, level);
+                  //   }
+                  // else
+                  //   {
+                  //     lc.Disable (LOG_ALL);
+                  //   }
+                  break;
                 }
               else
                 {
@@ -657,6 +768,12 @@ CheckEnvironmentVariables (void)
                       lev == "level_function" || lev == "level_logic" || lev == "level_all" ||
                       lev == "*" || lev == "**")
                     {
+
+                      if (!LogComponent::m_envLogsCollected)
+                        {
+                          LogComponent::m_envLogs.push_back (
+                              std::make_pair (GetLogComponent (component), GetLogLevel (lev)));
+                        }
                       continue;
                     }
                   else
@@ -677,8 +794,86 @@ CheckEnvironmentVariables (void)
             }
         }
       cur = next + 1; // parse next component
+
     }
+
+  // LogComponent::ComponentList *components = LogComponent::GetComponentList ();
+  // for (LogComponent::ComponentList::const_iterator it = components->begin ();
+  //      it != components->end (); it++)
+  //   {
+  //     LogComponent* const component = it->second;
+  //     // std::cout << "Enabling and disabling " << component->Name () << std::endl;
+  //     LogLevel level = LOG_ALL; // TODO extract log level from current log component
+
+  //     if (dtLogStart.IsPositive ())
+  //       {
+  //         component->Disable (LOG_ALL);
+  //         Simulator::Schedule (dtLogStart, &LogComponentEnable, component->Name(), level);
+  //         Simulator::Schedule (dtLogEnd, &LogComponentDisable, component->Name (), level);
+  //       }
+  //     else if (m_tLogStart <= Simulator::Now () && Simulator::Now () < m_tLogEnd)
+  //       {
+  //         Simulator::Schedule (dtLogEnd, &LogComponentDisableAll, level);
+  //       }
+  //     else
+  //       {
+  //         LogComponentDisableAll (LOG_ALL);
+  //       }
+  //   }
+
+  // if (dtLogEnd.IsPositive ())
+  //   {
+  //     Simulator::Schedule (dtLogEnd, &LogComponentDisableAll, LOG_ALL);
+  //   }
+
+  LogComponent::m_envLogsCollected = true;
+  LogComponent::ActivateEnvLogs ();
 }
+
+void
+LogComponent::ActivateEnvLogs (void)
+{
+  if (m_envLogsActivated)
+    {
+      return;
+    }
+
+  NS_ASSERT (m_tLogEnd >= m_tLogStart);
+
+  Time dtLogStart = m_tLogStart - Simulator::Now ();
+  Time dtLogEnd = m_tLogEnd - Simulator::Now ();
+
+  if (dtLogStart.IsPositive ())
+    {
+      // TODO check if still necessary
+      LogComponentDisableAll(LOG_ALL);
+
+      for (const auto &log : m_envLogs)
+        {
+          Simulator::Schedule (dtLogStart, &LogComponentEnable, log.first.Name (), log.second);
+          Simulator::Schedule (dtLogEnd, &LogComponentDisableAll, LOG_ALL);
+        }
+    }
+  else if (dtLogStart.IsStrictlyNegative () && dtLogEnd.IsPositive ())
+    {
+      for (const auto &log : m_envLogs)
+        {
+          LogComponentEnable (log.first.Name (), log.second);
+          Simulator::Schedule (dtLogEnd, &LogComponentDisableAll, LOG_ALL);
+        }
+    }
+  else if (dtLogEnd.IsStrictlyNegative ())
+    {
+      Simulator::Schedule (dtLogEnd, &LogComponentDisableAll, LOG_ALL);
+    }
+  else
+    {
+      NS_ABORT_MSG ("Unexpected state");
+    }
+
+  m_envLogsActivated = true;
+}
+
 void
 LogSetTimePrinter (TimePrinter printer)
 {

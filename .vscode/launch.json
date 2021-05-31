@@ -106,7 +106,7 @@
                 },
                 {
                     "name": "NS_LOG=",
-                    "value": "1s:1.5s:PointToPointChannel"
+                    "value": "1s:1.5s:PointToPointChannel=**"
                 }
             ],
             "externalConsole": true,

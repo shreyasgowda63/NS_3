@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <map>
 #include <vector>
+#include <list>
 
 #include "node-printer.h"
 #include "time-printer.h"
@@ -136,7 +137,7 @@ enum LogLevel
  * \param [in] level The logging level.
  */
 void LogComponentEnable (char const *name, enum LogLevel level);
-void LogComponentEnable (std::string name, enum LogLevel level);
+// void LogComponentEnable (std::string name, enum LogLevel level);
 
 /**
  * Enable the logging output for all registered log components.
@@ -159,7 +160,7 @@ void LogComponentEnableAll (enum LogLevel level);
  * \param [in] level The logging level.
  */
 void LogComponentDisable (char const *name, enum LogLevel level);
-void LogComponentDisable (std::string name, enum LogLevel level);
+// void LogComponentDisable (std::string name, enum LogLevel level);
 
 /**
  * Disable all logging for all components.
@@ -423,6 +424,13 @@ public:
    */
   static ComponentList * GetComponentList (void);
 
+  static void ActivateEnvLogs (void);
+  static Time m_tLogStart;
+  static Time m_tLogEnd;
+  static std::list<std::pair<LogComponent, LogLevel>> m_envLogs;
+  static bool m_envLogsCollected;
+  static bool m_envLogsActivated;
+
 private:
   /**
    * Parse the `NS_LOG` environment variable for options relating to this
@@ -434,10 +442,7 @@ private:
   int32_t     m_mask;    //!< Blocked LogLevels.
   std::string m_name;    //!< LogComponent name.
   std::string m_file;    //!< File defining this LogComponent.
-
-  static Time m_tLogStart;
-  static Time m_tLogEnd;
-};  // class LogComponent
+}; // class LogComponent
 
 /**
  * Get the LogComponent registered with the given name.
@@ -446,6 +451,7 @@ private:
  * \return a reference to the requested LogComponent
  */
 LogComponent & GetLogComponent (const std::string name);
+LogLevel GetLogLevel (const std::string lev);
 
 /**
  * Insert `, ` when streaming function arguments.
