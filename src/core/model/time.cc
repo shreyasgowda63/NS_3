@@ -189,7 +189,7 @@ Time::Time (const std::string& s)
         }
       else
         {
-          throw std::runtime_error ("Can't Parse Time " + s);
+          throw std::runtime_error ("Unable to parse Time string: \"" + s + "\"");
         }
     }
   else

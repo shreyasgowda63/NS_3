@@ -137,7 +137,6 @@ enum LogLevel
  * \param [in] level The logging level.
  */
 void LogComponentEnable (char const *name, enum LogLevel level);
-// void LogComponentEnable (std::string name, enum LogLevel level);
 
 /**
  * Enable the logging output for all registered log components.
@@ -160,7 +159,6 @@ void LogComponentEnableAll (enum LogLevel level);
  * \param [in] level The logging level.
  */
 void LogComponentDisable (char const *name, enum LogLevel level);
-// void LogComponentDisable (std::string name, enum LogLevel level);
 
 /**
  * Disable all logging for all components.
@@ -425,11 +423,12 @@ public:
   static ComponentList * GetComponentList (void);
 
   static void ActivateEnvLogs (void);
-  static Time m_tLogStart;
-  static Time m_tLogEnd;
-  static std::list<std::pair<LogComponent, LogLevel>> m_envLogs;
-  static bool m_envLogsCollected;
-  static bool m_envLogsActivated;
+
+  static Time m_tLogStart;  //!< Start time of logs
+  static Time m_tLogEnd;    //!< End time of logs
+  static std::list<std::pair<LogComponent, LogLevel>> m_envLogs; //!< Log components and levels parsed from NS_LOG environment variable
+  static bool m_envLogsCollected; //!< Flag: true if NS_LOG was parsed into m_envLogs
+  static bool m_envLogsActivated; //!< Flag: true if m_engLogs have been scheduled
 
 private:
   /**
@@ -442,6 +441,7 @@ private:
   int32_t     m_mask;    //!< Blocked LogLevels.
   std::string m_name;    //!< LogComponent name.
   std::string m_file;    //!< File defining this LogComponent.
+
 }; // class LogComponent
 
 /**
@@ -451,6 +451,10 @@ private:
  * \return a reference to the requested LogComponent
  */
 LogComponent & GetLogComponent (const std::string name);
+
+/**
+ * Parse a string to get the corresponding LogLevel
+ */
 LogLevel GetLogLevel (const std::string lev);
 
 /**
