@@ -357,12 +357,12 @@ int main (int argc, char** argv)
   lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
   lrWpanHelper.EnablePcapAll (std::string ("sixlowpan-mesh-example"), true);
 
-//  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
-//  for (int var = 0; var < stopTime; ++var)
-//  {
-//	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
+  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
+  for (int var = 0; var < stopTime; ++var)
+  {
+	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
 //	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
-//  }
+  }
 
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
                     MakeCallback (&PhyCallback));
