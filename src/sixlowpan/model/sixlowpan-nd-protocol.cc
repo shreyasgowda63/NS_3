@@ -1350,7 +1350,7 @@ SixLowPanNdProtocol::AddressRegistrationSuccess (Ipv6Address registrar, Lollipop
   NS_ABORT_MSG_IF (registrar != m_addrPendingReg.registrar, "AddressRegistrationSuccess, mismatch between sender and expected sender " <<
                    registrar << "  vs expected " << m_addrPendingReg.registrar);
 
-  NS_ABORT_MSG_IF (m_addressRegistrationEvent.IsRunning (), "Address registration success but another AddressRegistration has been scheduled already - error.");
+//  NS_ABORT_MSG_IF (m_addressRegistrationEvent.IsRunning (), "Address registration success but another AddressRegistration has been scheduled already - error.");
 
   // NS_ABORT_MSG_IF (!m_addrPendingReg.isValid, "AddressRegistrationSuccess, address pending registration is not valid");
 
@@ -1373,8 +1373,6 @@ SixLowPanNdProtocol::AddressRegistrationSuccess (Ipv6Address registrar, Lollipop
             }
         }
     }
-
-
   // Success. We have to:
   // If the registered address is link-local:
   //   - add the registrar in the NCE as REACHABLE
@@ -1580,6 +1578,7 @@ SixLowPanNdProtocol::RetransmitRS (Ipv6Address src, Ipv6Address dst, Address lin
       m_retransmitRsEvent = Simulator::Schedule (retransmissionInterval,
                                                  &SixLowPanNdProtocol::RetransmitRS, this, src,
                                                  dst, linkAddr, retransmission, retransmissionInterval);
+      std::cout << Now ().As (Time::S) << " Source = " <<src << " Destination = " <<dst<< "************************We are in backoff mode.**********************"<< std::endl;
       return;
     }
 }

@@ -73,12 +73,12 @@ uint32_t multicastcount = 0;
 void
 PrintResults (Time interval)
 {
-//	std::cout << Now().GetSeconds () << "\t";
-//	std::cout << pktCount << "\t" << pktTotalSize << "\t";
-//	std::cout << ackCount << "\t" << ackTotalSize << "\t";
-//	std::cout << unkCount << "\t" << unkTotalSize << "\t";
-//	std::cout << unicastcount << "\t" <<multicastcount << "\t";
-//	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
+	std::cout << Now().GetSeconds ()<< "\t";
+	std::cout << pktCount << "\t" << pktTotalSize << "\t";
+	std::cout << ackCount << "\t" << ackTotalSize << "\t";
+	std::cout << unkCount << "\t" << unkTotalSize << "\t";
+	std::cout << unicastcount << "\t" <<multicastcount << "\t";
+	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
 
 	pktCount = 0;
 	pktTotalSize = 0;
@@ -189,7 +189,7 @@ int main (int argc, char** argv)
 #endif
 
   NodeContainer lo_nodes;
-  lo_nodes.Create (5);
+  lo_nodes.Create (9);
 
   MobilityHelper mobility;
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
@@ -223,9 +223,9 @@ int main (int argc, char** argv)
   NetDeviceContainer devices = sixlowpan.Install (lrwpanDevices);
 
 
-  for (int var = 0; var <5; var++)
+  for (int var = 0; var <9; var++)
     {
-      if (var == 1)
+      if (var == 4)
         {
           sixlowpan.InstallSixLowPanNdBorderRouter (devices.Get (var), "2001::");
           sixlowpan.SetAdvertisedPrefix (devices.Get (var), Ipv6Prefix ("2001::", 64));
@@ -357,12 +357,12 @@ int main (int argc, char** argv)
   lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
   lrWpanHelper.EnablePcapAll (std::string ("sixlowpan-mesh-example"), true);
 
-  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
-  for (int var = 0; var < stopTime; ++var)
-  {
-	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
+//  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
+//  for (int var = 0; var < stopTime; ++var)
+//  {
+//	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
 //	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
-  }
+//  }
 
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
                     MakeCallback (&PhyCallback));
