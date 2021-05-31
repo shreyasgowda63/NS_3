@@ -73,12 +73,12 @@ uint32_t multicastcount = 0;
 void
 PrintResults (Time interval)
 {
-	std::cout << Now().GetSeconds () << "\t";
-	std::cout << pktCount << "\t" << pktTotalSize << "\t";
-	std::cout << ackCount << "\t" << ackTotalSize << "\t";
-	std::cout << unkCount << "\t" << unkTotalSize << "\t";
-	std::cout << unicastcount << "\t" <<multicastcount << "\t";
-	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
+//	std::cout << Now().GetSeconds () << "\t";
+//	std::cout << pktCount << "\t" << pktTotalSize << "\t";
+//	std::cout << ackCount << "\t" << ackTotalSize << "\t";
+//	std::cout << unkCount << "\t" << unkTotalSize << "\t";
+//	std::cout << unicastcount << "\t" <<multicastcount << "\t";
+//	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
 
 	pktCount = 0;
 	pktTotalSize = 0;
@@ -160,7 +160,7 @@ int main (int argc, char** argv)
 	std::string useUdpFrom = "";
 	std::string usePingOn = "";
 	double stopTime;
-	Time interval = Seconds (100);
+	Time interval = Seconds (1);
 
 	CommandLine cmd;
 	cmd.AddValue ("Mesh", "Use mesh-under in the network", useMeshUnder);
@@ -189,7 +189,7 @@ int main (int argc, char** argv)
 #endif
 
   NodeContainer lo_nodes;
-  lo_nodes.Create (9);
+  lo_nodes.Create (5);
 
   MobilityHelper mobility;
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
@@ -223,9 +223,9 @@ int main (int argc, char** argv)
   NetDeviceContainer devices = sixlowpan.Install (lrwpanDevices);
 
 
-  for (int var = 0; var < 9; var++)
+  for (int var = 0; var <5; var++)
     {
-      if (var == 4)
+      if (var == 1)
         {
           sixlowpan.InstallSixLowPanNdBorderRouter (devices.Get (var), "2001::");
           sixlowpan.SetAdvertisedPrefix (devices.Get (var), Ipv6Prefix ("2001::", 64));
@@ -358,7 +358,7 @@ int main (int argc, char** argv)
   lrWpanHelper.EnablePcapAll (std::string ("sixlowpan-mesh-example"), true);
 
   Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
-  for (int var = 0; var < 4; ++var)
+  for (int var = 0; var < stopTime; ++var)
   {
 	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
 //	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);

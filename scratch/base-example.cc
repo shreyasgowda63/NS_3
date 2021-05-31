@@ -39,6 +39,7 @@
 
 
 #include <fstream>
+#include <map>
 #include "ns3/core-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/internet-apps-module.h"
@@ -54,6 +55,100 @@
 #include "ns3/address.h"
 
 using namespace ns3;
+uint32_t pktCount = 0;
+uint64_t pktTotalSize = 0;
+uint32_t ackCount = 0;
+uint64_t ackTotalSize = 0;
+uint32_t unkCount = 0;
+uint64_t unkTotalSize = 0;
+
+std::map<uint8_t, uint32_t> icmpTypeCount;
+uint32_t udpCount = 0;
+uint32_t otherL4Count = 0;
+
+uint32_t unicastcount = 0;
+uint32_t multicastcount = 0;
+
+void
+PrintResults (Time interval)
+{
+	std::cout << Now().GetSeconds () << "\t";
+	std::cout << pktCount << "\t" << pktTotalSize << "\t";
+	std::cout << ackCount << "\t" << ackTotalSize << "\t";
+	std::cout << unkCount << "\t" << unkTotalSize << "\t";
+	std::cout << unicastcount << "\t" <<multicastcount << "\t";
+	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
+
+	pktCount = 0;
+	pktTotalSize = 0;
+	ackCount = 0;
+	ackTotalSize = 0;
+	unkCount = 0;
+	unkTotalSize = 0;
+
+	Simulator::Schedule (interval, &PrintResults, interval);
+}
+
+void
+PhyCallback (std::string path, Ptr<const Packet> packet)
+{
+  LrWpanMacHeader lrWpanHdr;
+  Ptr<Packet> pktCpy = packet->Copy ();
+  pktCpy->RemoveHeader (lrWpanHdr);
+
+  if (lrWpanHdr.IsAcknowledgment ())
+    {
+      ackCount ++;
+      ackTotalSize += packet->GetSize ();
+    }
+  else if (lrWpanHdr.IsData ())
+    {
+      pktCount ++;
+      pktTotalSize += packet->GetSize ();
+    }
+  else
+    {
+      unkCount ++;
+      unkTotalSize += packet->GetSize ();
+      std::cout << *packet << std::endl;
+    }
+}
+
+// Here you see only the packets that IP did send to 6LoWPAN.
+// It can NOT tell you shit about the real packet size after compression, if there has been a fragmentation, etc.
+// for that you need the function above.
+
+void
+SixLowCallback (std::string path, Ptr<const Packet> packet, Ptr<SixLowPanNetDevice> netDev, uint32_t index)
+{
+	Ipv6Header ipv6Hdr;
+	Ptr<Packet> pktCpy = packet->Copy ();
+	pktCpy->RemoveHeader (ipv6Hdr);
+	if (ipv6Hdr.GetNextHeader () == UdpL4Protocol::PROT_NUMBER)
+	{
+		udpCount ++;
+	}
+	else if (ipv6Hdr.GetNextHeader () == Icmpv6L4Protocol::PROT_NUMBER)
+	{
+		Icmpv6Header icmpHdr;
+		pktCpy->RemoveHeader (icmpHdr);
+		icmpTypeCount[icmpHdr.GetType ()] ++;
+	}
+	else
+	{
+		otherL4Count ++;
+	}
+
+	if (ipv6Hdr.GetDestinationAddress()==Ipv6Address::GetAllRoutersMulticast())
+	{
+		multicastcount++;
+	}
+	else
+	{
+		unicastcount++;
+	}
+//std::cout << Now ().As (Time::S) << " Tx something of size (Packets that IP did send to 6LoWPAN) " << packet->GetSize () << " - " << *packet << std::endl;
+}
 
 int main (int argc, char** argv)
 {
@@ -64,7 +159,8 @@ int main (int argc, char** argv)
   bool useGUA = false;
   std::string useUdpFrom = "";
   std::string usePingOn = "";
-  double stopTime = 40;
+  double stopTime;
+  Time interval = Seconds (1);
 
   CommandLine cmd;
   cmd.AddValue ("Mesh", "Use mesh-under in the network", useMeshUnder);
@@ -74,8 +170,8 @@ int main (int argc, char** argv)
   cmd.AddValue ("Ping", "Install Ping app on (6LBR, 6LN, nothing)", usePingOn);
   cmd.AddValue ("LLA", "Use link-local addresses for the communication", useLLA);
   cmd.AddValue ("GUA", "Use global addresses for the communication", useGUA);
-
   cmd.AddValue ("StopTime", "Simulation stop time (seconds)", stopTime);
+  cmd.AddValue ("Interval", "Sampling interval", interval);
   cmd.Parse (argc, argv);
 
   if (useMeshUnder)
@@ -93,8 +189,6 @@ int main (int argc, char** argv)
   LogComponentEnable ("SixLowPanNetDevice", LOG_LEVEL_ALL);
 #endif
 
-  Time SimulationEnd = Seconds (stopTime);
-
   NodeContainer nodes;
   nodes.Create(2);
 
@@ -109,6 +203,11 @@ int main (int argc, char** argv)
                                  "LayoutType", StringValue ("RowFirst"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.Install (nodes);
+
+  // this means that the registration is valid for 2 days (and the re-registration is performed after 1 day).
+  Config::SetDefault ("ns3::SixLowPanNdProtocol::RegistrationLifeTime", UintegerValue (2880));
+  // Config::SetDefault ("ns3::Icmpv6L4Protocol::SolicitationJitter", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=1000.0]"));
+
 
   LrWpanHelper lrWpanHelper;
   // Add and install the LrWpanNetDevice for each node
@@ -212,8 +311,8 @@ int main (int argc, char** argv)
           std::cout << "PING: invalid option\n";
           exit (0);
         }
-      apps.Start (Seconds (35.0));
-      apps.Stop (SimulationEnd - Seconds (1));
+      apps.Start (Seconds (0.5));
+      apps.Stop (Seconds(stopTime - 1));
     }
 
   //*********************************UDP testing*********************************
@@ -223,7 +322,7 @@ int main (int argc, char** argv)
       UdpServerHelper server (port);
       ApplicationContainer udpServerApps = server.Install (nodes);
       udpServerApps.Start (Seconds (0.0));
-      udpServerApps.Stop (SimulationEnd);
+      udpServerApps.Stop (Seconds(stopTime-1));
 
       uint32_t MaxPacketSize = 12;
       Time interPacketInterval = Seconds (0.05);
@@ -272,7 +371,7 @@ int main (int argc, char** argv)
           exit (0);
         }
       udpClientApps.Start (Seconds (35.0));
-      udpClientApps.Stop (SimulationEnd - Seconds (1));
+      udpClientApps.Stop (Seconds (stopTime-1));
     }
 
 
@@ -290,7 +389,14 @@ int main (int argc, char** argv)
       Ipv6RoutingHelper::PrintNeighborCacheAllEvery (Seconds (1), neighborStream);
     }
 
-  Simulator::Stop (SimulationEnd);
+  Config::Connect ("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
+                    MakeCallback (&PhyCallback));
+  Config::Connect ("/NodeList/*/DeviceList/*/$ns3::SixLowPanNetDevice/TxPre",
+                    MakeCallback (&SixLowCallback));
+
+  Simulator::Schedule (interval, &PrintResults, interval);
+
+  Simulator::Stop (Seconds (stopTime));
   Simulator::Run ();
   Simulator::Destroy ();
 
