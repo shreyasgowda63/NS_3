@@ -64,9 +64,6 @@ const uint8_t SixLowPanNdProtocol::TENTATIVE_NCE_LIFETIME = 20;
 
 const uint8_t SixLowPanNdProtocol::MULTIHOP_HOPLIMIT = 64;
 
-const uint8_t SixLowPanNdProtocol::RTR_SOLICITATION_INTERVAL = 10;
-const uint8_t SixLowPanNdProtocol::MAX_RTR_SOLICITATIONS = 3;
-const uint8_t SixLowPanNdProtocol::MAX_RTR_SOLICITATION_INTERVAL = 60;
 
 SixLowPanNdProtocol::SixLowPanNdProtocol () : Icmpv6L4Protocol ()
 {
