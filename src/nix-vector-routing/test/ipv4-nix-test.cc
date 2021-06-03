@@ -66,7 +66,7 @@ class Ipv4NixVectorRoutingTest : public TestCase
    * \param socket The sending socket.
    * \param to Destination address.
    */
-  void SendData (Ptr<Socket> socket, std::string to, Time delay);
+  void SendData (Time delay, Ptr<Socket> socket, std::string to);
 
 public:
   virtual void DoRun (void);
@@ -77,6 +77,8 @@ public:
    * \param socket The receiving socket.
    */
   void ReceivePkt (Ptr<Socket> socket);
+
+  std::vector<uint32_t> m_receivedPacketSizes; //!< Received packet sizes
 };
 
 Ipv4NixVectorRoutingTest::Ipv4NixVectorRoutingTest ()
@@ -93,6 +95,7 @@ void Ipv4NixVectorRoutingTest::ReceivePkt (Ptr<Socket> socket)
   //cast availableData to void, to suppress 'availableData' set but not used
   //compiler warning
   (void) availableData;
+  m_receivedPacketSizes.push_back (m_receivedPacket->GetSize ());
 }
 
 void
@@ -104,7 +107,7 @@ Ipv4NixVectorRoutingTest::DoSendData (Ptr<Socket> socket, std::string to)
 }
 
 void
-Ipv4NixVectorRoutingTest::SendData (Ptr<Socket> socket, std::string to, Time delay)
+Ipv4NixVectorRoutingTest::SendData (Time delay, Ptr<Socket> socket, std::string to)
 {
   m_receivedPacket = Create<Packet> ();
   Simulator::ScheduleWithContext (socket->GetNode ()->GetId (), delay,
@@ -140,8 +143,7 @@ Ipv4NixVectorRoutingTest::DoRun (void)
 
   NodeContainer allNodes = NodeContainer (nSrcnA, nBnC, nCnDst.Get (1));
 
-  // NixHelper to install nix-vector routing
-  // on all nodes
+  // NixHelper to install nix-vector routing on all nodes
   Ipv4NixVectorHelper nixRouting;
   InternetStackHelper stack;
   stack.SetRoutingHelper (nixRouting); // has effect on the next Install ()
@@ -185,21 +187,33 @@ Ipv4NixVectorRoutingTest::DoRun (void)
   Ptr<Socket> txSocket = txSocketFactory->CreateSocket ();
   txSocket->SetAllowBroadcast (true);
 
-  SendData (txSocket, "10.1.3.2", Seconds (2));
+  SendData (Seconds (2), txSocket, "10.1.3.2");
 
-  std::ostringstream food1;
-  Ptr<OutputStreamWrapper> routingStream1 = Create<OutputStreamWrapper> (&food1);
+  std::ostringstream stringStream1;
+  Ptr<OutputStreamWrapper> routingStream1 = Create<OutputStreamWrapper> (&stringStream1);
   nixRouting.PrintRoutingPathAt (Seconds (3), nSrcnA.Get (0), iCiDst.GetAddress (1), routingStream1);
 
+  // Set the nA interface on nA - nC channel down.
   Ptr<Ipv4> ipv4 = nAnC.Get (0)->GetObject<Ipv4> ();
   int32_t ifIndex = ipv4->GetInterfaceForDevice (dAdC.Get (0));
-
-  // Set the nA interface on nA - nC channel down.
   Simulator::Schedule (Seconds (5), &Ipv4::SetDown, ipv4, ifIndex);
 
-  std::ostringstream food2;
-  Ptr<OutputStreamWrapper> cacheStream = Create<OutputStreamWrapper> (&food2);
+  std::ostringstream stringStream2;
+  Ptr<OutputStreamWrapper> cacheStream = Create<OutputStreamWrapper> (&stringStream2);
   nixRouting.PrintRoutingTableAllAt (Seconds (7), cacheStream);
+
+  SendData (Seconds (8), txSocket, "10.1.3.2");
+
+  std::ostringstream stringStream3;
+  Ptr<OutputStreamWrapper> routingStream3 = Create<OutputStreamWrapper> (&stringStream3);
+  nixRouting.PrintRoutingPathAt (Seconds (9), nSrcnA.Get (0), iCiDst.GetAddress (1), routingStream3);
+
+  // Set the nC interface on nB - nC channel down.
+  ipv4 = nBnC.Get (1)->GetObject<Ipv4> ();
+  ifIndex = ipv4->GetInterfaceForDevice (dBdC.Get (1));
+  Simulator::Schedule (Seconds (10), &Ipv4::SetDown, ipv4, ifIndex);
+  // This is the 3rd routing of the test and should not work.
+  SendData (Seconds (11), txSocket, "10.1.3.2");
 
   Simulator::Stop (Seconds (66));
   Simulator::Run ();
@@ -207,7 +221,8 @@ Ipv4NixVectorRoutingTest::DoRun (void)
   // ------ Now the tests ------------
 
   // Test the Routing
-  NS_TEST_EXPECT_MSG_EQ (m_receivedPacket->GetSize (), 123, "IPv4 Nix-Vector Routing should work.");
+  NS_TEST_EXPECT_MSG_EQ (m_receivedPacketSizes[0], 123, "IPv4 Nix-Vector Routing should work.");
+  NS_TEST_EXPECT_MSG_EQ (m_receivedPacketSizes.size (), 2, "IPv4 Nix-Vector Routing should have received only 1 packet.");
 
   // Test the Path
   const std::string path_nSrc_nA_nC_nDst = "Time: +3s, Nix Routing\n"
@@ -215,24 +230,31 @@ Ipv4NixVectorRoutingTest::DoRun (void)
                                            "10.1.0.1 (Node 0)   ---->   10.1.0.2 (Node 1)\n"
                                            "10.1.4.1 (Node 1)   ---->   10.1.4.2 (Node 3)\n"
                                            "10.1.3.1 (Node 3)   ---->   10.1.3.2 (Node 4)\n\n";
-  NS_TEST_EXPECT_MSG_EQ (food1.str (), path_nSrc_nA_nC_nDst, "Routing Path is incorrect.");
+  NS_TEST_EXPECT_MSG_EQ (stringStream1.str (), path_nSrc_nA_nC_nDst, "Routing Path is incorrect.");
+  const std::string path_nSrc_nA_nB_nC_nDst = "Time: +9s, Nix Routing\n"
+                                              "Route Path: (Node 0 to Node 4, Nix Vector: 001101)\n"
+                                              "10.1.0.1 (Node 0)   ---->   10.1.0.2 (Node 1)\n"
+                                              "10.1.1.1 (Node 1)   ---->   10.1.1.2 (Node 2)\n"
+                                              "10.1.2.1 (Node 2)   ---->   10.1.2.2 (Node 3)\n"
+                                              "10.1.3.1 (Node 3)   ---->   10.1.3.2 (Node 4)\n\n";
+  NS_TEST_EXPECT_MSG_EQ (stringStream3.str (), path_nSrc_nA_nB_nC_nDst, "Routing Path is incorrect.");
 
-  const std::string empty_caches = "Node: 0, Time: +7s, Local time: +7s, Nix Routing\n"
-                                   "NixCache:\n"
-                                   "Ipv4RouteCache:\n\n"
-                                   "Node: 1, Time: +7s, Local time: +7s, Nix Routing\n"
-                                   "NixCache:\n"
-                                   "Ipv4RouteCache:\n\n"
-                                   "Node: 2, Time: +7s, Local time: +7s, Nix Routing\n"
-                                   "NixCache:\n"
-                                   "Ipv4RouteCache:\n\n"
-                                   "Node: 3, Time: +7s, Local time: +7s, Nix Routing\n"
-                                   "NixCache:\n"
-                                   "Ipv4RouteCache:\n\n"
-                                   "Node: 4, Time: +7s, Local time: +7s, Nix Routing\n"
-                                   "NixCache:\n"
-                                   "Ipv4RouteCache:\n\n";
-  NS_TEST_EXPECT_MSG_EQ (food2.str (), empty_caches, "The caches should have been empty.");
+  const std::string emptyCaches = "Node: 0, Time: +7s, Local time: +7s, Nix Routing\n"
+                                  "NixCache:\n"
+                                  "Ipv4RouteCache:\n\n"
+                                  "Node: 1, Time: +7s, Local time: +7s, Nix Routing\n"
+                                  "NixCache:\n"
+                                  "Ipv4RouteCache:\n\n"
+                                  "Node: 2, Time: +7s, Local time: +7s, Nix Routing\n"
+                                  "NixCache:\n"
+                                  "Ipv4RouteCache:\n\n"
+                                  "Node: 3, Time: +7s, Local time: +7s, Nix Routing\n"
+                                  "NixCache:\n"
+                                  "Ipv4RouteCache:\n\n"
+                                  "Node: 4, Time: +7s, Local time: +7s, Nix Routing\n"
+                                  "NixCache:\n"
+                                  "Ipv4RouteCache:\n\n";
+  NS_TEST_EXPECT_MSG_EQ (stringStream2.str (), emptyCaches, "The caches should have been empty.");
 
   Simulator::Destroy ();
 }
