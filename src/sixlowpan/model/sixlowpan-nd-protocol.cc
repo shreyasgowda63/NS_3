@@ -730,7 +730,6 @@ SixLowPanNdProtocol::HandleSixLowPanNA (Ptr<Packet> packet, Ipv6Address const &s
               NS_ABORT_MSG(" Received ROVR mismatch... discard.");
               return;
             }
-          m_addressRegistrationTimeoutEvent.Cancel ();
           AddressRegistrationSuccess (src, earoHdr.GetTransactionId ());
         }
       else           /* status NOT 0, fail! */
@@ -810,6 +809,9 @@ SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address const &s
                                         Ipv6Address const &dst, Ptr<Ipv6Interface> interface)
 {
   NS_LOG_FUNCTION (this << packet << src << dst << interface);
+
+  if (m_node->GetId () == 2)
+    std::cout << Now ().As (Time::S) << " Node 2 received a RA - " << *packet << std::endl;
 
   if (m_retransmitRsEvent.IsRunning ())
     {
@@ -1261,58 +1263,60 @@ SixLowPanNdProtocol::AddressRegistration (void)
 {
   NS_LOG_FUNCTION (this);
 
-  if (!m_addrPendingReg.isValid)       // We need to pick a new address
+  if (m_addrPendingReg.isValid)
     {
-      bool addressPendingRegistrationIsNew;
+      return;
+    }
 
-      // Decide if it's a new address registration or there's an urgent re-registration to be made.
-       if (!m_pendingRas.empty () && m_registeredAddresses.empty ())
-         {
-           addressPendingRegistrationIsNew = true;
-         }
-       else if (m_pendingRas.empty () && !m_registeredAddresses.empty ())
-         {
-           addressPendingRegistrationIsNew = false;
-         }
-       else if (!m_pendingRas.empty () && !m_registeredAddresses.empty ())
-         {
-           // must choose
-           if (m_registeredAddresses.front ().registrationTimeout - Minutes (m_regTime)/2 <= Now ())
-             {
-               NS_LOG_LOGIC ("AddressRegistration: found an address that needs urgently a re-registration");
-               addressPendingRegistrationIsNew = false;
-             }
-           else
-             {
-               addressPendingRegistrationIsNew = true;
-             }
-         }
-       else
-         {
-           NS_ABORT_MSG ("SixLowPanNdProtocol::AddressRegistration called but no address to register - error.");
-         }
+  bool addressPendingRegistrationIsNew;
 
-       if (addressPendingRegistrationIsNew == true)
-         {
-           m_addrPendingReg.isValid = true;
-           m_addrPendingReg.addressPendingRegistration = m_pendingRas.front ().addressesToBeregistered.front ();
-           m_addrPendingReg.abroAddress = m_pendingRas.front ().pendingRa->GetAbroBorderRouterAddress ();
-           m_addrPendingReg.registrar = m_pendingRas.front ().source;
-           m_addrPendingReg.registrarMacAddr = m_pendingRas.front ().llaHdr.GetAddress ();
-           m_addrPendingReg.newRegistration = true;
-           m_addrPendingReg.sixDevice = m_pendingRas.front ().incomingIf->GetDevice ();
-         }
-       else
-         {
-           m_addrPendingReg.isValid = true;
-           m_addrPendingReg.addressPendingRegistration = m_registeredAddresses.front ().registeredAddr;
-           m_addrPendingReg.abroAddress = m_registeredAddresses.front ().abroAddress;
-           m_addrPendingReg.registrar = m_registeredAddresses.front ().registrar;
-           m_addrPendingReg.registrarMacAddr = m_registeredAddresses.front ().registrarMacAddr;
-           m_addrPendingReg.newRegistration = false;
-           m_addrPendingReg.sixDevice = m_registeredAddresses.front ().interface->GetDevice ();
-         }
-   }
+  // Decide if it's a new address registration or there's an urgent re-registration to be made.
+  if (!m_pendingRas.empty () && m_registeredAddresses.empty ())
+    {
+      addressPendingRegistrationIsNew = true;
+    }
+  else if (m_pendingRas.empty () && !m_registeredAddresses.empty ())
+    {
+      addressPendingRegistrationIsNew = false;
+    }
+  else if (!m_pendingRas.empty () && !m_registeredAddresses.empty ())
+    {
+      // must choose
+      if (m_registeredAddresses.front ().registrationTimeout - Minutes (m_regTime)/2 <= Now ())
+        {
+          NS_LOG_LOGIC ("AddressRegistration: found an address that needs urgently a re-registration");
+          addressPendingRegistrationIsNew = false;
+        }
+      else
+        {
+          addressPendingRegistrationIsNew = true;
+        }
+    }
+  else
+    {
+      NS_ABORT_MSG ("SixLowPanNdProtocol::AddressRegistration called but no address to register - error.");
+    }
+
+  if (addressPendingRegistrationIsNew == true)
+    {
+      m_addrPendingReg.isValid = true;
+      m_addrPendingReg.addressPendingRegistration = m_pendingRas.front ().addressesToBeregistered.front ();
+      m_addrPendingReg.abroAddress = m_pendingRas.front ().pendingRa->GetAbroBorderRouterAddress ();
+      m_addrPendingReg.registrar = m_pendingRas.front ().source;
+      m_addrPendingReg.registrarMacAddr = m_pendingRas.front ().llaHdr.GetAddress ();
+      m_addrPendingReg.newRegistration = true;
+      m_addrPendingReg.sixDevice = m_pendingRas.front ().incomingIf->GetDevice ();
+    }
+  else
+    {
+      m_addrPendingReg.isValid = true;
+      m_addrPendingReg.addressPendingRegistration = m_registeredAddresses.front ().registeredAddr;
+      m_addrPendingReg.abroAddress = m_registeredAddresses.front ().abroAddress;
+      m_addrPendingReg.registrar = m_registeredAddresses.front ().registrar;
+      m_addrPendingReg.registrarMacAddr = m_registeredAddresses.front ().registrarMacAddr;
+      m_addrPendingReg.newRegistration = false;
+      m_addrPendingReg.sixDevice = m_registeredAddresses.front ().interface->GetDevice ();
+    }
 
   Ipv6Address addressToRegister = m_addrPendingReg.addressPendingRegistration;
 
@@ -1350,6 +1354,11 @@ SixLowPanNdProtocol::AddressRegistrationSuccess (Ipv6Address registrar, Lollipop
   NS_ABORT_MSG_IF (registrar != m_addrPendingReg.registrar, "AddressRegistrationSuccess, mismatch between sender and expected sender " <<
                    registrar << "  vs expected " << m_addrPendingReg.registrar);
 
+  if (m_addressRegistrationTimeoutEvent.IsRunning ())
+    {
+      m_addressRegistrationTimeoutEvent.Cancel ();
+    }
+
 //  NS_ABORT_MSG_IF (m_addressRegistrationEvent.IsRunning (), "Address registration success but another AddressRegistration has been scheduled already - error.");
 
   // NS_ABORT_MSG_IF (!m_addrPendingReg.isValid, "AddressRegistrationSuccess, address pending registration is not valid");
@@ -1368,7 +1377,7 @@ SixLowPanNdProtocol::AddressRegistrationSuccess (Ipv6Address registrar, Lollipop
               i.registrar == registrar)
             {
               NS_LOG_LOGIC ("Received a successful address registration for an address that we did already register. Increase the registration timeout");
-              //std::cout << "Received a successful address registration for an address that we did already register. Increase the registration timeout" << std::endl;
+              // std::cout << "Received a successful address registration for an address that we did already register. Increase the registration timeout" << std::endl;
               return;
             }
         }
@@ -1480,7 +1489,7 @@ SixLowPanNdProtocol::AddressRegistrationTimeout ()
   NS_LOG_FUNCTION (this);
 
   NS_ABORT_MSG_IF (m_addressRegistrationEvent.IsRunning (), "AddressRegistrationTimeout but another address registration is in progress.");
-  NS_ABORT_MSG_IF (!m_addrPendingReg.isValid, "AddressRegistrationTimeout but there is no valid address pending registration.");
+  NS_ABORT_MSG_IF (!m_addrPendingReg.isValid, "AddressRegistrationTimeout but there is no valid address pending registration. "  << m_node->GetId ());
 
   if (m_addressRegistrationCounter < m_maxUnicastSolicit)
     {

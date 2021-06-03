@@ -159,7 +159,7 @@ int main (int argc, char** argv)
 	bool printNeighborCache = false;
 	std::string useUdpFrom = "";
 	std::string usePingOn = "";
-	double stopTime;
+	double stopTime = 100;
 	Time interval = Seconds (1);
 
 	CommandLine cmd;
@@ -196,8 +196,8 @@ int main (int argc, char** argv)
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
                                  "MinX", DoubleValue (0.0),
                                  "MinY", DoubleValue (0.0),
-                                 "DeltaX", DoubleValue (20),
-                                 "DeltaY", DoubleValue (20),
+                                 "DeltaX", DoubleValue (30),
+                                 "DeltaY", DoubleValue (30),
                                  "GridWidth", UintegerValue (3),
                                  "LayoutType", StringValue ("RowFirst"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
@@ -353,23 +353,23 @@ int main (int argc, char** argv)
       std::cout<< "****------------------Ping or UDP Applications are not running------------------****"<<std::endl;
     }
 
-  AsciiTraceHelper ascii;
-  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
-  lrWpanHelper.EnablePcapAll (std::string ("sixlowpan-mesh-example"), true);
-
-  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
-  for (int var = 0; var < stopTime; ++var)
-  {
-	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
-//	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
-  }
+//  AsciiTraceHelper ascii;
+//  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
+//  lrWpanHelper.EnablePcapAll (std::string ("sixlowpan-mesh-example"), true);
+//
+//  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
+//  for (int var = 0; var < stopTime; ++var)
+//  {
+//	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
+////	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
+//  }
 
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
                     MakeCallback (&PhyCallback));
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::SixLowPanNetDevice/TxPre",
                     MakeCallback (&SixLowCallback));
 
-  Simulator::Schedule (interval, &PrintResults, interval);
+  // Simulator::Schedule (interval, &PrintResults, interval);
 
   Simulator::Stop (Seconds (stopTime));
   Simulator::Run ();
