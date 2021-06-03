@@ -147,9 +147,17 @@ ArpL3Protocol::CreateCache (Ptr<NetDevice> device, Ptr<Ipv4Interface> interface)
   NS_LOG_FUNCTION (this << device << interface);
   Ptr<Ipv4L3Protocol> ipv4 = m_node->GetObject<Ipv4L3Protocol> ();
   Ptr<ArpCache> cache = CreateObject<ArpCache> ();
+  Ptr<NetDeviceState> deviceState = device->GetObject<NetDeviceState> ();
   cache->SetDevice (device, interface);
   NS_ASSERT (device->IsBroadcast ());
-  device->AddLinkChangeCallback (MakeCallback (&ArpCache::Flush, cache));
+  if (deviceState != nullptr)
+    {
+      deviceState->TraceConnectWithoutContext ("StateChange", MakeCallback (&ArpCache::ProcessDeviceStateChange, cache));
+    }
+  else
+    {
+      device->AddLinkChangeCallback (MakeCallback (&ArpCache::Flush, cache));
+    }
   cache->SetArpRequestCallback (MakeCallback (&ArpL3Protocol::SendArpRequest, this));
   m_cacheList.push_back (cache);
   return cache;
