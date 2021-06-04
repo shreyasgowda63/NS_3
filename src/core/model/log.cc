@@ -491,10 +491,37 @@ static bool ComponentExists (std::string componentName)
 
 /**
  * \ingroup logging
+ * Parse a string to obtain start and end logging times
+ * This is private to the logging implementation.
+ */
+static void
+ParseLogTimes (const std::string &s, std::string::size_type slash)
+{
+  std::string startTime = std::string (s, 0, slash);
+  std::string endTime = std::string (s, slash + 1, std::string::npos);
+
+  if (!startTime.empty ())
+    {
+      // Default to Time::Min ()
+      NS_ABORT_MSG_IF (!Time::tryParse (startTime, LogComponent::m_tLogStart),
+                       "Could not parse start time \"" << startTime << "\"");
+    }
+
+  if (!endTime.empty ())
+    {
+      // Default to Time::Max ()
+      NS_ABORT_MSG_IF (!Time::tryParse (endTime, LogComponent::m_tLogEnd),
+                       "Could not parse end time \"" << endTime << "\"");
+    }
+}
+
+/**
+ * \ingroup logging
  * Parse the \c NS_LOG environment variable.
  * This is private to the logging implementation.
  */
-static void CheckEnvironmentVariables (void)
+static void
+CheckEnvironmentVariables (void)
 {
   // Called by LogSetTimePrinter, called by Simulator::GetImpl/Destroy/SetImplementation
   const char *envVar = std::getenv ("NS_LOG");
@@ -506,9 +533,6 @@ static void CheckEnvironmentVariables (void)
   std::string env = envVar;
   std::string::size_type cur = 0;
   std::string::size_type next = 0;
-  bool tLogStartSet = false;
-  Time dtLogStart{0};
-  Time dtLogEnd = Time::Max () - Simulator::Now ();
 
   while (next != std::string::npos)
     {
@@ -519,32 +543,18 @@ static void CheckEnvironmentVariables (void)
       if (equal == std::string::npos)
         {
           // ie no '=' characters found
-          Time t;
-          bool isTimeField = Time::tryParse (tmp, t);
 
-          if (isTimeField)
+          std::string::size_type slash = tmp.find ("/");
+          if (slash == std::string::npos)
             {
-              if (!tLogStartSet)
-                {
-                  LogComponent::m_tLogStart = t; // TODO check simulator now
-                  dtLogStart = LogComponent::m_tLogStart - Simulator::Now ();
-                  tLogStartSet = true;
-                }
-              else
-                {
-                  LogComponent::m_tLogEnd = t;
-                  dtLogEnd = LogComponent::m_tLogEnd - Simulator::Now ();
-                }
-            }
-          else
-            {
+              // ie no '/' characters found: should be a log component
               component = tmp;
               if (ComponentExists (component) || component == "*" || component == "***")
                 {
                   if (!LogComponent::m_envLogsCollected)
                     {
-                      LogComponent::m_envLogs.push_back (
-                          std::make_pair (GetLogComponent (component), (enum LogLevel) (LOG_ALL | LOG_PREFIX_ALL)));
+                      LogComponent::m_envLogs.push_back (std::make_pair (
+                          GetLogComponent (component), (enum LogLevel) (LOG_ALL | LOG_PREFIX_ALL)));
                     }
                   // TODO not sure why return was used before
                   continue;
@@ -555,6 +565,10 @@ static void CheckEnvironmentVariables (void)
                   NS_FATAL_ERROR ("Invalid or unregistered component name \"" << component <<
                                   "\" in env variable NS_LOG, see above for a list of valid components");
                 }
+            }
+          else
+            {
+              ParseLogTimes (tmp, slash);
             }
         }
       else
