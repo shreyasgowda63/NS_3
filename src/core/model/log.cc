@@ -642,13 +642,10 @@ LogComponent::ActivateEnvLogs (void)
 
   if (dtLogStart.IsPositive ())
     {
-      // TODO check if still necessary
-      LogComponentDisableAll(LOG_ALL);
-
       for (const auto &log : m_envLogs)
         {
           Simulator::Schedule (dtLogStart, &LogComponentEnable, log.first.Name (), log.second);
-          Simulator::Schedule (dtLogEnd, &LogComponentDisableAll, LOG_ALL);
+          Simulator::Schedule (dtLogEnd, &LogComponentDisable, log.first.Name (), log.second);
         }
     }
   else if (dtLogStart.IsStrictlyNegative () && dtLogEnd.IsPositive ())
@@ -656,12 +653,15 @@ LogComponent::ActivateEnvLogs (void)
       for (const auto &log : m_envLogs)
         {
           LogComponentEnable (log.first.Name (), log.second);
-          Simulator::Schedule (dtLogEnd, &LogComponentDisableAll, LOG_ALL);
+          Simulator::Schedule (dtLogEnd, &LogComponentDisable, log.first.Name (), log.second);
         }
     }
   else if (dtLogEnd.IsStrictlyNegative ())
     {
-      Simulator::Schedule (dtLogEnd, &LogComponentDisableAll, LOG_ALL);
+      for (const auto &log : m_envLogs)
+        {
+          Simulator::Schedule (dtLogEnd, &LogComponentDisable, log.first.Name (), log.second);
+        }
     }
   else
     {
