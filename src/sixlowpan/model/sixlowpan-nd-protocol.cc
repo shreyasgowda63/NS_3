@@ -808,7 +808,7 @@ SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address const &s
   NS_LOG_FUNCTION (this << packet << src << dst << interface);
 
   if (m_node->GetId () == 2)
-    std::cout << Now ().As (Time::S) << " Node 2 received a RA - " << *packet << std::endl;
+//    std::cout << Now ().As (Time::S) << " Node 2 received a RA - " << *packet << std::endl;
 
   if (m_retransmitRsEvent.IsRunning ())
     {
@@ -1584,7 +1584,7 @@ SixLowPanNdProtocol::RetransmitRS (Ipv6Address src, Ipv6Address dst, Address lin
       m_retransmitRsEvent = Simulator::Schedule (retransmissionInterval,
                                                  &SixLowPanNdProtocol::RetransmitRS, this, src,
                                                  dst, linkAddr, retransmission, retransmissionInterval);
-      std::cout << Now ().As (Time::S) << " Source = " <<src << " Destination = " <<dst<< "************************We are in backoff mode.**********************"<< std::endl;
+//      std::cout << Now ().As (Time::S) << " Source = " <<src << " Destination = " <<dst<< "************************We are in backoff mode.**********************"<< std::endl;
       return;
     }
 }

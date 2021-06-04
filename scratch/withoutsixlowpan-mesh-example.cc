@@ -77,8 +77,8 @@ PrintResults (Time interval)
 	std::cout << pktCount << "\t" << pktTotalSize << "\t";
 	std::cout << ackCount << "\t" << ackTotalSize << "\t";
 	std::cout << unkCount << "\t" << unkTotalSize << "\t";
-	std::cout << unicastcount << "\t" <<multicastcount << "\t";
-	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
+	std::cout << unicastcount << "\t" <<multicastcount <<std::endl;
+//	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
 
   pktCount = 0;
   pktTotalSize = 0;
@@ -198,8 +198,8 @@ int main (int argc, char** argv)
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
                                  "MinX", DoubleValue (0.0),
                                  "MinY", DoubleValue (0.0),
-                                 "DeltaX", DoubleValue (20),
-                                 "DeltaY", DoubleValue (20),
+                                 "DeltaX", DoubleValue (30),
+                                 "DeltaY", DoubleValue (30),
                                  "GridWidth", UintegerValue (3),
                                  "LayoutType", StringValue ("RowFirst"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");

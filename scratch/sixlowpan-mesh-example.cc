@@ -34,7 +34,7 @@
  *                ===============  ===============
  *
  * ./waf --run "scratch/sixlowpan-mesh-example.cc --Mesh --Ping=6LN --LLA --StopTime=2000 --Interval=100"
- *
+ *We are in backoff mode.
  */
 #include <fstream>
 #include <map>
@@ -77,8 +77,8 @@ PrintResults (Time interval)
 	std::cout << pktCount << "\t" << pktTotalSize << "\t";
 	std::cout << ackCount << "\t" << ackTotalSize << "\t";
 	std::cout << unkCount << "\t" << unkTotalSize << "\t";
-	std::cout << unicastcount << "\t" <<multicastcount << "\t";
-	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
+	std::cout << unicastcount << "\t" <<multicastcount << std::endl;
+//	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
 
 	pktCount = 0;
 	pktTotalSize = 0;
@@ -189,10 +189,9 @@ int main (int argc, char** argv)
 #endif
 
   NodeContainer lo_nodes;
-  lo_nodes.Create (9);
+  lo_nodes.Create (40);
 
   MobilityHelper mobility;
-  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
                                  "MinX", DoubleValue (0.0),
                                  "MinY", DoubleValue (0.0),
@@ -223,9 +222,9 @@ int main (int argc, char** argv)
   NetDeviceContainer devices = sixlowpan.Install (lrwpanDevices);
 
 
-  for (int var = 0; var <9; var++)
+  for (int var = 0; var <40; var++)
     {
-      if (var == 4)
+      if (var == 20)
         {
           sixlowpan.InstallSixLowPanNdBorderRouter (devices.Get (var), "2001::");
           sixlowpan.SetAdvertisedPrefix (devices.Get (var), Ipv6Prefix ("2001::", 64));
@@ -369,7 +368,7 @@ int main (int argc, char** argv)
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::SixLowPanNetDevice/TxPre",
                     MakeCallback (&SixLowCallback));
 
-  // Simulator::Schedule (interval, &PrintResults, interval);
+  Simulator::Schedule (interval, &PrintResults, interval);
 
   Simulator::Stop (Seconds (stopTime));
   Simulator::Run ();
