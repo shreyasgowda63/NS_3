@@ -269,16 +269,12 @@ LogComponent::EnvVarCheck (void)
       std::string component;
       if (equal == std::string::npos)
         {
-          bool isTimeField = false;
-          try
-            {
-              Time t (tmp);
-              isTimeField = true;
-          } catch (std::runtime_error &e)
-            { /* Not a time field */}
+          Time t;
+          bool isTimeField = Time::tryParse (tmp, t);
 
           if (!isTimeField)
             {
+
               component = tmp;
               if (component == m_name || component == "*" || component == "***")
                 {
@@ -573,11 +569,12 @@ static void CheckEnvironmentVariables (void)
       std::string component;
       if (equal == std::string::npos)
         {
+          // ie no '=' characters found
+          Time t;
+          bool isTimeField = Time::tryParse (tmp, t);
 
-          bool isTimeField = false;
-          try
+          if (isTimeField)
             {
-              Time t (tmp);
               if (!tLogStartSet)
                 {
                   LogComponent::m_tLogStart = t; // TODO check simulator now
@@ -589,13 +586,9 @@ static void CheckEnvironmentVariables (void)
                   LogComponent::m_tLogEnd = t;
                   dtLogEnd = LogComponent::m_tLogEnd - Simulator::Now ();
                 }
-              isTimeField = true;
-          } catch (std::runtime_error &e)
-            { /* Not a time field */}
-
-          if (!isTimeField)
+            }
+          else
             {
-              // ie no '=' characters found
               component = tmp;
               if (ComponentExists (component) || component == "*" || component == "***")
                 {
@@ -604,7 +597,7 @@ static void CheckEnvironmentVariables (void)
                       LogComponent::m_envLogs.push_back (
                           std::make_pair (GetLogComponent (component), LOG_ALL));
                     }
-                  // not sure why return was used before
+                  // TODO not sure why return was used before
                   continue;
                 }
               else

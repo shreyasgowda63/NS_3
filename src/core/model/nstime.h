@@ -246,7 +246,14 @@ public:
 
   /**
    * Construct Time object from common time expressions like "1ms"
-   *
+   * Check Time::tryParse for further information.
+   * \param [in] s The string to parse into a Time
+   */
+  explicit Time (const std::string &s);
+
+  /**
+   * Try to parse a string from common time expressions like "1ms"
+   * 
    * Supported units include:
    * - `s`  (seconds)
    * - `ms` (milliseconds)
@@ -260,11 +267,13 @@ public:
    * - `y`  (years)
    *
    * There can be no white space between the numerical portion
-   * and the units.  Any otherwise malformed string causes a fatal error to
+   * and the units. Any otherwise malformed string causes a fatal error to
    * occur.
    * \param [in] s The string to parse into a Time
+   * \param [out] t The Time object where to transfer the string
+   * \returns A flag indicating true if the string was successfully parsed
    */
-  explicit Time (const std::string & s);
+  static bool tryParse (const std::string &s, Time &t);
 
   /**
    * Minimum representable Time

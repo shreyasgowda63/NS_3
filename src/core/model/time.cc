@@ -135,10 +135,27 @@ bool Time::StaticInit ()
   return firstTime;
 }
 
-
-Time::Time (const std::string& s)
+Time::Time (const std::string &s)
 {
   NS_LOG_FUNCTION (this << &s);
+  bool isValid = tryParse (s, *this);
+
+  if (!isValid)
+    {
+      NS_ABORT_MSG ("Can't Parse Time " << s);
+    }
+
+  if (g_markingTimes)
+    {
+      Mark (this);
+    }
+}
+
+// static
+bool
+Time::tryParse (const std::string &s, Time &t)
+{
+  NS_LOG_FUNCTION (s);
   std::string::size_type n = s.find_first_not_of ("+-0123456789.eE");
   if (n != std::string::npos)
     { // Found non-numeric
@@ -149,47 +166,47 @@ Time::Time (const std::string& s)
       std::string trailer = s.substr (n, std::string::npos);
       if (trailer == std::string ("s"))
         {
-          *this = Time::FromDouble (r, Time::S);
+          t = Time::FromDouble (r, Time::S);
         }
       else if (trailer == std::string ("ms"))
         {
-          *this = Time::FromDouble (r, Time::MS);
+          t = Time::FromDouble (r, Time::MS);
         }
       else if (trailer == std::string ("us"))
         {
-          *this = Time::FromDouble (r, Time::US);
+          t = Time::FromDouble (r, Time::US);
         }
       else if (trailer == std::string ("ns"))
         {
-          *this = Time::FromDouble (r, Time::NS);
+          t = Time::FromDouble (r, Time::NS);
         }
       else if (trailer == std::string ("ps"))
         {
-          *this = Time::FromDouble (r, Time::PS);
+          t = Time::FromDouble (r, Time::PS);
         }
       else if (trailer == std::string ("fs"))
         {
-          *this = Time::FromDouble (r, Time::FS);
+          t = Time::FromDouble (r, Time::FS);
         }
       else if (trailer == std::string ("min"))
         {
-          *this = Time::FromDouble (r, Time::MIN);
+          t = Time::FromDouble (r, Time::MIN);
         }
       else if (trailer == std::string ("h"))
         {
-          *this = Time::FromDouble (r, Time::H);
+          t = Time::FromDouble (r, Time::H);
         }
       else if (trailer == std::string ("d"))
         {
-          *this = Time::FromDouble (r, Time::D);
+          t = Time::FromDouble (r, Time::D);
         }
       else if (trailer == std::string ("y"))
         {
-          *this = Time::FromDouble (r, Time::Y);
+          t = Time::FromDouble (r, Time::Y);
         }
       else
         {
-          throw std::runtime_error ("Unable to parse Time string: \"" + s + "\"");
+          return false;
         }
     }
   else
@@ -199,13 +216,10 @@ Time::Time (const std::string& s)
       iss.str (s);
       double v;
       iss >> v;
-      *this = Time::FromDouble (v, Time::S);
+      t = Time::FromDouble (v, Time::S);
     }
 
-  if (g_markingTimes)
-    {
-      Mark (this);
-    }
+  return true;
 }
 
 // static
