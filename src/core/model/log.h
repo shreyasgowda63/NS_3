@@ -431,12 +431,6 @@ public:
   static bool m_envLogsActivated; //!< Flag: true if m_engLogs have been scheduled
 
 private:
-  /**
-   * Parse the `NS_LOG` environment variable for options relating to this
-   * LogComponent.
-   */
-  void EnvVarCheck (void);
-
   int32_t     m_levels;  //!< Enabled LogLevels.
   int32_t     m_mask;    //!< Blocked LogLevels.
   std::string m_name;    //!< LogComponent name.

@@ -116,8 +116,6 @@ LogComponent::LogComponent (const std::string & name,
                             const enum LogLevel mask /* = 0 */)
   : m_levels (0), m_mask (mask), m_name (name), m_file (file)
 {
-  EnvVarCheck ();
-
   LogComponent::ComponentList *components = GetComponentList ();
   for (LogComponent::ComponentList::const_iterator i = components->begin ();
        i != components->end ();
@@ -246,55 +244,6 @@ GetLogLevel (const std::string levelStr) // TODO reuse
   } while (next_lev != std::string::npos);
 
   return (enum LogLevel) level;
-}
-
-void
-LogComponent::EnvVarCheck (void)
-{
-  // Called by the LogComponent constructor
-  const char *envVar = std::getenv ("NS_LOG");
-  if (envVar == 0 || std::strlen (envVar) == 0)
-    {
-      return;
-    }
-  std::string env = envVar;
-
-  std::string::size_type cur = 0;
-  std::string::size_type next = 0;
-  while (next != std::string::npos)
-    {
-      next = env.find_first_of (":", cur);
-      std::string tmp = std::string (env, cur, next - cur);
-      std::string::size_type equal = tmp.find ("=");
-      std::string component;
-      if (equal == std::string::npos)
-        {
-          Time t;
-          bool isTimeField = Time::tryParse (tmp, t);
-
-          if (!isTimeField)
-            {
-
-              component = tmp;
-              if (component == m_name || component == "*" || component == "***")
-                {
-                  int level = LOG_LEVEL_ALL | LOG_PREFIX_ALL;
-                  Enable ((enum LogLevel) level);
-                  return;
-                }
-            }
-        }
-      else
-        {
-          component = tmp.substr (0, equal);
-          if (component == m_name || component == "*")
-            {
-              int level = GetLogLevel(tmp.substr(equal+1, std::string::npos));
-              Enable ((enum LogLevel)level);
-            }
-        }
-      cur = next + 1;
-    }
 }
 
 
@@ -595,7 +544,7 @@ static void CheckEnvironmentVariables (void)
                   if (!LogComponent::m_envLogsCollected)
                     {
                       LogComponent::m_envLogs.push_back (
-                          std::make_pair (GetLogComponent (component), LOG_ALL));
+                          std::make_pair (GetLogComponent (component), (enum LogLevel) (LOG_ALL | LOG_PREFIX_ALL)));
                     }
                   // TODO not sure why return was used before
                   continue;
