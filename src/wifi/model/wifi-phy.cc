@@ -2294,7 +2294,10 @@ int64_t
 WifiPhy::AssignStreams (int64_t stream)
 {
   NS_LOG_FUNCTION (this << stream);
-  m_random->SetStream (stream);
+  int64_t currentStream = stream;
+  m_random->SetStream (currentStream++);
+  currentStream += m_interference.GetErrorRateModel ()->AssignStreams (currentStream);
+  return (currentStream - stream);
   return 1;
 }
 
