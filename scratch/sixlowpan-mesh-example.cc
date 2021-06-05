@@ -34,7 +34,7 @@
  *                ===============  ===============
  *
  * ./waf --run "scratch/sixlowpan-mesh-example.cc --Mesh --Ping=6LN --LLA --StopTime=2000 --Interval=100"
- *We are in backoff mode.
+ *
  */
 #include <fstream>
 #include <map>
