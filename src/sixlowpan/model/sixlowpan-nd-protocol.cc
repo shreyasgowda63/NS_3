@@ -121,13 +121,6 @@ SixLowPanNdProtocol::GetTypeId ()
                    TimeValue (Minutes (10)),
                    MakeTimeAccessor (&SixLowPanNdProtocol::m_abroValidLifeTime),
                    MakeTimeChecker ())
-    .AddAttribute ("MaxRtrSolicitations", "Maximum number of RS before starting a backoff.",
-                   UintegerValue (3), MakeUintegerAccessor (&SixLowPanNdProtocol::m_maxRtrSolicitations),
-                   MakeUintegerChecker<uint8_t> (1))
-    .AddAttribute ("RtrSolicitationInterval", "Time between two RS before stating the backoff.",
-                   TimeValue (Seconds (10)),
-                   MakeTimeAccessor (&SixLowPanNdProtocol::m_rtrSolicitationInterval),
-                   MakeTimeChecker ())
     .AddAttribute ("MaxRtrSolicitationInterval", "Maximum Time between two RS (after the backoff).",
                    TimeValue (Seconds (60)),
                    MakeTimeAccessor (&SixLowPanNdProtocol::m_maxRtrSolicitationInterval),
@@ -147,7 +140,6 @@ SixLowPanNdProtocol::AssignStreams (int64_t stream)
 {
   NS_LOG_FUNCTION (this << stream);
   m_addressRegistrationJitter->SetStream (stream);
-  m_rsRetransmissionDelay->SetStream (stream+1);
   return 2;
 }
 
@@ -158,8 +150,6 @@ SixLowPanNdProtocol::DoInitialize ()
     {
       m_nodeRole = SixLowPanBorderRouter;
     }
-
-  m_rsRetransmissionDelay = CreateObject<UniformRandomVariable> ();
 
   m_addrPendingReg.isValid = false;
 
@@ -477,7 +467,7 @@ SixLowPanNdProtocol::DoDispose ()
 {
   NS_LOG_FUNCTION (this);
 
-  m_retransmitRsEvent.Cancel ();
+  m_handleRsTimeoutEvent.Cancel ();
   m_addressRegistrationTimeoutEvent.Cancel ();
   m_addressRegistrationEvent.Cancel ();
   Icmpv6L4Protocol::DoDispose ();
@@ -807,12 +797,12 @@ SixLowPanNdProtocol::HandleSixLowPanRA (Ptr<Packet> packet, Ipv6Address const &s
 {
   NS_LOG_FUNCTION (this << packet << src << dst << interface);
 
-  if (m_node->GetId () == 2)
+//  if (m_node->GetId () == 2)
 //    std::cout << Now ().As (Time::S) << " Node 2 received a RA - " << *packet << std::endl;
 
-  if (m_retransmitRsEvent.IsRunning ())
+  if (m_handleRsTimeoutEvent.IsRunning ())
     {
-      m_retransmitRsEvent.Cancel ();
+      m_handleRsTimeoutEvent.Cancel ();
     }
 
   Ptr<SixLowPanNetDevice> sixDevice = DynamicCast<SixLowPanNetDevice> (interface->GetDevice ());
@@ -1172,20 +1162,39 @@ SixLowPanNdProtocol::Lookup (Ptr<Packet> p, const Ipv6Header & ipHeader, Ipv6Add
 }
 
 void
+SixLowPanNdProtocol::HandleRsTimeout (Ipv6Address src, Ipv6Address dst,  Address hardwareAddress, uint8_t retryCounter)
+{
+  NS_LOG_FUNCTION (this << src << dst << hardwareAddress << +retryCounter);
+
+  std::cout << "SixLowPanNdProtocol::HandleRsTimeout " << src << " " << dst << " " << hardwareAddress << " " << +retryCounter << " " << +m_maxRtrSolicitations << " ";
+  std::cout << m_rtrSolicitationInterval.As (Time::S) << " - " << m_maxRtrSolicitationInterval.As (Time::S) << std::endl; 
+
+  NS_ABORT_MSG_IF (src == Ipv6Address::GetAny (),
+                   "An unspecified source address MUST NOT be used in RS messages");
+
+  if (retryCounter <= m_maxRtrSolicitations)
+    {
+      retryCounter ++;
+    }
+
+  if (retryCounter > m_maxRtrSolicitations)
+    {
+      m_rtrSolicitationInterval = m_rtrSolicitationInterval*2;
+      if (m_rtrSolicitationInterval > m_maxRtrSolicitationInterval)
+        {
+          m_rtrSolicitationInterval = m_maxRtrSolicitationInterval;
+        }
+    }
+
+  SendRS (src, dst, hardwareAddress, retryCounter);
+}
+
+
+void
 SixLowPanNdProtocol::FunctionDadTimeout (Ipv6Interface* interface, Ipv6Address addr)
 {
   // We actually want to override the immediate send of an RS.
   Icmpv6L4Protocol::FunctionDadTimeout (interface, addr);
-
-
-  if (!interface->IsForwarding () && addr.IsLinkLocal ())
-    {
-      Address linkAddr = interface->GetDevice ()->GetAddress ();
-
-      m_retransmitRsEvent = Simulator::Schedule (m_rtrSolicitationInterval,
-                                                 &SixLowPanNdProtocol::RetransmitRS, this, addr,
-                                                 Ipv6Address::GetAllRoutersMulticast (), linkAddr, 1, m_rtrSolicitationInterval);
-    }
 }
 
 void
@@ -1541,53 +1550,6 @@ SixLowPanNdProtocol::AddressRegistrationTimeout ()
   return;
 }
 
-void
-SixLowPanNdProtocol::RetransmitRS (Ipv6Address src, Ipv6Address dst, Address linkAddr, uint8_t retransmission, Time retransmissionInterval)
-{
-  NS_LOG_FUNCTION (this << src << dst << linkAddr);
-
-  NS_ABORT_MSG_IF (src == Ipv6Address::GetAny (),
-                   "An unspecified source address MUST NOT be used in RS messages");
-
-  if (retransmission > 1)
-    {
-      SendRS (src, dst, linkAddr);
-    }
-
-  if (retransmission <= m_maxRtrSolicitations)
-    {
-      retransmission++;
-    }
-
-  if (retransmission < m_maxRtrSolicitations)
-    {
-      // We are not yet in backoff mode.
-      m_retransmitRsEvent = Simulator::Schedule (m_rtrSolicitationInterval,
-                                                 &SixLowPanNdProtocol::RetransmitRS, this, src,
-                                                 dst, linkAddr, retransmission, retransmissionInterval);
-      return;
-    }
-  else
-    {
-      // We are in backoff mode.
-      retransmissionInterval = retransmissionInterval*2;
-      if (retransmissionInterval > m_maxRtrSolicitationInterval)
-        {
-          retransmissionInterval = m_maxRtrSolicitationInterval;
-        }
-//      Time randomDelay = Seconds (m_rsRetransmissionDelay->GetValue (m_rtrSolicitationInterval.GetSeconds (),
-//                                                                     retransmissionInterval.GetSeconds ()));
-//
-//      m_retransmitRsEvent = Simulator::Schedule (randomDelay,
-//                                                 &SixLowPanNdProtocol::RetransmitRS, this, src,
-//                                                 dst, linkAddr, retransmission, retransmissionInterval);
-      m_retransmitRsEvent = Simulator::Schedule (retransmissionInterval,
-                                                 &SixLowPanNdProtocol::RetransmitRS, this, src,
-                                                 dst, linkAddr, retransmission, retransmissionInterval);
-//      std::cout << Now ().As (Time::S) << " Source = " <<src << " Destination = " <<dst<< "************************We are in backoff mode.**********************"<< std::endl;
-      return;
-    }
-}
 
 void
 SixLowPanNdProtocol::SetInterfaceAs6lbr (Ptr<SixLowPanNetDevice> device)

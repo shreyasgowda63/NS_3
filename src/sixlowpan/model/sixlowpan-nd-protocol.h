@@ -95,21 +95,6 @@ public:
   static const uint8_t MULTIHOP_HOPLIMIT;
 
   /**
-   * \brief host constants : RS interval.
-   */
-  static const uint8_t RTR_SOLICITATION_INTERVAL;
-
-  /**
-   * \brief host constants : max RS transmission.
-   */
-  static const uint8_t MAX_RTR_SOLICITATIONS;
-
-  /**
-   * \brief host constants : max RS interval.
-   */
-  static const uint8_t MAX_RTR_SOLICITATION_INTERVAL;
-
-  /**
    * \brief Constructor.
    */
   SixLowPanNdProtocol ();
@@ -252,6 +237,8 @@ protected:
    * \brief Dispose this object.
    */
   virtual void DoDispose ();
+
+  virtual void HandleRsTimeout (Ipv6Address src, Ipv6Address dst,  Address hardwareAddress, uint8_t retryCounter);
 
 private:
 
@@ -660,8 +647,6 @@ private:
 
   uint8_t m_addressRegistrationCounter; //!< Number of retries of an address registration.
 
-  EventId m_retransmitRsEvent; //!< RS retransmission event.
-
   std::map<Ptr<NetDevice>, std::vector<uint8_t> > m_rovrContainer; //!< Container of ROVRs
 
   EventId m_addressRegistrationTimeoutEvent; //!< Address Registration timeout event.
@@ -726,11 +711,10 @@ private:
   std::list<SixLowPanRegisteredAddress> m_registeredAddresses; //!< Addresses that have been registered.
 
   // RS retry backoff
-  Time m_rtrSolicitationInterval;         //!< RS Retransmission interval
+//  Time m_rtrSolicitationInterval;         //!< RS Retransmission interval
   Time m_maxRtrSolicitationInterval;      //!< Maximum RS Retransmission interval
-  Time m_currentRtrSolicitationInterval;  //!< Current RS Retransmission interval
-  uint8_t m_maxRtrSolicitations;          //!< Maximum RS Retransmission number before starting an exponentional backoff
-  Ptr<UniformRandomVariable> m_rsRetransmissionDelay; //!< Random variable for RS retransmissions.
+//  Time m_currentRtrSolicitationInterval;  //!< Current RS Retransmission interval
+//  Ptr<UniformRandomVariable> m_rsRetransmissionDelay; //!< Random variable for RS retransmissions.
 
 };
 

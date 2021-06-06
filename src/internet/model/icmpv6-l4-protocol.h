@@ -351,10 +351,11 @@ public:
   /**
    * \brief Send a Router Solicitation.
    * \param src link-local source address
-   * \param dst destination address (usually ff02::2 i.e all-routers)
+   * \param dst destination address (usually ff02::2 i.e., all-routers)
    * \param hardwareAddress link-layer address (SHOULD be included if src is not ::)
+   * \param retryCounter retries counter
    */
-  void SendRS (Ipv6Address src, Ipv6Address dst,  Address hardwareAddress);
+  void SendRS (Ipv6Address src, Ipv6Address dst,  Address hardwareAddress, uint8_t retryCounter);
 
   /**
    * \brief Create a neighbor cache.
@@ -379,6 +380,24 @@ public:
    * \return the number of stream indices assigned by this model
    */
   int64_t AssignStreams (int64_t stream);
+
+  /**
+   * Get a random jitter for transmitting RS
+   * \return a random jitter
+   */
+  Time GetRsJitter ();
+
+  /**
+   * Get a random jitter for transmitting DAD
+   * \return a random jitter
+   */
+  Time GetDadJitter ();
+
+  /**
+   * Get the DAD timeout
+   * \return the DAD timeout
+   */
+  Time GetDadTimeout () const;
 
 protected:
   /**
@@ -417,6 +436,16 @@ protected:
    * \param interface the interface from which the packet is coming
    */
   void HandleRS (Ptr<Packet> p, Ipv6Address const &src, Ipv6Address const &dst, Ptr<Ipv6Interface> interface);
+
+  /**
+   * \brief Router Solicitation Timeout handler.
+   * \param src link-local source address
+   * \param dst destination address (usually ff02::2 i.e all-routers)
+   * \param hardwareAddress link-layer address (SHOULD be included if src is not ::)
+   * \param retryCounter retries counter
+   */
+  virtual void HandleRsTimeout (Ipv6Address src, Ipv6Address dst,  Address hardwareAddress, uint8_t retryCounter);
+
 
   /**
    * \brief Receive Router Advertisement method.
@@ -534,6 +563,16 @@ protected:
   uint8_t m_maxUnicastSolicit;
 
   /**
+   * \brief Neighbor Discovery node constants: max multicast RS retries.
+   */
+  uint8_t m_maxRtrSolicitations;
+
+  /**
+   * \brief Neighbor Discovery node constants: Minimum time between multicast RS.
+   */
+  Time m_rtrSolicitationInterval;
+
+  /**
    * \brief Neighbor Discovery node constants: reachable time.
    */
   Time m_reachableTime;
@@ -557,6 +596,26 @@ protected:
    * \brief Random jitter before sending solicitations
    */
   Ptr<RandomVariableStream> m_solicitationJitter;
+
+  /**
+   * \brief Random jitter before sending DAD
+   */
+  Ptr<RandomVariableStream> m_dadJitter;
+
+  /**
+   * \brief DAD timeout
+   */
+  Time m_dadTimeout;
+
+  /**
+   * RS timeout handler event
+   */
+  EventId m_handleRsTimeoutEvent;
+
+  /**
+   * \brief Random jitter before sending Router Solicitations (RS)
+   */
+  Ptr<RandomVariableStream> m_rsJitter;
 
   IpL4Protocol::DownTargetCallback6 m_downTarget; //!< callback to Ipv6::Send
 
