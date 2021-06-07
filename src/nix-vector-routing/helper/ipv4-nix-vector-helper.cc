@@ -25,7 +25,7 @@ namespace ns3 {
 
 Ipv4NixVectorHelper::Ipv4NixVectorHelper ()
 {
-  m_agentFactory.SetTypeId ("ns3::Ipv4NixVectorRouting");
+  m_agentFactory.SetTypeId ("ns3::NixVectorRouting");
 }
 
 Ipv4NixVectorHelper::Ipv4NixVectorHelper (const Ipv4NixVectorHelper &o)
@@ -42,7 +42,7 @@ Ipv4NixVectorHelper::Copy (void) const
 Ptr<Ipv4RoutingProtocol> 
 Ipv4NixVectorHelper::Create (Ptr<Node> node) const
 {
-  Ptr<Ipv4NixVectorRouting> agent = m_agentFactory.Create<Ipv4NixVectorRouting> ();
+  Ptr<NixVectorRouting<Ipv4RoutingProtocol>> agent = m_agentFactory.Create<NixVectorRouting<Ipv4RoutingProtocol>> ();
   agent->SetNode (node);
   node->AggregateObject (agent);
   return agent;
@@ -57,7 +57,7 @@ Ipv4NixVectorHelper::PrintRoutingPathAt (Time printTime, Ptr<Node> source, Ipv4A
 void
 Ipv4NixVectorHelper::PrintRoute (Ptr<Node> source, Ipv4Address dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit)
 {
-  Ptr<Ipv4NixVectorRouting> rp = Ipv4RoutingHelper::GetRouting <Ipv4NixVectorRouting> (source->GetObject<Ipv4> ()->GetRoutingProtocol ());
+  Ptr<NixVectorRouting<Ipv4RoutingProtocol>> rp = Ipv4RoutingHelper::GetRouting <NixVectorRouting<Ipv4RoutingProtocol>> (source->GetObject<Ipv4> ()->GetRoutingProtocol ());
   NS_ASSERT (rp);
   rp->PrintRoutingPath (source, dest, stream, unit);
 }

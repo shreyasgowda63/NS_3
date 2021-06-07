@@ -58,11 +58,12 @@ typedef std::map<Ipv4Address, Ptr<Ipv4Route> > Ipv4RouteMap_t;
  * \ingroup nix-vector-routing
  * Nix-vector routing protocol
  */
-class Ipv4NixVectorRouting : public Ipv4RoutingProtocol
+template <typename parent>
+class NixVectorRouting : public parent
 {
 public:
-  Ipv4NixVectorRouting ();
-  ~Ipv4NixVectorRouting ();
+  NixVectorRouting ();
+  ~NixVectorRouting ();
   /**
    * @brief The Interface ID of the Global Router interface.
    * @return The Interface ID
@@ -223,6 +224,19 @@ private:
             Ptr<NetDevice> oif) const;
 
   void DoDispose (void);
+
+  /// Callback for unicast packets to be forwarded
+  typedef Callback<void, Ptr<Ipv4Route>, Ptr<const Packet>, const Ipv4Header &> UnicastForwardCallback;
+
+  /// Callback for multicast packets to be forwarded
+  typedef Callback<void, Ptr<Ipv4MulticastRoute>, Ptr<const Packet>, const Ipv4Header &> MulticastForwardCallback;
+
+  /// Callback for packets to be locally delivered
+  typedef Callback<void, Ptr<const Packet>, const Ipv4Header &, uint32_t > LocalDeliverCallback;
+
+  /// Callback for routing errors (e.g., no route found)
+  typedef Callback<void, Ptr<const Packet>, const Ipv4Header &, Socket::SocketErrno > ErrorCallback;
+
 
   /* From Ipv4RoutingProtocol */
   virtual Ptr<Ipv4Route> RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr);

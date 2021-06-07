@@ -31,37 +31,44 @@
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("Ipv4NixVectorRouting");
+NS_LOG_COMPONENT_DEFINE ("NixVectorRouting");
 
-NS_OBJECT_ENSURE_REGISTERED (Ipv4NixVectorRouting);
+NS_OBJECT_TEMPLATE_CLASS_DEFINE (NixVectorRouting, Ipv4RoutingProtocol);
 
-bool Ipv4NixVectorRouting::g_isCacheDirty = false;
-Ipv4NixVectorRouting::Ipv4AddressToNodeMap Ipv4NixVectorRouting::g_ipv4AddressToNodeMap;
+template <typename parent>
+bool NixVectorRouting<parent>::g_isCacheDirty = false;
 
+template <typename parent>
+typename NixVectorRouting<parent>::Ipv4AddressToNodeMap NixVectorRouting<parent>::g_ipv4AddressToNodeMap;
+
+template <typename parent>
 TypeId 
-Ipv4NixVectorRouting::GetTypeId (void)
+NixVectorRouting<parent>::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::Ipv4NixVectorRouting")
-    .SetParent<Ipv4RoutingProtocol> ()
+  static TypeId tid = TypeId ("ns3::NixVectorRouting")
+    .SetParent<parent> ()
     .SetGroupName ("NixVectorRouting")
-    .AddConstructor<Ipv4NixVectorRouting> ()
+    .template AddConstructor<NixVectorRouting<parent>> ()
   ;
   return tid;
 }
 
-Ipv4NixVectorRouting::Ipv4NixVectorRouting ()
+template <typename parent>
+NixVectorRouting<parent>::NixVectorRouting ()
   : m_totalNeighbors (0)
 {
   NS_LOG_FUNCTION_NOARGS ();
 }
 
-Ipv4NixVectorRouting::~Ipv4NixVectorRouting ()
+template <typename parent>
+NixVectorRouting<parent>::~NixVectorRouting ()
 {
   NS_LOG_FUNCTION_NOARGS ();
 }
 
+template <typename parent>
 void
-Ipv4NixVectorRouting::SetIpv4 (Ptr<Ipv4> ipv4)
+NixVectorRouting<parent>::SetIpv4 (Ptr<Ipv4> ipv4)
 {
   NS_ASSERT (ipv4 != 0);
   NS_ASSERT (m_ipv4 == 0);
@@ -70,8 +77,9 @@ Ipv4NixVectorRouting::SetIpv4 (Ptr<Ipv4> ipv4)
   m_ipv4 = ipv4;
 }
 
+template <typename parent>
 void 
-Ipv4NixVectorRouting::DoDispose ()
+NixVectorRouting<parent>::DoDispose ()
 {
   NS_LOG_FUNCTION_NOARGS ();
 
@@ -81,24 +89,25 @@ Ipv4NixVectorRouting::DoDispose ()
   Ipv4RoutingProtocol::DoDispose ();
 }
 
-
+template <typename parent>
 void
-Ipv4NixVectorRouting::SetNode (Ptr<Node> node)
+NixVectorRouting<parent>::SetNode (Ptr<Node> node)
 {
   NS_LOG_FUNCTION_NOARGS ();
 
   m_node = node;
 }
 
+template <typename parent>
 void
-Ipv4NixVectorRouting::FlushGlobalNixRoutingCache (void) const
+NixVectorRouting<parent>::FlushGlobalNixRoutingCache (void) const
 {
   NS_LOG_FUNCTION_NOARGS ();
   NodeList::Iterator listEnd = NodeList::End ();
   for (NodeList::Iterator i = NodeList::Begin (); i != listEnd; i++)
     {
       Ptr<Node> node = *i;
-      Ptr<Ipv4NixVectorRouting> rp = node->GetObject<Ipv4NixVectorRouting> ();
+      Ptr<NixVectorRouting<parent>> rp = node->GetObject<NixVectorRouting> ();
       if (!rp)
         {
           continue;
@@ -113,22 +122,25 @@ Ipv4NixVectorRouting::FlushGlobalNixRoutingCache (void) const
   g_ipv4AddressToNodeMap.clear ();
 }
 
+template <typename parent>
 void
-Ipv4NixVectorRouting::FlushNixCache (void) const
+NixVectorRouting<parent>::FlushNixCache (void) const
 {
   NS_LOG_FUNCTION_NOARGS ();
   m_nixCache.clear ();
 }
 
+template <typename parent>
 void
-Ipv4NixVectorRouting::FlushIpv4RouteCache (void) const
+NixVectorRouting<parent>::FlushIpv4RouteCache (void) const
 {
   NS_LOG_FUNCTION_NOARGS ();
   m_ipv4RouteCache.clear ();
 }
 
+template <typename parent>
 Ptr<NixVector>
-Ipv4NixVectorRouting::GetNixVector (Ptr<Node> source, Ipv4Address dest, Ptr<NetDevice> oif) const
+NixVectorRouting<parent>::GetNixVector (Ptr<Node> source, Ipv4Address dest, Ptr<NetDevice> oif) const
 {
   NS_LOG_FUNCTION_NOARGS ();
 
@@ -172,8 +184,9 @@ Ipv4NixVectorRouting::GetNixVector (Ptr<Node> source, Ipv4Address dest, Ptr<NetD
     }
 }
 
+template <typename parent>
 Ptr<NixVector>
-Ipv4NixVectorRouting::GetNixVectorInCache (Ipv4Address address) const
+NixVectorRouting<parent>::GetNixVectorInCache (Ipv4Address address) const
 {
   NS_LOG_FUNCTION_NOARGS ();
 
@@ -190,8 +203,9 @@ Ipv4NixVectorRouting::GetNixVectorInCache (Ipv4Address address) const
   return 0;
 }
 
+template <typename parent>
 Ptr<Ipv4Route>
-Ipv4NixVectorRouting::GetIpv4RouteInCache (Ipv4Address address)
+NixVectorRouting<parent>::GetIpv4RouteInCache (Ipv4Address address)
 {
   NS_LOG_FUNCTION_NOARGS ();
 
@@ -208,8 +222,9 @@ Ipv4NixVectorRouting::GetIpv4RouteInCache (Ipv4Address address)
   return 0;
 }
 
+template <typename parent>
 bool
-Ipv4NixVectorRouting::BuildNixVectorLocal (Ptr<NixVector> nixVector)
+NixVectorRouting<parent>::BuildNixVectorLocal (Ptr<NixVector> nixVector)
 {
   NS_LOG_FUNCTION_NOARGS ();
 
@@ -235,8 +250,9 @@ Ipv4NixVectorRouting::BuildNixVectorLocal (Ptr<NixVector> nixVector)
   return false;
 }
 
+template <typename parent>
 bool
-Ipv4NixVectorRouting::BuildNixVector (const std::vector< Ptr<Node> > & parentVector, uint32_t source, uint32_t dest, Ptr<NixVector> nixVector) const
+NixVectorRouting<parent>::BuildNixVector (const std::vector< Ptr<Node> > & parentVector, uint32_t source, uint32_t dest, Ptr<NixVector> nixVector) const
 {
   NS_LOG_FUNCTION_NOARGS ();
 
@@ -308,8 +324,9 @@ Ipv4NixVectorRouting::BuildNixVector (const std::vector< Ptr<Node> > & parentVec
   return true;
 }
 
+template <typename parent>
 void
-Ipv4NixVectorRouting::GetAdjacentNetDevices (Ptr<NetDevice> netDevice, Ptr<Channel> channel, NetDeviceContainer & netDeviceContainer) const
+NixVectorRouting<parent>::GetAdjacentNetDevices (Ptr<NetDevice> netDevice, Ptr<Channel> channel, NetDeviceContainer & netDeviceContainer) const
 {
   NS_LOG_FUNCTION_NOARGS ();
 
@@ -348,8 +365,9 @@ Ipv4NixVectorRouting::GetAdjacentNetDevices (Ptr<NetDevice> netDevice, Ptr<Chann
     }
 }
 
+template <typename parent>
 void
-Ipv4NixVectorRouting::BuildIpv4AddressToNodeMap (void) const
+NixVectorRouting<parent>::BuildIpv4AddressToNodeMap (void) const
 {
   NS_LOG_FUNCTION_NOARGS ();
 
@@ -391,8 +409,9 @@ Ipv4NixVectorRouting::BuildIpv4AddressToNodeMap (void) const
     }
 }
 
+template <typename parent>
 Ptr<Node>
-Ipv4NixVectorRouting::GetNodeByIp (Ipv4Address dest) const
+NixVectorRouting<parent>::GetNodeByIp (Ipv4Address dest) const
 {
   NS_LOG_FUNCTION_NOARGS ();
 
@@ -419,8 +438,9 @@ Ipv4NixVectorRouting::GetNodeByIp (Ipv4Address dest) const
   return destNode;
 }
 
+template <typename parent>
 uint32_t
-Ipv4NixVectorRouting::FindTotalNeighbors (Ptr<Node> node) const
+NixVectorRouting<parent>::FindTotalNeighbors (Ptr<Node> node) const
 {
   uint32_t numberOfDevices = node->GetNDevices ();
   uint32_t totalNeighbors = 0;
@@ -450,8 +470,9 @@ Ipv4NixVectorRouting::FindTotalNeighbors (Ptr<Node> node) const
   return totalNeighbors;
 }
 
+template <typename parent>
 Ptr<BridgeNetDevice>
-Ipv4NixVectorRouting::NetDeviceIsBridged (Ptr<NetDevice> nd) const
+NixVectorRouting<parent>::NetDeviceIsBridged (Ptr<NetDevice> nd) const
 {
   NS_LOG_FUNCTION (nd);
 
@@ -473,7 +494,7 @@ Ipv4NixVectorRouting::NetDeviceIsBridged (Ptr<NetDevice> nd) const
         {
           NS_LOG_LOGIC ("device " << i << " is a bridge net device");
           Ptr<BridgeNetDevice> bnd = ndTest->GetObject<BridgeNetDevice> ();
-          NS_ABORT_MSG_UNLESS (bnd, "Ipv4NixVectorRouting::NetDeviceIsBridged (): GetObject for <BridgeNetDevice> failed");
+          NS_ABORT_MSG_UNLESS (bnd, "NixVectorRouting::NetDeviceIsBridged (): GetObject for <BridgeNetDevice> failed");
 
           for (uint32_t j = 0; j < bnd->GetNBridgePorts (); ++j)
             {
@@ -490,8 +511,9 @@ Ipv4NixVectorRouting::NetDeviceIsBridged (Ptr<NetDevice> nd) const
   return 0;
 }
 
+template <typename parent>
 uint32_t
-Ipv4NixVectorRouting::FindNetDeviceForNixIndex (Ptr<Node> node, uint32_t nodeIndex, Ipv4Address & gatewayIp) const
+NixVectorRouting<parent>::FindNetDeviceForNixIndex (Ptr<Node> node, uint32_t nodeIndex, Ipv4Address & gatewayIp) const
 {
   uint32_t numberOfDevices = node->GetNDevices ();
   uint32_t index = 0;
@@ -536,8 +558,9 @@ Ipv4NixVectorRouting::FindNetDeviceForNixIndex (Ptr<Node> node, uint32_t nodeInd
   return index;
 }
 
+template <typename parent>
 Ptr<Ipv4Route> 
-Ipv4NixVectorRouting::RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr)
+NixVectorRouting<parent>::RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr)
 {
   NS_LOG_FUNCTION_NOARGS ();
   Ptr<Ipv4Route> rtentry;
@@ -658,10 +681,11 @@ Ipv4NixVectorRouting::RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<
   return rtentry;
 }
 
+template <typename parent>
 bool 
-Ipv4NixVectorRouting::RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
-                                  UnicastForwardCallback ucb, MulticastForwardCallback mcb,
-                                  LocalDeliverCallback lcb, ErrorCallback ecb)
+NixVectorRouting<parent>::RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
+                                      UnicastForwardCallback ucb, MulticastForwardCallback mcb,
+                                      LocalDeliverCallback lcb, ErrorCallback ecb)
 {
   NS_LOG_FUNCTION_NOARGS ();
 
@@ -743,8 +767,9 @@ Ipv4NixVectorRouting::RouteInput (Ptr<const Packet> p, const Ipv4Header &header,
   return true;
 }
 
+template <typename parent>
 void
-Ipv4NixVectorRouting::PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::Unit unit) const
+NixVectorRouting<parent>::PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::Unit unit) const
 {
 
   CheckCacheStateAndFlush ();
@@ -804,29 +829,34 @@ Ipv4NixVectorRouting::PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::
 }
 
 // virtual functions from Ipv4RoutingProtocol 
+template <typename parent>
 void
-Ipv4NixVectorRouting::NotifyInterfaceUp (uint32_t i)
+NixVectorRouting<parent>::NotifyInterfaceUp (uint32_t i)
 {
   g_isCacheDirty = true;
 }
+template <typename parent>
 void
-Ipv4NixVectorRouting::NotifyInterfaceDown (uint32_t i)
+NixVectorRouting<parent>::NotifyInterfaceDown (uint32_t i)
 {
   g_isCacheDirty = true;
 }
+template <typename parent>
 void
-Ipv4NixVectorRouting::NotifyAddAddress (uint32_t interface, Ipv4InterfaceAddress address)
+NixVectorRouting<parent>::NotifyAddAddress (uint32_t interface, Ipv4InterfaceAddress address)
 {
   g_isCacheDirty = true;
 }
+template <typename parent>
 void
-Ipv4NixVectorRouting::NotifyRemoveAddress (uint32_t interface, Ipv4InterfaceAddress address)
+NixVectorRouting<parent>::NotifyRemoveAddress (uint32_t interface, Ipv4InterfaceAddress address)
 {
   g_isCacheDirty = true;
 }
 
+template <typename parent>
 bool
-Ipv4NixVectorRouting::BFS (uint32_t numberOfNodes, Ptr<Node> source, 
+NixVectorRouting<parent>::BFS (uint32_t numberOfNodes, Ptr<Node> source, 
                            Ptr<Node> dest, std::vector< Ptr<Node> > & parentVector,
                            Ptr<NetDevice> oif) const
 {
@@ -971,8 +1001,9 @@ Ipv4NixVectorRouting::BFS (uint32_t numberOfNodes, Ptr<Node> source,
   return false;
 }
 
+template <typename parent>
 void
-Ipv4NixVectorRouting::PrintRoutingPath (Ptr<Node> source, Ipv4Address dest,
+NixVectorRouting<parent>::PrintRoutingPath (Ptr<Node> source, Ipv4Address dest,
                                         Ptr<OutputStreamWrapper> stream, Time::Unit unit) const
 {
   NS_LOG_FUNCTION (this << source << dest);
@@ -1091,8 +1122,9 @@ Ipv4NixVectorRouting::PrintRoutingPath (Ptr<Node> source, Ipv4Address dest,
   (*os).copyfmt (oldState);
 }
 
+template <typename parent>
 void 
-Ipv4NixVectorRouting::CheckCacheStateAndFlush (void) const
+NixVectorRouting<parent>::CheckCacheStateAndFlush (void) const
 {
   if (g_isCacheDirty)
     {
