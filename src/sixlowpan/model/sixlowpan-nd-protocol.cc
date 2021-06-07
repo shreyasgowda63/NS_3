@@ -1166,8 +1166,8 @@ SixLowPanNdProtocol::HandleRsTimeout (Ipv6Address src, Ipv6Address dst,  Address
 {
   NS_LOG_FUNCTION (this << src << dst << hardwareAddress << +retryCounter);
 
-  std::cout << "SixLowPanNdProtocol::HandleRsTimeout " << src << " " << dst << " " << hardwareAddress << " " << +retryCounter << " " << +m_maxRtrSolicitations << " ";
-  std::cout << m_rtrSolicitationInterval.As (Time::S) << " - " << m_maxRtrSolicitationInterval.As (Time::S) << std::endl; 
+//  std::cout << "SixLowPanNdProtocol::HandleRsTimeout " << src << " " << dst << " " << hardwareAddress << " " << +retryCounter << " " << +m_maxRtrSolicitations << " ";
+//  std::cout << m_rtrSolicitationInterval.As (Time::S) << " - " << m_maxRtrSolicitationInterval.As (Time::S) << std::endl;
 
   NS_ABORT_MSG_IF (src == Ipv6Address::GetAny (),
                    "An unspecified source address MUST NOT be used in RS messages");

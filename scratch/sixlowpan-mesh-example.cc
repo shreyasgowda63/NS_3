@@ -189,7 +189,7 @@ int main (int argc, char** argv)
 #endif
 
   NodeContainer lo_nodes;
-  lo_nodes.Create (40);
+  lo_nodes.Create (9);
 
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
@@ -221,10 +221,9 @@ int main (int argc, char** argv)
   SixLowPanHelper sixlowpan;
   NetDeviceContainer devices = sixlowpan.Install (lrwpanDevices);
 
-
-  for (int var = 0; var <40; var++)
+  for (int var = 0; var <9; var++)
     {
-      if (var == 20)
+      if (var == 4)
         {
           sixlowpan.InstallSixLowPanNdBorderRouter (devices.Get (var), "2001::");
           sixlowpan.SetAdvertisedPrefix (devices.Get (var), Ipv6Prefix ("2001::", 64));
@@ -352,9 +351,9 @@ int main (int argc, char** argv)
       std::cout<< "****------------------Ping or UDP Applications are not running------------------****"<<std::endl;
     }
 
-//  AsciiTraceHelper ascii;
-//  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
-//  lrWpanHelper.EnablePcapAll (std::string ("sixlowpan-mesh-example"), true);
+  AsciiTraceHelper ascii;
+  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
+  lrWpanHelper.EnablePcapAll (std::string ("sixlowpan-mesh-example"), true);
 //
 //  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
 //  for (int var = 0; var < stopTime; ++var)

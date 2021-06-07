@@ -191,7 +191,7 @@ int main (int argc, char** argv)
 #endif
 
   NodeContainer lo_nodes;
-  lo_nodes.Create (40);
+  lo_nodes.Create (9);
 
   MobilityHelper mobility;
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
@@ -226,9 +226,9 @@ int main (int argc, char** argv)
   Ipv6InterfaceContainer iicr; // for router node
 
 
-  for (int var = 0; var < 40; var++)
+  for (int var = 0; var < 9; var++)
     {
-      if (var == 20)
+      if (var == 4)
         {
           iicr=ipv6.Assign (devices.Get(var));
           iicr.SetForwarding (0, true);
