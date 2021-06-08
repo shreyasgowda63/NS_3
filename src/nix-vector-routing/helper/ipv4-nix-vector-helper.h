@@ -23,6 +23,7 @@
 
 #include "ns3/object-factory.h"
 #include "ns3/ipv4-routing-helper.h"
+#include "ns3/ipv6-routing-helper.h"
 
 namespace ns3 {
 
@@ -38,6 +39,10 @@ namespace ns3 {
 template <typename parent>
 class NixVectorHelper : public parent
 {
+  using IsIpv4 = std::is_same <Ipv4RoutingHelper, parent>;
+  using Ip = typename std::conditional <IsIpv4::value, Ipv4, Ipv6>::type;
+  using IpAddress = typename std::conditional<IsIpv4::value, Ipv4Address, Ipv6Address>::type;
+  using IpRoutingProtocol = typename std::conditional<IsIpv4::value, Ipv4RoutingProtocol, Ipv6RoutingProtocol>::type;
 public:
   /**
    * Construct an NixVectorHelper to make life easier while adding Nix-vector
@@ -67,7 +72,7 @@ public:
   *
   * This method will be called by ns3::InternetStackHelper::Install
   */
-  virtual Ptr<Ipv4RoutingProtocol> Create (Ptr<Node> node) const;
+  virtual Ptr<IpRoutingProtocol> Create (Ptr<Node> node) const;
 
   /**
    * \brief prints the routing path for a source and destination at a particular time.
@@ -75,15 +80,15 @@ public:
    * the nodes in the ostream.
    * \param printTime the time at which the routing path is supposed to be printed.
    * \param source the source node pointer to start traversing
-   * \param dest the IPv4 destination address
+   * \param dest the IP destination address
    * \param stream the output stream object to use
    * \param unit the time unit to be used in the report
    *
    * This method calls the PrintRoutingPath() method of the
-   * Ipv4NixVectorRouting for the source and destination to provide
+   * NixVectorRouting for the source and destination to provide
    * the routing path at the specified time.
    */
-  void PrintRoutingPathAt (Time printTime, Ptr<Node> source, Ipv4Address dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S);
+  void PrintRoutingPathAt (Time printTime, Ptr<Node> source, IpAddress dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S);
 
 private:
   /**
@@ -99,15 +104,15 @@ private:
    * \brief prints the routing path for the source and destination. If the routing path
    * does not exist, it prints that the path does not exist between the nodes in the ostream.
    * \param source the source node pointer to start traversing
-   * \param dest the IPv4 destination address
+   * \param dest the IP destination address
    * \param stream the output stream object to use
    * \param unit the time unit to be used in the report
    *
    * This method calls the PrintRoutingPath() method of the
-   * Ipv4NixVectorRouting for the source and destination to provide
+   * NixVectorRouting for the source and destination to provide
    * the routing path.
    */
-  static void PrintRoute (Ptr<Node> source, Ipv4Address dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S);
+  static void PrintRoute (Ptr<Node> source, IpAddress dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S);
 };
 
 /**

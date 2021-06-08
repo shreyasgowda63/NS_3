@@ -86,7 +86,7 @@ NixVectorRouting<parent>::DoDispose ()
   m_node = 0;
   m_ip = 0;
 
-  Ipv4RoutingProtocol::DoDispose ();
+  parent::DoDispose ();
 }
 
 template <typename parent>
@@ -117,7 +117,7 @@ NixVectorRouting<parent>::FlushGlobalNixRoutingCache (void) const
       rp->FlushIpRouteCache ();
     }
 
-  // IPv4 address to node mapping is potentially invalid so clear it.
+  // IP address to node mapping is potentially invalid so clear it.
   // Will be repopulated in lazy evaluation when mapping is needed.
   g_ipAddressToNodeMap.clear ();
 }
@@ -374,9 +374,9 @@ NixVectorRouting<parent>::BuildIpAddressToNodeMap (void) const
   for (NodeList::Iterator it = NodeList::Begin (); it != NodeList::End (); ++it)
     {
       Ptr<Node> node = *it;
-      Ptr<Ip> ipv4 = node->GetObject<Ip> ();
+      Ptr<Ip> ip = node->GetObject<Ip> ();
 
-      if(ipv4)
+      if(ip)
         {
           uint32_t numberOfDevices = node->GetNDevices ();
 
@@ -384,22 +384,22 @@ NixVectorRouting<parent>::BuildIpAddressToNodeMap (void) const
             {
               Ptr<NetDevice> device = node->GetDevice (deviceId);
 
-              // If this is not a loopback device add the IPv4 address to the map
+              // If this is not a loopback device add the IP address to the map
               if ( !DynamicCast<LoopbackNetDevice>(device) )
                 {
-                  int32_t interfaceIndex = (ipv4)->GetInterfaceForDevice (node->GetDevice (deviceId));
+                  int32_t interfaceIndex = (ip)->GetInterfaceForDevice (node->GetDevice (deviceId));
                   if (interfaceIndex != -1)
                     {
-                      uint32_t numberOfAddresses = ipv4->GetNAddresses (interfaceIndex);
+                      uint32_t numberOfAddresses = ip->GetNAddresses (interfaceIndex);
                       for (uint32_t addressIndex = 0; addressIndex < numberOfAddresses; addressIndex++)
                         {
-                          IpInterfaceAddress ifAddr = ipv4->GetAddress (interfaceIndex, addressIndex);
+                          IpInterfaceAddress ifAddr = ip->GetAddress (interfaceIndex, addressIndex);
                           IpAddress addr = ifAddr.GetLocal ();
 
                           NS_ABORT_MSG_IF (g_ipAddressToNodeMap.count (addr),
-                                          "Duplicate IPv4 address (" << addr << ") found during NIX Vector map construction for node " << node->GetId ());
+                                          "Duplicate IP address (" << addr << ") found during NIX Vector map construction for node " << node->GetId ());
 
-                          NS_LOG_LOGIC ("Adding IPv4 address " << addr << " for node " << node->GetId () << " to NIX Vector IPv4 address to node map");
+                          NS_LOG_LOGIC ("Adding IP address " << addr << " for node " << node->GetId () << " to NIX Vector IP address to node map");
                           g_ipAddressToNodeMap[addr] = node;
                         }
                     }
@@ -545,10 +545,10 @@ NixVectorRouting<parent>::FindNetDeviceForNixIndex (Ptr<Node> node, uint32_t nod
           index = i;
           Ptr<NetDevice> gatewayDevice = netDeviceContainer.Get (nodeIndex-totalNeighbors);
           Ptr<Node> gatewayNode = gatewayDevice->GetNode ();
-          Ptr<Ip> ipv4 = gatewayNode->GetObject<Ip> ();
+          Ptr<Ip> ip = gatewayNode->GetObject<Ip> ();
 
-          uint32_t interfaceIndex = (ipv4)->GetInterfaceForDevice (gatewayDevice);
-          IpInterfaceAddress ifAddr = ipv4->GetAddress (interfaceIndex, 0);
+          uint32_t interfaceIndex = (ip)->GetInterfaceForDevice (gatewayDevice);
+          IpInterfaceAddress ifAddr = ip->GetAddress (interfaceIndex, 0);
           gatewayIp = ifAddr.GetLocal ();
           break;
         }
@@ -876,7 +876,7 @@ NixVectorRouting<parent>::BFS (uint32_t numberOfNodes, Ptr<Node> source,
   while (greyNodeList.size () != 0)
     {
       Ptr<Node> currNode = greyNodeList.front ();
-      Ptr<Ip> ipv4 = currNode->GetObject<Ip> ();
+      Ptr<Ip> ip = currNode->GetObject<Ip> ();
  
       if (currNode == dest) 
         {
@@ -890,12 +890,12 @@ NixVectorRouting<parent>::BFS (uint32_t numberOfNodes, Ptr<Node> source,
       if (currNode == source && oif)
         {
           // make sure that we can go this way
-          if (ipv4)
+          if (ip)
             {
-              uint32_t interfaceIndex = (ipv4)->GetInterfaceForDevice (oif);
-              if (!(ipv4->IsUp (interfaceIndex)))
+              uint32_t interfaceIndex = (ip)->GetInterfaceForDevice (oif);
+              if (!(ip->IsUp (interfaceIndex)))
                 {
-                  NS_LOG_LOGIC ("Ipv4Interface is down");
+                  NS_LOG_LOGIC ("IpInterface is down");
                   return false;
                 }
             }
@@ -946,12 +946,12 @@ NixVectorRouting<parent>::BFS (uint32_t numberOfNodes, Ptr<Node> source,
               Ptr<NetDevice> localNetDevice = currNode->GetDevice (i);
 
               // make sure that we can go this way
-              if (ipv4)
+              if (ip)
                 {
-                  uint32_t interfaceIndex = (ipv4)->GetInterfaceForDevice (currNode->GetDevice (i));
-                  if (!(ipv4->IsUp (interfaceIndex)))
+                  uint32_t interfaceIndex = (ip)->GetInterfaceForDevice (currNode->GetDevice (i));
+                  if (!(ip->IsUp (interfaceIndex)))
                     {
-                      NS_LOG_LOGIC ("Ipv4Interface is down");
+                      NS_LOG_LOGIC ("IpInterface is down");
                       continue;
                     }
                 }
@@ -1086,19 +1086,19 @@ NixVectorRouting<parent>::PrintRoutingPath (Ptr<Node> source, IpAddress dest,
           // Get the interfaceIndex with the help of NetDeviceIndex.
           // It will be used to get the IP address on interfaceIndex
           // interface of 'curr' node.
-          Ptr<Ip> ipv4 = curr->GetObject<Ip> ();
+          Ptr<Ip> ip = curr->GetObject<Ip> ();
           Ptr<NetDevice> outDevice = curr->GetDevice (NetDeviceIndex);
-          uint32_t interfaceIndex = ipv4->GetInterfaceForDevice (outDevice);
+          uint32_t interfaceIndex = ip->GetInterfaceForDevice (outDevice);
           IpAddress sourceIPAddr;
           if (curr == source)
             {
-              sourceIPAddr = ipv4->SourceAddressSelection (interfaceIndex, dest);
+              sourceIPAddr = ip->SourceAddressSelection (interfaceIndex, dest);
             }
           else
             {
               // We use the first address because it's indifferent which one
               // we use to identify intermediate routers
-              sourceIPAddr = ipv4->GetAddress (interfaceIndex, 0).GetLocal ();
+              sourceIPAddr = ip->GetAddress (interfaceIndex, 0).GetLocal ();
             }
 
           std::ostringstream currNode, nextNode;

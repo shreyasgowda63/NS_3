@@ -39,14 +39,14 @@ template <typename parent>
 NixVectorHelper<parent>*
 NixVectorHelper<parent>::Copy (void) const
 {
-  return new Ipv4NixVectorHelper (*this); 
+  return new NixVectorHelper<parent> (*this);
 }
 
 template <typename parent>
-Ptr<Ipv4RoutingProtocol>
+Ptr<typename NixVectorHelper<parent>::IpRoutingProtocol>
 NixVectorHelper<parent>::Create (Ptr<Node> node) const
 {
-  Ptr<Ipv4NixVectorRouting> agent = m_agentFactory.Create<Ipv4NixVectorRouting> ();
+  Ptr<NixVectorRouting<IpRoutingProtocol>> agent = m_agentFactory.Create<NixVectorRouting<IpRoutingProtocol>> ();
   agent->SetNode (node);
   node->AggregateObject (agent);
   return agent;
@@ -54,16 +54,16 @@ NixVectorHelper<parent>::Create (Ptr<Node> node) const
 
 template <typename parent>
 void
-NixVectorHelper<parent>::PrintRoutingPathAt (Time printTime, Ptr<Node> source, Ipv4Address dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit)
+NixVectorHelper<parent>::PrintRoutingPathAt (Time printTime, Ptr<Node> source, IpAddress dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit)
 {
   Simulator::Schedule (printTime, &NixVectorHelper<parent>::PrintRoute, source, dest, stream, unit);
 }
 
 template <typename parent>
 void
-NixVectorHelper<parent>::PrintRoute (Ptr<Node> source, Ipv4Address dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit)
+NixVectorHelper<parent>::PrintRoute (Ptr<Node> source, IpAddress dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit)
 {
-  Ptr<Ipv4NixVectorRouting> rp = Ipv4RoutingHelper::GetRouting <Ipv4NixVectorRouting> (source->GetObject<Ipv4> ()->GetRoutingProtocol ());
+  Ptr<NixVectorRouting<IpRoutingProtocol>> rp = parent::template GetRouting <NixVectorRouting<IpRoutingProtocol>> (source->GetObject<Ip> ()->GetRoutingProtocol ());
   NS_ASSERT (rp);
   rp->PrintRoutingPath (source, dest, stream, unit);
 }
