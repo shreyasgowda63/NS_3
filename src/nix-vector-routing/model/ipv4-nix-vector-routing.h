@@ -27,6 +27,7 @@
 #include "ns3/net-device-container.h"
 #include "ns3/ipv4-routing-protocol.h"
 #include "ns3/ipv4-route.h"
+#include "ns3/ipv6-routing-protocol.h"
 #include "ns3/nix-vector.h"
 #include "ns3/bridge-net-device.h"
 #include "ns3/nstime.h"
@@ -50,6 +51,15 @@ namespace ns3 {
 template <typename parent>
 class NixVectorRouting : public parent
 {
+  using IsIpv4 = std::is_same <Ipv4RoutingProtocol, parent>;
+  using Ip = typename std::conditional <IsIpv4::value, Ipv4, Ipv6>::type;
+  using IpAddress = typename std::conditional<IsIpv4::value, Ipv4Address, Ipv6Address>::type;
+  using IpRoute = typename std::conditional<IsIpv4::value, Ipv4Route, Ipv6Route>::type;
+  using IpAddressHash = typename std::conditional<IsIpv4::value, Ipv4AddressHash, Ipv6AddressHash>::type;
+  using IpHeader = typename std::conditional<IsIpv4::value, Ipv4Header, Ipv6Header>::type;
+  using IpInterfaceAddress = typename std::conditional<IsIpv4::value, Ipv4InterfaceAddress, Ipv6InterfaceAddress>::type;
+  using IpMulticastRoute = typename std::conditional<IsIpv4::value, Ipv4MulticastRoute, Ipv6MulticastRoute>::type;
+
 public:
   NixVectorRouting ();
   ~NixVectorRouting ();
@@ -86,7 +96,7 @@ public:
    * \param stream The ostream the Routing path is printed to
    * \param unit the time unit to be used in the report
    */
-  void PrintRoutingPath (Ptr<Node> source, Ipv4Address dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit) const;
+  void PrintRoutingPath (Ptr<Node> source, IpAddress dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit) const;
 
 
 private:
@@ -98,10 +108,10 @@ private:
   void FlushNixCache (void) const;
 
   /**
-   * Flushes the cache which stores the Ipv4 route
+   * Flushes the cache which stores the Ip route
    * based on the destination IP
    */
-  void FlushIpv4RouteCache (void) const;
+  void FlushIpRouteCache (void) const;
 
   /**
    * Upon a run-time topology change caches are
@@ -120,21 +130,21 @@ private:
    * \param oif Preferred output interface
    * \returns The NixVector to be used in routing.
    */
-  Ptr<NixVector> GetNixVector (Ptr<Node> source, Ipv4Address dest, Ptr<NetDevice> oif) const;
+  Ptr<NixVector> GetNixVector (Ptr<Node> source, IpAddress dest, Ptr<NetDevice> oif) const;
 
   /**
    * Checks the cache based on dest IP for the nix-vector
    * \param address Address to check
    * \returns The NixVector to be used in routing.
    */
-  Ptr<NixVector> GetNixVectorInCache (Ipv4Address address) const;
+  Ptr<NixVector> GetNixVectorInCache (IpAddress address) const;
 
   /**
-   * Checks the cache based on dest IP for the Ipv4Route
+   * Checks the cache based on dest IP for the IpRoute
    * \param address Address to check
    * \returns The cached route.
    */
-  Ptr<Ipv4Route> GetIpv4RouteInCache (Ipv4Address address);
+  Ptr<IpRoute> GetIpRouteInCache (IpAddress address);
 
   /**
    * Given a net-device returns all the adjacent net-devices,
@@ -147,11 +157,11 @@ private:
 
   /**
    * Iterates through the node list and finds the one
-   * corresponding to the given Ipv4Address
+   * corresponding to the given IpAddress
    * \param dest destination node IP
    * \return The node with the specified IP.
    */
-  Ptr<Node> GetNodeByIp (Ipv4Address dest) const;
+  Ptr<Node> GetNodeByIp (IpAddress dest) const;
 
   /**
    * Recurses the parent vector, created by BFS and actually builds the nixvector
@@ -195,7 +205,7 @@ private:
    * \param [out] gatewayIp IP address of the gateway
    * \returns the index of the NetDevice in the node.
    */
-  uint32_t FindNetDeviceForNixIndex (Ptr<Node> node, uint32_t nodeIndex, Ipv4Address & gatewayIp) const;
+  uint32_t FindNetDeviceForNixIndex (Ptr<Node> node, uint32_t nodeIndex, IpAddress & gatewayIp) const;
 
   /**
    * \brief Breadth first search algorithm.
@@ -214,34 +224,34 @@ private:
 
   void DoDispose (void);
 
-  /// Map of Ipv4Address to NixVector
-  typedef std::map<Ipv4Address, Ptr<NixVector> > NixMap_t;
-  /// Map of Ipv4Address to Ipv4Route
-  typedef std::map<Ipv4Address, Ptr<Ipv4Route> > Ipv4RouteMap_t;
+  /// Map of IpAddress to NixVector
+  typedef std::map<IpAddress, Ptr<NixVector> > NixMap_t;
+  /// Map of IpAddress to IpRoute
+  typedef std::map<IpAddress, Ptr<IpRoute> > IpRouteMap_t;
 
   /// Callback for unicast packets to be forwarded
-  typedef Callback<void, Ptr<Ipv4Route>, Ptr<const Packet>, const Ipv4Header &> UnicastForwardCallback;
+  typedef Callback<void, Ptr<IpRoute>, Ptr<const Packet>, const IpHeader &> UnicastForwardCallback;
 
   /// Callback for multicast packets to be forwarded
-  typedef Callback<void, Ptr<Ipv4MulticastRoute>, Ptr<const Packet>, const Ipv4Header &> MulticastForwardCallback;
+  typedef Callback<void, Ptr<IpMulticastRoute>, Ptr<const Packet>, const IpHeader &> MulticastForwardCallback;
 
   /// Callback for packets to be locally delivered
-  typedef Callback<void, Ptr<const Packet>, const Ipv4Header &, uint32_t > LocalDeliverCallback;
+  typedef Callback<void, Ptr<const Packet>, const IpHeader &, uint32_t > LocalDeliverCallback;
 
   /// Callback for routing errors (e.g., no route found)
-  typedef Callback<void, Ptr<const Packet>, const Ipv4Header &, Socket::SocketErrno > ErrorCallback;
+  typedef Callback<void, Ptr<const Packet>, const IpHeader &, Socket::SocketErrno > ErrorCallback;
 
 
   /* From Ipv4RoutingProtocol */
-  virtual Ptr<Ipv4Route> RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr);
-  virtual bool RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
+  virtual Ptr<IpRoute> RouteOutput (Ptr<Packet> p, const IpHeader &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr);
+  virtual bool RouteInput (Ptr<const Packet> p, const IpHeader &header, Ptr<const NetDevice> idev,
                            UnicastForwardCallback ucb, MulticastForwardCallback mcb,
                            LocalDeliverCallback lcb, ErrorCallback ecb);
   virtual void NotifyInterfaceUp (uint32_t interface);
   virtual void NotifyInterfaceDown (uint32_t interface);
-  virtual void NotifyAddAddress (uint32_t interface, Ipv4InterfaceAddress address);
-  virtual void NotifyRemoveAddress (uint32_t interface, Ipv4InterfaceAddress address);
-  virtual void SetIpv4 (Ptr<Ipv4> ipv4);
+  virtual void NotifyAddAddress (uint32_t interface, IpInterfaceAddress address);
+  virtual void NotifyRemoveAddress (uint32_t interface, IpInterfaceAddress address);
+  virtual void SetIpv4 (Ptr<Ip> ipv4);
   virtual void PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S) const;
  
   /**
@@ -250,9 +260,9 @@ private:
   void CheckCacheStateAndFlush (void) const;
 
   /**
-   * Build map from IPv4 Address to Node for faster lookup.
+   * Build map from IP Address to Node for faster lookup.
    */
-  void BuildIpv4AddressToNodeMap (void) const;
+  void BuildIpAddressToNodeMap (void) const;
 
   /**
    * Flag to mark when caches are dirty and need to be flushed.  
@@ -263,10 +273,10 @@ private:
   /** Cache stores nix-vectors based on destination ip */
   mutable NixMap_t m_nixCache;
 
-  /** Cache stores Ipv4Routes based on destination ip */
-  mutable Ipv4RouteMap_t m_ipv4RouteCache;
+  /** Cache stores IpRoutes based on destination ip */
+  mutable IpRouteMap_t m_ipRouteCache;
 
-  Ptr<Ipv4> m_ipv4; //!< IPv4 object
+  Ptr<Ip> m_ip; //!< IP object
   Ptr<Node> m_node; //!< Node object
 
   /** Total neighbors used for nix-vector to determine number of bits */
@@ -274,14 +284,14 @@ private:
 
 
   /**
-   * Mapping of IPv4 address to ns-3 node.
+   * Mapping of IP address to ns-3 node.
    *
    * Used to avoid linear searching of nodes/devices to find a node in
    * GetNodeByIp() method.  NIX vector routing assumes IP addresses
    * are unique so mapping can be done without duplication.
    **/
-  typedef std::unordered_map<Ipv4Address, ns3::Ptr<ns3::Node>, Ipv4AddressHash > Ipv4AddressToNodeMap;
-  static Ipv4AddressToNodeMap g_ipv4AddressToNodeMap; //!< Address to node map.
+  typedef std::unordered_map<IpAddress, ns3::Ptr<ns3::Node>, IpAddressHash > IpAddressToNodeMap;
+  static IpAddressToNodeMap g_ipAddressToNodeMap; //!< Address to node map.
 };
 
 
@@ -294,4 +304,4 @@ private:
 typedef NixVectorRouting<Ipv4RoutingProtocol> Ipv4NixVectorRouting;
 } // namespace ns3
 
-#endif /* IPV4_NIX_VECTOR_ROUTING_H */
+#endif /* NIX_VECTOR_ROUTING_H */

@@ -119,4 +119,4 @@ private:
 typedef NixVectorHelper<Ipv4RoutingHelper> Ipv4NixVectorHelper;
 } // namespace ns3
 
-#endif /* IPV4_NIX_VECTOR_HELPER_H */
+#endif /* NIX_VECTOR_HELPER_H */
