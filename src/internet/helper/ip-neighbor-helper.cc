@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2008 INRIA
+ * Copyright (c) 2021 Universita' di Firenze, Italy
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -107,7 +107,7 @@ IpNeighborHelper::Remove (Ptr<NetDevice> netDevice, Ipv4Address ipv4Address)
 
   ArpCache::Entry* entry;
   entry = arpCache->Lookup (ipv4Address);
-  if (!entry)
+  if (entry)
     {
       arpCache->Remove (entry);
       return true;
@@ -167,7 +167,7 @@ IpNeighborHelper::Remove (Ptr<NetDevice> netDevice, Ipv6Address ipv6Address)
 
   NdiscCache::Entry* entry;
   entry = ndiscCache->Lookup (ipv6Address);
-  if (!entry)
+  if (entry)
     {
       ndiscCache->Remove (entry);
       return true;

@@ -54,7 +54,7 @@ public:
   IpNeighborHelper(void);
 
   /**
-   * Destroy the InternetStackHelper
+   * Destroy the IpNeighborHelper
    */
   virtual ~IpNeighborHelper(void);
 
@@ -67,7 +67,7 @@ public:
   /**
    * \brief Copy constructor
    * \param o Object to copy from.
-   * \returns A copy of the InternetStackHelper.
+   * \returns A copy of the IpNeighborHelper.
    */
   IpNeighborHelper &operator = (const IpNeighborHelper &o);
 
@@ -75,7 +75,7 @@ public:
    * \brief Neighbor entries states
    */
   enum NudState_e {
-    PERMANENT,  //!< the neighbour entry is valid forever and can be only be removed administratively.
+    PERMANENT,  //!< the neighbour entry is valid forever and can only be removed administratively.
     NOARP,      //!< the neighbour entry is valid. No attempts to validate this entry will be made but it can be removed when its lifetime expires.
     REACHABLE,  //!< the neighbour entry is valid until the reachability timeout expires.
     STALE,      //!< the neighbour entry is valid but suspicious. Does not change the neighbour state if it was valid and the address is not changed.
@@ -112,7 +112,7 @@ public:
    *
    * Equivalent to "ip neighbor add 2001:db8:food::1 lladdr 00:c0:7b:7d:00:c8 dev eth3 nud permanent"
    *
-   * \param netDevice the NetDevice whose ARP cache is to modify.
+   * \param netDevice the NetDevice whose NDISC cache is to modify.
    * \param ipv6Address the IPv6 address to add to the cache.
    * \param macAddress the MAC address to add to the cache.
    * \param nud the neighbor NUD state.
@@ -124,7 +124,7 @@ public:
    *
    * Equivalent to "ip neighbor remove 2001:db8:food::1 dev eth3"
    *
-   * \param netDevice the NetDevice whose ARP cache is to modify.
+   * \param netDevice the NetDevice whose NDISC cache is to modify.
    * \param ipv6Address the IPv6 address to add to the cache.
    * \return true on success.
    */
