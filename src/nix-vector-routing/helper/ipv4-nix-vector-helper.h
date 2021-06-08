@@ -18,8 +18,8 @@
  * Authors: Josh Pelkey <jpelkey@gatech.edu>
  */
 
-#ifndef IPV4_NIX_VECTOR_HELPER_H
-#define IPV4_NIX_VECTOR_HELPER_H
+#ifndef NIX_VECTOR_HELPER_H
+#define NIX_VECTOR_HELPER_H
 
 #include "ns3/object-factory.h"
 #include "ns3/ipv4-routing-helper.h"
@@ -35,30 +35,31 @@ namespace ns3 {
  * ns3::InternetStackHelper::SetRoutingHelper
  *
  */
-class Ipv4NixVectorHelper : public Ipv4RoutingHelper
+template <typename parent>
+class NixVectorHelper : public parent
 {
 public:
   /**
-   * Construct an Ipv4NixVectorHelper to make life easier while adding Nix-vector
+   * Construct an NixVectorHelper to make life easier while adding Nix-vector
    * routing to nodes.
    */
-  Ipv4NixVectorHelper ();
+  NixVectorHelper ();
 
   /**
-   * \brief Construct an Ipv4NixVectorHelper from another previously 
+   * \brief Construct an NixVectorHelper from another previously
    * initialized instance (Copy Constructor).
    *
    * \param o object to copy
    */
-  Ipv4NixVectorHelper (const Ipv4NixVectorHelper &o);
+  NixVectorHelper (const NixVectorHelper<parent> &o);
 
   /**
-   * \returns pointer to clone of this Ipv4NixVectorHelper 
+   * \returns pointer to clone of this NixVectorHelper
    * 
    * This method is mainly for internal use by the other helpers;
    * clients are expected to free the dynamic memory allocated by this method
    */
-  Ipv4NixVectorHelper* Copy (void) const;
+  NixVectorHelper<parent>* Copy (void) const;
 
   /**
   * \param node the node on which the routing protocol will run
@@ -90,7 +91,7 @@ private:
    * assignment and prevent the compiler from happily inserting its own.
    * \return Nothing useful.
    */
-  Ipv4NixVectorHelper &operator = (const Ipv4NixVectorHelper &);
+  NixVectorHelper &operator = (const NixVectorHelper &);
 
   ObjectFactory m_agentFactory; //!< Object factory
 
@@ -108,6 +109,14 @@ private:
    */
   static void PrintRoute (Ptr<Node> source, Ipv4Address dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S);
 };
+
+/**
+ * \ingroup nix-vector-routing
+ * Create the typedef Ipv4NixVectorHelper with parent as Ipv4RoutingHelper
+ *
+ * Note: This is kept to have backwards compatibility with original Ipv4RoutingHelper.
+ */
+typedef NixVectorHelper<Ipv4RoutingHelper> Ipv4NixVectorHelper;
 } // namespace ns3
 
 #endif /* IPV4_NIX_VECTOR_HELPER_H */

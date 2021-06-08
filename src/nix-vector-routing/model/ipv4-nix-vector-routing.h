@@ -18,8 +18,8 @@
  * Authors: Josh Pelkey <jpelkey@gatech.edu>
  */
 
-#ifndef IPV4_NIX_VECTOR_ROUTING_H
-#define IPV4_NIX_VECTOR_ROUTING_H
+#ifndef NIX_VECTOR_ROUTING_H
+#define NIX_VECTOR_ROUTING_H
 
 #include "ns3/channel.h"
 #include "ns3/node-container.h"
@@ -42,17 +42,6 @@ namespace ns3 {
  * Nix-vector routing is a simulation specific routing protocol and is
  * intended for large network topologies.
  */
-
-/**
- * \ingroup nix-vector-routing
- * Map of Ipv4Address to NixVector
- */
-typedef std::map<Ipv4Address, Ptr<NixVector> > NixMap_t;
-/**
- * \ingroup nix-vector-routing
- * Map of Ipv4Address to Ipv4Route
- */
-typedef std::map<Ipv4Address, Ptr<Ipv4Route> > Ipv4RouteMap_t;
 
 /**
  * \ingroup nix-vector-routing
@@ -225,6 +214,11 @@ private:
 
   void DoDispose (void);
 
+  /// Map of Ipv4Address to NixVector
+  typedef std::map<Ipv4Address, Ptr<NixVector> > NixMap_t;
+  /// Map of Ipv4Address to Ipv4Route
+  typedef std::map<Ipv4Address, Ptr<Ipv4Route> > Ipv4RouteMap_t;
+
   /// Callback for unicast packets to be forwarded
   typedef Callback<void, Ptr<Ipv4Route>, Ptr<const Packet>, const Ipv4Header &> UnicastForwardCallback;
 
@@ -289,6 +283,15 @@ private:
   typedef std::unordered_map<Ipv4Address, ns3::Ptr<ns3::Node>, Ipv4AddressHash > Ipv4AddressToNodeMap;
   static Ipv4AddressToNodeMap g_ipv4AddressToNodeMap; //!< Address to node map.
 };
+
+
+/**
+ * \ingroup nix-vector-routing
+ * Create the typedef Ipv4NixVectorRouting with parent as Ipv4RoutingProtocol
+ *
+ * Note: This is kept to have backwards compatibility with original Ipv4NixVectorRouting.
+ */
+typedef NixVectorRouting<Ipv4RoutingProtocol> Ipv4NixVectorRouting;
 } // namespace ns3
 
 #endif /* IPV4_NIX_VECTOR_ROUTING_H */

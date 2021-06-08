@@ -48,7 +48,7 @@ NixVectorRouting<parent>::GetTypeId (void)
   static TypeId tid = TypeId ("ns3::NixVectorRouting")
     .SetParent<parent> ()
     .SetGroupName ("NixVectorRouting")
-    .template AddConstructor<NixVectorRouting<parent>> ()
+    .template AddConstructor<NixVectorRouting<parent> > ()
   ;
   return tid;
 }
@@ -107,7 +107,7 @@ NixVectorRouting<parent>::FlushGlobalNixRoutingCache (void) const
   for (NodeList::Iterator i = NodeList::Begin (); i != listEnd; i++)
     {
       Ptr<Node> node = *i;
-      Ptr<NixVectorRouting<parent>> rp = node->GetObject<NixVectorRouting> ();
+      Ptr<NixVectorRouting<parent> > rp = node->GetObject<NixVectorRouting> ();
       if (!rp)
         {
           continue;
