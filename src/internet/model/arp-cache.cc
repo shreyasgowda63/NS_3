@@ -108,7 +108,7 @@ ArpCache::DoDispose (void)
   m_arpCache.erase (m_arpCache.begin (), m_arpCache.end ());
   if (m_waitReplyTimer.IsRunning ())
     {
-      NS_LOG_LOGIC ("Stopping WaitReplyTimer at " << Simulator::Now ().GetSeconds () << " due to ArpCache flush");
+      NS_LOG_LOGIC ("Stopping WaitReplyTimer at " << Simulator::Now ().As (Time::S) << " due to ArpCache flush");
       m_waitReplyTimer.Cancel ();
     }
 
@@ -245,7 +245,7 @@ ArpCache::HandleWaitReplyTimeout (void)
     }
   if (restartWaitReplyTimer)
     {
-      NS_LOG_LOGIC ("Restarting WaitReplyTimer at " << Simulator::Now ().GetSeconds ());
+      NS_LOG_LOGIC ("Restarting WaitReplyTimer at " << Simulator::Now ().As (Time::S));
       m_waitReplyTimer = Simulator::Schedule (m_waitReplyTimeout,
                                               &ArpCache::HandleWaitReplyTimeout, this);
     }
@@ -268,7 +268,7 @@ ArpCache::Flush (void)
   m_arpCache.erase (m_arpCache.begin (), m_arpCache.end ());
   if (m_waitReplyTimer.IsRunning ())
     {
-      NS_LOG_LOGIC ("Stopping WaitReplyTimer at " << Simulator::Now ().GetSeconds () << " due to ArpCache flush");
+      NS_LOG_LOGIC ("Stopping WaitReplyTimer at " << Simulator::Now ().As (Time::S) << " due to ArpCache flush");
       m_waitReplyTimer.Cancel ();
     }
 }
@@ -516,8 +516,13 @@ ArpCache::Entry::IsExpired (void) const
   NS_LOG_FUNCTION (this);
   Time timeout = GetTimeout ();
   Time delta = Simulator::Now () - m_lastSeen;
+<<<<<<< HEAD
   NS_LOG_DEBUG ("delta=" << delta.GetSeconds () << "s");
   if (delta > timeout)
+=======
+  NS_LOG_DEBUG ("delta=" << delta.As (Time::S));
+  if (delta > timeout) 
+>>>>>>> 328237974 (Change GetSeconds() to As(Time::S))
     {
       return true;
     }
