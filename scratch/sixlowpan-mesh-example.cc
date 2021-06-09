@@ -18,23 +18,23 @@
  * Author: Adnan Rashid <adnan.rashid@unifi.it>
  *         Tommaso Pecorella <tommaso.pecorella@unifi.it>
  *
- *        Sixlowpan Mesh-under network topology
  *
- *                             n0(6LBR)
- *                           +---------+
- *            n1(6LN)        | UDP     |        n2(6LN)
- *          +---------+      +---------+      +---------+
- *          | IPv6    |      | IPv6    |      | IPv6    |
- *          +---------+      +---------+      +---------+
- *   ...    | 6LoWPAN |      | 6LoWPAN |      | 6LoWPAN |    ...
- *          +---------+      +---------+      +---------+
- *          | lr-wpan |      | lr-wpan |      | lr-wpan |
- *          +---------+      +---------+      +---------+
- *              ||               ||               ||
- *                ===============  ===============
+ *   Sixlowpan stack view
+ *                     n0(6LBR)
+ *                   +---------+                 Sixlowpan Mesh-under network topology
+ *    n1(6LN)        | UDP     |
+ *  +---------+      +---------+                 n0---------n1---------n2
+ *  | IPv6    |      | IPv6    |                 |          |          |
+ *  +---------+      +---------+                 |          |          |      6LBR = n4
+ *  | 6LoWPAN |      | 6LoWPAN |                 n3---------n4---------n5     6LN = rest nodes
+ *  +---------+      +---------+                 |          |          |
+ *  | lr-wpan |      | lr-wpan |                 |          |          |
+ *  +---------+      +---------+                 n6---------n7---------n8
+ *      ||               ||
+ *       =================
+ *
  *
  * ./waf --run "scratch/sixlowpan-mesh-example.cc --Mesh --Ping=6LN --LLA --StopTime=2000 --Interval=100"
- *
  */
 #include <fstream>
 #include <map>
@@ -79,6 +79,7 @@ PrintResults (Time interval)
 	std::cout << unkCount << "\t" << unkTotalSize << "\t";
 	std::cout << unicastcount << "\t" <<multicastcount << std::endl;
 //	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
+
 
 	pktCount = 0;
 	pktTotalSize = 0;
@@ -148,7 +149,7 @@ SixLowCallback (std::string path, Ptr<const Packet> packet, Ptr<SixLowPanNetDevi
 	{
 		unicastcount++;
 	}
-//std::cout << Now ().As (Time::S) << " Tx something of size (Packets that IP did send to 6LoWPAN) " << packet->GetSize () << " - " << *packet << std::endl;
+//std::cout << Now ().As (Time::S) << " ******* "<< packet->GetSize () << " ******* " << *packet << std::endl;
 }
 
 int main (int argc, char** argv)
@@ -206,6 +207,11 @@ int main (int argc, char** argv)
   Config::SetDefault ("ns3::SixLowPanNdProtocol::RegistrationLifeTime", UintegerValue (2880));
   // Config::SetDefault ("ns3::Icmpv6L4Protocol::SolicitationJitter", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=1000.0]"));
 
+//  Config::SetDefault ("ns3::SixLowPanNdProtocol::DefaultRouterLifeTime", &SixLowPanNdProtocol::SixLowPanRaEntry::SetRouterLifeTime(2880);
+//  Config::SetDefault ("ns3::SixLowPanNdProtocol::DefaultPrefixInformationPreferredLifeTime", UintegerValue (2880));
+//  Config::SetDefault ("ns3::SixLowPanNdProtocol::DefaultPrefixInformationValidLifeTime", UintegerValue (2880));
+//  Config::SetDefault ("ns3::SixLowPanNdProtocol::DefaultContextValidLifeTime", UintegerValue (2880));
+//  Config::SetDefault ("ns3::SixLowPanNdProtocol::DefaultAbroValidLifeTime", UintegerValue (2880));
 
   LrWpanHelper lrWpanHelper;
   // Add and install the LrWpanNetDevice for each node
@@ -352,7 +358,7 @@ int main (int argc, char** argv)
     }
 
   AsciiTraceHelper ascii;
-  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
+//  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
   lrWpanHelper.EnablePcapAll (std::string ("sixlowpan-mesh-example"), true);
 //
 //  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
@@ -372,21 +378,6 @@ int main (int argc, char** argv)
   Simulator::Stop (Seconds (stopTime));
   Simulator::Run ();
 
-//  Ptr<Packet> foo = Create<Packet> ();
-//  PhyCallback ("foobar", foo);
-//  std::cout << "End of simulation at " << Now ().As (Time::S) << std::endl;
-
   Simulator::Destroy ();
-
-//  std::cout << "Udp: " << udpCount << std::endl;
-//  std::cout << "Other L4: " << otherL4Count << std::endl;
-//  for (auto const& x : icmpTypeCount)
-//  {
-//      std::cout << +x.first
-//                << ':'
-//                << x.second
-//                << std::endl;
-//  }
-
 };
 
