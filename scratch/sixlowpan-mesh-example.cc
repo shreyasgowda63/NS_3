@@ -162,6 +162,8 @@ int main (int argc, char** argv)
 	std::string usePingOn = "";
 	double stopTime = 100;
 	Time interval = Seconds (1);
+  std::string position = "Grid";
+  uint8_t numberOfNodes = 9;
 
 	CommandLine cmd;
 	cmd.AddValue ("Mesh", "Use mesh-under in the network", useMeshUnder);
@@ -171,7 +173,9 @@ int main (int argc, char** argv)
 	cmd.AddValue ("LLA", "Use link-local addresses for the communication", useLLA);
 	cmd.AddValue ("GUA", "Use global addresses for the communication", useGUA);
 	cmd.AddValue ("StopTime", "Simulation stop time (seconds)", stopTime);
-	cmd.AddValue ("Interval", "Sampling interval", interval);
+  cmd.AddValue ("Interval", "Sampling interval", interval);
+  cmd.AddValue ("Position", "Grid or Circle", position);
+  cmd.AddValue ("NumberOfNodes", "Number of nodes", numberOfNodes);
 	cmd.Parse (argc, argv);
 
 	if (useMeshUnder)
@@ -190,18 +194,48 @@ int main (int argc, char** argv)
 #endif
 
   NodeContainer lo_nodes;
-  lo_nodes.Create (9);
+  lo_nodes.Create (numberOfNodes);
+  uint8_t sixLbrNodeNum;
 
-  MobilityHelper mobility;
-  mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
-                                 "MinX", DoubleValue (0.0),
-                                 "MinY", DoubleValue (0.0),
-                                 "DeltaX", DoubleValue (30),
-                                 "DeltaY", DoubleValue (30),
-                                 "GridWidth", UintegerValue (3),
-                                 "LayoutType", StringValue ("RowFirst"));
-  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  mobility.Install (lo_nodes);
+  if (position == "Grid")
+    {
+      MobilityHelper mobility;
+      mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
+                                     "MinX", DoubleValue (0.0),
+                                     "MinY", DoubleValue (0.0),
+                                     "DeltaX", DoubleValue (60),
+                                     "DeltaY", DoubleValue (60),
+                                     "GridWidth", UintegerValue (3),
+                                     "LayoutType", StringValue ("RowFirst"));
+      mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+      mobility.Install (lo_nodes);
+      sixLbrNodeNum = 4;
+    }
+  else if (position == "Circle")
+    {
+
+      MobilityHelper mobility;
+      mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+
+      Ptr<ListPositionAllocator> nodesPositionAlloc = CreateObject<ListPositionAllocator> ();
+      sixLbrNodeNum = 0;
+      nodesPositionAlloc->Add (Vector (0.0, 0.0, 0.0));
+      for (uint8_t index = 1; index < numberOfNodes; index++)
+        {
+          double x, y;
+          x = 90 * sin (2*M_PI/(numberOfNodes-1)*(index-1));
+          y = 90 * cos (2*M_PI/(numberOfNodes-1)*(index-1));
+          nodesPositionAlloc->Add (Vector (x, y, 0.0));
+        }
+      mobility.SetPositionAllocator (nodesPositionAlloc);
+      mobility.Install (lo_nodes);
+
+    }
+  else
+    {
+      std::cout << "Invalid position type " << position << std::endl;
+      exit (0);
+    }
 
   // this means that the registration is valid for 2 days (and the re-registration is performed after 1 day).
   Config::SetDefault ("ns3::SixLowPanNdProtocol::RegistrationLifeTime", UintegerValue (2880));
@@ -227,9 +261,9 @@ int main (int argc, char** argv)
   SixLowPanHelper sixlowpan;
   NetDeviceContainer devices = sixlowpan.Install (lrwpanDevices);
 
-  for (int var = 0; var <9; var++)
+  for (int var = 0; var < numberOfNodes; var++)
     {
-      if (var == 4)
+      if (var == sixLbrNodeNum)
         {
           sixlowpan.InstallSixLowPanNdBorderRouter (devices.Get (var), "2001::");
           sixlowpan.SetAdvertisedPrefix (devices.Get (var), Ipv6Prefix ("2001::", 64));
@@ -358,7 +392,7 @@ int main (int argc, char** argv)
     }
 
   AsciiTraceHelper ascii;
-//  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
+  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("sixlowpan-mesh-example.tr"));
   lrWpanHelper.EnablePcapAll (std::string ("sixlowpan-mesh-example"), true);
 //
 //  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);

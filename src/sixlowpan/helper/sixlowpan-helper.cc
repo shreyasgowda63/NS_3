@@ -31,6 +31,7 @@
 #include "ns3/ipv6-routing-protocol.h"
 #include "ns3/boolean.h"
 #include "ns3/uinteger.h"
+#include "ns3/string.h"
 #include "ns3/ipv6-address-helper.h"
 #include "ns3/sixlowpan-nd-context.h"
 #include "ns3/sixlowpan-nd-prefix.h"
@@ -137,6 +138,7 @@ void SixLowPanHelper::InstallSixLowPanNd (NetDeviceContainer c, bool borderRoute
           sixLowPanNdProtocol->SetAttribute ("DAD", BooleanValue (false));
           sixLowPanNdProtocol->SetAttribute ("MaxRtrSolicitations", UintegerValue (3));
           sixLowPanNdProtocol->SetAttribute ("RtrSolicitationInterval", TimeValue (Seconds (10)));
+          // sixLowPanNdProtocol->SetAttribute ("RsJitter", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=1000.0]"));
           node->AggregateObject (sixLowPanNdProtocol);
         }
       ipv6->Insert (sixLowPanNdProtocol, interfaceId);
