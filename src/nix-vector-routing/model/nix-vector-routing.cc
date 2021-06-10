@@ -1,6 +1,7 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2009 The Georgia Institute of Technology 
+ * Copyright (c) 2009 The Georgia Institute of Technology
+ * Copyright (c) 2021 NITK Surathkal
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -14,8 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * 
+ * This file is adopted from the old ipv4-nix-vector-routing.cc.
  *
  * Authors: Josh Pelkey <jpelkey@gatech.edu>
+ * 
+ * Modified by: Ameya Deshpande <ameyanrd@outlook.com>
  */
 
 #include <queue>
@@ -27,7 +32,7 @@
 #include "ns3/ipv4-list-routing.h"
 #include "ns3/loopback-net-device.h"
 
-#include "ipv4-nix-vector-routing.h"
+#include "nix-vector-routing.h"
 
 namespace ns3 {
 
