@@ -63,6 +63,8 @@ NixVectorRouting<parent>::NixVectorRouting ()
   : m_totalNeighbors (0)
 {
   NS_LOG_FUNCTION_NOARGS ();
+  // Check if the parent is Ipv4RoutingProtocol
+  NS_ASSERT_MSG (IsIpv4::value, "Template parameter is not Ipv4RoutingProtocol");
 }
 
 template <typename parent>

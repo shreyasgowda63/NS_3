@@ -25,6 +25,7 @@
 
 #include "ipv4-nix-vector-helper.h"
 #include "ns3/nix-vector-routing.h"
+#include "ns3/assert.h"
 
 namespace ns3 {
 
@@ -32,12 +33,16 @@ template <typename parent>
 NixVectorHelper<parent>::NixVectorHelper ()
 {
   m_agentFactory.SetTypeId ("ns3::NixVectorRouting");
+  // Check if the parent is Ipv4RoutingHelper
+  NS_ASSERT_MSG (IsIpv4::value, "Template parameter is not Ipv4RoutingHelper");
 }
 
 template <typename parent>
 NixVectorHelper<parent>::NixVectorHelper (const NixVectorHelper<parent> &o)
   : m_agentFactory (o.m_agentFactory)
 {
+  // Check if the parent is Ipv4RoutingHelper
+  NS_ASSERT_MSG (IsIpv4::value, "Template parameter is not Ipv4RoutingHelper");
 }
 
 template <typename parent>
