@@ -380,8 +380,8 @@ int main (int argc, char** argv)
       std::cout<< "****------------------Ping or UDP Applications are not running------------------****"<<std::endl;
     }
   AsciiTraceHelper ascii;
-  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("Ping-6LoW-lr-wpan.tr"));
-  lrWpanHelper.EnablePcapAll (std::string ("Ping-6LoW-lr-wpan"), true);
+  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("base-example.tr"));
+  lrWpanHelper.EnablePcapAll (std::string ("base-example"), true);
 
   if (printNeighborCache)
     {

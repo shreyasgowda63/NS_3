@@ -198,8 +198,8 @@ int main (int argc, char** argv)
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
                                  "MinX", DoubleValue (0.0),
                                  "MinY", DoubleValue (0.0),
-                                 "DeltaX", DoubleValue (30),
-                                 "DeltaY", DoubleValue (30),
+                                 "DeltaX", DoubleValue (60),
+                                 "DeltaY", DoubleValue (60),
                                  "GridWidth", UintegerValue (3),
                                  "LayoutType", StringValue ("RowFirst"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
@@ -278,15 +278,15 @@ int main (int argc, char** argv)
               {
                 if(useGUA!=false)
                   {
-                    ping6.SetLocal ("2001::ff:fe00:5");
-                    ping6.SetRemote ("2001::ff:fe00:1");
-                    apps.Add (ping6.Install (lo_nodes.Get (4)));
+                    ping6.SetLocal ("2001::ff:fe00:1");
+                    ping6.SetRemote ("2001::ff:fe00:5");
+                    apps.Add (ping6.Install (lo_nodes.Get (0)));
                   }
                 else
                   {
-                    ping6.SetLocal ("fe80::ff:fe00:5");
-                    ping6.SetRemote ("fe80::ff:fe00:1");
-                    apps.Add (ping6.Install (lo_nodes.Get (4)));
+                    ping6.SetLocal ("fe80::ff:fe00:1");
+                    ping6.SetRemote ("fe80::ff:fe00:5");
+                    apps.Add (ping6.Install (lo_nodes.Get (0)));
                   }
               }
         else

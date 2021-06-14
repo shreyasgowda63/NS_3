@@ -737,6 +737,7 @@ SixLowPanNdProtocol::HandleSixLowPanNA (Ptr<Packet> packet, Ipv6Address const &s
 void
 SixLowPanNdProtocol::HandleSixLowPanRS (Ptr<Packet> packet, Ipv6Address const &src,Ipv6Address const &dst, Ptr<Ipv6Interface> interface)
 {
+//	std::cout << Now ().As (Time::S) << " ******* "<< packet->GetSize () << " ******* " << *packet << std::endl;
   NS_LOG_FUNCTION (this << packet << src << dst << interface);
 
   if (m_nodeRole == SixLowPanNode || m_nodeRole == SixLowPanNodeOnly)
