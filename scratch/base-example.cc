@@ -72,12 +72,12 @@ uint32_t multicastcount = 0;
 void
 PrintResults (Time interval)
 {
-	std::cout << Now().GetSeconds () << "\t";
+	std::cout << Now().GetSeconds ()<< "\t";
 	std::cout << pktCount << "\t" << pktTotalSize << "\t";
 	std::cout << ackCount << "\t" << ackTotalSize << "\t";
 	std::cout << unkCount << "\t" << unkTotalSize << "\t";
-	std::cout << unicastcount << "\t" <<multicastcount << "\t";
-	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
+	std::cout << unicastcount << "\t" <<multicastcount << std::endl;
+//	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
 
 	pktCount = 0;
 	pktTotalSize = 0;

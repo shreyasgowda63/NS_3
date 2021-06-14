@@ -72,12 +72,12 @@ uint32_t multicastcount = 0;
 void
 PrintResults (Time interval)
 {
-	std::cout << Now().GetSeconds () << "\t";
+	std::cout << Now().GetSeconds ()<< "\t";
 	std::cout << pktCount << "\t" << pktTotalSize << "\t";
 	std::cout << ackCount << "\t" << ackTotalSize << "\t";
 	std::cout << unkCount << "\t" << unkTotalSize << "\t";
-	std::cout << unicastcount << "\t" <<multicastcount << "\t";
-	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
+	std::cout << unicastcount << "\t" <<multicastcount << std::endl;
+//	std::cout << udpCount << "\t" <<otherL4Count << std::endl;
 
 	pktCount = 0;
 	pktTotalSize = 0;
@@ -85,7 +85,6 @@ PrintResults (Time interval)
 	ackTotalSize = 0;
 	unkCount = 0;
 	unkTotalSize = 0;
-
 	Simulator::Schedule (interval, &PrintResults, interval);
 }
 
@@ -197,8 +196,8 @@ int main (int argc, char** argv)
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
                                  "MinX", DoubleValue (0.0),
                                  "MinY", DoubleValue (0.0),
-                                 "DeltaX", DoubleValue (20),
-                                 "DeltaY", DoubleValue (20),
+                                 "DeltaX", DoubleValue (60),
+                                 "DeltaY", DoubleValue (60),
                                  "GridWidth", UintegerValue (3),
                                  "LayoutType", StringValue ("RowFirst"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
@@ -231,157 +230,165 @@ int main (int argc, char** argv)
   sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001::", 64));
 
 
-  if (printNodesAddresses)
-    {
-      std::cout<< "\n 6LoWPAN Boarder Router Addresses"<<std::endl;
+  //*********************************OnOff Application testing*********************************
+//  ApplicationContainer cbrApps;
+//  uint16_t cbrPort = 12345;
+//  uint32_t packetSize = 10;
+//  uint32_t maxPacketCount = 10;
+//  Time interPacketInterval = Seconds (1.);
+//  OnOffHelper onOffHelper ("ns3::UdpSocketFactory", Inet6SocketAddress (Ipv6Address ("fe80::ff:fe00:1"), cbrPort));
+//  onOffHelper.SetAttribute ("PacketSize", UintegerValue (1400));
+//  onOffHelper.SetAttribute ("OnTime",  StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
+//  onOffHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=10]"));
+//
+//  // flow 1:  node 1 -> node 0
+//  onOffHelper.SetAttribute ("DataRate", StringValue ("3000bps"));
+//  onOffHelper.SetAttribute ("StartTime", TimeValue (Seconds (1.000000)));
+//  cbrApps.Add (onOffHelper.Install (nodes.Get (1)));
+//*******************************************************************************************
+  // Create a packet sink on the star "hub" to receive these packets
+  uint16_t port = 50000;
+  Address sinkLocalAddress (Inet6SocketAddress (Ipv6Address ("fe80::ff:fe00:1"), port));
+  PacketSinkHelper sinkHelper ("ns3::TcpSocketFactory", sinkLocalAddress);
+  ApplicationContainer sinkApp = sinkHelper.Install (nodes.Get(0));
+  sinkApp.Start (Seconds (1.0));
+  sinkApp.Stop (Seconds (10.0));
 
-      Ptr<Ipv6L3Protocol> ipv6l3;
+  // Create the OnOff applications to send TCP to the server
+  OnOffHelper clientHelper ("ns3::TcpSocketFactory", Address ());
+  clientHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
+  clientHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
 
-      ipv6l3 = nodes.Get(0)->GetObject<Ipv6L3Protocol> ();
-      for (uint32_t index=0; index<ipv6l3->GetNInterfaces (); index++)
-        {
-          for (uint32_t i=0; i<ipv6l3->GetNAddresses (index); i++)
-            {
-              std::cout << "interface " << index << ", " << i << " - " << ipv6l3->GetAddress (index, i);
-              std::cout << " MAC: " << ipv6l3->GetInterface(index)->GetDevice()->GetAddress() << std::endl;
-            }
-        }
-
-      std::cout<< "\n 6LoWPAN Node Addresses"<<std::endl;
-      ipv6l3 = nodes.Get(1)->GetObject<Ipv6L3Protocol> ();
-      for (uint32_t index=0; index<ipv6l3->GetNInterfaces (); index++)
-        {
-          for (uint32_t i=0; i<ipv6l3->GetNAddresses (index); i++)
-            {
-              std::cout << "interface " << index << ", " << i << " - " << ipv6l3->GetAddress (index, i);
-              std::cout << " MAC: " << ipv6l3->GetInterface(index)->GetDevice()->GetAddress() << std::endl;
-            }
-        }
-    }
+  ApplicationContainer clientApps;
+  AddressValue remoteAddress(Inet6SocketAddress(sinkLocalAddress, port));
+  clientHelper.SetAttribute ("Remote", remoteAddress);
+  clientApps.Add (clientHelper.Install (nodes.Get (1)));
+  clientApps.Start (Seconds (2.0));
+  clientApps.Stop (Seconds (10.0));
 
 
   //*********************************ICMPV6 Ping testing*********************************
-  if (usePingOn != "")
-    {
-      uint32_t packetSize = 10;
-      uint32_t maxPacketCount = 2;
-      Time interPacketInterval = Seconds (1.);
-      Ping6Helper ping6;
-
-      ping6.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
-      ping6.SetAttribute ("Interval", TimeValue (interPacketInterval));
-      ping6.SetAttribute ("PacketSize", UintegerValue (packetSize));
-      ApplicationContainer apps;
-
-      // 6LBR addresses: "2001::ff:fe00:1" - "fe80::ff:fe00:1"
-      // 6LN addresses: "2001::ff:fe00:2" - "fe80::ff:fe00:2"
-
-      if (usePingOn == "6LBR")
-        {
-          if (useGUA!=false)
-            {
-              ping6.SetLocal ("2001::ff:fe00:1");
-              ping6.SetRemote ("2001::ff:fe00:2");
-              apps.Add (ping6.Install (nodes.Get (0)));
-            }
-          else
-            {
-              ping6.SetLocal ("fe80::ff:fe00:1");
-              ping6.SetRemote ("fe80::ff:fe00:2");
-              apps.Add (ping6.Install (nodes.Get (0)));
-            }
-        }
-      else if (usePingOn == "6LN")
-            {
-              if(useGUA!=false)
-                {
-                  ping6.SetLocal ("2001::ff:fe00:2");
-                  ping6.SetRemote ("2001::ff:fe00:1");
-                  apps.Add (ping6.Install (nodes.Get (1)));
-                }
-              else
-                {
-                  ping6.SetLocal ("fe80::ff:fe00:2");
-                  ping6.SetRemote ("fe80::ff:fe00:1");
-                  apps.Add (ping6.Install (nodes.Get (1)));
-                }
-            }
-      else
-        {
-          std::cout << "PING: invalid option\n";
-          exit (0);
-        }
-      apps.Start (Seconds (0.5));
-      apps.Stop (Seconds(stopTime - 1));
-    }
-
-  //*********************************UDP testing*********************************
-  if (useUdpFrom != "")
-    {
-      uint16_t port = 4000;
-      UdpServerHelper server (port);
-      ApplicationContainer udpServerApps = server.Install (nodes);
-      udpServerApps.Start (Seconds (0.0));
-      udpServerApps.Stop (Seconds(stopTime-1));
-
-      uint32_t MaxPacketSize = 12;
-      Time interPacketInterval = Seconds (0.05);
-      uint32_t maxPacketCount = 2;
-
-      // Server IP and port number
-      UdpClientHelper client;
-      client.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
-      client.SetAttribute ("Interval", TimeValue (interPacketInterval));
-      client.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
-      ApplicationContainer udpClientApps;
-
-      if (useUdpFrom == "6LBR")
-        {
-          if(useGUA==false)
-            {
-              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("2001::ff:fe00:2")));
-              client.SetAttribute ("RemotePort", UintegerValue (port));
-              udpClientApps.Add (client.Install (nodes.Get (0)));
-            }
-          else
-            {
-              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("fe80::ff:fe00:2")));
-              client.SetAttribute ("RemotePort", UintegerValue (port));
-              udpClientApps.Add (client.Install (nodes.Get (0)));
-            }
-        }
-      else if (useUdpFrom == "6LN")
-        {
-          if(useGUA==false)
-            {
-              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("2001::ff:fe00:1")));
-              client.SetAttribute ("RemotePort", UintegerValue (port));
-              udpClientApps.Add (client.Install (nodes.Get (1)));
-            }
-          else
-            {
-              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("fe80::ff:fe00:1")));
-              client.SetAttribute ("RemotePort", UintegerValue (port));
-              udpClientApps.Add (client.Install (nodes.Get (1)));
-            }
-        }
-      else
-        {
-          std::cout << "UDP app: invalid option\n";
-          exit (0);
-        }
-      udpClientApps.Start (Seconds (35.0));
-      udpClientApps.Stop (Seconds (stopTime-1));
-    }
-
-
-  if (useUdpFrom != "" && usePingOn != "")
-    {
-      std::cout<< "****------------------Ping or UDP Applications are not running------------------****"<<std::endl;
-    }
+//  if (usePingOn != "")
+//    {
+//      uint32_t packetSize = 10;
+//      uint32_t maxPacketCount = 2;
+//      Time interPacketInterval = Seconds (1.);
+//      Ping6Helper ping6;
+//
+//      ping6.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+//      ping6.SetAttribute ("Interval", TimeValue (interPacketInterval));
+//      ping6.SetAttribute ("PacketSize", UintegerValue (packetSize));
+//      ApplicationContainer apps;
+//
+//      // 6LBR addresses: "2001::ff:fe00:1" - "fe80::ff:fe00:1"
+//      // 6LN addresses: "2001::ff:fe00:2" - "fe80::ff:fe00:2"
+//
+//      if (usePingOn == "6LBR")
+//        {
+//          if (useGUA!=false)
+//            {
+//              ping6.SetLocal ("2001::ff:fe00:1");
+//              ping6.SetRemote ("2001::ff:fe00:2");
+//              apps.Add (ping6.Install (nodes.Get (0)));
+//            }
+//          else
+//            {
+//              ping6.SetLocal ("fe80::ff:fe00:1");
+//              ping6.SetRemote ("fe80::ff:fe00:2");
+//              apps.Add (ping6.Install (nodes.Get (0)));
+//            }
+//        }
+//      else if (usePingOn == "6LN")
+//            {
+//              if(useGUA!=false)
+//                {
+//                  ping6.SetLocal ("2001::ff:fe00:2");
+//                  ping6.SetRemote ("2001::ff:fe00:1");
+//                  apps.Add (ping6.Install (nodes.Get (1)));
+//                }
+//              else
+//                {
+//                  ping6.SetLocal ("fe80::ff:fe00:2");
+//                  ping6.SetRemote ("fe80::ff:fe00:1");
+//                  apps.Add (ping6.Install (nodes.Get (1)));
+//                }
+//            }
+//      else
+//        {
+//          std::cout << "PING: invalid option\n";
+//          exit (0);
+//        }
+//      apps.Start (Seconds (0.5));
+//      apps.Stop (Seconds(stopTime - 1));
+//    }
+//
+//  //*********************************UDP testing*********************************
+//  if (useUdpFrom != "")
+//    {
+//      uint16_t port = 4000;
+//      UdpServerHelper server (port);
+//      ApplicationContainer udpServerApps = server.Install (nodes);
+//      udpServerApps.Start (Seconds (0.0));
+//      udpServerApps.Stop (Seconds(stopTime-1));
+//
+//      uint32_t MaxPacketSize = 12;
+//      Time interPacketInterval = Seconds (0.05);
+//      uint32_t maxPacketCount = 2;
+//
+//      // Server IP and port number
+//      UdpClientHelper client;
+//      client.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
+//      client.SetAttribute ("Interval", TimeValue (interPacketInterval));
+//      client.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
+//      ApplicationContainer udpClientApps;
+//
+//      if (useUdpFrom == "6LBR")
+//        {
+//          if(useGUA==false)
+//            {
+//              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("2001::ff:fe00:2")));
+//              client.SetAttribute ("RemotePort", UintegerValue (port));
+//              udpClientApps.Add (client.Install (nodes.Get (0)));
+//            }
+//          else
+//            {
+//              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("fe80::ff:fe00:2")));
+//              client.SetAttribute ("RemotePort", UintegerValue (port));
+//              udpClientApps.Add (client.Install (nodes.Get (0)));
+//            }
+//        }
+//      else if (useUdpFrom == "6LN")
+//        {
+//          if(useGUA==false)
+//            {
+//              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("2001::ff:fe00:1")));
+//              client.SetAttribute ("RemotePort", UintegerValue (port));
+//              udpClientApps.Add (client.Install (nodes.Get (1)));
+//            }
+//          else
+//            {
+//              client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("fe80::ff:fe00:1")));
+//              client.SetAttribute ("RemotePort", UintegerValue (port));
+//              udpClientApps.Add (client.Install (nodes.Get (1)));
+//            }
+//        }
+//      else
+//        {
+//          std::cout << "UDP app: invalid option\n";
+//          exit (0);
+//        }
+//      udpClientApps.Start (Seconds (35.0));
+//      udpClientApps.Stop (Seconds (stopTime-1));
+//    }
+//
+//
+//  if (useUdpFrom != "" && usePingOn != "")
+//    {
+//      std::cout<< "****------------------Ping or UDP Applications are not running------------------****"<<std::endl;
+//    }
   AsciiTraceHelper ascii;
-  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("base-example.tr"));
-  lrWpanHelper.EnablePcapAll (std::string ("base-example"), true);
+  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("onoffapplication.tr"));
+  lrWpanHelper.EnablePcapAll (std::string ("onoffapplication"), true);
 
   if (printNeighborCache)
     {
