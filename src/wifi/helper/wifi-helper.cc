@@ -491,8 +491,8 @@ WifiPhyHelper::GetRadiotapHeader (
         {
           data2 |= RadiotapHeader::HE_DATA2_RU_OFFSET_KNOWN;
           //HeRu indices start at 1 whereas RadioTap starts at 0
-          data2 |= (((txVector.GetHeMuUserInfo (staId).ru.index - 1) << 8) & 0x3f00);
-          data2 |= (((!txVector.GetHeMuUserInfo (staId).ru.primary80MHz) << 15) & 0x8000);
+          data2 |= (((txVector.GetHeMuUserInfo (staId).ru.GetIndex () - 1) << 8) & 0x3f00);
+          data2 |= (((!txVector.GetHeMuUserInfo (staId).ru.GetPrimary80MHz ()) << 15) & 0x8000);
         }
 
       uint16_t data3 = 0;
@@ -508,7 +508,7 @@ WifiPhyHelper::GetRadiotapHeader (
       uint16_t data5 = 0;
       if (preamble == WIFI_PREAMBLE_HE_MU || preamble == WIFI_PREAMBLE_HE_TB)
         {
-          HeRu::RuType ruType = txVector.GetHeMuUserInfo (staId).ru.ruType;
+          HeRu::RuType ruType = txVector.GetHeMuUserInfo (staId).ru.GetRuType ();
           switch (ruType)
             {
             case HeRu::RU_26_TONE:
@@ -966,12 +966,14 @@ WifiHelper::EnableLogComponents (void)
   LogComponentEnable ("QosTxop", LOG_LEVEL_ALL);
   LogComponentEnable ("RegularWifiMac", LOG_LEVEL_ALL);
   LogComponentEnable ("RraaWifiManager", LOG_LEVEL_ALL);
+  LogComponentEnable ("RrMultiUserScheduler", LOG_LEVEL_ALL);
   LogComponentEnable ("RrpaaWifiManager", LOG_LEVEL_ALL);
   LogComponentEnable ("SimpleFrameCaptureModel", LOG_LEVEL_ALL);
   LogComponentEnable ("SpectrumWifiPhy", LOG_LEVEL_ALL);
   LogComponentEnable ("StaWifiMac", LOG_LEVEL_ALL);
   LogComponentEnable ("SupportedRates", LOG_LEVEL_ALL);
   LogComponentEnable ("TableBasedErrorRateModel", LOG_LEVEL_ALL);
+  LogComponentEnable ("ThompsonSamplingWifiManager", LOG_LEVEL_ALL);
   LogComponentEnable ("ThresholdPreambleDetectionModel", LOG_LEVEL_ALL);
   LogComponentEnable ("Txop", LOG_LEVEL_ALL);
   LogComponentEnable ("VhtConfiguration", LOG_LEVEL_ALL);
@@ -997,6 +999,7 @@ WifiHelper::EnableLogComponents (void)
   LogComponentEnable ("WifiSpectrumSignalParameters", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiTxCurrentModel", LOG_LEVEL_ALL);
   LogComponentEnable ("WifiTxParameters", LOG_LEVEL_ALL);
+  LogComponentEnable ("WifiTxTimer", LOG_LEVEL_ALL);
   LogComponentEnable ("YansErrorRateModel", LOG_LEVEL_ALL);
   LogComponentEnable ("YansWifiChannel", LOG_LEVEL_ALL);
   LogComponentEnable ("YansWifiPhy", LOG_LEVEL_ALL);

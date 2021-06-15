@@ -64,7 +64,8 @@ cflags.default_profile = 'debug'
 Configure.autoconfig = 0
 
 # the following two variables are used by the target "waf dist"
-VERSION = open("VERSION", "rt").read().strip()
+with open("VERSION", "rt") as f:
+    VERSION = f.read().strip()
 APPNAME = 'ns'
 
 wutils.VERSION = VERSION
@@ -118,7 +119,7 @@ def print_module_names(names):
           print(name.ljust(25), end=' ')
 
 # return types of some APIs differ in Python 2/3 (type string vs class bytes)
-# This method will decode('utf-8') a byte object in Python 3, 
+# This method will decode('utf-8') a byte object in Python 3,
 # and do nothing in Python 2
 def maybe_decode(input):
     if sys.version_info < (3,):
@@ -142,7 +143,7 @@ def options(opt):
                    help=('Print the current configuration.'),
                    action="store_true", default=False,
                    dest="check_config")
-    
+
     opt.add_option('--cwd',
                    help=('Set the working directory for a program.'),
                    action="store", type="string", default=None,
@@ -258,7 +259,7 @@ def options(opt):
                    dest='enable_desmetrics')
     opt.add_option('--cxx-standard',
                    help=('Compile NS-3 with the given C++ standard'),
-                   type='string', default='-std=c++11', dest='cxx_standard')
+                   type='string', dest='cxx_standard')
     opt.add_option('--enable-asserts',
                    help=('Enable the asserts regardless of the compile mode'),
                    action="store_true", default=False,
@@ -345,15 +346,15 @@ def print_config(env, phase='configure'):
         profile = get_build_profile(env)
     else:
         profile = get_build_profile()
-        
+
     print("---- Summary of optional NS-3 features:")
     print("%-30s: %s%s%s" % ("Build profile", Logs.colors('GREEN'),
                              profile, Logs.colors('NORMAL')))
     bld = wutils.bld
     print("%-30s: %s%s%s" % ("Build directory", Logs.colors('GREEN'),
                              Options.options.out, Logs.colors('NORMAL')))
-    
-    
+
+
     for (name, caption, was_enabled, reason_not_enabled) in sorted(env['NS3_OPTIONAL_FEATURES'], key=lambda s : s[1]):
         if was_enabled:
             status = 'enabled'
@@ -419,7 +420,7 @@ def configure(conf):
         env['BUILD_SUFFIX'] = ''
     else:
         env['BUILD_SUFFIX'] = '-'+Options.options.build_profile
-    
+
     env['APPNAME'] = wutils.APPNAME
     env['VERSION'] = wutils.VERSION
 
@@ -429,11 +430,11 @@ def configure(conf):
                        ('.'.join(conf.env['CC_VERSION']), '.'.join(map(str, gcc_min_version))))
 
     if conf.env['CXX_NAME'] in ['gcc', 'icc']:
-        if Options.options.build_profile == 'release': 
-            env.append_value('CXXFLAGS', '-fomit-frame-pointer') 
-        if Options.options.build_profile == 'optimized': 
+        if Options.options.build_profile == 'release':
+            env.append_value('CXXFLAGS', '-fomit-frame-pointer')
+        if Options.options.build_profile == 'optimized':
             if conf.check_compilation_flag('-march=native'):
-                env.append_value('CXXFLAGS', '-march=native') 
+                env.append_value('CXXFLAGS', '-march=native')
             env.append_value('CXXFLAGS', '-fstrict-overflow')
             if conf.env['CXX_NAME'] in ['gcc']:
                 env.append_value('CXXFLAGS', '-Wstrict-overflow=2')
@@ -485,12 +486,51 @@ def configure(conf):
                 conf.report_optional_feature("static", "Static build", False,
                                              "Link flag -Wl,--whole-archive,-Bstatic does not work")
 
-    # Enables C++-11 support by default, unless user specified another option
-    # Warn the user if the CXX Standard flag provided was not recognized  
-    if conf.check_compilation_flag(Options.options.cxx_standard):
-        env.append_value('CXXFLAGS', Options.options.cxx_standard)
-    else:
-        Logs.warn("CXX Standard flag " + Options.options.cxx_standard + " was not recognized, using compiler's default")
+    # Checks if environment variable specifies the C++ language standard and/or
+    # if the user has specified the standard via the -cxx-standard argument
+    # to 'waf configure'.  The following precedence and behavior is implemented:
+    # 1) if user does not specify anything, Waf will use the default standard
+    #    configured for ns-3, which is configured below
+    # 2) if user specifies the '-cxx-standard' option, it will be used instead
+    #    of the default.
+    #    Example:  ./waf configure --cxx-standard=-std=c++14
+    # 3) if user specifies the C++ standard via the CXXFLAGS environment
+    #    variable, it will be used instead of the default.
+    #    Example: CXXFLAGS="-std=c++14" ./waf configure
+    # 4) if user specifies both the CXXFLAGS environment variable and the
+    #    -cxx-standard argument, the latter will take precedence and a warning
+    #    will be emitted in the configure output if there were conflicting
+    #    standards between the two.
+    #    Example: CXXFLAGS="-std=c++14" ./waf configure --cxx-standard=-std=c++17
+    #    (in the above scenario, Waf will use c++17 but warn about it)
+    # Note: If the C++ standard is not recognized, configuration will error exit
+    cxx_standard = ""
+    cxx_standard_env = ""
+    for flag in env['CXXFLAGS']:
+        if flag[:5] == "-std=":
+            cxx_standard_env = flag
+
+    if not cxx_standard_env and Options.options.cxx_standard:
+        cxx_standard = Options.options.cxx_standard
+        env.append_value('CXXFLAGS', cxx_standard)
+    elif cxx_standard_env and not Options.options.cxx_standard:
+        cxx_standard = cxx_standard_env
+        # No need to change CXXFLAGS
+    elif cxx_standard_env and Options.options.cxx_standard and cxx_standard_env != Options.options.cxx_standard:
+        Logs.warn("user-specified --cxx-standard (" + 
+            Options.options.cxx_standard + ") does not match the value in CXXFLAGS (" + cxx_standard_env + "); Waf will use the --cxx-standard value")
+        cxx_standard = Options.options.cxx_standard
+        env['CXXFLAGS'].remove(cxx_standard_env)
+        env.append_value('CXXFLAGS', cxx_standard)
+    elif cxx_standard_env and Options.options.cxx_standard and cxx_standard_env == Options.options.cxx_standard:
+        cxx_standard = Options.options.cxx_standard
+        # No need to change CXXFLAGS
+    elif not cxx_standard and not Options.options.cxx_standard:
+        cxx_standard = "-std=c++11"
+        env.append_value('CXXFLAGS', cxx_standard)
+
+    if not conf.check_compilation_flag(cxx_standard):
+        raise Errors.ConfigurationError("Exiting because C++ standard value " + cxx_standard + " is not recognized")
 
     # Find Boost libraries by modules
     conf.env['REQUIRED_BOOST_LIBS'] = []
@@ -518,21 +558,21 @@ def configure(conf):
 
     # Set the list of enabled modules.
     if Options.options.enable_modules:
-        # Use the modules explicitly enabled. 
+        # Use the modules explicitly enabled.
         _enabled_mods = []
         _enabled_contrib_mods = []
-        for mod in Options.options.enable_modules.split(','): 
-            if mod in conf.env['NS3_MODULES'] and mod.startswith('ns3-'): 
+        for mod in Options.options.enable_modules.split(','):
+            if mod in conf.env['NS3_MODULES'] and mod.startswith('ns3-'):
                 _enabled_mods.append(mod)
-            elif 'ns3-' + mod in conf.env['NS3_MODULES']: 
+            elif 'ns3-' + mod in conf.env['NS3_MODULES']:
                 _enabled_mods.append('ns3-' + mod)
-            elif mod in conf.env['NS3_CONTRIBUTED_MODULES'] and mod.startswith('ns3-'): 
+            elif mod in conf.env['NS3_CONTRIBUTED_MODULES'] and mod.startswith('ns3-'):
                 _enabled_contrib_mods.append(mod)
-            elif 'ns3-' + mod in conf.env['NS3_CONTRIBUTED_MODULES']: 
+            elif 'ns3-' + mod in conf.env['NS3_CONTRIBUTED_MODULES']:
                 _enabled_contrib_mods.append('ns3-' + mod)
         conf.env['NS3_ENABLED_MODULES'] = _enabled_mods
         conf.env['NS3_ENABLED_CONTRIBUTED_MODULES'] = _enabled_contrib_mods
-        
+
     else:
         # Use the enabled modules list from the ns3 configuration file.
         if modules_enabled[0] == 'all_modules':
@@ -543,14 +583,14 @@ def configure(conf):
             # Enable the modules from the list.
             _enabled_mods = []
             _enabled_contrib_mods = []
-            for mod in modules_enabled: 
-                if mod in conf.env['NS3_MODULES'] and mod.startswith('ns3-'): 
+            for mod in modules_enabled:
+                if mod in conf.env['NS3_MODULES'] and mod.startswith('ns3-'):
                     _enabled_mods.append(mod)
-                elif 'ns3-' + mod in conf.env['NS3_MODULES']: 
+                elif 'ns3-' + mod in conf.env['NS3_MODULES']:
                     _enabled_mods.append('ns3-' + mod)
-                elif mod in conf.env['NS3_CONTRIBUTED_MODULES'] and mod.startswith('ns3-'): 
+                elif mod in conf.env['NS3_CONTRIBUTED_MODULES'] and mod.startswith('ns3-'):
                     _enabled_contrib_mods.append(mod)
-                elif 'ns3-' + mod in conf.env['NS3_CONTRIBUTED_MODULES']: 
+                elif 'ns3-' + mod in conf.env['NS3_CONTRIBUTED_MODULES']:
                     _enabled_contrib_mods.append('ns3-' + mod)
             conf.env['NS3_ENABLED_MODULES'] = _enabled_mods
             conf.env['NS3_ENABLED_CONTRIBUTED_MODULES'] = _enabled_contrib_mods
@@ -592,11 +632,11 @@ def configure(conf):
 
     # Decide if tests will be built or not.
     if Options.options.enable_tests:
-        # Tests were explicitly enabled. 
+        # Tests were explicitly enabled.
         env['ENABLE_TESTS'] = True
         why_not_tests = "option --enable-tests selected"
     elif Options.options.disable_tests:
-        # Tests were explicitly disabled. 
+        # Tests were explicitly disabled.
         env['ENABLE_TESTS'] = False
         why_not_tests = "option --disable-tests selected"
     else:
@@ -613,11 +653,11 @@ def configure(conf):
 
     # Decide if examples will be built or not.
     if Options.options.enable_examples:
-        # Examples were explicitly enabled. 
+        # Examples were explicitly enabled.
         env['ENABLE_EXAMPLES'] = True
         why_not_examples = "option --enable-examples selected"
     elif Options.options.disable_examples:
-        # Examples were explicitly disabled. 
+        # Examples were explicitly disabled.
         env['ENABLE_EXAMPLES'] = False
         why_not_examples = "option --disable-examples selected"
     else:
@@ -630,7 +670,7 @@ def configure(conf):
         else:
             why_not_examples = "defaults to disabled"
 
-    conf.report_optional_feature("ENABLE_EXAMPLES", "Examples", env['ENABLE_EXAMPLES'], 
+    conf.report_optional_feature("ENABLE_EXAMPLES", "Examples", env['ENABLE_EXAMPLES'],
                                  why_not_examples)
     try:
         for dir in os.listdir('examples'):
@@ -707,7 +747,7 @@ def configure(conf):
             conf.env.append_value(confvar, value)
 
     print_config(env)
-    
+
 
 class SuidBuild_task(Task.Task):
     """task that makes a binary Suid
@@ -779,7 +819,7 @@ def create_ns3_program(bld, name, dependencies=('core',)):
     else:
         if program.env.DEST_BINFMT == 'elf':
             # All ELF platforms are impacted but only the gcc compiler has a flag to fix it.
-            if 'gcc' in (program.env.CXX_NAME, program.env.CC_NAME): 
+            if 'gcc' in (program.env.CXX_NAME, program.env.CC_NAME):
                 program.env.append_value ('SHLIB_MARKER', '-Wl,--no-as-needed')
 
     return program
@@ -882,7 +922,7 @@ def build(bld):
         if Options.options.check_profile:
             profile = get_build_profile()
             print("Build profile: %s" % profile)
-        
+
     if Options.options.check_profile or Options.options.check_config:
         raise SystemExit(0)
         return
@@ -943,10 +983,10 @@ def build(bld):
                     if not dep.startswith('ns3-'):
                         continue
                     if dep not in modules and dep not in contribModules:
-                        if dep in env['NS3_MODULES']: 
+                        if dep in env['NS3_MODULES']:
                             modules.append(dep)
                             changed = True
-                        elif dep in env['NS3_CONTRIBUTED_MODULES']: 
+                        elif dep in env['NS3_CONTRIBUTED_MODULES']:
                             contribModules.append(dep)
                             changed = True
                         else:
@@ -993,7 +1033,7 @@ def build(bld):
                 # Add this program to the list if all of its
                 # dependencies will be built.
                 if program_built:
-                    object_name = "%s%s-%s%s" % (wutils.APPNAME, wutils.VERSION, 
+                    object_name = "%s%s-%s%s" % (wutils.APPNAME, wutils.VERSION,
                                                   obj.name, bld.env.BUILD_SUFFIX)
 
                     # Get the relative path to the program from the
@@ -1017,13 +1057,13 @@ def build(bld):
             # disable the ns3header_taskgen
             if 'ns3header' in getattr(obj, "features", []):
                 if ("ns3-%s" % obj.module) not in modules and ("ns3-%s" % obj.module) not in contribModules:
-                    obj.mode = 'remove' # tell it to remove headers instead of installing 
+                    obj.mode = 'remove' # tell it to remove headers instead of installing
 
             # disable the ns3privateheader_taskgen
             if 'ns3privateheader' in getattr(obj, "features", []):
                 if ("ns3-%s" % obj.module) not in modules and ("ns3-%s" % obj.module) not in contribModules:
 
-                    obj.mode = 'remove' # tell it to remove headers instead of installing 
+                    obj.mode = 'remove' # tell it to remove headers instead of installing
 
             # disable pcfile taskgens for disabled modules
             if 'ns3pcfile' in getattr(obj, "features", []):
@@ -1088,7 +1128,7 @@ def build(bld):
                 gen.post()
 
     if Options.options.run or Options.options.pyrun:
-        bld.env['PRINT_BUILT_MODULES_AT_END'] = False 
+        bld.env['PRINT_BUILT_MODULES_AT_END'] = False
 
     if Options.options.doxygen_no_build:
         _doxygen(bld, skip_pid=True)
@@ -1161,16 +1201,15 @@ def shutdown(ctx):
 
     # Write the build status file.
     build_status_file = os.path.join(bld.out_dir, 'build-status.py')
-    out = open(build_status_file, 'w')
-    out.write('#! /usr/bin/env python3\n')
-    out.write('\n')
-    out.write('# Programs that are runnable.\n')
-    out.write('ns3_runnable_programs = ' + str(env['NS3_RUNNABLE_PROGRAMS']) + '\n')
-    out.write('\n')
-    out.write('# Scripts that are runnable.\n')
-    out.write('ns3_runnable_scripts = ' + str(env['NS3_RUNNABLE_SCRIPTS']) + '\n')
-    out.write('\n')
-    out.close()
+    with open(build_status_file, 'w') as out:
+        out.write('#! /usr/bin/env python3\n')
+        out.write('\n')
+        out.write('# Programs that are runnable.\n')
+        out.write('ns3_runnable_programs = ' + str(env['NS3_RUNNABLE_PROGRAMS']) + '\n')
+        out.write('\n')
+        out.write('# Scripts that are runnable.\n')
+        out.write('ns3_runnable_scripts = ' + str(env['NS3_RUNNABLE_SCRIPTS']) + '\n')
+        out.write('\n')
 
     if Options.options.lcov_report:
         lcov_report(bld)
@@ -1207,7 +1246,7 @@ class CheckContext(Context.Context):
         bld.options = Options.options # provided for convenience
         bld.cmd = "build"
         bld.execute()
-        
+
         wutils.bld = bld
         wutils.run_python_program("test.py -n -c core", bld.env)
 
@@ -1235,7 +1274,7 @@ def check_shell(bld):
 class Ns3ShellContext(Context.Context):
     """run a shell with an environment suitably modified to run locally built programs"""
     cmd = 'shell'
-    
+
     def execute(self):
         # first we execute the build
         bld = Context.create_context("build")
@@ -1246,7 +1285,7 @@ class Ns3ShellContext(Context.Context):
         # Set this so that the lists won't be printed when the user
         # exits the shell.
         bld.env['PRINT_BUILT_MODULES_AT_END'] = False
-        
+
         if sys.platform == 'win32':
             shell = os.environ.get("COMSPEC", "cmd.exe")
         else:
@@ -1265,7 +1304,7 @@ def _print_introspected_doxygen(bld):
     proc_env = wutils.get_proc_env()
     try:
         program_obj = wutils.find_program('print-introspected-doxygen', env)
-    except ValueError: 
+    except ValueError:
         Logs.warn("print-introspected-doxygen does not exist")
         raise SystemExit(1)
         return
@@ -1281,16 +1320,14 @@ def _print_introspected_doxygen(bld):
     Logs.info("Running print-introspected-doxygen")
 
     # Create a header file with the introspected information.
-    doxygen_out = open(os.path.join('doc', 'introspected-doxygen.h'), 'w')
-    if subprocess.Popen([prog], stdout=doxygen_out, env=proc_env).wait():
-        raise SystemExit(1)
-    doxygen_out.close()
+    with open(os.path.join('doc', 'introspected-doxygen.h'), 'w') as doxygen_out:
+        if subprocess.Popen([prog], stdout=doxygen_out, env=proc_env).wait():
+            raise SystemExit(1)
 
     # Create a text file with the introspected information.
-    text_out = open(os.path.join('doc', 'ns3-object.txt'), 'w')
-    if subprocess.Popen([prog, '--output-text'], stdout=text_out, env=proc_env).wait():
-        raise SystemExit(1)
-    text_out.close()
+    with open(os.path.join('doc', 'ns3-object.txt'), 'w') as text_out:
+        if subprocess.Popen([prog, '--output-text'], stdout=text_out, env=proc_env).wait():
+            raise SystemExit(1)
 
     # Gather the CommandLine doxy
     # test.py appears not to create or keep the output directory
@@ -1301,7 +1338,7 @@ def _print_introspected_doxygen(bld):
     proc_env['NS_COMMANDLINE_INTROSPECTION'] = '..'
     subprocess.run(["./test.py", "--nowaf", "--constrain=example"],
                    env=proc_env, stdout=subprocess.DEVNULL)
-    
+
     doxygen_out = os.path.join('doc', 'introspected-command-line.h')
     try:
         os.remove(doxygen_out)
@@ -1317,13 +1354,12 @@ CommandLine configuration in those files instead.
 */\n
 """
         out_file.write(lines)
-    out_file.close()
 
     with open(doxygen_out,'a') as outfile:
         for in_file in glob.glob('testpy-output/*.command-line'):
             with open(in_file,'r') as infile:
                 outfile.write(infile.read())
-                
+
 def _doxygen(bld, skip_pid=False):
     env = wutils.bld.env
     proc_env = wutils.get_proc_env()
@@ -1346,9 +1382,8 @@ def _docset(bld):
     # Get the doxygen config
     doxyfile = os.path.join('doc', 'doxygen.conf')
     Logs.info("docset: reading " + doxyfile)
-    doxygen_config = open(doxyfile, 'r')
-    doxygen_config_contents = doxygen_config.read()
-    doxygen_config.close()
+    with open(doxyfile, 'r') as doxygen_config:
+        doxygen_config_contents = doxygen_config.read()
 
     # Create the output directory
     docset_path = os.path.join('doc', 'docset')
@@ -1358,19 +1393,18 @@ def _docset(bld):
         os.mkdir(docset_path)
 
     doxyfile = os.path.join('doc', 'doxygen.docset.conf')
-    doxygen_config = open(doxyfile, 'w')
-    Logs.info("docset: writing doxygen conf " + doxyfile)
-    doxygen_config.write(doxygen_config_contents)
-    doxygen_config.write(
-        """
-        HAVE_DOT = NO
-        GENERATE_DOCSET = YES
-        DISABLE_INDEX = YES
-        SEARCHENGINE = NO
-        GENERATE_TREEVIEW = NO
-        OUTPUT_DIRECTORY=""" + docset_path + "\n"
-        )
-    doxygen_config.close()
+    with open(doxyfile, 'w') as doxygen_config:
+        Logs.info("docset: writing doxygen conf " + doxyfile)
+        doxygen_config.write(doxygen_config_contents)
+        doxygen_config.write(
+            """
+            HAVE_DOT = NO
+            GENERATE_DOCSET = YES
+            DISABLE_INDEX = YES
+            SEARCHENGINE = NO
+            GENERATE_TREEVIEW = NO
+            OUTPUT_DIRECTORY=""" + docset_path + "\n"
+            )
 
     # Run Doxygen manually, so as to avoid build
     Logs.info("docset: running doxygen")
@@ -1400,7 +1434,7 @@ def _docset(bld):
     shutil.move(docset_out, os.path.join('doc', 'ns-3.docset'))
 
     print("Docset built successfully.")
-    
+
 
 def _getVersion():
     """update the ns3_version.js file, when building documentation"""
@@ -1423,7 +1457,7 @@ class Ns3DoxygenContext(Context.Context):
 
 class Ns3SphinxContext(Context.Context):
     """build the Sphinx documentation: manual, tutorial, models"""
-    
+
     cmd = 'sphinx'
 
     def sphinx_build(self, path):
@@ -1439,18 +1473,18 @@ class Ns3SphinxContext(Context.Context):
         _getVersion()
         for sphinxdir in ["manual", "models", "tutorial"] :
             self.sphinx_build(os.path.join("doc", sphinxdir))
-     
+
 
 class Ns3DocContext(Context.Context):
     """build all the documentation: doxygen, manual, tutorial, models"""
-    
+
     cmd = 'docs'
 
     def execute(self):
         steps = ['doxygen', 'sphinx']
         Options.commands = steps + Options.commands
-        
-    
+
+
 def lcov_report(bld):
     env = bld.env
 

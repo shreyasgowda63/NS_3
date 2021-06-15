@@ -264,16 +264,6 @@ public:
    */
   static Time CalculatePhyPreambleAndHeaderDuration (const WifiTxVector& txVector);
   /**
-   * Get the duration of the PPDU field (or group of fields)
-   * for the given transmission parameters.
-   *
-   * \param field the PPDU field (or group of fields)
-   * \param txVector the transmission parameters
-   *
-   * \return the duration of the PPDU field
-   */
-  static Time GetPpduFieldDuration (WifiPpduField field, const WifiTxVector& txVector);
-  /**
    * \return the preamble detection duration, which is the time correlation needs to detect the start of an incoming frame.
    */
   static Time GetPreambleDetectionDuration (void);
@@ -1096,10 +1086,9 @@ public:
   virtual std::tuple<double, double, double> GetTxMaskRejectionParams (void) const = 0;
 
 protected:
-  // Inherited
   virtual void DoDispose (void);
 
-  /*
+  /**
    * Reset data upon end of TX or RX
    */
   void Reset (void);
@@ -1131,7 +1120,7 @@ protected:
    * HE TB PPDU solicited by the AP.
    *
    * \param ppdu the PPDU that is being received
-   * \param the channel width (in MHz) used for RSSI measurement
+   * \return the channel width (in MHz) used for RSSI measurement
    */
   uint16_t GetMeasurementChannelWidth (const Ptr<const WifiPpdu> ppdu) const;
 
