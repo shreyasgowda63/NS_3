@@ -46,8 +46,8 @@ namespace ns3 {
  *
  *
  * Padding can be automatically added at the end or at the start
- * to reach a multiple of 8 bits. By default the padding is added
- * at the end.
+ * of the byte blob to reach a multiple of 8 bits.
+ * By default the padding is added at the end of the byte blob.
  *
  * This class should be used in two cases:
  *   - When the number of fields is large.
