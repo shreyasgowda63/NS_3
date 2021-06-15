@@ -36,7 +36,7 @@ namespace ns3 {
  * and extract the original bit-fields.
  *
  * Note that once the Deserialization starts, it's not anymore
- * possible to add more data to the `packet' to deserialize.
+ * possible to add more data to the byte blob to deserialize.
  */
 
 class BitDeserializer
@@ -64,7 +64,9 @@ public:
   void PushByte (uint8_t byte);
 
   /**
-   * Pops a given number of bits from the blob front.
+   * Pops a given number of bits from the blob front. In other terms,
+   * 'size' bits are shifted from the contents of the byte blob
+   * onto the return value.
    *
    * The maximum number of bits to be deserialized in one single call is 64.
    *

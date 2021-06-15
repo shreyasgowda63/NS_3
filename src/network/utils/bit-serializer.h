@@ -35,18 +35,19 @@ namespace ns3 {
  *
  * The typical use-case is:
  * \verbatim
- * aaa: A field
- * bbb: B field
- * ccc: C field
- * ddd: D field
- * 000: padding
+   aaa: A field
+   bbb: B field
+   ccc: C field
+   ddd: D field
+   000: padding
+
+   |aaaa abbb bbcc cdd0|
+ \endverbatim
  *
- * |aaaa abbb bbcc cdd0|
- * \endverbatim
  *
  * Padding can be automatically added at the end or at the start
- * of the `packet' to reach a multiple of 8 bits. By default the
- * padding is added at the end of the `packet'.
+ * to reach a multiple of 8 bits. By default the padding is added
+ * at the end.
  *
  * This class should be used in two cases:
  *   - When the number of fields is large.

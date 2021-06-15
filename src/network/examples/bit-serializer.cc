@@ -50,9 +50,14 @@ int main ()
 
   BitSerializer testBitSerializer1;
 
+  // add 7 bits - 0x55 (101 0101)
   testBitSerializer1.PushBits (0x55, 7);
+  // add 3 bits - 0x7 (111)
   testBitSerializer1.PushBits (0x7, 3);
+  // add 2 bits - 0x0 (00)
   testBitSerializer1.PushBits (0x0, 2);
+  // The results is 1010 1011 1100.
+  // Adding 4 bits of padding at the end the result is 0xabc0.
 
   std::vector<uint8_t> result = testBitSerializer1.GetBytes ();
 
@@ -73,12 +78,17 @@ int main ()
 
   BitSerializer testBitSerializer2;
 
+  // add 7 bits - 0x55 (101 0101)
   testBitSerializer2.PushBits (0x55, 7);
+  // add 3 bits - 0x7 (111)
   testBitSerializer2.PushBits (0x7, 3);
+  // add 2 bits - 0x0 (00)
   testBitSerializer2.PushBits (0x0, 2);
 
   // Change the class behaviour so to use a padding at the start of the buffer.
   testBitSerializer2.InsertPaddingAtEnd (false);
+  // The results is 1010 1011 1100.
+  // Adding 4 bits of padding at the start the result is 0xabc.
 
   result = testBitSerializer2.GetBytes ();
 
