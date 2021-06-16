@@ -159,7 +159,9 @@ while getopts :bef:F:hilm:s:tvw option ; do
 
     (e)  filter_examples=1        ;;
 
-    (f)  filter_in="$OPTARG"      ;;
+    (f)  use_filter_in=1
+         filter_in="$OPTARG"
+         ;;
 
     (F)  filter_out="$OPTARG"     ;;
 
@@ -169,7 +171,9 @@ while getopts :bef:F:hilm:s:tvw option ; do
 
     (l)  use_standard=1           ;;
 
-    (m)  filter_module="$OPTARG"  ;;
+    (m)  use_filter_module=1
+         filter_module="$OPTARG"
+         ;;
 
     (s)  use_filearg=1
          logfile_arg="$OPTARG"
@@ -190,6 +194,7 @@ while getopts :bef:F:hilm:s:tvw option ; do
     (\?) echo "$me: Invalid option: -$OPTARG"     ; synopsis ;;
 
     esac
+
 done
 
 function checklogfile
@@ -352,6 +357,9 @@ function filter_log
 
     [[ "${filter_inRE:-}"  != "" ]] && flog=$( echo "$flog" | grep "$filter_inRE" )
     [[ "${filter_outRE:-}" != "" ]] && flog=$( echo "$flog" | grep -v "$filter_outRE" )
+    
+    [[ $use_filter_in -eq 1     && "${filter_inRE:-}"  == "" ]] && flog=""
+    [[ $use_filter_module -eq 1 && "${filter_inRE:-}"  == "" ]] && flog=""
 
     flog=$(                         \
         echo "$flog"              | \
