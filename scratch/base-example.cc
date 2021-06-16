@@ -230,7 +230,6 @@ int main (int argc, char** argv)
   //  sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2002::", 64));
   sixlowpan.AddAdvertisedContext (devices.Get (0), Ipv6Prefix ("2001::", 64));
 
-
   if (printNodesAddresses)
     {
       std::cout<< "\n 6LoWPAN Boarder Router Addresses"<<std::endl;
@@ -258,7 +257,6 @@ int main (int argc, char** argv)
             }
         }
     }
-
 
   //*********************************ICMPV6 Ping testing*********************************
   if (usePingOn != "")
@@ -370,7 +368,7 @@ int main (int argc, char** argv)
           std::cout << "UDP app: invalid option\n";
           exit (0);
         }
-      udpClientApps.Start (Seconds (35.0));
+      udpClientApps.Start (Seconds (5.0));
       udpClientApps.Stop (Seconds (stopTime-1));
     }
 
