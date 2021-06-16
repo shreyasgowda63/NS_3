@@ -34,7 +34,6 @@
 
 using namespace ns3;
 /**
- * \ingroup nix-vector-routing
  * \defgroup nix-vector-routing-test Nix-Vector Routing Tests
  */
 
