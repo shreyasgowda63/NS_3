@@ -26,6 +26,8 @@
 #include "ns3/object-factory.h"
 #include "ns3/sixlowpan-header.h"
 #include <string>
+#include "ns3/application-container.h"
+#include "ns3/node-container.h"
 
 namespace ns3 {
 
@@ -191,6 +193,24 @@ public:
    * \return The number of stream indices assigned by this helper.
    */
   int64_t AssignStreams (NetDeviceContainer c, int64_t stream);
+
+//  /**
+//   * \brief UdpSendData() function to send UDP data.
+//   * \param interval The scheduled time to send data.
+//   * \param socket The sending socket (Inet6SocketAddress).
+//   * \param to Destination address.
+//   * \param port Destination port
+//   */
+//  void UdpSendData (Time interval, std::string to, uint16_t port);
+//
+//  /**
+//     * \param c the nodes
+//     *
+//     * Create one UDP client application on each of the input nodes
+//     *
+//     * \returns the applications created, one application per input node.
+//     */
+//  ApplicationContainer Install (NodeContainer c);
 
 private:
 

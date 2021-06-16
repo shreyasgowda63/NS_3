@@ -36,6 +36,8 @@
 #include "ns3/sixlowpan-nd-context.h"
 #include "ns3/sixlowpan-nd-prefix.h"
 #include "sixlowpan-helper.h"
+#include "ns3/udp-server.h"
+#include "ns3/udp-client.h"
 
 namespace ns3 {
 
@@ -301,5 +303,28 @@ int64_t SixLowPanHelper::AssignStreams (NetDeviceContainer c, int64_t stream)
     }
   return (currentStream - stream);
 }
+//
+//void SixLowPanHelper::UdpSendData (Time interval, std::string to, uint16_t port)
+//{
+//	m_deviceFactory.SetTypeId (SixLowPanHelper::GetTypeId ());
+//	SetAttribute ("RemoteAddress", AddressValue (to));
+//	SetAttribute ("RemotePort", UintegerValue (port));
+//
+//}
+
+//ApplicationContainer
+//SixLowPanHelper:: Install (NodeContainer c)
+//{
+//	ApplicationContainer apps;
+//	for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
+//	{
+//		Ptr<Node> node = *i;
+//		Ptr<UdpClient> client = m_deviceFactory.Create<UdpClient> ();
+//		node->AddApplication (client);
+//		apps.Add (client);
+//	}
+//	return apps;
+//}
+
 
 } // namespace ns3
