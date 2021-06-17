@@ -363,21 +363,20 @@ int main (int argc, char** argv)
 	udpServerApps.Stop (Seconds(stopTime - 1));
 
 	uint32_t MaxPacketSize = 12;
-	Time interPacketInterval = Seconds (0.05);
-	uint32_t maxPacketCount = 2;
+//	Time interPacketInterval = Seconds (0.05);
+//	uint32_t maxPacketCount = 5;
 
 	ApplicationContainer udpClientApps;
 	UdpClientHelper client;
 
 	OnOffHelper onoff ("ns3::UdpSocketFactory", Address ());
 
-	onoff.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
-	onoff.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
-	onoff.SetAttribute ("DataRate", DataRateValue (DataRate ("300bps")));
+	onoff.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.0001]"));
+	onoff.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"));
+//	onoff.SetAttribute ("DataRate", DataRateValue (DataRate ("300bps")));
 	onoff.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
-	onoff.SetAttribute ("PacketCount", UintegerValue (maxPacketCount));
-	onoff.SetAttribute ("Interval", TimeValue (interPacketInterval));
-	onoff.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
+//	onoff.SetAttribute ("PacketCount", UintegerValue (maxPacketCount));
+//	onoff.SetAttribute ("Interval", TimeValue (interPacketInterval));
 
 	if (position == "Grid")
 	{
@@ -389,21 +388,16 @@ int main (int argc, char** argv)
 			i++;
 		}
 		AddressValue remoteAddress (Inet6SocketAddress ("fe80::ff:fe00:5", port));
-		onoff.SetAttribute ("RemoteAddress", remoteAddress);
+		onoff.SetAttribute ("Remote", remoteAddress);
 		udpClientApps=onoff.Install (lo_nodes.Get (i));
 	}
-
-//		client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("fe80::ff:fe00:5")));
-//		client.SetAttribute ("RemotePort", UintegerValue (port));
-
-				std::cout<<"**********************************\n";
-
-//		udpClientApps.Add (client.Install (lo_nodes.Get (0)));
 		udpClientApps.Start (Seconds (0.0));
 		udpClientApps.Stop (Seconds(stopTime - 1));
+
 	}
 	else
 	{
+		std::cout<<"**********************************\n";
 		return(0);
 		server.Install (lo_nodes.Get(0));
 		client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("fe80::ff:fe00:1")));
