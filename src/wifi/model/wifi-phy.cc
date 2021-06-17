@@ -1607,12 +1607,6 @@ WifiPhy::CalculatePhyPreambleAndHeaderDuration (const WifiTxVector& txVector)
 }
 
 Time
-WifiPhy::GetPpduFieldDuration (WifiPpduField field, const WifiTxVector& txVector)
-{
-  return GetStaticPhyEntity (txVector.GetModulationClass ())->GetDuration (field, txVector);
-}
-
-Time
 WifiPhy::CalculateTxDuration (uint32_t size, const WifiTxVector& txVector, WifiPhyBand band, uint16_t staId)
 {
   Time duration = CalculatePhyPreambleAndHeaderDuration (txVector)
@@ -1805,6 +1799,16 @@ WifiPhy::Send (WifiConstPsduMap psdus, WifiTxVector txVector)
       return;
     }
   
+  // Set RU PHY indices
+  if (txVector.IsMu ())
+    {
+      for (auto& heMuUserInfo : txVector.GetHeMuUserInfoMap ())
+        {
+          heMuUserInfo.second.ru.SetPhyIndex (txVector.GetChannelWidth (),
+                                              m_operatingChannel.GetPrimaryChannelIndex (20));
+        }
+    }
+
   Time txDuration = CalculateTxDuration (psdus, txVector, GetPhyBand ());
 
   bool noEndPreambleDetectionEvent = true;
