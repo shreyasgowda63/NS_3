@@ -184,7 +184,7 @@ SixLowPanNdProtocol::SendSixLowPanNsWithEaro (Ipv6Address addrToRegister, Ipv6Ad
                                               uint16_t time, const std::vector<uint8_t> &rovr,
                                               uint8_t tid, Ptr<NetDevice> sixDevice)
 {
-//  std::cout << Now ().As (Time::S) << " sending an NS(EARO) for " << addrToRegister << std::endl;
+// std::cout << Now ().As (Time::S) << " sending an NS(EARO) for " << addrToRegister << std::endl;
   NS_LOG_FUNCTION (this << addrToRegister << dst << time);
 
   NS_ASSERT_MSG (!dst.IsMulticast (),"Destination address must not be a multicast address in EARO messages.");
@@ -227,6 +227,7 @@ SixLowPanNdProtocol::SendSixLowPanNaWithEaro (Ipv6Address src, Ipv6Address dst, 
                                               const std::vector<uint8_t> &rovr, uint8_t tid,
                                               Ptr<NetDevice> sixDevice, uint8_t status)
 {
+	std::cout << Now ().As (Time::S) << " sending an NA(EARO) With Target Address = " << target << std::endl;
   NS_LOG_FUNCTION (this << src << dst << static_cast<uint32_t> (status) << time);
   Ptr<Packet> p = Create<Packet> ();
   Icmpv6NA na;

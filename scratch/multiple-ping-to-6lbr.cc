@@ -28,7 +28,7 @@
  *  |          |          |
  *  n6---------n7---------n8
  *
- * ./waf --run "scratch/sixlowpan-mesh-example.cc --Mesh --Ping=6LN --Position=Grid NumberOfNodes=9 --StopTime=200 --Interval=1"
+ * ./waf --run "scratch/multiple-ping-to-6lbr.cc --Mesh --Ping=6LN --Position=Grid NumberOfNodes=9 --StopTime=200 --Interval=1"
  */
 #include <fstream>
 #include <map>
@@ -364,8 +364,8 @@ int main (int argc, char** argv)
   udpServerApps.Stop (Seconds(stopTime - 1));
 
 //  uint32_t MaxPacketSize = 12;
-  //	Time interPacketInterval = Seconds (0.05);
-  //	uint32_t maxPacketCount = 5;
+//  Time interPacketInterval = Seconds (0.05);
+//  uint32_t maxPacketCount = 5;
 
   UdpClientHelper client;
 
@@ -374,7 +374,7 @@ int main (int argc, char** argv)
   onoff.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.01]"));
   onoff.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=60.0]"));
   //	onoff.SetAttribute ("DataRate", DataRateValue (DataRate ("300bps")));
-//  onoff.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
+  //    onoff.SetAttribute ("PacketSize", UintegerValue (MaxPacketSize));
   //	onoff.SetAttribute ("PacketCount", UintegerValue (maxPacketCount));
   //	onoff.SetAttribute ("Interval", TimeValue (interPacketInterval));
 
@@ -392,57 +392,52 @@ int main (int argc, char** argv)
           onoff.SetAttribute ("Remote", remoteAddress);
 
           udpClientApps = onoff.Install (lo_nodes.Get (i));
-          udpClientApps.Start (Seconds (50+10*i));
+
+          udpClientApps.Start (Seconds (10+10*i));
           udpClientApps.Stop (Seconds (stopTime - 1));
-
-//
-//          Ptr<Application> app = onoff.Install (lo_nodes.Get (i)).Get (0);
-//          app->SetStartTime (Seconds (10+10*i));
-//          app->SetStopTime (Seconds (stopTime - 1));
         }
-//      udpClientApps.Start (Seconds (0.0));
-//      udpClientApps.Stop (Seconds (stopTime - 1));
-
     }
-//  else
-//    {
-//      std::cout<<"**********************************\n";
-//      return(0);
-//      server.Install (lo_nodes.Get(0));
-//      client.SetAttribute ("RemoteAddress", AddressValue (Ipv6Address ("fe80::ff:fe00:1")));
-//      client.SetAttribute ("RemotePort", UintegerValue (port));
-//      udpClientApps.Add (client.Install (lo_nodes.Get (1)));
-//      udpClientApps.Add (client.Install (lo_nodes.Get (2)));
-//      udpClientApps.Add (client.Install (lo_nodes.Get (3)));
-//      udpClientApps.Add (client.Install (lo_nodes.Get (4)));
-//      udpClientApps.Add (client.Install (lo_nodes.Get (5)));
-//      udpClientApps.Add (client.Install (lo_nodes.Get (6)));
-//      udpClientApps.Add (client.Install (lo_nodes.Get (7)));
-//      udpClientApps.Add (client.Install (lo_nodes.Get (8)));
-//
-//      udpClientApps.Start (Seconds (5.0));
-//      udpClientApps.Stop (Seconds(stopTime - 1));
-//    }
+  else
+  {
+	  std::cout<<"**********************************\n";
+	  for (uint32_t i = 0; i < numberOfNodes; ++i)
+	  {
+		  if(i==0)
+		  {
+			  server.Install (lo_nodes.Get(i));
+			  i++;
+			  std::cout<<"**********************************\n";
+		  }
+		  ApplicationContainer udpClientApps;
+		  AddressValue remoteAddress (Inet6SocketAddress ("fe80::ff:fe00:1", port));
+		  onoff.SetAttribute ("Remote", remoteAddress);
+
+		  udpClientApps = onoff.Install (lo_nodes.Get (i));
+
+		  udpClientApps.Start (Seconds (10+10*i));
+		  udpClientApps.Stop (Seconds (stopTime - 1));
+	  }
+  }
   AsciiTraceHelper ascii;
-  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("multiple-ping-to-6lbr.tr"));
-  lrWpanHelper.EnablePcapAll (std::string ("multiple-ping-to-6lbr"), true);
+  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("multiple-udp-to-6lbr.tr"));
+  lrWpanHelper.EnablePcapAll (std::string ("multiple-udp-to-6lbr"), true);
+//
+//  if (!printNeighborCache)
+//    {
+//      for (int var = 0; var < stopTime; ++var)
+//        {
+//          Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
+//          Ipv6RoutingHelper::PrintNeighborCacheAllEvery (Seconds (var), neighborStream);
+//          Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
+//        }
+//    }
 
-  if (printNeighborCache)
-    {
-      for (int var = 0; var < stopTime; ++var)
-        {
-          Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
-          Ipv6RoutingHelper::PrintNeighborCacheAllEvery (Seconds (var), neighborStream);
-          Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
-        }
-    }
-
-  //  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
-  //  for (int var = 0; var < stopTime; ++var)
-  //  {
-  //	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
-  ////	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
-  //  }
+//    Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
+//    for (int var = 0; var < stopTime; ++var)
+//    {
+//  	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
+//// 	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
+//    }
 
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
                    MakeCallback (&PhyCallback));
