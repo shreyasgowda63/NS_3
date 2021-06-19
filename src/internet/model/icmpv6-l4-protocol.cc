@@ -1421,11 +1421,21 @@ Ptr<NdiscCache> Icmpv6L4Protocol::CreateCache (Ptr<NetDevice> device, Ptr<Ipv6In
 {
   NS_LOG_FUNCTION (this << device << interface);
 
+  Ptr<NetDeviceState> netDevState = device->GetObject<NetDeviceState> ();
   Ptr<NdiscCache> cache = CreateObject<NdiscCache> ();
 
   cache->SetDevice (device, interface, this);
-  device->AddLinkChangeCallback (MakeCallback (&NdiscCache::Flush, cache));
   m_cacheList.push_back (cache);
+
+  if (netDevState != nullptr)
+    {
+      netDevState->TraceConnectWithoutContext ("StateChange", MakeCallback (&NdiscCache::ProcessDeviceStateChange, cache));
+    }
+  else
+    {
+      device->AddLinkChangeCallback (MakeCallback (&NdiscCache::Flush, cache));
+    }
+    
   return cache;
 }
 

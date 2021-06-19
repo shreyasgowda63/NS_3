@@ -28,6 +28,7 @@
 #include "ns3/packet.h"
 #include "ns3/nstime.h"
 #include "ns3/net-device.h"
+#include "ns3/net-device-state.h"
 #include "ns3/ipv6-address.h"
 #include "ns3/ptr.h"
 #include "ns3/timer.h"
@@ -156,6 +157,14 @@ public:
    * \brief Pair of a packet and an Ipv4 header.
    */
   typedef std::pair<Ptr<Packet>, Ipv6Header> Ipv6PayloadHeaderPair;
+
+  /**
+   * \brief Process NDISC cache when the corresponding NetDevice state changes.
+   * 
+   * \param isUp latest admin state of the NetDevice
+   * \param opState latest operational state of the NetDevice
+   */
+  void ProcessDeviceStateChange (bool isUp, NetDeviceState::OperationalState opState);
 
   /**
    * \ingroup ipv6

@@ -24,6 +24,7 @@
 #define ICMPV6_L4_PROTOCOL_H
 
 #include <list>
+#include <algorithm>
 
 #include "ns3/ipv6-address.h"
 #include "ns3/random-variable-stream.h"
@@ -31,6 +32,7 @@
 #include "icmpv6-header.h"
 #include "ip-l4-protocol.h"
 #include "ndisc-cache.h"
+#include "ns3/net-device-state.h"
 
 namespace ns3 {
 
@@ -512,6 +514,13 @@ protected:
    * \param interface the interface from which the packet is coming
    */
   void ReceiveLLA (Icmpv6OptionLinkLayerAddress lla, Ipv6Address const &src, Ipv6Address const &dst, Ptr<Ipv6Interface> interface);
+
+  /**
+   * \brief Handle the state changes of associated NetDevice
+   * \param isUp Administrative state of the device
+   * \param opState Operational State of the device
+   */
+  void ProcessDeviceStateChange (bool isUp, NetDeviceState::OperationalState opState);
 
   /**
    * \brief Get the cache corresponding to the device.
