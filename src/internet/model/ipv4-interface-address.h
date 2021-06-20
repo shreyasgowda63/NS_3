@@ -71,7 +71,17 @@ public:
    * \brief Set local address
    * \param local the address
    */
+  void SetAddress (Ipv4Address local);
+  /**
+   * \brief Set local address
+   * \param local the address
+   */
   void SetLocal (Ipv4Address local);
+  /**
+   * \brief Get the local address
+   * \returns the local address
+   */
+  Ipv4Address GetAddress (void) const;
   /**
    * \brief Get the local address
    * \returns the local address
