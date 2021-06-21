@@ -227,7 +227,7 @@ SixLowPanNdProtocol::SendSixLowPanNaWithEaro (Ipv6Address src, Ipv6Address dst, 
                                               const std::vector<uint8_t> &rovr, uint8_t tid,
                                               Ptr<NetDevice> sixDevice, uint8_t status)
 {
-	std::cout << Now ().As (Time::S) << " sending an NA(EARO) With Target Address = " << target << std::endl;
+//	std::cout << Now ().As (Time::S) << " sending an NA(EARO) With Target Address = " << target << std::endl;
   NS_LOG_FUNCTION (this << src << dst << static_cast<uint32_t> (status) << time);
   Ptr<Packet> p = Create<Packet> ();
   Icmpv6NA na;
@@ -480,7 +480,7 @@ SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const &src,
 
   NS_LOG_FUNCTION (this << pkt << src << dst << interface);
 
-  // std::cout << Now ().As(Time::S) << " " << *pkt << " " << src << " " << dst << " " << interface << std::endl;
+//std::cout << Now ().As(Time::S) << " HandleSixLowPanNS " << *pkt << " " << src << " " << dst << " " << interface << std::endl;
 
   Ptr<Packet> packet = pkt->Copy ();
   Icmpv6NS nsHdr;
@@ -575,27 +575,27 @@ SixLowPanNdProtocol::HandleSixLowPanNS (Ptr<Packet> pkt, Ipv6Address const &src,
       // \todo set the registered status.
 
       if (earoHdr.GetRegTime ()  > 0)
-        {
-          if (!entry)
-            {
-              entry = static_cast<SixLowPanNdiscCache::SixLowPanEntry *> (cache->Add (target));
-            }
-//          std::cout <<" Before MarkRegistered" << std::endl;
-//          std::cout <<" "<<Now()<<" "<< *entry<< std::endl;
-          entry->SetRouter (false);
-          entry->SetMacAddress (sllaoHdr.GetAddress ());
-          entry->MarkReachable ();
-          entry->StartReachableTimer ();
-          entry->MarkRegistered (earoHdr.GetRegTime ());
-//          std::cout <<" After MarkRegistered"<<std::endl;
-//          std::cout <<" "<<Now()<<" "<< *entry << std::endl;
-          if (!target.IsLinkLocal ())
-            {
-              Ptr<Ipv6L3Protocol> ipv6l3Protocol = m_node->GetObject<Ipv6L3Protocol> ();
-              ipv6l3Protocol->GetRoutingProtocol ()->NotifyAddRoute(target, Ipv6Prefix (128), src, ipv6l3Protocol->GetInterfaceForDevice (interface->GetDevice ()));
-              // Forward the registration to the 6LBR.
-              // Unless we're the 6LBR, of course.
-            }
+      {
+    	  if (!entry)
+    	  {
+    		  entry = static_cast<SixLowPanNdiscCache::SixLowPanEntry *> (cache->Add (target));
+    	  }
+    	  //          std::cout <<" Before MarkRegistered" << target << std::endl;
+    	  //          std::cout <<" "<<Now()<<" "<< *entry<< std::endl;
+    	  entry->SetRouter (false);
+    	  entry->SetMacAddress (sllaoHdr.GetAddress ());
+    	  entry->MarkReachable ();
+    	  entry->StartReachableTimer ();
+    	  entry->MarkRegistered (earoHdr.GetRegTime ());
+    	  //          std::cout <<" After MarkRegistered"<< target<<std::endl;
+    	  //          std::cout <<" "<<Now()<<" "<< *entry << std::endl;
+    	  if (!target.IsLinkLocal ())
+    	  {
+    		  Ptr<Ipv6L3Protocol> ipv6l3Protocol = m_node->GetObject<Ipv6L3Protocol> ();
+    		  ipv6l3Protocol->GetRoutingProtocol ()->NotifyAddRoute(target, Ipv6Prefix (128), src, ipv6l3Protocol->GetInterfaceForDevice (interface->GetDevice ()));
+    		  // Forward the registration to the 6LBR.
+    		  // Unless we're the 6LBR, of course.
+    	  }
         }
       else // Remove the entry (if any) and remove the RT entry (if any)
         {
@@ -781,9 +781,12 @@ SixLowPanNdProtocol::HandleSixLowPanRS (Ptr<Packet> packet, Ipv6Address const &s
     {
       sixEntry = dynamic_cast<SixLowPanNdiscCache::SixLowPanEntry *> (sixCache->Add (src));
       sixEntry->SetRouter (false);
-      sixEntry->MarkStale (lla.GetAddress ());
+      std::cout <<" ******* - Before - ******* "<< *sixEntry<< std::endl;
+       sixEntry->MarkStale (lla.GetAddress ());
       sixEntry->MarkTentative ();
-//      NS_LOG_LOGIC ("Tentative entry created from RS");
+      std::cout <<" ******* - After - ******* "<< *sixEntry<< std::endl;
+//       std::cout <<" "<<Now()<<" "<< *sixEntry << std::endl;
+      NS_LOG_LOGIC ("Tentative entry created from RS");
     }
   else if (sixEntry->GetMacAddress () != lla.GetAddress ())
     {

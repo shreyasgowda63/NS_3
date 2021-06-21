@@ -421,8 +421,8 @@ int main (int argc, char** argv)
   AsciiTraceHelper ascii;
   lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("multiple-udp-to-6lbr.tr"));
   lrWpanHelper.EnablePcapAll (std::string ("multiple-udp-to-6lbr"), true);
-//
-//  if (!printNeighborCache)
+
+//  if (printNeighborCache)
 //    {
 //      for (int var = 0; var < stopTime; ++var)
 //        {
@@ -431,13 +431,12 @@ int main (int argc, char** argv)
 //          Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
 //        }
 //    }
-
-//    Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
-//    for (int var = 0; var < stopTime; ++var)
-//    {
-//  	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
-//// 	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
-//    }
+  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
+    for (int var = 0; var < stopTime; ++var)
+    {
+  	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
+// 	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
+    }
 
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
                    MakeCallback (&PhyCallback));
