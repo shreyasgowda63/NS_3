@@ -1344,6 +1344,8 @@ SixLowPanNdProtocol::AddressRegistration (void)
       tid = m_tidContainer[std::make_pair (addressToRegister, registeringAddressNodeAddr)];
   }
 
+  std::cout << "+++++ Sending a NS(EARO) for " << addressToRegister << std::endl;
+
   SendSixLowPanNsWithEaro (addressToRegister,
                            m_addrPendingReg.registrar,
                            m_addrPendingReg.registrarMacAddr,
@@ -1504,6 +1506,8 @@ SixLowPanNdProtocol::AddressRegistrationTimeout ()
 
   if (m_addressRegistrationCounter < m_maxUnicastSolicit)
     {
+
+      std::cout << "***** Registration unsuccessful for " << m_addrPendingReg.addressPendingRegistration << ", trying again " << +m_addressRegistrationCounter << " of " << +m_maxUnicastSolicit << std::endl;
       // Try again
       m_addressRegistrationCounter++;
 
@@ -1512,6 +1516,9 @@ SixLowPanNdProtocol::AddressRegistrationTimeout ()
     }
   else
     {
+
+      NS_ABORT_MSG ("I'm giving up, bye");
+
       if (m_addrPendingReg.newRegistration == true)
         {
           m_tidContainer.erase (std::make_pair (m_addrPendingReg.addressPendingRegistration, m_addrPendingReg.registrar));

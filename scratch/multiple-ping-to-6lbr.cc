@@ -431,19 +431,19 @@ int main (int argc, char** argv)
 //          Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
 //        }
 //    }
-  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
-    for (int var = 0; var < stopTime; ++var)
-    {
-  	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
-// 	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
-    }
-
-  Config::Connect ("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
-                   MakeCallback (&PhyCallback));
-  Config::Connect ("/NodeList/*/DeviceList/*/$ns3::SixLowPanNetDevice/TxPre",
-                   MakeCallback (&SixLowCallback));
-
-  Simulator::Schedule (interval, &PrintResults, interval);
+//  Ptr<OutputStreamWrapper> neighborStream = Create<OutputStreamWrapper> (&std::cout);
+//    for (int var = 0; var < stopTime; ++var)
+//    {
+//  	  Ipv6RoutingHelper::PrintNeighborCacheAllAt (Seconds (var), neighborStream);
+//// 	  Ipv6RoutingHelper::PrintRoutingTableAllAt(Seconds (var), neighborStream);
+//    }
+//
+//  Config::Connect ("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
+//                   MakeCallback (&PhyCallback));
+//  Config::Connect ("/NodeList/*/DeviceList/*/$ns3::SixLowPanNetDevice/TxPre",
+//                   MakeCallback (&SixLowCallback));
+//
+//  Simulator::Schedule (interval, &PrintResults, interval);
 
   Simulator::Stop (Seconds (stopTime));
   Simulator::Run ();
