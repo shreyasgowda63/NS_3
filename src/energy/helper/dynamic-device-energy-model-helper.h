@@ -47,7 +47,7 @@ public:
   virtual void Set (std::string name, const AttributeValue &v);
 
   /**
-   * \param device Pointer to the Node to install DynamicDeviceEnergyModel on.
+   * \param node Pointer to the Node to install DynamicDeviceEnergyModel on.
    * \param source The EnergySource the DynamicDeviceEnergyModels will be using.
    * \returns A DeviceEnergyModelContainer containing all the DynamicDeviceEnergyModels.
    *
@@ -82,6 +82,7 @@ private:
   std::vector<DynamicDeviceEnergyModel::EnergyRechargedCallback>
       m_energyRechargedCallbacks; ///< Callbacks for when the energy is recharged
 
+  /// ObjectFactory for creating the DynamicDeviceEnergyModel objects
   ObjectFactory m_dynamicEnergy;
 };
 } // namespace ns3
