@@ -112,6 +112,19 @@ private:
   std::map<uint32_t, State> m_states; ///< Map of all states onto their indizes
 };
 
+/**
+ * \ingroup energy
+ * 
+ * @brief Device Energy Model for dynamic devices like MCUs.
+ * 
+ * This DeviceEnergyModel can model the energy consumption of a wide range of different devices.
+ * By connecting this class to a DynamicEnergyModelStates object, dynamic states can
+ * be created during the simulation while not having to set the currents in A directly.
+ * 
+ * This class also provides automatic functionality for changing the state to Off
+ * when the energy is depleted, and energy depletion and recharged callbacks
+ * can be registered.
+ */
 class DynamicDeviceEnergyModel : public DeviceEnergyModel
 {
 public:

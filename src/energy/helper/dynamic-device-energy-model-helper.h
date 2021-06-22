@@ -26,6 +26,13 @@
 
 namespace ns3 {
 
+/**
+ * \ingroup energy
+ * \brief Creates DynamicDeviceEnergyModel objects.
+ *
+ * This class creates and installs DynamicDeviceEnergyModel objects.
+ *
+ */
 class DynamicDeviceEnergyModelHelper
 {
 public:
