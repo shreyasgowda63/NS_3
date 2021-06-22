@@ -258,8 +258,6 @@ int main (int argc, char** argv)
 	}
 
 	//*********************************ICMPV6 Ping testing*********************************
-	if(position=="Grid")
-	{
 		if (usePingOn != "")
 		{
 			uint32_t packetSize = 2;
