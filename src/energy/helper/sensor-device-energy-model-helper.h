@@ -46,7 +46,7 @@ public:
   virtual void Set (std::string name, const AttributeValue &v);
 
   /**
-   * \param device Pointer to the Node to install SensorDeviceEnergyModel on.
+   * \param node Pointer to the Node to install SensorDeviceEnergyModel on.
    * \param source The EnergySource the SensorDeviceEnergyModel will be using.
    * \returns A DeviceEnergyModelContainer containing all the SensorDeviceEnergyModels.
    *
@@ -65,9 +65,29 @@ public:
   DeviceEnergyModelContainer Install (NodeContainer nodeContainer,
                                       EnergySourceContainer sourceContainer) const;
 
+  /**
+   * @brief Adds a MeasurementStartCallback.
+   * 
+   * @param cb The callback to add
+   */
   void AddMeasurementStartCallback (SensorDeviceEnergyModel::MeasurementStartCallback cb);
+  /**
+   * @brief Adds a MeasurementEndCallback.
+   * 
+   * @param cb The callback to add
+   */
   void AddMeasurementEndCallback (SensorDeviceEnergyModel::MeasurementEndCallback cb);
+  /**
+   * @brief Adds an EnergyDepletedCallback.
+   * 
+   * @param cb The callback to add
+   */
   void AddEnergyDepletedCallback (SensorDeviceEnergyModel::EnergyDepletedCallback cb);
+  /**
+   * @brief Adds an EnergyRechargedCallback
+   * 
+   * @param cb The callback to add
+   */
   void AddEnergyRechargedCallback (SensorDeviceEnergyModel::EnergyRechargedCallback cb);
 
 private:
@@ -87,7 +107,7 @@ private:
   std::vector<SensorDeviceEnergyModel::EnergyRechargedCallback>
       m_energyRechargedCallbacks; ///< Callbacks for when the energy is recharged
 
-  ObjectFactory m_sensorEnergy;
+  ObjectFactory m_sensorEnergy; ///< Object factory for creating the SensorDeviceEnergyModel objects
 };
 
 } // namespace ns3

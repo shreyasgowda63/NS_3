@@ -221,7 +221,7 @@ private:
 
   double m_measureCurrentA; ///< The current for the Measure state
   double m_idleCurrentA; ///< The current for the SensorDeviceEnergyModel::State::Idle state
-  double m_sleepCurrentA; ////< The current for the Sleep state
+  double m_sleepCurrentA; ///< The current for the Sleep state
   /**
    * \brief The default SensorDeviceEnergyModel::SensorModelState to be in after initialization and after the energy is recharged.
    */
