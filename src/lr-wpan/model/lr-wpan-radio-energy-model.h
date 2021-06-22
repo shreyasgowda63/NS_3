@@ -255,7 +255,7 @@ private:
   /// This variable keeps track of the total energy consumed by this model in watts.
   TracedValue<double> m_totalEnergyConsumption;
   TracedValue<double> m_currentA; ///< Current A for tracing
-  bool m_energyDepleted;
+  bool m_energyDepleted; ///< Indication whether the energy is depleted
 
   // State variables.
   TracedValue<LrWpanRadioEnergyState>
