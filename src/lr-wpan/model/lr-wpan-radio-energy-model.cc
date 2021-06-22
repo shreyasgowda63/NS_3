@@ -55,10 +55,6 @@ LrWpanRadioEnergyModel::GetTypeId (void)
                          MakeDoubleAccessor (&LrWpanRadioEnergyModel::SetRxCurrentA,
                                              &LrWpanRadioEnergyModel::GetRxCurrentA),
                          MakeDoubleChecker<double> ())
-          // .AddAttribute ("TxCurrentModel", "A pointer to the attached TX current model.",
-          //                PointerValue (),
-          //                MakePointerAccessor (&LrWpanRadioEnergyModel::m_txCurrentModel),
-          //                MakePointerChecker<LrWpanTxCurrentModel> ())
           .AddTraceSource (
               "TotalEnergyConsumption", "Total energy consumption of the radio device.",
               MakeTraceSourceAccessor (&LrWpanRadioEnergyModel::m_totalEnergyConsumption),
@@ -88,7 +84,6 @@ LrWpanRadioEnergyModel::LrWpanRadioEnergyModel ()
 LrWpanRadioEnergyModel::~LrWpanRadioEnergyModel ()
 {
   NS_LOG_FUNCTION (this);
-  // m_txCurrentModel = 0;
 }
 
 void
@@ -111,19 +106,6 @@ LrWpanRadioEnergyModel::SetLrWpanPhy (Ptr<LrWpanPhy> phy)
   SetEnergyDepletionCallback (MakeCallback (&LrWpanPhy::SetEnergyOff, phy));
   SetEnergyRechargedCallback (MakeCallback (&LrWpanPhy::SetEnergyOn, phy));
 
-  // Connect the relevant TracedCallbacks of the PHY
-  // phy->TraceConnectWithoutContext ("PhyTxBegin",
-  //                                  MakeCallback (&LrWpanRadioEnergyModel::PhyTxBegin, this));
-  // phy->TraceConnectWithoutContext ("PhyTxEnd",
-  //                                  MakeCallback (&LrWpanRadioEnergyModel::PhyTxEnd, this));
-  // phy->TraceConnectWithoutContext ("PhyTxDrop",
-  //                                  MakeCallback (&LrWpanRadioEnergyModel::PhyTxDrop, this));
-  // phy->TraceConnectWithoutContext ("PhyRxBegin",
-  //                                  MakeCallback (&LrWpanRadioEnergyModel::PhyRxBegin, this));
-  // phy->TraceConnectWithoutContext ("PhyRxEnd",
-  //                                  MakeCallback (&LrWpanRadioEnergyModel::PhyRxEnd, this));
-  // phy->TraceConnectWithoutContext ("PhyRxDrop",
-  //                                  MakeCallback (&LrWpanRadioEnergyModel::PhyRxDrop, this));
   phy->TraceConnectWithoutContext ("TrxStateValue",
                                    MakeCallback (&LrWpanRadioEnergyModel::TrxStateChanged, this));
 }
@@ -267,66 +249,6 @@ LrWpanRadioEnergyModel::ChangeState (int newState)
     }
 
   m_nPendingChangeState--;
-}
-
-void
-LrWpanRadioEnergyModel::PhyTxBegin (Ptr<const Packet> p)
-{
-  NS_LOG_FUNCTION (this << p);
-  if (m_currentState != Off)
-    {
-      ChangeState (LrWpanRadioEnergyState::Tx);
-    }
-}
-
-void
-LrWpanRadioEnergyModel::PhyTxEnd (Ptr<const Packet> p)
-{
-  NS_LOG_FUNCTION (this << p);
-  if (m_currentState != Off)
-    {
-      ChangeState (LrWpanRadioEnergyState::Idle);
-    }
-}
-
-void
-LrWpanRadioEnergyModel::PhyTxDrop (Ptr<const Packet> p)
-{
-  NS_LOG_FUNCTION (this << p);
-  if (m_currentState != Off)
-    {
-      ChangeState (LrWpanRadioEnergyState::Idle);
-    }
-}
-
-void
-LrWpanRadioEnergyModel::PhyRxBegin (Ptr<const Packet> p)
-{
-  NS_LOG_FUNCTION (this << p);
-  if (m_currentState != Off)
-    {
-      ChangeState (LrWpanRadioEnergyState::Rx);
-    }
-}
-
-void
-LrWpanRadioEnergyModel::PhyRxEnd (Ptr<const Packet> p, double sinr)
-{
-  NS_LOG_FUNCTION (this << p << sinr);
-  if (m_currentState != Off)
-    {
-      ChangeState (LrWpanRadioEnergyState::Idle);
-    }
-}
-
-void
-LrWpanRadioEnergyModel::PhyRxDrop (Ptr<const Packet> p)
-{
-  NS_LOG_FUNCTION (this << p);
-  if (m_currentState != Off)
-    {
-      ChangeState (LrWpanRadioEnergyState::Idle);
-    }
 }
 
 void

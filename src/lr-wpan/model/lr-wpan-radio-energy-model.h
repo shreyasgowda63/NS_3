@@ -36,39 +36,31 @@ namespace ns3 {
 
 /**
  * \ingroup energy
- * \brief A LR-WPAN radio energy model.
+ * \brief An LR-WPAN radio energy model.
  *
  * 4 states are defined for the radio: IDLE, TX, RX, and OFF. Default state is
  * IDLE.
  * Every time the LrWpanPhy starts to transmitt or receive something,
  * as well as ends such an activity in some way,
- * this class is notified using callbacks (PhyTxBegin, PhyTxEnd, PhyTxDrop, PhyRxBegin, PhyRxEnd, PhyRxDrop).
+ * this class is notified using the LrWpanPhy's TracedValue "TrxStateValue".
  * This class will handle the energy consumption of the LrWpanNetDevice
- * according to the above mentioned callbacks.
+ * according to the above mentioned state changes.
  * Additionally, if the connected energy source is depleted,
  * the LrWpanRadio will be denied to change its state (from PHY_OFF) until the energy is recharged.
  *
- * Energy calculation: For each transaction, this model notifies EnergySource
+ * Energy calculation: For each transaction, this model notifies the EnergySource
  * object. The EnergySource object will query this model for the total current.
  * Then the EnergySource object uses the total current to calculate energy.
  *
- * Default values for power consumption are based on data reported in:
+ * Default values for power consumption are the following:
  *
- * Nicolas Fourty, Adrien van den Bossche, Thierry Val,
- * "An advanced study of energy consumption in an IEEE 802.15.4 based network: Everything but the truth on 802.15.4 node lifetime",
- * https://doi.org/10.1016/j.comcom.2012.05.008
- *
- * From Table 1:
- *
- * \f$ Tx (0dBm): 30 mA \f$
+ * \f$ Tx: 30 mA \f$
  *
  * \f$ Rx: 38 mA \f$
  *
  * \f$ Idle: 1.3 mA \f$
- *
- * The dependence of the power consumption in transmission mode on the nominal
- * transmit power can also be achieved through a wifi TX current model.
- *
+ * 
+ * This class is based on and used code from the WifiRadioEnergyModel.
  */
 class LrWpanRadioEnergyModel : public DeviceEnergyModel
 {
@@ -133,49 +125,6 @@ public:
    * Implements DeviceEnergyModel::ChangeState
    */
   void ChangeState (int newState);
-
-  /**
-   * Callback for receiving notifications about a packet starting to be sent.
-   * 
-   * \param p The packet.
-   */
-  void PhyTxBegin (Ptr<const Packet> p);
-
-  /**
-   * Callback for receiving notifications about a packet being sent.
-   * 
-   * \param p The packet.
-   */
-  void PhyTxEnd (Ptr<const Packet> p);
-
-  /**
-   * Callback for receiving notifications about a packet being dropped while being sent.
-   * 
-   * \param p The packet.
-   */
-  void PhyTxDrop (Ptr<const Packet> p);
-
-  /**
-   * Callback for receiving notifications about a packet starting to be received.
-   * 
-   * \param p The packet.
-   */
-  void PhyRxBegin (Ptr<const Packet> p);
-
-  /**
-   * Callback for receiving notifications about a packet being received.
-   * 
-   * \param p The packet.
-   * \param sinr Received SINR.
-   */
-  void PhyRxEnd (Ptr<const Packet> p, double sinr);
-
-  /**
-   * Callback for receiving notifications about a packet being droppped while being received.
-   * 
-   * \param p The packet.
-   */
-  void PhyRxDrop (Ptr<const Packet> p);
 
   /**
    * \brief Callback for receiving notifications about a new state of the connected LrWpanPhy.
@@ -302,7 +251,6 @@ private:
   double m_idleCurrentA; ///< IDLE current in Amperes
   double m_rxCurrentA; ///< RX current in Amperes
   double m_txCurrentA; ///< TX current in Amperes
-  // Ptr<LrWpanTxCurrentModel> m_txCurrentModel; ///< current model
 
   /// This variable keeps track of the total energy consumed by this model in watts.
   TracedValue<double> m_totalEnergyConsumption;
