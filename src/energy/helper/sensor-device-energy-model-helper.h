@@ -25,6 +25,13 @@
 
 namespace ns3 {
 
+/**
+ * \ingroup energy
+ * \brief Creates SensorDeviceEnergyModel objects.
+ *
+ * This class creates and installs SensorDeviceEnergyModels .
+ *
+ */
 class SensorDeviceEnergyModelHelper
 {
 public:
