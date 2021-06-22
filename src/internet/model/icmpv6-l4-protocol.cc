@@ -31,6 +31,7 @@
 #include "ns3/pointer.h"
 #include "ns3/string.h"
 #include "ns3/integer.h"
+#include "ns3/uinteger.h"
 
 #include "ipv6-l3-protocol.h"
 #include "ipv6-interface.h"
@@ -74,6 +75,18 @@ TypeId Icmpv6L4Protocol::GetTypeId ()
                    StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=10.0]"),
                    MakePointerAccessor (&Icmpv6L4Protocol::m_solicitationJitter),
                    MakePointerChecker<RandomVariableStream> ())
+    .AddAttribute ("DadJitter", "The jitter in ms a node will wait before sending a DAD. Some jitter aims to prevent collisions. By default, the model will wait for a duration in ms defined by a uniform random-variable between 0 and SolicitationJitter",
+                   StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=10.0]"),
+                   MakePointerAccessor (&Icmpv6L4Protocol::m_dadJitter),
+                   MakePointerChecker<RandomVariableStream> ())
+    .AddAttribute ("DadTimeout", "The DAD timeout",
+                   TimeValue (Seconds (1)),
+                   MakeTimeAccessor (&Icmpv6L4Protocol::m_dadTimeout),
+                   MakeTimeChecker ())
+    .AddAttribute ("RsJitter", "The jitter in ms a node will wait before sending a RS. Some jitter aims to prevent collisions. By default, the model will wait for a duration in ms defined by a uniform random-variable between 0 and SolicitationJitter",
+                   StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=10.0]"),
+                   MakePointerAccessor (&Icmpv6L4Protocol::m_rsJitter),
+                   MakePointerChecker<RandomVariableStream> ())
     .AddAttribute ("MaxMulticastSolicit", "Neighbor Discovery node constants: max multicast solicitations.",
                    IntegerValue (3),
                    MakeIntegerAccessor (&Icmpv6L4Protocol::m_maxMulticastSolicit),
@@ -94,9 +107,18 @@ TypeId Icmpv6L4Protocol::GetTypeId ()
                    TimeValue (Seconds (5)),
                    MakeTimeAccessor (&Icmpv6L4Protocol::m_delayFirstProbe),
                    MakeTimeChecker ())
+    .AddAttribute ("MaxRtrSolicitations", "Neighbor Discovery node constants: max multicast RS retries.",
+                   UintegerValue (3),
+                   MakeUintegerAccessor (&Icmpv6L4Protocol::m_maxRtrSolicitations),
+                   MakeUintegerChecker<uint8_t> ())
+    .AddAttribute ("RtrSolicitationInterval", "Neighbor Discovery node constants: Minimum time between multicast RS.",
+                   TimeValue (Seconds (4)),
+                   MakeTimeAccessor (&Icmpv6L4Protocol::m_rtrSolicitationInterval),
+                   MakeTimeChecker ())
     ;
   return tid;
 }
+
 
 TypeId Icmpv6L4Protocol::GetInstanceTypeId () const
 {
@@ -135,7 +157,9 @@ int64_t Icmpv6L4Protocol::AssignStreams (int64_t stream)
 {
   NS_LOG_FUNCTION (this << stream);
   m_solicitationJitter->SetStream (stream);
-  return 1;
+  m_dadJitter->SetStream (stream+1);
+  m_rsJitter->SetStream (stream+2);
+  return 3;
 }
 
 void Icmpv6L4Protocol::NotifyNewAggregate ()
@@ -325,6 +349,12 @@ void Icmpv6L4Protocol::HandleEchoRequest (Ptr<Packet> packet, Ipv6Address const 
 void Icmpv6L4Protocol::HandleRA (Ptr<Packet> packet, Ipv6Address const &src, Ipv6Address const &dst, Ptr<Ipv6Interface> interface)
 {
   NS_LOG_FUNCTION (this << packet << src << dst << interface);
+
+  if (m_handleRsTimeoutEvent.IsRunning ())
+    {
+      m_handleRsTimeoutEvent.Cancel ();
+    }
+
   Ptr<Packet> p = packet->Copy ();
   Icmpv6RA raHeader;
   Ptr<Ipv6L3Protocol> ipv6 = m_node->GetObject<Ipv6L3Protocol> ();
@@ -449,6 +479,7 @@ void Icmpv6L4Protocol::ReceiveLLA (Icmpv6OptionLinkLayerAddress lla, Ipv6Address
 void Icmpv6L4Protocol::HandleRS (Ptr<Packet> packet, Ipv6Address const &src, Ipv6Address const &dst, Ptr<Ipv6Interface> interface)
 {
   NS_LOG_FUNCTION (this << packet << src << dst << interface);
+
   Ptr<Ipv6L3Protocol> ipv6 = m_node->GetObject<Ipv6L3Protocol> ();
   Icmpv6RS rsHeader;
   packet->RemoveHeader (rsHeader);
@@ -1068,7 +1099,7 @@ void Icmpv6L4Protocol::SendNS (Ipv6Address src, Ipv6Address dst, Ipv6Address tar
     }
 }
 
-void Icmpv6L4Protocol::SendRS (Ipv6Address src, Ipv6Address dst,  Address hardwareAddress)
+void Icmpv6L4Protocol::SendRS (Ipv6Address src, Ipv6Address dst, Address hardwareAddress, uint8_t retryCounter)
 {
   NS_LOG_FUNCTION (this << src << dst << hardwareAddress);
   Ptr<Packet> p = Create<Packet> ();
@@ -1094,9 +1125,26 @@ void Icmpv6L4Protocol::SendRS (Ipv6Address src, Ipv6Address dst,  Address hardwa
   else
     {
       NS_LOG_LOGIC ("Destination is Multicast, using DelayedSendMessage");
-      Simulator::Schedule (Time (MilliSeconds (m_solicitationJitter->GetValue ())), &Icmpv6L4Protocol::DelayedSendMessage, this, p, src, dst, 255);
+      Time rsDelay = GetRsJitter ();
+      Simulator::Schedule (rsDelay, &Icmpv6L4Protocol::DelayedSendMessage, this, p, src, dst, 255);
+      m_handleRsTimeoutEvent = Simulator::Schedule (rsDelay+m_rtrSolicitationInterval, &Icmpv6L4Protocol::HandleRsTimeout, this, src, dst, hardwareAddress, retryCounter);
     }
 }
+
+void Icmpv6L4Protocol::HandleRsTimeout (Ipv6Address src, Ipv6Address dst,  Address hardwareAddress, uint8_t retryCounter)
+{
+  NS_LOG_FUNCTION (this << src << dst << hardwareAddress << +retryCounter);
+
+  retryCounter ++;
+  if (retryCounter > m_maxRtrSolicitations)
+    {
+      NS_LOG_LOGIC ("Maximum number of multicast RS reached, giving up.");
+      return;
+    }
+
+  SendRS (src, dst, hardwareAddress, retryCounter);
+}
+
 
 void Icmpv6L4Protocol::SendErrorDestinationUnreachable (Ptr<Packet> malformedPacket, Ipv6Address dst, uint8_t code)
 {
@@ -1489,7 +1537,7 @@ void Icmpv6L4Protocol::FunctionDadTimeout (Ipv6Interface* interface, Ipv6Address
            * because all nodes start at the same time, there will be many of RS around 1 second of simulation time
            */
           NS_LOG_LOGIC ("Scheduled a Router Solicitation");
-          Simulator::Schedule (Seconds (0.0), &Icmpv6L4Protocol::SendRS, this, ifaddr.GetAddress (), Ipv6Address::GetAllRoutersMulticast (), interface->GetDevice ()->GetAddress ());
+          Simulator::ScheduleNow (&Icmpv6L4Protocol::SendRS, this, ifaddr.GetAddress (), Ipv6Address::GetAllRoutersMulticast (), interface->GetDevice ()->GetAddress (), 1);
         }
       else
         {
@@ -1555,6 +1603,24 @@ Icmpv6L4Protocol::GetDelayFirstProbe () const
   return m_delayFirstProbe;
 }
 
+Time
+Icmpv6L4Protocol::GetRsJitter ()
+{
+  Time jitter = MilliSeconds (m_rsJitter->GetValue ());
+  return jitter;
+}
+
+Time
+Icmpv6L4Protocol::GetDadJitter ()
+{
+  return MilliSeconds (m_dadJitter->GetValue ());
+}
+
+Time
+Icmpv6L4Protocol::GetDadTimeout () const
+{
+  return m_dadTimeout;
+}
 
 } /* namespace ns3 */
 
