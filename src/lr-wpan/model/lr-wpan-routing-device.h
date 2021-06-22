@@ -28,6 +28,17 @@
 
 namespace ns3 {
 
+/**
+ * @brief Base class for LR-WPAN routing devices.
+ * 
+ * This is the base class for creating a routing device for LR-WPAN.
+ * It is installed on an LrWpanNetDevice and upon receiving a transmission,
+ * the Receive method is called to check whether a packet has
+ * to be forwarded using SendFrom and the abstract method GetRouteTo,
+ * or if it can be delivered to the current node.
+ * 
+ * Child classes have to implement GetRouteTo.
+ */
 class LrWpanRoutingDevice : public NetDevice
 {
 public:

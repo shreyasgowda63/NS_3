@@ -28,6 +28,16 @@
 
 namespace ns3 {
 
+/**
+ * @brief Creates LrWpanGlobalRouting objects and is responsible for the creation of routes.
+ * 
+ * This class installs LrWpanGlobalRouting objects on LrWpanNetDevices.
+ * Additionally, the information about neighbours is collected and processed
+ * in this class to create the static routes.
+ * 
+ * This class can not be deleted before the static routes have been created,
+ * which is indicated with the RoutingCalcCompleteCallback!
+ */
 class LrWpanGlobalRoutingHelper : public Object
 {
 public:

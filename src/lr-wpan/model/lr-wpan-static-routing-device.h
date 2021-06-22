@@ -26,6 +26,14 @@
 
 namespace ns3 {
 
+/**
+ * @brief LR-WPAN static routing device.
+ * 
+ * This class implements a static routing method.
+ * Each route has to be added manually using AddStaticRoute
+ * and the class will refer to those routes to find the gateway
+ * for each packet.
+ */
 class LrWpanStaticRoutingDevice : public LrWpanRoutingDevice
 {
 public:

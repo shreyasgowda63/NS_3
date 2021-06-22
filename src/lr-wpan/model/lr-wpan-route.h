@@ -32,6 +32,12 @@ namespace ns3 {
 
 class LrWpanNetDevice;
 
+/**
+ * @brief Class representing a route in an LR-WPAN network.
+ * 
+ * This class represents a simple route by storing a destination address,
+ * a source address, and a gateway address.
+ */
 class LrWpanRoute : public Object
 {
 public:

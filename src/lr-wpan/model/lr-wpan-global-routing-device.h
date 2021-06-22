@@ -25,6 +25,15 @@
 
 namespace ns3 {
 
+  /**
+   * @brief LR-WPAN Routing class for global "god" routing.
+   * 
+   * This class extends the LrWpanStaticRoutingDevice class to allow for
+   * an automatic creation of static routes in an LR-WPAN network.
+   * For this, the LrWpanGlobalRoutingHelper class has to be used.
+   * After creation of the routes,
+   * this device behaves the same as the LrWpanStaticRoutingDevice.
+   */
 class LrWpanGlobalRoutingDevice : public LrWpanStaticRoutingDevice
 {
 public:
