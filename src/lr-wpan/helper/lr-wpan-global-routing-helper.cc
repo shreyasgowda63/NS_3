@@ -264,7 +264,7 @@ LrWpanGlobalRoutingHelper::CalculateRoutes (uint16_t id)
     {
       Address rxAddr = LrWpanRoute::ConvertAddress (receiver->first);
       // Find receiver's Node
-      Node *rxNode;
+      Node *rxNode = nullptr;
       // graph.at(rxAddr) somehow isn't working
       for (std::map<Address, Node *>::iterator it = graph.begin (); it != graph.end (); it++)
         {
