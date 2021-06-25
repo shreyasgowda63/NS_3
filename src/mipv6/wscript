@@ -23,6 +23,7 @@ def build(bld):
         'model/mipv6-option-demux.h',
         'model/mipv6-mobility.h',
         'model/mipv6-option.h',
+        'model/mipv6-header.h',
         
         ]
 
