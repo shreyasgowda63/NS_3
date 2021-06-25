@@ -9,8 +9,6 @@
 def build(bld):
     module = bld.create_ns3_module('mipv6', ['core','internet','network', 'csma', 'point-to-point', 'applications', 'wifi', 'wimax', 'internet-apps'])
     module.source = [
-        'model/mipv6-option-header.cc',
-        'model/mipv6-header.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('mipv6')
@@ -21,9 +19,9 @@ def build(bld):
     headers.module = 'mipv6'
     headers.source = [
         'model/mipv6-option-header.h',
-        'model/mipv6-header.h',
         'model/mipv6-demux.h',
         'model/mipv6-option-demux.h',
+        'model/mipv6-mobility.h',
         
         ]
 
