@@ -169,6 +169,7 @@ public:
   void SetRefreshInterval (uint16_t intvl);
 
 protected:
+
 private:
   //for MIPv6
   /**
@@ -179,21 +180,21 @@ private:
    * \brief care-of-address.
    */
   Ipv6Address m_coa;
- /**
-   * \brief home init cookie.
-   */
+  /**
+    * \brief home init cookie.
+    */
   uint16_t m_hi;
- /**
-   * \brief care-of init cookie.
-   */
+  /**
+    * \brief care-of init cookie.
+    */
   uint16_t m_coi;
- /**
-   * \brief authenticator.
-   */
+  /**
+    * \brief authenticator.
+    */
   uint64_t m_auth;
- /**
-   * \brief refresh interval.
-   */
+  /**
+    * \brief refresh interval.
+    */
   uint16_t m_interval;
 };
 
@@ -204,9 +205,9 @@ private:
 class Ipv6MobilityOptionPad1 : public Mipv6Option
 {
 public:
- /**
-   * \brief option no.
-   */
+  /**
+    * \brief option no.
+    */
   static const uint8_t OPT_NUMBER = 0;
 
   /**
@@ -247,9 +248,9 @@ private:
 class Ipv6MobilityOptionPadn : public Mipv6Option
 {
 public:
- /**
-   * \brief option no.
-   */
+  /**
+    * \brief option no.
+    */
   static const uint8_t OPT_NUMBER = 1;
 
   /**
@@ -333,9 +334,9 @@ private:
 class Ipv6MobilityOptionAlternateCareofAddress : public Mipv6Option
 {
 public:
- /**
-   * \brief option no.
-   */
+  /**
+    * \brief option no.
+    */
   static const uint8_t OPT_NUMBER = 3;
 
   /**
@@ -376,9 +377,9 @@ private:
 class Ipv6MobilityOptionNonceIndices : public Mipv6Option
 {
 public:
- /**
-   * \brief option no.
-   */
+  /**
+    * \brief option no.
+    */
   static const uint8_t OPT_NUMBER = 4;
 
   /**
@@ -419,9 +420,9 @@ private:
 class Ipv6MobilityOptionBindingAuthorizationData : public Mipv6Option
 {
 public:
- /**
-   * \brief option no.
-   */
+  /**
+    * \brief option no.
+    */
   static const uint8_t OPT_NUMBER = 5;
 
   /**

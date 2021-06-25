@@ -189,6 +189,7 @@ public:
   virtual uint32_t Deserialize (Buffer::Iterator start);
 
 protected:
+
 private:
 };
 
@@ -241,6 +242,7 @@ public:
   virtual uint32_t Deserialize (Buffer::Iterator start);
 
 protected:
+
 private:
 };
 
@@ -306,7 +308,9 @@ public:
    * \return the required alignment
    */
   virtual Alignment GetAlignment () const;
+
 protected:
+
 private:
   /**
    * \brief refresh interval
@@ -379,6 +383,7 @@ public:
   virtual Alignment GetAlignment () const;
 
 protected:
+
 private:
   /**
    * \brief the alternate CoA
@@ -456,7 +461,9 @@ public:
    * \return the required alignment
    */
   virtual Alignment GetAlignment () const;
+
 protected:
+
 private:
   /**
    * \brief home nonce index
@@ -530,7 +537,9 @@ public:
    * \return the required alignment
    */
   virtual Alignment GetAlignment () const;
+
 protected:
+
 private:
   /**
    * \brief the authenticator
