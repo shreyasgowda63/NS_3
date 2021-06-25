@@ -23,6 +23,8 @@ def build(bld):
         'model/mipv6-option-header.h',
         'model/mipv6-header.h',
         'model/mipv6-demux.h',
+        'model/mipv6-option-demux.h',
+        
         ]
 
     if bld.env.ENABLE_EXAMPLES:
