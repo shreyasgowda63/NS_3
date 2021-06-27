@@ -226,33 +226,33 @@ Ipv4NixVectorRoutingTest::DoRun (void)
   // Test the Path
   const std::string path_nSrc_nA_nC_nDst = "Time: +3s, Nix Routing\n"
                                            "Route Path: (Node 0 to Node 4, Nix Vector: 01001)\n"
-                                           "10.1.0.1 (Node 0)   ---->   10.1.0.2 (Node 1)\n"
-                                           "10.1.4.1 (Node 1)   ---->   10.1.4.2 (Node 3)\n"
-                                           "10.1.3.1 (Node 3)   ---->   10.1.3.2 (Node 4)\n\n";
+                                           "10.1.0.1                 (Node 0)  ---->   10.1.0.2                 (Node 1)\n"
+                                           "10.1.4.1                 (Node 1)  ---->   10.1.4.2                 (Node 3)\n"
+                                           "10.1.3.1                 (Node 3)  ---->   10.1.3.2                 (Node 4)\n\n";
   NS_TEST_EXPECT_MSG_EQ (stringStream1.str (), path_nSrc_nA_nC_nDst, "Routing Path is incorrect.");
   const std::string path_nSrc_nA_nB_nC_nDst = "Time: +9s, Nix Routing\n"
                                               "Route Path: (Node 0 to Node 4, Nix Vector: 001101)\n"
-                                              "10.1.0.1 (Node 0)   ---->   10.1.0.2 (Node 1)\n"
-                                              "10.1.1.1 (Node 1)   ---->   10.1.1.2 (Node 2)\n"
-                                              "10.1.2.1 (Node 2)   ---->   10.1.2.2 (Node 3)\n"
-                                              "10.1.3.1 (Node 3)   ---->   10.1.3.2 (Node 4)\n\n";
+                                              "10.1.0.1                 (Node 0)  ---->   10.1.0.2                 (Node 1)\n"
+                                              "10.1.1.1                 (Node 1)  ---->   10.1.1.2                 (Node 2)\n"
+                                              "10.1.2.1                 (Node 2)  ---->   10.1.2.2                 (Node 3)\n"
+                                              "10.1.3.1                 (Node 3)  ---->   10.1.3.2                 (Node 4)\n\n";
   NS_TEST_EXPECT_MSG_EQ (stringStream3.str (), path_nSrc_nA_nB_nC_nDst, "Routing Path is incorrect.");
 
   const std::string emptyCaches = "Node: 0, Time: +7s, Local time: +7s, Nix Routing\n"
                                   "NixCache:\n"
-                                  "Ipv4RouteCache:\n\n"
+                                  "IpRouteCache:\n\n"
                                   "Node: 1, Time: +7s, Local time: +7s, Nix Routing\n"
                                   "NixCache:\n"
-                                  "Ipv4RouteCache:\n\n"
+                                  "IpRouteCache:\n\n"
                                   "Node: 2, Time: +7s, Local time: +7s, Nix Routing\n"
                                   "NixCache:\n"
-                                  "Ipv4RouteCache:\n\n"
+                                  "IpRouteCache:\n\n"
                                   "Node: 3, Time: +7s, Local time: +7s, Nix Routing\n"
                                   "NixCache:\n"
-                                  "Ipv4RouteCache:\n\n"
+                                  "IpRouteCache:\n\n"
                                   "Node: 4, Time: +7s, Local time: +7s, Nix Routing\n"
                                   "NixCache:\n"
-                                  "Ipv4RouteCache:\n\n";
+                                  "IpRouteCache:\n\n";
   NS_TEST_EXPECT_MSG_EQ (stringStream2.str (), emptyCaches, "The caches should have been empty.");
 
   Simulator::Destroy ();
