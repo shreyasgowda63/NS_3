@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * 
- * This file is adopted from the old ipv4-nix-vector-helper.h.
+ * This file is adapted from the old ipv4-nix-vector-helper.h.
  *
  * Authors: Josh Pelkey <jpelkey@gatech.edu>
  * 
@@ -41,10 +41,10 @@ namespace ns3 {
  * ns3::InternetStackHelper::SetRoutingHelper
  *
  */
-template <typename parent>
-class NixVectorHelper : public parent
+template <typename T>
+class NixVectorHelper : public T
 {
-  using IsIpv4 = std::is_same <Ipv4RoutingHelper, parent>;
+  using IsIpv4 = std::is_same <Ipv4RoutingHelper, T>;
   using Ip = typename std::conditional <IsIpv4::value, Ipv4, Ipv6>::type;
   using IpAddress = typename std::conditional<IsIpv4::value, Ipv4Address, Ipv6Address>::type;
   using IpRoutingProtocol = typename std::conditional<IsIpv4::value, Ipv4RoutingProtocol, Ipv6RoutingProtocol>::type;
@@ -61,7 +61,7 @@ public:
    *
    * \param o object to copy
    */
-  NixVectorHelper (const NixVectorHelper<parent> &o);
+  NixVectorHelper (const NixVectorHelper<T> &o);
 
   /**
    * \returns pointer to clone of this NixVectorHelper
@@ -69,7 +69,7 @@ public:
    * This method is mainly for internal use by the other helpers;
    * clients are expected to free the dynamic memory allocated by this method
    */
-  NixVectorHelper<parent>* Copy (void) const;
+  NixVectorHelper<T>* Copy (void) const;
 
   /**
   * \param node the node on which the routing protocol will run
@@ -122,11 +122,17 @@ private:
 
 /**
  * \ingroup nix-vector-routing
- * Create the typedef Ipv4NixVectorHelper with parent as Ipv4RoutingHelper
+ * Create the typedef Ipv4NixVectorHelper with T as Ipv4RoutingHelper
  *
- * Note: This is kept to have backwards compatibility with original Ipv4RoutingHelper.
+ * Note: This typedef enables also backwards compatibility with original Ipv4RoutingHelper.
  */
 typedef NixVectorHelper<Ipv4RoutingHelper> Ipv4NixVectorHelper;
+
+/**
+ * \ingroup nix-vector-routing
+ * Create the typedef Ipv6NixVectorHelper with T as Ipv6RoutingHelper
+ */
+typedef NixVectorHelper<Ipv6RoutingHelper> Ipv6NixVectorHelper;
 } // namespace ns3
 
 #endif /* NIX_VECTOR_HELPER_H */

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * 
- * This file is adopted from the old ipv4-nix-vector-routing.h.
+ * This file is adapted from the old ipv4-nix-vector-routing.h.
  *
  * Authors: Josh Pelkey <jpelkey@gatech.edu>
  * 
@@ -32,6 +32,7 @@
 #include "ns3/net-device-container.h"
 #include "ns3/ipv4-routing-protocol.h"
 #include "ns3/ipv4-route.h"
+#include "ns3/ipv6-route.h"
 #include "ns3/ipv6-routing-protocol.h"
 #include "ns3/nix-vector.h"
 #include "ns3/bridge-net-device.h"
@@ -53,10 +54,10 @@ namespace ns3 {
  * \ingroup nix-vector-routing
  * Nix-vector routing protocol
  */
-template <typename parent>
-class NixVectorRouting : public parent
+template <typename T>
+class NixVectorRouting : public T
 {
-  using IsIpv4 = std::is_same <Ipv4RoutingProtocol, parent>;
+  using IsIpv4 = std::is_same <Ipv4RoutingProtocol, T>;
   using Ip = typename std::conditional <IsIpv4::value, Ipv4, Ipv6>::type;
   using IpAddress = typename std::conditional<IsIpv4::value, Ipv4Address, Ipv6Address>::type;
   using IpRoute = typename std::conditional<IsIpv4::value, Ipv4Route, Ipv6Route>::type;
@@ -169,7 +170,7 @@ private:
   Ptr<Node> GetNodeByIp (IpAddress dest) const;
 
   /**
-   * Recurses the parent vector, created by BFS and actually builds the nixvector
+   * Recurses the T vector, created by BFS and actually builds the nixvector
    * \param [in] parentVector Parent vector for retracing routes
    * \param [in] source Source Node index
    * \param [in] dest Destination Node index
@@ -227,6 +228,8 @@ private:
             std::vector< Ptr<Node> > & parentVector,
             Ptr<NetDevice> oif) const;
 
+  void DoInitialize ();
+
   void DoDispose (void);
 
   /// Map of IpAddress to NixVector
@@ -234,11 +237,23 @@ private:
   /// Map of IpAddress to IpRoute
   typedef std::map<IpAddress, Ptr<IpRoute> > IpRouteMap_t;
 
+  /// Callback for IPv4 unicast packets to be forwarded
+  typedef Callback<void, Ptr<IpRoute>, Ptr<const Packet>, const IpHeader &> UnicastForwardCallbackv4;
+
+  /// Callback for IPv6 unicast packets to be forwarded
+  typedef Callback<void, Ptr<const NetDevice>, Ptr<IpRoute>, Ptr<const Packet>, const IpHeader &> UnicastForwardCallbackv6;
+
   /// Callback for unicast packets to be forwarded
-  typedef Callback<void, Ptr<IpRoute>, Ptr<const Packet>, const IpHeader &> UnicastForwardCallback;
+  typedef typename std::conditional<IsIpv4::value, UnicastForwardCallbackv4, UnicastForwardCallbackv6>::type UnicastForwardCallback;
+
+  /// Callback for IPv4 multicast packets to be forwarded
+  typedef Callback<void, Ptr<IpMulticastRoute>, Ptr<const Packet>, const IpHeader &> MulticastForwardCallbackv4;
+
+  /// Callback for IPv6 multicast packets to be forwarded
+  typedef Callback<void, Ptr<const NetDevice>, Ptr<IpMulticastRoute>, Ptr<const Packet>, const IpHeader &> MulticastForwardCallbackv6;
 
   /// Callback for multicast packets to be forwarded
-  typedef Callback<void, Ptr<IpMulticastRoute>, Ptr<const Packet>, const IpHeader &> MulticastForwardCallback;
+  typedef typename std::conditional<IsIpv4::value, MulticastForwardCallbackv4, MulticastForwardCallbackv6>::type MulticastForwardCallback;
 
   /// Callback for packets to be locally delivered
   typedef Callback<void, Ptr<const Packet>, const IpHeader &, uint32_t > LocalDeliverCallback;
@@ -246,8 +261,7 @@ private:
   /// Callback for routing errors (e.g., no route found)
   typedef Callback<void, Ptr<const Packet>, const IpHeader &, Socket::SocketErrno > ErrorCallback;
 
-
-  /* From Ipv4RoutingProtocol */
+  /* From Ipv4RoutingProtocol and Ipv6RoutingProtocol */
   virtual Ptr<IpRoute> RouteOutput (Ptr<Packet> p, const IpHeader &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr);
   virtual bool RouteInput (Ptr<const Packet> p, const IpHeader &header, Ptr<const NetDevice> idev,
                            UnicastForwardCallback ucb, MulticastForwardCallback mcb,
@@ -256,9 +270,16 @@ private:
   virtual void NotifyInterfaceDown (uint32_t interface);
   virtual void NotifyAddAddress (uint32_t interface, IpInterfaceAddress address);
   virtual void NotifyRemoveAddress (uint32_t interface, IpInterfaceAddress address);
-  virtual void SetIpv4 (Ptr<Ip> ipv4);
   virtual void PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S) const;
- 
+
+  /* From IPv4RoutingProtocol */
+  virtual void SetIpv4 (Ptr<Ip> ipv4);
+
+  /* From IPv6RoutingProtocol */
+  virtual void SetIpv6 (Ptr<Ip> ipv6);
+  virtual void NotifyAddRoute (IpAddress dst, Ipv6Prefix mask, IpAddress nextHop, uint32_t interface, IpAddress prefixToUse = IpAddress::GetZero ());
+  virtual void NotifyRemoveRoute (IpAddress dst, Ipv6Prefix mask, IpAddress nextHop, uint32_t interface, IpAddress prefixToUse = IpAddress::GetZero ());
+
   /**
    * Flushes routing caches if required.
    */
@@ -302,11 +323,17 @@ private:
 
 /**
  * \ingroup nix-vector-routing
- * Create the typedef Ipv4NixVectorRouting with parent as Ipv4RoutingProtocol
+ * Create the typedef Ipv4NixVectorRouting with T as Ipv4RoutingProtocol
  *
- * Note: This is kept to have backwards compatibility with original Ipv4NixVectorRouting.
+ * Note: This typedef enables also backwards compatibility with original Ipv4NixVectorRouting.
  */
 typedef NixVectorRouting<Ipv4RoutingProtocol> Ipv4NixVectorRouting;
+
+/**
+ * \ingroup nix-vector-routing
+ * Create the typedef Ipv6NixVectorRouting with T as Ipv6RoutingProtocol
+ */
+typedef NixVectorRouting<Ipv6RoutingProtocol> Ipv6NixVectorRouting;
 } // namespace ns3
 
 #endif /* NIX_VECTOR_ROUTING_H */

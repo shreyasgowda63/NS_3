@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * The purpose of this file is have backwards compatibility with previous
+ * The purpose of this file is to have backwards compatibility with previous
  * IPv4 Nix Vector Routing examples and usages.
  *
  * Authors: Ameya Deshpande <ameyanrd@outlook.com>
