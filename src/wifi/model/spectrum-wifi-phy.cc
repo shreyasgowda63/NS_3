@@ -72,6 +72,11 @@ SpectrumWifiPhy::GetTypeId (void)
                      "Signal arrival",
                      MakeTraceSourceAccessor (&SpectrumWifiPhy::m_signalCb),
                      "ns3::SpectrumWifiPhy::SignalArrivalCallback")
+    .AddTraceSource ("TxDataTrace",
+                     "Indicates when the channel is being occupied by a transmission",
+                     MakeTraceSourceAccessor (&SpectrumWifiPhy::m_txTrace),
+                     "ns3::SpectrumWifiPhy::ChannelOccupiedTracedCallback")
+
   ;
   return tid;
 }
@@ -445,6 +450,10 @@ void
 SpectrumWifiPhy::StartTx (Ptr<WifiPpdu> ppdu)
 {
   NS_LOG_FUNCTION (this << ppdu);
+
+  Time duration = ppdu->GetTxDuration ();
+  m_txTrace (duration);
+
   GetPhyEntity (ppdu->GetModulation ())->StartTx (ppdu);
 }
 
