@@ -1440,4 +1440,14 @@ NixVectorRouting<T>::CheckCacheStateAndFlush (void) const
     }
 }
 
+/* Public template function declarations */
+template void NixVectorRouting<Ipv4RoutingProtocol>::SetNode (Ptr<Node> node);
+template void NixVectorRouting<Ipv6RoutingProtocol>::SetNode (Ptr<Node> node);
+template void NixVectorRouting<Ipv4RoutingProtocol>::FlushGlobalNixRoutingCache (void) const;
+template void NixVectorRouting<Ipv6RoutingProtocol>::FlushGlobalNixRoutingCache (void) const;
+template void NixVectorRouting<Ipv4RoutingProtocol>::PrintRoutingPath (Ptr<Node> source, IpAddress dest,
+                                                                       Ptr<OutputStreamWrapper> stream, Time::Unit unit) const;
+template void NixVectorRouting<Ipv6RoutingProtocol>::PrintRoutingPath (Ptr<Node> source, IpAddress dest,
+                                                                       Ptr<OutputStreamWrapper> stream, Time::Unit unit) const;
+
 } // namespace ns3
