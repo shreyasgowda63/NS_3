@@ -727,6 +727,8 @@ NixVectorRouting<T>::RouteOutput (Ptr<Packet> p, const IpHeader &header, Ptr<Net
   return rtentry;
 }
 
+/* Doxygen should skip the documentation for specialized function */
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 template <>
 Ptr<typename NixVectorRouting<Ipv6RoutingProtocol>::IpRoute>
 NixVectorRouting<Ipv6RoutingProtocol>::RouteOutput (Ptr<Packet> p, const IpHeader &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr)
@@ -870,6 +872,7 @@ NixVectorRouting<Ipv6RoutingProtocol>::RouteOutput (Ptr<Packet> p, const IpHeade
 
   return rtentry;
 }
+#endif
 
 template <typename T>
 bool
@@ -958,6 +961,8 @@ NixVectorRouting<T>::RouteInput (Ptr<const Packet> p, const IpHeader &header, Pt
   return true;
 }
 
+/* Doxygen should skip the documentation for specialized function */
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 template <>
 bool
 NixVectorRouting<Ipv6RoutingProtocol>::RouteInput (Ptr<const Packet> p, const IpHeader &header, Ptr<const NetDevice> idev,
@@ -1047,6 +1052,7 @@ NixVectorRouting<Ipv6RoutingProtocol>::RouteInput (Ptr<const Packet> p, const Ip
 
   return true;
 }
+#endif
 
 template <typename T>
 void
