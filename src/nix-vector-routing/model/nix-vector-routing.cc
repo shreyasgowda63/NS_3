@@ -207,17 +207,24 @@ NixVectorRouting<T>::GetNixVector (Ptr<Node> source, IpAddress dest, Ptr<NetDevi
       // and build the nix vector
       std::vector< Ptr<Node> > parentVector;
 
-      BFS (NodeList::GetNNodes (), source, destNode, parentVector, oif);
-
-      if (BuildNixVector (parentVector, source->GetId (), destNode->GetId (), nixVector))
+      if (BFS (NodeList::GetNNodes (), source, destNode, parentVector, oif))
         {
-          return nixVector;
+          if (BuildNixVector (parentVector, source->GetId (), destNode->GetId (), nixVector))
+            {
+              return nixVector;
+            }
+          else
+            {
+              NS_LOG_ERROR ("No routing path exists");
+              return 0;
+            }
         }
       else
         {
           NS_LOG_ERROR ("No routing path exists");
           return 0;
         }
+
     }
 }
 
@@ -1226,6 +1233,21 @@ NixVectorRouting<T>::BFS (uint32_t numberOfNodes, Ptr<Node> source,
           for (NetDeviceContainer::Iterator iter = netDeviceContainer.Begin (); iter != netDeviceContainer.End (); iter++)
             {
               Ptr<Node> remoteNode = (*iter)->GetNode ();
+              Ptr<Ip> remoteIp = remoteNode->GetObject<Ip> ();
+              if (remoteIp)
+                {
+                  uint32_t interfaceIndex = remoteIp->GetInterfaceForDevice (*iter);
+                  if (!(remoteIp->IsUp (interfaceIndex)))
+                    {
+                      NS_LOG_LOGIC ("IpInterface is down");
+                      continue;
+                    }
+                }
+              if (!((*iter)->IsLinkUp ()))
+                {
+                  NS_LOG_LOGIC ("Link is down.");
+                  continue;
+                }
 
               // check to see if this node has been pushed before
               // by checking to see if it has a parent
@@ -1282,6 +1304,21 @@ NixVectorRouting<T>::BFS (uint32_t numberOfNodes, Ptr<Node> source,
               for (NetDeviceContainer::Iterator iter = netDeviceContainer.Begin (); iter != netDeviceContainer.End (); iter++)
                 {
                   Ptr<Node> remoteNode = (*iter)->GetNode ();
+                  Ptr<Ip> remoteIp = remoteNode->GetObject<Ip> ();
+                  if (remoteIp)
+                    {
+                      uint32_t interfaceIndex = remoteIp->GetInterfaceForDevice (*iter);
+                      if (!(remoteIp->IsUp (interfaceIndex)))
+                        {
+                          NS_LOG_LOGIC ("IpInterface is down");
+                          continue;
+                        }
+                    }
+                  if (!((*iter)->IsLinkUp ()))
+                    {
+                      NS_LOG_LOGIC ("Link is down.");
+                      continue;
+                    }
 
                   // check to see if this node has been pushed before
                   // by checking to see if it has a parent
