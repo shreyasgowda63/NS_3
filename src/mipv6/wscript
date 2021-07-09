@@ -5,10 +5,15 @@
 
 # def configure(conf):
 #     conf.check_nonfatal(header_name='stdint.h', define_name='HAVE_STDINT_H')
-
 def build(bld):
-    module = bld.create_ns3_module('mipv6', ['core','internet','network', 'csma', 'point-to-point', 'applications', 'wifi', 'wimax', 'internet-apps'])
+    module = bld.create_ns3_module('mipv6', ['core','internet','network', 'csma', 'point-to-point', 'applications', 'wifi', 'internet-apps'])
     module.source = [
+        'model/mipv6-option-header.cc',
+        'model/mipv6-header.cc',
+        'model/mipv6-demux.cc',
+        'model/mipv6-option-demux.cc',
+        'model/mipv6-mobility.cc',
+        'model/mipv6-option.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('mipv6')
@@ -24,7 +29,6 @@ def build(bld):
         'model/mipv6-mobility.h',
         'model/mipv6-option.h',
         'model/mipv6-header.h',
-        
         ]
 
     if bld.env.ENABLE_EXAMPLES:
