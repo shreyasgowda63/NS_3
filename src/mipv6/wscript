@@ -14,6 +14,7 @@ def build(bld):
         'model/mipv6-option-demux.cc',
         'model/mipv6-mobility.cc',
         'model/mipv6-option.cc',
+        'model/mipv6-agent.cc'
         ]
 
     module_test = bld.create_ns3_module_test_library('mipv6')
@@ -29,6 +30,7 @@ def build(bld):
         'model/mipv6-mobility.h',
         'model/mipv6-option.h',
         'model/mipv6-header.h',
+        'model/mipv6-agent.h'
         ]
 
     if bld.env.ENABLE_EXAMPLES:
