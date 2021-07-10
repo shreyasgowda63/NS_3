@@ -47,7 +47,7 @@ namespace ns3 {
 
  */
 template <typename T>
-class NixVectorHelper : public T
+class NixVectorHelper : public std::enable_if<std::is_same<Ipv4RoutingHelper, T>::value || std::is_same<Ipv6RoutingHelper, T>::value, T>::type
 {
   /// Alias for determining whether the parent is Ipv4RoutingHelper or Ipv6RoutingHelper
   using IsIpv4 = std::is_same <Ipv4RoutingHelper, T>;

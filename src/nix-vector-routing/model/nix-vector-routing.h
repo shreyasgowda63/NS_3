@@ -60,7 +60,7 @@ namespace ns3 {
  * exposed here; it is in nix-vector-routing.cc.
  */
 template <typename T>
-class NixVectorRouting : public T
+class NixVectorRouting : public std::enable_if<std::is_same<Ipv4RoutingProtocol, T>::value || std::is_same<Ipv6RoutingProtocol, T>::value, T>::type
 {
   /// Alias for determining whether the parent is Ipv4RoutingProtocol or Ipv6RoutingProtocol
   using IsIpv4 = std::is_same <Ipv4RoutingProtocol, T>;

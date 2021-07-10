@@ -66,9 +66,6 @@ NixVectorRouting<T>::NixVectorRouting ()
   : m_totalNeighbors (0)
 {
   NS_LOG_FUNCTION_NOARGS ();
-  // Check if the T is Ipv4RoutingProtocol or Ipv6RoutingProtocol.
-  NS_ASSERT_MSG ((IsIpv4::value || std::is_same <Ipv6RoutingProtocol, T>::value),
-                  "Template parameter is not Ipv4RoutingProtocol or Ipv6RoutingProtcol");
 }
 
 template <typename T>
