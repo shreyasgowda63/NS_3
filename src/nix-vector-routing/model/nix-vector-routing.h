@@ -53,6 +53,11 @@ namespace ns3 {
 /**
  * \ingroup nix-vector-routing
  * Nix-vector routing protocol
+ *
+ * \internal
+ * Since this class is meant to be specialized only by Ipv4RoutingProtocol or 
+ * Ipv6RoutingProtocol the implementation of this class doesn't need to be
+ * exposed here; it is in nix-vector-routing.cc.
  */
 template <typename T>
 class NixVectorRouting : public T

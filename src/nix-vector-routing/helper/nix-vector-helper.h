@@ -40,6 +40,11 @@ namespace ns3 {
  * This class is expected to be used in conjunction with 
  * ns3::InternetStackHelper::SetRoutingHelper
  *
+ * \internal
+ * Since this class is meant to be specialized only by Ipv4RoutingHelper or 
+ * Ipv6RoutingHelper the implementation of this class doesn't need to be
+ * exposed here; it is in nix-vector-helper.cc.
+
  */
 template <typename T>
 class NixVectorHelper : public T
