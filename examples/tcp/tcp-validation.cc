@@ -187,11 +187,11 @@ TraceFirstCwnd (std::ofstream* ofStream, uint32_t oldCwnd, uint32_t newCwnd)
         {
           g_validationFailed = true;
         }
-      else if ((now > 14) && (now < 14.328) && (cwnd < 225))
+      else if ((now > 14) && (now < 14.328) && (cwnd < 165))
         {
           g_validationFailed = true;
         }
-      else if ((now > 17) && (now < 18.2) && (cwnd < 225))
+      else if ((now > 17) && (now < 18.2) && (cwnd < 163))
         {
           g_validationFailed = true;
         }
@@ -628,8 +628,14 @@ main (int argc, char *argv[])
   Config::SetDefault ("ns3::TcpSocketBase::UseEcn", StringValue ("On"));
 
   // Report on configuration
-  NS_LOG_DEBUG ("first TCP: " << firstTcpTypeId.GetName () << "; second TCP: " << secondTcpTypeId.GetName () << "; queue: " << queueTypeId.GetName () << "; ceThreshold: " << ceThreshold.GetSeconds () * 1000 << "ms");
-
+  if(enableSecondTcp == true)
+   {
+     NS_LOG_DEBUG ("first TCP: " << firstTcpTypeId.GetName () << "; second TCP: " << secondTcpTypeId.GetName () << "; queue: " << queueTypeId.GetName () << "; ceThreshold: " << ceThreshold.GetSeconds () * 1000 << "ms");
+   }
+  else 
+   {
+     NS_LOG_DEBUG ("first TCP: " << firstTcpTypeId.GetName () << "; queue: " << queueTypeId.GetName () << "; ceThreshold: " << ceThreshold.GetSeconds () * 1000 << "ms");
+   }
   // Write traces only if we are not in validation mode (g_validate == "")
   std::ofstream pingOfStream;
   std::ofstream firstTcpRttOfStream;
