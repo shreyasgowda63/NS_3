@@ -70,23 +70,39 @@ public:
   /**
    * \brief Set local address
    * \param local the address
-   */
-  void SetAddress (Ipv4Address local);
-  /**
-   * \brief Set local address
-   * \param local the address
+   *
+   * \note This method corresponds to the linux
+   *       variable in_ifaddr.ifa_local
    */
   void SetLocal (Ipv4Address local);
+
   /**
-   * \brief Get the local address
-   * \returns the local address
+   * \brief Set local address
+   * \param address the address
+   *
+   * \note This method is similar to SetLocal () and
+   *       exists for the sake of consistency with IPv6
    */
-  Ipv4Address GetAddress (void) const;
+  void SetAddress (Ipv4Address address);
+
   /**
    * \brief Get the local address
    * \returns the local address
+   *
+   * \note The method corresponds to the linux
+   *       variable in_ifaddr.ifa_local
    */
   Ipv4Address GetLocal (void) const;
+
+  /**
+   * \brief Get the local address
+   * \returns the local address
+   *
+   * \note This method is similar to GetLocal () and
+   *       exists for the sake of consistency with IPv6
+   */
+  Ipv4Address GetAddress (void) const;
+
   /**
    * \brief Set the network mask
    * \param mask the network mask

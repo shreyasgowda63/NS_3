@@ -58,29 +58,29 @@ Ipv4InterfaceAddress::Ipv4InterfaceAddress (const Ipv4InterfaceAddress &o)
 }
 
 void
-Ipv4InterfaceAddress::SetAddress (Ipv4Address local)
+Ipv4InterfaceAddress::SetLocal (Ipv4Address local)
 {
   NS_LOG_FUNCTION (this << local);
   m_local = local;
 }
 
 void
-Ipv4InterfaceAddress::SetLocal (Ipv4Address local)
+Ipv4InterfaceAddress::SetAddress (Ipv4Address address)
 {
-  SetAddress (local);
-}
-
-Ipv4Address
-Ipv4InterfaceAddress::GetAddress (void) const
-{
-  NS_LOG_FUNCTION (this);
-  return m_local; 
+  SetLocal (address);
 }
 
 Ipv4Address
 Ipv4InterfaceAddress::GetLocal (void) const
 {
-  return GetAddress ();
+  NS_LOG_FUNCTION (this);
+  return m_local;
+}
+
+Ipv4Address
+Ipv4InterfaceAddress::GetAddress (void) const
+{
+  return GetLocal ();
 }
 
 void 
