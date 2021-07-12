@@ -118,6 +118,9 @@ public:
    * \param dest Destination node address
    * \param stream The ostream the Routing path is printed to
    * \param unit the time unit to be used in the report
+   * 
+   * \note IpAddress is alias for either Ipv4Address or Ipv6Address
+   *       depending on on whether the network is IPv4 or IPv6 respectively.
    */
   void PrintRoutingPath (Ptr<Node> source, IpAddress dest, Ptr<OutputStreamWrapper> stream, Time::Unit unit) const;
 
