@@ -409,8 +409,8 @@ LrWpanPhy::CheckInterference (void)
       if (m_errorModel != 0)
         {
           // How many bits did we receive since the last calculation?
-          double t = (Simulator::Now () - m_rxLastUpdate).ToDouble (Time::MS);
-          uint32_t chunkSize = ceil (t * (GetDataOrSymbolRate (true) / 1000));
+          Time t = Simulator::Now () - m_rxLastUpdate;
+          uint32_t chunkSize = ceil (t * GetDataRate ());
           Ptr<SpectrumValue> interferenceAndNoise = m_signal->GetSignalPsd ();
           *interferenceAndNoise -= *currentRxParams->psd;
           *interferenceAndNoise += *m_noise;
@@ -1287,6 +1287,17 @@ LrWpanPhy::GetDataOrSymbolRate (bool isData)
     }
 
   return (rate * 1000.0);
+}
+
+DataRate
+LrWpanPhy::GetDataRate()
+{
+  NS_ASSERT (m_phyOption < IEEE_802_15_4_INVALID_PHY_OPTION);
+
+  DataRate rate(dataSymbolRates [m_phyOption].bitRate);
+
+  return rate;
+
 }
 
 Time
