@@ -66,6 +66,11 @@ public:
   SpectrumWifiPhy ();
   virtual ~SpectrumWifiPhy ();
 
+  /**
+   * \brief Typedef for a channel occupancy. Used by different traces.
+   */
+  typedef TracedCallback <Time> ChannelOccupiedTracedCallback;
+
   // Implementation of pure virtual method.
   void StartTx (Ptr<WifiPpdu> ppdu) override;
   Ptr<Channel> GetChannel (void) const override;
@@ -200,6 +205,7 @@ private:
                                               bands associated with every RU in a channel of that width */
   bool m_disableWifiReception;                              //!< forces this PHY to fail to sync on any signal
   TracedCallback<bool, uint32_t, double, Time> m_signalCb;  //!< Signal callback
+  ChannelOccupiedTracedCallback m_txTrace;
 
   double m_txMaskInnerBandMinimumRejection; //!< The minimum rejection (in dBr) for the inner band of the transmit spectrum mask
   double m_txMaskOuterBandMinimumRejection; //!< The minimum rejection (in dBr) for the outer band of the transmit spectrum mask
