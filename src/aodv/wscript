@@ -11,6 +11,7 @@ def build(bld):
         'model/aodv-packet.cc',
         'model/aodv-neighbor.cc',
         'model/aodv-routing-protocol.cc',
+        'model/aodv-ipv4-routing-protocol.cc',
         'helper/aodv-helper.cc',
         ]
 
@@ -37,8 +38,9 @@ def build(bld):
         'model/aodv-rtable.h',
         'model/aodv-rqueue.h',
         'model/aodv-packet.h',
+        'model/aodv-routing-protocol.h', 
         'model/aodv-neighbor.h',
-        'model/aodv-routing-protocol.h',
+        'model/aodv-ipv4-routing-protocol.h',
         'helper/aodv-helper.h',
         ]
 

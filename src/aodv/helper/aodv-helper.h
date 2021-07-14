@@ -25,6 +25,8 @@
 #include "ns3/node.h"
 #include "ns3/node-container.h"
 #include "ns3/ipv4-routing-helper.h"
+#include "ns3/aodv-routing-protocol.h"
+#include "ns3/aodv-ipv4-routing-protocol.h"
 
 namespace ns3 {
 /**
@@ -53,12 +55,12 @@ public:
    *
    * \todo support installing AODV on the subset of all available IP interfaces
    */
-  virtual Ptr<Ipv4RoutingProtocol> Create (Ptr<Node> node) const;
+  virtual Ptr<ns3::Ipv4RoutingProtocol> Create (Ptr<Node> node) const;
   /**
    * \param name the name of the attribute to set
    * \param value the value of the attribute to set.
    *
-   * This method controls the attributes of ns3::aodv::RoutingProtocol
+   * This method controls the attributes of ns3::aodv::Ipv4RoutingProtocol
    */
   void Set (std::string name, const AttributeValue &value);
   /**
@@ -76,7 +78,8 @@ public:
 
 private:
   /** the factory to create AODV routing object */
-  ObjectFactory m_agentFactory;
+  ObjectFactory m_commonFactory;
+  ObjectFactory m_ipv4Factory;
 };
 
 }

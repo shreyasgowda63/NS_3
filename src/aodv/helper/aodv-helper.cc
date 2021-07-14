@@ -18,7 +18,7 @@
  * Authors: Pavel Boyko <boyko@iitp.ru>, written after OlsrHelper by Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
 #include "aodv-helper.h"
-#include "ns3/aodv-routing-protocol.h"
+#include "ns3/aodv-ipv4-routing-protocol.h"
 #include "ns3/node-list.h"
 #include "ns3/names.h"
 #include "ns3/ptr.h"
@@ -30,7 +30,8 @@ namespace ns3
 AodvHelper::AodvHelper() : 
   Ipv4RoutingHelper ()
 {
-  m_agentFactory.SetTypeId ("ns3::aodv::RoutingProtocol");
+  m_ipv4Factory.SetTypeId ("ns3::aodv::Ipv4RoutingProtocol");
+  m_commonFactory.SetTypeId("ns3::aodv::RoutingProtocol");
 }
 
 AodvHelper* 
@@ -42,15 +43,19 @@ AodvHelper::Copy (void) const
 Ptr<Ipv4RoutingProtocol> 
 AodvHelper::Create (Ptr<Node> node) const
 {
-  Ptr<aodv::RoutingProtocol> agent = m_agentFactory.Create<aodv::RoutingProtocol> ();
-  node->AggregateObject (agent);
+  Ptr<aodv::RoutingProtocol> agent2 = m_commonFactory.Create<aodv::RoutingProtocol> ();
+  Ptr<aodv::Ipv4RoutingProtocol> agent = m_ipv4Factory.Create<aodv::Ipv4RoutingProtocol> (); 
+  node->AggregateObject(agent2);
+  agent->SetProtocol(agent2);
+  agent2->SetProtocol(agent);
+  node->AggregateObject(agent);
   return agent;
 }
 
 void 
 AodvHelper::Set (std::string name, const AttributeValue &value)
 {
-  m_agentFactory.Set (name, value);
+  m_commonFactory.Set (name, value);
 }
 
 int64_t
@@ -65,7 +70,7 @@ AodvHelper::AssignStreams (NodeContainer c, int64_t stream)
       NS_ASSERT_MSG (ipv4, "Ipv4 not installed on node");
       Ptr<Ipv4RoutingProtocol> proto = ipv4->GetRoutingProtocol ();
       NS_ASSERT_MSG (proto, "Ipv4 routing not installed on node");
-      Ptr<aodv::RoutingProtocol> aodv = DynamicCast<aodv::RoutingProtocol> (proto);
+      Ptr<aodv::Ipv4RoutingProtocol> aodv = DynamicCast<aodv::Ipv4RoutingProtocol> (proto);
       if (aodv)
         {
           currentStream += aodv->AssignStreams (currentStream);
@@ -77,11 +82,11 @@ AodvHelper::AssignStreams (NodeContainer c, int64_t stream)
         {
           int16_t priority;
           Ptr<Ipv4RoutingProtocol> listProto;
-          Ptr<aodv::RoutingProtocol> listAodv;
+          Ptr<aodv::Ipv4RoutingProtocol> listAodv;
           for (uint32_t i = 0; i < list->GetNRoutingProtocols (); i++)
             {
               listProto = list->GetRoutingProtocol (i, priority);
-              listAodv = DynamicCast<aodv::RoutingProtocol> (listProto);
+              listAodv = DynamicCast<aodv::Ipv4RoutingProtocol> (listProto);
               if (listAodv)
                 {
                   currentStream += listAodv->AssignStreams (currentStream);
