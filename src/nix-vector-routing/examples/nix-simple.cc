@@ -21,7 +21,9 @@
 #include "ns3/applications-module.h"
 #include "ns3/ipv4-static-routing-helper.h"
 #include "ns3/ipv4-list-routing-helper.h"
-#include "ns3/ipv4-nix-vector-helper.h"
+#include "ns3/ipv6-static-routing-helper.h"
+#include "ns3/ipv6-list-routing-helper.h"
+#include "ns3/nix-vector-helper.h"
 
 /**
  * This program demonstrates two types of
@@ -115,7 +117,10 @@ NS_LOG_COMPONENT_DEFINE ("NixSimpleExample");
 int
 main (int argc, char *argv[])
 {
+  std::string ip = "v4";
+
   CommandLine cmd (__FILE__);
+  cmd.AddValue ("ip", "IP Stack in the network", ip);
   cmd.Parse (argc, argv);
 
   LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_INFO);
@@ -142,59 +147,119 @@ main (int argc, char *argv[])
 
   NodeContainer allNodes = NodeContainer (nodes12, nodes23.Get (1), nodes34.Get (1));
 
-  // NixHelper to install nix-vector routing
-  // on all nodes
-  Ipv4NixVectorHelper nixRouting;
-  InternetStackHelper stack;
-  stack.SetRoutingHelper (nixRouting); // has effect on the next Install ()
-  stack.Install (allNodes);
+  if (ip == "v4")
+    {
+      // NixHelper to install nix-vector routing
+      // on all nodes
+      Ipv4NixVectorHelper nixRouting;
+      InternetStackHelper stack;
+      stack.SetRoutingHelper (nixRouting); // has effect on the next Install ()
+      stack.Install (allNodes);
 
-  NetDeviceContainer devices12;
-  NetDeviceContainer devices23;
-  NetDeviceContainer devices34;
-  NetDeviceContainer devices13;
-  devices12 = pointToPoint.Install (nodes12);
-  devices23 = pointToPoint.Install (nodes23);
-  devices34 = pointToPoint.Install (nodes34);
-  devices13 = pointToPoint.Install (nodes13);
+      NetDeviceContainer devices12;
+      NetDeviceContainer devices23;
+      NetDeviceContainer devices34;
+      NetDeviceContainer devices13;
+      devices12 = pointToPoint.Install (nodes12);
+      devices23 = pointToPoint.Install (nodes23);
+      devices34 = pointToPoint.Install (nodes34);
+      devices13 = pointToPoint.Install (nodes13);
 
-  Ipv4AddressHelper address1;
-  address1.SetBase ("10.1.1.0", "255.255.255.0");
-  Ipv4AddressHelper address2;
-  address2.SetBase ("10.1.2.0", "255.255.255.0");
-  Ipv4AddressHelper address3;
-  address3.SetBase ("10.1.3.0", "255.255.255.0");
-  Ipv4AddressHelper address4;
-  address4.SetBase ("10.1.4.0", "255.255.255.0");
+      Ipv4AddressHelper address1;
+      address1.SetBase ("10.1.1.0", "255.255.255.0");
+      Ipv4AddressHelper address2;
+      address2.SetBase ("10.1.2.0", "255.255.255.0");
+      Ipv4AddressHelper address3;
+      address3.SetBase ("10.1.3.0", "255.255.255.0");
+      Ipv4AddressHelper address4;
+      address4.SetBase ("10.1.4.0", "255.255.255.0");
 
-  Ipv4InterfaceContainer interfaces12 = address1.Assign (devices12);
-  Ipv4InterfaceContainer interfaces23 = address2.Assign (devices23);
-  Ipv4InterfaceContainer interfaces34 = address3.Assign (devices34);
-  Ipv4InterfaceContainer interfaces13 = address4.Assign (devices13);
+      Ipv4InterfaceContainer interfaces12 = address1.Assign (devices12);
+      Ipv4InterfaceContainer interfaces23 = address2.Assign (devices23);
+      Ipv4InterfaceContainer interfaces34 = address3.Assign (devices34);
+      Ipv4InterfaceContainer interfaces13 = address4.Assign (devices13);
 
-  UdpEchoServerHelper echoServer (9);
+      UdpEchoServerHelper echoServer (9);
 
-  ApplicationContainer serverApps = echoServer.Install (nodes34.Get (1));
-  serverApps.Start (Seconds (1.0));
-  serverApps.Stop (Seconds (10.0));
+      ApplicationContainer serverApps = echoServer.Install (nodes34.Get (1));
+      serverApps.Start (Seconds (1.0));
+      serverApps.Stop (Seconds (10.0));
 
-  UdpEchoClientHelper echoClient (interfaces34.GetAddress (1), 9);
-  echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
-  echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.)));
-  echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+      UdpEchoClientHelper echoClient (interfaces34.GetAddress (1), 9);
+      echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+      echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.)));
+      echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
 
-  ApplicationContainer clientApps = echoClient.Install (nodes12.Get (0));
-  clientApps.Start (Seconds (2.0));
-  clientApps.Stop (Seconds (10.0));
+      ApplicationContainer clientApps = echoClient.Install (nodes12.Get (0));
+      clientApps.Start (Seconds (2.0));
+      clientApps.Stop (Seconds (10.0));
 
-  // Trace routing paths for different source and destinations.
-  Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ("nix-simple.routes", std::ios::out);
-  nixRouting.PrintRoutingPathAt (Seconds (3), nodes12.Get (0), interfaces34.GetAddress (1), routingStream);
-  nixRouting.PrintRoutingPathAt (Seconds (5), nodes12.Get (1), interfaces34.GetAddress (1), routingStream);
-  nixRouting.PrintRoutingPathAt (Seconds (6), nodes23.Get (1), interfaces12.GetAddress (0), routingStream);
-  nixRouting.PrintRoutingPathAt (Seconds (7), nodes12.Get (1), interfaces12.GetAddress (1), routingStream);
-  // Trace routing tables
-  nixRouting.PrintRoutingTableAllAt (Seconds (8), routingStream);
+      // Trace routing paths for different source and destinations.
+      Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ("nix-simple.routes", std::ios::out);
+      nixRouting.PrintRoutingPathAt (Seconds (3), nodes12.Get (0), interfaces34.GetAddress (1), routingStream);
+      nixRouting.PrintRoutingPathAt (Seconds (5), nodes12.Get (1), interfaces34.GetAddress (1), routingStream);
+      nixRouting.PrintRoutingPathAt (Seconds (6), nodes23.Get (1), interfaces12.GetAddress (0), routingStream);
+      nixRouting.PrintRoutingPathAt (Seconds (7), nodes12.Get (1), interfaces12.GetAddress (1), routingStream);
+      // Trace routing tables
+      nixRouting.PrintRoutingTableAllAt (Seconds (8), routingStream);
+    }
+  else if (ip == "v6")
+    {
+      // NixHelper to install nix-vector routing
+      // on all nodes
+      Ipv6NixVectorHelper nixRouting;
+      InternetStackHelper stack;
+      stack.SetRoutingHelper (nixRouting); // has effect on the next Install ()
+      stack.Install (allNodes);
+
+      NetDeviceContainer devices12;
+      NetDeviceContainer devices23;
+      NetDeviceContainer devices34;
+      NetDeviceContainer devices13;
+      devices12 = pointToPoint.Install (nodes12);
+      devices23 = pointToPoint.Install (nodes23);
+      devices34 = pointToPoint.Install (nodes34);
+      devices13 = pointToPoint.Install (nodes13);
+
+      Ipv6AddressHelper address1;
+      address1.SetBase (Ipv6Address ("2001:1::"), Ipv6Prefix (64));
+      Ipv6AddressHelper address2;
+      address2.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));
+      Ipv6AddressHelper address3;
+      address3.SetBase (Ipv6Address ("2001:3::"), Ipv6Prefix (64));
+      Ipv6AddressHelper address4;
+      address4.SetBase (Ipv6Address ("2001:4::"), Ipv6Prefix (64));
+
+      Ipv6InterfaceContainer interfaces12 = address1.Assign (devices12);
+      Ipv6InterfaceContainer interfaces23 = address2.Assign (devices23);
+      Ipv6InterfaceContainer interfaces34 = address3.Assign (devices34);
+      Ipv6InterfaceContainer interfaces13 = address4.Assign (devices13);
+
+      UdpEchoServerHelper echoServer (9);
+
+      ApplicationContainer serverApps = echoServer.Install (nodes34.Get (1));
+      serverApps.Start (Seconds (1.0));
+      serverApps.Stop (Seconds (10.0));
+
+      UdpEchoClientHelper echoClient (interfaces34.GetAddress (1, 1), 9);
+      echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+      echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.)));
+      echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+
+      ApplicationContainer clientApps = echoClient.Install (nodes12.Get (0));
+      clientApps.Start (Seconds (2.0));
+      clientApps.Stop (Seconds (10.0));
+
+      // Trace routing paths for different source and destinations.
+      Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ("ipv6-nix-simple.routes", std::ios::out);
+      nixRouting.PrintRoutingPathAt (Seconds (3), nodes12.Get (0), interfaces34.GetAddress (1, 1), routingStream);
+      nixRouting.PrintRoutingPathAt (Seconds (5), nodes12.Get (1), interfaces34.GetAddress (1, 1), routingStream);
+      nixRouting.PrintRoutingPathAt (Seconds (6), nodes23.Get (1), interfaces12.GetAddress (0, 1), routingStream);
+      nixRouting.PrintRoutingPathAt (Seconds (7), nodes12.Get (1), interfaces12.GetAddress (1, 1), routingStream);
+      // // Trace routing tables
+      nixRouting.PrintRoutingTableAllAt (Seconds (8), routingStream);
+    }
+  
 
   Simulator::Run ();
   Simulator::Destroy ();

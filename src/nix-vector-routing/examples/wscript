@@ -12,11 +12,3 @@ def build(bld):
     obj = bld.create_ns3_program('nix-simple-multi-address',
                                  ['point-to-point', 'applications', 'internet', 'nix-vector-routing'])
     obj.source = 'nix-simple-multi-address.cc'
-
-    obj = bld.create_ns3_program('ipv6-nix-simple',
-                                 ['point-to-point', 'applications', 'internet', 'nix-vector-routing'])
-    obj.source = 'ipv6-nix-simple.cc'
-
-    obj = bld.create_ns3_program('ipv6-nms-p2p-nix',
-                                 ['point-to-point', 'applications', 'internet', 'nix-vector-routing'])
-    obj.source = 'ipv6-nms-p2p-nix.cc'
