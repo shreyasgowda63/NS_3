@@ -68,9 +68,8 @@ public:
   Ipv4RoutingProtocol ();
   ~Ipv4RoutingProtocol ();
   void DoDispose ();
-  Ptr<RoutingProtocol> m_rProtocol;
-  // Set Protocol, used by AodvHelper to pass a poiner to an object(sets m_rProtocol, to be specific)
-  void SetProtocol(Ptr<RoutingProtocol> agent2);
+  /** Set Protocol, used by AodvHelper to pass a poiner to an object(sets m_rProtocol, to be specific) */
+  void SetIPv4AODVProtocol(Ptr<RoutingProtocol> agent2);
   // Inherited from Ipv4RoutingProtocol
   Ptr<Ipv4Route> RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr);
   bool RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
@@ -102,8 +101,8 @@ private:
    */
   void NotifyTxError (WifiMacDropReason reason, Ptr<const WifiMacQueueItem> mpdu);
 
-// private:
-  /// Start protocol operation
+private:
+  // Start protocol operation
   /**
    * Queue packet and send route request
    *
@@ -177,6 +176,8 @@ public:
    * \param destination - destination node IP address
    */
   void SendTo (Ptr<Socket> socket, Ptr<Packet> packet, Ipv4Address destination);
+  private:
+  Ptr<RoutingProtocol> m_rProtocol;   //!< Pointer to the common AodvRoutingProtocol part
 };
 
 } //namespace aodv

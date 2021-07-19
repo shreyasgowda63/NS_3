@@ -79,6 +79,7 @@ public:
 private:
   /** the factory to create AODV routing object */
   ObjectFactory m_commonFactory;
+  /** the factory to create AODV IPv4 routing object */
   ObjectFactory m_ipv4Factory;
 };
 

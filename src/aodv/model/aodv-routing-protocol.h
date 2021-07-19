@@ -159,17 +159,9 @@ public:
   {
     return m_enableBroadcast;
   }
-  // /**
-  //  * Assign a fixed random variable stream number to the random variables
-  //  * used by this model.  Return the number of streams (possibly zero) that
-  //  * have been assigned.
-  //  *
-  //  * \param stream first stream index to use
-  //  * \return the number of stream indices assigned by this model
-  //  */
-  // int64_t AssignStreams (int64_t stream);
-  //Set Protocol, used by AodvHelper to pass a poiner to an object
-  void SetProtocol(Ptr<Ipv4RoutingProtocol> agent);
+
+  /** Set Protocol, used by AodvHelper to pass a poiner to an object */
+  void SetCommonAODVProtocol(Ptr<Ipv4RoutingProtocol> agent);
 protected:
   virtual void DoInitialize (void);
 private:
@@ -240,7 +232,7 @@ private:
   /// Number of RERRs used for RERR rate control
   uint16_t m_rerrCount;
 
-  Ptr<Ipv4RoutingProtocol> m_ipver4;
+  Ptr<Ipv4RoutingProtocol> m_ipver4;  //!< Pointer to the IPv4 specific AdovroutingProtocol part
   /// Start protocol operation
   void Start ();
     /**
@@ -349,6 +341,13 @@ private:
   private:
   /// Hello timer
   Timer m_htimer;
+    /**
+   * Mark link to neighbor node as unidirectional for blacklistTimeout
+   *
+   * \param neighbor the IP address of the neightbor node
+   * \param blacklistTimeout the black list timeout time
+   */
+
   void AckTimerExpire (Ipv4Address neighbor, Time blacklistTimeout);
   /// RREQ rate limit timer
   Timer m_rreqRateLimitTimer;

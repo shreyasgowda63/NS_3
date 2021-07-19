@@ -43,13 +43,13 @@ AodvHelper::Copy (void) const
 Ptr<Ipv4RoutingProtocol> 
 AodvHelper::Create (Ptr<Node> node) const
 {
-  Ptr<aodv::RoutingProtocol> agent2 = m_commonFactory.Create<aodv::RoutingProtocol> ();
-  Ptr<aodv::Ipv4RoutingProtocol> agent = m_ipv4Factory.Create<aodv::Ipv4RoutingProtocol> (); 
-  node->AggregateObject(agent2);
-  agent->SetProtocol(agent2);
-  agent2->SetProtocol(agent);
-  node->AggregateObject(agent);
-  return agent;
+  Ptr<aodv::RoutingProtocol> common_agent = m_commonFactory.Create<aodv::RoutingProtocol> ();
+  Ptr<aodv::Ipv4RoutingProtocol> ipv4_agent = m_ipv4Factory.Create<aodv::Ipv4RoutingProtocol> (); 
+  node->AggregateObject(common_agent);
+  ipv4_agent->SetIPv4AODVProtocol(common_agent);
+  common_agent->SetCommonAODVProtocol(ipv4_agent);
+  node->AggregateObject(ipv4_agent);
+  return ipv4_agent;
 }
 
 void 

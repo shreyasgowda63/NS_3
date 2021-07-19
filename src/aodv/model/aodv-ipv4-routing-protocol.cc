@@ -827,9 +827,9 @@ Ipv4RoutingProtocol::DoInitialize (void)
 }
 
 void
-Ipv4RoutingProtocol::SetProtocol(Ptr<RoutingProtocol> agent2)
+Ipv4RoutingProtocol::SetIPv4AODVProtocol(Ptr<RoutingProtocol> common_agent)
 {
-  m_rProtocol = agent2;
+  m_rProtocol = common_agent;
 }
 
 } //namespace aodv

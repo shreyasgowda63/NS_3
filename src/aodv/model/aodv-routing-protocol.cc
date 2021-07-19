@@ -1315,9 +1315,9 @@ RoutingProtocol::HelloTimerExpire ()
 }
 
 void
-RoutingProtocol::SetProtocol(Ptr<Ipv4RoutingProtocol> agent)
+RoutingProtocol::SetCommonAODVProtocol(Ptr<Ipv4RoutingProtocol> ipv4_agent)
 {
-  m_ipver4 = agent;
+  m_ipver4 = ipv4_agent;
 }
 void 
 RoutingProtocol::DoInitialize(void)
