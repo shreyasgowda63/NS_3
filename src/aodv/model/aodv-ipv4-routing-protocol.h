@@ -68,7 +68,9 @@ public:
   Ipv4RoutingProtocol ();
   ~Ipv4RoutingProtocol ();
   void DoDispose ();
-  /** Set Protocol, used by AodvHelper to pass a poiner to an object(sets m_rProtocol, to be specific) */
+  /** 
+   * Set Protocol, used by AodvHelper to pass a poiner to an object(sets m_rProtocol, to be specific) 
+  */
   void SetIPv4AODVProtocol(Ptr<RoutingProtocol> agent2);
   // Inherited from Ipv4RoutingProtocol
   Ptr<Ipv4Route> RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr);

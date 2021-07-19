@@ -253,14 +253,6 @@ RoutingProtocol::SetMaxQueueTime (Time t)
   m_queue.SetQueueTimeout (t);
 }
 
-// int64_t
-// RoutingProtocol::AssignStreams (int64_t stream)
-// {
-//   NS_LOG_FUNCTION (this << stream);
-//   m_uniformRandomVariable->SetStream (stream);
-//   return 1;
-// }
-
 void
 RoutingProtocol::Start ()
 {

@@ -160,7 +160,9 @@ public:
     return m_enableBroadcast;
   }
 
-  /** Set Protocol, used by AodvHelper to pass a poiner to an object */
+  /** 
+   * Set Protocol, used by AodvHelper to pass a poiner to an object 
+  */
   void SetCommonAODVProtocol(Ptr<Ipv4RoutingProtocol> agent);
 protected:
   virtual void DoInitialize (void);
