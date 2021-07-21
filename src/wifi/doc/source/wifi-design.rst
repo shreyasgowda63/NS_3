@@ -702,6 +702,17 @@ To support an easier user configuration experience, the existing
 YansWifi helper classes (in ``src/wifi/helper``) were copied and
 adapted to provide equivalent SpectrumWifi helper classes.
 
+Since ``SpectrumWifiPhy`` models frequency dependent effects
+down to subcarrier level, this precision comes with
+processing costs. An alternative "lightweight" frequency modeling can be
+used to fasten processing (at the expense of precision; no free lunch...).
+This can be done by setting the attribute ``SpectrumWifiPhy::BandSpacing``
+to the enum value ``SpectrumWifiPhy::CHANNEL_SPACING``. With this option,
+5 MHz granularity is used for 2.4 GHz and 5.8/5.9 GHz bands, and 20 MHz
+granularity otherwise. In addition, guard bands are ignored (i.e. no out-of-band
+emission modeling) and DSSS 22 MHz bands will be truncated to 20 MHz.
+Also note that OFDMA is not supported yet when using this option.
+
 Finally, for reasons related to avoiding C++ multiple inheritance
 issues, a small forwarding class called ``WifiSpectrumPhyInterface``
 was inserted as a shim between the ``SpectrumWifiPhy`` and the

@@ -1057,10 +1057,20 @@ PhyEntity::Transmit (Time txDuration, Ptr<WifiPpdu> ppdu, std::string type)
   spectrumWifiPhy->Transmit (txParams);
 }
 
-uint16_t
-PhyEntity::GetGuardBandwidth (uint16_t currentChannelWidth) const
+uint32_t
+PhyEntity::GetGranularity (void) const
 {
-  return m_wifiPhy->GetGuardBandwidth (currentChannelWidth);
+  auto spectrumWifiPhy = DynamicCast<SpectrumWifiPhy> (m_wifiPhy);
+  NS_ASSERT (spectrumWifiPhy);
+  return spectrumWifiPhy->GetGranularity ();
+}
+
+bool
+PhyEntity::IncludeAdjacentChannelPower (void) const
+{
+  auto spectrumWifiPhy = DynamicCast<SpectrumWifiPhy> (m_wifiPhy);
+  NS_ASSERT (spectrumWifiPhy);
+  return spectrumWifiPhy->IncludeAdjacentChannelPower ();
 }
 
 std::tuple<double, double, double>

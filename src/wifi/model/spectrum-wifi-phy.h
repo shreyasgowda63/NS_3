@@ -58,6 +58,29 @@ public:
   friend class ::SpectrumWifiPhyFilterTest;
 
   /**
+   * The granularity to use for frequency modeling.
+   * Subcarrier spacing enables precise modeling while
+   * channel spacing reduces processing time.
+   */
+  enum BandSpacing
+  {
+    /**
+     * Granularity based on subcarrier spacing.
+     * 312.5 kHz, 156.25 kHz, or 78.125 kHz granularity is used based on the standard.
+     */
+    SUBCARRIER_SPACING = 0,
+    /**
+     * Granularity based on channel spacing.
+     * 5 MHz granularity is used for 2.4 GHz and 5.8/5.9 GHz bands. 20 MHz
+     * granularity is used otherwise.
+     * Guard bands are ignored (i.e. no out-of-band emission modeling).
+     * In addition, DSSS 22 MHz bands will be truncated to 20 MHz.
+     * Finally, OFDMA is not supported yet.
+     */
+    CHANNEL_SPACING
+  };
+
+  /**
    * \brief Get the type ID.
    * \return the object TypeId
    */
@@ -121,9 +144,16 @@ public:
   Ptr<const SpectrumModel> GetRxSpectrumModel ();
 
   /**
-   * \return the width of each band (Hz)
+   * \return the granularity of each band (Hz)
    */
-  uint32_t GetBandBandwidth (void) const;
+  uint32_t GetGranularity (void) const;
+
+  /**
+   * \return whether to include adjacent channel power
+   *
+   * Note: guard bands are included for subcarrier band spacing only.
+   */
+  virtual bool IncludeAdjacentChannelPower (void) const;
 
   /**
    * Callback invoked when the PHY model starts to process a signal
@@ -200,6 +230,7 @@ private:
                                               bands associated with every RU in a channel of that width */
   bool m_disableWifiReception;                              //!< forces this PHY to fail to sync on any signal
   TracedCallback<bool, uint32_t, double, Time> m_signalCb;  //!< Signal callback
+  BandSpacing m_bandSpacing;                                //!< Granularity to use for frequency modeling (no guard bands when channel spacing is used)
 
   double m_txMaskInnerBandMinimumRejection; //!< The minimum rejection (in dBr) for the inner band of the transmit spectrum mask
   double m_txMaskOuterBandMinimumRejection; //!< The minimum rejection (in dBr) for the outer band of the transmit spectrum mask

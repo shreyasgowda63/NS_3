@@ -763,13 +763,18 @@ protected:
   uint16_t GetCenterFrequencyForChannelWidth (const WifiTxVector& txVector) const;
 
   /**
-   * \param currentChannelWidth channel width of the current transmission (MHz)
-   * \return the width of the guard band (MHz)
+   * \return the granularity of each band (Hz)
+   *
+   * Wrapper method used by child classes for PSD generation.
+   */
+  uint32_t GetGranularity (void) const;
+  /**
+   * \return whether to include adjacent channel power
    *
    * Wrapper method used by child classes for PSD generation.
    * Note that this method is necessary for testing UL OFDMA.
    */
-  uint16_t GetGuardBandwidth (uint16_t currentChannelWidth) const;
+  bool IncludeAdjacentChannelPower (void) const;
   /**
    * \return a tuple containing the minimum rejection (in dBr) for the inner band,
    *                            the minimum rejection (in dBr) for the outer band, and

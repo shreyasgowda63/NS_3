@@ -56,14 +56,14 @@ public:
    * \param str test reference name
    * \param standard selected PHY standard
    * \param band selected PHY band
-   * \param bw bandwidth
+   * \param bw bandwidth (in MHz)
    * \param maskRefsLeft vector of expected power values and corresponding indexes of generated PSD
    *                     (only start and stop indexes/values given) for left guard bandwidth
    * \param maskRefsRight vector of expected power values and corresponding indexes of generated PSD
    *                      (only start and stop indexes/values given) for right guard bandwidth
    * \param tol tolerance (in dB)
    */
-  WifiOfdmMaskSlopesTestCase (const char* str, WifiPhyStandard standard, WifiPhyBand band, uint8_t bw,
+  WifiOfdmMaskSlopesTestCase (const char* str, WifiPhyStandard standard, WifiPhyBand band, uint16_t bw,
                               IndexPowerVect maskRefsLeft, IndexPowerVect maskRefsRight, double tol);
   virtual ~WifiOfdmMaskSlopesTestCase ();
 
@@ -89,13 +89,15 @@ private:
                                           double tol);
 };
 
-WifiOfdmMaskSlopesTestCase::WifiOfdmMaskSlopesTestCase (const char* str, WifiPhyStandard standard, WifiPhyBand band, uint8_t bw,
+WifiOfdmMaskSlopesTestCase::WifiOfdmMaskSlopesTestCase (const char* str, WifiPhyStandard standard, WifiPhyBand band, uint16_t bw,
                                                         IndexPowerVect maskRefsLeft, IndexPowerVect maskRefsRight, double tol)
   :   TestCase (std::string ("SpectrumValue ") + str)
 {
-  NS_LOG_FUNCTION (this << str << standard << band << +bw << tol);
+  NS_LOG_FUNCTION (this << str << standard << band << bw << tol);
   NS_ASSERT (maskRefsLeft.size () % 2 == 0 && maskRefsRight.size () % 2 == 0); //start/stop pairs expected
   uint16_t freq = 5170 + (bw / 2); // so as to have 5180/5190/5210/5250 for 20/40/80/160
+  uint32_t granularity = 312500; //Hz, default value to be used for DSSS and pre-11ax OFDM-based standards, except 5/10MHz OFDM
+  bool includeGuardBand = true;
   double refTxPowerW = 1; // have to work in dBr when comparing though
   m_tolerance = tol; // in dB
   double outerBandMaximumRejection = -40; // in dBr
@@ -105,7 +107,8 @@ WifiOfdmMaskSlopesTestCase::WifiOfdmMaskSlopesTestCase (const char* str, WifiPhy
     case WIFI_PHY_STANDARD_80211p:
       NS_ASSERT ((bw == 5) || (bw == 10));
       freq = 5860;
-      m_actualSpectrum = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (freq, bw, refTxPowerW, bw, -20.0, -28.0, outerBandMaximumRejection);
+      granularity = (bw == 5) ? 78125 : 156250;
+      m_actualSpectrum = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (freq, bw, granularity, refTxPowerW, includeGuardBand, -20.0, -28.0, outerBandMaximumRejection);
       break;
 
     // 11g and 11a
@@ -114,7 +117,7 @@ WifiOfdmMaskSlopesTestCase::WifiOfdmMaskSlopesTestCase (const char* str, WifiPhy
     // no break on purpose
     case WIFI_PHY_STANDARD_80211a:
       NS_ASSERT (bw == 20);
-      m_actualSpectrum = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (freq, bw, refTxPowerW, bw, -20.0, -28.0, outerBandMaximumRejection);
+      m_actualSpectrum = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (freq, bw, granularity, refTxPowerW, includeGuardBand, -20.0, -28.0, outerBandMaximumRejection);
       break;
 
     // 11n
@@ -125,13 +128,13 @@ WifiOfdmMaskSlopesTestCase::WifiOfdmMaskSlopesTestCase (const char* str, WifiPhy
           outerBandMaximumRejection = -45;
         }
       NS_ASSERT (bw == 20 || bw == 40);
-      m_actualSpectrum = WifiSpectrumValueHelper::CreateHtOfdmTxPowerSpectralDensity (freq, bw, refTxPowerW, bw, -20.0, -28.0, outerBandMaximumRejection);
+      m_actualSpectrum = WifiSpectrumValueHelper::CreateHtOfdmTxPowerSpectralDensity (freq, bw, granularity, refTxPowerW, includeGuardBand, -20.0, -28.0, outerBandMaximumRejection);
       break;
 
     // 11ac
     case WIFI_PHY_STANDARD_80211ac:
       NS_ASSERT (bw == 20 || bw == 40 || bw == 80 || bw == 160);
-      m_actualSpectrum = WifiSpectrumValueHelper::CreateHtOfdmTxPowerSpectralDensity (freq, bw, refTxPowerW, bw, -20.0, -28.0, outerBandMaximumRejection);
+      m_actualSpectrum = WifiSpectrumValueHelper::CreateHtOfdmTxPowerSpectralDensity (freq, bw, granularity, refTxPowerW, includeGuardBand, -20.0, -28.0, outerBandMaximumRejection);
       break;
 
     // 11ax
@@ -143,7 +146,8 @@ WifiOfdmMaskSlopesTestCase::WifiOfdmMaskSlopesTestCase (const char* str, WifiPhy
           outerBandMaximumRejection = -45;
         }
       NS_ASSERT (bw == 20 || bw == 40 || bw == 80 || bw == 160);
-      m_actualSpectrum = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (freq, bw, refTxPowerW, bw, -20.0, -28.0, outerBandMaximumRejection);
+      granularity = 78125;
+      m_actualSpectrum = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (freq, bw, granularity, refTxPowerW, includeGuardBand, -20.0, -28.0, outerBandMaximumRejection);
       break;
 
     // other
@@ -227,6 +231,155 @@ WifiOfdmMaskSlopesTestCase::DoRun (void)
     }
 }
 
+
+/**
+ * \ingroup wifi-test
+ * \ingroup tests
+ *
+ * \brief Test checks if Wifi spectrum values with channel spacing granularity are generated properly.
+ * Different test cases are configured by defining different standards and bandwidths.
+ */
+class WifiChannelSpacingGranularityTestCase : public TestCase
+{
+public:
+  WifiChannelSpacingGranularityTestCase ();
+  virtual ~WifiChannelSpacingGranularityTestCase ();
+
+private:
+  virtual void DoRun (void);
+
+  /**
+   * Check generated PSD for given standard and bandwidth
+   * over each subband of SpectrumValue.
+   *
+   * \param standard selected PHY standard
+   * \param band selected PHY band
+   * \param bw bandwidth (in MHz)
+   * \param powerPerBand power (in W) expected per subband of SpectrumValue
+   */
+  void CheckPsd (WifiPhyStandard standard, WifiPhyBand band, uint16_t bw, double powerPerBand);
+
+  double m_txPower;   ///< transmit power (in W)
+  double m_tolerance; ///< tolerance (in linear scale)
+};
+
+WifiChannelSpacingGranularityTestCase::WifiChannelSpacingGranularityTestCase ()
+  : TestCase ("Check PSD with channel spacing granularity"),
+    m_txPower (1.0),
+    m_tolerance (0.00001)
+{
+}
+
+WifiChannelSpacingGranularityTestCase::~WifiChannelSpacingGranularityTestCase ()
+{
+}
+
+void
+WifiChannelSpacingGranularityTestCase::CheckPsd (WifiPhyStandard standard, WifiPhyBand band, uint16_t bw, double powerPerBand)
+{
+  NS_LOG_FUNCTION (this << standard << band << bw << powerPerBand);
+  uint16_t freq = 5170 + (bw / 2); // so as to have 5180/5190/5210/5250 for 20/40/80/160
+  bool includeGuardBand = false;
+  Ptr<SpectrumValue> spectrumValue;
+  uint32_t granularity = 0;
+  switch (standard)
+  {
+    case WIFI_PHY_STANDARD_80211b:
+      NS_ASSERT (bw == 22);
+      freq = 2412;
+      granularity = WifiSpectrumValueHelper::GetGranularityForChannelSpacing (freq);
+      spectrumValue = WifiSpectrumValueHelper::CreateDsssTxPowerSpectralDensity (freq, granularity, m_txPower, includeGuardBand);
+      break;
+    case WIFI_PHY_STANDARD_80211p:
+      NS_ASSERT ((bw == 5) || (bw == 10));
+      freq = 5860;
+      granularity = WifiSpectrumValueHelper::GetGranularityForChannelSpacing (freq);
+      spectrumValue = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (freq, bw, granularity, m_txPower, includeGuardBand);
+      break;
+
+      // 11g and 11a
+    case WIFI_PHY_STANDARD_80211g:
+      freq = 2412;
+      // no break on purpose
+    case WIFI_PHY_STANDARD_80211a:
+      NS_ASSERT (bw == 20);
+      granularity = WifiSpectrumValueHelper::GetGranularityForChannelSpacing (freq);
+      spectrumValue = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (freq, bw, granularity, m_txPower, includeGuardBand);
+      break;
+
+      // 11n
+    case WIFI_PHY_STANDARD_80211n:
+      if (band == WIFI_PHY_BAND_2_4GHZ)
+        {
+          freq = 2402 + (bw / 2); //so as to have 2412/2422 for 20/40
+        }
+      NS_ASSERT (bw == 20 || bw == 40);
+      granularity = WifiSpectrumValueHelper::GetGranularityForChannelSpacing (freq);
+      spectrumValue = WifiSpectrumValueHelper::CreateHtOfdmTxPowerSpectralDensity (freq, bw, granularity, m_txPower, includeGuardBand);
+      break;
+
+      // 11ac
+    case WIFI_PHY_STANDARD_80211ac:
+      NS_ASSERT (bw == 20 || bw == 40 || bw == 80 || bw == 160);
+      granularity = WifiSpectrumValueHelper::GetGranularityForChannelSpacing (freq);
+      spectrumValue = WifiSpectrumValueHelper::CreateHtOfdmTxPowerSpectralDensity (freq, bw, granularity, m_txPower, includeGuardBand);
+      break;
+
+      // 11ax
+    case WIFI_PHY_STANDARD_80211ax:
+      if (band == WIFI_PHY_BAND_2_4GHZ)
+        {
+          NS_ASSERT (bw != 160); // not enough space in 2.4 GHz bands
+          freq = 2402 + (bw / 2); //so as to have 2412/2422 for 20/40
+        }
+      NS_ASSERT (bw == 20 || bw == 40 || bw == 80 || bw == 160);
+      granularity = WifiSpectrumValueHelper::GetGranularityForChannelSpacing (freq);
+      spectrumValue = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (freq, bw, granularity, m_txPower, includeGuardBand);
+      break;
+
+      // other
+    default:
+      NS_FATAL_ERROR ("Standard unknown");
+      break;
+  }
+
+  for (Values::const_iterator vit = spectrumValue->ConstValuesBegin (); vit != spectrumValue->ConstValuesEnd (); ++vit)
+    {
+      NS_TEST_EXPECT_MSG_EQ_TOL ((*vit) * granularity, powerPerBand, m_tolerance, "Mismatch between power per subband obtained from PSD and expected value");
+    }
+}
+
+void
+WifiChannelSpacingGranularityTestCase::DoRun (void)
+{
+  NS_LOG_FUNCTION (this);
+
+  // 5 MHz granularity at 2.4 GHz and 5.8/5.9 GHz
+  NS_LOG_INFO ("Check PSD for 5 MHz granularity");
+  CheckPsd (WIFI_PHY_STANDARD_80211b, WIFI_PHY_BAND_2_4GHZ, 22, 0.25); //20 MHz bandwidth for DSSS
+  CheckPsd (WIFI_PHY_STANDARD_80211p, WIFI_PHY_BAND_5GHZ, 5, 1.0);
+  CheckPsd (WIFI_PHY_STANDARD_80211p, WIFI_PHY_BAND_5GHZ, 10, 0.5);
+  CheckPsd (WIFI_PHY_STANDARD_80211g, WIFI_PHY_BAND_2_4GHZ, 20, 0.25);
+  CheckPsd (WIFI_PHY_STANDARD_80211n, WIFI_PHY_BAND_2_4GHZ, 20, 0.25);
+  CheckPsd (WIFI_PHY_STANDARD_80211n, WIFI_PHY_BAND_2_4GHZ, 40, 0.125);
+  CheckPsd (WIFI_PHY_STANDARD_80211ax, WIFI_PHY_BAND_2_4GHZ, 20, 0.25);
+  CheckPsd (WIFI_PHY_STANDARD_80211ax, WIFI_PHY_BAND_2_4GHZ, 40, 0.125);
+  CheckPsd (WIFI_PHY_STANDARD_80211ax, WIFI_PHY_BAND_2_4GHZ, 80, 0.0625);
+
+  // 20 MHz granularity otherwise
+  NS_LOG_INFO ("Check PSD for 20 MHz granularity");
+  CheckPsd (WIFI_PHY_STANDARD_80211a, WIFI_PHY_BAND_5GHZ, 20, 1.0);
+  CheckPsd (WIFI_PHY_STANDARD_80211n, WIFI_PHY_BAND_5GHZ, 20, 1.0);
+  CheckPsd (WIFI_PHY_STANDARD_80211n, WIFI_PHY_BAND_5GHZ, 40, 0.5);
+  CheckPsd (WIFI_PHY_STANDARD_80211ac, WIFI_PHY_BAND_5GHZ, 20, 1.0);
+  CheckPsd (WIFI_PHY_STANDARD_80211ac, WIFI_PHY_BAND_5GHZ, 40, 0.5);
+  CheckPsd (WIFI_PHY_STANDARD_80211ac, WIFI_PHY_BAND_5GHZ, 80, 0.25);
+  CheckPsd (WIFI_PHY_STANDARD_80211ac, WIFI_PHY_BAND_5GHZ, 160, 0.125);
+  CheckPsd (WIFI_PHY_STANDARD_80211ax, WIFI_PHY_BAND_5GHZ, 20, 1.0);
+  CheckPsd (WIFI_PHY_STANDARD_80211ax, WIFI_PHY_BAND_5GHZ, 40, 0.5);
+  CheckPsd (WIFI_PHY_STANDARD_80211ax, WIFI_PHY_BAND_5GHZ, 80, 0.25);
+  CheckPsd (WIFI_PHY_STANDARD_80211ax, WIFI_PHY_BAND_5GHZ, 160, 0.125);
+}
 
 
 /**
@@ -703,6 +856,9 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite ()
   AddTestCase (new WifiOfdmMaskSlopesTestCase ("11ax_5GHz 160MHz", WIFI_PHY_STANDARD_80211ax, WIFI_PHY_BAND_5GHZ,
                                                160, maskSlopesLeft, maskSlopesRight, tol),
                TestCase::QUICK);
+
+  // ============================================================================================
+  AddTestCase (new WifiChannelSpacingGranularityTestCase, TestCase::QUICK);
 
   maskSlopesLeft.clear ();
   maskSlopesRight.clear ();

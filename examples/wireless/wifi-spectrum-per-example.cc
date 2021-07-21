@@ -30,8 +30,10 @@
 #include "ns3/boolean.h"
 #include "ns3/double.h"
 #include "ns3/string.h"
+#include "ns3/enum.h"
 #include "ns3/log.h"
 #include "ns3/yans-wifi-helper.h"
+#include "ns3/spectrum-wifi-phy.h"
 #include "ns3/spectrum-wifi-helper.h"
 #include "ns3/ssid.h"
 #include "ns3/mobility-helper.h"
@@ -68,6 +70,7 @@
 //    --distance:        meters separation between nodes [50]
 //    --index:           restrict index to single value between 0 and 31 [256]
 //    --wifiType:        select ns3::SpectrumWifiPhy or ns3::YansWifiPhy [ns3::SpectrumWifiPhy]
+//    --bandSpacing:     band spacing to use for ns3::SpectrumWifiPhy (select SubcarrierSpacing or ChannelSpacing) [ChannelSpacing]
 //    --errorModelType:  select ns3::NistErrorRateModel or ns3::YansErrorRateModel [ns3::NistErrorRateModel]
 //    --enablePcap:      enable pcap output [false]
 //
@@ -119,6 +122,7 @@ int main (int argc, char *argv[])
   double simulationTime = 10; //seconds
   uint16_t index = 256;
   std::string wifiType = "ns3::SpectrumWifiPhy";
+  std::string bandSpacing = "ChannelSpacing"; //for SpectrumWifiPhy only
   std::string errorModelType = "ns3::NistErrorRateModel";
   bool enablePcap = false;
   const uint32_t tcpPacketSize = 1448;
@@ -129,6 +133,7 @@ int main (int argc, char *argv[])
   cmd.AddValue ("distance", "meters separation between nodes", distance);
   cmd.AddValue ("index", "restrict index to single value between 0 and 31", index);
   cmd.AddValue ("wifiType", "select ns3::SpectrumWifiPhy or ns3::YansWifiPhy", wifiType);
+  cmd.AddValue ("bandSpacing", "band spacing to use for ns3::SpectrumWifiPhy (select SubcarrierSpacing or ChannelSpacing)", bandSpacing);
   cmd.AddValue ("errorModelType", "select ns3::NistErrorRateModel or ns3::YansErrorRateModel", errorModelType);
   cmd.AddValue ("enablePcap", "enable pcap output", enablePcap);
   cmd.Parse (argc,argv);
@@ -141,7 +146,12 @@ int main (int argc, char *argv[])
       stopIndex = index;
     }
 
-  std::cout << "wifiType: " << wifiType << " distance: " << distance << "m; time: " << simulationTime << "; TxPower: 1 dBm (1.3 mW)" << std::endl;
+  std::cout << "wifiType: " << wifiType;
+  if (wifiType == "ns3::SpectrumWifiPhy")
+    {
+      std::cout << " ("<< bandSpacing << ")";
+    }
+  std::cout << " distance: " << distance << "m; time: " << simulationTime << "; TxPower: 1 dBm (1.3 mW)" << std::endl;
   std::cout << std::setw (5) << "index" <<
     std::setw (6) << "MCS" <<
     std::setw (13) << "Rate (Mb/s)" <<
@@ -198,6 +208,14 @@ int main (int argc, char *argv[])
           spectrumPhy.SetErrorRateModel (errorModelType);
           spectrumPhy.Set ("TxPowerStart", DoubleValue (1)); // dBm  (1.26 mW)
           spectrumPhy.Set ("TxPowerEnd", DoubleValue (1));
+          if (bandSpacing == "ChannelSpacing")
+            {
+              spectrumPhy.Set ("BandSpacing", EnumValue (SpectrumWifiPhy::CHANNEL_SPACING));
+            }
+          else
+            {
+              spectrumPhy.Set ("BandSpacing", EnumValue (SpectrumWifiPhy::SUBCARRIER_SPACING));
+            }
         }
       else
         {

@@ -736,7 +736,7 @@ HePhy::GetRuBandForTx (const WifiTxVector& txVector, uint16_t staId) const
   HeRu::SubcarrierRange range = std::make_pair (group.front ().first, group.back ().second);
   // for a TX spectrum, the guard bandwidth is a function of the transmission channel width
   // and the spectrum width equals the transmission channel width (hence bandIndex equals 0)
-  band = m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, GetGuardBandwidth (channelWidth),
+  band = m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, m_wifiPhy->GetGuardBandwidth (channelWidth),
                                             range, 0);
   return band;
 }
@@ -753,7 +753,7 @@ HePhy::GetRuBandForRx (const WifiTxVector& txVector, uint16_t staId) const
   HeRu::SubcarrierRange range = std::make_pair (group.front ().first, group.back ().second);
   // for an RX spectrum, the guard bandwidth is a function of the operating channel width
   // and the spectrum width equals the operating channel width
-  band = m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, GetGuardBandwidth (m_wifiPhy->GetChannelWidth ()),
+  band = m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, m_wifiPhy->GetGuardBandwidth (m_wifiPhy->GetChannelWidth ()),
                                             range, m_wifiPhy->GetOperatingChannel ().GetPrimaryChannelIndex (channelWidth));
   return band;
 }
@@ -774,7 +774,7 @@ HePhy::GetNonOfdmaBand (const WifiTxVector& txVector, uint16_t staId) const
 
   HeRu::SubcarrierGroup groupPreamble = HeRu::GetSubcarrierGroup (channelWidth, nonOfdmaRu.GetRuType (), nonOfdmaRu.GetPhyIndex ());
   HeRu::SubcarrierRange range = std::make_pair (groupPreamble.front ().first, groupPreamble.back ().second);
-  return m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, GetGuardBandwidth (m_wifiPhy->GetChannelWidth ()), range,
+  return m_wifiPhy->ConvertHeRuSubcarriers (channelWidth, m_wifiPhy->GetGuardBandwidth (m_wifiPhy->GetChannelWidth ()), range,
                                             m_wifiPhy->GetOperatingChannel ().GetPrimaryChannelIndex (channelWidth));
 }
 
@@ -847,7 +847,8 @@ HePhy::GetTxPowerSpectralDensity (double txPowerW, Ptr<const WifiPpdu> ppdu) con
   if (flag == HePpdu::PSD_HE_TB_OFDMA_PORTION)
     {
       WifiSpectrumBand band = GetRuBandForTx (txVector, GetStaId (hePpdu));
-      v = WifiSpectrumValueHelper::CreateHeMuOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, txPowerW, GetGuardBandwidth (channelWidth), band);
+      v = WifiSpectrumValueHelper::CreateHeMuOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, GetGranularity (),
+                                                                         txPowerW, IncludeAdjacentChannelPower (), band);
     }
   else
     {
@@ -860,7 +861,8 @@ HePhy::GetTxPowerSpectralDensity (double txPowerW, Ptr<const WifiPpdu> ppdu) con
           channelWidth = ruWidth < 20 ? 20 : ruWidth;
         }
       const auto & txMaskRejectionParams = GetTxMaskRejectionParams ();
-      v = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, txPowerW, GetGuardBandwidth (channelWidth),
+      v = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, GetGranularity (),
+                                                                       txPowerW, IncludeAdjacentChannelPower (),
                                                                        std::get<0> (txMaskRejectionParams), std::get<1> (txMaskRejectionParams), std::get<2> (txMaskRejectionParams));
     }
   return v;

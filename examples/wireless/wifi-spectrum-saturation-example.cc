@@ -30,9 +30,11 @@
 #include "ns3/boolean.h"
 #include "ns3/double.h"
 #include "ns3/string.h"
+#include "ns3/enum.h"
 #include "ns3/log.h"
 #include "ns3/yans-wifi-helper.h"
 #include "ns3/spectrum-wifi-helper.h"
+#include "ns3/spectrum-wifi-phy.h"
 #include "ns3/ssid.h"
 #include "ns3/mobility-helper.h"
 #include "ns3/internet-stack-helper.h"
@@ -63,6 +65,7 @@
 //    --distance:        meters separation between nodes [50]
 //    --index:           restrict index to single value between 0 and 31 [256]
 //    --wifiType:        select ns3::SpectrumWifiPhy or ns3::YansWifiPhy [ns3::SpectrumWifiPhy]
+//    --bandSpacing:     band spacing to use for ns3::SpectrumWifiPhy (select SubcarrierSpacing or ChannelSpacing) [ChannelSpacing]
 //    --errorModelType:  select ns3::NistErrorRateModel or ns3::YansErrorRateModel [ns3::NistErrorRateModel]
 //    --enablePcap:      enable pcap output [false]
 //
@@ -102,6 +105,7 @@ int main (int argc, char *argv[])
   uint16_t index = 256;
   uint32_t channelWidth = 0;
   std::string wifiType = "ns3::SpectrumWifiPhy";
+  std::string bandSpacing = "ChannelSpacing"; //for SpectrumWifiPhy only
   std::string errorModelType = "ns3::NistErrorRateModel";
   bool enablePcap = false;
 
@@ -110,6 +114,7 @@ int main (int argc, char *argv[])
   cmd.AddValue ("distance", "meters separation between nodes", distance);
   cmd.AddValue ("index", "restrict index to single value between 0 and 63", index);
   cmd.AddValue ("wifiType", "select ns3::SpectrumWifiPhy or ns3::YansWifiPhy", wifiType);
+  cmd.AddValue ("bandSpacing", "band spacing to use for ns3::SpectrumWifiPhy (select SubcarrierSpacing or ChannelSpacing)", bandSpacing);
   cmd.AddValue ("errorModelType", "select ns3::NistErrorRateModel or ns3::YansErrorRateModel", errorModelType);
   cmd.AddValue ("enablePcap", "enable pcap output", enablePcap);
   cmd.Parse (argc,argv);
@@ -122,7 +127,12 @@ int main (int argc, char *argv[])
       stopIndex = index;
     }
 
-  std::cout << "wifiType: " << wifiType << " distance: " << distance << "m" << std::endl;
+  std::cout << "wifiType: " << wifiType;
+  if (wifiType == "ns3::SpectrumWifiPhy")
+    {
+      std::cout << " ("<< bandSpacing << ")";
+    }
+  std::cout << " distance: " << distance << "m" << std::endl;
   std::cout << std::setw (5) << "index" <<
     std::setw (6) << "MCS" <<
     std::setw (8) << "width" <<
@@ -192,6 +202,14 @@ int main (int argc, char *argv[])
           spectrumPhy.SetErrorRateModel (errorModelType);
           spectrumPhy.Set ("TxPowerStart", DoubleValue (1));
           spectrumPhy.Set ("TxPowerEnd", DoubleValue (1));
+          if (bandSpacing == "ChannelSpacing")
+            {
+              spectrumPhy.Set ("BandSpacing", EnumValue (SpectrumWifiPhy::CHANNEL_SPACING));
+            }
+          else
+            {
+              spectrumPhy.Set ("BandSpacing", EnumValue (SpectrumWifiPhy::SUBCARRIER_SPACING));
+            }
 
           if (i > 31 && i <= 39)
             {
@@ -588,7 +606,7 @@ int main (int argc, char *argv[])
           apDevice = wifi.Install (spectrumPhy, mac, wifiApNode);
         }
 
-     if ((i <= 7) || (i > 31 && i <= 39))
+      if ((i <= 7) || (i > 31 && i <= 39))
         {
           Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/HtConfiguration/ShortGuardIntervalSupported", BooleanValue (false));
         }

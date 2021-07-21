@@ -343,7 +343,8 @@ OfdmPhy::GetTxPowerSpectralDensity (double txPowerW, Ptr<const WifiPpdu> ppdu) c
   uint16_t channelWidth = txVector.GetChannelWidth ();
   NS_LOG_FUNCTION (this << centerFrequency << channelWidth << txPowerW);
   const auto & txMaskRejectionParams = GetTxMaskRejectionParams ();
-  Ptr<SpectrumValue> v = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, txPowerW, GetGuardBandwidth (channelWidth),
+  Ptr<SpectrumValue> v = WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity (centerFrequency, channelWidth, GetGranularity (),
+                                                                                    txPowerW, IncludeAdjacentChannelPower (),
                                                                                     std::get<0> (txMaskRejectionParams), std::get<1> (txMaskRejectionParams), std::get<2> (txMaskRejectionParams));
   return v;
 }
