@@ -85,18 +85,29 @@ public:
    *
    * @return
    */
-  SpectrumModel (std::vector<double> centerFreqs);
+  SpectrumModel (const std::vector<double>& centerFreqs);
 
 
   /**
-   * This construct a SpectrumModel based on the explicit values of
+   * This constructs a SpectrumModel based on the explicit values of
    * center frequencies and boundaries of each subband.
    *
    * @param bands
    *
    * @return
    */
-  SpectrumModel (Bands bands);
+  SpectrumModel (const Bands& bands);
+
+  /**
+   * This constructs a SpectrumModel based on the explicit values of
+   * center frequencies and boundaries of each subband. This is used
+   * if <i>bands</i> is an rvalue.
+   *
+   * @param bands
+   *
+   * @return
+   */
+  SpectrumModel (Bands&& bands);
 
   /**
    *
