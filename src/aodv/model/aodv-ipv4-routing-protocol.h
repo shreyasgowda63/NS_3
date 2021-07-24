@@ -72,7 +72,7 @@ public:
    * Set Protocol, used by AodvHelper to pass a poiner to an object(sets m_rProtocol, to be specific) 
    * \param common_agent assign a pointer of RoutingProtocol to aodv::Ipv4RoutingProtocol to hook attributes 
   */
-  void SetIPv4AODVProtocol(Ptr<RoutingProtocol> common_agent);
+  void SetCommonAODVProtocol(Ptr<RoutingProtocol> common_agent);
   // Inherited from Ipv4RoutingProtocol
   Ptr<Ipv4Route> RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr);
   bool RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,

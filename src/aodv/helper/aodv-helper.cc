@@ -46,8 +46,8 @@ AodvHelper::Create (Ptr<Node> node) const
   Ptr<aodv::RoutingProtocol> common_agent = m_commonFactory.Create<aodv::RoutingProtocol> ();
   Ptr<aodv::Ipv4RoutingProtocol> ipv4_agent = m_ipv4Factory.Create<aodv::Ipv4RoutingProtocol> (); 
   node->AggregateObject(common_agent);
-  ipv4_agent->SetIPv4AODVProtocol(common_agent);
-  common_agent->SetCommonAODVProtocol(ipv4_agent);
+  ipv4_agent->SetCommonAODVProtocol(common_agent);
+  common_agent->SetIPv4AODVProtocol(ipv4_agent);
   node->AggregateObject(ipv4_agent);
   return ipv4_agent;
 }

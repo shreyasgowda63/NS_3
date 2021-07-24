@@ -164,7 +164,7 @@ public:
    * Set Protocol, used by AodvHelper to pass a poiner to an object 
    * \param ipv4_agent assign a pointer of aodv::Ipv4RoutingProtocol to RoutingProtocol to hook functions 
   */
-  void SetCommonAODVProtocol(Ptr<Ipv4RoutingProtocol> ipv4_agent);
+  void SetIPv4AODVProtocol(Ptr<Ipv4RoutingProtocol> ipv4_agent);
 protected:
   virtual void DoInitialize (void);
 private:
