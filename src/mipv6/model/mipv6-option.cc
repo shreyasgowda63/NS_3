@@ -19,7 +19,6 @@
  */
 
 #include "ns3/assert.h"
-#include "ns3/address-utils.h"
 #include "ns3/log.h"
 #include "ns3/uinteger.h"
 #include "mipv6-option.h"

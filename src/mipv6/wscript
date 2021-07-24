@@ -6,7 +6,7 @@
 # def configure(conf):
 #     conf.check_nonfatal(header_name='stdint.h', define_name='HAVE_STDINT_H')
 def build(bld):
-    module = bld.create_ns3_module('mipv6', ['core','internet','network', 'csma', 'point-to-point', 'applications', 'wifi', 'internet-apps'])
+    module = bld.create_ns3_module('mipv6', ['core','internet'])
     module.source = [
         'model/mipv6-option-header.cc',
         'model/mipv6-header.cc',
