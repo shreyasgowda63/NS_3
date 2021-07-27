@@ -322,22 +322,16 @@ MultiModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
                     }
                   else if (m_phasedArraySpectrumPropagationLoss)
                     {
-                      Ptr<const PhasedArrayModel> txPhasedArrayModel = nullptr;
-                      Ptr<const PhasedArrayModel> rxPhasedArrayModel = nullptr;
+                      // they cannot be combined, this case is not supported yet by any propagation model in ns-3
+                      NS_ASSERT_MSG (rxParams->txAntenna == nullptr && rxAntenna == nullptr, " Either AntennaModel or PhasedArrayModel can be used on a pair of TX/RX device");
 
-                      // Either AntennaModel or PhasedArrayModel can be used on a pair of TX/RX device,
-                      // they cannot be combined still, this case is not supported yet by any propagation model in ns-3
-                      if (rxParams->txAntenna == nullptr && rxAntenna == nullptr)
-                        {
-                          Ptr<PhasedArraySpectrumPhy> txPhasedArraySpectrumPhy = DynamicCast<PhasedArraySpectrumPhy> (txParams->txPhy);
-                          Ptr<PhasedArraySpectrumPhy> rxPhasedArraySpectrumPhy = DynamicCast<PhasedArraySpectrumPhy> (*rxPhyIterator);
-                          // try to obtain tx and rx phased array model
-                          if (txPhasedArraySpectrumPhy && rxPhasedArraySpectrumPhy)
-                            {
-                              txPhasedArrayModel = txPhasedArraySpectrumPhy->GetPhasedArrayModel ();
-                              rxPhasedArrayModel = rxPhasedArraySpectrumPhy->GetPhasedArrayModel ();
-                            }
-                        }
+                      Ptr<PhasedArraySpectrumPhy> txPhasedArraySpectrumPhy = DynamicCast<PhasedArraySpectrumPhy> (txParams->txPhy);
+                      Ptr<PhasedArraySpectrumPhy> rxPhasedArraySpectrumPhy = DynamicCast<PhasedArraySpectrumPhy> (*rxPhyIterator);
+
+                      NS_ASSERT_MSG (txPhasedArraySpectrumPhy && rxPhasedArraySpectrumPhy, "PhasedArraySpectrumPhy should be installed at both TX and RX in order to use PhasedArraySpectrumPropagationLoss.");
+                      Ptr<const PhasedArrayModel> txPhasedArrayModel = txPhasedArraySpectrumPhy->GetPhasedArrayModel ();
+                      Ptr<const PhasedArrayModel> rxPhasedArrayModel = rxPhasedArraySpectrumPhy->GetPhasedArrayModel ();
+
                       rxParams->psd = m_phasedArraySpectrumPropagationLoss->CalcRxPowerSpectralDensity (rxParams->psd, txMobility, receiverMobility, txPhasedArrayModel, rxPhasedArrayModel);
                      }
 
