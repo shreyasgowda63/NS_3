@@ -66,6 +66,14 @@ New user-visible features
 - (network) More arithmetic operators are provided for DataRate objects
 - (nix-vector) Nix-Vector routing supports multiple interface addresse and can print out routing paths.
 - (olsr) Add support for printing OLSR headers
+--(spectrum) Removed limitation from ThreeGppSpectrumPropagationLossModel which was supporting a maximum of one 
+PhasedArrayModel instance per device. Now, one PhasedArrayModel instance can be installed per PhasedArraySpectrumPhy. 
+--(spectrum) Added new class called PhasedArraySpectrumPhy which inherits SpectrumPhy and has a pointer to 
+PhasedAntennaArray instance. Spectrum module (in particular MultiModelSpectrumChannel) now supports any number of PhasedArraySpectrumPhy 
+instances per device. MultiModelSpectrumChannel is aware of this new type and when PhasedArraySpectrumPropagationLossModel is set to 
+the SpectrumChanel, then PhasedArrayModel instances for the transmitter and receiver are obtained from 
+corresponding PhasedArraySpectrumPhy instances and passed to PhasedArraySpectrumPropagationLossModel when 
+DoCalcRxPowerSpectralDensity is called.
 - (sixlowpan) Added support for stateful (i.e., context-based) RFC6282 compression.
 - (tcp) TCP CUBIC is now the default TCP congestion control, replacing NewReno.
 - (tcp) A BBRv1 congestion control model has been added.

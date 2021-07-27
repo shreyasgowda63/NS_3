@@ -320,6 +320,20 @@ MultiModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
                     {
                       rxParams->psd = m_spectrumPropagationLoss->CalcRxPowerSpectralDensity (rxParams->psd, txMobility, receiverMobility);
                     }
+                  else if (m_phasedArraySpectrumPropagationLoss)
+                    {
+                      // they cannot be combined, this case is not supported yet by any propagation model in ns-3
+                      NS_ASSERT_MSG (rxParams->txAntenna == nullptr && rxAntenna == nullptr, " Either AntennaModel or PhasedArrayModel can be used on a pair of TX/RX device");
+
+                      Ptr<PhasedArraySpectrumPhy> txPhasedArraySpectrumPhy = DynamicCast<PhasedArraySpectrumPhy> (txParams->txPhy);
+                      Ptr<PhasedArraySpectrumPhy> rxPhasedArraySpectrumPhy = DynamicCast<PhasedArraySpectrumPhy> (*rxPhyIterator);
+
+                      NS_ASSERT_MSG (txPhasedArraySpectrumPhy && rxPhasedArraySpectrumPhy, "PhasedArraySpectrumPhy should be installed at both TX and RX in order to use PhasedArraySpectrumPropagationLoss.");
+                      Ptr<const PhasedArrayModel> txPhasedArrayModel = txPhasedArraySpectrumPhy->GetPhasedArrayModel ();
+                      Ptr<const PhasedArrayModel> rxPhasedArrayModel = rxPhasedArraySpectrumPhy->GetPhasedArrayModel ();
+
+                      rxParams->psd = m_phasedArraySpectrumPropagationLoss->CalcRxPowerSpectralDensity (rxParams->psd, txMobility, receiverMobility, txPhasedArrayModel, rxPhasedArrayModel);
+                     }
 
                   if (m_propagationDelay)
                     {
