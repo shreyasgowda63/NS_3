@@ -249,17 +249,15 @@ TypeId Ipv6HomeAddressOption::GetTypeId ()
 
 Ipv6HomeAddressOption::Ipv6HomeAddressOption ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
 }
 
 Ipv6HomeAddressOption::~Ipv6HomeAddressOption ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
 }
 
 uint8_t Ipv6HomeAddressOption::GetOptionNumber () const
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 
   return OPT_NUMBER;
 }

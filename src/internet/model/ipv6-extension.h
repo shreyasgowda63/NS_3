@@ -673,6 +673,20 @@ public:
    */
   virtual uint8_t GetTypeRouting () const;
 
+  /**
+   * \brief Process method
+   * Called from Ipv4L3Protocol::Receive.
+   *
+   * \param packet the packet
+   * \param offset the offset of the extension to process
+   * \param ipv6Header the IPv6 header of packet received
+   * \param dst destination address of the packet received (i.e. us)
+   * \param nextHeader the next header
+   * \param stopProcessing true if the packet must not be further processed
+   * \param isDropped true if the packet must be dropped
+   * \param dropReason dropping reason
+   * \return the size processed
+   */
   virtual uint8_t Process (Ptr<Packet>& packet,
                            uint8_t offset,
                            Ipv6Header const& ipv6Header,

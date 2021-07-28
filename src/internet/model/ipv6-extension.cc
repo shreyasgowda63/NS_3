@@ -1108,17 +1108,17 @@ TypeId Ipv6ExtensionType2Routing::GetTypeId ()
 
 Ipv6ExtensionType2Routing::Ipv6ExtensionType2Routing ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 }
 
 Ipv6ExtensionType2Routing::~Ipv6ExtensionType2Routing ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 }
 
 uint8_t Ipv6ExtensionType2Routing::GetTypeRouting () const
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 
   return TYPE_ROUTING;
 }

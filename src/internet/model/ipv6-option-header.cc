@@ -415,7 +415,7 @@ Ipv6Address Ipv6HomeAddressOptionHeader::GetHomeAddress () const
 
 void Ipv6HomeAddressOptionHeader::Print (std::ostream &os) const
 {
-  os << "( type = " << (uint32_t)GetType () << "home_address" << (Ipv6Address)GetHomeAddress () << " )";
+  os << "( type = " << (uint32_t) GetType () << "home_address" << (Ipv6Address) GetHomeAddress () << " )";
 }
 
 uint32_t Ipv6HomeAddressOptionHeader::GetSerializedSize () const

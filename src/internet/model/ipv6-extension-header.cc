@@ -715,7 +715,8 @@ TypeId Ipv6ExtensionType2RoutingHeader::GetInstanceTypeId () const
 }
 
 Ipv6ExtensionType2RoutingHeader::Ipv6ExtensionType2RoutingHeader ()
-  : m_hoa (Ipv6Address::GetAny ())
+  : m_reserved (0),
+    m_hoa (Ipv6Address::GetAny ())
 {
   SetTypeRouting (2);
   SetSegmentsLeft (1);
@@ -736,8 +737,8 @@ Ipv6Address Ipv6ExtensionType2RoutingHeader::GetHomeAddress () const
 
 void Ipv6ExtensionType2RoutingHeader::Print (std::ostream &os) const
 {
-  os << "( nextHeader = " << (uint32_t)GetNextHeader () << " length = " << (uint32_t)GetLength ()
-     << " typeRouting = " << (uint32_t)GetTypeRouting () << " segmentsLeft = " << (uint32_t)GetSegmentsLeft () << "home_address" << (Ipv6Address)GetHomeAddress () << " )";
+  os << "( nextHeader = " << (uint32_t) GetNextHeader () << " length = " << (uint32_t) GetLength ()
+     << " typeRouting = " << (uint32_t) GetTypeRouting () << " segmentsLeft = " << (uint32_t) GetSegmentsLeft () << "home_address" << (Ipv6Address) GetHomeAddress () << " )";
 }
 
 uint32_t Ipv6ExtensionType2RoutingHeader::GetSerializedSize () const
@@ -777,12 +778,11 @@ uint32_t Ipv6ExtensionType2RoutingHeader::Deserialize (Buffer::Iterator start)
   m_length = i.ReadU8 ();
   SetTypeRouting (i.ReadU8 ());
   SetSegmentsLeft (i.ReadU8 ());
-  m_reserved = i.ReadU32 ();
+  i.ReadU32 ();
 
   uint8_t buf[16];
   i.Read (buf,16);
   SetHomeAddress (Ipv6Address::Deserialize (buf));
-
 
   return GetSerializedSize ();
 }

@@ -562,27 +562,24 @@ public:
   Ipv6Address GetHomeAddress () const;
 
   /**
-   * \brief Print some informations about the packet.
-   * \param os output stream
+   * \copydoc ns3::Header::Print
    * \return info about this packet
    */
   virtual void Print (std::ostream &os) const;
 
   /**
-   * \brief Get the serialized size of the packet.
+   * \copydoc ns3::Header::GetSerializedSize
    * \return size
    */
   virtual uint32_t GetSerializedSize () const;
 
   /**
-   * \brief Serialize the packet.
-   * \param start Buffer iterator
+   * \copydoc ns3::Header::Serialize
    */
   virtual void Serialize (Buffer::Iterator start) const;
 
   /**
-   * \brief Deserialize the packet.
-   * \param start Buffer iterator
+   * \copydoc ns3::Header::Deserialize
    * \return size of the packet
    */
   virtual uint32_t Deserialize (Buffer::Iterator start);
@@ -590,7 +587,7 @@ public:
 private:
 
   /**
-   * \brief reserved 2
+   * \brief The reserved value.
    */
   uint32_t m_reserved;
 
