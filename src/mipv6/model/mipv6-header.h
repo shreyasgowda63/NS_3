@@ -28,8 +28,10 @@
 
 namespace ns3 {
 
-//class Identifier;
-
+/**
+ * \class Mipv6Header
+ * \brief Ipv6 Mobility Header.
+ */
 class Mipv6Header : public Header
 {
 public:
@@ -149,18 +151,6 @@ public:
    * \param mh_type the mh type
    */
   void SetMhType (uint8_t mh_type);
-
-  /**
-   * \brief Get the reserved.
-   * \return reserved
-   */
-  uint8_t GetReserved () const;
-
-  /**
-   * \brief Set the reserved.
-   * \param reserved to set
-   */
-  void SetReserved (uint8_t reserved);
 
   /**
    * \brief Get the checksum.
@@ -308,7 +298,10 @@ private:
   uint32_t m_optionsOffset;
 };
 
-
+/**
+ * \class Ipv6MobilityBindingUpdateHeader
+ * \brief Ipv6 Mobility Binding Update header.
+ */
 class Ipv6MobilityBindingUpdateHeader : public Mipv6Header,
                                         public Mipv6OptionField
 {
@@ -394,21 +387,6 @@ public:
    * \param k value
    */
   void SetFlagK (bool k);
-
-
-
-  /**
-   * \brief Get the Reserved2 value.
-   * \return Reserved2 value
-   */
-
-  uint16_t GetReserved2 () const;
-
-  /**
-   * \brief Set the Reserved.
-   * \param reserved2 reserved value
-   */
-  void SetReserved2 (uint16_t reserved2);
 
   /**
    * \brief Get the Lifetime value.
@@ -542,19 +520,6 @@ public:
   void SetFlagK (bool k);
 
   /**
-   * \brief Get the P flag.
-   * \return P flag
-   */
-
-  uint8_t GetReserved2 () const;
-
-  /**
-   * \brief Set the reserved2 field.
-   * \param reserved2 the reserved2 value
-   */
-  void SetReserved2 (uint8_t reserved2);
-
-  /**
    * \brief Get the Sequence field.
    * \return sequence value
    */
@@ -635,7 +600,10 @@ private:
   uint16_t m_lifetime;
 };
 
-
+/**
+ * \class Ipv6HoTIHeader
+ * \brief Ipv6 Home Test Init header.
+ */
 class Ipv6HoTIHeader : public Mipv6Header
 {
 public:
@@ -661,17 +629,7 @@ public:
    * \brief Destructor.
    */
   virtual ~Ipv6HoTIHeader ();
-  /**
-   * \brief Get the Reserved2 field.
-   * \return reserved2 value
-   */
-  uint16_t GetReserved2 () const;
 
-  /**
-   * \brief Set the Reserved2 field.
-   * \param reserved2 reserved value
-   */
-  void SetReserved2 (uint16_t reserved2);
   /**
    * \brief Get the home init cookie.
    * \return home init cookie
@@ -721,6 +679,10 @@ private:
 
 };
 
+/**
+ * \class Ipv6CoTIHeader
+ * \brief Ipv6 Care Of Test Init header.
+ */
 class Ipv6CoTIHeader : public Mipv6Header
 {
 public:
@@ -745,16 +707,7 @@ public:
    * \brief Destructor.
    */
   virtual ~Ipv6CoTIHeader ();
-  /**
-   * \brief get reserved 2 field.
-   */
-  uint16_t GetReserved2 () const;
 
-  /**
-   * \brief Set the Reserved 2.
-   * \param reserved2 reserved value
-   */
-  void SetReserved2 (uint16_t reserved2);
   /**
    * \brief get care-of init cookie.
    * \return care-of init cookie
@@ -802,6 +755,10 @@ private:
 
 };
 
+/**
+ * \class Ipv6HoTHeader
+ * \brief Ipv6 Home Test header.
+ */
 class Ipv6HoTHeader : public Mipv6Header
 {
 public:
@@ -901,6 +858,10 @@ private:
 
 };
 
+/**
+ * \class Ipv6CoTHeader
+ * \brief Ipv6 Care Of Test header.
+ */
 class Ipv6CoTHeader : public Mipv6Header
 {
 public:
@@ -1001,6 +962,10 @@ private:
 
 };
 
+/**
+ * \class Ipv6BindingRefreshRequestHeader
+ * \brief Ipv6 Binding Refresh Request header.
+ */
 class Ipv6BindingRefreshRequestHeader : public Mipv6Header
 {
 public:
@@ -1026,17 +991,6 @@ public:
    * \brief Destructor.
    */
   virtual ~Ipv6BindingRefreshRequestHeader ();
-  /**
-   * \brief get reserved 2 field value.
-   * \return reserved2 field value
-   */
-  uint16_t GetReserved2 () const;
-
-  /**
-   * \brief Set the Reserved2 field value.
-   * \param reserved2 reserved2 value
-   */
-  void SetReserved2 (uint16_t reserved2);
 
   /**
    * \brief Print informations.
@@ -1071,6 +1025,10 @@ private:
 
 };
 
+/**
+ * \class Ipv6BindingErrorHeader
+ * \brief Ipv6 Mobility Binding Error header.
+ */
 class Ipv6BindingErrorHeader : public Mipv6Header
 {
 public:
@@ -1107,17 +1065,6 @@ public:
    */
   uint8_t GetStatus () const;
 
-  /**
-   * \brief Get the reserved2.
-   * \return reserved 2
-   */
-  uint8_t GetReserved2 () const;
-
-  /**
-   * \brief Set the Reserved2 field value.
-   * \param reserved2 reserved2 value
-   */
-  void SetReserved2 (uint8_t reserved2);
   /**
    * \brief Get the home address.
    * \return home address

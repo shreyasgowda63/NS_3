@@ -54,8 +54,8 @@ void Mipv6Option::SetNode (Ptr<Node> node)
 }
 
 Mipv6OptionBundle::Mipv6OptionBundle ()
-  : m_hoa ("0::0"),
-    m_coa ("0::0"),
+  : m_hoa (Ipv6Address::GetAny ()),
+    m_coa (Ipv6Address::GetAny ()),
     m_hi (0),
     m_coi (0),
     m_auth (0),
