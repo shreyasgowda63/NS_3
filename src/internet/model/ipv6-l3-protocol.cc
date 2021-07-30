@@ -1650,5 +1650,17 @@ bool Ipv6L3Protocol::ReachabilityHint (uint32_t ipInterfaceIndex, Ipv6Address ad
   return true;
 }
 
+void Ipv6L3Protocol::SetPrefixCallback (Callback<void, Ipv6Address, uint32_t> ip)
+{
+  NS_LOG_FUNCTION (this);
+  m_RouterPrefix = ip;
+}
+
+void Ipv6L3Protocol::SetNSCallback2 (Callback<bool, Ipv6Address> ns)
+{
+  NS_LOG_FUNCTION (this);
+  m_NSCallback2 = ns;
+}
+
 } /* namespace ns3 */
 
