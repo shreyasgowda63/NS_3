@@ -38,8 +38,8 @@ Ipv6Header::Ipv6Header ()
     m_nextHeader (0),
     m_hopLimit (0)
 {
-  SetSourceAddress (Ipv6Address ("::"));
-  SetDestinationAddress (Ipv6Address ("::"));
+  SetSource (Ipv6Address ("::"));
+  SetDestination (Ipv6Address ("::"));
 }
 
 void Ipv6Header::SetTrafficClass (uint8_t traffic)
