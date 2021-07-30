@@ -44,7 +44,7 @@ TypeId Mipv6Option::GetTypeId ()
 
 Mipv6Option::~Mipv6Option ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 }
 
 void Mipv6Option::SetNode (Ptr<Node> node)
@@ -149,7 +149,7 @@ TypeId Ipv6MobilityOptionPad1::GetTypeId ()
 
 Ipv6MobilityOptionPad1::~Ipv6MobilityOptionPad1 ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 }
 
 uint8_t Ipv6MobilityOptionPad1::GetMobilityOptionNumber () const
@@ -186,7 +186,7 @@ TypeId Ipv6MobilityOptionPadn::GetTypeId ()
 
 Ipv6MobilityOptionPadn::~Ipv6MobilityOptionPadn ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 }
 
 uint8_t Ipv6MobilityOptionPadn::GetMobilityOptionNumber () const
@@ -223,7 +223,7 @@ TypeId Ipv6MobilityOptionBindingRefreshAdvice::GetTypeId ()
 
 Ipv6MobilityOptionBindingRefreshAdvice::~Ipv6MobilityOptionBindingRefreshAdvice ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 }
 
 uint8_t Ipv6MobilityOptionBindingRefreshAdvice::GetMobilityOptionNumber () const
@@ -264,7 +264,7 @@ TypeId Ipv6MobilityOptionAlternateCareofAddress::GetTypeId ()
 
 Ipv6MobilityOptionAlternateCareofAddress::~Ipv6MobilityOptionAlternateCareofAddress ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 }
 
 uint8_t Ipv6MobilityOptionAlternateCareofAddress::GetMobilityOptionNumber () const
@@ -302,7 +302,7 @@ TypeId Ipv6MobilityOptionNonceIndices::GetTypeId ()
 
 Ipv6MobilityOptionNonceIndices::~Ipv6MobilityOptionNonceIndices ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 }
 
 uint8_t Ipv6MobilityOptionNonceIndices::GetMobilityOptionNumber () const
@@ -341,7 +341,7 @@ TypeId Ipv6MobilityOptionBindingAuthorizationData::GetTypeId ()
 
 Ipv6MobilityOptionBindingAuthorizationData::~Ipv6MobilityOptionBindingAuthorizationData ()
 {
-  NS_LOG_FUNCTION_NOARGS ();
+  NS_LOG_FUNCTION (this);
 }
 
 uint8_t Ipv6MobilityOptionBindingAuthorizationData::GetMobilityOptionNumber () const
