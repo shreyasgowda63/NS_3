@@ -11,7 +11,14 @@ def build(bld):
         'model/mipv6-option-header.cc',
         'model/mipv6-header.cc',
         'model/mipv6-option.cc',
-        'model/mipv6-option-demux.cc'
+        'model/mipv6-option-demux.cc',
+        'model/mipv6-demux.cc',
+        'model/mipv6-mobility.cc',
+        'model/mipv6-agent.cc',
+        'model/blist.cc',
+        'model/mipv6-mn.cc',
+        'model/bcache.cc',
+        'model/mipv6-ha.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('mipv6')
@@ -24,7 +31,14 @@ def build(bld):
         'model/mipv6-option-header.h',
         'model/mipv6-header.h',
         'model/mipv6-option.h',
-        'model/mipv6-option-demux.h'
+        'model/mipv6-option-demux.h',
+        'model/mipv6-demux.h',
+        'model/mipv6-mobility.h',
+        'model/mipv6-agent.h',
+        'model/blist.h',
+        'model/mipv6-mn.h',
+        'model/bcache.h',
+        'model/mipv6-ha.h',
         ]
 
     # bld.ns3_python_bindings()
