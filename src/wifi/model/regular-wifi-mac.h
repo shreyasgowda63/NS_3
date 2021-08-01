@@ -149,6 +149,20 @@ public:
    */
   HeCapabilities GetHeCapabilities (void) const;
 
+  /**
+   * Return the maximum AMPDU size of the current Access Class.
+   *
+   * \param ac access class index
+   * \return the maximum AMPDU size
+   */
+  uint32_t GetMaxAmpduSize (AcIndex ac) const;
+  /**
+   * Return the maximum AMSDU size of the current Access Class.
+   *
+   * \param ac access class index
+   * \return the maximum AMSDU size
+   */
+  uint16_t GetMaxAmsduSize (AcIndex ac) const;
 protected:
   void DoInitialize () override;
   void DoDispose () override;
