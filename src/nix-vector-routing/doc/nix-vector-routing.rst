@@ -47,15 +47,16 @@ as well as CSMA links.  It does not (yet) provide support for
 efficient adaptation to link failures.  It simply flushes all nix-vector 
 routing caches.
 
-NixVectorRouting bases its routing decisions on the nodes addresses,
-and it does **not** check that the nodes are in the proper subnets.
-In other terms, using NixVectorRouting you could have an (apparently)
-working network that violates every good practice in IP address assignments.
+NixVectorRouting bases its routing decisions on the nodes' interface
+addresses and does **not** check whether the nodes are in the proper
+subnets or the addresses have been appropriately assigned. In other
+terms, using Nix-Vector routing, it is possible to have a working
+network that violates every good practice in IP address assignments.
 
 In case of IPv6, Nix assumes the link-local addresses assigned are **unique**.
 When using the IPv6 stack, the link-local address allocation is unique by
 default over the entire topology. However, if the link-local addresses are
-assigned manually, this care should be taken of.
+assigned manually, the user must ensure uniqueness of link-local addresses.
 
 
 Usage
