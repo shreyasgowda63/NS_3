@@ -40,6 +40,7 @@ class Mipv6Agent : public Object
 public:
   /**
    * \brief Interface ID
+   * \return type ID
    */
   static TypeId GetTypeId ();
 
@@ -104,15 +105,6 @@ protected:
    * \return status
    */
   virtual uint8_t HandleBA (Ptr<Packet> packet, const Ipv6Address &src, const Ipv6Address &dst, Ptr<Ipv6Interface> interface);
-
-  /**
-   * \brief hanling packets if HoTI is received and calls the corresponding function inherited from this class.
-   * \param packet the packet
-   * \param src source address
-   * \param dst the destination address
-   * \param interface the interface where the packet is received
-   * \return status
-   */
 
   /**
    * \brief Dispose this object.

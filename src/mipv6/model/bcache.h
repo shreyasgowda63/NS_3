@@ -39,7 +39,8 @@ class BCache : public Object
 public:
 
   /**
-   * \brief typeid
+   * \brief Get the type identifier.
+   * \return type identifier
    */
   static TypeId GetTypeId ();
 
