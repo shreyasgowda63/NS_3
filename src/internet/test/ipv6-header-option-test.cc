@@ -30,13 +30,26 @@
 
 #include <string>
 
+#include "ns3/ipv6-address-helper.h"
+#include "ns3/simple-net-device.h"
+#include "ns3/simple-net-device-helper.h"
+#include "ns3/icmpv6-header.h"
+#include "ns3/socket.h"
+#include "ns3/socket-factory.h"
+#include "ns3/uinteger.h"
+#include "ns3/assert.h"
+#include "ns3/log.h"
+#include "ns3/ipv6-static-routing-helper.h"
+#include "ns3/ipv6-routing-helper.h"
+#include "ns3/node.h"
+#include "ns3/internet-stack-helper.h"
+
 using namespace ns3;
 
 /**
  * \brief Test class for Ipv6ExtensionType2RoutingHeader and Ipv6HomeAddressOptionHeader
  *
- * It tries to send one packet with Ipv6ExtensionType2RoutingHeader and Ipv6HomeAddressOptionHeader from one NetDevice to another, over a
- * PointToPointChannel.
+ * It tries to send one packet with Ipv6ExtensionType2RoutingHeader and Ipv6HomeAddressOptionHeader from one NetDevice to another and checks if proper headers and options are present
  */
 class Ipv6HeaderOptionTest : public TestCase
 {
@@ -57,11 +70,10 @@ private:
   /**
    * \brief Send one packet with Ipv6ExtensionType2RoutingHeader and Ipv6HomeAddressOptionHeader to the device specified
    *
-   * \param device NetDevice to send to.
-   * \param buffer Payload content of the packet.
-   * \param size Size of the payload.
+   * \param dev NetDevice to send to.
    */
-  void SendOnePacket (Ptr<PointToPointNetDevice> device, uint8_t const *buffer, uint32_t size);
+  void SendOnePacket (Ptr<NetDevice> dev);
+
   /**
    * \brief Callback function which sets the recvdPacket parameter and tests if correct home address present
    *
@@ -81,9 +93,10 @@ Ipv6HeaderOptionTest::Ipv6HeaderOptionTest ()
 }
 
 void
-Ipv6HeaderOptionTest::SendOnePacket (Ptr<PointToPointNetDevice> device, uint8_t const *buffer, uint32_t size)
+Ipv6HeaderOptionTest::SendOnePacket (Ptr<NetDevice> dev)
 {
-  Ptr<Packet> p = Create<Packet> (buffer, size);
+
+  Ptr<Packet> p = Create<Packet> ();
   Ipv6ExtensionType2RoutingHeader type2extn;
   type2extn.SetHomeAddress ("2001:db80::1");
   p->AddHeader (type2extn);
@@ -96,17 +109,18 @@ Ipv6HeaderOptionTest::SendOnePacket (Ptr<PointToPointNetDevice> device, uint8_t 
   destextnhdr.SetNextHeader (59);
   p->AddHeader (destextnhdr);
 
-  device->Send (p, device->GetBroadcast (), 0x800);
+  NS_TEST_EXPECT_MSG_EQ (dev->Send (p, dev->GetBroadcast(), 0x800), 1, "Sending failed");
 }
+
 
 bool
 Ipv6HeaderOptionTest::RxPacket (Ptr<NetDevice> dev, Ptr<const Packet> pkt, uint16_t mode, const Address &sender)
 {
-  m_recvdPacket = pkt;
+  m_recvdPacket = pkt->Copy ();
+  Ptr<Packet> p = pkt->Copy ();
 
-  Ptr <Packet> packet = pkt->Copy ();
   Ipv6ExtensionDestinationHeader dest;
-  packet->RemoveHeader (dest);
+  p->RemoveHeader (dest);
 
   Buffer buf;
 
@@ -118,8 +132,10 @@ Ipv6HeaderOptionTest::RxPacket (Ptr<NetDevice> dev, Ptr<const Packet> pkt, uint1
 
   NS_TEST_EXPECT_MSG_EQ (homopt.GetHomeAddress (), "2001:db80::1", "HomeAddressOption does not match");
 
+  NS_TEST_EXPECT_MSG_EQ (dest.GetNextHeader (), 59, "The received Packet does not have Type2Routing Header");
+
   Ipv6ExtensionType2RoutingHeader type2; // Fetching Type2 extension header which contains home address
-  packet->RemoveHeader (type2);
+  p->RemoveHeader (type2);
 
   NS_TEST_EXPECT_MSG_EQ (type2.GetHomeAddress (), "2001:db80::1", "Type2Routing hoa does not match");
 
@@ -130,31 +146,36 @@ Ipv6HeaderOptionTest::RxPacket (Ptr<NetDevice> dev, Ptr<const Packet> pkt, uint1
 void
 Ipv6HeaderOptionTest::DoRun (void)
 {
-  Ptr<Node> a = CreateObject<Node> ();
-  Ptr<Node> b = CreateObject<Node> ();
-  Ptr<PointToPointNetDevice> devA = CreateObject<PointToPointNetDevice> ();
-  Ptr<PointToPointNetDevice> devB = CreateObject<PointToPointNetDevice> ();
-  Ptr<PointToPointChannel> channel = CreateObject<PointToPointChannel> ();
 
-  devA->Attach (channel);
-  devA->SetAddress (Mac48Address::Allocate ());
-  devA->SetQueue (CreateObject<DropTailQueue<Packet> > ());
-  devB->Attach (channel);
-  devB->SetAddress (Mac48Address::Allocate ());
-  devB->SetQueue (CreateObject<DropTailQueue<Packet> > ());
+  NodeContainer n;
+  n.Create (2);
 
-  a->AddDevice (devA);
-  b->AddDevice (devB);
-  
-  devB->SetReceiveCallback (MakeCallback (&Ipv6HeaderOptionTest::RxPacket,
+  InternetStackHelper internet;
+  internet.Install (n);
+
+  // link the two nodes
+  Ptr<SimpleNetDevice> txDev = CreateObject<SimpleNetDevice> ();
+  Ptr<SimpleNetDevice> rxDev = CreateObject<SimpleNetDevice> ();
+  txDev->SetAddress (Mac48Address ("00:00:00:00:00:01"));
+  rxDev->SetAddress (Mac48Address ("00:00:00:00:00:02"));
+  n.Get (0)->AddDevice (txDev);
+  n.Get (1)->AddDevice (rxDev);
+  Ptr<SimpleChannel> channel1 = CreateObject<SimpleChannel> ();
+  rxDev->SetChannel (channel1);
+  txDev->SetChannel (channel1);
+  NetDeviceContainer d;
+  d.Add (txDev);
+  d.Add (rxDev);
+
+  rxDev->SetReceiveCallback (MakeCallback (&Ipv6HeaderOptionTest::RxPacket,
                                           this));
-  uint8_t txBuffer [] = "\"Can you tell me where my country lies?\" \\ said the unifaun to his true love's eyes. \\ \"It lies with me!\" cried the Queen of Maybe \\ - for her merchandise, he traded in his prize.";
-  size_t txBufferSize = sizeof(txBuffer);
-  
-  Simulator::Schedule (Seconds (1.0), &Ipv6HeaderOptionTest::SendOnePacket, this, devA, txBuffer, txBufferSize);
+
+  Simulator::Schedule (Seconds (1.0), &Ipv6HeaderOptionTest::SendOnePacket, this, txDev);
 
   Simulator::Run ();
-  
+
+  NS_TEST_EXPECT_MSG_EQ (m_recvdPacket->GetSize (), 48, " Unexpected packet size");
+
   Simulator::Destroy ();
 }
 
