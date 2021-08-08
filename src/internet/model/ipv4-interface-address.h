@@ -71,8 +71,9 @@ public:
    * \brief Set local address
    * \param local the address
    *
-   * \note This method corresponds to the linux
-   *       variable in_ifaddr.ifa_local
+   * \note Functionally identical to `Ipv4InterfaceAddress::SetAddress`.
+   *       The method corresponds to the linux variable in_ifaddr.ifa_local
+   *       `Ipv4InterfaceAddress::SetAddress` is to be preferred.
    */
   void SetLocal (Ipv4Address local);
 
@@ -80,8 +81,8 @@ public:
    * \brief Set local address
    * \param address the address
    *
-   * \note This method is similar to SetLocal () and
-   *       exists for the sake of consistency with IPv6
+   * \note Functially identical to `Ipv4InterfaceAddress::SetLocal`.
+   *       This function is consistent with `Ipv6InterfaceAddress::SetAddress`.
    */
   void SetAddress (Ipv4Address address);
 
@@ -89,8 +90,9 @@ public:
    * \brief Get the local address
    * \returns the local address
    *
-   * \note The method corresponds to the linux
-   *       variable in_ifaddr.ifa_local
+   * \note Functionally identical to `Ipv4InterfaceAddress::GetAddress`.
+   *       The method corresponds to the linux variable in_ifaddr.ifa_local
+   *       `Ipv4InterfaceAddress::GetAddress` is to be preferred.
    */
   Ipv4Address GetLocal (void) const;
 
@@ -98,8 +100,8 @@ public:
    * \brief Get the local address
    * \returns the local address
    *
-   * \note This method is similar to GetLocal () and
-   *       exists for the sake of consistency with IPv6
+   * \note Functially identical to `Ipv4InterfaceAddress::GetLocal`.
+   *       This function is consistent with `Ipv6InterfaceAddress::GetAddress`.
    */
   Ipv4Address GetAddress (void) const;
 
