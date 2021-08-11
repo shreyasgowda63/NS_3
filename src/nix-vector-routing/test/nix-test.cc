@@ -185,18 +185,18 @@ NixVectorRoutingTest::DoRun (void)
 
   NodeContainer allNodes = NodeContainer (nSrcnA, nBnC, nCnDst.Get (1));
 
-  std::ostringstream stringStream1_v4;
-  Ptr<OutputStreamWrapper> routingStream1_v4 = Create<OutputStreamWrapper> (&stringStream1_v4);
-  std::ostringstream stringStream1_v6;
-  Ptr<OutputStreamWrapper> routingStream1_v6 = Create<OutputStreamWrapper> (&stringStream1_v6);
-  std::ostringstream stringStream2_v4;
-  Ptr<OutputStreamWrapper> cacheStream_v4 = Create<OutputStreamWrapper> (&stringStream2_v4);
-  std::ostringstream stringStream2_v6;
-  Ptr<OutputStreamWrapper> cacheStream_v6 = Create<OutputStreamWrapper> (&stringStream2_v6);
-  std::ostringstream stringStream3_v4;
-  Ptr<OutputStreamWrapper> routingStream3_v4 = Create<OutputStreamWrapper> (&stringStream3_v4);
-  std::ostringstream stringStream3_v6;
-  Ptr<OutputStreamWrapper> routingStream3_v6 = Create<OutputStreamWrapper> (&stringStream3_v6);
+  std::ostringstream stringStream1v4;
+  Ptr<OutputStreamWrapper> routingStream1v4 = Create<OutputStreamWrapper> (&stringStream1v4);
+  std::ostringstream stringStream1v6;
+  Ptr<OutputStreamWrapper> routingStream1v6 = Create<OutputStreamWrapper> (&stringStream1v6);
+  std::ostringstream stringStream2v4;
+  Ptr<OutputStreamWrapper> cacheStreamv4 = Create<OutputStreamWrapper> (&stringStream2v4);
+  std::ostringstream stringStream2v6;
+  Ptr<OutputStreamWrapper> cacheStreamv6 = Create<OutputStreamWrapper> (&stringStream2v6);
+  std::ostringstream stringStream3v4;
+  Ptr<OutputStreamWrapper> routingStream3v4 = Create<OutputStreamWrapper> (&stringStream3v4);
+  std::ostringstream stringStream3v6;
+  Ptr<OutputStreamWrapper> routingStream3v6 = Create<OutputStreamWrapper> (&stringStream3v6);
 
   // NixHelper to install nix-vector routing on all nodes
   Ipv4NixVectorHelper ipv4NixRouting;
@@ -217,48 +217,48 @@ NixVectorRoutingTest::DoRun (void)
   dCdDst = devHelper.Install (nCnDst);
   dAdC = devHelper.Install (nAnC);
 
-  Ipv4AddressHelper aSrcaA_v4;
-  aSrcaA_v4.SetBase ("10.1.0.0", "255.255.255.0");
-  Ipv4AddressHelper aAaB_v4;
-  aAaB_v4.SetBase ("10.1.1.0", "255.255.255.0");
-  Ipv4AddressHelper aBaC_v4;
-  aBaC_v4.SetBase ("10.1.2.0", "255.255.255.0");
-  Ipv4AddressHelper aCaDst_v4;
-  aCaDst_v4.SetBase ("10.1.3.0", "255.255.255.0");
-  Ipv4AddressHelper aAaC_v4;
-  aAaC_v4.SetBase ("10.1.4.0", "255.255.255.0");
+  Ipv4AddressHelper aSrcaAv4;
+  aSrcaAv4.SetBase ("10.1.0.0", "255.255.255.0");
+  Ipv4AddressHelper aAaBv4;
+  aAaBv4.SetBase ("10.1.1.0", "255.255.255.0");
+  Ipv4AddressHelper aBaCv4;
+  aBaCv4.SetBase ("10.1.2.0", "255.255.255.0");
+  Ipv4AddressHelper aCaDstv4;
+  aCaDstv4.SetBase ("10.1.3.0", "255.255.255.0");
+  Ipv4AddressHelper aAaCv4;
+  aAaCv4.SetBase ("10.1.4.0", "255.255.255.0");
 
-  Ipv6AddressHelper aSrcaA_v6;
-  aSrcaA_v6.SetBase (Ipv6Address ("2001:0::"), Ipv6Prefix (64));
-  Ipv6AddressHelper aAaB_v6;
-  aAaB_v6.SetBase (Ipv6Address ("2001:1::"), Ipv6Prefix (64));
-  Ipv6AddressHelper aBaC_v6;
-  aBaC_v6.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));
-  Ipv6AddressHelper aCaDst_v6;
-  aCaDst_v6.SetBase (Ipv6Address ("2001:3::"), Ipv6Prefix (64));
-  Ipv6AddressHelper aAaC_v6;
-  aAaC_v6.SetBase (Ipv6Address ("2001:4::"), Ipv6Prefix (64));
+  Ipv6AddressHelper aSrcaAv6;
+  aSrcaAv6.SetBase (Ipv6Address ("2001:0::"), Ipv6Prefix (64));
+  Ipv6AddressHelper aAaBv6;
+  aAaBv6.SetBase (Ipv6Address ("2001:1::"), Ipv6Prefix (64));
+  Ipv6AddressHelper aBaCv6;
+  aBaCv6.SetBase (Ipv6Address ("2001:2::"), Ipv6Prefix (64));
+  Ipv6AddressHelper aCaDstv6;
+  aCaDstv6.SetBase (Ipv6Address ("2001:3::"), Ipv6Prefix (64));
+  Ipv6AddressHelper aAaCv6;
+  aAaCv6.SetBase (Ipv6Address ("2001:4::"), Ipv6Prefix (64));
 
-  aSrcaA_v4.Assign (dSrcdA);
-  aAaB_v4.Assign (dAdB);
-  aBaC_v4.Assign (dBdC);
-  Ipv4InterfaceContainer iCiDst_v4 = aCaDst_v4.Assign (dCdDst);
-  Ipv4InterfaceContainer iAiC_v4 = aAaC_v4.Assign (dAdC);
+  aSrcaAv4.Assign (dSrcdA);
+  aAaBv4.Assign (dAdB);
+  aBaCv4.Assign (dBdC);
+  Ipv4InterfaceContainer iCiDstv4 = aCaDstv4.Assign (dCdDst);
+  Ipv4InterfaceContainer iAiCv4 = aAaCv4.Assign (dAdC);
 
-  aSrcaA_v6.Assign (dSrcdA);
-  aAaB_v6.Assign (dAdB);
-  aBaC_v6.Assign (dBdC);
-  Ipv6InterfaceContainer iCiDst_v6 = aCaDst_v6.Assign (dCdDst);
-  Ipv6InterfaceContainer iAiC_v6 = aAaC_v6.Assign (dAdC);
+  aSrcaAv6.Assign (dSrcdA);
+  aAaBv6.Assign (dAdB);
+  aBaCv6.Assign (dBdC);
+  Ipv6InterfaceContainer iCiDstv6 = aCaDstv6.Assign (dCdDst);
+  Ipv6InterfaceContainer iAiCv6 = aAaCv6.Assign (dAdC);
 
   // Create the UDP sockets
   Ptr<SocketFactory> rxSocketFactory = nCnDst.Get (1)->GetObject<UdpSocketFactory> ();
-  Ptr<Socket> rxSocket_v4 = rxSocketFactory->CreateSocket ();
-  Ptr<Socket> rxSocket_v6 = rxSocketFactory->CreateSocket ();
-  NS_TEST_EXPECT_MSG_EQ (rxSocket_v4->Bind (InetSocketAddress (iCiDst_v4.GetAddress (1), 1234)), 0, "trivial");
-  NS_TEST_EXPECT_MSG_EQ (rxSocket_v6->Bind (Inet6SocketAddress (iCiDst_v6.GetAddress (1, 1), 1234)), 0, "trivial");
-  rxSocket_v4->SetRecvCallback (MakeCallback (&NixVectorRoutingTest::ReceivePkt, this));
-  rxSocket_v6->SetRecvCallback (MakeCallback (&NixVectorRoutingTest::ReceivePkt, this));
+  Ptr<Socket> rxSocketv4 = rxSocketFactory->CreateSocket ();
+  Ptr<Socket> rxSocketv6 = rxSocketFactory->CreateSocket ();
+  NS_TEST_EXPECT_MSG_EQ (rxSocketv4->Bind (InetSocketAddress (iCiDstv4.GetAddress (1), 1234)), 0, "trivial");
+  NS_TEST_EXPECT_MSG_EQ (rxSocketv6->Bind (Inet6SocketAddress (iCiDstv6.GetAddress (1, 1), 1234)), 0, "trivial");
+  rxSocketv4->SetRecvCallback (MakeCallback (&NixVectorRoutingTest::ReceivePkt, this));
+  rxSocketv6->SetRecvCallback (MakeCallback (&NixVectorRoutingTest::ReceivePkt, this));
 
   Ptr<SocketFactory> txSocketFactory = nSrcnA.Get (0)->GetObject<UdpSocketFactory> ();
   Ptr<Socket> txSocket = txSocketFactory->CreateSocket ();
@@ -267,8 +267,8 @@ NixVectorRoutingTest::DoRun (void)
   SendData (Seconds (2), txSocket, Ipv4Address ("10.1.3.2"));
   SendData (Seconds (2), txSocket, Ipv6Address ("2001:3::200:ff:fe00:8"));
 
-  ipv4NixRouting.PrintRoutingPathAt (Seconds (3), nSrcnA.Get (0), iCiDst_v4.GetAddress (1), routingStream1_v4);
-  ipv6NixRouting.PrintRoutingPathAt (Seconds (3), nSrcnA.Get (0), iCiDst_v6.GetAddress (1, 1), routingStream1_v6);
+  ipv4NixRouting.PrintRoutingPathAt (Seconds (3), nSrcnA.Get (0), iCiDstv4.GetAddress (1), routingStream1v4);
+  ipv6NixRouting.PrintRoutingPathAt (Seconds (3), nSrcnA.Get (0), iCiDstv6.GetAddress (1, 1), routingStream1v6);
 
   // Set the IPv4 nA interface on nA - nC channel down.
   Ptr<Ipv4> ipv4 = nAnC.Get (0)->GetObject<Ipv4> ();
@@ -280,14 +280,14 @@ NixVectorRoutingTest::DoRun (void)
   ifIndex = ipv6->GetInterfaceForDevice (dAdC.Get (0));
   Simulator::Schedule (Seconds (5), &Ipv6::SetDown, ipv6, ifIndex);
 
-  ipv4NixRouting.PrintRoutingTableAllAt (Seconds (7), cacheStream_v4);
-  ipv6NixRouting.PrintRoutingTableAllAt (Seconds (7), cacheStream_v6);
+  ipv4NixRouting.PrintRoutingTableAllAt (Seconds (7), cacheStreamv4);
+  ipv6NixRouting.PrintRoutingTableAllAt (Seconds (7), cacheStreamv6);
 
   SendData (Seconds (8), txSocket, Ipv4Address ("10.1.3.2"));
   SendData (Seconds (8), txSocket, Ipv6Address ("2001:3::200:ff:fe00:8"));
 
-  ipv4NixRouting.PrintRoutingPathAt (Seconds (9), nSrcnA.Get (0), iCiDst_v4.GetAddress (1), routingStream3_v4);
-  ipv6NixRouting.PrintRoutingPathAt (Seconds (9), nSrcnA.Get (0), iCiDst_v6.GetAddress (1, 1), routingStream3_v6);
+  ipv4NixRouting.PrintRoutingPathAt (Seconds (9), nSrcnA.Get (0), iCiDstv4.GetAddress (1), routingStream3v4);
+  ipv6NixRouting.PrintRoutingPathAt (Seconds (9), nSrcnA.Get (0), iCiDstv6.GetAddress (1, 1), routingStream3v6);
 
   // Set the IPv4 nC interface on nB - nC channel down.
   ipv4 = nBnC.Get (1)->GetObject<Ipv4> ();
@@ -313,35 +313,35 @@ NixVectorRoutingTest::DoRun (void)
   NS_TEST_EXPECT_MSG_EQ (m_receivedPacketSizes.size (), 4, "IPv4 and IPv6 Nix-Vector Routing should have received only 1 packet.");
 
   // Test the Path
-  const std::string path_nSrc_nA_nC_nDst_v4 = "Time: +3s, Nix Routing\n"
+  const std::string p_nSrcnAnCnDstv4 = "Time: +3s, Nix Routing\n"
                                               "Route Path: (Node 0 to Node 4, Nix Vector: 01001)\n"
                                               "10.1.0.1                 (Node 0)  ---->   10.1.0.2                 (Node 1)\n"
                                               "10.1.4.1                 (Node 1)  ---->   10.1.4.2                 (Node 3)\n"
                                               "10.1.3.1                 (Node 3)  ---->   10.1.3.2                 (Node 4)\n\n";
-  NS_TEST_EXPECT_MSG_EQ (stringStream1_v4.str (), path_nSrc_nA_nC_nDst_v4, "Routing Path is incorrect.");
+  NS_TEST_EXPECT_MSG_EQ (stringStream1v4.str (), p_nSrcnAnCnDstv4, "Routing Path is incorrect.");
 
-  const std::string path_nSrc_nA_nC_nDst_v6 = "Time: +3s, Nix Routing\n"
+  const std::string p_nSrcnAnCnDstv6 = "Time: +3s, Nix Routing\n"
                                               "Route Path: (Node 0 to Node 4, Nix Vector: 01001)\n"
                                               "2001::200:ff:fe00:1      (Node 0)  ---->   fe80::200:ff:fe00:2      (Node 1)\n"
                                               "fe80::200:ff:fe00:9      (Node 1)  ---->   fe80::200:ff:fe00:a      (Node 3)\n"
                                               "fe80::200:ff:fe00:7      (Node 3)  ---->   2001:3::200:ff:fe00:8    (Node 4)\n\n";
-  NS_TEST_EXPECT_MSG_EQ (stringStream1_v6.str (), path_nSrc_nA_nC_nDst_v6, "Routing Path is incorrect.");
+  NS_TEST_EXPECT_MSG_EQ (stringStream1v6.str (), p_nSrcnAnCnDstv6, "Routing Path is incorrect.");
 
-  const std::string path_nSrc_nA_nB_nC_nDst_v4 = "Time: +9s, Nix Routing\n"
+  const std::string p_nSrcnAnBnCnDstv4 = "Time: +9s, Nix Routing\n"
                                                  "Route Path: (Node 0 to Node 4, Nix Vector: 001101)\n"
                                                  "10.1.0.1                 (Node 0)  ---->   10.1.0.2                 (Node 1)\n"
                                                  "10.1.1.1                 (Node 1)  ---->   10.1.1.2                 (Node 2)\n"
                                                  "10.1.2.1                 (Node 2)  ---->   10.1.2.2                 (Node 3)\n"
                                                  "10.1.3.1                 (Node 3)  ---->   10.1.3.2                 (Node 4)\n\n";
-  NS_TEST_EXPECT_MSG_EQ (stringStream3_v4.str (), path_nSrc_nA_nB_nC_nDst_v4, "Routing Path is incorrect.");
+  NS_TEST_EXPECT_MSG_EQ (stringStream3v4.str (), p_nSrcnAnBnCnDstv4, "Routing Path is incorrect.");
 
-  const std::string path_nSrc_nA_nB_nC_nDst_v6 = "Time: +9s, Nix Routing\n"
+  const std::string p_nSrcnAnBnCnDstv6 = "Time: +9s, Nix Routing\n"
                                                  "Route Path: (Node 0 to Node 4, Nix Vector: 001101)\n"
                                                  "2001::200:ff:fe00:1      (Node 0)  ---->   fe80::200:ff:fe00:2      (Node 1)\n"
                                                  "fe80::200:ff:fe00:3      (Node 1)  ---->   fe80::200:ff:fe00:4      (Node 2)\n"
                                                  "fe80::200:ff:fe00:5      (Node 2)  ---->   fe80::200:ff:fe00:6      (Node 3)\n"
                                                  "fe80::200:ff:fe00:7      (Node 3)  ---->   2001:3::200:ff:fe00:8    (Node 4)\n\n";
-  NS_TEST_EXPECT_MSG_EQ (stringStream3_v6.str (), path_nSrc_nA_nB_nC_nDst_v6, "Routing Path is incorrect.");
+  NS_TEST_EXPECT_MSG_EQ (stringStream3v6.str (), p_nSrcnAnBnCnDstv6, "Routing Path is incorrect.");
 
   const std::string emptyCaches = "Node: 0, Time: +7s, Local time: +7s, Nix Routing\n"
                                   "NixCache:\n"
@@ -358,8 +358,8 @@ NixVectorRoutingTest::DoRun (void)
                                   "Node: 4, Time: +7s, Local time: +7s, Nix Routing\n"
                                   "NixCache:\n"
                                   "IpRouteCache:\n\n";
-  NS_TEST_EXPECT_MSG_EQ (stringStream2_v4.str (), emptyCaches, "The caches should have been empty.");
-  NS_TEST_EXPECT_MSG_EQ (stringStream2_v6.str (), emptyCaches, "The caches should have been empty.");
+  NS_TEST_EXPECT_MSG_EQ (stringStream2v4.str (), emptyCaches, "The caches should have been empty.");
+  NS_TEST_EXPECT_MSG_EQ (stringStream2v6.str (), emptyCaches, "The caches should have been empty.");
   
   Simulator::Destroy ();
 }
