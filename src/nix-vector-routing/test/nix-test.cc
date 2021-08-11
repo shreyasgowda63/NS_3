@@ -33,7 +33,7 @@
 #include "ns3/icmpv6-l4-protocol.h"
 #include "ns3/udp-l4-protocol.h"
 #include "ns3/simple-net-device-helper.h"
-#include "ns3/ipv4-nix-vector-helper.h"
+#include "ns3/nix-vector-helper.h"
 
 using namespace ns3;
 /**
