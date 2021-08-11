@@ -68,7 +68,7 @@ public:
 
   /**
    * Compute the squared length of the vector.
-   * \returns the vector length.
+   * \returns the vector length squared.
    */
   double GetLengthSquared () const;
 
