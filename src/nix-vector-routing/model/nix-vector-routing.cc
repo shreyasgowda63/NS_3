@@ -565,7 +565,7 @@ NixVectorRouting<T>::FindNetDeviceForNixIndex (Ptr<Node> node, uint32_t nodeInde
   uint32_t index = 0;
   uint32_t totalNeighbors = 0;
 
-  // scan through the net devices on the T node
+  // scan through the net devices on the parent node
   // and then look at the nodes adjacent to them
   for (uint32_t i = 0; i < numberOfDevices; i++)
     {
