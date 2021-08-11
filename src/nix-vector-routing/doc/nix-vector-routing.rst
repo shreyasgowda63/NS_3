@@ -30,12 +30,12 @@ known as a nix-vector.
 When a packet is generated at a node for transmission, the route is 
 calculated, and the nix-vector is built.
 
-How is the Nix-Vector calculated?
+**How is the Nix-Vector calculated?**
 The nix-vector stores an index for each hop along the path, which 
 corresponds to the neighbor-index.  This index is used to determine
 which net-device and gateway should be used.
 
-How does the routing take place?
+**How does the routing take place?**
 To route a packet, the nix-vector must be transmitted with the packet.
 At each hop, the current node extracts the appropriate neighbor-index
 from the nix-vector and transmits the packet through the corresponding
@@ -46,8 +46,8 @@ net-device. This continues until the packet reaches the destination.
    during the calculation of nix-vector. It is only based on the shortest
    path calculated according to BFS.
 
-How does Nix decide between two equally short path from source to
-destination?
+**How does Nix decide between two equally short path from source to
+destination?**
 It depends on how the topology is constructed i.e., the order in which the
 net-devices are added on a node and net-devices added on the channels
 associated with current node's net-devices. Please check the ``nix-simple.cc``
