@@ -115,30 +115,40 @@ There are examples which use both IPv4 and IPv6 networking.
 
       # By default IPv4 network is selected
       ./waf --run src/nix-vector-routing/examples/nix-simple
-      # Alternatively, setting ip as "v4" explicitly also works
-      ./waf --run "src/nix-vector-routing/examples/nix-simple --ip=v4"
 
    #. Using IPv6:
    .. code-block:: bash
 
       # Set ip as "v6" explicity
-      ./waf --run "src/nix-vector-routing/examples/nix-simple --ip=v6"
+      ./waf --run "src/nix-vector-routing/examples/nix-simple --useIPv6"
 
 * nms-p2p-nix.cc
 
 This example demonstrates the advantage of Nix-Vector routing as Nix
 performs source-based routing (BFS) to have faster routing.
 
+.. image:: figures/nms.png
+   :alt: NMS P2P Network Diagram
+
    #. Using IPv4:
    .. code-block:: bash
 
       # By default IPv4 network is selected
       ./waf --run src/nix-vector-routing/examples/nms-p2p-nix
-      # Alternatively, setting ip as "v4" explicitly also works
-      ./waf --run "src/nix-vector-routing/examples/nms-p2p-nix --ip=v4"
 
    #. Using IPv6:
    .. code-block:: bash
 
       # Set ip as "v6" explicity
-      ./waf --run "src/nix-vector-routing/examples/nms-p2p-nix --ip=v6"
+      ./waf --run "src/nix-vector-routing/examples/nms-p2p-nix --useIPv6"
+
+*  nix-simple-multi-address.cc
+
+This is an IPv4 example demonstrating multiple interface addresses. This
+example also shows how address assignment in between the simulation causes
+the all the route caches and Nix caches to flush.
+
+.. code-block:: bash
+
+   # By default IPv4 network is selected
+   ./waf --run src/nix-vector-routing/examples/nix-simple-multi-address
