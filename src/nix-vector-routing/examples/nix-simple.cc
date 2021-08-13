@@ -42,10 +42,30 @@
       /        \
     n0 -- n1 -- n2 -- n3
 
+    Using IPv4:
     n0 IP: 10.1.1.1, 10.1.4.1
     n1 IP: 10.1.1.2, 10.1.2.1
     n2 IP: 10.1.2.2, 10.1.3.1, 10.1.4.2
     n3 IP: 10.1.3.2
+
+    Using IPv6: (parenthesis mentions the link for node
+                 interface associated)
+    n0 IP: 2001:1::200:ff:fe00:1 (Global Unicast on n0 -- n1)
+           2001:4::200:ff:fe00:7 (Global Unicast on n0 -- n2)
+           fe80::200:ff:fe00:1 (Link-local on n0 -- n1)
+           fe80::200:ff:fe00:7 (Link-local on n0 -- n2)
+    n1 IP: 2001:1::200:ff:fe00:2 (Global Unicast on n0 -- n1)
+           2001:2::200:ff:fe00:3 (Global Unicast on n1 -- n2)
+           fe80::200:ff:fe00:2 (Link-local on n0 -- n1)
+           fe80::200:ff:fe00:3 (Link-local on n0 -- n2)
+    n2 IP: 2001:2::200:ff:fe00:4 (Global Unicast on n1 -- n2)
+           2001:3::200:ff:fe00:5 (Global Unicast on n2 -- n3)
+           2001:4::200:ff:fe00:8 (Global Unicast on n0 -- n2)
+           fe80::200:ff:fe00:4 (Link-local on n1 -- n2)
+           fe80::200:ff:fe00:5 (Link-local on n2 -- n3)
+           fe80::200:ff:fe00:8 (Link-local on n0 -- n2)
+    n3 IP: 2001:3::200:ff:fe00:6 (Global Unicast on n2 -- n3)
+           fe80::200:ff:fe00:6 (Link-local on n2 -- n3)
    \endverbatim
  *
  * Route Path for considered cases:
@@ -59,7 +79,7 @@
  *   It goes from n1 -> n1
  * .
  * \verbatim
-   Expected Routing Path output for above
+   Expected IPv4 Routing Path output for above
    cases (in the output stream):
    Time: +3s, Nix Routing
    Route Path: (Node 0 to Node 3, Nix Vector: 101)
@@ -112,6 +132,59 @@
    Ipv4RouteCache:
    Destination     Gateway         Source            OutputDevice
    10.1.4.1        10.1.3.1        10.1.3.2          1
+   \endverbatim
+ *
+ * \verbatim
+   Expected IPv6 Routing Path output for above
+   cases (in the output stream):
+   Time: +3s, Nix Routing
+   Route Path: (Node 0 to Node 3, Nix Vector: 101)
+   2001:4::200:ff:fe00:7    (Node 0)  ---->   fe80::200:ff:fe00:8      (Node 2)
+   fe80::200:ff:fe00:5      (Node 2)  ---->   2001:3::200:ff:fe00:6    (Node 3)
+
+   Time: +5s, Nix Routing
+   Route Path: (Node 1 to Node 3, Nix Vector: 101)
+   2001:2::200:ff:fe00:3    (Node 1)  ---->   fe80::200:ff:fe00:4      (Node 2)
+   fe80::200:ff:fe00:5      (Node 2)  ---->   2001:3::200:ff:fe00:6    (Node 3)
+
+   Time: +6s, Nix Routing
+   Route Path: (Node 2 to Node 0, Nix Vector: 10)
+   2001:4::200:ff:fe00:8    (Node 2)  ---->   2001:1::200:ff:fe00:1    (Node 0)
+
+   Time: +7s, Nix Routing
+   Route Path: (Node 1 to Node 1, Nix Vector: )
+   2001:1::200:ff:fe00:2    (Node 1)  ---->   2001:1::200:ff:fe00:2    (Node 1)
+
+   Node: 0, Time: +8s, Local time: +8s, Nix Routing
+   NixCache:
+   Destination                   NixVector
+   2001:3::200:ff:fe00:6         101
+   IpRouteCache:
+   Destination                   Gateway                       Source                        OutputDevice
+   2001:3::200:ff:fe00:6         fe80::200:ff:fe00:8           2001:4::200:ff:fe00:7           1
+
+   Node: 1, Time: +8s, Local time: +8s, Nix Routing
+   NixCache:
+   Destination                   NixVector
+   2001:3::200:ff:fe00:6         101
+   IpRouteCache:
+
+   Node: 2, Time: +8s, Local time: +8s, Nix Routing
+   NixCache:
+   Destination                   NixVector
+   2001:1::200:ff:fe00:1         10
+   IpRouteCache:
+   Destination                   Gateway                       Source                        OutputDevice
+   2001:3::200:ff:fe00:6         fe80::200:ff:fe00:6           fe80::200:ff:fe00:5             1
+   2001:4::200:ff:fe00:7         fe80::200:ff:fe00:7           fe80::200:ff:fe00:8             2
+
+   Node: 3, Time: +8s, Local time: +8s, Nix Routing
+   NixCache:
+   Destination                   NixVector
+   2001:4::200:ff:fe00:7         010
+   IpRouteCache:
+   Destination                   Gateway                       Source                        OutputDevice
+   2001:4::200:ff:fe00:7         fe80::200:ff:fe00:5           2001:3::200:ff:fe00:6           0
    \endverbatim
  */
 
