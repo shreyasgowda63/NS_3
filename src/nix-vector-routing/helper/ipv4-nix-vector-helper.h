@@ -20,4 +20,5 @@
  *
  * Authors: Ameya Deshpande <ameyanrd@outlook.com>
  */
+#pragma GCC warning "Deprecated header, please use nix-vector-helper.h instead"
 #include "nix-vector-helper.h"
