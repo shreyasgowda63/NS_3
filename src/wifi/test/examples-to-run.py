@@ -472,6 +472,8 @@ cpp_examples = [
     ("wifi-bianchi --validate --phyMode=OfdmRate6Mbps --nMinStas=5 --nMaxStas=10 --duration=15", "True", "False"), # TODO: run from N=5 to N=50 for 400s (TAKES_FOREVER) when issue #170 is fixed
     ("wifi-bianchi --validate --phyMode=OfdmRate54Mbps --nMinStas=5 --nMaxStas=10 --duration=5 --infra", "False", "False"), # TODO: run from N=5 to N=50 for 100s (TAKES_FOREVER) when issue #170 is fixed
     ("wifi-bianchi --validate --phyMode=OfdmRate6Mbps --nMinStas=5 --nMaxStas=10 --duration=20 --infra", "False", "False"), # TODO: run from N=5 to N=50 for 600s (TAKES_FOREVER) when issue #170 is fixed
+    ("clipping-yans-static --width=32", "True", "True"),
+    ("clipping-yans-mobile --width=32", "True", "True"),
 ]
 
 # A list of Python examples to run in order to ensure that they remain

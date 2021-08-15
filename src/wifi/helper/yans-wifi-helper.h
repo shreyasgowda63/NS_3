@@ -140,10 +140,20 @@ public:
   */
   int64_t AssignStreams (Ptr<YansWifiChannel> c, int64_t stream);
 
+  /** Enable clipping
+   * Must be set before calling 'Create'. Will create clipping versions of the
+   * channel if enabled */
+  void EnableClipping() { m_enableClipping = true;}
+  /// Disable Clipping
+  void DisableClipping() { m_enableClipping = false;}
+  /** Check if clipping is enabled
+   * \return whether or not clipping is enabled */
+  bool IsClippingEnabled() { return m_enableClipping;}
 
 private:
   std::vector<ObjectFactory> m_propagationLoss; ///< vector of propagation loss models
   ObjectFactory m_propagationDelay; ///< propagation delay model
+  bool m_enableClipping = false; ///< enable clipping?
 };
 
 
