@@ -1,0 +1,29 @@
+## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+def build(bld):
+    position_aware = bld.create_ns3_module('position-aware', ['mobility'])
+    position_aware.source = [
+        'model/position-aware.cc',
+        'helper/position-aware-helper.cc',
+        ]
+
+#    mobility_test = bld.create_ns3_module_test_library('position-aware')
+#    mobility_test.source = [
+#        'test/mobility-test-suite.cc',
+#        'test/mobility-trace-test-suite.cc',
+#        'test/ns2-mobility-helper-test-suite.cc',
+#        'test/steady-state-random-waypoint-mobility-model-test.cc',
+#        'test/waypoint-mobility-model-test.cc',
+#        ]
+
+    headers = bld(features='ns3header')
+    headers.module = 'position-aware'
+    headers.source = [
+        'model/position-aware.h',
+        'helper/position-aware-helper.h',
+        ]
+
+    if (bld.env['ENABLE_EXAMPLES']):
+        bld.recurse('examples')
+
+#    bld.ns3_python_bindings()

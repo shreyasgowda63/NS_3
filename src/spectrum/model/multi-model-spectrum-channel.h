@@ -128,6 +128,16 @@ public:
 protected:
   void DoDispose ();
 
+  /** Useful method for child classes to preprocess txparams at start of tx while
+   * reusing parent startTx
+   * \param txParams The params that are being used
+   * \return False aborts transmit */
+  virtual bool ProcessTxParams (Ptr<SpectrumSignalParameters> txParams);
+  /** Useful method for child classes to filter phys while reusing parent send
+   * \param phy The phy to check
+   * \return True if valid, false cancels reception scheduling */
+  virtual bool CheckValidPhy (Ptr<SpectrumPhy> phy);
+
 private:
   /**
    * This method checks if m_rxSpectrumModelInfoMap contains an entry
