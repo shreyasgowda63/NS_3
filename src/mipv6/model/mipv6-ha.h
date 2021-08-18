@@ -50,6 +50,12 @@ public:
   virtual ~Mipv6Ha ();
 
   /**
+   * \brief all the home link  addresses are returned.
+   * \returns home address list 
+   */
+  std::list<Ipv6Address> HomeAgentAddressList ();
+
+  /**
    * \brief perform DAD on behalf of MN for its HoA in home network.
    * \param target target address
    * \param interface interface in which HoA is defined 
@@ -60,9 +66,10 @@ public:
    * \brief performing binding process after DAD completion.
    * \param interface interface at which BU is received
    * \param ba formed BA
+   * \param src source address for the BA
    * \param homeaddr home address of the MN
    */
-  void FunctionDadTimeoutForOffLinkAddress (Ptr<Ipv6Interface> interface, Ptr<Packet> ba, Ipv6Address homeaddr);
+  void FunctionDadTimeoutForOffLinkAddress (Ptr<Ipv6Interface> interface, Ptr<Packet> ba, Ipv6Address src, Ipv6Address homeaddr);
 
   /**
    * \brief Indication from the ICMPv6L4Protocol, if any corresponding NA is received and DAD fails.
@@ -108,6 +115,15 @@ protected:
   virtual void NotifyNewAggregate ();
 
   /**
+   * \brief build BA in response of BU
+   * \param bu the BU packet
+   * \param hoa the home address
+   * \param status the staus of BU reception
+   * \return a ba packet
+   */
+  Ptr<Packet> BuildBA (Ipv6MobilityBindingUpdateHeader bu, Ipv6Address hoa, uint8_t status, uint16_t lifetime, bool extn);
+
+  /**
    * \brief handle BU
    * \param packet the BU packet
    * \param src the source address
@@ -116,6 +132,20 @@ protected:
    * \return status
    */
   virtual uint8_t HandleBU (Ptr<Packet> packet, const Ipv6Address &src, const Ipv6Address &dst, Ptr<Ipv6Interface> interface);
+
+  /**
+   * \brief setup tunnel for a bcache entry
+   * \param bce BCache entry
+   * \return status whether tunnel is set up or not
+   */
+  bool SetupTunnelAndRouting (BCache::Entry *bce);
+
+  /**
+   * \brief clear tunnel for a bcache entry
+   * \param bce BCache entry
+   * \return status whether tunnel is cleared or not
+   */
+  bool ClearTunnelAndRouting (BCache::Entry *bce);
 
 private:
   /**
@@ -132,4 +162,3 @@ private:
 } /* namespace ns3 */
 
 #endif /* MIPV6_HA_H */
-

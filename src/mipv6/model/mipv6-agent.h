@@ -77,12 +77,21 @@ public:
   virtual uint8_t Receive (Ptr<Packet> packet, const Ipv6Address &src, const Ipv6Address &dst, Ptr<Ipv6Interface> interface);
 
   /**
-   * \brief send a mobility handling packets (BU/BA).
+   * \brief send a mobility handling packets (BU).
    * \param packet the packet
    * \param dst the destination address
    * \param ttl time to live field 
    */
   void SendMessage (Ptr<Packet> packet, Ipv6Address dst, uint32_t ttl);
+
+  /**
+   * \brief send a mobility handling packets (BA).
+   * \param packet the packet
+   * \param src the source address
+   * \param dst the destination address
+   * \param ttl time to live field 
+   */
+  void SendReply (Ptr<Packet> packet, Ipv6Address src, Ipv6Address dst, uint32_t ttl);
 
 protected:
 

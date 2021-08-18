@@ -28,6 +28,11 @@
 #include "ns3/traced-value.h"
 #include "ns3/uinteger.h"
 #include "ns3/ipv6-interface.h"
+#include "mipv6-header.h"
+#include "ns3/ipv6-l3-protocol.h"
+#include "ns3/ipv6-header.h"
+#include "ns3/ipv6-routing-protocol.h"
+#include "ns3/ipv6-route.h"
 
 using namespace std;
 
@@ -90,7 +95,32 @@ uint8_t Mipv6Agent::Receive (Ptr<Packet> packet, const Ipv6Address &src, const I
 {
   NS_LOG_FUNCTION ( this << packet << src << dst << interface );
 
-  // TODO: define what to do on receiving mobility message
+  m_agentPromiscRxTrace (packet);
+
+  Ptr<Packet> p = packet->Copy ();
+
+  Mipv6Header mh;
+
+  p->PeekHeader (mh);
+
+  uint8_t mhType = mh.GetMhType ();
+
+  if (mhType == Mipv6Header::IPV6_MOBILITY_BINDING_UPDATE)
+    {
+      NS_LOG_FUNCTION (this << packet << src << "BU" << "recieve BU");
+      m_agentRxTrace (packet);
+      HandleBU (packet, src, dst, interface);
+    }
+  else if (mhType == Mipv6Header::IPV6_MOBILITY_BINDING_ACKNOWLEDGEMENT)
+    {
+      NS_LOG_FUNCTION (this << packet << src << "receive BACK");
+      m_agentRxTrace (packet);
+      HandleBA (packet, src, dst, interface);
+    }
+  else
+    {
+      NS_LOG_ERROR ("Unknown MHType (" << (uint32_t)mhType << ")");
+    }
 
   return 0;
 }
@@ -98,7 +128,77 @@ uint8_t Mipv6Agent::Receive (Ptr<Packet> packet, const Ipv6Address &src, const I
 void Mipv6Agent::SendMessage (Ptr<Packet> packet, Ipv6Address dst, uint32_t ttl)
 {
   NS_LOG_FUNCTION (this << packet << dst << (uint32_t)ttl << "send");
-  // TODO: define how mobility messages to be sent
+
+  Ptr<Ipv6L3Protocol> ipv6 = m_node->GetObject<Ipv6L3Protocol> ();
+
+  NS_ASSERT (ipv6 != 0 && ipv6->GetRoutingProtocol () != 0);
+
+  Ipv6Header header;
+  SocketIpTtlTag tag;
+  Socket::SocketErrno err;
+  Ptr<Ipv6Route> route;
+  Ptr<NetDevice> oif (0); // specify non-zero if bound to a source address
+
+  header.SetDestinationAddress (dst);
+  route = ipv6->GetRoutingProtocol ()->RouteOutput (packet, header, oif, err);
+
+  if (route != 0)
+    {
+      tag.SetTtl (ttl);
+      packet->AddPacketTag (tag);
+      Ipv6Address src = route->GetSource ();
+      NS_LOG_FUNCTION ("Lura1" << src << "    " << dst);
+
+      m_agentTxTrace (packet);
+      ipv6->Send (packet, src, dst, 135, route);
+      NS_LOG_LOGIC ("route found and send hmipv6 message");
+    }
+  else
+    {
+      NS_LOG_LOGIC ("no route.. drop mipv6 message");
+    }
+}
+
+void Mipv6Agent::SendReply (Ptr<Packet> packet, Ipv6Address src, Ipv6Address dst, uint32_t ttl)
+{
+  NS_LOG_FUNCTION (this << packet << src << dst << (uint32_t)ttl);
+
+  Ptr<Ipv6L3Protocol> ipv6 = m_node->GetObject<Ipv6L3Protocol> ();
+
+  NS_ASSERT (ipv6 != 0 && ipv6->GetRoutingProtocol () != 0);
+
+  Ipv6Header header;
+  SocketIpTtlTag tag;
+  Socket::SocketErrno err;
+  Ptr<Ipv6Route> route;
+  Ptr<NetDevice> oif (0); // specify non-zero if bound to a source address
+
+  if(!src.IsLinkLocal ()) {
+    NS_LOG_INFO ("Not LinkLocal source");
+    header.SetSourceAddress (src);
+  }
+  header.SetDestinationAddress (dst);
+  route = ipv6->GetRoutingProtocol ()->RouteOutput (packet, header, oif, err);
+
+  if (route != 0)
+    {
+      tag.SetTtl (ttl);
+      packet->AddPacketTag (tag);
+
+      if(src.IsLinkLocal ()) {
+        NS_LOG_INFO (" LinkLocal source use " << route->GetSource ());
+        src = route->GetSource ();
+      }
+      
+      NS_LOG_INFO ("Lura1" << src << "    " << dst);
+
+      ipv6->Send (packet, src, dst, 135, route);
+      NS_LOG_LOGIC ("route found and send hmipv6 message");
+    }
+  else
+    {
+      NS_LOG_LOGIC ("no route.. drop mipv6 message");
+    }
 }
 
 uint8_t Mipv6Agent::HandleBU (Ptr<Packet> packet, const Ipv6Address &src, const Ipv6Address &dst, Ptr<Ipv6Interface> interface)

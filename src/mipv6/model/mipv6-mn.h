@@ -46,6 +46,29 @@ public:
   Mipv6Mn (std::list<Ipv6Address> haalist);
 
   virtual ~Mipv6Mn ();
+  
+  /**
+   * \brief get home BU seq. no.
+   * \return seq no.
+   */
+  uint16_t GetHomeBUSequence ();
+
+  /**
+   * \brief build Home BU
+   * \return home BU packet
+   */
+  Ptr<Packet> BuildHomeBU (bool flagA, bool flagH, bool flagL, bool flagK, uint16_t lifetime, bool extn);
+  
+  /**
+   * \brief setup tunnel to transmit packet to CN
+   * \return status
+   */
+  bool SetupTunnelAndRouting ();
+
+  /**
+   * \brief clear tunnel
+   */
+  void ClearTunnelAndRouting ();
 
   /**
    * \brief set route optimization field
@@ -92,6 +115,8 @@ public:
    * \return CoA
    */
   Ipv6Address GetCoA ();
+
+  bool SetHomeLink (Ipv6Address prefix, Ipv6Prefix mask);
 
   /**
    * TracedCallback signature for BA reception event.
@@ -155,6 +180,21 @@ private:
    * \brief route optimization flag.
    */
   bool m_roflag;
+
+  /**
+   * \brief route optimization flag.
+   */
+  bool m_homelink;
+
+  /**
+   * \brief default router (i.e. connected AR) address .
+   */
+  Ipv6Address m_defaultrouteraddress;
+
+  /**
+   * \brief current interface index of the MN.
+   */
+  uint32_t m_IfIndex;
 
   /**
    * \brief Callback to trace RX (reception) ba packets.
