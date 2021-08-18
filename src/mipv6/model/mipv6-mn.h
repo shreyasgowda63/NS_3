@@ -55,6 +55,12 @@ public:
 
   /**
    * \brief build Home BU
+   * \param flagA set A flag
+   * \param flagH set H flag
+   * \param flagL set L flag
+   * \param flagK set K flag
+   * \param lifetime set lifetime for BU
+   * \param extn add extension or not
    * \return home BU packet
    */
   Ptr<Packet> BuildHomeBU (bool flagA, bool flagH, bool flagL, bool flagK, uint16_t lifetime, bool extn);
@@ -116,6 +122,12 @@ public:
    */
   Ipv6Address GetCoA ();
 
+  /**
+   * \brief Set if node is in homelink
+   * \param prefix the address to check with
+   * \param mask the prefix to check with
+   * \return CoA
+   */
   bool SetHomeLink (Ipv6Address prefix, Ipv6Prefix mask);
 
   /**
@@ -141,6 +153,9 @@ public:
     (Ptr<Packet> packet, Ipv6Address src, Ipv6Address dst);
 
 protected:
+  /**
+   * \brief This method is called by AddAgregate and completes the aggregation
+   */
   virtual void NotifyNewAggregate ();
 
   /**

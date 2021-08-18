@@ -112,6 +112,9 @@ public:
     (Ptr<Packet> packet, Ipv6Address src, Ipv6Address dst, Ptr<Ipv6Interface> interface);
 
 protected:
+  /**
+   * \brief This method is called by AddAgregate and completes the aggregation
+   */
   virtual void NotifyNewAggregate ();
 
   /**
@@ -119,6 +122,8 @@ protected:
    * \param bu the BU packet
    * \param hoa the home address
    * \param status the staus of BU reception
+   * \param lifetime lifetime for the binding update
+   * \param extn add extension or not
    * \return a ba packet
    */
   Ptr<Packet> BuildBA (Ipv6MobilityBindingUpdateHeader bu, Ipv6Address hoa, uint8_t status, uint16_t lifetime, bool extn);

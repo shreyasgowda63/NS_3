@@ -437,7 +437,7 @@ bool Mipv6Mn::SetHomeLink (Ipv6Address prefix, Ipv6Prefix mask) {
 
   m_homelink = false;
 
-  if (mask.IsMatch(prefix, GetHomeAddress ()))
+  if (mask.IsMatch (prefix, GetHomeAddress ()))
     {
       NS_LOG_INFO (this << " prefix matched, in home link");
       m_homelink = true;

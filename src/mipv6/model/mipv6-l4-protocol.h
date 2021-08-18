@@ -38,6 +38,7 @@ class Mipv6L4Protocol : public IpL4Protocol
 public:
   /**
    * \brief Interface ID
+   * \return the object TypeId
    */
   static TypeId GetTypeId ();
 

@@ -155,11 +155,13 @@ public:
 
   /**
    * \brief not used.
+   * \return home reachable time
    */
   Time GetHomeReachableTime () const;
 
   /**
    * \brief not used.
+   * \param tm home reachable time
    */
   void SetHomeReachableTime (Time tm);
 
