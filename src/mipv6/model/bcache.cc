@@ -75,7 +75,6 @@ BCache::Entry *BCache::LookupSHoa (Ipv6Address shoa)
   for (BCacheI i = m_bCache.begin (); i != m_bCache.end (); i++)
     {
       Ipv6Address te = (*i).second->GetSolicitedHoA ();
-      ((*i).second->GetSolicitedHoA()).Print(std::clog);
       if ((*i).second->GetSolicitedHoA () == (shoa))
         {
           NS_LOG_INFO ("returning true");

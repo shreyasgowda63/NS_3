@@ -720,8 +720,8 @@ void Icmpv6L4Protocol::HandleNA (Ptr<Packet> packet, Ipv6Address const &src, Ipv
       
       else
         {
-         if (!m_DADCallback.IsNull())
-           m_DADCallback(target); // Check if DAD with address in Cache and handle accordingly.
+         if (!m_DADCallback.IsNull ())
+           m_DADCallback (target); // Check if DAD with address in Cache and handle accordingly.
         }
 
       /* we have not initiated any communication with the target so... discard the NA */
