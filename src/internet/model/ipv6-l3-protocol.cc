@@ -313,6 +313,10 @@ void Ipv6L3Protocol::AddAutoconfiguredAddress (uint32_t interface, Ipv6Address n
   if (!defaultRouter.IsAny())
     {
       GetRoutingProtocol ()->NotifyAddRoute (Ipv6Address::GetAny (), Ipv6Prefix ((uint8_t)0), defaultRouter, interface, network);
+      if (!m_RouterPrefix.IsNull ())
+        {
+          m_RouterPrefix (defaultRouter, interface); // set the router and interface in the MN
+        }
     }
 
   bool onLink = false;
@@ -1036,6 +1040,12 @@ void Ipv6L3Protocol::Receive (Ptr<NetDevice> device, Ptr<const Packet> p, uint16
         {
           LocalDeliver (packet, hdr, interface);
           // do not return, the packet could be handled by a routing protocol
+        }
+
+      else if(!m_NSCallback2.IsNull () && m_NSCallback2 (hdr.GetDestinationAddress ()))
+        {
+          LocalDeliver (packet, hdr, interface); // packet is for MN, HA should handle it
+          return;        
         }
     }
 

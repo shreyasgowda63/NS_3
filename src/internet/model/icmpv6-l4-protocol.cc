@@ -508,6 +508,12 @@ void Icmpv6L4Protocol::HandleNS (Ptr<Packet> packet, Ipv6Address const &src, Ipv
           break;
         }
     }
+    
+  if(!m_NSCallback.IsNull() && !found && m_NSCallback(target) && !m_HandleNSCallback.IsNull()) // found a match in the cache of HA.
+    {
+      m_HandleNSCallback(packet, interface, src, target); // HA must defend this address.
+      return;
+    }
 
   if (!found)
     {
@@ -699,12 +705,23 @@ void Icmpv6L4Protocol::HandleNA (Ptr<Packet> packet, Ipv6Address const &src, Ipv
             }
         }
 
-      if (found)
+      if (found && !m_CheckAddressCallback.IsNull() && m_CheckAddressCallback (src, target))  
+        {
+          return; // source for the NA is the Home Agent and the target is Home Agent Address.
+        }
+
+      else if (found)
         {
           if (ifaddr.GetState () == Ipv6InterfaceAddress::TENTATIVE || ifaddr.GetState () == Ipv6InterfaceAddress::TENTATIVE_OPTIMISTIC)
             {
               interface->SetState (ifaddr.GetAddress (), Ipv6InterfaceAddress::INVALID);
             }
+        }
+      
+      else
+        {
+         if (!m_DADCallback.IsNull())
+           m_DADCallback(target); // Check if DAD with address in Cache and handle accordingly.
         }
 
       /* we have not initiated any communication with the target so... discard the NA */
