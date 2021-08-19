@@ -47,6 +47,7 @@
 #include "ns3/radvd-interface.h"
 #include "ns3/radvd-prefix.h"
 #include "ns3/ssid.h"
+#include "ns3/log.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -55,7 +56,20 @@
 
 using namespace ns3;
 
-void SendNA (Ptr<Node> node, Ptr<NetDevice> dev1, Ptr<NetDevice> dev2) {
+NS_LOG_COMPONENT_DEFINE ("mipv6-na-test");
+
+class Mipv6NATest
+{
+  public: 
+    void SendNA (Ptr<Node> node, Ptr<NetDevice> dev1, Ptr<NetDevice> dev2);
+    void TestReceived (Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface);
+    bool sentNA;
+    bool receivedNA;
+  private:
+
+};
+
+void Mipv6NATest::SendNA (Ptr<Node> node, Ptr<NetDevice> dev1, Ptr<NetDevice> dev2) {
   Ptr<Icmpv6L4Protocol> icmp = node->GetObject<Icmpv6L4Protocol>();
   Ptr<Ipv6L3Protocol> ipv6 = node->GetObject<Ipv6L3Protocol>();
 
@@ -67,8 +81,34 @@ void SendNA (Ptr<Node> node, Ptr<NetDevice> dev1, Ptr<NetDevice> dev2) {
 
   Ptr<Packet> pkt = p.first;
   pkt->AddHeader (p.second);
-  dev1->Send (pkt, replyMacAddress, Ipv6L3Protocol::PROT_NUMBER);
+  sentNA = dev1->Send (pkt, replyMacAddress, Ipv6L3Protocol::PROT_NUMBER);
 
+  if (!sentNA) {
+    NS_LOG_ERROR ("Failed to send NA");
+  }
+}
+
+void Mipv6NATest::TestReceived (Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface)
+{
+  Ipv6Header ipv6Header;
+  Ptr<Packet> pkt = p->Copy ();
+  pkt->Print (std::cout);
+  pkt->RemoveHeader (ipv6Header);
+
+  if (ipv6Header.GetNextHeader () == Icmpv6L4Protocol::PROT_NUMBER) {
+    Icmpv6Header icmpHeader;
+    pkt->PeekHeader (icmpHeader);
+
+    if (icmpHeader.GetType () == Icmpv6Header::ICMPV6_ND_NEIGHBOR_ADVERTISEMENT) {
+      if (!sentNA)
+        NS_LOG_ERROR ("Neighbour Advertisement was not sent");
+      Icmpv6NA naHeader;
+      pkt->RemoveHeader (naHeader);
+      if (!(naHeader.GetIpv6Target () == "3001:db80::200:ff:fe00:3"))
+        NS_LOG_ERROR ("Target address does not match");
+      receivedNA = true;
+    }
+  }
 }
 
 int main (int argc, char** argv)
@@ -76,6 +116,8 @@ int main (int argc, char** argv)
   bool verbose = false;
 
   CommandLine cmd (__FILE__);
+  cmd.AddValue ("verbose", "turn on log components", verbose);
+
   cmd.Parse (argc, argv);
   
   if (verbose)
@@ -187,11 +229,30 @@ int main (int argc, char** argv)
   Mipv6MnHelper mnhelper (hahelper.GetHomeAgentAddressList (),false); 
   mnhelper.Install (mn.Get (0));
 
-  Simulator::Schedule (Seconds(5), &SendNA, dn.Get (0), dHdC.Get (1), dHdC.Get (0));
+  Mipv6NATest mi;
+
+  Simulator::Schedule (Seconds(5), &Mipv6NATest::SendNA, &mi, dn.Get (0), dHdC.Get (1), dHdC.Get (0));
+
+  Ptr<Ipv6L3Protocol> ipL3 = ha.Get (0)->GetObject<Ipv6L3Protocol> ();
+  ipL3->TraceConnectWithoutContext ("Rx", MakeCallback(&Mipv6NATest::TestReceived, &mi));
   
   Simulator::Stop (Seconds (100.0));
   Simulator::Run ();
+
+  if (!mi.sentNA) {
+    NS_LOG_ERROR ("NS packet was not sent");
+  }
+  else if (!mi.receivedNA) {
+    NS_LOG_ERROR ("NA packet was not received");
+  }
+  else {
+    Ptr<Mipv6Ha> agent = ha.Get (0)->GetObject<Mipv6Ha> ();
+    if (agent) {
+      if (agent->IsAddress ("3001:db80::200:ff:fe00:3")) {
+        NS_LOG_ERROR ("Duplicate address not handled properly");
+      }
+    }
+  }
+
   Simulator::Destroy ();
-
 }
-

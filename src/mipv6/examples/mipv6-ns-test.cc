@@ -39,6 +39,7 @@
 #include "ns3/radvd-interface.h"
 #include "ns3/radvd-prefix.h"
 #include "ns3/ssid.h"
+#include "ns3/log.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -55,16 +56,54 @@ using namespace ns3;
 //
 // dn tries to configure an address on its interface with same address as home agent
 // home agent defends the address and sends a Neighbour Advertisement in response
-// (advertisement not received in dn since no address matches in dn with destination of NA)
+// (advertisement not processed in dn since no address matches in dn with destination of NA)
 
-void ConfigureWithAddress (Ptr<Node> node, Ptr<NetDevice> dev1, Address dAddr, Ipv6Address addr) {
-  Ipv6AddressHelper ipv6;
+NS_LOG_COMPONENT_DEFINE ("mipv6-ns-test");
 
-  dev1->SetAddress (dAddr);
-  ipv6.SetBase (Ipv6Address ("3001:db80::"), Ipv6Prefix (64));
-  Ipv6InterfaceContainer iC = ipv6.Assign (NetDeviceContainer (dev1));
-  iC.SetForwarding (0, true);
-  iC.SetDefaultRouteInAllNodes (0);
+class Mipv6NSTest
+{
+  public: 
+    void SendNS (Ptr<Node> node, Ptr<NetDevice> dev1, Ptr<NetDevice> dev2);
+    void TestReceived (Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface);
+    bool sentNS;
+    bool receivedNA;
+  private:
+
+};
+
+void Mipv6NSTest::SendNS (Ptr<Node> node, Ptr<NetDevice> dev1, Ptr<NetDevice> dev2) {
+  Ptr<Icmpv6L4Protocol> icmp = node->GetObject<Icmpv6L4Protocol>();
+  Ptr<Ipv6L3Protocol> ipv6 = node->GetObject<Ipv6L3Protocol>();
+
+  Address hardwareAddress = dev1->GetAddress ();
+
+  icmp->SendNS ("fe80::200:ff:fe00:2", "fe80::200:ff:fe00:1", "3001:db80::200:ff:fe00:3", hardwareAddress);
+
+  sentNS = true;
+
+}
+
+void Mipv6NSTest::TestReceived (Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface)
+{
+  Ipv6Header ipv6Header;
+  Ptr<Packet> pkt = p->Copy ();
+  pkt->Print (std::cout);
+  pkt->RemoveHeader (ipv6Header);
+
+  if (ipv6Header.GetNextHeader () == Icmpv6L4Protocol::PROT_NUMBER) {
+    Icmpv6Header icmpHeader;
+    pkt->PeekHeader (icmpHeader);
+
+    if (icmpHeader.GetType () == Icmpv6Header::ICMPV6_ND_NEIGHBOR_ADVERTISEMENT) {
+      if (!sentNS)
+        NS_LOG_ERROR ("Neighbour Solicitation was not sent");
+      Icmpv6NA naHeader;
+      pkt->RemoveHeader (naHeader);
+      if (!(naHeader.GetIpv6Target () == "3001:db80::200:ff:fe00:3"))
+        NS_LOG_ERROR ("Target address does not match");
+      receivedNA = true;
+    }
+  }
 }
 
 int main (int argc, char** argv)
@@ -89,11 +128,11 @@ int main (int argc, char** argv)
   NodeContainer mn (nodes.Get(0));
   NodeContainer ar (nodes.Get(1));
   NodeContainer ha (nodes.Get(2));
-  NodeContainer cn (nodes.Get(3));
+  NodeContainer dn (nodes.Get(3));
 
-  NodeContainer hacn;
-  hacn.Add (ha);
-  hacn.Add(cn);
+  NodeContainer hadn;
+  hadn.Add (ha);
+  hadn.Add(dn);
 
   NodeContainer arha;
   arha.Add (ar);
@@ -112,7 +151,7 @@ int main (int argc, char** argv)
   positionAlloc->Add (Vector (0.0, 0.0, 0.0));  //mn
   positionAlloc->Add (Vector (20.0, 0.0, 0.0)); //ar
   positionAlloc->Add (Vector (40.0, 0.0, 0.0));  //ha
-  positionAlloc->Add (Vector (60.0, 0.0, 0.0));  //cn
+  positionAlloc->Add (Vector (60.0, 0.0, 0.0));  //dn
 
   mobility.SetPositionAllocator (positionAlloc);
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
@@ -121,7 +160,7 @@ int main (int argc, char** argv)
   PointToPointHelper p2p;
   p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate (5000000)));
   p2p.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
-  NetDeviceContainer dHdC = p2p.Install (hacn);
+  NetDeviceContainer dHdC = p2p.Install (hadn);
   NetDeviceContainer dMdA = p2p.Install (mnar);
   NetDeviceContainer dA (dMdA.Get (1));
   NetDeviceContainer dM (dMdA.Get (0));
@@ -175,7 +214,7 @@ int main (int argc, char** argv)
   ipv692 = ha.Get (0)->GetObject<Ipv6> ();
   rttop = routingHelper.GetStaticRouting (ipv692);
   rttop->AddNetworkRouteTo(Ipv6Address ("1001:db80::"), Ipv6Prefix (64), Ipv6Address("3001:db80::200:ff:fe00:5"), 1, 0);
-  ipv692 = cn.Get (0)->GetObject<Ipv6> ();
+  ipv692 = dn.Get (0)->GetObject<Ipv6> ();
   rttop = routingHelper.GetStaticRouting (ipv692);
   rttop->AddNetworkRouteTo (Ipv6Address ("1001:db80::"), Ipv6Prefix (64), Ipv6Address ("2001:db80::200:ff:fe00:1"), 1, 0);
 
@@ -185,11 +224,23 @@ int main (int argc, char** argv)
   Mipv6MnHelper mnhelper (hahelper.GetHomeAgentAddressList (),false); 
   mnhelper.Install (mn.Get (0));
 
-  Simulator::Schedule (Seconds(5), &ConfigureWithAddress, cn.Get (0), dHdC.Get (1), dM.Get(0)->GetAddress (), "3001:db80::200:ff:fe00:3");
+  Mipv6NSTest mi;
+
+  Simulator::Schedule (Seconds(5), &Mipv6NSTest::SendNS, &mi, dn.Get (0), dHdC.Get (1), dHdC.Get (0));
+
+  Ptr<Ipv6L3Protocol> ipL3 = dn.Get (0)->GetObject<Ipv6L3Protocol> ();
+  ipL3->TraceConnectWithoutContext ("Rx", MakeCallback(&Mipv6NSTest::TestReceived, &mi));
   
   Simulator::Stop (Seconds (100.0));
   Simulator::Run ();
-  Simulator::Destroy ();
 
+  if (!mi.sentNS) {
+    NS_LOG_ERROR ("NS packet was not sent");
+  }
+  else if (!mi.receivedNA) {
+    NS_LOG_ERROR ("NA packet was not received");
+  }
+
+  Simulator::Destroy ();
 }
 
