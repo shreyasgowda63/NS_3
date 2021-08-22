@@ -27,6 +27,7 @@
 
 #include "ns3/application.h"
 #include "ns3/traced-value.h"
+#include "ns3/net-device-state.h"
 #include "dhcp-header.h"
 #include <list>
 
@@ -112,6 +113,24 @@ private:
    * \brief Stops the DHCP client application
    */
   virtual void StopApplication (void);
+
+   /**
+   * \brief Handles changes in netdevice state when NetDeviceState implementation is used.
+   * 
+   * \param adminState New administartive state of the device.
+   * \param operationalState New operational state of the device.
+   */
+  void ProcessDeviceStateChange (bool adminState, NetDeviceState::OperationalState operationalState);
+
+  /**
+   * \brief Handles link state UP change.
+   */
+  void LinkUpHandler (void);
+
+  /**
+   * \brief Handles link state DOWN change.
+   */
+  void LinkDownHandler (void);
 
   /**
    * \brief Handles changes in LinkState
