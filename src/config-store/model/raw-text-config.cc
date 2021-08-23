@@ -73,8 +73,32 @@ private:
     }
     virtual void DoVisitAttribute (std::string name, std::string defaultValue) {
       NS_LOG_DEBUG ("Saving " << m_typeId << "::" << name);
-      *m_os << "default " << m_typeId << "::" << name << " \"" << defaultValue << "\"" << std::endl;
-    }
+      TypeId tid = TypeId::LookupByName (m_typeId);
+      struct TypeId::AttributeInformation info;
+      bool supported = true;
+      for (std::size_t i = 0; i < tid.GetAttributeN (); i++)
+        {
+          struct TypeId::AttributeInformation tmp = tid.GetAttribute (i);
+          if (tmp.name == name)
+            {
+              if (tmp.supportLevel != TypeId::SupportLevel::SUPPORTED)
+                {
+                  supported = false;
+                }
+              break;
+            }
+        }
+      if (supported == false)
+        {
+          NS_LOG_UNCOND ("Global attribute " << m_typeId << "::" << name
+                                             << " was not saved because it is OBSOLETE or DEPRECATED");
+        }
+      else
+        {
+          *m_os << "default " << m_typeId << "::" << name << " \"" << defaultValue << "\""
+                << std::endl;
+        }
+      }
     std::string m_typeId;
     std::ostream *m_os;
   };
@@ -106,9 +130,33 @@ public:
 private:
     virtual void DoVisitAttribute (Ptr<Object> object, std::string name) {
       StringValue str;
-      object->GetAttribute (name, str);
-      NS_LOG_DEBUG ("Saving " << GetCurrentPath ());
-      *m_os << "value " << GetCurrentPath () << " \"" << str.Get () << "\"" << std::endl;
+
+      bool supported = true;
+      TypeId tid = object->GetInstanceTypeId ();
+
+      for (std::size_t i = 0; i < tid.GetAttributeN (); i++)
+        {
+          struct TypeId::AttributeInformation tmp = tid.GetAttribute (i);
+          if (tmp.name == name)
+            {
+              if (tmp.supportLevel != TypeId::SupportLevel::SUPPORTED)
+                {
+                  supported = false;
+                }
+              break;
+            }
+        }
+      if (supported == false)
+        {
+          NS_LOG_UNCOND ("Attribute " << GetCurrentPath () 
+                                      << " was not saved because it is OBSOLETE or DEPRECATED");
+        }
+      else
+        {
+          object->GetAttribute (name, str);
+          NS_LOG_DEBUG ("Saving " << GetCurrentPath ());
+          *m_os << "value " << GetCurrentPath () << " \"" << str.Get () << "\"" << std::endl;
+        }
     }
     std::ostream *m_os;
   };

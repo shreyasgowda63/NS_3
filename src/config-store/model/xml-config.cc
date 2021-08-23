@@ -111,6 +111,29 @@ private:
       m_typeid = name;
     }
     virtual void DoVisitAttribute (std::string name, std::string defaultValue) {
+      TypeId tid = TypeId::LookupByName (m_typeid);
+      struct TypeId::AttributeInformation info;
+      bool supported = true;
+      for (std::size_t i = 0; i < tid.GetAttributeN (); i++)
+        {
+          struct TypeId::AttributeInformation tmp = tid.GetAttribute (i);
+          if (tmp.name == name)
+            {
+              if (tmp.supportLevel != TypeId::SupportLevel::SUPPORTED)
+                {
+                  supported = false;
+                }
+              break;
+            }
+        }
+      if (supported == false)
+        {
+          NS_LOG_UNCOND ("Global attribute "
+                         << m_typeid << "::" << name
+                         << " was not saved because it is OBSOLETE or DEPRECATED");
+          return;
+        }
+
       int rc;
       rc = xmlTextWriterStartElement (m_writer, BAD_CAST "default");
       if (rc < 0)
@@ -153,6 +176,27 @@ public:
       : m_writer (writer) {}
 private:
     virtual void DoVisitAttribute (Ptr<Object> object, std::string name) {
+      TypeId tid = object->GetInstanceTypeId ();
+      struct TypeId::AttributeInformation info;
+      bool supported = true;
+      for (std::size_t i = 0; i < tid.GetAttributeN (); i++)
+        {
+          struct TypeId::AttributeInformation tmp = tid.GetAttribute (i);
+          if (tmp.name == name)
+            {
+              if (tmp.supportLevel != TypeId::SupportLevel::SUPPORTED)
+                {
+                  supported = false;
+                }
+              break;
+            }
+        }
+      if (supported == false)
+        {
+          NS_LOG_UNCOND ("Attribute " << GetCurrentPath ()
+                                      << " was not saved because it is OBSOLETE or DEPRECATED");
+          return;
+        }
       StringValue str;
       object->GetAttribute (name, str);
       int rc;
