@@ -128,9 +128,9 @@ private:
         }
       if (supported == false)
         {
-          NS_LOG_UNCOND ("Global attribute "
-                         << m_typeid << "::" << name
-                         << " was not saved because it is OBSOLETE or DEPRECATED");
+          NS_LOG_WARN ("Global attribute "
+                       << m_typeid << "::" << name
+                       << " was not saved because it is OBSOLETE or DEPRECATED");
           return;
         }
 
@@ -193,8 +193,8 @@ private:
         }
       if (supported == false)
         {
-          NS_LOG_UNCOND ("Attribute " << GetCurrentPath ()
-                                      << " was not saved because it is OBSOLETE or DEPRECATED");
+          NS_LOG_WARN ("Attribute " << GetCurrentPath ()
+                                    << " was not saved because it is OBSOLETE or DEPRECATED");
           return;
         }
       StringValue str;
