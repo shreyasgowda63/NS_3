@@ -73,16 +73,13 @@ PopulateArpCache ()
 int
 main (int argc, char *argv[])
 {
-  Config::SetDefault ("ns3::OnOffApplication::PacketSize", UintegerValue (1000.0));
-
-  Config::SetDefault ("ns3::OnOffApplication::DataRate", StringValue ("10kb/s"));
 
   CommandLine cmd;
   uint32_t numNodesRows = 3;
   cmd.AddValue ("numNodesRows", "Number of nodes", numNodesRows);
 
   uint32_t numRows = 3;
-  cmd.AddValue ("numRows", "Number of rows in grid", numRows)
+  cmd.AddValue ("numRows", "Number of rows in grid", numRows);
 
   uint32_t distance = 20;
   cmd.AddValue ("distance", "Distance between nodes in a row and column", distance);
@@ -92,11 +89,20 @@ main (int argc, char *argv[])
 
   cmd.Parse (argc,argv);
 
+  Config::SetDefault ("ns3::OnOffApplication::PacketSize", UintegerValue (125.0));
+
+  Config::SetDefault ("ns3::OnOffApplication::DataRate", StringValue ("1kb/s"));
+
+  Config::SetDefault ("ns3::Ipv4L3Protocol::EnableDuplicatePacketDetection", BooleanValue (true));
+  Config::SetDefault ("ns3::Ipv4L3Protocol::DuplicateExpire", TimeValue (Seconds (endTime)));
+
+  std::cout << "Running Ipv4 Duplicate detection test" << std::endl;
+
   uint32_t start_time = 1.0;
 
   NodeContainer wifi_nodes;
   uint32_t numNodes = numNodesRows * numRows;
-  wifi_nodes.create (numNodes);
+  wifi_nodes.Create (numNodes);
 
   WifiHelper wifi;
   wifi.SetStandard (WIFI_STANDARD_80211b);
@@ -105,7 +111,7 @@ main (int argc, char *argv[])
                                 "ControlMode", StringValue ("DsssRate1Mbps"),
                                 "RtsCtsThreshold", UintegerValue (500), // Not really necessary since multicast
                                 "NonUnicastMode", StringValue ("DsssRate1Mbps"),
-                                "DefaultTxPowerLevel", UintegerValue (1))
+                                "DefaultTxPowerLevel", UintegerValue (1));
 
   YansWifiPhyHelper phy;
   phy.SetErrorRateModel ("ns3::TableBasedErrorRateModel");
@@ -121,6 +127,11 @@ main (int argc, char *argv[])
 
   phy.SetChannel (channel);
 
+  WifiMacHelper mac;
+  mac.SetType ("ns3::AdhocWifiMac",
+         "QosSupported", BooleanValue (false), // Default, just exposing attributes.
+         "CtsToSelfSupported", BooleanValue (false)); // Default, just exposing attributes.
+
   NetDeviceContainer n_devices;
   n_devices = wifi.Install (phy, mac, wifi_nodes);
 
@@ -133,24 +144,23 @@ main (int argc, char *argv[])
 
   Ipv4StaticRoutingHelper ipv4RoutingHelper;
   // Set up routes
-  Ipv4Address group_dest_addr = "224.0.0.1"
-    for (uint32_t i = 0; i < interfaces.GetN (); i++)
-    {
-      // Ptr<WifiNetDevice> wifi_dev = DynamicCast<WifiNetDevice> (wifi_nodes.Get(i)->GetDevice ());
-      std::pair<Ptr<Ipv4>, uint32_t> ipv4_if = interfaces.Get (i);
-      Ptr<Ipv4StaticRouting> static_router = ipv4RoutingHelper.GetStaticRouting (ipv4_if.first);
-      ipv4RoutingHelper.SetDefaultMulticastRoute (wifi_nodes.Get (i), n_devices.Get (i));
-      // Host route for multicast
-      // route for host
-      // Use host routing entry according to note in Ipv4StaticRouting::RouteOutput:
-      //// Note:  Multicast routes for outbound packets are stored in the
-      //// normal unicast table.  An implication of this is that it is not
-      //// possible to source multicast datagrams on multiple interfaces.
-      //// This is a well-known property of sockets implementation on
-      //// many Unix variants.
-      //// So, we just log it and fall through to LookupStatic ()
-      static_router->AddHostRouteTo (group_dest_addr, ipv4_if.second, 0);
-    }
+  Ipv4Address group_dest_addr ("225.1.2.1");
+  for (uint32_t i = 0; i < interfaces.GetN (); i++)
+  {
+    std::pair<Ptr<Ipv4>, uint32_t> ipv4_if = interfaces.Get (i);
+    Ptr<Ipv4StaticRouting> static_router = ipv4RoutingHelper.GetStaticRouting (ipv4_if.first);
+    ipv4RoutingHelper.SetDefaultMulticastRoute (wifi_nodes.Get (i), n_devices.Get (i));
+    // Host route for multicast
+    // route for host
+    // Use host routing entry according to note in Ipv4StaticRouting::RouteOutput:
+    //// Note:  Multicast routes for outbound packets are stored in the
+    //// normal unicast table.  An implication of this is that it is not
+    //// possible to source multicast datagrams on multiple interfaces.
+    //// This is a well-known property of sockets implementation on
+    //// many Unix variants.
+    //// So, we just log it and fall through to LookupStatic ()
+    static_router->AddHostRouteTo (group_dest_addr, ipv4_if.second, 0);
+  }
 
   // Flood across whole network
   for (uint32_t i = 0; i < wifi_nodes.GetN (); i++)
@@ -179,7 +189,7 @@ main (int argc, char *argv[])
 
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
 
-  mobility.Install (nodes);
+  mobility.Install (wifi_nodes);
 
   std::map<Ipv4Address, std::vector<uint32_t> > mcast_groups;
 
@@ -194,7 +204,7 @@ main (int argc, char *argv[])
       else
         {
           mcast_groups[group_dest_addr].push_back (i);
-          sinkNodes.Add (wifi_nodes.Get (i))
+          sinkNodes.Add (wifi_nodes.Get (i));
         }
     }
 
@@ -204,7 +214,7 @@ main (int argc, char *argv[])
 
   ApplicationContainer sinkApps, srcApps;
 
-  OnOffHelper onOffHelper ("ns3::UdpSocketFactory", Address (InetSocketAddress (group_dest_addr, port)))
+  OnOffHelper onOffHelper ("ns3::UdpSocketFactory", Address (InetSocketAddress (group_dest_addr, port)));
   onOffHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   onOffHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
   srcApps.Add (onOffHelper.Install (wifi_nodes.Get (0)));
