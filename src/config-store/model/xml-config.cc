@@ -112,25 +112,21 @@ private:
     }
     virtual void DoVisitAttribute (std::string name, std::string defaultValue) {
       TypeId tid = TypeId::LookupByName (m_typeid);
-      struct TypeId::AttributeInformation info;
-      bool supported = true;
+      ns3::TypeId::SupportLevel supportLevel = TypeId::SupportLevel::SUPPORTED;
       for (std::size_t i = 0; i < tid.GetAttributeN (); i++)
         {
           struct TypeId::AttributeInformation tmp = tid.GetAttribute (i);
           if (tmp.name == name)
             {
-              if (tmp.supportLevel != TypeId::SupportLevel::SUPPORTED)
-                {
-                  supported = false;
-                }
+              supportLevel = tmp.supportLevel;
               break;
             }
         }
-      if (supported == false)
+      if (supportLevel == TypeId::SupportLevel::OBSOLETE)
         {
           NS_LOG_WARN ("Global attribute "
                        << m_typeid << "::" << name
-                       << " was not saved because it is OBSOLETE or DEPRECATED");
+                       << " was not saved because it is OBSOLETE");
           return;
         }
 
@@ -177,24 +173,20 @@ public:
 private:
     virtual void DoVisitAttribute (Ptr<Object> object, std::string name) {
       TypeId tid = object->GetInstanceTypeId ();
-      struct TypeId::AttributeInformation info;
-      bool supported = true;
+      ns3::TypeId::SupportLevel supportLevel = TypeId::SupportLevel::SUPPORTED;
       for (std::size_t i = 0; i < tid.GetAttributeN (); i++)
         {
           struct TypeId::AttributeInformation tmp = tid.GetAttribute (i);
           if (tmp.name == name)
             {
-              if (tmp.supportLevel != TypeId::SupportLevel::SUPPORTED)
-                {
-                  supported = false;
-                }
+              supportLevel = tmp.supportLevel;
               break;
             }
         }
-      if (supported == false)
+      if (supportLevel == TypeId::SupportLevel::OBSOLETE)
         {
           NS_LOG_WARN ("Attribute " << GetCurrentPath ()
-                                    << " was not saved because it is OBSOLETE or DEPRECATED");
+                                    << " was not saved because it is OBSOLETE");
           return;
         }
       StringValue str;
