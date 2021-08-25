@@ -1,11 +1,24 @@
 ## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
 
+def configure(conf):
+    conf.env['sodium'] = conf.check_nonfatal( compiler='gcc',mandatory=False,lib='sodium',uselib_store='LS',cflags='-Wall') 
+  
+
 def build(bld):
     if not bld.env['ENABLE_EXAMPLES']:
         return;
+
+    if(bld.env['sodium']):
+        obj = bld.create_ns3_program('onion-routing-example', ['internet-apps','csma','applications','core'])
+        obj.source = 'onion-routing-example.cc'
+        obj.use.append("LS")
 
     obj = bld.create_ns3_program('dhcp-example', ['internet', 'internet-apps', 'csma', 'point-to-point', 'applications'])
     obj.source = 'dhcp-example.cc'
     
     obj = bld.create_ns3_program('traceroute-example', ['aodv', 'core', 'network', 'internet', 'point-to-point', 'wifi','internet-apps'])
     obj.source = 'traceroute-example.cc'
+
+    
+    
+    
