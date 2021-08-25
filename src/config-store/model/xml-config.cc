@@ -106,6 +106,12 @@ public:
     XmlDefaultIterator (xmlTextWriterPtr writer) {
       m_writer = writer;
     }
+    void
+    SetSaveDeprecated (bool saveDeprecated)
+    {
+      m_saveDeprecated = saveDeprecated;
+    }
+
 private:
     virtual void StartVisitTypeId (std::string name) {
       m_typeid = name;
@@ -129,8 +135,14 @@ private:
                        << " was not saved because it is OBSOLETE");
           return;
         }
+      else if ((supportLevel == TypeId::SupportLevel::DEPRECATED) && (m_saveDeprecated == false))
+        {
+          NS_LOG_WARN ("Global attribute " << m_typeid << "::" << name
+                                           << " was not saved because it is DEPRECATED");
+          return;
+        }
 
-      int rc;
+        int rc;
       rc = xmlTextWriterStartElement (m_writer, BAD_CAST "default");
       if (rc < 0)
         {
@@ -157,8 +169,10 @@ private:
     }
     xmlTextWriterPtr m_writer;
     std::string m_typeid;
+    bool m_saveDeprecated;
   };
   XmlDefaultIterator iterator = XmlDefaultIterator (m_writer);
+  iterator.SetSaveDeprecated (m_saveDeprecated);
   iterator.Iterate ();
 }
 
@@ -170,7 +184,13 @@ XmlConfigSave::Attributes (void)
 public:
     XmlTextAttributeIterator (xmlTextWriterPtr writer)
       : m_writer (writer) {}
-private:
+    void
+    SetSaveDeprecated (bool saveDeprecated)
+    {
+      m_saveDeprecated = saveDeprecated;
+    }
+
+  private:
     virtual void DoVisitAttribute (Ptr<Object> object, std::string name) {
       TypeId tid = object->GetInstanceTypeId ();
       ns3::TypeId::SupportLevel supportLevel = TypeId::SupportLevel::SUPPORTED;
@@ -187,6 +207,12 @@ private:
         {
           NS_LOG_WARN ("Attribute " << GetCurrentPath ()
                                     << " was not saved because it is OBSOLETE");
+          return;
+        }
+      else if ((supportLevel == TypeId::SupportLevel::DEPRECATED) && (m_saveDeprecated == false))
+        {
+          NS_LOG_WARN ("Attribute " << GetCurrentPath ()
+                                    << " was not saved because it is DEPRECATED");
           return;
         }
       StringValue str;
@@ -216,9 +242,11 @@ private:
         }
     }
     xmlTextWriterPtr m_writer;
+    bool m_saveDeprecated;
   };
 
   XmlTextAttributeIterator iter = XmlTextAttributeIterator (m_writer);
+  iter.SetSaveDeprecated (m_saveDeprecated);
   iter.Iterate ();
 }
 

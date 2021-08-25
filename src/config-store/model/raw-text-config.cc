@@ -67,6 +67,10 @@ public:
     RawTextDefaultIterator (std::ostream *os) {
       m_os = os;
     }
+    void SetSaveDeprecated (bool saveDeprecated) {
+      m_saveDeprecated = saveDeprecated;
+    }
+
 private:
     virtual void StartVisitTypeId (std::string name) {
       m_typeId = name;
@@ -90,6 +94,11 @@ private:
                        << m_typeId << "::" << name
                        << " was not saved because it is OBSOLETE");
         }
+      else if ((supportLevel == TypeId::SupportLevel::DEPRECATED) && (m_saveDeprecated == false))
+        {
+          NS_LOG_WARN ("Global attribute " << m_typeId << "::" << name
+                                           << " was not saved because it is DEPRECATED");
+        }
       else
         {
           *m_os << "default " << m_typeId << "::" << name << " \"" << defaultValue << "\""
@@ -98,9 +107,11 @@ private:
       }
     std::string m_typeId;
     std::ostream *m_os;
+    bool m_saveDeprecated;
   };
 
   RawTextDefaultIterator iterator = RawTextDefaultIterator (m_os);
+  iterator.SetSaveDeprecated (m_saveDeprecated);
   iterator.Iterate ();
 }
 void
@@ -124,6 +135,11 @@ RawTextConfigSave::Attributes (void)
 public:
     RawTextAttributeIterator (std::ostream *os)
       : m_os (os) {}
+    void
+    SetSaveDeprecated (bool saveDeprecated) {
+      m_saveDeprecated = saveDeprecated;
+    }
+
 private:
     virtual void DoVisitAttribute (Ptr<Object> object, std::string name) {
       StringValue str;
@@ -145,6 +161,11 @@ private:
           NS_LOG_WARN ("Attribute " << GetCurrentPath ()
                                     << " was not saved because it is OBSOLETE");
         }
+      else if ((supportLevel == TypeId::SupportLevel::DEPRECATED) && (m_saveDeprecated == false))
+        {
+          NS_LOG_WARN ("Attribute " << GetCurrentPath ()
+                                    << " was not saved because it is DEPRECATED");
+        }
       else
         {
           object->GetAttribute (name, str);
@@ -153,9 +174,11 @@ private:
         }
     }
     std::ostream *m_os;
+    bool m_saveDeprecated;
   };
 
   RawTextAttributeIterator iter = RawTextAttributeIterator (m_os);
+  iter.SetSaveDeprecated (m_saveDeprecated);
   iter.Iterate ();
 }
 
