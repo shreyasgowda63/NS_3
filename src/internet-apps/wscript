@@ -3,8 +3,9 @@
 # def options(opt):
 #     pass
 
-# def configure(conf):
-#     conf.check_nonfatal(header_name='stdint.h', define_name='HAVE_STDINT_H')
+def configure(conf):
+    conf.env['sodium'] = conf.check_nonfatal( compiler='gcc',mandatory=False,lib='sodium',uselib_store='LS',cflags='-Wall') 
+    #conf.check_nonfatal(header_name='stdint.h', define_name='HAVE_STDINT_H')
 
 def build(bld):
     module = bld.create_ns3_module('internet-apps', ['internet'])
@@ -18,6 +19,7 @@ def build(bld):
         'model/dhcp-header.cc',
         'model/dhcp-server.cc',
         'model/dhcp-client.cc',
+        'model/onion-routing.cc',
         'helper/ping6-helper.cc',
         'helper/radvd-helper.cc',
         'helper/v4ping-helper.cc',
@@ -33,9 +35,12 @@ def build(bld):
 
     # Tests encapsulating example programs should be listed here
     if (bld.env['ENABLE_EXAMPLES']):
-        applications_test.source.extend([
-        #   'test/internet-apps-examples-test-suite.cc',
-            ])
+        if(bld.env['sodium']):
+            applications_test.source.extend([
+                'examples/onion-routing-example.cc',
+               #'test/internet-apps-examples-test-suite.cc',
+                ])
+            applications_test.use.append("LS")
     
     headers = bld(features='ns3header')
     headers.module = 'internet-apps'
@@ -49,6 +54,7 @@ def build(bld):
         'model/dhcp-header.h',
         'model/dhcp-server.h',
         'model/dhcp-client.h',
+        'model/onion-routing.h',
         'helper/ping6-helper.h',
         'helper/v4ping-helper.h',
         'helper/v4traceroute-helper.h',
