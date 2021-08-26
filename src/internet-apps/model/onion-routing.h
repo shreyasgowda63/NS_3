@@ -1,32 +1,25 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 
 /*
-* MIT License
+* Copyright (c) 2020 DLTLT 
 *
-* Copyright (c) 2020 DLTLT
-* 
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-* 
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation;
 *
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
 *
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *
 * Author: Niki Hrovatin <niki.hrovatin@famnit.upr.si>
-*
 */
+
+
 
 #ifndef ONION_ROUTING_H
 #define ONION_ROUTING_H
@@ -67,14 +60,30 @@ struct orLayer
 };
 
 
+
+
+/**
+ * \ingroup onion-routing
+ * \enum AddressType
+ * 
+ * \brief enum defined for the selection of the address type -- values are in bytes (4-Ipv4, 16-Ipv6)
+ * 
+ */
+
+enum class AddressType
+{
+  IPV4 = 4, IPV6 = 16
+};
+
+
 /**
  * \ingroup onion-routing
  * \class OnionRouting
- * \brief Abstract class for creation and decryption of Onion messagess.
+ * \brief Abstract class for creation and decryption of Onion messages.
  *
  * The OnionRouting abstract class include useful methods for the creation
- * and redirection of <a href="https://en.wikipedia.org/wiki/Onion_routing">Onion Messagess</a>. 
- * The given class can be used to construct onion messagess of the following features:<br>
+ * and redirection of <a href="https://en.wikipedia.org/wiki/Onion_routing">Onion Messages</a>. 
+ * The given class can be used to construct onion messages of the following features:<br>
  *   ONION_NO_CONTENT - onion message including only routing information<br>
  *      example: (((10.1.1.2) 10.1.1.1) 10.1.1.5)10.1.1.3<br><br>
  * 
@@ -118,13 +127,12 @@ public:
 *
 * \brief Constructor -- Setup parameters for the creation of onions
 * 
-*   \param [in] keySize size in bytes of encryption keys
 *   \param [in] sealPadding size increase of the ciphertext in bytes, intorduced by the encryption method 
-*   \param [in] addressSize size in bytes of the used address type (4-Ipv4, 16-Ipv6)
+*   \param [in] addressType enum of type \p AddressType defining the address type used. 
 *
 */
 
-  OnionRouting (uint16_t keySize, uint16_t sealPadding, uint16_t addressSize);
+  OnionRouting (uint16_t sealPadding, AddressType addressType);
 
 /**
 *
@@ -311,9 +319,7 @@ public:
 
 
   uint16_t                           m_sealPadding;       //!< size increase of the ciphertext in bytes, intorduced by the encryption method
-  uint16_t                           m_keySize;       //!< size in bytes of encryption keys 
   uint16_t                           m_addressSize;   //!< size in bytes of the used address type (4-Ipv4, 16-Ipv6)
-
   std::stringstream                  m_onionStream;  //!< stringstream used to LOG onion construction
 };
 
