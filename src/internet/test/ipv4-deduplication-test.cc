@@ -424,6 +424,11 @@ Ipv4DeduplicationTest::CheckPackets (const std::string &name)
     std::map <std::string, uint32_t> packets = {
       {"A", 14}, {"B", 16}, {"C", 16}, {"D", 16}, {"E", 4}
     };
+
+    // a priori determined packet receptions based on
+    std:: map <std::string, uint32_t> packetsDuped = {
+      {"A", 0}, {"B", 1}, {"C", 1}, {"D", 1}, {"E", 1}
+    };
     // a priori determined packet receptions based on initial TTL of 4, degenerate de-dup
     // There are TTL (4) rounds of packets.  Each round a node will register a
     // received packet if another connected node transmits.  A misses the 1st round
@@ -438,14 +443,8 @@ Ipv4DeduplicationTest::CheckPackets (const std::string &name)
         case ENABLED:
           NS_TEST_ASSERT_MSG_NE (((m_packetCountMap.find (name) == m_packetCountMap.end ()) && name != "A"), true,
                           "No packets received for node " << name);
-          if (name == "A")
-          {
-            NS_TEST_EXPECT_MSG_EQ (m_packetCountMap[name], 0, "Wrong number of packets received for node " << name);
-          }
-          else
-          {
-            NS_TEST_EXPECT_MSG_EQ (m_packetCountMap[name], 1, "Wrong number of packets received for node " << name);
-          }
+
+          NS_TEST_ASSERT_MSG_EQ (m_packetCountMap[name], packetsDuped[name], "Wrong number of packets received for node " << name);
           break;
         case DISABLED:
           NS_TEST_ASSERT_MSG_NE ((m_packetCountMap.find (name) == m_packetCountMap.end ()), true,
