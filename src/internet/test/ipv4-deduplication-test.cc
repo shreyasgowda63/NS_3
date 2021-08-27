@@ -433,14 +433,23 @@ Ipv4DeduplicationTest::CheckPackets (const std::string &name)
       {"A", 3}, {"B", 4}, {"C", 4}, {"D", 3}, {"E", 2}
     };
 
-    NS_TEST_ASSERT_MSG_NE ((m_packetCountMap.find (name) == m_packetCountMap.end ()), true,
-                          "No packets received for node " << name);
     switch (m_mode)
       {
         case ENABLED:
-          NS_TEST_EXPECT_MSG_EQ (m_packetCountMap[name], 1, "Wrong number of packets received for node " << name);
+          NS_TEST_ASSERT_MSG_NE (((m_packetCountMap.find (name) == m_packetCountMap.end ()) && name != "A"), true,
+                          "No packets received for node " << name);
+          if (name == "A")
+          {
+            NS_TEST_EXPECT_MSG_EQ (m_packetCountMap[name], 0, "Wrong number of packets received for node " << name);
+          }
+          else
+          {
+            NS_TEST_EXPECT_MSG_EQ (m_packetCountMap[name], 1, "Wrong number of packets received for node " << name);
+          }
           break;
         case DISABLED:
+          NS_TEST_ASSERT_MSG_NE ((m_packetCountMap.find (name) == m_packetCountMap.end ()), true,
+                          "No packets received for node " << name);
           NS_TEST_EXPECT_MSG_EQ (m_packetCountMap[name],  packets[name], "Wrong number of packets received for node " << name);
           break;
         case DEGENERATE:
@@ -457,10 +466,10 @@ Ipv4DeduplicationTest::CheckDrops (const std::string &name)
       {
         case ENABLED:
           // a priori determined packet drops based on initial TTL of 4, enabled de-dup;
-          // A hears from B & C
+          // A hears from B & C -- > 2 drops
           // D hears from B, C, AND E
-          // B (C) hears from A, C (B), D, and A again
-          drops = {{"A", 1}, {"B", 3}, {"C", 3}, {"D", 2}, {"E", 0}};
+          // B (C) hears from A, C (B), D,
+          drops = {{"A", 2}, {"B", 2}, {"C", 2}, {"D", 2}, {"E", 0}};
           break;
         case DISABLED:
           // a priori determined packet drops based on initial TTL of 4, disabled de-dup
