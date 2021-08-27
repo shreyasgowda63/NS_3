@@ -373,7 +373,7 @@ MyApp::SendOnion ()
 
       m_onionManager.BuildOnion (cipher, m_ipRoute, m_keys, m_layerContent, m_layerContentLen, m_routeLen);
     }
-  else if (m_onionMode == ONION_LAYERCONTENT_ENDCONTENT)
+  else // the case (m_onionMode == ONION_LAYERCONTENT_ENDCONTENT)
     {
       cipherLen = m_onionManager.OnionLength (m_routeLen,m_layerContentLen,contentLen);
       cipher = new uint8_t[cipherLen];
