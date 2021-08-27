@@ -48,24 +48,41 @@ OnionRouting::GetTypeId (void)
 
 
 
-OnionRouting::OnionRouting (uint16_t sealPadding,  AddressType addressType)
-{
-  this->m_sealPadding = sealPadding;
-  this->m_addressSize = (uint16_t) addressType;
+OnionRouting::OnionRouting (uint16_t sealPadding, const uint16_t protocolNumber)
+{ 
+  m_errno = ERROR_NOTERROR;
+  //set seal bytes
+  m_sealPadding = sealPadding;
+  //set address bytes of the used IP protocol
+  if (protocolNumber == Ipv4L3Protocol::PROT_NUMBER)
+    {
+      m_addressSize = 4;
+    }
+  else if (protocolNumber == Ipv6L3Protocol::PROT_NUMBER)
+    {
+      m_addressSize = 16;
+    }
+  else
+    {
+      NS_LOG_WARN ("The given (IP) protocol number is not valid.");
+      m_errno = ERROR_PROT_NUMBER;
+    }
 }
 
 
 
 
 
-int 
+void
 OnionRouting::BuildOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys,uint16_t routeLen)
 {
+  m_errno = ERROR_NOTERROR;
+
   if (routeLen < 4)
     {
 
       NS_LOG_LOGIC ("Route is too short, need at least 3 intermediate hops.");
-      return 1;
+      m_errno = ERROR_ROUTE_TO_SHORT;
 
     }
   else
@@ -74,26 +91,26 @@ OnionRouting::BuildOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys,ui
 
       m_onionStream.str ("");
 
-      int status = CreateOnion (cipher,route,keys, routeLen, routeLen, nullptr, 0, nullptr, 0);
+      CreateOnion (cipher,route,keys, routeLen, routeLen, nullptr, 0, nullptr, 0);
 
       AddressToStream (route[0]);
 
       NS_LOG_INFO (m_onionStream.str () << "\nOnion ready");
-
-      return status;
     }
 }
 
 
 
-int 
+void 
 OnionRouting::BuildOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys, uint16_t routeLen, uint8_t * endContent, uint16_t endContentLen)
 {
+  m_errno = ERROR_NOTERROR;
+
   if (routeLen < 4)
     {
 
       NS_LOG_LOGIC ("Route is too short, need at least 3 intermediate hops.");
-      return 1;
+      m_errno = ERROR_ROUTE_TO_SHORT;
 
     }
   else
@@ -102,27 +119,26 @@ OnionRouting::BuildOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys, u
 
       m_onionStream.str ("");
 
-      int status = CreateOnion (cipher,route,keys, routeLen, routeLen, nullptr, 0, endContent, endContentLen);
+      CreateOnion (cipher,route,keys, routeLen, routeLen, nullptr, 0, endContent, endContentLen);
 
       AddressToStream (route[0]);
 
       NS_LOG_INFO (m_onionStream.str () << "\nOnion ready");
-
-      return status;
     }
 }
 
 
 
-int 
+void
 OnionRouting::BuildOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys, uint8_t ** layerContent, uint16_t layerContentLen, uint16_t routeLen)
 {
+  m_errno = ERROR_NOTERROR;
 
   if (routeLen < 4)
     {
 
       NS_LOG_LOGIC ("Route is too short, need at least 3 intermediate hops.");
-      return 1;
+      m_errno = ERROR_ROUTE_TO_SHORT;
 
     }
   else
@@ -131,27 +147,25 @@ OnionRouting::BuildOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys, u
 
       m_onionStream.str ("");
 
-      int status = CreateOnion (cipher,route,keys, routeLen, routeLen, layerContent, layerContentLen, nullptr, 0);
+      CreateOnion (cipher,route,keys, routeLen, routeLen, layerContent, layerContentLen, nullptr, 0);
 
       AddressToStream (route[0]);
 
       NS_LOG_INFO (m_onionStream.str () << "\nOnion ready");
-
-      return status;
     }
 }
 
 
-
-int 
+void
 OnionRouting::BuildOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys, uint8_t ** layerContent, uint16_t layerContentLen, uint16_t routeLen, uint8_t * endContent, uint16_t endContentLen)
 {
+  m_errno = ERROR_NOTERROR;
+
   if (routeLen < 4)
     {
 
       NS_LOG_LOGIC ("Route is too short, need at least 3 intermediate hops.");
-      return 1;
-
+      m_errno = ERROR_ROUTE_TO_SHORT;
     }
   else
     {
@@ -159,26 +173,21 @@ OnionRouting::BuildOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys, u
 
       m_onionStream.str ("");
 
-      int status = CreateOnion (cipher,route,keys, routeLen, routeLen, layerContent, layerContentLen, endContent, endContentLen);
+      CreateOnion (cipher,route,keys, routeLen, routeLen, layerContent, layerContentLen, endContent, endContentLen);
 
       AddressToStream (route[0]);
 
       NS_LOG_INFO (m_onionStream.str () << "\nOnion ready");
-
-      return status;
     }
 }
 
-
-int 
+void
 OnionRouting::CreateOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys, uint16_t index, uint16_t routeLen, uint8_t ** layerContent, uint16_t layerContentLen, uint8_t * endContent, uint16_t endContentLen)
 {
   //number of bytes to be encrypted in this layer
   int plainLayerLen = m_addressSize + layerContentLen + OnionLength (index - 1,layerContentLen,endContentLen);
 
   m_onionStream << "(";       //fancy output
-
-  int errors = 0;
  
   if (index <= 2 && (endContentLen != 0 || layerContentLen != 0))       //stop recursion
 
@@ -192,20 +201,20 @@ OnionRouting::CreateOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys, 
         {
           //If end content is set include it & encrypt
           memcpy (&cipher[m_addressSize + layerContentLen + m_sealPadding + m_sealPadding + m_addressSize], endContent, endContentLen);
-          errors += EncryptLayer (&cipher[m_addressSize + layerContentLen + m_sealPadding],&cipher[m_addressSize + layerContentLen + m_sealPadding + m_sealPadding],m_addressSize + endContentLen,keys[routeLen - index + 1]);
+          EncryptLayer (&cipher[m_addressSize + layerContentLen + m_sealPadding],&cipher[m_addressSize + layerContentLen + m_sealPadding + m_sealPadding],m_addressSize + endContentLen,keys[routeLen - index + 1]);
         }
       else
         {
           //Include layer content & encrypt
           memcpy (&cipher[m_addressSize + layerContentLen + m_sealPadding + m_sealPadding + m_addressSize], layerContent[routeLen - index + 1], layerContentLen);
-          errors += EncryptLayer (&cipher[m_addressSize + layerContentLen + m_sealPadding],&cipher[m_addressSize + layerContentLen + m_sealPadding + m_sealPadding],m_addressSize + layerContentLen,keys[routeLen - index + 1]);
+          EncryptLayer (&cipher[m_addressSize + layerContentLen + m_sealPadding],&cipher[m_addressSize + layerContentLen + m_sealPadding + m_sealPadding],m_addressSize + layerContentLen,keys[routeLen - index + 1]);
         }
 
     }
   else if (index > 2)        //recursion
 
     {
-      errors += CreateOnion (&cipher[ m_sealPadding + m_addressSize + layerContentLen],route, keys, index - 1,routeLen,layerContent, layerContentLen, endContent,endContentLen);
+      CreateOnion (&cipher[ m_sealPadding + m_addressSize + layerContentLen],route, keys, index - 1,routeLen,layerContent, layerContentLen, endContent,endContentLen);
     }
 
 
@@ -219,13 +228,13 @@ OnionRouting::CreateOnion (uint8_t * cipher, uint8_t ** route, uint8_t ** keys, 
       memcpy (&cipher[m_sealPadding + m_addressSize], layerContent[routeLen - index], layerContentLen);
     }
 
-  errors += EncryptLayer (cipher,&cipher[m_sealPadding],plainLayerLen,keys[routeLen - index]);       //encrypt
-
+  EncryptLayer (cipher,&cipher[m_sealPadding],plainLayerLen,keys[routeLen - index]);       //encrypt
 
   m_onionStream << ") ";       //fancy output
-  return errors;
 
 } //create the onion
+
+
 
 
 
@@ -275,6 +284,85 @@ void OnionRouting::AddressToStream (uint8_t* ip)
       m_onionStream << "."  << (int) ip[i];
     }
 }
+
+
+
+
+enum OnionRouting::OnionErrno
+OnionRouting::GetErrno (void)
+{
+  NS_LOG_FUNCTION (this);
+  return m_errno;
+}
+
+
+
+//OnionRoutingDummyEncryption -- Implemented class onion routing with dummy encryption
+
+
+OnionRoutingDummyEncryption::OnionRoutingDummyEncryption (uint16_t sealPadding, const uint16_t protocolNumber) : OnionRouting (sealPadding,protocolNumber)
+{
+  if (sealPadding < 4)
+    {
+      NS_FATAL_ERROR ("Seal padding must be at least 4-Bytes");
+    }
+}
+
+
+TypeId
+OnionRoutingDummyEncryption::GetTypeId (void)
+{
+  static TypeId tid = TypeId ("ns3::OnionRoutingDummyEncryption")
+    .SetParent<OnionRouting> ()
+    .SetGroupName ("OnionRouting");
+  return tid;
+
+}
+
+
+void OnionRoutingDummyEncryption::GenerateNewKey (void)
+{
+  Ptr<UniformRandomVariable> x = CreateObject<UniformRandomVariable> ();
+  uint32_t key = x->GetInteger (0,UINT32_MAX);
+  memcpy (m_encryptionkey, &key, 4);
+}
+
+
+uint8_t * OnionRoutingDummyEncryption::GetEncryptionKey (void)
+{
+  return m_encryptionkey;
+}
+
+
+
+void OnionRoutingDummyEncryption::EncryptLayer (uint8_t * ciphertext, uint8_t* message, int len, uint8_t * key) const
+{
+  memcpy (ciphertext, &key[0], 4); //include the key
+  for (int i = 0; i < m_sealPadding - 4; ++i) //insert seal padding, all zeros
+    {
+      ciphertext[4 + i] = 0;
+    }
+}
+
+
+
+void OnionRoutingDummyEncryption::DecryptLayer (uint8_t * innerLayer, uint8_t* onion, uint16_t onionLen, uint8_t * pk, uint8_t * sk) const
+{
+  for (int i = 0; i < 4; ++i)
+    {
+      if (onion[i] != pk[i])
+        {
+          NS_LOG_INFO ("Messge corrupted or not for this node");
+          m_errno = ERROR_DECRYPTION;
+          return;
+        }
+    }
+  memcpy (innerLayer,&onion[m_sealPadding],onionLen - m_sealPadding);
+}
+
+
+
+
 
 
 
