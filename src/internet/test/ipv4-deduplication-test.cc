@@ -441,14 +441,9 @@ Ipv4DeduplicationTest::CheckPackets (const std::string &name)
     switch (m_mode)
       {
         case ENABLED:
-          NS_TEST_ASSERT_MSG_NE (((m_packetCountMap.find (name) == m_packetCountMap.end ()) && name != "A"), true,
-                          "No packets received for node " << name);
-
           NS_TEST_ASSERT_MSG_EQ (m_packetCountMap[name], packetsDuped[name], "Wrong number of packets received for node " << name);
           break;
         case DISABLED:
-          NS_TEST_ASSERT_MSG_NE ((m_packetCountMap.find (name) == m_packetCountMap.end ()), true,
-                          "No packets received for node " << name);
           NS_TEST_EXPECT_MSG_EQ (m_packetCountMap[name],  packets[name], "Wrong number of packets received for node " << name);
           break;
         case DEGENERATE:
