@@ -41,6 +41,11 @@ def build(bld):
                #'test/internet-apps-examples-test-suite.cc',
                 ])
             applications_test.use.append("LS")
+        else:
+            applications_test.source.extend([
+                'examples/onion-routing-dummy-encryption-example.cc',
+               #'test/internet-apps-examples-test-suite.cc',
+            ])
     
     headers = bld(features='ns3header')
     headers.module = 'internet-apps'
