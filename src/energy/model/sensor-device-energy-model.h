@@ -134,6 +134,11 @@ public:
 
   SensorDeviceEnergyModel ();
 
+  /**
+   * \brief Get the type identificator
+   * 
+   * \return type identificator
+   */
   static TypeId GetTypeId (void);
 
   virtual void SetEnergySource (Ptr<EnergySource> source);
@@ -162,29 +167,106 @@ public:
    */
   Id MeasureNow (Time end, SensorModelState afterState = Previous);
 
+  /**
+   * \brief Registers a new callback for when a measurement starts.
+   * 
+   * \param cb The callback
+   */
   void RegisterMeasurementStartCallback (MeasurementStartCallback cb);
+
+  /**
+   * \brief Registers a new callback for when a measurement ends.
+   * 
+   * \param cb The callback
+   */
   void RegisterMeasurementEndCallback (MeasurementEndCallback cb);
 
+  /**
+   * \brief Registers a new callback for when the energy is depleted.
+   * 
+   * \param cb The callback
+   */
   void RegisterEnergyDepletedCallback (EnergyDepletedCallback cb);
+
+  /**
+   * \brief Registers a new callback for when the energy is recharged.
+   * 
+   * \param cb The callback
+   */
   void RegisterEnergyRechargedCallback (EnergyRechargedCallback cb);
 
   // ====================================================== //
   // ================== Getters & Setters ================= //
   // ====================================================== //
 
+  /**
+   * \brief Get the Node on which this device is installed.
+   * 
+   * \return Ptr<Node> The Node
+   */
   Ptr<Node> GetNode () const;
+
+  /**
+   * \brief Sets the Node on which this device is installed.
+   * 
+   * \param node The Node
+   */
   void SetNode (Ptr<Node> node);
 
+  /**
+   * \brief Gets the current associated with the Measure state..
+   * 
+   * \return double The current in ampere
+   */
   double GetMeasureCurrentA () const;
+
+  /**
+   * \brief Sets the current associated with the Measure  state.
+   * 
+   * \param current The current in ampere
+   */
   void SetMeasureCurrentA (double current);
 
+  /**
+   * \brief Get the current associated with the Idle state.
+   * 
+   * \return double The current in ampere
+   */
   double GetIdleCurrentA () const;
+  
+  /**
+   * \brief Sets the current associated with the Idle state.
+   * 
+   * \param current The current in ampere
+   */
   void SetIdleCurrentA (double current);
 
+  /**
+   * \brief Gets the current associated with the Sleep state.
+   * 
+   * \return double The current in ampere
+   */
   double GetSleepCurrentA () const;
+
+  /**
+   * \brief Sets the current associated with the Sleep state.
+   * 
+   * \param current The current in ampere
+   */
   void SetSleepCurrentA (double current);
 
+  /**
+   * \brief Gets the default state for this device.
+   * 
+   * \return SensorModelState The currently set default state
+   */
   SensorModelState GetDefaultState () const;
+
+  /**
+   * \brief Sets the default state for this device.
+   * 
+   * \param state The new default state
+   */
   void SetDefaultState (SensorModelState state);
 
   // ##################################################################### //
