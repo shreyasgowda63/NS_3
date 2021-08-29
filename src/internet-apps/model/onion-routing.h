@@ -267,7 +267,6 @@ public:
 *   \param [in] len length in bytes of the \p plaintext 
 *   \param [in] key encryption key 
 *
-*   \return Nothing
 *
 */
   virtual void EncryptLayer (uint8_t * ciphertext, uint8_t* plaintext, int len, uint8_t * key) const = 0;
@@ -282,7 +281,6 @@ public:
 *   \param [in] publicKey encryption key 
 *   \param [in] secretKey encryption key 
 *
-*   \return Nothing
 * 
 */
   virtual void DecryptLayer (uint8_t * plaintext, uint8_t* ciphertext, uint16_t len, uint8_t * publicKey, uint8_t * secretKey) const = 0;
