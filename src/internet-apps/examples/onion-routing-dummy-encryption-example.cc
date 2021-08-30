@@ -36,21 +36,28 @@
  *  The listed onion messagess are selected through the cmd argument onionMode. This argument defines the mode of operation of the example code.
  *    (The value preceeding the name should be given to the cmd argument)
  *
- *  !!NOTE!! the given example uses the external library <a href="https://libsodium.gitbook.io/doc/">libsodium</a> for encryption and decryption.
+ *
+ *   Network topology
  *
  *
- *   The Network Topology
+ *                        n2-------------n3
+ *                       / \             /
+ *                      /   \(1Mbps,3ms)/          
+ *                     /     \         /
+ *         (5Mbps,2ms)/       \       /
+ *                   /         \     /
+ *                  /           \   /
+ *                 /             \ /
+ *   n0-----------n1              n4----------n5
+ *     (5Mbps,2ms)                 (5Mbps,2ms)
+ *    
  *
- *
- *   n0   n1   n2   n3   n4
- *   |    |    |    |    |
- *   =====================
- *        LAN 10.1.1.0
- *
+ * - all links are point-to-point links with indicated delay
+ * - onion messagess are sent using the UDP protocol
+ * 
  *
  *  Instructions:
- *        1) Download & setup libsodium library
- *        2) run in terminal: ./waf --run "src/internet-apps/examples/onion-routing-example.cc --onionMode=1"
+ *        1) run in terminal: ./waf --run "src/internet-apps/examples/onion-routing-dummy-encryption-example.cc --onionMode=1"
  *             --note~ the argument onionMode defines the mode of operation of the example -- see the upper list
  *
  * 
@@ -59,9 +66,7 @@
 //! @cond Doxygen_Suppress
 
 
-//#include "ns3/core-module.h"
-#include "ns3/csma-module.h"
-//#include "ns3/network-module.h"
+#include "ns3/point-to-point-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/onion-routing.h"
 #include "ns3/applications-module.h"
@@ -384,7 +389,6 @@ int
 main (int argc, char *argv[])
 {
   bool  verbose = true;
-  uint32_t  nCsma = 5;
   uint8_t   onionMode = ONION_ENDCONTENT;
 
   CommandLine cmd (__FILE__);
@@ -408,29 +412,61 @@ main (int argc, char *argv[])
   /* ... */
 
 
-  //create nodes
-  NodeContainer csmaNodes;
-  csmaNodes.Create (nCsma);
+  
+  //create the topology of six nodes
+  NodeContainer nc;
+  nc.Create (6);
+  NodeContainer n0n1 = NodeContainer(nc.Get(0),nc.Get(1));
+  NodeContainer n1n2 = NodeContainer(nc.Get(1),nc.Get(2));
+  NodeContainer n2n3 = NodeContainer(nc.Get(2),nc.Get(3));
+  NodeContainer n2n4 = NodeContainer(nc.Get(2),nc.Get(4));
+  NodeContainer n3n4 = NodeContainer(nc.Get(3),nc.Get(4));
+  NodeContainer n4n5 = NodeContainer(nc.Get(4),nc.Get(5)); 
 
-  //create channel
-  CsmaHelper csma;
-  csma.SetChannelAttribute ("DataRate", StringValue ("10Mbps"));
-  csma.SetChannelAttribute ("Delay", TimeValue (NanoSeconds (6560)));
-
-  //create devices
-  NetDeviceContainer csmaDevices;
-  csmaDevices = csma.Install (csmaNodes);
 
   //Install internet stack
   InternetStackHelper stack;
-  stack.Install (csmaNodes);
+  stack.Install (nc);
+
+  //Create Point-to-Point Channels
+  NS_LOG_INFO ("Create channels.");
+  PointToPointHelper p2p;
+  p2p.SetDeviceAttribute ("DataRate",StringValue ("5Mbps"));
+  p2p.SetChannelAttribute("Delay",StringValue("2ms"));
+  NetDeviceContainer d0d1 = p2p.Install (n0n1);
+
+  NetDeviceContainer d1d2 = p2p.Install (n1n2);
+
+  NetDeviceContainer d4d5 = p2p.Install (n4n5);
+
+  p2p.SetDeviceAttribute ("DataRate",StringValue ("1Mbps"));
+  p2p.SetChannelAttribute("Delay",StringValue("3ms"));
+  NetDeviceContainer d2d3 = p2p.Install (n2n3);
+  NetDeviceContainer d3d4 = p2p.Install (n3n4);
+  NetDeviceContainer d2d4 = p2p.Install (n2n4);
+
+
 
   //setup ip addressses
   Ipv4AddressHelper address;
 
   address.SetBase ("10.1.1.0", "255.255.255.0");
-  Ipv4InterfaceContainer csmaInterfaces;
-  csmaInterfaces = address.Assign (csmaDevices);
+  Ipv4InterfaceContainer i0i1 = address.Assign (d0d1);
+
+  address.SetBase ("10.1.2.0", "255.255.255.0");
+  Ipv4InterfaceContainer i1i2 = address.Assign (d1d2);
+
+  address.SetBase ("10.1.3.0", "255.255.255.0");
+  Ipv4InterfaceContainer i2i3 = address.Assign (d2d3);
+
+  address.SetBase ("10.1.4.0", "255.255.255.0");
+  Ipv4InterfaceContainer i3i4 = address.Assign (d3d4);
+
+  address.SetBase ("10.1.5.0", "255.255.255.0");
+  Ipv4InterfaceContainer i2i4 = address.Assign (d2d4);
+
+  address.SetBase ("10.1.6.0", "255.255.255.0");
+  Ipv4InterfaceContainer i4i5 = address.Assign (d4d5);
 
   //set routing
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
@@ -440,7 +476,7 @@ main (int argc, char *argv[])
   uint16_t routeLen = 5;
   uint8_t * ipRoute[routeLen];
   uint8_t * keys[routeLen];
-  uint16_t layerContentLen = 27;
+  uint16_t layerContentLen = 27; //hardcoded
   uint8_t * layerContent[routeLen];
 
 
@@ -450,12 +486,15 @@ main (int argc, char *argv[])
   applications.Add (CreateObject<MyApp> (onionMode,layerContentLen));
   applications.Add (CreateObject<MyApp> (onionMode,layerContentLen));
   applications.Add (CreateObject<MyApp> (onionMode,layerContentLen));
+  applications.Add (CreateObject<MyApp> (onionMode,layerContentLen));
 
-  csmaNodes.Get (0)->AddApplication (applications.Get (0));
-  csmaNodes.Get (1)->AddApplication (applications.Get (1));
-  csmaNodes.Get (2)->AddApplication (applications.Get (2));
-  csmaNodes.Get (3)->AddApplication (applications.Get (3));
-  csmaNodes.Get (4)->AddApplication (applications.Get (4));
+  nc.Get (0)->AddApplication (applications.Get (0));
+  nc.Get (1)->AddApplication (applications.Get (1));
+  nc.Get (2)->AddApplication (applications.Get (2));
+  nc.Get (3)->AddApplication (applications.Get (3));
+  nc.Get (4)->AddApplication (applications.Get (4));
+  nc.Get (5)->AddApplication (applications.Get (5));
+
 
   //setup encryption & address
   for (uint32_t i = 0; i < applications.GetN (); ++i)
@@ -468,16 +507,16 @@ main (int argc, char *argv[])
   //ip addresses of the route
   ipRoute[0] = IpToBuff (applications.Get (2)->GetObject<MyApp> ()->GetAddress ());
   ipRoute[1] = IpToBuff (applications.Get (3)->GetObject<MyApp> ()->GetAddress ());
-  ipRoute[2] = IpToBuff (applications.Get (4)->GetObject<MyApp> ()->GetAddress ());
-  ipRoute[3] = IpToBuff (applications.Get (0)->GetObject<MyApp> ()->GetAddress ());
-  ipRoute[4] = IpToBuff (applications.Get (1)->GetObject<MyApp> ()->GetAddress ());
+  ipRoute[2] = IpToBuff (applications.Get (1)->GetObject<MyApp> ()->GetAddress ());
+  ipRoute[3] = IpToBuff (applications.Get (4)->GetObject<MyApp> ()->GetAddress ());
+  ipRoute[4] = IpToBuff (applications.Get (5)->GetObject<MyApp> ()->GetAddress ());
 
   //encryption keys of nodes in the route
-  keys[0] = applications.Get (2)->GetObject<MyApp> ()->GetEncryptionKey ();
-  keys[1] = applications.Get (3)->GetObject<MyApp> ()->GetEncryptionKey ();
-  keys[2] = applications.Get (4)->GetObject<MyApp> ()->GetEncryptionKey ();
-  keys[3] = applications.Get (0)->GetObject<MyApp> ()->GetEncryptionKey ();
-  keys[4] = applications.Get (1)->GetObject<MyApp> ()->GetEncryptionKey ();
+  keys[0] = applications.Get (2)->GetObject<MyApp> ()->GetPublicKey ();
+  keys[1] = applications.Get (3)->GetObject<MyApp> ()->GetPublicKey ();
+  keys[2] = applications.Get (1)->GetObject<MyApp> ()->GetPublicKey ();
+  keys[3] = applications.Get (4)->GetObject<MyApp> ()->GetPublicKey ();
+  keys[4] = applications.Get (5)->GetObject<MyApp> ()->GetPublicKey ();
 
   //set content of each layer
   layerContent[0] = StringToUchar ("OnionLayer 4 secret content");
@@ -485,7 +524,6 @@ main (int argc, char *argv[])
   layerContent[2] = StringToUchar ("OnionLayer 2 secret content");
   layerContent[3] = StringToUchar ("OnionLayer 1 secret content");
   layerContent[4] = StringToUchar ("OnionLayer 0 secret content");
-
 
   //setup the route at node 0, the node 0 will send the onion
   applications.Get (0)->GetObject<MyApp> ()->SetRoute (routeLen,ipRoute,keys,layerContent,layerContentLen);
