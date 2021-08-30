@@ -512,13 +512,12 @@ main (int argc, char *argv[])
   ipRoute[4] = IpToBuff (applications.Get (5)->GetObject<MyApp> ()->GetAddress ());
 
   //encryption keys of nodes in the route
-  keys[0] = applications.Get (2)->GetObject<MyApp> ()->GetPublicKey ();
-  keys[1] = applications.Get (3)->GetObject<MyApp> ()->GetPublicKey ();
-  keys[2] = applications.Get (1)->GetObject<MyApp> ()->GetPublicKey ();
-  keys[3] = applications.Get (4)->GetObject<MyApp> ()->GetPublicKey ();
-  keys[4] = applications.Get (5)->GetObject<MyApp> ()->GetPublicKey ();
-
-  //set content of each layer
+  keys[0] = applications.Get (2)->GetObject<MyApp> ()->GetEncryptionKey ();
+  keys[1] = applications.Get (3)->GetObject<MyApp> ()->GetEncryptionKey ();
+  keys[2] = applications.Get (1)->GetObject<MyApp> ()->GetEncryptionKey ();
+  keys[3] = applications.Get (4)->GetObject<MyApp> ()->GetEncryptionKey ();
+  keys[4] = applications.Get (5)->GetObject<MyApp> ()->GetEncryptionKey ()
+ ; //set content of each layer
   layerContent[0] = StringToUchar ("OnionLayer 4 secret content");
   layerContent[1] = StringToUchar ("OnionLayer 3 secret content");
   layerContent[2] = StringToUchar ("OnionLayer 2 secret content");
