@@ -160,7 +160,7 @@ void PacketSink::StartApplication ()    // Called at time specified by Start
     }
   else
     {
-      NS_FATAL_ERROR ("Local address is neither IPv4 or IPv6");
+      NS_FATAL_ERROR ("Local address is neither IPv4 nor IPv6");
     }
   m_socket->SetRecvCallback (MakeCallback (&PacketSink::HandleRead, this));
   m_socket->SetRecvPktInfo (true);
