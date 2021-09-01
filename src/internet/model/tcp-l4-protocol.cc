@@ -268,29 +268,69 @@ TcpL4Protocol::DeAllocate (Ipv4EndPoint *endPoint)
 Ipv6EndPoint *
 TcpL4Protocol::Allocate6 (void)
 {
-  NS_LOG_FUNCTION (this);
-  return m_endPoints6->Allocate ();
+//MIPv6 Extension Starts
+  if (!m_mipv6callback.IsNull())
+    {
+      NS_LOG_FUNCTION (this << m_mipv6callback());
+      return m_endPoints6->Allocate (m_mipv6callback());
+    }
+//MIPv6 Extension Ends
+  else
+    {
+      NS_LOG_FUNCTION (this);
+      return m_endPoints6->Allocate ();
+    }
 }
 
 Ipv6EndPoint *
 TcpL4Protocol::Allocate6 (Ipv6Address address)
 {
-  NS_LOG_FUNCTION (this << address);
-  return m_endPoints6->Allocate (address);
+//MIPv6 Extension Starts
+  if (!m_mipv6callback.IsNull())
+    {
+      NS_LOG_FUNCTION (this << m_mipv6callback());
+      return m_endPoints6->Allocate (m_mipv6callback());
+    }
+//MIPv6 Extension Ends
+  else
+    {
+      NS_LOG_FUNCTION (this << address);
+      return m_endPoints6->Allocate (address);
+    }
 }
 
 Ipv6EndPoint *
 TcpL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice, uint16_t port)
 {
-  NS_LOG_FUNCTION (this << boundNetDevice << port);
-  return m_endPoints6->Allocate (boundNetDevice, port);
+//MIPv6 Extension Starts
+  if (!m_mipv6callback.IsNull())
+    {
+      NS_LOG_FUNCTION (this << m_mipv6callback() << port);
+      return m_endPoints6->Allocate (boundNetDevice, m_mipv6callback(), port);
+    }
+//MIPv6 Extension Ends
+  else
+    {
+      NS_LOG_FUNCTION (this << boundNetDevice << port);
+      return m_endPoints6->Allocate (boundNetDevice, port);
+    }
 }
 
 Ipv6EndPoint *
 TcpL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice, Ipv6Address address, uint16_t port)
 {
-  NS_LOG_FUNCTION (this << boundNetDevice << address << port);
-  return m_endPoints6->Allocate (boundNetDevice, address, port);
+//MIPv6 Extension Starts
+  if (!m_mipv6callback.IsNull())
+    {
+      NS_LOG_FUNCTION (this << m_mipv6callback() << port);
+      return m_endPoints6->Allocate (boundNetDevice, m_mipv6callback(), port);
+    }
+//MIPv6 Extension Ends
+  else
+    {
+      NS_LOG_FUNCTION (this << boundNetDevice << address << port);
+      return m_endPoints6->Allocate (boundNetDevice, address, port);
+    }
 }
 
 Ipv6EndPoint *
@@ -298,10 +338,22 @@ TcpL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice,
                           Ipv6Address localAddress, uint16_t localPort,
                           Ipv6Address peerAddress, uint16_t peerPort)
 {
-  NS_LOG_FUNCTION (this << boundNetDevice << localAddress << localPort << peerAddress << peerPort);
-  return m_endPoints6->Allocate (boundNetDevice,
-                                 localAddress, localPort,
-                                 peerAddress, peerPort);
+//MIPv6 Extension Starts
+  if (!m_mipv6callback.IsNull())
+    {
+      NS_LOG_FUNCTION (this << m_mipv6callback() << localPort << peerAddress << peerPort);
+      return m_endPoints6->Allocate (boundNetDevice,
+                                      m_mipv6callback(), localPort,
+                                      peerAddress, peerPort);
+    }
+//MIPv6 Extension Ends
+   else
+    {
+      NS_LOG_FUNCTION (this << boundNetDevice << localAddress << localPort << peerAddress << peerPort);
+      return m_endPoints6->Allocate (boundNetDevice,
+                                    localAddress, localPort,
+                                    peerAddress, peerPort);
+    }
 }
 
 void
