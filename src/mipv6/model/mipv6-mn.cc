@@ -41,6 +41,10 @@
 #include "mipv6-l4-protocol.h"
 #include "ns3/ipv6-routing-protocol.h"
 #include "ns3/ipv6-route.h"
+#include "mipv6-tun-l4-protocol.h"
+#include "ns3/ipv6-static-routing-helper.h"
+#include "ns3/ipv6-static-routing.h"
+#include "ns3/ipv6-routing-table-entry.h"
 
 using namespace std;
 
@@ -122,7 +126,11 @@ void Mipv6Mn::NotifyNewAggregate ()
             }
           Ipv6Address addr (buf);
           m_buinf->SetHoa (addr);
+          Ptr<Ipv6TunnelL4Protocol> tunnel4prot = GetNode ()->GetObject<Ipv6TunnelL4Protocol> ();
+          tunnel4prot->SetHomeAddress (addr);
         }
+
+      m_OldinterfaceIndex = -1;
 
       Ptr<Icmpv6L4Protocol> icmpv6l4 = GetNode ()->GetObject<Icmpv6L4Protocol> ();
       icmpv6l4->SetNewIPCallback (MakeCallback (&Mipv6Mn::HandleNewAttachment, this));
@@ -141,9 +149,15 @@ void Mipv6Mn::NotifyNewAggregate ()
 
       Ptr<UdpL4Protocol> udpl4 = GetNode ()->GetObject<UdpL4Protocol> ();
       udpl4->SetMipv6Callback (MakeCallback (&BList::GetHoa, m_buinf));
+      udpl4->SetDownTarget6 (MakeCallback (&Mipv6Mn::SendData, this));
 
       Ptr<TcpL4Protocol> tcpl4 = GetNode ()->GetObject<TcpL4Protocol> ();
       tcpl4->SetMipv6Callback (MakeCallback (&BList::GetHoa, m_buinf));
+      tcpl4->SetDownTarget6 (MakeCallback (&Mipv6Mn::SendData, this));
+
+      Ptr<Ipv6TunnelL4Protocol> tunnell4 = GetNode ()->GetObject<Ipv6TunnelL4Protocol> ();
+      tunnell4->SetCacheAddressList (m_Haalist);
+      tunnell4->SetHA (m_buinf->GetHA ());
     }
   Mipv6Agent::NotifyNewAggregate ();
 }
@@ -229,6 +243,94 @@ void Mipv6Mn::HandleNewAttachment (Ipv6Address ipr)
           m_buinf->MarkHomeUpdating ();
         }
     }
+}
+
+void Mipv6Mn::SendData (Ptr<Packet> packet, Ipv6Address source, Ipv6Address destination, uint8_t protocol, Ptr<Ipv6Route> route)
+{
+  NS_LOG_FUNCTION (this << packet << source << destination << (uint32_t)protocol << route);
+
+  Ptr<Ipv6L3Protocol> ipv6 = GetNode()->GetObject<Ipv6L3Protocol> ();
+
+  Ipv6Header hdr;
+  uint8_t ttl = 64;
+  SocketIpv6HopLimitTag tag;
+  bool found = packet->RemovePacketTag (tag);
+
+  if (found)
+    {
+      ttl = tag.GetHopLimit ();
+    }
+
+  SocketIpv6TclassTag tclassTag;
+  uint8_t tclass = 0;
+  found = packet->RemovePacketTag (tclassTag);
+  
+  if (found)
+    {
+      tclass = tclassTag.GetTclass ();
+    }
+
+  if (route)
+    {
+      NS_LOG_LOGIC ("Ipv6L3Protocol::Send case 1: passed in with a route");
+      ipv6->Send (packet, source, destination, protocol, route);
+      return;
+    }
+
+  /* 3) */
+  NS_LOG_LOGIC ("Ipv6L3Protocol::Send case 3: passed in with no route " << destination);
+  Socket::SocketErrno err;
+  Ptr<NetDevice> oif (0);
+  Ptr<Ipv6Route> newRoute = 0;
+
+  hdr = BuildHeader (source, destination, protocol, packet->GetSize (), ttl, tclass);
+
+  //for link-local traffic, we need to determine the interface
+  if (source.IsLinkLocal ()
+      || destination.IsLinkLocal ()
+      || destination.IsLinkLocalMulticast ())
+    {
+      int32_t index = ipv6->GetInterfaceForAddress (source);
+      NS_ASSERT_MSG (index >= 0, "Can not find an outgoing interface for a packet with src " << source << " and dst " << destination);
+      oif = ipv6->GetNetDevice (index);
+    }
+  int32_t index = m_buinf->GetTunnelIfIndex ();
+  NS_LOG_LOGIC("Tunnel Net Device Interface is :" << index);
+  if(index >= 0) 
+    oif = ipv6->GetNetDevice (index);
+  else
+    {
+      NS_LOG_INFO ("No Tunnel Net Device Found, drop!");
+      return;
+    }
+    
+  newRoute = ipv6->GetRoutingProtocol()->RouteOutput (packet, hdr, oif, err);
+
+  if (newRoute)
+    {
+      ipv6->Send (packet, source, destination, protocol, newRoute);
+    }
+  else
+    {
+      NS_LOG_WARN ("No route to host, drop!");
+      // call ipv6-l3 with route 0 or droptrace system
+      // ipv6->Send (packet, source, destination, protocol, route);
+    }
+
+}
+
+Ipv6Header Mipv6Mn::BuildHeader (Ipv6Address src, Ipv6Address dst, uint8_t protocol, uint16_t payloadSize, uint8_t ttl, uint8_t tclass)
+{
+  NS_LOG_FUNCTION (this << src << dst << (uint32_t)protocol << (uint32_t)payloadSize << (uint32_t)ttl << (uint32_t)tclass);
+  Ipv6Header hdr;
+
+  hdr.SetSourceAddress (src);
+  hdr.SetDestinationAddress (dst);
+  hdr.SetNextHeader (protocol);
+  hdr.SetPayloadLength (payloadSize);
+  hdr.SetHopLimit (ttl);
+  hdr.SetTrafficClass (tclass);
+  return hdr;
 }
 
 Ptr<Packet> Mipv6Mn::BuildHomeBU (bool flagA, bool flagH, bool flagL, bool flagK, uint16_t lifetime, bool extn)
@@ -410,7 +512,40 @@ Ipv6Address Mipv6Mn::GetCoA ()
 bool Mipv6Mn::SetupTunnelAndRouting ()
 {
   NS_LOG_FUNCTION (this);
-  // TODO: Set Tunnel and Routing
+  Ptr<Ipv6TunnelL4Protocol> th = GetNode ()->GetObject<Ipv6TunnelL4Protocol> ();
+  NS_ASSERT (th);
+
+  uint16_t tunnelIf = th->AddTunnel (m_buinf->GetHA ());
+
+  m_buinf->SetTunnelIfIndex (tunnelIf);
+
+  Ipv6StaticRoutingHelper staticRoutingHelper;
+  Ptr<Ipv6> ipv6 = GetNode ()->GetObject<Ipv6> ();
+
+  Ptr<Ipv6StaticRouting> staticRouting = staticRoutingHelper.GetStaticRouting (ipv6);
+  Ipv6RoutingTableEntry routeentry (staticRouting->GetDefaultRoute ());
+
+  m_OldPrefixToUse = routeentry.GetPrefixToUse ();
+
+  staticRouting->RemoveRoute (routeentry.GetDest (), routeentry.GetDestNetworkPrefix (), routeentry.GetInterface (), routeentry.GetPrefixToUse ());
+
+  uint8_t buf1[8],buf2[16],buf[16];
+  (routeentry.GetPrefixToUse ()).GetBytes (buf1);
+  (m_defaultrouteraddress).GetBytes (buf2);
+  for (int i = 0; i < 8; i++)
+    {
+      buf[i] = buf1[i];
+    }
+  for (int i = 0; i < 8; i++)
+    {
+      buf[i + 8] = buf2[i + 8];
+    }
+  Ipv6Address addr (buf);
+
+  staticRouting->AddHostRouteTo (m_buinf->GetHA (), addr, m_IfIndex, Ipv6Address ("::"), 0);
+  m_OldinterfaceIndex = m_IfIndex;
+  staticRouting->AddNetworkRouteTo (routeentry.GetDest (), routeentry.GetDestNetworkPrefix (), m_defaultrouteraddress, m_buinf->GetTunnelIfIndex (), routeentry.GetPrefixToUse (), 0);
+  staticRouting->RemoveRoute (Ipv6Address ("fe80::"), Ipv6Prefix (64), m_buinf->GetTunnelIfIndex (), Ipv6Address ("fe80::"));
   return true;
 
 }
@@ -418,7 +553,23 @@ bool Mipv6Mn::SetupTunnelAndRouting ()
 void Mipv6Mn::ClearTunnelAndRouting ()
 {
   NS_LOG_FUNCTION (this);
-  // Clear Tunnel and Routing
+  
+  Ipv6StaticRoutingHelper staticRoutingHelper;
+  Ptr<Ipv6> ipv6 = GetNode ()->GetObject<Ipv6> ();
+
+
+  Ptr<Ipv6StaticRouting> staticRouting = staticRoutingHelper.GetStaticRouting (ipv6);
+
+  staticRouting->RemoveRoute (Ipv6Address ("::"), Ipv6Prefix::GetZero (), m_buinf->GetTunnelIfIndex (), m_OldPrefixToUse);
+  staticRouting->RemoveRoute (m_buinf->GetHA (), Ipv6Prefix (128), m_OldinterfaceIndex, Ipv6Address ("::"));
+
+  //clear tunnel
+  Ptr<Ipv6TunnelL4Protocol> th = GetNode ()->GetObject<Ipv6TunnelL4Protocol> ();
+  NS_ASSERT (th);
+
+  th->RemoveTunnel (m_buinf->GetHA ());
+
+  m_buinf->SetTunnelIfIndex (-1);
 }
 
 void Mipv6Mn::SetRouteOptimizationRequiredField (bool roflag)

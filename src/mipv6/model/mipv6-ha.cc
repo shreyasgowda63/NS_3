@@ -32,6 +32,9 @@
 #include "ns3/ipv6-interface.h"
 #include "ns3/ipv6-extension-header.h"
 #include "mipv6-l4-protocol.h"
+#include "mipv6-tun-l4-protocol.h"
+#include "ns3/ipv6-static-routing-helper.h"
+#include "ns3/ipv6-static-routing.h"
 
 using namespace std;
 
@@ -309,7 +312,23 @@ bool Mipv6Ha::SetupTunnelAndRouting (BCache::Entry *bce)
 {
   NS_LOG_FUNCTION (this << bce);
 
-  // TODO: Set Tunnel and Routing
+  //create tunnel
+  Ptr<Ipv6TunnelL4Protocol> th = GetNode ()->GetObject<Ipv6TunnelL4Protocol> ();
+  NS_ASSERT (th);
+
+  uint16_t tunnelIf = th->AddTunnel (bce->GetCoa ());
+
+  bce->SetTunnelIfIndex (tunnelIf);
+
+  //routing setup by static routing protocol
+  Ipv6StaticRoutingHelper staticRoutingHelper;
+  Ptr<Ipv6> ipv6 = GetNode ()->GetObject<Ipv6> ();
+
+  Ptr<Ipv6StaticRouting> staticRouting = staticRoutingHelper.GetStaticRouting (ipv6);
+
+  staticRouting->AddHostRouteTo (bce->GetHoa (), bce->GetTunnelIfIndex (),10);
+  staticRouting->RemoveRoute ("fe80::", Ipv6Prefix (64), bce->GetTunnelIfIndex (), "fe80::");
+
   return true;
 }
 
@@ -317,7 +336,22 @@ bool Mipv6Ha::SetupTunnelAndRouting (BCache::Entry *bce)
 bool Mipv6Ha::ClearTunnelAndRouting (BCache::Entry *bce)
 {
   NS_LOG_FUNCTION (this << bce);
-  // TODO: Clear Tunnel and Routing
+  //routing setup by static routing protocol
+  Ipv6StaticRoutingHelper staticRoutingHelper;
+  Ptr<Ipv6> ipv6 = GetNode ()->GetObject<Ipv6> ();
+
+
+  Ptr<Ipv6StaticRouting> staticRouting = staticRoutingHelper.GetStaticRouting (ipv6);
+
+  staticRouting->RemoveRoute (bce->GetHoa (), Ipv6Prefix (64), bce->GetTunnelIfIndex (), bce->GetHoa ());
+
+  //create tunnel
+  Ptr<Ipv6TunnelL4Protocol> th = GetNode ()->GetObject<Ipv6TunnelL4Protocol> ();
+  NS_ASSERT (th);
+
+  th->RemoveTunnel (bce->GetCoa ());
+
+  bce->SetTunnelIfIndex (-1);
   return true;
 }
 

@@ -24,6 +24,8 @@
 #include "mipv6-agent.h"
 #include "blist.h"
 #include "ns3/traced-callback.h"
+#include "ns3/ipv6-route.h"
+#include "ns3/ipv6-header.h"
 
 namespace ns3 {
 
@@ -174,6 +176,27 @@ protected:
    */
   virtual uint8_t HandleBA (Ptr<Packet> packet, const Ipv6Address &src, const Ipv6Address &dst, Ptr<Ipv6Interface> interface);
 
+  /**
+   * \brief Send Data packet from tunnel interface only.
+   * \param packet data packet to be sent
+   * \param source source address
+   * \param dest destination address
+   * \param protocol protocol used to send
+   * \param route route chosen to send packet
+   */
+  void SendData (Ptr<Packet> packet, Ipv6Address source, Ipv6Address destination, uint8_t protocol, Ptr<Ipv6Route> route);
+
+  /**
+   * \brief Construct an IPv6 header.
+   * \param src source IPv6 address
+   * \param dst destination IPv6 address
+   * \param protocol L4 protocol
+   * \param payloadSize payload size
+   * \param hopLimit Hop limit
+   * \param tclass Tclass
+   * \return newly created IPv6 header
+   */
+  Ipv6Header BuildHeader (Ipv6Address src, Ipv6Address dst, uint8_t protocol, uint16_t payloadSize, uint8_t ttl, uint8_t tclass);
 private:
 
   /**
@@ -205,6 +228,16 @@ private:
    * \brief default router (i.e. connected AR) address .
    */
   Ipv6Address m_defaultrouteraddress;
+
+  /**
+   * \brief prefix of the previous default route before handoff.
+   */
+  Ipv6Address m_OldPrefixToUse;
+
+  /**
+   * \brief interface index of the previous default route before handoff.
+   */
+  uint32_t m_OldinterfaceIndex;
 
   /**
    * \brief current interface index of the MN.
