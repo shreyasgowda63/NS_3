@@ -27,6 +27,7 @@
 #include "ns3/mipv6-mobility.h"
 #include "ns3/mipv6-mn.h"
 #include "ns3/mipv6-ha.h"
+#include "ns3/mipv6-tun-l4-protocol.h"
 #include "mipv6-helper.h"
 
 
@@ -61,6 +62,15 @@ Mipv6HaHelper::Install (Ptr<Node> node)
       mipv6->RegisterMobility();
 
       mipv6->RegisterMobilityOptions();
+    }
+
+  Ptr<Ipv6TunnelL4Protocol> ip6tunnel = node->GetObject<Ipv6TunnelL4Protocol> ();
+  
+  if ( ip6tunnel == 0 )
+    {
+      ip6tunnel = CreateObject<Ipv6TunnelL4Protocol> ();
+	  
+      node->AggregateObject (ip6tunnel);
     }
 
   Ptr<Mipv6Mn> mn = node->GetObject<Mipv6Mn> ();
@@ -111,6 +121,15 @@ Mipv6MnHelper::Install (Ptr<Node> node) const
       mipv6->RegisterMobility ();
 
       mipv6->RegisterMobilityOptions ();
+    }
+
+  Ptr<Ipv6TunnelL4Protocol> ip6tunnel = node->GetObject<Ipv6TunnelL4Protocol> ();
+  
+  if ( ip6tunnel == 0 )
+    {
+      ip6tunnel = CreateObject<Ipv6TunnelL4Protocol> ();
+	  
+      node->AggregateObject (ip6tunnel);
     }
 
   Ptr<Mipv6Ha> ha = node->GetObject<Mipv6Ha> ();

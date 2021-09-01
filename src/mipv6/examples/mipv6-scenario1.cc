@@ -287,7 +287,7 @@ Mipv6MnHelper mnhelper (hahelper.GetHomeAgentAddressList (),false);
 mnhelper.Install (sta.Get (0));
 
 //APP
-/*
+
 UdpEchoServerHelper echoServer (9);
 
 ApplicationContainer serverApps = echoServer.Install (cn.Get (0));
@@ -304,10 +304,10 @@ ApplicationContainer clientApps = echoClient.Install (sta.Get (0));
 
 clientApps.Start (Seconds (1.1));
 clientApps.Stop (Seconds (70.0));  
-*/
 
-//LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_ALL);
-//LogComponentEnable ("UdpEchoServerApplication", LOG_LEVEL_ALL);
+
+LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_ALL);
+LogComponentEnable ("UdpEchoServerApplication", LOG_LEVEL_ALL);
 LogComponentEnable ("Mipv6Ha", LOG_LEVEL_ALL);
 LogComponentEnable ("Mipv6Mn", LOG_LEVEL_ALL);
 
