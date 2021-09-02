@@ -46,7 +46,7 @@ PacketSink::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::PacketSink")
     .SetParent<Application> ()
-    .SetGroupName("Applications")
+    .SetGroupName ("Applications")
     .AddConstructor<PacketSink> ()
     .AddAttribute ("Local",
                    "The Address on which to Bind the rx socket.",
@@ -62,9 +62,10 @@ PacketSink::GetTypeId (void)
                    "Enable optional header tracing of SeqTsSizeHeader",
                    BooleanValue (false),
                    MakeBooleanAccessor (&PacketSink::m_enableSeqTsSizeHeader),
-                   MakeBooleanChecker ())
-    .AddTraceSource ("Rx",
-                     "A packet has been received",
+                   MakeBooleanChecker (), TypeId::DEPRECATED,
+                   "Not anymore used. Setting the RxWithSeqTsSize trace is enough - changing "
+                   "this attribute has no effect.")
+    .AddTraceSource ("Rx", "A packet has been received",
                      MakeTraceSourceAccessor (&PacketSink::m_rxTrace),
                      "ns3::Packet::AddressTracedCallback")
     .AddTraceSource ("RxWithAddresses", "A packet has been received",
@@ -81,6 +82,7 @@ PacketSink::GetTypeId (void)
 PacketSink::PacketSink ()
 {
   NS_LOG_FUNCTION (this);
+  NS_UNUSED (m_enableSeqTsSizeHeader);
   m_socket = 0;
   m_totalRx = 0;
 }
@@ -220,26 +222,30 @@ void PacketSink::HandleRead (Ptr<Socket> socket)
                        << " total Rx " << m_totalRx << " bytes");
         }
 
-      Ipv4PacketInfoTag interfaceInfo;
-      Ipv6PacketInfoTag interface6Info;
-      if (packet->RemovePacketTag (interfaceInfo))
+      if (!m_rxTrace.IsEmpty () || !m_rxTraceWithAddresses.IsEmpty () ||
+          !m_rxTraceWithSeqTsSize.IsEmpty ())
         {
-          localAddress = InetSocketAddress (interfaceInfo.GetAddress (), m_localPort);
-        }
-      else if (packet->RemovePacketTag (interface6Info))
-        {
-          localAddress = Inet6SocketAddress (interface6Info.GetAddress (), m_localPort);
-        }
-      else
-        {
-          socket->GetSockName (localAddress);
-        }
-      m_rxTrace (packet, from);
-      m_rxTraceWithAddresses (packet, from, localAddress);
+          Ipv4PacketInfoTag interfaceInfo;
+          Ipv6PacketInfoTag interface6Info;
+          if (packet->RemovePacketTag (interfaceInfo))
+            {
+              localAddress = InetSocketAddress (interfaceInfo.GetAddress (), m_localPort);
+            }
+          else if (packet->RemovePacketTag (interface6Info))
+            {
+              localAddress = Inet6SocketAddress (interface6Info.GetAddress (), m_localPort);
+            }
+          else
+            {
+              socket->GetSockName (localAddress);
+            }
+          m_rxTrace (packet, from);
+          m_rxTraceWithAddresses (packet, from, localAddress);
 
-      if (m_enableSeqTsSizeHeader)
-        {
-          PacketReceived (packet, from, localAddress);
+          if (!m_rxTraceWithSeqTsSize.IsEmpty ())
+            {
+              PacketReceived (packet, from, localAddress);
+            }
         }
     }
 }
