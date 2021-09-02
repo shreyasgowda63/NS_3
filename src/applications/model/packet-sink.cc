@@ -46,7 +46,7 @@ PacketSink::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::PacketSink")
     .SetParent<Application> ()
-    .SetGroupName ("Applications")
+    .SetGroupName("Applications")
     .AddConstructor<PacketSink> ()
     .AddAttribute ("Local",
                    "The Address on which to Bind the rx socket.",
@@ -62,10 +62,9 @@ PacketSink::GetTypeId (void)
                    "Enable optional header tracing of SeqTsSizeHeader",
                    BooleanValue (false),
                    MakeBooleanAccessor (&PacketSink::m_enableSeqTsSizeHeader),
-                   MakeBooleanChecker (), TypeId::DEPRECATED,
-                   "Not anymore used. Setting the RxWithSeqTsSize trace is enough - changing "
-                   "this attribute has no effect.")
-    .AddTraceSource ("Rx", "A packet has been received",
+                   MakeBooleanChecker ())
+    .AddTraceSource ("Rx",
+                     "A packet has been received",
                      MakeTraceSourceAccessor (&PacketSink::m_rxTrace),
                      "ns3::Packet::AddressTracedCallback")
     .AddTraceSource ("RxWithAddresses", "A packet has been received",
@@ -82,7 +81,6 @@ PacketSink::GetTypeId (void)
 PacketSink::PacketSink ()
 {
   NS_LOG_FUNCTION (this);
-  NS_UNUSED (m_enableSeqTsSizeHeader);
   m_socket = 0;
   m_totalRx = 0;
 }
@@ -242,7 +240,7 @@ void PacketSink::HandleRead (Ptr<Socket> socket)
           m_rxTrace (packet, from);
           m_rxTraceWithAddresses (packet, from, localAddress);
 
-          if (!m_rxTraceWithSeqTsSize.IsEmpty ())
+          if (!m_rxTraceWithSeqTsSize.IsEmpty () && m_enableSeqTsSizeHeader)
             {
               PacketReceived (packet, from, localAddress);
             }

@@ -232,6 +232,7 @@ BulkSendSeqTsSizeTestCase::DoRun (void)
   sourceApp.Stop (Seconds (10.0));
   PacketSinkHelper sinkHelper ("ns3::TcpSocketFactory",
                          InetSocketAddress (Ipv4Address::GetAny (), port));
+  sinkHelper.SetAttribute ("EnableSeqTsSizeHeader", BooleanValue (true));
   ApplicationContainer sinkApp = sinkHelper.Install (nodes.Get (1));
   sinkApp.Start (Seconds (0.0));
   sinkApp.Stop (Seconds (10.0));
