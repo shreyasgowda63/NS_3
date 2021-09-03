@@ -19,6 +19,7 @@
  */
 #include "simple-net-device.h"
 #include "simple-channel.h"
+#include "ns3/net-device-state.h"
 #include "ns3/node.h"
 #include "ns3/packet.h"
 #include "ns3/log.h"
@@ -274,10 +275,20 @@ void
 SimpleNetDevice::SetChannel (Ptr<SimpleChannel> channel)
 {
   NS_LOG_FUNCTION (this << channel);
+
+  Ptr<NetDeviceState> netDevState = GetObject<NetDeviceState> ();
   m_channel = channel;
   m_channel->Add (this);
-  m_linkUp = true;
-  m_linkChangeCallbacks ();
+
+  if (netDevState != nullptr)
+    {
+      netDevState->SetOperationalState (NetDeviceState::IF_OPER_UP);
+    }
+  else
+    {
+      m_linkUp = true;
+      m_linkChangeCallbacks ();
+    }  
 }
 
 Ptr<Queue<Packet> >

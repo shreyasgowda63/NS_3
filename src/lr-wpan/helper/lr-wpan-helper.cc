@@ -181,7 +181,9 @@ LrWpanHelper::Install (NodeContainer c)
       Ptr<Node> node = *i;
 
       Ptr<LrWpanNetDevice> netDevice = CreateObject<LrWpanNetDevice> ();
+      Ptr<NetDeviceState> netDevState = CreateObject<NetDeviceState> ();
       netDevice->SetChannel (m_channel);
+      netDevice->AggregateObject (netDevState);
       node->AddDevice (netDevice);
       netDevice->SetNode (node);
       // \todo add the capability to change short address, extended
