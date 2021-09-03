@@ -28,7 +28,7 @@
 #include "mipv6-tun-l4-protocol.h"
 #include "ns3/callback.h"
 #include "ns3/trace-source-accessor.h"
-
+#include "ns3/net-device-state.h"
 
 using namespace std;
 
@@ -221,6 +221,9 @@ uint16_t Ipv6TunnelL4Protocol::AddTunnel(Ipv6Address remote, Ipv6Address local)
       if(dev==0)
         {
           dev = CreateObject<TunnelNetDevice> ();
+          Ptr<NetDeviceState> netDevState = CreateObject<NetDeviceState> ();
+          dev->AggregateObject (netDevState);
+
           if (!TxTracedCallback.IsNull())
             {
               dev->TraceConnectWithoutContext ("MacTx2", TxTracedCallback);
@@ -238,7 +241,9 @@ uint16_t Ipv6TunnelL4Protocol::AddTunnel(Ipv6Address remote, Ipv6Address local)
     {
       dev = it->second;
     }
-    
+  Ptr<NetDeviceState> netDevState = dev->GetObject<NetDeviceState>();
+  netDevState->SetUp ();
+
   dev->IncreaseRefCount ();
   Ptr<Ipv6> ipv6 = m_node->GetObject<Ipv6> ();
   int32_t ifIndex = -1;
@@ -252,6 +257,8 @@ uint16_t Ipv6TunnelL4Protocol::AddTunnel(Ipv6Address remote, Ipv6Address local)
 	  ipv6->SetMetric (ifIndex, 1);
 	  ipv6->SetUp (ifIndex);
 	}
+
+  netDevState->SetOperationalState (NetDeviceState::IF_OPER_UP);
   return ifIndex;
 }
 
@@ -263,16 +270,19 @@ void Ipv6TunnelL4Protocol::RemoveTunnel(Ipv6Address remote)
 
   if (dev)
     {
-	  dev->DecreaseRefCount ();
-	  
-	  if (dev->GetRefCount() == 0)
-	    {
-		  TunnelMapI it = m_tunnelMap.find (remote);
+      dev->DecreaseRefCount ();
+      
+      if (dev->GetRefCount() == 0)
+        {
+          Ptr<NetDeviceState> netDeviceState = dev->GetObject<NetDeviceState> ();
+          netDeviceState->SetDown();
+
+          TunnelMapI it = m_tunnelMap.find (remote);
           it->second = 0;
           
           m_tunnelMap.erase (it);
-		}
-	}    
+        }
+    } 
 }
 
 uint16_t  Ipv6TunnelL4Protocol::ModifyTunnel(Ipv6Address remote, Ipv6Address newRemote, Ipv6Address local)

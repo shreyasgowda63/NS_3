@@ -30,6 +30,7 @@
 #include "ns3/ipv6-route.h"
 #include "ns3/ipv6-header.h"
 #include "tunnel-net-device.h"
+#include "ns3/net-device-state.h"
 
 NS_LOG_COMPONENT_DEFINE ("TunnelNetDevice");
 
@@ -313,6 +314,21 @@ TunnelNetDevice::Send (Ptr<Packet> packet, const Address& dest, uint16_t protoco
 {
 
   NS_LOG_FUNCTION ( this << packet << dest << protocolNumber );
+  Ptr<NetDeviceState> netDevState = this->GetObject<NetDeviceState> ();
+
+  if (netDevState)
+    {
+      if (!netDevState->IsUp ())
+        {
+          NS_LOG_WARN ("The Tunnel Device is disabled for use. Packet must be dropped.");
+          return false;
+        }
+    }
+  else
+    {
+      NS_LOG_WARN ("NetDeviceState is not aggregated to this TunnelNetDevice object.");
+    }
+
   Ipv6Header iph;
   packet->PeekHeader (iph);
 
@@ -380,6 +396,32 @@ TunnelNetDevice::SendFrom (Ptr<Packet> packet, const Address& source, const Addr
 {
 
   NS_LOG_FUNCTION ( this << packet << dest << protocolNumber );
+
+    Ptr<NetDeviceState> netDevState = this->GetObject<NetDeviceState> ();
+
+  if (netDevState)
+    {
+      if (!netDevState->IsUp ())
+        {
+          NS_LOG_WARN ("The TunnelNetDevice is disabled from use. Packet must be dropped.");
+          return false;
+        }
+
+      if (!(netDevState->GetOperationalState () == NetDeviceState::IF_OPER_UP))
+        {
+          NS_LOG_WARN ("The TunnelNetDevice is UP but not RUNNING. Packet must be dropped.");
+          return false;
+        }
+    }
+  else
+    {
+      NS_LOG_WARN ("NetDeviceState is not aggregated to this WifiNetDevice object.");
+      if (!IsLinkUp ())
+        {
+          NS_LOG_WARN ("The Wifi Device link is DOWN. Packet must be dropped.");
+          return false;
+        }
+    }
 
   NS_ASSERT (m_supportsSendFrom);
 
