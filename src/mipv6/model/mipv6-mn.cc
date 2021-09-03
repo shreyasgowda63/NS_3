@@ -440,6 +440,7 @@ uint8_t Mipv6Mn::HandleBA (Ptr<Packet> packet, const Ipv6Address &src, const Ipv
             else
               {
                 NS_LOG_INFO (this << "BA lifetime  is 0");
+                SetupTunnelAndRouting ();
                 ClearTunnelAndRouting ();
 
                 Address replyMacAddress = interface->GetDevice ()->GetMulticast (dst);
