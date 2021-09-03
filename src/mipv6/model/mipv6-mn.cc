@@ -277,6 +277,13 @@ void Mipv6Mn::SendData (Ptr<Packet> packet, Ipv6Address source, Ipv6Address dest
       return;
     }
 
+  if (m_homelink)
+    {
+      NS_LOG_LOGIC ("Ipv6L3Protocol::Send case 2: mobile node in homelink do not use tunnel");
+      ipv6->Send (packet, source, destination, protocol, route);
+      return;
+    }
+
   /* 3) */
   NS_LOG_LOGIC ("Ipv6L3Protocol::Send case 3: passed in with no route " << destination);
   Socket::SocketErrno err;

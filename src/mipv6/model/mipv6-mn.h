@@ -220,7 +220,7 @@ private:
   bool m_roflag;
 
   /**
-   * \brief route optimization flag.
+   * \brief mobile node in home link.
    */
   bool m_homelink;
 
