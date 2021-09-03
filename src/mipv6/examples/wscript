@@ -45,3 +45,5 @@ def build(bld):
     obj.source = 'mipv6-dad-test.cc'
     obj = bld.create_ns3_program ('mipv6-na-test', ['mipv6'])
     obj.source = 'mipv6-na-test.cc'
+    obj = bld.create_ns3_program ('mipv6-scenario1_bk', ['mipv6'])
+    obj.source = 'mipv6-scenario1_bk.cc'

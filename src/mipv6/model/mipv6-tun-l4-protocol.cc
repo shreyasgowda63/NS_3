@@ -218,21 +218,20 @@ uint16_t Ipv6TunnelL4Protocol::AddTunnel(Ipv6Address remote, Ipv6Address local)
   Ptr<TunnelNetDevice> dev = m_node->GetObject<TunnelNetDevice> ();
   if (it == m_tunnelMap.end ())
     {
-  if(dev==0)
-  {
-     dev = CreateObject<TunnelNetDevice> ();
-     
-     if (!TxTracedCallback.IsNull())
-       {
-         dev->TraceConnectWithoutContext ("MacTx2", TxTracedCallback);
-       }
+      if(dev==0)
+        {
+          dev = CreateObject<TunnelNetDevice> ();
+          if (!TxTracedCallback.IsNull())
+            {
+              dev->TraceConnectWithoutContext ("MacTx2", TxTracedCallback);
+            }
 
-      dev->SetAddress (Mac48Address::Allocate ());
-      m_node->AddDevice (dev);
-      m_tunnelMap.insert (std::pair<Ipv6Address, Ptr<TunnelNetDevice> > (remote, dev));
- }     
-	  dev->SetRemoteAddress(remote);
-	  dev->SetLocalAddress(local);
+          dev->SetAddress (Mac48Address::Allocate ());
+          m_node->AddDevice (dev);
+          m_tunnelMap.insert (std::pair<Ipv6Address, Ptr<TunnelNetDevice> > (remote, dev));
+        }
+      dev->SetRemoteAddress(remote);
+      dev->SetLocalAddress(local);
     }
 
   else
