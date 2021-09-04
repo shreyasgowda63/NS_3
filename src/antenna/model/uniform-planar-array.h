@@ -128,13 +128,6 @@ private:
   void SetAlpha (double alpha);
 
   /**
-   * \brief Get the bearing angle
-   * This method gets the bearing angle
-   * \return the bearing angle in radians
-   */
-  double GetAlpha (void) const;
-
-  /**
    * \brief Set the downtilt angle
    * This method sets the downtilt angle and
    * computes its cosine and sine

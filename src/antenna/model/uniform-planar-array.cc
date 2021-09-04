@@ -72,8 +72,7 @@ UniformPlanarArray::GetTypeId (void)
     .AddAttribute ("BearingAngle",
                    "The bearing angle in radians",
                    DoubleValue (0.0),
-                   MakeDoubleAccessor (&UniformPlanarArray::SetAlpha,
-                                       &UniformPlanarArray::GetAlpha),
+                   MakeDoubleAccessor (&UniformPlanarArray::SetAlpha),
                    MakeDoubleChecker<double> (-M_PI, M_PI))
     .AddAttribute ("DowntiltAngle",
                    "The downtilt angle in radians",
@@ -133,12 +132,6 @@ UniformPlanarArray::SetAlpha (double alpha)
   m_alpha = alpha;
   m_cosAlpha = cos (m_alpha);
   m_sinAlpha = sin (m_alpha);
-}
-
-double
-UniformPlanarArray::GetAlpha (void) const
-{
-  return m_alpha;
 }
 
 void
@@ -208,8 +201,8 @@ UniformPlanarArray::GetElementFieldPattern (Angles a) const
   // NOTE we assume a fixed slant angle of 0 degrees
   double cosIncl = cos (a.GetInclination ());
   double sinIncl = sin (a.GetInclination ());
-  double cosAzim = cos (a.GetAzimuth () - GetAlpha ());
-  double sinAzim = sin (a.GetAzimuth () - GetAlpha ());
+  double cosAzim = cos (a.GetAzimuth () - m_alpha);
+  double sinAzim = sin (a.GetAzimuth () - m_alpha);
   double thetaPrime = std::acos (m_cosBeta * cosIncl + m_sinBeta * cosAzim * sinIncl);
   double phiPrime = std::arg (std::complex<double> (m_cosBeta * sinIncl * cosAzim - m_sinBeta * cosIncl, sinAzim * sinIncl));
   Angles aPrime (phiPrime, thetaPrime);
