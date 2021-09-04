@@ -49,8 +49,10 @@ public:
    */
   virtual ~UniformPlanarArray (void);
 
-
-  // inherited from Object
+  /**
+   * \brief Get the type ID.
+   * \return The object TypeId.
+   */
   static TypeId GetTypeId (void);
 
 
