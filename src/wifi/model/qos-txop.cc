@@ -32,7 +32,6 @@
 #include "wifi-mac-trailer.h"
 #include "wifi-mac-queue.h"
 #include "qos-blocked-destinations.h"
-#include "wifi-remote-station-manager.h"
 #include "msdu-aggregator.h"
 #include "mpdu-aggregator.h"
 #include "ctrl-headers.h"
@@ -42,7 +41,7 @@
 #include "wifi-tx-parameters.h"
 
 #undef NS_LOG_APPEND_CONTEXT
-#define NS_LOG_APPEND_CONTEXT if (m_stationManager != 0 && m_stationManager->GetMac () != 0) { std::clog << "[mac=" << m_stationManager->GetMac ()->GetAddress () << "] "; }
+#define NS_LOG_APPEND_CONTEXT if (m_mac != 0) { std::clog << "[mac=" << m_mac->GetAddress () << "] "; }
 
 namespace ns3 {
 
@@ -118,20 +117,15 @@ QosTxop::DoDispose (void)
   Txop::DoDispose ();
 }
 
-void
-QosTxop::SetQosQueueSize (Ptr<WifiMacQueueItem> mpdu)
+uint8_t
+QosTxop::GetQosQueueSize (uint8_t tid, Mac48Address receiver) const
 {
-  NS_LOG_FUNCTION (this << *mpdu);
-
-  WifiMacHeader& hdr = mpdu->GetHeader ();
-  NS_ASSERT (hdr.IsQosData ());
-
-  uint32_t bufferSize = m_queue->GetNBytes (hdr.GetQosTid (), hdr.GetAddr1 ())
-                        + m_baManager->GetRetransmitQueue ()->GetNBytes (hdr.GetQosTid (), hdr.GetAddr1 ());
+  uint32_t bufferSize = m_queue->GetNBytes (tid, receiver)
+                        + m_baManager->GetRetransmitQueue ()->GetNBytes (tid, receiver);
   // A queue size value of 254 is used for all sizes greater than 64 768 octets.
   uint8_t queueSize = static_cast<uint8_t> (std::ceil (std::min (bufferSize, 64769u) / 256.0));
   NS_LOG_DEBUG ("Buffer size=" << bufferSize << " Queue Size=" << +queueSize);
-  hdr.SetQosQueueSize (queueSize);
+  return queueSize;
 }
 
 void
@@ -188,7 +182,7 @@ QosTxop::PrepareBlockAckRequest (Mac48Address recipient, uint8_t tid) const
   WifiMacHeader hdr;
   hdr.SetType (WIFI_MAC_CTL_BACKREQ);
   hdr.SetAddr1 (recipient);
-  hdr.SetAddr2 (m_stationManager->GetMac ()->GetAddress ());
+  hdr.SetAddr2 (m_mac->GetAddress ());
   hdr.SetDsNotTo ();
   hdr.SetDsNotFrom ();
   hdr.SetNoRetry ();
@@ -201,14 +195,6 @@ void
 QosTxop::ScheduleBar (Ptr<const WifiMacQueueItem> bar, bool skipIfNoDataQueued)
 {
   m_baManager->ScheduleBar (bar, skipIfNoDataQueued);
-}
-
-void
-QosTxop::SetWifiRemoteStationManager (const Ptr<WifiRemoteStationManager> remoteManager)
-{
-  Txop::SetWifiRemoteStationManager (remoteManager);
-  NS_LOG_FUNCTION (this << remoteManager);
-  m_baManager->SetWifiRemoteStationManager (m_stationManager);
 }
 
 bool
@@ -428,7 +414,7 @@ QosTxop::GetNextMpdu (Ptr<const WifiMacQueueItem> peekedItem, WifiTxParameters& 
                                 GetBaBufferSize (recipient, tid)));
 
       // try A-MSDU aggregation
-      if (m_stationManager->GetHtSupported () && !recipient.IsBroadcast ()
+      if (m_mac->GetHtSupported () && !recipient.IsBroadcast ()
           && !peekedItem->GetHeader ().IsRetry () && !peekedItem->IsFragment ())
         {
           Ptr<HtFrameExchangeManager> htFem = StaticCast<HtFrameExchangeManager> (m_qosFem);
@@ -478,88 +464,6 @@ BlockAckType
 QosTxop::GetBlockAckType (Mac48Address recipient, uint8_t tid) const
 {
   return m_baManager->GetBlockAckType (recipient, tid);
-}
-
-void
-QosTxop::NotifyInternalCollision (void)
-{
-  NS_LOG_FUNCTION (this);
-
-  // For internal collisions occurring with the EDCA access method, the appropriate
-  // retry counters (short retry counter for MSDU, A-MSDU, or MMPDU and QSRC[AC] or
-  // long retry counter for MSDU, A-MSDU, or MMPDU and QLRC[AC]) are incremented
-  // (Sec. 10.22.2.11.1 of 802.11-2016).
-  // We do not prepare the PSDU that the AC losing the internal collision would have
-  // sent. As an approximation, we consider the frame peeked from the queues of the AC.
-  Ptr<const WifiMacQueueItem> mpdu = PeekNextMpdu ();
-
-  if (mpdu != nullptr)
-    {
-      m_stationManager->ReportDataFailed (mpdu);
-
-      if (!mpdu->GetHeader ().GetAddr1 ().IsGroup () && !m_stationManager->NeedRetransmission (mpdu))
-        {
-          NS_LOG_DEBUG ("reset DCF");
-          m_stationManager->ReportFinalDataFailed (mpdu);
-          if (!m_droppedMpduCallback.IsNull ())
-            {
-              m_droppedMpduCallback (WIFI_MAC_DROP_REACHED_RETRY_LIMIT, mpdu);
-            }
-          ResetCw ();
-          // We have to discard mpdu, but first we have to determine whether mpdu
-          // is stored in the Block Ack Manager retransmit queue or in the AC queue
-          Mac48Address receiver = mpdu->GetHeader ().GetAddr1 ();
-          WifiMacQueue::ConstIterator testIt;
-          bool found = false;
-
-          if (mpdu->GetHeader ().IsQosData ()
-              && GetBaAgreementEstablished (receiver, mpdu->GetHeader ().GetQosTid ()))
-            {
-              uint8_t tid = mpdu->GetHeader ().GetQosTid ();
-              testIt = m_baManager->GetRetransmitQueue ()->PeekByTidAndAddress (tid, receiver);
-
-              if (testIt != m_baManager->GetRetransmitQueue ()->end ())
-                {
-                  found = true;
-                  // if not null, the test packet must equal the peeked packet
-                  NS_ASSERT ((*testIt)->GetPacket () == mpdu->GetPacket ());
-                  m_baManager->GetRetransmitQueue ()->Remove (testIt);
-                  m_baManager->NotifyDiscardedMpdu (mpdu);
-                }
-            }
-
-          if (!found)
-            {
-              if (mpdu->GetHeader ().IsQosData ())
-                {
-                  uint8_t tid = mpdu->GetHeader ().GetQosTid ();
-                  testIt = m_queue->PeekByTidAndAddress (tid, receiver);
-                  NS_ASSERT (testIt != m_queue->end () && (*testIt)->GetPacket () == mpdu->GetPacket ());
-                  m_queue->Remove (testIt);
-                }
-              else
-                {
-                  // the peeked packet is a non-QoS Data frame (e.g., a DELBA Request), hence
-                  // it was not peeked by TID, hence it must be the head of the queue
-                  Ptr<WifiMacQueueItem> item;
-                  item = m_queue->DequeueFirstAvailable (m_qosBlockedDestinations);
-                  NS_ASSERT (item != 0 && item->GetPacket () == mpdu->GetPacket ());
-                }
-            }
-        }
-      else
-        {
-          NS_LOG_DEBUG ("Update CW");
-          UpdateFailedCw ();
-        }
-    }
-
-  GenerateBackoff ();
-  m_access = NOT_REQUESTED;
-  if (HasFramesToTransmit ())
-    {
-      m_channelAccessManager->RequestAccess (this);
-    }
 }
 
 void
