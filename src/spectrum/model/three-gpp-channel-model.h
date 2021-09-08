@@ -57,7 +57,7 @@ public:
    * Destructor
    */
   ~ThreeGppChannelModel ();
-  
+
   void DoDispose () override;
 
   /**
@@ -127,7 +127,7 @@ public:
    * \return the number of stream indices assigned by this model
    */
   int64_t AssignStreams (int64_t stream);
-  
+
 private:
   /**
    * Wrap an (azimuth, inclination) angle pair in a valid range.
@@ -150,15 +150,15 @@ private:
    */
   void Shuffle (double * first, double * last) const;
   /**
-   * Extends the struct ChannelMatrix by including information that are used 
+   * Extends the struct ChannelMatrix by including information that are used
    * within the class ThreeGppChannelModel
    */
   struct ThreeGppChannelMatrix : public MatrixBasedChannelModel::ChannelMatrix
   {
     Ptr<const ChannelCondition> m_channelCondition; //!< the channel condition
-    
+
     // TODO these are not currently used, they have to be correctly set when including the spatial consistent update procedure
-    /*The following parameters are stored for spatial consistent updating. The notation is 
+    /*The following parameters are stored for spatial consistent updating. The notation is
     that of 3GPP technical reports, but it can apply also to other channel realizations*/
     MatrixBasedChannelModel::Double2DVector m_nonSelfBlocking; //!< store the blockages
     Vector m_preLocUT; //!< location of UT when generating the previous channel

@@ -1096,7 +1096,6 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
     }
 
   // NOTE the shadowing is generated in the propagation loss model
-
   double DS,ASD,ASA,ZSA,ZSD,K_factor = 0;
   if (los)
     {
@@ -1490,7 +1489,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
     }
   channelParams->m_clusterPhase = clusterPhase;
 
-  //Step 11: Generate channel coefficients for each cluster n and each receiver
+  // Step 11: Generate channel coefficients for each cluster n and each receiver
   // and transmitter element pair u,s.
 
   Complex3DVector H_NLOS; // channel coefficients H_NLOS [u][s][n],
@@ -1518,7 +1517,8 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
         }
     }
 
-  NS_LOG_INFO ("1st strongest cluster:" << (int)cluster1st << ", 2nd strongest cluster:" << (int)cluster2nd);
+  NS_LOG_INFO ("1st strongest cluster:" << +cluster1st
+                                        << ", 2nd strongest cluster:" << +cluster2nd);
 
   Complex3DVector H_usn;  //channel coffecient H_usn[u][s][n];
   // NOTE Since each of the strongest 2 clusters are divided into 3 sub-clusters,
@@ -1541,7 +1541,6 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
 
       for (uint64_t sIndex = 0; sIndex < sSize; sIndex++)
         {
-
           Vector sLoc = sAntenna->GetElementLocation (sIndex);
 
           for (uint8_t nIndex = 0; nIndex < numReducedCluster; nIndex++)
@@ -1590,7 +1589,6 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
                       double k = crossPolarizationPowerRatios[nIndex][mIndex];
 
                       //ZML:Just remind me that the angle offsets for the 3 subclusters were not generated correctly.
-
                       DoubleVector initialPhase = clusterPhase[nIndex][mIndex];
                       double rxPhaseDiff = 2 * M_PI * (sin (rayZoa_radian[nIndex][mIndex]) * cos (rayAoa_radian[nIndex][mIndex]) * uLoc.x
                                                        + sin (rayZoa_radian[nIndex][mIndex]) * sin (rayAoa_radian[nIndex][mIndex]) * uLoc.y
@@ -1637,9 +1635,9 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
                   H_usn[uIndex][sIndex][nIndex] = raysSub1;
                   H_usn[uIndex][sIndex].push_back (raysSub2);
                   H_usn[uIndex][sIndex].push_back (raysSub3);
-
                 }
             }
+
           if (los) //(7.5-29) && (7.5-30)
             {
               std::complex<double> ray (0,0);
@@ -1669,7 +1667,6 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
                 {
                   H_usn[uIndex][sIndex][nIndex] *= sqrt (1 / (K_linear + 1)); //(7.5-30) for tau = tau2...taunN
                 }
-
             }
         }
     }
@@ -1729,8 +1726,6 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
       clusterZod.push_back (clusterZod[min]);
       clusterZod.push_back (clusterZod[max]);
       clusterZod.push_back (clusterZod[max]);
-
-
     }
 
   NS_LOG_INFO ("size of coefficient matrix =[" << H_usn.size () << "][" << H_usn[0].size () << "][" << H_usn[0][0].size () << "]");
@@ -1752,11 +1747,11 @@ ThreeGppChannelModel::WrapAngles (double azimuthRad, double inclinationRad)
 {
   inclinationRad = WrapTo2Pi (inclinationRad);
   if (inclinationRad > M_PI)
-  {
-    // inclination must be in [0, M_PI]
-    inclinationRad -= M_PI;
-    azimuthRad += M_PI;
-  }
+    {
+      // inclination must be in [0, M_PI]
+      inclinationRad -= M_PI;
+      azimuthRad += M_PI;
+    }
 
   azimuthRad = WrapTo2Pi (azimuthRad);
 
