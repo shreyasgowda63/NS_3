@@ -10,9 +10,11 @@ def build(bld):
         'model/constant-velocity-mobility-model.cc',
         'model/gauss-markov-mobility-model.cc',
         'model/geographic-positions.cc',
+        'model/hex-position-allocator.cc',
         'model/hierarchical-mobility-model.cc',
         'model/mobility-model.cc',
         'model/position-allocator.cc',
+        'model/position-filter.cc',
         'model/random-direction-2d-mobility-model.cc',
         'model/random-walk-2d-mobility-model.cc',
         'model/random-waypoint-mobility-model.cc',
@@ -33,7 +35,6 @@ def build(bld):
         'test/waypoint-mobility-model-test.cc',
         'test/geo-to-cartesian-test.cc',
         'test/rand-cart-around-geo-test.cc',
-        'test/box-line-intersection-test.cc',
         ]
 
     # Tests encapsulating example programs should be listed here
@@ -52,9 +53,11 @@ def build(bld):
         'model/constant-velocity-mobility-model.h',
         'model/gauss-markov-mobility-model.h',
         'model/geographic-positions.h',
+        'model/hex-position-allocator.h',
         'model/hierarchical-mobility-model.h',
         'model/mobility-model.h',
         'model/position-allocator.h',
+        'model/position-filter.h',
         'model/rectangle.h',
         'model/random-direction-2d-mobility-model.h',
         'model/random-walk-2d-mobility-model.h',
