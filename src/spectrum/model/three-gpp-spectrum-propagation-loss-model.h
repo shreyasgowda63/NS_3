@@ -101,7 +101,7 @@ public:
    * Returns the value of an attribute belonging to the associated
    * MatrixBasedChannelModel instance
    * \param name name of the attribute
-   * \param where the result should be stored
+   * \param value where the result should be stored
    */
   void GetChannelModelAttribute (const std::string &name, AttributeValue &value) const;
 

@@ -40,20 +40,18 @@ NS_LOG_COMPONENT_DEFINE ("ThreeGppChannelModel");
 
 NS_OBJECT_ENSURE_REGISTERED (ThreeGppChannelModel);
 
-//Table 7.5-3: Ray offset angles within a cluster, given for rms angle spread normalized to 1.
+/// The ray offset angles within a cluster, given for rms angle spread normalized to 1. (Table 7.5-3)
 static const double offSetAlpha[20] = {
-    0.0447, -0.0447, 0.1413, -0.1413, 0.2492, -0.2492, 0.3715, -0.3715, 0.5129, -0.5129,
-    0.6797, -0.6797, 0.8844, -0.8844, 1.1481, -1.1481, 1.5195, -1.5195, 2.1551, -2.1551};
+  0.0447, -0.0447, 0.1413, -0.1413, 0.2492, -0.2492, 0.3715, -0.3715, 0.5129, -0.5129,
+  0.6797, -0.6797, 0.8844, -0.8844, 1.1481, -1.1481, 1.5195, -1.5195, 2.1551, -2.1551};
 
-/*
- * The cross correlation matrix is constructed according to table 7.5-6.
- * All the square root matrix is being generated using the Cholesky decomposition
- * and following the order of [SF,K,DS,ASD,ASA,ZSD,ZSA].
- * The parameter K is ignored in NLOS.
+/**
+ * The square root matrix for <em>RMa LOS</em>, which is generated using the
+ * Cholesky decomposition according to table 7.5-6 Part 2 and follows the order
+ * of [SF, K, DS, ASD, ASA, ZSD, ZSA].
  *
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
- *
  */
 static const double sqrtC_RMa_LOS[7][7] = {
   {1, 0, 0, 0, 0, 0, 0},
@@ -65,6 +63,15 @@ static const double sqrtC_RMa_LOS[7][7] = {
   {-0.17, -0.02, 0.21362, -0.14, 0.24, 0.142773, 0.909661},
 };
 
+/**
+ * The square root matrix for <em>RMa NLOS</em>, which is generated using the
+ * Cholesky decomposition according to table 7.5-6 Part 2 and follows the order
+ * of [SF, K, DS, ASD, ASA, ZSD, ZSA].
+ * The parameter K is ignored.
+ * 
+ * The Matlab file to generate the matrices can be found in
+ * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
+ */
 static const double sqrtC_RMa_NLOS[6][6] = {
   {1, 0, 0, 0, 0, 0},
   {-0.5, 0.866025, 0, 0, 0, 0},
@@ -74,6 +81,14 @@ static const double sqrtC_RMa_NLOS[6][6] = {
   {-0.25, -0.606218, -0.240013, 0.26, -0.231685, 0.625392},
 };
 
+/**
+ * The square root matrix for <em>RMa O2I</em>, which is generated using the
+ * Cholesky decomposition according to table 7.5-6 Part 2 and follows the order
+ * of [SF, K, DS, ASD, ASA, ZSD, ZSA].
+ * 
+ * The Matlab file to generate the matrices can be found in
+ * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
+ */
 static const double sqrtC_RMa_O2I[6][6] = {
   {1, 0, 0, 0, 0, 0},
   {0, 1, 0, 0, 0, 0},
@@ -83,6 +98,14 @@ static const double sqrtC_RMa_O2I[6][6] = {
   {0, 0, 0.47, 0.152631, -0.393194, 0.775373},
 };
 
+/**
+ * The square root matrix for <em>UMa LOS</em>, which is generated using the
+ * Cholesky decomposition according to table 7.5-6 Part 1 and follows the order
+ * of [SF, K, DS, ASD, ASA, ZSD, ZSA].
+ *
+ * The Matlab file to generate the matrices can be found in
+ * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
+ */
 static const double sqrtC_UMa_LOS[7][7] = {
   {1, 0, 0, 0, 0, 0, 0},
   {0, 1, 0, 0, 0, 0, 0},
@@ -93,7 +116,15 @@ static const double sqrtC_UMa_LOS[7][7] = {
   {-0.8, 0, -0.388057, -0.367926, 0.238537, -3.58949e-15, 0.130931},
 };
 
-
+/**
+ * The square root matrix for <em>UMa NLOS</em>, which is generated using the
+ * Cholesky decomposition according to table 7.5-6 Part 1 and follows the order
+ * of [SF, K, DS, ASD, ASA, ZSD, ZSA].
+ * The parameter K is ignored.
+ * 
+ * The Matlab file to generate the matrices can be found in
+ * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
+ */
 static const double sqrtC_UMa_NLOS[6][6] = {
   {1, 0, 0, 0, 0, 0},
   {-0.4, 0.916515, 0, 0, 0, 0},
@@ -103,6 +134,14 @@ static const double sqrtC_UMa_NLOS[6][6] = {
   {-0.4, -0.174574, -0.396459, 0.392138, 0.49099, 0.507445},
 };
 
+/**
+ * The square root matrix for <em>UMa O2I</em>, which is generated using the
+ * Cholesky decomposition according to table 7.5-6 Part 1 and follows the order
+ * of [SF, K, DS, ASD, ASA, ZSD, ZSA].
+ * 
+ * The Matlab file to generate the matrices can be found in
+ * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
+ */
 static const double sqrtC_UMa_O2I[6][6] = {
   {1, 0, 0, 0, 0, 0},
   {-0.5, 0.866025, 0, 0, 0, 0},
@@ -113,6 +152,14 @@ static const double sqrtC_UMa_O2I[6][6] = {
 
 };
 
+/**
+ * The square root matrix for <em>UMi LOS</em>, which is generated using the
+ * Cholesky decomposition according to table 7.5-6 Part 1 and follows the order
+ * of [SF, K, DS, ASD, ASA, ZSD, ZSA].
+ *
+ * The Matlab file to generate the matrices can be found in
+ * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
+ */
 static const double sqrtC_UMi_LOS[7][7] = {
   {1, 0, 0, 0, 0, 0, 0},
   {0.5, 0.866025, 0, 0, 0, 0, 0},
@@ -123,6 +170,15 @@ static const double sqrtC_UMi_LOS[7][7] = {
   {0, 0, 0.280976, 0.231921, -0.490509, 0.11916, 0.782603},
 };
 
+/**
+ * The square root matrix for <em>UMi NLOS</em>, which is generated using the
+ * Cholesky decomposition according to table 7.5-6 Part 1 and follows the order
+ * of [SF, K, DS, ASD, ASA, ZSD, ZSA].
+ * The parameter K is ignored.
+ * 
+ * The Matlab file to generate the matrices can be found in
+ * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
+ */
 static const double sqrtC_UMi_NLOS[6][6] = {
   {1, 0, 0, 0, 0, 0},
   {-0.7, 0.714143, 0, 0, 0, 0},
@@ -132,6 +188,14 @@ static const double sqrtC_UMi_NLOS[6][6] = {
   {0, 0, 0.5, 0.221981, -0.566238, 0.616522},
 };
 
+/**
+ * The square root matrix for <em>UMi O2I</em>, which is generated using the
+ * Cholesky decomposition according to table 7.5-6 Part 1 and follows the order
+ * of [SF, K, DS, ASD, ASA, ZSD, ZSA].
+ * 
+ * The Matlab file to generate the matrices can be found in
+ * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
+ */
 static const double sqrtC_UMi_O2I[6][6] = {
   {1, 0, 0, 0, 0, 0},
   {-0.5, 0.866025, 0, 0, 0, 0},
@@ -141,6 +205,14 @@ static const double sqrtC_UMi_O2I[6][6] = {
   {0, -0.23094, 0.16843, 0.808554, -0.220827, 0.464515},
 };
 
+/**
+ * The square root matrix for <em>Indoor-Office LOS</em>, which is generated
+ * using the Cholesky decomposition according to table 7.5-6 Part 2 and follows
+ * the order of [SF, K, DS, ASD, ASA, ZSD, ZSA].
+ *
+ * The Matlab file to generate the matrices can be found in
+ * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
+ */
 static const double sqrtC_office_LOS[7][7] = {
   {1, 0, 0, 0, 0, 0, 0},
   {0.5, 0.866025, 0, 0, 0, 0, 0},
@@ -151,6 +223,15 @@ static const double sqrtC_office_LOS[7][7] = {
   {0.3, -0.057735, 0.73598, -0.348236, 0.0610847, -0.304997, 0.383375},
 };
 
+/**
+ * The square root matrix for <em>Indoor-Office NLOS</em>, which is generated
+ * using the Cholesky decomposition according to table 7.5-6 Part 2 and follows
+ * the order of [SF, K, DS, ASD, ASA, ZSD, ZSA].
+ * The parameter K is ignored.
+ * 
+ * The Matlab file to generate the matrices can be found in
+ * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
+ */
 static const double sqrtC_office_NLOS[6][6] = {
   {1, 0, 0, 0, 0, 0},
   {-0.5, 0.866025, 0, 0, 0, 0},
