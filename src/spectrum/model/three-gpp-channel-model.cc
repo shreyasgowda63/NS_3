@@ -1308,11 +1308,10 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
     }
 
   DoubleVector clusterAoa, clusterAod, clusterZoa, clusterZod;
-  double angle;
   for (uint8_t cIndex = 0; cIndex < numReducedCluster; cIndex++)
     {
       double logCalc = -1 * log (clusterPowerForAngles[cIndex] / powerMax);
-      angle = 2 * sqrt (logCalc) / 1.4 / C_phi;        //(7.5-9)
+      double angle = 2 * sqrt (logCalc) / 1.4 / C_phi;        //(7.5-9)
       clusterAoa.push_back (ASA * angle);
       clusterAod.push_back (ASD * angle);
       angle = logCalc / C_theta;         //(7.5-14)
@@ -1378,10 +1377,10 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
           std::tie (rayAod_radian[nInd][mInd], rayZod_radian[nInd][mInd]) = WrapAngles (DegreesToRadians (tempAod), DegreesToRadians (tempZod));
         }
     }
-  DoubleVector angle_degree;
   double sizeTemp = clusterZoa.size ();
   for (uint8_t ind = 0; ind < 4; ind++)
     {
+      DoubleVector angle_degree;
       switch (ind)
         {
           case 0:
@@ -1492,24 +1491,25 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
   // Step 11: Generate channel coefficients for each cluster n and each receiver
   // and transmitter element pair u,s.
 
-  Complex3DVector H_NLOS; // channel coefficients H_NLOS [u][s][n],
+  // H_NLOS is declared but not used anywhere in the code
+  // Complex3DVector H_NLOS; // channel coefficients H_NLOS [u][s][n],
   // where u and s are receive and transmit antenna element, n is cluster index.
   uint64_t uSize = uAntenna->GetNumberOfElements ();
   uint64_t sSize = sAntenna->GetNumberOfElements ();
 
   uint8_t cluster1st = 0, cluster2nd = 0; // first and second strongest cluster;
-  double maxPower = 0;
   for (uint8_t cIndex = 0; cIndex < numReducedCluster; cIndex++)
     {
+      double maxPower = 0;
       if (maxPower < clusterPower[cIndex])
         {
           maxPower = clusterPower[cIndex];
           cluster1st = cIndex;
         }
     }
-  maxPower = 0;
   for (uint8_t cIndex = 0; cIndex < numReducedCluster; cIndex++)
     {
+      double maxPower = 0;
       if (maxPower < clusterPower[cIndex] && cluster1st != cIndex)
         {
           maxPower = clusterPower[cIndex];
@@ -1900,11 +1900,10 @@ ThreeGppChannelModel::CalcAttenuationOfBlockage (Ptr<ThreeGppChannelModel::Three
         }
 
       //check non-self blocking
-      double phiK, xK, thetaK, yK;
       for (uint16_t blockInd = 0; blockInd < m_numNonSelfBlocking; blockInd++)
         {
           //The normal RV is transformed to uniform RV with the desired correlation.
-          phiK = (0.5 * erfc (-1 * params->m_nonSelfBlocking[blockInd][PHI_INDEX] / sqrt (2))) * 360;
+          double phiK = (0.5 * erfc (-1 * params->m_nonSelfBlocking[blockInd][PHI_INDEX] / sqrt (2))) * 360;
           while (phiK > 360)
             {
               phiK -= 360;
@@ -1915,9 +1914,9 @@ ThreeGppChannelModel::CalcAttenuationOfBlockage (Ptr<ThreeGppChannelModel::Three
               phiK += 360;
             }
 
-          xK = params->m_nonSelfBlocking[blockInd][X_INDEX];
-          thetaK = params->m_nonSelfBlocking[blockInd][THETA_INDEX];
-          yK = params->m_nonSelfBlocking[blockInd][Y_INDEX];
+          double xK = params->m_nonSelfBlocking[blockInd][X_INDEX];
+          double thetaK = params->m_nonSelfBlocking[blockInd][THETA_INDEX];
+          double yK = params->m_nonSelfBlocking[blockInd][Y_INDEX];
           NS_LOG_INFO ("AOA=" << clusterAOA[cInd] << " Block Region[" << phiK - xK << "," << phiK + xK << "]");
           NS_LOG_INFO ("ZOA=" << clusterZOA[cInd] << " Block Region[" << thetaK - yK << "," << thetaK + yK << "]");
 
