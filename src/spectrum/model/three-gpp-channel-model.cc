@@ -42,8 +42,8 @@ NS_OBJECT_ENSURE_REGISTERED (ThreeGppChannelModel);
 
 //Table 7.5-3: Ray offset angles within a cluster, given for rms angle spread normalized to 1.
 static const double offSetAlpha[20] = {
-  0.0447,-0.0447,0.1413,-0.1413,0.2492,-0.2492,0.3715,-0.3715,0.5129,-0.5129,0.6797,-0.6797,0.8844,-0.8844,1.1481,-1.1481,1.5195,-1.5195,2.1551,-2.1551
-};
+    0.0447, -0.0447, 0.1413, -0.1413, 0.2492, -0.2492, 0.3715, -0.3715, 0.5129, -0.5129,
+    0.6797, -0.6797, 0.8844, -0.8844, 1.1481, -1.1481, 1.5195, -1.5195, 2.1551, -2.1551};
 
 /*
  * The cross correlation matrix is constructed according to table 7.5-6.
@@ -280,7 +280,7 @@ ThreeGppChannelModel::SetScenario (const std::string &scenario)
   NS_ASSERT_MSG (scenario == "RMa" || scenario == "UMa" || scenario == "UMi-StreetCanyon"
                  || scenario == "InH-OfficeOpen" || scenario == "InH-OfficeMixed"
                  || scenario == "V2V-Urban" || scenario == "V2V-Highway",
-                 "Unknown scenario, choose between RMa, UMa, UMi-StreetCanyon,"
+                 "Unknown scenario, choose between: RMa, UMa, UMi-StreetCanyon, "
                  "InH-OfficeOpen, InH-OfficeMixed, V2V-Urban or V2V-Highway");
   m_scenario = scenario;
 }
@@ -293,7 +293,8 @@ ThreeGppChannelModel::GetScenario () const
 }
 
 Ptr<const ThreeGppChannelModel::ParamsTable>
-ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondition, double hBS, double hUT, double distance2D) const
+ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondition, double hBS,
+                                        double hUT, double distance2D) const
 {
   NS_LOG_FUNCTION (this);
 
@@ -356,7 +357,7 @@ ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondi
           table3gpp->m_sigLgASD = 0.45;
           table3gpp->m_uLgASA = 1.52;
           table3gpp->m_sigLgASA = 0.13;
-          table3gpp->m_uLgZSA = 0.58,
+          table3gpp->m_uLgZSA = 0.58;
           table3gpp->m_sigLgZSA = 0.37;
           table3gpp->m_uLgZSD = std::max (-1.0, -0.19 * (distance2D / 1000) - 0.01 * (hUT - 1.5) + 0.28);
           table3gpp->m_sigLgZSD = 0.30;
@@ -390,7 +391,7 @@ ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondi
           table3gpp->m_sigLgASD = 0.18;
           table3gpp->m_uLgASA = 1.66;
           table3gpp->m_sigLgASA = 0.21;
-          table3gpp->m_uLgZSA = 0.93,
+          table3gpp->m_uLgZSA = 0.93;
           table3gpp->m_sigLgZSA = 0.22;
           table3gpp->m_uLgZSD = std::max (-1.0, -0.19 * (distance2D / 1000) - 0.01 * (hUT - 1.5) + 0.28);
           table3gpp->m_sigLgZSD = 0.30;
@@ -460,7 +461,7 @@ ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondi
           double cfc = -0.13 * log10 (fcGHz) + 2.03;
           double efc = 7.66 * log10 (fcGHz) - 5.96;
 
-          double offsetZOD = efc - std::pow (10, afc * log10 (std::max (bfc,distance2D)) + cfc);
+          double offsetZOD = efc - std::pow (10, afc * log10 (std::max (bfc, distance2D)) + cfc);
 
           if (!los && !o2i)
             {
@@ -573,7 +574,7 @@ ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondi
         }
       else
         {
-          double uLgZSD = std::max (-0.5, -3.1 * distance2D / 1000 + 0.01 * std::max (hUT - hBS,0.0) + 0.2);
+          double uLgZSD = std::max (-0.5, -3.1 * distance2D / 1000 + 0.01 * std::max (hUT - hBS, 0.0) + 0.2);
           double offsetZOD = -1 * std::pow (10, -1.5 * log10 (std::max (10.0, distance2D)) + 3.3);
           if (!los && !o2i)
             {
@@ -645,7 +646,7 @@ ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondi
             }
         }
     }
-  else if (m_scenario == "InH-OfficeMixed"||m_scenario == "InH-OfficeOpen")
+  else if (m_scenario == "InH-OfficeMixed" || m_scenario == "InH-OfficeOpen")
     {
       NS_ASSERT_MSG (!o2i, "The indoor scenario does out support outdoor to indoor");
       if (los)
@@ -731,8 +732,8 @@ ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondi
           table3gpp->m_sigLgASD = 0.1;
           table3gpp->m_uLgASA = -0.1 * log10 (1 + fcGHz) + 1.6;
           table3gpp->m_sigLgASA = 0.1;
-          table3gpp->m_uLgZSA = -0.1 * log10 (1 + fcGHz) + 0.73,
-          table3gpp->m_sigLgZSA = -0.04 * log10 (1 + fcGHz) + 0.34,
+          table3gpp->m_uLgZSA = -0.1 * log10 (1 + fcGHz) + 0.73;
+          table3gpp->m_sigLgZSA = -0.04 * log10 (1 + fcGHz) + 0.34;
           table3gpp->m_uLgZSD = -0.1 * log10 (1 + fcGHz) + 0.73;
           table3gpp->m_sigLgZSD = -0.04 * log10 (1 + fcGHz) + 0.34;
           table3gpp->m_offsetZOD = 0;
@@ -765,7 +766,7 @@ ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondi
           table3gpp->m_sigLgASD = 0.05 * log10 (1 + fcGHz) + 0.3;
           table3gpp->m_uLgASA = -0.08 * log10 (1 + fcGHz) + 1.81;
           table3gpp->m_sigLgASA = 0.05 * log10 (1 + fcGHz) + 0.3;
-          table3gpp->m_uLgZSA = -0.04 * log10 (1 + fcGHz) + 0.92,
+          table3gpp->m_uLgZSA = -0.04 * log10 (1 + fcGHz) + 0.92;
           table3gpp->m_sigLgZSA = -0.07 * log10 (1 + fcGHz) + 0.41;
           table3gpp->m_uLgZSD = -0.04 * log10 (1 + fcGHz) + 0.92;
           table3gpp->m_sigLgZSD = -0.07 * log10 (1 + fcGHz) + 0.41;
@@ -910,7 +911,7 @@ ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondi
           table3gpp->m_sigLgASD = 0.05 * log10 (1 + fcGHz) + 0.3;
           table3gpp->m_uLgASA = -0.08 * log10 (1 + fcGHz) + 1.81;
           table3gpp->m_sigLgASA = 0.05 * log10 (1 + fcGHz) + 0.3;
-          table3gpp->m_uLgZSA = -0.04 * log10 (1 + fcGHz) + 0.92,
+          table3gpp->m_uLgZSA = -0.04 * log10 (1 + fcGHz) + 0.92;
           table3gpp->m_sigLgZSA = -0.07 * log10 (1 + fcGHz) + 0.41;
           table3gpp->m_uLgZSD = -0.04 * log10 (1 + fcGHz) + 0.92;
           table3gpp->m_sigLgZSD = -0.07 * log10 (1 + fcGHz) + 0.41;
@@ -948,7 +949,8 @@ ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondi
 }
 
 bool
-ThreeGppChannelModel::ChannelMatrixNeedsUpdate (Ptr<const ThreeGppChannelMatrix> channelMatrix, Ptr<const ChannelCondition> channelCondition) const
+ThreeGppChannelModel::ChannelMatrixNeedsUpdate (Ptr<const ThreeGppChannelMatrix> channelMatrix,
+                                                Ptr<const ChannelCondition> channelCondition) const
 {
   NS_LOG_FUNCTION (this);
 
@@ -964,7 +966,8 @@ ThreeGppChannelModel::ChannelMatrixNeedsUpdate (Ptr<const ThreeGppChannelMatrix>
   // if the coherence time is over the channel has to be updated
   if (!m_updatePeriod.IsZero () && Simulator::Now () - channelMatrix->m_generatedTime > m_updatePeriod)
     {
-      NS_LOG_DEBUG ("Generation time " << channelMatrix->m_generatedTime.As (Time::NS) << " now " << Now ().As (Time::NS));
+      NS_LOG_DEBUG ("Generation time " << channelMatrix->m_generatedTime.As (Time::NS) << " now "
+                                       << Now ().As (Time::NS));
       update = true;
     }
 
@@ -1071,15 +1074,12 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
 
   //Step 4: Generate large scale parameters. All LSPS are uncorrelated.
   DoubleVector LSPsIndep, LSPs;
-  uint8_t paramNum;
+  uint8_t paramNum = 6;
   if (los)
     {
       paramNum = 7;
     }
-  else
-    {
-      paramNum = 6;
-    }
+
   //Generate paramNum independent LSPs.
   for (uint8_t iter = 0; iter < paramNum; iter++)
     {
@@ -1096,7 +1096,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
     }
 
   // NOTE the shadowing is generated in the propagation loss model
-  double DS,ASD,ASA,ZSA,ZSD,K_factor = 0;
+  double DS, ASD, ASA, ZSA, ZSD, K_factor = 0;
   if (los)
     {
       K_factor = LSPs[1] * table3gpp->m_sigK + table3gpp->m_uK;
@@ -1123,14 +1123,15 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
   channelParams->m_DS = DS;
   channelParams->m_K = K_factor;
 
-  NS_LOG_INFO ("K-factor=" << K_factor << ",DS=" << DS << ", ASD=" << ASD << ", ASA=" << ASA << ", ZSD=" << ZSD << ", ZSA=" << ZSA);
+  NS_LOG_INFO ("K-factor=" << K_factor << ", DS=" << DS << ", ASD=" << ASD << ", ASA=" << ASA
+                           << ", ZSD=" << ZSD << ", ZSA=" << ZSA);
 
   //Step 5: Generate Delays.
   DoubleVector clusterDelay;
   double minTau = 100.0;
   for (uint8_t cIndex = 0; cIndex < numOfCluster; cIndex++)
     {
-      double tau = -1 * table3gpp->m_rTau * DS * log (m_uniformRv->GetValue (0,1)); //(7.5-1)
+      double tau = -1 * table3gpp->m_rTau * DS * log (m_uniformRv->GetValue (0, 1)); //(7.5-1)
       if (minTau > tau)
         {
           minTau = tau;
@@ -1153,7 +1154,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
   for (uint8_t cIndex = 0; cIndex < numOfCluster; cIndex++)
     {
       double power = exp (-1 * clusterDelay[cIndex] * (table3gpp->m_rTau - 1) / table3gpp->m_rTau / DS) *
-        pow (10,-1 * m_normalRv->GetValue () * table3gpp->m_perClusterShadowingStd / 10);                       //(7.5-5)
+        pow (10, -1 * m_normalRv->GetValue () * table3gpp->m_perClusterShadowingStd / 10);                       //(7.5-5)
       powerSum += power;
       clusterPower.push_back (power);
     }
@@ -1167,7 +1168,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
   DoubleVector clusterPowerForAngles; // this power is only for equation (7.5-9) and (7.5-14), not for (7.5-22)
   if (los)
     {
-      double K_linear = pow (10,K_factor / 10);
+      double K_linear = pow (10, K_factor / 10);
 
       for (uint8_t cIndex = 0; cIndex < numOfCluster; cIndex++)
         {
@@ -1198,7 +1199,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
     }
 
   //remove clusters with less than -25 dB power compared to the maxim cluster power;
-  //double thresh = pow(10,-2.5);
+  //double thresh = pow(10, -2.5);
   double thresh = 0.0032;
   for (uint8_t cIndex = numOfCluster; cIndex > 0; cIndex--)
     {
@@ -1217,7 +1218,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
   // Resume step 5 to compute the delay for LoS condition.
   if (los)
     {
-      double C_tau = 0.7705 - 0.0433 * K_factor + 2e-4 * pow (K_factor,2) + 17e-6 * pow (K_factor,3);         //(7.5-3)
+      double C_tau = 0.7705 - 0.0433 * K_factor + 2e-4 * pow (K_factor, 2) + 17e-6 * pow (K_factor, 3); //(7.5-3)
       for (uint8_t cIndex = 0; cIndex < numReducedCluster; cIndex++)
         {
           clusterDelay[cIndex] = clusterDelay[cIndex] / C_tau;             //(7.5-4)
@@ -1271,7 +1272,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
   double C_phi = C_NLOS;
   if (los)
     {
-      C_phi *= (1.1035 - 0.028 * K_factor - 2e-3 * pow (K_factor,2) + 1e-4 * pow (K_factor,3));         //(7.5-10))
+      C_phi *= (1.1035 - 0.028 * K_factor - 2e-3 * pow (K_factor, 2) + 1e-4 * pow (K_factor, 3)); //(7.5-10))
     }
 
   switch (numOfCluster) //Table 7.5-4
@@ -1304,7 +1305,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
   double C_theta = C_NLOS;
   if (los)
     {
-      C_theta *= (1.3086 + 0.0339 * K_factor - 0.0077 * pow (K_factor,2) + 2e-4 * pow (K_factor,3));         //(7.5-15)
+      C_theta *= (1.3086 + 0.0339 * K_factor - 0.0077 * pow (K_factor, 2) + 2e-4 * pow (K_factor, 3)); //(7.5-15)
     }
 
   DoubleVector clusterAoa, clusterAod, clusterZoa, clusterZod;
@@ -1322,7 +1323,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
   for (uint8_t cIndex = 0; cIndex < numReducedCluster; cIndex++)
     {
       int Xn = 1;
-      if (m_uniformRv->GetValue (0,1) < 0.5)
+      if (m_uniformRv->GetValue (0, 1) < 0.5)
         {
           Xn = -1;
         }
@@ -1337,7 +1338,6 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
           clusterZoa[cIndex] = clusterZoa[cIndex] * Xn + (m_normalRv->GetValue () * ZSA / 7) + RadiansToDegrees (uAngle.GetInclination ());            //(7.5-16)
         }
       clusterZod[cIndex] = clusterZod[cIndex] * Xn + (m_normalRv->GetValue () * ZSD / 7) + RadiansToDegrees (sAngle.GetInclination ()) + table3gpp->m_offsetZOD;        //(7.5-19)
-
     }
 
   if (los)
@@ -1355,7 +1355,6 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
           clusterAod[cIndex] -= diffAod;
           clusterZoa[cIndex] -= diffZsa; //(7.5-17)
           clusterZod[cIndex] -= diffZsd;
-
         }
     }
 
@@ -1373,10 +1372,11 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
           std::tie (rayAoa_radian[nInd][mInd], rayZoa_radian[nInd][mInd]) = WrapAngles (DegreesToRadians (tempAoa), DegreesToRadians (tempZoa));
 
           double tempAod = clusterAod[nInd] + table3gpp->m_cASD * offSetAlpha[mInd]; //(7.5-13)
-          double tempZod = clusterZod[nInd] + 0.375 * pow (10,table3gpp->m_uLgZSD) * offSetAlpha[mInd]; //(7.5-20)
+          double tempZod = clusterZod[nInd] + 0.375 * pow (10, table3gpp->m_uLgZSD) * offSetAlpha[mInd]; //(7.5-20)
           std::tie (rayAod_radian[nInd][mInd], rayZod_radian[nInd][mInd]) = WrapAngles (DegreesToRadians (tempAod), DegreesToRadians (tempZod));
         }
     }
+
   double sizeTemp = clusterZoa.size ();
   for (uint8_t ind = 0; ind < 4; ind++)
     {
@@ -1444,7 +1444,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
       attenuation_dB = CalcAttenuationOfBlockage (channelParams, clusterAoa, clusterZoa);
       for (uint8_t cInd = 0; cInd < numReducedCluster; cInd++)
         {
-          clusterPower[cInd] = clusterPower[cInd] / pow (10,attenuation_dB[cInd] / 10);
+          clusterPower[cInd] = clusterPower[cInd] / pow (10, attenuation_dB[cInd] / 10);
         }
     }
   else
@@ -1549,7 +1549,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
               //polarization slant angle configured in the array (7.5-22)
               if (nIndex != cluster1st && nIndex != cluster2nd)
                 {
-                  std::complex<double> rays (0,0);
+                  std::complex<double> rays (0, 0);
                   for (uint8_t mIndex = 0; mIndex < raysPerCluster; mIndex++)
                     {
                       DoubleVector initialPhase = clusterPhase[nIndex][mIndex];
@@ -1580,9 +1580,9 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
                 }
               else  //(7.5-28)
                 {
-                  std::complex<double> raysSub1 (0,0);
-                  std::complex<double> raysSub2 (0,0);
-                  std::complex<double> raysSub3 (0,0);
+                  std::complex<double> raysSub1 (0, 0);
+                  std::complex<double> raysSub2 (0, 0);
+                  std::complex<double> raysSub3 (0, 0);
 
                   for (uint8_t mIndex = 0; mIndex < raysPerCluster; mIndex++)
                     {
@@ -1640,7 +1640,7 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
 
           if (los) //(7.5-29) && (7.5-30)
             {
-              std::complex<double> ray (0,0);
+              std::complex<double> ray (0, 0);
               double rxPhaseDiff = 2 * M_PI * (sin (uAngle.GetInclination ()) * cos (uAngle.GetAzimuth ()) * uLoc.x
                                                + sin (uAngle.GetInclination ()) * sin (uAngle.GetAzimuth ()) * uLoc.y
                                                + cos (uAngle.GetInclination ()) * uLoc.z);
@@ -1659,9 +1659,9 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
                 * std::complex<double> (cos (rxPhaseDiff), sin (rxPhaseDiff))
                 * std::complex<double> (cos (txPhaseDiff), sin (txPhaseDiff));
 
-              double K_linear = pow (10,K_factor / 10);
+              double K_linear = pow (10, K_factor / 10);
               // the LOS path should be attenuated if blockage is enabled.
-              H_usn[uIndex][sIndex][0] = sqrt (1 / (K_linear + 1)) * H_usn[uIndex][sIndex][0] + sqrt (K_linear / (1 + K_linear)) * ray / pow (10,attenuation_dB[0] / 10);           //(7.5-30) for tau = tau1
+              H_usn[uIndex][sIndex][0] = sqrt (1 / (K_linear + 1)) * H_usn[uIndex][sIndex][0] + sqrt (K_linear / (1 + K_linear)) * ray / pow (10, attenuation_dB[0] / 10);           //(7.5-30) for tau = tau1
               double tempSize = H_usn[uIndex][sIndex].size ();
               for (uint8_t nIndex = 1; nIndex < tempSize; nIndex++)
                 {
@@ -1728,7 +1728,8 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
       clusterZod.push_back (clusterZod[max]);
     }
 
-  NS_LOG_INFO ("size of coefficient matrix =[" << H_usn.size () << "][" << H_usn[0].size () << "][" << H_usn[0][0].size () << "]");
+  NS_LOG_INFO ("size of coefficient matrix =[" << H_usn.size () << "][" << H_usn[0].size () << "]["
+                                               << H_usn[0][0].size () << "]");
 
   channelParams->m_channel = H_usn;
   channelParams->m_delay = clusterDelay;
@@ -1895,7 +1896,7 @@ ThreeGppChannelModel::CalcAttenuationOfBlockage (Ptr<ThreeGppChannelModel::Three
       if ( std::abs (clusterAOA[cInd] - phi_sb) < (x_sb / 2) && std::abs (clusterZOA[cInd] - theta_sb) < (y_sb / 2))
         {
           powerAttenuation[cInd] += 30;               //anttenuate by 30 dB.
-          NS_LOG_INFO ("Cluster[" << (int)cInd << "] is blocked by self blocking region and reduce 30 dB power,"
+          NS_LOG_INFO ("Cluster[" << +cInd << "] is blocked by self blocking region and reduce 30 dB power,"
                        "the attenuation is [" << powerAttenuation[cInd] << " dB]");
         }
 
@@ -1973,15 +1974,13 @@ ThreeGppChannelModel::CalcAttenuationOfBlockage (Ptr<ThreeGppChannelModel::Three
                                                             params->m_nonSelfBlocking[blockInd][R_INDEX] * (1 / cos (DegreesToRadians (Z2)) - 1))) / M_PI;
               double L_dB = -20 * log10 (1 - (F_A1 + F_A2) * (F_Z1 + F_Z2));                  //(7.6-22)
               powerAttenuation[cInd] += L_dB;
-              NS_LOG_INFO ("Cluster[" << (int)cInd << "] is blocked by no-self blocking, "
-                           "the loss is [" << L_dB << "]" << " dB");
-
+              NS_LOG_INFO ("Cluster[" << +cInd << "] is blocked by no-self blocking, the loss is ["
+                                      << L_dB << "] dB");
             }
         }
     }
   return powerAttenuation;
 }
-
 
 void
 ThreeGppChannelModel::Shuffle (double * first, double * last) const

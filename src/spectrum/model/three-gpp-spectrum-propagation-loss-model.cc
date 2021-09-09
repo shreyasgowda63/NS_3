@@ -97,7 +97,8 @@ ThreeGppSpectrumPropagationLossModel::GetChannelModel () const
 void
 ThreeGppSpectrumPropagationLossModel::AddDevice (Ptr<NetDevice> n, Ptr<const PhasedArrayModel> a)
 {
-  NS_ASSERT_MSG (m_deviceAntennaMap.find (n->GetNode ()->GetId ()) == m_deviceAntennaMap.end (), "Device is already present in the map");
+  NS_ASSERT_MSG (m_deviceAntennaMap.find (n->GetNode ()->GetId ()) == m_deviceAntennaMap.end (),
+                 "Device is already present in the map");
   m_deviceAntennaMap.insert (std::make_pair (n->GetNode ()->GetId (), a));
 }
 
@@ -139,10 +140,10 @@ ThreeGppSpectrumPropagationLossModel::CalcLongTerm (Ptr<const MatrixBasedChannel
 
   for (uint8_t cIndex = 0; cIndex < numCluster; cIndex++)
     {
-      std::complex<double> txSum (0,0);
+      std::complex<double> txSum (0, 0);
       for (uint16_t sIndex = 0; sIndex < sAntenna; sIndex++)
         {
-          std::complex<double> rxSum (0,0);
+          std::complex<double> rxSum (0, 0);
           for (uint16_t uIndex = 0; uIndex < uAntenna; uIndex++)
             {
               rxSum = rxSum + uW[uIndex] * params->m_channel[uIndex][sIndex][cIndex];
@@ -196,7 +197,7 @@ ThreeGppSpectrumPropagationLossModel::CalcBeamformingGain (Ptr<SpectrumValue> tx
             }
         }
 
-      //cluster angle angle[direction][n],where, direction = 0(aoa), 1(zoa).
+      //cluster angle angle[direction][n], where direction = 0(aoa), 1(zoa).
       double temp_doppler = factor * ((sin (params->m_angle[MatrixBasedChannelModel::ZOA_INDEX][cIndex] * M_PI / 180) * cos (params->m_angle[MatrixBasedChannelModel::AOA_INDEX][cIndex] * M_PI / 180) * uSpeed.x
                                        + sin (params->m_angle[MatrixBasedChannelModel::ZOA_INDEX][cIndex] * M_PI / 180) * sin (params->m_angle[MatrixBasedChannelModel::AOA_INDEX][cIndex] * M_PI / 180) * uSpeed.y
                                        + cos (params->m_angle[MatrixBasedChannelModel::ZOA_INDEX][cIndex] * M_PI / 180) * uSpeed.z)

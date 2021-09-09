@@ -89,7 +89,6 @@ public:
    */
   void AddDevice (Ptr<NetDevice> n, Ptr<const PhasedArrayModel> a);
 
-
   /**
    * Sets the value of an attribute belonging to the associated
    * MatrixBasedChannelModel instance
@@ -163,6 +162,7 @@ private:
                                                Ptr<const MatrixBasedChannelModel::ChannelMatrix> channelMatrix,
                                                const PhasedArrayModel::ComplexVector &aW,
                                                const PhasedArrayModel::ComplexVector &bW) const;
+
   /**
    * Computes the long term component
    * \param channelMatrix the channel matrix H

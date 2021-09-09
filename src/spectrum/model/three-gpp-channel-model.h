@@ -66,7 +66,6 @@ public:
    */
   static TypeId GetTypeId ();
 
-
   /**
    * Set the channel condition model
    * \param a pointer to the ChannelConditionModel object
@@ -119,6 +118,7 @@ public:
                                        Ptr<const MobilityModel> bMob,
                                        Ptr<const PhasedArrayModel> aAntenna,
                                        Ptr<const PhasedArrayModel> bAntenna) override;
+
   /**
    * \brief Assign a fixed random variable stream number to the random variables
    * used by this model.
@@ -143,12 +143,14 @@ private:
    * \return the wrapped (azimuth, inclination) angle pair in radians
    */
   static std::pair<double, double> WrapAngles (double azimuthRad, double inclinationRad);
+
   /**
    * \brief Shuffle the elements of a simple sequence container of type double
    * \param first Pointer to the first element among the elements to be shuffled
    * \param last Pointer to the last element among the elements to be shuffled
    */
   void Shuffle (double * first, double * last) const;
+
   /**
    * Extends the struct ChannelMatrix by including information that are used
    * within the class ThreeGppChannelModel
