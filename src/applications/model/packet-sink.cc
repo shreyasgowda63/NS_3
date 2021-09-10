@@ -221,7 +221,7 @@ void PacketSink::HandleRead (Ptr<Socket> socket)
         }
 
       if (!m_rxTrace.IsEmpty () || !m_rxTraceWithAddresses.IsEmpty () ||
-          !m_rxTraceWithSeqTsSize.IsEmpty ())
+          (!m_rxTraceWithSeqTsSize.IsEmpty () && m_enableSeqTsSizeHeader))
         {
           Ipv4PacketInfoTag interfaceInfo;
           Ipv6PacketInfoTag interface6Info;
