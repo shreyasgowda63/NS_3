@@ -430,14 +430,15 @@ FlowMonitor::SerializeToXmlStream (std::ostream &os, uint16_t indent, bool enabl
     {
       os << std::string ( indent, ' ' );
 #define ATTRIB(name) << " " # name "=\"" << flowI->second.name << "\""
+#define ATTRIB_TIME(name) << " " # name "=\"+" << flowI->second.name.GetNanoSeconds () << "ns\""
       os << "<Flow flowId=\"" << flowI->first << "\""
-      ATTRIB (timeFirstTxPacket)
-      ATTRIB (timeFirstRxPacket)
-      ATTRIB (timeLastTxPacket)
-      ATTRIB (timeLastRxPacket)
-      ATTRIB (delaySum)
-      ATTRIB (jitterSum)
-      ATTRIB (lastDelay)
+      ATTRIB_TIME (timeFirstTxPacket)
+      ATTRIB_TIME (timeFirstRxPacket)
+      ATTRIB_TIME (timeLastTxPacket)
+      ATTRIB_TIME (timeLastRxPacket)
+      ATTRIB_TIME (delaySum)
+      ATTRIB_TIME (jitterSum)
+      ATTRIB_TIME (lastDelay)
       ATTRIB (txBytes)
       ATTRIB (rxBytes)
       ATTRIB (txPackets)
@@ -446,6 +447,7 @@ FlowMonitor::SerializeToXmlStream (std::ostream &os, uint16_t indent, bool enabl
       ATTRIB (timesForwarded)
       << ">\n";
 #undef ATTRIB
+#undef ATTRIB_TIME
 
       indent += 2;
       for (uint32_t reasonCode = 0; reasonCode < flowI->second.packetsDropped.size (); reasonCode++)
