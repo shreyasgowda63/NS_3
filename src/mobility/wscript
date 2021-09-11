@@ -17,6 +17,7 @@ def build(bld):
         'model/random-walk-2d-mobility-model.cc',
         'model/random-waypoint-mobility-model.cc',
         'model/rectangle.cc',
+        'model/semi-random-circular-mobility-model.cc',
         'model/steady-state-random-waypoint-mobility-model.cc',
         'model/waypoint.cc',
         'model/waypoint-mobility-model.cc',
@@ -35,7 +36,7 @@ def build(bld):
         'test/rand-cart-around-geo-test.cc',
         'test/box-line-intersection-test.cc',
         ]
-
+        
     # Tests encapsulating example programs should be listed here
     if (bld.env['ENABLE_EXAMPLES']):
         mobility_test.source.extend([
@@ -59,6 +60,7 @@ def build(bld):
         'model/random-direction-2d-mobility-model.h',
         'model/random-walk-2d-mobility-model.h',
         'model/random-waypoint-mobility-model.h',
+        'model/semi-random-circular-mobility-model.h',
         'model/steady-state-random-waypoint-mobility-model.h',
         'model/waypoint.h',
         'model/waypoint-mobility-model.h',

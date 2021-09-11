@@ -71,6 +71,11 @@ public:
    */
   void SetVelocity (const Vector &vel);
   /**
+   * Set new velocity vector, but not fresh update time.
+   * \param vel Velocity vector
+   */
+  void SetVelocityOnly (const Vector &vel);
+  /**
    * Pause mobility at current position
    */
   void Pause (void);
