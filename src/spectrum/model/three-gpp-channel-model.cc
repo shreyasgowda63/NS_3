@@ -1572,12 +1572,6 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
   // Step 11: Generate channel coefficients for each cluster n and each receiver
   // and transmitter element pair u,s.
 
-  // H_NLOS is declared but not used anywhere in the code
-  // Complex3DVector H_NLOS; // channel coefficients H_NLOS [u][s][n],
-  // where u and s are receive and transmit antenna element, n is cluster index.
-  uint64_t uSize = uAntenna->GetNumberOfElements ();
-  uint64_t sSize = sAntenna->GetNumberOfElements ();
-
   uint8_t cluster1st = 0, cluster2nd = 0; // first and second strongest cluster;
   for (uint8_t cIndex = 0; cIndex < numReducedCluster; cIndex++)
     {
@@ -1602,8 +1596,11 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
                                         << ", 2nd strongest cluster:" << +cluster2nd);
 
   Complex3DVector H_usn;  //channel coffecient H_usn[u][s][n];
+  // where u and s are receive and transmit antenna element, n is cluster index.
   // NOTE Since each of the strongest 2 clusters are divided into 3 sub-clusters,
   // the total cluster will be numReducedCLuster + 4.
+  uint64_t uSize = uAntenna->GetNumberOfElements ();
+  uint64_t sSize = sAntenna->GetNumberOfElements ();
 
   H_usn.resize (uSize);
   for (uint64_t uIndex = 0; uIndex < uSize; uIndex++)
