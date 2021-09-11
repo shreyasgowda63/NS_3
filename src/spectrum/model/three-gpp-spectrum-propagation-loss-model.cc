@@ -198,13 +198,13 @@ ThreeGppSpectrumPropagationLossModel::CalcBeamformingGain (Ptr<SpectrumValue> tx
         }
 
       //cluster angle angle[direction][n], where direction = 0(aoa), 1(zoa).
-      double temp_doppler = factor * ((sin (params->m_angle[MatrixBasedChannelModel::ZOA_INDEX][cIndex] * M_PI / 180) * cos (params->m_angle[MatrixBasedChannelModel::AOA_INDEX][cIndex] * M_PI / 180) * uSpeed.x
+      double tempDoppler = factor * ((sin (params->m_angle[MatrixBasedChannelModel::ZOA_INDEX][cIndex] * M_PI / 180) * cos (params->m_angle[MatrixBasedChannelModel::AOA_INDEX][cIndex] * M_PI / 180) * uSpeed.x
                                        + sin (params->m_angle[MatrixBasedChannelModel::ZOA_INDEX][cIndex] * M_PI / 180) * sin (params->m_angle[MatrixBasedChannelModel::AOA_INDEX][cIndex] * M_PI / 180) * uSpeed.y
                                        + cos (params->m_angle[MatrixBasedChannelModel::ZOA_INDEX][cIndex] * M_PI / 180) * uSpeed.z)
                                       + (sin (params->m_angle[MatrixBasedChannelModel::ZOD_INDEX][cIndex] * M_PI / 180) * cos (params->m_angle[MatrixBasedChannelModel::AOD_INDEX][cIndex] * M_PI / 180) * sSpeed.x
                                          + sin (params->m_angle[MatrixBasedChannelModel::ZOD_INDEX][cIndex] * M_PI / 180) * sin (params->m_angle[MatrixBasedChannelModel::AOD_INDEX][cIndex] * M_PI / 180) * sSpeed.y
                                          + cos (params->m_angle[MatrixBasedChannelModel::ZOD_INDEX][cIndex] * M_PI / 180) * sSpeed.z) + 2 * alpha * D);
-      doppler.push_back (std::complex<double> (cos (temp_doppler), sin (temp_doppler)));
+      doppler.push_back (std::complex<double> (cos (tempDoppler), sin (tempDoppler)));
     }
 
   // apply the doppler term and the propagation delay to the long term component
