@@ -26,11 +26,11 @@ class FiveTuple(object):
     #  source port
     ## @var destinationPort 
     #  destination port
-    ## @var __slots__ 
+    ## @var __slots_ 
     #  class variable list
-    __slots__ = ['sourceAddress', 'destinationAddress', 'protocol', 'sourcePort', 'destinationPort']
+    __slots_ = ['sourceAddress', 'destinationAddress', 'protocol', 'sourcePort', 'destinationPort']
     def __init__(self, el):
-        '''The initializer.
+        '''! The initializer.
         @param self The object pointer.
         @param el The element.
         '''
@@ -49,11 +49,11 @@ class Histogram(object):
     #  number of bins
     ## @var number_of_flows
     #  number of flows
-    ## @var __slots__
+    ## @var __slots_
     #  class variable list
-    __slots__ = 'bins', 'nbins', 'number_of_flows'
+    __slots_ = 'bins', 'nbins', 'number_of_flows'
     def __init__(self, el=None):
-        ''' The initializer.
+        '''! The initializer.
         @param self The object pointer.
         @param el The element.
         '''
@@ -88,13 +88,13 @@ class Flow(object):
     #  flow histogram
     ## @var rx_duration
     #  receive duration
-    ## @var __slots__
+    ## @var __slots_
     #  class variable list
-    __slots__ = ['flowId', 'delayMean', 'packetLossRatio', 'rxBitrate', 'txBitrate',
-                 'fiveTuple', 'packetSizeMean', 'probe_stats_unsorted',
-                 'hopCount', 'flowInterruptionsHistogram', 'rx_duration']
+    __slots_ = ['flowId', 'delayMean', 'packetLossRatio', 'rxBitrate', 'txBitrate',
+                'fiveTuple', 'packetSizeMean', 'probe_stats_unsorted',
+                'hopCount', 'flowInterruptionsHistogram', 'rx_duration']
     def __init__(self, flow_el):
-        ''' The initializer.
+        '''! The initializer.
         @param self The object pointer.
         @param flow_el The element.
         '''
@@ -148,9 +148,9 @@ class ProbeFlowStats(object):
     #  bytes
     ## @var delayFromFirstProbe
     #  delay from first probe
-    ## @var __slots__
+    ## @var __slots_
     #  class variable list
-    __slots__ = ['probeId', 'packets', 'bytes', 'delayFromFirstProbe']
+    __slots_ = ['probeId', 'packets', 'bytes', 'delayFromFirstProbe']
 
 ## Simulation
 class Simulation(object):
@@ -158,7 +158,7 @@ class Simulation(object):
     ## @var flows
     #  list of flows
     def __init__(self, simulation_el):
-        ''' The initializer.
+        '''! The initializer.
         @param self The object pointer.
         @param simulation_el The element.
         '''
