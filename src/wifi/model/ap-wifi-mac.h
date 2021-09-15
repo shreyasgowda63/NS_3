@@ -77,6 +77,8 @@ public:
   bool SupportsSendFrom (void) const override;
   Ptr<WifiMacQueue> GetTxopQueue (AcIndex ac) const override;
   void ConfigureStandard (WifiStandard standard) override;
+  void EnableMacAndPhy ();
+  void DisableMacAndPhy ();
 
   /**
    * \param interval the interval between two beacon transmissions.

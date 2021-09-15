@@ -48,6 +48,9 @@ public:
   void Enqueue (Ptr<Packet> packet, Mac48Address to) override;
   bool CanForwardPacketsTo (Mac48Address to) const override;
 
+  void EnableMacAndPhy ();
+  void DisableMacAndPhy ();
+  
 private:
   void Receive (Ptr<WifiMpdu> mpdu, uint8_t linkId) override;
 };

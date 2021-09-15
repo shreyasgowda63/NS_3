@@ -158,6 +158,10 @@ public:
   StaWifiMac ();
   virtual ~StaWifiMac ();
 
+  // Implementations of pure virtual methods, or overridden from base class.
+  void EnableMacAndPhy ();
+  void DisableMacAndPhy ();
+
   /**
    * \param packet the packet to send.
    * \param to the address to which the packet should be sent.

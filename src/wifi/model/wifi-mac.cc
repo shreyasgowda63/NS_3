@@ -1574,5 +1574,26 @@ WifiMac::GetMaxAmsduSize (AcIndex ac) const
   return maxSize;
 }
 
+void
+RegularWifiMac::EnableMacAndPhy ()
+{
+  NS_LOG_FUNCTION (this);
+  // Power on Radio.
+  GetWifiPhy ()->ResumeFromOff ();
+  GetTxop ()->NotifyOn ();
+  // We cannot call m_linkUp () here because AP,STA and AdHoc behave differently.
+}
+
+void
+RegularWifiMac::DisableMacAndPhy ()
+{
+  NS_LOG_FUNCTION (this);
+  m_linkDown ();
+  //Clear TX Queue.
+  GetTxop ()->NotifyOff ();
+  // Power off Radio.
+  GetWifiPhy ()->SetOffMode ();
+}
+
 } //namespace ns3
 

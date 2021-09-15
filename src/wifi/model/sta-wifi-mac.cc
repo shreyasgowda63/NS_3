@@ -1278,6 +1278,48 @@ StaWifiMac::NotifyChannelSwitching (uint8_t linkId)
     {
       Disassociated (linkId);
     }
+    
+StaWifiMac::EnableMacAndPhy ()
+{
+  NS_LOG_FUNCTION (this);
+  RegularWifiMac::EnableMacAndPhy ();
+  SetState (MacState::UNASSOCIATED);
+  StartScanning ();
+}
+
+void
+StaWifiMac::DisableMacAndPhy ()
+{
+  NS_LOG_FUNCTION (this);
+  // Dissociate from AP.
+  SetState (MacState::UNASSOCIATED);
+
+  // Cancel probe request event.
+  if (m_probeRequestEvent.IsRunning ())
+    {
+      m_probeRequestEvent.Cancel ();
+    }
+
+  // Cancel association request event.
+  if (m_assocRequestEvent.IsRunning ())
+    {
+      m_assocRequestEvent.Cancel ();
+    }
+
+  // Cancel wait beacon event.
+  if (m_waitBeaconEvent.IsRunning ())
+    {
+      m_waitBeaconEvent.Cancel ();
+    }
+
+  // Cancel Beacon watch dog event.
+  if (m_beaconWatchdog.IsRunning ())
+    {
+      m_beaconWatchdog.Cancel ();
+    }
+
+  // Clear TX queue and Power off Radio.
+  RegularWifiMac::DisableMacAndPhy ();
 }
 
 std::ostream & operator << (std::ostream &os, const StaWifiMac::ApInfo& apInfo)
