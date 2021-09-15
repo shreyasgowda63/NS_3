@@ -66,6 +66,8 @@ public:
   bool SupportsSendFrom (void) const override;
   void SetAddress (Mac48Address address) override;
   Ptr<WifiMacQueue> GetTxopQueue (AcIndex ac) const override;
+  void EnableMacAndPhy ();
+  void DisableMacAndPhy ();
 
   /**
    * \param interval the interval between two beacon transmissions.
@@ -137,6 +139,7 @@ public:
    * \return the maximum among the values of the Queue Size subfields
    */
   uint8_t GetMaxBufferStatus (Mac48Address address) const;
+
 
 private:
   void Receive (Ptr<WifiMacQueueItem> mpdu)  override;

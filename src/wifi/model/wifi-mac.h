@@ -293,6 +293,16 @@ public:
    * \param linkDown the callback to invoke when the link becomes down.
    */
   void SetLinkDownCallback (Callback<void> linkDown);
+  /**
+   * \brief Turn on PHY and resume functionalities of MAC.
+   */
+  virtual void EnableMacAndPhy () = 0;
+
+  /**
+   * \brief Turn off PHY and stop the functions of MAC.
+   */
+  virtual void DisableMacAndPhy () = 0;
+  
   /* Next functions are not pure virtual so non QoS WifiMacs are not
    * forced to implement them.
    */

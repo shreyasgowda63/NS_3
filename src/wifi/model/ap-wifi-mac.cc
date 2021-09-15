@@ -1590,4 +1590,35 @@ ApWifiMac::GetMaxBufferStatus (Mac48Address address) const
   return 255;
 }
 
+void
+ApWifiMac::EnableMacAndPhy ()
+{
+  NS_LOG_FUNCTION (this);
+  // Start beacon generation event.
+  if (m_enableBeaconGeneration && !m_beaconEvent.IsRunning ())
+    {
+      NS_LOG_DEBUG ("Scheduling beacon event for Access point " << GetAddress () << " at time " <<
+                    Simulator::Now ().GetSeconds () << "s without jitter.");
+      m_beaconEvent = Simulator::ScheduleNow (&ApWifiMac::SendOneBeacon, this);
+
+    }
+  RegularWifiMac::EnableMacAndPhy ();
+  m_linkUp ();
+}
+
+void
+ApWifiMac::DisableMacAndPhy ()
+{
+  NS_LOG_FUNCTION (this);
+
+  // Cancel Beacon event.
+  if (m_enableBeaconGeneration && m_beaconEvent.IsRunning ())
+    {
+      m_beaconEvent.Cancel ();
+    }
+
+  RegularWifiMac::DisableMacAndPhy ();
+
+}
+
 } //namespace ns3
