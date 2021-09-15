@@ -36,6 +36,7 @@ New user-visible features
 - (config-store) OBSOLETE Attributes are not anymore saved.
 - (config-store) New ConfigStore::SaveDeprecated Attribute (default false) to avoid to save DEPRECATED attributes.
 - (core) Add TracedCallback::IsEmpty to know if a TracedCallback has any callback associated.
+- (mobility) Add GroupMobilityHelper and demonstrate its use with a new program that configures the Reference Point Group Mobility model for a number of nodes.
 
 Bugs fixed
 ----------
