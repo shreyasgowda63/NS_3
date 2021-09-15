@@ -497,6 +497,26 @@ public:
   */
   int64_t AssignStreams (NetDeviceContainer c, int64_t stream);
 
+  /**
+   * Enable a device for use. A device is usable only after enabling it.
+   * There is no need to call this function at the start of the
+   * simulation. Device is automatically enabled. Call this function
+   * to re-enable a device after disabling.
+   *
+   * \param delay The delay after which device should be enabled.
+   * \param netDevice The WifiNetDevice to be enabled.
+   */
+  void SetDeviceUp (const Time &delay, Ptr<NetDevice> netDevice);
+
+  /**
+   * Disable a device from using. The device cannot be used for
+   * transmitting and receiving after disabling.
+   *
+   * \param delay The delay after which disable should be disabled.
+   * \param netDevice The WifiNetDevice to be disabled.
+   */
+  void SetDeviceDown (const Time &delay, Ptr<NetDevice> netDevice);
+
 
 protected:
   ObjectFactory m_stationManager;            ///< station manager
