@@ -10,6 +10,7 @@ def build(bld):
         'model/constant-velocity-mobility-model.cc',
         'model/gauss-markov-mobility-model.cc',
         'model/geographic-positions.cc',
+        'model/group-secondary-mobility-model.cc',
         'model/hierarchical-mobility-model.cc',
         'model/mobility-model.cc',
         'model/position-allocator.cc',
@@ -20,6 +21,7 @@ def build(bld):
         'model/steady-state-random-waypoint-mobility-model.cc',
         'model/waypoint.cc',
         'model/waypoint-mobility-model.cc',
+        'helper/group-mobility-helper.cc',
         'helper/mobility-helper.cc',
         'helper/ns2-mobility-helper.cc',
         ]
@@ -52,6 +54,7 @@ def build(bld):
         'model/constant-velocity-mobility-model.h',
         'model/gauss-markov-mobility-model.h',
         'model/geographic-positions.h',
+        'model/group-secondary-mobility-model.h',
         'model/hierarchical-mobility-model.h',
         'model/mobility-model.h',
         'model/position-allocator.h',
@@ -62,6 +65,7 @@ def build(bld):
         'model/steady-state-random-waypoint-mobility-model.h',
         'model/waypoint.h',
         'model/waypoint-mobility-model.h',
+        'helper/group-mobility-helper.h',
         'helper/mobility-helper.h',
         'helper/ns2-mobility-helper.h',
         ]
