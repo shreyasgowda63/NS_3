@@ -92,7 +92,12 @@ QosTxop::GetTypeId (void)
 
 QosTxop::QosTxop ()
   : m_startTxop (Seconds (0)),
-    m_txopDuration (Seconds (0))
+    m_txopDuration (Seconds (0)),
+    m_muCwMin (0),
+    m_muCwMax (0),
+    m_muAifsn (0),
+    m_muEdcaTimer (Seconds (0)),
+    m_muEdcaTimerStartTime (Seconds (0))
 {
   NS_LOG_FUNCTION (this);
   m_qosBlockedDestinations = Create<QosBlockedDestinations> ();
@@ -143,6 +148,91 @@ QosTxop::SetDroppedMpduCallback (DroppedMpdu callback)
   m_baManager->GetRetransmitQueue ()->TraceConnectWithoutContext ("Expired",
                                                                   m_droppedMpduCallback
                                                                   .Bind (WIFI_MAC_DROP_EXPIRED_LIFETIME));
+}
+
+void
+QosTxop::SetMuCwMin (uint16_t cwMin)
+{
+  NS_LOG_FUNCTION (this << cwMin);
+  m_muCwMin = cwMin;
+}
+
+void
+QosTxop::SetMuCwMax (uint16_t cwMax)
+{
+  NS_LOG_FUNCTION (this << cwMax);
+  m_muCwMax = cwMax;
+}
+
+void
+QosTxop::SetMuAifsn (uint8_t aifsn)
+{
+  NS_LOG_FUNCTION (this << +aifsn);
+  m_muAifsn = aifsn;
+}
+
+void
+QosTxop::SetMuEdcaTimer (Time timer)
+{
+  NS_LOG_FUNCTION (this << timer);
+  m_muEdcaTimer = timer;
+}
+
+void
+QosTxop::StartMuEdcaTimerNow (void)
+{
+  NS_LOG_FUNCTION (this);
+  m_muEdcaTimerStartTime = Simulator::Now ();
+  if (EdcaDisabled ())
+    {
+      NS_LOG_DEBUG ("Disable EDCA for " << m_muEdcaTimer.As (Time::MS));
+      m_channelAccessManager->DisableEdcaFor (this, m_muEdcaTimer);
+    }
+}
+
+bool
+QosTxop::MuEdcaTimerRunning (void) const
+{
+  return (m_muEdcaTimerStartTime.IsStrictlyPositive () && m_muEdcaTimer.IsStrictlyPositive ()
+          && m_muEdcaTimerStartTime + m_muEdcaTimer > Simulator::Now ());
+}
+
+bool
+QosTxop::EdcaDisabled (void) const
+{
+  return (MuEdcaTimerRunning () && m_muAifsn == 0);
+}
+
+uint32_t
+QosTxop::GetMinCw (void) const
+{
+  if (!MuEdcaTimerRunning ())
+    {
+      return m_cwMin;
+    }
+  NS_ASSERT (!EdcaDisabled ());
+  return m_muCwMin;
+}
+
+uint32_t
+QosTxop::GetMaxCw (void) const
+{
+  if (!MuEdcaTimerRunning ())
+    {
+      return m_cwMax;
+    }
+  NS_ASSERT (!EdcaDisabled ());
+  return m_muCwMax;
+}
+
+uint8_t
+QosTxop::GetAifsn (void) const
+{
+  if (!MuEdcaTimerRunning ())
+    {
+      return m_aifsn;
+    }
+  return m_muAifsn;
 }
 
 Ptr<BlockAckManager>
