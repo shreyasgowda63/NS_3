@@ -218,30 +218,30 @@ UdpL4Protocol::DeAllocate (Ipv4EndPoint *endPoint)
 Ipv6EndPoint *
 UdpL4Protocol::Allocate6 (void)
 {
-//MIPv6 Extension Starts
-  if (!m_mipv6callback.IsNull())
-   {
-     NS_LOG_FUNCTION (this << m_mipv6callback());
-     return m_endPoints6->Allocate (m_mipv6callback());
-   }
-//MIPv6 Extension Ends
+// MIPv6 Extension Starts
+  if (!m_mipv6callback.IsNull ())
+    {
+      NS_LOG_FUNCTION (this << m_mipv6callback ());
+      return m_endPoints6->Allocate (m_mipv6callback ());
+    }
+// MIPv6 Extension Ends
   else
-   {
-     NS_LOG_FUNCTION (this);
-     return m_endPoints6->Allocate ();
-   }
+    {
+      NS_LOG_FUNCTION (this);
+      return m_endPoints6->Allocate ();
+    }
 }
 
 Ipv6EndPoint *
 UdpL4Protocol::Allocate6 (Ipv6Address address)
 {
-//MIPv6 Extension Starts
-  if (!m_mipv6callback.IsNull())
-   {
-     NS_LOG_FUNCTION (this << m_mipv6callback());
-     return m_endPoints6->Allocate (m_mipv6callback());
-   }
-//MIPv6 Extension Ends
+// MIPv6 Extension Starts
+  if (!m_mipv6callback.IsNull ())
+    {
+      NS_LOG_FUNCTION (this << m_mipv6callback ());
+      return m_endPoints6->Allocate (m_mipv6callback ());
+    }
+// MIPv6 Extension Ends
   else
     {
       NS_LOG_FUNCTION (this << address);
@@ -252,13 +252,13 @@ UdpL4Protocol::Allocate6 (Ipv6Address address)
 Ipv6EndPoint *
 UdpL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice, uint16_t port)
 {
-//MIPv6 Extension Starts
-  if (!m_mipv6callback.IsNull())
+// MIPv6 Extension Starts
+  if (!m_mipv6callback.IsNull ())
     {
-      NS_LOG_FUNCTION (this << m_mipv6callback() << port);
-      return m_endPoints6->Allocate (boundNetDevice, m_mipv6callback(), port);
+      NS_LOG_FUNCTION (this << m_mipv6callback () << port);
+      return m_endPoints6->Allocate (boundNetDevice, m_mipv6callback (), port);
     }
-//MIPv6 Extension Ends
+// MIPv6 Extension Ends
   else
     {
       NS_LOG_FUNCTION (this << boundNetDevice << port);
@@ -269,13 +269,13 @@ UdpL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice, uint16_t port)
 Ipv6EndPoint *
 UdpL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice, Ipv6Address address, uint16_t port)
 {
-//MIPv6 Extension Starts
-  if (!m_mipv6callback.IsNull())
+// MIPv6 Extension Starts
+  if (!m_mipv6callback.IsNull ())
     {
-      NS_LOG_FUNCTION (this << m_mipv6callback() << port);
-      return m_endPoints6->Allocate (boundNetDevice, m_mipv6callback(), port);
+      NS_LOG_FUNCTION (this << m_mipv6callback () << port);
+      return m_endPoints6->Allocate (boundNetDevice, m_mipv6callback (), port);
     }
-//MIPv6 Extension Ends
+// MIPv6 Extension Ends
   else
     {
       NS_LOG_FUNCTION (this << boundNetDevice << address << port);
@@ -287,21 +287,21 @@ UdpL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice,
                           Ipv6Address localAddress, uint16_t localPort,
                           Ipv6Address peerAddress, uint16_t peerPort)
 {
-//MIPv6 Extension Starts
-  if (!m_mipv6callback.IsNull())
+// MIPv6 Extension Starts
+  if (!m_mipv6callback.IsNull ())
     {
-      NS_LOG_FUNCTION (this << m_mipv6callback() << localPort << peerAddress << peerPort);
+      NS_LOG_FUNCTION (this << m_mipv6callback () << localPort << peerAddress << peerPort);
       return m_endPoints6->Allocate (boundNetDevice,
-                                      m_mipv6callback(), localPort,
-                                      peerAddress, peerPort);
+                                     m_mipv6callback (), localPort,
+                                     peerAddress, peerPort);
     }
-//MIPv6 Extension Ends
-   else
+// MIPv6 Extension Ends
+  else
     {
       NS_LOG_FUNCTION (this << boundNetDevice << localAddress << localPort << peerAddress << peerPort);
       return m_endPoints6->Allocate (boundNetDevice,
-                                    localAddress, localPort,
-                                    peerAddress, peerPort);
+                                     localAddress, localPort,
+                                     peerAddress, peerPort);
     }
 }
 

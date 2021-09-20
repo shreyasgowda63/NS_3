@@ -508,9 +508,9 @@ void Icmpv6L4Protocol::HandleNS (Ptr<Packet> packet, Ipv6Address const &src, Ipv
           break;
         }
     }
-  if(!m_NSCallback.IsNull() && !found && m_NSCallback(target) && interface->GetAddressMatchingDestination (target).GetState () == Ipv6InterfaceAddress::PREFERRED && !m_HandleNSCallback.IsNull()) // Found a match in the cache of HA for off-link MN and is configured with receiving interfaces prefix (See MIPv6 implementation.
+  if (!m_NSCallback.IsNull () && !found && m_NSCallback (target) && interface->GetAddressMatchingDestination (target).GetState () == Ipv6InterfaceAddress::PREFERRED && !m_HandleNSCallback.IsNull ()) // Found a match in the cache of HA for off-link MN and is configured with receiving interfaces prefix (See MIPv6 implementation.
     {
-      m_HandleNSCallback(packet, interface, src, target); // HA executes its own HandleNS () version as it runs proxy-ND on behalf of MN (See MIPv6 implementation).
+      m_HandleNSCallback (packet, interface, src, target); // HA executes its own HandleNS () version as it runs proxy-ND on behalf of MN (See MIPv6 implementation).
       return;
     }
 
@@ -711,11 +711,13 @@ void Icmpv6L4Protocol::HandleNA (Ptr<Packet> packet, Ipv6Address const &src, Ipv
               interface->SetState (ifaddr.GetAddress (), Ipv6InterfaceAddress::INVALID);
             }
         }
-      
+
       else
         {
-         if (!m_DADCallback.IsNull ())
-           m_DADCallback (target); // Indicates that DAD for any MN's HoA (home address) is failed as HA runs proxy-ND for all MN (See MIPv6 implementation)
+          if (!m_DADCallback.IsNull ())
+            {
+              m_DADCallback (target); // Indicates that DAD for any MN's HoA (home address) is failed as HA runs proxy-ND for all MN (See MIPv6 implementation)
+            }
         }
 
       /* we have not initiated any communication with the target so... discard the NA */

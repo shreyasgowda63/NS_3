@@ -283,7 +283,6 @@ public:
    */
   void SetHomeLinkCheck (Callback<bool, Ipv6Address, Ipv6Prefix> sh);
 
-
 protected:
   /**
    * \brief Dispose this object.

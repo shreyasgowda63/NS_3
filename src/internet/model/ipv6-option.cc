@@ -250,12 +250,10 @@ TypeId Ipv6HomeAddressOption::GetTypeId ()
 }
 
 Ipv6HomeAddressOption::Ipv6HomeAddressOption ()
-{
-}
+{}
 
 Ipv6HomeAddressOption::~Ipv6HomeAddressOption ()
-{
-}
+{}
 
 uint8_t Ipv6HomeAddressOption::GetOptionNumber () const
 {

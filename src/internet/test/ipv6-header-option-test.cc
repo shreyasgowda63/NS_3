@@ -65,7 +65,7 @@ public:
   virtual void DoRun (void);
 
 private:
-  
+
   Ptr<const Packet> m_recvdPacket; //!< received packet
   /**
    * \brief Send one packet with Ipv6ExtensionType2RoutingHeader and Ipv6HomeAddressOptionHeader to the device specified
@@ -81,7 +81,7 @@ private:
    * \param pkt The received packet.
    * \param mode The protocol mode used.
    * \param sender The sender address.
-   * 
+   *
    * \return A boolean indicating packet handled properly.
    */
   bool RxPacket (Ptr<NetDevice> dev, Ptr<const Packet> pkt, uint16_t mode, const Address &sender);
@@ -89,8 +89,7 @@ private:
 
 Ipv6HeaderOptionTest::Ipv6HeaderOptionTest ()
   : TestCase ("Ipv6HeaderOptionTest")
-{
-}
+{}
 
 void
 Ipv6HeaderOptionTest::SendOnePacket (Ptr<NetDevice> dev)
@@ -109,7 +108,7 @@ Ipv6HeaderOptionTest::SendOnePacket (Ptr<NetDevice> dev)
   destextnhdr.SetNextHeader (59);
   p->AddHeader (destextnhdr);
 
-  NS_TEST_EXPECT_MSG_EQ (dev->Send (p, dev->GetBroadcast(), 0x800), 1, "Sending failed");
+  NS_TEST_EXPECT_MSG_EQ (dev->Send (p, dev->GetBroadcast (), 0x800), 1, "Sending failed");
 }
 
 
@@ -168,7 +167,7 @@ Ipv6HeaderOptionTest::DoRun (void)
   d.Add (rxDev);
 
   rxDev->SetReceiveCallback (MakeCallback (&Ipv6HeaderOptionTest::RxPacket,
-                                          this));
+                                           this));
 
   Simulator::Schedule (Seconds (1.0), &Ipv6HeaderOptionTest::SendOnePacket, this, txDev);
 

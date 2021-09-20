@@ -510,7 +510,7 @@ void Ipv6Interface::SetState (Ipv6Address address, Ipv6InterfaceAddress::State_e
             {
               icmptr->m_CoAConfigured (address);
             }
-            
+
           return;
         }
     }

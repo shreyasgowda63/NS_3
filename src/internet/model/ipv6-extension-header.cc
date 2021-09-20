@@ -312,7 +312,9 @@ uint32_t Ipv6ExtensionDestinationHeader::Deserialize (Buffer::Iterator start)
   uint32_t len = i.GetRemainingSize ();
 
   if (len < GetSerializedSize ())
-    return 0;
+    {
+      return 0;
+    }
 
   SetNextHeader (i.ReadU8 ());
   m_length = i.ReadU8 ();

@@ -397,7 +397,7 @@ TunnelNetDevice::SendFrom (Ptr<Packet> packet, const Address& source, const Addr
 
   NS_LOG_FUNCTION ( this << packet << dest << protocolNumber );
 
-    Ptr<NetDeviceState> netDevState = this->GetObject<NetDeviceState> ();
+  Ptr<NetDeviceState> netDevState = this->GetObject<NetDeviceState> ();
 
   if (netDevState)
     {

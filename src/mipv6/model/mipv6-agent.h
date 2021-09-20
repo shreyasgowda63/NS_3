@@ -80,7 +80,7 @@ public:
    * \brief send a mobility handling packets (BU).
    * \param packet the packet
    * \param dst the destination address
-   * \param ttl time to live field 
+   * \param ttl time to live field
    */
   void SendMessage (Ptr<Packet> packet, Ipv6Address dst, uint32_t ttl);
 
@@ -89,7 +89,7 @@ public:
    * \param packet the packet
    * \param src the source address
    * \param dst the destination address
-   * \param ttl time to live field 
+   * \param ttl time to live field
    */
   void SendReply (Ptr<Packet> packet, Ipv6Address src, Ipv6Address dst, uint32_t ttl);
 
@@ -127,17 +127,17 @@ private:
   Ptr<Node> m_node;
 
   /**
-   * \brief Trace source indicating a transmitted mobility handling packets by this agent 
+   * \brief Trace source indicating a transmitted mobility handling packets by this agent
    */
   TracedCallback<Ptr<const Packet> > m_agentTxTrace;
 
   /**
-   * \brief Trace source indicating a received mobility handling packets by this agent. This is a non-promiscuous trace 
+   * \brief Trace source indicating a received mobility handling packets by this agent. This is a non-promiscuous trace
    */
   TracedCallback<Ptr<const Packet> > m_agentRxTrace;
 
   /**
-   * \brief Trace source indicating a received mobility handling packets by this agent. This is a promiscuous trace 
+   * \brief Trace source indicating a received mobility handling packets by this agent. This is a promiscuous trace
    */
   TracedCallback<Ptr<const Packet> > m_agentPromiscRxTrace;
 

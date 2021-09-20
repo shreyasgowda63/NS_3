@@ -1042,10 +1042,10 @@ void Ipv6L3Protocol::Receive (Ptr<NetDevice> device, Ptr<const Packet> p, uint16
           // do not return, the packet could be handled by a routing protocol
         }
 
-      else if(!m_NSCallback2.IsNull () && m_NSCallback2 (hdr.GetDestinationAddress ()))
+      else if (!m_NSCallback2.IsNull () && m_NSCallback2 (hdr.GetDestinationAddress ()))
         {
           LocalDeliver (packet, hdr, interface); // packet is for MN, HA should handle it
-          return;        
+          return;
         }
     }
 

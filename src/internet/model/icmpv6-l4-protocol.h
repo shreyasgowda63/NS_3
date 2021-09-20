@@ -392,7 +392,7 @@ public:
   void SetCoAConfiguredCallback (Callback<void, Ipv6Address> handleAttachment);
 
   /**
-   * \brief Callback signature for DAD failure indication at home agent while 
+   * \brief Callback signature for DAD failure indication at home agent while
    * configuring address on behalf of mobile node (mipv6).
   */
   Callback<void, Ipv6Address> m_DADCallback;
