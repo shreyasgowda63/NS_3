@@ -235,6 +235,8 @@ uint8_t Ipv6OptionRouterAlert::Process (Ptr<Packet> packet, uint8_t offset, Ipv6
   return routerAlertHeader.GetSerializedSize ();
 }
 
+// mipv6 option
+
 NS_OBJECT_ENSURE_REGISTERED (Ipv6HomeAddressOption);
 
 TypeId Ipv6HomeAddressOption::GetTypeId ()

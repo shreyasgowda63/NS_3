@@ -309,6 +309,11 @@ uint32_t Ipv6ExtensionDestinationHeader::Deserialize (Buffer::Iterator start)
 {
   Buffer::Iterator i = start;
 
+  uint32_t len = i.GetRemainingSize ();
+
+  if (len < GetSerializedSize ())
+    return 0;
+
   SetNextHeader (i.ReadU8 ());
   m_length = i.ReadU8 ();
   OptionField::Deserialize (i, GetLength () - 2);
@@ -696,6 +701,8 @@ uint32_t Ipv6ExtensionAHHeader::Deserialize (Buffer::Iterator start)
   /** \todo */ 
   return 0;
 }
+
+// mipv6 extension
 
 NS_OBJECT_ENSURE_REGISTERED (Ipv6ExtensionType2RoutingHeader);
 

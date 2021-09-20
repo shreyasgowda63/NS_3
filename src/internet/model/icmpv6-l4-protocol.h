@@ -381,47 +381,36 @@ public:
   int64_t AssignStreams (int64_t stream);
 
   /**
-   * \brief Callback signature for new IPv6 address configuration event.
+   * \brief Callback signature for new IPv6 address configuration event (mipv6).
    */
-  Callback<void, Ipv6Address> m_newIPCallback;
+  Callback<void, Ipv6Address> m_CoAConfigured;
 
   /**
-   * \brief Set Callback for new IPv6 address configuration event triggering.
-   * \param newIP callback to be used
+   * \brief Set Callback for new IPv6 address configuration event triggering (mipv6).
+   * \param handleAttachment callback to be used
    */
-  void SetNewIPCallback (Callback<void, Ipv6Address> newIP);
-
-  /**
-   * \brief Callback signature currently not used.
-   */
-  Callback<bool, Ipv6Address, Ipv6Address> m_CheckAddressCallback;
-
-  /**
-   * \brief Set Callback for DAD to check if src is mobile node
-   * \param checkadr callback to be used
-   */
-  void SetCheckAddressCallback (Callback<bool, Ipv6Address, Ipv6Address> checkadr);
+  void SetCoAConfiguredCallback (Callback<void, Ipv6Address> handleAttachment);
 
   /**
    * \brief Callback signature for DAD failure indication at home agent while 
-   * configuring address on behalf of mobile node.
+   * configuring address on behalf of mobile node (mipv6).
   */
   Callback<void, Ipv6Address> m_DADCallback;
 
   /**
-   * \brief Set Callback for new DAD failure indication triggering.
+   * \brief Set Callback for new DAD failure indication triggering (mipv6).
    * \param dad callback to be used
    */
   void SetDADCallback (Callback<void, Ipv6Address> dad);
 
   /**
    * \brief Callback signature for checking whether the address is assigned to any mobile node
-   * which is currently detached from its home network.
+   * which is currently detached from its home network (mipv6).
    */
   Callback<bool, Ipv6Address> m_NSCallback;
 
   /**
-   * \brief Set Callback for home address checking of an off-link mobile node.
+   * \brief Set Callback for home address checking of an off-link mobile node (mipv6).
    * \param ns callback to be used
    */
   void SetNSCallback (Callback<bool, Ipv6Address> ns);
@@ -429,19 +418,19 @@ public:
   /**
    * \brief Callback signature for hand over the task of handling NS to a home agent on behalf of
    * some mobile nodes which are currently off-link and if the target address is matched the
-   * address which that hime agent is protecting.
+   * address which that hime agent is protecting (mipv6).
    */
   Callback<void, Ptr<Packet>, Ptr<Ipv6Interface>, Ipv6Address, Ipv6Address> m_HandleNSCallback;
 
   /**
-   * \brief Set Callback for handling NS on behalf of offlink mobile nodes.
+   * \brief Set Callback for handling NS on behalf of offlink mobile nodes (mipv6).
    * \param handlens callback to be used
    */
   void SetHandleNSCallback (Callback<void, Ptr<Packet>, Ptr<Ipv6Interface>, Ipv6Address, Ipv6Address> handlens);
 
   /**
    * \brief Get the Cache.
-   * \param device the netdevice associated
+   * \param device the netdevice associated (see mipv6-ha.cc)
    * \return a neighbor cache
    */
   Ptr<NdiscCache> GetCache (Ptr<NetDevice> device);

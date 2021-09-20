@@ -520,6 +520,8 @@ private:
   uint8_t m_segmentsLeft;
 };
 
+// mipv6 extension
+
 /**
  * \class Ipv6ExtensionType2RoutingHeader
  * \brief Header of IPv6 Extension Type2 Routing

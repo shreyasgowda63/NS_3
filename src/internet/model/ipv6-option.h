@@ -279,6 +279,8 @@ public:
   virtual uint8_t Process (Ptr<Packet> packet, uint8_t offset, Ipv6Header const& ipv6Header, bool& isDropped);
 };
 
+// mipv6 option
+
 /**
  * \class Ipv6HomeAddressOption
  * \brief IPv6 Home Address Option

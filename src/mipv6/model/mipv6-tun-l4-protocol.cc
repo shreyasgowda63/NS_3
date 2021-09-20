@@ -134,7 +134,7 @@ void Ipv6TunnelL4Protocol::SendMessage (Ptr<Packet> packet, Ipv6Address src, Ipv
 
 enum IpL4Protocol::RxStatus Ipv6TunnelL4Protocol::Receive(Ptr<Packet> p, Ipv6Header const &header, Ptr<Ipv6Interface> incomingInterface)
 {
-  Ptr<Ipv6L3Protocol> ipv6 = GetNode()->GetObject<Ipv6L3Protocol>();
+  Ptr<Ipv6L3Protocol> ipv6 = GetNode ()->GetObject<Ipv6L3Protocol> ();
   NS_ASSERT (ipv6 != 0);
   Ipv6Address src=header.GetSourceAddress ();
   /**
@@ -144,32 +144,32 @@ enum IpL4Protocol::RxStatus Ipv6TunnelL4Protocol::Receive(Ptr<Packet> p, Ipv6Hea
 
   Ptr<TunnelNetDevice> tdev = GetTunnelDevice (src);
 
-  if (tdev == 0 && GetCacheAddressList().size())
+  if (tdev == 0 && GetCacheAddressList ().size ())
   {
     std::list<Ipv6Address>::iterator iter = std::find (GetCacheAddressList().begin(), GetCacheAddressList().end(), src);
-    if ( GetCacheAddressList().end() != iter )
-      tdev = GetTunnelDevice (GetHA());
+    if ( GetCacheAddressList ().end () != iter )
+      tdev = GetTunnelDevice (GetHA ());
   }
 
-  if (tdev == 0 && src!="::")
+  if (tdev == 0 && src != "::")
     {
       NS_LOG_DEBUG ("The packet does not associate any tunnel device");
       return IpL4Protocol::RX_OK;
     }
   NS_LOG_FUNCTION (src << "Received in ipv6tunnell4protocol");
-  Ptr<Packet> packet = p->Copy();
+  Ptr<Packet> packet = p->Copy ();
   
   Ipv6Header innerHeader;
-  packet->RemoveHeader(innerHeader);
+  packet->RemoveHeader (innerHeader);
   
-  Ipv6Address source = innerHeader.GetSourceAddress();
-  Ipv6Address destination = innerHeader.GetDestinationAddress();
+  Ipv6Address source = innerHeader.GetSourceAddress ();
+  Ipv6Address destination = innerHeader.GetDestinationAddress ();
 
-  if (source.IsLinkLocal() ||
-      destination.IsLinkLocal() ||
-      destination.IsAllNodesMulticast() ||
-      destination.IsAllRoutersMulticast() ||
-      destination.IsSolicitedMulticast())
+  if (source.IsLinkLocal () ||
+      destination.IsLinkLocal () ||
+      destination.IsAllNodesMulticast () ||
+      destination.IsAllRoutersMulticast () ||
+      destination.IsSolicitedMulticast ())
 	{
 	  return IpL4Protocol::RX_OK;
 	}
@@ -203,17 +203,17 @@ enum IpL4Protocol::RxStatus Ipv6TunnelL4Protocol::Receive(Ptr<Packet> p, Ipv6Hea
   }
 
   m_rxHaPktTrace (packet, innerHeader, header, incomingInterface);
-  ipv6->Send (packet, source, destination, innerHeader.GetNextHeader(), route);
+  ipv6->Send (packet, source, destination, innerHeader.GetNextHeader (), route);
   return IpL4Protocol::RX_OK;
 }
 
 
 
-uint16_t Ipv6TunnelL4Protocol::AddTunnel(Ipv6Address remote, Ipv6Address local)
+uint16_t Ipv6TunnelL4Protocol::AddTunnel (Ipv6Address remote, Ipv6Address local)
 {
   NS_LOG_FUNCTION (this << remote << local);
   
-  //Search existing tunnel device
+  // Search existing tunnel device
   TunnelMapI it = m_tunnelMap.find (remote);
   Ptr<TunnelNetDevice> dev = m_node->GetObject<TunnelNetDevice> ();
   if (it == m_tunnelMap.end ())
@@ -233,15 +233,15 @@ uint16_t Ipv6TunnelL4Protocol::AddTunnel(Ipv6Address remote, Ipv6Address local)
           m_node->AddDevice (dev);
           m_tunnelMap.insert (std::pair<Ipv6Address, Ptr<TunnelNetDevice> > (remote, dev));
         }
-      dev->SetRemoteAddress(remote);
-      dev->SetLocalAddress(local);
+      dev->SetRemoteAddress (remote);
+      dev->SetLocalAddress (local);
     }
 
   else
     {
       dev = it->second;
     }
-  Ptr<NetDeviceState> netDevState = dev->GetObject<NetDeviceState>();
+  Ptr<NetDeviceState> netDevState = dev->GetObject<NetDeviceState> ();
   netDevState->SetUp ();
 
   dev->IncreaseRefCount ();
@@ -262,7 +262,7 @@ uint16_t Ipv6TunnelL4Protocol::AddTunnel(Ipv6Address remote, Ipv6Address local)
   return ifIndex;
 }
 
-void Ipv6TunnelL4Protocol::RemoveTunnel(Ipv6Address remote)
+void Ipv6TunnelL4Protocol::RemoveTunnel (Ipv6Address remote)
 {
   NS_LOG_FUNCTION ( "Remove tunnel" << remote);
   
@@ -285,19 +285,19 @@ void Ipv6TunnelL4Protocol::RemoveTunnel(Ipv6Address remote)
     } 
 }
 
-uint16_t  Ipv6TunnelL4Protocol::ModifyTunnel(Ipv6Address remote, Ipv6Address newRemote, Ipv6Address local)
+uint16_t  Ipv6TunnelL4Protocol::ModifyTunnel (Ipv6Address remote, Ipv6Address newRemote, Ipv6Address local)
 {
   NS_LOG_FUNCTION ( this << remote << newRemote << local );
   
-  Ptr<TunnelNetDevice> dev = GetTunnelDevice(remote);
+  Ptr<TunnelNetDevice> dev = GetTunnelDevice (remote);
   NS_ASSERT (dev != 0);
-  NS_ASSERT (dev->GetRefCount() > 0);
+  NS_ASSERT (dev->GetRefCount () > 0);
 	  
   RemoveTunnel (remote);
   return AddTunnel (newRemote, local);
 }
 
-Ptr<TunnelNetDevice> Ipv6TunnelL4Protocol::GetTunnelDevice(Ipv6Address remote)
+Ptr<TunnelNetDevice> Ipv6TunnelL4Protocol::GetTunnelDevice (Ipv6Address remote)
 {
   NS_LOG_FUNCTION ( this << remote );
   
@@ -317,42 +317,40 @@ IpL4Protocol::DownTargetCallback Ipv6TunnelL4Protocol::GetDownTarget (void) cons
 {IpL4Protocol::DownTargetCallback t;return t;}
 IpL4Protocol::DownTargetCallback6 Ipv6TunnelL4Protocol::GetDownTarget6 (void) const
 {IpL4Protocol::DownTargetCallback6 y;return y;}
-enum IpL4Protocol::RxStatus Ipv6TunnelL4Protocol::Receive(Ptr<Packet> p, Ipv4Header const &header, Ptr<Ipv4Interface> incomingInterface)
+
+enum IpL4Protocol::RxStatus Ipv6TunnelL4Protocol::Receive (Ptr<Packet> p, Ipv4Header const &header, Ptr<Ipv4Interface> incomingInterface)
 {
-
-
   return IpL4Protocol::RX_OK; 
-
 }
 
 void Ipv6TunnelL4Protocol::SetHomeAddress(Ipv6Address hoa)
 {
-m_hoa=hoa;
+  m_hoa=hoa;
 }
 
 Ipv6Address Ipv6TunnelL4Protocol::GetHomeAddress()
 {
-return m_hoa;
+  return m_hoa;
 }
 
 void Ipv6TunnelL4Protocol::SetCacheAddressList(std::list<Ipv6Address> list)
 {
-m_Cachelist= list;
+  m_Cachelist= list;
 }
 
 std::list<Ipv6Address> Ipv6TunnelL4Protocol::GetCacheAddressList()
 {
-return m_Cachelist;
+  return m_Cachelist;
 }
 
 void Ipv6TunnelL4Protocol::SetHA(Ipv6Address ha)
 {
-m_ha=ha;
+  m_ha=ha;
 }
 
 Ipv6Address Ipv6TunnelL4Protocol::GetHA()
 {
-return m_ha;
+  return m_ha;
 }
 
 void Ipv6TunnelL4Protocol::SetTxCallback (Callback<void, Ptr <Packet>, Ipv6Header, Ipv6Header> cb)
@@ -362,4 +360,3 @@ void Ipv6TunnelL4Protocol::SetTxCallback (Callback<void, Ptr <Packet>, Ipv6Heade
 }
 
 } /* namespace ns3 */
-

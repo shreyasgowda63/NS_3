@@ -639,6 +639,8 @@ public:
                            Ipv6L3Protocol::DropReason& dropReason);
 };
 
+// mipv6 extension
+
 /**
  * \class Ipv6ExtensionType2Routing
  * \brief IPv6 Extension Type 2 Routing

@@ -315,7 +315,7 @@ void Ipv6L3Protocol::AddAutoconfiguredAddress (uint32_t interface, Ipv6Address n
       GetRoutingProtocol ()->NotifyAddRoute (Ipv6Address::GetAny (), Ipv6Prefix ((uint8_t)0), defaultRouter, interface, network);
       if (!m_RouterPrefix.IsNull ())
         {
-          m_RouterPrefix (defaultRouter, interface); // set the router and interface in the MN
+          m_RouterPrefix (defaultRouter, interface); // Call the function in mipv6-mn (See MIPv6 implementation) to set the AR as its default router for any tunneled packet
         }
     }
 
@@ -1501,7 +1501,7 @@ void Ipv6L3Protocol::RegisterExtensions ()
   Ptr<Ipv6ExtensionLooseRouting> looseRoutingExtension = CreateObject<Ipv6ExtensionLooseRouting> ();
   looseRoutingExtension->SetNode (m_node);
   routingExtensionDemux->Insert (looseRoutingExtension);
-  Ptr<Ipv6ExtensionType2Routing> type2RoutingExtension = CreateObject<Ipv6ExtensionType2Routing> ();
+  Ptr<Ipv6ExtensionType2Routing> type2RoutingExtension = CreateObject<Ipv6ExtensionType2Routing> (); // Register Mipv6 Type 2 Routing
   type2RoutingExtension->SetNode (m_node);
   routingExtensionDemux->Insert (type2RoutingExtension);
 
@@ -1522,7 +1522,7 @@ void Ipv6L3Protocol::RegisterOptions ()
   jumbogramOption->SetNode (m_node);
   Ptr<Ipv6OptionRouterAlert> routerAlertOption = CreateObject<Ipv6OptionRouterAlert> ();
   routerAlertOption->SetNode (m_node);
-  Ptr<Ipv6HomeAddressOption> homeAddressOption = CreateObject<Ipv6HomeAddressOption> ();
+  Ptr<Ipv6HomeAddressOption> homeAddressOption = CreateObject<Ipv6HomeAddressOption> (); // Register Mipv6 Home Address Option
   homeAddressOption->SetNode (m_node);
 
   ipv6OptionDemux->Insert (pad1Option);
@@ -1668,12 +1668,14 @@ bool Ipv6L3Protocol::ReachabilityHint (uint32_t ipInterfaceIndex, Ipv6Address ad
 
 void Ipv6L3Protocol::SetPrefixCallback (Callback<void, Ipv6Address, uint32_t> ip)
 {
+  /* Used in Mipv6 */
   NS_LOG_FUNCTION (this);
   m_RouterPrefix = ip;
 }
 
 void Ipv6L3Protocol::SetNSCallback2 (Callback<bool, Ipv6Address> ns)
 {
+  /* Used in Mipv6 */
   NS_LOG_FUNCTION (this);
   m_NSCallback2 = ns;
 }

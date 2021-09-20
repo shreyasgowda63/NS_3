@@ -421,6 +421,8 @@ private:
   uint16_t m_value;
 };
 
+// mipv6 option
+
 /**
  * \class Ipv6HomeAddressOptionHeader
  * \brief Header of IPv6 Home address option

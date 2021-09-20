@@ -74,12 +74,12 @@ BList::BList (std::list<Ipv6Address> haalist)
   : m_hstate (UNREACHABLE),
   m_tunnelIfIndex (-1),
   m_hpktbu (0),
+  m_coa (Ipv6Address::GetAny ()),
   m_HaaList (haalist),
   m_hretransTimer (Timer::CANCEL_ON_DESTROY),
   m_hreachableTimer (Timer::CANCEL_ON_DESTROY),
   m_hrefreshTimer (Timer::CANCEL_ON_DESTROY),
   m_HomeAddressRegisteredFlag (false)
-
 {
   NS_LOG_FUNCTION_NOARGS ();
 }
@@ -147,7 +147,7 @@ void BList::FunctionHomeReachableTimeout ()
     }
 
 
-  //delete routing && tunnel
+  // delete routing && tunnel
   if (m_tunnelIfIndex >= 0)
     {
       mn->ClearTunnelAndRouting ();

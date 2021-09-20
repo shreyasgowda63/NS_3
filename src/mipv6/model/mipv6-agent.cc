@@ -25,7 +25,6 @@
 #include "ns3/net-device.h"
 #include "mipv6-agent.h"
 #include "ns3/trace-source-accessor.h"
-#include "ns3/traced-value.h"
 #include "ns3/uinteger.h"
 #include "ns3/ipv6-interface.h"
 #include "mipv6-header.h"
@@ -173,10 +172,12 @@ void Mipv6Agent::SendReply (Ptr<Packet> packet, Ipv6Address src, Ipv6Address dst
   Ptr<Ipv6Route> route;
   Ptr<NetDevice> oif (0); // specify non-zero if bound to a source address
 
-  if(!src.IsLinkLocal ()) {
-    NS_LOG_INFO ("Not LinkLocal source");
-    header.SetSourceAddress (src);
-  }
+  if(!src.IsLinkLocal ())
+    {
+      NS_LOG_INFO ("Not LinkLocal source");
+      header.SetSourceAddress (src);
+    }
+  
   header.SetDestinationAddress (dst);
   route = ipv6->GetRoutingProtocol ()->RouteOutput (packet, header, oif, err);
 
@@ -185,10 +186,11 @@ void Mipv6Agent::SendReply (Ptr<Packet> packet, Ipv6Address src, Ipv6Address dst
       tag.SetTtl (ttl);
       packet->AddPacketTag (tag);
 
-      if(src.IsLinkLocal ()) {
-        NS_LOG_INFO (" LinkLocal source use " << route->GetSource ());
-        src = route->GetSource ();
-      }
+      if(src.IsLinkLocal ())
+        {
+          NS_LOG_INFO (" LinkLocal source use " << route->GetSource ());
+          src = route->GetSource ();
+        }
       
       NS_LOG_INFO ("Lura1" << src << "    " << dst);
 

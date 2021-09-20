@@ -508,10 +508,9 @@ void Icmpv6L4Protocol::HandleNS (Ptr<Packet> packet, Ipv6Address const &src, Ipv
           break;
         }
     }
-    
-  if(!m_NSCallback.IsNull() && !found && m_NSCallback(target) && !m_HandleNSCallback.IsNull()) // found a match in the cache of HA.
+  if(!m_NSCallback.IsNull() && !found && m_NSCallback(target) && interface->GetAddressMatchingDestination (target).GetState () == Ipv6InterfaceAddress::PREFERRED && !m_HandleNSCallback.IsNull()) // Found a match in the cache of HA for off-link MN and is configured with receiving interfaces prefix (See MIPv6 implementation.
     {
-      m_HandleNSCallback(packet, interface, src, target); // HA must defend this address.
+      m_HandleNSCallback(packet, interface, src, target); // HA executes its own HandleNS () version as it runs proxy-ND on behalf of MN (See MIPv6 implementation).
       return;
     }
 
@@ -705,12 +704,7 @@ void Icmpv6L4Protocol::HandleNA (Ptr<Packet> packet, Ipv6Address const &src, Ipv
             }
         }
 
-      if (found && !m_CheckAddressCallback.IsNull() && m_CheckAddressCallback (src, target))  
-        {
-          return; // source for the NA is the Home Agent and the target is Home Agent Address.
-        }
-
-      else if (found)
+      if (found)
         {
           if (ifaddr.GetState () == Ipv6InterfaceAddress::TENTATIVE || ifaddr.GetState () == Ipv6InterfaceAddress::TENTATIVE_OPTIMISTIC)
             {
@@ -721,7 +715,7 @@ void Icmpv6L4Protocol::HandleNA (Ptr<Packet> packet, Ipv6Address const &src, Ipv
       else
         {
          if (!m_DADCallback.IsNull ())
-           m_DADCallback (target); // Check if DAD with address in Cache and handle accordingly.
+           m_DADCallback (target); // Indicates that DAD for any MN's HoA (home address) is failed as HA runs proxy-ND for all MN (See MIPv6 implementation)
         }
 
       /* we have not initiated any communication with the target so... discard the NA */
@@ -1572,32 +1566,30 @@ Icmpv6L4Protocol::GetDelayFirstProbe () const
   return m_delayFirstProbe;
 }
 
-void Icmpv6L4Protocol::SetNewIPCallback (Callback<void, Ipv6Address> newIP)
+void Icmpv6L4Protocol::SetCoAConfiguredCallback (Callback<void, Ipv6Address> handleAttachment)
 {
+  /* Used in Mipv6 */
   NS_LOG_FUNCTION (this);
-  m_newIPCallback = newIP;
-}
-
-void Icmpv6L4Protocol::SetCheckAddressCallback (Callback<bool, Ipv6Address, Ipv6Address> checkadr)
-{
-  NS_LOG_FUNCTION (this);
-  m_CheckAddressCallback = checkadr;
+  m_CoAConfigured = handleAttachment;
 }
 
 void Icmpv6L4Protocol::SetDADCallback (Callback<void, Ipv6Address> dad)
 {
+  /* Used in Mipv6 */
   NS_LOG_FUNCTION (this);
   m_DADCallback = dad;
 }
 
 void Icmpv6L4Protocol::SetNSCallback (Callback<bool, Ipv6Address> ns)
 {
+  /* Used in Mipv6 */
   NS_LOG_FUNCTION (this);
   m_NSCallback = ns;
 }
 
 void Icmpv6L4Protocol::SetHandleNSCallback (Callback<void, Ptr<Packet>, Ptr<Ipv6Interface>, Ipv6Address, Ipv6Address> handlens)
 {
+  /* Used in Mipv6 */
   NS_LOG_FUNCTION (this);
   m_HandleNSCallback = handlens;
 }

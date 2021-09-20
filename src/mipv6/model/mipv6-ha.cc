@@ -150,12 +150,6 @@ Ptr<Packet> Mipv6Ha::BuildBA (Ipv6MobilityBindingUpdateHeader bu,Ipv6Address hoa
 uint8_t Mipv6Ha::HandleBU (Ptr<Packet> packet, const Ipv6Address &src, const Ipv6Address &dst, Ptr<Ipv6Interface> interface)
 {
   NS_LOG_FUNCTION (this << packet << src << dst << interface);
-  uint32_t r = interface->GetNAddresses ();
-  for (uint32_t s = 0; s < r; s++)
-    {
-      Ipv6Address addr = (interface->GetAddress (s)).GetAddress ();
-      NS_LOG_FUNCTION ("Interface" << s << addr);
-    }
 
   Ptr<Packet> p = packet->Copy ();
   m_rxbuTrace (p, src, dst, interface);
@@ -163,8 +157,59 @@ uint8_t Mipv6Ha::HandleBU (Ptr<Packet> packet, const Ipv6Address &src, const Ipv
   Ipv6MobilityBindingUpdateHeader bu;
   p->RemoveHeader (bu);
 
+
   Ipv6ExtensionDestinationHeader dest;
-  p->RemoveHeader (dest);
+  bool noHdr = false;
+  if (p->PeekHeader (dest) != 0)
+    p->RemoveHeader (dest);
+  else
+    noHdr = true;
+
+  NS_LOG_INFO (noHdr);
+  Ptr<Mipv6Demux> ipv6MobilityDemux = GetNode ()->GetObject<Mipv6Demux> ();
+  NS_ASSERT (ipv6MobilityDemux);
+
+  Ptr<Mipv6Mobility> ipv6Mobility = ipv6MobilityDemux->GetMobility (bu.GetMhType ());
+  NS_ASSERT (ipv6Mobility);
+
+  uint8_t errStatus = 0;
+  BCache::Entry *bce = 0;
+
+  Ptr<Packet> ba;
+
+  if (noHdr)
+    {
+      bce = m_bCache->Lookup (src);
+
+      NS_LOG_INFO (this << " home address option missing must be at home ");
+      if (bce)
+        {
+          NS_LOG_INFO (this << " binding exists ");
+          ClearTunnelAndRouting (bce);
+          if (bu.GetLifetime () == 0)
+          {
+            NS_LOG_INFO (this << " DEREGISTER Home ");
+            ba = BuildBA (bu, src, errStatus, 0, false);
+            bce->SetState (BCache::Entry::INVALID);
+            Simulator::Schedule (Seconds (Mipv6L4Protocol::MAX_DELETE_BCE_TIMEOUT), &BCache::Remove, m_bCache, bce);
+            SendReply (ba, dst, src, 64);
+            return 0;
+          }
+        }
+      if (bu.GetFlagA ())
+        {
+          if (bu.GetLifetime () == 0)
+          {
+            NS_LOG_INFO (this << " home link first join ");
+            ba = BuildBA (bu, src, errStatus, 0, false);
+            SendReply (ba, dst, src, 64);
+            return 0;
+          }
+          ba = BuildBA (bu, src, errStatus, 0, false);
+          SendReply (ba, dst, src, 64);
+        }
+      return 0;
+    }
 
   Buffer buf;
 
@@ -173,18 +218,10 @@ uint8_t Mipv6Ha::HandleBU (Ptr<Packet> packet, const Ipv6Address &src, const Ipv
   start = buf.Begin ();
   Ipv6HomeAddressOptionHeader homopt;
   homopt.Deserialize (start);
+
   Ipv6Address homeaddr;
   homeaddr = homopt.GetHomeAddress ();
 
-  Ptr<Mipv6Demux> ipv6MobilityDemux = GetNode ()->GetObject<Mipv6Demux> ();
-  NS_ASSERT (ipv6MobilityDemux);
-
-  Ptr<Mipv6Mobility> ipv6Mobility = ipv6MobilityDemux->GetMobility (bu.GetMhType ());
-  NS_ASSERT (ipv6Mobility);
-
-
-  uint8_t errStatus = 0;
-  BCache::Entry *bce = 0;
   BCache::Entry *bce2 = 0;
 
   bce2 = new BCache::Entry (m_bCache);
@@ -200,45 +237,7 @@ uint8_t Mipv6Ha::HandleBU (Ptr<Packet> packet, const Ipv6Address &src, const Ipv
 
   NS_LOG_INFO (this << bu.GetLifetime ());
 
-  Ptr<Packet> ba;
-
   bce = m_bCache->Lookup (homeaddr);
-
-  if (src == homeaddr)
-    {
-      NS_LOG_INFO (this << " src and home addr match ");
-      if (bce)
-        {
-          NS_LOG_INFO (this << " binding exists ");
-          m_bCache->Remove (bce);
-          ClearTunnelAndRouting (bce);
-          if (bu.GetLifetime () == 0)
-          {
-            NS_LOG_INFO (this << " DEREGISTER Home ");
-            ba = BuildBA (bu, homeaddr, errStatus, 0, true);
-            bce2->SetState (BCache::Entry::INVALID);
-            m_bCache->Add (bce2);
-            Simulator::Schedule (Seconds (Mipv6L4Protocol::MAX_DELETE_BCE_TIMEOUT), &BCache::Remove, m_bCache, bce2);
-            SendReply (ba, dst, src, 64);
-            return 0;
-          }
-        }
-      delete bce2;
-      if (bu.GetFlagA ())
-        {
-          if (bu.GetLifetime () == 0)
-          {
-            NS_LOG_INFO (this << " home link first join ");
-            ba = BuildBA (bu, homeaddr, errStatus, 0, true);
-            SendReply (ba, dst, src, 64);
-            return 0;
-          }
-          ba = BuildBA (bu, homeaddr, errStatus, Mipv6L4Protocol::MAX_BINDING_LIFETIME, true);
-          SendReply (ba, dst, src, 64);
-        }
-      return 0;
-    }
-
 
   if (bce)
     {
@@ -264,10 +263,7 @@ uint8_t Mipv6Ha::HandleBU (Ptr<Packet> packet, const Ipv6Address &src, const Ipv
           SendReply (ba, dst, src, 64);
           SetupTunnelAndRouting (bce2);
         }
-
       return 0;
-
-
     }
 
   else
@@ -312,7 +308,7 @@ bool Mipv6Ha::SetupTunnelAndRouting (BCache::Entry *bce)
 {
   NS_LOG_FUNCTION (this << bce);
 
-  //create tunnel
+  // create tunnel
   Ptr<Ipv6TunnelL4Protocol> th = GetNode ()->GetObject<Ipv6TunnelL4Protocol> ();
   NS_ASSERT (th);
 
@@ -320,7 +316,7 @@ bool Mipv6Ha::SetupTunnelAndRouting (BCache::Entry *bce)
 
   bce->SetTunnelIfIndex (tunnelIf);
 
-  //routing setup by static routing protocol
+  // routing setup by static routing protocol
   Ipv6StaticRoutingHelper staticRoutingHelper;
   Ptr<Ipv6> ipv6 = GetNode ()->GetObject<Ipv6> ();
 
@@ -336,7 +332,7 @@ bool Mipv6Ha::SetupTunnelAndRouting (BCache::Entry *bce)
 bool Mipv6Ha::ClearTunnelAndRouting (BCache::Entry *bce)
 {
   NS_LOG_FUNCTION (this << bce);
-  //routing setup by static routing protocol
+  // routing setup by static routing protocol
   Ipv6StaticRoutingHelper staticRoutingHelper;
   Ptr<Ipv6> ipv6 = GetNode ()->GetObject<Ipv6> ();
 
@@ -345,7 +341,7 @@ bool Mipv6Ha::ClearTunnelAndRouting (BCache::Entry *bce)
 
   staticRouting->RemoveRoute (bce->GetHoa (), Ipv6Prefix (64), bce->GetTunnelIfIndex (), bce->GetHoa ());
 
-  //create tunnel
+  // create tunnel
   Ptr<Ipv6TunnelL4Protocol> th = GetNode ()->GetObject<Ipv6TunnelL4Protocol> ();
   NS_ASSERT (th);
 

@@ -515,7 +515,6 @@ void Ipv6MobilityBindingAckHeader::Serialize (Buffer::Iterator start) const
   i.WriteHtonU16 (m_sequence);
   i.WriteHtonU16 (m_lifetime);
 
-
 }
 
 uint32_t Ipv6MobilityBindingAckHeader::Deserialize (Buffer::Iterator start)

@@ -472,26 +472,26 @@ public:
    * \brief Callback signature to check for a home address of a mobile node to send any NS/NA packet
    * destined to a mobile node's solicited home address (which is currently offline) to the upper layer
    * of of an HA to further process. Without this callback no such NS/NA will not reach mipv6 layer
-   * to be processed further.
+   * to be processed further (mipv6).
    */
   Callback<bool, Ipv6Address> m_NSCallback2;
 
   /**
    * \brief Set Callback for delivering NS/NA of an offline mobile node to the upper
-   * layer of a home agent.
+   * layer of a home agent (mipv6).
    * \param ns callback to be used
    */
   void SetNSCallback2 (Callback<bool, Ipv6Address> ns);
 
   /**
    * \brief Callback signature to send the default router address, i.e. connected access router's address,
-   * and interface index to mipv6 layer to setup and clear tunneling purpose.
+   * and interface index to mipv6 layer to setup and clear tunneling purpose (mipv6).
    */
   Callback<void, Ipv6Address, uint32_t> m_RouterPrefix;
 
   /**
    * \brief Set Callback for delivering default router information to a mobile node while recieving RS
-   * at ICMPv6 layer
+   * at ICMPv6 layer (mipv6).
    * \param ip callback to be used
    */
   void SetPrefixCallback (Callback<void, Ipv6Address, uint32_t> ip);

@@ -362,7 +362,7 @@ TunnelNetDevice::Send (Ptr<Packet> packet, const Address& dest, uint16_t protoco
 
       Socket::SocketErrno err;
       Ptr<Ipv6Route> route;
-      Ptr<NetDevice> oif (0);     //specify non-zero if bound to a source address
+      Ptr<NetDevice> oif (0);     // specify non-zero if bound to a source address
       header.SetDestinationAddress (dst);
       route = ipv6->GetRoutingProtocol ()->RouteOutput (packet, header, oif, err);
 

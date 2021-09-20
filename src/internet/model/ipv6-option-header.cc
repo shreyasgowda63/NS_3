@@ -376,6 +376,8 @@ Ipv6OptionHeader::Alignment Ipv6OptionRouterAlertHeader::GetAlignment () const
   return (Alignment){ 2,0}; //2n+0
 }
 
+// mipv6 option
+
 NS_OBJECT_ENSURE_REGISTERED (Ipv6HomeAddressOptionHeader);
 
 TypeId Ipv6HomeAddressOptionHeader::GetTypeId ()

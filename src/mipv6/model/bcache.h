@@ -37,7 +37,7 @@ namespace ns3 {
  * \class BCache
  * \brief BCache class is associated with Mipv6Ha class. It contain data
  * members: CoA, HoA, lifetime, HA address, tunnel interface index, sequence
- * number, BU state, and nonce indices as defined in RFC 6275. To handle the
+ * number and BU state as defined in RFC 6275. To handle the
  * information of multiple MNs and HAs, each entry in the BCache is keyed by
  * the HoA.
 */
@@ -391,7 +391,10 @@ private:
    */
   std::list<Ipv6Address> m_HomePrefixList;
 
-  Ptr<Node> m_node; //!< The node pointer of the HA/CN
+  /**
+   * \brief The node pointer of the HA
+   */
+  Ptr<Node> m_node;
 };
 
 }

@@ -104,7 +104,7 @@ void Mipv6Mn::NotifyNewAggregate ()
       m_buinf->SetNode (node);
 
 
-      //Fetch any link-local address of the node
+      // _Fetch any link-local address of the node
       Ptr<Ipv6> ip = GetNode ()->GetObject<Ipv6> ();
       Ipv6InterfaceAddress ads = ip->GetAddress (1,0);
 
@@ -133,8 +133,7 @@ void Mipv6Mn::NotifyNewAggregate ()
       m_OldinterfaceIndex = -1;
 
       Ptr<Icmpv6L4Protocol> icmpv6l4 = GetNode ()->GetObject<Icmpv6L4Protocol> ();
-      icmpv6l4->SetNewIPCallback (MakeCallback (&Mipv6Mn::HandleNewAttachment, this));
-      icmpv6l4->SetCheckAddressCallback (MakeCallback (&Mipv6Mn::CheckAddresses, this));
+      icmpv6l4->SetCoAConfiguredCallback (MakeCallback (&Mipv6Mn::HandleNewAttachment, this));
 
       Ptr<Ipv6L3Protocol> ipv6l3 = GetNode ()->GetObject<Ipv6L3Protocol> ();
       ipv6l3->SetPrefixCallback (MakeCallback (&Mipv6Mn::SetDefaultRouterAddress, this));
@@ -174,17 +173,17 @@ void Mipv6Mn::HandleNewAttachment (Ipv6Address ipr)
       Ptr<Ipv6> ipv6 = GetNode ()->GetObject<Ipv6> ();
       NS_ASSERT (ipv6);
 
-      //preset header information
+      // preset header information
       m_buinf->SetHomeLastBindingUpdateSequence (GetHomeBUSequence ());
-      //Cut to micro-seconds
+      // Cut to micro-seconds
       m_buinf->SetHomeLastBindingUpdateTime (MicroSeconds (Simulator::Now ().GetMicroSeconds ()));
-      //reset (for the first registration)
+      // reset (for the first registration)
       m_buinf->ResetHomeRetryCount ();
 
       Ptr<Packet> p;
       if(m_homelink)
         {
-          p = BuildHomeBU (true, true, true, true, 0, true);
+          p = BuildHomeBU (true, true, true, true, 0, false);
 
           Ptr<Ipv6L3Protocol> ipv6l3 = (GetNode ())->GetObject <Ipv6L3Protocol> ();
 
@@ -221,11 +220,11 @@ void Mipv6Mn::HandleNewAttachment (Ipv6Address ipr)
           SendMessage (p->Copy (), m_buinf->GetHA (), 64);
         }
 
-      //save packet
+      // save packet
       m_buinf->SetHomeBUPacket (p);
 
 
-      //send BU
+      // send BU
       NS_LOG_FUNCTION (this << p->GetSize ());
       
       Ptr<Packet> pkt = p->Copy ();
@@ -284,7 +283,6 @@ void Mipv6Mn::SendData (Ptr<Packet> packet, Ipv6Address source, Ipv6Address dest
       return;
     }
 
-  /* 3) */
   NS_LOG_LOGIC ("Ipv6L3Protocol::Send case 3: passed in with no route " << destination);
   Socket::SocketErrno err;
   Ptr<NetDevice> oif (0);
@@ -292,7 +290,7 @@ void Mipv6Mn::SendData (Ptr<Packet> packet, Ipv6Address source, Ipv6Address dest
 
   hdr = BuildHeader (source, destination, protocol, packet->GetSize (), ttl, tclass);
 
-  //for link-local traffic, we need to determine the interface
+  // for link-local traffic, we need to determine the interface
   if (source.IsLinkLocal ()
       || destination.IsLinkLocal ()
       || destination.IsLinkLocalMulticast ())
@@ -346,9 +344,9 @@ Ptr<Packet> Mipv6Mn::BuildHomeBU (bool flagA, bool flagH, bool flagL, bool flagK
 
   Ptr<Packet> p = Create<Packet> ();
 
-  if(extn)
+  if (extn)
     {
-      //Adding home address option
+      // Adding home address option
 
       Ipv6ExtensionDestinationHeader destextnhdr;
       Ipv6HomeAddressOptionHeader homeopt;
@@ -370,7 +368,6 @@ Ptr<Packet> Mipv6Mn::BuildHomeBU (bool flagA, bool flagH, bool flagL, bool flagK
 
   bu.SetLifetime (lifetime);
 
-
   p->AddHeader (bu);
 
   return p;
@@ -388,8 +385,9 @@ uint8_t Mipv6Mn::HandleBA (Ptr<Packet> packet, const Ipv6Address &src, const Ipv
   Ipv6MobilityBindingAckHeader ba;
   Ipv6ExtensionType2RoutingHeader exttype2;
 
+  bool noHdr = false;
+
   p->RemoveHeader (ba);
-  p->RemoveHeader (exttype2);
 
   Ptr<Mipv6Demux> mipv6Demux = GetNode ()->GetObject<Mipv6Demux> ();
   NS_ASSERT (mipv6Demux);
@@ -397,7 +395,12 @@ uint8_t Mipv6Mn::HandleBA (Ptr<Packet> packet, const Ipv6Address &src, const Ipv
   Ptr<Mipv6Mobility> ipv6Mobility = mipv6Demux->GetMobility (ba.GetMhType ());
   NS_ASSERT (ipv6Mobility);
 
-  if (IsHomeMatch (src) && (m_buinf->GetHoa ()) == exttype2.GetHomeAddress ())
+  if (p->PeekHeader (exttype2) != 0)
+    p->RemoveHeader (exttype2);
+  else
+    noHdr = true;
+
+  if (IsHomeMatch (src))
     {
       if (m_buinf->GetHomeLastBindingUpdateSequence () != ba.GetSequence ())
         {
@@ -409,79 +412,81 @@ uint8_t Mipv6Mn::HandleBA (Ptr<Packet> packet, const Ipv6Address &src, const Ipv
           return 0;
         }
 
-      //check status code
-      switch (ba.GetStatus ())
+      if (noHdr)
         {
-        case Mipv6Header::BA_STATUS_BINDING_UPDATE_ACCEPTED:
-          {
-            m_buinf->StopHomeRetransTimer ();
-            m_buinf->SetHomeAddressRegistered (true);
-            m_buinf->SetHomeBUPacket (0);
-            m_buinf->SetHomeReachableTime (Seconds (ba.GetLifetime ()));
+          NS_LOG_INFO ("Type 2 routing header missing must be at home");
 
+          Address replyMacAddress = interface->GetDevice ()->GetMulticast (dst);
 
-            if (ba.GetLifetime () > 0)
-              {
-                if (!(m_buinf->GetHoa () ==  m_buinf->GetCoa ()))
-                  {
-                    SetupTunnelAndRouting ();
-                  }
+          uint8_t flags = 1;
 
-                m_buinf->MarkHomeReachable ();
+          /* send a NA to src */
+          Ptr<Ipv6L3Protocol> ipv6 = GetNode ()->GetObject<Ipv6L3Protocol> ();
+          Ptr<Icmpv6L4Protocol> icmp = GetNode ()->GetObject<Icmpv6L4Protocol> ();
 
-                //Setup lifetime
-                m_buinf->StopHomeRefreshTimer ();
-                m_buinf->StartHomeRefreshTimer ();
-                m_buinf->StopHomeReachableTimer ();
-                m_buinf->StartHomeReachableTimer ();
-                
-                // Route Optimization stuff here
-              }
-            else
-              {
-                NS_LOG_INFO (this << "BA lifetime  is 0");
-                SetupTunnelAndRouting ();
-                ClearTunnelAndRouting ();
+          if (ipv6->IsForwarding (ipv6->GetInterfaceForDevice (interface->GetDevice ())))
+            {
+              flags += 4; /* R flag */
+            }
 
-                Address replyMacAddress = interface->GetDevice ()->GetMulticast (dst);
+          Address hardwareAddress = interface->GetDevice ()->GetAddress ();
+          Ipv6Address hoa = GetHomeAddress ();
+          NdiscCache::Ipv6PayloadHeaderPair p = icmp->ForgeNA (hoa,
+                                                        interface->GetLinkLocalAddress ().GetAddress (),
+                                                        &hardwareAddress,
+                                                        flags );
 
-                uint8_t flags = 1;
-
-                /* send a NA to src */
-                Ptr<Ipv6L3Protocol> ipv6 = GetNode ()->GetObject<Ipv6L3Protocol> ();
-                Ptr<Icmpv6L4Protocol> icmp = GetNode ()->GetObject<Icmpv6L4Protocol> ();
-
-                if (ipv6->IsForwarding (ipv6->GetInterfaceForDevice (interface->GetDevice ())))
-                  {
-                    flags += 4; /* R flag */
-                  }
-
-                Address hardwareAddress = interface->GetDevice ()->GetAddress ();
-                Ipv6Address hoa = GetHomeAddress ();
-                NdiscCache::Ipv6PayloadHeaderPair p = icmp->ForgeNA (hoa,
-                                                              interface->GetLinkLocalAddress ().GetAddress (),
-                                                              &hardwareAddress,
-                                                              flags );
-
-                // We must bypass the IPv6 layer, as a NA must be sent regardless of the NCE status (and not change it beyond what we did already).
-                Ptr<Packet> pkt = p.first;
-                pkt->AddHeader (p.second);
-                interface->GetDevice ()->Send (pkt, replyMacAddress, Ipv6L3Protocol::PROT_NUMBER);
-              }
-
-
-
-            break;
-          }
-
-        default:
-          NS_LOG_LOGIC ("Error occurred code=" << ba.GetStatus ());
-
+          // We must bypass the IPv6 layer, as a NA must be sent regardless of the NCE status (and not change it beyond what we did already).
+          Ptr<Packet> pkt = p.first;
+          pkt->AddHeader (p.second);
+          interface->GetDevice ()->Send (pkt, replyMacAddress, Ipv6L3Protocol::PROT_NUMBER);
+          return 0;
         }
+      
+      // check status code
+      if (m_buinf->GetHoa () == exttype2.GetHomeAddress ())
+        {
+          switch (ba.GetStatus ())
+          {
+          case Mipv6Header::BA_STATUS_BINDING_UPDATE_ACCEPTED:
+            {
+              m_buinf->StopHomeRetransTimer ();
+              m_buinf->SetHomeAddressRegistered (true);
+              m_buinf->SetHomeBUPacket (0);
+              m_buinf->SetHomeReachableTime (Seconds (ba.GetLifetime ()));
 
+
+              if (ba.GetLifetime () > 0)
+                {
+                  if (!(m_buinf->GetHoa () ==  m_buinf->GetCoa ()))
+                    {
+                      SetupTunnelAndRouting ();
+                    }
+
+                  m_buinf->MarkHomeReachable ();
+
+                  // Setup lifetime
+                  m_buinf->StopHomeRefreshTimer ();
+                  m_buinf->StartHomeRefreshTimer ();
+                  m_buinf->StopHomeReachableTimer ();
+                  m_buinf->StartHomeReachableTimer ();
+                  
+                }
+              else
+                {
+                  ClearTunnelAndRouting ();
+                }
+
+              break;
+            }
+
+          default:
+            NS_LOG_LOGIC ("Error occurred code=" << ba.GetStatus ());
+
+          }
+        }
       return 0;
     }
-    
   else
     {
       NS_LOG_LOGIC ("Error occurred code, No source found");
@@ -571,7 +576,7 @@ void Mipv6Mn::ClearTunnelAndRouting ()
   staticRouting->RemoveRoute (Ipv6Address ("::"), Ipv6Prefix::GetZero (), m_buinf->GetTunnelIfIndex (), m_OldPrefixToUse);
   staticRouting->RemoveRoute (m_buinf->GetHA (), Ipv6Prefix (128), m_OldinterfaceIndex, Ipv6Address ("::"));
 
-  //clear tunnel
+  // clear tunnel
   Ptr<Ipv6TunnelL4Protocol> th = GetNode ()->GetObject<Ipv6TunnelL4Protocol> ();
   NS_ASSERT (th);
 
@@ -600,6 +605,8 @@ bool Mipv6Mn::SetHomeLink (Ipv6Address prefix, Ipv6Prefix mask) {
     {
       NS_LOG_INFO (this << " prefix matched, in home link");
       m_homelink = true;
+      if (m_buinf->GetCoa ().IsAny ())
+        return false;
       return m_homelink;
     }
 

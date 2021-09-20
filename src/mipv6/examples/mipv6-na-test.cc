@@ -61,6 +61,7 @@ NS_LOG_COMPONENT_DEFINE ("mipv6-na-test");
 class Mipv6NATest
 {
   public: 
+    Mipv6NATest();
     void SendNA (Ptr<Node> node, Ptr<NetDevice> dev1, Ptr<NetDevice> dev2);
     void TestReceived (Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface);
     bool sentNA;
@@ -68,6 +69,11 @@ class Mipv6NATest
   private:
 
 };
+
+Mipv6NATest::Mipv6NATest () {
+  sentNA = false;
+  receivedNA = false;
+}
 
 void Mipv6NATest::SendNA (Ptr<Node> node, Ptr<NetDevice> dev1, Ptr<NetDevice> dev2) {
   Ptr<Icmpv6L4Protocol> icmp = node->GetObject<Icmpv6L4Protocol>();
@@ -85,6 +91,7 @@ void Mipv6NATest::SendNA (Ptr<Node> node, Ptr<NetDevice> dev1, Ptr<NetDevice> de
 
   if (!sentNA) {
     NS_LOG_ERROR ("Failed to send NA");
+    exit (1);
   }
 }
 
@@ -100,12 +107,16 @@ void Mipv6NATest::TestReceived (Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t in
     pkt->PeekHeader (icmpHeader);
 
     if (icmpHeader.GetType () == Icmpv6Header::ICMPV6_ND_NEIGHBOR_ADVERTISEMENT) {
-      if (!sentNA)
+      if (!sentNA) {
         NS_LOG_ERROR ("Neighbour Advertisement was not sent");
+        exit (1);
+      }
       Icmpv6NA naHeader;
       pkt->RemoveHeader (naHeader);
-      if (!(naHeader.GetIpv6Target () == "3001:db80::200:ff:fe00:3"))
+      if (!(naHeader.GetIpv6Target () == "3001:db80::200:ff:fe00:3")) {
         NS_LOG_ERROR ("Target address does not match");
+        exit (1);
+      }
       receivedNA = true;
     }
   }
@@ -180,8 +191,6 @@ int main (int argc, char** argv)
   ipv6.SetBase (Ipv6Address ("3001:db80::"), Ipv6Prefix (64));
   iAiH = ipv6.Assign (dAdH);
   iAiH.SetForwarding (0, true);
-  iAiH.SetForwarding (1, true);
-  iAiH.SetDefaultRouteInAllNodes (0);
   iAiH.SetDefaultRouteInAllNodes (1);
   ipv6.SetBase (Ipv6Address ("2001:db80::"), Ipv6Prefix (64));
   iHiC = ipv6.Assign (dHdC);
@@ -241,15 +250,18 @@ int main (int argc, char** argv)
 
   if (!mi.sentNA) {
     NS_LOG_ERROR ("NS packet was not sent");
+    exit (1);
   }
   else if (!mi.receivedNA) {
     NS_LOG_ERROR ("NA packet was not received");
+    exit (1);
   }
   else {
     Ptr<Mipv6Ha> agent = ha.Get (0)->GetObject<Mipv6Ha> ();
     if (agent) {
       if (agent->IsAddress ("3001:db80::200:ff:fe00:3")) {
         NS_LOG_ERROR ("Duplicate address not handled properly");
+        exit (1);
       }
     }
   }

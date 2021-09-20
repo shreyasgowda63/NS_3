@@ -111,29 +111,29 @@ int main (int argc, char** argv)
   MobilityHelper mobility;
   Ptr<ListPositionAllocator> positionAlloc;
   positionAlloc = CreateObject<ListPositionAllocator> ();
-  positionAlloc->Add (Vector (-50.0, 20.0, 0.0)); //AR1
-  positionAlloc->Add (Vector (50.0, 20.0, 0.0)); //AR2
+  positionAlloc->Add (Vector (-100.0, 20.0, 0.0)); //AR1
+  positionAlloc->Add (Vector (100.0, 20.0, 0.0)); //AR2
   mobility.SetPositionAllocator (positionAlloc);
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.Install (ar);
 
   positionAlloc = CreateObject<ListPositionAllocator> ();
-  positionAlloc->Add (Vector (50.0, 50.0, 0.0)); //CN
+  positionAlloc->Add (Vector (100.0, 50.0, 0.0)); //CN
   mobility.SetPositionAllocator (positionAlloc);
   mobility.SetMobilityModel ("ns3::ConstantVelocityMobilityModel");  
   mobility.Install(cn);
 
   positionAlloc = CreateObject<ListPositionAllocator> ();
-  positionAlloc->Add (Vector (-50.0, 50.0, 0.0)); //MN
+  positionAlloc->Add (Vector (-100.0, 50.0, 0.0)); //MN
   mobility.SetPositionAllocator (positionAlloc);
   mobility.SetMobilityModel ("ns3::ConstantVelocityMobilityModel");  
   mobility.Install(mn);
 
   Ptr<ConstantVelocityMobilityModel> cvm = mn.Get (0)->GetObject<ConstantVelocityMobilityModel> ();
-  cvm->SetVelocity (Vector (3, 0, 0));
+  cvm->SetVelocity (Vector (6, 0, 0));
 
-  Simulator::Schedule (Seconds (35.0), &ConstantVelocityMobilityModel::SetVelocity, cvm, Vector (-3, 0, 0));
-  Simulator::Schedule (Seconds (60.0), &ConstantVelocityMobilityModel::SetVelocity, cvm, Vector (3, 0, 0));
+  Simulator::Schedule (Seconds (35.0), &ConstantVelocityMobilityModel::SetVelocity, cvm, Vector (-6, 0, 0));
+  Simulator::Schedule (Seconds (70.0), &ConstantVelocityMobilityModel::SetVelocity, cvm, Vector (6, 0, 0));
 
 
   NetDeviceContainer mnDev;

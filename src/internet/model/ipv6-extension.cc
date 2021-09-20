@@ -1094,6 +1094,8 @@ uint8_t Ipv6ExtensionLooseRouting::Process (Ptr<Packet>& packet,
   return routingHeader.GetSerializedSize ();
 }
 
+// mipv6 extension
+
 NS_OBJECT_ENSURE_REGISTERED (Ipv6ExtensionType2Routing);
 
 TypeId Ipv6ExtensionType2Routing::GetTypeId ()
