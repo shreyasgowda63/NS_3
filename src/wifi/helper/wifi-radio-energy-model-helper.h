@@ -69,35 +69,14 @@ public:
   void SetRechargedCallback (WifiRadioEnergyModel::WifiRadioEnergyRechargedCallback callback);
 
   /**
-   * \param name the name of the model to set
-   * \param n0 the name of the attribute to set
-   * \param v0 the value of the attribute to set
-   * \param n1 the name of the attribute to set
-   * \param v1 the value of the attribute to set
-   * \param n2 the name of the attribute to set
-   * \param v2 the value of the attribute to set
-   * \param n3 the name of the attribute to set
-   * \param v3 the value of the attribute to set
-   * \param n4 the name of the attribute to set
-   * \param v4 the value of the attribute to set
-   * \param n5 the name of the attribute to set
-   * \param v5 the value of the attribute to set
-   * \param n6 the name of the attribute to set
-   * \param v6 the value of the attribute to set
-   * \param n7 the name of the attribute to set
-   * \param v7 the value of the attribute to set
-   *
    * Configure a Transmission Current model for this EnergySource.
+   * 
+   * \tparam Args \deduced Template type parameter pack for the sequence of name-value pairs.
+   * \param name the name of the model to set
+   * \param args A sequence of name-value pairs of the attributes to set.
    */
-  void SetTxCurrentModel (std::string name,
-                          std::string n0 = "", const AttributeValue &v0 = EmptyAttributeValue (),
-                          std::string n1 = "", const AttributeValue &v1 = EmptyAttributeValue (),
-                          std::string n2 = "", const AttributeValue &v2 = EmptyAttributeValue (),
-                          std::string n3 = "", const AttributeValue &v3 = EmptyAttributeValue (),
-                          std::string n4 = "", const AttributeValue &v4 = EmptyAttributeValue (),
-                          std::string n5 = "", const AttributeValue &v5 = EmptyAttributeValue (),
-                          std::string n6 = "", const AttributeValue &v6 = EmptyAttributeValue (),
-                          std::string n7 = "", const AttributeValue &v7 = EmptyAttributeValue ());
+  template <typename... Args>
+  void SetTxCurrentModel (std::string name, Args &&...args);
 
 private:
   /**
@@ -117,6 +96,23 @@ private:
   ObjectFactory m_txCurrentModel; ///< transmit current model
 
 };
+
+} // namespace ns3
+
+/***************************************************************
+ *  Implementation of the templates declared above.
+ ***************************************************************/
+
+namespace ns3 {
+template <typename... Args>
+void
+WifiRadioEnergyModelHelper::SetTxCurrentModel (std::string name, Args &&...args)
+{
+  ObjectFactory factory;
+  factory.SetTypeId (name);
+  factory.Set (args...);
+  m_txCurrentModel = factory;
+}
 
 } // namespace ns3
 
