@@ -268,14 +268,6 @@ FqCoDelQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
       NS_LOG_DEBUG ("Creating a new flow queue with index " << h);
       flow = m_flowFactory.Create<FqCoDelFlow> ();
       Ptr<QueueDisc> qd = m_queueDiscFactory.Create<QueueDisc> ();
-      // If CoDel, Set values of CoDelQueueDisc to match this QueueDisc
-      Ptr<CoDelQueueDisc> codel = qd->GetObject<CoDelQueueDisc> ();
-      if (codel)
-        {
-          codel->SetAttribute ("UseEcn", BooleanValue (m_useEcn));
-          codel->SetAttribute ("CeThreshold", TimeValue (m_ceThreshold));
-          codel->SetAttribute ("UseL4s", BooleanValue (m_useL4s));
-        }
       qd->Initialize ();
       flow->SetQueueDisc (qd);
       flow->SetIndex (h);
@@ -457,6 +449,9 @@ FqCoDelQueueDisc::InitializeParams (void)
   m_queueDiscFactory.Set ("MaxSize", QueueSizeValue (GetMaxSize ()));
   m_queueDiscFactory.Set ("Interval", StringValue (m_interval));
   m_queueDiscFactory.Set ("Target", StringValue (m_target));
+  m_queueDiscFactory.Set ("UseEcn", BooleanValue (m_useEcn));
+  m_queueDiscFactory.Set ("CeThreshold", TimeValue (m_ceThreshold));
+  m_queueDiscFactory.Set ("UseL4s", BooleanValue (m_useL4s));
 }
 
 uint32_t

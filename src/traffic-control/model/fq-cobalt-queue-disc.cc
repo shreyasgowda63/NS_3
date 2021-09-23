@@ -294,15 +294,6 @@ FqCobaltQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
       NS_LOG_DEBUG ("Creating a new flow queue with index " << h);
       flow = m_flowFactory.Create<FqCobaltFlow> ();
       Ptr<QueueDisc> qd = m_queueDiscFactory.Create<QueueDisc> ();
-      // If Cobalt, Set values of CobaltQueueDisc to match this QueueDisc
-      Ptr<CobaltQueueDisc> cobalt = qd->GetObject<CobaltQueueDisc> ();
-      if (cobalt)
-        {
-          cobalt->SetAttribute ("UseEcn", BooleanValue (m_useEcn));
-          cobalt->SetAttribute ("CeThreshold", TimeValue (m_ceThreshold));
-          cobalt->SetAttribute ("UseL4s", BooleanValue (m_useL4s));
-          cobalt->SetAttribute ("BlueThreshold", TimeValue (m_blueThreshold));
-        }
       qd->Initialize ();
       flow->SetQueueDisc (qd);
       flow->SetIndex (h);
@@ -488,6 +479,10 @@ FqCobaltQueueDisc::InitializeParams (void)
   m_queueDiscFactory.Set ("Pdrop", DoubleValue (m_Pdrop));
   m_queueDiscFactory.Set ("Increment", DoubleValue (m_increment));
   m_queueDiscFactory.Set ("Decrement", DoubleValue (m_decrement));
+  m_queueDiscFactory.Set ("UseEcn", BooleanValue (m_useEcn));
+  m_queueDiscFactory.Set ("CeThreshold", TimeValue (m_ceThreshold));
+  m_queueDiscFactory.Set ("UseL4s", BooleanValue (m_useL4s));
+  m_queueDiscFactory.Set ("BlueThreshold", TimeValue (m_blueThreshold));
 }
 
 uint32_t

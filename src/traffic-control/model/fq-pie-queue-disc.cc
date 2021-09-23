@@ -324,14 +324,6 @@ FqPieQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
       NS_LOG_DEBUG ("Creating a new flow queue with index " << h);
       flow = m_flowFactory.Create<FqPieFlow> ();
       Ptr<QueueDisc> qd = m_queueDiscFactory.Create<QueueDisc> ();
-      // If Pie, Set values of PieQueueDisc to match this QueueDisc
-      Ptr<PieQueueDisc> pie = qd->GetObject<PieQueueDisc> ();
-      if (pie)
-        {
-          pie->SetAttribute ("UseEcn", BooleanValue (m_useEcn));
-          pie->SetAttribute ("CeThreshold", TimeValue (m_ceThreshold));
-          pie->SetAttribute ("UseL4s", BooleanValue (m_useL4s));
-        }
       qd->Initialize ();
       flow->SetQueueDisc (qd);
       flow->SetIndex (h);
@@ -523,6 +515,9 @@ FqPieQueueDisc::InitializeParams (void)
   m_queueDiscFactory.Set ("UseDequeueRateEstimator", BooleanValue (m_useDqRateEstimator));
   m_queueDiscFactory.Set ("UseCapDropAdjustment", BooleanValue (m_isCapDropAdjustment));
   m_queueDiscFactory.Set ("UseDerandomization", BooleanValue (m_useDerandomization));
+  m_queueDiscFactory.Set ("UseEcn", BooleanValue (m_useEcn));
+  m_queueDiscFactory.Set ("CeThreshold", TimeValue (m_ceThreshold));
+  m_queueDiscFactory.Set ("UseL4s", BooleanValue (m_useL4s));
 }
 
 uint32_t
