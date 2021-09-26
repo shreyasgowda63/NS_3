@@ -80,11 +80,16 @@ public:
    */
   static TypeId GetTypeId (void);
 
-  QosTxop ();
+  /**
+   * Constructor
+   *
+   * \param ac the Access Category
+   */
+  QosTxop (AcIndex ac = AC_UNDEF);
+
   virtual ~QosTxop ();
 
   bool IsQosTxop (void) const override;
-  AcIndex GetAccessCategory (void) const override;
   bool HasFramesToTransmit (void) override;
   void NotifyChannelAccessed (Time txopDuration) override;
   void NotifyChannelReleased (void) override;
@@ -96,6 +101,13 @@ public:
    * \param qosFem the associated QoS Frame Exchange Manager.
    */
   void SetQosFrameExchangeManager (const Ptr<QosFrameExchangeManager> qosFem);
+
+  /**
+   * Get the access category of this object.
+   *
+   * \return the access category.
+   */
+  AcIndex GetAccessCategory (void) const;
 
   /**
    * Return true if an explicit BlockAckRequest is sent after a missed BlockAck
@@ -208,13 +220,6 @@ public:
    * \param tid traffic ID
    */
   void ResetBa (Mac48Address recipient, uint8_t tid);
-
-  /**
-   * Set the access category of this EDCAF.
-   *
-   * \param ac access category.
-   */
-  void SetAccessCategory (AcIndex ac);
 
   /**
    * \param packet packet to send.
@@ -330,7 +335,7 @@ public:
    * \param recipient the receiver station address.
    * \returns the peeked frame.
    */
-  Ptr<const WifiMacQueueItem> PeekNextMpdu (WifiMacQueueItem::QueueIteratorPair queueIt,
+  Ptr<const WifiMacQueueItem> PeekNextMpdu (WifiMacQueueItem::ConstIterator queueIt,
                                             uint8_t tid = 8,
                                             Mac48Address recipient = Mac48Address::GetBroadcast ());
   /**
@@ -349,14 +354,14 @@ public:
                           (including protection and acknowledgment); a value of
    *                      Time::Min() indicates no time constraint
    * \param initialFrame true if the frame is the initial PPDU of a TXOP
-   * \param[out] queueIt a QueueIteratorPair pointing to the queue item following the
+   * \param[out] queueIt a queue iterator pointing to the queue item following the
    *                     last item used to prepare the returned MPDU, if any; if no MPDU
    *                     is returned, its value is unchanged
    * \return the frame to transmit or a null pointer if no frame meets the time constraints
    */
   Ptr<WifiMacQueueItem> GetNextMpdu (Ptr<const WifiMacQueueItem> peekedItem, WifiTxParameters& txParams,
                                      Time availableTime, bool initialFrame,
-                                     WifiMacQueueItem::QueueIteratorPair& queueIt);
+                                     WifiMacQueueItem::ConstIterator& queueIt);
 
   /**
    * Assign a sequence number to the given MPDU, if it is not a fragment
