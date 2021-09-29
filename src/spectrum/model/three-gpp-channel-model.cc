@@ -1573,19 +1573,19 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
   // Step 11: Generate channel coefficients for each cluster n and each receiver
   // and transmitter element pair u,s.
 
-  uint8_t cluster1st = 0, cluster2nd = 0; // first and second strongest cluster;
+  uint8_t cluster1st = 0, cluster2nd = 0; // index of first and second strongest cluster;
+  double maxPower = 0; // value for first strongest cluster
   for (uint8_t cIndex = 0; cIndex < numReducedCluster; cIndex++)
     {
-      double maxPower = 0;
       if (maxPower < clusterPower[cIndex])
         {
           maxPower = clusterPower[cIndex];
           cluster1st = cIndex;
         }
     }
+  maxPower = 0; // value for second strongest cluster
   for (uint8_t cIndex = 0; cIndex < numReducedCluster; cIndex++)
     {
-      double maxPower = 0;
       if (maxPower < clusterPower[cIndex] && cluster1st != cIndex)
         {
           maxPower = clusterPower[cIndex];
