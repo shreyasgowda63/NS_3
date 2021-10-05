@@ -66,7 +66,18 @@ public:
   DeviceEnergyModelContainer Install (NodeContainer nodeContainer,
                                       EnergySourceContainer sourceContainer) const;
 
+  /**
+   * \param cb The callback to register
+   *
+   * Registers a new EnergyDepletedCallback to be called when the installed device's energy is depleted.
+   */
   void AddEnergyDepletedCallback (DynamicDeviceEnergyModel::EnergyDepletedCallback cb);
+
+  /**
+   * \param cb The callback to register
+   *
+   * Registers a new EnergyRechargeCallback to be called when the installed device's energy has been recharged.
+   */
   void AddEnergyRechargedCallback (DynamicDeviceEnergyModel::EnergyRechargedCallback cb);
 
 private:

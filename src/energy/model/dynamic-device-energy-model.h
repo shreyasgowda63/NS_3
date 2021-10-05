@@ -46,6 +46,11 @@ public:
 
   DynamicEnergyModelStates ();
 
+  /**
+   * \brief Get the type identificator
+   * 
+   * \return type identificator
+   */
   static TypeId GetTypeId (void);
 
   /**
@@ -152,6 +157,11 @@ public:
 
   DynamicDeviceEnergyModel ();
 
+  /**
+   * \brief Get the type identificator
+   * 
+   * \return type identificator
+   */
   static TypeId GetTypeId (void);
 
   virtual void SetEnergySource (Ptr<EnergySource> source);
@@ -161,16 +171,50 @@ public:
   virtual void HandleEnergyRecharged (void);
   virtual void HandleEnergyChanged (void);
 
+  /**
+   * \brief Schedules a call to the ChangeState method.
+   * 
+   * \param delay The time after which the method should be called
+   * \param state The argument that will be passed to the method when it is called
+   *
+   * This method is intended to make it easier to schedule a call to the
+   * DynamicDeviceEnergyModel::ChangeState method compared to calling Simulator::Schedule.
+   * This method does nothing else than calling Simulator::Schedule with the provided arguments.
+   */
   void ScheduleChangeState (Time delay, uint32_t state);
 
+  /**
+   * \brief Registers a new EnergyDepletedCallback to be called when this device's energy is depleted.
+   * 
+   * \param cb The callback to register
+   */
   void RegisterEnergyDepletedCallback (EnergyDepletedCallback cb);
+
+  /**
+   * \brief Registers a new EnergyRechargedCallback to be called when this device's energy was recharged.
+   * 
+   * \param cb The callback to register
+   */
   void RegisterEnergyRechargedCallback (EnergyRechargedCallback cb);
 
   // ====================================================== //
   // ================== Getters & Setters ================= //
   // ====================================================== //
 
+  /**
+   * \brief Get a pointer to the Node on which this device is installed.
+   * 
+   * \return Ptr<Node> The node
+   */
   Ptr<Node> GetNode () const;
+
+  /**
+   * \brief Set the Node on which this device is installed.
+   * 
+   * \param node The node
+   * 
+   * This method does not install anything, but only reassigns a pointer.
+   */
   void SetNode (Ptr<Node> node);
 
   // ##################################################################### //
