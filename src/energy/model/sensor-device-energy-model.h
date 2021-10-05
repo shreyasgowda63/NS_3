@@ -214,7 +214,7 @@ public:
   void SetNode (Ptr<Node> node);
 
   /**
-   * \brief Gets the current associated with the Measure state..
+   * \brief Gets the current associated with the Measure state.
    * 
    * \return double The current in ampere
    */
