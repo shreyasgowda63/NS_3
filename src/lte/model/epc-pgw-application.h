@@ -27,6 +27,7 @@
 #include "ns3/application.h"
 #include "ns3/epc-tft-classifier.h"
 #include "ns3/epc-gtpc-header.h"
+#include "ns3/ipv6-header.h"
 
 namespace ns3 {
 
@@ -187,6 +188,23 @@ private:
    * \param packet GTPv2-C Delete Bearer Response message
    */
   void DoRecvDeleteBearerResponse (Ptr<Packet> packet);
+  
+  /**
+   * \brief Handle method for ICMPv6 packets.
+   * \param p the packet
+   * \param header the IPv6 header
+   * \param teid the Tunnel Enpoint IDentifier
+   */
+  void HandleICMPv6 (Ptr<Packet> packet, Ipv6Header const &header, uint8_t teid);
+  
+  /**
+   * \brief Receive Neighbor Solicitation method.
+   * \param p the packet
+   * \param src source address
+   * \param dst destination address
+   * \param teid the Tunnel Enpoint IDentifier
+   */
+  void HandleNS (Ptr<Packet> packet, Ipv6Address const &src, Ipv6Address const &dst, uint8_t teid);
 
 
   /**

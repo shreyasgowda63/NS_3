@@ -2,7 +2,7 @@
 
 def build(bld):
 
-    lte_module_dependencies = ['core', 'network', 'spectrum', 'stats', 'buildings', 'virtual-net-device','point-to-point','applications','internet','csma']
+    lte_module_dependencies = ['core', 'network', 'spectrum', 'stats', 'buildings', 'virtual-net-device','point-to-point','applications','internet', 'internet-apps', 'csma']
     if (bld.env['ENABLE_EMU']):
         lte_module_dependencies.append('fd-net-device')
     module = bld.create_ns3_module('lte', lte_module_dependencies)
@@ -195,6 +195,7 @@ def build(bld):
         'test/lte-test-ipv6-routing.cc',
         'test/lte-test-carrier-aggregation-configuration.cc',
         'test/lte-test-radio-link-failure.cc',
+        'test/lte-test-ipv6-dynamic-addr.cc'
         ]
 
     # Tests encapsulating example programs should be listed here
