@@ -37,16 +37,13 @@
 #include "ns3/radvd.h"
 #include "ns3/radvd-interface.h"
 #include "ns3/radvd-prefix.h"
-#include "ns3/ssid.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <vector>
 #include <string>
 
-/*
-Middle Router is HA for two MNs
-*/
+
 
 using namespace ns3;
 NS_LOG_COMPONENT_DEFINE ("mip6Wifi");
@@ -68,7 +65,7 @@ cmd.Parse (argc, argv);
 
 ars.Create (2);
 ha.Create (1);
-sta.Create (2);
+sta.Create (4);
 cn.Create (1);
 mid.Create (1);
 
@@ -170,30 +167,22 @@ mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
 mobility.Install (cn);
 
 
-  YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
-  YansWifiPhyHelper phy;
-  phy.SetChannel (channel.Create ());
-  
-  WifiHelper wifi;
-  wifi.SetRemoteStationManager ("ns3::AarfWifiManager");
+Ssid ssid = Ssid("ns-3-ssid");
+YansWifiPhyHelper wifiPhy;
+wifiPhy.SetPcapDataLinkType (YansWifiPhyHelper::DLT_IEEE802_11_RADIO);
 
-  WifiMacHelper mac;
-  Ssid ssid = Ssid ("ns-3-ssid");
-  mac.SetType ("ns3::StaWifiMac",
-               "Ssid", SsidValue (ssid),
-               "ActiveProbing", BooleanValue (false));
+WifiHelper wifi;
+WifiMacHelper wifiMac;
+YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
+wifiPhy.SetChannel (wifiChannel.Create ());
+   
+wifiMac.SetType ("ns3::ApWifiMac",
+		           "Ssid", SsidValue (ssid),
+		           "BeaconGeneration", BooleanValue (true),
+		           "BeaconInterval", TimeValue (MicroSeconds(102400)));
 
-
-  staDevs.Add( wifi.Install (phy, mac, sta));
-  
-
-  mac.SetType ("ns3::ApWifiMac",
-               "Ssid", SsidValue (ssid));
-               
-  ar1Devs = wifi.Install (phy, mac, ars.Get (0));
-  ar2Devs = wifi.Install (phy, mac, ars.Get (1));
-
-
+ar1Devs = wifi.Install (wifiPhy, wifiMac, ars.Get (0));
+ar2Devs = wifi.Install (wifiPhy, wifiMac, ars.Get (1));
 Ipv6AddressHelper ipv62;
 
 ipv62.SetBase (Ipv6Address ("8888:56ac::"), Ipv6Prefix (64));
@@ -213,8 +202,8 @@ ar2Ifs.SetDefaultRouteInAllNodes (0);
 
 positionAlloc = CreateObject<ListPositionAllocator> ();
 positionAlloc->Add (Vector (-50.0, 50.0, 0.0)); //STA1
-//positionAlloc->Add (Vector (-30.0, 50.0, 0.0)); //STA2
-//positionAlloc->Add (Vector (30.0, 50.0, 0.0)); //STA5
+positionAlloc->Add (Vector (-30.0, 50.0, 0.0)); //STA2
+positionAlloc->Add (Vector (30.0, 50.0, 0.0)); //STA5
 positionAlloc->Add (Vector (50.0, 50.0, 0.0)); //STA6
 mobility.SetPositionAllocator (positionAlloc);
 mobility.SetMobilityModel ("ns3::ConstantVelocityMobilityModel");  
@@ -222,15 +211,18 @@ mobility.Install(sta);
 
 Ptr<ConstantVelocityMobilityModel> cvm = sta.Get(0)->GetObject<ConstantVelocityMobilityModel> ();
 cvm->SetVelocity(Vector (3, 0, 0)); //move left to right
-//cvm = sta.Get(1)->GetObject<ConstantVelocityMobilityModel>();
-//cvm->SetVelocity(Vector (3, 0, 0)); //move left to right
+cvm = sta.Get(1)->GetObject<ConstantVelocityMobilityModel>();
+cvm->SetVelocity(Vector (3, 0, 0)); //move left to right
 
-//cvm = sta.Get(2)->GetObject<ConstantVelocityMobilityModel> ();
-//cvm->SetVelocity(Vector (-3, 0, 0)); //move right to left
-cvm = sta.Get(1)->GetObject<ConstantVelocityMobilityModel> ();
+cvm = sta.Get(2)->GetObject<ConstantVelocityMobilityModel> ();
+cvm->SetVelocity(Vector (-3, 0, 0)); //move right to left
+cvm = sta.Get(3)->GetObject<ConstantVelocityMobilityModel> ();
 cvm->SetVelocity(Vector (-3, 0, 0)); //move right to left
 
-
+wifiMac.SetType ("ns3::StaWifiMac",
+	               "Ssid", SsidValue (ssid),
+	               "ActiveProbing", BooleanValue (false));
+staDevs.Add( wifi.Install (wifiPhy, wifiMac, sta));
 iifc = ipv6.AssignWithoutAddress (staDevs);
 staIfs.Add(iifc);
 
@@ -287,19 +279,17 @@ rttop->AddNetworkRouteTo (Ipv6Address ("5001:db80::"), Ipv6Prefix (64), Ipv6Addr
 
 
 Mipv6HaHelper hahelper;
-hahelper.Install (mid.Get (0));
+hahelper.Install (ha.Get (0));
 Mipv6MnHelper mnhelper (hahelper.GetHomeAgentAddressList(),false); 
 mnhelper.Install (sta.Get(0));
 mnhelper.Install (sta.Get(1));
 
-//mnhelper.Install (sta.Get(2));
-//mnhelper.Install (sta.Get(3));
+mnhelper.Install (sta.Get(2));
+mnhelper.Install (sta.Get(3));
 
 LogComponentEnable ("Mipv6Mn", LOG_LEVEL_ALL);
 LogComponentEnable ("Mipv6Ha", LOG_LEVEL_ALL);
 
-
-/*
 UdpEchoServerHelper echoServer1 (9);
 UdpEchoServerHelper echoServer2 (10);
 
@@ -364,7 +354,7 @@ clientApps4.Stop (Seconds (700.0));
 
 LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_ALL);
 LogComponentEnable ("UdpEchoServerApplication", LOG_LEVEL_ALL);
-*/
+
 
 
 Simulator::Stop (Seconds (100.5));

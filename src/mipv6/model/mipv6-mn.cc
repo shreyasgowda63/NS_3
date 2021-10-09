@@ -412,7 +412,7 @@ uint8_t Mipv6Mn::HandleBA (Ptr<Packet> packet, const Ipv6Address &src, const Ipv
           return 0;
         }
 
-      if (noHdr)
+      if (noHdr && ba.GetLifetime () == 0)
         {
           NS_LOG_INFO ("Type 2 routing header missing must be at home");
 

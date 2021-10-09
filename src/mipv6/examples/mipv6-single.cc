@@ -47,6 +47,37 @@
 using namespace ns3;
 NS_LOG_COMPONENT_DEFINE ("mip6Wifi");
 
+void RxPktAtTun (Ptr<Packet> p, Ipv6Header ih, Ipv6Header oh, Ptr<Ipv6Interface> i)
+{
+  std::clog << "Received Packet at tunnel " << p << " " << ih << " " << oh << " " << i;
+}
+
+void TxPktAtTun (Ptr<Packet> p, Ipv6Header ih, Ipv6Header oh)
+{
+  std::clog << "Transfer Packet at tunnel " << p << " " << ih << " " << oh;
+}
+
+void TxPktAtClient (Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface)
+{
+  std::clog << "Transfer Packet at clinet " << p << " " << interface;
+}
+
+void RxPktAtServer (Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface)
+{
+  std::clog << "Receive Packet at server " << p << " " << interface;
+}
+
+
+void TxBU (Ptr<Packet> packet, Ipv6Address src, Ipv6Address dst)
+{
+  std::clog << "Transfer BU " << packet << " " << src << " " << dst;
+}
+
+void RxBA (Ptr<Packet> packet, Ipv6Address src, Ipv6Address dst, Ptr<Ipv6Interface> interface)
+{
+  std::clog << "Receive BA " << packet << " " << src << " " << dst;
+}
+
 int main (int argc, char *argv[])
 {
 
@@ -276,6 +307,47 @@ Mipv6HaHelper hahelper;
 hahelper.Install (ha.Get (0));
 Mipv6MnHelper mnhelper (hahelper.GetHomeAgentAddressList (),false); 
 mnhelper.Install (sta.Get (0));
+
+//APP
+UdpEchoServerHelper echoServer (9);
+
+ApplicationContainer serverApps = echoServer.Install (cn.Get (0));
+
+serverApps.Start (Seconds (1.0));
+serverApps.Stop (Seconds (70.0));
+
+UdpEchoClientHelper echoClient (Ipv6Address ("5001:db80::200:ff:fe00:4"), 9);
+echoClient.SetAttribute ("MaxPackets", UintegerValue (10000));
+echoClient.SetAttribute ("Interval", TimeValue (Seconds (0.05)));
+echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+
+ApplicationContainer clientApps = echoClient.Install (sta.Get (0));
+
+clientApps.Start (Seconds (1.1));
+clientApps.Stop (Seconds (70.0));  
+
+
+LogComponentEnable ("UdpEchoClientApplication", LOG_LEVEL_ALL);
+LogComponentEnable ("UdpEchoServerApplication", LOG_LEVEL_ALL);
+
+  // Ptr<Ipv6L3Protocol> ipl3 = cn.Get(0)->GetObject<Ipv6L3Protocol> ();
+  // ipl3->TraceConnectWithoutContext ("Rx", MakeCallback(&RxPktAtServer));
+  // ipl3->TraceConnectWithoutContext ("Tx", MakeCallback(&TxPktAtClient));
+
+
+
+  // Ptr<Ipv6TunnelL4Protocol> iptun = ha.Get(0)->GetObject<Ipv6TunnelL4Protocol> ();
+  // iptun->TraceConnectWithoutContext ("RxHa", MakeCallback(&RxPktAtTun));
+  // iptun->SetTxCallback (MakeCallback (&TxPktAtTun));
+
+
+  // Ptr<Ipv6TunnelL4Protocol> iptun2 = sta.Get(0)->GetObject<Ipv6TunnelL4Protocol> ();
+  // iptun2->SetTxCallback (MakeCallback (&TxPktAtTun)); 
+  // iptun2->TraceConnectWithoutContext ("RxMn", MakeCallback(&RxPktAtTun));
+
+  // Ptr<Mipv6Mn> mipmn = sta.Get(0)->GetObject<Mipv6Mn> ();
+  // mipmn->TraceConnectWithoutContext ("TxBU", MakeCallback(&TxBU));
+  // mipmn->TraceConnectWithoutContext ("RxBA", MakeCallback(&RxBA));
 
 Simulator::Stop (Seconds (30.0));
 Simulator::Run ();
