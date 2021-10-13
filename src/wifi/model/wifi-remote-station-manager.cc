@@ -832,6 +832,7 @@ WifiRemoteStationManager::ReportRtsFailed (const WifiMacHeader& header)
   NS_ASSERT (!header.GetAddr1 ().IsGroup ());
   AcIndex ac = QosUtilsMapTidToAc ((header.IsQosData ()) ? header.GetQosTid () : 0);
   m_ssrc[ac]++;
+  m_slrc[ac]++; // In case the Rts was for a long Mpdu
   m_macTxRtsFailed (header.GetAddr1 ());
   DoReportRtsFailed (Lookup (header.GetAddr1 ()));
 }
