@@ -1,4 +1,5 @@
-/* -*- Mode:C++; c-file-style:"gnu"; indent-
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/**
  * Copyright (c) 2021 Institute of Operating Systems and Computer Networks, TU Braunschweig
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,11 +63,14 @@ ProtocolHandler (Ptr<NetDevice> device, Ptr<const Packet> packet, uint16_t proto
   // Change into the Work state now
   energyModels.Get (myId)->ChangeState (stateWork);
   // In 500ms, change into the Peak state
-  energyModels.Get (myId)->GetObject<DynamicDeviceEnergyModel> ()->ScheduleChangeState (MilliSeconds (500), statePeak);
+  energyModels.Get (myId)->GetObject<DynamicDeviceEnergyModel> ()->ScheduleChangeState (
+      MilliSeconds (500), statePeak);
   // In 550ms, change into the Work state again
-  energyModels.Get (myId)->GetObject<DynamicDeviceEnergyModel> ()->ScheduleChangeState (MilliSeconds (550), stateWork);
+  energyModels.Get (myId)->GetObject<DynamicDeviceEnergyModel> ()->ScheduleChangeState (
+      MilliSeconds (550), stateWork);
   // In 1000ms, finally revert into the Idle state again
-  energyModels.Get (myId)->GetObject<DynamicDeviceEnergyModel> ()->ScheduleChangeState (MilliSeconds (1000), stateIdle);
+  energyModels.Get (myId)->GetObject<DynamicDeviceEnergyModel> ()->ScheduleChangeState (
+      MilliSeconds (1000), stateIdle);
 
   // Create a copy of the received packet
   Ptr<Packet> copiedPacket = packet->Copy ();
@@ -80,7 +84,7 @@ main (int argc, char *argv[])
   // Create two nodes
   NodeContainer nodes;
   nodes.Create (2);
-  
+
   // Install LrWpanNetDevices on both nodes
   LrWpanHelper lrWpanHelper;
   NetDeviceContainer devices;
@@ -117,16 +121,16 @@ main (int argc, char *argv[])
   // Start sending the first packet from node 0 to node 1 immediately
   devices.Get (0)->Send (packet, devices.Get (1)->GetAddress (), 0);
 
-   // Stop the simulation after 2 seconds
+  // Stop the simulation after 10 seconds
   Simulator::Stop (Seconds (10.0));
   Simulator::Run ();
 
   // Print out some info about the consumed energy after the simulation has finished
   for (uint32_t i = 0; i < nodes.GetN (); i++)
-  {
-    std::cout << "Energy stats for node " << i << ":" << std::endl;
-    std::cout << "\tInitial Energy: " << sources.Get (i)->GetInitialEnergy () << std::endl;
-    std::cout << "\tRemaining Energy: " << sources.Get (i)->GetRemainingEnergy () << std::endl;
-  }
+    {
+      std::cout << "Energy stats for node " << i << ":" << std::endl;
+      std::cout << "\tInitial Energy: " << sources.Get (i)->GetInitialEnergy () << std::endl;
+      std::cout << "\tRemaining Energy: " << sources.Get (i)->GetRemainingEnergy () << std::endl;
+    }
   Simulator::Destroy ();
 }

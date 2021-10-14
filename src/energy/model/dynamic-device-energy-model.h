@@ -1,4 +1,5 @@
-/* -*- Mode:C++; c-file-style:"gnu"; indent-
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/**
  * Copyright (c) 2021 Institute of Operating Systems and Computer Networks, TU Braunschweig
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,20 +37,15 @@ namespace ns3 {
 class DynamicEnergyModelStates : public Object
 {
 public:
-  /**
-   * \brief Represents a customised state.
-   * 
-   * \param name The name of the state.
-   * \param current The current in A of the state.
-   */
+  /** Type defining a state (string Name, double current in Amperes) */
   typedef std::pair<std::string, double> State;
 
   DynamicEnergyModelStates ();
 
   /**
-   * \brief Get the type identificator
+   * \brief Get the TypeId
    * 
-   * \return type identificator
+   * \return TypeId
    */
   static TypeId GetTypeId (void);
 
@@ -76,16 +72,10 @@ public:
    * \brief Removes a state.
    * 
    * \param index The index of the state to remove.
-   */
-  void RemoveState (uint32_t index);
-
-  /**
-   * \brief Gets the current in A of a given state.
    * 
-   * \param index The index of the state.
-   * \return double The state's current in A.
+   * \return bool Whether the state was removed successfully.
    */
-  double GetStateA (uint32_t index) const;
+  bool RemoveState (uint32_t index);
 
   /**
    * \brief Gets the name of a given state.
@@ -108,13 +98,15 @@ public:
    * 
    * \param index The index of the state to override.
    * \param currentA The current in A of the state to override.
+   * 
+   * \return bool Whether the current was successfully set.
    */
-  void SetCurrent (uint32_t index, double currentA);
+  bool SetCurrent (uint32_t index, double currentA);
 
 private:
-  uint32_t m_indexCounter; ///< Running counter for assigning indizes to the states
+  uint32_t m_indexCounter {0}; ///< Running counter for assigning indices to the states
 
-  std::map<uint32_t, State> m_states; ///< Map of all states onto their indizes
+  std::map<uint32_t, State> m_states; ///< Map of all states onto their indices
 };
 
 /**
@@ -158,9 +150,9 @@ public:
   DynamicDeviceEnergyModel ();
 
   /**
-   * \brief Get the type identificator
+   * \brief Get the TypeId
    * 
-   * \return type identificator
+   * \return TypeId 
    */
   static TypeId GetTypeId (void);
 

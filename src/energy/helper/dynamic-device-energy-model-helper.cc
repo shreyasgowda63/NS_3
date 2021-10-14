@@ -1,5 +1,5 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
-/*
+/**
  * Copyright (c) 2021 Institute of Operating Systems and Computer Networks, TU Braunschweig
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,8 +40,8 @@ DynamicDeviceEnergyModelHelper::Set (std::string name, const AttributeValue &v)
 DeviceEnergyModelContainer
 DynamicDeviceEnergyModelHelper::Install (Ptr<Node> node, Ptr<EnergySource> source) const
 {
-  NS_ASSERT (node != NULL);
-  NS_ASSERT (source != NULL);
+  NS_ASSERT (node != nullptr);
+  NS_ASSERT (source != nullptr);
   DeviceEnergyModelContainer container (DoInstall (node, source));
   return container;
 }

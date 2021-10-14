@@ -32,7 +32,6 @@ NS_LOG_COMPONENT_DEFINE ("DynamicDeviceEnergyModel");
 DynamicEnergyModelStates::DynamicEnergyModelStates ()
 {
   NS_LOG_FUNCTION (this);
-  m_indexCounter = 0;
 
   uint32_t offIndex = AddState ("Off", 0.0); // Always added
 
@@ -67,7 +66,7 @@ DynamicEnergyModelStates::AddState (std::string name, double currentA)
   return AddState (State (name, currentA));
 }
 
-void
+bool
 DynamicEnergyModelStates::RemoveState (uint32_t index)
 {
   NS_LOG_FUNCTION (this << index);
@@ -76,30 +75,13 @@ DynamicEnergyModelStates::RemoveState (uint32_t index)
     {
       // Index exists
       m_states.erase (index);
+      return true;
     }
   else
     {
       // Index does not exist
       NS_LOG_WARN ("DynamicEnergyModelStates::RemoveState: Index did not exists: " << index << ".");
-    }
-}
-
-double
-DynamicEnergyModelStates::GetStateA (uint32_t index) const
-{
-  NS_LOG_FUNCTION (this << index);
-
-  std::map<uint32_t, State>::const_iterator i = m_states.find (index);
-  if (i != m_states.end ())
-    {
-      // Index exists
-      return i->second.second;
-    }
-  else
-    {
-      // Index does not exist
-      NS_LOG_WARN ("DynamicEnergyModelStates::GetStateA: Index did not exists: " << index << ".");
-      return 0.0;
+      return false;
     }
 }
 
@@ -142,7 +124,7 @@ DynamicEnergyModelStates::GetState (uint32_t index) const
     }
 }
 
-void
+bool
 DynamicEnergyModelStates::SetCurrent (uint32_t index, double currentA)
 {
   NS_LOG_FUNCTION (this << index << currentA);
@@ -152,11 +134,13 @@ DynamicEnergyModelStates::SetCurrent (uint32_t index, double currentA)
     {
       // Index exists
       i->second.second = currentA;
+      return true;
     }
   else
     {
       // Index does not exist
       NS_LOG_WARN ("DynamicEnergyModelStates::SetCurrent: Index did not exists: " << index << ".");
+      return false;
     }
 }
 
@@ -263,11 +247,11 @@ DynamicDeviceEnergyModel::ChangeState (int newState)
 
   m_lastUpdateTime = Simulator::Now ();
 
-  if (m_states->GetStateA (newState) < 0)
+  if (m_states->GetState (newState).second < 0)
     {
       NS_LOG_WARN ("DynamicDeviceEnergyModel::ChangeState: Switching into new state "
                    << m_states->GetStateName (newState) << "' (" << newState
-                   << ") with current being negative: " << m_states->GetStateA (newState));
+                   << ") with current being negative: " << m_states->GetState (newState).second);
     }
 
     m_state = newState;
@@ -360,7 +344,7 @@ DynamicDeviceEnergyModel::DoGetCurrentA (void) const
 {
   NS_LOG_FUNCTION (this);
 
-  return m_states->GetStateA (m_state);
+  return m_states->GetState (m_state).second;
 }
 
 void
