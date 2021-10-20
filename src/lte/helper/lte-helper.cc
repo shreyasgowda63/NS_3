@@ -509,14 +509,12 @@ LteHelper::InstallSingleEnbDevice (Ptr<Node> n)
   Ptr<LteEnbNetDevice> dev = m_enbNetDeviceFactory.Create<LteEnbNetDevice> ();
   Ptr<LteHandoverAlgorithm> handoverAlgorithm = m_handoverAlgorithmFactory.Create<LteHandoverAlgorithm> ();
 
-  NS_ABORT_MSG_IF (m_componentCarrierPhyParams.size() != 0, "CC map is not clean");
-  DoComponentCarrierConfigure (dev->GetUlEarfcn (), dev->GetDlEarfcn (),
-                               dev->GetUlBandwidth (), dev->GetDlBandwidth ());
-  NS_ABORT_MSG_IF (m_componentCarrierPhyParams.size() != m_noOfCcs,
-                   "CC map size (" << m_componentCarrierPhyParams.size () <<
-                   ") must be equal to number of carriers (" <<
-                   m_noOfCcs << ")");
+  if (m_componentCarrierPhyParams.size() == 0)
+    {
+      DoComponentCarrierConfigure (dev->GetUlEarfcn (), dev->GetDlEarfcn (), dev->GetUlBandwidth (), dev->GetDlBandwidth ());
+    }
 
+  NS_ASSERT_MSG(m_componentCarrierPhyParams.size()!=0, "Cannot create enb ccm map.");
   // create component carrier map for this eNb device
   std::map<uint8_t,Ptr<ComponentCarrierBaseStation> > ccMap;
   for (std::map<uint8_t, ComponentCarrier >::iterator it = m_componentCarrierPhyParams.begin ();
@@ -533,9 +531,6 @@ LteHelper::InstallSingleEnbDevice (Ptr<Node> n)
       cc->SetCellId (m_cellIdCounter++);
       ccMap [it->first] =  cc;
     }
-  // CC map is not needed anymore
-  m_componentCarrierPhyParams.clear ();
-
   NS_ABORT_MSG_IF (m_useCa && ccMap.size()<2, "You have to either specify carriers or disable carrier aggregation");
   NS_ASSERT (ccMap.size () == m_noOfCcs);
 
@@ -740,7 +735,7 @@ LteHelper::InstallSingleEnbDevice (Ptr<Node> n)
   if (m_epcHelper != 0)
     {
       NS_LOG_INFO ("adding this eNB to the EPC");
-      m_epcHelper->AddEnb (n, dev, dev->GetCellId ());
+      m_epcHelper->AddEnb (n, dev, dev->GetCellIds ());
       Ptr<EpcEnbApplication> enbApp = n->GetApplication (0)->GetObject<EpcEnbApplication> ();
       NS_ASSERT_MSG (enbApp != 0, "cannot retrieve EpcEnbApplication");
 
@@ -762,19 +757,9 @@ LteHelper::InstallSingleUeDevice (Ptr<Node> n)
 {
   NS_LOG_FUNCTION (this);
 
+  NS_ABORT_MSG_IF (m_componentCarrierPhyParams.size() == 0 && m_useCa, "If CA is enabled, before call this method you need to install Enbs --> InstallEnbDevice()");
+
   Ptr<LteUeNetDevice> dev = m_ueNetDeviceFactory.Create<LteUeNetDevice> ();
-
-  // Initialize the component carriers with default values in order to initialize MACs and PHYs
-  // of each component carrier. These values must be updated once the UE is attached to the
-  // eNB and receives RRC Connection Reconfiguration message. In case of primary carrier or
-  // a single carrier, these values will be updated once the UE will receive SIB2 and MIB.
-  NS_ABORT_MSG_IF (m_componentCarrierPhyParams.size() != 0, "CC map is not clean");
-  DoComponentCarrierConfigure (dev->GetDlEarfcn () + 18000, dev->GetDlEarfcn (), 25, 25);
-  NS_ABORT_MSG_IF (m_componentCarrierPhyParams.size() != m_noOfCcs,
-                   "CC map size (" << m_componentCarrierPhyParams.size () <<
-                   ") must be equal to number of carriers (" <<
-                   m_noOfCcs << ")");
-
   std::map<uint8_t, Ptr<ComponentCarrierUe> > ueCcMap;
 
   for (std::map< uint8_t, ComponentCarrier >::iterator it = m_componentCarrierPhyParams.begin();
@@ -792,8 +777,6 @@ LteHelper::InstallSingleUeDevice (Ptr<Node> n)
       // cc->GetPhy ()->Initialize (); // it is initialized within the LteUeNetDevice::DoInitialize ()
       ueCcMap.insert (std::pair<uint8_t, Ptr<ComponentCarrierUe> > (it->first, cc));
     }
-  // CC map is not needed anymore
-  m_componentCarrierPhyParams.clear ();
 
   for (std::map<uint8_t, Ptr<ComponentCarrierUe> >::iterator it = ueCcMap.begin (); it != ueCcMap.end (); ++it)
     {
@@ -1009,7 +992,7 @@ LteHelper::Attach (NetDeviceContainer ueDevices, Ptr<NetDevice> enbDevice)
 }
 
 void
-LteHelper::Attach (Ptr<NetDevice> ueDevice, Ptr<NetDevice> enbDevice)
+LteHelper::Attach (Ptr<NetDevice> ueDevice, Ptr<NetDevice> enbDevice, uint8_t componentCarrierId)
 {
   NS_LOG_FUNCTION (this);
   //enbRrc->SetCellId (enbDevice->GetObject<LteEnbNetDevice> ()->GetCellId ());
@@ -1018,7 +1001,8 @@ LteHelper::Attach (Ptr<NetDevice> ueDevice, Ptr<NetDevice> enbDevice)
   Ptr<LteEnbNetDevice> enbLteDevice = enbDevice->GetObject<LteEnbNetDevice> ();
 
   Ptr<EpcUeNas> ueNas = ueLteDevice->GetNas ();
-  ueNas->Connect (enbLteDevice->GetCellId (), enbLteDevice->GetDlEarfcn ());
+  Ptr<ComponentCarrierEnb> componentCarrier = DynamicCast<ComponentCarrierEnb> (enbLteDevice->GetCcMap ().at (componentCarrierId));
+  ueNas->Connect (componentCarrier->GetCellId (), componentCarrier->GetDlEarfcn ());
 
   if (m_epcHelper != 0)
     {
