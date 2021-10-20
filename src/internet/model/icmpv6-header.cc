@@ -1088,7 +1088,6 @@ uint32_t Icmpv6DestinationUnreachable::GetSerializedSize () const
   // The real size of the header is 8 + m_packet->GetSize ()
   // HOWEVER we just serialize the first 8 bytes, as the rest is serialized separately.
   return 8;
-  ;
 }
 
 void Icmpv6DestinationUnreachable::Serialize (Buffer::Iterator start) const
