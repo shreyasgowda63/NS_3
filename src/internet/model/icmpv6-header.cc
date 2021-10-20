@@ -1085,7 +1085,7 @@ void Icmpv6DestinationUnreachable::Print (std::ostream& os) const
 uint32_t Icmpv6DestinationUnreachable::GetSerializedSize () const
 {
   NS_LOG_FUNCTION (this);
-  // The real size of the header is 8 + m_packet->GetSize ();
+  // The real size of the header is 8 + m_packet->GetSize ()
   // HOWEVER we just serialize the first 8 bytes, as the rest is serialized separately.
   return 8;
   ;
@@ -1193,7 +1193,7 @@ void Icmpv6TooBig::Print (std::ostream& os)  const
 uint32_t Icmpv6TooBig::GetSerializedSize () const 
 {
   NS_LOG_FUNCTION (this);
-  // The real size of the header is 8 + m_packet->GetSize ();
+  // The real size of the header is 8 + m_packet->GetSize ()
   // HOWEVER we just serialize the first 8 bytes, as the rest is serialized separately.
   return 8;
 }
@@ -1288,7 +1288,7 @@ void Icmpv6TimeExceeded::Print (std::ostream& os) const
 uint32_t Icmpv6TimeExceeded::GetSerializedSize () const
 {
   NS_LOG_FUNCTION (this);
-  // The real size of the header is 8 + m_packet->GetSize ();
+  // The real size of the header is 8 + m_packet->GetSize ()
   // HOWEVER we just serialize the first 8 bytes, as the rest is serialized separately.
   return 8;
 }
@@ -1395,7 +1395,7 @@ void Icmpv6ParameterError::Print (std::ostream& os) const
 uint32_t Icmpv6ParameterError::GetSerializedSize () const 
 {
   NS_LOG_FUNCTION (this);
-  // The real size of the header is 8 + m_packet->GetSize ();
+  // The real size of the header is 8 + m_packet->GetSize ()
   // HOWEVER we just serialize the first 8 bytes, as the rest is serialized separately.
   return 8;
 }
