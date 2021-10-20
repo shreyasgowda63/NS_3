@@ -205,10 +205,9 @@ TestMultiUserScheduler::SelectTxFormat (void)
               return SU_TX;
             }
 
-          WifiMacQueueItem::ConstIterator queueIt;
           Ptr<WifiMacQueueItem> mpdu = m_apMac->GetQosTxop (AC_BE)->GetNextMpdu (peeked, m_txParams,
                                                                                  m_availableTime,
-                                                                                 m_initialFrame, queueIt);
+                                                                                 m_initialFrame);
           if (mpdu == 0)
             {
               NS_LOG_DEBUG ("Not enough time to send frames to all the stations");
@@ -216,7 +215,7 @@ TestMultiUserScheduler::SelectTxFormat (void)
             }
 
           std::vector<Ptr<WifiMacQueueItem>> mpduList;
-          mpduList = m_heFem->GetMpduAggregator ()->GetNextAmpdu (mpdu, m_txParams, m_availableTime, queueIt);
+          mpduList = m_heFem->GetMpduAggregator ()->GetNextAmpdu (mpdu, m_txParams, m_availableTime);
 
           if (mpduList.size () > 1)
             {
@@ -486,7 +485,7 @@ OfdmaAckSequenceTest::Transmit (std::string context, WifiConstPsduMap psduMap, W
           auto tmp = it++;
           if (!(*tmp)->IsInFlight ())
             {
-              queue->Remove (tmp);
+              queue->Remove (*tmp, false);
               m_flushed++;
             }
         }
@@ -589,11 +588,11 @@ OfdmaAckSequenceTest::CheckResults (Time sifs, Time slotTime, uint8_t aifsn)
       uint8_t tid = hdr.GetQosTid ();
       if (tid == 0)
         {
-          NS_TEST_EXPECT_MSG_GT (hdr.GetQosQueueSize (), 0, "Expected a non null queue size for TID " << +tid);
+          NS_TEST_EXPECT_MSG_GT (+hdr.GetQosQueueSize (), 0, "Expected a non null queue size for TID " << +tid);
         }
       else
         {
-          NS_TEST_EXPECT_MSG_EQ (hdr.GetQosQueueSize (), 0, "Expected a null queue size for TID " << +tid);
+          NS_TEST_EXPECT_MSG_EQ (+hdr.GetQosQueueSize (), 0, "Expected a null queue size for TID " << +tid);
         }
     }
   tEnd = m_txPsdus[0].endTx;
@@ -615,11 +614,11 @@ OfdmaAckSequenceTest::CheckResults (Time sifs, Time slotTime, uint8_t aifsn)
       uint8_t tid = hdr.GetQosTid ();
       if (tid == 0)
         {
-          NS_TEST_EXPECT_MSG_GT (hdr.GetQosQueueSize (), 0, "Expected a non null queue size for TID " << +tid);
+          NS_TEST_EXPECT_MSG_GT (+hdr.GetQosQueueSize (), 0, "Expected a non null queue size for TID " << +tid);
         }
       else
         {
-          NS_TEST_EXPECT_MSG_EQ (hdr.GetQosQueueSize (), 0, "Expected a null queue size for TID " << +tid);
+          NS_TEST_EXPECT_MSG_EQ (+hdr.GetQosQueueSize (), 0, "Expected a null queue size for TID " << +tid);
         }
     }
   tStart = m_txPsdus[2].startTx;
@@ -639,11 +638,11 @@ OfdmaAckSequenceTest::CheckResults (Time sifs, Time slotTime, uint8_t aifsn)
       uint8_t tid = hdr.GetQosTid ();
       if (tid == 0)
         {
-          NS_TEST_EXPECT_MSG_GT (hdr.GetQosQueueSize (), 0, "Expected a non null queue size for TID " << +tid);
+          NS_TEST_EXPECT_MSG_GT (+hdr.GetQosQueueSize (), 0, "Expected a non null queue size for TID " << +tid);
         }
       else
         {
-          NS_TEST_EXPECT_MSG_EQ (hdr.GetQosQueueSize (), 0, "Expected a null queue size for TID " << +tid);
+          NS_TEST_EXPECT_MSG_EQ (+hdr.GetQosQueueSize (), 0, "Expected a null queue size for TID " << +tid);
         }
     }
   tStart = m_txPsdus[3].startTx;
@@ -663,11 +662,11 @@ OfdmaAckSequenceTest::CheckResults (Time sifs, Time slotTime, uint8_t aifsn)
       uint8_t tid = hdr.GetQosTid ();
       if (tid == 0)
         {
-          NS_TEST_EXPECT_MSG_GT (hdr.GetQosQueueSize (), 0, "Expected a non null queue size for TID " << +tid);
+          NS_TEST_EXPECT_MSG_GT (+hdr.GetQosQueueSize (), 0, "Expected a non null queue size for TID " << +tid);
         }
       else
         {
-          NS_TEST_EXPECT_MSG_EQ (hdr.GetQosQueueSize (), 0, "Expected a null queue size for TID " << +tid);
+          NS_TEST_EXPECT_MSG_EQ (+hdr.GetQosQueueSize (), 0, "Expected a null queue size for TID " << +tid);
         }
     }
   tStart = m_txPsdus[4].startTx;
@@ -1092,8 +1091,8 @@ void
 OfdmaAckSequenceTest::DoRun (void)
 {
   RngSeedManager::SetSeed (1);
-  RngSeedManager::SetRun (2);
-  int64_t streamNumber = 100;
+  RngSeedManager::SetRun (1);
+  int64_t streamNumber = 20;
 
   NodeContainer wifiApNode;
   wifiApNode.Create (1);

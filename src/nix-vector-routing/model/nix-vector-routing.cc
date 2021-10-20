@@ -271,35 +271,6 @@ NixVectorRouting<T>::GetIpRouteInCache (IpAddress address)
 
 template <typename T>
 bool
-NixVectorRouting<T>::BuildNixVectorLocal (Ptr<NixVector> nixVector)
-{
-  NS_LOG_FUNCTION_NOARGS ();
-
-  uint32_t numberOfDevices = m_node->GetNDevices ();
-
-  // here we are building a nix vector to 
-  // ourself, so we need to find the loopback 
-  // interface and add that to the nix vector
-
-  for (uint32_t i = 0; i < numberOfDevices; i++)
-    {
-      uint32_t interfaceIndex = (m_ip)->GetInterfaceForDevice (m_node->GetDevice (i));
-      IpInterfaceAddress ifAddr = m_ip->GetAddress (interfaceIndex, 0);
-      IpAddress ifAddrValue = ifAddr.GetAddress ();
-      if (ifAddrValue.IsLocalhost ())
-        {
-          NS_LOG_LOGIC ("Adding loopback to nix.");
-          NS_LOG_LOGIC ("Adding Nix: " << i << " with " << nixVector->BitCount (numberOfDevices) 
-                                       << " bits, for node " << m_node->GetId ());
-          nixVector->AddNeighborIndex (i, nixVector->BitCount (numberOfDevices));
-          return true;
-        }
-    }
-  return false;
-}
-
-template <typename T>
-bool
 NixVectorRouting<T>::BuildNixVector (const std::vector< Ptr<Node> > & parentVector, uint32_t source, uint32_t dest, Ptr<NixVector> nixVector) const
 {
   NS_LOG_FUNCTION (this << parentVector << source << dest << nixVector);
@@ -709,6 +680,24 @@ NixVectorRouting<T>::RouteOutput (Ptr<Packet> p, const IpHeader &header, Ptr<Net
   IpAddress destAddress = header.GetDestination ();
 
   NS_LOG_DEBUG ("Dest IP from header: " << destAddress);
+
+  if (destAddress.IsLocalhost ())
+    {
+      rtentry = Create<IpRoute> ();
+      rtentry->SetSource (IpAddress::GetLoopback ());
+      rtentry->SetDestination (destAddress);
+      rtentry->SetGateway (IpAddress::GetZero ());
+      for (uint32_t i = 0 ; i < m_ip->GetNInterfaces (); i++)
+        {
+          Ptr<LoopbackNetDevice> loNetDevice = DynamicCast<LoopbackNetDevice> (m_ip->GetNetDevice (i));
+          if (loNetDevice)
+            {
+              rtentry->SetOutputDevice (loNetDevice);
+              break;
+            }
+        }
+      return rtentry;
+    }
 
   if constexpr (!IsIpv4::value)
     {

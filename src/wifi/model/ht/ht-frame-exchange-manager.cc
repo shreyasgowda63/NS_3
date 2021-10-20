@@ -431,7 +431,7 @@ HtFrameExchangeManager::SendMpduFromBaManager (Ptr<QosTxop> edca, Time available
 
   // we can transmit the BlockAckReq frame
   Ptr<const WifiMacQueueItem> mpdu = edca->GetBaManager ()->GetBar ();
-  SendPsduWithProtection (Create<WifiPsdu> (mpdu, false), txParams);
+  SendPsduWithProtection (GetWifiPsdu (Copy (mpdu), txParams.m_txVector), txParams);
   return true;
 }
 
@@ -447,8 +447,7 @@ HtFrameExchangeManager::SendDataFrame (Ptr<const WifiMacQueueItem> peekedItem,
   Ptr<QosTxop> edca = m_mac->GetQosTxop (peekedItem->GetHeader ().GetQosTid ());
   WifiTxParameters txParams;
   txParams.m_txVector = m_mac->GetWifiRemoteStationManager ()->GetDataTxVector (peekedItem->GetHeader ());
-  WifiMacQueueItem::ConstIterator queueIt;
-  Ptr<WifiMacQueueItem> mpdu = edca->GetNextMpdu (peekedItem, txParams, availableTime, initialFrame, queueIt);
+  Ptr<WifiMacQueueItem> mpdu = edca->GetNextMpdu (peekedItem, txParams, availableTime, initialFrame);
 
   if (mpdu == nullptr)
     {
@@ -458,7 +457,7 @@ HtFrameExchangeManager::SendDataFrame (Ptr<const WifiMacQueueItem> peekedItem,
 
   // try A-MPDU aggregation
   std::vector<Ptr<WifiMacQueueItem>> mpduList = m_mpduAggregator->GetNextAmpdu (mpdu, txParams,
-                                                                                availableTime, queueIt);
+                                                                                availableTime);
   NS_ASSERT (txParams.m_acknowledgment);
 
   if (mpduList.size () > 1)

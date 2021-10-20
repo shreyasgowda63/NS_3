@@ -33,6 +33,7 @@
 #include "ns3/socket.h"
 #include "ns3/wifi-net-device.h"
 #include "ns3/channel-access-manager.h"
+#include "ns3/mac-tx-middle.h"
 
 namespace ns3 {
 
@@ -540,13 +541,17 @@ MeshWifiInterfaceMac::ResetStats ()
 void
 MeshWifiInterfaceMac::ConfigureStandard (enum WifiStandard standard)
 {
-  SetQosSupported (true);  // a mesh station is a QoS station
+  NS_ABORT_IF (!GetQosSupported ());
   RegularWifiMac::ConfigureStandard (standard);
   m_standard = standard;
 
   // We use the single DCF provided by WifiMac for the purpose of
   // Beacon transmission. For this we need to reconfigure the channel
   // access parameters slightly, and do so here.
+  m_txop = CreateObject<Txop> ();
+  m_txop->SetChannelAccessManager (m_channelAccessManager);
+  m_txop->SetWifiMac (this);
+  m_txop->SetTxMiddle (m_txMiddle);
   m_txop->SetMinCw (0);
   m_txop->SetMaxCw (0);
   m_txop->SetAifsn (1);

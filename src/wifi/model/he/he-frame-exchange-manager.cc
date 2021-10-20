@@ -356,7 +356,8 @@ HeFrameExchangeManager::SendPsduMap (void)
               m_staExpectTbPpduFrom.insert (station.first);
             }
 
-          Time txDuration = m_phy->CalculateTxDuration (m_triggerFrame->GetSize (),
+          Ptr<WifiPsdu> triggerPsdu = GetWifiPsdu (m_triggerFrame, acknowledgment->muBarTxVector);
+          Time txDuration = m_phy->CalculateTxDuration (triggerPsdu->GetSize (),
                                                         acknowledgment->muBarTxVector,
                                                         m_phy->GetPhyBand ());
           // update acknowledgmentTime to correctly set the Duration/ID
@@ -372,7 +373,7 @@ HeFrameExchangeManager::SendPsduMap (void)
                          &m_staExpectTbPpduFrom, m_staExpectTbPpduFrom.size ());
           m_channelAccessManager->NotifyAckTimeoutStartNow (timeout);
 
-          ForwardMpduDown (m_triggerFrame, acknowledgment->muBarTxVector);
+          ForwardPsduDown (triggerPsdu, acknowledgment->muBarTxVector);
           return;
         }
     }
@@ -733,6 +734,11 @@ HeFrameExchangeManager::CalculateAcknowledgmentTime (WifiAcknowledgment* acknowl
                                                              txVector, m_phy->GetPhyBand ());
 
       uint32_t muBarSize = GetMuBarSize (dlMuTfMuBarAcknowledgment->barTypes);
+      if (dlMuTfMuBarAcknowledgment->muBarTxVector.GetModulationClass () >= WIFI_MOD_CLASS_VHT)
+        {
+          // MU-BAR TF will be sent as an S-MPDU
+          muBarSize = MpduAggregator::GetSizeIfAggregated (muBarSize, 0);
+        }
       dlMuTfMuBarAcknowledgment->acknowledgmentTime = m_phy->GetSifs ()
                                                       + m_phy->CalculateTxDuration (muBarSize,
                                                                                     dlMuTfMuBarAcknowledgment->muBarTxVector,
@@ -1191,15 +1197,13 @@ HeFrameExchangeManager::ReceiveBasicTrigger (const CtrlTriggerHeader& trigger, c
       // otherwise, check if a suitable data frame is available
       if ((mpdu = edca->PeekNextMpdu (tid, hdr.GetAddr2 ())) != 0)
         {
-          WifiMacQueueItem::ConstIterator queueIt;
-          Ptr<WifiMacQueueItem> item = edca->GetNextMpdu (mpdu, txParams, ppduDuration, false, queueIt);
+          Ptr<WifiMacQueueItem> item = edca->GetNextMpdu (mpdu, txParams, ppduDuration, false);
 
           if (item != 0)
             {
               // try A-MPDU aggregation
               std::vector<Ptr<WifiMacQueueItem>> mpduList = m_mpduAggregator->GetNextAmpdu (item, txParams,
-                                                                                            ppduDuration,
-                                                                                            queueIt);
+                                                                                            ppduDuration);
               psdu = (mpduList.size () > 1 ? Create<WifiPsdu> (std::move (mpduList))
                                            : Create<WifiPsdu> (item, true));
               break;
