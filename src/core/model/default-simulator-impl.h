@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ mutexes.
  */
 
 #ifndef DEFAULT_SIMULATOR_IMPL_H
@@ -25,11 +26,11 @@
 #include "scheduler.h"
 #include "event-impl.h"
 #include "system-thread.h"
-#include "system-mutex.h"
 
 #include "ptr.h"
 
 #include <list>
+#include <mutex>
 
 /**
  * \file
@@ -107,7 +108,7 @@ private:
    */
   bool m_eventsWithContextEmpty;
   /** Mutex to control access to the list of events with context. */
-  SystemMutex m_eventsWithContextMutex;
+  std::mutex m_eventsWithContextMutex;
 
   /** Container type for the events to run at Simulator::Destroy() */
   typedef std::list<EventId> DestroyEvents;

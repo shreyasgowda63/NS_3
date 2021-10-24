@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Peter D. Barnes, Jr. <pdbarnes@llnl.gov>
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ mutexes.
  */
 
 
@@ -131,7 +132,7 @@ DesMetrics::TraceWithContext (uint32_t context, const Time & now, const Time & d
      << (now + delay).GetTimeStep () << "\"]";
 
   {
-    CriticalSection cs (m_mutex);
+    std::unique_lock<std::mutex> lock (m_mutex);
     m_os << ss.str ();
   }
 

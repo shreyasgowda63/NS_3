@@ -17,6 +17,7 @@
  *
  * Author: Alina Quereilhac <alina.quereilhac@inria.fr>
  *         Claudio Freire <klaussfreire@sourceforge.net>
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ mutexes.
  */
 
 #ifndef FD_NET_DEVICE_H
@@ -34,8 +35,8 @@
 #include "ns3/system-condition.h"
 #include "ns3/traced-callback.h"
 #include "ns3/unix-fd-reader.h"
-#include "ns3/system-mutex.h"
 
+#include <mutex>
 #include <utility>
 #include <queue>
 
@@ -201,7 +202,7 @@ protected:
    * Method Initialization for start and stop attributes.
    */
   virtual void DoInitialize (void);
-  
+
   virtual void DoDispose (void);
 
   /**
@@ -233,7 +234,7 @@ protected:
   /**
    * Mutex to increase pending read counter.
    */
-  SystemMutex m_pendingReadMutex;
+  std::mutex m_pendingReadMutex;
 
   /**
    * Number of packets that were received and scheduled for read but not yet read.
