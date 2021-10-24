@@ -14,13 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ condition variables.
  */
 
 #ifndef WALL_CLOCK_CLOCK_SYNCHRONIZER_H
 #define WALL_CLOCK_CLOCK_SYNCHRONIZER_H
 
-#include "system-condition.h"
 #include "synchronizer.h"
+
+#include <condition_variable>
+#include <mutex>
 
 /**
  * @file
@@ -114,7 +118,8 @@ protected:
    * scheduled event might be before the time we are waiting until, so we have
    * to break out of both the SleepWait and the following SpinWait to go back
    * and reschedule/resynchronize taking the new event into account.  The
-   * SystemCondition we have saved in m_condition takes care of this for us.
+   * condition we have saved in m_condition, along with the condition variable
+   * m_conditionVariable take care of this for us.
    *
    * This call will return if the timeout expires OR if the condition is
    * set @c true by a call to SetCondition (true) followed by a call to
@@ -194,8 +199,12 @@ protected:
   /** Time recorded by DoEventStart. */
   uint64_t m_nsEventStart;
 
-  /** Thread synchronizer. */
-  SystemCondition m_condition;
+  /** Condition variable for thread synchronizer. */
+  std::condition_variable m_conditionVariable;
+  /** Mutex controlling access to the condition variable. */
+  std::mutex m_mutex;
+  /** The condition state. */
+  bool m_condition;
 };
 
 } // namespace ns3

@@ -31,7 +31,6 @@
 #include "ns3/node.h"
 #include "ns3/packet.h"
 #include "ns3/ptr.h"
-#include "ns3/system-condition.h"
 #include "ns3/traced-callback.h"
 #include "ns3/unix-fd-reader.h"
 #include "ns3/system-mutex.h"
@@ -201,7 +200,7 @@ protected:
    * Method Initialization for start and stop attributes.
    */
   virtual void DoInitialize (void);
-  
+
   virtual void DoDispose (void);
 
   /**
