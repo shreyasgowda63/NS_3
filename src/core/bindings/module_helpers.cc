@@ -1,6 +1,7 @@
 #include "ns3module.h"
 #include "ns3/ref-count-base.h"
 #include <unistd.h>
+#include <thread>
 
 #if PY_VERSION_HEX >= 0x03000000
 # define PyInt_AsUnsignedLongMask PyLong_AsUnsignedLongMask
@@ -22,19 +23,19 @@ public:
   {
     m_callback = callback;
     Py_INCREF (m_callback);
-    
+
     if (py_context == NULL)
       {
         m_args = args;
         Py_INCREF (m_args);
       }
-    else 
+    else
       {
         Py_ssize_t arglen = PyTuple_GET_SIZE (args);
         m_args = PyTuple_New (arglen + 1);
         PyTuple_SET_ITEM (m_args, 0, py_context);
         Py_INCREF (py_context);
-        for (Py_ssize_t i = 0; i < arglen; ++i) 
+        for (Py_ssize_t i = 0; i < arglen; ++i)
           {
             PyObject *arg = PyTuple_GET_ITEM (args, i);
             Py_INCREF (arg);
@@ -362,7 +363,7 @@ private:
   volatile bool m_stopped;
   bool m_failed;
   volatile bool m_isCheckPending;
-  ns3::Ptr<ns3::SystemThread> m_thread;
+  std::thread m_thread;
   PyThreadState *m_py_thread_state;
 };
 
@@ -371,7 +372,6 @@ PythonSimulator::PythonSimulator()
     m_failed(false),
     m_isCheckPending(false)
 {
-  m_thread = ns3::Create<ns3::SystemThread>(ns3::MakeCallback(&PythonSimulator::DoRun, this));
   m_py_thread_state = NULL;
 }
 
@@ -381,19 +381,20 @@ PythonSimulator::Run(void)
   m_failed = false;
   m_stopped = false;
   m_isCheckPending = false;
-  m_thread->Start();
+  m_thread = std::thread (&PythonSimulator::DoRun, this);
 
   Py_BEGIN_ALLOW_THREADS;
-  
+
   ns3::Simulator::Run ();
 
   Py_END_ALLOW_THREADS;
 
   m_stopped = true;
-  m_thread->Join();
+  if (m_thread.joinable ())
+    m_thread.join ();
 }
 
-bool 
+bool
 PythonSimulator::IsFailed(void) const
 {
   return m_failed;
@@ -416,7 +417,7 @@ PythonSimulator::DoCheckSignals(void)
   m_isCheckPending = false;
 }
 
-void 
+void
 PythonSimulator::DoRun(void)
 {
   while (!m_stopped)

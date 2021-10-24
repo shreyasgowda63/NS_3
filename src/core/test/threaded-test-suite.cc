@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Claudio Freire <claudio-daniel.freire@inria.fr>
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ threads.
  */
 #include "ns3/test.h"
 #include "ns3/simulator.h"
@@ -25,7 +26,6 @@
 #include "ns3/calendar-scheduler.h"
 #include "ns3/config.h"
 #include "ns3/string.h"
-#include "ns3/system-thread.h"
 
 #include <chrono>  // seconds, milliseconds
 #include <ctime>
@@ -58,7 +58,7 @@ public:
   ObjectFactory m_schedulerFactory;
   std::string m_simulatorType;
   std::string m_error;
-  std::list<Ptr<SystemThread> > m_threadlist;
+  std::list<std::thread> m_threadlist;
 
 private:
   virtual void DoSetup (void);
@@ -80,9 +80,10 @@ void
 ThreadedSimulatorEventsTestCase::End (void)
 {
   m_stop = true;
-  for (std::list<Ptr<SystemThread> >::iterator it2 = m_threadlist.begin (); it2 != m_threadlist.end (); ++it2)
+  for (auto& thread : m_threadlist)
     {
-      (*it2)->Join ();
+      if (thread.joinable ())
+        thread.join ();
     }
 }
 void
@@ -185,14 +186,6 @@ ThreadedSimulatorEventsTestCase::DoSetup (void)
     m_b =
       m_c =
         m_d = 0;
-
-  for (unsigned int i = 0; i < m_threads; ++i)
-    {
-      m_threadlist.push_back (
-        Create<SystemThread> (MakeBoundCallback (
-                                &ThreadedSimulatorEventsTestCase::SchedulingThread,
-                                std::pair<ThreadedSimulatorEventsTestCase *, unsigned int> (this,i) )) );
-    }
 }
 void
 ThreadedSimulatorEventsTestCase::DoTeardown (void)
@@ -211,9 +204,11 @@ ThreadedSimulatorEventsTestCase::DoRun (void)
   Simulator::Schedule (Seconds (1), &ThreadedSimulatorEventsTestCase::End, this);
 
 
-  for (std::list<Ptr<SystemThread> >::iterator it = m_threadlist.begin (); it != m_threadlist.end (); ++it)
+  for (unsigned int i = 0; i < m_threads; ++i)
     {
-      (*it)->Start ();
+      m_threadlist.push_back (
+        std::thread (&ThreadedSimulatorEventsTestCase::SchedulingThread,
+                     std::pair<ThreadedSimulatorEventsTestCase *, unsigned int> (this,i) ));
     }
 
   Simulator::Run ();

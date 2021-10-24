@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ threads.
  */
 
 #include "ns3/command-line.h"
@@ -21,7 +23,6 @@
 #include "ns3/realtime-simulator-impl.h"
 #include "ns3/nstime.h"
 #include "ns3/log.h"
-#include "ns3/system-thread.h"
 #include "ns3/string.h"
 #include "ns3/config.h"
 #include "ns3/global-value.h"
@@ -36,8 +37,7 @@
  * \ingroup scheduler
  * An example of scheduling events in a background thread.
  *
- * See \ref ns3::SystemThread,
- * \ref ns3::SimulatorImpl::ScheduleWithContext
+ * See \ref ns3::SimulatorImpl::ScheduleWithContext
  */
 
 using namespace ns3;
@@ -109,7 +109,7 @@ FakeNetDevice::Doit3 (void)
 }
 
 /**
- * Example use of ns3::SystemThread.
+ * Example use of std::thread.
  *
  * This example is a complete simulation.
  * It schedules \c first_function and many executions of \c background_function
@@ -138,13 +138,14 @@ test (void)
       Simulator::Schedule (Seconds (d), &background_function);
     }
 
-  Ptr<SystemThread> st3 = Create<SystemThread> (
-    MakeCallback (&FakeNetDevice::Doit3, &fnd));
-  st3->Start ();
+  std::thread st3 = std::thread (&FakeNetDevice::Doit3, &fnd);
 
   Simulator::Stop (Seconds (15.0));
   Simulator::Run ();
-  st3->Join ();
+
+  if (st3.joinable ())
+    st3.join ();
+
   Simulator::Destroy ();
 }
 

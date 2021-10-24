@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ threads.
  */
 
 #ifndef REALTIME_SIMULATOR_IMPL_H
 #define REALTIME_SIMULATOR_IMPL_H
 
 #include "simulator-impl.h"
-#include "system-thread.h"
 
 #include "scheduler.h"
 #include "synchronizer.h"
@@ -32,6 +33,7 @@
 #include "system-mutex.h"
 
 #include <list>
+#include <thread>
 
 /**
  * \file
@@ -229,8 +231,8 @@ private:
   /** The maximum allowable drift from real-time in SYNC_HARD_LIMIT mode. */
   Time m_hardLimit;
 
-  /** Main SystemThread. */
-  SystemThread::ThreadId m_main;
+  /** Main thread. */
+  std::thread::id m_main;
 };
 
 } // namespace ns3

@@ -16,13 +16,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Pasquale Imputato <p.imputato@gmail.com>
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ threads.
  */
 
 #include "netmap-net-device.h"
-#include "ns3/system-thread.h"
 #include "ns3/uinteger.h"
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <thread>
 
 namespace ns3 {
 
@@ -191,7 +192,6 @@ NetmapNetDevice::NetmapNetDevice ()
   m_nRxRingsSlots = 0;
   m_queue = nullptr;
   m_totalQueuedBytes = 0;
-  m_syncAndNotifyQueueThread = nullptr;
   m_syncAndNotifyQueueThreadRun = false;
 }
 
@@ -220,8 +220,7 @@ NetmapNetDevice::DoFinishStartingDevice (void)
   NS_LOG_FUNCTION (this);
 
   m_syncAndNotifyQueueThreadRun = true;
-  m_syncAndNotifyQueueThread = Create<SystemThread> (MakeCallback (&NetmapNetDevice::SyncAndNotifyQueue, this));
-  m_syncAndNotifyQueueThread->Start ();
+  m_syncAndNotifyQueueThread = std::thread (&NetmapNetDevice::SyncAndNotifyQueue, this);
 }
 
 
@@ -233,8 +232,9 @@ NetmapNetDevice::DoFinishStoppingDevice (void)
   m_queue->Stop ();
 
   m_syncAndNotifyQueueThreadRun = false;
-  m_syncAndNotifyQueueThread->Join ();
-  m_syncAndNotifyQueueThread = nullptr;
+
+  if (m_syncAndNotifyQueueThread.joinable ())
+    m_syncAndNotifyQueueThread.join ();
 }
 
 uint32_t
