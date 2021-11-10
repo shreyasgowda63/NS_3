@@ -21,8 +21,6 @@
 #ifndef SYSTEM_MUTEX_H
 #define SYSTEM_MUTEX_H
 
-#include "ptr.h"
-
 /**
  * @file
  * @ingroup thread

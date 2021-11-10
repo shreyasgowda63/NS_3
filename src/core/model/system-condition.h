@@ -19,8 +19,6 @@
 #ifndef SYSTEM_CONDITION_H
 #define SYSTEM_CONDITION_H
 
-#include "ptr.h"
-
 /**
  * @file
  * @ingroup thread
