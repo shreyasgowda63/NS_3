@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ mutexes.
  */
 
 #ifndef REALTIME_SIMULATOR_IMPL_H
@@ -29,9 +31,9 @@
 #include "ptr.h"
 #include "assert.h"
 #include "log.h"
-#include "system-mutex.h"
 
 #include <list>
+#include <mutex>
 
 /**
  * \file
@@ -218,7 +220,7 @@ private:
   /**@}*/
 
   /** Mutex to control access to key state. */
-  mutable SystemMutex m_mutex;
+  mutable std::mutex m_mutex;
 
   /** The synchronizer in use to track real time. */
   Ptr<Synchronizer> m_synchronizer;

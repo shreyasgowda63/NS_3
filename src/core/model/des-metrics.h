@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Peter D. Barnes, Jr. <pdbarnes@llnl.gov>
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ mutexes.
  */
 
 #ifndef DESMETRICS_H
@@ -29,10 +30,10 @@
 
 #include "nstime.h"
 #include "singleton.h"
-#include "system-mutex.h"
 
 #include <stdint.h>    // uint32_t
 #include <fstream>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -160,7 +161,7 @@ private:
   char m_separator;      //!< The separator between event records.
 
   /** Mutex to control access to the output file. */
-  SystemMutex m_mutex;
+  std::mutex m_mutex;
 
 };  // class DesMetrics
 
