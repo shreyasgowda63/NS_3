@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ threads.
  */
 
 #ifndef DEFAULT_SIMULATOR_IMPL_H
@@ -24,12 +25,12 @@
 #include "simulator-impl.h"
 #include "scheduler.h"
 #include "event-impl.h"
-#include "system-thread.h"
 #include "system-mutex.h"
 
 #include "ptr.h"
 
 #include <list>
+#include <thread>
 
 /**
  * \file
@@ -135,7 +136,7 @@ private:
   int m_unscheduledEvents;
 
   /** Main execution thread. */
-  SystemThread::ThreadId m_main;
+  std::thread::id m_mainThreadId;
 };
 
 } // namespace ns3

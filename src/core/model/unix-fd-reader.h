@@ -16,15 +16,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Tom Goff <thomas.goff@boeing.com>
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ threads.
  */
 
 #ifndef UNIX_FD_READER_H
 #define UNIX_FD_READER_H
 
 #include <stdint.h>
+#include <thread>
 
 #include "callback.h"
-#include "system-thread.h"
 #include "event-id.h"
 
 /**
@@ -123,7 +124,7 @@ private:
   Callback<void, uint8_t *, ssize_t> m_readCallback;
 
   /** The thread doing the read, created and launched by Start(). */
-  Ptr<SystemThread> m_readThread;
+  std::thread m_readThread;
 
   /** Pipe used to signal events between threads. */
   int m_evpipe[2];

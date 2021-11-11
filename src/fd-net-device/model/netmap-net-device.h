@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Pasquale Imputato <p.imputato@gmail.com>
+ * Modified by: Eduardo Almeida <@edalm> to use standard C++ threads.
  */
 
 #ifndef NETMAP_NET_DEVICE_H
@@ -23,13 +24,12 @@
 
 #include "ns3/net-device-queue-interface.h"
 #include <mutex>
+#include <thread>
 #include "fd-net-device.h"
 #include <net/netmap_user.h>
 #include <atomic>
 
 namespace ns3 {
-
-class SystemThread;
 
 /**
  * \ingroup fd-net-device
@@ -210,7 +210,7 @@ private:
   uint32_t m_nRxRingsSlots; //!< Number of slots in the receiver rings
   Ptr<NetDeviceQueue> m_queue; //!< NetDevice queue
   uint32_t m_totalQueuedBytes; //!< Total queued bytes
-  Ptr<SystemThread> m_syncAndNotifyQueueThread; //!< Thread used to perform the flow control
+  std::thread m_syncAndNotifyQueueThread; //!< Thread used to perform the flow control
   std::atomic<bool> m_syncAndNotifyQueueThreadRun; //!< Running flag of the flow control thread
   uint8_t m_syncAndNotifyQueuePeriod; //!< The period of time in us after which the device syncs the netmap ring and notifies queue status
 };

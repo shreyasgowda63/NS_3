@@ -7,8 +7,8 @@ import wutils
 
 int64x64 = {
     # implementation name: [define, env, highprec]
-    'default': ['INT64X64_USE_128',    'INT64X64_USE_128',    '128-bit integer'], 
-    'int128':  ['INT64X64_USE_128',    'INT64X64_USE_128',    '128-bit integer'], 
+    'default': ['INT64X64_USE_128',    'INT64X64_USE_128',    '128-bit integer'],
+    'int128':  ['INT64X64_USE_128',    'INT64X64_USE_128',    '128-bit integer'],
     'cairo':   ['INT64X64_USE_CAIRO',  'INT64X64_USE_CAIRO',  'cairo 128-bit integer'],
     'double':  ['INT64X64_USE_DOUBLE', 'INT64X64_USE_DOUBLE', 'long double'],
     }
@@ -36,7 +36,7 @@ def options(opt):
                          % ", ".join([repr(p) for p in list(int64x64.keys())])),
                    choices=list(int64x64.keys()),
                    dest='int64x64_impl')
-                   
+
     opt.add_option('--disable-pthread',
                    help=('Whether to enable the use of POSIX threads'),
                    action="store_true", default=False,
@@ -64,7 +64,7 @@ def configure(conf):
 
         code_snip_type='''
         #include <stdint.h>
-        
+
         int main(int argc, char **argv) {
 	(void)argc; (void)argv;
 	if ((uint128_t *) 0) return 0;
@@ -78,7 +78,7 @@ def configure(conf):
 
         code_snip_type='''
         #include <stdint.h>
-        
+
         int main(int argc, char **argv) {
 	(void)argc; (void)argv;
 	if ((__uint128_t *) 0) return 0;
@@ -93,7 +93,7 @@ def configure(conf):
             int64x64_impl = 'int128'
         else:
             int64x64_impl = 'cairo'
-        
+
     def_flag, env_flag, highprec = int64x64[int64x64_impl]
     # Add a tag confirming default choice
     if Options.options.int64x64_impl == 'default':
@@ -163,10 +163,10 @@ int main ()
         conf.env["ENABLE_REAL_TIME"] = conf.env['ENABLE_THREADING']
 
     if Options.options.enable_build_version:
-        conf.env['ENABLE_BUILD_VERSION'] = True 
+        conf.env['ENABLE_BUILD_VERSION'] = True
         conf.env.append_value('DEFINES', 'ENABLE_BUILD_VERSION=1')
     else:
-        conf.env['ENABLE_BUILD_VERSION'] = False 
+        conf.env['ENABLE_BUILD_VERSION'] = False
 
     conf.write_config_header('ns3/core-config.h', top=True)
 
@@ -244,7 +244,7 @@ def build(bld):
 
     if (bld.env['ENABLE_EXAMPLES']):
         core.source.append('model/example-as-test.cc')
-            
+
     core_test = bld.create_ns3_module_test_library('core')
     core_test.source = [
         'test/attribute-test-suite.cc',
@@ -422,7 +422,6 @@ def build(bld):
 
     if env['ENABLE_THREADING']:
         core.source.extend([
-            'model/system-thread.cc',
             'model/unix-fd-reader.cc',
             'model/unix-system-mutex.cc',
             'model/unix-system-condition.cc',
@@ -433,7 +432,6 @@ def build(bld):
         headers.source.extend([
                 'model/unix-fd-reader.h',
                 'model/system-mutex.h',
-                'model/system-thread.h',
                 'model/system-condition.h',
                 ])
 
@@ -448,10 +446,10 @@ def build(bld):
     vers_tg = None
     if env['ENABLE_BUILD_VERSION']:
         version_template = bld.path.find_node('model/version-defines.h.in')
-        version_header = bld.bldnode.make_node('ns3/version-defines.h') 
+        version_header = bld.bldnode.make_node('ns3/version-defines.h')
 
-        vers_tg = bld(features='version-defines', 
-                      source=version_template, 
+        vers_tg = bld(features='version-defines',
+                      source=version_template,
                       target=version_header)
 
         #silence errors about no mapping for version-defines.h.in
@@ -500,8 +498,8 @@ def print_version(bld, tg):
         'BUILD_PROFILE': lambda s: "-" + s
     }
 
-    fields=('VERSION_TAG', 'CLOSEST_TAG', 'VERSION_TAG_DISTANCE', 
-            'VERSION_COMMIT_HASH', 'VERSION_DIRTY_FLAG', 'BUILD_PROFILE') 
+    fields=('VERSION_TAG', 'CLOSEST_TAG', 'VERSION_TAG_DISTANCE',
+            'VERSION_COMMIT_HASH', 'VERSION_DIRTY_FLAG', 'BUILD_PROFILE')
 
     parts = dict()
 
@@ -515,5 +513,5 @@ def print_version(bld, tg):
         parts['CLOSEST_TAG'] = "+" + parts['CLOSEST_TAG']
     else:
         parts['CLOSEST_TAG'] = ""
-    
+
     print(''.join([parts[f] for f in fields]))
