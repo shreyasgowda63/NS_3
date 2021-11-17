@@ -26,21 +26,16 @@
 #include "ns3/mobility-model.h"
 #include "ns3/random-variable-stream.h"
 #include "ns3/error-model.h"
+#include "wifi-net-device.h"
 #include "wifi-phy.h"
-#include "ampdu-tag.h"
 #include "wifi-utils.h"
-#include "sta-wifi-mac.h"
 #include "frame-capture-model.h"
 #include "preamble-detection-model.h"
 #include "wifi-radio-energy-model.h"
 #include "error-rate-model.h"
 #include "wifi-net-device.h"
-#include "ns3/ht-configuration.h"
-#include "ns3/he-configuration.h"
-#include "mpdu-aggregator.h"
 #include "wifi-psdu.h"
 #include "wifi-ppdu.h"
-#include "ap-wifi-mac.h"
 #include "ns3/dsss-phy.h"
 #include "ns3/erp-ofdm-phy.h"
 #include "ns3/he-phy.h" //includes OFDM, HT, and VHT
@@ -774,12 +769,12 @@ WifiPhy::GetShortPhyPreambleSupported (void) const
 }
 
 void
-WifiPhy::SetDevice (const Ptr<NetDevice> device)
+WifiPhy::SetDevice (const Ptr<WifiNetDevice> device)
 {
   m_device = device;
 }
 
-Ptr<NetDevice>
+Ptr<WifiNetDevice>
 WifiPhy::GetDevice (void) const
 {
   return m_device;
