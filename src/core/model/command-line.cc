@@ -505,6 +505,37 @@ CommandLine::PrintAttributes (std::ostream &os, const std::string &type) const
     {
       os << *it;
     }
+
+  //Parent Attributes
+  if (tid.GetParent () != tid)
+    {
+      os << "Parent Attributes for TypeId " << tid.GetName () << std::endl;
+      TypeId tmp = tid.GetParent ();
+      while (tmp.GetParent () != tmp)
+        {
+          os << "    Attributes for TypeId " << tmp.GetName () << std::endl;
+
+          std::vector<std::string> parentAttributes;
+
+          for (uint32_t i = 0; i < tmp.GetAttributeN (); ++i)
+            {
+              std::stringstream ss;
+              ss << "        --" << tmp.GetAttributeFullName (i) << "=[";
+              struct TypeId::AttributeInformation info = tmp.GetAttribute (i);
+              ss << info.initialValue->SerializeToString (info.checker) << "]"
+                 << std::endl;
+              ss << "            " << info.help << std::endl;
+              parentAttributes.push_back (ss.str ());
+            }
+          std::sort (parentAttributes.begin (), parentAttributes.end ());
+          for (const auto & it : parentAttributes)
+            {
+              os << it;
+            }
+          parentAttributes.clear();
+          tmp = tmp.GetParent();
+        }
+    }
 }
 
 
