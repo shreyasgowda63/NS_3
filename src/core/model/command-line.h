@@ -551,8 +551,9 @@ private:
    *
    * \param [in,out] os the output stream.
    * \param [in] tid The TypeId whose Attributes should be displayed,
+   * \param [in] header A header line to print if \c tid has Attributes
    */
-  void PrintAttributeList (std::ostream &os, const TypeId tid) const;
+  void PrintAttributeList (std::ostream &os, const TypeId tid, std::stringstream & header) const;
   /**
    * Handler for \c \--PrintGroup:  print all types belonging to a given group.
    *
