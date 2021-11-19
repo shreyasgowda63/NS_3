@@ -200,7 +200,7 @@ CommandLine::Parse (std::vector<std::string> args)
     {
       args.erase (args.begin ());  // discard the program name
 
-      for (auto param : args)
+      for (const auto & param : args)
         {
           if (HandleOption (param))
             {
@@ -636,7 +636,7 @@ CommandLine::PrintGroups (std::ostream &os) const
 
   os << "Registered TypeId groups:" << std::endl;
   // Sets are already sorted
-  for (const auto s : groups)
+  for (const auto & s : groups)
     {
       os << "    " << s << std::endl;
     }
