@@ -40,7 +40,8 @@ def build(bld):
       'test/queue-disc-traces-test-suite.cc',
       'test/tbf-queue-disc-test-suite.cc',
       'test/tc-flow-control-test-suite.cc',
-      'test/cobalt-queue-disc-test-suite.cc'
+      'test/cobalt-queue-disc-test-suite.cc',
+      'test/blue-queue-disc-test-suite.cc'
         ]
 
     # Tests encapsulating example programs should be listed here
