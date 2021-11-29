@@ -99,7 +99,7 @@ private:
 void
 TcpSocketAdvertisedWindowProxy::SetInvalidAwndCb (InvalidAwndCallback cb)
 {
-  NS_ASSERT (!cb.IsNull ());
+  NS_TEST_ASSERT_MSG_EQ (cb.IsNull (), false, " cannot open file in test ");
   m_inwalidAwndCb = cb;
 }
 

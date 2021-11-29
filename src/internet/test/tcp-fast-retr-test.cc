@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "ns3/test.h"
 #include "ns3/log.h"
 #include "ns3/tcp-westwood.h"
 #include "tcp-general-test.h"
@@ -375,7 +376,7 @@ TcpFastRetrTest::ProcessedAck (const Ptr<const TcpSocketState> tcb, const TcpHea
 void
 TcpFastRetrTest::AfterRTOExpired (const Ptr<const TcpSocketState> tcb, SocketWho who)
 {
-  NS_ASSERT_MSG (true == false, "RTO isn't expected here");
+  NS_TEST_ASSERT_MSG_EQ (true == false, false, "RTO isn't expected here");
 }
 
 void
