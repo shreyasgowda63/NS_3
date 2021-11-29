@@ -571,7 +571,7 @@ TracePacketReception (std::string context, Ptr<const Packet> p, uint16_t channel
   packet->PeekHeader (hdr);
   // hdr.GetAddr1() is the receiving MAC address
   if (hdr.GetAddr1 () != ContextToMac (context))
-    { 
+    {
       return;
     }
   // hdr.GetAddr2() is the sending MAC address
@@ -877,6 +877,9 @@ Experiment::Run (const WifiHelper &helper, const YansWifiPhyHelper &wifiPhy, con
                  uint32_t trialNumber, uint32_t networkSize, Time duration, bool pcap, bool infra, uint16_t guardIntervalNs,
                  double distance, double apTxPowerDbm, double staTxPowerDbm, Time pktInterval)
 {
+  RngSeedManager::SetSeed (10);
+  RngSeedManager::SetRun (10);
+
   NodeContainer wifiNodes;
   if (infra)
     {
@@ -884,7 +887,7 @@ Experiment::Run (const WifiHelper &helper, const YansWifiPhyHelper &wifiPhy, con
     }
   else
     {
-      wifiNodes.Create (networkSize); 
+      wifiNodes.Create (networkSize);
     }
 
   YansWifiPhyHelper phy = wifiPhy;
@@ -903,14 +906,14 @@ Experiment::Run (const WifiHelper &helper, const YansWifiPhyHelper &wifiPhy, con
       mac.SetType ("ns3::ApWifiMac",
                    "BeaconInterval", TimeValue (MicroSeconds (beaconInterval)),
                    "Ssid", SsidValue (ssid));
-      phy.Set ("TxPowerStart", DoubleValue (apTxPowerDbm)); 
+      phy.Set ("TxPowerStart", DoubleValue (apTxPowerDbm));
       phy.Set ("TxPowerEnd", DoubleValue (apTxPowerDbm));
       devices = wifi.Install (phy, mac, wifiNodes.Get (0));
 
       mac.SetType ("ns3::StaWifiMac",
                    "MaxMissedBeacons", UintegerValue (std::numeric_limits<uint32_t>::max ()),
                    "Ssid", SsidValue (ssid));
-      phy.Set ("TxPowerStart", DoubleValue (staTxPowerDbm)); 
+      phy.Set ("TxPowerStart", DoubleValue (staTxPowerDbm));
       phy.Set ("TxPowerEnd", DoubleValue (staTxPowerDbm));
       for (uint32_t i = 1; i < nNodes; ++i)
         {
@@ -927,7 +930,7 @@ Experiment::Run (const WifiHelper &helper, const YansWifiPhyHelper &wifiPhy, con
 
   wifi.AssignStreams (devices, trialNumber);
 
-  Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/HtConfiguration/ShortGuardIntervalSupported", BooleanValue (guardIntervalNs == 400 ? true : false));
+  Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/HtConfiguration/ShortGuardIntervalSupported", BooleanValue (guardIntervalNs == 400));
   Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/HeConfiguration/GuardInterval", TimeValue (NanoSeconds (guardIntervalNs)));
 
   // Configure aggregation
@@ -959,7 +962,7 @@ Experiment::Run (const WifiHelper &helper, const YansWifiPhyHelper &wifiPhy, con
 
   PacketSocketHelper packetSocket;
   packetSocket.Install (wifiNodes);
-  
+
   ApplicationContainer apps;
   Ptr<UniformRandomVariable> startTime = CreateObject<UniformRandomVariable> ();
   startTime->SetAttribute ("Stream", IntegerValue (trialNumber));
@@ -1046,7 +1049,7 @@ Experiment::Run (const WifiHelper &helper, const YansWifiPhyHelper &wifiPhy, con
       macRxTraceFile.flush ();
       socketSendTraceFile.flush ();
     }
-  
+
   return 0;
 }
 

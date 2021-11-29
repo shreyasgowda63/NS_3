@@ -32,7 +32,7 @@
 namespace ns3 {
 
 class Channel;
-class NetDevice;
+class WifiNetDevice;
 class MobilityModel;
 class WifiPhyStateHelper;
 class FrameCaptureModel;
@@ -823,13 +823,13 @@ public:
    *
    * \param device the device this PHY is associated with
    */
-  void SetDevice (const Ptr<NetDevice> device);
+  void SetDevice (const Ptr<WifiNetDevice> device);
   /**
    * Return the device this PHY is associated with
    *
    * \return the device this PHY is associated with
    */
-  Ptr<NetDevice> GetDevice (void) const;
+  Ptr<WifiNetDevice> GetDevice (void) const;
   /**
    * \brief assign a mobility model to this device
    *
@@ -1167,7 +1167,7 @@ protected:
    * Add the PHY entity to the map of supported PHY entities for the
    * given modulation class for the WifiPhy instance.
    * This is a wrapper method used to check that the PHY entity is
-   * in the static map of implemented PHY entities (\see m_staticPhyEntities).
+   * in the static map of implemented PHY entities (\see GetStaticPhyEntities).
    * In addition, child classes can add their own PHY entities.
    *
    * \param modulation the modulation class
@@ -1376,12 +1376,13 @@ private:
   TracedCallback<Ptr<const Packet>, uint16_t /* frequency (MHz) */, WifiTxVector, MpduInfo, uint16_t /* STA-ID*/> m_phyMonitorSniffTxTrace;
 
   /**
-   * Map of __implemented__ PHY entities. This is used to compute the different
+   * \return the map of __implemented__ PHY entities.
+   * This is used to compute the different
    * amendment-specific parameters in a static manner.
    * For PHY entities supported by a given WifiPhy instance,
    * \see m_phyEntities.
    */
-  static std::map<WifiModulationClass, Ptr<PhyEntity> > m_staticPhyEntities;
+  static std::map<WifiModulationClass, Ptr<PhyEntity> > & GetStaticPhyEntities (void);
 
   WifiPhyStandard m_standard;               //!< WifiPhyStandard
   WifiPhyBand m_band;                       //!< WifiPhyBand
@@ -1420,7 +1421,7 @@ private:
 
   Time m_channelSwitchDelay;     //!< Time required to switch between channel
 
-  Ptr<NetDevice>     m_device;   //!< Pointer to the device
+  Ptr<WifiNetDevice> m_device;   //!< Pointer to the device
   Ptr<MobilityModel> m_mobility; //!< Pointer to the mobility model
 
   Ptr<FrameCaptureModel> m_frameCaptureModel;           //!< Frame capture model

@@ -33,6 +33,7 @@
 #include "ns3/socket.h"
 #include "ns3/wifi-net-device.h"
 #include "ns3/channel-access-manager.h"
+#include "ns3/mac-tx-middle.h"
 
 namespace ns3 {
 
@@ -305,14 +306,14 @@ MeshWifiInterfaceMac::GetSupportedRates () const
   SupportedRates rates;
   for (const auto & mode : m_phy->GetModeList ())
     {
-      uint16_t gi = ConvertGuardIntervalToNanoSeconds (mode, DynamicCast<WifiNetDevice> (m_phy->GetDevice ()));
+      uint16_t gi = ConvertGuardIntervalToNanoSeconds (mode, m_phy->GetDevice ());
       rates.AddSupportedRate (mode.GetDataRate (m_phy->GetChannelWidth (), gi, 1));
     }
   // set the basic rates
   for (uint32_t j = 0; j < m_stationManager->GetNBasicModes (); j++)
     {
       WifiMode mode = m_stationManager->GetBasicMode (j);
-      uint16_t gi = ConvertGuardIntervalToNanoSeconds (mode, DynamicCast<WifiNetDevice> (m_phy->GetDevice ()));
+      uint16_t gi = ConvertGuardIntervalToNanoSeconds (mode, m_phy->GetDevice ());
       rates.SetBasicRate (mode.GetDataRate (m_phy->GetChannelWidth (), gi, 1));
     }
   return rates;
@@ -323,7 +324,7 @@ MeshWifiInterfaceMac::CheckSupportedRates (SupportedRates rates) const
   for (uint32_t i = 0; i < m_stationManager->GetNBasicModes (); i++)
     {
       WifiMode mode = m_stationManager->GetBasicMode (i);
-      uint16_t gi = ConvertGuardIntervalToNanoSeconds (mode, DynamicCast<WifiNetDevice> (m_phy->GetDevice ()));
+      uint16_t gi = ConvertGuardIntervalToNanoSeconds (mode, m_phy->GetDevice ());
       if (!rates.IsSupportedRate (mode.GetDataRate (m_phy->GetChannelWidth (), gi, 1)))
         {
           return false;
@@ -432,7 +433,7 @@ MeshWifiInterfaceMac::Receive (Ptr<WifiMacQueueItem> mpdu)
 
           for (const auto & mode : m_phy->GetModeList ())
             {
-              uint16_t gi = ConvertGuardIntervalToNanoSeconds (mode, DynamicCast<WifiNetDevice> (m_phy->GetDevice ()));
+              uint16_t gi = ConvertGuardIntervalToNanoSeconds (mode, m_phy->GetDevice ());
               uint64_t rate = mode.GetDataRate (m_phy->GetChannelWidth (), gi, 1);
               if (rates.IsSupportedRate (rate))
                 {
@@ -540,13 +541,17 @@ MeshWifiInterfaceMac::ResetStats ()
 void
 MeshWifiInterfaceMac::ConfigureStandard (enum WifiStandard standard)
 {
-  SetQosSupported (true);  // a mesh station is a QoS station
+  NS_ABORT_IF (!GetQosSupported ());
   RegularWifiMac::ConfigureStandard (standard);
   m_standard = standard;
 
   // We use the single DCF provided by WifiMac for the purpose of
   // Beacon transmission. For this we need to reconfigure the channel
   // access parameters slightly, and do so here.
+  m_txop = CreateObject<Txop> ();
+  m_txop->SetChannelAccessManager (m_channelAccessManager);
+  m_txop->SetWifiMac (this);
+  m_txop->SetTxMiddle (m_txMiddle);
   m_txop->SetMinCw (0);
   m_txop->SetMaxCw (0);
   m_txop->SetAifsn (1);

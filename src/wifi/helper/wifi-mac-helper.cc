@@ -18,7 +18,7 @@
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
-#include "ns3/net-device.h"
+#include "ns3/wifi-net-device.h"
 #include "wifi-mac-helper.h"
 #include "ns3/frame-exchange-manager.h"
 #include "ns3/wifi-protection-manager.h"
@@ -30,9 +30,8 @@ namespace ns3 {
 
 WifiMacHelper::WifiMacHelper ()
 {
-  //By default, we create an AdHoc MAC layer without QoS.
-  SetType ("ns3::AdhocWifiMac",
-           "QosSupported", BooleanValue (false));
+  //By default, we create an AdHoc MAC layer (without QoS).
+  SetType ("ns3::AdhocWifiMac");
 
   m_protectionManager.SetTypeId ("ns3::WifiDefaultProtectionManager");
   m_ackManager.SetTypeId ("ns3::WifiDefaultAckManager");
@@ -43,12 +42,19 @@ WifiMacHelper::~WifiMacHelper ()
 }
 
 Ptr<WifiMac>
-WifiMacHelper::Create (Ptr<NetDevice> device, WifiStandard standard) const
+WifiMacHelper::Create (Ptr<WifiNetDevice> device, WifiStandard standard) const
 {
   auto standardIt = wifiStandards.find (standard);
   NS_ABORT_MSG_IF (standardIt == wifiStandards.end (), "Selected standard is not defined!");
 
-  Ptr<WifiMac> mac = m_mac.Create<WifiMac> ();
+  // this is a const method, but we need to force the correct QoS setting
+  ObjectFactory macObjectFactory = m_mac;
+  if (standard >= WIFI_STANDARD_80211n_2_4GHZ)
+    {
+      macObjectFactory.Set ("QosSupported", BooleanValue (true));
+    }
+
+  Ptr<WifiMac> mac = macObjectFactory.Create<WifiMac> ();
   mac->SetDevice (device);
   mac->SetAddress (Mac48Address::Allocate ());
   mac->ConfigureStandard (standard);

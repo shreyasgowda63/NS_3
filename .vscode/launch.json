@@ -16,10 +16,10 @@
             "environment": [
                 {
                     "name": "LD_LIBRARY_PATH",
-                    "value": "./build/lib/"
+                    "value": "${workspaceFolder}/build/lib/"
                 }
             ],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
                 {
@@ -41,7 +41,7 @@
             "environment": [
                 {
                     "name": "LD_LIBRARY_PATH",
-                    "value": "./build/lib/"
+                    "value": "${workspaceFolder}/build/lib/"
                 }
             ],
             "externalConsole": false,
@@ -59,10 +59,10 @@
             "environment": [
                 {
                     "name": "LD_LIBRARY_PATH",
-                    "value": "./build/lib/"
+                    "value": "${workspaceFolder}/build/lib/"
                 }
             ],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
                 {
@@ -84,7 +84,7 @@
             "environment": [
                 {
                     "name": "LD_LIBRARY_PATH",
-                    "value": "./build/lib/"
+                    "value": "${workspaceFolder}/build/lib/"
                 }
             ],
             "externalConsole": false,

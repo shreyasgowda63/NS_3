@@ -26,21 +26,16 @@
 #include "ns3/mobility-model.h"
 #include "ns3/random-variable-stream.h"
 #include "ns3/error-model.h"
+#include "wifi-net-device.h"
 #include "wifi-phy.h"
-#include "ampdu-tag.h"
 #include "wifi-utils.h"
-#include "sta-wifi-mac.h"
 #include "frame-capture-model.h"
 #include "preamble-detection-model.h"
 #include "wifi-radio-energy-model.h"
 #include "error-rate-model.h"
 #include "wifi-net-device.h"
-#include "ns3/ht-configuration.h"
-#include "ns3/he-configuration.h"
-#include "mpdu-aggregator.h"
 #include "wifi-psdu.h"
 #include "wifi-ppdu.h"
-#include "ap-wifi-mac.h"
 #include "ns3/dsss-phy.h"
 #include "ns3/erp-ofdm-phy.h"
 #include "ns3/he-phy.h" //includes OFDM, HT, and VHT
@@ -291,7 +286,6 @@ const std::set<FrequencyChannelInfo> WifiPhy::m_frequencyChannels =
   { std::make_tuple (207, 6975, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) }
 };
 
-std::map<WifiModulationClass, Ptr<PhyEntity> > WifiPhy::m_staticPhyEntities; //will be filled by g_constructor_XXX
 
 TypeId
 WifiPhy::GetTypeId (void)
@@ -625,6 +619,13 @@ WifiPhy::DoDispose (void)
   m_phyEntities.clear ();
 }
 
+std::map<WifiModulationClass, Ptr<PhyEntity> > &
+WifiPhy::GetStaticPhyEntities (void)
+{
+    static std::map<WifiModulationClass, Ptr<PhyEntity> > g_staticPhyEntities;
+    return g_staticPhyEntities;
+}
+
 Ptr<WifiPhyStateHelper>
 WifiPhy::GetState (void) const
 {
@@ -774,12 +775,12 @@ WifiPhy::GetShortPhyPreambleSupported (void) const
 }
 
 void
-WifiPhy::SetDevice (const Ptr<NetDevice> device)
+WifiPhy::SetDevice (const Ptr<WifiNetDevice> device)
 {
   m_device = device;
 }
 
-Ptr<NetDevice>
+Ptr<WifiNetDevice>
 WifiPhy::GetDevice (void) const
 {
   return m_device;
@@ -869,8 +870,8 @@ WifiPhy::CalculateSnr (const WifiTxVector& txVector, double ber) const
 const Ptr<const PhyEntity>
 WifiPhy::GetStaticPhyEntity (WifiModulationClass modulation)
 {
-  const auto it = m_staticPhyEntities.find (modulation);
-  NS_ABORT_MSG_IF (it == m_staticPhyEntities.end (), "Unimplemented Wi-Fi modulation class");
+  const auto it = GetStaticPhyEntities ().find (modulation);
+  NS_ABORT_MSG_IF (it == GetStaticPhyEntities ().end (), "Unimplemented Wi-Fi modulation class");
   return it->second;
 }
 
@@ -886,15 +887,15 @@ void
 WifiPhy::AddStaticPhyEntity (WifiModulationClass modulation, Ptr<PhyEntity> phyEntity)
 {
   NS_LOG_FUNCTION (modulation);
-  NS_ASSERT_MSG (m_staticPhyEntities.find (modulation) == m_staticPhyEntities.end (), "The PHY entity has already been added. The setting should only be done once per modulation class");
-  m_staticPhyEntities[modulation] = phyEntity;
+  NS_ASSERT_MSG (GetStaticPhyEntities ().find (modulation) == GetStaticPhyEntities ().end (), "The PHY entity has already been added. The setting should only be done once per modulation class");
+    GetStaticPhyEntities ()[modulation] = phyEntity;
 }
 
 void
 WifiPhy::AddPhyEntity (WifiModulationClass modulation, Ptr<PhyEntity> phyEntity)
 {
   NS_LOG_FUNCTION (this << modulation);
-  NS_ABORT_MSG_IF (m_staticPhyEntities.find (modulation) == m_staticPhyEntities.end (), "Cannot add an unimplemented PHY to supported list. Update the former first.");
+  NS_ABORT_MSG_IF (GetStaticPhyEntities ().find (modulation) == GetStaticPhyEntities ().end (), "Cannot add an unimplemented PHY to supported list. Update the former first.");
   NS_ASSERT_MSG (m_phyEntities.find (modulation) == m_phyEntities.end (), "The PHY entity has already been added. The setting should only be done once per modulation class");
   phyEntity->SetOwner (this);
   m_phyEntities[modulation] = phyEntity;
