@@ -127,7 +127,7 @@ TcpRttEstimationTest::Tx (const Ptr<const Packet> p, const TcpHeader &h, SocketW
         }
 
       Ptr<RttEstimator> rttEstimator = GetRttEstimator (SENDER);
-      NS_ASSERT (rttEstimator != 0);
+      NS_TEST_ASSERT_MSG_EQ (rttEstimator != 0, true, " Cannor open file in test");
       NS_LOG_DEBUG ("S Tx: seq=" << h.GetSequenceNumber () << " ack=" << h.GetAckNumber ());
       NS_TEST_ASSERT_MSG_NE (rttEstimator->GetEstimate (), Seconds (1),
                              "Default Estimate for the RTT");

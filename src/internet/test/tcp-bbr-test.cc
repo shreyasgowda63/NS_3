@@ -161,7 +161,7 @@ TcpBbrCheckGainValuesTest::ExecuteTest ()
         desiredMode = TcpBbr::BBR_PROBE_RTT;
         break;
       default:
-        NS_ASSERT (false);
+        NS_TEST_ASSERT_MSG_EQ (false == false,true," cannot open file in test ");
     }
 
   actualPacingGain = cong->GetPacingGain ();
