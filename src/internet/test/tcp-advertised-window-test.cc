@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "ns3/test.h"
 #include "tcp-general-test.h"
 #include "ns3/node.h"
 #include "ns3/log.h"
@@ -99,7 +98,7 @@ private:
 void
 TcpSocketAdvertisedWindowProxy::SetInvalidAwndCb (InvalidAwndCallback cb)
 {
-  NS_TEST_ASSERT_MSG_EQ (cb.IsNull (), false, " Cannot open file in test ");
+  NS_ASSERT (!cb.IsNull ());
   m_inwalidAwndCb = cb;
 }
 
