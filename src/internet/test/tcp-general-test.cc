@@ -1057,35 +1057,35 @@ TcpSocketMsgBase::Fork (void)
 void
 TcpSocketMsgBase::SetRcvAckCb (AckManagementCb cb)
 {
-  NS_ASSERT (!cb.IsNull ());
+  NS_TEST_ASSERT_MSG_EQ (cb.IsNull (), false, " Cannot open file in test ");
   m_rcvAckCb = cb;
 }
 
 void
 TcpSocketMsgBase::SetProcessedAckCb (AckManagementCb cb)
 {
-  NS_ASSERT (!cb.IsNull ());
+  NS_TEST_ASSERT_MSG_EQ (cb.IsNull (), false, " Cannot open file in test ");
   m_processedAckCb = cb;
 }
 
 void
 TcpSocketMsgBase::SetAfterRetransmitCb (RetrCb cb)
 {
-  NS_ASSERT (!cb.IsNull ());
+  NS_TEST_ASSERT_MSG_EQ (cb.IsNull (), false, " Cannot open file in test ");
   m_afterRetrCallback = cb;
 }
 
 void
 TcpSocketMsgBase::SetBeforeRetransmitCb (RetrCb cb)
 {
-  NS_ASSERT (!cb.IsNull ());
+  NS_TEST_ASSERT_MSG_EQ (cb.IsNull (), false, " Cannot open file in test ");
   m_beforeRetrCallback = cb;
 }
 
 void
 TcpSocketMsgBase::ReceivedAck (Ptr<Packet> packet, const TcpHeader& tcpHeader)
 {
-  NS_ASSERT (!(m_rcvAckCb.IsNull () || m_processedAckCb.IsNull ()));
+  NS_TEST_ASSERT_MSG_EQ ((m_rcvAckCb.IsNull () || m_processedAckCb.IsNull ()), false, " Cannot open file in test ");
   m_rcvAckCb (packet, tcpHeader, this);
 
   TcpSocketBase::ReceivedAck (packet, tcpHeader);
@@ -1104,14 +1104,14 @@ TcpSocketMsgBase::ReTxTimeout ()
 void
 TcpSocketMsgBase::SetForkCb (Callback<void, Ptr<TcpSocketMsgBase> > cb)
 {
-  NS_ASSERT (!cb.IsNull ());
+  NS_TEST_ASSERT_MSG_EQ (cb.IsNull (), false, " Cannot open file in test ");
   m_forkCb = cb;
 }
 
 void
 TcpSocketMsgBase::SetUpdateRttHistoryCb (UpdateRttCallback cb)
 {
-  NS_ASSERT (!cb.IsNull ());
+  NS_TEST_ASSERT_MSG_EQ (cb.IsNull (), false, " Cannot open file in test ");
   m_updateRttCb = cb;
 }
 

@@ -201,7 +201,7 @@ GlobalRouteManagerImplTestCase::DoRun (void)
   srmlsdb->Insert (lsa1->GetLinkStateId (), lsa1);
   srmlsdb->Insert (lsa2->GetLinkStateId (), lsa2);
   srmlsdb->Insert (lsa3->GetLinkStateId (), lsa3);
-  NS_ASSERT (lsa2 == srmlsdb->GetLSA (lsa2->GetLinkStateId ()));
+  NS_TEST_ASSERT_MSG_EQ (lsa2, srmlsdb->GetLSA (lsa2->GetLinkStateId ()), " Cannot open file in test ");
 
   // next, calculate routes based on the manually created LSDB
   GlobalRouteManagerImpl* srm = new GlobalRouteManagerImpl ();
