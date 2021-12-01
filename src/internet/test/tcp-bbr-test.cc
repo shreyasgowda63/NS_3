@@ -161,7 +161,7 @@ TcpBbrCheckGainValuesTest::ExecuteTest ()
         desiredMode = TcpBbr::BBR_PROBE_RTT;
         break;
       default:
-        NS_TEST_ASSERT_MSG_EQ (false, false, "Received packet size is equal to the Rx buffer size");
+        NS_ASSERT (false);
     }
 
   actualPacingGain = cong->GetPacingGain ();
