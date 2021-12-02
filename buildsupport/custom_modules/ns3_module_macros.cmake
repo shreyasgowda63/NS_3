@@ -98,10 +98,10 @@ macro(
   # set output name of library
   set_target_properties(${lib${libname}} PROPERTIES OUTPUT_NAME ns${NS3_VER}-${libname}${build_profile_suffix})
 
+  set(ns3-external-libs "${non_ns_libraries_to_link};${ns3-external-libs}"
+      CACHE INTERNAL "list of non-ns libraries to link to NS3_STATIC and NS3_MONOLIB"
+  )
   if(${NS3_STATIC} OR ${NS3_MONOLIB})
-    set(ns3-external-libs "${non_ns_libraries_to_link};${ns3-external-libs}"
-        CACHE INTERNAL "list of non-ns libraries to link to NS3_STATIC and NS3_MONOLIB"
-    )
     set(lib-ns3-static-objs "$<TARGET_OBJECTS:${lib${libname}-obj}>;${lib-ns3-static-objs}"
         CACHE INTERNAL "list of object files from module used by NS3_STATIC and NS3_MONOLIB"
     )
