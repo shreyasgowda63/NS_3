@@ -34,13 +34,9 @@ macro(
   libraries_to_link
 )
   # cmake-format: on
-  build_lib_example_impl(
-    "contrib/${contribname}" "${name}" "${source_files}" "${header_files}" "${libraries_to_link}"
-  )
+  build_lib_example_impl("contrib/${contribname}" "${name}" "${source_files}" "${header_files}" "${libraries_to_link}")
 endmacro()
 
 macro(build_contrib_lib name source_files header_files libraries_to_link test_sources)
-  build_lib_impl(
-    "contrib" "${name}" "${source_files}" "${header_files}" "${libraries_to_link}" "${test_sources}"
-  )
+  build_lib_impl("contrib" "${name}" "${source_files}" "${header_files}" "${libraries_to_link}" "${test_sources}")
 endmacro()

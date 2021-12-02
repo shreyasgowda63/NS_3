@@ -165,15 +165,15 @@ macro(process_options)
   endif()
 
   # Set warning level and warning as errors
-  if (${NS3_WARNINGS})
-    if (MSVC)
+  if(${NS3_WARNINGS})
+    if(MSVC)
       add_compile_options(/W3) # /W4 = -Wall + -Wextra
-      if (${NS3_WARNINGS_AS_ERRORS})
+      if(${NS3_WARNINGS_AS_ERRORS})
         add_compile_options(/WX)
       endif()
     else()
       add_compile_options(-Wall) # -Wextra
-      if (${NS3_WARNINGS_AS_ERRORS})
+      if(${NS3_WARNINGS_AS_ERRORS})
         add_compile_options(-Werror)
       endif()
     endif()
