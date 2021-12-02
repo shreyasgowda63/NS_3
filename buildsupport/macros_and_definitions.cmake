@@ -759,7 +759,17 @@ CommandLine configuration in those files instead.
     set(optional_visualizer_lib ${libvisualizer})
   endif()
 
+  set(PRECOMPILE_HEADERS_ENABLED OFF)
   if(${NS3_PRECOMPILE_HEADERS})
+    if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+      set(PRECOMPILE_HEADERS_ENABLED ON)
+      message(STATUS "Precompiled headers were enabled")
+    else()
+      message(STATUS "CMake ${CMAKE_VERSION} does not support precompiled headers. Continuing without them")
+    endif()
+  endif()
+
+  if(${PRECOMPILE_HEADERS_ENABLED})
     set(precompiled_header_libraries
         <iostream>
         <stdint.h>
@@ -897,7 +907,7 @@ macro(build_example name source_files header_files libraries_to_link)
       )
     endif()
 
-    if(${NS3_PRECOMPILE_HEADERS})
+    if(${PRECOMPILE_HEADERS_ENABLED})
       target_precompile_headers(${name} REUSE_FROM stdlib_pch_exec)
     endif()
 

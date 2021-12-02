@@ -1,7 +1,7 @@
 # ######################################################################################################################
 # Required CMake version            #
 # ######################################################################################################################
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10..3.10)
 
 # Use ccache if available
 find_program(CCACHE_FOUND ccache)

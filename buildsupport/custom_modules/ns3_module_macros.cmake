@@ -53,7 +53,7 @@ macro(
     # Create object library with sources and headers, that will be used in lib-ns3-static and the shared library
     add_library(${lib${libname}-obj} OBJECT "${source_files}" "${header_files}")
 
-    if(${NS3_PRECOMPILE_HEADERS} AND (NOT ${ignore_pch}))
+    if(${PRECOMPILE_HEADERS_ENABLED} AND (NOT ${ignore_pch}))
       target_precompile_headers(${lib${libname}-obj} REUSE_FROM stdlib_pch)
     endif()
 
@@ -63,7 +63,7 @@ macro(
     # Xcode and CMake don't play well when using object libraries, so we have a specific path for that
     add_library(${lib${libname}} SHARED "${source_files}")
 
-    if(${NS3_PRECOMPILE_HEADERS} AND (NOT ${ignore_pch}))
+    if(${PRECOMPILE_HEADERS_ENABLED} AND (NOT ${ignore_pch}))
       target_precompile_headers(${lib${libname}} REUSE_FROM stdlib_pch)
     endif()
   endif()
@@ -142,7 +142,7 @@ macro(
       )
 
       target_compile_definitions(${test${libname}} PRIVATE NS_TEST_SOURCEDIR="${folder}/${libname}/test")
-      if(${NS3_PRECOMPILE_HEADERS} AND (NOT ${ignore_pch}))
+      if(${PRECOMPILE_HEADERS_ENABLED} AND (NOT ${ignore_pch}))
         target_precompile_headers(${test${libname}} REUSE_FROM stdlib_pch)
       endif()
     endif()
@@ -336,7 +336,7 @@ macro(
       )
     endif()
 
-    if(${NS3_PRECOMPILE_HEADERS} AND (NOT ${ignore_pch}))
+    if(${PRECOMPILE_HEADERS_ENABLED} AND (NOT ${ignore_pch}))
       target_precompile_headers(${name} REUSE_FROM stdlib_pch_exec)
     endif()
 
