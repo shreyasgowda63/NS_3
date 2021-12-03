@@ -594,7 +594,8 @@ def main():
         args.build = []
 
     # Load settings from config file
-    args = check_ns3rc_config_file(args)
+    if "configure" in args:
+        args = check_ns3rc_config_file(args)
 
     # Clean project if needed
     if "clean" in args and args.clean:
