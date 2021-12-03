@@ -72,6 +72,7 @@ def parse_args(argv):
     parser_configure = on_off_argument(parser_configure, "warnings", "compiler warnings")
     parser_configure = on_off_argument(parser_configure, "werror", "Treat compiler warnings as errors",
                                        "Treat compiler warnings as warnings")
+    parser_configure = on_off_argument(parser_configure, "documentation", "documentation targets")
 
     parser_configure.add_argument('--enable-modules',
                                   help='List of modules to build (e.g. core;network;internet)',
@@ -174,10 +175,13 @@ def parse_args(argv):
                         help='DEPRECATED (run ./test.py)',
                         action='store_true', default=None)
 
-    # parser.add_argument('--doxygen-no-build',
-    #               help=('Run doxygen to generate html documentation from source comments, '
-    #                     'but do not wait for ns-3 to finish the full build.'),
-    #               action="store_true", default=None)
+    parser.add_argument('--doxygen',
+                        help='Run doxygen to generate html documentation from source comments.',
+                        action="store_true", default=None)
+    parser.add_argument('--doxygen-no-build',
+                  help=('Run doxygen to generate html documentation from source comments, '
+                        'but do not wait for ns-3 to finish the full build.'),
+                  action="store_true", default=None)
     # parser.add_argument('--docset',
     #               help=(
     #                   'Create Docset, without building. This requires the docsetutil tool from Xcode 9.2 or earlier.'
@@ -325,7 +329,8 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
                    ("MPI", "mpi"),
                    ("GTK3", "gtk"),
                    ("WARNINGS", "warnings"),
-                   ("WARNINGS_AS_ERRORS", "werror")
+                   ("WARNINGS_AS_ERRORS", "werror"),
+                   ("DOCS", "documentation")
                    )
         for (cmake_flag, option_name) in options:
             arg = on_off_condition(args, cmake_flag, option_name)
@@ -544,12 +549,13 @@ def build_step(args,
 
     # If we are building specific targets, we build them one by one
     if "build" in args:
+        non_executable_targets = ["doxygen", "doxygen-no-build"]
         # Build targets in the list
         for target in args.build:
             if target in ns3_modules:
                 target = "lib" + target
-            else:
-                target = os.path.basename(target)  # This will get rid of path to the executables
+            elif target not in non_executable_targets:
+                target = get_target_to_build(target, ns3_version, build_profile)
             cmake_build(current_cmake_cache_folder, target=target, output=output, verbose=args.verbose)
         # We can also exit earlier in this case
         exit(0)
@@ -557,7 +563,7 @@ def build_step(args,
     # The remaining case is when we want to build something to run
     if configure_and_run:
         cmake_build(current_cmake_cache_folder,
-                    target=get_target_to_build(os.path.basename(target_to_run), ns3_version, build_profile),
+                    target=get_target_to_build(target_to_run, ns3_version, build_profile),
                     output=output,
                     verbose=args.verbose
                     )
@@ -578,6 +584,14 @@ def main():
         clean_cmake_artifacts(ns3_path, verbose=args.verbose)
         # We end things earlier when cleaning
         return
+
+    # Doxygen-no-build requires print-introspected-doxygen, but it has no explicit dependencies,
+    #     differently from the doxygen target
+    if args.doxygen:
+        args.build = ['doxygen']
+
+    if args.doxygen_no_build:
+        args.build = ['doxygen-no-build']
 
     # Get build profile
     build_profile, ns3_version, ns3_modules = check_build_profile(ns3_path)
@@ -627,6 +641,13 @@ def main():
             target_to_run = ns3_programs[target_to_run]
         else:
             raise Exception("Couldn't find the specified program: %s" % target_to_run)
+
+    if "build" in args:
+        complete_targets = []
+        for target in args.build:
+            complete_targets.append(ns3_programs[target] if target in ns3_programs else target)
+        args.build = complete_targets
+        del complete_targets
 
     build_step(args,
                configure_and_run,

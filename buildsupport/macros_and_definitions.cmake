@@ -578,9 +578,9 @@ macro(process_options)
   endif()
 
   if(${NS3_DOCS})
-    find_package(Doxygen REQUIRED)
-    find_program(DOT dot)
-    find_program(DIA dia)
+    find_program(DOXYGEN doxygen REQUIRED)
+    find_program(DOT dot REQUIRED)
+    find_program(DIA dia REQUIRED)
     if((NOT DOT) OR (NOT DIA))
       message(FATAL_ERROR "Dot and Dia are required by Doxygen docs."
                           "They're shipped within the graphviz and dia packages on Ubuntu"
@@ -589,7 +589,7 @@ macro(process_options)
     # Get introspected doxygen
     add_custom_target(
       run-print-introspected-doxygen
-      COMMAND ${CMAKE_COMMAND} -E env ${CMAKE_OUTPUT_DIRECTORY}/utils/print-introspected-doxygen >
+      COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/ns3 --run-no-build print-introspected-doxygen >
               ${PROJECT_SOURCE_DIR}/doc/introspected-doxygen.h DEPENDS print-introspected-doxygen
     )
     add_custom_target(
@@ -621,9 +621,14 @@ CommandLine configuration in those files instead.
 
     add_custom_target(
       doxygen
-      COMMAND Doxygen::doxygen ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
+      COMMAND ${DOXYGEN} ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
       DEPENDS run-print-introspected-doxygen assemble-introspected-command-line
+    )
+
+    add_custom_target(
+      doxygen-no-build COMMAND ${DOXYGEN} ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
 
     find_package(Sphinx REQUIRED)
