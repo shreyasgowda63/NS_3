@@ -199,7 +199,7 @@ void Ipv4DeduplicationTest::ReceivePkt (Ptr<Socket> socket)
   uint32_t availableData;
   availableData = socket->GetRxAvailable ();
   Ptr<Packet> packet = socket->Recv (std::numeric_limits<uint32_t>::max (), 0);
-  NS_TEST_ASSERT_MSG_EQ (availableData, packet->GetSize (), "Received packet size is equal to the Rx buffer size");
+  NS_TEST_ASSERT_MSG_EQ (availableData, packet->GetSize (), "Received packet size is not equal to the Rx buffer size");
 
   auto node = socket->GetNode ();
   std::string name = Names::FindName (node);
