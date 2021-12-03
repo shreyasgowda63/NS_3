@@ -1,4 +1,4 @@
-if(${NS3_TESTS})
+if(${TESTS_ENABLED})
   add_executable(test-runner $<TARGET_OBJECTS:${libtest}> test-runner.cc)
 
   if(${NS3_MONOLIB})
@@ -11,7 +11,7 @@ if(${NS3_TESTS})
     )
   endif()
   set_runtime_outputdirectory(test-runner ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/)
-  if(${NS3_TESTS})
+  if(${TESTS_ENABLED})
     add_dependencies(all-test-targets test-runner)
   endif()
 

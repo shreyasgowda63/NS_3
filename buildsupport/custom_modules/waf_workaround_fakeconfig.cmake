@@ -62,7 +62,7 @@ macro(write_fakewaf_config)
   string(APPEND out "Emulation FdNetDevice         : ")
   check_on_or_off("${NS3_EMU}" "${ENABLE_EMU}")
 
-  string(APPEND out "Examples                      : ${NS3_EXAMPLES}\n")
+  string(APPEND out "Examples                      : ${EXAMPLES_ENABLED}\n")
   string(APPEND out "File descriptor NetDevice     : ")
   check_on_or_off("ON" "${ENABLE_FDNETDEV}")
 
@@ -102,7 +102,7 @@ macro(write_fakewaf_config)
   string(APPEND out "Tap FdNetDevice               : ")
   check_on_or_off("${NS3_TAP}" "${ENABLE_TAP}")
 
-  string(APPEND out "Tests                         : ${NS3_TESTS}\n")
+  string(APPEND out "Tests                         : ${TESTS_ENABLED}\n")
   string(APPEND out "Threading Primitives          : ")
   check_on_or_off("${NS3_PTHREAD}" "${THREADS_ENABLED}")
 

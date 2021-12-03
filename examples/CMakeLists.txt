@@ -1,4 +1,4 @@
-if(${NS3_EXAMPLES})
+if(${EXAMPLES_ENABLED})
   subdirlist(examples_to_build ${CMAKE_CURRENT_SOURCE_DIR})
 
   # Process subdirectories

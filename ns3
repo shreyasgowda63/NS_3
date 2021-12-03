@@ -479,26 +479,6 @@ def get_target_to_build(program_name, ns3_version, build_profile):
     return re.findall("%s-(.*)%s" % (ns3_version, build_profile_suffix), program_name)[0]
 
 
-def check_ns3rc_config_file(args):
-    (config_file_exists, modules_enabled, examples_enabled, tests_enabled) = read_config_file()
-    if not config_file_exists:
-        return args
-
-    if not args.enable_modules and len(modules_enabled) > 0 and modules_enabled[0] != "all_modules":
-        args.enable_modules = ";".join(modules_enabled)
-    if not args.enable_examples and not args.disable_examples:
-        if examples_enabled:
-            args.enable_examples = True
-        else:
-            args.disable_examples = True
-    if not args.enable_tests and not args.disable_tests:
-        if tests_enabled:
-            args.enable_tests = True
-        else:
-            args.disable_tests = True
-    return args
-
-
 def configuration_step(ns3_path, current_cmake_cache_folder, current_cmake_generator, args, run_only, configure_and_run,
                        output):
     # There are a few cases where we want to reconfigure/refresh the cmake cache
@@ -592,10 +572,6 @@ def main():
     # no arguments were passed, so can't possibly be reconfiguring anything, then we refresh and rebuild
     if len(sys.argv) == 1:
         args.build = []
-
-    # Load settings from config file
-    if "configure" in args:
-        args = check_ns3rc_config_file(args)
 
     # Clean project if needed
     if "clean" in args and args.clean:

@@ -7,7 +7,7 @@ set(header_files helper/sixlowpan-helper.h model/sixlowpan-header.h model/sixlow
 set(libraries_to_link ${libinternet} ${libinternet} ${libcore})
 
 set(example_as_test_suite)
-if(${NS3_EXAMPLES})
+if(${EXAMPLES_ENABLED})
   set(example_as_test_suite test/sixlowpan-examples-test-suite.cc)
 endif()
 

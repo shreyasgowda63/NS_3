@@ -158,6 +158,18 @@ macro(process_options)
     add_definitions(-DNS3_BUILD_PROFILE_OPTIMIZED)
   endif()
 
+  # Enable examples if activated via command line (NS3_EXAMPLES) or ns3rc config file
+  set(EXAMPLES_ENABLED OFF)
+  if(${NS3_EXAMPLES} OR ${ns3rc_examples_enabled})
+    set(EXAMPLES_ENABLED ON)
+  endif()
+
+  # Enable examples if activated via command line (NS3_TESTS) or ns3rc config file
+  set(TESTS_ENABLED OFF)
+  if(${NS3_TESTS} OR ${ns3rc_tests_enabled})
+    set(TESTS_ENABLED ON)
+  endif()
+
   set(profiles_without_suffixes release)
   set(build_profile_suffix "" CACHE INTERNAL "")
   if(NOT (${build_profile} IN_LIST profiles_without_suffixes))
@@ -495,13 +507,13 @@ macro(process_options)
     add_custom_target(apiscan-all)
   endif()
 
-  if(${NS3_COVERAGE} AND (NOT ${NS3_TESTS} OR NOT ${NS3_EXAMPLES}))
+  if(${NS3_COVERAGE} AND (NOT ${TESTS_ENABLED} OR NOT ${EXAMPLES_ENABLED}))
     message(FATAL_ERROR "Code coverage requires examples and tests.\n"
                         "Try reconfiguring CMake with -DNS3_TESTS=ON -DNS3_EXAMPLES=ON"
     )
   endif()
 
-  if(${NS3_TESTS})
+  if(${TESTS_ENABLED})
     add_custom_target(all-test-targets)
 
     # Create a custom target to run test.py --nowaf Target is also used to produce code coverage output
@@ -511,7 +523,7 @@ macro(process_options)
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
       DEPENDS all-test-targets
     )
-    if(${NS3_EXAMPLES})
+    if(${EXAMPLES_ENABLED})
       include(buildsupport/custom_modules/ns3_coverage.cmake)
     endif()
   endif()
@@ -585,7 +597,7 @@ macro(process_options)
       COMMAND ${CMAKE_COMMAND} -E env NS_COMMANDLINE_INTROSPECTION=.. ${Python3_EXECUTABLE} ./test.py --nowaf
               --constrain=example
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-      DEPENDS all-test-targets # all-test-targets only exists if NS3_TESTS is set to ON
+      DEPENDS all-test-targets # all-test-targets only exists if TESTS_ENABLED is set to ON
     )
 
     file(
@@ -707,7 +719,7 @@ CommandLine configuration in those files instead.
   endif()
 
   # Enable examples as tests suites
-  if(${NS3_EXAMPLES})
+  if(${EXAMPLES_ENABLED})
     set(NS3_ENABLE_EXAMPLES "1")
     add_definitions(-DNS3_ENABLE_EXAMPLES -DCMAKE_EXAMPLE_AS_TEST)
   endif()
@@ -833,7 +845,7 @@ function(set_runtime_outputdirectory target_name output_directory)
     endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
   endif()
 
-  if(${NS3_TESTS})
+  if(${TESTS_ENABLED})
     add_dependencies(all-test-targets ${target_name})
   endif()
 
@@ -979,7 +991,7 @@ function(recursive_dependency module_name)
 
   # cmake-format: off
   # Scan dependencies required by this module examples
-  #if(${NS3_EXAMPLES})
+  #if(${EXAMPLES_ENABLED})
   #  string(REPLACE "${module_name}" "${module_name}/examples" examples_cmakelist ${examples_cmakelist})
   #  if(EXISTS ${examples_cmakelist})
   #    file(READ ${examples_cmakelist} cmakelists_content)
@@ -997,16 +1009,23 @@ function(recursive_dependency module_name)
   endforeach()
 endfunction()
 
-macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build NS3_ENABLED_MODULES NS3_DISABLED_MODULES)
+macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build NS3_ENABLED_MODULES NS3_DISABLED_MODULES
+      ns3rc_enabled_modules
+)
   # Before filtering, we set a variable with all scanned moduled in the src directory
   set(scanned_modules ${${libs_to_build}})
 
   # Now that scanning modules finished, we can remove the disabled modules or replace the modules list with the ones in
   # the enabled list
-  if(NS3_ENABLED_MODULES)
+  if(NS3_ENABLED_MODULES OR ns3rc_enabled_modules)
+    # List of enabled modules passed by the command line overwrites list read from ns3rc
+    if(NS3_ENABLED_MODULES)
+      set(ns3rc_enabled_modules ${NS3_ENABLED_MODULES})
+    endif()
+
     # Filter enabled modules
-    filter_modules(NS3_ENABLED_MODULES libs_to_build "")
-    filter_modules(NS3_ENABLED_MODULES contrib_libs_to_build "")
+    filter_modules(ns3rc_enabled_modules libs_to_build "")
+    filter_modules(ns3rc_enabled_modules contrib_libs_to_build "")
 
     # Recursively build a list of module dependendencies
     foreach(lib ${${contrib_libs_to_build}})
@@ -1025,8 +1044,8 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build NS
       unset(contrib_dependencies)
     endforeach()
 
-    if(${NS3_TESTS})
-      list(APPEND ${libs_to_build} test) # force enable test module if NS3_TESTS is enabled
+    if(${TESTS_ENABLED})
+      list(APPEND ${libs_to_build} test) # force enable test module if TESTS_ENABLED is enabled
     endif()
   endif()
 
@@ -1042,6 +1061,49 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build NS
   # Export list with all enabled modules (used to separate ns libraries from non-ns libraries in ns3_module_macros)
   set(ns3-all-modules "${${libs_to_build}};${${contrib_libs_to_build}}" CACHE INTERNAL "list with all enabled modules")
 endmacro()
+
+# Parse .ns3rc
+function(parse_ns3rc enabled_modules examples_enabled tests_enabled)
+  set(ns3rc ${PROJECT_SOURCE_DIR}/.ns3rc)
+  # Set parent scope variables with default values (all modules, no examples nor tests)
+  set(${enabled_modules} "" PARENT_SCOPE)
+  set(${examples_enabled} "FALSE" PARENT_SCOPE)
+  set(${tests_enabled} "FALSE" PARENT_SCOPE)
+  if(EXISTS ${ns3rc})
+    # If ns3rc exists in ns-3-dev, read it
+    file(READ ${ns3rc} ns3rc_contents)
+
+    # Match modules_enabled list
+    if(ns3rc_contents MATCHES "modules_enabled.*\\[(.*).*\\]")
+      set(${enabled_modules} ${CMAKE_MATCH_1})
+      if(${enabled_modules} MATCHES "all_modules")
+        # If all modules, just clean the filter and all modules will get built by default
+        set(${enabled_modules})
+      else()
+        # If modules are listed, remove quotes and replace commas with semicollons transforming a string into a cmake
+        # list
+        string(REPLACE "," ";" ${enabled_modules} "${${enabled_modules}}")
+        string(REPLACE "'" "" ${enabled_modules} "${${enabled_modules}}")
+        string(REPLACE "\"" "" ${enabled_modules} "${${enabled_modules}}")
+        string(REPLACE " " "" ${enabled_modules} "${${enabled_modules}}")
+      endif()
+    endif()
+    # Match examples_enabled flag
+    if(ns3rc_contents MATCHES "examples_enabled = (True|False)")
+      set(${examples_enabled} ${CMAKE_MATCH_1})
+    endif()
+
+    # Match tests_enabled flag
+    if(ns3rc_contents MATCHES "tests_enabled = (True|False)")
+      set(${tests_enabled} ${CMAKE_MATCH_1})
+    endif()
+
+    # Save variables to parent scope
+    set(${enabled_modules} "${${enabled_modules}}" PARENT_SCOPE)
+    set(${examples_enabled} "${${examples_enabled}}" PARENT_SCOPE)
+    set(${tests_enabled} "${${tests_enabled}}" PARENT_SCOPE)
+  endif()
+endfunction(parse_ns3rc)
 
 # Waf workaround scripts
 include(buildsupport/custom_modules/waf_workaround_c4cache.cmake)

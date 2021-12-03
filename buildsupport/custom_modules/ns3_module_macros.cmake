@@ -119,7 +119,7 @@ macro(
   endif()
 
   # Build tests if requested
-  if(${NS3_TESTS})
+  if(${TESTS_ENABLED})
     list(LENGTH test_sources test_source_len)
     if(${test_source_len} GREATER 0)
       # Create libname of output library test of module
@@ -149,7 +149,7 @@ macro(
   endif()
 
   # Build lib examples if requested
-  if(${NS3_EXAMPLES})
+  if(${EXAMPLES_ENABLED})
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
       add_subdirectory(examples)
     endif()
