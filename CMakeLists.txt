@@ -60,7 +60,6 @@ option(NS3_LINK_TIME_OPTIMIZATION "Build with link-time optimization" OFF)
 option(NS3_MONOLIB "Build a single shared ns-3 library and link it against executables" OFF)
 option(NS3_MPI "Build with MPI support" ON)
 option(NS3_NATIVE_OPTIMIZATIONS "Build with -march=native -mtune=native" OFF)
-option(NS3_NSC "Build with NSC support" OFF) # currently not supported
 option(NS3_PRECOMPILE_HEADERS "Precompile module headers to speed up compilation" ON)
 option(NS3_PTHREAD "Build with pthread support" ON)
 option(NS3_PYTHON_BINDINGS "Build ns-3 python bindings" OFF)
