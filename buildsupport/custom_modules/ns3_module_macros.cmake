@@ -150,10 +150,10 @@ macro(
 
   # Build lib examples if requested
   if(${EXAMPLES_ENABLED})
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
+    if((EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples) AND (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples/CMakeLists.txt))
       add_subdirectory(examples)
     endif()
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/example)
+    if((EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/example) AND (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/example/CMakeLists.txt))
       add_subdirectory(example)
     endif()
   endif()

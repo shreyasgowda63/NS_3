@@ -21,7 +21,12 @@ macro(process_contribution contribution_list)
 
   # Add contribution folders to be built
   foreach(contribname ${contribution_list})
-    add_subdirectory("contrib/${contribname}")
+    set(folder "contrib/${contribname}")
+    if(EXISTS ${PROJECT_SOURCE_DIR}/${folder}/CMakeLists.txt)
+      add_subdirectory(${folder})
+    else()
+      message(STATUS "Skipping ${folder} : it does not contain a CMakeLists.txt file")
+    endif()
   endforeach()
 endmacro()
 

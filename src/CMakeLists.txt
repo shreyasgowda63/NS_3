@@ -8,7 +8,11 @@ endif()
 
 # Process subdirectories
 foreach(libname ${libs})
-  add_subdirectory(${libname})
+  if(EXISTS ${PROJECT_SOURCE_DIR}/src/${libname}/CMakeLists.txt)
+    add_subdirectory(${libname})
+  else()
+    message(STATUS "Skipping src/${libname} : it does not contain a CMakeLists.txt file")
+  endif()
 endforeach()
 
 # Build the lib-ns3-static (ns3.x-static-buildtype.a/.lib) with all sublibraries
