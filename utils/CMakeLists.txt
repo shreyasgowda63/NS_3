@@ -11,20 +11,17 @@ if(${TESTS_ENABLED})
     )
   endif()
   set_runtime_outputdirectory(test-runner ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/)
-  if(${TESTS_ENABLED})
-    add_dependencies(all-test-targets test-runner)
-  endif()
-
-  add_executable(bench-simulator bench-simulator.cc)
-  target_link_libraries(bench-simulator ${libcore})
-  set_runtime_outputdirectory(bench-simulator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/)
-
-  add_executable(bench-packets bench-packets.cc)
-  target_link_libraries(bench-packets ${libnetwork})
-  set_runtime_outputdirectory(bench-packets ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/)
-
-  add_executable(print-introspected-doxygen print-introspected-doxygen.cc)
-  target_link_libraries(print-introspected-doxygen ${ns3-libs})
-  set_runtime_outputdirectory(print-introspected-doxygen ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/)
-
+  add_dependencies(all-test-targets test-runner)
 endif()
+
+add_executable(bench-simulator bench-simulator.cc)
+target_link_libraries(bench-simulator ${libcore})
+set_runtime_outputdirectory(bench-simulator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/)
+
+add_executable(bench-packets bench-packets.cc)
+target_link_libraries(bench-packets ${libnetwork})
+set_runtime_outputdirectory(bench-packets ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/)
+
+add_executable(print-introspected-doxygen print-introspected-doxygen.cc)
+target_link_libraries(print-introspected-doxygen ${ns3-libs})
+set_runtime_outputdirectory(print-introspected-doxygen ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/)
