@@ -10,6 +10,9 @@ import sys
 
 from utils import read_config_file
 
+out_dir = ""
+build_separator = ""
+lock_file = ".lock-waf_%s_build" % sys.platform
 
 def on_off_argument(parser, option_name, help_on, help_off=None):
     parser.add_argument('--enable-%s' % option_name,
@@ -35,7 +38,7 @@ def on_off_condition(args, cmake_flag, option_name):
 
 
 def parse_args(argv):
-    parser = argparse.ArgumentParser("ns-3 wrapper for the CMake build system")
+    parser = argparse.ArgumentParser(description="ns-3 wrapper for the CMake build system")
     sub_parser = parser.add_subparsers()
 
     parser_configure = sub_parser.add_parser('configure', help='configure --help')
@@ -90,6 +93,10 @@ def parse_args(argv):
                                         'when generating repeated lcov reports)'),
                                   action="store_true", default=None)
 
+    parser_configure.add_argument('--out', '--output-directory',
+                              help=('Use BRITE integration support, given by the indicated path,'
+                                    ' to allow the use of the BRITE topology generator'),
+                              type=str, default=None, dest="output_directory")
     parser_configure.add_argument('--with-brite',
                                   help=('Use BRITE integration support, given by the indicated path,'
                                         ' to allow the use of the BRITE topology generator'),
@@ -192,13 +199,13 @@ def parse_args(argv):
     return parser.parse_args(argv)
 
 
-def check_build_profile(ns3_path):
+def check_build_profile(output_directory):
     # Check the c4cache for the build type (in case there are multiple cmake cache folders
-    c4che_path = os.sep.join([ns3_path, "build", "c4che", "_cache.py"])
+    c4che_path = os.sep.join([output_directory, "c4che", "_cache.py"])
     build_profile = None
     ns3_version = None
     ns3_modules = None
-    if os.path.exists(c4che_path):
+    if output_directory and os.path.exists(c4che_path):
         c4che_info = {}
         exec(open(c4che_path).read(), globals(), c4che_info)
         build_profile = c4che_info["BUILD_PROFILE"]
@@ -209,9 +216,9 @@ def check_build_profile(ns3_path):
 
 def clean_cmake_artifacts(ns3_path, verbose=False):
     if verbose:
-        print("rm -R %s/build" % ns3_path)
+        print("rm -R %s" % out_dir)
 
-    shutil.rmtree(ns3_path + os.sep + "build", ignore_errors=True)
+    shutil.rmtree(out_dir, ignore_errors=True)
     cmake_cache_files = glob.glob("./**/CMakeCache.txt", recursive=True)
 
     for cmake_cache_file in cmake_cache_files:
@@ -340,7 +347,10 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
         if args.lcov_zerocounters is not None:
             cmake_args.append("-DNS3_COVERAGE_ZERO_COUNTERS=%s" % on_off(args.lcov_zerocounters))
 
-        # Brite, Click and Openflow
+        # Output, Brite, Click and Openflow directories
+        if args.output_directory is not None:
+            cmake_args.append("-DNS3_OUTPUT_DIRECTORY=%s" % args.output_directory)
+
         if args.with_brite is not None:
             cmake_args.append("-DNS3_WITH_BRITE=%s" % args.with_brite)
 
@@ -384,7 +394,7 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
 
 
 def get_program_shortcuts(ns3_path, build_profile, ns3_version):
-    build_status_file = os.sep.join([ns3_path, "build", "build-status.py"])
+    build_status_file = os.sep.join([out_dir, "build-status.py"])
 
     # Import programs from build-status.py
     programs_dict = {}
@@ -392,10 +402,11 @@ def get_program_shortcuts(ns3_path, build_profile, ns3_version):
 
     # We can now build a map to simplify things for users (at this point we could remove versioning prefix/suffix)
     ns3_program_map = {}
+    out_dir_name = os.path.basename(out_dir)
     for program in programs_dict["ns3_runnable_programs"]:
         if "pch_exec" in program:
             continue
-        temp_path = program.split("build")[-1].split(os.sep)
+        temp_path = program.split(out_dir_name)[-1].split(os.sep)
         # Remove version prefix and buildtype suffix from shortcuts (or keep them too?)
         temp_path[-1] = temp_path[-1].replace("-" + build_profile, "").replace("ns" + ns3_version + "-", "")
 
@@ -481,7 +492,11 @@ def reconfigure_cmake_to_force_refresh(cmake, current_cmake_cache_folder, output
 
 def get_target_to_build(program_name, ns3_version, build_profile):
     build_profile_suffix = "" if build_profile in ["release"] else "-" + build_profile
-    return re.findall("%s-(.*)%s" % (ns3_version, build_profile_suffix), program_name)[0]
+    program_name = "".join(*re.findall("(.*)ns%s-(.*)%s" % (ns3_version, build_profile_suffix), program_path))
+
+    # Get the path to the program and replace slashes with underlines
+    # to get unique targets for CMake, preventing collisions
+    return program_name.split(out_dir+"/")[1].replace("/", "_")
 
 
 def configuration_step(ns3_path, current_cmake_cache_folder, current_cmake_generator, args, run_only, configure_and_run,
@@ -570,6 +585,8 @@ def build_step(args,
 
 
 def main():
+    global out_dir
+
     # Parse arguments
     args = parse_args(sys.argv[1:])
     ns3_path = os.path.dirname(os.path.abspath(__file__))
@@ -593,8 +610,12 @@ def main():
     if args.doxygen_no_build:
         args.build = ['doxygen-no-build']
 
+    # Read contents from lock (output directory is important)
+    if os.path.exists(lock_file):
+        exec(open(os.sep.join([ns3_path, lock_file])).read(), globals())
+
     # Get build profile
-    build_profile, ns3_version, ns3_modules = check_build_profile(ns3_path)
+    build_profile, ns3_version, ns3_modules = check_build_profile(out_dir)
 
     # Check if running something or reconfiguring ns-3
     run_only = args.run_no_build or args.pyrun_no_build
@@ -625,9 +646,11 @@ def main():
                                                                output
                                                                )
 
+    # re-read contents from lock (output directory is important)
     # re-run build profile check to get up-to-date information before loading the program shortcuts
     if first_run:
-        build_profile, ns3_version, ns3_modules = check_build_profile(ns3_path)
+        exec(open(os.sep.join([ns3_path, lock_file])).read(), globals())
+        build_profile, ns3_version, ns3_modules = check_build_profile(out_dir)
 
     # We could also replace the "ns3-" prefix used in c4che with the "lib" prefix currently used in cmake
     ns3_modules = [module.replace("ns3-", "") for module in ns3_modules]
@@ -666,9 +689,9 @@ def main():
     # Finally, we try to run it
     if args.check or run_only or configure_and_run:
         path_sep = ";" if os.name == "nt" else ":"
-        paths_to_add = path_sep.join(["%s/build/" % ns3_path,
-                                      "%s/build/lib" % ns3_path,
-                                      "%s/build/bindings/python" % ns3_path,
+        paths_to_add = path_sep.join([out_dir,
+                                      "%s/lib" % out_dir,
+                                      "%s/bindings/python" % out_dir,
                                       ])
         proc_env = {"PATH": os.getenv("PATH") + path_sep + paths_to_add,
                     "LD_LIBRARY_PATH": paths_to_add,

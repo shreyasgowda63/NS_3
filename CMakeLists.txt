@@ -19,9 +19,7 @@ endif()
 # ######################################################################################################################
 project(NS3 CXX C)
 
-include(buildsupport/macros_and_definitions.cmake)
-
-set(NS3_VER 3-dev)
+file(STRINGS VERSION NS3_VER)
 
 # common options
 option(NS3_ASSERT "Enable assert on failure" OFF)
@@ -61,6 +59,7 @@ option(NS3_MONOLIB "Build a single shared ns-3 library and link it against execu
 option(NS3_MPI "Build with MPI support" ON)
 option(NS3_NATIVE_OPTIMIZATIONS "Build with -march=native -mtune=native" OFF)
 option(NS3_NSC "Build with NSC support" OFF) # currently not supported
+set(NS3_OUTPUT_DIRECTORY "" CACHE STRING "Directory to store built artifacts")
 option(NS3_PRECOMPILE_HEADERS "Precompile module headers to speed up compilation" ON)
 option(NS3_PTHREAD "Build with pthread support" ON)
 option(NS3_PYTHON_BINDINGS "Build ns-3 python bindings" OFF)
@@ -74,6 +73,9 @@ option(NS3_WARNINGS_AS_ERRORS "Treat warnings as errors. Requires NS3_WARNINGS=O
 # Options that either select which modules will get built or disable modules
 set(NS3_ENABLED_MODULES "" CACHE STRING "List of modules to enable (e.g. core;network;internet)")
 set(NS3_DISABLED_MODULES "" CACHE STRING "List of modules to disable (e.g. lte;wimax;wave)")
+
+# Include macros used below
+include(buildsupport/macros_and_definitions.cmake)
 
 # Scan module libraries
 subdirlist(libs_to_build ${CMAKE_SOURCE_DIR}/src)

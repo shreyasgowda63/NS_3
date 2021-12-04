@@ -54,7 +54,30 @@ include(ProcessorCount)
 ProcessorCount(NumThreads)
 
 # Output folders
-set(CMAKE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
+if("${NS3_OUTPUT_DIRECTORY}" STREQUAL "")
+  message(STATUS "Using default output directory ${PROJECT_SOURCE_DIR}/build")
+  set(CMAKE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build) # default output folder
+else()
+  # Check if we can create that directory
+  if(NOT (EXISTS ${NS3_OUTPUT_DIRECTORY}))
+    message(STATUS "User-defined output directory \"${NS3_OUTPUT_DIRECTORY}\" doesn't exist. Trying to create it")
+    file(MAKE_DIRECTORY ${NS3_OUTPUT_DIRECTORY})
+    if(NOT (EXISTS ${NS3_OUTPUT_DIRECTORY}))
+      message(FATAL_ERROR "User-defined output directory \"${NS3_OUTPUT_DIRECTORY}\" could not be created. "
+                          "Try changing the value of NS3_OUTPUT_DIRECTORY"
+      )
+    endif()
+
+    # If this directory is not inside the ns-3-dev folder, alert users tests may break
+    if(NOT ("${NS3_OUTPUT_DIRECTORY}" MATCHES "${PROJECT_SOURCE_DIR}"))
+      message(WARNING "User-defined output directory \"${NS3_OUTPUT_DIRECTORY}\" is outside "
+                      " of the ns-3 directory ${PROJECT_SOURCE_DIR}, which will break some tests"
+      )
+    endif()
+  endif()
+  message(STATUS "User-defined output directory \"${NS3_OUTPUT_DIRECTORY}\" will be used")
+  set(CMAKE_OUTPUT_DIRECTORY ${NS3_OUTPUT_DIRECTORY})
+endif()
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_OUTPUT_DIRECTORY}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_OUTPUT_DIRECTORY}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_OUTPUT_DIRECTORY})
