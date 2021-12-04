@@ -343,7 +343,7 @@ macro(process_options)
   if(CMAKE_FORMAT_PROGRAM)
     file(GLOB_RECURSE ALL_CMAKE_FILES CMakeLists.txt buildsupport/*.cmake)
     add_custom_target(
-      cmake-format COMMAND ${CMAKE_FORMAT_PROGRAM} -c ${PROJECT_SOURCE_DIR}/buildsupport/.cmake-format.txt -i
+      cmake-format COMMAND ${CMAKE_FORMAT_PROGRAM} -c ${PROJECT_SOURCE_DIR}/buildsupport/cmake-format.txt -i
                            ${ALL_CMAKE_FILES}
     )
     unset(ALL_CMAKE_FILES)
