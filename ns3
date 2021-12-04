@@ -170,6 +170,9 @@ def parse_args(argv):
     parser.add_argument('--valgrind',
                         help='Change the default command template to run programs and unit tests with valgrind',
                         action="store_true", default=None)
+    parser.add_argument('-j','--jobs',
+                        help='Set number of parallel jobs',
+                        action='store', type=int, dest="jobs", default=max(1,os.cpu_count()-1))
     # parser.add_argument('--shell',
     #               help=('DEPRECATED (run ./waf shell)'),
     #               action="store_true", default=None)
@@ -427,8 +430,8 @@ def get_program_shortcuts(ns3_path, build_profile, ns3_version):
     return ns3_program_map
 
 
-def cmake_build(current_cmake_cache_folder, output, target=None, verbose=False):
-    cmake_build_command = "cmake --build . -j %d%s" % (os.cpu_count(), (" --target %s" % target) if target else "")
+def cmake_build(current_cmake_cache_folder, output, jobs, target=None, verbose=False):
+    cmake_build_command = "cmake --build . -j %d%s" % (jobs, (" --target %s" % target) if target else "")
     if verbose:
         print("cd %s; %s" % (current_cmake_cache_folder, cmake_build_command))
     subprocess.run(cmake_build_command.split(), cwd=current_cmake_cache_folder, stdout=output)
@@ -561,7 +564,7 @@ def build_step(args,
                output):
     # There are two scenarios where we build everything: ./ns3 build and ./ns3 --check
     if args.check or ("build" in args and len(args.build) == 0):
-        cmake_build(current_cmake_cache_folder, output=output, verbose=args.verbose)
+        cmake_build(current_cmake_cache_folder, jobs=args.jobs, output=output, verbose=args.verbose)
         if "build" in args:
             # We can exit early if only building
             exit(0)
@@ -575,13 +578,14 @@ def build_step(args,
                 target = "lib" + target
             elif target not in non_executable_targets:
                 target = get_target_to_build(target, ns3_version, build_profile)
-            cmake_build(current_cmake_cache_folder, target=target, output=output, verbose=args.verbose)
+            cmake_build(current_cmake_cache_folder, jobs=args.jobs, target=target, output=output, verbose=args.verbose)
         # We can also exit earlier in this case
         exit(0)
 
     # The remaining case is when we want to build something to run
     if configure_and_run:
         cmake_build(current_cmake_cache_folder,
+                    jobs=args.jobs,
                     target=get_target_to_build(target_to_run, ns3_version, build_profile),
                     output=output,
                     verbose=args.verbose
@@ -721,7 +725,7 @@ def main():
         # running test.py/check?
         if args.check:
             target_to_run = ns3_path + os.sep + "test.py"
-            target_args = ["--nowaf"]
+            target_args = ["--nowaf", "--jobs=%d" % args.jobs]
 
         # running with command template?
         if args.command_template:
