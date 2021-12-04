@@ -1222,11 +1222,11 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
 
   # Now that scanning modules finished, we can remove the disabled modules or
   # replace the modules list with the ones in the enabled list
-  if(NS3_ENABLED_MODULES OR ns3rc_enabled_modules)
+  if(${NS3_ENABLED_MODULES} OR ${ns3rc_enabled_modules})
     # List of enabled modules passed by the command line overwrites list read
     # from ns3rc
     if(NS3_ENABLED_MODULES)
-      set(ns3rc_enabled_modules ${NS3_ENABLED_MODULES})
+      set(ns3rc_enabled_modules ${${NS3_ENABLED_MODULES}})
     endif()
 
     # Filter enabled modules
