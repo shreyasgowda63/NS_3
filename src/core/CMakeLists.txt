@@ -84,7 +84,6 @@ set(source_files
     ${osclock_sources}
     ${int64x64_sources}
     ${thread_sources}
-    ${valgrind_sources}
     ${example_as_test_sources}
     ${embedded_version_sources}
     helper/csv-reader.cc
