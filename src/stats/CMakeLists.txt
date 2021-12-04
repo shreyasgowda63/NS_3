@@ -16,6 +16,7 @@ if(${NS3_SQLITE})
     endif()
   endif()
 
+  mark_as_advanced(ENABLE_SQLITE)
   if("${SQLite3_FOUND}")
     set(ENABLE_SQLITE True CACHE INTERNAL "")
   else()

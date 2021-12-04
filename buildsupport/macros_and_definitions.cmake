@@ -159,6 +159,18 @@ macro(clear_global_cached_variables)
   unset(ns3-libs CACHE)
   unset(ns3-libs-tests CACHE)
   unset(ns3-python-bindings-modules CACHE)
+  mark_as_advanced(
+    build_profile
+    build_profile_suffix
+    lib-ns3-static-objs
+    ns3-contrib-libs
+    ns3-example-folders
+    ns3-execs
+    ns3-external-libs
+    ns3-libs
+    ns3-libs-tests
+    ns3-python-bindings-modules
+  )
 endmacro()
 
 # process all options passed in main cmakeLists
@@ -326,6 +338,7 @@ macro(process_options)
     endif()
   endif()
 
+  mark_as_advanced(CMAKE_FORMAT_PROGRAM)
   find_program(CMAKE_FORMAT_PROGRAM cmake-format HINTS ~/.local/bin)
   if(CMAKE_FORMAT_PROGRAM)
     file(GLOB_RECURSE ALL_CMAKE_FILES CMakeLists.txt buildsupport/*.cmake)
@@ -478,6 +491,7 @@ macro(process_options)
     endif()
 
     # LibRT
+    mark_as_advanced(LIBRT)
     if(${NS3_REALTIME})
       if(APPLE)
         message(STATUS "Lib RT is not supported on Mac OS X. Continuing without it.")
@@ -574,6 +588,7 @@ macro(process_options)
     set(ENABLE_VISUALIZER TRUE)
   endif()
 
+  mark_as_advanced(Boost_INCLUDE_DIR)
   find_package(Boost)
   if(${Boost_FOUND})
     include_directories(${Boost_INCLUDE_DIRS})
@@ -601,6 +616,7 @@ macro(process_options)
   endif()
 
   if(${NS3_DOCS})
+    mark_as_advanced(DOXYGEN DOT DIA)
     find_program(DOXYGEN doxygen REQUIRED)
     find_program(DOT dot REQUIRED)
     find_program(DIA dia REQUIRED)
@@ -654,6 +670,17 @@ CommandLine configuration in those files instead.
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
 
+    mark_as_advanced(
+      SPHINX_EXECUTABLE
+      SPHINX_OUTPUT_HTML
+      SPHINX_OUTPUT_MAN
+      SPHINX_WARNINGS_AS_ERRORS
+      EPSTOPDF
+      PDFLATEX
+      LATEXMK
+      CONVERT
+      DVIPNG
+    )
     find_package(Sphinx REQUIRED)
     find_program(EPSTOPDF epstopdf)
     find_program(PDFLATEX pdflatex)
@@ -787,6 +814,7 @@ CommandLine configuration in those files instead.
   foreach(libname ${scanned_modules})
     # Create libname of output library of module
     library_target_name(${libname} targetname)
+    mark_as_advanced(lib${libname} lib${libname}-obj)
     set(lib${libname} ${targetname} CACHE INTERNAL "")
     set(lib${libname}-obj ${targetname}-obj CACHE INTERNAL "")
   endforeach()
@@ -859,7 +887,8 @@ function(set_runtime_outputdirectory target_name output_directory target_prefix)
   set(ns3-execs "${output_directory}${ns3-exec-outputname};${ns3-execs}" CACHE INTERNAL "list of c++ executables")
 
   set_target_properties(
-    ${target_prefix}${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${output_directory} RUNTIME_OUTPUT_NAME ${ns3-exec-outputname}
+    ${target_prefix}${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${output_directory} RUNTIME_OUTPUT_NAME
+                                                                                           ${ns3-exec-outputname}
   )
   if(${XCODE})
     # Is that so hard not to break people's CI, AAPL?? Why would you output the targets to a Debug/Release subfolder?
@@ -867,8 +896,8 @@ function(set_runtime_outputdirectory target_name output_directory target_prefix)
     foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
       string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
       set_target_properties(
-              ${target_prefix}${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${output_directory}
-                                  RUNTIME_OUTPUT_NAME_${OUTPUTCONFIG} ${ns3-exec-outputname}
+        ${target_prefix}${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${output_directory}
+                                                  RUNTIME_OUTPUT_NAME_${OUTPUTCONFIG} ${ns3-exec-outputname}
       )
     endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
   endif()

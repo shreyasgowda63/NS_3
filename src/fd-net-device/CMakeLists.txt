@@ -1,5 +1,6 @@
 set(name fd-net-device)
 
+mark_as_advanced(ENABLE_THREADING)
 set(ENABLE_THREADING ${HAVE_PTHREAD_H})
 
 check_include_file_cxx(net/ethernet.h HAVE_NET_ETHERNET_H)
@@ -14,6 +15,7 @@ if(PKG_CONFIG_FOUND)
   pkg_check_modules(DPDK libdpdk)
 endif()
 
+mark_as_advanced(ENABLE_FDNETDEV ENABLE_DPDKDEVNET ENABLE_TAP ENABLE_EMU ENABLE_NETMAP_EMU)
 set(ENABLE_FDNETDEV False CACHE INTERNAL "")
 set(ENABLE_DPDKDEVNET False CACHE INTERNAL "")
 set(ENABLE_TAP False CACHE INTERNAL "")
@@ -57,9 +59,7 @@ if(${ENABLE_FDNETDEV})
     set(emu_sources helper/emu-fd-net-device-helper.cc)
     set(emu_headers helper/emu-fd-net-device-helper.h)
 
-    add_executable(
-      raw-sock-creator helper/creator-utils.cc helper/encode-decode.cc helper/raw-sock-creator.cc
-    )
+    add_executable(raw-sock-creator helper/creator-utils.cc helper/encode-decode.cc helper/raw-sock-creator.cc)
     add_definitions(
       -DRAW_SOCK_CREATOR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ns${NS3_VER}-raw-sock-creator${build_profile_suffix}"
     )
@@ -72,15 +72,11 @@ if(${ENABLE_FDNETDEV})
     set(tap_sources helper/tap-fd-net-device-helper.cc)
     set(tap_headers helper/tap-fd-net-device-helper.h)
 
-    add_executable(
-      tap-device-creator helper/creator-utils.cc helper/encode-decode.cc helper/tap-device-creator.cc
-    )
+    add_executable(tap-device-creator helper/creator-utils.cc helper/encode-decode.cc helper/tap-device-creator.cc)
     add_definitions(
       -DTAP_DEV_CREATOR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ns${NS3_VER}-tap-device-creator${build_profile_suffix}"
     )
-    set_runtime_outputdirectory(
-      tap-device-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ ""
-    )
+    set_runtime_outputdirectory(tap-device-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ "")
 
     list(APPEND fd-net-device_creators tap-device-creator)
   endif()
@@ -90,16 +86,13 @@ if(${ENABLE_FDNETDEV})
     set(planetlab_headers helper/planetlab-fd-net-device-helper.h)
 
     add_executable(
-      planetlab-tap-creator helper/creator-utils.cc helper/encode-decode.cc
-                                              helper/planetlab-tap-creator.cc
+      planetlab-tap-creator helper/creator-utils.cc helper/encode-decode.cc helper/planetlab-tap-creator.cc
     )
     add_definitions(
       -DPLANETLAB_TAP_CREATOR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ns${NS3_VER}-device_planetlab-tap-creator${build_profile_suffix}"
     )
     target_link_libraries(planetlab-tap-creator ${PLANETLAB_LIBRARIES})
-    set_runtime_outputdirectory(
-      planetlab-tap-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ ""
-    )
+    set_runtime_outputdirectory(planetlab-tap-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ "")
 
     list(APPEND fd-net-device_creators planetlab-tap-creator)
   endif()
@@ -109,15 +102,12 @@ if(${ENABLE_FDNETDEV})
     set(netmap_headers helper/netmap-net-device-helper.h model/netmap-net-device.h)
 
     add_executable(
-      netmap-device-creator helper/creator-utils.cc helper/encode-decode.cc
-                                              helper/netmap-device-creator.cc
+      netmap-device-creator helper/creator-utils.cc helper/encode-decode.cc helper/netmap-device-creator.cc
     )
     add_definitions(
       -DNETMAP_DEV_CREATOR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ns${NS3_VER}-netmap-device-creator${build_profile_suffix}"
     )
-    set_runtime_outputdirectory(
-      netmap-device-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ ""
-    )
+    set_runtime_outputdirectory(netmap-device-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ "")
 
     list(APPEND fd-net-device_creators netmap-device-creator)
   endif()

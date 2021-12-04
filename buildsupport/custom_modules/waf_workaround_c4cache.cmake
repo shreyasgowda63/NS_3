@@ -65,6 +65,7 @@ function(generate_c4che_cachepy)
   string(APPEND cache_contents "VERSION = '3-dev' \n")
   string(APPEND cache_contents "PYTHON = ['${Python3_EXECUTABLE}']\n")
 
+  mark_as_advanced(VALGRIND)
   find_program(VALGRIND valgrind)
   if("${VALGRIND}" STREQUAL "VALGRIND-NOTFOUND")
     string(APPEND cache_contents "VALGRIND_FOUND = False \n")
