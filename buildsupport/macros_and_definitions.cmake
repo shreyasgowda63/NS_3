@@ -831,7 +831,7 @@ CommandLine configuration in those files instead.
 
     add_executable(stdlib_pch_exec ${PROJECT_SOURCE_DIR}/buildsupport/empty_main.cc)
     target_precompile_headers(stdlib_pch_exec PUBLIC "${precompiled_header_libraries}")
-    set_runtime_outputdirectory(stdlib_pch_exec ${CMAKE_BINARY_DIR})
+    set_runtime_outputdirectory(stdlib_pch_exec ${CMAKE_BINARY_DIR} "")
   endif()
 
   # Create new lib for NS3 static builds
@@ -854,12 +854,12 @@ CommandLine configuration in those files instead.
   endif()
 endmacro()
 
-function(set_runtime_outputdirectory target_name output_directory)
+function(set_runtime_outputdirectory target_name output_directory target_prefix)
   set(ns3-exec-outputname ns${NS3_VER}-${target_name}${build_profile_suffix})
   set(ns3-execs "${output_directory}${ns3-exec-outputname};${ns3-execs}" CACHE INTERNAL "list of c++ executables")
 
   set_target_properties(
-    ${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${output_directory} RUNTIME_OUTPUT_NAME ${ns3-exec-outputname}
+    ${target_prefix}${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${output_directory} RUNTIME_OUTPUT_NAME ${ns3-exec-outputname}
   )
   if(${XCODE})
     # Is that so hard not to break people's CI, AAPL?? Why would you output the targets to a Debug/Release subfolder?
@@ -867,18 +867,18 @@ function(set_runtime_outputdirectory target_name output_directory)
     foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
       string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
       set_target_properties(
-        ${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${output_directory}
+              ${target_prefix}${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${output_directory}
                                   RUNTIME_OUTPUT_NAME_${OUTPUTCONFIG} ${ns3-exec-outputname}
       )
     endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
   endif()
 
   if(${TESTS_ENABLED})
-    add_dependencies(all-test-targets ${target_name})
+    add_dependencies(all-test-targets ${target_prefix}${target_name})
   endif()
 
   if(${NS3_CLANG_TIMETRACE})
-    add_dependencies(timeTraceReport ${target_name})
+    add_dependencies(timeTraceReport ${target_prefix}${target_name})
   endif()
 endfunction(set_runtime_outputdirectory)
 
@@ -948,7 +948,7 @@ macro(build_example name source_files header_files libraries_to_link)
       target_precompile_headers(${name} REUSE_FROM stdlib_pch_exec)
     endif()
 
-    set_runtime_outputdirectory(${name} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/examples/${examplefolder}/)
+    set_runtime_outputdirectory(${name} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/examples/${examplefolder}/ "")
   endif()
 endmacro()
 

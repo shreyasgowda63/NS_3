@@ -490,13 +490,17 @@ def reconfigure_cmake_to_force_refresh(cmake, current_cmake_cache_folder, output
                         "A backup of the settings was saved in %s" % settings_bak_file)
 
 
-def get_target_to_build(program_name, ns3_version, build_profile):
+def get_target_to_build(program_path, ns3_version, build_profile):
     build_profile_suffix = "" if build_profile in ["release"] else "-" + build_profile
     program_name = "".join(*re.findall("(.*)ns%s-(.*)%s" % (ns3_version, build_profile_suffix), program_path))
 
-    # Get the path to the program and replace slashes with underlines
-    # to get unique targets for CMake, preventing collisions
-    return program_name.split(out_dir+"/")[1].replace("/", "_")
+    if "scratch" in program_path:
+        # Get the path to the program and replace slashes with underlines
+        # to get unique targets for CMake, preventing collisions with modules examples
+        return program_name.split(out_dir+"/")[1].replace("/", "_")
+    else:
+        # Other programs just use their normal names (without version prefix and build_profile suffix) as targets
+        return program_name.split("/")[-1]
 
 
 def configuration_step(ns3_path, current_cmake_cache_folder, current_cmake_generator, args, run_only, configure_and_run,

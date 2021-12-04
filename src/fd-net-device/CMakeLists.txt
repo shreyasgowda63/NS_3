@@ -63,7 +63,7 @@ if(${ENABLE_FDNETDEV})
     add_definitions(
       -DRAW_SOCK_CREATOR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ns${NS3_VER}-raw-sock-creator${build_profile_suffix}"
     )
-    set_runtime_outputdirectory(raw-sock-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/)
+    set_runtime_outputdirectory(raw-sock-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ "")
 
     list(APPEND fd-net-device_creators raw-sock-creator)
   endif()
@@ -79,7 +79,7 @@ if(${ENABLE_FDNETDEV})
       -DTAP_DEV_CREATOR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ns${NS3_VER}-tap-device-creator${build_profile_suffix}"
     )
     set_runtime_outputdirectory(
-      tap-device-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/
+      tap-device-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ ""
     )
 
     list(APPEND fd-net-device_creators tap-device-creator)
@@ -98,7 +98,7 @@ if(${ENABLE_FDNETDEV})
     )
     target_link_libraries(planetlab-tap-creator ${PLANETLAB_LIBRARIES})
     set_runtime_outputdirectory(
-      planetlab-tap-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/
+      planetlab-tap-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ ""
     )
 
     list(APPEND fd-net-device_creators planetlab-tap-creator)
@@ -116,7 +116,7 @@ if(${ENABLE_FDNETDEV})
       -DNETMAP_DEV_CREATOR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ns${NS3_VER}-netmap-device-creator${build_profile_suffix}"
     )
     set_runtime_outputdirectory(
-      netmap-device-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/
+      netmap-device-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ ""
     )
 
     list(APPEND fd-net-device_creators netmap-device-creator)

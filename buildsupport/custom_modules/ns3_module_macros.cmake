@@ -340,7 +340,7 @@ macro(
       target_precompile_headers(${name} REUSE_FROM stdlib_pch_exec)
     endif()
 
-    set_runtime_outputdirectory(${name} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${folder}/examples/)
+    set_runtime_outputdirectory(${name} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${folder}/examples/ "")
   endif()
 endmacro()
 

@@ -182,4 +182,4 @@ else()
 endif()
 
 target_include_directories(netanim PUBLIC qtpropertybrowser/src)
-set_runtime_outputdirectory(netanim ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bin)
+set_runtime_outputdirectory(netanim ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bin "")

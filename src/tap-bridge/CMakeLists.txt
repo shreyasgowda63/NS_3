@@ -14,4 +14,4 @@ add_definitions(
   -DTAP_CREATOR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/tap-bridge/ns${NS3_VER}-tap-creator${build_profile_suffix}"
 )
 add_executable(tap-creator model/tap-creator.cc model/tap-encode-decode.cc)
-set_runtime_outputdirectory(tap-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/tap-bridge/)
+set_runtime_outputdirectory(tap-creator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/tap-bridge/ "")
