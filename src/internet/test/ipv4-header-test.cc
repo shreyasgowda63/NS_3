@@ -115,7 +115,7 @@ void Ipv4HeaderTest::ReceivePkt (Ptr<Socket> socket)
   m_receivedPacket = socket->Recv (2, MSG_PEEK);
   NS_TEST_ASSERT_MSG_EQ (m_receivedPacket->GetSize (),2, "Received packet size is  not equal to 2");
   m_receivedPacket = socket->Recv (std::numeric_limits<uint32_t>::max (), 0);
-  NS_TEST_ASSERT_MSG_EQ (availableData, m_receivedPacket->GetSize (), "Receivedpacket size is not equal to Rx buffer size");
+  NS_TEST_ASSERT_MSG_EQ (availableData, m_receivedPacket->GetSize (), "Received packet size is not equal to Rx buffer size");
   m_receivedPacket->PeekHeader (m_receivedHeader);
 }
 

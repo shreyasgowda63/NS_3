@@ -1085,7 +1085,7 @@ TcpSocketMsgBase::SetBeforeRetransmitCb (RetrCb cb)
 void
 TcpSocketMsgBase::ReceivedAck (Ptr<Packet> packet, const TcpHeader& tcpHeader)
 {
-  NS_ASSERT ((m_rcvAckCb.IsNull () || m_processedAckCb.IsNull ()));
+  NS_ASSERT (!(m_rcvAckCb.IsNull () || m_processedAckCb.IsNull ()));
   m_rcvAckCb (packet, tcpHeader, this);
 
   TcpSocketBase::ReceivedAck (packet, tcpHeader);

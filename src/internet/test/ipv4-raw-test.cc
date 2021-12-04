@@ -140,7 +140,7 @@ void Ipv4RawSocketImplTest::ReceivePkt (Ptr<Socket> socket)
   m_receivedPacket = socket->Recv (2, MSG_PEEK);
   NS_TEST_ASSERT_MSG_EQ (m_receivedPacket->GetSize (), 2, "ReceivedPacket size is not equal to 2");
   m_receivedPacket = socket->Recv (std::numeric_limits<uint32_t>::max (), 0);
-  NS_TEST_ASSERT_MSG_EQ (availableData, m_receivedPacket->GetSize (), "ReceivedPacket size is not equal to the Rx buffer size");
+  NS_TEST_ASSERT_MSG_EQ (availableData, m_receivedPacket->GetSize (), "Received packet size is not equal to Rx buffer size");
 }
 
 void Ipv4RawSocketImplTest::ReceivePkt2 (Ptr<Socket> socket)
@@ -150,7 +150,7 @@ void Ipv4RawSocketImplTest::ReceivePkt2 (Ptr<Socket> socket)
   m_receivedPacket2 = socket->Recv (2, MSG_PEEK);
   NS_TEST_ASSERT_MSG_EQ (m_receivedPacket2->GetSize (), 2, "ReceivedPacket size is not equal to 2");
   m_receivedPacket2 = socket->Recv (std::numeric_limits<uint32_t>::max (), 0);
-  NS_TEST_ASSERT_MSG_EQ (availableData, m_receivedPacket2->GetSize (), "ReceivedPacket size is not equal to the Rx buffer size");
+  NS_TEST_ASSERT_MSG_EQ (availableData, m_receivedPacket2->GetSize (), "Received packet size is not equal to Rx buffer size");
 }
 
 void
