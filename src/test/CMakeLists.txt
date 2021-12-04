@@ -2,7 +2,10 @@ set(name test)
 
 set(nsc_sources)
 if(${NS3_NSC})
-  set(nsc_sources ns3tcp/ns3tcp-cwnd-test-suite.cc ns3tcp/ns3tcp-interop-test-suite.cc ns3tcp/nsctcp-loss-test-suite.cc)
+  set(nsc_sources
+      ns3tcp/ns3tcp-cwnd-test-suite.cc ns3tcp/ns3tcp-interop-test-suite.cc
+      ns3tcp/nsctcp-loss-test-suite.cc
+  )
 endif()
 
 set(csma-layout_sources)
@@ -30,8 +33,10 @@ if(applications IN_LIST ns3-all-modules)
     )
   endif()
   if(wifi IN_LIST ns3-all-modules)
-    set(wifi_sources ns3wifi/wifi-issue-211-test-suite.cc ns3wifi/wifi-ac-mapping-test-suite.cc
-                     ns3wifi/wifi-msdu-aggregator-test-suite.cc
+    set(wifi_sources
+        ns3wifi/wifi-issue-211-test-suite.cc
+        ns3wifi/wifi-ac-mapping-test-suite.cc
+        ns3wifi/wifi-msdu-aggregator-test-suite.cc
     )
   endif()
 endif()
@@ -44,8 +49,11 @@ endif()
 
 set(traffic-control_sources)
 if(traffic-control IN_LIST ns3-all-modules)
-  set(traffic-control_sources ns3tc/fq-cobalt-queue-disc-test-suite.cc ns3tc/fq-codel-queue-disc-test-suite.cc
-                              ns3tc/fq-pie-queue-disc-test-suite.cc ns3tc/pfifo-fast-queue-disc-test-suite.cc
+  set(traffic-control_sources
+      ns3tc/fq-cobalt-queue-disc-test-suite.cc
+      ns3tc/fq-codel-queue-disc-test-suite.cc
+      ns3tc/fq-pie-queue-disc-test-suite.cc
+      ns3tc/pfifo-fast-queue-disc-test-suite.cc
   )
 endif()
 

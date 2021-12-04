@@ -14,7 +14,9 @@ set(source_files
     model/remote-channel-bundle.cc
 )
 
-set(header_files model/mpi-interface.h model/mpi-receiver.h model/parallel-communication-interface.h)
+set(header_files model/mpi-interface.h model/mpi-receiver.h
+                 model/parallel-communication-interface.h
+)
 
 set(libraries_to_link ${libcore} ${libnetwork} ${MPI_CXX_LIBRARIES})
 
@@ -25,4 +27,6 @@ endif()
 
 set(test_sources ${example_as_test_suite})
 
-build_lib("${name}" "${source_files}" "${header_files}" "${libraries_to_link}" "${test_sources}")
+build_lib("${name}" "${source_files}" "${header_files}" "${libraries_to_link}"
+          "${test_sources}"
+)

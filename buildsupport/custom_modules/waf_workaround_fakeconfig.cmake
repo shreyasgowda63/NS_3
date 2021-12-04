@@ -51,7 +51,9 @@ endmacro()
 macro(write_fakewaf_config)
   set(out "---- Summary of optional NS-3 features:\n")
   string(APPEND out "Build profile                 : ${build_profile}\n")
-  string(APPEND out "Build directory               : ${CMAKE_OUTPUT_DIRECTORY}\n")
+  string(APPEND out
+         "Build directory               : ${CMAKE_OUTPUT_DIRECTORY}\n"
+  )
   string(APPEND out "BRITE Integration             : ")
   check_on_or_off("ON" "${NS3_BRITE}")
 
@@ -69,8 +71,8 @@ macro(write_fakewaf_config)
   string(APPEND out "GNU Scientific Library (GSL)  : ")
   check_on_or_off("${NS3_GSL}" "${GSL_FOUND}")
 
-  # string(APPEND out "Gcrypt library                : not enabled (libgcrypt not found: you can use libgcrypt-config to
-  # find its location.)
+  # string(APPEND out "Gcrypt library                : not enabled (libgcrypt
+  # not found: you can use libgcrypt-config to find its location.)
 
   string(APPEND out "GtkConfigStore                : ")
   check_on_or_off("${NS3_GTK3}" "${GTK3_FOUND}")
@@ -87,10 +89,19 @@ macro(write_fakewaf_config)
   string(APPEND out "Netmap emulation FdNetDevice  : ")
   check_on_or_off("${NS3_EMU}" "${ENABLE_NETMAP_EMU}")
 
-  string(APPEND out "Network Simulation Cradle     : flag is set to ${NS3_NSC}, but currently not supported\n")
-  string(APPEND out "PlanetLab FdNetDevice         : flag is set to ${NS3_PLANETLAB}, but currently not supported\n")
+  string(
+    APPEND
+    out
+    "Network Simulation Cradle     : flag is set to ${NS3_NSC}, but currently not supported\n"
+  )
+  string(
+    APPEND
+    out
+    "PlanetLab FdNetDevice         : flag is set to ${NS3_PLANETLAB}, but currently not supported\n"
+  )
   string(APPEND out "PyViz visualizer              : ${NS3_VISUALIZER}\n")
-  # string(APPEND out "Python API Scanning Support   : not enabled (castxml too old)
+  # string(APPEND out "Python API Scanning Support   : not enabled (castxml too
+  # old)
   string(APPEND out "Python Bindings               : ${NS3_PYTHON_BINDINGS}\n")
   string(APPEND out "Real Time Simulator           : ")
   check_on_or_off("${NS3_REALTIME}" "${ENABLE_REALTIME}")
@@ -106,8 +117,8 @@ macro(write_fakewaf_config)
   string(APPEND out "Threading Primitives          : ")
   check_on_or_off("${NS3_PTHREAD}" "${THREADS_ENABLED}")
 
-  # string(APPEND out "Use sudo to set suid bit      : not enabled (option --enable-sudo not selected) string(APPEND out
-  # "XmlIo                         : enabled
+  # string(APPEND out "Use sudo to set suid bit      : not enabled (option
+  # --enable-sudo not selected) string(APPEND out "XmlIo : enabled
 
   file(WRITE ${PROJECT_BINARY_DIR}/ns3wafconfig.txt ${out})
   message(STATUS ${out})

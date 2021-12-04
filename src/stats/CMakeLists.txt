@@ -79,8 +79,11 @@ set(header_files
 
 set(libraries_to_link ${libcore} ${sqlite_libraries})
 
-set(test_sources test/average-test-suite.cc test/basic-data-calculators-test-suite.cc test/double-probe-test-suite.cc
-                 test/histogram-test-suite.cc
+set(test_sources
+    test/average-test-suite.cc test/basic-data-calculators-test-suite.cc
+    test/double-probe-test-suite.cc test/histogram-test-suite.cc
 )
 
-build_lib("${name}" "${source_files}" "${header_files}" "${libraries_to_link}" "${test_sources}")
+build_lib("${name}" "${source_files}" "${header_files}" "${libraries_to_link}"
+          "${test_sources}"
+)
