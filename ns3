@@ -449,7 +449,16 @@ def get_program_shortcuts(build_profile, ns3_version):
 
 
 def cmake_build(current_cmake_cache_folder, output, jobs, target=None, verbose=False, dry_run=False):
-    cmake_build_command = "cmake --build . -j %d%s" % (jobs, (" --target %s" % target) if target else "")
+    # Check CMake version
+    cmake = shutil.which("cmake")
+    if not cmake:
+        raise Exception("CMake was not found")
+    version = re.findall("version (.*)\n", subprocess.check_output([cmake, "--version"]).decode("utf-8"))[0]
+
+    # Older CMake versions do not accept the number of jobs directly
+    jobs_part = ("-j %d" % jobs) if version >= "3.12.0" else ""
+    target_part = (" --target %s" % target) if target else ""
+    cmake_build_command = "cmake --build . %s%s" % (jobs_part, target_part)
     if verbose:
         print("cd %s; %s" % (current_cmake_cache_folder, cmake_build_command))
     if not dry_run:

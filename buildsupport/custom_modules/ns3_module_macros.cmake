@@ -373,6 +373,7 @@ macro(
   # Handle package export
   install(TARGETS ${lib${name}} EXPORT ns3ExportTargets
           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   )
 endmacro()
 
