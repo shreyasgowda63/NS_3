@@ -43,7 +43,8 @@ def parse_args(argv):
     parser = argparse.ArgumentParser(description="ns-3 wrapper for the CMake build system")
     sub_parser = parser.add_subparsers()
 
-    parser_configure = sub_parser.add_parser('configure', help='configure --help')
+    parser_configure = sub_parser.add_parser('configure',
+                                             help='Try "./ns3 configure --help" for more configuration options')
     parser_configure.add_argument('configure',
                                   nargs='?',
                                   action='store', default=True)
@@ -114,12 +115,13 @@ def parse_args(argv):
                                        'the cache and reconfiguring the project',
                                   action="store_true", default=None)
 
-    parser_build = sub_parser.add_parser('build', help='build --help')
+    parser_build = sub_parser.add_parser('build',
+                                         help='Accepts a list of targets to build, or builds the entire project if no target is given')
     parser_build.add_argument('build',
                               help='Build the entire project or the specified target and dependencies',
                               action="store", nargs='*', default=None)
 
-    parser_clean = sub_parser.add_parser('clean', help='clean --help')
+    parser_clean = sub_parser.add_parser('clean', help='Removes files created by waf and ns3')
     parser_clean.add_argument('clean',
                               nargs="?",
                               action="store", default=True)
@@ -744,7 +746,7 @@ def main():
     # To determine if we are being called to run-no-build a waf build,
     # we can just check if the out_dir matches the base folder from the target_to_run
     if out_dir.split(os.sep)[-1] == target_to_run.split(os.sep)[0]:
-        target_to_run = target_to_run.replace(out_dir.split(os.sep)[-1]+os.sep, "")
+        target_to_run = target_to_run.replace(out_dir.split(os.sep)[-1] + os.sep, "")
         # Waf doesn't add version prefix and build type suffix to scratches, so we remove them
         if "scratch" in target_to_run and run_only:
             target_to_run = target_to_run.replace(os.path.basename(target_to_run), run_only)
