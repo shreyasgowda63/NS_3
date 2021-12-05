@@ -709,7 +709,7 @@ macro(process_options)
     add_custom_target(
       run-print-introspected-doxygen
       COMMAND
-        ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/ns3 --run-no-build
+        ${CMAKE_OUTPUT_DIRECTORY}/utils/ns${NS3_VER}-print-introspected-doxygen${build_profile_suffix}
         print-introspected-doxygen >
         ${PROJECT_SOURCE_DIR}/doc/introspected-doxygen.h
       DEPENDS print-introspected-doxygen
