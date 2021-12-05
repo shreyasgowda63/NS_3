@@ -12,7 +12,8 @@ from utils import read_config_file
 
 out_dir = ""
 build_separator = ""
-lock_file = ".lock-waf_%s_build" % sys.platform
+ns3_path = os.path.dirname(os.path.abspath(__file__))
+lock_file = os.sep.join([ns3_path, ".lock-waf_%s_build" % sys.platform])
 
 
 def on_off_argument(parser, option_name, help_on, help_off=None):
@@ -223,7 +224,7 @@ def check_build_profile(output_directory):
     return build_profile, ns3_version, ns3_modules + ns3_modules_tests if ns3_modules else None
 
 
-def clean_cmake_artifacts(ns3_path, verbose=False, dry_run=False):
+def clean_cmake_artifacts(verbose=False, dry_run=False):
     if verbose:
         print("rm -R %s" % out_dir)
 
@@ -238,8 +239,13 @@ def clean_cmake_artifacts(ns3_path, verbose=False, dry_run=False):
         if not dry_run:
             shutil.rmtree(dirname, ignore_errors=True)
 
+    if os.path.exists(lock_file):
+        if verbose:
+            print("rm %s" % lock_file)
+        os.remove(lock_file)
 
-def search_cmake_cache(ns3_path, build_profile):
+
+def search_cmake_cache(build_profile):
     # Search for the CMake cache
     cmake_cache_files = glob.glob("%s/**/CMakeCache.txt" % ns3_path, recursive=True)
     current_cmake_cache_folder = None
@@ -408,7 +414,7 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
     return first_run
 
 
-def get_program_shortcuts(ns3_path, build_profile, ns3_version):
+def get_program_shortcuts(build_profile, ns3_version):
     build_status_file = os.sep.join([out_dir, "build-status.py"])
 
     # Import programs from build-status.py
@@ -521,7 +527,7 @@ def get_target_to_build(program_path, ns3_version, build_profile):
         return program_name.split("/")[-1]
 
 
-def configuration_step(ns3_path, current_cmake_cache_folder, current_cmake_generator, args, run_only, configure_and_run,
+def configuration_step(current_cmake_cache_folder, current_cmake_generator, args, run_only, configure_and_run,
                        output, dry_run=False):
     # There are a few cases where we want to reconfigure/refresh the cmake cache
     #  MANUALLY (does require ./ns3 configure)
@@ -533,7 +539,7 @@ def configuration_step(ns3_path, current_cmake_cache_folder, current_cmake_gener
     if not run_only or configure_and_run:
         # Create a new cmake_cache folder if one does not exist
         if not current_cmake_cache_folder:
-            current_cmake_cache_folder = ns3_path + os.sep + "cmake_cache" + os.sep
+            current_cmake_cache_folder = os.sep.join([ns3_path, "cmake_cache"])
             if not os.path.exists(current_cmake_cache_folder):
                 if args.verbose:
                     print("mkdir %s" % current_cmake_cache_folder)
@@ -624,7 +630,6 @@ def main():
     global out_dir
     # Parse arguments
     args = parse_args(sys.argv[1:])
-    ns3_path = os.path.dirname(os.path.abspath(__file__))
     output = subprocess.DEVNULL if args.no_task_lines else None
 
     # no arguments were passed, so can't possibly be reconfiguring anything, then we refresh and rebuild
@@ -637,13 +642,13 @@ def main():
 
     # Read contents from lock (output directory is important)
     if os.path.exists(lock_file):
-        exec(open(os.sep.join([ns3_path, lock_file])).read(), globals())
+        exec(open(lock_file).read(), globals())
     else:
         out_dir = os.sep.join([ns3_path, "build"])
 
     # Clean project if needed
     if "clean" in args and args.clean:
-        clean_cmake_artifacts(ns3_path=ns3_path, verbose=args.verbose, dry_run=args.dry_run)
+        clean_cmake_artifacts(verbose=args.verbose, dry_run=args.dry_run)
         # We end things earlier when cleaning
         return
 
@@ -675,15 +680,14 @@ def main():
             raise Exception("You need to specify a program to run")
 
     # Get current CMake cache folder and CMake generator (used when reconfiguring)
-    current_cmake_cache_folder, current_cmake_generator = search_cmake_cache(ns3_path, build_profile)
+    current_cmake_cache_folder, current_cmake_generator = search_cmake_cache(build_profile)
 
     if args.check_config:
         check_config(current_cmake_cache_folder)
         # We end things earlier if only checking the current project configuration
         return
 
-    first_run, current_cmake_cache_folder = configuration_step(ns3_path=ns3_path,
-                                                               current_cmake_cache_folder=current_cmake_cache_folder,
+    first_run, current_cmake_cache_folder = configuration_step(current_cmake_cache_folder=current_cmake_cache_folder,
                                                                current_cmake_generator=current_cmake_generator,
                                                                args=args,
                                                                run_only=run_only,
@@ -695,14 +699,14 @@ def main():
     # re-read contents from lock (output directory is important)
     # re-run build profile check to get up-to-date information before loading the program shortcuts
     if first_run:
-        exec(open(os.sep.join([ns3_path, lock_file])).read(), globals())
+        exec(open(lock_file).read(), globals())
         build_profile, ns3_version, ns3_modules = check_build_profile(out_dir)
 
     # We could also replace the "ns3-" prefix used in c4che with the "lib" prefix currently used in cmake
     ns3_modules = [module.replace("ns3-", "") for module in ns3_modules]
 
     # Now that CMake is configured, we can look for c++ targets in build-status.py
-    ns3_programs = get_program_shortcuts(ns3_path, build_profile, ns3_version)
+    ns3_programs = get_program_shortcuts(build_profile, ns3_version)
 
     # If we have a target to run, replace shortcut with full path or raise exception
     if run_only or configure_and_run:
@@ -762,7 +766,7 @@ def main():
 
         # running test.py/check?
         if args.check:
-            target_to_run = ns3_path + os.sep + "test.py"
+            target_to_run = os.sep.join([ns3_path, "test.py"])
             target_args = ["--nowaf", "--jobs=%d" % args.jobs]
 
         # running with command template?
