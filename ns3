@@ -147,7 +147,7 @@ def parse_args(argv):
                         type=str, default='')
     parser.add_argument('--run-no-build',
                         help=(
-                            'Run a locally built program without rebuilding the project;'
+                            'Run a locally built program without rebuilding the project; '
                             'argument can be a program name, or a command starting with the program name.'),
                         type=str, default='')
     parser.add_argument('--visualize',
