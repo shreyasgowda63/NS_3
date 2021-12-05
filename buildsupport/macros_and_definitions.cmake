@@ -966,7 +966,7 @@ CommandLine configuration in those files instead.
     target_precompile_headers(
       stdlib_pch_exec PUBLIC "${precompiled_header_libraries}"
     )
-    set_runtime_outputdirectory(stdlib_pch_exec ${CMAKE_BINARY_DIR} "")
+    set_runtime_outputdirectory(stdlib_pch_exec ${CMAKE_BINARY_DIR}/ "")
   endif()
 
   # Create new lib for NS3 static builds
