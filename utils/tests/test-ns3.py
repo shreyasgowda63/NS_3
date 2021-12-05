@@ -101,6 +101,55 @@ def get_enabled_modules():
     return read_c4che_entry("NS3_ENABLED_MODULES")
 
 
+class NS3RunWafTargets(unittest.TestCase):
+
+    cleaned_once = False
+
+    def setUp(self):
+        if not NS3RunWafTargets.cleaned_once:
+            NS3RunWafTargets.cleaned_once = True
+            run_ns3("clean")
+            return_code, stdout, stderr = run_program("waf", "configure --enable-examples --enable-tests", python=True)
+            self.assertEqual(return_code, 0)
+            self.assertIn("finished successfully", stdout)
+
+            return_code, stdout, stderr = run_program("waf", "build", python=True)
+            self.assertEqual(return_code, 0)
+            self.assertIn("finished successfully", stdout)
+
+    def test_01_loadExecutables(self):
+        # Check if build-status.py exists, then read to get list of executables
+        self.assertTrue(os.path.exists(build_status_script))
+        self.ns3_executables = get_programs_list()
+        self.assertGreater(len(self.ns3_executables), 0)
+
+    def test_02_loadModules(self):
+        # Check if c4che.py exists than read to get the list of enabled modules
+        self.assertTrue(os.path.exists(c4che_script))
+        self.ns3_modules = get_enabled_modules()
+        self.assertGreater(len(self.ns3_modules), 0)
+
+    def test_03_runNobuildScratchSim(self):
+        return_code, stdout, stderr = run_ns3("--run-no-build scratch-simulator")
+        self.assertEqual(return_code, 0)
+        self.assertIn("Scratch Simulator", stderr)
+
+    def test_04_runNobuildExample(self):
+        return_code, stdout, stderr = run_ns3("--run-no-build command-line-example")
+        self.assertEqual(return_code, 0)
+        self.assertIn("command-line-example", stdout)
+
+    def test_05_runTestCaseCoreExampleSimulator(self):
+        return_code, stdout, stderr = run_program("test.py", "--nowaf -s core-example-simulator", True)
+        self.assertEqual(return_code, 0)
+        self.assertIn("PASS", stdout)
+
+    def test_06_runTestCaseExamplesAsTestsTestSuite(self):
+        return_code, stdout, stderr = run_program("test.py", "--nowaf -s examples-as-tests-test-suite", True)
+        self.assertEqual(return_code, 0)
+        self.assertIn("PASS", stdout)
+
+
 class NS3CommonSettingsTestCase(unittest.TestCase):
     def setUp(self):
         super().setUp()
@@ -510,6 +559,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     # Put tests cases in order
+    suite.addTests(loader.loadTestsFromTestCase(NS3RunWafTargets))
     suite.addTests(loader.loadTestsFromTestCase(NS3CommonSettingsTestCase))
     suite.addTests(loader.loadTestsFromTestCase(NS3ConfigureBuildProfileTestCase))
     suite.addTests(loader.loadTestsFromTestCase(NS3ConfigureTestCase))

@@ -741,6 +741,15 @@ def main():
                output
                )
 
+    # To determine if we are being called to run-no-build a waf build,
+    # we can just check if the out_dir matches the base folder from the target_to_run
+    if out_dir.split(os.sep)[-1] == target_to_run.split(os.sep)[0]:
+        target_to_run = target_to_run.replace(out_dir.split(os.sep)[-1]+os.sep, "")
+        # Waf doesn't add version prefix and build type suffix to scratches, so we remove them
+        if "scratch" in target_to_run and run_only:
+            target_to_run = target_to_run.replace(os.path.basename(target_to_run), run_only)
+        target_to_run = os.sep.join([out_dir, target_to_run])
+
     # If we're only trying to run the target, we need to check if it actually exists first
     if (run_only or configure_and_run) and not os.path.exists(target_to_run):
         raise Exception("Executable has not been built yet")
