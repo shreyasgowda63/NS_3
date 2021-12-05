@@ -901,7 +901,7 @@ CommandLine configuration in those files instead.
   # Create library names to solve dependency problems with macros that will be
   # called at each lib subdirectory
   set(ns3-libs)
-  set(ns3-all-modules)
+  set(ns3-all-enabled-modules)
   set(ns3-libs-tests)
   set(ns3-contrib-libs)
   set(lib-ns3-static-objs)
@@ -1083,7 +1083,7 @@ macro(build_example name source_files header_files libraries_to_link)
   set(missing_dependencies FALSE)
   foreach(lib ${libraries_to_link})
     string(REPLACE "lib" "" lib ${lib})
-    if(NOT (${lib} IN_LIST ns3-all-modules))
+    if(NOT (${lib} IN_LIST ns3-all-enabled-modules))
       set(missing_dependencies TRUE)
     endif()
   endforeach()
@@ -1216,6 +1216,8 @@ endfunction()
 macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
       NS3_ENABLED_MODULES NS3_DISABLED_MODULES ns3rc_enabled_modules
 )
+  mark_as_advanced(ns3-all-enabled-modules)
+
   # Before filtering, we set a variable with all scanned moduled in the src
   # directory
   set(scanned_modules ${${libs_to_build}})
@@ -1272,7 +1274,7 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
 
   # Export list with all enabled modules (used to separate ns libraries from
   # non-ns libraries in ns3_module_macros)
-  set(ns3-all-modules "${${libs_to_build}};${${contrib_libs_to_build}}"
+  set(ns3-all-enabled-modules "${${libs_to_build}};${${contrib_libs_to_build}}"
       CACHE INTERNAL "list with all enabled modules"
   )
 endmacro()
