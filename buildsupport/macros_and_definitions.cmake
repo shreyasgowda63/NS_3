@@ -1267,7 +1267,7 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
   if(NOT ${contrib_libs_to_build})
     set(${contrib_libs_to_build} "")
   endif()
-  
+
   # Filter out any eventual duplicates
   list(REMOVE_DUPLICATES ${libs_to_build})
   list(REMOVE_DUPLICATES ${contrib_libs_to_build})

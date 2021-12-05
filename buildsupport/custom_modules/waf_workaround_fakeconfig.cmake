@@ -78,18 +78,28 @@ function(print_formatted_table_with_modules table_name modules output)
   string(REPLACE "lib" "" modules_to_print "${modules}")
   list(SORT modules_to_print) # Sort for nice output
   foreach(module ${modules_to_print})
-    string(LENGTH ${module} module_name_length) # Get the size of the module string name
-    math(EXPR num_trailing_spaces "${width} - ${module_name_length}") # Calculate trailing spaces to fill the column
-    string(RANDOM LENGTH ${num_trailing_spaces} ALPHABET " " trailing_spaces) # Get string with spaces
-    string(APPEND temp "${module}${trailing_spaces}") # Append module name and spaces to output
+    # Get the size of the module string name
+    string(LENGTH ${module} module_name_length)
+
+    # Calculate trailing spaces to fill the column
+    math(EXPR num_trailing_spaces "${width} - ${module_name_length}")
+
+    # Get a string with spaces
+    string(RANDOM LENGTH ${num_trailing_spaces} ALPHABET " " trailing_spaces)
+
+    # Append module name and spaces to output
+    string(APPEND temp "${module}${trailing_spaces}")
     math(EXPR count "${count} + 1") # Count number of column
-    if(${count} EQUAL 3) # When counter hits the 3rd column, wrap to the next line
+
+    # When counter hits the 3rd column, wrap to the nextline
+    if(${count} EQUAL 3)
       string(APPEND temp "\n")
       set(count 0)
     endif()
   endforeach()
   string(APPEND temp "\n")
-  set(${output} ${${output}}${temp} PARENT_SCOPE) # Save the table outer scope out variable
+  # Save the table outer scope out variable
+  set(${output} ${${output}}${temp} PARENT_SCOPE)
 endfunction()
 
 macro(write_fakewaf_config)
@@ -166,14 +176,18 @@ macro(write_fakewaf_config)
   string(APPEND out "\n\n")
 
   set(really-enabled-modules ${ns3-libs};${ns3-contrib-libs})
-  print_formatted_table_with_modules("Modules that can be built" "${really-enabled-modules}" "out")
+  print_formatted_table_with_modules(
+    "Modules that can be built" "${really-enabled-modules}" "out"
+  )
   set(disabled-modules)
   foreach(module ${ns3-all-enabled-modules})
     if(NOT (lib${module} IN_LIST really-enabled-modules))
       list(APPEND disabled-modules ${module})
     endif()
   endforeach()
-  print_formatted_table_with_modules("Modules that cannot be built" "${disabled-modules}" "out")
+  print_formatted_table_with_modules(
+    "Modules that cannot be built" "${disabled-modules}" "out"
+  )
 
   file(WRITE ${PROJECT_BINARY_DIR}/ns3wafconfig.txt ${out})
   message(STATUS ${out})
