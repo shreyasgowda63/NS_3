@@ -150,7 +150,7 @@ macro(
     list(LENGTH test_sources test_source_len)
     if(${test_source_len} GREATER 0)
       # Create libname of output library test of module
-      set(test${libname} test-lib${libname} CACHE INTERNAL "")
+      set(test${libname} lib${libname}-test CACHE INTERNAL "")
       set(ns3-libs-tests "${test${libname}};${ns3-libs-tests}"
           CACHE INTERNAL "list of test libraries"
       )
