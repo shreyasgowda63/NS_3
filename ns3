@@ -639,7 +639,7 @@ def main():
     if os.path.exists(lock_file):
         exec(open(os.sep.join([ns3_path, lock_file])).read(), globals())
     else:
-        out_dir = os.sep.join([ns3_path], "build")
+        out_dir = os.sep.join([ns3_path, "build"])
 
     # Clean project if needed
     if "clean" in args and args.clean:
