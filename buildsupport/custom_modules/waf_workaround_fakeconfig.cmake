@@ -176,10 +176,12 @@ macro(write_fakewaf_config)
   string(APPEND out "\n\n")
 
   set(really-enabled-modules ${ns3-libs};${ns3-contrib-libs})
-  print_formatted_table_with_modules(
-    "Modules that can be built" "${really-enabled-modules}" "out"
-  )
-  string(APPEND out "\n")
+  if(really-enabled-modules)
+    print_formatted_table_with_modules(
+      "Modules configured to be built" "${really-enabled-modules}" "out"
+    )
+    string(APPEND out "\n")
+  endif()
 
   set(disabled-modules)
   foreach(module ${ns3-all-enabled-modules})
@@ -187,10 +189,13 @@ macro(write_fakewaf_config)
       list(APPEND disabled-modules ${module})
     endif()
   endforeach()
-  print_formatted_table_with_modules(
-    "Modules that cannot be built" "${disabled-modules}" "out"
-  )
-  string(APPEND out "\n")
+
+  if(disabled-modules)
+    print_formatted_table_with_modules(
+      "Modules that cannot be built" "${disabled-modules}" "out"
+    )
+    string(APPEND out "\n")
+  endif()
 
   file(WRITE ${PROJECT_BINARY_DIR}/ns3wafconfig.txt ${out})
   message(STATUS ${out})
