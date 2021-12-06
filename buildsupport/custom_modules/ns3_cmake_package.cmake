@@ -16,7 +16,7 @@
 # Author: Gabriel Ferreira <gabrielcarvfer@gmail.com>
 
 macro(ns3_cmake_package)
-  install(EXPORT ns3ExportTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ns3
+  install(EXPORT ns3ExportTargets NAMESPACE ns3:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ns3
           FILE ns3Targets.cmake
   )
 

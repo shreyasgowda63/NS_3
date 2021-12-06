@@ -78,6 +78,7 @@ macro(
       target_precompile_headers(${lib${libname}} REUSE_FROM stdlib_pch)
     endif()
   endif()
+  add_library(ns3::${lib${libname}} ALIAS ${lib${libname}})
 
   if(${NS3_CLANG_TIMETRACE})
     add_dependencies(timeTraceReport ${lib${libname}})
