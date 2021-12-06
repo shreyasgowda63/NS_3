@@ -24,6 +24,8 @@ set(source_files
     model/udp-echo-server.cc
     model/udp-server.cc
     model/udp-trace-client.cc
+    model/flent-application.cc
+    model/jsoncpp.cc
 )
 
 set(header_files
@@ -50,10 +52,12 @@ set(header_files
     model/udp-echo-server.h
     model/udp-server.h
     model/udp-trace-client.h
+    model/flent-application.h
+    model/json.h
 )
 
 # link to dependencies
-set(libraries_to_link ${libinternet} ${libstats})
+set(libraries_to_link ${libinternet} ${libinternet-apps} ${libstats})
 
 set(test_sources
     test/three-gpp-http-client-server-test.cc
