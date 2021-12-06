@@ -1222,12 +1222,16 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
   # directory
   set(scanned_modules ${${libs_to_build}})
 
+  # Ensure enabled and disable modules lists are using semicolons
+  string(REPLACE "," ";" ${NS3_ENABLED_MODULES} "${${NS3_ENABLED_MODULES}}")
+  string(REPLACE "," ";" ${NS3_DISABLED_MODULES} "${${NS3_DISABLED_MODULES}}")
+
   # Now that scanning modules finished, we can remove the disabled modules or
   # replace the modules list with the ones in the enabled list
   if(${NS3_ENABLED_MODULES} OR ${ns3rc_enabled_modules})
     # List of enabled modules passed by the command line overwrites list read
     # from ns3rc
-    if(NS3_ENABLED_MODULES)
+    if(${NS3_ENABLED_MODULES})
       set(ns3rc_enabled_modules ${${NS3_ENABLED_MODULES}})
     endif()
 
@@ -1237,7 +1241,6 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
 
     # Recursively build a list of module dependendencies
     foreach(lib ${${contrib_libs_to_build}})
-      message(WARNING "contrib ${lib}")
       resolve_dependencies(${lib} dependencies contrib_dependencies)
       list(APPEND ${contrib_libs_to_build} "${contrib_dependencies}")
       list(APPEND ${libs_to_build} "${dependencies}")
@@ -1258,7 +1261,7 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
     endif()
   endif()
 
-  if(NS3_DISABLED_MODULES)
+  if(${NS3_DISABLED_MODULES})
     filter_modules(NS3_DISABLED_MODULES libs_to_build "NOT")
     filter_modules(NS3_DISABLED_MODULES contrib_libs_to_build "NOT")
   endif()
