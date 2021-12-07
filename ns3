@@ -114,6 +114,9 @@ def parse_args(argv):
                                   help='Force refresh the CMake cache by deleting'
                                        'the cache and reconfiguring the project',
                                   action="store_true", default=None)
+    parser_configure.add_argument('--prefix',
+                                  help='Target output directory to install',
+                                  action="store", default=None)
 
     parser_build = sub_parser.add_parser('build',
                                          help='Accepts a list of targets to build, or builds the entire project if no target is given')
@@ -125,6 +128,15 @@ def parse_args(argv):
     parser_clean.add_argument('clean',
                               nargs="?",
                               action="store", default=True)
+
+    parser_install = sub_parser.add_parser('install', help='Install ns-3')
+    parser_install.add_argument('install',
+                              nargs="?",
+                              action="store", default=True)
+    parser_uninstall = sub_parser.add_parser('uninstall', help='Uninstall ns-3')
+    parser_uninstall.add_argument('uninstall',
+                                nargs="?",
+                                action="store", default=True)
 
     parser.add_argument('--dry-run',
                         help="Do not execute the commands",
@@ -382,6 +394,9 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
         if args.with_openflow is not None:
             cmake_args.append("-DNS3_WITH_OPENFLOW=%s" % args.with_openflow)
 
+        if args.prefix is not None:
+            cmake_args.append("-DCMAKE_INSTALL_PREFIX=%s" % args.prefix)
+
         # Build and link visualizer
         if args.visualize is not None:
             cmake_args.append("-DNS3_VISUALIZER=%s" % on_off(args.visualize))
@@ -610,7 +625,7 @@ def build_step(args,
 
     # If we are building specific targets, we build them one by one
     if "build" in args:
-        non_executable_targets = ["doxygen", "doxygen-no-build"]
+        non_executable_targets = ["doxygen", "doxygen-no-build", "install", "uninstall"]
         # Build targets in the list
         for target in args.build:
             if target in ns3_modules:
@@ -670,6 +685,12 @@ def main():
 
     if args.doxygen_no_build:
         args.build = ['doxygen-no-build']
+
+    # Installation and uninstallation options become cmake targets
+    if "install" in args:
+        args.build = ['install']
+    if 'uninstall' in args:
+        args.build = ['uninstall']
 
     # Get build profile
     build_profile, ns3_version, ns3_modules = check_build_profile(out_dir)
