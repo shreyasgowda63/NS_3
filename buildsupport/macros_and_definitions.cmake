@@ -1120,7 +1120,7 @@ endmacro()
 
 function(filter_modules modules_to_filter all_modules_list filter_in)
   set(new_modules_to_build)
-  # We are receiveing variable names as arguments, so we have to "dereference"
+  # We are receiving variable names as arguments, so we have to "dereference"
   # them first That is why we have the duplicated ${${}}
   foreach(module ${${all_modules_list}})
     if(${filter_in} (${module} IN_LIST ${modules_to_filter}))
@@ -1153,6 +1153,7 @@ endfunction()
 function(filter_libraries cmakelists_contents libraries)
   string(REGEX MATCHALL "{lib[^}]*[^obj]}" matches "${cmakelists_content}")
   list(REMOVE_ITEM matches "{libraries_to_link}")
+  string(REPLACE "{lib\${name" "" matches "${matches}") # special case for src/test
   string(REPLACE "{lib" "" matches "${matches}")
   string(REPLACE "}" "" matches "${matches}")
   set(${libraries} ${matches} PARENT_SCOPE)

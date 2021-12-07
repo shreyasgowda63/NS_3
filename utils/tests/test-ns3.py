@@ -347,7 +347,43 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
         # At this point we should have the same amount of modules that we had when we started
         self.assertEqual(len(get_enabled_modules()), len(self.ns3_modules))
 
-    def test_05_Ns3rc(self):
+    def test_05_EnableModulesComma(self):
+        # Try filtering enabled modules to network+wifi and their dependencies
+        return_code, stdout, stderr = run_ns3("configure --enable-modules='network,wifi'")
+        self.config_ok(return_code, stdout)
+
+        # At this point we should have fewer modules
+        enabled_modules = get_enabled_modules()
+        self.assertLess(len(get_enabled_modules()), len(self.ns3_modules))
+        self.assertIn("ns3-network", enabled_modules)
+        self.assertIn("ns3-wifi", enabled_modules)
+
+        # Try cleaning the list of enabled modules to reset to the normal configuration
+        return_code, stdout, stderr = run_ns3("configure --enable-modules=''")
+        self.config_ok(return_code, stdout)
+
+        # At this point we should have the same amount of modules that we had when we started
+        self.assertEqual(len(get_enabled_modules()), len(self.ns3_modules))
+
+    def test_06_DisableModulesComma(self):
+        # Try filtering disabled modules to disable lte and modules that depend on it
+        return_code, stdout, stderr = run_ns3("configure --disable-modules='lte,mpi'")
+        self.config_ok(return_code, stdout)
+
+        # At this point we should have fewer modules
+        enabled_modules = get_enabled_modules()
+        self.assertLess(len(enabled_modules), len(self.ns3_modules))
+        self.assertNotIn("ns3-lte", enabled_modules)
+        self.assertNotIn("ns3-mpi", enabled_modules)
+
+        # Try cleaning the list of enabled modules to reset to the normal configuration
+        return_code, stdout, stderr = run_ns3("configure --disable-modules=''")
+        self.config_ok(return_code, stdout)
+
+        # At this point we should have the same amount of modules that we had when we started
+        self.assertEqual(len(get_enabled_modules()), len(self.ns3_modules))
+
+    def test_07_Ns3rc(self):
         ns3rc_template = "# ! /usr/bin/env python\
                           \
                           # A list of the modules that will be enabled when ns-3 is run.\
