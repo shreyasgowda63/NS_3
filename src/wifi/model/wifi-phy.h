@@ -58,8 +58,6 @@ public:
   WifiPhy ();
   virtual ~WifiPhy ();
 
-  static const std::set<FrequencyChannelInfo> m_frequencyChannels;  //!< Available frequency channels
-
   /**
    * Return the WifiPhyStateHelper of this PHY
    *
@@ -493,6 +491,7 @@ public:
    *
    * \param id the channel number
    */
+  NS_DEPRECATED_3_35
   virtual void SetChannelNumber (uint8_t id);
   /**
    * Return current channel number.
@@ -511,7 +510,15 @@ public:
    * \param standard the Wi-Fi standard
    * \param band the Wi-Fi band
    */
+  NS_DEPRECATED_3_35
   virtual void ConfigureStandardAndBand (WifiPhyStandard standard, WifiPhyBand band);
+
+  /**
+   * Configure the PHY-level parameters for different Wi-Fi standard.
+   *
+   * \param standard the Wi-Fi standard
+   */
+  virtual void ConfigureStandard (WifiPhyStandard standard);
 
   /**
    * Get the configured Wi-Fi standard
@@ -863,6 +870,22 @@ public:
    * \param width the channel width in MHz (use 0 to leave it unspecified)
    */
   void SetOperatingChannel (uint8_t number, uint16_t frequency, uint16_t width);
+
+  using ChannelTuple = std::tuple<uint8_t /* channel number */,
+                                  uint16_t /* channel width */,
+                                  int /* WifiPhyBand */,
+                                  uint8_t /* primary20 index*/>;  //!< Tuple identifying an operating channel
+
+  /**
+   * If the standard for this object has not been set yet, store the given channel
+   * settings. Otherwise, check if a channel switch can be performed now. If not,
+   * schedule another call to this method when channel switch can be performed.
+   * Otherwise, set the operating channel based on the given channel settings and
+   * call ConfigureStandard if the PHY band has changed.
+   *
+   * \param channelTuple the given channel settings
+   */
+  void SetOperatingChannel (const ChannelTuple& channelTuple);
   /**
    * If the operating channel for this object has not been set yet, the given
    * center frequency is saved and will be used, along with the channel number and
@@ -878,6 +901,7 @@ public:
    *
    * \param freq the operating center frequency (MHz) on this node.
    */
+  NS_DEPRECATED_3_35
   virtual void SetFrequency (uint16_t freq);
   /**
    * \return the operating center frequency (MHz)
@@ -889,7 +913,12 @@ public:
    *
    * \param index the index of the primary 20 MHz channel
    */
+  NS_DEPRECATED_3_35
   void SetPrimary20Index (uint8_t index);
+  /**
+   * \return the index of the primary 20 MHz channel
+   */
+  uint8_t GetPrimary20Index (void) const;
   /**
    * \param antennas the number of antennas on this node.
    */
@@ -982,6 +1011,7 @@ public:
    *
    * \param channelWidth the channel width (in MHz)
    */
+  NS_DEPRECATED_3_35
   virtual void SetChannelWidth (uint16_t channelWidth);
   /**
    * \param width the channel width (in MHz) to support
@@ -1118,7 +1148,11 @@ protected:
    *         be performed or a negative value indicating that channel switch is
    *         currently not possible (i.e., the radio is in sleep mode)
    */
-  Time DoChannelSwitch (void);
+  Time GetDelayUntilChannelSwitch (void);
+  /**
+   * Actually switch channel based on the stored channel settings.
+   */
+  virtual void DoChannelSwitch (void);
 
   /**
    * Check if PHY state should move to CCA busy state based on current
@@ -1390,7 +1424,7 @@ private:
   uint8_t m_initialChannelNumber;           //!< Store channel number until initialization
   uint16_t m_initialChannelWidth;           //!< Store channel width (MHz) until initialization
   uint8_t m_initialPrimary20Index;          //!< Store the index of primary20 until initialization
-
+  ChannelTuple m_channelSettings;           //!< Store operating channel settings until initialization
   WifiPhyOperatingChannel m_operatingChannel;       //!< Operating channel
   std::vector<uint16_t> m_supportedChannelWidthSet; //!< Supported channel width set (MHz)
 
