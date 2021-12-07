@@ -1240,7 +1240,8 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
     filter_modules(ns3rc_enabled_modules libs_to_build "")
     filter_modules(ns3rc_enabled_modules contrib_libs_to_build "")
 
-    # Recursively build a list of module dependendencies
+    # Use recursion to automatically determine dependencies required
+    # by the manually enabled modules
     foreach(lib ${${contrib_libs_to_build}})
       resolve_dependencies(${lib} dependencies contrib_dependencies)
       list(APPEND ${contrib_libs_to_build} "${contrib_dependencies}")
@@ -1256,15 +1257,51 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
       unset(contrib_dependencies)
     endforeach()
 
-    if(${TESTS_ENABLED})
-      list(APPEND ${libs_to_build} test) # force enable test module if
-                                         # TESTS_ENABLED is enabled
+    if(core IN_LIST ${libs_to_build})
+      list(APPEND ${libs_to_build} test) # include test module
     endif()
   endif()
 
   if(${NS3_DISABLED_MODULES})
-    filter_modules(NS3_DISABLED_MODULES libs_to_build "NOT")
-    filter_modules(NS3_DISABLED_MODULES contrib_libs_to_build "NOT")
+    set(all_libs ${${libs_to_build}};${${contrib_libs_to_build}})
+
+
+    # We then use the recursive dependency finding to get all dependencies of all modules
+    foreach(lib ${all_libs})
+      resolve_dependencies(${lib} dependencies contrib_dependencies)
+      set(${lib}_dependencies "${dependencies};${contrib_dependencies}")
+      unset(dependencies)
+      unset(contrib_dependencies)
+    endforeach()
+
+    # Now we can begin removing libraries that require disabled dependencies
+    set(disabled_libs "${${NS3_DISABLED_MODULES}}")
+    foreach(libo ${all_libs})
+      foreach(lib ${all_libs})
+        foreach(disabled_lib ${disabled_libs})
+          if(${lib} STREQUAL ${disabled_lib})
+            continue()
+          endif()
+          if(${disabled_lib} IN_LIST ${lib}_dependencies)
+            list(APPEND disabled_libs ${lib})
+            break() # proceed to the next lib in all_libs
+          endif()
+        endforeach()
+      endforeach()
+    endforeach()
+
+    # Clean dependencies lists
+    foreach(lib ${all_libs})
+      unset(${lib}_dependencies)
+    endforeach()
+
+    # We can filter out disabled modules
+    filter_modules(disabled_libs libs_to_build "NOT")
+    filter_modules(disabled_libs contrib_libs_to_build "NOT")
+
+    if(core IN_LIST ${libs_to_build})
+      list(APPEND ${libs_to_build} test) # include test module
+    endif()
   endif()
 
   # Older CMake versions require this workaround for empty lists
