@@ -203,13 +203,13 @@ macro(process_options)
   clear_global_cached_variables()
 
   # process debug switch Used in build-profile-test-suite
-  string(TOLOWER ${CMAKE_BUILD_TYPE} cmakeBuildType)
+  string(TOLOWER "${CMAKE_BUILD_TYPE}" cmakeBuildType)
   set(build_profile "${cmakeBuildType}" CACHE INTERNAL "")
-  if(${cmakeBuildType} STREQUAL "debug")
+  if("${cmakeBuildType}" STREQUAL "debug")
     add_definitions(-DNS3_BUILD_PROFILE_DEBUG)
-  elseif(${cmakeBuildType} STREQUAL "relwithdebinfo")
+  elseif("${cmakeBuildType}" STREQUAL "relwithdebinfo")
     add_definitions(-DNS3_BUILD_PROFILE_RELEASE)
-  elseif(${cmakeBuildType} STREQUAL "release")
+  elseif("${cmakeBuildType}" STREQUAL "release")
     add_definitions(-DNS3_BUILD_PROFILE_OPTIMIZED)
     if(${NS3_NATIVE_OPTIMIZATIONS})
       set(build_profile "optimized" CACHE INTERNAL "")
@@ -234,7 +234,7 @@ macro(process_options)
 
   set(profiles_without_suffixes release)
   set(build_profile_suffix "" CACHE INTERNAL "")
-  if(NOT (${build_profile} IN_LIST profiles_without_suffixes))
+  if(NOT ("${build_profile}" IN_LIST profiles_without_suffixes))
     set(build_profile_suffix -${build_profile} CACHE INTERNAL "")
   endif()
 
@@ -857,12 +857,12 @@ CommandLine configuration in those files instead.
 
   # Force enable ns-3 logging in debug builds and if requested for other build
   # types
-  if(${NS3_LOG} OR (${build_profile} STREQUAL "debug"))
+  if(${NS3_LOG} OR ("${build_profile}" STREQUAL "debug"))
     add_definitions(-DNS3_LOG_ENABLE)
   endif()
   # Force enable ns-3 asserts in debug builds and if requested for other build
   # types
-  if(${NS3_ASSERT} OR (${build_profile} STREQUAL "debug"))
+  if(${NS3_ASSERT} OR ("${build_profile}" STREQUAL "debug"))
     add_definitions(-DNS3_ASSERT_ENABLE)
   endif()
 
