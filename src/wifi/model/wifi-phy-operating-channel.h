@@ -50,6 +50,8 @@ public:
 
   virtual ~WifiPhyOperatingChannel ();
 
+  static const std::set<FrequencyChannelInfo> m_frequencyChannels;  //!< Available frequency channels
+
   /**
    * Return true if a valid channel has been set, false otherwise.
    *
@@ -81,6 +83,17 @@ public:
    * \param band the PHY band
    */
   void SetDefault (uint16_t width, WifiPhyStandard standard, WifiPhyBand band);
+
+  /**
+   * Get the default channel number of the given width and for the given PHY standard
+   * and band.
+   *
+   * \param width the channel width in MHz
+   * \param standard the PHY standard
+   * \param band the PHY band
+   * \return the default channel number
+   */
+  static uint8_t GetDefaultChannelNumber (uint16_t width, WifiPhyStandard standard, WifiPhyBand band);
 
   /**
    * Return the channel number identifying the whole operating channel.
@@ -125,7 +138,6 @@ public:
    */
   uint16_t GetPrimaryChannelCenterFrequency (uint16_t primaryChannelWidth) const;
 
-private:
   /// Typedef for a const iterator pointing to a channel in the set of available channels
   typedef std::set<FrequencyChannelInfo>::const_iterator ConstIterator;
 
@@ -141,10 +153,11 @@ private:
    * \return an iterator pointing to the found channel, if any, or to past-the-end
    *         of the set of available channels
    */
-  ConstIterator FindFirst (uint8_t number, uint16_t frequency, uint16_t width,
-                           WifiPhyStandard standard, WifiPhyBand band,
-                           ConstIterator start) const;
+  static ConstIterator FindFirst (uint8_t number, uint16_t frequency, uint16_t width,
+                                  WifiPhyStandard standard, WifiPhyBand band,
+                                  ConstIterator start = m_frequencyChannels.begin ());
 
+private:
   ConstIterator m_channelIt;   //!< const iterator pointing to the configured frequency channel
   uint8_t m_primary20Index;    /**< index of the primary20 channel (0 indicates the 20 MHz
                                     subchannel with the lowest center frequency) */
