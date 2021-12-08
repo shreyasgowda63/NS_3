@@ -8,8 +8,6 @@ import shutil
 import subprocess
 import sys
 
-from utils import read_config_file
-
 out_dir = ""
 build_separator = ""
 ns3_path = os.path.dirname(os.path.abspath(__file__))
@@ -119,7 +117,8 @@ def parse_args(argv):
                                   action="store", default=None)
 
     parser_build = sub_parser.add_parser('build',
-                                         help='Accepts a list of targets to build, or builds the entire project if no target is given')
+                                         help=('Accepts a list of targets to build,',
+                                               ' or builds the entire project if no target is given'))
     parser_build.add_argument('build',
                               help='Build the entire project or the specified target and dependencies',
                               action="store", nargs='*', default=None)
@@ -131,12 +130,12 @@ def parse_args(argv):
 
     parser_install = sub_parser.add_parser('install', help='Install ns-3')
     parser_install.add_argument('install',
-                              nargs="?",
-                              action="store", default=True)
-    parser_uninstall = sub_parser.add_parser('uninstall', help='Uninstall ns-3')
-    parser_uninstall.add_argument('uninstall',
                                 nargs="?",
                                 action="store", default=True)
+    parser_uninstall = sub_parser.add_parser('uninstall', help='Uninstall ns-3')
+    parser_uninstall.add_argument('uninstall',
+                                  nargs="?",
+                                  action="store", default=True)
 
     parser.add_argument('--dry-run',
                         help="Do not execute the commands",
@@ -445,7 +444,7 @@ def get_program_shortcuts(build_profile, ns3_version):
         if "pch_exec" in program:
             continue
         temp_path = program.split(out_dir_name)[-1].split(os.sep)
-        # Remove version prefix and buildtype suffix from shortcuts (or keep them too?)
+        # Remove version prefix and build type suffix from shortcuts (or keep them too?)
         temp_path[-1] = temp_path[-1].replace("-" + build_profile, "").replace("ns" + ns3_version + "-", "")
 
         # Check if there is a .cc file for that specific program
@@ -489,7 +488,7 @@ def extract_cmakecache_settings(current_cmake_cache_folder):
     except FileNotFoundError as e:
         raise e
     current_settings = re.findall("(NS3_.*):.*=(.*)", contents)  # extract NS3 specific settings
-    current_settings.extend(re.findall("(CMAKE_BUILD_TYPE):.*=(.*)", contents))  # extract buildtype
+    current_settings.extend(re.findall("(CMAKE_BUILD_TYPE):.*=(.*)", contents))  # extract build type
     current_settings.extend(re.findall("(CMAKE_GENERATOR):.*=(.*)", contents))  # extract generator
 
     return dict(current_settings)
@@ -696,9 +695,11 @@ def main():
     build_profile, ns3_version, ns3_modules = check_build_profile(out_dir)
 
     # Check if running something or reconfiguring ns-3
+    current_cmake_cache_folder = None
     run_only = args.run_no_build or args.pyrun_no_build
     configure_and_run = args.run or args.pyrun
     target_to_run = None
+    target_args = []
     if not args.check and (run_only or configure_and_run):
         target_to_run = max(args.run_no_build, args.pyrun_no_build, args.run, args.pyrun)
         if len(target_to_run) > 0:
@@ -770,7 +771,7 @@ def main():
     # we can just check if the out_dir matches the base folder from the target_to_run
     if out_dir.split(os.sep)[-1] == target_to_run.split(os.sep)[0]:
         target_to_run = target_to_run.replace(out_dir.split(os.sep)[-1] + os.sep, "")
-        # Waf doesn't add version prefix and build type suffix to scratches, so we remove them
+        # Waf doesn't add version prefix and build type suffix to the scratches, so we remove them
         if "scratch" in target_to_run and run_only:
             target_to_run = target_to_run.replace(os.path.basename(target_to_run), run_only)
         target_to_run = os.sep.join([out_dir, target_to_run])

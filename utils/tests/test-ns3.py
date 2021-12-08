@@ -18,15 +18,14 @@
 #
 # Author: Gabriel Ferreira <gabrielcarvfer@gmail.com>
 
-import itertools
+import glob
+import os
+import re
 import shutil
-from functools import partial
+import subprocess
 import sys
 import unittest
-import os
-import subprocess
-import re
-import glob
+from functools import partial
 
 # Get path containing ns3
 ns3_path = os.path.dirname(os.path.abspath(os.sep.join([__file__, "../../"])))
@@ -73,7 +72,6 @@ def run_program(program, args, python=False, cwd=ns3_path):
         stdin=subprocess.DEVNULL,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        timeout=None,
         cwd=cwd  # run process from the ns-3-dev path
     )
 
@@ -520,14 +518,14 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         self.assertIn("Built target", stdout)
 
         # Programs with new versions
-        new_progs = get_programs_list()
+        new_programs = get_programs_list()
 
         # Check if they exist
-        for program in new_progs:
+        for program in new_programs:
             self.assertTrue(os.path.exists(program))
 
         # Check if we still have the same number of binaries
-        self.assertEqual(len(new_progs), len(self.ns3_executables))
+        self.assertEqual(len(new_programs), len(self.ns3_executables))
 
         # Check if versions changed from 3-dev to 3-00
         libraries = get_libraries_list()
@@ -571,9 +569,9 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
             self.config_ok(return_code, stdout)
 
             # Check if we have the same number of binaries and that they were built correctly
-            new_progs = get_programs_list(os.sep.join([absolute_path, "build-status.py"]))
-            self.assertEqual(len(new_progs), len(self.ns3_executables))
-            for program in new_progs:
+            new_programs = get_programs_list(os.sep.join([absolute_path, "build-status.py"]))
+            self.assertEqual(len(new_programs), len(self.ns3_executables))
+            for program in new_programs:
                 self.assertTrue(os.path.exists(program))
 
             # Check if we have the same number of libraries and that they were built correctly
@@ -596,9 +594,9 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         self.config_ok(return_code, stdout)
 
         # Check if we have the same binaries we had at the beginning
-        new_progs = get_programs_list()
-        self.assertEqual(len(new_progs), len(self.ns3_executables))
-        for program in new_progs:
+        new_programs = get_programs_list()
+        self.assertEqual(len(new_programs), len(self.ns3_executables))
+        for program in new_programs:
             self.assertTrue(os.path.exists(program))
 
         # Check if we have the same libraries we had at the beginning

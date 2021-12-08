@@ -1188,20 +1188,20 @@ function(recursive_dependency module_name)
     set(contrib_dependency_visited
         "${contrib_dependency_visited};${module_name}" CACHE INTERNAL ""
     )
-    set(examples_cmakelist ${contrib_cmakelist})
+    set(examples_cmakelists ${contrib_cmakelist})
   else()
     set(dependency_visited "${dependency_visited};${module_name}" CACHE INTERNAL
                                                                         ""
     )
-    set(examples_cmakelist ${src_cmakelist})
+    set(examples_cmakelists ${src_cmakelist})
   endif()
 
   # cmake-format: off
   # Scan dependencies required by this module examples
   #if(${EXAMPLES_ENABLED})
-  #  string(REPLACE "${module_name}" "${module_name}/examples" examples_cmakelist ${examples_cmakelist})
-  #  if(EXISTS ${examples_cmakelist})
-  #    file(READ ${examples_cmakelist} cmakelists_content)
+  #  string(REPLACE "${module_name}" "${module_name}/examples" examples_cmakelists ${examples_cmakelists})
+  #  if(EXISTS ${examples_cmakelists})
+  #    file(READ ${examples_cmakelists} cmakelists_content)
   #    filter_libraries(${cmakelists_content} example_matches)
   #  endif()
   #endif()
@@ -1223,7 +1223,7 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
 )
   mark_as_advanced(ns3-all-enabled-modules)
 
-  # Before filtering, we set a variable with all scanned moduled in the src
+  # Before filtering, we set a variable with all scanned modules in the src
   # directory
   set(scanned_modules ${${libs_to_build}})
 
@@ -1345,7 +1345,7 @@ function(parse_ns3rc enabled_modules examples_enabled tests_enabled)
         set(${enabled_modules})
       else()
         # If modules are listed, remove quotes and replace commas with
-        # semicollons transforming a string into a cmake list
+        # semicolons transforming a string into a cmake list
         string(REPLACE "," ";" ${enabled_modules} "${${enabled_modules}}")
         string(REPLACE "'" "" ${enabled_modules} "${${enabled_modules}}")
         string(REPLACE "\"" "" ${enabled_modules} "${${enabled_modules}}")
