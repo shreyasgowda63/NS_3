@@ -83,15 +83,15 @@ macro(
 
   # Associate public headers with library for installation purposes
   if("${libname}" STREQUAL "core")
-    set(config_headers
-    ${CMAKE_HEADER_OUTPUT_DIRECTORY}/config-store-config.h
-    ${CMAKE_HEADER_OUTPUT_DIRECTORY}/core-config.h
+    set(config_headers ${CMAKE_HEADER_OUTPUT_DIRECTORY}/config-store-config.h
+                       ${CMAKE_HEADER_OUTPUT_DIRECTORY}/core-config.h
     )
   endif()
-  set_target_properties(${lib${libname}}
-  PROPERTIES
-  PUBLIC_HEADER
-  "${header_files};${deprecated_header_files};${config_headers};${CMAKE_HEADER_OUTPUT_DIRECTORY}/${libname}-module.h"
+  set_target_properties(
+    ${lib${libname}}
+    PROPERTIES
+      PUBLIC_HEADER
+      "${header_files};${deprecated_header_files};${config_headers};${CMAKE_HEADER_OUTPUT_DIRECTORY}/${libname}-module.h"
   )
 
   if(${NS3_CLANG_TIMETRACE})

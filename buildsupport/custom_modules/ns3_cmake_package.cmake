@@ -16,10 +16,14 @@
 # Author: Gabriel Ferreira <gabrielcarvfer@gmail.com>
 
 function(ns3_cmake_package)
-  # Only create configuration to export if there is an module configured to be built
+  # Only create configuration to export if there is an module configured to be
+  # built
   set(enabled_modules "${ns3-libs};${ns3-contrib-libs}")
   if(enabled_modules STREQUAL ";")
-    message(STATUS "No modules were configured, so we cannot create installation artifacts")
+    message(
+      STATUS
+        "No modules were configured, so we cannot create installation artifacts"
+    )
     return()
   endif()
 
@@ -37,7 +41,8 @@ function(ns3_cmake_package)
     PATH_VARS CMAKE_INSTALL_LIBDIR
   )
 
-  # CMake does not support '-' separated versions in config packages, so replace them with dots
+  # CMake does not support '-' separated versions in config packages, so replace
+  # them with dots
   string(REPLACE "-" "." ns3_version "${NS3_VER}")
   write_basic_package_version_file(
     ${CMAKE_CURRENT_BINARY_DIR}/ns3ConfigVersion.cmake VERSION ${ns3_version}

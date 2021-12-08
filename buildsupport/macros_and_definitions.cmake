@@ -66,7 +66,9 @@ else()
   # Check if NS3_OUTPUT_DIRECTORY is a relative path
   set(absolute_ns3_output_directory "${NS3_OUTPUT_DIRECTORY}")
   if(NOT IS_ABSOLUTE ${NS3_OUTPUT_DIRECTORY})
-      set(absolute_ns3_output_directory "${PROJECT_SOURCE_DIR}/${NS3_OUTPUT_DIRECTORY}")
+    set(absolute_ns3_output_directory
+        "${PROJECT_SOURCE_DIR}/${NS3_OUTPUT_DIRECTORY}"
+    )
   endif()
   if(NOT (EXISTS ${absolute_ns3_output_directory}))
     message(
@@ -725,8 +727,8 @@ macro(process_options)
       COMMAND ${CMAKE_COMMAND} -E env NS_COMMANDLINE_INTROSPECTION=..
               ${Python3_EXECUTABLE} ./test.py --nowaf --constrain=example
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-      DEPENDS all-test-targets # all-test-targets only exists if ENABLE_TESTS
-                               # is set to ON
+      DEPENDS all-test-targets # all-test-targets only exists if ENABLE_TESTS is
+                               # set to ON
     )
 
     file(
@@ -1169,7 +1171,8 @@ endfunction()
 function(filter_libraries cmakelists_contents libraries)
   string(REGEX MATCHALL "{lib[^}]*[^obj]}" matches "${cmakelists_content}")
   list(REMOVE_ITEM matches "{libraries_to_link}")
-  string(REPLACE "{lib\${name" "" matches "${matches}") # special case for src/test
+  string(REPLACE "{lib\${name" "" matches "${matches}") # special case for
+                                                        # src/test
   string(REPLACE "{lib" "" matches "${matches}")
   string(REPLACE "}" "" matches "${matches}")
   set(${libraries} ${matches} PARENT_SCOPE)
@@ -1256,8 +1259,8 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
     filter_modules(ns3rc_enabled_modules libs_to_build "")
     filter_modules(ns3rc_enabled_modules contrib_libs_to_build "")
 
-    # Use recursion to automatically determine dependencies required
-    # by the manually enabled modules
+    # Use recursion to automatically determine dependencies required by the
+    # manually enabled modules
     foreach(lib ${${contrib_libs_to_build}})
       resolve_dependencies(${lib} dependencies contrib_dependencies)
       list(APPEND ${contrib_libs_to_build} "${contrib_dependencies}")
@@ -1281,8 +1284,8 @@ macro(filter_enabled_and_disabled_modules libs_to_build contrib_libs_to_build
   if(${NS3_DISABLED_MODULES})
     set(all_libs ${${libs_to_build}};${${contrib_libs_to_build}})
 
-
-    # We then use the recursive dependency finding to get all dependencies of all modules
+    # We then use the recursive dependency finding to get all dependencies of
+    # all modules
     foreach(lib ${all_libs})
       resolve_dependencies(${lib} dependencies contrib_dependencies)
       set(${lib}_dependencies "${dependencies};${contrib_dependencies}")
