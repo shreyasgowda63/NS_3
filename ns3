@@ -93,6 +93,8 @@ def parse_args(argv):
     parser_configure = on_off_argument(parser_configure, "werror", "Treat compiler warnings as errors",
                                        "Treat compiler warnings as warnings")
     parser_configure = on_off_argument(parser_configure, "documentation", "documentation targets")
+    parser_configure = on_off_argument(parser_configure, "sanitizers",
+                                       "address, memory leaks and undefined behavior sanitizers")
 
     parser_configure.add_argument('--enable-modules',
                                   help='List of modules to build (e.g. core;network;internet)',
@@ -402,7 +404,8 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
                    ("GTK3", "gtk"),
                    ("WARNINGS", "warnings"),
                    ("WARNINGS_AS_ERRORS", "werror"),
-                   ("DOCS", "documentation")
+                   ("DOCS", "documentation"),
+                   ("SANITIZE","sanitizers")
                    )
         for (cmake_flag, option_name) in options:
             arg = on_off_condition(args, cmake_flag, option_name)
