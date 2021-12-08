@@ -63,10 +63,10 @@ macro(check_on_or_off user_config_switch confirmation_flag)
     if(${confirmation_flag})
       string(APPEND out "ON\n")
     else()
-      string(APPEND out "OFF (not found)\n")
+      string(APPEND out "OFF (missing dependency)\n")
     endif()
   else()
-    string(APPEND out "OFF\n")
+    string(APPEND out "OFF (not requested)\n")
   endif()
 endmacro()
 
@@ -111,14 +111,18 @@ macro(write_fakewaf_config)
   string(APPEND out "BRITE Integration             : ")
   check_on_or_off("ON" "${NS3_BRITE}")
 
-  string(APPEND out "DES Metrics event collection  : ${NS3_DES_METRICS}\n")
+  string(APPEND out "DES Metrics event collection  : ")
+  check_on_or_off("${NS3_DES_METRICS}" "${NS3_DES_METRICS}")
+
   string(APPEND out "DPDK NetDevice                : ")
   check_on_or_off("ON" "${ENABLE_DPDKDEVNET}")
 
   string(APPEND out "Emulation FdNetDevice         : ")
-  check_on_or_off("${NS3_EMU}" "${ENABLE_EMU}")
+  check_on_or_off("${NS3_EMU}" "${ENABLE_EMUNETDEV}")
 
-  string(APPEND out "Examples                      : ${EXAMPLES_ENABLED}\n")
+  string(APPEND out "Examples                      : ")
+  check_on_or_off("${ENABLE_EXAMPLES}" "${ENABLE_EXAMPLES}")
+
   string(APPEND out "File descriptor NetDevice     : ")
   check_on_or_off("ON" "${ENABLE_FDNETDEV}")
 
@@ -153,21 +157,29 @@ macro(write_fakewaf_config)
     out
     "PlanetLab FdNetDevice         : flag is set to ${NS3_PLANETLAB}, but currently not supported\n"
   )
-  string(APPEND out "PyViz visualizer              : ${NS3_VISUALIZER}\n")
+  string(APPEND out "PyViz visualizer              : ")
+  check_on_or_off("${NS3_VISUALIZER}" "${ENABLE_VISUALIZER}")
+
   # string(APPEND out "Python API Scanning Support   : not enabled (castxml too
   # old)
-  string(APPEND out "Python Bindings               : ${NS3_PYTHON_BINDINGS}\n")
+  string(APPEND out "Python Bindings               : ")
+  check_on_or_off("${NS3_PYTHON_BINDINGS}" "${ENABLE_PYTHON_BINDINGS}")
+
   string(APPEND out "Real Time Simulator           : ")
   check_on_or_off("${NS3_REALTIME}" "${ENABLE_REALTIME}")
 
   string(APPEND out "SQLite stats support          : ")
   check_on_or_off("${NS3_SQLITE}" "${ENABLE_SQLITE}")
 
-  string(APPEND out "Tap Bridge                    : ${NS3_TAP}\n")
-  string(APPEND out "Tap FdNetDevice               : ")
+  string(APPEND out "Tap Bridge                    : ")
   check_on_or_off("${NS3_TAP}" "${ENABLE_TAP}")
 
-  string(APPEND out "Tests                         : ${TESTS_ENABLED}\n")
+  string(APPEND out "Tap FdNetDevice               : ")
+  check_on_or_off("${NS3_TAP}" "${ENABLE_TAPNETDEV}")
+
+  string(APPEND out "Tests                         : ")
+  check_on_or_off("${ENABLE_TESTS}" "${ENABLE_TESTS}")
+
   string(APPEND out "Threading Primitives          : ")
   check_on_or_off("${NS3_PTHREAD}" "${THREADS_ENABLED}")
 
@@ -176,6 +188,9 @@ macro(write_fakewaf_config)
   string(APPEND out "\n\n")
 
   set(really-enabled-modules ${ns3-libs};${ns3-contrib-libs})
+  if(${ENABLE_TESTS})
+    list(APPEND really-enabled-modules libtest)  # test is an object library and is treated differently
+  endif()
   if(really-enabled-modules)
     print_formatted_table_with_modules(
       "Modules configured to be built" "${really-enabled-modules}" "out"

@@ -224,16 +224,16 @@ macro(process_options)
 
   # Enable examples if activated via command line (NS3_EXAMPLES) or ns3rc config
   # file
-  set(EXAMPLES_ENABLED OFF)
+  set(ENABLE_EXAMPLES OFF)
   if(${NS3_EXAMPLES} OR ${ns3rc_examples_enabled})
-    set(EXAMPLES_ENABLED ON)
+    set(ENABLE_EXAMPLES ON)
   endif()
 
   # Enable examples if activated via command line (NS3_TESTS) or ns3rc config
   # file
-  set(TESTS_ENABLED OFF)
+  set(ENABLE_TESTS OFF)
   if(${NS3_TESTS} OR ${ns3rc_tests_enabled})
-    set(TESTS_ENABLED ON)
+    set(ENABLE_TESTS ON)
   endif()
 
   set(profiles_without_suffixes release)
@@ -597,10 +597,12 @@ macro(process_options)
   endif()
 
   find_package(Python3 COMPONENTS Interpreter Development)
+  set(ENABLE_PYTHON_BINDINGS OFF)
   if(${NS3_PYTHON_BINDINGS})
     if(NOT ${Python3_FOUND})
       message(FATAL_ERROR "NS3_PYTHON_BINDINGS requires Python3")
     endif()
+    set(ENABLE_PYTHON_BINDINGS ON)
     link_directories(${Python3_LIBRARY_DIRS})
     include_directories(${Python3_INCLUDE_DIRS})
     set(PYTHONDIR ${Python3_SITELIB})
@@ -619,7 +621,7 @@ macro(process_options)
     add_custom_target(apiscan-all)
   endif()
 
-  if(${NS3_COVERAGE} AND (NOT ${TESTS_ENABLED} OR NOT ${EXAMPLES_ENABLED}))
+  if(${NS3_COVERAGE} AND (NOT ${ENABLE_TESTS} OR NOT ${ENABLE_EXAMPLES}))
     message(
       FATAL_ERROR
         "Code coverage requires examples and tests.\n"
@@ -627,7 +629,7 @@ macro(process_options)
     )
   endif()
 
-  if(${TESTS_ENABLED})
+  if(${ENABLE_TESTS})
     add_custom_target(all-test-targets)
 
     # Create a custom target to run test.py --nowaf Target is also used to
@@ -638,7 +640,7 @@ macro(process_options)
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
       DEPENDS all-test-targets
     )
-    if(${EXAMPLES_ENABLED})
+    if(${ENABLE_EXAMPLES})
       include(buildsupport/custom_modules/ns3_coverage.cmake)
     endif()
   endif()
@@ -723,7 +725,7 @@ macro(process_options)
       COMMAND ${CMAKE_COMMAND} -E env NS_COMMANDLINE_INTROSPECTION=..
               ${Python3_EXECUTABLE} ./test.py --nowaf --constrain=example
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-      DEPENDS all-test-targets # all-test-targets only exists if TESTS_ENABLED
+      DEPENDS all-test-targets # all-test-targets only exists if ENABLE_TESTS
                                # is set to ON
     )
 
@@ -871,9 +873,19 @@ CommandLine configuration in those files instead.
   endif()
 
   # Enable examples as tests suites
-  if(${EXAMPLES_ENABLED})
+  if(${ENABLE_EXAMPLES})
     set(NS3_ENABLE_EXAMPLES "1")
     add_definitions(-DNS3_ENABLE_EXAMPLES -DCMAKE_EXAMPLE_AS_TEST)
+  endif()
+
+  set(ENABLE_TAP OFF)
+  if(${NS3_TAP})
+    set(ENABLE_TAP ON)
+  endif()
+
+  set(ENABLE_EMU OFF)
+  if(${NS3_EMU})
+    set(ENABLE_EMU ON)
   endif()
 
   set(PLATFORM_UNSUPPORTED_PRE "Platform doesn't support")
@@ -881,8 +893,8 @@ CommandLine configuration in those files instead.
   # Remove from libs_to_build all incompatible libraries or the ones that
   # dependencies couldn't be installed
   if(APPLE OR WSLv1)
-    set(NS3_TAP OFF)
-    set(NS3_EMU OFF)
+    set(ENABLE_TAP OFF)
+    set(ENABLE_EMU OFF)
     list(REMOVE_ITEM libs_to_build fd-net-device)
     message(
       STATUS
@@ -898,7 +910,7 @@ CommandLine configuration in those files instead.
     list(REMOVE_ITEM libs_to_build visualizer)
   endif()
 
-  if(NOT ${NS3_TAP})
+  if(NOT ${ENABLE_TAP})
     list(REMOVE_ITEM libs_to_build tap-bridge)
   endif()
 
@@ -1025,7 +1037,7 @@ function(set_runtime_outputdirectory target_name output_directory target_prefix)
     endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
   endif()
 
-  if(${TESTS_ENABLED})
+  if(${ENABLE_TESTS})
     add_dependencies(all-test-targets ${target_prefix}${target_name})
   endif()
 
@@ -1198,7 +1210,7 @@ function(recursive_dependency module_name)
 
   # cmake-format: off
   # Scan dependencies required by this module examples
-  #if(${EXAMPLES_ENABLED})
+  #if(${ENABLE_EXAMPLES})
   #  string(REPLACE "${module_name}" "${module_name}/examples" examples_cmakelists ${examples_cmakelists})
   #  if(EXISTS ${examples_cmakelists})
   #    file(READ ${examples_cmakelists} cmakelists_content)

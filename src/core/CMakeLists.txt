@@ -73,7 +73,7 @@ if(${NS3_PTHREAD})
   endif()
 endif()
 
-if(${EXAMPLES_ENABLED})
+if(${ENABLE_EXAMPLES})
   set(example_as_test_sources model/example-as-test.cc)
   set(example_as_test_headers model/example-as-test.h)
   set(example_as_test_suite test/examples-as-tests-test-suite.cc)

@@ -161,7 +161,7 @@ macro(
   endif()
 
   # Build tests if requested
-  if(${TESTS_ENABLED})
+  if(${ENABLE_TESTS})
     list(LENGTH test_sources test_source_len)
     if(${test_source_len} GREATER 0)
       # Create libname of output library test of module
@@ -201,7 +201,7 @@ macro(
   endif()
 
   # Build lib examples if requested
-  if(${EXAMPLES_ENABLED})
+  if(${ENABLE_EXAMPLES})
     if((EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
        AND (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples/CMakeLists.txt)
     )
