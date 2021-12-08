@@ -169,17 +169,12 @@ class NS3CommonSettingsTestCase(unittest.TestCase):
         self.assertEqual(return_code, 0)
         self.assertIn("You need to configure ns-3 first: try ./ns3 configure", stdout)
 
-    def test_02_Verbose(self):
-        return_code, stdout, stderr = run_ns3("--verbose")
-        self.assertEqual(return_code, 0)
-        self.assertIn("You need to configure ns-3 first: try ./ns3 configure", stdout)
-
-    def test_03_NoTaskLines(self):
+    def test_02_NoTaskLines(self):
         return_code, stdout, stderr = run_ns3("--no-task-lines")
         self.assertEqual(return_code, 0)
         self.assertIn("You need to configure ns-3 first: try ./ns3 configure", stdout)
 
-    def test_04_CheckConfig(self):
+    def test_03_CheckConfig(self):
         return_code, stdout, stderr = run_ns3("--check-config")
         self.assertEqual(return_code, 1)
         self.assertIn("Project was not configured", stderr)
@@ -450,8 +445,54 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
         self.assertEqual(len(get_programs_list()), len(self.ns3_executables))
 
     def test_08_DryRun(self):
-        # todo: collect commands from CMake and test them
-        pass
+        run_ns3("clean")
+
+        # Try dry-run before and after the positional commands (outputs should match)
+        for positional_command in ["configure", "build", "clean"]:
+            return_code, stdout, stderr = run_ns3("--dry-run %s" % positional_command)
+            return_code1, stdout1, stderr1 = run_ns3("%s --dry-run" % positional_command)
+
+            self.assertEqual(return_code, return_code1)
+            self.assertEqual(stdout, stdout1)
+            self.assertEqual(stderr, stderr1)
+
+        # Build target before using below
+        run_ns3("configure -d release")
+        run_ns3("build scratch-simulator")
+
+        # Run all cases and then check outputs
+        return_code0, stdout0, stderr0 = run_ns3("--dry-run --run scratch-simulator")
+        return_code1, stdout1, stderr1 = run_ns3("--run scratch-simulator")
+        return_code2, stdout2, stderr2 = run_ns3("--dry-run --run-no-build scratch-simulator")
+        return_code3, stdout3, stderr3 = run_ns3("--run-no-build scratch-simulator")
+
+        # Return code and stderr should be the same for all of them
+        self.assertEqual(sum([return_code0, return_code1, return_code2, return_code3]), 0)
+        self.assertEqual([stderr0, stderr1, stderr2, stderr3], [""]*4)
+
+        scratch_path = None
+        for program in get_programs_list():
+            if "scratch-simulator" in program and "subdir" not in program:
+                scratch_path = program
+                break
+
+        # Scratches currently have a 'scratch_' prefix in their CMake targets
+        # Case 0: dry-run + run (should print commands to refresh cache, build target and then run)
+        self.assertIn(cmake_refresh_cache_command, stdout0)
+        self.assertIn(cmake_build_target_command(target="scratch_scratch-simulator"), stdout0)
+        self.assertIn(scratch_path, stdout0)
+
+        # Case 1: run (should print all the commands of case 1 plus CMake output from build)
+        self.assertIn(cmake_refresh_cache_command, stdout1)
+        self.assertIn(cmake_build_target_command(target="scratch_scratch-simulator"), stdout1)
+        self.assertIn("Built target", stdout1)
+        self.assertIn(scratch_path, stdout1)
+
+        # Case 2: dry-run + run-no-build (should print commands to run the target)
+        self.assertIn(scratch_path, stdout2)
+
+        # Case 3: run-no-build (should print the target output only)
+        self.assertEqual("", stdout3)
 
 
 class NS3BuildBaseTestCase(NS3BaseTestCase):
@@ -481,29 +522,16 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         self.assertIn("Built target", stdout)
         for program in get_programs_list():
             self.assertTrue(os.path.exists(program))
-
-    def test_04_BuildProjectVerbose(self):
-        return_code, stdout, stderr = run_ns3("--verbose build")
-        self.assertEqual(return_code, 0)
-        self.assertIn("Built target", stdout)
-        for program in get_programs_list():
-            self.assertTrue(os.path.exists(program))
         self.assertIn(cmake_refresh_cache_command, stdout)
         self.assertIn(cmake_build_project_command, stdout)
 
-    def test_05_BuildProjectNoTaskLines(self):
+    def test_04_BuildProjectNoTaskLines(self):
         return_code, stdout, stderr = run_ns3("--no-task-lines build")
         self.assertEqual(return_code, 0)
-        self.assertEqual(len(stderr), 0)
-        self.assertEqual(len(stdout), 0)
-
-    def test_06_BuildProjectVerboseAndNoTaskLines(self):
-        return_code, stdout, stderr = run_ns3("--no-task-lines --verbose build")
-        self.assertEqual(return_code, 0)
         self.assertIn(cmake_refresh_cache_command, stdout)
         self.assertIn(cmake_build_project_command, stdout)
 
-    def test_07_TestVersionFile(self):
+    def test_05_TestVersionFile(self):
         version_file = os.sep.join([ns3_path, "VERSION"])
         with open(version_file, "w") as f:
             f.write("3-00\n")
@@ -543,7 +571,7 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         # Reset flag to let it clean the build
         NS3BuildBaseTestCase.cleaned_once = False
 
-    def test_08_OutputDirectory(self):
+    def test_06_OutputDirectory(self):
         # Re-build to return to the original state
         return_code, stdout, stderr = run_ns3("build")
         self.config_ok(return_code, stdout)
@@ -605,7 +633,7 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         for library in libraries:
             self.assertTrue(os.path.exists(library))
 
-    def test_09_InstallationAndUninstallation(self):
+    def test_07_InstallationAndUninstallation(self):
         # Remove existing libraries from the previous step
         libraries = get_libraries_list()
         for library in libraries:
@@ -726,8 +754,8 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         self.assertTrue(os.path.exists(usual_c4che_script))
         self.ns3_modules = get_enabled_modules()
 
-    def test_01_BuildProjectVerbose(self):
-        return_code, stdout, stderr = run_ns3("--verbose build")
+    def test_01_BuildProject(self):
+        return_code, stdout, stderr = run_ns3("build")
         self.assertEqual(return_code, 0)
         self.assertIn("Built target", stdout)
         for program in get_programs_list():
@@ -739,7 +767,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         self.assertIn(cmake_build_project_command, stdout)
 
     def test_02_BuildAndRunExistingExecutableTarget(self):
-        return_code, stdout, stderr = run_ns3('--verbose --run "test-runner --list"')
+        return_code, stdout, stderr = run_ns3('--run "test-runner --list"')
         self.assertEqual(return_code, 0)
         self.assertIn("Built target test-runner", stdout)
         self.assertIn(cmake_refresh_cache_command, stdout)
@@ -756,21 +784,19 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         self.assertIn("Couldn't find the specified program: nonsense", stderr)
 
     def test_05_RunNoBuildExistingExecutableTarget(self):
-        return_code, stdout, stderr = run_ns3('--verbose --run-no-build "test-runner --list"')
+        return_code, stdout, stderr = run_ns3('--run-no-build "test-runner --list"')
         self.assertEqual(return_code, 0)
         self.assertNotIn("Built target test-runner", stdout)
         self.assertNotIn(cmake_refresh_cache_command, stdout)
         self.assertNotIn(cmake_build_target_command(target="test-runner"), stdout)
-        self.assertIn("test-runner", stdout)
-        self.assertIn("--list", stdout)
 
     def test_06_RunNoBuildExistingLibraryTarget(self):
-        return_code, stdout, stderr = run_ns3("--verbose --run-no-build core")  # this should not work
+        return_code, stdout, stderr = run_ns3("--run-no-build core")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: core", stderr)
 
     def test_07_RunNoBuildNonExistingExecutableTarget(self):
-        return_code, stdout, stderr = run_ns3("--verbose --run-no-build nonsense")  # this should not work
+        return_code, stdout, stderr = run_ns3("--run-no-build nonsense")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: nonsense", stderr)
 
@@ -787,14 +813,14 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         self.assertIn("Memcheck", stderr)
 
     def test_10_DoxygenWithBuild(self):
-        return_code, stdout, stderr = run_ns3("--verbose --doxygen")
+        return_code, stdout, stderr = run_ns3("--doxygen")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_refresh_cache_command, stdout)
         self.assertIn(cmake_build_target_command(target="doxygen"), stdout)
         self.assertIn("Built target doxygen", stdout)
 
     def test_11_DoxygenWithoutBuild(self):
-        return_code, stdout, stderr = run_ns3("--verbose --doxygen-no-build")
+        return_code, stdout, stderr = run_ns3("--doxygen-no-build")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_refresh_cache_command, stdout)
         self.assertIn(cmake_build_target_command(target="doxygen-no-build"), stdout)
