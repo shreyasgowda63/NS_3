@@ -23,6 +23,8 @@
 #include "ns3/simulator.h"
 #include "ns3/log.h"
 #include "ns3/pointer.h"
+#include "ns3/string.h"
+#include "ns3/tuple.h"
 #include "ns3/mobility-model.h"
 #include "ns3/random-variable-stream.h"
 #include "ns3/error-model.h"
@@ -50,307 +52,57 @@ NS_LOG_COMPONENT_DEFINE ("WifiPhy");
 
 NS_OBJECT_ENSURE_REGISTERED (WifiPhy);
 
-const std::set<FrequencyChannelInfo> WifiPhy::m_frequencyChannels =
-{
-  //2.4 GHz channels
-  // 802.11b uses width of 22, while OFDM modes use width of 20
-  { std::make_tuple (1, 2412, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (1, 2412, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (2, 2417, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (2, 2417, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (3, 2422, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (3, 2422, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (4, 2427, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (4, 2427, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (5, 2432, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (5, 2432, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (6, 2437, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (6, 2437, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (7, 2442, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (7, 2442, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (8, 2447, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (8, 2447, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (9, 2452, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (9, 2452, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (10, 2457, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (10, 2457, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (11, 2462, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (11, 2462, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (12, 2467, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (12, 2467, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (13, 2472, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (13, 2472, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  // Only defined for 802.11b
-  { std::make_tuple (14, 2484, 22, WIFI_PHY_DSSS_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  // 40 MHz channels
-  { std::make_tuple (3, 2422, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (4, 2427, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (5, 2432, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (6, 2437, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (7, 2442, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (8, 2447, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (9, 2452, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (10, 2457, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-  { std::make_tuple (11, 2462, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_2_4GHZ) },
-
-  // Now the 5 GHz channels used for 802.11a/n/ac/ax
-  // 20 MHz channels
-  { std::make_tuple (36, 5180, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (40, 5200, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (44, 5220, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (48, 5240, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (52, 5260, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (56, 5280, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (60, 5300, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (64, 5320, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (100, 5500, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (104, 5520, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (108, 5540, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (112, 5560, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (116, 5580, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (120, 5600, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (124, 5620, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (128, 5640, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (132, 5660, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (136, 5680, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (140, 5700, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (144, 5720, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (149, 5745, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (153, 5765, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (157, 5785, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (161, 5805, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (165, 5825, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (169, 5845, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (173, 5865, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (177, 5885, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (181, 5905, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  // 40 MHz channels
-  { std::make_tuple (38, 5190, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (46, 5230, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (54, 5270, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (62, 5310, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (102, 5510, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (110, 5550, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (118, 5590, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (126, 5630, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (134, 5670, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (142, 5710, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (151, 5755, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (159, 5795, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (167, 5835, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (175, 5875, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  // 80 MHz channels
-  { std::make_tuple (42, 5210, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (58, 5290, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (106, 5530, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (122, 5610, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (138, 5690, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (155, 5775, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (171, 5855, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  // 160 MHz channels
-  { std::make_tuple (50, 5250, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (114, 5570, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (163, 5815, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-
-  // 802.11p 10 MHz channels at the 5.855-5.925 band
-  { std::make_tuple (172, 5860, 10, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (174, 5870, 10, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (176, 5880, 10, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (178, 5890, 10, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (180, 5900, 10, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (182, 5910, 10, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (184, 5920, 10, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-
-  // 802.11p 5 MHz channels at the 5.855-5.925 band (for simplification, we consider the same center frequencies as the 10 MHz channels)
-  { std::make_tuple (171, 5860, 5, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (173, 5870, 5, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (175, 5880, 5, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (177, 5890, 5, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (179, 5900, 5, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (181, 5910, 5, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-  { std::make_tuple (183, 5920, 5, WIFI_PHY_80211p_CHANNEL, WIFI_PHY_BAND_5GHZ) },
-
-  // Now the 6 GHz channels (802.11ax only)
-  // 20 MHz channels
-  { std::make_tuple (1, 5945, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (5, 5965, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (9, 5985, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (13, 6005, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (17, 6025, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (21, 6045, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (25, 6065, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (29, 6085, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (33, 6105, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (37, 6125, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (41, 6145, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (45, 6165, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (49, 6185, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (53, 6205, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (57, 6225, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (61, 6245, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (65, 6265, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (69, 6285, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (73, 6305, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (77, 6325, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (81, 6345, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (85, 6365, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (89, 6385, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (93, 6405, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (97, 6425, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (101, 6445, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (105, 6465, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (109, 6485, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (113, 6505, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (117, 6525, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (121, 6545, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (125, 6565, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (129, 6585, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (133, 6605, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (137, 6625, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (141, 6645, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (145, 6665, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (149, 6685, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (153, 6705, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (157, 6725, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (161, 6745, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (165, 6765, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (169, 6785, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (173, 6805, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (177, 6825, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (181, 6845, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (185, 6865, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (189, 6885, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (193, 6905, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (197, 6925, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (201, 6945, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (205, 6965, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (209, 6985, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (213, 7005, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (217, 7025, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (221, 7045, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (225, 7065, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (229, 7085, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (233, 7105, 20, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  // 40 MHz channels
-  { std::make_tuple (3, 5955, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (11, 5995, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (19, 6035, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (27, 6075, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (35, 6115, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (43, 6155, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (51, 6195, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (59, 6235, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (67, 6275, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (75, 6315, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (83, 6355, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (91, 6395, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (99, 6435, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (107, 6475, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (115, 6515, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (123, 6555, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (131, 6595, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (139, 6635, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (147, 6675, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (155, 6715, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (163, 6755, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (171, 6795, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (179, 6835, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (187, 6875, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (195, 6915, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (203, 6955, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (211, 6995, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (219, 7035, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (227, 7075, 40, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  // 80 MHz channels
-  { std::make_tuple (7, 5975, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (23, 6055, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (39, 6135, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (55, 6215, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (71, 6295, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (87, 6375, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (103, 6455, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (119, 6535, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (135, 6615, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (151, 6695, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (167, 6775, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (183, 6855, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (199, 6935, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (215, 7015, 80, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  // 160 MHz channels
-  { std::make_tuple (15, 6015, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (47, 6175, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (79, 6335, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (111, 6495, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (143, 6655, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (175, 6815, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) },
-  { std::make_tuple (207, 6975, 160, WIFI_PHY_OFDM_CHANNEL, WIFI_PHY_BAND_6GHZ) }
-};
-
-
 TypeId
 WifiPhy::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::WifiPhy")
     .SetParent<Object> ()
     .SetGroupName ("Wifi")
+    .AddAttribute ("ChannelSettings",
+                   "Tuple {channel number, channel width (MHz), PHY band, primary20 index} "
+                   "describing the settings of the operating channel. The primary20 index is "
+                   "the index of the primary 20 MHz channel within the operating channel "
+                   "(0 indicates the 20 MHz subchannel with the lowest center frequency) and "
+                   "is only valid if the width of the operating channel is a multiple of 20 MHz. "
+                   "If the standard for this object has not been set yet, the value of this "
+                   "attribute is saved and will be used to set the operating channel when the "
+                   "standard is configured. If the PHY band is left unspecified, the default "
+                   "band for the configured standard is used. If the channel width and the "
+                   "channel number are both 0, the default channel width for the configured "
+                   "standard and band are used. If the channel number is 0, the default "
+                   "channel number for the configured standard, band and channel width is used."
+                   "Note that the channel width can be left unspecified (0) if the channel "
+                   "number uniquely identify a frequency channel for the given standard and band. ",
+                   StringValue ("{0, 0, BAND_UNSPECIFIED, 0}"),
+                   MakeTupleAccessor <UintegerValue, UintegerValue, EnumValue, UintegerValue> ((void (WifiPhy::*) (const ChannelTuple&))(&WifiPhy::SetOperatingChannel)),
+                   MakeTupleChecker<UintegerValue, UintegerValue, EnumValue, UintegerValue>
+                     (MakeUintegerChecker<uint8_t> (0, 233),
+                      MakeUintegerChecker<uint16_t> (0, 160),
+                      MakeEnumChecker (WifiPhyBand::WIFI_PHY_BAND_2_4GHZ, "BAND_2_4GHZ",
+                                       WifiPhyBand::WIFI_PHY_BAND_5GHZ, "BAND_5GHZ",
+                                       WifiPhyBand::WIFI_PHY_BAND_6GHZ, "BAND_6GHZ",
+                                       WifiPhyBand::WIFI_PHY_BAND_UNSPECIFIED, "BAND_UNSPECIFIED"),
+                      MakeUintegerChecker<uint8_t> (0, 7)))
     .AddAttribute ("Frequency",
-                   "The center frequency (MHz) of the operating channel. "
-                   "If the operating channel for this object has not been set yet, the "
-                   "value of this attribute is saved and will be used, along with the channel "
-                   "number and width configured via other attributes, to set the operating "
-                   "channel when the standard and band are configured. The default value of "
-                   "this attribute is 0, which means unspecified center frequency. Note that "
-                   "if center frequency and channel number are both 0 when the standard and "
-                   "band are configured, a default channel (of the configured width, if any, "
-                   "or the default width for the current standard and band, otherwise) is set. "
-                   "If the operating channel for this object has been already set, the "
-                   "specified center frequency must uniquely identify a channel in the "
-                   "band being used.",
+                   "The center frequency (MHz) of the current operating channel.",
                    UintegerValue (0),
-                   MakeUintegerAccessor (&WifiPhy::GetFrequency,
-                                         &WifiPhy::SetFrequency),
+                   MakeUintegerAccessor (&WifiPhy::GetFrequency),
                    MakeUintegerChecker<uint16_t> ())
     .AddAttribute ("ChannelNumber",
-                   "The channel number of the operating channel. "
-                   "If the operating channel for this object has not been set yet, the "
-                   "value of this attribute is saved and will be used, along with the center "
-                   "frequency and width configured via other attributes, to set the operating "
-                   "channel when the standard and band are configured. The default value of "
-                   "this attribute is 0, which means unspecified channel number. Note that "
-                   "if center frequency and channel number are both 0 when the standard and "
-                   "band are configured, a default channel (of the configured width, if any, "
-                   "or the default width for the current standard and band, otherwise) is set. "
-                   "If the operating channel for this object has been already set, the "
-                   "specified channel number must uniquely identify a channel in the "
-                   "band being used.",
+                   "The channel number of the current operating channel.",
                    UintegerValue (0),
-                   MakeUintegerAccessor (&WifiPhy::SetChannelNumber,
-                                         &WifiPhy::GetChannelNumber),
+                   MakeUintegerAccessor (&WifiPhy::GetChannelNumber),
                    MakeUintegerChecker<uint8_t> (0, 233))
     .AddAttribute ("ChannelWidth",
-                   "The width in MHz of the operating channel (5, 10, 20, 22, 40, 80 or 160). "
-                   "If the operating channel for this object has not been set yet, the "
-                   "value of this attribute is saved and will be used, along with the center "
-                   "frequency and channel number configured via other attributes, to set the "
-                   "operating channel when the standard and band are configured. The default value "
-                   "of this attribute is 0, which means unspecified channel width. Note that "
-                   "if center frequency and channel number are both 0 when the standard and "
-                   "band are configured, a default channel (of the configured width, if any, "
-                   "or the default width for the current standard and band, otherwise) is set. "
-                   "Do not set this attribute when the standard and band of this object have "
-                   "been already configured, because it cannot uniquely identify a channel in "
-                   "the band being used.",
+                   "The width in MHz of the current operating channel (5, 10, 20, 22, 40, 80 or 160).",
                    UintegerValue (0),
-                   MakeUintegerAccessor (&WifiPhy::GetChannelWidth,
-                                         &WifiPhy::SetChannelWidth),
+                   MakeUintegerAccessor (&WifiPhy::GetChannelWidth),
                    MakeUintegerChecker<uint16_t> (5, 160))
     .AddAttribute ("Primary20MHzIndex",
-                   "The index of the primary 20 MHz channel within the operating channel "
-                   "(0 indicates the 20 MHz subchannel with the lowest center frequency). "
-                   "This attribute is only valid if the width of the operating channel is "
-                   "a multiple of 20 MHz.",
+                   "The index of the primary 20 MHz channel within the current operating channel "
+                   "(0 indicates the 20 MHz subchannel with the lowest center frequency).",
                    UintegerValue (0),
-                   MakeUintegerAccessor (&WifiPhy::SetPrimary20Index),
+                   MakeUintegerAccessor (&WifiPhy::GetPrimary20Index),
                    MakeUintegerChecker<uint8_t> (0, 7))
     .AddAttribute ("RxSensitivity",
                    "The energy of a received signal should be higher than "
@@ -1121,6 +873,54 @@ WifiPhy::ConfigureStandardAndBand (WifiPhyStandard standard, WifiPhyBand band)
     }
 }
 
+void
+WifiPhy::ConfigureStandard (WifiPhyStandard standard)
+{
+  NS_LOG_FUNCTION (this << standard);
+
+  NS_ABORT_MSG_IF (m_standard != WIFI_PHY_STANDARD_UNSPECIFIED && standard != m_standard,
+                   "Cannot change standard");
+
+  m_standard = standard;
+
+  if (!m_operatingChannel.IsSet ())
+    {
+      NS_LOG_DEBUG ("Setting the operating channel first");
+      SetOperatingChannel (m_channelSettings);
+      // return because we are called back by SetOperatingChannel
+      return;
+    }
+
+  switch (standard)
+    {
+    case WIFI_PHY_STANDARD_80211a:
+      Configure80211a ();
+      break;
+    case WIFI_PHY_STANDARD_80211b:
+      Configure80211b ();
+      break;
+    case WIFI_PHY_STANDARD_80211g:
+      Configure80211g ();
+      break;
+    case WIFI_PHY_STANDARD_80211p:
+      Configure80211p ();
+      break;
+    case WIFI_PHY_STANDARD_80211n:
+      Configure80211n ();
+      break;
+    case WIFI_PHY_STANDARD_80211ac:
+      Configure80211ac ();
+      break;
+    case WIFI_PHY_STANDARD_80211ax:
+      Configure80211ax ();
+      break;
+    case WIFI_PHY_STANDARD_UNSPECIFIED:
+    default:
+      NS_ASSERT_MSG (false, "Unsupported standard");
+      break;
+    }
+}
+
 WifiPhyBand
 WifiPhy::GetPhyBand (void) const
 {
@@ -1253,6 +1053,12 @@ WifiPhy::SetPrimary20Index (uint8_t index)
   m_operatingChannel.SetPrimary20Index (index);
 }
 
+uint8_t
+WifiPhy::GetPrimary20Index (void) const
+{
+  return m_operatingChannel.GetPrimaryChannelIndex (20);
+}
+
 void
 WifiPhy::SetOperatingChannel (uint8_t number, uint16_t frequency, uint16_t width)
 {
@@ -1260,7 +1066,7 @@ WifiPhy::SetOperatingChannel (uint8_t number, uint16_t frequency, uint16_t width
 
   if (IsInitialized ())
     {
-      delay = DoChannelSwitch ();
+      delay = GetDelayUntilChannelSwitch ();
     }
 
   if (delay.IsStrictlyNegative ())
@@ -1271,7 +1077,8 @@ WifiPhy::SetOperatingChannel (uint8_t number, uint16_t frequency, uint16_t width
   if (delay.IsStrictlyPositive ())
     {
       // switching channel has been postponed
-      Simulator::Schedule (delay, &WifiPhy::SetOperatingChannel, this, number, frequency, width);
+      void (WifiPhy::*fp) (uint8_t, uint16_t, uint16_t) = &WifiPhy::SetOperatingChannel;
+      Simulator::Schedule (delay, fp, this, number, frequency, width);
       return;
     }
 
@@ -1296,8 +1103,48 @@ WifiPhy::SetOperatingChannel (uint8_t number, uint16_t frequency, uint16_t width
     }
 }
 
+void
+WifiPhy::SetOperatingChannel (const ChannelTuple& channelTuple)
+{
+  // the generic operator<< for tuples does not give a pretty result
+  NS_LOG_FUNCTION (this << +std::get<0> (channelTuple) << std::get<1> (channelTuple)
+                   << static_cast<WifiPhyBand> (std::get<2> (channelTuple))
+                   << +std::get<3> (channelTuple));
+
+  m_channelSettings = channelTuple;
+
+  if (m_standard == WIFI_PHY_STANDARD_UNSPECIFIED)
+    {
+      NS_LOG_DEBUG ("Channel information will be applied when a standard is configured");
+      return;
+    }
+
+  Time delay = Seconds (0);
+
+  if (IsInitialized ())
+    {
+      delay = GetDelayUntilChannelSwitch ();
+    }
+
+  if (delay.IsStrictlyNegative ())
+    {
+      // switching channel is not possible now
+      return;
+    }
+  if (delay.IsStrictlyPositive ())
+    {
+      // switching channel has been postponed
+      void (WifiPhy::*fp) (const ChannelTuple&) = &WifiPhy::SetOperatingChannel;
+      Simulator::Schedule (delay, fp, this, channelTuple);
+      return;
+    }
+
+  // channel can be switched now.
+  DoChannelSwitch ();
+}
+
 Time
-WifiPhy::DoChannelSwitch (void)
+WifiPhy::GetDelayUntilChannelSwitch (void)
 {
   m_powerRestricted = false;
   m_channelAccessRequested = false;
@@ -1329,6 +1176,7 @@ WifiPhy::DoChannelSwitch (void)
       break;
     case WifiPhyState::CCA_BUSY:
     case WifiPhyState::IDLE:
+      m_endPhyRxEvent.Cancel ();
       for (auto & phyEntity : m_phyEntities)
         {
           phyEntity.second->CancelAllEvents ();
@@ -1359,6 +1207,55 @@ WifiPhy::DoChannelSwitch (void)
     }
 
   return delay;
+}
+
+void
+WifiPhy::DoChannelSwitch (void)
+{
+  NS_LOG_FUNCTION (this);
+
+  // Update unspecified parameters with default values
+  if (auto& [number, width, band, primary20] = m_channelSettings; true)
+    {
+      if (band == static_cast<int> (WIFI_PHY_BAND_UNSPECIFIED))
+        {
+          band = static_cast<int> (GetDefaultPhyBand (m_standard));
+        }
+      if (width == 0 && number == 0)
+        {
+          width = GetDefaultChannelWidth (m_standard, (WifiPhyBand)(band));
+        }
+      if (number == 0)
+        {
+          number = WifiPhyOperatingChannel::GetDefaultChannelNumber (width, m_standard, (WifiPhyBand)(band));
+        }
+    }
+
+  // We need to call SetStandard if this is the first time we set a channel or we
+  // are changing PHY band. Checking if the new PHY band is different than the
+  // previous one covers both cases because initially the PHY band is unspecified
+  bool changingPhyBand = (static_cast<WifiPhyBand> (std::get<2> (m_channelSettings)) != m_band);
+
+  m_band = static_cast<WifiPhyBand> (std::get<2> (m_channelSettings));
+
+  m_operatingChannel.Set (std::get<0> (m_channelSettings), 0, std::get<1> (m_channelSettings),
+                          m_standard, m_band);
+  m_operatingChannel.SetPrimary20Index (std::get<3> (m_channelSettings));
+
+  if (changingPhyBand)
+    {
+      ConfigureStandard (m_standard);
+    }
+
+  AddSupportedChannelWidth (GetChannelWidth ());
+
+  // If channel has been switched after initialization, invoke the capabilities
+  // changed callback (causing the transmission of an Association Request if this
+  // is a station)
+  if (IsInitialized () && !m_capabilitiesChangedCallback.IsNull ())
+    {
+      m_capabilitiesChangedCallback ();
+    }
 }
 
 void
