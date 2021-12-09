@@ -40,10 +40,9 @@ usual_lib_outdir = os.sep.join([usual_outdir, "lib"])
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Cmake commands
-cmake_refresh_cache_command = "cd {ns3_path}/cmake_cache; /usr/bin/cmake ..".format(ns3_path=ns3_path)
-cmake_build_project_command = "cd {ns3_path}/cmake_cache; cmake --build . -j".format(ns3_path=ns3_path)
-cmake_build_target_command = partial("cd {ns3_path}/cmake_cache; cmake --build . -j {jobs} --target {target}".format,
-                                     ns3_path=ns3_path,
+cmake_refresh_cache_command = "/usr/bin/cmake ..".format(ns3_path=ns3_path)
+cmake_build_project_command = "cmake --build . -j".format(ns3_path=ns3_path)
+cmake_build_target_command = partial("cmake --build . -j {jobs} --target {target}".format,
                                      jobs=max(1, os.cpu_count() - 1)
                                      )
 

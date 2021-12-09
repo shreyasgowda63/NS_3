@@ -30,6 +30,7 @@ def exit_handler(dry_run):
         print("Finished executing the following commands:")
     print(print_buffer[1:])
 
+
 def on_off_argument(parser, option_name, help_on, help_off=None):
     parser.add_argument('--enable-%s' % option_name,
                         help=('Enable %s' % help_on) if help_off is None else help_on,
@@ -270,7 +271,7 @@ def check_build_profile(output_directory):
 
 def print_and_buffer(message):
     global print_buffer
-    #print(message)
+    # print(message)
     print_buffer += "\n" + message
 
 
@@ -405,7 +406,7 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
                    ("WARNINGS", "warnings"),
                    ("WARNINGS_AS_ERRORS", "werror"),
                    ("DOCS", "documentation"),
-                   ("SANITIZE","sanitizers")
+                   ("SANITIZE", "sanitizers")
                    )
         for (cmake_flag, option_name) in options:
             arg = on_off_condition(args, cmake_flag, option_name)
@@ -442,9 +443,10 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
         if args.disable_modules:
             cmake_args.append("-DNS3_DISABLED_MODULES=%s" % args.disable_modules)
 
-        # Try to set specified generator (will probably fail if there is an old cache)
-        if args.G:
-            cmake_args.append("-G%s" % args.G)
+    # Try to set specified generator (will probably fail if there is an old cache)
+    if "configure" in args and args.G:
+        cmake_args.append("-G")
+        cmake_args.append(args.G)
 
     # Configure cmake
     cmake_args.append("..")  # for now, assuming the cmake_cache directory is inside the ns-3-dev folder
@@ -455,7 +457,11 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
             exit(0)
 
     # Echo out the configure command
-    print_and_buffer("cd %s; %s" % (current_cmake_cache_folder, " ".join(cmake_args)))
+    print_and_buffer("cd %s; %s ; cd %s" % (os.path.relpath(current_cmake_cache_folder, ns3_path),
+                                            " ".join(cmake_args),
+                                            os.path.relpath(ns3_path, current_cmake_cache_folder)
+                                            )
+                     )
 
     # Run cmake
     if not dry_run:
@@ -510,7 +516,11 @@ def cmake_build(current_cmake_cache_folder, output, jobs, target=None, dry_run=F
     target_part = (" --target %s" % target) if target else ""
     cmake_build_command = "cmake --build . %s%s" % (jobs_part, target_part)
 
-    print_and_buffer("cd %s; %s" % (current_cmake_cache_folder, cmake_build_command))
+    print_and_buffer("cd %s; %s ; cd %s" % (os.path.relpath(current_cmake_cache_folder, ns3_path),
+                                            cmake_build_command,
+                                            os.path.relpath(ns3_path, current_cmake_cache_folder)
+                                            )
+                     )
     if not dry_run:
         subprocess.run(cmake_build_command.split(), cwd=current_cmake_cache_folder, stdout=output)
 
@@ -557,7 +567,11 @@ def reconfigure_cmake_to_force_refresh(cmake, current_cmake_cache_folder, output
     cmake_args.append("..")
 
     # Echo out the configure command
-    print_and_buffer("cd %s; %s" % (current_cmake_cache_folder, " ".join(cmake_args)))
+    print_and_buffer("cd %s; %s, cd %s" % (os.path.relpath(ns3_path, current_cmake_cache_folder),
+                                           " ".join(cmake_args),
+                                           os.path.relpath(current_cmake_cache_folder, ns3_path)
+                                           )
+                     )
 
     # Call cmake
     if not dry_run:
@@ -584,7 +598,7 @@ def get_target_to_build(program_path, ns3_version, build_profile):
         return program_name.split("/")[-1]
 
 
-def configuration_step(current_cmake_cache_folder, current_cmake_generator, args, run_only, configure_and_run,
+def configuration_step(current_cmake_cache_folder, current_cmake_generator, args, configure_and_run,
                        output, dry_run=False):
     # There are a few cases where we want to reconfigure/refresh the cmake cache
     #  MANUALLY (does require ./ns3 configure)
@@ -749,7 +763,6 @@ def main():
         first_run, current_cmake_cache_folder = configuration_step(current_cmake_cache_folder,
                                                                    current_cmake_generator,
                                                                    args,
-                                                                   run_only,
                                                                    configure_and_run,
                                                                    output,
                                                                    args.dry_run
@@ -807,15 +820,11 @@ def main():
 
     # Finally, we try to run it
     if args.check or run_only or configure_and_run:
-        path_sep = ";" if os.name == "nt" else ":"
-        paths_to_add = path_sep.join([out_dir,
-                                      "%s/lib" % out_dir,
-                                      "%s/bindings/python" % out_dir,
-                                      ])
-        proc_env = {"PATH": os.getenv("PATH") + path_sep + paths_to_add,
-                    "LD_LIBRARY_PATH": paths_to_add,
-                    "PYTHON_PATH": paths_to_add,
-                    }
+        proc_env = {"PYTHON_PATH": "%s/bindings/python" % out_dir}
+        if sys.platform == "win32":
+            proc_env["PATH"] = os.getenv("PATH") + ";%s/lib" % out_dir
+        else:
+            proc_env["LD_LIBRARY_PATH"] = "%s/lib" % out_dir
 
         # running from ns-3-dev (ns3_path) or cwd
         working_dir = args.cwd if args.cwd else ns3_path
@@ -848,9 +857,13 @@ def main():
 
         if not run_only or args.dry_run:
             exported_variables = "export "
-            for var in proc_env.keys():
-                exported_variables += "%s=$%s:%s " % (var, var, paths_to_add)
-            print_and_buffer("cd %s; %s; %s" % (working_dir, exported_variables, " ".join(program_arguments)))
+            for (variable, value) in proc_env.items():
+                exported_variables += "%s=%s " % (variable, value)
+            print_and_buffer("cd %s; %s; %s" % (os.path.relpath(ns3_path, working_dir),
+                                                exported_variables,
+                                                " ".join(program_arguments)
+                                                )
+                             )
 
         if not args.dry_run:
             try:
