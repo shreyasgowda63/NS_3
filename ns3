@@ -820,10 +820,11 @@ def main():
 
     # Finally, we try to run it
     if args.check or run_only or configure_and_run:
-        proc_env = {"PYTHON_PATH": "%s/bindings/python" % out_dir}
-        if sys.platform == "win32":
-            proc_env["PATH"] = os.getenv("PATH") + ";%s/lib" % out_dir
-        else:
+        path_sep = ";" if sys.platform == "win32" else ":"
+        proc_env = {"PATH": os.getenv("PATH") + path_sep + "%s/lib" % out_dir,
+                    "PYTHON_PATH": "%s/bindings/python" % out_dir,
+                    }
+        if sys.platform != "win32":
             proc_env["LD_LIBRARY_PATH"] = "%s/lib" % out_dir
 
         # running from ns-3-dev (ns3_path) or cwd
