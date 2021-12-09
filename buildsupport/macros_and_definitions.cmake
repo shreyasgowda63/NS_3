@@ -131,16 +131,40 @@ endif()
 # fPIC (position-independent code) and fPIE (position-independent executable)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# Identify compiler
+# Identify compiler and check version
+set(below_minimum_msg "compiler is below the minimum required version")
 set(CLANG FALSE)
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${AppleClang_MinVersion})
+    message(
+      FATAL_ERROR
+        "Apple Clang ${CMAKE_CXX_COMPILER_VERSION} ${below_minimum_msg} ${AppleClang_MinVersion}"
+    )
+  endif()
+  set(CLANG TRUE)
+endif()
+
+if((NOT CLANG) AND ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang"))
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${Clang_MinVersion})
+    message(
+      FATAL_ERROR
+        "Clang ${CMAKE_CXX_COMPILER_VERSION} ${below_minimum_msg} ${Clang_MinVersion}"
+    )
+  endif()
   set(CLANG TRUE)
 endif()
 
 set(GCC FALSE)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${GNU_MinVersion})
+    message(
+      FATAL_ERROR
+        "GNU ${CMAKE_CXX_COMPILER_VERSION} ${below_minimum_msg} ${GNU_MinVersion}"
+    )
+  endif()
   set(GCC TRUE)
 endif()
+unset(below_minimum_msg)
 
 # Set compiler options and get command to force unused function linkage (useful
 # for libraries)
