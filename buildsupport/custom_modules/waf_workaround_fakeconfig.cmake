@@ -118,7 +118,7 @@ macro(write_fakewaf_config)
   check_on_or_off("ON" "${ENABLE_DPDKDEVNET}")
 
   string(APPEND out "Emulation FdNetDevice         : ")
-  check_on_or_off("${NS3_EMU}" "${ENABLE_EMUNETDEV}")
+  check_on_or_off("${ENABLE_EMU}" "${ENABLE_EMUNETDEV}")
 
   string(APPEND out "Examples                      : ")
   check_on_or_off("${ENABLE_EXAMPLES}" "${ENABLE_EXAMPLES}")
@@ -145,7 +145,7 @@ macro(write_fakewaf_config)
   check_on_or_off("ON" "${NS3_OPENFLOW}")
 
   string(APPEND out "Netmap emulation FdNetDevice  : ")
-  check_on_or_off("${NS3_EMU}" "${ENABLE_NETMAP_EMU}")
+  check_on_or_off("${ENABLE_EMU}" "${ENABLE_NETMAP_EMU}")
 
   string(
     APPEND
@@ -172,10 +172,10 @@ macro(write_fakewaf_config)
   check_on_or_off("${NS3_SQLITE}" "${ENABLE_SQLITE}")
 
   string(APPEND out "Tap Bridge                    : ")
-  check_on_or_off("${NS3_TAP}" "${ENABLE_TAP}")
+  check_on_or_off("${ENABLE_TAP}" "${ENABLE_TAP}")
 
   string(APPEND out "Tap FdNetDevice               : ")
-  check_on_or_off("${NS3_TAP}" "${ENABLE_TAPNETDEV}")
+  check_on_or_off("${ENABLE_TAP}" "${ENABLE_TAPNETDEV}")
 
   string(APPEND out "Tests                         : ")
   check_on_or_off("${ENABLE_TESTS}" "${ENABLE_TESTS}")
