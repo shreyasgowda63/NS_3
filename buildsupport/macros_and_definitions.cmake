@@ -18,11 +18,11 @@
 # Export compile time variable setting the directory to the NS3 root folder
 add_definitions(-DPROJECT_SOURCE_PATH="${PROJECT_SOURCE_DIR}")
 
-# Cache options for INT64X64
-set(INT64X64 "INT128" CACHE STRING "Int64x64 implementation")
-set(INT64X64 "CAIRO" CACHE STRING "Int64x64 implementation")
-set(INT64X64 "DOUBLE" CACHE STRING "Int64x64 implementation")
-set_property(CACHE INT64X64 PROPERTY STRINGS INT128 CAIRO DOUBLE)
+# Cache options for NS3_INT64X64
+set(NS3_INT64X64 "INT128" CACHE STRING "Int64x64 implementation")
+set(NS3_INT64X64 "CAIRO" CACHE STRING "Int64x64 implementation")
+set(NS3_INT64X64 "DOUBLE" CACHE STRING "Int64x64 implementation")
+set_property(CACHE NS3_INT64X64 PROPERTY STRINGS INT128 CAIRO DOUBLE)
 
 # WSLv1 doesn't support tap features
 if(EXISTS "/proc/version")
@@ -833,7 +833,7 @@ CommandLine configuration in those files instead.
   endif()
 
   # Process core-config
-  if(${INT64X64} MATCHES "INT128")
+  if(${NS3_INT64X64} MATCHES "INT128")
     include(buildsupport/3rd_party/FindInt128.cmake)
     find_int128_types()
     if(UINT128_FOUND)
@@ -841,15 +841,15 @@ CommandLine configuration in those files instead.
       set(INT64X64_USE_128 TRUE)
     else()
       message(STATUS "Int128 was not found. Falling back to Cairo.")
-      set(INT64X64 "CAIRO")
+      set(NS3_INT64X64 "CAIRO")
     endif()
   endif()
 
-  if(${INT64X64} MATCHES "CAIRO")
+  if(${NS3_INT64X64} MATCHES "CAIRO")
     set(INT64X64_USE_CAIRO TRUE)
   endif()
 
-  if(${INT64X64} MATCHES "DOUBLE")
+  if(${NS3_INT64X64} MATCHES "DOUBLE")
     # WSLv1 has a long double issue that will result in a few tests failing
     # https://github.com/microsoft/WSL/issues/830
     include(CheckTypeSize)
@@ -861,7 +861,7 @@ CommandLine configuration in those files instead.
         STATUS
           "Long double has the wrong size: LD ${SIZEOF_LONG_DOUBLE} vs D ${SIZEOF_DOUBLE}. Falling back to CAIRO."
       )
-      set(INT64X64 "CAIRO")
+      set(NS3_INT64X64 "CAIRO")
     else()
       set(INT64X64_USE_DOUBLE TRUE)
     endif()
