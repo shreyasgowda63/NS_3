@@ -820,12 +820,13 @@ def main():
 
     # Finally, we try to run it
     if args.check or run_only or configure_and_run:
+        libdir = "%s/lib" % out_dir
         path_sep = ";" if sys.platform == "win32" else ":"
-        proc_env = {"PATH": os.getenv("PATH") + path_sep + "%s/lib" % out_dir,
+        proc_env = {"PATH": os.getenv("PATH") + path_sep + libdir,
                     "PYTHON_PATH": "%s/bindings/python" % out_dir,
                     }
         if sys.platform != "win32":
-            proc_env["LD_LIBRARY_PATH"] = "%s/lib" % out_dir
+            proc_env["LD_LIBRARY_PATH"] = libdir
 
         # running from ns-3-dev (ns3_path) or cwd
         working_dir = args.cwd if args.cwd else ns3_path
@@ -859,6 +860,8 @@ def main():
         if not run_only or args.dry_run:
             exported_variables = "export "
             for (variable, value) in proc_env.items():
+                if variable == "PATH":
+                    value = "$PATH" + path_sep + libdir
                 exported_variables += "%s=%s " % (variable, value)
             print_and_buffer("cd %s; %s; %s" % (os.path.relpath(ns3_path, working_dir),
                                                 exported_variables,
