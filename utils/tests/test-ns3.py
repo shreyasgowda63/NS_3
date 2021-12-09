@@ -678,7 +678,6 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         with open(test_main_file, "w") as f:
             f.write("# include <iostream>\nint main() { return 0; }\n")
 
-        test_lib = "libcore"
         # We try to use this library without specifying a version,
         # specifying ns3-01 (text version with 'dev' is not supported)
         # and specifying ns3-00 (a wrong version)
@@ -688,10 +687,10 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
             project(ns3_consumer CXX)
             
             list(APPEND CMAKE_PREFIX_PATH ./lib/cmake/ns3)
-            find_package(ns3 {version} COMPONENTS test_lib)
+            find_package(ns3 {version} COMPONENTS libcore)
             add_executable(test main.cpp)
-            target_link_libraries(test PRIVATE {test_lib})
-            """.format(version=version, test_lib=test_lib)
+            target_link_libraries(test PRIVATE ns3::libcore)
+            """.format(version=version)
 
             test_cmake_project_file = os.sep.join([install_prefix, "CMakeLists.txt"])
             with open(test_cmake_project_file, "w") as f:
@@ -704,8 +703,8 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
                                                       cwd=install_prefix)
 
             if version == "3.00":
-                self.assertEqual(return_code, 0)
-                self.assertIn('Could not find a configuration file for package "ns3" that is compatible', 
+                self.assertEqual(return_code, 1)
+                self.assertIn('Could not find a configuration file for package "ns3" that is compatible',
                               stderr.replace("\n", ""))
             else:
                 self.assertEqual(return_code, 0)
