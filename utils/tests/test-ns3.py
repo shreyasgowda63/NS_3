@@ -659,8 +659,12 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         return_code, stdout, stderr = run_ns3("install")
         self.config_ok(return_code, stdout)
 
+        # Find out if libraries were installed to lib or lib64 (Fedora thing)
+        lib64 = os.path.exists(os.sep.join([install_prefix, "lib64"]))
+        installed_libdir = os.sep.join([install_prefix, ("lib64" if lib64 else "lib")])
+
         # Make sure all libraries were installed
-        installed_libraries = get_libraries_list(os.sep.join([install_prefix, "lib"]))
+        installed_libraries = get_libraries_list(installed_libdir)
         installed_libraries_list = ";".join(installed_libraries)
         for library in libraries:
             library_name = os.path.basename(library)
@@ -686,11 +690,11 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
             cmake_minimum_required(VERSION 3.10..3.10)
             project(ns3_consumer CXX)
             
-            list(APPEND CMAKE_PREFIX_PATH ./lib/cmake/ns3)
+            list(APPEND CMAKE_PREFIX_PATH ./{lib}/cmake/ns3)
             find_package(ns3 {version} COMPONENTS libcore)
             add_executable(test main.cpp)
             target_link_libraries(test PRIVATE ns3::libcore)
-            """.format(version=version)
+            """.format(lib=("lib64" if lib64 else "lib"), version=version)
 
             test_cmake_project_file = os.sep.join([install_prefix, "CMakeLists.txt"])
             with open(test_cmake_project_file, "w") as f:
