@@ -9,9 +9,8 @@ import shutil
 import subprocess
 import sys
 
-out_dir = ""
-build_separator = ""
 ns3_path = os.path.dirname(os.path.abspath(__file__))
+out_dir = os.sep.join([ns3_path, "build"])
 lock_file = os.sep.join([ns3_path, ".lock-waf_%s_build" % sys.platform])
 
 print_buffer = ""
@@ -276,7 +275,7 @@ def print_and_buffer(message):
 
 
 def clean_cmake_artifacts(dry_run=False):
-    print_and_buffer("rm -R %s" % out_dir)
+    print_and_buffer("rm -R %s" % os.path.relpath(out_dir, ns3_path))
 
     if not dry_run:
         shutil.rmtree(out_dir, ignore_errors=True)
@@ -284,12 +283,12 @@ def clean_cmake_artifacts(dry_run=False):
     cmake_cache_files = glob.glob("%s/**/CMakeCache.txt" % ns3_path, recursive=True)
     for cmake_cache_file in cmake_cache_files:
         dirname = os.path.dirname(cmake_cache_file)
-        print_and_buffer("rm -R %s" % dirname)
+        print_and_buffer("rm -R %s" % os.path.relpath(dirname, ns3_path))
         if not dry_run:
             shutil.rmtree(dirname, ignore_errors=True)
 
     if os.path.exists(lock_file):
-        print_and_buffer("rm %s" % lock_file)
+        print_and_buffer("rm %s" % os.path.relpath(lock_file, ns3_path))
         if not dry_run:
             os.remove(lock_file)
 
@@ -550,7 +549,8 @@ def reconfigure_cmake_to_force_refresh(cmake, current_cmake_cache_folder, output
             settings = json.load(f)
 
     # Delete cache folder and then recreate it
-    print_and_buffer("rm -R %s; mkdir %s" % current_cmake_cache_folder * 2)
+    cache_path = os.path.relpath(current_cmake_cache_folder, ns3_path)
+    print_and_buffer("rm -R %s; mkdir %s" % (cache_path, cache_path))
     if not dry_run:
         shutil.rmtree(current_cmake_cache_folder)
         os.mkdir(current_cmake_cache_folder)
@@ -567,7 +567,7 @@ def reconfigure_cmake_to_force_refresh(cmake, current_cmake_cache_folder, output
     cmake_args.append("..")
 
     # Echo out the configure command
-    print_and_buffer("cd %s; %s, cd %s" % (os.path.relpath(ns3_path, current_cmake_cache_folder),
+    print_and_buffer("cd %s; %s ; cd %s" % (os.path.relpath(ns3_path, current_cmake_cache_folder),
                                            " ".join(cmake_args),
                                            os.path.relpath(current_cmake_cache_folder, ns3_path)
                                            )
@@ -612,7 +612,7 @@ def configuration_step(current_cmake_cache_folder, current_cmake_generator, args
         if not current_cmake_cache_folder:
             current_cmake_cache_folder = os.sep.join([ns3_path, "cmake_cache"])
             if not os.path.exists(current_cmake_cache_folder):
-                print_and_buffer("mkdir %s" % current_cmake_cache_folder)
+                print_and_buffer("mkdir %s" % os.path.relpath(current_cmake_cache_folder, ns3_path))
                 if not dry_run:
                     os.mkdir(current_cmake_cache_folder)
                     current_cmake_cache_folder = os.path.abspath(current_cmake_cache_folder)
@@ -707,8 +707,6 @@ def main():
     # Read contents from lock (output directory is important)
     if os.path.exists(lock_file):
         exec(open(lock_file).read(), globals())
-    else:
-        out_dir = os.sep.join([ns3_path, "build"])
 
     # Clean project if needed
     if "clean" in args and args.clean:
