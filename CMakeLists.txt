@@ -25,6 +25,11 @@ project(NS3 CXX C)
 
 file(STRINGS VERSION NS3_VER)
 
+# minimum compiler versions
+set(AppleClang_MinVersion 7.0.0)
+set(Clang_MinVersion 3.6.0)
+set(GNU_MinVersion 7.0.0)
+
 # common options
 option(NS3_ASSERT "Enable assert on failure" OFF)
 option(NS3_DES_METRICS "Enable DES Metrics event collection" OFF)
@@ -74,7 +79,6 @@ option(NS3_MONOLIB
 )
 option(NS3_MPI "Build with MPI support" ON)
 option(NS3_NATIVE_OPTIMIZATIONS "Build with -march=native -mtune=native" OFF)
-option(NS3_NSC "Build with NSC support" OFF) # currently not supported
 set(NS3_OUTPUT_DIRECTORY "" CACHE STRING "Directory to store built artifacts")
 option(NS3_PRECOMPILE_HEADERS
        "Precompile module headers to speed up compilation" ON
