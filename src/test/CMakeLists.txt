@@ -1,13 +1,5 @@
 set(name test)
 
-set(nsc_sources)
-if(${NS3_NSC})
-  set(nsc_sources
-      ns3tcp/ns3tcp-cwnd-test-suite.cc ns3tcp/ns3tcp-interop-test-suite.cc
-      ns3tcp/nsctcp-loss-test-suite.cc
-  )
-endif()
-
 set(csma-layout_sources)
 if(csma-layout IN_LIST ns3-all-enabled-modules)
   set(csma-layout_sources csma-system-test-suite.cc)
@@ -22,15 +14,14 @@ set(application_sources)
 set(wifi_sources)
 if(applications IN_LIST ns3-all-enabled-modules)
   if(point-to-point IN_LIST ns3-all-enabled-modules)
+    # cmake-format: off
     set(applications_sources
-        ns3tcp/ns3tcp-cwnd-test-suite.cc
-        ns3tcp/ns3tcp-interop-test-suite.cc
         ns3tcp/ns3tcp-loss-test-suite.cc
         ns3tcp/ns3tcp-no-delay-test-suite.cc
         ns3tcp/ns3tcp-socket-test-suite.cc
         ns3tcp/ns3tcp-state-test-suite.cc
-        ns3tcp/nsctcp-loss-test-suite.cc
     )
+    # cmake-format: on
   endif()
   if(wifi IN_LIST ns3-all-enabled-modules)
     set(wifi_sources
@@ -63,7 +54,6 @@ add_library(
   ${csma-layout_sources}
   ${dsr_sources}
   ${internet_sources}
-  ${nsc_sources}
   ${traffic-control_sources}
   traced/traced-value-callback-typedef-test-suite.cc
   ${wifi_sources}
