@@ -513,15 +513,15 @@ Queue<Item>::DoEnqueue (ConstIterator pos, Ptr<Item> item, Iterator& ret)
 
   ret = m_packets.insert (pos, item);
 
+  NS_LOG_LOGIC ("m_traceEnqueue (p)");
+  m_traceEnqueue (item);
+
   uint32_t size = item->GetSize ();
   m_nBytes += size;
   m_nTotalReceivedBytes += size;
 
   m_nPackets++;
   m_nTotalReceivedPackets++;
-
-  NS_LOG_LOGIC ("m_traceEnqueue (p)");
-  m_traceEnqueue (item);
 
   return true;
 }
