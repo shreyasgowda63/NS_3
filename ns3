@@ -531,7 +531,10 @@ def cmake_build(current_cmake_cache_folder, output, jobs, target=None, dry_run=F
                                             )
                      )
     if not dry_run:
-        subprocess.run(cmake_build_command.split(), cwd=current_cmake_cache_folder, stdout=output)
+        ret = subprocess.run(cmake_build_command.split(), cwd=current_cmake_cache_folder, stdout=output)
+        # In case of failure, exit prematurely with the return code from the build
+        if ret.returncode != 0:
+            exit(ret.returncode)
 
 
 def extract_cmakecache_settings(current_cmake_cache_folder):
