@@ -236,7 +236,7 @@ class NS3ConfigureBuildProfileTestCase(unittest.TestCase):
         run_ns3("clean")
 
     def test_01_Debug(self):
-        return_code, stdout, stderr = run_ns3("configure -d debug")
+        return_code, stdout, stderr = run_ns3("configure -d debug --enable-verbose")
         self.assertEqual(return_code, 0)
         self.assertIn("Build profile                 : debug", stdout)
         self.assertIn("Build files have been written to", stdout)
@@ -257,7 +257,7 @@ class NS3ConfigureBuildProfileTestCase(unittest.TestCase):
         self.assertIn("Build files have been written to", stdout)
 
     def test_03_Optimized(self):
-        return_code, stdout, stderr = run_ns3("configure -d optimized")
+        return_code, stdout, stderr = run_ns3("configure -d optimized --enable-verbose")
         self.assertEqual(return_code, 0)
         self.assertIn("Build profile                 : optimized", stdout)
         self.assertIn("Build files have been written to", stdout)
@@ -311,7 +311,7 @@ class NS3BaseTestCase(unittest.TestCase):
         if not NS3BaseTestCase.cleaned_once:
             NS3BaseTestCase.cleaned_once = True
             run_ns3("clean")
-            return_code, stdout, stderr = run_ns3("configure -d release")
+            return_code, stdout, stderr = run_ns3("configure -d release --enable-verbose")
             self.config_ok(return_code, stdout)
 
         # Check if build-status.py exists, then read to get list of executables
@@ -519,7 +519,7 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
             self.assertEqual(stderr, stderr1)
 
         # Build target before using below
-        run_ns3("configure -d release")
+        run_ns3("configure -d release --enable-verbose")
         run_ns3("build scratch-simulator")
 
         # Run all cases and then check outputs
