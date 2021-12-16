@@ -392,8 +392,9 @@ macro(
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/
     PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ns3"
   )
-
-  message(STATUS "Processed ${folder}/${libname}")
+  if(${NS3_VERBOSE})
+    message(STATUS "Processed ${folder}/${libname}")
+  endif()
 endmacro()
 
 # cmake-format: off
