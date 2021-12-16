@@ -94,7 +94,7 @@ def parse_args(argv):
                                        "address, memory leaks and undefined behavior sanitizers")
     parser_configure = on_off_argument(parser_configure, "static", "Build a single static library with all ns-3",
                                        "Restore the shared libraries")
-    parser_configure = on_off_argument(parser_configure, "verbose", "CMake build target lines")
+    parser_configure = on_off_argument(parser_configure, "verbose", "printing of additional build system messages")
     parser_configure = on_off_argument(parser_configure, "warnings", "compiler warnings")
     parser_configure = on_off_argument(parser_configure, "werror", "Treat compiler warnings as errors",
                                        "Treat compiler warnings as warnings")
