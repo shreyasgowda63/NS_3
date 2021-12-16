@@ -592,7 +592,24 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_build_project_command, stdout)
 
-    def test_05_TestVersionFile(self):
+    def test_05_BreakBuild(self):
+        # change an essential file to break the build
+        attribute_cc_path = os.sep.join([ns3_path, "src", "core", "model", "attribute.cc"])
+        attribute_cc_bak_path = attribute_cc_path + ".bak"
+        shutil.move(attribute_cc_path, attribute_cc_bak_path)
+
+        # build should break
+        return_code, stdout, stderr = run_ns3("build")
+        self.assertNotEqual(return_code, 0)
+
+        # move file back
+        shutil.move(attribute_cc_bak_path, attribute_cc_path)
+
+        # build should work again
+        return_code, stdout, stderr = run_ns3("build")
+        self.assertEqual(return_code, 0)
+
+    def test_06_TestVersionFile(self):
         version_file = os.sep.join([ns3_path, "VERSION"])
         with open(version_file, "w") as f:
             f.write("3-00\n")
@@ -632,7 +649,7 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         # Reset flag to let it clean the build
         NS3BuildBaseTestCase.cleaned_once = False
 
-    def test_06_OutputDirectory(self):
+    def test_07_OutputDirectory(self):
         # Re-build to return to the original state
         return_code, stdout, stderr = run_ns3("build")
         self.ns3_libraries = get_libraries_list()
@@ -691,7 +708,7 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         for library in libraries:
             self.assertTrue(os.path.exists(library))
 
-    def test_07_InstallationAndUninstallation(self):
+    def test_08_InstallationAndUninstallation(self):
         # Remove existing libraries from the previous step
         libraries = get_libraries_list()
         for library in libraries:
