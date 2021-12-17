@@ -493,6 +493,37 @@ public:
    */
   static uint32_t GetSystemId (void);
 
+  /**
+   * Add additional bound to lookahead constraints.
+   *
+   * Objects that schedule remote events should invoke this method to
+   * constrain the lookahead window for conservative distributed
+   * parallel simulator implementations.  Only events between
+   * different systemid's need to be considered in lookahead. In
+   * network simulation the lookahead is frequently the channel delay.
+   * PointToPointNetDevice is an example that adds lookahead
+   * constraints, see PointToPointHelper for an example usage.
+   *
+   * It is currently assumed by the parallel simulator implementations
+   * that all BoundLookahead calls are made before the first
+   * invocation of Simulator::Run.
+   *
+   * @param [in] lookahead The lookahead bounds constraint
+   */
+  static void BoundLookahead (const Time lookahead);
+  /**
+   * Return the current lookahead.
+   *
+   * The current lookahead is the minimum lookahead bound seen in
+   * BoundLookahead calls.  Note that this value changes during
+   * problem setup as components make BoundLookahead calls to register
+   * lookahead constraints so care should be exercised when and how
+   * this value is used.
+   *
+   * @return The current lookahead.
+   */
+  static Time GetLookahead (void);
+  
 private:
   /** Default constructor. */
   Simulator ();
