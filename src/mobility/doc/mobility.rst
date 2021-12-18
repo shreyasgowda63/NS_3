@@ -112,6 +112,7 @@ MobilityModel Subclasses
 - RandomWaypoint
 - SteadyStateRandomWaypoint
 - Waypoint
+- CircleMobility3D
 
 PositionAllocator
 #################

@@ -21,6 +21,7 @@ set(source_files
     model/steady-state-random-waypoint-mobility-model.cc
     model/waypoint-mobility-model.cc
     model/waypoint.cc
+    model/circle-mobility-model.cc
 )
 
 set(header_files
@@ -44,6 +45,7 @@ set(header_files
     model/steady-state-random-waypoint-mobility-model.h
     model/waypoint-mobility-model.h
     model/waypoint.h
+    model/circle-mobility-model.h
 )
 
 set(libraries_to_link ${libnetwork})
@@ -57,6 +59,7 @@ set(test_sources
     test/rand-cart-around-geo-test.cc
     test/steady-state-random-waypoint-mobility-model-test.cc
     test/waypoint-mobility-model-test.cc
+    test/circle-mobility-model-test-suite.cc
 )
 
 build_lib("${name}" "${source_files}" "${header_files}" "${libraries_to_link}"
