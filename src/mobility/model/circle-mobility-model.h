@@ -51,13 +51,38 @@ public:
   CircleMobilityModel ();
   virtual ~CircleMobilityModel ();
   /**
-   * Sets patameters Origin, Radius, StartAngle and Speed
-   */
+  * Sets patameters Origin, Radius, StartAngle and Speed
+  *
+  * @param Origin is a Vector(x,y,z)
+  * @param Radius is a radius of the circle
+  * @param StartAngle is startng angle from which the object starts to move
+  * @param Speed is the moving speed of the object
+  */
     void SetParameters(const Vector &Origin, const double Radius, const double StartAngle, const double Speed);
 private:
+  /**
+  * DoGetPosition will be called whenever needed to get possition of the object
+  *
+  * @param void - No parameters passed to this function
+  */
   virtual Vector DoGetPosition (void) const;
+  /**
+  * DoSetPosition will be called whenever needed to set possition of the object
+  *
+  * @param position  is an address of a Vector(x,y,z)
+  */
   virtual void DoSetPosition (const Vector &position);
+  /**
+  * DoGetVelocity will be called whenever needed to get the velocity of the object
+  *
+  * @param void - No parameters passed to this function
+  */
   virtual Vector DoGetVelocity (void) const;
+  /**
+  * UpdateCourseChange will be called whenever an update on course change is required
+  *
+  * @param void - No parameters passed to this function
+  */  
   void UpdateCourseChange (void);
   Vector m_position; //!< the  position
   Vector m_Origin;   //!< the  origin of the circle
