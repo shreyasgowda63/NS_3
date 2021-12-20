@@ -8,14 +8,12 @@ mark_as_advanced(CCACHE_FOUND)
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-  set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-  message(STATUS "CCache is enabled")
-
-  # Configure ccache for pch headers
-  execute_process(
-    COMMAND ${CCACHE_FOUND}
-            --set-config=sloppiness=pch_defines,time_macros,include_file_mtime
+  message(
+    STATUS "CCache is enabled. Precompiled headers are disabled by default."
   )
+  set(NS3_PRECOMPILE_HEADERS OFF CACHE BOOL "")
+else()
+  set(NS3_PRECOMPILE_HEADERS ON CACHE BOOL "")
 endif()
 
 # ##############################################################################
