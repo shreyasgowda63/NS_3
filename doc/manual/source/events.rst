@@ -83,7 +83,7 @@ methods on C++ objects:
 
 Notes:
 
-* the ns-3 Schedule methods recognize automatically functions and
+* the |ns3| Schedule methods recognize automatically functions and
   methods only if they take less than 5 arguments. If you need them to
   support more arguments, please, file a bug report.
 * Readers familiar with the term 'fully-bound functors' will recognize
@@ -124,7 +124,7 @@ vs.
   Simulator::ScheduleWithContext (uint32_t context, Time const &time, MEM mem_ptr, OBJ obj);
 
 Readers who invest time and effort in developing or using a non-trivial
-simulation model will know the value of the ns-3 logging framework to
+simulation model will know the value of the |ns3| logging framework to
 debug simple and complex simulations alike. One of the important
 features that is provided by this logging framework is the automatic
 display of the network node id associated with the 'currently' running
@@ -170,7 +170,7 @@ Notes:
 * Users need to be careful to propagate DoInitialize methods across objects
   by calling Initialize explicitly on their member objects
 * The context id associated with each ScheduleWithContext method has
-  other uses beyond logging: it is used by an experimental branch of ns-3
+  other uses beyond logging: it is used by an experimental branch of |ns3|
   to perform parallel simulation on multicore systems using
   multithreading.
 
@@ -180,7 +180,7 @@ ScheduleWithContext is available when the corresponding event executes
 with ::GetContext.
 
 It is up to the models implemented on top of Simulator::* to interpret
-the context value. In ns-3, the network models interpret the context
+the context value. In |ns3|, the network models interpret the context
 as the node id of the node which generated an event. This is why it is
 important to call ScheduleWithContext in ns3::Channel subclasses
 because we are generating an event from node i to node j and we want
@@ -190,7 +190,7 @@ context.
 Available Simulator Engines
 ===========================
 
-ns-3 supplies two different types of basic simulator engine to manage 
+|ns3| supplies two different types of basic simulator engine to manage 
 event execution.  These are derived from the abstract base class `SimulatorImpl`:
 
 *  `DefaultSimulatorImpl`  This is a classic sequential discrete event 
@@ -215,9 +215,11 @@ for example::
   GlobalValue::Bind ("SimulatorImplementationType",
                      StringValue ("ns3::DistributedSimulatorImpl"));
 
-or by using a command line argument:
+or by using a command line argument::
 
-  -–SimulatorImplementationType=ns3::DistributedSimulatorImpl
+.. sourcecode:: bash
+
+  $ ./ns3 --run ...  -–SimulatorImplementationType=ns3::DistributedSimulatorImpl
 
 In addition to the basic simulator engines there is a general facility used
 to build "adapters" which provide small behavior modifications to one of 
@@ -227,53 +229,57 @@ uses the `PIMPL (pointer to implementation) <https://en.cppreference.com/w/cpp/l
 idiom to forward all calls to the configured base simulator engine.  
 This makes it easy to provide small customizations
 just by overriding the specific Simulator calls needed, and allowing 
-SimulatorAdapter to handle the rest.  
+`SimulatorAdapter` to handle the rest.  
 
 There are few places where adapters are used currently:
 
 *  `ReadltimeSimulatorImpl`  This adapter attempts to execute in real time 
    by pacing the wall clock evolution.  This pacing is "best effort", 
-   meaning actually event execution may not occur exactly in sync, but
+   meaning actual event execution may not occur exactly in sync, but
    close to it. This engine is normally only used with the 
-   DefaultSimulatorImpl, but it can be used to keep a distributed
-   simulation synchronized with real time.  See the :doc:realtime chapter.
+   `DefaultSimulatorImpl`, but it can be used to keep a distributed
+   simulation synchronized with real time.  See the :doc:`realtime` chapter.
 *  `VisualSimulatorImpl`  This adapter starts a live visualization of the 
    running simulation, showing the network graph and each packet traversing
    the links.
 *  `LocalTimeSimulatorImpl`  This adapter enables attaching noisy local clocks
-   to Nodes, then scheduling events with respect to the local noisy clock, 
+   to `Nodes`, then scheduling events with respect to the local noisy clock, 
    instead of relative to the true simulator time.
 
 In addition to the PIMPL idiom of `SimulatorAdapter` there is a special
-per-event customization hook: `SimulatorImpl::PreEventHook( const EventId & id)`.
+per-event customization hook::
+
+  SimulatorImpl::PreEventHook( const EventId & id)
+
 One can use this to perform any housekeeping actions before the next event
 actually executes.
-
    
 The distinction between a core engine and an adapter is the following: there 
 can only ever be one core engine running, while there can be several adapters
 chained up each providing a variation on the base engine execution.  
-For example one can use noise local clocks with the real time adapter.
+For example one can use noisy local clocks with the real time adapter.
 
-A single adapter can be added on top of the DefaultSimulatorImpl by the same
-two methods above: binding the "SimulatorImplementationType" global value or
+A single adapter can be added on top of the `DefaultSimulatorImpl` by the same
+two methods above: binding the `"SimulatorImplementationType"` global value or
 using the command line argument.  To chain multipe adapters a different 
-approach must be used; see the `SimulatorAdapter` API documentation.
+approach must be used; see the `SimulatorAdapter::AddAdapter()`
+API documentation.
 
 The simulator engine type can be set once, but must be set before the
-first call to the Simulator() API.  In practice, since some models have
+first call to the `Simulator()` API.  In practice, since some models have
 to schedule their start up events when they are constructed, this means
 generally you should set the engine type before instantiating any other 
 model components.
 
 The engine type can be changed after `Simulator::Destroy()` but before
-any additional calls to the Simulator API.
+any additional calls to the Simulator API, for instance when executing
+multiple runs in a single |ns3| invocation.
 
 
 Time
 ****
 
-ns-3 internally represents simulation times and durations as 
+|ns3| internally represents simulation times and durations as 
 64-bit signed integers (with the sign bit used for negative durations). 
 The time values are interpreted with respect to a "resolution" unit in the
 customary SI units: fs, ps, ns, us, ms, s, min, h, d, y.  
@@ -285,9 +291,10 @@ Times can be constructed from all standard numeric types
 (using the configured default unit) 
 or with explicit units (as in `Time MicroSeconds (uint64_t value)`).
 Times can be compared, tested for sign or equality to zero, rounded to 
-a given unit, converted to POD in specific units.  All basic arithmetic 
-operations are supported (addition, subtraction, multiplication or division
-by a scalar (plain number)). Times can be written to/read from IO streams. 
+a given unit, converted to standard numeric types in specific units.  
+All basic arithmetic operations are supported 
+(addition, subtraction, multiplication or division
+by a scalar (numeric value)). Times can be written to/read from IO streams. 
 In the case of writing it is easy to choose the output unit, different
 from the resolution unit.
 
@@ -295,9 +302,9 @@ from the resolution unit.
 Scheduler
 *********
 
-The main job of the Scheduler classes is to maintain the priority queue of
-future events.  The Scheduler can be set with a global variable,
-similar to choosing the SimulatorImpl::
+The main job of the `Scheduler` classes is to maintain the priority queue of
+future events.  The scheduler can be set with a global variable,
+similar to choosing the `SimulatorImpl`::
 
   GlobalValue::Bind ("SchedulerType", 
                      StringValue ("ns3::DistributedSimulatorImpl"));
@@ -307,37 +314,34 @@ The default scheduler is `MapScheduler` which uses a `std::map<>` to
 store events in time order.
 
 Because event distributions vary by model there is no one
-best strategy for the priority queue, so ns-3 has several options with
+best strategy for the priority queue, so |ns3| has several options with
 differing tradeoffs.  The example `utils/bench-simulator.c` can be used 
 to test the performance for a user-supplied event distribution.  
 For modest execution times (less than an hour, say) the choice of priority
 queue is usually not significant; configuring the build type to optimized
-is much more important.
+is much more important in reducing execution times.
 
 The available scheduler types, and a summary of their time and space
 complexity on `Insert()` and `RemoveNext()`, are listed in the
 following table.  See the individual Scheduler API pages for details on the 
 complexity of the other API calls.
 
-
-+--------------------+----------------------------------------+------------+--------------+----------+---------------+
++-----------------------+-------------------------------------+-------------+--------------+----------+--------------+
 |  Scheduler Type                                             | Complexity                                           |
-+-----------------------+-------------------------------------+------------+---------------+----------+--------------+
-|     SchedulerImpl     |               Method                | Time                       | Space                   |
-+                       +                                     +-------------+--------------+----------+--------------+
++-----------------------+-------------------------------------+-------------+--------------+----------+--------------+
+|                       |                                     | Time                       | Space                   |
+|  `SchedulerImpl` Type |               Method                +-------------+--------------+----------+--------------+
 |                       |                                     | Insert()    | RemoveNext() | Overhead |  Per Event   |
 +=======================+=====================================+=============+==============+==========+==============+
 | CalendarScheduler     | `<std::list> []`                    | Constant    | Constant     | 24 bytes | 16 bytes     |
 +-----------------------+-------------------------------------+-------------+--------------+----------+--------------+
 | HeapScheduler         | Heap on `std::vector`               | Logarithmic | Logaritmic   | 24 bytes | 0            |
-|                       |                                     |             |              |          |              |
 +-----------------------+-------------------------------------+-------------+--------------+----------+--------------+
 | ListScheduler         | `std::list`                         | Linear      | Constant     | 24 bytes | 16 bytes     |
 +-----------------------+-------------------------------------+-------------+--------------+----------+--------------+
 | MapScheduler          | `st::map`                           | Logarithmic | Constant     | 40 bytes | 32 bytes     |
 +-----------------------+-------------------------------------+-------------+--------------+----------+--------------+
 | PriorityQueueSchduler | `std::priority_queue<,std::vector>` | Logarithimc | Logarithims  | 24 bytes | 0            |
-|                       |                                     |             |              |          |              |
 +-----------------------+-------------------------------------+-------------+--------------+----------+--------------+
 
 
