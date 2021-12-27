@@ -223,10 +223,11 @@ In addition to the basic simulator engines there is a general facility used
 to build "adapters" which provide small behavior modifications to one of 
 the core `SimulatorImpl` engines.  The adapter base class is 
 `SimulatorAdapter`, itself derived from `SimulatorImpl`.  `SimluatorAdapter`
-uses the PIMPL idiom to forward all calls to the configured base simulator
-engine.  This makes it easy to provide small customizations just by overriding
-the specific Simulator calls needed, and allowing SimulatorAdapter to handle
-the rest.  
+uses the `PIMPL (pointer to implementation) <https://en.cppreference.com/w/cpp/language/pimpl>`_
+idiom to forward all calls to the configured base simulator engine.  
+This makes it easy to provide small customizations
+just by overriding the specific Simulator calls needed, and allowing 
+SimulatorAdapter to handle the rest.  
 
 There are few places where adapters are used currently:
 
@@ -272,14 +273,17 @@ any additional calls to the Simulator API.
 Time
 ****
 
-ns-3 internally represents simulation times and durations as 63-bit integers 
-(the high bit is used as a sign bit, to support negative durations). 
-The time values are interpreted with respect to a "resolution" value in the
-customary SI units: fs, ps, ns, us, ms, s, min, h, d, y.  The resolution
-value can be set once before any calls to `Simulator::Run()`.
+ns-3 internally represents simulation times and durations as 
+64-bit signed integers (with the sign bit used for negative durations). 
+The time values are interpreted with respect to a "resolution" unit in the
+customary SI units: fs, ps, ns, us, ms, s, min, h, d, y.  
+The unit defines the minimum Time value. 
+It can be changed once before any calls to `Simulator::Run()`.
+It is not stored with the 64-bit time value itself.
 
-Times can be constructed from all POD types (using the configured default 
-unit) or with explicit units (as in `Time MicroSeconds (uint64_t value)`).
+Times can be constructed from all standard numeric types 
+(using the configured default unit) 
+or with explicit units (as in `Time MicroSeconds (uint64_t value)`).
 Times can be compared, tested for sign or equality to zero, rounded to 
 a given unit, converted to POD in specific units.  All basic arithmetic 
 operations are supported (addition, subtraction, multiplication or division
@@ -299,12 +303,16 @@ similar to choosing the SimulatorImpl::
                      StringValue ("ns3::DistributedSimulatorImpl"));
 
 The scheduler can be changed at any time via `Simulator::SetScheduler()`.
-The default scheduler is `MapScheduler`.
+The default scheduler is `MapScheduler` which uses a `std::map<>` to 
+store events in time order.
 
 Because event distributions vary by model there is no one
 best strategy for the priority queue, so ns-3 has several options with
 differing tradeoffs.  The example `utils/bench-simulator.c` can be used 
-to test the performance for a user-supplied event distribution.
+to test the performance for a user-supplied event distribution.  
+For modest execution times (less than an hour, say) the choice of priority
+queue is usually not significant; configuring the build type to optimized
+is much more important.
 
 The available scheduler types, and a summary of their time and space
 complexity on `Insert()` and `RemoveNext()`, are listed in the
@@ -331,4 +339,6 @@ complexity of the other API calls.
 | PriorityQueueSchduler | `std::priority_queue<,std::vector>` | Logarithimc | Logarithims  | 24 bytes | 0            |
 |                       |                                     |             |              |          |              |
 +-----------------------+-------------------------------------+-------------+--------------+----------+--------------+
+
+
 
