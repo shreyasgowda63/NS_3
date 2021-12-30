@@ -173,6 +173,8 @@ private:
     Vector m_rxSpeed; //!< RX velocity
     double m_dis2D; //!< 2D distance between tx and rx
     double m_dis3D; //!< 3D distance between tx and rx
+    DoubleVector m_delayConsistency; //!< cluster delay for consistency update
+    bool m_newChannel; //!< true if the channel was generated with GetNewChannel
   };
 
   /**
@@ -278,9 +280,9 @@ private:
    * Check if the channel matrix has to be updated
    * \param channelMatrix channel matrix
    * \param channelCondition the channel condition
-   * \return true if the channel matrix has to be updated, false otherwise
+   * \return pair indicating if the channel matrix has to be updated due to a change of condition or expiration of coherence time.
    */
-  bool ChannelMatrixNeedsUpdate (Ptr<const ThreeGppChannelMatrix> channelMatrix, Ptr<const ChannelCondition> channelCondition) const;
+  std::pair<bool, bool> ChannelMatrixNeedsUpdate (Ptr<const ThreeGppChannelMatrix> channelMatrix, Ptr<const ChannelCondition> channelCondition) const;
 
   std::unordered_map<uint32_t, Ptr<ThreeGppChannelMatrix> > m_channelMap; //!< map containing the channel realizations
   Time m_updatePeriod; //!< the channel update period

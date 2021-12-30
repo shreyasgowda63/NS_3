@@ -953,28 +953,29 @@ ThreeGppChannelModel::GetThreeGppTable (Ptr<const ChannelCondition> channelCondi
   return table3gpp;
 }
 
-bool
+std::pair<bool, bool>
 ThreeGppChannelModel::ChannelMatrixNeedsUpdate (Ptr<const ThreeGppChannelMatrix> channelMatrix, Ptr<const ChannelCondition> channelCondition) const
 {
   NS_LOG_FUNCTION (this);
 
-  bool update = false;
+  bool condUpdate = false;
+  bool coherenceUpdate = false;
 
   // if the channel condition is different the channel has to be updated
   if (!channelMatrix->m_channelCondition->IsEqual (channelCondition))
     {
       NS_LOG_DEBUG ("Update the channel condition");
-      update = true;
+      condUpdate = true;
     }
 
   // if the coherence time is over the channel has to be updated
   if (!m_updatePeriod.IsZero () && Simulator::Now () - channelMatrix->m_generatedTime > m_updatePeriod)
     {
       NS_LOG_DEBUG ("Generation time " << channelMatrix->m_generatedTime.As (Time::NS) << " now " << Now ().As (Time::NS));
-      update = true;
+      coherenceUpdate = true;
     }
 
-  return update;
+  return std::make_pair (condUpdate, coherenceUpdate);
 }
 
 Ptr<const MatrixBasedChannelModel::ChannelMatrix>
@@ -995,7 +996,7 @@ ThreeGppChannelModel::GetChannel (Ptr<const MobilityModel> aMob,
 
   // Check if the channel is present in the map and return it, otherwise
   // generate a new channel
-  bool update = false;
+  std::pair<bool, bool> update; 
   bool notFound = false;
   Ptr<ThreeGppChannelMatrix> channelMatrix;
   if (m_channelMap.find (channelId) != m_channelMap.end ())
@@ -1013,11 +1014,8 @@ ThreeGppChannelModel::GetChannel (Ptr<const MobilityModel> aMob,
       notFound = true;
     }
 
-  // If the channel is not present in the map or if it has to be updated
-  // generate a new realization
-  if (notFound || update)
+  if (notFound || update.first || update.second)
     {
-      // channel matrix not found or has to be updated, generate a new one
       Angles txAngle (bMob->GetPosition (), aMob->GetPosition ());
       Angles rxAngle (aMob->GetPosition (), bMob->GetPosition ());
 
@@ -1036,17 +1034,19 @@ ThreeGppChannelModel::GetChannel (Ptr<const MobilityModel> aMob,
       // tx and rx instead
       Vector locUt = Vector (0.0, 0.0, 0.0);
 
-      if (notFound || !m_spatial_consistency)
+      if (notFound || update.first || !m_spatial_consistency)
         {
           // generate a new channel matrix
+          NS_LOG_DEBUG ("generate a new channel matrix");
           channelMatrix = GetNewChannel (locUt, condition, aAntenna, bAntenna, rxAngle, txAngle, distance2D, hBs, hUt);
           channelMatrix->m_txSpeed = bMob->GetVelocity ();
           channelMatrix->m_rxSpeed = aMob->GetVelocity ();
         }
 
-      else if (update && m_spatial_consistency)
+      else if (update.second && m_spatial_consistency)
         {
           // spatially consistent update of the channel matrix (mobility-based simulations)
+          NS_LOG_DEBUG ("spatial consistent update of the channel matrix");
           channelMatrix = GetUpdatedChannel (channelId, condition, aMob, bMob, aAntenna, bAntenna, rxAngle, txAngle, distance2D, hBs, hUt);
           channelMatrix->m_txSpeed = bMob->GetVelocity ();
           channelMatrix->m_rxSpeed = aMob->GetVelocity ();
@@ -1104,26 +1104,20 @@ ThreeGppChannelModel::GetUpdatedChannel (uint32_t channelId,
   Vector txSpeed = prevChannel->m_txSpeed;
   Vector rxSpeed = prevChannel->m_rxSpeed;
 
-  // update the cluster delays
-  // get delays from previous channel
-  DoubleVector clusterDelay;
-  for (uint8_t cInd = 0; cInd < numOfCluster; cInd++)
-    {
-      clusterDelay.push_back (prevChannel->m_delay.at (cInd));
-    }
-
-  // if LOS, we need to revert tau_n^LOS back to tau_n
-  double C_tau = 0.7705 - 0.0433 * K + 2e-4 * pow (K, 2) + 17e-6 * pow (K, 3);  // (7.5-3)
-  if (los)
-    {
-      for (uint8_t cInd = 0; cInd < numOfCluster; cInd++)
-        {
-          clusterDelay[cInd] *= C_tau;
-        }
-    }
-
   // update cluster delays based on equation (7.6-9)
-  DoubleVector prevClusterDelay = clusterDelay;
+  DoubleVector clusterDelay, prevClusterDelay;
+  if (prevChannel->m_newChannel)
+    {
+      prevClusterDelay = prevChannel->m_delayConsistency;
+      clusterDelay = prevChannel->m_delayConsistency;
+      channelParams->m_newChannel = false;
+    }
+  else
+    {
+      prevClusterDelay = prevChannel->m_delay;
+      clusterDelay = prevChannel->m_delay;
+    }
+  
   for (uint8_t cInd = 0; cInd < numOfCluster; cInd++)
     {
       clusterDelay[cInd] -= ((sin (prevChannel->m_angle.at (ZOA_INDEX).at (cInd) * M_PI / 180) * cos (prevChannel->m_angle.at (AOA_INDEX).at (cInd) * M_PI / 180) * rxSpeed.x
@@ -1146,7 +1140,6 @@ ThreeGppChannelModel::GetUpdatedChannel (uint32_t channelId,
     {
       clusterDelay[cInd] -= minTau;
     }
-  std::sort (clusterDelay.begin (), clusterDelay.end ()); // (7.5-2)
 
   // cluster powers are updated as in Step 6 using the cluster delays from Equation (7.6-10a).
   DoubleVector clusterPower;
@@ -1164,14 +1157,11 @@ ThreeGppChannelModel::GetUpdatedChannel (uint32_t channelId,
       clusterPower[cInd] = clusterPower[cInd] / powerSum; // (7.5-6)
     }
 
-  // resume step 5 to compute the delay for LoS condition.
-  if (los)
+  for (uint8_t cInd = 0; cInd < numOfCluster; cInd++)
     {
-      for (uint8_t cInd = 0; cInd < numOfCluster; cInd++)
-        {
-          clusterDelay[cInd] /= C_tau;
-        }
+      clusterDelay[cInd] += minTau;
     }
+
   NS_LOG_DEBUG ("delays and power cluster updated");
 
   // update cluster departure and arrival angles
@@ -1183,11 +1173,6 @@ ThreeGppChannelModel::GetUpdatedChannel (uint32_t channelId,
       clusterZoa.push_back (prevChannel->m_angle.at (ZOA_INDEX).at (cInd));
       clusterAod.push_back (prevChannel->m_angle.at (AOD_INDEX).at (cInd));
       clusterZod.push_back (prevChannel->m_angle.at (ZOD_INDEX).at (cInd));
-    }
-
-  if (prevClusterDelay[0] == 0)
-    {
-      prevClusterDelay[0] = 3e-8; // can't be 0
     }
 
   newClusterAoa = clusterAoa;
@@ -2414,8 +2399,16 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
 
   NS_LOG_INFO ("size of coefficient matrix =[" << H_usn.size () << "][" << H_usn[0].size () << "][" << H_usn[0][0].size () << "]");
 
+  DoubleVector consClusterDelay = clusterDelay;
+  for (uint8_t cInd = 0; cInd < numReducedCluster; cInd++)
+    {
+      consClusterDelay[cInd] += minTau + (dis3D / 3e8); 
+    }
+
   channelParams->m_channel = H_usn;
   channelParams->m_delay = clusterDelay;
+  channelParams->m_delayConsistency = consClusterDelay;
+  channelParams->m_newChannel = true;
 
   channelParams->m_angle.clear ();
   channelParams->m_angle.push_back (clusterAoa);
