@@ -169,6 +169,8 @@ private:
     uint8_t m_numCluster; //!< reduced cluster number;
     MatrixBasedChannelModel::Double3DVector m_clusterPhase; //!< the initial random phases
     Vector m_speed; //!< velocity
+    Vector m_txSpeed; //!< TX velocity
+    Vector m_rxSpeed; //!< RX velocity
     double m_dis2D; //!< 2D distance between tx and rx
     double m_dis3D; //!< 3D distance between tx and rx
   };
@@ -237,6 +239,31 @@ private:
                                             double dis2D, double hBS, double hUT) const;
 
   /**
+   * Update the channel matrix between two devices using the consistency procedure (procedure A)
+   * described in 3GPP TR 38.901
+   * \param channelId the Id of the channel between the two devices
+   * \param channelCondition the channel condition
+   * \param sMob the s node mobility model
+   * \param uMob the u node mobility model
+   * \param sAntenna the s node antenna array
+   * \param uAntenna the u node antenna array
+   * \param uAngle the u node angle
+   * \param sAngle the s node angle
+   * \param dis2D the 2D distance between tx and rx
+   * \param hBS the height of the BS
+   * \param hUT the height of the UT
+   * \return the updated channel realization
+   */
+  Ptr<ThreeGppChannelMatrix> GetUpdatedChannel (uint32_t channelId,
+                                                Ptr<const ChannelCondition> channelCondition,
+                                                Ptr<const MobilityModel> sMob,
+                                                Ptr<const MobilityModel> uMob,
+                                                Ptr<const PhasedArrayModel> sAntenna,
+                                                Ptr<const PhasedArrayModel> uAntenna,
+                                                Angles &uAngle, Angles &sAngle,
+                                                double dis2D, double hBS, double hUT) const;
+
+  /**
    * Applies the blockage model A described in 3GPP TR 38.901
    * \param params the channel matrix
    * \param clusterAOA vector containing the azimuth angle of arrival for each cluster
@@ -263,6 +290,9 @@ private:
   Ptr<UniformRandomVariable> m_uniformRv; //!< uniform random variable
   Ptr<NormalRandomVariable> m_normalRv; //!< normal random variable
   Ptr<UniformRandomVariable> m_uniformRvShuffle; //!< uniform random variable used to shuffle array in GetNewChannel
+
+  // parameters for the spatial consistency update
+  bool m_spatial_consistency; //!< enables spatial consistency, procedure A
 
   // parameters for the blockage model
   bool m_blockage; //!< enables the blockage model A
