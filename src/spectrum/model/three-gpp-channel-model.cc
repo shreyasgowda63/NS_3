@@ -2461,6 +2461,14 @@ ThreeGppChannelModel::GetNewChannel (Vector locUT, Ptr<const ChannelCondition> c
       consClusterDelay[cInd] += minTau + (dis3D / 3e8); 
     }
 
+  NS_LOG_INFO ("size of coefficient matrix =[" << H_usn.size () << "][" << H_usn[0].size () << "][" << H_usn[0][0].size () << "]");
+
+  DoubleVector consClusterDelay = clusterDelay;
+  for (uint8_t cInd = 0; cInd < numReducedCluster; cInd++)
+    {
+      consClusterDelay[cInd] += minTau + (dis3D / 3e8); 
+    }
+
   channelParams->m_channel = H_usn;
   channelParams->m_delay = clusterDelay;
   channelParams->m_delayConsistency = consClusterDelay;
