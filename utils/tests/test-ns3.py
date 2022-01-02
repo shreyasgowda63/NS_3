@@ -903,16 +903,99 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         self.assertIn("Memcheck", stderr)
 
     def test_10_DoxygenWithBuild(self):
+        """
+        Test the doxygen target that does trigger a full build
+        :return:
+        """
+        doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
+
+        doxygen_files = ["introspected-command-line.h", "introspected-doxygen.h"]
+        for filename in doxygen_files:
+            file_path = os.sep.join([doc_folder, filename])
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+        # Rebuilding dot images is super slow, so not removing doxygen products
+        # doxygen_build_folder = os.sep.join([doc_folder, "html"])
+        # if os.path.exists(doxygen_build_folder):
+        #     shutil.rmtree(doxygen_build_folder)
+
         return_code, stdout, stderr = run_ns3("--doxygen")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_build_target_command(target="doxygen"), stdout)
         self.assertIn("Built target doxygen", stdout)
 
     def test_11_DoxygenWithoutBuild(self):
+        """
+        Test the doxygen target that doesn't trigger a full build
+        :return:
+        """
+        # Rebuilding dot images is super slow, so not removing doxygen products
+        # doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
+        # doxygen_build_folder = os.sep.join([doc_folder, "html"])
+        # if os.path.exists(doxygen_build_folder):
+        #     shutil.rmtree(doxygen_build_folder)
+
         return_code, stdout, stderr = run_ns3("--doxygen-no-build")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_build_target_command(target="doxygen-no-build"), stdout)
         self.assertIn("Built target doxygen-no-build", stdout)
+
+    def test_12_SphinxDocumentation(self):
+        """
+        Test every individual target for Sphinx-based documentation
+        :return:
+        """
+        doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
+
+        # First we need to clean old docs, or it will not make any sense.
+        for target in ["manual", "models", "tutorial"]:
+            doc_build_folder = os.sep.join([doc_folder, target, "build"])
+            if os.path.exists(doc_build_folder):
+                shutil.rmtree(doc_build_folder)
+
+        # For each sphinx doc target.
+        for target in ["manual", "models", "tutorial"]:
+            # Build
+            return_code, stdout, stderr = run_ns3("--%s" % target)
+            self.assertEqual(return_code, 0)
+            self.assertIn(cmake_build_target_command(target="sphinx_%s" % target), stdout)
+            self.assertIn("Built target sphinx_%s" % target, stdout)
+
+            # Check if the docs output folder exists
+            doc_build_folder = os.sep.join([doc_folder, target, "build"])
+            self.assertTrue(os.path.exists(doc_build_folder))
+
+            # Check if the all the different types are in place (latex, split HTML and single page HTML)
+            for build_type in ["latex", "html", "singlehtml"]:
+                self.assertTrue(os.path.exists(os.sep.join([doc_build_folder, build_type])))
+
+    def test_13_Documentation(self):
+        """
+        Test the documentation target that builds
+        both doxygen and sphinx based documentation
+        :return:
+        """
+        doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
+
+        # First we need to clean old docs, or it will not make any sense.
+
+        # Rebuilding dot images is super slow, so not removing doxygen products
+        # doxygen_build_folder = os.sep.join([doc_folder, "html"])
+        # if os.path.exists(doxygen_build_folder):
+        #     shutil.rmtree(doxygen_build_folder)
+
+        for target in ["manual", "models", "tutorial"]:
+            doc_build_folder = os.sep.join([doc_folder, target, "build"])
+            if os.path.exists(doc_build_folder):
+                shutil.rmtree(doc_build_folder)
+
+        return_code, stdout, stderr = run_ns3("--documentation")
+        self.assertEqual(return_code, 0)
+        self.assertIn(cmake_build_target_command(target="sphinx"), stdout)
+        self.assertIn("Built target sphinx", stdout)
+        self.assertIn(cmake_build_target_command(target="doxygen"), stdout)
+        self.assertIn("Built target doxygen", stdout)
 
 
 if __name__ == '__main__':

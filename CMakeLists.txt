@@ -53,7 +53,6 @@ option(NS3_COVERAGE "Enable code coverage measurements and report generation"
 option(NS3_COVERAGE_ZERO_COUNTERS
        "Zero lcov counters before running. Requires NS3_COVERAGE=ON" OFF
 )
-option(NS3_DOCS "Generate documentation" OFF)
 option(NS3_INCLUDE_WHAT_YOU_USE
        "Use IWYU to determine unnecessary headers included" OFF
 )

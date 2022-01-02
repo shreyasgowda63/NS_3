@@ -83,7 +83,6 @@ def parse_args(argv):
     parser_configure = on_off_argument(parser_configure, "des-metrics",
                                        "Logging all events in a json file with the name of the executable "
                                        "(which must call CommandLine::Parse(argc, argv)")
-    parser_configure = on_off_argument(parser_configure, "documentation", "documentation targets")
     parser_configure = on_off_argument(parser_configure, "examples", "the ns-3 examples")
     parser_configure = on_off_argument(parser_configure, "gcov", "code coverage analysis")
     parser_configure = on_off_argument(parser_configure, "gtk", "GTK support in ConfigStore")
@@ -236,6 +235,18 @@ def parse_args(argv):
     parser.add_argument('--doxygen-no-build',
                         help=('Run doxygen to generate html documentation from source comments, '
                               'but do not wait for ns-3 to finish the full build.'),
+                        action="store_true", default=None)
+    parser.add_argument('--manual',
+                        help='Build manual.',
+                        action="store_true", default=None)
+    parser.add_argument('--models',
+                        help='Build models documentation.',
+                        action="store_true", default=None)
+    parser.add_argument('--tutorial',
+                        help='Build tutorial documentation.',
+                        action="store_true", default=None)
+    parser.add_argument('--documentation',
+                        help='Build all doxygen and sphinx documentation.',
                         action="store_true", default=None)
     # parser.add_argument('--docset',
     #               help=(
@@ -414,7 +425,6 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
     options = (("ASSERT", "asserts"),
                ("COVERAGE", "gcov"),
                ("DES_METRICS", "des_metrics"),
-               ("DOCS", "documentation"),
                ("EXAMPLES", "examples"),
                ("GTK3", "gtk"),
                ("LOG", "logs"),
@@ -662,6 +672,10 @@ def build_step(args,
     if "build" in args:
         non_executable_targets = ["doxygen",
                                   "doxygen-no-build",
+                                  "sphinx",
+                                  "sphinx_manual",
+                                  "sphinx_models",
+                                  "sphinx_tutorial",
                                   "install",
                                   "uninstall",
                                   "cmake-format"]
@@ -772,9 +786,16 @@ def main():
     #     differently from the doxygen target
     if args.doxygen:
         args.build = ['doxygen']
-
     if args.doxygen_no_build:
         args.build = ['doxygen-no-build']
+    if args.manual:
+        args.build = ['sphinx_manual']
+    if args.models:
+        args.build = ['sphinx_models']
+    if args.tutorial:
+        args.build = ['sphinx_tutorial']
+    if args.documentation:
+        args.build = ['doxygen', 'sphinx']
 
     # Installation and uninstallation options become cmake targets
     if "install" in args:
