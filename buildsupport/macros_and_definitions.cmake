@@ -232,9 +232,8 @@ macro(clear_global_cached_variables)
   )
 endmacro()
 
-# function used to search for package and program dependencies
-# than store list of missing dependencies in the list whose name is
-# stored in missing_deps
+# function used to search for package and program dependencies than store list
+# of missing dependencies in the list whose name is stored in missing_deps
 function(check_deps package_deps program_deps missing_deps)
   set(local_missing_deps)
   # Search for package dependencies
@@ -247,9 +246,8 @@ function(check_deps package_deps program_deps missing_deps)
 
   # And for program dependencies
   foreach(program ${program_deps})
-    # CMake likes to cache find_* to speed things up,
-    # so we can't reuse names here or it won't check
-    # other dependencies
+    # CMake likes to cache find_* to speed things up, so we can't reuse names
+    # here or it won't check other dependencies
     string(TOUPPER ${program} upper_${program})
     find_program(${upper_${program}} ${program})
     if(NOT ${upper_${program}})
@@ -776,7 +774,7 @@ macro(process_options)
   check_deps("" "doxygen;dot;dia" doxygen_docs_missing_deps)
   if(doxygen_docs_missing_deps)
     message(
-       STATUS
+      STATUS
         "docs: doxygen documentation not enabled due to missing dependencies: ${doxygen_docs_missing_deps}"
     )
   else()
@@ -835,14 +833,16 @@ macro(process_options)
 
   # Now we check for sphinx dependencies
   mark_as_advanced(
-    SPHINX_EXECUTABLE
-    SPHINX_OUTPUT_HTML
-    SPHINX_OUTPUT_MAN
+    SPHINX_EXECUTABLE SPHINX_OUTPUT_HTML SPHINX_OUTPUT_MAN
     SPHINX_WARNINGS_AS_ERRORS
   )
 
-  # Check deps accepts a list of packages, list of programs and name of the return variable
-  check_deps("Sphinx" "epstopdf;pdflatex;latexmk;convert;dvipng" sphinx_docs_missing_deps)
+  # Check deps accepts a list of packages, list of programs and name of the
+  # return variable
+  check_deps(
+    "Sphinx" "epstopdf;pdflatex;latexmk;convert;dvipng"
+    sphinx_docs_missing_deps
+  )
   if(sphinx_docs_missing_deps)
     message(
       STATUS
