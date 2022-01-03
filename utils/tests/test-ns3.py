@@ -1155,7 +1155,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         # if os.path.exists(doxygen_build_folder):
         #     shutil.rmtree(doxygen_build_folder)
 
-        return_code, stdout, stderr = run_ns3("--doxygen")
+        return_code, stdout, stderr = run_ns3("build doxygen")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_build_target_command(target="doxygen"), stdout)
         self.assertIn("Built target doxygen", stdout)
@@ -1171,7 +1171,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         # if os.path.exists(doxygen_build_folder):
         #     shutil.rmtree(doxygen_build_folder)
 
-        return_code, stdout, stderr = run_ns3("--doxygen-no-build")
+        return_code, stdout, stderr = run_ns3("build doxygen-no-build")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_build_target_command(target="doxygen-no-build"), stdout)
         self.assertIn("Built target doxygen-no-build", stdout)
@@ -1192,7 +1192,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         # For each sphinx doc target.
         for target in ["manual", "models", "tutorial"]:
             # Build
-            return_code, stdout, stderr = run_ns3("--%s" % target)
+            return_code, stdout, stderr = run_ns3("build %s" % target)
             self.assertEqual(return_code, 0)
             self.assertIn(cmake_build_target_command(target="sphinx_%s" % target), stdout)
             self.assertIn("Built target sphinx_%s" % target, stdout)
@@ -1225,7 +1225,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
             if os.path.exists(doc_build_folder):
                 shutil.rmtree(doc_build_folder)
 
-        return_code, stdout, stderr = run_ns3("--documentation")
+        return_code, stdout, stderr = run_ns3("build docs")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_build_target_command(target="sphinx"), stdout)
         self.assertIn("Built target sphinx", stdout)

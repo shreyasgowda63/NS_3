@@ -229,25 +229,6 @@ def parse_args(argv):
                         help='DEPRECATED (run ./test.py)',
                         action='store_true', default=None)
 
-    parser.add_argument('--doxygen',
-                        help='Run doxygen to generate html documentation from source comments.',
-                        action="store_true", default=None)
-    parser.add_argument('--doxygen-no-build',
-                        help=('Run doxygen to generate html documentation from source comments, '
-                              'but do not wait for ns-3 to finish the full build.'),
-                        action="store_true", default=None)
-    parser.add_argument('--manual',
-                        help='Build manual.',
-                        action="store_true", default=None)
-    parser.add_argument('--models',
-                        help='Build models documentation.',
-                        action="store_true", default=None)
-    parser.add_argument('--tutorial',
-                        help='Build tutorial documentation.',
-                        action="store_true", default=None)
-    parser.add_argument('--documentation',
-                        help='Build all doxygen and sphinx documentation.',
-                        action="store_true", default=None)
     # parser.add_argument('--docset',
     #               help=(
     #                   'Create Docset, without building. This requires the docsetutil tool from Xcode 9.2 or earlier.'
@@ -670,12 +651,13 @@ def build_step(args,
 
     # If we are building specific targets, we build them one by one
     if "build" in args:
-        non_executable_targets = ["doxygen",
+        non_executable_targets = ["docs",
+                                  "doxygen",
                                   "doxygen-no-build",
                                   "sphinx",
-                                  "sphinx_manual",
-                                  "sphinx_models",
-                                  "sphinx_tutorial",
+                                  "manual",
+                                  "models",
+                                  "tutorial",
                                   "install",
                                   "uninstall",
                                   "cmake-format"]
@@ -685,6 +667,16 @@ def build_step(args,
                 target = "lib" + target
             elif target not in non_executable_targets:
                 target = get_target_to_build(target, ns3_version, build_profile)
+            else:
+                # Sphinx target should have the sphinx prefix
+                if target in ["manual", "models", "tutorial"]:
+                    target = "sphinx_%s" % target
+
+                # Docs should build both doxygen and sphinx based docs
+                if target == "docs":
+                    target = "sphinx"
+                    args.build.append("doxygen")
+
             cmake_build(current_cmake_cache_folder,
                         jobs=args.jobs,
                         target=target,
@@ -781,21 +773,6 @@ def main():
         clean_cmake_artifacts(dry_run=args.dry_run)
         # We end things earlier when cleaning
         return
-
-    # Doxygen-no-build requires print-introspected-doxygen, but it has no explicit dependencies,
-    #     differently from the doxygen target
-    if args.doxygen:
-        args.build = ['doxygen']
-    if args.doxygen_no_build:
-        args.build = ['doxygen-no-build']
-    if args.manual:
-        args.build = ['sphinx_manual']
-    if args.models:
-        args.build = ['sphinx_models']
-    if args.tutorial:
-        args.build = ['sphinx_tutorial']
-    if args.documentation:
-        args.build = ['doxygen', 'sphinx']
 
     # Installation and uninstallation options become cmake targets
     if "install" in args:
