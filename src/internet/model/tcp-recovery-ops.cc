@@ -95,20 +95,18 @@ TcpClassicRecovery::~TcpClassicRecovery (void)
 
 void
 TcpClassicRecovery::EnterRecovery (Ptr<TcpSocketState> tcb, uint32_t dupAckCount,
-                                   uint32_t unAckDataCount, uint32_t deliveredBytes)
+                                   [[maybe_unused]] uint32_t unAckDataCount, 
+                                   [[maybe_unused]] uint32_t deliveredBytes)
 {
   NS_LOG_FUNCTION (this << tcb << dupAckCount << unAckDataCount);
-  NS_UNUSED (unAckDataCount);
-  NS_UNUSED (deliveredBytes);
   tcb->m_cWnd = tcb->m_ssThresh;
   tcb->m_cWndInfl = tcb->m_ssThresh + (dupAckCount * tcb->m_segmentSize);
 }
 
 void
-TcpClassicRecovery::DoRecovery (Ptr<TcpSocketState> tcb, uint32_t deliveredBytes)
+TcpClassicRecovery::DoRecovery (Ptr<TcpSocketState> tcb, [[maybe_unused]] uint32_t deliveredBytes)
 {
   NS_LOG_FUNCTION (this << tcb << deliveredBytes);
-  NS_UNUSED (deliveredBytes);
   tcb->m_cWndInfl += tcb->m_segmentSize;
 }
 
@@ -118,9 +116,9 @@ TcpClassicRecovery::ExitRecovery (Ptr<TcpSocketState> tcb)
   NS_LOG_FUNCTION (this << tcb);
   // Follow NewReno procedures to exit FR if SACK is disabled
   // (RFC2582 sec.3 bullet #5 paragraph 2, option 2)
-  // For SACK connections, we maintain the cwnd = ssthresh. In fact,
-  // this ACK was received in RECOVERY phase, not in OPEN. So we
-  // are not allowed to increase the window
+  // In this implementation, actual m_cWnd value is reset to ssThresh
+  // immediately before calling ExitRecovery(), so we just need to
+  // reset the inflated cWnd trace variable
   tcb->m_cWndInfl = tcb->m_ssThresh.Get ();
 }
 

@@ -32,6 +32,8 @@
 #include "ns3/udp-socket-factory.h"
 #include "packet-sink.h"
 #include "ns3/boolean.h"
+#include "ns3/ipv4-packet-info-tag.h"
+#include "ns3/ipv6-packet-info-tag.h"
 
 namespace ns3 {
 
@@ -148,7 +150,20 @@ void PacketSink::StartApplication ()    // Called at time specified by Start
         }
     }
 
+  if (InetSocketAddress::IsMatchingType (m_local))
+    {
+      m_localPort = InetSocketAddress::ConvertFrom (m_local).GetPort ();
+    }
+  else if (Inet6SocketAddress::IsMatchingType (m_local))
+    {
+      m_localPort = Inet6SocketAddress::ConvertFrom (m_local).GetPort ();
+    }
+  else
+    {
+      m_localPort = 0;
+    }
   m_socket->SetRecvCallback (MakeCallback (&PacketSink::HandleRead, this));
+  m_socket->SetRecvPktInfo (true);
   m_socket->SetAcceptCallback (
     MakeNullCallback<bool, Ptr<Socket>, const Address &> (),
     MakeCallback (&PacketSink::HandleAccept, this));
@@ -188,8 +203,8 @@ void PacketSink::HandleRead (Ptr<Socket> socket)
       m_totalRx += packet->GetSize ();
       if (InetSocketAddress::IsMatchingType (from))
         {
-          NS_LOG_INFO ("At time " << Simulator::Now ().GetSeconds ()
-                       << "s packet sink received "
+          NS_LOG_INFO ("At time " << Simulator::Now ().As (Time::S)
+                       << " packet sink received "
                        <<  packet->GetSize () << " bytes from "
                        << InetSocketAddress::ConvertFrom(from).GetIpv4 ()
                        << " port " << InetSocketAddress::ConvertFrom (from).GetPort ()
@@ -197,20 +212,38 @@ void PacketSink::HandleRead (Ptr<Socket> socket)
         }
       else if (Inet6SocketAddress::IsMatchingType (from))
         {
-          NS_LOG_INFO ("At time " << Simulator::Now ().GetSeconds ()
-                       << "s packet sink received "
+          NS_LOG_INFO ("At time " << Simulator::Now ().As (Time::S)
+                       << " packet sink received "
                        <<  packet->GetSize () << " bytes from "
                        << Inet6SocketAddress::ConvertFrom(from).GetIpv6 ()
                        << " port " << Inet6SocketAddress::ConvertFrom (from).GetPort ()
                        << " total Rx " << m_totalRx << " bytes");
         }
-      socket->GetSockName (localAddress);
-      m_rxTrace (packet, from);
-      m_rxTraceWithAddresses (packet, from, localAddress);
 
-      if (m_enableSeqTsSizeHeader)
+      if (!m_rxTrace.IsEmpty () || !m_rxTraceWithAddresses.IsEmpty () ||
+          (!m_rxTraceWithSeqTsSize.IsEmpty () && m_enableSeqTsSizeHeader))
         {
-          PacketReceived (packet, from, localAddress);
+          Ipv4PacketInfoTag interfaceInfo;
+          Ipv6PacketInfoTag interface6Info;
+          if (packet->RemovePacketTag (interfaceInfo))
+            {
+              localAddress = InetSocketAddress (interfaceInfo.GetAddress (), m_localPort);
+            }
+          else if (packet->RemovePacketTag (interface6Info))
+            {
+              localAddress = Inet6SocketAddress (interface6Info.GetAddress (), m_localPort);
+            }
+          else
+            {
+              socket->GetSockName (localAddress);
+            }
+          m_rxTrace (packet, from);
+          m_rxTraceWithAddresses (packet, from, localAddress);
+
+          if (!m_rxTraceWithSeqTsSize.IsEmpty () && m_enableSeqTsSizeHeader)
+            {
+              PacketReceived (packet, from, localAddress);
+            }
         }
     }
 }

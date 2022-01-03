@@ -38,13 +38,13 @@
  * - (if logging is enabled) the changes of rate to standard output.
  *
  * Example usage:
- * ./waf --run "wifi-rate-adaptation-distance --standard=802.11a --staManager=ns3::MinstrelWifiManager --apManager=ns3::MinstrelWifiManager --outputFileName=minstrel"
+ * ./ns3 --run "wifi-rate-adaptation-distance --standard=802.11a --staManager=ns3::MinstrelWifiManager --apManager=ns3::MinstrelWifiManager --outputFileName=minstrel"
  *
  * Another example (moving towards the AP):
- * ./waf --run "wifi-rate-adaptation-distance --standard=802.11a --staManager=ns3::MinstrelWifiManager --apManager=ns3::MinstrelWifiManager --outputFileName=minstrel --stepsSize=1 --STA1_x=-200"
+ * ./ns3 --run "wifi-rate-adaptation-distance --standard=802.11a --staManager=ns3::MinstrelWifiManager --apManager=ns3::MinstrelWifiManager --outputFileName=minstrel --stepsSize=1 --STA1_x=-200"
  *
  * Example for HT rates with SGI and channel width of 40MHz:
- * ./waf --run "wifi-rate-adaptation-distance --staManager=ns3::MinstrelHtWifiManager --apManager=ns3::MinstrelHtWifiManager --outputFileName=minstrelHt --shortGuardInterval=true --channelWidth=40"
+ * ./ns3 --run "wifi-rate-adaptation-distance --staManager=ns3::MinstrelHtWifiManager --apManager=ns3::MinstrelHtWifiManager --outputFileName=minstrelHt --shortGuardInterval=true --channelWidth=40"
  *
  * To enable the log of rate changes:
  * export NS_LOG=RateAdaptationDistance=level_info
@@ -191,7 +191,7 @@ int main (int argc, char *argv[])
   NodeContainer wifiStaNodes;
   wifiStaNodes.Create (1);
 
-  YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default ();
+  YansWifiPhyHelper wifiPhy;
   YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
   wifiPhy.SetChannel (wifiChannel.Create ());
 
@@ -204,15 +204,15 @@ int main (int argc, char *argv[])
     {
       if (standard == "802.11a")
         {
-          wifi.SetStandard (WIFI_PHY_STANDARD_80211a);
+          wifi.SetStandard (WIFI_STANDARD_80211a);
         }
       else if (standard == "802.11b")
         {
-          wifi.SetStandard (WIFI_PHY_STANDARD_80211b);
+          wifi.SetStandard (WIFI_STANDARD_80211b);
         }
       else if (standard == "802.11g")
         {
-          wifi.SetStandard (WIFI_PHY_STANDARD_80211g);
+          wifi.SetStandard (WIFI_STANDARD_80211g);
         }
       WifiMacHelper wifiMac;
 
@@ -236,11 +236,11 @@ int main (int argc, char *argv[])
     {
       if (standard == "802.11n-2.4GHz")
         {
-          wifi.SetStandard (WIFI_PHY_STANDARD_80211n_2_4GHZ);
+          wifi.SetStandard (WIFI_STANDARD_80211n_2_4GHZ);
         }
       else if (standard == "802.11n-5GHz")
         {
-          wifi.SetStandard (WIFI_PHY_STANDARD_80211n_5GHZ);
+          wifi.SetStandard (WIFI_STANDARD_80211n_5GHZ);
         }
 
       WifiMacHelper wifiMac;
@@ -265,7 +265,7 @@ int main (int argc, char *argv[])
     }
   else if (standard == "802.11ac")
     {
-      wifi.SetStandard (WIFI_PHY_STANDARD_80211ac);
+      wifi.SetStandard (WIFI_STANDARD_80211ac);
       WifiMacHelper wifiMac;
 
       //Configure the STA node

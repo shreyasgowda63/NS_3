@@ -587,23 +587,47 @@ protected:
    * \brief Forcefully set the initial cwnd
    *
    * \param who socket to force
-   * \param initialCwnd size of the initial cwnd
+   * \param initialCwnd size of the initial cwnd (segments)
    */
   void SetInitialCwnd (SocketWho who, uint32_t initialCwnd);
 
   /**
-   * \brief Forcefully set the ecn use on
+   * \brief Forcefully set the delayed acknowledgement count
    *
    * \param who socket to force
-   * \param useEcn Mode of ECN. Currently Off and On are supported.
+   * \param count value of delayed ACKs
+   */
+  void SetDelAckMaxCount (SocketWho who, uint32_t count);
+
+  /**
+   * \brief Forcefully set the ECN mode of use
+   *
+   * \param who socket to force
+   * \param useEcn Value representing the mode of ECN usage requested
    */
   void SetUseEcn (SocketWho who, TcpSocketState::UseEcn_t useEcn);
 
   /**
-   * \brief Forcefully set the initial ssth
+   * \brief Enable or disable pacing in the TCP socket
+   * 
+   * \param who socket
+   * \param pacing Boolean to enable or disable pacing
+   */
+  void SetPacingStatus (SocketWho who, bool pacing);
+
+  /**
+   * \brief Enable or disable pacing of the initial window
+   * 
+   * \param who socket
+   * \param paceWindow Boolean to enable or disable pacing of initial window
+   */
+  void SetPaceInitialWindow (SocketWho who, bool paceWindow);
+
+  /**
+   * \brief Forcefully set the initial ssthresh
    *
    * \param who socket to force
-   * \param initialSsThresh size of the initial ssth
+   * \param initialSsThresh Initial slow start threshold (bytes)
    */
   void SetInitialSsThresh (SocketWho who, uint32_t initialSsThresh);
 
@@ -658,7 +682,7 @@ protected:
    *
    * \param recovery typeid of the recovery algorithm
    */
-  void SetRecoveryAlgorithm (TypeId reccovery) { m_recoveryTypeId = reccovery; }
+  void SetRecoveryAlgorithm (TypeId recovery) { m_recoveryTypeId = recovery; }
 
   /**
    * \brief MTU of the bottleneck link
@@ -672,11 +696,9 @@ protected:
    * \param oldValue old value
    * \param newValue new value
    */
-  virtual void CongStateTrace (const TcpSocketState::TcpCongState_t oldValue,
-                               const TcpSocketState::TcpCongState_t newValue)
+  virtual void CongStateTrace ([[maybe_unused]] const TcpSocketState::TcpCongState_t oldValue,
+                               [[maybe_unused]] const TcpSocketState::TcpCongState_t newValue)
   {
-    NS_UNUSED (oldValue);
-    NS_UNUSED (newValue);
   }
 
   /**
@@ -685,10 +707,9 @@ protected:
    * \param oldValue old value
    * \param newValue new value
    */
-  virtual void CWndTrace (uint32_t oldValue, uint32_t newValue)
+  virtual void CWndTrace ([[maybe_unused]] uint32_t oldValue,
+                          [[maybe_unused]] uint32_t newValue)
   {
-    NS_UNUSED (oldValue);
-    NS_UNUSED (newValue);
   }
 
   /**
@@ -697,10 +718,9 @@ protected:
    * \param oldValue old value
    * \param newValue new value
    */
-  virtual void CWndInflTrace (uint32_t oldValue, uint32_t newValue)
+  virtual void CWndInflTrace ([[maybe_unused]] uint32_t oldValue,
+                              [[maybe_unused]] uint32_t newValue)
   {
-    NS_UNUSED (oldValue);
-    NS_UNUSED (newValue);
   }
 
   /**
@@ -711,10 +731,9 @@ protected:
    * \param oldTime old value
    * \param newTime new value
    */
-  virtual void RttTrace (Time oldTime, Time newTime)
+  virtual void RttTrace ([[maybe_unused]] Time oldTime,
+                         [[maybe_unused]] Time newTime)
   {
-    NS_UNUSED (oldTime);
-    NS_UNUSED (newTime);
   }
 
   /**
@@ -725,10 +744,9 @@ protected:
    * \param oldValue old value
    * \param newValue new value
    */
-  virtual void SsThreshTrace (uint32_t oldValue, uint32_t newValue)
+  virtual void SsThreshTrace ([[maybe_unused]] uint32_t oldValue,
+                              [[maybe_unused]] uint32_t newValue)
   {
-    NS_UNUSED (oldValue);
-    NS_UNUSED (newValue);
   }
 
   /**
@@ -739,10 +757,9 @@ protected:
    * \param oldValue old value
    * \param newValue new value
    */
-  virtual void BytesInFlightTrace (uint32_t oldValue, uint32_t newValue)
+  virtual void BytesInFlightTrace ([[maybe_unused]] uint32_t oldValue,
+                                   [[maybe_unused]] uint32_t newValue)
   {
-    NS_UNUSED (oldValue);
-    NS_UNUSED (newValue);
   }
 
   /**
@@ -753,10 +770,9 @@ protected:
    * \param oldValue old value
    * \param newValue new value
    */
-  virtual void RtoTrace (Time oldValue, Time newValue)
+  virtual void RtoTrace ([[maybe_unused]] Time oldValue,
+                         [[maybe_unused]] Time newValue)
   {
-    NS_UNUSED (oldValue);
-    NS_UNUSED (newValue);
   }
 
   /**
@@ -767,10 +783,9 @@ protected:
    * \param oldValue old value
    * \param newValue new value
    */
-  virtual void NextTxSeqTrace (SequenceNumber32 oldValue, SequenceNumber32 newValue)
+  virtual void NextTxSeqTrace ([[maybe_unused]] SequenceNumber32 oldValue,
+                               [[maybe_unused]] SequenceNumber32 newValue)
   {
-    NS_UNUSED (oldValue);
-    NS_UNUSED (newValue);
   }
 
   /**
@@ -781,37 +796,33 @@ protected:
    * \param oldValue old value
    * \param newValue new value
    */
-  virtual void HighestTxSeqTrace (SequenceNumber32 oldValue, SequenceNumber32 newValue)
+  virtual void HighestTxSeqTrace ([[maybe_unused]] SequenceNumber32 oldValue,
+                                  [[maybe_unused]] SequenceNumber32 newValue)
   {
-    NS_UNUSED (oldValue);
-    NS_UNUSED (newValue);
   }
 
   /**
    * \brief Track the rate value of TcpRateLinux.
    * \param rate updated value of TcpRate.
    */
-  virtual void RateUpdatedTrace (const TcpRateLinux::TcpRateConnection &rate)
+  virtual void RateUpdatedTrace ([[maybe_unused]] const TcpRateLinux::TcpRateConnection &rate)
   {
-    NS_UNUSED (rate);
   }
 
   /**
    * \brief Track the rate sample value of TcpRateLinux.
    * \param sample updated value of TcpRateSample.
    */
-  virtual void RateSampleUpdatedTrace (const TcpRateLinux::TcpRateSample &sample)
+  virtual void RateSampleUpdatedTrace ([[maybe_unused]] const TcpRateLinux::TcpRateSample &sample)
   {
-    NS_UNUSED (sample);
   }
 
   /**
    * \brief Socket closed normally
    * \param who the socket closed (SENDER or RECEIVER)
    */
-  virtual void NormalClose (SocketWho who)
+  virtual void NormalClose ([[maybe_unused]] SocketWho who)
   {
-    NS_UNUSED (who);
   }
 
   /**
@@ -819,28 +830,25 @@ protected:
    *
    * \param who the socket closed (SENDER or RECEIVER)
    */
-  virtual void ErrorClose  (SocketWho who)
+  virtual void ErrorClose  ([[maybe_unused]] SocketWho who)
   {
     /** \todo indicate the error */
-    NS_UNUSED (who);
   }
 
   /**
    * \brief Drop on the queue
    * \param who where the drop occurred (SENDER or RECEIVER)
    */
-  virtual void QueueDrop   (SocketWho who)
+  virtual void QueueDrop   ([[maybe_unused]] SocketWho who)
   {
-    NS_UNUSED (who);
   }
 
   /**
    * \brief Link drop
    * \param who where the drop occurred (SENDER or RECEIVER)
    */
-  virtual void PhyDrop     (SocketWho who)
+  virtual void PhyDrop     ([[maybe_unused]] SocketWho who)
   {
-    NS_UNUSED (who);
   }
 
   /**
@@ -852,12 +860,10 @@ protected:
    * \param h the header of segment
    * \param who the socket which has received the ACK (SENDER or RECEIVER)
    */
-  virtual void RcvAck      (const Ptr<const TcpSocketState> tcb,
-                            const TcpHeader& h, SocketWho who)
+  virtual void RcvAck      ([[maybe_unused]] const Ptr<const TcpSocketState> tcb,
+                            [[maybe_unused]] const TcpHeader& h,
+                            [[maybe_unused]] SocketWho who)
   {
-    NS_UNUSED (tcb);
-    NS_UNUSED (h);
-    NS_UNUSED (who);
   }
 
   /**
@@ -869,12 +875,10 @@ protected:
    * \param h the header of segment
    * \param who the socket which has processed the ACK (SENDER or RECEIVER)
    */
-  virtual void ProcessedAck (const Ptr<const TcpSocketState> tcb,
-                             const TcpHeader& h, SocketWho who)
+  virtual void ProcessedAck ([[maybe_unused]] const Ptr<const TcpSocketState> tcb,
+                             [[maybe_unused]] const TcpHeader& h,
+                             [[maybe_unused]] SocketWho who)
   {
-    NS_UNUSED (tcb);
-    NS_UNUSED (h);
-    NS_UNUSED (who);
   }
 
   /**
@@ -901,10 +905,9 @@ protected:
    * \param tcb Transmission control block
    * \param who where the RTO has expired (SENDER or RECEIVER)
    */
-  virtual void AfterRTOExpired (const Ptr<const TcpSocketState> tcb, SocketWho who)
+  virtual void AfterRTOExpired ([[maybe_unused]] const Ptr<const TcpSocketState> tcb,
+                                [[maybe_unused]] SocketWho who)
   {
-    NS_UNUSED (tcb);
-    NS_UNUSED (who);
   }
 
   /**
@@ -913,10 +916,9 @@ protected:
    * \param tcb Transmission control block
    * \param who where the RTO has expired (SENDER or RECEIVER)
    */
-  virtual void BeforeRTOExpired (const Ptr<const TcpSocketState> tcb, SocketWho who)
+  virtual void BeforeRTOExpired ([[maybe_unused]] const Ptr<const TcpSocketState> tcb,
+                                 [[maybe_unused]] SocketWho who)
   {
-    NS_UNUSED (tcb);
-    NS_UNUSED (who);
   }
 
   /**
@@ -926,13 +928,11 @@ protected:
    * \param isRetransmission self-explanatory
    * \param who where the rtt history was updated
    */
-  virtual void UpdatedRttHistory (const SequenceNumber32 & seq, uint32_t sz,
-                                  bool isRetransmission, SocketWho who)
+  virtual void UpdatedRttHistory ([[maybe_unused]] const SequenceNumber32 & seq,
+                                  [[maybe_unused]] uint32_t sz,
+                                  [[maybe_unused]] bool isRetransmission,
+                                  [[maybe_unused]] SocketWho who)
   {
-    NS_UNUSED (seq);
-    NS_UNUSED (sz);
-    NS_UNUSED (isRetransmission);
-    NS_UNUSED (who);
   }
 
   /**
@@ -941,10 +941,9 @@ protected:
    * \param size the amount of bytes transmitted
    * \param who where the RTO has expired (SENDER or RECEIVER)
    */
-  virtual void DataSent (uint32_t size, SocketWho who)
+  virtual void DataSent ([[maybe_unused]] uint32_t size,
+                         [[maybe_unused]] SocketWho who)
   {
-    NS_UNUSED (size);
-    NS_UNUSED (who);
   }
 
   /**

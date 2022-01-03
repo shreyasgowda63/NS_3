@@ -21,6 +21,9 @@
 #include "ns3/command-line.h"
 #include "ns3/config.h"
 #include "ns3/uinteger.h"
+#include "ns3/boolean.h"
+#include "ns3/enum.h"
+#include "ns3/tuple.h"
 #include "ns3/log.h"
 #include "ns3/yans-wifi-helper.h"
 #include "ns3/ssid.h"
@@ -41,54 +44,50 @@
 // the AP or both has/have traffic to send.
 //
 // Example for an IEEE 802.11ac station sending traffic to an 802.11a AP using Ideal rate adaptation algorithm:
-// ./waf --run "wifi-backward-compatibility --apVersion=80211a --staVersion=80211ac --staRaa=Ideal"
+// ./ns3 --run "wifi-backward-compatibility --apVersion=80211a --staVersion=80211ac --staRaa=Ideal"
 
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE ("wifi-backward-compatibility");
 
-WifiPhyStandard ConvertStringToStandard (std::string version)
+WifiStandard ConvertStringToStandard (std::string version)
 {
-  WifiPhyStandard standard;
+  WifiStandard standard = WIFI_STANDARD_80211a;
   if (version == "80211a")
     {
-      standard = WIFI_PHY_STANDARD_80211a;
+      standard = WIFI_STANDARD_80211a;
     }
   else if (version == "80211b")
     {
-      standard = WIFI_PHY_STANDARD_80211b;
+      standard = WIFI_STANDARD_80211b;
     }
   else if (version == "80211g")
     {
-      standard = WIFI_PHY_STANDARD_80211g;
+      standard = WIFI_STANDARD_80211g;
     }
-  else if (version == "80211_10MHZ")
+  else if (version == "80211p")
     {
-      standard = WIFI_PHY_STANDARD_80211_10MHZ;
-    }
-  else if (version == "80211_5MHZ")
-    {
-      standard = WIFI_PHY_STANDARD_80211_5MHZ;
-    }
-  else if (version == "holland")
-    {
-      standard = WIFI_PHY_STANDARD_holland;
+      standard = WIFI_STANDARD_80211p;
     }
   else if (version == "80211n_2_4GHZ")
     {
-      standard = WIFI_PHY_STANDARD_80211n_2_4GHZ;
+      standard = WIFI_STANDARD_80211n_2_4GHZ;
     }
   else if (version == "80211n_5GHZ")
     {
-      standard = WIFI_PHY_STANDARD_80211n_5GHZ;
+      standard = WIFI_STANDARD_80211n_5GHZ;
     }
   else if (version == "80211ac")
     {
-      standard = WIFI_PHY_STANDARD_80211ac;
+      standard = WIFI_STANDARD_80211ac;
     }
-  else
+  else if (version == "80211ax_2_4GHZ")
     {
-      standard = WIFI_PHY_STANDARD_UNSPECIFIED;
+      standard = WIFI_STANDARD_80211ax_2_4GHZ;
+    }
+  else if (version == "80211ax_5GHZ")
+    {
+      standard = WIFI_STANDARD_80211ax_5GHZ;
     }
   return standard;
 }
@@ -106,8 +105,8 @@ int main (int argc, char *argv[])
 
   CommandLine cmd (__FILE__);
   cmd.AddValue ("simulationTime", "Simulation time in seconds", simulationTime);
-  cmd.AddValue ("apVersion", "The standard version used by the AP: 80211a, 80211b, 80211g, 80211_10MHZ, 80211_5MHZ, holland, 80211n_2_4GHZ, 80211n_5GHZ or 80211ac", apVersion);
-  cmd.AddValue ("staVersion", "The standard version used by the station: 80211a, 80211b, 80211g, 80211_10MHZ, 80211_5MHZ, holland, 80211n_2_4GHZ, 80211n_5GHZ or 80211ac", staVersion);
+  cmd.AddValue ("apVersion", "The standard version used by the AP: 80211a, 80211b, 80211g, 80211p, 80211n_2_4GHZ, 80211n_5GHZ, 80211ac, 80211ax_2_4GHZ or 80211ax_5GHZ", apVersion);
+  cmd.AddValue ("staVersion", "The standard version used by the station: 80211a, 80211b, 80211g, 80211_10MHZ, 80211_5MHZ, 80211n_2_4GHZ, 80211n_5GHZ, 80211ac, 80211ax_2_4GHZ or 80211ax_5GHZ", staVersion);
   cmd.AddValue ("apRaa", "Rate adaptation algorithm used by the AP", apRaa);
   cmd.AddValue ("staRaa", "Rate adaptation algorithm used by the station", staRaa);
   cmd.AddValue ("apHasTraffic", "Enable/disable traffic on the AP", apHasTraffic);
@@ -120,18 +119,27 @@ int main (int argc, char *argv[])
   wifiApNode.Create (1);
 
   YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
-  YansWifiPhyHelper phy = YansWifiPhyHelper::Default ();
+  YansWifiPhyHelper phy;
   phy.SetChannel (channel.Create ());
 
   WifiMacHelper mac;
   WifiHelper wifi;
   Ssid ssid = Ssid ("ns3");
+  TupleValue<UintegerValue, UintegerValue, EnumValue, UintegerValue> channelValue;
 
   wifi.SetStandard (ConvertStringToStandard (staVersion));
   wifi.SetRemoteStationManager ("ns3::" + staRaa + "WifiManager");
 
   mac.SetType ("ns3::StaWifiMac",
+               "QosSupported", BooleanValue (true),
                "Ssid", SsidValue (ssid));
+
+  //Workaround needed as long as we do not fully support channel bonding
+  uint16_t width = (staVersion == "80211ac" ? 20 : 0);
+  auto standardIt = wifiStandards.find (ConvertStringToStandard (staVersion));
+  NS_ABORT_IF (standardIt == wifiStandards.end ());
+  channelValue.Set (WifiPhy::ChannelTuple {0, width, standardIt->second.phyBand, 0});
+  phy.Set ("ChannelSettings", channelValue);
 
   NetDeviceContainer staDevice;
   staDevice = wifi.Install (phy, mac, wifiStaNode);
@@ -140,22 +148,18 @@ int main (int argc, char *argv[])
   wifi.SetRemoteStationManager ("ns3::" + apRaa + "WifiManager");
 
   mac.SetType ("ns3::ApWifiMac",
+               "QosSupported", BooleanValue (true),
                "Ssid", SsidValue (ssid));
+
+  //Workaround needed as long as we do not fully support channel bonding
+  width = (apVersion == "80211ac" ? 20 : 0);
+  standardIt = wifiStandards.find (ConvertStringToStandard (apVersion));
+  NS_ABORT_IF (standardIt == wifiStandards.end ());
+  channelValue.Set (WifiPhy::ChannelTuple {0, width, standardIt->second.phyBand, 0});
+  phy.Set ("ChannelSettings", channelValue);
 
   NetDeviceContainer apDevice;
   apDevice = wifi.Install (phy, mac, wifiApNode);
-
-  //Workaround needed as long as we do not fully support channel bonding
-  if (staVersion == "80211ac")
-    {
-      Config::Set ("/NodeList/0/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (20));
-      Config::Set ("/NodeList/0/DeviceList/*/$ns3::WifiNetDevice/Phy/Frequency", UintegerValue (5180));
-    }
-  if (apVersion == "80211ac")
-    {
-      Config::Set ("/NodeList/1/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (20));
-      Config::Set ("/NodeList/1/DeviceList/*/$ns3::WifiNetDevice/Phy/Frequency", UintegerValue (5180));
-    }
 
   MobilityHelper mobility;
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();

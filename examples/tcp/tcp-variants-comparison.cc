@@ -127,23 +127,20 @@ RtoTracer (Time oldval, Time newval)
 }
 
 static void
-NextTxTracer (SequenceNumber32 old, SequenceNumber32 nextTx)
+NextTxTracer ([[maybe_unused]] SequenceNumber32 old, SequenceNumber32 nextTx)
 {
-  NS_UNUSED (old);
   *nextTxStream->GetStream () << Simulator::Now ().GetSeconds () << " " << nextTx << std::endl;
 }
 
 static void
-InFlightTracer (uint32_t old, uint32_t inFlight)
+InFlightTracer ([[maybe_unused]] uint32_t old, uint32_t inFlight)
 {
-  NS_UNUSED (old);
   *inFlightStream->GetStream () << Simulator::Now ().GetSeconds () << " " << inFlight << std::endl;
 }
 
 static void
-NextRxTracer (SequenceNumber32 old, SequenceNumber32 nextRx)
+NextRxTracer ([[maybe_unused]] SequenceNumber32 old, SequenceNumber32 nextRx)
 {
-  NS_UNUSED (old);
   *nextRxStream->GetStream () << Simulator::Now ().GetSeconds () << " " << nextRx << std::endl;
 }
 
@@ -227,10 +224,10 @@ int main (int argc, char *argv[])
 
 
   CommandLine cmd (__FILE__);
-  cmd.AddValue ("transport_prot", "Transport protocol to use: TcpNewReno, "
+  cmd.AddValue ("transport_prot", "Transport protocol to use: TcpNewReno, TcpLinuxReno, "
                 "TcpHybla, TcpHighSpeed, TcpHtcp, TcpVegas, TcpScalable, TcpVeno, "
                 "TcpBic, TcpYeah, TcpIllinois, TcpWestwood, TcpWestwoodPlus, TcpLedbat, "
-		"TcpLp, TcpDctcp", transport_prot);
+		"TcpLp, TcpDctcp, TcpCubic, TcpBbr", transport_prot);
   cmd.AddValue ("error_p", "Packet error rate", error_p);
   cmd.AddValue ("bandwidth", "Bottleneck bandwidth", bandwidth);
   cmd.AddValue ("delay", "Bottleneck delay", delay);

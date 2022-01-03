@@ -47,9 +47,7 @@ PointToPointHelper::PointToPointHelper ()
   m_queueFactory.SetTypeId ("ns3::DropTailQueue<Packet>");
   m_deviceFactory.SetTypeId ("ns3::PointToPointNetDevice");
   m_channelFactory.SetTypeId ("ns3::PointToPointChannel");
-#ifdef NS3_MPI
-  m_remoteChannelFactory.SetTypeId ("ns3::PointToPointRemoteChannel");
-#endif
+  m_enableFlowControl = true;
 }
 
 void 
@@ -78,9 +76,12 @@ void
 PointToPointHelper::SetChannelAttribute (std::string n1, const AttributeValue &v1)
 {
   m_channelFactory.Set (n1, v1);
-#ifdef NS3_MPI
-  m_remoteChannelFactory.Set (n1, v1);
-#endif
+}
+
+void
+PointToPointHelper::DisableFlowControl (void)
+{
+  m_enableFlowControl = false;
 }
 
 void 
@@ -246,13 +247,16 @@ PointToPointHelper::Install (Ptr<Node> a, Ptr<Node> b)
   b->AddDevice (devB);
   Ptr<Queue<Packet> > queueB = m_queueFactory.Create<Queue<Packet> > ();
   devB->SetQueue (queueB);
-  // Aggregate NetDeviceQueueInterface objects
-  Ptr<NetDeviceQueueInterface> ndqiA = CreateObject<NetDeviceQueueInterface> ();
-  ndqiA->GetTxQueue (0)->ConnectQueueTraces (queueA);
-  devA->AggregateObject (ndqiA);
-  Ptr<NetDeviceQueueInterface> ndqiB = CreateObject<NetDeviceQueueInterface> ();
-  ndqiB->GetTxQueue (0)->ConnectQueueTraces (queueB);
-  devB->AggregateObject (ndqiB);
+  if (m_enableFlowControl)
+    {
+      // Aggregate NetDeviceQueueInterface objects
+      Ptr<NetDeviceQueueInterface> ndqiA = CreateObject<NetDeviceQueueInterface> ();
+      ndqiA->GetTxQueue (0)->ConnectQueueTraces (queueA);
+      devA->AggregateObject (ndqiA);
+      Ptr<NetDeviceQueueInterface> ndqiB = CreateObject<NetDeviceQueueInterface> ();
+      ndqiB->GetTxQueue (0)->ConnectQueueTraces (queueB);
+      devB->AggregateObject (ndqiB);
+    }
 
   Ptr<PointToPointChannel> channel = 0;
 
@@ -273,11 +277,13 @@ PointToPointHelper::Install (Ptr<Node> a, Ptr<Node> b)
     }
   if (useNormalChannel)
     {
+      m_channelFactory.SetTypeId ("ns3::PointToPointChannel");
       channel = m_channelFactory.Create<PointToPointChannel> ();
     }
   else
     {
-      channel = m_remoteChannelFactory.Create<PointToPointRemoteChannel> ();
+      m_channelFactory.SetTypeId ("ns3::PointToPointRemoteChannel");
+      channel = m_channelFactory.Create<PointToPointRemoteChannel> ();
       Ptr<MpiReceiver> mpiRecA = CreateObject<MpiReceiver> ();
       Ptr<MpiReceiver> mpiRecB = CreateObject<MpiReceiver> ();
       mpiRecA->SetReceiveCallback (MakeCallback (&PointToPointNetDevice::Receive, devA));

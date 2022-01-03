@@ -16,11 +16,13 @@ SOURCES = \
 	source/replace.txt \
 	source/attributes.rst \
 	source/callbacks.rst \
+	source/develop.rst \
 	source/working-with-git.rst \
 	source/documentation.rst \
 	source/enable-modules.rst \
 	source/enable-tests.rst \
 	source/events.rst \
+	source/features.rst \
 	source/gnuplot.rst \
 	source/hash-functions.rst \
 	source/helpers.rst \
@@ -34,6 +36,7 @@ SOURCES = \
 	source/python.rst \
 	source/random-variables.rst \
 	source/realtime.rst \
+	source/simulator.rst \
 	source/support.rst \
 	source/test-background.rst \
 	source/test-framework.rst \
@@ -64,12 +67,12 @@ SOURCEFIGS = \
 	figures/plot-2d.png \
 	figures/plot-2d-with-error-bars.png \
 	figures/plot-3d.png \
+	figures/gtk-config-lena-dual-stripe-device-view.png \
+	figures/gtk-config-lena-dual-stripe-eNB-tx-power.png \
 	${SRC}/stats/doc/Stat-framework-arch.png \
 	${SRC}/stats/doc/Wifi-default.png \
 	${SRC}/stats/doc/dcf-overview.dia \
 	${SRC}/stats/doc/dcf-overview-with-aggregation.dia \
-	${SRC}/stats/doc/gnuplot-example.png \
-	${SRC}/stats/doc/file-example.png \
 	${SRC}/stats/doc/seventh-packet-byte-count.png \
 	${SRC}/stats/doc/gnuplot-helper-example.png \
 	${SRC}/stats/doc/gnuplot-aggregator.png \

@@ -101,6 +101,7 @@ public:
   /**
    * This method shall not be used in WAVE environment and
    * here it will overloaded to log warn message
+   * \return An invalid BSSID.
    */
   virtual Mac48Address GetBssid (void) const;
   /**
@@ -174,7 +175,9 @@ public:
   void Reset (void);
 
   // Inherited from base class
-  virtual void ConfigureStandard (enum WifiPhyStandard standard);
+  virtual void ConfigureStandard (enum WifiStandard standard);
+protected:
+  virtual void DoDispose (void);
 private:
   virtual void Receive (Ptr<WifiMacQueueItem> mpdu);
 

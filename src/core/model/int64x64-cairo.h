@@ -19,6 +19,7 @@
 
 #include "ns3/core-config.h"
 #if !defined(INT64X64_CAIRO_H) && defined (INT64X64_USE_CAIRO) && !defined(PYTHON_SCAN)
+/** Using the ns3::int64x64_t based on Cairo 128-bit integers. */
 #define INT64X64_CAIRO_H
 
 #include <cmath>  // pow
@@ -224,6 +225,37 @@ public:
   inline uint64_t GetLow (void) const
   {
     return _v.lo;
+  }
+
+  /**
+   * Truncate to an integer.
+   * Truncation is always toward zero, 
+   * \return The value truncated toward zero.
+   */
+  int64_t GetInt (void) const
+  {
+    const bool negative = _cairo_int128_negative (_v);
+    const cairo_int128_t value = negative ? _cairo_int128_negate (_v) : _v;
+    int64_t retval = value.hi;
+    retval = negative ? - retval : retval;
+    return retval;
+  }
+
+  /**
+   * Round to the nearest int.
+   * Similar to std::round this rounds halfway cases away from zero,
+   * regardless of the current (floating) rounding mode.
+   * \return The value rounded to the nearest int.
+   */
+  int64_t Round (void) const
+  {
+    const bool negative = _cairo_int128_negative (_v);
+    cairo_uint128_t value = negative ? _cairo_int128_negate (_v) : _v;
+    cairo_uint128_t half {1ULL << 63, 0};  // lo, hi
+    value = _cairo_uint128_add (value, half);
+    int64_t retval = value.hi;
+    retval = negative ? - retval : retval;
+    return retval;
   }
 
   /**

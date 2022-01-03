@@ -97,6 +97,7 @@ public:
     uint16_t widthA; ///< channel width A
     uint16_t widthB; ///< channel width B
     WifiPhyStandard standard; ///< standard
+    WifiPhyBand band; ///< band
     WifiPreamble preamble; ///< preamble
     bool captureEnabled; ///< whether physical layer capture is enabled
     double captureMargin; ///< margin used for physical layer capture
@@ -125,8 +126,8 @@ private:
   struct Input m_input; ///< input
   bool m_droppedA; ///< flag to indicate whether packet A has been dropped
   bool m_droppedB; ///< flag to indicate whether packet B has been dropped
-  mutable uint64_t m_uidA;
-  mutable uint64_t m_uidB;
+  mutable uint64_t m_uidA; ///< UID to use for packet A
+  mutable uint64_t m_uidB; ///< UID to use for packet B
 };
 
 void
@@ -202,6 +203,7 @@ InterferenceExperiment::Input::Input ()
     widthA (20),
     widthB (20),
     standard (WIFI_PHY_STANDARD_80211a),
+    band (WIFI_PHY_BAND_5GHZ),
     preamble (WIFI_PREAMBLE_LONG),
     captureEnabled (false),
     captureMargin (0)
@@ -278,9 +280,10 @@ InterferenceExperiment::Run (struct InterferenceExperiment::Input input)
   devRx->SetPhy (rx);
   nodeRx->AddDevice (devRx);
 
-  m_txA->SetChannelNumber (input.channelA);
-  m_txB->SetChannelNumber (input.channelB);
-  rx->SetChannelNumber (std::max (input.channelA, input.channelB));
+  m_txA->SetOperatingChannel (WifiPhy::ChannelTuple {input.channelA, 0, (int)(input.band), 0});
+  m_txB->SetOperatingChannel (WifiPhy::ChannelTuple {input.channelB, 0, (int)(input.band), 0});
+  rx->SetOperatingChannel (WifiPhy::ChannelTuple {std::max (input.channelA, input.channelB), 0,
+                                                  (int)(input.band), 0});
 
   rx->TraceConnectWithoutContext ("PhyRxDrop", MakeCallback (&InterferenceExperiment::PacketDropped, this));
 
@@ -341,34 +344,42 @@ int main (int argc, char *argv[])
   if (str_standard == "WIFI_PHY_STANDARD_80211a")
     {
       input.standard = WIFI_PHY_STANDARD_80211a;
+      input.band = WIFI_PHY_BAND_5GHZ;
     }
   else if (str_standard == "WIFI_PHY_STANDARD_80211b")
     {
       input.standard = WIFI_PHY_STANDARD_80211b;
+      input.band = WIFI_PHY_BAND_2_4GHZ;
     }
   else if (str_standard == "WIFI_PHY_STANDARD_80211g")
     {
       input.standard = WIFI_PHY_STANDARD_80211g;
+      input.band = WIFI_PHY_BAND_2_4GHZ;
     }
   else if (str_standard == "WIFI_PHY_STANDARD_80211n_2_4GHZ")
     {
-      input.standard = WIFI_PHY_STANDARD_80211n_2_4GHZ;
+      input.standard = WIFI_PHY_STANDARD_80211n;
+      input.band = WIFI_PHY_BAND_2_4GHZ;
     }
   else if (str_standard == "WIFI_PHY_STANDARD_80211n_5GHZ")
     {
-      input.standard = WIFI_PHY_STANDARD_80211n_5GHZ;
+      input.standard = WIFI_PHY_STANDARD_80211n;
+      input.band = WIFI_PHY_BAND_5GHZ;
     }
   else if (str_standard == "WIFI_PHY_STANDARD_80211ac")
     {
       input.standard = WIFI_PHY_STANDARD_80211ac;
+      input.band = WIFI_PHY_BAND_5GHZ;
     }
   else if (str_standard == "WIFI_PHY_STANDARD_80211ax_2_4GHZ")
     {
-      input.standard = WIFI_PHY_STANDARD_80211ax_2_4GHZ;
+      input.standard = WIFI_PHY_STANDARD_80211ax;
+      input.band = WIFI_PHY_BAND_2_4GHZ;
     }
   else if (str_standard == "WIFI_PHY_STANDARD_80211ax_5GHZ")
     {
-      input.standard = WIFI_PHY_STANDARD_80211ax_5GHZ;
+      input.standard = WIFI_PHY_STANDARD_80211ax;
+      input.band = WIFI_PHY_BAND_5GHZ;
     }
 
   if (str_preamble == "WIFI_PREAMBLE_LONG" && (input.standard == WIFI_PHY_STANDARD_80211a || input.standard == WIFI_PHY_STANDARD_80211b || input.standard == WIFI_PHY_STANDARD_80211g))
@@ -379,19 +390,15 @@ int main (int argc, char *argv[])
     {
       input.preamble = WIFI_PREAMBLE_SHORT;
     }
-  else if (str_preamble == "WIFI_PREAMBLE_HT_MF" && (input.standard == WIFI_PHY_STANDARD_80211n_2_4GHZ || input.standard == WIFI_PHY_STANDARD_80211n_5GHZ))
+  else if (str_preamble == "WIFI_PREAMBLE_HT_MF" && input.standard == WIFI_PHY_STANDARD_80211n)
     {
       input.preamble = WIFI_PREAMBLE_HT_MF;
-    }
-  else if (str_preamble == "WIFI_PREAMBLE_HT_GF" && (input.standard == WIFI_PHY_STANDARD_80211n_2_4GHZ || input.standard == WIFI_PHY_STANDARD_80211n_5GHZ))
-    {
-      input.preamble = WIFI_PREAMBLE_HT_GF;
     }
   else if (str_preamble == "WIFI_PREAMBLE_VHT_SU" && input.standard == WIFI_PHY_STANDARD_80211ac)
     {
       input.preamble = WIFI_PREAMBLE_VHT_SU;
     }
-  else if (str_preamble == "WIFI_PREAMBLE_HE_SU" && (input.standard == WIFI_PHY_STANDARD_80211ax_2_4GHZ || input.standard == WIFI_PHY_STANDARD_80211ax_5GHZ))
+  else if (str_preamble == "WIFI_PREAMBLE_HE_SU" && input.standard == WIFI_PHY_STANDARD_80211ax)
     {
       input.preamble = WIFI_PREAMBLE_HE_SU;
     }

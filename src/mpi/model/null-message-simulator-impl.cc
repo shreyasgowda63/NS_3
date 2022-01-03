@@ -16,8 +16,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Steven Smith <smith84@llnl.gov>
- *
  */
+
+/**
+ * \file
+ * \ingroup mpi
+ * Implementation of class ns3::NullMessageSimulatorImpl.
+ */
+
 
 #include "null-message-simulator-impl.h"
 
@@ -73,13 +79,8 @@ NullMessageSimulatorImpl::NullMessageSimulatorImpl ()
   m_systemCount = MpiInterface::GetSize ();
 
   m_stop = false;
-  // uids are allocated from 4.
-  // uid 0 is "invalid" events
-  // uid 1 is "now" events
-  // uid 2 is "destroy" events
-  m_uid = 4;
-  // before ::Run is entered, the m_currentUid will be zero
-  m_currentUid = 0;
+  m_uid = EventId::UID::VALID;
+  m_currentUid = EventId::UID::INVALID;
   m_currentTs = 0;
   m_currentContext = Simulator::NO_CONTEXT;
   m_unscheduledEvents = 0;
@@ -229,6 +230,9 @@ NullMessageSimulatorImpl::ProcessOneEvent (void)
 
   Scheduler::Event next = m_events->RemoveNext ();
 
+  PreEventHook (EventId (next.impl, next.key.m_ts, 
+                         next.key.m_context, next.key.m_uid));
+
   NS_ASSERT (next.key.m_ts >= m_currentTs);
   m_unscheduledEvents--;
   m_eventCount++;
@@ -370,14 +374,6 @@ NullMessageSimulatorImpl::GetSystemId () const
 }
 
 void
-NullMessageSimulatorImpl::RunOneEvent (void)
-{
-  NS_LOG_FUNCTION (this);
-
-  ProcessOneEvent ();
-}
-
-void
 NullMessageSimulatorImpl::Stop (void)
 {
   NS_LOG_FUNCTION (this);
@@ -440,16 +436,7 @@ EventId
 NullMessageSimulatorImpl::ScheduleNow (EventImpl *event)
 {
   NS_LOG_FUNCTION (this << event);
-
-  Scheduler::Event ev;
-  ev.impl = event;
-  ev.key.m_ts = m_currentTs;
-  ev.key.m_context = GetContext ();
-  ev.key.m_uid = m_uid;
-  m_uid++;
-  m_unscheduledEvents++;
-  m_events->Insert (ev);
-  return EventId (event, ev.key.m_ts, ev.key.m_context, ev.key.m_uid);
+  return Schedule (Time (0), event);
 }
 
 EventId
@@ -485,7 +472,7 @@ NullMessageSimulatorImpl::GetDelayLeft (const EventId &id) const
 void
 NullMessageSimulatorImpl::Remove (const EventId &id)
 {
-  if (id.GetUid () == 2)
+  if (id.GetUid () == EventId::UID::DESTROY)
     {
       // destroy events.
       for (DestroyEvents::iterator i = m_destroyEvents.begin (); i != m_destroyEvents.end (); i++)
@@ -527,7 +514,7 @@ NullMessageSimulatorImpl::Cancel (const EventId &id)
 bool
 NullMessageSimulatorImpl::IsExpired (const EventId &id) const
 {
-  if (id.GetUid () == 2)
+  if (id.GetUid () == EventId::UID::DESTROY)
     {
       if (id.PeekEventImpl () == 0
           || id.PeekEventImpl ()->IsCancelled ())

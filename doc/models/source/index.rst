@@ -30,7 +30,6 @@ This document is written in `reStructuredText <http://docutils.sourceforge.net/r
    dsr
    emulation-overview
    energy
-   fd-net-device
    flow-monitor
    internet-models
    lr-wpan
@@ -46,7 +45,6 @@ This document is written in `reStructuredText <http://docutils.sourceforge.net/r
    propagation
    spectrum
    sixlowpan
-   tap
    topology
    traffic-control
    uan

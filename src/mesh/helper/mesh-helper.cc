@@ -27,7 +27,9 @@
 #include "ns3/minstrel-wifi-manager.h"
 #include "ns3/mesh-wifi-interface-mac.h"
 #include "ns3/wifi-helper.h"
-#include "ns3/wifi-ack-policy-selector.h"
+#include "ns3/frame-exchange-manager.h"
+#include "ns3/wifi-default-protection-manager.h"
+#include "ns3/wifi-default-ack-manager.h"
 
 namespace ns3
 {
@@ -35,7 +37,7 @@ MeshHelper::MeshHelper () :
   m_nInterfaces (1),
   m_spreadChannelPolicy (ZERO_CHANNEL),
   m_stack (0),
-  m_standard (WIFI_PHY_STANDARD_80211a)
+  m_standard (WIFI_STANDARD_80211a)
 {
 }
 MeshHelper::~MeshHelper ()
@@ -97,11 +99,11 @@ MeshHelper::Install (const WifiPhyHelper &phyHelper, NodeContainer c) const
           uint32_t channel = 0;
           if (m_spreadChannelPolicy == ZERO_CHANNEL)
             {
-              channel = 0;
+              channel = 100;
             }
           if (m_spreadChannelPolicy == SPREAD_CHANNELS)
             {
-              channel = i * 5;
+              channel = 100 + i * 5;
             }
           Ptr<WifiNetDevice> iface = CreateInterface (phyHelper, node, channel);
           mp->AddInterface (iface);
@@ -120,10 +122,6 @@ MeshHelper::Default (void)
   MeshHelper helper;
   helper.SetMacType ();
   helper.SetRemoteStationManager ("ns3::ArfWifiManager");
-  helper.SetAckPolicySelectorForAc (AC_BE, "ns3::ConstantWifiAckPolicySelector");
-  helper.SetAckPolicySelectorForAc (AC_BK, "ns3::ConstantWifiAckPolicySelector");
-  helper.SetAckPolicySelectorForAc (AC_VI, "ns3::ConstantWifiAckPolicySelector");
-  helper.SetAckPolicySelectorForAc (AC_VO, "ns3::ConstantWifiAckPolicySelector");
   helper.SetSpreadInterfaceChannels (SPREAD_CHANNELS);
   return helper;
 }
@@ -170,30 +168,8 @@ MeshHelper::SetRemoteStationManager (std::string type,
   m_stationManager.Set (n6, v6);
   m_stationManager.Set (n7, v7);
 }
-void
-MeshHelper::SetAckPolicySelectorForAc (AcIndex ac, std::string type,
-                                       std::string n0, const AttributeValue &v0,
-                                       std::string n1, const AttributeValue &v1,
-                                       std::string n2, const AttributeValue &v2,
-                                       std::string n3, const AttributeValue &v3,
-                                       std::string n4, const AttributeValue &v4,
-                                       std::string n5, const AttributeValue &v5,
-                                       std::string n6, const AttributeValue &v6,
-                                       std::string n7, const AttributeValue &v7)
-{
-  m_ackPolicySelector[ac] = ObjectFactory ();
-  m_ackPolicySelector[ac].SetTypeId (type);
-  m_ackPolicySelector[ac].Set (n0, v0);
-  m_ackPolicySelector[ac].Set (n1, v1);
-  m_ackPolicySelector[ac].Set (n2, v2);
-  m_ackPolicySelector[ac].Set (n3, v3);
-  m_ackPolicySelector[ac].Set (n4, v4);
-  m_ackPolicySelector[ac].Set (n5, v5);
-  m_ackPolicySelector[ac].Set (n6, v6);
-  m_ackPolicySelector[ac].Set (n7, v7);
-}
 void 
-MeshHelper::SetStandard (enum WifiPhyStandard standard)
+MeshHelper::SetStandard (enum WifiStandard standard)
 {
   m_standard = standard;
 }
@@ -203,7 +179,17 @@ MeshHelper::CreateInterface (const WifiPhyHelper &phyHelper, Ptr<Node> node, uin
 {
   Ptr<WifiNetDevice> device = CreateObject<WifiNetDevice> ();
 
-  Ptr<MeshWifiInterfaceMac> mac = m_mac.Create<MeshWifiInterfaceMac> ();
+  auto it = wifiStandards.find (m_standard);
+  if (it == wifiStandards.end ())
+    {
+      NS_FATAL_ERROR ("Selected standard is not defined!");
+      return device;
+    }
+
+  // this is a const method, but we need to force the correct QoS setting
+  ObjectFactory macObjectFactory = m_mac;
+  macObjectFactory.Set ("QosSupported", BooleanValue (true));  // a mesh station is a QoS station
+  Ptr<MeshWifiInterfaceMac> mac = macObjectFactory.Create<MeshWifiInterfaceMac> ();
   NS_ASSERT (mac != 0);
   mac->SetSsid (Ssid ());
   mac->SetDevice (device);
@@ -212,35 +198,24 @@ MeshHelper::CreateInterface (const WifiPhyHelper &phyHelper, Ptr<Node> node, uin
   Ptr<WifiPhy> phy = phyHelper.Create (node, device);
   mac->SetAddress (Mac48Address::Allocate ());
   mac->ConfigureStandard (m_standard);
-  phy->ConfigureStandard (m_standard);
+  Ptr<RegularWifiMac> wifiMac = DynamicCast<RegularWifiMac> (mac);
+  Ptr<FrameExchangeManager> fem;
+  if (wifiMac != 0 && (fem = wifiMac->GetFrameExchangeManager ()) != 0)
+    {
+      Ptr<WifiProtectionManager> protectionManager = CreateObject<WifiDefaultProtectionManager> ();
+      protectionManager->SetWifiMac (wifiMac);
+      fem->SetProtectionManager (protectionManager);
+
+      Ptr<WifiAckManager> ackManager = CreateObject<WifiDefaultAckManager> ();
+      ackManager->SetWifiMac (wifiMac);
+      fem->SetAckManager (ackManager);
+    }
+  phy->ConfigureStandard (it->second.phyStandard);
   device->SetMac (mac);
   device->SetPhy (phy);
   device->SetRemoteStationManager (manager);
   node->AddDevice (device);
   mac->SwitchFrequencyChannel (channelId);
-  // Install ack policy selector
-  PointerValue ptr;
-  Ptr<WifiAckPolicySelector> ackSelector;
-
-  mac->GetAttributeFailSafe ("BE_Txop", ptr);
-  ackSelector = m_ackPolicySelector[AC_BE].Create<WifiAckPolicySelector> ();
-  ackSelector->SetQosTxop (ptr.Get<QosTxop> ());
-  ptr.Get<QosTxop> ()->SetAckPolicySelector (ackSelector);
-
-  mac->GetAttributeFailSafe ("BK_Txop", ptr);
-  ackSelector = m_ackPolicySelector[AC_BK].Create<WifiAckPolicySelector> ();
-  ackSelector->SetQosTxop (ptr.Get<QosTxop> ());
-  ptr.Get<QosTxop> ()->SetAckPolicySelector (ackSelector);
-
-  mac->GetAttributeFailSafe ("VI_Txop", ptr);
-  ackSelector = m_ackPolicySelector[AC_VI].Create<WifiAckPolicySelector> ();
-  ackSelector->SetQosTxop (ptr.Get<QosTxop> ());
-  ptr.Get<QosTxop> ()->SetAckPolicySelector (ackSelector);
-
-  mac->GetAttributeFailSafe ("VO_Txop", ptr);
-  ackSelector = m_ackPolicySelector[AC_VO].Create<WifiAckPolicySelector> ();
-  ackSelector->SetQosTxop (ptr.Get<QosTxop> ());
-  ptr.Get<QosTxop> ()->SetAckPolicySelector (ackSelector);
 
   return device;
 }

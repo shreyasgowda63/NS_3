@@ -60,7 +60,6 @@ interesting_config_items = [
     "NS3_ENABLED_MODULES",
     "NS3_ENABLED_CONTRIBUTED_MODULES",
     "NS3_MODULE_PATH",
-    "NSC_ENABLED",
     "ENABLE_REAL_TIME",
     "ENABLE_THREADING",
     "ENABLE_EXAMPLES",
@@ -77,7 +76,6 @@ interesting_config_items = [
     "VALGRIND_FOUND",
 ]
 
-NSC_ENABLED = False
 ENABLE_REAL_TIME = False
 ENABLE_THREADING = False
 ENABLE_EXAMPLES = True
@@ -106,13 +104,9 @@ test_runner_name = "test-runner"
 core_kinds = ["core", "performance", "system", "unit"]
 
 #
-# There are some special cases for test suites that kill valgrind.  This is
-# because NSC causes illegal instruction crashes when run under valgrind.
+# Exclude tests that are problematic for valgrind.
 #
 core_valgrind_skip_tests = [
-    "ns3-tcp-cwnd",
-    "nsc-tcp-loss",
-    "ns3-tcp-interoperability",
     "routing-click",
     "lte-rr-ff-mac-scheduler",
     "lte-tdmt-ff-mac-scheduler",
@@ -124,16 +118,6 @@ core_valgrind_skip_tests = [
     "lte-fdtbfq-ff-mac-scheduler",
     "lte-tdtbfq-ff-mac-scheduler",
     "lte-pss-ff-mac-scheduler",
-]
-
-#
-# There are some special cases for test suites that fail when NSC is
-# missing.
-#
-core_nsc_missing_skip_tests = [
-    "ns3-tcp-cwnd",
-    "nsc-tcp-loss",
-    "ns3-tcp-interoperability",
 ]
 
 #
@@ -165,6 +149,7 @@ def parse_examples_to_run_file(
         #
         # Note that the two conditions are Python statements that
         # can depend on waf configuration variables.  For example,
+        # when NSC was in the codebase, we could write:
         #
         #     ("tcp-nsc-lfn", "NSC_ENABLED == True", "NSC_ENABLED == False"),
         #
@@ -269,12 +254,12 @@ def read_test(test):
 # A simple example of writing a text file with a test result summary.  It is
 # expected that this output will be fine for developers looking for problems.
 #
-def node_to_text(test, f):
+def node_to_text(test, f, test_type='Suite'):
     (result, name, reason, time_real) = read_test(test)
     if reason:
         reason = " (%s)" % reason
 
-    output = "%s: Test Suite \"%s\" (%s)%s\n" % (result, name, time_real, reason)
+    output = "%s: Test %s \"%s\" (%s)%s\n" % (result, test_type, name, time_real, reason)
     f.write(output)
     for details in test.findall('FailureDetails'):
         f.write("    Details:\n")
@@ -285,28 +270,28 @@ def node_to_text(test, f):
         f.write("      File:      %s\n" % details.find('File').text)
         f.write("      Line:      %s\n" % details.find('Line').text)
     for child in test.findall('Test'):
-        node_to_text(child, f)
+        node_to_text(child, f, 'Case')
 
 def translate_to_text(results_file, text_file):
     text_file += '.txt'
     print('Writing results to text file \"%s\"...' % text_file, end='')
-    f = open(text_file, 'w')
     import xml.etree.ElementTree as ET
     et = ET.parse(results_file)
-    for test in et.findall('Test'):
-        node_to_text(test, f)
 
-    for example in et.findall('Example'):
-        result = example.find('Result').text
-        name = example.find('Name').text
-        if not example.find('Time') is None:
-            time_real = example.find('Time').get('real')
-        else:
-            time_real = ''
-        output = "%s: Example \"%s\" (%s)\n" % (result, name, time_real)
-        f.write(output)
+    with open(text_file, 'w') as f:
+        for test in et.findall('Test'):
+            node_to_text(test, f)
 
-    f.close()
+        for example in et.findall('Example'):
+            result = example.find('Result').text
+            name = example.find('Name').text
+            if not example.find('Time') is None:
+                time_real = example.find('Time').get('real')
+            else:
+                time_real = ''
+            output = "%s: Example \"%s\" (%s)\n" % (result, name, time_real)
+            f.write(output)
+
     print('done.')
 
 #
@@ -318,262 +303,263 @@ def translate_to_text(results_file, text_file):
 def translate_to_html(results_file, html_file):
     html_file += '.html'
     print('Writing results to html file %s...' % html_file, end='')
-    f = open(html_file, 'w')
-    f.write("<html>\n")
-    f.write("<body>\n")
-    f.write("<center><h1>ns-3 Test Results</h1></center>\n")
 
-    #
-    # Read and parse the whole results file.
-    #
-    import xml.etree.ElementTree as ET
-    et = ET.parse(results_file)
-
-    #
-    # Iterate through the test suites
-    #
-    f.write("<h2>Test Suites</h2>\n")
-    for suite in et.findall('Test'):
-        #
-        # For each test suite, get its name, result and execution time info
-        #
-        (result, name, reason, time) = read_test(suite)
+    with open(html_file, 'w') as f:
+        f.write("<html>\n")
+        f.write("<body>\n")
+        f.write("<center><h1>ns-3 Test Results</h1></center>\n")
 
         #
-        # Print a level three header with the result, name and time.  If the
-        # test suite passed, the header is printed in green. If the suite was
-        # skipped, print it in orange, otherwise assume something bad happened
-        # and print in red.
+        # Read and parse the whole results file.
         #
-        if result == "PASS":
-            f.write("<h3 style=\"color:green\">%s: %s (%s)</h3>\n" % (result, name, time))
-        elif result == "SKIP":
-            f.write("<h3 style=\"color:#ff6600\">%s: %s (%s) (%s)</h3>\n" % (result, name, time, reason))
-        else:
-            f.write("<h3 style=\"color:red\">%s: %s (%s)</h3>\n" % (result, name, time))
+        import xml.etree.ElementTree as ET
+        et = ET.parse(results_file)
 
         #
-        # The test case information goes in a table.
+        # Iterate through the test suites
+        #
+        f.write("<h2>Test Suites</h2>\n")
+        for suite in et.findall('Test'):
+            #
+            # For each test suite, get its name, result and execution time info
+            #
+            (result, name, reason, time) = read_test(suite)
+
+            #
+            # Print a level three header with the result, name and time.  If the
+            # test suite passed, the header is printed in green. If the suite was
+            # skipped, print it in orange, otherwise assume something bad happened
+            # and print in red.
+            #
+            if result == "PASS":
+                f.write("<h3 style=\"color:green\">%s: %s (%s)</h3>\n" % (result, name, time))
+            elif result == "SKIP":
+                f.write("<h3 style=\"color:#ff6600\">%s: %s (%s) (%s)</h3>\n" % (result, name, time, reason))
+            else:
+                f.write("<h3 style=\"color:red\">%s: %s (%s)</h3>\n" % (result, name, time))
+
+            #
+            # The test case information goes in a table.
+            #
+            f.write("<table border=\"1\">\n")
+
+            #
+            # The first column of the table has the heading Result
+            #
+            f.write("<th> Result </th>\n")
+
+            #
+            # If the suite crashed or is skipped, there is no further information, so just
+            # declare a new table row with the result (CRASH or SKIP) in it.  Looks like:
+            #
+            #   +--------+
+            #   | Result |
+            #   +--------+
+            #   | CRASH  |
+            #   +--------+
+            #
+            # Then go on to the next test suite.  Valgrind and skipped errors look the same.
+            #
+            if result in ["CRASH", "SKIP", "VALGR"]:
+                f.write("<tr>\n")
+                if result == "SKIP":
+                    f.write("<td style=\"color:#ff6600\">%s</td>\n" % result)
+                else:
+                    f.write("<td style=\"color:red\">%s</td>\n" % result)
+                f.write("</tr>\n")
+                f.write("</table>\n")
+                continue
+
+            #
+            # If the suite didn't crash, we expect more information, so fill out
+            # the table heading row.  Like,
+            #
+            #   +--------+----------------+------+
+            #   | Result | Test Case Name | Time |
+            #   +--------+----------------+------+
+            #
+            f.write("<th>Test Case Name</th>\n")
+            f.write("<th> Time </th>\n")
+
+            #
+            # If the test case failed, we need to print out some failure details
+            # so extend the heading row again.  Like,
+            #
+            #   +--------+----------------+------+-----------------+
+            #   | Result | Test Case Name | Time | Failure Details |
+            #   +--------+----------------+------+-----------------+
+            #
+            if result == "FAIL":
+                f.write("<th>Failure Details</th>\n")
+
+            #
+            # Now iterate through all of the test cases.
+            #
+            for case in suite.findall('Test'):
+
+                #
+                # Get the name, result and timing information from xml to use in
+                # printing table below.
+                #
+                (result, name, reason, time) = read_test(case)
+
+                #
+                # If the test case failed, we iterate through possibly multiple
+                # failure details
+                #
+                if result == "FAIL":
+                    #
+                    # There can be multiple failures for each test case.  The first
+                    # row always gets the result, name and timing information along
+                    # with the failure details.  Remaining failures don't duplicate
+                    # this information but just get blanks for readability.  Like,
+                    #
+                    #   +--------+----------------+------+-----------------+
+                    #   | Result | Test Case Name | Time | Failure Details |
+                    #   +--------+----------------+------+-----------------+
+                    #   |  FAIL  | The name       | time | It's busted     |
+                    #   +--------+----------------+------+-----------------+
+                    #   |        |                |      | Really broken   |
+                    #   +--------+----------------+------+-----------------+
+                    #   |        |                |      | Busted bad      |
+                    #   +--------+----------------+------+-----------------+
+                    #
+
+                    first_row = True
+                    for details in case.findall('FailureDetails'):
+
+                        #
+                        # Start a new row in the table for each possible Failure Detail
+                        #
+                        f.write("<tr>\n")
+
+                        if first_row:
+                            first_row = False
+                            f.write("<td style=\"color:red\">%s</td>\n" % result)
+                            f.write("<td>%s</td>\n" % name)
+                            f.write("<td>%s</td>\n" % time)
+                        else:
+                            f.write("<td></td>\n")
+                            f.write("<td></td>\n")
+                            f.write("<td></td>\n")
+
+                        f.write("<td>")
+                        f.write("<b>Message: </b>%s, " % details.find('Message').text)
+                        f.write("<b>Condition: </b>%s, " % details.find('Condition').text)
+                        f.write("<b>Actual: </b>%s, " % details.find('Actual').text)
+                        f.write("<b>Limit: </b>%s, " % details.find('Limit').text)
+                        f.write("<b>File: </b>%s, " % details.find('File').text)
+                        f.write("<b>Line: </b>%s" % details.find('Line').text)
+                        f.write("</td>\n")
+
+                        #
+                        # End the table row
+                        #
+                        f.write("</td>\n")
+                else:
+                    #
+                    # If this particular test case passed, then we just print the PASS
+                    # result in green, followed by the test case name and its execution
+                    # time information.  These go off in <td> ... </td> table data.
+                    # The details table entry is left blank.
+                    #
+                    #   +--------+----------------+------+---------+
+                    #   | Result | Test Case Name | Time | Details |
+                    #   +--------+----------------+------+---------+
+                    #   |  PASS  | The name       | time |         |
+                    #   +--------+----------------+------+---------+
+                    #
+                    f.write("<tr>\n")
+                    f.write("<td style=\"color:green\">%s</td>\n" % result)
+                    f.write("<td>%s</td>\n" % name)
+                    f.write("<td>%s</td>\n" % time)
+                    f.write("<td>%s</td>\n" % reason)
+                    f.write("</tr>\n")
+            #
+            # All of the rows are written, so we need to end the table.
+            #
+            f.write("</table>\n")
+
+        #
+        # That's it for all of the test suites.  Now we have to do something about
+        # our examples.
+        #
+        f.write("<h2>Examples</h2>\n")
+
+        #
+        # Example status is rendered in a table just like the suites.
         #
         f.write("<table border=\"1\">\n")
 
         #
-        # The first column of the table has the heading Result
+        # The table headings look like,
+        #
+        #   +--------+--------------+--------------+---------+
+        #   | Result | Example Name | Elapsed Time | Details |
+        #   +--------+--------------+--------------+---------+
         #
         f.write("<th> Result </th>\n")
+        f.write("<th>Example Name</th>\n")
+        f.write("<th>Elapsed Time</th>\n")
+        f.write("<th>Details</th>\n")
 
         #
-        # If the suite crashed or is skipped, there is no further information, so just
-        # declare a new table row with the result (CRASH or SKIP) in it.  Looks like:
+        # Now iterate through all of the examples
         #
-        #   +--------+
-        #   | Result |
-        #   +--------+
-        #   | CRASH  |
-        #   +--------+
-        #
-        # Then go on to the next test suite.  Valgrind and skipped errors look the same.
-        #
-        if result in ["CRASH", "SKIP", "VALGR"]:
+        for example in et.findall("Example"):
+
+            #
+            # Start a new row for each example
+            #
             f.write("<tr>\n")
-            if result == "SKIP":
-                f.write("<td style=\"color:#ff6600\">%s</td>\n" % result)
+
+            #
+            # Get the result and name of the example in question
+            #
+            (result, name, reason, time) = read_test(example)
+
+            #
+            # If the example either failed or crashed, print its result status
+            # in red; otherwise green.  This goes in a <td> ... </td> table data
+            #
+            if result == "PASS":
+                f.write("<td style=\"color:green\">%s</td>\n" % result)
+            elif result == "SKIP":
+                f.write("<td style=\"color:#ff6600\">%s</fd>\n" % result)
             else:
                 f.write("<td style=\"color:red\">%s</td>\n" % result)
+
+            #
+            # Write the example name as a new tag data.
+            #
+            f.write("<td>%s</td>\n" % name)
+
+            #
+            # Write the elapsed time as a new tag data.
+            #
+            f.write("<td>%s</td>\n" % time)
+
+            #
+            # Write the reason, if it exist
+            #
+            f.write("<td>%s</td>\n" % reason)
+
+            #
+            # That's it for the current example, so terminate the row.
+            #
             f.write("</tr>\n")
-            f.write("</table>\n")
-            continue
 
         #
-        # If the suite didn't crash, we expect more information, so fill out
-        # the table heading row.  Like,
-        #
-        #   +--------+----------------+------+
-        #   | Result | Test Case Name | Time |
-        #   +--------+----------------+------+
-        #
-        f.write("<th>Test Case Name</th>\n")
-        f.write("<th> Time </th>\n")
-
-        #
-        # If the test case failed, we need to print out some failure details
-        # so extend the heading row again.  Like,
-        #
-        #   +--------+----------------+------+-----------------+
-        #   | Result | Test Case Name | Time | Failure Details |
-        #   +--------+----------------+------+-----------------+
-        #
-        if result == "FAIL":
-            f.write("<th>Failure Details</th>\n")
-
-        #
-        # Now iterate through all of the test cases.
-        #
-        for case in suite.findall('Test'):
-
-            #
-            # Get the name, result and timing information from xml to use in
-            # printing table below.
-            #
-            (result, name, reason, time) = read_test(case)
-
-            #
-            # If the test case failed, we iterate through possibly multiple
-            # failure details
-            #
-            if result == "FAIL":
-                #
-                # There can be multiple failures for each test case.  The first
-                # row always gets the result, name and timing information along
-                # with the failure details.  Remaining failures don't duplicate
-                # this information but just get blanks for readability.  Like,
-                #
-                #   +--------+----------------+------+-----------------+
-                #   | Result | Test Case Name | Time | Failure Details |
-                #   +--------+----------------+------+-----------------+
-                #   |  FAIL  | The name       | time | It's busted     |
-                #   +--------+----------------+------+-----------------+
-                #   |        |                |      | Really broken   |
-                #   +--------+----------------+------+-----------------+
-                #   |        |                |      | Busted bad      |
-                #   +--------+----------------+------+-----------------+
-                #
-
-                first_row = True
-                for details in case.findall('FailureDetails'):
-
-                    #
-                    # Start a new row in the table for each possible Failure Detail
-                    #
-                    f.write("<tr>\n")
-
-                    if first_row:
-                        first_row = False
-                        f.write("<td style=\"color:red\">%s</td>\n" % result)
-                        f.write("<td>%s</td>\n" % name)
-                        f.write("<td>%s</td>\n" % time)
-                    else:
-                        f.write("<td></td>\n")
-                        f.write("<td></td>\n")
-                        f.write("<td></td>\n")
-
-                    f.write("<td>")
-                    f.write("<b>Message: </b>%s, " % details.find('Message').text)
-                    f.write("<b>Condition: </b>%s, " % details.find('Condition').text)
-                    f.write("<b>Actual: </b>%s, " % details.find('Actual').text)
-                    f.write("<b>Limit: </b>%s, " % details.find('Limit').text)
-                    f.write("<b>File: </b>%s, " % details.find('File').text)
-                    f.write("<b>Line: </b>%s" % details.find('Line').text)
-                    f.write("</td>\n")
-
-                    #
-                    # End the table row
-                    #
-                    f.write("</td>\n")
-            else:
-                #
-                # If this particular test case passed, then we just print the PASS
-                # result in green, followed by the test case name and its execution
-                # time information.  These go off in <td> ... </td> table data.
-                # The details table entry is left blank.
-                #
-                #   +--------+----------------+------+---------+
-                #   | Result | Test Case Name | Time | Details |
-                #   +--------+----------------+------+---------+
-                #   |  PASS  | The name       | time |         |
-                #   +--------+----------------+------+---------+
-                #
-                f.write("<tr>\n")
-                f.write("<td style=\"color:green\">%s</td>\n" % result)
-                f.write("<td>%s</td>\n" % name)
-                f.write("<td>%s</td>\n" % time)
-                f.write("<td>%s</td>\n" % reason)
-                f.write("</tr>\n")
-        #
-        # All of the rows are written, so we need to end the table.
+        # That's it for the table of examples, so terminate the table.
         #
         f.write("</table>\n")
 
-    #
-    # That's it for all of the test suites.  Now we have to do something about
-    # our examples.
-    #
-    f.write("<h2>Examples</h2>\n")
+        #
+        # And that's it for the report, so finish up.
+        #
+        f.write("</body>\n")
+        f.write("</html>\n")
 
-    #
-    # Example status is rendered in a table just like the suites.
-    #
-    f.write("<table border=\"1\">\n")
-
-    #
-    # The table headings look like,
-    #
-    #   +--------+--------------+--------------+---------+
-    #   | Result | Example Name | Elapsed Time | Details |
-    #   +--------+--------------+--------------+---------+
-    #
-    f.write("<th> Result </th>\n")
-    f.write("<th>Example Name</th>\n")
-    f.write("<th>Elapsed Time</th>\n")
-    f.write("<th>Details</th>\n")
-
-    #
-    # Now iterate through all of the examples
-    #
-    for example in et.findall("Example"):
-
-        #
-        # Start a new row for each example
-        #
-        f.write("<tr>\n")
-
-        #
-        # Get the result and name of the example in question
-        #
-        (result, name, reason, time) = read_test(example)
-
-        #
-        # If the example either failed or crashed, print its result status
-        # in red; otherwise green.  This goes in a <td> ... </td> table data
-        #
-        if result == "PASS":
-            f.write("<td style=\"color:green\">%s</td>\n" % result)
-        elif result == "SKIP":
-            f.write("<td style=\"color:#ff6600\">%s</fd>\n" % result)
-        else:
-            f.write("<td style=\"color:red\">%s</td>\n" % result)
-
-        #
-        # Write the example name as a new tag data.
-        #
-        f.write("<td>%s</td>\n" % name)
-
-        #
-        # Write the elapsed time as a new tag data.
-        #
-        f.write("<td>%s</td>\n" % time)
-
-        #
-        # Write the reason, if it exist
-        #
-        f.write("<td>%s</td>\n" % reason)
-
-        #
-        # That's it for the current example, so terminate the row.
-        #
-        f.write("</tr>\n")
-
-    #
-    # That's it for the table of examples, so terminate the table.
-    #
-    f.write("</table>\n")
-
-    #
-    # And that's it for the report, so finish up.
-    #
-    f.write("</body>\n")
-    f.write("</html>\n")
-    f.close()
     print('done.')
 
 #
@@ -599,8 +585,8 @@ def sigint_hook(signal, frame):
 #
 # Examples, however, are a different story.  In that case, we are just given
 # a list of examples that could be run.  Instead of just failing, for example,
-# nsc-tcp-zoo if NSC is not present, we look into the waf saved configuration
-# for relevant configuration items.
+# an example if its library support is not present, we look into the waf
+# saved configuration for relevant configuration items.
 #
 # XXX This function pokes around in the waf internal state file.  To be a
 # little less hacky, we should add a command to waf to return this info
@@ -625,14 +611,19 @@ def read_waf_config():
         if line.startswith("out_dir ="):
             key, val = line.split('=')
             out_dir = eval(val.strip())
+
+    f.close()
+
     global NS3_BASEDIR
     NS3_BASEDIR = top_dir
     global NS3_BUILDDIR
     NS3_BUILDDIR = out_dir
-    for line in open("%s/c4che/_cache.py" % out_dir).readlines():
-        for item in interesting_config_items:
-            if line.startswith(item):
-                exec(line, globals())
+
+    with open("%s/c4che/_cache.py" % out_dir) as f:
+        for line in f.readlines():
+            for item in interesting_config_items:
+                if line.startswith(item):
+                    exec(line, globals())
 
     if options.verbose:
         for item in interesting_config_items:
@@ -1293,10 +1284,9 @@ def run_tests():
     # do this since the tests will just append individual results to this file.
     #
     xml_results_file = os.path.join(testpy_output_dir, "results.xml")
-    f = open(xml_results_file, 'w')
-    f.write('<?xml version="1.0"?>\n')
-    f.write('<Results>\n')
-    f.close()
+    with open(xml_results_file, 'w') as f:
+        f.write('<?xml version="1.0"?>\n')
+        f.write('<Results>\n')
 
     #
     # We need to figure out what test suites to execute.  We are either given one
@@ -1471,11 +1461,6 @@ def run_tests():
                 job.set_is_skip(True)
                 job.set_skip_reason("crashes valgrind")
 
-            # Skip tests that will fail if NSC is missing.
-            if not NSC_ENABLED and test in core_nsc_missing_skip_tests:
-                job.set_is_skip(True)
-                job.set_skip_reason("requires NSC")
-
             if options.verbose:
                 print("Queue %s" % test)
 
@@ -1489,14 +1474,7 @@ def run_tests():
     # the example programs it makes sense to try and run.  Each example will
     # have a condition associated with it that must evaluate to true for us
     # to try and execute it.  This is used to determine if the example has
-    # a dependency that is not satisfied.  For example, if an example depends
-    # on NSC being configured by waf, that example should have a condition
-    # that evaluates to true if NSC is enabled.  For example,
-    #
-    #      ("tcp-nsc-zoo", "NSC_ENABLED == True"),
-    #
-    # In this case, the example "tcp-nsc-zoo" will only be run if we find the
-    # waf configuration variable "NSC_ENABLED" to be True.
+    # a dependency that is not satisfied.
     #
     # We don't care at all how the trace files come out, so we just write them
     # to a single temporary directory.
@@ -1767,25 +1745,24 @@ def run_tests():
             # XXX We could add some timing information to the examples, i.e. run
             # them through time and print the results here.
             #
-            f = open(xml_results_file, 'a')
-            f.write('<Example>\n')
-            example_name = "  <Name>%s</Name>\n" % job.display_name
-            f.write(example_name)
+            with open(xml_results_file, 'a') as f:
+                f.write('<Example>\n')
+                example_name = "  <Name>%s</Name>\n" % job.display_name
+                f.write(example_name)
 
-            if status == "PASS":
-                f.write('  <Result>PASS</Result>\n')
-            elif status == "FAIL":
-                f.write('  <Result>FAIL</Result>\n')
-            elif status == "VALGR":
-                f.write('  <Result>VALGR</Result>\n')
-            elif status == "SKIP":
-                f.write('  <Result>SKIP</Result>\n')
-            else:
-                f.write('  <Result>CRASH</Result>\n')
+                if status == "PASS":
+                    f.write('  <Result>PASS</Result>\n')
+                elif status == "FAIL":
+                    f.write('  <Result>FAIL</Result>\n')
+                elif status == "VALGR":
+                    f.write('  <Result>VALGR</Result>\n')
+                elif status == "SKIP":
+                    f.write('  <Result>SKIP</Result>\n')
+                else:
+                    f.write('  <Result>CRASH</Result>\n')
 
-            f.write('  <Time real="%.3f"/>\n' % job.elapsed_time)
-            f.write('</Example>\n')
-            f.close()
+                f.write('  <Time real="%.3f"/>\n' % job.elapsed_time)
+                f.write('</Example>\n')
 
         else:
             #
@@ -1833,27 +1810,22 @@ def run_tests():
             # followed by a VALGR failing test suite of the same name.
             #
             if job.is_skip:
-                f = open(xml_results_file, 'a')
-                f.write("<Test>\n")
-                f.write("  <Name>%s</Name>\n" % job.display_name)
-                f.write('  <Result>SKIP</Result>\n')
-                f.write("  <Reason>%s</Reason>\n" % job.skip_reason)
-                f.write("</Test>\n")
-                f.close()
-            else:
-                if job.returncode == 0 or job.returncode == 1 or job.returncode == 2:
-                    f_to = open(xml_results_file, 'a')
-                    f_from = open(job.tmp_file_name)
-                    f_to.write(f_from.read())
-                    f_to.close()
-                    f_from.close()
-                else:
-                    f = open(xml_results_file, 'a')
+                with open(xml_results_file, 'a') as f:
                     f.write("<Test>\n")
                     f.write("  <Name>%s</Name>\n" % job.display_name)
-                    f.write('  <Result>CRASH</Result>\n')
+                    f.write('  <Result>SKIP</Result>\n')
+                    f.write("  <Reason>%s</Reason>\n" % job.skip_reason)
                     f.write("</Test>\n")
-                    f.close()
+            else:
+                if job.returncode == 0 or job.returncode == 1 or job.returncode == 2:
+                    with open(xml_results_file, 'a') as f_to, open(job.tmp_file_name) as f_from:
+                        f_to.write(f_from.read())
+                else:
+                    with open(xml_results_file, 'a') as f:
+                        f.write("<Test>\n")
+                        f.write("  <Name>%s</Name>\n" % job.display_name)
+                        f.write('  <Result>CRASH</Result>\n')
+                        f.write("</Test>\n")
 
     #
     # We have all of the tests run and the results written out.  One final
@@ -1869,9 +1841,8 @@ def run_tests():
     # individual pieces.  So, we need to finish off and close out the XML
     # document
     #
-    f = open(xml_results_file, 'a')
-    f.write('</Results>\n')
-    f.close()
+    with open(xml_results_file, 'a') as f:
+        f.write('</Results>\n')
 
     #
     # Print a quick summary of events
@@ -2026,10 +1997,10 @@ def main(argv):
 
     # From waf/waflib/Options.py
     envcolor=os.environ.get('NOCOLOR','') and 'no' or 'auto' or 'yes'
-    
+
     if options.nocolor or envcolor == 'no':
         colors_lst['USE'] = False
-    
+
     return run_tests()
 
 if __name__ == '__main__':

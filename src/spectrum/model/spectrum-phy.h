@@ -49,6 +49,10 @@ public:
   SpectrumPhy ();
   virtual ~SpectrumPhy ();
 
+  // Delete copy constructor and assignment operator to avoid misuse
+  SpectrumPhy (SpectrumPhy const &) = delete;
+  SpectrumPhy &operator= (SpectrumPhy const &) = delete;
+
   /**
    * \brief Get the type ID.
    * \return the object TypeId
@@ -81,7 +85,7 @@ public:
    *
    * @return a Ptr to the associated MobilityModel instance
    */
-  virtual Ptr<MobilityModel> GetMobility () = 0;
+  virtual Ptr<MobilityModel> GetMobility () const = 0;
 
   /**
    * Set the channel attached to this device.
@@ -103,7 +107,7 @@ public:
    *
    * @return a Ptr to the AntennaModel used by the NetDevice for reception
    */
-  virtual Ptr<AntennaModel> GetRxAntenna () = 0;
+  virtual Ptr<AntennaModel> GetRxAntenna () const = 0;
 
   /**
    * Notify the SpectrumPhy instance of an incoming signal
@@ -111,35 +115,8 @@ public:
    * @param params the parameters of the signals being received
    */
   virtual void StartRx (Ptr<SpectrumSignalParameters> params) = 0;
-
-private:
-  /**
-   * \brief Copy constructor
-   *
-   * Defined and unimplemented to avoid misuse
-   */
-  SpectrumPhy (SpectrumPhy const &);
-  /**
-   * \brief Copy constructor
-   *
-   * Defined and unimplemented to avoid misuse
-   * \returns
-   */
-  SpectrumPhy& operator= (SpectrumPhy const &);
 };
 
-
-
-
-
-
-
-
-
 } // namespace ns3
-
-
-
-
 
 #endif /* SPECTRUM_PHY_H */

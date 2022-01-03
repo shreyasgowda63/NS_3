@@ -167,6 +167,19 @@ public:
   void SetMaxBufferSize (uint32_t n);
 
   /**
+   * \brief check whether SACK is used on the corresponding TCP socket
+   * \return true if SACK is used
+   */
+  bool IsSackEnabled (void) const;
+
+  /**
+   * \brief tell tx-buffer whether SACK is used on this TCP socket
+   *
+   * \param enabled whether sack is used
+   */
+  void SetSackEnabled (bool enabled);
+
+  /**
    * \brief Returns the available capacity of this buffer
    * \returns available capacity in this Tx window
    */
@@ -257,6 +270,14 @@ public:
   void SetHeadSequence (const SequenceNumber32& seq);
 
   /**
+   * \brief Checks whether the ack corresponds to retransmitted data
+   *
+   * \param ack ACK number received
+   * \return true if retransmitted data was acked
+   */
+  bool IsRetransmittedDataAcked (const SequenceNumber32& ack) const;
+
+  /**
    * \brief Discard data up to but not including this sequence number.
    *
    * \param seq The first sequence number to maintain after discarding all the
@@ -284,8 +305,6 @@ public:
    * as lost for an external class
    *
    * \param seq sequence to check
-   * \param dupThresh dupAck threshold
-   * \param segmentSize segment size
    * \return true if the sequence is supposed to be lost, false otherwise
    */
   bool IsLost (const SequenceNumber32 &seq) const;
@@ -598,6 +617,7 @@ private:
   uint32_t m_dupAckThresh {0}; //!< Duplicate Ack threshold from TcpSocketBase
   uint32_t m_segmentSize {0}; //!< Segment size from TcpSocketBase
   bool     m_renoSack {false}; //!< Indicates if AddRenoSack was called
+  bool     m_sackEnabled {true}; //!< Indicates if SACK is enabled on this connection
 
   static Callback<void, TcpTxItem *> m_nullCb; //!< Null callback for an item
 };

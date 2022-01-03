@@ -20,37 +20,46 @@ def module_init():
 def register_types(module):
     root_module = module.get_root()
     
-    ## angles.h (module 'antenna'): ns3::Angles [struct]
+    ## log.h (module 'core'): ns3::LogLevel [enumeration]
+    module.add_enum('LogLevel', ['LOG_NONE', 'LOG_ERROR', 'LOG_LEVEL_ERROR', 'LOG_WARN', 'LOG_LEVEL_WARN', 'LOG_DEBUG', 'LOG_LEVEL_DEBUG', 'LOG_INFO', 'LOG_LEVEL_INFO', 'LOG_FUNCTION', 'LOG_LEVEL_FUNCTION', 'LOG_LOGIC', 'LOG_LEVEL_LOGIC', 'LOG_ALL', 'LOG_LEVEL_ALL', 'LOG_PREFIX_FUNC', 'LOG_PREFIX_TIME', 'LOG_PREFIX_NODE', 'LOG_PREFIX_LEVEL', 'LOG_PREFIX_ALL'], import_from_module='ns.core')
+    ## angles.h (module 'antenna'): ns3::Angles [class]
     module.add_class('Angles')
     ## attribute-construction-list.h (module 'core'): ns3::AttributeConstructionList [class]
     module.add_class('AttributeConstructionList', import_from_module='ns.core')
     ## attribute-construction-list.h (module 'core'): ns3::AttributeConstructionList::Item [struct]
-    module.add_class('Item', outer_class=root_module['ns3::AttributeConstructionList'], import_from_module='ns.core')
+    module.add_class('Item', import_from_module='ns.core', outer_class=root_module['ns3::AttributeConstructionList'])
     typehandlers.add_type_alias('std::list< ns3::AttributeConstructionList::Item > const_iterator', 'ns3::AttributeConstructionList::CIterator')
     typehandlers.add_type_alias('std::list< ns3::AttributeConstructionList::Item > const_iterator*', 'ns3::AttributeConstructionList::CIterator*')
     typehandlers.add_type_alias('std::list< ns3::AttributeConstructionList::Item > const_iterator&', 'ns3::AttributeConstructionList::CIterator&')
     ## callback.h (module 'core'): ns3::CallbackBase [class]
     module.add_class('CallbackBase', import_from_module='ns.core')
     ## default-deleter.h (module 'core'): ns3::DefaultDeleter<ns3::AttributeAccessor> [struct]
-    module.add_class('DefaultDeleter', template_parameters=['ns3::AttributeAccessor'], import_from_module='ns.core')
+    module.add_class('DefaultDeleter', import_from_module='ns.core', template_parameters=['ns3::AttributeAccessor'])
     ## default-deleter.h (module 'core'): ns3::DefaultDeleter<ns3::AttributeChecker> [struct]
-    module.add_class('DefaultDeleter', template_parameters=['ns3::AttributeChecker'], import_from_module='ns.core')
+    module.add_class('DefaultDeleter', import_from_module='ns.core', template_parameters=['ns3::AttributeChecker'])
     ## default-deleter.h (module 'core'): ns3::DefaultDeleter<ns3::AttributeValue> [struct]
-    module.add_class('DefaultDeleter', template_parameters=['ns3::AttributeValue'], import_from_module='ns.core')
+    module.add_class('DefaultDeleter', import_from_module='ns.core', template_parameters=['ns3::AttributeValue'])
     ## default-deleter.h (module 'core'): ns3::DefaultDeleter<ns3::CallbackImplBase> [struct]
-    module.add_class('DefaultDeleter', template_parameters=['ns3::CallbackImplBase'], import_from_module='ns.core')
+    module.add_class('DefaultDeleter', import_from_module='ns.core', template_parameters=['ns3::CallbackImplBase'])
     ## default-deleter.h (module 'core'): ns3::DefaultDeleter<ns3::Hash::Implementation> [struct]
-    module.add_class('DefaultDeleter', template_parameters=['ns3::Hash::Implementation'], import_from_module='ns.core')
+    module.add_class('DefaultDeleter', import_from_module='ns.core', template_parameters=['ns3::Hash::Implementation'])
     ## default-deleter.h (module 'core'): ns3::DefaultDeleter<ns3::TraceSourceAccessor> [struct]
-    module.add_class('DefaultDeleter', template_parameters=['ns3::TraceSourceAccessor'], import_from_module='ns.core')
+    module.add_class('DefaultDeleter', import_from_module='ns.core', template_parameters=['ns3::TraceSourceAccessor'])
     ## hash.h (module 'core'): ns3::Hasher [class]
     module.add_class('Hasher', import_from_module='ns.core')
+    ## log.h (module 'core'): ns3::LogComponent [class]
+    module.add_class('LogComponent', import_from_module='ns.core')
+    typehandlers.add_type_alias('std::map< std::string, ns3::LogComponent * >', 'ns3::LogComponent::ComponentList')
+    typehandlers.add_type_alias('std::map< std::string, ns3::LogComponent * >*', 'ns3::LogComponent::ComponentList*')
+    typehandlers.add_type_alias('std::map< std::string, ns3::LogComponent * >&', 'ns3::LogComponent::ComponentList&')
     ## object-base.h (module 'core'): ns3::ObjectBase [class]
     module.add_class('ObjectBase', allow_subclassing=True, import_from_module='ns.core')
     ## object.h (module 'core'): ns3::ObjectDeleter [struct]
     module.add_class('ObjectDeleter', import_from_module='ns.core')
+    ## log.h (module 'core'): ns3::ParameterLogger [class]
+    module.add_class('ParameterLogger', import_from_module='ns.core')
     ## simple-ref-count.h (module 'core'): ns3::SimpleRefCount<ns3::Object, ns3::ObjectBase, ns3::ObjectDeleter> [class]
-    module.add_class('SimpleRefCount', template_parameters=['ns3::Object', 'ns3::ObjectBase', 'ns3::ObjectDeleter'], automatic_type_narrowing=True, memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::ObjectBase'], import_from_module='ns.core')
+    module.add_class('SimpleRefCount', automatic_type_narrowing=True, import_from_module='ns.core', memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::ObjectBase'], template_parameters=['ns3::Object', 'ns3::ObjectBase', 'ns3::ObjectDeleter'])
     ## type-id.h (module 'core'): ns3::TypeId [class]
     module.add_class('TypeId', import_from_module='ns.core')
     ## type-id.h (module 'core'): ns3::TypeId::AttributeFlag [enumeration]
@@ -58,9 +67,9 @@ def register_types(module):
     ## type-id.h (module 'core'): ns3::TypeId::SupportLevel [enumeration]
     module.add_enum('SupportLevel', ['SUPPORTED', 'DEPRECATED', 'OBSOLETE'], outer_class=root_module['ns3::TypeId'], import_from_module='ns.core')
     ## type-id.h (module 'core'): ns3::TypeId::AttributeInformation [struct]
-    module.add_class('AttributeInformation', outer_class=root_module['ns3::TypeId'], import_from_module='ns.core')
+    module.add_class('AttributeInformation', import_from_module='ns.core', outer_class=root_module['ns3::TypeId'])
     ## type-id.h (module 'core'): ns3::TypeId::TraceSourceInformation [struct]
-    module.add_class('TraceSourceInformation', outer_class=root_module['ns3::TypeId'], import_from_module='ns.core')
+    module.add_class('TraceSourceInformation', import_from_module='ns.core', outer_class=root_module['ns3::TypeId'])
     typehandlers.add_type_alias('uint32_t', 'ns3::TypeId::hash_t')
     typehandlers.add_type_alias('uint32_t*', 'ns3::TypeId::hash_t*')
     typehandlers.add_type_alias('uint32_t&', 'ns3::TypeId::hash_t&')
@@ -71,69 +80,76 @@ def register_types(module):
     ## empty.h (module 'core'): ns3::empty [class]
     module.add_class('empty', import_from_module='ns.core')
     ## object.h (module 'core'): ns3::Object [class]
-    module.add_class('Object', parent=root_module['ns3::SimpleRefCount< ns3::Object, ns3::ObjectBase, ns3::ObjectDeleter >'], import_from_module='ns.core')
+    module.add_class('Object', import_from_module='ns.core', parent=root_module['ns3::SimpleRefCount< ns3::Object, ns3::ObjectBase, ns3::ObjectDeleter >'])
     ## object.h (module 'core'): ns3::Object::AggregateIterator [class]
-    module.add_class('AggregateIterator', outer_class=root_module['ns3::Object'], import_from_module='ns.core')
+    module.add_class('AggregateIterator', import_from_module='ns.core', outer_class=root_module['ns3::Object'])
+    ## phased-array-model.h (module 'antenna'): ns3::PhasedArrayModel [class]
+    module.add_class('PhasedArrayModel', parent=root_module['ns3::Object'])
+    typehandlers.add_type_alias('std::vector< std::complex< double > >', 'ns3::PhasedArrayModel::ComplexVector')
+    typehandlers.add_type_alias('std::vector< std::complex< double > >*', 'ns3::PhasedArrayModel::ComplexVector*')
+    typehandlers.add_type_alias('std::vector< std::complex< double > >&', 'ns3::PhasedArrayModel::ComplexVector&')
     ## simple-ref-count.h (module 'core'): ns3::SimpleRefCount<ns3::AttributeAccessor, ns3::empty, ns3::DefaultDeleter<ns3::AttributeAccessor> > [class]
-    module.add_class('SimpleRefCount', template_parameters=['ns3::AttributeAccessor', 'ns3::empty', 'ns3::DefaultDeleter<ns3::AttributeAccessor>'], automatic_type_narrowing=True, memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], import_from_module='ns.core')
+    module.add_class('SimpleRefCount', automatic_type_narrowing=True, import_from_module='ns.core', memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], template_parameters=['ns3::AttributeAccessor', 'ns3::empty', 'ns3::DefaultDeleter<ns3::AttributeAccessor>'])
     ## simple-ref-count.h (module 'core'): ns3::SimpleRefCount<ns3::AttributeChecker, ns3::empty, ns3::DefaultDeleter<ns3::AttributeChecker> > [class]
-    module.add_class('SimpleRefCount', template_parameters=['ns3::AttributeChecker', 'ns3::empty', 'ns3::DefaultDeleter<ns3::AttributeChecker>'], automatic_type_narrowing=True, memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], import_from_module='ns.core')
+    module.add_class('SimpleRefCount', automatic_type_narrowing=True, import_from_module='ns.core', memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], template_parameters=['ns3::AttributeChecker', 'ns3::empty', 'ns3::DefaultDeleter<ns3::AttributeChecker>'])
     ## simple-ref-count.h (module 'core'): ns3::SimpleRefCount<ns3::AttributeValue, ns3::empty, ns3::DefaultDeleter<ns3::AttributeValue> > [class]
-    module.add_class('SimpleRefCount', template_parameters=['ns3::AttributeValue', 'ns3::empty', 'ns3::DefaultDeleter<ns3::AttributeValue>'], automatic_type_narrowing=True, memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], import_from_module='ns.core')
+    module.add_class('SimpleRefCount', automatic_type_narrowing=True, import_from_module='ns.core', memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], template_parameters=['ns3::AttributeValue', 'ns3::empty', 'ns3::DefaultDeleter<ns3::AttributeValue>'])
     ## simple-ref-count.h (module 'core'): ns3::SimpleRefCount<ns3::CallbackImplBase, ns3::empty, ns3::DefaultDeleter<ns3::CallbackImplBase> > [class]
-    module.add_class('SimpleRefCount', template_parameters=['ns3::CallbackImplBase', 'ns3::empty', 'ns3::DefaultDeleter<ns3::CallbackImplBase>'], automatic_type_narrowing=True, memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], import_from_module='ns.core')
+    module.add_class('SimpleRefCount', automatic_type_narrowing=True, import_from_module='ns.core', memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], template_parameters=['ns3::CallbackImplBase', 'ns3::empty', 'ns3::DefaultDeleter<ns3::CallbackImplBase>'])
     ## simple-ref-count.h (module 'core'): ns3::SimpleRefCount<ns3::Hash::Implementation, ns3::empty, ns3::DefaultDeleter<ns3::Hash::Implementation> > [class]
-    module.add_class('SimpleRefCount', template_parameters=['ns3::Hash::Implementation', 'ns3::empty', 'ns3::DefaultDeleter<ns3::Hash::Implementation>'], automatic_type_narrowing=True, memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], import_from_module='ns.core')
+    module.add_class('SimpleRefCount', automatic_type_narrowing=True, import_from_module='ns.core', memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], template_parameters=['ns3::Hash::Implementation', 'ns3::empty', 'ns3::DefaultDeleter<ns3::Hash::Implementation>'])
     ## simple-ref-count.h (module 'core'): ns3::SimpleRefCount<ns3::TraceSourceAccessor, ns3::empty, ns3::DefaultDeleter<ns3::TraceSourceAccessor> > [class]
-    module.add_class('SimpleRefCount', template_parameters=['ns3::TraceSourceAccessor', 'ns3::empty', 'ns3::DefaultDeleter<ns3::TraceSourceAccessor>'], automatic_type_narrowing=True, memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], import_from_module='ns.core')
-    ## three-gpp-antenna-array-model.h (module 'antenna'): ns3::ThreeGppAntennaArrayModel [class]
-    module.add_class('ThreeGppAntennaArrayModel', parent=root_module['ns3::Object'])
-    typehandlers.add_type_alias('std::vector< std::complex< double > >', 'ns3::ThreeGppAntennaArrayModel::ComplexVector')
-    typehandlers.add_type_alias('std::vector< std::complex< double > >*', 'ns3::ThreeGppAntennaArrayModel::ComplexVector*')
-    typehandlers.add_type_alias('std::vector< std::complex< double > >&', 'ns3::ThreeGppAntennaArrayModel::ComplexVector&')
+    module.add_class('SimpleRefCount', automatic_type_narrowing=True, import_from_module='ns.core', memory_policy=cppclass.ReferenceCountingMethodsPolicy(incref_method='Ref', decref_method='Unref', peekref_method='GetReferenceCount'), parent=root_module['ns3::empty'], template_parameters=['ns3::TraceSourceAccessor', 'ns3::empty', 'ns3::DefaultDeleter<ns3::TraceSourceAccessor>'])
     ## trace-source-accessor.h (module 'core'): ns3::TraceSourceAccessor [class]
-    module.add_class('TraceSourceAccessor', parent=root_module['ns3::SimpleRefCount< ns3::TraceSourceAccessor, ns3::empty, ns3::DefaultDeleter<ns3::TraceSourceAccessor> >'], import_from_module='ns.core')
+    module.add_class('TraceSourceAccessor', import_from_module='ns.core', parent=root_module['ns3::SimpleRefCount< ns3::TraceSourceAccessor, ns3::empty, ns3::DefaultDeleter<ns3::TraceSourceAccessor> >'])
+    ## uniform-planar-array.h (module 'antenna'): ns3::UniformPlanarArray [class]
+    module.add_class('UniformPlanarArray', parent=root_module['ns3::PhasedArrayModel'])
     ## antenna-model.h (module 'antenna'): ns3::AntennaModel [class]
     module.add_class('AntennaModel', parent=root_module['ns3::Object'])
     ## attribute.h (module 'core'): ns3::AttributeAccessor [class]
-    module.add_class('AttributeAccessor', parent=root_module['ns3::SimpleRefCount< ns3::AttributeAccessor, ns3::empty, ns3::DefaultDeleter<ns3::AttributeAccessor> >'], import_from_module='ns.core')
+    module.add_class('AttributeAccessor', import_from_module='ns.core', parent=root_module['ns3::SimpleRefCount< ns3::AttributeAccessor, ns3::empty, ns3::DefaultDeleter<ns3::AttributeAccessor> >'])
     ## attribute.h (module 'core'): ns3::AttributeChecker [class]
-    module.add_class('AttributeChecker', allow_subclassing=False, automatic_type_narrowing=True, parent=root_module['ns3::SimpleRefCount< ns3::AttributeChecker, ns3::empty, ns3::DefaultDeleter<ns3::AttributeChecker> >'], import_from_module='ns.core')
+    module.add_class('AttributeChecker', allow_subclassing=False, automatic_type_narrowing=True, import_from_module='ns.core', parent=root_module['ns3::SimpleRefCount< ns3::AttributeChecker, ns3::empty, ns3::DefaultDeleter<ns3::AttributeChecker> >'])
     ## attribute.h (module 'core'): ns3::AttributeValue [class]
-    module.add_class('AttributeValue', allow_subclassing=False, automatic_type_narrowing=True, parent=root_module['ns3::SimpleRefCount< ns3::AttributeValue, ns3::empty, ns3::DefaultDeleter<ns3::AttributeValue> >'], import_from_module='ns.core')
+    module.add_class('AttributeValue', allow_subclassing=False, automatic_type_narrowing=True, import_from_module='ns.core', parent=root_module['ns3::SimpleRefCount< ns3::AttributeValue, ns3::empty, ns3::DefaultDeleter<ns3::AttributeValue> >'])
     ## callback.h (module 'core'): ns3::CallbackChecker [class]
-    module.add_class('CallbackChecker', parent=root_module['ns3::AttributeChecker'], import_from_module='ns.core')
+    module.add_class('CallbackChecker', import_from_module='ns.core', parent=root_module['ns3::AttributeChecker'])
     ## callback.h (module 'core'): ns3::CallbackImplBase [class]
-    module.add_class('CallbackImplBase', parent=root_module['ns3::SimpleRefCount< ns3::CallbackImplBase, ns3::empty, ns3::DefaultDeleter<ns3::CallbackImplBase> >'], import_from_module='ns.core')
+    module.add_class('CallbackImplBase', import_from_module='ns.core', parent=root_module['ns3::SimpleRefCount< ns3::CallbackImplBase, ns3::empty, ns3::DefaultDeleter<ns3::CallbackImplBase> >'])
     ## callback.h (module 'core'): ns3::CallbackValue [class]
-    module.add_class('CallbackValue', parent=root_module['ns3::AttributeValue'], import_from_module='ns.core')
+    module.add_class('CallbackValue', import_from_module='ns.core', parent=root_module['ns3::AttributeValue'])
     ## cosine-antenna-model.h (module 'antenna'): ns3::CosineAntennaModel [class]
     module.add_class('CosineAntennaModel', parent=root_module['ns3::AntennaModel'])
     ## attribute.h (module 'core'): ns3::EmptyAttributeAccessor [class]
-    module.add_class('EmptyAttributeAccessor', parent=root_module['ns3::AttributeAccessor'], import_from_module='ns.core')
+    module.add_class('EmptyAttributeAccessor', import_from_module='ns.core', parent=root_module['ns3::AttributeAccessor'])
     ## attribute.h (module 'core'): ns3::EmptyAttributeChecker [class]
-    module.add_class('EmptyAttributeChecker', parent=root_module['ns3::AttributeChecker'], import_from_module='ns.core')
+    module.add_class('EmptyAttributeChecker', import_from_module='ns.core', parent=root_module['ns3::AttributeChecker'])
     ## attribute.h (module 'core'): ns3::EmptyAttributeValue [class]
-    module.add_class('EmptyAttributeValue', parent=root_module['ns3::AttributeValue'], import_from_module='ns.core')
+    module.add_class('EmptyAttributeValue', import_from_module='ns.core', parent=root_module['ns3::AttributeValue'])
     ## isotropic-antenna-model.h (module 'antenna'): ns3::IsotropicAntennaModel [class]
     module.add_class('IsotropicAntennaModel', parent=root_module['ns3::AntennaModel'])
     ## parabolic-antenna-model.h (module 'antenna'): ns3::ParabolicAntennaModel [class]
     module.add_class('ParabolicAntennaModel', parent=root_module['ns3::AntennaModel'])
+    ## three-gpp-antenna-model.h (module 'antenna'): ns3::ThreeGppAntennaModel [class]
+    module.add_class('ThreeGppAntennaModel', parent=root_module['ns3::AntennaModel'])
     ## type-id.h (module 'core'): ns3::TypeIdChecker [class]
-    module.add_class('TypeIdChecker', parent=root_module['ns3::AttributeChecker'], import_from_module='ns.core')
+    module.add_class('TypeIdChecker', import_from_module='ns.core', parent=root_module['ns3::AttributeChecker'])
     ## type-id.h (module 'core'): ns3::TypeIdValue [class]
-    module.add_class('TypeIdValue', parent=root_module['ns3::AttributeValue'], import_from_module='ns.core')
+    module.add_class('TypeIdValue', import_from_module='ns.core', parent=root_module['ns3::AttributeValue'])
     ## vector.h (module 'core'): ns3::Vector2DChecker [class]
-    module.add_class('Vector2DChecker', parent=root_module['ns3::AttributeChecker'], import_from_module='ns.core')
+    module.add_class('Vector2DChecker', import_from_module='ns.core', parent=root_module['ns3::AttributeChecker'])
     ## vector.h (module 'core'): ns3::Vector2DValue [class]
-    module.add_class('Vector2DValue', parent=root_module['ns3::AttributeValue'], import_from_module='ns.core')
+    module.add_class('Vector2DValue', import_from_module='ns.core', parent=root_module['ns3::AttributeValue'])
     ## vector.h (module 'core'): ns3::Vector3DChecker [class]
-    module.add_class('Vector3DChecker', parent=root_module['ns3::AttributeChecker'], import_from_module='ns.core')
+    module.add_class('Vector3DChecker', import_from_module='ns.core', parent=root_module['ns3::AttributeChecker'])
     ## vector.h (module 'core'): ns3::Vector3DValue [class]
-    module.add_class('Vector3DValue', parent=root_module['ns3::AttributeValue'], import_from_module='ns.core')
+    module.add_class('Vector3DValue', import_from_module='ns.core', parent=root_module['ns3::AttributeValue'])
     ## callback.h (module 'core'): ns3::CallbackImpl<ns3::ObjectBase *, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty> [class]
-    module.add_class('CallbackImpl', template_parameters=['ns3::ObjectBase *', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty'], parent=root_module['ns3::CallbackImplBase'], import_from_module='ns.core')
+    module.add_class('CallbackImpl', import_from_module='ns.core', parent=root_module['ns3::CallbackImplBase'], template_parameters=['ns3::ObjectBase *', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty', 'ns3::empty'])
+    module.add_container('std::vector< double >', 'double', container_type='vector')
+    module.add_container('std::map< std::string, ns3::LogComponent * >', ('std::string', 'ns3::LogComponent *'), container_type='map')
     module.add_container('std::vector< std::complex< double > >', 'std::complex< double >', container_type='vector')
+    module.add_container('ns3::PhasedArrayModel::ComplexVector', 'std::complex< double >', container_type='vector')
     typehandlers.add_type_alias('ns3::Vector3D', 'ns3::Vector')
     typehandlers.add_type_alias('ns3::Vector3D*', 'ns3::Vector*')
     typehandlers.add_type_alias('ns3::Vector3D&', 'ns3::Vector&')
@@ -146,6 +162,12 @@ def register_types(module):
     typehandlers.add_type_alias('ns3::Vector3DChecker*', 'ns3::VectorChecker*')
     typehandlers.add_type_alias('ns3::Vector3DChecker&', 'ns3::VectorChecker&')
     module.add_typedef(root_module['ns3::Vector3DChecker'], 'VectorChecker')
+    typehandlers.add_type_alias('void ( * ) ( std::ostream & )', 'ns3::TimePrinter')
+    typehandlers.add_type_alias('void ( * ) ( std::ostream & )*', 'ns3::TimePrinter*')
+    typehandlers.add_type_alias('void ( * ) ( std::ostream & )&', 'ns3::TimePrinter&')
+    typehandlers.add_type_alias('void ( * ) ( std::ostream & )', 'ns3::NodePrinter')
+    typehandlers.add_type_alias('void ( * ) ( std::ostream & )*', 'ns3::NodePrinter*')
+    typehandlers.add_type_alias('void ( * ) ( std::ostream & )&', 'ns3::NodePrinter&')
     
     ## Register a nested module for the namespace FatalImpl
     
@@ -167,7 +189,7 @@ def register_types_ns3_Hash(module):
     root_module = module.get_root()
     
     ## hash-function.h (module 'core'): ns3::Hash::Implementation [class]
-    module.add_class('Implementation', parent=root_module['ns3::SimpleRefCount< ns3::Hash::Implementation, ns3::empty, ns3::DefaultDeleter<ns3::Hash::Implementation> >'], import_from_module='ns.core')
+    module.add_class('Implementation', import_from_module='ns.core', parent=root_module['ns3::SimpleRefCount< ns3::Hash::Implementation, ns3::empty, ns3::DefaultDeleter<ns3::Hash::Implementation> >'])
     typehandlers.add_type_alias('uint32_t ( * ) ( char const *, std::size_t const )', 'ns3::Hash::Hash32Function_ptr')
     typehandlers.add_type_alias('uint32_t ( * ) ( char const *, std::size_t const )*', 'ns3::Hash::Hash32Function_ptr*')
     typehandlers.add_type_alias('uint32_t ( * ) ( char const *, std::size_t const )&', 'ns3::Hash::Hash32Function_ptr&')
@@ -185,13 +207,13 @@ def register_types_ns3_Hash_Function(module):
     root_module = module.get_root()
     
     ## hash-fnv.h (module 'core'): ns3::Hash::Function::Fnv1a [class]
-    module.add_class('Fnv1a', parent=root_module['ns3::Hash::Implementation'], import_from_module='ns.core')
+    module.add_class('Fnv1a', import_from_module='ns.core', parent=root_module['ns3::Hash::Implementation'])
     ## hash-function.h (module 'core'): ns3::Hash::Function::Hash32 [class]
-    module.add_class('Hash32', parent=root_module['ns3::Hash::Implementation'], import_from_module='ns.core')
+    module.add_class('Hash32', import_from_module='ns.core', parent=root_module['ns3::Hash::Implementation'])
     ## hash-function.h (module 'core'): ns3::Hash::Function::Hash64 [class]
-    module.add_class('Hash64', parent=root_module['ns3::Hash::Implementation'], import_from_module='ns.core')
+    module.add_class('Hash64', import_from_module='ns.core', parent=root_module['ns3::Hash::Implementation'])
     ## hash-murmur3.h (module 'core'): ns3::Hash::Function::Murmur3 [class]
-    module.add_class('Murmur3', parent=root_module['ns3::Hash::Implementation'], import_from_module='ns.core')
+    module.add_class('Murmur3', import_from_module='ns.core', parent=root_module['ns3::Hash::Implementation'])
 
 def register_methods(root_module):
     register_Ns3Angles_methods(root_module, root_module['ns3::Angles'])
@@ -205,8 +227,10 @@ def register_methods(root_module):
     register_Ns3DefaultDeleter__Ns3HashImplementation_methods(root_module, root_module['ns3::DefaultDeleter< ns3::Hash::Implementation >'])
     register_Ns3DefaultDeleter__Ns3TraceSourceAccessor_methods(root_module, root_module['ns3::DefaultDeleter< ns3::TraceSourceAccessor >'])
     register_Ns3Hasher_methods(root_module, root_module['ns3::Hasher'])
+    register_Ns3LogComponent_methods(root_module, root_module['ns3::LogComponent'])
     register_Ns3ObjectBase_methods(root_module, root_module['ns3::ObjectBase'])
     register_Ns3ObjectDeleter_methods(root_module, root_module['ns3::ObjectDeleter'])
+    register_Ns3ParameterLogger_methods(root_module, root_module['ns3::ParameterLogger'])
     register_Ns3SimpleRefCount__Ns3Object_Ns3ObjectBase_Ns3ObjectDeleter_methods(root_module, root_module['ns3::SimpleRefCount< ns3::Object, ns3::ObjectBase, ns3::ObjectDeleter >'])
     register_Ns3TypeId_methods(root_module, root_module['ns3::TypeId'])
     register_Ns3TypeIdAttributeInformation_methods(root_module, root_module['ns3::TypeId::AttributeInformation'])
@@ -216,14 +240,15 @@ def register_methods(root_module):
     register_Ns3Empty_methods(root_module, root_module['ns3::empty'])
     register_Ns3Object_methods(root_module, root_module['ns3::Object'])
     register_Ns3ObjectAggregateIterator_methods(root_module, root_module['ns3::Object::AggregateIterator'])
+    register_Ns3PhasedArrayModel_methods(root_module, root_module['ns3::PhasedArrayModel'])
     register_Ns3SimpleRefCount__Ns3AttributeAccessor_Ns3Empty_Ns3DefaultDeleter__lt__ns3AttributeAccessor__gt___methods(root_module, root_module['ns3::SimpleRefCount< ns3::AttributeAccessor, ns3::empty, ns3::DefaultDeleter<ns3::AttributeAccessor> >'])
     register_Ns3SimpleRefCount__Ns3AttributeChecker_Ns3Empty_Ns3DefaultDeleter__lt__ns3AttributeChecker__gt___methods(root_module, root_module['ns3::SimpleRefCount< ns3::AttributeChecker, ns3::empty, ns3::DefaultDeleter<ns3::AttributeChecker> >'])
     register_Ns3SimpleRefCount__Ns3AttributeValue_Ns3Empty_Ns3DefaultDeleter__lt__ns3AttributeValue__gt___methods(root_module, root_module['ns3::SimpleRefCount< ns3::AttributeValue, ns3::empty, ns3::DefaultDeleter<ns3::AttributeValue> >'])
     register_Ns3SimpleRefCount__Ns3CallbackImplBase_Ns3Empty_Ns3DefaultDeleter__lt__ns3CallbackImplBase__gt___methods(root_module, root_module['ns3::SimpleRefCount< ns3::CallbackImplBase, ns3::empty, ns3::DefaultDeleter<ns3::CallbackImplBase> >'])
     register_Ns3SimpleRefCount__Ns3HashImplementation_Ns3Empty_Ns3DefaultDeleter__lt__ns3HashImplementation__gt___methods(root_module, root_module['ns3::SimpleRefCount< ns3::Hash::Implementation, ns3::empty, ns3::DefaultDeleter<ns3::Hash::Implementation> >'])
     register_Ns3SimpleRefCount__Ns3TraceSourceAccessor_Ns3Empty_Ns3DefaultDeleter__lt__ns3TraceSourceAccessor__gt___methods(root_module, root_module['ns3::SimpleRefCount< ns3::TraceSourceAccessor, ns3::empty, ns3::DefaultDeleter<ns3::TraceSourceAccessor> >'])
-    register_Ns3ThreeGppAntennaArrayModel_methods(root_module, root_module['ns3::ThreeGppAntennaArrayModel'])
     register_Ns3TraceSourceAccessor_methods(root_module, root_module['ns3::TraceSourceAccessor'])
+    register_Ns3UniformPlanarArray_methods(root_module, root_module['ns3::UniformPlanarArray'])
     register_Ns3AntennaModel_methods(root_module, root_module['ns3::AntennaModel'])
     register_Ns3AttributeAccessor_methods(root_module, root_module['ns3::AttributeAccessor'])
     register_Ns3AttributeChecker_methods(root_module, root_module['ns3::AttributeChecker'])
@@ -237,6 +262,7 @@ def register_methods(root_module):
     register_Ns3EmptyAttributeValue_methods(root_module, root_module['ns3::EmptyAttributeValue'])
     register_Ns3IsotropicAntennaModel_methods(root_module, root_module['ns3::IsotropicAntennaModel'])
     register_Ns3ParabolicAntennaModel_methods(root_module, root_module['ns3::ParabolicAntennaModel'])
+    register_Ns3ThreeGppAntennaModel_methods(root_module, root_module['ns3::ThreeGppAntennaModel'])
     register_Ns3TypeIdChecker_methods(root_module, root_module['ns3::TypeIdChecker'])
     register_Ns3TypeIdValue_methods(root_module, root_module['ns3::TypeIdValue'])
     register_Ns3Vector2DChecker_methods(root_module, root_module['ns3::Vector2DChecker'])
@@ -255,18 +281,32 @@ def register_Ns3Angles_methods(root_module, cls):
     cls.add_output_stream_operator()
     ## angles.h (module 'antenna'): ns3::Angles::Angles(ns3::Angles const & arg0) [constructor]
     cls.add_constructor([param('ns3::Angles const &', 'arg0')])
-    ## angles.h (module 'antenna'): ns3::Angles::Angles() [constructor]
-    cls.add_constructor([])
-    ## angles.h (module 'antenna'): ns3::Angles::Angles(double phi, double theta) [constructor]
-    cls.add_constructor([param('double', 'phi'), param('double', 'theta')])
+    ## angles.h (module 'antenna'): ns3::Angles::Angles(double azimuth, double inclination) [constructor]
+    cls.add_constructor([param('double', 'azimuth'), param('double', 'inclination')])
     ## angles.h (module 'antenna'): ns3::Angles::Angles(ns3::Vector v) [constructor]
     cls.add_constructor([param('ns3::Vector', 'v')])
     ## angles.h (module 'antenna'): ns3::Angles::Angles(ns3::Vector v, ns3::Vector o) [constructor]
     cls.add_constructor([param('ns3::Vector', 'v'), param('ns3::Vector', 'o')])
-    ## angles.h (module 'antenna'): ns3::Angles::phi [variable]
-    cls.add_instance_attribute('phi', 'double', is_const=False)
-    ## angles.h (module 'antenna'): ns3::Angles::theta [variable]
-    cls.add_instance_attribute('theta', 'double', is_const=False)
+    ## angles.h (module 'antenna'): double ns3::Angles::GetAzimuth() const [member function]
+    cls.add_method('GetAzimuth', 
+                   'double', 
+                   [], 
+                   is_const=True)
+    ## angles.h (module 'antenna'): double ns3::Angles::GetInclination() const [member function]
+    cls.add_method('GetInclination', 
+                   'double', 
+                   [], 
+                   is_const=True)
+    ## angles.h (module 'antenna'): void ns3::Angles::SetAzimuth(double azimuth) [member function]
+    cls.add_method('SetAzimuth', 
+                   'void', 
+                   [param('double', 'azimuth')])
+    ## angles.h (module 'antenna'): void ns3::Angles::SetInclination(double inclination) [member function]
+    cls.add_method('SetInclination', 
+                   'void', 
+                   [param('double', 'inclination')])
+    ## angles.h (module 'antenna'): ns3::Angles::m_printDeg [variable]
+    cls.add_static_attribute('m_printDeg', 'bool', is_const=False)
     return
 
 def register_Ns3AttributeConstructionList_methods(root_module, cls):
@@ -424,6 +464,55 @@ def register_Ns3Hasher_methods(root_module, cls):
                    [])
     return
 
+def register_Ns3LogComponent_methods(root_module, cls):
+    ## log.h (module 'core'): ns3::LogComponent::LogComponent(ns3::LogComponent const & arg0) [constructor]
+    cls.add_constructor([param('ns3::LogComponent const &', 'arg0')])
+    ## log.h (module 'core'): ns3::LogComponent::LogComponent(std::string const & name, std::string const & file, ns3::LogLevel const mask=::ns3::LogLevel::LOG_NONE) [constructor]
+    cls.add_constructor([param('std::string const &', 'name'), param('std::string const &', 'file'), param('ns3::LogLevel const', 'mask', default_value='::ns3::LogLevel::LOG_NONE')])
+    ## log.h (module 'core'): void ns3::LogComponent::Disable(ns3::LogLevel const level) [member function]
+    cls.add_method('Disable', 
+                   'void', 
+                   [param('ns3::LogLevel const', 'level')])
+    ## log.h (module 'core'): void ns3::LogComponent::Enable(ns3::LogLevel const level) [member function]
+    cls.add_method('Enable', 
+                   'void', 
+                   [param('ns3::LogLevel const', 'level')])
+    ## log.h (module 'core'): std::string ns3::LogComponent::File() const [member function]
+    cls.add_method('File', 
+                   'std::string', 
+                   [], 
+                   is_const=True)
+    ## log.h (module 'core'): static ns3::LogComponent::ComponentList * ns3::LogComponent::GetComponentList() [member function]
+    cls.add_method('GetComponentList', 
+                   'ns3::LogComponent::ComponentList *', 
+                   [], 
+                   is_static=True)
+    ## log.h (module 'core'): static std::string ns3::LogComponent::GetLevelLabel(ns3::LogLevel const level) [member function]
+    cls.add_method('GetLevelLabel', 
+                   'std::string', 
+                   [param('ns3::LogLevel const', 'level')], 
+                   is_static=True)
+    ## log.h (module 'core'): bool ns3::LogComponent::IsEnabled(ns3::LogLevel const level) const [member function]
+    cls.add_method('IsEnabled', 
+                   'bool', 
+                   [param('ns3::LogLevel const', 'level')], 
+                   is_const=True)
+    ## log.h (module 'core'): bool ns3::LogComponent::IsNoneEnabled() const [member function]
+    cls.add_method('IsNoneEnabled', 
+                   'bool', 
+                   [], 
+                   is_const=True)
+    ## log.h (module 'core'): char const * ns3::LogComponent::Name() const [member function]
+    cls.add_method('Name', 
+                   'char const *', 
+                   [], 
+                   is_const=True)
+    ## log.h (module 'core'): void ns3::LogComponent::SetMask(ns3::LogLevel const level) [member function]
+    cls.add_method('SetMask', 
+                   'void', 
+                   [param('ns3::LogLevel const', 'level')])
+    return
+
 def register_Ns3ObjectBase_methods(root_module, cls):
     ## object-base.h (module 'core'): ns3::ObjectBase::ObjectBase() [constructor]
     cls.add_constructor([])
@@ -495,6 +584,13 @@ def register_Ns3ObjectDeleter_methods(root_module, cls):
                    'void', 
                    [param('ns3::Object *', 'object')], 
                    is_static=True)
+    return
+
+def register_Ns3ParameterLogger_methods(root_module, cls):
+    ## log.h (module 'core'): ns3::ParameterLogger::ParameterLogger(ns3::ParameterLogger const & arg0) [constructor]
+    cls.add_constructor([param('ns3::ParameterLogger const &', 'arg0')])
+    ## log.h (module 'core'): ns3::ParameterLogger::ParameterLogger(std::ostream & os) [constructor]
+    cls.add_constructor([param('std::ostream &', 'os')])
     return
 
 def register_Ns3SimpleRefCount__Ns3Object_Ns3ObjectBase_Ns3ObjectDeleter_methods(root_module, cls):
@@ -737,6 +833,11 @@ def register_Ns3Vector2D_methods(root_module, cls):
                    'double', 
                    [], 
                    is_const=True)
+    ## vector.h (module 'core'): double ns3::Vector2D::GetLengthSquared() const [member function]
+    cls.add_method('GetLengthSquared', 
+                   'double', 
+                   [], 
+                   is_const=True)
     ## vector.h (module 'core'): ns3::Vector2D::x [variable]
     cls.add_instance_attribute('x', 'double', is_const=False)
     ## vector.h (module 'core'): ns3::Vector2D::y [variable]
@@ -761,6 +862,11 @@ def register_Ns3Vector3D_methods(root_module, cls):
     cls.add_constructor([])
     ## vector.h (module 'core'): double ns3::Vector3D::GetLength() const [member function]
     cls.add_method('GetLength', 
+                   'double', 
+                   [], 
+                   is_const=True)
+    ## vector.h (module 'core'): double ns3::Vector3D::GetLengthSquared() const [member function]
+    cls.add_method('GetLengthSquared', 
                    'double', 
                    [], 
                    is_const=True)
@@ -804,12 +910,12 @@ def register_Ns3Object_methods(root_module, cls):
     cls.add_method('GetObject', 
                    'ns3::Ptr< ns3::Object >', 
                    [], 
-                   template_parameters=['ns3::Object'], is_const=True, custom_template_method_name='GetObject')
+                   custom_template_method_name='GetObject', is_const=True, template_parameters=['ns3::Object'])
     ## object.h (module 'core'): ns3::Ptr<ns3::Object> ns3::Object::GetObject(ns3::TypeId tid) const [member function]
     cls.add_method('GetObject', 
                    'ns3::Ptr< ns3::Object >', 
                    [param('ns3::TypeId', 'tid')], 
-                   template_parameters=['ns3::Object'], is_const=True, custom_template_method_name='GetObject')
+                   custom_template_method_name='GetObject', is_const=True, template_parameters=['ns3::Object'])
     ## object.h (module 'core'): static ns3::TypeId ns3::Object::GetTypeId() [member function]
     cls.add_method('GetTypeId', 
                    'ns3::TypeId', 
@@ -860,6 +966,66 @@ def register_Ns3ObjectAggregateIterator_methods(root_module, cls):
                    [])
     return
 
+def register_Ns3PhasedArrayModel_methods(root_module, cls):
+    ## phased-array-model.h (module 'antenna'): ns3::PhasedArrayModel::PhasedArrayModel(ns3::PhasedArrayModel const & arg0) [constructor]
+    cls.add_constructor([param('ns3::PhasedArrayModel const &', 'arg0')])
+    ## phased-array-model.h (module 'antenna'): ns3::PhasedArrayModel::PhasedArrayModel() [constructor]
+    cls.add_constructor([])
+    ## phased-array-model.h (module 'antenna'): ns3::Ptr<const ns3::AntennaModel> ns3::PhasedArrayModel::GetAntennaElement() const [member function]
+    cls.add_method('GetAntennaElement', 
+                   'ns3::Ptr< ns3::AntennaModel const >', 
+                   [], 
+                   is_const=True)
+    ## phased-array-model.h (module 'antenna'): ns3::PhasedArrayModel::ComplexVector ns3::PhasedArrayModel::GetBeamformingVector() const [member function]
+    cls.add_method('GetBeamformingVector', 
+                   'ns3::PhasedArrayModel::ComplexVector', 
+                   [], 
+                   is_const=True)
+    ## phased-array-model.h (module 'antenna'): ns3::PhasedArrayModel::ComplexVector ns3::PhasedArrayModel::GetBeamformingVector(ns3::Angles a) const [member function]
+    cls.add_method('GetBeamformingVector', 
+                   'ns3::PhasedArrayModel::ComplexVector', 
+                   [param('ns3::Angles', 'a')], 
+                   is_const=True)
+    ## phased-array-model.h (module 'antenna'): std::pair<double, double> ns3::PhasedArrayModel::GetElementFieldPattern(ns3::Angles a) const [member function]
+    cls.add_method('GetElementFieldPattern', 
+                   'std::pair< double, double >', 
+                   [param('ns3::Angles', 'a')], 
+                   is_const=True, is_pure_virtual=True, is_virtual=True)
+    ## phased-array-model.h (module 'antenna'): ns3::Vector ns3::PhasedArrayModel::GetElementLocation(uint64_t index) const [member function]
+    cls.add_method('GetElementLocation', 
+                   'ns3::Vector', 
+                   [param('uint64_t', 'index')], 
+                   is_const=True, is_pure_virtual=True, is_virtual=True)
+    ## phased-array-model.h (module 'antenna'): uint64_t ns3::PhasedArrayModel::GetNumberOfElements() const [member function]
+    cls.add_method('GetNumberOfElements', 
+                   'uint64_t', 
+                   [], 
+                   is_const=True, is_pure_virtual=True, is_virtual=True)
+    ## phased-array-model.h (module 'antenna'): ns3::PhasedArrayModel::ComplexVector ns3::PhasedArrayModel::GetSteeringVector(ns3::Angles a) const [member function]
+    cls.add_method('GetSteeringVector', 
+                   'ns3::PhasedArrayModel::ComplexVector', 
+                   [param('ns3::Angles', 'a')], 
+                   is_const=True)
+    ## phased-array-model.h (module 'antenna'): static ns3::TypeId ns3::PhasedArrayModel::GetTypeId() [member function]
+    cls.add_method('GetTypeId', 
+                   'ns3::TypeId', 
+                   [], 
+                   is_static=True)
+    ## phased-array-model.h (module 'antenna'): void ns3::PhasedArrayModel::SetAntennaElement(ns3::Ptr<ns3::AntennaModel> antennaElement) [member function]
+    cls.add_method('SetAntennaElement', 
+                   'void', 
+                   [param('ns3::Ptr< ns3::AntennaModel >', 'antennaElement')])
+    ## phased-array-model.h (module 'antenna'): void ns3::PhasedArrayModel::SetBeamformingVector(ns3::PhasedArrayModel::ComplexVector const & beamformingVector) [member function]
+    cls.add_method('SetBeamformingVector', 
+                   'void', 
+                   [param('ns3::PhasedArrayModel::ComplexVector const &', 'beamformingVector')])
+    ## phased-array-model.h (module 'antenna'): static double ns3::PhasedArrayModel::ComputeNorm(ns3::PhasedArrayModel::ComplexVector const & vector) [member function]
+    cls.add_method('ComputeNorm', 
+                   'double', 
+                   [param('ns3::PhasedArrayModel::ComplexVector const &', 'vector')], 
+                   is_static=True, visibility='protected')
+    return
+
 def register_Ns3SimpleRefCount__Ns3AttributeAccessor_Ns3Empty_Ns3DefaultDeleter__lt__ns3AttributeAccessor__gt___methods(root_module, cls):
     ## simple-ref-count.h (module 'core'): ns3::SimpleRefCount<ns3::AttributeAccessor, ns3::empty, ns3::DefaultDeleter<ns3::AttributeAccessor> >::SimpleRefCount() [constructor]
     cls.add_constructor([])
@@ -902,51 +1068,6 @@ def register_Ns3SimpleRefCount__Ns3TraceSourceAccessor_Ns3Empty_Ns3DefaultDelete
     cls.add_constructor([param('ns3::SimpleRefCount< ns3::TraceSourceAccessor, ns3::empty, ns3::DefaultDeleter< ns3::TraceSourceAccessor > > const &', 'o')])
     return
 
-def register_Ns3ThreeGppAntennaArrayModel_methods(root_module, cls):
-    ## three-gpp-antenna-array-model.h (module 'antenna'): ns3::ThreeGppAntennaArrayModel::ThreeGppAntennaArrayModel(ns3::ThreeGppAntennaArrayModel const & arg0) [constructor]
-    cls.add_constructor([param('ns3::ThreeGppAntennaArrayModel const &', 'arg0')])
-    ## three-gpp-antenna-array-model.h (module 'antenna'): ns3::ThreeGppAntennaArrayModel::ThreeGppAntennaArrayModel() [constructor]
-    cls.add_constructor([])
-    ## three-gpp-antenna-array-model.h (module 'antenna'): void ns3::ThreeGppAntennaArrayModel::ChangeToOmniTx() [member function]
-    cls.add_method('ChangeToOmniTx', 
-                   'void', 
-                   [])
-    ## three-gpp-antenna-array-model.h (module 'antenna'): ns3::ThreeGppAntennaArrayModel::ComplexVector const & ns3::ThreeGppAntennaArrayModel::GetBeamformingVector() const [member function]
-    cls.add_method('GetBeamformingVector', 
-                   'ns3::ThreeGppAntennaArrayModel::ComplexVector const &', 
-                   [], 
-                   is_const=True)
-    ## three-gpp-antenna-array-model.h (module 'antenna'): std::pair<double, double> ns3::ThreeGppAntennaArrayModel::GetElementFieldPattern(ns3::Angles a) const [member function]
-    cls.add_method('GetElementFieldPattern', 
-                   'std::pair< double, double >', 
-                   [param('ns3::Angles', 'a')], 
-                   is_const=True)
-    ## three-gpp-antenna-array-model.h (module 'antenna'): ns3::Vector ns3::ThreeGppAntennaArrayModel::GetElementLocation(uint64_t index) const [member function]
-    cls.add_method('GetElementLocation', 
-                   'ns3::Vector', 
-                   [param('uint64_t', 'index')], 
-                   is_const=True, is_virtual=True)
-    ## three-gpp-antenna-array-model.h (module 'antenna'): uint64_t ns3::ThreeGppAntennaArrayModel::GetNumberOfElements() const [member function]
-    cls.add_method('GetNumberOfElements', 
-                   'uint64_t', 
-                   [], 
-                   is_const=True, is_virtual=True)
-    ## three-gpp-antenna-array-model.h (module 'antenna'): static ns3::TypeId ns3::ThreeGppAntennaArrayModel::GetTypeId() [member function]
-    cls.add_method('GetTypeId', 
-                   'ns3::TypeId', 
-                   [], 
-                   is_static=True)
-    ## three-gpp-antenna-array-model.h (module 'antenna'): bool ns3::ThreeGppAntennaArrayModel::IsOmniTx() const [member function]
-    cls.add_method('IsOmniTx', 
-                   'bool', 
-                   [], 
-                   is_const=True)
-    ## three-gpp-antenna-array-model.h (module 'antenna'): void ns3::ThreeGppAntennaArrayModel::SetBeamformingVector(ns3::ThreeGppAntennaArrayModel::ComplexVector const & beamformingVector) [member function]
-    cls.add_method('SetBeamformingVector', 
-                   'void', 
-                   [param('ns3::ThreeGppAntennaArrayModel::ComplexVector const &', 'beamformingVector')])
-    return
-
 def register_Ns3TraceSourceAccessor_methods(root_module, cls):
     ## trace-source-accessor.h (module 'core'): ns3::TraceSourceAccessor::TraceSourceAccessor(ns3::TraceSourceAccessor const & arg0) [constructor]
     cls.add_constructor([param('ns3::TraceSourceAccessor const &', 'arg0')])
@@ -972,6 +1093,33 @@ def register_Ns3TraceSourceAccessor_methods(root_module, cls):
                    'bool', 
                    [param('ns3::ObjectBase *', 'obj', transfer_ownership=False), param('ns3::CallbackBase const &', 'cb')], 
                    is_const=True, is_pure_virtual=True, is_virtual=True)
+    return
+
+def register_Ns3UniformPlanarArray_methods(root_module, cls):
+    ## uniform-planar-array.h (module 'antenna'): ns3::UniformPlanarArray::UniformPlanarArray(ns3::UniformPlanarArray const & arg0) [constructor]
+    cls.add_constructor([param('ns3::UniformPlanarArray const &', 'arg0')])
+    ## uniform-planar-array.h (module 'antenna'): ns3::UniformPlanarArray::UniformPlanarArray() [constructor]
+    cls.add_constructor([])
+    ## uniform-planar-array.h (module 'antenna'): std::pair<double, double> ns3::UniformPlanarArray::GetElementFieldPattern(ns3::Angles a) const [member function]
+    cls.add_method('GetElementFieldPattern', 
+                   'std::pair< double, double >', 
+                   [param('ns3::Angles', 'a')], 
+                   is_const=True, is_virtual=True)
+    ## uniform-planar-array.h (module 'antenna'): ns3::Vector ns3::UniformPlanarArray::GetElementLocation(uint64_t index) const [member function]
+    cls.add_method('GetElementLocation', 
+                   'ns3::Vector', 
+                   [param('uint64_t', 'index')], 
+                   is_const=True, is_virtual=True)
+    ## uniform-planar-array.h (module 'antenna'): uint64_t ns3::UniformPlanarArray::GetNumberOfElements() const [member function]
+    cls.add_method('GetNumberOfElements', 
+                   'uint64_t', 
+                   [], 
+                   is_const=True, is_virtual=True)
+    ## uniform-planar-array.h (module 'antenna'): static ns3::TypeId ns3::UniformPlanarArray::GetTypeId() [member function]
+    cls.add_method('GetTypeId', 
+                   'ns3::TypeId', 
+                   [], 
+                   is_static=True)
     return
 
 def register_Ns3AntennaModel_methods(root_module, cls):
@@ -1113,7 +1261,7 @@ def register_Ns3CallbackImplBase_methods(root_module, cls):
     cls.add_method('GetCppTypeid', 
                    'std::string', 
                    [], 
-                   template_parameters=['ns3::ObjectBase*'], is_static=True, visibility='protected')
+                   is_static=True, template_parameters=['ns3::ObjectBase*'], visibility='protected')
     return
 
 def register_Ns3CallbackValue_methods(root_module, cls):
@@ -1149,16 +1297,16 @@ def register_Ns3CosineAntennaModel_methods(root_module, cls):
     cls.add_constructor([])
     ## cosine-antenna-model.h (module 'antenna'): ns3::CosineAntennaModel::CosineAntennaModel(ns3::CosineAntennaModel const & arg0) [constructor]
     cls.add_constructor([param('ns3::CosineAntennaModel const &', 'arg0')])
-    ## cosine-antenna-model.h (module 'antenna'): double ns3::CosineAntennaModel::GetBeamwidth() const [member function]
-    cls.add_method('GetBeamwidth', 
-                   'double', 
-                   [], 
-                   is_const=True)
     ## cosine-antenna-model.h (module 'antenna'): double ns3::CosineAntennaModel::GetGainDb(ns3::Angles a) [member function]
     cls.add_method('GetGainDb', 
                    'double', 
                    [param('ns3::Angles', 'a')], 
                    is_virtual=True)
+    ## cosine-antenna-model.h (module 'antenna'): double ns3::CosineAntennaModel::GetHorizontalBeamwidth() const [member function]
+    cls.add_method('GetHorizontalBeamwidth', 
+                   'double', 
+                   [], 
+                   is_const=True)
     ## cosine-antenna-model.h (module 'antenna'): double ns3::CosineAntennaModel::GetOrientation() const [member function]
     cls.add_method('GetOrientation', 
                    'double', 
@@ -1169,14 +1317,11 @@ def register_Ns3CosineAntennaModel_methods(root_module, cls):
                    'ns3::TypeId', 
                    [], 
                    is_static=True)
-    ## cosine-antenna-model.h (module 'antenna'): void ns3::CosineAntennaModel::SetBeamwidth(double beamwidthDegrees) [member function]
-    cls.add_method('SetBeamwidth', 
-                   'void', 
-                   [param('double', 'beamwidthDegrees')])
-    ## cosine-antenna-model.h (module 'antenna'): void ns3::CosineAntennaModel::SetOrientation(double orientationDegrees) [member function]
-    cls.add_method('SetOrientation', 
-                   'void', 
-                   [param('double', 'orientationDegrees')])
+    ## cosine-antenna-model.h (module 'antenna'): double ns3::CosineAntennaModel::GetVerticalBeamwidth() const [member function]
+    cls.add_method('GetVerticalBeamwidth', 
+                   'double', 
+                   [], 
+                   is_const=True)
     return
 
 def register_Ns3EmptyAttributeAccessor_methods(root_module, cls):
@@ -1315,6 +1460,48 @@ def register_Ns3ParabolicAntennaModel_methods(root_module, cls):
     cls.add_method('SetOrientation', 
                    'void', 
                    [param('double', 'orientationDegrees')])
+    return
+
+def register_Ns3ThreeGppAntennaModel_methods(root_module, cls):
+    ## three-gpp-antenna-model.h (module 'antenna'): ns3::ThreeGppAntennaModel::ThreeGppAntennaModel(ns3::ThreeGppAntennaModel const & arg0) [constructor]
+    cls.add_constructor([param('ns3::ThreeGppAntennaModel const &', 'arg0')])
+    ## three-gpp-antenna-model.h (module 'antenna'): ns3::ThreeGppAntennaModel::ThreeGppAntennaModel() [constructor]
+    cls.add_constructor([])
+    ## three-gpp-antenna-model.h (module 'antenna'): double ns3::ThreeGppAntennaModel::GetAntennaElementGain() const [member function]
+    cls.add_method('GetAntennaElementGain', 
+                   'double', 
+                   [], 
+                   is_const=True)
+    ## three-gpp-antenna-model.h (module 'antenna'): double ns3::ThreeGppAntennaModel::GetGainDb(ns3::Angles a) [member function]
+    cls.add_method('GetGainDb', 
+                   'double', 
+                   [param('ns3::Angles', 'a')], 
+                   is_virtual=True)
+    ## three-gpp-antenna-model.h (module 'antenna'): double ns3::ThreeGppAntennaModel::GetHorizontalBeamwidth() const [member function]
+    cls.add_method('GetHorizontalBeamwidth', 
+                   'double', 
+                   [], 
+                   is_const=True)
+    ## three-gpp-antenna-model.h (module 'antenna'): double ns3::ThreeGppAntennaModel::GetMaxAttenuation() const [member function]
+    cls.add_method('GetMaxAttenuation', 
+                   'double', 
+                   [], 
+                   is_const=True)
+    ## three-gpp-antenna-model.h (module 'antenna'): double ns3::ThreeGppAntennaModel::GetSlaV() const [member function]
+    cls.add_method('GetSlaV', 
+                   'double', 
+                   [], 
+                   is_const=True)
+    ## three-gpp-antenna-model.h (module 'antenna'): static ns3::TypeId ns3::ThreeGppAntennaModel::GetTypeId() [member function]
+    cls.add_method('GetTypeId', 
+                   'ns3::TypeId', 
+                   [], 
+                   is_static=True)
+    ## three-gpp-antenna-model.h (module 'antenna'): double ns3::ThreeGppAntennaModel::GetVerticalBeamwidth() const [member function]
+    cls.add_method('GetVerticalBeamwidth', 
+                   'double', 
+                   [], 
+                   is_const=True)
     return
 
 def register_Ns3TypeIdChecker_methods(root_module, cls):
@@ -1456,7 +1643,7 @@ def register_Ns3CallbackImpl__Ns3ObjectBase___star___Ns3Empty_Ns3Empty_Ns3Empty_
     cls.add_method('operator()', 
                    'ns3::ObjectBase *', 
                    [], 
-                   is_pure_virtual=True, is_virtual=True, custom_name='__call__')
+                   custom_name='__call__', is_pure_virtual=True, is_virtual=True)
     return
 
 def register_Ns3HashImplementation_methods(root_module, cls):
@@ -1566,14 +1753,38 @@ def register_Ns3HashFunctionMurmur3_methods(root_module, cls):
 
 def register_functions(root_module):
     module = root_module
+    ## angles.h (module 'antenna'): std::vector<double, std::allocator<double> > ns3::DegreesToRadians(std::vector<double, std::allocator<double> > const & degrees) [free function]
+    module.add_function('DegreesToRadians', 
+                        'std::vector< double >', 
+                        [param('std::vector< double > const &', 'degrees')])
     ## angles.h (module 'antenna'): double ns3::DegreesToRadians(double degrees) [free function]
     module.add_function('DegreesToRadians', 
                         'double', 
                         [param('double', 'degrees')])
+    ## angles.h (module 'antenna'): std::vector<double, std::allocator<double> > ns3::RadiansToDegrees(std::vector<double, std::allocator<double> > const & radians) [free function]
+    module.add_function('RadiansToDegrees', 
+                        'std::vector< double >', 
+                        [param('std::vector< double > const &', 'radians')])
     ## angles.h (module 'antenna'): double ns3::RadiansToDegrees(double radians) [free function]
     module.add_function('RadiansToDegrees', 
                         'double', 
                         [param('double', 'radians')])
+    ## angles.h (module 'antenna'): double ns3::WrapTo180(double a) [free function]
+    module.add_function('WrapTo180', 
+                        'double', 
+                        [param('double', 'a')])
+    ## angles.h (module 'antenna'): double ns3::WrapTo2Pi(double a) [free function]
+    module.add_function('WrapTo2Pi', 
+                        'double', 
+                        [param('double', 'a')])
+    ## angles.h (module 'antenna'): double ns3::WrapTo360(double a) [free function]
+    module.add_function('WrapTo360', 
+                        'double', 
+                        [param('double', 'a')])
+    ## angles.h (module 'antenna'): double ns3::WrapToPi(double a) [free function]
+    module.add_function('WrapToPi', 
+                        'double', 
+                        [param('double', 'a')])
     register_functions_ns3_FatalImpl(module.add_cpp_namespace('FatalImpl'), root_module)
     register_functions_ns3_Hash(module.add_cpp_namespace('Hash'), root_module)
     return

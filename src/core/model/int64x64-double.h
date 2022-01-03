@@ -19,6 +19,7 @@
 
 #include "ns3/core-config.h"
 #if !defined(INT64X64_DOUBLE_H) && (defined (INT64X64_USE_DOUBLE) || defined(PYTHON_SCAN))
+/** Using the ns3::int64x64_t based on double values. */
 #define INT64X64_DOUBLE_H
 
 #include <stdint.h>
@@ -227,6 +228,29 @@ public:
   }
 
   /**
+   * Truncate to an integer.
+   * Truncation is always toward zero, 
+   * \return The value truncated toward zero.
+   */
+  int64_t GetInt (void) const
+  {
+    int64_t retval = static_cast<int64_t> (_v);
+    return retval;
+  }
+
+  /**
+   * Round to the nearest int.
+   * Similar to std::round this rounds halfway cases away from zero,
+   * regardless of the current (floating) rounding mode.
+   * \return The value rounded to the nearest int.
+   */
+  int64_t Round (void) const
+  {
+    int64_t retval = std::round (_v);
+    return retval;
+  }
+
+  /**
    * Multiply this value by a Q0.128 value, presumably representing an inverse,
    * completing a division operation.
    *
@@ -257,8 +281,9 @@ private:
   /**
    * \name Arithmetic Operators
    * Arithmetic operators for int64x64_t.
+   * @{
    */
-  /**
+  /*
    * @{
    *  Arithmetic operator.
    *  \param [in] lhs Left hand argument
@@ -280,7 +305,7 @@ private:
    * \name Unary Operators
    * Unary operators for int64x64_t.
    */
-  /**
+  /*
    * @{
    *  Unary operator.
    *  \param [in] lhs Left hand argument
@@ -295,7 +320,7 @@ private:
 };  // class int64x64_t
 
 
-/**
+/*
  * \ingroup highprec
  * Equality operator.
  * \param [in] lhs Left hand argument

@@ -24,7 +24,7 @@
 #define MESH_HELPER_H
 
 #include "ns3/mesh-stack-installer.h"
-#include "ns3/wifi-phy-standard.h"
+#include "ns3/wifi-standards.h"
 #include "ns3/qos-utils.h"
 #include "ns3/object-factory.h"
 
@@ -122,42 +122,10 @@ public:
                            std::string n6 = "", const AttributeValue &v6 = EmptyAttributeValue (),
                            std::string n7 = "", const AttributeValue &v7 = EmptyAttributeValue ());
   /**
-   * \param ac the Access Category to attach the ack policy selector to.
-   * \param type the type of ns3::WifiAckPolicySelector to create.
-   * \param n0 the name of the attribute to set
-   * \param v0 the value of the attribute to set
-   * \param n1 the name of the attribute to set
-   * \param v1 the value of the attribute to set
-   * \param n2 the name of the attribute to set
-   * \param v2 the value of the attribute to set
-   * \param n3 the name of the attribute to set
-   * \param v3 the value of the attribute to set
-   * \param n4 the name of the attribute to set
-   * \param v4 the value of the attribute to set
-   * \param n5 the name of the attribute to set
-   * \param v5 the value of the attribute to set
-   * \param n6 the name of the attribute to set
-   * \param v6 the value of the attribute to set
-   * \param n7 the name of the attribute to set
-   * \param v7 the value of the attribute to set
-   *
-   * All the attributes specified in this method should exist
-   * in the requested ack policy selector.
-   */
-  void SetAckPolicySelectorForAc (AcIndex ac, std::string type,
-                                  std::string n0 = "", const AttributeValue &v0 = EmptyAttributeValue (),
-                                  std::string n1 = "", const AttributeValue &v1 = EmptyAttributeValue (),
-                                  std::string n2 = "", const AttributeValue &v2 = EmptyAttributeValue (),
-                                  std::string n3 = "", const AttributeValue &v3 = EmptyAttributeValue (),
-                                  std::string n4 = "", const AttributeValue &v4 = EmptyAttributeValue (),
-                                  std::string n5 = "", const AttributeValue &v5 = EmptyAttributeValue (),
-                                  std::string n6 = "", const AttributeValue &v6 = EmptyAttributeValue (),
-                                  std::string n7 = "", const AttributeValue &v7 = EmptyAttributeValue ());
-  /**
-   * Set PHY standard
+   * Set standard
    * \param standard the wifi phy standard
    */
-  void SetStandard (enum WifiPhyStandard standard);
+  void SetStandard (enum WifiStandard standard);
   /// \todo SetMeshId 
   //void SetMeshId (std::string s);
   /** 
@@ -265,7 +233,7 @@ private:
   ObjectFactory m_mac; ///< the MAC
   ObjectFactory m_stationManager; ///< the station manager
   ObjectFactory m_ackPolicySelector[4]; ///< ack policy selector for all ACs
-  enum WifiPhyStandard m_standard; ///< phy standard
+  enum WifiStandard m_standard; ///< standard
 
 };
 } // namespace ns3

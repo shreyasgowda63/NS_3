@@ -171,10 +171,10 @@ UanMacRcGw::GetTypeId (void)
 }
 
 bool
-UanMacRcGw::Enqueue (Ptr<Packet> packet, uint16_t protocolNumber, const Address &dest)
+UanMacRcGw::Enqueue (Ptr<Packet> packet, 
+                     [[maybe_unused]] uint16_t protocolNumber, 
+                     [[maybe_unused]] const Address &dest)
 {
-  NS_UNUSED (dest);
-  NS_UNUSED (protocolNumber);
   NS_LOG_WARN ("RCMAC Gateway transmission to acoustic nodes is not yet implemented");
   return false;
 }
@@ -194,15 +194,13 @@ UanMacRcGw::AttachPhy (Ptr<UanPhy> phy)
 }
 
 void
-UanMacRcGw::ReceiveError (Ptr<Packet> pkt, double sinr)
+UanMacRcGw::ReceiveError (Ptr<Packet> pkt, [[maybe_unused]] double sinr)
 {
-  NS_UNUSED (sinr);
 }
 
 void
-UanMacRcGw::ReceivePacket (Ptr<Packet> pkt, double sinr, UanTxMode mode)
+UanMacRcGw::ReceivePacket (Ptr<Packet> pkt, [[maybe_unused]] double sinr, UanTxMode mode)
 {
-  NS_UNUSED (sinr);
   UanHeaderCommon ch;
   pkt->PeekHeader (ch);
 
@@ -301,7 +299,7 @@ UanMacRcGw::StartCycle (void)
   // Calculate dataRate
   uint32_t totalBytes = 0;
   uint32_t totalFrames = 0;
-  double pDelay = 0;
+  Time pDelay = Seconds (0);
   if (numRts > 0)
     {
       std::map<Mac8Address, Request>::iterator rit = m_requests.begin ();
@@ -310,7 +308,7 @@ UanMacRcGw::StartCycle (void)
           totalBytes += (*rit).second.length;
           totalFrames += (*rit).second.numFrames;
         }
-      pDelay = 2 * m_sortedRes.begin ()->first.GetSeconds ();
+      pDelay = 2 * m_sortedRes.begin ()->first;
     }
 
 
@@ -321,7 +319,7 @@ UanMacRcGw::StartCycle (void)
     {
       optA = FindOptA ();
     }
-  double thAlpha = ComputeAlpha (totalFrames, totalBytes, m_numNodes, optA, pDelay / 2.0);
+  double thAlpha = ComputeAlpha (totalFrames, totalBytes, m_numNodes, optA, (pDelay / 2.0).GetSeconds ());
 
   double thCtlRate = m_totalRate * thAlpha;
 
@@ -353,23 +351,24 @@ UanMacRcGw::StartCycle (void)
   uint32_t ctlRate =  m_phy->GetMode (m_currentRateNum + m_numRates).GetDataRateBps ();
 
 
-  double winSize = (double)(totalBytes) * 8.0 / dataRate + m_sifs.GetSeconds () * totalFrames + pDelay;
+  Time winSize = Seconds (totalBytes * 8.0 / dataRate) + m_sifs * totalFrames + pDelay; 
   if (numRts == 0)
     {
-      winSize = (optA * std::exp (1.0) + 0.5) * 2.0 * 8.0 * m_rtsSize / (thAlpha * m_totalRate) + 2 * m_maxDelta.GetSeconds ();
+      winSize = Seconds ((optA * std::exp (1.0) + 0.5) * 2.0 * 8.0 * m_rtsSize / (thAlpha * m_totalRate)) + (2 * m_maxDelta); 
     }
-  double effWinSize = winSize - m_rtsSize * 8 / ctlRate  - 2 * m_maxDelta.GetSeconds ();
-
+  Time effWinSize = winSize - Seconds (m_rtsSize * 8.0 / ctlRate)  - (2 * m_maxDelta);
 
   // Before fast CTS/ACK(below)
-  double cycleSeconds = winSize + (totalFrames + 1.0) * m_sifs.GetSeconds () + m_ctsSizeG * 8.0 / dataRate + (m_ctsSizeN + m_ackSize) * 8.0 * numRts / dataRate;
-
   Time ctsTxTimeG = Seconds (m_ctsSizeG * 8.0 / dataRate);
+  Time cycleSeconds = winSize + ((totalFrames + 1.0) * m_sifs) +
+    ctsTxTimeG + Seconds ((m_ctsSizeN + m_ackSize) * 8.0 / dataRate);    
+
+
   Time ctsTxTimeTotal = Seconds (m_ctsSizeN * 8.0 * numRts / dataRate) + ctsTxTimeG;
   if (numRts == 0)
     {
       UanHeaderRcCtsGlobal ctsg;
-      ctsg.SetWindowTime (Seconds (effWinSize));
+      ctsg.SetWindowTime (effWinSize);
       ctsg.SetRateNum (static_cast<uint16_t> (m_currentRateNum));
       ctsg.SetRetryRate (m_currentRetryRate);
       ctsg.SetTxTimeStamp (Simulator::Now ());
@@ -386,9 +385,9 @@ UanMacRcGw::StartCycle (void)
       SendPacket (p, m_currentRateNum);
 
 
-      Simulator::Schedule (Seconds (cycleSeconds), &UanMacRcGw::StartCycle, this);
+      Simulator::Schedule (cycleSeconds, &UanMacRcGw::StartCycle, this);
       m_state = INCYCLE;
-      m_cycleLogger (Simulator::Now (), Seconds (0), numRts, totalBytes, effWinSize, ctlRate, actualX);
+      m_cycleLogger (Simulator::Now (), Seconds (0), numRts, totalBytes, effWinSize.GetSeconds (), ctlRate, actualX);
       return;
     }
 
@@ -433,7 +432,7 @@ UanMacRcGw::StartCycle (void)
   UanHeaderRcCtsGlobal ctsg;
   ctsg.SetRateNum (static_cast<uint16_t> (m_currentRateNum));
   ctsg.SetRetryRate (m_currentRetryRate);
-  ctsg.SetWindowTime (Seconds (effWinSize));
+  ctsg.SetWindowTime (effWinSize);
   ctsg.SetTxTimeStamp (Simulator::Now ());
   UanHeaderCommon ch;
   ch.SetDest (Mac8Address::GetBroadcast ());
@@ -448,7 +447,7 @@ UanMacRcGw::StartCycle (void)
   Simulator::Schedule (nextEarliest, &UanMacRcGw::EndCycle, this);
 
 
-  m_cycleLogger (Simulator::Now (), minPdelay, numRts, totalBytes, cycleSeconds, ctlRate, actualX);
+  m_cycleLogger (Simulator::Now (), minPdelay, numRts, totalBytes, cycleSeconds.GetSeconds (), ctlRate, actualX);
 }
 
 void
@@ -535,9 +534,9 @@ UanMacRcGw::SendPacket (Ptr<Packet> pkt, uint32_t rate)
 
 
 double
-UanMacRcGw::ComputeAlpha (uint32_t totalFrames, uint32_t totalBytes, uint32_t n, uint32_t a, double deltaK)
+UanMacRcGw::ComputeAlpha (uint32_t totalFrames, uint32_t totalBytes, 
+                          [[maybe_unused]] uint32_t n, uint32_t a, double deltaK)
 {
-  NS_UNUSED (n);
   double alpha;
   double lrae = m_rtsSize * 8.0 * a * std::exp (1.0);
   if (totalFrames == 0)
