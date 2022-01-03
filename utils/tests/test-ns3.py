@@ -767,7 +767,17 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         # Now create a test CMake project and try to find_package ns-3
         test_main_file = os.sep.join([install_prefix, "main.cpp"])
         with open(test_main_file, "w") as f:
-            f.write("# include <iostream>\nint main() { return 0; }\n")
+            f.write("""
+            #include <ns3/core-module.h>
+            using namespace ns3;
+            int main () 
+            { 
+                Simulator::Stop (Seconds (1.0));
+                Simulator::Run ();
+                Simulator::Destroy ();
+                return 0;
+            }
+            """)
 
         # We try to use this library without specifying a version,
         # specifying ns3-01 (text version with 'dev' is not supported)
@@ -805,10 +815,14 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
 
             if version == "3.00":
                 self.assertEqual(return_code, 2)
-                self.assertIn("cannot", stderr)
+                self.assertGreater(len(stderr), 0)
             else:
                 self.assertEqual(return_code, 0)
                 self.assertIn("Built target", stdout)
+
+                # Try running the test program that imports ns-3
+                return_code, stdout, stderr = run_program("./test", "", cwd=install_prefix)
+                self.assertEqual(return_code, 0)
 
         # Uninstall
         return_code, stdout, stderr = run_ns3("uninstall")
