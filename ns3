@@ -238,6 +238,11 @@ def parse_args(argv):
                     ["build_dry_run", "clean_dry_run", "configure_dry_run", "dry_run", "run_dry_run"]]
     args.dry_run = dry_run_args.count(True) > 0
 
+    # If some positional options are not in args, set them to false.
+    for option in ["clean", "configure", "install", "run", "shell", "uninstall"]:
+        if option not in args:
+            setattr(args, option, False)
+
     return args
 
 
@@ -704,7 +709,7 @@ def run_step(args, target_to_run, target_args):
     if args.check:
         target_to_run = os.sep.join([ns3_path, "test.py"])
         target_args = ["--no-build", "--jobs=%d" % args.jobs]
-    elif "shell" in args:
+    elif args.shell:
         target_to_run = "bash"
         shell = True
     else:
@@ -768,15 +773,15 @@ def main():
         exec(open(lock_file).read(), globals())
 
     # Clean project if needed
-    if "clean" in args and args.clean:
+    if args.clean:
         clean_cmake_artifacts(dry_run=args.dry_run)
         # We end things earlier when cleaning
         return
 
     # Installation and uninstallation options become cmake targets
-    if "install" in args:
+    if args.install:
         args.build = ['install']
-    if 'uninstall' in args:
+    if args.uninstall:
         args.build = ['uninstall']
 
     # Get build profile
@@ -785,7 +790,7 @@ def main():
     # Check if running something or reconfiguring ns-3
     run_only = False
     build_and_run = False
-    if "run" in args:
+    if args.run:
         if not args.no_build:
             build_and_run = True
         else:
@@ -814,7 +819,7 @@ def main():
             # We end things earlier if only checking the current project configuration
             return
 
-        if "configure" in args:
+        if args.configure:
             configuration_step(current_cmake_cache_folder,
                                current_cmake_generator,
                                args,
@@ -871,7 +876,7 @@ def main():
         target_path = os.sep.join(target_path)
         return target_path
 
-    if not args.check and not ("shell" in args):
+    if not args.check and not args.shell:
         target_to_run = remove_overlapping_path(out_dir, target_to_run)
 
         # Waf doesn't add version prefix and build type suffix to the scratches, so we remove them
@@ -887,7 +892,7 @@ def main():
             raise Exception("Executable has not been built yet")
 
     # Finally, we try to run it
-    if args.check or "shell" in args or run_only or build_and_run:
+    if args.check or args.shell or run_only or build_and_run:
         run_step(args, target_to_run, target_args)
 
     return
