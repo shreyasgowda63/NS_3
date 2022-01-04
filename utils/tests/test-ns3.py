@@ -1232,6 +1232,14 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         self.assertIn(cmake_build_target_command(target="doxygen"), stdout)
         self.assertIn("Built target doxygen", stdout)
 
+    def test_14_Check(self):
+        """!
+        Test if ns3 --check is working as expected
+        @return None
+        """
+        return_code, stdout, stderr = run_ns3("--check")
+        self.assertEqual(return_code, 0)
+
 
 if __name__ == '__main__':
     loader = unittest.TestLoader()

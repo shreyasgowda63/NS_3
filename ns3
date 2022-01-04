@@ -209,9 +209,12 @@ def parse_args(argv):
                         help="Don't print task lines, i.e. messages saying which tasks are being executed.",
                         action="store_true", default=None)
 
-    # parser.add_argument('--shell',
-    #               help=('DEPRECATED (run ./waf shell)'),
-    #               action="store_true", default=None)
+    parser_shell = sub_parser.add_parser('shell',
+                                       help='Try "./ns3 shell --help" for more runtime options')
+    parser_shell.add_argument('shell',
+                              nargs="?",
+                              help='Export necessary environment variables and open a shell',
+                              action="store", default=True)
     # parser.add_argument('--enable-sudo',
     #               help=('Use sudo to setup suid bits on ns3 executables.'),
     #               dest='enable_sudo', action='store_true',
@@ -693,32 +696,39 @@ def run_step(args, target_to_run, target_args):
     if sys.platform != "win32":
         proc_env["LD_LIBRARY_PATH"] = libdir
 
-    # running from ns-3-dev (ns3_path) or cwd
-    working_dir = args.cwd if args.cwd else ns3_path
     debugging_software = []
-
-    # running valgrind?
-    if args.valgrind:
-        debugging_software.append(shutil.which("valgrind"))
-
-    # running gdb?
-    if args.gdb:
-        debugging_software.extend([shutil.which("gdb"), "--args"])
-
-    # running with visualizer?
-    if args.visualize:
-        target_args.append("--SimulatorImplementationType=ns3::VisualSimulatorImpl")
+    working_dir = ns3_path
+    shell = False
 
     # running test.py/check?
     if args.check:
         target_to_run = os.sep.join([ns3_path, "test.py"])
         target_args = ["--no-build", "--jobs=%d" % args.jobs]
+    elif "shell" in args:
+        target_to_run = "bash"
+        shell = True
+    else:
+        # running from ns-3-dev (ns3_path) or cwd
+        if args.cwd:
+            working_dir = args.cwd
 
-    # running with command template?
-    if args.command_template:
-        commands = (args.command_template % target_to_run).split()
-        target_to_run = commands[0]
-        target_args = commands[1:] + target_args
+        # running valgrind?
+        if args.valgrind:
+            debugging_software.append(shutil.which("valgrind"))
+
+        # running gdb?
+        if args.gdb:
+            debugging_software.extend([shutil.which("gdb"), "--args"])
+
+        # running with visualizer?
+        if args.visualize:
+            target_args.append("--SimulatorImplementationType=ns3::VisualSimulatorImpl")
+
+        # running with command template?
+        if args.command_template:
+            commands = (args.command_template % target_to_run).split()
+            target_to_run = commands[0]
+            target_args = commands[1:] + target_args
 
     program_arguments = [*debugging_software, target_to_run, *target_args]
 
@@ -736,7 +746,7 @@ def run_step(args, target_to_run, target_args):
 
     if not args.dry_run:
         try:
-            subprocess.run(program_arguments, env=proc_env, cwd=working_dir)
+            subprocess.run(program_arguments, env=proc_env, cwd=working_dir, shell=shell)
         except KeyboardInterrupt:
             print("Process was interrupted by the user")
 
@@ -861,22 +871,23 @@ def main():
         target_path = os.sep.join(target_path)
         return target_path
 
-    target_to_run = remove_overlapping_path(out_dir, target_to_run)
+    if not args.check and not ("shell" in args):
+        target_to_run = remove_overlapping_path(out_dir, target_to_run)
 
-    # Waf doesn't add version prefix and build type suffix to the scratches, so we remove them
-    if current_cmake_cache_folder is None:
-        if "scratch" in target_to_run and run_only:
-            waf_target_to_run = target_to_run.replace(os.path.basename(target_to_run), args.run)
-            if os.path.exists(os.sep.join([out_dir, waf_target_to_run])):
-                target_to_run = waf_target_to_run
-    target_to_run = os.sep.join([out_dir, target_to_run])
+        # Waf doesn't add version prefix and build type suffix to the scratches, so we remove them
+        if current_cmake_cache_folder is None:
+            if "scratch" in target_to_run and run_only:
+                waf_target_to_run = target_to_run.replace(os.path.basename(target_to_run), args.run)
+                if os.path.exists(os.sep.join([out_dir, waf_target_to_run])):
+                    target_to_run = waf_target_to_run
+        target_to_run = os.sep.join([out_dir, target_to_run])
 
-    # If we're only trying to run the target, we need to check if it actually exists first
-    if (run_only or build_and_run) and not os.path.exists(target_to_run):
-        raise Exception("Executable has not been built yet")
+        # If we're only trying to run the target, we need to check if it actually exists first
+        if (run_only or build_and_run) and not os.path.exists(target_to_run):
+            raise Exception("Executable has not been built yet")
 
     # Finally, we try to run it
-    if args.check or run_only or build_and_run:
+    if args.check or "shell" in args or run_only or build_and_run:
         run_step(args, target_to_run, target_args)
 
     return
