@@ -205,7 +205,7 @@ def parse_args(argv):
                         help='Print the current configuration.',
                         action="store_true", default=None)
 
-    parser.add_argument('--no-task-lines',
+    parser.add_argument('--quiet',
                         help="Don't print task lines, i.e. messages saying which tasks are being executed.",
                         action="store_true", default=None)
 
@@ -747,7 +747,7 @@ def main():
     # Parse arguments
     args = parse_args(sys.argv[1:])
     atexit.register(exit_handler, dry_run=args.dry_run)
-    output = subprocess.DEVNULL if args.no_task_lines else None
+    output = subprocess.DEVNULL if args.quiet else None
 
     # no arguments were passed, so can't possibly be reconfiguring anything, then we refresh and rebuild
     if len(sys.argv) == 1:

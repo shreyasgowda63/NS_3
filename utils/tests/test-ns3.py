@@ -283,10 +283,10 @@ class NS3CommonSettingsTestCase(unittest.TestCase):
 
     def test_02_NoTaskLines(self):
         """!
-        Test only passing --no-task-lines argument to ns3
+        Test only passing --quiet argument to ns3
         @return None
         """
-        return_code, stdout, stderr = run_ns3("--no-task-lines")
+        return_code, stdout, stderr = run_ns3("--quiet")
         self.assertEqual(return_code, 0)
         self.assertIn("You need to configure ns-3 first: try ./ns3 configure", stdout)
 
@@ -753,7 +753,7 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         Try hiding task lines
         @return None
         """
-        return_code, stdout, stderr = run_ns3("--no-task-lines build")
+        return_code, stdout, stderr = run_ns3("--quiet build")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_build_project_command, stdout)
 
