@@ -207,7 +207,7 @@ class NS3RunWafTargets(unittest.TestCase):
         Try to run an executable built by waf
         @return None
         """
-        return_code, stdout, stderr = run_ns3("--run-no-build scratch-simulator")
+        return_code, stdout, stderr = run_ns3("run scratch-simulator --no-build")
         self.assertEqual(return_code, 0)
         self.assertIn("Scratch Simulator", stderr)
 
@@ -216,7 +216,7 @@ class NS3RunWafTargets(unittest.TestCase):
         Try to run a different executable built by waf
         @return None
         """
-        return_code, stdout, stderr = run_ns3("--run-no-build command-line-example")
+        return_code, stdout, stderr = run_ns3("run command-line-example --no-build")
         self.assertEqual(return_code, 0)
         self.assertIn("command-line-example", stdout)
 
@@ -225,7 +225,7 @@ class NS3RunWafTargets(unittest.TestCase):
         Try to run a test case built by waf that calls the ns3 wrapper script
         @return None
         """
-        return_code, stdout, stderr = run_program("test.py", "--nowaf -s core-example-simulator", True)
+        return_code, stdout, stderr = run_program("test.py", "--no-build -s core-example-simulator", True)
         self.assertEqual(return_code, 0)
         self.assertIn("PASS", stdout)
 
@@ -234,7 +234,7 @@ class NS3RunWafTargets(unittest.TestCase):
         Try to run a different test case built by waf that calls the ns3 wrapper script
         @return None
         """
-        return_code, stdout, stderr = run_program("test.py", "--nowaf -s examples-as-tests-test-suite", True)
+        return_code, stdout, stderr = run_program("test.py", "--no-build -s examples-as-tests-test-suite", True)
         self.assertEqual(return_code, 0)
         self.assertIn("PASS", stdout)
 
@@ -666,10 +666,10 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
         run_ns3("build scratch-simulator")
 
         # Run all cases and then check outputs
-        return_code0, stdout0, stderr0 = run_ns3("--dry-run --run scratch-simulator")
-        return_code1, stdout1, stderr1 = run_ns3("--run scratch-simulator")
-        return_code2, stdout2, stderr2 = run_ns3("--dry-run --run-no-build scratch-simulator")
-        return_code3, stdout3, stderr3 = run_ns3("--run-no-build scratch-simulator")
+        return_code0, stdout0, stderr0 = run_ns3("--dry-run run scratch-simulator")
+        return_code1, stdout1, stderr1 = run_ns3("run scratch-simulator")
+        return_code2, stdout2, stderr2 = run_ns3("--dry-run run scratch-simulator --no-build")
+        return_code3, stdout3, stderr3 = run_ns3("run scratch-simulator --no-build ")
 
         # Return code and stderr should be the same for all of them.
         self.assertEqual(sum([return_code0, return_code1, return_code2, return_code3]), 0)
@@ -1066,7 +1066,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         Try to build and run test-runner
         @return None
         """
-        return_code, stdout, stderr = run_ns3('--run "test-runner --list"')
+        return_code, stdout, stderr = run_ns3('run "test-runner --list"')
         self.assertEqual(return_code, 0)
         self.assertIn("Built target test-runner", stdout)
         self.assertIn(cmake_build_target_command(target="test-runner"), stdout)
@@ -1076,7 +1076,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         Try to build and run a library
         @return None
         """
-        return_code, stdout, stderr = run_ns3("--run core")  # this should not work
+        return_code, stdout, stderr = run_ns3("run core")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: core", stderr)
 
@@ -1085,7 +1085,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         Try to build and run an unknown target
         @return None
         """
-        return_code, stdout, stderr = run_ns3("--run nonsense")  # this should not work
+        return_code, stdout, stderr = run_ns3("run nonsense")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: nonsense", stderr)
 
@@ -1094,7 +1094,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         Try to run test-runner without building
         @return None
         """
-        return_code, stdout, stderr = run_ns3('--run-no-build "test-runner --list"')
+        return_code, stdout, stderr = run_ns3('run "test-runner --list" --no-build ')
         self.assertEqual(return_code, 0)
         self.assertNotIn("Built target test-runner", stdout)
         self.assertNotIn(cmake_build_target_command(target="test-runner"), stdout)
@@ -1104,7 +1104,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         Test ns3 fails to run a library
         @return None
         """
-        return_code, stdout, stderr = run_ns3("--run-no-build core")  # this should not work
+        return_code, stdout, stderr = run_ns3("run core --no-build")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: core", stderr)
 
@@ -1113,7 +1113,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         Test ns3 fails to run an unknown program
         @return None
         """
-        return_code, stdout, stderr = run_ns3("--run-no-build nonsense")  # this should not work
+        return_code, stdout, stderr = run_ns3("run nonsense --no-build")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: nonsense", stderr)
 
@@ -1122,7 +1122,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         Test if scratch simulator is executed through gdb
         @return None
         """
-        return_code, stdout, stderr = run_ns3("--run-no-build scratch-simulator --gdb")
+        return_code, stdout, stderr = run_ns3("run scratch-simulator --gdb --no-build")
         self.assertEqual(return_code, 0)
         self.assertIn("scratch-simulator", stdout)
         self.assertIn("No debugging symbols found", stdout)
@@ -1132,7 +1132,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         Test if scratch simulator is executed through valgrind
         @return None
         """
-        return_code, stdout, stderr = run_ns3("--run-no-build scratch-simulator --valgrind")
+        return_code, stdout, stderr = run_ns3("run scratch-simulator --valgrind --no-build")
         self.assertEqual(return_code, 0)
         self.assertIn("scratch-simulator", stderr)
         self.assertIn("Memcheck", stderr)

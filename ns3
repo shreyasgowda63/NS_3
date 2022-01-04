@@ -97,7 +97,7 @@ def parse_args(argv):
     parser_configure = on_off_argument(parser_configure, "warnings", "compiler warnings")
     parser_configure = on_off_argument(parser_configure, "werror", "Treat compiler warnings as errors",
                                        "Treat compiler warnings as warnings")
-
+    parser_configure = on_off_argument(parser_configure, "visualizer", "the visualizer module")
     parser_configure.add_argument('--enable-modules',
                                   help='List of modules to build (e.g. core;network;internet)',
                                   action="store", type=str, default=None)
@@ -166,6 +166,38 @@ def parse_args(argv):
                                   nargs="?",
                                   action="store", default=True)
 
+    parser_run = sub_parser.add_parser('run',
+                                       help='Try "./ns3 run --help" for more runtime options')
+    parser_run.add_argument('run',
+                            help='Build and run executable. If --no-build is present, build step is skipped.',
+                            type=str, default='')
+    parser_run.add_argument('--no-build',
+                            help='Skip build step.',
+                            action="store_true", default=False)
+    parser_run.add_argument('--command-template',
+                            help=('Template of the command used to run the program given by run;'
+                                  ' It should be a shell command string containing %s inside,'
+                                  ' which will be replaced by the actual program.'),
+                            type=str, default=None)
+    parser_run.add_argument('--cwd',
+                            help='Set the working directory for a program.',
+                            action="store", type=str, default=None)
+    parser_run.add_argument('--gdb',
+                            help='Change the default command template to run programs with gdb',
+                            action="store_true", default=None)
+    parser_run.add_argument('--valgrind',
+                            help='Change the default command template to run programs with valgrind',
+                            action="store_true", default=None)
+    parser_run.add_argument('--visualize',
+                            help='Modify --run arguments to enable the visualizer',
+                            action="store_true", default=None)
+    parser_run.add_argument('--dry-run',
+                            help="Do not execute the commands",
+                            action="store_true", default=None, dest="run_dry_run")
+
+    parser.add_argument('-j', '--jobs',
+                        help='Set number of parallel jobs',
+                        action='store', type=int, dest="jobs", default=max(1, os.cpu_count() - 1))
     parser.add_argument('--dry-run',
                         help="Do not execute the commands",
                         action="store_true", default=None, dest="dry_run")
@@ -173,50 +205,10 @@ def parse_args(argv):
                         help='Print the current configuration.',
                         action="store_true", default=None)
 
-    parser.add_argument('--cwd',
-                        help='Set the working directory for a program.',
-                        action="store", type=str, default=None)
     parser.add_argument('--no-task-lines',
                         help="Don't print task lines, i.e. messages saying which tasks are being executed.",
                         action="store_true", default=None)
 
-    parser.add_argument('--run',
-                        help=('Run a locally built program; argument can be a program name,'
-                              ' or a command starting with the program name.'),
-                        type=str, default='')
-    parser.add_argument('--run-no-build',
-                        help=(
-                            'Run a locally built program without rebuilding the project; '
-                            'argument can be a program name, or a command starting with the program name.'),
-                        type=str, default='')
-    parser.add_argument('--visualize',
-                        help='Modify --run arguments to enable the visualizer',
-                        action="store_true", default=None)
-    parser.add_argument('--command-template',
-                        help=('Template of the command used to run the program given by --run;'
-                              ' It should be a shell command string containing %s inside,'
-                              ' which will be replaced by the actual program.'),
-                        type=str, default=None)
-    parser.add_argument('--pyrun',
-                        help=('Run a python program using locally built ns3 python module;'
-                              ' argument is the path to the python program, optionally followed'
-                              ' by command-line options that are passed to the program.'),
-                        type=str, default='')
-    parser.add_argument('--pyrun-no-build',
-                        help=(
-                            'Run a python program using locally built ns3 python module without rebuilding the project;'
-                            ' argument is the path to the python program, optionally followed'
-                            ' by command-line options that are passed to the program.'),
-                        type=str, default='')
-    parser.add_argument('--gdb',
-                        help='Change the default command template to run programs and unit tests with gdb',
-                        action="store_true", default=None)
-    parser.add_argument('--valgrind',
-                        help='Change the default command template to run programs and unit tests with valgrind',
-                        action="store_true", default=None)
-    parser.add_argument('-j', '--jobs',
-                        help='Set number of parallel jobs',
-                        action='store', type=int, dest="jobs", default=max(1, os.cpu_count() - 1))
     # parser.add_argument('--shell',
     #               help=('DEPRECATED (run ./waf shell)'),
     #               action="store_true", default=None)
@@ -240,7 +232,7 @@ def parse_args(argv):
 
     # Merge dry_runs
     dry_run_args = [(args.__getattribute__(name) if name in args else None) for name in
-                    ["build_dry_run", "clean_dry_run", "configure_dry_run", "dry_run"]]
+                    ["build_dry_run", "clean_dry_run", "configure_dry_run", "dry_run", "run_dry_run"]]
     args.dry_run = dry_run_args.count(True) > 0
 
     return args
@@ -414,6 +406,7 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
                ("STATIC", "static"),
                ("TESTS", "tests"),
                ("VERBOSE", "verbose"),
+               ("VISUALIZER", "visualizer"),
                ("WARNINGS", "warnings"),
                ("WARNINGS_AS_ERRORS", "werror"),
                )
@@ -440,10 +433,6 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
 
     if args.prefix is not None:
         cmake_args.append("-DCMAKE_INSTALL_PREFIX=%s" % args.prefix)
-
-    # Build and link visualizer
-    if args.visualize is not None:
-        cmake_args.append("-DNS3_VISUALIZER=%s" % on_off(args.visualize))
 
     # Process enabled/disabled modules
     if args.enable_modules:
@@ -723,7 +712,7 @@ def run_step(args, target_to_run, target_args):
     # running test.py/check?
     if args.check:
         target_to_run = os.sep.join([ns3_path, "test.py"])
-        target_args = ["--nowaf", "--jobs=%d" % args.jobs]
+        target_args = ["--no-build", "--jobs=%d" % args.jobs]
 
     # running with command template?
     if args.command_template:
@@ -784,13 +773,18 @@ def main():
     build_profile, ns3_version, ns3_modules = check_build_profile(out_dir)
 
     # Check if running something or reconfiguring ns-3
-    run_only = args.run_no_build or args.pyrun_no_build
-    build_and_run = args.run or args.pyrun
+    run_only = False
+    build_and_run = False
+    if "run" in args:
+        if not args.no_build:
+            build_and_run = True
+        else:
+            run_only = True
     target_to_run = None
     target_args = []
     current_cmake_cache_folder = None
     if not args.check and (run_only or build_and_run):
-        target_to_run = max(args.run_no_build, args.pyrun_no_build, args.run, args.pyrun)
+        target_to_run = args.run
         if len(target_to_run) > 0:
             # While testing a weird case appeared where the target to run is between quotes,
             # so we remove in case they exist
@@ -872,7 +866,7 @@ def main():
     # Waf doesn't add version prefix and build type suffix to the scratches, so we remove them
     if current_cmake_cache_folder is None:
         if "scratch" in target_to_run and run_only:
-            waf_target_to_run = target_to_run.replace(os.path.basename(target_to_run), run_only)
+            waf_target_to_run = target_to_run.replace(os.path.basename(target_to_run), args.run)
             if os.path.exists(os.sep.join([out_dir, waf_target_to_run])):
                 target_to_run = waf_target_to_run
     target_to_run = os.sep.join([out_dir, target_to_run])

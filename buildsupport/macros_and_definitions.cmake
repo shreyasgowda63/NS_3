@@ -694,11 +694,11 @@ macro(process_options)
   if(${ENABLE_TESTS})
     add_custom_target(all-test-targets)
 
-    # Create a custom target to run test.py --nowaf Target is also used to
+    # Create a custom target to run test.py --no-build Target is also used to
     # produce code coverage output
     add_custom_target(
       run_test_py
-      COMMAND ${Python3_EXECUTABLE} test.py --nowaf
+      COMMAND ${Python3_EXECUTABLE} test.py --no-build
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
       DEPENDS all-test-targets
     )
@@ -793,7 +793,7 @@ macro(process_options)
     add_custom_target(
       run-introspected-command-line
       COMMAND ${CMAKE_COMMAND} -E env NS_COMMANDLINE_INTROSPECTION=..
-              ${Python3_EXECUTABLE} ./test.py --nowaf --constrain=example
+              ${Python3_EXECUTABLE} ./test.py --no-build --constrain=example
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
       DEPENDS all-test-targets # all-test-targets only exists if ENABLE_TESTS is
                                # set to ON
