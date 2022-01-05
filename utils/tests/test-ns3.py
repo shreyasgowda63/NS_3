@@ -31,6 +31,10 @@ import sys
 import unittest
 from functools import partial
 
+# Used for --enable-sudo tests, test will be skipped if not defined
+# Can be changed here or setting the SUDO_PASSWORD environment variable
+SUDO_PASSWORD = os.getenv("SUDO_PASSWORD", "")
+
 # Get path containing ns3
 ns3_path = os.path.dirname(os.path.abspath(os.sep.join([__file__, "../../"])))
 ns3_script = os.sep.join([ns3_path, "ns3"])
@@ -263,6 +267,7 @@ class NS3CommonSettingsTestCase(unittest.TestCase):
     """!
     ns3 tests related to generic options
     """
+
     def setUp(self):
         """!
         Clean configuration/build artifacts before common commands
@@ -304,6 +309,7 @@ class NS3ConfigureBuildProfileTestCase(unittest.TestCase):
     """!
     ns3 tests related to build profiles
     """
+
     def setUp(self):
         """!
         Clean configuration/build artifacts before testing configuration settings
@@ -673,7 +679,7 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
 
         # Return code and stderr should be the same for all of them.
         self.assertEqual(sum([return_code0, return_code1, return_code2, return_code3]), 0)
-        self.assertEqual([stderr0, stderr1, stderr2, stderr3], [""]*4)
+        self.assertEqual([stderr0, stderr1, stderr2, stderr3], [""] * 4)
 
         scratch_path = None
         for program in get_programs_list():
@@ -1036,7 +1042,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
         # Check if build-status.py exists, then read to get list of executables.
         self.assertTrue(os.path.exists(usual_build_status_script))
-        
+
         ## ns3_executables holds a list of executables in build-status.py
         self.ns3_executables = get_programs_list()
 
@@ -1063,9 +1069,9 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_02_BuildAndRunExistingExecutableTarget(self):
         """!
-        Try to build and run test-runner
-        @return None
-        """
+       Try to build and run test-runner
+       @return None
+       """
         return_code, stdout, stderr = run_ns3('run "test-runner --list"')
         self.assertEqual(return_code, 0)
         self.assertIn("Built target test-runner", stdout)
@@ -1073,27 +1079,27 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_03_BuildAndRunExistingLibraryTarget(self):
         """!
-        Try to build and run a library
-        @return None
-        """
+       Try to build and run a library
+       @return None
+       """
         return_code, stdout, stderr = run_ns3("run core")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: core", stderr)
 
     def test_04_BuildAndRunNonExistingTarget(self):
         """!
-        Try to build and run an unknown target
-        @return None
-        """
+       Try to build and run an unknown target
+       @return None
+       """
         return_code, stdout, stderr = run_ns3("run nonsense")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: nonsense", stderr)
 
     def test_05_RunNoBuildExistingExecutableTarget(self):
         """!
-        Try to run test-runner without building
-        @return None
-        """
+       Try to run test-runner without building
+       @return None
+       """
         return_code, stdout, stderr = run_ns3('run "test-runner --list" --no-build ')
         self.assertEqual(return_code, 0)
         self.assertNotIn("Built target test-runner", stdout)
@@ -1101,27 +1107,27 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_06_RunNoBuildExistingLibraryTarget(self):
         """!
-        Test ns3 fails to run a library
-        @return None
-        """
+       Test ns3 fails to run a library
+       @return None
+       """
         return_code, stdout, stderr = run_ns3("run core --no-build")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: core", stderr)
 
     def test_07_RunNoBuildNonExistingExecutableTarget(self):
         """!
-        Test ns3 fails to run an unknown program
-        @return None
-        """
+       Test ns3 fails to run an unknown program
+       @return None
+       """
         return_code, stdout, stderr = run_ns3("run nonsense --no-build")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: nonsense", stderr)
 
     def test_08_RunNoBuildGdb(self):
         """!
-        Test if scratch simulator is executed through gdb
-        @return None
-        """
+       Test if scratch simulator is executed through gdb
+       @return None
+       """
         return_code, stdout, stderr = run_ns3("run scratch-simulator --gdb --no-build")
         self.assertEqual(return_code, 0)
         self.assertIn("scratch-simulator", stdout)
@@ -1129,9 +1135,9 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_09_RunNoBuildValgrind(self):
         """!
-        Test if scratch simulator is executed through valgrind
-        @return None
-        """
+       Test if scratch simulator is executed through valgrind
+       @return None
+       """
         return_code, stdout, stderr = run_ns3("run scratch-simulator --valgrind --no-build")
         self.assertEqual(return_code, 0)
         self.assertIn("scratch-simulator", stderr)
@@ -1139,9 +1145,9 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_10_DoxygenWithBuild(self):
         """!
-        Test the doxygen target that does trigger a full build
-        @return None
-        """
+       Test the doxygen target that does trigger a full build
+       @return None
+       """
         doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
 
         doxygen_files = ["introspected-command-line.h", "introspected-doxygen.h"]
@@ -1155,32 +1161,32 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         # if os.path.exists(doxygen_build_folder):
         #     shutil.rmtree(doxygen_build_folder)
 
-        return_code, stdout, stderr = run_ns3("build doxygen")
+        return_code, stdout, stderr = run_ns3("docs doxygen")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_build_target_command(target="doxygen"), stdout)
         self.assertIn("Built target doxygen", stdout)
 
     def test_11_DoxygenWithoutBuild(self):
         """!
-        Test the doxygen target that doesn't trigger a full build
-        @return None
-        """
+       Test the doxygen target that doesn't trigger a full build
+       @return None
+       """
         # Rebuilding dot images is super slow, so not removing doxygen products
         # doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
         # doxygen_build_folder = os.sep.join([doc_folder, "html"])
         # if os.path.exists(doxygen_build_folder):
         #     shutil.rmtree(doxygen_build_folder)
 
-        return_code, stdout, stderr = run_ns3("build doxygen-no-build")
+        return_code, stdout, stderr = run_ns3("docs doxygen-no-build")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_build_target_command(target="doxygen-no-build"), stdout)
         self.assertIn("Built target doxygen-no-build", stdout)
 
     def test_12_SphinxDocumentation(self):
         """!
-        Test every individual target for Sphinx-based documentation
-        @return None
-        """
+       Test every individual target for Sphinx-based documentation
+       @return None
+       """
         doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
 
         # First we need to clean old docs, or it will not make any sense.
@@ -1192,7 +1198,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         # For each sphinx doc target.
         for target in ["manual", "models", "tutorial"]:
             # Build
-            return_code, stdout, stderr = run_ns3("build %s" % target)
+            return_code, stdout, stderr = run_ns3("docs %s" % target)
             self.assertEqual(return_code, 0)
             self.assertIn(cmake_build_target_command(target="sphinx_%s" % target), stdout)
             self.assertIn("Built target sphinx_%s" % target, stdout)
@@ -1207,10 +1213,10 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_13_Documentation(self):
         """!
-        Test the documentation target that builds
-        both doxygen and sphinx based documentation
-        @return None
-        """
+       Test the documentation target that builds
+       both doxygen and sphinx based documentation
+       @return None
+       """
         doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
 
         # First we need to clean old docs, or it will not make any sense.
@@ -1225,7 +1231,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
             if os.path.exists(doc_build_folder):
                 shutil.rmtree(doc_build_folder)
 
-        return_code, stdout, stderr = run_ns3("build docs")
+        return_code, stdout, stderr = run_ns3("docs all")
         self.assertEqual(return_code, 0)
         self.assertIn(cmake_build_target_command(target="sphinx"), stdout)
         self.assertIn("Built target sphinx", stdout)
@@ -1234,11 +1240,52 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_14_Check(self):
         """!
-        Test if ns3 --check is working as expected
-        @return None
-        """
+       Test if ns3 --check is working as expected
+       @return None
+       """
         return_code, stdout, stderr = run_ns3("--check")
         self.assertEqual(return_code, 0)
+
+    def test_15_EnableSudo(self):
+        """!
+        Try to set ownership of scratch-simulator from current user to root,
+        and change execution permissions
+        @return None
+        """
+
+        # Skip test if variable containing sudo password is the default value
+        if SUDO_PASSWORD == "":
+            return
+
+        # First we run to ensure the program was built
+        return_code, stdout, stderr = run_ns3('run scratch-simulator')
+        self.assertEqual(return_code, 0)
+        self.assertIn("Built target scratch_scratch-simulator", stdout)
+        self.assertIn(cmake_build_target_command(target="scratch_scratch-simulator"), stdout)
+        scratch_simulator_path = list(filter(lambda x: x if "scratch-simulator" in x else None,
+                                             self.ns3_executables
+                                             )
+                                      )[-1]
+        prev_fstat = os.stat(scratch_simulator_path)  # we get the permissions before enabling sudo
+
+        return_code, stdout, stderr = run_ns3('run scratch-simulator --enable-sudo ' + SUDO_PASSWORD)
+        self.assertEqual(return_code, 0)
+        self.assertIn("Built target scratch_scratch-simulator", stdout)
+        self.assertIn(cmake_build_target_command(target="scratch_scratch-simulator"), stdout)
+        fstat = os.stat(scratch_simulator_path)
+
+        import stat
+        # If we are on Windows, these permissions mean absolutely nothing,
+        # and on Fuse builds they might not make any sense, so we need to skip before failing
+        likely_fuse_mount = ((prev_fstat.st_mode & stat.S_ISUID) == (fstat.st_mode & stat.S_ISUID)) and \
+                            prev_fstat.st_uid == 0
+
+        if sys.platform == "win32" or likely_fuse_mount:
+            return
+
+        # If this is a valid platform, we can continue
+        self.assertEqual(fstat.st_uid, 0)  # check the file was correctly chown'ed by root
+        self.assertEqual(fstat.st_mode & stat.S_ISUID, stat.S_ISUID)  # check if normal users can run as sudo
 
 
 if __name__ == '__main__':

@@ -194,6 +194,11 @@ def parse_args(argv):
     parser_run.add_argument('--dry-run',
                             help="Do not execute the commands",
                             action="store_true", default=None, dest="run_dry_run")
+    parser_run.add_argument('--enable-sudo',
+                            nargs="?",
+                            help='Use sudo to setup suid bits on ns3 executables.',
+                            dest='enable_sudo', action='store',
+                            default=False)
 
     parser.add_argument('-j', '--jobs',
                         help='Set number of parallel jobs',
@@ -210,15 +215,11 @@ def parse_args(argv):
                         action="store_true", default=None)
 
     parser_shell = sub_parser.add_parser('shell',
-                                       help='Try "./ns3 shell --help" for more runtime options')
+                                         help='Try "./ns3 shell --help" for more runtime options')
     parser_shell.add_argument('shell',
                               nargs="?",
                               help='Export necessary environment variables and open a shell',
                               action="store", default=True)
-    # parser.add_argument('--enable-sudo',
-    #               help=('Use sudo to setup suid bits on ns3 executables.'),
-    #               dest='enable_sudo', action='store_true',
-    #               default=None)
 
     parser.add_argument('--check',
                         help='DEPRECATED (run ./test.py)',
@@ -243,6 +244,8 @@ def parse_args(argv):
         if option not in args:
             setattr(args, option, False)
 
+    if args.run and args.enable_sudo is None:
+        args.enable_sudo = True
     return args
 
 
@@ -510,7 +513,7 @@ def cmake_build(current_cmake_cache_folder, output, jobs, target=None, dry_run=F
         raise Exception("CMake was not found")
     version = re.findall("version (.*)\n", subprocess.check_output([cmake, "--version"]).decode("utf-8"))[0]
 
-    # Older CMake versions do not accept the number of jobs directly
+    # Older CMake versions don't accept the number of jobs directly
     jobs_part = ("-j %d" % jobs) if version >= "3.12.0" else ""
     target_part = (" --target %s" % target) if target else ""
     cmake_build_command = "cmake --build . %s%s" % (jobs_part, target_part)
@@ -725,7 +728,7 @@ def run_step(args, target_to_run, target_args):
         if args.gdb:
             debugging_software.extend([shutil.which("gdb"), "--args"])
 
-        # running with visualizer?
+        # running with the visualizer?
         if args.visualize:
             target_args.append("--SimulatorImplementationType=ns3::VisualSimulatorImpl")
 
@@ -756,8 +759,69 @@ def run_step(args, target_to_run, target_args):
             print("Process was interrupted by the user")
 
 
+# Debugging this with PyCharm is a no no. It refuses to work hanging indefinitely
+def sudo_command(command: list, password: str):
+    # Run command and feed the sudo password
+    proc = subprocess.Popen(['sudo', '-S', *command],
+                            stdin=subprocess.PIPE,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE
+                            ).communicate(input=password.encode() + b'\n')
+    stdout, stderr = proc[0].decode(), proc[1].decode()
+
+    # Clean sudo password after each command
+    subprocess.Popen(["sudo", "-k"],
+                     stdin=subprocess.PIPE,
+                     stdout=subprocess.PIPE,
+                     stderr=subprocess.PIPE).communicate()
+
+    # Check if the password is wrong
+    if "try again" in stderr:
+        raise Exception("Incorrect sudo password")
+
+    return stdout, stderr
+
+
+def sudo_step(args, target_to_sudo):
+    import stat
+    # Check if we need to set anything
+    fstat = os.stat(target_to_sudo)
+    if (fstat.st_mode & stat.S_ISUID) == stat.S_ISUID:
+        return
+
+    # Check if sudo exists
+    sudo = shutil.which("sudo")
+    if not sudo:
+        raise Exception("Sudo is required by --enable-sudo, but it was not found")
+
+    if type(args.enable_sudo) == str:
+        password = args.enable_sudo
+    else:
+        from getpass import getpass
+        password = getpass(prompt="Password:")
+
+    out, err = sudo_command("chown root {}".format(target_to_sudo).split(), password)
+    if len(out) > 0:
+        raise Exception("Failed to chown: ", target_to_sudo)
+
+    out, err = sudo_command("chmod u+s {}".format(target_to_sudo).split(), password)
+    if len(out) > 0:
+        raise Exception("Failed to chmod: ", target_to_sudo)
+    return
+
+
+def refuse_run_as_root():
+    # Check if the user is root and refuse to run
+    username = os.getenv("USER", "")
+    if username == "root":
+        raise Exception("Refusing to run as root. --enable-sudo will request your password when needed")
+
+
 def main():
     global out_dir, run_only
+
+    # Refuse to run with sudo
+    refuse_run_as_root()
 
     # Parse arguments
     args = parse_args(sys.argv[1:])
@@ -890,6 +954,10 @@ def main():
         # If we're only trying to run the target, we need to check if it actually exists first
         if (run_only or build_and_run) and not os.path.exists(target_to_run):
             raise Exception("Executable has not been built yet")
+
+    # Setup program as sudo
+    if args.run and args.enable_sudo:
+        sudo_step(args, target_to_run)
 
     # Finally, we try to run it
     if args.check or args.shell or run_only or build_and_run:
