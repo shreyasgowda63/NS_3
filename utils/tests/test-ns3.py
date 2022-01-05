@@ -31,10 +31,6 @@ import sys
 import unittest
 from functools import partial
 
-# Used for --enable-sudo tests, test will be skipped if not defined
-# Can be changed here or setting the SUDO_PASSWORD environment variable
-SUDO_PASSWORD = os.getenv("SUDO_PASSWORD", "")
-
 # Get path containing ns3
 ns3_path = os.path.dirname(os.path.abspath(os.sep.join([__file__, "../../"])))
 ns3_script = os.sep.join([ns3_path, "ns3"])
@@ -54,23 +50,25 @@ cmake_build_target_command = partial("cmake --build . -j {jobs} --target {target
                                      )
 
 
-def run_ns3(args):
+def run_ns3(args, env=None):
     """!
     Runs the ns3 wrapper script with arguments
     @param args: string containing arguments that will get split before calling ns3
+    @param env: environment variables dictionary
     @return tuple containing (error code, stdout and stderr)
     """
-    return run_program(ns3_script, args, True)
+    return run_program(ns3_script, args, python=True, env=env)
 
 
 # Adapted from https://github.com/metabrainz/picard/blob/master/picard/util/__init__.py
-def run_program(program, args, python=False, cwd=ns3_path):
+def run_program(program, args, python=False, cwd=ns3_path, env=None):
     """!
     Runs a program with the given arguments and returns a tuple containing (error code, stdout and stderr)
     @param program: program to execute (or python script)
     @param args: string containing arguments that will get split before calling the program
     @param python: flag indicating whether the program is a python script
     @param cwd: the working directory used that will be the root folder for the execution
+    @param env: environment variables dictionary
     @return tuple containing (error code, stdout and stderr)
     """
     if type(args) != str:
@@ -88,15 +86,22 @@ def run_program(program, args, python=False, cwd=ns3_path):
     for i in range(len(arguments)):
         arguments[i] = arguments[i].replace("\"", "")
 
+    # Forward environment variables used by the ns3 script
+    current_env = os.environ.copy()
+
+    # Add different environment variables
+    #if env:
+    #    current_env.update(env)
+
     # Call program with arguments
     ret = subprocess.run(
         arguments,
         stdin=subprocess.DEVNULL,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        cwd=cwd  # run process from the ns-3-dev path
+        cwd=cwd,  # run process from the ns-3-dev path
+        #env=current_env
     )
-
     # Return (error code, stdout and stderr)
     return ret.returncode, ret.stdout.decode(sys.stdout.encoding), ret.stderr.decode(sys.stderr.encoding)
 
@@ -141,7 +146,7 @@ def read_c4che_entry(entry, c4che_script_path=usual_c4che_script):
     values = {}
     with open(c4che_script_path) as f:
         exec(f.read(), globals(), values)
-    return values[entry]
+    return values.get(entry, None)
 
 
 def get_test_enabled():
@@ -1069,9 +1074,9 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_02_BuildAndRunExistingExecutableTarget(self):
         """!
-       Try to build and run test-runner
-       @return None
-       """
+        Try to build and run test-runner
+        @return None
+        """
         return_code, stdout, stderr = run_ns3('run "test-runner --list"')
         self.assertEqual(return_code, 0)
         self.assertIn("Built target test-runner", stdout)
@@ -1079,27 +1084,27 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_03_BuildAndRunExistingLibraryTarget(self):
         """!
-       Try to build and run a library
-       @return None
-       """
+        Try to build and run a library
+        @return None
+        """
         return_code, stdout, stderr = run_ns3("run core")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: core", stderr)
 
     def test_04_BuildAndRunNonExistingTarget(self):
         """!
-       Try to build and run an unknown target
-       @return None
-       """
+        Try to build and run an unknown target
+        @return None
+        """
         return_code, stdout, stderr = run_ns3("run nonsense")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: nonsense", stderr)
 
     def test_05_RunNoBuildExistingExecutableTarget(self):
         """!
-       Try to run test-runner without building
-       @return None
-       """
+        Try to run test-runner without building
+        @return None
+        """
         return_code, stdout, stderr = run_ns3('run "test-runner --list" --no-build ')
         self.assertEqual(return_code, 0)
         self.assertNotIn("Built target test-runner", stdout)
@@ -1107,27 +1112,27 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_06_RunNoBuildExistingLibraryTarget(self):
         """!
-       Test ns3 fails to run a library
-       @return None
-       """
+        Test ns3 fails to run a library
+        @return None
+        """
         return_code, stdout, stderr = run_ns3("run core --no-build")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: core", stderr)
 
     def test_07_RunNoBuildNonExistingExecutableTarget(self):
         """!
-       Test ns3 fails to run an unknown program
-       @return None
-       """
+        Test ns3 fails to run an unknown program
+        @return None
+        """
         return_code, stdout, stderr = run_ns3("run nonsense --no-build")  # this should not work
         self.assertEqual(return_code, 1)
         self.assertIn("Couldn't find the specified program: nonsense", stderr)
 
     def test_08_RunNoBuildGdb(self):
         """!
-       Test if scratch simulator is executed through gdb
-       @return None
-       """
+        Test if scratch simulator is executed through gdb
+        @return None
+        """
         return_code, stdout, stderr = run_ns3("run scratch-simulator --gdb --no-build")
         self.assertEqual(return_code, 0)
         self.assertIn("scratch-simulator", stdout)
@@ -1135,9 +1140,9 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_09_RunNoBuildValgrind(self):
         """!
-       Test if scratch simulator is executed through valgrind
-       @return None
-       """
+      Test if scratch simulator is executed through valgrind
+      @return None
+      """
         return_code, stdout, stderr = run_ns3("run scratch-simulator --valgrind --no-build")
         self.assertEqual(return_code, 0)
         self.assertIn("scratch-simulator", stderr)
@@ -1145,9 +1150,9 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_10_DoxygenWithBuild(self):
         """!
-       Test the doxygen target that does trigger a full build
-       @return None
-       """
+        Test the doxygen target that does trigger a full build
+        @return None
+        """
         doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
 
         doxygen_files = ["introspected-command-line.h", "introspected-doxygen.h"]
@@ -1168,9 +1173,9 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_11_DoxygenWithoutBuild(self):
         """!
-       Test the doxygen target that doesn't trigger a full build
-       @return None
-       """
+        Test the doxygen target that doesn't trigger a full build
+        @return None
+        """
         # Rebuilding dot images is super slow, so not removing doxygen products
         # doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
         # doxygen_build_folder = os.sep.join([doc_folder, "html"])
@@ -1184,9 +1189,9 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_12_SphinxDocumentation(self):
         """!
-       Test every individual target for Sphinx-based documentation
-       @return None
-       """
+        Test every individual target for Sphinx-based documentation
+        @return None
+        """
         doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
 
         # First we need to clean old docs, or it will not make any sense.
@@ -1213,10 +1218,10 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_13_Documentation(self):
         """!
-       Test the documentation target that builds
-       both doxygen and sphinx based documentation
-       @return None
-       """
+        Test the documentation target that builds
+        both doxygen and sphinx based documentation
+        @return None
+        """
         doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
 
         # First we need to clean old docs, or it will not make any sense.
@@ -1240,9 +1245,9 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
 
     def test_14_Check(self):
         """!
-       Test if ns3 --check is working as expected
-       @return None
-       """
+        Test if ns3 --check is working as expected
+        @return None
+        """
         return_code, stdout, stderr = run_ns3("--check")
         self.assertEqual(return_code, 0)
 
@@ -1253,9 +1258,15 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         @return None
         """
 
+        # Test will be skipped if not defined
+        SUDO_PASSWORD = os.getenv("SUDO_PASSWORD", None)
+
         # Skip test if variable containing sudo password is the default value
-        if SUDO_PASSWORD == "":
+        if SUDO_PASSWORD == None:
             return
+
+        enable_sudo = read_c4che_entry("ENABLE_SUDO")
+        self.assertFalse(enable_sudo is True)
 
         # First we run to ensure the program was built
         return_code, stdout, stderr = run_ns3('run scratch-simulator')
@@ -1268,7 +1279,9 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
                                       )[-1]
         prev_fstat = os.stat(scratch_simulator_path)  # we get the permissions before enabling sudo
 
-        return_code, stdout, stderr = run_ns3('run scratch-simulator --enable-sudo ' + SUDO_PASSWORD)
+        # Now try setting the sudo bits from the run subparser
+        return_code, stdout, stderr = run_ns3('run scratch-simulator --enable-sudo',
+                                              env={"SUDO_PASSWORD": SUDO_PASSWORD})
         self.assertEqual(return_code, 0)
         self.assertIn("Built target scratch_scratch-simulator", stdout)
         self.assertIn(cmake_build_target_command(target="scratch_scratch-simulator"), stdout)
@@ -1284,6 +1297,34 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
             return
 
         # If this is a valid platform, we can continue
+        self.assertEqual(fstat.st_uid, 0)  # check the file was correctly chown'ed by root
+        self.assertEqual(fstat.st_mode & stat.S_ISUID, stat.S_ISUID)  # check if normal users can run as sudo
+
+        # Now try setting the sudo bits as a post-build step (as set by configure subparser)
+        return_code, stdout, stderr = run_ns3('configure --enable-sudo')
+        self.assertEqual(return_code, 0)
+
+        # Check if it was properly set in the c4che file
+        enable_sudo = read_c4che_entry("ENABLE_SUDO")
+        self.assertTrue(enable_sudo)
+
+        # Remove old executables
+        for executable in self.ns3_executables:
+            if os.path.exists(executable):
+                os.remove(executable)
+
+        # Try to build and then set sudo bits as a post-build step
+        return_code, stdout, stderr = run_ns3('build', env={"SUDO_PASSWORD": SUDO_PASSWORD})
+        self.assertEqual(return_code, 0)
+
+        # Check if commands are being printed for every target
+        self.assertIn("chown root", stdout)
+        self.assertIn("chmod u+s", stdout)
+        for executable in self.ns3_executables:
+            self.assertIn(os.path.basename(executable), stdout)
+
+        # Check scratch simulator yet again
+        fstat = os.stat(scratch_simulator_path)
         self.assertEqual(fstat.st_uid, 0)  # check the file was correctly chown'ed by root
         self.assertEqual(fstat.st_mode & stat.S_ISUID, stat.S_ISUID)  # check if normal users can run as sudo
 

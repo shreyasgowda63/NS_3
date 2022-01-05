@@ -24,6 +24,11 @@ set(NS3_INT64X64 "CAIRO" CACHE STRING "Int64x64 implementation")
 set(NS3_INT64X64 "DOUBLE" CACHE STRING "Int64x64 implementation")
 set_property(CACHE NS3_INT64X64 PROPERTY STRINGS INT128 CAIRO DOUBLE)
 
+# Purposefully hidden option since we can't really do that safely
+# from the CMake side
+mark_as_advanced(NS3_ENABLE_SUDO)
+option(NS3_ENABLE_SUDO "Set executables ownership to root and enable the SUID flag" OFF)
+
 # WSLv1 doesn't support tap features
 if(EXISTS "/proc/version")
   file(READ "/proc/version" CMAKE_LINUX_DISTRO)
