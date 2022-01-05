@@ -59,6 +59,16 @@ def parse_args(argv):
     parser = argparse.ArgumentParser(description="ns-3 wrapper for the CMake build system")
     sub_parser = parser.add_subparsers()
 
+    parser_build = sub_parser.add_parser('build',
+                                         help=('Accepts a list of targets to build,'
+                                               ' or builds the entire project if no target is given'))
+    parser_build.add_argument('build',
+                              help='Build the entire project or the specified target and dependencies',
+                              action="store", nargs='*', default=None)
+    parser_build.add_argument('--dry-run',
+                              help="Do not execute the commands",
+                              action="store_true", default=None, dest="build_dry_run")
+
     parser_configure = sub_parser.add_parser('configure',
                                              help='Try "./ns3 configure --help" for more configuration options')
     parser_configure.add_argument('configure',
@@ -139,16 +149,6 @@ def parse_args(argv):
                                   help="Do not execute the commands",
                                   action="store_true", default=None, dest="configure_dry_run")
 
-    parser_build = sub_parser.add_parser('build',
-                                         help=('Accepts a list of targets to build,'
-                                               ' or builds the entire project if no target is given'))
-    parser_build.add_argument('build',
-                              help='Build the entire project or the specified target and dependencies',
-                              action="store", nargs='*', default=None)
-    parser_build.add_argument('--dry-run',
-                              help="Do not execute the commands",
-                              action="store_true", default=None, dest="build_dry_run")
-
     parser_clean = sub_parser.add_parser('clean', help='Removes files created by waf and ns3')
     parser_clean.add_argument('clean',
                               nargs="?",
@@ -200,6 +200,20 @@ def parse_args(argv):
                             dest='enable_sudo', action='store',
                             default=False)
 
+    parser_shell = sub_parser.add_parser('shell',
+                                         help='Try "./ns3 shell --help" for more runtime options')
+    parser_shell.add_argument('shell',
+                              nargs="?",
+                              help='Export necessary environment variables and open a shell',
+                              action="store", default=True)
+
+    parser_docs = sub_parser.add_parser('docs',
+                                        help='Try "./ns3 docs --help" for more documentation options')
+    parser_docs.add_argument('docs',
+                             help='Build project documentation',
+                             choices=["manual", "models", "tutorial", "sphinx", "doxygen-no-build", "doxygen", "all"],
+                             action="store", type=str, default=None)
+
     parser.add_argument('-j', '--jobs',
                         help='Set number of parallel jobs',
                         action='store', type=int, dest="jobs", default=max(1, os.cpu_count() - 1))
@@ -213,13 +227,6 @@ def parse_args(argv):
     parser.add_argument('--quiet',
                         help="Don't print task lines, i.e. messages saying which tasks are being executed.",
                         action="store_true", default=None)
-
-    parser_shell = sub_parser.add_parser('shell',
-                                         help='Try "./ns3 shell --help" for more runtime options')
-    parser_shell.add_argument('shell',
-                              nargs="?",
-                              help='Export necessary environment variables and open a shell',
-                              action="store", default=True)
 
     parser.add_argument('--check',
                         help='DEPRECATED (run ./test.py)',
@@ -240,7 +247,7 @@ def parse_args(argv):
     args.dry_run = dry_run_args.count(True) > 0
 
     # If some positional options are not in args, set them to false.
-    for option in ["clean", "configure", "install", "run", "shell", "uninstall"]:
+    for option in ["clean", "configure", "docs", "install", "run", "shell", "uninstall"]:
         if option not in args:
             setattr(args, option, False)
 
@@ -841,6 +848,10 @@ def main():
         clean_cmake_artifacts(dry_run=args.dry_run)
         # We end things earlier when cleaning
         return
+
+    # Docs options become cmake targets
+    if args.docs:
+        args.build = [args.docs] if args.docs != "all" else ["sphinx", "doxygen"]
 
     # Installation and uninstallation options become cmake targets
     if args.install:
