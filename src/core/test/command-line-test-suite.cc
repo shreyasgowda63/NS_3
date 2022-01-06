@@ -142,7 +142,7 @@ CommandLineBooleanTestCase::CommandLineBooleanTestCase ()
 void
 CommandLineBooleanTestCase::DoRun (void)
 {
-  CommandLine cmd;
+  CommandLine cmd (__FILE__);
   bool myBool = true;
   bool myDefaultFalseBool = false;
 
@@ -194,7 +194,7 @@ CommandLineUint8tTestCase::CommandLineUint8tTestCase ()
 void
 CommandLineUint8tTestCase::DoRun (void)
 {
-  CommandLine cmd;
+  CommandLine cmd (__FILE__);
   uint8_t myUint8 = 10;
 
   cmd.AddValue ("my-uint8", "help", myUint8);
@@ -229,7 +229,7 @@ CommandLineIntTestCase::CommandLineIntTestCase ()
 void
 CommandLineIntTestCase::DoRun (void)
 {
-  CommandLine cmd;
+  CommandLine cmd (__FILE__);
   bool myBool = true;
   int32_t myInt32 = 10;
 
@@ -271,7 +271,7 @@ CommandLineUnsignedIntTestCase::CommandLineUnsignedIntTestCase ()
 void
 CommandLineUnsignedIntTestCase::DoRun (void)
 {
-  CommandLine cmd;
+  CommandLine cmd (__FILE__);
   bool myBool = true;
   uint32_t myUint32 = 10;
 
@@ -310,7 +310,7 @@ CommandLineStringTestCase::CommandLineStringTestCase ()
 void
 CommandLineStringTestCase::DoRun (void)
 {
-  CommandLine cmd;
+  CommandLine cmd (__FILE__);
   uint32_t myUint32 = 10;
   std::string myStr = "MyStr";
 
@@ -349,7 +349,7 @@ CommandLineOrderTestCase::CommandLineOrderTestCase ()
 void
 CommandLineOrderTestCase::DoRun (void)
 {
-  CommandLine cmd;
+  CommandLine cmd (__FILE__);
   uint32_t myUint32 = 0;
 
   cmd.AddValue ("my-uint32", "help", myUint32);
@@ -385,7 +385,7 @@ CommandLineInvalidTestCase::CommandLineInvalidTestCase ()
 void
 CommandLineInvalidTestCase::DoRun (void)
 {
-  CommandLine cmd;
+  CommandLine cmd (__FILE__);
   uint32_t myUint32 = 0;
 
   cmd.AddValue ("my-uint32", "help", myUint32);
@@ -421,7 +421,7 @@ CommandLineNonOptionTestCase::CommandLineNonOptionTestCase ()
 void
 CommandLineNonOptionTestCase::DoRun (void)
 {
-  CommandLine cmd;
+  CommandLine cmd (__FILE__);
   bool myBool = false;
   int32_t myInt = 1;
   std::string myStr = "MyStr";
