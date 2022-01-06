@@ -317,8 +317,17 @@ else
 
     # doxygen.warnings.report.sh:
     EXTRACT_ALL = no
-    HAVE_DOT = no
+    HAVE_DOT = yes
     CLASS_DIAGRAMS = no
+    CLASS_GRAPH = no
+    COLLABORATION_GRAPH = no
+    GROUP_GRAPHS = no
+    CALL_GRAPH = no
+    CALLER_GRAPH = no
+    DIRECTORY_GRAPH = no
+    INCLUDE_GRAPH = no
+    INCLUDED_BY_GRAPH = no
+    CALL_GRAPH = no
     WARNINGS = no
     SOURCE_BROWSER = no
     HTML_OUTPUT = html-warn
@@ -328,27 +337,23 @@ EOF
 
     intro_h="introspected-doxygen.h"
     if [ $skip_intro -eq 1 ]; then
-        verbose "" "Skipping ./waf build"
+        verbose "" "Skipping ./ns3 build"
         verbose -n "Trying print-introspected-doxygen with doxygen build"
-        (cd "$ROOT" && ./waf --run-no-build print-introspected-doxygen >doc/$intro_h 2>&6 )
-        status_report $? "./waf --run print-introspected-doxygen" noexit
+        (cd "$ROOT" && ./ns3 --run-no-build print-introspected-doxygen >doc/$intro_h 2>&6 )
+        status_report $? "./ns3 --run-no-build print-introspected-doxygen" noexit
     else
         # Run introspection, which may require a build
         verbose -n "Building"
-        (cd "$ROOT" && ./waf build >&6 2>&6 )
-        status_report $? "./waf build"
+        (cd "$ROOT" && ./ns3 build >&6 2>&6 )
+        status_report $? "./ns3 build"
         verbose -n "Running print-introspected-doxygen with doxygen build"
-        (cd "$ROOT" && ./waf --run-no-build print-introspected-doxygen >doc/$intro_h 2>&6 )
-        status_report $? "./waf --run print-introspected-doxygen"
+        (cd "$ROOT" && ./ns3 --run-no-build print-introspected-doxygen >doc/$intro_h 2>&6 )
+        status_report $? "./ns3 --run-no-build print-introspected-doxygen"
     fi
 
-    # Waf insists on writing cruft to stdout
-    sed -i.bak -E '/^Waf:/d' doc/$intro_h
-    rm doc/$intro_h.bak
-
     verbose -n "Rebuilding doxygen docs with full errors"
-    (cd "$ROOT" && ./waf --doxygen-no-build >&6 2>&6 )
-    status_report $? "./waf --doxygen-no-build"
+    (cd "$ROOT" && ./ns3 --doxygen-no-build >&6 2>&6 )
+    status_report $? "./ns3 --doxygen-no-build"
 
     # Swap back to original config
     rm -f $conf
