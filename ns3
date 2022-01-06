@@ -768,7 +768,8 @@ def run_step(args, target_to_run, target_args):
 
     if not args.dry_run:
         try:
-            subprocess.run(program_arguments, env=proc_env, cwd=working_dir, shell=shell)
+            ret = subprocess.run(program_arguments, env=proc_env, cwd=working_dir, shell=shell)
+            exit(ret.returncode)
         except KeyboardInterrupt:
             print("Process was interrupted by the user")
 

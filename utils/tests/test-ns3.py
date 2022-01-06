@@ -90,8 +90,8 @@ def run_program(program, args, python=False, cwd=ns3_path, env=None):
     current_env = os.environ.copy()
 
     # Add different environment variables
-    #if env:
-    #    current_env.update(env)
+    if env:
+        current_env.update(env)
 
     # Call program with arguments
     ret = subprocess.run(
@@ -100,7 +100,7 @@ def run_program(program, args, python=False, cwd=ns3_path, env=None):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         cwd=cwd,  # run process from the ns-3-dev path
-        #env=current_env
+        env=current_env
     )
     # Return (error code, stdout and stderr)
     return ret.returncode, ret.stdout.decode(sys.stdout.encoding), ret.stderr.decode(sys.stderr.encoding)
@@ -707,6 +707,32 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
 
         # Case 3: run-no-build (should print the target output only)
         self.assertEqual("", stdout3)
+
+    def test_09_PropagationOfReturnCode(self):
+        """!
+        Test if ns3 is propagating back the return code from the executables called with the run command
+        @return None
+        """
+        # From this point forward we are reconfiguring in debug mode
+        return_code, _, _ = run_ns3("clean")
+        self.assertEqual(return_code, 0)
+
+        return_code, _, _ = run_ns3("configure --enable-examples --enable-tests")
+        self.assertEqual(return_code, 0)
+
+        # Build necessary executables
+        return_code, stdout, stderr = run_ns3("build command-line-example test-runner")
+        self.assertEqual(return_code, 0)
+
+        # Now some tests will succeed normally
+        return_code, stdout, stderr = run_ns3("run \"test-runner --test-name=command-line\" --no-build")
+        self.assertEqual(return_code, 0)
+
+        # Now some tests will fail during NS_COMMANDLINE_INTROSPECTION
+        return_code, stdout, stderr = run_ns3("run \"test-runner --test-name=command-line\" --no-build",
+                                              env={"NS_COMMANDLINE_INTROSPECTION": ".."}
+                                              )
+        self.assertNotEqual(return_code, 0)
 
 
 class NS3BuildBaseTestCase(NS3BaseTestCase):
