@@ -319,7 +319,7 @@ else
     cat <<-EOF >> $conf
 
     # doxygen.warnings.report.sh:
-    EXTRACT_ALL = 
+    EXTRACT_ALL = no
     WARNINGS = no
     WARN_LOGFILE = doc/$WARNINGSLOGFILE
     SOURCE_BROWSER = no
@@ -334,7 +334,6 @@ else
     CALLER_GRAPH = no
     GRAPHICAL_HIERARCHY = no
     DIRECTORY_GRAPH = no
-    
 EOF
 
 
