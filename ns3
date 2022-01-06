@@ -720,7 +720,7 @@ def run_step(args, target_to_run, target_args):
 
     debugging_software = []
     working_dir = ns3_path
-    shell = False
+    use_shell = False
 
     # running test.py/check?
     if args.check:
@@ -728,7 +728,7 @@ def run_step(args, target_to_run, target_args):
         target_args = ["--no-build", "--jobs=%d" % args.jobs]
     elif args.shell:
         target_to_run = "bash"
-        shell = True
+        use_shell = True
     else:
         # running from ns-3-dev (ns3_path) or cwd
         if args.cwd:
@@ -768,7 +768,7 @@ def run_step(args, target_to_run, target_args):
 
     if not args.dry_run:
         try:
-            ret = subprocess.run(program_arguments, env=proc_env, cwd=working_dir, shell=shell)
+            ret = subprocess.run(program_arguments, env=proc_env, cwd=working_dir, shell=use_shell)
             exit(ret.returncode)
         except KeyboardInterrupt:
             print("Process was interrupted by the user")
