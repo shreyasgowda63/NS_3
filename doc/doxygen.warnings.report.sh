@@ -309,51 +309,58 @@ if [ $skip_doxy -eq 1 ]; then
 else
 
     # Modify doxygen.conf to generate all the warnings
-    # (We also suppress dot graphs, so shorten the run time.)
+    # We keep dot active to generate graphs in the documentaion
+    # (see for example PacketTagList) and warn about ill-formed
+    # graphs, but we disable all the doxygen-generated diagrams
+    # to shorten the run time.
 
     conf=doc/doxygen.conf
     cp $conf ${conf}.bak
     cat <<-EOF >> $conf
 
     # doxygen.warnings.report.sh:
-    EXTRACT_ALL = no
-    HAVE_DOT = yes
+    EXTRACT_ALL = 
+    WARNINGS = no
+    WARN_LOGFILE = doc/$WARNINGSLOGFILE
+    SOURCE_BROWSER = no
+    HTML_OUTPUT = html-warn
     CLASS_DIAGRAMS = no
     CLASS_GRAPH = no
     COLLABORATION_GRAPH = no
     GROUP_GRAPHS = no
-    CALL_GRAPH = no
-    CALLER_GRAPH = no
-    DIRECTORY_GRAPH = no
     INCLUDE_GRAPH = no
     INCLUDED_BY_GRAPH = no
     CALL_GRAPH = no
-    WARNINGS = no
-    SOURCE_BROWSER = no
-    HTML_OUTPUT = html-warn
-    WARN_LOGFILE = doc/$WARNINGSLOGFILE
+    CALLER_GRAPH = no
+    GRAPHICAL_HIERARCHY = no
+    DIRECTORY_GRAPH = no
+    
 EOF
 
 
     intro_h="introspected-doxygen.h"
     if [ $skip_intro -eq 1 ]; then
-        verbose "" "Skipping ./ns3 build"
+        verbose "" "Skipping ./waf build"
         verbose -n "Trying print-introspected-doxygen with doxygen build"
-        (cd "$ROOT" && ./ns3 --run-no-build print-introspected-doxygen >doc/$intro_h 2>&6 )
-        status_report $? "./ns3 --run-no-build print-introspected-doxygen" noexit
+        (cd "$ROOT" && ./waf --run-no-build print-introspected-doxygen >doc/$intro_h 2>&6 )
+        status_report $? "./waf --run print-introspected-doxygen" noexit
     else
         # Run introspection, which may require a build
         verbose -n "Building"
-        (cd "$ROOT" && ./ns3 build >&6 2>&6 )
-        status_report $? "./ns3 build"
+        (cd "$ROOT" && ./waf build >&6 2>&6 )
+        status_report $? "./waf build"
         verbose -n "Running print-introspected-doxygen with doxygen build"
-        (cd "$ROOT" && ./ns3 --run-no-build print-introspected-doxygen >doc/$intro_h 2>&6 )
-        status_report $? "./ns3 --run-no-build print-introspected-doxygen"
+        (cd "$ROOT" && ./waf --run-no-build print-introspected-doxygen >doc/$intro_h 2>&6 )
+        status_report $? "./waf --run print-introspected-doxygen"
     fi
 
+    # Waf insists on writing cruft to stdout
+    sed -i.bak -E '/^Waf:/d' doc/$intro_h
+    rm doc/$intro_h.bak
+
     verbose -n "Rebuilding doxygen docs with full errors"
-    (cd "$ROOT" && ./ns3 --doxygen-no-build >&6 2>&6 )
-    status_report $? "./ns3 --doxygen-no-build"
+    (cd "$ROOT" && ./waf --doxygen-no-build >&6 2>&6 )
+    status_report $? "./waf --doxygen-no-build"
 
     # Swap back to original config
     rm -f $conf
