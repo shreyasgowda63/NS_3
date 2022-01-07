@@ -480,7 +480,9 @@ def configure_cmake(cmake, args, current_cmake_cache_folder, current_cmake_gener
 
     # Run cmake
     if not dry_run:
-        subprocess.run(cmake_args, cwd=current_cmake_cache_folder, stdout=output)
+        ret = subprocess.run(cmake_args, cwd=current_cmake_cache_folder, stdout=output)
+        if ret.returncode != 0:
+            exit(ret.returncode)
 
 
 def get_program_shortcuts(build_profile, ns3_version):
