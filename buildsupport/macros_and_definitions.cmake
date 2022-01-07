@@ -671,7 +671,7 @@ macro(process_options)
     endif()
   endif()
 
-  find_package(Python3 COMPONENTS Interpreter Development)
+  find_package(Python3 COMPONENTS Interpreter Development QUIET)
   set(ENABLE_PYTHON_BINDINGS OFF)
   if(${NS3_PYTHON_BINDINGS})
     if(NOT ${Python3_FOUND})
