@@ -792,7 +792,7 @@ macro(process_options)
     )
   else()
     # We checked this already exists, but we need the path to the executable
-    find_program(DOXYGEN doxygen)
+    find_package(Doxygen QUIET)
 
     # Get introspected doxygen
     add_custom_target(
@@ -832,13 +832,13 @@ macro(process_options)
 
     add_custom_target(
       doxygen
-      COMMAND ${DOXYGEN} ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
+      COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
       DEPENDS run-print-introspected-doxygen assemble-introspected-command-line
     )
 
     add_custom_target(
-      doxygen-no-build COMMAND ${DOXYGEN} ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
+      doxygen-no-build COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
   endif()
