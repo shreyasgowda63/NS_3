@@ -800,6 +800,9 @@ macro(process_options)
       COMMAND
         ${CMAKE_OUTPUT_DIRECTORY}/utils/ns${NS3_VER}-print-introspected-doxygen${build_profile_suffix}
         > ${PROJECT_SOURCE_DIR}/doc/introspected-doxygen.h
+      COMMAND
+        ${CMAKE_OUTPUT_DIRECTORY}/utils/ns${NS3_VER}-print-introspected-doxygen${build_profile_suffix}
+        --output-text > ${PROJECT_SOURCE_DIR}/doc/ns3-object.txt
       DEPENDS print-introspected-doxygen
     )
     add_custom_target(
