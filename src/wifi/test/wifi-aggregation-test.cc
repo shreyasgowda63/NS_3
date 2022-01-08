@@ -103,7 +103,7 @@ AmpduAggregationTest::DoRun (void)
    */
   m_phy = CreateObject<YansWifiPhy> ();
   m_phy->SetDevice (m_device);
-  m_phy->ConfigureStandard (WIFI_PHY_STANDARD_80211n);
+  m_phy->ConfigureStandard (WIFI_STANDARD_80211n);
   m_device->SetPhy (m_phy);
 
   /*
@@ -123,7 +123,7 @@ AmpduAggregationTest::DoRun (void)
   m_mac->SetDevice (m_device);
   m_mac->SetWifiRemoteStationManager (m_manager);
   m_mac->SetAddress (Mac48Address ("00:00:00:00:00:01"));
-  m_mac->ConfigureStandard (WIFI_STANDARD_80211n_5GHZ);
+  m_mac->ConfigureStandard (WIFI_STANDARD_80211n);
   Ptr<FrameExchangeManager> fem = m_mac->GetFrameExchangeManager ();
   Ptr<WifiProtectionManager> protectionManager = CreateObject<WifiDefaultProtectionManager> ();
   protectionManager->SetWifiMac (m_mac);
@@ -133,6 +133,7 @@ AmpduAggregationTest::DoRun (void)
   fem->SetAckManager (ackManager);
   m_mac->SetWifiPhy (m_phy);
   m_device->SetMac (m_mac);
+  m_mac->SetState (StaWifiMac::ASSOCIATED);
 
   /*
    * Configure MPDU aggregation.
@@ -342,6 +343,7 @@ TwoLevelAggregationTest::DoRun (void)
    * Create device and attach HT configuration.
    */
   m_device = CreateObject<WifiNetDevice> ();
+  m_device->SetStandard (WIFI_STANDARD_80211n);
   Ptr<HtConfiguration> htConfiguration = CreateObject<HtConfiguration> ();
   m_device->SetHtConfiguration (htConfiguration);
 
@@ -350,7 +352,7 @@ TwoLevelAggregationTest::DoRun (void)
    */
   m_phy = CreateObject<YansWifiPhy> ();
   m_phy->SetDevice (m_device);
-  m_phy->ConfigureStandard (WIFI_PHY_STANDARD_80211n);
+  m_phy->ConfigureStandard (WIFI_STANDARD_80211n);
   m_device->SetPhy (m_phy);
 
   /*
@@ -370,7 +372,7 @@ TwoLevelAggregationTest::DoRun (void)
   m_mac->SetDevice (m_device);
   m_mac->SetWifiRemoteStationManager (m_manager);
   m_mac->SetAddress (Mac48Address ("00:00:00:00:00:01"));
-  m_mac->ConfigureStandard (WIFI_STANDARD_80211n_5GHZ);
+  m_mac->ConfigureStandard (WIFI_STANDARD_80211n);
   Ptr<FrameExchangeManager> fem = m_mac->GetFrameExchangeManager ();
   Ptr<WifiProtectionManager> protectionManager = CreateObject<WifiDefaultProtectionManager> ();
   protectionManager->SetWifiMac (m_mac);
@@ -380,6 +382,7 @@ TwoLevelAggregationTest::DoRun (void)
   fem->SetAckManager (ackManager);
   m_mac->SetWifiPhy (m_phy);
   m_device->SetMac (m_mac);
+  m_mac->SetState (StaWifiMac::ASSOCIATED);
 
   /*
    * Configure aggregation.
@@ -583,7 +586,7 @@ HeAggregationTest::DoRunSubTest (uint16_t bufferSize)
    */
   m_phy = CreateObject<YansWifiPhy> ();
   m_phy->SetDevice (m_device);
-  m_phy->ConfigureStandard (WIFI_PHY_STANDARD_80211ax);
+  m_phy->ConfigureStandard (WIFI_STANDARD_80211ax);
   m_device->SetPhy (m_phy);
 
   /*
@@ -603,7 +606,7 @@ HeAggregationTest::DoRunSubTest (uint16_t bufferSize)
   m_mac->SetDevice (m_device);
   m_mac->SetWifiRemoteStationManager (m_manager);
   m_mac->SetAddress (Mac48Address ("00:00:00:00:00:01"));
-  m_mac->ConfigureStandard (WIFI_STANDARD_80211ax_5GHZ);
+  m_mac->ConfigureStandard (WIFI_STANDARD_80211ax);
   Ptr<FrameExchangeManager> fem = m_mac->GetFrameExchangeManager ();
   Ptr<WifiProtectionManager> protectionManager = CreateObject<WifiDefaultProtectionManager> ();
   protectionManager->SetWifiMac (m_mac);
@@ -613,6 +616,7 @@ HeAggregationTest::DoRunSubTest (uint16_t bufferSize)
   fem->SetAckManager (ackManager);
   m_mac->SetWifiPhy (m_phy);
   m_device->SetMac (m_mac);
+  m_mac->SetState (StaWifiMac::ASSOCIATED);
 
   /*
    * Configure aggregation.
@@ -819,7 +823,7 @@ PreservePacketsInAmpdus::DoRun (void)
   phy.SetChannel (channel.Create ());
 
   WifiHelper wifi;
-  wifi.SetStandard (WIFI_STANDARD_80211n_5GHZ);
+  wifi.SetStandard (WIFI_STANDARD_80211n);
   wifi.SetRemoteStationManager ("ns3::IdealWifiManager");
 
   WifiMacHelper mac;

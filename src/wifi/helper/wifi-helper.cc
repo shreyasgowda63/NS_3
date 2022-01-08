@@ -793,36 +793,41 @@ WifiHelper::Install (const WifiPhyHelper &phyHelper,
     {
       Ptr<Node> node = *i;
       Ptr<WifiNetDevice> device = CreateObject<WifiNetDevice> ();
-      auto it = wifiStandards.find (m_standard);
-      if (it == wifiStandards.end ())
+      device->SetStandard (m_standard);
+      if (m_standard == WIFI_STANDARD_UNSPECIFIED)
         {
-          NS_FATAL_ERROR ("Selected standard is not defined!");
+          NS_FATAL_ERROR ("No standard specified!");
           return devices;
         }
-      if (it->second.phyStandard >= WIFI_PHY_STANDARD_80211n)
+      if (m_standard >= WIFI_STANDARD_80211n)
         {
           Ptr<HtConfiguration> htConfiguration = CreateObject<HtConfiguration> ();
           device->SetHtConfiguration (htConfiguration);
         }
-      if ((it->second.phyStandard >= WIFI_PHY_STANDARD_80211ac) && (it->second.phyBand != WIFI_PHY_BAND_2_4GHZ))
+      if (m_standard >= WIFI_STANDARD_80211ac)
         {
+          // Create the VHT Configuration object even if the PHY band is 2.4GHz
+          // (WifiNetDevice::GetVhtConfiguration() checks the PHY band being used).
+          // This approach allows us not to worry about deleting this object when
+          // the PHY band is switched from 5GHz to 2.4GHz and creating this object
+          // when the PHY band is switched from 2.4GHz to 5GHz.
           Ptr<VhtConfiguration> vhtConfiguration = CreateObject<VhtConfiguration> ();
           device->SetVhtConfiguration (vhtConfiguration);
         }
-      if (it->second.phyStandard >= WIFI_PHY_STANDARD_80211ax)
+      if (m_standard >= WIFI_STANDARD_80211ax)
         {
           Ptr<HeConfiguration> heConfiguration = CreateObject<HeConfiguration> ();
           device->SetHeConfiguration (heConfiguration);
         }
       Ptr<WifiRemoteStationManager> manager = m_stationManager.Create<WifiRemoteStationManager> ();
       Ptr<WifiPhy> phy = phyHelper.Create (node, device);
-      phy->ConfigureStandard (it->second.phyStandard);
+      phy->ConfigureStandard (m_standard);
       device->SetPhy (phy);
       Ptr<WifiMac> mac = macHelper.Create (device, m_standard);
       device->SetMac (mac);
       device->SetRemoteStationManager (manager);
       node->AddDevice (device);
-      if ((it->second.phyStandard >= WIFI_PHY_STANDARD_80211ax) && (m_obssPdAlgorithm.IsTypeIdSet ()))
+      if ((m_standard >= WIFI_STANDARD_80211ax) && (m_obssPdAlgorithm.IsTypeIdSet ()))
         {
           Ptr<ObssPdAlgorithm> obssPdAlgorithm = m_obssPdAlgorithm.Create<ObssPdAlgorithm> ();
           device->AggregateObject (obssPdAlgorithm);

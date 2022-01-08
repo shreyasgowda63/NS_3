@@ -310,7 +310,7 @@ WifiPhy::WifiPhy ()
     m_endTxEvent (),
     m_currentEvent (0),
     m_previouslyRxPpduUid (UINT64_MAX),
-    m_standard (WIFI_PHY_STANDARD_UNSPECIFIED),
+    m_standard (WIFI_STANDARD_UNSPECIFIED),
     m_band (WIFI_PHY_BAND_UNSPECIFIED),
     m_initialFrequency (0),
     m_initialChannelNumber (0),
@@ -631,7 +631,7 @@ Ptr<PhyEntity>
 WifiPhy::GetPhyEntity (WifiModulationClass modulation) const
 {
   const auto it = m_phyEntities.find (modulation);
-  NS_ABORT_MSG_IF (it == m_phyEntities.end (), "Unsupported Wi-Fi modulation class");
+  NS_ABORT_MSG_IF (it == m_phyEntities.end (), "Unsupported Wi-Fi modulation class " << modulation);
   return it->second;
 }
 
@@ -819,7 +819,7 @@ WifiPhy::Configure80211ax (void)
 }
 
 void
-WifiPhy::ConfigureStandardAndBand (WifiPhyStandard standard, WifiPhyBand band)
+WifiPhy::ConfigureStandardAndBand (WifiStandard standard, WifiPhyBand band)
 {
   NS_LOG_FUNCTION (this << standard << band);
   m_standard = standard;
@@ -845,28 +845,28 @@ WifiPhy::ConfigureStandardAndBand (WifiPhyStandard standard, WifiPhyBand band)
 
   switch (standard)
     {
-    case WIFI_PHY_STANDARD_80211a:
+    case WIFI_STANDARD_80211a:
       Configure80211a ();
       break;
-    case WIFI_PHY_STANDARD_80211b:
+    case WIFI_STANDARD_80211b:
       Configure80211b ();
       break;
-    case WIFI_PHY_STANDARD_80211g:
+    case WIFI_STANDARD_80211g:
       Configure80211g ();
       break;
-    case WIFI_PHY_STANDARD_80211p:
+    case WIFI_STANDARD_80211p:
       Configure80211p ();
       break;
-    case WIFI_PHY_STANDARD_80211n:
+    case WIFI_STANDARD_80211n:
       Configure80211n ();
       break;
-    case WIFI_PHY_STANDARD_80211ac:
+    case WIFI_STANDARD_80211ac:
       Configure80211ac ();
       break;
-    case WIFI_PHY_STANDARD_80211ax:
+    case WIFI_STANDARD_80211ax:
       Configure80211ax ();
       break;
-    case WIFI_PHY_STANDARD_UNSPECIFIED:
+    case WIFI_STANDARD_UNSPECIFIED:
     default:
       NS_ASSERT_MSG (false, "Unsupported standard");
       break;
@@ -874,11 +874,11 @@ WifiPhy::ConfigureStandardAndBand (WifiPhyStandard standard, WifiPhyBand band)
 }
 
 void
-WifiPhy::ConfigureStandard (WifiPhyStandard standard)
+WifiPhy::ConfigureStandard (WifiStandard standard)
 {
   NS_LOG_FUNCTION (this << standard);
 
-  NS_ABORT_MSG_IF (m_standard != WIFI_PHY_STANDARD_UNSPECIFIED && standard != m_standard,
+  NS_ABORT_MSG_IF (m_standard != WIFI_STANDARD_UNSPECIFIED && standard != m_standard,
                    "Cannot change standard");
 
   m_standard = standard;
@@ -891,30 +891,34 @@ WifiPhy::ConfigureStandard (WifiPhyStandard standard)
       return;
     }
 
+  // this function is called when changing PHY band, hence we have to delete
+  // the previous PHY entities
+  m_phyEntities.clear ();
+
   switch (standard)
     {
-    case WIFI_PHY_STANDARD_80211a:
+    case WIFI_STANDARD_80211a:
       Configure80211a ();
       break;
-    case WIFI_PHY_STANDARD_80211b:
+    case WIFI_STANDARD_80211b:
       Configure80211b ();
       break;
-    case WIFI_PHY_STANDARD_80211g:
+    case WIFI_STANDARD_80211g:
       Configure80211g ();
       break;
-    case WIFI_PHY_STANDARD_80211p:
+    case WIFI_STANDARD_80211p:
       Configure80211p ();
       break;
-    case WIFI_PHY_STANDARD_80211n:
+    case WIFI_STANDARD_80211n:
       Configure80211n ();
       break;
-    case WIFI_PHY_STANDARD_80211ac:
+    case WIFI_STANDARD_80211ac:
       Configure80211ac ();
       break;
-    case WIFI_PHY_STANDARD_80211ax:
+    case WIFI_STANDARD_80211ax:
       Configure80211ax ();
       break;
-    case WIFI_PHY_STANDARD_UNSPECIFIED:
+    case WIFI_STANDARD_UNSPECIFIED:
     default:
       NS_ASSERT_MSG (false, "Unsupported standard");
       break;
@@ -928,8 +932,8 @@ WifiPhy::GetPhyBand (void) const
 }
 
 
-WifiPhyStandard
-WifiPhy::GetPhyStandard (void) const
+WifiStandard
+WifiPhy::GetStandard (void) const
 {
   return m_standard;
 }
@@ -1113,7 +1117,7 @@ WifiPhy::SetOperatingChannel (const ChannelTuple& channelTuple)
 
   m_channelSettings = channelTuple;
 
-  if (m_standard == WIFI_PHY_STANDARD_UNSPECIFIED)
+  if (m_standard == WIFI_STANDARD_UNSPECIFIED)
     {
       NS_LOG_DEBUG ("Channel information will be applied when a standard is configured");
       return;
@@ -1191,21 +1195,6 @@ WifiPhy::GetDelayUntilChannelSwitch (void)
       break;
     }
 
-  if (delay.IsZero ())
-    {
-      // channel switch can be done now
-      NS_LOG_DEBUG ("switching channel");
-      m_state->SwitchToChannelSwitching (GetChannelSwitchDelay ());
-      m_interference.EraseEvents ();
-      /*
-      * Needed here to be able to correctly sensed the medium for the first
-      * time after the switching. The actual switching is not performed until
-      * after m_channelSwitchDelay. Packets received during the switching
-      * state are added to the event list and are employed later to figure
-      * out the state of the medium after the switching.
-      */
-    }
-
   return delay;
 }
 
@@ -1238,6 +1227,7 @@ WifiPhy::DoChannelSwitch (void)
 
   m_band = static_cast<WifiPhyBand> (std::get<2> (m_channelSettings));
 
+  NS_LOG_DEBUG ("switching channel");
   m_operatingChannel.Set (std::get<0> (m_channelSettings), 0, std::get<1> (m_channelSettings),
                           m_standard, m_band);
   m_operatingChannel.SetPrimary20Index (std::get<3> (m_channelSettings));
@@ -1249,12 +1239,18 @@ WifiPhy::DoChannelSwitch (void)
 
   AddSupportedChannelWidth (GetChannelWidth ());
 
-  // If channel has been switched after initialization, invoke the capabilities
-  // changed callback (causing the transmission of an Association Request if this
-  // is a station)
-  if (IsInitialized () && !m_capabilitiesChangedCallback.IsNull ())
+  if (IsInitialized ())
     {
-      m_capabilitiesChangedCallback ();
+      // notify channel switching
+      m_state->SwitchToChannelSwitching (GetChannelSwitchDelay ());
+      m_interference.EraseEvents ();
+      /*
+      * Needed here to be able to correctly sensed the medium for the first
+      * time after the switching. The actual switching is not performed until
+      * after m_channelSwitchDelay. Packets received during the switching
+      * state are added to the event list and are employed later to figure
+      * out the state of the medium after the switching.
+      */
     }
 }
 

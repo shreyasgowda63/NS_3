@@ -209,6 +209,11 @@ public:
    */
   uint16_t GetMaxAmsduSize (AcIndex ac) const;
 
+  /**
+   * Notify that channel has been switched.
+   */
+  virtual void NotifyChannelSwitching (void);
+
 protected:
   void DoInitialize () override;
   void DoDispose () override;
@@ -272,7 +277,7 @@ protected:
    * This method is called to set the minimum and the maximum
    * contention window size.
    */
-  void ConfigureContentionWindow (uint32_t cwMin, uint32_t cwMax);
+  virtual void ConfigureContentionWindow (uint32_t cwMin, uint32_t cwMax);
 
   /**
    * This method acts as the MacRxMiddle receive callback and is
@@ -318,8 +323,10 @@ protected:
   /**
    * Create a Frame Exchange Manager depending on the supported version
    * of the standard.
+   *
+   * \param standard the supported version of the standard
    */
-  void SetupFrameExchangeManager (void);
+  void SetupFrameExchangeManager (WifiStandard standard);
 
   /**
    * Enable or disable ERP support for the device.
@@ -403,6 +410,11 @@ private:
    * \param timeout the BK block ack inactivity timeout.
    */
   void SetBkBlockAckInactivityTimeout (uint16_t timeout);
+
+  /**
+   * Configure PHY dependent parameters such as CWmin and CWmax.
+   */
+  void ConfigurePhyDependentParameters (void);
 
   TypeOfStation m_typeOfStation;                        //!< the type of station
 

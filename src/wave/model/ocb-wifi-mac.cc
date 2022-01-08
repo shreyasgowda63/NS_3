@@ -156,6 +156,12 @@ OcbWifiMac::SetLinkDownCallback (Callback<void> linkDown)
   NS_LOG_WARN ("in OCB mode the like will never down, so linkDown will never be called");
 }
 
+bool
+OcbWifiMac::CanForwardPacketsTo (Mac48Address to) const
+{
+  return true;
+}
+
 void
 OcbWifiMac::Enqueue (Ptr<Packet> packet, Mac48Address to)
 {
@@ -447,7 +453,7 @@ OcbWifiMac::CancleTx (enum AcIndex ac)
   Ptr<QosTxop> queue = m_edca.find (ac)->second;
   NS_ASSERT (queue != 0);
   // reset and flush queue
-  queue->NotifyChannelSwitching ();
+  queue->GetWifiMacQueue ()->Flush ();
 }
 
 void

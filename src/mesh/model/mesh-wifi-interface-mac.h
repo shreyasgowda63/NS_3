@@ -65,6 +65,7 @@ public:
   virtual void  Enqueue (Ptr<Packet> packet, Mac48Address to);
   virtual bool  SupportsSendFrom () const;
   virtual void  SetLinkUpCallback (Callback<void> linkUp);
+  virtual bool CanForwardPacketsTo (Mac48Address to) const;
 
   /// \name Each mesh point interface must know the mesh point address
   ///@{
@@ -192,6 +193,15 @@ public:
    * \param standard the WifiStandard being configured
    */
   virtual void ConfigureStandard (enum WifiStandard standard);
+  /**
+   * \param cwMin the minimum contention window size
+   * \param cwMax the maximum contention window size
+   *
+   * This method is called to set the minimum and the maximum
+   * contention window size.
+   */
+  virtual void ConfigureContentionWindow (uint32_t cwMin, uint32_t cwMax);
+
   /**
    * Assign a fixed random variable stream number to the random variables
    * used by this model.  Return the number of streams (possibly zero) that

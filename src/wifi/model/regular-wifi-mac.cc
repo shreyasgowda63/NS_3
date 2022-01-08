@@ -114,23 +114,24 @@ RegularWifiMac::DoDispose ()
 }
 
 void
-RegularWifiMac::SetupFrameExchangeManager (void)
+RegularWifiMac::SetupFrameExchangeManager (WifiStandard standard)
 {
   NS_LOG_FUNCTION (this);
+  NS_ABORT_MSG_IF (standard == WIFI_STANDARD_UNSPECIFIED, "Wifi standard not set");
 
-  if (GetHeSupported ())
+  if (standard >= WIFI_STANDARD_80211ax)
     {
       m_feManager = CreateObject<HeFrameExchangeManager> ();
     }
-  else if (GetVhtSupported ())
+  else if (standard >= WIFI_STANDARD_80211ac)
     {
       m_feManager = CreateObject<VhtFrameExchangeManager> ();
     }
-  else if (GetHtSupported ())
+  else if (standard >= WIFI_STANDARD_80211n)
     {
       m_feManager = CreateObject<HtFrameExchangeManager> ();
     }
-  else if (GetQosSupported ())
+  else if (m_qosSupported)
     {
       m_feManager = CreateObject<QosFrameExchangeManager> ();
     }
@@ -562,6 +563,9 @@ RegularWifiMac::SetWifiPhy (const Ptr<WifiPhy> phy)
 {
   NS_LOG_FUNCTION (this << phy);
   m_phy = phy;
+  NS_ABORT_MSG_IF (!m_phy->GetOperatingChannel ().IsSet (),
+                   "PHY operating channel must have been set");
+  ConfigurePhyDependentParameters ();
   m_channelAccessManager->SetupPhyListener (phy);
   NS_ASSERT (m_feManager != 0);
   m_feManager->SetWifiPhy (phy);
@@ -1142,42 +1146,55 @@ void
 RegularWifiMac::ConfigureStandard (WifiStandard standard)
 {
   NS_LOG_FUNCTION (this << standard);
+
+  NS_ABORT_IF (standard >= WIFI_STANDARD_80211n && !m_qosSupported);
+
+  SetupFrameExchangeManager (standard);
+}
+
+void
+RegularWifiMac::NotifyChannelSwitching (void)
+{
+  NS_LOG_FUNCTION (this);
+
+  // we may have changed PHY band, in which case it is necessary to re-configure
+  // the PHY dependent parameters. In any case, this makes no harm
+  ConfigurePhyDependentParameters ();
+
+  // SetupPhy not only resets the remote station manager, but also sets the
+  // default TX mode and MCS, which is required when switching to a channel
+  // in a different band
+  m_stationManager->SetupPhy (m_phy);
+}
+
+void
+RegularWifiMac::ConfigurePhyDependentParameters (void)
+{
+  WifiPhyBand band = m_phy->GetPhyBand ();
+  NS_LOG_FUNCTION (this << band);
+
   uint32_t cwmin = 0;
   uint32_t cwmax = 0;
-  switch (standard)
+
+  NS_ASSERT (m_phy != 0);
+  WifiStandard standard = m_phy->GetStandard ();
+
+  if (standard == WIFI_STANDARD_80211b)
     {
-    case WIFI_STANDARD_80211n_5GHZ:
-    case WIFI_STANDARD_80211ac:
-    case WIFI_STANDARD_80211ax_5GHZ:
-    case WIFI_STANDARD_80211ax_6GHZ:
-      {
-        NS_ABORT_IF (!m_qosSupported);
-        cwmin = 15;
-        cwmax = 1023;
-        break;
-      }
-    case WIFI_STANDARD_80211ax_2_4GHZ:
-    case WIFI_STANDARD_80211n_2_4GHZ:
-      {
-        NS_ABORT_IF (!m_qosSupported);
-      }
-    case WIFI_STANDARD_80211g:
-      SetErpSupported (true);
-    case WIFI_STANDARD_80211a:
-    case WIFI_STANDARD_80211p:
-      cwmin = 15;
-      cwmax = 1023;
-      break;
-    case WIFI_STANDARD_80211b:
       SetDsssSupported (true);
       cwmin = 31;
       cwmax = 1023;
-      break;
-    default:
-      NS_FATAL_ERROR ("Unsupported WifiPhyStandard in RegularWifiMac::FinishConfigureStandard ()");
+      return;
     }
 
-  SetupFrameExchangeManager ();
+  if (standard >= WIFI_STANDARD_80211g && band == WIFI_PHY_BAND_2_4GHZ)
+    {
+      SetErpSupported (true);
+    }
+
+  cwmin = 15;
+  cwmax = 1023;
+
   ConfigureContentionWindow (cwmin, cwmax);
 }
 
