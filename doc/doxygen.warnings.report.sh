@@ -13,10 +13,8 @@ ROOT=$(cd "$DIR/.."; pwd -P)
 # Known log files
 STANDARDLOGFILE=doxygen.log
 WARNINGSLOGFILE=doxygen.warnings.log
-FILTEREDWARNINGSLOGFILE=doxygen.warnings.filtered.log
 # Default choice:  generate it
 LOG="$DIR/$WARNINGSLOGFILE"
-FILTEREDFLOG="$DIR/$FILTEREDWARNINGSLOGFILE"
 # Verbose log
 VERBLOG="$DIR/doxygen.verbose.log"
 
@@ -382,7 +380,6 @@ function filter_log
         uniq                        \
         )
 
-    echo "$flog" > "$FILTEREDFLOG"
     echo "$flog"
 }
 
