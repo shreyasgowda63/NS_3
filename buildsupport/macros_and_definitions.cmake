@@ -831,15 +831,24 @@ macro(process_options)
     )
 
     add_custom_target(
-      doxygen
-      COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
+      update_doxygen_version
+      COMMAND ${PROJECT_SOURCE_DIR}/doc/ns3_html_theme/get_version.sh
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-      DEPENDS run-print-introspected-doxygen assemble-introspected-command-line
     )
 
     add_custom_target(
-      doxygen-no-build COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
+      doxygen
+      COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+      DEPENDS update_doxygen_version run-print-introspected-doxygen
+              assemble-introspected-command-line
+    )
+
+    add_custom_target(
+      doxygen-no-build
+      COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_SOURCE_DIR}/doc/doxygen.conf
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+      DEPENDS update_doxygen_version
     )
   endif()
 
