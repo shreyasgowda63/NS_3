@@ -37,6 +37,7 @@ stages:
     - mkdir -p $CCACHE_BASEDIR_VALUE
     - export CCACHE_BASEDIR=${PWD}
     - export CCACHE_DIR=${PWD}/$CCACHE_BASEDIR_VALUE
+    - export CXX=${COMPILER}
     - ./ns3 configure -d $MODE -GNinja --enable-examples --enable-tests --enable-asserts
     - ./ns3 build
     - if [ "$MODE" != "debug" ]; then ./test.py -n; fi
@@ -117,7 +118,7 @@ per-commit-compile-optimized:
 #   timeout: 9h
 #   variables:
 #     CCACHE_BASEDIR_VALUE: ns-3-ccache-storage
-    
+
 # per-commit-compile-release-cmake:
 #   extends: .cmake-build
 #   except:
