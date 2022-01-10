@@ -247,6 +247,7 @@ BasicDeviceEnergyModel::ChangeState (int newState)
 
   m_lastUpdateTime = Simulator::Now ();
 
+  // Check if the new state's current is negative
   if (m_states->GetState (newState).second < 0)
     {
       NS_LOG_WARN ("BasicDeviceEnergyModel::ChangeState: Switching into new state "
