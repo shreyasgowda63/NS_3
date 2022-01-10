@@ -226,7 +226,6 @@ private:
 
   bool m_energyDepleted; ///< Whether the energy is currently depleted
   Ptr<EnergySource> m_source; ///< The connected EnergySource
-  Ptr<Node> m_node; ///< The Node this device's model is installed on
   Ptr<BasicEnergyModelStates> m_states; ///< The BasicEnergyModelStates object associated with this
   TracedValue<double> m_totalEnergyConsumption; ///< The total energy consumed by this device
   TracedValue<uint32_t> m_state; ///< The state this model is currently in

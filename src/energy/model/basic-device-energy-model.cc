@@ -315,26 +315,6 @@ BasicDeviceEnergyModel::RegisterEnergyRechargedCallback (EnergyRechargedCallback
   m_energyDepletedCallbacks.ConnectWithoutContext (cb);
 }
 
-// ====================================================== //
-// ================== Getters & Setters ================= //
-// ====================================================== //
-
-Ptr<Node>
-BasicDeviceEnergyModel::GetNode () const
-{
-  NS_LOG_FUNCTION (this);
-
-  return m_node;
-}
-
-void
-BasicDeviceEnergyModel::SetNode (Ptr<Node> node)
-{
-  NS_LOG_FUNCTION (this << node);
-
-  m_node = node;
-}
-
 // ##################################################################### //
 // ############################## Private ############################## //
 // ##################################################################### //
