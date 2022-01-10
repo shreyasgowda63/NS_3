@@ -30,17 +30,17 @@
 namespace ns3 {
 
 /**
- * \brief A class for saving different states that a DynamicDeviceEnergyModel can be in.
+ * \brief A class for saving different states that a BasicDeviceEnergyModel can be in.
  * 
  * By default, the Off state (index 0) is always added. This can not be changed.
  */
-class DynamicEnergyModelStates : public Object
+class BasicEnergyModelStates : public Object
 {
 public:
   /** Type defining a state (string Name, double current in Amperes) */
   typedef std::pair<std::string, double> State;
 
-  DynamicEnergyModelStates ();
+  BasicEnergyModelStates ();
 
   /**
    * \brief Get the TypeId
@@ -52,7 +52,7 @@ public:
   /**
    * \brief Adds a new state.
    * 
-   * \param state The DynamicEnergyModelStates::State to add.
+   * \param state The BasicEnergyModelStates::State to add.
    * 
    * \return uint32_t The index assigned to the new state.
    */
@@ -115,14 +115,14 @@ private:
  * @brief Device Energy Model for dynamic devices like MCUs.
  * 
  * This DeviceEnergyModel can model the energy consumption of a wide range of different devices.
- * By connecting this class to a DynamicEnergyModelStates object, dynamic states can
+ * By connecting this class to a BasicEnergyModelStates object, dynamic states can
  * be created during the simulation while not having to set the currents in A directly.
  * 
  * This class also provides automatic functionality for changing the state to Off
  * when the energy is depleted, and energy depletion and recharged callbacks
  * can be registered.
  */
-class DynamicDeviceEnergyModel : public DeviceEnergyModel
+class BasicDeviceEnergyModel : public DeviceEnergyModel
 {
 public:
   // ##################################################################### //
@@ -132,22 +132,22 @@ public:
   /**
    * \brief Callback for notifying that the energy for this device is depleted.
    * 
-   * \param model Pointer to the DynamicDeviceEnergyModel where the energy is depleted.
+   * \param model Pointer to the BasicDeviceEnergyModel where the energy is depleted.
    */
-  typedef Callback<void, Ptr<DynamicDeviceEnergyModel>> EnergyDepletedCallback;
+  typedef Callback<void, Ptr<BasicDeviceEnergyModel>> EnergyDepletedCallback;
 
   /**
    * \brief Callback for notifying that the energy for this device is recharged.
    * 
-   * \param model Pointer to the DynamicDeviceEnergyModel where the energy is recharged.
+   * \param model Pointer to the BasicDeviceEnergyModel where the energy is recharged.
    */
-  typedef Callback<void, Ptr<DynamicDeviceEnergyModel>> EnergyRechargedCallback;
+  typedef Callback<void, Ptr<BasicDeviceEnergyModel>> EnergyRechargedCallback;
 
   // ##################################################################### //
   // ############################## Methods ############################## //
   // ##################################################################### //
 
-  DynamicDeviceEnergyModel ();
+  BasicDeviceEnergyModel ();
 
   /**
    * \brief Get the TypeId
@@ -170,7 +170,7 @@ public:
    * \param state The argument that will be passed to the method when it is called
    *
    * This method is intended to make it easier to schedule a call to the
-   * DynamicDeviceEnergyModel::ChangeState method compared to calling Simulator::Schedule.
+   * BasicDeviceEnergyModel::ChangeState method compared to calling Simulator::Schedule.
    * This method does nothing else than calling Simulator::Schedule with the provided arguments.
    */
   void ScheduleChangeState (Time delay, uint32_t state);
@@ -227,15 +227,15 @@ private:
   bool m_energyDepleted; ///< Whether the energy is currently depleted
   Ptr<EnergySource> m_source; ///< The connected EnergySource
   Ptr<Node> m_node; ///< The Node this device's model is installed on
-  Ptr<DynamicEnergyModelStates> m_states; ///< The DynamicEnergyModelStates object associated with this
+  Ptr<BasicEnergyModelStates> m_states; ///< The BasicEnergyModelStates object associated with this
   TracedValue<double> m_totalEnergyConsumption; ///< The total energy consumed by this device
   TracedValue<uint32_t> m_state; ///< The state this model is currently in
   TracedValue<double> m_currentA; ///< The current in A of this model (for tracing)
   uint32_t m_defaultState; ///< The default state for the beginning and after energy is recharged
 
-  TracedCallback<Ptr<DynamicDeviceEnergyModel>>
+  TracedCallback<Ptr<BasicDeviceEnergyModel>>
       m_energyDepletedCallbacks; ///< Callbacks for when the energy is depleted
-  TracedCallback<Ptr<DynamicDeviceEnergyModel>>
+  TracedCallback<Ptr<BasicDeviceEnergyModel>>
       m_energyRechargedCallbacks; ///< Callbacks for when the energy is recharged
 };
 } // namespace ns3

@@ -18,50 +18,50 @@
  * Author: Philip Hönnecke <p.hoennecke@tu-braunschweig.de>
  */
 
-#ifndef DYNAMIC_DEVICE_ENERGY_MODEL_HELPER_H
-#define DYNAMIC_DEVICE_ENERGY_MODEL_HELPER_H
+#ifndef BASIC_DEVICE_ENERGY_MODEL_HELPER_H
+#define BASIC_DEVICE_ENERGY_MODEL_HELPER_H
 
-#include <ns3/dynamic-device-energy-model.h>
+#include <ns3/basic-device-energy-model.h>
 #include <ns3/energy-model-helper.h>
 
 namespace ns3 {
 
 /**
  * \ingroup energy
- * \brief Creates DynamicDeviceEnergyModel objects.
+ * \brief Creates BasicDeviceEnergyModel objects.
  *
- * This class creates and installs DynamicDeviceEnergyModel objects.
+ * This class creates and installs BasicDeviceEnergyModel objects.
  *
  */
-class DynamicDeviceEnergyModelHelper
+class BasicDeviceEnergyModelHelper
 {
 public:
-  DynamicDeviceEnergyModelHelper ();
+  BasicDeviceEnergyModelHelper ();
 
   /**
    * \param name Name of attribute to set.
    * \param v Value of the attribute.
    *
-   * Sets one of the attributes of underlying DynamicDeviceEnergyModel.
+   * Sets one of the attributes of underlying BasicDeviceEnergyModel.
    */
   virtual void Set (std::string name, const AttributeValue &v);
 
   /**
-   * \param node Pointer to the Node to install DynamicDeviceEnergyModel on.
-   * \param source The EnergySource the DynamicDeviceEnergyModels will be using.
-   * \returns A DeviceEnergyModelContainer containing all the DynamicDeviceEnergyModels.
+   * \param node Pointer to the Node to install BasicDeviceEnergyModel on.
+   * \param source The EnergySource the BasicDeviceEnergyModels will be using.
+   * \returns A DeviceEnergyModelContainer containing all the BasicDeviceEnergyModels.
    *
-   * Installs a DynamicDeviceEnergyModel with a specified EnergySource onto a
+   * Installs a BasicDeviceEnergyModel with a specified EnergySource onto a
    * Node.
    */
   DeviceEnergyModelContainer Install (Ptr<Node> node, Ptr<EnergySource> source) const;
 
   /**
-   * \param nodeContainer List of Nodes to install DynamicDeviceEnergyModels on.
-   * \param sourceContainer List of EnergySources the DynamicDeviceEnergyModels will be using.
-   * \returns An DeviceEnergyModelContainer containing all the DynamicDeviceEnergyModels.
+   * \param nodeContainer List of Nodes to install BasicDeviceEnergyModels on.
+   * \param sourceContainer List of EnergySources the BasicDeviceEnergyModels will be using.
+   * \returns An DeviceEnergyModelContainer containing all the BasicDeviceEnergyModels.
    *
-   * Installs DynamicDeviceEnergyModels with specified EnergySources onto a list of Nodes.
+   * Installs BasicDeviceEnergyModels with specified EnergySources onto a list of Nodes.
    */
   DeviceEnergyModelContainer Install (NodeContainer nodeContainer,
                                       EnergySourceContainer sourceContainer) const;
@@ -71,31 +71,31 @@ public:
    *
    * Registers a new EnergyDepletedCallback to be called when the installed device's energy is depleted.
    */
-  void AddEnergyDepletedCallback (DynamicDeviceEnergyModel::EnergyDepletedCallback cb);
+  void AddEnergyDepletedCallback (BasicDeviceEnergyModel::EnergyDepletedCallback cb);
 
   /**
    * \param cb The callback to register
    *
    * Registers a new EnergyRechargeCallback to be called when the installed device's energy has been recharged.
    */
-  void AddEnergyRechargedCallback (DynamicDeviceEnergyModel::EnergyRechargedCallback cb);
+  void AddEnergyRechargedCallback (BasicDeviceEnergyModel::EnergyRechargedCallback cb);
 
 private:
   /**
-   * \param node The Node corresponding to this DynamicDeviceEnergyModel object.
-   * \param source The EnergySource the DynamicDeviceEnergyModel will be using.
-   * \returns Pointer to the created DynamicDeviceEnergyModel.
+   * \param node The Node corresponding to this BasicDeviceEnergyModel object.
+   * \param source The EnergySource the BasicDeviceEnergyModel will be using.
+   * \returns Pointer to the created BasicDeviceEnergyModel.
    */
-  Ptr<DynamicDeviceEnergyModel> DoInstall (Ptr<Node> node, Ptr<EnergySource> source) const;
+  Ptr<BasicDeviceEnergyModel> DoInstall (Ptr<Node> node, Ptr<EnergySource> source) const;
 
-  std::vector<DynamicDeviceEnergyModel::EnergyDepletedCallback>
+  std::vector<BasicDeviceEnergyModel::EnergyDepletedCallback>
       m_energyDepletedCallbacks; ///< Callbacks for when the energy is depleted
-  std::vector<DynamicDeviceEnergyModel::EnergyRechargedCallback>
+  std::vector<BasicDeviceEnergyModel::EnergyRechargedCallback>
       m_energyRechargedCallbacks; ///< Callbacks for when the energy is recharged
 
-  /// ObjectFactory for creating the DynamicDeviceEnergyModel objects
-  ObjectFactory m_dynamicEnergy;
+  /// ObjectFactory for creating the BasicDeviceEnergyModel objects
+  ObjectFactory m_basicEnergy;
 };
 } // namespace ns3
 
-#endif /* DYNAMIC_DEVICE_ENERGY_MODEL_HELPER_H */
+#endif /* BASIC_DEVICE_ENERGY_MODEL_HELPER_H */

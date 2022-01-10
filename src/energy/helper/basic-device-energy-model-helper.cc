@@ -18,27 +18,27 @@
  * Author: Philip Hönnecke <p.hoennecke@tu-braunschweig.de>
  */
 
-#include "dynamic-device-energy-model-helper.h"
+#include "basic-device-energy-model-helper.h"
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("DynamicDeviceEnergyModelHelper");
+NS_LOG_COMPONENT_DEFINE ("BasicDeviceEnergyModelHelper");
 
-NS_OBJECT_ENSURE_REGISTERED (DynamicDeviceEnergyModel);
+NS_OBJECT_ENSURE_REGISTERED (BasicDeviceEnergyModel);
 
-DynamicDeviceEnergyModelHelper::DynamicDeviceEnergyModelHelper ()
+BasicDeviceEnergyModelHelper::BasicDeviceEnergyModelHelper ()
 {
-  m_dynamicEnergy.SetTypeId ("ns3::DynamicDeviceEnergyModel");
+  m_basicEnergy.SetTypeId ("ns3::BasicDeviceEnergyModel");
 }
 
 void
-DynamicDeviceEnergyModelHelper::Set (std::string name, const AttributeValue &v)
+BasicDeviceEnergyModelHelper::Set (std::string name, const AttributeValue &v)
 {
-  m_dynamicEnergy.Set (name, v);
+  m_basicEnergy.Set (name, v);
 }
 
 DeviceEnergyModelContainer
-DynamicDeviceEnergyModelHelper::Install (Ptr<Node> node, Ptr<EnergySource> source) const
+BasicDeviceEnergyModelHelper::Install (Ptr<Node> node, Ptr<EnergySource> source) const
 {
   NS_ASSERT (node != nullptr);
   NS_ASSERT (source != nullptr);
@@ -47,7 +47,7 @@ DynamicDeviceEnergyModelHelper::Install (Ptr<Node> node, Ptr<EnergySource> sourc
 }
 
 DeviceEnergyModelContainer
-DynamicDeviceEnergyModelHelper::Install (NodeContainer nodeContainer,
+BasicDeviceEnergyModelHelper::Install (NodeContainer nodeContainer,
                                         EnergySourceContainer sourceContainer) const
 {
   DeviceEnergyModelContainer container;
@@ -64,31 +64,31 @@ DynamicDeviceEnergyModelHelper::Install (NodeContainer nodeContainer,
 }
 
 void
-DynamicDeviceEnergyModelHelper::AddEnergyDepletedCallback (
-    DynamicDeviceEnergyModel::EnergyDepletedCallback cb)
+BasicDeviceEnergyModelHelper::AddEnergyDepletedCallback (
+    BasicDeviceEnergyModel::EnergyDepletedCallback cb)
 {
   m_energyDepletedCallbacks.push_back (cb);
 }
 
 void
-DynamicDeviceEnergyModelHelper::AddEnergyRechargedCallback (
-    DynamicDeviceEnergyModel::EnergyRechargedCallback cb)
+BasicDeviceEnergyModelHelper::AddEnergyRechargedCallback (
+    BasicDeviceEnergyModel::EnergyRechargedCallback cb)
 {
   m_energyRechargedCallbacks.push_back (cb);
 }
 
-Ptr<DynamicDeviceEnergyModel>
-DynamicDeviceEnergyModelHelper::DoInstall (Ptr<Node> node, Ptr<EnergySource> source) const
+Ptr<BasicDeviceEnergyModel>
+BasicDeviceEnergyModelHelper::DoInstall (Ptr<Node> node, Ptr<EnergySource> source) const
 {
-  Ptr<DynamicDeviceEnergyModel> model = m_dynamicEnergy.Create<DynamicDeviceEnergyModel> ();
+  Ptr<BasicDeviceEnergyModel> model = m_basicEnergy.Create<BasicDeviceEnergyModel> ();
   model->SetNode (node);
   model->SetEnergySource (source);
   source->AppendDeviceEnergyModel (model);
-  for (const DynamicDeviceEnergyModel::EnergyDepletedCallback &cb : m_energyDepletedCallbacks)
+  for (const BasicDeviceEnergyModel::EnergyDepletedCallback &cb : m_energyDepletedCallbacks)
     {
       model->RegisterEnergyDepletedCallback (cb);
     }
-  for (const DynamicDeviceEnergyModel::EnergyRechargedCallback &cb : m_energyRechargedCallbacks)
+  for (const BasicDeviceEnergyModel::EnergyRechargedCallback &cb : m_energyRechargedCallbacks)
     {
       model->RegisterEnergyRechargedCallback (cb);
     }

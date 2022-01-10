@@ -27,9 +27,9 @@
 using namespace ns3;
 
 /**
- * This example shows how to create and use the DynamicDeviceEnergyModel.
+ * This example shows how to create and use the BasicDeviceEnergyModel.
  * The scenario consists of two nodes with LrWpanNetDevices that send packets between each other.
- * Whenever one node receives a packet (ProtocolHandler method), it's DynamicDeviceEnergyModel
+ * Whenever one node receives a packet (ProtocolHandler method), it's BasicDeviceEnergyModel
  * will change between different states for 1000ms and then send the same packet back to the other node.
  * This will stop after 10 seconds.
  * 
@@ -56,20 +56,20 @@ void
 ProtocolHandler (Ptr<NetDevice> device, Ptr<const Packet> packet, uint16_t protocol,
                  const Address &sender, const Address &receiver, NetDevice::PacketType packetType)
 {
-  // Find my id to be able to refer to the correct DynamicDeviceEnergyModel
+  // Find my id to be able to refer to the correct BasicDeviceEnergyModel
   uint32_t myId = device->GetNode ()->GetId ();
   std::cout << "Received a packet on node " << myId << std::endl;
 
   // Change into the Work state now
   energyModels.Get (myId)->ChangeState (stateWork);
   // In 500ms, change into the Peak state
-  energyModels.Get (myId)->GetObject<DynamicDeviceEnergyModel> ()->ScheduleChangeState (
+  energyModels.Get (myId)->GetObject<BasicDeviceEnergyModel> ()->ScheduleChangeState (
       MilliSeconds (500), statePeak);
   // In 550ms, change into the Work state again
-  energyModels.Get (myId)->GetObject<DynamicDeviceEnergyModel> ()->ScheduleChangeState (
+  energyModels.Get (myId)->GetObject<BasicDeviceEnergyModel> ()->ScheduleChangeState (
       MilliSeconds (550), stateWork);
   // In 1000ms, finally revert into the Idle state again
-  energyModels.Get (myId)->GetObject<DynamicDeviceEnergyModel> ()->ScheduleChangeState (
+  energyModels.Get (myId)->GetObject<BasicDeviceEnergyModel> ()->ScheduleChangeState (
       MilliSeconds (1000), stateIdle);
 
   // Create a copy of the received packet
@@ -96,17 +96,17 @@ main (int argc, char *argv[])
   sourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (10));
   EnergySourceContainer sources = sourceHelper.Install (nodes);
 
-  // Create the DynamicEnergyModelStates object which will be used for both DynamicDeviceEnergyModels
-  Ptr<DynamicEnergyModelStates> states = CreateObject<DynamicEnergyModelStates> ();
+  // Create the BasicEnergyModelStates object which will be used for both BasicDeviceEnergyModels
+  Ptr<BasicEnergyModelStates> states = CreateObject<BasicEnergyModelStates> ();
   // Add the three states Idle, Work, and Peak
   // Each returned index is stored in a variable for easy access later in the simulation
   stateIdle = states->AddState ("Idle", 0.003);
   stateWork = states->AddState ("Work", 0.05);
   statePeak = states->AddState ("Peak", 0.1);
 
-  // Install DynamicDeviceEnergyModels on both nodes
-  DynamicDeviceEnergyModelHelper modelHelper;
-  modelHelper.Set ("DynamicEnergyModelStates", PointerValue (states));
+  // Install BasicDeviceEnergyModels on both nodes
+  BasicDeviceEnergyModelHelper modelHelper;
+  modelHelper.Set ("BasicEnergyModelStates", PointerValue (states));
   modelHelper.Set ("DefaultState", UintegerValue (stateIdle));
   energyModels = modelHelper.Install (nodes, sources);
 

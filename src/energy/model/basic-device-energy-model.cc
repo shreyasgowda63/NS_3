@@ -18,18 +18,18 @@
  * Author: Philip Hönnecke <p.hoennecke@tu-braunschweig.de>
  */
 
-#include "dynamic-device-energy-model.h"
+#include "basic-device-energy-model.h"
 #include <ns3/energy-source.h>
 
 namespace ns3 {
 
 // ##################################################################### //
-// ###################### DynamicEnergyModelStates ##################### //
+// ####################### BasicEnergyModelStates ###################### //
 // ##################################################################### //
 
-NS_LOG_COMPONENT_DEFINE ("DynamicDeviceEnergyModel");
+NS_LOG_COMPONENT_DEFINE ("BasicDeviceEnergyModel");
 
-DynamicEnergyModelStates::DynamicEnergyModelStates ()
+BasicEnergyModelStates::BasicEnergyModelStates ()
 {
   NS_LOG_FUNCTION (this);
 
@@ -39,17 +39,17 @@ DynamicEnergyModelStates::DynamicEnergyModelStates ()
 }
 
 TypeId
-DynamicEnergyModelStates::GetTypeId (void)
+BasicEnergyModelStates::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::DynamicEnergyModelStates")
+  static TypeId tid = TypeId ("ns3::BasicEnergyModelStates")
                           .SetParent<Object> ()
                           .SetGroupName ("Energy")
-                          .AddConstructor<DynamicEnergyModelStates> ();
+                          .AddConstructor<BasicEnergyModelStates> ();
   return tid;
 }
 
 uint32_t
-DynamicEnergyModelStates::AddState (State state)
+BasicEnergyModelStates::AddState (State state)
 {
   NS_LOG_FUNCTION (this << &state << state.first << state.second);
 
@@ -59,7 +59,7 @@ DynamicEnergyModelStates::AddState (State state)
 }
 
 uint32_t
-DynamicEnergyModelStates::AddState (std::string name, double currentA)
+BasicEnergyModelStates::AddState (std::string name, double currentA)
 {
   NS_LOG_FUNCTION (this << name << currentA);
 
@@ -67,7 +67,7 @@ DynamicEnergyModelStates::AddState (std::string name, double currentA)
 }
 
 bool
-DynamicEnergyModelStates::RemoveState (uint32_t index)
+BasicEnergyModelStates::RemoveState (uint32_t index)
 {
   NS_LOG_FUNCTION (this << index);
 
@@ -80,13 +80,13 @@ DynamicEnergyModelStates::RemoveState (uint32_t index)
   else
     {
       // Index does not exist
-      NS_LOG_WARN ("DynamicEnergyModelStates::RemoveState: Index did not exists: " << index << ".");
+      NS_LOG_WARN ("BasicEnergyModelStates::RemoveState: Index did not exists: " << index << ".");
       return false;
     }
 }
 
 std::string
-DynamicEnergyModelStates::GetStateName (uint32_t index) const
+BasicEnergyModelStates::GetStateName (uint32_t index) const
 {
   NS_LOG_FUNCTION (this << index);
 
@@ -99,14 +99,14 @@ DynamicEnergyModelStates::GetStateName (uint32_t index) const
   else
     {
       // Index does not exist
-      NS_LOG_WARN ("DynamicEnergyModelStates::GetStateName: Index did not exists: " << index
+      NS_LOG_WARN ("BasicEnergyModelStates::GetStateName: Index did not exists: " << index
                                                                                     << ".");
       return "Not found";
     }
 }
 
-DynamicEnergyModelStates::State
-DynamicEnergyModelStates::GetState (uint32_t index) const
+BasicEnergyModelStates::State
+BasicEnergyModelStates::GetState (uint32_t index) const
 {
   NS_LOG_FUNCTION (this << index);
 
@@ -119,13 +119,13 @@ DynamicEnergyModelStates::GetState (uint32_t index) const
   else
     {
       // Index does not exist
-      NS_LOG_WARN ("DynamicEnergyModelStates::GetState: Index did not exists: " << index << ".");
+      NS_LOG_WARN ("BasicEnergyModelStates::GetState: Index did not exists: " << index << ".");
       return State ("Not found", 0.0);
     }
 }
 
 bool
-DynamicEnergyModelStates::SetCurrent (uint32_t index, double currentA)
+BasicEnergyModelStates::SetCurrent (uint32_t index, double currentA)
 {
   NS_LOG_FUNCTION (this << index << currentA);
 
@@ -139,18 +139,18 @@ DynamicEnergyModelStates::SetCurrent (uint32_t index, double currentA)
   else
     {
       // Index does not exist
-      NS_LOG_WARN ("DynamicEnergyModelStates::SetCurrent: Index did not exists: " << index << ".");
+      NS_LOG_WARN ("BasicEnergyModelStates::SetCurrent: Index did not exists: " << index << ".");
       return false;
     }
 }
 
 // ##################################################################### //
-// ###################### DynamicDeviceEnergyModel ##################### //
+// ##################ä#### BasicDeviceEnergyModel ###################### //
 // ##################################################################### //
 
-NS_OBJECT_ENSURE_REGISTERED (DynamicDeviceEnergyModel);
+NS_OBJECT_ENSURE_REGISTERED (BasicDeviceEnergyModel);
 
-DynamicDeviceEnergyModel::DynamicDeviceEnergyModel ()
+BasicDeviceEnergyModel::BasicDeviceEnergyModel ()
 {
   NS_LOG_FUNCTION (this);
   m_state = 0;
@@ -161,43 +161,43 @@ DynamicDeviceEnergyModel::DynamicDeviceEnergyModel ()
 }
 
 TypeId
-DynamicDeviceEnergyModel::GetTypeId (void)
+BasicDeviceEnergyModel::GetTypeId (void)
 {
   static TypeId tid =
-      TypeId ("ns3::DynamicDeviceEnergyModel")
+      TypeId ("ns3::BasicDeviceEnergyModel")
           .SetParent<DeviceEnergyModel> ()
           .SetGroupName ("Energy")
-          .AddConstructor<DynamicDeviceEnergyModel> ()
-          .AddAttribute ("DynamicEnergyModelStates",
-                         "The DynamicEnergyModelStates object to assign to this model.",
-                         PointerValue (), MakePointerAccessor (&DynamicDeviceEnergyModel::m_states),
-                         MakePointerChecker<DynamicEnergyModelStates> ())
+          .AddConstructor<BasicDeviceEnergyModel> ()
+          .AddAttribute ("BasicEnergyModelStates",
+                         "The BasicEnergyModelStates object to assign to this model.",
+                         PointerValue (), MakePointerAccessor (&BasicDeviceEnergyModel::m_states),
+                         MakePointerChecker<BasicEnergyModelStates> ())
           .AddAttribute (
               "DefaultState", "Default state for beginning and after energy is recharged.",
-              UintegerValue (0), MakeUintegerAccessor (&DynamicDeviceEnergyModel::m_defaultState),
+              UintegerValue (0), MakeUintegerAccessor (&BasicDeviceEnergyModel::m_defaultState),
               MakeUintegerChecker<uint32_t> (0, UINT32_MAX))
           .AddTraceSource (
               "TotalEnergyConsumption", "Total energy consumption of the sensor device.",
-              MakeTraceSourceAccessor (&DynamicDeviceEnergyModel::m_totalEnergyConsumption),
+              MakeTraceSourceAccessor (&BasicDeviceEnergyModel::m_totalEnergyConsumption),
               "ns3::TracedValueCallback::Double")
           .AddTraceSource ("State", "The state of this model.",
-                           MakeTraceSourceAccessor (&DynamicDeviceEnergyModel::m_state),
+                           MakeTraceSourceAccessor (&BasicDeviceEnergyModel::m_state),
                            "ns3::TracedValueCallback::UInt32")
           .AddTraceSource ("CurrentA", "The current in A of this model.",
-                           MakeTraceSourceAccessor (&DynamicDeviceEnergyModel::m_currentA),
+                           MakeTraceSourceAccessor (&BasicDeviceEnergyModel::m_currentA),
                            "ns3::TracedValueCallback::Double");
   return tid;
 }
 
 void
-DynamicDeviceEnergyModel::SetEnergySource (Ptr<EnergySource> source)
+BasicDeviceEnergyModel::SetEnergySource (Ptr<EnergySource> source)
 {
   NS_LOG_FUNCTION (this << source);
   m_source = source;
 }
 
 double
-DynamicDeviceEnergyModel::GetTotalEnergyConsumption (void) const
+BasicDeviceEnergyModel::GetTotalEnergyConsumption (void) const
 {
   NS_LOG_FUNCTION (this);
 
@@ -219,14 +219,14 @@ DynamicDeviceEnergyModel::GetTotalEnergyConsumption (void) const
 }
 
 void
-DynamicDeviceEnergyModel::ChangeState (int newState)
+BasicDeviceEnergyModel::ChangeState (int newState)
 {
   NS_LOG_FUNCTION (this << newState);
 
   // energy depleted and newState != Off
   if (m_energyDepleted && newState != 0)
     {
-      NS_LOG_INFO ("DynamicDeviceEnergyModel::ChangeState: Cannot change into new state '"
+      NS_LOG_INFO ("BasicDeviceEnergyModel::ChangeState: Cannot change into new state '"
                    << m_states->GetStateName (newState) << "' (" << newState
                    << "). Energy depleted!");
       return;
@@ -249,14 +249,14 @@ DynamicDeviceEnergyModel::ChangeState (int newState)
 
   if (m_states->GetState (newState).second < 0)
     {
-      NS_LOG_WARN ("DynamicDeviceEnergyModel::ChangeState: Switching into new state "
+      NS_LOG_WARN ("BasicDeviceEnergyModel::ChangeState: Switching into new state "
                    << m_states->GetStateName (newState) << "' (" << newState
                    << ") with current being negative: " << m_states->GetState (newState).second);
     }
 
     m_state = newState;
 
-    NS_LOG_INFO ("DynamicDeviceEnergyModel::ChangeState: '"
+    NS_LOG_INFO ("BasicDeviceEnergyModel::ChangeState: '"
                  << m_states->GetStateName (m_state) << "' (" << m_state
                  << ") -> '" << m_states->GetStateName (newState) << "' (" << newState << ")");
 
@@ -264,43 +264,43 @@ DynamicDeviceEnergyModel::ChangeState (int newState)
 }
 
 void
-DynamicDeviceEnergyModel::HandleEnergyDepletion (void)
+BasicDeviceEnergyModel::HandleEnergyDepletion (void)
 {
   NS_LOG_FUNCTION (this);
 
   m_energyDepleted = true;
   ChangeState (0);
 
-  m_energyDepletedCallbacks (Ptr<DynamicDeviceEnergyModel> (this));
+  m_energyDepletedCallbacks (Ptr<BasicDeviceEnergyModel> (this));
 }
 
 void
-DynamicDeviceEnergyModel::HandleEnergyRecharged (void)
+BasicDeviceEnergyModel::HandleEnergyRecharged (void)
 {
   NS_LOG_FUNCTION (this);
 
   m_energyDepleted = false;
   ChangeState (m_defaultState);
 
-  m_energyRechargedCallbacks (Ptr<DynamicDeviceEnergyModel> (this));
+  m_energyRechargedCallbacks (Ptr<BasicDeviceEnergyModel> (this));
 }
 
 void
-DynamicDeviceEnergyModel::HandleEnergyChanged (void)
+BasicDeviceEnergyModel::HandleEnergyChanged (void)
 {
   // Empty
 }
 
 void
-DynamicDeviceEnergyModel::ScheduleChangeState (Time delay, uint32_t state)
+BasicDeviceEnergyModel::ScheduleChangeState (Time delay, uint32_t state)
 {
   NS_LOG_FUNCTION (this << delay << state);
 
-  Simulator::Schedule (delay, &DynamicDeviceEnergyModel::ChangeState, this, state);
+  Simulator::Schedule (delay, &BasicDeviceEnergyModel::ChangeState, this, state);
 }
 
 void
-DynamicDeviceEnergyModel::RegisterEnergyDepletedCallback (EnergyDepletedCallback cb)
+BasicDeviceEnergyModel::RegisterEnergyDepletedCallback (EnergyDepletedCallback cb)
 {
   NS_LOG_FUNCTION (this << &cb);
 
@@ -308,7 +308,7 @@ DynamicDeviceEnergyModel::RegisterEnergyDepletedCallback (EnergyDepletedCallback
 }
 
 void
-DynamicDeviceEnergyModel::RegisterEnergyRechargedCallback (EnergyRechargedCallback cb)
+BasicDeviceEnergyModel::RegisterEnergyRechargedCallback (EnergyRechargedCallback cb)
 {
   NS_LOG_FUNCTION (this << &cb);
 
@@ -320,7 +320,7 @@ DynamicDeviceEnergyModel::RegisterEnergyRechargedCallback (EnergyRechargedCallba
 // ====================================================== //
 
 Ptr<Node>
-DynamicDeviceEnergyModel::GetNode () const
+BasicDeviceEnergyModel::GetNode () const
 {
   NS_LOG_FUNCTION (this);
 
@@ -328,7 +328,7 @@ DynamicDeviceEnergyModel::GetNode () const
 }
 
 void
-DynamicDeviceEnergyModel::SetNode (Ptr<Node> node)
+BasicDeviceEnergyModel::SetNode (Ptr<Node> node)
 {
   NS_LOG_FUNCTION (this << node);
 
@@ -340,7 +340,7 @@ DynamicDeviceEnergyModel::SetNode (Ptr<Node> node)
 // ##################################################################### //
 
 double
-DynamicDeviceEnergyModel::DoGetCurrentA (void) const
+BasicDeviceEnergyModel::DoGetCurrentA (void) const
 {
   NS_LOG_FUNCTION (this);
 
@@ -348,7 +348,7 @@ DynamicDeviceEnergyModel::DoGetCurrentA (void) const
 }
 
 void
-DynamicDeviceEnergyModel::DoInitialize (void)
+BasicDeviceEnergyModel::DoInitialize (void)
 {
   NS_LOG_FUNCTION (this);
 
