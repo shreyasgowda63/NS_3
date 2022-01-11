@@ -51,22 +51,17 @@ public:
    */
   CobaltQueueDiscTestItem (Ptr<Packet> p, const Address & addr,uint16_t protocol, bool ecnCapable);
   virtual ~CobaltQueueDiscTestItem ();
+
+  // Delete copy constructor and assignment operator to avoid misuse
+  CobaltQueueDiscTestItem (const CobaltQueueDiscTestItem &) = delete;
+  CobaltQueueDiscTestItem & operator = (const CobaltQueueDiscTestItem &) = delete;
+
   virtual void AddHeader (void);
   virtual bool Mark (void);
 
 private:
   CobaltQueueDiscTestItem ();
-  /**
-   * \brief Copy constructor
-   * Disable default implementation to avoid misuse
-   */
-  CobaltQueueDiscTestItem (const CobaltQueueDiscTestItem &);
-  /**
-   * \brief Assignment operator
-   * \return this object
-   * Disable default implementation to avoid misuse
-   */
-  CobaltQueueDiscTestItem &operator = (const CobaltQueueDiscTestItem &);
+
   bool m_ecnCapablePacket; ///< ECN capable packet?
 };
 
@@ -386,10 +381,8 @@ CobaltQueueDiscMarkTest::CobaltQueueDiscMarkTest (QueueSizeUnit mode)
 }
 
 void
-CobaltQueueDiscMarkTest::DropNextTracer (int64_t oldVal, int64_t newVal)
+CobaltQueueDiscMarkTest::DropNextTracer ([[maybe_unused]] int64_t oldVal, [[maybe_unused]] int64_t newVal)
 {
-  NS_UNUSED (oldVal);
-  NS_UNUSED (newVal);
   m_dropNextCount++;
 }
 

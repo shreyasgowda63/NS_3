@@ -24,7 +24,7 @@ set_runtime_outputdirectory(
   bench-simulator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/ ""
 )
 
-if (network IN_LIST libs_to_build)
+if(network IN_LIST libs_to_build)
   add_executable(bench-packets bench-packets.cc)
   target_link_libraries(bench-packets ${libnetwork})
   set_runtime_outputdirectory(
@@ -32,9 +32,12 @@ if (network IN_LIST libs_to_build)
   )
 
   add_executable(print-introspected-doxygen print-introspected-doxygen.cc)
-  target_link_libraries(print-introspected-doxygen ${libnetwork})
+  target_link_libraries(
+    print-introspected-doxygen
+    PRIVATE ${LIB_AS_NEEDED_PRE} ${ns3-libs} ${ns3-contrib-libs}
+            ${LIB_AS_NEEDED_POST}
+  )
   set_runtime_outputdirectory(
-          print-introspected-doxygen ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/ ""
+    print-introspected-doxygen ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utils/ ""
   )
 endif()
-

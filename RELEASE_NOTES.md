@@ -20,7 +20,7 @@ This release is not yet available.
 
 This release is intended to work on systems with the following minimal
 requirements (Note: not all ns-3 features are available on all systems):
-- g++-7 or later, or LLVM/clang++-8 or later
+- g++-8 or later, or LLVM/clang++-6 or later
 - Python 3.6 or later
 - (macOS only) Xcode 11 or later
 
@@ -32,6 +32,7 @@ requirements (Note: not all ns-3 features are available on all systems):
 - (wifi) #468 - WiFi: Wrong txDuration for trigger frame
 - (wifi) #475 - Wi-Fi: Assert when sending OFDMA DL to STAs with different TIDs
 - (wifi) #480 - wifi: 2.4GHz remote station manager issue
+- (wifi) #507 - wifi: Set CS Required field according to 802.11ax specs
 
 Release 3.35
 ------------

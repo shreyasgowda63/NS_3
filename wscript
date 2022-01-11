@@ -33,7 +33,7 @@ examples_enabled = False
 tests_enabled    = False
 
 # GCC minimum version requirements for C++17 support
-gcc_min_version = (7, 0, 0)
+gcc_min_version = (8, 0, 0)
 
 # Bug 2181:  clang warnings about unused local typedefs and potentially
 # evaluated expressions affecting darwin clang/LLVM version 7.0.0 (Xcode 7)
@@ -1539,10 +1539,10 @@ def _print_introspected_doxygen(bld):
     # test.py appears not to create or keep the output directory
     # if no real tests are run, so we just stuff all the
     # .command-line output files into testpy-output/
-    # NS_COMMANDLINE_INTROSPECTION=".." test.py --nowaf --constrain=example
+    # NS_COMMANDLINE_INTROSPECTION=".." test.py -n --constrain=example
     Logs.info("Running CommandLine introspection")
     proc_env['NS_COMMANDLINE_INTROSPECTION'] = '..'
-    subprocess.run(["./test.py", "--nowaf", "--constrain=example"],
+    subprocess.run(["./test.py", "-n", "--constrain=example"],
                    env=proc_env, stdout=subprocess.DEVNULL)
 
     doxygen_out = os.path.join('doc', 'introspected-command-line.h')

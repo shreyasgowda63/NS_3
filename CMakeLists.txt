@@ -8,14 +8,12 @@ mark_as_advanced(CCACHE_FOUND)
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-  set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-  message(STATUS "CCache is enabled")
-
-  # Configure ccache for pch headers
-  execute_process(
-    COMMAND ${CCACHE_FOUND}
-            --set-config=sloppiness=pch_defines,time_macros,include_file_mtime
+  message(
+    STATUS "CCache is enabled. Precompiled headers are disabled by default."
   )
+  set(NS3_PRECOMPILE_HEADERS OFF CACHE BOOL "")
+else()
+  set(NS3_PRECOMPILE_HEADERS ON CACHE BOOL "")
 endif()
 
 # ##############################################################################
@@ -26,9 +24,9 @@ project(NS3 CXX C)
 file(STRINGS VERSION NS3_VER)
 
 # minimum compiler versions
-set(AppleClang_MinVersion 7.0.0)
-set(Clang_MinVersion 3.6.0)
-set(GNU_MinVersion 7.0.0)
+set(AppleClang_MinVersion 11.0.0)
+set(Clang_MinVersion 6.0.0)
+set(GNU_MinVersion 8.0.0)
 
 # common options
 option(NS3_ASSERT "Enable assert on failure" OFF)
@@ -39,7 +37,6 @@ option(NS3_TESTS "Enable tests to be built" OFF)
 
 # fd-net-device options
 option(NS3_EMU "Build with emulation support" ON)
-option(NS3_PLANETLAB "Build with Planetlab support" OFF)
 option(NS3_TAP "Build with Tap support" ON)
 
 # maintenance and documentation
@@ -54,7 +51,6 @@ option(NS3_COVERAGE "Enable code coverage measurements and report generation"
 option(NS3_COVERAGE_ZERO_COUNTERS
        "Zero lcov counters before running. Requires NS3_COVERAGE=ON" OFF
 )
-option(NS3_DOCS "Generate documentation" OFF)
 option(NS3_INCLUDE_WHAT_YOU_USE
        "Use IWYU to determine unnecessary headers included" OFF
 )

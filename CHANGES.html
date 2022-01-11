@@ -54,15 +54,17 @@ us a note on ns-developers mailing list.</p>
 <h1>Changes from ns-3.35 to ns-3.36</h1>
 <h2>New API:</h2>
 <ul>
-<li></li>
+<li>The helpers of the NetDevices supporting flow control (PointToPointHelper, CsmaHelper, SimpleNetDeviceHelper, WifiHelper) now provide a <b>DisableFlowControl</b> method to disable flow control. If flow control is disabled, the Traffic Control layer forwards packets down to the NetDevice even if there is no room for them in the NetDevice queue(s)</li>
+<li>Added a new trace source <b>TcDrop</b> in TrafficControlLayer for tracing packets that have been dropped because no queue disc is installed on the device, the device supports flow control and the device queue is full.</li>
 </ul>
 <h2>Changes to existing API:</h2>
 <ul>
 <li>internet: Support for Network Simulation Cradle (NSC) TCP has been removed.</li>
+<li>fd-net-device: Support for PlanetLabFdNetDeviceHelper has been removed.</li>
 </ul>
 <h2>Changes to build system:</h2>
 <ul>
-<li></li>
+<li>G++ version 8 is now the minimum G++ version supported.</li>
 </ul>
 <h2>Changed behavior:</h2>
 <ul>

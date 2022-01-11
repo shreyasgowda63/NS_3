@@ -19,6 +19,7 @@
 
 #include "ns3/core-config.h"
 #if !defined(INT64X64_CAIRO_H) && defined (INT64X64_USE_CAIRO) && !defined(PYTHON_SCAN)
+/** Using the ns3::int64x64_t based on Cairo 128-bit integers. */
 #define INT64X64_CAIRO_H
 
 #include <cmath>  // pow
@@ -285,15 +286,12 @@ public:
 private:
 
   /**
-   * \name Arithmetic Operators
-   * Arithmetic operators for int64x64_t.
-   */
-  /**
+   * \defgroup AritmeticOps Arithmetic Operators
+   * \brief Arithmetic operators for int64x64_t.
+   * \param [in] lhs Left hand argument
+   * \param [in] rhs Right hand argument
+   * \return The result of the operator.
    * @{
-   *  Arithmetic operator.
-   *  \param [in] lhs Left hand argument
-   *  \param [in] rhs Right hand argument
-   *  \return The result of the operator.
    */
   friend bool         operator == (const int64x64_t & lhs, const int64x64_t & rhs);
 
@@ -304,21 +302,18 @@ private:
   friend int64x64_t & operator -= (      int64x64_t & lhs, const int64x64_t & rhs);
   friend int64x64_t & operator *= (      int64x64_t & lhs, const int64x64_t & rhs);
   friend int64x64_t & operator /= (      int64x64_t & lhs, const int64x64_t & rhs);
-  /**@}*/
+  /** @} */
 
   /**
-   * \name Unary Operators
-   * Unary operators for int64x64_t.
-   */
-  /**
+   * \defgroup UnaryOps Unary Operators
+   * \brief Unary operators for int64x64_t.
+   * \param [in] lhs Left hand argument
+   * \return The result of the operator.
    * @{
-   *  Unary operator.
-   *  \param [in] lhs Left hand argument
-   *  \return The result of the operator.
    */
   friend int64x64_t   operator -  (const int64x64_t & lhs);
   friend int64x64_t   operator !  (const int64x64_t & lhs);
-  /**@}*/
+  /** @} */
 
   /**
    * Implement `*=`.

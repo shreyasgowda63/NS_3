@@ -21,7 +21,6 @@
 #include "example-as-test.h"
 #include "ascii-test.h"
 #include "log.h"
-#include "unused.h"
 #include "assert.h"
 
 #include <string>
@@ -88,8 +87,8 @@ ExampleAsTestCase::DoRun (void)
   std::stringstream ss;
 
   // Use bash as shell to allow use of PIPESTATUS
-  ss << "bash -c './ns3 --run-no-build " << m_program
-     << " --command-template=\"" << GetCommandTemplate () << "\""
+  ss << "bash -c './ns3 run " << m_program
+     << " --no-build --command-template=\"" << GetCommandTemplate () << "\""
 
     // redirect std::clog, std::cerr to std::cout
      << " 2>&1 "

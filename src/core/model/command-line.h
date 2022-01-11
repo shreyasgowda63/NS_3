@@ -26,6 +26,7 @@
 
 #include "callback.h"
 #include "nstime.h"
+#include "type-id.h"
 
 /**
  * \file
@@ -538,12 +539,21 @@ private:
    */
   void PrintGlobals (std::ostream &os) const;
   /**
-   * Handler for \c \--PrintAttributes:  print the attributes for a given type.
+   * Handler for \c \--PrintAttributes:  print the attributes for a given type
+   * as well as its parents.
    *
    * \param [in,out] os the output stream.
-   * \param [in] type The TypeId whose Attributes should be displayed
+   * \param [in] type The type name whose Attributes should be displayed,
    */
   void PrintAttributes (std::ostream &os, const std::string &type) const;
+  /**
+   * Print the Attributes for a single type.
+   *
+   * \param [in,out] os the output stream.
+   * \param [in] tid The TypeId whose Attributes should be displayed,
+   * \param [in] header A header line to print if \c tid has Attributes
+   */
+  void PrintAttributeList (std::ostream &os, const TypeId tid, std::stringstream & header) const;
   /**
    * Handler for \c \--PrintGroup:  print all types belonging to a given group.
    *
@@ -574,6 +584,7 @@ private:
   /**
    * Append usage message in Doxygen format to the file indicated
    * by the NS_COMMANDLINE_INTROSPECTION environment variable.
+   * This is typically only called once, by Parse().
    */
   void PrintDoxygenUsage (void) const;
 
@@ -603,7 +614,7 @@ namespace CommandLineHelper {
  *
  * \param [in] value The argument name
  * \param [out] val The argument location
- * \tparam \deduced T The type being specialized
+ * \tparam T \deduced The type being specialized
  * \return \c true if parsing was successful
  */
 template <typename T>
@@ -695,7 +706,7 @@ template <typename T>
 bool
 CommandLine::UserItem<T>::HasDefault () const
 {
-  return true;
+  return (m_default.size () > 0);
 }
 
 template <typename T>

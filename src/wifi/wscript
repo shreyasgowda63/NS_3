@@ -50,7 +50,6 @@ def build(bld):
         'model/mgt-headers.cc',
         'model/channel-access-manager.cc',
         'model/wifi-mac.cc',
-        'model/regular-wifi-mac.cc',
         'model/wifi-remote-station-info.cc',
         'model/wifi-remote-station-manager.cc',
         'model/ap-wifi-mac.cc',
@@ -156,6 +155,7 @@ def build(bld):
         'test/wifi-mac-ofdma-test.cc',
         'test/wifi-phy-ofdma-test.cc',
         'test/wifi-mac-queue-test.cc',
+        'test/wifi-channel-switching-test.cc',
         ]
 
     # Tests encapsulating example programs should be listed here
@@ -202,7 +202,6 @@ def build(bld):
         'model/rate-control/minstrel-ht-wifi-manager.h',
         'model/rate-control/thompson-sampling-wifi-manager.h',
         'model/wifi-mac.h',
-        'model/regular-wifi-mac.h',
         'model/supported-rates.h',
         'model/error-rate-model.h',
         'model/yans-error-rate-model.h',

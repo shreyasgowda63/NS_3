@@ -71,22 +71,17 @@ public:
    */
   CodelQueueDiscTestItem (Ptr<Packet> p, const Address & addr, bool ecnCapable);
   virtual ~CodelQueueDiscTestItem ();
+
+  // Delete copy constructor and assignment operator to avoid misuse
+  CodelQueueDiscTestItem (const CodelQueueDiscTestItem &) = delete;
+  CodelQueueDiscTestItem & operator = (const CodelQueueDiscTestItem &) = delete;
+
   virtual void AddHeader (void);
   virtual bool Mark(void);
 
 private:
   CodelQueueDiscTestItem ();
-  /**
-   * \brief Copy constructor
-   * Disable default implementation to avoid misuse
-   */
-  CodelQueueDiscTestItem (const CodelQueueDiscTestItem &);
-  /**
-   * \brief Assignment operator
-   * \return this object
-   * Disable default implementation to avoid misuse
-   */
-  CodelQueueDiscTestItem &operator = (const CodelQueueDiscTestItem &);
+  
   bool m_ecnCapablePacket; ///< ECN capable packet?
 };
 
@@ -461,10 +456,8 @@ CoDelQueueDiscBasicDrop::CoDelQueueDiscBasicDrop (QueueSizeUnit mode)
 }
 
 void
-CoDelQueueDiscBasicDrop::DropNextTracer (uint32_t oldVal, uint32_t newVal)
+CoDelQueueDiscBasicDrop::DropNextTracer ([[maybe_unused]] uint32_t oldVal, [[maybe_unused]] uint32_t newVal)
 {
-  NS_UNUSED(oldVal);
-  NS_UNUSED(newVal);
   m_dropNextCount++;
 }
 
@@ -636,10 +629,8 @@ CoDelQueueDiscBasicMark::CoDelQueueDiscBasicMark (QueueSizeUnit mode)
 }
 
 void
-CoDelQueueDiscBasicMark::DropNextTracer (uint32_t oldVal, uint32_t newVal)
+CoDelQueueDiscBasicMark::DropNextTracer ([[maybe_unused]] uint32_t oldVal, [[maybe_unused]] uint32_t newVal)
 {
-  NS_UNUSED(oldVal);
-  NS_UNUSED(newVal);
   m_dropNextCount++;
 }
 

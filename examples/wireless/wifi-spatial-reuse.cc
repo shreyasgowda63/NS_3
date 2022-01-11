@@ -63,6 +63,7 @@
 #include "ns3/command-line.h"
 #include "ns3/config.h"
 #include "ns3/string.h"
+#include "ns3/double.h"
 #include "ns3/spectrum-wifi-helper.h"
 #include "ns3/ssid.h"
 #include "ns3/mobility-helper.h"
@@ -153,7 +154,7 @@ main (int argc, char *argv[])
   //TODO: add parameter to configure CCA-PD
 
   WifiHelper wifi;
-  wifi.SetStandard (WIFI_STANDARD_80211ax_5GHZ);
+  wifi.SetStandard (WIFI_STANDARD_80211ax);
   if (enableObssPd)
     {
       wifi.SetObssPdAlgorithm ("ns3::ConstantObssPdAlgorithm",
