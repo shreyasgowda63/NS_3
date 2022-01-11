@@ -13,6 +13,7 @@ cpp_examples = [
     ("main-random-walk", "True", "True"),
     ("reference-point-group-mobility-example --useHelper=0", "True", "True"),
     ("reference-point-group-mobility-example --useHelper=1", "True", "True"),
+    ("simple-3d-circle-mobility-example1 --useHelper=1", "True", "True"),
 ]
 
 # A list of Python examples to run in order to ensure that they remain

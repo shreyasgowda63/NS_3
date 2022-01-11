@@ -112,6 +112,7 @@ MobilityModel Subclasses
 - RandomWaypoint
 - SteadyStateRandomWaypoint
 - Waypoint
+- CircleMobility
 
 PositionAllocator
 #################
@@ -199,6 +200,15 @@ Scope and Limitations
 =====================
 
 - only cartesian coordinates are presently supported
+
+CircleMobilityModel
+###################
+
+The inspired by ConstantPositionMobilityModel of ns-3 by Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
+and Circle Function Logic of Circle Mobility Model of Omnet++ by Andras Varga.
+
+The position and velocity calculations are inspired from and Circle Function Logic of Circle Mobility Model of Omnet++.
+Omnet++ used radian-degree conversions in its implementation. But here we are doing the angle math in degrees only.
 
 References
 ==========
@@ -440,6 +450,7 @@ Examples
 - main-grid-topology.cc
 - ns2-mobility-trace.cc
 - ns2-bonnmotion.cc
+- simple-3d-circle-mobility-example1.cc
 
 reference-point-group-mobility-example.cc
 #########################################
@@ -462,7 +473,34 @@ using an image processing program such as ImageMagick to form a
 basic animated gif of the mobility.  The example and animation program
 files have further instructions on how to run them.
 
+simple-3d-circle-mobility-example1.cc
+###########################
+This Example will generate a 5 UAV node topology and simulate CircleMobilityModel in them.
+This simulation will create a NetAnim Trace file called "Simple3DCircleMobilityExample1.xml" as an output.
+
+The "origin" of the circular  path, the "radius" of the circle, "startAngle" of the objects  
+and  the "speed" of the objects can be configured differently for each and every nodes in the network. 
+
 Validation
 **********
 
 TBD
+
+CircleMobilityModel
+###################
+
+The CircleMobilityModel test suite performs the following tests.
+
+This is a simple test to check the case in which there are no runtime parameter changes. 
+It first considers the origin to be (0m,0m,0m), radius to be 1m, and speed to be 2*pi m/s, and initial angle to be 0 degre, 
+and then check the position at time 0.5 second. 
+Since PI is irrational, we need to check these x-coordinates with some tolerance value.
+So it will test the position provided by the mobility model with calculated value of position (-1m, 0m, 0m) with a tolerance value of 0.1m.
+The test will succeed  if the values are equal within that tolerance
+
+With the same initial condition, the calculations are repeated at time 1 second .
+And it will test the position provided by the mobility model with calculated value of position (1m, 0m, 0m) with a tolerance value of 0.1m.
+The test will succeed  if the values are equal within that tolerance
+
+
+
