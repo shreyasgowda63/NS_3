@@ -255,11 +255,11 @@ BasicDeviceEnergyModel::ChangeState (int newState)
                    << ") with current being negative: " << m_states->GetState (newState).second);
     }
 
-    m_state = newState;
+  m_state = newState;
 
-    NS_LOG_INFO ("BasicDeviceEnergyModel::ChangeState: '"
-                 << m_states->GetStateName (m_state) << "' (" << m_state
-                 << ") -> '" << m_states->GetStateName (newState) << "' (" << newState << ")");
+  NS_LOG_INFO ("BasicDeviceEnergyModel::ChangeState: '"
+                << m_states->GetStateName (m_state) << "' (" << m_state
+                << ") -> '" << m_states->GetStateName (newState) << "' (" << newState << ")");
 
   m_currentA = DoGetCurrentA ();
 }
