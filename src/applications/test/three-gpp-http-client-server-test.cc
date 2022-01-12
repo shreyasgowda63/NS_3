@@ -313,7 +313,7 @@ ThreeGppHttpObjectTestCase::ThreeGppHttpObjectTestCase (const std::string &name,
   NS_LOG_FUNCTION (this << GetName ());
 
   //NS_ASSERT (tcpType.IsChildOf (TypeId::LookupByName ("ns3::TcpSocketBase")));
-  NS_ASSERT (channelDelay.IsPositive ());
+  NS_TEST_ASSERT_MSG_EQ (channelDelay.IsPositive (), true, "Propagation time of the Packet is not positive");
 
   m_errorModel = CreateObject<RateErrorModel> ();
   m_errorModel->SetRate (bitErrorRate);
@@ -434,70 +434,69 @@ ThreeGppHttpObjectTestCase::DoRun ()
       "TxMainObjectRequest",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientTxMainObjectRequestCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
   traceSourceConnected = httpClient->TraceConnectWithoutContext (
       "TxEmbeddedObjectRequest",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientTxEmbeddedObjectRequestCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
   traceSourceConnected = httpServer->TraceConnectWithoutContext (
       "Rx",
       MakeCallback (&ThreeGppHttpObjectTestCase::ServerRxCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
 
   // Downlink (main objects) trace sources.
   traceSourceConnected = httpServer->TraceConnectWithoutContext (
       "MainObject",
       MakeCallback (&ThreeGppHttpObjectTestCase::ServerMainObjectCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
-  traceSourceConnected = httpClient->TraceConnectWithoutContext (
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
+traceSourceConnected = httpClient->TraceConnectWithoutContext (
       "RxMainObjectPacket",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientRxMainObjectPacketCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
   traceSourceConnected = httpClient->TraceConnectWithoutContext (
       "RxMainObject",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientRxMainObjectCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
-
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
   // Downlink (embedded objects) trace sources.
   traceSourceConnected = httpServer->TraceConnectWithoutContext (
       "EmbeddedObject",
       MakeCallback (&ThreeGppHttpObjectTestCase::ServerEmbeddedObjectCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
 
   traceSourceConnected = httpClient->TraceConnectWithoutContext (
       "RxEmbeddedObjectPacket",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientRxEmbeddedObjectPacketCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
 
   traceSourceConnected = httpClient->TraceConnectWithoutContext (
       "RxEmbeddedObject",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientRxEmbeddedObjectCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
 
   // Other trace sources.
   traceSourceConnected = httpClient->TraceConnectWithoutContext (
       "StateTransition",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientStateTransitionCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
   traceSourceConnected = httpClient->TraceConnectWithoutContext (
       "RxDelay",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientRxDelayCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
   traceSourceConnected = httpClient->TraceConnectWithoutContext (
       "RxRtt",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientRxRttCallback,
                     this));
-  NS_ASSERT (traceSourceConnected);
+  NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
 
   Simulator::Schedule (Seconds (1.0), &ThreeGppHttpObjectTestCase::ProgressCallback, this);
 
