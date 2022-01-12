@@ -27,14 +27,17 @@ using namespace ns3;
 namespace {
 
 /**
+ * \ingroup tests
  * \name Stringify the known TracedValue type names.
- *
- * \returns The \c TracedValueCallback type name.
- * @{
+ */
+/**
+ * Generic template for unknown classes.
+ * 
+ * \returns The \c TracedValueCallback type name, or "unknown" for unknown classes.
  */
 template <typename T> inline
 std::string TypeName (void) { return "unknown"; }
-
+/** @{ */
 template <> inline std::string TypeName <bool>     (void) { return "Bool"    ; }
 template <> inline std::string TypeName <int8_t>   (void) { return "Int8_t"  ; }
 template <> inline std::string TypeName <int16_t>  (void) { return "Int16_t" ; }
@@ -51,6 +54,8 @@ template <> inline std::string TypeName <SequenceNumber32> (void) { return "Sequ
 
 
 /**
+ * \ingroup tests
+ * 
  * Result of callback test.
  *
  * Since the sink function is outside the invoking class,
@@ -109,7 +114,12 @@ void TracedValueCbSink<SequenceNumber32> (SequenceNumber32 oldValue,
 
 }  // unnamed namespace
 
-  
+
+/**
+ * \ingroup tests
+ *
+ * \brief TracedValueCallback Test Case
+ */
 class TracedValueCallbackTestCase : public TestCase
 {
 public:
@@ -125,6 +135,7 @@ private:
   template <typename T>
   class CheckTvCb : public Object
   {
+    /// Traced value.
     TracedValue<T> m_value;
 
   public:
@@ -152,7 +163,9 @@ private:
      * aren't compatible, the connection will fail.
      *
      * Just to make sure, we increment the TracedValue,
-     * which calls the sink..
+     * which calls the sink.
+     * 
+     * \param cb Callback.
      */
     template <typename U>
     void Invoke (U cb)
@@ -229,6 +242,11 @@ TracedValueCallbackTestCase::DoRun (void)
   CheckType< SequenceNumber32, TracedValueCallback::SequenceNumber32 > ();
 }
 
+/**
+ * \ingroup tests
+ *
+ * \brief TracedValueCallback TestSuite
+ */
 class TracedValueCallbackTestSuite : public TestSuite
 {
 public:
@@ -241,4 +259,5 @@ TracedValueCallbackTestSuite::TracedValueCallbackTestSuite ()
   AddTestCase (new TracedValueCallbackTestCase, TestCase::QUICK);
 }
 
+/// Static variable for test initialization
 static TracedValueCallbackTestSuite tracedValueCallbackTestSuite;
