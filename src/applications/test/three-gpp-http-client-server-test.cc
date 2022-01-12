@@ -452,7 +452,11 @@ ThreeGppHttpObjectTestCase::DoRun ()
       MakeCallback (&ThreeGppHttpObjectTestCase::ServerMainObjectCallback,
                     this));
   NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
+<<<<<<< HEAD
   traceSourceConnected = httpClient->TraceConnectWithoutContext (
+=======
+  traceSourceConnected = httpClient->TraceConnectWithoutContext (
+>>>>>>> changed NS_ASSERT to NS_TEST_ASSERT* inside src/applications/test
       "RxMainObjectPacket",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientRxMainObjectPacketCallback,
                     this));
