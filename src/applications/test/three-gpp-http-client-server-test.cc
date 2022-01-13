@@ -350,14 +350,14 @@ ThreeGppHttpObjectTestCase::CreateSimpleInternetNode (Ptr<SimpleChannel> channel
     {
       Ipv6InterfaceContainer ipv6Ifs
         = m_ipv6AddressHelper.Assign (NetDeviceContainer (dev));
-      NS_ASSERT (ipv6Ifs.GetN () == 1);
+      NS_TEST_EXPECT_MSG_EQ (ipv6Ifs.GetN (), 1, "Interface size != 1");
       assignedAddress = ipv6Ifs.GetAddress (0, 0);
     }
   else
     {
       Ipv4InterfaceContainer ipv4Ifs
         = m_ipv4AddressHelper.Assign (NetDeviceContainer (dev));
-      NS_ASSERT (ipv4Ifs.GetN () == 1);
+      NS_TEST_EXPECT_MSG_EQ (ipv4Ifs.GetN (), 1, "Interface size != 1");
       assignedAddress = ipv4Ifs.GetAddress (0, 0);
     }
 
@@ -452,7 +452,7 @@ ThreeGppHttpObjectTestCase::DoRun ()
       MakeCallback (&ThreeGppHttpObjectTestCase::ServerMainObjectCallback,
                     this));
   NS_TEST_ASSERT_MSG_EQ (traceSourceConnected, true, "Trace source is not connected");
-traceSourceConnected = httpClient->TraceConnectWithoutContext (
+  traceSourceConnected = httpClient->TraceConnectWithoutContext (
       "RxMainObjectPacket",
       MakeCallback (&ThreeGppHttpObjectTestCase::ClientRxMainObjectPacketCallback,
                     this));
