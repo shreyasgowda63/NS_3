@@ -131,90 +131,92 @@
 
 #include "ns3/core-module.h"
 #include "ns3/mobility-module.h"
-#include "ns3/netanim-module.h" 
+#include "ns3/netanim-module.h"
 #include <sstream>
 
 using namespace ns3;
 
-int main (int argc, char *argv[])
+int
+main (int argc, char *argv[])
 {
 
-
-  int NumOfUAVs=6;
+  int NumOfUAVs = 6;
 
   NodeContainer UAVs;
   UAVs.Create (NumOfUAVs);
-	
-  uint example=6;
+
+  uint example = 6;
 
   MobilityHelper mobility;
-  switch(example){
-  case 1 :
-          mobility.SetMobilityModel ("ns3::CircleMobilityModel");
-          break;
-  case 2 :
-          mobility.SetMobilityModel ("ns3::CircleMobilityModel");
-          mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
-				 "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
-				 "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
-				 "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
-          break;
-  case 3 :
-          mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
-                                    "UseConfiguredOrigin",BooleanValue(true));
-          break;
-  case 4 :
-          mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
-                                    "UseConfiguredOrigin",BooleanValue(true),
-                                    "MinOrigin",Vector3DValue(Vector3D(0,0,0)),"MaxOrigin",Vector3DValue(Vector3D(500,500,500)),
-                                    "MinMaxRadius",Vector2DValue(Vector2D(500,500)),
-                                    "MinMaxStartAngle",Vector2DValue(Vector2D(0,0)),
-                                    "MinMaxSpeed",Vector2DValue(Vector2D(30,60)),
-                                    "RandomizeDirection",BooleanValue(false),
-                                    "Clockwise",BooleanValue(true));
+  switch (example)
+    {
+    case 1:
+      mobility.SetMobilityModel ("ns3::CircleMobilityModel");
+      break;
+    case 2:
+      mobility.SetMobilityModel ("ns3::CircleMobilityModel");
+      mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator", 
+          "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
+          "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
+          "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
+      break;
+    case 3:
+      mobility.SetMobilityModel ("ns3::CircleMobilityModel", "UseConfiguredOrigin",
+                                 BooleanValue (true));
+      break;
+    case 4:
+      mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
+          "UseConfiguredOrigin", BooleanValue (true), 
+          "MinOrigin", Vector3DValue (Vector3D (0, 0, 0)), "MaxOrigin", Vector3DValue (Vector3D (500, 500, 500)),
+          "MinMaxRadius", Vector2DValue (Vector2D (500, 500)), 
+          "MinMaxStartAngle", Vector2DValue (Vector2D (0, 0)), 
+          "MinMaxSpeed", Vector2DValue (Vector2D (30, 60)),
+          "RandomizeDirection", BooleanValue (false), 
+          "Clockwise", BooleanValue (true));
 
-          break;                
-  case 5 :
-          mobility.SetMobilityModel ("ns3::CircleMobilityModel");
-          break;
-  case 6 :
-          mobility.SetMobilityModel ("ns3::CircleMobilityModel",
-                                    "UseInitialPositionAsOrigin", BooleanValue(true),
-                                    "MinMaxSpeed",Vector2DValue(Vector2D(10,10)),
-                                    "RandomizeDirection",BooleanValue(false),
-                                    "MinMaxRadius",Vector2DValue(Vector2D(300,300)));
-          mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
-                                    "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
-                                    "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
-                                    "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
- 
+      break;
+    case 5:
+      mobility.SetMobilityModel ("ns3::CircleMobilityModel");
+      break;
+    case 6:
+      mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
+          "UseInitialPositionAsOrigin", BooleanValue (true),
+          "MinMaxSpeed", Vector2DValue (Vector2D (10, 10)), 
+          "RandomizeDirection", BooleanValue (false), 
+          "MinMaxRadius", Vector2DValue (Vector2D (300, 300)));
+      mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator", 
+          "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
+          "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
+          "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
 
-          break;          
-          
-  default:
-          std::cout<<"Sorry wrong example number\n";
-          return 1;
-  }
+      break;
+
+    default:
+      std::cout << "Sorry wrong example number\n";
+      return 1;
+    }
 
   mobility.Install (UAVs);
 
-  if (example == 5) {
-        UAVs.Get (0)->GetObject<CircleMobilityModel> ()->SetParameters(Vector (1000, 1000, 1000), 200, 0, true, 20);              
-  }
+  if (example == 5)
+    {
+      UAVs.Get (0)->GetObject<CircleMobilityModel> ()->SetParameters (Vector (1000, 1000, 1000),
+                                                                      200, 0, true, 20);
+    }
 
-   //Configure NetAnim
+  //Configure NetAnim
   std::stringstream sstm;
-  sstm << "Example-"<<example<<".xml";
+  sstm << "Example-" << example << ".xml";
 
-  AnimationInterface anim ("Simple3DCircleMobility"+sstm.str()); 
+  AnimationInterface anim ("Simple3DCircleMobility" + sstm.str ());
   //Set node size as 5m so that make it visible in NetAnim
-  for(int i=0;i<NumOfUAVs;i++)	
-      anim.UpdateNodeSize (i, 20, 20);
-	
+  for (int i = 0; i < NumOfUAVs; i++)
+    anim.UpdateNodeSize (i, 20, 20);
+
   //Stop the Simulation and Run it
   Simulator::Stop (Seconds (200.0));
   Simulator::Run ();
   Simulator::Destroy ();
-  
+
   return 0;
 }
