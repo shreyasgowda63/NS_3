@@ -130,6 +130,19 @@
                                     "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
  * \endcode
  * 
+  * Example 7:
+ * The CircleMobilityModel can be used in group mobility as shown below:
+ *         
+ * \code
+       Ptr<WaypointMobilityModel> waypointMm = CreateObject<WaypointMobilityModel> ();
+        waypointMm->AddWaypoint (Waypoint (Seconds (0), Vector (0, 0, 0)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (1000), Vector (1000, 0, 1000)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (2000), Vector (1000, 1000, 500)));
+        GroupMobilityHelper group;
+        group.SetReferenceMobilityModel (waypointMm);
+        group.SetMemberMobilityModel ("ns3::CircleMobilityModel");
+        group.Install (UAVs);
+ * \endcode
 */
 
 #include "ns3/core-module.h"
@@ -142,13 +155,18 @@ using namespace ns3;
 int
 main (int argc, char *argv[])
 {
-
   int NumOfUAVs = 5;
+  int example = 7;
+
+  CommandLine cmd;
+  cmd.AddValue("NumOfUAVs", "Number of UAVs to Simulate", NumOfUAVs);
+  cmd.AddValue("example", "Number of example scenario to Simulate", example);
+  cmd.Parse (argc, argv);
+
 
   NodeContainer UAVs;
   UAVs.Create (NumOfUAVs);
 
-  uint example = 7;
 
   MobilityHelper mobility;
   switch (example)
@@ -200,19 +218,21 @@ main (int argc, char *argv[])
           "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
       mobility.Install (UAVs);
       break;
+    case 7:
+        break;
     default:
       std::cout << "Sorry wrong example number\n";
       return 1;
     }
-
+  
     if (example==7){
         Ptr<WaypointMobilityModel> waypointMm = CreateObject<WaypointMobilityModel> ();
         waypointMm->AddWaypoint (Waypoint (Seconds (0), Vector (0, 0, 0)));
-        waypointMm->AddWaypoint (Waypoint (Seconds (1000), Vector (1000, 0, 1000)));
-        waypointMm->AddWaypoint (Waypoint (Seconds (2000), Vector (1000, 1000, 500)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (1000), Vector (5000, 0, 0)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (2000), Vector (0, 5000, 0)));
         GroupMobilityHelper group;
         group.SetReferenceMobilityModel (waypointMm);
-        group.SetMemberMobilityModel ("ns3::CircleMobilityModel");
+        group.SetMemberMobilityModel ("ns3::CircleMobilityModel","UseConfiguredOrigin",BooleanValue(true));
         group.Install (UAVs);
     }
 
@@ -226,7 +246,7 @@ main (int argc, char *argv[])
     anim.UpdateNodeSize (i, 20, 20);
 
   //Stop the Simulation and Run it
-  Simulator::Stop (Seconds (200.0));
+  Simulator::Stop (Seconds (5000.0));
   Simulator::Run ();
   Simulator::Destroy ();
 
