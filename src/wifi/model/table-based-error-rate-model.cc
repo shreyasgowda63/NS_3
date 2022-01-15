@@ -85,54 +85,58 @@ uint8_t
 TableBasedErrorRateModel::GetMcsForMode (WifiMode mode)
 {
   uint8_t mcs = 0xff; // Initialize to invalid mcs
-  if (mode.GetModulationClass () == WIFI_MOD_CLASS_OFDM || mode.GetModulationClass () == WIFI_MOD_CLASS_ERP_OFDM)
+  WifiModulationClass modulationClass = mode.GetModulationClass ();
+  WifiCodeRate codeRate = mode.GetCodeRate ();
+  uint16_t constellationSize = mode.GetConstellationSize ();
+
+  if (modulationClass == WIFI_MOD_CLASS_OFDM || modulationClass == WIFI_MOD_CLASS_ERP_OFDM)
     {
-      if (mode.GetConstellationSize () == 2)
+      if (constellationSize == 2)
         {
-          if (mode.GetCodeRate () == WIFI_CODE_RATE_1_2)
+          if (codeRate == WIFI_CODE_RATE_1_2)
             {
               mcs = 0;
             }
-          if (mode.GetCodeRate () == WIFI_CODE_RATE_3_4)
+          if (codeRate == WIFI_CODE_RATE_3_4)
             {
               mcs = 1;
             }
         }
-      else if (mode.GetConstellationSize () == 4)
+      else if (constellationSize == 4)
         {
-          if (mode.GetCodeRate () == WIFI_CODE_RATE_1_2)
+          if (codeRate == WIFI_CODE_RATE_1_2)
             {
               mcs = 2;
             }
-          else if (mode.GetCodeRate () == WIFI_CODE_RATE_3_4)
+          else if (codeRate == WIFI_CODE_RATE_3_4)
             {
               mcs = 3;
             }
         }
-      else if (mode.GetConstellationSize () == 16)
+      else if (constellationSize == 16)
         {
-          if (mode.GetCodeRate () == WIFI_CODE_RATE_1_2)
+          if (codeRate == WIFI_CODE_RATE_1_2)
             {
               mcs = 4;
             }
-          else if (mode.GetCodeRate () == WIFI_CODE_RATE_3_4)
+          else if (codeRate == WIFI_CODE_RATE_3_4)
             {
               mcs = 5;
             }
         }
-      else if (mode.GetConstellationSize () == 64)
+      else if (constellationSize == 64)
         {
-          if (mode.GetCodeRate () == WIFI_CODE_RATE_2_3)
+          if (codeRate == WIFI_CODE_RATE_2_3)
             {
               mcs = 6;
             }
-          else if (mode.GetCodeRate () == WIFI_CODE_RATE_3_4)
+          else if (codeRate == WIFI_CODE_RATE_3_4)
             {
               mcs = 7;
             }
         }
     }
-  else if (mode.GetModulationClass () >= WIFI_MOD_CLASS_HT)
+  else if (modulationClass >= WIFI_MOD_CLASS_HT)
     {
       mcs = mode.GetMcsValue ();
     }
@@ -163,15 +167,15 @@ TableBasedErrorRateModel::DoGetChunkSuccessRate (WifiMode mode, const WifiTxVect
     }
 
   auto errorTable = (ldpc ? AwgnErrorTableLdpc1458 : (size < m_threshold ? AwgnErrorTableBcc32 : AwgnErrorTableBcc1458));
-  auto itVector = errorTable[mcs];
-  auto itTable = std::find_if (itVector.begin(), itVector.end(),
+  const auto& itVector = errorTable[mcs];
+  auto itTable = std::find_if (itVector.cbegin (), itVector.cend (),
       [&roundedSnr](const std::pair<double, double>& element) {
           return element.first == roundedSnr;
       });
-  double minSnr = itVector.begin ()->first;
-  double maxSnr = (--itVector.end ())->first;
+  double minSnr = itVector.cbegin ()->first;
+  double maxSnr = (--itVector.cend ())->first;
   double per;
-  if (itTable == itVector.end ())
+  if (itTable == itVector.cend ())
     {
       if (roundedSnr < minSnr)
         {
@@ -184,7 +188,7 @@ TableBasedErrorRateModel::DoGetChunkSuccessRate (WifiMode mode, const WifiTxVect
       else
         {
           double a = 0.0, b = 0.0, previousSnr = 0.0, nextSnr = 0.0;
-          for (auto i = itVector.begin (); i != itVector.end (); ++i)
+          for (auto i = itVector.cbegin (); i != itVector.cend (); ++i)
             {
               if (i->first < roundedSnr)
                 {
