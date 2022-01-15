@@ -134,13 +134,13 @@
  * The CircleMobilityModel can be used in group mobility as shown below:
  *         
  * \code
-       Ptr<WaypointMobilityModel> waypointMm = CreateObject<WaypointMobilityModel> ();
+        Ptr<WaypointMobilityModel> waypointMm = CreateObject<WaypointMobilityModel> ();
         waypointMm->AddWaypoint (Waypoint (Seconds (0), Vector (0, 0, 0)));
-        waypointMm->AddWaypoint (Waypoint (Seconds (1000), Vector (1000, 0, 1000)));
-        waypointMm->AddWaypoint (Waypoint (Seconds (2000), Vector (1000, 1000, 500)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (1000), Vector (5000, 0, 0)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (2000), Vector (0, 5000, 0)));
         GroupMobilityHelper group;
         group.SetReferenceMobilityModel (waypointMm);
-        group.SetMemberMobilityModel ("ns3::CircleMobilityModel");
+        group.SetMemberMobilityModel ("ns3::CircleMobilityModel","UseConfiguredOrigin",BooleanValue(true));
         group.Install (UAVs);
  * \endcode
 */

@@ -138,6 +138,19 @@ namespace ns3 {
                                     "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
  * \endcode
  * 
+ * Example 7:
+ * The CircleMobilityModel can be used in group mobility as shown below:
+ *         
+ * \code
+        Ptr<WaypointMobilityModel> waypointMm = CreateObject<WaypointMobilityModel> ();
+        waypointMm->AddWaypoint (Waypoint (Seconds (0), Vector (0, 0, 0)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (1000), Vector (5000, 0, 0)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (2000), Vector (0, 5000, 0)));
+        GroupMobilityHelper group;
+        group.SetReferenceMobilityModel (waypointMm);
+        group.SetMemberMobilityModel ("ns3::CircleMobilityModel","UseConfiguredOrigin",BooleanValue(true));
+        group.Install (UAVs);
+ * \endcode
  */
 class CircleMobilityModel : public MobilityModel
 {
