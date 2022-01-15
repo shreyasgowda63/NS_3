@@ -27,11 +27,14 @@
  * 
  * The movement of the object will be controlled by parameters 
  * Origin, Radius, StartAngle, Speed and Direction
- * This mobility model enforces no bounding box by itself; 
+ * This mobility model enforces no bounding box by itself. 
+ * 
  * The the mobility model Parameters/Attributes can be set during initialization of the Mobility Model
  * 
- * After initialization, if the user want to change the Mobility Parameter of one Particular Node,
- * or group of nodes, that can be only done through the SetAttributes method of the model
+ *  During initialization itself, we can configure different  Mobility Parameter.
+ * 
+ * Even after initialization, if the user want to change the Mobility Parameter of one Particular Node,
+ * or group of nodes, that can be only done through a custom SetAttributes method of the model.
  * 
  * The implementation of this model is not 2d-specific. i.e. if you provide
  * z value greater than 0, then you may use it in 3d scenarios
@@ -140,18 +143,19 @@ int
 main (int argc, char *argv[])
 {
 
-  int NumOfUAVs = 6;
+  int NumOfUAVs = 5;
 
   NodeContainer UAVs;
   UAVs.Create (NumOfUAVs);
 
-  uint example = 6;
+  uint example = 7;
 
   MobilityHelper mobility;
   switch (example)
     {
     case 1:
       mobility.SetMobilityModel ("ns3::CircleMobilityModel");
+      mobility.Install (UAVs);
       break;
     case 2:
       mobility.SetMobilityModel ("ns3::CircleMobilityModel");
@@ -159,10 +163,13 @@ main (int argc, char *argv[])
           "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
           "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
           "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
+      mobility.Install (UAVs);
       break;
+
     case 3:
       mobility.SetMobilityModel ("ns3::CircleMobilityModel", "UseConfiguredOrigin",
                                  BooleanValue (true));
+      mobility.Install (UAVs);
       break;
     case 4:
       mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
@@ -173,10 +180,13 @@ main (int argc, char *argv[])
           "MinMaxSpeed", Vector2DValue (Vector2D (30, 60)),
           "RandomizeDirection", BooleanValue (false), 
           "Clockwise", BooleanValue (true));
-
+      mobility.Install (UAVs);
       break;
     case 5:
       mobility.SetMobilityModel ("ns3::CircleMobilityModel");
+      mobility.Install (UAVs);
+      UAVs.Get (0)->GetObject<CircleMobilityModel> ()->SetParameters (Vector (1000, 1000, 1000),
+                                                                      200, 0, true, 20);     
       break;
     case 6:
       mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
@@ -188,20 +198,22 @@ main (int argc, char *argv[])
           "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
           "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
           "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
-
+      mobility.Install (UAVs);
       break;
-
     default:
       std::cout << "Sorry wrong example number\n";
       return 1;
     }
 
-  mobility.Install (UAVs);
-
-  if (example == 5)
-    {
-      UAVs.Get (0)->GetObject<CircleMobilityModel> ()->SetParameters (Vector (1000, 1000, 1000),
-                                                                      200, 0, true, 20);
+    if (example==7){
+        Ptr<WaypointMobilityModel> waypointMm = CreateObject<WaypointMobilityModel> ();
+        waypointMm->AddWaypoint (Waypoint (Seconds (0), Vector (0, 0, 0)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (1000), Vector (1000, 0, 1000)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (2000), Vector (1000, 1000, 500)));
+        GroupMobilityHelper group;
+        group.SetReferenceMobilityModel (waypointMm);
+        group.SetMemberMobilityModel ("ns3::CircleMobilityModel");
+        group.Install (UAVs);
     }
 
   //Configure NetAnim

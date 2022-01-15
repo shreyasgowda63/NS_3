@@ -26,6 +26,7 @@
 #include "mobility-model.h"
 #include <ns3/vector.h>
 #include <ns3/random-variable-stream.h>
+#include "constant-velocity-helper.h"
 
 namespace ns3 {
 
@@ -35,11 +36,12 @@ namespace ns3 {
  *
  * The movement of the object will be controlled by parameters 
  * Origin, Radius, StartAngle, Speed and Direction
- * This mobility model enforces no bounding box by itself; 
+ * This mobility model enforces no bounding box by itself. 
+ * 
  * The the mobility model Parameters/Attributes can be set during initialization of the Mobility Model
  * 
- * After initialization, if the user want to change the Mobility Parameter of one Particular Node,
- * or group of nodes, that can be only done through the SetAttributes method of the model
+ * Even after initialization, if the user want to change the Mobility Parameter of one Particular Node,
+ * or group of nodes, that can be only done through a custom SetAttributes method of the model.
  * 
  * The implementation of this model is not 2d-specific. i.e. if you provide
  * z value greater than 0, then you may use it in 3d scenarios
@@ -122,6 +124,19 @@ namespace ns3 {
  * \endcode
  * 
  * Example 6:
+ * If the user choose to use the initial position of the node (provided by PositionAllocator) as origin,
+ * they can do it as follows:
+ * \code 
+           mobility.SetMobilityModel ("ns3::CircleMobilityModel",
+                                    "UseInitialPositionAsOrigin", BooleanValue(true),
+                                    "MinMaxSpeed",Vector2DValue(Vector2D(10,10)),
+                                    "RandomizeDirection",BooleanValue(false),
+                                    "MinMaxRadius",Vector2DValue(Vector2D(300,300)));
+          mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
+                                    "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
+                                    "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
+                                    "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
+ * \endcode
  * 
  */
 class CircleMobilityModel : public MobilityModel
@@ -146,14 +161,15 @@ public:
   * @param Clockwise is a boolean that will decide the direction of the object on the circular path
   * @param Speed is the moving speed of the object in meters
   */
-    void SetParameters(const Vector &Origin, const double Radius, const double StartAngle, const bool Clockwise, const double Speed);
+  void SetParameters (const Vector &Origin, const double Radius, const double StartAngle,
+                      const bool Clockwise, const double Speed);
+
 private:
   virtual Vector DoGetPosition (void) const;
   virtual void DoSetPosition (const Vector &nitOrigin);
   virtual Vector DoGetVelocity (void) const;
+  virtual void DoInitialize (void);
 
-
-  
   mutable Time m_lastUpdate; //!< the  last upsate time
 
   double m_radius; //!< the  radius of the circle
@@ -162,15 +178,18 @@ private:
   bool m_clockwise; //!< the  direction of circular movement
   bool m_randomizeDirection; //!< randomize the direction of circular movement
   bool m_useConfiguredOrigin; //!< use the origins configured through attribute
-  bool m_useInitialPositionAsOrigin;//!< Use the initial position of the node (provided by PositionAllocator) as origin
+  bool
+      m_useInitialPositionAsOrigin; //!< Use the initial position of the node (provided by PositionAllocator) as origin
   Vector m_origin; //!< the  origin of the circle
 
-  Vector2D m_radiusMinMax;   //!< minimum and maximum range of radius
-  Vector2D m_startAngleMinMax;   //!< minimum and maximum range of start angle
+  Vector2D m_radiusMinMax; //!< minimum and maximum range of radius
+  Vector2D m_startAngleMinMax; //!< minimum and maximum range of start angle
   Vector2D m_speedMinMax; //!< minimum and maximum range of start speed
-
+  Vector3D m_position; //!< the positon of the object
   Vector3D m_originMin; //!< minimum range of origin
   Vector3D m_originMax; //!< maximum range of origin
+  ConstantVelocityHelper m_helper;   //!< helper for velocity computations
+  bool m_parametersInitialized=false; //!< to check whether the parameters are initialized or not
 };
 
 } // namespace ns3

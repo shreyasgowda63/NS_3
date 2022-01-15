@@ -30,51 +30,54 @@ NS_OBJECT_ENSURE_REGISTERED (CircleMobilityModel);
 TypeId
 CircleMobilityModel::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::CircleMobilityModel")
-   .SetParent<MobilityModel> ()
-   .SetGroupName ("Mobility")
-   .AddConstructor<CircleMobilityModel> ()
-   .AddAttribute ("MinMaxRadius","The min and max of radius of the circle in meters.", 
-                   Vector2DValue (Vector2D(100.0,1500.0)),
-                   MakeVector2DAccessor (&CircleMobilityModel::m_radiusMinMax),
-                   MakeVector2DChecker())
-   .AddAttribute ("MinMaxStartAngle", "The min and max starting angle  if the circle in degree.", 
-                   Vector2DValue (Vector2D(0.0,360.0)),
-                   MakeVector2DAccessor (&CircleMobilityModel::m_startAngleMinMax),
-                   MakeVector2DChecker())
-   .AddAttribute ("MinMaxSpeed", "The min and max speed of the object (m/s).", 
-                   Vector2DValue (Vector2D(0.0,100.0)),
-                   MakeVector2DAccessor (&CircleMobilityModel::m_speedMinMax),
-                   MakeVector2DChecker())
+  static TypeId tid =
+      TypeId ("ns3::CircleMobilityModel")
+          .SetParent<MobilityModel> ()
+          .SetGroupName ("Mobility")
+          .AddConstructor<CircleMobilityModel> ()
+          .AddAttribute ("MinMaxRadius", "The min and max of radius of the circle in meters.",
+                         Vector2DValue (Vector2D (100.0, 1500.0)),
+                         MakeVector2DAccessor (&CircleMobilityModel::m_radiusMinMax),
+                         MakeVector2DChecker ())
+          .AddAttribute ("MinMaxStartAngle",
+                         "The min and max starting angle  if the circle in degree.",
+                         Vector2DValue (Vector2D (0.0, 360.0)),
+                         MakeVector2DAccessor (&CircleMobilityModel::m_startAngleMinMax),
+                         MakeVector2DChecker ())
+          .AddAttribute ("MinMaxSpeed", "The min and max speed of the object (m/s).",
+                         Vector2DValue (Vector2D (0.0, 100.0)),
+                         MakeVector2DAccessor (&CircleMobilityModel::m_speedMinMax),
+                         MakeVector2DChecker ())
 
-   .AddAttribute ("Clockwise", "The direction of circular movement", 
-                   BooleanValue (false),
-                   MakeBooleanAccessor (&CircleMobilityModel::m_clockwise),
-                   MakeBooleanChecker ())
-   .AddAttribute ("RandomizeDirection", "The direction of circular movement", 
-                   BooleanValue (true),
-                   MakeBooleanAccessor (&CircleMobilityModel::m_randomizeDirection),
-                   MakeBooleanChecker ())                   
+          .AddAttribute ("Clockwise", "The direction of circular movement", 
+                         BooleanValue (false),
+                         MakeBooleanAccessor (&CircleMobilityModel::m_clockwise),
+                         MakeBooleanChecker ())
+          .AddAttribute ("RandomizeDirection", "The direction of circular movement",
+                         BooleanValue (true),
+                         MakeBooleanAccessor (&CircleMobilityModel::m_randomizeDirection),
+                         MakeBooleanChecker ())
 
-   .AddAttribute ("UseConfiguredOrigin", "Use the origins configured through attribute", 
-                   BooleanValue (false),
-                   MakeBooleanAccessor (&CircleMobilityModel::m_useConfiguredOrigin),
-                   MakeBooleanChecker ())
-   .AddAttribute ("UseInitialPositionAsOrigin", "Use the initial position of the node (provided by PositionAllocator) as origin", 
-                   BooleanValue (false),
-                   MakeBooleanAccessor (&CircleMobilityModel::m_useInitialPositionAsOrigin),
-                   MakeBooleanChecker ())
+          .AddAttribute ("UseConfiguredOrigin", "Use the origins configured through attribute",
+                         BooleanValue (false),
+                         MakeBooleanAccessor (&CircleMobilityModel::m_useConfiguredOrigin),
+                         MakeBooleanChecker ())
+          .AddAttribute (
+              "UseInitialPositionAsOrigin",
+              "Use the initial position of the node (provided by PositionAllocator) as origin",
+              BooleanValue (false),
+              MakeBooleanAccessor (&CircleMobilityModel::m_useInitialPositionAsOrigin),
+              MakeBooleanChecker ())
 
-   .AddAttribute ("MinOrigin", "Min origin of the circle in meters.", 
-                   Vector3DValue (Vector3D(0.0,0.0,0.0)),
-                   MakeVector3DAccessor (&CircleMobilityModel::m_originMin),
-                   MakeVector3DChecker())
-   .AddAttribute ("MaxOrigin", "Max origin of the circle in meters.", 
-                   Vector3DValue (Vector3D(1000.0,1000.0,1000.0)),
-                   MakeVector3DAccessor (&CircleMobilityModel::m_originMax),
-                   MakeVector3DChecker())                 
-
-  ;
+          .AddAttribute ("MinOrigin", "Min origin of the circle in meters.",
+                         Vector3DValue (Vector3D (0.0, 0.0, 0.0)),
+                         MakeVector3DAccessor (&CircleMobilityModel::m_originMin),
+                         MakeVector3DChecker ())
+          .AddAttribute ("MaxOrigin", "Max origin of the circle in meters.",
+                         Vector3DValue (Vector3D (1000.0, 1000.0, 1000.0)),
+                         MakeVector3DAccessor (&CircleMobilityModel::m_originMax),
+                         MakeVector3DChecker ())
+      ;
   return tid;
 }
 
@@ -89,57 +92,108 @@ CircleMobilityModel::GetTypeId (void)
 
 Vector
 CircleMobilityModel::DoGetPosition (void) const
-{
-   Time now = Simulator::Now ();
-   NS_ASSERT (m_lastUpdate <= now);
-   m_lastUpdate = now;
-   double direction = m_clockwise?1:-1;
-   double angle = m_startAngle+ ((direction*m_speed/m_radius) * now.GetSeconds());
-   double cosAngle = cos(angle);
-   double sinAngle = sin(angle);
-   return Vector( m_origin.x + m_radius * cosAngle, m_origin.y + m_radius * sinAngle, m_origin.z);
+{ 
+  Time now = Simulator::Now ();
+  NS_ASSERT (m_lastUpdate <= now);
+  m_lastUpdate = now;
+  double direction = m_clockwise ? 1 : -1;
+  double angle = m_startAngle + ((direction * m_speed / m_radius) * now.GetSeconds ());
+  double cosAngle = cos (angle);
+  double sinAngle = sin (angle);
+  return Vector (m_origin.x + m_radius * cosAngle, m_origin.y + m_radius * sinAngle, m_origin.z);
 }
 
 void
 CircleMobilityModel::DoSetPosition (const Vector &position)
 {
-   Ptr<UniformRandomVariable> rn = CreateObject<UniformRandomVariable> ();
-   m_radius =  rn->GetValue(m_radiusMinMax.x, m_radiusMinMax.y);
-   m_startAngle = rn->GetValue(m_startAngleMinMax.x, m_startAngleMinMax.x );
-   m_speed =  rn->GetValue(m_speedMinMax.x, m_speedMinMax.y);
-   if (m_randomizeDirection){
-     m_clockwise = rn->GetValue(1,100)>50? false:true;
-   } 
-   if(m_useInitialPositionAsOrigin){
+  m_position=position;
+  Ptr<UniformRandomVariable> rn = CreateObject<UniformRandomVariable> ();
+  m_radius = rn->GetValue (m_radiusMinMax.x, m_radiusMinMax.y);
+  m_startAngle = rn->GetValue (m_startAngleMinMax.x, m_startAngleMinMax.x);
+  m_speed = rn->GetValue (m_speedMinMax.x, m_speedMinMax.y);
+  if (m_randomizeDirection)
+    {
+      m_clockwise = rn->GetValue (1, 100) > 50 ? false : true;
+    }
+  if (m_useInitialPositionAsOrigin)
+    {
       m_origin = position;
-
-   } else
-   if(m_useConfiguredOrigin){
-      m_origin=Vector (rn->GetValue(m_originMin.x,m_originMax.x), rn->GetValue(m_originMin.y,m_originMax.y),rn->GetValue(m_originMin.z,m_originMax.z));
-   } else {
+    }
+  else if (m_useConfiguredOrigin)
+    {
+      m_origin = Vector (rn->GetValue (m_originMin.x, m_originMax.x),
+                         rn->GetValue (m_originMin.y, m_originMax.y),
+                         rn->GetValue (m_originMin.z, m_originMax.z));
+    }
+  else
+    {
       // Set Origin of the Circle According to the initial position of the object passed by PositionAllocator or user
       // Usually the possition of the node will be passed by a PositionAllocator
       // calclulate the origin of the circle according to the initial position of the object passed by PositionAllocator or user
-      double cosAngle = cos(m_startAngle);
-      double sinAngle = sin(m_startAngle);
-      m_origin = Vector( position.x - m_radius * cosAngle, position.y - m_radius * sinAngle, position.z);
-   }
-   m_lastUpdate = Simulator::Now ();
-   NotifyCourseChange (); 	
+      double cosAngle = cos (m_startAngle);
+      double sinAngle = sin (m_startAngle);
+      m_origin =
+          Vector (position.x - m_radius * cosAngle, position.y - m_radius * sinAngle, position.z);
+    }
+  m_lastUpdate = Simulator::Now ();
+  NotifyCourseChange ();
+  m_parametersInitialized=true;
+ 
 }
 
+void
+CircleMobilityModel::DoInitialize (void)
+{ 
+  m_position= DoGetPosition();
+  
+  if(!m_parametersInitialized){
+   Ptr<UniformRandomVariable> rn = CreateObject<UniformRandomVariable> ();
+  m_radius = rn->GetValue (m_radiusMinMax.x, m_radiusMinMax.y);
+
+  m_startAngle = rn->GetValue (m_startAngleMinMax.x, m_startAngleMinMax.x);
+  m_speed = rn->GetValue (m_speedMinMax.x, m_speedMinMax.y);
+  if (m_randomizeDirection)
+    {
+      m_clockwise = rn->GetValue (1, 100) > 50 ? false : true;
+    }
+  if (m_useInitialPositionAsOrigin)
+    {
+      m_origin = m_position;
+    }
+  else if (m_useConfiguredOrigin)
+    {
+      m_origin = Vector (rn->GetValue (m_originMin.x, m_originMax.x),
+                         rn->GetValue (m_originMin.y, m_originMax.y),
+                         rn->GetValue (m_originMin.z, m_originMax.z));
+    }
+  else
+    {
+      // Set Origin of the Circle According to the initial position of the object passed by PositionAllocator or user
+      // Usually the possition of the node will be passed by a PositionAllocator
+      // calclulate the origin of the circle according to the initial position of the object passed by PositionAllocator or user
+      double cosAngle = cos (m_startAngle);
+      double sinAngle = sin (m_startAngle);
+      m_origin =
+          Vector (m_position.x - m_radius * cosAngle, m_position.y - m_radius * sinAngle, m_position.z);
+    }
+  MobilityModel::DoInitialize ();
+  m_parametersInitialized=true;
+  }
+}
 /*
  * In the function SetParameters, the  initial parameters are set.
  */
-void 
-CircleMobilityModel::SetParameters(const Vector &Origin, const double Radius, const double StartAngle, const bool Clockwise, const double Speed)
+void
+CircleMobilityModel::SetParameters (const Vector &Origin, const double Radius,
+                                    const double StartAngle, const bool Clockwise,
+                                    const double Speed)
 {
-   m_origin = Origin;
-   m_radius = Radius;
-   m_startAngle = StartAngle;
-   m_clockwise = Clockwise;
-   m_speed = Speed;	
-   NotifyCourseChange ();
+  m_origin = Origin;
+  m_radius = Radius;
+  m_startAngle = StartAngle;
+  m_clockwise = Clockwise;
+  m_speed = Speed;
+  NotifyCourseChange ();
 }
 
 /*
@@ -153,14 +207,14 @@ CircleMobilityModel::SetParameters(const Vector &Origin, const double Radius, co
 Vector
 CircleMobilityModel::DoGetVelocity (void) const
 {
-   Time now = Simulator::Now ();
-   NS_ASSERT (m_lastUpdate <= now);
-    m_lastUpdate = now;
-   double direction = m_clockwise?1:-1;
-   double angle = m_startAngle + ((direction*m_speed/m_radius) * now.GetSeconds());
-   double cosAngle = cos(angle);
-   double sinAngle = sin(angle);   
-   return Vector ( -sinAngle * m_speed, cosAngle * m_speed, 0.0);
+  Time now = Simulator::Now ();
+  NS_ASSERT (m_lastUpdate <= now);
+  m_lastUpdate = now;
+  double direction = m_clockwise ? 1 : -1;
+  double angle = m_startAngle + ((direction * m_speed / m_radius) * now.GetSeconds ());
+  double cosAngle = cos (angle);
+  double sinAngle = sin (angle);
+  return Vector (-sinAngle * m_speed, cosAngle * m_speed, 0.0);
 }
 
 } // namespace ns3
