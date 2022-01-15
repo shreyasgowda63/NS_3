@@ -85,8 +85,8 @@ CircleMobilityModel::GetTypeId (void)
  * In the function DoGetPosition, the position of the object at the circle 
  * will be calculated by the circle function
 *
-* This calculations are inspired from and Circle Function Logic of Circle Mobility Model of Omnet++ by Andras Varga
-* In omnet++, they did radian-degree conversions
+* This calculations are inspired from and circle function logic of circle mobility model of Omnet++ by Andras Varga
+* In Omnet++, they did radian-degree conversions
 * But here we are doing the angle math in degrees only
  */
 
@@ -129,7 +129,7 @@ CircleMobilityModel::DoSetPosition (const Vector &position)
     {
       // Set Origin of the Circle According to the initial position of the object passed by PositionAllocator or user
       // Usually the possition of the node will be passed by a PositionAllocator
-      // calclulate the origin of the circle according to the initial position of the object passed by PositionAllocator or user
+      // calculate the origin of the circle according to the initial position of the object passed by PositionAllocator or user
       double cosAngle = cos (m_startAngle);
       double sinAngle = sin (m_startAngle);
       m_origin =
@@ -145,7 +145,7 @@ void
 CircleMobilityModel::DoInitialize (void)
 { 
   m_position= DoGetPosition();
-  
+
   if(!m_parametersInitialized){
    Ptr<UniformRandomVariable> rn = CreateObject<UniformRandomVariable> ();
   m_radius = rn->GetValue (m_radiusMinMax.x, m_radiusMinMax.y);
@@ -168,9 +168,9 @@ CircleMobilityModel::DoInitialize (void)
     }
   else
     {
-      // Set Origin of the Circle According to the initial position of the object passed by PositionAllocator or user
+      // Set Origin of the circle according to the initial position of the object passed by PositionAllocator or user
       // Usually the possition of the node will be passed by a PositionAllocator
-      // calclulate the origin of the circle according to the initial position of the object passed by PositionAllocator or user
+      // calculate the origin of the circle according to the initial position of the object passed by PositionAllocator or user
       double cosAngle = cos (m_startAngle);
       double sinAngle = sin (m_startAngle);
       m_origin =
@@ -197,11 +197,11 @@ CircleMobilityModel::SetParameters (const Vector &Origin, const double Radius,
 }
 
 /*
- * In the function DoGetVelocity, the velosity of the object at the circle 
+ * In the function DoGetVelocity, the velocity of the object at the circle 
  * will be calculated 
 *
-* This calculations are inspired from  Mobility Model of Omnet++ by Andras Varga
-* In omnet++, they did radian-degree conversions 
+* This calculations are inspired from  mobility Model of Omnet++ by Andras Varga
+* In Omnet++, they did radian-degree conversions 
 * But here we are doing the angle math in degrees only
  */
 Vector

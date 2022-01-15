@@ -29,15 +29,15 @@
  * Origin, Radius, StartAngle, Speed and Direction
  * This mobility model enforces no bounding box by itself. 
  * 
- * The the mobility model Parameters/Attributes can be set during initialization of the Mobility Model
+ * The the mobility model parameters/attributes can be set during initialization of the mobility model
  * 
  *  During initialization itself, we can configure different  Mobility Parameter.
  * 
- * Even after initialization, if the user want to change the Mobility Parameter of one Particular Node,
+ * Even after initialization, if the user want to change the mobility parameter of one particular node,
  * or group of nodes, that can be only done through a custom SetAttributes method of the model.
  * 
  * The implementation of this model is not 2d-specific. i.e. if you provide
- * z value greater than 0, then you may use it in 3d scenarios
+ * z-value greater than 0, then you may use it in 3d scenarios
  * It is possible to use this model as  child in a hierarchical/group mobility 
  * and create more practical 3d mobility scenarios
  * 
@@ -49,7 +49,7 @@
  * In this all the nodes start the movement at (0,0,0) but will have different 
  * origins derived from the default random value of radius, start angle 
  * and will have random speed and direction. So, all the nodes will circulate 
- * in different circlular paths but the nodes will pass the point (0,0,0)
+ * in different circular paths but the nodes will pass the point (0,0,0)
  * 
  * \code
     MobilityHelper mobility;
@@ -60,7 +60,7 @@
  * Example 2:
  * In this, all the nodes will start the movement at initial position provided by the PositionAllocator
  * and calculate origins with respect to the positions and with respect to the default random value
- * of radius, strat angle and will have random speed and direction.
+ * of radius, start angle and will have random speed and direction.
  * So, all the nodes will circulate in different circles but will pass the initial point provided by PositionAllocator
  * 
  * \code
@@ -77,7 +77,7 @@
  * In this, all the nodes will start the movement at position with respect to different 
  * origins derived from the default random value of radius, start angle 
  * and will have random speed and direction.
- * So, all the nodes will circulate in different circlular planes perpendicular to the z axis
+ * So, all the nodes will circulate in different circular planes perpendicular to the z-axis
  * \code
     MobilityHelper mobility;
     mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
@@ -89,7 +89,7 @@
  * In this, all the nodes will start the movement with respect to different 
  * origins derived from the user provided range of random value of radius, start angle 
  * and will have random speed and direction.
- * So, all the nodes will circulate in different circlular planes perpendicular to the z axis
+ * So, all the nodes will circulate in different circular x-y planes perpendicular to the z-axis
  * \code
     MobilityHelper mobility;
     mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
@@ -179,8 +179,9 @@ main (int argc, char *argv[])
   NodeContainer UAVs;
   UAVs.Create (NumOfUAVs);
 
-
   MobilityHelper mobility;
+
+  //run the example as per selection
   switch (example)
     {
     case 1:
@@ -236,7 +237,8 @@ main (int argc, char *argv[])
       std::cout << "Sorry wrong example number\n";
       return 1;
     }
-  
+
+  //The special group mobility scenario example
     if (example==7){
         Ptr<WaypointMobilityModel> waypointMm = CreateObject<WaypointMobilityModel> ();
         waypointMm->AddWaypoint (Waypoint (Seconds (0), Vector (0, 0, 0)));
@@ -248,16 +250,17 @@ main (int argc, char *argv[])
         group.Install (UAVs);
     }
 
-  //Configure NetAnim
+  //Setting file name suffix
   std::stringstream sstm;
   sstm << "Example-" << example << ".xml";
 
+  //Configure NetAnim
   AnimationInterface anim ("Simple3DCircleMobility" + sstm.str ());
   //Set node size as 5m so that make it visible in NetAnim
   for (int i = 0; i < NumOfUAVs; i++)
     anim.UpdateNodeSize (i, 20, 20);
 
-  //Stop the Simulation and Run it
+  //Stop the simulation and run it
   Simulator::Stop (Seconds (5000.0));
   Simulator::Run ();
   Simulator::Destroy ();

@@ -38,9 +38,9 @@ namespace ns3 {
  * Origin, Radius, StartAngle, Speed and Direction
  * This mobility model enforces no bounding box by itself. 
  * 
- * The the mobility model Parameters/Attributes can be set during initialization of the Mobility Model
+ * The the mobility model parameters/attributes can be set during initialization of the mobility Model
  * 
- * Even after initialization, if the user want to change the Mobility Parameter of one Particular Node,
+ * Even after initialization, if the user want to change the Mobility Parameter of one particular node,
  * or group of nodes, that can be only done through a custom SetAttributes method of the model.
  * 
  * The implementation of this model is not 2d-specific. i.e. if you provide
@@ -52,11 +52,23 @@ namespace ns3 {
  * All the example codes will set the CircleMobilityModel in all the nodes in the 
  * NodeContainer but move them differently according to settings
  * 
+ * Caveat of this model:
+ * 
+ * If no further changes are made to the model's parameters after initialization, 
+ * the model will not call NotifyCourseChange again.  If, however, the user changes 
+ * any parameters after initialization, a course change will be notified.  
+ * Changing of parameters may, in some cases, cause the node to change position 
+ * instantaneously in a discrete jump (such as a change in altitude or radius) 
+ * 
+ * while running group mobility simulation, the nodes gets placed at 0,0,0 and 
+ * starts to move from the configured locations while starts playing the simulation in NetAnim.
+ * This problem will be resolved in future version
+ * 
  * Example 1:
  * In this all the nodes start the movement at (0,0,0) but will have different 
  * origins derived from the default random value of radius, start angle 
  * and will have random speed and direction. So, all the nodes will circulate 
- * in different circlular paths but the nodes will pass the point (0,0,0)
+ * in different circular paths but the nodes will pass the point (0,0,0)
  * 
  * \code
     MobilityHelper mobility;
@@ -67,7 +79,7 @@ namespace ns3 {
  * Example 2:
  * In this, all the nodes will start the movement at initial position provided by the PositionAllocator
  * and calculate origins with respect to the positions and with respect to the default random value
- * of radius, strat angle and will have random speed and direction.
+ * of radius, start angle and will have random speed and direction.
  * So, all the nodes will circulate in different circles but will pass the initial point provided by PositionAllocator
  * 
  * \code
@@ -84,7 +96,7 @@ namespace ns3 {
  * In this, all the nodes will start the movement at position with respect to different 
  * origins derived from the default random value of radius, start angle 
  * and will have random speed and direction.
- * So, all the nodes will circulate in different circlular planes perpendicular to the z axis
+ * So, all the nodes will circulate in different circular planes perpendicular to the z axis
  * \code
     MobilityHelper mobility;
     mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
@@ -96,7 +108,7 @@ namespace ns3 {
  * In this, all the nodes will start the movement with respect to different 
  * origins derived from the user provided range of random value of radius, start angle 
  * and will have random speed and direction.
- * So, all the nodes will circulate in different circlular planes perpendicular to the z axis
+ * So, all the nodes will circulate in different circular x-y planes perpendicular to the z axis
  * \code
     MobilityHelper mobility;
     mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
@@ -165,12 +177,12 @@ public:
   * This will override the values set during the initialization of the MobilityModel
   * This function can be called during the simulation whenever needed to 
   * set the circle mobility models attributes of a particular node's MobilityModel  
-  * This will set the mobility model patameters/attributes 
+  * This will set the mobility model parameters/attributes 
   *              Origin, Radius, StartAngle, Speed and Direction
   *
   * @param Origin is a Vector(x,y,z) - in meters
   * @param Radius is a radius of the circle in meters
-  * @param StartAngle is startng angle from which the object starts to move - measured with reference to x axis in degrees
+  * @param StartAngle is starting angle from which the object starts to move - measured with reference to x axis in degrees
   * @param Clockwise is a boolean that will decide the direction of the object on the circular path
   * @param Speed is the moving speed of the object in meters
   */
@@ -198,7 +210,7 @@ private:
   Vector2D m_radiusMinMax; //!< minimum and maximum range of radius
   Vector2D m_startAngleMinMax; //!< minimum and maximum range of start angle
   Vector2D m_speedMinMax; //!< minimum and maximum range of start speed
-  Vector3D m_position; //!< the positon of the object
+  Vector3D m_position; //!< the position of the object
   Vector3D m_originMin; //!< minimum range of origin
   Vector3D m_originMax; //!< maximum range of origin
   ConstantVelocityHelper m_helper;   //!< helper for velocity computations
