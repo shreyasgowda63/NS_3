@@ -129,7 +129,7 @@
                                     "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
                                     "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
  * \endcode
- * 
+"" * 
   * Example 7:
  * The CircleMobilityModel can be used in group mobility as shown below:
  *         
@@ -156,13 +156,20 @@ int
 main (int argc, char *argv[])
 {
   int NumOfUAVs = 5;
-  int example = 7;
-
+  int example = 1;
+  bool showhelper;
   CommandLine cmd;
   cmd.AddValue("NumOfUAVs", "Number of UAVs to Simulate", NumOfUAVs);
   cmd.AddValue("example", "Number of example scenario to Simulate", example);
+  cmd.AddValue("useHelper", "helper", showhelper);
   cmd.Parse (argc, argv);
 
+  if (showhelper){
+    std::cout<<"You can run the code with different parameters as follows:\n\n";
+    std::cout<<"    ./waf --run \"simple-3d-circle-mobility-example1\"\n";
+    std::cout<<"    ./waf --run \"simple-3d-circle-mobility-example1 --NumOfUAVs=5\"\n";
+    std::cout<<"    ./waf --run \"simple-3d-circle-mobility-example1 --example=2\"\n";
+  }
 
   NodeContainer UAVs;
   UAVs.Create (NumOfUAVs);
@@ -249,6 +256,6 @@ main (int argc, char *argv[])
   Simulator::Stop (Seconds (5000.0));
   Simulator::Run ();
   Simulator::Destroy ();
-
+  
   return 0;
 }
