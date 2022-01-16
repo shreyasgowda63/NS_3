@@ -1123,7 +1123,7 @@ void Ipv6L3Protocol::SendRealOut (Ptr<Ipv6Route> route, Ptr<Packet> packet, Ipv6
       targetMtu = dev->GetMtu ();
     }
 
-  if (packet->GetSize () > targetMtu + 40) /* 40 => size of IPv6 header */
+  if (packet->GetSize () + ipHeader.GetSerializedSize() > targetMtu)
     {
       // Router => drop
 
