@@ -1094,6 +1094,89 @@ uint8_t Ipv6ExtensionLooseRouting::Process (Ptr<Packet>& packet,
   return routingHeader.GetSerializedSize ();
 }
 
+// mipv6 extension
+
+NS_OBJECT_ENSURE_REGISTERED (Ipv6ExtensionType2Routing);
+
+TypeId Ipv6ExtensionType2Routing::GetTypeId ()
+{
+  static TypeId tid = TypeId ("ns3::Ipv6ExtensionType2Routing")
+    .SetParent<Ipv6ExtensionRouting> ()
+    .SetGroupName ("Internet")
+    .AddConstructor<Ipv6ExtensionType2Routing> ()
+  ;
+  return tid;
+}
+
+Ipv6ExtensionType2Routing::Ipv6ExtensionType2Routing ()
+{
+  NS_LOG_FUNCTION (this);
+}
+
+Ipv6ExtensionType2Routing::~Ipv6ExtensionType2Routing ()
+{
+  NS_LOG_FUNCTION (this);
+}
+
+uint8_t Ipv6ExtensionType2Routing::GetTypeRouting () const
+{
+  NS_LOG_FUNCTION (this);
+
+  return TYPE_ROUTING;
+}
+
+uint8_t Ipv6ExtensionType2Routing::Process (Ptr<Packet>& packet,
+                                            uint8_t offset,
+                                            Ipv6Header const& ipv6Header,
+                                            Ipv6Address dst,
+                                            uint8_t *nextHeader,
+                                            bool& stopProcessing,
+                                            bool& isDropped,
+                                            Ipv6L3Protocol::DropReason& dropReason)
+{
+  NS_LOG_FUNCTION (this << packet << offset << ipv6Header << dst << nextHeader << isDropped);
+
+  // For ICMPv6 Error packets
+  Ptr<Packet> malformedPacket = packet->Copy ();
+  malformedPacket->AddHeader (ipv6Header);
+
+  Ptr<Packet> p = packet->Copy ();
+  p->RemoveAtStart (offset);
+
+
+  Ipv6ExtensionType2RoutingHeader type2Header;
+
+  p->RemoveHeader (type2Header);
+
+  uint8_t segmentsLeft = type2Header.GetSegmentsLeft ();
+
+  if (nextHeader)
+    {
+      *nextHeader = type2Header.GetNextHeader ();
+    }
+
+  Ptr<Icmpv6L4Protocol> icmpv6 = GetNode ()->GetObject<Ipv6L3Protocol> ()->GetIcmpv6 ();
+
+  Ipv6Address srcAddress = ipv6Header.GetSourceAddress ();
+  Ipv6Address destAddress = ipv6Header.GetDestinationAddress ();
+
+  if (segmentsLeft == 1)
+    {
+      isDropped = false;
+      /** \todo */
+      return type2Header.GetSerializedSize ();
+    }
+
+  else
+    {
+      NS_LOG_LOGIC ("Malformed header. Drop!");
+      icmpv6->SendErrorParameterError (malformedPacket, srcAddress, Icmpv6Header::ICMPV6_MALFORMED_HEADER, offset + 3);
+      dropReason = Ipv6L3Protocol::DROP_MALFORMED_HEADER;
+      isDropped = true;
+      stopProcessing = true;
+      return type2Header.GetSerializedSize ();
+    }
+}
 
 NS_OBJECT_ENSURE_REGISTERED (Ipv6ExtensionESP);
 

@@ -195,6 +195,7 @@ bool Ipv6Interface::AddAddress (Ipv6InterfaceAddress iface)
 {
   NS_LOG_FUNCTION (this << iface);
   Ipv6Address addr = iface.GetAddress ();
+  Ipv6Prefix mask = iface.GetPrefix (); // mask to be used to check if address is in homelink for mipv6
 
   /* DAD handling */
   if (!addr.IsAny ())
@@ -208,6 +209,12 @@ bool Ipv6Interface::AddAddress (Ipv6InterfaceAddress iface)
         }
 
       Ipv6Address solicited = Ipv6Address::MakeSolicitedAddress (iface.GetAddress ());
+
+      bool inHome = false;
+      if (!m_homeLinkCheck.IsNull () && m_homeLinkCheck (addr, mask)) // check if MN is in home-link but is not starting from HA for mipv6
+        {
+          inHome = true;
+        }
       m_addresses.push_back (std::make_pair (iface, solicited));
 
       if (!addr.IsAny () || !addr.IsLocalhost ())
@@ -219,7 +226,7 @@ bool Ipv6Interface::AddAddress (Ipv6InterfaceAddress iface)
 
           if (icmpv6)
             {
-              if (icmpv6->IsAlwaysDad ())
+              if (icmpv6->IsAlwaysDad () && !inHome) // If MN is not in home-link or is starting at HA do DAD for mipv6.
                 {
                   Simulator::Schedule (Seconds (0.), &Icmpv6L4Protocol::DoDAD, icmpv6, addr, this);
                   Simulator::Schedule (Seconds (1.), &Icmpv6L4Protocol::FunctionDadTimeout, icmpv6, this, addr);
@@ -495,6 +502,15 @@ void Ipv6Interface::SetState (Ipv6Address address, Ipv6InterfaceAddress::State_e
       if (it->first.GetAddress () == address)
         {
           it->first.SetState (state);
+
+          // New address has been configured now handle the attachment of MN (for mipv6);
+          Ptr<Icmpv6L4Protocol> icmptr = m_node->GetObject<Icmpv6L4Protocol>();
+
+          if (state == Ipv6InterfaceAddress::PREFERRED && !icmptr->m_CoAConfigured.IsNull ())
+            {
+              icmptr->m_CoAConfigured (address);
+            }
+
           return;
         }
     }
@@ -520,6 +536,13 @@ Ptr<NdiscCache> Ipv6Interface::GetNdiscCache () const
 {
   NS_LOG_FUNCTION (this);
   return m_ndCache;
+}
+
+void Ipv6Interface::SetHomeLinkCheck (Callback<bool, Ipv6Address, Ipv6Prefix> sh)
+{
+  /* Used in Mipv6 */
+  NS_LOG_FUNCTION (this);
+  m_homeLinkCheck = sh;
 }
 
 } /* namespace ns3 */

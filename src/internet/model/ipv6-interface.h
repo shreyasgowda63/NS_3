@@ -275,6 +275,17 @@ public:
    */
   Ptr<NdiscCache> GetNdiscCache () const;
 
+  /**
+   * \brief Callback signature to send the mask, i.e. connected access router's prefix,
+   * to mipv6 layer and set whether node is in homelink or not (mipv6).
+   */
+  Callback<bool, Ipv6Address, Ipv6Prefix> m_homeLinkCheck;
+
+  /**
+   * \brief Set Callback for setting whether node is in home link (mipv6).
+   * \param sh callback to be used
+   */
+  void SetHomeLinkCheck (Callback<bool, Ipv6Address, Ipv6Prefix> sh);
 
 protected:
   /**

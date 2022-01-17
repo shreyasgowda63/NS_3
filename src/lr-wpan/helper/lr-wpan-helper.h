@@ -26,6 +26,7 @@
 #include <ns3/lr-wpan-phy.h>
 #include <ns3/lr-wpan-mac.h>
 #include <ns3/trace-helper.h>
+#include "ns3/net-device-state.h"
 
 namespace ns3 {
 

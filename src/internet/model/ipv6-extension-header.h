@@ -520,6 +520,85 @@ private:
   uint8_t m_segmentsLeft;
 };
 
+// mipv6 extension
+
+/**
+ * \class Ipv6ExtensionType2RoutingHeader
+ * \brief Header of IPv6 Extension Type2 Routing
+ */
+class Ipv6ExtensionType2RoutingHeader : public Ipv6ExtensionRoutingHeader
+{
+public:
+  /**
+   * \brief Get the type identificator.
+   * \return type identificator
+   */
+  static TypeId GetTypeId ();
+
+  /**
+   * \brief Get the instance type ID.
+   * \return instance type ID
+   */
+  virtual TypeId GetInstanceTypeId () const;
+
+  /**
+   * \brief Constructor.
+   */
+  Ipv6ExtensionType2RoutingHeader ();
+
+  /**
+   * \brief Destructor.
+   */
+  virtual ~Ipv6ExtensionType2RoutingHeader ();
+
+  /**
+   * \brief set home address.
+   * \param ip home address
+   */
+  void SetHomeAddress (Ipv6Address ip);
+
+  /**
+   * \brief get home address.
+   * \return home address
+   */
+  Ipv6Address GetHomeAddress () const;
+
+  /**
+   * \copydoc ns3::Header::Print
+   * \return info about this packet
+   */
+  virtual void Print (std::ostream &os) const;
+
+  /**
+   * \copydoc ns3::Header::GetSerializedSize
+   * \return size
+   */
+  virtual uint32_t GetSerializedSize () const;
+
+  /**
+   * \copydoc ns3::Header::Serialize
+   */
+  virtual void Serialize (Buffer::Iterator start) const;
+
+  /**
+   * \copydoc ns3::Header::Deserialize
+   * \return size of the packet
+   */
+  virtual uint32_t Deserialize (Buffer::Iterator start);
+
+private:
+
+  /**
+   * \brief The reserved value.
+   */
+  uint32_t m_reserved;
+
+  /**
+   * \brief home address
+   */
+  Ipv6Address m_hoa;
+};
+
 /**
  * \ingroup ipv6HeaderExt
  *

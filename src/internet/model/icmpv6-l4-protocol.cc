@@ -508,6 +508,11 @@ void Icmpv6L4Protocol::HandleNS (Ptr<Packet> packet, Ipv6Address const &src, Ipv
           break;
         }
     }
+  if (!m_NSCallback.IsNull () && !found && m_NSCallback (target) && interface->GetAddressMatchingDestination (target).GetState () == Ipv6InterfaceAddress::PREFERRED && !m_HandleNSCallback.IsNull ()) // Found a match in the cache of HA for off-link MN and is configured with receiving interfaces prefix (See MIPv6 implementation.
+    {
+      m_HandleNSCallback (packet, interface, src, target); // HA executes its own HandleNS () version as it runs proxy-ND on behalf of MN (See MIPv6 implementation).
+      return;
+    }
 
   if (!found)
     {
@@ -704,6 +709,14 @@ void Icmpv6L4Protocol::HandleNA (Ptr<Packet> packet, Ipv6Address const &src, Ipv
           if (ifaddr.GetState () == Ipv6InterfaceAddress::TENTATIVE || ifaddr.GetState () == Ipv6InterfaceAddress::TENTATIVE_OPTIMISTIC)
             {
               interface->SetState (ifaddr.GetAddress (), Ipv6InterfaceAddress::INVALID);
+            }
+        }
+
+      else
+        {
+          if (!m_DADCallback.IsNull ())
+            {
+              m_DADCallback (target); // Indicates that DAD for any MN's HoA (home address) is failed as HA runs proxy-ND for all MN (See MIPv6 implementation)
             }
         }
 
@@ -1557,6 +1570,38 @@ Icmpv6L4Protocol::GetDelayFirstProbe () const
   return m_delayFirstProbe;
 }
 
+void Icmpv6L4Protocol::SetCoAConfiguredCallback (Callback<void, Ipv6Address> handleAttachment)
+{
+  /* Used in Mipv6 */
+  NS_LOG_FUNCTION (this);
+  m_CoAConfigured = handleAttachment;
+}
+
+void Icmpv6L4Protocol::SetDADCallback (Callback<void, Ipv6Address> dad)
+{
+  /* Used in Mipv6 */
+  NS_LOG_FUNCTION (this);
+  m_DADCallback = dad;
+}
+
+void Icmpv6L4Protocol::SetNSCallback (Callback<bool, Ipv6Address> ns)
+{
+  /* Used in Mipv6 */
+  NS_LOG_FUNCTION (this);
+  m_NSCallback = ns;
+}
+
+void Icmpv6L4Protocol::SetHandleNSCallback (Callback<void, Ptr<Packet>, Ptr<Ipv6Interface>, Ipv6Address, Ipv6Address> handlens)
+{
+  /* Used in Mipv6 */
+  NS_LOG_FUNCTION (this);
+  m_HandleNSCallback = handlens;
+}
+
+Ptr<NdiscCache> Icmpv6L4Protocol::GetCache (Ptr<NetDevice> device)
+{
+  return FindCache (device);
+}
 
 } /* namespace ns3 */
 

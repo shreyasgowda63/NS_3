@@ -376,5 +376,86 @@ Ipv6OptionHeader::Alignment Ipv6OptionRouterAlertHeader::GetAlignment () const
   return (Alignment){ 2,0}; //2n+0
 }
 
+// mipv6 option
+
+NS_OBJECT_ENSURE_REGISTERED (Ipv6HomeAddressOptionHeader);
+
+TypeId Ipv6HomeAddressOptionHeader::GetTypeId ()
+{
+  static TypeId tid = TypeId ("ns3::Ipv6HomeAddressOptionHeader")
+    .AddConstructor<Ipv6HomeAddressOptionHeader> ()
+    .SetParent<Ipv6OptionHeader> ()
+    .SetGroupName ("Internet")
+  ;
+  return tid;
+}
+
+TypeId Ipv6HomeAddressOptionHeader::GetInstanceTypeId () const
+{
+  return GetTypeId ();
+}
+
+Ipv6HomeAddressOptionHeader::Ipv6HomeAddressOptionHeader ()
+{
+  SetType (0xC9);
+  SetLength (16);
+  SetHomeAddress (Ipv6Address::GetAny ());
+}
+
+Ipv6HomeAddressOptionHeader::~Ipv6HomeAddressOptionHeader ()
+{}
+
+void Ipv6HomeAddressOptionHeader::SetHomeAddress (Ipv6Address ip)
+{
+  m_hoa = ip;
+}
+
+Ipv6Address Ipv6HomeAddressOptionHeader::GetHomeAddress () const
+{
+  return m_hoa;
+}
+
+void Ipv6HomeAddressOptionHeader::Print (std::ostream &os) const
+{
+  os << "( type = " << (uint32_t) GetType () << "home_address" << (Ipv6Address) GetHomeAddress () << " )";
+}
+
+uint32_t Ipv6HomeAddressOptionHeader::GetSerializedSize () const
+{
+  return 18;
+}
+
+void Ipv6HomeAddressOptionHeader::Serialize (Buffer::Iterator start) const
+{
+  Buffer::Iterator i = start;
+
+  i.WriteU8 (GetType ());
+  i.WriteU8 (GetLength ());
+  uint8_t buf[16];
+  Ipv6Address addr;
+  addr = GetHomeAddress ();
+  addr.Serialize (buf);
+  i.Write (buf,16);
+
+}
+
+uint32_t Ipv6HomeAddressOptionHeader::Deserialize (Buffer::Iterator start)
+{
+  Buffer::Iterator i = start;
+  uint32_t len = i.GetRemainingSize ();
+  if (len < GetSerializedSize ())
+    {
+      return 0;
+    }
+
+  SetType (i.ReadU8 ());
+  SetLength (i.ReadU8 ());
+  uint8_t buf[16];
+  i.Read (buf,16);
+  SetHomeAddress (Ipv6Address::Deserialize (buf));
+
+  return GetSerializedSize ();
+}
+
 } /* namespace ns3 */
 
