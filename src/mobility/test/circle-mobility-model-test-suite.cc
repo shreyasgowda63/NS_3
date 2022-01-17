@@ -90,13 +90,14 @@ CircleMobilityModelTestCase1::DoRun (void)
   double speed = 2.0*(22.0/7.0);
   ObjectFactory mobilityFactory;
   mobilityFactory.SetTypeId ("ns3::CircleMobilityModel");
+  mobilityFactory.Set ("UseConfiguredOrigin", BooleanValue (true));
   mobilityFactory.Set ("MinOrigin", Vector3DValue (Vector3D (0, 0, 0)));
   mobilityFactory.Set ("MaxOrigin", Vector3DValue (Vector3D (0, 0, 0)));
-  mobilityFactory.Set ("MinMaxRadius", Vector2DValue (Vector2D (speed,speed))); 
+  mobilityFactory.Set ("MinMaxRadius", Vector2DValue (Vector2D (1,1))); 
   mobilityFactory.Set ("MinMaxStartAngle", Vector2DValue (Vector2D (0, 0))); 
-  mobilityFactory.Set ("MinMaxSpeed", Vector2DValue (Vector2D (1, 1)));
+  mobilityFactory.Set ("MinMaxSpeed", Vector2DValue (Vector2D (speed,speed)));
   mobilityFactory.Set ("RandomizeDirection", BooleanValue (false));
-  mobilityFactory.Set ("Clockwise", BooleanValue (true));
+  mobilityFactory.Set ("Clockwise", BooleanValue (false));
 
   // Populate the vector of mobility models.
   count = 10;

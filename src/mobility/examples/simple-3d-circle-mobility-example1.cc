@@ -164,17 +164,17 @@ main (int argc, char *argv[])
   cmd.AddValue("useHelper", "helper", useHelper);
   cmd.Parse (argc, argv);
 
-  if (useHelper){
-    std::cout<<"All the examples in this script are using helpers\n";
-    std::cout<<"You can run the code with different parameters as follows:\n\n";
-    std::cout<<"    ./waf --run \"simple-3d-circle-mobility-example1\"\n";
-    std::cout<<"    ./waf --run \"simple-3d-circle-mobility-example1 --NumOfUAVs=5\"\n";
-    std::cout<<"    ./waf --run \"simple-3d-circle-mobility-example1 --example=2\"\n";
-    std::cout<<"\nRunning the example with helpers\n";
-  } else {
-    std::cout<<"Sorry. No examples provided without helpers\n";
-    std::cout<<"Running the example with helpers\n";
-  }
+  // if (useHelper){
+  //   std::cout<<"All the examples in this script are using helpers\n";
+  //   std::cout<<"You can run the code with different parameters as follows:\n\n";
+  //   std::cout<<"    ./waf --run \"simple-3d-circle-mobility-example1\"\n";
+  //   std::cout<<"    ./waf --run \"simple-3d-circle-mobility-example1 --NumOfUAVs=5\"\n";
+  //   std::cout<<"    ./waf --run \"simple-3d-circle-mobility-example1 --example=2\"\n";
+  //   std::cout<<"\nRunning the example with helpers\n";
+  // } else {
+  //   std::cout<<"Sorry. No examples provided without helpers\n";
+  //   std::cout<<"Running the example with helpers\n";
+  // }
 
   NodeContainer UAVs;
   UAVs.Create (NumOfUAVs);

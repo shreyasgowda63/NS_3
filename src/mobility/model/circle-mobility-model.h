@@ -193,7 +193,7 @@ private:
   virtual Vector DoGetPosition (void) const;
   virtual void DoSetPosition (const Vector &nitOrigin);
   virtual Vector DoGetVelocity (void) const;
-
+  
   /**
    * @brief Initializes the parameters of the circle mobility model
    * 
@@ -210,12 +210,12 @@ private:
   bool m_useConfiguredOrigin; //!< use the origins configured through attribute
   bool
       m_useInitialPositionAsOrigin; //!< Use the initial position of the node (provided by PositionAllocator) as origin
-  Vector m_origin; //!< the  origin of the circle
+  Vector m_origin=Vector3D(0,0,0); //!< the  origin of the circle
 
   Vector2D m_radiusMinMax; //!< minimum and maximum range of radius
   Vector2D m_startAngleMinMax; //!< minimum and maximum range of start angle
   Vector2D m_speedMinMax; //!< minimum and maximum range of start speed
-  Vector3D m_position; //!< the position of the object
+  Vector3D m_position=Vector3D(0,0,0); //!< the position of the object
   Vector3D m_originMin; //!< minimum range of origin
   Vector3D m_originMax; //!< maximum range of origin
   ConstantVelocityHelper m_helper;   //!< helper for velocity computations

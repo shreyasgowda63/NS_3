@@ -110,32 +110,37 @@ CircleMobilityModel::DoGetPosition (void) const
 void
 CircleMobilityModel::DoSetPosition (const Vector &position)
 {
+  //if the PositionAllocator or user sets the position then initialize variables accordingly
+  //this will have impact if UseInitialPositionAsOrigin=true
+  //this will not have impact if UseConfiguredOrigin=true
   m_position=position;
-  if(!m_parametersInitialized){
-    InitializePrivate();
-  }
+  InitializePrivate();
 }
 
-
-
-/*
- * In the function SetParameters, the  initial parameters are set.
+/**
+ * @brief In the function InitializePrivate, the  initial variables are set according to configuration settings.
  */
 void
 CircleMobilityModel::InitializePrivate(void)
 {
  Ptr<UniformRandomVariable> rn = CreateObject<UniformRandomVariable> ();
+
+  //set  radius, start angle and speed according to default or selected range
   m_radius = rn->GetValue (m_radiusMinMax.x, m_radiusMinMax.y);
   m_startAngle = rn->GetValue (m_startAngleMinMax.x, m_startAngleMinMax.x);
   m_speed = rn->GetValue (m_speedMinMax.x, m_speedMinMax.y);
+
+  //randomly set direction if according to choice
   if (m_randomizeDirection)
     {
       m_clockwise = rn->GetValue (1, 100) > 50 ? false : true;
     }
+  //set position as origin according to choice
   if (m_useInitialPositionAsOrigin)
     {
       m_origin = m_position;
     }
+  //set origin randomly according to default or selected range
   else if (m_useConfiguredOrigin)
     {
       m_origin = Vector (rn->GetValue (m_originMin.x, m_originMax.x),
@@ -152,14 +157,16 @@ CircleMobilityModel::InitializePrivate(void)
       m_origin =
           Vector (m_position.x - m_radius * cosAngle, m_position.y - m_radius * sinAngle, m_position.z);
     }
+
   m_lastUpdate = Simulator::Now ();
   NotifyCourseChange ();
   m_parametersInitialized=true;
  
 }
 
-/*
- * In the function SetParameters, the  initial parameters are set.
+/**
+ * @brief In the function SetParameters, the variables are set.
+ * 
  */
 void
 CircleMobilityModel::SetParameters (const Vector &Origin, const double Radius,
