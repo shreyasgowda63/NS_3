@@ -157,22 +157,22 @@ CircleMobilityModelTestCaseSimple::DistXCompare (double par)
   NS_TEST_ASSERT_MSG_EQ_TOL (mean_x, par, 0.1, "Distances are not equal within tolerance");
 }
 
-////////////////////////// Groupu Mobility Test /////////////////////////
+////////////////////////// Group/Hierarchical Mobility Test /////////////////////////
 
 /**
-* CircleMobilityModelTestCaseGroup will be used to test the CircleMobilityModel
+* CircleMobilityModelTestCaseHierarchical will be used to test the CircleMobilityModel
 *
 *
 * @section DESCRIPTION
 *
-* The CircleMobilityModelTestCaseGroup inherited from TestCase.
+* The CircleMobilityModelTestCaseHierarchical inherited from TestCase.
 */
-class CircleMobilityModelTestCaseGroup : public TestCase
+class CircleMobilityModelTestCaseHierarchical : public TestCase
 {
 public:
-  CircleMobilityModelTestCaseGroup ()
+  CircleMobilityModelTestCaseHierarchical ()
       : TestCase ("circlemobilitymodel movement over time test"){}
-  virtual ~CircleMobilityModelTestCaseGroup ();
+  virtual ~CircleMobilityModelTestCaseHierarchical ();
 
 private:
   std::vector<Ptr<MobilityModel> > mobilityStack; ///< modility model
@@ -184,11 +184,23 @@ private:
 
 // This destructor does nothing but we include it as a reminder that
 // the test case should clean up after itself
-CircleMobilityModelTestCaseGroup::~CircleMobilityModelTestCaseGroup ()
+CircleMobilityModelTestCaseHierarchical::~CircleMobilityModelTestCaseHierarchical ()
 {
 }
 
-void CircleMobilityModelTestCaseGroup::DistXCompare (double va1,double val2)
+/**
+ * 
+* CircleMobilityModelTestCaseSimple::DistXCompare will be used to compare the movements of the mobility model
+* at a particular time with the calculated values
+*
+ * \ingroup mobility-test
+ * \ingroup tests
+ * @param va1 is the predicted displacement in x direction.
+ * @param va2 is the actual displacement x direction.
+ * \brief DistXCompare will copare the x-displacement of a node provided by the mobility model with the calculated values 
+ */
+
+void CircleMobilityModelTestCaseHierarchical::DistXCompare (double va1,double val2)
 {
   NS_TEST_ASSERT_MSG_EQ_TOL (va1, val2, 0.1, "Distances are not equal within tolerance");
 }
@@ -203,7 +215,7 @@ void CircleMobilityModelTestCaseGroup::DistXCompare (double va1,double val2)
 
 //
 void
-CircleMobilityModelTestCaseGroup::DoRun (void)
+CircleMobilityModelTestCaseHierarchical::DoRun (void)
 {
   SeedManager::SetSeed (123);
   // Total simulation time, seconds
@@ -235,14 +247,14 @@ CircleMobilityModelTestCaseGroup::DoRun (void)
   // hierarchical0->GetPosition().x // works but giving movement of the parent only
   // childCircleMobilityModel->GetPosition().x; // works but giving movement of the child only
 
-  Simulator::Schedule (Seconds (1.0), &CircleMobilityModelTestCaseGroup::DistXCompare, this,(double) 2,(double) ( (double) childCircleMobilityModel->GetPosition().x + (double) childCircleMobilityModel->GetPosition().x)); 
+  Simulator::Schedule (Seconds (1.0), &CircleMobilityModelTestCaseHierarchical::DistXCompare, this,(double) 2,(double) ( (double) childCircleMobilityModel->GetPosition().x + (double) childCircleMobilityModel->GetPosition().x)); 
   Simulator::Stop (Seconds (totalTime));
   Simulator::Run ();
   Simulator::Destroy ();
 }
 
 /**
-* CircleMobilityModelTestCaseGroup::DistXCompare will be used to compare the movements of the mobility model
+* CircleMobilityModelTestCaseHierarchical::DistXCompare will be used to compare the movements of the mobility model
 * at a particular time with the calculated values
 *
  * \ingroup mobility-test
@@ -265,7 +277,7 @@ struct CircleMobilityModelTestSuite : public TestSuite
   {
     AddTestCase (new CircleMobilityModelTestCaseSimple, TestCase::QUICK);
 
-    AddTestCase (new CircleMobilityModelTestCaseGroup, TestCase::QUICK);
+    AddTestCase (new CircleMobilityModelTestCaseHierarchical, TestCase::QUICK);
   }
 } g_circleMobilityModelTestSuite; ///< the test suite
 
