@@ -153,7 +153,10 @@ private:
     /** Constructor. */
     CheckTvCb (void)  : m_value (0)  { }
     
-    /** Register this type. */
+    /**
+     * \brief Register this type.
+     * \return The object TypeId. 
+     */
     static TypeId GetTypeId (void)
     {
       static TypeId tid =
