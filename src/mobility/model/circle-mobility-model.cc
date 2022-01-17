@@ -81,6 +81,7 @@ CircleMobilityModel::GetTypeId (void)
   return tid;
 }
 
+
 /*
  * In the function DoGetPosition, the position of the object at the circle 
  * will be calculated by the circle function
@@ -93,6 +94,9 @@ CircleMobilityModel::GetTypeId (void)
 Vector
 CircleMobilityModel::DoGetPosition (void) const
 { 
+  if(!m_parametersInitialized){
+    const_cast<CircleMobilityModel *>(this)->InitializePrivate();
+  }
   Time now = Simulator::Now ();
   NS_ASSERT (m_lastUpdate <= now);
   m_lastUpdate = now;
@@ -107,49 +111,21 @@ void
 CircleMobilityModel::DoSetPosition (const Vector &position)
 {
   m_position=position;
-  Ptr<UniformRandomVariable> rn = CreateObject<UniformRandomVariable> ();
-  m_radius = rn->GetValue (m_radiusMinMax.x, m_radiusMinMax.y);
-  m_startAngle = rn->GetValue (m_startAngleMinMax.x, m_startAngleMinMax.x);
-  m_speed = rn->GetValue (m_speedMinMax.x, m_speedMinMax.y);
-  if (m_randomizeDirection)
-    {
-      m_clockwise = rn->GetValue (1, 100) > 50 ? false : true;
-    }
-  if (m_useInitialPositionAsOrigin)
-    {
-      m_origin = position;
-    }
-  else if (m_useConfiguredOrigin)
-    {
-      m_origin = Vector (rn->GetValue (m_originMin.x, m_originMax.x),
-                         rn->GetValue (m_originMin.y, m_originMax.y),
-                         rn->GetValue (m_originMin.z, m_originMax.z));
-    }
-  else
-    {
-      // Set Origin of the Circle According to the initial position of the object passed by PositionAllocator or user
-      // Usually the possition of the node will be passed by a PositionAllocator
-      // calculate the origin of the circle according to the initial position of the object passed by PositionAllocator or user
-      double cosAngle = cos (m_startAngle);
-      double sinAngle = sin (m_startAngle);
-      m_origin =
-          Vector (position.x - m_radius * cosAngle, position.y - m_radius * sinAngle, position.z);
-    }
-  m_lastUpdate = Simulator::Now ();
-  NotifyCourseChange ();
-  m_parametersInitialized=true;
- 
+  if(!m_parametersInitialized){
+    InitializePrivate();
+  }
 }
 
+
+
+/*
+ * In the function SetParameters, the  initial parameters are set.
+ */
 void
-CircleMobilityModel::DoInitialize (void)
-{ 
-  m_position= DoGetPosition();
-
-  if(!m_parametersInitialized){
-   Ptr<UniformRandomVariable> rn = CreateObject<UniformRandomVariable> ();
+CircleMobilityModel::InitializePrivate(void)
+{
+ Ptr<UniformRandomVariable> rn = CreateObject<UniformRandomVariable> ();
   m_radius = rn->GetValue (m_radiusMinMax.x, m_radiusMinMax.y);
-
   m_startAngle = rn->GetValue (m_startAngleMinMax.x, m_startAngleMinMax.x);
   m_speed = rn->GetValue (m_speedMinMax.x, m_speedMinMax.y);
   if (m_randomizeDirection)
@@ -168,7 +144,7 @@ CircleMobilityModel::DoInitialize (void)
     }
   else
     {
-      // Set Origin of the circle according to the initial position of the object passed by PositionAllocator or user
+      // Set Origin of the Circle According to the initial position of the object passed by PositionAllocator or user
       // Usually the possition of the node will be passed by a PositionAllocator
       // calculate the origin of the circle according to the initial position of the object passed by PositionAllocator or user
       double cosAngle = cos (m_startAngle);
@@ -176,10 +152,12 @@ CircleMobilityModel::DoInitialize (void)
       m_origin =
           Vector (m_position.x - m_radius * cosAngle, m_position.y - m_radius * sinAngle, m_position.z);
     }
-  MobilityModel::DoInitialize ();
+  m_lastUpdate = Simulator::Now ();
+  NotifyCourseChange ();
   m_parametersInitialized=true;
-  }
+ 
 }
+
 /*
  * In the function SetParameters, the  initial parameters are set.
  */
