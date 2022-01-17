@@ -24,6 +24,7 @@
 #include <ostream>
 
 #include "ns3/header.h"
+#include "ns3/ipv6-address.h"
 
 namespace ns3
 {
@@ -418,6 +419,79 @@ private:
    * \brief The value.
    */
   uint16_t m_value;
+};
+
+/**
+ * \class Ipv6HomeAddressOptionHeader
+ * \brief Header of IPv6 Home address option
+ */
+class Ipv6HomeAddressOptionHeader : public Ipv6OptionHeader
+{
+public:
+  /**
+   * \brief Get the type identificator.
+   * \return type identificator
+   */
+  static TypeId GetTypeId ();
+
+  /**
+   * \brief Get the instance type ID.
+   * \return instance type ID
+   */
+  virtual TypeId GetInstanceTypeId () const;
+
+  /**
+   * \brief Constructor.
+   * \param pad Number of bytes to pad (>=2)
+   */
+  Ipv6HomeAddressOptionHeader ();
+
+  /**
+   * \brief Destructor.
+   */
+  virtual ~Ipv6HomeAddressOptionHeader ();
+
+  /**
+   * \brief set home address.
+   * \param ip home address
+   */
+  void SetHomeAddress (Ipv6Address ip);
+
+  /**
+   * \brief get home address.
+   * \return home address
+   */
+  Ipv6Address GetHomeAddress () const;
+
+  /**
+   * \copydoc ns3::Header::Print
+   * \return info about this packet
+   */
+  virtual void Print (std::ostream &os) const;
+
+  /**
+   * \copydoc ns3::Header::GetSerializedSize
+   * \return size
+   */
+  virtual uint32_t GetSerializedSize () const;
+
+  /**
+   * \copydoc ns3::Header::Serialize
+   */
+  virtual void Serialize (Buffer::Iterator start) const;
+
+  /**
+   * \copydoc ns3::Header::Deserialize
+   * \return size of the packet
+   */
+  virtual uint32_t Deserialize (Buffer::Iterator start);
+
+private:
+
+  /**
+   * \brief home address
+   */
+  Ipv6Address m_hoa;
 };
 
 } // namespace ns3

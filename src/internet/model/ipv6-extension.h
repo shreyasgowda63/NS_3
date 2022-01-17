@@ -640,6 +640,64 @@ public:
 };
 
 /**
+ * \class Ipv6ExtensionType2Routing
+ * \brief IPv6 Extension Type 2 Routing
+ */
+class Ipv6ExtensionType2Routing : public Ipv6ExtensionRouting
+{
+public:
+  /**
+   * \brief Routing type.
+   */
+  static const uint8_t TYPE_ROUTING = 2;
+
+  /**
+   * \brief Get the type identificator.
+   * \return type identificator
+   */
+  static TypeId GetTypeId ();
+
+  /**
+   * \brief Constructor.
+   */
+  Ipv6ExtensionType2Routing ();
+
+  /**
+   * \brief Destructor.
+   */
+  ~Ipv6ExtensionType2Routing ();
+
+  /**
+   * \brief Get the type of routing.
+   * \return type of routing
+   */
+  virtual uint8_t GetTypeRouting () const;
+
+  /**
+   * \brief Process method
+   * Called from Ipv4L3Protocol::Receive.
+   *
+   * \param packet the packet
+   * \param offset the offset of the extension to process
+   * \param ipv6Header the IPv6 header of packet received
+   * \param dst destination address of the packet received (i.e. us)
+   * \param nextHeader the next header
+   * \param stopProcessing true if the packet must not be further processed
+   * \param isDropped true if the packet must be dropped
+   * \param dropReason dropping reason
+   * \return the size processed
+   */
+  virtual uint8_t Process (Ptr<Packet>& packet,
+                           uint8_t offset,
+                           Ipv6Header const& ipv6Header,
+                           Ipv6Address dst,
+                           uint8_t *nextHeader,
+                           bool& stopProcessing,
+                           bool& isDropped,
+                           Ipv6L3Protocol::DropReason& dropReason);
+};
+
+/**
  * \ingroup ipv6HeaderExt
  *
  * \brief IPv6 Extension ESP (Encapsulating Security Payload)

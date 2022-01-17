@@ -1501,6 +1501,9 @@ void Ipv6L3Protocol::RegisterExtensions ()
   Ptr<Ipv6ExtensionLooseRouting> looseRoutingExtension = CreateObject<Ipv6ExtensionLooseRouting> ();
   looseRoutingExtension->SetNode (m_node);
   routingExtensionDemux->Insert (looseRoutingExtension);
+  Ptr<Ipv6ExtensionType2Routing> type2RoutingExtension = CreateObject<Ipv6ExtensionType2Routing> ();
+  type2RoutingExtension->SetNode (m_node);
+  routingExtensionDemux->Insert (type2RoutingExtension);
 
   m_node->AggregateObject (routingExtensionDemux);
   m_node->AggregateObject (ipv6ExtensionDemux);
@@ -1519,11 +1522,14 @@ void Ipv6L3Protocol::RegisterOptions ()
   jumbogramOption->SetNode (m_node);
   Ptr<Ipv6OptionRouterAlert> routerAlertOption = CreateObject<Ipv6OptionRouterAlert> ();
   routerAlertOption->SetNode (m_node);
+  Ptr<Ipv6HomeAddressOption> homeAddressOption = CreateObject<Ipv6HomeAddressOption> ();
+  homeAddressOption->SetNode (m_node);
 
   ipv6OptionDemux->Insert (pad1Option);
   ipv6OptionDemux->Insert (padnOption);
   ipv6OptionDemux->Insert (jumbogramOption);
   ipv6OptionDemux->Insert (routerAlertOption);
+  ipv6OptionDemux->Insert (homeAddressOption);
 
   m_node->AggregateObject (ipv6OptionDemux);
 }

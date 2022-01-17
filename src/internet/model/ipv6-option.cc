@@ -235,5 +235,47 @@ uint8_t Ipv6OptionRouterAlert::Process (Ptr<Packet> packet, uint8_t offset, Ipv6
   return routerAlertHeader.GetSerializedSize ();
 }
 
+NS_OBJECT_ENSURE_REGISTERED (Ipv6HomeAddressOption);
+
+TypeId Ipv6HomeAddressOption::GetTypeId ()
+{
+  static TypeId tid = TypeId ("ns3::Ipv6HomeAddressOption")
+    .SetParent<Ipv6Option> ()
+    .SetGroupName ("Internet")
+    .AddConstructor<Ipv6HomeAddressOption> ()
+  ;
+  return tid;
+}
+
+Ipv6HomeAddressOption::Ipv6HomeAddressOption ()
+{
+}
+
+Ipv6HomeAddressOption::~Ipv6HomeAddressOption ()
+{
+}
+
+uint8_t Ipv6HomeAddressOption::GetOptionNumber () const
+{
+  NS_LOG_FUNCTION (this);
+
+  return OPT_NUMBER;
+}
+
+uint8_t Ipv6HomeAddressOption::Process (Ptr<Packet> packet, uint8_t offset, Ipv6Header const& ipv6Header, bool& isDropped)
+{
+  NS_LOG_FUNCTION (this << packet << offset << ipv6Header << isDropped);
+
+  Ptr<Packet> p = packet->Copy ();
+  p->RemoveAtStart (offset);
+
+  Ipv6HomeAddressOptionHeader homeAddressHeader;
+  p->RemoveHeader (homeAddressHeader);
+
+  isDropped = false;
+
+  return homeAddressHeader.GetSerializedSize ();
+}
+
 } /* namespace ns3 */
 
