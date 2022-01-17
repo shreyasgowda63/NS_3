@@ -530,5 +530,11 @@ UdpL4Protocol::GetDownTarget6 (void) const
   return m_downTarget6;
 }
 
+void UdpL4Protocol::SetMipv6Callback (Callback<Ipv6Address> cb)
+{
+  NS_LOG_FUNCTION (this);
+  m_mipv6callback = cb;
+}
+
 } // namespace ns3
 

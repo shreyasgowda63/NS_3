@@ -380,6 +380,72 @@ public:
    */
   int64_t AssignStreams (int64_t stream);
 
+  /**
+   * \brief Callback signature for new IPv6 address configuration event.
+   */
+  Callback<void, Ipv6Address> m_newIPCallback;
+
+  /**
+   * \brief Set Callback for new IPv6 address configuration event triggering.
+   * \param newIP callback to be used
+   */
+  void SetNewIPCallback (Callback<void, Ipv6Address> newIP);
+
+  /**
+   * \brief Callback signature currently not used.
+   */
+  Callback<bool, Ipv6Address, Ipv6Address> m_CheckAddressCallback;
+
+  /**
+   * \brief Set Callback for DAD to check if src is mobile node
+   * \param checkadr callback to be used
+   */
+  void SetCheckAddressCallback (Callback<bool, Ipv6Address, Ipv6Address> checkadr);
+
+  /**
+   * \brief Callback signature for DAD failure indication at home agent while 
+   * configuring address on behalf of mobile node.
+  */
+  Callback<void, Ipv6Address> m_DADCallback;
+
+  /**
+   * \brief Set Callback for new DAD failure indication triggering.
+   * \param dad callback to be used
+   */
+  void SetDADCallback (Callback<void, Ipv6Address> dad);
+
+  /**
+   * \brief Callback signature for checking whether the address is assigned to any mobile node
+   * which is currently detached from its home network.
+   */
+  Callback<bool, Ipv6Address> m_NSCallback;
+
+  /**
+   * \brief Set Callback for home address checking of an off-link mobile node.
+   * \param ns callback to be used
+   */
+  void SetNSCallback (Callback<bool, Ipv6Address> ns);
+
+  /**
+   * \brief Callback signature for hand over the task of handling NS to a home agent on behalf of
+   * some mobile nodes which are currently off-link and if the target address is matched the
+   * address which that hime agent is protecting.
+   */
+  Callback<void, Ptr<Packet>, Ptr<Ipv6Interface>, Ipv6Address, Ipv6Address> m_HandleNSCallback;
+
+  /**
+   * \brief Set Callback for handling NS on behalf of offlink mobile nodes.
+   * \param handlens callback to be used
+   */
+  void SetHandleNSCallback (Callback<void, Ptr<Packet>, Ptr<Ipv6Interface>, Ipv6Address, Ipv6Address> handlens);
+
+  /**
+   * \brief Get the Cache.
+   * \param device the netdevice associated
+   * \return a neighbor cache
+   */
+  Ptr<NdiscCache> GetCache (Ptr<NetDevice> device);
+
 protected:
   /**
    * \brief Dispose this object.

@@ -1557,6 +1557,40 @@ Icmpv6L4Protocol::GetDelayFirstProbe () const
   return m_delayFirstProbe;
 }
 
+void Icmpv6L4Protocol::SetNewIPCallback (Callback<void, Ipv6Address> newIP)
+{
+  NS_LOG_FUNCTION (this);
+  m_newIPCallback = newIP;
+}
+
+void Icmpv6L4Protocol::SetCheckAddressCallback (Callback<bool, Ipv6Address, Ipv6Address> checkadr)
+{
+  NS_LOG_FUNCTION (this);
+  m_CheckAddressCallback = checkadr;
+}
+
+void Icmpv6L4Protocol::SetDADCallback (Callback<void, Ipv6Address> dad)
+{
+  NS_LOG_FUNCTION (this);
+  m_DADCallback = dad;
+}
+
+void Icmpv6L4Protocol::SetNSCallback (Callback<bool, Ipv6Address> ns)
+{
+  NS_LOG_FUNCTION (this);
+  m_NSCallback = ns;
+}
+
+void Icmpv6L4Protocol::SetHandleNSCallback (Callback<void, Ptr<Packet>, Ptr<Ipv6Interface>, Ipv6Address, Ipv6Address> handlens)
+{
+  NS_LOG_FUNCTION (this);
+  m_HandleNSCallback = handlens;
+}
+
+Ptr<NdiscCache> Icmpv6L4Protocol::GetCache (Ptr<NetDevice> device)
+{
+  return FindCache (device);
+}
 
 } /* namespace ns3 */
 
