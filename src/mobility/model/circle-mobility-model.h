@@ -44,7 +44,7 @@ namespace ns3 {
  * or group of nodes, that can be only done through a custom SetAttributes method of the model.
  * 
  * The implementation of this model is not 2d-specific. i.e. if you provide
- * z value greater than 0, then you may use it in 3d scenarios
+ * z-value greater than 0, then you may use it in 3d scenarios
  * It is possible to use this model as  child in a hierarchical/group mobility 
  * and create more practical 3d mobility scenarios
  * 
@@ -96,7 +96,7 @@ namespace ns3 {
  * In this, all the nodes will start the movement at position with respect to different 
  * origins derived from the default random value of radius, start angle 
  * and will have random speed and direction.
- * So, all the nodes will circulate in different circular planes perpendicular to the z axis
+ * So, all the nodes will circulate in different circular planes perpendicular to the z-axis
  * \code
     MobilityHelper mobility;
     mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
@@ -108,7 +108,7 @@ namespace ns3 {
  * In this, all the nodes will start the movement with respect to different 
  * origins derived from the user provided range of random value of radius, start angle 
  * and will have random speed and direction.
- * So, all the nodes will circulate in different circular x-y planes perpendicular to the z axis
+ * So, all the nodes will circulate in different circular x-y planes perpendicular to the z-axis
  * \code
     MobilityHelper mobility;
     mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
@@ -193,7 +193,12 @@ private:
   virtual Vector DoGetPosition (void) const;
   virtual void DoSetPosition (const Vector &nitOrigin);
   virtual Vector DoGetVelocity (void) const;
-  virtual void DoInitialize (void);
+
+  /**
+   * @brief Initializes the parameters of the circle mobility model
+   * 
+   */
+  void InitializePrivate(void);
 
   mutable Time m_lastUpdate; //!< the  last upsate time
 

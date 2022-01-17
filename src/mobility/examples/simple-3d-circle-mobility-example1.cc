@@ -157,7 +157,7 @@ main (int argc, char *argv[])
 {
   int NumOfUAVs = 5;
   int example = 1;
-  bool useHelper;
+  bool useHelper=false;
   CommandLine cmd;
   cmd.AddValue("NumOfUAVs", "Number of UAVs to Simulate", NumOfUAVs);
   cmd.AddValue("example", "Number of example scenario to Simulate", example);
