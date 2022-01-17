@@ -45,7 +45,7 @@
 using namespace ns3;
 
 /**
- * \ingroup tests
+ * \ingroup system-tests-traced
  * 
  * TracedCallback Testcase.
  * 
@@ -89,8 +89,10 @@ private:
 namespace {
 
 /** 
- * \ingroup tests
+ * \ingroup system-tests-traced
+ * 
  * Record typedefs which are identical to previously declared.
+ * \return a container of strings representing the duplicates.
  */
 std::set<std::string>
 Duplicates (void)
@@ -107,14 +109,16 @@ Duplicates (void)
 }
 
 /**
- * \ingroup tests
+ * \ingroup system-tests-traced
+ * 
  * Container for duplicate types.
  */
 std::set<std::string> g_dupes = Duplicates ();
 
 
 /**
- * \ingroup tests
+ * \ingroup system-tests-traced
+ * 
  * Stringify the known TracedCallback type names.
  *
  * \tparam T \explicit The typedef name.
@@ -139,7 +143,8 @@ std::string TypeName (int N)
   }
 
 /**
- * \ingroup tests
+ * \ingroup system-tests-traced
+ * 
  * \name Stringify known typename.
 */
 /**
@@ -206,7 +211,7 @@ TYPENAME (WifiRemoteStationManager::RateChangeTracedCallback);
 
 
 /**
- * \ingroup tests
+ * \ingroup system-tests-traced
  * 
  * Log that a callback was invoked.
  *
@@ -222,6 +227,8 @@ void SinkIt (unsigned int N)
 }
 
 /**
+ * \ingroup system-tests-traced
+ * 
  * Sink functions.
  */
 template <typename... Ts>
@@ -508,7 +515,7 @@ TracedCallbackTypedefTestCase::DoRun (void)
 }
 
 /**
- * \ingroup tests
+ * \ingroup system-tests-traced
  *
  * \brief TracedCallback typedef TestSuite
  */

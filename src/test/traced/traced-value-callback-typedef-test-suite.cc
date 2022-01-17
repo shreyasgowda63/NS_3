@@ -27,7 +27,8 @@ using namespace ns3;
 namespace {
 
 /**
- * \ingroup tests
+ * \ingroup system-tests-traced
+ * 
  * \name Stringify the known TracedValue type names.
  */
 /**
@@ -54,7 +55,7 @@ template <> inline std::string TypeName <SequenceNumber32> (void) { return "Sequ
 
 
 /**
- * \ingroup tests
+ * \ingroup system-tests-traced
  * 
  * Result of callback test.
  *
@@ -68,6 +69,8 @@ std::string g_Result = "";
   
 
 /**
+ * \ingroup system-tests-traced
+ * 
  * Template for TracedValue sink functions.
  *
  * This generates a sink function for any underlying type.
@@ -93,7 +96,11 @@ void TracedValueCbSink (T oldValue, T newValue)
 }  // TracedValueCbSink<>()
   
 /**
+ * \ingroup system-tests-traced
+ * 
  * TracedValueCbSink specialization for Time.
+ * \param oldValue The old value,
+ * \param newValue The new value.
  */
 template <>
 void TracedValueCbSink<Time> (Time oldValue, Time newValue)
@@ -102,7 +109,11 @@ void TracedValueCbSink<Time> (Time oldValue, Time newValue)
                                newValue.GetInteger ());
 }
 /**
+ * \ingroup system-tests-traced
+ * 
  * TracedValueCbSink specialization for SequenceNumber32.
+ * \param oldValue The old value,
+ * \param newValue The new value.
  */
 template <>  
 void TracedValueCbSink<SequenceNumber32> (SequenceNumber32 oldValue,
@@ -116,7 +127,7 @@ void TracedValueCbSink<SequenceNumber32> (SequenceNumber32 oldValue,
 
 
 /**
- * \ingroup tests
+ * \ingroup system-tests-traced
  *
  * \brief TracedValueCallback Test Case
  */
@@ -243,7 +254,7 @@ TracedValueCallbackTestCase::DoRun (void)
 }
 
 /**
- * \ingroup tests
+ * \ingroup system-tests-traced
  *
  * \brief TracedValueCallback TestSuite
  */
