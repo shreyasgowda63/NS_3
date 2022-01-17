@@ -34,11 +34,10 @@ namespace ns3 {
  * \ingroup mobility
  * \brief 3D Circle mobility model.
  *
- * The movement of the object will be controlled by parameters 
- * Origin, Radius, StartAngle, Speed and Direction
+ * The movement of the object will be controlled by parameters Origin, Radius, StartAngle, Speed and Direction
  * This mobility model enforces no bounding box by itself. 
  * 
- * The the mobility model parameters/attributes can be set during initialization of the mobility Model
+ * The mobility model parameters/attributes can be set during initialization of the mobility Model
  * 
  * Even after initialization, if the user want to change the Mobility Parameter of one particular node,
  * or group of nodes, that can be only done through a custom SetAttributes method of the model.

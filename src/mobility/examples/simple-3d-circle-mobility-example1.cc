@@ -23,13 +23,25 @@
  * \brief 3D Circle mobility model example.
  * 
  * This Example "Simple3DCircleMobilityExample1.cc" will generate a 5 UAV node topology and simulate CircleMobilityModel in them.
- * This simulation will create a NetAnim Trace file as an output.
+ * This simulation will create a NetAnim Trace file as an output. 
+ * The name of the NetAnim trace file will depend on the selected example scenario.
  * 
- * The movement of the object will be controlled by parameters 
- * Origin, Radius, StartAngle, Speed and Direction
+ * You can run the example script as follows:
+ * 
+ * $./waf "simple-3d-circle-mobility-example1 --example=7"
+ * 
+ * This will run the simulation for the 7th example scenario presented below.
+ * 
+ * This simulation and will create the file 'Simple3DCircleMobilityExample-7.xml'
+ * We can visualize the scenario using NetAnim using this xml file.
+ * 
+ * 
+ * General Description:
+ * 
+ * The movement of the object will be controlled by parameters Origin, Radius, StartAngle, Speed and Direction
  * This mobility model enforces no bounding box by itself. 
  * 
- * The the mobility model parameters/attributes can be set during initialization of the mobility model
+ * The mobility model parameters/attributes can be set during initialization of the mobility model
  * 
  *  During initialization itself, we can configure different  Mobility Parameter.
  * 

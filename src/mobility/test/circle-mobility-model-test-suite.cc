@@ -33,40 +33,51 @@
 #include "ns3/double.h"
 #include "ns3/config.h"
 
+
+#include "ns3/core-module.h"
+#include <ns3/mobility-module.h>
+
+
 // Do not put your test classes in namespace ns3.  You may find it useful
 // to use the using directive to access the ns3 namespace directly
 using namespace ns3;
 
+
+////////////////////////// Simple Mobility Test /////////////////////////
+
 /**
-* CircleMobilityModelTestCase1 will be used to test the CircleMobilityModel
+* CircleMobilityModelTestCaseSimple will be used to test the CircleMobilityModel
 *
 *
 * @section DESCRIPTION
 *
-* The CircleMobilityModelTestCase1 inherited from TestCase.
+* The CircleMobilityModelTestCaseSimple inherited from TestCase.
 */
-class CircleMobilityModelTestCase1 : public TestCase
+class CircleMobilityModelTestCaseSimple : public TestCase
 {
 public:
-  CircleMobilityModelTestCase1 ();
-  virtual ~CircleMobilityModelTestCase1 ();
+  CircleMobilityModelTestCaseSimple ()
+      : TestCase ("circlemobilitymodel movement over time test"){}
+  virtual ~CircleMobilityModelTestCaseSimple ();
 
 private:
   std::vector<Ptr<MobilityModel> > mobilityStack; ///< modility model
   double count; ///< count
   virtual void DoRun (void);
+  virtual void DoTeardown (void);
   void DistXCompare (double);
 };
 
-// Add some help text to this case to describe what it is intended to test
-CircleMobilityModelTestCase1::CircleMobilityModelTestCase1 ()
-  : TestCase ("circlemobilitymodel test case (does nothing)")
+void
+CircleMobilityModelTestCaseSimple::DoTeardown (void)
 {
+  mobilityStack.clear();
 }
+
 
 // This destructor does nothing but we include it as a reminder that
 // the test case should clean up after itself
-CircleMobilityModelTestCase1::~CircleMobilityModelTestCase1 ()
+CircleMobilityModelTestCaseSimple::~CircleMobilityModelTestCaseSimple ()
 {
 }
 
@@ -80,8 +91,9 @@ CircleMobilityModelTestCase1::~CircleMobilityModelTestCase1 ()
 // Of course, since PI is irrational, we need to check these x-coordinates with some tolerance value.
 
 //
+
 void
-CircleMobilityModelTestCase1::DoRun (void)
+CircleMobilityModelTestCaseSimple::DoRun (void)
 {
   SeedManager::SetSeed (123);
 
@@ -111,15 +123,15 @@ CircleMobilityModelTestCase1::DoRun (void)
       Simulator::Schedule (Seconds (0.0), &Object::Initialize, model);
     } 
 
-  Simulator::Schedule (Seconds (0.5), &CircleMobilityModelTestCase1::DistXCompare, this,(double) -1);
-  Simulator::Schedule (Seconds (1.0), &CircleMobilityModelTestCase1::DistXCompare, this,(double) 1); 
+  Simulator::Schedule (Seconds (0.5), &CircleMobilityModelTestCaseSimple::DistXCompare, this,(double) -1);
+  Simulator::Schedule (Seconds (1.0), &CircleMobilityModelTestCaseSimple::DistXCompare, this,(double) 1); 
   Simulator::Stop (Seconds (totalTime));
   Simulator::Run ();
   Simulator::Destroy ();
 }
 
 /**
-* CircleMobilityModelTestCase1::DistXCompare will be used to compare the movements of the mobility model
+* CircleMobilityModelTestCaseSimple::DistXCompare will be used to compare the movements of the mobility model
 * at a particular time with the calculated values
 *
  * \ingroup mobility-test
@@ -128,7 +140,7 @@ CircleMobilityModelTestCase1::DoRun (void)
  * \brief DistXCompare will copare the x-displacement of a node provided by the mobility model with the calculated values 
  */
 void
-CircleMobilityModelTestCase1::DistXCompare (double par)
+CircleMobilityModelTestCaseSimple::DistXCompare (double par)
 {
   double sum_x = 0;
   Vector vv;
@@ -142,8 +154,103 @@ CircleMobilityModelTestCase1::DistXCompare (double par)
     }
   double mean_x = sum_x / count;
 
-  NS_TEST_ASSERT_MSG_EQ_TOL (mean_x, par, 0.1, "Numbers are not equal within tolerance");
+  NS_TEST_ASSERT_MSG_EQ_TOL (mean_x, par, 0.1, "Distances are not equal within tolerance");
 }
+
+////////////////////////// Groupu Mobility Test /////////////////////////
+
+/**
+* CircleMobilityModelTestCaseGroup will be used to test the CircleMobilityModel
+*
+*
+* @section DESCRIPTION
+*
+* The CircleMobilityModelTestCaseGroup inherited from TestCase.
+*/
+class CircleMobilityModelTestCaseGroup : public TestCase
+{
+public:
+  CircleMobilityModelTestCaseGroup ()
+      : TestCase ("circlemobilitymodel movement over time test"){}
+  virtual ~CircleMobilityModelTestCaseGroup ();
+
+private:
+  std::vector<Ptr<MobilityModel> > mobilityStack; ///< modility model
+  double count; ///< count
+  virtual void DoRun (void);
+  void DistXCompare (double,double);
+};
+
+
+// This destructor does nothing but we include it as a reminder that
+// the test case should clean up after itself
+CircleMobilityModelTestCaseGroup::~CircleMobilityModelTestCaseGroup ()
+{
+}
+
+void CircleMobilityModelTestCaseGroup::DistXCompare (double va1,double val2)
+{
+  NS_TEST_ASSERT_MSG_EQ_TOL (va1, val2, 0.1, "Distances are not equal within tolerance");
+}
+//
+// This method is the pure virtual method from class TestCase that every
+// TestCase must implement
+// Tom recommended to define a few test cases once it is decided what parameters can be changed at runtime.  
+// An obviously simple initial test would be to check the case in which there are no runtime parameter changes, 
+// and then consider the origin to be 0,0,0, radius to be 1, and speed to be 2*pi m/s, and initial angle to be 0, 
+// and then check the position at time 0.5 second (should be -1, 0, 0) and 1 second (should be 1, 0, 0).  
+// Of course, since PI is irrational, we need to check these x-coordinates with some tolerance value.
+
+//
+void
+CircleMobilityModelTestCaseGroup::DoRun (void)
+{
+  SeedManager::SetSeed (123);
+  // Total simulation time, seconds
+  double totalTime = 100;
+  NodeContainer n;
+  n.Create (1);
+  double speed = 2.0*(22.0/7.0);
+  Ptr<WaypointMobilityModel> waypointMm = CreateObject<WaypointMobilityModel> ();
+  waypointMm->AddWaypoint (Waypoint (Seconds (0), Vector (0, 0, 0)));
+  waypointMm->AddWaypoint (Waypoint (Seconds (1), Vector (1, 0, 0)));
+
+  Ptr<HierarchicalMobilityModel> hierarchical0 = CreateObject<HierarchicalMobilityModel> ();
+  hierarchical0->SetParent (waypointMm);
+  Ptr<CircleMobilityModel> childCircleMobilityModel = CreateObject<CircleMobilityModel> ();
+  childCircleMobilityModel->SetAttribute ("UseConfiguredOrigin", BooleanValue (true));
+  childCircleMobilityModel->SetAttribute ("MinOrigin", Vector3DValue (Vector3D (0, 0, 0)));
+  childCircleMobilityModel->SetAttribute ( "MaxOrigin", Vector3DValue (Vector3D (0, 0, 0)));
+  childCircleMobilityModel->SetAttribute ("MinMaxRadius", Vector2DValue (Vector2D (1,1)));
+  childCircleMobilityModel->SetAttribute ("MinMaxStartAngle", Vector2DValue (Vector2D (0, 0)));
+  childCircleMobilityModel->SetAttribute ("MinMaxSpeed", Vector2DValue (Vector2D (speed,speed)));
+  childCircleMobilityModel->SetAttribute ("RandomizeDirection", BooleanValue (false));
+  childCircleMobilityModel->SetAttribute ("Clockwise", BooleanValue (false));
+
+  hierarchical0->SetChild (childCircleMobilityModel);
+  n.Get (0)->AggregateObject (hierarchical0);
+
+  
+  // n.Get (0)->GetObject<CircleMobilityModel> ()->GetPosition().x; //CRASH
+  // hierarchical0->GetPosition().x // works but giving movement of the parent only
+  // childCircleMobilityModel->GetPosition().x; // works but giving movement of the child only
+
+  Simulator::Schedule (Seconds (1.0), &CircleMobilityModelTestCaseGroup::DistXCompare, this,(double) 2,(double) ( (double) childCircleMobilityModel->GetPosition().x + (double) childCircleMobilityModel->GetPosition().x)); 
+  Simulator::Stop (Seconds (totalTime));
+  Simulator::Run ();
+  Simulator::Destroy ();
+}
+
+/**
+* CircleMobilityModelTestCaseGroup::DistXCompare will be used to compare the movements of the mobility model
+* at a particular time with the calculated values
+*
+ * \ingroup mobility-test
+ * \ingroup tests
+ * @param par is the predicted displacement in x direction.
+ * \brief DistXCompare will copare the x-displacement of a node provided by the mobility model with the calculated values 
+ */
+
 /**
 * CircleMobilityModelTestSuite class is the TestSuite for CircleMobilityModel
 * and it enables the TestCases to be run.
@@ -156,7 +263,9 @@ struct CircleMobilityModelTestSuite : public TestSuite
 {
   CircleMobilityModelTestSuite () : TestSuite ("CircleMobilityModel", UNIT)
   {
-    AddTestCase (new CircleMobilityModelTestCase1, TestCase::QUICK);
+    AddTestCase (new CircleMobilityModelTestCaseSimple, TestCase::QUICK);
+
+    AddTestCase (new CircleMobilityModelTestCaseGroup, TestCase::QUICK);
   }
 } g_circleMobilityModelTestSuite; ///< the test suite
 
