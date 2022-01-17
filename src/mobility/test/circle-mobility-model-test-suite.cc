@@ -195,14 +195,14 @@ CircleMobilityModelTestCaseHierarchical::~CircleMobilityModelTestCaseHierarchica
 *
  * \ingroup mobility-test
  * \ingroup tests
- * @param va1 is the predicted displacement in x direction.
- * @param va2 is the actual displacement x direction.
+ * @param val1 is the predicted displacement in x direction.
+ * @param val2 is the actual displacement x direction.
  * \brief DistXCompare will copare the x-displacement of a node provided by the mobility model with the calculated values 
  */
 
-void CircleMobilityModelTestCaseHierarchical::DistXCompare (double va1,double val2)
+void CircleMobilityModelTestCaseHierarchical::DistXCompare (double val1,double val2)
 {
-  NS_TEST_ASSERT_MSG_EQ_TOL (va1, val2, 0.1, "Distances are not equal within tolerance");
+  NS_TEST_ASSERT_MSG_EQ_TOL (val1, val2, 0.1, "Distances are not equal within tolerance");
 }
 //
 // This method is the pure virtual method from class TestCase that every
@@ -241,8 +241,11 @@ CircleMobilityModelTestCaseHierarchical::DoRun (void)
 
   hierarchical0->SetChild (childCircleMobilityModel);
   n.Get (0)->AggregateObject (hierarchical0);
+ 
+  //n.Get (0)->GetObject<CircleMobilityModel> ()->SetParameters (Vector (0, 0, 0),1, 0, false, speed); 
+  //Ptr<CircleMobilityModel> model = n.Get (0)->GetObject<CircleMobilityModel> ();
 
-  
+  //model->GetPosition ();
   // n.Get (0)->GetObject<CircleMobilityModel> ()->GetPosition().x; //CRASH
   // hierarchical0->GetPosition().x // works but giving movement of the parent only
   // childCircleMobilityModel->GetPosition().x; // works but giving movement of the child only
