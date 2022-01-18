@@ -24,7 +24,12 @@
 
 #include "ns3/simulator.h"
 #include "mobility-model.h"
-#include <ns3/vector.h>
+#include "ns3/vector.h"
+#include "ns3/enum.h"
+#include "ns3/pointer.h"
+#include "ns3/string.h"
+#include "ns3/double.h"
+#include <ns3/boolean.h>
 #include <ns3/random-variable-stream.h>
 #include "constant-velocity-helper.h"
 
@@ -188,38 +193,118 @@ public:
   void SetParameters (const Vector &Origin, const double Radius, const double StartAngle,
                       const bool Clockwise, const double Speed);
 
+   /**
+   * @brief A function to set the radius
+   * @param radius is a radius of the circle in meters
+   */
+   void SetRadius(const double radius);
+   
+   /**
+   * @brief A function to get the radius
+   * \return a double value
+   */                  
+   double GetRadius () const;
+
+   /**
+   * @brief A function to set the origin of the circle
+   * @param origin is a Vector(x,y,z) - in meters
+   */
+   void SetOrigin(const Vector3D &origin);
+
+   /**
+   * @brief A function to get the origin
+   * \return pointer to Vector(x,y,z)
+   */    
+   const Vector3D & GetOrigin () const;
+
+
+   /**
+   * @brief A function to set the starting angle
+   * @param startAngle is a starting angle of the circle - in meters
+   */  
+   void SetStartAngle(const double startAngle);
+
+   /**
+   * @brief A function to get the starting angle
+   * \return a double value
+   */  
+   double GetStartAngle() const;
+
+   /**
+   * @brief A function to set the speed of the node
+   * @param speed is a moving speed of the   node - in meters/second
+   */  
+   void SetSpeed(const double speed);
+
+   /**
+   * @brief A function to get the speed of the node
+   * \return a double value 
+   */  
+   double GetSpeed() const;
+
+   /**
+   * @brief A function to set the direction of rotation of the node
+   * @param clockwise true sets it in clockwise; false sets it in anticlockwise
+   */  
+   void SetClockwise(const bool clockwise);
+
+   /**
+   * @brief A function to get the direction of rotation of the node
+   * \return a boolean value 
+   */     
+   bool GetClockwise() const;
+
+   enum model_mode {
+   // The mode affects how the model is initialized
+      INITIALIZE_RANDOM,
+      INITIALIZE_ATTRIBUTE
+   };
+
+//OriginConfigMode is a important parametre that will 
+//decided the way in which origin of the circle will be derived
+   enum origin_mode {
+   // An enum representing the different origin configuration modes
+      ORIGIN_FROM_ATTRIBUTE,
+      RADIUS_AWAY_FROM_POSITION,
+      POSITION_AS_ORIGIN
+   };
+
 private:
   virtual Vector DoGetPosition (void) const;
   virtual void DoSetPosition (const Vector &nitOrigin);
   virtual Vector DoGetVelocity (void) const;
-  
+  virtual void DoInitialize (void);
+  virtual int64_t DoAssignStreams (int64_t stream);
   /**
    * @brief Initializes the parameters of the circle mobility model
    * 
    */
   void InitializePrivate(void);
-
+   
+  enum model_mode m_mode; //!< this decids the way in which origin of the circle will be derived
+  enum origin_mode m_OriginConfigMode; //!< this decids the way in which origin of the circle will be derived
   mutable Time m_lastUpdate; //!< the  last upsate time
+  Vector3D m_position; //!< the position of the node/object
+  bool m_parametersInitialized=false; //!< to check whether the parameters are initialized or not
 
+//the five main parameters of the model
+  Vector m_origin; //!< the  origin of the circle
   double m_radius; //!< the  radius of the circle
   double m_startAngle; //!< the  start angle of the circle
   double m_speed; //!< the  speed of the object
-  bool m_clockwise; //!< the  direction of circular movement
-  bool m_randomizeDirection; //!< randomize the direction of circular movement
-  bool m_useConfiguredOrigin; //!< use the origins configured through attribute
-  bool
-      m_useInitialPositionAsOrigin; //!< Use the initial position of the node (provided by PositionAllocator) as origin
-  Vector m_origin=Vector3D(0,0,0); //!< the  origin of the circle
+  bool m_clockwise;       //!< The  direction of circular movement.
 
-  Vector2D m_radiusMinMax; //!< minimum and maximum range of radius
-  Vector2D m_startAngleMinMax; //!< minimum and maximum range of start angle
-  Vector2D m_speedMinMax; //!< minimum and maximum range of start speed
-  Vector3D m_position=Vector3D(0,0,0); //!< the position of the object
-  Vector3D m_originMin; //!< minimum range of origin
-  Vector3D m_originMax; //!< maximum range of origin
-  ConstantVelocityHelper m_helper;   //!< helper for velocity computations
-  bool m_parametersInitialized=false; //!< to check whether the parameters are initialized or not
-};
+
+//the parameters that will control the randomness in circular orbit creation
+  Ptr<RandomVariableStream> m_randomOriginX; //!< A random variable used to pick the origin y-axis coordinate (m).
+  Ptr<RandomVariableStream> m_randomOriginY; //!< A random variable used to pick the origin y-axis coordinate (m).
+  Ptr<RandomVariableStream> m_randomOriginZ; //!< A random variable used to pick the origin z-axis coordinate (m).
+  Ptr<RandomVariableStream> m_randomRadius;  //!< A random variable used to pick the radius (m).
+  Ptr<RandomVariableStream> m_randomStartAngle;//!< A random variable used to pick the start angle (degrees).
+  Ptr<RandomVariableStream> m_randomSpeed    ;//!< A random variable used to pick the speed (m/s).
+  //Ptr<RandomVariableStream> m_randomClockwise;//!< A random variable used to select clockwise (true) or counter-clockwise (false) direction. 
+
+ };
 
 } // namespace ns3
 
