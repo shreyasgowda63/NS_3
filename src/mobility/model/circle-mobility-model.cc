@@ -316,11 +316,11 @@ CircleMobilityModel::SetParameters (const Vector &Origin, const double Radius,
                                     const double StartAngle, const bool Clockwise,
                                     const double Speed)
 {
-  m_origin = Origin;
-  m_radius = Radius;
-  m_startAngle = StartAngle;
-  m_clockwise = Clockwise;
-  m_speed = Speed;
+  SetOrigin(Origin);
+  SetRadius(Radius);
+  SetStartAngle(StartAngle);
+  SetClockwise(Clockwise);
+  SetSpeed(Speed);
   NotifyCourseChange ();
 }
 
