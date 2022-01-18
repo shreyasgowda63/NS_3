@@ -56,7 +56,7 @@ CircleMobilityModel::GetTypeId (void)
                          MakeVectorChecker ())
 
          .AddAttribute ("Radius", "Radius (m) for circular motion",
-                         DoubleValue (0),
+                         DoubleValue (100),
                          MakeDoubleAccessor (&CircleMobilityModel::SetRadius,
                                              &CircleMobilityModel::GetRadius),
                          MakeDoubleChecker <double>(0))
@@ -66,7 +66,7 @@ CircleMobilityModel::GetTypeId (void)
                                              &CircleMobilityModel::GetStartAngle),
                          MakeDoubleChecker <double>(0, 360))
           .AddAttribute ("Speed", "Speed (m/s) for circular motion",
-                         DoubleValue (0),
+                         DoubleValue (10),
                          MakeDoubleAccessor (&CircleMobilityModel::SetSpeed,
                                              &CircleMobilityModel::GetSpeed),
                          MakeDoubleChecker<double> (0))
@@ -105,11 +105,17 @@ CircleMobilityModel::GetTypeId (void)
                          StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=100.0]"),
                          MakePointerAccessor (&CircleMobilityModel::m_randomSpeed),
                          MakePointerChecker<RandomVariableStream> ()) 
+          /*until the availability of BernoulliRandomVariable from Tom*/        
+          .AddAttribute ("RandomClockwise",
+                         "A random variable used to select clockwise (true) or counter-clockwise (false) direction.",
+                         StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=1]]"),
+                         MakePointerAccessor (&CircleMobilityModel::m_randomClockwise),
+                         MakePointerChecker<RandomVariableStream> ()  )                       
   /*       .AddAttribute ("RandomClockwise",
                          "A random variable used to select clockwise (true) or counter-clockwise (false) direction. " 
                          StringValue ("ns3::BernoulliRandomVariable[Mean=0.5]"),
                          MakePointerAccessor (&CircleMobilityModel::m_randomClockwise),
-                         MakePointerChecker<BernoulliRandomVariable> ());*/
+                         MakePointerChecker<BernoulliRandomVariable> ())*/
       ;
   return tid;
 }
@@ -124,7 +130,7 @@ CircleMobilityModel::DoAssignStreams (int64_t stream)
   m_randomStartAngle->SetStream (stream + 4);
   m_randomSpeed->SetStream (stream + 5);
   m_randomRadius->SetStream (stream + 6);
-  //m_randomClockwise->SetStream (stream + 3);
+  m_randomClockwise->SetStream (stream + 7);
   return 4;
 }
 
@@ -165,7 +171,7 @@ CircleMobilityModel::SetStartAngle(const double startAngle)
 {
   NS_LOG_FUNCTION (this << startAngle);  
   //NS_LOG_DEBUG ("value error");
-  NS_ASSERT ((startAngle < 0||startAngle >360));
+  NS_ASSERT ((startAngle >= 0||startAngle <=360));
   m_startAngle = startAngle;
 }
 
@@ -181,7 +187,7 @@ CircleMobilityModel::SetSpeed(const double speed)
 {
   NS_LOG_FUNCTION (this << speed);  
   //NS_LOG_DEBUG ("value error");
-  NS_ASSERT (speed < 0);
+  NS_ASSERT (speed > 0);
   m_speed = speed;
 }
 
@@ -231,7 +237,7 @@ CircleMobilityModel::InitializePrivate(void)
     SetStartAngle(m_randomStartAngle->GetValue ());
     SetSpeed(m_randomSpeed->GetValue ());
     SetRadius(m_randomRadius->GetValue ());
-    //SetClockwise(m_randomClockwise->GetValue()); //completed after the MR of BernoulliRandomVariable
+    SetClockwise(m_randomClockwise->GetValue()>0.5?true:false); //completed after the MR of BernoulliRandomVariable
    break;
  case INITIALIZE_ATTRIBUTE:
    /* In this case the value may be already set by setters*/
