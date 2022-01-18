@@ -393,23 +393,32 @@ echo "Net result of all filters:"
 
 verbose -n "Filtering the doxygen log"
 
+filter_log_results=$(filter_log)
+echo "filter_log_results is \"$filter_log_results\""
+
 # List of module directories (e.g, "src/core/model")
-undocmods=$(                \
-    filter_log            | \
-    cut -d ':' -f 1       | \
-    sed "s|$ROOT/||g"     | \
-    cut -d '/' -f 1-3     | \
-    sort                  | \
-    uniq -c               | \
-    sort -nr                \
-    )
+if [ ! -z "$filter_log_results" ]
+then
+    undocmods=$(                \
+        filter_log            | \
+        cut -d ':' -f 1       | \
+        sed "s|$ROOT/||g"     | \
+        cut -d '/' -f 1-3     | \
+        sort                  | \
+        uniq -c               | \
+        sort -nr                \
+        )
+fi
 
 # Number of directories
-modcount=$(                         \
-    echo "$undocmods"             | \
-    wc -l                         | \
-    sed 's/^[ \t]*//;s/[ \t]*$//'   \
-    )
+if [ ! -z "$undocmods" ]
+then 
+    modcount=$(                         \
+        echo "$undocmods"             | \
+        wc -l                         | \
+        sed 's/^[ \t]*//;s/[ \t]*$//'   \
+        )
+fi
 
 # For a function with multiple undocumented parameters,
 # Doxygen prints the additional parameters on separate lines,
@@ -430,25 +439,31 @@ warncount=$(                                  \
 warncount=$((warncount + addlparam))
 
 # List of files appearing in the log
-undocfiles=$(               \
-    filter_log            | \
-    cut -d ':' -f 1       | \
-    sed "s|$ROOT||g"      | \
-    cut -d '/' -f 2-      | \
-    sort                  | \
-    uniq -c               | \
-    sort -k 2               \
-    )
+if [ ! -z "$filter_log_results" ]
+then
+    undocfiles=$(               \
+        filter_log            | \
+        cut -d ':' -f 1       | \
+        sed "s|$ROOT||g"      | \
+        cut -d '/' -f 2-      | \
+        sort                  | \
+        uniq -c               | \
+        sort -k 2               \
+        )
+fi
 
 # Sorted by number, decreasing
 undocsort=$(echo "$undocfiles" | sort -k1nr,2 )
 
 # Total number of files
-filecount=$(                        \
-    echo "$undocfiles"            | \
-    wc -l                         | \
-    sed 's/^[ \t]*//;s/[ \t]*$//'   \
-    )
+if [ ! -z "$undocfiles" ]
+then
+    filecount=$(                        \
+        echo "$undocfiles"            | \
+        wc -l                         | \
+        sed 's/^[ \t]*//;s/[ \t]*$//'   \
+        )
+fi
 
 # Filtered in warnings
 filterin=
@@ -530,8 +545,8 @@ if [ "$filterin" != "" ] ; then
     echo "========================================"
     echo "$filterin"
     exit_status=1
-else
-    exit_status=0
+# else
+#     exit_status=0
 fi
 
 status_report 0 $me
