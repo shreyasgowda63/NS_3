@@ -251,8 +251,15 @@ CircleMobilityModel::InitializePrivate(void)
   {
   case ORIGIN_FROM_ATTRIBUTE:
         //set origin randomly according to default or selected /randomly selected range
-      m_origin=Vector(m_randomOriginX->GetValue (),m_randomOriginY->GetValue (),m_randomOriginZ->GetValue ());
-    break;
+        switch (m_mode)
+        {
+        case INITIALIZE_RANDOM:
+            m_origin=Vector(m_randomOriginX->GetValue (),m_randomOriginY->GetValue (),m_randomOriginZ->GetValue ());
+            break;
+        case INITIALIZE_ATTRIBUTE:
+              //already set by setters
+            break;
+        }
 
   case RADIUS_AWAY_FROM_POSITION:
       // Set Origin of the Circle According to the initial position of the object passed by PositionAllocator or user
@@ -310,24 +317,6 @@ CircleMobilityModel::DoSetPosition (const Vector &position)
   //this will not have impact if UseConfiguredOrigin=true
   m_position=position;
   InitializePrivate();
-}
-
-
-/**
- * @brief In the function SetParameters, the variables are set.
- * 
- */
-void
-CircleMobilityModel::SetParameters (const Vector &Origin, const double Radius,
-                                    const double StartAngle, const bool Clockwise,
-                                    const double Speed)
-{
-  SetOrigin(Origin);
-  SetRadius(Radius);
-  SetStartAngle(StartAngle);
-  SetClockwise(Clockwise);
-  SetSpeed(Speed);
-  NotifyCourseChange ();
 }
 
 /*

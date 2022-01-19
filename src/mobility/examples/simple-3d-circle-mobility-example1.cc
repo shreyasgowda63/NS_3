@@ -211,29 +211,27 @@ main (int argc, char *argv[])
 
     case 3:
       mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
+                          "Mode", EnumValue (CircleMobilityModel::INITIALIZE_ATTRIBUTE),
                           "OriginConfigMode", EnumValue (CircleMobilityModel::ORIGIN_FROM_ATTRIBUTE));
       mobility.Install (UAVs);
       break;
     case 4:
       mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
-                          "OriginConfigMode", EnumValue (CircleMobilityModel::ORIGIN_FROM_ATTRIBUTE));
+                          "OriginConfigMode", EnumValue (CircleMobilityModel::ORIGIN_FROM_ATTRIBUTE),
+                          "Origin", VectorValue (Vector (1500, 1500, 1500)));
 
-      // mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
-      //     "UseConfiguredOrigin", BooleanValue (true), 
-      //     "MinOrigin", Vector3DValue (Vector3D (0, 0, 0)), "MaxOrigin", Vector3DValue (Vector3D (500, 500, 500)),
-      //     "MinMaxRadius", Vector2DValue (Vector2D (500, 500)), 
-      //     "MinMaxStartAngle", Vector2DValue (Vector2D (0, 0)), 
-      //     "MinMaxSpeed", Vector2DValue (Vector2D (30, 60)),
-      //     "RandomizeDirection", BooleanValue (false), 
-      //     "Clockwise", BooleanValue (true));
 
       mobility.Install (UAVs);
       break;
     case 5:
       mobility.SetMobilityModel ("ns3::CircleMobilityModel");
       mobility.Install (UAVs);
-      UAVs.Get (0)->GetObject<CircleMobilityModel> ()->SetParameters (Vector (1500, 1500, 1500),
-                                                                      200, 0, true, 20);     
+      UAVs.Get (0)->GetObject<CircleMobilityModel> ()->SetAttribute (
+                        "Origin", VectorValue (Vector (1800, 1800, 1800))); 
+      UAVs.Get (0)->GetObject<CircleMobilityModel> ()->SetAttribute (
+                        "Radius", DoubleValue (200));     
+                      
+                         
       break;
     case 6:
           mobility.SetMobilityModel ("ns3::CircleMobilityModel", 

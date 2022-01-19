@@ -176,22 +176,6 @@ public:
    * \return the object TypeId
    */
   static TypeId GetTypeId (void);
-  /**
-  * SetParameters function may be called by user after the initialization of the MobilityModel
-  * This will override the values set during the initialization of the MobilityModel
-  * This function can be called during the simulation whenever needed to 
-  * set the circle mobility models attributes of a particular node's MobilityModel  
-  * This will set the mobility model parameters/attributes 
-  *              Origin, Radius, StartAngle, Speed and Direction
-  *
-  * @param Origin is a Vector(x,y,z) - in meters
-  * @param Radius is a radius of the circle in meters
-  * @param StartAngle is starting angle from which the object starts to move - measured with reference to x axis in degrees
-  * @param Clockwise is a boolean that will decide the direction of the object on the circular path
-  * @param Speed is the moving speed of the object in meters
-  */
-  void SetParameters (const Vector &Origin, const double Radius, const double StartAngle,
-                      const bool Clockwise, const double Speed);
 
    /**
    * @brief A function to set the radius
@@ -302,7 +286,7 @@ private:
   Ptr<RandomVariableStream> m_randomRadius;  //!< A random variable used to pick the radius (m).
   Ptr<RandomVariableStream> m_randomStartAngle;//!< A random variable used to pick the start angle (degrees).
   Ptr<RandomVariableStream> m_randomSpeed    ;//!< A random variable used to pick the speed (m/s).
-  //Ptr<RandomVariableStream> m_randomClockwise;//!< A random variable used to select clockwise (true) or counter-clockwise (false) direction. 
+  Ptr<RandomVariableStream> m_randomClockwise;//!< A random variable used to select clockwise (true) or counter-clockwise (false) direction. 
 
  };
 
