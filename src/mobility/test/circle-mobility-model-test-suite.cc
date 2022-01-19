@@ -102,14 +102,14 @@ CircleMobilityModelTestCaseSimple::DoRun (void)
   double speed = 2.0*(22.0/7.0);
   ObjectFactory mobilityFactory;
   mobilityFactory.SetTypeId ("ns3::CircleMobilityModel");
-  mobilityFactory.Set ("UseConfiguredOrigin", BooleanValue (true));
-  mobilityFactory.Set ("MinOrigin", Vector3DValue (Vector3D (0, 0, 0)));
-  mobilityFactory.Set ("MaxOrigin", Vector3DValue (Vector3D (0, 0, 0)));
-  mobilityFactory.Set ("MinMaxRadius", Vector2DValue (Vector2D (1,1))); 
-  mobilityFactory.Set ("MinMaxStartAngle", Vector2DValue (Vector2D (0, 0))); 
-  mobilityFactory.Set ("MinMaxSpeed", Vector2DValue (Vector2D (speed,speed)));
-  mobilityFactory.Set ("RandomizeDirection", BooleanValue (false));
+  mobilityFactory.Set ("Mode", EnumValue (CircleMobilityModel::INITIALIZE_NONRANDOM));
+  mobilityFactory.Set ("OriginConfigMode", EnumValue (CircleMobilityModel::ORIGIN_FROM_ATTRIBUTE));
+  mobilityFactory.Set ("Origin", VectorValue (Vector (0, 0, 0))); 
+  mobilityFactory.Set ("Radius", DoubleValue (1)); 
+  mobilityFactory.Set ("StartAngle", DoubleValue (0));  
+  mobilityFactory.Set ("Speed", DoubleValue(speed));
   mobilityFactory.Set ("Clockwise", BooleanValue (false));
+
 
   // Populate the vector of mobility models.
   count = 10;
@@ -230,13 +230,12 @@ CircleMobilityModelTestCaseHierarchical::DoRun (void)
   Ptr<HierarchicalMobilityModel> hierarchical0 = CreateObject<HierarchicalMobilityModel> ();
   hierarchical0->SetParent (waypointMm);
   Ptr<CircleMobilityModel> childCircleMobilityModel = CreateObject<CircleMobilityModel> ();
-  childCircleMobilityModel->SetAttribute ("UseConfiguredOrigin", BooleanValue (true));
-  childCircleMobilityModel->SetAttribute ("MinOrigin", Vector3DValue (Vector3D (0, 0, 0)));
-  childCircleMobilityModel->SetAttribute ( "MaxOrigin", Vector3DValue (Vector3D (0, 0, 0)));
-  childCircleMobilityModel->SetAttribute ("MinMaxRadius", Vector2DValue (Vector2D (1,1)));
-  childCircleMobilityModel->SetAttribute ("MinMaxStartAngle", Vector2DValue (Vector2D (0, 0)));
-  childCircleMobilityModel->SetAttribute ("MinMaxSpeed", Vector2DValue (Vector2D (speed,speed)));
-  childCircleMobilityModel->SetAttribute ("RandomizeDirection", BooleanValue (false));
+  childCircleMobilityModel->SetAttribute  ("Mode", EnumValue (CircleMobilityModel::INITIALIZE_NONRANDOM));
+  childCircleMobilityModel->SetAttribute ("OriginConfigMode", EnumValue (CircleMobilityModel::ORIGIN_FROM_ATTRIBUTE));
+  childCircleMobilityModel->SetAttribute ("Origin", VectorValue (Vector (0, 0, 0))); 
+  childCircleMobilityModel->SetAttribute ("Radius", DoubleValue (1)); 
+  childCircleMobilityModel->SetAttribute ("StartAngle", DoubleValue (0));  
+  childCircleMobilityModel->SetAttribute ("Speed", DoubleValue(speed));
   childCircleMobilityModel->SetAttribute ("Clockwise", BooleanValue (false));
 
   hierarchical0->SetChild (childCircleMobilityModel);
@@ -279,7 +278,7 @@ struct CircleMobilityModelTestSuite : public TestSuite
   CircleMobilityModelTestSuite () : TestSuite ("CircleMobilityModel", UNIT)
   {
     AddTestCase (new CircleMobilityModelTestCaseSimple, TestCase::QUICK);
-
+     // Test Case for Hierarchical not yet finished
     AddTestCase (new CircleMobilityModelTestCaseHierarchical, TestCase::QUICK);
   }
 } g_circleMobilityModelTestSuite; ///< the test suite

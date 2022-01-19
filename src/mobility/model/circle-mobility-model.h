@@ -89,10 +89,10 @@ namespace ns3 {
  * \code
     MobilityHelper mobility;
     mobility.SetMobilityModel ("ns3::CircleMobilityModel");
-    mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
-                               "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
-                               "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
-                               "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
+    mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator", 
+          "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
+          "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
+          "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
     mobility.Install (UAVs);
  * \endcode
  *
@@ -104,7 +104,8 @@ namespace ns3 {
  * \code
     MobilityHelper mobility;
     mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
-                               "UseConfiguredOrigin",BooleanValue(true));
+                          "Mode", EnumValue (CircleMobilityModel::INITIALIZE_NONRANDOM),
+                          "OriginConfigMode", EnumValue (CircleMobilityModel::ORIGIN_FROM_ATTRIBUTE));
     mobility.Install (UAVs);
  * \endcode
  *
@@ -116,14 +117,13 @@ namespace ns3 {
  * \code
     MobilityHelper mobility;
     mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
-                               "UseConfiguredOrigin",BooleanValue(true),
-                               "MinOrigin",Vector3DValue(Vector3D(0,0,0)),"MaxOrigin",Vector3DValue(Vector3D(500,500,500)),
-                               "MinMaxRadius",Vector2DValue(Vector2D(500,500)),
-                               "MinMaxStartAngle",Vector2DValue(Vector2D(0,0)),
-                               "MinMaxSpeed",Vector2DValue(Vector2D(30,60)),
-                               "RandomizeDirection",BooleanValue(false),
-                               "Clockwise",BooleanValue(true)
-    mobility.Install (UAVs);
+                          "Mode", EnumValue (CircleMobilityModel::INITIALIZE_RANDOM),
+                          "OriginConfigMode",EnumValue (CircleMobilityModel::ORIGIN_FROM_ATTRIBUTE),
+                          "RandomOriginX", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=2000.0]"),
+                          "RandomOriginY", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=2000.0]"),
+                          "RandomOriginZ", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=1000.0]"),
+                          "Radius", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=500.0]"));
+   mobility.Install (UAVs);
  * \endcode
  * 
  * 
@@ -134,24 +134,25 @@ namespace ns3 {
  * using the CircleMobilityModel::SetParameters function at any time.
  * 
  * \code 
-   //void SetParameters(const Vector &Origin, const double Radius, const double StartAngle, const bool Clockwise, const double Speed);
-  
-   mobility.Get (0)->GetObject<CircleMobilityModel> ()->SetParameters(Vector (150, 150, 250), 150, 0, true, 20); 
- * \endcode
+    mobility.SetMobilityModel ("ns3::CircleMobilityModel");
+    mobility.Install (UAVs);
+    UAVs.Get (0)->GetObject<CircleMobilityModel> ()->SetAttribute (
+                        "Origin", VectorValue (Vector (1800, 1800, 1800))); 
+    UAVs.Get (0)->GetObject<CircleMobilityModel> ()->SetAttribute (
+                        "Radius", DoubleValue (200));               
+    break; * \endcode
  * 
  * Example 6:
  * If the user choose to use the initial position of the node (provided by PositionAllocator) as origin,
  * they can do it as follows:
  * \code 
-           mobility.SetMobilityModel ("ns3::CircleMobilityModel",
-                                    "UseInitialPositionAsOrigin", BooleanValue(true),
-                                    "MinMaxSpeed",Vector2DValue(Vector2D(10,10)),
-                                    "RandomizeDirection",BooleanValue(false),
-                                    "MinMaxRadius",Vector2DValue(Vector2D(300,300)));
-          mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
-                                    "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
-                                    "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
-                                    "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
+      mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
+                    "OriginConfigMode", EnumValue (CircleMobilityModel::POSITION_AS_ORIGIN));
+      mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator", 
+          "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
+          "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"), 
+          "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
+      mobility.Install (UAVs);
  * \endcode
  * 
  * Example 7:
@@ -164,7 +165,8 @@ namespace ns3 {
         waypointMm->AddWaypoint (Waypoint (Seconds (2000), Vector (0, 5000, 0)));
         GroupMobilityHelper group;
         group.SetReferenceMobilityModel (waypointMm);
-        group.SetMemberMobilityModel ("ns3::CircleMobilityModel","UseConfiguredOrigin",BooleanValue(true));
+        group.SetMemberMobilityModel ("ns3::CircleMobilityModel", 
+                                 "OriginConfigMode", EnumValue (CircleMobilityModel::ORIGIN_FROM_ATTRIBUTE));
         group.Install (UAVs);
  * \endcode
  */
@@ -241,7 +243,7 @@ public:
    enum model_mode {
    // The mode affects how the model is initialized
       INITIALIZE_RANDOM,
-      INITIALIZE_ATTRIBUTE
+      INITIALIZE_NONRANDOM
    };
 
 //OriginConfigMode is a important parametre that will 

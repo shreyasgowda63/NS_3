@@ -38,7 +38,7 @@ CircleMobilityModel::GetTypeId (void)
                          "The mode affects how the model is initialized",
                          EnumValue (CircleMobilityModel::INITIALIZE_RANDOM),
                          MakeEnumAccessor (&CircleMobilityModel::m_mode),
-                         MakeEnumChecker (CircleMobilityModel::INITIALIZE_ATTRIBUTE, "Attribute",
+                         MakeEnumChecker (CircleMobilityModel::INITIALIZE_NONRANDOM, "Attribute",
                                           CircleMobilityModel::INITIALIZE_RANDOM, "Random"))
 
           .AddAttribute ("OriginConfigMode",
@@ -50,7 +50,7 @@ CircleMobilityModel::GetTypeId (void)
                                           CircleMobilityModel::POSITION_AS_ORIGIN,"PAO"))
                                           
          .AddAttribute ("Origin", "Origin for circular motion",
-                         VectorValue (Vector (0, 0, 0)),
+                         VectorValue (Vector (500, 500, 500)),
                          MakeVectorAccessor (&CircleMobilityModel::SetOrigin,
                                              &CircleMobilityModel::GetOrigin),
                          MakeVectorChecker ())
@@ -105,7 +105,7 @@ CircleMobilityModel::GetTypeId (void)
                          StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=100.0]"),
                          MakePointerAccessor (&CircleMobilityModel::m_randomSpeed),
                          MakePointerChecker<RandomVariableStream> ()) 
-          /*until the availability of BernoulliRandomVariable from Tom*/        
+          /*until the availability of BernoulliRandomVariable implementation from Tom*/        
           .AddAttribute ("RandomClockwise",
                          "A random variable used to select clockwise (true) or counter-clockwise (false) direction.",
                          StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=1]]"),
@@ -161,7 +161,6 @@ void
 CircleMobilityModel::SetRadius(const double radius)
 {
   NS_LOG_FUNCTION (this << radius);  
-  //NS_LOG_DEBUG ("value error");
   NS_ASSERT (radius > 0);
   m_radius = radius;
 }
@@ -170,7 +169,6 @@ void
 CircleMobilityModel::SetStartAngle(const double startAngle)
 {
   NS_LOG_FUNCTION (this << startAngle);  
-  //NS_LOG_DEBUG ("value error");
   NS_ASSERT ((startAngle >= 0||startAngle <=360));
   m_startAngle = startAngle;
 }
@@ -186,7 +184,6 @@ void
 CircleMobilityModel::SetSpeed(const double speed)
 {
   NS_LOG_FUNCTION (this << speed);  
-  //NS_LOG_DEBUG ("value error");
   NS_ASSERT (speed > 0);
   m_speed = speed;
 }
@@ -228,9 +225,8 @@ CircleMobilityModel::InitializePrivate(void)
 {
   //set  radius, start angle and speed according to default or selected range
  
- switch (m_mode)
+ if (m_mode == INITIALIZE_RANDOM)
  {
- case INITIALIZE_RANDOM:
     //set the parameters after checking them in setters
     // it will override the value that may already set through setters
     SetRadius(m_randomRadius->GetValue ());
@@ -238,29 +234,19 @@ CircleMobilityModel::InitializePrivate(void)
     SetSpeed(m_randomSpeed->GetValue ());
     SetRadius(m_randomRadius->GetValue ());
     SetClockwise(m_randomClockwise->GetValue()>0.5?true:false); //completed after the MR of BernoulliRandomVariable
-   break;
- case INITIALIZE_ATTRIBUTE:
-   /* In this case the value may be already set by setters*/
-   break; 
- default:
-   break;
- }
+ } /* else use the values already set by setters*/
 
   double cosAngle, sinAngle;
+
   switch (m_OriginConfigMode)
   {
   case ORIGIN_FROM_ATTRIBUTE:
         //set origin randomly according to default or selected /randomly selected range
-        switch (m_mode)
+        if (m_mode==INITIALIZE_RANDOM)
         {
-        case INITIALIZE_RANDOM:
             m_origin=Vector(m_randomOriginX->GetValue (),m_randomOriginY->GetValue (),m_randomOriginZ->GetValue ());
-            break;
-        case INITIALIZE_ATTRIBUTE:
-              //already set by setters
-            break;
-        }
-
+        }   //else use value already set by setters
+    break;
   case RADIUS_AWAY_FROM_POSITION:
       // Set Origin of the Circle According to the initial position of the object passed by PositionAllocator or user
       // Usually the possition of the node will be passed by a PositionAllocator
@@ -302,8 +288,8 @@ CircleMobilityModel::DoGetPosition (void) const
   Time now = Simulator::Now ();
   NS_ASSERT (m_lastUpdate <= now);
   m_lastUpdate = now;
-  double direction = m_clockwise ? 1 : -1;
-  double angle = m_startAngle + ((direction * m_speed / m_radius) * now.GetSeconds ());
+  double clockwise = m_clockwise ? 1 : -1;
+  double angle = m_startAngle + ((clockwise * m_speed / m_radius) * now.GetSeconds ());
   double cosAngle = cos (angle);
   double sinAngle = sin (angle);
   return Vector (m_origin.x + m_radius * cosAngle, m_origin.y + m_radius * sinAngle, m_origin.z);
@@ -333,8 +319,8 @@ CircleMobilityModel::DoGetVelocity (void) const
   Time now = Simulator::Now ();
   NS_ASSERT (m_lastUpdate <= now);
   m_lastUpdate = now;
-  double direction = m_clockwise ? 1 : -1;
-  double angle = m_startAngle + ((direction * m_speed / m_radius) * now.GetSeconds ());
+  double clockwise = m_clockwise ? 1 : -1;
+  double angle = m_startAngle + ((clockwise * m_speed / m_radius) * now.GetSeconds ());
   double cosAngle = cos (angle);
   double sinAngle = sin (angle);
   return Vector (-sinAngle * m_speed, cosAngle * m_speed, 0.0);
