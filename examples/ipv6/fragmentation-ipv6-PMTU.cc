@@ -24,12 +24,12 @@
 
 // Network topology
 // //
-// //     Src  n0          r         n1         n3
-// //          |        _            |          |
-// //          ===========|_|====================
-// //     MTU   5000    router  2000     1500
+// //      Src  n0        r1     n1      r2        n2
+// //           |         _      |       _         |
+// //           =========|_|============|_|=========
+// //      MTU   5000           2000          1500
 // //
-// // - Tracing of queues and packet receptions to file "fragmentation-ipv6-two-mtu.tr"
+// // - Tracing of queues and packet receptions to file "fragmentation-ipv6-PMTU.tr"
 
 #include <fstream>
 #include "ns3/core-module.h"
@@ -66,14 +66,15 @@ main (int argc, char **argv)
 
   NS_LOG_INFO ("Create nodes.");
   Ptr<Node> n0 = CreateObject<Node> ();
-  Ptr<Node> r = CreateObject<Node> ();
+  Ptr<Node> r1 = CreateObject<Node> ();
   Ptr<Node> n1 = CreateObject<Node> ();
+  Ptr<Node> r2 = CreateObject<Node> ();
   Ptr<Node> n2 = CreateObject<Node> ();
 
-  NodeContainer net1 (n0, r);
-  NodeContainer net2 (r, n1);
-  NodeContainer net3 (n1, n2);
-  NodeContainer all (n0, r, n1, n2);
+  NodeContainer net1 (n0, r1);
+  NodeContainer net2 (r1, n1, r2);
+  NodeContainer net3 (r2, n2);
+  NodeContainer all (n0, r1, n1, r2, n2);
 
   NS_LOG_INFO ("Create IPv6 Internet Stack");
   InternetStackHelper internetv6;
@@ -84,15 +85,16 @@ main (int argc, char **argv)
   csma.SetChannelAttribute ("DataRate", DataRateValue (5000000));
   csma.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
   csma.SetDeviceAttribute ("Mtu", UintegerValue (2000));
-  NetDeviceContainer d2 = csma.Install (net2);
+  NetDeviceContainer d2 = csma.Install (net2);  // CSMA Network with MTU 2000
+
   csma.SetDeviceAttribute ("Mtu", UintegerValue (5000));
-  NetDeviceContainer d1 = csma.Install (net1);
+  NetDeviceContainer d1 = csma.Install (net1);  // CSMA Network with MTU 5000
 
   PointToPointHelper pointToPoint;
   pointToPoint.SetDeviceAttribute ("DataRate", DataRateValue (5000000));
   pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
   pointToPoint.SetDeviceAttribute ("Mtu", UintegerValue (1500));
-  NetDeviceContainer d3 = pointToPoint.Install (net3);
+  NetDeviceContainer d3 = pointToPoint.Install (net3);  // P2P Network with MTU 1500
 
   NS_LOG_INFO ("Create networks and assign IPv6 Addresses.");
   Ipv6AddressHelper ipv6;
@@ -107,7 +109,9 @@ main (int argc, char **argv)
   i2.SetForwarding (0, true);
   i2.SetDefaultRouteInAllNodes (0);
   i2.SetForwarding (1, true);
-  i2.SetDefaultRouteInAllNodes (1);
+  i2.SetDefaultRouteInAllNodes (0);
+  i2.SetForwarding (2, true);
+  i2.SetDefaultRouteInAllNodes (2);
 
   ipv6.SetBase (Ipv6Address ("2001:3::"), Ipv6Prefix (64));
   Ipv6InterfaceContainer i3 = ipv6.Assign (d3);
@@ -116,7 +120,7 @@ main (int argc, char **argv)
 
   Ipv6StaticRoutingHelper routingHelper;
   Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> (&std::cout);
-  routingHelper.PrintRoutingTableAt (Seconds (0), r, routingStream);
+  routingHelper.PrintRoutingTableAt (Seconds (0), r1, routingStream);
 
   /* Create a Ping6 application to send ICMPv6 echo request from r to n2 */
   uint32_t packetSize = 1600; // Packet should fragment as intermediate link MTU is 1500
@@ -124,13 +128,13 @@ main (int argc, char **argv)
   Time interPacketInterval = Seconds (1.0);
   Ping6Helper ping6;
 
-  ping6.SetLocal (i2.GetAddress (0, 1));
+  ping6.SetLocal (i2.GetAddress (1, 1));
   ping6.SetRemote (i3.GetAddress (1, 1));
 
   ping6.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
   ping6.SetAttribute ("Interval", TimeValue (interPacketInterval));
   ping6.SetAttribute ("PacketSize", UintegerValue (packetSize));
-  ApplicationContainer apps = ping6.Install (r);
+  ApplicationContainer apps = ping6.Install (n1);
   apps.Start (Seconds (2.0));
   apps.Stop (Seconds (10.0));
 
