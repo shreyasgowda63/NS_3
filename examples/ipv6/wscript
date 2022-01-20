@@ -31,3 +31,6 @@ def build(bld):
     obj = bld.create_ns3_program('fragmentation-ipv6-PMTU', ['csma', 'internet', 'internet-apps', 'point-to-point'])
     obj.source = 'fragmentation-ipv6-PMTU.cc'
 
+    obj = bld.create_ns3_program('fragmentation-ipv6-three', ['csma', 'internet', 'internet-apps'])
+    obj.source = 'fragmentation-ipv6-three.cc'
+
