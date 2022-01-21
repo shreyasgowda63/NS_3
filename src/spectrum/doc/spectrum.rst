@@ -149,6 +149,26 @@ quite similar, the main difference is that
 automatically taking care of the conversion of PSDs among the
 different models.
 
+.. _spectrum-clipping:
+
+Clipping
+#############################
+
+Clipping is dependant on :ref:`position-aware<position-aware>`. This module should be installed on a nodes prior to
+adding them to the channel.
+
+:ref:`Clipped<clipping>` adds the attributes "ReceiveClipRange" and  "EnableSpatialIndexing" both multi and single model spectrum
+channels. To utilize clipping, enable clipping via the EnableSpatialIndexing attribute and set the clip range to be non-zero. 
+The interaction between this clip range and the delta-position that is used by position-aware is described in 
+the :reg:`clipping documentation<clipping>` 
+``
+      ...
+      spectrumChannel->SetAttribute ("EnableSpatialIndexing", BooleanValue (true));
+      spectrumChannel->SetAttribute ("ReceiveClipRange", DoubleValue (clip_range));
+      ...
+``
+
+Examples of how to use clipping can be found in the clipping-spectrum-mobile.cc and clipping-spectrum-static.cc.
 
 
 .. _sec-example-model-implementations:
@@ -169,7 +189,7 @@ of the available implementations:
    interference model (implemented in ``SpectrumInterference``)
    together with an error model based on Shannon capacity (described
    in [Baldo2009Spectrum]_ and implemented in ``SpectrumErrorModel``. This PHY
-   uses the ``GenericPhy`` interface. Its addditional custom signal
+   uses the ``GenericPhy`` interface. Its additional custom signal
    parameters are defined in ``HalfDuplexIdealPhySignalParameters``.
 
  * ``WifiSpectrumValueHelper`` is an helper object that makes it easy

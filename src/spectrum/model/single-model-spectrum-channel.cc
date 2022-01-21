@@ -18,24 +18,27 @@
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
 
-#include <ns3/object.h>
-#include <ns3/simulator.h>
+#include "single-model-spectrum-channel.h"
+
+#include <ns3/angles.h>
+#include <ns3/antenna-model.h>
+#include <ns3/boolean.h>
+#include <ns3/double.h>
 #include <ns3/log.h>
-#include <ns3/packet.h>
-#include <ns3/packet-burst.h>
+#include <ns3/kdtree-index.h>
+#include <ns3/mobility-model.h>
 #include <ns3/net-device.h>
 #include <ns3/node.h>
-#include <ns3/double.h>
-#include <ns3/mobility-model.h>
+#include <ns3/object.h>
+#include <ns3/packet-burst.h>
+#include <ns3/packet.h>
+#include <ns3/propagation-delay-model.h>
+#include <ns3/propagation-loss-model.h>
+#include <ns3/simulator.h>
 #include <ns3/spectrum-phy.h>
 #include <ns3/spectrum-propagation-loss-model.h>
-#include <ns3/propagation-loss-model.h>
-#include <ns3/propagation-delay-model.h>
-#include <ns3/antenna-model.h>
-#include <ns3/angles.h>
 
-
-#include "single-model-spectrum-channel.h"
+#include <algorithm>
 
 
 namespace ns3 {
@@ -47,6 +50,7 @@ NS_OBJECT_ENSURE_REGISTERED (SingleModelSpectrumChannel);
 SingleModelSpectrumChannel::SingleModelSpectrumChannel ()
 {
   NS_LOG_FUNCTION (this);
+  m_spatialIndex = new KDTreeSpatialIndexing ();
 }
 
 void
@@ -62,11 +66,22 @@ TypeId
 SingleModelSpectrumChannel::GetTypeId (void)
 {
   NS_LOG_FUNCTION_NOARGS ();
-  static TypeId tid = TypeId ("ns3::SingleModelSpectrumChannel")
-    .SetParent<SpectrumChannel> ()
-    .SetGroupName ("Spectrum")
-    .AddConstructor<SingleModelSpectrumChannel> ()
-  ;
+  static TypeId tid =
+      TypeId ("ns3::SingleModelSpectrumChannel")
+          .SetParent<SpectrumChannel> ()
+          .SetGroupName ("Spectrum")
+          .AddConstructor<SingleModelSpectrumChannel> ()
+          .AddAttribute (
+              "ReceiveClipRange", "Range at which to clip reception event scheduling",
+              DoubleValue (0),
+              MakeDoubleAccessor (&SingleModelSpectrumChannel::m_receive_clip_range),
+              MakeDoubleChecker<double> ())
+          .AddAttribute ("EnableSpatialIndexing",
+                         "If true, enable spatial indexing for faster wireless simulations.",
+                         BooleanValue (false), // TODO later may want to change default to true
+                         MakeBooleanAccessor (
+                             &SingleModelSpectrumChannel::m_spatialIndexingEnabled),
+                         MakeBooleanChecker ());
   return tid;
 }
 
@@ -76,13 +91,57 @@ SingleModelSpectrumChannel::AddRx (Ptr<SpectrumPhy> phy)
 {
   NS_LOG_FUNCTION (this << phy);
   m_phyList.push_back (phy);
+  BooleanValue indexingDenabled;
+  GetAttribute ("EnableSpatialIndexing", indexingDenabled);
+  if (m_spatialIndexingEnabled || indexingDenabled)
+    {
+      auto m = phy->GetMobility ();
+      auto n = m->GetObject<Node> (); // TODO: convert spatial indexing to objects?
+      m_spatialIndex->Add (n, m->GetPosition ());
+    }
 }
 
+bool
+SingleModelSpectrumChannel::ProcessTxParams (Ptr<SpectrumSignalParameters> txParams)
+{
+  NS_ASSERT_MSG (txParams->psd, "NULL txPsd");
+  NS_ASSERT_MSG (txParams->txPhy, "NULL txPhy");
+  auto txParamsTrace = txParams->Copy (); // copy it since traced value cannot be const (because of potential underlying DynamicCasts)
+  m_txSigParamsTrace (txParamsTrace);
+  Ptr<MobilityModel> senderMobility = txParams->txPhy->GetMobility ();
+  if (m_spatialIndexingEnabled)
+    {
+      m_nodesInRange.clear ();
+      m_nodesInRange =
+          m_spatialIndex->GetNodesInRange (m_receive_clip_range, senderMobility->GetPosition (),
+                                           txParams->txPhy->GetDevice ()->GetNode ());
+      //sort for efficient lookup using binary_search
+      std::sort (m_nodesInRange.begin (), m_nodesInRange.end ());
+    }
+  return true;
+}
+
+bool
+SingleModelSpectrumChannel::CheckValidPhy (Ptr<SpectrumPhy> phy)
+{
+  if (phy == nullptr)
+    {
+      return false;
+    }
+  if (!m_spatialIndexingEnabled)
+    {
+      return true;
+    }
+  return std::binary_search (m_nodesInRange.begin (), m_nodesInRange.end (),
+                             (phy->GetDevice ()->GetNode ()->GetObject<Object> ()));
+}
 
 void
 SingleModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
 {
   NS_LOG_FUNCTION (this << txParams->psd << txParams->duration << txParams->txPhy);
+  if (!ProcessTxParams (txParams)) return;
+
   NS_ASSERT_MSG (txParams->psd, "NULL txPsd");
   NS_ASSERT_MSG (txParams->txPhy, "NULL txPhy");
 
@@ -101,15 +160,13 @@ SingleModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
       NS_ASSERT (*(txParams->psd->GetSpectrumModel ()) == *m_spectrumModel);
     }
 
-
-
-
   Ptr<MobilityModel> senderMobility = txParams->txPhy->GetMobility ();
 
   for (PhyList::const_iterator rxPhyIterator = m_phyList.begin ();
        rxPhyIterator != m_phyList.end ();
        ++rxPhyIterator)
     {
+      if(!CheckValidPhy(*rxPhyIterator)) continue;
       if ((*rxPhyIterator) != txParams->txPhy)
         {
           Time delay  = MicroSeconds (0);

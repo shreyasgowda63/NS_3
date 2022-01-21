@@ -24,3 +24,10 @@ def build(bld):
     obj = bld.create_ns3_program('three-gpp-channel-example',
                                  ['spectrum', 'mobility', 'core', 'lte'])
     obj.source = 'three-gpp-channel-example.cc'
+
+    obj = bld.create_ns3_program('clipping-spectrum-static', ['spatial-index', 'network', 'propagation', 'spectrum', 'wifi', 'internet', 'applications'])
+    obj.source = 'clipping-spectrum-static.cc'
+
+    obj = bld.create_ns3_program('clipping-spectrum-mobile', ['spatial-index', 'network', 'propagation', 'spectrum', 'wifi', 'internet', 'applications'])
+    obj.source = 'clipping-spectrum-mobile.cc'
+

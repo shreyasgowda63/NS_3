@@ -1,0 +1,32 @@
+# -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+# def options(opt):
+#     pass
+
+# def configure(conf):
+#     conf.check_nonfatal(header_name='stdint.h', define_name='HAVE_STDINT_H')
+
+def build(bld):
+    module = bld.create_ns3_module('spatial-index', ['core', 'mobility'])
+    module.source = [
+        'model/kdtree-index.cc',
+        'model/bruteforce.cc',
+        'model/spatial-index.cc',
+        ]
+
+    module_test = bld.create_ns3_module_test_library('spatial-index')
+    module_test.source = [
+        'test/spatial-index-test-suite.cc',
+        ]
+
+    headers = bld(features='ns3header')
+    headers.module = 'spatial-index'
+    headers.source = [
+        'model/spatial-index.h',
+        'model/bruteforce.h',
+        'model/kdtree-index.h',
+        'model/kdtree.h'
+        ]
+
+    # bld.ns3_python_bindings()
+

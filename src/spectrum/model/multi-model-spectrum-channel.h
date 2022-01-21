@@ -22,11 +22,14 @@
 #ifndef MULTI_MODEL_SPECTRUM_CHANNEL_H
 #define MULTI_MODEL_SPECTRUM_CHANNEL_H
 
-#include <ns3/spectrum-value.h>
-#include <ns3/spectrum-converter.h>
-#include <ns3/spectrum-channel.h>
-#include <ns3/spectrum-propagation-loss-model.h>
+
 #include <ns3/propagation-delay-model.h>
+#include <ns3/spatial-index.h>
+#include <ns3/spectrum-channel.h>
+#include <ns3/spectrum-converter.h>
+#include <ns3/spectrum-propagation-loss-model.h>
+#include <ns3/spectrum-value.h>
+
 #include <map>
 #include <set>
 
@@ -128,6 +131,16 @@ public:
 protected:
   void DoDispose ();
 
+  /** Useful method for child classes to preprocess txparams at start of tx while
+   * reusing parent startTx
+   * \param txParams The params that are being used
+   * \return False aborts transmit */
+  virtual bool ProcessTxParams (Ptr<SpectrumSignalParameters> txParams);
+  /** Useful method for child classes to filter phys while reusing parent send
+   * \param phy The phy to check
+   * \return True if valid, false cancels reception scheduling */
+  virtual bool CheckValidPhy (Ptr<SpectrumPhy> phy);
+
 private:
   /**
    * This method checks if m_rxSpectrumModelInfoMap contains an entry
@@ -169,9 +182,11 @@ private:
    */
   std::size_t m_numDevices;
 
+  bool                          m_spatialIndexingEnabled; ///< Enable clipping based on spatial indexing
+  double                        m_receive_clip_range;     ///< Range to use for clipping
+  Ptr<SpatialIndexing>          m_spatialIndex;           ///< pointer to spatial indexing to be used
+  std::vector<ns3::SpatialIndexing::PointerType>  m_nodesInRange;           ///<Vector for storing nodes that are in range
 };
-
-
 
 }
 

@@ -25,6 +25,7 @@ This document is written in `reStructuredText <http://docutils.sourceforge.net/r
    brite
    buildings
    click
+   clipping
    csma
    dsdv
    dsr
@@ -42,7 +43,9 @@ This document is written in `reStructuredText <http://docutils.sourceforge.net/r
    olsr
    openflow-switch
    point-to-point
+   position-aware
    propagation
+   spatial-index
    spectrum
    sixlowpan
    topology

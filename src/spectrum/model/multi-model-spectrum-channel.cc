@@ -18,26 +18,31 @@
  * Author: Nicola Baldo <nbaldo@cttc.es>
  */
 
+#include "multi-model-spectrum-channel.h"
+
+#include <ns3/angles.h>
+#include <ns3/antenna-model.h>
+#include <ns3/boolean.h>
+#include <ns3/double.h>
+#include <ns3/kdtree-index.h>
+#include <ns3/log.h>
+#include <ns3/mobility-model.h>
+#include <ns3/net-device.h>
+#include <ns3/node.h>
+#include <ns3/object.h>
+#include <ns3/packet-burst.h>
+#include <ns3/packet.h>
+#include <ns3/propagation-delay-model.h>
+#include <ns3/propagation-loss-model.h>
+#include <ns3/simulator.h>
+#include <ns3/spectrum-converter.h>
+#include <ns3/spectrum-phy.h>
+#include <ns3/spectrum-propagation-loss-model.h>
+#include <ns3/kdtree.h>
+
 #include <algorithm>
 #include <iostream>
 #include <utility>
-#include <ns3/object.h>
-#include <ns3/simulator.h>
-#include <ns3/log.h>
-#include <ns3/packet.h>
-#include <ns3/packet-burst.h>
-#include <ns3/net-device.h>
-#include <ns3/node.h>
-#include <ns3/double.h>
-#include <ns3/mobility-model.h>
-#include <ns3/spectrum-phy.h>
-#include <ns3/spectrum-converter.h>
-#include <ns3/spectrum-propagation-loss-model.h>
-#include <ns3/propagation-loss-model.h>
-#include <ns3/propagation-delay-model.h>
-#include <ns3/antenna-model.h>
-#include <ns3/angles.h>
-#include "multi-model-spectrum-channel.h"
 
 namespace ns3 {
 
@@ -82,6 +87,7 @@ MultiModelSpectrumChannel::MultiModelSpectrumChannel ()
   : m_numDevices {0}
 {
   NS_LOG_FUNCTION (this);
+  m_spatialIndex = new KDTreeSpatialIndexing ();
 }
 
 void
@@ -96,12 +102,22 @@ MultiModelSpectrumChannel::DoDispose ()
 TypeId
 MultiModelSpectrumChannel::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::MultiModelSpectrumChannel")
-    .SetParent<SpectrumChannel> ()
-    .SetGroupName ("Spectrum")
-    .AddConstructor<MultiModelSpectrumChannel> ()
-
-  ;
+  static TypeId tid =
+      TypeId ("ns3::MultiModelSpectrumChannel")
+          .SetParent<SpectrumChannel> ()
+          .SetGroupName ("Spectrum")
+          .AddConstructor<MultiModelSpectrumChannel> ()
+          .AddAttribute (
+              "ReceiveClipRange", "Range at which to clip reception event scheduling",
+              DoubleValue (0),
+              MakeDoubleAccessor (&MultiModelSpectrumChannel::m_receive_clip_range),
+              MakeDoubleChecker<double> ())
+          .AddAttribute ("EnableSpatialIndexing",
+                         "If true, enable spatial indexing for faster wireless simulations.",
+                         BooleanValue (false), // TODO later may want to change default to true
+                         MakeBooleanAccessor (
+                             &MultiModelSpectrumChannel::m_spatialIndexingEnabled),
+                         MakeBooleanChecker ());
   return tid;
 }
 
@@ -169,6 +185,22 @@ MultiModelSpectrumChannel::AddRx (Ptr<SpectrumPhy> phy)
       // spectrum model is already known, just add the device to the corresponding list
       rxInfoIterator->second.m_rxPhys.push_back (phy);
     }
+  BooleanValue indexingDenabled;
+  GetAttribute ("EnableSpatialIndexing", indexingDenabled);
+  if (m_spatialIndexingEnabled || indexingDenabled)
+    {
+      auto m = phy->GetMobility ();
+      auto n = m->GetObject<Node> ();
+      // The try catch block can be removed when the 'double add' is fixed.
+      try
+        {
+          m_spatialIndex->Add (n, m->GetPosition ());
+        }
+      catch (add_error &e)
+        {
+          NS_LOG_WARN (e.what ());
+        }
+    }
 }
 
 TxSpectrumModelInfoMap_t::const_iterator
@@ -213,15 +245,47 @@ MultiModelSpectrumChannel::FindAndEventuallyAddTxSpectrumModel (Ptr<const Spectr
   return txInfoIterator;
 }
 
+bool
+MultiModelSpectrumChannel::ProcessTxParams(Ptr<SpectrumSignalParameters> txParams)
+{
+  NS_ASSERT_MSG (txParams->psd, "NULL txPsd");
+  NS_ASSERT_MSG (txParams->txPhy, "NULL txPhy");
+
+  auto txParamsTrace = txParams->Copy (); // copy it since traced value cannot be const (because of potential underlying DynamicCasts)
+  m_txSigParamsTrace (txParamsTrace);
+  Ptr<MobilityModel> senderMobility = txParams->txPhy->GetMobility ();
+  if (m_spatialIndexingEnabled)
+    {
+      m_nodesInRange.clear ();
+      m_nodesInRange =
+          m_spatialIndex->GetNodesInRange (m_receive_clip_range, senderMobility->GetPosition (),
+                                           txParams->txPhy->GetDevice ()->GetNode ());
+      //sort for efficient lookup using binary_search
+      std::sort (m_nodesInRange.begin (), m_nodesInRange.end ());
+    }
+  return true;
+}
+
+bool
+MultiModelSpectrumChannel::CheckValidPhy (Ptr<SpectrumPhy> phy)
+{
+  if (phy == nullptr)
+    {
+      return false;
+    }
+  if (!m_spatialIndexingEnabled)
+    {
+      return true;
+    }
+  return std::binary_search (m_nodesInRange.begin (), m_nodesInRange.end (),
+                             phy->GetDevice ()->GetNode ()->GetObject<Object> ());
+}
+
 void
 MultiModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
 {
   NS_LOG_FUNCTION (this << txParams);
-
-  NS_ASSERT (txParams->txPhy);
-  NS_ASSERT (txParams->psd);
-  Ptr<SpectrumSignalParameters> txParamsTrace = txParams->Copy (); // copy it since traced value cannot be const (because of potential underlying DynamicCasts)
-  m_txSigParamsTrace (txParamsTrace);
+  if(!ProcessTxParams(txParams)) return;
 
   Ptr<MobilityModel> txMobility = txParams->txPhy->GetMobility ();
   SpectrumModelUid_t txSpectrumModelUid = txParams->psd->GetSpectrumModelUid ();
@@ -264,6 +328,7 @@ MultiModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
            rxPhyIterator != rxInfoIterator->second.m_rxPhys.end ();
            ++rxPhyIterator)
         {
+          if(!CheckValidPhy(*rxPhyIterator)) continue;
           NS_ASSERT_MSG ((*rxPhyIterator)->GetRxSpectrumModel ()->GetUid () == rxSpectrumModelUid,
                          "SpectrumModel change was not notified to MultiModelSpectrumChannel (i.e., AddRx should be called again after model is changed)");
 

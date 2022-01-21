@@ -69,6 +69,7 @@ SOURCES = \
 	$(SRC)/internet/doc/udp.rst \
 	$(SRC)/internet-apps/doc/internet-apps.rst \
 	$(SRC)/mobility/doc/mobility.rst \
+	$(SRC)/mobility/doc/position-aware.rst \
 	$(SRC)/olsr/doc/olsr.rst \
 	$(SRC)/openflow/doc/openflow-switch.rst \
 	$(SRC)/point-to-point/doc/point-to-point.rst \
