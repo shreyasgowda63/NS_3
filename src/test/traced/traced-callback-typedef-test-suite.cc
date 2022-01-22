@@ -274,7 +274,7 @@ public:
   std::tuple<typename TypeTraits<Ts>::BaseType...> m_items;
 
   /// Number of arguments of the TracedCallback.
-  const std::size_t m_itemsNum = sizeof...(Ts);
+  const std::size_t m_nItems = sizeof...(Ts);
 
   /**
    * Invoke a TracedCallback.
@@ -285,23 +285,22 @@ public:
     U sink = TracedCbSink<Ts...>::Sink;
     Callback<void, Ts...> cb = MakeCallback (sink);
 
-    std::cout << TypeName<U> (m_itemsNum) << " invoked ";
+    std::cout << TypeName<U> (m_nItems) << " invoked ";
     m_cb.ConnectWithoutContext (cb);
-    std::apply(m_cb, this->m_items);
-    this->Cleanup (m_itemsNum);
+    std::apply(m_cb, m_items);
+    Cleanup ();
   }
   
   /**
    * Cleanup the test.
-   * \param N Number of arguments of the callback.
    */
-  void Cleanup (int N)
+  void Cleanup ()
   {
     if (m_nArgs == 0)
       {
         std::cout << std::endl;
       }
-    NS_ASSERT_MSG (m_nArgs && m_nArgs == N, "failed, m_nArgs: " << m_nArgs << " N: " << N);
+    NS_ASSERT_MSG (m_nArgs && m_nArgs == m_nItems, "failed, m_nArgs: " << m_nArgs << " N: " << m_nItems);
     m_nArgs = 0;
   }
 
