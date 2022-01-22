@@ -68,7 +68,7 @@ public:
    * in the \c m_nArgs public value, then inspect it
    * in the CheckType() method.
    */
-  static int m_nArgs;
+  static std::size_t m_nArgs;
 
 private:
 
@@ -220,7 +220,7 @@ TYPENAME (WifiRemoteStationManager::RateChangeTracedCallback);
  *
  * \param [in] N The number of arguments passed to the callback.
  */
-void SinkIt (unsigned int N)
+void SinkIt (std::size_t N)
 {
   std::cout << "with " << N << " args." << std::endl;
   TracedCallbackTypedefTestCase::m_nArgs = N;
@@ -259,7 +259,7 @@ public:
   --------------------------------------------------------------------
 */
 
-int TracedCallbackTypedefTestCase::m_nArgs = 0;
+std::size_t TracedCallbackTypedefTestCase::m_nArgs = 0;
 
 template <typename... Ts>
 class TracedCallbackTypedefTestCase::Checker : public Object
