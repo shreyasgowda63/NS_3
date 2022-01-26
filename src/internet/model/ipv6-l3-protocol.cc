@@ -1130,8 +1130,10 @@ void Ipv6L3Protocol::SendRealOut (Ptr<Ipv6Route> route, Ptr<Packet> packet, Ipv6
         }
     }
 
-  // Check if we have a Path MTU stored. If so, use it. Else, use the link MTU.
   size_t targetMtu = 0;
+
+  // Check if we have a Path MTU stored. If so, use it. Else, use the link MTU.
+  // Note: PMTU must not be cached in intermediate nodes, and must be checked only by the source node
   if (fromMe)
     {
       targetMtu = (size_t)(m_pmtuCache->GetPmtu (ipHeader.GetDestination()));

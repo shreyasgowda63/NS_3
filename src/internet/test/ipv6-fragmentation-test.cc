@@ -181,15 +181,21 @@ public:
 
   /**
    * \brief Handle Server's incoming packets.
-   * 
    * Ensure no packet greater than MTU is received
+   * 
+   * \param packet the packet.
+   * \param ipv6 the Ipv6 protocol.
+   * \param interface the IP-level interface index.
    */
   void HandleServerRx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface);
   
   /**
    * \brief Handle Client's transmitting packets.
-   * 
    * Ensure no packet greater than MTU is transmitted
+   * 
+   * \param packet the packet.
+   * \param ipv6 the Ipv6 protocol.
+   * \param interface the IP-level interface index.
    */
   void HandleClientTx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface);
 };
