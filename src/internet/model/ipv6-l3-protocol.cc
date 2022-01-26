@@ -1118,11 +1118,11 @@ void Ipv6L3Protocol::SendRealOut (Ptr<Ipv6Route> route, Ptr<Packet> packet, Ipv6
 
   // Check if this is the source of the packet
   bool fromMe = false;
-  for (uint32_t i=0; i<GetNInterfaces(); i++ )
+  for (uint32_t i = 0; i < GetNInterfaces (); i++ )
     {
-      for (uint32_t j=0; j<GetNAddresses(i); j++ )
+      for (uint32_t j = 0; j < GetNAddresses (i); j++ )
         {
-          if (GetAddress(i,j).GetAddress() == ipHeader.GetSource())
+          if (GetAddress (i,j).GetAddress () == ipHeader.GetSource ())
             {
               fromMe = true;
               break;
@@ -1136,14 +1136,14 @@ void Ipv6L3Protocol::SendRealOut (Ptr<Ipv6Route> route, Ptr<Packet> packet, Ipv6
   // Note: PMTU must not be cached in intermediate nodes, and must be checked only by the source node
   if (fromMe)
     {
-      targetMtu = (size_t)(m_pmtuCache->GetPmtu (ipHeader.GetDestination()));
+      targetMtu = (size_t)(m_pmtuCache->GetPmtu (ipHeader.GetDestination ()));
     }
   if (targetMtu == 0)
     {
       targetMtu = dev->GetMtu ();
     }
 
-  if (packet->GetSize () + ipHeader.GetSerializedSize() > targetMtu)
+  if (packet->GetSize () + ipHeader.GetSerializedSize () > targetMtu)
     {
       // Router => drop
       if (!fromMe)
@@ -1151,7 +1151,7 @@ void Ipv6L3Protocol::SendRealOut (Ptr<Ipv6Route> route, Ptr<Packet> packet, Ipv6
           Ptr<Icmpv6L4Protocol> icmpv6 = GetIcmpv6 ();
           if ( icmpv6 )
             {
-              packet->AddHeader(ipHeader);
+              packet->AddHeader (ipHeader);
               icmpv6->SendErrorTooBig (packet, ipHeader.GetSource (), dev->GetMtu ());
             }
           return;

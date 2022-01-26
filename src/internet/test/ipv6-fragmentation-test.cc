@@ -180,17 +180,17 @@ public:
   /**
    * \brief Handle Server's incoming packets.
    * Ensure no packet greater than MTU is received
-   * 
+   *
    * \param packet the packet.
    * \param ipv6 the Ipv6 protocol.
    * \param interface the IP-level interface index.
    */
   void HandleServerRx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface);
-  
+
   /**
    * \brief Handle Client's transmitting packets.
    * Ensure no packet greater than MTU is transmitted
-   * 
+   *
    * \param packet the packet.
    * \param ipv6 the Ipv6 protocol.
    * \param interface the IP-level interface index.
@@ -342,12 +342,12 @@ Ptr<Packet> Ipv6FragmentationTest::SendClient (void)
 
 void Ipv6FragmentationTest::HandleServerRx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface)
 {
-  NS_TEST_EXPECT_MSG_LT_OR_EQ(packet->GetSize(), ipv6->GetMtu(interface), "Received packet size > MTU: packetSizes: "<<packet->GetSize());
+  NS_TEST_EXPECT_MSG_LT_OR_EQ (packet->GetSize (), ipv6->GetMtu (interface), "Received packet size > MTU: packetSizes: " << packet->GetSize ());
 }
 
 void Ipv6FragmentationTest::HandleClientTx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface)
 {
-  NS_TEST_EXPECT_MSG_LT_OR_EQ(packet->GetSize(), ipv6->GetMtu(interface), "Transmitted packet size > MTU: packetSizes: "<<packet->GetSize());
+  NS_TEST_EXPECT_MSG_LT_OR_EQ (packet->GetSize (), ipv6->GetMtu (interface), "Transmitted packet size > MTU: packetSizes: " << packet->GetSize ());
 }
 
 void
