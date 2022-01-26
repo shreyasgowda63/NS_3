@@ -61,8 +61,6 @@
 #include <limits>
 #include <netinet/in.h>
 
-#define MTU 1500
-
 using namespace ns3;
 
 class UdpSocketImpl;
@@ -344,12 +342,12 @@ Ptr<Packet> Ipv6FragmentationTest::SendClient (void)
 
 void Ipv6FragmentationTest::HandleServerRx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface)
 {
-  NS_TEST_EXPECT_MSG_LT_OR_EQ(packet->GetSize(), MTU, "Received packet size > MTU: packetSizes: "<<packet->GetSize());
+  NS_TEST_EXPECT_MSG_LT_OR_EQ(packet->GetSize(), ipv6->GetMtu(interface), "Received packet size > MTU: packetSizes: "<<packet->GetSize());
 }
 
 void Ipv6FragmentationTest::HandleClientTx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface)
 {
-  NS_TEST_EXPECT_MSG_LT_OR_EQ(packet->GetSize(), MTU, "Transmitted packet size > MTU: packetSizes: "<<packet->GetSize());
+  NS_TEST_EXPECT_MSG_LT_OR_EQ(packet->GetSize(), ipv6->GetMtu(interface), "Transmitted packet size > MTU: packetSizes: "<<packet->GetSize());
 }
 
 void
@@ -368,7 +366,7 @@ Ipv6FragmentationTest::DoRun (void)
   {
     serverDev = CreateObject<SimpleNetDevice> ();
     serverDev->SetAddress (Mac48Address::ConvertFrom (Mac48Address::Allocate ()));
-    serverDev->SetMtu (MTU);
+    serverDev->SetMtu (1500);
     serverDev->SetReceiveErrorModel (serverDevErrorModel);
     serverDevErrorModel->Disable ();
     serverNode->AddDevice (serverDev);
@@ -389,7 +387,7 @@ Ipv6FragmentationTest::DoRun (void)
   {
     clientDev = CreateObject<SimpleNetDevice> ();
     clientDev->SetAddress (Mac48Address::ConvertFrom (Mac48Address::Allocate ()));
-    clientDev->SetMtu (MTU);
+    clientDev->SetMtu (1500);
     clientDev->SetReceiveErrorModel (clientDevErrorModel);
     clientDevErrorModel->Disable ();
     clientNode->AddDevice (clientDev);
