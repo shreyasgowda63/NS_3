@@ -61,6 +61,8 @@
 #include <limits>
 #include <netinet/in.h>
 
+#define MTU 1500
+
 using namespace ns3;
 
 class UdpSocketImpl;
@@ -176,6 +178,20 @@ public:
    * \returns The sent packet.
    */
   Ptr<Packet> SendClient (void);
+
+  /**
+   * \brief Handle Server's incoming packets.
+   * 
+   * Ensure no packet greater than MTU is received
+   */
+  void HandleServerRx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface);
+  
+  /**
+   * \brief Handle Client's transmitting packets.
+   * 
+   * Ensure no packet greater than MTU is transmitted
+   */
+  void HandleClientTx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface);
 };
 
 
@@ -320,6 +336,16 @@ Ptr<Packet> Ipv6FragmentationTest::SendClient (void)
   return p;
 }
 
+void Ipv6FragmentationTest::HandleServerRx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface)
+{
+  NS_TEST_EXPECT_MSG_LT_OR_EQ(packet->GetSize(), MTU, "Received packet size > MTU: packetSizes: "<<packet->GetSize());
+}
+
+void Ipv6FragmentationTest::HandleClientTx (Ptr<const Packet> packet, Ptr<Ipv6> ipv6, uint32_t interface)
+{
+  NS_TEST_EXPECT_MSG_LT_OR_EQ(packet->GetSize(), MTU, "Transmitted packet size > MTU: packetSizes: "<<packet->GetSize());
+}
+
 void
 Ipv6FragmentationTest::DoRun (void)
 {
@@ -336,7 +362,7 @@ Ipv6FragmentationTest::DoRun (void)
   {
     serverDev = CreateObject<SimpleNetDevice> ();
     serverDev->SetAddress (Mac48Address::ConvertFrom (Mac48Address::Allocate ()));
-    serverDev->SetMtu (1500);
+    serverDev->SetMtu (MTU);
     serverDev->SetReceiveErrorModel (serverDevErrorModel);
     serverDevErrorModel->Disable ();
     serverNode->AddDevice (serverDev);
@@ -345,6 +371,7 @@ Ipv6FragmentationTest::DoRun (void)
     Ipv6InterfaceAddress ipv6Addr = Ipv6InterfaceAddress (Ipv6Address ("2001::1"), Ipv6Prefix (32));
     ipv6->AddAddress (netdev_idx, ipv6Addr);
     ipv6->SetUp (netdev_idx);
+    ipv6->TraceConnectWithoutContext ("Rx", MakeCallback (&Ipv6FragmentationTest::HandleServerRx, this));
   }
   StartServer (serverNode);
 
@@ -356,7 +383,7 @@ Ipv6FragmentationTest::DoRun (void)
   {
     clientDev = CreateObject<SimpleNetDevice> ();
     clientDev->SetAddress (Mac48Address::ConvertFrom (Mac48Address::Allocate ()));
-    clientDev->SetMtu (1500);
+    clientDev->SetMtu (MTU);
     clientDev->SetReceiveErrorModel (clientDevErrorModel);
     clientDevErrorModel->Disable ();
     clientNode->AddDevice (clientDev);
@@ -365,6 +392,7 @@ Ipv6FragmentationTest::DoRun (void)
     Ipv6InterfaceAddress ipv6Addr = Ipv6InterfaceAddress (Ipv6Address ("2001::2"), Ipv6Prefix (32));
     ipv6->AddAddress (netdev_idx, ipv6Addr);
     ipv6->SetUp (netdev_idx);
+    ipv6->TraceConnectWithoutContext ("Tx", MakeCallback (&Ipv6FragmentationTest::HandleClientTx, this));
   }
   StartClient (clientNode);
 
@@ -376,7 +404,7 @@ Ipv6FragmentationTest::DoRun (void)
 
 
   // some small packets, some rather big ones
-  uint32_t packetSizes[5] = {2000, 2500, 5000, 10000, 65000};
+  uint32_t packetSizes[5] = {1500, 2000, 5000, 10000, 65000};
 
   // using the alphabet
   uint8_t fillData[78];
