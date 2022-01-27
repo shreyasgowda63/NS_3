@@ -547,8 +547,8 @@ if [ "$filterin" != "" ] ; then
     echo "========================================"
     echo "$filterin"
     exit_status=1
-# else
-#     exit_status=0
+else
+    exit_status=0
 fi
 
 status_report 0 $me
