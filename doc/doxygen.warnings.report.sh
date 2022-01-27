@@ -394,7 +394,6 @@ echo "Net result of all filters:"
 verbose -n "Filtering the doxygen log"
 
 filter_log_results=$(filter_log)
-echo "filter_log_results is \"$filter_log_results\""
 
 # List of module directories (e.g, "src/core/model")
 if [ ! -z "$filter_log_results" ]
@@ -408,16 +407,19 @@ then
         uniq -c               | \
         sort -nr                \
         )
-fi
-
-# Number of directories
-if [ ! -z "$undocmods" ]
-then 
     modcount=$(                         \
         echo "$undocmods"             | \
         wc -l                         | \
         sed 's/^[ \t]*//;s/[ \t]*$//'   \
         )
+    modwarncount=$(                               \
+        echo "$undocmods"                       | \
+        awk '{total += $1}; END {print total}'    \
+        )
+else
+    undocmods=""
+    modcount=0
+    modwarncount=0
 fi
 
 # For a function with multiple undocumented parameters,
@@ -432,11 +434,7 @@ addlparam=$(                                  \
     )
 
 # Total number of warnings
-warncount=$(                                  \
-    echo "$undocmods"                       | \
-    awk '{total += $1}; END {print total}'    \
-    )
-warncount=$((warncount + addlparam))
+warncount=$((modwarncount + addlparam))
 
 # List of files appearing in the log
 if [ ! -z "$filter_log_results" ]
@@ -450,6 +448,8 @@ then
         uniq -c               | \
         sort -k 2               \
         )
+else
+    undocfiles=""
 fi
 
 # Sorted by number, decreasing
@@ -463,6 +463,8 @@ then
         wc -l                         | \
         sed 's/^[ \t]*//;s/[ \t]*$//'   \
         )
+else
+    filecount=0
 fi
 
 # Filtered in warnings
