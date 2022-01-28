@@ -112,6 +112,7 @@ MobilityModel Subclasses
 - RandomWaypoint
 - SteadyStateRandomWaypoint
 - Waypoint
+- CircleMobility
 
 PositionAllocator
 #################
@@ -199,6 +200,50 @@ Scope and Limitations
 =====================
 
 - only cartesian coordinates are presently supported
+
+CircleMobilityModel
+###################
+
+The inspired by ConstantPositionMobilityModel of ns-3 by Mathieu Lacage and circle function logic of 
+circle mobility model of Omnet++ by Andras Varga.
+
+The position and velocity calculations are inspired from and circle function Logic of 
+circle mobility model of Omnet++. Omnet++ used radian-degree conversions in its implementation. 
+But here we are doing the angle math in degrees only.
+
+Scope and Limitations:
+=====================================
+
+The movement of the object will be controlled by parameters  `Origin, Radius, StartAngle, Speed` 
+and `Direction`. This mobility model enforces no bounding box by itself. 
+
+No seperate helper function is implemented to handle this model in a special way. 
+The standatd MobilityHelper of |ns3| is used to configure this model.
+No special PositionAllocator is needed to configure the initial positions of the nodes. 
+The user can use any of the existing PositionAllocator of |ns3|.
+
+The mobility model parameters/attributes can be set during initialization of the mobility model.
+During initialization itself, we can configure different  Mobility Parameter. 
+
+After initialization, if the user want to change the mobility parameter of one particular node,
+or group of nodes, that can be only done through a custom SetAttributes method of the model.
+
+Changing of parameters using  SetAttributes method will cause the node to change position instantaneously
+in a discrete jump such as a instant change in altitude and radius. This is a maojor limitaion/caveat of this model.
+Taking this in consideration, a forced position override by calling SetPosition() after the model has been initialized 
+is also allowed. Because, in that case also, with respect to the other initial parameters, 
+the path of the node will get configured by with respect to the new position input.
+
+The implementation of this model is not 2d-specific. i.e. if you provide z-value greater than 0, 
+then you may use it in 3d scenarios. It is possible to use this model as  child in a 
+hierarchical/group mobility and create more practical 3d mobility scenarios.
+
+This implementation tries to keep this CircleMobilityModel as simple as possible and make it compatible with hierarchical mobility model to make complex movements. For example, if we use WaypointMobilityModel as parent and CircleMobilityModel as child, then we will have different kinds of spiral like movements that will mimic realistic movements of circulating UAV/Aircraft.
+
+While using this model in a hierarchical/group mobility scenario, maximum speed of the node being its "nominal" speed plus the speed of the parent mobility model. So, due to the changes of parent mobility, the speed of (UAV) node may exceed the UAV specifications.
+So that, the user should be aware and configure the speed parent mobility and child mobility(node) accordingly. 
+All this kind of group mobility related issues are not addressed in this simple circle mobiity model.
+
 
 References
 ==========
@@ -440,6 +485,7 @@ Examples
 - main-grid-topology.cc
 - ns2-mobility-trace.cc
 - ns2-bonnmotion.cc
+- simple-3d-circle-mobility-example1.cc
 
 reference-point-group-mobility-example.cc
 #########################################
@@ -462,7 +508,164 @@ using an image processing program such as ImageMagick to form a
 basic animated gif of the mobility.  The example and animation program
 files have further instructions on how to run them.
 
+simple-3d-circle-mobility-example1.cc
+######################################################
+
+This Example `Simple3DCircleMobilityExample1.cc` will generate a 5 UAV node topology 
+and simulate CircleMobilityModel in them.
+This simulation will create a NetAnim Trace file as an output.
+
+The name of the NetAnim trace file will depend on the selected example scenario.
+
+You can run the example script as follows:
+
+.. sourcecode:: bash
+
+    $./waf "simple-3d-circle-mobility-example1 --example=7"
+
+This will run the simulation for the 7th example scenario presented below.
+
+This simulation and will create the file `Simple3DCircleMobilityExample-7.xml`
+We can visualize the scenario using NetAnim using this xml file.
+
+**Initializing and using the model in different ways**
+
+
+The following are different ways in which we can initialize and use the model:
+All the example codes will set the CircleMobilityModel in all the nodes in the 
+NodeContainer but move them differently according to settings
+
+**Example 1:**
+
+In this all the nodes start the movement at `(0,0,0)` but will have different 
+origins derived from the default random value of radius, start angle 
+and will have random speed and direction. So, all the nodes will circulate 
+in different circular paths but the nodes will pass the point `(0,0,0)`
+
+.. sourcecode:: cpp
+
+    MobilityHelper mobility;
+    mobility.SetMobilityModel ("ns3::CircleMobilityModel");
+    mobility.Install (UAVs);
+  
+ 
+**Example 2:**
+
+In this, all the nodes will start the movement at initial position provided by the PositionAllocator
+and calculate origins with respect to the positions and with respect to the default random value
+of radius, start angle and will have random speed and direction.
+So, all the nodes will circulate in different circles but will pass the initial point provided by PositionAllocator
+
+.. code-block:: cpp
+
+    MobilityHelper mobility;
+    mobility.SetMobilityModel ("ns3::CircleMobilityModel");
+    mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
+                               "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
+                               "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
+                               "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
+    mobility.Install (UAVs);
+  
+ 
+**Example 3:**
+
+In this, all the nodes will start the movement at position with respect to different 
+origins derived from the default random value of radius, start angle 
+and will have random speed and direction.
+So, all the nodes will circulate in different circular planes perpendicular to the z-axis
+
+.. code-block:: cpp
+
+    MobilityHelper mobility;
+    mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
+                               "UseConfiguredOrigin",BooleanValue(true));
+    mobility.Install (UAVs);
+  
+ 
+**Example 4:**
+
+In this, all the nodes will start the movement with respect to different 
+origins derived from the user provided range of random value of radius, start angle 
+and will have random speed and direction.
+So, all the nodes will circulate in different circular x-y planes perpendicular to the z-axis
+
+.. code-block:: cpp
+
+    MobilityHelper mobility;
+    mobility.SetMobilityModel ("ns3::CircleMobilityModel", 
+                               "UseConfiguredOrigin",BooleanValue(true),
+                               "MinOrigin",Vector3DValue(Vector3D(0,0,0)),"MaxOrigin",Vector3DValue(Vector3D(500,500,500)),
+                               "MinMaxRadius",Vector2DValue(Vector2D(500,500)),
+                               "MinMaxStartAngle",Vector2DValue(Vector2D(0,0)),
+                               "MinMaxSpeed",Vector2DValue(Vector2D(30,60)),
+                               "RandomizeDirection",BooleanValue(false),
+                               "Clockwise",BooleanValue(true)
+    mobility.Install (UAVs);
+  
+What ever may be the way in which we initialize the mobility model, 
+we can customize the path of any single node by 
+class CircleMobilityModel : public MobilityModel
+using the CircleMobilityModel::SetParameters function at any time.
+
+**Example 5:**
+
+.. code-block:: cpp
+
+   //void SetParameters(const Vector &Origin, const double Radius, const double StartAngle, const bool Clockwise, const double Speed);
+   mobility.Get (0)->GetObject<CircleMobilityModel> ()->SetParameters(Vector (150, 150, 250), 150, 0, true, 20); 
+
+
+**Example 6:**
+
+If the user choose to use the initial position of the node (provided by PositionAllocator) as origin,
+they can do it as follows:
+ 
+.. code-block:: cpp
+
+           mobility.SetMobilityModel ("ns3::CircleMobilityModel",
+                                    "UseInitialPositionAsOrigin", BooleanValue(true),
+                                    "MinMaxSpeed",Vector2DValue(Vector2D(10,10)),
+                                    "RandomizeDirection",BooleanValue(false),
+                                    "MinMaxRadius",Vector2DValue(Vector2D(300,300)));
+          mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
+                                    "X", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
+                                    "Y", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"),
+                                    "Z", StringValue ("ns3::UniformRandomVariable[Min=500.0|Max=1500.0]"));
+
+**Example 7:**
+
+The CircleMobilityModel can be used in group mobility as shown below:
+
+.. code-block:: cpp
+
+        Ptr<WaypointMobilityModel> waypointMm = CreateObject<WaypointMobilityModel> ();
+        waypointMm->AddWaypoint (Waypoint (Seconds (0), Vector (0, 0, 0)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (1000), Vector (5000, 0, 0)));
+        waypointMm->AddWaypoint (Waypoint (Seconds (2000), Vector (0, 5000, 0)));
+        GroupMobilityHelper group;
+        group.SetReferenceMobilityModel (waypointMm);
+        group.SetMemberMobilityModel ("ns3::CircleMobilityModel","UseConfiguredOrigin",BooleanValue(true));
+        group.Install (UAVs);
+
 Validation
 **********
 
 TBD
+
+CircleMobilityModel
+###################
+
+The CircleMobilityModel test suite performs a simple test to check the case in which there are no runtime parameter changes. 
+It first considers the origin to be (0m,0m,0m), radius to be 1m, and speed to be 2*pi m/s, and initial angle to be 0 degre, 
+and then check the position at time 0.5 second.
+
+Since PI is irrational, we need to check these x-coordinates with some tolerance value.
+So it will test the position provided by the mobility model with calculated value of position (-1m, 0m, 0m) with a tolerance value of 0.1m.
+The test will succeed if the values are equal within that tolerance
+
+With the same initial condition, the calculations are repeated at 1.0 second .
+And it will test the position provided by the mobility model with calculated value of position (1m, 0m, 0m) with a tolerance value of 0.1m.
+The test will succeed if the values are equal within that tolerance
+
+
+
