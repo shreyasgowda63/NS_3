@@ -1052,8 +1052,8 @@ PrintAllAttributes (std::ostream & os)
   NS_LOG_FUNCTION_NOARGS ();
   os << commentStart << page << "AttributeList All Attributes\n"
      << std::endl;
-  os << "This is a list of all" << reference << "ns3::Attribute classes.  "
-     << "For more information see the" << reference << "ns3::Attributes "
+  os << "This is a list of all" << reference << "attributes classes.  "
+     << "For more information see the" << reference << "attributes "
      << "section of this API documentation and the Attributes sections "
      << "in the Tutorial and Manual.\n"
      << std::endl;
@@ -1530,7 +1530,7 @@ PrintAttributeImplementations (std::ostream & os)
       { "Ssid",           "Ssid",           true,  "ssid.h"             },
       { "TypeId",         "TypeId",         true,  "type-id.h"          },
       { "UanModesList",   "UanModesList",   true,  "uan-tx-mode.h"      },
-      // { "ValueClassTest", "ValueClassTest", false, "" /* outside ns3 */ },
+      { "ValueClassTest", "ValueClassTest", false, "attribute-test-suite.cc" /* core/test/ */  },
       { "Vector",         "Vector",         true,  "vector.h"           },
       { "Vector2D",       "Vector2D",       true,  "vector.h"           },
       { "Vector3D",       "Vector3D",       true,  "vector.h"           },
