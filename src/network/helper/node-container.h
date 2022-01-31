@@ -296,9 +296,9 @@ public:
    * Whenever a Node is created, a Ptr<Node> is added to a global list of all
    * nodes in the system.  It is sometimes useful to be able to get to all
    * nodes in one place.  This method creates a NodeContainer that is 
-   * initialized to contain all of the simulation nodes,
+   * initialized to contain all of the simulation nodes.
    *
-   * \returns a NoceContainer which contains a list of all Nodes.
+   * \returns a NodeContainer which contains a list of all Nodes.
    */
   static NodeContainer GetGlobal (void);
 
