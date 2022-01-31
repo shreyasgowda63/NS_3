@@ -45,6 +45,15 @@
 using namespace ns3;
 
 /**
+ * \file
+ * \ingroup system-tests-traced
+ * 
+ * TracedCallback tests to verify if they are called with
+ * the right type and number of arguments.
+ */
+
+
+/**
  * \ingroup system-tests-traced
  * 
  * TracedCallback Testcase.
@@ -132,6 +141,11 @@ std::string TypeName (int N)
   return "unknown";
 }
 
+/**
+ * \ingroup system-tests-traced
+ * 
+ * Returns a sting representing the type of a class.
+*/
 #define TYPENAME(T)               \
   template <> \
   inline std::string  \
@@ -312,10 +326,12 @@ TracedCallbackTypedefTestCase::TracedCallbackTypedefTestCase ()
 {
 }
 
-void
-TracedCallbackTypedefTestCase::DoRun (void)
-{
-
+/**
+ * \ingroup system-tests-traced
+ * 
+ * Check the TracedCallback duplicate by checking if it maches the TracedCallback
+ * it is supposed to be equal to.
+ */
 #define DUPE(U, T1)                                                     \
   if (g_dupes.find ( # U ) == g_dupes.end ()) {                           \
       NS_TEST_ASSERT_MSG_NE (0, 1,                                        \
@@ -329,8 +345,19 @@ TracedCallbackTypedefTestCase::DoRun (void)
       " used to match the typedef " << # T1 <<                         \
       " but no longer does.  Please add a new CHECK call.")
 
+
+/**
+ * \ingroup system-tests-traced
+ * 
+ * Check the TracedCallback by calling its Invoke function.
+ */
 #define CHECK(U, ...)                                    \
   CreateObject< Checker< __VA_ARGS__ > > ()->Invoke<U> ()
+
+
+void
+TracedCallbackTypedefTestCase::DoRun (void)
+{
 
   CHECK (dsr::DsrOptionSRHeader::TracedCallback,
          const dsr::DsrOptionSRHeader &);

@@ -24,6 +24,15 @@
 
 using namespace ns3;
 
+/**
+ * \file
+ * \ingroup system-tests-traced
+ * 
+ * TracedValueCallback tests to verify that they work with different types
+ * of classes - it tests bool, double, various types of integers types, 
+ * Time, and SequenceNumber32.
+ */
+
 namespace {
 
 /**
