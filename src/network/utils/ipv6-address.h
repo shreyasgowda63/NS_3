@@ -306,6 +306,14 @@ public:
   bool IsDocumentation () const;
 
   /**
+   * \brief If the IPv6 address is allocated in the block 2000::/3, i.e.,
+   * 001x xxxx ..., and is not a documentation address.
+   * \link https://www.iana.org/assignments/ipv6-address-space/ipv6-address-space.xhtml
+   * \return true only if this address is publicly reachable unicast address.
+   */
+  bool IsGlobalUnicast (void) const;
+
+  /**
    * \brief Compares an address and a prefix.
    * \param prefix the prefix to compare with
    * \return true if the address has the given prefix

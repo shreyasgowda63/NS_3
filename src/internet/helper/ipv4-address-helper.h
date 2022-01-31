@@ -20,6 +20,7 @@
 #define IPV4_ADDRESS_HELPER_H
 
 #include "ns3/ipv4-address.h"
+#include "ns3/node-container.h"
 #include "ns3/net-device-container.h"
 #include "ipv4-interface-container.h"
 
@@ -178,6 +179,32 @@ public:
    * @see NewNetwork
    */
   Ipv4InterfaceContainer Assign (const NetDeviceContainer &c);
+
+ /**
+   * @brief Get the Node Pointer from the NodeContainer for a given
+   * Ipv4Address.
+   *
+   * If the IPv4Address is a Broadcast, Localhost, Multicast or Any
+   * address, then a nullptr is returned. This function will return
+   * a node pointer for valid unicast IPv4 address on a non-loopback
+   * interface only.
+   *
+   * If NodeContainer parameter is not mentioned, it will find the
+   * Node Pointer from all the nodes present in the simulation.
+   *
+   * @remark This function is capable of scanning through all the nodes
+   * present in the simulation. Such kind of access is not present in
+   * real-world scenarios. However, this function can be used in
+   * simulation-specific protocols (designed for simulation purpose) and
+   * as a configuration helper to avoid taking Ipv4Address as well as
+   * the corresponding node pointer.
+   *
+   * @param addr Ipv4Address for which want to find Node pointer.
+   * @param c NodeContainer object where we search for the Node pointer.
+   *
+   * @returns Node pointer of the node with the given address.
+   */
+  static Ptr<Node> GetNode (const Ipv4Address &addr, const NodeContainer &c = NodeContainer::GetGlobal ());
 
 private:
   /**

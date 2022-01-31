@@ -813,6 +813,14 @@ bool Ipv6Address::IsDocumentation () const
   return false;
 }
 
+bool Ipv6Address::IsGlobalUnicast (void) const
+{
+  NS_LOG_FUNCTION (this);
+  // The standard states that Global Unicast are allocated in the block 2000::/3, i.e., 001x xxxx ...
+  // See https://www.iana.org/assignments/ipv6-address-space/ipv6-address-space.xhtml
+  return ((m_address[0] >> 5 == 1) && !IsDocumentation ());
+}
+
 bool Ipv6Address::HasPrefix (Ipv6Prefix const& prefix) const
 {
   NS_LOG_FUNCTION (this << prefix);
