@@ -1180,15 +1180,21 @@ macro(build_example)
   set(multiValueArgs SOURCE_FILES HEADER_FILES LIBRARIES_TO_LINK)
   cmake_parse_arguments("EXAMPLE" "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  set(missing_dependencies FALSE)
-  foreach(lib ${libraries_to_link})
+  set(missing_dependencies)
+  foreach(lib ${EXAMPLE_LIBRARIES_TO_LINK})
+    # skip check for ns-3 modules if its a path to a library
+    if(EXISTS ${lib})
+      continue()
+    endif()
+
+    # check if the example depends on disabled modules
     string(REPLACE "lib" "" lib ${lib})
     if(NOT (${lib} IN_LIST ns3-all-enabled-modules))
-      set(missing_dependencies TRUE)
+      list(APPEND missing_dependencies ${lib})
     endif()
   endforeach()
 
-  if(NOT ${missing_dependencies})
+  if(NOT missing_dependencies)
     # Create shared library with sources and headers
     add_executable(${EXAMPLE_NAME} "${EXAMPLE_SOURCE_FILES}" "${EXAMPLE_HEADER_FILES}")
 
