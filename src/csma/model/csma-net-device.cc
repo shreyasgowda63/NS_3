@@ -58,10 +58,10 @@ CsmaNetDevice::GetTypeId (void)
                    MakeUintegerChecker<uint16_t> ())
     .AddAttribute ("EncapsulationMode", 
                    "The link-layer encapsulation type to use.",
-                   EnumValue (DIX),
+                   EnumValue (Ethernet::DIX),
                    MakeEnumAccessor (&CsmaNetDevice::SetEncapsulationMode),
-                   MakeEnumChecker (DIX, "Dix",
-                                    LLC, "Llc"))
+                   MakeEnumChecker (Ethernet::DIX, "Dix",
+                                    Ethernet::LLC, "Llc"))
     .AddAttribute ("SendEnable", 
                    "Enable or disable the transmitter section of the device.",
                    BooleanValue (true),
@@ -202,7 +202,7 @@ CsmaNetDevice::CsmaNetDevice ()
   // you can just change the default encapsulation mode above without having 
   // to change it here.
   //
-  m_encapMode = DIX;
+  m_encapMode = Ethernet::DIX;
 }
 
 CsmaNetDevice::~CsmaNetDevice()
@@ -222,17 +222,16 @@ CsmaNetDevice::DoDispose ()
 }
 
 void
-CsmaNetDevice::SetEncapsulationMode (enum EncapsulationMode mode)
+CsmaNetDevice::SetEncapsulationMode (Ethernet::EncapMode mode)
 {
   NS_LOG_FUNCTION (mode);
-
   m_encapMode = mode;
 
   NS_LOG_LOGIC ("m_encapMode = " << m_encapMode);
   NS_LOG_LOGIC ("m_mtu = " << m_mtu);
 }
 
-CsmaNetDevice::EncapsulationMode
+Ethernet::EncapMode
 CsmaNetDevice::GetEncapsulationMode (void)
 {
   NS_LOG_FUNCTION_NOARGS ();
@@ -304,137 +303,6 @@ CsmaNetDevice::SetBackoffParams (Time slotTime, uint32_t minSlots, uint32_t maxS
   m_backoff.m_ceiling = ceiling;
   m_backoff.m_maxRetries = maxRetries;
 }
-
-void
-CsmaNetDevice::AddHeader (Ptr<Packet> p,   Mac48Address source,  Mac48Address dest,  uint16_t protocolNumber)
-{
-  NS_LOG_FUNCTION (p << source << dest << protocolNumber);
-
-  EthernetHeader header (false);
-  header.SetSource (source);
-  header.SetDestination (dest);
-
-  EthernetTrailer trailer;
-
-  NS_LOG_LOGIC ("p->GetSize () = " << p->GetSize ());
-  NS_LOG_LOGIC ("m_encapMode = " << m_encapMode);
-  NS_LOG_LOGIC ("m_mtu = " << m_mtu);
-
-  uint16_t lengthType = 0;
-  switch (m_encapMode) 
-    {
-    case DIX:
-      NS_LOG_LOGIC ("Encapsulating packet as DIX (type interpretation)");
-      //
-      // This corresponds to the type interpretation of the lengthType field as
-      // in the old Ethernet Blue Book.
-      //
-      lengthType = protocolNumber;
-
-      //
-      // All Ethernet frames must carry a minimum payload of 46 bytes.  We need
-      // to pad out if we don't have enough bytes.  These must be real bytes 
-      // since they will be written to pcap files and compared in regression 
-      // trace files.
-      //
-      if (p->GetSize () < 46)
-        {
-          uint8_t buffer[46];
-          memset (buffer, 0, 46);
-          Ptr<Packet> padd = Create<Packet> (buffer, 46 - p->GetSize ());
-          p->AddAtEnd (padd);
-        }
-      break;
-    case LLC: 
-      {
-        NS_LOG_LOGIC ("Encapsulating packet as LLC (length interpretation)");
-
-        LlcSnapHeader llc;
-        llc.SetType (protocolNumber);
-        p->AddHeader (llc);
-
-        //
-        // This corresponds to the length interpretation of the lengthType 
-        // field but with an LLC/SNAP header added to the payload as in 
-        // IEEE 802.2
-        //
-        lengthType = p->GetSize ();
-
-        //
-        // All Ethernet frames must carry a minimum payload of 46 bytes.  The 
-        // LLC SNAP header counts as part of this payload.  We need to padd out
-        // if we don't have enough bytes.  These must be real bytes since they 
-        // will be written to pcap files and compared in regression trace files.
-        //
-        if (p->GetSize () < 46)
-          {
-            uint8_t buffer[46];
-            memset (buffer, 0, 46);
-            Ptr<Packet> padd = Create<Packet> (buffer, 46 - p->GetSize ());
-            p->AddAtEnd (padd);
-          }
-
-        NS_ASSERT_MSG (p->GetSize () <= GetMtu (),
-                       "CsmaNetDevice::AddHeader(): 802.3 Length/Type field with LLC/SNAP: "
-                       "length interpretation must not exceed device frame size minus overhead");
-      }
-      break;
-    case ILLEGAL:
-    default:
-      NS_FATAL_ERROR ("CsmaNetDevice::AddHeader(): Unknown packet encapsulation mode");
-      break;
-    }
-
-  NS_LOG_LOGIC ("header.SetLengthType (" << lengthType << ")");
-  header.SetLengthType (lengthType);
-  p->AddHeader (header);
-
-  if (Node::ChecksumEnabled ())
-    {
-      trailer.EnableFcs (true);
-    }
-  trailer.CalcFcs (p);
-  p->AddTrailer (trailer);
-}
-
-#if 0
-bool
-CsmaNetDevice::ProcessHeader (Ptr<Packet> p, uint16_t & param)
-{
-  NS_LOG_FUNCTION (p << param);
-
-  EthernetTrailer trailer;
-  p->RemoveTrailer (trailer);
-
-  EthernetHeader header (false);
-  p->RemoveHeader (header);
-
-  if ((header.GetDestination () != GetBroadcast ()) &&
-      (header.GetDestination () != GetAddress ()))
-    {
-      return false;
-    }
-
-  switch (m_encapMode)
-    {
-    case DIX:
-      param = header.GetLengthType ();
-      break;
-    case LLC: 
-      {
-        LlcSnapHeader llc;
-        p->RemoveHeader (llc);
-        param = llc.GetType ();
-      } 
-      break;
-    case ILLEGAL:
-    default:
-      NS_FATAL_ERROR ("CsmaNetDevice::ProcessHeader(): Unknown packet encapsulation mode");
-      break;
-    }
-  return true;
-}
-#endif
 
 void
 CsmaNetDevice::TransmitStart (void)
@@ -726,52 +594,12 @@ CsmaNetDevice::Receive (Ptr<Packet> packet, Ptr<CsmaNetDevice> senderDevice)
   //
   Ptr<Packet> originalPacket = packet->Copy ();
 
-  EthernetTrailer trailer;
-  packet->RemoveTrailer (trailer);
-  if (Node::ChecksumEnabled ())
-    {
-      trailer.EnableFcs (true);
-    }
-
-  bool crcGood = trailer.CheckFcs (packet);
-  if (!crcGood)
-    {
-      NS_LOG_INFO ("CRC error on Packet " << packet);
-      m_phyRxDropTrace (packet);
-      return;
-    }
-
-  EthernetHeader header (false);
-  packet->RemoveHeader (header);
-
-  NS_LOG_LOGIC ("Pkt source is " << header.GetSource ());
-  NS_LOG_LOGIC ("Pkt destination is " << header.GetDestination ());
-
   uint16_t protocol;
-  //
-  // If the length/type is less than 1500, it corresponds to a length 
-  // interpretation packet.  In this case, it is an 802.3 packet and 
-  // will also have an 802.2 LLC header.  If greater than 1500, we
-  // find the protocol number (Ethernet type) directly.
-  //
-  if (header.GetLengthType () <= 1500)
-    {
-      NS_ASSERT (packet->GetSize () >= header.GetLengthType ());
-      uint32_t padlen = packet->GetSize () - header.GetLengthType ();
-      NS_ASSERT (padlen <= 46);
-      if (padlen > 0)
-        {
-          packet->RemoveAtEnd (padlen);
-        }
-
-      LlcSnapHeader llc;
-      packet->RemoveHeader (llc);
-      protocol = llc.GetType ();
-    }
-  else
-    {
-      protocol = header.GetLengthType ();
-    }
+  EthernetHeader header(false);
+  if (!EthernetDecap(packet, protocol, header)) {
+    m_phyRxDropTrace(packet);
+    return;
+  }
 
   //
   // Classify the packet based on its destination.
@@ -963,7 +791,13 @@ CsmaNetDevice::SendFrom (Ptr<Packet> packet, const Address& src, const Address& 
 
   Mac48Address destination = Mac48Address::ConvertFrom (dest);
   Mac48Address source = Mac48Address::ConvertFrom (src);
-  AddHeader (packet, source, destination, protocolNumber);
+  EthernetEncap (packet, source, destination, protocolNumber, m_encapMode);
+  if (m_encapMode == Ethernet::LLC)
+    {
+      NS_ASSERT_MSG (packet->GetSize () <= GetMtu (),
+                     "CsmaNetDevice::SendFrom(): 802.3 Length/Type field with LLC/SNAP: "
+                     "length interpretation must not exceed device frame size minus overhead");
+    }
 
   m_macTxTrace (packet);
 

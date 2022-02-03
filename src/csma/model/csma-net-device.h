@@ -33,6 +33,7 @@
 #include "ns3/data-rate.h"
 #include "ns3/ptr.h"
 #include "ns3/mac48-address.h"
+#include "ns3/ethernet-utils.h"
 
 namespace ns3 {
 
@@ -64,15 +65,6 @@ public:
    * \return the object TypeId
    */
   static TypeId GetTypeId (void);
-
-  /**
-   * Enumeration of the types of packets supported in the class.
-   */
-  enum EncapsulationMode {
-    ILLEGAL,     /**< Encapsulation mode not set */
-    DIX,         /**< DIX II / Ethernet II packet */
-    LLC,         /**< 802.2 LLC/SNAP Packet*/
-  };
 
   /**
    * Construct a CsmaNetDevice
@@ -202,14 +194,14 @@ public:
    * \param mode The encapsulation mode of this device.
    *
    */
-  void SetEncapsulationMode (CsmaNetDevice::EncapsulationMode mode);
+  void SetEncapsulationMode (Ethernet::EncapMode mode);
 
   /**
    * Get the encapsulation mode of this device.
    *
    * \returns The encapsulation mode of this device.
    */
-  CsmaNetDevice::EncapsulationMode  GetEncapsulationMode (void);
+  Ethernet::EncapMode GetEncapsulationMode (void);
 
   //
   // The following methods are inherited from NetDevice base class.
@@ -482,13 +474,6 @@ private:
   TxMachineState m_txMachineState;
 
   /**
-   * The type of packet that should be created by the AddHeader
-   * function and that should be processed by the ProcessHeader
-   * function.
-   */
-  EncapsulationMode m_encapMode;
-
-  /**
    * The data rate that the Net Device uses to simulate packet transmission
    * timing.
    * \see class DataRate
@@ -727,6 +712,11 @@ private:
    * Ethernet.
    */
   uint32_t m_mtu;
+
+  /**
+   * Default encapsulation mode
+   */
+  Ethernet::EncapMode m_encapMode;
 };
 
 } // namespace ns3
