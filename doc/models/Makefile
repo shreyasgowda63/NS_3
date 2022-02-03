@@ -24,6 +24,8 @@ SOURCES = \
 	$(SRC)/antenna/doc/source/antenna-testing.rst \
 	$(SRC)/aodv/doc/aodv.rst \
 	$(SRC)/applications/doc/applications.rst \
+	$(SRC)/applications/doc/flent.rst \
+	$(SRC)/applications/doc/three-gpp-http.rst \
 	$(SRC)/bridge/doc/bridge.rst \
 	$(SRC)/brite/doc/brite.rst \
 	$(SRC)/buildings/doc/source/buildings.rst \
