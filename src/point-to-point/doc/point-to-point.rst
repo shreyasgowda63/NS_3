@@ -13,10 +13,14 @@ Overview of the PointToPoint model
 The |ns3| point-to-point model is of a very simple point to point data link
 connecting exactly two PointToPointNetDevice devices over an
 PointToPointChannel. This can be viewed as equivalent to a full duplex RS-232 or
-RS-422 link with null modem and no handshaking.
+RS-422 link with null modem and no handshaking. PointToPointNetDevice is thus good
+for simulations of a packet-switched network where the details of the L2 protocol
+are not essential. If you want specific features of the L2 network, another NetDevice
+may be more appropriate; for example CsmaNetDevice features a full-duplex mode for 
+simulating switched ethernet networks.
 
-Data is encapsulated in the Point-to-Point Protocol (PPP -- RFC 1661), however
-the Link Control Protocol (LCP) and associated state machine is not implemented.
+The PointToPointNetDevice encapsulates data in the Point-to-Point Protocol (PPP -- RFC 1661), 
+however the Link Control Protocol (LCP) and associated state machine is not implemented.
 The PPP link is assumed to be established and authenticated at all times.
 
 Data is not framed, therefore Address and Control fields will not be found.

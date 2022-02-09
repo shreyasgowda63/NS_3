@@ -21,6 +21,8 @@
 #ifndef CSMA_CHANNEL_H
 #define CSMA_CHANNEL_H
 
+#include <array>
+
 #include "ns3/channel.h"
 #include "ns3/ptr.h"
 #include "ns3/nstime.h"
@@ -200,7 +202,7 @@ public:
    * \return Returns true unless the source was detached before it
    * completed its transmission.
    */
-  bool TransmitEnd ();
+  bool TransmitEnd (uint32_t srcId);
 
   /**
    * \brief Indicates that the channel has finished propagating the
@@ -224,7 +226,7 @@ public:
    * \return Returns the state of the channel (IDLE -- free,
    * TRANSMITTING -- busy, PROPAGATING - busy )
    */
-  WireState GetState ();
+  WireState GetState (uint32_t srcId);
 
   /**
    * \brief Indicates if the channel is busy. The channel will only
@@ -233,7 +235,7 @@ public:
    * \return Returns true if the channel is busy and false if it is
    * free.
    */
-  bool IsBusy ();
+  bool IsBusy (uint32_t srcId);
 
   /**
    * \brief Indicates if a net device is currently attached or
@@ -292,6 +294,16 @@ public:
    */
   Time GetDelay (void);
 
+  /**
+   * Called from TransmitStart if m_fullDuplexMode is true. 
+   */
+  bool TransmitStartFullDuplex (Ptr<const Packet> p, uint32_t srcId);
+
+/**
+   * Called from TransmitEnd if m_fullDuplexMode is true. 
+   */
+  bool TransmitEndFullDuplex (uint32_t srcId);
+
 private:
   /**
    * Copy constructor is declared but not implemented.  This disables the
@@ -332,23 +344,35 @@ private:
   std::vector<CsmaDeviceRec> m_deviceList;
 
   /**
-   * The Packet that is currently being transmitted on the channel (or last
+   * The Packet(s) that is/are currently being transmitted on the channel (or last
    * packet to have been transmitted on the channel if the channel is
    * free.)
+   * 
+   * In half duplex mode, only look at the first element
    */
-  Ptr<Packet> m_currentPkt;
+  std::array<Ptr<Packet>, 2> m_currentPkts;
 
   /**
    * Device Id of the source that is currently transmitting on the
    * channel. Or last source to have transmitted a packet on the
    * channel, if the channel is currently not busy.
+   * 
+   * Only has meaning in half-duplex operation
    */
   uint32_t                            m_currentSrc;
 
   /**
    * Current state of the channel
+   * In half duplex mode, only look at the first element
    */
-  WireState          m_state;
+  std::array<WireState, 2> m_states;
+
+  /**
+   * Enable full duplex (i.e. point-to-point or "switched") operation.
+   * In this mode, CsmaChannel may only have up to two CsmaNetDevices connected. 
+   * False by default.
+   */
+  bool m_fullDuplexMode;
 };
 
 } // namespace ns3

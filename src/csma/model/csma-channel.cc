@@ -23,6 +23,7 @@
 #include "ns3/packet.h"
 #include "ns3/simulator.h"
 #include "ns3/log.h"
+#include "ns3/boolean.h"
 
 namespace ns3 {
 
@@ -46,16 +47,20 @@ CsmaChannel::GetTypeId (void)
                    TimeValue (Seconds (0)),
                    MakeTimeAccessor (&CsmaChannel::m_delay),
                    MakeTimeChecker ())
+    .AddAttribute ("FullDuplexMode",
+                   "The device is configured in full duplex mode",
+                   BooleanValue (false),
+                   MakeBooleanAccessor (&CsmaChannel::m_fullDuplexMode),
+                   MakeBooleanChecker ())
   ;
   return tid;
 }
 
 CsmaChannel::CsmaChannel ()
   :
-    Channel ()
+    Channel (), m_currentPkts{nullptr, nullptr}, m_states{IDLE, IDLE}
 {
   NS_LOG_FUNCTION_NOARGS ();
-  m_state = IDLE;
   m_deviceList.clear ();
 }
 
@@ -70,6 +75,12 @@ CsmaChannel::Attach (Ptr<CsmaNetDevice> device)
 {
   NS_LOG_FUNCTION (this << device);
   NS_ASSERT (device != 0);
+
+  if (m_fullDuplexMode)
+    {
+      NS_ABORT_MSG_IF (m_deviceList.size () >= 2,
+                   "Only two NetDevices may be attached to a CsmaChannel in full duplex mode");
+    }
 
   CsmaDeviceRec rec (device);
 
@@ -127,6 +138,7 @@ bool
 CsmaChannel::Detach (uint32_t deviceId)
 {
   NS_LOG_FUNCTION (this << deviceId);
+  size_t idx = m_fullDuplexMode ? deviceId : 0;
 
   if (deviceId < m_deviceList.size ())
     {
@@ -138,7 +150,7 @@ CsmaChannel::Detach (uint32_t deviceId)
 
       m_deviceList[deviceId].active = false;
 
-      if ((m_state == TRANSMITTING) && (m_currentSrc == deviceId))
+      if ((m_states[idx] == TRANSMITTING) && (m_currentSrc == deviceId))
         {
           NS_LOG_WARN ("CsmaChannel::Detach(): Device is currently" << "transmitting (" << deviceId << ")");
         }
@@ -175,7 +187,13 @@ CsmaChannel::TransmitStart (Ptr<const Packet> p, uint32_t srcId)
   NS_LOG_FUNCTION (this << p << srcId);
   NS_LOG_INFO ("UID is " << p->GetUid () << ")");
 
-  if (m_state != IDLE)
+  NS_ASSERT ((srcId < 2) || (!m_fullDuplexMode));
+
+  // If we're in full duplex mode, index into the various arrays correctly
+  // Otherwise, fall back to just using the first element
+  size_t idx = m_fullDuplexMode ? srcId : 0;
+
+  if (m_states[idx] != IDLE)
     {
       NS_LOG_WARN ("CsmaChannel::TransmitStart(): State is not IDLE");
       return false;
@@ -188,9 +206,10 @@ CsmaChannel::TransmitStart (Ptr<const Packet> p, uint32_t srcId)
     }
 
   NS_LOG_LOGIC ("switch to TRANSMITTING");
-  m_currentPkt = p->Copy ();
+  m_currentPkts[idx] = p->Copy ();
+  // This is irrelevant in the case of full duplex mode, but that's fine
   m_currentSrc = srcId;
-  m_state = TRANSMITTING;
+  m_states[idx] = TRANSMITTING;
   return true;
 }
 
@@ -201,56 +220,80 @@ CsmaChannel::IsActive (uint32_t deviceId)
 }
 
 bool
-CsmaChannel::TransmitEnd ()
+CsmaChannel::TransmitEnd (uint32_t srcId)
 {
-  NS_LOG_FUNCTION (this << m_currentPkt << m_currentSrc);
-  NS_LOG_INFO ("UID is " << m_currentPkt->GetUid () << ")");
+  size_t idx = m_fullDuplexMode ? srcId : 0;
+  NS_LOG_FUNCTION (this << m_currentPkts[idx] << srcId);
+  NS_LOG_INFO ("UID is " << m_currentPkts[idx]->GetUid () << ")");
 
-  NS_ASSERT (m_state == TRANSMITTING);
-  m_state = PROPAGATING;
+  NS_ASSERT ((srcId < 2) || (!m_fullDuplexMode));
+  NS_ASSERT (m_states[idx] == TRANSMITTING);
 
   bool retVal = true;
 
-  if (!IsActive (m_currentSrc))
+  if (!IsActive (srcId))
     {
-      NS_LOG_ERROR ("CsmaChannel::TransmitEnd(): Seclected source was detached before the end of the transmission");
+      NS_LOG_ERROR ("CsmaChannel::TransmitEnd(): Seclected source was detached before the end of "
+                    "the transmission");
       retVal = false;
     }
 
   NS_LOG_LOGIC ("Schedule event in " << m_delay.As (Time::S));
 
-
   NS_LOG_LOGIC ("Receive");
 
-  std::vector<CsmaDeviceRec>::iterator it;
-  uint32_t devId = 0;
-  for (it = m_deviceList.begin (); it < m_deviceList.end (); it++)
+  // In half-duplex mode, we wait for the transmission to complete before changing the channel state
+  // However, in full-duplex mode, the transmitter can start sending again immediately
+  if (m_fullDuplexMode)
     {
-      if (it->IsActive ())
+      m_states[idx] = IDLE;
+
+      if (GetNumActDevices () < 2)
         {
-          // schedule reception events
-          Simulator::ScheduleWithContext (it->devicePtr->GetNode ()->GetId (),
-                                          m_delay,
-                                          &CsmaNetDevice::Receive, it->devicePtr,
-                                          m_currentPkt->Copy (), m_deviceList[m_currentSrc].devicePtr);
+          NS_LOG_WARN ("No other attached devices; dropping packet off end of wire");
+          return true;
         }
-      devId++;
+
+      size_t dstId = 1 - srcId;
+      auto dstDev = m_deviceList[dstId].devicePtr;
+      auto srcDev = m_deviceList[srcId].devicePtr;
+      auto pkt = m_currentPkts[srcId];
+      NS_ASSERT(pkt);
+      Simulator::ScheduleWithContext (dstDev->GetNode ()->GetId (), m_delay,
+                                      &CsmaNetDevice::Receive, dstDev, pkt->Copy (), srcDev);
+      m_currentPkts[srcId] = nullptr;
+    }
+  else
+    {
+      std::vector<CsmaDeviceRec>::iterator it;
+      for (it = m_deviceList.begin (); it < m_deviceList.end (); it++)
+        {
+          if (it->IsActive ())
+            {
+              // schedule reception events
+              Simulator::ScheduleWithContext (
+                  it->devicePtr->GetNode ()->GetId (), m_delay, &CsmaNetDevice::Receive,
+                  it->devicePtr, m_currentPkts[idx]->Copy (), m_deviceList[m_currentSrc].devicePtr);
+            }
+        }
+      m_states[idx] = PROPAGATING;
+      Simulator::Schedule (m_delay, &CsmaChannel::PropagationCompleteEvent, this);
     }
 
-  // also schedule for the tx side to go back to IDLE
-  Simulator::Schedule (m_delay, &CsmaChannel::PropagationCompleteEvent,
-                       this);
   return retVal;
 }
 
 void
 CsmaChannel::PropagationCompleteEvent ()
 {
-  NS_LOG_FUNCTION (this << m_currentPkt);
-  NS_LOG_INFO ("UID is " << m_currentPkt->GetUid () << ")");
+  // We don't reach this function in full duplex mode, so idx is always 0
+  NS_ASSERT(!m_fullDuplexMode); 
+  size_t idx = 0;
+  NS_LOG_FUNCTION (this << m_currentPkts[idx]);
+  NS_LOG_INFO ("UID is " << m_currentPkts[idx]->GetUid () << ")");
 
-  NS_ASSERT (m_state == PROPAGATING);
-  m_state = IDLE;
+  NS_ASSERT (m_states[idx] == PROPAGATING);
+  m_states[idx] = IDLE;
 }
 
 uint32_t
@@ -304,9 +347,10 @@ CsmaChannel::GetDeviceNum (Ptr<CsmaNetDevice> device)
 }
 
 bool
-CsmaChannel::IsBusy (void)
+CsmaChannel::IsBusy (uint32_t srcId)
 {
-  if (m_state == IDLE) 
+  size_t idx = m_fullDuplexMode ? srcId : 0;
+  if (m_states[idx] == IDLE) 
     {
       return false;
     } 
@@ -329,9 +373,10 @@ CsmaChannel::GetDelay (void)
 }
 
 WireState
-CsmaChannel::GetState (void)
+CsmaChannel::GetState (uint32_t srcId)
 {
-  return m_state;
+  size_t idx = m_fullDuplexMode ? srcId : 0;
+  return m_states[idx];
 }
 
 Ptr<NetDevice>
