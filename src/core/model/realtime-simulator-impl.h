@@ -19,7 +19,7 @@
 #ifndef REALTIME_SIMULATOR_IMPL_H
 #define REALTIME_SIMULATOR_IMPL_H
 
-#include "simulator-impl.h"
+#include "simulator-adapter.h"
 #include "system-thread.h"
 
 #include "scheduler.h"
@@ -53,7 +53,7 @@ namespace ns3 {
  *
  * Realtime version of SimulatorImpl.
  */
-class RealtimeSimulatorImpl : public SimulatorImpl
+class RealtimeSimulatorImpl : public SimulatorAdapter
 {
 public:
   /**
@@ -90,25 +90,13 @@ public:
   ~RealtimeSimulatorImpl ();
 
   // Inherited from SimulatorImpl
-  virtual void Destroy ();
   virtual bool IsFinished (void) const;
-  virtual void Stop (void);
-  virtual void Stop (const Time &delay);
   virtual EventId Schedule (const Time &delay, EventImpl *event);
   virtual void ScheduleWithContext (uint32_t context, const Time &delay, EventImpl *event);
-  virtual EventId ScheduleNow (EventImpl *event);
   virtual EventId ScheduleDestroy (EventImpl *event);
   virtual void Remove (const EventId &ev);
-  virtual void Cancel (const EventId &ev);
-  virtual bool IsExpired (const EventId &ev) const;
   virtual void Run (void);
-  virtual Time Now (void) const;
-  virtual Time GetDelayLeft (const EventId &id) const;
-  virtual Time GetMaximumSimulationTime (void) const;
   virtual void SetScheduler (ObjectFactory schedulerFactory);
-  virtual uint32_t GetSystemId (void) const;
-  virtual uint32_t GetContext (void) const;
-  virtual uint64_t GetEventCount (void) const;
 
   /** \copydoc ScheduleWithContext(uint32_t,const Time&,EventImpl*) */
   void ScheduleRealtimeWithContext (uint32_t context, const Time &delay, EventImpl *event);
@@ -190,7 +178,7 @@ private:
   typedef std::list<EventId> DestroyEvents;
   /** Container for events to be run at destroy time. */
   DestroyEvents m_destroyEvents;
-  /** Has the stopping condition been reached? */
+  /** Should we stop. */
   bool m_stop;
   /** Is the simulator currently running. */
   bool m_running;
