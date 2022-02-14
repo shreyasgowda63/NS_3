@@ -40,7 +40,7 @@ stages:
     - export MPI_CI=1
     - CXX=$COMPILER ./ns3 configure -d $MODE -GNinja --enable-examples --enable-tests --enable-asserts --enable-mpi
     - ./ns3 build
-    - if [ "$MODE" != "debug" ]; then ./test.py -n; fi
+    - if [ "$MODE" != "debug" ]; then ./test.py -n -r; fi
   cache:
     # Use separate key for each (debug/optimized/release) jobs because
     # they run in parallel and will otherwise overwrite each other
@@ -56,6 +56,9 @@ stages:
   timeout: 12h
   variables:
     CCACHE_BASEDIR_VALUE: ns-3-ccache-storage
+  artifacts:
+    paths:
+      - testpy-output/*/examples/
 
 # Defines the per-commit jobs. They are executed for any branch
 per-commit-compile-debug:
