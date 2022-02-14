@@ -56,6 +56,8 @@ doxygen:
 #  tags:
 #    - nsnam
 #    - linux
+  only:
+    - master
 
 manual:
   extends: .doc
