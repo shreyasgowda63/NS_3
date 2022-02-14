@@ -82,7 +82,7 @@ main (int argc, char **argv)
   Time now = Simulator::Now ();
 
   // discharge at 2.33 A for 1700 seconds
-  sem->SetCurrentA (2.33);
+  sem->SetCurrentA (2.34);
   now += Seconds (1701);
 
 
