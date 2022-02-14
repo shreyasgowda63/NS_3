@@ -1008,8 +1008,13 @@ class worker_thread(threading.Thread):
                     # know.  It will be something like "examples/udp/udp-echo" or
                     # "examples/wireless/mixed-wireless.py"
                     #
+                    os.makedirs(job.cwd)
                     (job.returncode, standard_out, standard_err, et) = run_job_synchronously(job.shell_command,
                         job.cwd, options.valgrind, job.is_pyexample, job.build_path)
+                    with open(os.path.join(job.cwd, "stdout"), "w") as f:
+                        f.write(str(standard_out))
+                    with open(os.path.join(job.cwd, "stderr"), "w") as f:
+                        f.write(str(standard_err))
                 else:
                     #
                     # If we're a test suite, we need to provide a little more info
@@ -1505,12 +1510,17 @@ def run_tests():
                     # Don't try to run this example if it isn't runnable.
                     if test_name in ns3_runnable_programs_dictionary:
                         if eval(do_run):
+                            # Make sure there exists a folder
+                            execution_folder = os.path.join(testpy_output_dir,
+                                                            "examples",
+                                                            name.split(" ")[0],
+                                                            name.split(" ")[0].split("/")[-1])
                             job = Job()
                             job.set_is_example(True)
                             job.set_is_pyexample(False)
                             job.set_display_name(name)
                             job.set_tmp_file_name("")
-                            job.set_cwd(testpy_output_dir)
+                            job.set_cwd(execution_folder)
                             job.set_basedir(os.getcwd())
                             job.set_tempdir(testpy_output_dir)
                             job.set_shell_command(test)
