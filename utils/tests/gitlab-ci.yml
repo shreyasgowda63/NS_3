@@ -41,6 +41,10 @@ stages:
     - CXX=$COMPILER ./ns3 configure -d $MODE -GNinja --enable-examples --enable-tests --enable-asserts --enable-mpi
     - ./ns3 build
     - if [ "$MODE" != "debug" ]; then ./test.py -n -r; fi
+    # TODO Substitute DvdMgr->nsnam and ci-diff-examples->master below
+    - curl -L https://gitlab.com/DvdMgr/ns-3-dev/-/jobs/artifacts/ci-diff-examples/download?job=per-commit-compile-optimized --output artifacts.zip
+    - unzip -o artifacts.zip
+    - diff -qr testpy-output/*/examples/ > examples.diff
   cache:
     # Use separate key for each (debug/optimized/release) jobs because
     # they run in parallel and will otherwise overwrite each other
@@ -57,8 +61,10 @@ stages:
   variables:
     CCACHE_BASEDIR_VALUE: ns-3-ccache-storage
   artifacts:
+    expose_as: "Diff of examples"
     paths:
-      - testpy-output/*/examples/
+      - testpy-output/
+      - examples.diff
 
 # Defines the per-commit jobs. They are executed for any branch
 per-commit-compile-debug:
@@ -74,7 +80,7 @@ per-commit-compile-debug:
     MODE: debug
   before_script:
     - pacman -Syu --noconfirm
-    - pacman -Sy base-devel python ccache gsl gtk3 boost ninja cmake --noconfirm
+    - pacman -Sy base-devel python ccache gsl gtk3 boost ninja cmake unzip --noconfirm
 
 per-commit-compile-release:
   extends: .base-build
@@ -89,7 +95,7 @@ per-commit-compile-release:
     MODE: release
   before_script:
     - pacman -Syu --noconfirm
-    - pacman -Sy base-devel python ccache gsl gtk3 boost ninja cmake --noconfirm
+    - pacman -Sy base-devel python ccache gsl gtk3 boost ninja cmake unzip --noconfirm
 
 per-commit-compile-optimized:
   extends: .base-build
@@ -104,7 +110,7 @@ per-commit-compile-optimized:
     MODE: optimized
   before_script:
     - pacman -Syu --noconfirm
-    - pacman -Sy base-devel python ccache gsl gtk3 boost ninja cmake --noconfirm
+    - pacman -Sy base-devel python ccache gsl gtk3 boost ninja cmake unzip --noconfirm
 
 # .cmake-build:
 #   stage: build
