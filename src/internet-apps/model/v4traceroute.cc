@@ -99,7 +99,6 @@ V4TraceRoute::V4TraceRoute ()
 {
   m_osRoute.clear ();
   m_routeIpv4.clear ();
-
 }
 
 V4TraceRoute::~V4TraceRoute ()
@@ -123,16 +122,16 @@ V4TraceRoute::StartApplication (void)
 
   if (m_verbose)
     {
-	  NS_LOG_UNCOND("Traceroute to " << m_remote << ", "
-                << m_maxTtl << " hops Max, "
-                << m_size << " bytes of data.");
+      NS_LOG_UNCOND("Traceroute to " << m_remote << ", "
+                                     << m_maxTtl << " hops Max, "
+                                     << m_size << " bytes of data.");
     }
 
   if (m_printStream != NULL)
     {
       *m_printStream->GetStream () << "Traceroute to " << m_remote << ", "
-                                 << m_maxTtl << " hops Max, "
-                                 << m_size << " bytes of data.\n";
+                                   << m_maxTtl << " hops Max, "
+                                   << m_size << " bytes of data.\n";
     }
 
 
@@ -259,14 +258,14 @@ V4TraceRoute::Receive (Ptr<Socket> socket)
                 {
                   if (m_verbose)
                     {
-                	    NS_LOG_UNCOND(m_ttl << " " << m_routeIpv4.str () << " " << m_osRoute.str ());
+                      NS_LOG_UNCOND(m_ttl << " " << m_routeIpv4.str () << " " << m_osRoute.str ());
                     }
 
                   if (m_printStream != NULL)
                     {
                       *m_printStream->GetStream () << m_ttl << " "
-                                                 << m_routeIpv4.str () << " "
-                                                 << m_osRoute.str () << "\n";
+                                                   << m_routeIpv4.str () << " "
+                                                   << m_osRoute.str () << "\n";
                     }
                   m_osRoute.str ("");
                   m_osRoute.clear ();
@@ -320,12 +319,12 @@ V4TraceRoute::Receive (Ptr<Socket> socket)
 
                       if (m_probeCount == m_maxProbes)
                         {
-                    	  NS_LOG_UNCOND(m_ttl << " " << m_routeIpv4.str () << " " << m_osRoute.str ());
+                          NS_LOG_UNCOND(m_ttl << " " << m_routeIpv4.str () << " " << m_osRoute.str ());
                           if (m_printStream != NULL)
                             {
                               *m_printStream->GetStream () << m_ttl << " "
-                                                         << m_routeIpv4.str () << " "
-                                                         << m_osRoute.str () << "\n";
+                                                           << m_routeIpv4.str () << " "
+                                                           << m_osRoute.str () << "\n";
                             }
 
                           m_osRoute.clear ();
@@ -443,14 +442,14 @@ V4TraceRoute::HandleWaitReplyTimeout (void)
     {
       if (m_verbose)
         {
-    	  NS_LOG_UNCOND(m_ttl << " " << m_routeIpv4.str () << " " << m_osRoute.str ());
+          NS_LOG_UNCOND(m_ttl << " " << m_routeIpv4.str () << " " << m_osRoute.str ());
         }
 
       if (m_printStream != NULL)
         {
           *m_printStream->GetStream () << m_ttl
-                                     << " " << m_routeIpv4.str () << " "
-                                     << m_osRoute.str () << "\n";
+                                       << " " << m_routeIpv4.str () << " "
+                                       << m_osRoute.str () << "\n";
         }
       m_osRoute.str ("");
       m_osRoute.clear ();
