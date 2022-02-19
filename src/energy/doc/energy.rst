@@ -85,7 +85,7 @@ will then calculate the new total current draw and update the
 remaining energy.
 
 The Device Energy Model can also be used for devices that do not have
-finite number of states. For example, in an electric vehicle, the
+a finite number of states. For example, in an electric vehicle, the
 current draw of the motor is determined by its speed. Since the
 vehicle's speed can take continuous values within a certain range, it
 is infeasible to define a set of discrete states of
@@ -145,6 +145,40 @@ callback is not specified when the Wifi Radio Energy Model Helper is
 used to install the model on a device, a callback is implicitly made
 so that the Wifi PHY is resumed from the OFF mode when the energy
 source is recharged.
+
+
+Basic Device Energy Model
+#########################
+
+The Basic Device Energy Model is an energy consumption model to
+provide a simple way of modelling devices which are not represented
+in ns-3 themselves. An example for this could be an MCU which is not
+implemented in ns-3 itself and therefore doesn't allow for direct
+mirroring of states. Instead, state changes have to be handled
+manually. This is where the Basic Device Energy Model can be used.
+
+Before the model can be used, one has to create a collection of
+states to allow for different energy consumption states. Each of
+these states composes of an index to access it later, as well as
+a name and current consumption in Amperes. In the form of a Basic
+Energy Model States instance, this collection of states can then
+be assigned to one or more Basic Device Energy Models. From there
+on, manual and automatic state changes can be configured.
+
+The state of this model can be changed in multiple ways. Next to the
+simple `ChangeState` method, which does exactly what it sounds like,
+the `ScheduleChangeState` method can be used to configure a state
+change that should take place after a defined period of time.
+Especially when incorporating callbacks from other ns-3 classes and
+models, the Basic Device Energy Model can be used to set up
+a simple but dynamic and powerful energy consumption model which can
+be used for a multitude of modeled devices.
+
+Lastly, the Basic Device Energy Model provides callbacks for energy
+depleted and recharged events. Next to this, the total energy
+consumption, the current state, and the model's current can be accessed
+as `TracedValues`.
+
 
 Future Work
 ***********
