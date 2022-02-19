@@ -55,7 +55,7 @@ TypeId
 RealtimeSimulatorImpl::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::RealtimeSimulatorImpl")
-    .SetParent<SimulatorImpl> ()
+    .SetParent<SimulatorAdapter> ()
     .SetGroupName ("Core")
     .AddConstructor<RealtimeSimulatorImpl> ()
     .AddAttribute ("SynchronizationMode",
@@ -111,31 +111,6 @@ RealtimeSimulatorImpl::DoDispose (void)
   m_events = 0;
   m_synchronizer = 0;
   SimulatorImpl::DoDispose ();
-}
-
-void
-RealtimeSimulatorImpl::Destroy ()
-{
-  NS_LOG_FUNCTION (this);
-
-  //
-  // This function is only called with the private version "disconnected" from
-  // the main simulator functions.  We rely on the user not calling
-  // Simulator::Destroy while there is a chance that a worker thread could be
-  // accessing the current instance of the private object.  In practice this
-  // means shutting down the workers and doing a Join() before calling the
-  // Simulator::Destroy().
-  //
-  while (m_destroyEvents.empty () == false)
-    {
-      Ptr<EventImpl> ev = m_destroyEvents.front ().PeekEventImpl ();
-      m_destroyEvents.pop_front ();
-      NS_LOG_LOGIC ("handle destroy " << ev);
-      if (ev->IsCancelled () == false)
-        {
-          ev->Invoke ();
-        }
-    }
 }
 
 void
@@ -492,20 +467,6 @@ RealtimeSimulatorImpl::Realtime (void) const
   return m_synchronizer->Realtime ();
 }
 
-void
-RealtimeSimulatorImpl::Stop (void)
-{
-  NS_LOG_FUNCTION (this);
-  m_stop = true;
-}
-
-void
-RealtimeSimulatorImpl::Stop (Time const &delay)
-{
-  NS_LOG_FUNCTION (this << delay);
-  Simulator::Schedule (delay, &Simulator::Stop);
-}
-
 //
 // Schedule an event for a _relative_ time in the future.
 //
@@ -572,19 +533,6 @@ RealtimeSimulatorImpl::ScheduleWithContext (uint32_t context, Time const &delay,
     m_events->Insert (ev);
     m_synchronizer->Signal ();
   }
-}
-
-EventId
-RealtimeSimulatorImpl::ScheduleNow (EventImpl *impl)
-{
-  NS_LOG_FUNCTION (this << impl);
-  return Schedule (Time (0), impl);
-}
-
-Time
-RealtimeSimulatorImpl::Now (void) const
-{
-  return TimeStep (m_currentTs);
 }
 
 //
@@ -680,21 +628,6 @@ RealtimeSimulatorImpl::ScheduleDestroy (EventImpl *impl)
   return id;
 }
 
-Time
-RealtimeSimulatorImpl::GetDelayLeft (const EventId &id) const
-{
-  //
-  // If the event has expired, there is no delay until it runs.  It is not the
-  // case that there is a negative time until it runs.
-  //
-  if (IsExpired (id))
-    {
-      return TimeStep (0);
-    }
-
-  return TimeStep (id.GetTs () - m_currentTs);
-}
-
 void
 RealtimeSimulatorImpl::Remove (const EventId &id)
 {
@@ -732,83 +665,6 @@ RealtimeSimulatorImpl::Remove (const EventId &id)
     event.impl->Cancel ();
     event.impl->Unref ();
   }
-}
-
-void
-RealtimeSimulatorImpl::Cancel (const EventId &id)
-{
-  if (IsExpired (id) == false)
-    {
-      id.PeekEventImpl ()->Cancel ();
-    }
-}
-
-bool
-RealtimeSimulatorImpl::IsExpired (const EventId &id) const
-{
-  if (id.GetUid () == EventId::UID::DESTROY)
-    {
-      if (id.PeekEventImpl () == 0
-          || id.PeekEventImpl ()->IsCancelled ())
-        {
-          return true;
-        }
-      // destroy events.
-      for (DestroyEvents::const_iterator i = m_destroyEvents.begin ();
-           i != m_destroyEvents.end (); i++)
-        {
-          if (*i == id)
-            {
-              return false;
-            }
-        }
-      return true;
-    }
-
-  //
-  // If the time of the event is less than the current timestamp of the
-  // simulator, the simulator has gone past the invocation time of the
-  // event, so the statement ev.GetTs () < m_currentTs does mean that
-  // the event has been fired even in realtime mode.
-  //
-  // The same is true for the next line involving the m_currentUid.
-  //
-  if (id.PeekEventImpl () == 0
-      || id.GetTs () < m_currentTs
-      || (id.GetTs () == m_currentTs && id.GetUid () <= m_currentUid)
-      || id.PeekEventImpl ()->IsCancelled ())
-    {
-      return true;
-    }
-  else
-    {
-      return false;
-    }
-}
-
-Time
-RealtimeSimulatorImpl::GetMaximumSimulationTime (void) const
-{
-  return TimeStep (0x7fffffffffffffffLL);
-}
-
-// System ID for non-distributed simulation is always zero
-uint32_t
-RealtimeSimulatorImpl::GetSystemId (void) const
-{
-  return 0;
-}
-
-uint32_t
-RealtimeSimulatorImpl::GetContext (void) const
-{
-  return m_currentContext;
-}
-
-uint64_t
-RealtimeSimulatorImpl::GetEventCount (void) const
-{
-  return m_eventCount;
 }
 
 void

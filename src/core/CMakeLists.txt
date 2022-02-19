@@ -176,6 +176,7 @@ set(source_files
     model/event-impl.cc
     model/simulator.cc
     model/simulator-impl.cc
+    model/simulator-adapter.cc
     model/default-simulator-impl.cc
     model/timer.cc
     model/watchdog.cc
@@ -303,6 +304,7 @@ set(header_files
     model/show-progress.h
     model/simple-ref-count.h
     model/simulation-singleton.h
+    model/simulator-adapter.h
     model/simulator-impl.h
     model/simulator.h
     model/singleton.h
@@ -352,6 +354,7 @@ set(test_sources
     test/pair-value-test-suite.cc
     test/ptr-test-suite.cc
     test/sample-test-suite.cc
+    test/simulator-adapter-test-suite.cc
     test/simulator-test-suite.cc
     test/time-test-suite.cc
     test/timer-test-suite.cc
