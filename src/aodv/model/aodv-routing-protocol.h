@@ -22,8 +22,8 @@
  *      AODV-UU implementation by Erik Nordström of Uppsala University
  *      http://core.it.uu.se/core/index.php/AODV-UU
  *
- * Authors: Elena Buchatskaia <borovkovaes@iitp.ru>
- *          Pavel Boyko <boyko@iitp.ru>
+ * Author: Nitya Chandra <nityachandra6@gmail.com>
+ *          
  */
 #ifndef AODVROUTINGPROTOCOL_H
 #define AODVROUTINGPROTOCOL_H
@@ -41,45 +41,34 @@
 #include "ns3/ipv4-l3-protocol.h"
 #include <map>
 
-namespace ns3 {
 
-class WifiMacQueueItem;
-enum WifiMacDropReason : uint8_t;  // opaque enum declaration
+namespace ns3{
 
-namespace aodv {
+namespace aodv{
+
+class Ipv4RoutingProtocol;
 /**
  * \ingroup aodv
  *
  * \brief AODV routing protocol
  */
-class RoutingProtocol : public Ipv4RoutingProtocol
+class RoutingProtocol : public Object
 {
+  friend class Ipv4RoutingProtocol;
+
 public:
   /**
    * \brief Get the type ID.
    * \return the object TypeId
    */
   static TypeId GetTypeId (void);
-  static const uint32_t AODV_PORT;
+ 
+  ///constructor
+  RoutingProtocol();
+  virtual ~RoutingProtocol();
+  void DoDispose ();
 
-  /// constructor
-  RoutingProtocol ();
-  virtual ~RoutingProtocol ();
-  virtual void DoDispose ();
-
-  // Inherited from Ipv4RoutingProtocol
-  Ptr<Ipv4Route> RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr);
-  bool RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
-                   UnicastForwardCallback ucb, MulticastForwardCallback mcb,
-                   LocalDeliverCallback lcb, ErrorCallback ecb);
-  virtual void NotifyInterfaceUp (uint32_t interface);
-  virtual void NotifyInterfaceDown (uint32_t interface);
-  virtual void NotifyAddAddress (uint32_t interface, Ipv4InterfaceAddress address);
-  virtual void NotifyRemoveAddress (uint32_t interface, Ipv4InterfaceAddress address);
-  virtual void SetIpv4 (Ptr<Ipv4> ipv4);
-  virtual void PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S) const;
-
-  // Handle protocol parameters
+    // Handle protocol parameters
   /**
    * Get maximum queue time
    * \returns the maximum queue time
@@ -122,7 +111,7 @@ public:
   {
     m_destinationOnly = f;
   }
-  /**
+    /**
    * Get gratuitous reply flag
    * \returns the gratuitous reply flag
    */
@@ -138,7 +127,7 @@ public:
   {
     m_gratuitousReply = f;
   }
-  /**
+    /**
    * Set hello enable
    * \param f the hello enable flag
    */
@@ -171,27 +160,14 @@ public:
     return m_enableBroadcast;
   }
 
-  /**
-   * Assign a fixed random variable stream number to the random variables
-   * used by this model.  Return the number of streams (possibly zero) that
-   * have been assigned.
-   *
-   * \param stream first stream index to use
-   * \return the number of stream indices assigned by this model
-   */
-  int64_t AssignStreams (int64_t stream);
-
+  /** 
+   * Set Protocol, used by AodvHelper to pass a poiner to an object 
+   * \param ipv4_agent assign a pointer of aodv::Ipv4RoutingProtocol to RoutingProtocol to hook functions 
+  */
+  void SetIPv4AODVProtocol(Ptr<Ipv4RoutingProtocol> ipv4_agent);
 protected:
   virtual void DoInitialize (void);
 private:
-  /**
-   * Notify that an MPDU was dropped.
-   *
-   * \param reason the reason why the MPDU was dropped
-   * \param mpdu the dropped MPDU
-   */
-  void NotifyTxError (WifiMacDropReason reason, Ptr<const WifiMacQueueItem> mpdu);
-
   // Protocol parameters.
   uint32_t m_rreqRetries;             ///< Maximum number of retransmissions of RREQ with TTL = NetDiameter to discover a route
   uint16_t m_ttlStart;                ///< Initial TTL value for RREQ.
@@ -224,14 +200,13 @@ private:
   Time m_nextHopWait;                  ///< Period of our waiting for the neighbour's RREP_ACK
   Time m_blackListTimeout;             ///< Time for which the node is put into the blacklist
   uint32_t m_maxQueueLen;              ///< The maximum number of packets that we allow a routing protocol to buffer.
-  Time m_maxQueueTime;                 ///< The maximum period of time that a routing protocol is allowed to buffer a packet for.
-  bool m_destinationOnly;              ///< Indicates only the destination may respond to this RREQ.
+  Time m_maxQueueTime;                ///< The maximum period of time that a routing protocol is allowed to buffer a packet for.
+  bool m_destinationOnly;              ///< Indicates only the destination may respond to this RREQ.  
   bool m_gratuitousReply;              ///< Indicates whether a gratuitous RREP should be unicast to the node originated route discovery.
   bool m_enableHello;                  ///< Indicates whether a hello messages enable
   bool m_enableBroadcast;              ///< Indicates whether a a broadcast data packets forwarding enable
-  //\}
-
-  /// IP protocol
+  
+    /// IP protocol
   Ptr<Ipv4> m_ipv4;
   /// Raw unicast socket per each IP interface, map socket -> iface address (IP + mask)
   std::map< Ptr<Socket>, Ipv4InterfaceAddress > m_socketAddresses;
@@ -240,11 +215,12 @@ private:
   /// Loopback device used to defer RREQ until packet will be fully formed
   Ptr<NetDevice> m_lo;
 
+
   /// Routing table
   RoutingTable m_routingTable;
   /// A "drop-front" queue used by the routing layer to buffer packets to which it does not have a route.
   RequestQueue m_queue;
-  /// Broadcast ID
+    /// Broadcast ID
   uint32_t m_requestId;
   /// Request sequence number
   uint32_t m_seqNo;
@@ -259,29 +235,10 @@ private:
   /// Number of RERRs used for RERR rate control
   uint16_t m_rerrCount;
 
-private:
+  Ptr<Ipv4RoutingProtocol> m_ipver4;  //!< Pointer to the IPv4 specific AdovroutingProtocol part
   /// Start protocol operation
   void Start ();
-  /**
-   * Queue packet and send route request
-   *
-   * \param p the packet to route
-   * \param header the IP header
-   * \param ucb the UnicastForwardCallback function
-   * \param ecb the ErrorCallback function
-   */ 
-  void DeferredRouteOutput (Ptr<const Packet> p, const Ipv4Header & header, UnicastForwardCallback ucb, ErrorCallback ecb);
-  /**
-   * If route exists and is valid, forward packet.
-   *
-   * \param p the packet to route
-   * \param header the IP header
-   * \param ucb the UnicastForwardCallback function
-   * \param ecb the ErrorCallback function
-   * \returns true if forwarded
-   */ 
-  bool Forwarding (Ptr<const Packet> p, const Ipv4Header & header, UnicastForwardCallback ucb, ErrorCallback ecb);
-  /**
+    /**
    * Repeated attempts by a source node at route discovery for a single destination
    * use the expanding ring search technique.
    * \param dst the destination IP address
@@ -294,32 +251,12 @@ private:
    * \return true if route to destination address addr exist
    */
   bool UpdateRouteLifeTime (Ipv4Address addr, Time lt);
-  /**
+    /**
    * Update neighbor record.
    * \param receiver is supposed to be my interface
    * \param sender is supposed to be IP address of my neighbor.
    */
   void UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver);
-  /**
-   * Test whether the provided address is assigned to an interface on this node
-   * \param src the source IP address
-   * \returns true if the IP address is the node's IP address
-   */
-  bool IsMyOwnAddress (Ipv4Address src);
-  /**
-   * Find unicast socket with local interface address iface
-   *
-   * \param iface the interface
-   * \returns the socket associated with the interface
-   */
-  Ptr<Socket> FindSocketWithInterfaceAddress (Ipv4InterfaceAddress iface) const;
-  /**
-   * Find subnet directed broadcast socket with local interface address iface
-   *
-   * \param iface the interface
-   * \returns the socket associated with the interface
-   */
-  Ptr<Socket> FindSubnetBroadcastSocketWithInterfaceAddress (Ipv4InterfaceAddress iface) const;
   /**
    * Process hello message
    * 
@@ -327,42 +264,32 @@ private:
    * \param receiverIfaceAddr receiver interface IP address
    */
   void ProcessHello (RrepHeader const & rrepHeader, Ipv4Address receiverIfaceAddr);
-  /**
-   * Create loopback route for given header
-   *
-   * \param header the IP header
-   * \param oif the output interface net device
-   * \returns the route
-   */
-  Ptr<Ipv4Route> LoopbackRoute (const Ipv4Header & header, Ptr<NetDevice> oif) const;
-
-  ///\name Receive control packets
+    /// Send hello
+  void SendHello ();
+    /// Schedule next send of hello message
+  void HelloTimerExpire ();
+    ///\name Receive control packets
   //\{
-  /**
-   * Receive and process control packet
-   * \param socket input socket
-   */
-  void RecvAodv (Ptr<Socket> socket);
-  /**
+    /**
    * Receive RREQ
    * \param p packet
    * \param receiver receiver address
    * \param src sender address
    */
   void RecvRequest (Ptr<Packet> p, Ipv4Address receiver, Ipv4Address src);
-  /**
+    /**
    * Receive RREP
    * \param p packet
    * \param my destination address
    * \param src sender address
    */
   void RecvReply (Ptr<Packet> p, Ipv4Address my, Ipv4Address src);
-  /**
+    /**
    * Receive RREP_ACK
    * \param neighbor neighbor address
    */
   void RecvReplyAck (Ipv4Address neighbor);
-  /**
+    /**
    * Receive RERR
    * \param p packet
    * \param src sender address
@@ -370,45 +297,37 @@ private:
   /// Receive  from node with address src
   void RecvError (Ptr<Packet> p, Ipv4Address src);
   //\}
-
-  ///\name Send
+    ///\name Send
   //\{
-  /** Forward packet from route request queue
-   * \param dst destination address
-   * \param route route to use
-   */
-  void SendPacketFromQueue (Ipv4Address dst, Ptr<Ipv4Route> route);
-  /// Send hello
-  void SendHello ();
-  /** Send RREQ
+    /** Send RREQ
    * \param dst destination address
    */
-  void SendRequest (Ipv4Address dst);
+  void SendRequest (Ipv4Address dst);  
+    /** Initiate RERR
+   * \param nextHop next hop address
+   */
+  void SendRerrWhenBreaksLinkToNextHop (Ipv4Address nextHop);
   /** Send RREP
    * \param rreqHeader route request header
    * \param toOrigin routing table entry to originator
    */
   void SendReply (RreqHeader const & rreqHeader, RoutingTableEntry const & toOrigin);
-  /** Send RREP by intermediate node
+    /** Send RREP by intermediate node
    * \param toDst routing table entry to destination
    * \param toOrigin routing table entry to originator
    * \param gratRep indicates whether a gratuitous RREP should be unicast to destination
    */
   void SendReplyByIntermediateNode (RoutingTableEntry & toDst, RoutingTableEntry & toOrigin, bool gratRep);
-  /** Send RREP_ACK
+    /** Send RREP_ACK
    * \param neighbor neighbor address
    */
   void SendReplyAck (Ipv4Address neighbor);
-  /** Initiate RERR
-   * \param nextHop next hop address
-   */
-  void SendRerrWhenBreaksLinkToNextHop (Ipv4Address nextHop);
-  /** Forward RERR
+    /** Forward RERR
    * \param packet packet
    * \param precursors list of addresses of the visited nodes
    */
   void SendRerrMessage (Ptr<Packet> packet,  std::vector<Ipv4Address> precursors);
-  /**
+    /**
    * Send RERR message when no route to forward input packet. Unicast if there is reverse route to originating node, broadcast otherwise.
    * \param dst - destination node IP address
    * \param dstSeqNo - destination node sequence number
@@ -416,49 +335,129 @@ private:
    */
   void SendRerrWhenNoRouteToForward (Ipv4Address dst, uint32_t dstSeqNo, Ipv4Address origin);
   /// @}
-
-  /**
-   * Send packet to destination scoket
-   * \param socket - destination node socket
-   * \param packet - packet to send
-   * \param destination - destination node IP address
-   */
-  void SendTo (Ptr<Socket> socket, Ptr<Packet> packet, Ipv4Address destination);
-
-  /// Hello timer
-  Timer m_htimer;
-  /// Schedule next send of hello message
-  void HelloTimerExpire ();
-  /// RREQ rate limit timer
-  Timer m_rreqRateLimitTimer;
-  /// Reset RREQ count and schedule RREQ rate limit timer with delay 1 sec.
-  void RreqRateLimitTimerExpire ();
-  /// RERR rate limit timer
-  Timer m_rerrRateLimitTimer;
-  /// Reset RERR count and schedule RERR rate limit timer with delay 1 sec.
-  void RerrRateLimitTimerExpire ();
-  /// Map IP address + RREQ timer.
-  std::map<Ipv4Address, Timer> m_addressReqTimer;
-  /**
-   * Handle route discovery process
-   * \param dst the destination IP address
-   */
-  void RouteRequestTimerExpire (Ipv4Address dst);
-  /**
+    /**
    * Mark link to neighbor node as unidirectional for blacklistTimeout
    *
    * \param neighbor the IP address of the neightbor node
    * \param blacklistTimeout the black list timeout time
    */
-  void AckTimerExpire (Ipv4Address neighbor, Time blacklistTimeout);
+  private:
+  /// Hello timer
+  Timer m_htimer;
+    /**
+   * Mark link to neighbor node as unidirectional for blacklistTimeout
+   *
+   * \param neighbor the IP address of the neightbor node
+   * \param blacklistTimeout the black list timeout time
+   */
 
+  void AckTimerExpire (Ipv4Address neighbor, Time blacklistTimeout);
+  /// RREQ rate limit timer
+  Timer m_rreqRateLimitTimer;
+  /// Reset RREQ count and schedule RREQ rate limit timer with delay 1 sec.
+  void RreqRateLimitTimerExpire ();
+  /// Reset RERR count and schedule RERR rate limit timer with delay 1 sec.
+  void RerrRateLimitTimerExpire ();
+  /// RERR rate limit timer
+  Timer m_rerrRateLimitTimer;
+    /**
+   * Handle route discovery process
+   * \param dst the destination IP address
+   */
+  void RouteRequestTimerExpire (Ipv4Address dst);
+
+  private:
+  /// Map IP address + RREQ timer.
+  std::map<Ipv4Address, Timer> m_addressReqTimer;
   /// Provides uniform random variables.
   Ptr<UniformRandomVariable> m_uniformRandomVariable;
   /// Keep track of the last bcast time
   Time m_lastBcastTime;
 };
 
+
+/**
+* \ingroup aodv
+* \brief Tag used by AODV implementation
+*/
+class DeferredRouteOutputTag : public Tag
+{
+
+public:
+  /**
+   * \brief Constructor
+   * \param o the output interface
+   */
+  DeferredRouteOutputTag (int32_t o = -1) : Tag (),
+                                            m_oif (o)
+  {
+  }
+
+  /**
+   * \brief Get the type ID.
+   * \return the object TypeId
+   */
+  static TypeId GetTypeId ()
+  {
+    static TypeId tid = TypeId ("ns3::aodv::DeferredRouteOutputTag")
+      .SetParent<Tag> ()
+      .SetGroupName ("Aodv")
+      .AddConstructor<DeferredRouteOutputTag> ()
+    ;
+    return tid;
+  }
+
+  TypeId  GetInstanceTypeId () const
+  {
+    return GetTypeId ();
+  }
+
+  /**
+   * \brief Get the output interface
+   * \return the output interface
+   */
+  int32_t GetInterface () const
+  {
+    return m_oif;
+  }
+
+  /**
+   * \brief Set the output interface
+   * \param oif the output interface
+   */
+  void SetInterface (int32_t oif)
+  {
+    m_oif = oif;
+  }
+
+  uint32_t GetSerializedSize () const
+  {
+    return sizeof(int32_t);
+  }
+
+  void  Serialize (TagBuffer i) const
+  {
+    i.WriteU32 (m_oif);
+  }
+
+  void  Deserialize (TagBuffer i)
+  {
+    m_oif = i.ReadU32 ();
+  }
+
+  void  Print (std::ostream &os) const
+  {
+    os << "DeferredRouteOutputTag: output interface = " << m_oif;
+  }
+
+private:
+  /// Positive if output device is fixed in RouteOutput
+  int32_t m_oif;
+};
+
+NS_OBJECT_ENSURE_REGISTERED (DeferredRouteOutputTag);
+
 } //namespace aodv
 } //namespace ns3
 
-#endif /* AODVROUTINGPROTOCOL_H */
+#endif /*AODVROUTINGPROTOCOL_H*/
