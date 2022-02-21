@@ -13,10 +13,15 @@ def build(bld):
         'model/lr-wpan-mac-trailer.cc',
         'model/lr-wpan-csmaca.cc',
         'model/lr-wpan-net-device.cc',
+        'model/lr-wpan-route.cc',
+        'model/lr-wpan-routing-device.cc',
+        'model/lr-wpan-static-routing-device.cc',
+        'model/lr-wpan-global-routing-device.cc',
         'model/lr-wpan-spectrum-value-helper.cc',
         'model/lr-wpan-spectrum-signal-parameters.cc',
         'model/lr-wpan-lqi-tag.cc',
         'helper/lr-wpan-helper.cc',
+        'helper/lr-wpan-global-routing-helper.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('lr-wpan')
@@ -52,10 +57,15 @@ def build(bld):
         'model/lr-wpan-mac-trailer.h',
         'model/lr-wpan-csmaca.h',
         'model/lr-wpan-net-device.h',
+        'model/lr-wpan-route.h',
+        'model/lr-wpan-routing-device.h',
+        'model/lr-wpan-static-routing-device.h',
+        'model/lr-wpan-global-routing-device.h',
         'model/lr-wpan-spectrum-value-helper.h',
         'model/lr-wpan-spectrum-signal-parameters.h',
         'model/lr-wpan-lqi-tag.h',
         'helper/lr-wpan-helper.h',
+        'helper/lr-wpan-global-routing-helper.h',
         ]
 
     if (bld.env['ENABLE_EXAMPLES']):
