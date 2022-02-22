@@ -9,6 +9,7 @@ def build(bld):
         'model/rv-battery-model.cc',
         'model/device-energy-model.cc',
         'model/device-energy-model-container.cc',
+        'model/sensor-device-energy-model.cc',
         'model/simple-device-energy-model.cc',
         'model/energy-harvester.cc',
         'model/basic-energy-harvester.cc',
@@ -20,6 +21,7 @@ def build(bld):
         'helper/energy-harvester-container.cc',
         'helper/energy-harvester-helper.cc',
         'helper/basic-energy-harvester-helper.cc',
+        'helper/sensor-device-energy-model-helper.cc',
         ]
 
     obj_test = bld.create_ns3_module_test_library('energy')
@@ -43,6 +45,7 @@ def build(bld):
         'model/rv-battery-model.h',
         'model/device-energy-model.h',
         'model/device-energy-model-container.h',
+        'model/sensor-device-energy-model.h',
         'model/simple-device-energy-model.h',
         'model/energy-harvester.h',
         'model/basic-energy-harvester.h',
@@ -54,6 +57,7 @@ def build(bld):
         'helper/energy-harvester-container.h',
         'helper/energy-harvester-helper.h',
         'helper/basic-energy-harvester-helper.h',
+        'helper/sensor-device-energy-model-helper.h',
         ]
 
     if (bld.env['ENABLE_EXAMPLES']):
