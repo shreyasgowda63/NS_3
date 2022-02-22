@@ -294,6 +294,14 @@ LrWpanMac::McpsDataRequest (McpsDataRequestParams params, Ptr<Packet> p)
 {
   NS_LOG_FUNCTION (this << p);
 
+  if (!m_phy->IsOn ())
+  {
+    // Connected LrWpanPhy can't send because the energy is depleted.
+
+    NS_LOG_INFO ("LrWpanMac: Can't execute McpsDataRequest because the connected LrWpanPhy is out of energy!");
+    return;
+  }
+
   McpsDataConfirmParams confirmParams;
   confirmParams.m_msduHandle = params.m_msduHandle;
 

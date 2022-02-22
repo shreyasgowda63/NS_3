@@ -41,6 +41,7 @@ class SpectrumModel;
 class AntennaModel;
 class NetDevice;
 class UniformRandomVariable;
+class LrWpanRadioEnergyModel;
 
 /**
  * \ingroup lr-wpan
@@ -478,6 +479,24 @@ public:
   int64_t AssignStreams (int64_t stream);
 
   /**
+   * Turns the energy supply for this device off.
+   */
+  void SetEnergyOff ();
+
+  /**
+   * Turns the energy supply for this device back on.
+   */
+  void SetEnergyOn ();
+
+  /**
+   * Returns the state of !m_energyOff.
+   * 
+   * \return true If m_energyOff == false
+   * \return false If m_energyOff == true
+   */
+  bool IsOn ();
+
+  /**
    * TracedCallback signature for Trx state change events.
    *
    * \param [in] time The time of the state change.
@@ -719,7 +738,7 @@ private:
   Ptr<SpectrumValue> m_txPsd;
 
   /**
-   * The spectral density for for the noise.
+   * The spectral density for the noise.
    */
   Ptr<const SpectrumValue> m_noise;
 
@@ -860,6 +879,11 @@ private:
    * Uniform random variable stream.
    */
   Ptr<UniformRandomVariable> m_random;
+
+  /**
+   * Whether energy for this device is turned off.
+   */
+  bool m_energyOff;
 };
 
 
