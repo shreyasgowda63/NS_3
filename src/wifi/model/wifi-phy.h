@@ -1165,7 +1165,6 @@ protected:
    */
   std::map<WifiModulationClass, Ptr<PhyEntity> > m_phyEntities;
 
-
 private:
   /**
    * Configure WifiPhy with appropriate channel frequency and
@@ -1232,6 +1231,18 @@ private:
    * \return the PSDU addressed to that PHY
    */
   Ptr<const WifiPsdu> GetAddressedPsduInPpdu (Ptr<const WifiPpdu> ppdu) const;
+
+  /**
+   * Get the __implemented__ PHY entity corresponding to the modulation class.
+   * This is used to compute the different amendment-specific parameters within
+   * calling static methods.
+   *
+   * \param modulation the modulation class
+   * \return the pointer to the static implemented PHY entity, or empty Ptr
+   * if not implemented
+   */
+  static const Ptr<const PhyEntity> GetStaticPhyEntityInternal (
+    WifiModulationClass modulation);
 
   /**
    * The trace source fired when a packet begins the transmission process on
@@ -1338,7 +1349,7 @@ private:
    * For PHY entities supported by a given WifiPhy instance,
    * \see m_phyEntities.
    */
-  static std::map<WifiModulationClass, Ptr<PhyEntity> > & GetStaticPhyEntities (void);
+  static std::vector<Ptr<PhyEntity> >& GetStaticPhyEntities (void);
 
   WifiStandard m_standard;                  //!< WifiStandard
   WifiPhyBand m_band;                       //!< WifiPhyBand
