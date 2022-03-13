@@ -37,6 +37,11 @@
 
 namespace ns3 {
 
+<<<<<<< HEAD
+=======
+template <typename Item>
+class Queue;
+>>>>>>> 62eeec6e8 (csma: add NetDeviceState functionality)
 class CsmaChannel;
 class ErrorModel;
 
@@ -57,8 +62,10 @@ class ErrorModel;
  */
 class CsmaNetDevice : public NetDevice
 {
-public:
+  // CsmaChannel needs to be friend to update the NetDevice status
+  friend class CsmaChannel;
 
+public:
   /**
    * \brief Get the type ID.
    * \return the object TypeId
@@ -68,7 +75,8 @@ public:
   /**
    * Enumeration of the types of packets supported in the class.
    */
-  enum EncapsulationMode {
+  enum EncapsulationMode
+  {
     ILLEGAL,     /**< Encapsulation mode not set */
     DIX,         /**< DIX II / Ethernet II packet */
     LLC,         /**< 802.2 LLC/SNAP Packet*/
@@ -211,6 +219,11 @@ public:
    */
   CsmaNetDevice::EncapsulationMode  GetEncapsulationMode (void);
 
+  /**
+   * Get the deviceId used by channel to identify a netdevice
+   */
+  uint32_t GetDeviceId (void);
+
   //
   // The following methods are inherited from NetDevice base class.
   //
@@ -327,14 +340,14 @@ public:
   virtual void SetPromiscReceiveCallback (PromiscReceiveCallback cb);
   virtual bool SupportsSendFrom (void) const;
 
- /**
-  * Assign a fixed random variable stream number to the random variables
-  * used by this model.  Return the number of streams (possibly zero) that
-  * have been assigned.
-  *
-  * \param stream first stream index to use
-  * \return the number of stream indices assigned by this model
-  */
+  /**
+   * Assign a fixed random variable stream number to the random variables
+   * used by this model.  Return the number of streams (possibly zero) that
+   * have been assigned.
+   *
+   * \param stream first stream index to use
+   * \return the number of stream indices assigned by this model
+   */
   int64_t AssignStreams (int64_t stream);
 
 protected:
@@ -357,7 +370,6 @@ protected:
   void AddHeader (Ptr<Packet> p, Mac48Address source, Mac48Address dest, uint16_t protocolNumber);
 
 private:
-
   /**
    * Operator = is declared but not implemented.  This disables the assignment
    * operator for CsmaNetDevice objects.
@@ -443,11 +455,22 @@ private:
   void TransmitAbort (void);
 
   /**
-   * Notify any interested parties that the link has come up.
+   * Notify any interested parties that the link has gone up.
+   * This function will be removed in future. This is here
+   * for supporting devices that don't aggregate NetDeviceState
+   * class.
    */
   void NotifyLinkUp (void);
 
   /**
+   * Notify any interested parties that the link has gone down.
+   * This function will be removed in future. This is here
+   * for supporting devices that don't aggregate NetDeviceState
+   * class.
+   */
+  void NotifyLinkDown (void);
+
+  /** 
    * Device ID returned by the attached functions. It is used by the
    * mp-channel to identify each net device to make sure that only
    * active net devices are writing to the channel

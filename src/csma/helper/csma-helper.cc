@@ -23,6 +23,7 @@
 #include "ns3/simulator.h"
 #include "ns3/object-factory.h"
 #include "ns3/net-device-queue-interface.h"
+#include "ns3/csma-net-device-state.h"
 #include "ns3/csma-net-device.h"
 #include "ns3/csma-channel.h"
 #include "ns3/config.h"
@@ -297,6 +298,10 @@ CsmaHelper::InstallPriv (Ptr<Node> node, Ptr<CsmaChannel> channel) const
   Ptr<CsmaNetDevice> device = m_deviceFactory.Create<CsmaNetDevice> ();
   device->SetAddress (Mac48Address::Allocate ());
   node->AddDevice (device);
+  Ptr<CsmaNetDeviceState> csmaNetDeviceState = CreateObject<CsmaNetDeviceState> ();
+  csmaNetDeviceState->SetDevice (device);
+  // Aggregate a CsmaNetDeviceState object
+  device->AggregateObject (csmaNetDeviceState);
   Ptr<Queue<Packet> > queue = m_queueFactory.Create<Queue<Packet> > ();
   device->SetQueue (queue);
   device->Attach (channel);
@@ -308,6 +313,47 @@ CsmaHelper::InstallPriv (Ptr<Node> node, Ptr<CsmaChannel> channel) const
       device->AggregateObject (ndqi);
     }
   return device;
+}
+
+void
+CsmaHelper::SetDeviceUp (const Time &delay, Ptr<NetDevice> netDevice)
+{
+  Ptr<CsmaNetDeviceState> csmaNetDeviceState = netDevice->GetObject<CsmaNetDeviceState> ();
+  if (csmaNetDeviceState == nullptr)
+    {
+      return;
+    }
+  Simulator::Schedule (delay, &CsmaNetDeviceState::SetUp, csmaNetDeviceState);
+}
+
+void
+CsmaHelper::SetDeviceDown (const Time &delay, Ptr<NetDevice> netDevice)
+{
+  Ptr<CsmaNetDeviceState> csmaNetDeviceState = netDevice->GetObject<CsmaNetDeviceState> ();
+  if (csmaNetDeviceState == nullptr)
+    {
+      return;
+    }
+  Simulator::Schedule (delay, &CsmaNetDeviceState::SetDown, csmaNetDeviceState);
+}
+
+void
+CsmaHelper::DetachChannel (const Time &delay, Ptr<NetDevice> netDevice)
+{
+  Ptr<CsmaNetDevice> cnd = DynamicCast<CsmaNetDevice> (netDevice);
+  Ptr<CsmaChannel> channel = DynamicCast<CsmaChannel> (cnd->GetChannel ());
+  bool (CsmaChannel::*f)(Ptr<CsmaNetDevice>) = static_cast<bool (CsmaChannel::*)(Ptr<CsmaNetDevice>)> (&CsmaChannel::Detach);
+  Simulator::Schedule (delay, f, channel, cnd);
+}
+
+void
+CsmaHelper::ReattachChannel (const Time &delay, Ptr<NetDevice> netDevice)
+{
+  Ptr<CsmaNetDevice> cnd = DynamicCast<CsmaNetDevice> (netDevice);
+  Ptr<CsmaChannel> channel = DynamicCast<CsmaChannel> (cnd->GetChannel ());
+  bool (CsmaChannel::*f)(Ptr<CsmaNetDevice>) = static_cast<bool (CsmaChannel::*)(Ptr<CsmaNetDevice>)> (&CsmaChannel::Reattach);
+  Simulator::Schedule (delay, f, channel, cnd);
+
 }
 
 } // namespace ns3
