@@ -33,6 +33,7 @@ SOURCES = \
 	$(SRC)/buildings/doc/source/buildings-references.rst \
 	$(SRC)/click/doc/click.rst \
 	$(SRC)/csma/doc/csma.rst \
+	$(SRC)/csma/doc/csma-net-device-state.rst \
 	$(SRC)/dsdv/doc/dsdv.rst \
 	$(SRC)/dsr/doc/dsr.rst \
 	$(SRC)/mpi/doc/distributed.rst \
