@@ -15,6 +15,9 @@
 #
 # Author: Gabriel Ferreira <gabrielcarvfer@gmail.com>
 
+# Generate compile_commands.json
+add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
+
 # Export compile time variable setting the directory to the NS3 root folder
 add_definitions(-DPROJECT_SOURCE_PATH="${PROJECT_SOURCE_DIR}")
 
