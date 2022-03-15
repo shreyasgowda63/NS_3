@@ -146,9 +146,13 @@ if(${ENABLE_FDNETDEV})
   if(${ENABLE_EMUNETDEV})
     set(emu_sources
         helper/emu-fd-net-device-helper.cc
+	helper/l3-emu-fd-net-device-helper.cc
+	model/l3-emu-fd-net-device.cc
     )
     set(emu_headers
         helper/emu-fd-net-device-helper.h
+	helper/l3-emu-fd-net-device-helper.h
+	model/l3-emu-fd-net-device.h
     )
 
     add_executable(
@@ -166,15 +170,32 @@ if(${ENABLE_FDNETDEV})
       ""
     )
 
+    add_executable(
+      l3-raw-sock-creator
+      helper/creator-utils.cc
+      helper/encode-decode.cc
+      helper/l3-raw-sock-creator.cc
+    )
+    add_definitions(
+      -DL3_RAW_SOCK_CREATOR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/ns${NS3_VER}-l3-raw-sock-creator${build_profile_suffix}"
+    )
+    set_runtime_outputdirectory(
+      l3-raw-sock-creator
+      ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/
+      ""
+    )
+
     list(
       APPEND
       fd-net-device_creators
+      l3-raw-sock-creator
       raw-sock-creator
     )
     list(
       APPEND
       module_enabled_features
       EmuFdNetDevice
+      L3EmuFdNetDevice
     )
   endif()
 
