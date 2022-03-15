@@ -20,6 +20,7 @@
  */
 
 #include <algorithm>
+#include "ns3/assert.h"
 #include "ns3/simulator.h"
 #include "ns3/log.h"
 #include "ns3/pointer.h"
@@ -617,17 +618,18 @@ WifiPhy::CalculateSnr (const WifiTxVector& txVector, double ber) const
 
 const Ptr<const PhyEntity> WifiPhy::GetStaticPhyEntityInternal (
     WifiModulationClass modulation) {
-  if (size_t(modulation) >= GetStaticPhyEntities().size()) {
-    return {};
-  }
-  return GetStaticPhyEntities()[modulation];
+  if (static_cast<std::size_t>(modulation) >= GetStaticPhyEntities().size())
+    {
+      return {};
+    }
+  return GetStaticPhyEntities ()[modulation];
 }
 
 const Ptr<const PhyEntity>
 WifiPhy::GetStaticPhyEntity (WifiModulationClass modulation)
 {
-  auto res = GetStaticPhyEntityInternal(modulation);
-  NS_ASSERT(res != nullptr);
+  auto res = GetStaticPhyEntityInternal (modulation);
+  NS_ASSERT_MSG (res != nullptr, "Unimplemented Wi-Fi modulation class");
   return res;
 }
 
@@ -643,12 +645,13 @@ void
 WifiPhy::AddStaticPhyEntity (WifiModulationClass modulation, Ptr<PhyEntity> phyEntity)
 {
   NS_LOG_FUNCTION (modulation);
-  NS_ASSERT(modulation <= 256);
-  if (modulation >= GetStaticPhyEntities().size()) {
-    GetStaticPhyEntities().resize(modulation + 1);
-  } else {
-    NS_ASSERT_MSG (GetStaticPhyEntities()[modulation] == nullptr, "The PHY entity has already been added. The setting should only be done once per modulation class");
-  }
+  NS_ASSERT (modulation <= 256);
+  if (modulation >= GetStaticPhyEntities().size())
+    {
+      GetStaticPhyEntities ().resize (modulation + 1);
+    } else {
+      NS_ASSERT_MSG (GetStaticPhyEntities ()[modulation] == nullptr, "The PHY entity has already been added. The setting should only be done once per modulation class");
+    }
   GetStaticPhyEntities ()[modulation] = phyEntity;
 }
 
