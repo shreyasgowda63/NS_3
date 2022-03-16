@@ -646,7 +646,6 @@ void
 WifiPhy::AddStaticPhyEntity (WifiModulationClass modulation, Ptr<PhyEntity> phyEntity)
 {
   NS_LOG_FUNCTION (modulation);
-  NS_ASSERT (modulation <= 256);
   if (modulation >= GetStaticPhyEntities ().size ())
     {
       GetStaticPhyEntities ().resize (modulation + 1);
