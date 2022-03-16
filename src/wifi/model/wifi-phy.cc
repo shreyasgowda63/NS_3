@@ -616,8 +616,9 @@ WifiPhy::CalculateSnr (const WifiTxVector& txVector, double ber) const
   return m_interference.GetErrorRateModel ()->CalculateSnr (txVector, ber);
 }
 
-const Ptr<const PhyEntity> WifiPhy::GetStaticPhyEntityInternal (
-    WifiModulationClass modulation) {
+const Ptr<const PhyEntity>
+WifiPhy::GetStaticPhyEntityInternal (WifiModulationClass modulation)
+{
   if (static_cast<std::size_t>(modulation) >= GetStaticPhyEntities().size())
     {
       return {};
@@ -646,10 +647,12 @@ WifiPhy::AddStaticPhyEntity (WifiModulationClass modulation, Ptr<PhyEntity> phyE
 {
   NS_LOG_FUNCTION (modulation);
   NS_ASSERT (modulation <= 256);
-  if (modulation >= GetStaticPhyEntities().size())
+  if (modulation >= GetStaticPhyEntities ().size ())
     {
       GetStaticPhyEntities ().resize (modulation + 1);
-    } else {
+    }
+  else
+    {
       NS_ASSERT_MSG (GetStaticPhyEntities ()[modulation] == nullptr, "The PHY entity has already been added. The setting should only be done once per modulation class");
     }
   GetStaticPhyEntities ()[modulation] = phyEntity;
