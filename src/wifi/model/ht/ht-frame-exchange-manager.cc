@@ -185,7 +185,12 @@ HtFrameExchangeManager::SendAddBaRequest (Mac48Address dest, uint8_t tid, uint16
   txParams.m_acknowledgment = GetAckManager ()->TryAddMpdu (mpdu, txParams);
 
   // Push the MPDU to the front of the queue and transmit it
-  m_mac->GetQosTxop (tid)->GetWifiMacQueue ()->PushFront (mpdu);
+  auto queue = m_mac->GetQosTxop (tid)->GetWifiMacQueue ();
+  if (!queue->PushFront (mpdu))
+    {
+      NS_LOG_DEBUG ("Queue is full, replace the oldest frame with the ADDBA Request frame");
+      queue->Replace (queue->Peek (), mpdu);
+    }
   SendMpduWithProtection (mpdu, txParams);
 }
 
@@ -648,7 +653,7 @@ HtFrameExchangeManager::RetransmitMpduAfterMissedAck (Ptr<WifiMacQueueItem> mpdu
 }
 
 void
-HtFrameExchangeManager::RetransmitMpduAfterMissedCts (Ptr<WifiMacQueueItem> mpdu) const
+HtFrameExchangeManager::ReleaseSequenceNumber (Ptr<WifiMacQueueItem> mpdu) const
 {
   NS_LOG_FUNCTION (this << *mpdu);
 
@@ -677,7 +682,7 @@ HtFrameExchangeManager::RetransmitMpduAfterMissedCts (Ptr<WifiMacQueueItem> mpdu
           return;
         }
     }
-  QosFrameExchangeManager::RetransmitMpduAfterMissedCts (mpdu);
+  QosFrameExchangeManager::ReleaseSequenceNumber (mpdu);
 }
 
 Time
@@ -781,11 +786,15 @@ HtFrameExchangeManager::CtsTimeout (Ptr<WifiMacQueueItem> rts, const WifiTxVecto
   else
     {
       NS_LOG_DEBUG ("Missed CTS, retransmit MPDUs");
-      for (const auto& mpdu : *PeekPointer (m_psdu))
-        {
-          RetransmitMpduAfterMissedCts (mpdu);
-        }
       m_edca->UpdateFailedCw ();
+    }
+  // Make the sequence numbers of the MPDUs available again if the MPDUs have never
+  // been transmitted, both in case the MPDUs have been discarded and in case the
+  // MPDUs have to be transmitted (because a new sequence number is assigned to
+  // MPDUs that have never been transmitted and are selected for transmission)
+  for (const auto& mpdu : *PeekPointer (m_psdu))
+    {
+      ReleaseSequenceNumber (mpdu);
     }
   m_psdu = 0;
   TransmissionFailed ();
