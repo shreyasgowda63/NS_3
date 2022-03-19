@@ -248,8 +248,11 @@ OfdmPhy::GetPayloadDuration (uint32_t size, const WifiTxVector& txVector, WifiPh
   constexpr auto symbolDurationUs = 4;  // microseconds
 
   uint64_t bps = txVector.GetMode ().GetDataRate (txVector);
+
   //We are lucky that `symbolDurationUs` divides 10^6.
+  static_assert (1000000 % symbolDurationUs == 0);
   constexpr auto numSymbolsInSecond = 1000000 / symbolDurationUs;
+
   //The number of OFDM symbols in the data field when BCC encoding
   //is used is given in equation 19-32 of the IEEE 802.11-2016 standard.
   //Below is an optimized version of
@@ -257,7 +260,7 @@ OfdmPhy::GetPayloadDuration (uint32_t size, const WifiTxVector& txVector, WifiPh
   auto numSymbols =
     1 + ((GetNumberServiceBits () + size * 8 + 6) * numSymbolsInSecond - 1) / bps;
 
-  return MicroSeconds(numSymbols * symbolDurationUs) + GetSignalExtension (band);
+  return MicroSeconds (numSymbols * symbolDurationUs) + GetSignalExtension (band);
 }
 
 uint8_t
