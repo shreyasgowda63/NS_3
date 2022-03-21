@@ -257,10 +257,12 @@ OfdmPhy::GetPayloadDuration (uint32_t size, const WifiTxVector& txVector, WifiPh
   //is used is given in equation 19-32 of the IEEE 802.11-2016 standard.
   //Below is an optimized version of
   //ceil((GetNumberServiceBits () + size * 8 + 6) / (bps * symbolDurationUs / 10^6)).
-  auto numSymbols =
-    1 + ((GetNumberServiceBits () + size * 8 + 6) * numSymbolsInSecond - 1) / bps;
+  uint64_t numBits = GetNumberServiceBits () + size * 8 + 6;
+  auto numSymbols = 1 + (numBits * numSymbolsInSecond - 1) / bps;
 
-  return MicroSeconds (numSymbols * symbolDurationUs) + GetSignalExtension (band);
+  ns3::Time payloadDuration = MicroSeconds (numSymbols * symbolDurationUs);
+  payloadDuration += GetSignalExtension (band);
+  return payloadDuration;
 }
 
 uint8_t
