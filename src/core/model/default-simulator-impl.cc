@@ -180,6 +180,9 @@ DefaultSimulatorImpl::ProcessEventsWithContext (void)
       ev.key.m_context = event.context;
       ev.key.m_uid = m_uid;
       m_uid++;
+
+      NS_ASSERT_MSG( ev.key.m_uid < m_uid, "Event ID overflow!!!!");
+
       m_unscheduledEvents++;
       m_events->Insert (ev);
     }
@@ -237,6 +240,9 @@ DefaultSimulatorImpl::Schedule (Time const &delay, EventImpl *event)
   ev.key.m_context = GetContext ();
   ev.key.m_uid = m_uid;
   m_uid++;
+
+  NS_ASSERT_MSG( ev.key.m_uid < m_uid, "Event ID overflow!!!!");
+
   m_unscheduledEvents++;
   m_events->Insert (ev);
   return EventId (event, ev.key.m_ts, ev.key.m_context, ev.key.m_uid);
@@ -256,6 +262,9 @@ DefaultSimulatorImpl::ScheduleWithContext (uint32_t context, Time const &delay, 
       ev.key.m_context = context;
       ev.key.m_uid = m_uid;
       m_uid++;
+
+      NS_ASSERT_MSG( ev.key.m_uid < m_uid, "Event ID overflow!!!!");
+
       m_unscheduledEvents++;
       m_events->Insert (ev);
     }
