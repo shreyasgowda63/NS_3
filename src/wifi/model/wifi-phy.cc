@@ -617,21 +617,13 @@ WifiPhy::CalculateSnr (const WifiTxVector& txVector, double ber) const
 }
 
 const Ptr<const PhyEntity>
-WifiPhy::GetStaticPhyEntityInternal (WifiModulationClass modulation)
-{
-  if (static_cast<std::size_t>(modulation) >= GetStaticPhyEntities().size())
-    {
-      return {};
-    }
-  return GetStaticPhyEntities ()[modulation];
-}
-
-const Ptr<const PhyEntity>
 WifiPhy::GetStaticPhyEntity (WifiModulationClass modulation)
 {
-  auto res = GetStaticPhyEntityInternal (modulation);
-  NS_ASSERT_MSG (res != nullptr, "Unimplemented Wi-Fi modulation class");
-  return res;
+  NS_ASSERT_MSG (
+      (static_cast<std::size_t> (modulation) < GetStaticPhyEntities ().size ()) &&
+      (GetStaticPhyEntities ()[modulation] != nullptr),
+      "Unimplemented Wi-Fi modulation class");
+  return GetStaticPhyEntities ()[modulation];
 }
 
 Ptr<PhyEntity>
@@ -661,7 +653,10 @@ void
 WifiPhy::AddPhyEntity (WifiModulationClass modulation, Ptr<PhyEntity> phyEntity)
 {
   NS_LOG_FUNCTION (this << modulation);
-  NS_ABORT_MSG_IF (GetStaticPhyEntityInternal(modulation) == nullptr, "Cannot add an unimplemented PHY to supported list. Update the former first.");
+  NS_ABORT_MSG_IF (
+      (static_cast<std::size_t> (modulation) >= GetStaticPhyEntities ().size ()) ||
+      (GetStaticPhyEntities ()[modulation] == nullptr),
+      "Cannot add an unimplemented PHY to supported list. Update the former first.");
   NS_ASSERT_MSG (m_phyEntities.find (modulation) == m_phyEntities.end (), "The PHY entity has already been added. The setting should only be done once per modulation class");
   phyEntity->SetOwner (this);
   m_phyEntities[modulation] = phyEntity;

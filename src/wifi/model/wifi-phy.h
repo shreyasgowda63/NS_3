@@ -1233,18 +1233,6 @@ private:
   Ptr<const WifiPsdu> GetAddressedPsduInPpdu (Ptr<const WifiPpdu> ppdu) const;
 
   /**
-   * Get the __implemented__ PHY entity corresponding to the modulation class.
-   * This is used to compute the different amendment-specific parameters within
-   * calling static methods.
-   *
-   * \param modulation the modulation class
-   * \return the pointer to the static implemented PHY entity, or empty Ptr
-   * if not implemented
-   */
-  static const Ptr<const PhyEntity> GetStaticPhyEntityInternal (
-    WifiModulationClass modulation);
-
-  /**
    * The trace source fired when a packet begins the transmission process on
    * the medium.
    *
