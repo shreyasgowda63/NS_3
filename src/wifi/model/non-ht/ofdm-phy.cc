@@ -260,7 +260,7 @@ OfdmPhy::GetPayloadDuration (uint32_t size, const WifiTxVector& txVector, WifiPh
   uint64_t numBits = GetNumberServiceBits () + size * 8 + 6;
   auto numSymbols = 1 + (numBits * numSymbolsInSecond - 1) / bps;
 
-  ns3::Time payloadDuration = MicroSeconds (numSymbols * symbolDurationUs);
+  Time payloadDuration = MicroSeconds (numSymbols * symbolDurationUs);
   payloadDuration += GetSignalExtension (band);
   return payloadDuration;
 }
