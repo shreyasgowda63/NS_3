@@ -139,7 +139,7 @@ def get_headers_list(outdir=usual_outdir):
     return glob.glob(outdir + '/**/*.h', recursive=True)
 
 
-def read_buildstatus_entry(entry):
+def read_lock_entry(entry):
     """!
     Read interesting entries from the .lock-ns3 file
     @param entry: entry to read from .lock-ns3
@@ -156,7 +156,7 @@ def get_test_enabled():
     Check if tests are enabled in the .lock-ns3
     @return bool.
     """
-    return read_buildstatus_entry("ENABLE_TESTS")
+    return read_lock_entry("ENABLE_TESTS")
 
 
 def get_enabled_modules():
@@ -164,7 +164,7 @@ def get_enabled_modules():
     Check if tests are enabled in the .lock-ns3
     @return list of enabled modules (prefixed with 'ns3-').
     """
-    return read_buildstatus_entry("NS3_ENABLED_MODULES")
+    return read_lock_entry("NS3_ENABLED_MODULES")
 
 
 class NS3UnusedSourcesTestCase(unittest.TestCase):
@@ -199,7 +199,7 @@ class NS3UnusedSourcesTestCase(unittest.TestCase):
         unused_sources = set()
         for example_directory in self.directory_and_files.keys():
             # Skip non-example directories
-            if os.sep+"examples" not in example_directory:
+            if os.sep + "examples" not in example_directory:
                 continue
 
             # Open the examples CMakeLists.txt and read it
@@ -265,7 +265,7 @@ class NS3UnusedSourcesTestCase(unittest.TestCase):
         for directory in self.directory_and_files.keys():
             # Skip directories that are not utils
             is_module = "src" in directory or "contrib" in directory
-            if os.sep+"utils" not in directory or is_module:
+            if os.sep + "utils" not in directory or is_module:
                 continue
 
             # We can be in one of the module subdirectories (helper, model, test, bindings, etc)
@@ -723,7 +723,7 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
 
         # Run all cases and then check outputs
         return_code0, stdout0, stderr0 = run_ns3("--dry-run run scratch-simulator")
-        return_code1, stdout1, stderr1 = run_ns3("run scratch-simulator --verbose")
+        return_code1, stdout1, stderr1 = run_ns3("run scratch-simulator")
         return_code2, stdout2, stderr2 = run_ns3("--dry-run run scratch-simulator --no-build")
         return_code3, stdout3, stderr3 = run_ns3("run scratch-simulator --no-build")
 
@@ -742,16 +742,18 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
         self.assertIn(cmake_build_target_command(target="scratch_scratch-simulator"), stdout0)
         self.assertIn(scratch_path, stdout0)
 
-        # Case 1: run (should print all the commands of case 1 plus CMake output from build)
-        self.assertIn(cmake_build_target_command(target="scratch_scratch-simulator"), stdout1)
+        # Case 1: run (should print only make build message)
+        self.assertNotIn(cmake_build_target_command(target="scratch_scratch-simulator"), stdout1)
         self.assertIn("Built target", stdout1)
-        self.assertIn(scratch_path, stdout1)
+        self.assertNotIn(scratch_path, stdout1)
 
         # Case 2: dry-run + run-no-build (should print commands to run the target)
+        self.assertIn("The following commands would be executed:", stdout2)
         self.assertIn(scratch_path, stdout2)
 
         # Case 3: run-no-build (should print the target output only)
-        self.assertEqual("", stdout3)
+        self.assertNotIn("Finished executing the following commands:", stdout3)
+        self.assertNotIn(scratch_path, stdout3)
 
     def test_09_PropagationOfReturnCode(self):
         """!
@@ -778,6 +780,40 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
                                               env={"NS_COMMANDLINE_INTROSPECTION": ".."}
                                               )
         self.assertNotEqual(return_code, 0)
+
+        # Cause a sigsegv
+        sigsegv_example = os.path.join(ns3_path, "scratch", "sigsegv.cc")
+        with open(sigsegv_example, "w") as f:
+            f.write("""
+                    int main (int argc, char *argv[])
+                    {
+                      char *s = "hello world"; *s = 'H';
+                      return 0;
+                    }
+                    """)
+        return_code, stdout, stderr = run_ns3("run sigsegv")
+        self.assertEqual(return_code, 245)
+        self.assertIn("sigsegv-default' died with <Signals.SIGSEGV: 11>", stdout)
+
+        # Cause an abort
+        abort_example = os.path.join(ns3_path, "scratch", "abort.cc")
+        with open(abort_example, "w") as f:
+            f.write("""
+                    #include "ns3/core-module.h"
+
+                    using namespace ns3;
+                    int main (int argc, char *argv[])
+                    {
+                      NS_ABORT_IF(true);
+                      return 0;
+                    }
+                    """)
+        return_code, stdout, stderr = run_ns3("run abort")
+        self.assertEqual(return_code, 250)
+        self.assertIn("abort-default' died with <Signals.SIGABRT: 6>", stdout)
+
+        os.remove(sigsegv_example)
+        os.remove(abort_example)
 
     def test_10_CheckConfig(self):
         """!
@@ -1057,6 +1093,17 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
 
         shutil.rmtree("contrib/calibre", ignore_errors=True)
 
+    def test_17_CMakePerformanceTracing(self):
+        """!
+        Test if CMake performance tracing works and produces the
+        cmake_performance_trace.log file
+        @return None
+        """
+        return_code, stdout, stderr = run_ns3("configure --trace-performance")
+        self.assertEqual(return_code, 0)
+        self.assertIn("--profiling-format=google-trace --profiling-output=../cmake_performance_trace.log", stdout)
+        self.assertTrue(os.path.exists(os.path.join(ns3_path, "cmake_performance_trace.log")))
+
 
 class NS3BuildBaseTestCase(NS3BaseTestCase):
     """!
@@ -1329,7 +1376,7 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
                                pkg_check_modules(ns3 REQUIRED IMPORTED_TARGET ns3-core{version})
                                target_link_libraries(test PUBLIC PkgConfig::ns3)
                                """.format(lib=("lib64" if lib64 else "lib"),
-                                          version="="+version if version else ""
+                                          version="=" + version if version else ""
                                           )
 
             for import_type in [pkgconfig_import, find_package_import]:
@@ -1429,6 +1476,10 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         except Exception:
             self.skipTest("Pybindgen is not available")
 
+        # Check if the number of runnable python scripts is equal to 0
+        python_scripts = read_lock_entry("ns3_runnable_scripts")
+        self.assertEqual(len(python_scripts), 0)
+
         # First we enable python bindings
         return_code, stdout, stderr = run_ns3("configure -G \"Unix Makefiles\" --enable-examples --enable-tests --enable-python-bindings")
         self.assertEqual(return_code, 0)
@@ -1491,7 +1542,7 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         # Then check if it was built
         self.assertGreater(len(list(filter(lambda x: "_core" in x, os.listdir(core_bindings_path)))), 0)
 
-        # We are on python anyways, so we can just try to load it from here
+        # We are on python anyway, so we can just try to load it from here
         sys.path.insert(0, os.path.join(core_bindings_path, ".."))
         try:
             from ns import core
@@ -1504,6 +1555,19 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
 
         # Check if test.py can find and run the python example
         return_code, stdout, stderr = run_program("./test.py", "-p src/core/examples/sample-simulator.py", python=True)
+        self.assertEqual(return_code, 0)
+
+        # Since python examples do not require recompilation,
+        # test if we still can run the python examples after disabling examples
+        return_code, stdout, stderr = run_ns3("configure -G \"Unix Makefiles\" --disable-examples")
+        self.assertEqual(return_code, 0)
+
+        # Check if the lock file has python runnable python scripts (it should)
+        python_scripts = read_lock_entry("ns3_runnable_scripts")
+        self.assertGreater(len(python_scripts), 0)
+
+        # Try to run an example
+        return_code, stdout, stderr = run_ns3("run sample-simulator.py")
         self.assertEqual(return_code, 0)
 
         NS3BuildBaseTestCase.cleaned_once = False
@@ -1529,8 +1593,8 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
         return_code, stdout, stderr = run_ns3("build second")
         self.assertEqual(return_code, 1)
         self.assertIn(
-           'Build target "second" is ambiguous. Try one of these: "scratch/second", "examples/tutorial/second"',
-           stdout
+            'Build target "second" is ambiguous. Try one of these: "scratch/second", "examples/tutorial/second"',
+            stdout
         )
 
         # Try to run scratch/second and succeed
@@ -1751,7 +1815,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         doc_folder = os.path.abspath(os.sep.join([".", "doc"]))
 
         # For each sphinx doc target.
-        for target in ["contributing", "manual",  "models", "tutorial"]:
+        for target in ["contributing", "manual", "models", "tutorial"]:
             # First we need to clean old docs, or it will not make any sense.
             doc_build_folder = os.sep.join([doc_folder, target, "build"])
             doc_temp_folder = os.sep.join([doc_folder, target, "source-temp"])
@@ -1820,7 +1884,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         if sudo_password is None:
             self.skipTest("SUDO_PASSWORD environment variable was not specified")
 
-        enable_sudo = read_buildstatus_entry("ENABLE_SUDO")
+        enable_sudo = read_lock_entry("ENABLE_SUDO")
         self.assertFalse(enable_sudo is True)
 
         # First we run to ensure the program was built
@@ -1860,7 +1924,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         self.assertEqual(return_code, 0)
 
         # Check if it was properly set in the buildstatus file
-        enable_sudo = read_buildstatus_entry("ENABLE_SUDO")
+        enable_sudo = read_lock_entry("ENABLE_SUDO")
         self.assertTrue(enable_sudo)
 
         # Remove old executables
@@ -1889,7 +1953,7 @@ class NS3ExpectedUseTestCase(NS3BaseTestCase):
         @return None
         """
 
-        # Command templates that are empty or do not have a %s should fail
+        # Command templates that are empty or do not have a '%s' should fail
         return_code0, stdout0, stderr0 = run_ns3('run sample-simulator --command-template')
         self.assertEqual(return_code0, 2)
         self.assertIn("argument --command-template: expected one argument", stderr0)
@@ -1991,6 +2055,16 @@ if __name__ == '__main__':
     suite.addTests(loader.loadTestsFromTestCase(NS3ConfigureTestCase))
     suite.addTests(loader.loadTestsFromTestCase(NS3BuildBaseTestCase))
     suite.addTests(loader.loadTestsFromTestCase(NS3ExpectedUseTestCase))
+
+    # Generate a dictionary of test names and their objects
+    tests = dict(map(lambda x: (x._testMethodName, x), suite._tests))
+
+    # Filter tests by name
+    # name_to_search = ""
+    # tests_to_run = set(map(lambda x: x if name_to_search in x else None, tests.keys()))
+    # tests_to_remove = set(tests) - set(tests_to_run)
+    # for test_to_remove in tests_to_remove:
+    #     suite._tests.remove(tests[test_to_remove])
 
     # Before running, check if ns3rc exists and save it
     ns3rc_script_bak = ns3rc_script + ".bak"
