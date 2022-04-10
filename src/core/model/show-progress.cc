@@ -44,6 +44,7 @@ const int64x64_t ShowProgress::HYSTERESIS = 1.414;
 const int64x64_t ShowProgress::MAXGAIN = 2.0;
   
 ShowProgress::ShowProgress (const Time interval /* = Seconds (1.0) */,
+                            bool enable /* = true */,
                             std::ostream & os /* = std::cout */)
   : m_timer (),
     m_stamp (),
@@ -58,16 +59,42 @@ ShowProgress::ShowProgress (const Time interval /* = Seconds (1.0) */,
     m_repCount (0)
 {
   NS_LOG_FUNCTION (this << interval);
-  ScheduleCheckProgress ();
-  Start ();
+
+  Enable (enable);
+
+  Simulator::SaveUntilDestroy (Ptr<ShowProgress> (this));
 }
 
 
 ShowProgress::~ShowProgress (void)
 {
-  Stop ();
+  if (m_enabled)
+    {
+      Stop ();
+    }
 }
 
+bool
+ShowProgress::Enable (bool enable)
+{
+  bool old = m_enabled;
+  m_enabled = enable;
+
+  // If we werent' enabled, and now are, start everything up
+  if (m_enabled && !old)
+    {
+      ScheduleCheckProgress ();
+      Start ();
+    }
+
+  // If we were enabled, and not now, stop
+  if (old && !m_enabled)
+    {
+      m_event.Cancel ();
+    }
+
+  return old;
+}
 
 void
 ShowProgress::SetInterval (const Time interval)
