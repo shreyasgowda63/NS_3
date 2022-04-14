@@ -291,6 +291,7 @@ V4Ping::StopApplication (void)
            << m_avgRtt.Max () << "/" << m_avgRtt.Stddev ()
            << " ms\n";
       std::cout << os.str ();
+      NS_ASSERT (m_seq == m_recv);
     }
 }
 
