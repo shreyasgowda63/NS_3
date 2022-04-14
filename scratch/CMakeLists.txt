@@ -39,6 +39,7 @@ function(create_scratch source_files)
   endif()
 
   # Get source absolute path and transform into relative path
+  get_filename_component(scratch_src ${scratch_src} ABSOLUTE)
   get_filename_component(scratch_absolute_directory ${scratch_src} DIRECTORY)
   string(REPLACE "${PROJECT_SOURCE_DIR}" "${CMAKE_OUTPUT_DIRECTORY}"
                  scratch_directory ${scratch_absolute_directory}
@@ -61,7 +62,7 @@ function(create_scratch source_files)
 endfunction()
 
 # Scan *.cc files in ns-3-dev/scratch and build a target for each
-file(GLOB single_source_file_scratches ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
+file(GLOB single_source_file_scratches CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 foreach(scratch_src ${single_source_file_scratches})
   create_scratch(${scratch_src})
 endforeach()
@@ -70,6 +71,7 @@ endforeach()
 # subdirectory
 file(
   GLOB_RECURSE scratch_subdirectories
+  CONFIGURE_DEPENDS
   LIST_DIRECTORIES true
   ${CMAKE_CURRENT_SOURCE_DIR}/**
 )
@@ -81,6 +83,17 @@ foreach(entry ${scratch_subdirectories})
 endforeach()
 
 foreach(subdir ${scratch_subdirectories})
-  file(GLOB scratch_sources ${subdir}/*.cc)
-  create_scratch("${scratch_sources}")
+  if(EXISTS ${subdir}/CMakeLists.txt)
+    # If the subdirectory contains a CMakeLists.txt file
+    # we let the CMake file manage the source files
+    #
+    # Use this if you want to link to external libraries
+    # without creating a module
+    add_subdirectory(${subdir})
+  else()
+    # Otherwise we pick all the files in the subdirectory
+    # and create a scratch for them automatically
+    file(GLOB scratch_sources CONFIGURE_DEPENDS ${subdir}/*.cc)
+    create_scratch("${scratch_sources}")
+  endif()
 endforeach()

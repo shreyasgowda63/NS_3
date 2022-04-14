@@ -451,12 +451,16 @@ WifiMac::GetTxop () const
 Ptr<QosTxop>
 WifiMac::GetQosTxop (AcIndex ac) const
 {
-  const auto it = m_edca.find (ac);
-  if (it == m_edca.cend ())
-    {
-      return nullptr;
-    }
-  return it->second;
+  // Use std::find_if() instead of std::map::find() because the latter compares
+  // the given AC index with the AC index of an element in the map by using the
+  // operator< defined for AcIndex, which aborts if an operand is not a QoS AC
+  // (the AC index passed to this method may not be a QoS AC).
+  // The performance penalty is limited because std::map::find() performs 3
+  // comparisons in the worst case, while std::find_if() performs 4 comparisons
+  // in the worst case.
+  const auto it = std::find_if (m_edca.cbegin (), m_edca.cend (),
+                                [ac](const auto& pair){ return pair.first == ac; });
+  return (it == m_edca.cend () ? nullptr : it->second);
 }
 
 Ptr<QosTxop>
@@ -492,13 +496,8 @@ WifiMac::GetBKQueue () const
 Ptr<WifiMacQueue>
 WifiMac::GetTxopQueue (AcIndex ac) const
 {
-  if (ac == AC_BE_NQOS)
-    {
-      NS_ASSERT (m_txop != nullptr);
-      return m_txop->GetWifiMacQueue ();
-    }
-  NS_ASSERT (ac == AC_BE || ac == AC_BK || ac == AC_VI || ac == AC_VO);
-  return m_edca.find (ac)->second->GetWifiMacQueue ();
+  Ptr<Txop> txop = (ac == AC_BE_NQOS ? m_txop : StaticCast<Txop> (GetQosTxop (ac)));
+  return (txop != nullptr ? txop->GetWifiMacQueue () : nullptr);
 }
 
 void
@@ -674,16 +673,17 @@ WifiMac::ConfigurePhyDependentParameters (void)
       SetDsssSupported (true);
       cwmin = 31;
       cwmax = 1023;
-      return;
     }
-
-  if (standard >= WIFI_STANDARD_80211g && band == WIFI_PHY_BAND_2_4GHZ)
+  else
     {
-      SetErpSupported (true);
-    }
+      if (standard >= WIFI_STANDARD_80211g && band == WIFI_PHY_BAND_2_4GHZ)
+        {
+          SetErpSupported (true);
+        }
 
-  cwmin = 15;
-  cwmax = 1023;
+      cwmin = 15;
+      cwmax = 1023;
+    }
 
   ConfigureContentionWindow (cwmin, cwmax);
 }
@@ -984,6 +984,11 @@ WifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
                 //and act by locally establishing the agreement on
                 //the appropriate queue.
                 GetQosTxop (respHdr.GetTid ())->GotAddBaResponse (&respHdr, from);
+                auto htFem = DynamicCast<HtFrameExchangeManager> (m_feManager);
+                if (htFem != 0)
+                  {
+                    GetQosTxop (respHdr.GetTid ())->GetBaManager ()->SetBlockAckInactivityCallback (MakeCallback (&HtFrameExchangeManager::SendDelbaFrame, htFem));
+                  }
                 //This frame is now completely dealt with, so we're done.
                 return;
               }

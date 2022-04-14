@@ -27,15 +27,22 @@ requirements (Note: not all ns-3 features are available on all systems):
 ### New user-visible features
 
 - (spectrum) ThreeGppSpectrumPropagationLossModel and ThreeGppChannelModel now support multiple PhasedArrayModel instances per device. This feature can be used to implement MIMO.
+- (wifi) The default Wi-Fi standard has been upgraded from 802.11a to 802.11ax.
+- (wifi) The default Wi-Fi rate control has been changed from ArfWifiManager to IdealWifiManager.
+- (mesh) The mesh model now includes a randomized per-hop forwarding delay.
+
 ### Bugs fixed
 
 - (spectrum) Fix condition for channel matrix update in ThreeGppChannelModel (left and right operand were pointing to the same object)
 - (spectrum) Assign stream to random variable for doppler term in ThreeGppChannelModel (moved from ThreeGppSpectrumPropagationLossModel)
 - (wifi) #467 - WiFi: Failed association process
 - (wifi) #468 - WiFi: Wrong txDuration for trigger frame
+- (mesh) #472 - mesh.cc example distance too large for preamble detect
 - (wifi) #475 - Wi-Fi: Assert when sending OFDMA DL to STAs with different TIDs
+- (mesh) #478 - Persistent collisions of forwarded broadcast frames
 - (wifi) #480 - wifi: 2.4GHz remote station manager issue
 - (wifi) #507 - wifi: Set CS Required field according to 802.11ax specs
+- (tcp) #531 - tcp: TcpWestwood divide-by-zero and floating point issues
 
 Release 3.35
 ------------

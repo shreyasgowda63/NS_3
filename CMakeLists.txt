@@ -5,21 +5,21 @@ cmake_minimum_required(VERSION 3.10..3.10)
 
 # Use ccache if available
 mark_as_advanced(CCACHE_FOUND)
-find_program(CCACHE_FOUND ccache)
-if(CCACHE_FOUND)
+find_program(CCACHE ccache)
+if(NOT ("${CCACHE}" STREQUAL "CCACHE-NOTFOUND"))
   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
   message(
     STATUS "CCache is enabled. Precompiled headers are disabled by default."
   )
-  set(NS3_PRECOMPILE_HEADERS OFF CACHE BOOL "")
-else()
-  set(NS3_PRECOMPILE_HEADERS ON CACHE BOOL "")
+  set(NS3_PRECOMPILE_HEADERS OFF
+      CACHE BOOL "Precompile module headers to speed up compilation" FORCE
+  )
 endif()
 
 # ##############################################################################
 # Project name                        #
 # ##############################################################################
-project(NS3 CXX C)
+project(NS3 CXX)
 
 file(STRINGS VERSION NS3_VER)
 
@@ -45,6 +45,7 @@ option(NS3_CLANG_TIDY "Use clang-tidy static analysis" OFF)
 option(NS3_CLANG_TIMETRACE
        "Collect compilation statistics to analyze the build process" OFF
 )
+option(NS3_COLORED_OUTPUT "Colorize CMake messages" OFF)
 option(NS3_COVERAGE "Enable code coverage measurements and report generation"
        OFF
 )
@@ -102,7 +103,7 @@ set(NS3_DISABLED_MODULES ""
 )
 
 # Include macros used below
-include(buildsupport/macros_and_definitions.cmake)
+include(build-support/macros-and-definitions.cmake)
 
 # Scan module libraries
 subdirlist(libs_to_build ${CMAKE_SOURCE_DIR}/src)
@@ -139,11 +140,8 @@ add_subdirectory(scratch)
 # Build test utils
 add_subdirectory(utils)
 
-# Workaround for missing waf files used by test.py
-generate_c4che_cachepy()
-generate_buildstatus()
-generate_fakewaflock()
-write_fakewaf_config()
+write_lock()
+write_configtable()
 write_header_to_modules_map()
 
 # Export package targets when installing

@@ -337,7 +337,7 @@ WifiTxVector::IsValid (void) const
     {
       return false;
     }
-  std::string modeName = m_mode.GetUniqueName ();
+  const std::string& modeName = m_mode.GetUniqueName ();
   if (m_channelWidth == 20)
     {
       if (m_nss != 3 && m_nss != 6)
@@ -540,6 +540,20 @@ std::ostream & operator << ( std::ostream &os, const WifiTxVector &v)
          << " Nss: " << +v.GetNss ();
     }
   return os;
+}
+
+bool
+HeMuUserInfo::operator== (const HeMuUserInfo& other) const
+{
+  return ru == other.ru
+         && mcs.GetMcsValue () == other.mcs.GetMcsValue ()
+         && nss == other.nss;
+}
+
+bool
+HeMuUserInfo::operator!= (const HeMuUserInfo& other) const
+{
+  return !(*this == other);
 }
 
 } //namespace ns3

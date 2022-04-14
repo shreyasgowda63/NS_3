@@ -96,6 +96,12 @@ Here is some example code that is written in Python and that runs |ns3|, which i
 Running Python Scripts
 **********************
 
+First, we need to enable the build of python bindings:
+
+.. sourcecode:: bash
+
+  $ ./ns3 configure --enable-python-bindings
+
 ns3 contains some options that automatically update the python path to find the ns3 module.  To run example programs, there are two ways to use ns3 to take care of this.  One is to run a ns3 shell; e.g.:
 
 .. sourcecode:: bash
@@ -103,17 +109,15 @@ ns3 contains some options that automatically update the python path to find the 
   $ ./ns3 shell
   $ python examples/wireless/mixed-wireless.py
 
-and the other is to use the --pyrun option to ns3:
+and the other is to use the 'run' option to ns3:
 
 .. sourcecode:: bash
 
   $ ./ns3 run examples/wireless/mixed-wireless.py
 
-As of ns-3.30, a --pyrun-no-build option was added to allow the running of
-a program without invoking a project rebuild.  This option may be useful
-to improve execution time when running the same program repeatedly but with
-different arguments, such as from scripts. It can be used in place of
---pyrun such as:
+Use the ``--no-build`` option to run the program without invoking a project rebuild.
+This option may be useful to improve execution time when running the same program
+repeatedly but with different arguments, such as from scripts.
 
 .. sourcecode:: bash
 
@@ -198,7 +202,7 @@ Callback based tracing is not yet properly supported for Python, as new |ns3| AP
 
 Pcap file writing is supported via the normal API.
 
-ASCII tracing is supported since |ns3|.4 via the normal C++ API translated to Python.  However, ASCII tracing requires the creation of an ostream object to pass into the ASCII tracing methods.  In Python, the C++ std::ofstream has been minimally wrapped to allow this.  For example:
+ASCII tracing is supported via the normal C++ API translated to Python.  However, ASCII tracing requires the creation of an ostream object to pass into the ASCII tracing methods.  In Python, the C++ std::ofstream has been minimally wrapped to allow this.  For example:
 
 ::
 
@@ -251,13 +255,7 @@ If something goes wrong with compiling Python bindings and you just want to igno
 
 .. sourcecode:: bash
 
-  $ ./ns3 configure --disable-python ...
-
-To add support for modular bindings to an existing or new |ns3| module, simply add the following line to its wscript build() function:
-
-::
-
-    bld.ns3_python_bindings()
+  $ ./ns3 configure --disable-python-bindings ...
 
 One must also provide the bindings files (usually by running the scanning
 framework).
@@ -276,7 +274,7 @@ Process Overview
 
 |ns3| has an automated process to regenerate Python bindings from the C++
 header files.  The process is only supported for Linux at the moment
-(ns-3.33) because the project has not found a contributor yet to test and
+because the project has not found a contributor yet to test and
 document the capability on macOS. In short, the process currently 
 requires the following steps on a Linux machine.
 
@@ -489,19 +487,37 @@ ILP32 bindings with some type substitutions automated by CMake scripts.
 Rescanning a module
 ###################
 
-To re-scan a module:
+To re-scan a module, it is recommended to clean the installation, and then
+to configure with Python scanning enabled:
 
 .. sourcecode:: bash
 
     $ cd source/ns-3-dev
-    $ ./ns3 --apiscan=wifi
+    $ ./ns3 clean
+    $ ./ns3 configure -- -DNS3_SCAN_PYTHON_BINDINGS=ON
 
-To re-scan all modules:
+Ensure in the configure output that pygccxml and castxml were found.  To
+scan an individual module, such as wifi, append `-apiscan` to the module
+name:
+
+.. sourcecode:: bash
+
+    $ ./ns3 build wifi-apiscan
+
+To re-scan all modules (which can take some time):
 
 .. sourcecode:: bash
 
     $ cd source/ns-3-dev
-    $ ./ns3 --apiscan=all
+    $ ./ns3 apiscan-all
+
+Then, to check whether the rescanned bindings can be compiled, enable
+the Python bindings in the build:
+
+.. sourcecode:: bash
+
+    $ ./ns3 configure --enable-python-bindings
+    $ ./ns3 build
 
 Generating bindings on MacOS
 ############################
@@ -520,7 +536,7 @@ The ``src/<module>/bindings`` directory may contain the following files, some of
 * ``modulegen__gcc_ILP32.py``: this is a scanned file, DO NOT TOUCH.  Scanned API definitions for the GCC, ILP32 architecture (32-bit)
 * ``modulegen_customizations.py``: you may optionally add this file in order to customize the pybindgen code generation
 * ``scan-header.h``: you may optionally add this file to customize what header file is scanned for the module.  Basically this file is scanned instead of ns3/<module>-module.h.  Typically, the first statement is #include "ns3/<module>-module.h", plus some other stuff to force template instantiations;
-* ``module_helpers.cc``: you may add additional files, such as this, to be linked to python extension module, but they have to be registered in the wscript. Look at src/core/wscript for an example of how to do so;
+* ``module_helpers.cc``: you may add additional files, such as this, to be linked to python extension module. They will be automatically scanned;
 * ``<module>.py``: if this file exists, it becomes the "frontend" python module for the ns3 module, and the extension module (.so file) becomes _<module>.so instead of <module>.so.  The <module>.py file has to import all symbols from the module _<module> (this is more tricky than it sounds, see src/core/bindings/core.py for an example), and then can add some additional pure-python definitions.   
 
 Historical Information
