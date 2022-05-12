@@ -62,6 +62,7 @@ class LteRadioBearerInfo;
 class LteSignalingRadioBearerInfo;
 class LteDataRadioBearerInfo;
 class LteEnbRrc;
+class LteEnbNetDevice;
 class Packet;
 
 
@@ -875,6 +876,18 @@ public:
    * \return the corresponding UeManager instance
    */
   Ptr<UeManager> GetUeManager (uint16_t rnti);
+
+  /**
+   * \param pointer to LteEnbNetDevice holding this LTE eNB RRC
+   * Stores pointer to LTE eNB net device that hold this LTE eNB RRC.
+  */
+  void SetLteEnbNetDevice (Ptr<LteEnbNetDevice> device);
+
+  /**
+   * Returns pointer to LteEnbNetDevice that holds this LTE eNB RRC.
+   * \return pointer to LteEnbNetDevice that holds this LTE eNB RRC
+  */
+  Ptr<LteEnbNetDevice> GetLteEnbNetDevice (void) const;
 
   /**
    * \brief Add a new UE measurement reporting configuration
@@ -1697,6 +1710,8 @@ private:
   bool m_carriersConfigured; ///< are carriers configured
 
   std::map<uint8_t, Ptr<ComponentCarrierBaseStation>> m_componentCarrierPhyConf; ///< component carrier phy configuration
+
+  Ptr<LteEnbNetDevice> m_lteEnbNetDevice; //< eNB net device referencing this LTE eNB RRC
 
 }; // end of `class LteEnbRrc`
 

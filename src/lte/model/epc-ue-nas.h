@@ -30,6 +30,7 @@ namespace ns3 {
 
 
 class EpcHelper;
+class LteUeNetDevice;
 
 class EpcUeNas : public Object
 {
@@ -182,6 +183,18 @@ public:
    */
   typedef void (* StateTracedCallback)
     (const State oldState, const State newState);
+
+  /**
+   * \param pointer to LteUeNetDevice holding this EPC UE NAS
+   * Stores pointer to LTE UE net device that hold this EPC UE NAS.
+  */
+  void SetLteUeNetDevice (Ptr<LteUeNetDevice> device);
+
+  /**
+   * Returns pointer to LteUeNetDevice that holds this EPC UE NAS.
+   * \return pointer to LteUeNetDevice that holds this EPC UE NAS
+  */
+  Ptr<LteUeNetDevice>  GetLteUeNetDevice (void) const;
  
 private:
 
@@ -255,6 +268,8 @@ private:
    *
    */
   std::list<BearerToBeActivated> m_bearersToBeActivatedListForReconnection;
+  
+  Ptr<LteUeNetDevice> m_lteUeNetDevice; //< UE net device referencing this EPC UE NAS
 
 };
 

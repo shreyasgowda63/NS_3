@@ -25,8 +25,10 @@
  */
 
 #include "lte-ue-rrc.h"
+#include "lte-ue-net-device.h"
 
 #include <ns3/fatal-error.h>
+#include <ns3/node.h>
 #include <ns3/log.h>
 #include <ns3/object-map.h>
 #include <ns3/object-factory.h>
@@ -181,6 +183,7 @@ LteUeRrc::DoDispose ()
   m_cmacSapProvider.erase (m_cmacSapProvider.begin (), m_cmacSapProvider.end ());
   m_cmacSapProvider.clear ();
   m_drbMap.clear ();
+  m_lteUeNetDevice = nullptr;
 }
 
 TypeId
@@ -3330,6 +3333,18 @@ const std::string
 LteUeRrc::ToString (LteUeRrc::State s)
 {
   return g_ueRrcStateName[s];
+}
+
+void
+LteUeRrc::SetLteUeNetDevice (Ptr<LteUeNetDevice> device)
+{
+  m_lteUeNetDevice = device;
+}
+
+Ptr<LteUeNetDevice>
+LteUeRrc::GetLteUeNetDevice (void) const
+{
+  return m_lteUeNetDevice;
 }
 
 

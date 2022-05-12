@@ -40,6 +40,7 @@ class LteCcmRrcSapProvider;
 class LteMacSapUser;
 class LteMacSapProvider;
 class LteEnbCmacSapProvider;
+class LteEnbNetDevice;
 class LteCcmMacSapProvider;
 
 /**
@@ -151,6 +152,17 @@ public:
    */
   virtual void SetNumberOfComponentCarriers (uint16_t noOfComponentCarriers);
 
+  /**
+   * \param pointer to LteEnbNetDevice holding this LTE eNB component carrier manager
+   * Stores pointer to LTE eNB net device that hold this LTE eNB component carrier manager.
+  */
+  void SetLteEnbNetDevice (Ptr<LteEnbNetDevice> device);
+
+  /**
+   * Returns pointer to LteEnbNetDevice that holds this LTE eNB component carrier manager.
+   * \return pointer to LteEnbNetDevice that holds this LTE eNB component carrier manager
+  */
+  Ptr<LteEnbNetDevice> GetLteEnbNetDevice (void) const;
 
 protected:
 
@@ -208,6 +220,8 @@ protected:
   LteCcmMacSapUser* m_ccmMacSapUser; //!< LteCcmMacSapUser is extended version of LteMacSapUser interface. Contains functions that allow reporting of UL BSR from MAC to CCM.
   LteCcmRrcSapUser* m_ccmRrcSapUser; //!< A pointer to SAP interface of RRC instance, i.e. to configure measurements reporting for CCM.
   LteCcmRrcSapProvider* m_ccmRrcSapProvider; //!< A pointer to the SAP interface of the CCM instance to receive API calls from the eNodeB RRC instance.
+
+  Ptr<LteEnbNetDevice> m_lteEnbNetDevice; //< eNB net device referencing this eNB component carrier manager
 
 }; // end of class LteEnbComponentCarrierManager
 

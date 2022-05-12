@@ -68,6 +68,7 @@ static const Time UE_MEASUREMENT_REPORT_DELAY = MicroSeconds (1);
 
 
 class LteRlc;
+class LteUeNetDevice;
 class LteMacSapProvider;
 class LteUeCmacSapUser;
 class LteUeCmacSapProvider;
@@ -414,9 +415,19 @@ public:
   typedef void (* ImsiCidRntiCountTracedCallback)
   (uint64_t imsi, uint16_t cellId, uint16_t rnti, uint8_t count);
 
+  /**
+   * \param pointer to LteUeNetDevice holding this LTE UE RRC
+   * Stores pointer to LTE UE net device that hold this LTE UE RRC.
+  */
+  void SetLteUeNetDevice (Ptr<LteUeNetDevice> device);
+
+  /**
+   * Returns pointer to LteUeNetDevice that holds this LTE UE RRC.
+   * \return pointer to LteUeNetDevice that holds this LTE UE RRC
+  */
+  Ptr<LteUeNetDevice>  GetLteUeNetDevice (void) const;
 
 private:
-
 
   // PDCP SAP methods
   /**
@@ -1330,6 +1341,8 @@ private:
    *
    */
   void ResetRlfParams ();
+
+  Ptr<LteUeNetDevice> m_lteUeNetDevice; //< UE net device referencing this LTE UE RRC
 
 public:
   /**

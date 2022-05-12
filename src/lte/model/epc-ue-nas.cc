@@ -19,11 +19,13 @@
  */
 
 #include <ns3/fatal-error.h>
+#include <ns3/node.h>
 #include <ns3/log.h>
 
 #include <ns3/epc-helper.h>
 
 #include "lte-enb-net-device.h"
+#include "lte-ue-net-device.h"
 #include "epc-ue-nas.h"
 #include "lte-as-sap.h"
 
@@ -78,6 +80,7 @@ EpcUeNas::DoDispose ()
 {
   NS_LOG_FUNCTION (this);
   delete m_asSapUser;
+  m_lteUeNetDevice = nullptr;
 }
 
 TypeId
@@ -315,6 +318,19 @@ EpcUeNas::SwitchToState (State newState)
       break;
     }
 
+}
+
+
+void
+EpcUeNas::SetLteUeNetDevice (Ptr<LteUeNetDevice> device)
+{
+  m_lteUeNetDevice = device;
+}
+
+Ptr<LteUeNetDevice>
+EpcUeNas::GetLteUeNetDevice (void) const
+{
+  return m_lteUeNetDevice;
 }
 
 
