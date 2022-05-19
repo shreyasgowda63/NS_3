@@ -1174,7 +1174,6 @@ protected:
    */
   std::map<WifiModulationClass, Ptr<PhyEntity> > m_phyEntities;
 
-
 private:
   /**
    * Configure WifiPhy with appropriate channel frequency and
@@ -1347,7 +1346,7 @@ private:
    * For PHY entities supported by a given WifiPhy instance,
    * \see m_phyEntities.
    */
-  static std::map<WifiModulationClass, Ptr<PhyEntity> > & GetStaticPhyEntities (void);
+  static std::vector<Ptr<PhyEntity> >& GetStaticPhyEntities (void);
 
   WifiStandard m_standard;                  //!< WifiStandard
   WifiPhyBand m_band;                       //!< WifiPhyBand

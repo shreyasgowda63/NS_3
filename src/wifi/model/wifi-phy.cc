@@ -20,6 +20,7 @@
  */
 
 #include <algorithm>
+#include "ns3/assert.h"
 #include "ns3/simulator.h"
 #include "ns3/log.h"
 #include "ns3/pointer.h"
@@ -373,10 +374,10 @@ WifiPhy::DoDispose (void)
   m_phyEntities.clear ();
 }
 
-std::map<WifiModulationClass, Ptr<PhyEntity> > &
+std::vector<Ptr<PhyEntity>>&
 WifiPhy::GetStaticPhyEntities (void)
 {
-    static std::map<WifiModulationClass, Ptr<PhyEntity> > g_staticPhyEntities;
+    static std::vector<Ptr<PhyEntity>> g_staticPhyEntities;
     return g_staticPhyEntities;
 }
 
@@ -635,9 +636,11 @@ WifiPhy::CalculateSnr (const WifiTxVector& txVector, double ber) const
 const Ptr<const PhyEntity>
 WifiPhy::GetStaticPhyEntity (WifiModulationClass modulation)
 {
-  const auto it = GetStaticPhyEntities ().find (modulation);
-  NS_ABORT_MSG_IF (it == GetStaticPhyEntities ().end (), "Unimplemented Wi-Fi modulation class");
-  return it->second;
+  NS_ASSERT_MSG (
+      (static_cast<std::size_t> (modulation) < GetStaticPhyEntities ().size ()) &&
+      (GetStaticPhyEntities ()[modulation] != nullptr),
+      "Unimplemented Wi-Fi modulation class");
+  return GetStaticPhyEntities ()[modulation];
 }
 
 Ptr<PhyEntity>
@@ -652,15 +655,25 @@ void
 WifiPhy::AddStaticPhyEntity (WifiModulationClass modulation, Ptr<PhyEntity> phyEntity)
 {
   NS_LOG_FUNCTION (modulation);
-  NS_ASSERT_MSG (GetStaticPhyEntities ().find (modulation) == GetStaticPhyEntities ().end (), "The PHY entity has already been added. The setting should only be done once per modulation class");
-    GetStaticPhyEntities ()[modulation] = phyEntity;
+  if (modulation >= GetStaticPhyEntities ().size ())
+    {
+      GetStaticPhyEntities ().resize (modulation + 1);
+    }
+  else
+    {
+      NS_ASSERT_MSG (GetStaticPhyEntities ()[modulation] == nullptr, "The PHY entity has already been added. The setting should only be done once per modulation class");
+    }
+  GetStaticPhyEntities ()[modulation] = phyEntity;
 }
 
 void
 WifiPhy::AddPhyEntity (WifiModulationClass modulation, Ptr<PhyEntity> phyEntity)
 {
   NS_LOG_FUNCTION (this << modulation);
-  NS_ABORT_MSG_IF (GetStaticPhyEntities ().find (modulation) == GetStaticPhyEntities ().end (), "Cannot add an unimplemented PHY to supported list. Update the former first.");
+  NS_ABORT_MSG_IF (
+      (static_cast<std::size_t> (modulation) >= GetStaticPhyEntities ().size ()) ||
+      (GetStaticPhyEntities ()[modulation] == nullptr),
+      "Cannot add an unimplemented PHY to supported list. Update the former first.");
   NS_ASSERT_MSG (m_phyEntities.find (modulation) == m_phyEntities.end (), "The PHY entity has already been added. The setting should only be done once per modulation class");
   phyEntity->SetOwner (this);
   m_phyEntities[modulation] = phyEntity;

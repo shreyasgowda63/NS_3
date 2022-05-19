@@ -117,6 +117,7 @@ inline std::ostream& operator<< (std::ostream &os, const WifiPreamble &preamble)
  * This enumeration defines the modulation classes per
  * (Table 10-6 "Modulation classes"; IEEE 802.11-2016, with
  * updated in 802.11ax/D6.0 as Table 10-9).
+ * These enum constants shouldn't be assigned values manually!
  */
 enum WifiModulationClass
 {
