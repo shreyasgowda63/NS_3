@@ -63,6 +63,12 @@ public:
    */
   void SetLocal (PacketSocketAddress addr);
 
+  /**
+   * \brief Returns the number of received packets
+   * \return the number of received packets
+   */
+  uint32_t GetReceivedPackets () const;
+
 protected:
   virtual void DoDispose (void);
 

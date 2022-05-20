@@ -70,10 +70,27 @@ public:
   void SetRemote (PacketSocketAddress addr);
 
   /**
+   * \brief Query the maximum number of packets to be sent.
+   * \return Maximum number of packets
+   */
+  uint32_t GetMaxPackets () const;
+
+  /**
+   * \brief Set the maximum number of packets.
+   */
+  void SetMaxPackets (uint32_t maxPackets);
+
+  /**
    * \brief Query the priority value of this socket
    * \return The priority value
    */
   uint8_t GetPriority (void) const;
+
+  /**
+   * \brief Returns the number of sent packets
+   * \return The number of sent packets
+   */
+  uint32_t GetSent () const;
 
 protected:
   virtual void DoDispose (void);

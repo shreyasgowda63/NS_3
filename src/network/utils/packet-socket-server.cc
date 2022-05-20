@@ -106,6 +106,13 @@ PacketSocketServer::SetLocal (PacketSocketAddress addr)
   m_localAddressSet = true;
 }
 
+uint32_t
+PacketSocketServer::GetReceivedPackets () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_pktRx;
+}
+
 void
 PacketSocketServer::HandleRead (Ptr<Socket> socket)
 {

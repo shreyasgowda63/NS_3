@@ -49,7 +49,8 @@ PacketSocketClient::GetTypeId (void)
     .AddAttribute ("MaxPackets",
                    "The maximum number of packets the application will send (zero means infinite)",
                    UintegerValue (100),
-                   MakeUintegerAccessor (&PacketSocketClient::m_maxPackets),
+                   MakeUintegerAccessor (&PacketSocketClient::SetMaxPackets,
+                                         &PacketSocketClient::GetMaxPackets),
                    MakeUintegerChecker<uint32_t> ())
     .AddAttribute ("Interval",
                    "The time to wait between packets", TimeValue (Seconds (1.0)),
@@ -112,10 +113,36 @@ PacketSocketClient::SetPriority (uint8_t priority)
     }
 }
 
+uint32_t
+PacketSocketClient::GetMaxPackets (void) const
+{
+  return m_maxPackets;
+}
+
+void
+PacketSocketClient::SetMaxPackets (uint32_t maxPackets)
+{
+  m_maxPackets = maxPackets;
+
+  if (m_socket &&
+      m_sendEvent.IsExpired () &&
+      (m_sent < m_maxPackets || m_maxPackets == 0))
+    {
+      m_sendEvent = Simulator::ScheduleNow (&PacketSocketClient::Send, this);
+    }
+}
+
 uint8_t
 PacketSocketClient::GetPriority (void) const
 {
   return m_priority;
+}
+
+uint32_t
+PacketSocketClient::GetSent () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_sent;
 }
 
 void
