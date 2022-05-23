@@ -76,7 +76,7 @@ TcpLp::~TcpLp (void)
 Ptr<TcpCongestionOps>
 TcpLp::Fork (void)
 {
-  return CopyObject<TcpLp> (this);
+  return CopyObject<TcpLp> (Ptr<const TcpLp> (this));
 }
 
 void

@@ -251,7 +251,7 @@ TcpNewReno::GetSsThresh (Ptr<const TcpSocketState> state,
 Ptr<TcpCongestionOps>
 TcpNewReno::Fork ()
 {
-  return CopyObject<TcpNewReno> (this);
+  return CopyObject<TcpNewReno> (Ptr<const TcpNewReno> (this));
 }
 
 } // namespace ns3

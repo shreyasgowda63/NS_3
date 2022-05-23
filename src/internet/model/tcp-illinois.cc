@@ -369,7 +369,7 @@ TcpIllinois::Fork (void)
 {
   NS_LOG_FUNCTION (this);
 
-  return CopyObject<TcpIllinois> (this);
+  return CopyObject<TcpIllinois> (Ptr<const TcpIllinois> (this));
 }
 
 std::string

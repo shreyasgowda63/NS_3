@@ -208,7 +208,7 @@ ArpCache::HandleWaitReplyTimeout (void)
                             ", ArpWaitTimeout for " << entry->GetIpv4Address () <<
                             " expired -- retransmitting arp request since retries = " <<
                             entry->GetRetries ());
-              m_arpRequestCallback (this, entry->GetIpv4Address ());
+              m_arpRequestCallback (Ptr<ArpCache> (this), entry->GetIpv4Address ());
               restartWaitReplyTimer = true;
               entry->IncrementRetries ();
             }

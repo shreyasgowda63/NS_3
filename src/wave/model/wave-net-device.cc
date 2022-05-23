@@ -164,8 +164,8 @@ WaveNetDevice::DoInitialize (void)
       stationManager->SetupPhy (m_phyEntities[0]);
       stationManager->Initialize ();
     }
-  m_channelScheduler->SetWaveNetDevice (this);
-  m_vsaManager->SetWaveNetDevice (this);
+  m_channelScheduler->SetWaveNetDevice (Ptr<WaveNetDevice> (this));
+  m_vsaManager->SetWaveNetDevice (Ptr<WaveNetDevice> (this));
   m_channelScheduler->Initialize ();
   m_channelCoordinator->Initialize ();
   m_channelManager->Initialize ();
@@ -697,7 +697,7 @@ WaveNetDevice::ForwardUp (Ptr<const Packet> packet, Mac48Address from, Mac48Addr
       // so we use the MAC entity for CCH as it receives this packet.
       Ptr<OcbWifiMac> mac = GetMac (CCH);
       mac->NotifyRx (copy);
-      m_forwardUp (this, copy, llc.GetType (), from);
+      m_forwardUp (Ptr<WaveNetDevice> (this), copy, llc.GetType (), from);
     }
 
   if (!m_promiscRx.IsNull ())
@@ -706,7 +706,7 @@ WaveNetDevice::ForwardUp (Ptr<const Packet> packet, Mac48Address from, Mac48Addr
       // so we use the MAC entity for CCH as it receives this packet.
       Ptr<OcbWifiMac> mac = GetMac (CCH);
       mac->NotifyPromiscRx (copy);
-      m_promiscRx (this, copy, llc.GetType (), from, to, type);
+      m_promiscRx (Ptr<WaveNetDevice> (this), copy, llc.GetType (), from, to, type);
     }
 }
 

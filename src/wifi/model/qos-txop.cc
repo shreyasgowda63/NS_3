@@ -190,7 +190,7 @@ QosTxop::StartMuEdcaTimerNow (void)
   if (EdcaDisabled ())
     {
       NS_LOG_DEBUG ("Disable EDCA for " << m_muEdcaTimer.As (Time::MS));
-      m_channelAccessManager->DisableEdcaFor (this, m_muEdcaTimer);
+      m_channelAccessManager->DisableEdcaFor (Ptr<QosTxop> (this), m_muEdcaTimer);
     }
 }
 
@@ -583,7 +583,7 @@ QosTxop::PushFront (Ptr<const Packet> packet, const WifiMacHeader &hdr)
   m_queue->PushFront (Create<WifiMacQueueItem> (packet, hdr));
   if (HasFramesToTransmit () && m_access == NOT_REQUESTED)
     {
-      m_channelAccessManager->RequestAccess (this);
+      m_channelAccessManager->RequestAccess (Ptr<QosTxop> (this));
     }
 }
 
@@ -618,7 +618,7 @@ QosTxop::GotAddBaResponse (const MgtAddBaResponseHeader *respHdr, Mac48Address r
 
   if (HasFramesToTransmit () && m_access == NOT_REQUESTED)
     {
-      m_channelAccessManager->RequestAccess (this);
+      m_channelAccessManager->RequestAccess (Ptr<QosTxop> (this));
     }
 }
 
@@ -689,7 +689,7 @@ QosTxop::AddBaResponseTimeout (Mac48Address recipient, uint8_t tid)
       GenerateBackoff ();
       if (HasFramesToTransmit () && m_access == NOT_REQUESTED)
         {
-          m_channelAccessManager->RequestAccess (this);
+          m_channelAccessManager->RequestAccess (Ptr<QosTxop> (this));
         }
     }
 }

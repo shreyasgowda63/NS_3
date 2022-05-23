@@ -41,11 +41,11 @@
 namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("HwmpProtocol");
-  
+
 namespace dot11s {
 
 NS_OBJECT_ENSURE_REGISTERED (HwmpProtocol);
-  
+
 TypeId
 HwmpProtocol::GetTypeId ()
 {
@@ -790,16 +790,17 @@ HwmpProtocol::Install (Ptr<MeshPointDevice> mp)
           return false;
         }
       // Installing plugins:
-      Ptr<HwmpProtocolMac> hwmpMac = Create<HwmpProtocolMac> (wifiNetDev->GetIfIndex (), this);
+      Ptr<HwmpProtocolMac> hwmpMac = Create<HwmpProtocolMac> (wifiNetDev->GetIfIndex (),
+                                                              Ptr<HwmpProtocol> (this));
       m_interfaces[wifiNetDev->GetIfIndex ()] = hwmpMac;
       mac->InstallPlugin (hwmpMac);
       //Installing airtime link metric:
       Ptr<AirtimeLinkMetricCalculator> metric = CreateObject <AirtimeLinkMetricCalculator> ();
       mac->SetLinkMetricCallback (MakeCallback (&AirtimeLinkMetricCalculator::CalculateMetric, metric));
     }
-  mp->SetRoutingProtocol (this);
+  mp->SetRoutingProtocol (Ptr<HwmpProtocol> (this));
   // Mesh point aggregates all installed protocols
-  mp->AggregateObject (this);
+  mp->AggregateObject (Ptr<HwmpProtocol> (this));
   m_address = Mac48Address::ConvertFrom (mp->GetAddress ()); // address;
   return true;
 }
@@ -826,7 +827,7 @@ HwmpProtocol::DropDataFrame (uint32_t seqno, Mac48Address source)
   NS_LOG_FUNCTION (this << seqno << source);
   if (source == GetAddress ())
     {
-      NS_LOG_DEBUG ("Dropping seqno " << seqno << "; from self"); 
+      NS_LOG_DEBUG ("Dropping seqno " << seqno << "; from self");
       return true;
     }
   std::map<Mac48Address, uint32_t,std::less<Mac48Address> >::const_iterator i = m_lastDataSeqno.find (source);

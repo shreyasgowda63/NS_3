@@ -225,7 +225,7 @@ OfdmaSpectrumWifiPhy::OfdmaSpectrumWifiPhy (uint16_t staId)
   : SpectrumWifiPhy ()
 {
   m_ofdmTestHePhy = Create<OfdmaTestHePhy> (staId);
-  m_ofdmTestHePhy->SetOwner (this);
+  m_ofdmTestHePhy->SetOwner (Ptr<OfdmaSpectrumWifiPhy> (this));
 }
 
 OfdmaSpectrumWifiPhy::~OfdmaSpectrumWifiPhy()

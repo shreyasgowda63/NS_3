@@ -105,7 +105,7 @@ TcpDctcp::~TcpDctcp (void)
 Ptr<TcpCongestionOps> TcpDctcp::Fork (void)
 {
   NS_LOG_FUNCTION (this);
-  return CopyObject<TcpDctcp> (this);
+  return CopyObject<TcpDctcp> (Ptr<TcpDctcp> (this));
 }
 
 void

@@ -78,7 +78,7 @@ struct has_begin_end
     std::is_same<decltype (static_cast<typename C::const_iterator (C::*) () const> (&C::begin)),
     typename C::const_iterator (C::*) () const>::value, void>::type *))[1];
 
-  /** 
+  /**
    * Compiled if type T does not have a begin() method.
    * \return A value indicating that this specialization has been compiled.
    */
@@ -109,12 +109,12 @@ struct has_begin_end
  *
  * Container here means has an iterator and supports begin() and end()
  * methods.
- * 
+ *
  * Can be used when defining specializations when a type T is an STL
  * like container.
  */
-template<typename T> 
-struct is_container : std::integral_constant<bool, has_const_iterator<T>::value && has_begin_end<T>::beg_value && has_begin_end<T>::end_value> 
+template<typename T>
+struct is_container : std::integral_constant<bool, has_const_iterator<T>::value && has_begin_end<T>::beg_value && has_begin_end<T>::end_value>
 { };
 
 /**
@@ -179,7 +179,7 @@ DoMakeAccessorHelperOne (U<I...> T::*memberContainer)
 
     U<I...> T::*m_memberContainer;  // Address of the class data member.
   };
-  return Ptr<const AttributeAccessor> (new MemberContainer (memberContainer), false);
+  return Ptr<const AttributeAccessor> (new MemberContainer (memberContainer));
 }
 
 } // namespace ns3

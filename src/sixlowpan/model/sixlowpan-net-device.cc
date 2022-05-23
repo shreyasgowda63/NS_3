@@ -201,7 +201,7 @@ void SixLowPanNetDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort,
   SixLowPanDispatch::Dispatch_e dispatchVal;
   Ptr<Packet> copyPkt = packet->Copy ();
 
-  m_rxTrace (copyPkt, this, GetIfIndex ());
+  m_rxTrace (copyPkt, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
 
   copyPkt->CopyData (&dispatchRawVal, sizeof(dispatchRawVal));
   dispatchVal = SixLowPanDispatch::GetDispatchType (dispatchRawVal);
@@ -237,7 +237,7 @@ void SixLowPanNetDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort,
       if (!hasBc0)
         {
           NS_LOG_LOGIC ("Dropped packet - we only support mesh if it is paired with a BC0");
-          m_dropTrace (DROP_UNKNOWN_EXTENSION, copyPkt, this, GetIfIndex ());
+          m_dropTrace (DROP_UNKNOWN_EXTENSION, copyPkt, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
           return;
         }
 
@@ -336,7 +336,7 @@ void SixLowPanNetDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort,
     case SixLowPanDispatch::LOWPAN_HC1:
       if (m_useIphc)
         {
-          m_dropTrace (DROP_DISALLOWED_COMPRESSION, copyPkt, this, GetIfIndex ());
+          m_dropTrace (DROP_DISALLOWED_COMPRESSION, copyPkt, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
           return;
         }
       DecompressLowPanHc1 (copyPkt, realSrc, realDst);
@@ -345,12 +345,12 @@ void SixLowPanNetDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort,
     case SixLowPanDispatch::LOWPAN_IPHC:
       if (!m_useIphc)
         {
-          m_dropTrace (DROP_DISALLOWED_COMPRESSION, copyPkt, this, GetIfIndex ());
+          m_dropTrace (DROP_DISALLOWED_COMPRESSION, copyPkt, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
           return;
         }
       if (DecompressLowPanIphc (copyPkt, realSrc, realDst))
         {
-          m_dropTrace (DROP_SATETFUL_DECOMPRESSION_PROBLEM, copyPkt, this, GetIfIndex ());
+          m_dropTrace (DROP_SATETFUL_DECOMPRESSION_PROBLEM, copyPkt, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
         }
       else
         {
@@ -359,7 +359,7 @@ void SixLowPanNetDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort,
       break;
     default:
       NS_LOG_DEBUG ("Unsupported 6LoWPAN encoding: dropping.");
-      m_dropTrace (DROP_UNKNOWN_EXTENSION, copyPkt, this, GetIfIndex ());
+      m_dropTrace (DROP_UNKNOWN_EXTENSION, copyPkt, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
       break;
     }
 
@@ -373,10 +373,10 @@ void SixLowPanNetDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort,
 
   if (!m_promiscRxCallback.IsNull ())
     {
-      m_promiscRxCallback (this, copyPkt, Ipv6L3Protocol::PROT_NUMBER, realSrc, realDst, packetType);
+      m_promiscRxCallback (Ptr<SixLowPanNetDevice> (this), copyPkt, Ipv6L3Protocol::PROT_NUMBER, realSrc, realDst, packetType);
     }
 
-  m_rxCallback (this, copyPkt, Ipv6L3Protocol::PROT_NUMBER, realSrc);
+  m_rxCallback (Ptr<SixLowPanNetDevice> (this), copyPkt, Ipv6L3Protocol::PROT_NUMBER, realSrc);
 
   return;
 }
@@ -628,7 +628,7 @@ bool SixLowPanNetDevice::DoSend (Ptr<Packet> packet,
       for ( it = fragmentList.begin (); it != fragmentList.end (); it++ )
         {
           NS_LOG_DEBUG ( "SixLowPanNetDevice::Send (Fragment) " << **it );
-          m_txTrace (*it, this, GetIfIndex ());
+          m_txTrace (*it, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
 
           if (useMesh)
             {
@@ -649,7 +649,7 @@ bool SixLowPanNetDevice::DoSend (Ptr<Packet> packet,
     }
   else
     {
-      m_txTrace (packet, this, GetIfIndex ());
+      m_txTrace (packet, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
 
       if (useMesh)
         {
@@ -2110,7 +2110,7 @@ SixLowPanNetDevice::DecompressLowPanNhc (Ptr<Packet> packet, Address const &src,
       actualHeaderType = Ipv6Header::IPV6_IPV6;
       if (DecompressLowPanIphc (packet, src, dst))
         {
-          m_dropTrace (DROP_SATETFUL_DECOMPRESSION_PROBLEM, packet, this, GetIfIndex ());
+          m_dropTrace (DROP_SATETFUL_DECOMPRESSION_PROBLEM, packet, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
           return std::pair<uint8_t, bool> (0, true);
         }
       break;
@@ -2269,7 +2269,7 @@ void SixLowPanNetDevice::DoFragmentation (Ptr<Packet> packet,
   uint32_t size;
   NS_ASSERT_MSG ( l2Mtu > frag1Hdr.GetSerializedSize (),
                   "6LoWPAN: can not fragment, 6LoWPAN headers are bigger than MTU");
-  
+
   // All the headers are substracted to get remaining units for data
   size = l2Mtu - frag1Hdr.GetSerializedSize () - compressedHeaderSize - extraHdrSize;
   size -= size % 8;
@@ -2367,7 +2367,7 @@ bool SixLowPanNetDevice::ProcessFragment (Ptr<Packet>& packet, Address const &sr
         case SixLowPanDispatch::LOWPAN_IPHC:
           if (DecompressLowPanIphc (p, src, dst))
             {
-              m_dropTrace (DROP_SATETFUL_DECOMPRESSION_PROBLEM, p, this, GetIfIndex ());
+              m_dropTrace (DROP_SATETFUL_DECOMPRESSION_PROBLEM, p, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
               return false;
             }
           break;
@@ -2401,7 +2401,7 @@ bool SixLowPanNetDevice::ProcessFragment (Ptr<Packet>& packet, Address const &sr
           for (std::list< Ptr<Packet> >::iterator fragIter = storedFragments.begin ();
                fragIter != storedFragments.end (); fragIter++)
             {
-              m_dropTrace (DROP_FRAGMENT_BUFFER_FULL, *fragIter, this, GetIfIndex ());
+              m_dropTrace (DROP_FRAGMENT_BUFFER_FULL, *fragIter, Ptr<SixLowPanNetDevice> (this), GetIfIndex ());
             }
 
           m_timeoutEventList.erase (m_fragments[oldestKey]->GetTimeoutIter ());
@@ -2594,7 +2594,7 @@ void SixLowPanNetDevice::HandleFragmentsTimeout (FragmentKey_t key, uint32_t iif
   for (std::list< Ptr<Packet> >::iterator fragIter = storedFragments.begin ();
        fragIter != storedFragments.end (); fragIter++)
     {
-      m_dropTrace (DROP_FRAGMENT_TIMEOUT, *fragIter, this, iif);
+      m_dropTrace (DROP_FRAGMENT_TIMEOUT, *fragIter, Ptr<SixLowPanNetDevice> (this), iif);
     }
   // clear the buffers
   it->second = 0;

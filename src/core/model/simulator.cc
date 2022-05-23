@@ -109,7 +109,7 @@ static SimulatorImpl * GetImpl (void)
 
         g_simTypeImpl.GetValue (s);
         factory.SetTypeId (s.Get ());
-        *pimpl = GetPointer (factory.Create<SimulatorImpl> ());
+        *pimpl = factory.Create<SimulatorImpl> ().get ();
       }
       {
         ObjectFactory factory;
@@ -210,13 +210,13 @@ Simulator::GetDelayLeft (const EventId &id)
 EventId
 Simulator::Schedule (Time const &delay, const Ptr<EventImpl> &event)
 {
-  return DoSchedule (delay, GetPointer (event));
+  return DoSchedule (delay, event.get ());
 }
 
 EventId
 Simulator::ScheduleNow (const Ptr<EventImpl> &ev)
 {
-  return DoScheduleNow (GetPointer (ev));
+  return DoScheduleNow (ev.get ());
 }
 void
 Simulator::ScheduleWithContext (uint32_t context, const Time &delay, EventImpl *impl)
@@ -229,7 +229,7 @@ Simulator::ScheduleWithContext (uint32_t context, const Time &delay, EventImpl *
 EventId
 Simulator::ScheduleDestroy (const Ptr<EventImpl> &ev)
 {
-  return DoScheduleDestroy (GetPointer (ev));
+  return DoScheduleDestroy (ev.get ());
 }
 EventId
 Simulator::DoSchedule (Time const &time, EventImpl *impl)
@@ -331,7 +331,7 @@ Simulator::SetImplementation (Ptr<SimulatorImpl> impl)
     {
       NS_FATAL_ERROR ("It is not possible to set the implementation after calling any Simulator:: function. Call Simulator::SetImplementation earlier or after Simulator::Destroy.");
     }
-  *PeekImpl () = GetPointer (impl);
+  *PeekImpl () = impl.get ();
   // Set the default scheduler
   ObjectFactory factory;
   StringValue s;
@@ -353,7 +353,7 @@ Ptr<SimulatorImpl>
 Simulator::GetImplementation (void)
 {
   NS_LOG_FUNCTION_NOARGS ();
-  return GetImpl ();
+  return Ptr<SimulatorImpl> (GetImpl ());
 }
 
 

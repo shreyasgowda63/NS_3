@@ -106,7 +106,7 @@ ApWifiMac::ApWifiMac ()
 {
   NS_LOG_FUNCTION (this);
   m_beaconTxop = CreateObject<Txop> (CreateObject<WifiMacQueue> (AC_BEACON));
-  m_beaconTxop->SetWifiMac (this);
+  m_beaconTxop->SetWifiMac (Ptr<ApWifiMac> (this));
   m_beaconTxop->SetAifsn (1);
   m_beaconTxop->SetMinCw (0);
   m_beaconTxop->SetMaxCw (0);
@@ -1414,7 +1414,7 @@ void
 ApWifiMac::DeaggregateAmsduAndForward (Ptr<WifiMacQueueItem> mpdu)
 {
   NS_LOG_FUNCTION (this << *mpdu);
-  for (auto& i : *PeekPointer (mpdu))
+  for (auto& i : *mpdu.get ())
     {
       if (i.second.GetDestinationAddr () == GetAddress ())
         {

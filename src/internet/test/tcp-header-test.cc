@@ -203,7 +203,7 @@ TcpHeaderWithRFC793OptionTestCase::CheckCorrectDeserialize ()
   buffer.AddAtStart (40);
 
   Buffer::Iterator i = buffer.Begin ();
-  source.AppendOption (&temp);
+  source.AppendOption (Ptr<const TcpOptionNOP> (&temp));
 
   source.Serialize (i);
 
@@ -226,10 +226,10 @@ TcpHeaderWithRFC793OptionTestCase::CheckNoPadding ()
 
     NS_TEST_ASSERT_MSG_EQ (header.GetLength (), 5, "TcpHeader without option is"
                            " not 5 word");
-    header.AppendOption (&oNop1);
-    header.AppendOption (&oNop2);
-    header.AppendOption (&oNop3);
-    header.AppendOption (&oNop4);
+    header.AppendOption (Ptr<const TcpOptionNOP> (&oNop1));
+    header.AppendOption (Ptr<const TcpOptionNOP> (&oNop2));
+    header.AppendOption (Ptr<const TcpOptionNOP> (&oNop3));
+    header.AppendOption (Ptr<const TcpOptionNOP> (&oNop4));
 
     NS_TEST_ASSERT_MSG_EQ (header.GetLength (), 6, "Four byte added as option "
                            "are not a word");
@@ -267,7 +267,7 @@ TcpHeaderWithRFC793OptionTestCase::OneOptionAtTime ()
 
     NS_TEST_ASSERT_MSG_EQ (header.GetLength (), 5, "TcpHeader without option is"
                            " not 5 word");
-    header.AppendOption (&oEnd);
+    header.AppendOption (Ptr<TcpOptionEnd> (&oEnd));
     NS_TEST_ASSERT_MSG_EQ (header.GetLength (), 5, "Length has changed also for"
                            " END option");
     NS_TEST_ASSERT_MSG_EQ (header.GetSerializedSize (), 20, "Length has changed also for"
@@ -288,7 +288,7 @@ TcpHeaderWithRFC793OptionTestCase::OneOptionAtTime ()
 
     NS_TEST_ASSERT_MSG_EQ (header.GetLength (), 5, "TcpHeader without option is"
                            " not 5 word");
-    header.AppendOption (&oNop);
+    header.AppendOption (Ptr<TcpOptionNOP> (&oNop));
     NS_TEST_ASSERT_MSG_EQ (header.GetLength (), 6, "NOP option not handled correctly");
     NS_TEST_ASSERT_MSG_EQ (header.GetSerializedSize (), 24, "Different length found for"
                            "NOP option");
@@ -322,7 +322,7 @@ TcpHeaderWithRFC793OptionTestCase::OneOptionAtTime ()
 
     NS_TEST_ASSERT_MSG_EQ (header.GetLength (), 5, "TcpHeader without option is"
                            " not 5 word");
-    header.AppendOption (&oMSS);
+    header.AppendOption (Ptr<const TcpOptionMSS> (&oMSS));
     NS_TEST_ASSERT_MSG_EQ (header.GetLength (), 6, "MSS option not handled correctly");
     NS_TEST_ASSERT_MSG_EQ (header.GetSerializedSize (), 24, "Different length found for"
                            "MSS option");

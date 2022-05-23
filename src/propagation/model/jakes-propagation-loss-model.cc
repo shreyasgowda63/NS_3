@@ -26,7 +26,7 @@ namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE ("Jakes");
-  
+
 NS_OBJECT_ENSURE_REGISTERED (JakesPropagationLossModel);
 
 
@@ -60,7 +60,7 @@ JakesPropagationLossModel::DoCalcRxPower (double txPowerDbm,
   if (pathData == 0)
     {
       pathData = CreateObject<JakesProcess> ();
-      pathData->SetPropagationLossModel (this);
+      pathData->SetPropagationLossModel (Ptr<const JakesPropagationLossModel> (this));
       m_propagationCache.AddPathData (pathData, a, b, 0 /**Spectrum model uid is not used in PropagationLossModel*/);
     }
   return txPowerDbm + pathData->GetChannelGainDb ();

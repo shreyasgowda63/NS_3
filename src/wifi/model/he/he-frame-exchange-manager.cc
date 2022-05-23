@@ -204,7 +204,7 @@ HeFrameExchangeManager::SendPsduMapWithProtection (WifiPsduMap psduMap, WifiTxPa
     {
       for (const auto& psdu : psduMap)
         {
-          for (const auto& mpdu : *PeekPointer (psdu.second))
+          for (const auto& mpdu : *psdu.second.get ())
             {
               NS_ASSERT (mpdu->GetHeader ().IsCtl () || !mpdu->GetHeader ().HasData () || mpdu->IsQueued ());
             }
@@ -1017,7 +1017,7 @@ HeFrameExchangeManager::NormalAckTimeout (Ptr<WifiMacQueueItem> mpdu, const Wifi
   // not been acknowledged nor discarded and clear m_psduMap since the transmission failed.
   for (auto& psdu : m_psduMap)
     {
-      for (auto& mpdu : *PeekPointer (psdu.second))
+      for (auto& mpdu : *psdu.second.get ())
         {
           if (mpdu->IsQueued ())
             {
@@ -1040,7 +1040,7 @@ HeFrameExchangeManager::BlockAckTimeout (Ptr<WifiPsdu> psdu, const WifiTxVector&
   // not been acknowledged nor discarded and clear m_psduMap since the transmission failed.
   for (auto& psdu : m_psduMap)
     {
-      for (auto& mpdu : *PeekPointer (psdu.second))
+      for (auto& mpdu : *psdu.second.get ())
         {
           if (mpdu->IsQueued ())
             {

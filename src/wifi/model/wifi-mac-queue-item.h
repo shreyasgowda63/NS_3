@@ -41,7 +41,7 @@ class QosBlockedDestinations;
  * WifiMacQueueItem stores (const) packets along with their Wifi MAC headers
  * and the time when they were enqueued.
  */
-class WifiMacQueueItem : public SimpleRefCount<WifiMacQueueItem>
+class WifiMacQueueItem
 {
 public:
   /**

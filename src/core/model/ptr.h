@@ -22,6 +22,7 @@
 #define PTR_H
 
 #include <iostream>
+#include <memory>
 #include <stdint.h>
 #include "assert.h"
 
@@ -70,6 +71,8 @@ namespace ns3 {
  * \tparam T \explicit The type of the underlying object.
  */
 template <typename T>
+using Ptr = std::shared_ptr<T>;
+#if 0
 class Ptr
 {
 private:
@@ -207,7 +210,7 @@ public:
    */
   operator Tester * () const;
 };
-
+#endif
 /**
  * \ingroup ptr
  * Create class instances by constructors with varying numbers
@@ -268,8 +271,8 @@ bool operator == (Ptr<T1> const &lhs, T2 const *rhs);
 template <typename T1, typename T2>
 bool operator == (T1 const *lhs, Ptr<T2> &rhs);
 
-template <typename T1, typename T2>
-bool operator == (Ptr<T1> const &lhs, Ptr<T2> const &rhs);
+// template <typename T1, typename T2>
+// bool operator == (Ptr<T1> const &lhs, Ptr<T2> const &rhs);
 /**@}*/
 
 /**
@@ -299,8 +302,8 @@ bool operator != (Ptr<T1> const &lhs, T2 const *rhs);
 template <typename T1, typename T2>
 bool operator != (T1 const *lhs, Ptr<T2> &rhs);
 
-template <typename T1, typename T2>
-bool operator != (Ptr<T1> const &lhs, Ptr<T2> const &rhs);
+// template <typename T1, typename T2>
+// bool operator != (Ptr<T1> const &lhs, Ptr<T2> const &rhs);
 /**@}*/
 
 
@@ -363,7 +366,7 @@ struct CallbackTraits<Ptr<T> >
    */
   static T & GetReference (Ptr<T> const p)
   {
-    return *PeekPointer (p);
+    return *p.get ();
   }
 };
 
@@ -390,7 +393,7 @@ struct EventMemberImplObjTraits<Ptr<T> >
    */
   static T & GetReference (Ptr<T> p)
   {
-    return *PeekPointer (p);
+    return *p.get ();
   }
 };
 
@@ -408,26 +411,26 @@ namespace ns3 {
 template <typename T, typename... Ts>
 Ptr<T> Create (Ts&&... args)
 {
-  return Ptr<T> (new T (std::forward<Ts> (args)...), false);
+  return std::make_shared<T> (std::forward<Ts> (args)...);
 }
 
-template <typename U>
-U * PeekPointer (const Ptr<U> &p)
-{
-  return p.m_ptr;
-}
-
-template <typename U>
-U * GetPointer (const Ptr<U> &p)
-{
-  p.Acquire ();
-  return p.m_ptr;
-}
+// template <typename U>
+// U * PeekPointer (const Ptr<U> &p)
+// {
+//   return p.m_ptr;
+// }
+//
+// template <typename U>
+// U * GetPointer (const Ptr<U> &p)
+// {
+//   p.Acquire ();
+//   return p.m_ptr;
+// }
 
 template <typename T>
 std::ostream &operator << (std::ostream &os, const Ptr<T> &p)
 {
-  os << PeekPointer (p);
+  os << p.get ();
   return os;
 }
 
@@ -435,81 +438,81 @@ template <typename T1, typename T2>
 bool
 operator == (Ptr<T1> const &lhs, T2 const *rhs)
 {
-  return PeekPointer (lhs) == rhs;
+  return lhs.get () == rhs;
 }
 
 template <typename T1, typename T2>
 bool
 operator == (T1 const *lhs, Ptr<T2> &rhs)
 {
-  return lhs == PeekPointer (rhs);
+  return lhs == rhs.get ();
 }
 
 template <typename T1, typename T2>
 bool
 operator != (Ptr<T1> const &lhs, T2 const *rhs)
 {
-  return PeekPointer (lhs) != rhs;
+  return lhs.get () != rhs;
 }
 
 template <typename T1, typename T2>
 bool
 operator != (T1 const *lhs, Ptr<T2> &rhs)
 {
-  return lhs != PeekPointer (rhs);
+  return lhs != rhs.get ();
 }
 
-template <typename T1, typename T2>
-bool
-operator == (Ptr<T1> const &lhs, Ptr<T2> const &rhs)
-{
-  return PeekPointer (lhs) == PeekPointer (rhs);
-}
+// template <typename T1, typename T2>
+// bool
+// operator == (Ptr<T1> const &lhs, Ptr<T2> const &rhs)
+// {
+//   return lhs.get () == rhs.get ();
+// }
 
-template <typename T1, typename T2>
-bool
-operator != (Ptr<T1> const &lhs, Ptr<T2> const &rhs)
-{
-  return PeekPointer (lhs) != PeekPointer (rhs);
-}
+// template <typename T1, typename T2>
+// bool
+// operator != (Ptr<T1> const &lhs, Ptr<T2> const &rhs)
+// {
+//   return lhs.get () != rhs.get ();
+// }
 
 template <typename T>
 bool operator < (const Ptr<T> &lhs, const Ptr<T> &rhs)
 {
-  return PeekPointer<T> (lhs) < PeekPointer<T> (rhs);
+  return lhs.get () < rhs.get ();
 }
 
 template <typename T>
 bool
 operator< (const Ptr<T> &lhs, const Ptr<const T> &rhs)
 {
-  return PeekPointer<T> (lhs) < PeekPointer<const T> (rhs);
+  return lhs.get () < rhs.get ();
 }
 
 template <typename T>
 bool
 operator< (const Ptr<const T> &lhs, const Ptr<T> &rhs)
 {
-  return PeekPointer<const T> (lhs) < PeekPointer<T> (rhs);
+  return lhs.get () < rhs.get ();
 }
 
 template <typename T>
 bool
 operator<= (const Ptr<T> &lhs, const Ptr<T> &rhs)
 {
-  return PeekPointer<T> (lhs) <= PeekPointer<T> (rhs);
+  return lhs.get () <= rhs.get ();
 }
 
 template <typename T>
 bool operator > (const Ptr<T> &lhs, const Ptr<T> &rhs)
 {
-  return PeekPointer<T> (lhs) > PeekPointer<T> (rhs);
+  return lhs.get () > rhs.get ();
 }
 
 template <typename T>
 bool operator >= (const Ptr<T> &lhs, const Ptr<T> &rhs)
 {
-  return PeekPointer<T> (lhs) >= PeekPointer<T> (rhs);
+  return lhs.get () >= rhs.get ();
 }
 
 /**
@@ -525,21 +528,21 @@ template <typename T1, typename T2>
 Ptr<T1>
 ConstCast (Ptr<T2> const&p)
 {
-  return Ptr<T1> (const_cast<T1 *> (PeekPointer (p)));
+  return std::const_pointer_cast<T1> (p);
 }
 
 template <typename T1, typename T2>
 Ptr<T1>
 DynamicCast (Ptr<T2> const&p)
 {
-  return Ptr<T1> (dynamic_cast<T1 *> (PeekPointer (p)));
+  return std::dynamic_pointer_cast<T1> (p);
 }
 
 template <typename T1, typename T2>
 Ptr<T1>
 StaticCast (Ptr<T2> const&p)
 {
-  return Ptr<T1> (static_cast<T1 *> (PeekPointer (p)));
+  return std::static_pointer_cast<T1> (p);
 }
 /** @} */
 
@@ -554,14 +557,14 @@ StaticCast (Ptr<T2> const&p)
 template <typename T>
 Ptr<T> Copy (Ptr<T> object)
 {
-  Ptr<T> p = Ptr<T> (new T (*PeekPointer (object)), false);
+  Ptr<T> p = Ptr<T> (new T (*object.get ()));
   return p;
 }
 
 template <typename T>
 Ptr<T> Copy (Ptr<const T> object)
 {
-  Ptr<T> p = Ptr<T> (new T (*PeekPointer (object)), false);
+  Ptr<T> p = Ptr<T> (new T (*object.get ()));
   return p;
 }
 /** @} */
@@ -569,7 +572,7 @@ Ptr<T> Copy (Ptr<const T> object)
 /****************************************************
  *      Member method implementations.
  ***************************************************/
-
+#if 0
 template <typename T>
 void
 Ptr<T>::Acquire (void) const
@@ -691,7 +694,7 @@ Ptr<T>::operator Tester * () const
   static Tester test;
   return &test;
 }
-
+#endif
 
 } // namespace ns3
 
@@ -713,21 +716,21 @@ Ptr<T>::operator Tester * () const
  *
  * \tparam T \deduced The type held by the `Ptr`
  */
-template<class T>
-struct
-std::hash<ns3::Ptr<T>>
-{
-  /**
-   * The functor.
-   * \param p The `Ptr` value to hash.
-   * \return the hash
-   */
-  std::size_t
-  operator () (ns3::Ptr<T> p) const
-  {
-    return std::hash<const T *> () (ns3::PeekPointer (p));
-  }
-};
+// template<class T>
+// struct
+// std::hash<ns3::Ptr<T>>
+// {
+//   /**
+//    * The functor.
+//    * \param p The `Ptr` value to hash.
+//    * \return the hash
+//    */
+//   std::size_t
+//   operator () (ns3::Ptr<T> p) const
+//   {
+//     return std::hash<const T *> () (ns3::PeekPointer (p));
+//   }
+// };
 
 
 #endif /* PTR_H */

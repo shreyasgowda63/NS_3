@@ -825,7 +825,7 @@ FrameExchangeManager::DoCtsTimeout (Ptr<WifiPsdu> psdu)
     {
       NS_LOG_DEBUG ("Missed CTS, discard MPDU(s)");
       m_mac->GetWifiRemoteStationManager ()->ReportFinalRtsFailed (psdu->GetHeader (0));
-      for (const auto& mpdu : *PeekPointer (psdu))
+      for (const auto& mpdu : *psdu.get ())
         {
           // Dequeue the MPDU if it is stored in a queue
           DequeueMpdu (mpdu);
@@ -842,7 +842,7 @@ FrameExchangeManager::DoCtsTimeout (Ptr<WifiPsdu> psdu)
   // been transmitted, both in case the MPDUs have been discarded and in case the
   // MPDUs have to be transmitted (because a new sequence number is assigned to
   // MPDUs that have never been transmitted and are selected for transmission)
-  for (const auto& mpdu : *PeekPointer (psdu))
+  for (const auto& mpdu : *psdu.get ())
     {
       ReleaseSequenceNumber (mpdu);
     }

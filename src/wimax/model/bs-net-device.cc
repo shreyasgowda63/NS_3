@@ -226,11 +226,11 @@ BaseStationNetDevice::InitBaseStationNetDevice ()
   m_allocationStartTime = 0;
   m_psDuration = Seconds (0);
   m_symbolDuration = Seconds (0);
-  m_linkManager = CreateObject<BSLinkManager> (this);
+  m_linkManager = CreateObject<BSLinkManager> (Ptr<BaseStationNetDevice> (this));
   m_cidFactory = new CidFactory ();
   m_ssManager = CreateObject<SSManager> ();
   m_bsClassifier = CreateObject<IpcsClassifier> ();
-  m_serviceFlowManager = CreateObject<BsServiceFlowManager> (this);
+  m_serviceFlowManager = CreateObject<BsServiceFlowManager> (Ptr<BaseStationNetDevice> (this));
 
 }
 

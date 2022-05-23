@@ -134,7 +134,7 @@ TcpYeah::~TcpYeah (void)
 Ptr<TcpCongestionOps>
 TcpYeah::Fork (void)
 {
-  return CopyObject<TcpYeah> (this);
+  return CopyObject<TcpYeah> (Ptr<const TcpYeah> (this));
 }
 
 void

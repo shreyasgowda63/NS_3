@@ -69,7 +69,7 @@ TcpPrrRecovery::~TcpPrrRecovery (void)
 }
 
 void
-TcpPrrRecovery::EnterRecovery (Ptr<TcpSocketState> tcb, 
+TcpPrrRecovery::EnterRecovery (Ptr<TcpSocketState> tcb,
                                [[maybe_unused]] uint32_t dupAckCount,
                                uint32_t unAckDataCount, uint32_t deliveredBytes)
 {
@@ -137,7 +137,7 @@ TcpPrrRecovery::UpdateBytesSent (uint32_t bytesSent)
 Ptr<TcpRecoveryOps>
 TcpPrrRecovery::Fork (void)
 {
-  return CopyObject<TcpPrrRecovery> (this);
+  return CopyObject<TcpPrrRecovery> (Ptr<const TcpPrrRecovery> (this));
 }
 
 std::string

@@ -249,9 +249,9 @@ SubscriberStationNetDevice::InitSubscriberStationNetDevice (void)
   m_dlBurstProfile = new OfdmDlBurstProfile ();
   m_ulBurstProfile = new OfdmUlBurstProfile ();
   m_classifier = CreateObject<IpcsClassifier> ();
-  m_linkManager = CreateObject<SSLinkManager> (this);
-  m_scheduler = CreateObject<SSScheduler> (this);
-  m_serviceFlowManager = CreateObject<SsServiceFlowManager> (this);
+  m_linkManager = CreateObject<SSLinkManager> (Ptr<SubscriberStationNetDevice> (this));
+  m_scheduler = CreateObject<SSScheduler> (Ptr<SubscriberStationNetDevice> (this));
+  m_serviceFlowManager = CreateObject<SsServiceFlowManager> (Ptr<SubscriberStationNetDevice> (this));
 }
 
 SubscriberStationNetDevice::SubscriberStationNetDevice (Ptr<Node> node, Ptr<WimaxPhy> phy)

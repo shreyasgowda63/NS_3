@@ -108,20 +108,20 @@ MeshPointDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort, Ptr<const Packe
   NS_LOG_DEBUG ("SRC=" << src48 << ", DST = " << dst48 << ", I am: " << m_address);
   if (!m_promiscRxCallback.IsNull ())
     {
-      m_promiscRxCallback (this, packet, protocol, src, dst, packetType);
+      m_promiscRxCallback (Ptr<MeshPointDevice> (this), packet, protocol, src, dst, packetType);
     }
   if (dst48.IsGroup ())
     {
       Ptr<Packet> packet_copy = packet->Copy ();
       if (m_routingProtocol->RemoveRoutingStuff (incomingPort->GetIfIndex (), src48, dst48, packet_copy, realProtocol))
         {
-          m_rxCallback (this, packet_copy, realProtocol, src);
+          m_rxCallback (Ptr<MeshPointDevice> (this), packet_copy, realProtocol, src);
           m_rxStats.broadcastData++;
           m_rxStats.broadcastDataBytes += packet->GetSize ();
           Time forwardingDelay = GetForwardingDelay ();
           NS_LOG_DEBUG ("Forwarding broadcast from " << src48 << " to " << dst48
             << " with delay " << forwardingDelay.As (Time::US));
-          Simulator::Schedule (forwardingDelay, &MeshPointDevice::Forward, this, incomingPort, packet, protocol, src48, dst48); 
+          Simulator::Schedule (forwardingDelay, &MeshPointDevice::Forward, this, incomingPort, packet, protocol, src48, dst48);
         }
       return;
     }
@@ -130,7 +130,7 @@ MeshPointDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort, Ptr<const Packe
       Ptr<Packet> packet_copy = packet->Copy ();
       if (m_routingProtocol->RemoveRoutingStuff (incomingPort->GetIfIndex (), src48, dst48, packet_copy, realProtocol))
         {
-          m_rxCallback (this, packet_copy, realProtocol, src);
+          m_rxCallback (Ptr<MeshPointDevice> (this), packet_copy, realProtocol, src);
           m_rxStats.unicastData++;
           m_rxStats.unicastDataBytes += packet->GetSize ();
         }
@@ -139,8 +139,8 @@ MeshPointDevice::ReceiveFromDevice (Ptr<NetDevice> incomingPort, Ptr<const Packe
   else
     {
       Time forwardingDelay = GetForwardingDelay ();
-      Simulator::Schedule (forwardingDelay, &MeshPointDevice::Forward, this, incomingPort, packet->Copy (), protocol, src48, dst48); 
-      NS_LOG_DEBUG ("Forwarding unicast from " << src48 << " to " << dst48 
+      Simulator::Schedule (forwardingDelay, &MeshPointDevice::Forward, this, incomingPort, packet->Copy (), protocol, src48, dst48);
+      NS_LOG_DEBUG ("Forwarding unicast from " << src48 << " to " << dst48
         << " with delay " << forwardingDelay.As (Time::US));
     }
 }
@@ -415,7 +415,7 @@ void
 MeshPointDevice::SetRoutingProtocol (Ptr<MeshL2RoutingProtocol> protocol)
 {
   NS_LOG_FUNCTION (this << protocol);
-  NS_ASSERT_MSG (PeekPointer (protocol->GetMeshPoint ()) == this,
+  NS_ASSERT_MSG (protocol->GetMeshPoint ().get () == this,
                  "Routing protocol must be installed on mesh point to be useful.");
   m_routingProtocol = protocol;
 }

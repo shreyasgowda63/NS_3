@@ -556,7 +556,7 @@ WifiMac::SetupEdcaQueue (AcIndex ac)
 
   Ptr<QosTxop> edca = CreateObject<QosTxop> (ac);
   edca->SetChannelAccessManager (m_channelAccessManager);
-  edca->SetWifiMac (this);
+  edca->SetWifiMac (Ptr<WifiMac> (this));
   edca->SetTxMiddle (m_txMiddle);
   edca->GetBaManager ()->SetTxOkCallback (MakeCallback (&MpduTracedCallback::operator(),
                                                         &m_ackedMpduCallback));
@@ -715,7 +715,7 @@ WifiMac::SetupFrameExchangeManager (WifiStandard standard)
       m_feManager = CreateObject<FrameExchangeManager> ();
     }
 
-  m_feManager->SetWifiMac (this);
+  m_feManager->SetWifiMac (Ptr<WifiMac> (this));
   m_feManager->SetMacTxMiddle (m_txMiddle);
   m_feManager->SetMacRxMiddle (m_rxMiddle);
   m_feManager->SetAddress (GetAddress ());
@@ -801,7 +801,7 @@ WifiMac::SetQosSupported (bool enable)
       // create a non-QoS TXOP
       m_txop = CreateObject<Txop> ();
       m_txop->SetChannelAccessManager (m_channelAccessManager);
-      m_txop->SetWifiMac (this);
+      m_txop->SetWifiMac (Ptr<WifiMac> (this));
       m_txop->SetTxMiddle (m_txMiddle);
       m_txop->SetDroppedMpduCallback (MakeCallback (&DroppedMpduTracedCallback::operator(),
                                                     &m_droppedMpduCallback));
@@ -1036,7 +1036,7 @@ void
 WifiMac::DeaggregateAmsduAndForward (Ptr<WifiMacQueueItem> mpdu)
 {
   NS_LOG_FUNCTION (this << *mpdu);
-  for (auto& msduPair : *PeekPointer (mpdu))
+  for (auto& msduPair : *mpdu.get ())
     {
       ForwardUp (msduPair.first, msduPair.second.GetSourceAddr (),
                  msduPair.second.GetDestinationAddr ());

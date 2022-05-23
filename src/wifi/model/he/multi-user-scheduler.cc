@@ -113,7 +113,7 @@ MultiUserScheduler::SetWifiMac (Ptr<ApWifiMac> mac)
                    "MultiUserScheduler can only be installed on HE APs");
 
   m_heFem = DynamicCast<HeFrameExchangeManager> (m_apMac->GetFrameExchangeManager ());
-  m_heFem->SetMultiUserScheduler (this);
+  m_heFem->SetMultiUserScheduler (Ptr<MultiUserScheduler> (this));
 }
 
 Ptr<WifiRemoteStationManager>

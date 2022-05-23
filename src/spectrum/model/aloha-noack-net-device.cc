@@ -494,12 +494,12 @@ AlohaNoackNetDevice::NotifyReceptionEndOk (Ptr<Packet> packet)
 
   if (!m_promiscRxCallback.IsNull ())
     {
-      m_promiscRxCallback (this, packet->Copy (), llc.GetType (), header.GetSource (), header.GetDestination (), packetType);
+      m_promiscRxCallback (Ptr<AlohaNoackNetDevice> (this), packet->Copy (), llc.GetType (), header.GetSource (), header.GetDestination (), packetType);
     }
 
   if (packetType != PACKET_OTHERHOST)
     {
-      m_rxCallback (this, packet, llc.GetType (), header.GetSource () );
+      m_rxCallback (Ptr<AlohaNoackNetDevice> (this), packet, llc.GetType (), header.GetSource () );
     }
 }
 

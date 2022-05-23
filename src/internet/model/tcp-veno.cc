@@ -85,7 +85,7 @@ TcpVeno::~TcpVeno (void)
 Ptr<TcpCongestionOps>
 TcpVeno::Fork (void)
 {
-  return CopyObject<TcpVeno> (this);
+  return CopyObject<TcpVeno> (Ptr<const TcpVeno> (this));
 }
 
 void

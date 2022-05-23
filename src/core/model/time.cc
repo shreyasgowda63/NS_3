@@ -58,11 +58,11 @@ namespace {
   long double
   Scale (Time::Unit u)
   {
-    return UNIT_COEFF[u] * std::pow (10L, UNIT_POWER[u]); 
+    return UNIT_COEFF[u] * std::pow (10L, UNIT_POWER[u]);
   }
 
-  /** 
-   * Initializer for \c UNIT_VALUE 
+  /**
+   * Initializer for \c UNIT_VALUE
    * \returns The array of scale factors between units.
    */
   long double *
@@ -576,7 +576,7 @@ MakeTimeChecker (const Time min, const Time max)
     Time m_minValue;
     Time m_maxValue;
   } *checker = new Checker (min, max);
-  return Ptr<const AttributeChecker> (checker, false);
+  return Ptr<const AttributeChecker> (checker);
 }
 
 

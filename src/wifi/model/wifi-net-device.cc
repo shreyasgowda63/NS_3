@@ -399,7 +399,7 @@ WifiNetDevice::ForwardUp (Ptr<const Packet> packet, Mac48Address from, Mac48Addr
     {
       m_mac->NotifyRx (packet);
       copy->RemoveHeader (llc);
-      m_forwardUp (this, copy, llc.GetType (), from);
+      m_forwardUp (Ptr<WifiNetDevice> (this), copy, llc.GetType (), from);
     }
   else
     {
@@ -409,7 +409,7 @@ WifiNetDevice::ForwardUp (Ptr<const Packet> packet, Mac48Address from, Mac48Addr
   if (!m_promiscRx.IsNull ())
     {
       m_mac->NotifyPromiscRx (copy);
-      m_promiscRx (this, copy, llc.GetType (), from, to, type);
+      m_promiscRx (Ptr<WifiNetDevice> (this), copy, llc.GetType (), from, to, type);
     }
 }
 

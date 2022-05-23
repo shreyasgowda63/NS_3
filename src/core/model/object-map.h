@@ -113,7 +113,7 @@ MakeObjectMapAccessor (U T::*memberVector)
     U T::*m_memberVector;
   } *spec = new MemberStdContainer ();
   spec->m_memberVector = memberVector;
-  return Ptr<const AttributeAccessor> (spec, false);
+  return Ptr<const AttributeAccessor> (spec);
 }
 
 template <typename T>

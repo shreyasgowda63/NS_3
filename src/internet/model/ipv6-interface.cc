@@ -106,7 +106,7 @@ void Ipv6Interface::DoSetup ()
 
   if (icmpv6 && !m_ndCache)
     {
-      m_ndCache = icmpv6->CreateCache (m_device, this);
+      m_ndCache = icmpv6->CreateCache (m_device, Ptr<Ipv6Interface> (this));
     }
 }
 
@@ -221,7 +221,7 @@ bool Ipv6Interface::AddAddress (Ipv6InterfaceAddress iface)
             {
               if (icmpv6->IsAlwaysDad ())
                 {
-                  Simulator::Schedule (Seconds (0.), &Icmpv6L4Protocol::DoDAD, icmpv6, addr, this);
+                  Simulator::Schedule (Seconds (0.), &Icmpv6L4Protocol::DoDAD, icmpv6, addr, Ptr<Ipv6Interface> (this));
                   Simulator::Schedule (Seconds (1.), &Icmpv6L4Protocol::FunctionDadTimeout, icmpv6, this, addr);
                 }
               else
@@ -317,7 +317,7 @@ Ipv6InterfaceAddress Ipv6Interface::RemoveAddress (uint32_t index)
   return addr;  /* quiet compiler */
 }
 
-Ipv6InterfaceAddress 
+Ipv6InterfaceAddress
 Ipv6Interface::RemoveAddress(Ipv6Address address)
 {
   NS_LOG_FUNCTION(this << address);
@@ -476,7 +476,7 @@ uint16_t Ipv6Interface::GetReachableTime () const
 
 void Ipv6Interface::SetRetransTimer (uint16_t retransTimer)
 {
-  NS_LOG_FUNCTION (this << retransTimer); 
+  NS_LOG_FUNCTION (this << retransTimer);
   m_retransTimer = retransTimer;
 }
 

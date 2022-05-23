@@ -66,7 +66,7 @@ std::string
 EnumValue::SerializeToString (Ptr<const AttributeChecker> checker) const
 {
   NS_LOG_FUNCTION (this << checker);
-  const EnumChecker *p = dynamic_cast<const EnumChecker *> (PeekPointer (checker));
+  const EnumChecker *p = dynamic_cast<const EnumChecker *> (checker.get ());
   NS_ASSERT (p != 0);
   std::string name = p->GetName (m_value);
   return name;
@@ -75,7 +75,7 @@ bool
 EnumValue::DeserializeFromString (std::string value, Ptr<const AttributeChecker> checker)
 {
   NS_LOG_FUNCTION (this << value << checker);
-  const EnumChecker *p = dynamic_cast<const EnumChecker *> (PeekPointer (checker));
+  const EnumChecker *p = dynamic_cast<const EnumChecker *> (checker.get ());
   NS_ASSERT (p != 0);
   m_value = p->GetValue (value);
   return true;

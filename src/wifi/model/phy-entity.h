@@ -30,7 +30,6 @@
 #include "wifi-mpdu-type.h"
 #include "wifi-ppdu.h"
 #include "ns3/event-id.h"
-#include "ns3/simple-ref-count.h"
 #include "ns3/nstime.h"
 #include "ns3/wifi-spectrum-value-helper.h"
 #include <list>
@@ -90,7 +89,7 @@ class WifiPpdu;
  * to be used by each PHY entity, corresponding to
  * the different amendments of the IEEE 802.11 standard.
  */
-class PhyEntity : public SimpleRefCount<PhyEntity>
+class PhyEntity
 {
 public:
 

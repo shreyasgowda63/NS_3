@@ -480,7 +480,7 @@ Object::GetObject () const
   Ptr<Object> found = DoGetObject (T::GetTypeId ());
   if (found != 0)
     {
-      return Ptr<T> (static_cast<T *> (PeekPointer (found)));
+      return Ptr<T> (static_cast<T *> (found.get ()));
     }
   return 0;
 }
@@ -506,7 +506,7 @@ Object::GetObject (TypeId tid) const
   Ptr<Object> found = DoGetObject (tid);
   if (found != 0)
     {
-      return Ptr<T> (static_cast<T *> (PeekPointer (found)));
+      return Ptr<T> (static_cast<T *> (found.get ()));
     }
   return 0;
 }
@@ -540,7 +540,7 @@ Object::GetObject (TypeId tid) const
 template <typename T>
 Ptr<T> CopyObject (Ptr<T> object)
 {
-  Ptr<T> p = Ptr<T> (new T (*PeekPointer (object)), false);
+  Ptr<T> p = std::make_shared<T> (*object.get ());
   NS_ASSERT (p->GetInstanceTypeId () == object->GetInstanceTypeId ());
   return p;
 }
@@ -548,7 +548,7 @@ Ptr<T> CopyObject (Ptr<T> object)
 template <typename T>
 Ptr<T> CopyObject (Ptr<const T> object)
 {
-  Ptr<T> p = Ptr<T> (new T (*PeekPointer (object)), false);
+  Ptr<T> p = std::make_shared<T> (*object.get ());
   NS_ASSERT (p->GetInstanceTypeId () == object->GetInstanceTypeId ());
   return p;
 }
@@ -558,7 +558,7 @@ Ptr<T> CompleteConstruct (T *object)
 {
   object->SetTypeId (T::GetTypeId ());
   object->Object::Construct (AttributeConstructionList ());
-  return Ptr<T> (object, false);
+  return std::shared_ptr<T> (object);
 }
 
 /**

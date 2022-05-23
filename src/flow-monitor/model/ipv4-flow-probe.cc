@@ -117,7 +117,7 @@ private:
   Ipv4Address m_dst;      //!< IP destination
 };
 
-TypeId 
+TypeId
 Ipv4FlowProbeTag::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::Ipv4FlowProbeTag")
@@ -127,17 +127,17 @@ Ipv4FlowProbeTag::GetTypeId (void)
   ;
   return tid;
 }
-TypeId 
+TypeId
 Ipv4FlowProbeTag::GetInstanceTypeId (void) const
 {
   return GetTypeId ();
 }
-uint32_t 
+uint32_t
 Ipv4FlowProbeTag::GetSerializedSize (void) const
 {
   return 4 + 4 + 4 + 8;
 }
-void 
+void
 Ipv4FlowProbeTag::Serialize (TagBuffer buf) const
 {
   buf.WriteU32 (m_flowId);
@@ -150,7 +150,7 @@ Ipv4FlowProbeTag::Serialize (TagBuffer buf) const
   m_dst.Serialize (tBuf);
   buf.Write (tBuf, 4);
 }
-void 
+void
 Ipv4FlowProbeTag::Deserialize (TagBuffer buf)
 {
   m_flowId = buf.ReadU32 ();
@@ -163,7 +163,7 @@ Ipv4FlowProbeTag::Deserialize (TagBuffer buf)
   buf.Read (tBuf, 4);
   m_dst = Ipv4Address::Deserialize (tBuf);
 }
-void 
+void
 Ipv4FlowProbeTag::Print (std::ostream &os) const
 {
   os << "FlowId=" << m_flowId;
@@ -171,7 +171,7 @@ Ipv4FlowProbeTag::Print (std::ostream &os) const
   os << " PacketSize=" << m_packetSize;
 }
 Ipv4FlowProbeTag::Ipv4FlowProbeTag ()
-  : Tag () 
+  : Tag ()
 {
 }
 
@@ -204,7 +204,7 @@ uint32_t
 Ipv4FlowProbeTag::GetPacketId (void) const
 {
   return m_packetId;
-} 
+}
 uint32_t
 Ipv4FlowProbeTag::GetPacketSize (void) const
 {
@@ -311,7 +311,7 @@ Ipv4FlowProbe::SendOutgoingLogger (const Ipv4Header &ipHeader, Ptr<const Packet>
       uint32_t size = (ipPayload->GetSize () + ipHeader.GetSerializedSize ());
       NS_LOG_DEBUG ("ReportFirstTx ("<<this<<", "<<flowId<<", "<<packetId<<", "<<size<<"); "
                                      << ipHeader << *ipPayload);
-      m_flowMonitor->ReportFirstTx (this, flowId, packetId, size);
+      m_flowMonitor->ReportFirstTx (Ptr<Ipv4FlowProbe> (this), flowId, packetId, size);
 
       // tag the packet with the flow id and packet id, so that the packet can be identified even
       // when Ipv4Header is not accessible at some non-IPv4 protocol layer
@@ -344,7 +344,7 @@ Ipv4FlowProbe::ForwardLogger (const Ipv4Header &ipHeader, Ptr<const Packet> ipPa
 
       uint32_t size = (ipPayload->GetSize () + ipHeader.GetSerializedSize ());
       NS_LOG_DEBUG ("ReportForwarding ("<<this<<", "<<flowId<<", "<<packetId<<", "<<size<<");");
-      m_flowMonitor->ReportForwarding (this, flowId, packetId, size);
+      m_flowMonitor->ReportForwarding (Ptr<Ipv4FlowProbe> (this), flowId, packetId, size);
     }
 }
 
@@ -368,7 +368,7 @@ Ipv4FlowProbe::ForwardUpLogger (const Ipv4Header &ipHeader, Ptr<const Packet> ip
       uint32_t size = (ipPayload->GetSize () + ipHeader.GetSerializedSize ());
       NS_LOG_DEBUG ("ReportLastRx ("<<this<<", "<<flowId<<", "<<packetId<<", "<<size<<"); "
                                      << ipHeader << *ipPayload);
-      m_flowMonitor->ReportLastRx (this, flowId, packetId, size);
+      m_flowMonitor->ReportLastRx (Ptr<Ipv4FlowProbe> (this), flowId, packetId, size);
     }
 }
 
@@ -403,7 +403,7 @@ Ipv4FlowProbe::DropLogger (const Ipv4Header &ipHeader, Ptr<const Packet> ipPaylo
       FlowPacketId packetId = fTag.GetPacketId ();
 
       uint32_t size = (ipPayload->GetSize () + ipHeader.GetSerializedSize ());
-      NS_LOG_DEBUG ("Drop ("<<this<<", "<<flowId<<", "<<packetId<<", "<<size<<", " << reason 
+      NS_LOG_DEBUG ("Drop ("<<this<<", "<<flowId<<", "<<packetId<<", "<<size<<", " << reason
                             << ", destIp=" << ipHeader.GetDestination () << "); "
                             << "HDR: " << ipHeader << " PKT: " << *ipPayload);
 
@@ -442,11 +442,11 @@ Ipv4FlowProbe::DropLogger (const Ipv4Header &ipHeader, Ptr<const Packet> ipPaylo
           NS_FATAL_ERROR ("Unexpected drop reason code " << reason);
         }
 
-      m_flowMonitor->ReportDrop (this, flowId, packetId, size, myReason);
+      m_flowMonitor->ReportDrop (Ptr<Ipv4FlowProbe> (this), flowId, packetId, size, myReason);
     }
 }
 
-void 
+void
 Ipv4FlowProbe::QueueDropLogger (Ptr<const Packet> ipPayload)
 {
   Ipv4FlowProbeTag fTag;
@@ -461,10 +461,10 @@ Ipv4FlowProbe::QueueDropLogger (Ptr<const Packet> ipPayload)
   FlowPacketId packetId = fTag.GetPacketId ();
   uint32_t size = fTag.GetPacketSize ();
 
-  NS_LOG_DEBUG ("Drop ("<<this<<", "<<flowId<<", "<<packetId<<", "<<size<<", " << DROP_QUEUE 
+  NS_LOG_DEBUG ("Drop ("<<this<<", "<<flowId<<", "<<packetId<<", "<<size<<", " << DROP_QUEUE
                         << "); ");
 
-  m_flowMonitor->ReportDrop (this, flowId, packetId, size, DROP_QUEUE);
+  m_flowMonitor->ReportDrop (Ptr<Ipv4FlowProbe> (this), flowId, packetId, size, DROP_QUEUE);
 }
 
 void
@@ -485,7 +485,7 @@ Ipv4FlowProbe::QueueDiscDropLogger (Ptr<const QueueDiscItem> item)
   NS_LOG_DEBUG ("Drop ("<<this<<", "<<flowId<<", "<<packetId<<", "<<size<<", " << DROP_QUEUE_DISC
                         << "); ");
 
-  m_flowMonitor->ReportDrop (this, flowId, packetId, size, DROP_QUEUE_DISC);
+  m_flowMonitor->ReportDrop (Ptr<Ipv4FlowProbe> (this), flowId, packetId, size, DROP_QUEUE_DISC);
 }
 
 } // namespace ns3

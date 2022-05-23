@@ -543,7 +543,7 @@ int main (int argc, char *argv[])
       Ptr<SpectrumValue> wgPsd = Create<SpectrumValue> (i <= 15 ? SpectrumModelWifi5180MHz
                                                                 : SpectrumModelWifi5190MHz);
       *wgPsd = waveformPower / 20e6;  // PSD spread across 20 MHz
-      NS_LOG_INFO ("wgPsd : " << *wgPsd << " integrated power: " << Integral (*(GetPointer (wgPsd))));
+      NS_LOG_INFO ("wgPsd : " << *wgPsd << " integrated power: " << Integral (*wgPsd.get ()));
 
       if (wifiType == "ns3::SpectrumWifiPhy")
         {

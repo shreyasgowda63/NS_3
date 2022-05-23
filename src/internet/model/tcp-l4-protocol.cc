@@ -128,7 +128,7 @@ TcpL4Protocol::NotifyNewAggregate ()
         {
           this->SetNode (node);
           Ptr<TcpSocketFactoryImpl> tcpFactory = CreateObject<TcpSocketFactoryImpl> ();
-          tcpFactory->SetTcp (this);
+          tcpFactory->SetTcp (Ptr<TcpL4Protocol> (this));
           node->AggregateObject (tcpFactory);
         }
     }
@@ -140,12 +140,12 @@ TcpL4Protocol::NotifyNewAggregate ()
 
   if (ipv4 != 0 && m_downTarget.IsNull ())
     {
-      ipv4->Insert (this);
+      ipv4->Insert (Ptr<TcpL4Protocol> (this));
       this->SetDownTarget (MakeCallback (&Ipv4::Send, ipv4));
     }
   if (ipv6 != 0 && m_downTarget6.IsNull ())
     {
-      ipv6->Insert (this);
+      ipv6->Insert (Ptr<TcpL4Protocol> (this));
       this->SetDownTarget6 (MakeCallback (&Ipv6::Send, ipv6));
     }
   IpL4Protocol::NotifyNewAggregate ();
@@ -204,7 +204,7 @@ TcpL4Protocol::CreateSocket (TypeId congestionTypeId, TypeId recoveryTypeId)
   Ptr<TcpRecoveryOps> recovery = recoveryAlgorithmFactory.Create<TcpRecoveryOps> ();
 
   socket->SetNode (m_node);
-  socket->SetTcp (this);
+  socket->SetTcp (Ptr<TcpL4Protocol> (this));
   socket->SetRtt (rtt);
   socket->SetCongestionControlAlgorithm (algo);
   socket->SetRecoveryAlgorithm (recovery);

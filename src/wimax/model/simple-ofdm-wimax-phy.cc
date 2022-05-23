@@ -46,7 +46,7 @@ TypeId SimpleOfdmWimaxPhy::GetTypeId (void)
   static TypeId tid = TypeId ("ns3::SimpleOfdmWimaxPhy")
     .SetParent<WimaxPhy> ()
     .SetGroupName ("Wimax")
-    
+
     .AddConstructor<SimpleOfdmWimaxPhy> ()
 
     .AddAttribute ("NoiseFigure",
@@ -246,7 +246,7 @@ SimpleOfdmWimaxPhy::DoDispose (void)
 void
 SimpleOfdmWimaxPhy::DoAttach (Ptr<WimaxChannel> channel)
 {
-  GetChannel ()->Attach (this);
+  GetChannel ()->Attach (Ptr<SimpleOfdmWimaxPhy> (this));
 }
 
 void
@@ -296,7 +296,7 @@ SimpleOfdmWimaxPhy::StartSendDummyFecBlock (bool isFirstBlock,
       m_blockTime = GetBlockTransmissionTime (modulationType);
     }
 
-  SimpleOfdmWimaxChannel *channel = dynamic_cast<SimpleOfdmWimaxChannel*> (PeekPointer (GetChannel ()));
+  SimpleOfdmWimaxChannel *channel = dynamic_cast<SimpleOfdmWimaxChannel*> (GetChannel ().get ());
   NS_ASSERT (channel != 0);
 
   if (m_nrRemainingBlocksToSend==1)
@@ -309,7 +309,7 @@ SimpleOfdmWimaxPhy::StartSendDummyFecBlock (bool isFirstBlock,
     }
   channel->Send (m_blockTime,
                  m_currentBurstSize,
-                 this,
+                 Ptr<SimpleOfdmWimaxPhy> (this),
                  isFirstBlock,
                  isLastFecBlock,
                  GetTxFrequency (),

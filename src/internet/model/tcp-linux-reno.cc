@@ -78,7 +78,7 @@ TcpLinuxReno::CongestionAvoidance (Ptr<TcpSocketState> tcb, uint32_t segmentsAck
 
   uint32_t w = tcb->m_cWnd / tcb->m_segmentSize;
 
-  // Floor w to 1 if w == 0 
+  // Floor w to 1 if w == 0
   if (w == 0)
     {
       w = 1;
@@ -142,7 +142,7 @@ TcpLinuxReno::GetSsThresh (Ptr<const TcpSocketState> state,
 Ptr<TcpCongestionOps>
 TcpLinuxReno::Fork ()
 {
-  return CopyObject<TcpLinuxReno> (this);
+  return CopyObject<TcpLinuxReno> (Ptr<const TcpLinuxReno> (this));
 }
 
 } // namespace ns3

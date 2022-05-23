@@ -1050,7 +1050,7 @@ TcpSocketMsgBase::GetTypeId (void)
 Ptr<TcpSocketBase>
 TcpSocketMsgBase::Fork (void)
 {
-  return CopyObject<TcpSocketMsgBase> (this);
+  return CopyObject<TcpSocketMsgBase> (Ptr<const TcpSocketMsgBase> (this));
 }
 
 void
@@ -1085,19 +1085,19 @@ void
 TcpSocketMsgBase::ReceivedAck (Ptr<Packet> packet, const TcpHeader& tcpHeader)
 {
   NS_ASSERT (!(m_rcvAckCb.IsNull () || m_processedAckCb.IsNull ()));
-  m_rcvAckCb (packet, tcpHeader, this);
+  m_rcvAckCb (packet, tcpHeader, Ptr<TcpSocketMsgBase> (this));
 
   TcpSocketBase::ReceivedAck (packet, tcpHeader);
 
-  m_processedAckCb (packet, tcpHeader, this);
+  m_processedAckCb (packet, tcpHeader, Ptr<TcpSocketMsgBase> (this));
 }
 
 void
 TcpSocketMsgBase::ReTxTimeout ()
 {
-  m_beforeRetrCallback (m_tcb, this);
+  m_beforeRetrCallback (m_tcb, Ptr<TcpSocketMsgBase> (this));
   TcpSocketBase::ReTxTimeout ();
-  m_afterRetrCallback (m_tcb, this);
+  m_afterRetrCallback (m_tcb, Ptr<TcpSocketMsgBase> (this));
 }
 
 void
@@ -1121,7 +1121,7 @@ TcpSocketMsgBase::UpdateRttHistory (const SequenceNumber32 &seq, uint32_t sz,
   TcpSocketBase::UpdateRttHistory (seq, sz, isRetransmission);
   if (!m_updateRttCb.IsNull ())
     {
-      m_updateRttCb (this, seq, sz, isRetransmission);
+      m_updateRttCb (Ptr<TcpSocketMsgBase> (this), seq, sz, isRetransmission);
     }
 }
 
@@ -1133,7 +1133,7 @@ TcpSocketMsgBase::CompleteFork (Ptr<Packet> p, const TcpHeader &tcpHeader,
 
   if (!m_forkCb.IsNull ())
     {
-      m_forkCb (this);
+      m_forkCb (Ptr<TcpSocketMsgBase> (this));
     }
 }
 
@@ -1293,7 +1293,7 @@ TcpSocketSmallAcks::SendEmptyPacket (uint8_t flags)
                          m_endPoint6->GetPeerAddress (), m_boundnetdevice);
     }
 
-  m_txTrace (p, header, this);
+  m_txTrace (p, header, Ptr<TcpSocketMsgBase> (this));
 
   if (flags & TcpHeader::ACK)
     { // If sending an ACK, cancel the delay ACK as well
@@ -1319,6 +1319,6 @@ TcpSocketSmallAcks::SendEmptyPacket (uint8_t flags)
 Ptr<TcpSocketBase>
 TcpSocketSmallAcks::Fork (void)
 {
-  return CopyObject<TcpSocketSmallAcks> (this);
+  return CopyObject<TcpSocketSmallAcks> (Ptr<const TcpSocketSmallAcks> (this));
 }
 

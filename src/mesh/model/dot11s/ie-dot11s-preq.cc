@@ -404,7 +404,7 @@ operator== (const IePreq & a, const IePreq & b)
     }
   for (size_t i = 0; i < a.m_destinations.size (); ++i)
     {
-      if (!(*(PeekPointer (a.m_destinations[i])) == *(PeekPointer (b.m_destinations[i]))))
+      if (!(*(a.m_destinations[i]).get () == *(b.m_destinations[i].get ())))
         {
           return false;
         }

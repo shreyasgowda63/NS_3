@@ -523,7 +523,7 @@ TcpSocketBase::Bind (void)
       return -1;
     }
 
-  m_tcp->AddSocket (this);
+  m_tcp->AddSocket (Ptr<TcpSocketBase> (this));
 
   return SetupCallback ();
 }
@@ -539,7 +539,7 @@ TcpSocketBase::Bind6 (void)
       return -1;
     }
 
-  m_tcp->AddSocket (this);
+  m_tcp->AddSocket (Ptr<TcpSocketBase> (this));
 
   return SetupCallback ();
 }
@@ -610,7 +610,7 @@ TcpSocketBase::Bind (const Address &address)
       return -1;
     }
 
-  m_tcp->AddSocket (this);
+  m_tcp->AddSocket (Ptr<TcpSocketBase> (this));
 
   NS_LOG_LOGIC ("TcpSocketBase " << this << " got an endpoint: " << m_endPoint);
 
@@ -1293,7 +1293,7 @@ TcpSocketBase::DoForwardUp (Ptr<Packet> packet, const Address &fromAddress,
         }
     }
 
-  m_rxTrace (packet, tcpHeader, this);
+  m_rxTrace (packet, tcpHeader, Ptr<TcpSocketBase> (this));
 
   if (tcpHeader.GetFlags () & TcpHeader::SYN)
     {
@@ -1409,7 +1409,7 @@ TcpSocketBase::DoForwardUp (Ptr<Packet> packet, const Address &fromAddress,
           h.SetDestinationPort (tcpHeader.GetSourcePort ());
           h.SetWindowSize (AdvertisedWindowSize ());
           AddOptions (h);
-          m_txTrace (p, h, this);
+          m_txTrace (p, h, Ptr<TcpSocketBase> (this));
           m_tcp->SendPacket (p, h, toAddress, fromAddress, m_boundnetdevice);
         }
       break;
@@ -2265,7 +2265,7 @@ TcpSocketBase::ProcessSynSent (Ptr<Packet> packet, const TcpHeader& tcpHeader)
       m_tcb->m_rxBuffer->SetNextRxSequence (tcpHeader.GetSequenceNumber () + SequenceNumber32 (1));
       m_tcb->m_highTxMark = ++m_tcb->m_nextTxSequence;
       m_txBuffer->SetHeadSequence (m_tcb->m_nextTxSequence);
-      // Before sending packets, update the pacing rate based on RTT measurement so far 
+      // Before sending packets, update the pacing rate based on RTT measurement so far
       UpdatePacingRate ();
       SendEmptyPacket (TcpHeader::ACK);
 
@@ -2303,7 +2303,7 @@ TcpSocketBase::ProcessSynSent (Ptr<Packet> packet, const TcpHeader& tcpHeader)
 /* Received a packet upon SYN_RCVD */
 void
 TcpSocketBase::ProcessSynRcvd (Ptr<Packet> packet, const TcpHeader& tcpHeader,
-                               const Address& fromAddress, 
+                               const Address& fromAddress,
                                [[maybe_unused]] const Address& toAddress)
 {
   NS_LOG_FUNCTION (this << tcpHeader);
@@ -2338,7 +2338,7 @@ TcpSocketBase::ProcessSynRcvd (Ptr<Packet> packet, const TcpHeader& tcpHeader,
       // Always respond to first data packet to speed up the connection.
       // Remove to get the behaviour of old NS-3 code.
       m_delAckCount = m_delAckMaxCount;
-      NotifyNewConnectionCreated (this, fromAddress);
+      NotifyNewConnectionCreated (Ptr<TcpSocketBase> (this), fromAddress);
       ReceivedAck (packet, tcpHeader);
       // Update the pacing rate based on RTT measurement so far
       UpdatePacingRate ();
@@ -2385,7 +2385,7 @@ TcpSocketBase::ProcessSynRcvd (Ptr<Packet> packet, const TcpHeader& tcpHeader,
               m_endPoint6->SetPeer (Inet6SocketAddress::ConvertFrom (fromAddress).GetIpv6 (),
                                     Inet6SocketAddress::ConvertFrom (fromAddress).GetPort ());
             }
-          NotifyNewConnectionCreated (this, fromAddress);
+          NotifyNewConnectionCreated (Ptr<TcpSocketBase> (this), fromAddress);
           PeerClose (packet, tcpHeader);
         }
     }
@@ -2637,7 +2637,7 @@ TcpSocketBase::Destroy (void)
   m_endPoint = nullptr;
   if (m_tcp != nullptr)
     {
-      m_tcp->RemoveSocket (this);
+      m_tcp->RemoveSocket (Ptr<TcpSocketBase> (this));
     }
   NS_LOG_LOGIC (this << " Cancelled ReTxTimeout event which was set to expire at " <<
                 (Simulator::Now () + Simulator::GetDelayLeft (m_retxEvent)).GetSeconds ());
@@ -2653,7 +2653,7 @@ TcpSocketBase::Destroy6 (void)
   m_endPoint6 = nullptr;
   if (m_tcp != nullptr)
     {
-      m_tcp->RemoveSocket (this);
+      m_tcp->RemoveSocket (Ptr<TcpSocketBase> (this));
     }
   NS_LOG_LOGIC (this << " Cancelled ReTxTimeout event which was set to expire at " <<
                 (Simulator::Now () + Simulator::GetDelayLeft (m_retxEvent)).GetSeconds ());
@@ -2765,7 +2765,7 @@ TcpSocketBase::SendEmptyPacket (uint8_t flags)
       NS_LOG_INFO ("Sending a pure ACK, acking seq " << m_tcb->m_rxBuffer->NextRxSequence ());
     }
 
-  m_txTrace (p, header, this);
+  m_txTrace (p, header, Ptr<TcpSocketBase> (this));
 
   if (m_endPoint != nullptr)
     {
@@ -2808,7 +2808,7 @@ TcpSocketBase::DeallocateEndPoint (void)
       m_endPoint->SetDestroyCallback (MakeNullCallback<void> ());
       m_tcp->DeAllocate (m_endPoint);
       m_endPoint = nullptr;
-      m_tcp->RemoveSocket (this);
+      m_tcp->RemoveSocket (Ptr<TcpSocketBase> (this));
     }
   else if (m_endPoint6 != nullptr)
     {
@@ -2816,7 +2816,7 @@ TcpSocketBase::DeallocateEndPoint (void)
       m_endPoint6->SetDestroyCallback (MakeNullCallback<void> ());
       m_tcp->DeAllocate (m_endPoint6);
       m_endPoint6 = nullptr;
-      m_tcp->RemoveSocket (this);
+      m_tcp->RemoveSocket (Ptr<TcpSocketBase> (this));
     }
 }
 
@@ -2908,7 +2908,7 @@ TcpSocketBase::CompleteFork ([[maybe_unused]] Ptr<Packet> p, const TcpHeader& h,
                                       Inet6SocketAddress::ConvertFrom (fromAddress).GetPort ());
       m_endPoint = nullptr;
     }
-  m_tcp->AddSocket (this);
+  m_tcp->AddSocket (Ptr<TcpSocketBase> (this));
 
   // Change the cloned socket from LISTEN state to SYN_RCVD
   NS_LOG_DEBUG ("LISTEN -> SYN_RCVD");
@@ -3129,7 +3129,7 @@ TcpSocketBase::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize, bool with
       m_retxEvent = Simulator::Schedule (m_rto, &TcpSocketBase::ReTxTimeout, this);
     }
 
-  m_txTrace (p, header, this);
+  m_txTrace (p, header, Ptr<TcpSocketBase> (this));
 
   if (m_endPoint)
     {
@@ -3824,7 +3824,7 @@ TcpSocketBase::PersistTimeout ()
       ipTclassTag.SetTclass (MarkEcnCodePoint (0, m_tcb->m_ectCodePoint));
       p->AddPacketTag (ipTclassTag);
     }
-  m_txTrace (p, tcpHeader, this);
+  m_txTrace (p, tcpHeader, Ptr<TcpSocketBase> (this));
 
   if (m_endPoint != nullptr)
     {
@@ -4429,7 +4429,7 @@ TcpSocketBase::SetRecoveryAlgorithm (Ptr<TcpRecoveryOps> recovery)
 Ptr<TcpSocketBase>
 TcpSocketBase::Fork (void)
 {
-  return CopyObject<TcpSocketBase> (this);
+  return CopyObject<TcpSocketBase> (Ptr<const TcpSocketBase> (this));
 }
 
 uint32_t
@@ -4505,7 +4505,7 @@ TcpSocketBase::UpdatePacingRate (void)
     }
   Time lastRtt = m_tcb->m_lastRtt.Get (); // Get underlying Time value
   NS_LOG_DEBUG ("Last RTT is " << lastRtt.GetSeconds ());
-  
+
   // Multiply by 8 to convert from bytes per second to bits per second
   DataRate pacingRate ((std::max (m_tcb->m_cWnd, m_tcb->m_bytesInFlight) * 8 * factor) / lastRtt.GetSeconds ());
   if (pacingRate < m_tcb->m_maxPacingRate)

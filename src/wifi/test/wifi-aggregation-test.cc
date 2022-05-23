@@ -800,7 +800,7 @@ PreservePacketsInAmpdus::NotifyPsduForwardedDown (WifiConstPsduMap psduMap, Wifi
 
   m_nMpdus.push_back (psduMap[SU_STA_ID]->GetNMpdus ());
 
-  for (auto& mpdu : *PeekPointer (psduMap[SU_STA_ID]))
+  for (auto& mpdu : *psduMap[SU_STA_ID].get ())
     {
       std::size_t dist = std::distance (mpdu->begin (), mpdu->end ());
       // the list of aggregated MSDUs is empty if the MPDU includes a non-aggregated MSDU

@@ -61,7 +61,7 @@ CallbackValue::SerializeToString (Ptr<const AttributeChecker> checker) const
 {
   NS_LOG_FUNCTION (this << checker);
   std::ostringstream oss;
-  oss << PeekPointer (m_value.GetImpl ());
+  oss << m_value.GetImpl ().get ();
   return oss.str ();
 }
 bool

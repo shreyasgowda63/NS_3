@@ -93,7 +93,7 @@ TcpVegas::~TcpVegas (void)
 Ptr<TcpCongestionOps>
 TcpVegas::Fork (void)
 {
-  return CopyObject<TcpVegas> (this);
+  return CopyObject<TcpVegas> (Ptr<const TcpVegas> (this));
 }
 
 void

@@ -540,7 +540,7 @@ FdNetDevice::ForwardUp (void)
   if (!m_promiscRxCallback.IsNull ())
     {
       m_macPromiscRxTrace (originalPacket);
-      m_promiscRxCallback (this, packet, protocol, source, destination,
+      m_promiscRxCallback (Ptr<FdNetDevice> (this), packet, protocol, source, destination,
                            packetType);
     }
 
@@ -553,7 +553,7 @@ FdNetDevice::ForwardUp (void)
     {
       m_snifferTrace (originalPacket);
       m_macRxTrace (originalPacket);
-      m_rxCallback (this, packet, protocol, source);
+      m_rxCallback (Ptr<FdNetDevice> (this), packet, protocol, source);
     }
 }
 

@@ -249,7 +249,7 @@ public:
   Ptr<Object> Find (Ptr<Object> context, std::string name);
 
 private:
-  
+
   /**
    * Check if an object has a name.
    *
@@ -379,7 +379,7 @@ NamesPriv::Add (std::string path, std::string name, Ptr<Object> object)
   NS_LOG_FUNCTION (this << path << name << object);
   if (path == "/Names")
     {
-      return Add (Ptr<Object> (0, false), name, object);
+      return Add (Ptr<Object> (0), name, object);
     }
   return Add (Find (path), name, object);
 }
@@ -489,7 +489,7 @@ NamesPriv::Rename (std::string path, std::string oldname, std::string newname)
   NS_LOG_FUNCTION (this << path << oldname << newname);
   if (path == "/Names")
     {
-      return Rename (Ptr<Object> (0, false), oldname, newname);
+      return Rename (Ptr<Object> (0), oldname, newname);
     }
   return Rename (Find (path), oldname, newname);
 }
@@ -688,7 +688,7 @@ NamesPriv::Find (std::string path, std::string name)
 
   if (path == "/Names")
     {
-      return Find (Ptr<Object> (0, false), name);
+      return Find (Ptr<Object> (0), name);
     }
   return Find (Find (path), name);
 }

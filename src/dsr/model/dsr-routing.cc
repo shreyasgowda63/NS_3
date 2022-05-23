@@ -406,7 +406,7 @@ DsrRouting::NotifyNewAggregate ()
           if (m_ipv4 != 0)
             {
               this->SetNode (node);
-              m_ipv4->Insert (this);
+              m_ipv4->Insert (Ptr<DsrRouting> (this));
               this->SetDownTarget (MakeCallback (&Ipv4L3Protocol::Send, m_ipv4));
             }
 

@@ -253,7 +253,7 @@ WifiTxTimer::Set (Reason reason, const Time &delay, MEM mem_ptr, OBJ obj, Args..
 
   // create an event to invoke when the timer expires
   m_impl = Ptr<EventImpl> (MakeEvent<TimeoutType> (&WifiTxTimer::Timeout, this, mem_ptr, obj,
-                                                   std::forward<Args> (args)... ), false);
+                                                   std::forward<Args> (args)... ));
 }
 
 template<typename MEM, typename OBJ, typename... Args>

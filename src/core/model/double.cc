@@ -105,7 +105,7 @@ Ptr<const AttributeChecker> MakeDoubleChecker (double min, double max, std::stri
     double m_maxValue;
     std::string m_name;
   } *checker = new Checker (min, max, name);
-  return Ptr<const AttributeChecker> (checker, false);
+  return Ptr<const AttributeChecker> (checker);
 }
 
 } // namespace internal

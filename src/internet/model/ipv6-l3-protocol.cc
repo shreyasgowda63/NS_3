@@ -128,7 +128,7 @@ Ipv6L3Protocol::Ipv6L3Protocol ()
 {
   NS_LOG_FUNCTION (this);
   m_pmtuCache = CreateObject<Ipv6PmtuCache> ();
-  
+
   Ptr<Ipv6RawSocketFactoryImpl> rawFactoryImpl = CreateObject<Ipv6RawSocketFactoryImpl> ();
   AggregateObject (rawFactoryImpl);
 }
@@ -183,7 +183,7 @@ void Ipv6L3Protocol::SetRoutingProtocol (Ptr<Ipv6RoutingProtocol> routingProtoco
 {
   NS_LOG_FUNCTION (this << routingProtocol);
   m_routingProtocol = routingProtocol;
-  m_routingProtocol->SetIpv6 (this);
+  m_routingProtocol->SetIpv6 (Ptr<Ipv6L3Protocol> (this));
 }
 
 Ptr<Ipv6RoutingProtocol> Ipv6L3Protocol::GetRoutingProtocol () const
@@ -362,7 +362,7 @@ void Ipv6L3Protocol::RemoveAutoconfiguredAddress (uint32_t interface, Ipv6Addres
   NS_LOG_FUNCTION (this << interface << network << mask);
   Ptr<Ipv6Interface> iface = GetInterface (interface);
   Address addr = iface->GetDevice ()->GetAddress ();
-  
+
   Ipv6Address addressToFind = Ipv6Address::MakeAutoconfiguredAddress (addr, network);
 
   for (uint32_t i = 0; i < iface->GetNAddresses (); i++)
@@ -373,7 +373,7 @@ void Ipv6L3Protocol::RemoveAutoconfiguredAddress (uint32_t interface, Ipv6Addres
           break;
         }
     }
-  
+
   /* remove from list of autoconfigured address */
   for (Ipv6AutoconfiguredPrefixListI it = m_prefixes.begin (); it != m_prefixes.end (); ++it)
     {
@@ -440,7 +440,7 @@ bool Ipv6L3Protocol::RemoveAddress (uint32_t i, uint32_t addressIndex)
   return false;
 }
 
-bool 
+bool
 Ipv6L3Protocol::RemoveAddress (uint32_t i, Ipv6Address address)
 {
   NS_LOG_FUNCTION (this << i << address);
@@ -605,7 +605,7 @@ Ipv6Address Ipv6L3Protocol::SourceAddressSelection (uint32_t interface, Ipv6Addr
     {
       return Ipv6Address::GetLoopback ();
     }
-  
+
   if (dest.IsLinkLocal () || dest.IsLinkLocalMulticast ())
     {
       for (uint32_t i = 0; i < GetNAddresses (interface); i++)
@@ -697,7 +697,7 @@ void Ipv6L3Protocol::NotifyNewAggregate ()
           this->SetNode (node);
         }
     }
-  
+
   Ipv6::NotifyNewAggregate ();
 }
 
@@ -864,7 +864,7 @@ void Ipv6L3Protocol::Send (Ptr<Packet> packet, Ipv6Address source, Ipv6Address d
   SocketIpv6TclassTag tclassTag;
   uint8_t tclass = m_defaultTclass;
   found = packet->RemovePacketTag (tclassTag);
-  
+
   if (found)
     {
       tclass = tclassTag.GetTclass ();
@@ -927,7 +927,7 @@ void Ipv6L3Protocol::Send (Ptr<Packet> packet, Ipv6Address source, Ipv6Address d
   else
     {
       NS_LOG_WARN ("No route to host, drop!");
-      m_dropTrace (hdr, packet, DROP_NO_ROUTE, this, GetInterfaceForDevice (oif));
+      m_dropTrace (hdr, packet, DROP_NO_ROUTE, Ptr<Ipv6L3Protocol> (this), GetInterfaceForDevice (oif));
     }
 }
 
@@ -944,14 +944,14 @@ void Ipv6L3Protocol::Receive (Ptr<NetDevice> device, Ptr<const Packet> p, uint16
 
   if (ipv6Interface->IsUp ())
     {
-      m_rxTrace (packet, this, interface);
+      m_rxTrace (packet, Ptr<Ipv6L3Protocol> (this), interface);
     }
   else
     {
       NS_LOG_LOGIC ("Dropping received packet-- interface is down");
       Ipv6Header hdr;
       packet->RemoveHeader (hdr);
-      m_dropTrace (hdr, packet, DROP_INTERFACE_DOWN, this, interface);
+      m_dropTrace (hdr, packet, DROP_INTERFACE_DOWN, Ptr<Ipv6L3Protocol> (this), interface);
       return;
     }
 
@@ -1015,7 +1015,7 @@ void Ipv6L3Protocol::Receive (Ptr<NetDevice> device, Ptr<const Packet> p, uint16
 
       if (isDropped)
         {
-          m_dropTrace (hdr, packet, dropReason, this, interface);
+          m_dropTrace (hdr, packet, dropReason, Ptr<Ipv6L3Protocol> (this), interface);
         }
 
       if (stopProcessing)
@@ -1160,7 +1160,7 @@ void Ipv6L3Protocol::SendRealOut (Ptr<Ipv6Route> route, Ptr<Packet> packet, Ipv6
       Ptr<Ipv6ExtensionDemux> ipv6ExtensionDemux = m_node->GetObject<Ipv6ExtensionDemux> ();
 
       // To get specific method GetFragments from Ipv6ExtensionFragmentation
-      Ipv6ExtensionFragment *ipv6Fragment = dynamic_cast<Ipv6ExtensionFragment *> (PeekPointer (ipv6ExtensionDemux->GetExtension (Ipv6Header::IPV6_EXT_FRAGMENTATION)));
+      Ipv6ExtensionFragment *ipv6Fragment = dynamic_cast<Ipv6ExtensionFragment *> (ipv6ExtensionDemux->GetExtension (Ipv6Header::IPV6_EXT_FRAGMENTATION).get ());
       NS_ASSERT (ipv6Fragment != 0);
       ipv6Fragment->GetFragments (packet, ipHeader, targetMtu, fragments);
     }
@@ -1177,20 +1177,20 @@ void Ipv6L3Protocol::SendRealOut (Ptr<Ipv6Route> route, Ptr<Packet> packet, Ipv6
 
               for (std::list<Ipv6ExtensionFragment::Ipv6PayloadHeaderPair>::const_iterator it = fragments.begin (); it != fragments.end (); it++)
                 {
-                  CallTxTrace (it->second, it->first, this, interface);
+                  CallTxTrace (it->second, it->first, Ptr<Ipv6L3Protocol> (this), interface);
                   outInterface->Send (it->first, it->second, route->GetGateway ());
                 }
             }
           else
             {
-              CallTxTrace (ipHeader, packet, this, interface);
+              CallTxTrace (ipHeader, packet, Ptr<Ipv6L3Protocol> (this), interface);
               outInterface->Send (packet, ipHeader, route->GetGateway ());
             }
         }
       else
         {
           NS_LOG_LOGIC ("Dropping-- outgoing interface is down: " << route->GetGateway ());
-          m_dropTrace (ipHeader, packet, DROP_INTERFACE_DOWN, this, interface);
+          m_dropTrace (ipHeader, packet, DROP_INTERFACE_DOWN, Ptr<Ipv6L3Protocol> (this), interface);
         }
     }
   else
@@ -1205,20 +1205,20 @@ void Ipv6L3Protocol::SendRealOut (Ptr<Ipv6Route> route, Ptr<Packet> packet, Ipv6
 
               for (std::list<Ipv6ExtensionFragment::Ipv6PayloadHeaderPair>::const_iterator it = fragments.begin (); it != fragments.end (); it++)
                 {
-                  CallTxTrace (it->second, it->first, this, interface);
+                  CallTxTrace (it->second, it->first, Ptr<Ipv6L3Protocol> (this), interface);
                   outInterface->Send (it->first, it->second, ipHeader.GetDestination ());
                 }
             }
           else
             {
-              CallTxTrace (ipHeader, packet, this, interface);
+              CallTxTrace (ipHeader, packet, Ptr<Ipv6L3Protocol> (this), interface);
               outInterface->Send (packet, ipHeader, ipHeader.GetDestination ());
             }
         }
       else
         {
           NS_LOG_LOGIC ("Dropping-- outgoing interface is down: " << ipHeader.GetDestination ());
-          m_dropTrace (ipHeader, packet, DROP_INTERFACE_DOWN, this, interface);
+          m_dropTrace (ipHeader, packet, DROP_INTERFACE_DOWN, Ptr<Ipv6L3Protocol> (this), interface);
         }
     }
 }
@@ -1232,7 +1232,7 @@ void Ipv6L3Protocol::IpForward (Ptr<const NetDevice> idev, Ptr<Ipv6Route> rtentr
   if (header.GetDestination().IsDocumentation ())
     {
       NS_LOG_WARN ("Received a packet for 2001:db8::/32 (documentation class).  Drop.");
-      m_dropTrace (header, p, DROP_ROUTE_ERROR, this, 0);
+      m_dropTrace (header, p, DROP_ROUTE_ERROR, Ptr<Ipv6L3Protocol> (this), 0);
       return;
     }
 
@@ -1250,7 +1250,7 @@ void Ipv6L3Protocol::IpForward (Ptr<const NetDevice> idev, Ptr<Ipv6Route> rtentr
   if (ipHeader.GetHopLimit () == 0)
     {
       NS_LOG_WARN ("TTL exceeded.  Drop.");
-      m_dropTrace (ipHeader, packet, DROP_TTL_EXPIRED, this, 0);
+      m_dropTrace (ipHeader, packet, DROP_TTL_EXPIRED, Ptr<Ipv6L3Protocol> (this), 0);
       // Do not reply to multicast IPv6 address
       if (ipHeader.GetDestination ().IsMulticast () == false)
         {
@@ -1325,7 +1325,7 @@ void Ipv6L3Protocol::IpMulticastForward (Ptr<const NetDevice> idev, Ptr<Ipv6Mult
       if (h.GetHopLimit () == 0)
         {
           NS_LOG_WARN ("TTL exceeded.  Drop.");
-          m_dropTrace (header, packet, DROP_TTL_EXPIRED, this, interfaceId);
+          m_dropTrace (header, packet, DROP_TTL_EXPIRED, Ptr<Ipv6L3Protocol> (this), interfaceId);
           return;
         }
       NS_LOG_LOGIC ("Forward multicast via interface " << interfaceId);
@@ -1382,7 +1382,7 @@ void Ipv6L3Protocol::LocalDeliver (Ptr<const Packet> packet, Ipv6Header const& i
 
           if (isDropped)
             {
-              m_dropTrace (ip, packet, dropReason, this, iif);
+              m_dropTrace (ip, packet, dropReason, Ptr<Ipv6L3Protocol> (this), iif);
             }
 
           if (stopProcessing)
@@ -1412,7 +1412,7 @@ void Ipv6L3Protocol::LocalDeliver (Ptr<const Packet> packet, Ipv6Header const& i
                 {
                   GetIcmpv6 ()->SendErrorParameterError (malformedPacket, dst, Icmpv6Header::ICMPV6_UNKNOWN_NEXT_HEADER, ip.GetSerializedSize () + nextHeaderPosition);
                 }
-              m_dropTrace (ip, p, DROP_UNKNOWN_PROTOCOL, this, iif);
+              m_dropTrace (ip, p, DROP_UNKNOWN_PROTOCOL, Ptr<Ipv6L3Protocol> (this), iif);
               break;
             }
           else
@@ -1456,7 +1456,7 @@ void Ipv6L3Protocol::RouteInputError (Ptr<const Packet> p, const Ipv6Header& ipH
   NS_LOG_FUNCTION (this << p << ipHeader << sockErrno);
   NS_LOG_LOGIC ("Route input failure-- dropping packet to " << ipHeader << " with errno " << sockErrno);
 
-  m_dropTrace (ipHeader, p, DROP_ROUTE_ERROR, this, 0);
+  m_dropTrace (ipHeader, p, DROP_ROUTE_ERROR, Ptr<Ipv6L3Protocol> (this), 0);
 
   if (!ipHeader.GetDestination ().IsMulticast ())
     {
@@ -1537,7 +1537,7 @@ void Ipv6L3Protocol::RegisterOptions ()
 
 void Ipv6L3Protocol::ReportDrop (Ipv6Header ipHeader, Ptr<Packet> p, DropReason dropReason)
 {
-  m_dropTrace (ipHeader, p, dropReason, this, 0);
+  m_dropTrace (ipHeader, p, dropReason, Ptr<Ipv6L3Protocol> (this), 0);
 }
 
 void Ipv6L3Protocol::AddMulticastAddress (Ipv6Address address, uint32_t interface)

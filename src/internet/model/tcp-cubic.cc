@@ -448,7 +448,7 @@ Ptr<TcpCongestionOps>
 TcpCubic::Fork (void)
 {
   NS_LOG_FUNCTION (this);
-  return CopyObject<TcpCubic> (this);
+  return CopyObject<TcpCubic> (Ptr<const TcpCubic> (this));
 }
 
 }

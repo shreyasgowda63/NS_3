@@ -132,7 +132,7 @@ WaveBsmHelper::Install (Ipv4InterfaceContainer & i,
 Ptr<WaveBsmStats>
 WaveBsmHelper::GetWaveBsmStats ()
 {
-  return &m_waveBsmStats;
+  return Ptr<WaveBsmStats> (&m_waveBsmStats);
 }
 
 int64_t

@@ -219,7 +219,7 @@ Socket::NotifyConnectionSucceeded (void)
   NS_LOG_FUNCTION (this);
   if (!m_connectionSucceeded.IsNull ())
     {
-      m_connectionSucceeded (this);
+      m_connectionSucceeded (Ptr<Socket> (this));
     }
 }
 
@@ -229,7 +229,7 @@ Socket::NotifyConnectionFailed (void)
   NS_LOG_FUNCTION (this);
   if (!m_connectionFailed.IsNull ())
     {
-      m_connectionFailed (this);
+      m_connectionFailed (Ptr<Socket> (this));
     }
 }
 
@@ -239,7 +239,7 @@ Socket::NotifyNormalClose (void)
   NS_LOG_FUNCTION (this);
   if (!m_normalClose.IsNull ())
     {
-      m_normalClose (this);
+      m_normalClose (Ptr<Socket> (this));
     }
 }
 
@@ -249,7 +249,7 @@ Socket::NotifyErrorClose (void)
   NS_LOG_FUNCTION (this);
   if (!m_errorClose.IsNull ())
     {
-      m_errorClose (this);
+      m_errorClose (Ptr<Socket> (this));
     }
 }
 
@@ -259,7 +259,7 @@ Socket::NotifyConnectionRequest (const Address &from)
   NS_LOG_FUNCTION (this << &from);
   if (!m_connectionRequest.IsNull ())
     {
-      return m_connectionRequest (this, from);
+      return m_connectionRequest (Ptr<Socket> (this), from);
     }
   else
     {
@@ -287,7 +287,7 @@ Socket::NotifyDataSent (uint32_t size)
   NS_LOG_FUNCTION (this << size);
   if (!m_dataSent.IsNull ())
     {
-      m_dataSent (this, size);
+      m_dataSent (Ptr<Socket> (this), size);
     }
 }
 
@@ -297,7 +297,7 @@ Socket::NotifySend (uint32_t spaceAvailable)
   NS_LOG_FUNCTION (this << spaceAvailable);
   if (!m_sendCb.IsNull ())
     {
-      m_sendCb (this, spaceAvailable);
+      m_sendCb (Ptr<Socket> (this), spaceAvailable);
     }
 }
 
@@ -307,7 +307,7 @@ Socket::NotifyDataRecv (void)
   NS_LOG_FUNCTION (this);
   if (!m_receivedData.IsNull ())
     {
-      m_receivedData (this);
+      m_receivedData (Ptr<Socket> (this));
     }
 }
 

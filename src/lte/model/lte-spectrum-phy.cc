@@ -353,7 +353,7 @@ LteSpectrumPhy::Reset ()
   // spectrum model is an error.
   if (m_channel)
     {
-      m_channel->RemoveRx (this);
+      m_channel->RemoveRx (Ptr<LteSpectrumPhy> (this));
     }
 }
 

@@ -166,7 +166,7 @@ TcpHybla::CongestionAvoidance (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked)
 Ptr<TcpCongestionOps>
 TcpHybla::Fork (void)
 {
-  return CopyObject<TcpHybla> (this);
+  return CopyObject<TcpHybla> (Ptr<TcpHybla> (this));
 }
 
 std::string

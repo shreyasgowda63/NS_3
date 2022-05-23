@@ -199,7 +199,7 @@ IeBeaconTiming::operator== (WifiInformationElement const & a) const
         }
       for (unsigned int i = 0; i < m_neighbours.size (); i++)
         {
-          if (!(*PeekPointer (m_neighbours[i]) == *PeekPointer (aa.m_neighbours[i])))
+          if (!(*m_neighbours[i].get () == *aa.m_neighbours[i].get ()))
             {
               return false;
             }

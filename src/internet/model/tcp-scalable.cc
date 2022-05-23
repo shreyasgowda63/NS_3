@@ -82,7 +82,7 @@ TcpScalable::~TcpScalable (void)
 Ptr<TcpCongestionOps>
 TcpScalable::Fork (void)
 {
-  return CopyObject<TcpScalable> (this);
+  return CopyObject<TcpScalable> (Ptr<const TcpScalable> (this));
 }
 
 void

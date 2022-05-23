@@ -48,7 +48,7 @@ typedef std::unordered_map <uint16_t /* STA-ID */, Ptr<const WifiPsdu> /* PSDU *
  * WifiPpdu stores a preamble, a modulation class, PHY headers and a PSDU.
  * This class should be subclassed for each amendment.
  */
-class WifiPpdu : public SimpleRefCount<WifiPpdu>
+class WifiPpdu
 {
 public:
   /**

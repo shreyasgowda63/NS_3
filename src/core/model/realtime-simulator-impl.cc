@@ -127,7 +127,7 @@ RealtimeSimulatorImpl::Destroy ()
   //
   while (m_destroyEvents.empty () == false)
     {
-      Ptr<EventImpl> ev = m_destroyEvents.front ().PeekEventImpl ();
+      Ptr<EventImpl> ev (m_destroyEvents.front ().PeekEventImpl ());
       m_destroyEvents.pop_front ();
       NS_LOG_LOGIC ("handle destroy " << ev);
       if (ev->IsCancelled () == false)
@@ -325,7 +325,7 @@ RealtimeSimulatorImpl::ProcessOneEvent (void)
                    "RealtimeSimulatorImpl::ProcessOneEvent(): event queue is empty");
     next = m_events->RemoveNext ();
 
-    PreEventHook (EventId (next.impl, next.key.m_ts, 
+    PreEventHook (EventId (Ptr<EventImpl> (next.impl), next.key.m_ts,
                            next.key.m_context, next.key.m_uid));
 
     m_unscheduledEvents--;
@@ -534,7 +534,7 @@ RealtimeSimulatorImpl::Schedule (Time const &delay, EventImpl *impl)
     m_synchronizer->Signal ();
   }
 
-  return EventId (impl, ev.key.m_ts, ev.key.m_context, ev.key.m_uid);
+  return EventId (Ptr<EventImpl> (impl), ev.key.m_ts, ev.key.m_context, ev.key.m_uid);
 }
 
 void
@@ -670,7 +670,7 @@ RealtimeSimulatorImpl::ScheduleDestroy (EventImpl *impl)
     // overridden by the uid of DESTROY which identifies this as an event to be
     // executed at Simulator::Destroy time.
     //
-    id = EventId (Ptr<EventImpl> (impl, false), m_currentTs, 0xffffffff, 
+    id = EventId (Ptr<EventImpl> (impl), m_currentTs, 0xffffffff,
                   EventId::UID::DESTROY);
     m_destroyEvents.push_back (id);
     m_uid++;

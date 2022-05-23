@@ -244,7 +244,7 @@ ThreeGppHttpClient::ConnectionSucceededCallback (Ptr<Socket> socket)
   if (m_state == CONNECTING)
     {
       NS_ASSERT_MSG (m_socket == socket, "Invalid socket.");
-      m_connectionEstablishedTrace (this);
+      m_connectionEstablishedTrace (Ptr<ThreeGppHttpClient> (this));
       socket->SetRecvCallback (MakeCallback (&ThreeGppHttpClient::ReceivedDataCallback,
                                              this));
       NS_ASSERT (m_embeddedObjectsToBeRequested == 0);
@@ -294,7 +294,7 @@ ThreeGppHttpClient::NormalCloseCallback (Ptr<Socket> socket)
   m_socket->SetCloseCallbacks (MakeNullCallback<void, Ptr<Socket> > (),
                                MakeNullCallback<void, Ptr<Socket> > ());
 
-  m_connectionClosedTrace (this);
+  m_connectionClosedTrace (Ptr<ThreeGppHttpClient> (this));
 }
 
 
@@ -310,7 +310,7 @@ ThreeGppHttpClient::ErrorCloseCallback (Ptr<Socket> socket)
                          << " error code: " << socket->GetErrno () << ".");
     }
 
-  m_connectionClosedTrace (this);
+  m_connectionClosedTrace (Ptr<ThreeGppHttpClient> (this));
 }
 
 
@@ -568,7 +568,7 @@ ThreeGppHttpClient::ReceiveMainObject (Ptr<Packet> packet, const Address &from)
            * reception of a whole main object
            */
           NS_LOG_INFO (this << " Finished receiving a main object.");
-          m_rxMainObjectTrace (this, m_constructedPacket);
+          m_rxMainObjectTrace (Ptr<ThreeGppHttpClient> (this), m_constructedPacket);
 
           if (!m_objectServerTs.IsZero ())
             {
@@ -629,7 +629,7 @@ ThreeGppHttpClient::ReceiveEmbeddedObject (Ptr<Packet> packet, const Address &fr
            * the reception of a whole embedded object
            */
           NS_LOG_INFO (this << " Finished receiving an embedded object.");
-          m_rxEmbeddedObjectTrace (this, m_constructedPacket);
+          m_rxEmbeddedObjectTrace (Ptr<ThreeGppHttpClient> (this), m_constructedPacket);
 
           if (!m_objectServerTs.IsZero ())
             {

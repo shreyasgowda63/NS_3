@@ -150,7 +150,7 @@ void Icmpv6L4Protocol::NotifyNewAggregate ()
           if (ipv6 != 0 && m_downTarget.IsNull ())
             {
               SetNode (node);
-              ipv6->Insert (this);
+              ipv6->Insert (Ptr<Icmpv6L4Protocol> (this));
               SetDownTarget6 (MakeCallback (&Ipv6::Send, ipv6));
             }
         }
@@ -208,7 +208,7 @@ void Icmpv6L4Protocol::DoDAD (Ipv6Address target, Ptr<Ipv6Interface> interface)
     }
 
   /** \todo disable multicast loopback to prevent NS probing to be received by the sender */
-  
+
   NdiscCache::Ipv6PayloadHeaderPair p = ForgeNS ("::",Ipv6Address::MakeSolicitedAddress (target), target, interface->GetDevice ()->GetAddress ());
 
   /* update last packet UID */
@@ -683,7 +683,7 @@ void Icmpv6L4Protocol::HandleNA (Ptr<Packet> packet, Ipv6Address const &src, Ipv
   if (!entry)
     {
       /* ouch!! we might be victim of a DAD */
-      
+
       Ipv6InterfaceAddress ifaddr;
       bool found = false;
       uint32_t i = 0;
@@ -1335,7 +1335,7 @@ Ptr<NdiscCache> Icmpv6L4Protocol::CreateCache (Ptr<NetDevice> device, Ptr<Ipv6In
 
   Ptr<NdiscCache> cache = CreateObject<NdiscCache> ();
 
-  cache->SetDevice (device, interface, this);
+  cache->SetDevice (device, interface, Ptr<Icmpv6L4Protocol> (this));
   device->AddLinkChangeCallback (MakeCallback (&NdiscCache::Flush, cache));
   m_cacheList.push_back (cache);
   return cache;

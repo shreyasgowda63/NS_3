@@ -662,7 +662,7 @@ WifiPhy::AddPhyEntity (WifiModulationClass modulation, Ptr<PhyEntity> phyEntity)
   NS_LOG_FUNCTION (this << modulation);
   NS_ABORT_MSG_IF (GetStaticPhyEntities ().find (modulation) == GetStaticPhyEntities ().end (), "Cannot add an unimplemented PHY to supported list. Update the former first.");
   NS_ASSERT_MSG (m_phyEntities.find (modulation) == m_phyEntities.end (), "The PHY entity has already been added. The setting should only be done once per modulation class");
-  phyEntity->SetOwner (this);
+  phyEntity->SetOwner (Ptr<WifiPhy> (this));
   m_phyEntities[modulation] = phyEntity;
 }
 
@@ -1357,7 +1357,7 @@ WifiPhy::NotifyTxBegin (WifiConstPsduMap psdus, double txPowerW)
     {
       for (auto const& psdu : psdus)
         {
-          for (auto& mpdu : *PeekPointer (psdu.second))
+          for (auto& mpdu : *psdu.second.get ())
             {
               m_phyTxBeginTrace (mpdu->GetProtocolDataUnit (), txPowerW);
             }
@@ -1372,7 +1372,7 @@ WifiPhy::NotifyTxEnd (WifiConstPsduMap psdus)
     {
       for (auto const& psdu : psdus)
         {
-          for (auto& mpdu : *PeekPointer (psdu.second))
+          for (auto& mpdu : *psdu.second.get ())
             {
               m_phyTxEndTrace (mpdu->GetProtocolDataUnit ());
             }
@@ -1385,7 +1385,7 @@ WifiPhy::NotifyTxDrop (Ptr<const WifiPsdu> psdu)
 {
   if (!m_phyTxDropTrace.IsEmpty ())
     {
-      for (auto& mpdu : *PeekPointer (psdu))
+      for (auto& mpdu : *psdu.get ())
         {
           m_phyTxDropTrace (mpdu->GetProtocolDataUnit ());
         }
@@ -1397,7 +1397,7 @@ WifiPhy::NotifyRxBegin (Ptr<const WifiPsdu> psdu, const RxPowerWattPerChannelBan
 {
   if (psdu && !m_phyRxBeginTrace.IsEmpty ())
     {
-      for (auto& mpdu : *PeekPointer (psdu))
+      for (auto& mpdu : *psdu.get ())
         {
           m_phyRxBeginTrace (mpdu->GetProtocolDataUnit (), rxPowersW);
         }
@@ -1409,7 +1409,7 @@ WifiPhy::NotifyRxEnd (Ptr<const WifiPsdu> psdu)
 {
   if (psdu && !m_phyRxEndTrace.IsEmpty ())
     {
-      for (auto& mpdu : *PeekPointer (psdu))
+      for (auto& mpdu : *psdu.get ())
         {
           m_phyRxEndTrace (mpdu->GetProtocolDataUnit ());
         }
@@ -1421,7 +1421,7 @@ WifiPhy::NotifyRxDrop (Ptr<const WifiPsdu> psdu, WifiPhyRxfailureReason reason)
 {
   if (psdu && !m_phyRxDropTrace.IsEmpty ())
     {
-      for (auto& mpdu : *PeekPointer (psdu))
+      for (auto& mpdu : *psdu.get ())
         {
           m_phyRxDropTrace (mpdu->GetProtocolDataUnit (), reason);
         }

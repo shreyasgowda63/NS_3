@@ -143,8 +143,8 @@ WimaxNetDevice::WimaxNetDevice (void)
 {
   InitializeChannels ();
   m_connectionManager = CreateObject<ConnectionManager> ();
-  m_burstProfileManager = CreateObject<BurstProfileManager> (this);
-  m_bandwidthManager = CreateObject<BandwidthManager> (this);
+  m_burstProfileManager = CreateObject<BurstProfileManager> (Ptr<WimaxNetDevice> (this));
+  m_bandwidthManager = CreateObject<BandwidthManager> (Ptr<WimaxNetDevice> (this));
   m_nrFrames = 0;
   m_direction = ~0;
   m_frameStartTime = Seconds (0);
@@ -350,7 +350,7 @@ WimaxNetDevice::ForwardUp (Ptr<Packet> packet, const Mac48Address &source, const
   m_traceRx (packet, source);
   LlcSnapHeader llc;
   packet->RemoveHeader (llc);
-  m_forwardUp (this, packet, llc.GetType (), source);
+  m_forwardUp (Ptr<WimaxNetDevice> (this), packet, llc.GetType (), source);
 }
 
 void

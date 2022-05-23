@@ -105,7 +105,7 @@ TcpHtcp::~TcpHtcp (void)
 Ptr<TcpCongestionOps> TcpHtcp::Fork (void)
 {
   NS_LOG_FUNCTION (this);
-  return CopyObject<TcpHtcp> (this);
+  return CopyObject<TcpHtcp> (Ptr<TcpHtcp> (this));
 }
 
 void TcpHtcp::CongestionAvoidance (Ptr<TcpSocketState> tcb,

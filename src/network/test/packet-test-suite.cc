@@ -572,12 +572,12 @@ PacketTest::DoRun (void)
     Packet c0 = *copy;
     Packet c1 = *copy;
     c0 = c1;
-    CHECK (&c0, 1, E (1, 0, 1000));
-    CHECK (&c1, 1, E (1, 0, 1000));
+    CHECK (Ptr<Packet> (&c0), 1, E (1, 0, 1000));
+    CHECK (Ptr<Packet> (&c1), 1, E (1, 0, 1000));
     CHECK (copy, 1, E (1, 0, 1000));
     c0.AddByteTag (ATestTag<10> ());
-    CHECK (&c0, 2, E (1, 0, 1000), E (10, 0, 1000));
-    CHECK (&c1, 1, E (1, 0, 1000));
+    CHECK (Ptr<Packet> (&c0), 2, E (1, 0, 1000), E (10, 0, 1000));
+    CHECK (Ptr<Packet> (&c1), 1, E (1, 0, 1000));
     CHECK (copy, 1, E (1, 0, 1000));
   }
 

@@ -93,7 +93,7 @@ DefaultSimulatorImpl::Destroy ()
   NS_LOG_FUNCTION (this);
   while (!m_destroyEvents.empty ())
     {
-      Ptr<EventImpl> ev = m_destroyEvents.front ().PeekEventImpl ();
+      Ptr<EventImpl> ev (m_destroyEvents.front ().PeekEventImpl ());
       m_destroyEvents.pop_front ();
       NS_LOG_LOGIC ("handle destroy " << ev);
       if (!ev->IsCancelled ())
@@ -132,7 +132,7 @@ DefaultSimulatorImpl::ProcessOneEvent (void)
 {
   Scheduler::Event next = m_events->RemoveNext ();
 
-  PreEventHook (EventId (next.impl, next.key.m_ts, 
+  PreEventHook (EventId (Ptr<EventImpl> (next.impl), next.key.m_ts,
                          next.key.m_context, next.key.m_uid));
 
   NS_ASSERT (next.key.m_ts >= m_currentTs);
@@ -239,7 +239,7 @@ DefaultSimulatorImpl::Schedule (Time const &delay, EventImpl *event)
   m_uid++;
   m_unscheduledEvents++;
   m_events->Insert (ev);
-  return EventId (event, ev.key.m_ts, ev.key.m_context, ev.key.m_uid);
+  return EventId (Ptr<EventImpl> (event), ev.key.m_ts, ev.key.m_context, ev.key.m_uid);
 }
 
 void
@@ -289,7 +289,7 @@ DefaultSimulatorImpl::ScheduleDestroy (EventImpl *event)
   NS_ASSERT_MSG (m_mainThreadId == std::this_thread::get_id (),
                  "Simulator::ScheduleDestroy Thread-unsafe invocation!");
 
-  EventId id (Ptr<EventImpl> (event, false), m_currentTs, 0xffffffff, 2);
+  EventId id (Ptr<EventImpl> (event), m_currentTs, 0xffffffff, 2);
   m_destroyEvents.push_back (id);
   m_uid++;
   return id;

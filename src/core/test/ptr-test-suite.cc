@@ -299,7 +299,7 @@ PtrTestCase::DoRun (void)
       {
         Ptr<NoCount const> p1 = p;
       }
-      raw = GetPointer (p);
+      raw = p.get ();
       p = 0;
     }
     NS_TEST_EXPECT_MSG_EQ (m_nDestroyed, 0, "012");
@@ -309,8 +309,8 @@ PtrTestCase::DoRun (void)
   m_nDestroyed = 0;
   {
     Ptr<NoCount> p = Create<NoCount> (this);
-    const NoCount *v1 = PeekPointer (p);
-    NoCount *v2 = PeekPointer (p);
+    const NoCount *v1 = p.get ();
+    NoCount *v2 = p.get ();
     v1->Nothing ();
     v2->Nothing ();
   }

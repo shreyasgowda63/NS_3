@@ -332,7 +332,7 @@ ThreeGppHttpServer::NewConnectionCreatedCallback (Ptr<Socket> socket,
   socket->SetSendCallback (MakeCallback (&ThreeGppHttpServer::SendCallback,
                                          this));
 
-  m_connectionEstablishedTrace (this, socket);
+  m_connectionEstablishedTrace (Ptr<ThreeGppHttpServer> (this), socket);
   m_txBuffer->AddSocket (socket);
 
   /*

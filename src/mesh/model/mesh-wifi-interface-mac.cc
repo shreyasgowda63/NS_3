@@ -173,7 +173,7 @@ MeshWifiInterfaceMac::InstallPlugin (Ptr<MeshWifiInterfaceMacPlugin> plugin)
 {
   NS_LOG_FUNCTION (this);
 
-  plugin->SetParent (this);
+  plugin->SetParent (Ptr<MeshWifiInterfaceMac> (this));
   m_plugins.push_back (plugin);
 }
 //-----------------------------------------------------------------------------
@@ -489,7 +489,7 @@ MeshWifiInterfaceMac::GetLinkMetric (Mac48Address peerAddress)
   uint32_t metric = 1;
   if (!m_linkMetricCallback.IsNull ())
     {
-      metric = m_linkMetricCallback (peerAddress, this);
+      metric = m_linkMetricCallback (peerAddress, Ptr<MeshWifiInterfaceMac> (this));
     }
   return metric;
 }
@@ -561,7 +561,7 @@ MeshWifiInterfaceMac::ConfigureContentionWindow (uint32_t cwMin, uint32_t cwMax)
   // access parameters slightly, and do so here.
   m_txop = CreateObject<Txop> ();
   m_txop->SetChannelAccessManager (m_channelAccessManager);
-  m_txop->SetWifiMac (this);
+  m_txop->SetWifiMac (Ptr<MeshWifiInterfaceMac> (this));
   m_txop->SetTxMiddle (m_txMiddle);
   m_txop->SetMinCw (0);
   m_txop->SetMaxCw (0);

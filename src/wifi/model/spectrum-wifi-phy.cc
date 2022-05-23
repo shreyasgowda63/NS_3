@@ -397,7 +397,7 @@ SpectrumWifiPhy::CreateWifiSpectrumPhyInterface (Ptr<NetDevice> device)
 {
   NS_LOG_FUNCTION (this << device);
   m_wifiSpectrumPhyInterface = CreateObject<WifiSpectrumPhyInterface> ();
-  m_wifiSpectrumPhyInterface->SetSpectrumWifiPhy (this);
+  m_wifiSpectrumPhyInterface->SetSpectrumWifiPhy (Ptr<SpectrumWifiPhy> (this));
   m_wifiSpectrumPhyInterface->SetDevice (device);
 }
 

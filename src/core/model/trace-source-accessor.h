@@ -195,7 +195,7 @@ DoMakeTraceSourceAccessor (SOURCE T::*a)
     SOURCE T::*m_source;
   } *accessor = new Accessor ();
   accessor->m_source = a;
-  return Ptr<const TraceSourceAccessor> (accessor, false);
+  return Ptr<const TraceSourceAccessor> (accessor);
 }
 
 template <typename T>

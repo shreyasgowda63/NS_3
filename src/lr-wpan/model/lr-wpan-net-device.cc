@@ -141,7 +141,7 @@ LrWpanNetDevice::CompleteConfig (void)
   m_phy->SetMobility (mobility);
   Ptr<LrWpanErrorModel> model = CreateObject<LrWpanErrorModel> ();
   m_phy->SetErrorModel (model);
-  m_phy->SetDevice (this);
+  m_phy->SetDevice (Ptr<LrWpanNetDevice> (this));
 
   m_phy->SetPdDataIndicationCallback (MakeCallback (&LrWpanMac::PdDataIndication, m_mac));
   m_phy->SetPdDataConfirmCallback (MakeCallback (&LrWpanMac::PdDataConfirm, m_mac));
@@ -482,11 +482,11 @@ LrWpanNetDevice::McpsDataIndication (McpsDataIndicationParams params, Ptr<Packet
 
   if (params.m_dstAddrMode == SHORT_ADDR)
     {
-      m_receiveCallback (this, pkt, 0, BuildPseudoMacAddress (params.m_srcPanId, params.m_srcAddr));
+      m_receiveCallback (Ptr<LrWpanNetDevice> (this), pkt, 0, BuildPseudoMacAddress (params.m_srcPanId, params.m_srcAddr));
     }
   else
     {
-      m_receiveCallback (this, pkt, 0, params.m_srcExtAddr);
+      m_receiveCallback (Ptr<LrWpanNetDevice> (this), pkt, 0, params.m_srcExtAddr);
     }
 }
 

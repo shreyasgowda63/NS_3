@@ -285,12 +285,12 @@ LteNetDevice::Receive (Ptr<Packet> p)
   if (p->PeekHeader (ipv4Header) != 0)
     {
       NS_LOG_LOGIC ("IPv4 stack...");
-      m_rxCallback (this, p, Ipv4L3Protocol::PROT_NUMBER, Address ());
+      m_rxCallback (Ptr<LteNetDevice> (this), p, Ipv4L3Protocol::PROT_NUMBER, Address ());
     }
   else if  (p->PeekHeader (ipv6Header) != 0)
     {
       NS_LOG_LOGIC ("IPv6 stack...");
-      m_rxCallback (this, p, Ipv6L3Protocol::PROT_NUMBER, Address ());
+      m_rxCallback (Ptr<LteNetDevice> (this), p, Ipv6L3Protocol::PROT_NUMBER, Address ());
     }
   else
     {

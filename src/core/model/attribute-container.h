@@ -39,11 +39,11 @@ class AttributeChecker;
 // A = attribute value type, C = container type to return
 /**
  * A container for one type of attribute.
- * 
+ *
  * The container uses \p A to parse items into elements.
  * Internally the container is always a list but an instance
  * can return the items in a container specified by \p C.
- * 
+ *
  * @tparam A AttributeValue type to be contained.
  * @tparam C Possibly templated container class returned by Get.
  */
@@ -111,7 +111,7 @@ public:
   result_type Get (void) const;
   /**
    * Copy items from container c.
-   * 
+   *
    * This method assumes \p c has stl-style begin and end methods.
    * The AttributeContainerValue value is cleared before copying from \p c.
    * @tparam T type of container.
@@ -166,8 +166,8 @@ public:
 
 private:
   /**
-   * Copy items from \ref begin to \ref end. 
-   * 
+   * Copy items from \ref begin to \ref end.
+   *
    * The internal container is cleared before values are copied
    * using the push_back method.
    * @tparam ITER \deduced iterator type
@@ -497,7 +497,7 @@ AttributeContainerValue<A, C>::CopyFrom (const ITER begin, const ITER end)
     {
       m_container.push_back (Create<A> (*iter));
     }
-  return this;
+  return Ptr<AttributeContainerValue<A, C>> (this);
 }
 
 template <typename A, template <typename...> class C, typename T1>

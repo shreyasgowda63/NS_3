@@ -230,7 +230,7 @@ typedef uint8_t WifiInformationElementId;
  * This class is pure virtual and acts as base for classes which know
  * how to serialize specific IEs.
  */
-class WifiInformationElement : public SimpleRefCount<WifiInformationElement>
+class WifiInformationElement
 {
 public:
   virtual ~WifiInformationElement ();

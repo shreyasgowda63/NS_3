@@ -361,7 +361,7 @@ QueueDisc::QueueDisc (QueueDiscSizePolicy policy)
     };
   m_childQueueDiscMarkFunctor = [this] (Ptr<const QueueDiscItem> item, const char* r)
     {
-      return Mark (const_cast<QueueDiscItem *> (PeekPointer (item)),
+      return Mark (std::const_pointer_cast<QueueDiscItem> (item),
                    m_childQueueDiscMarkMsg.assign (CHILD_QUEUE_DISC_MARK).append (r).data ());
     };
 }

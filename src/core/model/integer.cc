@@ -104,7 +104,7 @@ MakeIntegerChecker (int64_t min, int64_t max, std::string name)
     int64_t m_maxValue;
     std::string m_name;
   } *checker = new IntegerChecker (min, max, name);
-  return Ptr<AttributeChecker> (checker, false);
+  return Ptr<AttributeChecker> (checker);
 }
 
 } // namespace internal

@@ -22,7 +22,6 @@
 #define MAC_RX_MIDDLE_H
 
 #include <map>
-#include "ns3/simple-ref-count.h"
 #include "ns3/callback.h"
 
 namespace ns3 {
@@ -38,7 +37,7 @@ class WifiMacQueueItem;
  *
  * This class handles duplicate detection and recomposition of fragments.
  */
-class MacRxMiddle : public SimpleRefCount<MacRxMiddle>
+class MacRxMiddle
 {
 public:
   /**

@@ -115,7 +115,7 @@ int main (int argc, char *argv[])
     // Clear the currently-stored object
     ClearPtr ();
     // get the raw pointer and release it.
-    PtrExample *raw = GetPointer (prev);
+    PtrExample *raw = prev.get ();
     prev = 0;
     raw->Method ();
     raw->Unref ();

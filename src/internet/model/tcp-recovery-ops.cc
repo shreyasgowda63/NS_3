@@ -95,7 +95,7 @@ TcpClassicRecovery::~TcpClassicRecovery (void)
 
 void
 TcpClassicRecovery::EnterRecovery (Ptr<TcpSocketState> tcb, uint32_t dupAckCount,
-                                   [[maybe_unused]] uint32_t unAckDataCount, 
+                                   [[maybe_unused]] uint32_t unAckDataCount,
                                    [[maybe_unused]] uint32_t deliveredBytes)
 {
   NS_LOG_FUNCTION (this << tcb << dupAckCount << unAckDataCount);
@@ -131,7 +131,7 @@ TcpClassicRecovery::GetName () const
 Ptr<TcpRecoveryOps>
 TcpClassicRecovery::Fork ()
 {
-  return CopyObject<TcpClassicRecovery> (this);
+  return CopyObject<TcpClassicRecovery> (Ptr<const TcpClassicRecovery> (this));
 }
 
 } // namespace ns3

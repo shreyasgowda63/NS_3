@@ -21,7 +21,6 @@
 #define EVENT_IMPL_H
 
 #include <stdint.h>
-#include "simple-ref-count.h"
 
 /**
  * \file
@@ -41,7 +40,7 @@ namespace ns3 {
  * are usually created by one of the many Simulator::Schedule
  * methods.
  */
-class EventImpl : public SimpleRefCount<EventImpl>
+class EventImpl
 {
 public:
   /** Default constructor. */

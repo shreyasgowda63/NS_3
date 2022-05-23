@@ -26,7 +26,7 @@
 namespace ns3 {
 using namespace dot11s;
 NS_OBJECT_ENSURE_REGISTERED (Dot11sStack);
-  
+
 TypeId
 Dot11sStack::GetTypeId ()
 {
@@ -34,7 +34,7 @@ Dot11sStack::GetTypeId ()
     .SetParent<MeshStack> ()
     .SetGroupName ("Mesh")
     .AddConstructor<Dot11sStack> ()
-    .AddAttribute ("Root", 
+    .AddAttribute ("Root",
                    "The MAC address of root mesh point.",
                    Mac48AddressValue (Mac48Address ("ff:ff:ff:ff:ff:ff")),
                    MakeMac48AddressAccessor (&Dot11sStack::m_root),
@@ -75,9 +75,9 @@ Dot11sStack::InstallStack (Ptr<MeshPointDevice> mp)
       hwmp->SetRoot ();
     }
   //Install interaction between HWMP and Peer management protocol:
-  //PeekPointer()'s to avoid circular Ptr references
-  pmp->SetPeerLinkStatusCallback (MakeCallback (&HwmpProtocol::PeerLinkStatus, PeekPointer (hwmp)));
-  hwmp->SetNeighboursCallback (MakeCallback (&PeerManagementProtocol::GetPeers, PeekPointer (pmp)));
+  //raw pointers to avoid circular Ptr references
+  pmp->SetPeerLinkStatusCallback (MakeCallback (&HwmpProtocol::PeerLinkStatus, hwmp.get ()));
+  hwmp->SetNeighboursCallback (MakeCallback (&PeerManagementProtocol::GetPeers, pmp.get ()));
   return true;
 }
 void

@@ -34,7 +34,7 @@ class ErrorRateModel;
  * \brief handles interference calculations
  * \brief signal event for a PPDU.
  */
-class Event : public SimpleRefCount<Event>
+class Event
 {
 public:
   /**
@@ -257,7 +257,7 @@ public:
   void NotifyRxStart ();
   /**
    * Notify that RX has ended.
-   * 
+   *
    * \param endTime the end time of the signal
    */
   void NotifyRxEnd (Time endTime);

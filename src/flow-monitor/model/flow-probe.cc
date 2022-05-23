@@ -43,7 +43,7 @@ FlowProbe::~FlowProbe ()
 FlowProbe::FlowProbe (Ptr<FlowMonitor> flowMonitor)
   : m_flowMonitor (flowMonitor)
 {
-  m_flowMonitor->AddProbe (this);
+  m_flowMonitor->AddProbe (Ptr<FlowProbe> (this));
 }
 
 void
@@ -75,9 +75,9 @@ FlowProbe::AddPacketDropStats (FlowId flowId, uint32_t packetSize, uint32_t reas
   ++flow.packetsDropped[reasonCode];
   flow.bytesDropped[reasonCode] += packetSize;
 }
- 
+
 FlowProbe::Stats
-FlowProbe::GetStats () const 
+FlowProbe::GetStats () const
 {
   return m_stats;
 }

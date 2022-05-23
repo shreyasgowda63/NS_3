@@ -533,7 +533,7 @@ Resolver::DoResolve (std::string path, Ptr<Object> root)
                   continue;
                 }
               // attempt to cast to a pointer checker.
-              const PointerChecker *pChecker = dynamic_cast<const PointerChecker *> (PeekPointer (info.checker));
+              const PointerChecker *pChecker = dynamic_cast<const PointerChecker *> (info.checker.get ());
               if (pChecker != 0)
                 {
                   NS_LOG_DEBUG ("GetAttribute(ptr)=" << info.name << " on path=" << GetResolvedPath ());
@@ -554,7 +554,7 @@ Resolver::DoResolve (std::string path, Ptr<Object> root)
                 }
               // attempt to cast to an object vector.
               const ObjectPtrContainerChecker *vectorChecker =
-                dynamic_cast<const ObjectPtrContainerChecker *> (PeekPointer (info.checker));
+                dynamic_cast<const ObjectPtrContainerChecker *> (info.checker.get ());
               if (vectorChecker != 0)
                 {
                   NS_LOG_DEBUG ("GetAttribute(vector)=" << info.name << " on path=" << GetResolvedPath () << pathLeft);

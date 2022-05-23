@@ -998,7 +998,7 @@ void
 UanPhyGen::SetTransducer (Ptr<UanTransducer> trans)
 {
   m_transducer = trans;
-  m_transducer->AddPhy (this);
+  m_transducer->AddPhy (Ptr<UanPhyGen> (this));
 }
 
 void

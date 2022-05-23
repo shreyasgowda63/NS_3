@@ -36,9 +36,9 @@
 namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("PeerManagementProtocol");
-  
+
 namespace dot11s {
-  
+
 /***************************************************
  * PeerManager
  ***************************************************/
@@ -130,7 +130,7 @@ PeerManagementProtocol::Install (Ptr<MeshPointDevice> mp)
         {
           return false;
         }
-      Ptr<PeerManagementProtocolMac> plugin = Create<PeerManagementProtocolMac> ((*i)->GetIfIndex (), this);
+      Ptr<PeerManagementProtocolMac> plugin = Create<PeerManagementProtocolMac> ((*i)->GetIfIndex (), Ptr<PeerManagementProtocol> (this));
       mac->InstallPlugin (plugin);
       m_plugins[(*i)->GetIfIndex ()] = plugin;
       PeerLinksOnInterface newmap;
@@ -138,7 +138,7 @@ PeerManagementProtocol::Install (Ptr<MeshPointDevice> mp)
     }
   // Mesh point aggregates all installed protocols
   m_address = Mac48Address::ConvertFrom (mp->GetAddress ());
-  mp->AggregateObject (this);
+  mp->AggregateObject (Ptr<PeerManagementProtocol> (this));
   return true;
 }
 
@@ -194,7 +194,7 @@ PeerManagementProtocol::ReceiveBeacon (uint32_t interface, Mac48Address peerAddr
   peerLink->SetBeaconInformation (Simulator::Now (), beaconInterval);
   if (GetBeaconCollisionAvoidance ())
     {
-      peerLink->SetBeaconTimingElement (*PeekPointer (timingElement));
+      peerLink->SetBeaconTimingElement (*timingElement.get ());
     }
 }
 
@@ -498,10 +498,10 @@ PeerManagementProtocol::PeerLinkStatus (uint32_t interface, Mac48Address peerAdd
 {
   PeerManagementProtocolMacMap::iterator plugin = m_plugins.find (interface);
   NS_ASSERT (plugin != m_plugins.end ());
-  NS_LOG_DEBUG ("Link between me:" << m_address << " my interface:" 
+  NS_LOG_DEBUG ("Link between me:" << m_address << " my interface:"
                     << plugin->second->GetAddress ()
                     << " and peer mesh point:" << peerMeshPointAddress << " and its interface:" << peerAddress
-                    << ", at my interface ID:" << interface << ". State movement:" << PeerLink::PeerStateNames[ostate] 
+                    << ", at my interface ID:" << interface << ". State movement:" << PeerLink::PeerStateNames[ostate]
                     << " -> " << PeerLink::PeerStateNames[nstate]);
   if ((nstate == PeerLink::ESTAB) && (ostate != PeerLink::ESTAB))
     {

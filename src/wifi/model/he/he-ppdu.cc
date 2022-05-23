@@ -166,7 +166,7 @@ HePpdu::GetTxDuration (void) const
 Ptr<WifiPpdu>
 HePpdu::Copy (void) const
 {
-  return ns3::Copy (Ptr (this));
+  return ns3::Copy (Ptr<const HePpdu> (this));
 }
 
 WifiPpduType

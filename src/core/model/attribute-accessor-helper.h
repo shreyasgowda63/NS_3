@@ -298,7 +298,7 @@ DoMakeAccessorHelperOne (U T::*memberVariable)
 
     U T::*m_memberVariable;  // Address of the class data member.
   };
-  return Ptr<const AttributeAccessor> (new MemberVariable (memberVariable), false);
+  return Ptr<const AttributeAccessor> (new MemberVariable (memberVariable));
 }
 
 
@@ -352,7 +352,7 @@ DoMakeAccessorHelperOne (U (T::*getter)(void) const)
     }
     U (T::*m_getter)(void) const;  // The class get functor method pointer.
   };
-  return Ptr<const AttributeAccessor> (new MemberMethod (getter), false);
+  return Ptr<const AttributeAccessor> (new MemberMethod (getter));
 }
 
 
@@ -413,7 +413,7 @@ DoMakeAccessorHelperOne (void (T::*setter)(U))
     }
     void (T::*m_setter)(U);  // The class set method pointer, returning void.
   };
-  return Ptr<const AttributeAccessor> (new MemberMethod (setter), false);
+  return Ptr<const AttributeAccessor> (new MemberMethod (setter));
 }
 
 
@@ -487,7 +487,7 @@ DoMakeAccessorHelperTwo (void (T::*setter)(U),
     void (T::*m_setter)(U);        // The class set method pointer, returning void.
     V (T::*m_getter)(void) const;  // The class get functor method pointer.
   };
-  return Ptr<const AttributeAccessor> (new MemberMethod (setter, getter), false);
+  return Ptr<const AttributeAccessor> (new MemberMethod (setter, getter));
 }
 
 
@@ -575,7 +575,7 @@ DoMakeAccessorHelperTwo (bool (T::*setter)(U),
     bool (T::*m_setter)(U);        // The class set method pointer, returning bool.
     V (T::*m_getter)(void) const;  // The class get functor method pointer.
   };
-  return Ptr<const AttributeAccessor> (new MemberMethod (setter, getter), false);
+  return Ptr<const AttributeAccessor> (new MemberMethod (setter, getter));
 }
 
 

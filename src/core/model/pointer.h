@@ -140,7 +140,7 @@ class PointerChecker : public ns3::PointerChecker
       {
         return true;
       }
-    T *ptr = dynamic_cast<T*> (PeekPointer (value->GetObject ()));
+    T *ptr = dynamic_cast<T*> (value->GetObject ().get ());
     if (ptr == 0)
       {
         return false;
@@ -200,8 +200,7 @@ template <typename T>
 Ptr<T>
 PointerValue::Get (void) const
 {
-  T *v = dynamic_cast<T *> (PeekPointer (m_value));
-  return v;
+  return std::dynamic_pointer_cast<T> (m_value);
 }
 
 template <typename T>
@@ -214,7 +213,7 @@ template <typename T>
 bool
 PointerValue::GetAccessor (Ptr<T> &v) const
 {
-  Ptr<T> ptr = dynamic_cast<T*> (PeekPointer (m_value));
+  Ptr<T> ptr = std::dynamic_pointer_cast<T> (m_value);
   if (ptr == 0)
     {
       return false;

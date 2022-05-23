@@ -1386,7 +1386,7 @@ LteUeRrc::ApplyRadioResourceConfigDedicatedSecondaryCarrier (LteRrcSap::NonCriti
       m_cphySapProvider.at (ccId)->SetSrsConfigurationIndex (srsIndex);
     }
 
-  m_sCarrierConfiguredTrace (this, m_sCellToAddModList);
+  m_sCarrierConfiguredTrace (Ptr<LteUeRrc> (this), m_sCellToAddModList);
 }
 
 void

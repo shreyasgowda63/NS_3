@@ -572,7 +572,7 @@ public:
   virtual bool IsEqual (Ptr<const CallbackImplBase> other) const
   {
     FunctorCallbackImpl<T,R,T1,T2,T3,T4,T5,T6,T7,T8,T9> const *otherDerived =
-      dynamic_cast<FunctorCallbackImpl<T,R,T1,T2,T3,T4,T5,T6,T7,T8,T9> const *> (PeekPointer (other));
+      dynamic_cast<FunctorCallbackImpl<T,R,T1,T2,T3,T4,T5,T6,T7,T8,T9> const *> (other.get ());
     if (otherDerived == 0)
       {
         return false;
@@ -736,7 +736,7 @@ public:
   virtual bool IsEqual (Ptr<const CallbackImplBase> other) const
   {
     MemPtrCallbackImpl<OBJ_PTR,MEM_PTR,R,T1,T2,T3,T4,T5,T6,T7,T8,T9> const *otherDerived =
-      dynamic_cast<MemPtrCallbackImpl<OBJ_PTR,MEM_PTR,R,T1,T2,T3,T4,T5,T6,T7,T8,T9> const *> (PeekPointer (other));
+      dynamic_cast<MemPtrCallbackImpl<OBJ_PTR,MEM_PTR,R,T1,T2,T3,T4,T5,T6,T7,T8,T9> const *> (other.get ());
     if (otherDerived == 0)
       {
         return false;
@@ -890,7 +890,7 @@ public:
   virtual bool IsEqual (Ptr<const CallbackImplBase> other) const
   {
     BoundFunctorCallbackImpl<T,R,TX,T1,T2,T3,T4,T5,T6,T7,T8> const *otherDerived =
-      dynamic_cast<BoundFunctorCallbackImpl<T,R,TX,T1,T2,T3,T4,T5,T6,T7,T8> const *> (PeekPointer (other));
+      dynamic_cast<BoundFunctorCallbackImpl<T,R,TX,T1,T2,T3,T4,T5,T6,T7,T8> const *> (other.get ());
     if (otherDerived == 0)
       {
         return false;
@@ -1033,7 +1033,7 @@ public:
   virtual bool IsEqual (Ptr<const CallbackImplBase> other) const
   {
     TwoBoundFunctorCallbackImpl<T,R,TX1,TX2,T1,T2,T3,T4,T5,T6,T7> const *otherDerived =
-      dynamic_cast<TwoBoundFunctorCallbackImpl<T,R,TX1,TX2,T1,T2,T3,T4,T5,T6,T7> const *> (PeekPointer (other));
+      dynamic_cast<TwoBoundFunctorCallbackImpl<T,R,TX1,TX2,T1,T2,T3,T4,T5,T6,T7> const *> (other.get ());
     if (otherDerived == 0)
       {
         return false;
@@ -1167,7 +1167,7 @@ public:
   virtual bool IsEqual (Ptr<const CallbackImplBase> other) const
   {
     ThreeBoundFunctorCallbackImpl<T,R,TX1,TX2,TX3,T1,T2,T3,T4,T5,T6> const *otherDerived =
-      dynamic_cast<ThreeBoundFunctorCallbackImpl<T,R,TX1,TX2,TX3,T1,T2,T3,T4,T5,T6> const *> (PeekPointer (other));
+      dynamic_cast<ThreeBoundFunctorCallbackImpl<T,R,TX1,TX2,TX3,T1,T2,T3,T4,T5,T6> const *> (other.get ());
     if (otherDerived == 0)
       {
         return false;
@@ -1332,7 +1332,7 @@ public:
       Ptr<CallbackImpl<R,T2,T3,T4,T5,T6,T7,T8,T9,empty> > (
         new BoundFunctorCallbackImpl<
           Callback<R,T1,T2,T3,T4,T5,T6,T7,T8,T9>,
-          R,T1,T2,T3,T4,T5,T6,T7,T8,T9> (*this, a), false);
+          R,T1,T2,T3,T4,T5,T6,T7,T8,T9> (*this, a));
     return Callback<R,T2,T3,T4,T5,T6,T7,T8,T9> (impl);
   }
 
@@ -1352,7 +1352,7 @@ public:
       Ptr<CallbackImpl<R,T3,T4,T5,T6,T7,T8,T9,empty,empty> > (
         new TwoBoundFunctorCallbackImpl<
           Callback<R,T1,T2,T3,T4,T5,T6,T7,T8,T9>,
-          R,T1,T2,T3,T4,T5,T6,T7,T8,T9> (*this, a1, a2), false);
+          R,T1,T2,T3,T4,T5,T6,T7,T8,T9> (*this, a1, a2));
     return Callback<R,T3,T4,T5,T6,T7,T8,T9> (impl);
   }
 
@@ -1374,7 +1374,7 @@ public:
       Ptr<CallbackImpl<R,T4,T5,T6,T7,T8,T9,empty,empty,empty> > (
         new ThreeBoundFunctorCallbackImpl<
           Callback<R,T1,T2,T3,T4,T5,T6,T7,T8,T9>,
-          R,T1,T2,T3,T4,T5,T6,T7,T8,T9> (*this, a1, a2, a3), false);
+          R,T1,T2,T3,T4,T5,T6,T7,T8,T9> (*this, a1, a2, a3));
     return Callback<R,T4,T5,T6,T7,T8,T9> (impl);
   }
 
@@ -1548,7 +1548,7 @@ private:
   /** \return The pimpl pointer */
   CallbackImpl<R,T1,T2,T3,T4,T5,T6,T7,T8,T9> * DoPeekImpl (void) const
   {
-    return static_cast<CallbackImpl<R,T1,T2,T3,T4,T5,T6,T7,T8,T9> *> (PeekPointer (m_impl));
+    return static_cast<CallbackImpl<R,T1,T2,T3,T4,T5,T6,T7,T8,T9> *> (m_impl.get ());
   }
   /**
    * Check for compatible types
@@ -1559,7 +1559,7 @@ private:
   bool DoCheckType (Ptr<const CallbackImplBase> other) const
   {
     if (other != 0
-        && dynamic_cast<const CallbackImpl<R,T1,T2,T3,T4,T5,T6,T7,T8,T9> *> (PeekPointer (other)) != 0)
+        && dynamic_cast<const CallbackImpl<R,T1,T2,T3,T4,T5,T6,T7,T8,T9> *> (other.get ()) != 0)
       {
         return true;
       }
@@ -1590,7 +1590,7 @@ private:
                              "expected=" << myTid);
         return false;
       }
-    m_impl = const_cast<CallbackImplBase *> (PeekPointer (other));
+    m_impl = std::const_pointer_cast<CallbackImplBase> (other);
     return true;
   }
 };

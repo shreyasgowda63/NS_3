@@ -311,7 +311,7 @@ int main (int argc, char *argv[])
                       TypeIdValue (TypeId::LookupByName (recovery)));
   // Select TCP variant
   if (transport_prot.compare ("ns3::TcpWestwoodPlus") == 0)
-    { 
+    {
       // TcpWestwoodPlus is not an actual TypeId name; we need TcpWestwood here
       Config::SetDefault ("ns3::TcpL4Protocol::SocketType", TypeIdValue (TcpWestwood::GetTypeId ()));
       // the default protocol type in ns3::TcpWestwood is WESTWOOD
@@ -344,7 +344,7 @@ int main (int argc, char *argv[])
   PointToPointHelper UnReLink;
   UnReLink.SetDeviceAttribute ("DataRate", StringValue (bandwidth));
   UnReLink.SetChannelAttribute ("Delay", StringValue (delay));
-  UnReLink.SetDeviceAttribute ("ReceiveErrorModel", PointerValue (&error_model));
+  UnReLink.SetDeviceAttribute ("ReceiveErrorModel", PointerValue (Ptr<RateErrorModel> (&error_model)));
 
 
   InternetStackHelper stack;
@@ -436,9 +436,8 @@ int main (int argc, char *argv[])
   if (tracing)
     {
       std::ofstream ascii;
-      Ptr<OutputStreamWrapper> ascii_wrap;
       ascii.open ((prefix_file_name + "-ascii").c_str ());
-      ascii_wrap = new OutputStreamWrapper ((prefix_file_name + "-ascii").c_str (),
+      auto ascii_wrap = std::make_shared<OutputStreamWrapper> ((prefix_file_name + "-ascii").c_str (),
                                             std::ios::out);
       stack.EnableAsciiIpv4All (ascii_wrap);
 

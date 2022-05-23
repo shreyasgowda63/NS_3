@@ -344,7 +344,7 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
       m_retxEvent = Simulator::Schedule (m_rto, &TcpSocketCongestedRouter::ReTxTimeout, this);
     }
 
-  m_txTrace (p, header, this);
+  m_txTrace (p, header, Ptr<TcpSocketCongestedRouter> (this));
 
   if (m_endPoint)
     {
@@ -379,7 +379,7 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
 Ptr<TcpSocketBase>
 TcpSocketCongestedRouter::Fork (void)
 {
-  return CopyObject<TcpSocketCongestedRouter> (this);
+  return CopyObject<TcpSocketCongestedRouter> (Ptr<const TcpSocketCongestedRouter> (this));
 }
 
 

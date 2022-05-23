@@ -69,12 +69,12 @@ MockNetDevice::Receive (Ptr<Packet> packet, uint16_t protocol,
 
   if (packetType != NetDevice::PACKET_OTHERHOST)
     {
-      m_rxCallback (this, packet, protocol, from);
+      m_rxCallback (Ptr<MockNetDevice> (this), packet, protocol, from);
     }
 
   if (!m_promiscCallback.IsNull ())
     {
-      m_promiscCallback (this, packet, protocol, from, to, packetType);
+      m_promiscCallback (Ptr<MockNetDevice> (this), packet, protocol, from, to, packetType);
     }
 }
 
@@ -274,7 +274,7 @@ MockNetDevice::SendFrom (Ptr<Packet> p, const Address& source, const Address& de
 
   if (!m_sendCallback.IsNull ())
     {
-      m_sendCallback (this, p, protocolNumber, source, dest, NetDevice::PACKET_HOST);
+      m_sendCallback (Ptr<MockNetDevice> (this), p, protocolNumber, source, dest, NetDevice::PACKET_HOST);
     }
 
   return true;

@@ -51,7 +51,7 @@ WifiSpectrumSignalParameters::Copy ()
   //   return Copy<WifiSpectrumSignalParameters> (this);
   // but it causes a double creation of the object, hence it is less efficient.
   // The solution below is copied from the implementation of Copy<> (Ptr<>) in ptr.h
-  Ptr<WifiSpectrumSignalParameters> wssp (new WifiSpectrumSignalParameters (*this), false);
+  Ptr<WifiSpectrumSignalParameters> wssp (new WifiSpectrumSignalParameters (*this));
   return wssp;
 }
 

@@ -318,7 +318,7 @@ OcbWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
               NS_LOG_DEBUG ("cannot find VscCallback for OrganizationIdentifier=" << oi);
               return;
             }
-          bool succeed = cb (this, oi,packet, from);
+          bool succeed = cb (Ptr<OcbWifiMac> (this), oi,packet, from);
 
           if (!succeed)
             {
@@ -408,7 +408,7 @@ OcbWifiMac::ConfigureStandard (enum WifiStandard standard)
 
   // Setup FrameExchangeManager
   m_feManager = CreateObject<WaveFrameExchangeManager> ();
-  m_feManager->SetWifiMac (this);
+  m_feManager->SetWifiMac (Ptr<OcbWifiMac> (this));
   m_feManager->SetMacTxMiddle (m_txMiddle);
   m_feManager->SetMacRxMiddle (m_rxMiddle);
   m_feManager->SetAddress (GetAddress ());

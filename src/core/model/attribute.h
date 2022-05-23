@@ -284,7 +284,7 @@ public:
 static inline Ptr<const AttributeAccessor>
 MakeEmptyAttributeAccessor ()
 {
-  return Ptr<const AttributeAccessor> (new EmptyAttributeAccessor (), false);
+  return Ptr<const AttributeAccessor> (new EmptyAttributeAccessor ());
 }
 
 /**
@@ -316,7 +316,7 @@ public:
 static inline Ptr<AttributeChecker>
 MakeEmptyAttributeChecker ()
 {
-  return Ptr<AttributeChecker> (new EmptyAttributeChecker (), false);
+  return Ptr<AttributeChecker> (new EmptyAttributeChecker ());
 }
 
 } // namespace ns3

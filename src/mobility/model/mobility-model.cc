@@ -27,7 +27,7 @@ namespace ns3 {
 
 NS_OBJECT_ENSURE_REGISTERED (MobilityModel);
 
-TypeId 
+TypeId
 MobilityModel::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::MobilityModel")
@@ -44,7 +44,7 @@ MobilityModel::GetTypeId (void)
                    VectorValue (Vector (0.0, 0.0, 0.0)), // ignored initial value.
                    MakeVectorAccessor (&MobilityModel::GetVelocity),
                    MakeVectorChecker ())
-    .AddTraceSource ("CourseChange", 
+    .AddTraceSource ("CourseChange",
                      "The value of the position and/or velocity vector changed",
                      MakeTraceSourceAccessor (&MobilityModel::m_courseChangeTrace),
                      "ns3::MobilityModel::TracedCallback")
@@ -84,13 +84,13 @@ MobilityModel::GetVelocity (void) const
   return DoGetVelocity ();
 }
 
-void 
+void
 MobilityModel::SetPosition (const Vector &position)
 {
   DoSetPosition (position);
 }
 
-double 
+double
 MobilityModel::GetDistanceFrom (Ptr<const MobilityModel> other) const
 {
   Vector oPosition = other->DoGetPosition ();
@@ -107,7 +107,7 @@ MobilityModel::GetRelativeSpeed (Ptr<const MobilityModel> other) const
 void
 MobilityModel::NotifyCourseChange (void) const
 {
-  m_courseChangeTrace (this);
+  m_courseChangeTrace (Ptr<const MobilityModel> (this));
 }
 
 int64_t

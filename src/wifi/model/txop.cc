@@ -123,7 +123,7 @@ Txop::SetChannelAccessManager (const Ptr<ChannelAccessManager> manager)
 {
   NS_LOG_FUNCTION (this << manager);
   m_channelAccessManager = manager;
-  m_channelAccessManager->Add (this);
+  m_channelAccessManager->Add (Ptr<Txop> (this));
 }
 
 void Txop::SetTxMiddle (const Ptr<MacTxMiddle> txMiddle)
@@ -297,7 +297,7 @@ Txop::Queue (Ptr<Packet> packet, const WifiMacHeader &hdr)
   // remove the priority tag attached, if any
   SocketPriorityTag priorityTag;
   packet->RemovePacketTag (priorityTag);
-  if (m_channelAccessManager->NeedBackoffUponAccess (this))
+  if (m_channelAccessManager->NeedBackoffUponAccess (Ptr<Txop> (this)))
     {
       GenerateBackoff ();
     }
@@ -319,7 +319,7 @@ Txop::StartAccessIfNeeded (void)
   NS_LOG_FUNCTION (this);
   if (HasFramesToTransmit () && m_access == NOT_REQUESTED)
     {
-      m_channelAccessManager->RequestAccess (this);
+      m_channelAccessManager->RequestAccess (Ptr<Txop> (this));
     }
 }
 
@@ -368,7 +368,7 @@ Txop::RequestAccess (void)
 {
   if (m_access == NOT_REQUESTED)
     {
-      m_channelAccessManager->RequestAccess (this);
+      m_channelAccessManager->RequestAccess (Ptr<Txop> (this));
     }
 }
 

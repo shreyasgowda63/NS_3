@@ -103,7 +103,7 @@ Ptr<const AttributeChecker> MakeUintegerChecker (uint64_t min, uint64_t max, std
     uint64_t m_maxValue;
     std::string m_name;
   } *checker = new Checker (min, max, name);
-  return Ptr<const AttributeChecker> (checker, false);
+  return Ptr<const AttributeChecker> (checker);
 }
 
 } // namespace internal

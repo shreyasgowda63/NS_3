@@ -77,7 +77,7 @@ EventImpl *
 EventId::PeekEventImpl (void) const
 {
   NS_LOG_FUNCTION (this);
-  return PeekPointer (m_eventImpl);
+  return m_eventImpl.get ();
 }
 uint64_t
 EventId::GetTs (void) const

@@ -33,9 +33,9 @@
 namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("FlameProtocol");
-  
+
 namespace flame {
-  
+
 //-----------------------------------------------------------------------------
 // FlameTag
 //-----------------------------------------------------------------------------
@@ -311,14 +311,14 @@ FlameProtocol::Install (Ptr<MeshPointDevice> mp)
           return false;
         }
       // Installing plugins:
-      Ptr<FlameProtocolMac> flameMac = Create<FlameProtocolMac> (this);
+      Ptr<FlameProtocolMac> flameMac = Create<FlameProtocolMac> (Ptr<FlameProtocol> (this));
       m_interfaces[wifiNetDev->GetIfIndex ()] = flameMac;
       mac->SetBeaconGeneration (false);
       mac->InstallPlugin (flameMac);
     }
-  mp->SetRoutingProtocol (this);
+  mp->SetRoutingProtocol (Ptr<FlameProtocol> (this));
   // Mesh point aggregates all installed protocols
-  mp->AggregateObject (this);
+  mp->AggregateObject (Ptr<FlameProtocol> (this));
   m_address = Mac48Address::ConvertFrom (mp->GetAddress ()); //* address;
   return true;
 }

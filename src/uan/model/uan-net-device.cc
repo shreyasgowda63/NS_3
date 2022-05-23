@@ -181,7 +181,7 @@ UanNetDevice::SetChannel (Ptr<UanChannel> channel)
       if (m_trans != 0)
         {
 
-          m_channel->AddDevice (this, m_trans);
+          m_channel->AddDevice (Ptr<UanNetDevice> (this), m_trans);
           NS_LOG_DEBUG ("Added self to channel device list");
           m_trans->SetChannel (m_channel);
           NS_LOG_DEBUG ("Set Transducer channel");
@@ -308,9 +308,9 @@ UanNetDevice::Send (Ptr<Packet> packet, const Address &dest, uint16_t protocolNu
 }
 
 bool
-UanNetDevice::SendFrom (Ptr<Packet> packet, 
-                        [[maybe_unused]] const Address& source, 
-                        [[maybe_unused]] const Address& dest, 
+UanNetDevice::SendFrom (Ptr<Packet> packet,
+                        [[maybe_unused]] const Address& source,
+                        [[maybe_unused]] const Address& dest,
                         [[maybe_unused]] uint16_t protocolNumber)
 {
   // Not yet implemented
@@ -346,7 +346,7 @@ UanNetDevice::ForwardUp (Ptr<Packet> pkt, uint16_t protocolNumber, const Mac8Add
 {
   NS_LOG_DEBUG ("Forwarding packet up to application");
   m_rxLogger (pkt, src);
-  m_forwardUp (this, pkt, protocolNumber, src);
+  m_forwardUp (Ptr<UanNetDevice> (this), pkt, protocolNumber, src);
 
 }
 
@@ -371,7 +371,7 @@ UanNetDevice::SetTransducer (Ptr<UanTransducer> trans)
 
       if (m_channel != 0)
         {
-          m_channel->AddDevice (this, m_trans);
+          m_channel->AddDevice (Ptr<UanNetDevice> (this), m_trans);
           m_trans->SetChannel (m_channel);
           NS_LOG_DEBUG ("Added self to channel device list");
         }

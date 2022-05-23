@@ -623,7 +623,7 @@ QosFrameExchangeManager::PreProcessFrame (Ptr<const WifiPsdu> psdu, const WifiTx
   // APs store buffer size report of associated stations
   if (m_mac->GetTypeOfStation () == AP && psdu->GetAddr1 () == m_self)
     {
-      for (const auto& mpdu : *PeekPointer (psdu))
+      for (const auto& mpdu : *psdu.get ())
         {
           const WifiMacHeader& hdr = mpdu->GetHeader ();
 

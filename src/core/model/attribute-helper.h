@@ -139,7 +139,7 @@ MakeSimpleAttributeChecker (std::string name, std::string underlying)
   } *checker = new SimpleAttributeChecker ();
   checker->m_type = name;
   checker->m_underlying = underlying;
-  return Ptr<AttributeChecker> (checker, false);
+  return Ptr<AttributeChecker> (checker);
 }
 
 }

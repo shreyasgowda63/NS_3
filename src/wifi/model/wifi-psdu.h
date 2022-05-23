@@ -37,7 +37,7 @@ class Packet;
  * WifiPsdu stores an MPDU, S-MPDU or A-MPDU, by keeping header(s) and
  * payload(s) separate for each constituent MPDU.
  */
-class WifiPsdu : public SimpleRefCount<WifiPsdu>
+class WifiPsdu
 {
 public:
   /**

@@ -67,7 +67,7 @@ TcpSocketHalfAck::GetTypeId (void)
 Ptr<TcpSocketBase>
 TcpSocketHalfAck::Fork (void)
 {
-  return CopyObject<TcpSocketHalfAck> (this);
+  return CopyObject<TcpSocketHalfAck> (Ptr<const TcpSocketHalfAck> (this));
 }
 
 void

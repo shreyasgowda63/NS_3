@@ -66,7 +66,7 @@ AttributeChecker::CreateValidValue (const AttributeValue &value) const
     }
   // attempt to convert back to value.
   Ptr<AttributeValue> v = Create ();
-  bool ok = v->DeserializeFromString (str->Get (), this);
+  bool ok = v->DeserializeFromString (str->Get (), Ptr<const AttributeChecker> (this));
   if (!ok)
     {
       return 0;
@@ -171,7 +171,7 @@ Ptr<AttributeValue>
 EmptyAttributeChecker::Create (void) const
 {
   static EmptyAttributeValue t;
-  return Ptr<AttributeValue> (&t, false);
+  return Ptr<AttributeValue> (&t);
 }
 
 bool

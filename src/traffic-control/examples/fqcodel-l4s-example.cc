@@ -446,7 +446,7 @@ static void
 PacketDequeue (std::ofstream* n0OfStream, std::ofstream* n1OfStream, Ptr<QueueDiscItem const> item)
 {
   Ptr<Packet> p = item->GetPacket ();
-  Ptr<const Ipv4QueueDiscItem> iqdi = Ptr<const Ipv4QueueDiscItem> (dynamic_cast<const Ipv4QueueDiscItem *> (PeekPointer (item)));
+  Ptr<const Ipv4QueueDiscItem> iqdi = std::dynamic_pointer_cast<const Ipv4QueueDiscItem> (item);
   Ipv4Address address = iqdi->GetHeader ().GetDestination ();
   Time qDelay = Simulator::Now () - item->GetTimeStamp ();
   if (address == "192.168.2.2")

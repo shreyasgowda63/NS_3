@@ -65,7 +65,7 @@ Object::AggregateIterator::Next (void)
   NS_LOG_FUNCTION (this);
   Object *object = m_object->m_aggregates->buffer[m_current];
   m_current++;
-  return object;
+  return Ptr<const Object> (object);
 }
 Object::AggregateIterator::AggregateIterator (Ptr<const Object> object)
   : m_object (object),
@@ -174,7 +174,7 @@ Object::DoGetObject (TypeId tid) const
           // then, update the sort
           UpdateSortedArray (m_aggregates, i);
           // finally, return the match
-          return const_cast<Object *> (current);
+          return std::const_pointer_cast<Object> (Ptr<Object> (current));
         }
     }
   return 0;
@@ -257,7 +257,7 @@ Object::AggregateObject (Ptr<Object> o)
   NS_ASSERT (CheckLoose ());
   NS_ASSERT (o->CheckLoose ());
 
-  Object *other = PeekPointer (o);
+  Object *other = o.get ();
   // first create the new aggregate buffer.
   uint32_t total = m_aggregates->n + other->m_aggregates->n;
   struct Aggregates *aggregates =
@@ -331,7 +331,7 @@ Object::AggregateIterator
 Object::GetAggregateIterator (void) const
 {
   NS_LOG_FUNCTION (this);
-  return AggregateIterator (this);
+  return AggregateIterator (Ptr<const Object> (this));
 }
 
 void

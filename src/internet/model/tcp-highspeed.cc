@@ -60,7 +60,7 @@ TcpHighSpeed::~TcpHighSpeed (void)
 Ptr<TcpCongestionOps>
 TcpHighSpeed::Fork (void)
 {
-  return CopyObject<TcpHighSpeed> (this);
+  return CopyObject<TcpHighSpeed> (Ptr<TcpHighSpeed> (this));
 }
 
 /**

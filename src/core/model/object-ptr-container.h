@@ -277,7 +277,7 @@ MakeObjectPtrContainerAccessor (Ptr<U> (T::*get)(INDEX) const,
   } *spec = new MemberGetters ();
   spec->m_get = get;
   spec->m_getN = getN;
-  return Ptr<const AttributeAccessor> (spec, false);
+  return Ptr<const AttributeAccessor> (spec);
 }
 
 template <typename T, typename U, typename INDEX>

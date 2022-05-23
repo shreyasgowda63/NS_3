@@ -276,7 +276,7 @@ TcpBic::GetSsThresh (Ptr<const TcpSocketState> tcb, uint32_t bytesInFlight)
 Ptr<TcpCongestionOps>
 TcpBic::Fork (void)
 {
-  return CopyObject<TcpBic> (this);
+  return CopyObject<TcpBic> (Ptr<const TcpBic> (this));
 }
 
 } // namespace ns3

@@ -196,11 +196,11 @@ TcpVenoTest::DoRun ()
       // Our calculation of cwnd
       if (cntRtt <= 2)
         {
-          NewReno_IncreaseWindow (&state, 1);
+          NewReno_IncreaseWindow (Ptr<TcpSocketState> (&state), 1);
         }
       else
         {
-          AdditiveIncrease (&state, diff, beta);
+          AdditiveIncrease (Ptr<TcpSocketState> (&state), diff, beta);
         }
 
       NS_TEST_ASSERT_MSG_EQ (m_state->m_cWnd.Get (), state.m_cWnd.Get (),

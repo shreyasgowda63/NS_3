@@ -240,7 +240,7 @@ NetDeviceQueueInterface::NotifyNewAggregate (void)
   // Notify the NetDeviceQueue objects that an object was aggregated
   for (auto& tx : m_txQueuesVector)
     {
-      tx->NotifyAggregatedObject (this);
+      tx->NotifyAggregatedObject (Ptr<NetDeviceQueueInterface> (this));
     }
   Object::NotifyNewAggregate ();
 }

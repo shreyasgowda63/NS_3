@@ -196,7 +196,7 @@ private:
   std::map<uint16_t, RuBand> m_ruBands;  /**< For each channel width, store all the distinct spectrum
                                               bands associated with every RU in a channel of that width */
   bool m_disableWifiReception;                              //!< forces this PHY to fail to sync on any signal
-  TracedCallback<bool, uint32_t, double, Time> m_signalCb;  //!< Signal callback
+  TracedCallback<Ptr<WifiSpectrumSignalParameters>, uint32_t, double, Time> m_signalCb;  //!< Signal callback
 
   double m_txMaskInnerBandMinimumRejection; //!< The minimum rejection (in dBr) for the inner band of the transmit spectrum mask
   double m_txMaskOuterBandMinimumRejection; //!< The minimum rejection (in dBr) for the outer band of the transmit spectrum mask

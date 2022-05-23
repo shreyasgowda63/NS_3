@@ -328,13 +328,13 @@ NetDeviceQueue::ConnectQueueTraces (Ptr<QueueType> queue)
 
   queue->TraceConnectWithoutContext ("Enqueue",
                                      MakeCallback (&NetDeviceQueue::PacketEnqueued<QueueType>, this)
-                                     .Bind (PeekPointer (queue)));
+                                     .Bind (queue.get ()));
   queue->TraceConnectWithoutContext ("Dequeue",
                                      MakeCallback (&NetDeviceQueue::PacketDequeued<QueueType>, this)
-                                     .Bind (PeekPointer (queue)));
+                                     .Bind (queue.get ()));
   queue->TraceConnectWithoutContext ("DropBeforeEnqueue",
                                      MakeCallback (&NetDeviceQueue::PacketDiscarded<QueueType>, this)
-                                     .Bind (PeekPointer (queue)));
+                                     .Bind (queue.get ()));
 }
 
 template <typename QueueType>

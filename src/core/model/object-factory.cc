@@ -104,7 +104,7 @@ ObjectFactory::Create (void) const
   NS_ASSERT (derived != 0);
   derived->SetTypeId (m_tid);
   derived->Construct (m_parameters);
-  Ptr<Object> object = Ptr<Object> (derived, false);
+  Ptr<Object> object (derived);
   return object;
 }
 

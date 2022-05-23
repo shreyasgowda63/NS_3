@@ -718,7 +718,7 @@ HtFrameExchangeManager::SendPsduWithProtection (Ptr<WifiPsdu> psdu, WifiTxParame
   // they are not put back in a queue if the RTS/CTS exchange fails
   if (m_txParams.m_protection->method != WifiProtection::NONE)
     {
-      for (const auto& mpdu : *PeekPointer (m_psdu))
+      for (const auto& mpdu : *m_psdu.get ())
         {
           NS_ASSERT (mpdu->GetHeader ().IsCtl () || mpdu->IsQueued ());
         }
@@ -857,7 +857,7 @@ HtFrameExchangeManager::NotifyTxToEdca (Ptr<const WifiPsdu> psdu) const
   // use an array to avoid computing the queue size for every MPDU in the PSDU
   std::array<std::optional<uint8_t>, 8> queueSizeForTid;
 
-  for (const auto& mpdu : *PeekPointer (psdu))
+  for (const auto& mpdu : *psdu.get ())
     {
       WifiMacHeader& hdr = mpdu->GetHeader ();
 
@@ -892,7 +892,7 @@ HtFrameExchangeManager::DequeuePsdu (Ptr<const WifiPsdu> psdu)
 {
   NS_LOG_DEBUG (this << psdu);
 
-  for (const auto& mpdu : *PeekPointer (psdu))
+  for (const auto& mpdu : *psdu.get ())
     {
       DequeueMpdu (mpdu);
     }
@@ -1195,7 +1195,7 @@ HtFrameExchangeManager::MissedBlockAck (Ptr<WifiPsdu> psdu, const WifiTxVector& 
         {
           NS_LOG_DEBUG ("Missed Block Ack, do not retransmit the data frames");
           m_mac->GetWifiRemoteStationManager ()->ReportFinalDataFailed (*psdu->begin ());
-          for (const auto& mpdu : *PeekPointer (psdu))
+          for (const auto& mpdu : *psdu.get ())
             {
               NotifyPacketDiscarded (mpdu);
               DequeueMpdu (mpdu);

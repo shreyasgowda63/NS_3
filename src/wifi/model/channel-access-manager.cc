@@ -167,7 +167,7 @@ ChannelAccessManager::SetupFrameExchangeManager (Ptr<FrameExchangeManager> feMan
 {
   NS_LOG_FUNCTION (this << feManager);
   m_feManager = feManager;
-  m_feManager->SetChannelAccessManager (this);
+  m_feManager->SetChannelAccessManager (Ptr<ChannelAccessManager> (this));
 }
 
 Time

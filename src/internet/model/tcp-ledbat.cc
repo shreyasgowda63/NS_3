@@ -135,7 +135,7 @@ TcpLedbat::~TcpLedbat (void)
 Ptr<TcpCongestionOps>
 TcpLedbat::Fork (void)
 {
-  return CopyObject<TcpLedbat> (this);
+  return CopyObject<TcpLedbat> (Ptr<const TcpLedbat> (this));
 }
 
 std::string
