@@ -31,6 +31,7 @@ NS_LOG_COMPONENT_DEFINE ("TcpBbr");
 NS_OBJECT_ENSURE_REGISTERED (TcpBbr);
 
 const double TcpBbr::PACING_GAIN_CYCLE [] = {5.0 / 4, 3.0 / 4, 1, 1, 1, 1, 1, 1};
+uint8_t  bbr_pacing_margin = 1;
 
 TypeId
 TcpBbr::GetTypeId (void)
@@ -184,7 +185,7 @@ TcpBbr::InitPacingRate (Ptr<TcpSocketState> tcb)
     }
   
   DataRate nominalBandwidth (tcb->m_cWnd * 8 / rtt.GetSeconds ());
-  tcb->m_pacingRate = DataRate (m_pacingGain * nominalBandwidth.GetBitRate ());
+  tcb->m_pacingRate = DataRate (((m_pacingGain * nominalBandwidth.GetBitRate ()) / 100) * (100 - bbr_pacing_margin));
   m_maxBwFilter = MaxBandwidthFilter_t (m_bandwidthWindowLength,
                                         DataRate (tcb->m_cWnd * 8 / rtt.GetSeconds ()),
                                         0);
@@ -217,9 +218,9 @@ void
 TcpBbr::SetPacingRate (Ptr<TcpSocketState> tcb, double gain)
 {
   NS_LOG_FUNCTION (this << tcb << gain);
-  DataRate rate (gain * m_maxBwFilter.GetBest ().GetBitRate ());
+  DataRate rate (((gain * m_maxBwFilter.GetBest ().GetBitRate ()) / 100) * (100 - bbr_pacing_margin));
   rate = std::min (rate, tcb->m_maxPacingRate);
-  
+
   if (!m_hasSeenRtt && tcb->m_minRtt != Time::Max ())
     {
       InitPacingRate (tcb);
