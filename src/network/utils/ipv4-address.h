@@ -123,6 +123,11 @@ public:
     */
   bool IsLocalMulticast (void) const;
   /**
+   * \remark This method is named IsGlobalUnicast after its IPv6 alternative.
+   * \return true only if this address is publicly reachable unicast address.
+   */
+  bool IsGlobalUnicast (void) const;
+  /**
    * \brief Combine this address with a network mask
    *
    * This method returns an IPv4 address that is this address combined

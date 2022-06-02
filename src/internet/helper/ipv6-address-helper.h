@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "ns3/ipv6-address.h"
+#include "ns3/node-container.h"
 #include "ns3/net-device-container.h"
 #include "ipv6-interface-container.h"
 
@@ -194,6 +195,31 @@ public:
    * \return newly created Ipv6InterfaceContainer
    */
   Ipv6InterfaceContainer AssignWithoutOnLink (const NetDeviceContainer &c);
+
+ /**
+   * @brief Get the Node Pointer from the NodeContainer for a given
+   * Ipv6Address.
+   *
+   * If the IPv6Address is a Multicast, Localhost, Link-Local or Any
+   * address, then a nullptr is returned. This function will return
+   * a node pointer for valid global unicast IPv6 address.
+   *
+   * If NodeContainer parameter is not mentioned, it will find the
+   * Node Pointer from all the nodes present in the simulation.
+   *
+   * @remark This function is capable of scanning through all the nodes
+   * present in the simulation. Such kind of access is not present in
+   * real-world scenarios. However, this function can be used in
+   * simulation-specific protocols (designed for simulation purpose) and
+   * as a configuration helper to avoid taking Ipv6Address as well as
+   * the corresponding node pointer.
+   *
+   * @param addr Ipv6Address for which want to find Node pointer.
+   * @param c NodeContainer object where we search for the Node pointer.
+   *
+   * @returns Node pointer of the node with the given address.
+   */
+  static Ptr<Node> GetNode (const Ipv6Address &addr, const NodeContainer &c = NodeContainer::GetGlobal ());
 
 private:
   Ipv6Address m_network; //!< network address

@@ -314,5 +314,46 @@ Ipv6InterfaceContainer Ipv6AddressHelper::AssignWithoutOnLink (const NetDeviceCo
   return Assign (c, withConfiguration, onLink);
 }
 
+Ptr<Node>
+Ipv6AddressHelper::GetNode (const Ipv6Address &addr, const NodeContainer &c)
+{
+  if (!addr.IsGlobalUnicast ())
+    {
+      NS_LOG_WARN ("Couldn't find a node for the given IPv6 address" << addr);
+      return nullptr;
+    }
+
+  for (NodeContainer::Iterator it = c.Begin (); it != c.End (); ++it)
+    {
+      Ptr<Node> node = *it;
+      Ptr<Ipv6> ipv6 = node->GetObject<Ipv6> ();
+
+      if(ipv6)
+        {
+          for (uint32_t deviceId = 0; deviceId < node->GetNDevices (); deviceId++)
+            {
+              int32_t interfaceIndex = (ipv6)->GetInterfaceForDevice (node->GetDevice (deviceId));
+              if (interfaceIndex != -1)
+                {
+                  uint32_t numberOfAddresses = ipv6->GetNAddresses (interfaceIndex);
+                  for (uint32_t addressIndex = 0; addressIndex < numberOfAddresses; addressIndex++)
+                    {
+                      Ipv6InterfaceAddress ifAddr = ipv6->GetAddress (interfaceIndex, addressIndex);
+                      Ipv6Address address = ifAddr.GetAddress ();
+
+                      if (address == addr)
+                        {
+                          return node;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  NS_LOG_WARN ("Couldn't find a node for the given IPv6 address" << addr);
+  return nullptr;
+}
+
 } /* namespace ns3 */
 

@@ -186,6 +186,47 @@ Ipv4AddressHelper::Assign (const NetDeviceContainer &c)
   return retval;
 }
 
+Ptr<Node>
+Ipv4AddressHelper::GetNode (const Ipv4Address &addr, const NodeContainer &c)
+{
+  if (!addr.IsGlobalUnicast ())
+    {
+      NS_LOG_WARN ("Couldn't find a node for the given IPv4 address" << addr);
+      return nullptr;
+    }
+
+  for (NodeContainer::Iterator it = c.Begin (); it != c.End (); ++it)
+    {
+      Ptr<Node> node = *it;
+      Ptr<Ipv4> ipv4 = node->GetObject<Ipv4> ();
+
+      if(ipv4)
+        {
+          for (uint32_t deviceId = 0; deviceId < node->GetNDevices (); deviceId++)
+            {
+              int32_t interfaceIndex = (ipv4)->GetInterfaceForDevice (node->GetDevice (deviceId));
+              if (interfaceIndex != -1)
+                {
+                  uint32_t numberOfAddresses = ipv4->GetNAddresses (interfaceIndex);
+                  for (uint32_t addressIndex = 0; addressIndex < numberOfAddresses; addressIndex++)
+                    {
+                      Ipv4InterfaceAddress ifAddr = ipv4->GetAddress (interfaceIndex, addressIndex);
+                      Ipv4Address address = ifAddr.GetAddress ();
+
+                      if (address == addr)
+                        {
+                          return node;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  NS_LOG_WARN ("Couldn't find a node for the given IPv4 address" << addr);
+  return nullptr;
+}
+
 const uint32_t N_BITS = 32; //!< number of bits in a IPv4 address
 
 uint32_t
