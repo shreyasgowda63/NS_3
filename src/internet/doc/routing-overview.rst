@@ -216,15 +216,51 @@ at time 5 seconds::
                        &Ipv4GlobalRoutingHelper::RecomputeRoutingTables);
 
 
-There are two attributes that govern the behavior. The first is
-Ipv4GlobalRouting::RandomEcmpRouting. If set to true, packets are randomly
-routed across equal-cost multipath routes. If set to false (default), only one
-route is consistently used. The second is
-Ipv4GlobalRouting::RespondToInterfaceEvents. If set to true, dynamically
+There are two attributes that govern the behavior. The first is Ipv4GlobalRouting::EcmpRoutingMode. 
+There are four route selection algorithms supported. 
+FixedRoute EcmpRoutingMode is specified when only one route is consistently used.
+When RandomEcmpRouting is selected, packets are randomly routed across equal-cost multipath routes. 
+For FlowBasedEcmpRouting, a hash function is performed over the packet header fields that identify a flow 
+(5-tuple, i.e., source IP, source port, destination IP, destination port, transport protocol type). 
+One of the N next hops is selected based on the modulo-N formula: 
+selected index = flow hash % N. It does not keep a record of flow states.
+Compared with per packet ECMP, flow based ECMP is more friendly to TCP since it avoids
+packet reordering, however, when large flows collide on the same path, it will 
+degrade the network performances severely.
+The last option is FlowletEcmpRouting. It provides an intermediate granularity between the packet level and the flow level.
+A flowlet is a burst of packets that is separated in time from other bursts by a sufficient gap — called the “flowlet timeout” ([Ref1]_).
+The implementation aligns with ([Ref1]_) and uses random route selection for each flowlet.
+An internal table is maintained which maps a flow signature to the last time point when a packet from the flowlet arrived.
+Notice that ([Ref1]_) uses a coarse grained representation for the time point due to the practical hardware implementation reasons, 
+we instead directly record the time point as fine-grained double data type for simulation.
+If a new packet comes with the time difference (current arrival time minus the last seen arrival time) larger than the flowlet 
+timeout value (specified by Ipv4GlobalRouting::FlowletTimeout attribute), 
+then it is considered as the first packet of the new flowlet and updates the table with a randomly selected route index. 
+The same thing happens if the packet is the first packet from the flow. 
+If the time difference is smaller than the flowlet timeout value, the flowlet is considered active and the packet is 
+forwarded to the previous path recorded by the flowlet table. 
+Notice that if flowlet timeout value equals to zero, the behavior of flowlet switching would be the same as packet based ecmp 
+since each packet would be considered as a new flowlet and a random route is assigned for each packet.
+One could also specify the desired Ipv4GlobalRouting::Perturbation attribute (default 0) when using 
+FlowBasedEcmpRouting mode and FlowletEcmpRouting mode.
+Notice that flowlet switching is targeting at TCP flows to prevent packet reordering.
+Current implementation uses flowlet switching over non-TCP flows as well.
+One might want to extend the implementation and support more sophisticated route selection algorithms 
+for flowlet switching mentioned in ([Ref2]_), ([Ref3]_), ([Ref4]_).
+
+The second is Ipv4GlobalRouting::RespondToInterfaceEvents. If set to true, dynamically
 recompute the global routes upon Interface notification events (up/down, or
 add/remove address). If set to false (default), routing may break unless the
 user manually calls RecomputeRoutingTables() after such events. The default is
 set to false to preserve legacy |ns3| program behavior.
+
+References
+==========
+
+.. [Ref1] Vanini, Erico, et al. "Let it flow: Resilient asymmetric load balancing with flowlet switching." 14th {USENIX} Symposium on Networked Systems Design and Implementation ({NSDI} 17). 2017.
+.. [Ref2] Kandula, Srikanth, et al. "Dynamic load balancing without packet reordering." ACM SIGCOMM Computer Communication Review 37.2 (2007): 51-62.
+.. [Ref3] Sinha, Shan, Srikanth Kandula, and Dina Katabi. "Harnessing TCP’s burstiness with flowlet switching." Proc. 3rd ACM Workshop on Hot Topics in Networks (Hotnets-III). 2004.
+.. [Ref4] Alizadeh, Mohammad, et al. "CONGA: Distributed congestion-aware load balancing for datacenters." ACM SIGCOMM Computer Communication Review. Vol. 44. No. 4. ACM, 2014.
 
 Global Routing Implementation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
