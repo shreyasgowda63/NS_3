@@ -242,6 +242,26 @@ protected:
    */
   std::queue< std::pair<uint8_t *, ssize_t> > m_pendingQueue;
 
+  /**
+   * The net device mac address.
+   */
+  Mac48Address m_address;
+
+  /**
+   * Maximum number of packets that can be received and scheduled for read but not yet read.
+   */
+  uint32_t m_maxPendingReads;
+
+  /**
+   * Time to start spinning up the device
+   */
+  Time m_tStart;
+
+  /**
+   * Time to start tearing down the device
+   */
+  Time m_tStop;
+
 private:
   /**
    * Spin up the device
@@ -272,7 +292,7 @@ private:
   /**
    * Forward the frame to the appropriate callback for processing
    */
-  void ForwardUp (void);
+  virtual void ForwardUp (void);
 
   /**
    * Start Sending a Packet Down the Wire.
@@ -319,11 +339,6 @@ private:
   Ptr<FdReader> m_fdReader;
 
   /**
-   * The net device mac address.
-   */
-  Mac48Address m_address;
-
-  /**
    * The type of encapsulation of the received/transmitted frames.
    */
   EncapsulationMode m_encapMode;
@@ -350,21 +365,6 @@ private:
    * multicast.
    */
   bool m_isMulticast;
-
-  /**
-   * Maximum number of packets that can be received and scheduled for read but not yet read.
-   */
-  uint32_t m_maxPendingReads;
-
-  /**
-   * Time to start spinning up the device
-   */
-  Time m_tStart;
-
-  /**
-   * Time to start tearing down the device
-   */
-  Time m_tStop;
 
   /**
    * NetDevice start event

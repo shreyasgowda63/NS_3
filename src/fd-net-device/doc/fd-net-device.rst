@@ -18,10 +18,12 @@ The user has full freedom to define how external traffic is generated
 and |ns3| traffic is consumed. 
 
 Different mechanisms to associate a simulation to external traffic can 
-be provided through helper classes.  Two specific helpers are provided:
+be provided through helper classes.  Three specific helpers are provided:
 
 * EmuFdNetDeviceHelper (to associate the |ns3| device with a physical device
   in the host machine)
+* L3EmuFdNetDeviceHelper (to associate the |ns3| device with a GRE device on
+  the host machine and pull of layer 3 traffic)
 * TapFdNetDeviceHelper (to associate the ns-3 device with the file descriptor 
   from a tap device in the host machine)
 
@@ -203,6 +205,14 @@ socket file descriptor over the Unix socket that is passed to it as a parameter.
 The raw socket is passed as a control message (sometimes called ancillary data)
 of type SCM_RIGHTS.
 
+An alternative approach for integration is to use the ``L3Emu`` helper. This
+approach supports running the simulator in real-time, but it bypasses the need
+to perform layer 2 integration with the host as no layer 2 traffic will be sent
+from the host. Traffic still needs to be integrated with ns-3 (for example, it
+can be injected into a UDP socket to form an overlay over any ns-3 supported
+link type). Using this approach, it is often the case that checksum
+computations do not need to be enabled, which can help with performance when
+scaling up experiments that use ns-3 for emulation.
 
 Helpers
 =======
@@ -285,6 +295,62 @@ identify which physical device should be used to open the raw socket.
 ::
 
   EmuFdNetDeviceHelper emu;
+  emu.SetDeviceName (deviceName);
+  NetDeviceContainer devices = emu.Install (node);
+  Ptr<NetDevice> device = devices.Get (0);
+  device->SetAttribute ("Address", Mac48AddressValue (Mac48Address::Allocate ()));
+
+L3EmuFdNetDeviceHelper
+######################
+
+The L3EmuFdNetDeviceHelper creates a raw socket to an underlying GRE device
+that only accepts traffic at layer 3, and provides the socket descriptor to the
+FdNetDevice.  This allows the |ns3| simulation to read packets from and write
+packets to a GRE network device on the host.
+
+The emulation helper allows for transparently integrating a simulated |ns3|
+node with a set of applications running outside of |ns3|, where those
+applications can either live on a different host or in containers on the local
+host.
+
+.. sourcecode:: text
+
++---------------------------------------------------------------------------------------------------------------+
+|                                                     host                                                      |
++---------------------------------------------------------------------------------------------------------------+
+|  +----------------+            +---------------------------------------------+            +----------------+  |
+|  |     Container  |            |               ns-3 emulation                |            |    Container   |  |
+|  +----------------+            +---------------------------------------------+            +----------------+  |
+|  |   Application  |            |       ns-3 Node      |     ns-3 Node        |            |   Application  |  |
+|  | -------------- |            | +------+     +-----+ | +-----+     +------+ |            | -------------- |  |
+|  |       TCP      |     ---------| l3emu| --- | UDP | | | UDP | --- | l3emu|---------     |       TCP      |  |
+|  | -------------- |     |      | +------+     | --- | | | --- |     +------+ |      |     | -------------- |  |
+|  |       IP       |     |      |              | IP  | | | IP  |              |      |     |       IP       |  |
+|  | -------------- |     |      |              | --- | | | --- |              |      |     | -------------- |  |
+|  |    | gre  |    |     |      |              | net | | | net |              |      |     |    | gre  |    |  |
+|  |    --------    |  +------+  |              | dev | | | dev |              |  +------+  |    --------    |  |
+|  |    | veth |    |  | gre  |  |              +-----+ | +-----+              |  | gre  |  |    | veth |    |  |
+|  +----------------+  --------  +----------------------+----------------------+  --------  +----------------+  |
+|       | veth |       |  br  |  |                ||         ||                |  |  br  |       | veth |       |
+|       +------+       +------+  |              +---------------+              |  +------+       +------+       |
+|           |             |      |              | ns-3 channel  |              |      |             |           |
+|           |             |      |              +---------------+              |      |             |           |
+|           ---------------      +---------------------------------------------+      ---------------           |
++---------------------------------------------------------------------------------------------------------------+
+
+The helper only works if the underlying interface is up, but the interface does
+not need to be in promiscuous mode as layer 2 addresses are not presented to
+the |ns3| socket. Packets will be sent out over the device without a MAC
+address. The module still allows for setting a MAC address for each device, but
+that value is effectively not used within the traffic sent to or from the host.
+
+Before invoking the ``Install`` method, the correct device name must be configured
+on the helper using the ``SetDeviceName`` method. The device name is required to
+identify which device should be used to open the raw socket.
+
+::
+
+  L3EmuFdNetDeviceHelper emu;
   emu.SetDeviceName (deviceName);
   NetDeviceContainer devices = emu.Install (node);
   Ptr<NetDevice> device = devices.Get (0);
