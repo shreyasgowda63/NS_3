@@ -275,28 +275,28 @@ public:
    * \param item item to enqueue
    * \return True if the operation was successful; false otherwise
    */
-  virtual bool Enqueue (Ptr<Item> item) = 0;
+  bool Enqueue (Ptr<Item> item);
 
   /**
    * Remove an item from the Queue (each subclass defines the position),
    * counting it and tracing it as dequeued
    * \return 0 if the operation was not successful; the item otherwise.
    */
-  virtual Ptr<Item> Dequeue (void) = 0;
+  Ptr<Item> Dequeue (void);
 
   /**
    * Remove an item from the Queue (each subclass defines the position),
    * counting it and tracing it as both dequeued and dropped
    * \return 0 if the operation was not successful; the item otherwise.
    */
-  virtual Ptr<Item>  Remove (void) = 0;
+  Ptr<Item> Remove (void);
 
   /**
    * Get a copy of an item in the queue (each subclass defines the position)
    * without removing it
    * \return 0 if the operation was not successful; the item otherwise.
    */
-  virtual Ptr<const Item> Peek (void) const = 0;
+  Ptr<const Item> Peek (void) const;
 
   /**
    * Flush the queue by calling Remove() on each item enqueued.  Note that
@@ -310,112 +310,33 @@ public:
 
 protected:
 
-  /// Const iterator.
-  typedef typename std::list<Ptr<Item> >::const_iterator ConstIterator;
-  /// Iterator.
-  typedef typename std::list<Ptr<Item> >::iterator Iterator;
+  /**
+   * Place an item into the Queue (each subclass defines the position)
+   * \param item item to enqueue
+   * \return True if the operation was successful; false otherwise
+   */
+  virtual bool DoEnqueue (Ptr<Item> item) = 0;
 
   /**
-   * \brief Get a const iterator which refers to the first item in the queue.
-   *
-   * Subclasses can browse the items in the queue by using a const iterator
-   *
-   * \code
-   *   for (auto i = begin (); i != end (); ++i)
-   *     {
-   *       (*i)->method ();  // some const method of the Item class
-   *     }
-   * \endcode
-   *
-   * \returns a const iterator which refers to the first item in the queue.
+   * Remove an item from the Queue (each subclass defines the position),
+   * counting it and tracing it as dequeued
+   * \return 0 if the operation was not successful; the item otherwise.
    */
-  ConstIterator begin (void) const;
+  virtual Ptr<Item> DoDequeue (void) = 0;
 
   /**
-   * \brief Get an iterator which refers to the first item in the queue.
-   *
-   * Subclasses can browse the items in the queue by using an iterator
-   *
-   * \code
-   *   for (auto i = begin (); i != end (); ++i)
-   *     {
-   *       (*i)->method ();  // some method of the Item class
-   *     }
-   * \endcode
-   *
-   * \returns an iterator which refers to the first item in the queue.
+   * Remove an item from the Queue (each subclass defines the position),
+   * counting it and tracing it as both dequeued and dropped
+   * \return 0 if the operation was not successful; the item otherwise.
    */
-  Iterator begin (void);
+  virtual Ptr<Item> DoRemove (void) = 0;
 
   /**
-   * \brief Get a const iterator which indicates past-the-last item in the queue.
-   *
-   * Subclasses can browse the items in the queue by using a const iterator
-   *
-   * \code
-   *   for (auto i = begin (); i != end (); ++i)
-   *     {
-   *       (*i)->method ();  // some const method of the Item class
-   *     }
-   * \endcode
-   *
-   * \returns a const iterator which indicates past-the-last item in the queue.
+   * Get a copy of an item in the queue (each subclass defines the position)
+   * without removing it
+   * \return 0 if the operation was not successful; the item otherwise.
    */
-  ConstIterator end (void) const;
-
-  /**
-   * \brief Get an iterator which indicates past-the-last item in the queue.
-   *
-   * Subclasses can browse the items in the queue by using an iterator
-   *
-   * \code
-   *   for (auto i = begin (); i != end (); ++i)
-   *     {
-   *       (*i)->method ();  // some method of the Item class
-   *     }
-   * \endcode
-   *
-   * \returns an iterator which indicates past-the-last item in the queue.
-   */
-  Iterator end (void);
-
-  /**
-   * Push an item in the queue
-   * \param pos the position before which the item will be inserted
-   * \param item the item to enqueue
-   * \return true if success, false if the packet has been dropped.
-   */
-  bool DoEnqueue (ConstIterator pos, Ptr<Item> item);
-
-  /**
-   * Push an item in the queue
-   * \param pos the position before which the item will be inserted
-   * \param item the item to enqueue
-   * \param[out] ret an iterator pointing to the inserted value
-   * \return true if success, false if the packet has been dropped.
-   */
-  bool DoEnqueue (ConstIterator pos, Ptr<Item> item, Iterator& ret);
-
-  /**
-   * Pull the item to dequeue from the queue
-   * \param pos the position of the item to dequeue
-   * \return the item.
-   */
-  Ptr<Item> DoDequeue (ConstIterator pos);
-
-  /**
-   * Pull the item to drop from the queue
-   * \param pos the position of the item to remove
-   * \return the item.
-   */
-  Ptr<Item> DoRemove (ConstIterator pos);
-
-  /**
-   * Peek the front item in the queue
-   * \param pos the position of the item to peek
-   * \return the item.
-   */
-  Ptr<const Item> DoPeek (ConstIterator pos) const;
+  virtual Ptr<const Item> DoPeek (void) const = 0;
 
   /**
    * \brief Drop a packet before enqueue
@@ -440,7 +361,6 @@ protected:
   void DoDispose (void) override;
 
 private:
-  std::list<Ptr<Item> > m_packets;          //!< the items in the queue
   NS_LOG_TEMPLATE_DECLARE;                  //!< the log component
 
   /// Traced callback: fired when a packet is enqueued
@@ -500,15 +420,7 @@ Queue<Item>::~Queue ()
 
 template <typename Item>
 bool
-Queue<Item>::DoEnqueue (ConstIterator pos, Ptr<Item> item)
-{
-  Iterator ret;
-  return DoEnqueue (pos, item, ret);
-}
-
-template <typename Item>
-bool
-Queue<Item>::DoEnqueue (ConstIterator pos, Ptr<Item> item, Iterator& ret)
+Queue<Item>::Enqueue (Ptr<Item> item)
 {
   NS_LOG_FUNCTION (this << item);
 
@@ -519,7 +431,7 @@ Queue<Item>::DoEnqueue (ConstIterator pos, Ptr<Item> item, Iterator& ret)
       return false;
     }
 
-  ret = m_packets.insert (pos, item);
+  DoEnqueue (item); // return value is ignored, may want to revisit this...
 
   uint32_t size = item->GetSize ();
   m_nBytes += size;
@@ -536,7 +448,7 @@ Queue<Item>::DoEnqueue (ConstIterator pos, Ptr<Item> item, Iterator& ret)
 
 template <typename Item>
 Ptr<Item>
-Queue<Item>::DoDequeue (ConstIterator pos)
+Queue<Item>::Dequeue ()
 {
   NS_LOG_FUNCTION (this);
 
@@ -546,8 +458,7 @@ Queue<Item>::DoDequeue (ConstIterator pos)
       return 0;
     }
 
-  Ptr<Item> item = *pos;
-  m_packets.erase (pos);
+  Ptr<Item> item = DoDequeue ();
 
   if (item != 0)
     {
@@ -565,18 +476,11 @@ Queue<Item>::DoDequeue (ConstIterator pos)
 
 template <typename Item>
 Ptr<Item>
-Queue<Item>::DoRemove (ConstIterator pos)
+Queue<Item>::Remove ()
 {
   NS_LOG_FUNCTION (this);
 
-  if (m_nPackets.Get () == 0)
-    {
-      NS_LOG_LOGIC ("Queue empty");
-      return 0;
-    }
-
-  Ptr<Item> item = *pos;
-  m_packets.erase (pos);
+  Ptr<Item> item = DoRemove ();
 
   if (item != 0)
     {
@@ -596,6 +500,15 @@ Queue<Item>::DoRemove (ConstIterator pos)
 }
 
 template <typename Item>
+Ptr<const Item>
+Queue<Item>::Peek () const
+{
+  NS_LOG_FUNCTION (this);
+
+  return DoPeek ();
+}
+
+template <typename Item>
 void
 Queue<Item>::Flush (void)
 {
@@ -611,47 +524,8 @@ void
 Queue<Item>::DoDispose (void)
 {
   NS_LOG_FUNCTION (this);
-  m_packets.clear ();
+  //m_packets.clear ();
   Object::DoDispose ();
-}
-
-template <typename Item>
-Ptr<const Item>
-Queue<Item>::DoPeek (ConstIterator pos) const
-{
-  NS_LOG_FUNCTION (this);
-
-  if (m_nPackets.Get () == 0)
-    {
-      NS_LOG_LOGIC ("Queue empty");
-      return 0;
-    }
-
-  return *pos;
-}
-
-template <typename Item>
-typename Queue<Item>::ConstIterator Queue<Item>::begin (void) const
-{
-  return m_packets.cbegin ();
-}
-
-template <typename Item>
-typename Queue<Item>::Iterator Queue<Item>::begin (void)
-{
-  return m_packets.begin ();
-}
-
-template <typename Item>
-typename Queue<Item>::ConstIterator Queue<Item>::end (void) const
-{
-  return m_packets.cend ();
-}
-
-template <typename Item>
-typename Queue<Item>::Iterator Queue<Item>::end (void)
-{
-  return m_packets.end ();
 }
 
 template <typename Item>

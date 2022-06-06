@@ -46,18 +46,13 @@ public:
 
   virtual ~DropTailQueue ();
 
-  virtual bool Enqueue (Ptr<Item> item);
-  virtual Ptr<Item> Dequeue (void);
-  virtual Ptr<Item> Remove (void);
-  virtual Ptr<const Item> Peek (void) const;
-
 private:
-  using Queue<Item>::begin;
-  using Queue<Item>::end;
-  using Queue<Item>::DoEnqueue;
-  using Queue<Item>::DoDequeue;
-  using Queue<Item>::DoRemove;
-  using Queue<Item>::DoPeek;
+  std::list<Ptr<Item> > m_packets;          //!< the items in the queue
+
+  virtual bool DoEnqueue (Ptr<Item> item);
+  virtual Ptr<Item> DoDequeue (void);
+  virtual Ptr<Item> DoRemove (void);
+  virtual Ptr<const Item> DoPeek (void) const;
 
   NS_LOG_TEMPLATE_DECLARE;     //!< redefinition of the log component
 };
@@ -101,20 +96,22 @@ DropTailQueue<Item>::~DropTailQueue ()
 
 template <typename Item>
 bool
-DropTailQueue<Item>::Enqueue (Ptr<Item> item)
+DropTailQueue<Item>::DoEnqueue (Ptr<Item> item)
 {
   NS_LOG_FUNCTION (this << item);
 
-  return DoEnqueue (end (), item);
+  m_packets.push_back (item);
+  return true;
 }
 
 template <typename Item>
 Ptr<Item>
-DropTailQueue<Item>::Dequeue (void)
+DropTailQueue<Item>::DoDequeue (void)
 {
   NS_LOG_FUNCTION (this);
 
-  Ptr<Item> item = DoDequeue (begin ());
+  Ptr<Item> item = m_packets.front ();
+  m_packets.pop_front ();
 
   NS_LOG_LOGIC ("Popped " << item);
 
@@ -123,11 +120,12 @@ DropTailQueue<Item>::Dequeue (void)
 
 template <typename Item>
 Ptr<Item>
-DropTailQueue<Item>::Remove (void)
+DropTailQueue<Item>::DoRemove (void)
 {
   NS_LOG_FUNCTION (this);
 
-  Ptr<Item> item = DoRemove (begin ());
+  Ptr<Item> item = m_packets.front ();
+  m_packets.pop_front ();
 
   NS_LOG_LOGIC ("Removed " << item);
 
@@ -136,11 +134,11 @@ DropTailQueue<Item>::Remove (void)
 
 template <typename Item>
 Ptr<const Item>
-DropTailQueue<Item>::Peek (void) const
+DropTailQueue<Item>::DoPeek (void) const
 {
   NS_LOG_FUNCTION (this);
 
-  return DoPeek (begin ());
+  return m_packets.front ();
 }
 
 // The following explicit template instantiation declarations prevent all the
