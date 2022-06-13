@@ -1,6 +1,7 @@
 set(source_files
     helper/internet-stack-helper.cc
     helper/internet-trace-helper.cc
+    helper/ip-neighbor-helper.cc
     helper/ipv4-address-helper.cc
     helper/ipv4-global-routing-helper.cc
     helper/ipv4-interface-container.cc
@@ -132,6 +133,7 @@ set(header_files
     ${header_files}
     helper/internet-stack-helper.h
     helper/internet-trace-helper.h
+    helper/ip-neighbor-helper.h
     helper/ipv4-address-helper.h
     helper/ipv4-global-routing-helper.h
     helper/ipv4-interface-container.h

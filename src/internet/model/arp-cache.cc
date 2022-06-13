@@ -516,13 +516,8 @@ ArpCache::Entry::IsExpired (void) const
   NS_LOG_FUNCTION (this);
   Time timeout = GetTimeout ();
   Time delta = Simulator::Now () - m_lastSeen;
-<<<<<<< HEAD
-  NS_LOG_DEBUG ("delta=" << delta.GetSeconds () << "s");
-  if (delta > timeout)
-=======
   NS_LOG_DEBUG ("delta=" << delta.As (Time::S));
-  if (delta > timeout) 
->>>>>>> 328237974 (Change GetSeconds() to As(Time::S))
+  if (delta > timeout)
     {
       return true;
     }
