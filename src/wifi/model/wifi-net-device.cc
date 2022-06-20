@@ -25,6 +25,7 @@
 #include "ns3/node.h"
 #include "ns3/uinteger.h"
 #include "wifi-net-device.h"
+#include "wifi-net-device-state.h"
 #include "wifi-phy.h"
 #include "wifi-mac.h"
 #include "ns3/ht-configuration.h"
@@ -346,6 +347,22 @@ WifiNetDevice::Send (Ptr<Packet> packet, const Address& dest, uint16_t protocolN
   NS_LOG_FUNCTION (this << packet << dest << protocolNumber);
   NS_ASSERT (Mac48Address::IsMatchingType (dest));
 
+  Ptr<WifiNetDeviceState> netDevState = this->GetObject<WifiNetDeviceState> ();
+
+  if (netDevState)
+    {
+      if (!netDevState->IsUp ())
+        {
+          NS_LOG_WARN ("The Wifi Device is disabled from use. Packet must be dropped.");
+          m_mac->NotifyTxDrop (packet);
+          return false;
+        }
+    }
+  else
+    {
+      NS_LOG_WARN ("WifiNetDeviceState is not aggregated to this WifiNetDevice object.");
+    }
+
   Mac48Address realTo = Mac48Address::ConvertFrom (dest);
 
   LlcSnapHeader llc;
@@ -386,6 +403,35 @@ void
 WifiNetDevice::ForwardUp (Ptr<const Packet> packet, Mac48Address from, Mac48Address to)
 {
   NS_LOG_FUNCTION (this << packet << from << to);
+
+  Ptr<WifiNetDeviceState> netDevState = GetObject<WifiNetDeviceState> ();
+
+  if (netDevState)
+    {
+      if (!netDevState->IsUp ())
+        {
+          NS_LOG_WARN ("The Wifi Device is disabled from use. Packet must be dropped.");
+          m_mac->NotifyRxDrop (packet);
+          return;
+        }
+      else if (netDevState->GetOperationalState () != NetDeviceState::IF_OPER_UP)
+        {
+          NS_LOG_WARN ("The Wifi Device is UP but not RUNNING. Packet must be dropped.");
+          m_mac->NotifyRxDrop (packet);
+          return;
+        }
+    }
+  else
+    {
+      NS_LOG_WARN ("WifiNetDeviceState is not aggregated to this WifiNetDevice object.");
+      if (!IsLinkUp ())
+        {
+          NS_LOG_WARN ("The Wifi Device link is DOWN. Packet must be dropped.");
+          m_mac->NotifyRxDrop (packet);
+          return;
+        }
+    }
+
   LlcSnapHeader llc;
   NetDevice::PacketType type;
   if (to.IsBroadcast ())
@@ -428,14 +474,39 @@ void
 WifiNetDevice::LinkUp (void)
 {
   m_linkUp = true;
-  m_linkChanges ();
+
+  Ptr<WifiNetDeviceState> netDevState = this->GetObject <WifiNetDeviceState> ();
+
+  if (netDevState)
+    {
+      NS_ASSERT (netDevState->IsUp ());
+      NS_LOG_INFO ("OperationalStae of Wifi Device with MAC " << GetMac ()->GetInstanceTypeId () << " is set to " << NetDeviceState::IF_OPER_UP);
+      netDevState->SetOperationalState (NetDeviceState::IF_OPER_UP);
+    }
+  else
+    {
+      NS_LOG_WARN ("WifiNetDeviceState object not aggregated to WifiNetDevice.");
+      m_linkChanges ();
+    }
 }
 
 void
 WifiNetDevice::LinkDown (void)
 {
   m_linkUp = false;
-  m_linkChanges ();
+
+  Ptr<WifiNetDeviceState> netDevState = this->GetObject <WifiNetDeviceState> ();
+
+  if (netDevState)
+    {
+      NS_LOG_INFO ("OperationalStae of Wifi Device with MAC " << GetMac ()->GetInstanceTypeId () << " is set to " << NetDeviceState::IF_OPER_DOWN);
+      netDevState->SetOperationalState (NetDeviceState::IF_OPER_DOWN);
+    }
+  else
+    {
+      NS_LOG_WARN ("WifiNetDeviceState object not aggregated to WifiNetDevice.");
+      m_linkChanges ();
+    }
 }
 
 bool
@@ -444,6 +515,35 @@ WifiNetDevice::SendFrom (Ptr<Packet> packet, const Address& source, const Addres
   NS_LOG_FUNCTION (this << packet << source << dest << protocolNumber);
   NS_ASSERT (Mac48Address::IsMatchingType (dest));
   NS_ASSERT (Mac48Address::IsMatchingType (source));
+
+  Ptr<WifiNetDeviceState> netDevState = this->GetObject<WifiNetDeviceState> ();
+
+  if (netDevState)
+    {
+      if (!netDevState->IsUp ())
+        {
+          NS_LOG_WARN ("The Wifi Device is disabled from use. Packet must be dropped.");
+          m_mac->NotifyTxDrop (packet);
+          return false;
+        }
+
+      if (!(netDevState->GetOperationalState () == NetDeviceState::IF_OPER_UP))
+        {
+          NS_LOG_WARN ("The Wifi Device is UP but not RUNNING. Packet must be dropped.");
+          m_mac->NotifyTxDrop (packet);
+          return false;
+        }
+    }
+  else
+    {
+      NS_LOG_WARN ("WifiNetDeviceState is not aggregated to this WifiNetDevice object.");
+      if (!IsLinkUp ())
+        {
+          NS_LOG_WARN ("The Wifi Device link is DOWN. Packet must be dropped.");
+          m_mac->NotifyTxDrop (packet);
+          return false;
+        }
+    }
 
   Mac48Address realTo = Mac48Address::ConvertFrom (dest);
   Mac48Address realFrom = Mac48Address::ConvertFrom (source);

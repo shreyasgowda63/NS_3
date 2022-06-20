@@ -298,42 +298,42 @@ StaWifiMac::TryToEnsureAssociated (void)
   NS_LOG_FUNCTION (this);
   switch (m_state)
     {
-    case ASSOCIATED:
-      return;
-      break;
-    case WAIT_PROBE_RESP:
-      /* we have sent a probe request earlier so we
-         do not need to re-send a probe request immediately.
-         We just need to wait until probe-request-timeout
-         or until we get a probe response
-       */
-      break;
-    case WAIT_BEACON:
-      /* we have initiated passive scanning, continue to wait
-         and gather beacons
-       */
-      break;
-    case UNASSOCIATED:
-      /* we were associated but we missed a bunch of beacons
-       * so we should assume we are not associated anymore.
-       * We try to initiate a scan now.
-       */
-      m_linkDown ();
-      StartScanning ();
-      break;
-    case WAIT_ASSOC_RESP:
-      /* we have sent an association request so we do not need to
-         re-send an association request right now. We just need to
-         wait until either assoc-request-timeout or until
-         we get an association response.
-       */
-      break;
-    case REFUSED:
-      /* we have sent an association request and received a negative
-         association response. We wait until someone restarts an
-         association with a given SSID.
-       */
-      break;
+      case ASSOCIATED:
+        return;
+        break;
+      case WAIT_PROBE_RESP:
+        /* we have sent a probe request earlier so we
+           do not need to re-send a probe request immediately.
+           We just need to wait until probe-request-timeout
+           or until we get a probe response
+         */
+        break;
+      case WAIT_BEACON:
+        /* we have initiated passive scanning, continue to wait
+           and gather beacons
+         */
+        break;
+      case UNASSOCIATED:
+        /* we were associated but we missed a bunch of beacons
+         * so we should assume we are not associated anymore.
+         * We try to initiate a scan now.
+         */
+        m_linkDown ();
+        StartScanning ();
+        break;
+      case WAIT_ASSOC_RESP:
+        /* we have sent an association request so we do not need to
+           re-send an association request right now. We just need to
+           wait until either assoc-request-timeout or until
+           we get an association response.
+         */
+        break;
+      case REFUSED:
+        /* we have sent an association request and received a negative
+           association response. We wait until someone restarts an
+           association with a given SSID.
+         */
+        break;
     }
 }
 
@@ -373,8 +373,8 @@ StaWifiMac::ScanningTimeout (void)
   NS_LOG_FUNCTION (this);
   if (!m_candidateAps.empty ())
     {
-      ApInfo bestAp = m_candidateAps.front();
-      m_candidateAps.erase(m_candidateAps.begin ());
+      ApInfo bestAp = m_candidateAps.front ();
+      m_candidateAps.erase (m_candidateAps.begin ());
       NS_LOG_DEBUG ("Attempting to associate with BSSID " << bestAp.m_bssid);
       Time beaconInterval;
       if (bestAp.m_activeProbing)
@@ -750,16 +750,16 @@ StaWifiMac::UpdateCandidateApList (ApInfo newApInfo)
 {
   NS_LOG_FUNCTION (this << newApInfo.m_bssid << newApInfo.m_apAddr << newApInfo.m_snr << newApInfo.m_activeProbing << newApInfo.m_beacon << newApInfo.m_probeResp);
   // Remove duplicate ApInfo entry
-  for (std::vector<ApInfo>::iterator i = m_candidateAps.begin(); i != m_candidateAps.end(); ++i)
+  for (std::vector<ApInfo>::iterator i = m_candidateAps.begin (); i != m_candidateAps.end (); ++i)
     {
       if (newApInfo.m_bssid == (*i).m_bssid)
         {
-          m_candidateAps.erase(i);
+          m_candidateAps.erase (i);
           break;
         }
     }
   // Insert before the entry with lower SNR
-  for (std::vector<ApInfo>::iterator i = m_candidateAps.begin(); i != m_candidateAps.end(); ++i)
+  for (std::vector<ApInfo>::iterator i = m_candidateAps.begin (); i != m_candidateAps.end (); ++i)
     {
       if (newApInfo.m_snr > (*i).m_snr)
         {
@@ -768,7 +768,7 @@ StaWifiMac::UpdateCandidateApList (ApInfo newApInfo)
         }
     }
   // If new ApInfo is the lowest, insert at back
-  m_candidateAps.push_back(newApInfo);
+  m_candidateAps.push_back (newApInfo);
 }
 
 void
@@ -1219,6 +1219,48 @@ StaWifiMac::NotifyChannelSwitching (void)
     {
       Disassociated ();
     }
+    
+StaWifiMac::EnableMacAndPhy ()
+{
+  NS_LOG_FUNCTION (this);
+  RegularWifiMac::EnableMacAndPhy ();
+  SetState (MacState::UNASSOCIATED);
+  StartScanning ();
+}
+
+void
+StaWifiMac::DisableMacAndPhy ()
+{
+  NS_LOG_FUNCTION (this);
+  // Dissociate from AP.
+  SetState (MacState::UNASSOCIATED);
+
+  // Cancel probe request event.
+  if (m_probeRequestEvent.IsRunning ())
+    {
+      m_probeRequestEvent.Cancel ();
+    }
+
+  // Cancel association request event.
+  if (m_assocRequestEvent.IsRunning ())
+    {
+      m_assocRequestEvent.Cancel ();
+    }
+
+  // Cancel wait beacon event.
+  if (m_waitBeaconEvent.IsRunning ())
+    {
+      m_waitBeaconEvent.Cancel ();
+    }
+
+  // Cancel Beacon watch dog event.
+  if (m_beaconWatchdog.IsRunning ())
+    {
+      m_beaconWatchdog.Cancel ();
+    }
+
+  // Clear TX queue and Power off Radio.
+  RegularWifiMac::DisableMacAndPhy ();
 }
 
 } //namespace ns3

@@ -21,6 +21,7 @@
  */
 
 #include "ns3/wifi-net-device.h"
+#include "ns3/wifi-net-device-state.h"
 #include "ns3/ap-wifi-mac.h"
 #include "ns3/ampdu-subframe-header.h"
 #include "ns3/mobility-model.h"
@@ -695,6 +696,11 @@ WifiHelper::Install (const WifiPhyHelper &phyHelper,
       Ptr<WifiNetDevice> device = CreateObject<WifiNetDevice> ();
       device->SetStandard (m_standard);
       if (m_standard == WIFI_STANDARD_UNSPECIFIED)
+      Ptr<WifiNetDeviceState> netDevState = CreateObject<WifiNetDeviceState> ();
+      netDevState->SetDevice (device);
+      device->AggregateObject (netDevState);
+      auto it = wifiStandards.find (m_standard);
+      if (it == wifiStandards.end ())
         {
           NS_FATAL_ERROR ("No standard specified!");
           return devices;
@@ -945,6 +951,32 @@ WifiHelper::AssignStreams (NetDeviceContainer c, int64_t stream)
         }
     }
   return (currentStream - stream);
+}
+
+void
+WifiHelper::SetDeviceUp (const Time &delay, Ptr<NetDevice> netDevice)
+{
+  Ptr<WifiNetDevice> wifiDevice = StaticCast<WifiNetDevice> (netDevice);
+  Ptr<WifiNetDeviceState> wifiNetDeviceState = wifiDevice->GetObject<WifiNetDeviceState> ();
+  if (!wifiNetDeviceState)
+    {
+      NS_LOG_WARN ("No WifiNetDeviceState object has been aggregated to this WifiNetDevice. This device cannot be set up/down.");
+      return;
+    }
+  Simulator::Schedule (delay, &WifiNetDeviceState::SetUp, wifiNetDeviceState);
+}
+
+void
+WifiHelper::SetDeviceDown (const Time &delay, Ptr<NetDevice> netDevice)
+{
+  Ptr<WifiNetDevice> wifiDevice = StaticCast<WifiNetDevice> (netDevice);
+  Ptr<WifiNetDeviceState> wifiNetDeviceState = wifiDevice->GetObject<WifiNetDeviceState> ();
+  if (!wifiNetDeviceState)
+    {
+      NS_LOG_WARN ("No WifiNetDeviceState object has been aggregated to this WifiNetDevice. This device cannot be set up/down.");
+      return;
+    }
+  Simulator::Schedule (delay, &WifiNetDeviceState::SetDown, wifiNetDeviceState);
 }
 
 } //namespace ns3

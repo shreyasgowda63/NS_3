@@ -28,6 +28,7 @@
 #include "ns3/vht-capabilities.h"
 #include "ns3/he-capabilities.h"
 #include "ns3/eht-capabilities.h"
+#include "wifi-net-device-state.h"
 
 namespace ns3 {
 
@@ -227,6 +228,21 @@ AdhocWifiMac::Receive (Ptr<WifiMacQueueItem> mpdu)
   //other frames. Specifically, this will handle Block Ack-related
   //Management Action frames.
   WifiMac::Receive (mpdu);
+}
+
+void
+AdhocWifiMac::EnableMacAndPhy ()
+{
+  NS_LOG_FUNCTION (this);
+  RegularWifiMac::EnableMacAndPhy ();
+  m_linkUp ();
+}
+
+void
+AdhocWifiMac::DisableMacAndPhy ()
+{
+  NS_LOG_FUNCTION (this);
+  RegularWifiMac::DisableMacAndPhy ();
 }
 
 } //namespace ns3
