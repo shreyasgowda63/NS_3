@@ -102,6 +102,20 @@ public:
    * \returns \c true if the event has not expired, \c false otherwise.
    */
   bool IsRunning (void) const;
+  /**
+   * Mark the event as preferring to be Removed, rather than just cancelled.
+   * For events which are likely to be cancelled this can reduce the
+   * event list size in the scheduler.  This also improves the
+   * performance of the symbolic execution engine.
+   *
+   * \returns this EventId, to facilitate
+   *     `Schedule (...).RemoveOnCancel ();`
+   */
+  EventId RemoveOnCancel ();
+  /**
+   * \returns \c true if this event prefers to be removed when cancelled.
+   */
+  bool IsRemoveOnCancel (void) const;
 
 public:
   /**

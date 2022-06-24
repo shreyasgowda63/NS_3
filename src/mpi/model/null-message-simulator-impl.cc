@@ -507,7 +507,14 @@ NullMessageSimulatorImpl::Cancel (const EventId &id)
 {
   if (!IsExpired (id))
     {
-      id.PeekEventImpl ()->Cancel ();
+      if (!id.IsRemoveOnCancel ())
+        {
+          id.PeekEventImpl ()->Cancel ();
+        }
+      else
+        {
+          Remove (id);
+        }
     }
 }
 

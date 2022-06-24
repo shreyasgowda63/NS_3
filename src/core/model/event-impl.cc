@@ -37,7 +37,8 @@ EventImpl::~EventImpl ()
 }
 
 EventImpl::EventImpl ()
-  : m_cancel (false)
+  : m_cancel (false),
+    m_removeOnCancel (false)
 {
   NS_LOG_FUNCTION (this);
 }
@@ -64,6 +65,20 @@ EventImpl::IsCancelled (void)
 {
   NS_LOG_FUNCTION (this);
   return m_cancel;
+}
+
+void
+EventImpl::RemoveOnCancel ()
+{
+  NS_LOG_FUNCTION (this);
+  m_removeOnCancel = true;
+}
+
+bool
+EventImpl::IsRemoveOnCancel () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_removeOnCancel;
 }
 
 } // namespace ns3

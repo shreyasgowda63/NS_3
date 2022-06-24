@@ -73,6 +73,22 @@ EventId::IsRunning (void) const
   NS_LOG_FUNCTION (this);
   return !IsExpired ();
 }
+EventId
+EventId::RemoveOnCancel ()
+{
+  NS_LOG_FUNCTION (this);
+  m_eventImpl->RemoveOnCancel ();
+  return *this;
+}
+bool
+EventId::IsRemoveOnCancel (void) const
+{
+  if (m_eventImpl)
+    {
+      return m_eventImpl->IsRemoveOnCancel ();
+    }
+  return false;
+}
 EventImpl *
 EventId::PeekEventImpl (void) const
 {

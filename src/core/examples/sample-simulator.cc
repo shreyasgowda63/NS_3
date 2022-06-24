@@ -114,7 +114,7 @@ int main (int argc, char *argv[])
 
   Simulator::Schedule (Seconds (v->GetValue ()), &RandomFunction);
 
-  EventId id = Simulator::Schedule (Seconds (30.0), &CancelledEvent);
+  EventId id = Simulator::Schedule (Seconds (30.0), &CancelledEvent).RemoveOnCancel ();
   Simulator::Cancel (id);
 
   Simulator::Schedule (Seconds (25.0),
