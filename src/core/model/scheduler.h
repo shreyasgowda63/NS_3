@@ -270,19 +270,60 @@ inline bool operator != (const Scheduler::EventKey &a,
 inline bool operator < (const Scheduler::EventKey &a,
                         const Scheduler::EventKey &b)
 {
-  if (a.m_ts < b.m_ts)
+  /*
+    Sorting order is timestamp then uid, so this form would be more natural,
+    and in fact was the prior implementation:
+
+    if (a.m_ts < b.m_ts)
+      {
+        return true;
+      }
+    else if (a.m_ts == b.m_ts
+             && a.m_uid < b.m_uid)
+      {
+        return true;
+      }
+    else
+      {
+        return false;
+      }
+
+    However this compares timestamps twice for tied events, which are
+    a problem for the symbolic engine. The form below only compares
+    tied event timestamps once.
+
+    The form below was suggested in Vu, et al, "Efficient Protocol Testing
+    Under Temporal Uncertain Event Using Discrete-event Network Simulations",
+    ACM TOMACS 32, 2, April 2022, p. 1.
+    https://doi.org/10.1145/3490028
+
+
+    Truth table:
+
+    ts: a ? b        uid: a ? b
+                     a < b    a = b    a > b
+    ---------        -----    -----    -----
+    a < b            true     true     true
+    a = b            true     false    false
+    a > b            false    false    false
+
+  */
+
+  if (a.m_uid < b.m_uid)
     {
-      return true;
-    }
-  else if (a.m_ts == b.m_ts
-           && a.m_uid < b.m_uid)
-    {
-      return true;
+      if (a.m_ts <= b.m_ts)
+        {
+          return true;
+        }
     }
   else
     {
-      return false;
+      if (a.m_ts < b.m_ts)
+        {
+          return true;
+        }
     }
+  return false;
 }
 
 /**
@@ -295,19 +336,48 @@ inline bool operator < (const Scheduler::EventKey &a,
 inline bool operator > (const Scheduler::EventKey &a,
                         const Scheduler::EventKey &b)
 {
-  if (a.m_ts > b.m_ts)
+  /*
+    See note in operator <.
+
+    if (a.m_ts > b.m_ts)
+      {
+        return true;
+      }
+    else if (a.m_ts == b.m_ts
+             && a.m_uid > b.m_uid)
+      {
+        return true;
+      }
+    else
+      {
+        return false;
+      }
+
+   Truth table:
+
+    ts: a ? b        uid: a ? b
+                     a < b    a = b    a > b
+    ---------        -----    -----    -----
+    a < b            false    false    false
+    a = b            false    false    true
+    a > b            true     true     true
+
+  */
+  if (a.m_uid > b.m_uid)
     {
-      return true;
-    }
-  else if (a.m_ts == b.m_ts
-           && a.m_uid > b.m_uid)
-    {
-      return true;
+      if (a.m_ts >= b.m_ts)
+        {
+          return true;
+        }
     }
   else
     {
-      return false;
+      if (a.m_ts > b.m_ts)
+        {
+          return true;
+        }
     }
+  return false;
 }
 
 /**
