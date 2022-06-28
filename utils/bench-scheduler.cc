@@ -18,6 +18,7 @@
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
 
+#include <cmath>      // sqrt
 #include <iomanip>
 #include <iostream>
 #include <fstream>
@@ -96,8 +97,21 @@ public:
     m_total = total;
   }
 
-  /** Run the benchmark as configure. */
-  void RunBench (void);
+  /** The output. */
+  struct Result
+  {
+    double init;                       /**< Time (s) for initialization. */
+    double simu;                       /**< Time (s) for simulation. */
+    uint32_t pop;                      /**< Event population. */
+    uint32_t events;                   /**< Number of events executed. */
+  };
+
+  /**
+   *  Run the benchmark as configured. 
+   *
+   * \returns The Result.
+   */
+  Result Run (void);
 
 private:
   /**
@@ -110,43 +124,36 @@ private:
   uint32_t m_population;               /**< Event population size. */
   uint32_t m_total;                    /**< Total number of events to execute. */
   uint32_t m_count;                    /**< Count of events executed so far. */
-};
 
-void
-Bench::RunBench (void)
+};  // class Bench
+
+Bench::Result
+Bench::Run (void)
 {
-  SystemWallClockMs time;
+  SystemWallClockMs timer;
   double init, simu;
 
   DEB ("initializing");
   m_count = 0;
 
-
-  time.Start ();
+  timer.Start ();
   for (uint32_t i = 0; i < m_population; ++i)
     {
       Time at = NanoSeconds (m_rand->GetValue ());
       Simulator::Schedule (at, &Bench::Cb, this);
     }
-  init = time.End ();
-  init /= 1000;
+  init = timer.End () / 1000.0;
   DEB ("initialization took " << init << "s");
 
   DEB ("running");
-  time.Start ();
+  timer.Start ();
   Simulator::Run ();
-  simu = time.End ();
-  simu /= 1000;
+  simu = timer.End () / 1000.0;
   DEB ("run took " << simu << "s");
 
-  LOG (std::setw (g_fwidth) << init <<
-       std::setw (g_fwidth) << (m_population / init) <<
-       std::setw (g_fwidth) << (init / m_population) <<
-       std::setw (g_fwidth) << simu <<
-       std::setw (g_fwidth) << (m_count / simu)
-                            << (simu / m_count)
-       );
+  return Result {init, simu, m_population, m_count};
 
+  Simulator::Destroy ();
 }
 
 void
@@ -163,6 +170,230 @@ Bench::Cb (void)
   Simulator::Schedule (after, &Bench::Cb, this);
   ++m_count;
 }
+
+
+/** Benchmark which performs an ensemble of runs. */
+class BenchSuite
+{
+public:
+
+  /**
+   * Perform the runs for a single scheduler type.
+   *
+   * This will create and set the scheduler, then execute a priming run
+   * followed by the number of data runs requested.
+   *
+   * Output will be in the form of a table showing performance for each run.
+   *
+   * \param [in] factory Factory pre-configured to create the desired Scheduler.
+   * \param [in] pop The event population size.
+   * \param [in] total The total number of events to execute.
+   * \param [in] runs The number of replications.
+   * \param [in] eventStream The random stream of event delays.
+   * \param [in] calRev For the CalendarScheduler, whether the Reverse attribute was set.
+   */
+  BenchSuite (ObjectFactory & factory, 
+              uint32_t pop, uint32_t total, uint32_t runs,
+              Ptr<RandomVariableStream> eventStream, 
+              bool calRev);
+
+  void Log () const;
+
+private:
+
+  /** Print the table header. */ 
+  void Header () const;
+
+  /** Result from a single run. */
+  struct Result
+  {
+    double initTime;      /**< Initialization time (s). */
+    double initRate;      /**< Initialization event rate (events/s). */
+    double initPeriod;    /**< Initialization period (s/event). */
+    double simTime;       /**< Simulation time (s). */        
+    double simRate;       /**< Simulation event rate (events/s). */
+    double simPeriod;     /**< Simulation period (s/event). */
+
+    /**
+     * Construct from the individual run result.
+     *
+     * \param [in] r The result from a single run.
+     */ 
+    static Result Bench (Bench::Result r);
+
+    /**
+     * Log this result.
+     * 
+     * \tparam T The type of the label.
+     * \param label The label for the line.
+     */
+    template <typename T>
+    void Log(T label) const;
+  };
+
+  std::string m_scheduler;    /**< Descriptive string for the scheduler. */
+  std::vector<Result> m_results;  /**< Store for the run results. */
+    
+};  // BenchSuite
+
+/* static */
+BenchSuite::Result
+BenchSuite::Result::Bench (Bench::Result r)
+{
+  return Result {
+    r.init,
+    r.pop / r.init,
+    r.init / r.pop,
+    r.simu,
+    r.events / r.simu,
+    r.simu / r.events};
+}
+
+template <typename T>
+void
+BenchSuite::Result::Log(T label) const
+{
+  // Need std::left for string labels
+
+  LOG (std::left << std::setw (g_fwidth) << label <<
+       std::setw (g_fwidth) << initTime <<
+       std::setw (g_fwidth) << initRate <<
+       std::setw (g_fwidth) << initPeriod <<
+       std::setw (g_fwidth) << simTime <<
+       std::setw (g_fwidth) << simRate <<
+       std::setw (g_fwidth) << simPeriod
+       );
+}
+
+BenchSuite::BenchSuite (ObjectFactory & factory, 
+                        uint32_t pop, uint32_t total, uint32_t runs,
+                        Ptr<RandomVariableStream> eventStream, 
+                        bool calRev)
+{
+  Simulator::SetScheduler (factory);
+
+  m_scheduler = factory.GetTypeId ().GetName ();
+  if (m_scheduler == "ns3::CalendarScheduler")
+    {
+      m_scheduler += ": insertion order: "
+        + std::string (calRev ? "reverse" : "normal");
+    }
+  if (m_scheduler == "ns3::MapScheduler")
+    {
+      m_scheduler += " (default)";
+    }
+
+  Bench bench (pop, total);
+  bench.SetRandomStream (eventStream);
+  bench.SetPopulation (pop);
+  bench.SetTotal (total);
+
+  m_results.reserve (runs);
+  Header ();
+
+  // Prime
+  DEB ("priming");
+  auto prime = bench.Run ();
+  Result::Bench (prime).Log ("prime");
+
+  // Perform the actual runs
+  for (uint32_t i = 0; i < runs; i++)
+    {
+      auto run = bench.Run ();
+      m_results.push_back (Result::Bench (run));
+      m_results.back ().Log (i);
+    }
+
+  Simulator::Destroy ();
+
+}  // BenchSuite::Run
+
+void
+BenchSuite::Header () const
+{
+  // table header
+  LOG ("");
+  LOG (m_scheduler);
+  LOG (std::left << std::setw (g_fwidth) << "Run #" <<
+       std::left << std::setw (3 * g_fwidth) << "Initialization:" <<
+       std::left                         << "Simulation:"
+       );
+  LOG (std::left << std::setw (g_fwidth) << "" <<
+       std::left << std::setw (g_fwidth) << "Time (s)" <<
+       std::left << std::setw (g_fwidth) << "Rate (ev/s)" <<
+       std::left << std::setw (g_fwidth) << "Per (s/ev)" <<
+       std::left << std::setw (g_fwidth) << "Time (s)" <<
+       std::left << std::setw (g_fwidth) << "Rate (ev/s)" <<
+       std::left                         << "Per (s/ev)"
+       );
+  LOG (std::setfill ('-') <<
+       std::right << std::setw (g_fwidth) << " " <<
+       std::right << std::setw (g_fwidth) << " " <<
+       std::right << std::setw (g_fwidth) << " " <<
+       std::right << std::setw (g_fwidth) << " " <<
+       std::right << std::setw (g_fwidth) << " " <<
+       std::right << std::setw (g_fwidth) << " " <<
+       std::right << std::setw (g_fwidth) << " " <<
+       std::setfill (' ')
+       );
+
+}
+
+void
+BenchSuite::Log () const
+{
+  if (m_results.size () < 2)
+    {
+      LOG ("");
+      return;
+    }
+
+  // Average the results
+
+  // See Welford's online algorithm for these expressions, 
+  // which avoid subtracting large numbers.
+  // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
+
+  uint32_t n {0};
+  Result average {m_results[0]};
+  Result moment2 {0, 0, 0, 0, 0, 0};
+
+  for ( ; n < m_results.size (); ++n)
+    {
+      double deltaPre, deltaPost;
+      const auto & run = m_results[n];
+      uint32_t count = n + 1;
+
+#define ACCUMULATE(field)                \
+  deltaPre = run.field - average.field;  \
+  average.field += deltaPre / count ;    \
+  deltaPost = run.field - average.field; \
+  moment2.field += deltaPre * deltaPost
+
+      ACCUMULATE (initTime);
+      ACCUMULATE (initRate);
+      ACCUMULATE (initPeriod);
+      ACCUMULATE (simTime);
+      ACCUMULATE (simRate);
+      ACCUMULATE (simPeriod);
+
+#undef ACCUMULATE
+    }
+
+  auto stdev = Result {
+    std::sqrt (moment2.initTime / n),
+    std::sqrt (moment2.initRate / n),
+    std::sqrt (moment2.initPeriod / n),
+    std::sqrt (moment2.simTime / n),
+    std::sqrt (moment2.simRate / n),
+    std::sqrt (moment2.simPeriod / n)};
+
+  average.Log ("average");
+  stdev.Log ("stdev");
+
+  LOG ("");
+
+}  // BenchSuite::Log()
 
 
 /**
@@ -184,7 +415,7 @@ GetRandomStream (std::string filename)
   if (filename == "")
     {
       LOG ("  Event time distribution:      default exponential");
-      Ptr<ExponentialRandomVariable> erv = CreateObject<ExponentialRandomVariable> ();
+      auto erv = CreateObject<ExponentialRandomVariable> ();
       erv->SetAttribute ("Mean", DoubleValue (100));
       stream = erv;
     }
@@ -229,87 +460,6 @@ GetRandomStream (std::string filename)
   return stream;
 }
 
-/**
- * Perform the runs for a single scheduler type.
- *
- * This will create and set the scheduler, then execute a priming run
- * followed by the number of data runs requsted.
- *
- * Output will be in the form of a table showing performance for each run.
- *
- * \param [in] factory Factory pre-configured to create the desired Scheduler.
- * \param [in] pop The event population size.
- * \param [in] total The total number of events to execute.
- * \param [in] runs The number of replications.
- * \param [in] eventStream The random stream of event delays.
- * \param [in] calRev For the CalendarScheduler, whether to set the Reverse attribute.
- */
-void
-Run (ObjectFactory & factory, uint32_t pop, uint32_t total, uint32_t runs,
-     Ptr<RandomVariableStream> eventStream, bool calRev)
-{
-  Simulator::SetScheduler (factory);
-
-  std::string schedType = factory.GetTypeId ().GetName ();
-  if (schedType == "ns3::CalendarScheduler")
-    {
-      schedType += ": insertion order: "
-        + std::string (calRev ? "reverse" : "normal");
-    }
-
-  DEB ("scheduler: " << schedType);
-  DEB ("population: " << pop);
-  DEB ("total events: " << total);
-  DEB ("runs: " << runs);
-
-  Bench *bench = new Bench (pop, total);
-  bench->SetRandomStream (eventStream);
-
-  // table header
-  LOG ("");
-  LOG (schedType);
-  LOG (std::left << std::setw (g_fwidth) << "Run #" <<
-       std::left << std::setw (3 * g_fwidth) << "Initialization:" <<
-       std::left                         << "Simulation:"
-       );
-  LOG (std::left << std::setw (g_fwidth) << "" <<
-       std::left << std::setw (g_fwidth) << "Time (s)" <<
-       std::left << std::setw (g_fwidth) << "Rate (ev/s)" <<
-       std::left << std::setw (g_fwidth) << "Per (s/ev)" <<
-       std::left << std::setw (g_fwidth) << "Time (s)" <<
-       std::left << std::setw (g_fwidth) << "Rate (ev/s)" <<
-       std::left                         << "Per (s/ev)"
-       );
-  LOG (std::setfill ('-') <<
-       std::right << std::setw (g_fwidth) << " " <<
-       std::right << std::setw (g_fwidth) << " " <<
-       std::right << std::setw (g_fwidth) << " " <<
-       std::right << std::setw (g_fwidth) << " " <<
-       std::right << std::setw (g_fwidth) << " " <<
-       std::right << std::setw (g_fwidth) << " " <<
-       std::right << std::setw (g_fwidth) << " " <<
-       std::setfill (' ')
-       );
-
-  // prime
-  DEB ("priming");
-  std::cout << std::left << std::setw (g_fwidth) << "(prime)";
-  bench->RunBench ();
-
-  bench->SetPopulation (pop);
-  bench->SetTotal (total);
-  for (uint32_t i = 0; i < runs; i++)
-    {
-      std::cout << std::setw (g_fwidth) << i;
-
-      bench->RunBench ();
-    }
-
-  LOG ("");
-  Simulator::Destroy ();
-  delete bench;
-}
-
 
 int main (int argc, char *argv[])
 {
@@ -335,7 +485,9 @@ int main (int argc, char *argv[])
              "  an ascii file, given by the --file=\"<filename>\" argument,\n"
              "  or standard input, by the argument --file=\"-\"\n"
              "In the case of either --file form, the input is expected\n"
-             "to be ascii, giving the relative event times in ns.");
+             "to be ascii, giving the relative event times in ns.\n"
+             "\n"
+             "If no scheduler is specified the MapScheduler will be run.");
   cmd.AddValue ("all",   "use all schedulers",            allSched);
   cmd.AddValue ("cal",   "use CalendarSheduler",          schedCal);
   cmd.AddValue ("calrev", "reverse ordering in the CalendarScheduler", calRev);
@@ -344,9 +496,9 @@ int main (int argc, char *argv[])
   cmd.AddValue ("map",   "use MapScheduler (default)",    schedMap);
   cmd.AddValue ("pri",   "use PriorityQueue",             schedPQ);
   cmd.AddValue ("debug", "enable debugging output",       g_debug);
-  cmd.AddValue ("pop",   "event population size (default 1E5)",         pop);
-  cmd.AddValue ("total", "total number of events to run (default 1E6)", total);
-  cmd.AddValue ("runs",  "number of runs (default 1)",    runs);
+  cmd.AddValue ("pop",   "event population size",         pop);
+  cmd.AddValue ("total", "total number of events to run", total);
+  cmd.AddValue ("runs",  "number of runs",                runs);
   cmd.AddValue ("file",  "file of relative event times",  filename);
   cmd.AddValue ("prec",  "printed output precision",      g_fwidth);
   cmd.Parse (argc, argv);
@@ -371,7 +523,7 @@ int main (int argc, char *argv[])
       schedMap = true;
     }
 
-  Ptr<RandomVariableStream> eventStream = GetRandomStream (filename);
+  auto eventStream = GetRandomStream (filename);
 
 
   ObjectFactory factory ("ns3::MapScheduler");
@@ -379,32 +531,38 @@ int main (int argc, char *argv[])
     {
       factory.SetTypeId ("ns3::CalendarScheduler");
       factory.Set ("Reverse", BooleanValue (calRev));
-      Run (factory, pop, total, runs, eventStream, calRev);
+      BenchSuite (factory, pop, total, runs, eventStream, calRev).Log ();
       if (allSched)
         {
           factory.Set ("Reverse", BooleanValue (!calRev));
-          Run (factory, pop, total, runs, eventStream, !calRev);
+          BenchSuite (factory, pop, total, runs, eventStream, !calRev).Log ();
         }
     }
   if (schedHeap)
     {
       factory.SetTypeId ("ns3::HeapScheduler");
-      Run (factory, pop, total, runs, eventStream, calRev);
+      BenchSuite (factory, pop, total, runs, eventStream, calRev).Log ();
     }
   if (schedList)
     {
       factory.SetTypeId ("ns3::ListScheduler");
-      Run (factory, pop, total, runs, eventStream, calRev);
+      auto listTotal = total;
+      if (allSched)
+        {
+          LOG ("Running List scheduler with 1/10 total events");
+          listTotal /= 10;
+        }
+      BenchSuite (factory, pop, listTotal, runs, eventStream, calRev).Log ();
     }
   if (schedMap)
     {
       factory.SetTypeId ("ns3::MapScheduler");
-      Run (factory, pop, total, runs, eventStream, calRev);
+      BenchSuite (factory, pop, total, runs, eventStream, calRev).Log ();
     }
   if (schedPQ)
     {
       factory.SetTypeId ("ns3::PriorityQueueScheduler");
-      Run (factory, pop, total, runs, eventStream, calRev);
+      BenchSuite (factory, pop, total, runs, eventStream, calRev).Log ();
     }
 
   return 0;
