@@ -1,43 +1,55 @@
----
 Language: Cpp
-AccessModifierOffset: -2
+BasedOnStyle: GNU
+AllowShortFunctionsOnASingleLine: None
+AlwaysBreakTemplateDeclarations: Yes
+ColumnLimit: 100
+FixNamespaceComments: true
+IncludeBlocks: Regroup
+IndentWidth: 2
+KeepEmptyLinesAtTheStartOfBlocks: false
+Standard: "c++17"
+UseCRLF: false
+UseTab: Never
+
+AccessModifierOffset: -1
 AlignAfterOpenBracket: Align
-AlignConsecutiveAssignments: false
+AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: false
 AlignEscapedNewlinesLeft: true
 AlignOperands: true
-AlignTrailingComments: false
+AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
-AlwaysBreakAfterReturnType: AllDefinitions
-AlwaysBreakTemplateDeclarations: true
-BinPackArguments: true
-BinPackParameters: true
+AlwaysBreakAfterReturnType: None
+BinPackArguments: false
+BinPackParameters: false
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterClass: true
+  AfterEnum: true
   AfterControlStatement: true
   AfterFunction: true
   AfterNamespace: false
   AfterStruct: true
-  IndentBraces: true
+  AfterUnion: true
   BeforeElse: true
+  BeforeCatch: true
+  IndentBraces: false
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: false
-ColumnLimit: 100
+AllowAllConstructorInitializersOnNextLine: false
+BreakConstructorInitializers: BeforeColon
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 IndentCaseLabels: false
-IndentWidth: 2
 NamespaceIndentation: None
-PointerAlignment: Right
-ReflowComments: false
+PointerAlignment: Left
+ReflowComments: true
 SortIncludes: false
 SpaceAfterCStyleCast: true
 SpaceAfterTemplateKeyword: true
@@ -48,6 +60,10 @@ SpacesInAngles:  false
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-Standard: 'Cpp11'
-UseTab: Never
-...
+AlwaysBreakAfterDefinitionReturnType: All
+MaxEmptyLinesToKeep: 2
+AlignConsecutiveDeclarations: true
+IncludeBlocks: Regroup
+SpacesBeforeTrailingComments: 1
+ContinuationIndentWidth: 4
+PenaltyBreakBeforeFirstCallParameter: 100
