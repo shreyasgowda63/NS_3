@@ -54,6 +54,9 @@ class EventId
 {
 public:
 
+  /** Type used for event UIDs. */
+  using UID_t = uint64_t;
+
   /** Special values of the event UID. */
   enum UID
     {
@@ -66,8 +69,31 @@ public:
       /** Reserved UID. */
       RESERVED = 3,
       /** Schedule(), etc. events. */
-      VALID = 4
+      VALID = 4,
+      /** One past the last valid UID. */
+      VALID_END = std::numeric_limits<UID_t>::max()
     };
+
+  /** Increment a UID, handling rollover to UID::VALID. */
+  inline static UID_t Increment (UID_t uid)
+  {
+    UID_t next = uid + 1;
+    if (next != UID::VALID_END)
+      {
+        return next;
+      }
+
+    // To demonstrate roll-over:
+    // 1.  Include fatal-error.h
+    // 2.  Change `UID_t` to `uint32_t`
+    // 3.  Uncomment the following line
+    //     NS_FATAL_ERROR_CONT ("EventId UID overflow");
+    // 4. Run the bench-scheduler:
+    //    `$ time ./ns3 run bench-scheduler -- --pop=1000 --total=4300000000
+    // This takes ~25 min on a 2.4 GHz box.
+
+    return UID::VALID;
+  }
 
   /** Default constructor. This EventId does nothing. */
   EventId ();
@@ -79,7 +105,7 @@ public:
    * \param [in] context The execution context for this event.
    * \param [in] uid The unique id for this EventId.
    */
-  EventId (const Ptr<EventImpl> &impl, uint64_t ts, uint32_t context, uint32_t uid);
+  EventId (const Ptr<EventImpl> &impl, uint64_t ts, uint32_t context, UID_t uid);
   /**
    * This method is syntactic sugar for the ns3::Simulator::Cancel
    * method.
@@ -102,6 +128,20 @@ public:
    * \returns \c true if the event has not expired, \c false otherwise.
    */
   bool IsRunning (void) const;
+  /**
+   * Mark the event as preferring to be Removed, rather than just cancelled.
+   * For events which are likely to be cancelled this can reduce the
+   * event list size in the scheduler.  This also improves the
+   * performance of the symbolic execution engine.
+   *
+   * \returns this EventId, to facilitate
+   *     `Schedule (...).RemoveOnCancel ();`
+   */
+  EventId RemoveOnCancel ();
+  /**
+   * \returns \c true if this event prefers to be removed when cancelled.
+   */
+  bool IsRemoveOnCancel (void) const;
 
 public:
   /**
@@ -117,7 +157,7 @@ public:
   /** \return The event context. */
   uint32_t GetContext (void) const;
   /** \return The unique id. */
-  uint32_t GetUid (void) const;
+  UID_t GetUid (void) const;
   /**@}*/
 
   /**
@@ -146,7 +186,7 @@ private:
   Ptr<EventImpl> m_eventImpl;  /**< The underlying event implementation. */
   uint64_t m_ts;               /**< The virtual time stamp. */
   uint32_t m_context;          /**< The context. */
-  uint32_t m_uid;              /**< The unique id. */
+  UID_t m_uid;                 /**< The unique id. */
 };
 
 /*************************************************
