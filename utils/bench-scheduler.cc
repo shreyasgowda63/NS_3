@@ -204,16 +204,19 @@ private:
   /** Print the table header. */ 
   void Header () const;
 
-  /** Result from a single run. */
+  /** Statistics from a single phase, init or run. */
+  struct PhaseResult
+  {
+    double time;      /**< Phase run time time (s). */
+    double rate;      /**< Phase event rate (events/s). */
+    double period;    /**< Phase period (s/event). */
+  };
+    
+  /** Results from initialization and execution of a single run. */
   struct Result
   {
-    double initTime;      /**< Initialization time (s). */
-    double initRate;      /**< Initialization event rate (events/s). */
-    double initPeriod;    /**< Initialization period (s/event). */
-    double simTime;       /**< Simulation time (s). */        
-    double simRate;       /**< Simulation event rate (events/s). */
-    double simPeriod;     /**< Simulation period (s/event). */
-
+    PhaseResult init;    /** Initialization phase results. */
+    PhaseResult run;     /** Run (simulation) phase results. */
     /**
      * Construct from the individual run result.
      *
@@ -240,13 +243,9 @@ private:
 BenchSuite::Result
 BenchSuite::Result::Bench (Bench::Result r)
 {
-  return Result {
-    r.init,
-    r.pop / r.init,
-    r.init / r.pop,
-    r.simu,
-    r.events / r.simu,
-    r.simu / r.events};
+  return Result { {r.init, r.pop / r.init,    r.init / r.pop },
+                  {r.simu, r.events / r.simu, r.simu / r.events}
+  };
 }
 
 template <typename T>
@@ -256,12 +255,12 @@ BenchSuite::Result::Log(T label) const
   // Need std::left for string labels
 
   LOG (std::left << std::setw (g_fwidth) << label <<
-       std::setw (g_fwidth) << initTime <<
-       std::setw (g_fwidth) << initRate <<
-       std::setw (g_fwidth) << initPeriod <<
-       std::setw (g_fwidth) << simTime <<
-       std::setw (g_fwidth) << simRate <<
-       std::setw (g_fwidth) << simPeriod
+       std::setw (g_fwidth) << init.time <<
+       std::setw (g_fwidth) << init.rate <<
+       std::setw (g_fwidth) << init.period <<
+       std::setw (g_fwidth) << run.time <<
+       std::setw (g_fwidth) << run.rate <<
+       std::setw (g_fwidth) << run.period
        );
 }
 
@@ -354,9 +353,10 @@ BenchSuite::Log () const
   // which avoid subtracting large numbers.
   // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
 
-  uint64_t n {0};                     // number of samples
-  Result average {m_results[0]};      // average
-  Result moment2 {0, 0, 0, 0, 0, 0};  // 2nd moment, to calculate stdev
+  uint64_t n {0};                   // number of samples
+  Result average {m_results[0]};    // average
+  Result moment2 { {0, 0, 0},       // 2nd moment, to calculate stdev
+                   {0, 0, 0} };
 
   for ( ; n < m_results.size (); ++n)
     {
@@ -364,29 +364,30 @@ BenchSuite::Log () const
       const auto & run = m_results[n];
       uint64_t count = n + 1;
 
-#define ACCUMULATE(field)                \
-  deltaPre = run.field - average.field;  \
-  average.field += deltaPre / count ;    \
-  deltaPost = run.field - average.field; \
-  moment2.field += deltaPre * deltaPost
+#define ACCUMULATE(phase, field)           \
+  deltaPre = run.phase.field - average.phase.field;  \
+  average.phase.field += deltaPre / count ;    \
+  deltaPost = run.phase.field - average.phase.field; \
+  moment2.phase.field += deltaPre * deltaPost
 
-      ACCUMULATE (initTime);
-      ACCUMULATE (initRate);
-      ACCUMULATE (initPeriod);
-      ACCUMULATE (simTime);
-      ACCUMULATE (simRate);
-      ACCUMULATE (simPeriod);
+      ACCUMULATE (init, time);
+      ACCUMULATE (init, rate);
+      ACCUMULATE (init, period);
+      ACCUMULATE (run, time);
+      ACCUMULATE (run, rate);
+      ACCUMULATE (run, period);
 
 #undef ACCUMULATE
     }
 
   auto stdev = Result {
-    std::sqrt (moment2.initTime / n),
-    std::sqrt (moment2.initRate / n),
-    std::sqrt (moment2.initPeriod / n),
-    std::sqrt (moment2.simTime / n),
-    std::sqrt (moment2.simRate / n),
-    std::sqrt (moment2.simPeriod / n)};
+    { std::sqrt (moment2.init.time / n),
+      std::sqrt (moment2.init.rate / n),
+      std::sqrt (moment2.init.period / n)},
+    { std::sqrt (moment2.run.time / n),
+      std::sqrt (moment2.run.rate / n),
+      std::sqrt (moment2.run.period / n)}
+  };
 
   average.Log ("average");
   stdev.Log ("stdev");
