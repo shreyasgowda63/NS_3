@@ -60,7 +60,7 @@ public:
    * \param [in] population The number of events to keep in the scheduler.
    * \param [in] total The total number of events to execute.
    */
-  Bench (const uint32_t population, const uint32_t total)
+  Bench (const uint64_t population, const uint64_t total)
     : m_population (population),
       m_total (total),
       m_count (0)
@@ -83,7 +83,7 @@ public:
    * Each event executed schedules a new event, maintaining the population.
    * \param [in] population The number of events to keep in the scheduler.
    */
-  void SetPopulation (const uint32_t population)
+  void SetPopulation (const uint64_t population)
   {
     m_population = population;
   }
@@ -92,7 +92,7 @@ public:
    * Set the total number of events to execute.
    * \param [in] total The total number of events to execute.
    */
-  void SetTotal (const uint32_t total)
+  void SetTotal (const uint64_t total)
   {
     m_total = total;
   }
@@ -102,8 +102,8 @@ public:
   {
     double init;                       /**< Time (s) for initialization. */
     double simu;                       /**< Time (s) for simulation. */
-    uint32_t pop;                      /**< Event population. */
-    uint32_t events;                   /**< Number of events executed. */
+    uint64_t pop;                      /**< Event population. */
+    uint64_t events;                   /**< Number of events executed. */
   };
 
   /**
@@ -121,9 +121,9 @@ private:
   void Cb (void);
 
   Ptr<RandomVariableStream> m_rand;    /**< Stream for event delays. */
-  uint32_t m_population;               /**< Event population size. */
-  uint32_t m_total;                    /**< Total number of events to execute. */
-  uint32_t m_count;                    /**< Count of events executed so far. */
+  uint64_t m_population;               /**< Event population size. */
+  uint64_t m_total;                    /**< Total number of events to execute. */
+  uint64_t m_count;                    /**< Count of events executed so far. */
 
 };  // class Bench
 
@@ -137,7 +137,7 @@ Bench::Run (void)
   m_count = 0;
 
   timer.Start ();
-  for (uint32_t i = 0; i < m_population; ++i)
+  for (uint64_t i = 0; i < m_population; ++i)
     {
       Time at = NanoSeconds (m_rand->GetValue ());
       Simulator::Schedule (at, &Bench::Cb, this);
@@ -193,7 +193,7 @@ public:
    * \param [in] calRev For the CalendarScheduler, whether the Reverse attribute was set.
    */
   BenchSuite (ObjectFactory & factory, 
-              uint32_t pop, uint32_t total, uint32_t runs,
+              uint64_t pop, uint64_t total, uint64_t runs,
               Ptr<RandomVariableStream> eventStream, 
               bool calRev);
 
@@ -266,7 +266,7 @@ BenchSuite::Result::Log(T label) const
 }
 
 BenchSuite::BenchSuite (ObjectFactory & factory, 
-                        uint32_t pop, uint32_t total, uint32_t runs,
+                        uint64_t pop, uint64_t total, uint64_t runs,
                         Ptr<RandomVariableStream> eventStream, 
                         bool calRev)
 {
@@ -297,7 +297,7 @@ BenchSuite::BenchSuite (ObjectFactory & factory,
   Result::Bench (prime).Log ("prime");
 
   // Perform the actual runs
-  for (uint32_t i = 0; i < runs; i++)
+  for (uint64_t i = 0; i < runs; i++)
     {
       auto run = bench.Run ();
       m_results.push_back (Result::Bench (run));
@@ -354,15 +354,15 @@ BenchSuite::Log () const
   // which avoid subtracting large numbers.
   // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
 
-  uint32_t n {0};
-  Result average {m_results[0]};
-  Result moment2 {0, 0, 0, 0, 0, 0};
+  uint64_t n {0};                     // number of samples
+  Result average {m_results[0]};      // average
+  Result moment2 {0, 0, 0, 0, 0, 0};  // 2nd moment, to calculate stdev
 
   for ( ; n < m_results.size (); ++n)
     {
       double deltaPre, deltaPost;
       const auto & run = m_results[n];
-      uint32_t count = n + 1;
+      uint64_t count = n + 1;
 
 #define ACCUMULATE(field)                \
   deltaPre = run.field - average.field;  \
@@ -471,9 +471,9 @@ int main (int argc, char *argv[])
   bool schedMap  = false;   // default scheduler
   bool schedPQ   = false;
 
-  uint32_t pop   =  100000;
-  uint32_t total = 1000000;
-  uint32_t runs  =       1;
+  uint64_t pop   =  100000;
+  uint64_t total = 1000000;
+  uint64_t runs  =       1;
   std::string filename = "";
   bool calRev = false;
 
