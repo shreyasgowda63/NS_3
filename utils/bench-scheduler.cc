@@ -151,9 +151,9 @@ Bench::Run (void)
   simu = timer.End () / 1000.0;
   DEB ("run took " << simu << "s");
 
-  return Result {init, simu, m_population, m_count};
-
   Simulator::Destroy ();
+
+  return Result {init, simu, m_population, m_count};
 }
 
 void
