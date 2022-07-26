@@ -143,6 +143,7 @@ DefaultSimulatorImpl::ProcessOneEvent (void)
   m_currentTs = next.key.m_ts;
   m_currentContext = next.key.m_context;
   m_currentUid = next.key.m_uid;
+  next.impl->Expire ();
   next.impl->Invoke ();
   next.impl->Unref ();
 
@@ -289,7 +290,8 @@ DefaultSimulatorImpl::ScheduleDestroy (EventImpl *event)
   NS_ASSERT_MSG (m_mainThreadId == std::this_thread::get_id (),
                  "Simulator::ScheduleDestroy Thread-unsafe invocation!");
 
-  EventId id (Ptr<EventImpl> (event, false), m_currentTs, 0xffffffff, 2);
+  EventId id (Ptr<EventImpl> (event, false), m_currentTs,
+              m_currentContext, EventId::UID::DESTROY);
   m_destroyEvents.push_back (id);
   m_uid++;
   return id;
@@ -360,34 +362,21 @@ DefaultSimulatorImpl::Cancel (const EventId &id)
 bool
 DefaultSimulatorImpl::IsExpired (const EventId &id) const
 {
+  if (id.PeekEventImpl () == 0
+      || id.PeekEventImpl ()->IsCancelled ()
+      || id.PeekEventImpl ()->IsExpired ())
+    {
+      return true;
+    }
   if (id.GetUid () == EventId::UID::DESTROY)
     {
-      if (id.PeekEventImpl () == 0
-          || id.PeekEventImpl ()->IsCancelled ())
-        {
-          return true;
-        }
       // destroy events.
-      for (DestroyEvents::const_iterator i = m_destroyEvents.begin (); i != m_destroyEvents.end (); i++)
-        {
-          if (*i == id)
-            {
-              return false;
-            }
-        }
-      return true;
+      auto it = std::find (m_destroyEvents.begin (), m_destroyEvents.end (), id);
+      return (it == m_destroyEvents.end ());
     }
-  if (id.PeekEventImpl () == 0
-      || id.GetTs () < m_currentTs
-      || (id.GetTs () == m_currentTs && id.GetUid () <= m_currentUid)
-      || id.PeekEventImpl ()->IsCancelled ())
-    {
-      return true;
-    }
-  else
-    {
-      return false;
-    }
+
+  // All other cases are still runnable
+  return false;
 }
 
 Time

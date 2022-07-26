@@ -35,8 +35,8 @@ NS_LOG_COMPONENT_DEFINE ("EventId");
 EventId::EventId ()
   : m_eventImpl (0),
     m_ts (0),
-    m_context (0),
-    m_uid (0)
+    m_context (Simulator::NO_CONTEXT),
+    m_uid (UID::INVALID)
 {
   NS_LOG_FUNCTION (this);
 }

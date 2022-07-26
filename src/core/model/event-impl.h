@@ -65,6 +65,12 @@ public:
    * Checked by the simulation engine before calling Invoke().
    */
   bool IsCancelled (void);
+  /** Mark the event as 'expired', meaning it has been executed. */
+  void Expire (void);
+  /**
+   * \returns true if the event has been executed.
+   */
+  bool IsExpired (void);
 
 protected:
   /**
@@ -77,6 +83,7 @@ protected:
 
 private:
   bool m_cancel;  /**< Has this event been cancelled. */
+  bool m_expired; /**< Has this event been executed. */
 };
 
 } // namespace ns3
