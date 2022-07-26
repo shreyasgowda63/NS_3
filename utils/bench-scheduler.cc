@@ -107,7 +107,7 @@ public:
   };
 
   /**
-   *  Run the benchmark as configured. 
+   *  Run the benchmark as configured.
    *
    * \returns The Result.
    */
@@ -192,16 +192,16 @@ public:
    * \param [in] eventStream The random stream of event delays.
    * \param [in] calRev For the CalendarScheduler, whether the Reverse attribute was set.
    */
-  BenchSuite (ObjectFactory & factory, 
+  BenchSuite (ObjectFactory & factory,
               uint64_t pop, uint64_t total, uint64_t runs,
-              Ptr<RandomVariableStream> eventStream, 
+              Ptr<RandomVariableStream> eventStream,
               bool calRev);
 
   void Log () const;
 
 private:
 
-  /** Print the table header. */ 
+  /** Print the table header. */
   void Header () const;
 
   /** Statistics from a single phase, init or run. */
@@ -211,7 +211,7 @@ private:
     double rate;      /**< Phase event rate (events/s). */
     double period;    /**< Phase period (s/event). */
   };
-    
+
   /** Results from initialization and execution of a single run. */
   struct Result
   {
@@ -221,12 +221,12 @@ private:
      * Construct from the individual run result.
      *
      * \param [in] r The result from a single run.
-     */ 
+     */
     static Result Bench (Bench::Result r);
 
     /**
      * Log this result.
-     * 
+     *
      * \tparam T The type of the label.
      * \param label The label for the line.
      */
@@ -236,7 +236,7 @@ private:
 
   std::string m_scheduler;    /**< Descriptive string for the scheduler. */
   std::vector<Result> m_results;  /**< Store for the run results. */
-    
+
 };  // BenchSuite
 
 /* static */
@@ -264,9 +264,9 @@ BenchSuite::Result::Log(T label) const
        );
 }
 
-BenchSuite::BenchSuite (ObjectFactory & factory, 
+BenchSuite::BenchSuite (ObjectFactory & factory,
                         uint64_t pop, uint64_t total, uint64_t runs,
-                        Ptr<RandomVariableStream> eventStream, 
+                        Ptr<RandomVariableStream> eventStream,
                         bool calRev)
 {
   Simulator::SetScheduler (factory);
@@ -349,7 +349,7 @@ BenchSuite::Log () const
 
   // Average the results
 
-  // See Welford's online algorithm for these expressions, 
+  // See Welford's online algorithm for these expressions,
   // which avoid subtracting large numbers.
   // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
 

@@ -20,7 +20,7 @@ Release 3-dev
 - (lr-wpan) !991 - Adds MAC ED scan support
 - (internet) !996 - IPv6 Router Solicitations (RS) are now retransmitted up to 4 times, following RFC 5779.
 - (lr-wpan) !997 - Adds MAC ACTIVE and PASSIVE scan support
-- (utils) `utils/bench-simulator` has been moved to `utils/bench-scheduler` to better reflect what it actually tests
+- (utils) `utils/bench-simulator` has been moved to `utils/bench-scheduler` to better reflect what it actually tests.
 - (utils) `utils/bench-scheduler` has been enhanced to test multiple schedulers.
 
 
