@@ -197,6 +197,7 @@ public:
               Ptr<RandomVariableStream> eventStream,
               bool calRev);
 
+  /** Write the results to \c LOG() */
   void Log () const;
 
 private:
@@ -215,12 +216,13 @@ private:
   /** Results from initialization and execution of a single run. */
   struct Result
   {
-    PhaseResult init;    /** Initialization phase results. */
-    PhaseResult run;     /** Run (simulation) phase results. */
+    PhaseResult init;    /**< Initialization phase results. */
+    PhaseResult run;     /**< Run (simulation) phase results. */
     /**
      * Construct from the individual run result.
      *
      * \param [in] r The result from a single run.
+     * \returns The run result.
      */
     static Result Bench (Bench::Result r);
 
@@ -232,7 +234,7 @@ private:
      */
     template <typename T>
     void Log(T label) const;
-  };
+  };  // struct Result
 
   std::string m_scheduler;    /**< Descriptive string for the scheduler. */
   std::vector<Result> m_results;  /**< Store for the run results. */
