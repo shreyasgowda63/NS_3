@@ -24,6 +24,9 @@
 
 #include "lr-wpan-interference-helper.h"
 
+#include "lr-wpan-radio-energy-model.h"
+#include "lr-wpan-phy-listener.h"
+
 #include <ns3/spectrum-phy.h>
 #include <ns3/traced-callback.h>
 #include <ns3/traced-value.h>
@@ -41,6 +44,7 @@ class SpectrumModel;
 class AntennaModel;
 class NetDevice;
 class UniformRandomVariable;
+class LrWpanRadioEnergyModel;
 
 /**
  * \ingroup lr-wpan
@@ -130,8 +134,8 @@ namespace TracedValueCallback
  * \param [in] oldValue original value of the traced variable
  * \param [in] newValue new value of the traced variable
  */
-  typedef void (* LrWpanPhyEnumeration)(LrWpanPhyEnumeration oldValue,
-                                        LrWpanPhyEnumeration newValue);
+typedef void (* LrWpanPhyEnumeration)(LrWpanPhyEnumeration oldValue,
+                                      LrWpanPhyEnumeration newValue);
 }  // namespace TracedValueCallback
 
 /**
@@ -502,6 +506,47 @@ public:
   int64_t AssignStreams (int64_t stream);
 
   /**
+   * Set a LrWpanRadioEnergyModel for energy estimations
+   *
+   * \param lrWpanRadioEnergyModel pointer to the energy model
+   *  to use
+   */
+  void SetLrWpanRadioEnergyModel (const Ptr<LrWpanRadioEnergyModel> lrWpanRadioEnergyModel);
+
+  /**
+   * Get the LrWpanRadioEnergyModel used for energy estimations
+   *
+   * \return pointer to the energy model
+   */
+  Ptr<LrWpanRadioEnergyModel> GetLrWpanRadioEnergyModel ();
+
+  /**
+   * Register a LrWpanPhyListener
+   *
+   * \param listener pointer to the listener
+   */
+  void RegisterListener (LrWpanPhyListener *listener);
+
+  /**
+   * Unregister a (previously regiestered) LrWpanPhyListener
+   *
+   * \param listener pointer to the listener
+   */
+  void UnregisterListener (LrWpanPhyListener *listener);
+
+  /**
+   * Switch PHY off
+   *
+   */
+  void ChangeToOffState ();
+
+  /**
+   * Switch PHY back on after switching off
+   *
+   */
+  void ResumeFromOff ();
+
+  /**
    * TracedCallback signature for Trx state change events.
    *
    * \param [in] time The time of the state change.
@@ -511,8 +556,7 @@ public:
    * TracedValue \c TrxStateValue.  The \c TrxState TracedCallback will
    * be removed in a future release.
    */
-  typedef void (* StateTracedCallback)
-    (Time time, LrWpanPhyEnumeration oldState, LrWpanPhyEnumeration newState);
+  typedef void (* StateTracedCallback)(Time time, LrWpanPhyEnumeration oldState, LrWpanPhyEnumeration newState);
 
 protected:
   /**
@@ -540,8 +584,9 @@ private:
    * Change the PHY state to the given new state, firing the state change trace.
    *
    * \param newState the new state
+   * \param resetBattery true if battery is "reset" and new state thus forced
    */
-  void ChangeTrxState (LrWpanPhyEnumeration newState);
+  void ChangeTrxState (LrWpanPhyEnumeration newState, bool resetBattery = false);
 
   /**
    * Get the currently configured PHY option.
@@ -863,6 +908,11 @@ private:
   PacketAndStatus m_currentTxPacket;
 
   /**
+   * The transmit power set for the PHY (gain)
+   */
+  double m_txPower;
+
+  /**
    * Scheduler event of a currently running CCA request.
    */
   EventId m_ccaRequest;
@@ -883,9 +933,19 @@ private:
   EventId m_pdDataRequest;
 
   /**
+   * List of currently regeistered listeners
+   */
+  std::vector<LrWpanPhyListener*> m_listeners;
+
+  /**
    * Uniform random variable stream.
    */
   Ptr<UniformRandomVariable> m_random;
+
+  /**
+   * The energy model used for energy estimations
+   */
+  Ptr<LrWpanRadioEnergyModel> m_lrWpanRadioEnergyModel;
 };
 
 

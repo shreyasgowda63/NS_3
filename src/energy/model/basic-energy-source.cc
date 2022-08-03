@@ -225,6 +225,12 @@ BasicEnergySource::CalculateRemainingEnergy (void)
   NS_ASSERT (duration.IsPositive ());
   // energy = current * voltage * time
   double energyToDecreaseJ = (totalCurrentA * m_supplyVoltageV * duration).GetSeconds ();
+  if (m_remainingEnergyJ < energyToDecreaseJ)
+    {
+      NS_LOG_INFO ("Energy-Source Drained! Reset last used energy-amount to fully drain the battery!");
+      energyToDecreaseJ = m_remainingEnergyJ;
+    }
+
   NS_ASSERT (m_remainingEnergyJ >= energyToDecreaseJ);
   m_remainingEnergyJ -= energyToDecreaseJ;
   NS_LOG_DEBUG ("BasicEnergySource:Remaining energy = " << m_remainingEnergyJ);
