@@ -48,10 +48,9 @@
 #include "ns3/mobility-helper.h"
 #include "ns3/wifi-net-device.h"
 #include "ns3/packet-socket-helper.h"
-#include "ns3/packet-socket-client.h"
-#include "ns3/packet-socket-server.h"
 #include "ns3/application-container.h"
 #include "ns3/ampdu-subframe-header.h"
+#include "ns3/packet-loop-helper.h"
 #include "ns3/wifi-mac.h"
 
 #define PI 3.1415926535
@@ -863,12 +862,11 @@ public:
    * \param distanceM the distance in meters
    * \param apTxPowerDbm the AP transmit power in dBm
    * \param staTxPowerDbm the STA transmit power in dBm
-   * \param pktInterval the packet interval
    * \return 0 if all went well
    */
   int Run (const WifiHelper &wifi, const YansWifiPhyHelper &wifiPhy, const WifiMacHelper &wifiMac, const YansWifiChannelHelper &wifiChannel,
            uint32_t trialNumber, uint32_t networkSize, Time duration, bool pcap, bool infra, uint16_t guardIntervalNs,
-           double distanceM, double apTxPowerDbm, double staTxPowerDbm, Time pktInterval);
+           double distanceM, double apTxPowerDbm, double staTxPowerDbm);
 };
 
 Experiment::Experiment ()
@@ -878,7 +876,7 @@ Experiment::Experiment ()
 int
 Experiment::Run (const WifiHelper &helper, const YansWifiPhyHelper &wifiPhy, const WifiMacHelper &wifiMac, const YansWifiChannelHelper &wifiChannel,
                  uint32_t trialNumber, uint32_t networkSize, Time duration, bool pcap, bool infra, uint16_t guardIntervalNs,
-                 double distance, double apTxPowerDbm, double staTxPowerDbm, Time pktInterval)
+                 double distance, double apTxPowerDbm, double staTxPowerDbm)
 {
   RngSeedManager::SetSeed (10);
   RngSeedManager::SetRun (10);
@@ -980,19 +978,20 @@ Experiment::Run (const WifiHelper &helper, const YansWifiPhyHelper &wifiPhy, con
       socketAddr.SetPhysicalAddress (devices.Get (j)->GetAddress ());
       socketAddr.SetProtocol (1);
 
-      Ptr<PacketSocketClient> client = CreateObject<PacketSocketClient> ();
-      client->SetRemote (socketAddr);
-      wifiNodes.Get (i)->AddApplication (client);
-      client->SetAttribute ("PacketSize", UintegerValue (pktSize));
-      client->SetAttribute ("MaxPackets", UintegerValue (0));
-      client->SetAttribute ("Interval", TimeValue (pktInterval));
+      PacketLoopHelper packetLoopHelper (socketAddr);
+      packetLoopHelper.SetSourceAttribute ("PacketSize", UintegerValue (pktSize));
+      packetLoopHelper.SetSourceAttribute ("Interval", TimeValue{Time{}});
+
+      ApplicationContainer apps = packetLoopHelper.Install (wifiNodes.Get (i), wifiNodes.Get (j), 500);
+
+      Ptr<PacketSocketClient> source = DynamicCast<PacketSocketClient> (apps.Get (0));
+      Ptr<PacketSocketServer> sink = DynamicCast<PacketSocketServer> (apps.Get (1));
+
+      sink->SetLocal (socketAddr);
+
       double start = startTime->GetValue ();
       NS_LOG_DEBUG ("Client " << i << " starting at " << start);
-      client->SetStartTime (Seconds (start));
-
-      Ptr<PacketSocketServer> server = CreateObject<PacketSocketServer> ();
-      server->SetLocal (socketAddr);
-      wifiNodes.Get (j)->AddApplication (server);
+      source->SetStartTime (Seconds (start));
     }
 
   // Log packet receptions
@@ -1087,7 +1086,6 @@ int main (int argc, char *argv[])
   double frequency = 5;                   ///< The operating frequency band in GHz: 2.4, 5 or 6
   uint16_t channelWidth = 20;             ///< The constant channel width in MHz (only for 11n/ac/ax)
   uint16_t guardIntervalNs = 800;         ///< The guard interval in nanoseconds (800 or 400 for 11n/ac, 800 or 1600 or 3200 for 11 ax)
-  uint16_t pktInterval = 1000;            ///< The socket packet interval in microseconds (a higher value is needed to reach saturation conditions as the channel bandwidth or the MCS increases)
   double distance = 0.001;                ///< The distance in meters between the AP and the STAs
   double apTxPower = 16;                  ///< The transmit power of the AP in dBm (if infrastructure only)
   double staTxPower = 16;                 ///< The transmit power of each STA in dBm (or all STAs if adhoc)
@@ -1126,7 +1124,6 @@ int main (int argc, char *argv[])
   cmd.AddValue ("distance", "Set the distance in meters between the AP and the STAs", distance);
   cmd.AddValue ("apTxPower", "Set the transmit power of the AP in dBm (if infrastructure only)", apTxPower);
   cmd.AddValue ("staTxPower", "Set the transmit power of each STA in dBm (or all STAs if adhoc)", staTxPower);
-  cmd.AddValue ("pktInterval", "Set the socket packet interval in microseconds", pktInterval);
   cmd.Parse (argc, argv);
 
   if (tracing)
@@ -1335,7 +1332,7 @@ int main (int argc, char *argv[])
               macRxTraceFile << "# Trial " << runIndex + 1 << " of " << trials << "; " << phyModeStr.str () << " for " << n << " nodes" << std::endl;
               socketSendTraceFile << "# Trial " << runIndex + 1 << " of " << trials << "; " << phyModeStr.str () << " for " << n << " nodes" << std::endl;
             }
-          experiment.Run (wifi, wifiPhy, wifiMac, wifiChannel, runIndex, n, Seconds (duration), pcap, infra, guardIntervalNs, distance, apTxPower, staTxPower, MicroSeconds (pktInterval));
+          experiment.Run (wifi, wifiPhy, wifiMac, wifiChannel, runIndex, n, Seconds (duration), pcap, infra, guardIntervalNs, distance, apTxPower, staTxPower);
           uint32_t k = 0;
           if (bytesReceived.size () != n)
             {
