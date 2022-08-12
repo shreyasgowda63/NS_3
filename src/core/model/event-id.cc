@@ -35,13 +35,13 @@ NS_LOG_COMPONENT_DEFINE ("EventId");
 EventId::EventId ()
   : m_eventImpl (0),
     m_ts (0),
-    m_context (0),
-    m_uid (0)
+    m_context (Simulator::NO_CONTEXT),
+    m_uid (UID::INVALID)
 {
   NS_LOG_FUNCTION (this);
 }
 
-EventId::EventId (const Ptr<EventImpl> &impl, uint64_t ts, uint32_t context, uint32_t uid)
+EventId::EventId (const Ptr<EventImpl> &impl, uint64_t ts, uint32_t context, UID_t uid)
   : m_eventImpl (impl),
     m_ts (ts),
     m_context (context),
@@ -91,7 +91,7 @@ EventId::GetContext (void) const
   NS_LOG_FUNCTION (this);
   return m_context;
 }
-uint32_t
+EventId::UID_t
 EventId::GetUid (void) const
 {
   NS_LOG_FUNCTION (this);

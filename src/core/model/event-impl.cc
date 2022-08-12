@@ -37,7 +37,8 @@ EventImpl::~EventImpl ()
 }
 
 EventImpl::EventImpl ()
-  : m_cancel (false)
+  : m_cancel (false),
+    m_expired (false)
 {
   NS_LOG_FUNCTION (this);
 }
@@ -64,6 +65,20 @@ EventImpl::IsCancelled (void)
 {
   NS_LOG_FUNCTION (this);
   return m_cancel;
+}
+
+void
+EventImpl::Expire (void)
+{
+  NS_LOG_FUNCTION (this);
+  m_expired = true;
+}
+
+bool
+EventImpl::IsExpired (void)
+{
+  NS_LOG_FUNCTION (this);
+  return m_expired;
 }
 
 } // namespace ns3

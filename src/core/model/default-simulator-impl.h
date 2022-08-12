@@ -117,7 +117,7 @@ private:
   Ptr<Scheduler> m_events;
 
   /** Next event unique id. */
-  uint32_t m_uid;
+  EventId::UID_t m_uid;
   /** Unique id of the current event. */
   uint32_t m_currentUid;
   /** Timestamp of the current event. */
