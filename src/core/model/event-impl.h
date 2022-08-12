@@ -65,6 +65,17 @@ public:
    * Checked by the simulation engine before calling Invoke().
    */
   bool IsCancelled (void);
+  /**
+   * Mark the event as preferring to be Removed, rather than just cancelled.
+   * For events which are likely to be cancelled this can reduce the
+   * event list size in the scheduler.  This also improves the
+   * performance of the symbolic execution engine.
+   */
+  void RemoveOnCancel ();
+  /**
+   * \returns \c true if this event prefers to be removed when cancelled.
+   */
+  bool IsRemoveOnCancel () const;
 
 protected:
   /**
@@ -77,6 +88,8 @@ protected:
 
 private:
   bool m_cancel;  /**< Has this event been cancelled. */
+
+  bool m_removeOnCancel;  /**< Remove this event, rather than cancel. */
 };
 
 } // namespace ns3
