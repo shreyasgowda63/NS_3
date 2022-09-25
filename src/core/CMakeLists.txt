@@ -207,7 +207,6 @@ set(header_files
     model/abort.h
     model/ascii-file.h
     model/ascii-test.h
-    model/assert.h
     model/attribute-accessor-helper.h
     model/attribute-construction-list.h
     model/attribute-container.h
@@ -250,6 +249,7 @@ set(header_files
     model/math.h
     model/names.h
     model/node-printer.h
+    model/nsassert.h
     model/nstime.h
     model/object-base.h
     model/object-factory.h
