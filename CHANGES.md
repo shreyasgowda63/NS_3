@@ -46,7 +46,7 @@ Changes from ns-3.36 to ns-3.37
 * The maximum allowed channel width (in MHz) for a data transmission is passed to the **GetDataTxVector** method of the `WifiRemoteStationManager`.
 * The **WifiMacQueueItem** class has been renamed as **WifiMpdu**.
 * The **Assoc** and **DeAssoc** trace sources of `StaWifiMac` provide the AP MLD address in case (de)association takes place between a non-AP MLD and an AP MLD.
-
+* Rename file `src/core/model/assert.h` to `src/core/model/nsassert.h`, in order to avoid confusion with the C library of the same name.
 
 ### Changes to build system
 
