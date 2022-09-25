@@ -25,7 +25,7 @@
 #include "uan-phy.h"
 #include "uan-tx-mode.h"
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/log.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/nstime.h"

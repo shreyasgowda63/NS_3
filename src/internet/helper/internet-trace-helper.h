@@ -19,7 +19,7 @@
 #ifndef INTERNET_TRACE_HELPER_H
 #define INTERNET_TRACE_HELPER_H
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/ipv4-interface-container.h"
 #include "ns3/ipv6-interface-container.h"
 #include "ns3/ipv4.h"

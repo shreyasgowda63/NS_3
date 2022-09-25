@@ -18,7 +18,7 @@
  * Author: Sebastien Vincent <vincent@clarinet.u-strasbg.fr>
  */
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "inet6-socket-address.h"
 #include "ns3/log.h"
 

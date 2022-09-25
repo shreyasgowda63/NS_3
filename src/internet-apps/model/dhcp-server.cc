@@ -24,7 +24,7 @@
 
 #include <algorithm>
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/nstime.h"
 #include "ns3/ipv4-packet-info-tag.h"
 #include "ns3/socket.h"

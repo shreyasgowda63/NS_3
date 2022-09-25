@@ -29,7 +29,7 @@
 #include "string.h"
 #include "object-factory.h"
 #include "global-value.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "log.h"
 
 #include <cmath>

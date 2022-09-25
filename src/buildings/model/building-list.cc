@@ -24,7 +24,7 @@
 #include "ns3/object-vector.h"
 #include "ns3/config.h"
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "building-list.h"
 #include "building.h"
 

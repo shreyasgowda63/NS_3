@@ -20,7 +20,7 @@
 
 /* taken from src/node/ipv4.h and adapted to IPv6 */
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/node.h"
 #include "ns3/boolean.h"
 

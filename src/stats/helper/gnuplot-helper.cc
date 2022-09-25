@@ -25,7 +25,7 @@
 
 #include "gnuplot-helper.h"
 #include "ns3/abort.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/config.h"
 #include "ns3/log.h"
 #include "ns3/get-wildcard-matches.h"

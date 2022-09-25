@@ -23,7 +23,7 @@
 #include <cstddef>
 #include <ns3/spectrum-model.h>
 #include <ns3/log.h>
-#include <ns3/assert.h>
+#include <ns3/nsassert.h>
 
 
 

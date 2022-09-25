@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include <vector>
 #include <ostream>
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 #define BUFFER_FREE_LIST 1
 
@@ -806,7 +806,7 @@ private:
 
 } // namespace ns3
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include <cstring>
 
 namespace ns3 {

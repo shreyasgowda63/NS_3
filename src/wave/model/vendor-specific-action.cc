@@ -20,7 +20,7 @@
 #include <iostream>
 #include <cstring>
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "vendor-specific-action.h"
 
 namespace ns3 {

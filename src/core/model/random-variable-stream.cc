@@ -24,7 +24,7 @@
  *
  */
 #include "random-variable-stream.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "boolean.h"
 #include "double.h"
 #include "integer.h"

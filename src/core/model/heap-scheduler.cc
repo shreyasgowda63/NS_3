@@ -22,7 +22,7 @@
 
 #include "heap-scheduler.h"
 #include "event-impl.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "log.h"
 
 /**

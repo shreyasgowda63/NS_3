@@ -23,7 +23,7 @@
 
 #include <ns3/lte-amc.h>
 #include <ns3/log.h>
-#include <ns3/assert.h>
+#include <ns3/nsassert.h>
 #include <ns3/math.h>
 #include <vector>
 #include <ns3/spectrum-value.h>

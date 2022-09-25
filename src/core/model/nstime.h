@@ -20,7 +20,7 @@
 #ifndef TIME_H
 #define TIME_H
 
-#include "assert.h"
+#include "nsassert.h"
 #include "attribute.h"
 #include "attribute-helper.h"
 #include "event-id.h"

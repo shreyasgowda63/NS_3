@@ -19,7 +19,7 @@
 #include <map>
 #include "object.h"
 #include "log.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "abort.h"
 #include "names.h"
 #include "singleton.h"

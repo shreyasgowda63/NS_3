@@ -23,7 +23,7 @@
 #define SIMPLE_REF_COUNT_H
 
 #include "default-deleter.h"
-#include "assert.h"
+#include "nsassert.h"
 #include <stdint.h>
 #include <limits>
 

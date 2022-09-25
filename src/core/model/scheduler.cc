@@ -19,7 +19,7 @@
  */
 
 #include "scheduler.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "log.h"
 
 /**

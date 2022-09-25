@@ -19,7 +19,7 @@
  */
 
 #include "ipv4-routing-table-entry.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/log.h"
 
 namespace ns3 {

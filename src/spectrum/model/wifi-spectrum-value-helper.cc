@@ -28,7 +28,7 @@
 #include "wifi-spectrum-value-helper.h"
 #include "ns3/log.h"
 #include "ns3/fatal-error.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 

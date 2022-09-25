@@ -17,7 +17,7 @@
  */
 
 #include "test.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "abort.h"
 #include "singleton.h"
 #include "system-path.h"

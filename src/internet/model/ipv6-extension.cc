@@ -22,7 +22,7 @@
 #include <ctime>
 
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/uinteger.h"
 #include "ns3/object-vector.h"
 #include "ns3/ipv6-address.h"

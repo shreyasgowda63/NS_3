@@ -21,7 +21,7 @@
 
 #include "ns3/simulator.h"
 #include "ns3/snr-to-block-error-rate-record.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 

@@ -20,7 +20,7 @@
 
 #include <iostream>
 #include <cstring>
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/packet.h"
 #include "ns3/fatal-error.h"
 #include "ns3/fatal-impl.h"

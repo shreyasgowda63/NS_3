@@ -19,7 +19,7 @@
  * Author: Faker Moatamri <faker.moatamri@sophia.inria.fr>
  */
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/log.h"
 #include "ns3/object.h"
 #include "ns3/names.h"

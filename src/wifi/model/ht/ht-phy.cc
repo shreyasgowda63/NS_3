@@ -26,7 +26,7 @@
 #include "ns3/wifi-utils.h"
 #include "ns3/interference-helper.h"
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 

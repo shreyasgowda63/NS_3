@@ -21,7 +21,7 @@
  */
 
 #include "ascii-file.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "fatal-error.h"
 #include "fatal-impl.h"
 #include <iostream>

@@ -26,7 +26,7 @@
 #include <utility>
 #include <string>
 #include <list>
-#include "assert.h"
+#include "nsassert.h"
 #include "log.h"
 
 /**

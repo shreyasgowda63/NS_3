@@ -22,7 +22,7 @@
 #include "basic-energy-harvester.h"
 
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/pointer.h"
 #include "ns3/string.h"
 #include "ns3/trace-source-accessor.h"

@@ -20,7 +20,7 @@
 
 #include "he-ru.h"
 #include "ns3/abort.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 

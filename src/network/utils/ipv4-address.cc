@@ -21,7 +21,7 @@
 #include <cstdlib>
 #include "ns3/log.h"
 #include "ipv4-address.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 

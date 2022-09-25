@@ -26,7 +26,7 @@
 #include "event-impl.h"
 
 #include "ptr.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "log.h"
 
 #include <list>
