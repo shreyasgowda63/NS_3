@@ -18,7 +18,7 @@
 #ifndef OPENFLOW_INTERFACE_H
 #define OPENFLOW_INTERFACE_H
 
-#include <assert.h>
+#include <nsassert.h>
 #include <errno.h>
 
 // Include OFSI code

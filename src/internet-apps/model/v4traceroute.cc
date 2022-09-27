@@ -27,7 +27,7 @@
 #include "v4traceroute.h"
 #include "ns3/icmpv4.h"
 #include "ns3/icmpv4-l4-protocol.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/log.h"
 #include "ns3/ipv4-address.h"
 #include "ns3/socket.h"

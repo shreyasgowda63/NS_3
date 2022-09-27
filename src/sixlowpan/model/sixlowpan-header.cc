@@ -19,7 +19,7 @@
  *         Michele Muccio <michelemuccio@virgilio.it>
  */
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/log.h"
 #include "ns3/abort.h"
 #include "ns3/ipv6-header.h"

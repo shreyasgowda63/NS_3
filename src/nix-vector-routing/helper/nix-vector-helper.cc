@@ -25,7 +25,7 @@
 
 #include "nix-vector-helper.h"
 #include "ns3/nix-vector-routing.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 

@@ -21,7 +21,7 @@
 #ifndef LTE_RLC_SEQUENCE_NUMBER_H
 #define LTE_RLC_SEQUENCE_NUMBER_H
 
-#include <ns3/assert.h>
+#include <ns3/nsassert.h>
 
 #include <limits>
 #include <iostream>

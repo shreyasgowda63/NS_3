@@ -33,7 +33,7 @@
 #include "ns3/interference-helper.h"
 #include "ns3/simulator.h"
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include <algorithm>
 
 namespace ns3 {

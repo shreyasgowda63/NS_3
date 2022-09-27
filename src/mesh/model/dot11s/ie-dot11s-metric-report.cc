@@ -19,7 +19,7 @@
  */
 
 #include "ie-dot11s-metric-report.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 namespace dot11s {

@@ -19,7 +19,7 @@
 #ifndef TRACE_HELPER_H
 #define TRACE_HELPER_H
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/net-device-container.h"
 #include "ns3/node-container.h"
 #include "ns3/simulator.h"

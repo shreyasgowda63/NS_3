@@ -20,7 +20,7 @@
 
 #include "ie-dot11s-prep.h"
 #include "ns3/address-utils.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/packet.h"
 namespace ns3 {
 namespace dot11s {

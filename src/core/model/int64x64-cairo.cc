@@ -19,7 +19,7 @@
  */
 #include "test.h"
 #include "abort.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "log.h"
 #include <cmath>
 #include <iostream>

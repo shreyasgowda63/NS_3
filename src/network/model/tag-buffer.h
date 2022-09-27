@@ -164,7 +164,7 @@ private:
 
 #ifdef TAG_BUFFER_USE_INLINE
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 

@@ -23,7 +23,7 @@
 #include "log.h"
 #include <utility>
 #include <string>
-#include "assert.h"
+#include "nsassert.h"
 
 /**
  * \file

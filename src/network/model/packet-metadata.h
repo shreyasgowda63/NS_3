@@ -24,7 +24,7 @@
 #include <vector>
 #include <limits>
 #include "ns3/callback.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/type-id.h"
 #include "buffer.h"
 

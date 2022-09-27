@@ -65,7 +65,7 @@
 #include "error-model.h"
 
 #include "ns3/packet.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/log.h"
 #include "ns3/boolean.h"
 #include "ns3/enum.h"

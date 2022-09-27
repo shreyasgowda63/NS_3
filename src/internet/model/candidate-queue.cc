@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <iostream>
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "candidate-queue.h"
 #include "global-route-manager-impl.h"
 

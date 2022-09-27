@@ -25,7 +25,7 @@
 #include "ns3/ipv6.h"
 #include "ns3/ipv6-route.h"
 #include "ns3/ipv6-list-routing.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/ipv6-address.h"
 #include "ns3/ipv6-routing-protocol.h"
 

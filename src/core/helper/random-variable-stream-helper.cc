@@ -20,7 +20,7 @@
 #include "ns3/config.h"
 #include "ns3/pointer.h"
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "random-variable-stream-helper.h"
 
 /**

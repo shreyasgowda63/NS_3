@@ -20,7 +20,7 @@
 
 #include "box.h"
 #include "ns3/vector.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/fatal-error.h"
 #include <cmath>
 #include <algorithm>

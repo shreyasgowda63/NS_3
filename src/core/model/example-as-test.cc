@@ -21,7 +21,7 @@
 #include "example-as-test.h"
 #include "ascii-test.h"
 #include "log.h"
-#include "assert.h"
+#include "nsassert.h"
 
 #include <string>
 #include <sstream>

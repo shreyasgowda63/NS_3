@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/log.h"
 #include "ns3/ptr.h"
 #include "ns3/node.h"

@@ -20,7 +20,7 @@
 #include "system-path.h"
 #include "fatal-error.h"
 #include "log.h"
-#include "assert.h"
+#include "nsassert.h"
 
 #include <algorithm>
 #include <cstdlib> // getenv

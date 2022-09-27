@@ -22,7 +22,7 @@
 #include <iostream>
 #include <iomanip>  // showpos
 #include <sstream>
-#include "assert.h"
+#include "nsassert.h"
 #include "log.h"
 
 /**

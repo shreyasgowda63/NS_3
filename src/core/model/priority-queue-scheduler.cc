@@ -20,7 +20,7 @@
 
 #include "priority-queue-scheduler.h"
 #include "event-impl.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "log-macros-disabled.h"
 #include "log.h"
 #include "scheduler.h"

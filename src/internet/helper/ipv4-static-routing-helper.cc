@@ -24,7 +24,7 @@
 #include "ns3/ipv4.h"
 #include "ns3/ipv4-route.h"
 #include "ns3/ipv4-list-routing.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/ipv4-address.h"
 #include "ns3/ipv4-routing-protocol.h"
 #include "ipv4-static-routing-helper.h"

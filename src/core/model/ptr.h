@@ -21,7 +21,7 @@
 #ifndef PTR_H
 #define PTR_H
 
-#include "assert.h"
+#include "nsassert.h"
 #include "deprecated.h"
 
 #include <iostream>

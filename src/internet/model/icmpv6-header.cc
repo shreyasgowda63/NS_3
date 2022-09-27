@@ -20,7 +20,7 @@
  *         David Gross <gdavid.devel@gmail.com>
  */
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/address-utils.h"
 #include "ns3/log.h"
 

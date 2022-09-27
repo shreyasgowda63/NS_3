@@ -21,7 +21,7 @@
 
 #include "object.h"
 #include "object-factory.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "attribute.h"
 #include "log.h"
 #include "string.h"

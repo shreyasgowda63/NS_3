@@ -18,7 +18,7 @@
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
 #include "buffer.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/log.h"
 
 #define LOG_INTERNAL_STATE(y)                                                                    \

@@ -22,7 +22,7 @@
 #include "default-simulator-impl.h"
 
 #include "scheduler.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "log.h"
 
 #include <cmath>

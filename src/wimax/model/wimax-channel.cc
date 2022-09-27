@@ -18,7 +18,7 @@
  * Author: Jahanzeb Farooq <jahanzeb.farooq@sophia.inria.fr>
  */
 
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/net-device.h"
 #include "wimax-channel.h"
 #include "wimax-phy.h"

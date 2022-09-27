@@ -26,7 +26,7 @@
 #include <ns3/enum.h>
 #include <ns3/uinteger.h>
 #include <ns3/log.h>
-#include <ns3/assert.h>
+#include <ns3/nsassert.h>
 #include <cmath>
 
 namespace ns3 {

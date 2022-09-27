@@ -22,7 +22,7 @@
  */
 
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/packet.h"
 #include "ns3/node.h"
 #include "ns3/boolean.h"

@@ -22,7 +22,7 @@
 #include <list>
 #include <utility>
 #include <iostream>
-#include "assert.h"
+#include "nsassert.h"
 #include <stdexcept>
 #include "ns3/core-config.h"
 #include "fatal-error.h"

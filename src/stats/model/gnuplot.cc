@@ -19,7 +19,7 @@
  * Enhancements: Timo Bingmann <timo.bingmann@student.kit.edu>
  */
 #include "gnuplot.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include <ostream>
 #include <stdexcept>
 

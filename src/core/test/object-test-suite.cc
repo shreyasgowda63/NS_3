@@ -21,7 +21,7 @@
 #include "ns3/test.h"
 #include "ns3/object.h"
 #include "ns3/object-factory.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 /**
  * \file

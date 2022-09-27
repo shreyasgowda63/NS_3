@@ -23,7 +23,7 @@
 
 #include <string>
 
-#include "assert.h"
+#include "nsassert.h"
 #include "ptr.h"
 
 #include "hash-function.h"

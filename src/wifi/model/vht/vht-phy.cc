@@ -28,7 +28,7 @@
 #include "ns3/wifi-net-device.h"
 #include "vht-configuration.h"
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 

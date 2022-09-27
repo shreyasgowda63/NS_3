@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 #include "get-wildcard-matches.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 

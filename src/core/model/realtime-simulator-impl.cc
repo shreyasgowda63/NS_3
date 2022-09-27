@@ -25,7 +25,7 @@
 
 #include "ptr.h"
 #include "pointer.h"
-#include "assert.h"
+#include "nsassert.h"
 #include "fatal-error.h"
 #include "log.h"
 #include "boolean.h"

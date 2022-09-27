@@ -20,7 +20,7 @@
 #include "tcp-socket-factory-impl.h"
 #include "tcp-l4-protocol.h"
 #include "ns3/socket.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 
 namespace ns3 {
 

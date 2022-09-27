@@ -37,7 +37,7 @@
 #include <map>
 #include "ns3/ptr.h"
 #include "ns3/log.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/fatal-error.h"
 #include "ns3/node.h"
 #include "ns3/uinteger.h"

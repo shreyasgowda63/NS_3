@@ -34,7 +34,7 @@
 #include "ns3/node-container.h"
 #include "ns3/ptr.h"
 #include "ns3/pointer.h"
-#include "ns3/assert.h"
+#include "ns3/nsassert.h"
 #include "ns3/log.h"
 
 #include <mpi.h>
