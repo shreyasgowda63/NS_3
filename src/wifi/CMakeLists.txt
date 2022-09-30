@@ -339,6 +339,7 @@ build_lib(
     test/spectrum-wifi-phy-test.cc
     test/tx-duration-test.cc
     test/wifi-aggregation-test.cc
+    test/wifi-channel-sounding-frame-test-suite.cc
     test/wifi-dynamic-bw-op-test.cc
     test/wifi-eht-info-elems-test.cc
     test/wifi-emlsr-test.cc
