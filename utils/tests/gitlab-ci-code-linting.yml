@@ -32,3 +32,11 @@ clang-tidy:
       - clang-tidy-errors.log
     when: on_failure
   timeout: 3h
+
+markdown-linter:
+  stage: code-linting
+  image: ruby:slim
+  before_script:
+    - gem install mdl
+  script:
+    - mdl .
