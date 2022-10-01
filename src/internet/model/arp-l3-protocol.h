@@ -23,6 +23,7 @@
 #include <list>
 #include "ns3/ipv4-header.h"
 #include "ns3/net-device.h"
+#include "ns3/net-device-state.h"
 #include "ns3/address.h"
 #include "ns3/ptr.h"
 #include "ns3/traced-callback.h"
