@@ -744,6 +744,7 @@ PfFfMacScheduler::DoSchedDlTriggerReq (const struct FfMacSchedSapProvider::Sched
                   break;
                 }
             }
+          bool isHarqBuffered = false;
           if (free)
             {
               // use the same RBGs for the retx
@@ -789,6 +790,7 @@ PfFfMacScheduler::DoSchedDlTriggerReq (const struct FfMacSchedSapProvider::Sched
                 }
               else
                 {
+                  isHarqBuffered = true;
                   // HARQ retx cannot be performed on this TTI -> store it
                   dlInfoListUntxed.push_back (m_dlInfoListBuffered.at (i));
                   NS_LOG_INFO (this << " No resource for this retx -> buffer it");
@@ -870,7 +872,10 @@ PfFfMacScheduler::DoSchedDlTriggerReq (const struct FfMacSchedSapProvider::Sched
               NS_FATAL_ERROR ("Unable to find HARQ timer for RNTI " << (uint16_t)rnti);
             }
           (*itHarqTimer).second.at (harqId) = 0;
-          ret.m_buildDataList.push_back (newEl);
+          if (isHarqBuffered== false)
+            {
+              ret.m_buildDataList.push_back (newEl);
+            }
           rntiAllocated.insert (rnti);
         }
       else
