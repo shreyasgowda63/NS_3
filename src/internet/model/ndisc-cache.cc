@@ -90,6 +90,14 @@ Ptr<NetDevice> NdiscCache::GetDevice () const
   return m_device;
 }
 
+void
+NdiscCache::ProcessDeviceStateChange (bool isUp, NetDeviceState::OperationalState opState)
+{
+  NS_LOG_FUNCTION (this << isUp << opState);
+  this->Flush ();
+
+}
+
 NdiscCache::Entry* NdiscCache::Lookup (Ipv6Address dst)
 {
   NS_LOG_FUNCTION (this << dst);
