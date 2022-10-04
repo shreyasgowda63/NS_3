@@ -166,7 +166,7 @@ LteFrStrictAlgorithm::GetTypeId ()
                    MakeUintegerChecker<uint8_t> ())
     .AddAttribute ("EdgePowerOffset",
                    "PdschConfigDedicated::Pa value for Edge Sub-band, default value dB0",
-                   UintegerValue (5),
+                   UintegerValue (LteRrcSap::PdschConfigDedicated::dB0),
                    MakeUintegerAccessor (&LteFrStrictAlgorithm::m_edgeAreaPowerOffset),
                    MakeUintegerChecker<uint8_t> ())
     .AddAttribute ("CenterAreaTpc",

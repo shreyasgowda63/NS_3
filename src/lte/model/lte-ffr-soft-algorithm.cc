@@ -166,17 +166,17 @@ LteFfrSoftAlgorithm::GetTypeId ()
                    MakeUintegerChecker<uint8_t> ())
     .AddAttribute ("CenterAreaPowerOffset",
                    "PdschConfigDedicated::Pa value for Center Sub-band, default value dB0",
-                   UintegerValue (5),
+                   UintegerValue (LteRrcSap::PdschConfigDedicated::dB0),
                    MakeUintegerAccessor (&LteFfrSoftAlgorithm::m_centerAreaPowerOffset),
                    MakeUintegerChecker<uint8_t> ())
     .AddAttribute ("MediumAreaPowerOffset",
                    "PdschConfigDedicated::Pa value for Medium Sub-band, default value dB0",
-                   UintegerValue (5),
+                   UintegerValue (LteRrcSap::PdschConfigDedicated::dB0),
                    MakeUintegerAccessor (&LteFfrSoftAlgorithm::m_mediumAreaPowerOffset),
                    MakeUintegerChecker<uint8_t> ())
     .AddAttribute ("EdgeAreaPowerOffset",
                    "PdschConfigDedicated::Pa value for Edge Sub-band, default value dB0",
-                   UintegerValue (5),
+                   UintegerValue (LteRrcSap::PdschConfigDedicated::dB0),
                    MakeUintegerAccessor (&LteFfrSoftAlgorithm::m_edgeAreaPowerOffset),
                    MakeUintegerChecker<uint8_t> ())
     .AddAttribute ("CenterAreaTpc",
