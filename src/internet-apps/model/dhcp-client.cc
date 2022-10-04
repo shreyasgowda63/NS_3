@@ -197,10 +197,18 @@ DhcpClient::StartApplication (void)
     }
   m_socket->SetRecvCallback (MakeCallback (&DhcpClient::NetHandler, this));
 
+  Ptr<NetDeviceState> netDevState = m_device->GetObject<NetDeviceState> ();
+
   if (m_firstBoot)
     {
-      m_device->AddLinkChangeCallback (MakeCallback (&DhcpClient::LinkStateHandler, this));
-      m_firstBoot = false;
+      if (netDevState)
+        {
+          netDevState->TraceConnectWithoutContext ("StateChange", MakeCallback (&DhcpClient::ProcessDeviceStateChange, this));
+        }
+      else
+        {
+          m_device->AddLinkChangeCallback (MakeCallback (&DhcpClient::LinkStateHandler, this));
+        }
     }
   Boot ();
 
@@ -242,53 +250,83 @@ void DhcpClient::LinkStateHandler (void)
 
   if (m_device->IsLinkUp ())
     {
-      NS_LOG_INFO ("Link up at " << Simulator::Now ().As (Time::S));
-      m_socket->SetRecvCallback (MakeCallback (&DhcpClient::NetHandler, this));
-      StartApplication ();
+      LinkUpHandler ();
     }
   else
     {
-      NS_LOG_INFO ("Link down at " << Simulator::Now ().As (Time::S)); //reinitialization
-
-      // Stop all the timers
-      m_refreshEvent.Cancel ();
-      m_requestEvent.Cancel ();
-      m_discoverEvent.Cancel ();
-      m_rebindEvent.Cancel ();
-      m_nextOfferEvent.Cancel ();
-      m_timeout.Cancel ();
-      m_collectEvent.Cancel ();
-
-      m_socket->SetRecvCallback (MakeNullCallback<void, Ptr<Socket> > ());  //stop receiving on this socket !!!
-
-      Ptr<Ipv4> ipv4MN = GetNode ()->GetObject<Ipv4> ();
-      int32_t ifIndex = ipv4MN->GetInterfaceForDevice (m_device);
-
-      for (uint32_t i = 0; i < ipv4MN->GetNAddresses (ifIndex); i++)
-        {
-          if (ipv4MN->GetAddress (ifIndex,i).GetLocal () == m_myAddress)
-            {
-              ipv4MN->RemoveAddress (ifIndex, i);
-              break;
-            }
-        }
-
-      Ipv4StaticRoutingHelper ipv4RoutingHelper;
-      Ptr<Ipv4StaticRouting> staticRouting = ipv4RoutingHelper.GetStaticRouting (ipv4MN);
-      uint32_t i;
-      for (i = 0; i < staticRouting->GetNRoutes (); i++)
-        {
-          if (staticRouting->GetRoute (i).GetGateway () == m_gateway)
-            {
-              staticRouting->RemoveRoute (i);
-              break;
-            }
-        }
-
-      m_state = 0;
-      m_myAddress = Ipv4Address ("0.0.0.0");
-      m_gateway = Ipv4Address ("0.0.0.0");
+      LinkDownHandler ();
     }
+}
+
+void
+DhcpClient::ProcessDeviceStateChange (bool adminState, NetDeviceState::OperationalState operationalState)
+{
+  NS_LOG_FUNCTION (this << adminState << operationalState);
+  
+  if (operationalState == NetDeviceState::IF_OPER_UP)
+    {
+      LinkUpHandler ();
+    }
+  else if (operationalState == NetDeviceState::IF_OPER_DOWN)
+    {
+      LinkDownHandler ();
+    }
+}
+
+
+void DhcpClient::LinkUpHandler (void)
+{
+  NS_LOG_FUNCTION (this);
+
+  NS_LOG_INFO ("Link up at " << Simulator::Now ().As (Time::S));
+  m_socket->SetRecvCallback (MakeCallback (&DhcpClient::NetHandler, this));
+  StartApplication ();
+}
+
+void DhcpClient::LinkDownHandler (void)
+{
+  NS_LOG_FUNCTION (this);
+
+  NS_LOG_INFO ("Link down at " << Simulator::Now ().As (Time::S)); //reinitialization
+
+  // Stop all the timers
+  m_refreshEvent.Cancel ();
+  m_requestEvent.Cancel ();
+  m_discoverEvent.Cancel ();
+  m_rebindEvent.Cancel ();
+  m_nextOfferEvent.Cancel ();
+  m_timeout.Cancel ();
+  m_collectEvent.Cancel ();
+
+  m_socket->SetRecvCallback (MakeNullCallback<void, Ptr<Socket> > ());      //stop receiving on this socket !!!
+
+  Ptr<Ipv4> ipv4MN = GetNode ()->GetObject<Ipv4> ();
+  int32_t ifIndex = ipv4MN->GetInterfaceForDevice (m_device);
+
+  for (uint32_t i = 0; i < ipv4MN->GetNAddresses (ifIndex); i++)
+    {
+      if (ipv4MN->GetAddress (ifIndex,i).GetLocal () == m_myAddress)
+        {
+          ipv4MN->RemoveAddress (ifIndex, i);
+          break;
+        }
+    }
+
+  Ipv4StaticRoutingHelper ipv4RoutingHelper;
+  Ptr<Ipv4StaticRouting> staticRouting = ipv4RoutingHelper.GetStaticRouting (ipv4MN);
+  uint32_t i;
+  for (i = 0; i < staticRouting->GetNRoutes (); i++)
+    {
+      if (staticRouting->GetRoute (i).GetGateway () == m_gateway)
+        {
+          staticRouting->RemoveRoute (i);
+          break;
+        }
+    }
+
+  m_state = 0;
+  m_myAddress = Ipv4Address ("0.0.0.0");
+  m_gateway = Ipv4Address ("0.0.0.0");
 }
 
 void DhcpClient::NetHandler (Ptr<Socket> socket)
