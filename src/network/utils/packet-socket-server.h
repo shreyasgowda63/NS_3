@@ -25,6 +25,7 @@
 #include "ns3/event-id.h"
 #include "ns3/ptr.h"
 #include "ns3/packet-socket-address.h"
+#include "ns3/traced-callback.h"
 
 namespace ns3 {
 
@@ -61,6 +62,12 @@ public:
    * \param addr local address
    */
   void SetLocal (PacketSocketAddress addr);
+
+  /**
+   * \brief Returns the number of received packets
+   * \return the number of received packets
+   */
+  uint32_t GetReceivedPackets () const;
 
 protected:
   virtual void DoDispose (void);

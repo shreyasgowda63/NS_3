@@ -3,6 +3,7 @@ set(source_files
     helper/delay-jitter-estimation.cc
     helper/net-device-container.cc
     helper/node-container.cc
+    helper/packet-loop-helper.cc
     helper/packet-socket-helper.cc
     helper/simple-net-device-helper.cc
     helper/trace-helper.cc
@@ -68,6 +69,7 @@ set(source_files
     utils/simple-channel.cc
     utils/simple-net-device.cc
     utils/sll-header.cc
+    utils/sequence-tag.cc
 )
 
 set(header_files
@@ -75,6 +77,7 @@ set(header_files
     helper/delay-jitter-estimation.h
     helper/net-device-container.h
     helper/node-container.h
+    helper/packet-loop-helper.h
     helper/packet-socket-helper.h
     helper/simple-net-device-helper.h
     helper/trace-helper.h
@@ -146,6 +149,7 @@ set(header_files
     utils/simple-channel.h
     utils/simple-net-device.h
     utils/sll-header.h
+    utils/sequence-tag.h
 )
 
 build_lib(
