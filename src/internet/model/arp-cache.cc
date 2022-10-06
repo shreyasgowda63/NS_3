@@ -100,7 +100,18 @@ void
 ArpCache::DoDispose (void)
 {
   NS_LOG_FUNCTION (this);
-  Flush ();
+
+  for (CacheI i = m_arpCache.begin (); i != m_arpCache.end (); i++)
+    {
+      delete (*i).second;
+    }
+  m_arpCache.erase (m_arpCache.begin (), m_arpCache.end ());
+  if (m_waitReplyTimer.IsRunning ())
+    {
+      NS_LOG_LOGIC ("Stopping WaitReplyTimer at " << Simulator::Now ().As (Time::S) << " due to ArpCache flush");
+      m_waitReplyTimer.Cancel ();
+    }
+
   m_device = 0;
   m_interface = 0;
   if (!m_waitReplyTimer.IsRunning ())
@@ -234,7 +245,7 @@ ArpCache::HandleWaitReplyTimeout (void)
     }
   if (restartWaitReplyTimer)
     {
-      NS_LOG_LOGIC ("Restarting WaitReplyTimer at " << Simulator::Now ().GetSeconds ());
+      NS_LOG_LOGIC ("Restarting WaitReplyTimer at " << Simulator::Now ().As (Time::S));
       m_waitReplyTimer = Simulator::Schedule (m_waitReplyTimeout,
                                               &ArpCache::HandleWaitReplyTimeout, this);
     }
@@ -244,6 +255,12 @@ void
 ArpCache::Flush (void)
 {
   NS_LOG_FUNCTION (this);
+
+  if (m_interface->GetDevice ()->IsLinkUp () == true)
+    {
+      return;
+    }
+
   for (CacheI i = m_arpCache.begin (); i != m_arpCache.end (); i++)
     {
       delete (*i).second;
@@ -251,7 +268,7 @@ ArpCache::Flush (void)
   m_arpCache.erase (m_arpCache.begin (), m_arpCache.end ());
   if (m_waitReplyTimer.IsRunning ())
     {
-      NS_LOG_LOGIC ("Stopping WaitReplyTimer at " << Simulator::Now ().GetSeconds () << " due to ArpCache flush");
+      NS_LOG_LOGIC ("Stopping WaitReplyTimer at " << Simulator::Now ().As (Time::S) << " due to ArpCache flush");
       m_waitReplyTimer.Cancel ();
     }
 }
@@ -536,7 +553,7 @@ ArpCache::Entry::IsExpired (void) const
   NS_LOG_FUNCTION (this);
   Time timeout = GetTimeout ();
   Time delta = Simulator::Now () - m_lastSeen;
-  NS_LOG_DEBUG ("delta=" << delta.GetSeconds () << "s");
+  NS_LOG_DEBUG ("delta=" << delta.As (Time::S));
   if (delta > timeout)
     {
       return true;

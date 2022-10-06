@@ -57,13 +57,17 @@ NdiscCache::NdiscCache ()
 NdiscCache::~NdiscCache ()
 {
   NS_LOG_FUNCTION (this);
-  Flush ();
 }
 
 void NdiscCache::DoDispose ()
 {
   NS_LOG_FUNCTION (this);
-  Flush ();
+  for (CacheI i = m_ndCache.begin (); i != m_ndCache.end (); i++)
+    {
+      delete (*i).second; /* delete the pointer NdiscCache::Entry */
+    }
+
+  m_ndCache.erase (m_ndCache.begin (), m_ndCache.end ());
   m_device = 0;
   m_interface = 0;
   m_icmpv6 = 0;
@@ -153,6 +157,11 @@ void NdiscCache::Remove (NdiscCache::Entry* entry)
 void NdiscCache::Flush ()
 {
   NS_LOG_FUNCTION (this);
+
+  if (m_interface->GetDevice ()->IsLinkUp () == true)
+    {
+      return;
+    }
 
   for (CacheI i = m_ndCache.begin (); i != m_ndCache.end (); i++)
     {

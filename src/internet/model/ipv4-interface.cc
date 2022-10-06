@@ -193,6 +193,10 @@ Ipv4Interface::SetDown (void)
 {
   NS_LOG_FUNCTION (this);
   m_ifup = false;
+  if (m_cache)
+    {
+      m_cache->Flush ();
+    }
 }
 
 bool
