@@ -27,6 +27,7 @@
 #include <map>
 #include <type_traits>
 #include <vector>
+#include <list>
 
 #include "node-printer.h"
 #include "time-printer.h"
@@ -87,6 +88,7 @@
 
 
 namespace ns3 {
+class Time;
 
 /**
  *  Logging severity classes and levels.
@@ -421,19 +423,21 @@ public:
    */
   static ComponentList * GetComponentList (void);
 
-private:
-  /**
-   * Parse the `NS_LOG` environment variable for options relating to this
-   * LogComponent.
-   */
-  void EnvVarCheck (void);
+  static void ActivateEnvLogs (void);
 
+  static Time m_tLogStart;  //!< Start time of logs
+  static Time m_tLogEnd;    //!< End time of logs
+  static std::list<std::pair<LogComponent, LogLevel>> m_envLogs; //!< Log components and levels parsed from NS_LOG environment variable
+  static bool m_envLogsCollected; //!< Flag: true if NS_LOG was parsed into m_envLogs
+  static bool m_envLogsActivated; //!< Flag: true if m_engLogs have been scheduled
+
+private:
   int32_t     m_levels;  //!< Enabled LogLevels.
   int32_t     m_mask;    //!< Blocked LogLevels.
   std::string m_name;    //!< LogComponent name.
   std::string m_file;    //!< File defining this LogComponent.
 
-};  // class LogComponent
+}; // class LogComponent
 
 /**
  * Get the LogComponent registered with the given name.
@@ -442,6 +446,11 @@ private:
  * \return a reference to the requested LogComponent
  */
 LogComponent & GetLogComponent (const std::string name);
+
+/**
+ * Parse a string to get the corresponding LogLevel
+ */
+LogLevel GetLogLevel (const std::string lev);
 
 /**
  * Insert `, ` when streaming function arguments.
