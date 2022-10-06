@@ -179,6 +179,9 @@ DefaultSimulatorImpl::ProcessEventsWithContext (void)
       ev.key.m_ts = m_currentTs + event.timestamp;
       ev.key.m_context = event.context;
       ev.key.m_uid = m_uid;
+
+      NS_ABORT_MSG_UNLESS( ev.key.m_uid != ULLONG_MAX, "Event ID at max. Stop to prevent overflow!");
+
       m_uid++;
       m_unscheduledEvents++;
       m_events->Insert (ev);
@@ -236,6 +239,9 @@ DefaultSimulatorImpl::Schedule (Time const &delay, EventImpl *event)
   ev.key.m_ts = (uint64_t) tAbsolute.GetTimeStep ();
   ev.key.m_context = GetContext ();
   ev.key.m_uid = m_uid;
+
+  NS_ABORT_MSG_UNLESS( ev.key.m_uid != ULLONG_MAX, "Event ID at max. Stop to prevent overflow!");
+
   m_uid++;
   m_unscheduledEvents++;
   m_events->Insert (ev);
@@ -255,6 +261,9 @@ DefaultSimulatorImpl::ScheduleWithContext (uint32_t context, Time const &delay, 
       ev.key.m_ts = (uint64_t) tAbsolute.GetTimeStep ();
       ev.key.m_context = context;
       ev.key.m_uid = m_uid;
+
+      NS_ABORT_MSG_UNLESS( ev.key.m_uid != ULLONG_MAX, "Event ID at max. Stop to prevent overflow!");
+
       m_uid++;
       m_unscheduledEvents++;
       m_events->Insert (ev);
@@ -291,6 +300,9 @@ DefaultSimulatorImpl::ScheduleDestroy (EventImpl *event)
 
   EventId id (Ptr<EventImpl> (event, false), m_currentTs, 0xffffffff, 2);
   m_destroyEvents.push_back (id);
+
+  NS_ABORT_MSG_UNLESS( ev.key.m_uid != ULLONG_MAX, "Event ID at max. Stop to prevent overflow!");
+
   m_uid++;
   return id;
 }

@@ -79,7 +79,7 @@ public:
    * \param [in] context The execution context for this event.
    * \param [in] uid The unique id for this EventId.
    */
-  EventId (const Ptr<EventImpl> &impl, uint64_t ts, uint32_t context, uint32_t uid);
+  EventId (const Ptr<EventImpl> &impl, uint64_t ts, uint32_t context, uint64_t uid);
   /**
    * This method is syntactic sugar for the ns3::Simulator::Cancel
    * method.
@@ -146,7 +146,7 @@ private:
   Ptr<EventImpl> m_eventImpl;  /**< The underlying event implementation. */
   uint64_t m_ts;               /**< The virtual time stamp. */
   uint32_t m_context;          /**< The context. */
-  uint32_t m_uid;              /**< The unique id. */
+  uint64_t m_uid;              /**< The unique id. */
 };
 
 /*************************************************

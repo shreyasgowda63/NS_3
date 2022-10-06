@@ -168,7 +168,7 @@ public:
   struct EventKey
   {
     uint64_t m_ts;         /**< Event time stamp. */
-    uint32_t m_uid;        /**< Event unique id. */
+    uint64_t m_uid;        /**< Event unique id. */
     uint32_t m_context;    /**< Event context. */
   };
   /**
