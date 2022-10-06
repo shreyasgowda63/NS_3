@@ -21,10 +21,12 @@
 #ifndef WIFI_PPDU_H
 #define WIFI_PPDU_H
 
-#include "wifi-tx-vector.h"
-#include "ns3/nstime.h"
 #include <list>
 #include <unordered_map>
+
+#include "ns3/nstime.h"
+#include "wifi-psdu.h"
+#include "wifi-tx-vector.h"
 
 /**
  * \file
@@ -34,8 +36,6 @@
  */
 
 namespace ns3 {
-
-class WifiPsdu;
 
 /**
  * Map of const PSDUs indexed by STA-ID
@@ -72,7 +72,7 @@ public:
   /**
    * Destructor for WifiPpdu.
    */
-  virtual ~WifiPpdu ();
+  virtual ~WifiPpdu () = default;
 
   /**
    * Get the TXVECTOR used to send the PPDU.

@@ -52,15 +52,6 @@ WifiPpdu::WifiPpdu (const WifiConstPsduMap & psdus, const WifiTxVector& txVector
   m_psdus = psdus;
 }
 
-WifiPpdu::~WifiPpdu ()
-{
-  for (auto & psdu : m_psdus)
-    {
-      psdu.second = 0;
-    }
-  m_psdus.clear ();
-}
-
 WifiTxVector
 WifiPpdu::GetTxVector (void) const
 {
