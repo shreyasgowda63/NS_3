@@ -230,7 +230,8 @@ private:
   bool m_enableHello;                  ///< Indicates whether a hello messages enable
   bool m_enableBroadcast;              ///< Indicates whether a a broadcast data packets forwarding enable
   //\}
-
+  void SetParams();                  ///< To check the validity of parameters.
+  void SetBlackListTimeout();
   /// IP protocol
   Ptr<Ipv4> m_ipv4;
   /// Raw unicast socket per each IP interface, map socket -> iface address (IP + mask)
