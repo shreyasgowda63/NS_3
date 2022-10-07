@@ -80,12 +80,12 @@ LteFfrDistributedAlgorithm::GetTypeId ()
                    MakeUintegerChecker<uint8_t> ())
     .AddAttribute ("CenterPowerOffset",
                    "PdschConfigDedicated::Pa value for Center Sub-band, default value dB0",
-                   UintegerValue (5),
+                   UintegerValue (LteRrcSap::PdschConfigDedicated::dB0),
                    MakeUintegerAccessor (&LteFfrDistributedAlgorithm::m_centerPowerOffset),
                    MakeUintegerChecker<uint8_t> ())
     .AddAttribute ("EdgePowerOffset",
                    "PdschConfigDedicated::Pa value for Edge Sub-band, default value dB0",
-                   UintegerValue (5),
+                   UintegerValue (LteRrcSap::PdschConfigDedicated::dB0),
                    MakeUintegerAccessor (&LteFfrDistributedAlgorithm::m_edgePowerOffset),
                    MakeUintegerChecker<uint8_t> ())
     .AddAttribute ("EdgeRbNum",
