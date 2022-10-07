@@ -21,6 +21,7 @@
 #ifndef CSMA_CHANNEL_H
 #define CSMA_CHANNEL_H
 
+#include <map>
 #include "ns3/channel.h"
 #include "ns3/ptr.h"
 #include "ns3/nstime.h"
@@ -39,12 +40,13 @@ class CsmaNetDevice;
  * Stores the information related to each net device that is
  * connected to the channel.
  */
-class CsmaDeviceRec {
+class CsmaDeviceRec
+{
 public:
   Ptr< CsmaNetDevice > devicePtr; //!< Pointer to the net device
   bool                 active;    //!< Is net device enabled to TX/RX
 
-  CsmaDeviceRec();
+  CsmaDeviceRec ();
 
   /**
    * \brief Constructor
@@ -52,7 +54,7 @@ public:
    *
    * \param device the device to record
    */
-  CsmaDeviceRec(Ptr< CsmaNetDevice > device);
+  CsmaDeviceRec (Ptr< CsmaNetDevice > device);
 
   /**
    * Copy constructor
@@ -116,7 +118,7 @@ public:
    * \param device Device pointer to the netdevice to attach to the channel
    * \return The assigned device number
    */
-  int32_t Attach (Ptr<CsmaNetDevice> device);
+  uint32_t Attach (Ptr<CsmaNetDevice> device);
 
   /**
    * \brief Detach a given netdevice from this channel
@@ -170,9 +172,28 @@ public:
    * \param device Device pointer to the netdevice to detach from the channel
    * \return True if the device is found and is not attached to the
    * channel, false if the device is currently connected to the
-   * channel or can't be found.
+   * channel or can't be found or CsmaNetDeviceState is not aggregated.
    */
   bool Reattach (Ptr<CsmaNetDevice> device);
+
+  /**
+   * \brief Remove a given CsmaNetDevice from this channel
+   *
+   * \param device Device pointer to the netdevice to remove from the channel
+   * \return True if the device is found and attached to the channel,
+   * false if the device is not currently connected to the channel.
+   */
+  bool Remove (Ptr<CsmaNetDevice> device);
+
+  /**
+   * \brief Remove a given CsmaNetDevice from this channel
+   *
+   * \param deviceId The deviceID assigned to the net device when it
+   * was connected to the channel
+   * \return True if the device is found and attached to the channel,
+   * false if the device is not currently connected to the channel.
+   */
+  bool Remove (uint32_t deviceId);
 
   /**
    * \brief Start transmitting a packet over the channel
@@ -265,7 +286,7 @@ public:
   /**
    * \return Get a NetDevice pointer to a connected network device.
    *
-   * \param i The index of the net device.
+   * \param i The ID of the net device.
    * \return Returns the pointer to the net device that is associated
    * with deviceId i.
    */
@@ -279,7 +300,7 @@ public:
    * \return Returns the pointer to the net device that is associated
    * with deviceId i.
    */
-  Ptr<CsmaNetDevice> GetCsmaDevice (std::size_t i) const;
+  Ptr<CsmaNetDevice> GetCsmaDevice (uint32_t i) const;
 
   /**
    * Get the assigned data rate of the channel
@@ -318,7 +339,12 @@ private:
    * whole list does not have to be searched when making sure that a
    * source is attached to a channel when it is transmitting data.
    */
-  std::vector<CsmaDeviceRec> m_deviceList;
+  std::map<uint32_t, CsmaDeviceRec> m_deviceList;
+
+  /**
+   * List of the CsmaNetDevice Ids that have been removed and are available for reuse.
+   */
+  std::list<uint32_t> m_removedDeviceIds;
 
   /**
    * The Packet that is currently being transmitted on the channel (or last
@@ -333,7 +359,6 @@ private:
    * channel, if the channel is currently not busy.
    */
   uint32_t                            m_currentSrc;
-
   /**
    * Current state of the channel
    */

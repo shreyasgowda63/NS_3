@@ -44,14 +44,16 @@ class Packet;
  * encapsulates a general attribute or a set of functionality that
  * may be of interest to many other classes.
  */
-class CsmaHelper : public PcapHelperForDevice, public AsciiTraceHelperForDevice
+class CsmaHelper : public PcapHelperForDevice,
+                   public AsciiTraceHelperForDevice
 {
 public:
   /**
    * Construct a CsmaHelper.
    */
   CsmaHelper ();
-  virtual ~CsmaHelper () {}
+  virtual ~CsmaHelper ()
+  {}
 
   /**
    * \tparam Ts \deduced Argument types
@@ -207,8 +209,49 @@ public:
   */
   int64_t AssignStreams (NetDeviceContainer c, int64_t stream);
 
-private:
 
+  /**
+   * Enable a device for use. A device is usable only after enabling it.
+   * There is no need to call this function at the start of the
+   * simulation. Device is automatically enabled. Call this function
+   * to re-enable a device after disabling.
+   *
+   * \param delay The delay after which device should be enabled.
+   * \param netDevice The CsmaNetDevice to be enabled.
+   */
+  void SetDeviceUp (const Time &delay, Ptr<NetDevice> netDevice);
+
+  /**
+   * Disable a device from using. The device cannot be used for
+   * transmitting and receiving after disabling.
+   *
+   * \param delay The delay after which disable should be disabled.
+   * \param netDevice The CsmaNetDevice to be disabled.
+   */
+  void SetDeviceDown (const Time &delay, Ptr<NetDevice> netDevice);
+
+  /**
+   * Detach a device from channel. CsmaNetDevice will be detached from
+   * CsmaChannel at the given time.
+   *
+   * \param delay The delay after which the device will be detached.
+   */
+  void DetachChannel (const Time &delay, Ptr<NetDevice> netDevice);
+
+  /**
+   * Reattach a previously detached device to the channel. Use this
+   * method very carefully. A device is always freshly attached to
+   * channel in CsmaHelper::InstallPriv (). This method should be
+   * used for reattaching a previously detached device to the channel.
+   * This method cannot be used to freshly attach a device to the
+   * channel.
+   *
+   * \param delay The time at which device should be reattached.
+   * \param netDevice The CsmaNetDevice to reattached.
+   */
+  void ReattachChannel (const Time &delay, Ptr<NetDevice> netDevice);
+
+private:
   /**
    * This method creates an ns3::CsmaNetDevice with the attributes configured by
    * CsmaHelper::SetDeviceAttribute and then adds the device to the node and

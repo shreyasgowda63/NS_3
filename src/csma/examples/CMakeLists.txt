@@ -37,3 +37,12 @@ build_lib_example(
     ${libapplications}
     ${libinternet-apps}
 )
+
+build_lib_example(
+  NAME csma-net-device-state-example
+  SOURCE_FILES csma-net-device-state-example.cc
+  LIBRARIES_TO_LINK
+    ${libcsma}
+    ${libinternet}
+    ${libapplications}
+)

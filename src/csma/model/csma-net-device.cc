@@ -31,6 +31,7 @@
 #include "ns3/pointer.h"
 #include "ns3/trace-source-accessor.h"
 #include "csma-net-device.h"
+#include "ns3/csma-net-device-state.h"
 #include "csma-channel.h"
 
 namespace ns3 {
@@ -205,7 +206,7 @@ CsmaNetDevice::CsmaNetDevice ()
   m_encapMode = DIX;
 }
 
-CsmaNetDevice::~CsmaNetDevice()
+CsmaNetDevice::~CsmaNetDevice ()
 {
   NS_LOG_FUNCTION_NOARGS ();
   m_queue = 0;
@@ -237,6 +238,13 @@ CsmaNetDevice::GetEncapsulationMode (void)
 {
   NS_LOG_FUNCTION_NOARGS ();
   return m_encapMode;
+}
+
+uint32_t
+CsmaNetDevice::GetDeviceId (void)
+{
+  NS_LOG_FUNCTION_NOARGS ();
+  return m_deviceId;
 }
 
 bool
@@ -373,16 +381,45 @@ CsmaNetDevice::AddHeader (Ptr<Packet> p,   Mac48Address source,  Mac48Address de
             Ptr<Packet> padd = Create<Packet> (buffer, 46 - p->GetSize ());
             p->AddAtEnd (padd);
           }
+        break;
+      case LLC:
+        {
+          NS_LOG_LOGIC ("Encapsulating packet as LLC (length interpretation)");
 
-        NS_ASSERT_MSG (p->GetSize () <= GetMtu (),
-                       "CsmaNetDevice::AddHeader(): 802.3 Length/Type field with LLC/SNAP: "
-                       "length interpretation must not exceed device frame size minus overhead");
-      }
-      break;
-    case ILLEGAL:
-    default:
-      NS_FATAL_ERROR ("CsmaNetDevice::AddHeader(): Unknown packet encapsulation mode");
-      break;
+          LlcSnapHeader llc;
+          llc.SetType (protocolNumber);
+          p->AddHeader (llc);
+
+          //
+          // This corresponds to the length interpretation of the lengthType
+          // field but with an LLC/SNAP header added to the payload as in
+          // IEEE 802.2
+          //
+          lengthType = p->GetSize ();
+
+          //
+          // All Ethernet frames must carry a minimum payload of 46 bytes.  The
+          // LLC SNAP header counts as part of this payload.  We need to padd out
+          // if we don't have enough bytes.  These must be real bytes since they
+          // will be written to pcap files and compared in regression trace files.
+          //
+          if (p->GetSize () < 46)
+            {
+              uint8_t buffer[46];
+              memset (buffer, 0, 46);
+              Ptr<Packet> padd = Create<Packet> (buffer, 46 - p->GetSize ());
+              p->AddAtEnd (padd);
+            }
+
+          NS_ASSERT_MSG (p->GetSize () <= GetMtu (),
+                         "CsmaNetDevice::AddHeader(): 802.3 Length/Type field with LLC/SNAP: "
+                         "length interpretation must not exceed device frame size minus overhead");
+        }
+        break;
+      case ILLEGAL:
+      default:
+        NS_FATAL_ERROR ("CsmaNetDevice::AddHeader(): Unknown packet encapsulation mode");
+        break;
     }
 
   NS_LOG_LOGIC ("header.SetLengthType (" << lengthType << ")");
@@ -409,8 +446,8 @@ CsmaNetDevice::ProcessHeader (Ptr<Packet> p, uint16_t & param)
   EthernetHeader header (false);
   p->RemoveHeader (header);
 
-  if ((header.GetDestination () != GetBroadcast ()) &&
-      (header.GetDestination () != GetAddress ()))
+  if ((header.GetDestination () != GetBroadcast ())
+      && (header.GetDestination () != GetAddress ()))
     {
       return false;
     }
@@ -648,6 +685,18 @@ CsmaNetDevice::Attach (Ptr<CsmaChannel> ch)
 {
   NS_LOG_FUNCTION (this << &ch);
 
+  if(m_channel)
+  {
+    if (m_channel == ch)
+    {
+      // already attached to the same channel, skipping
+      return true;
+    }
+
+    // We was attached to another channel, we must first detach and remove from the old channel
+    m_channel->Remove (this);
+  }
+
   m_channel = ch;
 
   m_deviceId = m_channel->Attach (this);
@@ -660,12 +709,8 @@ CsmaNetDevice::Attach (Ptr<CsmaChannel> ch)
   //
   // We use the Ethernet interframe gap of 96 bit times.
   //
-  m_tInterframeGap = m_bps.CalculateBytesTxTime (96/8);
+  m_tInterframeGap = m_bps.CalculateBytesTxTime (96 / 8);
 
-  //
-  // This device is up whenever a channel is attached to it.
-  //
-  NotifyLinkUp ();
   return true;
 }
 
@@ -688,6 +733,22 @@ CsmaNetDevice::Receive (Ptr<Packet> packet, Ptr<CsmaNetDevice> senderDevice)
 {
   NS_LOG_FUNCTION (packet << senderDevice);
   NS_LOG_LOGIC ("UID is " << packet->GetUid ());
+
+  Ptr<CsmaNetDeviceState> csmaNetDeviceState = this->GetObject<CsmaNetDeviceState> ();
+  
+  if (!csmaNetDeviceState->IsUp ())
+    {
+      // Drop packet.
+      NS_LOG_LOGIC ("Dropping packet because device is not enabled for use.");
+      return;
+    }
+
+  if (csmaNetDeviceState->GetOperationalState () != NetDeviceState::IF_OPER_UP )
+    {
+      // Drop packet.
+      NS_LOG_LOGIC ("Dropping packet because device is not operational.");
+      return;
+    }
 
   //
   // We never forward up packets that we sent.  Real devices don't do this since
@@ -836,6 +897,15 @@ CsmaNetDevice::NotifyLinkUp (void)
 }
 
 void
+CsmaNetDevice::NotifyLinkDown (void)
+{
+  NS_LOG_FUNCTION_NOARGS ();
+  m_linkUp = false;
+  m_queue->Flush ();
+  m_linkChangeCallbacks ();
+}
+
+void
 CsmaNetDevice::SetIfIndex (const uint32_t index)
 {
   NS_LOG_FUNCTION (index);
@@ -950,13 +1020,29 @@ CsmaNetDevice::SendFrom (Ptr<Packet> packet, const Address& src, const Address& 
   NS_LOG_LOGIC ("packet =" << packet);
   NS_LOG_LOGIC ("UID is " << packet->GetUid () << ")");
 
-  NS_ASSERT (IsLinkUp ());
+  Ptr<CsmaNetDeviceState> csmaNetDeviceState = this->GetObject<CsmaNetDeviceState> ();
+  if (!csmaNetDeviceState->IsUp ())
+    {
+      // Drop packet.
+      NS_LOG_LOGIC ("Dropping packet because device is not enabled for use.");
+      m_macTxDropTrace (packet);
+      return false;
+    }
+
+  if (csmaNetDeviceState->GetOperationalState () != NetDeviceState::IF_OPER_UP)
+    {
+      // Drop packet.
+      NS_LOG_LOGIC ("Dropping packet because device is not operational.");
+      m_macTxDropTrace (packet);
+      return false;
+    }
 
   //
   // Only transmit if send side of net device is enabled
   //
   if (IsSendEnabled () == false)
     {
+      NS_LOG_LOGIC ("Send is disabled, discarding packet");
       m_macTxDropTrace (packet);
       return false;
     }
