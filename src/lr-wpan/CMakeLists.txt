@@ -13,8 +13,10 @@ build_lib(
     model/lr-wpan-mac.cc
     model/lr-wpan-net-device.cc
     model/lr-wpan-phy.cc
+    model/lr-wpan-radio-energy-model.cc
     model/lr-wpan-spectrum-signal-parameters.cc
     model/lr-wpan-spectrum-value-helper.cc
+    model/lr-wpan-tx-current-model.cc
   HEADER_FILES
     helper/lr-wpan-helper.h
     model/lr-wpan-csmaca.h
@@ -28,14 +30,18 @@ build_lib(
     model/lr-wpan-mac.h
     model/lr-wpan-net-device.h
     model/lr-wpan-phy.h
+    model/lr-wpan-phy-listener.h
+    model/lr-wpan-radio-energy-model.h
     model/lr-wpan-spectrum-signal-parameters.h
     model/lr-wpan-spectrum-value-helper.h
+    model/lr-wpan-tx-current-model.h
   LIBRARIES_TO_LINK
     ${libnetwork}
     ${libcore}
     ${libmobility}
     ${libspectrum}
     ${libpropagation}
+    ${libenergy}
   TEST_SOURCES
     test/lr-wpan-ack-test.cc
     test/lr-wpan-cca-test.cc
