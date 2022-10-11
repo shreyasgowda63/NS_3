@@ -1147,6 +1147,7 @@ CtrlTriggerUserInfoField::operator=(const CtrlTriggerUserInfoField& userInfo)
     m_bits26To31 = userInfo.m_bits26To31;
     m_ulTargetRssi = userInfo.m_ulTargetRssi;
     m_basicTriggerDependentUserInfo = userInfo.m_basicTriggerDependentUserInfo;
+    m_bfrpTriggerDependentUserInfo = userInfo.m_bfrpTriggerDependentUserInfo;
     m_muBarTriggerDependentUserInfo = userInfo.m_muBarTriggerDependentUserInfo;
     return *this;
 }
@@ -1185,8 +1186,6 @@ CtrlTriggerUserInfoField::GetSerializedSize() const
 Buffer::Iterator
 CtrlTriggerUserInfoField::Serialize(Buffer::Iterator start) const
 {
-    NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::BFRP_TRIGGER,
-                    "BFRP Trigger frame is not supported");
     NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::GCR_MU_BAR_TRIGGER,
                     "GCR-MU-BAR Trigger frame is not supported");
     NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::NFRP_TRIGGER,
@@ -1230,6 +1229,10 @@ CtrlTriggerUserInfoField::Serialize(Buffer::Iterator start) const
     {
         i.WriteU8(m_basicTriggerDependentUserInfo);
     }
+    else if (m_triggerType == TriggerFrameType::BFRP_TRIGGER)
+    {
+        i.WriteU8(m_bfrpTriggerDependentUserInfo);
+    }
     else if (m_triggerType == TriggerFrameType::MU_BAR_TRIGGER)
     {
         m_muBarTriggerDependentUserInfo.Serialize(i);
@@ -1242,8 +1245,6 @@ CtrlTriggerUserInfoField::Serialize(Buffer::Iterator start) const
 Buffer::Iterator
 CtrlTriggerUserInfoField::Deserialize(Buffer::Iterator start)
 {
-    NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::BFRP_TRIGGER,
-                    "BFRP Trigger frame is not supported");
     NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::GCR_MU_BAR_TRIGGER,
                     "GCR-MU-BAR Trigger frame is not supported");
     NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::NFRP_TRIGGER,
@@ -1284,6 +1285,10 @@ CtrlTriggerUserInfoField::Deserialize(Buffer::Iterator start)
     if (m_triggerType == TriggerFrameType::BASIC_TRIGGER)
     {
         m_basicTriggerDependentUserInfo = i.ReadU8();
+    }
+    else if (m_triggerType == TriggerFrameType::BFRP_TRIGGER)
+    {
+        m_bfrpTriggerDependentUserInfo = i.ReadU8();
     }
     else if (m_triggerType == TriggerFrameType::MU_BAR_TRIGGER)
     {
@@ -1654,6 +1659,20 @@ CtrlTriggerUserInfoField::GetMuBarTriggerDepUserInfo() const
     return m_muBarTriggerDependentUserInfo;
 }
 
+void
+CtrlTriggerUserInfoField::SetBfrpTriggerDepUserInfo(uint8_t dependentUserInfo)
+{
+    NS_ABORT_MSG_IF(m_triggerType != TriggerFrameType::BFRP_TRIGGER, "Not a BFRP Trigger frame");
+    m_bfrpTriggerDependentUserInfo = dependentUserInfo;
+}
+
+uint8_t
+CtrlTriggerUserInfoField::GetBfrpTriggerDepUserInfo() const
+{
+    NS_ABORT_MSG_IF(m_triggerType != TriggerFrameType::BFRP_TRIGGER, "Not a BFRP Trigger frame");
+    return m_bfrpTriggerDependentUserInfo;
+}
+
 /***********************************
  *       Trigger frame
  ***********************************/
@@ -1810,8 +1829,6 @@ CtrlTriggerHeader::GetSerializedSize() const
 void
 CtrlTriggerHeader::Serialize(Buffer::Iterator start) const
 {
-    NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::BFRP_TRIGGER,
-                    "BFRP Trigger frame is not supported");
     NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::GCR_MU_BAR_TRIGGER,
                     "GCR-MU-BAR Trigger frame is not supported");
     NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::NFRP_TRIGGER,
@@ -1867,8 +1884,6 @@ CtrlTriggerHeader::Deserialize(Buffer::Iterator start)
     m_userInfoFields.clear();
     m_padding = 0;
 
-    NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::BFRP_TRIGGER,
-                    "BFRP Trigger frame is not supported");
     NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::GCR_MU_BAR_TRIGGER,
                     "GCR-MU-BAR Trigger frame is not supported");
     NS_ABORT_MSG_IF(m_triggerType == TriggerFrameType::NFRP_TRIGGER,

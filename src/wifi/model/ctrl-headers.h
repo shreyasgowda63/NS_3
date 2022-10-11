@@ -886,6 +886,20 @@ class CtrlTriggerUserInfoField
      */
     const CtrlBAckRequestHeader& GetMuBarTriggerDepUserInfo() const;
 
+    /**
+     * Set the BFRP Trigger Dependent User Info subfield for BFRP Trigger frames.
+     *
+     * \param dependentUserInfo the BFRP Trigger Dependent User Info subfield
+     */
+    void SetBfrpTriggerDepUserInfo(uint8_t dependentUserInfo);
+
+    /**
+     * Get the BFRP Trigger Dependent User Info subfield
+     *
+     * \return the BFRP Trigger Dependent User Info subfield
+     */
+    uint8_t GetBfrpTriggerDepUserInfo() const;
+
   private:
     TriggerFrameVariant m_variant; //!< User Info field variant
 
@@ -916,6 +930,8 @@ class CtrlTriggerUserInfoField
                                              //!< Info subfield
     CtrlBAckRequestHeader
         m_muBarTriggerDependentUserInfo; //!< MU-BAR variant of Trigger Dependent User Info subfield
+    uint8_t m_bfrpTriggerDependentUserInfo; //!< BFRP Trigger variant of Trigger Dependent User Info
+                                            //!< subfield
 };
 
 /**
