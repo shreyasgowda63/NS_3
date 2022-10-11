@@ -2285,4 +2285,164 @@ CtrlTriggerHeader::IsValid() const
     return true;
 }
 
+/***********************************
+ *       NDPA Frame
+ ***********************************/
+CtrlNdpaHeader::CtrlNdpaHeader()
+    : m_dialogToken(0x40)
+{
+    // format of 1-byte Sounding Dialog Token field: 1-bit reserved subfield + 1-bit HE subfield +
+    // 6-bit Sounding Dialog Token number the 1-bit HE subfield is set as 1 by default to identify
+    // the frame as an HE NDP Announcement frame
+}
+
+CtrlNdpaHeader::~CtrlNdpaHeader()
+{
+}
+
+TypeId
+CtrlNdpaHeader::GetTypeId()
+{
+    static TypeId tid = TypeId("ns3::CtrlNdpaHeader")
+                            .SetParent<Header>()
+                            .SetGroupName("Wifi")
+                            .AddConstructor<CtrlNdpaHeader>();
+    return tid;
+}
+
+TypeId
+CtrlNdpaHeader::GetInstanceTypeId() const
+{
+    return GetTypeId();
+}
+
+void
+CtrlNdpaHeader::Print(std::ostream& os) const
+{
+    os << "NDPA frame : "
+       << " Sounding Dialog Token = " << GetSoundingDialogToken();
+
+    for (auto& sta : m_staInfoFields)
+    {
+        os << ", STA_INFO AID =" << sta.m_aid11 << ", Ru Start =" << +sta.m_ruStart
+           << ", Ru End =" << +sta.m_ruEnd << ", Feedback Type and Ng =" << +sta.m_feedbackTypeNg
+           << ", Codebook Size =" << +sta.m_codebookSize;
+    }
+}
+
+void
+CtrlNdpaHeader::AddStaInfoField(const StaInfo& staInfo)
+{
+    m_staInfoFields.push_back(staInfo);
+}
+
+void
+CtrlNdpaHeader::AddStaInfoField()
+{
+    m_staInfoFields.emplace_back();
+}
+
+CtrlNdpaHeader::Iterator
+CtrlNdpaHeader::begin()
+{
+    return m_staInfoFields.begin();
+}
+
+CtrlNdpaHeader::Iterator
+CtrlNdpaHeader::end()
+{
+    return m_staInfoFields.end();
+}
+
+std::size_t
+CtrlNdpaHeader::GetNumStaInfoFields() const
+{
+    return m_staInfoFields.size();
+}
+
+CtrlNdpaHeader::Iterator
+CtrlNdpaHeader::FindStaInfoWithAid(uint16_t aid11)
+{
+    Iterator sta = m_staInfoFields.begin();
+    while (sta->m_aid11 != aid11 && sta != m_staInfoFields.end())
+    {
+        sta++;
+    }
+    return sta;
+}
+
+void
+CtrlNdpaHeader::ClearStaInfo()
+{
+    m_staInfoFields.clear();
+}
+
+void
+CtrlNdpaHeader::SetSoundingDialogToken(uint8_t dialogToken)
+{
+    m_dialogToken = dialogToken;
+}
+
+uint8_t
+CtrlNdpaHeader::GetSoundingDialogToken() const
+{
+    return m_dialogToken;
+}
+
+uint32_t
+CtrlNdpaHeader::GetSerializedSize() const
+{
+    // Sounding Dialog Token  1 byte
+    uint32_t size = 1;
+
+    // Add the size of STA Info subfields
+    size += GetNumStaInfoFields() * 4;
+
+    return size;
+}
+
+void
+CtrlNdpaHeader::Serialize(Buffer::Iterator start) const
+{
+    Buffer::Iterator i = start;
+    i.WriteU8(m_dialogToken);
+
+    for (auto& sta : m_staInfoFields)
+    {
+        uint32_t staInfo = 0;
+        staInfo |= (sta.m_aid11 & 0x07ff);
+        staInfo |= ((sta.m_ruStart & 0x7f) << 11);
+        staInfo |= ((sta.m_ruEnd & 0x7f) << 18);
+        staInfo |= ((sta.m_feedbackTypeNg & 0x03) << 25);
+        staInfo |= ((sta.m_disambiguation & 0x01) << 27);
+        staInfo |= ((sta.m_codebookSize & 0x01) << 28);
+        staInfo |= ((sta.m_nc & 0x07) << 29);
+        i.WriteHtolsbU32(staInfo);
+    }
+}
+
+uint32_t
+CtrlNdpaHeader::Deserialize(Buffer::Iterator start)
+{
+    Buffer::Iterator i = start;
+    m_dialogToken = i.ReadU8();
+
+    m_staInfoFields.clear();
+    while (i.GetRemainingSize() > 0)
+    {
+        uint32_t staInfo = i.ReadLsbtohU32();
+        StaInfo sta;
+        sta.m_aid11 = staInfo & 0x000007ff;
+        sta.m_ruStart = (staInfo >> 11) & 0x0000007f;
+        sta.m_ruEnd = (staInfo >> 18) & 0x0000007f;
+        sta.m_feedbackTypeNg = (staInfo >> 25) & 0x00000003;
+        sta.m_disambiguation = (staInfo >> 27) & 0x00000001;
+        sta.m_codebookSize = (staInfo >> 28) & 0x00000001;
+        sta.m_nc = (staInfo >> 29) & 0x00000007;
+        m_staInfoFields.push_back(sta);
+    }
+
+    return i.GetDistanceFrom(start);
+}
+
 } // namespace ns3
