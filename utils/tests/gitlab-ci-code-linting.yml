@@ -32,3 +32,13 @@ clang-tidy:
       - clang-tidy-errors.log
     when: on_failure
   timeout: 3h
+
+rst-linter:
+  stage: code-linting
+  image: python:slim
+  before_script:
+    - pip3 install
+      restructuredtext-lint
+      pygments
+  script:
+    - rst-lint .
