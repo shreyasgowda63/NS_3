@@ -17,6 +17,7 @@
 
 #include "ns3/log.h"
 #include "ns3/pcap-file.h"
+#include "ns3/system-path.h"
 #include "ns3/test.h"
 
 #include <cstdio>
@@ -44,36 +45,6 @@ Swap(uint32_t val)
 {
     return ((val >> 24) & 0x000000ff) | ((val >> 8) & 0x0000ff00) | ((val << 8) & 0x00ff0000) |
            ((val << 24) & 0xff000000);
-}
-
-static bool
-CheckFileExists(std::string filename)
-{
-    FILE* p = std::fopen(filename.c_str(), "rb");
-    if (p == nullptr)
-    {
-        return false;
-    }
-
-    std::fclose(p);
-    return true;
-}
-
-static bool
-CheckFileLength(std::string filename, uint64_t sizeExpected)
-{
-    FILE* p = std::fopen(filename.c_str(), "rb");
-    if (p == nullptr)
-    {
-        return false;
-    }
-
-    std::fseek(p, 0, SEEK_END);
-
-    uint64_t sizeActual = std::ftell(p);
-    std::fclose(p);
-
-    return sizeActual == sizeExpected;
 }
 
 /**
@@ -118,10 +89,7 @@ WriteModeCreateTestCase::DoSetup()
 void
 WriteModeCreateTestCase::DoTeardown()
 {
-    if (remove(m_testFilename.c_str()))
-    {
-        NS_LOG_ERROR("Failed to delete file " << m_testFilename);
-    }
+    SystemPath::RemoveFile(m_testFilename);
 }
 
 void
@@ -138,12 +106,12 @@ WriteModeCreateTestCase::DoRun()
     NS_TEST_ASSERT_MSG_EQ(f.Fail(), false, "Open (" << m_testFilename << ", \"w\") returns error");
     f.Close();
 
-    NS_TEST_ASSERT_MSG_EQ(CheckFileExists(m_testFilename),
+    NS_TEST_ASSERT_MSG_EQ(SystemPath::Exists(m_testFilename),
                           true,
                           "Open (" << m_testFilename
                                    << ", \"std::ios::out\") does not create file");
-    NS_TEST_ASSERT_MSG_EQ(CheckFileLength(m_testFilename, 0),
-                          true,
+    NS_TEST_ASSERT_MSG_EQ(SystemPath::GetFileSize(m_testFilename),
+                          0,
                           "Open (" << m_testFilename
                                    << ", \"std::ios::out\") does not result in an empty file");
 
@@ -161,8 +129,8 @@ WriteModeCreateTestCase::DoRun()
 
     f.Close();
 
-    NS_TEST_ASSERT_MSG_EQ(CheckFileLength(m_testFilename, 24),
-                          true,
+    NS_TEST_ASSERT_MSG_EQ(SystemPath::GetFileSize(m_testFilename),
+                          24,
                           "Init () does not result in a file with a pcap file header");
 
     //
@@ -176,8 +144,8 @@ WriteModeCreateTestCase::DoRun()
 
     f.Close();
 
-    NS_TEST_ASSERT_MSG_EQ(CheckFileLength(m_testFilename, 0),
-                          true,
+    NS_TEST_ASSERT_MSG_EQ(SystemPath::GetFileSize(m_testFilename),
+                          0,
                           "Open (" << m_testFilename
                                    << ", \"w\") does not result in an empty file");
 
@@ -245,10 +213,7 @@ ReadModeCreateTestCase::DoSetup()
 void
 ReadModeCreateTestCase::DoTeardown()
 {
-    if (remove(m_testFilename.c_str()))
-    {
-        NS_LOG_ERROR("Failed to delete file " << m_testFilename);
-    }
+    SystemPath::RemoveFile(m_testFilename);
 }
 
 void
@@ -266,7 +231,7 @@ ReadModeCreateTestCase::DoRun()
                               << m_testFilename << ", \"std::ios::in\") does not return error");
     f.Close();
     f.Clear();
-    NS_TEST_ASSERT_MSG_EQ(CheckFileExists(m_testFilename),
+    NS_TEST_ASSERT_MSG_EQ(SystemPath::Exists(m_testFilename),
                           false,
                           "Open (" << m_testFilename
                                    << ", \"std::ios::in\") unexpectedly created a file");
@@ -364,10 +329,7 @@ AppendModeCreateTestCase::DoSetup ()
 void
 AppendModeCreateTestCase::DoTeardown ()
 {
-  if (remove (m_testFilename.c_str ()))
-    {
-      NS_LOG_ERROR ("Failed to delete file " << m_testFilename);
-    }
+  SystemPath::RemoveFile(m_testFilename);
 }
 
 void
@@ -384,7 +346,7 @@ AppendModeCreateTestCase::DoRun ()
   f.Close ();
   f.Clear ();
 
-  NS_TEST_ASSERT_MSG_EQ (CheckFileExists (m_testFilename), false,
+  NS_TEST_ASSERT_MSG_EQ (SystemPath::Exists(m_testFilename), false,
                          "Open (" << m_testFilename << ", \"std::ios::app\") unexpectedly created a file");
 
   //
@@ -477,10 +439,7 @@ FileHeaderTestCase::DoSetup()
 void
 FileHeaderTestCase::DoTeardown()
 {
-    if (remove(m_testFilename.c_str()))
-    {
-        NS_LOG_ERROR("Failed to delete file " << m_testFilename);
-    }
+    SystemPath::RemoveFile(m_testFilename);
 }
 
 void
@@ -755,10 +714,7 @@ RecordHeaderTestCase::DoSetup()
 void
 RecordHeaderTestCase::DoTeardown()
 {
-    if (remove(m_testFilename.c_str()))
-    {
-        NS_LOG_ERROR("Failed to delete file " << m_testFilename);
-    }
+    SystemPath::RemoveFile(m_testFilename);
 }
 
 void

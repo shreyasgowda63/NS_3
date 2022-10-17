@@ -448,8 +448,8 @@ main(int argc, char* argv[])
         filePlotQueueAvg << pathOut << "/"
                          << "red-queue_avg.plotme";
 
-        remove(filePlotQueue.str().c_str());
-        remove(filePlotQueueAvg.str().c_str());
+        SystemPath::RemoveFile(filePlotQueue.str());
+        SystemPath::RemoveFile(filePlotQueueAvg.str());
         Ptr<QueueDisc> queue = queueDiscs.Get(0);
         Simulator::ScheduleNow(&CheckQueueSize, queue);
     }

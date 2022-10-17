@@ -225,11 +225,7 @@ main(int argc, char* argv[])
 
     // Create a new directory to store the output of the program
     dir = "bbr-results/" + currentTime + "/";
-    std::string dirToSave = "mkdir -p " + dir;
-    if (system(dirToSave.c_str()) == -1)
-    {
-        exit(1);
-    }
+    SystemPath::MakeDirectories(dir);
 
     // The plotting scripts are provided in the following repository, if needed:
     // https://github.com/mohittahiliani/BBR-Validation/
@@ -252,10 +248,7 @@ main(int argc, char* argv[])
     // Generate PCAP traces if it is enabled
     if (enablePcap)
     {
-        if (system((dirToSave + "/pcap/").c_str()) == -1)
-        {
-            exit(1);
-        }
+        SystemPath::MakeDirectories(dir + "/pcap/");
         bottleneckLink.EnablePcapAll(dir + "/pcap/bbr", true);
     }
 

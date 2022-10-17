@@ -45,6 +45,7 @@
 #include <ns3/simulator.h>
 #include <ns3/spectrum-error-model.h>
 #include <ns3/spectrum-interference.h>
+#include <ns3/system-path.h>
 #include <ns3/test.h>
 
 #include <errno.h>
@@ -94,7 +95,7 @@ TestCarrierAggregationSuite::TestCarrierAggregationSuite()
 
         bool abort = false;
 
-        if (fopen(dlResultsFileName.c_str(), "r"))
+        if (SystemPath::Exists(dlResultsFileName))
         {
             std::cout << "\nResults file " << dlResultsFileName
                       << " already exists. Move it out of the way or specify another downlink "
@@ -102,7 +103,7 @@ TestCarrierAggregationSuite::TestCarrierAggregationSuite()
                       << std::endl;
             abort = true;
         }
-        if (fopen(ulResultsFileName.c_str(), "r"))
+        if (SystemPath::Exists(ulResultsFileName))
         {
             std::cout << "\nResults file " << ulResultsFileName
                       << " already exists. Move it out of the way or specify another uplink "
