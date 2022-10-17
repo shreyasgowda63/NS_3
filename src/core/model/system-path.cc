@@ -18,6 +18,7 @@
  */
 #include "system-path.h"
 
+#include "abort.h"
 #include "assert.h"
 #include "fatal-error.h"
 #include "log.h"
@@ -175,7 +176,7 @@ FindSelfDirectory()
         }
         if (status == -1)
         {
-            NS_FATAL_ERROR("Oops, could not find self directory.");
+            NS_ABORT_MSG("Oops, could not find self directory.");
         }
         filename = buffer;
         free(buffer);
@@ -302,7 +303,7 @@ ReadFiles(std::string path)
     std::tie(files, err) = ReadFilesNoThrow(path);
     if (err)
     {
-        NS_FATAL_ERROR("Could not open directory=" << path);
+        NS_ABORT_MSG("Could not open directory=" << path);
     }
     return files;
 }
@@ -367,7 +368,7 @@ MakeDirectories(std::string path)
 
     if (ec.value())
     {
-        NS_FATAL_ERROR("failed creating directory " << path);
+        NS_ABORT_MSG("failed creating directory " << path);
     }
 }
 
