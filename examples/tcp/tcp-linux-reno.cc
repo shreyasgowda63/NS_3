@@ -48,7 +48,8 @@
 #include <sys/stat.h>
 
 using namespace ns3;
-std::string dir = "results/";
+
+const std::string DIR = "results/";
 Time stopTime = Seconds(60);
 uint32_t segmentSize = 524;
 
@@ -60,7 +61,7 @@ CheckQueueSize(Ptr<QueueDisc> queue)
 
     // Check queue size every 1/100 of a second
     Simulator::Schedule(Seconds(0.001), &CheckQueueSize, queue);
-    std::ofstream fPlotQueue(std::stringstream(dir + "queue-size.dat").str().c_str(),
+    std::ofstream fPlotQueue(std::stringstream(DIR + "queue-size.dat").str().c_str(),
                              std::ios::out | std::ios::app);
     fPlotQueue << Simulator::Now().GetSeconds() << " " << qSize << std::endl;
     fPlotQueue.close();
@@ -70,7 +71,7 @@ CheckQueueSize(Ptr<QueueDisc> queue)
 static void
 CwndChange(uint32_t oldCwnd, uint32_t newCwnd)
 {
-    std::ofstream fPlotQueue(dir + "cwndTraces/n0.dat", std::ios::out | std::ios::app);
+    std::ofstream fPlotQueue(DIR + "cwndTraces/n0.dat", std::ios::out | std::ios::app);
     fPlotQueue << Simulator::Now().GetSeconds() << " " << newCwnd / segmentSize << std::endl;
     fPlotQueue.close();
 }
@@ -231,22 +232,15 @@ main(int argc, char* argv[])
 
     // Create directories to store dat files
     struct stat buffer;
-    [[maybe_unused]] int retVal;
-    if ((stat(dir.c_str(), &buffer)) == 0)
+    if (stat(DIR.c_str(), &buffer) == 0)
     {
-        std::string dirToRemove = "rm -rf " + dir;
-        retVal = system(dirToRemove.c_str());
-        NS_ASSERT_MSG(retVal == 0, "Error in return value");
+        SystemPath::RemoveDirectories(DIR);
     }
-    std::string dirToSave = "mkdir -p " + dir;
-    retVal = system(dirToSave.c_str());
-    NS_ASSERT_MSG(retVal == 0, "Error in return value");
-    retVal = system((dirToSave + "/pcap/").c_str());
-    NS_ASSERT_MSG(retVal == 0, "Error in return value");
-    retVal = system((dirToSave + "/queueTraces/").c_str());
-    NS_ASSERT_MSG(retVal == 0, "Error in return value");
-    retVal = system((dirToSave + "/cwndTraces/").c_str());
-    NS_ASSERT_MSG(retVal == 0, "Error in return value");
+
+    SystemPath::MakeDirectories(DIR);
+    SystemPath::MakeDirectories(DIR + "/pcap/");
+    SystemPath::MakeDirectories(DIR + "/queueTraces/");
+    SystemPath::MakeDirectories(DIR + "/cwndTraces/");
 
     // Set default parameters for queue discipline
     Config::SetDefault(qdiscTypeId + "::MaxSize", QueueSizeValue(QueueSize("100p")));
@@ -268,7 +262,7 @@ main(int argc, char* argv[])
     Ptr<OutputStreamWrapper> streamWrapper;
 
     // Create dat to store packets dropped and marked at the router
-    streamWrapper = asciiTraceHelper.CreateFileStream(dir + "/queueTraces/drop-0.dat");
+    streamWrapper = asciiTraceHelper.CreateFileStream(DIR + "/queueTraces/drop-0.dat");
     qd.Get(0)->TraceConnectWithoutContext("Drop", MakeBoundCallback(&DropAtQueue, streamWrapper));
 
     // Install packet sink at receiver side
@@ -285,21 +279,21 @@ main(int argc, char* argv[])
                     MakeCallback(&CwndChange));
 
     // Enable PCAP on all the point to point interfaces
-    pointToPointLeaf.EnablePcapAll(dir + "pcap/ns-3", true);
+    pointToPointLeaf.EnablePcapAll(DIR + "pcap/ns-3", true);
 
     Simulator::Stop(stopTime);
     Simulator::Run();
 
     // Store queue stats in a file
     std::ofstream myfile;
-    myfile.open(dir + "queueStats.txt", std::fstream::in | std::fstream::out | std::fstream::app);
+    myfile.open(DIR + "queueStats.txt", std::fstream::in | std::fstream::out | std::fstream::app);
     myfile << std::endl;
     myfile << "Stat for Queue 1";
     myfile << qd.Get(0)->GetStats();
     myfile.close();
 
     // Store configuration of the simulation in a file
-    myfile.open(dir + "config.txt", std::fstream::in | std::fstream::out | std::fstream::app);
+    myfile.open(DIR + "config.txt", std::fstream::in | std::fstream::out | std::fstream::app);
     myfile << "qdiscTypeId " << qdiscTypeId << "\n";
     myfile << "stream  " << stream << "\n";
     myfile << "segmentSize " << segmentSize << "\n";

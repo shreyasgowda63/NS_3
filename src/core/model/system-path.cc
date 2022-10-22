@@ -18,6 +18,7 @@
  */
 #include "system-path.h"
 
+#include "abort.h"
 #include "assert.h"
 #include "fatal-error.h"
 #include "log.h"
@@ -175,7 +176,7 @@ FindSelfDirectory()
         }
         if (status == -1)
         {
-            NS_FATAL_ERROR("Oops, could not find self directory.");
+            NS_ABORT_MSG("Oops, could not find self directory.");
         }
         filename = buffer;
         free(buffer);
@@ -302,7 +303,7 @@ ReadFiles(std::string path)
     std::tie(files, err) = ReadFilesNoThrow(path);
     if (err)
     {
-        NS_FATAL_ERROR("Could not open directory=" << path);
+        NS_ABORT_MSG("Could not open directory=" << path);
     }
     return files;
 }
@@ -367,7 +368,24 @@ MakeDirectories(std::string path)
 
     if (ec.value())
     {
-        NS_FATAL_ERROR("failed creating directory " << path);
+        NS_ABORT_MSG("failed creating directory " << path);
+    }
+}
+
+void
+RemoveDirectories(std::string path)
+{
+    NS_LOG_FUNCTION(path);
+
+    std::error_code ec;
+    if (fs::is_directory(path))
+    {
+        fs::remove_all(path, ec);
+    }
+
+    if (ec.value())
+    {
+        NS_ABORT_MSG("failed removing directory " << path);
     }
 }
 
@@ -419,6 +437,8 @@ Exists(const std::string path)
 std::string
 CreateValidSystemPath(const std::string path)
 {
+    NS_LOG_FUNCTION(path);
+
     // Windows and its file systems, e.g. NTFS and (ex)FAT(12|16|32),
     // do not like paths with empty spaces or special symbols.
     // Some of these symbols are allowed in test names, checked in TestCase::AddTestCase.
@@ -432,6 +452,39 @@ CreateValidSystemPath(const std::string path)
                        "_");
     return valid_path;
 } // CreateValidSystemPath
+
+std::uintmax_t
+GetFileSize(const std::string path)
+{
+    NS_LOG_FUNCTION(path);
+
+    if (!fs::exists(path))
+    {
+        NS_LOG_LOGIC("File does not exist: " << path << ". Returning size 0.");
+        return 0;
+    }
+
+    auto fileSize = fs::file_size(path);
+    NS_LOG_LOGIC("File size: " << fileSize);
+
+    return fileSize;
+}
+
+void
+RemoveFile(const std::string path)
+{
+    NS_LOG_FUNCTION(path);
+
+    if (!fs::exists(path))
+    {
+        NS_LOG_LOGIC("File does not exist: " << path);
+        return;
+    }
+
+    fs::remove(path);
+
+    NS_LOG_LOGIC("Removed file " << path);
+}
 
 } // namespace SystemPath
 
