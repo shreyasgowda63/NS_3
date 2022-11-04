@@ -103,3 +103,15 @@ models:
     # - mv build/latex/ns-3-model-library.pdf ../../public
   only:
     - master
+
+contributing:
+  extends: .doc
+  script:
+    # - mkdir -p public/models
+    - cd doc/contributing
+    - make html
+    - make latexpdf
+    # - mv build/html ../../public/models
+    # - mv build/latex/ns-3-model-library.pdf ../../public
+  only:
+    - master
