@@ -134,7 +134,7 @@ CsmaBridgeTestCase::DoRun()
     internet.Install(terminals);
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     ipv4.Assign(terminalDevices);
 
     uint16_t port = 9; // Discard port (RFC 863)
@@ -265,9 +265,9 @@ CsmaBroadcastTestCase::DoRun()
     internet.Install(c);
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.0.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.0.0"), Ipv4Mask(24));
     ipv4.Assign(n0);
-    ipv4.SetBase("192.168.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     ipv4.Assign(n1);
 
     // RFC 863 discard port ("9") indicates packet should be thrown away
@@ -407,9 +407,9 @@ CsmaMulticastTestCase::DoRun()
     internet.Install(c);
 
     Ipv4AddressHelper ipv4Addr;
-    ipv4Addr.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4Addr.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     ipv4Addr.Assign(nd0);
-    ipv4Addr.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4Addr.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     ipv4Addr.Assign(nd1);
 
     //
@@ -589,7 +589,7 @@ CsmaOneSubnetTestCase::DoRun()
     // We've got the "hardware" in place.  Now we need to add IP addresses.
     //
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer interfaces = ipv4.Assign(devices);
 
     uint16_t port = 9; // Discard port (RFC 863)
@@ -867,7 +867,7 @@ CsmaPingTestCase::DoRun()
 
     // assign ip addresses
     Ipv4AddressHelper ip;
-    ip.SetBase("192.168.1.0", "255.255.255.0");
+    ip.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer addresses = ip.Assign(devs);
 
     // Create the OnOff application to send UDP datagrams from n0 to n1.
@@ -1001,7 +1001,7 @@ CsmaRawIpSocketTestCase::DoRun()
 
     // assign ip addresses
     Ipv4AddressHelper ip;
-    ip.SetBase("192.168.1.0", "255.255.255.0");
+    ip.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer addresses = ip.Assign(devs);
 
     // IP protocol configuration
@@ -1142,7 +1142,7 @@ CsmaStarTestCase::DoRun()
     star.InstallStack(internet);
     internet.Install(fillNodes);
 
-    star.AssignIpv4Addresses(Ipv4AddressHelper("10.1.0.0", "255.255.255.0"));
+    star.AssignIpv4Addresses(Ipv4AddressHelper(Ipv4Address("10.1.0.0"), Ipv4Mask(24)));
 
     //
     // We assigned addresses to the logical hub and the first "drop" of the
@@ -1159,7 +1159,7 @@ CsmaStarTestCase::DoRun()
     {
         std::ostringstream subnet;
         subnet << "10.1." << i << ".0";
-        address.SetBase(subnet.str().c_str(), "255.255.255.0", "0.0.0.3");
+        address.SetBase(subnet.str(), Ipv4Mask(24), Ipv4Address("0.0.0.3"));
 
         for (uint32_t j = 0; j < nFill; ++j)
         {

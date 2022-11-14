@@ -397,19 +397,19 @@ main(int argc, char* argv[])
     NS_LOG_INFO("Assign IP Addresses");
     Ipv4AddressHelper ipv4;
 
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     i0i2 = ipv4.Assign(devn0n2);
 
-    ipv4.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     i1i2 = ipv4.Assign(devn1n2);
 
-    ipv4.SetBase("10.1.3.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     i2i3 = ipv4.Assign(devn2n3);
 
-    ipv4.SetBase("10.1.4.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.4.0"), Ipv4Mask(24));
     i3i4 = ipv4.Assign(devn3n4);
 
-    ipv4.SetBase("10.1.5.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.5.0"), Ipv4Mask(24));
     i3i5 = ipv4.Assign(devn3n5);
 
     // Set up the routing

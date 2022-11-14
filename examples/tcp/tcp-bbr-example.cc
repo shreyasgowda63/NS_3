@@ -192,7 +192,7 @@ main(int argc, char* argv[])
 
     // Assign IP addresses
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.0.0.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
 
     Ipv4InterfaceContainer i1i2 = ipv4.Assign(r1r2);
 

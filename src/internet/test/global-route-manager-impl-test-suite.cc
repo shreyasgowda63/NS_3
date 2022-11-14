@@ -90,79 +90,79 @@ GlobalRouteManagerImplTestCase::DoRun()
     // Router 0
     GlobalRoutingLinkRecord* lr0 =
         new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::PointToPoint,
-                                    "0.0.0.2",  // router ID 0.0.0.2
-                                    "10.1.1.1", // local ID
-                                    1);         // metric
+                                    Ipv4Address("0.0.0.2"),  // router ID 0.0.0.2
+                                    Ipv4Address("10.1.1.1"), // local ID
+                                    1);                      // metric
 
     GlobalRoutingLinkRecord* lr1 = new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::StubNetwork,
-                                                               "10.1.1.1",
-                                                               "255.255.255.252",
+                                                               Ipv4Address("10.1.1.1"),
+                                                               Ipv4Address("255.255.255.252"),
                                                                1);
 
     GlobalRoutingLSA* lsa0 = new GlobalRoutingLSA();
     lsa0->SetLSType(GlobalRoutingLSA::RouterLSA);
-    lsa0->SetLinkStateId("0.0.0.0");
-    lsa0->SetAdvertisingRouter("0.0.0.0");
+    lsa0->SetLinkStateId(Ipv4Address::GetAny());
+    lsa0->SetAdvertisingRouter(Ipv4Address::GetAny());
     lsa0->AddLinkRecord(lr0);
     lsa0->AddLinkRecord(lr1);
 
     // Router 1
     GlobalRoutingLinkRecord* lr2 =
         new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::PointToPoint,
-                                    "0.0.0.2",
-                                    "10.1.2.1",
+                                    Ipv4Address("0.0.0.2"),
+                                    Ipv4Address("10.1.2.1"),
                                     1);
 
     GlobalRoutingLinkRecord* lr3 = new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::StubNetwork,
-                                                               "10.1.2.1",
-                                                               "255.255.255.252",
+                                                               Ipv4Address("10.1.2.1"),
+                                                               Ipv4Address("255.255.255.252"),
                                                                1);
 
     GlobalRoutingLSA* lsa1 = new GlobalRoutingLSA();
     lsa1->SetLSType(GlobalRoutingLSA::RouterLSA);
-    lsa1->SetLinkStateId("0.0.0.1");
-    lsa1->SetAdvertisingRouter("0.0.0.1");
+    lsa1->SetLinkStateId(Ipv4Address("0.0.0.1"));
+    lsa1->SetAdvertisingRouter(Ipv4Address("0.0.0.1"));
     lsa1->AddLinkRecord(lr2);
     lsa1->AddLinkRecord(lr3);
 
     // Router 2
     GlobalRoutingLinkRecord* lr4 =
         new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::PointToPoint,
-                                    "0.0.0.0",
-                                    "10.1.1.2",
+                                    Ipv4Address("0.0.0.0"),
+                                    Ipv4Address("10.1.1.2"),
                                     1);
 
     GlobalRoutingLinkRecord* lr5 = new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::StubNetwork,
-                                                               "10.1.1.2",
-                                                               "255.255.255.252",
+                                                               Ipv4Address("10.1.1.2"),
+                                                               Ipv4Address("255.255.255.252"),
                                                                1);
 
     GlobalRoutingLinkRecord* lr6 =
         new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::PointToPoint,
-                                    "0.0.0.1",
-                                    "10.1.2.2",
+                                    Ipv4Address("0.0.0.1"),
+                                    Ipv4Address("10.1.2.2"),
                                     1);
 
     GlobalRoutingLinkRecord* lr7 = new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::StubNetwork,
-                                                               "10.1.2.2",
-                                                               "255.255.255.252",
+                                                               Ipv4Address("10.1.2.2"),
+                                                               Ipv4Address("255.255.255.252"),
                                                                1);
 
     GlobalRoutingLinkRecord* lr8 =
         new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::PointToPoint,
-                                    "0.0.0.3",
-                                    "10.1.3.2",
+                                    Ipv4Address("0.0.0.3"),
+                                    Ipv4Address("10.1.3.2"),
                                     1);
 
     GlobalRoutingLinkRecord* lr9 = new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::StubNetwork,
-                                                               "10.1.3.2",
-                                                               "255.255.255.252",
+                                                               Ipv4Address("10.1.3.2"),
+                                                               Ipv4Address("255.255.255.252"),
                                                                1);
 
     GlobalRoutingLSA* lsa2 = new GlobalRoutingLSA();
     lsa2->SetLSType(GlobalRoutingLSA::RouterLSA);
-    lsa2->SetLinkStateId("0.0.0.2");
-    lsa2->SetAdvertisingRouter("0.0.0.2");
+    lsa2->SetLinkStateId(Ipv4Address("0.0.0.2"));
+    lsa2->SetAdvertisingRouter(Ipv4Address("0.0.0.2"));
     lsa2->AddLinkRecord(lr4);
     lsa2->AddLinkRecord(lr5);
     lsa2->AddLinkRecord(lr6);
@@ -173,20 +173,20 @@ GlobalRouteManagerImplTestCase::DoRun()
     // Router 3
     GlobalRoutingLinkRecord* lr10 =
         new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::PointToPoint,
-                                    "0.0.0.2",
-                                    "10.1.2.1",
+                                    Ipv4Address("0.0.0.2"),
+                                    Ipv4Address("10.1.2.1"),
                                     1);
 
     GlobalRoutingLinkRecord* lr11 =
         new GlobalRoutingLinkRecord(GlobalRoutingLinkRecord::StubNetwork,
-                                    "10.1.2.1",
-                                    "255.255.255.252",
+                                    Ipv4Address("10.1.2.1"),
+                                    Ipv4Address("255.255.255.252"),
                                     1);
 
     GlobalRoutingLSA* lsa3 = new GlobalRoutingLSA();
     lsa3->SetLSType(GlobalRoutingLSA::RouterLSA);
-    lsa3->SetLinkStateId("0.0.0.3");
-    lsa3->SetAdvertisingRouter("0.0.0.3");
+    lsa3->SetLinkStateId(Ipv4Address("0.0.0.3"));
+    lsa3->SetAdvertisingRouter(Ipv4Address("0.0.0.3"));
     lsa3->AddLinkRecord(lr10);
     lsa3->AddLinkRecord(lr11);
 

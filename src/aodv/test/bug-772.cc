@@ -187,7 +187,7 @@ Bug772ChainTest::CreateDevices()
                           ((devices.GetN() * 3) + (3 * m_size) + m_size),
                           "Stream assignment mismatch");
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer interfaces = address.Assign(devices);
 
     // 3. Setup UDP source and sink

@@ -302,45 +302,47 @@ AddressCollisionTestCase::DoTeardown()
 void
 AddressCollisionTestCase::DoRun()
 {
-    Ipv4AddressGenerator::AddAllocated("0.0.0.5");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.10");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.15");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.20");
+    using namespace std::string_literals;
 
-    Ipv4AddressGenerator::AddAllocated("0.0.0.4");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.3");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.2");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.1");
+    Ipv4AddressGenerator::AddAllocated("0.0.0.5"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.10"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.15"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.20"s);
 
-    Ipv4AddressGenerator::AddAllocated("0.0.0.6");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.7");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.8");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.9");
+    Ipv4AddressGenerator::AddAllocated("0.0.0.4"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.3"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.2"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.1"s);
 
-    Ipv4AddressGenerator::AddAllocated("0.0.0.11");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.12");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.13");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.14");
+    Ipv4AddressGenerator::AddAllocated("0.0.0.6"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.7"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.8"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.9"s);
 
-    Ipv4AddressGenerator::AddAllocated("0.0.0.19");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.18");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.17");
-    Ipv4AddressGenerator::AddAllocated("0.0.0.16");
+    Ipv4AddressGenerator::AddAllocated("0.0.0.11"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.12"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.13"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.14"s);
+
+    Ipv4AddressGenerator::AddAllocated("0.0.0.19"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.18"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.17"s);
+    Ipv4AddressGenerator::AddAllocated("0.0.0.16"s);
 
     Ipv4AddressGenerator::TestMode();
-    bool added = Ipv4AddressGenerator::AddAllocated("0.0.0.21");
+    bool added = Ipv4AddressGenerator::AddAllocated("0.0.0.21"s);
     NS_TEST_EXPECT_MSG_EQ(added, true, "400");
 
-    added = Ipv4AddressGenerator::AddAllocated("0.0.0.4");
+    added = Ipv4AddressGenerator::AddAllocated("0.0.0.4"s);
     NS_TEST_EXPECT_MSG_EQ(added, false, "401");
 
-    added = Ipv4AddressGenerator::AddAllocated("0.0.0.9");
+    added = Ipv4AddressGenerator::AddAllocated("0.0.0.9"s);
     NS_TEST_EXPECT_MSG_EQ(added, false, "402");
 
-    added = Ipv4AddressGenerator::AddAllocated("0.0.0.16");
+    added = Ipv4AddressGenerator::AddAllocated("0.0.0.16"s);
     NS_TEST_EXPECT_MSG_EQ(added, false, "403");
 
-    added = Ipv4AddressGenerator::AddAllocated("0.0.0.21");
+    added = Ipv4AddressGenerator::AddAllocated("0.0.0.21"s);
     NS_TEST_EXPECT_MSG_EQ(added, false, "404");
 }
 

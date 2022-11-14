@@ -182,7 +182,7 @@ main(int argc, char* argv[])
 
     NS_LOG_INFO("assigning ip address");
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer allInterfaces;
     allInterfaces = address.Assign(allDevices);
 

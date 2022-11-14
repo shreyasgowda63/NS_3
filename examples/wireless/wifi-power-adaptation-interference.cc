@@ -577,7 +577,7 @@ main(int argc, char* argv[])
     stack.Install(wifiApNodes);
     stack.Install(wifiStaNodes);
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = address.Assign(wifiDevices);
     Ipv4Address sinkAddress = i.GetAddress(0);
     Ipv4Address sinkAddress1 = i.GetAddress(1);
@@ -672,7 +672,8 @@ main(int argc, char* argv[])
          ++i)
     {
         Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow(i->first);
-        if ((t.sourceAddress == "10.1.1.3" && t.destinationAddress == "10.1.1.1"))
+        if ((t.sourceAddress == Ipv4Address("10.1.1.3") &&
+             t.destinationAddress == Ipv4Address("10.1.1.1")))
         {
             NS_LOG_INFO("Flow " << i->first << " (" << t.sourceAddress << " -> "
                                 << t.destinationAddress << ")\n");
@@ -690,7 +691,8 @@ main(int argc, char* argv[])
                         << i->second.jitterSum.GetSeconds() / (i->second.rxPackets - 1) << "\n");
             NS_LOG_INFO("  Tx Opp: " << 1 - (statisticsAp0.GetBusyTime() / simuTime));
         }
-        if ((t.sourceAddress == "10.1.1.4" && t.destinationAddress == "10.1.1.2"))
+        if ((t.sourceAddress == Ipv4Address("10.1.1.4") &&
+             t.destinationAddress == Ipv4Address("10.1.1.2")))
         {
             NS_LOG_INFO("Flow " << i->first << " (" << t.sourceAddress << " -> "
                                 << t.destinationAddress << ")\n");

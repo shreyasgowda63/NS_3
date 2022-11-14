@@ -92,7 +92,7 @@ UdpClientServerTestCase::DoRun()
 
     Ipv4AddressHelper ipv4;
 
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = ipv4.Assign(d);
 
     uint16_t port = 4000;
@@ -168,7 +168,7 @@ UdpTraceClientServerTestCase::DoRun()
     d.Add(rxDev);
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = ipv4.Assign(d);
 
     uint16_t port = 4000;
@@ -315,7 +315,7 @@ UdpEchoClientSetFillTestCase::DoRun()
 
     Ipv4AddressHelper ipv4;
 
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer interfaces = ipv4.Assign(d);
 
     uint16_t port = 5000;

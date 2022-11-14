@@ -185,7 +185,7 @@ main(int argc, char* argv[])
                        StringValue(std::to_string(queueDiscSize) + "p"));
 
     Ipv4AddressHelper address;
-    address.SetBase("10.0.0.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
 
     // Configure the source and sink net devices
     // and the channels between the source/sink and the gateway

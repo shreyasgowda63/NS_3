@@ -66,13 +66,15 @@ Ipv4L3ProtocolTestCase::DoRun()
     uint32_t index = ipv4->AddIpv4Interface(interface);
     NS_TEST_ASSERT_MSG_EQ(index, 0, "No interface should be found??");
     interface->SetUp();
-    Ipv4InterfaceAddress ifaceAddr1 = Ipv4InterfaceAddress("192.168.0.1", "255.255.255.0");
+    Ipv4InterfaceAddress ifaceAddr1 =
+        Ipv4InterfaceAddress(Ipv4Address("192.168.0.1"), Ipv4Mask(24));
     interface->AddAddress(ifaceAddr1);
-    Ipv4InterfaceAddress ifaceAddr2 = Ipv4InterfaceAddress("192.168.0.2", "255.255.255.0");
+    Ipv4InterfaceAddress ifaceAddr2 =
+        Ipv4InterfaceAddress(Ipv4Address("192.168.0.2"), Ipv4Mask(24));
     interface->AddAddress(ifaceAddr2);
-    Ipv4InterfaceAddress ifaceAddr3 = Ipv4InterfaceAddress("10.30.0.1", "255.255.255.0");
+    Ipv4InterfaceAddress ifaceAddr3 = Ipv4InterfaceAddress(Ipv4Address("10.30.0.1"), Ipv4Mask(24));
     interface->AddAddress(ifaceAddr3);
-    Ipv4InterfaceAddress ifaceAddr4 = Ipv4InterfaceAddress("250.0.0.1", "255.255.255.0");
+    Ipv4InterfaceAddress ifaceAddr4 = Ipv4InterfaceAddress(Ipv4Address("250.0.0.1"), Ipv4Mask(24));
     interface->AddAddress(ifaceAddr4);
     uint32_t num = interface->GetNAddresses();
     NS_TEST_ASSERT_MSG_EQ(num, 4, "Should find 4 interfaces??");

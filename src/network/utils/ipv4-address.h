@@ -26,6 +26,7 @@
 
 #include <ostream>
 #include <stdint.h>
+#include <string>
 
 namespace ns3
 {
@@ -57,7 +58,18 @@ class Ipv4Address
      * low byte
      * \param address C-string containing the address as described above
      */
-    Ipv4Address(const char* address);
+    // NS_DEPRECATED_3_38("Use the std::string version")
+    // Ipv4Address(const char* address);
+    /**
+     * \brief Constructs an Ipv4Address by parsing a the input string
+     *
+     * Input address is in format:
+     * \c hhh.xxx.xxx.lll
+     * where \c h is the high byte and \c l the
+     * low byte
+     * \param address string containing the address as described above
+     */
+    Ipv4Address(const std::string& address);
     /**
      * Get the host-order 32-bit IP address
      * \return the host-order 32-bit IP address
@@ -77,7 +89,18 @@ class Ipv4Address
      * low byte
      * \param address C-string containing the address as described above
      */
-    void Set(const char* address);
+    // NS_DEPRECATED_3_38("Use the std::string version")
+    // void Set(const char* address);
+    /**
+     * \brief Sets an Ipv4Address by parsing a the input string
+     *
+     * Input address is in format:
+     * \c hhh.xxx.xxx.lll
+     * where \c h is the high byte and \c l the
+     * low byte
+     * \param address string containing the address as described above
+     */
+    void Set(const std::string& address);
     /**
      * Serialize this address to a 4-byte buffer
      *
@@ -270,7 +293,12 @@ class Ipv4Mask
     /**
      * \param mask String constant either in "255.255.255.0" or "/24" format
      */
-    Ipv4Mask(const char* mask);
+    // NS_DEPRECATED_3_38("Use the std::string version")
+    // Ipv4Mask(const char* mask);
+    /**
+     * \param mask String constant either in "255.255.255.0" or "/24" format
+     */
+    Ipv4Mask(const std::string& mask);
     /**
      * \param a first address to compare
      * \param b second address to compare

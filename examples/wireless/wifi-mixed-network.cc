@@ -259,7 +259,7 @@ Experiment::Run(Parameters params)
     stack.Install(wifiNStaNodes);
 
     Ipv4AddressHelper address;
-    address.SetBase("192.168.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer bStaInterface;
     bStaInterface = address.Assign(bStaDevice);
     Ipv4InterfaceContainer gStaInterface;

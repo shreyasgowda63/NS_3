@@ -245,7 +245,7 @@ main(int argc, char* argv[])
     NetDeviceContainer devicesAccessLink = accessLink.Install(n1.Get(0), n2.Get(0));
     tchPfifoFastAccess.Install(devicesAccessLink);
     Ipv4AddressHelper address;
-    address.SetBase("192.168.0.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24));
     address.NewNetwork();
     Ipv4InterfaceContainer interfacesAccess = address.Assign(devicesAccessLink);
 

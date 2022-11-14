@@ -418,10 +418,10 @@ NeighborCacheExample::Run()
     if (!m_useIpv6)
     {
         Ipv4AddressHelper address;
-        address.SetBase("10.1.1.0", "255.255.255.0");
+        address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
         Ipv4InterfaceContainer csmaInterfacesLeft;
         csmaInterfacesLeft = address.Assign(csmaDevicesLeft);
-        address.SetBase("10.1.2.0", "255.255.255.0");
+        address.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
         Ipv4InterfaceContainer csmaInterfacesRight;
         csmaInterfacesRight = address.Assign(csmaDevicesRight);
 

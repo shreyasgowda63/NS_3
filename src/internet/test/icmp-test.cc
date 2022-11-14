@@ -184,7 +184,7 @@ IcmpEchoReplyTestCase::DoRun()
 
     Ipv4AddressHelper ipv4;
 
-    ipv4.SetBase("10.0.0.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i = ipv4.Assign(d);
 
     Ptr<Socket> socket;
@@ -324,10 +324,10 @@ IcmpTimeExceedTestCase::DoRun()
     internet.Install(n);
 
     Ipv4AddressHelper address;
-    address.SetBase("10.0.0.0", "255.255.255.255");
+    address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(32));
     Ipv4InterfaceContainer i = address.Assign(devices);
 
-    address.SetBase("10.0.1.0", "255.255.255.255");
+    address.SetBase(Ipv4Address("10.0.1.0"), Ipv4Mask(32));
     Ipv4InterfaceContainer i2 = address.Assign(devices2);
 
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();

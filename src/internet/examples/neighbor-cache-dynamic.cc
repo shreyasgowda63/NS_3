@@ -207,7 +207,7 @@ main(int argc, char* argv[])
     if (!useIpv6)
     {
         Ipv4AddressHelper address;
-        address.SetBase("10.1.1.0", "255.255.255.0");
+        address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
         Ipv4InterfaceContainer csmaInterfaces;
         csmaInterfaces = address.Assign(csmaDevices);
     }
@@ -231,7 +231,8 @@ main(int argc, char* argv[])
         uint32_t ipv4ifIndex = 1;
         Ptr<Ipv4Interface> ipv4Interface =
             n1->GetObject<Ipv4L3Protocol>()->GetInterface(ipv4ifIndex);
-        Ipv4InterfaceAddress ifaceAddr = Ipv4InterfaceAddress("10.1.1.4", "255.255.255.0");
+        Ipv4InterfaceAddress ifaceAddr =
+            Ipv4InterfaceAddress(Ipv4Address("10.1.1.4"), Ipv4Mask(24));
         Simulator::Schedule(Seconds(0.5), &AddIpv4Address, ipv4Interface, ifaceAddr);
 
         // Remove the first address (10.1.1.1) from interface 1 in 1.5 seconds
@@ -251,7 +252,7 @@ main(int argc, char* argv[])
         Ptr<Ipv6Interface> ipv6Interface =
             n1->GetObject<Ipv6L3Protocol>()->GetInterface(ipv6ifIndex);
         Ipv6InterfaceAddress ifaceAddr =
-            Ipv6InterfaceAddress("2001:1::200:ff:fe00:4", Ipv6Prefix(64));
+            Ipv6InterfaceAddress(Ipv6Address("2001:1::200:ff:fe00:4"), Ipv6Prefix(64));
         Simulator::Schedule(Seconds(0.5), &AddIpv6Address, ipv6Interface, ifaceAddr);
 
         // Remove the second address (2001:1::200:ff:fe00:1) from interface 1 in 1.5 seconds

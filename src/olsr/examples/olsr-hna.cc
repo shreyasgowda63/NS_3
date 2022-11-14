@@ -203,10 +203,10 @@ main(int argc, char* argv[])
 
     Ipv4AddressHelper ipv4;
     NS_LOG_INFO("Assign IP Addresses.");
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     ipv4.Assign(devices);
 
-    ipv4.SetBase("172.16.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("172.16.1.0"), Ipv4Mask(24));
     ipv4.Assign(csmaDevices);
 
     TypeId tid = TypeId::LookupByName("ns3::UdpSocketFactory");

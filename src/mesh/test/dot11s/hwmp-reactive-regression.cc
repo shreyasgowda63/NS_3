@@ -143,7 +143,7 @@ HwmpReactiveRegressionTest::CreateDevices()
     internetStack.Install(*m_nodes);
     streamsUsed += internetStack.AssignStreams(*m_nodes, streamsUsed);
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     m_interfaces = address.Assign(meshDevices);
     // 4. write PCAP if needed
     wifiPhy.EnablePcapAll(CreateTempDirFilename(PREFIX));

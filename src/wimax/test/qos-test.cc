@@ -91,7 +91,7 @@ Ns3WimaxSchedulingTestCase::DoRunOnce(WimaxHelper::SchedulerType scheduler)
     stack.Install(ssNodes);
 
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
 
     Ipv4InterfaceContainer SSinterfaces = address.Assign(ssDevs);
     Ipv4InterfaceContainer BSinterface = address.Assign(bsDevs);
@@ -223,7 +223,7 @@ Ns3WimaxSFTypeTestCase::DoRunOnce(ServiceFlow::SchedulingType schedulingType)
     stack.Install(ssNodes);
 
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
 
     Ipv4InterfaceContainer SSinterfaces = address.Assign(ssDevs);
     Ipv4InterfaceContainer BSinterface = address.Assign(bsDevs);

@@ -112,7 +112,7 @@ main(int argc, char* argv[])
     internet.Install(nodes);
 
     Ipv4AddressHelper ipv4address;
-    ipv4address.SetBase("10.0.0.0", "255.255.255.0");
+    ipv4address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
     ipv4address.Assign(devices);
 
     // add static routes for each node / device
@@ -134,14 +134,14 @@ main(int argc, char* argv[])
             NS_ASSERT_MSG((bool)ipv4,
                           "Node " << Names::FindName(node) << " does not have Ipv4 aggregate");
             auto routing = staticRouting.GetStaticRouting(ipv4);
-            routing->AddHostRouteTo(targetAddr.c_str(), ipv4->GetInterfaceForDevice(*diter), 0);
+            routing->AddHostRouteTo(targetAddr, ipv4->GetInterfaceForDevice(*diter), 0);
         }
         else
         {
             // route for forwarding
             staticRouting.AddMulticastRoute(node,
                                             Ipv4Address::GetAny(),
-                                            targetAddr.c_str(),
+                                            targetAddr,
                                             *diter,
                                             NetDeviceContainer(*diter));
         }

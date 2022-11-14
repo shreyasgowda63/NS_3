@@ -129,7 +129,7 @@ main(int argc, char* argv[])
 
     NS_LOG_INFO("creating IPv4 addresses");
     Ipv4AddressHelper address;
-    address.SetBase("10.0.0.0", "255.255.255.252");
+    address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(30));
 
     int totlinks = inFile->LinksSize();
 

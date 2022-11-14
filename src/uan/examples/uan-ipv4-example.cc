@@ -142,7 +142,7 @@ UanExperiment::SetupCommunications()
     internetStackHelper.Install(m_nodes);
 
     Ipv4AddressHelper ipv4AddressHelper;
-    ipv4AddressHelper.SetBase("10.0.0.0", "255.255.255.0");
+    ipv4AddressHelper.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
     ipv4AddressHelper.Assign(netDeviceContainer);
     node = m_nodes.Begin();
     while (node != m_nodes.End())

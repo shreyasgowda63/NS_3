@@ -128,7 +128,7 @@ main(int argc, char* argv[])
     if (useV6 == false)
     {
         Ipv4AddressHelper address;
-        address.SetBase("10.1.1.0", "255.255.255.0");
+        address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
         Ipv4InterfaceContainer interfaces = address.Assign(devices);
         sinkAddress = InetSocketAddress(interfaces.GetAddress(1), sinkPort);
         anyAddress = InetSocketAddress(Ipv4Address::GetAny(), sinkPort);
@@ -138,7 +138,7 @@ main(int argc, char* argv[])
     else
     {
         Ipv6AddressHelper address;
-        address.SetBase("2001:0000:f00d:cafe::", Ipv6Prefix(64));
+        address.SetBase(Ipv6Address("2001:0000:f00d:cafe::"), Ipv6Prefix(64));
         Ipv6InterfaceContainer interfaces = address.Assign(devices);
         sinkAddress = Inet6SocketAddress(interfaces.GetAddress(1, 1), sinkPort);
         anyAddress = Inet6SocketAddress(Ipv6Address::GetAny(), sinkPort);

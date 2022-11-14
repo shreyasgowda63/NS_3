@@ -83,9 +83,9 @@ main(int argc, char* argv[])
 
     NS_LOG_INFO("Assign IP Addresses.");
     Ipv4AddressHelper ipv4Addr;
-    ipv4Addr.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4Addr.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     ipv4Addr.Assign(nd0);
-    ipv4Addr.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4Addr.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     ipv4Addr.Assign(nd1);
 
     NS_LOG_INFO("Configure multicasting.");

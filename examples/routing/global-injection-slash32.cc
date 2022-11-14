@@ -90,10 +90,10 @@ main(int argc, char* argv[])
 
     // Later, we add IP addresses.
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer iAiB = ipv4.Assign(dAdB);
 
-    ipv4.SetBase("10.1.1.4", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.4"), Ipv4Mask(30));
     Ipv4InterfaceContainer iBiC = ipv4.Assign(dBdC);
 
     Ptr<Ipv4> ipv4A = nA->GetObject<Ipv4>();
@@ -122,9 +122,9 @@ main(int argc, char* argv[])
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();
     // Inject global routes from Node B, including transit network...
     Ptr<GlobalRouter> globalRouterB = nB->GetObject<GlobalRouter>();
-    globalRouterB->InjectRoute("10.1.1.4", "255.255.255.252");
+    globalRouterB->InjectRoute(Ipv4Address("10.1.1.4"), Ipv4Mask(30));
     // ...and the host in network "C"
-    globalRouterB->InjectRoute("192.168.1.1", "255.255.255.255");
+    globalRouterB->InjectRoute(Ipv4Address("192.168.1.1"), Ipv4Mask(32));
 
     Ipv4GlobalRoutingHelper::RecomputeRoutingTables();
     // In addition, nB needs a static route to nC so it knows what to do with stuff

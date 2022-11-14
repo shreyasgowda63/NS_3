@@ -332,7 +332,7 @@ main(int argc, char* argv[])
     stack.Install(wifiApNodes);
     stack.Install(wifiStaNodes);
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = address.Assign(wifiDevices);
     Ipv4Address sinkAddress = i.GetAddress(0);
     uint16_t port = 9;

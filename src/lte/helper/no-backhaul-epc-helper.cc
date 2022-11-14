@@ -64,15 +64,15 @@ NoBackhaulEpcHelper::NoBackhaulEpcHelper()
     // since we use point-to-point links for links between the core network nodes,
     // we use a /30 subnet which can hold exactly two addresses
     // (remember that net broadcast and null address are not valid)
-    m_x2Ipv4AddressHelper.SetBase("12.0.0.0", "255.255.255.252");
-    m_s11Ipv4AddressHelper.SetBase("13.0.0.0", "255.255.255.252");
-    m_s5Ipv4AddressHelper.SetBase("14.0.0.0", "255.255.255.252");
+    m_x2Ipv4AddressHelper.SetBase(Ipv4Address("12.0.0.0"), Ipv4Mask(30));
+    m_s11Ipv4AddressHelper.SetBase(Ipv4Address("13.0.0.0"), Ipv4Mask(30));
+    m_s5Ipv4AddressHelper.SetBase(Ipv4Address("14.0.0.0"), Ipv4Mask(30));
 
     // we use a /8 net for all UEs
-    m_uePgwAddressHelper.SetBase("7.0.0.0", "255.0.0.0");
+    m_uePgwAddressHelper.SetBase(Ipv4Address("7.0.0.0"), Ipv4Mask(8));
 
     // we use a /64 IPv6 net all UEs
-    m_uePgwAddressHelper6.SetBase("7777:f00d::", Ipv6Prefix(64));
+    m_uePgwAddressHelper6.SetBase(Ipv6Address("7777:f00d::"), Ipv6Prefix(64));
 
     // Create PGW, SGW and MME nodes
     m_pgw = CreateObject<Node>();
@@ -90,7 +90,11 @@ NoBackhaulEpcHelper::NoBackhaulEpcHelper()
     Ipv6StaticRoutingHelper ipv6RoutingHelper;
     Ptr<Ipv6StaticRouting> pgwStaticRouting =
         ipv6RoutingHelper.GetStaticRouting(m_pgw->GetObject<Ipv6>());
-    pgwStaticRouting->AddNetworkRouteTo("7777:f00d::", Ipv6Prefix(64), Ipv6Address("::"), 1, 0);
+    pgwStaticRouting->AddNetworkRouteTo(Ipv6Address("7777:f00d::"),
+                                        Ipv6Prefix(64),
+                                        Ipv6Address("::"),
+                                        1,
+                                        0);
 
     // create TUN device implementing tunneling of user data over GTP-U/UDP/IP in the PGW
     m_tunDevice = CreateObject<VirtualNetDevice>();

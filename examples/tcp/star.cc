@@ -68,7 +68,7 @@ main(int argc, char* argv[])
     star.InstallStack(internet);
 
     NS_LOG_INFO("Assign IP Addresses.");
-    star.AssignIpv4Addresses(Ipv4AddressHelper("10.1.1.0", "255.255.255.0"));
+    star.AssignIpv4Addresses(Ipv4AddressHelper(Ipv4Address("10.1.1.0"), Ipv4Mask(24)));
 
     NS_LOG_INFO("Create applications.");
     //

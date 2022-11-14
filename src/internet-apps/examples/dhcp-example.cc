@@ -121,7 +121,7 @@ main(int argc, char* argv[])
     tcpip.Install(p2pNodes.Get(1));
 
     Ipv4AddressHelper address;
-    address.SetBase("172.30.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("172.30.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer p2pInterfaces;
     p2pInterfaces = address.Assign(p2pDevices);
 

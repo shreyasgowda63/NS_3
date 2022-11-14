@@ -451,12 +451,12 @@ PacketDequeue(std::ofstream* n0OfStream, std::ofstream* n1OfStream, Ptr<const Qu
         Ptr<const Ipv4QueueDiscItem>(dynamic_cast<const Ipv4QueueDiscItem*>(PeekPointer(item)));
     Ipv4Address address = iqdi->GetHeader().GetDestination();
     Time qDelay = Simulator::Now() - item->GetTimeStamp();
-    if (address == "192.168.2.2")
+    if (address == Ipv4Address("192.168.2.2"))
     {
         *n0OfStream << Simulator::Now().GetSeconds() << " " << qDelay.GetMicroSeconds() / 1000.0
                     << std::endl;
     }
-    else if (address == "192.168.3.2")
+    else if (address == Ipv4Address("192.168.3.2"))
     {
         *n1OfStream << Simulator::Now().GetSeconds() << " " << qDelay.GetMicroSeconds() / 1000.0
                     << std::endl;
@@ -795,19 +795,19 @@ main(int argc, char* argv[])
     tchN2.Install(n2n3Devices.Get(0));
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer pingServerIfaces = ipv4.Assign(pingServerDevices);
-    ipv4.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer n0ServerIfaces = ipv4.Assign(n0ServerDevices);
-    ipv4.SetBase("10.1.3.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer secondServerIfaces = ipv4.Assign(n1ServerDevices);
-    ipv4.SetBase("172.16.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("172.16.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer n2n3Ifaces = ipv4.Assign(n2n3Devices);
-    ipv4.SetBase("192.168.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer pingClientIfaces = ipv4.Assign(pingClientDevices);
-    ipv4.SetBase("192.168.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("192.168.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer n4ClientIfaces = ipv4.Assign(n4ClientDevices);
-    ipv4.SetBase("192.168.3.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("192.168.3.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer n5ClientIfaces = ipv4.Assign(n5ClientDevices);
 
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();
@@ -816,7 +816,7 @@ main(int argc, char* argv[])
     // application setup                                      //
     ////////////////////////////////////////////////////////////
 
-    V4PingHelper pingHelper("192.168.1.2");
+    V4PingHelper pingHelper(Ipv4Address("192.168.1.2"));
     pingHelper.SetAttribute("Interval", TimeValue(pingInterval));
     pingHelper.SetAttribute("Size", UintegerValue(pingSize));
     ApplicationContainer pingContainer = pingHelper.Install(pingServer);

@@ -271,7 +271,7 @@ DynamicNeighborCacheTest::DoRun()
     Ptr<Node> n1 = rxNode;
     uint32_t ipv4ifIndex = 1;
     Ptr<Ipv4Interface> ipv4Interface = n1->GetObject<Ipv4L3Protocol>()->GetInterface(ipv4ifIndex);
-    Ipv4InterfaceAddress ifaceAddr = Ipv4InterfaceAddress("10.0.1.5", "255.255.255.0");
+    Ipv4InterfaceAddress ifaceAddr = Ipv4InterfaceAddress(Ipv4Address("10.0.1.5"), Ipv4Mask(24));
     Simulator::Schedule(Seconds(0.5),
                         &DynamicNeighborCacheTest::AddIpv4Address,
                         this,
@@ -295,7 +295,7 @@ DynamicNeighborCacheTest::DoRun()
     uint32_t ipv6ifIndex = 1;
     Ptr<Ipv6Interface> ipv6Interface = n1->GetObject<Ipv6L3Protocol>()->GetInterface(ipv6ifIndex);
     Ipv6InterfaceAddress ifaceAddrv6 =
-        Ipv6InterfaceAddress("2001:0::200:ff:fe00:5", Ipv6Prefix(64));
+        Ipv6InterfaceAddress(Ipv6Address("2001:0::200:ff:fe00:5"), Ipv6Prefix(64));
     Simulator::Schedule(Seconds(0.5),
                         &DynamicNeighborCacheTest::AddIpv6Address,
                         this,
@@ -582,9 +582,9 @@ ChannelTest::DoRun()
 
     // Setup IPv4 addresses
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
-    ipv4.SetBase("10.1.2.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i2 = ipv4.Assign(net2);
 
     // Setup IPv6 addresses
@@ -672,9 +672,9 @@ NetDeviceContainerTest::DoRun()
 
     // Setup IPv4 addresses
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
-    ipv4.SetBase("10.1.2.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i2 = ipv4.Assign(net2);
 
     // Setup IPv6 addresses
@@ -763,9 +763,9 @@ InterfaceContainerTest::DoRun()
 
     // Setup IPv4 addresses
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
-    ipv4.SetBase("10.1.2.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i2 = ipv4.Assign(net2);
 
     // Setup IPv6 addresses
@@ -854,9 +854,9 @@ FlushTest::DoRun()
 
     // Setup IPv4 addresses
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
-    ipv4.SetBase("10.1.2.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i2 = ipv4.Assign(net2);
 
     // Setup IPv6 addresses
@@ -962,9 +962,9 @@ DuplicateTest::DoRun()
 
     // Setup IPv4 addresses
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
-    ipv4.SetBase("10.1.2.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i2 = ipv4.Assign(net2);
 
     // Setup IPv6 addresses
@@ -1114,16 +1114,16 @@ DynamicPartialTest::DoRun()
 
     // Setup IPv4 addresses
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
-    ipv4.SetBase("10.1.2.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i2 = ipv4.Assign(net2);
 
     // Add address 10.1.1.5 to n1 in 0.5 seconds
     Ptr<Node> n1 = m_nodes.Get(0);
     uint32_t ipv4ifIndex = 1;
     Ptr<Ipv4Interface> ipv4Interface = n1->GetObject<Ipv4L3Protocol>()->GetInterface(ipv4ifIndex);
-    Ipv4InterfaceAddress ifaceAddr = Ipv4InterfaceAddress("10.1.1.5", "255.255.255.0");
+    Ipv4InterfaceAddress ifaceAddr = Ipv4InterfaceAddress(Ipv4Address("10.1.1.5"), Ipv4Mask(24));
     Simulator::Schedule(Seconds(0.5),
                         &DynamicPartialTest::AddIpv4Address,
                         this,
@@ -1149,7 +1149,7 @@ DynamicPartialTest::DoRun()
     uint32_t ipv6ifIndex = 1;
     Ptr<Ipv6Interface> ipv6Interface = n1->GetObject<Ipv6L3Protocol>()->GetInterface(ipv6ifIndex);
     Ipv6InterfaceAddress ifaceAddrv6 =
-        Ipv6InterfaceAddress("2001:0::200:ff:fe00:5", Ipv6Prefix(64));
+        Ipv6InterfaceAddress(Ipv6Address("2001:0::200:ff:fe00:5"), Ipv6Prefix(64));
     Simulator::Schedule(Seconds(0.5),
                         &DynamicPartialTest::AddIpv6Address,
                         this,

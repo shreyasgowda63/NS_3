@@ -156,7 +156,7 @@ LinkTest::DoSetup()
     internet.Install(m_nodes);
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
 }
 
@@ -240,7 +240,7 @@ LanTest::DoSetup()
     internet.Install(m_nodes);
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
 }
 
@@ -330,9 +330,9 @@ TwoLinkTest::DoSetup()
     internet.Install(m_nodes);
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
-    ipv4.SetBase("10.1.2.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer i2 = ipv4.Assign(net2);
 }
 
@@ -448,9 +448,9 @@ TwoLanTest::DoSetup()
     internet.Install(m_nodes);
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
-    ipv4.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i2 = ipv4.Assign(net2);
 }
 
@@ -579,13 +579,13 @@ BridgeTest::DoSetup()
     internet.Install(m_nodes.Get(4));
 
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     address.Assign(net);
 
-    address.SetBase("10.1.2.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     address.Assign(bridgeFacingDevices);
 
-    address.SetBase("10.1.3.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     address.Assign(net4);
 }
 
@@ -770,10 +770,10 @@ TwoBridgeTest::DoSetup()
     internet.Install(m_nodes.Get(4));
 
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     address.Assign(net);
 
-    address.SetBase("10.1.2.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     address.Assign(bridgeFacingDevices);
 }
 
@@ -1017,19 +1017,19 @@ Ipv4DynamicGlobalRoutingTestCase::DoRun()
 
     // Later, we add IP addresses.
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     ipv4.Assign(d0d2);
 
-    ipv4.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     ipv4.Assign(d1d2);
 
-    ipv4.SetBase("10.1.3.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i5i6 = ipv4.Assign(d5d6);
 
-    ipv4.SetBase("10.250.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.250.1.0"), Ipv4Mask(24));
     ipv4.Assign(d2345);
 
-    ipv4.SetBase("172.16.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("172.16.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i1i6 = ipv4.Assign(d1d6);
 
     // Create router nodes, initialize routing database and set up the routing
@@ -1269,10 +1269,10 @@ Ipv4GlobalRoutingSlash32TestCase::DoRun()
 
     // Later, we add IP addresses.
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer iAiB = ipv4.Assign(dAdB);
 
-    ipv4.SetBase("10.1.1.4", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.4"), Ipv4Mask(30));
     Ipv4InterfaceContainer iBiC = ipv4.Assign(dBdC);
 
     Ptr<Ipv4> ipv4A = nA->GetObject<Ipv4>();

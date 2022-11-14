@@ -20,6 +20,8 @@
 #include "ns3/simulation-singleton.h"
 #include "ns3/test.h"
 
+#include <string>
+
 using namespace ns3;
 
 /**
@@ -294,45 +296,47 @@ AddressCollision6TestCase::DoTeardown()
 void
 AddressCollision6TestCase::DoRun()
 {
-    Ipv6AddressGenerator::AddAllocated("0::0:5");
-    Ipv6AddressGenerator::AddAllocated("0::0:10");
-    Ipv6AddressGenerator::AddAllocated("0::0:15");
-    Ipv6AddressGenerator::AddAllocated("0::0:20");
+    using namespace std::string_literals;
 
-    Ipv6AddressGenerator::AddAllocated("0::0:4");
-    Ipv6AddressGenerator::AddAllocated("0::0:3");
-    Ipv6AddressGenerator::AddAllocated("0::0:2");
-    Ipv6AddressGenerator::AddAllocated("0::0:1");
+    Ipv6AddressGenerator::AddAllocated("0::0:5"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:10"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:15"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:20"s);
 
-    Ipv6AddressGenerator::AddAllocated("0::0:6");
-    Ipv6AddressGenerator::AddAllocated("0::0:7");
-    Ipv6AddressGenerator::AddAllocated("0::0:8");
-    Ipv6AddressGenerator::AddAllocated("0::0:9");
+    Ipv6AddressGenerator::AddAllocated("0::0:4"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:3"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:2"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:1"s);
 
-    Ipv6AddressGenerator::AddAllocated("0::0:11");
-    Ipv6AddressGenerator::AddAllocated("0::0:12");
-    Ipv6AddressGenerator::AddAllocated("0::0:13");
-    Ipv6AddressGenerator::AddAllocated("0::0:14");
+    Ipv6AddressGenerator::AddAllocated("0::0:6"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:7"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:8"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:9"s);
 
-    Ipv6AddressGenerator::AddAllocated("0::0:19");
-    Ipv6AddressGenerator::AddAllocated("0::0:18");
-    Ipv6AddressGenerator::AddAllocated("0::0:17");
-    Ipv6AddressGenerator::AddAllocated("0::0:16");
+    Ipv6AddressGenerator::AddAllocated("0::0:11"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:12"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:13"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:14"s);
+
+    Ipv6AddressGenerator::AddAllocated("0::0:19"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:18"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:17"s);
+    Ipv6AddressGenerator::AddAllocated("0::0:16"s);
 
     Ipv6AddressGenerator::TestMode();
-    bool added = Ipv6AddressGenerator::AddAllocated("0::0:21");
+    bool added = Ipv6AddressGenerator::AddAllocated("0::0:21"s);
     NS_TEST_EXPECT_MSG_EQ(added, true, "address should get allocated");
 
-    added = Ipv6AddressGenerator::AddAllocated("0::0:4");
+    added = Ipv6AddressGenerator::AddAllocated("0::0:4"s);
     NS_TEST_EXPECT_MSG_EQ(added, false, "address should not get allocated");
 
-    added = Ipv6AddressGenerator::AddAllocated("0::0:9");
+    added = Ipv6AddressGenerator::AddAllocated("0::0:9"s);
     NS_TEST_EXPECT_MSG_EQ(added, false, "address should not get allocated");
 
-    added = Ipv6AddressGenerator::AddAllocated("0::0:16");
+    added = Ipv6AddressGenerator::AddAllocated("0::0:16"s);
     NS_TEST_EXPECT_MSG_EQ(added, false, "address should not get allocated");
 
-    added = Ipv6AddressGenerator::AddAllocated("0::0:21");
+    added = Ipv6AddressGenerator::AddAllocated("0::0:21"s);
     NS_TEST_EXPECT_MSG_EQ(added, false, "address should not get allocated");
 }
 

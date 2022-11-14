@@ -311,8 +311,11 @@ LteIpv6RoutingTestCase::DoRun()
 
     Ptr<Ipv6StaticRouting> remoteHostStaticRouting =
         ipv6RoutingHelper.GetStaticRouting(remoteHost->GetObject<Ipv6>());
-    remoteHostStaticRouting
-        ->AddNetworkRouteTo("7777:f00d::", Ipv6Prefix(64), internetIpIfaces.GetAddress(0, 1), 1, 0);
+    remoteHostStaticRouting->AddNetworkRouteTo(Ipv6Address("7777:f00d::"),
+                                               Ipv6Prefix(64),
+                                               internetIpIfaces.GetAddress(0, 1),
+                                               1,
+                                               0);
 
     // interface 0 is localhost, 1 is the p2p device
     m_remoteHostAddr = internetIpIfaces.GetAddress(1, 1);

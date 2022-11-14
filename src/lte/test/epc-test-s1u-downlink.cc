@@ -140,7 +140,7 @@ EpcS1uDlTestCase::DoRun()
     p2ph.SetDeviceAttribute("DataRate", DataRateValue(DataRate("100Gb/s")));
     NetDeviceContainer internetDevices = p2ph.Install(pgw, remoteHost);
     Ipv4AddressHelper ipv4h;
-    ipv4h.SetBase("1.0.0.0", "255.0.0.0");
+    ipv4h.SetBase(Ipv4Address("1.0.0.0"), Ipv4Mask(8));
     ipv4h.Assign(internetDevices);
 
     // setup default gateway for the remote hosts

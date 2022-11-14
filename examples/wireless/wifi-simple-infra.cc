@@ -219,7 +219,7 @@ main(int argc, char* argv[])
     internet.Install(c);
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = ipv4.Assign(devices);
 
     TypeId tid = TypeId::LookupByName("ns3::UdpSocketFactory");

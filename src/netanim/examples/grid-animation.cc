@@ -60,8 +60,8 @@ main(int argc, char* argv[])
     grid.InstallStack(stack);
 
     // Assign Addresses to Grid
-    grid.AssignIpv4Addresses(Ipv4AddressHelper("10.1.1.0", "255.255.255.0"),
-                             Ipv4AddressHelper("10.2.1.0", "255.255.255.0"));
+    grid.AssignIpv4Addresses(Ipv4AddressHelper(Ipv4Address("10.1.1.0"), Ipv4Mask(24)),
+                             Ipv4AddressHelper(Ipv4Address("10.2.1.0"), Ipv4Mask(24)));
 
     OnOffHelper clientHelper("ns3::UdpSocketFactory", Address());
     clientHelper.SetAttribute("OnTime", StringValue("ns3::ConstantRandomVariable[Constant=1]"));

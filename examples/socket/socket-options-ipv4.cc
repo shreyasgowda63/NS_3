@@ -110,7 +110,7 @@ main(int argc, char* argv[])
 
     NS_LOG_INFO("Assign IP Addresses.");
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = ipv4.Assign(d);
     serverAddress = Address(i.GetAddress(1));
 

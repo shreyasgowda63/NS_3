@@ -154,7 +154,7 @@ LoopbackTestCase::DoRun()
     internetStack.SetRoutingHelper(aodv);
     internetStack.Install(nodes);
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer interfaces = address.Assign(devices);
 
     // Setup echos

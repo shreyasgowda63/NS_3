@@ -110,7 +110,7 @@ main(int argc, char* argv[])
 
     NS_LOG_INFO("Assign IP Addresses.");
     Ipv6AddressHelper ipv6;
-    ipv6.SetBase("2001:0000:f00d:cafe::", Ipv6Prefix(64));
+    ipv6.SetBase(Ipv6Address("2001:0000:f00d:cafe::"), Ipv6Prefix(64));
     Ipv6InterfaceContainer i6 = ipv6.Assign(d);
     serverAddress = Address(i6.GetAddress(1, 1));
 

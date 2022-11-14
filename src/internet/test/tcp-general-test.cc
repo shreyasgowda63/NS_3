@@ -171,7 +171,7 @@ TcpGeneralTest::DoRun()
     receiverDev->SetReceiveErrorModel(receiverEM);
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = ipv4.Assign(net);
     Ipv4Address serverAddress = i.GetAddress(1);
     // Ipv4Address clientAddress = i.GetAddress (0);

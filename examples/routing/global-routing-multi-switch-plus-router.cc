@@ -593,7 +593,7 @@ main(int argc, char* argv[])
     topLanIpDevices.Add(link_t3_ts1.Get(0)); //       assignment
                                              // - - - - - -- - - - - - -
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("192.168.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     ipv4.Assign(topLanIpDevices);
 
     // ----------------------------------------------------------------------
@@ -607,7 +607,7 @@ main(int argc, char* argv[])
     botLanIpDevices.Add(link_b3_bs1.Get(0)); //       assignment
                                              // - - - - - -- - - - - - -
 
-    ipv4.SetBase("192.168.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("192.168.2.0"), Ipv4Mask(24));
     ipv4.Assign(botLanIpDevices);
 
     // ----------------------------------------------------------------------
@@ -615,7 +615,7 @@ main(int argc, char* argv[])
     // ----------------------------------------------------------------------
     NS_LOG_INFO("L3: Assign WAN IP Addresses.");
 
-    ipv4.SetBase("76.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("76.1.1.0"), Ipv4Mask(24));
     ipv4.Assign(link_tr_br);
 
     // ======================================================================

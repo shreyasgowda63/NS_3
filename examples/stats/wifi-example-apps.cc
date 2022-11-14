@@ -54,7 +54,7 @@ Sender::GetTypeId()
                                           MakeUintegerChecker<uint32_t>(1))
                             .AddAttribute("Destination",
                                           "Target host address.",
-                                          Ipv4AddressValue("255.255.255.255"),
+                                          Ipv4AddressValue(Ipv4Address("255.255.255.255")),
                                           MakeIpv4AddressAccessor(&Sender::m_destAddr),
                                           MakeIpv4AddressChecker())
                             .AddAttribute("Port",

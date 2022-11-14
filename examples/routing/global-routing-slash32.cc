@@ -76,10 +76,10 @@ main(int argc, char* argv[])
 
     // Later, we add IP addresses.
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer iAiB = ipv4.Assign(dAdB);
 
-    ipv4.SetBase("10.1.1.4", "255.255.255.252");
+    ipv4.SetBase(Ipv4Address("10.1.1.4"), Ipv4Mask(30));
     Ipv4InterfaceContainer iBiC = ipv4.Assign(dBdC);
 
     Ptr<Ipv4> ipv4A = nA->GetObject<Ipv4>();

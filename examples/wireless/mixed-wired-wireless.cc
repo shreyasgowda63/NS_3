@@ -183,7 +183,7 @@ main(int argc, char* argv[])
     // IPv4 interfaces) we just created.
     //
     Ipv4AddressHelper ipAddrs;
-    ipAddrs.SetBase("192.168.0.0", "255.255.255.0");
+    ipAddrs.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24));
     ipAddrs.Assign(backboneDevices);
 
     //
@@ -221,7 +221,7 @@ main(int argc, char* argv[])
 
     // Reset the address base-- all of the CSMA networks will be in
     // the "172.16 address space
-    ipAddrs.SetBase("172.16.0.0", "255.255.255.0");
+    ipAddrs.SetBase(Ipv4Address("172.16.0.0"), Ipv4Mask(24));
 
     for (uint32_t i = 0; i < backboneNodes; ++i)
     {
@@ -281,7 +281,7 @@ main(int argc, char* argv[])
 
     // Reset the address base-- all of the 802.11 networks will be in
     // the "10.0" address space
-    ipAddrs.SetBase("10.0.0.0", "255.255.255.0");
+    ipAddrs.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
 
     for (uint32_t i = 0; i < backboneNodes; ++i)
     {
