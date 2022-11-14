@@ -40,16 +40,6 @@ Ipv6InterfaceAddress::Ipv6InterfaceAddress()
     NS_LOG_FUNCTION(this);
 }
 
-Ipv6InterfaceAddress::Ipv6InterfaceAddress(Ipv6Address address)
-{
-    NS_LOG_FUNCTION(this << address);
-    m_prefix = Ipv6Prefix(64);
-    SetAddress(address);
-    SetState(TENTATIVE_OPTIMISTIC);
-    m_onLink = true;
-    m_nsDadUid = 0;
-}
-
 Ipv6InterfaceAddress::Ipv6InterfaceAddress(Ipv6Address address, Ipv6Prefix prefix)
 {
     NS_LOG_FUNCTION(this << address << prefix);
@@ -58,6 +48,11 @@ Ipv6InterfaceAddress::Ipv6InterfaceAddress(Ipv6Address address, Ipv6Prefix prefi
     SetState(TENTATIVE_OPTIMISTIC);
     m_onLink = true;
     m_nsDadUid = 0;
+}
+
+Ipv6InterfaceAddress::Ipv6InterfaceAddress(const std::string& address, Ipv6Prefix prefix)
+    : Ipv6InterfaceAddress(Ipv6Address(address), prefix)
+{
 }
 
 Ipv6InterfaceAddress::Ipv6InterfaceAddress(Ipv6Address address, Ipv6Prefix prefix, bool onLink)

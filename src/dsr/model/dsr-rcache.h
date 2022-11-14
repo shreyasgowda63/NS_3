@@ -362,7 +362,7 @@ class DsrRouteCacheEntry
             /*
              * Verify if neither the entry are not 0 and they equal to each other
              */
-            if (((*i) == nullptr) || ((*j) == nullptr))
+            if (((*i) == Ipv4Address::GetAny()) || ((*j) == Ipv4Address::GetAny()))
             {
                 return false;
             }

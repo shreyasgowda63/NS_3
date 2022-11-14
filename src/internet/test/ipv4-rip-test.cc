@@ -246,10 +246,10 @@ Ipv4RipTest::DoRun()
     Ptr<Ipv4StaticRouting> staticRouting;
     staticRouting = Ipv4RoutingHelper::GetRouting<Ipv4StaticRouting>(
         txNode->GetObject<Ipv4>()->GetRoutingProtocol());
-    staticRouting->SetDefaultRoute("10.0.1.2", 1);
+    staticRouting->SetDefaultRoute(Ipv4Address("10.0.1.2"), 1);
     staticRouting = Ipv4RoutingHelper::GetRouting<Ipv4StaticRouting>(
         rxNode->GetObject<Ipv4>()->GetRoutingProtocol());
-    staticRouting->SetDefaultRoute("10.0.2.1", 1);
+    staticRouting->SetDefaultRoute(Ipv4Address("10.0.2.1"), 1);
 
     // Create the UDP sockets
     Ptr<SocketFactory> rxSocketFactory = rxNode->GetObject<UdpSocketFactory>();
@@ -483,10 +483,10 @@ Ipv4RipCountToInfinityTest::DoRun()
     Ptr<Ipv4StaticRouting> staticRouting;
     staticRouting = Ipv4RoutingHelper::GetRouting<Ipv4StaticRouting>(
         txNode->GetObject<Ipv4>()->GetRoutingProtocol());
-    staticRouting->SetDefaultRoute("10.0.1.2", 1);
+    staticRouting->SetDefaultRoute(Ipv4Address("10.0.1.2"), 1);
     staticRouting = Ipv4RoutingHelper::GetRouting<Ipv4StaticRouting>(
         rxNode->GetObject<Ipv4>()->GetRoutingProtocol());
-    staticRouting->SetDefaultRoute("10.0.2.1", 1);
+    staticRouting->SetDefaultRoute(Ipv4Address("10.0.2.1"), 1);
 
     // Create the UDP sockets
     Ptr<SocketFactory> rxSocketFactory = rxNode->GetObject<UdpSocketFactory>();
@@ -553,7 +553,7 @@ Ipv4RipSplitHorizonStrategyTest::ReceivePktProbe(Ptr<Socket> socket)
                           "Received Packet size is not equal to the Rx buffer size");
     Ipv4Address senderAddress = InetSocketAddress::ConvertFrom(srcAddr).GetIpv4();
 
-    if (senderAddress == "192.168.0.2")
+    if (senderAddress == Ipv4Address("192.168.0.2"))
     {
         RipHeader hdr;
         receivedPacketProbe->RemoveHeader(hdr);
@@ -563,7 +563,7 @@ Ipv4RipSplitHorizonStrategyTest::ReceivePktProbe(Ptr<Socket> socket)
         // validate the RTEs before processing
         for (std::list<RipRte>::iterator iter = rtes.begin(); iter != rtes.end(); iter++)
         {
-            if (iter->GetPrefix() == "10.0.1.0")
+            if (iter->GetPrefix() == Ipv4Address("10.0.1.0"))
             {
                 bool correct = false;
                 if (iter->GetRouteMetric() == 16)

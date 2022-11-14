@@ -975,7 +975,7 @@ main(int argc, char* argv[])
     ////////////////////////////////////////////////////////////
     // application setup                                      //
     ////////////////////////////////////////////////////////////
-    V4PingHelper pingHelper("192.168.1.2");
+    V4PingHelper pingHelper(Ipv4Address("192.168.1.2"));
     pingHelper.SetAttribute("Interval", TimeValue(pingInterval));
     pingHelper.SetAttribute("Size", UintegerValue(pingSize));
     ApplicationContainer pingContainer = pingHelper.Install(pingServer);

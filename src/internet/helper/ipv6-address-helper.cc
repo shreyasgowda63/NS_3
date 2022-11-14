@@ -85,6 +85,13 @@ Ipv6AddressHelper::SetBase(Ipv6Address network, Ipv6Prefix prefix, Ipv6Address b
                                                                                      << m_prefix);
 }
 
+void
+Ipv6AddressHelper::SetBase(const std::string& network, Ipv6Prefix prefix, const std::string& base)
+{
+    NS_LOG_FUNCTION_NOARGS();
+    SetBase(Ipv6Address(network), prefix, Ipv6Address(base));
+}
+
 Ipv6Address
 Ipv6AddressHelper::NewAddress(Address addr)
 {

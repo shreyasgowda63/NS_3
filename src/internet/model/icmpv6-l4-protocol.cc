@@ -269,7 +269,7 @@ Icmpv6L4Protocol::DoDAD(Ipv6Address target, Ptr<Ipv6Interface> interface)
 
     /** \todo disable multicast loopback to prevent NS probing to be received by the sender */
 
-    NdiscCache::Ipv6PayloadHeaderPair p = ForgeNS("::",
+    NdiscCache::Ipv6PayloadHeaderPair p = ForgeNS(Ipv6Address::GetAny(),
                                                   Ipv6Address::MakeSolicitedAddress(target),
                                                   target,
                                                   interface->GetDevice()->GetAddress());
@@ -644,7 +644,7 @@ Icmpv6L4Protocol::HandleNS(Ptr<Packet> packet,
                            Ptr<Ipv6Interface> interface)
 {
     NS_LOG_FUNCTION(this << packet << src << dst << interface);
-    Icmpv6NS nsHeader("::");
+    Icmpv6NS nsHeader(Ipv6Address::GetAny());
     Ipv6InterfaceAddress ifaddr;
     uint32_t nb = interface->GetNAddresses();
     uint32_t i = 0;

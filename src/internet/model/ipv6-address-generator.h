@@ -73,7 +73,7 @@ class Ipv6AddressGenerator
      */
     static void Init(const Ipv6Address net,
                      const Ipv6Prefix prefix,
-                     const Ipv6Address interfaceId = "::1");
+                     const Ipv6Address interfaceId = Ipv6Address("::1"));
 
     /**
      * \brief Get the next network according to the given Ipv6Prefix

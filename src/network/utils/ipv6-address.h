@@ -58,7 +58,13 @@ class Ipv6Address
      * \brief Constructs an Ipv6Address by parsing the input C-string.
      * \param address the C-string containing the IPv6 address (e.g. 2001:660:4701::1).
      */
-    Ipv6Address(const char* address);
+    // Ipv6Address(const char* address);
+
+    /**
+     * \brief Constructs an Ipv6Address by parsing the input C-string.
+     * \param address the C-string containing the IPv6 address (e.g. 2001:660:4701::1).
+     */
+    Ipv6Address(const std::string& address);
 
     /**
      * \brief Constructs an Ipv6Address by using the input 16 bytes.
@@ -88,7 +94,13 @@ class Ipv6Address
      * \brief Sets an Ipv6Address by parsing the input C-string.
      * \param address the C-string containing the IPv6 address (e.g. 2001:660:4701::1).
      */
-    void Set(const char* address);
+    // void Set(const char* address);
+
+    /**
+     * \brief Sets an Ipv6Address by parsing the input C-string.
+     * \param address the C-string containing the IPv6 address (e.g. 2001:660:4701::1).
+     */
+    void Set(const std::string& address);
 
     /**
      * \brief Set an Ipv6Address by using the input 16 bytes.
@@ -478,7 +490,7 @@ class Ipv6Prefix
      *
      * \param prefix the 128-bit prefix
      */
-    Ipv6Prefix(const char* prefix);
+    Ipv6Prefix(const std::string& prefix);
 
     /**
      * \brief Constructs an Ipv6Prefix by using the input 16 bytes.
@@ -492,7 +504,7 @@ class Ipv6Prefix
      * \param prefix the 128-bit prefix
      * \param prefixLength the prefix length
      */
-    Ipv6Prefix(const char* prefix, uint8_t prefixLength);
+    Ipv6Prefix(const std::string& prefix, uint8_t prefixLength);
 
     /**
      * \brief Constructs an Ipv6Prefix by using the input number of bits.

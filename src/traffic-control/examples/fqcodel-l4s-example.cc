@@ -451,12 +451,12 @@ PacketDequeue(std::ofstream* n0OfStream, std::ofstream* n1OfStream, Ptr<const Qu
         Ptr<const Ipv4QueueDiscItem>(dynamic_cast<const Ipv4QueueDiscItem*>(PeekPointer(item)));
     Ipv4Address address = iqdi->GetHeader().GetDestination();
     Time qDelay = Simulator::Now() - item->GetTimeStamp();
-    if (address == "192.168.2.2")
+    if (address == Ipv4Address("192.168.2.2"))
     {
         *n0OfStream << Simulator::Now().GetSeconds() << " " << qDelay.GetMicroSeconds() / 1000.0
                     << std::endl;
     }
-    else if (address == "192.168.3.2")
+    else if (address == Ipv4Address("192.168.3.2"))
     {
         *n1OfStream << Simulator::Now().GetSeconds() << " " << qDelay.GetMicroSeconds() / 1000.0
                     << std::endl;
@@ -816,7 +816,7 @@ main(int argc, char* argv[])
     // application setup                                      //
     ////////////////////////////////////////////////////////////
 
-    V4PingHelper pingHelper("192.168.1.2");
+    V4PingHelper pingHelper(Ipv4Address("192.168.1.2"));
     pingHelper.SetAttribute("Interval", TimeValue(pingInterval));
     pingHelper.SetAttribute("Size", UintegerValue(pingSize));
     ApplicationContainer pingContainer = pingHelper.Install(pingServer);

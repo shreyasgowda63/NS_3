@@ -51,7 +51,7 @@ class Ipv4AddressGenerator
      */
     static void Init(const Ipv4Address net,
                      const Ipv4Mask mask,
-                     const Ipv4Address addr = "0.0.0.1");
+                     const Ipv4Address addr = Ipv4Address("0.0.0.1"));
 
     /**
      * \brief Get the next network according to the given Ipv4Mask

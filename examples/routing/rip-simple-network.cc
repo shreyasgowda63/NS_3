@@ -206,10 +206,10 @@ main(int argc, char** argv)
     Ptr<Ipv4StaticRouting> staticRouting;
     staticRouting = Ipv4RoutingHelper::GetRouting<Ipv4StaticRouting>(
         src->GetObject<Ipv4>()->GetRoutingProtocol());
-    staticRouting->SetDefaultRoute("10.0.0.2", 1);
+    staticRouting->SetDefaultRoute(Ipv4Address("10.0.0.2"), 1);
     staticRouting = Ipv4RoutingHelper::GetRouting<Ipv4StaticRouting>(
         dst->GetObject<Ipv4>()->GetRoutingProtocol());
-    staticRouting->SetDefaultRoute("10.0.6.1", 1);
+    staticRouting->SetDefaultRoute(Ipv4Address("10.0.6.1"), 1);
 
     if (printRoutingTables)
     {
@@ -236,7 +236,7 @@ main(int argc, char** argv)
     NS_LOG_INFO("Create Applications.");
     uint32_t packetSize = 1024;
     Time interPacketInterval = Seconds(1.0);
-    V4PingHelper ping("10.0.6.2");
+    V4PingHelper ping(Ipv4Address("10.0.6.2"));
 
     ping.SetAttribute("Interval", TimeValue(interPacketInterval));
     ping.SetAttribute("Size", UintegerValue(packetSize));

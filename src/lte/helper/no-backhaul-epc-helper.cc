@@ -90,7 +90,11 @@ NoBackhaulEpcHelper::NoBackhaulEpcHelper()
     Ipv6StaticRoutingHelper ipv6RoutingHelper;
     Ptr<Ipv6StaticRouting> pgwStaticRouting =
         ipv6RoutingHelper.GetStaticRouting(m_pgw->GetObject<Ipv6>());
-    pgwStaticRouting->AddNetworkRouteTo("7777:f00d::", Ipv6Prefix(64), Ipv6Address("::"), 1, 0);
+    pgwStaticRouting->AddNetworkRouteTo(Ipv6Address("7777:f00d::"),
+                                        Ipv6Prefix(64),
+                                        Ipv6Address("::"),
+                                        1,
+                                        0);
 
     // create TUN device implementing tunneling of user data over GTP-U/UDP/IP in the PGW
     m_tunDevice = CreateObject<VirtualNetDevice>();

@@ -133,6 +133,7 @@ class Ipv6 : public Object
      */
     virtual uint32_t GetNInterfaces() const = 0;
 
+    ///@{
     /**
      * \brief Return the interface number of the interface that has been
      *        assigned the specified IP address.
@@ -148,14 +149,17 @@ class Ipv6 : public Object
      * that address, or -1 if not found.  There must be an exact match.
      */
     virtual int32_t GetInterfaceForAddress(Ipv6Address address) const = 0;
+    virtual int32_t GetInterfaceForAddress(const std::string& address) const = 0;
+    ///@}
 
+    ///@{
     /**
      * \brief Return the interface number of first interface found that
      *  has an IPv6 address within the prefix specified by the input
      *  address and mask parameters
      *
      * \param address The IP address assigned to the interface of interest.
-     * \param mask The IP prefix to use in the mask
+     * \param prefix The IP prefix to use in the mask
      * \returns The interface number of the IPv6 interface with the given
      *          address or -1 if not found.
      *
@@ -165,7 +169,9 @@ class Ipv6 : public Object
      * formed by the input address and mask parameters.  The value -1 is
      * returned if no match is found.
      */
-    virtual int32_t GetInterfaceForPrefix(Ipv6Address address, Ipv6Prefix mask) const = 0;
+    virtual int32_t GetInterfaceForPrefix(Ipv6Address address, Ipv6Prefix prefix) const = 0;
+    virtual int32_t GetInterfaceForPrefix(const std::string& address, Ipv6Prefix prefix) const = 0;
+    ///@}
 
     /**
      * \brief Get the NetDevice of the specified interface number.

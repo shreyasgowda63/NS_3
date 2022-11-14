@@ -2344,7 +2344,7 @@ AnimationInterface::TrackIpv4RoutePaths()
         std::ostringstream oss;
         oss << rt->GetGateway();
         NS_LOG_INFO("Node:" << trackElement.fromNodeId << "-->" << rt->GetGateway());
-        if (rt->GetGateway() == "0.0.0.0")
+        if (rt->GetGateway() == Ipv4Address::GetAny())
         {
             Ipv4RoutePathElement elem = {trackElement.fromNodeId, "C"};
             rpElements.push_back(elem);
@@ -2354,7 +2354,7 @@ AnimationInterface::TrackIpv4RoutePaths()
                 rpElements.push_back(elem2);
             }
         }
-        else if (rt->GetGateway() == "127.0.0.1")
+        else if (rt->GetGateway() == Ipv4Address::GetLoopback())
         {
             Ipv4RoutePathElement elem = {trackElement.fromNodeId, "-1"};
             rpElements.push_back(elem);
@@ -2419,7 +2419,7 @@ AnimationInterface::RecursiveIpv4RoutePathSearch(std::string from,
                                                  Ipv4RoutePathElements& rpElements)
 {
     NS_LOG_INFO("RecursiveIpv4RoutePathSearch from:" << from << " to:" << to);
-    if (from == "0.0.0.0" || from == "127.0.0.1")
+    if (from == Ipv4Address::GetAny() || from == Ipv4Address::GetLoopback())
     {
         NS_LOG_INFO("Got " << from << " End recursion");
         return;
@@ -2466,7 +2466,7 @@ AnimationInterface::RecursiveIpv4RoutePathSearch(std::string from,
     NS_LOG_DEBUG("Node: " << fromNode->GetId() << " G:" << rt->GetGateway());
     std::ostringstream oss;
     oss << rt->GetGateway();
-    if (oss.str() == "0.0.0.0" && (sockerr != Socket::ERROR_NOROUTETOHOST))
+    if (oss.str() == Ipv4Address::GetAny() && (sockerr != Socket::ERROR_NOROUTETOHOST))
     {
         NS_LOG_INFO("Null gw");
         Ipv4RoutePathElement elem = {fromNode->GetId(), "C"};

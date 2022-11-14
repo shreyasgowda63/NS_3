@@ -68,18 +68,15 @@ class Ipv6InterfaceAddress
      */
     Ipv6InterfaceAddress();
 
-    /**
-     * \brief Constructor. Prefix is 64 by default.
-     * \param address the IPv6 address to set
-     */
-    Ipv6InterfaceAddress(Ipv6Address address);
-
+    ///@{
     /**
      * \brief Constructor.
      * \param address IPv6 address to set
      * \param prefix IPv6 prefix
      */
-    Ipv6InterfaceAddress(Ipv6Address address, Ipv6Prefix prefix);
+    Ipv6InterfaceAddress(Ipv6Address address, Ipv6Prefix prefix = Ipv6Prefix(64));
+    Ipv6InterfaceAddress(const std::string& address, Ipv6Prefix prefix = Ipv6Prefix(64));
+    ///@}
 
     /**
      * \brief Constructor.

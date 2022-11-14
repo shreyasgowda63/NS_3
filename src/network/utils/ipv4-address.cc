@@ -47,12 +47,17 @@ Ipv4Mask::Ipv4Mask(uint32_t mask)
     NS_LOG_FUNCTION(this << mask);
 }
 
-Ipv4Mask::Ipv4Mask(const char* mask)
+// Ipv4Mask::Ipv4Mask(const char* mask)
+//     : Ipv4Mask(std::string(mask))
+// {
+// }
+
+Ipv4Mask::Ipv4Mask(const std::string& mask)
 {
     NS_LOG_FUNCTION(this << mask);
-    if (*mask == '/')
+    if (mask[0] == '/')
     {
-        uint32_t plen = static_cast<uint32_t>(std::atoi(++mask));
+        uint32_t plen = static_cast<uint32_t>(std::stoi(mask.substr(1)));
         NS_ASSERT(plen <= 32);
         if (plen > 0)
         {
@@ -65,7 +70,7 @@ Ipv4Mask::Ipv4Mask(const char* mask)
     }
     else
     {
-        if (inet_pton(AF_INET, mask, &m_mask) <= 0)
+        if (inet_pton(AF_INET, mask.c_str(), &m_mask) <= 0)
         {
             NS_ABORT_MSG("Error, can not build an IPv4 mask from an invalid string: " << mask);
         }
@@ -174,11 +179,16 @@ Ipv4Address::Ipv4Address(uint32_t address)
     m_initialized = true;
 }
 
-Ipv4Address::Ipv4Address(const char* address)
+// Ipv4Address::Ipv4Address(const char* address)
+//     : Ipv4Address(std::string(address))
+// {
+// }
+
+Ipv4Address::Ipv4Address(const std::string& address)
 {
     NS_LOG_FUNCTION(this << address);
 
-    if (inet_pton(AF_INET, address, &m_address) <= 0)
+    if (inet_pton(AF_INET, address.c_str(), &m_address) <= 0)
     {
         NS_LOG_LOGIC("Error, can not build an IPv4 address from an invalid string: " << address);
         m_address = 0;
@@ -204,11 +214,18 @@ Ipv4Address::Set(uint32_t address)
     m_initialized = true;
 }
 
+// void
+// Ipv4Address::Set(const char* address)
+// {
+//     std::string addressString(address);
+//     Set(addressString);
+// }
+
 void
-Ipv4Address::Set(const char* address)
+Ipv4Address::Set(const std::string& address)
 {
     NS_LOG_FUNCTION(this << address);
-    if (inet_pton(AF_INET, address, &m_address) <= 0)
+    if (inet_pton(AF_INET, address.c_str(), &m_address) <= 0)
     {
         NS_LOG_LOGIC("Error, can not build an IPv4 address from an invalid string: " << address);
         m_address = 0;
