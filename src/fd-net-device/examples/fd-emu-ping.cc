@@ -133,7 +133,7 @@ main(int argc, char* argv[])
 
     Ipv4Address remoteIp(remote);
     Ipv4Address localIp(localAddress);
-    NS_ABORT_MSG_IF(localIp == Ipv4Adress("1.2.3.4"),
+    NS_ABORT_MSG_IF(localIp == Ipv4Address("1.2.3.4"),
                     "You must change the local IP address before running this example");
 
     Ipv4Mask localMask("255.255.255.0");
