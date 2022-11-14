@@ -177,13 +177,13 @@ main(int argc, char* argv[])
     {
         remoteIp = Ipv4Address(client);
         localIp = Ipv4Address(server);
-        localMac = Mac48AddressValue(macServer);
+        localMac = Mac48AddressValue(macServer.c_str());
     }
     else
     {
         remoteIp = Ipv4Address(server);
         localIp = Ipv4Address(client);
-        localMac = Mac48AddressValue(macClient);
+        localMac = Mac48AddressValue(macClient.c_str());
     }
 
     Ipv4Mask localMask(netmask);
