@@ -15,6 +15,7 @@ Checks: >
   bugprone-virtual-near-miss,
   misc-redundant-expression,
   misc-static-assert,
+  misc-unused-parameters,
   modernize-make-shared,
   modernize-make-unique,
   modernize-redundant-void-arg,
