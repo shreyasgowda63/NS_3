@@ -113,6 +113,8 @@ namespace tests
 // Test for equality (generic version)
 // ===========================================================================
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
 /**
  * \ingroup testing
  *
@@ -1015,6 +1017,8 @@ namespace tests
                               __LINE__);                                                           \
         }                                                                                          \
     } while (false)
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 /**
  * \ingroup testing

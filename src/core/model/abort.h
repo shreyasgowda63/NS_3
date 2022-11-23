@@ -28,6 +28,8 @@
  * \brief \c NS_ABORT_x macro definitions.
  */
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
 /**
  * \ingroup fatal
  *
@@ -142,5 +144,7 @@
  * \see NS_ABORT_MSG_IF
  */
 #define NS_ABORT_MSG_UNLESS(cond, msg) NS_ABORT_MSG_IF(!(cond), msg)
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #endif /* NS3_ABORT_H */

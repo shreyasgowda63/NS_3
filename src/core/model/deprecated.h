@@ -26,6 +26,8 @@
  * NS_DEPRECATED macro definition.
  */
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
 /**
  * \defgroup deprecation Deprecation
  * \ingroup core
@@ -121,5 +123,7 @@
  * Tag for things deprecated in version ns-3.40.
  */
 #define NS_DEPRECATED_3_40(msg) NS_DEPRECATED("Deprecated in ns-3.40: " msg)
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #endif /* NS3_DEPRECATED_H */

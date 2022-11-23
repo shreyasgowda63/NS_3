@@ -94,6 +94,7 @@ WifiTxTimer::GetReason() const
 std::string
 WifiTxTimer::GetReasonString(Reason reason) const
 {
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define CASE_REASON(x)                                                                             \
     case WAIT_##x:                                                                                 \
         return #x;

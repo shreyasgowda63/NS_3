@@ -160,6 +160,7 @@ ErpOfdmPhy::GetErpOfdmRate(uint64_t rate)
     }
 }
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define GET_ERP_OFDM_MODE(x, f)                                                                    \
     WifiMode ErpOfdmPhy::Get##x()                                                                  \
     {                                                                                              \

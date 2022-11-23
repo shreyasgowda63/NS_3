@@ -56,6 +56,8 @@
 
 */
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
 /**
  * \ingroup logging
  * Empty logging macro implementation, used when logging is disabled.
@@ -87,6 +89,8 @@
 #define NS_LOG_FUNCTION(parameters) NS_LOG_NOOP_FUNC_INTERNAL(parameters)
 
 #define NS_LOG_UNCOND(msg) NS_LOG_NOOP_INTERNAL(msg)
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #endif /* !NS3_LOG_ENABLE */
 

@@ -443,8 +443,12 @@ FlowMonitor::SerializeToXmlStream(std::ostream& os,
     for (auto flowI = m_flowStats.begin(); flowI != m_flowStats.end(); flowI++)
     {
         os << std::string(indent, ' ');
+
+        // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #define ATTRIB(name) " " #name "=\"" << flowI->second.name << "\""
 #define ATTRIB_TIME(name) " " #name "=\"" << flowI->second.name.As(Time::NS) << "\""
+        // NOLINTEND(cppcoreguidelines-macro-usage)
+
         os << "<Flow flowId=\"" << flowI->first << "\"" << ATTRIB_TIME(timeFirstTxPacket)
            << ATTRIB_TIME(timeFirstRxPacket) << ATTRIB_TIME(timeLastTxPacket)
            << ATTRIB_TIME(timeLastRxPacket) << ATTRIB_TIME(delaySum) << ATTRIB_TIME(jitterSum)

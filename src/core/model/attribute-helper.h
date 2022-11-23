@@ -157,6 +157,8 @@ MakeSimpleAttributeChecker(std::string name, std::string underlying)
 
 } // namespace ns3
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
 /**
  * \ingroup attributehelper
  *
@@ -429,5 +431,7 @@ MakeSimpleAttributeChecker(std::string name, std::string underlying)
 #define ATTRIBUTE_HELPER_CPP(type)                                                                 \
     ATTRIBUTE_CHECKER_IMPLEMENT(type);                                                             \
     ATTRIBUTE_VALUE_IMPLEMENT(type)
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #endif /* ATTRIBUTE_HELPER_H */

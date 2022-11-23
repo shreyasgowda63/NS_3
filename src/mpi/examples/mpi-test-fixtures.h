@@ -57,6 +57,7 @@ class Packet;
  *
  * \param x The output operators.
  */
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define RANK0COUT(x)                                                                               \
     do                                                                                             \
         if (SinkTracer::GetWorldRank() == 0)                                                       \
@@ -77,6 +78,7 @@ class Packet;
  *
  * \param x The output operators.
  */
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define RANK0COUTAPPEND(x)                                                                         \
     do                                                                                             \
         if (SinkTracer::GetWorldRank() == 0)                                                       \

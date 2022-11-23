@@ -27,6 +27,8 @@
  * macro definitions.
  */
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
 /**
  * \ingroup debugging
  * Build profile no-op macro.
@@ -83,5 +85,7 @@
 #else
 #define NS_BUILD_OPTIMIZED(code) NS_BUILD_PROFILE_NOOP(code)
 #endif
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #endif /* NS3_BUILD_PROFILE_H */

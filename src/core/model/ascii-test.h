@@ -27,6 +27,8 @@
 
 #include <stdint.h>
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
 /**
  * \brief Test that a pair of new/reference ascii files are equal
  *
@@ -45,5 +47,7 @@
                               "ASCII traces " << gotFilename << " and " << expectedFilename        \
                                               << " differ starting from line " << line);           \
     } while (false)
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #endif /* ASCII_TEST_H */

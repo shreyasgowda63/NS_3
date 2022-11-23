@@ -57,6 +57,7 @@ TypeNameGet()
  *
  * \param T The type.
  */
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define TYPENAMEGET_DEFINE(T)                                                                      \
     template <>                                                                                    \
     inline std::string TypeNameGet<T>()                                                            \

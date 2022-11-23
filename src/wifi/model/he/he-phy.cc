@@ -1548,6 +1548,7 @@ HePhy::InitializeModes()
 WifiMode
 HePhy::GetHeMcs(uint8_t index)
 {
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define CASE(x)                                                                                    \
     case x:                                                                                        \
         return GetHeMcs##x();
@@ -1573,6 +1574,7 @@ HePhy::GetHeMcs(uint8_t index)
 #undef CASE
 }
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define GET_HE_MCS(x)                                                                              \
     WifiMode HePhy::GetHeMcs##x()                                                                  \
     {                                                                                              \
