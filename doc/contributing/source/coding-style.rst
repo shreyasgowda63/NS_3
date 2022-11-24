@@ -753,6 +753,93 @@ For standard headers, use the C++ style of inclusion:
 
     #include <ns3/header.h>
 
+Class members initialization
+============================
+
+Default class member variables should be initialized next to the declaration of the
+corresponding variable, instead of the constructor's initialization list.
+This reduces the size of the initialization list to the set of variables dependent on the
+constructor's parameters, allowing a clearer differentiation between default values and
+parameter-dependent values.
+Additionally, it avoids duplicating the default initialization
+across different overloads of the constructor.
+
+In the following example, class ``Vector3D`` has a default value for ``m_z`` of 0.
+Therefore, this variable should not be initialized in the constructor.
+
+  .. sourcecode:: cpp
+
+    class Vector3D
+    {
+      public:
+        Vector3D(int x, int y)
+            : m_x(x), // Parameter-dependent values
+              m_y(y),
+              m_z(0)  // Default value should be initialized next to the variable declaration
+        {
+        }
+
+      private:
+        int m_x;
+        int m_y;
+        int m_z;
+    };
+
+Instead, it should be initialized next to the corresponding variable declaration.
+
+  .. sourcecode:: cpp
+
+    class Vector3D
+    {
+      public:
+        Vector3D(int x, int y)
+            : m_x(x), // Parameter-dependent values
+              m_y(y)
+        {
+        }
+
+      private:
+        int m_x;
+        int m_y;
+        int m_z{0}; // Default value
+    };
+
+- Prefer to initialize class member variables in the constructor's initialization list,
+  rather than the constructor's body.
+
+- Avoid unnecessary member variables initializations with default constructor,
+  since those are already done by the compiler.
+
+  .. sourcecode:: cpp
+
+    class MyClass
+    {
+      public:
+        MyClass() = default;
+    };
+
+    class DerivedClass
+    {
+      public:
+
+        // Avoid
+        DerivedClass(int x)
+            : m_x(x),
+              m_myClass() // Unnecessary
+        {
+        }
+
+        // Prefer
+        DerivedClass(int x)
+            : m_x(x)
+        {
+        }
+
+      private:
+        int m_x;
+        MyClass m_myClass;
+    };
+
 Variables
 =========
 
@@ -1234,7 +1321,25 @@ of rules that should be observed while developing code.
     // Avoid
     if (ptr.get()) { ... }
 
-- Avoid declaring trivial destructors, to optimize performance.
+- Avoid explicitly declaring trivial constructors, destructors and copy constructors,
+  in order to optimize performance.
+  If they are needed, prefer to declare them as ``= default`` instead of an empty body.
+
+  .. sourcecode:: cpp
+
+    class MyClass
+    {
+      public:
+        // Prefer
+        MyClass() = default;
+        MyClass(const MyClass&) = default;
+        ~MyClass() = default;
+
+        // Avoid
+        MyClass() {}
+        MyClass(const MyClass& m) { ... }
+        ~MyClass() {}
+    };
 
 - Prefer to use ``static_assert()`` over ``NS_ASSERT()`` when conditions can be
   evaluated at compile-time.
