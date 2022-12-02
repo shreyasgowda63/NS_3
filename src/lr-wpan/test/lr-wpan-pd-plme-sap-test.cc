@@ -55,9 +55,7 @@ LrWpanPlmeAndPdInterfaceTestCase::LrWpanPlmeAndPdInterfaceTestCase()
 {
 }
 
-LrWpanPlmeAndPdInterfaceTestCase::~LrWpanPlmeAndPdInterfaceTestCase()
-{
-}
+LrWpanPlmeAndPdInterfaceTestCase::~LrWpanPlmeAndPdInterfaceTestCase() = default;
 
 void
 LrWpanPlmeAndPdInterfaceTestCase::ReceivePdDataIndication(uint32_t psduLength,

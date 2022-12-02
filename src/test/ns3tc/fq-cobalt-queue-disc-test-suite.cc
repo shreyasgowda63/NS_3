@@ -84,13 +84,9 @@ Ipv4FqCobaltTestPacketFilter::GetTypeId()
     return tid;
 }
 
-Ipv4FqCobaltTestPacketFilter::Ipv4FqCobaltTestPacketFilter()
-{
-}
+Ipv4FqCobaltTestPacketFilter::Ipv4FqCobaltTestPacketFilter() = default;
 
-Ipv4FqCobaltTestPacketFilter::~Ipv4FqCobaltTestPacketFilter()
-{
-}
+Ipv4FqCobaltTestPacketFilter::~Ipv4FqCobaltTestPacketFilter() = default;
 
 int32_t
 Ipv4FqCobaltTestPacketFilter::DoClassify(Ptr<QueueDiscItem> item) const
@@ -124,9 +120,7 @@ FqCobaltQueueDiscNoSuitableFilter::FqCobaltQueueDiscNoSuitableFilter()
 {
 }
 
-FqCobaltQueueDiscNoSuitableFilter::~FqCobaltQueueDiscNoSuitableFilter()
-{
-}
+FqCobaltQueueDiscNoSuitableFilter::~FqCobaltQueueDiscNoSuitableFilter() = default;
 
 void
 FqCobaltQueueDiscNoSuitableFilter::DoRun()
@@ -189,9 +183,7 @@ FqCobaltQueueDiscIPFlowsSeparationAndPacketLimit::FqCobaltQueueDiscIPFlowsSepara
 }
 
 FqCobaltQueueDiscIPFlowsSeparationAndPacketLimit::
-    ~FqCobaltQueueDiscIPFlowsSeparationAndPacketLimit()
-{
-}
+    ~FqCobaltQueueDiscIPFlowsSeparationAndPacketLimit() = default;
 
 void
 FqCobaltQueueDiscIPFlowsSeparationAndPacketLimit::AddPacket(Ptr<FqCobaltQueueDisc> queue,
@@ -284,9 +276,7 @@ FqCobaltQueueDiscDeficit::FqCobaltQueueDiscDeficit()
 {
 }
 
-FqCobaltQueueDiscDeficit::~FqCobaltQueueDiscDeficit()
-{
-}
+FqCobaltQueueDiscDeficit::~FqCobaltQueueDiscDeficit() = default;
 
 void
 FqCobaltQueueDiscDeficit::AddPacket(Ptr<FqCobaltQueueDisc> queue, Ipv4Header hdr)
@@ -511,9 +501,7 @@ FqCobaltQueueDiscTCPFlowsSeparation::FqCobaltQueueDiscTCPFlowsSeparation()
 {
 }
 
-FqCobaltQueueDiscTCPFlowsSeparation::~FqCobaltQueueDiscTCPFlowsSeparation()
-{
-}
+FqCobaltQueueDiscTCPFlowsSeparation::~FqCobaltQueueDiscTCPFlowsSeparation() = default;
 
 void
 FqCobaltQueueDiscTCPFlowsSeparation::AddPacket(Ptr<FqCobaltQueueDisc> queue,
@@ -636,9 +624,7 @@ FqCobaltQueueDiscUDPFlowsSeparation::FqCobaltQueueDiscUDPFlowsSeparation()
 {
 }
 
-FqCobaltQueueDiscUDPFlowsSeparation::~FqCobaltQueueDiscUDPFlowsSeparation()
-{
-}
+FqCobaltQueueDiscUDPFlowsSeparation::~FqCobaltQueueDiscUDPFlowsSeparation() = default;
 
 void
 FqCobaltQueueDiscUDPFlowsSeparation::AddPacket(Ptr<FqCobaltQueueDisc> queue,
@@ -794,18 +780,15 @@ class FqCobaltQueueDiscEcnMarking : public TestCase
      * \param newVal New value.
      */
     void DropNextTracer(int64_t oldVal, int64_t newVal);
-    uint32_t m_dropNextCount; ///< count the number of times m_dropNext is recalculated
+    uint32_t m_dropNextCount{0}; ///< count the number of times m_dropNext is recalculated
 };
 
 FqCobaltQueueDiscEcnMarking::FqCobaltQueueDiscEcnMarking()
     : TestCase("Test ECN marking")
 {
-    m_dropNextCount = 0;
 }
 
-FqCobaltQueueDiscEcnMarking::~FqCobaltQueueDiscEcnMarking()
-{
-}
+FqCobaltQueueDiscEcnMarking::~FqCobaltQueueDiscEcnMarking() = default;
 
 void
 FqCobaltQueueDiscEcnMarking::AddPacket(Ptr<FqCobaltQueueDisc> queue,
@@ -1332,9 +1315,7 @@ FqCobaltQueueDiscSetLinearProbing::FqCobaltQueueDiscSetLinearProbing()
 {
 }
 
-FqCobaltQueueDiscSetLinearProbing::~FqCobaltQueueDiscSetLinearProbing()
-{
-}
+FqCobaltQueueDiscSetLinearProbing::~FqCobaltQueueDiscSetLinearProbing() = default;
 
 void
 FqCobaltQueueDiscSetLinearProbing::AddPacket(Ptr<FqCobaltQueueDisc> queue, Ipv4Header hdr)
@@ -1485,9 +1466,7 @@ FqCobaltQueueDiscL4sMode::FqCobaltQueueDiscL4sMode()
 {
 }
 
-FqCobaltQueueDiscL4sMode::~FqCobaltQueueDiscL4sMode()
-{
-}
+FqCobaltQueueDiscL4sMode::~FqCobaltQueueDiscL4sMode() = default;
 
 void
 FqCobaltQueueDiscL4sMode::AddPacket(Ptr<FqCobaltQueueDisc> queue, Ipv4Header hdr, uint32_t nPkt)

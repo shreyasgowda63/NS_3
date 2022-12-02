@@ -27,12 +27,8 @@ namespace ns3
 {
 
 Ipv6PacketInfoTag::Ipv6PacketInfoTag()
-    : m_addr(Ipv6Address()),
-      m_ifindex(0),
-      m_hoplimit(0),
-      m_tclass(0)
-{
-}
+
+    = default;
 
 void
 Ipv6PacketInfoTag::SetAddress(Ipv6Address addr)

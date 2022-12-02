@@ -49,9 +49,7 @@ OneIntegerAverageTestCase::OneIntegerAverageTestCase()
 {
 }
 
-OneIntegerAverageTestCase::~OneIntegerAverageTestCase()
-{
-}
+OneIntegerAverageTestCase::~OneIntegerAverageTestCase() = default;
 
 void
 OneIntegerAverageTestCase::DoRun()
@@ -140,9 +138,7 @@ FiveIntegersAverageTestCase::FiveIntegersAverageTestCase()
 {
 }
 
-FiveIntegersAverageTestCase::~FiveIntegersAverageTestCase()
-{
-}
+FiveIntegersAverageTestCase::~FiveIntegersAverageTestCase() = default;
 
 void
 FiveIntegersAverageTestCase::DoRun()
@@ -233,9 +229,7 @@ FiveDoublesAverageTestCase::FiveDoublesAverageTestCase()
 {
 }
 
-FiveDoublesAverageTestCase::~FiveDoublesAverageTestCase()
-{
-}
+FiveDoublesAverageTestCase::~FiveDoublesAverageTestCase() = default;
 
 void
 FiveDoublesAverageTestCase::DoRun()

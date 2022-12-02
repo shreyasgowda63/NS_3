@@ -30,9 +30,7 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("LteGlobalPathlossDatabase");
 
-LteGlobalPathlossDatabase::~LteGlobalPathlossDatabase()
-{
-}
+LteGlobalPathlossDatabase::~LteGlobalPathlossDatabase() = default;
 
 void
 LteGlobalPathlossDatabase::Print()

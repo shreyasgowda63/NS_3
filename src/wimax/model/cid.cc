@@ -21,23 +21,13 @@
 
 #include "cid.h"
 
-// 0 will match IR CID, -1 will match broadcast CID 0xFFFF, hence 60000
-#define CID_UNINITIALIZED 60000
-
 namespace ns3
 {
 
-Cid::Cid()
-{
-    m_identifier = CID_UNINITIALIZED;
-}
+Cid::Cid() = default;
 
 Cid::Cid(uint16_t identifier)
-{
-    m_identifier = identifier;
-}
-
-Cid::~Cid()
+    : m_identifier(identifier)
 {
 }
 

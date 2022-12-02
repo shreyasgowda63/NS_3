@@ -38,13 +38,9 @@ EnergySourceContainer::GetTypeId()
     return tid;
 }
 
-EnergySourceContainer::EnergySourceContainer()
-{
-}
+EnergySourceContainer::EnergySourceContainer() = default;
 
-EnergySourceContainer::~EnergySourceContainer()
-{
-}
+EnergySourceContainer::~EnergySourceContainer() = default;
 
 EnergySourceContainer::EnergySourceContainer(Ptr<EnergySource> source)
 {

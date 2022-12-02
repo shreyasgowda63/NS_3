@@ -42,17 +42,10 @@ ThreeGppAntennaModel::GetTypeId()
 }
 
 ThreeGppAntennaModel::ThreeGppAntennaModel()
-    : m_verticalBeamwidthDegrees{65},
-      m_horizontalBeamwidthDegrees{65},
-      m_aMax{30},
-      m_slaV{30},
-      m_geMax{8.0}
-{
-}
 
-ThreeGppAntennaModel::~ThreeGppAntennaModel()
-{
-}
+    = default;
+
+ThreeGppAntennaModel::~ThreeGppAntennaModel() = default;
 
 double
 ThreeGppAntennaModel::GetVerticalBeamwidth() const

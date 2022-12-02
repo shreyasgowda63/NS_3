@@ -112,7 +112,7 @@ class TcRegressionTest : public TestCase
      */
     void ReceivePktProbeA(Ptr<Socket> socket);
     /// Packet counter on node A
-    uint8_t m_countA;
+    uint8_t m_countA{0};
     /// Receiving socket on node A
     Ptr<Ipv4RawSocketImpl> m_rxSocketA;
 
@@ -122,7 +122,7 @@ class TcRegressionTest : public TestCase
      */
     void ReceivePktProbeB(Ptr<Socket> socket);
     /// Packet counter on node B
-    uint8_t m_countB;
+    uint8_t m_countB{0};
     /// Receiving socket on node B
     Ptr<Ipv4RawSocketImpl> m_rxSocketB;
 
@@ -132,7 +132,7 @@ class TcRegressionTest : public TestCase
      */
     void ReceivePktProbeC(Ptr<Socket> socket);
     /// Packet counter on node C
-    uint8_t m_countC;
+    uint8_t m_countC{0};
     /// Receiving socket on node C
     Ptr<Ipv4RawSocketImpl> m_rxSocketC;
 };

@@ -91,9 +91,7 @@ operator==(const Ipv4FlowClassifier::FiveTuple& t1, const Ipv4FlowClassifier::Fi
             t1.sourcePort == t2.sourcePort && t1.destinationPort == t2.destinationPort);
 }
 
-Ipv4FlowClassifier::Ipv4FlowClassifier()
-{
-}
+Ipv4FlowClassifier::Ipv4FlowClassifier() = default;
 
 bool
 Ipv4FlowClassifier::Classify(const Ipv4Header& ipHeader,

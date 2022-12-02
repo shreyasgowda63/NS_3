@@ -31,14 +31,11 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("OriginatorBlockAckAgreement");
 
 OriginatorBlockAckAgreement::OriginatorBlockAckAgreement(Mac48Address recipient, uint8_t tid)
-    : BlockAckAgreement(recipient, tid),
-      m_state(PENDING)
+    : BlockAckAgreement(recipient, tid)
 {
 }
 
-OriginatorBlockAckAgreement::~OriginatorBlockAckAgreement()
-{
-}
+OriginatorBlockAckAgreement::~OriginatorBlockAckAgreement() = default;
 
 void
 OriginatorBlockAckAgreement::SetState(State state)

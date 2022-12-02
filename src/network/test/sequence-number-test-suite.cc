@@ -87,8 +87,8 @@ class SequenceNumberTestObj : public Object
  */
 class SequenceNumberTestCase : public TestCase
 {
-    SequenceNumber32 m_oldval; //!< Old value
-    SequenceNumber32 m_newval; //!< New value
+    SequenceNumber32 m_oldval{0}; //!< Old value
+    SequenceNumber32 m_newval{0}; //!< New value
 
     /**
      * Sequence number tracker
@@ -106,13 +106,9 @@ class SequenceNumberTestCase : public TestCase
 SequenceNumberTestCase::SequenceNumberTestCase()
     : TestCase("Sequence number test case")
 {
-    m_oldval = 0;
-    m_newval = 0;
 }
 
-SequenceNumberTestCase::~SequenceNumberTestCase()
-{
-}
+SequenceNumberTestCase::~SequenceNumberTestCase() = default;
 
 void
 SequenceNumberTestCase::SequenceNumberTracer(SequenceNumber32 oldval, SequenceNumber32 newval)

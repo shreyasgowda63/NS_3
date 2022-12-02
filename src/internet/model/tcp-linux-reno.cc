@@ -41,7 +41,6 @@ TcpLinuxReno::GetTypeId()
 }
 
 TcpLinuxReno::TcpLinuxReno()
-    : TcpCongestionOps()
 {
     NS_LOG_FUNCTION(this);
 }
@@ -52,9 +51,7 @@ TcpLinuxReno::TcpLinuxReno(const TcpLinuxReno& sock)
     NS_LOG_FUNCTION(this);
 }
 
-TcpLinuxReno::~TcpLinuxReno()
-{
-}
+TcpLinuxReno::~TcpLinuxReno() = default;
 
 uint32_t
 TcpLinuxReno::SlowStart(Ptr<TcpSocketState> tcb, uint32_t segmentsAcked)

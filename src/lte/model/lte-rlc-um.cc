@@ -34,12 +34,12 @@ NS_OBJECT_ENSURE_REGISTERED(LteRlcUm);
 
 LteRlcUm::LteRlcUm()
     : m_maxTxBufferSize(10 * 1024),
-      m_txBufferSize(0),
+
       m_sequenceNumber(0),
       m_vrUr(0),
       m_vrUx(0),
       m_vrUh(0),
-      m_windowSize(512),
+
       m_expectedSeqNumber(0)
 {
     NS_LOG_FUNCTION(this);

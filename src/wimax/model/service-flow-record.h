@@ -229,29 +229,29 @@ class ServiceFlowRecord
     uint32_t GetBackloggedTemp() const;
 
   private:
-    uint32_t m_grantSize;  ///< only used for UGS flow
+    uint32_t m_grantSize{0}; ///< only used for UGS flow
     Time m_grantTimeStamp; ///< allocation (for data) for UGS flows and unicast poll (for bandwidth
                            ///< requests) for non-UGS flows
     Time m_dlTimeStamp;    ///< time when this service flow's traffic was last sent
 
     // stats members
-    uint32_t m_pktsSent; ///< packets sent
-    uint32_t m_pktsRcvd; ///< packets received
+    uint32_t m_pktsSent{0}; ///< packets sent
+    uint32_t m_pktsRcvd{0}; ///< packets received
 
-    uint32_t m_bytesSent; ///< bytes sent
-    uint32_t m_bytesRcvd; ///< bytes received
+    uint32_t m_bytesSent{0}; ///< bytes sent
+    uint32_t m_bytesRcvd{0}; ///< bytes received
 
-    uint32_t m_requestedBandwidth;   ///< requested bandwidth
-    uint32_t m_grantedBandwidth;     ///< granted badnwidth
-    uint32_t m_grantedBandwidthTemp; ///< Temporary variable used to sort list. Necessary to keep
-                                     ///< original order
+    uint32_t m_requestedBandwidth{0};   ///< requested bandwidth
+    uint32_t m_grantedBandwidth{0};     ///< granted badnwidth
+    uint32_t m_grantedBandwidthTemp{0}; ///< Temporary variable used to sort list. Necessary to keep
+                                        ///< original order
 
     /** bandwidth granted since last expiry of minimum reserved traffic rate interval,
      * only for nrtPS, to make sure minimum reserved traffic rate is maintained */
-    uint32_t m_bwSinceLastExpiry;
-    Time m_lastGrantTime;     ///< last grant time
-    int32_t m_backlogged;     ///< back logged
-    int32_t m_backloggedTemp; ///< back logged temp
+    uint32_t m_bwSinceLastExpiry{0};
+    Time m_lastGrantTime;        ///< last grant time
+    int32_t m_backlogged{0};     ///< back logged
+    int32_t m_backloggedTemp{0}; ///< back logged temp
 };
 
 } // namespace ns3

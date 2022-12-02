@@ -27,17 +27,8 @@ namespace ns3
 {
 
 DlFramePrefixIe::DlFramePrefixIe()
-    : m_rateId(0),
-      m_diuc(0),
-      m_preamblePresent(0),
-      m_length(0),
-      m_startTime(0)
-{
-}
 
-DlFramePrefixIe::~DlFramePrefixIe()
-{
-}
+    = default;
 
 void
 DlFramePrefixIe::SetRateId(uint8_t rateId)
@@ -130,16 +121,11 @@ DlFramePrefixIe::Read(Buffer::Iterator start)
 }
 
 OfdmDownlinkFramePrefix::OfdmDownlinkFramePrefix()
-    : m_baseStationId(Mac48Address("00:00:00:00:00:00")),
-      m_frameNumber(0),
-      m_configurationChangeCount(0),
-      m_hcs(0)
+    : m_baseStationId(Mac48Address("00:00:00:00:00:00"))
 {
 }
 
-OfdmDownlinkFramePrefix::~OfdmDownlinkFramePrefix()
-{
-}
+OfdmDownlinkFramePrefix::~OfdmDownlinkFramePrefix() = default;
 
 /* static */
 TypeId

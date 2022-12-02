@@ -43,7 +43,6 @@ CsmaHelper::CsmaHelper()
     m_queueFactory.SetTypeId("ns3::DropTailQueue<Packet>");
     m_deviceFactory.SetTypeId("ns3::CsmaNetDevice");
     m_channelFactory.SetTypeId("ns3::CsmaChannel");
-    m_enableFlowControl = true;
 }
 
 void

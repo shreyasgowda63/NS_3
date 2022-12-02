@@ -30,8 +30,7 @@ NS_LOG_COMPONENT_DEFINE("LteFfrDistributedAlgorithm");
 NS_OBJECT_ENSURE_REGISTERED(LteFfrDistributedAlgorithm);
 
 LteFfrDistributedAlgorithm::LteFfrDistributedAlgorithm()
-    : m_ffrSapUser(nullptr),
-      m_ffrRrcSapUser(nullptr)
+
 {
     NS_LOG_FUNCTION(this);
     m_ffrSapProvider = new MemberLteFfrSapProvider<LteFfrDistributedAlgorithm>(this);

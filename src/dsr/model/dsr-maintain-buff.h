@@ -422,9 +422,7 @@ class DsrMaintainBuffer
     /**
      * Default constructor
      */
-    DsrMaintainBuffer()
-    {
-    }
+    DsrMaintainBuffer() = default;
 
     /// Push entry in queue, if there is no entry with the same packet and destination address in
     /// queue.

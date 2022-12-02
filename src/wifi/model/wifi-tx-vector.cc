@@ -42,9 +42,7 @@ WifiTxVector::WifiTxVector()
       m_ldpc(false),
       m_bssColor(0),
       m_length(0),
-      m_modeInitialized(false),
-      m_inactiveSubchannels(),
-      m_ruAllocation()
+      m_modeInitialized(false)
 {
 }
 
@@ -74,9 +72,7 @@ WifiTxVector::WifiTxVector(WifiMode mode,
       m_ldpc(ldpc),
       m_bssColor(bssColor),
       m_length(length),
-      m_modeInitialized(true),
-      m_inactiveSubchannels(),
-      m_ruAllocation()
+      m_modeInitialized(true)
 {
 }
 

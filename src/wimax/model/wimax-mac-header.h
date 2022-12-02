@@ -219,18 +219,18 @@ class GenericMacHeader : public Header
     bool check_hcs() const;
 
   private:
-    uint8_t m_ht;   ///< Header type
-    uint8_t m_ec;   ///< Encryption Control
-    uint8_t m_type; ///< type
-    uint8_t m_esf;  ///< ESF
-    uint8_t m_ci;   ///< CRC Indicator
-    uint8_t m_eks;  ///< Encryption Key Sequence
-    uint8_t m_rsv1; ///< RSV
-    uint16_t m_len; ///< length
-    Cid m_cid;      ///< CID
-    uint8_t m_hcs;  ///< Header Check Sequence
-    uint8_t c_hcs;  ///< calculated header check sequence; this is used to check if the received
-                    ///< header is correct or not
+    uint8_t m_ht{0};   ///< Header type
+    uint8_t m_ec{0};   ///< Encryption Control
+    uint8_t m_type{0}; ///< type
+    uint8_t m_esf{0};  ///< ESF
+    uint8_t m_ci{0};   ///< CRC Indicator
+    uint8_t m_eks{0};  ///< Encryption Key Sequence
+    uint8_t m_rsv1{0}; ///< RSV
+    uint16_t m_len{0}; ///< length
+    Cid m_cid;         ///< CID
+    uint8_t m_hcs{0};  ///< Header Check Sequence
+    uint8_t c_hcs{0};  ///< calculated header check sequence; this is used to check if the received
+                       ///< header is correct or not
 };
 
 } // namespace ns3
@@ -353,14 +353,14 @@ class BandwidthRequestHeader : public Header
     bool check_hcs() const;
 
   private:
-    uint8_t m_ht;   ///< Header type
-    uint8_t m_ec;   ///< Encryption Control
-    uint8_t m_type; ///< type
-    uint32_t m_br;  ///< Bandwidth Request
-    Cid m_cid;      ///< Connection identifier
-    uint8_t m_hcs;  ///< Header Check Sequence
-    uint8_t c_hcs;  ///< calculated header check sequence; this is used to check if the received
-                    ///< header is correct or not
+    uint8_t m_ht{1};   ///< Header type
+    uint8_t m_ec{0};   ///< Encryption Control
+    uint8_t m_type{0}; ///< type
+    uint32_t m_br{0};  ///< Bandwidth Request
+    Cid m_cid;         ///< Connection identifier
+    uint8_t m_hcs{0};  ///< Header Check Sequence
+    uint8_t c_hcs;     ///< calculated header check sequence; this is used to check if the received
+                       ///< header is correct or not
 };
 
 } // namespace ns3
@@ -442,9 +442,9 @@ class GrantManagementSubheader : public Header
   private:
     // size of the Grant Management Subheader shall actually be 2 bytes
 
-    uint8_t m_si;   ///< Slip Indicator
-    uint8_t m_pm;   ///< Poll-Me bit (byte in this case)
-    uint16_t m_pbr; ///< PiggyBack Request
+    uint8_t m_si{0};   ///< Slip Indicator
+    uint8_t m_pm{0};   ///< Poll-Me bit (byte in this case)
+    uint16_t m_pbr{0}; ///< PiggyBack Request
 };
 
 } // namespace ns3
@@ -513,8 +513,8 @@ class FragmentationSubheader : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint8_t m_fc;  ///< Fragment Control
-    uint8_t m_fsn; ///< Fragment Sequence Number
+    uint8_t m_fc{0};  ///< Fragment Control
+    uint8_t m_fsn{0}; ///< Fragment Sequence Number
 };
 } // namespace ns3
 

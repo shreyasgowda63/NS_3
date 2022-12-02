@@ -52,9 +52,7 @@ const uint16_t VERSION_MAJOR = 2; /**< Major version of supported pcap file form
 const uint16_t VERSION_MINOR = 4; /**< Minor version of supported pcap file format */
 
 PcapFile::PcapFile()
-    : m_file(),
-      m_swapMode(false),
-      m_nanosecMode(false)
+
 {
     NS_LOG_FUNCTION(this);
     FatalImpl::RegisterStream(&m_file);

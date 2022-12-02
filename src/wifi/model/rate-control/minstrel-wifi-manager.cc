@@ -99,8 +99,7 @@ MinstrelWifiManager::GetTypeId()
 }
 
 MinstrelWifiManager::MinstrelWifiManager()
-    : WifiRemoteStationManager(),
-      m_currentRate(0)
+    : m_currentRate(0)
 {
     NS_LOG_FUNCTION(this);
     m_uniformRandomVariable = CreateObject<UniformRandomVariable>();

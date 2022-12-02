@@ -45,16 +45,11 @@ namespace olsr
 
 TcRegressionTest::TcRegressionTest()
     : TestCase("Test OLSR Topology Control message generation"),
-      m_time(Seconds(20)),
-      m_countA(0),
-      m_countB(0),
-      m_countC(0)
+      m_time(Seconds(20))
 {
 }
 
-TcRegressionTest::~TcRegressionTest()
-{
-}
+TcRegressionTest::~TcRegressionTest() = default;
 
 void
 TcRegressionTest::DoRun()

@@ -1236,13 +1236,17 @@ class TestCase
      */
     struct Result;
 
-    TestCase* m_parent;                //!< Pointer to my parent TestCase
+    TestCase* m_parent{nullptr};       //!< Pointer to my parent TestCase
     std::vector<TestCase*> m_children; //!< Vector of my children
     std::string m_dataDir;             //!< My data directory
-    TestRunnerImpl* m_runner;          //!< Pointer to the TestRunner
-    struct Result* m_result;           //!< Results data
+    TestRunnerImpl* m_runner{nullptr}; //!< Pointer to the TestRunner
+    struct Result* m_result{nullptr};  //!< Results data
     std::string m_name;                //!< TestCase name
-    enum TestDuration m_duration;      //!< TestCase duration
+
+    enum TestDuration m_duration
+    {
+        TestCase::QUICK
+    }; //!< TestCase duration
 };
 
 /**
@@ -1359,14 +1363,13 @@ class TestVectors
 
   private:
     typedef std::vector<T> TestVector; //!< Container type
-    TestVector m_vectors;              //!< The list of test vectors
+    TestVector m_vectors{};            //!< The list of test vectors
 };
 
 template <typename T>
 TestVectors<T>::TestVectors()
-    : m_vectors()
-{
-}
+
+    = default;
 
 template <typename T>
 void
@@ -1376,9 +1379,7 @@ TestVectors<T>::Reserve(uint32_t reserve)
 }
 
 template <typename T>
-TestVectors<T>::~TestVectors()
-{
-}
+TestVectors<T>::~TestVectors() = default;
 
 template <typename T>
 std::size_t

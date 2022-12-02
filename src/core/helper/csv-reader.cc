@@ -84,15 +84,13 @@ CsvReader::CsvReader(const std::string& filepath, char delimiter /* =',' */)
 CsvReader::CsvReader(std::istream& stream, char delimiter /* =',' */)
     : m_delimiter(delimiter),
       m_rowsRead(0),
-      m_fileStream(),
+
       m_stream(&stream)
 {
     NS_LOG_FUNCTION(this);
 }
 
-CsvReader::~CsvReader()
-{
-}
+CsvReader::~CsvReader() = default;
 
 std::size_t
 CsvReader::ColumnCount() const

@@ -48,9 +48,7 @@ TcpHybla::GetTypeId()
 }
 
 TcpHybla::TcpHybla()
-    : TcpNewReno(),
-      m_rho(1.0),
-      m_cWndCnt(0)
+    : m_rho(1.0)
 {
     NS_LOG_FUNCTION(this);
 }

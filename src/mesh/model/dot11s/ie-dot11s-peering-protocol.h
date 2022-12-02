@@ -47,7 +47,7 @@ class IePeeringProtocol : public WifiInformationElement
     void Print(std::ostream& os) const override;
 
   private:
-    uint8_t m_protocol; ///< the protocol
+    uint8_t m_protocol{0}; ///< the protocol
 };
 } // namespace dot11s
 } // namespace ns3

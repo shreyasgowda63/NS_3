@@ -38,9 +38,7 @@ MacHeaderType::MacHeaderType(uint8_t type)
 {
 }
 
-MacHeaderType::~MacHeaderType()
-{
-}
+MacHeaderType::~MacHeaderType() = default;
 
 void
 MacHeaderType::SetType(uint8_t type)
@@ -104,23 +102,10 @@ MacHeaderType::Deserialize(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(GenericMacHeader);
 
 GenericMacHeader::GenericMacHeader()
-    : m_ht(0),
-      m_ec(0),
-      m_type(0),
-      m_ci(0),
-      m_eks(0),
-      m_len(0),
-      m_cid(Cid())
-{
-    m_esf = 0;
-    m_hcs = 0;
-    m_rsv1 = 0;
-    c_hcs = 0;
-}
 
-GenericMacHeader::~GenericMacHeader()
-{
-}
+    = default;
+
+GenericMacHeader::~GenericMacHeader() = default;
 
 void
 GenericMacHeader::SetHt(uint8_t ht)
@@ -333,18 +318,10 @@ GenericMacHeader::check_hcs() const
 NS_OBJECT_ENSURE_REGISTERED(BandwidthRequestHeader);
 
 BandwidthRequestHeader::BandwidthRequestHeader()
-    : m_ht(1),
-      m_ec(0),
-      m_type(0),
-      m_br(0),
-      m_cid(Cid()),
-      m_hcs(0)
-{
-}
 
-BandwidthRequestHeader::~BandwidthRequestHeader()
-{
-}
+    = default;
+
+BandwidthRequestHeader::~BandwidthRequestHeader() = default;
 
 void
 BandwidthRequestHeader::SetHt(uint8_t ht)
@@ -535,15 +512,10 @@ BandwidthRequestHeader::check_hcs() const
 NS_OBJECT_ENSURE_REGISTERED(GrantManagementSubheader);
 
 GrantManagementSubheader::GrantManagementSubheader()
-    : m_si(0),
-      m_pm(0),
-      m_pbr(0)
-{
-}
 
-GrantManagementSubheader::~GrantManagementSubheader()
-{
-}
+    = default;
+
+GrantManagementSubheader::~GrantManagementSubheader() = default;
 
 void
 GrantManagementSubheader::SetSi(uint8_t si)
@@ -641,14 +613,10 @@ GrantManagementSubheader::Deserialize(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(FragmentationSubheader);
 
 FragmentationSubheader::FragmentationSubheader()
-    : m_fc(0),
-      m_fsn(0)
-{
-}
 
-FragmentationSubheader::~FragmentationSubheader()
-{
-}
+    = default;
+
+FragmentationSubheader::~FragmentationSubheader() = default;
 
 void
 FragmentationSubheader::SetFc(uint8_t fc)

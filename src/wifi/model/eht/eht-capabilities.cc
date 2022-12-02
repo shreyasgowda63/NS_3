@@ -22,9 +22,7 @@
 namespace ns3
 {
 
-EhtCapabilities::EhtCapabilities()
-{
-}
+EhtCapabilities::EhtCapabilities() = default;
 
 WifiInformationElementId
 EhtCapabilities::ElementId() const

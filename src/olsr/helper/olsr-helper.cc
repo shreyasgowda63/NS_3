@@ -33,9 +33,9 @@ OlsrHelper::OlsrHelper()
 }
 
 OlsrHelper::OlsrHelper(const OlsrHelper& o)
-    : m_agentFactory(o.m_agentFactory)
+    : m_agentFactory(o.m_agentFactory),
+      m_interfaceExclusions(o.m_interfaceExclusions)
 {
-    m_interfaceExclusions = o.m_interfaceExclusions;
 }
 
 OlsrHelper*

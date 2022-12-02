@@ -603,9 +603,9 @@ class TcpTxBuffer : public Object
 
     PacketList m_appList;              //!< Buffer for application data
     PacketList m_sentList;             //!< Buffer for sent (but not acked) data
-    uint32_t m_maxBuffer;              //!< Max number of data bytes in buffer (SND.WND)
-    uint32_t m_size;                   //!< Size of all data in this buffer
-    uint32_t m_sentSize;               //!< Size of sent (and not discarded) segments
+    uint32_t m_maxBuffer{32768};       //!< Max number of data bytes in buffer (SND.WND)
+    uint32_t m_size{0};                //!< Size of all data in this buffer
+    uint32_t m_sentSize{0};            //!< Size of sent (and not discarded) segments
     Callback<uint32_t> m_rWndCallback; //!< Callback to obtain RCV.WND value
 
     TracedValue<SequenceNumber32>

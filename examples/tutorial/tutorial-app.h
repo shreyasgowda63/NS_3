@@ -63,14 +63,14 @@ class TutorialApp : public Application
     /// Send a packet.
     void SendPacket();
 
-    Ptr<Socket> m_socket;   //!< The tranmission socket.
-    Address m_peer;         //!< The destination address.
-    uint32_t m_packetSize;  //!< The packet size.
-    uint32_t m_nPackets;    //!< The number of pacts to send.
-    DataRate m_dataRate;    //!< The datarate to use.
-    EventId m_sendEvent;    //!< Send event.
-    bool m_running;         //!< True if the application is running.
-    uint32_t m_packetsSent; //!< The number of pacts sent.
+    Ptr<Socket> m_socket;      //!< The tranmission socket.
+    Address m_peer;            //!< The destination address.
+    uint32_t m_packetSize{0};  //!< The packet size.
+    uint32_t m_nPackets{0};    //!< The number of pacts to send.
+    DataRate m_dataRate;       //!< The datarate to use.
+    EventId m_sendEvent;       //!< Send event.
+    bool m_running{false};     //!< True if the application is running.
+    uint32_t m_packetsSent{0}; //!< The number of pacts sent.
 };
 
 } // namespace ns3

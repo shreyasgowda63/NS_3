@@ -204,8 +204,8 @@ class int64x64_t
      * \param [in] lo Fractional portion, already scaled to HP_MAX_64.
      */
     explicit inline int64x64_t(const int64_t hi, const uint64_t lo)
+        : _v((int128_t)hi << 64)
     {
-        _v = (int128_t)hi << 64;
         _v |= lo;
     }
 
@@ -215,9 +215,8 @@ class int64x64_t
      * \param [in] o Value to copy.
      */
     inline int64x64_t(const int64x64_t& o)
-        : _v(o._v)
-    {
-    }
+
+        = default;
 
     /**
      * Assignment.
@@ -225,11 +224,7 @@ class int64x64_t
      * \param [in] o Value to assign to this int64x64_t.
      * \returns This int64x64_t.
      */
-    inline int64x64_t& operator=(const int64x64_t& o)
-    {
-        _v = o._v;
-        return *this;
-    }
+    inline int64x64_t& operator=(const int64x64_t& o) = default;
 
     /** Explicit bool conversion. */
     inline explicit operator bool() const

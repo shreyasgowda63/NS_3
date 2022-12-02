@@ -38,8 +38,8 @@ namespace ns3
 class GtpcHeader : public Header
 {
   public:
-    GtpcHeader();
-    ~GtpcHeader() override;
+    GtpcHeader() = default;
+    ~GtpcHeader() override = default;
     /**
      * \brief Get the type ID.
      * \return the object TypeId
@@ -151,26 +151,26 @@ class GtpcHeader : public Header
      * TEID flag.
      * This flag indicates if TEID field is present or not
      */
-    bool m_teidFlag;
+    bool m_teidFlag{false};
     /**
      * Message type field.
      * It can be one of the values of MessageType_t
      */
-    uint8_t m_messageType;
+    uint8_t m_messageType{0};
     /**
      * Message length field.
      * This field indicates the length of the message in octets excluding
      * the mandatory part of the GTP-C header (the first 4 octets)
      */
-    uint16_t m_messageLength;
+    uint16_t m_messageLength{4};
     /**
      * Tunnel Endpoint Identifier (TEID) field
      */
-    uint32_t m_teid;
+    uint32_t m_teid{0};
     /**
      * GTP Sequence number field
      */
-    uint32_t m_sequenceNumber;
+    uint32_t m_sequenceNumber{0};
 
   protected:
     /**
@@ -358,7 +358,7 @@ class GtpcCreateSessionRequestMessage : public GtpcHeader, public GtpcIes
 {
   public:
     GtpcCreateSessionRequestMessage();
-    ~GtpcCreateSessionRequestMessage() override;
+    ~GtpcCreateSessionRequestMessage() override = default;
     /**
      * \brief Get the type ID.
      * \return the object TypeId
@@ -427,8 +427,8 @@ class GtpcCreateSessionRequestMessage : public GtpcHeader, public GtpcIes
     void SetBearerContextsToBeCreated(std::list<BearerContextToBeCreated> bearerContexts);
 
   private:
-    uint64_t m_imsi;                     //!< IMSI
-    uint32_t m_uliEcgi;                  //!< UliEcgi
+    uint64_t m_imsi{0};                  //!< IMSI
+    uint32_t m_uliEcgi{0};               //!< UliEcgi
     GtpcHeader::Fteid_t m_senderCpFteid; //!< Sender CpFteid
 
     /// Bearer Context list
@@ -443,7 +443,7 @@ class GtpcCreateSessionResponseMessage : public GtpcHeader, public GtpcIes
 {
   public:
     GtpcCreateSessionResponseMessage();
-    ~GtpcCreateSessionResponseMessage() override;
+    ~GtpcCreateSessionResponseMessage() override = default;
     /**
      * \brief Get the type ID.
      * \return the object TypeId
@@ -502,7 +502,7 @@ class GtpcCreateSessionResponseMessage : public GtpcHeader, public GtpcIes
     void SetBearerContextsCreated(std::list<BearerContextCreated> bearerContexts);
 
   private:
-    Cause_t m_cause;                     //!< Cause
+    Cause_t m_cause{Cause_t::RESERVED};  //!< Cause
     GtpcHeader::Fteid_t m_senderCpFteid; //!< Sender CpFteid
     /// Container of Bearer Contexts
     std::list<BearerContextCreated> m_bearerContextsCreated;
@@ -516,7 +516,7 @@ class GtpcModifyBearerRequestMessage : public GtpcHeader, public GtpcIes
 {
   public:
     GtpcModifyBearerRequestMessage();
-    ~GtpcModifyBearerRequestMessage() override;
+    ~GtpcModifyBearerRequestMessage() override = default;
     /**
      * \brief Get the type ID.
      * \return the object TypeId
@@ -572,8 +572,8 @@ class GtpcModifyBearerRequestMessage : public GtpcHeader, public GtpcIes
     void SetBearerContextsToBeModified(std::list<BearerContextToBeModified> bearerContexts);
 
   private:
-    uint64_t m_imsi;    //!< IMSI
-    uint32_t m_uliEcgi; //!< UliEcgi
+    uint64_t m_imsi{0};    //!< IMSI
+    uint32_t m_uliEcgi{0}; //!< UliEcgi
 
     /// Bearer Context list
     std::list<BearerContextToBeModified> m_bearerContextsToBeModified;
@@ -587,7 +587,7 @@ class GtpcModifyBearerResponseMessage : public GtpcHeader, public GtpcIes
 {
   public:
     GtpcModifyBearerResponseMessage();
-    ~GtpcModifyBearerResponseMessage() override;
+    ~GtpcModifyBearerResponseMessage() override = default;
     /**
      * \brief Get the type ID.
      * \return the object TypeId
@@ -612,7 +612,7 @@ class GtpcModifyBearerResponseMessage : public GtpcHeader, public GtpcIes
     void SetCause(Cause_t cause);
 
   private:
-    Cause_t m_cause; //!< Cause
+    Cause_t m_cause{Cause_t::RESERVED}; //!< Cause
 };
 
 /**
@@ -623,7 +623,7 @@ class GtpcDeleteBearerCommandMessage : public GtpcHeader, public GtpcIes
 {
   public:
     GtpcDeleteBearerCommandMessage();
-    ~GtpcDeleteBearerCommandMessage() override;
+    ~GtpcDeleteBearerCommandMessage() override = default;
     /**
      * \brief Get the type ID.
      * \return the object TypeId
@@ -701,7 +701,7 @@ class GtpcDeleteBearerResponseMessage : public GtpcHeader, public GtpcIes
 {
   public:
     GtpcDeleteBearerResponseMessage();
-    ~GtpcDeleteBearerResponseMessage() override;
+    ~GtpcDeleteBearerResponseMessage() override = default;
     /**
      * \brief Get the type ID.
      * \return the object TypeId

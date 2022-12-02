@@ -44,8 +44,8 @@ class GtpuHeader : public Header
      * \return the object TypeId
      */
     static TypeId GetTypeId();
-    GtpuHeader();
-    ~GtpuHeader() override;
+    GtpuHeader() = default;
+    ~GtpuHeader() override = default;
     TypeId GetInstanceTypeId() const override;
     uint32_t GetSerializedSize() const override;
     void Serialize(Buffer::Iterator start) const override;
@@ -176,13 +176,13 @@ class GtpuHeader : public Header
      * This field is used to determine the version of the GTPU-U protocol. The version number shall
      * be set to 1.
      */
-    uint8_t m_version; // really a 3 uint3_t
+    uint8_t m_version{1}; // really a 3 uint3_t
 
     /**
      * This bit is used as a protocol discriminator between GTP (when PT is '1') and GTP' (when
      * PT is '0').
      */
-    bool m_protocolType;
+    bool m_protocolType{true};
 
     /**
      * This flag indicates the presence of a meaningful value of the Next Extension Header
@@ -190,7 +190,7 @@ class GtpuHeader : public Header
      * or, if present, shall not be interpreted. When it is set to '1', the Next Extension
      *  Header field is present, and shall be interpreted
      */
-    bool m_extensionHeaderFlag;
+    bool m_extensionHeaderFlag{false};
 
     /**
      * This flag indicates the presence of a meaningful value of the Sequence Number field.
@@ -198,50 +198,50 @@ class GtpuHeader : public Header
      * shall not be interpreted. When it is set to '1', the Sequence Number field is present,
      * and shall be interpreted
      */
-    bool m_sequenceNumberFlag;
+    bool m_sequenceNumberFlag{true};
     /**
      * This flag indicates the presence of a meaningful value of the N-PDU Number field.
      * When it is set to '0', the N-PDU Number field either is not present, or, if present,
      * shall not be interpreted. When it is set to '1', the N-PDU Number field is present,
      * and shall be interpreted
      */
-    bool m_nPduNumberFlag;
+    bool m_nPduNumberFlag{true};
     /**
      *  This field indicates the type of GTP-U message
      */
-    uint8_t m_messageType;
+    uint8_t m_messageType{255};
     /**
      *  This field indicates the length in octets of the payload, i.e. the rest of the packet
      *  following the mandatory part of the GTP header (that is the first 8 octets).
      *  The Sequence Number, the N-PDU Number or any Extension headers shall be considered
      *  to be part of the payload, i.e. included in the length count
      */
-    uint16_t m_length;
+    uint16_t m_length{0};
 
     /**
      * This field unambiguously identifies a tunnel endpoint in the receiving GTP-U
      * protocol entity. The receiving end side of a GTP tunnel locally assigns the
      * TEID value the transmitting side has to use.
      */
-    uint32_t m_teid;
+    uint32_t m_teid{0};
     /**
      * If Sequence Number field is used for G-PDUs (T-PDUs+headers), an increasing
      * sequence number for T-PDUs is transmitted via GTP-U tunnels, when transmission
      * order must be preserved
      */
-    uint16_t m_sequenceNumber;
+    uint16_t m_sequenceNumber{0};
     /**
      * This field is used at the Inter SGSN Routeing Area Update procedure and some
      * inter-system handover procedures (e.g. between 2G and 3G radio access networks).
      * This field is used to co-ordinate the data transmission for acknowledged mode
      * of communication between the MS and the SGSN
      */
-    uint8_t m_nPduNumber;
+    uint8_t m_nPduNumber{0};
     /**
      * This field defines the type of Extension Header that follows this field in
      * the GTP-PDU
      */
-    uint8_t m_nextExtensionType;
+    uint8_t m_nextExtensionType{0};
 };
 
 } // namespace ns3

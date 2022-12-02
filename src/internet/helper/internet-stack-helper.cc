@@ -114,12 +114,6 @@ static InterfaceStreamMapIpv6
     g_interfaceStreamMapIpv6; //!< A mapping of Ipv6/interface pairs to pcap files
 
 InternetStackHelper::InternetStackHelper()
-    : m_routing(nullptr),
-      m_routingv6(nullptr),
-      m_ipv4Enabled(true),
-      m_ipv6Enabled(true),
-      m_ipv4ArpJitterEnabled(true),
-      m_ipv6NsRsJitterEnabled(true)
 
 {
     Initialize();
@@ -147,14 +141,14 @@ InternetStackHelper::~InternetStackHelper()
 }
 
 InternetStackHelper::InternetStackHelper(const InternetStackHelper& o)
+    : m_tcpFactory(o.m_tcpFactory),
+      m_routing(o.m_routing->Copy()),
+      m_routingv6(o.m_routingv6->Copy()),
+      m_ipv4Enabled(o.m_ipv4Enabled),
+      m_ipv6Enabled(o.m_ipv6Enabled),
+      m_ipv4ArpJitterEnabled(o.m_ipv4ArpJitterEnabled),
+      m_ipv6NsRsJitterEnabled(o.m_ipv6NsRsJitterEnabled)
 {
-    m_routing = o.m_routing->Copy();
-    m_routingv6 = o.m_routingv6->Copy();
-    m_ipv4Enabled = o.m_ipv4Enabled;
-    m_ipv6Enabled = o.m_ipv6Enabled;
-    m_tcpFactory = o.m_tcpFactory;
-    m_ipv4ArpJitterEnabled = o.m_ipv4ArpJitterEnabled;
-    m_ipv6NsRsJitterEnabled = o.m_ipv6NsRsJitterEnabled;
 }
 
 InternetStackHelper&

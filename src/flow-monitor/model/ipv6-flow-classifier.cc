@@ -92,9 +92,7 @@ operator==(const Ipv6FlowClassifier::FiveTuple& t1, const Ipv6FlowClassifier::Fi
             t1.sourcePort == t2.sourcePort && t1.destinationPort == t2.destinationPort);
 }
 
-Ipv6FlowClassifier::Ipv6FlowClassifier()
-{
-}
+Ipv6FlowClassifier::Ipv6FlowClassifier() = default;
 
 bool
 Ipv6FlowClassifier::Classify(const Ipv6Header& ipHeader,

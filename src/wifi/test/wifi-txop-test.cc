@@ -93,29 +93,27 @@ class WifiTxopTest : public TestCase
         WifiTxVector txVector; ///< TX vector used to transmit the frame
     };
 
-    uint16_t m_nStations;             ///< number of stations
+    uint16_t m_nStations{3};          ///< number of stations
     NetDeviceContainer m_staDevices;  ///< container for stations' NetDevices
     NetDeviceContainer m_apDevices;   ///< container for AP's NetDevice
     std::vector<FrameInfo> m_txPsdus; ///< transmitted PSDUs
     Time m_txopLimit;                 ///< TXOP limit
     uint8_t m_aifsn;                  ///< AIFSN for BE
     uint32_t m_cwMin;                 ///< CWmin for BE
-    uint16_t m_received;              ///< number of packets received by the stations
+    uint16_t m_received{0};           ///< number of packets received by the stations
     bool m_pifsRecovery;              ///< whether to use PIFS recovery
 };
 
 WifiTxopTest::WifiTxopTest(bool pifsRecovery)
     : TestCase("Check correct operation within TXOPs"),
-      m_nStations(3),
+
       m_txopLimit(MicroSeconds(4768)),
-      m_received(0),
+
       m_pifsRecovery(pifsRecovery)
 {
 }
 
-WifiTxopTest::~WifiTxopTest()
-{
-}
+WifiTxopTest::~WifiTxopTest() = default;
 
 void
 WifiTxopTest::L7Receive(std::string context, Ptr<const Packet> p, const Address& addr)

@@ -22,9 +22,7 @@
 namespace ns3
 {
 
-FileConfig::~FileConfig()
-{
-}
+FileConfig::~FileConfig() = default;
 
 void
 FileConfig::SetSaveDeprecated(bool saveDeprecated)
@@ -32,13 +30,9 @@ FileConfig::SetSaveDeprecated(bool saveDeprecated)
     m_saveDeprecated = saveDeprecated;
 }
 
-NoneFileConfig::NoneFileConfig()
-{
-}
+NoneFileConfig::NoneFileConfig() = default;
 
-NoneFileConfig::~NoneFileConfig()
-{
-}
+NoneFileConfig::~NoneFileConfig() = default;
 
 void
 NoneFileConfig::SetFilename(std::string filename)

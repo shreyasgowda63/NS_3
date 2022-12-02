@@ -45,15 +45,11 @@ namespace olsr
 
 HelloRegressionTest::HelloRegressionTest()
     : TestCase("Test OLSR Hello messages generation"),
-      m_time(Seconds(5)),
-      m_countA(0),
-      m_countB(0)
+      m_time(Seconds(5))
 {
 }
 
-HelloRegressionTest::~HelloRegressionTest()
-{
-}
+HelloRegressionTest::~HelloRegressionTest() = default;
 
 void
 HelloRegressionTest::DoRun()

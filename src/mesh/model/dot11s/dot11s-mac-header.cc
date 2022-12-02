@@ -41,18 +41,10 @@ MeshHeader::GetTypeId()
 }
 
 MeshHeader::MeshHeader()
-    : m_meshFlags(0),
-      m_meshTtl(0),
-      m_meshSeqno(0),
-      m_addr4(Mac48Address()),
-      m_addr5(Mac48Address()),
-      m_addr6(Mac48Address())
-{
-}
 
-MeshHeader::~MeshHeader()
-{
-}
+    = default;
+
+MeshHeader::~MeshHeader() = default;
 
 TypeId
 MeshHeader::GetInstanceTypeId() const

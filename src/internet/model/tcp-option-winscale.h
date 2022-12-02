@@ -83,7 +83,7 @@ class TcpOptionWinScale : public TcpOption
     void SetScale(uint8_t scale);
 
   protected:
-    uint8_t m_scale; //!< Window scaling in number of bit shift
+    uint8_t m_scale{0}; //!< Window scaling in number of bit shift
 };
 
 } // namespace ns3

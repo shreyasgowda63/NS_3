@@ -121,13 +121,13 @@ class RemSpectrumPhy : public SpectrumPhy
     Ptr<MobilityModel> m_mobility;              ///< the mobility model
     Ptr<const SpectrumModel> m_rxSpectrumModel; ///< receive spectrum model
 
-    double m_referenceSignalPower; ///< reference signal power
-    double m_sumPower;             ///< sum power
+    double m_referenceSignalPower{0}; ///< reference signal power
+    double m_sumPower{0};             ///< sum power
 
-    bool m_active; ///< is active?
+    bool m_active{true}; ///< is active?
 
-    bool m_useDataChannel; ///< use data channel
-    int32_t m_rbId;        ///< RBID
+    bool m_useDataChannel{false}; ///< use data channel
+    int32_t m_rbId{-1};           ///< RBID
 };
 
 } // namespace ns3

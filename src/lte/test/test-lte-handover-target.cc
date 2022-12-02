@@ -139,7 +139,7 @@ class LteHandoverTargetTestCase : public TestCase
     std::string m_handoverAlgorithmType; ///< handover algorithm type
 
     Ptr<LteEnbNetDevice> m_sourceEnbDev; ///< source ENB device
-    bool m_hasHandoverOccurred;          ///< has handover occurred?
+    bool m_hasHandoverOccurred{false};   ///< has handover occurred?
 
 }; // end of class LteHandoverTargetTestCase
 
@@ -157,8 +157,7 @@ LteHandoverTargetTestCase::LteHandoverTargetTestCase(std::string name,
       m_sourceCellId(sourceCellId),
       m_targetCellId(targetCellId),
       m_handoverAlgorithmType(handoverAlgorithmType),
-      m_sourceEnbDev(nullptr),
-      m_hasHandoverOccurred(false)
+      m_sourceEnbDev(nullptr)
 {
     NS_LOG_INFO(this << " name=" << name);
 

@@ -78,8 +78,8 @@ class Ssid : public WifiInformationElement
     void SerializeInformationField(Buffer::Iterator start) const override;
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 
-    uint8_t m_ssid[33]; //!< Raw SSID value
-    uint8_t m_length;   //!< Length of the SSID
+    uint8_t m_ssid[33];  //!< Raw SSID value
+    uint8_t m_length{0}; //!< Length of the SSID
 };
 
 /**

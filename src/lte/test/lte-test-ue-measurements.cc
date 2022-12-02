@@ -256,9 +256,7 @@ LteUeMeasurementsTestCase::LteUeMeasurementsTestCase(std::string name,
     NS_LOG_INFO("Test UE Measurements d1 = " << d1 << " m. and d2 = " << d2 << " m.");
 }
 
-LteUeMeasurementsTestCase::~LteUeMeasurementsTestCase()
-{
-}
+LteUeMeasurementsTestCase::~LteUeMeasurementsTestCase() = default;
 
 void
 LteUeMeasurementsTestCase::DoRun()
@@ -1728,10 +1726,9 @@ LteUeMeasurementsPiecewiseTestCase3::LteUeMeasurementsPiecewiseTestCase3(
     std::vector<Time> expectedTime)
     : TestCase(name),
       m_config(config),
-      m_expectedTime(expectedTime)
+      m_expectedTime(expectedTime),
+      m_expectedMeasId(std::numeric_limits<uint8_t>::max())
 {
-    m_expectedMeasId = std::numeric_limits<uint8_t>::max();
-
     m_itExpectedTime = m_expectedTime.begin();
 
     NS_LOG_INFO(this << " name=" << name);

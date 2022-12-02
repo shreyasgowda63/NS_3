@@ -63,10 +63,10 @@ class SocketWriter : public Application
   private:
     void StartApplication() override;
     void StopApplication() override;
-    Address m_peer;       //!< Peer's address.
-    Ptr<Node> m_node;     //!< Node pointer
-    Ptr<Socket> m_socket; //!< Socket.
-    bool m_isSetup;       //!< True if the socket is connected.
-    bool m_isConnected;   //!< True if the socket setup has been done.
+    Address m_peer;            //!< Peer's address.
+    Ptr<Node> m_node;          //!< Node pointer
+    Ptr<Socket> m_socket;      //!< Socket.
+    bool m_isSetup{false};     //!< True if the socket is connected.
+    bool m_isConnected{false}; //!< True if the socket setup has been done.
 };
 } // namespace ns3

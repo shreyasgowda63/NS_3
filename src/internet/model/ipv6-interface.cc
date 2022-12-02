@@ -49,24 +49,15 @@ Ipv6Interface::GetTypeId()
 }
 
 Ipv6Interface::Ipv6Interface()
-    : m_ifup(false),
-      m_forwarding(true),
-      m_metric(1),
-      m_node(nullptr),
+    : m_node(nullptr),
       m_device(nullptr),
       m_tc(nullptr),
-      m_ndCache(nullptr),
-      m_curHopLimit(0),
-      m_baseReachableTime(0),
-      m_reachableTime(0),
-      m_retransTimer(0)
+      m_ndCache(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }
 
-Ipv6Interface::~Ipv6Interface()
-{
-}
+Ipv6Interface::~Ipv6Interface() = default;
 
 void
 Ipv6Interface::DoDispose()

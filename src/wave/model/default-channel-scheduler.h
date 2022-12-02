@@ -126,14 +126,18 @@ class DefaultChannelScheduler : public ChannelScheduler
      *   is extended access, extends is the number of extends access.
      *  when m_channelAccess is DefaultCchAccess, m_channelNumber is CCH.
      */
-    uint32_t m_channelNumber;           ///< channel number
-    uint32_t m_extend;                  ///< extend
-    EventId m_extendEvent;              ///< extend event
-    enum ChannelAccess m_channelAccess; ///< channel access
+    uint32_t m_channelNumber{0};            ///< channel number
+    uint32_t m_extend{EXTENDED_CONTINUOUS}; ///< extend
+    EventId m_extendEvent;                  ///< extend event
 
-    EventId m_waitEvent;          ///< wait event
-    uint32_t m_waitChannelNumber; ///< wait channel number
-    uint32_t m_waitExtend;        ///< wait extend
+    enum ChannelAccess m_channelAccess
+    {
+        NoAccess
+    }; ///< channel access
+
+    EventId m_waitEvent;             ///< wait event
+    uint32_t m_waitChannelNumber{0}; ///< wait channel number
+    uint32_t m_waitExtend{0};        ///< wait extend
 
     Ptr<ChannelCoordinationListener> m_coordinationListener; ///< coordination listener
 };

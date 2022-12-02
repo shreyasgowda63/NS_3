@@ -47,10 +47,7 @@ NS_LOG_COMPONENT_DEFINE("UanMacRcGw");
 NS_OBJECT_ENSURE_REGISTERED(UanMacRcGw);
 
 UanMacRcGw::UanMacRcGw()
-    : UanMac(),
-      m_state(IDLE),
-      m_currentRateNum(0),
-      m_cleared(false)
+
 {
     UanHeaderCommon ch;
     UanHeaderRcRts rts;
@@ -66,9 +63,7 @@ UanMacRcGw::UanMacRcGw()
     NS_LOG_DEBUG("Gateway initialized");
 }
 
-UanMacRcGw::~UanMacRcGw()
-{
-}
+UanMacRcGw::~UanMacRcGw() = default;
 
 void
 UanMacRcGw::Clear()

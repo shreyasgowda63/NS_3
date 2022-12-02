@@ -765,34 +765,34 @@ class LteUeRrc : public Object
     std::vector<LteUeCmacSapUser*> m_cmacSapUser;         ///< UE CMac SAP user
     std::vector<LteUeCmacSapProvider*> m_cmacSapProvider; ///< UE CMac SAP provider
 
-    LteUeRrcSapUser* m_rrcSapUser;         ///< RRC SAP user
-    LteUeRrcSapProvider* m_rrcSapProvider; ///< RRC SAP provider
+    LteUeRrcSapUser* m_rrcSapUser{nullptr}; ///< RRC SAP user
+    LteUeRrcSapProvider* m_rrcSapProvider;  ///< RRC SAP provider
 
-    LteMacSapProvider* m_macSapProvider; ///< MAC SAP provider
-    LtePdcpSapUser* m_drbPdcpSapUser;    ///< DRB PDCP SAP user
+    LteMacSapProvider* m_macSapProvider{nullptr}; ///< MAC SAP provider
+    LtePdcpSapUser* m_drbPdcpSapUser;             ///< DRB PDCP SAP user
 
-    LteAsSapProvider* m_asSapProvider; ///< AS SAP provider
-    LteAsSapUser* m_asSapUser;         ///< AS SAP user
+    LteAsSapProvider* m_asSapProvider;  ///< AS SAP provider
+    LteAsSapUser* m_asSapUser{nullptr}; ///< AS SAP user
 
     // Receive API calls from the LteUeComponentCarrierManager  instance.
     // LteCcmRrcSapUser* m_ccmRrcSapUser;
     /// Interface to the LteUeComponentCarrierManage instance.
-    LteUeCcmRrcSapProvider* m_ccmRrcSapProvider; ///< CCM RRC SAP provider
-    LteUeCcmRrcSapUser* m_ccmRrcSapUser;         ///< CCM RRC SAP user
+    LteUeCcmRrcSapProvider* m_ccmRrcSapProvider{nullptr}; ///< CCM RRC SAP provider
+    LteUeCcmRrcSapUser* m_ccmRrcSapUser;                  ///< CCM RRC SAP user
 
     /// The current UE RRC state.
-    State m_state;
+    State m_state{IDLE_START};
 
     /// The unique UE identifier.
-    uint64_t m_imsi;
+    uint64_t m_imsi{0};
     /**
      * The `C-RNTI` attribute. Cell Radio Network Temporary Identifier.
      */
-    uint16_t m_rnti;
+    uint16_t m_rnti{0};
     /**
      * The `CellId` attribute. Serving cell identifier.
      */
-    uint16_t m_cellId;
+    uint16_t m_cellId{0};
 
     /**
      * The `Srb0` attribute. SignalingRadioBearerInfo for SRB0.
@@ -817,7 +817,7 @@ class LteUeRrc : public Object
      * True if RLC SM is to be used, false if RLC UM/AM are to be used.
      * Can be modified using SetUseRlcSm().
      */
-    bool m_useRlcSm;
+    bool m_useRlcSm{true};
 
     uint8_t m_lastRrcTransactionIdentifier; ///< last RRC transaction identifier
 
@@ -934,13 +934,13 @@ class LteUeRrc : public Object
     TracedCallback<uint64_t, uint16_t, uint16_t> m_radioLinkFailureTrace;
 
     /// True if a connection request by upper layers is pending.
-    bool m_connectionPending;
+    bool m_connectionPending{false};
     /// True if MIB was received for the current cell.
-    bool m_hasReceivedMib;
+    bool m_hasReceivedMib{false};
     /// True if SIB1 was received for the current cell.
-    bool m_hasReceivedSib1;
+    bool m_hasReceivedSib1{false};
     /// True if SIB2 was received for the current cell.
-    bool m_hasReceivedSib2;
+    bool m_hasReceivedSib2{false};
 
     /// Stored content of the last SIB1 received.
     LteRrcSap::SystemInformationBlockType1 m_lastSib1;
@@ -949,7 +949,7 @@ class LteUeRrc : public Object
     std::set<uint16_t> m_acceptableCell;
 
     /// List of CSG ID which this UE entity has access to.
-    uint32_t m_csgWhiteList;
+    uint32_t m_csgWhiteList{0};
 
     // INTERNAL DATA STRUCTURE RELATED TO UE MEASUREMENTS
 
@@ -1273,18 +1273,18 @@ class LteUeRrc : public Object
      */
     EventId m_radioLinkFailureDetected;
 
-    uint8_t m_noOfSyncIndications; ///< number of in-sync or out-of-sync indications coming from PHY
-                                   ///< layer
+    uint8_t m_noOfSyncIndications{0}; ///< number of in-sync or out-of-sync indications coming from
+                                      ///< PHY layer
 
-    bool m_leaveConnectedMode; ///< true if UE NAS ask UE RRC to leave connected mode, e.g., after
-                               ///< RLF, i.e. T310 has expired
+    bool m_leaveConnectedMode{false}; ///< true if UE NAS ask UE RRC to leave connected mode, e.g.,
+                                      ///< after RLF, i.e. T310 has expired
 
-    uint16_t m_previousCellId; ///< the cell id of the previous cell UE was attached to
+    uint16_t m_previousCellId{0}; ///< the cell id of the previous cell UE was attached to
 
-    uint8_t m_connEstFailCountLimit; ///< the counter value for T300 timer expiration received from
-                                     ///< the eNB
+    uint8_t m_connEstFailCountLimit{0}; ///< the counter value for T300 timer expiration received
+                                        ///< from the eNB
 
-    uint8_t m_connEstFailCount; ///< the counter to count T300 timer expiration
+    uint8_t m_connEstFailCount{0}; ///< the counter to count T300 timer expiration
     /**
      * \brief Radio link failure detected function
      *
@@ -1343,7 +1343,7 @@ class LteUeRrc : public Object
     /**
      * The number of component carriers.
      */
-    uint16_t m_numberOfComponentCarriers;
+    uint16_t m_numberOfComponentCarriers{MIN_NO_CC};
 
 }; // end of class LteUeRrc
 

@@ -372,21 +372,21 @@ class CqaFfMacScheduler : public FfMacScheduler
     std::map<uint16_t, uint32_t> m_ceBsrRxed;
 
     // MAC SAPs
-    FfMacCschedSapUser* m_cschedSapUser;         ///< MAC Csched SAP user
-    FfMacSchedSapUser* m_schedSapUser;           ///< MAC Sched SAP user
-    FfMacCschedSapProvider* m_cschedSapProvider; ///< Csched SAP provider
-    FfMacSchedSapProvider* m_schedSapProvider;   ///< Sched SAP provider
+    FfMacCschedSapUser* m_cschedSapUser{nullptr}; ///< MAC Csched SAP user
+    FfMacSchedSapUser* m_schedSapUser{nullptr};   ///< MAC Sched SAP user
+    FfMacCschedSapProvider* m_cschedSapProvider{nullptr};  ///< Csched SAP provider
+    FfMacSchedSapProvider* m_schedSapProvider{nullptr};    ///< Sched SAP provider
 
     // FFR SAPs
-    LteFfrSapUser* m_ffrSapUser;         ///< FFR SAP user
-    LteFfrSapProvider* m_ffrSapProvider; ///< FFR SAP provider
+    LteFfrSapUser* m_ffrSapUser{nullptr};                  ///< FFR SAP user
+    LteFfrSapProvider* m_ffrSapProvider{nullptr}; ///< FFR SAP provider
 
     /// Internal parameters
     FfMacCschedSapProvider::CschedCellConfigReqParameters m_cschedCellConfig;
 
-    double m_timeWindow; ///< time window
+    double m_timeWindow{99.0}; ///< time window
 
-    uint16_t m_nextRntiUl; ///< RNTI of the next user to be served next scheduling in UL
+    uint16_t m_nextRntiUl{0}; ///< RNTI of the next user to be served next scheduling in UL
 
     uint32_t m_cqiTimersThreshold; ///< # of TTIs for which a CQI can be considered valid
 

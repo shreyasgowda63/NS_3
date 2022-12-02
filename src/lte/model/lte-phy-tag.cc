@@ -42,16 +42,8 @@ LtePhyTag::GetInstanceTypeId() const
     return GetTypeId();
 }
 
-LtePhyTag::LtePhyTag()
-{
-}
-
 LtePhyTag::LtePhyTag(uint16_t cellId)
     : m_cellId(cellId)
-{
-}
-
-LtePhyTag::~LtePhyTag()
 {
 }
 

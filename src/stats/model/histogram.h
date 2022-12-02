@@ -112,7 +112,7 @@ class Histogram
 
   private:
     std::vector<uint32_t> m_histogram; //!< Histogram data
-    double m_binWidth;                 //!< Bin width
+    double m_binWidth{1};              //!< Bin width
 };
 
 } // namespace ns3

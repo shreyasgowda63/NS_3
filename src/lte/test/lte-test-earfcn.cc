@@ -62,9 +62,7 @@ LteEarfcnTestCase::LteEarfcnTestCase(const char* str, uint32_t earfcn, double f)
     NS_LOG_FUNCTION(this << str << earfcn << f);
 }
 
-LteEarfcnTestCase::~LteEarfcnTestCase()
-{
-}
+LteEarfcnTestCase::~LteEarfcnTestCase() = default;
 
 void
 LteEarfcnTestCase::DoRun()

@@ -44,9 +44,7 @@ YansErrorRateModel::GetTypeId()
     return tid;
 }
 
-YansErrorRateModel::YansErrorRateModel()
-{
-}
+YansErrorRateModel::YansErrorRateModel() = default;
 
 double
 YansErrorRateModel::GetBpskBer(double snr, uint32_t signalSpread, uint64_t phyRate) const

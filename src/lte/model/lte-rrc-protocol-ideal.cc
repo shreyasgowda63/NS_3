@@ -47,15 +47,11 @@ static const Time RRC_IDEAL_MSG_DELAY = MilliSeconds(0);
 NS_OBJECT_ENSURE_REGISTERED(LteUeRrcProtocolIdeal);
 
 LteUeRrcProtocolIdeal::LteUeRrcProtocolIdeal()
-    : m_ueRrcSapProvider(nullptr),
-      m_enbRrcSapProvider(nullptr)
+    : m_ueRrcSapUser(new MemberLteUeRrcSapUser<LteUeRrcProtocolIdeal>(this))
 {
-    m_ueRrcSapUser = new MemberLteUeRrcSapUser<LteUeRrcProtocolIdeal>(this);
 }
 
-LteUeRrcProtocolIdeal::~LteUeRrcProtocolIdeal()
-{
-}
+LteUeRrcProtocolIdeal::~LteUeRrcProtocolIdeal() = default;
 
 void
 LteUeRrcProtocolIdeal::DoDispose()
@@ -239,7 +235,6 @@ LteUeRrcProtocolIdeal::SetEnbRrcSapProvider()
 NS_OBJECT_ENSURE_REGISTERED(LteEnbRrcProtocolIdeal);
 
 LteEnbRrcProtocolIdeal::LteEnbRrcProtocolIdeal()
-    : m_enbRrcSapProvider(nullptr)
 {
     NS_LOG_FUNCTION(this);
     m_enbRrcSapUser = new MemberLteEnbRrcSapUser<LteEnbRrcProtocolIdeal>(this);

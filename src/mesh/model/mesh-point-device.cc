@@ -64,7 +64,6 @@ MeshPointDevice::GetTypeId()
 }
 
 MeshPointDevice::MeshPointDevice()
-    : m_ifIndex(0)
 {
     NS_LOG_FUNCTION(this);
     m_channel = CreateObject<BridgeChannel>();
@@ -523,10 +522,7 @@ MeshPointDevice::DoSend(bool success,
 }
 
 MeshPointDevice::Statistics::Statistics()
-    : unicastData(0),
-      unicastDataBytes(0),
-      broadcastData(0),
-      broadcastDataBytes(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

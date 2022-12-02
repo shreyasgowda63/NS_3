@@ -535,9 +535,9 @@ class Ipv6RipngSplitHorizonStrategyTest : public TestCase
 
 Ipv6RipngSplitHorizonStrategyTest::Ipv6RipngSplitHorizonStrategyTest(
     RipNg::SplitHorizonType_e strategy)
-    : TestCase("RIPng Split Horizon strategy")
+    : TestCase("RIPng Split Horizon strategy"),
+      m_setStrategy(strategy)
 {
-    m_setStrategy = strategy;
 }
 
 void

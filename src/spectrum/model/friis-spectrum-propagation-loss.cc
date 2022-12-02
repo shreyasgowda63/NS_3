@@ -29,13 +29,9 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(FriisSpectrumPropagationLossModel);
 
-FriisSpectrumPropagationLossModel::FriisSpectrumPropagationLossModel()
-{
-}
+FriisSpectrumPropagationLossModel::FriisSpectrumPropagationLossModel() = default;
 
-FriisSpectrumPropagationLossModel::~FriisSpectrumPropagationLossModel()
-{
-}
+FriisSpectrumPropagationLossModel::~FriisSpectrumPropagationLossModel() = default;
 
 TypeId
 FriisSpectrumPropagationLossModel::GetTypeId()

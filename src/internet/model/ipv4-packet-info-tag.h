@@ -111,11 +111,11 @@ class Ipv4PacketInfoTag : public Tag
     //                                   address */
     // };
 
-    Ipv4Address m_addr; //!< Header destination address
-    uint32_t m_ifindex; //!< interface index
+    Ipv4Address m_addr;    //!< Header destination address
+    uint32_t m_ifindex{0}; //!< interface index
 
     // Used for IP_RECVTTL, though not implemented yet.
-    uint8_t m_ttl; //!< Time to Live
+    uint8_t m_ttl{0}; //!< Time to Live
 };
 } // namespace ns3
 

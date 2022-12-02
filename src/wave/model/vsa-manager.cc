@@ -52,9 +52,7 @@ VsaManager::VsaManager()
     m_vsaReceived = MakeNullCallback<bool, Ptr<const Packet>, const Address&, uint32_t, uint32_t>();
 }
 
-VsaManager::~VsaManager()
-{
-}
+VsaManager::~VsaManager() = default;
 
 void
 VsaManager::DoDispose()

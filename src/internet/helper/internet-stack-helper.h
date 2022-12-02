@@ -298,12 +298,12 @@ class InternetStackHelper : public PcapHelperForIpv4,
     /**
      * \brief IPv4 routing helper.
      */
-    const Ipv4RoutingHelper* m_routing;
+    const Ipv4RoutingHelper* m_routing{nullptr};
 
     /**
      * \brief IPv6 routing helper.
      */
-    const Ipv6RoutingHelper* m_routingv6;
+    const Ipv6RoutingHelper* m_routingv6{nullptr};
 
     /**
      * \brief create an object from its TypeId and aggregates it to the node
@@ -343,22 +343,22 @@ class InternetStackHelper : public PcapHelperForIpv4,
     /**
      * \brief IPv4 install state (enabled/disabled) ?
      */
-    bool m_ipv4Enabled;
+    bool m_ipv4Enabled{true};
 
     /**
      * \brief IPv6 install state (enabled/disabled) ?
      */
-    bool m_ipv6Enabled;
+    bool m_ipv6Enabled{true};
 
     /**
      * \brief IPv4 ARP Jitter state (enabled/disabled) ?
      */
-    bool m_ipv4ArpJitterEnabled;
+    bool m_ipv4ArpJitterEnabled{true};
 
     /**
      * \brief IPv6 IPv6 NS and RS Jitter state (enabled/disabled) ?
      */
-    bool m_ipv6NsRsJitterEnabled;
+    bool m_ipv6NsRsJitterEnabled{true};
 };
 
 } // namespace ns3

@@ -69,7 +69,7 @@ class HelloRegressionTest : public TestCase
      */
     void ReceivePktProbeA(Ptr<Socket> socket);
     /// Packet counter on node A
-    uint8_t m_countA;
+    uint8_t m_countA{0};
     /// Receiving socket on node A
     Ptr<Ipv4RawSocketImpl> m_rxSocketA;
     /**
@@ -78,7 +78,7 @@ class HelloRegressionTest : public TestCase
      */
     void ReceivePktProbeB(Ptr<Socket> socket);
     /// Packet counter on node B
-    uint8_t m_countB;
+    uint8_t m_countB{0};
     /// Receiving socket on node B
     Ptr<Ipv4RawSocketImpl> m_rxSocketB;
 };

@@ -434,9 +434,9 @@ class FrameExchangeManager : public Object
     Mac48Address m_self;                              //!< the MAC address of this device
     Mac48Address m_bssid;                             //!< BSSID address (Mac48Address)
     Time m_navEnd;                                    //!< NAV expiration time
-    uint8_t m_linkId;                  //!< the ID of the link this object is associated with
-    uint16_t m_allowedWidth;           //!< the allowed width in MHz for the current transmission
-    bool m_promisc;                    //!< Flag if the device is operating in promiscuous mode
+    uint8_t m_linkId{0};               //!< the ID of the link this object is associated with
+    uint16_t m_allowedWidth{0};        //!< the allowed width in MHz for the current transmission
+    bool m_promisc{false};             //!< Flag if the device is operating in promiscuous mode
     DroppedMpdu m_droppedMpduCallback; //!< the dropped MPDU callback
     AckedMpdu m_ackedMpduCallback;     //!< the acknowledged MPDU callback
 
@@ -607,7 +607,7 @@ class FrameExchangeManager : public Object
     Ptr<WifiMpdu> m_mpdu;           //!< the MPDU being transmitted
     WifiTxParameters m_txParams;    //!< the TX parameters for the current frame
     Ptr<Packet> m_fragmentedPacket; //!< the MSDU being fragmented
-    bool m_moreFragments;           //!< true if a fragment has to be sent after a SIFS
+    bool m_moreFragments{false};    //!< true if a fragment has to be sent after a SIFS
     Ptr<WifiProtectionManager> m_protectionManager; //!< Protection manager
     Ptr<WifiAckManager> m_ackManager;               //!< Acknowledgment manager
 };

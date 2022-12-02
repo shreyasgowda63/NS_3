@@ -151,9 +151,7 @@ class AccessorHelper : public AttributeAccessor
 {
   public:
     /** Constructor */
-    AccessorHelper()
-    {
-    }
+    AccessorHelper() = default;
 
     /**
      * Set the underlying member to the argument AttributeValue.

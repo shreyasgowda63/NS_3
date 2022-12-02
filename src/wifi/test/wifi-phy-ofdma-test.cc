@@ -101,14 +101,11 @@ class OfdmaTestHePhy : public HePhy
 };                    // class OfdmaTestHePhy
 
 OfdmaTestHePhy::OfdmaTestHePhy(uint16_t staId)
-    : HePhy(),
-      m_staId(staId)
+    : m_staId(staId)
 {
 }
 
-OfdmaTestHePhy::~OfdmaTestHePhy()
-{
-}
+OfdmaTestHePhy::~OfdmaTestHePhy() = default;
 
 uint16_t
 OfdmaTestHePhy::GetStaId(const Ptr<const WifiPpdu> ppdu) const
@@ -219,15 +216,12 @@ OfdmaSpectrumWifiPhy::GetTypeId()
 }
 
 OfdmaSpectrumWifiPhy::OfdmaSpectrumWifiPhy(uint16_t staId)
-    : SpectrumWifiPhy()
 {
     m_ofdmTestHePhy = Create<OfdmaTestHePhy>(staId);
     m_ofdmTestHePhy->SetOwner(this);
 }
 
-OfdmaSpectrumWifiPhy::~OfdmaSpectrumWifiPhy()
-{
-}
+OfdmaSpectrumWifiPhy::~OfdmaSpectrumWifiPhy() = default;
 
 void
 OfdmaSpectrumWifiPhy::DoInitialize()
@@ -424,15 +418,15 @@ class TestDlOfdmaPhyTransmission : public TestCase
      */
     void DoCheckPhyState(Ptr<OfdmaSpectrumWifiPhy> phy, WifiPhyState expectedState);
 
-    uint32_t m_countRxSuccessSta1; ///< count RX success for STA 1
-    uint32_t m_countRxSuccessSta2; ///< count RX success for STA 2
-    uint32_t m_countRxSuccessSta3; ///< count RX success for STA 3
-    uint32_t m_countRxFailureSta1; ///< count RX failure for STA 1
-    uint32_t m_countRxFailureSta2; ///< count RX failure for STA 2
-    uint32_t m_countRxFailureSta3; ///< count RX failure for STA 3
-    uint32_t m_countRxBytesSta1;   ///< count RX bytes for STA 1
-    uint32_t m_countRxBytesSta2;   ///< count RX bytes for STA 2
-    uint32_t m_countRxBytesSta3;   ///< count RX bytes for STA 3
+    uint32_t m_countRxSuccessSta1{0}; ///< count RX success for STA 1
+    uint32_t m_countRxSuccessSta2{0}; ///< count RX success for STA 2
+    uint32_t m_countRxSuccessSta3{0}; ///< count RX success for STA 3
+    uint32_t m_countRxFailureSta1{0}; ///< count RX failure for STA 1
+    uint32_t m_countRxFailureSta2{0}; ///< count RX failure for STA 2
+    uint32_t m_countRxFailureSta3{0}; ///< count RX failure for STA 3
+    uint32_t m_countRxBytesSta1{0};   ///< count RX bytes for STA 1
+    uint32_t m_countRxBytesSta2{0};   ///< count RX bytes for STA 2
+    uint32_t m_countRxBytesSta3{0};   ///< count RX bytes for STA 3
 
     Ptr<SpectrumWifiPhy> m_phyAp;           ///< PHY of AP
     Ptr<OfdmaSpectrumWifiPhy> m_phySta1;    ///< PHY of STA 1
@@ -447,15 +441,7 @@ class TestDlOfdmaPhyTransmission : public TestCase
 
 TestDlOfdmaPhyTransmission::TestDlOfdmaPhyTransmission()
     : TestCase("DL-OFDMA PHY test"),
-      m_countRxSuccessSta1(0),
-      m_countRxSuccessSta2(0),
-      m_countRxSuccessSta3(0),
-      m_countRxFailureSta1(0),
-      m_countRxFailureSta2(0),
-      m_countRxFailureSta3(0),
-      m_countRxBytesSta1(0),
-      m_countRxBytesSta2(0),
-      m_countRxBytesSta3(0),
+
       m_frequency(DEFAULT_FREQUENCY),
       m_channelWidth(DEFAULT_CHANNEL_WIDTH),
       m_expectedPpduDuration(NanoSeconds(306400))
@@ -565,9 +551,7 @@ TestDlOfdmaPhyTransmission::StopInterference()
     m_phyInterferer->Stop();
 }
 
-TestDlOfdmaPhyTransmission::~TestDlOfdmaPhyTransmission()
-{
-}
+TestDlOfdmaPhyTransmission::~TestDlOfdmaPhyTransmission() = default;
 
 void
 TestDlOfdmaPhyTransmission::RxSuccessSta1(Ptr<const WifiPsdu> psdu,
@@ -1303,23 +1287,23 @@ class TestDlOfdmaPhyPuncturing : public TestCase
      */
     void DoCheckPhyState(Ptr<OfdmaSpectrumWifiPhy> phy, WifiPhyState expectedState);
 
-    uint32_t m_countRxSuccessSta1; ///< count RX success for STA 1
-    uint32_t m_countRxSuccessSta2; ///< count RX success for STA 2
-    uint32_t m_countRxFailureSta1; ///< count RX failure for STA 1
-    uint32_t m_countRxFailureSta2; ///< count RX failure for STA 2
-    uint32_t m_countRxBytesSta1;   ///< count RX bytes for STA 1
-    uint32_t m_countRxBytesSta2;   ///< count RX bytes for STA 2
+    uint32_t m_countRxSuccessSta1{0}; ///< count RX success for STA 1
+    uint32_t m_countRxSuccessSta2{0}; ///< count RX success for STA 2
+    uint32_t m_countRxFailureSta1{0}; ///< count RX failure for STA 1
+    uint32_t m_countRxFailureSta2{0}; ///< count RX failure for STA 2
+    uint32_t m_countRxBytesSta1{0};   ///< count RX bytes for STA 1
+    uint32_t m_countRxBytesSta2{0};   ///< count RX bytes for STA 2
 
     Ptr<SpectrumWifiPhy> m_phyAp;           ///< PHY of AP
     Ptr<OfdmaSpectrumWifiPhy> m_phySta1;    ///< PHY of STA 1
     Ptr<OfdmaSpectrumWifiPhy> m_phySta2;    ///< PHY of STA 2
     Ptr<WaveformGenerator> m_phyInterferer; ///< PHY of interferer
 
-    uint16_t m_frequency;    ///< frequency in MHz
-    uint16_t m_channelWidth; ///< channel width in MHz
+    uint16_t m_frequency{5210};  ///< frequency in MHz
+    uint16_t m_channelWidth{80}; ///< channel width in MHz
 
-    uint8_t m_indexSubchannel; ///< Index of the subchannel (starting from 0) that should contain an
-                               ///< interference and be punctured during the test run
+    uint8_t m_indexSubchannel{0}; ///< Index of the subchannel (starting from 0) that should contain
+                                  ///< an interference and be punctured during the test run
 
     Time m_expectedPpduDuration20Mhz; ///< expected duration to send MU PPDU on 20 MHz RU
     Time m_expectedPpduDuration40Mhz; ///< expected duration to send MU PPDU on 40 MHz RU
@@ -1327,15 +1311,7 @@ class TestDlOfdmaPhyPuncturing : public TestCase
 
 TestDlOfdmaPhyPuncturing::TestDlOfdmaPhyPuncturing()
     : TestCase("DL-OFDMA PHY puncturing test"),
-      m_countRxSuccessSta1(0),
-      m_countRxSuccessSta2(0),
-      m_countRxFailureSta1(0),
-      m_countRxFailureSta2(0),
-      m_countRxBytesSta1(0),
-      m_countRxBytesSta2(0),
-      m_frequency(5210),
-      m_channelWidth(80),
-      m_indexSubchannel(0),
+
       m_expectedPpduDuration20Mhz(NanoSeconds(156800)),
       m_expectedPpduDuration40Mhz(NanoSeconds(102400))
 {
@@ -1885,22 +1861,17 @@ class TestUlOfdmaPpduUid : public TestCase
     Ptr<OfdmaSpectrumWifiPhy> m_phySta1; ///< PHY of STA 1
     Ptr<OfdmaSpectrumWifiPhy> m_phySta2; ///< PHY of STA 2
 
-    uint64_t m_ppduUidAp;   ///< UID of PPDU transmitted by AP
-    uint64_t m_ppduUidSta1; ///< UID of PPDU transmitted by STA1
-    uint64_t m_ppduUidSta2; ///< UID of PPDU transmitted by STA2
+    uint64_t m_ppduUidAp{UINT64_MAX};   ///< UID of PPDU transmitted by AP
+    uint64_t m_ppduUidSta1{UINT64_MAX}; ///< UID of PPDU transmitted by STA1
+    uint64_t m_ppduUidSta2{UINT64_MAX}; ///< UID of PPDU transmitted by STA2
 };
 
 TestUlOfdmaPpduUid::TestUlOfdmaPpduUid()
-    : TestCase("UL-OFDMA PPDU UID attribution test"),
-      m_ppduUidAp(UINT64_MAX),
-      m_ppduUidSta1(UINT64_MAX),
-      m_ppduUidSta2(UINT64_MAX)
+    : TestCase("UL-OFDMA PPDU UID attribution test")
 {
 }
 
-TestUlOfdmaPpduUid::~TestUlOfdmaPpduUid()
-{
-}
+TestUlOfdmaPpduUid::~TestUlOfdmaPpduUid() = default;
 
 void
 TestUlOfdmaPpduUid::DoSetup()
@@ -2319,13 +2290,13 @@ class TestMultipleHeTbPreambles : public TestCase
 
     Ptr<OfdmaSpectrumWifiPhy> m_phy; ///< Phy
 
-    uint64_t m_totalBytesDropped; ///< total number of dropped bytes
-    WifiTxVector m_trigVector;    ///< TRIGVECTOR
+    uint64_t m_totalBytesDropped{0}; ///< total number of dropped bytes
+    WifiTxVector m_trigVector;       ///< TRIGVECTOR
 };
 
 TestMultipleHeTbPreambles::TestMultipleHeTbPreambles()
     : TestCase("UL-OFDMA multiple RX events test"),
-      m_totalBytesDropped(0),
+
       m_trigVector(HePhy::GetHeMcs7(),
                    0,
                    WIFI_PREAMBLE_HE_TB,
@@ -2339,9 +2310,7 @@ TestMultipleHeTbPreambles::TestMultipleHeTbPreambles()
 {
 }
 
-TestMultipleHeTbPreambles::~TestMultipleHeTbPreambles()
-{
-}
+TestMultipleHeTbPreambles::~TestMultipleHeTbPreambles() = default;
 
 void
 TestMultipleHeTbPreambles::Reset()
@@ -3182,12 +3151,12 @@ class TestUlOfdmaPhyTransmission : public TestCase
 
     Ptr<WaveformGenerator> m_phyInterferer; ///< PHY of interferer
 
-    uint32_t m_countRxSuccessFromSta1; ///< count RX success from STA 1
-    uint32_t m_countRxSuccessFromSta2; ///< count RX success from STA 2
-    uint32_t m_countRxFailureFromSta1; ///< count RX failure from STA 1
-    uint32_t m_countRxFailureFromSta2; ///< count RX failure from STA 2
-    uint32_t m_countRxBytesFromSta1;   ///< count RX bytes from STA 1
-    uint32_t m_countRxBytesFromSta2;   ///< count RX bytes from STA 2
+    uint32_t m_countRxSuccessFromSta1{0}; ///< count RX success from STA 1
+    uint32_t m_countRxSuccessFromSta2{0}; ///< count RX success from STA 2
+    uint32_t m_countRxFailureFromSta1{0}; ///< count RX failure from STA 1
+    uint32_t m_countRxFailureFromSta2{0}; ///< count RX failure from STA 2
+    uint32_t m_countRxBytesFromSta1{0};   ///< count RX bytes from STA 1
+    uint32_t m_countRxBytesFromSta2{0};   ///< count RX bytes from STA 2
 
     uint16_t m_frequency;        ///< frequency in MHz
     uint16_t m_channelWidth;     ///< channel width in MHz
@@ -3196,12 +3165,7 @@ class TestUlOfdmaPhyTransmission : public TestCase
 
 TestUlOfdmaPhyTransmission::TestUlOfdmaPhyTransmission()
     : TestCase("UL-OFDMA PHY test"),
-      m_countRxSuccessFromSta1(0),
-      m_countRxSuccessFromSta2(0),
-      m_countRxFailureFromSta1(0),
-      m_countRxFailureFromSta2(0),
-      m_countRxBytesFromSta1(0),
-      m_countRxBytesFromSta2(0),
+
       m_frequency(DEFAULT_FREQUENCY),
       m_channelWidth(DEFAULT_CHANNEL_WIDTH),
       m_expectedPpduDuration(NanoSeconds(271200))
@@ -3455,9 +3419,7 @@ TestUlOfdmaPhyTransmission::StopInterference()
     m_phyInterferer->Stop();
 }
 
-TestUlOfdmaPhyTransmission::~TestUlOfdmaPhyTransmission()
-{
-}
+TestUlOfdmaPhyTransmission::~TestUlOfdmaPhyTransmission() = default;
 
 void
 TestUlOfdmaPhyTransmission::RxSuccess(Ptr<const WifiPsdu> psdu,
@@ -4894,22 +4856,16 @@ class TestPhyPaddingExclusion : public TestCase
 
     Ptr<WaveformGenerator> m_phyInterferer; ///< PHY of interferer
 
-    uint32_t m_countRxSuccessFromSta1; ///< count RX success from STA 1
-    uint32_t m_countRxSuccessFromSta2; ///< count RX success from STA 2
-    uint32_t m_countRxFailureFromSta1; ///< count RX failure from STA 1
-    uint32_t m_countRxFailureFromSta2; ///< count RX failure from STA 2
-    uint32_t m_countRxBytesFromSta1;   ///< count RX bytes from STA 1
-    uint32_t m_countRxBytesFromSta2;   ///< count RX bytes from STA 2
+    uint32_t m_countRxSuccessFromSta1{0}; ///< count RX success from STA 1
+    uint32_t m_countRxSuccessFromSta2{0}; ///< count RX success from STA 2
+    uint32_t m_countRxFailureFromSta1{0}; ///< count RX failure from STA 1
+    uint32_t m_countRxFailureFromSta2{0}; ///< count RX failure from STA 2
+    uint32_t m_countRxBytesFromSta1{0};   ///< count RX bytes from STA 1
+    uint32_t m_countRxBytesFromSta2{0};   ///< count RX bytes from STA 2
 };
 
 TestPhyPaddingExclusion::TestPhyPaddingExclusion()
-    : TestCase("PHY padding exclusion test"),
-      m_countRxSuccessFromSta1(0),
-      m_countRxSuccessFromSta2(0),
-      m_countRxFailureFromSta1(0),
-      m_countRxFailureFromSta2(0),
-      m_countRxBytesFromSta1(0),
-      m_countRxBytesFromSta2(0)
+    : TestCase("PHY padding exclusion test")
 {
 }
 
@@ -4982,9 +4938,7 @@ TestPhyPaddingExclusion::StopInterference()
     m_phyInterferer->Stop();
 }
 
-TestPhyPaddingExclusion::~TestPhyPaddingExclusion()
-{
-}
+TestPhyPaddingExclusion::~TestPhyPaddingExclusion() = default;
 
 void
 TestPhyPaddingExclusion::RxSuccess(Ptr<const WifiPsdu> psdu,
@@ -5426,7 +5380,7 @@ class TestUlOfdmaPowerControl : public TestCase
                                WifiTxVector txVector,
                                std::vector<bool> statusPerMpdu);
 
-    uint8_t m_bssColor; ///< BSS color
+    uint8_t m_bssColor{1}; ///< BSS color
 
     Ptr<WifiNetDevice> m_apDev;   ///< network device of AP
     Ptr<WifiNetDevice> m_sta1Dev; ///< network device of STA 1
@@ -5434,32 +5388,22 @@ class TestUlOfdmaPowerControl : public TestCase
 
     Ptr<SpectrumWifiPhy> m_phyAp; ///< PHY of AP
 
-    double m_txPowerAp;      ///< transmit power (in dBm) of AP
-    double m_txPowerStart;   ///< minimum transmission power (in dBm) for STAs
-    double m_txPowerEnd;     ///< maximum transmission power (in dBm) for STAs
-    uint8_t m_txPowerLevels; ///< number of transmission power levels for STAs
+    double m_txPowerAp{0};      ///< transmit power (in dBm) of AP
+    double m_txPowerStart{0};   ///< minimum transmission power (in dBm) for STAs
+    double m_txPowerEnd{0};     ///< maximum transmission power (in dBm) for STAs
+    uint8_t m_txPowerLevels{0}; ///< number of transmission power levels for STAs
 
-    double m_requestedRssiSta1; ///< requested RSSI (in dBm) from STA 1 at AP for HE TB PPDUs
-    double m_requestedRssiSta2; ///< requested RSSI (in dBm) from STA 2 at AP for HE TB PPDUs
+    double m_requestedRssiSta1{0}; ///< requested RSSI (in dBm) from STA 1 at AP for HE TB PPDUs
+    double m_requestedRssiSta2{0}; ///< requested RSSI (in dBm) from STA 2 at AP for HE TB PPDUs
 
-    double m_rssiSta1; ///< expected RSSI (in dBm) from STA 1 at AP for HE TB PPDUs
-    double m_rssiSta2; ///< expected RSSI (in dBm) from STA 2 at AP for HE TB PPDUs
+    double m_rssiSta1{0}; ///< expected RSSI (in dBm) from STA 1 at AP for HE TB PPDUs
+    double m_rssiSta2{0}; ///< expected RSSI (in dBm) from STA 2 at AP for HE TB PPDUs
 
-    double m_tol; ///< tolerance (in dB) between received and expected RSSIs
+    double m_tol{0.1}; ///< tolerance (in dB) between received and expected RSSIs
 };
 
 TestUlOfdmaPowerControl::TestUlOfdmaPowerControl()
-    : TestCase("UL-OFDMA power control test"),
-      m_bssColor(1),
-      m_txPowerAp(0),
-      m_txPowerStart(0),
-      m_txPowerEnd(0),
-      m_txPowerLevels(0),
-      m_requestedRssiSta1(0),
-      m_requestedRssiSta2(0),
-      m_rssiSta1(0),
-      m_rssiSta2(0),
-      m_tol(0.1)
+    : TestCase("UL-OFDMA power control test")
 {
 }
 

@@ -38,9 +38,7 @@ class WifiPhyListener
      *       This destructor is needed.
      ****************************************************************/
 
-    virtual ~WifiPhyListener()
-    {
-    }
+    virtual ~WifiPhyListener() = default;
 
     /**
      * \param duration the expected duration of the packet reception.

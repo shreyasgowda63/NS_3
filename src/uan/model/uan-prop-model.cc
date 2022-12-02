@@ -101,9 +101,7 @@ Tap::GetDelay() const
     return m_delay;
 }
 
-UanPdp::UanPdp()
-{
-}
+UanPdp::UanPdp() = default;
 
 UanPdp::UanPdp(std::vector<Tap> taps, Time resolution)
     : m_taps(taps),

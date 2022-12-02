@@ -48,7 +48,7 @@ namespace ns3
 class UanNoiseModelDefault : public UanNoiseModel
 {
   public:
-    UanNoiseModelDefault();           //!< Default constructor.
+    UanNoiseModelDefault();  //!< Default constructor.
     ~UanNoiseModelDefault() override; //!< Dummy destructor, DoDispose.
 
     /**

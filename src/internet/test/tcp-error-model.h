@@ -90,9 +90,8 @@ class TcpSeqErrorModel : public TcpGeneralErrorModel
     static TypeId GetTypeId();
 
     TcpSeqErrorModel()
-        : TcpGeneralErrorModel()
-    {
-    }
+
+        = default;
 
     /**
      * \brief Add the sequence number to the list of segments to be killed
@@ -174,8 +173,9 @@ class TcpFlagErrorModel : public TcpGeneralErrorModel
                     uint32_t packetSize) override;
 
   protected:
-    TcpHeader::Flags_t m_flagsToKill; //!< Flags a packet should have to be dropped.
-    int16_t m_killNumber;             //!< The number of times the packet should be killed.
+    TcpHeader::Flags_t m_flagsToKill{
+        TcpHeader::NONE};    //!< Flags a packet should have to be dropped.
+    int16_t m_killNumber{0}; //!< The number of times the packet should be killed.
 
   private:
     void DoReset() override;

@@ -211,7 +211,7 @@ class AlohaNoackNetDevice : public NetDevice
     mutable uint32_t m_mtu; //!< NetDevice MTU
     bool m_linkUp;          //!< true if the link is up
 
-    State m_state;            //!< State of the NetDevice
+    State m_state{IDLE};      //!< State of the NetDevice
     Ptr<Packet> m_currentPkt; //!< Current packet
     Ptr<Object> m_phy;        //!< PHY object
 };

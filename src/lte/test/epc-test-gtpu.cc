@@ -50,9 +50,7 @@ EpsGtpuHeaderTestCase::EpsGtpuHeaderTestCase()
     NS_LOG_INFO("Creating EpsGtpuHeaderTestCase");
 }
 
-EpsGtpuHeaderTestCase::~EpsGtpuHeaderTestCase()
-{
-}
+EpsGtpuHeaderTestCase::~EpsGtpuHeaderTestCase() = default;
 
 void
 EpsGtpuHeaderTestCase::DoRun()

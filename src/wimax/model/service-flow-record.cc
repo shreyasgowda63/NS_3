@@ -23,26 +23,13 @@ namespace ns3
 {
 
 ServiceFlowRecord::ServiceFlowRecord()
-    : m_grantSize(0),
-      m_grantTimeStamp(Seconds(0)),
-      m_dlTimeStamp(Seconds(0)),
-      m_pktsSent(0),
-      m_pktsRcvd(0),
-      m_bytesSent(0),
-      m_bytesRcvd(0),
-      m_requestedBandwidth(0),
-      m_grantedBandwidth(0),
-      m_bwSinceLastExpiry(0)
+    : m_grantTimeStamp(Seconds(0)),
+      m_dlTimeStamp(Seconds(0))
 {
     m_lastGrantTime = Seconds(0);
-    m_backlogged = 0;
-    m_backloggedTemp = 0;
-    m_grantedBandwidthTemp = 0;
 }
 
-ServiceFlowRecord::~ServiceFlowRecord()
-{
-}
+ServiceFlowRecord::~ServiceFlowRecord() = default;
 
 void
 ServiceFlowRecord::SetGrantSize(uint32_t grantSize)

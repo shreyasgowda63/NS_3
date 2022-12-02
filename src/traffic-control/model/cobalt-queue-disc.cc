@@ -146,7 +146,6 @@ CoDelGetTime()
 }
 
 CobaltQueueDisc::CobaltQueueDisc()
-    : QueueDisc()
 {
     NS_LOG_FUNCTION(this);
     InitializeParams();

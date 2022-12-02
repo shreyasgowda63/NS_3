@@ -36,9 +36,7 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("YansWifiHelper");
 
-YansWifiChannelHelper::YansWifiChannelHelper()
-{
-}
+YansWifiChannelHelper::YansWifiChannelHelper() = default;
 
 YansWifiChannelHelper
 YansWifiChannelHelper::Default()

@@ -182,9 +182,7 @@ InterferenceHelper::NiChange::GetEvent() const
  ****************************************************************/
 
 InterferenceHelper::InterferenceHelper()
-    : m_errorRateModel(nullptr),
-      m_numRxAntennas(1),
-      m_rxing(false)
+    : m_errorRateModel(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }

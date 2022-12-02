@@ -496,7 +496,7 @@ class LteSpectrumPhy : public SpectrumPhy
     std::list<Ptr<LteControlMessage>> m_txControlMessageList; ///< the transmit control message list
     std::list<Ptr<LteControlMessage>> m_rxControlMessageList; ///< the receive control message list
 
-    State m_state;          ///< the state
+    State m_state{IDLE};    ///< the state
     Time m_firstRxStart;    ///< the first receive start
     Time m_firstRxDuration; ///< the first receive duration
 
@@ -523,11 +523,11 @@ class LteSpectrumPhy : public SpectrumPhy
     Ptr<LteInterference> m_interferenceData; ///< the data interference
     Ptr<LteInterference> m_interferenceCtrl; ///< the control interference
 
-    uint16_t m_cellId; ///< the cell ID
+    uint16_t m_cellId{0}; ///< the cell ID
 
-    uint8_t m_componentCarrierId;  ///< the component carrier ID
-    expectedTbs_t m_expectedTbs;   ///< the expected TBS
-    SpectrumValue m_sinrPerceived; ///< the preceived SINR
+    uint8_t m_componentCarrierId{0}; ///< the component carrier ID
+    expectedTbs_t m_expectedTbs;     ///< the expected TBS
+    SpectrumValue m_sinrPerceived;   ///< the preceived SINR
 
     /// Provides uniform random variables.
     Ptr<UniformRandomVariable> m_random;
@@ -535,8 +535,8 @@ class LteSpectrumPhy : public SpectrumPhy
     bool m_ctrlErrorModelEnabled; ///< when true (default) the phy error model is enabled for DL
                                   ///< ctrl frame
 
-    uint8_t m_transmissionMode;       ///< for UEs: store the transmission mode
-    uint8_t m_layersNum;              ///< layers num
+    uint8_t m_transmissionMode{0};    ///< for UEs: store the transmission mode
+    uint8_t m_layersNum{1};           ///< layers num
     std::vector<double> m_txModeGain; ///< duplicate value of LteUePhy
 
     Ptr<LteHarqPhy> m_harqPhyModule; ///< the HARQ phy module

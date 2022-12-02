@@ -28,13 +28,9 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(UanPropModelIdeal);
 
-UanPropModelIdeal::UanPropModelIdeal()
-{
-}
+UanPropModelIdeal::UanPropModelIdeal() = default;
 
-UanPropModelIdeal::~UanPropModelIdeal()
-{
-}
+UanPropModelIdeal::~UanPropModelIdeal() = default;
 
 TypeId
 UanPropModelIdeal::GetTypeId()

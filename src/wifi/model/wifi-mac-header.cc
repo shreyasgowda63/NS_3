@@ -77,9 +77,7 @@ WifiMacHeader::WifiMacHeader(WifiMacType type)
     SetType(type);
 }
 
-WifiMacHeader::~WifiMacHeader()
-{
-}
+WifiMacHeader::~WifiMacHeader() = default;
 
 void
 WifiMacHeader::SetDsFrom()

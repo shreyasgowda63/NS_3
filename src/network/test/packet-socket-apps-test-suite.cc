@@ -38,8 +38,8 @@ using namespace ns3;
  */
 class PacketSocketAppsTest : public TestCase
 {
-    uint32_t m_receivedPacketSize;   //!< Received packet size
-    uint32_t m_receivedPacketNumber; //!< Number of received packets
+    uint32_t m_receivedPacketSize{0};   //!< Received packet size
+    uint32_t m_receivedPacketNumber{0}; //!< Number of received packets
 
   public:
     void DoRun() override;
@@ -56,8 +56,6 @@ class PacketSocketAppsTest : public TestCase
 PacketSocketAppsTest::PacketSocketAppsTest()
     : TestCase("Packet Socket Apps test")
 {
-    m_receivedPacketSize = 0;
-    m_receivedPacketNumber = 0;
 }
 
 void

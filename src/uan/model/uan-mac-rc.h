@@ -209,18 +209,18 @@ class UanMacRc : public UanMac
         DATATX        //!< (Unused).
     };
 
-    State m_state;     //!< MAC state.
-    bool m_rtsBlocked; //!< RTS blocked while processing ACK.
+    State m_state{UNASSOCIATED}; //!< MAC state.
+    bool m_rtsBlocked{false};    //!< RTS blocked while processing ACK.
 
-    EventId m_startAgain;    //!< (Unused).
-    double m_retryRate;      //!< Number of retry attempts per second (of RTS/GWPING.
-    Mac8Address m_assocAddr; //!< Next hop address.
-    Ptr<UanPhy> m_phy;       //!< PHY layer attached to this MAC.
-    uint32_t m_numRates;     //!< Number of rates per Phy layer.
-    uint32_t m_currentRate;  //!< Rate number corresponding to data rate of current cycle.
-    uint32_t m_maxFrames;    //!< Maximum number of frames to include in a single RTS.
-    uint32_t m_queueLimit;   //!< Maximum packets to queue at MAC.
-    uint8_t m_frameNo;       //!< Current frame number.
+    EventId m_startAgain;       //!< (Unused).
+    double m_retryRate;         //!< Number of retry attempts per second (of RTS/GWPING.
+    Mac8Address m_assocAddr;    //!< Next hop address.
+    Ptr<UanPhy> m_phy;          //!< PHY layer attached to this MAC.
+    uint32_t m_numRates;        //!< Number of rates per Phy layer.
+    uint32_t m_currentRate{10}; //!< Rate number corresponding to data rate of current cycle.
+    uint32_t m_maxFrames;       //!< Maximum number of frames to include in a single RTS.
+    uint32_t m_queueLimit;      //!< Maximum packets to queue at MAC.
+    uint8_t m_frameNo{0};       //!< Current frame number.
     Time m_sifs; //!< Spacing between frames to account for timing error and processing delay.
     Time m_learnedProp; //!< Propagation delay to gateway.
 
@@ -230,7 +230,7 @@ class UanMacRc : public UanMac
     uint32_t m_ctsSizeN; //!< Size of UanHeaderRcCts.
     uint32_t m_ctsSizeG; //!< Size of UanHeaderCommon and UanHeaderRcCtsGlobal.
 
-    bool m_cleared; //!< Flag when we've been cleared.
+    bool m_cleared{false}; //!< Flag when we've been cleared.
 
     /** Pending packets. */
     std::list<std::pair<Ptr<Packet>, Mac8Address>> m_pktQueue;

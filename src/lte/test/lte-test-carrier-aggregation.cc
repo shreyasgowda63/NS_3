@@ -283,13 +283,9 @@ CarrierAggregationTestCase::CarrierAggregationTestCase(uint16_t nUser,
       m_ulBandwidth(ulBandwidth),
       m_numberOfComponentCarriers(numberOfComponentCarriers)
 {
-    m_dlThroughput = 0;
-    m_statsDuration = 0.6;
 }
 
-CarrierAggregationTestCase::~CarrierAggregationTestCase()
-{
-}
+CarrierAggregationTestCase::~CarrierAggregationTestCase() = default;
 
 void
 CarrierAggregationTestCase::DoRun()

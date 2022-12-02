@@ -101,7 +101,7 @@ class Ping6Helper
     /**
      * \brief Out interface index.
      */
-    uint32_t m_ifIndex;
+    uint32_t m_ifIndex{0};
 
     /**
      * \brief Routers addresses.

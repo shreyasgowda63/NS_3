@@ -33,8 +33,7 @@ NS_LOG_COMPONENT_DEFINE("PhyRxStatsCalculator");
 NS_OBJECT_ENSURE_REGISTERED(PhyRxStatsCalculator);
 
 PhyRxStatsCalculator::PhyRxStatsCalculator()
-    : m_dlRxFirstWrite(true),
-      m_ulRxFirstWrite(true)
+
 {
     NS_LOG_FUNCTION(this);
 }

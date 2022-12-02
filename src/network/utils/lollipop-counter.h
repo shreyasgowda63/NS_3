@@ -93,11 +93,10 @@ class LollipopCounter
      * \tparam T \deduced The type being used for the counter.
      */
     LollipopCounter(T val)
+        : m_value(val)
     {
         uint16_t numberofDigits = std::numeric_limits<T>::digits;
         m_sequenceWindow = 1 << (numberofDigits / 2);
-
-        m_value = val;
     }
 
     /**

@@ -71,9 +71,7 @@ CobaltQueueDiscTestItem::CobaltQueueDiscTestItem(Ptr<Packet> p,
 {
 }
 
-CobaltQueueDiscTestItem::~CobaltQueueDiscTestItem()
-{
-}
+CobaltQueueDiscTestItem::~CobaltQueueDiscTestItem() = default;
 
 void
 CobaltQueueDiscTestItem::AddHeader()
@@ -120,9 +118,10 @@ class CobaltQueueDiscBasicEnqueueDequeue : public TestCase
 };
 
 CobaltQueueDiscBasicEnqueueDequeue::CobaltQueueDiscBasicEnqueueDequeue(QueueSizeUnit mode)
-    : TestCase("Basic enqueue and dequeue operations, and attribute setting" + std::to_string(mode))
+    : TestCase("Basic enqueue and dequeue operations, and attribute setting" +
+               std::to_string(mode)),
+      m_mode(mode)
 {
-    m_mode = mode;
 }
 
 void
@@ -422,16 +421,16 @@ class CobaltQueueDiscMarkTest : public TestCase
      */
     void DropNextTracer(int64_t oldVal, int64_t newVal);
     QueueSizeUnit m_mode;             ///< mode
-    uint32_t m_dropNextCount;         ///< count the number of times m_dropNext is recalculated
+    uint32_t m_dropNextCount{0};      ///< count the number of times m_dropNext is recalculated
     uint32_t nPacketsBeforeFirstDrop; ///< Number of packets in the queue before first drop
     uint32_t nPacketsBeforeFirstMark; ///< Number of packets in the queue before first mark
 };
 
 CobaltQueueDiscMarkTest::CobaltQueueDiscMarkTest(QueueSizeUnit mode)
-    : TestCase("Basic mark operations")
+    : TestCase("Basic mark operations"),
+
+      m_mode(mode)
 {
-    m_mode = mode;
-    m_dropNextCount = 0;
 }
 
 void
@@ -888,14 +887,12 @@ class CobaltQueueDiscCeThresholdTest : public TestCase
 };
 
 CobaltQueueDiscCeThresholdTest::CobaltQueueDiscCeThresholdTest(QueueSizeUnit mode)
-    : TestCase("Test CE Threshold marking")
+    : TestCase("Test CE Threshold marking"),
+      m_mode(mode)
 {
-    m_mode = mode;
 }
 
-CobaltQueueDiscCeThresholdTest::~CobaltQueueDiscCeThresholdTest()
-{
-}
+CobaltQueueDiscCeThresholdTest::~CobaltQueueDiscCeThresholdTest() = default;
 
 void
 CobaltQueueDiscCeThresholdTest::Enqueue(Ptr<CobaltQueueDisc> queue, uint32_t size, uint32_t nPkt)
@@ -1097,14 +1094,12 @@ class CobaltQueueDiscEnhancedBlueTest : public TestCase
 };
 
 CobaltQueueDiscEnhancedBlueTest::CobaltQueueDiscEnhancedBlueTest(QueueSizeUnit mode)
-    : TestCase("Enhanced Blue tests verification for both packets and bytes mode")
+    : TestCase("Enhanced Blue tests verification for both packets and bytes mode"),
+      m_mode(mode)
 {
-    m_mode = mode;
 }
 
-CobaltQueueDiscEnhancedBlueTest::~CobaltQueueDiscEnhancedBlueTest()
-{
-}
+CobaltQueueDiscEnhancedBlueTest::~CobaltQueueDiscEnhancedBlueTest() = default;
 
 void
 CobaltQueueDiscEnhancedBlueTest::DoRun()

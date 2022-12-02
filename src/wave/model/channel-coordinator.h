@@ -248,8 +248,8 @@ class ChannelCoordinator : public Object
     typedef std::vector<Ptr<ChannelCoordinationListener>>::iterator ListenersI;
     Listeners m_listeners; ///< listeners
 
-    uint32_t m_guardCount;  ///< guard count
-    EventId m_coordination; ///< coordination event
+    uint32_t m_guardCount{0}; ///< guard count
+    EventId m_coordination;   ///< coordination event
 };
 
 } // namespace ns3

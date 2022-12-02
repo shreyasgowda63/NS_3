@@ -157,17 +157,17 @@ Ipv6Address::Ipv6Address()
 }
 
 Ipv6Address::Ipv6Address(const Ipv6Address& addr)
+    : m_initialized(true)
 {
     // Do not add function logging here, to avoid stack overflow
     memcpy(m_address, addr.m_address, 16);
-    m_initialized = true;
 }
 
 Ipv6Address::Ipv6Address(const Ipv6Address* addr)
+    : m_initialized(true)
 {
     // Do not add function logging here, to avoid stack overflow
     memcpy(m_address, addr->m_address, 16);
-    m_initialized = true;
 }
 
 Ipv6Address::Ipv6Address(const char* address)
@@ -896,15 +896,15 @@ Ipv6Prefix::Ipv6Prefix(uint8_t prefix)
 }
 
 Ipv6Prefix::Ipv6Prefix(const Ipv6Prefix& prefix)
+    : m_prefixLength(prefix.m_prefixLength)
 {
     memcpy(m_prefix, prefix.m_prefix, 16);
-    m_prefixLength = prefix.m_prefixLength;
 }
 
 Ipv6Prefix::Ipv6Prefix(const Ipv6Prefix* prefix)
+    : m_prefixLength(prefix->m_prefixLength)
 {
     memcpy(m_prefix, prefix->m_prefix, 16);
-    m_prefixLength = prefix->m_prefixLength;
 }
 
 Ipv6Prefix::~Ipv6Prefix()

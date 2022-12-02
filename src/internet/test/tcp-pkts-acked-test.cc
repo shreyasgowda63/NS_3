@@ -68,8 +68,8 @@ class TcpPktsAckedOpenTest : public TcpGeneralTest
     void FinalChecks() override;
 
   private:
-    uint32_t m_segmentsAcked;    //!< Contains the number of times PktsAcked is called
-    uint32_t m_segmentsReceived; //!< Contains the ack number received
+    uint32_t m_segmentsAcked{0};    //!< Contains the number of times PktsAcked is called
+    uint32_t m_segmentsReceived{0}; //!< Contains the ack number received
 
     Ptr<DummyCongControl> m_congCtl; //!< Dummy congestion control.
 };
@@ -90,9 +90,7 @@ class DummyCongControl : public TcpNewReno
      */
     static TypeId GetTypeId();
 
-    DummyCongControl()
-    {
-    }
+    DummyCongControl() = default;
 
     /**
      * \brief Set the callback to be used when an ACK is received.
@@ -123,9 +121,7 @@ DummyCongControl::GetTypeId()
 }
 
 TcpPktsAckedOpenTest::TcpPktsAckedOpenTest(const std::string& desc)
-    : TcpGeneralTest(desc),
-      m_segmentsAcked(0),
-      m_segmentsReceived(0)
+    : TcpGeneralTest(desc)
 {
 }
 

@@ -60,9 +60,7 @@ JakesPropagationExample::JakesPropagationExample()
     m_nextEvent = Simulator::Schedule(m_step, &JakesPropagationExample::Next, this);
 }
 
-JakesPropagationExample::~JakesPropagationExample()
-{
-}
+JakesPropagationExample::~JakesPropagationExample() = default;
 
 void
 JakesPropagationExample::Next()

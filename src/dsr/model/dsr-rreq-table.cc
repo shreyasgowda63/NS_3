@@ -56,9 +56,8 @@ DsrRreqTable::GetTypeId()
 }
 
 DsrRreqTable::DsrRreqTable()
-    : m_linkStates(PROBABLE)
-{
-}
+
+    = default;
 
 DsrRreqTable::~DsrRreqTable()
 {

@@ -180,10 +180,10 @@ class CtrlBAckRequestHeader : public Header
      * For now only non HT immediate BlockAck is implemented so this field
      * is here only for a future implementation of HT delayed variant.
      */
-    bool m_barAckPolicy;       ///< bar ack policy
-    BlockAckReqType m_barType; ///< BAR type
-    uint16_t m_tidInfo;        ///< TID info
-    uint16_t m_startingSeq;    ///< starting seq
+    bool m_barAckPolicy{false}; ///< bar ack policy
+    BlockAckReqType m_barType;  ///< BAR type
+    uint16_t m_tidInfo;         ///< TID info
+    uint16_t m_startingSeq;     ///< starting seq
 };
 
 /**
@@ -525,9 +525,9 @@ class CtrlBAckResponseHeader : public Header
      * For now only non HT immediate block ack is implemented so this field
      * is here only for a future implementation of HT delayed variant.
      */
-    bool m_baAckPolicy;    ///< BA Ack Policy
-    BlockAckType m_baType; ///< BA type
-    uint16_t m_tidInfo;    ///< TID info (reserved if Multi-STA Block Ack)
+    bool m_baAckPolicy{false}; ///< BA Ack Policy
+    BlockAckType m_baType;     ///< BA type
+    uint16_t m_tidInfo{0};     ///< TID info (reserved if Multi-STA Block Ack)
 
     /**
      * The following structure can hold the BA Information field for the Basic and
@@ -831,11 +831,11 @@ class CtrlTriggerUserInfoField
     const CtrlBAckRequestHeader& GetMuBarTriggerDepUserInfo() const;
 
   private:
-    uint16_t m_aid12;       //!< Association ID of the addressed station
-    uint8_t m_ruAllocation; //!< RU Allocation
-    bool m_ulFecCodingType; //!< UL FEC Coding Type
-    uint8_t m_ulMcs;        //!< MCS to be used by the addressed station
-    bool m_ulDcm;           //!< whether or not to use Dual Carrier Modulation
+    uint16_t m_aid12{0};           //!< Association ID of the addressed station
+    uint8_t m_ruAllocation{0};     //!< RU Allocation
+    bool m_ulFecCodingType{false}; //!< UL FEC Coding Type
+    uint8_t m_ulMcs{0};            //!< MCS to be used by the addressed station
+    bool m_ulDcm{false};           //!< whether or not to use Dual Carrier Modulation
 
     union {
         struct
@@ -851,10 +851,10 @@ class CtrlTriggerUserInfoField
         } raRuInformation; //!< Used when AID12 is 0 or 2045
     } m_bits26To31;        //!< Fields occupying bits 26-31 in the User Info field
 
-    uint8_t m_ulTargetRssi;                  //!< Expected receive signal power
-    uint8_t m_triggerType;                   //!< Trigger frame type
-    uint8_t m_basicTriggerDependentUserInfo; //!< Basic Trigger variant of Trigger Dependent User
-                                             //!< Info subfield
+    uint8_t m_ulTargetRssi{0};                  //!< Expected receive signal power
+    uint8_t m_triggerType;                      //!< Trigger frame type
+    uint8_t m_basicTriggerDependentUserInfo{0}; //!< Basic Trigger variant of Trigger Dependent User
+                                                //!< Info subfield
     CtrlBAckRequestHeader
         m_muBarTriggerDependentUserInfo; //!< MU-BAR variant of Trigger Dependent User Info subfield
 };

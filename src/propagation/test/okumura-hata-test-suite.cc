@@ -99,9 +99,7 @@ OkumuraHataPropagationLossModelTestCase::OkumuraHataPropagationLossModelTestCase
 {
 }
 
-OkumuraHataPropagationLossModelTestCase::~OkumuraHataPropagationLossModelTestCase()
-{
-}
+OkumuraHataPropagationLossModelTestCase::~OkumuraHataPropagationLossModelTestCase() = default;
 
 void
 OkumuraHataPropagationLossModelTestCase::DoRun()

@@ -21,13 +21,7 @@ using namespace ns3;
 
 TutorialApp::TutorialApp()
     : m_socket(nullptr),
-      m_peer(),
-      m_packetSize(0),
-      m_nPackets(0),
-      m_dataRate(0),
-      m_sendEvent(),
-      m_running(false),
-      m_packetsSent(0)
+      m_dataRate(0)
 {
 }
 

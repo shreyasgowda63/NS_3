@@ -248,7 +248,7 @@ class LrWpanNetDevice : public NetDevice
      * True if MAC, PHY and CSMA/CA where successfully configured and the
      * NetDevice is ready for being used.
      */
-    bool m_configComplete;
+    bool m_configComplete{false};
 
     /**
      * Configure the NetDevice to request MAC layer acknowledgments when sending

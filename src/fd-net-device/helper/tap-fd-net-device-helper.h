@@ -47,9 +47,7 @@ class TapFdNetDeviceHelper : public EmuFdNetDeviceHelper
      */
     TapFdNetDeviceHelper();
 
-    ~TapFdNetDeviceHelper() override
-    {
-    }
+    ~TapFdNetDeviceHelper() override = default;
 
     /**
      * Set flag IFF_NO_PI on the device.
@@ -119,7 +117,7 @@ class TapFdNetDeviceHelper : public EmuFdNetDeviceHelper
     /**
      * The TAP device flag IFF_NO_PI.
      */
-    bool m_modePi;
+    bool m_modePi{false};
 
     /**
      * The IPv4 address for the TAP device.
@@ -139,7 +137,7 @@ class TapFdNetDeviceHelper : public EmuFdNetDeviceHelper
     /**
      * The network prefix IPv6 for the TAP device.
      */
-    int m_tapPrefix6;
+    int m_tapPrefix6{64};
 
     /**
      * The TAP device MAC address.

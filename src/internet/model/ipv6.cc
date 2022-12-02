@@ -51,12 +51,8 @@ Ipv6::GetTypeId()
     return tid;
 }
 
-Ipv6::Ipv6()
-{
-}
+Ipv6::Ipv6() = default;
 
-Ipv6::~Ipv6()
-{
-}
+Ipv6::~Ipv6() = default;
 
 } /* namespace ns3 */

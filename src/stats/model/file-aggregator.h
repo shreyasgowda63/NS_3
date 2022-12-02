@@ -350,7 +350,7 @@ class FileAggregator : public DataCollectionObject
     std::string m_separator;
 
     /// Indicates if the heading line for the file has been set.
-    bool m_hasHeadingBeenSet;
+    bool m_hasHeadingBeenSet{false};
 
     /// Heading line for the outputfile.
     std::string m_heading;

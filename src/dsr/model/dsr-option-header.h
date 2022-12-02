@@ -134,11 +134,11 @@ class DsrOptionHeader : public Header
     /**
      * \brief The type of the option.
      */
-    uint8_t m_type;
+    uint8_t m_type{0};
     /**
      * \brief The option length.
      */
-    uint8_t m_length;
+    uint8_t m_length{0};
     /**
      * \brief The anonymous data of this option
      */
@@ -679,7 +679,7 @@ class DsrOptionSRHeader : public DsrOptionHeader
     /**
      * \brief Number of left segments.
      */
-    uint8_t m_segmentsLeft;
+    uint8_t m_segmentsLeft{0};
     /**
      * \brief Number of savlage times for a packet.
      */
@@ -819,15 +819,15 @@ class DsrOptionRerrHeader : public DsrOptionHeader
     /**
      * \brief The error type or route error option
      */
-    uint8_t m_errorType;
+    uint8_t m_errorType{0};
     /**
      * \brief The salavage field
      */
-    uint8_t m_salvage;
+    uint8_t m_salvage{0};
     /**
      * \brief The specific error message length
      */
-    uint16_t m_errorLength;
+    uint16_t m_errorLength{4};
     /**
      * \brief The error source address
      */
@@ -978,7 +978,7 @@ class DsrOptionRerrUnreachHeader : public DsrOptionRerrHeader
     /**
      * \brief The salavage field
      */
-    uint8_t m_salvage;
+    uint8_t m_salvage{0};
     /**
      * \brief The error source address
      */
@@ -1124,7 +1124,7 @@ class DsrOptionRerrUnsupportHeader : public DsrOptionRerrHeader
     /**
      * \brief The salavage field
      */
-    uint8_t m_salvage;
+    uint8_t m_salvage{0};
     /**
      * \brief The error source address
      */
@@ -1218,7 +1218,7 @@ class DsrOptionAckReqHeader : public DsrOptionHeader
     /**
      * The identification field
      */
-    uint16_t m_identification;
+    uint16_t m_identification{0};
 };
 
 /**
@@ -1324,7 +1324,7 @@ class DsrOptionAckHeader : public DsrOptionHeader
     /**
      * \brief identification field
      */
-    uint16_t m_identification;
+    uint16_t m_identification{0};
     /**
      * \brief ack source address
      */

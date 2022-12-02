@@ -175,9 +175,8 @@ PointToPointNetDevice::GetTypeId()
 }
 
 PointToPointNetDevice::PointToPointNetDevice()
-    : m_txMachineState(READY),
-      m_channel(nullptr),
-      m_linkUp(false),
+    : m_channel(nullptr),
+
       m_currentPkt(nullptr)
 {
     NS_LOG_FUNCTION(this);

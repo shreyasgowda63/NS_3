@@ -45,8 +45,8 @@ namespace tests
  */
 class EventGarbageCollectorTestCase : public TestCase
 {
-    int m_counter;                   //!< Counter to trigger deletion of events.
-    EventGarbageCollector* m_events; //!< Object under test.
+    int m_counter{0};                         //!< Counter to trigger deletion of events.
+    EventGarbageCollector* m_events{nullptr}; //!< Object under test.
 
     /** Callback to record event invocations. */
     void EventGarbageCollectorCallback();
@@ -60,15 +60,11 @@ class EventGarbageCollectorTestCase : public TestCase
 };
 
 EventGarbageCollectorTestCase::EventGarbageCollectorTestCase()
-    : TestCase("EventGarbageCollector"),
-      m_counter(0),
-      m_events(nullptr)
+    : TestCase("EventGarbageCollector")
 {
 }
 
-EventGarbageCollectorTestCase::~EventGarbageCollectorTestCase()
-{
-}
+EventGarbageCollectorTestCase::~EventGarbageCollectorTestCase() = default;
 
 void
 EventGarbageCollectorTestCase::EventGarbageCollectorCallback()

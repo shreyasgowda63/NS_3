@@ -624,7 +624,7 @@ class SixLowPanNetDevice : public NetDevice
 
     Ptr<Node> m_node;           //!< Smart pointer to the Node.
     Ptr<NetDevice> m_netDevice; //!< Smart pointer to the underlying NetDevice.
-    uint32_t m_ifIndex;         //!< Interface index.
+    uint32_t m_ifIndex{0};      //!< Interface index.
 
     /**
      * \brief Force the EtherType number.

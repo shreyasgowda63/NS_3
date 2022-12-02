@@ -111,10 +111,10 @@ class EpcTft : public SimpleRefCount<EpcTft>
 
         /// Used to specify the precedence for the packet filter among all packet filters in the
         /// TFT; higher values will be evaluated last.
-        uint8_t precedence;
+        uint8_t precedence{255};
 
         /// Whether the filter needs to be applied to uplink / downlink only, or in both cases
-        Direction direction;
+        Direction direction{BIDIRECTIONAL};
 
         Ipv4Address remoteAddress; //!< IPv4 address of the remote host
         Ipv4Mask remoteMask;       //!< IPv4 address mask of the remote host
@@ -126,13 +126,13 @@ class EpcTft : public SimpleRefCount<EpcTft>
         Ipv6Address localIpv6Address;  //!< IPv6 address of the UE
         Ipv6Prefix localIpv6Prefix;    //!< IPv6 address prefix of the UE
 
-        uint16_t remotePortStart; //!< start of the port number range of the remote host
-        uint16_t remotePortEnd;   //!< end of the port number range of the remote host
-        uint16_t localPortStart;  //!< start of the port number range of the UE
-        uint16_t localPortEnd;    //!< end of the port number range of the UE
+        uint16_t remotePortStart{0};   //!< start of the port number range of the remote host
+        uint16_t remotePortEnd{65535}; //!< end of the port number range of the remote host
+        uint16_t localPortStart{0};    //!< start of the port number range of the UE
+        uint16_t localPortEnd{65535};  //!< end of the port number range of the UE
 
-        uint8_t typeOfService;     //!< type of service field
-        uint8_t typeOfServiceMask; //!< type of service field mask
+        uint8_t typeOfService{0};     //!< type of service field
+        uint8_t typeOfServiceMask{0}; //!< type of service field mask
     };
 
     EpcTft();
@@ -193,7 +193,7 @@ class EpcTft : public SimpleRefCount<EpcTft>
 
   private:
     std::list<PacketFilter> m_filters; ///< packet filter list
-    uint8_t m_numFilters;              ///< number of packet filters applied to this TFT
+    uint8_t m_numFilters{0};           ///< number of packet filters applied to this TFT
 };
 
 std::ostream& operator<<(std::ostream& os, const EpcTft::Direction& d);

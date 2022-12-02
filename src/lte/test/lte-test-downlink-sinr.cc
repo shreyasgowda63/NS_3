@@ -120,9 +120,7 @@ LteDownlinkDataSinrTestCase::LteDownlinkDataSinrTestCase(Ptr<SpectrumValue> sv,
     NS_LOG_INFO("Creating LenaDownlinkSinrTestCase");
 }
 
-LteDownlinkDataSinrTestCase::~LteDownlinkDataSinrTestCase()
-{
-}
+LteDownlinkDataSinrTestCase::~LteDownlinkDataSinrTestCase() = default;
 
 void
 LteDownlinkDataSinrTestCase::DoRun()
@@ -290,9 +288,7 @@ LteDownlinkCtrlSinrTestCase::LteDownlinkCtrlSinrTestCase(Ptr<SpectrumValue> sv,
     NS_LOG_INFO("Creating LenaDownlinkCtrlSinrTestCase");
 }
 
-LteDownlinkCtrlSinrTestCase::~LteDownlinkCtrlSinrTestCase()
-{
-}
+LteDownlinkCtrlSinrTestCase::~LteDownlinkCtrlSinrTestCase() = default;
 
 void
 LteDownlinkCtrlSinrTestCase::DoRun()

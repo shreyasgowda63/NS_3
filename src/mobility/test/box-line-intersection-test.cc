@@ -84,9 +84,7 @@ BoxLineIntersectionTestCase::BoxLineIntersectionTestCase(uint16_t indexPos1,
 {
 }
 
-BoxLineIntersectionTestCase::~BoxLineIntersectionTestCase()
-{
-}
+BoxLineIntersectionTestCase::~BoxLineIntersectionTestCase() = default;
 
 std::string
 BoxLineIntersectionTestCase::BuildNameString(uint16_t indexPos1,

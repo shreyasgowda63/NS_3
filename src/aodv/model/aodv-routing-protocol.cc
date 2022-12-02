@@ -143,38 +143,27 @@ NS_OBJECT_ENSURE_REGISTERED(DeferredRouteOutputTag);
 
 //-----------------------------------------------------------------------------
 RoutingProtocol::RoutingProtocol()
-    : m_rreqRetries(2),
-      m_ttlStart(1),
-      m_ttlIncrement(2),
-      m_ttlThreshold(7),
-      m_timeoutBuffer(2),
-      m_rreqRateLimit(10),
-      m_rerrRateLimit(10),
-      m_activeRouteTimeout(Seconds(3)),
-      m_netDiameter(35),
+    : m_activeRouteTimeout(Seconds(3)),
+
       m_nodeTraversalTime(MilliSeconds(40)),
       m_netTraversalTime(Time((2 * m_netDiameter) * m_nodeTraversalTime)),
       m_pathDiscoveryTime(Time(2 * m_netTraversalTime)),
       m_myRouteTimeout(Time(2 * std::max(m_pathDiscoveryTime, m_activeRouteTimeout))),
       m_helloInterval(Seconds(1)),
-      m_allowedHelloLoss(2),
+
       m_deletePeriod(Time(5 * std::max(m_activeRouteTimeout, m_helloInterval))),
       m_nextHopWait(m_nodeTraversalTime + MilliSeconds(10)),
       m_blackListTimeout(Time(m_rreqRetries * m_netTraversalTime)),
-      m_maxQueueLen(64),
+
       m_maxQueueTime(Seconds(30)),
-      m_destinationOnly(false),
-      m_gratuitousReply(true),
-      m_enableHello(false),
+
       m_routingTable(m_deletePeriod),
       m_queue(m_maxQueueLen, m_maxQueueTime),
-      m_requestId(0),
-      m_seqNo(0),
+
       m_rreqIdCache(m_pathDiscoveryTime),
       m_dpd(m_pathDiscoveryTime),
       m_nb(m_helloInterval),
-      m_rreqCount(0),
-      m_rerrCount(0),
+
       m_htimer(Timer::CANCEL_ON_DESTROY),
       m_rreqRateLimitTimer(Timer::CANCEL_ON_DESTROY),
       m_rerrRateLimitTimer(Timer::CANCEL_ON_DESTROY),
@@ -354,9 +343,7 @@ RoutingProtocol::SetMaxQueueTime(Time t)
     m_queue.SetQueueTimeout(t);
 }
 
-RoutingProtocol::~RoutingProtocol()
-{
-}
+RoutingProtocol::~RoutingProtocol() = default;
 
 void
 RoutingProtocol::DoDispose()

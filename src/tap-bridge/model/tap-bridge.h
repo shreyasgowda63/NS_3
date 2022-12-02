@@ -348,7 +348,7 @@ class TapBridge : public NetDevice
     /**
      * The ns-3 interface index of this TapBridge net device.
      */
-    uint32_t m_ifIndex;
+    uint32_t m_ifIndex{0};
 
     /**
      * The common mtu to use for the net devices
@@ -359,7 +359,7 @@ class TapBridge : public NetDevice
      * The socket (actually interpreted as fd) to use to talk to the Tap device on
      * the real internet host.
      */
-    int m_sock;
+    int m_sock{-1};
 
     /**
      * The ID of the ns-3 event used to schedule the start up of the underlying
@@ -440,7 +440,7 @@ class TapBridge : public NetDevice
      * Whether the MAC address of the underlying ns-3 device has already been
      * rewritten is stored in this variable (for UseLocal/UseBridge mode only).
      */
-    bool m_ns3AddressRewritten;
+    bool m_ns3AddressRewritten{false};
 
     /**
      * A 64K buffer to hold packet data while it is being sent.

@@ -78,7 +78,7 @@ class TcpHybla : public TcpNewReno
   private:
     TracedValue<double> m_rho; //!< Rho parameter
     Time m_rRtt;               //!< Reference RTT
-    double m_cWndCnt;          //!< cWnd integer-to-float counter
+    double m_cWndCnt{0};       //!< cWnd integer-to-float counter
 
   private:
     /**

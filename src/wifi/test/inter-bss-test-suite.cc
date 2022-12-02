@@ -175,58 +175,40 @@ class TestInterBssConstantObssPdAlgo : public TestCase
      */
     void NotifyPhyRxDrop(std::string context, Ptr<const Packet> p, WifiPhyRxfailureReason reason);
 
-    unsigned int m_numSta1PacketsSent; ///< number of sent packets from STA1
-    unsigned int m_numSta2PacketsSent; ///< number of sent packets from STA2
-    unsigned int m_numAp1PacketsSent;  ///< number of sent packets from AP1
-    unsigned int m_numAp2PacketsSent;  ///< number of sent packets from AP2
+    unsigned int m_numSta1PacketsSent{0}; ///< number of sent packets from STA1
+    unsigned int m_numSta2PacketsSent{0}; ///< number of sent packets from STA2
+    unsigned int m_numAp1PacketsSent{0};  ///< number of sent packets from AP1
+    unsigned int m_numAp2PacketsSent{0};  ///< number of sent packets from AP2
 
-    unsigned int m_numSta1PacketsReceived; ///< number of received packets from STA1
-    unsigned int m_numSta2PacketsReceived; ///< number of received packets from STA2
-    unsigned int m_numAp1PacketsReceived;  ///< number of received packets from AP1
-    unsigned int m_numAp2PacketsReceived;  ///< number of received packets from AP2
+    unsigned int m_numSta1PacketsReceived{0}; ///< number of received packets from STA1
+    unsigned int m_numSta2PacketsReceived{0}; ///< number of received packets from STA2
+    unsigned int m_numAp1PacketsReceived{0};  ///< number of received packets from AP1
+    unsigned int m_numAp2PacketsReceived{0};  ///< number of received packets from AP2
 
     std::vector<WifiPhyRxfailureReason> m_dropReasonsSta1; ///< drop reasons for STA1
     std::vector<WifiPhyRxfailureReason> m_dropReasonsSta2; ///< drop reasons for STA2
     std::vector<WifiPhyRxfailureReason> m_dropReasonsAp1;  ///< drop reasons for AP1
     std::vector<WifiPhyRxfailureReason> m_dropReasonsAp2;  ///< drop reasons for AP2
 
-    unsigned int m_payloadSize1; ///< size in bytes of packet payload in BSS 1
-    unsigned int m_payloadSize2; ///< size in bytes of packet payload in BSS 2
-    unsigned int m_payloadSize3; ///< size in bytes of packet payload in BSS 3
+    unsigned int m_payloadSize1{1000}; ///< size in bytes of packet payload in BSS 1
+    unsigned int m_payloadSize2{1500}; ///< size in bytes of packet payload in BSS 2
+    unsigned int m_payloadSize3{2000}; ///< size in bytes of packet payload in BSS 3
 
     NetDeviceContainer m_staDevices; ///< STA devices
     NetDeviceContainer m_apDevices;  ///< AP devices
 
-    double m_txPowerDbm;         ///< configured transmit power in dBm
-    double m_obssPdLevelDbm;     ///< OBSS-PD level in dBm
-    double m_obssRxPowerDbm;     ///< forced RX power in dBm for OBSS
-    double m_expectedTxPowerDbm; ///< expected transmit power in dBm
+    double m_txPowerDbm{15};         ///< configured transmit power in dBm
+    double m_obssPdLevelDbm{-72};    ///< OBSS-PD level in dBm
+    double m_obssRxPowerDbm{-82};    ///< forced RX power in dBm for OBSS
+    double m_expectedTxPowerDbm{15}; ///< expected transmit power in dBm
 
-    uint8_t m_bssColor1; ///< color for BSS 1
-    uint8_t m_bssColor2; ///< color for BSS 2
-    uint8_t m_bssColor3; ///< color for BSS 3
+    uint8_t m_bssColor1{1}; ///< color for BSS 1
+    uint8_t m_bssColor2{2}; ///< color for BSS 2
+    uint8_t m_bssColor3{3}; ///< color for BSS 3
 };
 
 TestInterBssConstantObssPdAlgo::TestInterBssConstantObssPdAlgo()
-    : TestCase("InterBssConstantObssPd"),
-      m_numSta1PacketsSent(0),
-      m_numSta2PacketsSent(0),
-      m_numAp1PacketsSent(0),
-      m_numAp2PacketsSent(0),
-      m_numSta1PacketsReceived(0),
-      m_numSta2PacketsReceived(0),
-      m_numAp1PacketsReceived(0),
-      m_numAp2PacketsReceived(0),
-      m_payloadSize1(1000),
-      m_payloadSize2(1500),
-      m_payloadSize3(2000),
-      m_txPowerDbm(15),
-      m_obssPdLevelDbm(-72),
-      m_obssRxPowerDbm(-82),
-      m_expectedTxPowerDbm(15),
-      m_bssColor1(1),
-      m_bssColor2(2),
-      m_bssColor3(3)
+    : TestCase("InterBssConstantObssPd")
 {
 }
 

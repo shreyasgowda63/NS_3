@@ -96,7 +96,7 @@ class LteRlcUm : public LteRlc
 
   private:
     uint32_t m_maxTxBufferSize; ///< maximum transmit buffer status
-    uint32_t m_txBufferSize;    ///< transmit buffer size
+    uint32_t m_txBufferSize{0}; ///< transmit buffer size
 
     /**
      * \brief Store an incoming (from layer above us) PDU, waiting to transmit it
@@ -138,7 +138,7 @@ class LteRlcUm : public LteRlc
     /**
      * Constants. See section 7.2 in TS 36.322
      */
-    uint16_t m_windowSize; ///< windows size
+    uint16_t m_windowSize{512}; ///< windows size
 
     /**
      * Timers. See section 7.3 in TS 36.322

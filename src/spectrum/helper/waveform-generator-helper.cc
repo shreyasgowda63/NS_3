@@ -42,9 +42,7 @@ WaveformGeneratorHelper::WaveformGeneratorHelper()
     m_antenna.SetTypeId("ns3::IsotropicAntennaModel");
 }
 
-WaveformGeneratorHelper::~WaveformGeneratorHelper()
-{
-}
+WaveformGeneratorHelper::~WaveformGeneratorHelper() = default;
 
 void
 WaveformGeneratorHelper::SetChannel(Ptr<SpectrumChannel> channel)

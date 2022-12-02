@@ -79,8 +79,8 @@ class AmpduTag : public Tag
     Time GetRemainingAmpduDuration() const;
 
   private:
-    uint8_t m_nbOfMpdus; //!< Remaining number of MPDUs in the A-MPDU
-    Time m_duration;     //!< Remaining duration of the A-MPDU
+    uint8_t m_nbOfMpdus{0}; //!< Remaining number of MPDUs in the A-MPDU
+    Time m_duration;        //!< Remaining duration of the A-MPDU
 };
 
 } // namespace ns3

@@ -58,9 +58,7 @@ LteRlcSpecificLteMacSapUser::LteRlcSpecificLteMacSapUser(LteRlc* rlc)
 {
 }
 
-LteRlcSpecificLteMacSapUser::LteRlcSpecificLteMacSapUser()
-{
-}
+LteRlcSpecificLteMacSapUser::LteRlcSpecificLteMacSapUser() = default;
 
 void
 LteRlcSpecificLteMacSapUser::NotifyTxOpportunity(TxOpportunityParameters params)
@@ -85,10 +83,7 @@ LteRlcSpecificLteMacSapUser::ReceivePdu(LteMacSapUser::ReceivePduParameters para
 NS_OBJECT_ENSURE_REGISTERED(LteRlc);
 
 LteRlc::LteRlc()
-    : m_rlcSapUser(nullptr),
-      m_macSapProvider(nullptr),
-      m_rnti(0),
-      m_lcid(0)
+
 {
     NS_LOG_FUNCTION(this);
     m_rlcSapProvider = new LteRlcSpecificLteRlcSapProvider<LteRlc>(this);

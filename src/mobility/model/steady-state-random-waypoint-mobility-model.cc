@@ -87,18 +87,17 @@ SteadyStateRandomWaypointMobilityModel::GetTypeId()
 }
 
 SteadyStateRandomWaypointMobilityModel::SteadyStateRandomWaypointMobilityModel()
-    : alreadyStarted(false)
+    : m_speed(CreateObject<UniformRandomVariable>()),
+      m_pause(CreateObject<UniformRandomVariable>()),
+      m_position(CreateObject<RandomBoxPositionAllocator>()),
+      m_u_r(CreateObject<UniformRandomVariable>()),
+      m_x(CreateObject<UniformRandomVariable>()),
+      m_x1_r(CreateObject<UniformRandomVariable>()),
+      m_x2_r(CreateObject<UniformRandomVariable>()),
+      m_y(CreateObject<UniformRandomVariable>()),
+      m_y1_r(CreateObject<UniformRandomVariable>()),
+      m_y2_r(CreateObject<UniformRandomVariable>())
 {
-    m_speed = CreateObject<UniformRandomVariable>();
-    m_pause = CreateObject<UniformRandomVariable>();
-    m_x1_r = CreateObject<UniformRandomVariable>();
-    m_y1_r = CreateObject<UniformRandomVariable>();
-    m_x2_r = CreateObject<UniformRandomVariable>();
-    m_y2_r = CreateObject<UniformRandomVariable>();
-    m_u_r = CreateObject<UniformRandomVariable>();
-    m_x = CreateObject<UniformRandomVariable>();
-    m_y = CreateObject<UniformRandomVariable>();
-    m_position = CreateObject<RandomBoxPositionAllocator>();
 }
 
 void

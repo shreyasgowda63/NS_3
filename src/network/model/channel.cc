@@ -46,7 +46,6 @@ Channel::GetTypeId()
 }
 
 Channel::Channel()
-    : m_id(0)
 {
     NS_LOG_FUNCTION(this);
     m_id = ChannelList::Add(this);

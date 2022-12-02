@@ -52,9 +52,7 @@ class CsmaHelper : public PcapHelperForDevice, public AsciiTraceHelperForDevice
      */
     CsmaHelper();
 
-    ~CsmaHelper() override
-    {
-    }
+    ~CsmaHelper() override = default;
 
     /**
      * \tparam Ts \deduced Argument types
@@ -257,7 +255,7 @@ class CsmaHelper : public PcapHelperForDevice, public AsciiTraceHelperForDevice
     ObjectFactory m_queueFactory;   //!< factory for the queues
     ObjectFactory m_deviceFactory;  //!< factory for the NetDevices
     ObjectFactory m_channelFactory; //!< factory for the channel
-    bool m_enableFlowControl;       //!< whether to enable flow control
+    bool m_enableFlowControl{true}; //!< whether to enable flow control
 };
 
 /***************************************************************

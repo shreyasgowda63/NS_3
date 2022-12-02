@@ -42,9 +42,7 @@ class SteadyStateRandomWaypointTest : public TestCase
     {
     }
 
-    ~SteadyStateRandomWaypointTest() override
-    {
-    }
+    ~SteadyStateRandomWaypointTest() override = default;
 
   private:
     std::vector<Ptr<MobilityModel>> mobilityStack; ///< modility model

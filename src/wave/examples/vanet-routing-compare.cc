@@ -236,27 +236,19 @@ class RoutingStats
     void SetTxPkts(uint32_t txPkts);
 
   private:
-    uint32_t m_RxBytes;           ///< reeive bytes
-    uint32_t m_cumulativeRxBytes; ///< cumulative receive bytes
-    uint32_t m_RxPkts;            ///< receive packets
-    uint32_t m_cumulativeRxPkts;  ///< cumulative receive packets
-    uint32_t m_TxBytes;           ///< transmit bytes
-    uint32_t m_cumulativeTxBytes; ///< cumulative transmit bytes
-    uint32_t m_TxPkts;            ///< transmit packets
-    uint32_t m_cumulativeTxPkts;  ///< cumulative transmit packets
+    uint32_t m_RxBytes{0};           ///< reeive bytes
+    uint32_t m_cumulativeRxBytes{0}; ///< cumulative receive bytes
+    uint32_t m_RxPkts{0};            ///< receive packets
+    uint32_t m_cumulativeRxPkts{0};  ///< cumulative receive packets
+    uint32_t m_TxBytes{0};           ///< transmit bytes
+    uint32_t m_cumulativeTxBytes{0}; ///< cumulative transmit bytes
+    uint32_t m_TxPkts{0};            ///< transmit packets
+    uint32_t m_cumulativeTxPkts{0};  ///< cumulative transmit packets
 };
 
 RoutingStats::RoutingStats()
-    : m_RxBytes(0),
-      m_cumulativeRxBytes(0),
-      m_RxPkts(0),
-      m_cumulativeRxPkts(0),
-      m_TxBytes(0),
-      m_cumulativeTxBytes(0),
-      m_TxPkts(0),
-      m_cumulativeTxPkts(0)
-{
-}
+
+    = default;
 
 uint32_t
 RoutingStats::GetRxBytes()
@@ -461,14 +453,14 @@ class RoutingHelper : public Object
      */
     void ReceiveRoutingPacket(Ptr<Socket> socket);
 
-    double m_TotalSimTime;      ///< seconds
-    uint32_t m_protocol;        ///< routing protocol; 0=NONE, 1=OLSR, 2=AODV, 3=DSDV, 4=DSR
-    uint32_t m_port;            ///< port
-    uint32_t m_nSinks;          ///< number of sink nodes (< all nodes)
-    bool m_routingTables;       ///< dump routing table (at t=5 sec).  0=No, 1=Yes
-    RoutingStats routingStats;  ///< routing statistics
-    std::string m_protocolName; ///< protocol name
-    bool m_log;                 ///< log
+    double m_TotalSimTime{300.01}; ///< seconds
+    uint32_t m_protocol{0};        ///< routing protocol; 0=NONE, 1=OLSR, 2=AODV, 3=DSDV, 4=DSR
+    uint32_t m_port{9};            ///< port
+    uint32_t m_nSinks{0};          ///< number of sink nodes (< all nodes)
+    bool m_routingTables{false};   ///< dump routing table (at t=5 sec).  0=No, 1=Yes
+    RoutingStats routingStats;     ///< routing statistics
+    std::string m_protocolName;    ///< protocol name
+    bool m_log{false};             ///< log
 };
 
 NS_OBJECT_ENSURE_REGISTERED(RoutingHelper);
@@ -482,18 +474,10 @@ RoutingHelper::GetTypeId()
 }
 
 RoutingHelper::RoutingHelper()
-    : m_TotalSimTime(300.01),
-      m_protocol(0),
-      m_port(9),
-      m_nSinks(0),
-      m_routingTables(false),
-      m_log(false)
-{
-}
 
-RoutingHelper::~RoutingHelper()
-{
-}
+    = default;
+
+RoutingHelper::~RoutingHelper() = default;
 
 void
 RoutingHelper::Install(NodeContainer& c,
@@ -760,8 +744,8 @@ class WifiPhyStats : public Object
     void PhyRxDrop(std::string context, Ptr<const Packet> packet, WifiPhyRxfailureReason reason);
 
   private:
-    uint32_t m_phyTxPkts;  ///< phy transmit packets
-    uint32_t m_phyTxBytes; ///< phy transmit bytes
+    uint32_t m_phyTxPkts{0};  ///< phy transmit packets
+    uint32_t m_phyTxBytes{0}; ///< phy transmit bytes
 };
 
 NS_OBJECT_ENSURE_REGISTERED(WifiPhyStats);
@@ -775,14 +759,10 @@ WifiPhyStats::GetTypeId()
 }
 
 WifiPhyStats::WifiPhyStats()
-    : m_phyTxPkts(0),
-      m_phyTxBytes(0)
-{
-}
 
-WifiPhyStats::~WifiPhyStats()
-{
-}
+    = default;
+
+WifiPhyStats::~WifiPhyStats() = default;
 
 void
 WifiPhyStats::PhyTxTrace(std::string context,
@@ -897,13 +877,9 @@ class WifiApp
     virtual void ProcessOutputs();
 };
 
-WifiApp::WifiApp()
-{
-}
+WifiApp::WifiApp() = default;
 
-WifiApp::~WifiApp()
-{
-}
+WifiApp::~WifiApp() = default;
 
 void
 WifiApp::Simulate(int argc, char** argv)
@@ -1013,9 +989,7 @@ class ConfigStoreHelper
     void SaveConfig(std::string configFilename);
 };
 
-ConfigStoreHelper::ConfigStoreHelper()
-{
-}
+ConfigStoreHelper::ConfigStoreHelper() = default;
 
 void
 ConfigStoreHelper::LoadConfig(std::string configFilename)
@@ -1199,120 +1173,81 @@ class VanetRoutingExperiment : public WifiApp
                              std::string context,
                              Ptr<const MobilityModel> mobility);
 
-    uint32_t m_port;            ///< port
-    std::string m_CSVfileName;  ///< CSV file name
-    std::string m_CSVfileName2; ///< CSV file name
-    uint32_t m_nSinks;          ///< number of sinks
-    std::string m_protocolName; ///< protocol name
-    double m_txp;               ///< distance
-    bool m_traceMobility;       ///< trace mobility
-    uint32_t m_protocol;        ///< protocol
+    uint32_t m_port{9};          ///< port
+    std::string m_CSVfileName;   ///< CSV file name
+    std::string m_CSVfileName2;  ///< CSV file name
+    uint32_t m_nSinks{10};       ///< number of sinks
+    std::string m_protocolName;  ///< protocol name
+    double m_txp{20};            ///< distance
+    bool m_traceMobility{false}; ///< trace mobility
+    uint32_t m_protocol{2};      ///< protocol
 
-    uint32_t m_lossModel;        ///< loss model
-    uint32_t m_fading;           ///< fading
+    uint32_t m_lossModel{3};     ///< loss model
+    uint32_t m_fading{0};        ///< fading
     std::string m_lossModelName; ///< loss model name
 
-    std::string m_phyMode; ///< phy mode
-    uint32_t m_80211mode;  ///< 80211 mode
+    std::string m_phyMode;   ///< phy mode
+    uint32_t m_80211mode{1}; ///< 80211 mode
 
     std::string m_traceFile;                    ///< trace file
     std::string m_logFile;                      ///< log file
-    uint32_t m_mobility;                        ///< mobility
-    uint32_t m_nNodes;                          ///< number of nodes
-    double m_TotalSimTime;                      ///< total sim time
+    uint32_t m_mobility{1};                     ///< mobility
+    uint32_t m_nNodes{156};                     ///< number of nodes
+    double m_TotalSimTime{300.01};              ///< total sim time
     std::string m_rate;                         ///< rate
     std::string m_phyModeB;                     ///< phy mode
     std::string m_trName;                       ///< trace file name
-    int m_nodeSpeed;                            ///< in m/s
-    int m_nodePause;                            ///< in s
-    uint32_t m_wavePacketSize;                  ///< bytes
-    double m_waveInterval;                      ///< seconds
-    bool m_verbose;                             ///< verbose
+    int m_nodeSpeed{20};                        ///< in m/s
+    int m_nodePause{0};                         ///< in s
+    uint32_t m_wavePacketSize{200};             ///< bytes
+    double m_waveInterval{0.1};                 ///< seconds
+    bool m_verbose{false};                      ///< verbose
     std::ofstream m_os;                         ///< output stream
     NetDeviceContainer m_adhocTxDevices;        ///< adhoc transmit devices
     Ipv4InterfaceContainer m_adhocTxInterfaces; ///< adhoc transmit interfaces
-    uint32_t m_scenario;                        ///< scenario
-    double m_gpsAccuracyNs;                     ///< GPS accuracy
-    double m_txMaxDelayMs;                      ///< transmit maximum delay
-    bool m_routingTables;                       ///< routing tables
-    bool m_asciiTrace;                          ///< ascii trace
-    bool m_pcap;                                ///< PCAP
+    uint32_t m_scenario{1};                     ///< scenario
+    double m_gpsAccuracyNs{40};                 ///< GPS accuracy
+    double m_txMaxDelayMs{10};                  ///< transmit maximum delay
+    bool m_routingTables{false};                ///< routing tables
+    bool m_asciiTrace{false};                   ///< ascii trace
+    bool m_pcap{false};                         ///< PCAP
     std::string m_loadConfigFilename;           ///< load config file name
     std::string m_saveConfigFilename;           ///< save config file name
 
     WaveBsmHelper m_waveBsmHelper;      ///< helper
     Ptr<RoutingHelper> m_routingHelper; ///< routing helper
     Ptr<WifiPhyStats> m_wifiPhyStats;   ///< wifi phy statistics
-    bool m_log;                         ///< log
-    int64_t m_streamIndex;              ///< used to get consistent random numbers across scenarios
+    bool m_log{false};                  ///< log
+    int64_t m_streamIndex{0};           ///< used to get consistent random numbers across scenarios
     NodeContainer m_adhocTxNodes;       ///< adhoc transmit nodes
-    double m_txSafetyRange1;            ///< range 1
-    double m_txSafetyRange2;            ///< range 2
-    double m_txSafetyRange3;            ///< range 3
-    double m_txSafetyRange4;            ///< range 4
-    double m_txSafetyRange5;            ///< range 5
-    double m_txSafetyRange6;            ///< range 6
-    double m_txSafetyRange7;            ///< range 7
-    double m_txSafetyRange8;            ///< range 8
-    double m_txSafetyRange9;            ///< range 9
-    double m_txSafetyRange10;           ///< range 10
+    double m_txSafetyRange1{50.0};      ///< range 1
+    double m_txSafetyRange2{100.0};     ///< range 2
+    double m_txSafetyRange3{150.0};     ///< range 3
+    double m_txSafetyRange4{200.0};     ///< range 4
+    double m_txSafetyRange5{250.0};     ///< range 5
+    double m_txSafetyRange6{300.0};     ///< range 6
+    double m_txSafetyRange7{350.0};     ///< range 7
+    double m_txSafetyRange8{400.0};     ///< range 8
+    double m_txSafetyRange9{450.0};     ///< range 9
+    double m_txSafetyRange10{500.0};    ///< range 10
     std::vector<double> m_txSafetyRanges; ///< list of ranges
     std::string m_exp;                    ///< exp
     Time m_cumulativeBsmCaptureStart;     ///< capture start
 };
 
 VanetRoutingExperiment::VanetRoutingExperiment()
-    : m_port(9),
-      m_CSVfileName("vanet-routing.output.csv"),
+    : m_CSVfileName("vanet-routing.output.csv"),
       m_CSVfileName2("vanet-routing.output2.csv"),
-      m_nSinks(10),
       m_protocolName("protocol"),
-      m_txp(20),
-      m_traceMobility(false),
-      // AODV
-      m_protocol(2),
-      // Two-Ray ground
-      m_lossModel(3),
-      m_fading(0),
       m_lossModelName(""),
       m_phyMode("OfdmRate6MbpsBW10MHz"),
-      // 1=802.11p
-      m_80211mode(1),
       m_traceFile(""),
       m_logFile("low99-ct-unterstrass-1day.filt.7.adj.log"),
-      m_mobility(1),
-      m_nNodes(156),
-      m_TotalSimTime(300.01),
       m_rate("2048bps"),
       m_phyModeB("DsssRate11Mbps"),
       m_trName("vanet-routing-compare"),
-      m_nodeSpeed(20),
-      m_nodePause(0),
-      m_wavePacketSize(200),
-      m_waveInterval(0.1),
-      m_verbose(false),
-      m_scenario(1),
-      m_gpsAccuracyNs(40),
-      m_txMaxDelayMs(10),
-      m_routingTables(false),
-      m_asciiTrace(false),
-      m_pcap(false),
       m_loadConfigFilename("load-config.txt"),
       m_saveConfigFilename(""),
-      m_log(false),
-      m_streamIndex(0),
-      m_adhocTxNodes(),
-      m_txSafetyRange1(50.0),
-      m_txSafetyRange2(100.0),
-      m_txSafetyRange3(150.0),
-      m_txSafetyRange4(200.0),
-      m_txSafetyRange5(250.0),
-      m_txSafetyRange6(300.0),
-      m_txSafetyRange7(350.0),
-      m_txSafetyRange8(400.0),
-      m_txSafetyRange9(450.0),
-      m_txSafetyRange10(500.0),
-      m_txSafetyRanges(),
       m_exp(""),
       m_cumulativeBsmCaptureStart(0)
 {
@@ -1320,7 +1255,6 @@ VanetRoutingExperiment::VanetRoutingExperiment()
     m_routingHelper = CreateObject<RoutingHelper>();
 
     // simply uncond logging during simulation run
-    m_log = true;
 }
 
 void

@@ -23,9 +23,8 @@ namespace ns3
 {
 
 CapabilityInformation::CapabilityInformation()
-    : m_capability(0)
-{
-}
+
+    = default;
 
 void
 CapabilityInformation::SetEss()

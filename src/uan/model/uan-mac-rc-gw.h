@@ -54,7 +54,7 @@ class UanTxMode;
 class UanMacRcGw : public UanMac
 {
   public:
-    UanMacRcGw();           //!< Constructor
+    UanMacRcGw();  //!< Constructor
     ~UanMacRcGw() override; //!< Dummy destructor, see DoDispose.
 
     /**
@@ -99,7 +99,7 @@ class UanMacRcGw : public UanMac
         CTSING   //!< Sending CTS.
     };
 
-    State m_state; //!< Gateway processing state.
+    State m_state{IDLE}; //!< Gateway processing state.
 
     /**
      * \ingroup uan
@@ -132,14 +132,14 @@ class UanMacRcGw : public UanMac
     Time m_maxDelta;   //!< Maximum propagation delay between gateway and non-gateway nodes .
     Time m_sifs;       //!< Spacing between frames to account for timing error and processing delay.
     uint32_t m_maxRes; //!< Maximum number of reservations to accept per cycle.
-    uint32_t m_numRates;         //!< Number of rates per Phy layer.
-    uint32_t m_rtsSize;          //!< Size of UanHeaderCommon and UanHeaderRcRts.
-    uint32_t m_ctsSizeN;         //!< Size of UanHeaderRcCts.
-    uint32_t m_ctsSizeG;         //!< Size of UanHeaderCommon and UanHeaderRcCtsGlobal.
-    uint32_t m_ackSize;          //!< Size of UanHeaderCommon and UanHeaderRcAck.
-    uint16_t m_currentRetryRate; //!< Retry rate number for current cycle.
-    uint32_t m_currentRateNum;   //!< Rate number corresponding to data rate of current cycle.
-    uint32_t m_numNodes;         //!< Number of non-gateway nodes in this gateway's neighborhood.
+    uint32_t m_numRates;          //!< Number of rates per Phy layer.
+    uint32_t m_rtsSize;           //!< Size of UanHeaderCommon and UanHeaderRcRts.
+    uint32_t m_ctsSizeN;          //!< Size of UanHeaderRcCts.
+    uint32_t m_ctsSizeG;          //!< Size of UanHeaderCommon and UanHeaderRcCtsGlobal.
+    uint32_t m_ackSize;           //!< Size of UanHeaderCommon and UanHeaderRcAck.
+    uint16_t m_currentRetryRate;  //!< Retry rate number for current cycle.
+    uint32_t m_currentRateNum{0}; //!< Rate number corresponding to data rate of current cycle.
+    uint32_t m_numNodes;          //!< Number of non-gateway nodes in this gateway's neighborhood.
     uint32_t m_totalRate; //!< Total available channel rate in bps (for a single channel, without
                           //!< splitting reservation channel).
     uint32_t m_rateStep;  //!< Increments available for rate assignment in bps.
@@ -160,7 +160,7 @@ class UanMacRcGw : public UanMac
     std::set<std::pair<Time, Mac8Address>> m_sortedRes;
 
     /** Flag when we've been cleared. */
-    bool m_cleared;
+    bool m_cleared{false};
 
     /** A packet was destined for and received at this MAC layer. */
     TracedCallback<Ptr<const Packet>, UanTxMode> m_rxLogger;

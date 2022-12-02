@@ -126,9 +126,7 @@ StaWifiMac::GetTypeId()
 }
 
 StaWifiMac::StaWifiMac()
-    : m_state(UNASSOCIATED),
-      m_aid(0),
-      m_assocRequestEvent()
+
 {
     NS_LOG_FUNCTION(this);
 

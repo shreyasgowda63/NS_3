@@ -53,12 +53,12 @@ namespace aodv
  */
 class LoopbackTestCase : public TestCase
 {
-    uint32_t m_count;         //!< number of packet received;
-    Ptr<Socket> m_txSocket;   //!< transmit socket;
-    Ptr<Socket> m_echoSocket; //!< echo socket;
-    Ptr<Socket> m_rxSocket;   //!< receive socket;
-    uint16_t m_echoSendPort;  //!< echo send port;
-    uint16_t m_echoReplyPort; //!< echo reply port;
+    uint32_t m_count{0};            //!< number of packet received;
+    Ptr<Socket> m_txSocket;         //!< transmit socket;
+    Ptr<Socket> m_echoSocket;       //!< echo socket;
+    Ptr<Socket> m_rxSocket;         //!< receive socket;
+    uint16_t m_echoSendPort{1233};  //!< echo send port;
+    uint16_t m_echoReplyPort{1234}; //!< echo reply port;
 
     /**
      * Send data function
@@ -82,11 +82,8 @@ class LoopbackTestCase : public TestCase
 };
 
 LoopbackTestCase::LoopbackTestCase()
-    : TestCase("UDP Echo 127.0.0.1 test"),
-      m_count(0)
+    : TestCase("UDP Echo 127.0.0.1 test")
 {
-    m_echoSendPort = 1233;
-    m_echoReplyPort = 1234;
 }
 
 void

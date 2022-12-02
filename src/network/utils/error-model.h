@@ -162,7 +162,7 @@ class ErrorModel : public Object
      */
     virtual void DoReset() = 0;
 
-    bool m_enable; //!< True if the error model is enabled
+    bool m_enable{true}; //!< True if the error model is enabled
 };
 
 /**
@@ -348,8 +348,8 @@ class BurstErrorModel : public ErrorModel
      * keep track of the number of packets being errored
      * until it reaches m_burstSize
      */
-    uint32_t m_counter;
-    uint32_t m_currentBurstSz; //!< the current burst size
+    uint32_t m_counter{0};
+    uint32_t m_currentBurstSz{0}; //!< the current burst size
 };
 
 /**
@@ -451,8 +451,8 @@ class ReceiveListErrorModel : public ErrorModel
     /// Typedef: packet sequence number list const iterator
     typedef std::list<uint32_t>::const_iterator PacketListCI;
 
-    PacketList m_packetList; //!< container of sequence number of packets to corrupt
-    uint32_t m_timesInvoked; //!< number of times the error model has been invoked
+    PacketList m_packetList;    //!< container of sequence number of packets to corrupt
+    uint32_t m_timesInvoked{0}; //!< number of times the error model has been invoked
 };
 
 /**

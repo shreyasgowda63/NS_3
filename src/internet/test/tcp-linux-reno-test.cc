@@ -76,7 +76,7 @@ class TcpLinuxRenoSSTest : public TcpGeneralTest
     void ConfigureProperties() override;
     void DoTeardown() override;
 
-    bool m_initial; //!< First cycle flag.
+    bool m_initial{true}; //!< First cycle flag.
 
   private:
     void Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who) override;
@@ -86,7 +86,7 @@ class TcpLinuxRenoSSTest : public TcpGeneralTest
     uint32_t m_packets;      //!< Packet counter.
     uint32_t m_initialCwnd;  //!< Initial congestion window
     uint32_t m_delayedAck;   //!< Delayed Acknowledgement
-    uint32_t m_lastCwnd;     //!< Last cWnd value reported
+    uint32_t m_lastCwnd{0};  //!< Last cWnd value reported
     uint32_t m_expectedCwnd; //!< Expected final cWnd value
 };
 
@@ -99,13 +99,13 @@ TcpLinuxRenoSSTest::TcpLinuxRenoSSTest(uint32_t segmentSize,
                                        TypeId& typeId,
                                        const std::string& desc)
     : TcpGeneralTest(desc),
-      m_initial(true),
+
       m_segmentSize(segmentSize),
       m_packetSize(packetSize),
       m_packets(packets),
       m_initialCwnd(initialCwnd),
       m_delayedAck(delayedAck),
-      m_lastCwnd(0),
+
       m_expectedCwnd(expectedCwnd)
 {
     m_congControlTypeId = typeId;
@@ -245,18 +245,18 @@ class TcpLinuxRenoCongAvoidTest : public TcpGeneralTest
   private:
     void Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who) override;
     void Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who) override;
-    uint32_t m_segmentSize;     //!< Segment size.
-    uint32_t m_packetSize;      //!< Size of the packets used in socket writes.
-    uint32_t m_packets;         //!< Number of packets to send to the socket.
-    uint32_t m_initialCwnd;     //!< Initial congestion window (segments)
-    uint32_t m_initialSSThresh; //!< Initial slow start threshold (bytes)
-    uint32_t m_delayedAck;      //!< Delayed Acknowledgement
-    uint32_t m_lastCwnd;        //!< Last cWnd value reported
-    uint32_t m_expectedCwnd;    //!< Expected final cWnd value
-    uint32_t m_increment;       //!< Congestion window increment.
-    bool m_initial;             //!< True on first run.
-    bool m_inCongAvoidance;     //!< True if in congestion avoidance
-    bool m_inSlowStartPhase;    //!< True if in slow start
+    uint32_t m_segmentSize;        //!< Segment size.
+    uint32_t m_packetSize;         //!< Size of the packets used in socket writes.
+    uint32_t m_packets;            //!< Number of packets to send to the socket.
+    uint32_t m_initialCwnd;        //!< Initial congestion window (segments)
+    uint32_t m_initialSSThresh;    //!< Initial slow start threshold (bytes)
+    uint32_t m_delayedAck;         //!< Delayed Acknowledgement
+    uint32_t m_lastCwnd{0};        //!< Last cWnd value reported
+    uint32_t m_expectedCwnd;       //!< Expected final cWnd value
+    uint32_t m_increment{0};       //!< Congestion window increment.
+    bool m_initial{true};          //!< True on first run.
+    bool m_inCongAvoidance{false}; //!< True if in congestion avoidance
+    bool m_inSlowStartPhase{true}; //!< True if in slow start
 };
 
 TcpLinuxRenoCongAvoidTest::TcpLinuxRenoCongAvoidTest(uint32_t segmentSize,
@@ -275,12 +275,7 @@ TcpLinuxRenoCongAvoidTest::TcpLinuxRenoCongAvoidTest(uint32_t segmentSize,
       m_initialCwnd(initialCwnd),
       m_initialSSThresh(initialSSThresh),
       m_delayedAck(delayedAck),
-      m_lastCwnd(0),
-      m_expectedCwnd(expectedCwnd),
-      m_increment(0),
-      m_initial(true),
-      m_inCongAvoidance(false),
-      m_inSlowStartPhase(true)
+      m_expectedCwnd(expectedCwnd)
 {
     m_congControlTypeId = typeId;
 }

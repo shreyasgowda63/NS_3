@@ -91,7 +91,6 @@ FlowMonitor::GetInstanceTypeId() const
 }
 
 FlowMonitor::FlowMonitor()
-    : m_enabled(false)
 {
     NS_LOG_FUNCTION(this);
 }
@@ -361,7 +360,7 @@ FlowMonitor::PeriodicCheckForLostPackets()
 void
 FlowMonitor::NotifyConstructionCompleted()
 {
-    Object::NotifyConstructionCompleted();
+    NotifyConstructionCompleted();
     Simulator::Schedule(PERIODIC_CHECK_INTERVAL, &FlowMonitor::PeriodicCheckForLostPackets, this);
 }
 

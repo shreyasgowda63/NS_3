@@ -133,11 +133,11 @@ class RipRte : public Header
     Ipv4Address GetNextHop() const;
 
   private:
-    uint16_t m_tag;        //!< Route tag.
+    uint16_t m_tag{0};     //!< Route tag.
     Ipv4Address m_prefix;  //!< Advertised prefix.
     Ipv4Mask m_subnetMask; //!< Subnet mask.
     Ipv4Address m_nextHop; //!< Next hop.
-    uint32_t m_metric;     //!< Route metric.
+    uint32_t m_metric{16}; //!< Route metric.
 };
 
 /**
@@ -236,7 +236,7 @@ class RipHeader : public Header
     std::list<RipRte> GetRteList() const;
 
   private:
-    uint8_t m_command;           //!< command type
+    uint8_t m_command{0};        //!< command type
     std::list<RipRte> m_rteList; //!< list of the RTEs in the message
 };
 

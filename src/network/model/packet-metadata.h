@@ -152,8 +152,8 @@ class PacketMetadata
         const PacketMetadata* m_metadata; //!< pointer to the metadata
         Buffer m_buffer;                  //!< buffer the metadata refers to
         uint16_t m_current;               //!< current position
-        uint32_t m_offset;                //!< offset
-        bool m_hasReadTail;               //!< true if the metadata tail has been read
+        uint32_t m_offset{0};             //!< offset
+        bool m_hasReadTail{false};        //!< true if the metadata tail has been read
     };
 
     /**

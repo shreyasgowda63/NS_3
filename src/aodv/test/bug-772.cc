@@ -52,14 +52,11 @@ Bug772ChainTest::Bug772ChainTest(const char* const prefix,
                                  Time t,
                                  uint32_t size)
     : TestCase("Bug 772 UDP and TCP chain regression test"),
-      m_nodes(nullptr),
+
       m_prefix(prefix),
       m_proto(proto),
       m_time(t),
-      m_size(size),
-      m_step(120),
-      m_port(9),
-      m_receivedPackets(0)
+      m_size(size)
 {
 }
 

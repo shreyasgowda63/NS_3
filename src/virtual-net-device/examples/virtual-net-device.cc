@@ -199,20 +199,20 @@ class Tunnel
            Ipv4Address n3Addr,
            Ipv4Address n0Addr,
            Ipv4Address n1Addr)
-        : m_n3Address(n3Addr),
+        : m_n0Socket(Socket::CreateSocket(n0, TypeId::LookupByName("ns3::UdpSocketFactory"))),
+          m_n1Socket(Socket::CreateSocket(n1, TypeId::LookupByName("ns3::UdpSocketFactory"))),
+          m_n3Socket(Socket::CreateSocket(n3, TypeId::LookupByName("ns3::UdpSocketFactory"))),
+          m_n3Address(n3Addr),
           m_n0Address(n0Addr),
-          m_n1Address(n1Addr)
+          m_n1Address(n1Addr),
+          m_rng(CreateObject<UniformRandomVariable>())
     {
-        m_rng = CreateObject<UniformRandomVariable>();
-        m_n3Socket = Socket::CreateSocket(n3, TypeId::LookupByName("ns3::UdpSocketFactory"));
         m_n3Socket->Bind(InetSocketAddress(Ipv4Address::GetAny(), 667));
         m_n3Socket->SetRecvCallback(MakeCallback(&Tunnel::N3SocketRecv, this));
 
-        m_n0Socket = Socket::CreateSocket(n0, TypeId::LookupByName("ns3::UdpSocketFactory"));
         m_n0Socket->Bind(InetSocketAddress(Ipv4Address::GetAny(), 667));
         m_n0Socket->SetRecvCallback(MakeCallback(&Tunnel::N0SocketRecv, this));
 
-        m_n1Socket = Socket::CreateSocket(n1, TypeId::LookupByName("ns3::UdpSocketFactory"));
         m_n1Socket->Bind(InetSocketAddress(Ipv4Address::GetAny(), 667));
         m_n1Socket->SetRecvCallback(MakeCallback(&Tunnel::N1SocketRecv, this));
 

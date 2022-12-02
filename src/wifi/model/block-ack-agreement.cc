@@ -30,11 +30,7 @@ NS_LOG_COMPONENT_DEFINE("BlockAckAgreement");
 
 BlockAckAgreement::BlockAckAgreement(Mac48Address peer, uint8_t tid)
     : m_peer(peer),
-      m_amsduSupported(0),
-      m_blockAckPolicy(1),
-      m_tid(tid),
-      m_htSupported(0),
-      m_inactivityEvent()
+      m_tid(tid)
 {
     NS_LOG_FUNCTION(this << peer << +tid);
 }

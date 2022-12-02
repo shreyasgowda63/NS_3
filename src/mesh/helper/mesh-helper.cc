@@ -35,10 +35,7 @@
 namespace ns3
 {
 MeshHelper::MeshHelper()
-    : m_nInterfaces(1),
-      m_spreadChannelPolicy(ZERO_CHANNEL),
-      m_stack(nullptr),
-      m_standard(WIFI_STANDARD_80211a)
+    : m_stack(nullptr)
 {
 }
 

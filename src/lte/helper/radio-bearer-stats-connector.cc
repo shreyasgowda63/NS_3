@@ -134,9 +134,8 @@ UlRxPduCallback(Ptr<BoundCallbackArgument> arg,
 }
 
 RadioBearerStatsConnector::RadioBearerStatsConnector()
-    : m_connected(false)
-{
-}
+
+    = default;
 
 void
 RadioBearerStatsConnector::EnableRlcStats(Ptr<RadioBearerStatsCalculator> rlcStats)

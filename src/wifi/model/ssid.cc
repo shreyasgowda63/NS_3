@@ -24,7 +24,6 @@ namespace ns3
 
 Ssid::Ssid()
 {
-    m_length = 0;
     for (uint8_t i = 0; i < 33; i++)
     {
         m_ssid[i] = 0;

@@ -138,9 +138,7 @@ class WindowedFilter
     /**
      * \brief contructor
      */
-    WindowedFilter()
-    {
-    }
+    WindowedFilter() = default;
 
     /**
      * \brief contructor
@@ -277,9 +275,7 @@ class WindowedFilter
         /**
          * \brief constructor
          */
-        Sample()
-        {
-        }
+        Sample() = default;
 
         /**
          * \brief constructor

@@ -109,9 +109,7 @@ LrWpanDataIfsTestCase::LrWpanDataIfsTestCase()
 {
 }
 
-LrWpanDataIfsTestCase::~LrWpanDataIfsTestCase()
-{
-}
+LrWpanDataIfsTestCase::~LrWpanDataIfsTestCase() = default;
 
 void
 LrWpanDataIfsTestCase::DataConfirm(LrWpanDataIfsTestCase* testcase,

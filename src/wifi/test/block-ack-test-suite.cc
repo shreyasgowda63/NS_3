@@ -102,9 +102,7 @@ PacketBufferingCaseA::PacketBufferingCaseA()
     m_expectedBuffer.push_back(63984);
 }
 
-PacketBufferingCaseA::~PacketBufferingCaseA()
-{
-}
+PacketBufferingCaseA::~PacketBufferingCaseA() = default;
 
 void
 PacketBufferingCaseA::DoRun()
@@ -201,9 +199,7 @@ PacketBufferingCaseB::PacketBufferingCaseB()
     m_expectedBuffer.push_back(16);
 }
 
-PacketBufferingCaseB::~PacketBufferingCaseB()
-{
-}
+PacketBufferingCaseB::~PacketBufferingCaseB() = default;
 
 void
 PacketBufferingCaseB::DoRun()
@@ -800,9 +796,7 @@ BlockAckRecipientBufferTest::BlockAckRecipientBufferTest(uint16_t ssn)
 {
 }
 
-BlockAckRecipientBufferTest::~BlockAckRecipientBufferTest()
-{
-}
+BlockAckRecipientBufferTest::~BlockAckRecipientBufferTest() = default;
 
 void
 BlockAckRecipientBufferTest::ForwardUp(Ptr<const WifiMpdu> mpdu, uint8_t linkId)
@@ -1732,13 +1726,13 @@ class BlockAckAggregationDisabledTest : public TestCase
     void DoRun() override;
 
   private:
-    bool m_txop;           ///< true for non-null TXOP limit
-    uint32_t m_received;   ///< received packets
-    uint16_t m_txTotal;    ///< transmitted data packets
-    uint16_t m_txSinceBar; ///< packets transmitted since the agreement was established
-                           ///< or the last block ack was received
-    uint16_t m_nBar;       ///< transmitted BlockAckReq frames
-    uint16_t m_nBa;        ///< received BlockAck frames
+    bool m_txop;              ///< true for non-null TXOP limit
+    uint32_t m_received{0};   ///< received packets
+    uint16_t m_txTotal{0};    ///< transmitted data packets
+    uint16_t m_txSinceBar{0}; ///< packets transmitted since the agreement was established
+                              ///< or the last block ack was received
+    uint16_t m_nBar{0};       ///< transmitted BlockAckReq frames
+    uint16_t m_nBa{0};        ///< received BlockAck frames
 
     /**
      * Function to trace packets received by the server application
@@ -1776,18 +1770,11 @@ BlockAckAggregationDisabledTest::TxopDurationTracer::Trace(Time startTime,
 
 BlockAckAggregationDisabledTest::BlockAckAggregationDisabledTest(bool txop)
     : TestCase("Test case for Block Ack Policy with aggregation disabled"),
-      m_txop(txop),
-      m_received(0),
-      m_txTotal(0),
-      m_txSinceBar(0),
-      m_nBar(0),
-      m_nBa(0)
+      m_txop(txop)
 {
 }
 
-BlockAckAggregationDisabledTest::~BlockAckAggregationDisabledTest()
-{
-}
+BlockAckAggregationDisabledTest::~BlockAckAggregationDisabledTest() = default;
 
 void
 BlockAckAggregationDisabledTest::L7Receive(std::string context,

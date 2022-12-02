@@ -420,10 +420,10 @@ class Rip : public Ipv4RoutingProtocol
     std::set<uint32_t> m_interfaceExclusions;       //!< Set of excluded interfaces
     std::map<uint32_t, uint8_t> m_interfaceMetrics; //!< Map of interface metrics
 
-    SplitHorizonType_e m_splitHorizonStrategy; //!< Split Horizon strategy
+    SplitHorizonType_e m_splitHorizonStrategy{Rip::POISON_REVERSE}; //!< Split Horizon strategy
 
-    bool m_initialized;  //!< flag to allow socket's late-creation.
-    uint32_t m_linkDown; //!< Link down value.
+    bool m_initialized{false}; //!< flag to allow socket's late-creation.
+    uint32_t m_linkDown;       //!< Link down value.
 };
 
 } // namespace ns3

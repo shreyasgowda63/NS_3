@@ -338,17 +338,17 @@ class Ipv6Interface : public Object
     /**
      * \brief The state of this interface.
      */
-    bool m_ifup;
+    bool m_ifup{false};
 
     /**
      * \brief Forwarding state.
      */
-    bool m_forwarding;
+    bool m_forwarding{true};
 
     /**
      * \brief The metric.
      */
-    uint16_t m_metric;
+    uint16_t m_metric{1};
 
     /**
      * \brief Node associated with this interface.
@@ -373,24 +373,24 @@ class Ipv6Interface : public Object
     /**
      * \brief Current hop limit.
      */
-    uint8_t m_curHopLimit;
+    uint8_t m_curHopLimit{0};
 
     /**
      * \brief Base value used for computing the random reachable time value (in millisecond).
      */
-    uint16_t m_baseReachableTime;
+    uint16_t m_baseReachableTime{0};
 
     /**
      * \brief Reachable time (in millisecond).
      * The time a neighbor is considered reachable after receiving a reachability confirmation.
      */
-    uint16_t m_reachableTime;
+    uint16_t m_reachableTime{0};
 
     /**
      * \brief Retransmission timer (in millisecond).
      * Time between retransmission of NS.
      */
-    uint16_t m_retransTimer;
+    uint16_t m_retransTimer{0};
 
     Callback<void, Ptr<Ipv6Interface>, Ipv6InterfaceAddress>
         m_removeAddressCallback; //!< remove address callback

@@ -47,7 +47,6 @@ NS_LOG_COMPONENT_DEFINE("WifiMac");
 NS_OBJECT_ENSURE_REGISTERED(WifiMac);
 
 WifiMac::WifiMac()
-    : m_qosSupported(false)
 {
     NS_LOG_FUNCTION(this);
 

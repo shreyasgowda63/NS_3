@@ -93,9 +93,9 @@ class DsssPpdu : public WifiPpdu
         uint16_t GetLength() const;
 
       private:
-        uint8_t m_rate;    ///< RATE field
-        uint16_t m_length; ///< LENGTH field
-    };                     // class DsssSigHeader
+        uint8_t m_rate{0b00001010}; ///< RATE field
+        uint16_t m_length{0};       ///< LENGTH field
+    };                              // class DsssSigHeader
 
     /**
      * Create a DSSS (HR/DSSS) PPDU.

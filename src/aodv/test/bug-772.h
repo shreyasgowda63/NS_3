@@ -52,7 +52,7 @@ class Bug772ChainTest : public TestCase
 
   private:
     /// \internal It is important to have pointers here
-    NodeContainer* m_nodes;
+    NodeContainer* m_nodes{nullptr};
 
     /// PCAP file names prefix
     const std::string m_prefix;
@@ -63,9 +63,9 @@ class Bug772ChainTest : public TestCase
     /// Chain size
     const uint32_t m_size;
     /// Chain step, meters
-    const double m_step;
+    const double m_step{120};
     /// port number
-    const uint16_t m_port;
+    const uint16_t m_port{9};
 
     /// Create test topology
     void CreateNodes();
@@ -87,7 +87,7 @@ class Bug772ChainTest : public TestCase
     Ptr<Socket> m_sendSocket;
 
     /// Received packet count
-    uint32_t m_receivedPackets;
+    uint32_t m_receivedPackets{0};
 
     /**
      * Send data

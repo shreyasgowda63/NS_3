@@ -75,9 +75,7 @@ NS_LOG_COMPONENT_DEFINE("LteHelper");
 NS_OBJECT_ENSURE_REGISTERED(LteHelper);
 
 LteHelper::LteHelper()
-    : m_fadingStreamsAssigned(false),
-      m_imsiCounter(0),
-      m_cellIdCounter{1}
+
 {
     NS_LOG_FUNCTION(this);
     m_enbNetDeviceFactory.SetTypeId(LteEnbNetDevice::GetTypeId());
@@ -1235,7 +1233,7 @@ class DrbActivator : public SimpleRefCount<DrbActivator>
      * bearer. Initially is set to false and changed to true during
      * bearer activation.
      */
-    bool m_active;
+    bool m_active{false};
     /**
      * UeNetDevice for which bearer will be activated
      */
@@ -1251,8 +1249,7 @@ class DrbActivator : public SimpleRefCount<DrbActivator>
 };
 
 DrbActivator::DrbActivator(Ptr<NetDevice> ueDevice, EpsBearer bearer)
-    : m_active(false),
-      m_ueDevice(ueDevice),
+    : m_ueDevice(ueDevice),
       m_bearer(bearer),
       m_imsi(m_ueDevice->GetObject<LteUeNetDevice>()->GetImsi())
 {

@@ -39,11 +39,11 @@ class PsrExperiment
     struct Input
     {
         Input();
-        double distance;      ///< distance
-        std::string txMode;   ///< transmit mode
-        uint8_t txPowerLevel; ///< transmit power level
-        uint32_t packetSize;  ///< packet size
-        uint32_t nPackets;    ///< number of packets
+        double distance{5.0};      ///< distance
+        std::string txMode;        ///< transmit mode
+        uint8_t txPowerLevel{0};   ///< transmit power level
+        uint32_t packetSize{2304}; ///< packet size
+        uint32_t nPackets{400};    ///< number of packets
     };
 
     /// Output structure
@@ -101,16 +101,10 @@ PsrExperiment::Receive(Ptr<const WifiPsdu> psdu,
     m_output.received++;
 }
 
-PsrExperiment::PsrExperiment()
-{
-}
+PsrExperiment::PsrExperiment() = default;
 
 PsrExperiment::Input::Input()
-    : distance(5.0),
-      txMode("OfdmRate6Mbps"),
-      txPowerLevel(0),
-      packetSize(2304),
-      nPackets(400)
+    : txMode("OfdmRate6Mbps")
 {
 }
 
@@ -163,16 +157,16 @@ class CollisionExperiment
     struct Input
     {
         Input();
-        Time interval;         ///< interval
-        double xA;             ///< x A
-        double xB;             ///< x B
-        std::string txModeA;   ///< transmit mode A
-        std::string txModeB;   ///< transmit mode B
-        uint8_t txPowerLevelA; ///< transmit power level A
-        uint8_t txPowerLevelB; ///< transmit power level B
-        uint32_t packetSizeA;  ///< packet size A
-        uint32_t packetSizeB;  ///< packet size B
-        uint32_t nPackets;     ///< number of packets
+        Time interval;              ///< interval
+        double xA{-5};              ///< x A
+        double xB{5};               ///< x B
+        std::string txModeA;        ///< transmit mode A
+        std::string txModeB;        ///< transmit mode B
+        uint8_t txPowerLevelA{0};   ///< transmit power level A
+        uint8_t txPowerLevelB{0};   ///< transmit power level B
+        uint32_t packetSizeA{2304}; ///< packet size A
+        uint32_t packetSizeB{2304}; ///< packet size B
+        uint32_t nPackets{400};     ///< number of packets
     };
 
     /// Output struture
@@ -259,21 +253,13 @@ CollisionExperiment::Receive(Ptr<const WifiPsdu> psdu,
     }
 }
 
-CollisionExperiment::CollisionExperiment()
-{
-}
+CollisionExperiment::CollisionExperiment() = default;
 
 CollisionExperiment::Input::Input()
     : interval(MicroSeconds(0)),
-      xA(-5),
-      xB(5),
+
       txModeA("OfdmRate6Mbps"),
-      txModeB("OfdmRate6Mbps"),
-      txPowerLevelA(0),
-      txPowerLevelB(0),
-      packetSizeA(2304),
-      packetSizeB(2304),
-      nPackets(400)
+      txModeB("OfdmRate6Mbps")
 {
 }
 

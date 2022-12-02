@@ -61,7 +61,7 @@ class HistoryHeaderBase : public Header
     void ReportError();
 
   private:
-    bool m_ok; //!< True if no error is signalled.
+    bool m_ok{true}; //!< True if no error is signalled.
 };
 
 TypeId
@@ -72,9 +72,8 @@ HistoryHeaderBase::GetTypeId()
 }
 
 HistoryHeaderBase::HistoryHeaderBase()
-    : m_ok(true)
-{
-}
+
+    = default;
 
 bool
 HistoryHeaderBase::IsOk() const
@@ -202,7 +201,7 @@ class HistoryTrailerBase : public Trailer
     void ReportError();
 
   private:
-    bool m_ok; //!< True if no error is signalled.
+    bool m_ok{true}; //!< True if no error is signalled.
 };
 
 TypeId
@@ -213,9 +212,8 @@ HistoryTrailerBase::GetTypeId()
 }
 
 HistoryTrailerBase::HistoryTrailerBase()
-    : m_ok(true)
-{
-}
+
+    = default;
 
 bool
 HistoryTrailerBase::IsOk() const
@@ -256,9 +254,7 @@ class HistoryTrailer : public HistoryTrailerBase
 };
 
 template <int N>
-HistoryTrailer<N>::HistoryTrailer()
-{
-}
+HistoryTrailer<N>::HistoryTrailer() = default;
 
 template <int N>
 TypeId
@@ -351,9 +347,7 @@ PacketMetadataTest::PacketMetadataTest()
 {
 }
 
-PacketMetadataTest::~PacketMetadataTest()
-{
-}
+PacketMetadataTest::~PacketMetadataTest() = default;
 
 void
 PacketMetadataTest::CheckHistory(Ptr<Packet> p, uint32_t n, ...)

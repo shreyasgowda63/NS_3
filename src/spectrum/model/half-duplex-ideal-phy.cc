@@ -43,15 +43,12 @@ HalfDuplexIdealPhy::HalfDuplexIdealPhy()
     : m_mobility(nullptr),
       m_netDevice(nullptr),
       m_channel(nullptr),
-      m_txPsd(nullptr),
-      m_state(IDLE)
+      m_txPsd(nullptr)
 {
     m_interference.SetErrorModel(CreateObject<ShannonSpectrumErrorModel>());
 }
 
-HalfDuplexIdealPhy::~HalfDuplexIdealPhy()
-{
-}
+HalfDuplexIdealPhy::~HalfDuplexIdealPhy() = default;
 
 void
 HalfDuplexIdealPhy::DoDispose()

@@ -60,7 +60,6 @@ QosFrameExchangeManager::GetTypeId()
 }
 
 QosFrameExchangeManager::QosFrameExchangeManager()
-    : m_initialFrame(false)
 {
     NS_LOG_FUNCTION(this);
 }

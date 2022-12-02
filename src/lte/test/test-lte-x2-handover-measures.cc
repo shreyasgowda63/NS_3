@@ -136,7 +136,7 @@ class LteX2HandoverMeasuresTestCase : public TestCase
     uint32_t m_nDedicatedBearers;                     ///< number of UEs in the test
     std::list<CheckPointEvent> m_checkPointEventList; ///< check point event list
     std::string m_checkPointEventListName;            ///< check point event list name
-    bool m_epc;                                       ///< whether to use EPC
+    bool m_epc{true};                                 ///< whether to use EPC
     bool m_useUdp;                                    ///<  whether to use UDP traffic
     std::string m_schedulerType;                      ///< scheduler type
     std::string m_handoverAlgorithmType;              ///< handover algorithm type
@@ -185,10 +185,10 @@ class LteX2HandoverMeasuresTestCase : public TestCase
 
     std::vector<UeData> m_ueDataVector; ///< UE data vector
 
-    const Time m_maxHoDuration;        ///< maximum HO duration
-    const Time m_statsDuration;        ///< stats duration
-    const Time m_udpClientInterval;    ///< UDP client interval
-    const uint32_t m_udpClientPktSize; ///< UDP client packet size
+    const Time m_maxHoDuration;             ///< maximum HO duration
+    const Time m_statsDuration;             ///< stats duration
+    const Time m_udpClientInterval;         ///< UDP client interval
+    const uint32_t m_udpClientPktSize{100}; ///< UDP client packet size
 };
 
 std::string
@@ -242,7 +242,7 @@ LteX2HandoverMeasuresTestCase::LteX2HandoverMeasuresTestCase(
       m_nDedicatedBearers(nDedicatedBearers),
       m_checkPointEventList(checkPointEventList),
       m_checkPointEventListName(checkPointEventListName),
-      m_epc(true),
+
       m_useUdp(useUdp),
       m_schedulerType(schedulerType),
       m_handoverAlgorithmType(handoverAlgorithmType),
@@ -250,8 +250,7 @@ LteX2HandoverMeasuresTestCase::LteX2HandoverMeasuresTestCase(
       m_useIdealRrc(useIdealRrc),
       m_maxHoDuration(Seconds(0.1)),
       m_statsDuration(Seconds(0.5)),
-      m_udpClientInterval(Seconds(0.01)),
-      m_udpClientPktSize(100)
+      m_udpClientInterval(Seconds(0.01))
 {
 }
 

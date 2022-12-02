@@ -127,15 +127,7 @@ AthstatsWifiTraceSink::GetTypeId()
 }
 
 AthstatsWifiTraceSink::AthstatsWifiTraceSink()
-    : m_txCount(0),
-      m_rxCount(0),
-      m_shortRetryCount(0),
-      m_longRetryCount(0),
-      m_exceededRetryCount(0),
-      m_phyRxOkCount(0),
-      m_phyRxErrorCount(0),
-      m_phyTxCount(0),
-      m_writer(nullptr)
+
 {
     Simulator::ScheduleNow(&AthstatsWifiTraceSink::WriteStats, this);
 }

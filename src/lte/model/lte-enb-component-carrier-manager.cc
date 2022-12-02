@@ -28,14 +28,6 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("LteEnbComponentCarrierManager");
 NS_OBJECT_ENSURE_REGISTERED(LteEnbComponentCarrierManager);
 
-LteEnbComponentCarrierManager::LteEnbComponentCarrierManager()
-{
-}
-
-LteEnbComponentCarrierManager::~LteEnbComponentCarrierManager()
-{
-}
-
 TypeId
 LteEnbComponentCarrierManager::GetTypeId()
 {

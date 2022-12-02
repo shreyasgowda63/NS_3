@@ -55,9 +55,7 @@ MobilityTraceTestCase::MobilityTraceTestCase()
 {
 }
 
-MobilityTraceTestCase::~MobilityTraceTestCase()
-{
-}
+MobilityTraceTestCase::~MobilityTraceTestCase() = default;
 
 void
 MobilityTraceTestCase::DoRun()

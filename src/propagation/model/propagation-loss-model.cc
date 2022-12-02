@@ -53,9 +53,7 @@ PropagationLossModel::PropagationLossModel()
 {
 }
 
-PropagationLossModel::~PropagationLossModel()
-{
-}
+PropagationLossModel::~PropagationLossModel() = default;
 
 void
 PropagationLossModel::SetNext(Ptr<PropagationLossModel> next)
@@ -116,13 +114,10 @@ RandomPropagationLossModel::GetTypeId()
 }
 
 RandomPropagationLossModel::RandomPropagationLossModel()
-    : PropagationLossModel()
-{
-}
 
-RandomPropagationLossModel::~RandomPropagationLossModel()
-{
-}
+    = default;
+
+RandomPropagationLossModel::~RandomPropagationLossModel() = default;
 
 double
 RandomPropagationLossModel::DoCalcRxPower(double txPowerDbm,
@@ -174,9 +169,7 @@ FriisPropagationLossModel::GetTypeId()
     return tid;
 }
 
-FriisPropagationLossModel::FriisPropagationLossModel()
-{
-}
+FriisPropagationLossModel::FriisPropagationLossModel() = default;
 
 void
 FriisPropagationLossModel::SetSystemLoss(double systemLoss)
@@ -327,9 +320,7 @@ TwoRayGroundPropagationLossModel::GetTypeId()
     return tid;
 }
 
-TwoRayGroundPropagationLossModel::TwoRayGroundPropagationLossModel()
-{
-}
+TwoRayGroundPropagationLossModel::TwoRayGroundPropagationLossModel() = default;
 
 void
 TwoRayGroundPropagationLossModel::SetSystemLoss(double systemLoss)
@@ -499,9 +490,7 @@ LogDistancePropagationLossModel::GetTypeId()
     return tid;
 }
 
-LogDistancePropagationLossModel::LogDistancePropagationLossModel()
-{
-}
+LogDistancePropagationLossModel::LogDistancePropagationLossModel() = default;
 
 void
 LogDistancePropagationLossModel::SetPathLossExponent(double n)
@@ -611,9 +600,7 @@ ThreeLogDistancePropagationLossModel::GetTypeId()
     return tid;
 }
 
-ThreeLogDistancePropagationLossModel::ThreeLogDistancePropagationLossModel()
-{
-}
+ThreeLogDistancePropagationLossModel::ThreeLogDistancePropagationLossModel() = default;
 
 double
 ThreeLogDistancePropagationLossModel::DoCalcRxPower(double txPowerDbm,
@@ -711,9 +698,7 @@ NakagamiPropagationLossModel::GetTypeId()
     return tid;
 }
 
-NakagamiPropagationLossModel::NakagamiPropagationLossModel()
-{
-}
+NakagamiPropagationLossModel::NakagamiPropagationLossModel() = default;
 
 double
 NakagamiPropagationLossModel::DoCalcRxPower(double txPowerDbm,
@@ -796,13 +781,10 @@ FixedRssLossModel::GetTypeId()
 }
 
 FixedRssLossModel::FixedRssLossModel()
-    : PropagationLossModel()
-{
-}
 
-FixedRssLossModel::~FixedRssLossModel()
-{
-}
+    = default;
+
+FixedRssLossModel::~FixedRssLossModel() = default;
 
 void
 FixedRssLossModel::SetRss(double rss)
@@ -845,14 +827,11 @@ MatrixPropagationLossModel::GetTypeId()
 }
 
 MatrixPropagationLossModel::MatrixPropagationLossModel()
-    : PropagationLossModel(),
-      m_default(std::numeric_limits<double>::max())
+    : m_default(std::numeric_limits<double>::max())
 {
 }
 
-MatrixPropagationLossModel::~MatrixPropagationLossModel()
-{
-}
+MatrixPropagationLossModel::~MatrixPropagationLossModel() = default;
 
 void
 MatrixPropagationLossModel::SetDefaultLoss(double loss)
@@ -928,9 +907,7 @@ RangePropagationLossModel::GetTypeId()
     return tid;
 }
 
-RangePropagationLossModel::RangePropagationLossModel()
-{
-}
+RangePropagationLossModel::RangePropagationLossModel() = default;
 
 double
 RangePropagationLossModel::DoCalcRxPower(double txPowerDbm,

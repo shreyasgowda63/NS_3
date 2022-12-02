@@ -112,14 +112,8 @@ FlameProtocolMac::GetChannelId() const
 }
 
 FlameProtocolMac::Statistics::Statistics()
-    : txUnicast(0),
-      txBroadcast(0),
-      txBytes(0),
-      rxUnicast(0),
-      rxBroadcast(0),
-      rxBytes(0)
-{
-}
+
+    = default;
 
 void
 FlameProtocolMac::Statistics::Print(std::ostream& os) const

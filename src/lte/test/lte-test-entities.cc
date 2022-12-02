@@ -672,7 +672,6 @@ LteTestMac::Receive(Ptr<NetDevice> nd, Ptr<const Packet> p, uint16_t protocol, c
 NS_OBJECT_ENSURE_REGISTERED(EpcTestRrc);
 
 EpcTestRrc::EpcTestRrc()
-    : m_s1SapProvider(nullptr)
 {
     NS_LOG_FUNCTION(this);
     m_s1SapUser = new MemberEpcEnbS1SapUser<EpcTestRrc>(this);

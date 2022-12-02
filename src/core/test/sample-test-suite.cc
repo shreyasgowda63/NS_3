@@ -104,9 +104,7 @@ SampleTestCase1::SampleTestCase1()
  * This destructor does nothing but we include it as a reminder that
  * the test case should clean up after itself
  */
-SampleTestCase1::~SampleTestCase1()
-{
-}
+SampleTestCase1::~SampleTestCase1() = default;
 
 /**
  * This method is the pure virtual method from class TestCase that every

@@ -78,13 +78,10 @@ ChainRegressionTest::ChainRegressionTest(const char* const prefix,
                                          uint32_t size,
                                          Time arpAliveTimeout)
     : TestCase("AODV chain regression test"),
-      m_nodes(nullptr),
       m_prefix(prefix),
       m_time(t),
       m_size(size),
-      m_step(120),
-      m_arpAliveTimeout(arpAliveTimeout),
-      m_seq(0)
+      m_arpAliveTimeout(arpAliveTimeout)
 {
 }
 

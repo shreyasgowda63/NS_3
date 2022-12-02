@@ -29,9 +29,7 @@ namespace ns3
 /*
  * EnergyHarvesterHelper
  */
-EnergyHarvesterHelper::~EnergyHarvesterHelper()
-{
-}
+EnergyHarvesterHelper::~EnergyHarvesterHelper() = default;
 
 EnergyHarvesterContainer
 EnergyHarvesterHelper::Install(Ptr<EnergySource> source) const

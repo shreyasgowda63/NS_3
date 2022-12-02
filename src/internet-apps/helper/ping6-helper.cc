@@ -26,7 +26,6 @@ namespace ns3
 {
 
 Ping6Helper::Ping6Helper()
-    : m_ifIndex(0)
 {
     m_factory.SetTypeId(Ping6::GetTypeId());
 }

@@ -77,9 +77,7 @@ DsrFsHeaderTest::DsrFsHeaderTest()
 {
 }
 
-DsrFsHeaderTest::~DsrFsHeaderTest()
-{
-}
+DsrFsHeaderTest::~DsrFsHeaderTest() = default;
 
 void
 DsrFsHeaderTest::DoRun()
@@ -122,9 +120,7 @@ DsrRreqHeaderTest::DsrRreqHeaderTest()
 {
 }
 
-DsrRreqHeaderTest::~DsrRreqHeaderTest()
-{
-}
+DsrRreqHeaderTest::~DsrRreqHeaderTest() = default;
 
 void
 DsrRreqHeaderTest::DoRun()
@@ -178,9 +174,7 @@ DsrRrepHeaderTest::DsrRrepHeaderTest()
 {
 }
 
-DsrRrepHeaderTest::~DsrRrepHeaderTest()
-{
-}
+DsrRrepHeaderTest::~DsrRrepHeaderTest() = default;
 
 void
 DsrRrepHeaderTest::DoRun()
@@ -230,9 +224,7 @@ DsrSRHeaderTest::DsrSRHeaderTest()
 {
 }
 
-DsrSRHeaderTest::~DsrSRHeaderTest()
-{
-}
+DsrSRHeaderTest::~DsrSRHeaderTest() = default;
 
 void
 DsrSRHeaderTest::DoRun()
@@ -287,9 +279,7 @@ DsrRerrHeaderTest::DsrRerrHeaderTest()
 {
 }
 
-DsrRerrHeaderTest::~DsrRerrHeaderTest()
-{
-}
+DsrRerrHeaderTest::~DsrRerrHeaderTest() = default;
 
 void
 DsrRerrHeaderTest::DoRun()
@@ -335,9 +325,7 @@ DsrAckReqHeaderTest::DsrAckReqHeaderTest()
 {
 }
 
-DsrAckReqHeaderTest::~DsrAckReqHeaderTest()
-{
-}
+DsrAckReqHeaderTest::~DsrAckReqHeaderTest() = default;
 
 void
 DsrAckReqHeaderTest::DoRun()
@@ -380,9 +368,7 @@ DsrAckHeaderTest::DsrAckHeaderTest()
 {
 }
 
-DsrAckHeaderTest::~DsrAckHeaderTest()
-{
-}
+DsrAckHeaderTest::~DsrAckHeaderTest() = default;
 
 void
 DsrAckHeaderTest::DoRun()
@@ -429,9 +415,7 @@ DsrCacheEntryTest::DsrCacheEntryTest()
 {
 }
 
-DsrCacheEntryTest::~DsrCacheEntryTest()
-{
-}
+DsrCacheEntryTest::~DsrCacheEntryTest() = default;
 
 void
 DsrCacheEntryTest::DoRun()
@@ -498,14 +482,11 @@ class DsrSendBuffTest : public TestCase
 };
 
 DsrSendBuffTest::DsrSendBuffTest()
-    : TestCase("DSR SendBuff"),
-      q()
+    : TestCase("DSR SendBuff")
 {
 }
 
-DsrSendBuffTest::~DsrSendBuffTest()
-{
-}
+DsrSendBuffTest::~DsrSendBuffTest() = default;
 
 void
 DsrSendBuffTest::DoRun()
@@ -605,9 +586,7 @@ DsrRreqTableTest::DsrRreqTableTest()
 {
 }
 
-DsrRreqTableTest::~DsrRreqTableTest()
-{
-}
+DsrRreqTableTest::~DsrRreqTableTest() = default;
 
 void
 DsrRreqTableTest::DoRun()

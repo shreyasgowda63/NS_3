@@ -52,9 +52,7 @@ Ns3WimaxSfCreationTestCase::Ns3WimaxSfCreationTestCase()
 {
 }
 
-Ns3WimaxSfCreationTestCase::~Ns3WimaxSfCreationTestCase()
-{
-}
+Ns3WimaxSfCreationTestCase::~Ns3WimaxSfCreationTestCase() = default;
 
 void
 Ns3WimaxSfCreationTestCase::DoRun()

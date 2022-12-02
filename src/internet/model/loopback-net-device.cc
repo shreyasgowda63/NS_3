@@ -43,8 +43,7 @@ LoopbackNetDevice::GetTypeId()
 
 LoopbackNetDevice::LoopbackNetDevice()
     : m_node(nullptr),
-      m_mtu(0xffff),
-      m_ifIndex(0),
+
       m_address(Mac48Address("00:00:00:00:00:00"))
 {
     NS_LOG_FUNCTION(this);

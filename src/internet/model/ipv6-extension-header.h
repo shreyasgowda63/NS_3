@@ -115,13 +115,13 @@ class Ipv6ExtensionHeader : public Header
     /**
      * \brief The "length" field.
      */
-    uint8_t m_length;
+    uint8_t m_length{0};
 
   private:
     /**
      * \brief The "next header" field.
      */
-    uint8_t m_nextHeader;
+    uint8_t m_nextHeader{0};
 
     /**
      * \brief The data of the extension.
@@ -420,12 +420,12 @@ class Ipv6ExtensionFragmentHeader : public Ipv6ExtensionHeader
     /**
      * \brief Offset of the fragment and More Fragment bit.
      */
-    uint16_t m_offset;
+    uint16_t m_offset{0};
 
     /**
      * \brief Identifier of the packet.
      */
-    uint32_t m_identification;
+    uint32_t m_identification{0};
 };
 
 /**
@@ -511,12 +511,12 @@ class Ipv6ExtensionRoutingHeader : public Ipv6ExtensionHeader
     /**
      * \brief Type of routing.
      */
-    uint8_t m_typeRouting;
+    uint8_t m_typeRouting{0};
 
     /**
      * \brief Number of left segments.
      */
-    uint8_t m_segmentsLeft;
+    uint8_t m_segmentsLeft{0};
 };
 
 /**

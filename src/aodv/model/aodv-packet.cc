@@ -37,8 +37,7 @@ namespace aodv
 NS_OBJECT_ENSURE_REGISTERED(TypeHeader);
 
 TypeHeader::TypeHeader(MessageType t)
-    : m_type(t),
-      m_valid(true)
+    : m_type(t)
 {
 }
 
@@ -301,14 +300,13 @@ RrepHeader::RrepHeader(uint8_t prefixSize,
                        uint32_t dstSeqNo,
                        Ipv4Address origin,
                        Time lifeTime)
-    : m_flags(0),
-      m_prefixSize(prefixSize),
+    : m_prefixSize(prefixSize),
       m_hopCount(hopCount),
       m_dst(dst),
       m_dstSeqNo(dstSeqNo),
-      m_origin(origin)
+      m_origin(origin),
+      m_lifeTime(uint32_t(lifeTime.GetMilliSeconds()))
 {
-    m_lifeTime = uint32_t(lifeTime.GetMilliSeconds());
 }
 
 NS_OBJECT_ENSURE_REGISTERED(RrepHeader);
@@ -453,9 +451,8 @@ operator<<(std::ostream& os, const RrepHeader& h)
 //-----------------------------------------------------------------------------
 
 RrepAckHeader::RrepAckHeader()
-    : m_reserved(0)
-{
-}
+
+    = default;
 
 NS_OBJECT_ENSURE_REGISTERED(RrepAckHeader);
 
@@ -519,10 +516,8 @@ operator<<(std::ostream& os, const RrepAckHeader& h)
 // RERR
 //-----------------------------------------------------------------------------
 RerrHeader::RerrHeader()
-    : m_flag(0),
-      m_reserved(0)
-{
-}
+
+    = default;
 
 NS_OBJECT_ENSURE_REGISTERED(RerrHeader);
 

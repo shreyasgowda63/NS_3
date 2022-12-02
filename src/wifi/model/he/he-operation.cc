@@ -23,18 +23,8 @@ namespace ns3
 {
 
 HeOperation::HeOperation()
-    : m_bssColor(0),
-      m_defaultPEDuration(0),
-      m_twtRequired(0),
-      m_heDurationBasedRtsThreshold(0),
-      m_partialBssColor(0),
-      m_maxBssidIndicator(0),
-      m_txBssidIndicator(0),
-      m_bssColorDisabled(0),
-      m_dualBeacon(0),
-      m_basicHeMcsAndNssSet(0)
-{
-}
+
+    = default;
 
 WifiInformationElementId
 HeOperation::ElementId() const

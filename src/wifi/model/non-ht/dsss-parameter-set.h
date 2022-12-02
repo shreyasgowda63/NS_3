@@ -51,7 +51,7 @@ class DsssParameterSet : public WifiInformationElement
     void SerializeInformationField(Buffer::Iterator start) const override;
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 
-    uint8_t m_currentChannel; ///< current channel number
+    uint8_t m_currentChannel{0}; ///< current channel number
 };
 
 } // namespace ns3

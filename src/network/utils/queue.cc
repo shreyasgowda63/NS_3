@@ -50,15 +50,7 @@ QueueBase::GetTypeId()
 
 QueueBase::QueueBase()
     : m_nBytes(0),
-      m_nTotalReceivedBytes(0),
-      m_nPackets(0),
-      m_nTotalReceivedPackets(0),
-      m_nTotalDroppedBytes(0),
-      m_nTotalDroppedBytesBeforeEnqueue(0),
-      m_nTotalDroppedBytesAfterDequeue(0),
-      m_nTotalDroppedPackets(0),
-      m_nTotalDroppedPacketsBeforeEnqueue(0),
-      m_nTotalDroppedPacketsAfterDequeue(0)
+      m_nPackets(0)
 {
     NS_LOG_FUNCTION(this);
     m_maxSize = QueueSize(QueueSizeUnit::PACKETS, std::numeric_limits<uint32_t>::max());

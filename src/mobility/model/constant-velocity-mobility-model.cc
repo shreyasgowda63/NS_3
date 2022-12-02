@@ -35,13 +35,9 @@ ConstantVelocityMobilityModel::GetTypeId()
     return tid;
 }
 
-ConstantVelocityMobilityModel::ConstantVelocityMobilityModel()
-{
-}
+ConstantVelocityMobilityModel::ConstantVelocityMobilityModel() = default;
 
-ConstantVelocityMobilityModel::~ConstantVelocityMobilityModel()
-{
-}
+ConstantVelocityMobilityModel::~ConstantVelocityMobilityModel() = default;
 
 void
 ConstantVelocityMobilityModel::SetVelocity(const Vector& speed)

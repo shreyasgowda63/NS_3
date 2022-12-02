@@ -70,19 +70,16 @@ class TcpCloseWithLossTestCase : public TcpGeneralTest
 
   private:
     Ptr<TcpSeqErrorModel> m_errorModel; //!< The error model
-    bool m_sendClose;                   //!< true when the sender has closed
-    bool m_recvClose;                   //!< true when the receiver has closed
-    bool m_synReceived;                 //!< true when the receiver gets SYN
+    bool m_sendClose{false};            //!< true when the sender has closed
+    bool m_recvClose{false};            //!< true when the receiver has closed
+    bool m_synReceived{false};          //!< true when the receiver gets SYN
     bool m_sackEnabled;                 //!< true if sack should be enabled
 };
 
 TcpCloseWithLossTestCase::TcpCloseWithLossTestCase(bool sackEnabled)
-    : TcpGeneralTest("Testing connection closing with retransmissions")
+    : TcpGeneralTest("Testing connection closing with retransmissions"),
+      m_sackEnabled(sackEnabled)
 {
-    m_sendClose = false;
-    m_recvClose = false;
-    m_synReceived = false;
-    m_sackEnabled = sackEnabled;
 }
 
 void

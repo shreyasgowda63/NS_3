@@ -359,10 +359,10 @@ class FdBetFfMacScheduler : public FfMacScheduler
     std::map<uint16_t, uint32_t> m_ceBsrRxed;
 
     // MAC SAPs
-    FfMacCschedSapUser* m_cschedSapUser;         ///< csched sap user
-    FfMacSchedSapUser* m_schedSapUser;           ///< sched sap user
-    FfMacCschedSapProvider* m_cschedSapProvider; ///< csched sap provider
-    FfMacSchedSapProvider* m_schedSapProvider;   ///< sched sap provider
+    FfMacCschedSapUser* m_cschedSapUser{nullptr}; ///< csched sap user
+    FfMacSchedSapUser* m_schedSapUser{nullptr};   ///< sched sap user
+    FfMacCschedSapProvider* m_cschedSapProvider;  ///< csched sap provider
+    FfMacSchedSapProvider* m_schedSapProvider;    ///< sched sap provider
 
     // FFR SAPs
     LteFfrSapUser* m_ffrSapUser;         ///< ffr sap user
@@ -372,9 +372,9 @@ class FdBetFfMacScheduler : public FfMacScheduler
     FfMacCschedSapProvider::CschedCellConfigReqParameters
         m_cschedCellConfig; ///< csched cell config
 
-    double m_timeWindow; ///< time window
+    double m_timeWindow{99.0}; ///< time window
 
-    uint16_t m_nextRntiUl; ///< RNTI of the next user to be served next scheduling in UL
+    uint16_t m_nextRntiUl{0}; ///< RNTI of the next user to be served next scheduling in UL
 
     uint32_t m_cqiTimersThreshold; ///< # of TTIs for which a CQI can be considered valid
 

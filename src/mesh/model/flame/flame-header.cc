@@ -30,16 +30,10 @@ namespace flame
 NS_OBJECT_ENSURE_REGISTERED(FlameHeader);
 
 FlameHeader::FlameHeader()
-    : m_cost(0),
-      m_seqno(0),
-      m_origDst(Mac48Address()),
-      m_origSrc(Mac48Address())
-{
-}
 
-FlameHeader::~FlameHeader()
-{
-}
+    = default;
+
+FlameHeader::~FlameHeader() = default;
 
 TypeId
 FlameHeader::GetTypeId()

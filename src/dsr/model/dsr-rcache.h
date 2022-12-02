@@ -386,8 +386,8 @@ class DsrRouteCacheEntry
     IP_VECTOR m_path;             ///< brief The IP address constructed route
     Time m_expire;                ///< Expire time for queue entry
     Ipv4InterfaceAddress m_iface; ///< Output interface address
-    uint8_t m_reqCount;           ///< Number of route requests
-    bool m_blackListState;        ///< Indicate if this entry is in "blacklist"
+    uint8_t m_reqCount{0};        ///< Number of route requests
+    bool m_blackListState{false}; ///< Indicate if this entry is in "blacklist"
     Time m_blackListTimeout;      ///< Time for which the node is put into the blacklist
     Ptr<Ipv4Route> m_ipv4Route;   ///< The Ipv4 route
     Ptr<Ipv4> m_ipv4;             ///< The Ipv4 layer 3
@@ -708,9 +708,7 @@ class DsrRouteCache : public Object
         {
         }
 
-        Neighbor()
-        {
-        } // For Python bindings
+        Neighbor() = default; // For Python bindings
     };
 
     /**
@@ -820,11 +818,11 @@ class DsrRouteCache : public Object
 
     routeEntryVector m_routeEntryVector; ///< Define the route vector
 
-    uint32_t m_maxEntriesEachDst; ///< number of entries for each destination
+    uint32_t m_maxEntriesEachDst{3}; ///< number of entries for each destination
 
     std::map<Ipv4Address, uint16_t> m_ackIdCache; ///< The id cache to ensure all the ids are unique
 
-    bool m_isLinkCache; ///< Check if the route is using path cache or link cache
+    bool m_isLinkCache{false}; ///< Check if the route is using path cache or link cache
 
     bool m_subRoute; ///< Check if save the sub route entries or not
 /**

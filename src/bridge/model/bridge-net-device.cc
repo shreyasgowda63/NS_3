@@ -64,8 +64,7 @@ BridgeNetDevice::GetTypeId()
 }
 
 BridgeNetDevice::BridgeNetDevice()
-    : m_node(nullptr),
-      m_ifIndex(0)
+    : m_node(nullptr)
 {
     NS_LOG_FUNCTION_NOARGS();
     m_channel = CreateObject<BridgeChannel>();

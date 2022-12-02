@@ -30,9 +30,7 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("LteInterference");
 
 LteInterference::LteInterference()
-    : m_receiving(false),
-      m_lastSignalId(0),
-      m_lastSignalIdBeforeReset(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

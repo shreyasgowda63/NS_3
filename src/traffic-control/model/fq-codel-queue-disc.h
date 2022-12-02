@@ -99,9 +99,9 @@ class FqCoDelFlow : public QueueDiscClass
     uint32_t GetIndex() const;
 
   private:
-    int32_t m_deficit;   //!< the deficit for this flow
-    FlowStatus m_status; //!< the status of this flow
-    uint32_t m_index;    //!< the index for this flow
+    int32_t m_deficit{0};          //!< the deficit for this flow
+    FlowStatus m_status{INACTIVE}; //!< the status of this flow
+    uint32_t m_index{0};           //!< the index for this flow
 };
 
 /**
@@ -170,7 +170,7 @@ class FqCoDelQueueDisc : public QueueDisc
 
     std::string m_interval;          //!< CoDel interval attribute
     std::string m_target;            //!< CoDel target attribute
-    uint32_t m_quantum;              //!< Deficit assigned to flows at each round
+    uint32_t m_quantum{0};           //!< Deficit assigned to flows at each round
     uint32_t m_flows;                //!< Number of flow queues
     uint32_t m_setWays;              //!< size of a set of queues (used by set associative hash)
     uint32_t m_dropBatchSize;        //!< Max number of packets dropped from the fat flow

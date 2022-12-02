@@ -40,8 +40,7 @@ Synchronizer::GetTypeId()
 }
 
 Synchronizer::Synchronizer()
-    : m_realtimeOriginNano(0),
-      m_simOriginNano(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

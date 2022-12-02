@@ -37,13 +37,9 @@ FlameStack::GetTypeId()
     return tid;
 }
 
-FlameStack::FlameStack()
-{
-}
+FlameStack::FlameStack() = default;
 
-FlameStack::~FlameStack()
-{
-}
+FlameStack::~FlameStack() = default;
 
 void
 FlameStack::DoDispose()

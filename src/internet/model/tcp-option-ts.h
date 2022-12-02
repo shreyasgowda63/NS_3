@@ -101,8 +101,8 @@ class TcpOptionTS : public TcpOption
     static Time ElapsedTimeFromTsValue(uint32_t echoTime);
 
   protected:
-    uint32_t m_timestamp; //!< local timestamp
-    uint32_t m_echo;      //!< echo timestamp
+    uint32_t m_timestamp{0}; //!< local timestamp
+    uint32_t m_echo{0};      //!< echo timestamp
 };
 
 } // namespace ns3

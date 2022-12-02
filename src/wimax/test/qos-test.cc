@@ -59,9 +59,7 @@ Ns3WimaxSchedulingTestCase::Ns3WimaxSchedulingTestCase()
 {
 }
 
-Ns3WimaxSchedulingTestCase::~Ns3WimaxSchedulingTestCase()
-{
-}
+Ns3WimaxSchedulingTestCase::~Ns3WimaxSchedulingTestCase() = default;
 
 bool
 Ns3WimaxSchedulingTestCase::DoRunOnce(WimaxHelper::SchedulerType scheduler)
@@ -191,9 +189,7 @@ Ns3WimaxSFTypeTestCase::Ns3WimaxSFTypeTestCase()
 {
 }
 
-Ns3WimaxSFTypeTestCase::~Ns3WimaxSFTypeTestCase()
-{
-}
+Ns3WimaxSFTypeTestCase::~Ns3WimaxSFTypeTestCase() = default;
 
 bool
 Ns3WimaxSFTypeTestCase::DoRunOnce(ServiceFlow::SchedulingType schedulingType)

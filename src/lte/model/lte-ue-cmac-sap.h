@@ -39,7 +39,7 @@ class LteMacSapUser;
 class LteUeCmacSapProvider
 {
   public:
-    virtual ~LteUeCmacSapProvider();
+    virtual ~LteUeCmacSapProvider() = default;
 
     /// RachConfig structure
     struct RachConfig
@@ -135,7 +135,7 @@ class LteUeCmacSapProvider
 class LteUeCmacSapUser
 {
   public:
-    virtual ~LteUeCmacSapUser();
+    virtual ~LteUeCmacSapUser() = default;
 
     /**
      *

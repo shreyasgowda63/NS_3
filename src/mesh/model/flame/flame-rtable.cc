@@ -53,9 +53,7 @@ FlameRtable::FlameRtable()
 {
 }
 
-FlameRtable::~FlameRtable()
-{
-}
+FlameRtable::~FlameRtable() = default;
 
 void
 FlameRtable::DoDispose()

@@ -221,9 +221,7 @@ IpAddressHelperTestCasev4::IpAddressHelperTestCasev4()
 {
 }
 
-IpAddressHelperTestCasev4::~IpAddressHelperTestCasev4()
-{
-}
+IpAddressHelperTestCasev4::~IpAddressHelperTestCasev4() = default;
 
 void
 IpAddressHelperTestCasev4::DoRun()

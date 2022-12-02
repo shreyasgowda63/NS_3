@@ -144,15 +144,15 @@ class IePrep : public WifiInformationElement
     void Print(std::ostream& os) const override;
 
   private:
-    uint8_t m_flags;                   ///< flags
-    uint8_t m_hopcount;                ///< hop count
-    uint8_t m_ttl;                     ///< TTL
+    uint8_t m_flags{0};                ///< flags
+    uint8_t m_hopcount{0};             ///< hop count
+    uint8_t m_ttl{0};                  ///< TTL
     Mac48Address m_destinationAddress; ///< destination address
-    uint32_t m_destSeqNumber;          ///< destination sequence number
-    uint32_t m_lifetime;               ///< lifetime
-    uint32_t m_metric;                 ///< metric
+    uint32_t m_destSeqNumber{0};       ///< destination sequence number
+    uint32_t m_lifetime{0};            ///< lifetime
+    uint32_t m_metric{0};              ///< metric
     Mac48Address m_originatorAddress;  ///< originator address
-    uint32_t m_originatorSeqNumber;    ///< originator sequence number
+    uint32_t m_originatorSeqNumber{0}; ///< originator sequence number
     /**
      * equality operator
      *

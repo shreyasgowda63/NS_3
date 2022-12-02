@@ -38,13 +38,9 @@ WifiTxCurrentModel::GetTypeId()
     return tid;
 }
 
-WifiTxCurrentModel::WifiTxCurrentModel()
-{
-}
+WifiTxCurrentModel::WifiTxCurrentModel() = default;
 
-WifiTxCurrentModel::~WifiTxCurrentModel()
-{
-}
+WifiTxCurrentModel::~WifiTxCurrentModel() = default;
 
 NS_OBJECT_ENSURE_REGISTERED(LinearWifiTxCurrentModel);
 

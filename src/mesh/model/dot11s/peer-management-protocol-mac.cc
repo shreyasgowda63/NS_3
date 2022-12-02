@@ -40,14 +40,12 @@ namespace dot11s
 {
 PeerManagementProtocolMac::PeerManagementProtocolMac(uint32_t interface,
                                                      Ptr<PeerManagementProtocol> protocol)
+    : m_ifIndex(interface),
+      m_protocol(protocol)
 {
-    m_ifIndex = interface;
-    m_protocol = protocol;
 }
 
-PeerManagementProtocolMac::~PeerManagementProtocolMac()
-{
-}
+PeerManagementProtocolMac::~PeerManagementProtocolMac() = default;
 
 void
 PeerManagementProtocolMac::SetParent(Ptr<MeshWifiInterfaceMac> parent)
@@ -373,21 +371,8 @@ PeerManagementProtocolMac::SetBeaconShift(Time shift)
 }
 
 PeerManagementProtocolMac::Statistics::Statistics()
-    : txOpen(0),
-      txConfirm(0),
-      txClose(0),
-      rxOpen(0),
-      rxConfirm(0),
-      rxClose(0),
-      dropped(0),
-      brokenMgt(0),
-      txMgt(0),
-      txMgtBytes(0),
-      rxMgt(0),
-      rxMgtBytes(0),
-      beaconShift(0)
-{
-}
+
+    = default;
 
 void
 PeerManagementProtocolMac::Statistics::Print(std::ostream& os) const

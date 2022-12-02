@@ -26,13 +26,9 @@
 namespace ns3
 {
 
-Ipv6Route::Ipv6Route()
-{
-}
+Ipv6Route::Ipv6Route() = default;
 
-Ipv6Route::~Ipv6Route()
-{
-}
+Ipv6Route::~Ipv6Route() = default;
 
 void
 Ipv6Route::SetDestination(Ipv6Address dest)
@@ -95,9 +91,7 @@ Ipv6MulticastRoute::Ipv6MulticastRoute()
     m_ttls.clear();
 }
 
-Ipv6MulticastRoute::~Ipv6MulticastRoute()
-{
-}
+Ipv6MulticastRoute::~Ipv6MulticastRoute() = default;
 
 void
 Ipv6MulticastRoute::SetGroup(const Ipv6Address group)

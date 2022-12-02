@@ -38,14 +38,13 @@ namespace
 struct Zeroes
 {
     Zeroes()
-        : size(1000)
     {
         memset(buffer, 0, size);
     }
 
-    char buffer[1000];   //!< buffer containing zero values
-    const uint32_t size; //!< buffer size
-} g_zeroes;              //!< Zero-filled buffer
+    char buffer[1000];         //!< buffer containing zero values
+    const uint32_t size{1000}; //!< buffer size
+} g_zeroes;                    //!< Zero-filled buffer
 
 } // namespace
 

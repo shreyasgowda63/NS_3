@@ -70,9 +70,7 @@ QueueDiscTestItem::QueueDiscTestItem(Ptr<Packet> p)
 {
 }
 
-QueueDiscTestItem::~QueueDiscTestItem()
-{
-}
+QueueDiscTestItem::~QueueDiscTestItem() = default;
 
 void
 QueueDiscTestItem::AddHeader()
@@ -148,9 +146,7 @@ TcFlowControlTestCase::TcFlowControlTestCase(QueueSizeUnit tt,
 {
 }
 
-TcFlowControlTestCase::~TcFlowControlTestCase()
-{
-}
+TcFlowControlTestCase::~TcFlowControlTestCase() = default;
 
 void
 TcFlowControlTestCase::SendPackets(Ptr<Node> n, uint16_t nPackets)

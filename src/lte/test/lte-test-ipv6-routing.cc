@@ -111,9 +111,7 @@ LteIpv6RoutingTestCase::LteIpv6RoutingTestCase()
 {
 }
 
-LteIpv6RoutingTestCase::~LteIpv6RoutingTestCase()
-{
-}
+LteIpv6RoutingTestCase::~LteIpv6RoutingTestCase() = default;
 
 void
 LteIpv6RoutingTestCase::SentAtClient(Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface)

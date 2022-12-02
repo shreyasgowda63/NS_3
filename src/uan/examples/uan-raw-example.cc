@@ -101,9 +101,7 @@ class UanExperiment
     std::map<Ptr<Node>, Ptr<Socket>> m_sockets; //!< send and receive sockets
 };
 
-UanExperiment::UanExperiment()
-{
-}
+UanExperiment::UanExperiment() = default;
 
 void
 UanExperiment::SetupPositions()

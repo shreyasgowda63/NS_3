@@ -132,7 +132,7 @@ class Mac8Address
 
   private:
     static uint8_t m_allocationIndex; //!< Address allocation index
-    uint8_t m_address;                //!< The address.
+    uint8_t m_address{255};           //!< The address.
 
     /**
      * Get the Mac8Address type.

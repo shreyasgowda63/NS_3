@@ -186,12 +186,12 @@ class ShowProgress
     Time m_interval;                  //!< The target update interval, in wallclock time
     Time m_vtime;                     //!< The virtual time interval.
     EventId m_event;                  //!< The next progress event.
-    uint64_t m_eventCount;            //!< Simulator event count
+    uint64_t m_eventCount{0};         //!< Simulator event count
 
-    TimePrinter m_printer; //!< The TimePrinter to use
-    std::ostream* m_os;    //!< The output stream to use.
-    bool m_verbose;        //!< Verbose mode flag
-    uint64_t m_repCount;   //!< Number of CheckProgress events
+    TimePrinter m_printer;  //!< The TimePrinter to use
+    std::ostream* m_os;     //!< The output stream to use.
+    bool m_verbose{false};  //!< Verbose mode flag
+    uint64_t m_repCount{0}; //!< Number of CheckProgress events
 
 }; // class ShowProgress
 

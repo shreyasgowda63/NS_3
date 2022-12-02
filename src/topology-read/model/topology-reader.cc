@@ -101,16 +101,14 @@ TopologyReader::Link::Link(Ptr<Node> fromPtr,
                            const std::string& fromName,
                            Ptr<Node> toPtr,
                            const std::string& toName)
+    : m_fromPtr(fromPtr),
+      m_fromName(fromName),
+      m_toName(toName),
+      m_toPtr(toPtr)
 {
-    m_fromPtr = fromPtr;
-    m_fromName = fromName;
-    m_toPtr = toPtr;
-    m_toName = toName;
 }
 
-TopologyReader::Link::Link()
-{
-}
+TopologyReader::Link::Link() = default;
 
 Ptr<Node>
 TopologyReader::Link::GetFromNode() const

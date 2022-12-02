@@ -35,9 +35,7 @@ FlowProbe::GetTypeId()
     return tid;
 }
 
-FlowProbe::~FlowProbe()
-{
-}
+FlowProbe::~FlowProbe() = default;
 
 FlowProbe::FlowProbe(Ptr<FlowMonitor> flowMonitor)
     : m_flowMonitor(flowMonitor)

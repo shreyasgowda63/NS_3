@@ -46,9 +46,7 @@ WifiMpdu::WifiMpdu(Ptr<const Packet> p, const WifiMacHeader& header)
     m_inFlight = false;
 }
 
-WifiMpdu::~WifiMpdu()
-{
-}
+WifiMpdu::~WifiMpdu() = default;
 
 Ptr<const Packet>
 WifiMpdu::GetPacket() const

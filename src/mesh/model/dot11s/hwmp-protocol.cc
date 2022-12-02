@@ -153,27 +153,16 @@ HwmpProtocol::GetTypeId()
 }
 
 HwmpProtocol::HwmpProtocol()
-    : m_dataSeqno(1),
-      m_hwmpSeqno(1),
-      m_preqId(0),
-      m_rtable(CreateObject<HwmpRtable>()),
+    : m_rtable(CreateObject<HwmpRtable>()),
       m_randomStart(Seconds(0.1)),
-      m_maxQueueSize(255),
-      m_dot11MeshHWMPmaxPREQretries(3),
+
       m_dot11MeshHWMPnetDiameterTraversalTime(MicroSeconds(1024 * 100)),
       m_dot11MeshHWMPpreqMinInterval(MicroSeconds(1024 * 100)),
       m_dot11MeshHWMPperrMinInterval(MicroSeconds(1024 * 100)),
       m_dot11MeshHWMPactiveRootTimeout(MicroSeconds(1024 * 5000)),
       m_dot11MeshHWMPactivePathTimeout(MicroSeconds(1024 * 5000)),
       m_dot11MeshHWMPpathToRootInterval(MicroSeconds(1024 * 2000)),
-      m_dot11MeshHWMPrannInterval(MicroSeconds(1024 * 5000)),
-      m_isRoot(false),
-      m_maxTtl(32),
-      m_unicastPerrThreshold(32),
-      m_unicastPreqThreshold(1),
-      m_unicastDataThreshold(1),
-      m_doFlag(false),
-      m_rfFlag(false)
+      m_dot11MeshHWMPrannInterval(MicroSeconds(1024 * 5000))
 {
     NS_LOG_FUNCTION(this);
     m_coefficient = CreateObject<UniformRandomVariable>();
@@ -1277,17 +1266,8 @@ HwmpProtocol::GetAddress()
 
 // Statistics:
 HwmpProtocol::Statistics::Statistics()
-    : txUnicast(0),
-      txBroadcast(0),
-      txBytes(0),
-      droppedTtl(0),
-      totalQueued(0),
-      totalDropped(0),
-      initiatedPreq(0),
-      initiatedPrep(0),
-      initiatedPerr(0)
-{
-}
+
+    = default;
 
 void
 HwmpProtocol::Statistics::Print(std::ostream& os) const
@@ -1389,9 +1369,7 @@ HwmpProtocol::GetRoutingTable() const
 }
 
 HwmpProtocol::QueuedPacket::QueuedPacket()
-    : pkt(nullptr),
-      protocol(0),
-      inInterface(0)
+    : pkt(nullptr)
 {
 }
 } // namespace dot11s

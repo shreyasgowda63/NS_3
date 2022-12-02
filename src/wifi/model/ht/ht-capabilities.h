@@ -273,81 +273,83 @@ class HtCapabilities : public WifiInformationElement
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 
     // HT Capabilities Info field
-    uint8_t m_ldpc;                  ///< LDPC
-    uint8_t m_supportedChannelWidth; ///< supported channel width
-    uint8_t m_smPowerSave;           ///< SM power save
-    uint8_t m_greenField;            ///< Greenfield
-    uint8_t m_shortGuardInterval20;  ///< short guard interval 20 MHz
-    uint8_t m_shortGuardInterval40;  ///< short guard interval 40 MHz
-    uint8_t m_txStbc;                ///< transmit STBC
-    uint8_t m_rxStbc;                ///< receive STBC
-    uint8_t m_htDelayedBlockAck;     ///< HT delayed block ack
-    uint8_t m_maxAmsduLength;        ///< maximum A-MSDU length
-    uint8_t m_dssMode40;             ///< DSS mode 40
-    uint8_t m_psmpSupport;           ///< PSMP support
-    uint8_t m_fortyMhzIntolerant;    ///< 40 MHz intolerant
-    uint8_t m_lsigProtectionSupport; ///< L-SIG protection support
+    uint8_t m_ldpc{0};                  ///< LDPC
+    uint8_t m_supportedChannelWidth{0}; ///< supported channel width
+    uint8_t m_smPowerSave{0};           ///< SM power save
+    uint8_t m_greenField{0};            ///< Greenfield
+    uint8_t m_shortGuardInterval20{0};  ///< short guard interval 20 MHz
+    uint8_t m_shortGuardInterval40{0};  ///< short guard interval 40 MHz
+    uint8_t m_txStbc{0};                ///< transmit STBC
+    uint8_t m_rxStbc{0};                ///< receive STBC
+    uint8_t m_htDelayedBlockAck{0};     ///< HT delayed block ack
+    uint8_t m_maxAmsduLength{0};        ///< maximum A-MSDU length
+    uint8_t m_dssMode40{0};             ///< DSS mode 40
+    uint8_t m_psmpSupport{0};           ///< PSMP support
+    uint8_t m_fortyMhzIntolerant{0};    ///< 40 MHz intolerant
+    uint8_t m_lsigProtectionSupport{0}; ///< L-SIG protection support
 
     // A-MPDU Parameters field
-    uint8_t m_maxAmpduLengthExponent; ///< maximum A-MPDU length
-    uint8_t m_minMpduStartSpace;      ///< minimum MPDU start space
-    uint8_t m_ampduReserved;          ///< A-MPDU reserved
+    uint8_t m_maxAmpduLengthExponent{0}; ///< maximum A-MPDU length
+    uint8_t m_minMpduStartSpace{0};      ///< minimum MPDU start space
+    uint8_t m_ampduReserved{0};          ///< A-MPDU reserved
 
     // Supported MCS Set field
-    uint8_t m_reservedMcsSet1;                 ///< reserved MCS set 1
-    uint16_t m_rxHighestSupportedDataRate;     ///< receive highest supported data rate
-    uint8_t m_reservedMcsSet2;                 ///< reserved MCS set 2
-    uint8_t m_txMcsSetDefined;                 ///< transmit MCS set defined
-    uint8_t m_txRxMcsSetUnequal;               ///< transmit / receive MCS set unequal
-    uint8_t m_txMaxNSpatialStreams;            ///< transmit maximum number spatial streams
-    uint8_t m_txUnequalModulation;             ///< transmit unequal modulation
-    uint32_t m_reservedMcsSet3;                ///< reserved MCS set 3
+    uint8_t m_reservedMcsSet1{0};              ///< reserved MCS set 1
+    uint16_t m_rxHighestSupportedDataRate{0};  ///< receive highest supported data rate
+    uint8_t m_reservedMcsSet2{0};              ///< reserved MCS set 2
+    uint8_t m_txMcsSetDefined{0};              ///< transmit MCS set defined
+    uint8_t m_txRxMcsSetUnequal{0};            ///< transmit / receive MCS set unequal
+    uint8_t m_txMaxNSpatialStreams{0};         ///< transmit maximum number spatial streams
+    uint8_t m_txUnequalModulation{0};          ///< transmit unequal modulation
+    uint32_t m_reservedMcsSet3{0};             ///< reserved MCS set 3
     uint8_t m_rxMcsBitmask[MAX_SUPPORTED_MCS]; ///< receive MCS bitmask
 
     // HT Extended Capabilities field
-    uint8_t m_pco;                           ///< PCO
-    uint8_t m_pcoTransitionTime;             ///< PCO transition time
-    uint8_t m_reservedExtendedCapabilities;  ///< reserved extended capabilities
-    uint8_t m_mcsFeedback;                   ///< MCS feedback
-    uint8_t m_htcSupport;                    ///< HTC support
-    uint8_t m_reverseDirectionResponder;     ///< reverse direction responder
-    uint8_t m_reservedExtendedCapabilities2; ///< reserver extended capabilities 2
+    uint8_t m_pco{0};                           ///< PCO
+    uint8_t m_pcoTransitionTime{0};             ///< PCO transition time
+    uint8_t m_reservedExtendedCapabilities{0};  ///< reserved extended capabilities
+    uint8_t m_mcsFeedback{0};                   ///< MCS feedback
+    uint8_t m_htcSupport{0};                    ///< HTC support
+    uint8_t m_reverseDirectionResponder{0};     ///< reverse direction responder
+    uint8_t m_reservedExtendedCapabilities2{0}; ///< reserver extended capabilities 2
 
     // Transmit Beamforming Capabilities field
-    uint8_t m_implicitRxBfCapable;                  ///< implicit receive BF capable
-    uint8_t m_rxStaggeredSoundingCapable;           ///< receive staggered sounding capable
-    uint8_t m_txStaggeredSoundingCapable;           ///< transmit staggered sounding capable
-    uint8_t m_rxNdpCapable;                         ///< receive NDP capable
-    uint8_t m_txNdpCapable;                         ///< transmit NDP capable
-    uint8_t m_implicitTxBfCapable;                  ///< implicit transmit BF capable
-    uint8_t m_calibration;                          ///< calibration
-    uint8_t m_explicitCsiTxBfCapable;               ///< explicit CSI transmit BF capable
-    uint8_t m_explicitNoncompressedSteeringCapable; ///< explicit non compressed steeering capable
-    uint8_t m_explicitCompressedSteeringCapable;    ///< explicit compressed steeering capable
-    uint8_t m_explicitTxBfCsiFeedback;              ///< explicit transmit BF CSI feedback
-    uint8_t
-        m_explicitNoncompressedBfFeedbackCapable;  ///< explicit non compressed BF feedback capable
-    uint8_t m_explicitCompressedBfFeedbackCapable; ///< explicit compressed BF feedback capable
-    uint8_t m_minimalGrouping;                     ///< minimal grouping
-    uint8_t m_csiNBfAntennasSupported;             ///< CSI NBF antenna supported
-    uint8_t m_noncompressedSteeringNBfAntennasSupported; ///< non compressed steering NBF antenna
-                                                         ///< supported
-    uint8_t m_compressedSteeringNBfAntennasSupported; ///< compressed steering NBF antenna supported
-    uint8_t m_csiMaxNRowsBfSupported;                 ///< CSI maximum number rows BF supported
-    uint8_t m_channelEstimationCapability;            ///< channel estimation capability
-    uint8_t m_reservedTxBf;                           ///< reserved  transmit BF
+    uint8_t m_implicitRxBfCapable{0};        ///< implicit receive BF capable
+    uint8_t m_rxStaggeredSoundingCapable{0}; ///< receive staggered sounding capable
+    uint8_t m_txStaggeredSoundingCapable{0}; ///< transmit staggered sounding capable
+    uint8_t m_rxNdpCapable{0};               ///< receive NDP capable
+    uint8_t m_txNdpCapable{0};               ///< transmit NDP capable
+    uint8_t m_implicitTxBfCapable{0};        ///< implicit transmit BF capable
+    uint8_t m_calibration{0};                ///< calibration
+    uint8_t m_explicitCsiTxBfCapable{0};     ///< explicit CSI transmit BF capable
+    uint8_t m_explicitNoncompressedSteeringCapable{
+        0};                                         ///< explicit non compressed steeering capable
+    uint8_t m_explicitCompressedSteeringCapable{0}; ///< explicit compressed steeering capable
+    uint8_t m_explicitTxBfCsiFeedback{0};           ///< explicit transmit BF CSI feedback
+    uint8_t m_explicitNoncompressedBfFeedbackCapable{
+        0}; ///< explicit non compressed BF feedback capable
+    uint8_t m_explicitCompressedBfFeedbackCapable{0}; ///< explicit compressed BF feedback capable
+    uint8_t m_minimalGrouping{0};                     ///< minimal grouping
+    uint8_t m_csiNBfAntennasSupported{0};             ///< CSI NBF antenna supported
+    uint8_t m_noncompressedSteeringNBfAntennasSupported{0}; ///< non compressed steering NBF antenna
+                                                            ///< supported
+    uint8_t m_compressedSteeringNBfAntennasSupported{
+        0};                                   ///< compressed steering NBF antenna supported
+    uint8_t m_csiMaxNRowsBfSupported{0};      ///< CSI maximum number rows BF supported
+    uint8_t m_channelEstimationCapability{0}; ///< channel estimation capability
+    uint8_t m_reservedTxBf{0};                ///< reserved  transmit BF
 
     // ASEL Capabilities field
-    uint8_t m_antennaSelectionCapability;               ///< antenna selection capability
-    uint8_t m_explicitCsiFeedbackBasedTxASelCapable;    ///< explicit CSI feedback based transmit
-                                                        ///< antenna selection capable
-    uint8_t m_antennaIndicesFeedbackBasedTxASelCapable; ///< antenna indices feedback based transmit
-                                                        ///< antenna selection capable
-    uint8_t m_explicitCsiFeedbackCapable;               ///< explicit CSI feedback capable
-    uint8_t m_antennaIndicesFeedbackCapable;            ///< antenna indices feedback capable
-    uint8_t m_rxASelCapable;                            ///< receive antenna selection capable
-    uint8_t m_txSoundingPpdusCapable;                   ///< sounding PPDUS capable
-    uint8_t m_reservedASel;                             ///< reserved ASEL
+    uint8_t m_antennaSelectionCapability{0};               ///< antenna selection capability
+    uint8_t m_explicitCsiFeedbackBasedTxASelCapable{0};    ///< explicit CSI feedback based transmit
+                                                           ///< antenna selection capable
+    uint8_t m_antennaIndicesFeedbackBasedTxASelCapable{0}; ///< antenna indices feedback based
+                                                           ///< transmit antenna selection capable
+    uint8_t m_explicitCsiFeedbackCapable{0};               ///< explicit CSI feedback capable
+    uint8_t m_antennaIndicesFeedbackCapable{0};            ///< antenna indices feedback capable
+    uint8_t m_rxASelCapable{0};                            ///< receive antenna selection capable
+    uint8_t m_txSoundingPpdusCapable{0};                   ///< sounding PPDUS capable
+    uint8_t m_reservedASel{0};                             ///< reserved ASEL
 };
 
 /**

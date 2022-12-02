@@ -45,11 +45,8 @@ ErrorChannel::GetTypeId()
 ErrorChannel::ErrorChannel()
 {
     m_jumpingTime = Seconds(0.5);
-    m_jumping = false;
-    m_jumpingState = 0;
+
     m_duplicateTime = Seconds(0.1);
-    m_duplicate = false;
-    m_duplicateState = 0;
 }
 
 void

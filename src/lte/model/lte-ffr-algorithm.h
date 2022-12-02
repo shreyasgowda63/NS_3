@@ -58,8 +58,8 @@ class LteFfrRrcSapProvider;
 class LteFfrAlgorithm : public Object
 {
   public:
-    LteFfrAlgorithm();
-    ~LteFfrAlgorithm() override;
+    LteFfrAlgorithm() = default;
+    ~LteFfrAlgorithm() override = default;
 
     /**
      * \brief Get the type ID.
@@ -252,7 +252,7 @@ class LteFfrAlgorithm : public Object
 
     bool m_enabledInUplink; /**< If true FR algorithm will also work in Uplink*/
 
-    bool m_needReconfiguration; /**< If true FR algorithm will be reconfigured*/
+    bool m_needReconfiguration{true}; /**< If true FR algorithm will be reconfigured*/
 
 }; // end of class LteFfrAlgorithm
 

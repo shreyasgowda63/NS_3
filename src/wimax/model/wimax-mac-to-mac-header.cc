@@ -38,9 +38,7 @@ WimaxMacToMacHeader::WimaxMacToMacHeader(uint32_t len)
 {
 }
 
-WimaxMacToMacHeader::~WimaxMacToMacHeader()
-{
-}
+WimaxMacToMacHeader::~WimaxMacToMacHeader() = default;
 
 TypeId
 WimaxMacToMacHeader::GetTypeId()

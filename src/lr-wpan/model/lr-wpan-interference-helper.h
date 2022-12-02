@@ -117,7 +117,7 @@ class LrWpanInterferenceHelper : public SimpleRefCount<LrWpanInterferenceHelper>
      * Mark m_signal as dirty, whenever a signal is added or removed. m_signal has
      * to be recomputed before next use.
      */
-    mutable bool m_dirty;
+    mutable bool m_dirty{false};
 };
 
 } // namespace ns3

@@ -32,13 +32,13 @@ SNRToBlockErrorRateRecord::SNRToBlockErrorRateRecord(double snrValue,
                                                      double sigma2,
                                                      double I1,
                                                      double I2)
+    : m_snrValue(snrValue),
+      m_bitErrorRate(bitErrorRate),
+      m_blockErrorRate(blockErrorRate),
+      m_i1(I1),
+      m_i2(I2),
+      m_sigma2(sigma2)
 {
-    m_snrValue = snrValue;
-    m_bitErrorRate = bitErrorRate;
-    m_blockErrorRate = blockErrorRate;
-    m_sigma2 = sigma2;
-    m_i1 = I1;
-    m_i2 = I2;
 }
 
 SNRToBlockErrorRateRecord*

@@ -107,12 +107,12 @@ class FlameProtocolMac : public MeshWifiInterfaceMacPlugin
     /// Statistics structure
     struct Statistics
     {
-        uint16_t txUnicast;   ///< transmit unicast
-        uint16_t txBroadcast; ///< transit broadcast
-        uint32_t txBytes;     ///< transmit bytes
-        uint16_t rxUnicast;   ///< receive unicast
-        uint16_t rxBroadcast; ///< receive broadcast
-        uint32_t rxBytes;     ///< receive bytes
+        uint16_t txUnicast{0};   ///< transmit unicast
+        uint16_t txBroadcast{0}; ///< transit broadcast
+        uint32_t txBytes{0};     ///< transmit bytes
+        uint16_t rxUnicast{0};   ///< receive unicast
+        uint16_t rxBroadcast{0}; ///< receive broadcast
+        uint32_t rxBytes{0};     ///< receive bytes
 
         /**
          * Print function

@@ -91,18 +91,14 @@ DsrNodeStab::DsrNodeStab(Time nodeStab)
 {
 }
 
-DsrNodeStab::~DsrNodeStab()
-{
-}
+DsrNodeStab::~DsrNodeStab() = default;
 
 DsrLinkStab::DsrLinkStab(Time linkStab)
     : m_linkStability(linkStab + Simulator::Now())
 {
 }
 
-DsrLinkStab::~DsrLinkStab()
-{
-}
+DsrLinkStab::~DsrLinkStab() = default;
 
 void
 DsrLinkStab::Print() const
@@ -117,15 +113,12 @@ DsrRouteCacheEntry::DsrRouteCacheEntry(IP_VECTOR const& ip, Ipv4Address dst, Tim
       m_dst(dst),
       m_path(ip),
       m_expire(exp + Simulator::Now()),
-      m_reqCount(0),
-      m_blackListState(false),
+
       m_blackListTimeout(Simulator::Now())
 {
 }
 
-DsrRouteCacheEntry::~DsrRouteCacheEntry()
-{
-}
+DsrRouteCacheEntry::~DsrRouteCacheEntry() = default;
 
 void
 DsrRouteCacheEntry::Invalidate(Time badLinkLifetime)
@@ -154,8 +147,7 @@ DsrRouteCache::GetTypeId()
 
 DsrRouteCache::DsrRouteCache()
     : m_vector(0),
-      m_maxEntriesEachDst(3),
-      m_isLinkCache(false),
+
       m_ntimer(Timer::CANCEL_ON_DESTROY),
       m_delay(MilliSeconds(100))
 {

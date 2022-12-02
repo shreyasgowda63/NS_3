@@ -89,9 +89,7 @@ ItuR1411LosPropagationLossModelTestCase::ItuR1411LosPropagationLossModelTestCase
 {
 }
 
-ItuR1411LosPropagationLossModelTestCase::~ItuR1411LosPropagationLossModelTestCase()
-{
-}
+ItuR1411LosPropagationLossModelTestCase::~ItuR1411LosPropagationLossModelTestCase() = default;
 
 void
 ItuR1411LosPropagationLossModelTestCase::DoRun()

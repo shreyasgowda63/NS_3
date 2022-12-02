@@ -28,13 +28,9 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(UanNoiseModelDefault);
 
-UanNoiseModelDefault::UanNoiseModelDefault()
-{
-}
+UanNoiseModelDefault::UanNoiseModelDefault() = default;
 
-UanNoiseModelDefault::~UanNoiseModelDefault()
-{
-}
+UanNoiseModelDefault::~UanNoiseModelDefault() = default;
 
 TypeId
 UanNoiseModelDefault::GetTypeId()

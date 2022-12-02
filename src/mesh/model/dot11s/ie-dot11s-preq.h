@@ -82,11 +82,11 @@ class DestinationAddressUnit : public SimpleRefCount<DestinationAddressUnit>
     uint32_t GetDestSeqNumber() const;
 
   private:
-    bool m_do;                         ///< DO
-    bool m_rf;                         ///< RF
-    bool m_usn;                        ///< USN
+    bool m_do{false};                  ///< DO
+    bool m_rf{false};                  ///< RF
+    bool m_usn{false};                 ///< USN
     Mac48Address m_destinationAddress; ///< destination address
-    uint32_t m_destSeqNumber;          ///< destination sequence number
+    uint32_t m_destSeqNumber{0};       ///< destination sequence number
 
     /**
      * equality operator
@@ -266,17 +266,17 @@ class IePreq : public WifiInformationElement
      * how many destinations we support
      * \todo make as an attribute
      */
-    uint8_t m_maxSize;
+    uint8_t m_maxSize{32};
 
-    uint8_t m_flags;                                         ///< flags
-    uint8_t m_hopCount;                                      ///< hop count
-    uint8_t m_ttl;                                           ///< TTL
-    uint32_t m_preqId;                                       ///< PREQ ID
+    uint8_t m_flags{0};                                      ///< flags
+    uint8_t m_hopCount{0};                                   ///< hop count
+    uint8_t m_ttl{0};                                        ///< TTL
+    uint32_t m_preqId{0};                                    ///< PREQ ID
     Mac48Address m_originatorAddress;                        ///< originator address
-    uint32_t m_originatorSeqNumber;                          ///< originator sequence number
-    uint32_t m_lifetime;                                     ///< lifetime
-    uint32_t m_metric;                                       ///< metric
-    uint8_t m_destCount;                                     ///< destination count
+    uint32_t m_originatorSeqNumber{0};                       ///< originator sequence number
+    uint32_t m_lifetime{0};                                  ///< lifetime
+    uint32_t m_metric{0};                                    ///< metric
+    uint8_t m_destCount{0};                                  ///< destination count
     std::vector<Ptr<DestinationAddressUnit>> m_destinations; ///< the destinations
 
     /**

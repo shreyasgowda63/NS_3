@@ -53,18 +53,15 @@ class LrWpanCollisionTestCase : public TestCase
   private:
     void DoRun() override;
 
-    uint8_t m_rxPackets; //!< Rx packets counter.
+    uint8_t m_rxPackets{0}; //!< Rx packets counter.
 };
 
 LrWpanCollisionTestCase::LrWpanCollisionTestCase()
     : TestCase("Test the 802.15.4 collision handling")
 {
-    m_rxPackets = 0;
 }
 
-LrWpanCollisionTestCase::~LrWpanCollisionTestCase()
-{
-}
+LrWpanCollisionTestCase::~LrWpanCollisionTestCase() = default;
 
 void
 LrWpanCollisionTestCase::DataIndication(McpsDataIndicationParams params, Ptr<Packet> p)

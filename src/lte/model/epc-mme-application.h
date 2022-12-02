@@ -238,7 +238,8 @@ class EpcMmeApplication : public Application
     Ptr<Socket> m_s11Socket;  ///< Socket to send/receive messages in the S11 interface
     Ipv4Address m_mmeS11Addr; ///< IPv4 address of the MME S11 interface
     Ipv4Address m_sgwS11Addr; ///< IPv4 address of the SGW S11 interface
-    uint16_t m_gtpcUdpPort;   ///< UDP port for GTP-C protocol. Fixed by the standard to port 2123
+    uint16_t m_gtpcUdpPort{
+        2123}; ///< UDP port for GTP-C protocol. Fixed by the standard to port 2123
 };
 
 } // namespace ns3

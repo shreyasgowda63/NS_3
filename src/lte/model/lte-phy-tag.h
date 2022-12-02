@@ -41,7 +41,7 @@ class LtePhyTag : public Tag
     /**
      * Create an empty LtePhyTag
      */
-    LtePhyTag();
+    LtePhyTag() = default;
 
     /**
      * Create a LtePhyTag with the given RNTI and LC id
@@ -49,7 +49,7 @@ class LtePhyTag : public Tag
      */
     LtePhyTag(uint16_t cellId);
 
-    ~LtePhyTag() override;
+    ~LtePhyTag() override = default;
 
     void Serialize(TagBuffer i) const override;
     void Deserialize(TagBuffer i) override;

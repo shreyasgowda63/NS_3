@@ -35,11 +35,11 @@ namespace ns3
 /// LteFlowId structure
 struct LteFlowId_t
 {
-    uint16_t m_rnti; ///< RNTI
-    uint8_t m_lcId;  ///< LCID
+    uint16_t m_rnti{0}; ///< RNTI
+    uint8_t m_lcId{0};  ///< LCID
 
   public:
-    LteFlowId_t();
+    LteFlowId_t() = default;
     /**
      * Constructor
      *
@@ -55,11 +55,11 @@ struct LteFlowId_t
 /// ImsiLcidPair structure
 struct ImsiLcidPair_t
 {
-    uint64_t m_imsi; ///< IMSI
-    uint8_t m_lcId;  ///< LCID
+    uint64_t m_imsi{0}; ///< IMSI
+    uint8_t m_lcId{0};  ///< LCID
 
   public:
-    ImsiLcidPair_t();
+    ImsiLcidPair_t() = default;
     /**
      * Constructor
      *
@@ -95,7 +95,7 @@ struct LteUeConfig_t
     uint16_t m_srsConfigurationIndex;
 
   public:
-    LteUeConfig_t();
+    LteUeConfig_t() = default;
 
     /**
      * Equality operator

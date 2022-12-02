@@ -254,8 +254,7 @@ class ATestHeaderBase : public Header
 {
   public:
     ATestHeaderBase()
-        : Header(),
-          m_error(false)
+        : Header()
     {
     }
 
@@ -274,7 +273,7 @@ class ATestHeaderBase : public Header
         return tid;
     }
 
-    bool m_error; //!< Error in the Header
+    bool m_error{false}; //!< Error in the Header
 };
 
 /**
@@ -358,8 +357,7 @@ class ATestTrailerBase : public Trailer
 {
   public:
     ATestTrailerBase()
-        : Trailer(),
-          m_error(false)
+        : Trailer()
     {
     }
 
@@ -378,7 +376,7 @@ class ATestTrailerBase : public Trailer
         return tid;
     }
 
-    bool m_error; //!< Error in the Trailer
+    bool m_error{false}; //!< Error in the Trailer
 };
 
 /**
@@ -1010,9 +1008,7 @@ PacketTagListTest::PacketTagListTest()
 {
 }
 
-PacketTagListTest::~PacketTagListTest()
-{
-}
+PacketTagListTest::~PacketTagListTest() = default;
 
 void
 PacketTagListTest::CheckRef(const PacketTagList& ref, ATestTagBase& t, const char* msg, bool miss)

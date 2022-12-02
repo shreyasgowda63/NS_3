@@ -43,13 +43,10 @@ BuildingsChannelConditionModel::GetTypeId()
 }
 
 BuildingsChannelConditionModel::BuildingsChannelConditionModel()
-    : ChannelConditionModel()
-{
-}
 
-BuildingsChannelConditionModel::~BuildingsChannelConditionModel()
-{
-}
+    = default;
+
+BuildingsChannelConditionModel::~BuildingsChannelConditionModel() = default;
 
 Ptr<ChannelCondition>
 BuildingsChannelConditionModel::GetChannelCondition(Ptr<const MobilityModel> a,

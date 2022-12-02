@@ -274,12 +274,12 @@ class EdcaParameterSet : public WifiInformationElement
     void SerializeInformationField(Buffer::Iterator start) const override;
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 
-    uint8_t m_qosInfo;  ///< QOS info
-    uint8_t m_reserved; ///< reserved
-    uint32_t m_acBE;    ///< AC_BE
-    uint32_t m_acBK;    ///< AC_BK
-    uint32_t m_acVI;    ///< AC_VI
-    uint32_t m_acVO;    ///< AC_VO
+    uint8_t m_qosInfo{0};  ///< QOS info
+    uint8_t m_reserved{0}; ///< reserved
+    uint32_t m_acBE{0};    ///< AC_BE
+    uint32_t m_acBK{0};    ///< AC_BK
+    uint32_t m_acVI{0};    ///< AC_VI
+    uint32_t m_acVO{0};    ///< AC_VO
 };
 
 } // namespace ns3

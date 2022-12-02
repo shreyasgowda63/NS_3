@@ -65,8 +65,8 @@ class LteControlMessage : public SimpleRefCount<LteControlMessage>
         SIB1,          // System Information Block Type 1
     };
 
-    LteControlMessage();
-    virtual ~LteControlMessage();
+    LteControlMessage() = default;
+    virtual ~LteControlMessage() = default;
 
     /**
      * \brief Set the type of the message
@@ -94,7 +94,7 @@ class DlDciLteControlMessage : public LteControlMessage
 {
   public:
     DlDciLteControlMessage();
-    ~DlDciLteControlMessage() override;
+    ~DlDciLteControlMessage() override = default;
 
     /**
      * \brief add a DCI into the message
@@ -123,7 +123,7 @@ class UlDciLteControlMessage : public LteControlMessage
 {
   public:
     UlDciLteControlMessage();
-    ~UlDciLteControlMessage() override;
+    ~UlDciLteControlMessage() override = default;
 
     /**
      * \brief add a DCI into the message
@@ -152,7 +152,7 @@ class DlCqiLteControlMessage : public LteControlMessage
 {
   public:
     DlCqiLteControlMessage();
-    ~DlCqiLteControlMessage() override;
+    ~DlCqiLteControlMessage() override = default;
 
     /**
      * \brief add a DL-CQI feedback record into the message.
@@ -181,7 +181,7 @@ class BsrLteControlMessage : public LteControlMessage
 {
   public:
     BsrLteControlMessage();
-    ~BsrLteControlMessage() override;
+    ~BsrLteControlMessage() override = default;
 
     /**
      * \brief add a BSR feedback record into the message.
@@ -210,7 +210,7 @@ class DlHarqFeedbackLteControlMessage : public LteControlMessage
 {
   public:
     DlHarqFeedbackLteControlMessage();
-    ~DlHarqFeedbackLteControlMessage() override;
+    ~DlHarqFeedbackLteControlMessage() override = default;
 
     /**
      * \brief add a DL HARQ feedback record into the message.

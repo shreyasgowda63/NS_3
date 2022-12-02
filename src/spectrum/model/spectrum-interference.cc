@@ -30,8 +30,7 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("SpectrumInterference");
 
 SpectrumInterference::SpectrumInterference()
-    : m_receiving(false),
-      m_rxSignal(nullptr),
+    : m_rxSignal(nullptr),
       m_allSignals(nullptr),
       m_noise(nullptr),
       m_errorModel(nullptr)

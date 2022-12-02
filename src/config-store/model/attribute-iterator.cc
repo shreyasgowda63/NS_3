@@ -30,13 +30,9 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("AttributeIterator");
 
-AttributeIterator::AttributeIterator()
-{
-}
+AttributeIterator::AttributeIterator() = default;
 
-AttributeIterator::~AttributeIterator()
-{
-}
+AttributeIterator::~AttributeIterator() = default;
 
 void
 AttributeIterator::Iterate()

@@ -24,9 +24,7 @@
 namespace ns3
 {
 
-NetDeviceContainer::NetDeviceContainer()
-{
-}
+NetDeviceContainer::NetDeviceContainer() = default;
 
 NetDeviceContainer::NetDeviceContainer(Ptr<NetDevice> dev)
 {

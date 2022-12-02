@@ -94,10 +94,10 @@ class LteFrTestCase : public TestCase
     uint16_t m_ulBandwidth; ///< the UL bandwidth
 
     std::vector<bool> m_availableDlRb; ///< the available DL for each RB
-    bool m_usedMutedDlRbg;             ///< used muted DL RBG?
+    bool m_usedMutedDlRbg{false};      ///< used muted DL RBG?
 
     std::vector<bool> m_availableUlRb; ///< the available UL for each RB
-    bool m_usedMutedUlRbg;             ///< used muted UL RBG?
+    bool m_usedMutedUlRbg{false};      ///< used muted UL RBG?
 };
 
 /**
@@ -284,20 +284,20 @@ class LteFrAreaTestCase : public TestCase
 
     std::string m_schedulerType; ///< the scheduler type
 
-    uint16_t m_dlBandwidth; ///< the DL bandwidth
-    uint16_t m_ulBandwidth; ///< the UL bandwidth
+    uint16_t m_dlBandwidth{25}; ///< the DL bandwidth
+    uint16_t m_ulBandwidth{25}; ///< the UL bandwidth
 
     Time m_teleportTime;             ///< the telport time
     Ptr<MobilityModel> m_ueMobility; ///< the UE mobility model
 
     double m_expectedDlPower;         ///< the expected DL power
     std::vector<bool> m_expectedDlRb; ///< the expected DL per RB
-    bool m_usedWrongDlRbg;            ///< used wrong DL RBG?
+    bool m_usedWrongDlRbg{false};     ///< used wrong DL RBG?
     bool m_usedWrongDlPower;          ///< used wrong DL power?
 
     double m_expectedUlPower;         ///< expected UL power
     std::vector<bool> m_expectedUlRb; ///< expected UL per RB
-    bool m_usedWrongUlRbg;            ///< used wrong UL RBG?
+    bool m_usedWrongUlRbg{false};     ///< used wrong UL RBG?
     bool m_usedWrongUlPower;          ///< used wrong UL power?
 };
 

@@ -30,9 +30,8 @@ IePeeringProtocol::GetInformationFieldSize() const
 }
 
 IePeeringProtocol::IePeeringProtocol()
-    : m_protocol(0)
-{
-}
+
+    = default;
 
 WifiInformationElementId
 IePeeringProtocol::ElementId() const

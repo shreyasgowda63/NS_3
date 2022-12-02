@@ -33,40 +33,7 @@ NS_LOG_COMPONENT_DEFINE("RadiotapHeader");
 NS_OBJECT_ENSURE_REGISTERED(RadiotapHeader);
 
 RadiotapHeader::RadiotapHeader()
-    : m_length(8),
-      m_present(0),
-      m_tsft(0),
-      m_flags(FRAME_FLAG_NONE),
-      m_rate(0),
-      m_channelFreq(0),
-      m_channelFlags(CHANNEL_FLAG_NONE),
-      m_antennaSignal(0),
-      m_antennaNoise(0),
-      m_ampduStatusRef(0),
-      m_ampduStatusFlags(0),
-      m_ampduStatusCRC(0),
-      m_vhtPad(0),
-      m_vhtKnown(0),
-      m_vhtFlags(0),
-      m_vhtBandwidth(0),
-      m_vhtCoding(0),
-      m_vhtGroupId(0),
-      m_vhtPartialAid(0),
-      m_hePad(0),
-      m_heData1(0),
-      m_heData2(0),
-      m_heData3(0),
-      m_heData4(0),
-      m_heData5(0),
-      m_heData6(0),
-      m_heMuPad(0),
-      m_heMuFlags1(0),
-      m_heMuFlags2(0),
-      m_heMuOtherUserPad(0),
-      m_heMuPerUser1(0),
-      m_heMuPerUser2(0),
-      m_heMuPerUserPosition(0),
-      m_heMuPerUserKnown(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

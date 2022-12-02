@@ -85,9 +85,7 @@ class DataOutputCallback
     /**
      * Destructor
      */
-    virtual ~DataOutputCallback()
-    {
-    }
+    virtual ~DataOutputCallback() = default;
 
     /**
      * Outputs the data from the specified StatisticalSummary

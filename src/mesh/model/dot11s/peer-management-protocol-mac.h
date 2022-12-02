@@ -209,19 +209,19 @@ class PeerManagementProtocolMac : public MeshWifiInterfaceMacPlugin
     /// Statistics structure
     struct Statistics
     {
-        uint16_t txOpen;      ///< transmit open
-        uint16_t txConfirm;   ///< transmit confirm
-        uint16_t txClose;     ///< transmit close
-        uint16_t rxOpen;      ///< receive open
-        uint16_t rxConfirm;   ///< receive confirm
-        uint16_t rxClose;     ///< receive close
-        uint16_t dropped;     ///< dropped
-        uint16_t brokenMgt;   ///< broken management
-        uint16_t txMgt;       ///< transmit management
-        uint32_t txMgtBytes;  ///< transmit management bytes
-        uint16_t rxMgt;       ///< receive management
-        uint32_t rxMgtBytes;  ///< receive management bytes
-        uint16_t beaconShift; ///< beacon shift
+        uint16_t txOpen{0};      ///< transmit open
+        uint16_t txConfirm{0};   ///< transmit confirm
+        uint16_t txClose{0};     ///< transmit close
+        uint16_t rxOpen{0};      ///< receive open
+        uint16_t rxConfirm{0};   ///< receive confirm
+        uint16_t rxClose{0};     ///< receive close
+        uint16_t dropped{0};     ///< dropped
+        uint16_t brokenMgt{0};   ///< broken management
+        uint16_t txMgt{0};       ///< transmit management
+        uint32_t txMgtBytes{0};  ///< transmit management bytes
+        uint16_t rxMgt{0};       ///< receive management
+        uint32_t rxMgtBytes{0};  ///< receive management bytes
+        uint16_t beaconShift{0}; ///< beacon shift
 
         /// constructor
         Statistics();

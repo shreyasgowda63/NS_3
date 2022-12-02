@@ -109,17 +109,14 @@ NS_LOG_COMPONENT_DEFINE("CommandLine");
 
 CommandLine::CommandLine()
     : m_NNonOptions(0),
-      m_nonOptionCount(0),
-      m_usage(),
-      m_shortName()
+      m_nonOptionCount(0)
 {
     NS_LOG_FUNCTION(this);
 }
 
 CommandLine::CommandLine(const std::string& filename)
     : m_NNonOptions(0),
-      m_nonOptionCount(0),
-      m_usage()
+      m_nonOptionCount(0)
 {
     NS_LOG_FUNCTION(this << filename);
     std::string basename = SystemPath::Split(filename).back();

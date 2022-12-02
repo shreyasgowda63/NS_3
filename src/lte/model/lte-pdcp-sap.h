@@ -35,7 +35,7 @@ namespace ns3
 class LtePdcpSapProvider
 {
   public:
-    virtual ~LtePdcpSapProvider();
+    virtual ~LtePdcpSapProvider() = default;
 
     /**
      * Parameters for LtePdcpSapProvider::TransmitPdcpSdu
@@ -68,7 +68,7 @@ class LtePdcpSapProvider
 class LtePdcpSapUser
 {
   public:
-    virtual ~LtePdcpSapUser();
+    virtual ~LtePdcpSapUser() = default;
 
     /**
      * Parameters for LtePdcpSapUser::ReceivePdcpSdu

@@ -82,13 +82,9 @@ Ipv4TestPacketFilter::GetTypeId()
     return tid;
 }
 
-Ipv4TestPacketFilter::Ipv4TestPacketFilter()
-{
-}
+Ipv4TestPacketFilter::Ipv4TestPacketFilter() = default;
 
-Ipv4TestPacketFilter::~Ipv4TestPacketFilter()
-{
-}
+Ipv4TestPacketFilter::~Ipv4TestPacketFilter() = default;
 
 int32_t
 Ipv4TestPacketFilter::DoClassify(Ptr<QueueDiscItem> item) const
@@ -122,9 +118,7 @@ FqCoDelQueueDiscNoSuitableFilter::FqCoDelQueueDiscNoSuitableFilter()
 {
 }
 
-FqCoDelQueueDiscNoSuitableFilter::~FqCoDelQueueDiscNoSuitableFilter()
-{
-}
+FqCoDelQueueDiscNoSuitableFilter::~FqCoDelQueueDiscNoSuitableFilter() = default;
 
 void
 FqCoDelQueueDiscNoSuitableFilter::DoRun()
@@ -186,9 +180,8 @@ FqCoDelQueueDiscIPFlowsSeparationAndPacketLimit::FqCoDelQueueDiscIPFlowsSeparati
 {
 }
 
-FqCoDelQueueDiscIPFlowsSeparationAndPacketLimit::~FqCoDelQueueDiscIPFlowsSeparationAndPacketLimit()
-{
-}
+FqCoDelQueueDiscIPFlowsSeparationAndPacketLimit::
+    ~FqCoDelQueueDiscIPFlowsSeparationAndPacketLimit() = default;
 
 void
 FqCoDelQueueDiscIPFlowsSeparationAndPacketLimit::AddPacket(Ptr<FqCoDelQueueDisc> queue,
@@ -281,9 +274,7 @@ FqCoDelQueueDiscDeficit::FqCoDelQueueDiscDeficit()
 {
 }
 
-FqCoDelQueueDiscDeficit::~FqCoDelQueueDiscDeficit()
-{
-}
+FqCoDelQueueDiscDeficit::~FqCoDelQueueDiscDeficit() = default;
 
 void
 FqCoDelQueueDiscDeficit::AddPacket(Ptr<FqCoDelQueueDisc> queue, Ipv4Header hdr)
@@ -508,9 +499,7 @@ FqCoDelQueueDiscTCPFlowsSeparation::FqCoDelQueueDiscTCPFlowsSeparation()
 {
 }
 
-FqCoDelQueueDiscTCPFlowsSeparation::~FqCoDelQueueDiscTCPFlowsSeparation()
-{
-}
+FqCoDelQueueDiscTCPFlowsSeparation::~FqCoDelQueueDiscTCPFlowsSeparation() = default;
 
 void
 FqCoDelQueueDiscTCPFlowsSeparation::AddPacket(Ptr<FqCoDelQueueDisc> queue,
@@ -633,9 +622,7 @@ FqCoDelQueueDiscUDPFlowsSeparation::FqCoDelQueueDiscUDPFlowsSeparation()
 {
 }
 
-FqCoDelQueueDiscUDPFlowsSeparation::~FqCoDelQueueDiscUDPFlowsSeparation()
-{
-}
+FqCoDelQueueDiscUDPFlowsSeparation::~FqCoDelQueueDiscUDPFlowsSeparation() = default;
 
 void
 FqCoDelQueueDiscUDPFlowsSeparation::AddPacket(Ptr<FqCoDelQueueDisc> queue,
@@ -780,9 +767,7 @@ FqCoDelQueueDiscECNMarking::FqCoDelQueueDiscECNMarking()
 {
 }
 
-FqCoDelQueueDiscECNMarking::~FqCoDelQueueDiscECNMarking()
-{
-}
+FqCoDelQueueDiscECNMarking::~FqCoDelQueueDiscECNMarking() = default;
 
 void
 FqCoDelQueueDiscECNMarking::AddPacket(Ptr<FqCoDelQueueDisc> queue,
@@ -1396,9 +1381,7 @@ FqCoDelQueueDiscSetLinearProbing::FqCoDelQueueDiscSetLinearProbing()
 {
 }
 
-FqCoDelQueueDiscSetLinearProbing::~FqCoDelQueueDiscSetLinearProbing()
-{
-}
+FqCoDelQueueDiscSetLinearProbing::~FqCoDelQueueDiscSetLinearProbing() = default;
 
 void
 FqCoDelQueueDiscSetLinearProbing::AddPacket(Ptr<FqCoDelQueueDisc> queue, Ipv4Header hdr)
@@ -1544,9 +1527,7 @@ FqCoDelQueueDiscL4sMode::FqCoDelQueueDiscL4sMode()
 {
 }
 
-FqCoDelQueueDiscL4sMode::~FqCoDelQueueDiscL4sMode()
-{
-}
+FqCoDelQueueDiscL4sMode::~FqCoDelQueueDiscL4sMode() = default;
 
 void
 FqCoDelQueueDiscL4sMode::AddPacket(Ptr<FqCoDelQueueDisc> queue, Ipv4Header hdr, uint32_t nPkt)

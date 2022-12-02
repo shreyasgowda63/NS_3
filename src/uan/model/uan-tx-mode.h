@@ -42,8 +42,8 @@ class UanTxMode;
 class UanTxMode
 {
   public:
-    UanTxMode();  //!< Constructor.
-    ~UanTxMode(); //!< Destructor.
+    UanTxMode();            //!< Constructor.
+    ~UanTxMode() = default; //!< Destructor.
 
     /**
      * Modulation type.
@@ -179,7 +179,7 @@ class UanTxModeFactory
 
   private:
     friend class UanTxMode;
-    uint32_t m_nextUid; //!< next id number
+    uint32_t m_nextUid{0}; //!< next id number
 
     /**
      * \ingroup uan

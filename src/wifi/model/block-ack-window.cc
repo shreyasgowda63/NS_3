@@ -29,10 +29,8 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("BlockAckWindow");
 
 BlockAckWindow::BlockAckWindow()
-    : m_winStart(0),
-      m_head(0)
-{
-}
+
+    = default;
 
 void
 BlockAckWindow::Init(uint16_t winStart, uint16_t winSize)

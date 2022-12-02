@@ -80,19 +80,15 @@ class ThreeGppChannelConditionModelTestCase : public TestCase
     TestVectors<TestVector> m_testVectors;          //!< array containing all the test vectors
     Ptr<ThreeGppChannelConditionModel> m_condModel; //!< the channel condition model
     uint64_t m_numLos;                              //!< the number of LOS occurrences
-    double m_tolerance;                             //!< tolerance
+    double m_tolerance{2e-3};                       //!< tolerance
 };
 
 ThreeGppChannelConditionModelTestCase::ThreeGppChannelConditionModelTestCase()
-    : TestCase("Test case for the child classes of ThreeGppChannelConditionModel"),
-      m_testVectors(),
-      m_tolerance(2e-3)
+    : TestCase("Test case for the child classes of ThreeGppChannelConditionModel")
 {
 }
 
-ThreeGppChannelConditionModelTestCase::~ThreeGppChannelConditionModelTestCase()
-{
-}
+ThreeGppChannelConditionModelTestCase::~ThreeGppChannelConditionModelTestCase() = default;
 
 void
 ThreeGppChannelConditionModelTestCase::EvaluateChannelCondition(Ptr<MobilityModel> a,

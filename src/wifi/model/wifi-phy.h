@@ -1187,10 +1187,12 @@ class WifiPhy : public Object
     Ptr<UniformRandomVariable> m_random; //!< Provides uniform random variables.
     Ptr<WifiPhyStateHelper> m_state;     //!< Pointer to WifiPhyStateHelper
 
-    uint32_t m_txMpduReferenceNumber; //!< A-MPDU reference number to identify all transmitted
-                                      //!< subframes belonging to the same received A-MPDU
-    uint32_t m_rxMpduReferenceNumber; //!< A-MPDU reference number to identify all received
-                                      //!< subframes belonging to the same received A-MPDU
+    uint32_t m_txMpduReferenceNumber{
+        0xffffffff}; //!< A-MPDU reference number to identify all transmitted
+                     //!< subframes belonging to the same received A-MPDU
+    uint32_t m_rxMpduReferenceNumber{
+        0xffffffff}; //!< A-MPDU reference number to identify all received
+                     //!< subframes belonging to the same received A-MPDU
 
     EventId m_endPhyRxEvent; //!< the end of PHY receive event
     EventId m_endTxEvent;    //!< the end of transmit event
@@ -1200,8 +1202,8 @@ class WifiPhy : public Object
         m_currentPreambleEvents; //!< store event associated to a PPDU (that has a unique ID and
                                  //!< preamble combination) whose preamble is being received
 
-    uint64_t m_previouslyRxPpduUid; //!< UID of the previously received PPDU, reset to UINT64_MAX
-                                    //!< upon transmission
+    uint64_t m_previouslyRxPpduUid{UINT64_MAX}; //!< UID of the previously received PPDU, reset to
+                                                //!< UINT64_MAX upon transmission
 
     /**
      * This map holds the supported PHY entities.
@@ -1412,8 +1414,8 @@ class WifiPhy : public Object
      */
     static std::map<WifiModulationClass, Ptr<PhyEntity>>& GetStaticPhyEntities();
 
-    WifiStandard m_standard;        //!< WifiStandard
-    WifiPhyBand m_band;             //!< WifiPhyBand
+    WifiStandard m_standard{WIFI_STANDARD_UNSPECIFIED}; //!< WifiStandard
+    WifiPhyBand m_band{WIFI_PHY_BAND_UNSPECIFIED};      //!< WifiPhyBand
     ChannelTuple m_channelSettings; //!< Store operating channel settings until initialization
     WifiPhyOperatingChannel m_operatingChannel; //!< Operating channel
     bool m_fixedPhyBand; //!< True to prohibit changing PHY band after initialization
@@ -1437,18 +1439,18 @@ class WifiPhy : public Object
     uint8_t m_nTxPower;         //!< Number of available transmission power levels
     double m_powerDensityLimit; //!< the power density limit (dBm/MHz)
 
-    bool m_powerRestricted; //!< Flag whether transmit power is restricted by OBSS PD SR
+    bool m_powerRestricted{false}; //!< Flag whether transmit power is restricted by OBSS PD SR
     double
         m_txPowerMaxSiso; //!< SISO maximum transmit power due to OBSS PD SR power restriction (dBm)
     double
         m_txPowerMaxMimo; //!< MIMO maximum transmit power due to OBSS PD SR power restriction (dBm)
-    bool m_channelAccessRequested; //!< Flag if channels access has been requested (used for OBSS_PD
-                                   //!< SR)
+    bool m_channelAccessRequested{false}; //!< Flag if channels access has been requested (used for
+                                          //!< OBSS_PD SR)
 
-    bool m_shortPreamble;       //!< Flag if short PHY preamble is supported
-    uint8_t m_numberOfAntennas; //!< Number of transmitters
-    uint8_t m_txSpatialStreams; //!< Number of supported TX spatial streams
-    uint8_t m_rxSpatialStreams; //!< Number of supported RX spatial streams
+    bool m_shortPreamble;          //!< Flag if short PHY preamble is supported
+    uint8_t m_numberOfAntennas;    //!< Number of transmitters
+    uint8_t m_txSpatialStreams{1}; //!< Number of supported TX spatial streams
+    uint8_t m_rxSpatialStreams{1}; //!< Number of supported RX spatial streams
 
     double m_noiseFigureDb; //!< The noise figure in dB
 

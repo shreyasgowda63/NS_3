@@ -56,15 +56,13 @@ class LrWpanEdTestCase : public TestCase
      */
     void PlmeEdConfirm(LrWpanPhyEnumeration status, uint8_t level);
 
-    LrWpanPhyEnumeration m_status; //!< PHY status.
-    uint8_t m_level;               //!< ED level.
+    LrWpanPhyEnumeration m_status{IEEE_802_15_4_PHY_UNSPECIFIED}; //!< PHY status.
+    uint8_t m_level{0};                                           //!< ED level.
 };
 
 LrWpanEdTestCase::LrWpanEdTestCase()
     : TestCase("Test the 802.15.4 energie detection")
 {
-    m_status = IEEE_802_15_4_PHY_UNSPECIFIED;
-    m_level = 0;
 }
 
 void

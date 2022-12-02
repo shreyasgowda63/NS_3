@@ -76,7 +76,7 @@ class Channel : public Object
     virtual Ptr<NetDevice> GetDevice(std::size_t i) const = 0;
 
   private:
-    uint32_t m_id; //!< Channel id for this channel
+    uint32_t m_id{0}; //!< Channel id for this channel
 };
 
 } // namespace ns3

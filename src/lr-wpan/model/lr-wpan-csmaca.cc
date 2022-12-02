@@ -52,19 +52,9 @@ LrWpanCsmaCa::LrWpanCsmaCa()
 {
     // TODO-- make these into ns-3 attributes
 
-    m_isSlotted = false;
-    m_NB = 0;
-    m_CW = 2;
-    m_macBattLifeExt = false;
-    m_macMinBE = 3;
-    m_macMaxBE = 5;
-    m_macMaxCSMABackoffs = 4;
-    m_aUnitBackoffPeriod = 20; // symbols
+    // symbols
     m_random = CreateObject<UniformRandomVariable>();
     m_BE = m_macMinBE;
-    m_ccaRequestRunning = false;
-    m_randomBackoffPeriodsLeft = 0;
-    m_coorDest = false;
 }
 
 LrWpanCsmaCa::~LrWpanCsmaCa()

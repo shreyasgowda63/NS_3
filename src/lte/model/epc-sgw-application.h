@@ -230,19 +230,19 @@ class EpcSgwApplication : public Application
     Ptr<Socket> m_s1uSocket;
 
     /**
-     * UDP port to be used for GTP-U
+     * UDP port to be used for GTP-U (fixed by the standard)
      */
-    uint16_t m_gtpuUdpPort;
+    uint16_t m_gtpuUdpPort{2152};
 
     /**
-     * UDP port to be used for GTP-C
+     * UDP port to be used for GTP-C (fixed by the standard)
      */
-    uint16_t m_gtpcUdpPort;
+    uint16_t m_gtpcUdpPort{2123};
 
     /**
      * TEID count
      */
-    uint32_t m_teidCount;
+    uint32_t m_teidCount{0};
 
     /// EnbInfo structure
     struct EnbInfo

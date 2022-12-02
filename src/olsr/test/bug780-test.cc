@@ -46,15 +46,11 @@ namespace olsr
 
 Bug780Test::Bug780Test()
     : TestCase("Test OLSR bug 780"),
-      m_time(Seconds(200.0)),
-      m_seq(0),
-      m_recvCount(0)
+      m_time(Seconds(200.0))
 {
 }
 
-Bug780Test::~Bug780Test()
-{
-}
+Bug780Test::~Bug780Test() = default;
 
 void
 Bug780Test::DoRun()

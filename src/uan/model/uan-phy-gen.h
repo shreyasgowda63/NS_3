@@ -320,7 +320,7 @@ class UanPhyGen : public UanPhy
 
     UanModesList m_modes; //!< List of modes supported by this PHY.
 
-    State m_state;                   //!< Phy state.
+    State m_state{IDLE};             //!< Phy state.
     ListenerList m_listeners;        //!< List of listeners.
     RxOkCallback m_recOkCb;          //!< Callback for packets received without error.
     RxErrCallback m_recErrCb;        //!< Callback for packets received with errors.
@@ -331,9 +331,9 @@ class UanPhyGen : public UanPhy
     Ptr<UanPhyPer> m_per;            //!< Error model.
     Ptr<UanPhyCalcSinr> m_sinr;      //!< SINR calculator.
 
-    double m_txPwrDb;     //!< Transmit power.
-    double m_rxThreshDb;  //!< Receive SINR threshold.
-    double m_ccaThreshDb; //!< CCA busy threshold.
+    double m_txPwrDb{0};     //!< Transmit power.
+    double m_rxThreshDb{0};  //!< Receive SINR threshold.
+    double m_ccaThreshDb{0}; //!< CCA busy threshold.
 
     Ptr<Packet> m_pktRx;   //!< Received packet.
     Ptr<Packet> m_pktTx;   //!< Sent packet.
@@ -343,7 +343,7 @@ class UanPhyGen : public UanPhy
     UanPdp m_pktRxPdp;     //!< Power delay profile of packet.
     UanTxMode m_pktRxMode; //!< Packet transmission mode at receiver.
 
-    bool m_cleared; //!< Flag when we've been cleared.
+    bool m_cleared{false}; //!< Flag when we've been cleared.
 
     EventId m_txEndEvent; //!< Tx event
     EventId m_rxEndEvent; //!< Rx event

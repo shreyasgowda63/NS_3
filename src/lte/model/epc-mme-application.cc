@@ -30,7 +30,6 @@ NS_LOG_COMPONENT_DEFINE("EpcMmeApplication");
 NS_OBJECT_ENSURE_REGISTERED(EpcMmeApplication);
 
 EpcMmeApplication::EpcMmeApplication()
-    : m_gtpcUdpPort(2123) // fixed by the standard
 {
     NS_LOG_FUNCTION(this);
     m_s1apSapMme = new MemberEpcS1apSapMme<EpcMmeApplication>(this);

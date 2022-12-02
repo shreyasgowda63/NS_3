@@ -109,18 +109,18 @@ class LteFrHardAlgorithm : public LteFfrAlgorithm
     void InitializeUplinkRbgMaps();
 
     // FFR SAP
-    LteFfrSapUser* m_ffrSapUser;         ///< FFR SAP user
-    LteFfrSapProvider* m_ffrSapProvider; ///< FFR SAP provider
+    LteFfrSapUser* m_ffrSapUser{nullptr}; ///< FFR SAP user
+    LteFfrSapProvider* m_ffrSapProvider;  ///< FFR SAP provider
 
     // FFR RRF SAP
-    LteFfrRrcSapUser* m_ffrRrcSapUser;         ///< FFR RRC SAP user
-    LteFfrRrcSapProvider* m_ffrRrcSapProvider; ///< FFR RRC SAP provider
+    LteFfrRrcSapUser* m_ffrRrcSapUser{nullptr}; ///< FFR RRC SAP user
+    LteFfrRrcSapProvider* m_ffrRrcSapProvider;  ///< FFR RRC SAP provider
 
-    uint8_t m_dlOffset;  ///< DL offset
-    uint8_t m_dlSubBand; ///< DL subband
+    uint8_t m_dlOffset{0};  ///< DL offset
+    uint8_t m_dlSubBand{0}; ///< DL subband
 
-    uint8_t m_ulOffset;  ///< UL offset
-    uint8_t m_ulSubBand; ///< UL subband
+    uint8_t m_ulOffset{0};  ///< UL offset
+    uint8_t m_ulSubBand{0}; ///< UL subband
 
     std::vector<bool> m_dlRbgMap; ///< DL RBG Map
     std::vector<bool> m_ulRbgMap; ///< UL RBG Map

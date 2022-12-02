@@ -46,13 +46,10 @@ Kun2600MhzPropagationLossModel::GetTypeId()
 }
 
 Kun2600MhzPropagationLossModel::Kun2600MhzPropagationLossModel()
-    : PropagationLossModel()
-{
-}
 
-Kun2600MhzPropagationLossModel::~Kun2600MhzPropagationLossModel()
-{
-}
+    = default;
+
+Kun2600MhzPropagationLossModel::~Kun2600MhzPropagationLossModel() = default;
 
 double
 Kun2600MhzPropagationLossModel::GetLoss(Ptr<MobilityModel> a, Ptr<MobilityModel> b) const

@@ -344,11 +344,11 @@ class ThreeGppHttpClient : public Application
     void SwitchToState(State_t state);
 
     /// The current state of the client application. Begins with NOT_STARTED.
-    State_t m_state;
+    State_t m_state{NOT_STARTED};
     /// The socket for sending and receiving packets to/from the web server.
     Ptr<Socket> m_socket;
     /// According to the content length specified by the ThreeGppHttpHeader.
-    uint32_t m_objectBytesToBeReceived;
+    uint32_t m_objectBytesToBeReceived{0};
     /// The packet constructed of one or more parts with ThreeGppHttpHeader.
     Ptr<Packet> m_constructedPacket;
     /// The client time stamp of the ThreeGppHttpHeader from the last received packet.
@@ -356,7 +356,7 @@ class ThreeGppHttpClient : public Application
     /// The server time stamp of the ThreeGppHttpHeader from the last received packet.
     Time m_objectServerTs;
     /// Determined after parsing the main object.
-    uint32_t m_embeddedObjectsToBeRequested;
+    uint32_t m_embeddedObjectsToBeRequested{0};
 
     // ATTRIBUTES
 

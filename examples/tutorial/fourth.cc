@@ -46,9 +46,7 @@ class MyObject : public Object
         return tid;
     }
 
-    MyObject()
-    {
-    }
+    MyObject() = default;
 
     TracedValue<int32_t> m_myInt; //!< The traced value.
 };

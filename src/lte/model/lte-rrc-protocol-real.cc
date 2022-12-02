@@ -43,19 +43,15 @@ const Time RRC_REAL_MSG_DELAY = MilliSeconds(0);
 NS_OBJECT_ENSURE_REGISTERED(LteUeRrcProtocolReal);
 
 LteUeRrcProtocolReal::LteUeRrcProtocolReal()
-    : m_ueRrcSapProvider(nullptr),
-      m_enbRrcSapProvider(nullptr)
+    : m_ueRrcSapUser(new MemberLteUeRrcSapUser<LteUeRrcProtocolReal>(this))
 {
-    m_ueRrcSapUser = new MemberLteUeRrcSapUser<LteUeRrcProtocolReal>(this);
     m_completeSetupParameters.srb0SapUser =
         new LteRlcSpecificLteRlcSapUser<LteUeRrcProtocolReal>(this);
     m_completeSetupParameters.srb1SapUser =
         new LtePdcpSpecificLtePdcpSapUser<LteUeRrcProtocolReal>(this);
 }
 
-LteUeRrcProtocolReal::~LteUeRrcProtocolReal()
-{
-}
+LteUeRrcProtocolReal::~LteUeRrcProtocolReal() = default;
 
 void
 LteUeRrcProtocolReal::DoDispose()
@@ -382,7 +378,6 @@ LteUeRrcProtocolReal::DoReceivePdcpSdu(LtePdcpSapUser::ReceivePdcpSduParameters 
 NS_OBJECT_ENSURE_REGISTERED(LteEnbRrcProtocolReal);
 
 LteEnbRrcProtocolReal::LteEnbRrcProtocolReal()
-    : m_enbRrcSapProvider(nullptr)
 {
     NS_LOG_FUNCTION(this);
     m_enbRrcSapUser = new MemberLteEnbRrcSapUser<LteEnbRrcProtocolReal>(this);
@@ -831,9 +826,7 @@ RealProtocolRlcSapUser::RealProtocolRlcSapUser(LteEnbRrcProtocolReal* pdcp, uint
 {
 }
 
-RealProtocolRlcSapUser::RealProtocolRlcSapUser()
-{
-}
+RealProtocolRlcSapUser::RealProtocolRlcSapUser() = default;
 
 void
 RealProtocolRlcSapUser::ReceivePdcpPdu(Ptr<Packet> p)

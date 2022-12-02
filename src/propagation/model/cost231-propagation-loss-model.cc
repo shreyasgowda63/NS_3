@@ -73,10 +73,7 @@ Cost231PropagationLossModel::GetTypeId()
     return tid;
 }
 
-Cost231PropagationLossModel::Cost231PropagationLossModel()
-{
-    m_shadowing = 10;
-}
+Cost231PropagationLossModel::Cost231PropagationLossModel() = default;
 
 void
 Cost231PropagationLossModel::SetLambda(double frequency, double speed)

@@ -171,7 +171,7 @@ class MacStatsCalculator : public LteStatsCalculator
      * appended to file. This value is true if output
      * files have not been opened yet
      */
-    bool m_dlFirstWrite;
+    bool m_dlFirstWrite{true};
 
     /**
      * When writing UL MAC statistics first time to file,
@@ -179,7 +179,7 @@ class MacStatsCalculator : public LteStatsCalculator
      * appended to file. This value is true if output
      * files have not been opened yet
      */
-    bool m_ulFirstWrite;
+    bool m_ulFirstWrite{true};
 
     /**
      * Downlink output trace file

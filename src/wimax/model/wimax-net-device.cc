@@ -140,23 +140,19 @@ WimaxNetDevice::GetTypeId()
 }
 
 WimaxNetDevice::WimaxNetDevice()
-    : m_state(0),
-      m_symbolIndex(0),
-      m_ttg(0),
-      m_rtg(0)
+    : m_connectionManager(CreateObject<ConnectionManager>()),
+      m_bandwidthManager(CreateObject<BandwidthManager>(this)),
+      m_burstProfileManager(CreateObject<BurstProfileManager>(this))
+
 {
     InitializeChannels();
-    m_connectionManager = CreateObject<ConnectionManager>();
-    m_burstProfileManager = CreateObject<BurstProfileManager>(this);
-    m_bandwidthManager = CreateObject<BandwidthManager>(this);
+
     m_nrFrames = 0;
     m_direction = ~0;
     m_frameStartTime = Seconds(0);
 }
 
-WimaxNetDevice::~WimaxNetDevice()
-{
-}
+WimaxNetDevice::~WimaxNetDevice() = default;
 
 void
 WimaxNetDevice::DoDispose()

@@ -29,9 +29,7 @@ NS_LOG_COMPONENT_DEFINE("LteRlcHeader");
 NS_OBJECT_ENSURE_REGISTERED(LteRlcHeader);
 
 LteRlcHeader::LteRlcHeader()
-    : m_headerLength(0),
-      m_framingInfo(0xff),
-      m_sequenceNumber(0xfffa)
+    : m_sequenceNumber(0xfffa)
 {
 }
 

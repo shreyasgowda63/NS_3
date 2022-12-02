@@ -80,9 +80,7 @@ Ipv4StaticRoutingSlash32TestCase::Ipv4StaticRoutingSlash32TestCase()
 {
 }
 
-Ipv4StaticRoutingSlash32TestCase::~Ipv4StaticRoutingSlash32TestCase()
-{
-}
+Ipv4StaticRoutingSlash32TestCase::~Ipv4StaticRoutingSlash32TestCase() = default;
 
 void
 Ipv4StaticRoutingSlash32TestCase::ReceivePkt(Ptr<Socket> socket)

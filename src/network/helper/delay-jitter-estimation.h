@@ -39,7 +39,7 @@ namespace ns3
 class DelayJitterEstimation
 {
   public:
-    DelayJitterEstimation();
+    DelayJitterEstimation() = default;
 
     /**
      * This method should be invoked once on each packet to

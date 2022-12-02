@@ -26,14 +26,11 @@ namespace ns3
 {
 
 UlJob::UlJob()
-    : m_deadline(Seconds(0)),
-      m_size(0)
+    : m_deadline(Seconds(0))
 {
 }
 
-UlJob::~UlJob()
-{
-}
+UlJob::~UlJob() = default;
 
 SSRecord*
 UlJob::GetSsRecord()
@@ -150,9 +147,7 @@ operator==(const UlJob& a, const UlJob& b)
     return false;
 }
 
-PriorityUlJob::PriorityUlJob()
-{
-}
+PriorityUlJob::PriorityUlJob() = default;
 
 int
 PriorityUlJob::GetPriority()

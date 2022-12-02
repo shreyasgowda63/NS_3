@@ -34,7 +34,6 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("SqliteDataOutput");
 
 SqliteDataOutput::SqliteDataOutput()
-    : DataOutputInterface()
 {
     NS_LOG_FUNCTION(this);
 

@@ -142,11 +142,10 @@ LrWpanPhy::GetTypeId()
 }
 
 LrWpanPhy::LrWpanPhy()
-    : m_edRequest(),
-      m_setTRXState()
+    : m_random(CreateObject<UniformRandomVariable>())
+
 {
     m_trxState = IEEE_802_15_4_PHY_TRX_OFF;
-    m_trxStatePending = IEEE_802_15_4_PHY_IDLE;
 
     // default PHY PIB attributes
     m_phyPIBAttributes.phyTransmitPower = 0;
@@ -154,17 +153,13 @@ LrWpanPhy::LrWpanPhy()
 
     SetPhyOption(IEEE_802_15_4_2_4GHZ_OQPSK);
 
-    m_random = CreateObject<UniformRandomVariable>();
     m_random->SetAttribute("Min", DoubleValue(0.0));
     m_random->SetAttribute("Max", DoubleValue(1.0));
 
-    m_isRxCanceled = false;
     ChangeTrxState(IEEE_802_15_4_PHY_TRX_OFF);
 }
 
-LrWpanPhy::~LrWpanPhy()
-{
-}
+LrWpanPhy::~LrWpanPhy() = default;
 
 void
 LrWpanPhy::DoInitialize()

@@ -31,7 +31,7 @@ namespace ns3
 class EpcX2Header : public Header
 {
   public:
-    EpcX2Header();
+    EpcX2Header() = default;
     ~EpcX2Header() override;
 
     /**
@@ -98,11 +98,11 @@ class EpcX2Header : public Header
     };
 
   private:
-    uint8_t m_messageType;   ///< message type
-    uint8_t m_procedureCode; ///< procedure code
+    uint8_t m_messageType{0xfa};   ///< message type
+    uint8_t m_procedureCode{0xfa}; ///< procedure code
 
-    uint32_t m_lengthOfIes; ///< length of IEs
-    uint32_t m_numberOfIes; ///< number of IEs
+    uint32_t m_lengthOfIes{0xfa}; ///< length of IEs
+    uint32_t m_numberOfIes{0xfa}; ///< number of IEs
 };
 
 /**
@@ -111,7 +111,7 @@ class EpcX2Header : public Header
 class EpcX2HandoverRequestHeader : public Header
 {
   public:
-    EpcX2HandoverRequestHeader();
+    EpcX2HandoverRequestHeader() = default;
     ~EpcX2HandoverRequestHeader() override;
 
     /**
@@ -214,13 +214,13 @@ class EpcX2HandoverRequestHeader : public Header
     uint32_t GetNumberOfIes() const;
 
   private:
-    uint32_t m_numberOfIes;  ///< number of IEs
-    uint32_t m_headerLength; ///< header length
+    uint32_t m_numberOfIes{1 + 1 + 1 + 1};                     ///< number of IEs
+    uint32_t m_headerLength{6 + 5 + 12 + (3 + 4 + 8 + 8 + 4)}; ///< header length
 
-    uint16_t m_oldEnbUeX2apId;                ///< old ENB UE X1 AP ID
-    uint16_t m_cause;                         ///< cause
-    uint16_t m_targetCellId;                  ///< target cell ID
-    uint32_t m_mmeUeS1apId;                   ///< MME UE S1 AP ID
+    uint16_t m_oldEnbUeX2apId{0xfffa};        ///< old ENB UE X1 AP ID
+    uint16_t m_cause{0xfffa};                 ///< cause
+    uint16_t m_targetCellId{0xfffa};          ///< target cell ID
+    uint32_t m_mmeUeS1apId{0xfffffffa};       ///< MME UE S1 AP ID
     uint64_t m_ueAggregateMaxBitRateDownlink; ///< aggregate max bit rate downlink
     uint64_t m_ueAggregateMaxBitRateUplink;   ///< aggregate max bit rate uplink
     std::vector<EpcX2Sap::ErabToBeSetupItem> m_erabsToBeSetupList; ///< ERAB to be setup list
@@ -305,8 +305,8 @@ class EpcX2HandoverRequestAckHeader : public Header
     uint32_t m_numberOfIes;  ///< number of IEs
     uint32_t m_headerLength; ///< header length
 
-    uint16_t m_oldEnbUeX2apId;                                         ///< old ENB UE X2 AP ID
-    uint16_t m_newEnbUeX2apId;                                         ///< new ENB UE X2 AP ID
+    uint16_t m_oldEnbUeX2apId{0xfffa};                                 ///< old ENB UE X2 AP ID
+    uint16_t m_newEnbUeX2apId{0xfffa};                                 ///< new ENB UE X2 AP ID
     std::vector<EpcX2Sap::ErabAdmittedItem> m_erabsAdmittedList;       ///< ERABs admitted list
     std::vector<EpcX2Sap::ErabNotAdmittedItem> m_erabsNotAdmittedList; ///< ERABs not admitted list
 };
@@ -379,9 +379,9 @@ class EpcX2HandoverPreparationFailureHeader : public Header
     uint32_t m_numberOfIes;  ///< number of IEs
     uint32_t m_headerLength; ///< header length
 
-    uint16_t m_oldEnbUeX2apId;         ///< old ENB UE X2 AP ID
-    uint16_t m_cause;                  ///< cause
-    uint16_t m_criticalityDiagnostics; ///< criticality diagnostics
+    uint16_t m_oldEnbUeX2apId{0xfffa};         ///< old ENB UE X2 AP ID
+    uint16_t m_cause{0xfffa};                  ///< cause
+    uint16_t m_criticalityDiagnostics{0xfffa}; ///< criticality diagnostics
 };
 
 /**
@@ -451,11 +451,11 @@ class EpcX2SnStatusTransferHeader : public Header
     uint32_t GetNumberOfIes() const;
 
   private:
-    uint32_t m_numberOfIes;  ///< number of IEs
-    uint32_t m_headerLength; ///< header length
+    uint32_t m_numberOfIes{3};  ///< number of IEs
+    uint32_t m_headerLength{6}; ///< header length
 
-    uint16_t m_oldEnbUeX2apId; ///< old ENB UE X2 AP ID
-    uint16_t m_newEnbUeX2apId; ///< new ENB UE X2 AP ID
+    uint16_t m_oldEnbUeX2apId{0xfffa}; ///< old ENB UE X2 AP ID
+    uint16_t m_newEnbUeX2apId{0xfffa}; ///< new ENB UE X2 AP ID
     std::vector<EpcX2Sap::ErabsSubjectToStatusTransferItem>
         m_erabsSubjectToStatusTransferList; ///< ERABs subject to status transfer list
 };
@@ -517,8 +517,8 @@ class EpcX2UeContextReleaseHeader : public Header
     uint32_t m_numberOfIes;  ///< number of IEs
     uint32_t m_headerLength; ///< header length
 
-    uint16_t m_oldEnbUeX2apId; ///< old ENB UE X2 AP ID
-    uint16_t m_newEnbUeX2apId; ///< new ENB UE X2 AP ID
+    uint16_t m_oldEnbUeX2apId{0xfffa}; ///< old ENB UE X2 AP ID
+    uint16_t m_newEnbUeX2apId{0xfffa}; ///< new ENB UE X2 AP ID
 };
 
 /**
@@ -564,8 +564,8 @@ class EpcX2LoadInformationHeader : public Header
     uint32_t GetNumberOfIes() const;
 
   private:
-    uint32_t m_numberOfIes;  ///< number of IEs
-    uint32_t m_headerLength; ///< length of IEs
+    uint32_t m_numberOfIes{1};  ///< number of IEs
+    uint32_t m_headerLength{6}; ///< length of IEs
 
     std::vector<EpcX2Sap::CellInformationItem> m_cellInformationList; ///< cell information list
 };
@@ -636,11 +636,11 @@ class EpcX2ResourceStatusUpdateHeader : public Header
     uint32_t GetNumberOfIes() const;
 
   private:
-    uint32_t m_numberOfIes;  ///< number of IEs
-    uint32_t m_headerLength; ///< header length
+    uint32_t m_numberOfIes{3};  ///< number of IEs
+    uint32_t m_headerLength{6}; ///< header length
 
-    uint16_t m_enb1MeasurementId; ///< ENB1 measurement
-    uint16_t m_enb2MeasurementId; ///< ENB2 measurement
+    uint16_t m_enb1MeasurementId{0xfffa}; ///< ENB1 measurement
+    uint16_t m_enb2MeasurementId{0xfffa}; ///< ENB2 measurement
     std::vector<EpcX2Sap::CellMeasurementResultItem>
         m_cellMeasurementResultList; ///< cell measurement result list
 };
@@ -710,12 +710,12 @@ class EpcX2HandoverCancelHeader : public Header
     uint32_t GetNumberOfIes() const;
 
   private:
-    uint32_t m_numberOfIes;  ///< number of IEs
-    uint32_t m_headerLength; ///< header length
+    uint32_t m_numberOfIes{3};  ///< number of IEs
+    uint32_t m_headerLength{6}; ///< header length
 
-    uint16_t m_oldEnbUeX2apId; ///< old ENB UE X2 AP ID
-    uint16_t m_newEnbUeX2apId; ///< new ENB UE X2 AP ID
-    uint16_t m_cause;          ///< cause
+    uint16_t m_oldEnbUeX2apId{0xfffa}; ///< old ENB UE X2 AP ID
+    uint16_t m_newEnbUeX2apId{0xfffa}; ///< new ENB UE X2 AP ID
+    uint16_t m_cause{0xfffa};          ///< cause
 };
 
 } // namespace ns3

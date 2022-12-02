@@ -311,9 +311,7 @@ MultiLinkSetupTest::MultiLinkSetupTest(
 {
 }
 
-MultiLinkSetupTest::~MultiLinkSetupTest()
-{
-}
+MultiLinkSetupTest::~MultiLinkSetupTest() = default;
 
 void
 MultiLinkSetupTest::Transmit(uint8_t linkId,

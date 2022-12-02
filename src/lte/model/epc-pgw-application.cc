@@ -147,9 +147,7 @@ EpcPgwApplication::EpcPgwApplication(const Ptr<VirtualNetDevice> tunDevice,
     : m_pgwS5Addr(s5Addr),
       m_s5uSocket(s5uSocket),
       m_s5cSocket(s5cSocket),
-      m_tunDevice(tunDevice),
-      m_gtpuUdpPort(2152), // fixed by the standard
-      m_gtpcUdpPort(2123)  // fixed by the standard
+      m_tunDevice(tunDevice)
 {
     NS_LOG_FUNCTION(this << tunDevice << s5Addr << s5uSocket << s5cSocket);
     m_s5uSocket->SetRecvCallback(MakeCallback(&EpcPgwApplication::RecvFromS5uSocket, this));

@@ -49,9 +49,7 @@ class PointToPointHelper : public PcapHelperForDevice, public AsciiTraceHelperFo
      */
     PointToPointHelper();
 
-    ~PointToPointHelper() override
-    {
-    }
+    ~PointToPointHelper() override = default;
 
     /**
      * Each point to point net device must have a queue to pass packets through.
@@ -189,7 +187,7 @@ class PointToPointHelper : public PcapHelperForDevice, public AsciiTraceHelperFo
     ObjectFactory m_queueFactory;   //!< Queue Factory
     ObjectFactory m_channelFactory; //!< Channel Factory
     ObjectFactory m_deviceFactory;  //!< Device Factory
-    bool m_enableFlowControl;       //!< whether to enable flow control
+    bool m_enableFlowControl{true}; //!< whether to enable flow control
 };
 
 /***************************************************************

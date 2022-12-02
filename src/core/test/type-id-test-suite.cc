@@ -70,9 +70,7 @@ UniqueTypeIdTestCase::UniqueTypeIdTestCase()
 {
 }
 
-UniqueTypeIdTestCase::~UniqueTypeIdTestCase()
-{
-}
+UniqueTypeIdTestCase::~UniqueTypeIdTestCase() = default;
 
 void
 UniqueTypeIdTestCase::DoRun()
@@ -146,9 +144,7 @@ CollisionTestCase::CollisionTestCase()
 {
 }
 
-CollisionTestCase::~CollisionTestCase()
-{
-}
+CollisionTestCase::~CollisionTestCase() = default;
 
 void
 CollisionTestCase::DoRun()
@@ -214,7 +210,7 @@ class DeprecatedAttribute : public Object
   private:
     // float m_obsAttr;  // this is obsolete, no trivial forwarding
     // int m_oldAttr;  // this has become m_attr
-    int m_attr; //!< An attribute to test deprecation.
+    int m_attr{0}; //!< An attribute to test deprecation.
 
     // TracedValue<int> m_obsTrace;  // this is obsolete, no trivial forwarding
     // TracedValue<double> m_oldTrace;  // this has become m_trace
@@ -222,13 +218,10 @@ class DeprecatedAttribute : public Object
 
   public:
     DeprecatedAttribute()
-        : m_attr(0)
-    {
-    }
 
-    ~DeprecatedAttribute() override
-    {
-    }
+        = default;
+
+    ~DeprecatedAttribute() override = default;
 
     /**
      * \brief Get the type ID.
@@ -307,9 +300,7 @@ DeprecatedAttributeTestCase::DeprecatedAttributeTestCase()
 {
 }
 
-DeprecatedAttributeTestCase::~DeprecatedAttributeTestCase()
-{
-}
+DeprecatedAttributeTestCase::~DeprecatedAttributeTestCase() = default;
 
 void
 DeprecatedAttributeTestCase::DoRun()
@@ -379,9 +370,7 @@ LookupTimeTestCase::LookupTimeTestCase()
 {
 }
 
-LookupTimeTestCase::~LookupTimeTestCase()
-{
-}
+LookupTimeTestCase::~LookupTimeTestCase() = default;
 
 void
 LookupTimeTestCase::DoRun()

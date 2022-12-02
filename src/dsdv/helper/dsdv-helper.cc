@@ -37,9 +37,7 @@
 
 namespace ns3
 {
-DsdvHelper::~DsdvHelper()
-{
-}
+DsdvHelper::~DsdvHelper() = default;
 
 DsdvHelper::DsdvHelper()
     : Ipv4RoutingHelper()

@@ -42,23 +42,23 @@ class Backoff
      * Minimum number of backoff slots (when multiplied by m_slotTime, determines minimum backoff
      * time)
      */
-    uint32_t m_minSlots;
+    uint32_t m_minSlots{1};
 
     /**
      * Maximum number of backoff slots (when multiplied by m_slotTime, determines maximum backoff
      * time)
      */
-    uint32_t m_maxSlots;
+    uint32_t m_maxSlots{1000};
 
     /**
      * Caps the exponential function when the number of retries reaches m_ceiling.
      */
-    uint32_t m_ceiling;
+    uint32_t m_ceiling{10};
 
     /**
      * Maximum number of transmission retries before the packet is dropped.
      */
-    uint32_t m_maxRetries;
+    uint32_t m_maxRetries{1000};
 
     /**
      * Length of one slot. A slot time, it usually the packet transmission time, if the packet size
@@ -118,7 +118,7 @@ class Backoff
     /**
      * Number of times that the transmitter has tried to unsuccessfully transmit the current packet.
      */
-    uint32_t m_numBackoffRetries;
+    uint32_t m_numBackoffRetries{0};
 
     /**
      * Random number generator

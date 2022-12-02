@@ -1140,7 +1140,7 @@ class LrWpanMac : public Object
      * listed by the standard but its use is required for a device to react to the lost
      * of the association response (failure of the association: NO_DATA)
      */
-    uint64_t m_assocRespCmdWaitTime;
+    uint64_t m_assocRespCmdWaitTime{960};
 
     /**
      * The short address of the coordinator through which the device is
@@ -1170,7 +1170,7 @@ class LrWpanMac : public Object
      * (outgoing superframe). Range 0 - 15 with 15 meaning no beacons are being sent.
      * See IEEE 802.15.4-2011, section 6.4.2, Table 52.
      */
-    uint8_t m_macBeaconOrder;
+    uint8_t m_macBeaconOrder{15};
 
     /**
      * Used by a PAN coordinator or coordinator. The length of the active portion
@@ -1178,7 +1178,7 @@ class LrWpanMac : public Object
      * 0 - 15 with 15 means the superframe will not be active after the beacon.
      * See IEEE 802.15.4-2011, section 6.4.2, Table 52.
      */
-    uint8_t m_macSuperframeOrder;
+    uint8_t m_macSuperframeOrder{15};
 
     /**
      * The maximum time (in UNIT periods) that a transaction is stored by a
@@ -1189,7 +1189,7 @@ class LrWpanMac : public Object
      * Non-beacon enabled = aBaseSuperframeDuration
      * See IEEE 802.15.4-2006, section 7.4.2, Table 86.
      */
-    uint16_t m_macTransactionPersistenceTime;
+    uint16_t m_macTransactionPersistenceTime{500}; // 0x01F5
 
     /**
      * The total size of the received beacon in symbols.
@@ -1207,7 +1207,7 @@ class LrWpanMac : public Object
      * Specification of how often the parent coordinator transmits its beacon.
      * 0 - 15 with 15 means the parent is not currently transmitting beacons.
      */
-    uint8_t m_incomingBeaconOrder;
+    uint8_t m_incomingBeaconOrder{15};
 
     /**
      * Used by all devices that have a parent.
@@ -1215,7 +1215,7 @@ class LrWpanMac : public Object
      * beacon frame.
      * 0 - 15 with 15 meaning the superframe will not be active after the beacon.
      */
-    uint8_t m_incomingSuperframeOrder;
+    uint8_t m_incomingSuperframeOrder{15};
 
     /**
      * Indication of the Slot where the CAP portion of the INCOMING Superframe ends.
@@ -1227,14 +1227,14 @@ class LrWpanMac : public Object
      * frames from PHY.
      * See IEEE 802.15.4-2006, section 7.4.2, Table 86.
      */
-    bool m_macPromiscuousMode;
+    bool m_macPromiscuousMode{false};
 
     /**
      * 16 bits id of PAN on which this device is operating. 0xffff means not
      * associated.
      * See IEEE 802.15.4-2006, section 7.4.2, Table 86.
      */
-    uint16_t m_macPanId;
+    uint16_t m_macPanId{0xffff};
 
     /**
      * Temporally stores the value of the current m_macPanId when a MLME-SCAN.request is performed.
@@ -1258,33 +1258,33 @@ class LrWpanMac : public Object
      * The maximum number of retries allowed after a transmission failure.
      * See IEEE 802.15.4-2006, section 7.4.2, Table 86.
      */
-    uint8_t m_macMaxFrameRetries;
+    uint8_t m_macMaxFrameRetries{3};
 
     /**
      * Indication of whether the MAC sublayer is to enable its receiver during
      * idle periods.
      * See IEEE 802.15.4-2006, section 7.4.2, Table 86.
      */
-    bool m_macRxOnWhenIdle;
+    bool m_macRxOnWhenIdle{true};
 
     /**
      * The minimum time forming a Long InterFrame Spacing (LIFS) period.
      * See IEEE 802.15.4-2011, section 6.4.2, Table 52.
      */
-    uint32_t m_macLIFSPeriod;
+    uint32_t m_macLIFSPeriod{40};
 
     /**
      * The minimum time forming a Short InterFrame Spacing (SIFS) period.
      * See IEEE 802.15.4-2011, section 6.4.2, Table 52.
      */
-    uint32_t m_macSIFSPeriod;
+    uint32_t m_macSIFSPeriod{12};
 
     /**
      * Indication of whether a coordinator is currently allowing association.
      * A value of TRUE indicates that the association is permitted.
      * See IEEE 802.15.4-2011, section 6.4.2, Table 52.
      */
-    bool m_macAssociationPermit;
+    bool m_macAssociationPermit{true};
 
     /**
      * Indication of whether a device automatically sends data request command
@@ -1293,22 +1293,22 @@ class LrWpanMac : public Object
      * the generation of MLME-BEACON-NOTIFY.indication (6.2.4.1)
      * See IEEE 802.15.4-2011, section 6.4.2, Table 52.
      */
-    bool m_macAutoRequest;
+    bool m_macAutoRequest{true};
 
     /**
      * The maximum energy level detected during ED scan on the current channel.
      */
-    uint8_t m_maxEnergyLevel;
+    uint8_t m_maxEnergyLevel{0};
 
     /**
      * The value of the necessary InterFrame Space after the transmission of a packet.
      */
-    uint32_t m_ifs;
+    uint32_t m_ifs{0};
 
     /**
      * Indication of whether the current device is the PAN coordinator
      */
-    bool m_panCoor;
+    bool m_panCoor{false};
 
     /**
      * Indication of the Interval used by the coordinator to transmit beacon frames
@@ -1337,17 +1337,17 @@ class LrWpanMac : public Object
     /**
      * Indication of current device capability (FFD or RFD)
      */
-    uint8_t m_deviceCapability;
+    uint8_t m_deviceCapability{DeviceType::FFD};
 
     /**
      * Indication of whether the current device is tracking incoming beacons.
      */
-    bool m_beaconTrackingOn;
+    bool m_beaconTrackingOn{false};
 
     /**
      * The number of consecutive loss beacons in a beacon tracking operation.
      */
-    uint8_t m_numLostBeacons;
+    uint8_t m_numLostBeacons{0};
 
     /**
      * Get the macAckWaitDuration attribute value.
@@ -1911,22 +1911,22 @@ class LrWpanMac : public Object
     /**
      * The current state of the MAC layer.
      */
-    TracedValue<LrWpanMacState> m_lrWpanMacState;
+    TracedValue<LrWpanMacState> m_lrWpanMacState{MAC_IDLE};
 
     /**
      * The current period of the incoming superframe.
      */
-    TracedValue<SuperframeStatus> m_incSuperframeStatus;
+    TracedValue<SuperframeStatus> m_incSuperframeStatus{INACTIVE};
 
     /**
      * The current period of the outgoing superframe.
      */
-    TracedValue<SuperframeStatus> m_outSuperframeStatus;
+    TracedValue<SuperframeStatus> m_outSuperframeStatus{INACTIVE};
 
     /**
      * The current association status of the MAC layer.
      */
-    LrWpanAssociationStatus m_associationStatus;
+    LrWpanAssociationStatus m_associationStatus{ASSOCIATED};
 
     /**
      * The packet which is currently being sent by the MAC layer.
@@ -2005,24 +2005,24 @@ class LrWpanMac : public Object
     /**
      * The channel list index used to obtain the current scanned channel.
      */
-    uint16_t m_channelScanIndex;
+    uint16_t m_channelScanIndex{0};
 
     /**
      * Indicates the pending primitive when PLME.SET operation (page or channel switch) is called
      * from within another MLME primitive (e.g. Association, Scan, Sync, Start).
      */
-    PendingPrimitiveStatus m_pendPrimitive;
+    PendingPrimitiveStatus m_pendPrimitive{MLME_NONE};
 
     /**
      * The number of already used retransmission for the currently transmitted
      * packet.
      */
-    uint8_t m_retransmission;
+    uint8_t m_retransmission{0};
 
     /**
      * The number of CSMA/CA retries used for sending the current packet.
      */
-    uint8_t m_numCsmacaRetry;
+    uint8_t m_numCsmacaRetry{0};
 
     /**
      * Scheduler event for the ACK timeout of the currently transmitted data

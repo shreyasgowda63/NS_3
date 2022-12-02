@@ -106,7 +106,7 @@ class SteadyStateRandomWaypointMobilityModel : public MobilityModel
     double m_maxPause;                          //!< maximum pause value (s)
     Ptr<UniformRandomVariable> m_pause;         //!< random variable for pause values
     EventId m_event;                            //!< current event ID
-    bool alreadyStarted;                        //!< flag for starting state
+    bool alreadyStarted{false};                 //!< flag for starting state
     Ptr<UniformRandomVariable> m_x1_r;          //!< rv used in rejection sampling phase
     Ptr<UniformRandomVariable> m_y1_r;          //!< rv used in rejection sampling phase
     Ptr<UniformRandomVariable> m_x2_r;          //!< rv used in rejection sampling phase

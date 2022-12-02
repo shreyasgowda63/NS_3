@@ -81,9 +81,7 @@ class CallbackImplBase : public SimpleRefCount<CallbackImplBase>
 {
   public:
     /** Virtual destructor */
-    virtual ~CallbackImplBase()
-    {
-    }
+    virtual ~CallbackImplBase() = default;
 
     /**
      * Equality test
@@ -137,9 +135,7 @@ class CallbackComponentBase
 {
   public:
     /** Virtual destructor */
-    virtual ~CallbackComponentBase()
-    {
-    }
+    virtual ~CallbackComponentBase() = default;
 
     /**
      * Equality test
@@ -365,9 +361,8 @@ class CallbackBase
 {
   public:
     CallbackBase()
-        : m_impl()
-    {
-    }
+
+        = default;
 
     /** \return The impl pointer */
     Ptr<CallbackImplBase> GetImpl() const
@@ -442,9 +437,7 @@ template <typename R, typename... UArgs>
 class Callback : public CallbackBase
 {
   public:
-    Callback()
-    {
-    }
+    Callback() = default;
 
     /**
      * Construct from a CallbackImpl pointer

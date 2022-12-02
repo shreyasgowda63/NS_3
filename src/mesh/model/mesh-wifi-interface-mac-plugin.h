@@ -41,7 +41,7 @@ class MeshWifiInterfaceMacPlugin : public SimpleRefCount<MeshWifiInterfaceMacPlu
 {
   public:
     /// This is for subclasses
-    virtual ~MeshWifiInterfaceMacPlugin(){};
+    virtual ~MeshWifiInterfaceMacPlugin() = default;
     /**
      * Each plugin must be installed on an interface to work
      *

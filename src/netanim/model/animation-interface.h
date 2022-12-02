@@ -617,32 +617,32 @@ class AnimationInterface
 
     // ##### State #####
 
-    FILE* m_f;                             ///< File handle for output (0 if none)
-    FILE* m_routingF;                      ///< File handle for routing table output (0 if None);
-    Time m_mobilityPollInterval;           ///< mobility poll interval
-    std::string m_outputFileName;          ///< output file name
-    uint64_t gAnimUid;                     ///< Packet unique identifier used by AnimationInterface
-    AnimWriteCallback m_writeCallback;     ///< write callback
-    bool m_started;                        ///< started
-    bool m_enablePacketMetadata;           ///< enable packet metadata
-    Time m_startTime;                      ///< start time
-    Time m_stopTime;                       ///< stop time
-    uint64_t m_maxPktsPerFile;             ///< maximum pakets per file
-    std::string m_originalFileName;        ///< original file name
-    Time m_routingStopTime;                ///< routing stop time
-    std::string m_routingFileName;         ///< routing file name
-    Time m_routingPollInterval;            ///< routing poll interval
-    NodeContainer m_routingNc;             ///< routing node container
-    Time m_ipv4L3ProtocolCountersStopTime; ///< IPv4 L3 protocol counters stop time
-    Time m_ipv4L3ProtocolCountersPollInterval; ///< IPv4 L3 protocol counters poll interval
-    Time m_queueCountersStopTime;              ///< queue counters stop time
-    Time m_queueCountersPollInterval;          ///< queue counters poll interval
-    Time m_wifiMacCountersStopTime;            ///< wifi MAC counters stop time
-    Time m_wifiMacCountersPollInterval;        ///< wifi MAC counters poll interval
-    Time m_wifiPhyCountersStopTime;            ///< wifi Phy counters stop time
-    Time m_wifiPhyCountersPollInterval;        ///< wifi Phy counters poll interval
-    static Rectangle* userBoundary;            ///< user boundary
-    bool m_trackPackets;                       ///< track packets
+    FILE* m_f{nullptr};           ///< File handle for output (0 if none)
+    FILE* m_routingF{nullptr};    ///< File handle for routing table output (0 if None);
+    Time m_mobilityPollInterval;  ///< mobility poll interval
+    std::string m_outputFileName; ///< output file name
+    uint64_t gAnimUid{0};         ///< Packet unique identifier used by AnimationInterface
+    AnimWriteCallback m_writeCallback{nullptr};         ///< write callback
+    bool m_started{false};                              ///< started
+    bool m_enablePacketMetadata{false};                 ///< enable packet metadata
+    Time m_startTime;                                   ///< start time
+    Time m_stopTime;                                    ///< stop time
+    uint64_t m_maxPktsPerFile{MAX_PKTS_PER_TRACE_FILE}; ///< maximum pakets per file
+    std::string m_originalFileName;                     ///< original file name
+    Time m_routingStopTime;                             ///< routing stop time
+    std::string m_routingFileName;                      ///< routing file name
+    Time m_routingPollInterval;                         ///< routing poll interval
+    NodeContainer m_routingNc;                          ///< routing node container
+    Time m_ipv4L3ProtocolCountersStopTime;              ///< IPv4 L3 protocol counters stop time
+    Time m_ipv4L3ProtocolCountersPollInterval;          ///< IPv4 L3 protocol counters poll interval
+    Time m_queueCountersStopTime;                       ///< queue counters stop time
+    Time m_queueCountersPollInterval;                   ///< queue counters poll interval
+    Time m_wifiMacCountersStopTime;                     ///< wifi MAC counters stop time
+    Time m_wifiMacCountersPollInterval;                 ///< wifi MAC counters poll interval
+    Time m_wifiPhyCountersStopTime;                     ///< wifi Phy counters stop time
+    Time m_wifiPhyCountersPollInterval;                 ///< wifi Phy counters poll interval
+    static Rectangle* userBoundary;                     ///< user boundary
+    bool m_trackPackets{true};                          ///< track packets
 
     // Counter ID
     uint32_t m_remainingEnergyCounterId; ///< remaining energy counter ID

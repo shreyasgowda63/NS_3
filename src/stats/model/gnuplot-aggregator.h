@@ -278,10 +278,10 @@ class GnuplotAggregator : public DataCollectionObject
     std::string m_extra;
 
     /// Set equal to true after setting the title.
-    bool m_titleSet;
+    bool m_titleSet{false};
 
     /// Set equal to true after setting the x and y legends.
-    bool m_xAndYLegendsSet;
+    bool m_xAndYLegendsSet{false};
 
     /// Used to create gnuplot files.
     Gnuplot m_gnuplot;

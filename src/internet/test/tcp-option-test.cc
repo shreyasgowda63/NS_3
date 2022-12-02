@@ -60,9 +60,9 @@ class TcpOptionWSTestCase : public TestCase
 };
 
 TcpOptionWSTestCase::TcpOptionWSTestCase(std::string name, uint8_t scale)
-    : TestCase(name)
+    : TestCase(name),
+      m_scale(scale)
 {
-    m_scale = scale;
 }
 
 void
@@ -133,16 +133,14 @@ class TcpOptionTSTestCase : public TestCase
     void DoRun() override;
     void DoTeardown() override;
 
-    uint32_t m_timestamp; //!< TimeStamp.
-    uint32_t m_echo;      //!< Echoed TimeStamp.
-    Buffer m_buffer;      //!< Buffer.
+    uint32_t m_timestamp{0}; //!< TimeStamp.
+    uint32_t m_echo{0};      //!< Echoed TimeStamp.
+    Buffer m_buffer;         //!< Buffer.
 };
 
 TcpOptionTSTestCase::TcpOptionTSTestCase(std::string name)
     : TestCase(name)
 {
-    m_timestamp = 0;
-    m_echo = 0;
 }
 
 void

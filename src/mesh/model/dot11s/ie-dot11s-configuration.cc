@@ -28,15 +28,8 @@ namespace dot11s
 {
 
 Dot11sMeshCapability::Dot11sMeshCapability()
-    : acceptPeerLinks(true),
-      MCCASupported(false),
-      MCCAEnabled(false),
-      forwarding(true),
-      beaconTimingReport(true),
-      TBTTAdjustment(true),
-      powerSaveLevel(false)
-{
-}
+
+    = default;
 
 uint8_t
 Dot11sMeshCapability::GetSerializedSize() const
@@ -117,14 +110,8 @@ IeConfiguration::ElementId() const
 }
 
 IeConfiguration::IeConfiguration()
-    : m_APSPId(PROTOCOL_HWMP),
-      m_APSMId(METRIC_AIRTIME),
-      m_CCMId(CONGESTION_NULL),
-      m_SPId(SYNC_NEIGHBOUR_OFFSET),
-      m_APId(AUTH_NULL),
-      m_neighbors(0)
-{
-}
+
+    = default;
 
 uint16_t
 IeConfiguration::GetInformationFieldSize() const

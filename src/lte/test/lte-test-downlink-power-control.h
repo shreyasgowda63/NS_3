@@ -173,9 +173,10 @@ class LteDownlinkPowerControlRrcConnectionReconfigurationTestCase : public TestC
     void DoRun() override;
     bool m_useIdealRrc; ///< use ideal RRC?
 
-    bool m_changePdschConfigDedicatedTriggered;   ///< change PDSCH config dedicated triggered?
-    bool m_connectionReconfigurationUeReceived;   ///< connection reconfiguration UE received?
-    bool m_connectionReconfigurationEnbCompleted; ///< connection reconfiguration ENB completed?
+    bool m_changePdschConfigDedicatedTriggered{false}; ///< change PDSCH config dedicated triggered?
+    bool m_connectionReconfigurationUeReceived{false}; ///< connection reconfiguration UE received?
+    bool m_connectionReconfigurationEnbCompleted{
+        false}; ///< connection reconfiguration ENB completed?
 };
 
 #endif /* LTE_TEST_DOWNLINK_POWER_CONTROL_H */

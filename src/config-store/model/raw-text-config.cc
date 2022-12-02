@@ -38,7 +38,6 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("RawTextConfig");
 
 RawTextConfigSave::RawTextConfigSave()
-    : m_os(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }
@@ -71,8 +70,8 @@ RawTextConfigSave::Default()
     {
       public:
         RawTextDefaultIterator(std::ostream* os)
+            : m_os(os)
         {
-            m_os = os;
         }
 
         void SetSaveDeprecated(bool saveDeprecated)
@@ -205,7 +204,6 @@ RawTextConfigSave::Attributes()
 }
 
 RawTextConfigLoad::RawTextConfigLoad()
-    : m_is(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }

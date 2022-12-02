@@ -78,8 +78,8 @@ class LteCcmMacSapProvider;
 class LteEnbComponentCarrierManager : public Object
 {
   public:
-    LteEnbComponentCarrierManager();
-    ~LteEnbComponentCarrierManager() override;
+    LteEnbComponentCarrierManager() = default;
+    ~LteEnbComponentCarrierManager() override = default;
     /**
      * \brief Get the type ID.
      * \return the object TypeId

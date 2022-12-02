@@ -53,15 +53,13 @@ ChannelCondition::ChannelCondition()
 ChannelCondition::ChannelCondition(ChannelCondition::LosConditionValue losCondition,
                                    ChannelCondition::O2iConditionValue o2iCondition,
                                    ChannelCondition::O2iLowHighConditionValue o2iLowHighCondition)
+    : m_losCondition(losCondition),
+      m_o2iCondition(o2iCondition),
+      m_o2iLowHighCondition(o2iLowHighCondition)
 {
-    m_losCondition = losCondition;
-    m_o2iCondition = o2iCondition;
-    m_o2iLowHighCondition = o2iLowHighCondition;
 }
 
-ChannelCondition::~ChannelCondition()
-{
-}
+ChannelCondition::~ChannelCondition() = default;
 
 ChannelCondition::LosConditionValue
 ChannelCondition::GetLosCondition() const
@@ -172,13 +170,9 @@ ChannelConditionModel::GetTypeId()
     return tid;
 }
 
-ChannelConditionModel::ChannelConditionModel()
-{
-}
+ChannelConditionModel::ChannelConditionModel() = default;
 
-ChannelConditionModel::~ChannelConditionModel()
-{
-}
+ChannelConditionModel::~ChannelConditionModel() = default;
 
 // ------------------------------------------------------------------------- //
 
@@ -194,13 +188,9 @@ AlwaysLosChannelConditionModel::GetTypeId()
     return tid;
 }
 
-AlwaysLosChannelConditionModel::AlwaysLosChannelConditionModel()
-{
-}
+AlwaysLosChannelConditionModel::AlwaysLosChannelConditionModel() = default;
 
-AlwaysLosChannelConditionModel::~AlwaysLosChannelConditionModel()
-{
-}
+AlwaysLosChannelConditionModel::~AlwaysLosChannelConditionModel() = default;
 
 Ptr<ChannelCondition>
 AlwaysLosChannelConditionModel::GetChannelCondition(Ptr<const MobilityModel> /* a */,
@@ -231,13 +221,9 @@ NeverLosChannelConditionModel::GetTypeId()
     return tid;
 }
 
-NeverLosChannelConditionModel::NeverLosChannelConditionModel()
-{
-}
+NeverLosChannelConditionModel::NeverLosChannelConditionModel() = default;
 
-NeverLosChannelConditionModel::~NeverLosChannelConditionModel()
-{
-}
+NeverLosChannelConditionModel::~NeverLosChannelConditionModel() = default;
 
 Ptr<ChannelCondition>
 NeverLosChannelConditionModel::GetChannelCondition(Ptr<const MobilityModel> /* a */,
@@ -268,13 +254,9 @@ NeverLosVehicleChannelConditionModel::GetTypeId()
     return tid;
 }
 
-NeverLosVehicleChannelConditionModel::NeverLosVehicleChannelConditionModel()
-{
-}
+NeverLosVehicleChannelConditionModel::NeverLosVehicleChannelConditionModel() = default;
 
-NeverLosVehicleChannelConditionModel::~NeverLosVehicleChannelConditionModel()
-{
-}
+NeverLosVehicleChannelConditionModel::~NeverLosVehicleChannelConditionModel() = default;
 
 Ptr<ChannelCondition>
 NeverLosVehicleChannelConditionModel::GetChannelCondition(Ptr<const MobilityModel> /* a */,
@@ -335,19 +317,15 @@ ThreeGppChannelConditionModel::GetTypeId()
 }
 
 ThreeGppChannelConditionModel::ThreeGppChannelConditionModel()
-    : ChannelConditionModel()
+    : m_uniformVar(CreateObject<UniformRandomVariable>()),
+      m_uniformO2iLowHighLossVar(CreateObject<UniformRandomVariable>()),
+      m_uniformVarO2i(CreateObject<UniformRandomVariable>())
 {
-    m_uniformVar = CreateObject<UniformRandomVariable>();
     m_uniformVar->SetAttribute("Min", DoubleValue(0));
     m_uniformVar->SetAttribute("Max", DoubleValue(1));
-
-    m_uniformVarO2i = CreateObject<UniformRandomVariable>();
-    m_uniformO2iLowHighLossVar = CreateObject<UniformRandomVariable>();
 }
 
-ThreeGppChannelConditionModel::~ThreeGppChannelConditionModel()
-{
-}
+ThreeGppChannelConditionModel::~ThreeGppChannelConditionModel() = default;
 
 void
 ThreeGppChannelConditionModel::DoDispose()
@@ -552,13 +530,10 @@ ThreeGppRmaChannelConditionModel::GetTypeId()
 }
 
 ThreeGppRmaChannelConditionModel::ThreeGppRmaChannelConditionModel()
-    : ThreeGppChannelConditionModel()
-{
-}
 
-ThreeGppRmaChannelConditionModel::~ThreeGppRmaChannelConditionModel()
-{
-}
+    = default;
+
+ThreeGppRmaChannelConditionModel::~ThreeGppRmaChannelConditionModel() = default;
 
 double
 ThreeGppRmaChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,
@@ -599,13 +574,10 @@ ThreeGppUmaChannelConditionModel::GetTypeId()
 }
 
 ThreeGppUmaChannelConditionModel::ThreeGppUmaChannelConditionModel()
-    : ThreeGppChannelConditionModel()
-{
-}
 
-ThreeGppUmaChannelConditionModel::~ThreeGppUmaChannelConditionModel()
-{
-}
+    = default;
+
+ThreeGppUmaChannelConditionModel::~ThreeGppUmaChannelConditionModel() = default;
 
 double
 ThreeGppUmaChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,
@@ -671,13 +643,11 @@ ThreeGppUmiStreetCanyonChannelConditionModel::GetTypeId()
 }
 
 ThreeGppUmiStreetCanyonChannelConditionModel::ThreeGppUmiStreetCanyonChannelConditionModel()
-    : ThreeGppChannelConditionModel()
-{
-}
 
-ThreeGppUmiStreetCanyonChannelConditionModel::~ThreeGppUmiStreetCanyonChannelConditionModel()
-{
-}
+    = default;
+
+ThreeGppUmiStreetCanyonChannelConditionModel::~ThreeGppUmiStreetCanyonChannelConditionModel() =
+    default;
 
 double
 ThreeGppUmiStreetCanyonChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,
@@ -726,13 +696,11 @@ ThreeGppIndoorMixedOfficeChannelConditionModel::GetTypeId()
 }
 
 ThreeGppIndoorMixedOfficeChannelConditionModel::ThreeGppIndoorMixedOfficeChannelConditionModel()
-    : ThreeGppChannelConditionModel()
-{
-}
 
-ThreeGppIndoorMixedOfficeChannelConditionModel::~ThreeGppIndoorMixedOfficeChannelConditionModel()
-{
-}
+    = default;
+
+ThreeGppIndoorMixedOfficeChannelConditionModel::~ThreeGppIndoorMixedOfficeChannelConditionModel() =
+    default;
 
 double
 ThreeGppIndoorMixedOfficeChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,
@@ -785,13 +753,11 @@ ThreeGppIndoorOpenOfficeChannelConditionModel::GetTypeId()
 }
 
 ThreeGppIndoorOpenOfficeChannelConditionModel::ThreeGppIndoorOpenOfficeChannelConditionModel()
-    : ThreeGppChannelConditionModel()
-{
-}
 
-ThreeGppIndoorOpenOfficeChannelConditionModel::~ThreeGppIndoorOpenOfficeChannelConditionModel()
-{
-}
+    = default;
+
+ThreeGppIndoorOpenOfficeChannelConditionModel::~ThreeGppIndoorOpenOfficeChannelConditionModel() =
+    default;
 
 double
 ThreeGppIndoorOpenOfficeChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,

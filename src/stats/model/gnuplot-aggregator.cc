@@ -48,8 +48,7 @@ GnuplotAggregator::GnuplotAggregator(const std::string& outputFileNameWithoutExt
       m_title("Data Values"),
       m_xLegend("X Values"),
       m_yLegend("Y Values"),
-      m_titleSet(false),
-      m_xAndYLegendsSet(false),
+
       m_gnuplot(m_graphicsFileName)
 {
     NS_LOG_FUNCTION(this);

@@ -119,7 +119,7 @@ class SpectrumInterference : public Object
      */
     void DoSubtractSignal(Ptr<const SpectrumValue> spd);
 
-    bool m_receiving; //!< True if in Rx status
+    bool m_receiving{false}; //!< True if in Rx status
 
     /**
      * Stores the power spectral density of the signal whose RX is being attempted

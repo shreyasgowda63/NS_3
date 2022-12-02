@@ -35,7 +35,7 @@ namespace ns3
 class LteRlcSapProvider
 {
   public:
-    virtual ~LteRlcSapProvider();
+    virtual ~LteRlcSapProvider() = default;
 
     /**
      * Parameters for LteRlcSapProvider::TransmitPdcpPdu
@@ -66,7 +66,7 @@ class LteRlcSapProvider
 class LteRlcSapUser
 {
   public:
-    virtual ~LteRlcSapUser();
+    virtual ~LteRlcSapUser() = default;
 
     /**
      * Called by the RLC entity to notify the PDCP entity of the reception of a new PDCP PDU

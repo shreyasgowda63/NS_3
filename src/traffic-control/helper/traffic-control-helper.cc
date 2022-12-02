@@ -104,9 +104,7 @@ QueueDiscFactory::CreateQueueDisc(const std::vector<Ptr<QueueDisc>>& queueDiscs)
     return qd;
 }
 
-TrafficControlHelper::TrafficControlHelper()
-{
-}
+TrafficControlHelper::TrafficControlHelper() = default;
 
 TrafficControlHelper
 TrafficControlHelper::Default(std::size_t nTxQueues)

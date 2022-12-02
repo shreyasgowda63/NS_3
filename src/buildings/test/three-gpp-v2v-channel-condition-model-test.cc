@@ -81,14 +81,11 @@ class ThreeGppV2vBuildingsChCondModelTestCase : public TestCase
 
 ThreeGppV2vBuildingsChCondModelTestCase::ThreeGppV2vBuildingsChCondModelTestCase()
     : TestCase("Test case for the ThreeGppV2vUrban and ThreeGppV2vHighway ChannelConditionModel "
-               "with building"),
-      m_testVectors()
+               "with building")
 {
 }
 
-ThreeGppV2vBuildingsChCondModelTestCase::~ThreeGppV2vBuildingsChCondModelTestCase()
-{
-}
+ThreeGppV2vBuildingsChCondModelTestCase::~ThreeGppV2vBuildingsChCondModelTestCase() = default;
 
 void
 ThreeGppV2vBuildingsChCondModelTestCase::DoRun()
@@ -232,19 +229,16 @@ class ThreeGppV2vUrbanLosNlosvChCondModelTestCase : public TestCase
     TestVectors<TestVector> m_testVectors; //!< array containing all the test vectors
     Ptr<ThreeGppV2vUrbanChannelConditionModel> m_condModel; //!< the channel condition model
     uint64_t m_numLos{0};                                   //!< the number of LOS occurrences
-    double m_tolerance;                                     //!< tolerance
+    double m_tolerance{2e-3};                               //!< tolerance
 };
 
 ThreeGppV2vUrbanLosNlosvChCondModelTestCase::ThreeGppV2vUrbanLosNlosvChCondModelTestCase()
-    : TestCase("Test case for the class ThreeGppV2vUrbanChannelConditionModel"),
-      m_testVectors(),
-      m_tolerance(2e-3)
+    : TestCase("Test case for the class ThreeGppV2vUrbanChannelConditionModel")
 {
 }
 
-ThreeGppV2vUrbanLosNlosvChCondModelTestCase::~ThreeGppV2vUrbanLosNlosvChCondModelTestCase()
-{
-}
+ThreeGppV2vUrbanLosNlosvChCondModelTestCase::~ThreeGppV2vUrbanLosNlosvChCondModelTestCase() =
+    default;
 
 void
 ThreeGppV2vUrbanLosNlosvChCondModelTestCase::EvaluateChannelCondition(Ptr<MobilityModel> a,
@@ -397,19 +391,16 @@ class ThreeGppV2vHighwayLosNlosvChCondModelTestCase : public TestCase
     TestVectors<TestVector> m_testVectors; //!< array containing all the test vectors
     Ptr<ThreeGppV2vHighwayChannelConditionModel> m_condModel; //!< the channel condition model
     uint64_t m_numLos{0};                                     //!< the number of LOS occurrences
-    double m_tolerance;                                       //!< tolerance
+    double m_tolerance{2e-3};                                 //!< tolerance
 };
 
 ThreeGppV2vHighwayLosNlosvChCondModelTestCase::ThreeGppV2vHighwayLosNlosvChCondModelTestCase()
-    : TestCase("Test case for the class ThreeGppV2vHighwayChannelConditionModel"),
-      m_testVectors(),
-      m_tolerance(2e-3)
+    : TestCase("Test case for the class ThreeGppV2vHighwayChannelConditionModel")
 {
 }
 
-ThreeGppV2vHighwayLosNlosvChCondModelTestCase::~ThreeGppV2vHighwayLosNlosvChCondModelTestCase()
-{
-}
+ThreeGppV2vHighwayLosNlosvChCondModelTestCase::~ThreeGppV2vHighwayLosNlosvChCondModelTestCase() =
+    default;
 
 void
 ThreeGppV2vHighwayLosNlosvChCondModelTestCase::EvaluateChannelCondition(Ptr<MobilityModel> a,

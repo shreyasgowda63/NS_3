@@ -224,7 +224,7 @@ class BridgeNetDevice : public NetDevice
     Ptr<Node> m_node;                                  //!< node owning this NetDevice
     Ptr<BridgeChannel> m_channel;                      //!< virtual bridged channel
     std::vector<Ptr<NetDevice>> m_ports;               //!< bridged ports
-    uint32_t m_ifIndex;                                //!< Interface index
+    uint32_t m_ifIndex{0};                             //!< Interface index
     uint16_t m_mtu;                                    //!< MTU of the bridged NetDevice
     bool m_enableLearning; //!< true if the bridge will learn the node status
 };

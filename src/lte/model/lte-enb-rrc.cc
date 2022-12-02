@@ -142,19 +142,10 @@ UeManager::UeManager()
 }
 
 UeManager::UeManager(Ptr<LteEnbRrc> rrc, uint16_t rnti, State s, uint8_t componentCarrierId)
-    : m_lastAllocatedDrbid(0),
-      m_rnti(rnti),
-      m_imsi(0),
+    : m_rnti(rnti),
       m_componentCarrierId(componentCarrierId),
-      m_lastRrcTransactionIdentifier(0),
       m_rrc(rrc),
-      m_state(s),
-      m_pendingRrcConnectionReconfiguration(false),
-      m_sourceX2apId(0),
-      m_sourceCellId(0),
-      m_needPhyMacConfiguration(false),
-      m_caSupportConfigured(false),
-      m_pendingStartDataRadioBearers(false)
+      m_state(s)
 {
     NS_LOG_FUNCTION(this);
 }
@@ -307,10 +298,6 @@ UeManager::DoInitialize()
         break;
     }
     m_caSupportConfigured = false;
-}
-
-UeManager::~UeManager()
-{
 }
 
 void
@@ -1852,23 +1839,9 @@ UeManager::BuildNonCriticalExtensionConfigurationCa()
 NS_OBJECT_ENSURE_REGISTERED(LteEnbRrc);
 
 LteEnbRrc::LteEnbRrc()
-    : m_x2SapProvider(nullptr),
-      m_cmacSapProvider(0),
-      m_handoverManagementSapProvider(nullptr),
-      m_ccmRrcSapProvider(nullptr),
-      m_anrSapProvider(nullptr),
+    : m_cmacSapProvider(0),
       m_ffrRrcSapProvider(0),
-      m_rrcSapUser(nullptr),
-      m_macSapProvider(nullptr),
-      m_s1SapProvider(nullptr),
-      m_cphySapProvider(0),
-      m_configured(false),
-      m_lastAllocatedRnti(0),
-      m_srsCurrentPeriodicityId(0),
-      m_lastAllocatedConfigurationIndex(0),
-      m_reconfigureUes(false),
-      m_numberOfComponentCarriers(0),
-      m_carriersConfigured(false)
+      m_cphySapProvider(0)
 {
     NS_LOG_FUNCTION(this);
     m_cmacSapUser.push_back(new EnbRrcMemberLteEnbCmacSapUser(this, 0));

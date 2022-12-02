@@ -66,9 +66,9 @@ class WifiRemoteStationInfo
      */
     double CalculateAveragingCoefficient();
 
-    Time m_memoryTime; ///< averaging coefficient depends on the memory time
-    Time m_lastUpdate; ///< when last update has occurred
-    double m_failAvg;  ///< moving percentage of failed frames
+    Time m_memoryTime;     ///< averaging coefficient depends on the memory time
+    Time m_lastUpdate;     ///< when last update has occurred
+    double m_failAvg{0.0}; ///< moving percentage of failed frames
 };
 
 } // namespace ns3

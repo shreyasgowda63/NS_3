@@ -47,14 +47,11 @@ SSScheduler::GetTypeId()
 }
 
 SSScheduler::SSScheduler(Ptr<SubscriberStationNetDevice> ss)
-    : m_ss(ss),
-      m_pollMe(false)
+    : m_ss(ss)
 {
 }
 
-SSScheduler::~SSScheduler()
-{
-}
+SSScheduler::~SSScheduler() = default;
 
 void
 SSScheduler::DoDispose()

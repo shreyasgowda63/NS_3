@@ -28,12 +28,6 @@ NS_LOG_COMPONENT_DEFINE("LtePdcpHeader");
 
 NS_OBJECT_ENSURE_REGISTERED(LtePdcpHeader);
 
-LtePdcpHeader::LtePdcpHeader()
-    : m_dcBit(0xff),
-      m_sequenceNumber(0xfffa)
-{
-}
-
 LtePdcpHeader::~LtePdcpHeader()
 {
     m_dcBit = 0xff;

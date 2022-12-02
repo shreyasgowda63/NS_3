@@ -142,7 +142,7 @@ class MuEdcaParameterSet : public WifiInformationElement
         uint8_t muEdcaTimer; ///< the MU EDCA Timer field
     };
 
-    uint8_t m_qosInfo;                        ///< QoS info field
+    uint8_t m_qosInfo{0};                     ///< QoS info field
     std::array<ParameterRecord, 4> m_records; ///< MU AC Parameter Record fields
 };
 

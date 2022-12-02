@@ -538,7 +538,7 @@ class TypeId
      */
     inline TypeId& operator=(const TypeId& o);
     /** Destructor. */
-    inline ~TypeId();
+    inline ~TypeId() = default;
 
   private:
     /**
@@ -610,20 +610,10 @@ TypeId::TypeId()
 }
 
 TypeId::TypeId(const TypeId& o)
-    : m_tid(o.m_tid)
-{
-}
 
-TypeId&
-TypeId::operator=(const TypeId& o)
-{
-    m_tid = o.m_tid;
-    return *this;
-}
+    = default;
 
-TypeId::~TypeId()
-{
-}
+TypeId& TypeId::operator=(const TypeId& o) = default;
 
 inline bool
 operator==(TypeId a, TypeId b)

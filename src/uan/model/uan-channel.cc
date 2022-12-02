@@ -66,15 +66,11 @@ UanChannel::GetTypeId()
 }
 
 UanChannel::UanChannel()
-    : Channel(),
-      m_prop(nullptr),
-      m_cleared(false)
+    : m_prop(nullptr)
 {
 }
 
-UanChannel::~UanChannel()
-{
-}
+UanChannel::~UanChannel() = default;
 
 void
 UanChannel::Clear()

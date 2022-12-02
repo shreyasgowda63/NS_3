@@ -288,9 +288,7 @@ LenaPssFfMacSchedulerTestCase1::LenaPssFfMacSchedulerTestCase1(uint16_t nUser,
 {
 }
 
-LenaPssFfMacSchedulerTestCase1::~LenaPssFfMacSchedulerTestCase1()
-{
-}
+LenaPssFfMacSchedulerTestCase1::~LenaPssFfMacSchedulerTestCase1() = default;
 
 void
 LenaPssFfMacSchedulerTestCase1::DoRun()
@@ -562,9 +560,7 @@ LenaPssFfMacSchedulerTestCase2::LenaPssFfMacSchedulerTestCase2(std::vector<doubl
 {
 }
 
-LenaPssFfMacSchedulerTestCase2::~LenaPssFfMacSchedulerTestCase2()
-{
-}
+LenaPssFfMacSchedulerTestCase2::~LenaPssFfMacSchedulerTestCase2() = default;
 
 void
 LenaPssFfMacSchedulerTestCase2::DoRun()

@@ -36,23 +36,12 @@ NS_LOG_COMPONENT_DEFINE("TcpHeader");
 NS_OBJECT_ENSURE_REGISTERED(TcpHeader);
 
 TcpHeader::TcpHeader()
-    : m_sourcePort(0),
-      m_destinationPort(0),
-      m_sequenceNumber(0),
-      m_ackNumber(0),
-      m_length(5),
-      m_flags(0),
-      m_windowSize(0xffff),
-      m_urgentPointer(0),
-      m_calcChecksum(false),
-      m_goodChecksum(true),
-      m_optionsLen(0)
+    : m_sequenceNumber(0),
+      m_ackNumber(0)
 {
 }
 
-TcpHeader::~TcpHeader()
-{
-}
+TcpHeader::~TcpHeader() = default;
 
 std::string
 TcpHeader::FlagsToString(uint8_t flags, const std::string& delimiter)

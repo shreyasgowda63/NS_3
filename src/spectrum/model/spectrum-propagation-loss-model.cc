@@ -35,9 +35,7 @@ SpectrumPropagationLossModel::SpectrumPropagationLossModel()
 {
 }
 
-SpectrumPropagationLossModel::~SpectrumPropagationLossModel()
-{
-}
+SpectrumPropagationLossModel::~SpectrumPropagationLossModel() = default;
 
 void
 SpectrumPropagationLossModel::DoDispose()

@@ -38,9 +38,7 @@ MuSnrTag::GetInstanceTypeId() const
     return GetTypeId();
 }
 
-MuSnrTag::MuSnrTag()
-{
-}
+MuSnrTag::MuSnrTag() = default;
 
 void
 MuSnrTag::Reset()

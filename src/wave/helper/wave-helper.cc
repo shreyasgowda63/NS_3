@@ -274,13 +274,9 @@ YansWavePhyHelper::EnableAsciiInternal(Ptr<OutputStreamWrapper> stream,
 }
 
 /********************************** WaveHelper ******************************************/
-WaveHelper::WaveHelper()
-{
-}
+WaveHelper::WaveHelper() = default;
 
-WaveHelper::~WaveHelper()
-{
-}
+WaveHelper::~WaveHelper() = default;
 
 WaveHelper
 WaveHelper::Default()

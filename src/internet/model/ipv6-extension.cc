@@ -63,13 +63,11 @@ Ipv6Extension::GetTypeId()
 }
 
 Ipv6Extension::Ipv6Extension()
+    : m_uvar(CreateObject<UniformRandomVariable>())
 {
-    m_uvar = CreateObject<UniformRandomVariable>();
 }
 
-Ipv6Extension::~Ipv6Extension()
-{
-}
+Ipv6Extension::~Ipv6Extension() = default;
 
 void
 Ipv6Extension::SetNode(Ptr<Node> node)
@@ -207,13 +205,9 @@ Ipv6ExtensionHopByHop::GetTypeId()
     return tid;
 }
 
-Ipv6ExtensionHopByHop::Ipv6ExtensionHopByHop()
-{
-}
+Ipv6ExtensionHopByHop::Ipv6ExtensionHopByHop() = default;
 
-Ipv6ExtensionHopByHop::~Ipv6ExtensionHopByHop()
-{
-}
+Ipv6ExtensionHopByHop::~Ipv6ExtensionHopByHop() = default;
 
 uint8_t
 Ipv6ExtensionHopByHop::GetExtensionNumber() const
@@ -272,13 +266,9 @@ Ipv6ExtensionDestination::GetTypeId()
     return tid;
 }
 
-Ipv6ExtensionDestination::Ipv6ExtensionDestination()
-{
-}
+Ipv6ExtensionDestination::Ipv6ExtensionDestination() = default;
 
-Ipv6ExtensionDestination::~Ipv6ExtensionDestination()
-{
-}
+Ipv6ExtensionDestination::~Ipv6ExtensionDestination() = default;
 
 uint8_t
 Ipv6ExtensionDestination::GetExtensionNumber() const
@@ -344,13 +334,9 @@ Ipv6ExtensionFragment::GetTypeId()
     return tid;
 }
 
-Ipv6ExtensionFragment::Ipv6ExtensionFragment()
-{
-}
+Ipv6ExtensionFragment::Ipv6ExtensionFragment() = default;
 
-Ipv6ExtensionFragment::~Ipv6ExtensionFragment()
-{
-}
+Ipv6ExtensionFragment::~Ipv6ExtensionFragment() = default;
 
 void
 Ipv6ExtensionFragment::DoDispose()
@@ -728,13 +714,10 @@ Ipv6ExtensionFragment::HandleTimeout()
 }
 
 Ipv6ExtensionFragment::Fragments::Fragments()
-    : m_moreFragment(0)
-{
-}
 
-Ipv6ExtensionFragment::Fragments::~Fragments()
-{
-}
+    = default;
+
+Ipv6ExtensionFragment::Fragments::~Fragments() = default;
 
 void
 Ipv6ExtensionFragment::Fragments::AddFragment(Ptr<Packet> fragment,
@@ -865,13 +848,9 @@ Ipv6ExtensionRouting::GetTypeId()
     return tid;
 }
 
-Ipv6ExtensionRouting::Ipv6ExtensionRouting()
-{
-}
+Ipv6ExtensionRouting::Ipv6ExtensionRouting() = default;
 
-Ipv6ExtensionRouting::~Ipv6ExtensionRouting()
-{
-}
+Ipv6ExtensionRouting::~Ipv6ExtensionRouting() = default;
 
 uint8_t
 Ipv6ExtensionRouting::GetExtensionNumber() const
@@ -973,13 +952,9 @@ Ipv6ExtensionRoutingDemux::GetTypeId()
     return tid;
 }
 
-Ipv6ExtensionRoutingDemux::Ipv6ExtensionRoutingDemux()
-{
-}
+Ipv6ExtensionRoutingDemux::Ipv6ExtensionRoutingDemux() = default;
 
-Ipv6ExtensionRoutingDemux::~Ipv6ExtensionRoutingDemux()
-{
-}
+Ipv6ExtensionRoutingDemux::~Ipv6ExtensionRoutingDemux() = default;
 
 void
 Ipv6ExtensionRoutingDemux::DoDispose()
@@ -1045,13 +1020,9 @@ Ipv6ExtensionLooseRouting::GetTypeId()
     return tid;
 }
 
-Ipv6ExtensionLooseRouting::Ipv6ExtensionLooseRouting()
-{
-}
+Ipv6ExtensionLooseRouting::Ipv6ExtensionLooseRouting() = default;
 
-Ipv6ExtensionLooseRouting::~Ipv6ExtensionLooseRouting()
-{
-}
+Ipv6ExtensionLooseRouting::~Ipv6ExtensionLooseRouting() = default;
 
 uint8_t
 Ipv6ExtensionLooseRouting::GetTypeRouting() const
@@ -1212,13 +1183,9 @@ Ipv6ExtensionESP::GetTypeId()
     return tid;
 }
 
-Ipv6ExtensionESP::Ipv6ExtensionESP()
-{
-}
+Ipv6ExtensionESP::Ipv6ExtensionESP() = default;
 
-Ipv6ExtensionESP::~Ipv6ExtensionESP()
-{
-}
+Ipv6ExtensionESP::~Ipv6ExtensionESP() = default;
 
 uint8_t
 Ipv6ExtensionESP::GetExtensionNumber() const
@@ -1255,13 +1222,9 @@ Ipv6ExtensionAH::GetTypeId()
     return tid;
 }
 
-Ipv6ExtensionAH::Ipv6ExtensionAH()
-{
-}
+Ipv6ExtensionAH::Ipv6ExtensionAH() = default;
 
-Ipv6ExtensionAH::~Ipv6ExtensionAH()
-{
-}
+Ipv6ExtensionAH::~Ipv6ExtensionAH() = default;
 
 uint8_t
 Ipv6ExtensionAH::GetExtensionNumber() const

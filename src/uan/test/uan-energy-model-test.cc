@@ -73,20 +73,16 @@ class AcousticModemEnergyTestCase : public TestCase
 
     void DoRun() override;
 
-    double m_simTime;       ///< simulation time
-    uint32_t m_bytesRx;     ///< bytes received
-    uint32_t m_sentPackets; ///< number of sent packets
-    uint32_t m_packetSize;  ///< packet size
-    Ptr<Node> m_node;       ///< node
-    Ptr<Node> m_gateway;    ///< the gateway
+    double m_simTime{25};      ///< simulation time
+    uint32_t m_bytesRx{0};     ///< bytes received
+    uint32_t m_sentPackets{0}; ///< number of sent packets
+    uint32_t m_packetSize{17}; ///< packet size
+    Ptr<Node> m_node;          ///< node
+    Ptr<Node> m_gateway;       ///< the gateway
 };
 
 AcousticModemEnergyTestCase::AcousticModemEnergyTestCase()
-    : TestCase("Acoustic Modem energy model test case"),
-      m_simTime(25),
-      m_bytesRx(0),
-      m_sentPackets(0),
-      m_packetSize(17)
+    : TestCase("Acoustic Modem energy model test case")
 {
 }
 
@@ -232,17 +228,14 @@ class AcousticModemEnergyDepletionTestCase : public TestCase
 
     void DoRun() override;
 
-    double m_simTime;         ///< Simulation time
-    uint32_t m_callbackCount; ///< callback count
-    uint32_t m_packetSize;    ///< packet size
-    Ptr<Node> m_node;         ///< the node
+    double m_simTime{25};        ///< Simulation time
+    uint32_t m_callbackCount{0}; ///< callback count
+    uint32_t m_packetSize{17};   ///< packet size
+    Ptr<Node> m_node;            ///< the node
 };
 
 AcousticModemEnergyDepletionTestCase::AcousticModemEnergyDepletionTestCase()
-    : TestCase("Acoustic Modem energy depletion test case"),
-      m_simTime(25),
-      m_callbackCount(0),
-      m_packetSize(17)
+    : TestCase("Acoustic Modem energy depletion test case")
 {
 }
 

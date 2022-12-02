@@ -48,9 +48,7 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("RrcHeader");
 
 //////////////////// RrcAsn1Header class ///////////////////////////////
-RrcAsn1Header::RrcAsn1Header()
-{
-}
+RrcAsn1Header::RrcAsn1Header() = default;
 
 TypeId
 RrcAsn1Header::GetTypeId()
@@ -4782,18 +4780,15 @@ RrcAsn1Header::DeserializeMeasConfig(LteRrcSap::MeasConfig* measConfig, Buffer::
 
 // Constructor
 RrcConnectionRequestHeader::RrcConnectionRequestHeader()
-    : RrcUlCcchMessage()
 {
     m_mmec = std::bitset<8>(0UL);
     m_mTmsi = std::bitset<32>(0UL);
-    m_establishmentCause = MO_SIGNALLING;
+
     m_spare = std::bitset<1>(0UL);
 }
 
 // Destructor
-RrcConnectionRequestHeader::~RrcConnectionRequestHeader()
-{
-}
+RrcConnectionRequestHeader::~RrcConnectionRequestHeader() = default;
 
 TypeId
 RrcConnectionRequestHeader::GetTypeId()
@@ -4924,13 +4919,9 @@ RrcConnectionRequestHeader::GetMtmsi() const
 }
 
 //////////////////// RrcConnectionSetup class ////////////////////////
-RrcConnectionSetupHeader::RrcConnectionSetupHeader()
-{
-}
+RrcConnectionSetupHeader::RrcConnectionSetupHeader() = default;
 
-RrcConnectionSetupHeader::~RrcConnectionSetupHeader()
-{
-}
+RrcConnectionSetupHeader::~RrcConnectionSetupHeader() = default;
 
 void
 RrcConnectionSetupHeader::Print(std::ostream& os) const
@@ -5103,13 +5094,9 @@ RrcConnectionSetupHeader::GetRadioResourceConfigDedicated() const
 
 //////////////////// RrcConnectionSetupCompleteHeader class ////////////////////////
 
-RrcConnectionSetupCompleteHeader::RrcConnectionSetupCompleteHeader()
-{
-}
+RrcConnectionSetupCompleteHeader::RrcConnectionSetupCompleteHeader() = default;
 
-RrcConnectionSetupCompleteHeader::~RrcConnectionSetupCompleteHeader()
-{
-}
+RrcConnectionSetupCompleteHeader::~RrcConnectionSetupCompleteHeader() = default;
 
 void
 RrcConnectionSetupCompleteHeader::PreSerialize() const
@@ -5209,13 +5196,9 @@ RrcConnectionSetupCompleteHeader::GetMessage() const
 
 //////////////////// RrcConnectionReconfigurationCompleteHeader class ////////////////////////
 
-RrcConnectionReconfigurationCompleteHeader::RrcConnectionReconfigurationCompleteHeader()
-{
-}
+RrcConnectionReconfigurationCompleteHeader::RrcConnectionReconfigurationCompleteHeader() = default;
 
-RrcConnectionReconfigurationCompleteHeader::~RrcConnectionReconfigurationCompleteHeader()
-{
-}
+RrcConnectionReconfigurationCompleteHeader::~RrcConnectionReconfigurationCompleteHeader() = default;
 
 void
 RrcConnectionReconfigurationCompleteHeader::PreSerialize() const
@@ -5301,13 +5284,9 @@ RrcConnectionReconfigurationCompleteHeader::GetRrcTransactionIdentifier() const
 
 //////////////////// RrcConnectionReconfigurationHeader class ////////////////////////
 
-RrcConnectionReconfigurationHeader::RrcConnectionReconfigurationHeader()
-{
-}
+RrcConnectionReconfigurationHeader::RrcConnectionReconfigurationHeader() = default;
 
-RrcConnectionReconfigurationHeader::~RrcConnectionReconfigurationHeader()
-{
-}
+RrcConnectionReconfigurationHeader::~RrcConnectionReconfigurationHeader() = default;
 
 void
 RrcConnectionReconfigurationHeader::PreSerialize() const
@@ -5991,9 +5970,7 @@ RrcConnectionReconfigurationHeader::GetPhysicalConfigDedicated() const
 
 //////////////////// HandoverPreparationInfoHeader class ////////////////////////
 
-HandoverPreparationInfoHeader::HandoverPreparationInfoHeader()
-{
-}
+HandoverPreparationInfoHeader::HandoverPreparationInfoHeader() = default;
 
 void
 HandoverPreparationInfoHeader::PreSerialize() const
@@ -6243,13 +6220,9 @@ HandoverPreparationInfoHeader::GetAsConfig() const
 
 //////////////////// RrcConnectionReestablishmentRequestHeader class ////////////////////////
 
-RrcConnectionReestablishmentRequestHeader::RrcConnectionReestablishmentRequestHeader()
-{
-}
+RrcConnectionReestablishmentRequestHeader::RrcConnectionReestablishmentRequestHeader() = default;
 
-RrcConnectionReestablishmentRequestHeader::~RrcConnectionReestablishmentRequestHeader()
-{
-}
+RrcConnectionReestablishmentRequestHeader::~RrcConnectionReestablishmentRequestHeader() = default;
 
 void
 RrcConnectionReestablishmentRequestHeader::PreSerialize() const
@@ -6410,13 +6383,9 @@ RrcConnectionReestablishmentRequestHeader::GetReestablishmentCause() const
 
 //////////////////// RrcConnectionReestablishmentHeader class ////////////////////////
 
-RrcConnectionReestablishmentHeader::RrcConnectionReestablishmentHeader()
-{
-}
+RrcConnectionReestablishmentHeader::RrcConnectionReestablishmentHeader() = default;
 
-RrcConnectionReestablishmentHeader::~RrcConnectionReestablishmentHeader()
-{
-}
+RrcConnectionReestablishmentHeader::~RrcConnectionReestablishmentHeader() = default;
 
 void
 RrcConnectionReestablishmentHeader::PreSerialize() const
@@ -6543,9 +6512,7 @@ RrcConnectionReestablishmentHeader::GetRadioResourceConfigDedicated() const
 
 //////////////////// RrcConnectionReestablishmentCompleteHeader class ////////////////////////
 
-RrcConnectionReestablishmentCompleteHeader::RrcConnectionReestablishmentCompleteHeader()
-{
-}
+RrcConnectionReestablishmentCompleteHeader::RrcConnectionReestablishmentCompleteHeader() = default;
 
 void
 RrcConnectionReestablishmentCompleteHeader::PreSerialize() const
@@ -6642,13 +6609,9 @@ RrcConnectionReestablishmentCompleteHeader::GetRrcTransactionIdentifier() const
 
 //////////////////// RrcConnectionReestablishmentRejectHeader class ////////////////////////
 
-RrcConnectionReestablishmentRejectHeader::RrcConnectionReestablishmentRejectHeader()
-{
-}
+RrcConnectionReestablishmentRejectHeader::RrcConnectionReestablishmentRejectHeader() = default;
 
-RrcConnectionReestablishmentRejectHeader::~RrcConnectionReestablishmentRejectHeader()
-{
-}
+RrcConnectionReestablishmentRejectHeader::~RrcConnectionReestablishmentRejectHeader() = default;
 
 void
 RrcConnectionReestablishmentRejectHeader::PreSerialize() const
@@ -6728,13 +6691,9 @@ RrcConnectionReestablishmentRejectHeader::GetMessage() const
 
 //////////////////// RrcConnectionReleaseHeader class ////////////////////////
 
-RrcConnectionReleaseHeader::RrcConnectionReleaseHeader()
-{
-}
+RrcConnectionReleaseHeader::RrcConnectionReleaseHeader() = default;
 
-RrcConnectionReleaseHeader::~RrcConnectionReleaseHeader()
-{
-}
+RrcConnectionReleaseHeader::~RrcConnectionReleaseHeader() = default;
 
 void
 RrcConnectionReleaseHeader::PreSerialize() const
@@ -6853,13 +6812,9 @@ RrcConnectionReleaseHeader::GetMessage() const
 
 //////////////////// RrcConnectionRejectHeader class ////////////////////////
 
-RrcConnectionRejectHeader::RrcConnectionRejectHeader()
-{
-}
+RrcConnectionRejectHeader::RrcConnectionRejectHeader() = default;
 
-RrcConnectionRejectHeader::~RrcConnectionRejectHeader()
-{
-}
+RrcConnectionRejectHeader::~RrcConnectionRejectHeader() = default;
 
 void
 RrcConnectionRejectHeader::PreSerialize() const
@@ -6961,13 +6916,9 @@ RrcConnectionRejectHeader::GetMessage() const
 
 //////////////////// MeasurementReportHeader class ////////////////////////
 
-MeasurementReportHeader::MeasurementReportHeader()
-{
-}
+MeasurementReportHeader::MeasurementReportHeader() = default;
 
-MeasurementReportHeader::~MeasurementReportHeader()
-{
-}
+MeasurementReportHeader::~MeasurementReportHeader() = default;
 
 void
 MeasurementReportHeader::PreSerialize() const
@@ -7117,13 +7068,10 @@ MeasurementReportHeader::GetMessage() const
 
 ///////////////////  RrcUlDcchMessage //////////////////////////////////
 RrcUlDcchMessage::RrcUlDcchMessage()
-    : RrcAsn1Header()
-{
-}
 
-RrcUlDcchMessage::~RrcUlDcchMessage()
-{
-}
+    = default;
+
+RrcUlDcchMessage::~RrcUlDcchMessage() = default;
 
 uint32_t
 RrcUlDcchMessage::Deserialize(Buffer::Iterator bIterator)
@@ -7179,13 +7127,10 @@ RrcUlDcchMessage::SerializeUlDcchMessage(int messageType) const
 
 ///////////////////  RrcDlDcchMessage //////////////////////////////////
 RrcDlDcchMessage::RrcDlDcchMessage()
-    : RrcAsn1Header()
-{
-}
 
-RrcDlDcchMessage::~RrcDlDcchMessage()
-{
-}
+    = default;
+
+RrcDlDcchMessage::~RrcDlDcchMessage() = default;
 
 uint32_t
 RrcDlDcchMessage::Deserialize(Buffer::Iterator bIterator)
@@ -7241,13 +7186,10 @@ RrcDlDcchMessage::SerializeDlDcchMessage(int messageType) const
 
 ///////////////////  RrcUlCcchMessage //////////////////////////////////
 RrcUlCcchMessage::RrcUlCcchMessage()
-    : RrcAsn1Header()
-{
-}
 
-RrcUlCcchMessage::~RrcUlCcchMessage()
-{
-}
+    = default;
+
+RrcUlCcchMessage::~RrcUlCcchMessage() = default;
 
 uint32_t
 RrcUlCcchMessage::Deserialize(Buffer::Iterator bIterator)
@@ -7303,13 +7245,10 @@ RrcUlCcchMessage::SerializeUlCcchMessage(int messageType) const
 
 ///////////////////  RrcDlCcchMessage //////////////////////////////////
 RrcDlCcchMessage::RrcDlCcchMessage()
-    : RrcAsn1Header()
-{
-}
 
-RrcDlCcchMessage::~RrcDlCcchMessage()
-{
-}
+    = default;
+
+RrcDlCcchMessage::~RrcDlCcchMessage() = default;
 
 uint32_t
 RrcDlCcchMessage::Deserialize(Buffer::Iterator bIterator)

@@ -119,16 +119,16 @@ class TraceFadingLossModel : public SpectrumPropagationLossModel
 
     FadingTrace m_fadingTrace; ///< fading trace
 
-    Time m_traceLength;               ///< the trace time
-    uint32_t m_samplesNum;            ///< number of samples
-    Time m_windowSize;                ///< window size
-    uint8_t m_rbNum;                  ///< RB number
-    mutable Time m_lastWindowUpdate;  ///< time of last window update
-    uint8_t m_timeGranularity;        ///< time granularity
-    mutable uint64_t m_currentStream; ///< the current stream
-    mutable uint64_t m_lastStream;    ///< the last stream
-    uint64_t m_streamSetSize;         ///< stream set size
-    mutable bool m_streamsAssigned;   ///< is streams assigned?
+    Time m_traceLength;                    ///< the trace time
+    uint32_t m_samplesNum;                 ///< number of samples
+    Time m_windowSize;                     ///< window size
+    uint8_t m_rbNum;                       ///< RB number
+    mutable Time m_lastWindowUpdate;       ///< time of last window update
+    uint8_t m_timeGranularity;             ///< time granularity
+    mutable uint64_t m_currentStream;      ///< the current stream
+    mutable uint64_t m_lastStream;         ///< the last stream
+    uint64_t m_streamSetSize;              ///< stream set size
+    mutable bool m_streamsAssigned{false}; ///< is streams assigned?
 };
 
 } // namespace ns3

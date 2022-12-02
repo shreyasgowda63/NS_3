@@ -29,9 +29,7 @@ RvBatteryModelHelper::RvBatteryModelHelper()
     m_rvBatteryModel.SetTypeId("ns3::RvBatteryModel");
 }
 
-RvBatteryModelHelper::~RvBatteryModelHelper()
-{
-}
+RvBatteryModelHelper::~RvBatteryModelHelper() = default;
 
 void
 RvBatteryModelHelper::Set(std::string name, const AttributeValue& v)

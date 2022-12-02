@@ -107,9 +107,9 @@ class DcdChannelEncodings
      */
     virtual Buffer::Iterator DoRead(Buffer::Iterator start) = 0;
 
-    uint16_t m_bsEirp;     ///< BS EIRP
-    uint16_t m_eirXPIrMax; ///< EIRX IR MAX
-    uint32_t m_frequency;  ///< frequency
+    uint16_t m_bsEirp{0};     ///< BS EIRP
+    uint16_t m_eirXPIrMax{0}; ///< EIRX IR MAX
+    uint32_t m_frequency{0};  ///< frequency
 };
 
 } // namespace ns3
@@ -223,13 +223,13 @@ class OfdmDcdChannelEncodings : public DcdChannelEncodings
      */
     Buffer::Iterator DoRead(Buffer::Iterator start) override;
 
-    uint8_t m_channelNr; ///< channel number
-    uint8_t m_ttg;       ///< TTG
-    uint8_t m_rtg;       ///< RTG
+    uint8_t m_channelNr{0}; ///< channel number
+    uint8_t m_ttg{0};       ///< TTG
+    uint8_t m_rtg{0};       ///< RTG
 
-    Mac48Address m_baseStationId; ///< base station ID
-    uint8_t m_frameDurationCode;  ///< frame duration code
-    uint32_t m_frameNumber;       ///< frame number
+    Mac48Address m_baseStationId;   ///< base station ID
+    uint8_t m_frameDurationCode{0}; ///< frame duration code
+    uint32_t m_frameNumber{0};      ///< frame number
 };
 
 } // namespace ns3
@@ -278,7 +278,7 @@ class OfdmDlBurstProfile
     };
 
     OfdmDlBurstProfile();
-    ~OfdmDlBurstProfile();
+    ~OfdmDlBurstProfile() = default;
 
     /**
      * Set type field
@@ -332,12 +332,12 @@ class OfdmDlBurstProfile
     Buffer::Iterator Read(Buffer::Iterator start);
 
   private:
-    uint8_t m_type;   ///< type
-    uint8_t m_length; ///< length
-    uint8_t m_diuc;   ///< diuc
+    uint8_t m_type{0};   ///< type
+    uint8_t m_length{0}; ///< length
+    uint8_t m_diuc{0};   ///< diuc
 
     // TLV Encoded information
-    uint8_t m_fecCodeType; ///< FEC code type
+    uint8_t m_fecCodeType{0}; ///< FEC code type
 };
 
 } // namespace ns3
@@ -427,12 +427,12 @@ class Dcd : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint8_t m_reserved;                         ///< changed as per the amendment 802.16e-2005
-    uint8_t m_configurationChangeCount;         ///< configuration change count
+    uint8_t m_reserved{0};                      ///< changed as per the amendment 802.16e-2005
+    uint8_t m_configurationChangeCount{0};      ///< configuration change count
     OfdmDcdChannelEncodings m_channelEncodings; ///< TLV Encoded information for the overall channel
     std::vector<OfdmDlBurstProfile> m_dlBurstProfiles; ///< vector of download burst profiles
 
-    uint8_t m_nrDlBurstProfiles; ///< number DL purst profiles
+    uint8_t m_nrDlBurstProfiles{0}; ///< number DL purst profiles
 };
 
 } // namespace ns3
@@ -460,7 +460,7 @@ class OfdmDlMapIe
 {
   public:
     OfdmDlMapIe();
-    ~OfdmDlMapIe();
+    ~OfdmDlMapIe() = default;
 
     /**
      * Set CID function
@@ -524,10 +524,10 @@ class OfdmDlMapIe
     Buffer::Iterator Read(Buffer::Iterator start);
 
   private:
-    Cid m_cid;                 ///< CID
-    uint8_t m_diuc;            ///< DIUC
-    uint8_t m_preamblePresent; ///< preamble present
-    uint16_t m_startTime;      ///< start time
+    Cid m_cid;                    ///< CID
+    uint8_t m_diuc{0};            ///< DIUC
+    uint8_t m_preamblePresent{0}; ///< preamble present
+    uint16_t m_startTime{0};      ///< start time
 };
 
 } // namespace ns3
@@ -608,7 +608,7 @@ class DlMap : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint8_t m_dcdCount;                     ///< DCD count
+    uint8_t m_dcdCount{0};                  ///< DCD count
     Mac48Address m_baseStationId;           ///< base station ID
     std::list<OfdmDlMapIe> m_dlMapElements; ///< DL Map elements
                                             // m_paddingNibble; //fields to be implemented later on:

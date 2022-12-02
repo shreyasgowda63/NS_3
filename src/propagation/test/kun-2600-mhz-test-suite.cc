@@ -84,9 +84,7 @@ Kun2600MhzPropagationLossModelTestCase::Kun2600MhzPropagationLossModelTestCase(d
 {
 }
 
-Kun2600MhzPropagationLossModelTestCase::~Kun2600MhzPropagationLossModelTestCase()
-{
-}
+Kun2600MhzPropagationLossModelTestCase::~Kun2600MhzPropagationLossModelTestCase() = default;
 
 void
 Kun2600MhzPropagationLossModelTestCase::DoRun()

@@ -66,9 +66,7 @@ AredQueueDiscTestItem::AredQueueDiscTestItem(Ptr<Packet> p, const Address& addr)
 {
 }
 
-AredQueueDiscTestItem::~AredQueueDiscTestItem()
-{
-}
+AredQueueDiscTestItem::~AredQueueDiscTestItem() = default;
 
 void
 AredQueueDiscTestItem::AddHeader()

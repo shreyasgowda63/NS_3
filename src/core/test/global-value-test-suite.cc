@@ -50,9 +50,7 @@ class GlobalValueTestCase : public TestCase
     GlobalValueTestCase();
 
     /** Destructor. */
-    ~GlobalValueTestCase() override
-    {
-    }
+    ~GlobalValueTestCase() override = default;
 
   private:
     void DoRun() override;

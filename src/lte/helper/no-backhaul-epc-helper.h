@@ -163,7 +163,7 @@ class NoBackhaulEpcHelper : public EpcHelper
     /**
      * UDP port where the GTP-U Socket is bound, fixed by the standard as 2152
      */
-    uint16_t m_gtpuUdpPort;
+    uint16_t m_gtpuUdpPort{2152};
 
     /**
      * Helper to assign addresses to S11 NetDevices
@@ -183,12 +183,12 @@ class NoBackhaulEpcHelper : public EpcHelper
     /**
      * The MTU of the next S11 link to be created
      */
-    uint16_t m_s11LinkMtu;
+    uint16_t m_s11LinkMtu{3000};
 
     /**
      * UDP port where the GTPv2-C Socket is bound, fixed by the standard as 2123
      */
-    uint16_t m_gtpcUdpPort;
+    uint16_t m_gtpcUdpPort{2123};
 
     /**
      * S5 interfaces
@@ -212,7 +212,7 @@ class NoBackhaulEpcHelper : public EpcHelper
     /**
      * The MTU of the next S5 link to be created
      */
-    uint16_t m_s5LinkMtu;
+    uint16_t m_s5LinkMtu{3000};
 
     /**
      * Map storing for each IMSI the corresponding eNB NetDevice

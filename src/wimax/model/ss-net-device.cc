@@ -274,9 +274,7 @@ SubscriberStationNetDevice::SubscriberStationNetDevice(Ptr<Node> node, Ptr<Wimax
     this->SetPhy(phy);
 }
 
-SubscriberStationNetDevice::~SubscriberStationNetDevice()
-{
-}
+SubscriberStationNetDevice::~SubscriberStationNetDevice() = default;
 
 void
 SubscriberStationNetDevice::DoDispose()

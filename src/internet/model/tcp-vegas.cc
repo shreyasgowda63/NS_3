@@ -61,14 +61,9 @@ TcpVegas::GetTypeId()
 }
 
 TcpVegas::TcpVegas()
-    : TcpNewReno(),
-      m_alpha(2),
-      m_beta(4),
-      m_gamma(1),
-      m_baseRtt(Time::Max()),
+    : m_baseRtt(Time::Max()),
       m_minRtt(Time::Max()),
-      m_cntRtt(0),
-      m_doingVegasNow(true),
+
       m_begSndNxt(0)
 {
     NS_LOG_FUNCTION(this);
@@ -82,7 +77,7 @@ TcpVegas::TcpVegas(const TcpVegas& sock)
       m_baseRtt(sock.m_baseRtt),
       m_minRtt(sock.m_minRtt),
       m_cntRtt(sock.m_cntRtt),
-      m_doingVegasNow(true),
+
       m_begSndNxt(0)
 {
     NS_LOG_FUNCTION(this);

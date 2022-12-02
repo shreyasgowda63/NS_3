@@ -170,20 +170,20 @@ class HwmpProtocolMac : public MeshWifiInterfaceMacPlugin
      */
     struct Statistics
     {
-        uint16_t txPreq;      ///< transmit PREQ
-        uint16_t rxPreq;      ///< receive PREQ
-        uint16_t txPrep;      ///< transmit PREP
-        uint16_t rxPrep;      ///< receive PREP
-        uint16_t txPerr;      ///< transmit PERR
-        uint16_t rxPerr;      ///< receive PERR
-        uint16_t txMgt;       ///< transmit management
-        uint32_t txMgtBytes;  ///< transmit management bytes
-        uint16_t rxMgt;       ///< receive management
-        uint32_t rxMgtBytes;  ///< receive management bytes
-        uint16_t txData;      ///< transmit data
-        uint32_t txDataBytes; ///< transmit data bytes
-        uint16_t rxData;      ///< receive data
-        uint32_t rxDataBytes; ///< receive data bytes
+        uint16_t txPreq{0};      ///< transmit PREQ
+        uint16_t rxPreq{0};      ///< receive PREQ
+        uint16_t txPrep{0};      ///< transmit PREP
+        uint16_t rxPrep{0};      ///< receive PREP
+        uint16_t txPerr{0};      ///< transmit PERR
+        uint16_t rxPerr{0};      ///< receive PERR
+        uint16_t txMgt{0};       ///< transmit management
+        uint32_t txMgtBytes{0};  ///< transmit management bytes
+        uint16_t rxMgt{0};       ///< receive management
+        uint32_t rxMgtBytes{0};  ///< receive management bytes
+        uint16_t txData{0};      ///< transmit data
+        uint32_t txDataBytes{0}; ///< transmit data bytes
+        uint16_t rxData{0};      ///< receive data
+        uint32_t rxDataBytes{0}; ///< receive data bytes
         /**
          * Print function
          * \param os the output stream

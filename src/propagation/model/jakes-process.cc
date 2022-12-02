@@ -123,10 +123,8 @@ JakesProcess::ConstructOscillators()
 }
 
 JakesProcess::JakesProcess()
-    : m_omegaDopplerMax(0),
-      m_nOscillators(0)
-{
-}
+
+    = default;
 
 JakesProcess::~JakesProcess()
 {

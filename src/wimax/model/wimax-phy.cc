@@ -79,26 +79,14 @@ WimaxPhy::GetTypeId()
 }
 
 WimaxPhy::WimaxPhy()
-    : m_state(PHY_STATE_IDLE),
-      m_nrCarriers(0),
-      m_frameDuration(Seconds(0.01)),
-      m_frequency(5000000),
-      m_channelBandwidth(10000000),
+    : m_frameDuration(Seconds(0.01)),
       m_psDuration(Seconds(0)),
-      m_symbolDuration(Seconds(0)),
-      m_psPerSymbol(0),
-      m_psPerFrame(0),
-      m_symbolsPerFrame(0)
+      m_symbolDuration(Seconds(0))
 {
     m_mobility = nullptr;
-    m_duplex = 0;
-    m_txFrequency = 0;
-    m_rxFrequency = 0;
 }
 
-WimaxPhy::~WimaxPhy()
-{
-}
+WimaxPhy::~WimaxPhy() = default;
 
 void
 WimaxPhy::DoDispose()

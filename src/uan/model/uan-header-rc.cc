@@ -46,9 +46,7 @@ UanHeaderRcData::UanHeaderRcData(uint8_t frameNo, Time propDelay)
 {
 }
 
-UanHeaderRcData::~UanHeaderRcData()
-{
-}
+UanHeaderRcData::~UanHeaderRcData() = default;
 
 TypeId
 UanHeaderRcData::GetTypeId()
@@ -150,9 +148,7 @@ UanHeaderRcRts::UanHeaderRcRts(uint8_t frameNo,
 {
 }
 
-UanHeaderRcRts::~UanHeaderRcRts()
-{
-}
+UanHeaderRcRts::~UanHeaderRcRts() = default;
 
 TypeId
 UanHeaderRcRts::GetTypeId()
@@ -289,9 +285,7 @@ UanHeaderRcCtsGlobal::UanHeaderRcCtsGlobal(Time wt, Time ts, uint16_t rate, uint
 {
 }
 
-UanHeaderRcCtsGlobal::~UanHeaderRcCtsGlobal()
-{
-}
+UanHeaderRcCtsGlobal::~UanHeaderRcCtsGlobal() = default;
 
 TypeId
 UanHeaderRcCtsGlobal::GetTypeId()
@@ -421,9 +415,7 @@ UanHeaderRcCts::UanHeaderRcCts(uint8_t frameNo,
 {
 }
 
-UanHeaderRcCts::~UanHeaderRcCts()
-{
-}
+UanHeaderRcCts::~UanHeaderRcCts() = default;
 
 TypeId
 UanHeaderRcCts::GetTypeId()
@@ -547,9 +539,8 @@ UanHeaderRcCts::GetInstanceTypeId() const
 }
 
 UanHeaderRcAck::UanHeaderRcAck()
-    : m_frameNo(0)
-{
-}
+
+    = default;
 
 UanHeaderRcAck::~UanHeaderRcAck()
 {

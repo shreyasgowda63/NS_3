@@ -61,11 +61,10 @@ class Hold : public SimpleRefCount<Hold>
      *                 should be an order of magnitude larger than \pname{wait}.
      */
     Hold(Time wait, Time interval)
+        : m_rng(CreateObject<ExponentialRandomVariable>()),
+          m_wait(wait),
+          m_interval(interval)
     {
-        m_wait = wait;
-        m_interval = interval;
-
-        m_rng = CreateObject<ExponentialRandomVariable>();
         m_rng->SetAttribute("Mean", DoubleValue(m_wait.GetSeconds()));
     }
 

@@ -39,7 +39,7 @@ namespace ns3
 class simpleOfdmSendParam
 {
   public:
-    simpleOfdmSendParam();
+    simpleOfdmSendParam() = default;
     /**
      * Constructor
      *
@@ -142,14 +142,14 @@ class simpleOfdmSendParam
     Ptr<PacketBurst> GetBurst();
 
   private:
-    bvec m_fecBlock;                           ///< FEC block
-    uint32_t m_burstSize;                      ///< burst size
-    bool m_isFirstBlock;                       ///< is first block
-    uint64_t m_frequency;                      ///< frequency
-    WimaxPhy::ModulationType m_modulationType; ///< modulation type
-    uint8_t m_direction;                       ///< direction
-    double m_rxPowerDbm;                       ///< receive power dbM
-    Ptr<PacketBurst> m_burst;                  ///< burst
+    bvec m_fecBlock;                                                    ///< FEC block
+    uint32_t m_burstSize{0};                                            ///< burst size
+    bool m_isFirstBlock{0};                                             ///< is first block
+    uint64_t m_frequency{0};                                            ///< frequency
+    WimaxPhy::ModulationType m_modulationType{MODULATION_TYPE_QPSK_12}; ///< modulation type
+    uint8_t m_direction{0};                                             ///< direction
+    double m_rxPowerDbm{0};                                             ///< receive power dbM
+    Ptr<PacketBurst> m_burst;                                           ///< burst
 };
 } // namespace ns3
 

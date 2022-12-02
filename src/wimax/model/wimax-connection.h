@@ -151,10 +151,10 @@ class WimaxConnection : public Object
   private:
     void DoDispose() override;
 
-    Cid m_cid;                  ///< CID
-    enum Cid::Type m_cidType;   ///< CID type
-    Ptr<WimaxMacQueue> m_queue; ///< queue
-    ServiceFlow* m_serviceFlow; ///< service flow
+    Cid m_cid;                           ///< CID
+    enum Cid::Type m_cidType;            ///< CID type
+    Ptr<WimaxMacQueue> m_queue;          ///< queue
+    ServiceFlow* m_serviceFlow{nullptr}; ///< service flow
 
     // FragmentsQueue stores all received fragments
     FragmentsQueue m_fragmentsQueue; ///< fragments queue

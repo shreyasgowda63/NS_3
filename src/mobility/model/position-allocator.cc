@@ -43,13 +43,9 @@ PositionAllocator::GetTypeId()
     return tid;
 }
 
-PositionAllocator::PositionAllocator()
-{
-}
+PositionAllocator::PositionAllocator() = default;
 
-PositionAllocator::~PositionAllocator()
-{
-}
+PositionAllocator::~PositionAllocator() = default;
 
 NS_OBJECT_ENSURE_REGISTERED(ListPositionAllocator);
 
@@ -63,9 +59,7 @@ ListPositionAllocator::GetTypeId()
     return tid;
 }
 
-ListPositionAllocator::ListPositionAllocator()
-{
-}
+ListPositionAllocator::ListPositionAllocator() = default;
 
 void
 ListPositionAllocator::Add(Vector v)
@@ -191,9 +185,8 @@ GridPositionAllocator::GetTypeId()
 }
 
 GridPositionAllocator::GridPositionAllocator()
-    : m_current(0)
-{
-}
+
+    = default;
 
 void
 GridPositionAllocator::SetMinX(double xMin)
@@ -329,13 +322,9 @@ RandomRectanglePositionAllocator::GetTypeId()
     return tid;
 }
 
-RandomRectanglePositionAllocator::RandomRectanglePositionAllocator()
-{
-}
+RandomRectanglePositionAllocator::RandomRectanglePositionAllocator() = default;
 
-RandomRectanglePositionAllocator::~RandomRectanglePositionAllocator()
-{
-}
+RandomRectanglePositionAllocator::~RandomRectanglePositionAllocator() = default;
 
 void
 RandomRectanglePositionAllocator::SetX(Ptr<RandomVariableStream> x)
@@ -402,13 +391,9 @@ RandomBoxPositionAllocator::GetTypeId()
     return tid;
 }
 
-RandomBoxPositionAllocator::RandomBoxPositionAllocator()
-{
-}
+RandomBoxPositionAllocator::RandomBoxPositionAllocator() = default;
 
-RandomBoxPositionAllocator::~RandomBoxPositionAllocator()
-{
-}
+RandomBoxPositionAllocator::~RandomBoxPositionAllocator() = default;
 
 void
 RandomBoxPositionAllocator::SetX(Ptr<RandomVariableStream> x)
@@ -486,13 +471,9 @@ RandomDiscPositionAllocator::GetTypeId()
     return tid;
 }
 
-RandomDiscPositionAllocator::RandomDiscPositionAllocator()
-{
-}
+RandomDiscPositionAllocator::RandomDiscPositionAllocator() = default;
 
-RandomDiscPositionAllocator::~RandomDiscPositionAllocator()
-{
-}
+RandomDiscPositionAllocator::~RandomDiscPositionAllocator() = default;
 
 void
 RandomDiscPositionAllocator::SetTheta(Ptr<RandomVariableStream> theta)
@@ -576,13 +557,11 @@ UniformDiscPositionAllocator::GetTypeId()
 }
 
 UniformDiscPositionAllocator::UniformDiscPositionAllocator()
+    : m_rv(CreateObject<UniformRandomVariable>())
 {
-    m_rv = CreateObject<UniformRandomVariable>();
 }
 
-UniformDiscPositionAllocator::~UniformDiscPositionAllocator()
-{
-}
+UniformDiscPositionAllocator::~UniformDiscPositionAllocator() = default;
 
 void
 UniformDiscPositionAllocator::SetRho(double rho)

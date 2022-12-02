@@ -43,7 +43,7 @@ class LteEnbCphySapProvider
     /**
      * Destructor
      */
-    virtual ~LteEnbCphySapProvider();
+    virtual ~LteEnbCphySapProvider() = default;
 
     /**
      * Set cell ID
@@ -140,7 +140,7 @@ class LteEnbCphySapUser
     /**
      * Destructor
      */
-    virtual ~LteEnbCphySapUser();
+    virtual ~LteEnbCphySapUser() = default;
 };
 
 /**

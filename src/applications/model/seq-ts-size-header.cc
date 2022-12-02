@@ -30,7 +30,6 @@ NS_LOG_COMPONENT_DEFINE("SeqTsSizeHeader");
 NS_OBJECT_ENSURE_REGISTERED(SeqTsSizeHeader);
 
 SeqTsSizeHeader::SeqTsSizeHeader()
-    : SeqTsHeader()
 {
     NS_LOG_FUNCTION(this);
 }

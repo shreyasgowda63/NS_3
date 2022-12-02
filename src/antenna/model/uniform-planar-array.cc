@@ -30,13 +30,10 @@ NS_LOG_COMPONENT_DEFINE("UniformPlanarArray");
 NS_OBJECT_ENSURE_REGISTERED(UniformPlanarArray);
 
 UniformPlanarArray::UniformPlanarArray()
-    : PhasedArrayModel()
-{
-}
 
-UniformPlanarArray::~UniformPlanarArray()
-{
-}
+    = default;
+
+UniformPlanarArray::~UniformPlanarArray() = default;
 
 TypeId
 UniformPlanarArray::GetTypeId()

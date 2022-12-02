@@ -324,9 +324,7 @@ EpcS1uUlTestCase::EpcS1uUlTestCase(std::string name, std::vector<EnbUlTestData> 
 {
 }
 
-EpcS1uUlTestCase::~EpcS1uUlTestCase()
-{
-}
+EpcS1uUlTestCase::~EpcS1uUlTestCase() = default;
 
 void
 EpcS1uUlTestCase::DoRun()

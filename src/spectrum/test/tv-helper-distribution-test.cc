@@ -81,9 +81,7 @@ TvHelperDistributionTestCase::TvHelperDistributionTestCase(uint32_t maxNumTransm
 {
 }
 
-TvHelperDistributionTestCase::~TvHelperDistributionTestCase()
-{
-}
+TvHelperDistributionTestCase::~TvHelperDistributionTestCase() = default;
 
 void
 TvHelperDistributionTestCase::DoRun()

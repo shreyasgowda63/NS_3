@@ -295,14 +295,14 @@ class DhcpHeader : public Header
 
     uint8_t m_op;              //!< The DHCP Message type
     uint8_t m_bootp;           //!< The BOOTP Message type
-    uint8_t m_hType;           //!< The hardware type
-    uint8_t m_hLen;            //!< The hardware length
-    uint8_t m_hops;            //!< The number of hops covered by the message
-    uint32_t m_xid;            //!< The transaction number
+    uint8_t m_hType{1};        //!< The hardware type
+    uint8_t m_hLen{6};         //!< The hardware length
+    uint8_t m_hops{0};         //!< The number of hops covered by the message
+    uint32_t m_xid{0};         //!< The transaction number
     uint32_t m_mask;           //!< The mask of the network
-    uint32_t m_len;            //!< The length of the header
-    uint16_t m_secs;           //!< Seconds elapsed
-    uint16_t m_flags;          //!< BOOTP flags
+    uint32_t m_len{240};       //!< The length of the header
+    uint16_t m_secs{0};        //!< Seconds elapsed
+    uint16_t m_flags{0};       //!< BOOTP flags
     uint8_t m_chaddr[16];      //!< The address identifier
     Ipv4Address m_yiAddr;      //!< Your (client) IP address
     Ipv4Address m_ciAddr;      //!< The IP address of the client

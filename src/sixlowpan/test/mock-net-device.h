@@ -121,11 +121,11 @@ class MockNetDevice : public NetDevice
     NetDevice::PromiscReceiveCallback m_promiscCallback; //!< Promiscuous receive callback
     NetDevice::PromiscReceiveCallback m_sendCallback;    //!< Send callback
     Ptr<Node> m_node;                                    //!< Node this netDevice is associated to
-    uint16_t m_mtu;                                      //!< MTU
-    uint32_t m_ifIndex;                                  //!< Interface index
+    uint16_t m_mtu{0xffff};                              //!< MTU
+    uint32_t m_ifIndex{0};                               //!< Interface index
     Address m_address;                                   //!< MAC address
 
-    bool m_linkUp;           //!< Flag indicating whether or not the link is up
+    bool m_linkUp{true};     //!< Flag indicating whether or not the link is up
     bool m_pointToPointMode; //!< Enabling this will disable Broadcast and Arp.
 
     /**

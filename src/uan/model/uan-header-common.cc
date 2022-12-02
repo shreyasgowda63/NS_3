@@ -30,9 +30,7 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(UanHeaderCommon);
 
-UanHeaderCommon::UanHeaderCommon()
-{
-}
+UanHeaderCommon::UanHeaderCommon() = default;
 
 UanHeaderCommon::UanHeaderCommon(const Mac8Address src,
                                  const Mac8Address dest,
@@ -62,9 +60,7 @@ UanHeaderCommon::GetInstanceTypeId() const
     return GetTypeId();
 }
 
-UanHeaderCommon::~UanHeaderCommon()
-{
-}
+UanHeaderCommon::~UanHeaderCommon() = default;
 
 void
 UanHeaderCommon::SetDest(Mac8Address dest)

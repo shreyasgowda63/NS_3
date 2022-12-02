@@ -70,16 +70,16 @@ SpectrumModel::SpectrumModel(const std::vector<double>& centerFreqs)
 }
 
 SpectrumModel::SpectrumModel(const Bands& bands)
+    : m_uid(++m_uidCount)
 {
-    m_uid = ++m_uidCount;
     NS_LOG_INFO("creating new SpectrumModel, m_uid=" << m_uid);
     m_bands = bands;
 }
 
 SpectrumModel::SpectrumModel(Bands&& bands)
-    : m_bands(std::move(bands))
+    : m_bands(std::move(bands)),
+      m_uid(++m_uidCount)
 {
-    m_uid = ++m_uidCount;
     NS_LOG_INFO("creating new SpectrumModel, m_uid=" << m_uid);
 }
 

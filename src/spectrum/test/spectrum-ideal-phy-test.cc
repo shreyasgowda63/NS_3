@@ -121,9 +121,7 @@ SpectrumIdealPhyTestCase::SpectrumIdealPhyTestCase(double snrLinear,
 {
 }
 
-SpectrumIdealPhyTestCase::~SpectrumIdealPhyTestCase()
-{
-}
+SpectrumIdealPhyTestCase::~SpectrumIdealPhyTestCase() = default;
 
 void
 SpectrumIdealPhyTestCase::DoRun()

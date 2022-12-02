@@ -148,11 +148,7 @@ ByteTagList::Iterator::GetOffsetStart() const
 }
 
 ByteTagList::ByteTagList()
-    : m_minStart(INT32_MAX),
-      m_maxEnd(INT32_MIN),
-      m_adjustment(0),
-      m_used(0),
-      m_data(nullptr)
+    : m_maxEnd(INT32_MIN)
 {
     NS_LOG_FUNCTION(this);
 }

@@ -74,12 +74,7 @@ DefaultChannelScheduler::GetTypeId()
 }
 
 DefaultChannelScheduler::DefaultChannelScheduler()
-    : m_channelNumber(0),
-      m_extend(EXTENDED_CONTINUOUS),
-      m_channelAccess(NoAccess),
-      m_waitChannelNumber(0),
-      m_waitExtend(0),
-      m_coordinationListener(nullptr)
+    : m_coordinationListener(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }

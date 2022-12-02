@@ -68,16 +68,8 @@ TcpDctcp::GetName() const
 }
 
 TcpDctcp::TcpDctcp()
-    : TcpLinuxReno(),
-      m_ackedBytesEcn(0),
-      m_ackedBytesTotal(0),
-      m_priorRcvNxt(SequenceNumber32(0)),
-      m_priorRcvNxtFlag(false),
-      m_nextSeq(SequenceNumber32(0)),
-      m_nextSeqFlag(false),
-      m_ceState(false),
-      m_delayedAckReserved(false),
-      m_initialized(false)
+    : m_priorRcvNxt(SequenceNumber32(0)),
+      m_nextSeq(SequenceNumber32(0))
 {
     NS_LOG_FUNCTION(this);
 }

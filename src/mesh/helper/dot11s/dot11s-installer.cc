@@ -48,9 +48,7 @@ Dot11sStack::Dot11sStack()
 {
 }
 
-Dot11sStack::~Dot11sStack()
-{
-}
+Dot11sStack::~Dot11sStack() = default;
 
 void
 Dot11sStack::DoDispose()

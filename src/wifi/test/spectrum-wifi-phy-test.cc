@@ -175,9 +175,7 @@ SpectrumWifiPhyBasicTest::SpectrumWifiPhyRxFailure(Ptr<const WifiPsdu> psdu)
     m_count++;
 }
 
-SpectrumWifiPhyBasicTest::~SpectrumWifiPhyBasicTest()
-{
-}
+SpectrumWifiPhyBasicTest::~SpectrumWifiPhyBasicTest() = default;
 
 // Create necessary objects, and inject signals.  Test that the expected
 // number of packet receptions occur.
@@ -243,16 +241,10 @@ class TestPhyListener : public ns3::WifiPhyListener
      *
      */
     TestPhyListener()
-        : m_notifyRxStart(0),
-          m_notifyRxEndOk(0),
-          m_notifyRxEndError(0),
-          m_notifyMaybeCcaBusyStart(0)
-    {
-    }
 
-    ~TestPhyListener() override
-    {
-    }
+        = default;
+
+    ~TestPhyListener() override = default;
 
     void NotifyRxStart(Time duration) override
     {
@@ -305,10 +297,10 @@ class TestPhyListener : public ns3::WifiPhyListener
     {
     }
 
-    uint32_t m_notifyRxStart;           ///< notify receive start
-    uint32_t m_notifyRxEndOk;           ///< notify receive end OK
-    uint32_t m_notifyRxEndError;        ///< notify receive end error
-    uint32_t m_notifyMaybeCcaBusyStart; ///< notify maybe CCA busy start
+    uint32_t m_notifyRxStart{0};           ///< notify receive start
+    uint32_t m_notifyRxEndOk{0};           ///< notify receive end OK
+    uint32_t m_notifyRxEndError{0};        ///< notify receive end error
+    uint32_t m_notifyMaybeCcaBusyStart{0}; ///< notify maybe CCA busy start
 };
 
 /**
@@ -334,9 +326,7 @@ SpectrumWifiPhyListenerTest::SpectrumWifiPhyListenerTest()
 {
 }
 
-SpectrumWifiPhyListenerTest::~SpectrumWifiPhyListenerTest()
-{
-}
+SpectrumWifiPhyListenerTest::~SpectrumWifiPhyListenerTest() = default;
 
 void
 SpectrumWifiPhyListenerTest::DoSetup()

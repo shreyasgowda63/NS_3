@@ -63,9 +63,7 @@ Ns3WimaxSimpleOFDMTestCase::Ns3WimaxSimpleOFDMTestCase()
 {
 }
 
-Ns3WimaxSimpleOFDMTestCase::~Ns3WimaxSimpleOFDMTestCase()
-{
-}
+Ns3WimaxSimpleOFDMTestCase::~Ns3WimaxSimpleOFDMTestCase() = default;
 
 bool
 Ns3WimaxSimpleOFDMTestCase::DoRunOnce(double FrameDuration)
@@ -147,9 +145,7 @@ Ns3WimaxSNRtoBLERTestCase::Ns3WimaxSNRtoBLERTestCase()
 {
 }
 
-Ns3WimaxSNRtoBLERTestCase::~Ns3WimaxSNRtoBLERTestCase()
-{
-}
+Ns3WimaxSNRtoBLERTestCase::~Ns3WimaxSNRtoBLERTestCase() = default;
 
 bool
 Ns3WimaxSNRtoBLERTestCase::DoRunOnce(uint8_t modulationType)

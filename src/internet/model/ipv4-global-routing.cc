@@ -63,8 +63,7 @@ Ipv4GlobalRouting::GetTypeId()
 }
 
 Ipv4GlobalRouting::Ipv4GlobalRouting()
-    : m_randomEcmpRouting(false),
-      m_respondToInterfaceEvents(false)
+
 {
     NS_LOG_FUNCTION(this);
 

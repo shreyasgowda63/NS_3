@@ -63,9 +63,7 @@ OlsrMprTestCase::OlsrMprTestCase()
 {
 }
 
-OlsrMprTestCase::~OlsrMprTestCase()
-{
-}
+OlsrMprTestCase::~OlsrMprTestCase() = default;
 
 void
 OlsrMprTestCase::DoRun()

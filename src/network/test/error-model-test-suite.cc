@@ -107,21 +107,17 @@ class ErrorModelSimple : public TestCase
      */
     void DropEvent(Ptr<const Packet> p);
 
-    uint32_t m_count; //!< The received packets counter.
-    uint32_t m_drops; //!< The dropped packets counter.
+    uint32_t m_count{0}; //!< The received packets counter.
+    uint32_t m_drops{0}; //!< The dropped packets counter.
 };
 
 // Add some help text to this case to describe what it is intended to test
 ErrorModelSimple::ErrorModelSimple()
-    : TestCase("ErrorModel and PhyRxDrop trace for SimpleNetDevice"),
-      m_count(0),
-      m_drops(0)
+    : TestCase("ErrorModel and PhyRxDrop trace for SimpleNetDevice")
 {
 }
 
-ErrorModelSimple::~ErrorModelSimple()
-{
-}
+ErrorModelSimple::~ErrorModelSimple() = default;
 
 bool
 ErrorModelSimple::Receive(Ptr<NetDevice> nd,
@@ -210,21 +206,17 @@ class BurstErrorModelSimple : public TestCase
      */
     void DropEvent(Ptr<const Packet> p);
 
-    uint32_t m_count; //!< The received packets counter.
-    uint32_t m_drops; //!< The dropped packets counter.
+    uint32_t m_count{0}; //!< The received packets counter.
+    uint32_t m_drops{0}; //!< The dropped packets counter.
 };
 
 // Add some help text to this case to describe what it is intended to test
 BurstErrorModelSimple::BurstErrorModelSimple()
-    : TestCase("ErrorModel and PhyRxDrop trace for SimpleNetDevice"),
-      m_count(0),
-      m_drops(0)
+    : TestCase("ErrorModel and PhyRxDrop trace for SimpleNetDevice")
 {
 }
 
-BurstErrorModelSimple::~BurstErrorModelSimple()
-{
-}
+BurstErrorModelSimple::~BurstErrorModelSimple() = default;
 
 bool
 BurstErrorModelSimple::Receive(Ptr<NetDevice> nd,

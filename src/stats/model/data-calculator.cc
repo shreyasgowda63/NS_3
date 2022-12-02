@@ -32,7 +32,6 @@ const double ns3::NaN = zero / zero;
 //--------------------------------------------------------------
 //----------------------------------------------
 DataCalculator::DataCalculator()
-    : m_enabled(true)
 {
     NS_LOG_FUNCTION(this);
 }

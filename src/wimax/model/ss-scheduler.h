@@ -91,7 +91,7 @@ class SSScheduler : public Object
      */
     Ptr<WimaxConnection> SelectConnection();
     Ptr<SubscriberStationNetDevice> m_ss; ///< the subscriber station
-    bool m_pollMe;                        ///< poll me flag
+    bool m_pollMe{false};                 ///< poll me flag
 };
 
 } // namespace ns3

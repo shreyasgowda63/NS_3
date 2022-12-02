@@ -23,9 +23,8 @@ namespace ns3
 {
 
 DsssParameterSet::DsssParameterSet()
-    : m_currentChannel(0)
-{
-}
+
+    = default;
 
 WifiInformationElementId
 DsssParameterSet::ElementId() const

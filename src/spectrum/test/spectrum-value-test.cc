@@ -72,9 +72,7 @@ SpectrumValueTestCase::SpectrumValueTestCase(SpectrumValue a, SpectrumValue b, s
 {
 }
 
-SpectrumValueTestCase::~SpectrumValueTestCase()
-{
-}
+SpectrumValueTestCase::~SpectrumValueTestCase() = default;
 
 bool
 SpectrumValueTestCase::MoreOrLessEqual(SpectrumValue x, SpectrumValue y)

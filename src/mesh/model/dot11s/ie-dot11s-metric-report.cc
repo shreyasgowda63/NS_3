@@ -31,8 +31,8 @@ IeLinkMetricReport::IeLinkMetricReport()
 }
 
 IeLinkMetricReport::IeLinkMetricReport(uint32_t metric)
+    : m_metric(metric)
 {
-    m_metric = metric;
 }
 
 WifiInformationElementId

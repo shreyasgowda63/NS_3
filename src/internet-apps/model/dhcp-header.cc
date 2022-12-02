@@ -36,12 +36,6 @@ NS_OBJECT_ENSURE_REGISTERED(DhcpHeader);
 
 DhcpHeader::DhcpHeader()
 {
-    m_hType = 1;
-    m_hLen = 6;
-    m_xid = 0;
-    m_secs = 0;
-    m_hops = 0;
-    m_flags = 0;
     Ipv4Address addr = Ipv4Address("0.0.0.0");
     m_yiAddr = addr;
     m_ciAddr = addr;
@@ -50,7 +44,6 @@ DhcpHeader::DhcpHeader()
     m_dhcps = addr;
     m_req = addr;
     m_route = addr;
-    m_len = 240;
 
     uint32_t i;
 
@@ -68,9 +61,7 @@ DhcpHeader::DhcpHeader()
     m_magic_cookie[3] = 99;
 }
 
-DhcpHeader::~DhcpHeader()
-{
-}
+DhcpHeader::~DhcpHeader() = default;
 
 void
 DhcpHeader::SetType(uint8_t type)

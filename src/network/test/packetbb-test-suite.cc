@@ -62,17 +62,14 @@ class PbbTestCase : public TestCase
 };
 
 PbbTestCase::PbbTestCase(std::string name, Ptr<PbbPacket> packet, uint8_t* buffer, uint32_t size)
-    : TestCase(name)
+    : TestCase(name),
+      m_refPacket(packet)
 {
-    m_refPacket = packet;
-
     m_refBuffer.AddAtStart(size);
     m_refBuffer.Begin().Write(buffer, size);
 }
 
-PbbTestCase::~PbbTestCase()
-{
-}
+PbbTestCase::~PbbTestCase() = default;
 
 void
 PbbTestCase::DoRun()
@@ -107,7 +104,9 @@ PbbTestCase::TestDeserialize()
                           m_refBuffer.GetSize(),
                           "deserialization failed, did not use all bytes");
 
-    NS_TEST_ASSERT_MSG_EQ(*newPacket, *m_refPacket, "deserialization failed, objects do not match");
+    NS_TEST_ASSERT_MSG_EQ(&*newPacket,
+                          &*m_refPacket,
+                          "deserialization failed, objects do not match");
 }
 
 /**

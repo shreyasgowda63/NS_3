@@ -31,9 +31,7 @@ NS_LOG_COMPONENT_DEFINE("Ipv4EndPoint");
 Ipv4EndPoint::Ipv4EndPoint(Ipv4Address address, uint16_t port)
     : m_localAddr(address),
       m_localPort(port),
-      m_peerAddr(Ipv4Address::GetAny()),
-      m_peerPort(0),
-      m_rxEnabled(true)
+      m_peerAddr(Ipv4Address::GetAny())
 {
     NS_LOG_FUNCTION(this << address << port);
 }

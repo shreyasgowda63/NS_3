@@ -59,9 +59,7 @@ RoutingTableEntry::RoutingTableEntry(Ptr<NetDevice> dev,
       m_hops(hops),
       m_lifeTime(lifetime + Simulator::Now()),
       m_iface(iface),
-      m_flag(VALID),
-      m_reqCount(0),
-      m_blackListState(false),
+
       m_blackListTimeout(Simulator::Now())
 {
     m_ipv4Route = Create<Ipv4Route>();
@@ -71,9 +69,7 @@ RoutingTableEntry::RoutingTableEntry(Ptr<NetDevice> dev,
     m_ipv4Route->SetOutputDevice(dev);
 }
 
-RoutingTableEntry::~RoutingTableEntry()
-{
-}
+RoutingTableEntry::~RoutingTableEntry() = default;
 
 bool
 RoutingTableEntry::InsertPrecursor(Ipv4Address id)

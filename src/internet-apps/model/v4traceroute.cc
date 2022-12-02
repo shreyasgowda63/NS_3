@@ -90,23 +90,16 @@ V4TraceRoute::GetTypeId()
 
 V4TraceRoute::V4TraceRoute()
     : m_interval(Seconds(0)),
-      m_size(56),
+
       m_socket(nullptr),
-      m_seq(0),
-      m_verbose(true),
-      m_probeCount(0),
-      m_maxProbes(3),
-      m_ttl(1),
-      m_maxTtl(30),
+
       m_waitIcmpReplyTimeout(Seconds(5))
 {
     m_osRoute.clear();
     m_routeIpv4.clear();
 }
 
-V4TraceRoute::~V4TraceRoute()
-{
-}
+V4TraceRoute::~V4TraceRoute() = default;
 
 void
 V4TraceRoute::Print(Ptr<OutputStreamWrapper> stream)

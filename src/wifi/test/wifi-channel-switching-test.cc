@@ -106,25 +106,19 @@ class WifiChannelSwitchingTest : public TestCase
     NodeContainer m_staNode;        ///< STA node container
     NetDeviceContainer m_apDevice;  ///< AP device container
     NetDeviceContainer m_staDevice; ///< STA device container
-    uint8_t m_assocCount;           ///< count of completed Assoc Request procedures
-    uint8_t m_txCount;              ///< count of transmissions
-    uint64_t m_rxBytes;             ///< RX bytes
-    uint32_t m_payloadSize;         ///< payload size in bytes
+    uint8_t m_assocCount{0};        ///< count of completed Assoc Request procedures
+    uint8_t m_txCount{0};           ///< count of transmissions
+    uint64_t m_rxBytes{0};          ///< RX bytes
+    uint32_t m_payloadSize{2000};   ///< payload size in bytes
     std::array<uint8_t, 2> m_channelSwitchCount{0, 0}; ///< Per-node number of channel switch events
 };
 
 WifiChannelSwitchingTest::WifiChannelSwitchingTest()
-    : TestCase("Test case for resuming data transmission when the recipient moves back"),
-      m_assocCount(0),
-      m_txCount(0),
-      m_rxBytes(0),
-      m_payloadSize(2000)
+    : TestCase("Test case for resuming data transmission when the recipient moves back")
 {
 }
 
-WifiChannelSwitchingTest::~WifiChannelSwitchingTest()
-{
-}
+WifiChannelSwitchingTest::~WifiChannelSwitchingTest() = default;
 
 void
 WifiChannelSwitchingTest::Associated(Mac48Address bssid)

@@ -108,20 +108,13 @@ TcpCubic::GetTypeId()
 }
 
 TcpCubic::TcpCubic()
-    : TcpCongestionOps(),
-      m_cWndCnt(0),
-      m_lastMaxCwnd(0),
-      m_bicOriginPoint(0),
-      m_bicK(0.0),
-      m_delayMin(Time::Min()),
+    : m_delayMin(Time::Min()),
       m_epochStart(Time::Min()),
-      m_found(false),
       m_roundStart(Time::Min()),
       m_endSeq(0),
       m_lastAck(Time::Min()),
       m_cubicDelta(Time::Min()),
-      m_currRtt(Time::Min()),
-      m_sampleCnt(0)
+      m_currRtt(Time::Min())
 {
     NS_LOG_FUNCTION(this);
 }

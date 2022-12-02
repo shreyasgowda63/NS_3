@@ -36,7 +36,6 @@ namespace ns3
 {
 
 AsciiFile::AsciiFile()
-    : m_file()
 {
     FatalImpl::RegisterStream(&m_file);
 }

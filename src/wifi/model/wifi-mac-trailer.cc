@@ -24,13 +24,9 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(WifiMacTrailer);
 
-WifiMacTrailer::WifiMacTrailer()
-{
-}
+WifiMacTrailer::WifiMacTrailer() = default;
 
-WifiMacTrailer::~WifiMacTrailer()
-{
-}
+WifiMacTrailer::~WifiMacTrailer() = default;
 
 TypeId
 WifiMacTrailer::GetTypeId()

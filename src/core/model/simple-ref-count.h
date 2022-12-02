@@ -81,29 +81,7 @@ class SimpleRefCount : public PARENT
 {
   public:
     /** Default constructor.  */
-    SimpleRefCount()
-        : m_count(1)
-    {
-    }
-
-    /**
-     * Copy constructor
-     * \param [in] o The object to copy into this one.
-     */
-    SimpleRefCount(const SimpleRefCount& o [[maybe_unused]])
-        : m_count(1)
-    {
-    }
-
-    /**
-     * Assignment operator
-     * \param [in] o The object to copy
-     * \returns The copy of \pname{o}
-     */
-    SimpleRefCount& operator=(const SimpleRefCount& o [[maybe_unused]])
-    {
-        return *this;
-    }
+    SimpleRefCount() = default;
 
     /**
      * Increment the reference count. This method should not be called
@@ -151,7 +129,7 @@ class SimpleRefCount : public PARENT
      * Note we make this mutable so that the const methods can still
      * change it.
      */
-    mutable uint32_t m_count;
+    mutable uint32_t m_count{1};
 };
 
 } // namespace ns3

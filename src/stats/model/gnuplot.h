@@ -469,9 +469,9 @@ class Gnuplot
     std::string m_yLegend; //!< Y axis legend
     std::string m_extra;   //!< extra parameters for the plot
 
-    bool m_generateOneOutputFile; //!< true if only one plot will be generated
+    bool m_generateOneOutputFile{false}; //!< true if only one plot will be generated
 
-    unsigned int m_dataFileDatasetIndex; //!< Data set index to plot
+    unsigned int m_dataFileDatasetIndex{0}; //!< Data set index to plot
 };
 
 /**

@@ -133,12 +133,12 @@ class LteFfrEnhancedAlgorithm : public LteFfrAlgorithm
     int GetCqiFromSpectralEfficiency(double s);
 
     // FFR SAP
-    LteFfrSapUser* m_ffrSapUser;         ///< FFR SAP user
-    LteFfrSapProvider* m_ffrSapProvider; ///< FFR SAP provider
+    LteFfrSapUser* m_ffrSapUser{nullptr}; ///< FFR SAP user
+    LteFfrSapProvider* m_ffrSapProvider;  ///< FFR SAP provider
 
     // FFR RRF SAP
-    LteFfrRrcSapUser* m_ffrRrcSapUser;         ///< FFR RRC SAP user
-    LteFfrRrcSapProvider* m_ffrRrcSapProvider; ///< FFR RRC SAP provider
+    LteFfrRrcSapUser* m_ffrRrcSapUser{nullptr}; ///< FFR RRC SAP user
+    LteFfrRrcSapProvider* m_ffrRrcSapProvider;  ///< FFR RRC SAP provider
 
     uint8_t m_dlSubBandOffset;      ///< DL subband offset
     uint8_t m_dlReuse3SubBandwidth; ///< DL reuse 3 subband bandwidth
@@ -191,7 +191,7 @@ class LteFfrEnhancedAlgorithm : public LteFfrAlgorithm
     std::map<uint16_t, std::vector<bool>> m_ulRbAvailableforUe; ///< UL RB available for UE
 
     /// The expected measurement identity
-    uint8_t m_measId;
+    uint8_t m_measId{0};
 
 }; // end of class LteFfrEnhancedAlgorithm
 

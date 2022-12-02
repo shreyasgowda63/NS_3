@@ -154,13 +154,13 @@ class TcpVegas : public TcpNewReno
     void DisableVegas();
 
   private:
-    uint32_t m_alpha;             //!< Alpha threshold, lower bound of packets in network
-    uint32_t m_beta;              //!< Beta threshold, upper bound of packets in network
-    uint32_t m_gamma;             //!< Gamma threshold, limit on increase
+    uint32_t m_alpha{2};          //!< Alpha threshold, lower bound of packets in network
+    uint32_t m_beta{4};           //!< Beta threshold, upper bound of packets in network
+    uint32_t m_gamma{1};          //!< Gamma threshold, limit on increase
     Time m_baseRtt;               //!< Minimum of all Vegas RTT measurements seen during connection
     Time m_minRtt;                //!< Minimum of all RTT measurements within last RTT
-    uint32_t m_cntRtt;            //!< Number of RTT measurements during last RTT
-    bool m_doingVegasNow;         //!< If true, do Vegas for this RTT
+    uint32_t m_cntRtt{0};         //!< Number of RTT measurements during last RTT
+    bool m_doingVegasNow{true};   //!< If true, do Vegas for this RTT
     SequenceNumber32 m_begSndNxt; //!< Right edge during last RTT
 };
 

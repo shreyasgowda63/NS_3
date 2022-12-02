@@ -76,22 +76,14 @@ static bool initialized = false; //!< Initialization flag
 // Public methods
 
 AnimationInterface::AnimationInterface(const std::string fn)
-    : m_f(nullptr),
-      m_routingF(nullptr),
-      m_mobilityPollInterval(Seconds(0.25)),
+    : m_mobilityPollInterval(Seconds(0.25)),
       m_outputFileName(fn),
-      gAnimUid(0),
-      m_writeCallback(nullptr),
-      m_started(false),
-      m_enablePacketMetadata(false),
       m_startTime(Seconds(0)),
       m_stopTime(Seconds(3600 * 1000)),
-      m_maxPktsPerFile(MAX_PKTS_PER_TRACE_FILE),
       m_originalFileName(fn),
       m_routingStopTime(Seconds(0)),
       m_routingFileName(""),
-      m_routingPollInterval(Seconds(5)),
-      m_trackPackets(true)
+      m_routingPollInterval(Seconds(5))
 {
     initialized = true;
     StartAnimation();
@@ -2984,12 +2976,12 @@ AnimationInterface::AnimPacketInfo::AnimPacketInfo()
 }
 
 AnimationInterface::AnimPacketInfo::AnimPacketInfo(const AnimPacketInfo& pInfo)
+    : m_txnd(pInfo.m_txnd),
+      m_fbTx(pInfo.m_fbTx),
+      m_lbRx(pInfo.m_lbRx),
+      m_lbTx(pInfo.m_lbTx),
+      m_txNodeId(pInfo.m_txNodeId)
 {
-    m_txnd = pInfo.m_txnd;
-    m_txNodeId = pInfo.m_txNodeId;
-    m_fbTx = pInfo.m_fbTx;
-    m_lbTx = pInfo.m_lbTx;
-    m_lbRx = pInfo.m_lbRx;
 }
 
 AnimationInterface::AnimPacketInfo::AnimPacketInfo(Ptr<const NetDevice> txnd,

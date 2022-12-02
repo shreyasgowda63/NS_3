@@ -79,9 +79,7 @@ CommandLineExampleTestCase::CommandLineExampleTestCase()
 {
 }
 
-CommandLineExampleTestCase::~CommandLineExampleTestCase()
-{
-}
+CommandLineExampleTestCase::~CommandLineExampleTestCase() = default;
 
 std::string
 CommandLineExampleTestCase::GetPostProcessingCommand() const

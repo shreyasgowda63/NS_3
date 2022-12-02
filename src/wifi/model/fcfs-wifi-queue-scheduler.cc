@@ -58,8 +58,8 @@ FcfsWifiQueueScheduler::FcfsWifiQueueScheduler()
 Ptr<WifiMpdu>
 FcfsWifiQueueScheduler::HasToDropBeforeEnqueuePriv(AcIndex ac, Ptr<WifiMpdu> mpdu)
 {
-    auto queue = GetWifiMacQueue(ac);
-    if (queue->QueueBase::GetNPackets() < queue->GetMaxSize().GetValue())
+    auto queue = WifiMacQueue(ac);
+    if (queue.QueueBase::GetNPackets() < queue.GetMaxSize().GetValue())
     {
         // the queue is not full, do not drop anything
         return nullptr;
@@ -79,7 +79,7 @@ FcfsWifiQueueScheduler::HasToDropBeforeEnqueuePriv(AcIndex ac, Ptr<WifiMpdu> mpd
 
         if (sortedQueuesIt != GetSortedQueues(ac).end())
         {
-            return queue->PeekByQueueId(sortedQueuesIt->second.get().first);
+            return queue.PeekByQueueId(sortedQueuesIt->second.get().first);
         }
     }
     return mpdu;
@@ -92,7 +92,7 @@ FcfsWifiQueueScheduler::DoNotifyEnqueue(AcIndex ac, Ptr<WifiMpdu> mpdu)
 
     const auto queueId = WifiMacQueueContainer::GetQueueId(mpdu);
 
-    if (GetWifiMacQueue(ac)->GetNPackets(queueId) > 1)
+    if (WifiMacQueue(ac).GetNPackets(queueId) > 1)
     {
         // Enqueue takes place at the tail, while the priority is determined by the
         // head of the queue. Therefore, if the queue was not empty before inserting
@@ -126,7 +126,7 @@ FcfsWifiQueueScheduler::DoNotifyDequeue(AcIndex ac, const std::list<Ptr<WifiMpdu
             continue;
         }
 
-        if (auto item = GetWifiMacQueue(ac)->PeekByQueueId(queueId); item != nullptr)
+        if (auto item = WifiMacQueue(ac).PeekByQueueId(queueId); item != nullptr)
         {
             SetPriority(ac, queueId, item->GetExpiryTime());
         }
@@ -153,7 +153,7 @@ FcfsWifiQueueScheduler::DoNotifyRemove(AcIndex ac, const std::list<Ptr<WifiMpdu>
             continue;
         }
 
-        if (auto item = GetWifiMacQueue(ac)->PeekByQueueId(queueId); item != nullptr)
+        if (auto item = WifiMacQueue(ac).PeekByQueueId(queueId); item != nullptr)
         {
             SetPriority(ac, queueId, item->GetExpiryTime());
         }

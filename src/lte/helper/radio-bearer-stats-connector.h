@@ -232,7 +232,7 @@ class RadioBearerStatsConnector
     Ptr<RadioBearerStatsCalculator> m_rlcStats;  //!< Calculator for RLC Statistics
     Ptr<RadioBearerStatsCalculator> m_pdcpStats; //!< Calculator for PDCP Statistics
 
-    bool m_connected; //!< true if traces are connected to sinks, initially set to false
+    bool m_connected{false}; //!< true if traces are connected to sinks, initially set to false
 
     /**
      * Struct used as key in m_ueManagerPathByCellIdRnti map

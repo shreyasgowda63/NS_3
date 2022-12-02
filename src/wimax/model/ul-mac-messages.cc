@@ -29,15 +29,10 @@ namespace ns3
 NS_OBJECT_ENSURE_REGISTERED(Ucd);
 
 UcdChannelEncodings::UcdChannelEncodings()
-    : m_bwReqOppSize(0),
-      m_rangReqOppSize(0),
-      m_frequency(0)
-{
-}
 
-UcdChannelEncodings::~UcdChannelEncodings()
-{
-}
+    = default;
+
+UcdChannelEncodings::~UcdChannelEncodings() = default;
 
 void
 UcdChannelEncodings::SetBwReqOppSize(uint16_t bwReqOppSize)
@@ -104,14 +99,10 @@ UcdChannelEncodings::Read(Buffer::Iterator start)
 // ----------------------------------------------------------------------------------------------------------
 
 OfdmUcdChannelEncodings::OfdmUcdChannelEncodings()
-    : m_sbchnlReqRegionFullParams(0),
-      m_sbchnlFocContCodes(0)
-{
-}
 
-OfdmUcdChannelEncodings::~OfdmUcdChannelEncodings()
-{
-}
+    = default;
+
+OfdmUcdChannelEncodings::~OfdmUcdChannelEncodings() = default;
 
 void
 OfdmUcdChannelEncodings::SetSbchnlReqRegionFullParams(uint8_t sbchnlReqRegionFullParams)
@@ -164,16 +155,8 @@ OfdmUcdChannelEncodings::DoRead(Buffer::Iterator start)
 // ----------------------------------------------------------------------------------------------------------
 
 OfdmUlBurstProfile::OfdmUlBurstProfile()
-    : m_type(0),
-      m_length(0),
-      m_uiuc(0),
-      m_fecCodeType(0)
-{
-}
 
-OfdmUlBurstProfile::~OfdmUlBurstProfile()
-{
-}
+    = default;
 
 void
 OfdmUlBurstProfile::SetType(uint8_t type)
@@ -254,18 +237,10 @@ OfdmUlBurstProfile::Read(Buffer::Iterator start)
 // ----------------------------------------------------------------------------------------------------------
 
 Ucd::Ucd()
-    : m_configurationChangeCount(0),
-      m_rangingBackoffStart(0),
-      m_rangingBackoffEnd(0),
-      m_requestBackoffStart(0),
-      m_requestBackoffEnd(0),
-      m_nrUlBurstProfiles(0)
-{
-}
 
-Ucd::~Ucd()
-{
-}
+    = default;
+
+Ucd::~Ucd() = default;
 
 void
 Ucd::SetConfigurationChangeCount(uint8_t configurationChangeCount)
@@ -455,18 +430,8 @@ Ucd::Deserialize(Buffer::Iterator start)
 // ----------------------------------------------------------------------------------------------------------
 
 OfdmUlMapIe::OfdmUlMapIe()
-    : m_cid(),
-      m_startTime(0),
-      m_subchannelIndex(0),
-      m_uiuc(0),
-      m_duration(0),
-      m_midambleRepetitionInterval(0)
-{
-}
 
-OfdmUlMapIe::~OfdmUlMapIe()
-{
-}
+    = default;
 
 void
 OfdmUlMapIe::SetCid(const Cid& cid)
@@ -577,15 +542,10 @@ OfdmUlMapIe::Read(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(UlMap);
 
 UlMap::UlMap()
-    : m_reserved(0),
-      m_ucdCount(0),
-      m_allocationStartTime(0)
-{
-}
 
-UlMap::~UlMap()
-{
-}
+    = default;
+
+UlMap::~UlMap() = default;
 
 void
 UlMap::SetUcdCount(uint8_t ucdCount)

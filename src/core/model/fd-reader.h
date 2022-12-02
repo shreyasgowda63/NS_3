@@ -132,7 +132,7 @@ class FdReader : public SimpleRefCount<FdReader>
     /**
      * \brief The file descriptor to read from.
      */
-    int m_fd;
+    int m_fd{-1};
 
   private:
     /** The asynchronous function which performs the read. */
@@ -149,7 +149,7 @@ class FdReader : public SimpleRefCount<FdReader>
     /** Pipe used to signal events between threads. */
     int m_evpipe[2];
     /** Signal the read thread to stop. */
-    bool m_stop;
+    bool m_stop{false};
 
     /**
      * The event scheduled for destroy time which will invoke DestroyEvent

@@ -54,9 +54,7 @@ ListScheduler::ListScheduler()
     NS_LOG_FUNCTION(this);
 }
 
-ListScheduler::~ListScheduler()
-{
-}
+ListScheduler::~ListScheduler() = default;
 
 void
 ListScheduler::Insert(const Event& ev)

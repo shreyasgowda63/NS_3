@@ -67,14 +67,11 @@ class FriisPropagationLossModelTestCase : public TestCase
 
 FriisPropagationLossModelTestCase::FriisPropagationLossModelTestCase()
     : TestCase("Check to see that the ns-3 Friis propagation loss model provides correct received "
-               "power"),
-      m_testVectors()
+               "power")
 {
 }
 
-FriisPropagationLossModelTestCase::~FriisPropagationLossModelTestCase()
-{
-}
+FriisPropagationLossModelTestCase::~FriisPropagationLossModelTestCase() = default;
 
 void
 FriisPropagationLossModelTestCase::DoRun()
@@ -178,14 +175,11 @@ class TwoRayGroundPropagationLossModelTestCase : public TestCase
 
 TwoRayGroundPropagationLossModelTestCase::TwoRayGroundPropagationLossModelTestCase()
     : TestCase("Check to see that the ns-3 TwoRayGround propagation loss model provides correct "
-               "received power"),
-      m_testVectors()
+               "received power")
 {
 }
 
-TwoRayGroundPropagationLossModelTestCase::~TwoRayGroundPropagationLossModelTestCase()
-{
-}
+TwoRayGroundPropagationLossModelTestCase::~TwoRayGroundPropagationLossModelTestCase() = default;
 
 void
 TwoRayGroundPropagationLossModelTestCase::DoRun()
@@ -318,14 +312,11 @@ class LogDistancePropagationLossModelTestCase : public TestCase
 
 LogDistancePropagationLossModelTestCase::LogDistancePropagationLossModelTestCase()
     : TestCase("Check to see that the ns-3 Log Distance propagation loss model provides correct "
-               "received power"),
-      m_testVectors()
+               "received power")
 {
 }
 
-LogDistancePropagationLossModelTestCase::~LogDistancePropagationLossModelTestCase()
-{
-}
+LogDistancePropagationLossModelTestCase::~LogDistancePropagationLossModelTestCase() = default;
 
 void
 LogDistancePropagationLossModelTestCase::DoRun()
@@ -411,9 +402,7 @@ MatrixPropagationLossModelTestCase::MatrixPropagationLossModelTestCase()
 {
 }
 
-MatrixPropagationLossModelTestCase::~MatrixPropagationLossModelTestCase()
-{
-}
+MatrixPropagationLossModelTestCase::~MatrixPropagationLossModelTestCase() = default;
 
 void
 MatrixPropagationLossModelTestCase::DoRun()
@@ -464,9 +453,7 @@ RangePropagationLossModelTestCase::RangePropagationLossModelTestCase()
 {
 }
 
-RangePropagationLossModelTestCase::~RangePropagationLossModelTestCase()
-{
-}
+RangePropagationLossModelTestCase::~RangePropagationLossModelTestCase() = default;
 
 void
 RangePropagationLossModelTestCase::DoRun()

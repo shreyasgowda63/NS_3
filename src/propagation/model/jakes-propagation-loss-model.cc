@@ -36,9 +36,7 @@ JakesPropagationLossModel::JakesPropagationLossModel()
     m_uniformVariable->SetAttribute("Max", DoubleValue(M_PI));
 }
 
-JakesPropagationLossModel::~JakesPropagationLossModel()
-{
-}
+JakesPropagationLossModel::~JakesPropagationLossModel() = default;
 
 TypeId
 JakesPropagationLossModel::GetTypeId()

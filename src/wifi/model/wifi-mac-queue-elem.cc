@@ -26,9 +26,7 @@ namespace ns3
 
 WifiMacQueueElem::WifiMacQueueElem(Ptr<WifiMpdu> item)
     : mpdu(item),
-      expiryTime(0),
-      ac(AC_UNDEF),
-      expired(false)
+      expiryTime(0)
 {
 }
 

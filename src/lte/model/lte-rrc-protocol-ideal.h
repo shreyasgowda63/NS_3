@@ -142,11 +142,11 @@ class LteUeRrcProtocolIdeal : public Object
     /// Set ENB RRC SAP provider
     void SetEnbRrcSapProvider();
 
-    Ptr<LteUeRrc> m_rrc;                       ///< the RRC
-    uint16_t m_rnti;                           ///< the RNTI
-    LteUeRrcSapProvider* m_ueRrcSapProvider;   ///< the UE RRC SAP provider
-    LteUeRrcSapUser* m_ueRrcSapUser;           ///< the RRC SAP user
-    LteEnbRrcSapProvider* m_enbRrcSapProvider; ///< the ENB RRC SAP provider
+    Ptr<LteUeRrc> m_rrc;                                ///< the RRC
+    uint16_t m_rnti;                                    ///< the RNTI
+    LteUeRrcSapProvider* m_ueRrcSapProvider{nullptr};   ///< the UE RRC SAP provider
+    LteUeRrcSapUser* m_ueRrcSapUser;                    ///< the RRC SAP user
+    LteEnbRrcSapProvider* m_enbRrcSapProvider{nullptr}; ///< the ENB RRC SAP provider
 };
 
 /**
@@ -310,10 +310,10 @@ class LteEnbRrcProtocolIdeal : public Object
      */
     LteRrcSap::RrcConnectionReconfiguration DoDecodeHandoverCommand(Ptr<Packet> p);
 
-    uint16_t m_rnti;                           ///< the RNTI
-    uint16_t m_cellId;                         ///< the cell ID
-    LteEnbRrcSapProvider* m_enbRrcSapProvider; ///< the ENB RRC SAP provider
-    LteEnbRrcSapUser* m_enbRrcSapUser;         ///< the ENB RRC SAP user
+    uint16_t m_rnti;                                    ///< the RNTI
+    uint16_t m_cellId;                                  ///< the cell ID
+    LteEnbRrcSapProvider* m_enbRrcSapProvider{nullptr}; ///< the ENB RRC SAP provider
+    LteEnbRrcSapUser* m_enbRrcSapUser;                  ///< the ENB RRC SAP user
     std::map<uint16_t, LteUeRrcSapProvider*>
         m_enbRrcSapProviderMap; ///< the LTE UE RRC SAP provider
 };

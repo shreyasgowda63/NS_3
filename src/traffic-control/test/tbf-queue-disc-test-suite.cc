@@ -67,9 +67,7 @@ TbfQueueDiscTestItem::TbfQueueDiscTestItem(Ptr<Packet> p, const Address& addr)
 {
 }
 
-TbfQueueDiscTestItem::~TbfQueueDiscTestItem()
-{
-}
+TbfQueueDiscTestItem::~TbfQueueDiscTestItem() = default;
 
 void
 TbfQueueDiscTestItem::AddHeader()

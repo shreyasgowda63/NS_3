@@ -101,25 +101,25 @@ class V4TraceRoute : public Application
      * The default is 56, which translates into 64 ICMP data bytes when
      * combined with the 8 bytes of ICMP header data.
      */
-    uint32_t m_size;
+    uint32_t m_size{56};
     /// The socket we send packets from
     Ptr<Socket> m_socket;
     /// ICMP ECHO sequence number
-    uint16_t m_seq;
+    uint16_t m_seq{0};
     /// produce traceroute style output if true
-    bool m_verbose;
+    bool m_verbose{true};
     /// Start time to report total ping time
     Time m_started;
     /// Next packet will be sent
     EventId m_next;
     /// The Current probe value
-    uint32_t m_probeCount;
+    uint32_t m_probeCount{0};
     /// The maximum number of probe packets per hop
-    uint16_t m_maxProbes;
+    uint16_t m_maxProbes{3};
     /// The current TTL value
-    uint16_t m_ttl;
+    uint16_t m_ttl{1};
     /// The maximium Ttl (Max number of hops to trace)
-    uint32_t m_maxTtl;
+    uint32_t m_maxTtl{30};
     /// The wait time until the response is considered lost.
     Time m_waitIcmpReplyTimeout;
     /// The timer used to wait for the probes ICMP replies

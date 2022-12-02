@@ -59,10 +59,7 @@ TcpScalable::GetTypeId()
 }
 
 TcpScalable::TcpScalable()
-    : TcpNewReno(),
-      m_ackCnt(0),
-      m_aiFactor(50),
-      m_mdFactor(0.125)
+
 {
     NS_LOG_FUNCTION(this);
 }

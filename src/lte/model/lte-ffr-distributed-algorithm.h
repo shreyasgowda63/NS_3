@@ -124,12 +124,12 @@ class LteFfrDistributedAlgorithm : public LteFfrAlgorithm
     void SendLoadInformation(uint16_t targetCellId);
 
     // FFR SAP
-    LteFfrSapUser* m_ffrSapUser;         ///< FFR SAP User
-    LteFfrSapProvider* m_ffrSapProvider; ///< FFR SAP Provider
+    LteFfrSapUser* m_ffrSapUser{nullptr}; ///< FFR SAP User
+    LteFfrSapProvider* m_ffrSapProvider;  ///< FFR SAP Provider
 
     // FFR RRF SAP
-    LteFfrRrcSapUser* m_ffrRrcSapUser;         ///< FFR RRC SAP User
-    LteFfrRrcSapProvider* m_ffrRrcSapProvider; ///< FFR RRC SAP Provider
+    LteFfrRrcSapUser* m_ffrRrcSapUser{nullptr}; ///< FFR RRC SAP User
+    LteFfrRrcSapProvider* m_ffrRrcSapProvider;  ///< FFR RRC SAP Provider
 
     std::vector<bool> m_dlRbgMap; ///< DL RBG map
     std::vector<bool> m_ulRbgMap; ///< UL RBG map

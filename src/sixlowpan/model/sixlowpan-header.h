@@ -340,7 +340,7 @@ class SixLowPanHc1 : public Header
     void SetTrafficClass(uint8_t trafficClass);
 
   private:
-    uint8_t m_hopLimit;                            //!< Hop Limit.
+    uint8_t m_hopLimit{0};                         //!< Hop Limit.
     uint8_t m_srcPrefix[8];                        //!< Source prefix.
     uint8_t m_srcInterface[8];                     //!< Source interface.
     uint8_t m_dstPrefix[8];                        //!< Destination prefix.
@@ -431,8 +431,8 @@ class SixLowPanFrag1 : public Header
     uint16_t GetDatagramTag() const;
 
   private:
-    uint16_t m_datagramSize; //!< Datagram size.
-    uint16_t m_datagramTag;  //!< Datagram tag.
+    uint16_t m_datagramSize{0}; //!< Datagram size.
+    uint16_t m_datagramTag{0};  //!< Datagram tag.
 };
 
 /**
@@ -523,9 +523,9 @@ class SixLowPanFragN : public Header
     uint8_t GetDatagramOffset() const;
 
   private:
-    uint16_t m_datagramSize;  //!< Datagram size.
-    uint16_t m_datagramTag;   //!< Datagram tag.
-    uint8_t m_datagramOffset; //!< Datagram offset.
+    uint16_t m_datagramSize{0};  //!< Datagram size.
+    uint16_t m_datagramTag{0};   //!< Datagram tag.
+    uint8_t m_datagramOffset{0}; //!< Datagram offset.
 };
 
 /**
@@ -652,7 +652,7 @@ class SixLowPanIphc : public Header
         HC_COMPR_0
     };
 
-    SixLowPanIphc();
+    SixLowPanIphc() = default;
     /**
      * \brief Constructor.
      * \param [in] dispatch Dispatch value.
@@ -911,15 +911,15 @@ class SixLowPanIphc : public Header
     uint8_t GetHopLimit() const;
 
   private:
-    uint16_t m_baseFormat;       //!< Dispatch + encoding fields.
-    uint8_t m_srcdstContextId;   //!< Src and Dst Context ID.
-    uint8_t m_ecn : 2;           //!< ECN bits.
-    uint8_t m_dscp : 6;          //!< DSCP bits.
-    uint32_t m_flowLabel : 20;   //!< Flow Label bits.
-    uint8_t m_nextHeader;        //!< Next header.
-    uint8_t m_hopLimit;          //!< Hop Limit.
-    uint8_t m_srcInlinePart[16]; //!< source address inline part.
-    uint8_t m_dstInlinePart[16]; //!< destination address inline part.
+    uint16_t m_baseFormat{0x6000}; //!< Dispatch + encoding fields (011x xxxx xxxx xxxx).
+    uint8_t m_srcdstContextId{0};  //!< Src and Dst Context ID.
+    uint8_t m_ecn : 2;             //!< ECN bits.
+    uint8_t m_dscp : 6;            //!< DSCP bits.
+    uint32_t m_flowLabel : 20;     //!< Flow Label bits.
+    uint8_t m_nextHeader;          //!< Next header.
+    uint8_t m_hopLimit;            //!< Hop Limit.
+    uint8_t m_srcInlinePart[16];   //!< source address inline part.
+    uint8_t m_dstInlinePart[16];   //!< destination address inline part.
 };
 
 /**
@@ -967,7 +967,7 @@ class SixLowPanNhcExtension : public Header
         EID_IPv6_H = 7
     };
 
-    SixLowPanNhcExtension();
+    SixLowPanNhcExtension() = default;
 
     /**
      * \brief Get the type ID.
@@ -1060,10 +1060,10 @@ class SixLowPanNhcExtension : public Header
     uint32_t CopyBlob(uint8_t* blob, uint32_t size) const;
 
   private:
-    uint8_t m_nhcExtensionHeader; //!< NHC extension header type.
-    uint8_t m_nhcNextHeader;      //!< Next header.
-    uint8_t m_nhcBlobLength;      //!< Length of the NHC compressed header.
-    uint8_t m_nhcBlob[256];       //!< NHC compressed header.
+    uint8_t m_nhcExtensionHeader{0xE0}; //!< NHC extension header type (1110 xxxx).
+    uint8_t m_nhcNextHeader{0};         //!< Next header.
+    uint8_t m_nhcBlobLength{0};         //!< Length of the NHC compressed header.
+    uint8_t m_nhcBlob[256];             //!< NHC compressed header.
 };
 
 /**
@@ -1104,7 +1104,7 @@ class SixLowPanUdpNhcExtension : public Header
         PORTS_LAST_SRC_LAST_DST
     };
 
-    SixLowPanUdpNhcExtension();
+    SixLowPanUdpNhcExtension() = default;
 
     /**
      * \brief Get the type ID.
@@ -1206,10 +1206,10 @@ class SixLowPanUdpNhcExtension : public Header
     uint16_t GetChecksum() const;
 
   private:
-    uint8_t m_baseFormat; //!< Dispatch + encoding fields.
-    uint16_t m_checksum;  //!< Checksum.
-    uint16_t m_srcPort;   //!< Source port.
-    uint16_t m_dstPort;   //!< Destination port.
+    uint8_t m_baseFormat{0xF0}; //!< Dispatch + encoding fields (1111 0xxx).
+    uint16_t m_checksum{0};     //!< Checksum.
+    uint16_t m_srcPort{0};      //!< Source port.
+    uint16_t m_dstPort{0};      //!< Destination port.
 };
 
 /**
@@ -1276,7 +1276,7 @@ class SixLowPanBc0 : public Header
     uint8_t GetSequenceNumber() const;
 
   private:
-    uint8_t m_seqNumber; //!< Sequence number.
+    uint8_t m_seqNumber{66}; //!< Sequence number.
 };
 
 /**
@@ -1367,11 +1367,11 @@ class SixLowPanMesh : public Header
     Address GetFinalDst() const;
 
   private:
-    uint8_t m_hopsLeft; //!< Hops left.
-    bool m_v;           //!< True if Originator address is 16 bit
-    bool m_f;           //!< True if Destination address is 16 bit
-    Address m_src;      //!< Originator (source) address.
-    Address m_dst;      //!< Destination (final) address.
+    uint8_t m_hopsLeft{0}; //!< Hops left.
+    bool m_v{false};       //!< True if Originator address is 16 bit
+    bool m_f{false};       //!< True if Destination address is 16 bit
+    Address m_src;         //!< Originator (source) address.
+    Address m_dst;         //!< Destination (final) address.
 };
 
 /**

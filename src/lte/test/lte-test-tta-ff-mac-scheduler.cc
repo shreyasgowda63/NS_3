@@ -195,9 +195,7 @@ LenaTtaFfMacSchedulerTestCase::LenaTtaFfMacSchedulerTestCase(uint16_t nUser,
 {
 }
 
-LenaTtaFfMacSchedulerTestCase::~LenaTtaFfMacSchedulerTestCase()
-{
-}
+LenaTtaFfMacSchedulerTestCase::~LenaTtaFfMacSchedulerTestCase() = default;
 
 void
 LenaTtaFfMacSchedulerTestCase::DoRun()

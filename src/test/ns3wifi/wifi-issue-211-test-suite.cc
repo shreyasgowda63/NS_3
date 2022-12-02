@@ -73,22 +73,18 @@ class Issue211Test : public TestCase
     void CalcThroughput(Ptr<UdpServer> server);
 
     std::vector<double> m_tputValues; ///< throughput in sub-intervals
-    uint64_t m_lastRxBytes;           ///< RX bytes at last check-point
+    uint64_t m_lastRxBytes{0};        ///< RX bytes at last check-point
     Time m_lastCheckPointTime;        ///< time of last check-point
-    uint32_t m_payloadSize;           ///< payload size in bytes
+    uint32_t m_payloadSize{2000};     ///< payload size in bytes
 };
 
 Issue211Test::Issue211Test()
     : TestCase("Test case for resuming data transmission when the recipient moves back"),
-      m_lastRxBytes(0),
-      m_lastCheckPointTime(Seconds(0)),
-      m_payloadSize(2000)
+      m_lastCheckPointTime(Seconds(0))
 {
 }
 
-Issue211Test::~Issue211Test()
-{
-}
+Issue211Test::~Issue211Test() = default;
 
 void
 Issue211Test::CalcThroughput(Ptr<UdpServer> server)

@@ -105,9 +105,7 @@ TvSpectrumTransmitterTestCase::TvSpectrumTransmitterTestCase(double startFrequen
 {
 }
 
-TvSpectrumTransmitterTestCase::~TvSpectrumTransmitterTestCase()
-{
-}
+TvSpectrumTransmitterTestCase::~TvSpectrumTransmitterTestCase() = default;
 
 void
 TvSpectrumTransmitterTestCase::DoRun()

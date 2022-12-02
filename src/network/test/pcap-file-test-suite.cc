@@ -102,9 +102,7 @@ WriteModeCreateTestCase::WriteModeCreateTestCase()
 {
 }
 
-WriteModeCreateTestCase::~WriteModeCreateTestCase()
-{
-}
+WriteModeCreateTestCase::~WriteModeCreateTestCase() = default;
 
 void
 WriteModeCreateTestCase::DoSetup()
@@ -229,9 +227,7 @@ ReadModeCreateTestCase::ReadModeCreateTestCase()
 {
 }
 
-ReadModeCreateTestCase::~ReadModeCreateTestCase()
-{
-}
+ReadModeCreateTestCase::~ReadModeCreateTestCase() = default;
 
 void
 ReadModeCreateTestCase::DoSetup()
@@ -461,9 +457,7 @@ FileHeaderTestCase::FileHeaderTestCase()
 {
 }
 
-FileHeaderTestCase::~FileHeaderTestCase()
-{
-}
+FileHeaderTestCase::~FileHeaderTestCase() = default;
 
 void
 FileHeaderTestCase::DoSetup()
@@ -739,9 +733,7 @@ RecordHeaderTestCase::RecordHeaderTestCase()
 {
 }
 
-RecordHeaderTestCase::~RecordHeaderTestCase()
-{
-}
+RecordHeaderTestCase::~RecordHeaderTestCase() = default;
 
 void
 RecordHeaderTestCase::DoSetup()
@@ -1096,9 +1088,7 @@ ReadFileTestCase::ReadFileTestCase()
 {
 }
 
-ReadFileTestCase::~ReadFileTestCase()
-{
-}
+ReadFileTestCase::~ReadFileTestCase() = default;
 
 void
 ReadFileTestCase::DoSetup()

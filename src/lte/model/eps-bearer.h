@@ -37,12 +37,12 @@ struct GbrQosInformation
     /**
      * Default constructor, initializes member variables to zero or equivalent
      */
-    GbrQosInformation();
+    GbrQosInformation() = default;
 
-    uint64_t gbrDl; /**< Guaranteed Bit Rate (bit/s) in downlink */
-    uint64_t gbrUl; /**< Guaranteed Bit Rate (bit/s) in uplink */
-    uint64_t mbrDl; /**< Maximum Bit Rate (bit/s) in downlink */
-    uint64_t mbrUl; /**< Maximum Bit Rate (bit/s) in uplink */
+    uint64_t gbrDl{0}; /**< Guaranteed Bit Rate (bit/s) in downlink */
+    uint64_t gbrUl{0}; /**< Guaranteed Bit Rate (bit/s) in uplink */
+    uint64_t mbrDl{0}; /**< Maximum Bit Rate (bit/s) in downlink */
+    uint64_t mbrUl{0}; /**< Maximum Bit Rate (bit/s) in uplink */
 };
 
 /**
@@ -54,10 +54,10 @@ struct AllocationRetentionPriority
     /**
      * Default constructor, initializes member variables to zero or equivalent
      */
-    AllocationRetentionPriority();
-    uint8_t priorityLevel;        ///< 1-15; 1 = highest
-    bool preemptionCapability;    ///< true if bearer can preempt others
-    bool preemptionVulnerability; ///< true if bearer can be preempted by others
+    AllocationRetentionPriority() = default;
+    uint8_t priorityLevel{0};            ///< 1-15; 1 = highest
+    bool preemptionCapability{false};    ///< true if bearer can preempt others
+    bool preemptionVulnerability{false}; ///< true if bearer can be preempted by others
 };
 
 /**
@@ -167,9 +167,7 @@ class EpsBearer : public ObjectBase
     /**
      * \brief Deconstructor
      */
-    ~EpsBearer() override
-    {
-    }
+    ~EpsBearer() override = default;
 
     /**
      * \brief SetRelease

@@ -62,9 +62,9 @@ class SackPermittedTestCase : public TcpGeneralTest
 };
 
 SackPermittedTestCase::SackPermittedTestCase(SackPermittedTestCase::Configuration conf)
-    : TcpGeneralTest("Testing the TCP Sack Permitted option")
+    : TcpGeneralTest("Testing the TCP Sack Permitted option"),
+      m_configuration(conf)
 {
-    m_configuration = conf;
 }
 
 Ptr<TcpSocketMsgBase>

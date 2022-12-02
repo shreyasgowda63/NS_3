@@ -77,7 +77,6 @@ RandomVariableStream::GetTypeId()
 }
 
 RandomVariableStream::RandomVariableStream()
-    : m_rng(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }
@@ -311,9 +310,7 @@ SequentialRandomVariable::GetTypeId()
 }
 
 SequentialRandomVariable::SequentialRandomVariable()
-    : m_current(0),
-      m_currentConsecutive(0),
-      m_isCurrentSet(false)
+
 {
     // m_min, m_max, m_increment, and m_consecutive are initialized
     // after constructor by attributes.
@@ -711,7 +708,6 @@ NormalRandomVariable::GetTypeId()
 }
 
 NormalRandomVariable::NormalRandomVariable()
-    : m_nextValid(false)
 {
     // m_mean, m_variance, and m_bound are initialized after constructor
     // by attributes
@@ -965,7 +961,6 @@ GammaRandomVariable::GetTypeId()
 }
 
 GammaRandomVariable::GammaRandomVariable()
-    : m_nextValid(false)
 {
     // m_alpha and m_beta are initialized after constructor by
     // attributes
@@ -1545,9 +1540,7 @@ DeterministicRandomVariable::GetTypeId()
 }
 
 DeterministicRandomVariable::DeterministicRandomVariable()
-    : m_count(0),
-      m_next(0),
-      m_data(nullptr)
+
 {
     NS_LOG_FUNCTION(this);
 }
@@ -1647,7 +1640,6 @@ EmpiricalRandomVariable::GetTypeId()
 }
 
 EmpiricalRandomVariable::EmpiricalRandomVariable()
-    : m_validated(false)
 {
     NS_LOG_FUNCTION(this);
 }

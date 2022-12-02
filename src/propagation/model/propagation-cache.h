@@ -35,8 +35,8 @@ template <class T>
 class PropagationCache
 {
   public:
-    PropagationCache(){};
-    ~PropagationCache(){};
+    PropagationCache() = default;
+    ~PropagationCache() = default;
 
     /**
      * Get the model associated with the path

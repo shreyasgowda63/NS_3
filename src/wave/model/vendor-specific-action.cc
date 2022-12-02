@@ -255,8 +255,7 @@ operator>>(std::istream& is, const OrganizationIdentifier& oi)
 NS_OBJECT_ENSURE_REGISTERED(VendorSpecificActionHeader);
 
 VendorSpecificActionHeader::VendorSpecificActionHeader()
-    : m_oi(),
-      m_category(CATEGORY_OF_VSA)
+    : m_category(CATEGORY_OF_VSA)
 {
     NS_LOG_FUNCTION(this);
 }

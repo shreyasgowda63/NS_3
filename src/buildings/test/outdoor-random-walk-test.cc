@@ -58,14 +58,11 @@ class OutdoorRandomWalkTestCase : public TestCase
 };
 
 OutdoorRandomWalkTestCase::OutdoorRandomWalkTestCase()
-    : TestCase("Test case for the BuildingsChannelConditionModel"),
-      m_buildings()
+    : TestCase("Test case for the BuildingsChannelConditionModel")
 {
 }
 
-OutdoorRandomWalkTestCase::~OutdoorRandomWalkTestCase()
-{
-}
+OutdoorRandomWalkTestCase::~OutdoorRandomWalkTestCase() = default;
 
 void
 OutdoorRandomWalkTestCase::CheckPositionOutdoor(Ptr<RandomWalk2dOutdoorMobilityModel> model)

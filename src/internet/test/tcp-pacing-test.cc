@@ -133,27 +133,27 @@ class TcpPacingTest : public TcpGeneralTest
     void ConfigureProperties() override;
 
   private:
-    uint32_t m_segmentSize; //!< Segment size
-    uint32_t m_packetSize;  //!< Size of the packets
-    uint32_t m_packets;     //!< Number of packets
-    EventId m_event;        //!< Check event
-    bool m_initial;         //!< True on first run
-    uint32_t m_initialCwnd; //!< Initial value of cWnd
-    uint32_t m_curCwnd;     //!< Current sender cWnd
-    bool m_isFullCwndSent; //!< True if all bytes for that cWnd is sent and sender is waiting for an
-                           //!< ACK
-    uint32_t m_bytesInFlight;     //!< Current bytes in flight
-    Time m_prevTxTime;            //!< Time when Tx was previously called
-    uint16_t m_pacingSsRatio;     //!< Pacing factor during Slow Start
-    uint16_t m_pacingCaRatio;     //!< Pacing factor during Congestion Avoidance
-    uint32_t m_ssThresh;          //!< Slow start threshold
-    bool m_paceInitialWindow;     //!< True if initial window should be paced
-    uint32_t m_delAckMaxCount;    //!< Delayed ack count for receiver
-    bool m_isConnAboutToEnd;      //!< True when sender receives a FIN/ACK from receiver
-    Time m_transmissionStartTime; //!< Time at which sender starts data transmission
+    uint32_t m_segmentSize;      //!< Segment size
+    uint32_t m_packetSize;       //!< Size of the packets
+    uint32_t m_packets;          //!< Number of packets
+    EventId m_event;             //!< Check event
+    bool m_initial{true};        //!< True on first run
+    uint32_t m_initialCwnd{10};  //!< Initial value of cWnd
+    uint32_t m_curCwnd{0};       //!< Current sender cWnd
+    bool m_isFullCwndSent{true}; //!< True if all bytes for that cWnd is sent and sender is waiting
+                                 //!< for an ACK
+    uint32_t m_bytesInFlight{0}; //!< Current bytes in flight
+    Time m_prevTxTime;           //!< Time when Tx was previously called
+    uint16_t m_pacingSsRatio;    //!< Pacing factor during Slow Start
+    uint16_t m_pacingCaRatio;    //!< Pacing factor during Congestion Avoidance
+    uint32_t m_ssThresh;         //!< Slow start threshold
+    bool m_paceInitialWindow;    //!< True if initial window should be paced
+    uint32_t m_delAckMaxCount;   //!< Delayed ack count for receiver
+    bool m_isConnAboutToEnd{false}; //!< True when sender receives a FIN/ACK from receiver
+    Time m_transmissionStartTime;   //!< Time at which sender starts data transmission
     Time m_expectedInterval; //!< Theoretical estimate of the time at which next packet is scheduled
                              //!< for transmission
-    uint32_t m_packetsSent;  //!< Number of packets sent by sender so far
+    uint32_t m_packetsSent{0}; //!< Number of packets sent by sender so far
     Time m_nextPacketInterval; //!< Time maintained by Tx () trace about interval at which next
                                //!< packet will be sent
     Time m_tracedRtt; //!< Traced value of RTT, which may be different from the environment RTT in
@@ -174,21 +174,17 @@ TcpPacingTest::TcpPacingTest(uint32_t segmentSize,
       m_segmentSize(segmentSize),
       m_packetSize(packetSize),
       m_packets(packets),
-      m_initial(true),
-      m_initialCwnd(10),
-      m_curCwnd(0),
-      m_isFullCwndSent(true),
-      m_bytesInFlight(0),
+
       m_prevTxTime(0),
       m_pacingSsRatio(pacingSsRatio),
       m_pacingCaRatio(pacingCaRatio),
       m_ssThresh(ssThresh),
       m_paceInitialWindow(paceInitialWindow),
       m_delAckMaxCount(delAckMaxCount),
-      m_isConnAboutToEnd(false),
+
       m_transmissionStartTime(Seconds(0)),
       m_expectedInterval(Seconds(0)),
-      m_packetsSent(0),
+
       m_nextPacketInterval(Seconds(0)),
       m_tracedRtt(Seconds(0))
 {

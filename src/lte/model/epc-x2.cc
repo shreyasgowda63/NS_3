@@ -34,10 +34,10 @@ NS_LOG_COMPONENT_DEFINE("EpcX2");
 X2IfaceInfo::X2IfaceInfo(Ipv4Address remoteIpAddr,
                          Ptr<Socket> localCtrlPlaneSocket,
                          Ptr<Socket> localUserPlaneSocket)
+    : m_remoteIpAddr(remoteIpAddr),
+      m_localCtrlPlaneSocket(localCtrlPlaneSocket),
+      m_localUserPlaneSocket(localUserPlaneSocket)
 {
-    m_remoteIpAddr = remoteIpAddr;
-    m_localCtrlPlaneSocket = localCtrlPlaneSocket;
-    m_localUserPlaneSocket = localUserPlaneSocket;
 }
 
 X2IfaceInfo::~X2IfaceInfo()
@@ -64,10 +64,6 @@ X2CellInfo::X2CellInfo(std::vector<uint16_t> localCellIds, std::vector<uint16_t>
 {
 }
 
-X2CellInfo::~X2CellInfo()
-{
-}
-
 X2CellInfo&
 X2CellInfo::operator=(const X2CellInfo& value)
 {
@@ -82,8 +78,7 @@ X2CellInfo::operator=(const X2CellInfo& value)
 NS_OBJECT_ENSURE_REGISTERED(EpcX2);
 
 EpcX2::EpcX2()
-    : m_x2cUdpPort(4444),
-      m_x2uUdpPort(2152)
+
 {
     NS_LOG_FUNCTION(this);
 

@@ -51,13 +51,9 @@ MsduAggregator::GetTypeId()
     return tid;
 }
 
-MsduAggregator::MsduAggregator()
-{
-}
+MsduAggregator::MsduAggregator() = default;
 
-MsduAggregator::~MsduAggregator()
-{
-}
+MsduAggregator::~MsduAggregator() = default;
 
 void
 MsduAggregator::DoDispose()

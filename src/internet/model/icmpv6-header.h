@@ -213,23 +213,23 @@ class Icmpv6Header : public Header
     /**
      * \brief Checksum enable or not.
      */
-    bool m_calcChecksum;
+    bool m_calcChecksum{true};
 
     /**
      * \brief The checksum.
      */
-    uint16_t m_checksum;
+    uint16_t m_checksum{0};
 
   private:
     /**
      * \brief The type.
      */
-    uint8_t m_type;
+    uint8_t m_type{0};
 
     /**
      * \brief The code.
      */
-    uint8_t m_code;
+    uint8_t m_code{0};
 };
 
 /**
@@ -917,7 +917,7 @@ class Icmpv6Redirection : public Icmpv6Header
     /**
      * \brief Reserved value.
      */
-    uint32_t m_reserved;
+    uint32_t m_reserved{0};
 };
 
 /**
@@ -1167,7 +1167,7 @@ class Icmpv6TooBig : public Icmpv6Header
     /**
      * \brief The MTU value.
      */
-    uint32_t m_mtu;
+    uint32_t m_mtu{0};
 };
 
 /**
@@ -1320,7 +1320,7 @@ class Icmpv6ParameterError : public Icmpv6Header
     /**
      * \brief The pointer field.
      */
-    uint32_t m_ptr;
+    uint32_t m_ptr{0};
 };
 
 /**

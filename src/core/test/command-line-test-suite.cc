@@ -63,9 +63,7 @@ class CommandLineTestCaseBase : public TestCase
     CommandLineTestCaseBase(std::string description);
 
     /** Destructor */
-    ~CommandLineTestCaseBase() override
-    {
-    }
+    ~CommandLineTestCaseBase() override = default;
 
     /**
      * Exercise the CommandLine with the provided arguments
@@ -131,9 +129,7 @@ class CommandLineBooleanTestCase : public CommandLineTestCaseBase
     CommandLineBooleanTestCase();
 
     /** Destructor */
-    ~CommandLineBooleanTestCase() override
-    {
-    }
+    ~CommandLineBooleanTestCase() override = default;
 
   private:
     /** Run the test */
@@ -201,9 +197,7 @@ class CommandLineUint8tTestCase : public CommandLineTestCaseBase
     CommandLineUint8tTestCase();
 
     /** Destructor */
-    ~CommandLineUint8tTestCase() override
-    {
-    }
+    ~CommandLineUint8tTestCase() override = default;
 
   private:
     /** Run the test */
@@ -240,9 +234,7 @@ class CommandLineIntTestCase : public CommandLineTestCaseBase
     CommandLineIntTestCase();
 
     /** Destructor */
-    ~CommandLineIntTestCase() override
-    {
-    }
+    ~CommandLineIntTestCase() override = default;
 
   private:
     /** Run the test */
@@ -288,9 +280,7 @@ class CommandLineUnsignedIntTestCase : public CommandLineTestCaseBase
     CommandLineUnsignedIntTestCase();
 
     /** Destructor */
-    ~CommandLineUnsignedIntTestCase() override
-    {
-    }
+    ~CommandLineUnsignedIntTestCase() override = default;
 
   private:
     /** Run the test */
@@ -333,9 +323,7 @@ class CommandLineStringTestCase : public CommandLineTestCaseBase
     CommandLineStringTestCase();
 
     /** Destructor */
-    ~CommandLineStringTestCase() override
-    {
-    }
+    ~CommandLineStringTestCase() override = default;
 
   private:
     /** Run the test */
@@ -378,9 +366,7 @@ class CommandLineOrderTestCase : public CommandLineTestCaseBase
     CommandLineOrderTestCase();
 
     /** Destructor */
-    ~CommandLineOrderTestCase() override
-    {
-    }
+    ~CommandLineOrderTestCase() override = default;
 
   private:
     /** Run the test */
@@ -418,9 +404,7 @@ class CommandLineInvalidTestCase : public CommandLineTestCaseBase
     CommandLineInvalidTestCase();
 
     /** Destructor */
-    ~CommandLineInvalidTestCase() override
-    {
-    }
+    ~CommandLineInvalidTestCase() override = default;
 
   private:
     /** Run the test */
@@ -458,9 +442,7 @@ class CommandLineNonOptionTestCase : public CommandLineTestCaseBase
     CommandLineNonOptionTestCase();
 
     /** Destructor */
-    ~CommandLineNonOptionTestCase() override
-    {
-    }
+    ~CommandLineNonOptionTestCase() override = default;
 
   private:
     /** Run the test */
@@ -522,9 +504,7 @@ class CommandLineCharStarTestCase : public CommandLineTestCaseBase
     CommandLineCharStarTestCase();
 
     /** Destructor */
-    ~CommandLineCharStarTestCase() override
-    {
-    }
+    ~CommandLineCharStarTestCase() override = default;
 
   private:
     /** Run the test */

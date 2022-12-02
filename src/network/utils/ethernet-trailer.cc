@@ -33,8 +33,7 @@ NS_LOG_COMPONENT_DEFINE("EthernetTrailer");
 NS_OBJECT_ENSURE_REGISTERED(EthernetTrailer);
 
 EthernetTrailer::EthernetTrailer()
-    : m_calcFcs(false),
-      m_fcs(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

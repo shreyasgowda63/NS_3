@@ -33,8 +33,7 @@ NS_LOG_COMPONENT_DEFINE("PhyTxStatsCalculator");
 NS_OBJECT_ENSURE_REGISTERED(PhyTxStatsCalculator);
 
 PhyTxStatsCalculator::PhyTxStatsCalculator()
-    : m_dlTxFirstWrite(true),
-      m_ulTxFirstWrite(true)
+
 {
     NS_LOG_FUNCTION(this);
 }

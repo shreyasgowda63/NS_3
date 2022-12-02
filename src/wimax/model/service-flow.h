@@ -599,8 +599,11 @@ class ServiceFlow
     Type m_type;                                       ///< type
     Ptr<WimaxConnection> m_connection;                 ///< connection
     bool m_isEnabled;                                  ///< is enabled?
-    bool m_isMulticast;                                ///< is multicast?
-    enum WimaxPhy::ModulationType m_modulationType;    ///< modulation type
+    bool m_isMulticast{false};                         ///< is multicast?
+
+    enum WimaxPhy::ModulationType m_modulationType{
+        WimaxPhy::MODULATION_TYPE_QPSK_12}; ///< modulation type
+
     // will be used by the BS
     ServiceFlowRecord* m_record; ///< service flow record
 };

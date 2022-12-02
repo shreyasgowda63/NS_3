@@ -36,7 +36,7 @@ class LteControlMessage;
 class LteUePhySapProvider
 {
   public:
-    virtual ~LteUePhySapProvider();
+    virtual ~LteUePhySapProvider() = default;
 
     /**
      * \brief Send the MAC PDU to the channel
@@ -76,7 +76,7 @@ class LteUePhySapProvider
 class LteUePhySapUser
 {
   public:
-    virtual ~LteUePhySapUser();
+    virtual ~LteUePhySapUser() = default;
 
     /**
      * \brief Receive Phy Pdu funtion.

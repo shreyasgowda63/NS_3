@@ -40,13 +40,9 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(MeshInformationElementVector);
 
-MeshInformationElementVector::MeshInformationElementVector()
-{
-}
+MeshInformationElementVector::MeshInformationElementVector() = default;
 
-MeshInformationElementVector::~MeshInformationElementVector()
-{
-}
+MeshInformationElementVector::~MeshInformationElementVector() = default;
 
 TypeId
 MeshInformationElementVector::GetTypeId()

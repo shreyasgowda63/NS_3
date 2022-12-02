@@ -27,13 +27,9 @@
 namespace ns3
 {
 
-NqosWaveMacHelper::NqosWaveMacHelper()
-{
-}
+NqosWaveMacHelper::NqosWaveMacHelper() = default;
 
-NqosWaveMacHelper::~NqosWaveMacHelper()
-{
-}
+NqosWaveMacHelper::~NqosWaveMacHelper() = default;
 
 NqosWaveMacHelper
 NqosWaveMacHelper::Default()
@@ -48,13 +44,9 @@ NqosWaveMacHelper::Default()
 }
 
 /**********  QosWifi80211pMacHelper *********/
-QosWaveMacHelper::QosWaveMacHelper()
-{
-}
+QosWaveMacHelper::QosWaveMacHelper() = default;
 
-QosWaveMacHelper::~QosWaveMacHelper()
-{
-}
+QosWaveMacHelper::~QosWaveMacHelper() = default;
 
 QosWaveMacHelper
 QosWaveMacHelper::Default()

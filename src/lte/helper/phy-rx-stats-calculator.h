@@ -135,7 +135,7 @@ class PhyRxStatsCalculator : public LteStatsCalculator
      * appended to file. This value is true if output
      * files have not been opened yet
      */
-    bool m_dlRxFirstWrite;
+    bool m_dlRxFirstWrite{true};
 
     /**
      * When writing UL RX PHY statistics first time to file,
@@ -143,7 +143,7 @@ class PhyRxStatsCalculator : public LteStatsCalculator
      * appended to file. This value is true if output
      * files have not been opened yet
      */
-    bool m_ulRxFirstWrite;
+    bool m_ulRxFirstWrite{true};
 
     /**
      * DL RX PHY output trace file

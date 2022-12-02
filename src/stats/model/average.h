@@ -42,8 +42,7 @@ class Average
 {
   public:
     Average()
-        : m_size(0),
-          m_min(std::numeric_limits<T>::max()),
+        : m_min(std::numeric_limits<T>::max()),
           m_max(0)
     {
     }
@@ -190,7 +189,7 @@ class Average
     /**@}*/
 
   private:
-    uint32_t m_size;                                       //!< Number of sampled data.
+    uint32_t m_size{0};                                    //!< Number of sampled data.
     T m_min;                                               //!< Minimum value observed.
     T m_max;                                               //!< Maximum value observed.
     MinMaxAvgTotalCalculator<double> m_varianceCalculator; //!< Variance calculator.

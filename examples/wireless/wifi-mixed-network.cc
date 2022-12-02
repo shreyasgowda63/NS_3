@@ -95,9 +95,7 @@ class Experiment
     double Run(Parameters params);
 };
 
-Experiment::Experiment()
-{
-}
+Experiment::Experiment() = default;
 
 double
 Experiment::Run(Parameters params)

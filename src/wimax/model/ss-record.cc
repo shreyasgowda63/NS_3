@@ -33,15 +33,15 @@ SSRecord::SSRecord()
 }
 
 SSRecord::SSRecord(Mac48Address macAddress)
+    : m_macAddress(macAddress)
 {
-    m_macAddress = macAddress;
     Initialize();
 }
 
 SSRecord::SSRecord(Mac48Address macAddress, Ipv4Address IPaddress)
+    : m_macAddress(macAddress),
+      m_IPAddress(IPaddress)
 {
-    m_macAddress = macAddress;
-    m_IPAddress = IPaddress;
     Initialize();
 }
 

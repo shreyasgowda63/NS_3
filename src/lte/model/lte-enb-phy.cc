@@ -151,18 +151,10 @@ LteEnbPhy::LteEnbPhy()
 
 LteEnbPhy::LteEnbPhy(Ptr<LteSpectrumPhy> dlPhy, Ptr<LteSpectrumPhy> ulPhy)
     : LtePhy(dlPhy, ulPhy),
-      m_enbPhySapUser(nullptr),
-      m_enbCphySapUser(nullptr),
-      m_nrFrames(0),
-      m_nrSubFrames(0),
-      m_srsPeriodicity(0),
-      m_srsStartTime(Seconds(0)),
-      m_currentSrsOffset(0),
-      m_interferenceSampleCounter(0)
+      m_enbPhySapProvider(new EnbMemberLteEnbPhySapProvider(this)),
+      m_enbCphySapProvider(new MemberLteEnbCphySapProvider<LteEnbPhy>(this)),
+      m_harqPhyModule(Create<LteHarqPhy>()),
 {
-    m_enbPhySapProvider = new EnbMemberLteEnbPhySapProvider(this);
-    m_enbCphySapProvider = new MemberLteEnbCphySapProvider<LteEnbPhy>(this);
-    m_harqPhyModule = Create<LteHarqPhy>();
     m_downlinkSpectrumPhy->SetHarqPhyModule(m_harqPhyModule);
     m_uplinkSpectrumPhy->SetHarqPhyModule(m_harqPhyModule);
 }
@@ -239,10 +231,6 @@ LteEnbPhy::GetTypeId()
                           MakePointerAccessor(&LteEnbPhy::GetUlSpectrumPhy),
                           MakePointerChecker<LteSpectrumPhy>());
     return tid;
-}
-
-LteEnbPhy::~LteEnbPhy()
-{
 }
 
 void

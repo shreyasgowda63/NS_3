@@ -55,7 +55,6 @@ CsmaChannel::GetTypeId()
 }
 
 CsmaChannel::CsmaChannel()
-    : Channel()
 {
     NS_LOG_FUNCTION_NOARGS();
     m_state = IDLE;
@@ -344,22 +343,17 @@ CsmaChannel::GetDevice(std::size_t i) const
     return GetCsmaDevice(i);
 }
 
-CsmaDeviceRec::CsmaDeviceRec()
-{
-    active = false;
-}
+CsmaDeviceRec::CsmaDeviceRec() = default;
 
 CsmaDeviceRec::CsmaDeviceRec(Ptr<CsmaNetDevice> device)
+    : devicePtr(device),
+      active(true)
 {
-    devicePtr = device;
-    active = true;
 }
 
 CsmaDeviceRec::CsmaDeviceRec(const CsmaDeviceRec& deviceRec)
-{
-    devicePtr = deviceRec.devicePtr;
-    active = deviceRec.active;
-}
+
+    = default;
 
 bool
 CsmaDeviceRec::IsActive()

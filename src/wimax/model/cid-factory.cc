@@ -29,12 +29,8 @@ namespace ns3
 {
 
 CidFactory::CidFactory()
-    : m_m(0x5500),
-      // this is an arbitrary default
-      m_basicIdentifier(1),
-      m_primaryIdentifier(m_m + 1),
-      m_transportOrSecondaryIdentifier(2 * m_m + 1),
-      m_multicastPollingIdentifier(0xff00)
+    : m_primaryIdentifier(m_m + 1),
+      m_transportOrSecondaryIdentifier(2 * m_m + 1)
 {
 }
 

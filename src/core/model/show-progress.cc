@@ -45,17 +45,10 @@ const int64x64_t ShowProgress::MAXGAIN = 2.0;
 
 ShowProgress::ShowProgress(const Time interval /* = Seconds (1.0) */,
                            std::ostream& os /* = std::cout */)
-    : m_timer(),
-      m_stamp(),
-      m_elapsed(),
-      m_interval(interval),
+    : m_interval(interval),
       m_vtime(Time(1)),
-      m_event(),
-      m_eventCount(0),
       m_printer(DefaultTimePrinter),
-      m_os(&os),
-      m_verbose(false),
-      m_repCount(0)
+      m_os(&os)
 {
     NS_LOG_FUNCTION(this << interval);
     ScheduleCheckProgress();

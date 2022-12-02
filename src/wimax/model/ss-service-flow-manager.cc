@@ -46,20 +46,11 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("SsServiceFlowManager");
 
 SsServiceFlowManager::SsServiceFlowManager(Ptr<SubscriberStationNetDevice> device)
-    : m_device(device),
-      m_maxDsaReqRetries(100),
-      m_dsaReq(DsaReq()),
-      m_dsaAck(DsaAck()),
-      m_currentTransactionId(0),
-      m_transactionIdIndex(1),
-      m_dsaReqRetries(0),
-      m_pendingServiceFlow(nullptr)
+    : m_device(device)
 {
 }
 
-SsServiceFlowManager::~SsServiceFlowManager()
-{
-}
+SsServiceFlowManager::~SsServiceFlowManager() = default;
 
 /* static */
 TypeId

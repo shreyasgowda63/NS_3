@@ -102,9 +102,7 @@ HePpdu::HePpdu(Ptr<const WifiPsdu> psdu,
     SetTxPsdFlag(PSD_NON_HE_PORTION);
 }
 
-HePpdu::~HePpdu()
-{
-}
+HePpdu::~HePpdu() = default;
 
 void
 HePpdu::SetPhyHeaders(const WifiTxVector& txVector, Time ppduDuration)
@@ -338,21 +336,10 @@ HePpdu::PrintPayload() const
 }
 
 HePpdu::HeSigHeader::HeSigHeader()
-    : m_format(1),
-      m_bssColor(0),
-      m_ul_dl(0),
-      m_mcs(0),
-      m_spatialReuse(0),
-      m_bandwidth(0),
-      m_gi_ltf_size(0),
-      m_nsts(0),
-      m_mu(false)
-{
-}
 
-HePpdu::HeSigHeader::~HeSigHeader()
-{
-}
+    = default;
+
+HePpdu::HeSigHeader::~HeSigHeader() = default;
 
 TypeId
 HePpdu::HeSigHeader::GetTypeId()

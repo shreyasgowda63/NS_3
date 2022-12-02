@@ -397,26 +397,26 @@ class FdTbfqFfMacScheduler : public FfMacScheduler
     std::map<uint16_t, uint32_t> m_ceBsrRxed;
 
     // MAC SAPs
-    FfMacCschedSapUser* m_cschedSapUser;         ///< Csched SAP user
-    FfMacSchedSapUser* m_schedSapUser;           ///< sched SAP user
-    FfMacCschedSapProvider* m_cschedSapProvider; ///< CSched SAP provider
-    FfMacSchedSapProvider* m_schedSapProvider;   ///< sched SAP provider
+    FfMacCschedSapUser* m_cschedSapUser{nullptr}; ///< Csched SAP user
+    FfMacSchedSapUser* m_schedSapUser{nullptr};   ///< sched SAP user
+    FfMacCschedSapProvider* m_cschedSapProvider;  ///< CSched SAP provider
+    FfMacSchedSapProvider* m_schedSapProvider;    ///< sched SAP provider
 
     // FFR SAPs
-    LteFfrSapUser* m_ffrSapUser;         ///< FFR SAP user
-    LteFfrSapProvider* m_ffrSapProvider; ///< FFR SAP provider
+    LteFfrSapUser* m_ffrSapUser;                  ///< FFR SAP user
+    LteFfrSapProvider* m_ffrSapProvider{nullptr}; ///< FFR SAP provider
 
     // Internal parameters
     FfMacCschedSapProvider::CschedCellConfigReqParameters
         m_cschedCellConfig; ///< Csched cell config
 
-    uint16_t m_nextRntiUl; ///< RNTI of the next user to be served next scheduling in UL
+    uint16_t m_nextRntiUl{0}; ///< RNTI of the next user to be served next scheduling in UL
 
     uint32_t m_cqiTimersThreshold; ///< # of TTIs for which a CQI can be considered valid
 
     std::map<uint16_t, uint8_t> m_uesTxMode; ///< txMode of the UEs
 
-    uint64_t bankSize; ///< the number of bytes in token bank
+    uint64_t bankSize{0}; ///< the number of bytes in token bank
 
     int m_debtLimit; ///< flow debt limit (byte)
 

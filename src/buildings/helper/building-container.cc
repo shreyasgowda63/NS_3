@@ -26,9 +26,7 @@
 namespace ns3
 {
 
-BuildingContainer::BuildingContainer()
-{
-}
+BuildingContainer::BuildingContainer() = default;
 
 BuildingContainer::BuildingContainer(Ptr<Building> building)
 {

@@ -51,9 +51,7 @@ LrWpanPacketTestCase::LrWpanPacketTestCase()
 {
 }
 
-LrWpanPacketTestCase::~LrWpanPacketTestCase()
-{
-}
+LrWpanPacketTestCase::~LrWpanPacketTestCase() = default;
 
 void
 LrWpanPacketTestCase::DoRun()

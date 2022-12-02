@@ -103,12 +103,12 @@ class CidFactory
     void FreeCid(Cid cid);
 
   private:
-    uint16_t m_m; ///< m
+    uint16_t m_m{0x5500}; ///< m
 
-    uint16_t m_basicIdentifier;                ///< basic identifier
-    uint16_t m_primaryIdentifier;              ///< primary identifier
-    uint16_t m_transportOrSecondaryIdentifier; ///< transport or secondary identifier
-    uint16_t m_multicastPollingIdentifier;     ///< multicast polling identifier
+    uint16_t m_basicIdentifier{1};                 ///< basic identifier
+    uint16_t m_primaryIdentifier;                  ///< primary identifier
+    uint16_t m_transportOrSecondaryIdentifier;     ///< transport or secondary identifier
+    uint16_t m_multicastPollingIdentifier{0xff00}; ///< multicast polling identifier
 };
 
 } // namespace ns3

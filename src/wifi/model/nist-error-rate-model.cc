@@ -44,9 +44,7 @@ NistErrorRateModel::GetTypeId()
     return tid;
 }
 
-NistErrorRateModel::NistErrorRateModel()
-{
-}
+NistErrorRateModel::NistErrorRateModel() = default;
 
 double
 NistErrorRateModel::GetBpskBer(double snr) const

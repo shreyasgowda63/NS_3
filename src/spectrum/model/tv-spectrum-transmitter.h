@@ -129,15 +129,20 @@ class TvSpectrumTransmitter : public SpectrumPhy
     /** Sets up signal to be transmitted */
     virtual void SetupTx();
 
-    enum TvType m_tvType;      //!< Type of TV transmitter
-    double m_startFrequency;   //!< Start frequency (in Hz) of TV transmitter's signal
-    double m_channelBandwidth; //!< Bandwidth (in Hz) of TV transmitter's signal
-    double m_basePsd; //!< Base power spectral density value (in dBm/Hz) of TV transmitter's signal
+    enum TvType m_tvType
+    {
+        TVTYPE_8VSB
+    }; //!< Type of TV transmitter
+
+    double m_startFrequency{500e6}; //!< Start frequency (in Hz) of TV transmitter's signal
+    double m_channelBandwidth{6e6}; //!< Bandwidth (in Hz) of TV transmitter's signal
+    double m_basePsd{
+        20}; //!< Base power spectral density value (in dBm/Hz) of TV transmitter's signal
     Ptr<SpectrumValue> m_txPsd; //!< Pointer to power spectral density of TV transmitter's signal
     Time m_startingTime;     //!< Timepoint after simulation begins that TV transmitter will begin
                              //!< transmitting
     Time m_transmitDuration; //!< Length of time that TV transmitter will transmit for
-    bool m_active;           //!< True if TV transmitter is transmitting
+    bool m_active{false};    //!< True if TV transmitter is transmitting
 };
 
 } // namespace ns3

@@ -48,7 +48,6 @@ TcpPrrRecovery::GetTypeId()
 }
 
 TcpPrrRecovery::TcpPrrRecovery()
-    : TcpClassicRecovery()
 {
     NS_LOG_FUNCTION(this);
 }

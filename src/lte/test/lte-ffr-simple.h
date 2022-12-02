@@ -125,18 +125,18 @@ class LteFfrSimple : public LteFfrAlgorithm
     void UpdatePdschConfigDedicated();
 
     // FFR SAP
-    LteFfrSapUser* m_ffrSapUser;         ///< FFR SAP user
-    LteFfrSapProvider* m_ffrSapProvider; ///< FFR SAP provider
+    LteFfrSapUser* m_ffrSapUser{nullptr}; ///< FFR SAP user
+    LteFfrSapProvider* m_ffrSapProvider;  ///< FFR SAP provider
 
     // FFR RRF SAP
-    LteFfrRrcSapUser* m_ffrRrcSapUser;         ///< FFR RRC SAP user
-    LteFfrRrcSapProvider* m_ffrRrcSapProvider; ///< FFR RRC SAP provider
+    LteFfrRrcSapUser* m_ffrRrcSapUser{nullptr}; ///< FFR RRC SAP user
+    LteFfrRrcSapProvider* m_ffrRrcSapProvider;  ///< FFR RRC SAP provider
 
-    uint8_t m_dlOffset;  ///< DL offset
-    uint8_t m_dlSubBand; ///< DL subband
+    uint8_t m_dlOffset{0};  ///< DL offset
+    uint8_t m_dlSubBand{0}; ///< DL subband
 
-    uint8_t m_ulOffset;  ///< UL offset
-    uint8_t m_ulSubBand; ///< UL subband
+    uint8_t m_ulOffset{0};  ///< UL offset
+    uint8_t m_ulSubBand{0}; ///< UL subband
 
     std::vector<bool> m_dlRbgMap; ///< DL RBG map
     std::vector<bool> m_ulRbgMap; ///< UL RBG map
@@ -144,9 +144,9 @@ class LteFfrSimple : public LteFfrAlgorithm
     std::map<uint16_t, LteRrcSap::PdschConfigDedicated> m_ues; ///< UEs
 
     // The expected measurement identity
-    uint8_t m_measId; ///< measure ID
+    uint8_t m_measId{0}; ///< measure ID
 
-    bool m_changePdschConfigDedicated; ///< PDSCH config dedicate changed?
+    bool m_changePdschConfigDedicated{false}; ///< PDSCH config dedicate changed?
 
     LteRrcSap::PdschConfigDedicated m_pdschConfigDedicated; ///< PDSCH config dedicated
 
@@ -154,9 +154,9 @@ class LteFfrSimple : public LteFfrAlgorithm
         m_changePdschConfigDedicatedTrace; ///< PDSCH config dedicated change trace callback
 
     // Uplink Power Control
-    uint32_t m_tpc;         ///< transmission power control to be used
-    uint32_t m_tpcNum;      ///< number of TPC configurations
-    bool m_accumulatedMode; ///< whether to use the TPC accumulated mode
+    uint32_t m_tpc{1};             ///< transmission power control to be used
+    uint32_t m_tpcNum{0};          ///< number of TPC configurations
+    bool m_accumulatedMode{false}; ///< whether to use the TPC accumulated mode
 
 }; // end of class LteFfrSimple
 

@@ -32,7 +32,6 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("MacTxMiddle");
 
 MacTxMiddle::MacTxMiddle()
-    : m_sequence(0)
 {
     NS_LOG_FUNCTION(this);
 }

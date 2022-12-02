@@ -110,8 +110,7 @@ class LteHandoverFailureTestCase : public TestCase
           m_raResponseWindowSize(raResponseWindowSize),
           m_handoverJoiningTimeout(handoverJoiningTimeout),
           m_handoverLeavingTimeout(handoverLeavingTimeout),
-          m_targeteNodeBPosition(targeteNodeBPosition),
-          m_hasHandoverFailureOccured(false)
+          m_targeteNodeBPosition(targeteNodeBPosition)
     {
     }
 
@@ -199,8 +198,8 @@ class LteHandoverFailureTestCase : public TestCase
     uint8_t m_raResponseWindowSize; ///< window length for reception of RAR
     Time m_handoverJoiningTimeout;  ///< handover joining timeout duration at target eNodeB
     Time m_handoverLeavingTimeout;  ///< handover leaving timeout duration at source eNodeB
-    uint16_t m_targeteNodeBPosition;  ///< position of the target eNodeB
-    bool m_hasHandoverFailureOccured; ///< has handover failure occured in simulation
+    uint16_t m_targeteNodeBPosition;         ///< position of the target eNodeB
+    bool m_hasHandoverFailureOccured{false}; ///< has handover failure occured in simulation
 
 }; // end of class LteHandoverFailureTestCase
 

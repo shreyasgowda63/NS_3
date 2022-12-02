@@ -39,8 +39,7 @@ TcpHighSpeed::GetTypeId()
 }
 
 TcpHighSpeed::TcpHighSpeed()
-    : TcpNewReno(),
-      m_ackCnt(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

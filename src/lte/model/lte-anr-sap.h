@@ -36,7 +36,7 @@ namespace ns3
 class LteAnrSapProvider
 {
   public:
-    virtual ~LteAnrSapProvider();
+    virtual ~LteAnrSapProvider() = default;
 
     /**
      * \brief Send a UE measurement report to the ANC instance.
@@ -94,7 +94,7 @@ class LteAnrSapProvider
 class LteAnrSapUser
 {
   public:
-    virtual ~LteAnrSapUser();
+    virtual ~LteAnrSapUser() = default;
 
     /**
      * \brief Request a certain reporting configuration to be fulfilled by the UEs

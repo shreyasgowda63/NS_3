@@ -63,7 +63,7 @@ class TcpHyblaIncrementTest : public TestCase
     uint32_t m_ssThresh;         //!< Slow Start Threshold.
     uint32_t m_segmentSize;      //!< Segment size.
     Time m_rtt;                  //!< Round trip time.
-    double m_rho;                //!< TCP Hybla rho parameter.
+    double m_rho{0};             //!< TCP Hybla rho parameter.
     Ptr<TcpSocketState> m_state; //!< TCP socket state.
 };
 
@@ -76,8 +76,7 @@ TcpHyblaIncrementTest::TcpHyblaIncrementTest(uint32_t cWnd,
       m_cWnd(cWnd),
       m_ssThresh(ssThresh),
       m_segmentSize(segmentSize),
-      m_rtt(rtt),
-      m_rho(0)
+      m_rtt(rtt)
 {
 }
 

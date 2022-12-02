@@ -42,9 +42,7 @@ WifiMacHelper::WifiMacHelper()
     m_ackManager.SetTypeId("ns3::WifiDefaultAckManager");
 }
 
-WifiMacHelper::~WifiMacHelper()
-{
-}
+WifiMacHelper::~WifiMacHelper() = default;
 
 Ptr<WifiMac>
 WifiMacHelper::Create(Ptr<WifiNetDevice> device, WifiStandard standard) const

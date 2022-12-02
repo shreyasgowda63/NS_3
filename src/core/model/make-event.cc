@@ -48,9 +48,7 @@ MakeEvent(void (*f)())
         {
         }
 
-        ~EventFunctionImpl0() override
-        {
-        }
+        ~EventFunctionImpl0() override = default;
 
       protected:
         void Notify() override

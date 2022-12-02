@@ -57,9 +57,9 @@ enum LinkStates
 /// BlackList description
 struct BlackList
 {
-    Ipv4Address m_neighborAddress; //!< IPv4 address of the black-listed neighbor
-    Time m_expireTime;             //!< Expire time in the black list
-    LinkStates m_linkStates;       //!< State of the link
+    Ipv4Address m_neighborAddress;     //!< IPv4 address of the black-listed neighbor
+    Time m_expireTime;                 //!< Expire time in the black list
+    LinkStates m_linkStates{PROBABLE}; //!< State of the link
 
     /**
      * Construct a BlackList with the given parameters
@@ -69,8 +69,7 @@ struct BlackList
      */
     BlackList(Ipv4Address ip, Time t)
         : m_neighborAddress(ip),
-          m_expireTime(t),
-          m_linkStates(PROBABLE)
+          m_expireTime(t)
     {
     }
 };
@@ -386,7 +385,7 @@ class DsrRreqTable : public Object
     /// The unique request id for any destination
     uint32_t m_maxRreqId;
     /// The state of the unidirectional link
-    LinkStates m_linkStates;
+    LinkStates m_linkStates{PROBABLE};
     /// Map of entries
     std::list<DsrReceivedRreqEntry> m_sourceRequests;
     /// The id cache to ensure all the ids are unique, it is used when sending out route request

@@ -245,11 +245,8 @@ NdiscCache::PrintNdiscCache(Ptr<OutputStreamWrapper> stream)
 
 NdiscCache::Entry::Entry(NdiscCache* nd)
     : m_ndCache(nd),
-      m_waiting(),
-      m_router(false),
       m_nudTimer(Timer::CANCEL_ON_DESTROY),
-      m_lastReachabilityConfirmation(Seconds(0.0)),
-      m_nsRetransmit(0)
+      m_lastReachabilityConfirmation(Seconds(0.0))
 {
     NS_LOG_FUNCTION(this);
 }

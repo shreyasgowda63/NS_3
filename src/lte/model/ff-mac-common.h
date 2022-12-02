@@ -178,7 +178,7 @@ struct UlDciListElement_s
  */
 struct VendorSpecificValue : public SimpleRefCount<VendorSpecificValue>
 {
-    virtual ~VendorSpecificValue();
+    virtual ~VendorSpecificValue() = default;
 };
 
 /**

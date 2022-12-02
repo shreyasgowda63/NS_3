@@ -37,13 +37,9 @@ NS_LOG_COMPONENT_DEFINE("TcpOption");
 
 NS_OBJECT_ENSURE_REGISTERED(TcpOption);
 
-TcpOption::TcpOption()
-{
-}
+TcpOption::TcpOption() = default;
 
-TcpOption::~TcpOption()
-{
-}
+TcpOption::~TcpOption() = default;
 
 TypeId
 TcpOption::GetTypeId()
@@ -113,15 +109,10 @@ TcpOption::IsKindKnown(uint8_t kind)
 NS_OBJECT_ENSURE_REGISTERED(TcpOptionUnknown);
 
 TcpOptionUnknown::TcpOptionUnknown()
-    : TcpOption()
-{
-    m_kind = 0xFF;
-    m_size = 0;
-}
 
-TcpOptionUnknown::~TcpOptionUnknown()
-{
-}
+    = default;
+
+TcpOptionUnknown::~TcpOptionUnknown() = default;
 
 TypeId
 TcpOptionUnknown::GetTypeId()

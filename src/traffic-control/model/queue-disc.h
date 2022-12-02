@@ -187,51 +187,51 @@ class QueueDisc : public Object
     struct Stats
     {
         /// Total received packets
-        uint32_t nTotalReceivedPackets;
+        uint32_t nTotalReceivedPackets{0};
         /// Total received bytes
-        uint64_t nTotalReceivedBytes;
+        uint64_t nTotalReceivedBytes{0};
         /// Total sent packets -- this value is not kept up to date, call GetStats first
-        uint32_t nTotalSentPackets;
+        uint32_t nTotalSentPackets{0};
         /// Total sent bytes -- this value is not kept up to date, call GetStats first
-        uint64_t nTotalSentBytes;
+        uint64_t nTotalSentBytes{0};
         /// Total enqueued packets
-        uint32_t nTotalEnqueuedPackets;
+        uint32_t nTotalEnqueuedPackets{0};
         /// Total enqueued bytes
-        uint64_t nTotalEnqueuedBytes;
+        uint64_t nTotalEnqueuedBytes{0};
         /// Total dequeued packets
-        uint32_t nTotalDequeuedPackets;
+        uint32_t nTotalDequeuedPackets{0};
         /// Total dequeued bytes
-        uint64_t nTotalDequeuedBytes;
+        uint64_t nTotalDequeuedBytes{0};
         /// Total dropped packets
-        uint32_t nTotalDroppedPackets;
+        uint32_t nTotalDroppedPackets{0};
         /// Total packets dropped before enqueue
-        uint32_t nTotalDroppedPacketsBeforeEnqueue;
+        uint32_t nTotalDroppedPacketsBeforeEnqueue{0};
         /// Packets dropped before enqueue, for each reason
         std::map<std::string, uint32_t, std::less<>> nDroppedPacketsBeforeEnqueue;
         /// Total packets dropped after dequeue
-        uint32_t nTotalDroppedPacketsAfterDequeue;
+        uint32_t nTotalDroppedPacketsAfterDequeue{0};
         /// Packets dropped after dequeue, for each reason
         std::map<std::string, uint32_t, std::less<>> nDroppedPacketsAfterDequeue;
         /// Total dropped bytes
-        uint64_t nTotalDroppedBytes;
+        uint64_t nTotalDroppedBytes{0};
         /// Total bytes dropped before enqueue
-        uint64_t nTotalDroppedBytesBeforeEnqueue;
+        uint64_t nTotalDroppedBytesBeforeEnqueue{0};
         /// Bytes dropped before enqueue, for each reason
         std::map<std::string, uint64_t, std::less<>> nDroppedBytesBeforeEnqueue;
         /// Total bytes dropped after dequeue
-        uint64_t nTotalDroppedBytesAfterDequeue;
+        uint64_t nTotalDroppedBytesAfterDequeue{0};
         /// Bytes dropped after dequeue, for each reason
         std::map<std::string, uint64_t, std::less<>> nDroppedBytesAfterDequeue;
         /// Total requeued packets
-        uint32_t nTotalRequeuedPackets;
+        uint32_t nTotalRequeuedPackets{0};
         /// Total requeued bytes
-        uint64_t nTotalRequeuedBytes;
+        uint64_t nTotalRequeuedBytes{0};
         /// Total marked packets
-        uint32_t nTotalMarkedPackets;
+        uint32_t nTotalMarkedPackets{0};
         /// Marked packets, for each reason
         std::map<std::string, uint32_t, std::less<>> nMarkedPackets;
         /// Total marked bytes
-        uint32_t nTotalMarkedBytes;
+        uint32_t nTotalMarkedBytes{0};
         /// Marked bytes, for each reason
         std::map<std::string, uint64_t, std::less<>> nMarkedBytes;
 

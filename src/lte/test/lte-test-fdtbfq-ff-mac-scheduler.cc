@@ -291,9 +291,7 @@ LenaFdTbfqFfMacSchedulerTestCase1::LenaFdTbfqFfMacSchedulerTestCase1(uint16_t nU
 {
 }
 
-LenaFdTbfqFfMacSchedulerTestCase1::~LenaFdTbfqFfMacSchedulerTestCase1()
-{
-}
+LenaFdTbfqFfMacSchedulerTestCase1::~LenaFdTbfqFfMacSchedulerTestCase1() = default;
 
 void
 LenaFdTbfqFfMacSchedulerTestCase1::DoRun()
@@ -567,9 +565,7 @@ LenaFdTbfqFfMacSchedulerTestCase2::LenaFdTbfqFfMacSchedulerTestCase2(
 {
 }
 
-LenaFdTbfqFfMacSchedulerTestCase2::~LenaFdTbfqFfMacSchedulerTestCase2()
-{
-}
+LenaFdTbfqFfMacSchedulerTestCase2::~LenaFdTbfqFfMacSchedulerTestCase2() = default;
 
 void
 LenaFdTbfqFfMacSchedulerTestCase2::DoRun()

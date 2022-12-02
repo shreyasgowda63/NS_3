@@ -74,9 +74,9 @@ class TcpRateLinuxBasicTest : public TestCase
 
     TcpRateLinux m_rateOps;         //!< Rate information for TCP
     uint32_t m_cWnd;                //!< Congestion window size
-    uint32_t m_inFlight;            //!< Number of packets in-flight
-    uint32_t m_segmentSize;         //!< Segment size
-    uint32_t m_delivered;           //!< Number of segments delivered
+    uint32_t m_inFlight{0};         //!< Number of packets in-flight
+    uint32_t m_segmentSize{1};      //!< Segment size
+    uint32_t m_delivered{0};        //!< Number of segments delivered
     Time m_deliveredTime;           //!< Last time of a delivery
     SequenceNumber32 m_tailSeq;     //!< Tail sequence number
     SequenceNumber32 m_nextTx;      //!< Tx next sequence number
@@ -91,9 +91,7 @@ TcpRateLinuxBasicTest::TcpRateLinuxBasicTest(uint32_t cWnd,
                                              std::string testName)
     : TestCase(testName),
       m_cWnd(cWnd),
-      m_inFlight(0),
-      m_segmentSize(1),
-      m_delivered(0),
+
       m_deliveredTime(Seconds(0)),
       m_tailSeq(tailSeq),
       m_nextTx(nextTx),
@@ -197,9 +195,7 @@ class MimicCongControl : public TcpNewReno
      */
     static TypeId GetTypeId();
 
-    MimicCongControl()
-    {
-    }
+    MimicCongControl() = default;
 
     bool HasCongControl() const override
     {
@@ -483,9 +479,9 @@ class TcpRateLinuxWithBufferTest : public TestCase
 
 TcpRateLinuxWithBufferTest::TcpRateLinuxWithBufferTest(uint32_t segmentSize, std::string testString)
     : TestCase(testString),
-      m_segmentSize(segmentSize)
+      m_segmentSize(segmentSize),
+      m_rateOps(CreateObject<TcpRateLinux>())
 {
-    m_rateOps = CreateObject<TcpRateLinux>();
     m_rateOps->TraceConnectWithoutContext(
         "TcpRateUpdated",
         MakeCallback(&TcpRateLinuxWithBufferTest::RateUpdatedTrace, this));

@@ -98,9 +98,7 @@ class Experiment
     Gnuplot2dDataset m_output; //!< The output dataset.
 };
 
-Experiment::Experiment()
-{
-}
+Experiment::Experiment() = default;
 
 Experiment::Experiment(std::string name)
     : m_output(name)

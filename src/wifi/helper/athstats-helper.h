@@ -231,16 +231,16 @@ class AthstatsWifiTraceSink : public Object
     /// Reset counters function
     void ResetCounters();
 
-    uint32_t m_txCount;            ///< transmit count
-    uint32_t m_rxCount;            ///< receive count
-    uint32_t m_shortRetryCount;    ///< short retry count
-    uint32_t m_longRetryCount;     ///< long retry count
-    uint32_t m_exceededRetryCount; ///< exceeded retry count
-    uint32_t m_phyRxOkCount;       ///< PHY receive OK count
-    uint32_t m_phyRxErrorCount;    ///< PHY receive error count
-    uint32_t m_phyTxCount;         ///< PHY transmit count
+    uint32_t m_txCount{0};            ///< transmit count
+    uint32_t m_rxCount{0};            ///< receive count
+    uint32_t m_shortRetryCount{0};    ///< short retry count
+    uint32_t m_longRetryCount{0};     ///< long retry count
+    uint32_t m_exceededRetryCount{0}; ///< exceeded retry count
+    uint32_t m_phyRxOkCount{0};       ///< PHY receive OK count
+    uint32_t m_phyRxErrorCount{0};    ///< PHY receive error count
+    uint32_t m_phyTxCount{0};         ///< PHY transmit count
 
-    std::ofstream* m_writer; ///< output stream
+    std::ofstream* m_writer{nullptr}; ///< output stream
 
     Time m_interval; ///< interval
 

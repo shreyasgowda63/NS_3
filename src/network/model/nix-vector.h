@@ -185,15 +185,15 @@ class NixVector : public SimpleRefCount<NixVector>
     friend std::ostream& operator<<(std::ostream& os, const NixVector& nix);
 
     NixBits_t m_nixVector; //!< the actual nix-vector
-    uint32_t m_used;       //!< For tracking where we are in the nix-vector
+    uint32_t m_used{0};    //!< For tracking where we are in the nix-vector
 
     /**
      * A counter of how total bits are in
      * the nix-vector
      */
-    uint32_t m_totalBitSize;
+    uint32_t m_totalBitSize{0};
 
-    uint32_t m_epoch; //!< Epoch of the Nix-vector creation
+    uint32_t m_epoch{0}; //!< Epoch of the Nix-vector creation
 
     /**
      * Internal for pretty printing of nix-vector (no fill)

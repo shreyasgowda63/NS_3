@@ -34,10 +34,6 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("EpcEnbApplication");
 
-EpcEnbApplication::EpsFlowId_t::EpsFlowId_t()
-{
-}
-
 EpcEnbApplication::EpsFlowId_t::EpsFlowId_t(const uint16_t a, const uint8_t b)
     : m_rnti(a),
       m_bid(b)
@@ -88,9 +84,7 @@ EpcEnbApplication::DoDispose()
 EpcEnbApplication::EpcEnbApplication(Ptr<Socket> lteSocket, Ptr<Socket> lteSocket6, uint16_t cellId)
     : m_lteSocket(lteSocket),
       m_lteSocket6(lteSocket6),
-      m_gtpuUdpPort(2152), // fixed by the standard
-      m_s1SapUser(nullptr),
-      m_s1apSapMme(nullptr),
+
       m_cellId(cellId)
 {
     NS_LOG_FUNCTION(this << lteSocket << lteSocket6 << cellId);

@@ -32,13 +32,9 @@
 namespace ns3
 {
 
-Wifi80211pHelper::Wifi80211pHelper()
-{
-}
+Wifi80211pHelper::Wifi80211pHelper() = default;
 
-Wifi80211pHelper::~Wifi80211pHelper()
-{
-}
+Wifi80211pHelper::~Wifi80211pHelper() = default;
 
 Wifi80211pHelper
 Wifi80211pHelper::Default()

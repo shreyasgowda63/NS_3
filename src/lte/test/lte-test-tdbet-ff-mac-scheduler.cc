@@ -220,9 +220,7 @@ LenaTdBetFfMacSchedulerTestCase1::LenaTdBetFfMacSchedulerTestCase1(uint16_t nUse
 {
 }
 
-LenaTdBetFfMacSchedulerTestCase1::~LenaTdBetFfMacSchedulerTestCase1()
-{
-}
+LenaTdBetFfMacSchedulerTestCase1::~LenaTdBetFfMacSchedulerTestCase1() = default;
 
 void
 LenaTdBetFfMacSchedulerTestCase1::DoRun()
@@ -406,9 +404,7 @@ LenaTdBetFfMacSchedulerTestCase2::LenaTdBetFfMacSchedulerTestCase2(
 {
 }
 
-LenaTdBetFfMacSchedulerTestCase2::~LenaTdBetFfMacSchedulerTestCase2()
-{
-}
+LenaTdBetFfMacSchedulerTestCase2::~LenaTdBetFfMacSchedulerTestCase2() = default;
 
 void
 LenaTdBetFfMacSchedulerTestCase2::DoRun()

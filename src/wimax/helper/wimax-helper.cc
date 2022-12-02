@@ -46,9 +46,7 @@ WimaxHelper::WimaxHelper()
 {
 }
 
-WimaxHelper::~WimaxHelper()
-{
-}
+WimaxHelper::~WimaxHelper() = default;
 
 void
 WimaxHelper::EnableAsciiForConnection(Ptr<OutputStreamWrapper> os,

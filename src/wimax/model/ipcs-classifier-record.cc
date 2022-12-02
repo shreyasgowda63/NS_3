@@ -31,13 +31,6 @@ NS_LOG_COMPONENT_DEFINE("IpcsClassifierRecord");
 
 IpcsClassifierRecord::IpcsClassifierRecord()
 {
-    m_priority = 255;
-    m_priority = 0;
-    m_index = 0;
-    m_tosLow = 0;
-    m_tosHigh = 0;
-    m_tosMask = 0;
-    m_cid = 0;
     m_protocol.push_back(6);  // tcp
     m_protocol.push_back(17); // udp
     AddSrcAddr(Ipv4Address("0.0.0.0"), Ipv4Mask("0.0.0.0"));
@@ -46,9 +39,7 @@ IpcsClassifierRecord::IpcsClassifierRecord()
     AddDstPortRange(0, 65535);
 }
 
-IpcsClassifierRecord::~IpcsClassifierRecord()
-{
-}
+IpcsClassifierRecord::~IpcsClassifierRecord() = default;
 
 IpcsClassifierRecord::IpcsClassifierRecord(Tlv tlv)
 {
@@ -141,18 +132,13 @@ IpcsClassifierRecord::IpcsClassifierRecord(Ipv4Address SrcAddress,
                                            uint16_t DstPortHigh,
                                            uint8_t protocol,
                                            uint8_t priority)
+    : m_priority(priority)
 {
-    m_priority = priority;
     m_protocol.push_back(protocol);
     AddSrcAddr(SrcAddress, SrcMask);
     AddDstAddr(DstAddress, DstMask);
     AddSrcPortRange(SrcPortLow, SrcPortHigh);
     AddDstPortRange(DstPortLow, DstPortHigh);
-    m_index = 0;
-    m_tosLow = 0;
-    m_tosHigh = 0;
-    m_tosMask = 0;
-    m_cid = 0;
 }
 
 void

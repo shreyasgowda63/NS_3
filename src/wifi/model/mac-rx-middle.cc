@@ -46,17 +46,12 @@ class OriginatorRxStatus
      */
     typedef std::list<Ptr<const Packet>>::const_iterator FragmentsCI;
 
-    bool m_defragmenting;           ///< flag to indicate whether we are defragmenting
-    uint16_t m_lastSequenceControl; ///< last sequence control
-    Fragments m_fragments;          ///< fragments
+    bool m_defragmenting{false};            ///< flag to indicate whether we are defragmenting
+    uint16_t m_lastSequenceControl{0xffff}; ///< last sequence control (necessary magic value)
+    Fragments m_fragments;                  ///< fragments
 
   public:
-    OriginatorRxStatus()
-    {
-        /* this is a magic value necessary. */
-        m_lastSequenceControl = 0xffff;
-        m_defragmenting = false;
-    }
+    OriginatorRxStatus() = default;
 
     ~OriginatorRxStatus()
     {

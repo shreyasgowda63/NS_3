@@ -38,7 +38,7 @@ class LteControlMessage;
 class LteEnbPhySapProvider
 {
   public:
-    virtual ~LteEnbPhySapProvider();
+    virtual ~LteEnbPhySapProvider() = default;
 
     /**
      * \brief Send the MAC PDU to the channel
@@ -68,7 +68,7 @@ class LteEnbPhySapProvider
 class LteEnbPhySapUser
 {
   public:
-    virtual ~LteEnbPhySapUser();
+    virtual ~LteEnbPhySapUser() = default;
 
     /**
      * Called by the Phy to notify the MAC of the reception of a new PHY-PDU

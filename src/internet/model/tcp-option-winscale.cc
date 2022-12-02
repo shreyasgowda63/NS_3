@@ -30,14 +30,10 @@ NS_LOG_COMPONENT_DEFINE("TcpOptionWinScale");
 NS_OBJECT_ENSURE_REGISTERED(TcpOptionWinScale);
 
 TcpOptionWinScale::TcpOptionWinScale()
-    : TcpOption(),
-      m_scale(0)
-{
-}
 
-TcpOptionWinScale::~TcpOptionWinScale()
-{
-}
+    = default;
+
+TcpOptionWinScale::~TcpOptionWinScale() = default;
 
 TypeId
 TcpOptionWinScale::GetTypeId()

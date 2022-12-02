@@ -35,20 +35,13 @@ NS_LOG_COMPONENT_DEFINE("UanMacCw");
 NS_OBJECT_ENSURE_REGISTERED(UanMacCw);
 
 UanMacCw::UanMacCw()
-    : UanMac(),
-      m_phy(nullptr),
-      m_pktTx(nullptr),
-      m_txOngoing(false),
-      m_state(IDLE),
-      m_cleared(false)
-
+    : m_phy(nullptr),
+      m_pktTx(nullptr)
 {
     m_rv = CreateObject<UniformRandomVariable>();
 }
 
-UanMacCw::~UanMacCw()
-{
-}
+UanMacCw::~UanMacCw() = default;
 
 void
 UanMacCw::Clear()

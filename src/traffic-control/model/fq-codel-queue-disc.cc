@@ -45,9 +45,7 @@ FqCoDelFlow::GetTypeId()
 }
 
 FqCoDelFlow::FqCoDelFlow()
-    : m_deficit(0),
-      m_status(INACTIVE),
-      m_index(0)
+
 {
     NS_LOG_FUNCTION(this);
 }
@@ -175,8 +173,7 @@ FqCoDelQueueDisc::GetTypeId()
 }
 
 FqCoDelQueueDisc::FqCoDelQueueDisc()
-    : QueueDisc(QueueDiscSizePolicy::MULTIPLE_QUEUES, QueueSizeUnit::PACKETS),
-      m_quantum(0)
+    : QueueDisc(QueueDiscSizePolicy::MULTIPLE_QUEUES, QueueSizeUnit::PACKETS)
 {
     NS_LOG_FUNCTION(this);
 }

@@ -209,21 +209,18 @@ RoutingProtocol::GetTypeId()
 
 RoutingProtocol::RoutingProtocol()
     : m_routingTableAssociation(nullptr),
+      m_hnaRoutingTable(Create<Ipv4StaticRouting>()),
       m_ipv4(nullptr),
       m_helloTimer(Timer::CANCEL_ON_DESTROY),
       m_tcTimer(Timer::CANCEL_ON_DESTROY),
       m_midTimer(Timer::CANCEL_ON_DESTROY),
       m_hnaTimer(Timer::CANCEL_ON_DESTROY),
-      m_queuedMessagesTimer(Timer::CANCEL_ON_DESTROY)
-{
-    m_uniformRandomVariable = CreateObject<UniformRandomVariable>();
-
-    m_hnaRoutingTable = Create<Ipv4StaticRouting>();
-}
-
-RoutingProtocol::~RoutingProtocol()
+      m_queuedMessagesTimer(Timer::CANCEL_ON_DESTROY),
+      m_uniformRandomVariable(CreateObject<UniformRandomVariable>())
 {
 }
+
+RoutingProtocol::~RoutingProtocol() = default;
 
 void
 RoutingProtocol::SetIpv4(Ptr<Ipv4> ipv4)

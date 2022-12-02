@@ -117,7 +117,7 @@ WifiOfdmMaskSlopesTestCase::WifiOfdmMaskSlopesTestCase(
       m_band{band},
       m_channelWidth{channelWidth},
       m_puncturedSubchannels{puncturedSubchannels},
-      m_actualSpectrum{},
+
       m_expectedPsd{maskRefs},
       m_tolerance{tolerance},
       m_precision{precision}

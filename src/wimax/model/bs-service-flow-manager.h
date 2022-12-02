@@ -142,11 +142,11 @@ class BsServiceFlowManager : public ServiceFlowManager
      * \param cid the identifier of the connection on which the message was received
      */
     void ScheduleDsaRsp(ServiceFlow* serviceFlow, Cid cid);
-    Ptr<WimaxNetDevice> m_device; ///< the device
-    uint32_t m_sfidIndex;         ///< SFID index
-    uint8_t m_maxDsaRspRetries;   ///< maximum number of DSA response retries
-    EventId m_dsaAckTimeoutEvent; ///< DSA ack timeout event
-    Cid m_inuseScheduleDsaRspCid; ///< in use schedule DSA response CID
+    Ptr<WimaxNetDevice> m_device;    ///< the device
+    uint32_t m_sfidIndex{100};       ///< SFID index
+    uint8_t m_maxDsaRspRetries{100}; ///< maximum number of DSA response retries (default = 100)
+    EventId m_dsaAckTimeoutEvent;    ///< DSA ack timeout event
+    Cid m_inuseScheduleDsaRspCid;    ///< in use schedule DSA response CID
 };
 
 } // namespace ns3

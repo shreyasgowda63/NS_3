@@ -43,13 +43,10 @@ AmsduSubframeHeader::GetInstanceTypeId() const
 }
 
 AmsduSubframeHeader::AmsduSubframeHeader()
-    : m_length(0)
-{
-}
 
-AmsduSubframeHeader::~AmsduSubframeHeader()
-{
-}
+    = default;
+
+AmsduSubframeHeader::~AmsduSubframeHeader() = default;
 
 uint32_t
 AmsduSubframeHeader::GetSerializedSize() const

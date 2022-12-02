@@ -40,16 +40,12 @@ class PcapHelperForIpv4
     /**
      * @brief Construct a PcapHelperForIpv4.
      */
-    PcapHelperForIpv4()
-    {
-    }
+    PcapHelperForIpv4() = default;
 
     /**
      * @brief Destroy a PcapHelperForIpv4.
      */
-    virtual ~PcapHelperForIpv4()
-    {
-    }
+    virtual ~PcapHelperForIpv4() = default;
 
     /**
      * @brief Enable pcap output the indicated Ipv4 and interface pair.
@@ -145,16 +141,12 @@ class AsciiTraceHelperForIpv4
     /**
      * @brief Construct an AsciiTraceHelperForIpv4.
      */
-    AsciiTraceHelperForIpv4()
-    {
-    }
+    AsciiTraceHelperForIpv4() = default;
 
     /**
      * @brief Destroy an AsciiTraceHelperForIpv4
      */
-    virtual ~AsciiTraceHelperForIpv4()
-    {
-    }
+    virtual ~AsciiTraceHelperForIpv4() = default;
 
     /**
      * @brief Enable ascii trace output on the indicated Ipv4 and interface pair.
@@ -430,16 +422,12 @@ class PcapHelperForIpv6
     /**
      * @brief Construct a PcapHelperForIpv6.
      */
-    PcapHelperForIpv6()
-    {
-    }
+    PcapHelperForIpv6() = default;
 
     /**
      * @brief Destroy a PcapHelperForIpv6
      */
-    virtual ~PcapHelperForIpv6()
-    {
-    }
+    virtual ~PcapHelperForIpv6() = default;
 
     /**
      * @brief Enable pcap output the indicated Ipv6 and interface pair.
@@ -535,16 +523,12 @@ class AsciiTraceHelperForIpv6
     /**
      * @brief Construct an AsciiTraceHelperForIpv6.
      */
-    AsciiTraceHelperForIpv6()
-    {
-    }
+    AsciiTraceHelperForIpv6() = default;
 
     /**
      * @brief Destroy an AsciiTraceHelperForIpv6
      */
-    virtual ~AsciiTraceHelperForIpv6()
-    {
-    }
+    virtual ~AsciiTraceHelperForIpv6() = default;
 
     /**
      * @brief Enable ascii trace output on the indicated Ipv6 and interface pair.

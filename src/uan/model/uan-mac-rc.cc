@@ -151,12 +151,7 @@ Reservation::SetTransmitted(bool /* t */)
 uint32_t UanMacRc::m_cntrlSends = 0;
 
 UanMacRc::UanMacRc()
-    : UanMac(),
-      m_state(UNASSOCIATED),
-      m_rtsBlocked(false),
-      m_currentRate(10),
-      m_frameNo(0),
-      m_cleared(false)
+
 {
     m_ev = CreateObject<ExponentialRandomVariable>();
 
@@ -168,9 +163,7 @@ UanMacRc::UanMacRc()
     m_ctsSizeG = ch.GetSerializedSize() + ctsg.GetSerializedSize();
 }
 
-UanMacRc::~UanMacRc()
-{
-}
+UanMacRc::~UanMacRc() = default;
 
 void
 UanMacRc::Clear()

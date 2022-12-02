@@ -29,9 +29,7 @@
 namespace ns3
 {
 
-ReducedNeighborReport::ReducedNeighborReport()
-{
-}
+ReducedNeighborReport::ReducedNeighborReport() = default;
 
 WifiInformationElementId
 ReducedNeighborReport::ElementId() const

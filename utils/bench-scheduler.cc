@@ -65,8 +65,7 @@ class Bench
      */
     Bench(const uint64_t population, const uint64_t total)
         : m_population(population),
-          m_total(total),
-          m_count(0)
+          m_total(total)
     {
     }
 
@@ -126,7 +125,7 @@ class Bench
     Ptr<RandomVariableStream> m_rand; /**< Stream for event delays. */
     uint64_t m_population;            /**< Event population size. */
     uint64_t m_total;                 /**< Total number of events to execute. */
-    uint64_t m_count;                 /**< Count of events executed so far. */
+    uint64_t m_count{0};              /**< Count of events executed so far. */
 
 }; // class Bench
 

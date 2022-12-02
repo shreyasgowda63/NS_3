@@ -64,8 +64,8 @@ class LteHandoverManagementSapProvider;
 class LteHandoverAlgorithm : public Object
 {
   public:
-    LteHandoverAlgorithm();
-    ~LteHandoverAlgorithm() override;
+    LteHandoverAlgorithm() = default;
+    ~LteHandoverAlgorithm() override = default;
 
     /**
      * \brief Get the type ID.

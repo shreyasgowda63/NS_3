@@ -25,9 +25,8 @@ namespace ns3
 NS_OBJECT_ENSURE_REGISTERED(UanMac);
 
 UanMac::UanMac()
-    : m_txModeIndex(0)
-{
-}
+
+    = default;
 
 TypeId
 UanMac::GetTypeId()

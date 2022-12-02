@@ -146,8 +146,8 @@ class SimpleNetDevice : public NetDevice
     NetDevice::ReceiveCallback m_rxCallback;             //!< Receive callback
     NetDevice::PromiscReceiveCallback m_promiscCallback; //!< Promiscuous receive callback
     Ptr<Node> m_node;                                    //!< Node this netDevice is associated to
-    uint16_t m_mtu;                                      //!< MTU
-    uint32_t m_ifIndex;                                  //!< Interface index
+    uint16_t m_mtu{0xffff};                              //!< MTU
+    uint32_t m_ifIndex{0};                               //!< Interface index
     Mac48Address m_address;                              //!< MAC address
     Ptr<ErrorModel> m_receiveErrorModel;                 //!< Receive error model.
 
@@ -176,7 +176,7 @@ class SimpleNetDevice : public NetDevice
      */
     void FinishTransmission(Ptr<Packet> packet);
 
-    bool m_linkUp; //!< Flag indicating whether or not the link is up
+    bool m_linkUp{false}; //!< Flag indicating whether or not the link is up
 
     /**
      * Flag indicating whether or not the NetDevice is a Point to Point model.

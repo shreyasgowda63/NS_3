@@ -118,12 +118,12 @@ class MeshHeader : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint8_t m_meshFlags;  ///< mesh flags
-    uint8_t m_meshTtl;    ///< mesh TTL
-    uint32_t m_meshSeqno; ///< mesh sequence no
-    Mac48Address m_addr4; ///< MAC address 4
-    Mac48Address m_addr5; ///< MAC address 5
-    Mac48Address m_addr6; ///< MAC address 6
+    uint8_t m_meshFlags{0};  ///< mesh flags
+    uint8_t m_meshTtl{0};    ///< mesh TTL
+    uint32_t m_meshSeqno{0}; ///< mesh sequence no
+    Mac48Address m_addr4;    ///< MAC address 4
+    Mac48Address m_addr5;    ///< MAC address 5
+    Mac48Address m_addr6;    ///< MAC address 6
     /**
      * equality operator
      *

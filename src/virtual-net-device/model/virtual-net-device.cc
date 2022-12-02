@@ -84,12 +84,7 @@ VirtualNetDevice::GetTypeId()
     return tid;
 }
 
-VirtualNetDevice::VirtualNetDevice()
-{
-    m_needsArp = false;
-    m_supportsSendFrom = true;
-    m_isPointToPoint = true;
-}
+VirtualNetDevice::VirtualNetDevice() = default;
 
 void
 VirtualNetDevice::SetSendCallback(SendCallback sendCb)

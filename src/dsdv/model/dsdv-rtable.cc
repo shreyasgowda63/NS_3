@@ -54,7 +54,7 @@ RoutingTableEntry::RoutingTableEntry(Ptr<NetDevice> dev,
       m_hops(hops),
       m_lifeTime(lifetime),
       m_iface(iface),
-      m_flag(VALID),
+
       m_settlingTime(settlingTime),
       m_entriesChanged(areChanged)
 {
@@ -65,13 +65,9 @@ RoutingTableEntry::RoutingTableEntry(Ptr<NetDevice> dev,
     m_ipv4Route->SetOutputDevice(dev);
 }
 
-RoutingTableEntry::~RoutingTableEntry()
-{
-}
+RoutingTableEntry::~RoutingTableEntry() = default;
 
-RoutingTable::RoutingTable()
-{
-}
+RoutingTable::RoutingTable() = default;
 
 bool
 RoutingTable::LookupRoute(Ipv4Address id, RoutingTableEntry& rt)

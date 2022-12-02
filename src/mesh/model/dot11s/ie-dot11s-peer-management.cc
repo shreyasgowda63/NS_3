@@ -29,13 +29,8 @@ namespace dot11s
 {
 
 IePeerManagement::IePeerManagement()
-    : m_length(3),
-      m_subtype(PEER_OPEN),
-      m_localLinkId(0),
-      m_peerLinkId(0),
-      m_reasonCode(REASON11S_RESERVED)
-{
-}
+
+    = default;
 
 WifiInformationElementId
 IePeerManagement::ElementId() const

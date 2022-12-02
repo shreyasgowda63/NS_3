@@ -131,8 +131,8 @@ class JakesProcess : public Object
 
   private:
     std::vector<Oscillator> m_oscillators;        //!< Vector of oscillators
-    double m_omegaDopplerMax;                     //!< max rotation speed Doppler frequency
-    unsigned int m_nOscillators;                  //!< number of oscillators
+    double m_omegaDopplerMax{0};                  //!< max rotation speed Doppler frequency
+    unsigned int m_nOscillators{0};               //!< number of oscillators
     Ptr<UniformRandomVariable> m_uniformVariable; //!< random stream
     Ptr<const JakesPropagationLossModel> m_jakes; //!< pointer to the propagation loss model
 };

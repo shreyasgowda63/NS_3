@@ -60,9 +60,7 @@ class BaseA : public ns3::Object
     }
 
     /** Constructor. */
-    BaseA()
-    {
-    }
+    BaseA() = default;
 };
 
 /**
@@ -87,9 +85,7 @@ class DerivedA : public BaseA
     }
 
     /** Constructor. */
-    DerivedA()
-    {
-    }
+    DerivedA() = default;
 
   protected:
     void DoDispose() override
@@ -120,9 +116,7 @@ class BaseB : public ns3::Object
     }
 
     /** Constructor. */
-    BaseB()
-    {
-    }
+    BaseB() = default;
 };
 
 /**
@@ -147,9 +141,7 @@ class DerivedB : public BaseB
     }
 
     /** Constructor. */
-    DerivedB()
-    {
-    }
+    DerivedB() = default;
 
   protected:
     void DoDispose() override
@@ -192,9 +184,7 @@ CreateObjectTestCase::CreateObjectTestCase()
 {
 }
 
-CreateObjectTestCase::~CreateObjectTestCase()
-{
-}
+CreateObjectTestCase::~CreateObjectTestCase() = default;
 
 void
 CreateObjectTestCase::DoRun()
@@ -273,9 +263,7 @@ AggregateObjectTestCase::AggregateObjectTestCase()
 {
 }
 
-AggregateObjectTestCase::~AggregateObjectTestCase()
-{
-}
+AggregateObjectTestCase::~AggregateObjectTestCase() = default;
 
 void
 AggregateObjectTestCase::DoRun()
@@ -485,9 +473,7 @@ ObjectFactoryTestCase::ObjectFactoryTestCase()
 {
 }
 
-ObjectFactoryTestCase::~ObjectFactoryTestCase()
-{
-}
+ObjectFactoryTestCase::~ObjectFactoryTestCase() = default;
 
 void
 ObjectFactoryTestCase::DoRun()

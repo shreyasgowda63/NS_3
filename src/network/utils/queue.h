@@ -214,16 +214,16 @@ class QueueBase : public Object
 #endif
 
   protected:
-    TracedValue<uint32_t> m_nBytes;               //!< Number of bytes in the queue
-    uint32_t m_nTotalReceivedBytes;               //!< Total received bytes
-    TracedValue<uint32_t> m_nPackets;             //!< Number of packets in the queue
-    uint32_t m_nTotalReceivedPackets;             //!< Total received packets
-    uint32_t m_nTotalDroppedBytes;                //!< Total dropped bytes
-    uint32_t m_nTotalDroppedBytesBeforeEnqueue;   //!< Total dropped bytes before enqueue
-    uint32_t m_nTotalDroppedBytesAfterDequeue;    //!< Total dropped bytes after dequeue
-    uint32_t m_nTotalDroppedPackets;              //!< Total dropped packets
-    uint32_t m_nTotalDroppedPacketsBeforeEnqueue; //!< Total dropped packets before enqueue
-    uint32_t m_nTotalDroppedPacketsAfterDequeue;  //!< Total dropped packets after dequeue
+    TracedValue<uint32_t> m_nBytes;                  //!< Number of bytes in the queue
+    uint32_t m_nTotalReceivedBytes{0};               //!< Total received bytes
+    TracedValue<uint32_t> m_nPackets;                //!< Number of packets in the queue
+    uint32_t m_nTotalReceivedPackets{0};             //!< Total received packets
+    uint32_t m_nTotalDroppedBytes{0};                //!< Total dropped bytes
+    uint32_t m_nTotalDroppedBytesBeforeEnqueue{0};   //!< Total dropped bytes before enqueue
+    uint32_t m_nTotalDroppedBytesAfterDequeue{0};    //!< Total dropped bytes after dequeue
+    uint32_t m_nTotalDroppedPackets{0};              //!< Total dropped packets
+    uint32_t m_nTotalDroppedPacketsBeforeEnqueue{0}; //!< Total dropped packets before enqueue
+    uint32_t m_nTotalDroppedPacketsAfterDequeue{0};  //!< Total dropped packets after dequeue
 
     QueueSize m_maxSize; //!< max queue size
 };
@@ -494,9 +494,7 @@ Queue<Item, Container>::Queue()
 }
 
 template <typename Item, typename Container>
-Queue<Item, Container>::~Queue()
-{
-}
+Queue<Item, Container>::~Queue() = default;
 
 template <typename Item, typename Container>
 const Container&

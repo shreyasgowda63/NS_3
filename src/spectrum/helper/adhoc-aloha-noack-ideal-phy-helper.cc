@@ -44,9 +44,7 @@ AdhocAlohaNoackIdealPhyHelper::AdhocAlohaNoackIdealPhyHelper()
     m_antenna.SetTypeId("ns3::IsotropicAntennaModel");
 }
 
-AdhocAlohaNoackIdealPhyHelper::~AdhocAlohaNoackIdealPhyHelper()
-{
-}
+AdhocAlohaNoackIdealPhyHelper::~AdhocAlohaNoackIdealPhyHelper() = default;
 
 void
 AdhocAlohaNoackIdealPhyHelper::SetChannel(Ptr<SpectrumChannel> channel)

@@ -46,9 +46,7 @@ class WaypointMobilityModelNotifyTest : public TestCase
     {
     }
 
-    ~WaypointMobilityModelNotifyTest() override
-    {
-    }
+    ~WaypointMobilityModelNotifyTest() override = default;
 
   private:
     std::vector<Ptr<MobilityModel>> mobilityStack; ///< mobilty model
@@ -184,9 +182,7 @@ class WaypointMobilityModelAddWaypointTest : public TestCase
     {
     }
 
-    ~WaypointMobilityModelAddWaypointTest() override
-    {
-    }
+    ~WaypointMobilityModelAddWaypointTest() override = default;
 
   private:
     Ptr<MobilityModel> m_mobilityModel; ///< mobility model

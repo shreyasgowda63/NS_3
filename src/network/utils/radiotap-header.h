@@ -493,56 +493,56 @@ class RadiotapHeader : public Header
         RADIOTAP_EXT = 0x80000000
     };
 
-    uint16_t m_length;  //!< entire length of radiotap data + header
-    uint32_t m_present; //!< bits describing which fields follow header
+    uint16_t m_length{8};  //!< entire length of radiotap data + header
+    uint32_t m_present{0}; //!< bits describing which fields follow header
 
-    uint64_t m_tsft;        //!< Time Synchronization Function Timer (when the first bit of the MPDU
-                            //!< arrived at the MAC)
-    uint8_t m_flags;        //!< Properties of transmitted and received frames.
-    uint8_t m_rate;         //!< TX/RX data rate in units of 500 kbps
-    uint8_t m_channelPad;   //!< Tx/Rx channel padding.
-    uint16_t m_channelFreq; //!< Tx/Rx frequency in MHz.
-    uint16_t m_channelFlags; //!< Tx/Rx channel flags.
-    int8_t m_antennaSignal;  //!< RF signal power at the antenna, dB difference from an arbitrary,
-                             //!< fixed reference.
-    int8_t m_antennaNoise;   //!< RF noise power at the antenna, dB difference from an arbitrary,
-                             //!< fixed reference.
+    uint64_t m_tsft{0}; //!< Time Synchronization Function Timer (when the first bit of the MPDU
+                        //!< arrived at the MAC)
+    uint8_t m_flags{FRAME_FLAG_NONE};           //!< Properties of transmitted and received frames.
+    uint8_t m_rate{0};                          //!< TX/RX data rate in units of 500 kbps
+    uint8_t m_channelPad;                       //!< Tx/Rx channel padding.
+    uint16_t m_channelFreq{0};                  //!< Tx/Rx frequency in MHz.
+    uint16_t m_channelFlags{CHANNEL_FLAG_NONE}; //!< Tx/Rx channel flags.
+    int8_t m_antennaSignal{0}; //!< RF signal power at the antenna, dB difference from an arbitrary,
+                               //!< fixed reference.
+    int8_t m_antennaNoise{0};  //!< RF noise power at the antenna, dB difference from an arbitrary,
+                               //!< fixed reference.
 
     uint8_t m_mcsKnown; //!< MCS Flags, known information field.
     uint8_t m_mcsFlags; //!< MCS Flags, flags field.
     uint8_t m_mcsRate;  //!< MCS Flags, mcs rate index.
 
-    uint8_t m_ampduStatusPad;    //!< A-MPDU Status Flags, padding before A-MPDU Status Field.
-    uint32_t m_ampduStatusRef;   //!< A-MPDU Status Flags, reference number.
-    uint16_t m_ampduStatusFlags; //!< A-MPDU Status Flags, information about the received A-MPDU.
-    uint8_t m_ampduStatusCRC;    //!< A-MPDU Status Flags, delimiter CRC value.
+    uint8_t m_ampduStatusPad;       //!< A-MPDU Status Flags, padding before A-MPDU Status Field.
+    uint32_t m_ampduStatusRef{0};   //!< A-MPDU Status Flags, reference number.
+    uint16_t m_ampduStatusFlags{0}; //!< A-MPDU Status Flags, information about the received A-MPDU.
+    uint8_t m_ampduStatusCRC{0};    //!< A-MPDU Status Flags, delimiter CRC value.
 
-    uint8_t m_vhtPad;         //!< VHT padding.
-    uint16_t m_vhtKnown;      //!< VHT known field.
-    uint8_t m_vhtFlags;       //!< VHT flags field.
-    uint8_t m_vhtBandwidth;   //!< VHT bandwidth field.
-    uint8_t m_vhtMcsNss[4];   //!< VHT mcs_nss field.
-    uint8_t m_vhtCoding;      //!< VHT coding field.
-    uint8_t m_vhtGroupId;     //!< VHT group_id field.
-    uint16_t m_vhtPartialAid; //!< VHT partial_aid field.
+    uint8_t m_vhtPad{0};         //!< VHT padding.
+    uint16_t m_vhtKnown{0};      //!< VHT known field.
+    uint8_t m_vhtFlags{0};       //!< VHT flags field.
+    uint8_t m_vhtBandwidth{0};   //!< VHT bandwidth field.
+    uint8_t m_vhtMcsNss[4];      //!< VHT mcs_nss field.
+    uint8_t m_vhtCoding{0};      //!< VHT coding field.
+    uint8_t m_vhtGroupId{0};     //!< VHT group_id field.
+    uint16_t m_vhtPartialAid{0}; //!< VHT partial_aid field.
 
-    uint8_t m_hePad;    //!< HE padding.
-    uint16_t m_heData1; //!< HE data1 field.
-    uint16_t m_heData2; //!< HE data2 field.
-    uint16_t m_heData3; //!< HE data3 field.
-    uint16_t m_heData4; //!< HE data4 field.
-    uint16_t m_heData5; //!< HE data5 field.
-    uint16_t m_heData6; //!< HE data6 field.
+    uint8_t m_hePad{0};    //!< HE padding.
+    uint16_t m_heData1{0}; //!< HE data1 field.
+    uint16_t m_heData2{0}; //!< HE data2 field.
+    uint16_t m_heData3{0}; //!< HE data3 field.
+    uint16_t m_heData4{0}; //!< HE data4 field.
+    uint16_t m_heData5{0}; //!< HE data5 field.
+    uint16_t m_heData6{0}; //!< HE data6 field.
 
-    uint8_t m_heMuPad;     //!< HE MU padding.
-    uint16_t m_heMuFlags1; //!< HE MU flags1 field.
-    uint16_t m_heMuFlags2; //!< HE MU flags2 field.
+    uint8_t m_heMuPad{0};     //!< HE MU padding.
+    uint16_t m_heMuFlags1{0}; //!< HE MU flags1 field.
+    uint16_t m_heMuFlags2{0}; //!< HE MU flags2 field.
 
-    uint8_t m_heMuOtherUserPad;    //!< HE MU other user padding.
-    uint16_t m_heMuPerUser1;       //!< HE MU per_user_1 field.
-    uint16_t m_heMuPerUser2;       //!< HE MU per_user_2 field.
-    uint8_t m_heMuPerUserPosition; //!< HE MU per_user_position field.
-    uint8_t m_heMuPerUserKnown;    //!< HE MU per_user_known field.
+    uint8_t m_heMuOtherUserPad{0};    //!< HE MU other user padding.
+    uint16_t m_heMuPerUser1{0};       //!< HE MU per_user_1 field.
+    uint16_t m_heMuPerUser2{0};       //!< HE MU per_user_2 field.
+    uint8_t m_heMuPerUserPosition{0}; //!< HE MU per_user_position field.
+    uint8_t m_heMuPerUserKnown{0};    //!< HE MU per_user_known field.
 };
 
 } // namespace ns3

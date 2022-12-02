@@ -30,10 +30,7 @@ NS_LOG_COMPONENT_DEFINE("NixVector");
 typedef std::vector<uint32_t> NixBits_t; //!< typedef for the nixVector
 
 NixVector::NixVector()
-    : m_nixVector(0),
-      m_used(0),
-      m_totalBitSize(0),
-      m_epoch(0)
+    : m_nixVector(0)
 {
     NS_LOG_FUNCTION(this);
 }
@@ -44,12 +41,8 @@ NixVector::~NixVector()
 }
 
 NixVector::NixVector(const NixVector& o)
-    : m_nixVector(o.m_nixVector),
-      m_used(o.m_used),
-      m_totalBitSize(o.m_totalBitSize),
-      m_epoch(o.m_epoch)
-{
-}
+
+    = default;
 
 NixVector&
 NixVector::operator=(const NixVector& o)

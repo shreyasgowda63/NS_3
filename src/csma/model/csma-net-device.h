@@ -713,7 +713,7 @@ class CsmaNetDevice : public NetDevice
      * Flag indicating whether or not the link is up.  In this case,
      * whether or not the device is connected to a channel.
      */
-    bool m_linkUp;
+    bool m_linkUp{false};
 
     /**
      * List of callbacks to fire if the link changes state (up or down).

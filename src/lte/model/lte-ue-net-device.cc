@@ -115,7 +115,6 @@ LteUeNetDevice::GetTypeId()
 }
 
 LteUeNetDevice::LteUeNetDevice()
-    : m_isConstructed(false)
 {
     NS_LOG_FUNCTION(this);
 }

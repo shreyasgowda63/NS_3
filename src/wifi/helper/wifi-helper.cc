@@ -144,7 +144,6 @@ AsciiPhyReceiveSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
 }
 
 WifiPhyHelper::WifiPhyHelper(uint8_t nLinks)
-    : m_pcapDlt(PcapHelper::DLT_IEEE802_11)
 {
     NS_ABORT_IF(nLinks == 0);
     m_phy.resize(nLinks);
@@ -155,9 +154,7 @@ WifiPhyHelper::WifiPhyHelper(uint8_t nLinks)
     SetPreambleDetectionModel("ns3::ThresholdPreambleDetectionModel");
 }
 
-WifiPhyHelper::~WifiPhyHelper()
-{
-}
+WifiPhyHelper::~WifiPhyHelper() = default;
 
 void
 WifiPhyHelper::Set(std::string name, const AttributeValue& v)
@@ -718,14 +715,10 @@ WifiPhyHelper::EnableAsciiInternal(Ptr<OutputStreamWrapper> stream,
     Config::Connect(oss.str(), MakeBoundCallback(&AsciiPhyTransmitSinkWithContext, stream));
 }
 
-WifiHelper::~WifiHelper()
-{
-}
+WifiHelper::~WifiHelper() = default;
 
 WifiHelper::WifiHelper()
-    : m_standard(WIFI_STANDARD_80211ax),
-      m_selectQueueCallback(&SelectQueueByDSField),
-      m_enableFlowControl(true)
+    : m_selectQueueCallback(&SelectQueueByDSField)
 {
     SetRemoteStationManager("ns3::IdealWifiManager");
     m_htConfig.SetTypeId("ns3::HtConfiguration");

@@ -234,7 +234,7 @@ class MgtAssocRequestHeader : public Header
     std::optional<HtCapabilities> m_htCapability;             //!< HT capabilities
     std::optional<VhtCapabilities> m_vhtCapability;           //!< VHT capabilities
     std::optional<HeCapabilities> m_heCapability;             //!< HE capabilities
-    uint16_t m_listenInterval;                                //!< listen interval
+    uint16_t m_listenInterval{0};                             //!< listen interval
     std::optional<EhtCapabilities> m_ehtCapability;           //!< EHT capabilities
     std::optional<MultiLinkElement> m_multiLinkElement;       //!< Multi-Link Element
 };
@@ -713,7 +713,7 @@ class MgtAssocResponseHeader : public Header
     SupportedRates m_rates;                                   //!< List of supported rates
     CapabilityInformation m_capability;                       //!< Capability information
     StatusCode m_code;                                        //!< Status code
-    uint16_t m_aid;                                           //!< AID
+    uint16_t m_aid{0};                                        //!< AID
     std::optional<ExtendedCapabilities> m_extendedCapability; //!< extended capabilities
     std::optional<HtCapabilities> m_htCapability;             //!< HT capabilities
     std::optional<HtOperation> m_htOperation;                 //!< HT operation
@@ -1590,13 +1590,13 @@ class MgtAddBaRequestHeader : public Header
      */
     void SetStartingSequenceControl(uint16_t seqControl);
 
-    uint8_t m_dialogToken;   //!< Not used for now
-    uint8_t m_amsduSupport;  //!< Flag if A-MSDU is supported
-    uint8_t m_policy;        //!< Block Ack policy
-    uint8_t m_tid;           //!< Traffic ID
-    uint16_t m_bufferSize;   //!< Buffer size
-    uint16_t m_timeoutValue; //!< Timeout
-    uint16_t m_startingSeq;  //!< Starting sequence number
+    uint8_t m_dialogToken{1};  //!< Not used for now
+    uint8_t m_amsduSupport{1}; //!< Flag if A-MSDU is supported
+    uint8_t m_policy;          //!< Block Ack policy
+    uint8_t m_tid;             //!< Traffic ID
+    uint16_t m_bufferSize{0};  //!< Buffer size
+    uint16_t m_timeoutValue;   //!< Timeout
+    uint16_t m_startingSeq;    //!< Starting sequence number
 };
 
 /**
@@ -1709,13 +1709,13 @@ class MgtAddBaResponseHeader : public Header
      */
     void SetParameterSet(uint16_t params);
 
-    uint8_t m_dialogToken;   //!< Not used for now
-    StatusCode m_code;       //!< Status code
-    uint8_t m_amsduSupport;  //!< Flag if A-MSDU is supported
-    uint8_t m_policy;        //!< Block ACK policy
-    uint8_t m_tid;           //!< Traffic ID
-    uint16_t m_bufferSize;   //!< Buffer size
-    uint16_t m_timeoutValue; //!< Timeout
+    uint8_t m_dialogToken{1};  //!< Not used for now
+    StatusCode m_code;         //!< Status code
+    uint8_t m_amsduSupport{1}; //!< Flag if A-MSDU is supported
+    uint8_t m_policy;          //!< Block ACK policy
+    uint8_t m_tid;             //!< Traffic ID
+    uint16_t m_bufferSize{0};  //!< Buffer size
+    uint16_t m_timeoutValue;   //!< Timeout
 };
 
 /**
@@ -1781,9 +1781,9 @@ class MgtDelBaHeader : public Header
      */
     void SetParameterSet(uint16_t params);
 
-    uint16_t m_initiator;  //!< initiator
-    uint16_t m_tid;        //!< Traffic ID
-    uint16_t m_reasonCode; //!< Not used for now. Always set to 1: "Unspecified reason"
+    uint16_t m_initiator;     //!< initiator
+    uint16_t m_tid;           //!< Traffic ID
+    uint16_t m_reasonCode{1}; //!< Not used for now. Always set to 1: "Unspecified reason"
 };
 
 } // namespace ns3

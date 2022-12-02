@@ -35,9 +35,7 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("Ipv6StaticRoutingHelper");
 
-Ipv6StaticRoutingHelper::Ipv6StaticRoutingHelper()
-{
-}
+Ipv6StaticRoutingHelper::Ipv6StaticRoutingHelper() = default;
 
 Ipv6StaticRoutingHelper::Ipv6StaticRoutingHelper(const Ipv6StaticRoutingHelper& o)
 {

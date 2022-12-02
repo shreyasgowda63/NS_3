@@ -42,9 +42,7 @@ CsmaStarHelper::CsmaStarHelper(uint32_t numSpokes, CsmaHelper csmaHelper)
     }
 }
 
-CsmaStarHelper::~CsmaStarHelper()
-{
-}
+CsmaStarHelper::~CsmaStarHelper() = default;
 
 Ptr<Node>
 CsmaStarHelper::GetHub() const

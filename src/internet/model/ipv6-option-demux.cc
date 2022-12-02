@@ -46,13 +46,9 @@ Ipv6OptionDemux::GetTypeId()
     return tid;
 }
 
-Ipv6OptionDemux::Ipv6OptionDemux()
-{
-}
+Ipv6OptionDemux::Ipv6OptionDemux() = default;
 
-Ipv6OptionDemux::~Ipv6OptionDemux()
-{
-}
+Ipv6OptionDemux::~Ipv6OptionDemux() = default;
 
 void
 Ipv6OptionDemux::DoDispose()

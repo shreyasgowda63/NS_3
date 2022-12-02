@@ -22,9 +22,7 @@
 namespace ns3
 {
 
-QueueDiscContainer::QueueDiscContainer()
-{
-}
+QueueDiscContainer::QueueDiscContainer() = default;
 
 QueueDiscContainer::QueueDiscContainer(Ptr<QueueDisc> qDisc)
 {

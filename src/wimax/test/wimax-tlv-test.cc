@@ -51,9 +51,7 @@ Ns3WimaxCsParamTlvTestCase::Ns3WimaxCsParamTlvTestCase()
 {
 }
 
-Ns3WimaxCsParamTlvTestCase::~Ns3WimaxCsParamTlvTestCase()
-{
-}
+Ns3WimaxCsParamTlvTestCase::~Ns3WimaxCsParamTlvTestCase() = default;
 
 void
 Ns3WimaxCsParamTlvTestCase::DoRun()
@@ -153,9 +151,7 @@ Ns3WimaxSfTlvTestCase::Ns3WimaxSfTlvTestCase()
 {
 }
 
-Ns3WimaxSfTlvTestCase::~Ns3WimaxSfTlvTestCase()
-{
-}
+Ns3WimaxSfTlvTestCase::~Ns3WimaxSfTlvTestCase() = default;
 
 void
 Ns3WimaxSfTlvTestCase::DoRun()

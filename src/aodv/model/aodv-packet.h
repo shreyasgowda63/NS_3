@@ -102,7 +102,7 @@ class TypeHeader : public Header
 
   private:
     MessageType m_type; ///< type of the message
-    bool m_valid;       ///< Indicates if the message is valid
+    bool m_valid{true}; ///< Indicates if the message is valid
 };
 
 /**
@@ -506,7 +506,7 @@ class RrepHeader : public Header
     bool operator==(const RrepHeader& o) const;
 
   private:
-    uint8_t m_flags;      ///< A - acknowledgment required flag
+    uint8_t m_flags{0};   ///< A - acknowledgment required flag
     uint8_t m_prefixSize; ///< Prefix Size
     uint8_t m_hopCount;   ///< Hop Count
     Ipv4Address m_dst;    ///< Destination IP Address
@@ -558,7 +558,7 @@ class RrepAckHeader : public Header
     bool operator==(const RrepAckHeader& o) const;
 
   private:
-    uint8_t m_reserved; ///< Not used (must be 0)
+    uint8_t m_reserved{0}; ///< Not used (must be 0)
 };
 
 /**
@@ -649,8 +649,8 @@ class RerrHeader : public Header
     bool operator==(const RerrHeader& o) const;
 
   private:
-    uint8_t m_flag;     ///< No delete flag
-    uint8_t m_reserved; ///< Not used (must be 0)
+    uint8_t m_flag{0};     ///< No delete flag
+    uint8_t m_reserved{0}; ///< Not used (must be 0)
 
     /// List of Unreachable destination: IP addresses and sequence numbers
     std::map<Ipv4Address, uint32_t> m_unreachableDstSeqNo;

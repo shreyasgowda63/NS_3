@@ -54,13 +54,10 @@ ProbabilisticV2vUrbanChannelConditionModel::GetTypeId()
 }
 
 ProbabilisticV2vUrbanChannelConditionModel::ProbabilisticV2vUrbanChannelConditionModel()
-    : ThreeGppChannelConditionModel()
-{
-}
 
-ProbabilisticV2vUrbanChannelConditionModel::~ProbabilisticV2vUrbanChannelConditionModel()
-{
-}
+    = default;
+
+ProbabilisticV2vUrbanChannelConditionModel::~ProbabilisticV2vUrbanChannelConditionModel() = default;
 
 double
 ProbabilisticV2vUrbanChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,
@@ -157,13 +154,11 @@ ProbabilisticV2vHighwayChannelConditionModel::GetTypeId()
 }
 
 ProbabilisticV2vHighwayChannelConditionModel::ProbabilisticV2vHighwayChannelConditionModel()
-    : ThreeGppChannelConditionModel()
-{
-}
 
-ProbabilisticV2vHighwayChannelConditionModel::~ProbabilisticV2vHighwayChannelConditionModel()
-{
-}
+    = default;
+
+ProbabilisticV2vHighwayChannelConditionModel::~ProbabilisticV2vHighwayChannelConditionModel() =
+    default;
 
 double
 ProbabilisticV2vHighwayChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,

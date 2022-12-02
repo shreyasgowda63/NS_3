@@ -92,12 +92,12 @@ class LteFrNoOpAlgorithm : public LteFfrAlgorithm
 
   private:
     // FFR SAP
-    LteFfrSapUser* m_ffrSapUser;         ///< FFR SAP user
-    LteFfrSapProvider* m_ffrSapProvider; ///< FFR SAP provider
+    LteFfrSapUser* m_ffrSapUser{nullptr}; ///< FFR SAP user
+    LteFfrSapProvider* m_ffrSapProvider;  ///< FFR SAP provider
 
     // FFR RRF SAP
-    LteFfrRrcSapUser* m_ffrRrcSapUser;         ///< FFR RRC SAP user
-    LteFfrRrcSapProvider* m_ffrRrcSapProvider; ///< FFR RRC SAP provider
+    LteFfrRrcSapUser* m_ffrRrcSapUser{nullptr}; ///< FFR RRC SAP user
+    LteFfrRrcSapProvider* m_ffrRrcSapProvider;  ///< FFR RRC SAP provider
 
 }; // end of class LteFrNoOpAlgorithm
 

@@ -30,20 +30,11 @@ namespace dot11s
 /********************************
  * IePrep
  *******************************/
-IePrep::~IePrep()
-{
-}
+IePrep::~IePrep() = default;
 
 IePrep::IePrep()
-    : m_flags(0),
-      m_hopcount(0),
-      m_ttl(0),
-      m_destinationAddress(Mac48Address::GetBroadcast()),
-      m_destSeqNumber(0),
-      m_lifetime(0),
-      m_metric(0),
-      m_originatorAddress(Mac48Address::GetBroadcast()),
-      m_originatorSeqNumber(0)
+    : m_destinationAddress(Mac48Address::GetBroadcast()),
+      m_originatorAddress(Mac48Address::GetBroadcast())
 {
 }
 

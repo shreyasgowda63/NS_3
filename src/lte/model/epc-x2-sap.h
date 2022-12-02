@@ -48,7 +48,7 @@ class Node;
 class EpcX2Sap
 {
   public:
-    virtual ~EpcX2Sap();
+    virtual ~EpcX2Sap() = default;
 
     /**
      * E-RABs to be setup item as
@@ -57,13 +57,14 @@ class EpcX2Sap
      */
     struct ErabToBeSetupItem
     {
-        uint16_t erabId;                   ///< E-RAB ID
-        EpsBearer erabLevelQosParameters;  ///< E-RAB level QOS parameters
-        bool dlForwarding;                 ///< DL forwarding
-        Ipv4Address transportLayerAddress; ///< transport layer address
-        uint32_t gtpTeid;                  ///< TEID
+        uint16_t erabId; ///< E-RAB ID
+        EpsBearer erabLevelQosParameters{
+            EpsBearer(EpsBearer::GBR_CONV_VOICE)}; ///< E-RAB level QOS parameters
+        bool dlForwarding;                         ///< DL forwarding
+        Ipv4Address transportLayerAddress;         ///< transport layer address
+        uint32_t gtpTeid;                          ///< TEID
 
-        ErabToBeSetupItem();
+        ErabToBeSetupItem() = default;
     };
 
     /**
@@ -357,7 +358,7 @@ class EpcX2Sap
 class EpcX2SapProvider : public EpcX2Sap
 {
   public:
-    ~EpcX2SapProvider() override;
+    ~EpcX2SapProvider() override = default;
 
     //
     // Service primitives
@@ -425,7 +426,7 @@ class EpcX2SapProvider : public EpcX2Sap
 class EpcX2SapUser : public EpcX2Sap
 {
   public:
-    ~EpcX2SapUser() override;
+    ~EpcX2SapUser() override = default;
 
     /*
      * Service primitives

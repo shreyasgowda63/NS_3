@@ -132,12 +132,12 @@ class Ipv6OptionHeader : public Header
     /**
      * \brief The type of the option.
      */
-    uint8_t m_type;
+    uint8_t m_type{0};
 
     /**
      * \brief The option length.
      */
-    uint8_t m_length;
+    uint8_t m_length{0};
 
     /**
      * \brief The anonymous data of this option
@@ -335,7 +335,7 @@ class Ipv6OptionJumbogramHeader : public Ipv6OptionHeader
     /**
      * \brief The data length.
      */
-    uint32_t m_dataLength;
+    uint32_t m_dataLength{0};
 };
 
 /**
@@ -415,7 +415,7 @@ class Ipv6OptionRouterAlertHeader : public Ipv6OptionHeader
     /**
      * \brief The value.
      */
-    uint16_t m_value;
+    uint16_t m_value{0};
 };
 
 } // namespace ns3

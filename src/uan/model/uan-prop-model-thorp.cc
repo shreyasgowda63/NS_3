@@ -30,13 +30,9 @@ NS_LOG_COMPONENT_DEFINE("UanPropModelThorp");
 
 NS_OBJECT_ENSURE_REGISTERED(UanPropModelThorp);
 
-UanPropModelThorp::UanPropModelThorp()
-{
-}
+UanPropModelThorp::UanPropModelThorp() = default;
 
-UanPropModelThorp::~UanPropModelThorp()
-{
-}
+UanPropModelThorp::~UanPropModelThorp() = default;
 
 TypeId
 UanPropModelThorp::GetTypeId()

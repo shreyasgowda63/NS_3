@@ -43,9 +43,7 @@ class UanPacketArrival
 {
   public:
     /** Default constructor. */
-    UanPacketArrival()
-    {
-    }
+    UanPacketArrival() = default;
 
     /**
      * Constructor.

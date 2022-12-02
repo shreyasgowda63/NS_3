@@ -35,7 +35,6 @@ NS_LOG_COMPONENT_DEFINE("PointToPointEpcHelper");
 NS_OBJECT_ENSURE_REGISTERED(PointToPointEpcHelper);
 
 PointToPointEpcHelper::PointToPointEpcHelper()
-    : NoBackhaulEpcHelper()
 {
     NS_LOG_FUNCTION(this);
     // To access the attribute value within the constructor

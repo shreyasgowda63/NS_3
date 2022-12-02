@@ -225,17 +225,12 @@ RoutingProtocol::AssignStreams(int64_t stream)
 }
 
 RoutingProtocol::RoutingProtocol()
-    : m_routingTable(),
-      m_advRoutingTable(),
-      m_queue(),
-      m_periodicUpdateTimer(Timer::CANCEL_ON_DESTROY)
+    : m_periodicUpdateTimer(Timer::CANCEL_ON_DESTROY),
+      m_uniformRandomVariable(CreateObject<UniformRandomVariable>())
 {
-    m_uniformRandomVariable = CreateObject<UniformRandomVariable>();
 }
 
-RoutingProtocol::~RoutingProtocol()
-{
-}
+RoutingProtocol::~RoutingProtocol() = default;
 
 void
 RoutingProtocol::DoDispose()

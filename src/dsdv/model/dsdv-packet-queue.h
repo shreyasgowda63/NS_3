@@ -200,9 +200,7 @@ class PacketQueue
 {
   public:
     /// Default c-tor
-    PacketQueue()
-    {
-    }
+    PacketQueue() = default;
 
     /**
      * Push entry in queue, if there is no entry with the same packet and destination address in

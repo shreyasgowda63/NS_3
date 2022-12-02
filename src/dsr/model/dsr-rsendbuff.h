@@ -171,9 +171,7 @@ class DsrSendBuffer
     /**
      * Default constructor
      */
-    DsrSendBuffer()
-    {
-    }
+    DsrSendBuffer() = default;
 
     /**
      * Push entry in queue, if there is no entry with

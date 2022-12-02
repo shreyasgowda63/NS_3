@@ -50,10 +50,7 @@ Icmpv6Header::GetInstanceTypeId() const
 }
 
 Icmpv6Header::Icmpv6Header()
-    : m_calcChecksum(true),
-      m_checksum(0),
-      m_type(0),
-      m_code(0)
+
 {
     NS_LOG_FUNCTION(this);
 }
@@ -868,8 +865,7 @@ Icmpv6Redirection::GetInstanceTypeId() const
 
 Icmpv6Redirection::Icmpv6Redirection()
     : m_target(Ipv6Address("")),
-      m_destination(Ipv6Address("")),
-      m_reserved(0)
+      m_destination(Ipv6Address(""))
 {
     NS_LOG_FUNCTION(this);
     SetType(ICMPV6_ND_REDIRECTION);
@@ -1240,8 +1236,7 @@ Icmpv6TooBig::GetInstanceTypeId() const
 }
 
 Icmpv6TooBig::Icmpv6TooBig()
-    : m_packet(nullptr),
-      m_mtu(0)
+    : m_packet(nullptr)
 {
     NS_LOG_FUNCTION(this);
     SetType(ICMPV6_ERROR_PACKET_TOO_BIG);
@@ -1458,8 +1453,7 @@ Icmpv6ParameterError::GetInstanceTypeId() const
 }
 
 Icmpv6ParameterError::Icmpv6ParameterError()
-    : m_packet(nullptr),
-      m_ptr(0)
+    : m_packet(nullptr)
 {
     NS_LOG_FUNCTION(this);
     SetType(ICMPV6_ERROR_PARAMETER_ERROR);

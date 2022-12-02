@@ -116,8 +116,8 @@ class WifiAckManager : public Object
      */
     Ptr<WifiRemoteStationManager> GetWifiRemoteStationManager() const;
 
-    Ptr<WifiMac> m_mac; //!< MAC which is using this Acknowledgment Manager
-    uint8_t m_linkId;   //!< ID of the link this Acknowledgment Manager is operating on
+    Ptr<WifiMac> m_mac;  //!< MAC which is using this Acknowledgment Manager
+    uint8_t m_linkId{0}; //!< ID of the link this Acknowledgment Manager is operating on
 };
 
 } // namespace ns3

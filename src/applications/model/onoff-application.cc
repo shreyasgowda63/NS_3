@@ -125,10 +125,9 @@ OnOffApplication::GetTypeId()
 
 OnOffApplication::OnOffApplication()
     : m_socket(nullptr),
-      m_connected(false),
-      m_residualBits(0),
+
       m_lastStartTime(Seconds(0)),
-      m_totBytes(0),
+
       m_unsentPacket(nullptr)
 {
     NS_LOG_FUNCTION(this);

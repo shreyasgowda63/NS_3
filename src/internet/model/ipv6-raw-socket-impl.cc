@@ -75,9 +75,7 @@ Ipv6RawSocketImpl::Ipv6RawSocketImpl()
     Icmpv6FilterSetPassAll();
 }
 
-Ipv6RawSocketImpl::~Ipv6RawSocketImpl()
-{
-}
+Ipv6RawSocketImpl::~Ipv6RawSocketImpl() = default;
 
 void
 Ipv6RawSocketImpl::DoDispose()

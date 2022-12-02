@@ -41,9 +41,7 @@ class BasicTracedCallbackTestCase : public TestCase
   public:
     BasicTracedCallbackTestCase();
 
-    ~BasicTracedCallbackTestCase() override
-    {
-    }
+    ~BasicTracedCallbackTestCase() override = default;
 
   private:
     void DoRun() override;

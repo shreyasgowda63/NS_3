@@ -48,9 +48,7 @@ OneIntegerTestCase::OneIntegerTestCase()
 {
 }
 
-OneIntegerTestCase::~OneIntegerTestCase()
-{
-}
+OneIntegerTestCase::~OneIntegerTestCase() = default;
 
 void
 OneIntegerTestCase::DoRun()
@@ -122,9 +120,7 @@ FiveIntegersTestCase::FiveIntegersTestCase()
 {
 }
 
-FiveIntegersTestCase::~FiveIntegersTestCase()
-{
-}
+FiveIntegersTestCase::~FiveIntegersTestCase() = default;
 
 void
 FiveIntegersTestCase::DoRun()
@@ -196,9 +192,7 @@ FiveDoublesTestCase::FiveDoublesTestCase()
 {
 }
 
-FiveDoublesTestCase::~FiveDoublesTestCase()
-{
-}
+FiveDoublesTestCase::~FiveDoublesTestCase() = default;
 
 void
 FiveDoublesTestCase::DoRun()

@@ -94,7 +94,6 @@ ErrorModel::GetTypeId()
 }
 
 ErrorModel::ErrorModel()
-    : m_enable(true)
 {
     NS_LOG_FUNCTION(this);
 }
@@ -321,10 +320,8 @@ BurstErrorModel::GetTypeId()
 }
 
 BurstErrorModel::BurstErrorModel()
-    : m_counter(0),
-      m_currentBurstSz(0)
-{
-}
+
+    = default;
 
 BurstErrorModel::~BurstErrorModel()
 {
@@ -505,7 +502,6 @@ ReceiveListErrorModel::GetTypeId()
 }
 
 ReceiveListErrorModel::ReceiveListErrorModel()
-    : m_timesInvoked(0)
 {
     NS_LOG_FUNCTION(this);
 }

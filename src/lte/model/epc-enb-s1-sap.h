@@ -37,7 +37,7 @@ namespace ns3
 class EpcEnbS1SapProvider
 {
   public:
-    virtual ~EpcEnbS1SapProvider();
+    virtual ~EpcEnbS1SapProvider() = default;
 
     /**
      * Initial UE message.
@@ -97,7 +97,7 @@ class EpcEnbS1SapProvider
 class EpcEnbS1SapUser
 {
   public:
-    virtual ~EpcEnbS1SapUser();
+    virtual ~EpcEnbS1SapUser() = default;
 
     /**
      * Parameters passed to InitialContextSetupRequest ()

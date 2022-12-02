@@ -222,11 +222,11 @@ class WifiTxTimer
                          std::set<Mac48Address>* missingStations,
                          std::size_t nTotalStations);
 
-    EventId m_timeoutEvent; //!< the timeout event after a missing response
-    Reason m_reason;        //!< the reason why the timer was started
-    Ptr<EventImpl> m_impl;  /**< the timer implementation, which contains the bound
-                                 callback function and arguments */
-    Time m_end;             //!< the absolute time when the timer will expire
+    EventId m_timeoutEvent;       //!< the timeout event after a missing response
+    Reason m_reason{NOT_RUNNING}; //!< the reason why the timer was started
+    Ptr<EventImpl> m_impl;        /**< the timer implementation, which contains the bound
+                                       callback function and arguments */
+    Time m_end;                   //!< the absolute time when the timer will expire
 
     /// the MPDU response timeout callback
     mutable MpduResponseTimeout m_mpduResponseTimeoutCallback;

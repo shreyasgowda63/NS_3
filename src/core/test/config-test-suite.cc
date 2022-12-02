@@ -203,14 +203,10 @@ class DerivedConfigTestObject : public ConfigTestObject
     static TypeId GetTypeId();
 
     /** Constructor. */
-    DerivedConfigTestObject()
-    {
-    }
+    DerivedConfigTestObject() = default;
 
     /** Destructor */
-    ~DerivedConfigTestObject() override
-    {
-    }
+    ~DerivedConfigTestObject() override = default;
 };
 
 TypeId
@@ -235,17 +231,14 @@ class BaseConfigObject : public Object
 
     /** Constructor. */
     BaseConfigObject()
-        : m_x(15)
-    {
-    }
+
+        = default;
 
     /** Destructor. */
-    ~BaseConfigObject() override
-    {
-    }
+    ~BaseConfigObject() override = default;
 
   private:
-    int8_t m_x; //!< X attribute target.
+    int8_t m_x{15}; //!< X attribute target.
 };
 
 TypeId
@@ -275,14 +268,10 @@ class DerivedConfigObject : public BaseConfigObject
     static TypeId GetTypeId();
 
     /** Constructor. */
-    DerivedConfigObject()
-    {
-    }
+    DerivedConfigObject() = default;
 
     /** Destructor. */
-    ~DerivedConfigObject() override
-    {
-    }
+    ~DerivedConfigObject() override = default;
 };
 
 TypeId
@@ -303,9 +292,7 @@ class RootNamespaceConfigTestCase : public TestCase
     RootNamespaceConfigTestCase();
 
     /** Destructor. */
-    ~RootNamespaceConfigTestCase() override
-    {
-    }
+    ~RootNamespaceConfigTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -367,9 +354,7 @@ class UnderRootNamespaceConfigTestCase : public TestCase
     UnderRootNamespaceConfigTestCase();
 
     /** Destructor. */
-    ~UnderRootNamespaceConfigTestCase() override
-    {
-    }
+    ~UnderRootNamespaceConfigTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -480,9 +465,7 @@ class ObjectVectorConfigTestCase : public TestCase
     ObjectVectorConfigTestCase();
 
     /** Destructor. */
-    ~ObjectVectorConfigTestCase() override
-    {
-    }
+    ~ObjectVectorConfigTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -640,9 +623,7 @@ class ObjectVectorTraceConfigTestCase : public TestCase
     ObjectVectorTraceConfigTestCase();
 
     /** Destructor. */
-    ~ObjectVectorTraceConfigTestCase() override
-    {
-    }
+    ~ObjectVectorTraceConfigTestCase() override = default;
 
     /**
      * Trace callback without context.
@@ -822,9 +803,7 @@ class SearchAttributesOfParentObjectsTestCase : public TestCase
     SearchAttributesOfParentObjectsTestCase();
 
     /** Destructor. */
-    ~SearchAttributesOfParentObjectsTestCase() override
-    {
-    }
+    ~SearchAttributesOfParentObjectsTestCase() override = default;
 
   private:
     void DoRun() override;

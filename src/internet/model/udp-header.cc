@@ -31,14 +31,8 @@ NS_OBJECT_ENSURE_REGISTERED(UdpHeader);
  * problems so you can see the patterns in memory.
  */
 UdpHeader::UdpHeader()
-    : m_sourcePort(0xfffd),
-      m_destinationPort(0xfffd),
-      m_payloadSize(0),
-      m_checksum(0),
-      m_calcChecksum(false),
-      m_goodChecksum(true)
-{
-}
+
+    = default;
 
 UdpHeader::~UdpHeader()
 {

@@ -94,10 +94,7 @@ Object::GetTypeId()
 
 Object::Object()
     : m_tid(Object::GetTypeId()),
-      m_disposed(false),
-      m_initialized(false),
-      m_aggregates((struct Aggregates*)std::malloc(sizeof(struct Aggregates))),
-      m_getObjectCount(0)
+      m_aggregates((struct Aggregates*)std::malloc(sizeof(struct Aggregates)))
 {
     NS_LOG_FUNCTION(this);
     m_aggregates->n = 1;
@@ -131,10 +128,7 @@ Object::~Object()
 
 Object::Object(const Object& o)
     : m_tid(o.m_tid),
-      m_disposed(false),
-      m_initialized(false),
-      m_aggregates((struct Aggregates*)std::malloc(sizeof(struct Aggregates))),
-      m_getObjectCount(0)
+      m_aggregates((struct Aggregates*)std::malloc(sizeof(struct Aggregates)))
 {
     m_aggregates->n = 1;
     m_aggregates->buffer[0] = this;
@@ -144,7 +138,7 @@ void
 Object::Construct(const AttributeConstructionList& attributes)
 {
     NS_LOG_FUNCTION(this << &attributes);
-    ConstructSelf(attributes);
+    Construct(attributes);
 }
 
 Ptr<Object>

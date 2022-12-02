@@ -54,9 +54,7 @@ LtePdcpSpecificLteRlcSapUser::LtePdcpSpecificLteRlcSapUser(LtePdcp* pdcp)
 {
 }
 
-LtePdcpSpecificLteRlcSapUser::LtePdcpSpecificLteRlcSapUser()
-{
-}
+LtePdcpSpecificLteRlcSapUser::LtePdcpSpecificLteRlcSapUser() = default;
 
 void
 LtePdcpSpecificLteRlcSapUser::ReceivePdcpPdu(Ptr<Packet> p)
@@ -69,12 +67,7 @@ LtePdcpSpecificLteRlcSapUser::ReceivePdcpPdu(Ptr<Packet> p)
 NS_OBJECT_ENSURE_REGISTERED(LtePdcp);
 
 LtePdcp::LtePdcp()
-    : m_pdcpSapUser(nullptr),
-      m_rlcSapProvider(nullptr),
-      m_rnti(0),
-      m_lcid(0),
-      m_txSequenceNumber(0),
-      m_rxSequenceNumber(0)
+
 {
     NS_LOG_FUNCTION(this);
     m_pdcpSapProvider = new LtePdcpSpecificLtePdcpSapProvider<LtePdcp>(this);

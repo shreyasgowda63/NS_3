@@ -88,9 +88,7 @@ ThreeGppChannelMatrixComputationTest::ThreeGppChannelMatrixComputationTest()
 {
 }
 
-ThreeGppChannelMatrixComputationTest::~ThreeGppChannelMatrixComputationTest()
-{
-}
+ThreeGppChannelMatrixComputationTest::~ThreeGppChannelMatrixComputationTest() = default;
 
 void
 ThreeGppChannelMatrixComputationTest::DoComputeNorm(Ptr<ThreeGppChannelModel> channelModel,
@@ -300,9 +298,7 @@ ThreeGppChannelMatrixUpdateTest::ThreeGppChannelMatrixUpdateTest()
 {
 }
 
-ThreeGppChannelMatrixUpdateTest::~ThreeGppChannelMatrixUpdateTest()
-{
-}
+ThreeGppChannelMatrixUpdateTest::~ThreeGppChannelMatrixUpdateTest() = default;
 
 void
 ThreeGppChannelMatrixUpdateTest::DoGetChannel(Ptr<ThreeGppChannelModel> channelModel,
@@ -516,9 +512,7 @@ ThreeGppSpectrumPropagationLossModelTest::ThreeGppSpectrumPropagationLossModelTe
 {
 }
 
-ThreeGppSpectrumPropagationLossModelTest::~ThreeGppSpectrumPropagationLossModelTest()
-{
-}
+ThreeGppSpectrumPropagationLossModelTest::~ThreeGppSpectrumPropagationLossModelTest() = default;
 
 void
 ThreeGppSpectrumPropagationLossModelTest::DoBeamforming(Ptr<NetDevice> thisDevice,

@@ -51,13 +51,11 @@ class Ns3TcpSocketTestCaseP2P : public TestCase
   public:
     Ns3TcpSocketTestCaseP2P();
 
-    ~Ns3TcpSocketTestCaseP2P() override
-    {
-    }
+    ~Ns3TcpSocketTestCaseP2P() override = default;
 
   private:
     void DoRun() override;
-    bool m_writeResults; //!< True if write PCAP files.
+    bool m_writeResults{false}; //!< True if write PCAP files.
 
     /**
      * Receive a TCP packet.
@@ -73,8 +71,7 @@ class Ns3TcpSocketTestCaseP2P : public TestCase
 
 Ns3TcpSocketTestCaseP2P::Ns3TcpSocketTestCaseP2P()
     : TestCase("Check that ns-3 TCP successfully transfers an application data write of various "
-               "sizes (point-to-point)"),
-      m_writeResults(false)
+               "sizes (point-to-point)")
 {
 }
 
@@ -176,13 +173,11 @@ class Ns3TcpSocketTestCaseCsma : public TestCase
   public:
     Ns3TcpSocketTestCaseCsma();
 
-    ~Ns3TcpSocketTestCaseCsma() override
-    {
-    }
+    ~Ns3TcpSocketTestCaseCsma() override = default;
 
   private:
     void DoRun() override;
-    bool m_writeResults; //!< True if write PCAP files.
+    bool m_writeResults{false}; //!< True if write PCAP files.
 
     /**
      * Receive a TCP packet.
@@ -198,8 +193,7 @@ class Ns3TcpSocketTestCaseCsma : public TestCase
 
 Ns3TcpSocketTestCaseCsma::Ns3TcpSocketTestCaseCsma()
     : TestCase("Check to see that ns-3 TCP successfully transfers an application data write of "
-               "various sizes (CSMA)"),
-      m_writeResults(false)
+               "various sizes (CSMA)")
 {
 }
 

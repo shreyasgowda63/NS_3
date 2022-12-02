@@ -39,7 +39,6 @@ WifiProtectionManager::GetTypeId()
 }
 
 WifiProtectionManager::WifiProtectionManager()
-    : m_linkId(0)
 {
     NS_LOG_FUNCTION(this);
 }

@@ -189,8 +189,8 @@ class PointerChecker : public ns3::PointerChecker
 
 template <typename T>
 PointerValue::PointerValue(const Ptr<T>& object)
+    : m_value(object)
 {
-    m_value = object;
 }
 
 template <typename T>

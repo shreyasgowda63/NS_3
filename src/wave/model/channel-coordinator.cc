@@ -28,9 +28,7 @@ NS_LOG_COMPONENT_DEFINE("ChannelCoordinator");
  *       This destructor is needed.
  ****************************************************************/
 
-ChannelCoordinationListener::~ChannelCoordinationListener()
-{
-}
+ChannelCoordinationListener::~ChannelCoordinationListener() = default;
 
 /****************************************************************/
 
@@ -62,7 +60,6 @@ ChannelCoordinator::GetTypeId()
 }
 
 ChannelCoordinator::ChannelCoordinator()
-    : m_guardCount(0)
 {
     NS_LOG_FUNCTION(this);
 }

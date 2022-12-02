@@ -208,7 +208,7 @@ class Ipv4EndPoint
     /**
      * \brief The peer port.
      */
-    uint16_t m_peerPort;
+    uint16_t m_peerPort{0};
 
     /**
      * \brief The NetDevice the EndPoint is bound to (if any).
@@ -233,7 +233,7 @@ class Ipv4EndPoint
     /**
      * \brief true if the endpoint can receive packets.
      */
-    bool m_rxEnabled;
+    bool m_rxEnabled{true};
 };
 
 } // namespace ns3

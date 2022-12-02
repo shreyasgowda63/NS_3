@@ -28,9 +28,7 @@
 namespace ns3
 {
 
-Ipv6InterfaceContainer::Ipv6InterfaceContainer()
-{
-}
+Ipv6InterfaceContainer::Ipv6InterfaceContainer() = default;
 
 Ipv6InterfaceContainer::Iterator
 Ipv6InterfaceContainer::Begin() const

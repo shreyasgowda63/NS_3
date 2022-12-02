@@ -173,16 +173,20 @@ class MeshHelper
     Ptr<WifiNetDevice> CreateInterface(const WifiPhyHelper& phyHelper,
                                        Ptr<Node> node,
                                        uint16_t channelId) const;
-    uint32_t m_nInterfaces;              ///< number of interfaces
-    ChannelPolicy m_spreadChannelPolicy; ///< spread channel policy
-    Ptr<MeshStack> m_stack;              ///< stack
-    ObjectFactory m_stackFactory;        ///< stack factory
+    uint32_t m_nInterfaces{1};                         ///< number of interfaces
+    ChannelPolicy m_spreadChannelPolicy{ZERO_CHANNEL}; ///< spread channel policy
+    Ptr<MeshStack> m_stack;                            ///< stack
+    ObjectFactory m_stackFactory;                      ///< stack factory
 
     // Interface factory
     ObjectFactory m_mac;                  ///< the MAC
     ObjectFactory m_stationManager;       ///< the station manager
     ObjectFactory m_ackPolicySelector[4]; ///< ack policy selector for all ACs
-    enum WifiStandard m_standard;         ///< standard
+
+    enum WifiStandard m_standard
+    {
+        WIFI_STANDARD_80211a
+    }; ///< standard
 };
 
 /***************************************************************

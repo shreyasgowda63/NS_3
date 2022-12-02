@@ -35,9 +35,7 @@ NodeContainer::GetGlobal()
     return c;
 }
 
-NodeContainer::NodeContainer()
-{
-}
+NodeContainer::NodeContainer() = default;
 
 NodeContainer::NodeContainer(Ptr<Node> node)
 {

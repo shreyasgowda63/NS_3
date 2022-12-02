@@ -49,10 +49,8 @@ class TcpSocketAdvertisedWindowProxy : public TcpSocketMsgBase
      * \brief Constructor
      */
     TcpSocketAdvertisedWindowProxy()
-        : TcpSocketMsgBase(),
-          m_segmentSize(0)
-    {
-    }
+
+        = default;
 
     /**
      * \brief Copy-constructor
@@ -60,11 +58,8 @@ class TcpSocketAdvertisedWindowProxy : public TcpSocketMsgBase
      * \param other Other obj
      */
     TcpSocketAdvertisedWindowProxy(const TcpSocketAdvertisedWindowProxy& other)
-        : TcpSocketMsgBase(other)
-    {
-        m_segmentSize = other.m_segmentSize;
-        m_inwalidAwndCb = other.m_inwalidAwndCb;
-    }
+
+        = default;
 
     /**
      * \brief Set the invalid AdvWnd callback
@@ -97,7 +92,7 @@ class TcpSocketAdvertisedWindowProxy : public TcpSocketMsgBase
      * This is necessary for making sure the calculated awnd only differs by
      * exactly that one segment that was not yet read by the application.
      */
-    uint16_t m_segmentSize;
+    uint16_t m_segmentSize{0};
 };
 
 void
@@ -225,8 +220,7 @@ class TcpDropRatioErrorModel : public TcpGeneralErrorModel
      * \param dropRatio the drop ratio
      */
     TcpDropRatioErrorModel(double dropRatio)
-        : TcpGeneralErrorModel(),
-          m_dropRatio(dropRatio)
+        : m_dropRatio(dropRatio)
     {
         m_prng = CreateObject<UniformRandomVariable>();
     }

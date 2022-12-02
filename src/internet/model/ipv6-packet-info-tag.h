@@ -134,10 +134,10 @@ class Ipv6PacketInfoTag : public Tag
      *  3.  the arriving hop limit, and
      *  4.  the arriving traffic class value.
      */
-    Ipv6Address m_addr; //!< the packet address (src or dst)
-    uint8_t m_ifindex;  //!< the Interface index
-    uint8_t m_hoplimit; //!< the Hop Limit
-    uint8_t m_tclass;   //!< the Traffic Class
+    Ipv6Address m_addr;    //!< the packet address (src or dst)
+    uint8_t m_ifindex{0};  //!< the Interface index
+    uint8_t m_hoplimit{0}; //!< the Hop Limit
+    uint8_t m_tclass{0};   //!< the Traffic Class
 };
 } // namespace ns3
 

@@ -118,21 +118,19 @@ class LteMacSapUser
                                 uint8_t ccId,
                                 uint16_t rnti,
                                 uint8_t lcId)
+            : bytes(bytes),
+              layer(layer),
+              harqId(harqId),
+              componentCarrierId(ccId),
+              rnti(rnti),
+              lcid(lcId)
         {
-            this->bytes = bytes;
-            this->layer = layer;
-            this->harqId = harqId;
-            this->componentCarrierId = ccId;
-            this->rnti = rnti;
-            this->lcid = lcId;
         }
 
         /**
          * \brief TxOpportunityParameters default constructor (DEPRECATED)
          */
-        TxOpportunityParameters()
-        {
-        }
+        TxOpportunityParameters() = default;
 
         uint32_t bytes;             /**< the number of bytes to transmit */
         uint8_t layer;              /**<  the layer of transmission (MIMO) */
@@ -167,9 +165,7 @@ class LteMacSapUser
         /**
          * \brief ReceivePduParameters default constructor (DEPRECATED)
          */
-        ReceivePduParameters()
-        {
-        }
+        ReceivePduParameters() = default;
 
         /**
          * \brief ReceivePduParameters constructor
@@ -178,10 +174,10 @@ class LteMacSapUser
          * \param lcid Logical Channel ID
          */
         ReceivePduParameters(const Ptr<Packet>& p, uint16_t rnti, uint8_t lcid)
+            : p(p),
+              rnti(rnti),
+              lcid(lcid)
         {
-            this->p = p;
-            this->rnti = rnti;
-            this->lcid = lcid;
         }
 
         Ptr<Packet> p; /**< the RLC PDU to be received */

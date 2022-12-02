@@ -36,10 +36,7 @@ EpcSgwApplication::EpcSgwApplication(const Ptr<Socket> s1uSocket,
     : m_s5Addr(s5Addr),
       m_s5uSocket(s5uSocket),
       m_s5cSocket(s5cSocket),
-      m_s1uSocket(s1uSocket),
-      m_gtpuUdpPort(2152), // fixed by the standard
-      m_gtpcUdpPort(2123), // fixed by the standard
-      m_teidCount(0)
+      m_s1uSocket(s1uSocket)
 {
     NS_LOG_FUNCTION(this << s1uSocket << s5Addr << s5uSocket << s5cSocket);
     m_s1uSocket->SetRecvCallback(MakeCallback(&EpcSgwApplication::RecvFromS1uSocket, this));

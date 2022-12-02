@@ -42,7 +42,7 @@ namespace ns3
 class LteCcmMacSapProvider
 {
   public:
-    virtual ~LteCcmMacSapProvider();
+    virtual ~LteCcmMacSapProvider() = default;
 
     /**
      * \brief Add the Buffer Status Report to the list.
@@ -75,7 +75,7 @@ class LteCcmMacSapProvider
 class LteCcmMacSapUser : public LteMacSapUser
 {
   public:
-    ~LteCcmMacSapUser() override;
+    ~LteCcmMacSapUser() override = default;
     /**
      * \brief When the Primary Component carrier receive a buffer status report
      *  it is sent to the CCM.

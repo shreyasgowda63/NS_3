@@ -104,8 +104,7 @@ PrintList::PrintList()
 LogComponent::LogComponent(const std::string& name,
                            const std::string& file,
                            const enum LogLevel mask /* = 0 */)
-    : m_levels(0),
-      m_mask(mask),
+    : m_mask(mask),
       m_name(name),
       m_file(file)
 {

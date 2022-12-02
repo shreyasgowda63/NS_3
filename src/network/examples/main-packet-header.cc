@@ -14,8 +14,9 @@ using namespace ns3;
 class MyHeader : public Header
 {
   public:
-    MyHeader();
-    ~MyHeader() override;
+    // We must provide a public default constructor, implicit or explicit, but never private
+    MyHeader() = default;
+    ~MyHeader() override = default;
 
     /**
      * Set the header data.
@@ -42,16 +43,6 @@ class MyHeader : public Header
   private:
     uint16_t m_data; //!< Header data
 };
-
-MyHeader::MyHeader()
-{
-    // we must provide a public default constructor,
-    // implicit or explicit, but never private.
-}
-
-MyHeader::~MyHeader()
-{
-}
 
 TypeId
 MyHeader::GetTypeId()

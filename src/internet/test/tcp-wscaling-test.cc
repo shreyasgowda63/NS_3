@@ -77,11 +77,11 @@ WScalingTestCase::WScalingTestCase(WScalingTestCase::Configuration conf,
                                    uint32_t maxRcvBufferSize,
                                    uint32_t maxSndBufferSize,
                                    std::string name)
-    : TcpGeneralTest(name)
+    : TcpGeneralTest(name),
+      m_configuration(conf),
+      m_maxRcvBufferSize(maxRcvBufferSize),
+      m_maxSndBufferSize(maxSndBufferSize)
 {
-    m_configuration = conf;
-    m_maxRcvBufferSize = maxRcvBufferSize;
-    m_maxSndBufferSize = maxSndBufferSize;
 }
 
 Ptr<TcpSocketMsgBase>

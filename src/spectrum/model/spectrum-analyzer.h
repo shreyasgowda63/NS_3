@@ -129,7 +129,7 @@ class SpectrumAnalyzer : public SpectrumPhy
     double m_noisePowerSpectralDensity;           //!< Noise power spectral density
     Time m_resolution;                            //!< Time resolution
     Time m_lastChangeTime;                        //!< When the last update happened
-    bool m_active;                                //!< True if the analyzer is active
+    bool m_active{false};                         //!< True if the analyzer is active
 
     /// TracedCallback - average power spectral density report.
     TracedCallback<Ptr<const SpectrumValue>> m_averagePowerSpectralDensityReportTrace;

@@ -271,7 +271,7 @@ struct WifiDlMuTfMuBar : public WifiAcknowledgment
     /// Set of stations replying with a BlockAck frame
     std::map<Mac48Address, BlockAckInfo> stationsReplyingWithBlockAck;
     std::list<BlockAckReqType> barTypes; //!< BAR types
-    uint16_t ulLength;                   //!< the UL Length field of the MU-BAR Trigger Frame
+    uint16_t ulLength{0};                //!< the UL Length field of the MU-BAR Trigger Frame
     WifiTxVector muBarTxVector;          //!< TXVECTOR used to transmit the MU-BAR Trigger Frame
 };
 
@@ -303,7 +303,7 @@ struct WifiDlMuAggregateTf : public WifiAcknowledgment
 
     /// Set of stations replying with a BlockAck frame
     std::map<Mac48Address, BlockAckInfo> stationsReplyingWithBlockAck;
-    uint16_t ulLength; //!< the UL Length field of the MU-BAR Trigger Frames
+    uint16_t ulLength{0}; //!< the UL Length field of the MU-BAR Trigger Frames
 };
 
 /**

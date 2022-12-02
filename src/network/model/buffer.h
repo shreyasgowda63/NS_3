@@ -99,7 +99,7 @@ class Buffer
     class Iterator
     {
       public:
-        inline Iterator();
+        Iterator() = default;
         /**
          * go forward by one byte
          */
@@ -457,32 +457,32 @@ class Buffer
          * offset in virtual bytes from the start of the data buffer to the
          * start of the "virtual zero area".
          */
-        uint32_t m_zeroStart;
+        uint32_t m_zeroStart{0};
         /**
          * offset in virtual bytes from the start of the data buffer to the
          * end of the "virtual zero area".
          */
-        uint32_t m_zeroEnd;
+        uint32_t m_zeroEnd{0};
         /**
          * offset in virtual bytes from the start of the data buffer to the
          * start of the data which can be read by this iterator
          */
-        uint32_t m_dataStart;
+        uint32_t m_dataStart{0};
         /**
          * offset in virtual bytes from the start of the data buffer to the
          * end of the data which can be read by this iterator
          */
-        uint32_t m_dataEnd;
+        uint32_t m_dataEnd{0};
         /**
          * offset in virtual bytes from the start of the data buffer to the
          * current position represented by this iterator.
          */
-        uint32_t m_current;
+        uint32_t m_current{0};
         /**
          * a pointer to the underlying byte buffer. All offsets are relative
          * to this pointer.
          */
-        uint8_t* m_data;
+        uint8_t* m_data{nullptr};
     };
 
     /**
@@ -817,26 +817,16 @@ class Buffer
 namespace ns3
 {
 
-Buffer::Iterator::Iterator()
-    : m_zeroStart(0),
-      m_zeroEnd(0),
-      m_dataStart(0),
-      m_dataEnd(0),
-      m_current(0),
-      m_data(nullptr)
-{
-}
-
 Buffer::Iterator::Iterator(const Buffer* buffer)
+    : m_current(m_dataStart)
 {
     Construct(buffer);
-    m_current = m_dataStart;
 }
 
 Buffer::Iterator::Iterator(const Buffer* buffer, bool dummy)
+    : m_current(m_dataEnd)
 {
     Construct(buffer);
-    m_current = m_dataEnd;
 }
 
 void

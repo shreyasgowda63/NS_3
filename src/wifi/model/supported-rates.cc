@@ -32,8 +32,7 @@ NS_LOG_COMPONENT_DEFINE("SupportedRates");
 #define BSS_MEMBERSHIP_SELECTOR_EHT_PHY 121 // TODO not defined yet as of 802.11be D1.4
 
 SupportedRates::SupportedRates()
-    : extended(this),
-      m_nRates(0)
+    : extended(this)
 {
     NS_LOG_FUNCTION(this);
 }
@@ -204,13 +203,11 @@ SupportedRates::DeserializeInformationField(Buffer::Iterator start, uint16_t len
     return m_nRates;
 }
 
-ExtendedSupportedRatesIE::ExtendedSupportedRatesIE()
-{
-}
+ExtendedSupportedRatesIE::ExtendedSupportedRatesIE() = default;
 
 ExtendedSupportedRatesIE::ExtendedSupportedRatesIE(SupportedRates* sr)
+    : m_supportedRates(sr)
 {
-    m_supportedRates = sr;
 }
 
 WifiInformationElementId

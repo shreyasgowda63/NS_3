@@ -39,7 +39,7 @@ namespace ns3
 class EpcS1apSap
 {
   public:
-    virtual ~EpcS1apSap();
+    virtual ~EpcS1apSap() = default;
 };
 
 /**

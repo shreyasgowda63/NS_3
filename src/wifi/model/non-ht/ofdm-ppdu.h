@@ -97,9 +97,9 @@ class OfdmPpdu : public WifiPpdu
         uint16_t GetLength() const;
 
       private:
-        uint8_t m_rate;    ///< RATE field
-        uint16_t m_length; ///< LENGTH field
-    };                     // class LSigHeader
+        uint8_t m_rate{0b1101}; ///< RATE field
+        uint16_t m_length{0};   ///< LENGTH field
+    };                          // class LSigHeader
 
     /**
      * Create an OFDM PPDU.

@@ -30,7 +30,6 @@ namespace ns3
 std::vector<int> WaveBsmHelper::nodesMoving;
 
 WaveBsmHelper::WaveBsmHelper()
-    : m_waveBsmStats()
 {
     m_txSafetyRangesSq.resize(10, 0);
     m_txSafetyRangesSq[0] = 50.0 * 50.0;

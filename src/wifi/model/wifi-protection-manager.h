@@ -98,8 +98,8 @@ class WifiProtectionManager : public Object
      */
     Ptr<WifiRemoteStationManager> GetWifiRemoteStationManager() const;
 
-    Ptr<WifiMac> m_mac; //!< MAC which is using this Protection Manager
-    uint8_t m_linkId;   //!< ID of the link this Protection Manager is operating on
+    Ptr<WifiMac> m_mac;  //!< MAC which is using this Protection Manager
+    uint8_t m_linkId{0}; //!< ID of the link this Protection Manager is operating on
 };
 
 } // namespace ns3

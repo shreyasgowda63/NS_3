@@ -31,9 +31,7 @@ LiIonEnergySourceHelper::LiIonEnergySourceHelper()
     m_liIonEnergySource.SetTypeId("ns3::LiIonEnergySource");
 }
 
-LiIonEnergySourceHelper::~LiIonEnergySourceHelper()
-{
-}
+LiIonEnergySourceHelper::~LiIonEnergySourceHelper() = default;
 
 void
 LiIonEnergySourceHelper::Set(std::string name, const AttributeValue& v)

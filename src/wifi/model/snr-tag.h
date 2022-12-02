@@ -65,7 +65,7 @@ class SnrTag : public Tag
     double Get() const;
 
   private:
-    double m_snr; //!< SNR value in linear scale
+    double m_snr{0}; //!< SNR value in linear scale
 };
 
 } // namespace ns3

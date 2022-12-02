@@ -35,14 +35,10 @@ NS_LOG_COMPONENT_DEFINE("UanMacAloha");
 NS_OBJECT_ENSURE_REGISTERED(UanMacAloha);
 
 UanMacAloha::UanMacAloha()
-    : UanMac(),
-      m_cleared(false)
-{
-}
 
-UanMacAloha::~UanMacAloha()
-{
-}
+    = default;
+
+UanMacAloha::~UanMacAloha() = default;
 
 void
 UanMacAloha::Clear()

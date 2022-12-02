@@ -30,16 +30,16 @@ namespace ns3
 {
 
 ServiceFlow::ServiceFlow(Direction direction)
+    : m_direction(direction),
+      m_isEnabled(false),
+
+      m_record(new ServiceFlowRecord()),
+      m_sfid(0),
+      m_type(SF_TYPE_PROVISIONED)
 {
     InitValues();
-    m_direction = direction;
-    m_type = SF_TYPE_PROVISIONED;
-    m_record = new ServiceFlowRecord();
-    m_sfid = 0;
+
     m_connection = nullptr;
-    m_isEnabled = false;
-    m_isMulticast = false;
-    m_modulationType = WimaxPhy::MODULATION_TYPE_QPSK_12;
 }
 
 ServiceFlow::ServiceFlow()
@@ -51,30 +51,29 @@ ServiceFlow::ServiceFlow()
       m_record(new ServiceFlowRecord())
 {
     InitValues();
-    m_isMulticast = false;
-    m_modulationType = WimaxPhy::MODULATION_TYPE_QPSK_12;
 }
 
 ServiceFlow::ServiceFlow(uint32_t sfid, Direction direction, Ptr<WimaxConnection> connection)
+    : m_record(new ServiceFlowRecord()),
+      m_connection(connection),
+      m_direction(direction),
+      m_isEnabled(false),
+
+      m_sfid(sfid),
+      m_type(SF_TYPE_PROVISIONED)
 {
     InitValues();
-    m_record = new ServiceFlowRecord();
-    m_isEnabled = false;
-    m_connection = connection;
+
     m_connection->SetServiceFlow(this);
-    m_type = SF_TYPE_PROVISIONED;
-    m_direction = direction;
-    m_sfid = sfid;
-    m_isMulticast = false;
-    m_modulationType = WimaxPhy::MODULATION_TYPE_QPSK_12;
 }
 
 ServiceFlow::ServiceFlow(Tlv tlv)
+    : m_isEnabled(0),
+      m_record(new ServiceFlowRecord())
 {
     InitValues();
     m_connection = nullptr;
-    m_isEnabled = 0;
-    m_record = new ServiceFlowRecord();
+
     NS_ASSERT_MSG(tlv.GetType() == Tlv::UPLINK_SERVICE_FLOW ||
                       tlv.GetType() == Tlv::DOWNLINK_SERVICE_FLOW,
                   "Invalid TLV");
@@ -743,38 +742,41 @@ ServiceFlow::CopyParametersFrom(ServiceFlow sf)
 }
 
 ServiceFlow::ServiceFlow(const ServiceFlow& sf)
+    : m_sfid(sf.GetSfid()),
+      m_arqEnable(sf.GetArqEnable()),
+      m_arqRetryTimeoutRx(sf.GetArqRetryTimeoutRx()),
+      m_arqRetryTimeoutTx(sf.GetArqRetryTimeoutTx()),
+      m_arqWindowSize(sf.GetArqWindowSize()),
+      m_csSpecification(sf.GetCsSpecification()),
+      m_direction(sf.GetDirection()),
+      m_fixedversusVariableSduIndicator(sf.GetFixedversusVariableSduIndicator()),
+      m_isEnabled(sf.GetIsEnabled()),
+      m_isMulticast(sf.GetIsMulticast()),
+      m_maxSustainedTrafficRate(sf.GetMaxSustainedTrafficRate()),
+      m_maxTrafficBurst(sf.GetMaxTrafficBurst()),
+      m_maximumLatency(sf.GetMaximumLatency()),
+      m_minReservedTrafficRate(sf.GetMinReservedTrafficRate()),
+      m_minTolerableTrafficRate(sf.GetMinTolerableTrafficRate()),
+      m_modulationType(sf.GetModulation()),
+      m_qosParamSetType(sf.GetQosParamSetType()),
+      m_record(new ServiceFlowRecord()),
+      m_requestTransmissionPolicy(sf.GetRequestTransmissionPolicy()),
+      m_schedulingType(sf.GetServiceSchedulingType()),
+      m_sduSize(sf.GetSduSize()),
+      m_targetSAID(sf.GetTargetSAID()),
+      m_toleratedJitter(sf.GetToleratedJitter()),
+      m_trafficPriority(sf.GetTrafficPriority()),
+      m_type(sf.GetType()),
+      m_unsolicitedGrantInterval(sf.GetUnsolicitedGrantInterval()),
+      m_unsolicitedPollingInterval(sf.GetUnsolicitedPollingInterval())
 {
-    m_sfid = sf.GetSfid();
     m_serviceClassName = sf.GetServiceClassName();
-    m_qosParamSetType = sf.GetQosParamSetType();
-    m_trafficPriority = sf.GetTrafficPriority();
-    m_maxSustainedTrafficRate = sf.GetMaxSustainedTrafficRate();
-    m_maxTrafficBurst = sf.GetMaxTrafficBurst();
-    m_minReservedTrafficRate = sf.GetMinReservedTrafficRate();
-    m_minTolerableTrafficRate = sf.GetMinTolerableTrafficRate();
-    m_schedulingType = sf.GetServiceSchedulingType();
-    m_requestTransmissionPolicy = sf.GetRequestTransmissionPolicy();
-    m_toleratedJitter = sf.GetToleratedJitter();
-    m_maximumLatency = sf.GetMaximumLatency();
-    m_fixedversusVariableSduIndicator = sf.GetFixedversusVariableSduIndicator();
-    m_sduSize = sf.GetSduSize();
-    m_targetSAID = sf.GetTargetSAID();
-    m_arqEnable = sf.GetArqEnable();
-    m_arqWindowSize = sf.GetArqWindowSize();
-    m_arqRetryTimeoutTx = sf.GetArqRetryTimeoutTx();
-    m_arqRetryTimeoutRx = sf.GetArqRetryTimeoutRx();
-    m_csSpecification = sf.GetCsSpecification();
+
     m_convergenceSublayerParam = sf.GetConvergenceSublayerParam();
-    m_unsolicitedGrantInterval = sf.GetUnsolicitedGrantInterval();
-    m_unsolicitedPollingInterval = sf.GetUnsolicitedPollingInterval();
-    m_direction = sf.GetDirection();
-    m_type = sf.GetType();
+
     m_connection = sf.GetConnection();
-    m_isEnabled = sf.GetIsEnabled();
-    m_record = new ServiceFlowRecord();
+
     (*m_record) = (*sf.GetRecord());
-    m_isMulticast = sf.GetIsMulticast();
-    m_modulationType = sf.GetModulation();
 }
 
 ServiceFlow&

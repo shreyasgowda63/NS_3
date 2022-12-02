@@ -28,11 +28,7 @@ NS_LOG_COMPONENT_DEFINE("SllHeader");
 NS_OBJECT_ENSURE_REGISTERED(SllHeader);
 
 SllHeader::SllHeader()
-    : m_packetType(UNICAST_FROM_PEER_TO_ME),
-      m_arphdType(0),
-      m_addressLength(0),
-      m_address(0),
-      m_protocolType(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

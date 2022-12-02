@@ -32,9 +32,7 @@
 namespace ns3
 {
 
-Ipv6RoutingHelper::~Ipv6RoutingHelper()
-{
-}
+Ipv6RoutingHelper::~Ipv6RoutingHelper() = default;
 
 void
 Ipv6RoutingHelper::PrintRoutingTableAllAt(Time printTime,

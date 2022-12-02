@@ -29,14 +29,6 @@ NS_LOG_COMPONENT_DEFINE("LteHandoverAlgorithm");
 
 NS_OBJECT_ENSURE_REGISTERED(LteHandoverAlgorithm);
 
-LteHandoverAlgorithm::LteHandoverAlgorithm()
-{
-}
-
-LteHandoverAlgorithm::~LteHandoverAlgorithm()
-{
-}
-
 TypeId
 LteHandoverAlgorithm::GetTypeId()
 {

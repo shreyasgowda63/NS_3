@@ -34,9 +34,7 @@ PhasedArraySpectrumPropagationLossModel::PhasedArraySpectrumPropagationLossModel
 {
 }
 
-PhasedArraySpectrumPropagationLossModel::~PhasedArraySpectrumPropagationLossModel()
-{
-}
+PhasedArraySpectrumPropagationLossModel::~PhasedArraySpectrumPropagationLossModel() = default;
 
 void
 PhasedArraySpectrumPropagationLossModel::DoDispose()

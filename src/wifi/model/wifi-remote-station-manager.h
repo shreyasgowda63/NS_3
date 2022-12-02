@@ -65,7 +65,7 @@ struct RxSignalInfo;
  */
 struct WifiRemoteStation
 {
-    virtual ~WifiRemoteStation(){};
+    virtual ~WifiRemoteStation() = default;
     WifiRemoteStationState* m_state; //!< Remote station state
     std::pair<double, Time>
         m_rssiAndUpdateTimePair; //!< RSSI (in dBm) of the most recent packet received from the
@@ -1429,18 +1429,18 @@ class WifiRemoteStationManager : public Object
     WifiMode m_defaultTxMode; //!< The default transmission mode
     WifiMode m_defaultTxMcs;  //!< The default transmission modulation-coding scheme (MCS)
 
-    uint32_t m_maxSsrc;                //!< Maximum STA short retry count (SSRC)
-    uint32_t m_maxSlrc;                //!< Maximum STA long retry count (SLRC)
-    uint32_t m_rtsCtsThreshold;        //!< Threshold for RTS/CTS
-    uint32_t m_fragmentationThreshold; //!< Current threshold for fragmentation
-    uint8_t m_defaultTxPowerLevel;     //!< Default transmission power level
-    WifiMode m_nonUnicastMode;         //!< Transmission mode for non-unicast Data frames
-    bool m_useNonErpProtection;        //!< flag if protection for non-ERP stations against ERP
-                                       //!< transmissions is enabled
-    bool m_useNonHtProtection; //!< flag if protection for non-HT stations against HT transmissions
-                               //!< is enabled
-    bool m_shortPreambleEnabled;        //!< flag if short PHY preamble is enabled
-    bool m_shortSlotTimeEnabled;        //!< flag if short slot time is enabled
+    uint32_t m_maxSsrc;                 //!< Maximum STA short retry count (SSRC)
+    uint32_t m_maxSlrc;                 //!< Maximum STA long retry count (SLRC)
+    uint32_t m_rtsCtsThreshold;         //!< Threshold for RTS/CTS
+    uint32_t m_fragmentationThreshold;  //!< Current threshold for fragmentation
+    uint8_t m_defaultTxPowerLevel;      //!< Default transmission power level
+    WifiMode m_nonUnicastMode;          //!< Transmission mode for non-unicast Data frames
+    bool m_useNonErpProtection{false};  //!< flag if protection for non-ERP stations against ERP
+                                        //!< transmissions is enabled
+    bool m_useNonHtProtection{false};   //!< flag if protection for non-HT stations against HT
+                                        //!< transmissions is enabled
+    bool m_shortPreambleEnabled{false}; //!< flag if short PHY preamble is enabled
+    bool m_shortSlotTimeEnabled{false}; //!< flag if short slot time is enabled
     ProtectionMode m_erpProtectionMode; //!< Protection mode for ERP stations when non-ERP stations
                                         //!< are detected
     ProtectionMode

@@ -111,20 +111,20 @@ class LteFfrSoftAlgorithm : public LteFfrAlgorithm
     void InitializeUplinkRbgMaps();
 
     // FFR SAP
-    LteFfrSapUser* m_ffrSapUser;         ///< FFR SAP user
-    LteFfrSapProvider* m_ffrSapProvider; ///< FFR SAP provider
+    LteFfrSapUser* m_ffrSapUser{nullptr}; ///< FFR SAP user
+    LteFfrSapProvider* m_ffrSapProvider;  ///< FFR SAP provider
 
     // FFR RRF SAP
-    LteFfrRrcSapUser* m_ffrRrcSapUser;         ///< FFR RRC SAP user
-    LteFfrRrcSapProvider* m_ffrRrcSapProvider; ///< FFR RRC SAP provider
+    LteFfrRrcSapUser* m_ffrRrcSapUser{nullptr}; ///< FFR RRC SAP user
+    LteFfrRrcSapProvider* m_ffrRrcSapProvider;  ///< FFR RRC SAP provider
 
-    uint8_t m_dlCommonSubBandwidth; ///< DL common subbandwidth
-    uint8_t m_dlEdgeSubBandOffset;  ///< DL edge subband offset
-    uint8_t m_dlEdgeSubBandwidth;   ///< DL edge subbandwidth
+    uint8_t m_dlCommonSubBandwidth;   ///< DL common subbandwidth
+    uint8_t m_dlEdgeSubBandOffset{0}; ///< DL edge subband offset
+    uint8_t m_dlEdgeSubBandwidth{0};  ///< DL edge subbandwidth
 
-    uint8_t m_ulCommonSubBandwidth; ///< UL common subbandwidth
-    uint8_t m_ulEdgeSubBandOffset;  ///< UL edge subband offset
-    uint8_t m_ulEdgeSubBandwidth;   ///< UL edge subbandwidth
+    uint8_t m_ulCommonSubBandwidth;   ///< UL common subbandwidth
+    uint8_t m_ulEdgeSubBandOffset{0}; ///< UL edge subband offset
+    uint8_t m_ulEdgeSubBandwidth{0};  ///< UL edge subbandwidth
 
     std::vector<bool> m_dlRbgMap; ///< DL RBG Map
     std::vector<bool> m_ulRbgMap; ///< UL RBG map
@@ -161,7 +161,7 @@ class LteFfrSoftAlgorithm : public LteFfrAlgorithm
     uint8_t m_edgeAreaTpc;   ///< edge area tpc
 
     /// The expected measurement identity
-    uint8_t m_measId;
+    uint8_t m_measId{0};
 
 }; // end of class LteFfrSoftAlgorithm
 

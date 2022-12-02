@@ -96,8 +96,7 @@ AmrrWifiManager::GetTypeId()
 }
 
 AmrrWifiManager::AmrrWifiManager()
-    : WifiRemoteStationManager(),
-      m_currentRate(0)
+    : m_currentRate(0)
 {
     NS_LOG_FUNCTION(this);
 }

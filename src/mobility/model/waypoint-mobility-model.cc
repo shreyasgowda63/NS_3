@@ -69,15 +69,10 @@ WaypointMobilityModel::GetTypeId()
 }
 
 WaypointMobilityModel::WaypointMobilityModel()
-    : m_first(true),
-      m_lazyNotify(false),
-      m_initialPositionIsWaypoint(false)
-{
-}
 
-WaypointMobilityModel::~WaypointMobilityModel()
-{
-}
+    = default;
+
+WaypointMobilityModel::~WaypointMobilityModel() = default;
 
 void
 WaypointMobilityModel::DoDispose()

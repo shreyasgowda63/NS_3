@@ -28,17 +28,10 @@ namespace ns3
 namespace dot11s
 {
 
-IeRann::~IeRann()
-{
-}
+IeRann::~IeRann() = default;
 
 IeRann::IeRann()
-    : m_flags(0),
-      m_hopcount(0),
-      m_ttl(0),
-      m_originatorAddress(Mac48Address::GetBroadcast()),
-      m_destSeqNumber(0),
-      m_metric(0)
+    : m_originatorAddress(Mac48Address::GetBroadcast())
 {
 }
 

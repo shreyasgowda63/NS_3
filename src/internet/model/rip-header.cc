@@ -30,11 +30,9 @@ namespace ns3
 NS_OBJECT_ENSURE_REGISTERED(RipRte);
 
 RipRte::RipRte()
-    : m_tag(0),
-      m_prefix("127.0.0.1"),
+    : m_prefix("127.0.0.1"),
       m_subnetMask("0.0.0.0"),
-      m_nextHop("0.0.0.0"),
-      m_metric(16)
+      m_nextHop("0.0.0.0")
 {
 }
 
@@ -173,9 +171,8 @@ NS_LOG_COMPONENT_DEFINE("RipHeader");
 NS_OBJECT_ENSURE_REGISTERED(RipHeader);
 
 RipHeader::RipHeader()
-    : m_command(0)
-{
-}
+
+    = default;
 
 TypeId
 RipHeader::GetTypeId()

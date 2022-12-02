@@ -115,7 +115,7 @@ class A3RsrpHandoverAlgorithm : public LteHandoverAlgorithm
     Time m_timeToTrigger;
 
     /// Interface to the eNodeB RRC instance.
-    LteHandoverManagementSapUser* m_handoverManagementSapUser;
+    LteHandoverManagementSapUser* m_handoverManagementSapUser{nullptr};
     /// Receive API calls from the eNodeB RRC instance.
     LteHandoverManagementSapProvider* m_handoverManagementSapProvider;
 

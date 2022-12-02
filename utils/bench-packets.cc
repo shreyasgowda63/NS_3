@@ -67,14 +67,13 @@ class BenchHeader : public Header
      * \returns the type name string
      */
     static std::string GetTypeName();
-    bool m_ok; ///< variable to track whether deserialization succeeded
+    bool m_ok{false}; ///< variable to track whether deserialization succeeded
 };
 
 template <int N>
 BenchHeader<N>::BenchHeader()
-    : m_ok(false)
-{
-}
+
+    = default;
 
 template <int N>
 bool

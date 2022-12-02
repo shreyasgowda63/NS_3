@@ -46,13 +46,9 @@ NS_LOG_COMPONENT_DEFINE("UanPhyDual");
 NS_OBJECT_ENSURE_REGISTERED(UanPhyDual);
 NS_OBJECT_ENSURE_REGISTERED(UanPhyCalcSinrDual);
 
-UanPhyCalcSinrDual::UanPhyCalcSinrDual()
-{
-}
+UanPhyCalcSinrDual::UanPhyCalcSinrDual() = default;
 
-UanPhyCalcSinrDual::~UanPhyCalcSinrDual()
-{
-}
+UanPhyCalcSinrDual::~UanPhyCalcSinrDual() = default;
 
 TypeId
 UanPhyCalcSinrDual::GetTypeId()
@@ -124,11 +120,10 @@ UanPhyCalcSinrDual::CalcSinrDb(Ptr<Packet> pkt,
 }
 
 UanPhyDual::UanPhyDual()
-    : UanPhy()
+    : UanPhy(),
+      m_phy1(CreateObject<UanPhyGen>()),
+      m_phy2(CreateObject<UanPhyGen>())
 {
-    m_phy1 = CreateObject<UanPhyGen>();
-    m_phy2 = CreateObject<UanPhyGen>();
-
     m_phy1->SetReceiveOkCallback(m_recOkCb);
     m_phy2->SetReceiveOkCallback(m_recOkCb);
 
@@ -136,9 +131,7 @@ UanPhyDual::UanPhyDual()
     m_phy2->SetReceiveErrorCallback(m_recErrCb);
 }
 
-UanPhyDual::~UanPhyDual()
-{
-}
+UanPhyDual::~UanPhyDual() = default;
 
 void
 UanPhyDual::Clear()

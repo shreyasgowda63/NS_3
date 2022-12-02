@@ -41,21 +41,22 @@ using namespace ns3;
 class Experiment
 {
   public:
-    uint32_t m_simMin;    //!< Minimum parameter to test.
-    uint32_t m_simMax;    //!< Maximum parameter to test.
-    uint32_t m_simStep;   //!< Amount to increment param per trial
-    uint32_t m_numRates;  //!< Number of divided rates ( (NumberRates+1)%TotalRate should be 0).
-    uint32_t m_totalRate; //!< Total channel capacity.
-    uint32_t m_maxRange;  //!< Maximum range between gateway and acoustic node.
-    uint32_t m_numNodes;  //!< Number of nodes (invalid for m_doNode true).
-    uint32_t m_pktSize;   //!< Packet size in bytes.
-    bool m_doNode;        //!< 1 for do max nodes simulation (invalidates AMin and AMax values).
-    Time m_sifs;          //!< SIFS time duration.
-    Time m_simTime;       //!< Simulation time per trial
+    uint32_t m_simMin{1};  //!< Minimum parameter to test.
+    uint32_t m_simMax{1};  //!< Maximum parameter to test.
+    uint32_t m_simStep{1}; //!< Amount to increment param per trial
+    uint32_t m_numRates{
+        1023}; //!< Number of divided rates ( (NumberRates+1)%TotalRate should be 0).
+    uint32_t m_totalRate{4096}; //!< Total channel capacity.
+    uint32_t m_maxRange{3000};  //!< Maximum range between gateway and acoustic node.
+    uint32_t m_numNodes{15};    //!< Number of nodes (invalid for m_doNode true).
+    uint32_t m_pktSize{1000};   //!< Packet size in bytes.
+    bool m_doNode{true}; //!< 1 for do max nodes simulation (invalidates AMin and AMax values).
+    Time m_sifs;         //!< SIFS time duration.
+    Time m_simTime;      //!< Simulation time per trial
 
     std::string m_gnuplotfile; //!< Filename for GnuPlot.
 
-    uint32_t m_bytesTotal; //!< Total number of bytes received in a simulation run.
+    uint32_t m_bytesTotal{0}; //!< Total number of bytes received in a simulation run.
 
     UanModesList m_dataModes;    //!< List of UanTxModes used for data channels.
     UanModesList m_controlModes; //!< List of UanTxModes used for control channels.

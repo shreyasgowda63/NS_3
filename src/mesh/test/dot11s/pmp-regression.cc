@@ -41,7 +41,7 @@ const char* const PREFIX = "pmp-regression-test";
 
 PeerManagementProtocolRegressionTest::PeerManagementProtocolRegressionTest()
     : TestCase("PMP regression test"),
-      m_nodes(nullptr),
+
       m_time(Seconds(1))
 {
 }

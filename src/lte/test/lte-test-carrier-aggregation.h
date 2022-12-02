@@ -112,9 +112,9 @@ class CarrierAggregationTestCase : public TestCase
 
     std::map<uint8_t, uint32_t> m_ccDownlinkTraffic; ///< CC DL traffic
     std::map<uint8_t, uint32_t> m_ccUplinkTraffic;   ///< CC UL traffic
-    uint64_t m_dlThroughput;                         ///< DL throughput
+    uint64_t m_dlThroughput{0};                      ///< DL throughput
     uint64_t m_ulThroughput;                         ///< UL throughput
-    double m_statsDuration;                          ///< stats duration
+    double m_statsDuration{0.6};                     ///< stats duration
 };
 
 /**

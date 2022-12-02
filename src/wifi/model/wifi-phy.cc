@@ -333,23 +333,14 @@ WifiPhy::GetTypeId()
 }
 
 WifiPhy::WifiPhy()
-    : m_txMpduReferenceNumber(0xffffffff),
-      m_rxMpduReferenceNumber(0xffffffff),
-      m_endPhyRxEvent(),
-      m_endTxEvent(),
-      m_currentEvent(nullptr),
-      m_previouslyRxPpduUid(UINT64_MAX),
-      m_standard(WIFI_STANDARD_UNSPECIFIED),
-      m_band(WIFI_PHY_BAND_UNSPECIFIED),
+    : m_currentEvent(nullptr),
+
       m_sifs(Seconds(0)),
       m_slot(Seconds(0)),
       m_pifs(Seconds(0)),
       m_ackTxTime(Seconds(0)),
       m_blockAckTxTime(Seconds(0)),
-      m_powerRestricted(false),
-      m_channelAccessRequested(false),
-      m_txSpatialStreams(1),
-      m_rxSpatialStreams(1),
+
       m_wifiRadioEnergyModel(nullptr),
       m_timeLastPreambleDetected(Seconds(0))
 {

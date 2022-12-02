@@ -23,8 +23,6 @@
 namespace ns3
 {
 
-MatrixBasedChannelModel::~MatrixBasedChannelModel()
-{
-}
+MatrixBasedChannelModel::~MatrixBasedChannelModel() = default;
 
 } // namespace ns3

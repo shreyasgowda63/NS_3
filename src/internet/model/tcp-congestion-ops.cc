@@ -35,18 +35,14 @@ TcpCongestionOps::GetTypeId()
 }
 
 TcpCongestionOps::TcpCongestionOps()
-    : Object()
-{
-}
+
+    = default;
 
 TcpCongestionOps::TcpCongestionOps(const TcpCongestionOps& other)
-    : Object(other)
-{
-}
 
-TcpCongestionOps::~TcpCongestionOps()
-{
-}
+    = default;
+
+TcpCongestionOps::~TcpCongestionOps() = default;
 
 void
 TcpCongestionOps::IncreaseWindow(Ptr<TcpSocketState> tcb, uint32_t segmentsAcked)
@@ -102,7 +98,6 @@ TcpNewReno::GetTypeId()
 }
 
 TcpNewReno::TcpNewReno()
-    : TcpCongestionOps()
 {
     NS_LOG_FUNCTION(this);
 }
@@ -113,9 +108,7 @@ TcpNewReno::TcpNewReno(const TcpNewReno& sock)
     NS_LOG_FUNCTION(this);
 }
 
-TcpNewReno::~TcpNewReno()
-{
-}
+TcpNewReno::~TcpNewReno() = default;
 
 /**
  * \brief Tcp NewReno slow start algorithm

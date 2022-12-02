@@ -115,7 +115,7 @@ class TracedCallback
      */
     typedef std::list<Callback<void, Ts...>> CallbackList;
     /** The chain of Callbacks. */
-    CallbackList m_callbackList;
+    CallbackList m_callbackList{};
 };
 
 } // namespace ns3
@@ -129,9 +129,8 @@ namespace ns3
 
 template <typename... Ts>
 TracedCallback<Ts...>::TracedCallback()
-    : m_callbackList()
-{
-}
+
+    = default;
 
 template <typename... Ts>
 void

@@ -107,12 +107,12 @@ class VhtOperation : public WifiInformationElement
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 
     // VHT Operation Information
-    uint8_t m_channelWidth;                   ///< channel width
-    uint8_t m_channelCenterFrequencySegment0; ///< channel center frequency segment 0
-    uint8_t m_channelCenterFrequencySegment1; ///< channel center frequency segment 1
+    uint8_t m_channelWidth{0};                   ///< channel width
+    uint8_t m_channelCenterFrequencySegment0{0}; ///< channel center frequency segment 0
+    uint8_t m_channelCenterFrequencySegment1{0}; ///< channel center frequency segment 1
 
     // Basic VHT-MCS and NSS Set
-    uint16_t m_basicVhtMcsAndNssSet; ///< basic VHT MCS NSS set
+    uint16_t m_basicVhtMcsAndNssSet{0}; ///< basic VHT MCS NSS set
 };
 
 /**

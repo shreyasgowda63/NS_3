@@ -43,9 +43,7 @@ class TimerImpl
 {
   public:
     /** Destructor. */
-    virtual ~TimerImpl()
-    {
-    }
+    virtual ~TimerImpl() = default;
 
     /**
      * Set the arguments to be used when invoking the expire function.

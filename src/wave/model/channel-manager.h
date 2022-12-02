@@ -143,12 +143,12 @@ class ChannelManager : public Object
     /// WaveChannel structure
     struct WaveChannel
     {
-        uint32_t channelNumber;  ///< channel number
-        uint32_t operatingClass; ///< operating class
-        bool adaptable;          ///< adaptable?
-        WifiMode dataRate;       ///< data rate
-        WifiPreamble preamble;   ///< preamble
-        uint32_t txPowerLevel;   ///< transmit power level
+        uint32_t channelNumber;                    ///< channel number
+        uint32_t operatingClass;                   ///< operating class
+        bool adaptable{true};                      ///< adaptable?
+        WifiMode dataRate;                         ///< data rate
+        WifiPreamble preamble{WIFI_PREAMBLE_LONG}; ///< preamble
+        uint32_t txPowerLevel{4};                  ///< transmit power level
 
         /**
          * initializor
@@ -157,10 +157,7 @@ class ChannelManager : public Object
         WaveChannel(uint32_t channel)
             : channelNumber(channel),
               operatingClass(DEFAULT_OPERATING_CLASS),
-              adaptable(true),
-              dataRate(WifiMode("OfdmRate6MbpsBW10MHz")),
-              preamble(WIFI_PREAMBLE_LONG),
-              txPowerLevel(4)
+              dataRate(WifiMode("OfdmRate6MbpsBW10MHz"))
         {
         }
     };

@@ -65,9 +65,7 @@ PointToPointDumbbellHelper::PointToPointDumbbellHelper(uint32_t nLeftLeaf,
     }
 }
 
-PointToPointDumbbellHelper::~PointToPointDumbbellHelper()
-{
-}
+PointToPointDumbbellHelper::~PointToPointDumbbellHelper() = default;
 
 Ptr<Node>
 PointToPointDumbbellHelper::GetLeft() const

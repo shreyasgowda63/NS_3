@@ -91,9 +91,7 @@ UanHelper::UanHelper()
     m_transducer.SetTypeId("ns3::UanTransducerHd");
 }
 
-UanHelper::~UanHelper()
-{
-}
+UanHelper::~UanHelper() = default;
 
 void
 UanHelper::EnableAscii(std::ostream& os, uint32_t nodeid, uint32_t deviceid)

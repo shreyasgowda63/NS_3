@@ -404,8 +404,8 @@ class LteEnbMac : public Object
     LteEnbPhySapUser* m_enbPhySapUser;         ///< the ENB Phy SAP user
 
     // Sap For ComponentCarrierManager 'Uplink case'
-    LteCcmMacSapProvider* m_ccmMacSapProvider; ///< CCM MAC SAP provider
-    LteCcmMacSapUser* m_ccmMacSapUser;         ///< CCM MAC SAP user
+    LteCcmMacSapProvider* m_ccmMacSapProvider;  ///< CCM MAC SAP provider
+    LteCcmMacSapUser* m_ccmMacSapUser{nullptr}; ///< CCM MAC SAP user
     /**
      * frame number of current subframe indication
      */

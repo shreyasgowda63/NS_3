@@ -47,14 +47,10 @@ static const int Type0AllocationRbg[4] = {
 NS_OBJECT_ENSURE_REGISTERED(RrFfMacScheduler);
 
 RrFfMacScheduler::RrFfMacScheduler()
-    : m_cschedSapUser(nullptr),
-      m_schedSapUser(nullptr),
-      m_nextRntiDl(0),
-      m_nextRntiUl(0)
+    : m_cschedSapProvider(new MemberCschedSapProvider<RrFfMacScheduler>(this)),
+      m_schedSapProvider(new MemberSchedSapProvider<RrFfMacScheduler>(this))
 {
     m_amc = CreateObject<LteAmc>();
-    m_cschedSapProvider = new MemberCschedSapProvider<RrFfMacScheduler>(this);
-    m_schedSapProvider = new MemberSchedSapProvider<RrFfMacScheduler>(this);
 }
 
 RrFfMacScheduler::~RrFfMacScheduler()

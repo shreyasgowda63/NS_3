@@ -38,7 +38,7 @@ namespace ns3
 class LteFfrRrcSapProvider
 {
   public:
-    virtual ~LteFfrRrcSapProvider();
+    virtual ~LteFfrRrcSapProvider() = default;
 
     /**
      * \brief SetCellId
@@ -86,7 +86,7 @@ class LteFfrRrcSapProvider
 class LteFfrRrcSapUser
 {
   public:
-    virtual ~LteFfrRrcSapUser();
+    virtual ~LteFfrRrcSapUser() = default;
 
     /**
      * \brief Request a certain reporting configuration to be fulfilled by the UEs

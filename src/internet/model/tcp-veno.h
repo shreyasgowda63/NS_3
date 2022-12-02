@@ -159,14 +159,14 @@ class TcpVeno : public TcpNewReno
     void DisableVeno();
 
   private:
-    Time m_baseRtt;      //!< Minimum of all RTT measurements seen during connection
-    Time m_minRtt;       //!< Minimum of RTTs measured within last RTT
-    uint32_t m_cntRtt;   //!< Number of RTT measurements during last RTT
-    bool m_doingVenoNow; //!< If true, do Veno for this RTT
-    uint32_t m_diff;     //!< Difference between expected and actual throughput
-    bool m_inc;          //!< If true, cwnd needs to be incremented
-    uint32_t m_ackCnt;   //!< Number of received ACK
-    uint32_t m_beta;     //!< Threshold for congestion detection
+    Time m_baseRtt;            //!< Minimum of all RTT measurements seen during connection
+    Time m_minRtt;             //!< Minimum of RTTs measured within last RTT
+    uint32_t m_cntRtt{0};      //!< Number of RTT measurements during last RTT
+    bool m_doingVenoNow{true}; //!< If true, do Veno for this RTT
+    uint32_t m_diff{0};        //!< Difference between expected and actual throughput
+    bool m_inc{true};          //!< If true, cwnd needs to be incremented
+    uint32_t m_ackCnt{0};      //!< Number of received ACK
+    uint32_t m_beta{6};        //!< Threshold for congestion detection
 };
 
 } // namespace ns3

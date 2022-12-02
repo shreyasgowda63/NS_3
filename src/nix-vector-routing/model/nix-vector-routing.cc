@@ -77,7 +77,6 @@ NixVectorRouting<T>::GetTypeId()
 
 template <typename T>
 NixVectorRouting<T>::NixVectorRouting()
-    : m_totalNeighbors(0)
 {
     NS_LOG_FUNCTION_NOARGS();
 }

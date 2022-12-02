@@ -85,25 +85,10 @@ TcpYeah::GetTypeId()
 }
 
 TcpYeah::TcpYeah()
-    : TcpNewReno(),
-      m_alpha(80),
-      m_gamma(1),
-      m_delta(3),
-      m_epsilon(1),
-      m_phy(8),
-      m_rho(16),
-      m_zeta(50),
-      m_stcpAiFactor(100),
-      m_stcp(nullptr),
+    : m_stcp(nullptr),
       m_baseRtt(Time::Max()),
       m_minRtt(Time::Max()),
-      m_cntRtt(0),
-      m_doingYeahNow(true),
-      m_begSndNxt(0),
-      m_lastQ(0),
-      m_doingRenoNow(0),
-      m_renoCount(2),
-      m_fastCount(0)
+      m_begSndNxt(0)
 {
     NS_LOG_FUNCTION(this);
     m_stcp = CreateObject<TcpScalable>();

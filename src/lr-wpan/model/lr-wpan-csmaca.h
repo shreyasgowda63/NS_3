@@ -275,7 +275,7 @@ class LrWpanCsmaCa : public Object
     /**
      * Beacon-enabled slotted or nonbeacon-enabled unslotted CSMA-CA.
      */
-    bool m_isSlotted;
+    bool m_isSlotted{false};
     /**
      * The MAC instance for which this CSMA/CA implemenation is configured.
      */
@@ -283,11 +283,11 @@ class LrWpanCsmaCa : public Object
     /**
      * Number of backoffs for the current transmission.
      */
-    uint8_t m_NB;
+    uint8_t m_NB{0};
     /**
      * Contention window length (used in slotted ver only).
      */
-    uint8_t m_CW;
+    uint8_t m_CW{2};
     /**
      * Backoff exponent.
      */
@@ -295,27 +295,27 @@ class LrWpanCsmaCa : public Object
     /**
      * Battery Life Extension.
      */
-    bool m_macBattLifeExt;
+    bool m_macBattLifeExt{false};
     /**
      * Minimum backoff exponent. 0 - macMaxBE, default 3
      */
-    uint8_t m_macMinBE; //
+    uint8_t m_macMinBE{3}; //
     /**
      * Maximum backoff exponent. 3 - 8, default 5
      */
-    uint8_t m_macMaxBE;
+    uint8_t m_macMaxBE{5};
     /**
      * Maximum number of backoffs. 0 - 5, default 4
      */
-    uint8_t m_macMaxCSMABackoffs;
+    uint8_t m_macMaxCSMABackoffs{4};
     /**
      * Number of symbols per CSMA/CA time unit, default 20 symbols.
      */
-    uint64_t m_aUnitBackoffPeriod;
+    uint64_t m_aUnitBackoffPeriod{20};
     /**
      * Count the number of remaining random backoff periods left to delay.
      */
-    uint64_t m_randomBackoffPeriodsLeft;
+    uint64_t m_randomBackoffPeriodsLeft{0};
     /**
      * Uniform random variable stream.
      */
@@ -341,13 +341,13 @@ class LrWpanCsmaCa : public Object
      * Flag indicating that the PHY is currently running a CCA. Used to prevent
      * reporting the channel status to the MAC while canceling the CSMA algorithm.
      */
-    bool m_ccaRequestRunning;
+    bool m_ccaRequestRunning{false};
     /**
      * Indicates whether the CSMA procedure is targeted for a message to be sent to the coordinator.
      * Used to run slotted CSMA/CA on the incoming or outgoing superframe
      * according to the target.
      */
-    bool m_coorDest;
+    bool m_coorDest{false};
 };
 
 } // namespace ns3

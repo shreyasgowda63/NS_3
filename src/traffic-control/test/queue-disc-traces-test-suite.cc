@@ -54,9 +54,7 @@ qdTestItem::qdTestItem(Ptr<Packet> p, const Address& addr)
 {
 }
 
-qdTestItem::~qdTestItem()
-{
-}
+qdTestItem::~qdTestItem() = default;
 
 void
 qdTestItem::AddHeader()
@@ -98,9 +96,7 @@ TestChildQueueDisc::TestChildQueueDisc()
 {
 }
 
-TestChildQueueDisc::~TestChildQueueDisc()
-{
-}
+TestChildQueueDisc::~TestChildQueueDisc() = default;
 
 bool
 TestChildQueueDisc::DoEnqueue(Ptr<QueueDiscItem> item)
@@ -165,9 +161,7 @@ TestParentQueueDisc::TestParentQueueDisc()
 {
 }
 
-TestParentQueueDisc::~TestParentQueueDisc()
-{
-}
+TestParentQueueDisc::~TestParentQueueDisc() = default;
 
 bool
 TestParentQueueDisc::DoEnqueue(Ptr<QueueDiscItem> item)
@@ -240,29 +234,21 @@ class TestCounter
      */
     void PacketDad(Ptr<const QueueDiscItem> item, const char* reason);
 
-    uint32_t m_nPackets;    //!< Number of queued packets
-    uint32_t m_nBytes;      //!< Number of queued bytes
-    uint32_t m_nDbePackets; //!< Number of packets dropped before enqueue
-    uint32_t m_nDbeBytes;   //!< Number of packets dropped before enqueue
-    uint32_t m_nDadPackets; //!< Number of packets dropped after dequeue
-    uint32_t m_nDadBytes;   //!< Number of packets dropped after dequeue
+    uint32_t m_nPackets{0};    //!< Number of queued packets
+    uint32_t m_nBytes{0};      //!< Number of queued bytes
+    uint32_t m_nDbePackets{0}; //!< Number of packets dropped before enqueue
+    uint32_t m_nDbeBytes{0};   //!< Number of packets dropped before enqueue
+    uint32_t m_nDadPackets{0}; //!< Number of packets dropped after dequeue
+    uint32_t m_nDadBytes{0};   //!< Number of packets dropped after dequeue
 
     friend class QueueDiscTracesTestCase; //!< Needs to access private members
 };
 
 TestCounter::TestCounter()
-    : m_nPackets(0),
-      m_nBytes(0),
-      m_nDbePackets(0),
-      m_nDbeBytes(0),
-      m_nDadPackets(0),
-      m_nDadBytes(0)
-{
-}
 
-TestCounter::~TestCounter()
-{
-}
+    = default;
+
+TestCounter::~TestCounter() = default;
 
 void
 TestCounter::PacketEnqueued(Ptr<const QueueDiscItem> item)

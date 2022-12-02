@@ -286,17 +286,17 @@ class Ipv6Header : public Header
     /**
      * \brief The payload length.
      */
-    uint16_t m_payloadLength;
+    uint16_t m_payloadLength{0};
 
     /**
      * \brief The Next header number.
      */
-    uint8_t m_nextHeader;
+    uint8_t m_nextHeader{0};
 
     /**
      * \brief The Hop limit value.
      */
-    uint8_t m_hopLimit;
+    uint8_t m_hopLimit{0};
 
     /**
      * \brief The source address.

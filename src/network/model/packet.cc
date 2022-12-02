@@ -137,10 +137,7 @@ Packet::Copy() const
 }
 
 Packet::Packet()
-    : m_buffer(),
-      m_byteTagList(),
-      m_packetTagList(),
-      /* The upper 32 bits of the packet id in
+    : /* The upper 32 bits of the packet id in
        * metadata is for the system id. For non-
        * distributed simulations, this is simply
        * zero.  The lower 32 bits are for the
@@ -178,8 +175,7 @@ Packet::operator=(const Packet& o)
 
 Packet::Packet(uint32_t size)
     : m_buffer(size),
-      m_byteTagList(),
-      m_packetTagList(),
+
       /* The upper 32 bits of the packet id in
        * metadata is for the system id. For non-
        * distributed simulations, this is simply
@@ -194,8 +190,7 @@ Packet::Packet(uint32_t size)
 
 Packet::Packet(const uint8_t* buffer, uint32_t size, bool magic)
     : m_buffer(0, false),
-      m_byteTagList(),
-      m_packetTagList(),
+
       m_metadata(0, 0),
       m_nixVector(nullptr)
 {
@@ -204,10 +199,7 @@ Packet::Packet(const uint8_t* buffer, uint32_t size, bool magic)
 }
 
 Packet::Packet(const uint8_t* buffer, uint32_t size)
-    : m_buffer(),
-      m_byteTagList(),
-      m_packetTagList(),
-      /* The upper 32 bits of the packet id in
+    : /* The upper 32 bits of the packet id in
        * metadata is for the system id. For non-
        * distributed simulations, this is simply
        * zero.  The lower 32 bits are for the

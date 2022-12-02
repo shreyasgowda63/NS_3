@@ -51,9 +51,7 @@ class PhyListener : public ns3::WifiPhyListener
     {
     }
 
-    ~PhyListener() override
-    {
-    }
+    ~PhyListener() override = default;
 
     void NotifyRxStart(Time duration) override
     {
@@ -120,13 +118,8 @@ ChannelAccessManager::ChannelAccessManager()
       m_lastCtsTimeoutEnd(MicroSeconds(0)),
       m_lastNavEnd(MicroSeconds(0)),
       m_lastRx({MicroSeconds(0), MicroSeconds(0)}),
-      m_lastRxReceivedOk(true),
       m_lastTxEnd(MicroSeconds(0)),
-      m_lastSwitchingEnd(MicroSeconds(0)),
-      m_sleeping(false),
-      m_off(false),
-      m_phyListener(nullptr),
-      m_linkId(0)
+      m_lastSwitchingEnd(MicroSeconds(0))
 {
     NS_LOG_FUNCTION(this);
     InitLastBusyStructs();

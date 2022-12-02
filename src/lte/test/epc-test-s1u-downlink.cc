@@ -113,9 +113,7 @@ EpcS1uDlTestCase::EpcS1uDlTestCase(std::string name, std::vector<EnbDlTestData> 
 {
 }
 
-EpcS1uDlTestCase::~EpcS1uDlTestCase()
-{
-}
+EpcS1uDlTestCase::~EpcS1uDlTestCase() = default;
 
 void
 EpcS1uDlTestCase::DoRun()

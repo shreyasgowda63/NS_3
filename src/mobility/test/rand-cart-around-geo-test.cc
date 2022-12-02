@@ -130,9 +130,7 @@ RandCartAroundGeoTestCase::RandCartAroundGeoTestCase(double originLatitude,
 {
 }
 
-RandCartAroundGeoTestCase::~RandCartAroundGeoTestCase()
-{
-}
+RandCartAroundGeoTestCase::~RandCartAroundGeoTestCase() = default;
 
 void
 RandCartAroundGeoTestCase::DoRun()

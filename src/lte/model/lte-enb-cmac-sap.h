@@ -41,7 +41,7 @@ class LteMacSapUser;
 class LteEnbCmacSapProvider
 {
   public:
-    virtual ~LteEnbCmacSapProvider();
+    virtual ~LteEnbCmacSapProvider() = default;
     /**
      *
      *
@@ -176,7 +176,7 @@ class LteEnbCmacSapProvider
 class LteEnbCmacSapUser
 {
   public:
-    virtual ~LteEnbCmacSapUser();
+    virtual ~LteEnbCmacSapUser() = default;
 
     /**
      * request the allocation of a Temporary C-RNTI

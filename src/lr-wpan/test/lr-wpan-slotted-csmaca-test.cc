@@ -101,22 +101,19 @@ class LrWpanSlottedCsmacaTestCase : public TestCase
 
     void DoRun() override;
 
-    Time m_startCap;      //!< The time of the start of the Contention Access Period (CAP).
-    Time m_apBoundary;    //!< Indicates the time after the calculation of the transaction cost (A
-                          //!< boundary of an Active Period in the CAP)
-    Time m_sentTime;      //!< Indicates the time after a successful transmission.
-    uint32_t m_transCost; //!< The current transaction cost in symbols.
+    Time m_startCap;   //!< The time of the start of the Contention Access Period (CAP).
+    Time m_apBoundary; //!< Indicates the time after the calculation of the transaction cost (A
+                       //!< boundary of an Active Period in the CAP)
+    Time m_sentTime;   //!< Indicates the time after a successful transmission.
+    uint32_t m_transCost{0}; //!< The current transaction cost in symbols.
 };
 
 LrWpanSlottedCsmacaTestCase::LrWpanSlottedCsmacaTestCase()
     : TestCase("Lrwpan: Slotted CSMA-CA test")
 {
-    m_transCost = 0;
 }
 
-LrWpanSlottedCsmacaTestCase::~LrWpanSlottedCsmacaTestCase()
-{
-}
+LrWpanSlottedCsmacaTestCase::~LrWpanSlottedCsmacaTestCase() = default;
 
 void
 LrWpanSlottedCsmacaTestCase::TransEndIndication(LrWpanSlottedCsmacaTestCase* testcase,

@@ -90,9 +90,7 @@ TestRxOffWhenIdleAfterCsmaFailure::TestRxOffWhenIdleAfterCsmaFailure()
 {
 }
 
-TestRxOffWhenIdleAfterCsmaFailure::~TestRxOffWhenIdleAfterCsmaFailure()
-{
-}
+TestRxOffWhenIdleAfterCsmaFailure::~TestRxOffWhenIdleAfterCsmaFailure() = default;
 
 void
 TestRxOffWhenIdleAfterCsmaFailure::DataIndication(McpsDataIndicationParams params, Ptr<Packet> p)
@@ -320,9 +318,7 @@ TestActiveScanPanDescriptors::TestActiveScanPanDescriptors()
 {
 }
 
-TestActiveScanPanDescriptors::~TestActiveScanPanDescriptors()
-{
-}
+TestActiveScanPanDescriptors::~TestActiveScanPanDescriptors() = default;
 
 void
 TestActiveScanPanDescriptors::ScanConfirm(MlmeScanConfirmParams params)

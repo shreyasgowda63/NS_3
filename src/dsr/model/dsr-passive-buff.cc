@@ -57,13 +57,9 @@ DsrPassiveBuffer::GetTypeId()
     return tid;
 }
 
-DsrPassiveBuffer::DsrPassiveBuffer()
-{
-}
+DsrPassiveBuffer::DsrPassiveBuffer() = default;
 
-DsrPassiveBuffer::~DsrPassiveBuffer()
-{
-}
+DsrPassiveBuffer::~DsrPassiveBuffer() = default;
 
 uint32_t
 DsrPassiveBuffer::GetSize()

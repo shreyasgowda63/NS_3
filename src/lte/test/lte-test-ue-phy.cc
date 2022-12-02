@@ -40,9 +40,7 @@ LteTestUePhy::LteTestUePhy(Ptr<LteSpectrumPhy> dlPhy, Ptr<LteSpectrumPhy> ulPhy)
     NS_LOG_FUNCTION(this);
 }
 
-LteTestUePhy::~LteTestUePhy()
-{
-}
+LteTestUePhy::~LteTestUePhy() = default;
 
 void
 LteTestUePhy::DoDispose()

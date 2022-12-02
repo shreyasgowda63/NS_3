@@ -28,9 +28,7 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("GlobalRoutingHelper");
 
-Ipv4GlobalRoutingHelper::Ipv4GlobalRoutingHelper()
-{
-}
+Ipv4GlobalRoutingHelper::Ipv4GlobalRoutingHelper() = default;
 
 Ipv4GlobalRoutingHelper::Ipv4GlobalRoutingHelper(const Ipv4GlobalRoutingHelper& o)
 {

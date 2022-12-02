@@ -42,12 +42,12 @@ class LteStatsCalculator : public Object
     /**
      * Constructor
      */
-    LteStatsCalculator();
+    LteStatsCalculator() = default;
 
     /**
      * Destructor
      */
-    ~LteStatsCalculator() override;
+    ~LteStatsCalculator() override = default;
 
     /**
      * Register this type.

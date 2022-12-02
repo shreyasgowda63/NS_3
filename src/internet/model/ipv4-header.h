@@ -249,20 +249,20 @@ class Ipv4Header : public Header
         MORE_FRAGMENTS = (1 << 1)
     };
 
-    bool m_calcChecksum; //!< true if the checksum must be calculated
+    bool m_calcChecksum{false}; //!< true if the checksum must be calculated
 
-    uint16_t m_payloadSize;    //!< payload size
-    uint16_t m_identification; //!< identification
-    uint32_t m_tos : 8;        //!< TOS, also used as DSCP + ECN value
-    uint32_t m_ttl : 8;        //!< TTL
-    uint32_t m_protocol : 8;   //!< Protocol
-    uint32_t m_flags : 3;      //!< flags
-    uint16_t m_fragmentOffset; //!< Fragment offset
-    Ipv4Address m_source;      //!< source address
-    Ipv4Address m_destination; //!< destination address
-    uint16_t m_checksum;       //!< checksum
-    bool m_goodChecksum;       //!< true if checksum is correct
-    uint16_t m_headerSize;     //!< IP header size
+    uint16_t m_payloadSize{0};    //!< payload size
+    uint16_t m_identification{0}; //!< identification
+    uint32_t m_tos : 8;           //!< TOS, also used as DSCP + ECN value
+    uint32_t m_ttl : 8;           //!< TTL
+    uint32_t m_protocol : 8;      //!< Protocol
+    uint32_t m_flags : 3;         //!< flags
+    uint16_t m_fragmentOffset{0}; //!< Fragment offset
+    Ipv4Address m_source;         //!< source address
+    Ipv4Address m_destination;    //!< destination address
+    uint16_t m_checksum{0};       //!< checksum
+    bool m_goodChecksum{true};    //!< true if checksum is correct
+    uint16_t m_headerSize;        //!< IP header size
 };
 
 } // namespace ns3

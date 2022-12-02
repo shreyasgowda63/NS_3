@@ -69,7 +69,7 @@ class Neighbors
         /// Neighbor expire time
         Time m_expireTime;
         /// Neighbor close indicator
-        bool close;
+        bool close{false};
 
         /**
          * \brief Neighbor structure constructor
@@ -81,8 +81,7 @@ class Neighbors
         Neighbor(Ipv4Address ip, Mac48Address mac, Time t)
             : m_neighborAddress(ip),
               m_hardwareAddress(mac),
-              m_expireTime(t),
-              close(false)
+              m_expireTime(t)
         {
         }
     };

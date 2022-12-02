@@ -101,13 +101,9 @@ EmfToSeconds(uint8_t olsrFormat)
 
 NS_OBJECT_ENSURE_REGISTERED(PacketHeader);
 
-PacketHeader::PacketHeader()
-{
-}
+PacketHeader::PacketHeader() = default;
 
-PacketHeader::~PacketHeader()
-{
-}
+PacketHeader::~PacketHeader() = default;
 
 TypeId
 PacketHeader::GetTypeId()
@@ -163,9 +159,7 @@ MessageHeader::MessageHeader()
 {
 }
 
-MessageHeader::~MessageHeader()
-{
-}
+MessageHeader::~MessageHeader() = default;
 
 TypeId
 MessageHeader::GetTypeId()

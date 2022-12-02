@@ -267,7 +267,6 @@ TcpSocketBase::GetInstanceTypeId() const
 }
 
 TcpSocketBase::TcpSocketBase()
-    : TcpSocket()
 {
     NS_LOG_FUNCTION(this);
     m_txBuffer = CreateObject<TcpTxBuffer>();
@@ -330,7 +329,7 @@ TcpSocketBase::TcpSocketBase(const TcpSocketBase& sock)
     : TcpSocket(sock),
       // copy object::m_tid and socket::callbacks
       m_dupAckCount(sock.m_dupAckCount),
-      m_delAckCount(0),
+
       m_delAckMaxCount(sock.m_delAckMaxCount),
       m_noDelay(sock.m_noDelay),
       m_synCount(sock.m_synCount),
@@ -343,8 +342,7 @@ TcpSocketBase::TcpSocketBase(const TcpSocketBase& sock)
       m_delAckTimeout(sock.m_delAckTimeout),
       m_persistTimeout(sock.m_persistTimeout),
       m_cnTimeout(sock.m_cnTimeout),
-      m_endPoint(nullptr),
-      m_endPoint6(nullptr),
+
       m_node(sock.m_node),
       m_tcp(sock.m_tcp),
       m_state(sock.m_state),
@@ -4677,17 +4675,10 @@ TcpSocketBase::GetHighRxAck() const
 RttHistory::RttHistory(SequenceNumber32 s, uint32_t c, Time t)
     : seq(s),
       count(c),
-      time(t),
-      retx(false)
+      time(t)
 {
 }
 
-RttHistory::RttHistory(const RttHistory& h)
-    : seq(h.seq),
-      count(h.count),
-      time(h.time),
-      retx(h.retx)
-{
-}
+RttHistory::RttHistory(const RttHistory& h) = default;
 
 } // namespace ns3

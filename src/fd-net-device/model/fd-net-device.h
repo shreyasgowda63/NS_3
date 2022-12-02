@@ -64,7 +64,7 @@ class FdNetDeviceFdReader : public FdReader
   private:
     FdReader::Data DoRead() override;
 
-    uint32_t m_bufferSize; //!< size of the read buffer
+    uint32_t m_bufferSize{65536}; //!< size of the read buffer
 };
 
 class Node;
@@ -304,17 +304,17 @@ class FdNetDevice : public NetDevice
      * The ns-3 interface index (in the sense of net device index) that has been assigned to this
      * network device.
      */
-    uint32_t m_ifIndex;
+    uint32_t m_ifIndex{0};
 
     /**
      * The MTU associated to the file descriptor technology
      */
-    uint16_t m_mtu;
+    uint16_t m_mtu{1500};
 
     /**
      * The file descriptor used for receive/send network traffic.
      */
-    int m_fd;
+    int m_fd{-1};
 
     /**
      * Reader for the file descriptor.
@@ -346,13 +346,13 @@ class FdNetDevice : public NetDevice
      * Flag indicating whether or not the underlying net device supports
      * broadcast.
      */
-    bool m_isBroadcast;
+    bool m_isBroadcast{true};
 
     /**
      * Flag indicating whether or not the underlying net device supports
      * multicast.
      */
-    bool m_isMulticast;
+    bool m_isMulticast{false};
 
     /**
      * Maximum number of packets that can be received and scheduled for read but not yet read.

@@ -159,9 +159,7 @@ LtePathlossModelSystemTestCase::LtePathlossModelSystemTestCase(std::string name,
     NS_LOG_INFO("Creating LtePathlossModelSystemTestCase: " + sstream1.str());
 }
 
-LtePathlossModelSystemTestCase::~LtePathlossModelSystemTestCase()
-{
-}
+LtePathlossModelSystemTestCase::~LtePathlossModelSystemTestCase() = default;
 
 void
 LtePathlossModelSystemTestCase::DoRun()

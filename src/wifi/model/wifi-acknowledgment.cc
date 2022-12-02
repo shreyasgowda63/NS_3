@@ -36,9 +36,7 @@ WifiAcknowledgment::WifiAcknowledgment(Method m)
 {
 }
 
-WifiAcknowledgment::~WifiAcknowledgment()
-{
-}
+WifiAcknowledgment::~WifiAcknowledgment() = default;
 
 WifiMacHeader::QosAckPolicy
 WifiAcknowledgment::GetQosAckPolicy(Mac48Address receiver, uint8_t tid) const
@@ -260,8 +258,7 @@ WifiDlMuBarBaSequence::Print(std::ostream& os) const
  */
 
 WifiDlMuTfMuBar::WifiDlMuTfMuBar()
-    : WifiAcknowledgment(DL_MU_TF_MU_BAR),
-      ulLength(0)
+    : WifiAcknowledgment(DL_MU_TF_MU_BAR)
 {
 }
 
@@ -301,8 +298,7 @@ WifiDlMuTfMuBar::Print(std::ostream& os) const
  */
 
 WifiDlMuAggregateTf::WifiDlMuAggregateTf()
-    : WifiAcknowledgment(DL_MU_AGGREGATE_TF),
-      ulLength(0)
+    : WifiAcknowledgment(DL_MU_AGGREGATE_TF)
 {
 }
 

@@ -41,66 +41,47 @@ set(source_files
     model/component-carrier.cc
     model/cqa-ff-mac-scheduler.cc
     model/epc-enb-application.cc
-    model/epc-enb-s1-sap.cc
     model/epc-gtpc-header.cc
     model/epc-gtpu-header.cc
     model/epc-mme-application.cc
     model/epc-pgw-application.cc
-    model/epc-s11-sap.cc
-    model/epc-s1ap-sap.cc
     model/epc-sgw-application.cc
     model/epc-tft-classifier.cc
     model/epc-tft.cc
     model/epc-ue-nas.cc
     model/epc-x2-header.cc
-    model/epc-x2-sap.cc
     model/epc-x2.cc
     model/eps-bearer-tag.cc
     model/eps-bearer.cc
     model/fdbet-ff-mac-scheduler.cc
     model/fdmt-ff-mac-scheduler.cc
     model/fdtbfq-ff-mac-scheduler.cc
-    model/ff-mac-common.cc
-    model/ff-mac-csched-sap.cc
-    model/ff-mac-sched-sap.cc
     model/ff-mac-scheduler.cc
     model/lte-amc.cc
-    model/lte-anr-sap.cc
     model/lte-anr.cc
-    model/lte-as-sap.cc
     model/lte-asn1-header.cc
-    model/lte-ccm-mac-sap.cc
-    model/lte-ccm-rrc-sap.cc
     model/lte-chunk-processor.cc
     model/lte-common.cc
     model/lte-control-messages.cc
-    model/lte-enb-cmac-sap.cc
     model/lte-enb-component-carrier-manager.cc
-    model/lte-enb-cphy-sap.cc
     model/lte-enb-mac.cc
     model/lte-enb-net-device.cc
-    model/lte-enb-phy-sap.cc
     model/lte-enb-phy.cc
     model/lte-enb-rrc.cc
     model/lte-ffr-algorithm.cc
     model/lte-ffr-distributed-algorithm.cc
     model/lte-ffr-enhanced-algorithm.cc
-    model/lte-ffr-rrc-sap.cc
-    model/lte-ffr-sap.cc
     model/lte-ffr-soft-algorithm.cc
     model/lte-fr-hard-algorithm.cc
     model/lte-fr-no-op-algorithm.cc
     model/lte-fr-soft-algorithm.cc
     model/lte-fr-strict-algorithm.cc
     model/lte-handover-algorithm.cc
-    model/lte-handover-management-sap.cc
     model/lte-harq-phy.cc
     model/lte-interference.cc
-    model/lte-mac-sap.cc
     model/lte-mi-error-model.cc
     model/lte-net-device.cc
     model/lte-pdcp-header.cc
-    model/lte-pdcp-sap.cc
     model/lte-pdcp-tag.cc
     model/lte-pdcp.cc
     model/lte-phy-tag.cc
@@ -110,7 +91,6 @@ set(source_files
     model/lte-rlc-am-header.cc
     model/lte-rlc-am.cc
     model/lte-rlc-header.cc
-    model/lte-rlc-sap.cc
     model/lte-rlc-sdu-status-tag.cc
     model/lte-rlc-sequence-number.cc
     model/lte-rlc-tag.cc
@@ -124,13 +104,9 @@ set(source_files
     model/lte-spectrum-phy.cc
     model/lte-spectrum-signal-parameters.cc
     model/lte-spectrum-value-helper.cc
-    model/lte-ue-ccm-rrc-sap.cc
-    model/lte-ue-cmac-sap.cc
     model/lte-ue-component-carrier-manager.cc
-    model/lte-ue-cphy-sap.cc
     model/lte-ue-mac.cc
     model/lte-ue-net-device.cc
-    model/lte-ue-phy-sap.cc
     model/lte-ue-phy.cc
     model/lte-ue-power-control.cc
     model/lte-ue-rrc.cc

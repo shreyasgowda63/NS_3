@@ -39,9 +39,7 @@ SpectrumErrorModel::GetTypeId()
     return tid;
 }
 
-SpectrumErrorModel::~SpectrumErrorModel()
-{
-}
+SpectrumErrorModel::~SpectrumErrorModel() = default;
 
 NS_OBJECT_ENSURE_REGISTERED(ShannonSpectrumErrorModel);
 

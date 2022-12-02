@@ -51,9 +51,7 @@ class OlsrState
                                      //!< advertised using HNA messages.
 
   public:
-    OlsrState()
-    {
-    }
+    OlsrState() = default;
 
     // MPR selector
 

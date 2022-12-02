@@ -48,25 +48,7 @@ SSLinkManager::GetTypeId()
 }
 
 SSLinkManager::SSLinkManager(Ptr<SubscriberStationNetDevice> ss)
-    : m_ss(ss),
-      m_rangingStatus(WimaxNetDevice::RANGING_STATUS_EXPIRED),
-      m_bsEirp(65535),
-      m_eirXPIrMax(65535),
-      m_pTxIrMax(0),
-      m_initRangOppNumber(0),
-      m_contentionRangingRetries(0),
-      m_rngReqFrameNumber(0),
-      m_dlChnlNr(0),
-      m_frequency(0),
-      m_rangingIntervalFound(false),
-      m_nrRngReqsSent(0),
-      m_nrRngRspsRecvd(0),
-      m_nrInvitedPollsRecvd(0),
-      m_rangingCW(0),
-      m_rangingBO(0),
-      m_nrRangingTransOpps(0),
-      m_isBackoffSet(false),
-      m_rangingAnomalies(0)
+    : m_ss(ss)
 {
 }
 

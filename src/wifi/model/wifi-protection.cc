@@ -34,9 +34,7 @@ WifiProtection::WifiProtection(Method m)
 {
 }
 
-WifiProtection::~WifiProtection()
-{
-}
+WifiProtection::~WifiProtection() = default;
 
 /*
  * WifiNoProtection

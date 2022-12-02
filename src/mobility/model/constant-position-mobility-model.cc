@@ -33,13 +33,9 @@ ConstantPositionMobilityModel::GetTypeId()
     return tid;
 }
 
-ConstantPositionMobilityModel::ConstantPositionMobilityModel()
-{
-}
+ConstantPositionMobilityModel::ConstantPositionMobilityModel() = default;
 
-ConstantPositionMobilityModel::~ConstantPositionMobilityModel()
-{
-}
+ConstantPositionMobilityModel::~ConstantPositionMobilityModel() = default;
 
 Vector
 ConstantPositionMobilityModel::DoGetPosition() const

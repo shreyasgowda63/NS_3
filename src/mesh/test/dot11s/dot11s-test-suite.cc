@@ -122,9 +122,9 @@ class HwmpRtableTest : public TestCase
   private:
     Mac48Address dst;                     ///< destination address
     Mac48Address hop;                     ///< hop address
-    uint32_t iface;                       ///< interface
-    uint32_t metric;                      ///< metric
-    uint32_t seqnum;                      ///< sequence number
+    uint32_t iface{8010};                 ///< interface
+    uint32_t metric{10};                  ///< metric
+    uint32_t seqnum{1};                   ///< sequence number
     Time expire;                          ///< expiration time
     Ptr<HwmpRtable> table;                ///< tab;e
     std::vector<Mac48Address> precursors; ///< precursors
@@ -134,9 +134,7 @@ HwmpRtableTest::HwmpRtableTest()
     : TestCase("HWMP routing table"),
       dst("01:00:00:01:00:01"),
       hop("01:00:00:01:00:03"),
-      iface(8010),
-      metric(10),
-      seqnum(1),
+
       expire(Seconds(10))
 {
     precursors.emplace_back("00:10:20:30:40:50");
@@ -249,7 +247,7 @@ PeerLinkFrameStartTest::DoRun()
         packet->AddHeader(a);
         PeerLinkOpenStart b;
         packet->RemoveHeader(b);
-        NS_TEST_EXPECT_MSG_EQ(a, b, "PEER_LINK_OPEN works");
+        NS_TEST_EXPECT_MSG_EQ(&a, &b, "PEER_LINK_OPEN works");
     }
     {
         PeerLinkConfirmStart a;
@@ -261,7 +259,7 @@ PeerLinkFrameStartTest::DoRun()
         packet->AddHeader(a);
         PeerLinkConfirmStart b;
         packet->RemoveHeader(b);
-        NS_TEST_EXPECT_MSG_EQ(a, b, "PEER_LINK_CONFIRM works");
+        NS_TEST_EXPECT_MSG_EQ(&a, &b, "PEER_LINK_CONFIRM works");
     }
     {
         PeerLinkCloseStart a;
@@ -272,7 +270,7 @@ PeerLinkFrameStartTest::DoRun()
         packet->AddHeader(a);
         PeerLinkCloseStart b;
         packet->RemoveHeader(b);
-        NS_TEST_EXPECT_MSG_EQ(a, b, "PEER_LINK_CLOSE works");
+        NS_TEST_EXPECT_MSG_EQ(&a, &b, "PEER_LINK_CLOSE works");
     }
 }
 

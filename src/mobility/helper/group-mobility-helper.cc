@@ -43,9 +43,7 @@ GroupMobilityHelper::GroupMobilityHelper()
 {
 }
 
-GroupMobilityHelper::~GroupMobilityHelper()
-{
-}
+GroupMobilityHelper::~GroupMobilityHelper() = default;
 
 void
 GroupMobilityHelper::SetReferencePositionAllocator(Ptr<PositionAllocator> allocator)

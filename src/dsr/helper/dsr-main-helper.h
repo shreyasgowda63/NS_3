@@ -85,7 +85,7 @@ class DsrMainHelper
      * \return DsrHelper object
      */
     DsrMainHelper& operator=(const DsrMainHelper& o);
-    const DsrHelper* m_dsrHelper; ///< helper class
+    const DsrHelper* m_dsrHelper{nullptr}; ///< helper class
 };
 
 } // namespace ns3

@@ -25,17 +25,6 @@
 
 namespace ns3
 {
-simpleOfdmSendParam::simpleOfdmSendParam()
-{
-    // m_fecBlock = 0;
-    m_burstSize = 0;
-    m_isFirstBlock = 0;
-    m_frequency = 0;
-    m_modulationType = WimaxPhy::MODULATION_TYPE_QPSK_12;
-    m_direction = 0;
-    m_rxPowerDbm = 0;
-}
-
 simpleOfdmSendParam::simpleOfdmSendParam(const bvec& fecBlock,
                                          uint32_t burstSize,
                                          bool isFirstBlock,
@@ -43,14 +32,14 @@ simpleOfdmSendParam::simpleOfdmSendParam(const bvec& fecBlock,
                                          WimaxPhy::ModulationType modulationType,
                                          uint8_t direction,
                                          double rxPowerDbm)
+    : m_fecBlock(fecBlock),
+      m_burstSize(burstSize),
+      m_direction(direction),
+      m_frequency(Frequency),
+      m_isFirstBlock(isFirstBlock),
+      m_modulationType(modulationType),
+      m_rxPowerDbm(rxPowerDbm)
 {
-    m_fecBlock = fecBlock;
-    m_burstSize = burstSize;
-    m_isFirstBlock = isFirstBlock;
-    m_frequency = Frequency;
-    m_modulationType = modulationType;
-    m_direction = direction;
-    m_rxPowerDbm = rxPowerDbm;
 }
 
 simpleOfdmSendParam::simpleOfdmSendParam(uint32_t burstSize,
@@ -60,19 +49,17 @@ simpleOfdmSendParam::simpleOfdmSendParam(uint32_t burstSize,
                                          uint8_t direction,
                                          double rxPowerDbm,
                                          Ptr<PacketBurst> burst)
+    : m_burstSize(burstSize),
+      m_burst(burst),
+      m_direction(direction),
+      m_frequency(Frequency),
+      m_isFirstBlock(isFirstBlock),
+      m_modulationType(modulationType),
+      m_rxPowerDbm(rxPowerDbm)
 {
-    m_burstSize = burstSize;
-    m_isFirstBlock = isFirstBlock;
-    m_frequency = Frequency;
-    m_modulationType = modulationType;
-    m_direction = direction;
-    m_rxPowerDbm = rxPowerDbm;
-    m_burst = burst;
 }
 
-simpleOfdmSendParam::~simpleOfdmSendParam()
-{
-}
+simpleOfdmSendParam::~simpleOfdmSendParam() = default;
 
 void
 simpleOfdmSendParam::SetFecBlock(const bvec& fecBlock)

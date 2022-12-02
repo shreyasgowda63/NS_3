@@ -63,14 +63,12 @@ class TcpRtoTest : public TcpGeneralTest
     void ConfigureEnvironment() override;
 
   private:
-    bool m_afterRTOExpired; //!< True if RTO is expired.
-    bool m_segmentReceived; //!< True if segments have been received.
+    bool m_afterRTOExpired{false}; //!< True if RTO is expired.
+    bool m_segmentReceived{false}; //!< True if segments have been received.
 };
 
 TcpRtoTest::TcpRtoTest(const TypeId& congControl, const std::string& desc)
-    : TcpGeneralTest(desc),
-      m_afterRTOExpired(false),
-      m_segmentReceived(false)
+    : TcpGeneralTest(desc)
 {
     m_congControlTypeId = congControl;
 }
@@ -349,15 +347,13 @@ class TcpTimeRtoTest : public TcpGeneralTest
     void PktDropped(const Ipv4Header& ipH, const TcpHeader& tcpH, Ptr<const Packet> p);
 
   private:
-    uint32_t m_senderSentSegments; //!< Number of segments sent.
-    Time m_previousRTO;            //!< Previous RTO.
-    bool m_closed;                 //!< True if the connection is closed.
+    uint32_t m_senderSentSegments{0}; //!< Number of segments sent.
+    Time m_previousRTO;               //!< Previous RTO.
+    bool m_closed{false};             //!< True if the connection is closed.
 };
 
 TcpTimeRtoTest::TcpTimeRtoTest(const TypeId& congControl, const std::string& desc)
-    : TcpGeneralTest(desc),
-      m_senderSentSegments(0),
-      m_closed(false)
+    : TcpGeneralTest(desc)
 {
     m_congControlTypeId = congControl;
 }
