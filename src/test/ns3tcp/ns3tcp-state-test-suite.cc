@@ -78,9 +78,7 @@ class Ns3TcpStateTestCase : public TestCase
      */
     Ns3TcpStateTestCase(uint32_t testCase);
 
-    ~Ns3TcpStateTestCase() override
-    {
-    }
+    ~Ns3TcpStateTestCase() override = default;
 
   private:
     void DoSetup() override;

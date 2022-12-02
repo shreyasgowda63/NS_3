@@ -108,14 +108,14 @@ class WifiPhyThresholdsTest : public TestCase
      */
     virtual void PhyStateChanged(Time start, Time duration, WifiPhyState newState);
 
-    Ptr<SpectrumWifiPhy> m_phy;   ///< PHY object
-    uint32_t m_rxSuccess;         ///< count number of successfully received packets
-    uint32_t m_rxFailure;         ///< count number of unsuccessfully received packets
-    uint32_t m_rxDropped;         ///< count number of dropped packets
-    uint32_t m_stateChanged;      ///< count number of PHY state change
-    uint32_t m_rxStateCount;      ///< count number of PHY state change to RX state
-    uint32_t m_idleStateCount;    ///< count number of PHY state change to IDLE state
-    uint32_t m_ccabusyStateCount; ///< count number of PHY state change to CCA_BUSY state
+    Ptr<SpectrumWifiPhy> m_phy;      ///< PHY object
+    uint32_t m_rxSuccess{0};         ///< count number of successfully received packets
+    uint32_t m_rxFailure{0};         ///< count number of unsuccessfully received packets
+    uint32_t m_rxDropped{0};         ///< count number of dropped packets
+    uint32_t m_stateChanged{0};      ///< count number of PHY state change
+    uint32_t m_rxStateCount{0};      ///< count number of PHY state change to RX state
+    uint32_t m_idleStateCount{0};    ///< count number of PHY state change to IDLE state
+    uint32_t m_ccabusyStateCount{0}; ///< count number of PHY state change to CCA_BUSY state
 
   private:
     void DoSetup() override;
@@ -123,20 +123,11 @@ class WifiPhyThresholdsTest : public TestCase
 };
 
 WifiPhyThresholdsTest::WifiPhyThresholdsTest(std::string test_name)
-    : TestCase(test_name),
-      m_rxSuccess(0),
-      m_rxFailure(0),
-      m_rxDropped(0),
-      m_stateChanged(0),
-      m_rxStateCount(0),
-      m_idleStateCount(0),
-      m_ccabusyStateCount(0)
+    : TestCase(test_name)
 {
 }
 
-WifiPhyThresholdsTest::~WifiPhyThresholdsTest()
-{
-}
+WifiPhyThresholdsTest::~WifiPhyThresholdsTest() = default;
 
 Ptr<SpectrumSignalParameters>
 WifiPhyThresholdsTest::MakeWifiSignal(double txPowerWatts)
@@ -287,9 +278,7 @@ WifiPhyThresholdsWeakWifiSignalTest::WifiPhyThresholdsWeakWifiSignalTest()
 {
 }
 
-WifiPhyThresholdsWeakWifiSignalTest::~WifiPhyThresholdsWeakWifiSignalTest()
-{
-}
+WifiPhyThresholdsWeakWifiSignalTest::~WifiPhyThresholdsWeakWifiSignalTest() = default;
 
 void
 WifiPhyThresholdsWeakWifiSignalTest::DoRun()
@@ -337,9 +326,7 @@ WifiPhyThresholdsWeakForeignSignalTest::WifiPhyThresholdsWeakForeignSignalTest()
 {
 }
 
-WifiPhyThresholdsWeakForeignSignalTest::~WifiPhyThresholdsWeakForeignSignalTest()
-{
-}
+WifiPhyThresholdsWeakForeignSignalTest::~WifiPhyThresholdsWeakForeignSignalTest() = default;
 
 void
 WifiPhyThresholdsWeakForeignSignalTest::DoRun()
@@ -386,9 +373,7 @@ WifiPhyThresholdsStrongWifiSignalTest::WifiPhyThresholdsStrongWifiSignalTest()
 {
 }
 
-WifiPhyThresholdsStrongWifiSignalTest::~WifiPhyThresholdsStrongWifiSignalTest()
-{
-}
+WifiPhyThresholdsStrongWifiSignalTest::~WifiPhyThresholdsStrongWifiSignalTest() = default;
 
 void
 WifiPhyThresholdsStrongWifiSignalTest::DoRun()
@@ -439,9 +424,7 @@ WifiPhyThresholdsStrongForeignSignalTest::WifiPhyThresholdsStrongForeignSignalTe
 {
 }
 
-WifiPhyThresholdsStrongForeignSignalTest::~WifiPhyThresholdsStrongForeignSignalTest()
-{
-}
+WifiPhyThresholdsStrongForeignSignalTest::~WifiPhyThresholdsStrongForeignSignalTest() = default;
 
 void
 WifiPhyThresholdsStrongForeignSignalTest::DoRun()

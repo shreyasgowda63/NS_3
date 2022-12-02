@@ -25,9 +25,7 @@
 namespace ns3
 {
 
-Ipv6ListRoutingHelper::Ipv6ListRoutingHelper()
-{
-}
+Ipv6ListRoutingHelper::Ipv6ListRoutingHelper() = default;
 
 Ipv6ListRoutingHelper::~Ipv6ListRoutingHelper()
 {

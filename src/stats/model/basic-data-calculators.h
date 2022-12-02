@@ -40,8 +40,8 @@ template <typename T = uint32_t>
 class MinMaxAvgTotalCalculator : public DataCalculator, public StatisticalSummary
 {
   public:
-    MinMaxAvgTotalCalculator();
-    ~MinMaxAvgTotalCalculator() override;
+    MinMaxAvgTotalCalculator() = default;
+    ~MinMaxAvgTotalCalculator() override = default;
 
     /**
      * Register this type.
@@ -143,45 +143,24 @@ class MinMaxAvgTotalCalculator : public DataCalculator, public StatisticalSummar
      */
     void DoDispose() override;
 
-    uint32_t m_count; //!< Count value of MinMaxAvgTotalCalculator
+    uint32_t m_count{0}; //!< Count value of MinMaxAvgTotalCalculator
 
-    T m_total;       //!< Total value of MinMaxAvgTotalCalculator
-    T m_squareTotal; //!< Sum of squares value of MinMaxAvgTotalCalculator
-    T m_min;         //!< Minimum value of MinMaxAvgTotalCalculator
-    T m_max;         //!< Maximum value of MinMaxAvgTotalCalculator
+    T m_total{0};       //!< Total value of MinMaxAvgTotalCalculator
+    T m_squareTotal{0}; //!< Sum of squares value of MinMaxAvgTotalCalculator
+    T m_min;            //!< Minimum value of MinMaxAvgTotalCalculator
+    T m_max;            //!< Maximum value of MinMaxAvgTotalCalculator
 
-    double m_meanCurr;     //!< Current mean of MinMaxAvgTotalCalculator
-    double m_sCurr;        //!< Current s of MinMaxAvgTotalCalculator
-    double m_varianceCurr; //!< Current variance of MinMaxAvgTotalCalculator
+    double m_meanCurr{NaN};     //!< Current mean of MinMaxAvgTotalCalculator
+    double m_sCurr{NaN};        //!< Current s of MinMaxAvgTotalCalculator
+    double m_varianceCurr{NaN}; //!< Current variance of MinMaxAvgTotalCalculator
 
-    double m_meanPrev; //!< Previous mean of MinMaxAvgTotalCalculator
-    double m_sPrev;    //!< Previous s of MinMaxAvgTotalCalculator
+    double m_meanPrev{NaN}; //!< Previous mean of MinMaxAvgTotalCalculator
+    double m_sPrev{NaN};    //!< Previous s of MinMaxAvgTotalCalculator
 
     // end MinMaxAvgTotalCalculator
 };
 
 //----------------------------------------------
-template <typename T>
-MinMaxAvgTotalCalculator<T>::MinMaxAvgTotalCalculator()
-{
-    m_count = 0;
-
-    m_total = 0;
-    m_squareTotal = 0;
-
-    m_meanCurr = NaN;
-    m_sCurr = NaN;
-    m_varianceCurr = NaN;
-
-    m_meanPrev = NaN;
-    m_sPrev = NaN;
-}
-
-template <typename T>
-MinMaxAvgTotalCalculator<T>::~MinMaxAvgTotalCalculator()
-{
-}
-
 template <typename T>
 void
 MinMaxAvgTotalCalculator<T>::DoDispose()
@@ -350,9 +329,7 @@ CounterCalculator<T>::CounterCalculator()
 }
 
 template <typename T>
-CounterCalculator<T>::~CounterCalculator()
-{
-}
+CounterCalculator<T>::~CounterCalculator() = default;
 
 /* static */
 template <typename T>

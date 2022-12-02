@@ -61,9 +61,7 @@ ManyUniformRandomVariablesOneGetValueCallTestCase::
 }
 
 ManyUniformRandomVariablesOneGetValueCallTestCase::
-    ~ManyUniformRandomVariablesOneGetValueCallTestCase()
-{
-}
+    ~ManyUniformRandomVariablesOneGetValueCallTestCase() = default;
 
 void
 ManyUniformRandomVariablesOneGetValueCallTestCase::DoRun()

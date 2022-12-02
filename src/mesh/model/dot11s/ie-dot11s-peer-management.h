@@ -123,17 +123,17 @@ class IePeerManagement : public WifiInformationElement
     void Print(std::ostream& os) const override;
 
   private:
-    uint8_t m_length;       ///< length
-    uint8_t m_subtype;      ///< subtype
-    uint16_t m_localLinkId; ///< local link ID
+    uint8_t m_length{3};          ///< length
+    uint8_t m_subtype{PEER_OPEN}; ///< subtype
+    uint16_t m_localLinkId{0};    ///< local link ID
     /**
      * Present within confirm and may be present in close
      */
-    uint16_t m_peerLinkId;
+    uint16_t m_peerLinkId{0};
     /**
      * Present only within close frame
      */
-    PmpReasonCode m_reasonCode;
+    PmpReasonCode m_reasonCode{REASON11S_RESERVED};
     /**
      * equality operator
      *

@@ -98,8 +98,8 @@ class LteRlcTm : public LteRlc
 
     std::vector<TxPdu> m_txBuffer; ///< Transmission buffer
 
-    uint32_t m_maxTxBufferSize; ///< maximum transmit buffer size
-    uint32_t m_txBufferSize;    ///< transmit buffer size
+    uint32_t m_maxTxBufferSize{0}; ///< maximum transmit buffer size
+    uint32_t m_txBufferSize{0};    ///< transmit buffer size
 
     EventId m_rbsTimer; ///< RBS timer
 };

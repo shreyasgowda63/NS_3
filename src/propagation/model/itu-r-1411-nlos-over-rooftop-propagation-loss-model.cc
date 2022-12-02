@@ -101,13 +101,11 @@ ItuR1411NlosOverRooftopPropagationLossModel::GetTypeId()
 }
 
 ItuR1411NlosOverRooftopPropagationLossModel::ItuR1411NlosOverRooftopPropagationLossModel()
-    : PropagationLossModel()
-{
-}
 
-ItuR1411NlosOverRooftopPropagationLossModel::~ItuR1411NlosOverRooftopPropagationLossModel()
-{
-}
+    = default;
+
+ItuR1411NlosOverRooftopPropagationLossModel::~ItuR1411NlosOverRooftopPropagationLossModel() =
+    default;
 
 double
 ItuR1411NlosOverRooftopPropagationLossModel::GetLoss(Ptr<MobilityModel> a,

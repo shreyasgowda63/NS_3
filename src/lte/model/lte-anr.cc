@@ -37,10 +37,7 @@ NS_LOG_COMPONENT_DEFINE("LteAnr");
 NS_OBJECT_ENSURE_REGISTERED(LteAnr);
 
 LteAnr::LteAnr(uint16_t servingCellId)
-    : m_anrSapUser(nullptr),
-      m_threshold(0),
-      m_measId(0),
-      m_servingCellId(servingCellId)
+    : m_servingCellId(servingCellId)
 {
     NS_LOG_FUNCTION(this << servingCellId);
     m_anrSapProvider = new MemberLteAnrSapProvider<LteAnr>(this);

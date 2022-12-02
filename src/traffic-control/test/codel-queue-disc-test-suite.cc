@@ -93,9 +93,7 @@ CodelQueueDiscTestItem::CodelQueueDiscTestItem(Ptr<Packet> p, const Address& add
 {
 }
 
-CodelQueueDiscTestItem::~CodelQueueDiscTestItem()
-{
-}
+CodelQueueDiscTestItem::~CodelQueueDiscTestItem() = default;
 
 void
 CodelQueueDiscTestItem::AddHeader()
@@ -134,9 +132,9 @@ class CoDelQueueDiscBasicEnqueueDequeue : public TestCase
 };
 
 CoDelQueueDiscBasicEnqueueDequeue::CoDelQueueDiscBasicEnqueueDequeue(QueueSizeUnit mode)
-    : TestCase("Basic enqueue and dequeue operations, and attribute setting")
+    : TestCase("Basic enqueue and dequeue operations, and attribute setting"),
+      m_mode(mode)
 {
-    m_mode = mode;
 }
 
 void
@@ -304,9 +302,9 @@ class CoDelQueueDiscBasicOverflow : public TestCase
 };
 
 CoDelQueueDiscBasicOverflow::CoDelQueueDiscBasicOverflow(QueueSizeUnit mode)
-    : TestCase("Basic overflow behavior")
+    : TestCase("Basic overflow behavior"),
+      m_mode(mode)
 {
-    m_mode = mode;
 }
 
 void
@@ -501,15 +499,15 @@ class CoDelQueueDiscBasicDrop : public TestCase
      * \param newVal the new value
      */
     void DropNextTracer(uint32_t oldVal, uint32_t newVal);
-    QueueSizeUnit m_mode;     ///< mode
-    uint32_t m_dropNextCount; ///< count the number of times m_dropNext is recalculated
+    QueueSizeUnit m_mode;        ///< mode
+    uint32_t m_dropNextCount{0}; ///< count the number of times m_dropNext is recalculated
 };
 
 CoDelQueueDiscBasicDrop::CoDelQueueDiscBasicDrop(QueueSizeUnit mode)
-    : TestCase("Basic drop operations")
+    : TestCase("Basic drop operations"),
+
+      m_mode(mode)
 {
-    m_mode = mode;
-    m_dropNextCount = 0;
 }
 
 void
@@ -717,16 +715,16 @@ class CoDelQueueDiscBasicMark : public TestCase
      */
     void DropNextTracer(uint32_t oldVal, uint32_t newVal);
     QueueSizeUnit m_mode;             ///< mode
-    uint32_t m_dropNextCount;         ///< count the number of times m_dropNext is recalculated
+    uint32_t m_dropNextCount{0};      ///< count the number of times m_dropNext is recalculated
     uint32_t nPacketsBeforeFirstDrop; ///< Number of packets in the queue before first drop
     uint32_t nPacketsBeforeFirstMark; ///< Number of packets in the queue before first mark
 };
 
 CoDelQueueDiscBasicMark::CoDelQueueDiscBasicMark(QueueSizeUnit mode)
-    : TestCase("Basic mark operations")
+    : TestCase("Basic mark operations"),
+
+      m_mode(mode)
 {
-    m_mode = mode;
-    m_dropNextCount = 0;
 }
 
 void

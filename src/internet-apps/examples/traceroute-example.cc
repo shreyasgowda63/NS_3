@@ -73,15 +73,15 @@ class TracerouteExample
   private:
     // parameters
     /// Number of nodes
-    uint32_t size;
+    uint32_t size{10};
     /// Distance between nodes, meters
-    double step;
+    double step{50};
     /// Simulation time, seconds
-    double totalTime;
+    double totalTime{100};
     /// Write per-device PCAP traces if true
-    bool pcap;
+    bool pcap{false};
     /// Print aodv routes if true
-    bool printRoutes;
+    bool printRoutes{false};
     /// nodes used in the example
     NodeContainer nodes;
     /// devices used in the example
@@ -117,13 +117,8 @@ main(int argc, char** argv)
 
 //-----------------------------------------------------------------------------
 TracerouteExample::TracerouteExample()
-    : size(10),
-      step(50),
-      totalTime(100),
-      pcap(false),
-      printRoutes(false)
-{
-}
+
+    = default;
 
 bool
 TracerouteExample::Configure(int argc, char** argv)

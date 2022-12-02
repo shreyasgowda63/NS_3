@@ -113,13 +113,13 @@ class TcpIllinoisTest : public TestCase
     uint32_t m_segmentsAcked;        //!< Number of segments ACKed.
     SequenceNumber32 m_nextTxSeq;    //!< Next Tx sequence number.
     SequenceNumber32 m_lastAckedSeq; //!< Last ACKed sequence number.
-    double m_alpha;                  //!< TCP Illinois alpha parameter.
-    double m_beta;                   //!< TCP Illinois beta parameter.
+    double m_alpha{0.0};             //!< TCP Illinois alpha parameter.
+    double m_beta{0.0};              //!< TCP Illinois beta parameter.
     uint32_t m_cntRtt;               //!< RTT counter.
     Time m_sumRtt;                   //!< Sum of all the RTTs.
-    bool m_rttAbove;                 //!< RTT above threshold.
-    uint8_t m_rttLow;                //!< RTT low counter.
-    uint32_t m_ackCnt;               //!< ACK counter.
+    bool m_rttAbove{false};          //!< RTT above threshold.
+    uint8_t m_rttLow{0};             //!< RTT low counter.
+    uint32_t m_ackCnt{0};            //!< ACK counter.
 };
 
 TcpIllinoisTest::TcpIllinoisTest(uint32_t cWnd,
@@ -140,13 +140,8 @@ TcpIllinoisTest::TcpIllinoisTest(uint32_t cWnd,
       m_segmentsAcked(segmentsAcked),
       m_nextTxSeq(nextTxSeq),
       m_lastAckedSeq(lastAckedSeq),
-      m_alpha(0.0),
-      m_beta(0.0),
       m_cntRtt(cntRtt),
-      m_sumRtt(0),
-      m_rttAbove(false),
-      m_rttLow(0),
-      m_ackCnt(0)
+      m_sumRtt(0)
 {
 }
 

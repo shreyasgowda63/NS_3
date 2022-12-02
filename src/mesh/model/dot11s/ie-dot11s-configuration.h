@@ -97,13 +97,13 @@ class Dot11sMeshCapability
      * \returns the Mesh Capability byte
      */
     uint8_t GetUint8() const;
-    bool acceptPeerLinks;    ///< accept peer links
-    bool MCCASupported;      ///< MCCA supported
-    bool MCCAEnabled;        ///< MCCA enabled
-    bool forwarding;         ///< forwarding?
-    bool beaconTimingReport; ///< beacon timing report
-    bool TBTTAdjustment;     ///< TBTT adjustment
-    bool powerSaveLevel;     ///< power save level
+    bool acceptPeerLinks{true};    ///< accept peer links
+    bool MCCASupported{false};     ///< MCCA supported
+    bool MCCAEnabled{false};       ///< MCCA enabled
+    bool forwarding{true};         ///< forwarding?
+    bool beaconTimingReport{true}; ///< beacon timing report
+    bool TBTTAdjustment{true};     ///< TBTT adjustment
+    bool powerSaveLevel{false};    ///< power save level
     /**
      * This is a utility function to test if the bit at position n is true
      * \param cap byte to test
@@ -177,18 +177,18 @@ class IeConfiguration : public WifiInformationElement
 
   private:
     /** Active Path Selection Protocol ID */
-    dot11sPathSelectionProtocol m_APSPId;
+    dot11sPathSelectionProtocol m_APSPId{PROTOCOL_HWMP};
     /** Active Path Metric ID */
-    dot11sPathSelectionMetric m_APSMId;
+    dot11sPathSelectionMetric m_APSMId{METRIC_AIRTIME};
     /** Congestion Control Mode ID */
-    dot11sCongestionControlMode m_CCMId;
+    dot11sCongestionControlMode m_CCMId{CONGESTION_NULL};
     /** Sync protocol ID */
-    dot11sSynchronizationProtocolIdentifier m_SPId;
+    dot11sSynchronizationProtocolIdentifier m_SPId{SYNC_NEIGHBOUR_OFFSET};
     /** Auth protocol ID */
-    dot11sAuthenticationProtocol m_APId;
+    dot11sAuthenticationProtocol m_APId{AUTH_NULL};
     /** Mesh capability */
     Dot11sMeshCapability m_meshCap;
-    uint8_t m_neighbors; ///< neighbors
+    uint8_t m_neighbors{0}; ///< neighbors
     /**
      * equality operator
      *

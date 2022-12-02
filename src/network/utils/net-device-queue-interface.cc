@@ -41,9 +41,7 @@ NetDeviceQueue::GetTypeId()
 }
 
 NetDeviceQueue::NetDeviceQueue()
-    : m_stoppedByDevice(false),
-      m_stoppedByQueueLimits(false),
-      NS_LOG_TEMPLATE_DEFINE("NetDeviceQueueInterface")
+    : NS_LOG_TEMPLATE_DEFINE("NetDeviceQueueInterface")
 {
     NS_LOG_FUNCTION(this);
 }

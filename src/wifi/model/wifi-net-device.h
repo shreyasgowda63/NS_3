@@ -253,12 +253,12 @@ class WifiNetDevice : public NetDevice
     TracedCallback<Ptr<const Packet>, Mac48Address> m_rxLogger; //!< receive trace callback
     TracedCallback<Ptr<const Packet>, Mac48Address> m_txLogger; //!< transmit trace callback
 
-    WifiStandard m_standard;        //!< Wifi standard
-    uint32_t m_ifIndex;             //!< IF index
-    bool m_linkUp;                  //!< link up
-    TracedCallback<> m_linkChanges; //!< link change callback
-    mutable uint16_t m_mtu;         //!< MTU
-    bool m_configComplete;          //!< configuration complete
+    WifiStandard m_standard{WIFI_STANDARD_UNSPECIFIED}; //!< Wifi standard
+    uint32_t m_ifIndex;                                 //!< IF index
+    bool m_linkUp;                                      //!< link up
+    TracedCallback<> m_linkChanges;                     //!< link change callback
+    mutable uint16_t m_mtu;                             //!< MTU
+    bool m_configComplete{false};                       //!< configuration complete
 };
 
 } // namespace ns3

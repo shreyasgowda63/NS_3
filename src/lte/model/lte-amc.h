@@ -47,8 +47,8 @@ class LteAmc : public Object
      */
     static TypeId GetTypeId();
 
-    LteAmc();
-    ~LteAmc() override;
+    LteAmc() = default;
+    ~LteAmc() override = default;
 
     /// Types of AMC model.
     enum AmcModel

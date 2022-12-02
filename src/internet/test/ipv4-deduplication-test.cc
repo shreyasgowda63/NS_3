@@ -142,8 +142,8 @@ class Ipv4DeduplicationTest : public TestCase
         DEGENERATE
     }; // enabled, but expiration time too low
 
-    MODE m_mode;   //!< Test type
-    Time m_expire; //!< Expiration delay for duplicate cache entries
+    MODE m_mode{ENABLED}; //!< Test type
+    Time m_expire;        //!< Expiration delay for duplicate cache entries
     std::map<std::string, uint32_t>
         m_packetCountMap; //!< map of received packets (node name, counter)
     std::map<std::string, uint32_t>
@@ -184,7 +184,7 @@ const Time Ipv4DeduplicationTest::DELAY = MilliSeconds(1);
 
 Ipv4DeduplicationTest::Ipv4DeduplicationTest(bool enable, Time expire)
     : TestCase(MakeName(enable, expire)),
-      m_mode(ENABLED),
+
       m_expire(expire)
 {
     if (!enable)
@@ -603,7 +603,7 @@ class Ipv4DeduplicationPerformanceTest : public TestCase
   private:
     std::vector<Ptr<Socket>> m_sockets; //!< sockets in use
     std::vector<uint8_t> m_txPackets;   //!< transmitted packets for each socket
-    uint8_t m_target;                   //!< number of packets to transmit on each socket
+    uint8_t m_target{40};               //!< number of packets to transmit on each socket
 
     /**
      * Send data
@@ -617,7 +617,6 @@ class Ipv4DeduplicationPerformanceTest : public TestCase
 Ipv4DeduplicationPerformanceTest::Ipv4DeduplicationPerformanceTest()
     : TestCase("Ipv4Deduplication performance test")
 {
-    m_target = 40;
 }
 
 void

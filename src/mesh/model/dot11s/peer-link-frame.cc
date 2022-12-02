@@ -32,12 +32,8 @@ namespace dot11s
 NS_OBJECT_ENSURE_REGISTERED(PeerLinkOpenStart);
 
 PeerLinkOpenStart::PeerLinkOpenStart()
-    : m_capability(0),
-      m_rates(SupportedRates()),
-      m_meshId(),
-      m_config(IeConfiguration())
-{
-}
+
+    = default;
 
 void
 PeerLinkOpenStart::SetPlinkOpenStart(PeerLinkOpenStart::PlinkOpenStartFields fields)
@@ -157,9 +153,8 @@ operator==(const PeerLinkOpenStart& a, const PeerLinkOpenStart& b)
 NS_OBJECT_ENSURE_REGISTERED(PeerLinkCloseStart);
 
 PeerLinkCloseStart::PeerLinkCloseStart()
-    : m_meshId()
-{
-}
+
+    = default;
 
 void
 PeerLinkCloseStart::SetPlinkCloseStart(PeerLinkCloseStart::PlinkCloseStartFields fields)
@@ -240,12 +235,8 @@ operator==(const PeerLinkCloseStart& a, const PeerLinkCloseStart& b)
 NS_OBJECT_ENSURE_REGISTERED(PeerLinkConfirmStart);
 
 PeerLinkConfirmStart::PeerLinkConfirmStart()
-    : m_capability(0),
-      m_aid(0),
-      m_rates(SupportedRates()),
-      m_config(IeConfiguration())
-{
-}
+
+    = default;
 
 void
 PeerLinkConfirmStart::SetPlinkConfirmStart(PeerLinkConfirmStart::PlinkConfirmStartFields fields)

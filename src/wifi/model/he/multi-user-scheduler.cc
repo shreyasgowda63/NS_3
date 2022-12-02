@@ -78,9 +78,7 @@ MultiUserScheduler::GetTypeId()
     return tid;
 }
 
-MultiUserScheduler::MultiUserScheduler()
-{
-}
+MultiUserScheduler::MultiUserScheduler() = default;
 
 MultiUserScheduler::~MultiUserScheduler()
 {

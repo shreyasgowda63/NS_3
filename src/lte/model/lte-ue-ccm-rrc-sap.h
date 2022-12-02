@@ -47,7 +47,7 @@ class LteUeCcmRrcSapProvider
     friend class LteMacSapUser;
 
   public:
-    virtual ~LteUeCcmRrcSapProvider();
+    virtual ~LteUeCcmRrcSapProvider() = default;
 
     /// LcsConfig structure
     struct LcsConfig
@@ -190,7 +190,7 @@ MemberLteUeCcmRrcSapProvider<C>::ConfigureSignalBearer(
 class LteUeCcmRrcSapUser
 {
   public:
-    virtual ~LteUeCcmRrcSapUser();
+    virtual ~LteUeCcmRrcSapUser() = default;
 
     /**
      * this function will be used after the RRC notify to ComponentCarrierManager

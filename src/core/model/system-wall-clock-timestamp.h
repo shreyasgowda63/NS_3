@@ -64,10 +64,10 @@ class SystemWallClockTimestamp
 
   private:
     /** The last time stamp. */
-    std::time_t m_last;
+    std::time_t m_last{0};
 
     /** Difference between the two previous time stamps. */
-    std::time_t m_diff;
+    std::time_t m_diff{0};
 
 }; // class SystemWallClockTimestamp
 

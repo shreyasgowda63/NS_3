@@ -41,14 +41,11 @@ ThreeGppV2vUrbanChannelConditionModel::GetTypeId()
 }
 
 ThreeGppV2vUrbanChannelConditionModel::ThreeGppV2vUrbanChannelConditionModel()
-    : ThreeGppChannelConditionModel()
 {
     m_buildingsCcm = CreateObject<BuildingsChannelConditionModel>();
 }
 
-ThreeGppV2vUrbanChannelConditionModel::~ThreeGppV2vUrbanChannelConditionModel()
-{
-}
+ThreeGppV2vUrbanChannelConditionModel::~ThreeGppV2vUrbanChannelConditionModel() = default;
 
 double
 ThreeGppV2vUrbanChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,
@@ -107,7 +104,6 @@ ThreeGppV2vHighwayChannelConditionModel::GetTypeId()
 }
 
 ThreeGppV2vHighwayChannelConditionModel::ThreeGppV2vHighwayChannelConditionModel()
-    : ThreeGppChannelConditionModel()
 {
     m_buildingsCcm = CreateObject<BuildingsChannelConditionModel>();
     ComputeChCond = std::bind(&ThreeGppV2vHighwayChannelConditionModel::GetChCondAndFixCallback,
@@ -116,9 +112,7 @@ ThreeGppV2vHighwayChannelConditionModel::ThreeGppV2vHighwayChannelConditionModel
                               std::placeholders::_2);
 }
 
-ThreeGppV2vHighwayChannelConditionModel::~ThreeGppV2vHighwayChannelConditionModel()
-{
-}
+ThreeGppV2vHighwayChannelConditionModel::~ThreeGppV2vHighwayChannelConditionModel() = default;
 
 double
 ThreeGppV2vHighwayChannelConditionModel::ComputePlos(Ptr<const MobilityModel> a,

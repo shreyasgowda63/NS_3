@@ -136,17 +136,17 @@ class HePpdu : public OfdmPpdu
 
       private:
         // HE-SIG-A1 fields
-        uint8_t m_format;       ///< Format bit
-        uint8_t m_bssColor;     ///< BSS color field
-        uint8_t m_ul_dl;        ///< UL/DL bit
-        uint8_t m_mcs;          ///< MCS field
-        uint8_t m_spatialReuse; ///< Spatial Reuse field
-        uint8_t m_bandwidth;    ///< Bandwidth field
-        uint8_t m_gi_ltf_size;  ///< GI+LTF Size field
-        uint8_t m_nsts;         ///< NSTS
+        uint8_t m_format{1};       ///< Format bit
+        uint8_t m_bssColor{0};     ///< BSS color field
+        uint8_t m_ul_dl{0};        ///< UL/DL bit
+        uint8_t m_mcs{0};          ///< MCS field
+        uint8_t m_spatialReuse{0}; ///< Spatial Reuse field
+        uint8_t m_bandwidth{0};    ///< Bandwidth field
+        uint8_t m_gi_ltf_size{0};  ///< GI+LTF Size field
+        uint8_t m_nsts{0};         ///< NSTS
 
         /// This is used to decide whether MU SIG-B should be added or not
-        bool m_mu;
+        bool m_mu{false};
     }; // class HeSigHeader
 
     /**

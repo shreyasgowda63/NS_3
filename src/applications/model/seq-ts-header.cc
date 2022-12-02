@@ -32,8 +32,7 @@ NS_LOG_COMPONENT_DEFINE("SeqTsHeader");
 NS_OBJECT_ENSURE_REGISTERED(SeqTsHeader);
 
 SeqTsHeader::SeqTsHeader()
-    : m_seq(0),
-      m_ts(Simulator::Now().GetTimeStep())
+    : m_ts(Simulator::Now().GetTimeStep())
 {
     NS_LOG_FUNCTION(this);
 }

@@ -47,18 +47,15 @@ ConnectionManager::GetTypeId()
 }
 
 ConnectionManager::ConnectionManager()
-    : m_cidFactory(nullptr)
-{
-}
+
+    = default;
 
 void
 ConnectionManager::DoDispose()
 {
 }
 
-ConnectionManager::~ConnectionManager()
-{
-}
+ConnectionManager::~ConnectionManager() = default;
 
 void
 ConnectionManager::SetCidFactory(CidFactory* cidFactory)

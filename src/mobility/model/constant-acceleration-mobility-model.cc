@@ -33,13 +33,9 @@ ConstantAccelerationMobilityModel::GetTypeId()
     return tid;
 }
 
-ConstantAccelerationMobilityModel::ConstantAccelerationMobilityModel()
-{
-}
+ConstantAccelerationMobilityModel::ConstantAccelerationMobilityModel() = default;
 
-ConstantAccelerationMobilityModel::~ConstantAccelerationMobilityModel()
-{
-}
+ConstantAccelerationMobilityModel::~ConstantAccelerationMobilityModel() = default;
 
 inline Vector
 ConstantAccelerationMobilityModel::DoGetVelocity() const

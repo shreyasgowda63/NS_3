@@ -76,7 +76,7 @@ class RttHistory
     SequenceNumber32 seq; //!< First sequence number in packet sent
     uint32_t count;       //!< Number of bytes sent
     Time time;            //!< Time this one was sent
-    bool retx;            //!< True if this has been retransmitted
+    bool retx{false};     //!< True if this has been retransmitted
 };
 
 /**

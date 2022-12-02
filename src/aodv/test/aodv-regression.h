@@ -179,7 +179,7 @@ class ChainRegressionTest : public TestCase
 
   private:
     /// \internal It is important to have pointers here
-    NodeContainer* m_nodes;
+    NodeContainer* m_nodes{nullptr};
 
     /// PCAP file names prefix
     const std::string m_prefix;
@@ -188,13 +188,13 @@ class ChainRegressionTest : public TestCase
     /// Chain size
     const uint32_t m_size;
     /// Chain step, meters
-    const double m_step;
+    const double m_step{120};
     /// ARP alive timeout
     const Time m_arpAliveTimeout;
     /// Socket
     Ptr<Socket> m_socket;
     /// Sequence number
-    uint16_t m_seq;
+    uint16_t m_seq{0};
 
     /// Create test topology
     void CreateNodes();

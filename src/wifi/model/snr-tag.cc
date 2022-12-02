@@ -52,9 +52,8 @@ SnrTag::GetInstanceTypeId() const
 }
 
 SnrTag::SnrTag()
-    : m_snr(0)
-{
-}
+
+    = default;
 
 uint32_t
 SnrTag::GetSerializedSize() const

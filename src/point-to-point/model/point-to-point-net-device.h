@@ -280,7 +280,7 @@ class PointToPointNetDevice : public NetDevice
     /**
      * The state of the Net Device transmit state machine.
      */
-    TxMachineState m_txMachineState;
+    TxMachineState m_txMachineState{READY};
 
     /**
      * The data rate that the Net Device uses to simulate packet transmission
@@ -427,7 +427,7 @@ class PointToPointNetDevice : public NetDevice
     NetDevice::PromiscReceiveCallback m_promiscCallback; //!< Receive callback
                                                          //   (promisc data)
     uint32_t m_ifIndex;                                  //!< Index of the interface
-    bool m_linkUp;                                       //!< Identify if the link is up or not
+    bool m_linkUp{false};                                //!< Identify if the link is up or not
     TracedCallback<> m_linkChangeCallbacks;              //!< Callback for the link change event
 
     static const uint16_t DEFAULT_MTU = 1500; //!< Default MTU

@@ -223,15 +223,15 @@ class WaveBsmStats : public Object
     bool GetLogging();
 
   private:
-    int m_wavePktSendCount;                            ///< packet sent count
-    int m_waveByteSendCount;                           ///< byte sent count
-    int m_wavePktReceiveCount;                         ///< packet receive count
+    int m_wavePktSendCount{0};                         ///< packet sent count
+    int m_waveByteSendCount{0};                        ///< byte sent count
+    int m_wavePktReceiveCount{0};                      ///< packet receive count
     std::vector<int> m_wavePktInCoverageReceiveCounts; ///< packet in ceoverage receive counts
     std::vector<int> m_wavePktExpectedReceiveCounts;   ///< packet expected receive counts
     std::vector<int>
         m_waveTotalPktInCoverageReceiveCounts; ///< total packet in coverage receive counts
     std::vector<int> m_waveTotalPktExpectedReceiveCounts; ///< total packet expected receive counts
-    bool m_log;                                           ///< logging state
+    bool m_log{false};                                    ///< logging state
 };
 
 } // namespace ns3

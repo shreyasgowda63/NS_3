@@ -45,9 +45,8 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("FdNetDevice");
 
 FdNetDeviceFdReader::FdNetDeviceFdReader()
-    : m_bufferSize(65536) // Defaults to maximum TCP window size
-{
-}
+
+    = default;
 
 void
 FdNetDeviceFdReader::SetBufferSize(uint32_t bufferSize)
@@ -167,15 +166,7 @@ FdNetDevice::GetTypeId()
 
 FdNetDevice::FdNetDevice()
     : m_node(nullptr),
-      m_ifIndex(0),
-      // Defaults to Ethernet v2 MTU
-      m_mtu(1500),
-      m_fd(-1),
-      m_fdReader(nullptr),
-      m_isBroadcast(true),
-      m_isMulticast(false),
-      m_startEvent(),
-      m_stopEvent()
+      m_fdReader(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }

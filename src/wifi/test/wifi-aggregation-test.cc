@@ -76,12 +76,11 @@ class AmpduAggregationTest : public TestCase
     Ptr<YansWifiPhy> m_phy;                  ///< Phy
     Ptr<WifiRemoteStationManager> m_manager; ///< remote station manager
     ObjectFactory m_factory;                 ///< factory
-    bool m_discarded;                        ///< whether the packet should be discarded
+    bool m_discarded{false};                 ///< whether the packet should be discarded
 };
 
 AmpduAggregationTest::AmpduAggregationTest()
-    : TestCase("Check the correctness of MPDU aggregation operations"),
-      m_discarded(false)
+    : TestCase("Check the correctness of MPDU aggregation operations")
 {
 }
 
@@ -826,9 +825,7 @@ PreservePacketsInAmpdus::PreservePacketsInAmpdus()
 {
 }
 
-PreservePacketsInAmpdus::~PreservePacketsInAmpdus()
-{
-}
+PreservePacketsInAmpdus::~PreservePacketsInAmpdus() = default;
 
 void
 PreservePacketsInAmpdus::NotifyMacTransmit(Ptr<const Packet> packet)

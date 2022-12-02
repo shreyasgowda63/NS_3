@@ -102,17 +102,17 @@ class V4Ping : public Application
      * The default is 56, which translates into 64 ICMP data bytes when combined with the 8 bytes of
      * ICMP header data.
      */
-    uint32_t m_size;
+    uint32_t m_size{56};
     /// The socket we send packets from
     Ptr<Socket> m_socket;
     /// ICMP ECHO sequence number
-    uint16_t m_seq;
+    uint16_t m_seq{0};
     /// TracedCallback for RTT measured by ICMP ECHOs
     TracedCallback<Time> m_traceRtt;
     /// produce ping-style output if true
-    bool m_verbose;
+    bool m_verbose{false};
     /// received packets counter
-    uint32_t m_recv;
+    uint32_t m_recv{0};
     /// Start time to report total ping time
     Time m_started;
     /// Average rtt is ms

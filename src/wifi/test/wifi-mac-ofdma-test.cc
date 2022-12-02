@@ -78,13 +78,14 @@ class TestMultiUserScheduler : public MultiUserScheduler
      */
     void ComputeWifiTxVector();
 
-    TxFormat m_txFormat;              //!< the format of next transmission
-    TriggerFrameType m_ulTriggerType; //!< Trigger Frame type for UL MU
-    CtrlTriggerHeader m_trigger;      //!< Trigger Frame to send
-    WifiMacHeader m_triggerHdr;       //!< MAC header for Trigger Frame
-    WifiTxVector m_txVector;          //!< the TX vector for MU PPDUs
-    WifiTxParameters m_txParams;      //!< TX parameters
-    WifiPsduMap m_psduMap;            //!< the DL MU PPDU to transmit
+    TxFormat m_txFormat{SU_TX}; //!< the format of next transmission
+    TriggerFrameType m_ulTriggerType{
+        TriggerFrameType::BSRP_TRIGGER}; //!< Trigger Frame type for UL MU
+    CtrlTriggerHeader m_trigger;         //!< Trigger Frame to send
+    WifiMacHeader m_triggerHdr;          //!< MAC header for Trigger Frame
+    WifiTxVector m_txVector;             //!< the TX vector for MU PPDUs
+    WifiTxParameters m_txParams;         //!< TX parameters
+    WifiPsduMap m_psduMap;               //!< the DL MU PPDU to transmit
 };
 
 NS_OBJECT_ENSURE_REGISTERED(TestMultiUserScheduler);
@@ -100,8 +101,7 @@ TestMultiUserScheduler::GetTypeId()
 }
 
 TestMultiUserScheduler::TestMultiUserScheduler()
-    : m_txFormat(SU_TX),
-      m_ulTriggerType(TriggerFrameType::BSRP_TRIGGER)
+
 {
     NS_LOG_FUNCTION(this);
 }
@@ -422,7 +422,7 @@ class OfdmaAckSequenceTest : public TestCase
         WifiTxVector txVector;    ///< TXVECTOR
     };
 
-    uint16_t m_nStations;                       ///< number of stations
+    uint16_t m_nStations{4};                    ///< number of stations
     NetDeviceContainer m_staDevices;            ///< stations' devices
     Ptr<WifiNetDevice> m_apDevice;              ///< AP's device
     std::vector<PacketSocketAddress> m_sockets; ///< packet socket addresses for STAs
@@ -433,9 +433,9 @@ class OfdmaAckSequenceTest : public TestCase
     uint16_t m_txopLimit;                       ///< TXOP limit in microseconds
     uint16_t m_nPktsPerSta;                     ///< number of packets to send to each station
     MuEdcaParameterSet m_muEdcaParameterSet;    ///< MU EDCA Parameter Set
-    bool m_ulPktsGenerated;           ///< whether UL packets for HE TB PPDUs have been generated
-    uint16_t m_received;              ///< number of packets received by the stations
-    uint16_t m_flushed;               ///< number of DL packets flushed after DL MU PPDU
+    bool m_ulPktsGenerated{false};    ///< whether UL packets for HE TB PPDUs have been generated
+    uint16_t m_received{0};           ///< number of packets received by the stations
+    uint16_t m_flushed{0};            ///< number of DL packets flushed after DL MU PPDU
     Time m_edcaDisabledStartTime;     ///< time when disabling EDCA started
     std::vector<uint32_t> m_cwValues; ///< CW used by stations after MU exchange
 };
@@ -447,7 +447,7 @@ OfdmaAckSequenceTest::OfdmaAckSequenceTest(uint16_t width,
                                            uint16_t nPktsPerSta,
                                            MuEdcaParameterSet muEdcaParameterSet)
     : TestCase("Check correct operation of DL OFDMA acknowledgment sequences"),
-      m_nStations(4),
+
       m_sockets(m_nStations),
       m_channelWidth(width),
       m_dlMuAckType(dlType),
@@ -455,17 +455,13 @@ OfdmaAckSequenceTest::OfdmaAckSequenceTest(uint16_t width,
       m_txopLimit(txopLimit),
       m_nPktsPerSta(nPktsPerSta),
       m_muEdcaParameterSet(muEdcaParameterSet),
-      m_ulPktsGenerated(false),
-      m_received(0),
-      m_flushed(0),
+
       m_edcaDisabledStartTime(Seconds(0)),
       m_cwValues(std::vector<uint32_t>(m_nStations, 2)) // 2 is an invalid CW value
 {
 }
 
-OfdmaAckSequenceTest::~OfdmaAckSequenceTest()
-{
-}
+OfdmaAckSequenceTest::~OfdmaAckSequenceTest() = default;
 
 void
 OfdmaAckSequenceTest::L7Receive(std::string context, Ptr<const Packet> p, const Address& addr)

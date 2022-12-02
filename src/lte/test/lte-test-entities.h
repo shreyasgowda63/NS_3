@@ -458,8 +458,8 @@ class EpcTestRrc : public Object
     void DoPathSwitchRequestAcknowledge(
         EpcEnbS1SapUser::PathSwitchRequestAcknowledgeParameters params);
 
-    EpcEnbS1SapProvider* m_s1SapProvider; ///< S1 SAP provider
-    EpcEnbS1SapUser* m_s1SapUser;         ///< S1 SAP user
+    EpcEnbS1SapProvider* m_s1SapProvider{nullptr}; ///< S1 SAP provider
+    EpcEnbS1SapUser* m_s1SapUser;                  ///< S1 SAP user
 };
 
 } // namespace ns3

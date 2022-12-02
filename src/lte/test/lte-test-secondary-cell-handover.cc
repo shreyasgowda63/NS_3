@@ -85,20 +85,18 @@ class LteSecondaryCellHandoverTestCase : public TestCase
      */
     void DoTeardown() override;
 
-    bool m_useIdealRrc;                  ///< whether LTE is configured to use ideal RRC
-    uint8_t m_numberOfComponentCarriers; ///< Number of component carriers
+    bool m_useIdealRrc;                     ///< whether LTE is configured to use ideal RRC
+    uint8_t m_numberOfComponentCarriers{2}; ///< Number of component carriers
 
     Ptr<LteEnbNetDevice> m_sourceEnbDev; ///< Source eNB device
 
-    bool m_hasUeHandoverStarted; ///< true if UE started handover
+    bool m_hasUeHandoverStarted{false}; ///< true if UE started handover
 };
 
 LteSecondaryCellHandoverTestCase::LteSecondaryCellHandoverTestCase(std::string name,
                                                                    bool useIdealRrc)
     : TestCase{name},
-      m_useIdealRrc{useIdealRrc},
-      m_numberOfComponentCarriers{2},
-      m_hasUeHandoverStarted{false}
+      m_useIdealRrc{useIdealRrc}
 {
 }
 

@@ -73,7 +73,6 @@ operator<<(std::ostream& os, const CandidateQueue& q)
 }
 
 CandidateQueue::CandidateQueue()
-    : m_candidates()
 {
     NS_LOG_FUNCTION(this);
 }

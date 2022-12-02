@@ -72,11 +72,11 @@ class TcpEcnTest : public TcpGeneralTest
     void ConfigureProperties() override;
 
   private:
-    uint32_t m_cwndChangeCount;  //!< Number of times the congestion window did change
-    uint32_t m_senderSent;       //!< Number of segments sent by the sender
-    uint32_t m_senderReceived;   //!< Number of segments received by the sender
-    uint32_t m_receiverReceived; //!< Number of segments received by the receiver
-    uint32_t m_testcase;         //!< Test case type
+    uint32_t m_cwndChangeCount{0};  //!< Number of times the congestion window did change
+    uint32_t m_senderSent{0};       //!< Number of segments sent by the sender
+    uint32_t m_senderReceived{0};   //!< Number of segments received by the sender
+    uint32_t m_receiverReceived{0}; //!< Number of segments received by the receiver
+    uint32_t m_testcase;            //!< Test case type
 };
 
 /**
@@ -100,14 +100,12 @@ class TcpSocketCongestedRouter : public TcpSocketMsgBase
      */
     static TypeId GetTypeId();
 
-    uint32_t m_dataPacketSent; //!< Number of packets sent
-    uint8_t m_testcase;        //!< Test case type
+    uint32_t m_dataPacketSent{0}; //!< Number of packets sent
+    uint8_t m_testcase;           //!< Test case type
 
     TcpSocketCongestedRouter()
-        : TcpSocketMsgBase()
-    {
-        m_dataPacketSent = 0;
-    }
+
+        = default;
 
     /**
      * \brief Constructor.
@@ -394,10 +392,7 @@ TcpSocketCongestedRouter::Fork()
 
 TcpEcnTest::TcpEcnTest(uint32_t testcase, const std::string& desc)
     : TcpGeneralTest(desc),
-      m_cwndChangeCount(0),
-      m_senderSent(0),
-      m_senderReceived(0),
-      m_receiverReceived(0),
+
       m_testcase(testcase)
 {
 }

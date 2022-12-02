@@ -29,15 +29,8 @@ NS_LOG_COMPONENT_DEFINE("LteRlcAmHeader");
 NS_OBJECT_ENSURE_REGISTERED(LteRlcAmHeader);
 
 LteRlcAmHeader::LteRlcAmHeader()
-    : m_headerLength(0),
-      m_dataControlBit(0xff),
-      m_resegmentationFlag(0xff),
-      m_pollingBit(0xff),
-      m_framingInfo(0xff),
-      m_sequenceNumber(0xfffa),
-      m_segmentOffset(0xffff),
-      m_lastOffset(0xffff),
-      m_controlPduType(0xff),
+    : m_sequenceNumber(0xfffa),
+
       m_ackSn(0xffff)
 {
 }

@@ -82,20 +82,16 @@ static LteRlcUmE2eTestSuite lteRlcUmE2eTestSuite;
  */
 
 LteRlcUmE2eTestCase::LteRlcUmE2eTestCase(std::string name, uint32_t seed, double losses)
-    : TestCase(name)
+    : TestCase(name),
+      m_dlDrops(0),
+      m_losses(losses),
+      m_seed(seed),
+      m_ulDrops(0)
 {
     // NS_LOG_UNCOND ("Creating LteRlcUmTestingTestCase: " + name);
-
-    m_seed = seed;
-    m_losses = losses;
-
-    m_dlDrops = 0;
-    m_ulDrops = 0;
 }
 
-LteRlcUmE2eTestCase::~LteRlcUmE2eTestCase()
-{
-}
+LteRlcUmE2eTestCase::~LteRlcUmE2eTestCase() = default;
 
 void
 LteRlcUmE2eTestCase::DlDropEvent(Ptr<const Packet> p)

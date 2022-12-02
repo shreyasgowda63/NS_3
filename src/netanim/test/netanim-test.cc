@@ -60,8 +60,8 @@ class AbstractAnimationInterfaceTestCase : public TestCase
     void DoRun() override;
 
   protected:
-    NodeContainer m_nodes;      ///< the nodes
-    AnimationInterface* m_anim; ///< animation
+    NodeContainer m_nodes;               ///< the nodes
+    AnimationInterface* m_anim{nullptr}; ///< animation
 
   private:
     /// Prepare network function
@@ -73,13 +73,11 @@ class AbstractAnimationInterfaceTestCase : public TestCase
     /// Check file existence
     virtual void CheckFileExistence();
 
-    const char* m_traceFileName; ///< trace file name
+    const char* m_traceFileName{"netanim-test.xml"}; ///< trace file name
 };
 
 AbstractAnimationInterfaceTestCase::AbstractAnimationInterfaceTestCase(std::string name)
-    : TestCase(name),
-      m_anim(nullptr),
-      m_traceFileName("netanim-test.xml")
+    : TestCase(name)
 {
 }
 
@@ -200,12 +198,11 @@ class AnimationRemainingEnergyTestCase : public AbstractAnimationInterfaceTestCa
 
     Ptr<BasicEnergySource> m_energySource;      ///< energy source
     Ptr<SimpleDeviceEnergyModel> m_energyModel; ///< energy model
-    const double m_initialEnergy;               ///< initial energy
+    const double m_initialEnergy{100};          ///< initial energy
 };
 
 AnimationRemainingEnergyTestCase::AnimationRemainingEnergyTestCase()
-    : AbstractAnimationInterfaceTestCase("Verify Remaining energy tracing"),
-      m_initialEnergy(100)
+    : AbstractAnimationInterfaceTestCase("Verify Remaining energy tracing")
 {
 }
 

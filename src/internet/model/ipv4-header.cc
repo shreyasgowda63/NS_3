@@ -32,16 +32,11 @@ NS_LOG_COMPONENT_DEFINE("Ipv4Header");
 NS_OBJECT_ENSURE_REGISTERED(Ipv4Header);
 
 Ipv4Header::Ipv4Header()
-    : m_calcChecksum(false),
-      m_payloadSize(0),
-      m_identification(0),
-      m_tos(0),
+    : m_tos(0),
       m_ttl(0),
       m_protocol(0),
       m_flags(0),
-      m_fragmentOffset(0),
-      m_checksum(0),
-      m_goodChecksum(true),
+
       m_headerSize(5 * 4)
 {
 }

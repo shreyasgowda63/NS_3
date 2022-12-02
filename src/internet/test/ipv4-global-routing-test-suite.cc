@@ -878,10 +878,10 @@ class Ipv4DynamicGlobalRoutingTestCase : public TestCase
     void HandleRead(Ptr<Socket> socket);
     void DoRun() override;
 
-    uint16_t m_count;                                      //!< Number of packets received.
+    uint16_t m_count{0};                                   //!< Number of packets received.
     std::vector<std::pair<Ptr<Socket>, bool>> m_sendSocks; //!< Sending sockets.
     DataRate m_dataRate;                                   //!< Data rate.
-    uint16_t m_packetSize;                                 //!< Packet size.
+    uint16_t m_packetSize{50};                             //!< Packet size.
     std::vector<uint8_t>
         m_firstInterface; //!< Packets received on the 1st interface at a given time.
     std::vector<uint8_t>
@@ -890,13 +890,11 @@ class Ipv4DynamicGlobalRoutingTestCase : public TestCase
 
 // Add some help text to this case to describe what it is intended to test
 Ipv4DynamicGlobalRoutingTestCase::Ipv4DynamicGlobalRoutingTestCase()
-    : TestCase("Dynamic global routing example"),
-      m_count(0)
+    : TestCase("Dynamic global routing example")
 {
     m_firstInterface.resize(16);
     m_secondInterface.resize(16);
     m_dataRate = DataRate("2kbps");
-    m_packetSize = 50;
 }
 
 Ipv4DynamicGlobalRoutingTestCase::~Ipv4DynamicGlobalRoutingTestCase()
@@ -1199,9 +1197,7 @@ Ipv4GlobalRoutingSlash32TestCase::Ipv4GlobalRoutingSlash32TestCase()
 {
 }
 
-Ipv4GlobalRoutingSlash32TestCase::~Ipv4GlobalRoutingSlash32TestCase()
-{
-}
+Ipv4GlobalRoutingSlash32TestCase::~Ipv4GlobalRoutingSlash32TestCase() = default;
 
 void
 Ipv4GlobalRoutingSlash32TestCase::ReceivePkt(Ptr<Socket> socket)

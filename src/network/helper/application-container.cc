@@ -27,9 +27,7 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("ApplicationContainer");
 
-ApplicationContainer::ApplicationContainer()
-{
-}
+ApplicationContainer::ApplicationContainer() = default;
 
 ApplicationContainer::ApplicationContainer(Ptr<Application> app)
 {

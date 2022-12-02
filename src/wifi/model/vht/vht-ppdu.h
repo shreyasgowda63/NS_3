@@ -137,16 +137,16 @@ class VhtPpdu : public OfdmPpdu
 
       private:
         // VHT-SIG-A1 fields
-        uint8_t m_bw;   ///< BW
-        uint8_t m_nsts; ///< NSTS
+        uint8_t m_bw{0};   ///< BW
+        uint8_t m_nsts{0}; ///< NSTS
 
         // VHT-SIG-A2 fields
-        uint8_t m_sgi;                ///< Short GI
-        uint8_t m_sgi_disambiguation; ///< Short GI NSYM Disambiguation
-        uint8_t m_suMcs;              ///< SU VHT MCS
+        uint8_t m_sgi{0};                ///< Short GI
+        uint8_t m_sgi_disambiguation{0}; ///< Short GI NSYM Disambiguation
+        uint8_t m_suMcs{0};              ///< SU VHT MCS
 
         /// This is used to decide whether MU SIG-B should be added or not
-        bool m_mu;
+        bool m_mu{false};
     }; // class VhtSigHeader
 
     /**

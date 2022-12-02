@@ -87,25 +87,12 @@ TcpIllinois::GetTypeId()
 }
 
 TcpIllinois::TcpIllinois()
-    : TcpNewReno(),
-      m_sumRtt(Time(0)),
-      m_cntRtt(0),
+    : m_sumRtt(Time(0)),
       m_baseRtt(Time::Max()),
       m_maxRtt(Time::Min()),
       m_endSeq(0),
-      m_rttAbove(false),
-      m_rttLow(0),
-      m_alphaMin(0.3),
-      m_alphaMax(10.0),
-      m_alphaBase(1.0),
       m_alpha(m_alphaMax),
-      m_betaMin(0.125),
-      m_betaMax(0.5),
-      m_betaBase(0.5),
-      m_beta(m_betaBase),
-      m_winThresh(15),
-      m_theta(5),
-      m_ackCnt(0)
+      m_beta(m_betaBase)
 {
     NS_LOG_FUNCTION(this);
 }

@@ -58,10 +58,8 @@ class SequenceNumber10
      * \param value the value
      */
     SequenceNumber10(const SequenceNumber10& value)
-        : m_value(value.m_value),
-          m_modulusBase(value.m_modulusBase)
-    {
-    }
+
+        = default;
 
     /**
      * Assignment operator

@@ -126,7 +126,7 @@ class FfMacScheduler : public Object
     virtual LteFfrSapUser* GetLteFfrSapUser() = 0;
 
   protected:
-    UlCqiFilter_t m_ulCqiFilter; ///< UL CQI filter
+    UlCqiFilter_t m_ulCqiFilter{SRS_UL_CQI}; ///< UL CQI filter
 };
 
 } // namespace ns3

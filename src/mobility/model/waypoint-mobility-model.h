@@ -166,16 +166,16 @@ class WaypointMobilityModel : public MobilityModel
     /**
      * \brief This variable is set to true if there are no waypoints in the std::deque
      */
-    bool m_first;
+    bool m_first{true};
     /**
      * \brief If true, course change updates are only notified when position
      * is calculated.
      */
-    bool m_lazyNotify;
+    bool m_lazyNotify{false};
     /**
      * \brief If true, calling SetPosition with no waypoints creates a waypoint
      */
-    bool m_initialPositionIsWaypoint;
+    bool m_initialPositionIsWaypoint{false};
     /**
      * \brief The double ended queue containing the ns3::Waypoint objects
      */

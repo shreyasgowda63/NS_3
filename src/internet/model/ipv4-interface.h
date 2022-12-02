@@ -237,9 +237,9 @@ class Ipv4Interface : public Object
      */
     typedef std::list<Ipv4InterfaceAddress>::iterator Ipv4InterfaceAddressListI;
 
-    bool m_ifup;                        //!< The state of this interface
-    bool m_forwarding;                  //!< Forwarding state.
-    uint16_t m_metric;                  //!< Interface metric
+    bool m_ifup{false};                 //!< The state of this interface
+    bool m_forwarding{true};            //!< Forwarding state.
+    uint16_t m_metric{1};               //!< Interface metric
     Ipv4InterfaceAddressList m_ifaddrs; //!< Address list
     Ptr<Node> m_node;                   //!< The associated node
     Ptr<NetDevice> m_device;            //!< The associated NetDevice

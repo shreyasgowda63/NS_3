@@ -28,16 +28,11 @@ NS_OBJECT_ENSURE_REGISTERED(HwmpTag);
 
 // Class HwmpTag:
 HwmpTag::HwmpTag()
-    : m_address(Mac48Address::GetBroadcast()),
-      m_ttl(0),
-      m_metric(0),
-      m_seqno(0)
+    : m_address(Mac48Address::GetBroadcast())
 {
 }
 
-HwmpTag::~HwmpTag()
-{
-}
+HwmpTag::~HwmpTag() = default;
 
 void
 HwmpTag::SetAddress(Mac48Address retransmitter)

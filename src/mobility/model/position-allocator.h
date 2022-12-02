@@ -209,14 +209,14 @@ class GridPositionAllocator : public PositionAllocator
     int64_t AssignStreams(int64_t stream) override;
 
   private:
-    mutable uint32_t m_current;   //!< currently position
-    enum LayoutType m_layoutType; //!< currently selected layout type
-    double m_xMin;                //!< minimum boundary on x positions
-    double m_yMin;                //!< minimum boundary on y positions
-    double m_z;                   //!< z coordinate of all the positions generated
-    uint32_t m_n;                 //!< number of positions to allocate on each row or column
-    double m_deltaX;              //!< x interval between two consecutive x positions
-    double m_deltaY;              //!< y interval between two consecutive y positions
+    mutable uint32_t m_current{0}; //!< currently position
+    enum LayoutType m_layoutType;  //!< currently selected layout type
+    double m_xMin;                 //!< minimum boundary on x positions
+    double m_yMin;                 //!< minimum boundary on y positions
+    double m_z;                    //!< z coordinate of all the positions generated
+    uint32_t m_n;                  //!< number of positions to allocate on each row or column
+    double m_deltaX;               //!< x interval between two consecutive x positions
+    double m_deltaY;               //!< y interval between two consecutive y positions
 };
 
 /**

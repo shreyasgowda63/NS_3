@@ -109,7 +109,7 @@ class TcpOptionMSS : public TcpOption
     void SetMSS(uint16_t mss);
 
   protected:
-    uint16_t m_mss; //!< maximum segment size
+    uint16_t m_mss{1460}; //!< maximum segment size
 };
 
 } // namespace ns3

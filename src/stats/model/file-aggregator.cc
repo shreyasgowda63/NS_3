@@ -45,7 +45,7 @@ FileAggregator::GetTypeId()
 FileAggregator::FileAggregator(const std::string& outputFileName, enum FileType fileType)
     : m_outputFileName(outputFileName),
       m_fileType(fileType),
-      m_hasHeadingBeenSet(false),
+
       m_1dFormat("%e"),
       m_2dFormat("%e %e"),
       m_3dFormat("%e %e %e"),

@@ -92,7 +92,6 @@ ComponentCarrier::GetTypeId()
 }
 
 ComponentCarrier::ComponentCarrier()
-    : Object()
 {
     NS_LOG_FUNCTION(this);
 }
@@ -242,7 +241,6 @@ ComponentCarrierBaseStation::GetTypeId()
 }
 
 ComponentCarrierBaseStation::ComponentCarrierBaseStation()
-    : ComponentCarrier()
 {
     NS_LOG_FUNCTION(this);
 }

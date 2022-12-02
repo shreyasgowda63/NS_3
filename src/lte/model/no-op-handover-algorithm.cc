@@ -30,7 +30,6 @@ NS_LOG_COMPONENT_DEFINE("NoOpHandoverAlgorithm");
 NS_OBJECT_ENSURE_REGISTERED(NoOpHandoverAlgorithm);
 
 NoOpHandoverAlgorithm::NoOpHandoverAlgorithm()
-    : m_handoverManagementSapUser(nullptr)
 {
     NS_LOG_FUNCTION(this);
     m_handoverManagementSapProvider =

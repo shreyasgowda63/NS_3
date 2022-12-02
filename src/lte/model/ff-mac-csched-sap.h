@@ -45,7 +45,7 @@ namespace ns3
 class FfMacCschedSapProvider
 {
   public:
-    virtual ~FfMacCschedSapProvider();
+    virtual ~FfMacCschedSapProvider() = default;
 
     /**
      * Parameters of the API primitives
@@ -293,7 +293,7 @@ class FfMacCschedSapProvider
 class FfMacCschedSapUser
 {
   public:
-    virtual ~FfMacCschedSapUser();
+    virtual ~FfMacCschedSapUser() = default;
 
     /**
      * Parameters of the API primitives

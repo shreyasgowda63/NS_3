@@ -437,9 +437,9 @@ class ApWifiMac : public WifiMac
      */
     uint16_t GetNextAssociationId(std::list<uint8_t> linkIds);
 
-    Ptr<Txop> m_beaconTxop;        //!< Dedicated Txop for beacons
-    bool m_enableBeaconGeneration; //!< Flag whether beacons are being generated
-    Time m_beaconInterval;         //!< Beacon interval
+    Ptr<Txop> m_beaconTxop;               //!< Dedicated Txop for beacons
+    bool m_enableBeaconGeneration{false}; //!< Flag whether beacons are being generated
+    Time m_beaconInterval;                //!< Beacon interval
     Ptr<UniformRandomVariable>
         m_beaconJitter; //!< UniformRandomVariable used to randomize the time of the first beacon
     bool m_enableBeaconJitter; //!< Flag whether the first beacon should be generated at random time

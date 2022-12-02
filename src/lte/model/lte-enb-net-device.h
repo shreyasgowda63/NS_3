@@ -225,8 +225,8 @@ class LteEnbNetDevice : public LteNetDevice
     void DoInitialize() override;
 
   private:
-    bool m_isConstructed; ///< is constructed?
-    bool m_isConfigured;  ///< is configured?
+    bool m_isConstructed{false}; ///< is constructed?
+    bool m_isConfigured{false};  ///< is configured?
 
     /**
      * \brief Propagate attributes and configuration to sub-modules.

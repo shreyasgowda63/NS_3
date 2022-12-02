@@ -133,15 +133,12 @@ class Ns2MobilityHelperTest : public TestCase
     Ns2MobilityHelperTest(const std::string& name, Time timeLimit, uint32_t nodes = 1)
         : TestCase(name),
           m_timeLimit(timeLimit),
-          m_nodeCount(nodes),
-          m_nextRefPoint(0)
+          m_nodeCount(nodes)
     {
     }
 
     /// Empty
-    ~Ns2MobilityHelperTest() override
-    {
-    }
+    ~Ns2MobilityHelperTest() override = default;
 
     /**
      * Set NS-2 trace to read as single large string (don't forget to add \\n and quote \"'s)
@@ -183,7 +180,7 @@ class Ns2MobilityHelperTest : public TestCase
     /// Reference mobility
     std::vector<ReferencePoint> m_reference;
     /// Next reference point to be checked
-    size_t m_nextRefPoint;
+    size_t m_nextRefPoint{0};
     /// TMP trace file name
     std::string m_traceFile;
 

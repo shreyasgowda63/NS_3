@@ -138,9 +138,9 @@ class LteRrcConnectionEstablishmentTestCase : public TestCase
                                ///< (0...nUes-1) in ms
     uint32_t m_delayConnEnd;   ///< expected duration to perform connection establishment in ms
     uint32_t
-        m_delayDiscStart;    ///< delay between connection completed and disconnection request in ms
-    uint32_t m_delayDiscEnd; ///< expected duration to complete disconnection in ms
-    bool m_useIdealRrc;      ///< If set to false, real RRC protocol model will be used
+        m_delayDiscStart; ///< delay between connection completed and disconnection request in ms
+    uint32_t m_delayDiscEnd{10};      ///< expected duration to complete disconnection in ms
+    bool m_useIdealRrc;               ///< If set to false, real RRC protocol model will be used
     bool m_admitRrcConnectionRequest; ///< If set to false, eNb will not allow UE connections
     Ptr<LteHelper> m_lteHelper;       ///< LTE helper
 
@@ -212,7 +212,7 @@ LteRrcConnectionEstablishmentTestCase::LteRrcConnectionEstablishmentTestCase(
       m_tConnIncrPerUe(tConnIncrPerUe),
 
       m_delayDiscStart(delayDiscStart),
-      m_delayDiscEnd(10),
+
       m_useIdealRrc(useIdealRrc),
       m_admitRrcConnectionRequest(admitRrcConnectionRequest)
 {

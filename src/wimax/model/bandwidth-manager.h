@@ -109,7 +109,7 @@ class BandwidthManager : public Object
 
   private:
     Ptr<WimaxNetDevice> m_device; ///< the device
-    uint16_t m_nrBwReqsSent;      ///< bandwidth requests sent
+    uint16_t m_nrBwReqsSent{0};   ///< bandwidth requests sent
 };
 
 } // namespace ns3

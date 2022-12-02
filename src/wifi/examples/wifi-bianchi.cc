@@ -2429,9 +2429,7 @@ class Experiment
             Time pktInterval);
 };
 
-Experiment::Experiment()
-{
-}
+Experiment::Experiment() = default;
 
 int
 Experiment::Run(const WifiHelper& helper,

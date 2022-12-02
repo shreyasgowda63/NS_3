@@ -48,9 +48,7 @@ AirtimeLinkMetricCalculator::GetTypeId()
     return tid;
 }
 
-AirtimeLinkMetricCalculator::AirtimeLinkMetricCalculator()
-{
-}
+AirtimeLinkMetricCalculator::AirtimeLinkMetricCalculator() = default;
 
 void
 AirtimeLinkMetricCalculator::SetHeaderTid(uint8_t tid)

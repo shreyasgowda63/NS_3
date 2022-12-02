@@ -37,7 +37,7 @@ namespace ns3
 class LteHandoverManagementSapProvider
 {
   public:
-    virtual ~LteHandoverManagementSapProvider();
+    virtual ~LteHandoverManagementSapProvider() = default;
 
     /**
      * \brief Send a UE measurement report to handover algorithm.
@@ -64,7 +64,7 @@ class LteHandoverManagementSapProvider
 class LteHandoverManagementSapUser
 {
   public:
-    virtual ~LteHandoverManagementSapUser();
+    virtual ~LteHandoverManagementSapUser() = default;
 
     /**
      * \brief Request a certain reporting configuration to be fulfilled by the UEs

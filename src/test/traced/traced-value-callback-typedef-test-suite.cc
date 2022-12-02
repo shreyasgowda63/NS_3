@@ -125,9 +125,7 @@ class TracedValueCallbackTestCase : public TestCase
   public:
     TracedValueCallbackTestCase();
 
-    ~TracedValueCallbackTestCase() override
-    {
-    }
+    ~TracedValueCallbackTestCase() override = default;
 
   private:
     /**

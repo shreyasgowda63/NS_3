@@ -106,8 +106,8 @@ class EthernetTrailer : public Trailer
      * Enabled FCS calculations. If false, m_fcs is set to 0 and CheckFcs
      * returns true.
      */
-    bool m_calcFcs;
-    uint32_t m_fcs; //!< Value of the fcs contained in the trailer
+    bool m_calcFcs{false};
+    uint32_t m_fcs{0}; //!< Value of the fcs contained in the trailer
 };
 
 } // namespace ns3

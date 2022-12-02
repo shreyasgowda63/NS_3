@@ -36,8 +36,8 @@ namespace ns3
 class Asn1Header : public Header
 {
   public:
-    Asn1Header();
-    ~Asn1Header() override;
+    Asn1Header() = default;
+    ~Asn1Header() override = default;
 
     /**
      * \brief Get the type ID.
@@ -65,10 +65,10 @@ class Asn1Header : public Header
     virtual void PreSerialize() const = 0;
 
   protected:
-    mutable uint8_t m_serializationPendingBits;    //!< pending bits
-    mutable uint8_t m_numSerializationPendingBits; //!< number of pending bits
-    mutable bool m_isDataSerialized;               //!< true if data is serialized
-    mutable Buffer m_serializationResult;          //!< serialization result
+    mutable uint8_t m_serializationPendingBits{0x00}; //!< pending bits
+    mutable uint8_t m_numSerializationPendingBits{0}; //!< number of pending bits
+    mutable bool m_isDataSerialized{false};           //!< true if data is serialized
+    mutable Buffer m_serializationResult;             //!< serialization result
 
     /**
      * Function to write in m_serializationResult, after resizing its size

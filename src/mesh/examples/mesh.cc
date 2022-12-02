@@ -137,19 +137,19 @@ class MeshTest
     int Run();
 
   private:
-    int m_xSize;             ///< X size
-    int m_ySize;             ///< Y size
-    double m_step;           ///< step
-    double m_randomStart;    ///< random start
-    double m_totalTime;      ///< total time
-    double m_packetInterval; ///< packet interval
-    uint16_t m_packetSize;   ///< packet size
-    uint32_t m_nIfaces;      ///< number interfaces
-    bool m_chan;             ///< channel
-    bool m_pcap;             ///< PCAP
-    bool m_ascii;            ///< ASCII
-    std::string m_stack;     ///< stack
-    std::string m_root;      ///< root
+    int m_xSize{3};              ///< X size
+    int m_ySize{3};              ///< Y size
+    double m_step{50.0};         ///< step
+    double m_randomStart{0.1};   ///< random start
+    double m_totalTime{100.0};   ///< total time
+    double m_packetInterval{1};  ///< packet interval
+    uint16_t m_packetSize{1024}; ///< packet size
+    uint32_t m_nIfaces{1};       ///< number interfaces
+    bool m_chan{true};           ///< channel
+    bool m_pcap{false};          ///< PCAP
+    bool m_ascii{false};         ///< ASCII
+    std::string m_stack;         ///< stack
+    std::string m_root;          ///< root
     /// List of network nodes
     NodeContainer nodes;
     /// List of all mesh point devices
@@ -171,18 +171,7 @@ class MeshTest
 };
 
 MeshTest::MeshTest()
-    : m_xSize(3),
-      m_ySize(3),
-      m_step(50.0),
-      m_randomStart(0.1),
-      m_totalTime(100.0),
-      m_packetInterval(1),
-      m_packetSize(1024),
-      m_nIfaces(1),
-      m_chan(true),
-      m_pcap(false),
-      m_ascii(false),
-      m_stack("ns3::Dot11sStack"),
+    : m_stack("ns3::Dot11sStack"),
       m_root("ff:ff:ff:ff:ff:ff")
 {
 }

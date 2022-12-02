@@ -816,7 +816,7 @@ class LrWpanPhy : public SpectrumPhy
      * The next pending state to applied after the current action of the PHY is
      * completed.
      */
-    LrWpanPhyEnumeration m_trxStatePending;
+    LrWpanPhyEnumeration m_trxStatePending{IEEE_802_15_4_PHY_IDLE};
 
     // Callbacks
     /**
@@ -884,7 +884,7 @@ class LrWpanPhy : public SpectrumPhy
     /**
      * Indicates if the reception of frame has been canceled.
      */
-    bool m_isRxCanceled;
+    bool m_isRxCanceled{false};
 
     /**
      * The accumulated signals currently received by the transceiver, including

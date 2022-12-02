@@ -454,14 +454,6 @@ static const int TransportBlockSizeTable[110][27] = {
                    43816, 46888, 51024, 55056, 59256, 63776, 66592, 71112, 75376},
 };
 
-LteAmc::LteAmc()
-{
-}
-
-LteAmc::~LteAmc()
-{
-}
-
 TypeId
 LteAmc::GetTypeId()
 {

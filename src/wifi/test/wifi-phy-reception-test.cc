@@ -96,8 +96,8 @@ class TestThresholdPreambleDetectionWithoutFrameCapture : public TestCase
      * \param psdu the PSDU
      */
     void RxFailure(Ptr<const WifiPsdu> psdu);
-    uint32_t m_countRxSuccess; ///< count RX success
-    uint32_t m_countRxFailure; ///< count RX failure
+    uint32_t m_countRxSuccess{0}; ///< count RX success
+    uint32_t m_countRxFailure{0}; ///< count RX failure
 
   private:
     void DoRun() override;
@@ -119,15 +119,12 @@ class TestThresholdPreambleDetectionWithoutFrameCapture : public TestCase
      */
     void CheckRxPacketCount(uint32_t expectedSuccessCount, uint32_t expectedFailureCount);
 
-    uint64_t m_uid; //!< the UID to use for the PPDU
+    uint64_t m_uid{0}; //!< the UID to use for the PPDU
 };
 
 TestThresholdPreambleDetectionWithoutFrameCapture::
     TestThresholdPreambleDetectionWithoutFrameCapture()
-    : TestCase("Threshold preamble detection model test when no frame capture model is applied"),
-      m_countRxSuccess(0),
-      m_countRxFailure(0),
-      m_uid(0)
+    : TestCase("Threshold preamble detection model test when no frame capture model is applied")
 {
 }
 
@@ -769,8 +766,8 @@ class TestThresholdPreambleDetectionWithFrameCapture : public TestCase
      * \param psdu the PSDU
      */
     void RxFailure(Ptr<const WifiPsdu> psdu);
-    uint32_t m_countRxSuccess; ///< count RX success
-    uint32_t m_countRxFailure; ///< count RX failure
+    uint32_t m_countRxSuccess{0}; ///< count RX success
+    uint32_t m_countRxFailure{0}; ///< count RX failure
 
   private:
     void DoRun() override;
@@ -792,15 +789,11 @@ class TestThresholdPreambleDetectionWithFrameCapture : public TestCase
      */
     void CheckRxPacketCount(uint32_t expectedSuccessCount, uint32_t expectedFailureCount);
 
-    uint64_t m_uid; //!< the UID to use for the PPDU
+    uint64_t m_uid{0}; //!< the UID to use for the PPDU
 };
 
 TestThresholdPreambleDetectionWithFrameCapture::TestThresholdPreambleDetectionWithFrameCapture()
-    : TestCase(
-          "Threshold preamble detection model test when simple frame capture model is applied"),
-      m_countRxSuccess(0),
-      m_countRxFailure(0),
-      m_uid(0)
+    : TestCase("Threshold preamble detection model test when simple frame capture model is applied")
 {
 }
 
@@ -1834,21 +1827,16 @@ class TestSimpleFrameCaptureModel : public TestCase
 
     Ptr<SpectrumWifiPhy> m_phy; ///< Phy
 
-    bool m_rxSuccess1000B; ///< count received packets with 1000B payload
-    bool m_rxSuccess1500B; ///< count received packets with 1500B payload
-    bool m_rxDropped1000B; ///< count dropped packets with 1000B payload
-    bool m_rxDropped1500B; ///< count dropped packets with 1500B payload
+    bool m_rxSuccess1000B{false}; ///< count received packets with 1000B payload
+    bool m_rxSuccess1500B{false}; ///< count received packets with 1500B payload
+    bool m_rxDropped1000B{false}; ///< count dropped packets with 1000B payload
+    bool m_rxDropped1500B{false}; ///< count dropped packets with 1500B payload
 
-    uint64_t m_uid; //!< the UID to use for the PPDU
+    uint64_t m_uid{0}; //!< the UID to use for the PPDU
 };
 
 TestSimpleFrameCaptureModel::TestSimpleFrameCaptureModel()
-    : TestCase("Simple frame capture model test"),
-      m_rxSuccess1000B(false),
-      m_rxSuccess1500B(false),
-      m_rxDropped1000B(false),
-      m_rxDropped1500B(false),
-      m_uid(0)
+    : TestCase("Simple frame capture model test")
 {
 }
 
@@ -2108,12 +2096,11 @@ class TestPhyHeadersReception : public TestCase
      */
     void DoCheckPhyState(WifiPhyState expectedState);
 
-    uint64_t m_uid; //!< the UID to use for the PPDU
+    uint64_t m_uid{0}; //!< the UID to use for the PPDU
 };
 
 TestPhyHeadersReception::TestPhyHeadersReception()
-    : TestCase("PHY headers reception test"),
-      m_uid(0)
+    : TestCase("PHY headers reception test")
 {
 }
 
@@ -2608,27 +2595,20 @@ class TestAmpduReception : public TestCase
 
     Ptr<SpectrumWifiPhy> m_phy; ///< Phy
 
-    uint8_t m_rxSuccessBitmapAmpdu1; ///< bitmap of successfully received MPDUs in A-MPDU #1
-    uint8_t m_rxSuccessBitmapAmpdu2; ///< bitmap of successfully received MPDUs in A-MPDU #2
+    uint8_t m_rxSuccessBitmapAmpdu1{0}; ///< bitmap of successfully received MPDUs in A-MPDU #1
+    uint8_t m_rxSuccessBitmapAmpdu2{0}; ///< bitmap of successfully received MPDUs in A-MPDU #2
 
-    uint8_t m_rxFailureBitmapAmpdu1; ///< bitmap of unsuccessfully received MPDUs in A-MPDU #1
-    uint8_t m_rxFailureBitmapAmpdu2; ///< bitmap of unsuccessfully received MPDUs in A-MPDU #2
+    uint8_t m_rxFailureBitmapAmpdu1{0}; ///< bitmap of unsuccessfully received MPDUs in A-MPDU #1
+    uint8_t m_rxFailureBitmapAmpdu2{0}; ///< bitmap of unsuccessfully received MPDUs in A-MPDU #2
 
-    uint8_t m_rxDroppedBitmapAmpdu1; ///< bitmap of dropped MPDUs in A-MPDU #1
-    uint8_t m_rxDroppedBitmapAmpdu2; ///< bitmap of dropped MPDUs in A-MPDU #2
+    uint8_t m_rxDroppedBitmapAmpdu1{0}; ///< bitmap of dropped MPDUs in A-MPDU #1
+    uint8_t m_rxDroppedBitmapAmpdu2{0}; ///< bitmap of dropped MPDUs in A-MPDU #2
 
-    uint64_t m_uid; ///< UID
+    uint64_t m_uid{0}; ///< UID
 };
 
 TestAmpduReception::TestAmpduReception()
-    : TestCase("A-MPDU reception test"),
-      m_rxSuccessBitmapAmpdu1(0),
-      m_rxSuccessBitmapAmpdu2(0),
-      m_rxFailureBitmapAmpdu1(0),
-      m_rxFailureBitmapAmpdu2(0),
-      m_rxDroppedBitmapAmpdu1(0),
-      m_rxDroppedBitmapAmpdu2(0),
-      m_uid(0)
+    : TestCase("A-MPDU reception test")
 {
 }
 
@@ -4119,19 +4099,16 @@ class TestUnsupportedModulationReception : public TestCase
 
   private:
     void DoRun() override;
-    uint16_t m_dropped; ///< number of packets dropped by the AP because it was already receiving
+    uint16_t m_dropped{0}; ///< number of packets dropped by the AP because it was already receiving
 };
 
 TestUnsupportedModulationReception::TestUnsupportedModulationReception()
     : TestCase("Check correct behavior when a STA is receiving a transmission using an unsupported "
-               "modulation"),
-      m_dropped(0)
+               "modulation")
 {
 }
 
-TestUnsupportedModulationReception::~TestUnsupportedModulationReception()
-{
-}
+TestUnsupportedModulationReception::~TestUnsupportedModulationReception() = default;
 
 void
 TestUnsupportedModulationReception::Dropped(std::string context,

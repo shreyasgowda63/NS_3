@@ -77,7 +77,7 @@ class MacTxMiddle : public SimpleRefCount<MacTxMiddle>
 
   private:
     std::map<Mac48Address, uint16_t*> m_qosSequences; ///< QOS sequences
-    uint16_t m_sequence;                              ///< current sequence number
+    uint16_t m_sequence{0};                           ///< current sequence number
 };
 
 } // namespace ns3

@@ -293,11 +293,11 @@ class MeshWifiInterfaceMac : public WifiMac
     /// Statistics:
     struct Statistics
     {
-        uint16_t recvBeacons; ///< receive beacons
-        uint32_t sentFrames;  ///< sent frames
-        uint32_t sentBytes;   ///< sent bytes
-        uint32_t recvFrames;  ///< receive frames
-        uint32_t recvBytes;   ///< receive bytes
+        uint16_t recvBeacons{0}; ///< receive beacons
+        uint32_t sentFrames{0};  ///< sent frames
+        uint32_t sentBytes{0};   ///< sent bytes
+        uint32_t recvFrames{0};  ///< receive frames
+        uint32_t recvBytes{0};   ///< receive bytes
         /**
          * Print statistics.
          *
@@ -313,7 +313,7 @@ class MeshWifiInterfaceMac : public WifiMac
     Statistics m_stats; ///< statistics
 
     /// Current standard: needed to configure metric
-    WifiStandard m_standard;
+    WifiStandard m_standard{WIFI_STANDARD_80211a};
 
     /// Add randomness to beacon generation
     Ptr<UniformRandomVariable> m_coefficient;

@@ -67,9 +67,7 @@ VhtPpdu::VhtPpdu(Ptr<const WifiPsdu> psdu,
     m_vhtSig.SetNStreams(txVector.GetNss());
 }
 
-VhtPpdu::~VhtPpdu()
-{
-}
+VhtPpdu::~VhtPpdu() = default;
 
 WifiTxVector
 VhtPpdu::DoGetTxVector() const
@@ -117,18 +115,10 @@ VhtPpdu::GetType() const
 }
 
 VhtPpdu::VhtSigHeader::VhtSigHeader()
-    : m_bw(0),
-      m_nsts(0),
-      m_sgi(0),
-      m_sgi_disambiguation(0),
-      m_suMcs(0),
-      m_mu(false)
-{
-}
 
-VhtPpdu::VhtSigHeader::~VhtSigHeader()
-{
-}
+    = default;
+
+VhtPpdu::VhtSigHeader::~VhtSigHeader() = default;
 
 TypeId
 VhtPpdu::VhtSigHeader::GetTypeId()

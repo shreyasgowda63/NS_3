@@ -376,8 +376,8 @@ class PcapFile
     std::string m_filename;      //!< file name
     std::fstream m_file;         //!< file stream
     PcapFileHeader m_fileHeader; //!< file header
-    bool m_swapMode;             //!< swap mode
-    bool m_nanosecMode;          //!< nanosecond timestamp mode
+    bool m_swapMode{false};      //!< swap mode
+    bool m_nanosecMode{false};   //!< nanosecond timestamp mode
 };
 
 } // namespace ns3

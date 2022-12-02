@@ -625,16 +625,12 @@ class PcapHelperForDevice
     /**
      * @brief Construct a PcapHelperForDevice
      */
-    PcapHelperForDevice()
-    {
-    }
+    PcapHelperForDevice() = default;
 
     /**
      * @brief Destroy a PcapHelperForDevice
      */
-    virtual ~PcapHelperForDevice()
-    {
-    }
+    virtual ~PcapHelperForDevice() = default;
 
     /**
      * @brief Enable pcap output the indicated net device.
@@ -730,16 +726,12 @@ class AsciiTraceHelperForDevice
     /**
      * @brief Construct an AsciiTraceHelperForDevice.
      */
-    AsciiTraceHelperForDevice()
-    {
-    }
+    AsciiTraceHelperForDevice() = default;
 
     /**
      * @brief Destroy an AsciiTraceHelperForDevice.
      */
-    virtual ~AsciiTraceHelperForDevice()
-    {
-    }
+    virtual ~AsciiTraceHelperForDevice() = default;
 
     /**
      * @brief Enable ascii trace output on the indicated net device.

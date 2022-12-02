@@ -135,24 +135,22 @@ class WifiPhyCcaThresholdsTest : public TestCase
     Ptr<ObssPdAlgorithm> m_obssPdAlgorithm;   ///< The OBSS-PD algorithm
     Ptr<VhtConfiguration> m_vhtConfiguration; ///< The VHT configuration
 
-    double m_CcaEdThresholdDbm; ///< The current CCA-ED threshold for a 20 MHz subchannel (in dBm)
-    double m_CcaSensitivityDbm; ///< The current CCA sensitivity threshold for signals that occupy
-                                ///< the primary 20 MHz channel (in dBm)
+    double m_CcaEdThresholdDbm{
+        -62.0}; ///< The current CCA-ED threshold for a 20 MHz subchannel (in dBm)
+    double m_CcaSensitivityDbm{-82.0}; ///< The current CCA sensitivity threshold for signals that
+                                       ///< occupy the primary 20 MHz channel (in dBm)
 
     VhtConfiguration::SecondaryCcaSensitivityThresholds
         m_secondaryCcaSensitivityThresholds; ///< The current CCA sensitivity thresholds for signals
                                              ///< that do not occupy the primary 20 MHz channel (in
                                              ///< dBm)
 
-    double m_obssPdLevel; ///< The current OBSS-PD level (in dBm)
+    double m_obssPdLevel{-82.0}; ///< The current OBSS-PD level (in dBm)
 };
 
 WifiPhyCcaThresholdsTest::WifiPhyCcaThresholdsTest()
     : TestCase("Wi-Fi PHY CCA thresholds test"),
-      m_CcaEdThresholdDbm{-62.0},
-      m_CcaSensitivityDbm{-82.0},
-      m_secondaryCcaSensitivityThresholds{-72.0, -72.0, -69.0},
-      m_obssPdLevel{-82.0}
+      m_secondaryCcaSensitivityThresholds{-72.0, -72.0, -69.0}
 {
 }
 
@@ -819,21 +817,19 @@ class WifiPhyCcaIndicationTest : public TestCase
     Ptr<SpectrumWifiPhy> m_txPhy; ///< PHY object of the transmitter
 
     std::vector<Ptr<WaveformGenerator>> m_signalGenerators; ///< Generators of non-wifi signals
-    std::size_t
-        m_numSignalGenerators; ///< The number of non-wifi signals generators needed for the test
+    std::size_t m_numSignalGenerators{
+        2}; ///< The number of non-wifi signals generators needed for the test
 
     std::unique_ptr<CcaTestPhyListener>
         m_rxPhyStateListener; ///< Listener for PHY state transitions
 
-    uint16_t m_frequency;    ///< Operating frequency in MHz
-    uint16_t m_channelWidth; ///< Operating channel width in MHz
+    uint16_t m_frequency;        ///< Operating frequency in MHz
+    uint16_t m_channelWidth{20}; ///< Operating channel width in MHz
 };
 
 WifiPhyCcaIndicationTest::WifiPhyCcaIndicationTest()
     : TestCase("Wi-Fi PHY CCA indication test"),
-      m_numSignalGenerators(2),
-      m_frequency(P20_CENTER_FREQUENCY),
-      m_channelWidth(20)
+      m_frequency(P20_CENTER_FREQUENCY)
 {
 }
 

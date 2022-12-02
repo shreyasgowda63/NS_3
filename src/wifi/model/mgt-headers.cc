@@ -33,9 +33,7 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(MgtProbeRequestHeader);
 
-MgtProbeRequestHeader::~MgtProbeRequestHeader()
-{
-}
+MgtProbeRequestHeader::~MgtProbeRequestHeader() = default;
 
 void
 MgtProbeRequestHeader::SetSsid(const Ssid& ssid)
@@ -292,13 +290,9 @@ MgtProbeRequestHeader::Deserialize(Buffer::Iterator start)
 
 NS_OBJECT_ENSURE_REGISTERED(MgtProbeResponseHeader);
 
-MgtProbeResponseHeader::MgtProbeResponseHeader()
-{
-}
+MgtProbeResponseHeader::MgtProbeResponseHeader() = default;
 
-MgtProbeResponseHeader::~MgtProbeResponseHeader()
-{
-}
+MgtProbeResponseHeader::~MgtProbeResponseHeader() = default;
 
 uint64_t
 MgtProbeResponseHeader::GetTimestamp()
@@ -880,13 +874,10 @@ MgtBeaconHeader::GetTypeId()
 NS_OBJECT_ENSURE_REGISTERED(MgtAssocRequestHeader);
 
 MgtAssocRequestHeader::MgtAssocRequestHeader()
-    : m_listenInterval(0)
-{
-}
 
-MgtAssocRequestHeader::~MgtAssocRequestHeader()
-{
-}
+    = default;
+
+MgtAssocRequestHeader::~MgtAssocRequestHeader() = default;
 
 void
 MgtAssocRequestHeader::SetSsid(const Ssid& ssid)
@@ -1210,13 +1201,10 @@ MgtAssocRequestHeader::Deserialize(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(MgtReassocRequestHeader);
 
 MgtReassocRequestHeader::MgtReassocRequestHeader()
-    : m_currentApAddr(Mac48Address())
-{
-}
 
-MgtReassocRequestHeader::~MgtReassocRequestHeader()
-{
-}
+    = default;
+
+MgtReassocRequestHeader::~MgtReassocRequestHeader() = default;
 
 void
 MgtReassocRequestHeader::SetSsid(const Ssid& ssid)
@@ -1550,13 +1538,10 @@ MgtReassocRequestHeader::Deserialize(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(MgtAssocResponseHeader);
 
 MgtAssocResponseHeader::MgtAssocResponseHeader()
-    : m_aid(0)
-{
-}
 
-MgtAssocResponseHeader::~MgtAssocResponseHeader()
-{
-}
+    = default;
+
+MgtAssocResponseHeader::~MgtAssocResponseHeader() = default;
 
 StatusCode
 MgtAssocResponseHeader::GetStatusCode()
@@ -2049,13 +2034,9 @@ MgtAssocResponseHeader::Deserialize(Buffer::Iterator start)
 /**********************************************************
  *   ActionFrame
  **********************************************************/
-WifiActionHeader::WifiActionHeader()
-{
-}
+WifiActionHeader::WifiActionHeader() = default;
 
-WifiActionHeader::~WifiActionHeader()
-{
-}
+WifiActionHeader::~WifiActionHeader() = default;
 
 void
 WifiActionHeader::SetAction(WifiActionHeader::CategoryValue type,
@@ -2569,11 +2550,8 @@ WifiActionHeader::Deserialize(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(MgtAddBaRequestHeader);
 
 MgtAddBaRequestHeader::MgtAddBaRequestHeader()
-    : m_dialogToken(1),
-      m_amsduSupport(1),
-      m_bufferSize(0)
-{
-}
+
+    = default;
 
 TypeId
 MgtAddBaRequestHeader::GetTypeId()
@@ -2746,11 +2724,8 @@ MgtAddBaRequestHeader::SetParameterSet(uint16_t params)
 NS_OBJECT_ENSURE_REGISTERED(MgtAddBaResponseHeader);
 
 MgtAddBaResponseHeader::MgtAddBaResponseHeader()
-    : m_dialogToken(1),
-      m_amsduSupport(1),
-      m_bufferSize(0)
-{
-}
+
+    = default;
 
 TypeId
 MgtAddBaResponseHeader::GetTypeId()
@@ -2912,9 +2887,8 @@ MgtAddBaResponseHeader::SetParameterSet(uint16_t params)
 NS_OBJECT_ENSURE_REGISTERED(MgtDelBaHeader);
 
 MgtDelBaHeader::MgtDelBaHeader()
-    : m_reasonCode(1)
-{
-}
+
+    = default;
 
 TypeId
 MgtDelBaHeader::GetTypeId()

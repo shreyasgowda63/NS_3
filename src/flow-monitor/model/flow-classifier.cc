@@ -23,13 +23,10 @@ namespace ns3
 {
 
 FlowClassifier::FlowClassifier()
-    : m_lastNewFlowId(0)
-{
-}
 
-FlowClassifier::~FlowClassifier()
-{
-}
+    = default;
+
+FlowClassifier::~FlowClassifier() = default;
 
 FlowId
 FlowClassifier::GetNewFlowId()

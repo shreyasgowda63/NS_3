@@ -132,8 +132,8 @@ class LteRlcHeader : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint16_t m_headerLength;           ///< header length
-    uint8_t m_framingInfo;             ///<  2 bits
+    uint16_t m_headerLength{0};        ///< header length
+    uint8_t m_framingInfo{0xff};       ///<  2 bits
     SequenceNumber10 m_sequenceNumber; ///< sequence number
 
     std::list<uint8_t> m_extensionBits;     ///< Includes extensionBit of the fixed part

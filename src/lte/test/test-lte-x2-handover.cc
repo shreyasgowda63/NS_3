@@ -114,7 +114,7 @@ class LteX2HandoverTestCase : public TestCase
     uint32_t m_nDedicatedBearers;                 ///< number of UEs in the test
     std::list<HandoverEvent> m_handoverEventList; ///< handover event list
     std::string m_handoverEventListName;          ///< handover event list name
-    bool m_epc;                                   ///< whether to use EPC
+    bool m_epc{true};                             ///< whether to use EPC
     std::string m_schedulerType;                  ///< scheduler type
     bool m_admitHo;                               ///< whether to admit the handover request
     bool m_useIdealRrc;                           ///< whether to use the ideal RRC
@@ -161,10 +161,10 @@ class LteX2HandoverTestCase : public TestCase
 
     std::vector<UeData> m_ueDataVector; ///< UE data vector
 
-    const Time m_maxHoDuration;        ///< maximum HO duration
-    const Time m_statsDuration;        ///< stats duration
-    const Time m_udpClientInterval;    ///< UDP client interval
-    const uint32_t m_udpClientPktSize; ///< UDP client packet size
+    const Time m_maxHoDuration;             ///< maximum HO duration
+    const Time m_statsDuration;             ///< stats duration
+    const Time m_udpClientInterval;         ///< UDP client interval
+    const uint32_t m_udpClientPktSize{100}; ///< UDP client packet size
 };
 
 std::string
@@ -206,15 +206,12 @@ LteX2HandoverTestCase::LteX2HandoverTestCase(uint32_t nUes,
       m_nDedicatedBearers(nDedicatedBearers),
       m_handoverEventList(handoverEventList),
       m_handoverEventListName(handoverEventListName),
-      m_epc(true),
       m_schedulerType(schedulerType),
       m_admitHo(admitHo),
       m_useIdealRrc(useIdealRrc),
       m_maxHoDuration(Seconds(0.1)),
       m_statsDuration(Seconds(0.1)),
-      m_udpClientInterval(Seconds(0.01)),
-      m_udpClientPktSize(100)
-
+      m_udpClientInterval(Seconds(0.01))
 {
 }
 

@@ -127,9 +127,7 @@ LteLinkAdaptationTestCase::LteLinkAdaptationTestCase(std::string name,
     NS_LOG_INFO("Creating LteLinkAdaptationTestCase: " + sstream1.str());
 }
 
-LteLinkAdaptationTestCase::~LteLinkAdaptationTestCase()
-{
-}
+LteLinkAdaptationTestCase::~LteLinkAdaptationTestCase() = default;
 
 void
 LteLinkAdaptationTestCase::DoRun()

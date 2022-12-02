@@ -25,9 +25,7 @@ namespace ns3
 
 SocketWriter::SocketWriter()
     : m_node(nullptr),
-      m_socket(nullptr),
-      m_isSetup(false),
-      m_isConnected(false)
+      m_socket(nullptr)
 {
 }
 

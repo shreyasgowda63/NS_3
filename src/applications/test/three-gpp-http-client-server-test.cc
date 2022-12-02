@@ -157,9 +157,9 @@ class ThreeGppHttpObjectTestCase : public TestCase
          */
         std::list<uint32_t> m_objectsSize;
         /// The accumulated size (in bytes) of parts of a whole object.
-        uint32_t m_rxBuffer;
+        uint32_t m_rxBuffer{0};
         /// Number of whole objects that have been received so far.
-        uint16_t m_numOfObjectsReceived;
+        uint16_t m_numOfObjectsReceived{0};
     };
 
     // The following defines one tracker for each HTTP object type.
@@ -274,9 +274,9 @@ class ThreeGppHttpObjectTestCase : public TestCase
     /// Receive error model to be attached to the devices of both directions.
     Ptr<RateErrorModel> m_errorModel;
     /// Begins with 0. Simulation stops if this reaches 3.
-    uint16_t m_numOfPagesReceived;
+    uint16_t m_numOfPagesReceived{0};
     /// Number of packets dropped because of #m_errorModel.
-    uint16_t m_numOfPacketDrops;
+    uint16_t m_numOfPacketDrops{0};
     /// Installs TCP/IP stack on the nodes.
     InternetStackHelper m_internetStackHelper;
     /// Assigns IPv4 addresses to the nodes.
@@ -302,9 +302,7 @@ ThreeGppHttpObjectTestCase::ThreeGppHttpObjectTestCase(const std::string& name,
       m_tcpType(tcpType),
       m_channelDelay(channelDelay),
       m_mtuSize(mtuSize),
-      m_useIpv6(useIpv6),
-      m_numOfPagesReceived(0),
-      m_numOfPacketDrops(0)
+      m_useIpv6(useIpv6)
 {
     NS_LOG_FUNCTION(this << GetName());
 
@@ -531,8 +529,7 @@ ThreeGppHttpObjectTestCase::DoTeardown()
 }
 
 ThreeGppHttpObjectTestCase::ThreeGppHttpObjectTracker::ThreeGppHttpObjectTracker()
-    : m_rxBuffer(0),
-      m_numOfObjectsReceived(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

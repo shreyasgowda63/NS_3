@@ -84,12 +84,12 @@ class TcpNewRenoCongAvoidNormalTest : public TcpGeneralTest
     void ConfigureProperties() override;
 
   private:
-    uint32_t m_segmentSize; //!< Segment size.
-    uint32_t m_packetSize;  //!< Size of the packets.
-    uint32_t m_packets;     //!< Number of packets.
-    uint32_t m_increment;   //!< Congestion window increment.
-    EventId m_event;        //!< Check event.
-    bool m_initial;         //!< True on first run.
+    uint32_t m_segmentSize;  //!< Segment size.
+    uint32_t m_packetSize;   //!< Size of the packets.
+    uint32_t m_packets;      //!< Number of packets.
+    uint32_t m_increment{0}; //!< Congestion window increment.
+    EventId m_event;         //!< Check event.
+    bool m_initial{true};    //!< True on first run.
 };
 
 TcpNewRenoCongAvoidNormalTest::TcpNewRenoCongAvoidNormalTest(uint32_t segmentSize,
@@ -100,9 +100,7 @@ TcpNewRenoCongAvoidNormalTest::TcpNewRenoCongAvoidNormalTest(uint32_t segmentSiz
     : TcpGeneralTest(desc),
       m_segmentSize(segmentSize),
       m_packetSize(packetSize),
-      m_packets(packets),
-      m_increment(0),
-      m_initial(true)
+      m_packets(packets)
 {
     m_congControlTypeId = typeId;
 }

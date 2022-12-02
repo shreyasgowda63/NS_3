@@ -35,9 +35,7 @@ SpectrumChannel::SpectrumChannel()
     NS_LOG_FUNCTION(this);
 }
 
-SpectrumChannel::~SpectrumChannel()
-{
-}
+SpectrumChannel::~SpectrumChannel() = default;
 
 void
 SpectrumChannel::DoDispose()

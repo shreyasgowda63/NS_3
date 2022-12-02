@@ -43,25 +43,6 @@ GtpuHeader::GetTypeId()
     return tid;
 }
 
-GtpuHeader::GtpuHeader()
-    : m_version(1),
-      m_protocolType(true),
-      m_extensionHeaderFlag(false),
-      m_sequenceNumberFlag(true),
-      m_nPduNumberFlag(true),
-      m_messageType(255),
-      m_length(0),
-      m_teid(0),
-      m_sequenceNumber(0),
-      m_nPduNumber(0),
-      m_nextExtensionType(0)
-{
-}
-
-GtpuHeader::~GtpuHeader()
-{
-}
-
 TypeId
 GtpuHeader::GetInstanceTypeId() const
 {

@@ -118,8 +118,7 @@ WifiNetDevice::GetTypeId()
 }
 
 WifiNetDevice::WifiNetDevice()
-    : m_standard(WIFI_STANDARD_UNSPECIFIED),
-      m_configComplete(false)
+
 {
     NS_LOG_FUNCTION_NOARGS();
 }

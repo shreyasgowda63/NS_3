@@ -185,33 +185,36 @@ class SSLinkManager : public Object
 
     Ptr<SubscriberStationNetDevice> m_ss; ///< subscriber station device
 
-    WimaxNetDevice::RangingStatus m_rangingStatus; ///< ranging status
+    WimaxNetDevice::RangingStatus m_rangingStatus{
+        WimaxNetDevice::RANGING_STATUS_EXPIRED}; ///< ranging status
     // initial ranging parameters obtained from DCD (in channel encodings)
-    uint16_t m_bsEirp;     ///< BS EIRP
-    uint16_t m_eirXPIrMax; ///< initial ranging maximum equivalent isotropic received power at BS
-    uint16_t m_pTxIrMax; ///< maximum transmit signal strength for initial ranging calculated by SS
+    uint16_t m_bsEirp{65535}; ///< BS EIRP
+    uint16_t m_eirXPIrMax{
+        65535}; ///< initial ranging maximum equivalent isotropic received power at BS
+    uint16_t m_pTxIrMax{
+        0}; ///< maximum transmit signal strength for initial ranging calculated by SS
 
-    uint8_t m_initRangOppNumber; ///< Initial Ranging opportunity (1–255) in which SS transmitted
-                                 ///< the RNG_REQ
-    uint8_t m_contentionRangingRetries; ///< contention ranging retries
-    uint32_t m_rngReqFrameNumber;       ///< frame number in which SS sent RNG_REQ message
-    RngReq m_rngreq;                    ///< rng request
+    uint8_t m_initRangOppNumber{0}; ///< Initial Ranging opportunity (1–255) in which SS transmitted
+                                    ///< the RNG_REQ
+    uint8_t m_contentionRangingRetries{0}; ///< contention ranging retries
+    uint32_t m_rngReqFrameNumber{0};       ///< frame number in which SS sent RNG_REQ message
+    RngReq m_rngreq;                       ///< rng request
 
-    uint8_t m_dlChnlNr;   ///< indicates the channel/frequency currently the SS is scanning
-    uint64_t m_frequency; ///< frequency on which it is currently operating, i.e., where scanning
-                          ///< was successful
-    bool m_rangingIntervalFound; ///< ranging interval found
+    uint8_t m_dlChnlNr{0};   ///< indicates the channel/frequency currently the SS is scanning
+    uint64_t m_frequency{0}; ///< frequency on which it is currently operating, i.e., where scanning
+                             ///< was successful
+    bool m_rangingIntervalFound{false}; ///< ranging interval found
 
     // stats members
-    uint16_t m_nrRngReqsSent;       ///< number rang requests sent
-    uint16_t m_nrRngRspsRecvd;      ///< number rang responses received
-    uint16_t m_nrInvitedPollsRecvd; ///< number invited polls received
+    uint16_t m_nrRngReqsSent{0};       ///< number rang requests sent
+    uint16_t m_nrRngRspsRecvd{0};      ///< number rang responses received
+    uint16_t m_nrInvitedPollsRecvd{0}; ///< number invited polls received
 
-    uint8_t m_rangingCW;          ///< ranging CW
-    uint8_t m_rangingBO;          ///< ranging BO
-    uint8_t m_nrRangingTransOpps; ///< number ranging trans opps
-    bool m_isBackoffSet;          ///< is backoff set
-    uint8_t m_rangingAnomalies;   ///< ranging anomalies
+    uint8_t m_rangingCW{0};          ///< ranging CW
+    uint8_t m_rangingBO{0};          ///< ranging BO
+    uint8_t m_nrRangingTransOpps{0}; ///< number ranging trans opps
+    bool m_isBackoffSet{false};      ///< is backoff set
+    uint8_t m_rangingAnomalies{0};   ///< ranging anomalies
 
     EventId m_waitForRngRspEvent;    ///< wait for rang response event
     EventId m_dlMapSyncTimeoutEvent; ///< DL map sync timeout event

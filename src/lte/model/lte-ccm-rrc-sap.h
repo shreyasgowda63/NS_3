@@ -51,7 +51,7 @@ class LteCcmRrcSapProvider
     friend class LteMacSapUser;
 
   public:
-    virtual ~LteCcmRrcSapProvider();
+    virtual ~LteCcmRrcSapProvider() = default;
 
     /// LcsConfig structure
     struct LcsConfig
@@ -158,7 +158,7 @@ class LteCcmRrcSapUser
     friend class LteEnbRrc;
 
   public:
-    virtual ~LteCcmRrcSapUser();
+    virtual ~LteCcmRrcSapUser() = default;
 
     /**
      * \brief Request a certain reporting configuration to be fulfilled by the UEs

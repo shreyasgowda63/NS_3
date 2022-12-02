@@ -65,9 +65,7 @@ class TracedCallbackTypedefTestCase : public TestCase
   public:
     TracedCallbackTypedefTestCase();
 
-    ~TracedCallbackTypedefTestCase() override
-    {
-    }
+    ~TracedCallbackTypedefTestCase() override = default;
 
     /**
      * Number of arguments passed to callback.
@@ -278,8 +276,8 @@ class TracedCallbackTypedefTestCase::Checker : public Object
     TracedCallback<Ts...> m_cb;
 
   public:
-    Checker(){};
-    ~Checker() override{};
+    Checker() = default;
+    ~Checker() override = default;
 
     /// Arguments of the TracedCallback.
     std::tuple<typename TypeTraits<Ts>::BaseType...> m_items;

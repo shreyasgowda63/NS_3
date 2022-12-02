@@ -542,14 +542,14 @@ class WimaxNetDevice : public NetDevice
     /// not sure if it shall be included here
     std::vector<uint64_t> m_dlChannels;
 
-    Mac48Address m_address; ///< MAC address
-    uint8_t m_state;        ///< state
-    uint32_t m_symbolIndex; ///< symbol index
+    Mac48Address m_address;    ///< MAC address
+    uint8_t m_state{0};        ///< state
+    uint32_t m_symbolIndex{0}; ///< symbol index
 
     /// length of TTG in units of PSs
-    uint16_t m_ttg;
+    uint16_t m_ttg{0};
     /// length of RTG in units of PSs
-    uint16_t m_rtg;
+    uint16_t m_rtg{0};
 
     Dcd m_currentDcd; ///< DCD
     Ucd m_currentUcd; ///< UCD

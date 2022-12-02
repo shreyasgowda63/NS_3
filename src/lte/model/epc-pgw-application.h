@@ -313,14 +313,14 @@ class EpcPgwApplication : public Application
     std::map<uint64_t, Ptr<UeInfo>> m_ueInfoByImsiMap;
 
     /**
-     * UDP port to be used for GTP-U
+     * UDP port to be used for GTP-U (fixed by the standard)
      */
-    uint16_t m_gtpuUdpPort;
+    uint16_t m_gtpuUdpPort{2152};
 
     /**
-     * UDP port to be used for GTPv2-C
+     * UDP port to be used for GTPv2-C (fixed by the standard)
      */
-    uint16_t m_gtpcUdpPort;
+    uint16_t m_gtpcUdpPort{2123};
 
     /**
      * SGW address of the S5 interface

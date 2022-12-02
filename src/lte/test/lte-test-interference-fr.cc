@@ -137,9 +137,7 @@ LteInterferenceHardFrTestCase::LteInterferenceHardFrTestCase(std::string name,
     NS_LOG_INFO("Creating LteInterferenceFrTestCase");
 }
 
-LteInterferenceHardFrTestCase::~LteInterferenceHardFrTestCase()
-{
-}
+LteInterferenceHardFrTestCase::~LteInterferenceHardFrTestCase() = default;
 
 void
 LteInterferenceHardFrTestCase::DoRun()
@@ -312,9 +310,7 @@ LteInterferenceStrictFrTestCase::LteInterferenceStrictFrTestCase(std::string nam
     NS_LOG_INFO("Creating LteInterferenceFrTestCase");
 }
 
-LteInterferenceStrictFrTestCase::~LteInterferenceStrictFrTestCase()
-{
-}
+LteInterferenceStrictFrTestCase::~LteInterferenceStrictFrTestCase() = default;
 
 void
 LteInterferenceStrictFrTestCase::DoRun()

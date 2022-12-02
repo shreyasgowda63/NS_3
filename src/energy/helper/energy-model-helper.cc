@@ -28,9 +28,7 @@ namespace ns3
 /*
  * EnergySourceHelper
  */
-EnergySourceHelper::~EnergySourceHelper()
-{
-}
+EnergySourceHelper::~EnergySourceHelper() = default;
 
 EnergySourceContainer
 EnergySourceHelper::Install(Ptr<Node> node) const
@@ -84,9 +82,7 @@ EnergySourceHelper::InstallAll() const
 /*
  * DeviceEnergyModelHelper
  */
-DeviceEnergyModelHelper::~DeviceEnergyModelHelper()
-{
-}
+DeviceEnergyModelHelper::~DeviceEnergyModelHelper() = default;
 
 DeviceEnergyModelContainer
 DeviceEnergyModelHelper::Install(Ptr<NetDevice> device, Ptr<EnergySource> source) const

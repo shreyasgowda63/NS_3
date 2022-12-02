@@ -308,13 +308,13 @@ class ArpCache : public Object
          */
         Time GetTimeout() const;
 
-        ArpCache* m_arp;              //!< pointer to the ARP cache owning the entry
-        ArpCacheEntryState_e m_state; //!< state of the entry
-        Time m_lastSeen;              //!< last moment a packet from that address has been seen
-        Address m_macAddress;         //!< entry's MAC address
-        Ipv4Address m_ipv4Address;    //!< entry's IP address
+        ArpCache* m_arp;                     //!< pointer to the ARP cache owning the entry
+        ArpCacheEntryState_e m_state{ALIVE}; //!< state of the entry
+        Time m_lastSeen;           //!< last moment a packet from that address has been seen
+        Address m_macAddress;      //!< entry's MAC address
+        Ipv4Address m_ipv4Address; //!< entry's IP address
         std::list<Ipv4PayloadHeaderPair> m_pending; //!< list of pending packets for the entry's IP
-        uint32_t m_retries;                         //!< rerty counter
+        uint32_t m_retries{0};                      //!< rerty counter
     };
 
   private:

@@ -25,9 +25,7 @@
 namespace ns3
 {
 
-Ipv4InterfaceContainer::Ipv4InterfaceContainer()
-{
-}
+Ipv4InterfaceContainer::Ipv4InterfaceContainer() = default;
 
 void
 Ipv4InterfaceContainer::Add(const Ipv4InterfaceContainer& other)

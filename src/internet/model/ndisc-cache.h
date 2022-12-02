@@ -430,7 +430,7 @@ class NdiscCache : public Object
         /**
          * \brief Type of node (router or host).
          */
-        bool m_router;
+        bool m_router{false};
 
         /**
          * \brief Timer (used for NUD).
@@ -445,7 +445,7 @@ class NdiscCache : public Object
         /**
          * \brief Number of NS retransmission.
          */
-        uint8_t m_nsRetransmit;
+        uint8_t m_nsRetransmit{0};
     };
 
   protected:

@@ -51,7 +51,7 @@ class PeerManagementProtocolRegressionTest : public TestCase
 
   private:
     /// \internal It is important to have pointers here
-    NodeContainer* m_nodes;
+    NodeContainer* m_nodes{nullptr};
     /// Simulation time
     Time m_time;
 

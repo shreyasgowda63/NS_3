@@ -49,18 +49,13 @@ Tlv::Print(std::ostream& os) const
 }
 
 Tlv::Tlv(uint8_t type, uint64_t length, const TlvValue& value)
+    : m_type(type),
+      m_length(length),
+      m_value(value.Copy())
 {
-    m_type = type;
-    m_length = length;
-    m_value = value.Copy();
 }
 
-Tlv::Tlv()
-{
-    m_type = 0;
-    m_length = 0;
-    m_value = nullptr;
-}
+Tlv::Tlv() = default;
 
 Tlv::~Tlv()
 {
@@ -78,10 +73,10 @@ Tlv::CopyValue() const
 }
 
 Tlv::Tlv(const Tlv& tlv)
+    : m_type(tlv.GetType()),
+      m_length(tlv.GetLength()),
+      m_value(tlv.CopyValue())
 {
-    m_type = tlv.GetType();
-    m_length = tlv.GetLength();
-    m_value = tlv.CopyValue();
 }
 
 Tlv&
@@ -233,8 +228,8 @@ Tlv::Copy() const
 
 // ==============================================================================
 VectorTlvValue::VectorTlvValue()
+    : m_tlvList(new std::vector<Tlv*>)
 {
-    m_tlvList = new std::vector<Tlv*>;
 }
 
 VectorTlvValue::~VectorTlvValue()
@@ -290,9 +285,7 @@ VectorTlvValue::Add(const Tlv& val)
 }
 
 // ==============================================================================
-SfVectorTlvValue::SfVectorTlvValue()
-{
-}
+SfVectorTlvValue::SfVectorTlvValue() = default;
 
 SfVectorTlvValue*
 SfVectorTlvValue::Copy() const
@@ -481,18 +474,13 @@ SfVectorTlvValue::Deserialize(Buffer::Iterator i, uint64_t valueLen)
 // ==============================================================================
 
 U8TlvValue::U8TlvValue(uint8_t value)
+    : m_value(value)
 {
-    m_value = value;
 }
 
-U8TlvValue::U8TlvValue()
-{
-    m_value = 0;
-}
+U8TlvValue::U8TlvValue() = default;
 
-U8TlvValue::~U8TlvValue()
-{
-}
+U8TlvValue::~U8TlvValue() = default;
 
 uint32_t
 U8TlvValue::GetSerializedSize() const
@@ -534,18 +522,13 @@ U8TlvValue::Copy() const
 
 // ==============================================================================
 U16TlvValue::U16TlvValue(uint16_t value)
+    : m_value(value)
 {
-    m_value = value;
 }
 
-U16TlvValue::U16TlvValue()
-{
-    m_value = 0;
-}
+U16TlvValue::U16TlvValue() = default;
 
-U16TlvValue::~U16TlvValue()
-{
-}
+U16TlvValue::~U16TlvValue() = default;
 
 uint32_t
 U16TlvValue::GetSerializedSize() const
@@ -587,18 +570,13 @@ U16TlvValue::Copy() const
 
 // ==============================================================================
 U32TlvValue::U32TlvValue(uint32_t value)
+    : m_value(value)
 {
-    m_value = value;
 }
 
-U32TlvValue::U32TlvValue()
-{
-    m_value = 0;
-}
+U32TlvValue::U32TlvValue() = default;
 
-U32TlvValue::~U32TlvValue()
-{
-}
+U32TlvValue::~U32TlvValue() = default;
 
 uint32_t
 U32TlvValue::GetSerializedSize() const
@@ -686,9 +664,7 @@ CsParamVectorTlvValue::Deserialize(Buffer::Iterator i, uint64_t valueLength)
     return serializedSize;
 }
 
-CsParamVectorTlvValue::CsParamVectorTlvValue()
-{
-}
+CsParamVectorTlvValue::CsParamVectorTlvValue() = default;
 
 CsParamVectorTlvValue*
 CsParamVectorTlvValue::Copy() const
@@ -703,9 +679,7 @@ CsParamVectorTlvValue::Copy() const
 
 // ==============================================================================
 
-ClassificationRuleVectorTlvValue::ClassificationRuleVectorTlvValue()
-{
-}
+ClassificationRuleVectorTlvValue::ClassificationRuleVectorTlvValue() = default;
 
 ClassificationRuleVectorTlvValue*
 ClassificationRuleVectorTlvValue::Copy() const
@@ -802,23 +776,16 @@ ClassificationRuleVectorTlvValue::Deserialize(Buffer::Iterator i, uint64_t value
 }
 
 // ==============================================================================
-TosTlvValue::TosTlvValue()
-{
-    m_low = 0;
-    m_high = 0;
-    m_mask = 0;
-}
+TosTlvValue::TosTlvValue() = default;
 
 TosTlvValue::TosTlvValue(uint8_t low, uint8_t high, uint8_t mask)
+    : m_low(low),
+      m_high(high),
+      m_mask(mask)
 {
-    m_low = low;
-    m_high = high;
-    m_mask = mask;
 }
 
-TosTlvValue::~TosTlvValue()
-{
-}
+TosTlvValue::~TosTlvValue() = default;
 
 uint32_t
 TosTlvValue::GetSerializedSize() const
@@ -869,8 +836,8 @@ TosTlvValue::Copy() const
 
 // ==============================================================================
 PortRangeTlvValue::PortRangeTlvValue()
+    : m_portRange(new std::vector<struct PortRange>)
 {
-    m_portRange = new std::vector<struct PortRange>;
 }
 
 PortRangeTlvValue::~PortRangeTlvValue()
@@ -948,8 +915,8 @@ PortRangeTlvValue::Copy() const
 // ==============================================================================
 
 ProtocolTlvValue::ProtocolTlvValue()
+    : m_protocol(new std::vector<uint8_t>)
 {
-    m_protocol = new std::vector<uint8_t>;
 }
 
 ProtocolTlvValue::~ProtocolTlvValue()
@@ -1023,8 +990,8 @@ ProtocolTlvValue::Copy() const
 // ==============================================================================
 
 Ipv4AddressTlvValue::Ipv4AddressTlvValue()
+    : m_ipv4Addr(new std::vector<struct ipv4Addr>)
 {
-    m_ipv4Addr = new std::vector<struct ipv4Addr>;
 }
 
 Ipv4AddressTlvValue::~Ipv4AddressTlvValue()

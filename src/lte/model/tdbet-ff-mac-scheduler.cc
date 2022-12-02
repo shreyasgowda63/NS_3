@@ -46,14 +46,10 @@ static const int TdBetType0AllocationRbg[4] = {
 NS_OBJECT_ENSURE_REGISTERED(TdBetFfMacScheduler);
 
 TdBetFfMacScheduler::TdBetFfMacScheduler()
-    : m_cschedSapUser(nullptr),
-      m_schedSapUser(nullptr),
-      m_timeWindow(99.0),
-      m_nextRntiUl(0)
+    : m_cschedSapProvider(new MemberCschedSapProvider<TdBetFfMacScheduler>(this)),
+      m_schedSapProvider(new MemberSchedSapProvider<TdBetFfMacScheduler>(this))
 {
     m_amc = CreateObject<LteAmc>();
-    m_cschedSapProvider = new MemberCschedSapProvider<TdBetFfMacScheduler>(this);
-    m_schedSapProvider = new MemberSchedSapProvider<TdBetFfMacScheduler>(this);
 }
 
 TdBetFfMacScheduler::~TdBetFfMacScheduler()

@@ -53,10 +53,7 @@ MockNetDevice::GetTypeId()
 }
 
 MockNetDevice::MockNetDevice()
-    : m_node(nullptr),
-      m_mtu(0xffff),
-      m_ifIndex(0),
-      m_linkUp(true)
+    : m_node(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }

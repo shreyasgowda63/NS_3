@@ -44,9 +44,7 @@ ManagementMessageType::ManagementMessageType(uint8_t type)
 {
 }
 
-ManagementMessageType::~ManagementMessageType()
-{
-}
+ManagementMessageType::~ManagementMessageType() = default;
 
 void
 ManagementMessageType::SetType(uint8_t type)
@@ -114,16 +112,11 @@ ManagementMessageType::Deserialize(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(RngReq);
 
 RngReq::RngReq()
-    : m_reserved(0),
-      m_reqDlBurstProfile(0),
-      m_macAddress(Mac48Address("00:00:00:00:00:00")),
-      m_rangingAnomalies(0)
+    : m_macAddress(Mac48Address("00:00:00:00:00:00"))
 {
 }
 
-RngReq::~RngReq()
-{
-}
+RngReq::~RngReq() = default;
 
 void
 RngReq::SetReqDlBurstProfile(uint8_t reqDlBurstProfile)
@@ -230,27 +223,11 @@ RngReq::Deserialize(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(RngRsp);
 
 RngRsp::RngRsp()
-    : m_reserved(0),
-      m_timingAdjust(0),
-      m_powerLevelAdjust(0),
-      m_offsetFreqAdjust(0),
-      m_rangStatus(0),
-      m_dlFreqOverride(0),
-      m_ulChnlIdOverride(0),
-      m_dlOperBurstProfile(0),
-      m_macAddress(Mac48Address("00:00:00:00:00:00")),
-      m_basicCid(),
-      m_primaryCid(),
-      m_aasBdcastPermission(0),
-      m_frameNumber(0),
-      m_initRangOppNumber(0),
-      m_rangSubchnl(0)
+    : m_macAddress(Mac48Address("00:00:00:00:00:00"))
 {
 }
 
-RngRsp::~RngRsp()
-{
-}
+RngRsp::~RngRsp() = default;
 
 void
 RngRsp::SetTimingAdjust(uint32_t timingAdjust)
@@ -516,20 +493,18 @@ NS_OBJECT_ENSURE_REGISTERED(DsaReq);
 DsaReq::DsaReq()
     : m_transactionId(0),
       m_sfid(0),
-      m_cid(),
+
       m_serviceFlow(ServiceFlow::SF_DIRECTION_DOWN)
 {
 }
 
 DsaReq::DsaReq(ServiceFlow sf)
+    : m_transactionId(0),
+      m_serviceFlow(sf)
 {
-    m_transactionId = 0;
-    m_serviceFlow = sf;
 }
 
-DsaReq::~DsaReq()
-{
-}
+DsaReq::~DsaReq() = default;
 
 void
 DsaReq::SetTransactionId(uint16_t transactionId)
@@ -639,16 +614,10 @@ DsaReq::SetServiceFlow(ServiceFlow sf)
 NS_OBJECT_ENSURE_REGISTERED(DsaRsp);
 
 DsaRsp::DsaRsp()
-    : m_transactionId(0),
-      m_confirmationCode(0),
-      m_sfid(0),
-      m_cid()
-{
-}
 
-DsaRsp::~DsaRsp()
-{
-}
+    = default;
+
+DsaRsp::~DsaRsp() = default;
 
 void
 DsaRsp::SetTransactionId(uint16_t transactionId)
@@ -772,14 +741,10 @@ DsaRsp::Deserialize(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(DsaAck);
 
 DsaAck::DsaAck()
-    : m_transactionId(0),
-      m_confirmationCode(0)
-{
-}
 
-DsaAck::~DsaAck()
-{
-}
+    = default;
+
+DsaAck::~DsaAck() = default;
 
 void
 DsaAck::SetTransactionId(uint16_t transactionId)

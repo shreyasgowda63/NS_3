@@ -45,13 +45,9 @@ Ipv6PmtuCache::GetTypeId()
     return tid;
 }
 
-Ipv6PmtuCache::Ipv6PmtuCache()
-{
-}
+Ipv6PmtuCache::Ipv6PmtuCache() = default;
 
-Ipv6PmtuCache::~Ipv6PmtuCache()
-{
-}
+Ipv6PmtuCache::~Ipv6PmtuCache() = default;
 
 void
 Ipv6PmtuCache::DoDispose()

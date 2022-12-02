@@ -142,10 +142,10 @@ struct TxProfile
     TxProfile(uint32_t channel, bool adapt = true, uint32_t powerLevel = 4)
         : channelNumber(channel),
           adaptable(adapt),
-          txPowerLevel(powerLevel)
+          txPowerLevel(powerLevel),
+          preamble(WIFI_PREAMBLE_LONG)
     {
         dataRate = WifiMode("OfdmRate6MbpsBW10MHz");
-        preamble = WIFI_PREAMBLE_LONG;
     }
 };
 
@@ -402,7 +402,7 @@ class WaveNetDevice : public WifiNetDevice
     Ptr<ChannelScheduler> m_channelScheduler;     ///< the channel scheduler
     Ptr<ChannelCoordinator> m_channelCoordinator; ///< the channel coordinator
     Ptr<VsaManager> m_vsaManager;                 ///< the VSA manager
-    TxProfile* m_txProfile;                       ///< transmit profile
+    TxProfile* m_txProfile{nullptr};              ///< transmit profile
     /**
      * \todo The Address arguments should be passed
      * by const reference, since they are large.

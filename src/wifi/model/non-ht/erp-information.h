@@ -82,7 +82,7 @@ class ErpInformation : public WifiInformationElement
     uint8_t GetNonErpPresent() const;
 
   private:
-    uint8_t m_erpInformation; ///< ERP information
+    uint8_t m_erpInformation{0}; ///< ERP information
 };
 
 /**

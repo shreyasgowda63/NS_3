@@ -43,9 +43,8 @@ class TcpSocketHalfAck : public TcpSocketMsgBase
     static TypeId GetTypeId();
 
     TcpSocketHalfAck()
-        : TcpSocketMsgBase()
-    {
-    }
+
+        = default;
 
   protected:
     Ptr<TcpSocketBase> Fork() override;
@@ -112,8 +111,7 @@ class TcpDataSentCbTestCase : public TcpGeneralTest
     TcpDataSentCbTestCase(const std::string& desc, uint32_t size, uint32_t packets)
         : TcpGeneralTest(desc),
           m_pktSize(size),
-          m_pktCount(packets),
-          m_notifiedData(0)
+          m_pktCount(packets)
     {
     }
 
@@ -125,9 +123,9 @@ class TcpDataSentCbTestCase : public TcpGeneralTest
     void FinalChecks() override;
 
   private:
-    uint32_t m_pktSize;      //!< Packet size.
-    uint32_t m_pktCount;     //!< Number of packets sent.
-    uint32_t m_notifiedData; //!< Amount of data notified.
+    uint32_t m_pktSize;         //!< Packet size.
+    uint32_t m_pktCount;        //!< Number of packets sent.
+    uint32_t m_notifiedData{0}; //!< Amount of data notified.
 };
 
 void

@@ -129,18 +129,14 @@ FlameProtocol::GetTypeId()
 }
 
 FlameProtocol::FlameProtocol()
-    : m_address(Mac48Address()),
-      m_broadcastInterval(Seconds(5)),
+    : m_broadcastInterval(Seconds(5)),
       m_lastBroadcast(Seconds(0)),
-      m_maxCost(32),
-      m_myLastSeqno(1),
+
       m_rtable(CreateObject<FlameRtable>())
 {
 }
 
-FlameProtocol::~FlameProtocol()
-{
-}
+FlameProtocol::~FlameProtocol() = default;
 
 void
 FlameProtocol::DoDispose()
@@ -386,13 +382,8 @@ FlameProtocol::HandleDataFrame(uint16_t seqno,
 
 // Statistics:
 FlameProtocol::Statistics::Statistics()
-    : txUnicast(0),
-      txBroadcast(0),
-      txBytes(0),
-      droppedTtl(0),
-      totalDropped(0)
-{
-}
+
+    = default;
 
 void
 FlameProtocol::Statistics::Print(std::ostream& os) const

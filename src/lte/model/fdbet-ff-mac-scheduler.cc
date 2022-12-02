@@ -46,14 +46,10 @@ static const int FdBetType0AllocationRbg[4] = {
 NS_OBJECT_ENSURE_REGISTERED(FdBetFfMacScheduler);
 
 FdBetFfMacScheduler::FdBetFfMacScheduler()
-    : m_cschedSapUser(nullptr),
-      m_schedSapUser(nullptr),
-      m_timeWindow(99.0),
-      m_nextRntiUl(0)
+    : m_cschedSapProvider(new MemberCschedSapProvider<FdBetFfMacScheduler>(this)),
+      m_schedSapProvider(new MemberSchedSapProvider<FdBetFfMacScheduler>(this))
 {
     m_amc = CreateObject<LteAmc>();
-    m_cschedSapProvider = new MemberCschedSapProvider<FdBetFfMacScheduler>(this);
-    m_schedSapProvider = new MemberSchedSapProvider<FdBetFfMacScheduler>(this);
 }
 
 FdBetFfMacScheduler::~FdBetFfMacScheduler()

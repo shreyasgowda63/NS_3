@@ -142,12 +142,12 @@ class UanMacCw : public UanMac, public UanPhyListener
     /** Scheduled SendPacket event. */
     EventId m_sendEvent;
     /** Tx is ongoing */
-    bool m_txOngoing;
+    bool m_txOngoing{false};
     /** Current state. */
-    State m_state;
+    State m_state{IDLE};
 
     /** Flag when we've been cleared */
-    bool m_cleared;
+    bool m_cleared{false};
 
     /** Provides uniform random variable for contention window. */
     Ptr<UniformRandomVariable> m_rv;

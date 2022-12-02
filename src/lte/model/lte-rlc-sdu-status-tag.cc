@@ -24,9 +24,7 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(LteRlcSduStatusTag);
 
-LteRlcSduStatusTag::LteRlcSduStatusTag()
-{
-}
+LteRlcSduStatusTag::LteRlcSduStatusTag() = default;
 
 void
 LteRlcSduStatusTag::SetStatus(uint8_t status)

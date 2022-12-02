@@ -194,7 +194,7 @@ class SupportedRates : public WifiInformationElement
     void SerializeInformationField(Buffer::Iterator start) const override;
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 
-    uint8_t m_nRates;                     //!< Number of supported rates
+    uint8_t m_nRates{0};                  //!< Number of supported rates
     uint8_t m_rates[MAX_SUPPORTED_RATES]; //!< List of supported bit rates (divided by 500000)
 };
 

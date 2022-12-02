@@ -262,9 +262,7 @@ WifiMode::WifiMode(std::string name)
 
 ATTRIBUTE_HELPER_CPP(WifiMode);
 
-WifiModeFactory::WifiModeFactory()
-{
-}
+WifiModeFactory::WifiModeFactory() = default;
 
 WifiMode
 WifiModeFactory::CreateWifiMode(std::string uniqueName,

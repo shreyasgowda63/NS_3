@@ -54,14 +54,12 @@ class Ns3TcpNoDelayTestCase : public TestCase
      */
     Ns3TcpNoDelayTestCase(bool noDelay);
 
-    ~Ns3TcpNoDelayTestCase() override
-    {
-    }
+    ~Ns3TcpNoDelayTestCase() override = default;
 
   private:
     void DoRun() override;
-    bool m_noDelay;      //!< Enable or disable TCP no delay option.
-    bool m_writeResults; //!< True if write PCAP files.
+    bool m_noDelay;             //!< Enable or disable TCP no delay option.
+    bool m_writeResults{false}; //!< True if write PCAP files.
 
     /**
      * Receive a TCP packet.
@@ -78,8 +76,7 @@ class Ns3TcpNoDelayTestCase : public TestCase
 Ns3TcpNoDelayTestCase::Ns3TcpNoDelayTestCase(bool noDelay)
     : TestCase(
           "Check that ns-3 TCP Nagle's algorithm works correctly and that we can turn it off."),
-      m_noDelay(noDelay),
-      m_writeResults(false)
+      m_noDelay(noDelay)
 {
 }
 

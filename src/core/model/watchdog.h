@@ -115,7 +115,7 @@ class Watchdog
      * The timer implementation, which contains the bound callback
      * function and arguments.
      */
-    TimerImpl* m_impl;
+    TimerImpl* m_impl{nullptr};
     /** The future event scheduled to expire the timer. */
     EventId m_event;
     /** The absolute time when the timer will expire. */

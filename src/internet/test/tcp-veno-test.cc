@@ -110,7 +110,7 @@ class TcpVenoTest : public TestCase
     Time m_rtt;                  //!< RTT.
     uint32_t m_segmentsAcked;    //!< Number of segments ACKed.
     uint32_t m_numRtt;           //!< Number of RTT (i.e., rounds) of the test.
-    bool m_inc;                  //!< Internal flag to increase every other round.
+    bool m_inc{true};            //!< Internal flag to increase every other round.
     Ptr<TcpSocketState> m_state; //!< TCP socket state.
 };
 
@@ -127,8 +127,7 @@ TcpVenoTest::TcpVenoTest(uint32_t cWnd,
       m_ssThresh(ssThresh),
       m_rtt(rtt),
       m_segmentsAcked(segmentsAcked),
-      m_numRtt(numRtt),
-      m_inc(true)
+      m_numRtt(numRtt)
 {
 }
 

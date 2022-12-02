@@ -340,28 +340,28 @@ class ChannelAccessManager : public Object
      */
     typedef std::vector<Ptr<Txop>> Txops;
 
-    Txops m_txops;            //!< the vector of managed Txops
-    Time m_lastAckTimeoutEnd; //!< the last Ack timeout end time
-    Time m_lastCtsTimeoutEnd; //!< the last CTS timeout end time
-    Time m_lastNavEnd;        //!< the last NAV end time
-    Timespan m_lastRx;        //!< the last receive start and end time
-    bool m_lastRxReceivedOk;  //!< the last receive OK
-    Time m_lastTxEnd;         //!< the last transmit end time
+    Txops m_txops;                 //!< the vector of managed Txops
+    Time m_lastAckTimeoutEnd;      //!< the last Ack timeout end time
+    Time m_lastCtsTimeoutEnd;      //!< the last CTS timeout end time
+    Time m_lastNavEnd;             //!< the last NAV end time
+    Timespan m_lastRx;             //!< the last receive start and end time
+    bool m_lastRxReceivedOk{true}; //!< the last receive OK
+    Time m_lastTxEnd;              //!< the last transmit end time
     std::map<WifiChannelListType, Time>
         m_lastBusyEnd;                       //!< the last busy end time for each channel type
     std::vector<Time> m_lastPer20MHzBusyEnd; /**< the last busy end time per 20 MHz channel
                                                   (HE stations and channel width > 20 MHz only) */
     std::map<WifiChannelListType, Timespan>
-        m_lastIdle;             //!< the last idle start and end time for each channel type
-    Time m_lastSwitchingEnd;    //!< the last switching end time
-    bool m_sleeping;            //!< flag whether it is in sleeping state
-    bool m_off;                 //!< flag whether it is in off state
-    Time m_eifsNoDifs;          //!< EIFS no DIFS time
-    EventId m_accessTimeout;    //!< the access timeout ID
-    PhyListener* m_phyListener; //!< the PHY listener
-    Ptr<WifiPhy> m_phy;         //!< pointer to the PHY
+        m_lastIdle;                      //!< the last idle start and end time for each channel type
+    Time m_lastSwitchingEnd;             //!< the last switching end time
+    bool m_sleeping{false};              //!< flag whether it is in sleeping state
+    bool m_off{false};                   //!< flag whether it is in off state
+    Time m_eifsNoDifs;                   //!< EIFS no DIFS time
+    EventId m_accessTimeout;             //!< the access timeout ID
+    PhyListener* m_phyListener{nullptr}; //!< the PHY listener
+    Ptr<WifiPhy> m_phy;                  //!< pointer to the PHY
     Ptr<FrameExchangeManager> m_feManager; //!< pointer to the Frame Exchange Manager
-    uint8_t m_linkId;                      //!< the ID of the link this object is associated with
+    uint8_t m_linkId{0};                   //!< the ID of the link this object is associated with
 };
 
 } // namespace ns3

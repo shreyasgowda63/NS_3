@@ -115,9 +115,7 @@ WifiUseAvailBwTest::WifiUseAvailBwTest(std::initializer_list<std::string> channe
 {
 }
 
-WifiUseAvailBwTest::~WifiUseAvailBwTest()
-{
-}
+WifiUseAvailBwTest::~WifiUseAvailBwTest() = default;
 
 void
 WifiUseAvailBwTest::L7Receive(uint8_t bss, Ptr<const Packet> p, const Address& addr)

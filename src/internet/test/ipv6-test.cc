@@ -50,9 +50,7 @@ Ipv6L3ProtocolTestCase::Ipv6L3ProtocolTestCase()
 {
 }
 
-Ipv6L3ProtocolTestCase::~Ipv6L3ProtocolTestCase()
-{
-}
+Ipv6L3ProtocolTestCase::~Ipv6L3ProtocolTestCase() = default;
 
 void
 Ipv6L3ProtocolTestCase::DoRun()

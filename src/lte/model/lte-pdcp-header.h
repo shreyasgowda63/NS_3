@@ -44,7 +44,7 @@ class LtePdcpHeader : public Header
      * Creates a null header
      */
     LtePdcpHeader();
-    ~LtePdcpHeader() override;
+    ~LtePdcpHeader() override = default;
 
     /**
      * \brief Set DC bit
@@ -91,8 +91,8 @@ class LtePdcpHeader : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint8_t m_dcBit;           ///< the DC bit
-    uint16_t m_sequenceNumber; ///< the sequence number
+    uint8_t m_dcBit{0xff};             ///< the DC bit
+    uint16_t m_sequenceNumber{0xfffa}; ///< the sequence number
 };
 
 } // namespace ns3

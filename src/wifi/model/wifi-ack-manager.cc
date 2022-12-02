@@ -39,7 +39,6 @@ WifiAckManager::GetTypeId()
 }
 
 WifiAckManager::WifiAckManager()
-    : m_linkId(0)
 {
     NS_LOG_FUNCTION(this);
 }

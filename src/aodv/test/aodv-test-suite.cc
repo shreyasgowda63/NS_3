@@ -37,8 +37,7 @@ namespace aodv
 struct NeighborTest : public TestCase
 {
     NeighborTest()
-        : TestCase("Neighbor"),
-          neighbor(nullptr)
+        : TestCase("Neighbor")
     {
     }
 
@@ -55,7 +54,7 @@ struct NeighborTest : public TestCase
     /// Check timeout function 3
     void CheckTimeout3();
     /// The Neighbors
-    Neighbors* neighbor;
+    Neighbors* neighbor{nullptr};
 };
 
 void

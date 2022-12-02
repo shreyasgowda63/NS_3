@@ -358,13 +358,13 @@ class PeerManagementProtocol : public Object
     Mac48Address m_address;                 ///< address
     Ptr<IeMeshId> m_meshId;                 ///< mesh ID
 
-    uint16_t m_lastAssocId;         ///< last associated ID
-    uint16_t m_lastLocalLinkId;     ///< last local link ID
+    uint16_t m_lastAssocId{0};      ///< last associated ID
+    uint16_t m_lastLocalLinkId{1};  ///< last local link ID
     uint8_t m_maxNumberOfPeerLinks; ///< maimum number of peer links
     /// Flag which enables BCA
-    bool m_enableBca;
+    bool m_enableBca{true};
     /// Beacon can be shifted at [-m_maxBeaconShift; +m_maxBeaconShift] TUs
-    uint16_t m_maxBeaconShift;
+    uint16_t m_maxBeaconShift{15};
     /// Last beacon at each interface
     std::map<uint32_t, Time> m_lastBeacon;
     /// Beacon interval at each interface
@@ -393,9 +393,9 @@ class PeerManagementProtocol : public Object
     /// Statistics structure
     struct Statistics
     {
-        uint16_t linksTotal;  ///< total links
-        uint16_t linksOpened; ///< opened links
-        uint16_t linksClosed; ///< links closed
+        uint16_t linksTotal;     ///< total links
+        uint16_t linksOpened{0}; ///< opened links
+        uint16_t linksClosed{0}; ///< links closed
 
         /**
          * Constructor

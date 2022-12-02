@@ -356,10 +356,10 @@ class FdMtFfMacScheduler : public FfMacScheduler
     std::map<uint16_t, uint32_t> m_ceBsrRxed;
 
     // MAC SAPs
-    FfMacCschedSapUser* m_cschedSapUser;         ///< csched SAP user
-    FfMacSchedSapUser* m_schedSapUser;           ///< sched SAP user
-    FfMacCschedSapProvider* m_cschedSapProvider; ///< csched SAP provider
-    FfMacSchedSapProvider* m_schedSapProvider;   ///< sched SAP provider
+    FfMacCschedSapUser* m_cschedSapUser{nullptr}; ///< csched SAP user
+    FfMacSchedSapUser* m_schedSapUser{nullptr};   ///< sched SAP user
+    FfMacCschedSapProvider* m_cschedSapProvider;  ///< csched SAP provider
+    FfMacSchedSapProvider* m_schedSapProvider;    ///< sched SAP provider
 
     // FFR SAPs
     LteFfrSapUser* m_ffrSapUser;         ///< FFR SAP user
@@ -368,7 +368,7 @@ class FdMtFfMacScheduler : public FfMacScheduler
     // Internal parameters
     FfMacCschedSapProvider::CschedCellConfigReqParameters m_cschedCellConfig; ///< sched cell config
 
-    uint16_t m_nextRntiUl; ///< RNTI of the next user to be served next scheduling in UL
+    uint16_t m_nextRntiUl{0}; ///< RNTI of the next user to be served next scheduling in UL
 
     uint32_t m_cqiTimersThreshold; ///< # of TTIs for which a CQI can be considered valid
 

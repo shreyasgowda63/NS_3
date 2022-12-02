@@ -37,16 +37,13 @@ NS_LOG_COMPONENT_DEFINE("BuildingAllocator");
 NS_OBJECT_ENSURE_REGISTERED(GridBuildingAllocator);
 
 GridBuildingAllocator::GridBuildingAllocator()
-    : m_current(0)
 {
     m_buildingFactory.SetTypeId("ns3::Building");
     m_lowerLeftPositionAllocator = CreateObject<GridPositionAllocator>();
     m_upperRightPositionAllocator = CreateObject<GridPositionAllocator>();
 }
 
-GridBuildingAllocator::~GridBuildingAllocator()
-{
-}
+GridBuildingAllocator::~GridBuildingAllocator() = default;
 
 TypeId
 GridBuildingAllocator::GetTypeId()

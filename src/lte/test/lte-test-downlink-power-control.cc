@@ -411,9 +411,8 @@ LteDownlinkPowerControlSpectrumValueTestCase::LteDownlinkPowerControlSpectrumVal
     NS_LOG_INFO("Creating LteDownlinkPowerControlTestCase");
 }
 
-LteDownlinkPowerControlSpectrumValueTestCase::~LteDownlinkPowerControlSpectrumValueTestCase()
-{
-}
+LteDownlinkPowerControlSpectrumValueTestCase::~LteDownlinkPowerControlSpectrumValueTestCase() =
+    default;
 
 void
 LteDownlinkPowerControlSpectrumValueTestCase::DoRun()
@@ -431,17 +430,16 @@ LteDownlinkPowerControlSpectrumValueTestCase::DoRun()
 LteDownlinkPowerControlTestCase::LteDownlinkPowerControlTestCase(bool changePower,
                                                                  uint8_t pa,
                                                                  std::string name)
-    : TestCase("Downlink Power Control: " + name)
+    : TestCase("Downlink Power Control: " + name),
+      m_changePdschConfigDedicated(changePower),
+      m_expectedPowerDiff(LteRrcSap::ConvertPdschConfigDedicated2Double(m_pdschConfigDedicated))
 {
-    m_changePdschConfigDedicated = changePower;
     m_pdschConfigDedicated.pa = pa;
-    m_expectedPowerDiff = LteRrcSap::ConvertPdschConfigDedicated2Double(m_pdschConfigDedicated);
+
     NS_LOG_INFO("Creating LteDownlinkPowerControlTestCase");
 }
 
-LteDownlinkPowerControlTestCase::~LteDownlinkPowerControlTestCase()
-{
-}
+LteDownlinkPowerControlTestCase::~LteDownlinkPowerControlTestCase() = default;
 
 void
 LteDownlinkPowerControlTestCase::DoRun()
@@ -562,17 +560,12 @@ ChangePdschConfigDedicatedCallback(
 LteDownlinkPowerControlRrcConnectionReconfigurationTestCase::
     LteDownlinkPowerControlRrcConnectionReconfigurationTestCase(bool useIdealRrc, std::string name)
     : TestCase("Downlink Power Control: " + name),
-      m_useIdealRrc(useIdealRrc),
-      m_changePdschConfigDedicatedTriggered(false),
-      m_connectionReconfigurationUeReceived(false),
-      m_connectionReconfigurationEnbCompleted(false)
+      m_useIdealRrc(useIdealRrc)
 {
 }
 
 LteDownlinkPowerControlRrcConnectionReconfigurationTestCase::
-    ~LteDownlinkPowerControlRrcConnectionReconfigurationTestCase()
-{
-}
+    ~LteDownlinkPowerControlRrcConnectionReconfigurationTestCase() = default;
 
 void
 LteDownlinkPowerControlRrcConnectionReconfigurationTestCase::ConnectionReconfigurationEnb(

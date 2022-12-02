@@ -98,14 +98,16 @@ class LteUeComponentCarrierManager : public Object
     // inherited from Object
     void DoDispose() override;
 
-    LteUeCcmRrcSapUser* m_ccmRrcSapUser;         //!< Interface to the UE RRC instance.
-    LteUeCcmRrcSapProvider* m_ccmRrcSapProvider; //!< Receive API calls from the UE RRC instance.
+    LteUeCcmRrcSapUser* m_ccmRrcSapUser{nullptr}; //!< Interface to the UE RRC instance.
+    LteUeCcmRrcSapProvider* m_ccmRrcSapProvider{
+        nullptr}; //!< Receive API calls from the UE RRC instance.
 
     std::map<uint8_t, LteMacSapUser*> m_lcAttached; //!< Map of pointers to SAP interfaces of the
                                                     //!< RLC instance of the flows of this UE.
     std::map<uint8_t, std::map<uint8_t, LteMacSapProvider*>>
-        m_componentCarrierLcMap;     //!< Flow configuration per flow Id of this UE.
-    uint8_t m_noOfComponentCarriers; //!< The number of component carriers that this UE can support.
+        m_componentCarrierLcMap; //!< Flow configuration per flow Id of this UE.
+    uint8_t m_noOfComponentCarriers{
+        0}; //!< The number of component carriers that this UE can support.
     std::map<uint8_t, LteMacSapProvider*>
         m_macSapProvidersMap; //!< Map of pointers to SAP to interfaces of the MAC instance if the
                               //!< flows of this UE.

@@ -150,9 +150,7 @@ EpcTftClassifierTestCase::EpcTftClassifierTestCase(Ptr<EpcTftClassifier> c,
     m_udpHeader.SetDestinationPort(dp);
 }
 
-EpcTftClassifierTestCase::~EpcTftClassifierTestCase()
-{
-}
+EpcTftClassifierTestCase::~EpcTftClassifierTestCase() = default;
 
 std::string
 EpcTftClassifierTestCase::BuildNameString(Ptr<EpcTftClassifier> c,

@@ -223,10 +223,7 @@ SimpleNetDevice::GetTypeId()
 
 SimpleNetDevice::SimpleNetDevice()
     : m_channel(nullptr),
-      m_node(nullptr),
-      m_mtu(0xffff),
-      m_ifIndex(0),
-      m_linkUp(false)
+      m_node(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }

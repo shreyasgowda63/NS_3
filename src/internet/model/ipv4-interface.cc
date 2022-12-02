@@ -61,10 +61,7 @@ Ipv4Interface::GetTypeId()
  * invoke SetUp on them once an Ipv4 address and mask have been set.
  */
 Ipv4Interface::Ipv4Interface()
-    : m_ifup(false),
-      m_forwarding(true),
-      m_metric(1),
-      m_node(nullptr),
+    : m_node(nullptr),
       m_device(nullptr),
       m_tc(nullptr),
       m_cache(nullptr)

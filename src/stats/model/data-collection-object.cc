@@ -51,9 +51,7 @@ DataCollectionObject::GetTypeId()
     return tid;
 }
 
-DataCollectionObject::DataCollectionObject()
-{
-}
+DataCollectionObject::DataCollectionObject() = default;
 
 DataCollectionObject::~DataCollectionObject()
 {

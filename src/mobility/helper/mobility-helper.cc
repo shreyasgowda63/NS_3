@@ -45,9 +45,7 @@ MobilityHelper::MobilityHelper()
     m_mobility.SetTypeId("ns3::ConstantPositionMobilityModel");
 }
 
-MobilityHelper::~MobilityHelper()
-{
-}
+MobilityHelper::~MobilityHelper() = default;
 
 void
 MobilityHelper::SetPositionAllocator(Ptr<PositionAllocator> allocator)

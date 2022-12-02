@@ -127,19 +127,20 @@ class TcpDctcp : public TcpLinuxReno
      */
     void InitializeDctcpAlpha(double alpha);
 
-    uint32_t m_ackedBytesEcn;       //!< Number of acked bytes which are marked
-    uint32_t m_ackedBytesTotal;     //!< Total number of acked bytes
+    uint32_t m_ackedBytesEcn{0};    //!< Number of acked bytes which are marked
+    uint32_t m_ackedBytesTotal{0};  //!< Total number of acked bytes
     SequenceNumber32 m_priorRcvNxt; //!< Sequence number of the first missing byte in data
-    bool m_priorRcvNxtFlag; //!< Variable used in setting the value of m_priorRcvNxt for first time
-    double m_alpha;         //!< Parameter used to estimate the amount of network congestion
+    bool m_priorRcvNxtFlag{
+        false};     //!< Variable used in setting the value of m_priorRcvNxt for first time
+    double m_alpha; //!< Parameter used to estimate the amount of network congestion
     SequenceNumber32
-        m_nextSeq;      //!< TCP sequence number threshold for beginning a new observation window
-    bool m_nextSeqFlag; //!< Variable used in setting the value of m_nextSeq for first time
-    bool m_ceState;     //!< DCTCP Congestion Experienced state
-    bool m_delayedAckReserved; //!< Delayed Ack state
-    double m_g;                //!< Estimation gain
-    bool m_useEct0;            //!< Use ECT(0) for ECN codepoint
-    bool m_initialized;        //!< Whether DCTCP has been initialized
+        m_nextSeq; //!< TCP sequence number threshold for beginning a new observation window
+    bool m_nextSeqFlag{false}; //!< Variable used in setting the value of m_nextSeq for first time
+    bool m_ceState{false};     //!< DCTCP Congestion Experienced state
+    bool m_delayedAckReserved{false}; //!< Delayed Ack state
+    double m_g;                       //!< Estimation gain
+    bool m_useEct0;                   //!< Use ECT(0) for ECN codepoint
+    bool m_initialized{false};        //!< Whether DCTCP has been initialized
     /**
      * \brief Callback pointer for congestion state update
      */

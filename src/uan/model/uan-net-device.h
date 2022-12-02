@@ -193,7 +193,7 @@ class UanNetDevice : public NetDevice
 
     // unused: std::string m_name;
     uint32_t m_ifIndex;             //!< The interface index of this device.
-    uint16_t m_mtu;                 //!< The device MTU value, in bytes.
+    uint16_t m_mtu{64000};          //!< The device MTU value, in bytes.
     bool m_linkup;                  //!< The link state, true if up.
     TracedCallback<> m_linkChanges; //!< Callback to invoke when the link state changes to UP.
     ReceiveCallback m_forwardUp;    //!< The receive callback.
@@ -204,7 +204,7 @@ class UanNetDevice : public NetDevice
     TracedCallback<Ptr<const Packet>, Mac8Address> m_txLogger;
 
     /** Flag when we've been cleared. */
-    bool m_cleared;
+    bool m_cleared{false};
 
   protected:
     void DoDispose() override;

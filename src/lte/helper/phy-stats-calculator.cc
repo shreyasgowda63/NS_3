@@ -33,9 +33,7 @@ NS_LOG_COMPONENT_DEFINE("PhyStatsCalculator");
 NS_OBJECT_ENSURE_REGISTERED(PhyStatsCalculator);
 
 PhyStatsCalculator::PhyStatsCalculator()
-    : m_RsrpSinrFirstWrite(true),
-      m_UeSinrFirstWrite(true),
-      m_InterferenceFirstWrite(true)
+
 {
     NS_LOG_FUNCTION(this);
 }

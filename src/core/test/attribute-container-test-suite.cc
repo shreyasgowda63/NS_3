@@ -96,13 +96,9 @@ class AttributeContainerObject : public Object
     std::map<std::string, int> m_map; //!< Map of <std::string, int>.
 };
 
-AttributeContainerObject::AttributeContainerObject()
-{
-}
+AttributeContainerObject::AttributeContainerObject() = default;
 
-AttributeContainerObject::~AttributeContainerObject()
-{
-}
+AttributeContainerObject::~AttributeContainerObject() = default;
 
 TypeId
 AttributeContainerObject::GetTypeId()
@@ -204,9 +200,7 @@ class AttributeContainerTestCase : public TestCase
   public:
     AttributeContainerTestCase();
 
-    ~AttributeContainerTestCase() override
-    {
-    }
+    ~AttributeContainerTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -309,9 +303,7 @@ class AttributeContainerSerializationTestCase : public TestCase
   public:
     AttributeContainerSerializationTestCase();
 
-    ~AttributeContainerSerializationTestCase() override
-    {
-    }
+    ~AttributeContainerSerializationTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -409,9 +401,7 @@ class AttributeContainerSetGetTestCase : public TestCase
   public:
     AttributeContainerSetGetTestCase();
 
-    ~AttributeContainerSetGetTestCase() override
-    {
-    }
+    ~AttributeContainerSetGetTestCase() override = default;
 
   private:
     void DoRun() override;

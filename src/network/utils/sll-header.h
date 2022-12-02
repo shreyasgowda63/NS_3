@@ -118,11 +118,11 @@ class SllHeader : public Header
 
   protected:
     // declared in packet order
-    PacketType m_packetType;  /**< Packet type */
-    uint16_t m_arphdType;     /**< ARP protocol hardware identifier */
-    uint16_t m_addressLength; /**< Address length */
-    uint64_t m_address;       /**< Address */
-    uint16_t m_protocolType;  /**< protocol type */
+    PacketType m_packetType{UNICAST_FROM_PEER_TO_ME}; /**< Packet type */
+    uint16_t m_arphdType{0};                          /**< ARP protocol hardware identifier */
+    uint16_t m_addressLength{0};                      /**< Address length */
+    uint64_t m_address{0};                            /**< Address */
+    uint16_t m_protocolType{0};                       /**< protocol type */
 };
 
 } // namespace ns3

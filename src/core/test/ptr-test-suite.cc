@@ -58,7 +58,7 @@ class PtrTestBase
     void Unref() const;
 
   private:
-    mutable uint32_t m_count; //!< The reference count.
+    mutable uint32_t m_count{1}; //!< The reference count.
 };
 
 /**
@@ -113,13 +113,10 @@ class PtrTestCase : public TestCase
 };
 
 PtrTestBase::PtrTestBase()
-    : m_count(1)
-{
-}
 
-PtrTestBase::~PtrTestBase()
-{
-}
+    = default;
+
+PtrTestBase::~PtrTestBase() = default;
 
 void
 PtrTestBase::Ref() const

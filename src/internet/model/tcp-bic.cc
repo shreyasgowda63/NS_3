@@ -72,11 +72,7 @@ TcpBic::GetTypeId()
 }
 
 TcpBic::TcpBic()
-    : TcpCongestionOps(),
-      m_cWndCnt(0),
-      m_lastMaxCwnd(0),
-      m_lastCwnd(0),
-      m_epochStart(Time::Min())
+    : m_epochStart(Time::Min())
 {
     NS_LOG_FUNCTION(this);
 }

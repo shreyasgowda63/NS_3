@@ -56,9 +56,8 @@ operator<<(std::ostream& os, const PhasedArrayModel::ComplexVector& cv)
 }
 
 PhasedArrayModel::PhasedArrayModel()
-    : m_isBfVectorValid{false}
+    : m_id(m_idCounter++)
 {
-    m_id = m_idCounter++;
 }
 
 PhasedArrayModel::~PhasedArrayModel()

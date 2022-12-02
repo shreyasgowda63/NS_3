@@ -88,7 +88,6 @@ TcpLedbat::SetDoSs(SlowStartType doSS)
 }
 
 TcpLedbat::TcpLedbat()
-    : TcpNewReno()
 {
     NS_LOG_FUNCTION(this);
     m_target = MilliSeconds(100);

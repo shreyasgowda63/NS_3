@@ -23,14 +23,9 @@
 
 namespace ns3
 {
-CsParameters::CsParameters()
-{
-    m_classifierDscAction = CsParameters::ADD;
-}
+CsParameters::CsParameters() = default;
 
-CsParameters::~CsParameters()
-{
-}
+CsParameters::~CsParameters() = default;
 
 CsParameters::CsParameters(Tlv tlv)
 {
@@ -56,9 +51,9 @@ CsParameters::CsParameters(Tlv tlv)
 
 CsParameters::CsParameters(enum CsParameters::Action classifierDscAction,
                            IpcsClassifierRecord classifier)
+    : m_classifierDscAction(classifierDscAction),
+      m_packetClassifierRule(classifier)
 {
-    m_classifierDscAction = classifierDscAction;
-    m_packetClassifierRule = classifier;
 }
 
 void

@@ -45,7 +45,7 @@ namespace ns3
 class FfMacSchedSapProvider
 {
   public:
-    virtual ~FfMacSchedSapProvider();
+    virtual ~FfMacSchedSapProvider() = default;
 
     /**
      * Parameters of the API primitives
@@ -290,7 +290,7 @@ class FfMacSchedSapProvider
 class FfMacSchedSapUser
 {
   public:
-    virtual ~FfMacSchedSapUser();
+    virtual ~FfMacSchedSapUser() = default;
 
     /**
      * Parameters of the API primitives

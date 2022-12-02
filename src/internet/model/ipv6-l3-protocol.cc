@@ -127,7 +127,6 @@ Ipv6L3Protocol::GetTypeId()
 }
 
 Ipv6L3Protocol::Ipv6L3Protocol()
-    : m_nInterfaces(0)
 {
     NS_LOG_FUNCTION(this);
     m_pmtuCache = CreateObject<Ipv6PmtuCache>();

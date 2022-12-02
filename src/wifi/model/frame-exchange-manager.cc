@@ -54,11 +54,7 @@ FrameExchangeManager::GetTypeId()
 }
 
 FrameExchangeManager::FrameExchangeManager()
-    : m_navEnd(Seconds(0)),
-      m_linkId(0),
-      m_allowedWidth(0),
-      m_promisc(false),
-      m_moreFragments(false)
+    : m_navEnd(Seconds(0))
 {
     NS_LOG_FUNCTION(this);
 }

@@ -31,9 +31,7 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("WifiTxTimer");
 
 WifiTxTimer::WifiTxTimer()
-    : m_timeoutEvent(),
-      m_reason(NOT_RUNNING),
-      m_impl(nullptr),
+    : m_impl(nullptr),
       m_end(Seconds(0))
 {
 }

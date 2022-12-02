@@ -46,7 +46,7 @@ class RawTextConfigSave : public FileConfig
 
   private:
     /// Config store output stream
-    std::ofstream* m_os;
+    std::ofstream* m_os{nullptr};
 };
 
 /**
@@ -90,7 +90,7 @@ class RawTextConfigLoad : public FileConfig
      */
     std::string Strip(std::string value);
     /// Config store input stream
-    std::ifstream* m_is;
+    std::ifstream* m_is{nullptr};
 };
 
 } // namespace ns3

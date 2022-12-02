@@ -29,8 +29,7 @@ namespace ns3
 {
 
 EventGarbageCollector::EventGarbageCollector()
-    : m_nextCleanupSize(CHUNK_INIT_SIZE),
-      m_events()
+    : m_nextCleanupSize(CHUNK_INIT_SIZE)
 {
 }
 

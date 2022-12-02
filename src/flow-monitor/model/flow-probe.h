@@ -59,9 +59,7 @@ class FlowProbe : public Object
     struct FlowStats
     {
         FlowStats()
-            : delayFromFirstProbeSum(Seconds(0)),
-              bytes(0),
-              packets(0)
+            : delayFromFirstProbeSum(Seconds(0))
         {
         }
 
@@ -73,9 +71,9 @@ class FlowProbe : public Object
         /// first (entry) probe up to this one (partial delay)
         Time delayFromFirstProbeSum;
         /// Number of bytes seen of this flow
-        uint64_t bytes;
+        uint64_t bytes{0};
         /// Number of packets seen of this flow
-        uint32_t packets;
+        uint32_t packets{0};
     };
 
     /// Container to map FlowId -> FlowStats

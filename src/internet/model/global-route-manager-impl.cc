@@ -94,8 +94,7 @@ SPFVertex::SPFVertex()
       m_distanceFromRoot(SPF_INFINITY),
       m_rootOif(SPF_INFINITY),
       m_nextHop("0.0.0.0"),
-      m_parents(),
-      m_children(),
+
       m_vertexProcessed(false)
 {
     NS_LOG_FUNCTION(this);
@@ -107,8 +106,7 @@ SPFVertex::SPFVertex(GlobalRoutingLSA* lsa)
       m_distanceFromRoot(SPF_INFINITY),
       m_rootOif(SPF_INFINITY),
       m_nextHop("0.0.0.0"),
-      m_parents(),
-      m_children(),
+
       m_vertexProcessed(false)
 {
     NS_LOG_FUNCTION(this << lsa);
@@ -428,8 +426,7 @@ SPFVertex::ClearVertexProcessed()
 // ---------------------------------------------------------------------------
 
 GlobalRouteManagerLSDB::GlobalRouteManagerLSDB()
-    : m_database(),
-      m_extdatabase()
+
 {
     NS_LOG_FUNCTION(this);
 }
@@ -544,7 +541,6 @@ GlobalRouteManagerLSDB::GetLSAByLinkData(Ipv4Address addr) const
 // ---------------------------------------------------------------------------
 
 GlobalRouteManagerImpl::GlobalRouteManagerImpl()
-    : m_spfroot(nullptr)
 {
     NS_LOG_FUNCTION(this);
     m_lsdb = new GlobalRouteManagerLSDB();

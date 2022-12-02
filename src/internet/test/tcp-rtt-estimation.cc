@@ -66,10 +66,10 @@ class TcpRttEstimationTest : public TcpGeneralTest
 
   private:
     bool m_enableTs;                 //!< Enable TimeStamp option
-    bool m_rttChanged;               //!< True if RTT has changed.
+    bool m_rttChanged{false};        //!< True if RTT has changed.
     SequenceNumber32 m_highestTxSeq; //!< Highest sequence number sent.
     uint32_t m_pktCount;             //!< Packet counter.
-    uint32_t m_dataCount;            //!< Data counter.
+    uint32_t m_dataCount{0};         //!< Data counter.
 };
 
 TcpRttEstimationTest::TcpRttEstimationTest(const std::string& desc,
@@ -77,10 +77,8 @@ TcpRttEstimationTest::TcpRttEstimationTest(const std::string& desc,
                                            uint32_t pktCount)
     : TcpGeneralTest(desc),
       m_enableTs(enableTs),
-      m_rttChanged(false),
       m_highestTxSeq(0),
-      m_pktCount(pktCount),
-      m_dataCount(0)
+      m_pktCount(pktCount)
 {
 }
 

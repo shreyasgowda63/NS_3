@@ -33,10 +33,7 @@ NS_OBJECT_ENSURE_REGISTERED(Ipv6Header);
 
 Ipv6Header::Ipv6Header()
     : m_trafficClass(0),
-      m_flowLabel(1),
-      m_payloadLength(0),
-      m_nextHeader(0),
-      m_hopLimit(0)
+      m_flowLabel(1)
 {
     SetSource(Ipv6Address("::"));
     SetDestination(Ipv6Address("::"));

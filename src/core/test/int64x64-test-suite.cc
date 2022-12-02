@@ -1162,10 +1162,10 @@ class Int64x64DoubleTestCase : public TestCase
     static const long double MIN_MANT;
 
     // Member variables
-    long double m_last; //!< The last value tested.
+    long double m_last{0}; //!< The last value tested.
     int64x64_t
-        m_deltaMax;   //!< The maximum observed difference between expected and computed values.
-    int m_deltaCount; //!< The number of times a delta was recorded.
+        m_deltaMax;      //!< The maximum observed difference between expected and computed values.
+    int m_deltaCount{0}; //!< The number of times a delta was recorded.
 };
 
 /* static */
@@ -1174,9 +1174,7 @@ const long double Int64x64DoubleTestCase::MIN_MANT =
 
 Int64x64DoubleTestCase::Int64x64DoubleTestCase()
     : TestCase("Construct from floating point."),
-      m_last{0},
-      m_deltaMax{0},
-      m_deltaCount{0}
+      m_deltaMax{0}
 {
 }
 

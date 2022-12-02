@@ -50,9 +50,7 @@ class FdNetDeviceHelper : public PcapHelperForDevice, public AsciiTraceHelperFor
      */
     FdNetDeviceHelper();
 
-    ~FdNetDeviceHelper() override
-    {
-    }
+    ~FdNetDeviceHelper() override = default;
 
     /**
      * Set the TypeId of the Objects to be created by this helper.

@@ -536,9 +536,9 @@ class Ipv4RipSplitHorizonStrategyTest : public TestCase
 };
 
 Ipv4RipSplitHorizonStrategyTest::Ipv4RipSplitHorizonStrategyTest(Rip::SplitHorizonType_e strategy)
-    : TestCase("RIP Split Horizon strategy")
+    : TestCase("RIP Split Horizon strategy"),
+      m_setStrategy(strategy)
 {
-    m_setStrategy = strategy;
 }
 
 void

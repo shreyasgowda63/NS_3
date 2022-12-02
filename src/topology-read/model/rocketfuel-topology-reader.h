@@ -113,8 +113,8 @@ class RocketfuelTopologyReader : public TopologyReader
      */
     enum RF_FileType GetFileType(const std::string& buf);
 
-    int m_linksNumber;                          //!< Number of links.
-    int m_nodesNumber;                          //!< Number of nodes.
+    int m_linksNumber{0};                       //!< Number of links.
+    int m_nodesNumber{0};                       //!< Number of nodes.
     std::map<std::string, Ptr<Node>> m_nodeMap; //!< Map of the nodes (name, node).
 
     // end class RocketfuelTopologyReader

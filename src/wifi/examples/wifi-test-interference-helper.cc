@@ -83,24 +83,24 @@ class InterferenceExperiment
     struct Input
     {
         Input();
-        Time interval;         ///< interval
-        double xA;             ///< x A
-        double xB;             ///< x B
-        std::string txModeA;   ///< transmit mode A
-        std::string txModeB;   ///< transmit mode B
-        double txPowerLevelA;  ///< transmit power level A
-        double txPowerLevelB;  ///< transmit power level B
-        uint32_t packetSizeA;  ///< packet size A
-        uint32_t packetSizeB;  ///< packet size B
-        uint16_t channelA;     ///< channel number A
-        uint16_t channelB;     ///< channel number B
-        uint16_t widthA;       ///< channel width A
-        uint16_t widthB;       ///< channel width B
-        WifiStandard standard; ///< standard
-        WifiPhyBand band;      ///< band
-        WifiPreamble preamble; ///< preamble
-        bool captureEnabled;   ///< whether physical layer capture is enabled
-        double captureMargin;  ///< margin used for physical layer capture
+        Time interval;                               ///< interval
+        double xA{-5};                               ///< x A
+        double xB{5};                                ///< x B
+        std::string txModeA;                         ///< transmit mode A
+        std::string txModeB;                         ///< transmit mode B
+        double txPowerLevelA{16.0206};               ///< transmit power level A
+        double txPowerLevelB{16.0206};               ///< transmit power level B
+        uint32_t packetSizeA{1500};                  ///< packet size A
+        uint32_t packetSizeB{1500};                  ///< packet size B
+        uint16_t channelA{36};                       ///< channel number A
+        uint16_t channelB{36};                       ///< channel number B
+        uint16_t widthA{20};                         ///< channel width A
+        uint16_t widthB{20};                         ///< channel width B
+        WifiStandard standard{WIFI_STANDARD_80211a}; ///< standard
+        WifiPhyBand band{WIFI_PHY_BAND_5GHZ};        ///< band
+        WifiPreamble preamble{WIFI_PREAMBLE_LONG};   ///< preamble
+        bool captureEnabled{false};                  ///< whether physical layer capture is enabled
+        double captureMargin{0};                     ///< margin used for physical layer capture
     };
 
     InterferenceExperiment();
@@ -124,10 +124,10 @@ class InterferenceExperiment
     Ptr<SpectrumWifiPhy> m_txA; ///< transmit A function
     Ptr<SpectrumWifiPhy> m_txB; ///< transmit B function
     struct Input m_input;       ///< input
-    bool m_droppedA;            ///< flag to indicate whether packet A has been dropped
-    bool m_droppedB;            ///< flag to indicate whether packet B has been dropped
-    mutable uint64_t m_uidA;    ///< UID to use for packet A
-    mutable uint64_t m_uidB;    ///< UID to use for packet B
+    bool m_droppedA{false};     ///< flag to indicate whether packet A has been dropped
+    bool m_droppedB{false};     ///< flag to indicate whether packet B has been dropped
+    mutable uint64_t m_uidA{0}; ///< UID to use for packet A
+    mutable uint64_t m_uidB{0}; ///< UID to use for packet B
 };
 
 void
@@ -183,32 +183,13 @@ InterferenceExperiment::PacketDropped(Ptr<const Packet> packet, WifiPhyRxfailure
 }
 
 InterferenceExperiment::InterferenceExperiment()
-    : m_droppedA(false),
-      m_droppedB(false),
-      m_uidA(0),
-      m_uidB(0)
-{
-}
+
+    = default;
 
 InterferenceExperiment::Input::Input()
     : interval(MicroSeconds(0)),
-      xA(-5),
-      xB(5),
       txModeA("OfdmRate54Mbps"),
-      txModeB("OfdmRate54Mbps"),
-      txPowerLevelA(16.0206),
-      txPowerLevelB(16.0206),
-      packetSizeA(1500),
-      packetSizeB(1500),
-      channelA(36),
-      channelB(36),
-      widthA(20),
-      widthB(20),
-      standard(WIFI_STANDARD_80211a),
-      band(WIFI_PHY_BAND_5GHZ),
-      preamble(WIFI_PREAMBLE_LONG),
-      captureEnabled(false),
-      captureMargin(0)
+      txModeB("OfdmRate54Mbps")
 {
 }
 

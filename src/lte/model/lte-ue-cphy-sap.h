@@ -43,7 +43,7 @@ class LteUeCphySapProvider
     /**
      * Destructor
      */
-    virtual ~LteUeCphySapProvider();
+    virtual ~LteUeCphySapProvider() = default;
 
     /**
      * Reset the PHY
@@ -215,7 +215,7 @@ class LteUeCphySapUser
     /**
      * destructor
      */
-    virtual ~LteUeCphySapUser();
+    virtual ~LteUeCphySapUser() = default;
 
     /**
      * Parameters of the ReportUeMeasurements primitive: RSRP [dBm] and RSRQ [dB]

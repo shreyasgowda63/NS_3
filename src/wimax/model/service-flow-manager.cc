@@ -57,13 +57,11 @@ ServiceFlowManager::GetTypeId()
 }
 
 ServiceFlowManager::ServiceFlowManager()
+    : m_serviceFlows(new std::vector<ServiceFlow*>)
 {
-    m_serviceFlows = new std::vector<ServiceFlow*>;
 }
 
-ServiceFlowManager::~ServiceFlowManager()
-{
-}
+ServiceFlowManager::~ServiceFlowManager() = default;
 
 void
 ServiceFlowManager::DoDispose()

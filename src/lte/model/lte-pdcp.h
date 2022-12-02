@@ -148,8 +148,8 @@ class LtePdcp : public Object // SimpleRefCount<LtePdcp>
      */
     virtual void DoTransmitPdcpSdu(LtePdcpSapProvider::TransmitPdcpSduParameters params);
 
-    LtePdcpSapUser* m_pdcpSapUser;         ///< PDCP SAP user
-    LtePdcpSapProvider* m_pdcpSapProvider; ///< PDCP SAP provider
+    LtePdcpSapUser* m_pdcpSapUser{nullptr}; ///< PDCP SAP user
+    LtePdcpSapProvider* m_pdcpSapProvider;  ///< PDCP SAP provider
 
     /**
      * Interface provided to lower RLC entity
@@ -158,11 +158,11 @@ class LtePdcp : public Object // SimpleRefCount<LtePdcp>
      */
     virtual void DoReceivePdu(Ptr<Packet> p);
 
-    LteRlcSapUser* m_rlcSapUser;         ///< RLC SAP user
-    LteRlcSapProvider* m_rlcSapProvider; ///< RLC SAP provider
+    LteRlcSapUser* m_rlcSapUser;                  ///< RLC SAP user
+    LteRlcSapProvider* m_rlcSapProvider{nullptr}; ///< RLC SAP provider
 
-    uint16_t m_rnti; ///< RNTI
-    uint8_t m_lcid;  ///< LCID
+    uint16_t m_rnti{0}; ///< RNTI
+    uint8_t m_lcid{0};  ///< LCID
 
     /**
      * Used to inform of a PDU delivery to the RLC SAP provider.
@@ -179,11 +179,11 @@ class LtePdcp : public Object // SimpleRefCount<LtePdcp>
     /**
      * State variables. See section 7.1 in TS 36.323
      */
-    uint16_t m_txSequenceNumber;
+    uint16_t m_txSequenceNumber{0};
     /**
      * State variables. See section 7.1 in TS 36.323
      */
-    uint16_t m_rxSequenceNumber;
+    uint16_t m_rxSequenceNumber{0};
 
     /**
      * Constants. See section 7.2 in TS 36.323

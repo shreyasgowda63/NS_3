@@ -501,7 +501,7 @@ class NixVectorRouting : public std::enable_if_t<std::is_same_v<Ipv4RoutingProto
     Ptr<Node> m_node; //!< Node object
 
     /** Total neighbors used for nix-vector to determine number of bits */
-    uint32_t m_totalNeighbors;
+    uint32_t m_totalNeighbors{0};
 
     /**
      * Mapping of IP address to ns-3 node.

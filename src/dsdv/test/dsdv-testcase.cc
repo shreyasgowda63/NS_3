@@ -70,9 +70,7 @@ DsdvHeaderTestCase::DsdvHeaderTestCase()
 {
 }
 
-DsdvHeaderTestCase::~DsdvHeaderTestCase()
-{
-}
+DsdvHeaderTestCase::~DsdvHeaderTestCase() = default;
 
 void
 DsdvHeaderTestCase::DoRun()
@@ -128,9 +126,7 @@ DsdvTableTestCase::DsdvTableTestCase()
 {
 }
 
-DsdvTableTestCase::~DsdvTableTestCase()
-{
-}
+DsdvTableTestCase::~DsdvTableTestCase() = default;
 
 void
 DsdvTableTestCase::DoRun()

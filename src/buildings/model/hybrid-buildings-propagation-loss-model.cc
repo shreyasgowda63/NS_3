@@ -43,17 +43,15 @@ NS_LOG_COMPONENT_DEFINE("HybridBuildingsPropagationLossModel");
 NS_OBJECT_ENSURE_REGISTERED(HybridBuildingsPropagationLossModel);
 
 HybridBuildingsPropagationLossModel::HybridBuildingsPropagationLossModel()
+    : m_okumuraHata(CreateObject<OkumuraHataPropagationLossModel>()),
+      m_ituR1411Los(CreateObject<ItuR1411LosPropagationLossModel>()),
+      m_ituR1411NlosOverRooftop(CreateObject<ItuR1411NlosOverRooftopPropagationLossModel>()),
+      m_ituR1238(CreateObject<ItuR1238PropagationLossModel>()),
+      m_kun2600Mhz(CreateObject<Kun2600MhzPropagationLossModel>())
 {
-    m_okumuraHata = CreateObject<OkumuraHataPropagationLossModel>();
-    m_ituR1411Los = CreateObject<ItuR1411LosPropagationLossModel>();
-    m_ituR1411NlosOverRooftop = CreateObject<ItuR1411NlosOverRooftopPropagationLossModel>();
-    m_ituR1238 = CreateObject<ItuR1238PropagationLossModel>();
-    m_kun2600Mhz = CreateObject<Kun2600MhzPropagationLossModel>();
 }
 
-HybridBuildingsPropagationLossModel::~HybridBuildingsPropagationLossModel()
-{
-}
+HybridBuildingsPropagationLossModel::~HybridBuildingsPropagationLossModel() = default;
 
 TypeId
 HybridBuildingsPropagationLossModel::GetTypeId()

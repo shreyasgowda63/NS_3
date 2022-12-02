@@ -71,7 +71,6 @@ RttEstimator::GetVariation() const
 // Base class methods
 
 RttEstimator::RttEstimator()
-    : m_nSamples(0)
 {
     NS_LOG_FUNCTION(this);
 

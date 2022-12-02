@@ -1097,18 +1097,18 @@ class Socket : public Object
     uint8_t m_priority; //!< the socket priority
 
     // IPv4 options
-    bool m_manualIpTtl; //!< socket has IPv4 TTL set
-    bool m_ipRecvTos;   //!< socket forwards IPv4 TOS tag to L4
-    bool m_ipRecvTtl;   //!< socket forwards IPv4 TTL tag to L4
+    bool m_manualIpTtl{false}; //!< socket has IPv4 TTL set
+    bool m_ipRecvTos{false};   //!< socket forwards IPv4 TOS tag to L4
+    bool m_ipRecvTtl{false};   //!< socket forwards IPv4 TTL tag to L4
 
     uint8_t m_ipTos; //!< the socket IPv4 TOS
     uint8_t m_ipTtl; //!< the socket IPv4 TTL
 
     // IPv6 options
-    bool m_manualIpv6Tclass;   //!< socket has IPv6 Tclass set
-    bool m_manualIpv6HopLimit; //!< socket has IPv6 Hop Limit set
-    bool m_ipv6RecvTclass;     //!< socket forwards IPv6 Tclass tag to L4
-    bool m_ipv6RecvHopLimit;   //!< socket forwards IPv6 Hop Limit tag to L4
+    bool m_manualIpv6Tclass{false};   //!< socket has IPv6 Tclass set
+    bool m_manualIpv6HopLimit{false}; //!< socket has IPv6 Hop Limit set
+    bool m_ipv6RecvTclass{false};     //!< socket forwards IPv6 Tclass tag to L4
+    bool m_ipv6RecvHopLimit{false};   //!< socket forwards IPv6 Hop Limit tag to L4
 
     uint8_t m_ipv6Tclass;   //!< the socket IPv6 Tclass
     uint8_t m_ipv6HopLimit; //!< the socket IPv6 Hop Limit

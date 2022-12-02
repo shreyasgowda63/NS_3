@@ -71,12 +71,12 @@ class IeBeaconTimingUnit : public SimpleRefCount<IeBeaconTimingUnit>
 
   private:
     /// Least significant octet of AID:
-    uint8_t m_aid;
+    uint8_t m_aid{0};
     /// Last time we received a beacon in accordance with a local TSF measured in 256 microseconds
     /// unit
-    uint16_t m_lastBeacon;
+    uint16_t m_lastBeacon{0};
     /// Beacon interval of remote mesh point
-    uint16_t m_beaconInterval;
+    uint16_t m_beaconInterval{0};
     /**
      * equality operator
      *
@@ -164,7 +164,7 @@ class IeBeaconTiming : public WifiInformationElement
     /**
      * Timing element parameters:
      */
-    uint16_t m_numOfUnits;
+    uint16_t m_numOfUnits{0};
 };
 
 bool operator==(const IeBeaconTimingUnit& a, const IeBeaconTimingUnit& b);

@@ -738,7 +738,7 @@ class GlobalRouteManagerImpl
     void DebugSPFCalculate(Ipv4Address root);
 
   private:
-    SPFVertex* m_spfroot;           //!< the root node
+    SPFVertex* m_spfroot{nullptr};  //!< the root node
     GlobalRouteManagerLSDB* m_lsdb; //!< the Link State DataBase (LSDB) of the Global Route Manager
 
     /**

@@ -106,9 +106,9 @@ class GaussMarkovMobilityModel : public MobilityModel
     ConstantVelocityHelper m_helper; //!< constant velocity helper
     Time m_timeStep;                 //!< duraiton after which direction and speed should change
     double m_alpha;                  //!< tunable constant in the model
-    double m_meanVelocity;           //!< current mean velocity
-    double m_meanDirection;          //!< current mean direction
-    double m_meanPitch;              //!< current mean pitch
+    double m_meanVelocity{0.0};      //!< current mean velocity
+    double m_meanDirection{0.0};     //!< current mean direction
+    double m_meanPitch{0.0};         //!< current mean pitch
     double m_Velocity;               //!< current velocity
     double m_Direction;              //!< current direction
     double m_Pitch;                  //!< current pitch

@@ -51,8 +51,8 @@ class TupleObject : public Object
         VALUE3
     };
 
-    TupleObject();
-    ~TupleObject() override;
+    TupleObject() = default;
+    ~TupleObject() override = default;
 
     /**
      * \brief Get the type ID.
@@ -124,14 +124,6 @@ TupleObject::GetTypeId()
     return tid;
 }
 
-TupleObject::TupleObject()
-{
-}
-
-TupleObject::~TupleObject()
-{
-}
-
 void
 TupleObject::SetTuple1(const Tuple1& tuple)
 {
@@ -162,9 +154,7 @@ class TupleValueTestCase : public TestCase
   public:
     TupleValueTestCase();
 
-    ~TupleValueTestCase() override
-    {
-    }
+    ~TupleValueTestCase() override = default;
 
   private:
     void DoRun() override;

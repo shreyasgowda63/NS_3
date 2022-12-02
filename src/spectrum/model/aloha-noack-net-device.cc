@@ -121,7 +121,6 @@ AlohaNoackNetDevice::GetTypeId()
 }
 
 AlohaNoackNetDevice::AlohaNoackNetDevice()
-    : m_state(IDLE)
 {
     NS_LOG_FUNCTION(this);
 }

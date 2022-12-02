@@ -54,7 +54,7 @@ class Packet;
 class LteRrcSap
 {
   public:
-    virtual ~LteRrcSap();
+    virtual ~LteRrcSap() = default;
 
     /// Constraint values
     static const uint8_t MaxReportCells = 8;
@@ -368,9 +368,9 @@ class LteRrcSap
         /// Trigger enumeration
         enum
         {
-            EVENT,     ///< event report
-            PERIODICAL ///< periodical report
-        } triggerType; ///< trigger type
+            EVENT,            ///< event report
+            PERIODICAL        ///< periodical report
+        } triggerType{EVENT}; ///< trigger type
 
         /// Event enumeration
         enum
@@ -382,7 +382,7 @@ class LteRrcSap
             EVENT_A5  ///< Event A5: PCell becomes worse than absolute `threshold1` AND Neighbour
                       ///< becomes better than another absolute `threshold2`.
 
-        } eventId; ///< Choice of E-UTRA event triggered reporting criteria.
+        } eventId{EVENT_A1}; ///< Choice of E-UTRA event triggered reporting criteria.
 
         ThresholdEutra threshold1; ///< Threshold for event A1, A2, A4, and A5.
         ThresholdEutra threshold2; ///< Threshold for event A5.
@@ -390,34 +390,34 @@ class LteRrcSap
         /// Indicates whether or not the UE shall initiate the measurement reporting procedure when
         /// the leaving condition is met for a cell in `cellsTriggeredList`, as specified in 5.5.4.1
         /// of 3GPP TS 36.331.
-        bool reportOnLeave;
+        bool reportOnLeave{false};
 
         /// Offset value for Event A3. An integer between -30 and 30. The actual value is (value *
         /// 0.5) dB.
-        int8_t a3Offset;
+        int8_t a3Offset{0};
 
         /// Parameter used within the entry and leave condition of an event triggered reporting
         /// condition. The actual value is (value * 0.5) dB.
-        uint8_t hysteresis;
+        uint8_t hysteresis{0};
 
         /// Time during which specific criteria for the event needs to be met in order to trigger a
         /// measurement report.
-        uint16_t timeToTrigger;
+        uint16_t timeToTrigger{0};
 
         /// the report purpose
         enum report
         {
             REPORT_STRONGEST_CELLS,
             REPORT_CGI
-        } purpose; ///< purpose
+        } purpose{REPORT_STRONGEST_CELLS}; ///< purpose
 
         /// Trigger type enumeration
         enum
         {
-            RSRP,          ///< Reference Signal Received Power
-            RSRQ           ///< Reference Signal Received Quality
-        } triggerQuantity; ///< The quantities used to evaluate the triggering condition for the
-                           ///< event, see 3GPP TS 36.214.
+            RSRP,                ///< Reference Signal Received Power
+            RSRQ                 ///< Reference Signal Received Quality
+        } triggerQuantity{RSRP}; ///< The quantities used to evaluate the triggering condition for
+                                 ///< the event, see 3GPP TS 36.214.
 
         /// Report type enumeration
         enum
@@ -425,8 +425,8 @@ class LteRrcSap
             SAME_AS_TRIGGER_QUANTITY,
             BOTH ///< Both the RSRP and RSRQ quantities are to be included in the measurement
                  ///< report.
-        } reportQuantity; ///< The quantities to be included in the measurement report, always
-                          ///< assumed to be BOTH.
+        } reportQuantity{BOTH}; ///< The quantities to be included in the measurement report, always
+                                ///< assumed to be BOTH.
 
         /// Maximum number of cells, excluding the serving cell, to be included in the measurement
         /// report.
@@ -451,10 +451,10 @@ class LteRrcSap
             SPARE3,
             SPARE2,
             SPARE1
-        } reportInterval; ///< Indicates the interval between periodical reports.
+        } reportInterval{MS480}; ///< Indicates the interval between periodical reports.
 
         /// Number of measurement reports applicable, always assumed to be infinite.
-        uint8_t reportAmount;
+        uint8_t reportAmount{255};
 
         /// Report config eutra function
         ReportConfigEutra();

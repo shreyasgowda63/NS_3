@@ -107,13 +107,12 @@ class LrWpanCcaTestCase : public TestCase
 
     void DoRun() override;
 
-    LrWpanPhyEnumeration m_status; //!< PHY status.
+    LrWpanPhyEnumeration m_status{IEEE_802_15_4_PHY_UNSPECIFIED}; //!< PHY status.
 };
 
 LrWpanCcaTestCase::LrWpanCcaTestCase()
     : TestCase("Test the 802.15.4 clear channel assessment")
 {
-    m_status = IEEE_802_15_4_PHY_UNSPECIFIED;
 }
 
 void

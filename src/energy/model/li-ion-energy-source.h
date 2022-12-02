@@ -191,7 +191,7 @@ class LiIonEnergySource : public EnergySource
   private:
     double m_initialEnergyJ;                //!< initial energy, in Joules
     TracedValue<double> m_remainingEnergyJ; //!< remaining energy, in Joules
-    double m_drainedCapacity;               //!< capacity drained from the cell, in Ah
+    double m_drainedCapacity{0.0};          //!< capacity drained from the cell, in Ah
     double m_supplyVoltageV;                //!< actual voltage of the cell
     double m_lowBatteryTh;       //!< low battery threshold, as a fraction of the initial energy
     EventId m_energyUpdateEvent; //!< energy update event

@@ -106,9 +106,7 @@ LteUplinkPowerControlTestCase::LteUplinkPowerControlTestCase(std::string name)
     NS_LOG_INFO("Creating LteUplinkPowerControlTestCase");
 }
 
-LteUplinkPowerControlTestCase::~LteUplinkPowerControlTestCase()
-{
-}
+LteUplinkPowerControlTestCase::~LteUplinkPowerControlTestCase() = default;
 
 void
 LteUplinkPowerControlTestCase::TeleportUe(uint32_t x,
@@ -200,9 +198,7 @@ LteUplinkOpenLoopPowerControlTestCase::LteUplinkOpenLoopPowerControlTestCase(std
     NS_LOG_INFO("Creating LteUplinkPowerControlTestCase");
 }
 
-LteUplinkOpenLoopPowerControlTestCase::~LteUplinkOpenLoopPowerControlTestCase()
-{
-}
+LteUplinkOpenLoopPowerControlTestCase::~LteUplinkOpenLoopPowerControlTestCase() = default;
 
 void
 LteUplinkOpenLoopPowerControlTestCase::DoRun()
@@ -382,9 +378,7 @@ LteUplinkClosedLoopPowerControlAbsoluteModeTestCase::
 }
 
 LteUplinkClosedLoopPowerControlAbsoluteModeTestCase::
-    ~LteUplinkClosedLoopPowerControlAbsoluteModeTestCase()
-{
-}
+    ~LteUplinkClosedLoopPowerControlAbsoluteModeTestCase() = default;
 
 void
 LteUplinkClosedLoopPowerControlAbsoluteModeTestCase::DoRun()
@@ -546,9 +540,7 @@ LteUplinkClosedLoopPowerControlAccumulatedModeTestCase::
 }
 
 LteUplinkClosedLoopPowerControlAccumulatedModeTestCase::
-    ~LteUplinkClosedLoopPowerControlAccumulatedModeTestCase()
-{
-}
+    ~LteUplinkClosedLoopPowerControlAccumulatedModeTestCase() = default;
 
 void
 LteUplinkClosedLoopPowerControlAccumulatedModeTestCase::DoRun()

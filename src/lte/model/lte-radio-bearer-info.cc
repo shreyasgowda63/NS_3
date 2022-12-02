@@ -30,13 +30,9 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(LteRadioBearerInfo);
 
-LteRadioBearerInfo::LteRadioBearerInfo()
-{
-}
+LteRadioBearerInfo::LteRadioBearerInfo() = default;
 
-LteRadioBearerInfo::~LteRadioBearerInfo()
-{
-}
+LteRadioBearerInfo::~LteRadioBearerInfo() = default;
 
 TypeId
 LteRadioBearerInfo::GetTypeId()

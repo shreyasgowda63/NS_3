@@ -39,7 +39,6 @@ NS_LOG_COMPONENT_DEFINE("TraceFadingLossModel");
 NS_OBJECT_ENSURE_REGISTERED(TraceFadingLossModel);
 
 TraceFadingLossModel::TraceFadingLossModel()
-    : m_streamsAssigned(false)
 {
     NS_LOG_FUNCTION(this);
     SetNext(nullptr);

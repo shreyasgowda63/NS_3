@@ -34,9 +34,7 @@ namespace ns3
  * SixLowPanDispatch
  */
 
-SixLowPanDispatch::SixLowPanDispatch()
-{
-}
+SixLowPanDispatch::SixLowPanDispatch() = default;
 
 SixLowPanDispatch::Dispatch_e
 SixLowPanDispatch::GetDispatchType(uint8_t dispatch)
@@ -96,9 +94,8 @@ SixLowPanDispatch::GetNhcDispatchType(uint8_t dispatch)
 NS_OBJECT_ENSURE_REGISTERED(SixLowPanHc1);
 
 SixLowPanHc1::SixLowPanHc1()
-    : m_hopLimit(0)
-{
-}
+
+    = default;
 
 TypeId
 SixLowPanHc1::GetTypeId()
@@ -563,10 +560,8 @@ operator<<(std::ostream& os, const SixLowPanHc1& h)
 NS_OBJECT_ENSURE_REGISTERED(SixLowPanFrag1);
 
 SixLowPanFrag1::SixLowPanFrag1()
-    : m_datagramSize(0),
-      m_datagramTag(0)
-{
-}
+
+    = default;
 
 TypeId
 SixLowPanFrag1::GetTypeId()
@@ -660,11 +655,8 @@ operator<<(std::ostream& os, const SixLowPanFrag1& h)
 NS_OBJECT_ENSURE_REGISTERED(SixLowPanFragN);
 
 SixLowPanFragN::SixLowPanFragN()
-    : m_datagramSize(0),
-      m_datagramTag(0),
-      m_datagramOffset(0)
-{
-}
+
+    = default;
 
 /*
  * SixLowPanFragmentOffset
@@ -776,9 +768,7 @@ operator<<(std::ostream& os, const SixLowPanFragN& h)
 
 NS_OBJECT_ENSURE_REGISTERED(SixLowPanIpv6);
 
-SixLowPanIpv6::SixLowPanIpv6()
-{
-}
+SixLowPanIpv6::SixLowPanIpv6() = default;
 
 TypeId
 SixLowPanIpv6::GetTypeId()
@@ -837,19 +827,11 @@ operator<<(std::ostream& os, const SixLowPanIpv6& h)
  */
 NS_OBJECT_ENSURE_REGISTERED(SixLowPanIphc);
 
-SixLowPanIphc::SixLowPanIphc()
-{
-    // 011x xxxx xxxx xxxx
-    m_baseFormat = 0x6000;
-    m_srcdstContextId = 0;
-}
-
 SixLowPanIphc::SixLowPanIphc(uint8_t dispatch)
+    : m_baseFormat(dispatch)
 {
     // 011x xxxx xxxx xxxx
-    m_baseFormat = dispatch;
     m_baseFormat <<= 8;
-    m_srcdstContextId = 0;
 }
 
 TypeId
@@ -1518,14 +1500,6 @@ operator<<(std::ostream& os, const SixLowPanIphc& h)
  */
 NS_OBJECT_ENSURE_REGISTERED(SixLowPanNhcExtension);
 
-SixLowPanNhcExtension::SixLowPanNhcExtension()
-{
-    // 1110 xxxx
-    m_nhcExtensionHeader = 0xE0;
-    m_nhcNextHeader = 0;
-    m_nhcBlobLength = 0;
-}
-
 TypeId
 SixLowPanNhcExtension::GetTypeId()
 {
@@ -1660,15 +1634,6 @@ operator<<(std::ostream& os, const SixLowPanNhcExtension& h)
  * SixLowPanUdpNhcExtension
  */
 NS_OBJECT_ENSURE_REGISTERED(SixLowPanUdpNhcExtension);
-
-SixLowPanUdpNhcExtension::SixLowPanUdpNhcExtension()
-{
-    // 1111 0xxx
-    m_baseFormat = 0xF0;
-    m_checksum = 0;
-    m_srcPort = 0;
-    m_dstPort = 0;
-}
 
 TypeId
 SixLowPanUdpNhcExtension::GetTypeId()
@@ -1875,10 +1840,7 @@ operator<<(std::ostream& os, const SixLowPanUdpNhcExtension& h)
  */
 NS_OBJECT_ENSURE_REGISTERED(SixLowPanBc0);
 
-SixLowPanBc0::SixLowPanBc0()
-{
-    m_seqNumber = 66;
-}
+SixLowPanBc0::SixLowPanBc0() = default;
 
 TypeId
 SixLowPanBc0::GetTypeId()
@@ -1958,11 +1920,8 @@ NS_OBJECT_ENSURE_REGISTERED(SixLowPanMesh);
 
 SixLowPanMesh::SixLowPanMesh()
 {
-    m_hopsLeft = 0;
     m_src = Address();
     m_dst = Address();
-    m_v = false;
-    m_f = false;
 }
 
 TypeId

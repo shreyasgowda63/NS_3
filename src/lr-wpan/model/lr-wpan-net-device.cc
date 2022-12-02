@@ -81,7 +81,6 @@ LrWpanNetDevice::GetTypeId()
 }
 
 LrWpanNetDevice::LrWpanNetDevice()
-    : m_configComplete(false)
 {
     NS_LOG_FUNCTION(this);
     m_mac = CreateObject<LrWpanMac>();

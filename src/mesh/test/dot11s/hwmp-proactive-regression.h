@@ -70,7 +70,7 @@ class HwmpProactiveRegressionTest : public TestCase
 
   private:
     /// \internal It is important to have pointers here
-    NodeContainer* m_nodes;
+    NodeContainer* m_nodes{nullptr};
     /// Simulation time
     Time m_time;
     Ipv4InterfaceContainer m_interfaces; ///< interfaces
@@ -90,7 +90,7 @@ class HwmpProactiveRegressionTest : public TestCase
     Ptr<Socket> m_clientSocket;
 
     /// sent packets counter
-    uint32_t m_sentPktsCounter;
+    uint32_t m_sentPktsCounter{0};
 
     /**
      * Send data

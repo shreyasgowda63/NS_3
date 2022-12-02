@@ -204,8 +204,9 @@ class NetDeviceQueue : public Object
     void ConnectQueueTraces(Ptr<QueueType> queue);
 
   private:
-    bool m_stoppedByDevice;         //!< True if the queue has been stopped by the device
-    bool m_stoppedByQueueLimits;    //!< True if the queue has been stopped by a queue limits object
+    bool m_stoppedByDevice{false}; //!< True if the queue has been stopped by the device
+    bool m_stoppedByQueueLimits{
+        false};                     //!< True if the queue has been stopped by a queue limits object
     Ptr<QueueLimits> m_queueLimits; //!< Queue limits object
     WakeCallback m_wakeCallback;    //!< Wake callback
     Ptr<NetDevice> m_device;        //!< the netdevice aggregated to the NetDeviceQueueInterface

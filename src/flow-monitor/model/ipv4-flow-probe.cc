@@ -296,9 +296,7 @@ Ipv4FlowProbe::Ipv4FlowProbe(Ptr<FlowMonitor> monitor,
         MakeCallback(&Ipv4FlowProbe::QueueDropLogger, Ptr<Ipv4FlowProbe>(this)));
 }
 
-Ipv4FlowProbe::~Ipv4FlowProbe()
-{
-}
+Ipv4FlowProbe::~Ipv4FlowProbe() = default;
 
 /* static */
 TypeId

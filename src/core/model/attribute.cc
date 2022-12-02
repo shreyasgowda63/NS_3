@@ -36,29 +36,17 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("AttributeValue");
 
-AttributeValue::AttributeValue()
-{
-}
+AttributeValue::AttributeValue() = default;
 
-AttributeValue::~AttributeValue()
-{
-}
+AttributeValue::~AttributeValue() = default;
 
-AttributeAccessor::AttributeAccessor()
-{
-}
+AttributeAccessor::AttributeAccessor() = default;
 
-AttributeAccessor::~AttributeAccessor()
-{
-}
+AttributeAccessor::~AttributeAccessor() = default;
 
-AttributeChecker::AttributeChecker()
-{
-}
+AttributeChecker::AttributeChecker() = default;
 
-AttributeChecker::~AttributeChecker()
-{
-}
+AttributeChecker::~AttributeChecker() = default;
 
 Ptr<AttributeValue>
 AttributeChecker::CreateValidValue(const AttributeValue& value) const
@@ -116,13 +104,10 @@ EmptyAttributeValue::DeserializeFromString(std::string value, Ptr<const Attribut
 }
 
 EmptyAttributeAccessor::EmptyAttributeAccessor()
-    : AttributeAccessor()
-{
-}
 
-EmptyAttributeAccessor::~EmptyAttributeAccessor()
-{
-}
+    = default;
+
+EmptyAttributeAccessor::~EmptyAttributeAccessor() = default;
 
 bool
 EmptyAttributeAccessor::Set(ObjectBase* object [[maybe_unused]],
@@ -151,13 +136,10 @@ EmptyAttributeAccessor::HasSetter() const
 }
 
 EmptyAttributeChecker::EmptyAttributeChecker()
-    : AttributeChecker()
-{
-}
 
-EmptyAttributeChecker::~EmptyAttributeChecker()
-{
-}
+    = default;
+
+EmptyAttributeChecker::~EmptyAttributeChecker() = default;
 
 bool
 EmptyAttributeChecker::Check(const AttributeValue& value [[maybe_unused]]) const

@@ -80,7 +80,6 @@ TcpBbr::GetTypeId()
 }
 
 TcpBbr::TcpBbr()
-    : TcpCongestionOps()
 {
     NS_LOG_FUNCTION(this);
     m_uv = CreateObject<UniformRandomVariable>();

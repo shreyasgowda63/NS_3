@@ -46,7 +46,6 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("DsrMainHelper");
 
 DsrMainHelper::DsrMainHelper()
-    : m_dsrHelper(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }

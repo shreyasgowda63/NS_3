@@ -37,7 +37,7 @@ namespace ns3
 class EpcS11Sap
 {
   public:
-    virtual ~EpcS11Sap();
+    virtual ~EpcS11Sap() = default;
 
     /**
      * GTPC message

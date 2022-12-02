@@ -46,9 +46,7 @@ LrWpanSpectrumValueHelperTestCase::LrWpanSpectrumValueHelperTestCase()
 {
 }
 
-LrWpanSpectrumValueHelperTestCase::~LrWpanSpectrumValueHelperTestCase()
-{
-}
+LrWpanSpectrumValueHelperTestCase::~LrWpanSpectrumValueHelperTestCase() = default;
 
 void
 LrWpanSpectrumValueHelperTestCase::DoRun()

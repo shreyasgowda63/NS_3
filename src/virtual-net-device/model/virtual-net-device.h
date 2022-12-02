@@ -170,9 +170,9 @@ class VirtualNetDevice : public NetDevice
     std::string m_name;                                      //!< Name of the device
     uint32_t m_index;                                        //!< Device index
     uint16_t m_mtu;                                          //!< MTU
-    bool m_needsArp;                                         //!< True if the device needs ARP
-    bool m_supportsSendFrom; //!< True if the device supports SendFrm
-    bool m_isPointToPoint;   //!< True if the device is a PointToPoint type device
+    bool m_needsArp{false};                                  //!< True if the device needs ARP
+    bool m_supportsSendFrom{true}; //!< True if the device supports SendFrm
+    bool m_isPointToPoint{true};   //!< True if the device is a PointToPoint type device
 };
 
 } // namespace ns3

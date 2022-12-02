@@ -331,8 +331,7 @@ MultiLinkElement::HasMediumSyncDelayInfo() const
 MultiLinkElement::PerStaProfileSubelement::PerStaProfileSubelement(Variant variant,
                                                                    WifiMacType frameType)
     : m_variant(variant),
-      m_frameType(frameType),
-      m_staControl(0)
+      m_frameType(frameType)
 {
 }
 

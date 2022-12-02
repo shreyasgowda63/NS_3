@@ -34,13 +34,10 @@ NS_LOG_COMPONENT_DEFINE("TcpOptionSackPermitted");
 NS_OBJECT_ENSURE_REGISTERED(TcpOptionSackPermitted);
 
 TcpOptionSackPermitted::TcpOptionSackPermitted()
-    : TcpOption()
-{
-}
 
-TcpOptionSackPermitted::~TcpOptionSackPermitted()
-{
-}
+    = default;
+
+TcpOptionSackPermitted::~TcpOptionSackPermitted() = default;
 
 TypeId
 TcpOptionSackPermitted::GetTypeId()

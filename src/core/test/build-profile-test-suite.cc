@@ -48,9 +48,7 @@ class BuildProfileTestCase : public TestCase
   public:
     BuildProfileTestCase();
 
-    ~BuildProfileTestCase() override
-    {
-    }
+    ~BuildProfileTestCase() override = default;
 
   private:
     void DoRun() override;

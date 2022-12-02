@@ -53,7 +53,7 @@ typedef uint32_t FlowPacketId;
 class FlowClassifier : public SimpleRefCount<FlowClassifier>
 {
   private:
-    FlowId m_lastNewFlowId; //!< Last known Flow ID
+    FlowId m_lastNewFlowId{0}; //!< Last known Flow ID
 
   public:
     FlowClassifier();

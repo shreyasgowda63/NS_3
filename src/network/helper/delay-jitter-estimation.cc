@@ -26,9 +26,7 @@
 namespace ns3
 {
 
-DelayJitterEstimation::DelayJitterEstimation()
-{
-}
+DelayJitterEstimation::DelayJitterEstimation() = default;
 
 void
 DelayJitterEstimation::PrepareTx(Ptr<const Packet> packet)

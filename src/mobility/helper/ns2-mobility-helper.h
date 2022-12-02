@@ -112,9 +112,7 @@ class Ns2MobilityHelper
     class ObjectStore
     {
       public:
-        virtual ~ObjectStore()
-        {
-        }
+        virtual ~ObjectStore() = default;
 
         /**
          * Return ith object in store

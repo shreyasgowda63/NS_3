@@ -71,13 +71,9 @@ class PairObject : public Object
     std::pair<double, int> m_doubleIntPair;           //!< A pair of double, int.
 };
 
-PairObject::PairObject()
-{
-}
+PairObject::PairObject() = default;
 
-PairObject::~PairObject()
-{
-}
+PairObject::~PairObject() = default;
 
 TypeId
 PairObject::GetTypeId()
@@ -128,9 +124,7 @@ class PairValueTestCase : public TestCase
   public:
     PairValueTestCase();
 
-    ~PairValueTestCase() override
-    {
-    }
+    ~PairValueTestCase() override = default;
 
   private:
     void DoRun() override;

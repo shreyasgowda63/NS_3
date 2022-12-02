@@ -55,16 +55,16 @@ class NetAnimExperiment
      * \param cw the CW
      */
     void IncrementCw(uint32_t cw);
-    uint32_t m_numNodes;   ///< number of nodes
-    uint32_t m_dataRate;   ///< data rate
-    double m_depth;        ///< depth
-    double m_boundary;     ///< boundary
-    uint32_t m_packetSize; ///< packet size
-    uint32_t m_bytesTotal; ///< bytes total
-    uint32_t m_cwMin;      ///< CW minimum
-    uint32_t m_cwMax;      ///< CW maximum
-    uint32_t m_cwStep;     ///< CW step
-    uint32_t m_avgs;       ///< averages
+    uint32_t m_numNodes{15};   ///< number of nodes
+    uint32_t m_dataRate{80};   ///< data rate
+    double m_depth{70};        ///< depth
+    double m_boundary{500};    ///< boundary
+    uint32_t m_packetSize{32}; ///< packet size
+    uint32_t m_bytesTotal{0};  ///< bytes total
+    uint32_t m_cwMin{10};      ///< CW minimum
+    uint32_t m_cwMax{400};     ///< CW maximum
+    uint32_t m_cwStep{10};     ///< CW step
+    uint32_t m_avgs{3};        ///< averages
 
     Time m_slotTime; ///< slot time
     Time m_simTime;  ///< simulation time

@@ -30,9 +30,7 @@ SrsCqiRntiVsp::SrsCqiRntiVsp(uint16_t rnti)
 {
 }
 
-SrsCqiRntiVsp::~SrsCqiRntiVsp()
-{
-}
+SrsCqiRntiVsp::~SrsCqiRntiVsp() = default;
 
 uint16_t
 SrsCqiRntiVsp::GetRnti()

@@ -139,8 +139,8 @@ class LteRlc : public Object // SimpleRefCount<LteRlc>
      */
     virtual void DoTransmitPdcpPdu(Ptr<Packet> p) = 0;
 
-    LteRlcSapUser* m_rlcSapUser;         ///< RLC SAP user
-    LteRlcSapProvider* m_rlcSapProvider; ///< RLC SAP provider
+    LteRlcSapUser* m_rlcSapUser{nullptr}; ///< RLC SAP user
+    LteRlcSapProvider* m_rlcSapProvider;  ///< RLC SAP provider
 
     // Interface forwarded by LteMacSapUser
     /**
@@ -160,11 +160,11 @@ class LteRlc : public Object // SimpleRefCount<LteRlc>
      */
     virtual void DoReceivePdu(LteMacSapUser::ReceivePduParameters params) = 0;
 
-    LteMacSapUser* m_macSapUser;         ///< MAC SAP user
-    LteMacSapProvider* m_macSapProvider; ///< MAC SAP provider
+    LteMacSapUser* m_macSapUser;                  ///< MAC SAP user
+    LteMacSapProvider* m_macSapProvider{nullptr}; ///< MAC SAP provider
 
-    uint16_t m_rnti; ///< RNTI
-    uint8_t m_lcid;  ///< LCID
+    uint16_t m_rnti{0}; ///< RNTI
+    uint8_t m_lcid{0};  ///< LCID
 
     /**
      * Used to inform of a PDU delivery to the MAC SAP provider

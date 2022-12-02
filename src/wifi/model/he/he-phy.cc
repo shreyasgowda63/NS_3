@@ -77,9 +77,7 @@ const PhyEntity::PpduFormats HePhy::m_hePpduFormats { // Ignoring PE (Packet Ext
 
 HePhy::HePhy(bool buildModeList /* = true */)
     : VhtPhy(false), // don't add VHT modes to list
-      m_trigVectorExpirationTime(Seconds(0)),
-      m_rxHeTbPpdus(0),
-      m_lastPer20MHzDurations()
+      m_trigVectorExpirationTime(Seconds(0))
 {
     NS_LOG_FUNCTION(this << buildModeList);
     m_bssMembershipSelector = HE_PHY;

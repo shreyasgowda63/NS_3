@@ -66,9 +66,7 @@ LteSpectrumModelTestCase::LteSpectrumModelTestCase(const char* str,
     m_expected = Create<SpectrumModel>(fcs);
 }
 
-LteSpectrumModelTestCase::~LteSpectrumModelTestCase()
-{
-}
+LteSpectrumModelTestCase::~LteSpectrumModelTestCase() = default;
 
 void
 LteSpectrumModelTestCase::DoRun()
@@ -126,9 +124,7 @@ LteNoisePsdTestCase::LteNoisePsdTestCase(const char* str,
     NS_LOG_FUNCTION(this << str << earfcn << bw << noiseFigureDb);
 }
 
-LteNoisePsdTestCase::~LteNoisePsdTestCase()
-{
-}
+LteNoisePsdTestCase::~LteNoisePsdTestCase() = default;
 
 void
 LteNoisePsdTestCase::DoRun()
@@ -192,9 +188,7 @@ LteTxPsdTestCase::LteTxPsdTestCase(const char* str,
     NS_LOG_FUNCTION(this << str << earfcn << bw << txPowerDbm);
 }
 
-LteTxPsdTestCase::~LteTxPsdTestCase()
-{
-}
+LteTxPsdTestCase::~LteTxPsdTestCase() = default;
 
 void
 LteTxPsdTestCase::DoRun()

@@ -185,7 +185,6 @@ CsmaNetDevice::GetTypeId()
 }
 
 CsmaNetDevice::CsmaNetDevice()
-    : m_linkUp(false)
 {
     NS_LOG_FUNCTION(this);
     m_txMachineState = READY;

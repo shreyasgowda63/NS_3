@@ -355,23 +355,23 @@ class PeerLink : public Object
     /// interface mesh point
     Mac48Address m_peerMeshPointAddress;
     /// My ID of this link
-    uint16_t m_localLinkId;
+    uint16_t m_localLinkId{0};
     /// Peer ID of this link
-    uint16_t m_peerLinkId;
+    uint16_t m_peerLinkId{0};
     /// My association ID
-    uint16_t m_assocId;
+    uint16_t m_assocId{0};
     /// Assoc Id assigned to me by peer
-    uint16_t m_peerAssocId;
+    uint16_t m_peerAssocId{0};
 
     /// When last beacon was received
     Time m_lastBeacon;
     /// Current beacon interval on corresponding interface
     Time m_beaconInterval;
     /// How many successive packets were failed to transmit
-    uint16_t m_packetFail;
+    uint16_t m_packetFail{0};
 
     /// Current state
-    PeerState m_state;
+    PeerState m_state{IDLE};
     /**
      * \brief Mesh interface configuration
      * \attention Is not used now, nothing to configure :)
@@ -389,13 +389,13 @@ class PeerLink : public Object
     Time m_dot11MeshHoldingTimeout; //!< Holding timeout
     Time m_dot11MeshConfirmTimeout; //!< Confirm timeout
 
-    EventId m_retryTimer;      //!< Retry timer
-    EventId m_holdingTimer;    //!< Holding timer
-    EventId m_confirmTimer;    //!< Confirm timer
-    uint16_t m_retryCounter;   //!< Retry counter
-    EventId m_beaconLossTimer; //!< Beacon loss timer
-    uint16_t m_maxBeaconLoss;  //!< Maximum number of lost beacons before link will be closed
-    uint16_t m_maxPacketFail;  //!< Maximum number of failed packets before link will be closed
+    EventId m_retryTimer;        //!< Retry timer
+    EventId m_holdingTimer;      //!< Holding timer
+    EventId m_confirmTimer;      //!< Confirm timer
+    uint16_t m_retryCounter{0};  //!< Retry counter
+    EventId m_beaconLossTimer;   //!< Beacon loss timer
+    uint16_t m_maxBeaconLoss;    //!< Maximum number of lost beacons before link will be closed
+    uint16_t m_maxPacketFail{3}; //!< Maximum number of failed packets before link will be closed
     ///@}
 
     /// How to report my status change

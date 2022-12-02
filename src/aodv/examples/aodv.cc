@@ -71,15 +71,15 @@ class AodvExample
   private:
     // parameters
     /// Number of nodes
-    uint32_t size;
+    uint32_t size{10};
     /// Distance between nodes, meters
-    double step;
+    double step{50};
     /// Simulation time, seconds
-    double totalTime;
+    double totalTime{100};
     /// Write per-device PCAP traces if true
-    bool pcap;
+    bool pcap{true};
     /// Print routes if true
-    bool printRoutes;
+    bool printRoutes{true};
 
     // network
     /// nodes used in the example
@@ -116,13 +116,8 @@ main(int argc, char** argv)
 
 //-----------------------------------------------------------------------------
 AodvExample::AodvExample()
-    : size(10),
-      step(50),
-      totalTime(100),
-      pcap(true),
-      printRoutes(true)
-{
-}
+
+    = default;
 
 bool
 AodvExample::Configure(int argc, char** argv)

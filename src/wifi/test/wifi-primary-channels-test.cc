@@ -226,9 +226,7 @@ WifiPrimaryChannelsTest::WifiPrimaryChannelsTest(uint16_t channelWidth, bool use
 {
 }
 
-WifiPrimaryChannelsTest::~WifiPrimaryChannelsTest()
-{
-}
+WifiPrimaryChannelsTest::~WifiPrimaryChannelsTest() = default;
 
 void
 WifiPrimaryChannelsTest::Transmit(std::string context,

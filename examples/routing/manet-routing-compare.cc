@@ -127,25 +127,20 @@ class RoutingExperiment
      */
     void CheckThroughput();
 
-    uint32_t port;            //!< Receiving port number.
-    uint32_t bytesTotal;      //!< Total received bytes.
-    uint32_t packetsReceived; //!< Total received packets.
+    uint32_t port{9};            //!< Receiving port number.
+    uint32_t bytesTotal{0};      //!< Total received bytes.
+    uint32_t packetsReceived{0}; //!< Total received packets.
 
-    std::string m_CSVfileName;  //!< CSV filename.
-    int m_nSinks;               //!< Number of sink nodes.
-    std::string m_protocolName; //!< Protocol name.
-    double m_txp;               //!< Tx power.
-    bool m_traceMobility;       //!< Enavle mobility tracing.
-    uint32_t m_protocol;        //!< Protocol type.
+    std::string m_CSVfileName;   //!< CSV filename.
+    int m_nSinks;                //!< Number of sink nodes.
+    std::string m_protocolName;  //!< Protocol name.
+    double m_txp;                //!< Tx power.
+    bool m_traceMobility{false}; //!< Enavle mobility tracing.
+    uint32_t m_protocol{2};      //!< Protocol type (2=AODV).
 };
 
 RoutingExperiment::RoutingExperiment()
-    : port(9),
-      bytesTotal(0),
-      packetsReceived(0),
-      m_CSVfileName("manet-routing.output.csv"),
-      m_traceMobility(false),
-      m_protocol(2) // AODV
+    : m_CSVfileName("manet-routing.output.csv")
 {
 }
 

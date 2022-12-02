@@ -175,7 +175,7 @@ std::ostream& operator<<(std::ostream& os, const SuperframeField& superframeFiel
 class GtsFields
 {
   public:
-    GtsFields();
+    GtsFields() = default;
     /**
      * Get the GTS Specification Field from the GTS Fields
      * \return The GTS Specification Field
@@ -232,11 +232,11 @@ class GtsFields
     };
 
     // GTS specification field
-    uint8_t m_gtsSpecDescCount; //!< GTS specification field Descriptor Count (Bit 0-2)
+    uint8_t m_gtsSpecDescCount{0}; //!< GTS specification field Descriptor Count (Bit 0-2)
     // GTS specification field Reserved (Not necessary) (Bit 3-6)
-    uint8_t m_gtsSpecPermit; //!< GTS specification field GTS Permit (Bit 7)
+    uint8_t m_gtsSpecPermit{0}; //!< GTS specification field GTS Permit (Bit 7)
     // GTS Direction field
-    uint8_t m_gtsDirMask; //!< GTS Direction field Directions Mask (Bit 0-6)
+    uint8_t m_gtsDirMask{0}; //!< GTS Direction field Directions Mask (Bit 0-6)
     // GTS Direction field Reserved (Not Necessary) (Bit 7)
     // GTS List
     gtsDescriptor m_gtsList[7]; //!< GTS List field (maximum descriptors stored == 7)
@@ -325,12 +325,12 @@ class PendingAddrFields
 
   private:
     // Pending Address Specification Field
-    uint8_t m_pndAddrSpecNumShortAddr; //!< Pending Address Specification field Number of Short
-                                       //!< Address (Bits 0-2) Pending Address Specification field
-                                       //!< Reserved (Not Necessary)(Bit  3)
-    uint8_t m_pndAddrSpecNumExtAddr;   //!< Pending Address Specification field Number of Extended
-                                       //!< Address (Bits 4-6) Pending Address Specification field
-                                       //!< Reserved (Not Necessary) (Bit  7)
+    uint8_t m_pndAddrSpecNumShortAddr{0}; //!< Pending Address Specification field Number of Short
+                                          //!< Address (Bits 0-2) Pending Address Specification
+                                          //!< field Reserved (Not Necessary)(Bit  3)
+    uint8_t m_pndAddrSpecNumExtAddr{0}; //!< Pending Address Specification field Number of Extended
+                                        //!< Address (Bits 4-6) Pending Address Specification field
+                                        //!< Reserved (Not Necessary) (Bit  7)
     // Address List
     std::array<Mac16Address, 7> m_shortAddrList; //!< Pending Short Address List
     std::array<Mac64Address, 7> m_extAddrList;   //!< Pending Extended Address List
@@ -434,11 +434,12 @@ class CapabilityField
     void SetShortAddrAllocOn(bool addrAlloc);
 
   private:
-    bool m_deviceType;         //!< Capability Information Field, Device Type  (bit 1)
-    bool m_powerSource;        //!< Capability Information Field, Power Source (bit 2)
-    bool m_receiverOnWhenIdle; //!< Capability Information Field, Receiver On When Idle (bit 3)
-    bool m_securityCap;        //!< Capability Information Field, Security Capability (bit 6)
-    bool m_allocAddr;          //!< Capability Information Field, Allocate Address (bit 7)
+    bool m_deviceType{true};   //!< Capability Information Field, Device Type  (bit 1)
+    bool m_powerSource{false}; //!< Capability Information Field, Power Source (bit 2)
+    bool m_receiverOnWhenIdle{
+        true};                 //!< Capability Information Field, Receiver On When Idle (bit 3)
+    bool m_securityCap{false}; //!< Capability Information Field, Security Capability (bit 6)
+    bool m_allocAddr{true};    //!< Capability Information Field, Allocate Address (bit 7)
 };
 
 std::ostream& operator<<(std::ostream& os, const CapabilityField& capabilityField);

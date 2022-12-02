@@ -475,26 +475,26 @@ class WimaxPhy : public Object
     Ptr<WimaxNetDevice> m_device; ///< the device
     Ptr<WimaxChannel> m_channel;  ///< channel
 
-    uint64_t m_txFrequency;           ///< transmit frequency
-    uint64_t m_rxFrequency;           ///< receive frequency
+    uint64_t m_txFrequency{0};        ///< transmit frequency
+    uint64_t m_rxFrequency{0};        ///< receive frequency
     uint64_t m_scanningFrequency;     ///< scanning frequency
     EventId m_dlChnlSrchTimeoutEvent; ///< DL channel search timeout event
-    bool m_duplex;                    ///< duplex
-    PhyState m_state;                 ///< state
+    bool m_duplex{0};                 ///< duplex
+    PhyState m_state{PHY_STATE_IDLE}; ///< state
 
     Callback<void, Ptr<const PacketBurst>> m_rxCallback; ///< receive callback function
     Callback<void, bool, uint64_t> m_scanningCallback;   ///< scanning callback function
 
-    uint8_t m_nrCarriers;        ///< number of carriers
-    Time m_frameDuration;        ///< in seconds
-    uint32_t m_frequency;        ///< in KHz
-    uint32_t m_channelBandwidth; ///< in Hz
-    Time m_psDuration;           ///< in seconds
-    Time m_symbolDuration;       ///< in seconds
-    uint16_t m_psPerSymbol;      ///< ps per sumbol
-    uint16_t m_psPerFrame;       ///< ps per framce
-    uint32_t m_symbolsPerFrame;  ///< symbols per frame
-    Ptr<Object> m_mobility;      ///< modility model
+    uint8_t m_nrCarriers{0};               ///< number of carriers
+    Time m_frameDuration;                  ///< in seconds
+    uint32_t m_frequency{5000000};         ///< in KHz
+    uint32_t m_channelBandwidth{10000000}; ///< in Hz
+    Time m_psDuration;                     ///< in seconds
+    Time m_symbolDuration;                 ///< in seconds
+    uint16_t m_psPerSymbol{0};             ///< ps per sumbol
+    uint16_t m_psPerFrame{0};              ///< ps per framce
+    uint32_t m_symbolsPerFrame{0};         ///< symbols per frame
+    Ptr<Object> m_mobility;                ///< modility model
 };
 
 } // namespace ns3

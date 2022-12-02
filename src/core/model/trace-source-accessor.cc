@@ -31,12 +31,8 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("TraceSourceAccessor");
 
-TraceSourceAccessor::TraceSourceAccessor()
-{
-}
+TraceSourceAccessor::TraceSourceAccessor() = default;
 
-TraceSourceAccessor::~TraceSourceAccessor()
-{
-}
+TraceSourceAccessor::~TraceSourceAccessor() = default;
 
 } // namespace ns3

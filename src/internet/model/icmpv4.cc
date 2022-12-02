@@ -44,9 +44,7 @@ Icmpv4Header::GetTypeId()
 }
 
 Icmpv4Header::Icmpv4Header()
-    : m_type(0),
-      m_code(0),
-      m_calcChecksum(false)
+
 {
     NS_LOG_FUNCTION(this);
 }
@@ -222,9 +220,7 @@ Icmpv4Echo::GetTypeId()
 }
 
 Icmpv4Echo::Icmpv4Echo()
-    : m_identifier(0),
-      m_sequence(0),
-      m_dataSize(0)
+
 {
     NS_LOG_FUNCTION(this);
     //
@@ -362,9 +358,7 @@ Icmpv4DestinationUnreachable::GetHeader() const
     return m_header;
 }
 
-Icmpv4DestinationUnreachable::~Icmpv4DestinationUnreachable()
-{
-}
+Icmpv4DestinationUnreachable::~Icmpv4DestinationUnreachable() = default;
 
 TypeId
 Icmpv4DestinationUnreachable::GetInstanceTypeId() const

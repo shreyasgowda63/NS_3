@@ -89,13 +89,9 @@ Ipv4FqPieTestPacketFilter::GetTypeId()
     return tid;
 }
 
-Ipv4FqPieTestPacketFilter::Ipv4FqPieTestPacketFilter()
-{
-}
+Ipv4FqPieTestPacketFilter::Ipv4FqPieTestPacketFilter() = default;
 
-Ipv4FqPieTestPacketFilter::~Ipv4FqPieTestPacketFilter()
-{
-}
+Ipv4FqPieTestPacketFilter::~Ipv4FqPieTestPacketFilter() = default;
 
 int32_t
 Ipv4FqPieTestPacketFilter::DoClassify(Ptr<QueueDiscItem> item) const
@@ -129,9 +125,7 @@ FqPieQueueDiscNoSuitableFilter::FqPieQueueDiscNoSuitableFilter()
 {
 }
 
-FqPieQueueDiscNoSuitableFilter::~FqPieQueueDiscNoSuitableFilter()
-{
-}
+FqPieQueueDiscNoSuitableFilter::~FqPieQueueDiscNoSuitableFilter() = default;
 
 void
 FqPieQueueDiscNoSuitableFilter::DoRun()
@@ -193,9 +187,8 @@ FqPieQueueDiscIPFlowsSeparationAndPacketLimit::FqPieQueueDiscIPFlowsSeparationAn
 {
 }
 
-FqPieQueueDiscIPFlowsSeparationAndPacketLimit::~FqPieQueueDiscIPFlowsSeparationAndPacketLimit()
-{
-}
+FqPieQueueDiscIPFlowsSeparationAndPacketLimit::~FqPieQueueDiscIPFlowsSeparationAndPacketLimit() =
+    default;
 
 void
 FqPieQueueDiscIPFlowsSeparationAndPacketLimit::AddPacket(Ptr<FqPieQueueDisc> queue, Ipv4Header hdr)
@@ -287,9 +280,7 @@ FqPieQueueDiscDeficit::FqPieQueueDiscDeficit()
 {
 }
 
-FqPieQueueDiscDeficit::~FqPieQueueDiscDeficit()
-{
-}
+FqPieQueueDiscDeficit::~FqPieQueueDiscDeficit() = default;
 
 void
 FqPieQueueDiscDeficit::AddPacket(Ptr<FqPieQueueDisc> queue, Ipv4Header hdr)
@@ -514,9 +505,7 @@ FqPieQueueDiscTCPFlowsSeparation::FqPieQueueDiscTCPFlowsSeparation()
 {
 }
 
-FqPieQueueDiscTCPFlowsSeparation::~FqPieQueueDiscTCPFlowsSeparation()
-{
-}
+FqPieQueueDiscTCPFlowsSeparation::~FqPieQueueDiscTCPFlowsSeparation() = default;
 
 void
 FqPieQueueDiscTCPFlowsSeparation::AddPacket(Ptr<FqPieQueueDisc> queue,
@@ -639,9 +628,7 @@ FqPieQueueDiscUDPFlowsSeparation::FqPieQueueDiscUDPFlowsSeparation()
 {
 }
 
-FqPieQueueDiscUDPFlowsSeparation::~FqPieQueueDiscUDPFlowsSeparation()
-{
-}
+FqPieQueueDiscUDPFlowsSeparation::~FqPieQueueDiscUDPFlowsSeparation() = default;
 
 void
 FqPieQueueDiscUDPFlowsSeparation::AddPacket(Ptr<FqPieQueueDisc> queue,
@@ -784,9 +771,7 @@ FqPieQueueDiscSetLinearProbing::FqPieQueueDiscSetLinearProbing()
 {
 }
 
-FqPieQueueDiscSetLinearProbing::~FqPieQueueDiscSetLinearProbing()
-{
-}
+FqPieQueueDiscSetLinearProbing::~FqPieQueueDiscSetLinearProbing() = default;
 
 void
 FqPieQueueDiscSetLinearProbing::AddPacket(Ptr<FqPieQueueDisc> queue, Ipv4Header hdr)
@@ -932,9 +917,7 @@ FqPieQueueDiscL4sMode::FqPieQueueDiscL4sMode()
 {
 }
 
-FqPieQueueDiscL4sMode::~FqPieQueueDiscL4sMode()
-{
-}
+FqPieQueueDiscL4sMode::~FqPieQueueDiscL4sMode() = default;
 
 void
 FqPieQueueDiscL4sMode::AddPacket(Ptr<FqPieQueueDisc> queue, Ipv4Header hdr, uint32_t nPkt)

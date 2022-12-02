@@ -56,7 +56,7 @@ class Cid
      * \param cid
      */
     Cid(uint16_t cid);
-    ~Cid();
+    ~Cid() = default;
     /**
      * \return the identifier of the cid
      */
@@ -95,7 +95,9 @@ class Cid
     friend class CidFactory;
     /// equality operator
     friend bool operator==(const Cid& lhs, const Cid& rhs);
-    uint16_t m_identifier; ///< identiifier
+
+    /// Identifier (0 will match IR CID, -1 will match broadcast CID 0xFFFF, hence 60000)
+    uint16_t m_identifier{60000};
 };
 
 bool operator==(const Cid& lhs, const Cid& rhs);

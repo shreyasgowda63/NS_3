@@ -33,18 +33,6 @@ NS_LOG_COMPONENT_DEFINE("LteStatsCalculator");
 
 NS_OBJECT_ENSURE_REGISTERED(LteStatsCalculator);
 
-LteStatsCalculator::LteStatsCalculator()
-    : m_dlOutputFilename(""),
-      m_ulOutputFilename("")
-{
-    // Nothing to do here
-}
-
-LteStatsCalculator::~LteStatsCalculator()
-{
-    // Nothing to do here
-}
-
 TypeId
 LteStatsCalculator::GetTypeId()
 {

@@ -29,9 +29,7 @@ NS_LOG_COMPONENT_DEFINE("LteUeComponentCarrierManager");
 NS_OBJECT_ENSURE_REGISTERED(LteUeComponentCarrierManager);
 
 LteUeComponentCarrierManager::LteUeComponentCarrierManager()
-    : m_ccmRrcSapUser(nullptr),
-      m_ccmRrcSapProvider(nullptr),
-      m_noOfComponentCarriers(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

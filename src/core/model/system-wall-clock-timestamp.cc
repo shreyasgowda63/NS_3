@@ -29,8 +29,7 @@ namespace ns3
 {
 
 SystemWallClockTimestamp::SystemWallClockTimestamp()
-    : m_last(0),
-      m_diff(0)
+
 {
     Stamp();
 }

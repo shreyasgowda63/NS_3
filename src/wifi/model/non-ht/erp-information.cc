@@ -23,9 +23,8 @@ namespace ns3
 {
 
 ErpInformation::ErpInformation()
-    : m_erpInformation(0)
-{
-}
+
+    = default;
 
 WifiInformationElementId
 ErpInformation::ElementId() const

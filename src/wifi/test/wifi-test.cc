@@ -645,7 +645,7 @@ class Bug730TestCase : public TestCase
     void DoRun() override;
 
   private:
-    uint32_t m_received; ///< received
+    uint32_t m_received{0}; ///< received
 
     /**
      * Receive function
@@ -657,14 +657,11 @@ class Bug730TestCase : public TestCase
 };
 
 Bug730TestCase::Bug730TestCase()
-    : TestCase("Test case for Bug 730"),
-      m_received(0)
+    : TestCase("Test case for Bug 730")
 {
 }
 
-Bug730TestCase::~Bug730TestCase()
-{
-}
+Bug730TestCase::~Bug730TestCase() = default;
 
 void
 Bug730TestCase::Receive(std::string context, Ptr<const Packet> p, const Address& adr)
@@ -784,8 +781,8 @@ class QosFragmentationTestCase : public TestCase
     void DoRun() override;
 
   private:
-    uint32_t m_received;  ///< received packets
-    uint32_t m_fragments; ///< transmitted fragments
+    uint32_t m_received{0};  ///< received packets
+    uint32_t m_fragments{0}; ///< transmitted fragments
 
     /**
      * Receive function
@@ -805,15 +802,11 @@ class QosFragmentationTestCase : public TestCase
 };
 
 QosFragmentationTestCase::QosFragmentationTestCase()
-    : TestCase("Test case for fragmentation with QoS stations"),
-      m_received(0),
-      m_fragments(0)
+    : TestCase("Test case for fragmentation with QoS stations")
 {
 }
 
-QosFragmentationTestCase::~QosFragmentationTestCase()
-{
-}
+QosFragmentationTestCase::~QosFragmentationTestCase() = default;
 
 void
 QosFragmentationTestCase::Receive(std::string context, Ptr<const Packet> p, const Address& adr)
@@ -1375,7 +1368,7 @@ class Bug2222TestCase : public TestCase
     void DoRun() override;
 
   private:
-    uint32_t m_countInternalCollisions; ///< count internal collisions
+    uint32_t m_countInternalCollisions{0}; ///< count internal collisions
 
     /**
      * Transmit data failed function
@@ -1386,14 +1379,11 @@ class Bug2222TestCase : public TestCase
 };
 
 Bug2222TestCase::Bug2222TestCase()
-    : TestCase("Test case for Bug 2222"),
-      m_countInternalCollisions(0)
+    : TestCase("Test case for Bug 2222")
 {
 }
 
-Bug2222TestCase::~Bug2222TestCase()
-{
-}
+Bug2222TestCase::~Bug2222TestCase() = default;
 
 void
 Bug2222TestCase::TxDataFailedTrace(std::string context, Mac48Address adr)
@@ -1541,18 +1531,15 @@ class Bug2843TestCase : public TestCase
                          Ptr<NetDevice> sourceDevice,
                          Address& destination) const;
 
-    uint16_t m_channelWidth; ///< channel width (in MHz)
+    uint16_t m_channelWidth{20}; ///< channel width (in MHz)
 };
 
 Bug2843TestCase::Bug2843TestCase()
-    : TestCase("Test case for Bug 2843"),
-      m_channelWidth(20)
+    : TestCase("Test case for Bug 2843")
 {
 }
 
-Bug2843TestCase::~Bug2843TestCase()
-{
-}
+Bug2843TestCase::~Bug2843TestCase() = default;
 
 void
 Bug2843TestCase::StoreDistinctTuple(std::string context, Ptr<SpectrumSignalParameters> txParams)
@@ -1747,26 +1734,20 @@ class Bug2831TestCase : public TestCase
     Ptr<YansWifiPhy> m_apPhy;  ///< AP PHY
     Ptr<YansWifiPhy> m_staPhy; ///< STA PHY
 
-    uint16_t m_assocReqCount;                  ///< count number of association requests
-    uint16_t m_assocRespCount;                 ///< count number of association responses
-    uint16_t m_countOperationalChannelWidth20; ///< count number of beacon frames announcing a 20
-                                               ///< MHz operating channel width
-    uint16_t m_countOperationalChannelWidth40; ///< count number of beacon frames announcing a 40
-                                               ///< MHz operating channel width
+    uint16_t m_assocReqCount{0};                  ///< count number of association requests
+    uint16_t m_assocRespCount{0};                 ///< count number of association responses
+    uint16_t m_countOperationalChannelWidth20{0}; ///< count number of beacon frames announcing a 20
+                                                  ///< MHz operating channel width
+    uint16_t m_countOperationalChannelWidth40{0}; ///< count number of beacon frames announcing a 40
+                                                  ///< MHz operating channel width
 };
 
 Bug2831TestCase::Bug2831TestCase()
-    : TestCase("Test case for Bug 2831"),
-      m_assocReqCount(0),
-      m_assocRespCount(0),
-      m_countOperationalChannelWidth20(0),
-      m_countOperationalChannelWidth40(0)
+    : TestCase("Test case for Bug 2831")
 {
 }
 
-Bug2831TestCase::~Bug2831TestCase()
-{
-}
+Bug2831TestCase::~Bug2831TestCase() = default;
 
 void
 Bug2831TestCase::ChangeSupportedChannelWidth()
@@ -1976,9 +1957,7 @@ StaWifiMacScanningTestCase::StaWifiMacScanningTestCase()
 {
 }
 
-StaWifiMacScanningTestCase::~StaWifiMacScanningTestCase()
-{
-}
+StaWifiMacScanningTestCase::~StaWifiMacScanningTestCase() = default;
 
 void
 StaWifiMacScanningTestCase::AssocCallback(std::string context, Mac48Address bssid)
@@ -2200,35 +2179,26 @@ class Bug2470TestCase : public TestCase
      */
     void RunSubtest(PointerValue apErrorModel, PointerValue staErrorModel);
 
-    uint16_t m_receivedNormalMpduCount; ///< Count received normal MPDU packets on STA
-    uint16_t m_receivedAmpduCount;      ///< Count received A-MPDU packets on STA
-    uint16_t m_failedActionCount;       ///< Count failed ADDBA request/response
-    uint16_t m_addbaEstablishedCount;   ///< Count number of times ADDBA state machine is in
-                                        ///< established state
-    uint16_t m_addbaPendingCount; ///< Count number of times ADDBA state machine is in pending state
-    uint16_t
-        m_addbaRejectedCount; ///< Count number of times ADDBA state machine is in rejected state
-    uint16_t
-        m_addbaNoReplyCount;    ///< Count number of times ADDBA state machine is in no_reply state
-    uint16_t m_addbaResetCount; ///< Count number of times ADDBA state machine is in reset state
+    uint16_t m_receivedNormalMpduCount{0}; ///< Count received normal MPDU packets on STA
+    uint16_t m_receivedAmpduCount{0};      ///< Count received A-MPDU packets on STA
+    uint16_t m_failedActionCount{0};       ///< Count failed ADDBA request/response
+    uint16_t m_addbaEstablishedCount{0};   ///< Count number of times ADDBA state machine is in
+                                           ///< established state
+    uint16_t m_addbaPendingCount{
+        0}; ///< Count number of times ADDBA state machine is in pending state
+    uint16_t m_addbaRejectedCount{
+        0}; ///< Count number of times ADDBA state machine is in rejected state
+    uint16_t m_addbaNoReplyCount{
+        0}; ///< Count number of times ADDBA state machine is in no_reply state
+    uint16_t m_addbaResetCount{0}; ///< Count number of times ADDBA state machine is in reset state
 };
 
 Bug2470TestCase::Bug2470TestCase()
-    : TestCase("Test case for Bug 2470"),
-      m_receivedNormalMpduCount(0),
-      m_receivedAmpduCount(0),
-      m_failedActionCount(0),
-      m_addbaEstablishedCount(0),
-      m_addbaPendingCount(0),
-      m_addbaRejectedCount(0),
-      m_addbaNoReplyCount(0),
-      m_addbaResetCount(0)
+    : TestCase("Test case for Bug 2470")
 {
 }
 
-Bug2470TestCase::~Bug2470TestCase()
-{
-}
+Bug2470TestCase::~Bug2470TestCase() = default;
 
 void
 Bug2470TestCase::AddbaStateChangedCallback(std::string context,
@@ -2557,23 +2527,18 @@ class Issue40TestCase : public TestCase
      */
     void TxFinalDataFailedCallback(std::string context, Mac48Address address);
 
-    uint16_t m_rxCount; ///< Count number of successfully received data packets
-    uint16_t m_txCount; ///< Count number of transmitted data packets
-    uint16_t
-        m_txMacFinalDataFailedCount; ///< Count number of unsuccessfully transmitted data packets
+    uint16_t m_rxCount{0}; ///< Count number of successfully received data packets
+    uint16_t m_txCount{0}; ///< Count number of transmitted data packets
+    uint16_t m_txMacFinalDataFailedCount{
+        0}; ///< Count number of unsuccessfully transmitted data packets
 };
 
 Issue40TestCase::Issue40TestCase()
-    : TestCase("Test case for issue #40"),
-      m_rxCount(0),
-      m_txCount(0),
-      m_txMacFinalDataFailedCount(0)
+    : TestCase("Test case for issue #40")
 {
 }
 
-Issue40TestCase::~Issue40TestCase()
-{
-}
+Issue40TestCase::~Issue40TestCase() = default;
 
 void
 Issue40TestCase::RxSuccessCallback(std::string context, Ptr<const Packet> p)
@@ -2793,9 +2758,7 @@ Issue169TestCase::Issue169TestCase()
 {
 }
 
-Issue169TestCase::~Issue169TestCase()
-{
-}
+Issue169TestCase::~Issue169TestCase() = default;
 
 void
 Issue169TestCase::SendPackets(uint8_t numPackets,
@@ -2959,9 +2922,7 @@ IdealRateManagerChannelWidthTest::IdealRateManagerChannelWidthTest()
 {
 }
 
-IdealRateManagerChannelWidthTest::~IdealRateManagerChannelWidthTest()
-{
-}
+IdealRateManagerChannelWidthTest::~IdealRateManagerChannelWidthTest() = default;
 
 void
 IdealRateManagerChannelWidthTest::ChangeChannelWidth(uint16_t channelWidth)
@@ -3165,9 +3126,7 @@ IdealRateManagerMimoTest::IdealRateManagerMimoTest()
 {
 }
 
-IdealRateManagerMimoTest::~IdealRateManagerMimoTest()
-{
-}
+IdealRateManagerMimoTest::~IdealRateManagerMimoTest() = default;
 
 void
 IdealRateManagerMimoTest::SetApMimoSettings(uint8_t antennas, uint8_t maxStreams)

@@ -111,15 +111,15 @@ class LrWpanAckTestCase : public TestCase
 };
 
 LrWpanAckTestCase::LrWpanAckTestCase(const char* const prefix, TestMode_e mode)
-    : TestCase("Test the 802.15.4 ACK handling")
+    : TestCase("Test the 802.15.4 ACK handling"),
+      m_prefix(prefix),
+      m_mode(mode)
 {
-    m_prefix = prefix;
     m_requestTime = Seconds(0);
     m_requestSentTime = Seconds(0);
     m_replyTime = Seconds(0);
     m_replySentTime = Seconds(0);
     m_replyArrivalTime = Seconds(0);
-    m_mode = mode;
 }
 
 void

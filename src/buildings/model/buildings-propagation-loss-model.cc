@@ -38,9 +38,7 @@ NS_LOG_COMPONENT_DEFINE("BuildingsPropagationLossModel");
 
 NS_OBJECT_ENSURE_REGISTERED(BuildingsPropagationLossModel);
 
-BuildingsPropagationLossModel::ShadowingLoss::ShadowingLoss()
-{
-}
+BuildingsPropagationLossModel::ShadowingLoss::ShadowingLoss() = default;
 
 BuildingsPropagationLossModel::ShadowingLoss::ShadowingLoss(double shadowingValue,
                                                             Ptr<MobilityModel> receiver)

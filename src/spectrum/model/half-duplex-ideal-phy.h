@@ -218,8 +218,8 @@ class HalfDuplexIdealPhy : public SpectrumPhy
     Ptr<Packet> m_txPacket;           //!< Tx packet
     Ptr<Packet> m_rxPacket;           //!< Rx packet
 
-    DataRate m_rate; //!< Datarate
-    State m_state;   //!< PHY state
+    DataRate m_rate;     //!< Datarate
+    State m_state{IDLE}; //!< PHY state
 
     TracedCallback<Ptr<const Packet>> m_phyTxStartTrace;    //!< Trace - Tx start
     TracedCallback<Ptr<const Packet>> m_phyTxEndTrace;      //!< Trace - Tx end

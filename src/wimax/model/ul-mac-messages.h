@@ -107,9 +107,9 @@ class UcdChannelEncodings
      */
     virtual Buffer::Iterator DoRead(Buffer::Iterator start) = 0;
 
-    uint16_t m_bwReqOppSize;   ///< BW request opp size
-    uint16_t m_rangReqOppSize; ///< range request opp size
-    uint32_t m_frequency;      ///< frequency
+    uint16_t m_bwReqOppSize{0};   ///< BW request opp size
+    uint16_t m_rangReqOppSize{0}; ///< range request opp size
+    uint32_t m_frequency{0};      ///< frequency
 };
 
 } // namespace ns3
@@ -179,8 +179,8 @@ class OfdmUcdChannelEncodings : public UcdChannelEncodings
      */
     Buffer::Iterator DoRead(Buffer::Iterator start) override;
 
-    uint8_t m_sbchnlReqRegionFullParams; ///< SB channel request region full parameters
-    uint8_t m_sbchnlFocContCodes;        ///< SB channel for control codes
+    uint8_t m_sbchnlReqRegionFullParams{0}; ///< SB channel request region full parameters
+    uint8_t m_sbchnlFocContCodes{0};        ///< SB channel for control codes
 };
 
 } // namespace ns3
@@ -227,7 +227,7 @@ class OfdmUlBurstProfile
     };
 
     OfdmUlBurstProfile();
-    ~OfdmUlBurstProfile();
+    ~OfdmUlBurstProfile() = default;
 
     /**
      * Set type
@@ -291,12 +291,12 @@ class OfdmUlBurstProfile
     Buffer::Iterator Read(Buffer::Iterator start);
 
   private:
-    uint8_t m_type;   ///< type
-    uint8_t m_length; ///< length
-    uint8_t m_uiuc;   ///< UIUC
+    uint8_t m_type{0};   ///< type
+    uint8_t m_length{0}; ///< length
+    uint8_t m_uiuc{0};   ///< UIUC
 
     // TLV Encoded information
-    uint8_t m_fecCodeType; ///< FEC code type
+    uint8_t m_fecCodeType{0}; ///< FEC code type
 };
 
 } // namespace ns3
@@ -426,15 +426,15 @@ class Ucd : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint8_t m_configurationChangeCount;         ///< configuration change count
-    uint8_t m_rangingBackoffStart;              ///< ranging backoff start
-    uint8_t m_rangingBackoffEnd;                ///< ranging backoff end
-    uint8_t m_requestBackoffStart;              ///< request backoff start
-    uint8_t m_requestBackoffEnd;                ///< request backoff end
+    uint8_t m_configurationChangeCount{0};      ///< configuration change count
+    uint8_t m_rangingBackoffStart{0};           ///< ranging backoff start
+    uint8_t m_rangingBackoffEnd{0};             ///< ranging backoff end
+    uint8_t m_requestBackoffStart{0};           ///< request backoff start
+    uint8_t m_requestBackoffEnd{0};             ///< request backoff end
     OfdmUcdChannelEncodings m_channelEncodings; ///< TLV Encoded information for the overall channel
     std::vector<OfdmUlBurstProfile> m_ulBurstProfiles; ///< UL burst profiles
 
-    uint8_t m_nrUlBurstProfiles; ///< number UL burst profiles
+    uint8_t m_nrUlBurstProfiles{0}; ///< number UL burst profiles
 };
 
 } // namespace ns3
@@ -464,7 +464,7 @@ class OfdmUlMapIe
 {
   public:
     OfdmUlMapIe();
-    ~OfdmUlMapIe();
+    ~OfdmUlMapIe() = default;
 
     /**
      * Set CID
@@ -548,12 +548,12 @@ class OfdmUlMapIe
     Buffer::Iterator Read(Buffer::Iterator start);
 
   private:
-    Cid m_cid;                            ///< CID
-    uint16_t m_startTime;                 ///< start time
-    uint8_t m_subchannelIndex;            ///< subchannel index
-    uint8_t m_uiuc;                       ///< UIUC
-    uint16_t m_duration;                  ///< duration
-    uint8_t m_midambleRepetitionInterval; ///< midamble repetition interval
+    Cid m_cid;                               ///< CID
+    uint16_t m_startTime{0};                 ///< start time
+    uint8_t m_subchannelIndex{0};            ///< subchannel index
+    uint8_t m_uiuc{0};                       ///< UIUC
+    uint16_t m_duration{0};                  ///< duration
+    uint8_t m_midambleRepetitionInterval{0}; ///< midamble repetition interval
 
     // fields to be implemented later on:
     // m_focusedContentionIe()
@@ -639,10 +639,10 @@ class UlMap : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint8_t m_reserved; ///< changed as per the amendment 802.16e-2005
+    uint8_t m_reserved{0}; ///< changed as per the amendment 802.16e-2005
 
-    uint8_t m_ucdCount;                     ///< UCD count
-    uint32_t m_allocationStartTime;         ///< allocation start time
+    uint8_t m_ucdCount{0};                  ///< UCD count
+    uint32_t m_allocationStartTime{0};      ///< allocation start time
     std::list<OfdmUlMapIe> m_ulMapElements; ///< UL map elements
 };
 

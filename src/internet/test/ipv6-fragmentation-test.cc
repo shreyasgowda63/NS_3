@@ -145,11 +145,11 @@ class Ipv6FragmentationTest : public TestCase
 
     Ptr<Socket> m_socketServer; //!< Server socket.
     Ptr<Socket> m_socketClient; //!< Client socket.
-    uint32_t m_dataSize;        //!< Data size.
-    uint8_t* m_data;            //!< Data.
-    uint32_t m_size;            //!< packet size.
-    uint8_t m_icmpType;         //!< ICMP type.
-    uint8_t m_icmpCode;         //!< ICMP code.
+    uint32_t m_dataSize{0};     //!< Data size.
+    uint8_t* m_data{nullptr};   //!< Data.
+    uint32_t m_size{0};         //!< packet size.
+    uint8_t m_icmpType{0};      //!< ICMP type.
+    uint8_t m_icmpCode{0};      //!< ICMP code.
 
   public:
     void DoRun() override;
@@ -234,11 +234,6 @@ Ipv6FragmentationTest::Ipv6FragmentationTest()
     : TestCase("Verify the IPv6 layer 3 protocol fragmentation and reassembly")
 {
     m_socketServer = nullptr;
-    m_data = nullptr;
-    m_dataSize = 0;
-    m_size = 0;
-    m_icmpType = 0;
-    m_icmpCode = 0;
 }
 
 Ipv6FragmentationTest::~Ipv6FragmentationTest()

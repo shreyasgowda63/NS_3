@@ -58,9 +58,7 @@ PfifoFastQueueDiscTosPrioritization::PfifoFastQueueDiscTosPrioritization()
 {
 }
 
-PfifoFastQueueDiscTosPrioritization::~PfifoFastQueueDiscTosPrioritization()
-{
-}
+PfifoFastQueueDiscTosPrioritization::~PfifoFastQueueDiscTosPrioritization() = default;
 
 void
 PfifoFastQueueDiscTosPrioritization::TestTosValue(Ptr<PfifoFastQueueDisc> queue,
@@ -148,9 +146,7 @@ PfifoFastQueueDiscDscpPrioritization::PfifoFastQueueDiscDscpPrioritization()
 {
 }
 
-PfifoFastQueueDiscDscpPrioritization::~PfifoFastQueueDiscDscpPrioritization()
-{
-}
+PfifoFastQueueDiscDscpPrioritization::~PfifoFastQueueDiscDscpPrioritization() = default;
 
 void
 PfifoFastQueueDiscDscpPrioritization::TestDscpValue(Ptr<PfifoFastQueueDisc> queue,
@@ -242,9 +238,7 @@ PfifoFastQueueDiscOverflow::PfifoFastQueueDiscOverflow()
 {
 }
 
-PfifoFastQueueDiscOverflow::~PfifoFastQueueDiscOverflow()
-{
-}
+PfifoFastQueueDiscOverflow::~PfifoFastQueueDiscOverflow() = default;
 
 void
 PfifoFastQueueDiscOverflow::AddPacket(Ptr<PfifoFastQueueDisc> queue, Ipv4Header::DscpType dscp)
@@ -333,9 +327,7 @@ PfifoFastQueueDiscNoPriority::PfifoFastQueueDiscNoPriority()
 {
 }
 
-PfifoFastQueueDiscNoPriority::~PfifoFastQueueDiscNoPriority()
-{
-}
+PfifoFastQueueDiscNoPriority::~PfifoFastQueueDiscNoPriority() = default;
 
 void
 PfifoFastQueueDiscNoPriority::DoRun()

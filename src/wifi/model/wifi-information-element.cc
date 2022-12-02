@@ -22,9 +22,7 @@
 namespace ns3
 {
 
-WifiInformationElement::~WifiInformationElement()
-{
-}
+WifiInformationElement::~WifiInformationElement() = default;
 
 void
 WifiInformationElement::Print(std::ostream& os) const

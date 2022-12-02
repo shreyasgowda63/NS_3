@@ -41,9 +41,9 @@ struct WifiMacQueueElem
 {
     Ptr<WifiMpdu> mpdu;                    ///< MPDU stored by this element
     Time expiryTime;                       ///< expiry time of the MPDU (set by WifiMacQueue)
-    AcIndex ac;                            ///< the Access Category associated with the queue
+    AcIndex ac{AC_UNDEF};                  ///< the Access Category associated with the queue
                                            ///< storing this element (set by WifiMacQueue)
-    bool expired;                          ///< whether this MPDU has been marked as expired
+    bool expired{false};                   ///< whether this MPDU has been marked as expired
     Callback<void, Ptr<WifiMpdu>> deleter; ///< reset the iterator stored by the MPDU
 
     /**

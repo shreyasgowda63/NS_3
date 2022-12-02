@@ -67,16 +67,10 @@ TcpHtcp::GetName() const
 }
 
 TcpHtcp::TcpHtcp()
-    : TcpNewReno(),
-      m_alpha(0),
-      m_beta(0),
-      m_delta(0),
+    : m_delta(0),
       m_lastCon(0),
       m_minRtt(Time::Max()),
-      m_maxRtt(Time::Min()),
-      m_throughput(0),
-      m_lastThroughput(0),
-      m_dataSent(0)
+      m_maxRtt(Time::Min())
 {
     NS_LOG_FUNCTION(this);
 }

@@ -312,7 +312,7 @@ class RoutingTableEntry
     /// Output interface address
     Ipv4InterfaceAddress m_iface;
     /// Routing flags: valid, invalid or in search
-    RouteFlags m_flag;
+    RouteFlags m_flag{VALID};
     /// Time for which the node retains an update with changed metric before broadcasting it.
     /// A node does that in hope of receiving a better update.
     Time m_settlingTime;

@@ -82,7 +82,11 @@ class CsParameters
     Tlv ToTlv() const;
 
   private:
-    enum Action m_classifierDscAction;           ///< classifier DSC action
+    enum Action m_classifierDscAction
+    {
+        CsParameters::ADD
+    }; ///< classifier DSC action
+
     IpcsClassifierRecord m_packetClassifierRule; ///< packet classifier rule
 };
 

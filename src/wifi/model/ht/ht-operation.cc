@@ -23,32 +23,7 @@ namespace ns3
 {
 
 HtOperation::HtOperation()
-    : m_primaryChannel(0),
-      m_secondaryChannelOffset(0),
-      m_staChannelWidth(0),
-      m_rifsMode(0),
-      m_reservedInformationSubset1(0),
-      m_htProtection(0),
-      m_nonGfHtStasPresent(1),
-      m_reservedInformationSubset2_1(0),
-      m_obssNonHtStasPresent(0),
-      m_reservedInformationSubset2_2(0),
-      m_reservedInformationSubset3_1(0),
-      m_dualBeacon(0),
-      m_dualCtsProtection(0),
-      m_stbcBeacon(0),
-      m_lSigTxopProtectionFullSupport(0),
-      m_pcoActive(0),
-      m_pcoPhase(0),
-      m_reservedInformationSubset3_2(0),
-      m_reservedMcsSet1(0),
-      m_rxHighestSupportedDataRate(0),
-      m_reservedMcsSet2(0),
-      m_txMcsSetDefined(0),
-      m_txRxMcsSetUnequal(0),
-      m_txMaxNSpatialStreams(0),
-      m_txUnequalModulation(0),
-      m_reservedMcsSet3(0)
+
 {
     for (uint8_t k = 0; k < MAX_SUPPORTED_MCS; k++)
     {

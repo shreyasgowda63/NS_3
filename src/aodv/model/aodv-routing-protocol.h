@@ -216,19 +216,19 @@ class RoutingProtocol : public Ipv4RoutingProtocol
     void NotifyTxError(WifiMacDropReason reason, Ptr<const WifiMpdu> mpdu);
 
     // Protocol parameters.
-    uint32_t m_rreqRetries; ///< Maximum number of retransmissions of RREQ with TTL = NetDiameter to
-                            ///< discover a route
-    uint16_t m_ttlStart;    ///< Initial TTL value for RREQ.
-    uint16_t m_ttlIncrement; ///< TTL increment for each attempt using the expanding ring search for
-                             ///< RREQ dissemination.
-    uint16_t m_ttlThreshold; ///< Maximum TTL value for expanding ring search, TTL = NetDiameter is
-                             ///< used beyond this value.
-    uint16_t m_timeoutBuffer;  ///< Provide a buffer for the timeout.
-    uint16_t m_rreqRateLimit;  ///< Maximum number of RREQ per second.
-    uint16_t m_rerrRateLimit;  ///< Maximum number of REER per second.
+    uint32_t m_rreqRetries{2}; ///< Maximum number of retransmissions of RREQ with TTL = NetDiameter
+                               ///< to discover a route
+    uint16_t m_ttlStart{1};    ///< Initial TTL value for RREQ.
+    uint16_t m_ttlIncrement{2};  ///< TTL increment for each attempt using the expanding ring search
+                                 ///< for RREQ dissemination.
+    uint16_t m_ttlThreshold{7};  ///< Maximum TTL value for expanding ring search, TTL = NetDiameter
+                                 ///< is used beyond this value.
+    uint16_t m_timeoutBuffer{2}; ///< Provide a buffer for the timeout.
+    uint16_t m_rreqRateLimit{10}; ///< Maximum number of RREQ per second.
+    uint16_t m_rerrRateLimit{10}; ///< Maximum number of REER per second.
     Time m_activeRouteTimeout; ///< Period of time during which the route is considered to be valid.
-    uint32_t m_netDiameter; ///< Net diameter measures the maximum possible number of hops between
-                            ///< two nodes in the network
+    uint32_t m_netDiameter{35}; ///< Net diameter measures the maximum possible number of hops
+                                ///< between two nodes in the network
     /**
      * NodeTraversalTime is a conservative estimate of the average one hop traversal time for
      * packets and should include queuing delays, interrupt processing times and transfer times.
@@ -242,24 +242,24 @@ class RoutingProtocol : public Ipv4RoutingProtocol
      * HelloInterval. If it has not, it MAY broadcast a  Hello message
      */
     Time m_helloInterval;
-    uint32_t m_allowedHelloLoss; ///< Number of hello messages which may be loss for valid link
+    uint32_t m_allowedHelloLoss{2}; ///< Number of hello messages which may be loss for valid link
     /**
      * DeletePeriod is intended to provide an upper bound on the time for which an upstream node A
      * can have a neighbor B as an active next hop for destination D, while B has invalidated the
      * route to D.
      */
     Time m_deletePeriod;
-    Time m_nextHopWait;      ///< Period of our waiting for the neighbour's RREP_ACK
-    Time m_blackListTimeout; ///< Time for which the node is put into the blacklist
-    uint32_t m_maxQueueLen;  ///< The maximum number of packets that we allow a routing protocol to
-                             ///< buffer.
-    Time m_maxQueueTime;     ///< The maximum period of time that a routing protocol is allowed to
-                             ///< buffer a packet for.
-    bool m_destinationOnly;  ///< Indicates only the destination may respond to this RREQ.
-    bool m_gratuitousReply;  ///< Indicates whether a gratuitous RREP should be unicast to the node
-                             ///< originated route discovery.
-    bool m_enableHello;      ///< Indicates whether a hello messages enable
-    bool m_enableBroadcast;  ///< Indicates whether a a broadcast data packets forwarding enable
+    Time m_nextHopWait;         ///< Period of our waiting for the neighbour's RREP_ACK
+    Time m_blackListTimeout;    ///< Time for which the node is put into the blacklist
+    uint32_t m_maxQueueLen{64}; ///< The maximum number of packets that we allow a routing protocol
+                                ///< to buffer.
+    Time m_maxQueueTime; ///< The maximum period of time that a routing protocol is allowed to
+                         ///< buffer a packet for.
+    bool m_destinationOnly{false}; ///< Indicates only the destination may respond to this RREQ.
+    bool m_gratuitousReply{true};  ///< Indicates whether a gratuitous RREP should be unicast to the
+                                   ///< node originated route discovery.
+    bool m_enableHello{false};     ///< Indicates whether a hello messages enable
+    bool m_enableBroadcast; ///< Indicates whether a a broadcast data packets forwarding enable
     //\}
 
     /// IP protocol
@@ -278,9 +278,9 @@ class RoutingProtocol : public Ipv4RoutingProtocol
     /// route.
     RequestQueue m_queue;
     /// Broadcast ID
-    uint32_t m_requestId;
+    uint32_t m_requestId{0};
     /// Request sequence number
-    uint32_t m_seqNo;
+    uint32_t m_seqNo{0};
     /// Handle duplicated RREQ
     IdCache m_rreqIdCache;
     /// Handle duplicated broadcast/multicast packets
@@ -288,9 +288,9 @@ class RoutingProtocol : public Ipv4RoutingProtocol
     /// Handle neighbors
     Neighbors m_nb;
     /// Number of RREQs used for RREQ rate control
-    uint16_t m_rreqCount;
+    uint16_t m_rreqCount{0};
     /// Number of RERRs used for RERR rate control
-    uint16_t m_rerrCount;
+    uint16_t m_rerrCount{0};
 
   private:
     /// Start protocol operation

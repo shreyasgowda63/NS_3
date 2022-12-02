@@ -401,7 +401,7 @@ class Ipv6ExtensionFragment : public Ipv6Extension
         /**
          * \brief If other fragments will be sent.
          */
-        bool m_moreFragment;
+        bool m_moreFragment{0};
 
         /**
          * \brief The current fragments.

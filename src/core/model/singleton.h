@@ -81,9 +81,7 @@ class Singleton
     }
 
     /** Destructor. */
-    virtual ~Singleton<T>()
-    {
-    }
+    virtual ~Singleton<T>() = default;
 };
 
 } // namespace ns3

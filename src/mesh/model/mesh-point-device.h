@@ -224,7 +224,7 @@ class MeshPointDevice : public NetDevice
     /// List of interfaces
     std::vector<Ptr<NetDevice>> m_ifaces;
     /// If index
-    uint32_t m_ifIndex;
+    uint32_t m_ifIndex{0};
     /// MTU in bytes
     uint16_t m_mtu;
     /// Virtual channel for upper layers
@@ -237,10 +237,10 @@ class MeshPointDevice : public NetDevice
     /// statistics counters
     struct Statistics
     {
-        uint32_t unicastData;        ///< unicast data
-        uint32_t unicastDataBytes;   ///< unicast data bytes
-        uint32_t broadcastData;      ///< broadcast data
-        uint32_t broadcastDataBytes; ///< broadcast data bytes
+        uint32_t unicastData{0};        ///< unicast data
+        uint32_t unicastDataBytes{0};   ///< unicast data bytes
+        uint32_t broadcastData{0};      ///< broadcast data
+        uint32_t broadcastDataBytes{0}; ///< broadcast data bytes
 
         /// constructor
         Statistics();

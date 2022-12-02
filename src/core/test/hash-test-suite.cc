@@ -95,9 +95,7 @@ HashTestCase::HashTestCase(const std::string name)
 {
 }
 
-HashTestCase::~HashTestCase()
-{
-}
+HashTestCase::~HashTestCase() = default;
 
 void
 HashTestCase::Check(const std::string hashName, const uint32_t hash)
@@ -166,9 +164,7 @@ DefaultHashTestCase::DefaultHashTestCase()
 {
 }
 
-DefaultHashTestCase::~DefaultHashTestCase()
-{
-}
+DefaultHashTestCase::~DefaultHashTestCase() = default;
 
 void
 DefaultHashTestCase::DoRun()
@@ -203,9 +199,7 @@ Fnv1aTestCase::Fnv1aTestCase()
 {
 }
 
-Fnv1aTestCase::~Fnv1aTestCase()
-{
-}
+Fnv1aTestCase::~Fnv1aTestCase() = default;
 
 void
 Fnv1aTestCase::DoRun()
@@ -239,9 +233,7 @@ Murmur3TestCase::Murmur3TestCase()
 {
 }
 
-Murmur3TestCase::~Murmur3TestCase()
-{
-}
+Murmur3TestCase::~Murmur3TestCase() = default;
 
 void
 Murmur3TestCase::DoRun()
@@ -328,9 +320,7 @@ Hash32FunctionPtrTestCase::Hash32FunctionPtrTestCase()
 {
 }
 
-Hash32FunctionPtrTestCase::~Hash32FunctionPtrTestCase()
-{
-}
+Hash32FunctionPtrTestCase::~Hash32FunctionPtrTestCase() = default;
 
 void
 Hash32FunctionPtrTestCase::DoRun()
@@ -361,9 +351,7 @@ Hash64FunctionPtrTestCase::Hash64FunctionPtrTestCase()
 {
 }
 
-Hash64FunctionPtrTestCase::~Hash64FunctionPtrTestCase()
-{
-}
+Hash64FunctionPtrTestCase::~Hash64FunctionPtrTestCase() = default;
 
 void
 Hash64FunctionPtrTestCase::DoRun()
@@ -403,9 +391,7 @@ IncrementalTestCase::IncrementalTestCase()
 {
 }
 
-IncrementalTestCase::~IncrementalTestCase()
-{
-}
+IncrementalTestCase::~IncrementalTestCase() = default;
 
 void
 IncrementalTestCase::DoHash(const std::string name, Hasher hasher)

@@ -57,7 +57,6 @@ PacketSocket::GetTypeId()
 }
 
 PacketSocket::PacketSocket()
-    : m_rxAvailable(0)
 {
     NS_LOG_FUNCTION(this);
     m_state = STATE_OPEN;
@@ -538,9 +537,7 @@ PacketSocket::GetAllowBroadcast() const
  *           PacketSocket Tags
  ***************************************************************/
 
-PacketSocketTag::PacketSocketTag()
-{
-}
+PacketSocketTag::PacketSocketTag() = default;
 
 void
 PacketSocketTag::SetPacketType(NetDevice::PacketType t)
@@ -614,9 +611,7 @@ PacketSocketTag::Print(std::ostream& os) const
  *           DeviceName Tags
  ***************************************************************/
 
-DeviceNameTag::DeviceNameTag()
-{
-}
+DeviceNameTag::DeviceNameTag() = default;
 
 void
 DeviceNameTag::SetDeviceName(std::string n)

@@ -106,10 +106,7 @@ struct Step
 /// StandardInfo structure
 struct StandardInfo
 {
-    StandardInfo()
-    {
-        m_name = "none";
-    }
+    StandardInfo() = default;
 
     /**
      * Constructor
@@ -145,15 +142,15 @@ struct StandardInfo
     {
     }
 
-    std::string m_name;      ///< name
-    WifiStandard m_standard; ///< standard
-    WifiPhyBand m_band;      ///< PHY band
-    uint16_t m_width;        ///< channel width
-    double m_snrLow;         ///< lowest SNR
-    double m_snrHigh;        ///< highest SNR
-    double m_xMin;           ///< X minimum
-    double m_xMax;           ///< X maximum
-    double m_yMax;           ///< Y maximum
+    std::string m_name{"none"}; ///< name
+    WifiStandard m_standard;    ///< standard
+    WifiPhyBand m_band;         ///< PHY band
+    uint16_t m_width;           ///< channel width
+    double m_snrLow;            ///< lowest SNR
+    double m_snrHigh;           ///< highest SNR
+    double m_xMin;              ///< X minimum
+    double m_xMax;              ///< X maximum
+    double m_yMax;              ///< Y maximum
 };
 
 /**

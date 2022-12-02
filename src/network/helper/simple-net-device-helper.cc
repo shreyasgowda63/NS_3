@@ -44,8 +44,6 @@ SimpleNetDeviceHelper::SimpleNetDeviceHelper()
     m_queueFactory.SetTypeId("ns3::DropTailQueue<Packet>");
     m_deviceFactory.SetTypeId("ns3::SimpleNetDevice");
     m_channelFactory.SetTypeId("ns3::SimpleChannel");
-    m_pointToPointMode = false;
-    m_enableFlowControl = true;
 }
 
 void

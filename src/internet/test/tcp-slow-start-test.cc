@@ -72,12 +72,12 @@ class TcpSlowStartNormalTest : public TcpGeneralTest
     void ConfigureEnvironment() override;
     void ConfigureProperties() override;
 
-    uint32_t m_ackedBytes;      //!< ACKed bytes.
-    uint32_t m_sentBytes;       //!< Sent bytes.
-    uint32_t m_totalAckedBytes; //!< Total ACKed bytes.
-    uint32_t m_allowedIncrease; //!< Allowed increase.
+    uint32_t m_ackedBytes{0};      //!< ACKed bytes.
+    uint32_t m_sentBytes{0};       //!< Sent bytes.
+    uint32_t m_totalAckedBytes{0}; //!< Total ACKed bytes.
+    uint32_t m_allowedIncrease{0}; //!< Allowed increase.
 
-    bool m_initial; //!< First cycle flag.
+    bool m_initial{true}; //!< First cycle flag.
 
   private:
     uint32_t m_segmentSize; //!< Segment size.
@@ -92,11 +92,7 @@ TcpSlowStartNormalTest::TcpSlowStartNormalTest(uint32_t segmentSize,
                                                const TypeId& typeId,
                                                const std::string& desc)
     : TcpGeneralTest(desc),
-      m_ackedBytes(0),
-      m_sentBytes(0),
-      m_totalAckedBytes(0),
-      m_allowedIncrease(0),
-      m_initial(true),
+
       m_segmentSize(segmentSize),
       m_packetSize(packetSize),
       m_packets(packets)

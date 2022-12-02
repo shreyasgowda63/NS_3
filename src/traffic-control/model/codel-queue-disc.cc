@@ -139,7 +139,7 @@ CoDelQueueDisc::CoDelQueueDisc()
       m_lastCount(0),
       m_dropping(false),
       m_recInvSqrt(~0U >> REC_INV_SQRT_SHIFT),
-      m_firstAboveTime(0),
+
       m_dropNext(0)
 {
     NS_LOG_FUNCTION(this);

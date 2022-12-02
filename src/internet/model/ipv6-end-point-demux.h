@@ -170,17 +170,17 @@ class Ipv6EndPointDemux
     /**
      * \brief The ephemeral port.
      */
-    uint16_t m_ephemeral;
+    uint16_t m_ephemeral{49152};
 
     /**
      * \brief The first ephemeral port.
      */
-    uint16_t m_portFirst;
+    uint16_t m_portFirst{49152};
 
     /**
      * \brief The last ephemeral port.
      */
-    uint16_t m_portLast;
+    uint16_t m_portLast{65535};
 
     /**
      * \brief A list of IPv6 end points.

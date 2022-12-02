@@ -33,9 +33,7 @@ WifiRadioEnergyModelHelper::WifiRadioEnergyModelHelper()
     m_rechargedCallback.Nullify();
 }
 
-WifiRadioEnergyModelHelper::~WifiRadioEnergyModelHelper()
-{
-}
+WifiRadioEnergyModelHelper::~WifiRadioEnergyModelHelper() = default;
 
 void
 WifiRadioEnergyModelHelper::Set(std::string name, const AttributeValue& v)

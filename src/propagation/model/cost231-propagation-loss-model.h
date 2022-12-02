@@ -138,7 +138,7 @@ class Cost231PropagationLossModel : public PropagationLossModel
     double m_lambda;          //!< The wavelength
     double m_minDistance;     //!< minimum distance [m]
     double m_frequency;       //!< frequency [Hz]
-    double m_shadowing;       //!< Shadowing loss [dB]
+    double m_shadowing{10};   //!< Shadowing loss [dB]
 };
 
 } // namespace ns3

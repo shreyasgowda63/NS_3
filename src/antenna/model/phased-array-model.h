@@ -132,7 +132,7 @@ class PhasedArrayModel : public Object
 
     ComplexVector m_beamformingVector;  //!< the beamforming vector in use
     Ptr<AntennaModel> m_antennaElement; //!< the model of the antenna element in use
-    bool m_isBfVectorValid;             //!< ensures the validity of the beamforming vector
+    bool m_isBfVectorValid{false};      //!< ensures the validity of the beamforming vector
     static uint32_t
         m_idCounter;  //!< the ID counter that is used to determine the unique antenna array ID
     uint32_t m_id{0}; //!< the ID of this antenna array instance

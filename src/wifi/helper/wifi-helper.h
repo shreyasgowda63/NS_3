@@ -311,7 +311,7 @@ class WifiPhyHelper : public PcapHelperForDevice, public AsciiTraceHelperForDevi
                              Ptr<NetDevice> nd,
                              bool explicitFilename) override;
 
-    PcapHelper::DataLinkType m_pcapDlt; ///< PCAP data link type
+    PcapHelper::DataLinkType m_pcapDlt{PcapHelper::DLT_IEEE802_11}; ///< PCAP data link type
 };
 
 /**
@@ -503,15 +503,15 @@ class WifiHelper
     int64_t AssignStreams(NetDeviceContainer c, int64_t stream);
 
   protected:
-    ObjectFactory m_stationManager;            ///< station manager
-    WifiStandard m_standard;                   ///< wifi standard
-    ObjectFactory m_htConfig;                  ///< HT configuration
-    ObjectFactory m_vhtConfig;                 ///< VHT configuration
-    ObjectFactory m_heConfig;                  ///< HE configuration
-    ObjectFactory m_ehtConfig;                 ///< EHT configuration
-    SelectQueueCallback m_selectQueueCallback; ///< select queue callback
-    ObjectFactory m_obssPdAlgorithm;           ///< OBSS_PD algorithm
-    bool m_enableFlowControl;                  //!< whether to enable flow control
+    ObjectFactory m_stationManager;                 ///< station manager
+    WifiStandard m_standard{WIFI_STANDARD_80211ax}; ///< wifi standard
+    ObjectFactory m_htConfig;                       ///< HT configuration
+    ObjectFactory m_vhtConfig;                      ///< VHT configuration
+    ObjectFactory m_heConfig;                       ///< HE configuration
+    ObjectFactory m_ehtConfig;                      ///< EHT configuration
+    SelectQueueCallback m_selectQueueCallback;      ///< select queue callback
+    ObjectFactory m_obssPdAlgorithm;                ///< OBSS_PD algorithm
+    bool m_enableFlowControl{true};                 //!< whether to enable flow control
 };
 
 } // namespace ns3

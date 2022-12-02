@@ -87,11 +87,11 @@ class ErrorChannel : public SimpleChannel
   private:
     std::vector<Ptr<SimpleNetDevice>> m_devices; //!< devices connected by the channel
     Time m_jumpingTime;                          //!< Delay time in Jumping mode.
-    uint8_t m_jumpingState;                      //!< Counter for even/odd packets in Jumping mode.
-    bool m_jumping;                              //!< Flag for Jumping mode.
+    uint8_t m_jumpingState{0};                   //!< Counter for even/odd packets in Jumping mode.
+    bool m_jumping{false};                       //!< Flag for Jumping mode.
     Time m_duplicateTime;                        //!< Duplicate time in Duplicate mode.
-    bool m_duplicate;                            //!< Flag for Duplicate mode.
-    uint8_t m_duplicateState; //!< Counter for even/odd packets in Duplicate mode.
+    bool m_duplicate{false};                     //!< Flag for Duplicate mode.
+    uint8_t m_duplicateState{0}; //!< Counter for even/odd packets in Duplicate mode.
 };
 
 } // namespace ns3

@@ -42,9 +42,7 @@ class SimpleNetDeviceHelper
      */
     SimpleNetDeviceHelper();
 
-    virtual ~SimpleNetDeviceHelper()
-    {
-    }
+    virtual ~SimpleNetDeviceHelper() = default;
 
     /**
      * Each net device must have a queue to pass packets through.
@@ -176,8 +174,8 @@ class SimpleNetDeviceHelper
     ObjectFactory m_queueFactory;   //!< Queue factory
     ObjectFactory m_deviceFactory;  //!< NetDevice factory
     ObjectFactory m_channelFactory; //!< Channel factory
-    bool m_pointToPointMode;        //!< Install PointToPoint SimpleNetDevice or Broadcast ones
-    bool m_enableFlowControl;       //!< whether to enable flow control
+    bool m_pointToPointMode{false}; //!< Install PointToPoint SimpleNetDevice or Broadcast ones
+    bool m_enableFlowControl{true}; //!< whether to enable flow control
 };
 
 /***************************************************************

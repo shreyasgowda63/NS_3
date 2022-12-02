@@ -131,7 +131,7 @@ struct TestCase::Result
     /** TestCaseFailure records for each child. */
     std::vector<TestCaseFailure> failure;
     /** \c true if any child TestCases failed. */
-    bool childrenFailed;
+    bool childrenFailed{false};
 };
 
 /**
@@ -247,12 +247,12 @@ class TestRunnerImpl : public Singleton<TestRunnerImpl>
     /** Container type for the test. */
     typedef std::vector<TestSuite*> TestSuiteVector;
 
-    TestSuiteVector m_suites; //!< The list of tests.
-    std::string m_tempDir;    //!< The temporary directory.
-    bool m_verbose;           //!< Produce verbose output.
-    bool m_assertOnFailure;   //!< \c true if we should assert on failure.
-    bool m_continueOnFailure; //!< \c true if we should continue on failure.
-    bool m_updateData;        //!< \c true if we should update reference data.
+    TestSuiteVector m_suites;       //!< The list of tests.
+    std::string m_tempDir;          //!< The temporary directory.
+    bool m_verbose;                 //!< Produce verbose output.
+    bool m_assertOnFailure{false};  //!< \c true if we should assert on failure.
+    bool m_continueOnFailure{true}; //!< \c true if we should continue on failure.
+    bool m_updateData{false};       //!< \c true if we should update reference data.
 };
 
 TestCaseFailure::TestCaseFailure(std::string _cond,
@@ -272,18 +272,13 @@ TestCaseFailure::TestCaseFailure(std::string _cond,
 }
 
 TestCase::Result::Result()
-    : childrenFailed(false)
 {
     NS_LOG_FUNCTION(this);
 }
 
 TestCase::TestCase(std::string name)
-    : m_parent(nullptr),
-      m_dataDir(""),
-      m_runner(nullptr),
-      m_result(nullptr),
-      m_name(name),
-      m_duration(TestCase::QUICK)
+    : m_dataDir(""),
+      m_name(name)
 {
     NS_LOG_FUNCTION(this << name);
 }
@@ -519,10 +514,7 @@ TestSuite::DoRun()
 }
 
 TestRunnerImpl::TestRunnerImpl()
-    : m_tempDir(""),
-      m_assertOnFailure(false),
-      m_continueOnFailure(true),
-      m_updateData(false)
+    : m_tempDir("")
 {
     NS_LOG_FUNCTION(this);
 }

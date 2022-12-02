@@ -151,16 +151,14 @@ LteCqiGenerationTestCase::LteCqiGenerationTestCase(std::string name,
                                                    uint16_t dlMcs,
                                                    uint16_t ulMcs)
     : TestCase("Downlink Power Control: " + name),
+      m_usePdschForCqiGeneration(usePdcchForCqiGeneration),
       m_dlMcs(dlMcs),
       m_ulMcs(ulMcs)
 {
-    m_usePdschForCqiGeneration = usePdcchForCqiGeneration;
     NS_LOG_INFO("Creating LteCqiGenerationTestCase");
 }
 
-LteCqiGenerationTestCase::~LteCqiGenerationTestCase()
-{
-}
+LteCqiGenerationTestCase::~LteCqiGenerationTestCase() = default;
 
 void
 LteCqiGenerationTestCase::DlScheduling(DlSchedulingCallbackInfo dlInfo)
@@ -300,9 +298,7 @@ LteCqiGenerationDlPowerControlTestCase::LteCqiGenerationDlPowerControlTestCase(s
     NS_LOG_INFO("Creating LteCqiGenerationTestCase");
 }
 
-LteCqiGenerationDlPowerControlTestCase::~LteCqiGenerationDlPowerControlTestCase()
-{
-}
+LteCqiGenerationDlPowerControlTestCase::~LteCqiGenerationDlPowerControlTestCase() = default;
 
 void
 LteCqiGenerationDlPowerControlTestCase::DlScheduling(DlSchedulingCallbackInfo dlInfo)

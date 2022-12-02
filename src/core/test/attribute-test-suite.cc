@@ -59,9 +59,7 @@ namespace ns3
 class ValueClassTest
 {
   public:
-    ValueClassTest()
-    {
-    }
+    ValueClassTest() = default;
 
     /**
      * TracedValue callback signature for ValueClassTest
@@ -134,9 +132,7 @@ class Derived : public Object
         return tid;
     }
 
-    Derived()
-    {
-    }
+    Derived() = default;
 };
 
 NS_OBJECT_ENSURE_REGISTERED(Derived);
@@ -321,13 +317,9 @@ class AttributeObjectTest : public Object
         return tid;
     }
 
-    AttributeObjectTest()
-    {
-    }
+    AttributeObjectTest() = default;
 
-    ~AttributeObjectTest() override
-    {
-    }
+    ~AttributeObjectTest() override = default;
 
     /// Add an object to the first vector.
     void AddToVector1()
@@ -543,9 +535,7 @@ AttributeTestCase<T>::AttributeTestCase(std::string description)
 }
 
 template <typename T>
-AttributeTestCase<T>::~AttributeTestCase()
-{
-}
+AttributeTestCase<T>::~AttributeTestCase() = default;
 
 template <typename T>
 bool
@@ -1100,9 +1090,7 @@ class RandomVariableStreamAttributeTestCase : public TestCase
      */
     RandomVariableStreamAttributeTestCase(std::string description);
 
-    ~RandomVariableStreamAttributeTestCase() override
-    {
-    }
+    ~RandomVariableStreamAttributeTestCase() override = default;
 
     /**
      * Invoke the m_cbValue.
@@ -1180,9 +1168,7 @@ class ObjectVectorAttributeTestCase : public TestCase
      */
     ObjectVectorAttributeTestCase(std::string description);
 
-    ~ObjectVectorAttributeTestCase() override
-    {
-    }
+    ~ObjectVectorAttributeTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -1265,9 +1251,7 @@ class ObjectMapAttributeTestCase : public TestCase
      */
     ObjectMapAttributeTestCase(std::string description);
 
-    ~ObjectMapAttributeTestCase() override
-    {
-    }
+    ~ObjectMapAttributeTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -1346,9 +1330,7 @@ class IntegerTraceSourceAttributeTestCase : public TestCase
      */
     IntegerTraceSourceAttributeTestCase(std::string description);
 
-    ~IntegerTraceSourceAttributeTestCase() override
-    {
-    }
+    ~IntegerTraceSourceAttributeTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -1459,9 +1441,7 @@ class IntegerTraceSourceTestCase : public TestCase
      */
     IntegerTraceSourceTestCase(std::string description);
 
-    ~IntegerTraceSourceTestCase() override
-    {
-    }
+    ~IntegerTraceSourceTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -1561,9 +1541,7 @@ class TracedCallbackTestCase : public TestCase
      */
     TracedCallbackTestCase(std::string description);
 
-    ~TracedCallbackTestCase() override
-    {
-    }
+    ~TracedCallbackTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -1662,9 +1640,7 @@ class PointerAttributeTestCase : public TestCase
      */
     PointerAttributeTestCase(std::string description);
 
-    ~PointerAttributeTestCase() override
-    {
-    }
+    ~PointerAttributeTestCase() override = default;
 
   private:
     void DoRun() override;
@@ -1808,9 +1784,7 @@ class CallbackValueTestCase : public TestCase
      */
     CallbackValueTestCase(std::string description);
 
-    ~CallbackValueTestCase() override
-    {
-    }
+    ~CallbackValueTestCase() override = default;
 
     /**
      * Function to invoke the callback.

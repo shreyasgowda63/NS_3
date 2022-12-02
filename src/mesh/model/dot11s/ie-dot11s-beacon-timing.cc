@@ -29,11 +29,8 @@ namespace dot11s
  * IeBeaconTimingUnit
  *******************************************/
 IeBeaconTimingUnit::IeBeaconTimingUnit()
-    : m_aid(0),
-      m_lastBeacon(0),
-      m_beaconInterval(0)
-{
-}
+
+    = default;
 
 void
 IeBeaconTimingUnit::SetAid(uint8_t aid)
@@ -81,9 +78,8 @@ IeBeaconTiming::ElementId() const
 }
 
 IeBeaconTiming::IeBeaconTiming()
-    : m_numOfUnits(0)
-{
-}
+
+    = default;
 
 IeBeaconTiming::NeighboursTimingUnitsList
 IeBeaconTiming::GetNeighboursTimingElementsList()

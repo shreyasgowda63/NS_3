@@ -61,18 +61,11 @@ DsrFsHeader::GetInstanceTypeId() const
 }
 
 DsrFsHeader::DsrFsHeader()
-    : m_nextHeader(0),
-      m_messageType(0),
-      m_payloadLen(0),
-      m_sourceId(0),
-      m_destId(0),
-      m_data(0)
+    : m_data(0)
 {
 }
 
-DsrFsHeader::~DsrFsHeader()
-{
-}
+DsrFsHeader::~DsrFsHeader() = default;
 
 void
 DsrFsHeader::SetNextHeader(uint8_t protocol)
@@ -199,9 +192,7 @@ DsrOptionField::DsrOptionField(uint32_t optionsOffset)
 {
 }
 
-DsrOptionField::~DsrOptionField()
-{
-}
+DsrOptionField::~DsrOptionField() = default;
 
 uint32_t
 DsrOptionField::GetSerializedSize() const
@@ -305,9 +296,7 @@ DsrRoutingHeader::DsrRoutingHeader()
 {
 }
 
-DsrRoutingHeader::~DsrRoutingHeader()
-{
-}
+DsrRoutingHeader::~DsrRoutingHeader() = default;
 
 void
 DsrRoutingHeader::Print(std::ostream& os) const

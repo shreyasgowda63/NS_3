@@ -77,7 +77,7 @@ class EventImpl : public SimpleRefCount<EventImpl>
     virtual void Notify() = 0;
 
   private:
-    bool m_cancel; /**< Has this event been cancelled. */
+    bool m_cancel{false}; /**< Has this event been cancelled. */
 };
 
 } // namespace ns3

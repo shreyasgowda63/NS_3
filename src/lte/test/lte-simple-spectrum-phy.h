@@ -87,7 +87,7 @@ class LteSimpleSpectrumPhy : public SpectrumPhy
     Ptr<SpectrumChannel> m_channel;             ///< the channel
     Ptr<const SpectrumModel> m_rxSpectrumModel; ///< the spectrum model
 
-    uint16_t m_cellId; ///< the cell ID
+    uint16_t m_cellId{0}; ///< the cell ID
 
     TracedCallback<Ptr<const SpectrumValue>> m_rxStart; ///< receive start trace callback function
 };

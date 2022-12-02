@@ -34,9 +34,7 @@ AcousticModemEnergyModelHelper::AcousticModemEnergyModelHelper()
     m_depletionCallback.Nullify();
 }
 
-AcousticModemEnergyModelHelper::~AcousticModemEnergyModelHelper()
-{
-}
+AcousticModemEnergyModelHelper::~AcousticModemEnergyModelHelper() = default;
 
 void
 AcousticModemEnergyModelHelper::Set(std::string name, const AttributeValue& v)

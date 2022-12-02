@@ -65,9 +65,7 @@ DataRateTestCase::DataRateTestCase(std::string name)
 {
 }
 
-DataRateTestCase::~DataRateTestCase()
-{
-}
+DataRateTestCase::~DataRateTestCase() = default;
 
 void
 DataRateTestCase::CheckTimesEqual(Time actual, Time correct, const std::string msg)

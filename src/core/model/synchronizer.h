@@ -315,9 +315,9 @@ class Synchronizer : public Object
     virtual uint64_t DoEventEnd() = 0;
 
     /** The real time, in ns, when SetOrigin was called. */
-    uint64_t m_realtimeOriginNano;
+    uint64_t m_realtimeOriginNano{0};
     /** The simulation time, in ns, when SetOrigin was called. */
-    uint64_t m_simOriginNano;
+    uint64_t m_simOriginNano{0};
 
   private:
     /**

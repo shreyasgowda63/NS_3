@@ -28,14 +28,6 @@ NS_LOG_COMPONENT_DEFINE("EpcX2Header");
 
 NS_OBJECT_ENSURE_REGISTERED(EpcX2Header);
 
-EpcX2Header::EpcX2Header()
-    : m_messageType(0xfa),
-      m_procedureCode(0xfa),
-      m_lengthOfIes(0xfa),
-      m_numberOfIes(0xfa)
-{
-}
-
 EpcX2Header::~EpcX2Header()
 {
     m_messageType = 0xfb;
@@ -144,17 +136,6 @@ EpcX2Header::SetNumberOfIes(uint32_t numberOfIes)
 /////////////////////////////////////////////////////////////////////
 
 NS_OBJECT_ENSURE_REGISTERED(EpcX2HandoverRequestHeader);
-
-EpcX2HandoverRequestHeader::EpcX2HandoverRequestHeader()
-    : m_numberOfIes(1 + 1 + 1 + 1),
-      m_headerLength(6 + 5 + 12 + (3 + 4 + 8 + 8 + 4)),
-      m_oldEnbUeX2apId(0xfffa),
-      m_cause(0xfffa),
-      m_targetCellId(0xfffa),
-      m_mmeUeS1apId(0xfffffffa)
-{
-    m_erabsToBeSetupList.clear();
-}
 
 EpcX2HandoverRequestHeader::~EpcX2HandoverRequestHeader()
 {
@@ -434,9 +415,7 @@ NS_OBJECT_ENSURE_REGISTERED(EpcX2HandoverRequestAckHeader);
 
 EpcX2HandoverRequestAckHeader::EpcX2HandoverRequestAckHeader()
     : m_numberOfIes(1 + 1 + 1 + 1),
-      m_headerLength(2 + 2 + 4 + 4),
-      m_oldEnbUeX2apId(0xfffa),
-      m_newEnbUeX2apId(0xfffa)
+      m_headerLength(2 + 2 + 4 + 4)
 {
 }
 
@@ -659,10 +638,7 @@ NS_OBJECT_ENSURE_REGISTERED(EpcX2HandoverPreparationFailureHeader);
 
 EpcX2HandoverPreparationFailureHeader::EpcX2HandoverPreparationFailureHeader()
     : m_numberOfIes(1 + 1 + 1),
-      m_headerLength(2 + 2 + 2),
-      m_oldEnbUeX2apId(0xfffa),
-      m_cause(0xfffa),
-      m_criticalityDiagnostics(0xfffa)
+      m_headerLength(2 + 2 + 2)
 {
 }
 
@@ -783,10 +759,7 @@ EpcX2HandoverPreparationFailureHeader::GetNumberOfIes() const
 NS_OBJECT_ENSURE_REGISTERED(EpcX2SnStatusTransferHeader);
 
 EpcX2SnStatusTransferHeader::EpcX2SnStatusTransferHeader()
-    : m_numberOfIes(3),
-      m_headerLength(6),
-      m_oldEnbUeX2apId(0xfffa),
-      m_newEnbUeX2apId(0xfffa)
+
 {
     m_erabsSubjectToStatusTransferList.clear();
 }
@@ -979,9 +952,7 @@ NS_OBJECT_ENSURE_REGISTERED(EpcX2UeContextReleaseHeader);
 
 EpcX2UeContextReleaseHeader::EpcX2UeContextReleaseHeader()
     : m_numberOfIes(1 + 1),
-      m_headerLength(2 + 2),
-      m_oldEnbUeX2apId(0xfffa),
-      m_newEnbUeX2apId(0xfffa)
+      m_headerLength(2 + 2)
 {
 }
 
@@ -1085,8 +1056,7 @@ EpcX2UeContextReleaseHeader::GetNumberOfIes() const
 NS_OBJECT_ENSURE_REGISTERED(EpcX2LoadInformationHeader);
 
 EpcX2LoadInformationHeader::EpcX2LoadInformationHeader()
-    : m_numberOfIes(1),
-      m_headerLength(6)
+
 {
     m_cellInformationList.clear();
 }
@@ -1318,10 +1288,7 @@ EpcX2LoadInformationHeader::GetNumberOfIes() const
 NS_OBJECT_ENSURE_REGISTERED(EpcX2ResourceStatusUpdateHeader);
 
 EpcX2ResourceStatusUpdateHeader::EpcX2ResourceStatusUpdateHeader()
-    : m_numberOfIes(3),
-      m_headerLength(6),
-      m_enb1MeasurementId(0xfffa),
-      m_enb2MeasurementId(0xfffa)
+
 {
     m_cellMeasurementResultList.clear();
 }
@@ -1497,15 +1464,6 @@ EpcX2ResourceStatusUpdateHeader::GetNumberOfIes() const
 ///////////////////////////////////////////////////////////////////////////////
 
 NS_OBJECT_ENSURE_REGISTERED(EpcX2HandoverCancelHeader);
-
-EpcX2HandoverCancelHeader::EpcX2HandoverCancelHeader()
-    : m_numberOfIes(3),
-      m_headerLength(6),
-      m_oldEnbUeX2apId(0xfffa),
-      m_newEnbUeX2apId(0xfffa),
-      m_cause(0xfffa)
-{
-}
 
 EpcX2HandoverCancelHeader::~EpcX2HandoverCancelHeader()
 {

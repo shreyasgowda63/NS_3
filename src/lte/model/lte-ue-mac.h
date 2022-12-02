@@ -268,17 +268,17 @@ class LteUeMac : public Object
     Time m_bsrPeriodicity; ///< BSR periodicity
     Time m_bsrLast;        ///< BSR last
 
-    bool m_freshUlBsr; ///< true when a BSR has been received in the last TTI
+    bool m_freshUlBsr{false}; ///< true when a BSR has been received in the last TTI
 
-    uint8_t m_harqProcessId; ///< HARQ process ID
+    uint8_t m_harqProcessId{0}; ///< HARQ process ID
     std::vector<Ptr<PacketBurst>>
         m_miUlHarqProcessesPacket; ///< Packets under transmission of the UL HARQ processes
     std::vector<uint8_t> m_miUlHarqProcessesPacketTimer; ///< timer for packet life in the buffer
 
-    uint16_t m_rnti; ///< RNTI
-    uint16_t m_imsi; ///< IMSI
+    uint16_t m_rnti{0}; ///< RNTI
+    uint16_t m_imsi{0}; ///< IMSI
 
-    bool m_rachConfigured;                                  ///< is RACH configured?
+    bool m_rachConfigured{false};                           ///< is RACH configured?
     LteUeCmacSapProvider::RachConfig m_rachConfig;          ///< RACH configuration
     uint8_t m_raPreambleId;                                 ///< RA preamble ID
     uint8_t m_preambleTransmissionCounter;                  ///< preamble tranamission counter
@@ -286,10 +286,10 @@ class LteUeMac : public Object
     EventId m_noRaResponseReceivedEvent;                    ///< no RA response received event ID
     Ptr<UniformRandomVariable> m_raPreambleUniformVariable; ///< RA preamble random variable
 
-    uint32_t m_frameNo;          ///< frame number
-    uint32_t m_subframeNo;       ///< subframe number
-    uint8_t m_raRnti;            ///< RA RNTI
-    bool m_waitingForRaResponse; ///< waiting for RA response
+    uint32_t m_frameNo;                 ///< frame number
+    uint32_t m_subframeNo;              ///< subframe number
+    uint8_t m_raRnti;                   ///< RA RNTI
+    bool m_waitingForRaResponse{false}; ///< waiting for RA response
 
     /**
      * \brief The `RaResponseTimeout` trace source. Fired RA response timeout.

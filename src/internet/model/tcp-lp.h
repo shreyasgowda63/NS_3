@@ -99,13 +99,13 @@ class TcpLp : public TcpNewReno
         LP_WITHIN_INF = (1 << 4), /**< TcpLp is within Inference */
     };
 
-    uint32_t m_flag;      //!< TcpLp state flag
-    uint32_t m_sOwd;      //!< Smoothed One-Way Delay
-    uint32_t m_owdMin;    //!< Minimum One-Way Delay
-    uint32_t m_owdMax;    //!< Maximum One-Way Delay
-    uint32_t m_owdMaxRsv; //!< Reserved Maximum One-Way Delay
-    Time m_lastDrop;      //!< Last time when cwnd was reduced
-    Time m_inference;     //!< Current inference period
+    uint32_t m_flag{0};            //!< TcpLp state flag
+    uint32_t m_sOwd{0};            //!< Smoothed One-Way Delay
+    uint32_t m_owdMin{0xffffffff}; //!< Minimum One-Way Delay
+    uint32_t m_owdMax{0};          //!< Maximum One-Way Delay
+    uint32_t m_owdMaxRsv{0};       //!< Reserved Maximum One-Way Delay
+    Time m_lastDrop;               //!< Last time when cwnd was reduced
+    Time m_inference;              //!< Current inference period
 
   private:
     /**

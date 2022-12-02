@@ -45,17 +45,6 @@ Asn1Header::GetInstanceTypeId() const
     return GetTypeId();
 }
 
-Asn1Header::Asn1Header()
-{
-    m_serializationPendingBits = 0x00;
-    m_numSerializationPendingBits = 0;
-    m_isDataSerialized = false;
-}
-
-Asn1Header::~Asn1Header()
-{
-}
-
 uint32_t
 Asn1Header::GetSerializedSize() const
 {

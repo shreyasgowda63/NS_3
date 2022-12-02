@@ -44,14 +44,10 @@ TvSpectrumTransmitter::TvSpectrumTransmitter()
       m_antenna(CreateObject<IsotropicAntennaModel>()),
       m_netDevice(nullptr),
       m_channel(nullptr),
-      m_tvType(TVTYPE_8VSB),
-      m_startFrequency(500e6),
-      m_channelBandwidth(6e6),
-      m_basePsd(20),
+
       m_txPsd(nullptr),
       m_startingTime(Seconds(0)),
-      m_transmitDuration(Seconds(0.2)),
-      m_active(false)
+      m_transmitDuration(Seconds(0.2))
 {
     NS_LOG_FUNCTION(this);
 }

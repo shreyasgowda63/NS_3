@@ -43,7 +43,7 @@ class CsmaDeviceRec
 {
   public:
     Ptr<CsmaNetDevice> devicePtr; //!< Pointer to the net device
-    bool active;                  //!< Is net device enabled to TX/RX
+    bool active{false};           //!< Is net device enabled to TX/RX
 
     CsmaDeviceRec();
 

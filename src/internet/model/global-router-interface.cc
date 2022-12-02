@@ -137,9 +137,9 @@ GlobalRoutingLSA::GlobalRoutingLSA()
     : m_lsType(GlobalRoutingLSA::Unknown),
       m_linkStateId("0.0.0.0"),
       m_advertisingRtr("0.0.0.0"),
-      m_linkRecords(),
+
       m_networkLSANetworkMask("0.0.0.0"),
-      m_attachedRouters(),
+
       m_status(GlobalRoutingLSA::LSA_SPF_NOT_EXPLORED),
       m_node_id(0)
 {
@@ -152,9 +152,9 @@ GlobalRoutingLSA::GlobalRoutingLSA(GlobalRoutingLSA::SPFStatus status,
     : m_lsType(GlobalRoutingLSA::Unknown),
       m_linkStateId(linkStateId),
       m_advertisingRtr(advertisingRtr),
-      m_linkRecords(),
+
       m_networkLSANetworkMask("0.0.0.0"),
-      m_attachedRouters(),
+
       m_status(status),
       m_node_id(0)
 {
@@ -514,7 +514,6 @@ GlobalRouter::GetTypeId()
 }
 
 GlobalRouter::GlobalRouter()
-    : m_LSAs()
 {
     NS_LOG_FUNCTION(this);
     m_routerId.Set(GlobalRouteManager::AllocateRouterId());

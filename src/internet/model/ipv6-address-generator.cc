@@ -189,13 +189,11 @@ class Ipv6AddressGeneratorImpl
 
     std::list<Entry> m_entries; //!< contained of allocated addresses
     Ipv6Address m_base;         //!< base address
-    bool m_test;                //!< test mode (if true)
+    bool m_test{false};         //!< test mode (if true)
 };
 
 Ipv6AddressGeneratorImpl::Ipv6AddressGeneratorImpl()
-    : m_entries(),
-      m_base("::1"),
-      m_test(false)
+    : m_base("::1")
 {
     NS_LOG_FUNCTION(this);
     Reset();

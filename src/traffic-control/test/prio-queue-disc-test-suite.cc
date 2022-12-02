@@ -100,19 +100,16 @@ class PrioQueueDiscTestFilter : public PacketFilter
     bool CheckProtocol(Ptr<QueueDiscItem> item) const override;
     int32_t DoClassify(Ptr<QueueDiscItem> item) const override;
 
-    bool m_cls;    //!< whether this filter is able to classify a PrioQueueDiscTestItem
-    int32_t m_ret; //!< the value that DoClassify returns if m_cls is true
+    bool m_cls;       //!< whether this filter is able to classify a PrioQueueDiscTestItem
+    int32_t m_ret{0}; //!< the value that DoClassify returns if m_cls is true
 };
 
 PrioQueueDiscTestFilter::PrioQueueDiscTestFilter(bool cls)
-    : m_cls(cls),
-      m_ret(0)
+    : m_cls(cls)
 {
 }
 
-PrioQueueDiscTestFilter::~PrioQueueDiscTestFilter()
-{
-}
+PrioQueueDiscTestFilter::~PrioQueueDiscTestFilter() = default;
 
 void
 PrioQueueDiscTestFilter::SetReturnValue(int32_t ret)

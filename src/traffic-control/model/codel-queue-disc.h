@@ -215,7 +215,7 @@ class CoDelQueueDisc : public QueueDisc
     TracedValue<uint32_t> m_lastCount; //!< Last number of packets dropped since entering drop state
     TracedValue<bool> m_dropping;      //!< True if in dropping state
     uint16_t m_recInvSqrt;             //!< Reciprocal inverse square root
-    uint32_t m_firstAboveTime;         //!< Time to declare sojourn time above target
+    uint32_t m_firstAboveTime{0};      //!< Time to declare sojourn time above target
     TracedValue<uint32_t> m_dropNext;  //!< Time to drop next packet
 };
 

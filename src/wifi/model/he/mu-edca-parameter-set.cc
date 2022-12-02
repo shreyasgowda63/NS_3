@@ -26,8 +26,7 @@ namespace ns3
 {
 
 MuEdcaParameterSet::MuEdcaParameterSet()
-    : m_qosInfo(0),
-      m_records{{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}}
+    : m_records{{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}}
 {
 }
 

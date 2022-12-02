@@ -297,23 +297,23 @@ class LteRlcAmHeader : public Header
     int PopNack();
 
   private:
-    uint16_t m_headerLength;  ///< header length
-    uint8_t m_dataControlBit; ///< data control bit
+    uint16_t m_headerLength{0};     ///< header length
+    uint8_t m_dataControlBit{0xff}; ///< data control bit
 
     // Data PDU fields
-    uint8_t m_resegmentationFlag;      ///< resegmentation flag
-    uint8_t m_pollingBit;              ///< polling bit
-    uint8_t m_framingInfo;             ///<  2 bits
-    SequenceNumber10 m_sequenceNumber; ///< sequence number
-    uint8_t m_lastSegmentFlag;         ///< last segment flag
-    uint16_t m_segmentOffset;          ///< segment offset
-    uint16_t m_lastOffset;             ///< last offset
+    uint8_t m_resegmentationFlag{0xff}; ///< resegmentation flag
+    uint8_t m_pollingBit{0xff};         ///< polling bit
+    uint8_t m_framingInfo{0xff};        ///<  2 bits
+    SequenceNumber10 m_sequenceNumber;  ///< sequence number
+    uint8_t m_lastSegmentFlag;          ///< last segment flag
+    uint16_t m_segmentOffset{0xffff};   ///< segment offset
+    uint16_t m_lastOffset{0xffff};      ///< last offset
 
     std::list<uint8_t> m_extensionBits;     ///< Includes extensionBit of the fixed part
     std::list<uint16_t> m_lengthIndicators; ///< length indicators
 
     // Control PDU fields
-    uint8_t m_controlPduType; ///< control PDU type
+    uint8_t m_controlPduType{0xff}; ///< control PDU type
 
     // Status PDU fields
     SequenceNumber10 m_ackSn;    ///< ack sn

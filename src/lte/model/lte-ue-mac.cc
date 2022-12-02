@@ -239,14 +239,7 @@ LteUeMac::GetTypeId()
 
 LteUeMac::LteUeMac()
     : m_bsrPeriodicity(MilliSeconds(1)), // ideal behavior
-      m_bsrLast(MilliSeconds(0)),
-      m_freshUlBsr(false),
-      m_harqProcessId(0),
-      m_rnti(0),
-      m_imsi(0),
-      m_rachConfigured(false),
-      m_waitingForRaResponse(false)
-
+      m_bsrLast(MilliSeconds(0))
 {
     NS_LOG_FUNCTION(this);
     m_miUlHarqProcessesPacket.resize(HARQ_PERIOD);

@@ -47,13 +47,9 @@ IpcsClassifier::GetTypeId()
     return tid;
 }
 
-IpcsClassifier::IpcsClassifier()
-{
-}
+IpcsClassifier::IpcsClassifier() = default;
 
-IpcsClassifier::~IpcsClassifier()
-{
-}
+IpcsClassifier::~IpcsClassifier() = default;
 
 ServiceFlow*
 IpcsClassifier::Classify(Ptr<const Packet> packet,

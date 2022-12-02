@@ -29,10 +29,6 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("WaveBsmStats");
 
 WaveBsmStats::WaveBsmStats()
-    : m_wavePktSendCount(0),
-      m_waveByteSendCount(0),
-      m_wavePktReceiveCount(0),
-      m_log(false)
 {
     m_wavePktExpectedReceiveCounts.resize(10, 0);
     m_wavePktInCoverageReceiveCounts.resize(10, 0);

@@ -90,13 +90,7 @@ const uint16_t NUM_UPLINK_CONFS(sizeof(g_frStrictUplinkDefaultConfiguration) /
                                 sizeof(FrStrictUplinkDefaultConfiguration));
 
 LteFrStrictAlgorithm::LteFrStrictAlgorithm()
-    : m_ffrSapUser(nullptr),
-      m_ffrRrcSapUser(nullptr),
-      m_dlEdgeSubBandOffset(0),
-      m_dlEdgeSubBandwidth(0),
-      m_ulEdgeSubBandOffset(0),
-      m_ulEdgeSubBandwidth(0),
-      m_measId(0)
+
 {
     NS_LOG_FUNCTION(this);
     m_ffrSapProvider = new MemberLteFfrSapProvider<LteFrStrictAlgorithm>(this);

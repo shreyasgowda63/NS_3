@@ -387,8 +387,8 @@ class WifiPhyStateHelper : public Object
      */
     TracedCallback<Time, Time, WifiPhyState> m_stateLogger;
 
-    bool m_sleeping;                ///< sleeping
-    bool m_isOff;                   ///< switched off
+    bool m_sleeping{false};         ///< sleeping
+    bool m_isOff{false};            ///< switched off
     Time m_endTx;                   ///< end transmit
     Time m_endRx;                   ///< end receive
     Time m_endCcaBusy;              ///< end CCA busy

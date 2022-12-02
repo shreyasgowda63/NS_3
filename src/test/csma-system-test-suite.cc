@@ -70,19 +70,16 @@ class CsmaBridgeTestCase : public TestCase
      * \param ad Sender's address (uused).
      */
     void SinkRx(Ptr<const Packet> p, const Address& ad);
-    uint32_t m_count; //!< Counter of received packets.
+    uint32_t m_count{0}; //!< Counter of received packets.
 };
 
 // Add some help text to this case to describe what it is intended to test
 CsmaBridgeTestCase::CsmaBridgeTestCase()
-    : TestCase("Bridge example for Carrier Sense Multiple Access (CSMA) networks"),
-      m_count(0)
+    : TestCase("Bridge example for Carrier Sense Multiple Access (CSMA) networks")
 {
 }
 
-CsmaBridgeTestCase::~CsmaBridgeTestCase()
-{
-}
+CsmaBridgeTestCase::~CsmaBridgeTestCase() = default;
 
 void
 CsmaBridgeTestCase::SinkRx(Ptr<const Packet> p, const Address& ad)
@@ -197,23 +194,18 @@ class CsmaBroadcastTestCase : public TestCase
      */
     void DropEvent(Ptr<const Packet> p);
 
-    uint32_t m_countNode1; //!< Counter of received packets on node 1.
-    uint32_t m_countNode2; //!< Counter of received packets on node 2.
-    uint32_t m_drops;      //!< Counter of dropped packets.
+    uint32_t m_countNode1{0}; //!< Counter of received packets on node 1.
+    uint32_t m_countNode2{0}; //!< Counter of received packets on node 2.
+    uint32_t m_drops{0};      //!< Counter of dropped packets.
 };
 
 // Add some help text to this case to describe what it is intended to test
 CsmaBroadcastTestCase::CsmaBroadcastTestCase()
-    : TestCase("Broadcast example for Carrier Sense Multiple Access (CSMA) networks"),
-      m_countNode1(0),
-      m_countNode2(0),
-      m_drops(0)
+    : TestCase("Broadcast example for Carrier Sense Multiple Access (CSMA) networks")
 {
 }
 
-CsmaBroadcastTestCase::~CsmaBroadcastTestCase()
-{
-}
+CsmaBroadcastTestCase::~CsmaBroadcastTestCase() = default;
 
 void
 CsmaBroadcastTestCase::SinkRxNode1(Ptr<const Packet> p, const Address& ad)
@@ -337,21 +329,17 @@ class CsmaMulticastTestCase : public TestCase
      */
     void DropEvent(Ptr<const Packet> p);
 
-    uint32_t m_count; //!< Counter of received packets.
-    uint32_t m_drops; //!< Counter of dropped packets.
+    uint32_t m_count{0}; //!< Counter of received packets.
+    uint32_t m_drops{0}; //!< Counter of dropped packets.
 };
 
 // Add some help text to this case to describe what it is intended to test
 CsmaMulticastTestCase::CsmaMulticastTestCase()
-    : TestCase("Multicast example for Carrier Sense Multiple Access (CSMA) networks"),
-      m_count(0),
-      m_drops(0)
+    : TestCase("Multicast example for Carrier Sense Multiple Access (CSMA) networks")
 {
 }
 
-CsmaMulticastTestCase::~CsmaMulticastTestCase()
-{
-}
+CsmaMulticastTestCase::~CsmaMulticastTestCase() = default;
 
 void
 CsmaMulticastTestCase::SinkRx(Ptr<const Packet> p, const Address& ad)
@@ -522,23 +510,18 @@ class CsmaOneSubnetTestCase : public TestCase
      * \param p Received packet (unused).
      */
     void DropEvent(Ptr<const Packet> p);
-    uint32_t m_countNode0; //!< Counter of received packets on node 0.
-    uint32_t m_countNode1; //!< Counter of received packets on node 1.
-    uint32_t m_drops;      //!< Counter of dropped packets.
+    uint32_t m_countNode0{0}; //!< Counter of received packets on node 0.
+    uint32_t m_countNode1{0}; //!< Counter of received packets on node 1.
+    uint32_t m_drops{0};      //!< Counter of dropped packets.
 };
 
 // Add some help text to this case to describe what it is intended to test
 CsmaOneSubnetTestCase::CsmaOneSubnetTestCase()
-    : TestCase("One subnet example for Carrier Sense Multiple Access (CSMA) networks"),
-      m_countNode0(0),
-      m_countNode1(0),
-      m_drops(0)
+    : TestCase("One subnet example for Carrier Sense Multiple Access (CSMA) networks")
 {
 }
 
-CsmaOneSubnetTestCase::~CsmaOneSubnetTestCase()
-{
-}
+CsmaOneSubnetTestCase::~CsmaOneSubnetTestCase() = default;
 
 void
 CsmaOneSubnetTestCase::SinkRxNode0(Ptr<const Packet> p, const Address& ad)
@@ -670,21 +653,17 @@ class CsmaPacketSocketTestCase : public TestCase
      */
     void DropEvent(Ptr<const Packet> p);
 
-    uint32_t m_count; //!< Counter of received packets.
-    uint32_t m_drops; //!< Counter of dropped packets.
+    uint32_t m_count{0}; //!< Counter of received packets.
+    uint32_t m_drops{0}; //!< Counter of dropped packets.
 };
 
 // Add some help text to this case to describe what it is intended to test
 CsmaPacketSocketTestCase::CsmaPacketSocketTestCase()
-    : TestCase("Packet socket example for Carrier Sense Multiple Access (CSMA) networks"),
-      m_count(0),
-      m_drops(0)
+    : TestCase("Packet socket example for Carrier Sense Multiple Access (CSMA) networks")
 {
 }
 
-CsmaPacketSocketTestCase::~CsmaPacketSocketTestCase()
-{
-}
+CsmaPacketSocketTestCase::~CsmaPacketSocketTestCase() = default;
 
 void
 CsmaPacketSocketTestCase::SinkRx(std::string path, Ptr<const Packet> p, const Address& address)
@@ -802,23 +781,18 @@ class CsmaPingTestCase : public TestCase
      */
     void DropEvent(Ptr<const Packet> p);
 
-    uint32_t m_countSinkRx;  //!< Counter of received packets.
-    uint32_t m_countPingRtt; //!< Counter of PING received.
-    uint32_t m_drops;        //!< Counter of dropped packets.
+    uint32_t m_countSinkRx{0};  //!< Counter of received packets.
+    uint32_t m_countPingRtt{0}; //!< Counter of PING received.
+    uint32_t m_drops{0};        //!< Counter of dropped packets.
 };
 
 // Add some help text to this case to describe what it is intended to test
 CsmaPingTestCase::CsmaPingTestCase()
-    : TestCase("Ping example for Carrier Sense Multiple Access (CSMA) networks"),
-      m_countSinkRx(0),
-      m_countPingRtt(0),
-      m_drops(0)
+    : TestCase("Ping example for Carrier Sense Multiple Access (CSMA) networks")
 {
 }
 
-CsmaPingTestCase::~CsmaPingTestCase()
-{
-}
+CsmaPingTestCase::~CsmaPingTestCase() = default;
 
 void
 CsmaPingTestCase::SinkRx(Ptr<const Packet> p, const Address& ad)
@@ -942,22 +916,18 @@ class CsmaRawIpSocketTestCase : public TestCase
      */
     void DropEvent(Ptr<const Packet> p);
 
-    uint32_t m_count; //!< Counter of received packets.
-    uint32_t m_drops; //!< Counter of dropped packets.
+    uint32_t m_count{0}; //!< Counter of received packets.
+    uint32_t m_drops{0}; //!< Counter of dropped packets.
 };
 
 // Add some help text to this case to describe what it is intended to test
 CsmaRawIpSocketTestCase::CsmaRawIpSocketTestCase()
     : TestCase(
-          "Raw internet protocol socket example for Carrier Sense Multiple Access (CSMA) networks"),
-      m_count(0),
-      m_drops(0)
+          "Raw internet protocol socket example for Carrier Sense Multiple Access (CSMA) networks")
 {
 }
 
-CsmaRawIpSocketTestCase::~CsmaRawIpSocketTestCase()
-{
-}
+CsmaRawIpSocketTestCase::~CsmaRawIpSocketTestCase() = default;
 
 void
 CsmaRawIpSocketTestCase::SinkRx(Ptr<const Packet> p, const Address& ad)
@@ -1060,21 +1030,17 @@ class CsmaStarTestCase : public TestCase
      */
     void DropEvent(Ptr<const Packet> p);
 
-    uint32_t m_count; //!< Counter of received packets.
-    uint32_t m_drops; //!< Counter of dropped packets.
+    uint32_t m_count{0}; //!< Counter of received packets.
+    uint32_t m_drops{0}; //!< Counter of dropped packets.
 };
 
 // Add some help text to this case to describe what it is intended to test
 CsmaStarTestCase::CsmaStarTestCase()
-    : TestCase("Star example for Carrier Sense Multiple Access (CSMA) networks"),
-      m_count(0),
-      m_drops(0)
+    : TestCase("Star example for Carrier Sense Multiple Access (CSMA) networks")
 {
 }
 
-CsmaStarTestCase::~CsmaStarTestCase()
-{
-}
+CsmaStarTestCase::~CsmaStarTestCase() = default;
 
 void
 CsmaStarTestCase::SinkRx(Ptr<const Packet> p, const Address& ad)

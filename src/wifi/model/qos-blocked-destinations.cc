@@ -25,13 +25,9 @@
 namespace ns3
 {
 
-QosBlockedDestinations::QosBlockedDestinations()
-{
-}
+QosBlockedDestinations::QosBlockedDestinations() = default;
 
-QosBlockedDestinations::~QosBlockedDestinations()
-{
-}
+QosBlockedDestinations::~QosBlockedDestinations() = default;
 
 bool
 QosBlockedDestinations::IsBlocked(Mac48Address dest, uint8_t tid) const

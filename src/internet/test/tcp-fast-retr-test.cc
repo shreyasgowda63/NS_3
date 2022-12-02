@@ -80,32 +80,27 @@ class TcpFastRetrTest : public TcpGeneralTest
     void ConfigureProperties() override;
     void ConfigureEnvironment() override;
 
-    bool m_pktDropped;         //!< The packet has been dropped.
-    bool m_pktWasDropped;      //!< The packet was dropped (according to the receiver).
-    uint32_t m_seqToKill;      //!< Sequence number to drop.
-    uint32_t m_dupAckReceived; //!< DipACk received.
+    bool m_pktDropped{false};     //!< The packet has been dropped.
+    bool m_pktWasDropped{false};  //!< The packet was dropped (according to the receiver).
+    uint32_t m_seqToKill;         //!< Sequence number to drop.
+    uint32_t m_dupAckReceived{0}; //!< DipACk received.
 
     SequenceNumber32 m_previousAck;   //!< Previous ACK received.
     SequenceNumber32 m_sndNextExpSeq; //!< Sender next expected sequence number.
     SequenceNumber32 m_rcvNextExpAck; //!< Receiver next expected sequence number.
 
-    uint32_t m_countRetr; //!< Retry counter.
+    uint32_t m_countRetr{0}; //!< Retry counter.
 
-    uint32_t m_bytesRcvButNotAcked; //!< Number of bytes received but not acked.
+    uint32_t m_bytesRcvButNotAcked{0}; //!< Number of bytes received but not acked.
 
     Ptr<TcpSeqErrorModel> m_errorModel; //!< Error model.
 };
 
 TcpFastRetrTest::TcpFastRetrTest(TypeId typeId, uint32_t seqToKill, const std::string& msg)
     : TcpGeneralTest(msg),
-      m_pktDropped(false),
-      m_pktWasDropped(false),
       m_seqToKill(seqToKill),
-      m_dupAckReceived(0),
       m_sndNextExpSeq(0),
-      m_rcvNextExpAck(1),
-      m_countRetr(0),
-      m_bytesRcvButNotAcked(0)
+      m_rcvNextExpAck(1)
 {
     m_congControlTypeId = typeId;
 }

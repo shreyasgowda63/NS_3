@@ -86,26 +86,8 @@ QueueDiscClass::SetQueueDisc(Ptr<QueueDisc> qd)
 }
 
 QueueDisc::Stats::Stats()
-    : nTotalReceivedPackets(0),
-      nTotalReceivedBytes(0),
-      nTotalSentPackets(0),
-      nTotalSentBytes(0),
-      nTotalEnqueuedPackets(0),
-      nTotalEnqueuedBytes(0),
-      nTotalDequeuedPackets(0),
-      nTotalDequeuedBytes(0),
-      nTotalDroppedPackets(0),
-      nTotalDroppedPacketsBeforeEnqueue(0),
-      nTotalDroppedPacketsAfterDequeue(0),
-      nTotalDroppedBytes(0),
-      nTotalDroppedBytesBeforeEnqueue(0),
-      nTotalDroppedBytesAfterDequeue(0),
-      nTotalRequeuedPackets(0),
-      nTotalRequeuedBytes(0),
-      nTotalMarkedPackets(0),
-      nTotalMarkedBytes(0)
-{
-}
+
+    = default;
 
 uint32_t
 QueueDisc::Stats::GetNDroppedPackets(std::string reason) const
@@ -364,10 +346,10 @@ QueueDisc::QueueDisc(QueueDiscSizePolicy policy)
 }
 
 QueueDisc::QueueDisc(QueueDiscSizePolicy policy, QueueSizeUnit unit)
-    : QueueDisc(policy)
+    : QueueDisc(policy),
+      m_prohibitChangeMode(true)
 {
     m_maxSize = QueueSize(unit, 0);
-    m_prohibitChangeMode = true;
 }
 
 QueueDisc::~QueueDisc()

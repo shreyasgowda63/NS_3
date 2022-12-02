@@ -44,13 +44,7 @@ Socket::GetTypeId()
 }
 
 Socket::Socket()
-    : m_manualIpTtl(false),
-      m_ipRecvTos(false),
-      m_ipRecvTtl(false),
-      m_manualIpv6Tclass(false),
-      m_manualIpv6HopLimit(false),
-      m_ipv6RecvTclass(false),
-      m_ipv6RecvHopLimit(false)
+
 {
     NS_LOG_FUNCTION_NOARGS();
     m_boundnetdevice = nullptr;
@@ -658,9 +652,7 @@ SocketIpTtlTag::Print(std::ostream& os) const
     os << "Ttl=" << (uint32_t)m_ttl;
 }
 
-SocketIpv6HopLimitTag::SocketIpv6HopLimitTag()
-{
-}
+SocketIpv6HopLimitTag::SocketIpv6HopLimitTag() = default;
 
 void
 SocketIpv6HopLimitTag::SetHopLimit(uint8_t hopLimit)
@@ -788,9 +780,7 @@ SocketSetDontFragmentTag::Print(std::ostream& os) const
     os << (m_dontFragment ? "true" : "false");
 }
 
-SocketIpTosTag::SocketIpTosTag()
-{
-}
+SocketIpTosTag::SocketIpTosTag() = default;
 
 void
 SocketIpTosTag::SetTos(uint8_t ipTos)
@@ -844,9 +834,7 @@ SocketIpTosTag::Print(std::ostream& os) const
     os << "IP_TOS = " << m_ipTos;
 }
 
-SocketPriorityTag::SocketPriorityTag()
-{
-}
+SocketPriorityTag::SocketPriorityTag() = default;
 
 void
 SocketPriorityTag::SetPriority(uint8_t priority)
@@ -900,9 +888,7 @@ SocketPriorityTag::Print(std::ostream& os) const
     os << "SO_PRIORITY = " << m_priority;
 }
 
-SocketIpv6TclassTag::SocketIpv6TclassTag()
-{
-}
+SocketIpv6TclassTag::SocketIpv6TclassTag() = default;
 
 void
 SocketIpv6TclassTag::SetTclass(uint8_t tclass)

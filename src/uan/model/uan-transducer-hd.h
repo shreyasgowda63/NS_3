@@ -66,14 +66,14 @@ class UanTransducerHd : public UanTransducer
     void Clear() override;
 
   private:
-    State m_state;             //!< Transducer state.
+    State m_state{RX};         //!< Transducer state.
     ArrivalList m_arrivalList; //!< List of arriving packets which overlap in time.
     UanPhyList m_phyList;      //!< List of physical layers attached above this tranducer.
     Ptr<UanChannel> m_channel; //!< The attached channel.
     EventId m_endTxEvent;      //!< Event scheduled for end of transmission.
     Time m_endTxTime;          //!< Time at which transmission will be completed.
-    bool m_cleared;            //!< Flab when we've been cleared.
-    double m_rxGainDb;         //!< Receive gain in dB.
+    bool m_cleared{false};     //!< Flab when we've been cleared.
+    double m_rxGainDb{0};      //!< Receive gain in dB.
 
     /**
      * Remove an entry from the arrival list.

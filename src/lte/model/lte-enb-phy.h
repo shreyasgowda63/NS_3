@@ -61,7 +61,7 @@ class LteEnbPhy : public LtePhy
      */
     LteEnbPhy(Ptr<LteSpectrumPhy> dlPhy, Ptr<LteSpectrumPhy> ulPhy);
 
-    ~LteEnbPhy() override;
+    ~LteEnbPhy() override = default;
 
     /**
      * \brief Get the type ID.
@@ -440,29 +440,29 @@ class LteEnbPhy : public LtePhy
     /// For storing info on future receptions.
     std::vector<std::list<UlDciLteControlMessage>> m_ulDciQueue;
 
-    LteEnbPhySapProvider* m_enbPhySapProvider; ///< ENB Phy SAP provider
-    LteEnbPhySapUser* m_enbPhySapUser;         ///< ENB Phy SAP user
+    LteEnbPhySapProvider* m_enbPhySapProvider;  ///< ENB Phy SAP provider
+    LteEnbPhySapUser* m_enbPhySapUser{nullptr}; ///< ENB Phy SAP user
 
-    LteEnbCphySapProvider* m_enbCphySapProvider; ///< ENB CPhy SAP provider
-    LteEnbCphySapUser* m_enbCphySapUser;         ///< ENB CPhy SAP user
+    LteEnbCphySapProvider* m_enbCphySapProvider;  ///< ENB CPhy SAP provider
+    LteEnbCphySapUser* m_enbCphySapUser{nullptr}; ///< ENB CPhy SAP user
 
     /**
      * The frame number currently served. In ns-3, frame number starts from 1.
      * In contrast, the 3GPP standard's frame number starts from 0.
      */
-    uint32_t m_nrFrames;
+    uint32_t m_nrFrames{0};
     /**
      * The subframe number currently served. In ns-3, subframe number starts
      * from 1. In contrast, the 3GPP standard's subframe number starts from 0.
      * The number resets to the beginning again after 10 subframes.
      */
-    uint32_t m_nrSubFrames;
+    uint32_t m_nrSubFrames{0};
 
-    uint16_t m_srsPeriodicity;                 ///< SRS periodicity
+    uint16_t m_srsPeriodicity{0};              ///< SRS periodicity
     Time m_srsStartTime;                       ///< SRS start time
     std::map<uint16_t, uint16_t> m_srsCounter; ///< SRS counter
     std::vector<uint16_t> m_srsUeOffset;       ///< SRS UE offset
-    uint16_t m_currentSrsOffset;               ///< current SRS offset
+    uint16_t m_currentSrsOffset{0};            ///< current SRS offset
 
     /**
      * The Master Information Block message to be broadcasted every frame.
@@ -504,7 +504,7 @@ class LteEnbPhy : public LtePhy
      * \todo In what unit is this?
      */
     uint16_t m_interferenceSamplePeriod;
-    uint16_t m_interferenceSampleCounter; ///< interference sample counter
+    uint16_t m_interferenceSampleCounter{0}; ///< interference sample counter
 
     /**
      * The `DlPhyTransmission` trace source. Contains trace information regarding

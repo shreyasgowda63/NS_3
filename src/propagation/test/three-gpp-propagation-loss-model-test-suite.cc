@@ -73,19 +73,15 @@ class ThreeGppRmaPropagationLossModelTestCase : public TestCase
     } TestVector;
 
     TestVectors<TestVector> m_testVectors; //!< array containing all the test vectors
-    double m_tolerance;                    //!< tolerance
+    double m_tolerance{5e-2};              //!< tolerance
 };
 
 ThreeGppRmaPropagationLossModelTestCase::ThreeGppRmaPropagationLossModelTestCase()
-    : TestCase("Test for the ThreeGppRmaPropagationLossModel class"),
-      m_testVectors(),
-      m_tolerance(5e-2)
+    : TestCase("Test for the ThreeGppRmaPropagationLossModel class")
 {
 }
 
-ThreeGppRmaPropagationLossModelTestCase::~ThreeGppRmaPropagationLossModelTestCase()
-{
-}
+ThreeGppRmaPropagationLossModelTestCase::~ThreeGppRmaPropagationLossModelTestCase() = default;
 
 void
 ThreeGppRmaPropagationLossModelTestCase::DoRun()
@@ -236,19 +232,15 @@ class ThreeGppUmaPropagationLossModelTestCase : public TestCase
     } TestVector;
 
     TestVectors<TestVector> m_testVectors; //!< array containing all the test vectors
-    double m_tolerance;                    //!< tolerance
+    double m_tolerance{5e-2};              //!< tolerance
 };
 
 ThreeGppUmaPropagationLossModelTestCase::ThreeGppUmaPropagationLossModelTestCase()
-    : TestCase("Test for the ThreeGppUmaPropagationLossModel class"),
-      m_testVectors(),
-      m_tolerance(5e-2)
+    : TestCase("Test for the ThreeGppUmaPropagationLossModel class")
 {
 }
 
-ThreeGppUmaPropagationLossModelTestCase::~ThreeGppUmaPropagationLossModelTestCase()
-{
-}
+ThreeGppUmaPropagationLossModelTestCase::~ThreeGppUmaPropagationLossModelTestCase() = default;
 
 void
 ThreeGppUmaPropagationLossModelTestCase::DoRun()
@@ -399,19 +391,15 @@ class ThreeGppUmiPropagationLossModelTestCase : public TestCase
     } TestVector;
 
     TestVectors<TestVector> m_testVectors; //!< array containing all the test vectors
-    double m_tolerance;                    //!< tolerance
+    double m_tolerance{5e-2};              //!< tolerance
 };
 
 ThreeGppUmiPropagationLossModelTestCase::ThreeGppUmiPropagationLossModelTestCase()
-    : TestCase("Test for the ThreeGppUmiPropagationLossModel class"),
-      m_testVectors(),
-      m_tolerance(5e-2)
+    : TestCase("Test for the ThreeGppUmiPropagationLossModel class")
 {
 }
 
-ThreeGppUmiPropagationLossModelTestCase::~ThreeGppUmiPropagationLossModelTestCase()
-{
-}
+ThreeGppUmiPropagationLossModelTestCase::~ThreeGppUmiPropagationLossModelTestCase() = default;
 
 void
 ThreeGppUmiPropagationLossModelTestCase::DoRun()
@@ -556,20 +544,16 @@ class ThreeGppIndoorOfficePropagationLossModelTestCase : public TestCase
     } TestVector;
 
     TestVectors<TestVector> m_testVectors; //!< array containing all the test vectors
-    double m_tolerance;                    //!< tolerance
+    double m_tolerance{5e-2};              //!< tolerance
 };
 
 ThreeGppIndoorOfficePropagationLossModelTestCase::ThreeGppIndoorOfficePropagationLossModelTestCase()
-    : TestCase("Test for the ThreeGppIndoorOfficePropagationLossModel class"),
-      m_testVectors(),
-      m_tolerance(5e-2)
+    : TestCase("Test for the ThreeGppIndoorOfficePropagationLossModel class")
 {
 }
 
 ThreeGppIndoorOfficePropagationLossModelTestCase::
-    ~ThreeGppIndoorOfficePropagationLossModelTestCase()
-{
-}
+    ~ThreeGppIndoorOfficePropagationLossModelTestCase() = default;
 
 void
 ThreeGppIndoorOfficePropagationLossModelTestCase::DoRun()
@@ -730,19 +714,16 @@ class ThreeGppV2vUrbanPropagationLossModelTestCase : public TestCase
     } TestVector;
 
     TestVectors<TestVector> m_testVectors; //!< array containing all the test vectors
-    double m_tolerance;                    //!< tolerance
+    double m_tolerance{5e-2};              //!< tolerance
 };
 
 ThreeGppV2vUrbanPropagationLossModelTestCase::ThreeGppV2vUrbanPropagationLossModelTestCase()
-    : TestCase("Test for the ThreeGppV2vUrbanPropagationLossModel class."),
-      m_testVectors(),
-      m_tolerance(5e-2)
+    : TestCase("Test for the ThreeGppV2vUrbanPropagationLossModel class.")
 {
 }
 
-ThreeGppV2vUrbanPropagationLossModelTestCase::~ThreeGppV2vUrbanPropagationLossModelTestCase()
-{
-}
+ThreeGppV2vUrbanPropagationLossModelTestCase::~ThreeGppV2vUrbanPropagationLossModelTestCase() =
+    default;
 
 void
 ThreeGppV2vUrbanPropagationLossModelTestCase::DoRun()
@@ -889,19 +870,16 @@ class ThreeGppV2vHighwayPropagationLossModelTestCase : public TestCase
     } TestVector;
 
     TestVectors<TestVector> m_testVectors; //!< array containing all the test vectors
-    double m_tolerance;                    //!< tolerance
+    double m_tolerance{5e-2};              //!< tolerance
 };
 
 ThreeGppV2vHighwayPropagationLossModelTestCase::ThreeGppV2vHighwayPropagationLossModelTestCase()
-    : TestCase("Test for the ThreeGppV2vHighwayPropagationLossModel"),
-      m_testVectors(),
-      m_tolerance(5e-2)
+    : TestCase("Test for the ThreeGppV2vHighwayPropagationLossModel")
 {
 }
 
-ThreeGppV2vHighwayPropagationLossModelTestCase::~ThreeGppV2vHighwayPropagationLossModelTestCase()
-{
-}
+ThreeGppV2vHighwayPropagationLossModelTestCase::~ThreeGppV2vHighwayPropagationLossModelTestCase() =
+    default;
 
 void
 ThreeGppV2vHighwayPropagationLossModelTestCase::DoRun()
@@ -1070,9 +1048,7 @@ ThreeGppShadowingTestCase::ThreeGppShadowingTestCase()
 {
 }
 
-ThreeGppShadowingTestCase::~ThreeGppShadowingTestCase()
-{
-}
+ThreeGppShadowingTestCase::~ThreeGppShadowingTestCase() = default;
 
 void
 ThreeGppShadowingTestCase::EvaluateLoss(Ptr<MobilityModel> a, Ptr<MobilityModel> b, uint8_t testNum)

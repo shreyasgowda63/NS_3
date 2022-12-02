@@ -24,18 +24,11 @@
 namespace ns3
 {
 
-Ipv6RoutingTableEntry::Ipv6RoutingTableEntry()
-{
-}
+Ipv6RoutingTableEntry::Ipv6RoutingTableEntry() = default;
 
 Ipv6RoutingTableEntry::Ipv6RoutingTableEntry(const Ipv6RoutingTableEntry& route)
-    : m_dest(route.m_dest),
-      m_destNetworkPrefix(route.m_destNetworkPrefix),
-      m_gateway(route.m_gateway),
-      m_interface(route.m_interface),
-      m_prefixToUse(route.m_prefixToUse)
-{
-}
+
+    = default;
 
 Ipv6RoutingTableEntry::Ipv6RoutingTableEntry(const Ipv6RoutingTableEntry* route)
     : m_dest(route->m_dest),
@@ -114,9 +107,7 @@ Ipv6RoutingTableEntry::Ipv6RoutingTableEntry(Ipv6Address network,
 {
 }
 
-Ipv6RoutingTableEntry::~Ipv6RoutingTableEntry()
-{
-}
+Ipv6RoutingTableEntry::~Ipv6RoutingTableEntry() = default;
 
 bool
 Ipv6RoutingTableEntry::IsHost() const
@@ -286,18 +277,12 @@ operator<<(std::ostream& os, const Ipv6RoutingTableEntry& route)
     return os;
 }
 
-Ipv6MulticastRoutingTableEntry::Ipv6MulticastRoutingTableEntry()
-{
-}
+Ipv6MulticastRoutingTableEntry::Ipv6MulticastRoutingTableEntry() = default;
 
 Ipv6MulticastRoutingTableEntry::Ipv6MulticastRoutingTableEntry(
     const Ipv6MulticastRoutingTableEntry& route)
-    : m_origin(route.m_origin),
-      m_group(route.m_group),
-      m_inputInterface(route.m_inputInterface),
-      m_outputInterfaces(route.m_outputInterfaces)
-{
-}
+
+    = default;
 
 Ipv6MulticastRoutingTableEntry::Ipv6MulticastRoutingTableEntry(
     const Ipv6MulticastRoutingTableEntry* route)

@@ -74,7 +74,6 @@ MeshWifiInterfaceMac::GetTypeId()
 }
 
 MeshWifiInterfaceMac::MeshWifiInterfaceMac()
-    : m_standard(WIFI_STANDARD_80211a)
 {
     NS_LOG_FUNCTION(this);
 
@@ -542,13 +541,8 @@ MeshWifiInterfaceMac::GetMeshPointAddress() const
 
 // Statistics:
 MeshWifiInterfaceMac::Statistics::Statistics()
-    : recvBeacons(0),
-      sentFrames(0),
-      sentBytes(0),
-      recvFrames(0),
-      recvBytes(0)
-{
-}
+
+    = default;
 
 void
 MeshWifiInterfaceMac::Statistics::Print(std::ostream& os) const

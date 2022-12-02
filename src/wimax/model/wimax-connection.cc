@@ -70,14 +70,11 @@ WimaxConnection::GetTypeId()
 WimaxConnection::WimaxConnection(Cid cid, enum Cid::Type type)
     : m_cid(cid),
       m_cidType(type),
-      m_queue(CreateObject<WimaxMacQueue>(1024)),
-      m_serviceFlow(nullptr)
+      m_queue(CreateObject<WimaxMacQueue>(1024))
 {
 }
 
-WimaxConnection::~WimaxConnection()
-{
-}
+WimaxConnection::~WimaxConnection() = default;
 
 void
 WimaxConnection::DoDispose()

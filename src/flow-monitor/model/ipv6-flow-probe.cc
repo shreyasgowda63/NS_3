@@ -266,9 +266,7 @@ Ipv6FlowProbe::GetTypeId()
     return tid;
 }
 
-Ipv6FlowProbe::~Ipv6FlowProbe()
-{
-}
+Ipv6FlowProbe::~Ipv6FlowProbe() = default;
 
 void
 Ipv6FlowProbe::DoDispose()

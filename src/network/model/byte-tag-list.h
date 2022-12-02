@@ -283,11 +283,11 @@ class ByteTagList
      */
     void Deallocate(struct ByteTagListData* data);
 
-    int32_t m_minStart;             //!< minimal start offset
-    int32_t m_maxEnd;               //!< maximal end offset
-    int32_t m_adjustment;           //!< adjustment to byte tag offsets
-    uint32_t m_used;                //!< the number of used bytes in the buffer
-    struct ByteTagListData* m_data; //!< the ByteTagListData structure
+    int32_t m_minStart{INT32_MAX};           //!< minimal start offset
+    int32_t m_maxEnd;                        //!< maximal end offset
+    int32_t m_adjustment{0};                 //!< adjustment to byte tag offsets
+    uint32_t m_used{0};                      //!< the number of used bytes in the buffer
+    struct ByteTagListData* m_data{nullptr}; //!< the ByteTagListData structure
 };
 
 void

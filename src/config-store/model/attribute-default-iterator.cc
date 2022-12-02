@@ -28,9 +28,7 @@
 namespace ns3
 {
 
-AttributeDefaultIterator::~AttributeDefaultIterator()
-{
-}
+AttributeDefaultIterator::~AttributeDefaultIterator() = default;
 
 void
 AttributeDefaultIterator::Iterate()

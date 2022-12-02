@@ -26,13 +26,9 @@ namespace ns3
 {
 namespace dot11s
 {
-IePerr::IePerr()
-{
-}
+IePerr::IePerr() = default;
 
-IePerr::~IePerr()
-{
-}
+IePerr::~IePerr() = default;
 
 WifiInformationElementId
 IePerr::ElementId() const

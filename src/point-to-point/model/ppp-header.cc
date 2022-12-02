@@ -31,13 +31,9 @@ NS_LOG_COMPONENT_DEFINE("PppHeader");
 
 NS_OBJECT_ENSURE_REGISTERED(PppHeader);
 
-PppHeader::PppHeader()
-{
-}
+PppHeader::PppHeader() = default;
 
-PppHeader::~PppHeader()
-{
-}
+PppHeader::~PppHeader() = default;
 
 TypeId
 PppHeader::GetTypeId()

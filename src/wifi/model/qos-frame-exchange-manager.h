@@ -175,7 +175,7 @@ class QosFrameExchangeManager : public FrameExchangeManager
      */
     void CancelPifsRecovery();
 
-    bool m_initialFrame;         //!< true if transmitting the initial frame of a TXOP
+    bool m_initialFrame{false};  //!< true if transmitting the initial frame of a TXOP
     bool m_pifsRecovery;         //!< true if performing a PIFS recovery after failure
     EventId m_pifsRecoveryEvent; //!< event associated with an attempt of PIFS recovery
     Ptr<Txop> m_edcaBackingOff;  //!< channel access function that invoked backoff during TXOP

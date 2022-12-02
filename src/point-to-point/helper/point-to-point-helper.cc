@@ -47,7 +47,6 @@ PointToPointHelper::PointToPointHelper()
     m_queueFactory.SetTypeId("ns3::DropTailQueue<Packet>");
     m_deviceFactory.SetTypeId("ns3::PointToPointNetDevice");
     m_channelFactory.SetTypeId("ns3::PointToPointChannel");
-    m_enableFlowControl = true;
 }
 
 void

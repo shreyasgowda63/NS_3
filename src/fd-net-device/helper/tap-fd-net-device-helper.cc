@@ -61,11 +61,11 @@ NS_LOG_COMPONENT_DEFINE("TapFdNetDeviceHelper");
 TapFdNetDeviceHelper::TapFdNetDeviceHelper()
 {
     m_deviceName = "";
-    m_modePi = false;
+
     m_tapIp4 = Ipv4Address::GetZero();
     m_tapMask4 = Ipv4Mask::GetZero();
     m_tapIp6 = Ipv6Address::GetZero();
-    m_tapPrefix6 = 64;
+
     m_tapMac = Mac48Address::Allocate();
 }
 

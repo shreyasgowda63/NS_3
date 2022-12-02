@@ -57,9 +57,7 @@ Ipv6AutoconfiguredPrefix::Ipv6AutoconfiguredPrefix(Ptr<Node> node,
     m_defaultGatewayRouter = router;
 }
 
-Ipv6AutoconfiguredPrefix::~Ipv6AutoconfiguredPrefix()
-{
-}
+Ipv6AutoconfiguredPrefix::~Ipv6AutoconfiguredPrefix() = default;
 
 void
 Ipv6AutoconfiguredPrefix::SetDefaultGatewayRouter(Ipv6Address router)

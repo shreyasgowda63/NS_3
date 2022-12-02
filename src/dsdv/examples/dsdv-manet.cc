@@ -93,8 +93,8 @@ class DsdvManetExample
     uint32_t m_periodicUpdateInterval; ///< routing update interval
     uint32_t m_settlingTime;           ///< routing setting time
     double m_dataStart;                ///< time to start data transmissions (seconds)
-    uint32_t bytesTotal;               ///< total bytes received by all nodes
-    uint32_t packetsReceived;          ///< total packets received by all nodes
+    uint32_t bytesTotal{0};            ///< total bytes received by all nodes
+    uint32_t packetsReceived{0};       ///< total packets received by all nodes
     bool m_printRoutes;                ///< print routing table
     std::string m_CSVfileName;         ///< CSV file name
 
@@ -207,10 +207,8 @@ main(int argc, char** argv)
 }
 
 DsdvManetExample::DsdvManetExample()
-    : bytesTotal(0),
-      packetsReceived(0)
-{
-}
+
+    = default;
 
 void
 DsdvManetExample::ReceivePacket(Ptr<Socket> socket)

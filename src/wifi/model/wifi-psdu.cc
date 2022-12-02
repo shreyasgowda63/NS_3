@@ -33,17 +33,17 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("WifiPsdu");
 
 WifiPsdu::WifiPsdu(Ptr<const Packet> p, const WifiMacHeader& header)
-    : m_isSingle(false)
+    : m_isSingle(false),
+      m_size(header.GetSerializedSize() + p->GetSize() + WIFI_MAC_FCS_LENGTH)
 {
     m_mpduList.push_back(Create<WifiMpdu>(p, header));
-    m_size = header.GetSerializedSize() + p->GetSize() + WIFI_MAC_FCS_LENGTH;
 }
 
 WifiPsdu::WifiPsdu(Ptr<WifiMpdu> mpdu, bool isSingle)
-    : m_isSingle(isSingle)
+    : m_isSingle(isSingle),
+      m_size(mpdu->GetSize())
 {
     m_mpduList.push_back(mpdu);
-    m_size = mpdu->GetSize();
 
     if (isSingle)
     {
@@ -69,9 +69,7 @@ WifiPsdu::WifiPsdu(std::vector<Ptr<WifiMpdu>> mpduList)
     }
 }
 
-WifiPsdu::~WifiPsdu()
-{
-}
+WifiPsdu::~WifiPsdu() = default;
 
 bool
 WifiPsdu::IsSingle() const

@@ -51,7 +51,7 @@ class UanChannel : public Channel
      */
     typedef std::vector<std::pair<Ptr<UanNetDevice>, Ptr<UanTransducer>>> UanDeviceList;
 
-    UanChannel();           //!< Constructor
+    UanChannel();  //!< Constructor
     ~UanChannel() override; //!< Dummy destructor, see DoDispose.
 
     /**
@@ -118,7 +118,7 @@ class UanChannel : public Channel
     Ptr<UanPropModel> m_prop;   //!< The propagation model.
     Ptr<UanNoiseModel> m_noise; //!< The noise model.
     /** Has Clear ever been called on the channel. */
-    bool m_cleared;
+    bool m_cleared{false};
 
     /**
      * Send a packet up to the receiving UanTransducer.

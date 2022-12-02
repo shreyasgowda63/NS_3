@@ -66,9 +66,7 @@ WifiErrorRateModelsTestCaseDsss::WifiErrorRateModelsTestCaseDsss()
 {
 }
 
-WifiErrorRateModelsTestCaseDsss::~WifiErrorRateModelsTestCaseDsss()
-{
-}
+WifiErrorRateModelsTestCaseDsss::~WifiErrorRateModelsTestCaseDsss() = default;
 
 void
 WifiErrorRateModelsTestCaseDsss::DoRun()
@@ -175,9 +173,7 @@ WifiErrorRateModelsTestCaseNist::WifiErrorRateModelsTestCaseNist()
 {
 }
 
-WifiErrorRateModelsTestCaseNist::~WifiErrorRateModelsTestCaseNist()
-{
-}
+WifiErrorRateModelsTestCaseNist::~WifiErrorRateModelsTestCaseNist() = default;
 
 void
 WifiErrorRateModelsTestCaseNist::DoRun()
@@ -421,9 +417,7 @@ WifiErrorRateModelsTestCaseMimo::WifiErrorRateModelsTestCaseMimo()
 {
 }
 
-WifiErrorRateModelsTestCaseMimo::~WifiErrorRateModelsTestCaseMimo()
-{
-}
+WifiErrorRateModelsTestCaseMimo::~WifiErrorRateModelsTestCaseMimo() = default;
 
 void
 WifiErrorRateModelsTestCaseMimo::DoRun()
@@ -978,9 +972,7 @@ TableBasedErrorRateTestCase::TableBasedErrorRateTestCase(const std::string& test
 {
 }
 
-TableBasedErrorRateTestCase::~TableBasedErrorRateTestCase()
-{
-}
+TableBasedErrorRateTestCase::~TableBasedErrorRateTestCase() = default;
 
 void
 TableBasedErrorRateTestCase::DoRun()

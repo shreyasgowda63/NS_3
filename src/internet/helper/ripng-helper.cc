@@ -33,10 +33,10 @@ RipNgHelper::RipNgHelper()
 }
 
 RipNgHelper::RipNgHelper(const RipNgHelper& o)
-    : m_factory(o.m_factory)
+    : m_factory(o.m_factory),
+      m_interfaceExclusions(o.m_interfaceExclusions),
+      m_interfaceMetrics(o.m_interfaceMetrics)
 {
-    m_interfaceExclusions = o.m_interfaceExclusions;
-    m_interfaceMetrics = o.m_interfaceMetrics;
 }
 
 RipNgHelper::~RipNgHelper()

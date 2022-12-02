@@ -406,9 +406,7 @@ MakeEvent(MEM mem_ptr, OBJ obj)
         {
         }
 
-        ~EventMemberImpl0() override
-        {
-        }
+        ~EventMemberImpl0() override = default;
 
       private:
         void Notify() override
@@ -439,9 +437,7 @@ MakeEvent(MEM mem_ptr, OBJ obj, T1 a1)
         }
 
       protected:
-        ~EventMemberImpl1() override
-        {
-        }
+        ~EventMemberImpl1() override = default;
 
       private:
         void Notify() override
@@ -474,9 +470,7 @@ MakeEvent(MEM mem_ptr, OBJ obj, T1 a1, T2 a2)
         }
 
       protected:
-        ~EventMemberImpl2() override
-        {
-        }
+        ~EventMemberImpl2() override = default;
 
       private:
         void Notify() override
@@ -511,9 +505,7 @@ MakeEvent(MEM mem_ptr, OBJ obj, T1 a1, T2 a2, T3 a3)
         }
 
       protected:
-        ~EventMemberImpl3() override
-        {
-        }
+        ~EventMemberImpl3() override = default;
 
       private:
         void Notify() override
@@ -550,9 +542,7 @@ MakeEvent(MEM mem_ptr, OBJ obj, T1 a1, T2 a2, T3 a3, T4 a4)
         }
 
       protected:
-        ~EventMemberImpl4() override
-        {
-        }
+        ~EventMemberImpl4() override = default;
 
       private:
         void Notify() override
@@ -598,9 +588,7 @@ MakeEvent(MEM mem_ptr, OBJ obj, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5)
         }
 
       protected:
-        ~EventMemberImpl5() override
-        {
-        }
+        ~EventMemberImpl5() override = default;
 
       private:
         void Notify() override
@@ -649,9 +637,7 @@ MakeEvent(MEM mem_ptr, OBJ obj, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6)
         }
 
       protected:
-        ~EventMemberImpl6() override
-        {
-        }
+        ~EventMemberImpl6() override = default;
 
       private:
         void Notify() override
@@ -690,9 +676,7 @@ MakeEvent(void (*f)(U1), T1 a1)
         }
 
       protected:
-        ~EventFunctionImpl1() override
-        {
-        }
+        ~EventFunctionImpl1() override = default;
 
       private:
         void Notify() override
@@ -725,9 +709,7 @@ MakeEvent(void (*f)(U1, U2), T1 a1, T2 a2)
         }
 
       protected:
-        ~EventFunctionImpl2() override
-        {
-        }
+        ~EventFunctionImpl2() override = default;
 
       private:
         void Notify() override
@@ -762,9 +744,7 @@ MakeEvent(void (*f)(U1, U2, U3), T1 a1, T2 a2, T3 a3)
         }
 
       protected:
-        ~EventFunctionImpl3() override
-        {
-        }
+        ~EventFunctionImpl3() override = default;
 
       private:
         void Notify() override
@@ -808,9 +788,7 @@ MakeEvent(void (*f)(U1, U2, U3, U4), T1 a1, T2 a2, T3 a3, T4 a4)
         }
 
       protected:
-        ~EventFunctionImpl4() override
-        {
-        }
+        ~EventFunctionImpl4() override = default;
 
       private:
         void Notify() override
@@ -858,9 +836,7 @@ MakeEvent(void (*f)(U1, U2, U3, U4, U5), T1 a1, T2 a2, T3 a3, T4 a4, T5 a5)
         }
 
       protected:
-        ~EventFunctionImpl5() override
-        {
-        }
+        ~EventFunctionImpl5() override = default;
 
       private:
         void Notify() override
@@ -912,9 +888,7 @@ MakeEvent(void (*f)(U1, U2, U3, U4, U5, U6), T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, 
         }
 
       protected:
-        ~EventFunctionImpl6() override
-        {
-        }
+        ~EventFunctionImpl6() override = default;
 
       private:
         void Notify() override
@@ -946,9 +920,7 @@ MakeEvent(T function)
         {
         }
 
-        ~EventImplFunctional() override
-        {
-        }
+        ~EventImplFunctional() override = default;
 
       private:
         void Notify() override

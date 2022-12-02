@@ -46,16 +46,12 @@ NS_LOG_COMPONENT_DEFINE("RipNg");
 NS_OBJECT_ENSURE_REGISTERED(RipNg);
 
 RipNg::RipNg()
-    : m_ipv6(nullptr),
-      m_splitHorizonStrategy(RipNg::POISON_REVERSE),
-      m_initialized(false)
+    : m_ipv6(nullptr)
 {
     m_rng = CreateObject<UniformRandomVariable>();
 }
 
-RipNg::~RipNg()
-{
-}
+RipNg::~RipNg() = default;
 
 TypeId
 RipNg::GetTypeId()
@@ -1450,9 +1446,7 @@ RipNgRoutingTableEntry::RipNgRoutingTableEntry(Ipv6Address network,
 {
 }
 
-RipNgRoutingTableEntry::~RipNgRoutingTableEntry()
-{
-}
+RipNgRoutingTableEntry::~RipNgRoutingTableEntry() = default;
 
 void
 RipNgRoutingTableEntry::SetRouteTag(uint16_t routeTag)

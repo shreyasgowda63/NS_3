@@ -54,9 +54,7 @@ DsrGraReply::GetTypeId()
     return tid;
 }
 
-DsrGraReply::DsrGraReply()
-{
-}
+DsrGraReply::DsrGraReply() = default;
 
 DsrGraReply::~DsrGraReply()
 {

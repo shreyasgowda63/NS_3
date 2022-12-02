@@ -117,9 +117,7 @@ IcmpEchoReplyTestCase::IcmpEchoReplyTestCase()
 {
 }
 
-IcmpEchoReplyTestCase::~IcmpEchoReplyTestCase()
-{
-}
+IcmpEchoReplyTestCase::~IcmpEchoReplyTestCase() = default;
 
 void
 IcmpEchoReplyTestCase::SendData(Ptr<Socket> socket, Ipv4Address dst)
@@ -246,9 +244,7 @@ IcmpTimeExceedTestCase::IcmpTimeExceedTestCase()
 {
 }
 
-IcmpTimeExceedTestCase::~IcmpTimeExceedTestCase()
-{
-}
+IcmpTimeExceedTestCase::~IcmpTimeExceedTestCase() = default;
 
 void
 IcmpTimeExceedTestCase::SendData(Ptr<Socket> socket, Ipv4Address dst)
@@ -391,9 +387,7 @@ IcmpV6EchoReplyTestCase::IcmpV6EchoReplyTestCase()
 {
 }
 
-IcmpV6EchoReplyTestCase::~IcmpV6EchoReplyTestCase()
-{
-}
+IcmpV6EchoReplyTestCase::~IcmpV6EchoReplyTestCase() = default;
 
 void
 IcmpV6EchoReplyTestCase::SendData(Ptr<Socket> socket, Ipv6Address dst)
@@ -529,9 +523,7 @@ IcmpV6TimeExceedTestCase::IcmpV6TimeExceedTestCase()
 {
 }
 
-IcmpV6TimeExceedTestCase::~IcmpV6TimeExceedTestCase()
-{
-}
+IcmpV6TimeExceedTestCase::~IcmpV6TimeExceedTestCase() = default;
 
 void
 IcmpV6TimeExceedTestCase::SendData(Ptr<Socket> socket, Ipv6Address dst)

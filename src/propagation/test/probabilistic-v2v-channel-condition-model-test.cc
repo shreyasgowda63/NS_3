@@ -90,20 +90,16 @@ class V2vUrbanProbChCondModelTestCase : public TestCase
     TestVectors<TestVector> m_testVectors; //!< array containing all the test vectors
     Ptr<ProbabilisticV2vUrbanChannelConditionModel> m_condModel; //!< the channel condition model
     uint64_t m_numLos{0};                                        //!< the number of LOS occurrences
-    uint64_t m_numNlosv{0}; //!< the number of NLOSv occurrences
-    double m_tolerance;     //!< tolerance
+    uint64_t m_numNlosv{0};   //!< the number of NLOSv occurrences
+    double m_tolerance{5e-3}; //!< tolerance
 };
 
 V2vUrbanProbChCondModelTestCase::V2vUrbanProbChCondModelTestCase()
-    : TestCase("Test case for the class ProbabilisticV2vUrbanChannelConditionModel"),
-      m_testVectors(),
-      m_tolerance(5e-3)
+    : TestCase("Test case for the class ProbabilisticV2vUrbanChannelConditionModel")
 {
 }
 
-V2vUrbanProbChCondModelTestCase::~V2vUrbanProbChCondModelTestCase()
-{
-}
+V2vUrbanProbChCondModelTestCase::~V2vUrbanProbChCondModelTestCase() = default;
 
 void
 V2vUrbanProbChCondModelTestCase::EvaluateChannelCondition(Ptr<MobilityModel> a,
@@ -321,21 +317,17 @@ class V2vHighwayProbChCondModelTestCase : public TestCase
 
     TestVectors<TestVector> m_testVectors; //!< array containing all the test vectors
     Ptr<ProbabilisticV2vHighwayChannelConditionModel> m_condModel; //!< the channel condition model
-    uint64_t m_numLos{0};  //!< the number of LOS occurrences
-    uint64_t m_numNlos{0}; //!< the number of NLOS occurrences
-    double m_tolerance;    //!< tolerance
+    uint64_t m_numLos{0};     //!< the number of LOS occurrences
+    uint64_t m_numNlos{0};    //!< the number of NLOS occurrences
+    double m_tolerance{5e-3}; //!< tolerance
 };
 
 V2vHighwayProbChCondModelTestCase::V2vHighwayProbChCondModelTestCase()
-    : TestCase("Test case for the class ProbabilisticV2vHighwayChannelConditionModel"),
-      m_testVectors(),
-      m_tolerance(5e-3)
+    : TestCase("Test case for the class ProbabilisticV2vHighwayChannelConditionModel")
 {
 }
 
-V2vHighwayProbChCondModelTestCase::~V2vHighwayProbChCondModelTestCase()
-{
-}
+V2vHighwayProbChCondModelTestCase::~V2vHighwayProbChCondModelTestCase() = default;
 
 void
 V2vHighwayProbChCondModelTestCase::EvaluateChannelCondition(Ptr<MobilityModel> a,

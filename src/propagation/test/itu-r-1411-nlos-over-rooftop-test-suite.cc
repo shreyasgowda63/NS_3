@@ -101,9 +101,7 @@ ItuR1411NlosOverRooftopPropagationLossModelTestCase::
 }
 
 ItuR1411NlosOverRooftopPropagationLossModelTestCase::
-    ~ItuR1411NlosOverRooftopPropagationLossModelTestCase()
-{
-}
+    ~ItuR1411NlosOverRooftopPropagationLossModelTestCase() = default;
 
 void
 ItuR1411NlosOverRooftopPropagationLossModelTestCase::DoRun()

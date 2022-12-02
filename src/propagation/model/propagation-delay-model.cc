@@ -36,9 +36,7 @@ PropagationDelayModel::GetTypeId()
     return tid;
 }
 
-PropagationDelayModel::~PropagationDelayModel()
-{
-}
+PropagationDelayModel::~PropagationDelayModel() = default;
 
 int64_t
 PropagationDelayModel::AssignStreams(int64_t stream)
@@ -66,13 +64,9 @@ RandomPropagationDelayModel::GetTypeId()
     return tid;
 }
 
-RandomPropagationDelayModel::RandomPropagationDelayModel()
-{
-}
+RandomPropagationDelayModel::RandomPropagationDelayModel() = default;
 
-RandomPropagationDelayModel::~RandomPropagationDelayModel()
-{
-}
+RandomPropagationDelayModel::~RandomPropagationDelayModel() = default;
 
 Time
 RandomPropagationDelayModel::GetDelay(Ptr<MobilityModel> a, Ptr<MobilityModel> b) const
@@ -106,9 +100,7 @@ ConstantSpeedPropagationDelayModel::GetTypeId()
     return tid;
 }
 
-ConstantSpeedPropagationDelayModel::ConstantSpeedPropagationDelayModel()
-{
-}
+ConstantSpeedPropagationDelayModel::ConstantSpeedPropagationDelayModel() = default;
 
 Time
 ConstantSpeedPropagationDelayModel::GetDelay(Ptr<MobilityModel> a, Ptr<MobilityModel> b) const

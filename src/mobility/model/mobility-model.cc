@@ -55,13 +55,9 @@ MobilityModel::GetTypeId()
     return tid;
 }
 
-MobilityModel::MobilityModel()
-{
-}
+MobilityModel::MobilityModel() = default;
 
-MobilityModel::~MobilityModel()
-{
-}
+MobilityModel::~MobilityModel() = default;
 
 Vector
 MobilityModel::GetPosition() const

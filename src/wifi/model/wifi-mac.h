@@ -768,7 +768,7 @@ class WifiMac : public Object
      * state. Having a big switch seems like a good intermediate stage,
      * however.
      */
-    bool m_qosSupported;
+    bool m_qosSupported{false};
 
     bool m_shortSlotTimeSupported; ///< flag whether short slot time is supported
     bool m_ctsToSelfSupported;     ///< flag indicating whether CTS-To-Self is supported

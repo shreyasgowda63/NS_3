@@ -38,7 +38,6 @@ NS_LOG_COMPONENT_DEFINE("EmuEpcHelper");
 NS_OBJECT_ENSURE_REGISTERED(EmuEpcHelper);
 
 EmuEpcHelper::EmuEpcHelper()
-    : NoBackhaulEpcHelper()
 {
     NS_LOG_FUNCTION(this);
     // To access the attribute value within the constructor

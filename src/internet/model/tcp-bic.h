@@ -132,11 +132,11 @@ class TcpBic : public TcpCongestionOps
     uint32_t m_smoothPart;  //!< Number of RTT needed to reach Wmax from Wmax-B
 
     // Bic parameters
-    uint32_t m_cWndCnt;     //!<  cWnd integer-to-float counter
-    uint32_t m_lastMaxCwnd; //!<  Last maximum cWnd
-    uint32_t m_lastCwnd;    //!<  Last cWnd
-    Time m_epochStart;      //!<  Beginning of an epoch
-    uint8_t m_b;            //!< Binary search coefficient
+    uint32_t m_cWndCnt{0};     //!<  cWnd integer-to-float counter
+    uint32_t m_lastMaxCwnd{0}; //!<  Last maximum cWnd
+    uint32_t m_lastCwnd{0};    //!<  Last cWnd
+    Time m_epochStart;         //!<  Beginning of an epoch
+    uint8_t m_b;               //!< Binary search coefficient
 };
 
 } // namespace ns3

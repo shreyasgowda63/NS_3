@@ -70,14 +70,11 @@ class BuildingsChannelConditionModelTestCase : public TestCase
 };
 
 BuildingsChannelConditionModelTestCase::BuildingsChannelConditionModelTestCase()
-    : TestCase("Test case for the BuildingsChannelConditionModel"),
-      m_testVectors()
+    : TestCase("Test case for the BuildingsChannelConditionModel")
 {
 }
 
-BuildingsChannelConditionModelTestCase::~BuildingsChannelConditionModelTestCase()
-{
-}
+BuildingsChannelConditionModelTestCase::~BuildingsChannelConditionModelTestCase() = default;
 
 void
 BuildingsChannelConditionModelTestCase::DoRun()

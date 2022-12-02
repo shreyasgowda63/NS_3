@@ -64,9 +64,9 @@ class TimestampTestCase : public TcpGeneralTest
 };
 
 TimestampTestCase::TimestampTestCase(TimestampTestCase::Configuration conf)
-    : TcpGeneralTest("Testing the TCP Timestamp option")
+    : TcpGeneralTest("Testing the TCP Timestamp option"),
+      m_configuration(conf)
 {
-    m_configuration = conf;
 }
 
 Ptr<TcpSocketMsgBase>
@@ -246,10 +246,10 @@ class TimestampValueTestCase : public TestCase
 TimestampValueTestCase::TimestampValueTestCase(double startTime,
                                                double timeToWait,
                                                std::string name)
-    : TestCase(name)
+    : TestCase(name),
+      m_startTime(startTime),
+      m_timeToWait(timeToWait)
 {
-    m_startTime = startTime;
-    m_timeToWait = timeToWait;
 }
 
 void

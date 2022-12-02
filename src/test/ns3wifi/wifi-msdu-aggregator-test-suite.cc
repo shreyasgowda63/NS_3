@@ -46,12 +46,11 @@ class WifiMsduAggregatorThroughputTest : public TestCase
     void DoRun() override;
 
   private:
-    bool m_writeResults; //!< flag whether to generate pcap
+    bool m_writeResults{false}; //!< flag whether to generate pcap
 };
 
 WifiMsduAggregatorThroughputTest::WifiMsduAggregatorThroughputTest()
-    : TestCase("MsduAggregator throughput test"),
-      m_writeResults(false)
+    : TestCase("MsduAggregator throughput test")
 {
 }
 

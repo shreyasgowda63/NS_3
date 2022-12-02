@@ -32,9 +32,7 @@ class SampleEmitter : public Object
         m_var = CreateObject<ExponentialRandomVariable>();
     }
 
-    ~SampleEmitter() override
-    {
-    }
+    ~SampleEmitter() override = default;
 
     /// Start emission of data.
     void Start()
@@ -110,21 +108,17 @@ class ProbeTestCase1 : public TestCase
      * \param newValue New value
      */
     void TraceSink(std::string context, double oldValue, double newValue);
-    uint32_t m_objectProbed; //!< Number of probes by Object
-    uint32_t m_pathProbed;   //!< Number of probed by Path
-    Ptr<SampleEmitter> m_s;  //!< Sample emitter pointer
+    uint32_t m_objectProbed{0}; //!< Number of probes by Object
+    uint32_t m_pathProbed{0};   //!< Number of probed by Path
+    Ptr<SampleEmitter> m_s;     //!< Sample emitter pointer
 };
 
 ProbeTestCase1::ProbeTestCase1()
-    : TestCase("basic probe test case"),
-      m_objectProbed(0),
-      m_pathProbed(0)
+    : TestCase("basic probe test case")
 {
 }
 
-ProbeTestCase1::~ProbeTestCase1()
-{
-}
+ProbeTestCase1::~ProbeTestCase1() = default;
 
 void
 ProbeTestCase1::TraceSink(std::string context, double oldValue, double newValue)

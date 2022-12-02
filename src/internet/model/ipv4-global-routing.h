@@ -237,10 +237,10 @@ class Ipv4GlobalRouting : public Ipv4RoutingProtocol
   private:
     /// Set to true if packets are randomly routed among ECMP; set to false for using only one route
     /// consistently
-    bool m_randomEcmpRouting;
+    bool m_randomEcmpRouting{false};
     /// Set to true if this interface should respond to interface events by globallly recomputing
     /// routes
-    bool m_respondToInterfaceEvents;
+    bool m_respondToInterfaceEvents{false};
     /// A uniform random number generator for randomly routing packets among ECMP
     Ptr<UniformRandomVariable> m_rand;
 

@@ -45,9 +45,7 @@ DsssPpdu::DsssPpdu(Ptr<const WifiPsdu> psdu,
     m_dsssSig.SetLength(psduDuration.GetMicroSeconds());
 }
 
-DsssPpdu::~DsssPpdu()
-{
-}
+DsssPpdu::~DsssPpdu() = default;
 
 WifiTxVector
 DsssPpdu::DoGetTxVector() const
@@ -76,14 +74,10 @@ DsssPpdu::Copy() const
 }
 
 DsssPpdu::DsssSigHeader::DsssSigHeader()
-    : m_rate(0b00001010),
-      m_length(0)
-{
-}
 
-DsssPpdu::DsssSigHeader::~DsssSigHeader()
-{
-}
+    = default;
+
+DsssPpdu::DsssSigHeader::~DsssSigHeader() = default;
 
 TypeId
 DsssPpdu::DsssSigHeader::GetTypeId()

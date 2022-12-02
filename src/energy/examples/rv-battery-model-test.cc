@@ -98,20 +98,13 @@ class BatteryLifetimeTest
     } LoadProfile;
 
     std::vector<LoadProfile> m_loadProfiles; //!< Load profiles
-    double m_alpha;                          //!< Alpha parameter of the battery model
-    double m_beta;                           //!< Beta parameter of the battery model
+    double m_alpha{35220};                   //!< Alpha parameter of the battery model
+    double m_beta{0.637};                    //!< Beta parameter of the battery model
 };
 
-BatteryLifetimeTest::BatteryLifetimeTest()
-{
-    // Itsy battery
-    m_alpha = 35220;
-    m_beta = 0.637;
-}
+BatteryLifetimeTest::BatteryLifetimeTest() = default;
 
-BatteryLifetimeTest::~BatteryLifetimeTest()
-{
-}
+BatteryLifetimeTest::~BatteryLifetimeTest() = default;
 
 void
 BatteryLifetimeTest::CreateLoadProfiles()

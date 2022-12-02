@@ -55,17 +55,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("UanCwExample");
 
 Experiment::Experiment()
-    : m_numNodes(15),
-      m_dataRate(80),
-      m_depth(70),
-      m_boundary(500),
-      m_packetSize(32),
-      m_bytesTotal(0),
-      m_cwMin(10),
-      m_cwMax(400),
-      m_cwStep(10),
-      m_avgs(3),
-      m_slotTime(Seconds(0.2)),
+    : m_slotTime(Seconds(0.2)),
       m_simTime(Seconds(1000)),
       m_gnudatfile("uan-cw-example.gpl"),
       m_asciitracefile("uan-cw-example.asc"),

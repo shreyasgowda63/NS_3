@@ -114,9 +114,7 @@ LteRlcAmE2eTestCase::LteRlcAmE2eTestCase(std::string name,
     NS_LOG_INFO("Creating LteRlcAmTestingTestCase: " + name);
 }
 
-LteRlcAmE2eTestCase::~LteRlcAmE2eTestCase()
-{
-}
+LteRlcAmE2eTestCase::~LteRlcAmE2eTestCase() = default;
 
 void
 LteRlcAmE2eTestCase::DlDropEvent(Ptr<const Packet> p)

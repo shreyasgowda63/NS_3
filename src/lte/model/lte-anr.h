@@ -194,12 +194,12 @@ class LteAnr : public Object
      * \brief Reference to the "user" part of the ANR SAP interface, which is
      *        provided by the eNodeB RRC instance.
      */
-    LteAnrSapUser* m_anrSapUser;
+    LteAnrSapUser* m_anrSapUser{nullptr};
 
     // ATTRIBUTE
 
     /// The attribute Threshold.
-    uint8_t m_threshold;
+    uint8_t m_threshold{0};
 
     /**
      * \brief Neighbour Relation between two eNodeBs (serving eNodeB and neighbour
@@ -227,7 +227,7 @@ class LteAnr : public Object
     const NeighbourRelation_t* Find(uint16_t cellId) const;
 
     /// The expected measurement identity
-    uint8_t m_measId;
+    uint8_t m_measId{0};
 
     /// Serving cell ID
     uint16_t m_servingCellId;

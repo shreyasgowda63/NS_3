@@ -81,10 +81,10 @@ class AmpduSubframeHeader : public Header
     bool IsSignatureValid() const;
 
   private:
-    uint16_t m_length;   //!< length field in bytes
-    bool m_eof;          //!< EOF field
-    uint8_t m_signature; //!< delimiter signature (should correspond to pattern 0x4E in order to be
-                         //!< assumed valid)
+    uint16_t m_length{0};      //!< length field in bytes
+    bool m_eof{0};             //!< EOF field
+    uint8_t m_signature{0x4E}; //!< delimiter signature (should correspond to pattern 0x4E in order
+                               //!< to be assumed valid)
 };
 
 } // namespace ns3

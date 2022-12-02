@@ -1046,9 +1046,7 @@ PacketMetadata::BeginItem(Buffer buffer) const
 PacketMetadata::ItemIterator::ItemIterator(const PacketMetadata* metadata, Buffer buffer)
     : m_metadata(metadata),
       m_buffer(buffer),
-      m_current(metadata->m_head),
-      m_offset(0),
-      m_hasReadTail(false)
+      m_current(metadata->m_head)
 {
     NS_LOG_FUNCTION(this << metadata << &buffer);
 }

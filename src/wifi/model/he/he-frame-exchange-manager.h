@@ -243,7 +243,7 @@ class HeFrameExchangeManager : public VhtFrameExchangeManager
     std::set<Mac48Address> m_staExpectTbPpduFrom; //!< set of stations expected to send a TB PPDU
     EventId m_multiStaBaEvent;                    //!< Sending a Multi-STA BlockAck event
     MuSnrTag m_muSnrTag;                          //!< Tag to attach to Multi-STA BlockAck frames
-    bool m_triggerFrameInAmpdu; //!< True if the received A-MPDU contains an MU-BAR
+    bool m_triggerFrameInAmpdu{false}; //!< True if the received A-MPDU contains an MU-BAR
 };
 
 } // namespace ns3

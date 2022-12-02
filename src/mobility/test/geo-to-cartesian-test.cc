@@ -1587,9 +1587,7 @@ GeoToCartesianTestCase::GeoToCartesianTestCase(double latitude,
 {
 }
 
-GeoToCartesianTestCase::~GeoToCartesianTestCase()
-{
-}
+GeoToCartesianTestCase::~GeoToCartesianTestCase() = default;
 
 void
 GeoToCartesianTestCase::DoRun()
@@ -1764,9 +1762,7 @@ CartesianToGeoTestCase::CartesianToGeoTestCase(double latitude,
 {
 }
 
-CartesianToGeoTestCase::~CartesianToGeoTestCase()
-{
-}
+CartesianToGeoTestCase::~CartesianToGeoTestCase() = default;
 
 void
 CartesianToGeoTestCase::DoRun()

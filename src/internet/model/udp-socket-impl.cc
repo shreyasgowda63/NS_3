@@ -81,15 +81,8 @@ UdpSocketImpl::GetTypeId()
 }
 
 UdpSocketImpl::UdpSocketImpl()
-    : m_endPoint(nullptr),
-      m_endPoint6(nullptr),
-      m_node(nullptr),
-      m_udp(nullptr),
-      m_errno(ERROR_NOTERROR),
-      m_shutdownSend(false),
-      m_shutdownRecv(false),
-      m_connected(false),
-      m_rxAvailable(0)
+    : m_node(nullptr),
+      m_udp(nullptr)
 {
     NS_LOG_FUNCTION(this);
     m_allowBroadcast = false;

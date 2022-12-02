@@ -57,9 +57,7 @@ class TestObject : public Object
     }
 
     /** Constructor. */
-    TestObject()
-    {
-    }
+    TestObject() = default;
 };
 
 /**
@@ -84,9 +82,7 @@ class AlternateTestObject : public Object
     }
 
     /** Constructor. */
-    AlternateTestObject()
-    {
-    }
+    AlternateTestObject() = default;
 };
 
 /**
@@ -119,9 +115,7 @@ BasicAddTestCase::BasicAddTestCase()
 {
 }
 
-BasicAddTestCase::~BasicAddTestCase()
-{
-}
+BasicAddTestCase::~BasicAddTestCase() = default;
 
 void
 BasicAddTestCase::DoTeardown()
@@ -193,9 +187,7 @@ StringContextAddTestCase::StringContextAddTestCase()
 {
 }
 
-StringContextAddTestCase::~StringContextAddTestCase()
-{
-}
+StringContextAddTestCase::~StringContextAddTestCase() = default;
 
 void
 StringContextAddTestCase::DoTeardown()
@@ -266,9 +258,7 @@ FullyQualifiedAddTestCase::FullyQualifiedAddTestCase()
 {
 }
 
-FullyQualifiedAddTestCase::~FullyQualifiedAddTestCase()
-{
-}
+FullyQualifiedAddTestCase::~FullyQualifiedAddTestCase() = default;
 
 void
 FullyQualifiedAddTestCase::DoTeardown()
@@ -343,9 +333,7 @@ RelativeAddTestCase::RelativeAddTestCase()
 {
 }
 
-RelativeAddTestCase::~RelativeAddTestCase()
-{
-}
+RelativeAddTestCase::~RelativeAddTestCase() = default;
 
 void
 RelativeAddTestCase::DoTeardown()
@@ -416,9 +404,7 @@ BasicRenameTestCase::BasicRenameTestCase()
 {
 }
 
-BasicRenameTestCase::~BasicRenameTestCase()
-{
-}
+BasicRenameTestCase::~BasicRenameTestCase() = default;
 
 void
 BasicRenameTestCase::DoTeardown()
@@ -482,9 +468,7 @@ StringContextRenameTestCase::StringContextRenameTestCase()
 {
 }
 
-StringContextRenameTestCase::~StringContextRenameTestCase()
-{
-}
+StringContextRenameTestCase::~StringContextRenameTestCase() = default;
 
 void
 StringContextRenameTestCase::DoTeardown()
@@ -548,9 +532,7 @@ FullyQualifiedRenameTestCase::FullyQualifiedRenameTestCase()
 {
 }
 
-FullyQualifiedRenameTestCase::~FullyQualifiedRenameTestCase()
-{
-}
+FullyQualifiedRenameTestCase::~FullyQualifiedRenameTestCase() = default;
 
 void
 FullyQualifiedRenameTestCase::DoTeardown()
@@ -614,9 +596,7 @@ RelativeRenameTestCase::RelativeRenameTestCase()
 {
 }
 
-RelativeRenameTestCase::~RelativeRenameTestCase()
-{
-}
+RelativeRenameTestCase::~RelativeRenameTestCase() = default;
 
 void
 RelativeRenameTestCase::DoTeardown()
@@ -680,9 +660,7 @@ FindPathTestCase::FindPathTestCase()
 {
 }
 
-FindPathTestCase::~FindPathTestCase()
-{
-}
+FindPathTestCase::~FindPathTestCase() = default;
 
 void
 FindPathTestCase::DoTeardown()
@@ -741,9 +719,7 @@ BasicFindTestCase::BasicFindTestCase()
 {
 }
 
-BasicFindTestCase::~BasicFindTestCase()
-{
-}
+BasicFindTestCase::~BasicFindTestCase() = default;
 
 void
 BasicFindTestCase::DoTeardown()
@@ -815,9 +791,7 @@ StringContextFindTestCase::StringContextFindTestCase()
 {
 }
 
-StringContextFindTestCase::~StringContextFindTestCase()
-{
-}
+StringContextFindTestCase::~StringContextFindTestCase() = default;
 
 void
 StringContextFindTestCase::DoTeardown()
@@ -889,9 +863,7 @@ FullyQualifiedFindTestCase::FullyQualifiedFindTestCase()
 {
 }
 
-FullyQualifiedFindTestCase::~FullyQualifiedFindTestCase()
-{
-}
+FullyQualifiedFindTestCase::~FullyQualifiedFindTestCase() = default;
 
 void
 FullyQualifiedFindTestCase::DoTeardown()
@@ -963,9 +935,7 @@ RelativeFindTestCase::RelativeFindTestCase()
 {
 }
 
-RelativeFindTestCase::~RelativeFindTestCase()
-{
-}
+RelativeFindTestCase::~RelativeFindTestCase() = default;
 
 void
 RelativeFindTestCase::DoTeardown()
@@ -1034,9 +1004,7 @@ AlternateFindTestCase::AlternateFindTestCase()
 {
 }
 
-AlternateFindTestCase::~AlternateFindTestCase()
-{
-}
+AlternateFindTestCase::~AlternateFindTestCase() = default;
 
 void
 AlternateFindTestCase::DoTeardown()

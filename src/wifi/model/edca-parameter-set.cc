@@ -25,14 +25,8 @@ namespace ns3
 {
 
 EdcaParameterSet::EdcaParameterSet()
-    : m_qosInfo(0),
-      m_reserved(0),
-      m_acBE(0),
-      m_acBK(0),
-      m_acVI(0),
-      m_acVO(0)
-{
-}
+
+    = default;
 
 WifiInformationElementId
 EdcaParameterSet::ElementId() const

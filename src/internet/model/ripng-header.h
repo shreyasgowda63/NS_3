@@ -122,10 +122,10 @@ class RipNgRte : public Header
     uint8_t GetRouteMetric() const;
 
   private:
-    Ipv6Address m_prefix; //!< prefix
-    uint16_t m_tag;       //!< route tag
-    uint8_t m_prefixLen;  //!< prefix length
-    uint8_t m_metric;     //!< route metric
+    Ipv6Address m_prefix;   //!< prefix
+    uint16_t m_tag{0};      //!< route tag
+    uint8_t m_prefixLen{0}; //!< prefix length
+    uint8_t m_metric{16};   //!< route metric
 };
 
 /**
@@ -225,7 +225,7 @@ class RipNgHeader : public Header
     std::list<RipNgRte> GetRteList() const;
 
   private:
-    uint8_t m_command;             //!< command type
+    uint8_t m_command{0};          //!< command type
     std::list<RipNgRte> m_rteList; //!< list of the RTEs in the message
 };
 

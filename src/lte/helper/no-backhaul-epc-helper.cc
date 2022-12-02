@@ -46,14 +46,11 @@ NS_LOG_COMPONENT_DEFINE("NoBackhaulEpcHelper");
 NS_OBJECT_ENSURE_REGISTERED(NoBackhaulEpcHelper);
 
 NoBackhaulEpcHelper::NoBackhaulEpcHelper()
-    : m_gtpuUdpPort(2152), // fixed by the standard
-      m_s11LinkDataRate(DataRate("10Gb/s")),
+    : m_s11LinkDataRate(DataRate("10Gb/s")),
       m_s11LinkDelay(Seconds(0)),
-      m_s11LinkMtu(3000),
-      m_gtpcUdpPort(2123), // fixed by the standard
+      // fixed by the standard
       m_s5LinkDataRate(DataRate("10Gb/s")),
-      m_s5LinkDelay(Seconds(0)),
-      m_s5LinkMtu(3000)
+      m_s5LinkDelay(Seconds(0))
 {
     NS_LOG_FUNCTION(this);
     // To access the attribute value within the constructor

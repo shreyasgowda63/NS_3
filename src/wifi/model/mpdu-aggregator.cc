@@ -56,13 +56,9 @@ MpduAggregator::GetTypeId()
     return tid;
 }
 
-MpduAggregator::MpduAggregator()
-{
-}
+MpduAggregator::MpduAggregator() = default;
 
-MpduAggregator::~MpduAggregator()
-{
-}
+MpduAggregator::~MpduAggregator() = default;
 
 void
 MpduAggregator::DoDispose()

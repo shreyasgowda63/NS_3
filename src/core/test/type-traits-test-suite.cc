@@ -43,9 +43,7 @@ class TypeTraitsTestCase : public TestCase
     TypeTraitsTestCase();
 
     /** Destructor. */
-    ~TypeTraitsTestCase() override
-    {
-    }
+    ~TypeTraitsTestCase() override = default;
 
   private:
     void DoRun() override;

@@ -108,9 +108,7 @@ class TxopTest : public TxopType
 class ChannelAccessManagerStub : public ChannelAccessManager
 {
   public:
-    ChannelAccessManagerStub()
-    {
-    }
+    ChannelAccessManagerStub() = default;
 
     /**
      * Set the Short Interframe Space (SIFS).

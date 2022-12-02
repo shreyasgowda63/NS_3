@@ -149,11 +149,11 @@ class EpcEnbApplication : public Application
      */
     struct EpsFlowId_t
     {
-        uint16_t m_rnti; ///< RNTI
-        uint8_t m_bid;   ///< Bid, the EPS Bearer IDentifier
+        uint16_t m_rnti{0}; ///< RNTI
+        uint8_t m_bid{0};   ///< Bid, the EPS Bearer IDentifier
 
       public:
-        EpsFlowId_t();
+        EpsFlowId_t() = default;
         /**
          * Constructor
          *
@@ -298,7 +298,7 @@ class EpcEnbApplication : public Application
     /**
      * UDP port to be used for GTP
      */
-    uint16_t m_gtpuUdpPort;
+    uint16_t m_gtpuUdpPort{2152};
 
     /**
      * Provider for the S1 SAP
@@ -308,13 +308,13 @@ class EpcEnbApplication : public Application
     /**
      * User for the S1 SAP
      */
-    EpcEnbS1SapUser* m_s1SapUser;
+    EpcEnbS1SapUser* m_s1SapUser{nullptr};
 
     /**
      * MME side of the S1-AP SAP
      *
      */
-    EpcS1apSapMme* m_s1apSapMme;
+    EpcS1apSapMme* m_s1apSapMme{nullptr};
 
     /**
      * ENB side of the S1-AP SAP

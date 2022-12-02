@@ -85,18 +85,18 @@ class HeOperation : public WifiInformationElement
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 
     // HE Operation Parameters fields
-    uint8_t m_bssColor;                     //!< BSS color
-    uint8_t m_defaultPEDuration;            //!< default PE duration
-    uint8_t m_twtRequired;                  //!< TWT required
-    uint16_t m_heDurationBasedRtsThreshold; //!< HE duration based RTS threshold
-    uint8_t m_partialBssColor;              //!< partial BSS color
-    uint8_t m_maxBssidIndicator;            //!< max BSSID indicator
-    uint8_t m_txBssidIndicator;             //!< TX BSSID indicator
-    uint8_t m_bssColorDisabled;             //!< BSS color disabled
-    uint8_t m_dualBeacon;                   //!< Dual Beacon
+    uint8_t m_bssColor{0};                     //!< BSS color
+    uint8_t m_defaultPEDuration{0};            //!< default PE duration
+    uint8_t m_twtRequired{0};                  //!< TWT required
+    uint16_t m_heDurationBasedRtsThreshold{0}; //!< HE duration based RTS threshold
+    uint8_t m_partialBssColor{0};              //!< partial BSS color
+    uint8_t m_maxBssidIndicator{0};            //!< max BSSID indicator
+    uint8_t m_txBssidIndicator{0};             //!< TX BSSID indicator
+    uint8_t m_bssColorDisabled{0};             //!< BSS color disabled
+    uint8_t m_dualBeacon{0};                   //!< Dual Beacon
 
     // Basic HE-MCS and NSS Set
-    uint16_t m_basicHeMcsAndNssSet; ///< basic HE MCS NSS set
+    uint16_t m_basicHeMcsAndNssSet{0}; ///< basic HE MCS NSS set
 
     // TODO: VHT Operation Information subfields not defined in the standard yet.
 };

@@ -422,12 +422,12 @@ class Object : public SimpleRefCount<Object, ObjectBase, ObjectDeleter>
      * Set to \c true when the DoDispose() method of the Object has run,
      * \c false otherwise.
      */
-    bool m_disposed;
+    bool m_disposed{false};
     /**
      * Set to \c true once the DoInitialize() method has run,
      * \c false otherwise
      */
-    bool m_initialized;
+    bool m_initialized{false};
     /**
      * A pointer to an array of 'aggregates'.
      *
@@ -443,7 +443,7 @@ class Object : public SimpleRefCount<Object, ObjectBase, ObjectDeleter>
      * This integer is used to implement a heuristic to sort
      * the array of aggregates in most-frequently accessed order.
      */
-    uint32_t m_getObjectCount;
+    uint32_t m_getObjectCount{0};
 };
 
 template <typename T>

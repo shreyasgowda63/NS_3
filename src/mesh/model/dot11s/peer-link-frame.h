@@ -85,7 +85,7 @@ class PeerLinkOpenStart : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint16_t m_capability;    ///< capability
+    uint16_t m_capability{0}; ///< capability
     SupportedRates m_rates;   ///< rates
     IeMeshId m_meshId;        ///< mesh ID
     IeConfiguration m_config; ///< config
@@ -217,8 +217,8 @@ class PeerLinkConfirmStart : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint16_t m_capability;    ///< capability
-    uint16_t m_aid;           ///< aid
+    uint16_t m_capability{0}; ///< capability
+    uint16_t m_aid{0};        ///< aid
     SupportedRates m_rates;   ///< rates
     IeConfiguration m_config; ///< config
 

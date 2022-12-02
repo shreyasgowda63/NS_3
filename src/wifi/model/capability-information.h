@@ -155,7 +155,7 @@ class CapabilityInformation
      */
     void Clear(uint8_t n);
 
-    uint16_t m_capability; ///< capability
+    uint16_t m_capability{0}; ///< capability
 };
 
 } // namespace ns3

@@ -128,11 +128,7 @@ class Time
      * \param [in] o Time to assign.
      * \return The Time.
      */
-    inline Time& operator=(const Time& o)
-    {
-        m_data = o.m_data;
-        return *this;
-    }
+    inline Time& operator=(const Time& o) = default;
 
     /** Default constructor, with value 0. */
     inline Time()

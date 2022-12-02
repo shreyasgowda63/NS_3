@@ -42,9 +42,7 @@ WaveformGenerator::WaveformGenerator()
 {
 }
 
-WaveformGenerator::~WaveformGenerator()
-{
-}
+WaveformGenerator::~WaveformGenerator() = default;
 
 void
 WaveformGenerator::DoDispose()

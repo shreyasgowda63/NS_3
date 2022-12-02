@@ -175,23 +175,23 @@ class DsrFsHeader : public Header
     /**
      * \brief The "next header" field.
      */
-    uint8_t m_nextHeader;
+    uint8_t m_nextHeader{0};
     /**
      * \brief The type of the message.
      */
-    uint8_t m_messageType;
+    uint8_t m_messageType{0};
     /**
      * \brief The "payload length" field.
      */
-    uint16_t m_payloadLen;
+    uint16_t m_payloadLen{0};
     /**
      * \brief The source node id
      */
-    uint16_t m_sourceId;
+    uint16_t m_sourceId{0};
     /**
      * \brief The destination node id
      */
-    uint16_t m_destId;
+    uint16_t m_destId{0};
     /**
      * \brief The data of the extension.
      */

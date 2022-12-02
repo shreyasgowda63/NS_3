@@ -45,9 +45,7 @@ class EmuFdNetDeviceHelper : public FdNetDeviceHelper
      */
     EmuFdNetDeviceHelper();
 
-    ~EmuFdNetDeviceHelper() override
-    {
-    }
+    ~EmuFdNetDeviceHelper() override = default;
 
     /**
      * Get the device name of this device.
@@ -95,8 +93,8 @@ class EmuFdNetDeviceHelper : public FdNetDeviceHelper
     /**
      * The Unix/Linux name of the underlying device (e.g., eth0)
      */
-    std::string m_deviceName;
-    bool m_hostQdiscBypass; //!< True if request host qdisc bypass
+    std::string m_deviceName{"undefined"};
+    bool m_hostQdiscBypass{false}; //!< True if request host qdisc bypass
 };
 
 } // namespace ns3

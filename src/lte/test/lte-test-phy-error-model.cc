@@ -140,9 +140,7 @@ LenaDataPhyErrorModelTestCase::LenaDataPhyErrorModelTestCase(uint16_t nUser,
 {
 }
 
-LenaDataPhyErrorModelTestCase::~LenaDataPhyErrorModelTestCase()
-{
-}
+LenaDataPhyErrorModelTestCase::~LenaDataPhyErrorModelTestCase() = default;
 
 void
 LenaDataPhyErrorModelTestCase::DoRun()
@@ -296,9 +294,7 @@ LenaDlCtrlPhyErrorModelTestCase::LenaDlCtrlPhyErrorModelTestCase(uint16_t nEnb,
 {
 }
 
-LenaDlCtrlPhyErrorModelTestCase::~LenaDlCtrlPhyErrorModelTestCase()
-{
-}
+LenaDlCtrlPhyErrorModelTestCase::~LenaDlCtrlPhyErrorModelTestCase() = default;
 
 void
 LenaDlCtrlPhyErrorModelTestCase::DoRun()

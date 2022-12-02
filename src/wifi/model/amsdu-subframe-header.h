@@ -80,9 +80,9 @@ class AmsduSubframeHeader : public Header
     uint16_t GetLength() const;
 
   private:
-    Mac48Address m_da; ///< destination address
-    Mac48Address m_sa; ///< source address
-    uint16_t m_length; ///< length in bytes
+    Mac48Address m_da;    ///< destination address
+    Mac48Address m_sa;    ///< source address
+    uint16_t m_length{0}; ///< length in bytes
 };
 
 } // namespace ns3

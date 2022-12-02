@@ -45,8 +45,8 @@ class BasicEnergyHarvesterTestCase : public TestCase
 
     void DoRun() override;
 
-    double m_timeS;     //!< Time, in seconds
-    double m_tolerance; //!< Tolerance for energy estimation
+    double m_timeS{15};          //!< Time, in seconds
+    double m_tolerance{1.0e-13}; //!< Tolerance for energy estimation
 
     ObjectFactory m_energySource;    //!< Energy source factory
     ObjectFactory m_energyHarvester; //!< Energy harvester factory
@@ -55,13 +55,11 @@ class BasicEnergyHarvesterTestCase : public TestCase
 BasicEnergyHarvesterTestCase::BasicEnergyHarvesterTestCase()
     : TestCase("Basic Energy Harvester test case")
 {
-    m_timeS = 15;          // harvest energy for 15 seconds
-    m_tolerance = 1.0e-13; //
+    // harvest energy for 15 seconds
+    //
 }
 
-BasicEnergyHarvesterTestCase::~BasicEnergyHarvesterTestCase()
-{
-}
+BasicEnergyHarvesterTestCase::~BasicEnergyHarvesterTestCase() = default;
 
 void
 BasicEnergyHarvesterTestCase::DoRun()

@@ -104,7 +104,7 @@ class RttEstimator : public Object
   protected:
     Time m_estimatedRtt;       //!< Current estimate
     Time m_estimatedVariation; //!< Current estimate variation
-    uint32_t m_nSamples;       //!< Number of samples
+    uint32_t m_nSamples{0};    //!< Number of samples
 };
 
 /**

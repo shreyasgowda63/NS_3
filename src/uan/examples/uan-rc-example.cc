@@ -68,19 +68,9 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("UanRcExample");
 
 Experiment::Experiment()
-    : m_simMin(1),
-      m_simMax(1),
-      m_simStep(1),
-      m_numRates(1023),
-      m_totalRate(4096),
-      m_maxRange(3000),
-      m_numNodes(15),
-      m_pktSize(1000),
-      m_doNode(true),
-      m_sifs(Seconds(0.05)),
+    : m_sifs(Seconds(0.05)),
       m_simTime(Seconds(5000)),
-      m_gnuplotfile("uan-rc-example.gpl"),
-      m_bytesTotal(0)
+      m_gnuplotfile("uan-rc-example.gpl")
 {
 }
 

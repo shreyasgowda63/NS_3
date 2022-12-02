@@ -65,7 +65,7 @@ class UanMacAloha : public UanMac
     /** Forwarding up callback. */
     Callback<void, Ptr<Packet>, uint16_t, const Mac8Address&> m_forUpCb;
     /** Flag when we've been cleared. */
-    bool m_cleared;
+    bool m_cleared{false};
 
     /**
      * Receive packet from lower layer (passed to PHY as callback).

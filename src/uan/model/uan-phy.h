@@ -144,9 +144,7 @@ class UanPhyListener
 {
   public:
     /** Default destructor */
-    virtual ~UanPhyListener()
-    {
-    }
+    virtual ~UanPhyListener() = default;
 
     /** Called when UanPhy begins receiving packet. */
     virtual void NotifyRxStart() = 0;

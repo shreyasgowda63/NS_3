@@ -29,11 +29,6 @@ NS_LOG_COMPONENT_DEFINE("Backoff");
 Backoff::Backoff()
 {
     m_slotTime = MicroSeconds(1);
-    m_minSlots = 1;
-    m_maxSlots = 1000;
-    m_ceiling = 10;
-    m_maxRetries = 1000;
-    m_numBackoffRetries = 0;
     m_rng = CreateObject<UniformRandomVariable>();
 
     ResetBackoffTime();
@@ -44,14 +39,13 @@ Backoff::Backoff(Time slotTime,
                  uint32_t maxSlots,
                  uint32_t ceiling,
                  uint32_t maxRetries)
+    : m_minSlots(minSlots),
+      m_maxSlots(maxSlots),
+      m_ceiling(ceiling),
+      m_maxRetries(maxRetries),
+      m_slotTime(slotTime),
+      m_rng(CreateObject<UniformRandomVariable>())
 {
-    m_slotTime = slotTime;
-    m_minSlots = minSlots;
-    m_maxSlots = maxSlots;
-    m_ceiling = ceiling;
-    m_maxRetries = maxRetries;
-    m_numBackoffRetries = 0;
-    m_rng = CreateObject<UniformRandomVariable>();
 }
 
 Time

@@ -67,12 +67,10 @@ TcpWestwoodPlus::GetTypeId()
 }
 
 TcpWestwoodPlus::TcpWestwoodPlus()
-    : TcpNewReno(),
-      m_currentBW(0),
+    : m_currentBW(0),
       m_lastSampleBW(0),
       m_lastBW(0),
-      m_ackedSegments(0),
-      m_IsCount(false),
+
       m_lastAck(0)
 {
     NS_LOG_FUNCTION(this);
@@ -90,9 +88,7 @@ TcpWestwoodPlus::TcpWestwoodPlus(const TcpWestwoodPlus& sock)
     NS_LOG_LOGIC("Invoked the copy constructor");
 }
 
-TcpWestwoodPlus::~TcpWestwoodPlus()
-{
-}
+TcpWestwoodPlus::~TcpWestwoodPlus() = default;
 
 void
 TcpWestwoodPlus::PktsAcked(Ptr<TcpSocketState> tcb, uint32_t packetsAcked, const Time& rtt)

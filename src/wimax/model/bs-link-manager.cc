@@ -49,11 +49,8 @@ BSLinkManager::GetTypeId()
 }
 
 BSLinkManager::BSLinkManager(Ptr<BaseStationNetDevice> bs)
-    : m_bs(bs),
-      m_signalQuality(10),
-      m_signalQualityThreshold(10) // arbitrary value
+    : m_bs(bs)
 {
-    tries = 0;
 }
 
 BSLinkManager::~BSLinkManager()

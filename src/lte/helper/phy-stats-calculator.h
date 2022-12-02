@@ -207,7 +207,7 @@ class PhyStatsCalculator : public LteStatsCalculator
      * appended to file. This value is true if output
      * files have not been opened yet
      */
-    bool m_RsrpSinrFirstWrite;
+    bool m_RsrpSinrFirstWrite{true};
 
     /**
      * When writing UE SINR statistics first time to file,
@@ -215,7 +215,7 @@ class PhyStatsCalculator : public LteStatsCalculator
      * appended to file. This value is true if output
      * files have not been opened yet
      */
-    bool m_UeSinrFirstWrite;
+    bool m_UeSinrFirstWrite{true};
 
     /**
      * When writing interference statistics first time to file,
@@ -223,7 +223,7 @@ class PhyStatsCalculator : public LteStatsCalculator
      * appended to file. This value is true if output
      * files have not been opened yet
      */
-    bool m_InterferenceFirstWrite;
+    bool m_InterferenceFirstWrite{true};
 
     /**
      * Name of the file where the RSRP/SINR statistics will be saved

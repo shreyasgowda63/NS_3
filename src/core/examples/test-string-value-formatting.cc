@@ -82,9 +82,7 @@ FormattingTestObject::GetTypeId()
     return tid;
 }
 
-FormattingTestObject::FormattingTestObject()
-{
-}
+FormattingTestObject::FormattingTestObject() = default;
 
 Ptr<RandomVariableStream>
 FormattingTestObject::GetTestVariable() const

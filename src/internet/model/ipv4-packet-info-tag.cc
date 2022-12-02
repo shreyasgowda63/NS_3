@@ -30,9 +30,7 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("Ipv4PacketInfoTag");
 
 Ipv4PacketInfoTag::Ipv4PacketInfoTag()
-    : m_addr(Ipv4Address()),
-      m_ifindex(0),
-      m_ttl(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

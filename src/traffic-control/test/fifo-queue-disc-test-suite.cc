@@ -65,9 +65,7 @@ FifoQueueDiscTestItem::FifoQueueDiscTestItem(Ptr<Packet> p, const Address& addr)
 {
 }
 
-FifoQueueDiscTestItem::~FifoQueueDiscTestItem()
-{
-}
+FifoQueueDiscTestItem::~FifoQueueDiscTestItem() = default;
 
 void
 FifoQueueDiscTestItem::AddHeader()

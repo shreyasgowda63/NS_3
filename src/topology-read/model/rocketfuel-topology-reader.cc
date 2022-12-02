@@ -54,8 +54,6 @@ RocketfuelTopologyReader::GetTypeId()
 
 RocketfuelTopologyReader::RocketfuelTopologyReader()
 {
-    m_linksNumber = 0;
-    m_nodesNumber = 0;
     NS_LOG_FUNCTION(this);
 }
 

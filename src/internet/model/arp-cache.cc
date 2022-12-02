@@ -380,9 +380,7 @@ ArpCache::Remove(ArpCache::Entry* entry)
 }
 
 ArpCache::Entry::Entry(ArpCache* arp)
-    : m_arp(arp),
-      m_state(ALIVE),
-      m_retries(0)
+    : m_arp(arp)
 {
     NS_LOG_FUNCTION(this << arp);
 }

@@ -137,10 +137,10 @@ class Ipv4FragmentationTest : public TestCase
 
     Ptr<Socket> m_socketServer; //!< Server socket.
     Ptr<Socket> m_socketClient; //!< Client socket.
-    uint32_t m_dataSize;        //!< Data size.
-    uint8_t* m_data;            //!< Data.
-    uint32_t m_size;            //!< packet size.
-    uint8_t m_icmpType;         //!< ICMP type.
+    uint32_t m_dataSize{0};     //!< Data size.
+    uint8_t* m_data{nullptr};   //!< Data.
+    uint32_t m_size{0};         //!< packet size.
+    uint8_t m_icmpType{0};      //!< ICMP type.
     bool m_broadcast;           //!< broadcast packets
 
   public:
@@ -208,14 +208,10 @@ class Ipv4FragmentationTest : public TestCase
 
 Ipv4FragmentationTest::Ipv4FragmentationTest(bool broadcast)
     : TestCase(std::string("Verify the IPv4 layer 3 protocol fragmentation and reassembly: ") +
-               (broadcast ? "broadcast" : "unicast"))
+               (broadcast ? "broadcast" : "unicast")),
+      m_broadcast(broadcast)
 {
     m_socketServer = nullptr;
-    m_data = nullptr;
-    m_dataSize = 0;
-    m_size = 0;
-    m_icmpType = 0;
-    m_broadcast = broadcast;
 }
 
 Ipv4FragmentationTest::~Ipv4FragmentationTest()

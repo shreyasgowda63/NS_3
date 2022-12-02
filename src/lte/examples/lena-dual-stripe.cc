@@ -91,7 +91,7 @@ class FemtocellBlockAllocator
     uint32_t m_nFloors;                   ///< number of floors
     std::list<Box> m_previousBlocks;      ///< previous bocks
     double m_xSize;                       ///< X size
-    double m_ySize;                       ///< Y size
+    double m_ySize{70};                   ///< Y size
     Ptr<UniformRandomVariable> m_xMinVar; ///< X minimum variance
     Ptr<UniformRandomVariable> m_yMinVar; ///< Y minimum variance
 };
@@ -101,12 +101,12 @@ FemtocellBlockAllocator::FemtocellBlockAllocator(Box area, uint32_t nApartmentsX
       m_nApartmentsX(nApartmentsX),
       m_nFloors(nFloors),
       m_xSize(nApartmentsX * 10 + 20),
-      m_ySize(70)
+      m_xMinVar(CreateObject<UniformRandomVariable>()),
+      m_yMinVar(CreateObject<UniformRandomVariable>())
 {
-    m_xMinVar = CreateObject<UniformRandomVariable>();
     m_xMinVar->SetAttribute("Min", DoubleValue(area.xMin));
     m_xMinVar->SetAttribute("Max", DoubleValue(area.xMax - m_xSize));
-    m_yMinVar = CreateObject<UniformRandomVariable>();
+
     m_yMinVar->SetAttribute("Min", DoubleValue(area.yMin));
     m_yMinVar->SetAttribute("Max", DoubleValue(area.yMax - m_ySize));
 }

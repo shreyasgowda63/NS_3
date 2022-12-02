@@ -152,7 +152,7 @@ class UlJob : public Object
     Time m_releaseTime; ///< The time after which the job can be processed
     Time m_period;      ///< For periodic jobs
     Time m_deadline;    ///< Request should be satisfied by this time
-    uint32_t m_size;    ///< Number of minislots requested
+    uint32_t m_size{0}; ///< Number of minislots requested
     enum ServiceFlow::SchedulingType m_schedulingType; ///< Scheduling type of flow
 
     SSRecord* m_ssRecord; ///< Pointer to SSRecord

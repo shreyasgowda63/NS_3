@@ -53,9 +53,8 @@ class TcpSocketState : public Object
      * \brief TcpSocketState Constructor
      */
     TcpSocketState()
-        : Object()
-    {
-    }
+
+        = default;
 
     /**
      * \brief Copy constructor.

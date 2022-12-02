@@ -152,12 +152,7 @@ TapBridge::GetTypeId()
 
 TapBridge::TapBridge()
     : m_node(nullptr),
-      m_ifIndex(0),
-      m_sock(-1),
-      m_startEvent(),
-      m_stopEvent(),
-      m_fdReader(nullptr),
-      m_ns3AddressRewritten(false)
+      m_fdReader(nullptr)
 {
     NS_LOG_FUNCTION(this);
     m_packetBuffer = new uint8_t[65536];

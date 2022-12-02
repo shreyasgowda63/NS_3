@@ -186,12 +186,11 @@ class Ipv4AddressGeneratorImpl
     };
 
     std::list<Entry> m_entries; //!< contained of allocated addresses
-    bool m_test;                //!< test mode (if true)
+    bool m_test{false};         //!< test mode (if true)
 };
 
 Ipv4AddressGeneratorImpl::Ipv4AddressGeneratorImpl()
-    : m_entries(),
-      m_test(false)
+
 {
     NS_LOG_FUNCTION(this);
     Reset();

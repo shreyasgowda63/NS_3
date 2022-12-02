@@ -39,15 +39,6 @@ static const int Type0AllocationRbg[4] = {
 
 NS_OBJECT_ENSURE_REGISTERED(LteFfrAlgorithm);
 
-LteFfrAlgorithm::LteFfrAlgorithm()
-    : m_needReconfiguration(true)
-{
-}
-
-LteFfrAlgorithm::~LteFfrAlgorithm()
-{
-}
-
 TypeId
 LteFfrAlgorithm::GetTypeId()
 {

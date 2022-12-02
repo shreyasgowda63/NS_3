@@ -43,7 +43,6 @@ BridgeChannel::GetTypeId()
 }
 
 BridgeChannel::BridgeChannel()
-    : Channel()
 {
     NS_LOG_FUNCTION_NOARGS();
 }

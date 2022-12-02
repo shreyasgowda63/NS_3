@@ -108,9 +108,9 @@ class HwmpTag : public Tag
 
   private:
     Mac48Address m_address; ///< address
-    uint8_t m_ttl;          ///< TTL
-    uint32_t m_metric;      ///< metric
-    uint32_t m_seqno;       ///< sequence no
+    uint8_t m_ttl{0};       ///< TTL
+    uint32_t m_metric{0};   ///< metric
+    uint32_t m_seqno{0};    ///< sequence no
 };
 } // namespace dot11s
 } // namespace ns3

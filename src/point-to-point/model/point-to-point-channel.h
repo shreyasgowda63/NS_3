@@ -151,8 +151,8 @@ class PointToPointChannel : public Channel
     /** Each point to point link has exactly two net devices. */
     static const std::size_t N_DEVICES = 2;
 
-    Time m_delay;           //!< Propagation delay
-    std::size_t m_nDevices; //!< Devices of this channel
+    Time m_delay;              //!< Propagation delay
+    std::size_t m_nDevices{0}; //!< Devices of this channel
 
     /**
      * The trace source for the packet transmission animation events that the
@@ -194,17 +194,12 @@ class PointToPointChannel : public Channel
     class Link
     {
       public:
-        /** \brief Create the link, it will be in INITIALIZING state
-         *
+        /**
+         * \brief Create the link, it will be in INITIALIZING state
          */
-        Link()
-            : m_state(INITIALIZING),
-              m_src(nullptr),
-              m_dst(nullptr)
-        {
-        }
+        Link() = default;
 
-        WireState m_state;                //!< State of the link
+        WireState m_state{INITIALIZING};  //!< State of the link
         Ptr<PointToPointNetDevice> m_src; //!< First NetDevice
         Ptr<PointToPointNetDevice> m_dst; //!< Second NetDevice
     };

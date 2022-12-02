@@ -96,9 +96,6 @@ GaussMarkovMobilityModel::GetTypeId()
 
 GaussMarkovMobilityModel::GaussMarkovMobilityModel()
 {
-    m_meanVelocity = 0.0;
-    m_meanDirection = 0.0;
-    m_meanPitch = 0.0;
     m_event = Simulator::ScheduleNow(&GaussMarkovMobilityModel::Start, this);
     m_helper.Unpause();
 }

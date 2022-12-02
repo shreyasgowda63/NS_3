@@ -39,9 +39,8 @@ NS_LOG_COMPONENT_DEFINE("LteSimpleSpectrumPhy");
 NS_OBJECT_ENSURE_REGISTERED(LteSimpleSpectrumPhy);
 
 LteSimpleSpectrumPhy::LteSimpleSpectrumPhy()
-    : m_cellId(0)
-{
-}
+
+    = default;
 
 LteSimpleSpectrumPhy::~LteSimpleSpectrumPhy()
 {

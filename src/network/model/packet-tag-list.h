@@ -304,7 +304,7 @@ class PacketTagList
     /**
      * Pointer to first \ref TagData on the list
      */
-    struct TagData* m_next;
+    struct TagData* m_next{};
 };
 
 } // namespace ns3
@@ -317,9 +317,8 @@ namespace ns3
 {
 
 PacketTagList::PacketTagList()
-    : m_next()
-{
-}
+
+    = default;
 
 PacketTagList::PacketTagList(const PacketTagList& o)
     : m_next(o.m_next)

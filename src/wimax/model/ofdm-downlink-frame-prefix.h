@@ -36,7 +36,7 @@ class DlFramePrefixIe
 {
   public:
     DlFramePrefixIe();
-    ~DlFramePrefixIe();
+    ~DlFramePrefixIe() = default;
 
     /**
      * Set rate ID field
@@ -110,11 +110,11 @@ class DlFramePrefixIe
     Buffer::Iterator Read(Buffer::Iterator start);
 
   private:
-    uint8_t m_rateId;          ///< rate ID
-    uint8_t m_diuc;            ///< DIUC
-    uint8_t m_preamblePresent; ///< preamble present
-    uint16_t m_length;         ///< length
-    uint16_t m_startTime;      ///< start time
+    uint8_t m_rateId{0};          ///< rate ID
+    uint8_t m_diuc{0};            ///< DIUC
+    uint8_t m_preamblePresent{0}; ///< preamble present
+    uint16_t m_length{0};         ///< length
+    uint16_t m_startTime{0};      ///< start time
 
     // shall actually contain m_startTime if DIUC is 0. see Table 225, page 452
 };
@@ -213,11 +213,12 @@ class OfdmDownlinkFramePrefix : public Header
 
   private:
     Mac48Address m_baseStationId; ///< base station ID
-    uint32_t m_frameNumber; ///< shall actually be only 4 LSB of the same field in OFDM DCD Channel
-                            ///< Encodings
-    uint8_t m_configurationChangeCount; ///< shall actually be only 4 LSB of the same field in DCD
+    uint32_t m_frameNumber{0};    ///< shall actually be only 4 LSB of the same field in OFDM DCD
+                                  ///< Channel Encodings
+    uint8_t m_configurationChangeCount{
+        0}; ///< shall actually be only 4 LSB of the same field in DCD
     std::vector<DlFramePrefixIe> m_dlFramePrefixElements; ///< vector of dl frame prefix elements
-    uint8_t m_hcs;                                        ///< Header Check Sequence
+    uint8_t m_hcs{0};                                     ///< Header Check Sequence
 };
 
 } // namespace ns3

@@ -28,13 +28,7 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("UanTxMode");
 
-UanTxMode::UanTxMode()
-{
-}
-
-UanTxMode::~UanTxMode()
-{
-}
+UanTxMode::UanTxMode() = default;
 
 UanTxMode::ModulationType
 UanTxMode::GetModType() const
@@ -104,9 +98,8 @@ operator>>(std::istream& is, UanTxMode& mode)
 }
 
 UanTxModeFactory::UanTxModeFactory()
-    : m_nextUid(0)
-{
-}
+
+    = default;
 
 UanTxModeFactory::~UanTxModeFactory()
 {
@@ -217,9 +210,7 @@ UanTxModeFactory::GetFactory()
     return factory;
 }
 
-UanModesList::UanModesList()
-{
-}
+UanModesList::UanModesList() = default;
 
 UanModesList::~UanModesList()
 {

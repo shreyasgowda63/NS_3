@@ -87,12 +87,9 @@ PeerManagementProtocol::GetTypeId()
 }
 
 PeerManagementProtocol::PeerManagementProtocol()
-    : m_lastAssocId(0),
-      m_lastLocalLinkId(1),
-      m_enableBca(true),
-      m_maxBeaconShift(15)
+    : m_beaconShift(CreateObject<UniformRandomVariable>())
+
 {
-    m_beaconShift = CreateObject<UniformRandomVariable>();
 }
 
 PeerManagementProtocol::~PeerManagementProtocol()
@@ -610,9 +607,7 @@ PeerManagementProtocol::NotifyBeaconSent(uint32_t interface, Time beaconInterval
 }
 
 PeerManagementProtocol::Statistics::Statistics(uint16_t t)
-    : linksTotal(t),
-      linksOpened(0),
-      linksClosed(0)
+    : linksTotal(t)
 {
 }
 

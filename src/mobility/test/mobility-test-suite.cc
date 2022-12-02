@@ -61,18 +61,15 @@ class WaypointLazyNotifyFalse : public TestCase
     void DoRun() override;
     Ptr<Node> m_node;                 ///< mode
     Ptr<WaypointMobilityModel> m_mob; ///< modility model
-    int m_courseChanges;              ///< course changes
+    int m_courseChanges{0};           ///< course changes
 };
 
 WaypointLazyNotifyFalse::WaypointLazyNotifyFalse()
-    : TestCase("Test behavior when LazyNotify is false"),
-      m_courseChanges(0)
+    : TestCase("Test behavior when LazyNotify is false")
 {
 }
 
-WaypointLazyNotifyFalse::~WaypointLazyNotifyFalse()
-{
-}
+WaypointLazyNotifyFalse::~WaypointLazyNotifyFalse() = default;
 
 void
 WaypointLazyNotifyFalse::TestXPosition(double expectedXPos)
@@ -145,9 +142,7 @@ WaypointLazyNotifyTrue::WaypointLazyNotifyTrue()
 {
 }
 
-WaypointLazyNotifyTrue::~WaypointLazyNotifyTrue()
-{
-}
+WaypointLazyNotifyTrue::~WaypointLazyNotifyTrue() = default;
 
 void
 WaypointLazyNotifyTrue::TestXPosition(double expectedXPos)
@@ -224,9 +219,7 @@ WaypointInitialPositionIsWaypoint::WaypointInitialPositionIsWaypoint()
 {
 }
 
-WaypointInitialPositionIsWaypoint::~WaypointInitialPositionIsWaypoint()
-{
-}
+WaypointInitialPositionIsWaypoint::~WaypointInitialPositionIsWaypoint() = default;
 
 void
 WaypointInitialPositionIsWaypoint::TestXPosition(Ptr<const WaypointMobilityModel> model,
@@ -407,9 +400,7 @@ WaypointMobilityModelViaHelper::WaypointMobilityModelViaHelper()
 {
 }
 
-WaypointMobilityModelViaHelper::~WaypointMobilityModelViaHelper()
-{
-}
+WaypointMobilityModelViaHelper::~WaypointMobilityModelViaHelper() = default;
 
 void
 WaypointMobilityModelViaHelper::TestXPosition(Ptr<const WaypointMobilityModel> mob,

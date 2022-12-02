@@ -30,9 +30,7 @@ BasicEnergyHarvesterHelper::BasicEnergyHarvesterHelper()
     m_basicEnergyHarvester.SetTypeId("ns3::BasicEnergyHarvester");
 }
 
-BasicEnergyHarvesterHelper::~BasicEnergyHarvesterHelper()
-{
-}
+BasicEnergyHarvesterHelper::~BasicEnergyHarvesterHelper() = default;
 
 void
 BasicEnergyHarvesterHelper::Set(std::string name, const AttributeValue& v)

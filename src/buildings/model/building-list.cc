@@ -150,9 +150,7 @@ BuildingListPriv::BuildingListPriv()
     NS_LOG_FUNCTION_NOARGS();
 }
 
-BuildingListPriv::~BuildingListPriv()
-{
-}
+BuildingListPriv::~BuildingListPriv() = default;
 
 void
 BuildingListPriv::DoDispose()

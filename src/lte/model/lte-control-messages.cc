@@ -32,14 +32,6 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("LteControlMessage");
 
-LteControlMessage::LteControlMessage()
-{
-}
-
-LteControlMessage::~LteControlMessage()
-{
-}
-
 void
 LteControlMessage::SetMessageType(LteControlMessage::MessageType type)
 {
@@ -57,10 +49,6 @@ LteControlMessage::GetMessageType()
 DlDciLteControlMessage::DlDciLteControlMessage()
 {
     SetMessageType(LteControlMessage::DL_DCI);
-}
-
-DlDciLteControlMessage::~DlDciLteControlMessage()
-{
 }
 
 void
@@ -82,10 +70,6 @@ UlDciLteControlMessage::UlDciLteControlMessage()
     SetMessageType(LteControlMessage::UL_DCI);
 }
 
-UlDciLteControlMessage::~UlDciLteControlMessage()
-{
-}
-
 void
 UlDciLteControlMessage::SetDci(UlDciListElement_s dci)
 {
@@ -105,10 +89,6 @@ DlCqiLteControlMessage::DlCqiLteControlMessage()
     SetMessageType(LteControlMessage::DL_CQI);
 }
 
-DlCqiLteControlMessage::~DlCqiLteControlMessage()
-{
-}
-
 void
 DlCqiLteControlMessage::SetDlCqi(CqiListElement_s dlcqi)
 {
@@ -126,10 +106,6 @@ DlCqiLteControlMessage::GetDlCqi()
 BsrLteControlMessage::BsrLteControlMessage()
 {
     SetMessageType(LteControlMessage::BSR);
-}
-
-BsrLteControlMessage::~BsrLteControlMessage()
-{
 }
 
 void
@@ -243,10 +219,6 @@ Sib1LteControlMessage::GetSib1() const
 DlHarqFeedbackLteControlMessage::DlHarqFeedbackLteControlMessage()
 {
     SetMessageType(LteControlMessage::DL_HARQ);
-}
-
-DlHarqFeedbackLteControlMessage::~DlHarqFeedbackLteControlMessage()
-{
 }
 
 void

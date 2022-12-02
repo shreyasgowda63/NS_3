@@ -36,8 +36,7 @@ NS_OBJECT_ENSURE_REGISTERED(WimaxMacQueue);
 
 WimaxMacQueue::QueueElement::QueueElement()
     : m_packet(Create<Packet>()),
-      m_hdrType(MacHeaderType()),
-      m_hdr(GenericMacHeader()),
+
       m_timeStamp(Seconds(0)),
       m_fragmentation(false),
       m_fragmentNumber(0),
@@ -119,9 +118,7 @@ WimaxMacQueue::WimaxMacQueue(uint32_t maxSize)
 {
 }
 
-WimaxMacQueue::~WimaxMacQueue()
-{
-}
+WimaxMacQueue::~WimaxMacQueue() = default;
 
 void
 WimaxMacQueue::SetMaxSize(uint32_t maxSize)

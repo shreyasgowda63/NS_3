@@ -31,13 +31,10 @@ NS_LOG_COMPONENT_DEFINE("TcpOptionRfc793");
 NS_OBJECT_ENSURE_REGISTERED(TcpOptionEnd);
 
 TcpOptionEnd::TcpOptionEnd()
-    : TcpOption()
-{
-}
 
-TcpOptionEnd::~TcpOptionEnd()
-{
-}
+    = default;
+
+TcpOptionEnd::~TcpOptionEnd() = default;
 
 TypeId
 TcpOptionEnd::GetTypeId()
@@ -101,13 +98,10 @@ TcpOptionEnd::GetKind() const
 NS_OBJECT_ENSURE_REGISTERED(TcpOptionNOP);
 
 TcpOptionNOP::TcpOptionNOP()
-    : TcpOption()
-{
-}
 
-TcpOptionNOP::~TcpOptionNOP()
-{
-}
+    = default;
+
+TcpOptionNOP::~TcpOptionNOP() = default;
 
 TypeId
 TcpOptionNOP::GetTypeId()
@@ -170,14 +164,10 @@ TcpOptionNOP::GetKind() const
 NS_OBJECT_ENSURE_REGISTERED(TcpOptionMSS);
 
 TcpOptionMSS::TcpOptionMSS()
-    : TcpOption(),
-      m_mss(1460)
-{
-}
 
-TcpOptionMSS::~TcpOptionMSS()
-{
-}
+    = default;
+
+TcpOptionMSS::~TcpOptionMSS() = default;
 
 TypeId
 TcpOptionMSS::GetTypeId()

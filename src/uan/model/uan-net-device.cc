@@ -39,15 +39,11 @@ NS_LOG_COMPONENT_DEFINE("UanNetDevice");
 NS_OBJECT_ENSURE_REGISTERED(UanNetDevice);
 
 UanNetDevice::UanNetDevice()
-    : NetDevice(),
-      m_mtu(64000),
-      m_cleared(false)
+    : NetDevice()
 {
 }
 
-UanNetDevice::~UanNetDevice()
-{
-}
+UanNetDevice::~UanNetDevice() = default;
 
 void
 UanNetDevice::Clear()

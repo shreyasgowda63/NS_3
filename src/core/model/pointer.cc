@@ -35,7 +35,6 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("Pointer");
 
 PointerValue::PointerValue()
-    : m_value()
 {
     NS_LOG_FUNCTION(this);
 }

@@ -78,7 +78,7 @@ class HwmpDoRfRegressionTest : public TestCase
 
   private:
     /// \internal It is important to have pointers here
-    NodeContainer* m_nodes;
+    NodeContainer* m_nodes{nullptr};
     /// Simulation time
     Time m_time;
     Ipv4InterfaceContainer m_interfaces; ///< interfaces
@@ -104,11 +104,11 @@ class HwmpDoRfRegressionTest : public TestCase
     Ptr<Socket> m_clientSocketC;
 
     /// sent packets counter A
-    uint32_t m_sentPktsCounterA;
+    uint32_t m_sentPktsCounterA{0};
     /// sent packets counter B
-    uint32_t m_sentPktsCounterB;
+    uint32_t m_sentPktsCounterB{0};
     /// sent packets counter C
-    uint32_t m_sentPktsCounterC;
+    uint32_t m_sentPktsCounterC{0};
 
     /**
      * Send data A

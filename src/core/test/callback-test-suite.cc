@@ -43,9 +43,7 @@ class BasicCallbackTestCase : public TestCase
   public:
     BasicCallbackTestCase();
 
-    ~BasicCallbackTestCase() override
-    {
-    }
+    ~BasicCallbackTestCase() override = default;
 
     /**
      * Callback 1 target function.
@@ -240,9 +238,7 @@ class MakeCallbackTestCase : public TestCase
   public:
     MakeCallbackTestCase();
 
-    ~MakeCallbackTestCase() override
-    {
-    }
+    ~MakeCallbackTestCase() override = default;
 
     /**
      * Callback 1 target function.
@@ -426,9 +422,7 @@ class MakeBoundCallbackTestCase : public TestCase
   public:
     MakeBoundCallbackTestCase();
 
-    ~MakeBoundCallbackTestCase() override
-    {
-    }
+    ~MakeBoundCallbackTestCase() override = default;
 
     /**
      * Member function to test the creation of a bound callback pointing to a member function
@@ -786,9 +780,7 @@ class CallbackEqualityTestCase : public TestCase
   public:
     CallbackEqualityTestCase();
 
-    ~CallbackEqualityTestCase() override
-    {
-    }
+    ~CallbackEqualityTestCase() override = default;
 
     /**
      * Member function used to test equality of callbacks.
@@ -943,9 +935,7 @@ class NullifyCallbackTestCase : public TestCase
   public:
     NullifyCallbackTestCase();
 
-    ~NullifyCallbackTestCase() override
-    {
-    }
+    ~NullifyCallbackTestCase() override = default;
 
     /**
      * Callback 1 target function.
@@ -1002,9 +992,7 @@ class MakeCallbackTemplatesTestCase : public TestCase
   public:
     MakeCallbackTemplatesTestCase();
 
-    ~MakeCallbackTemplatesTestCase() override
-    {
-    }
+    ~MakeCallbackTemplatesTestCase() override = default;
 
     /**
      * Callback 1 target function.

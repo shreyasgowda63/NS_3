@@ -51,15 +51,8 @@ TcpVeno::GetTypeId()
 }
 
 TcpVeno::TcpVeno()
-    : TcpNewReno(),
-      m_baseRtt(Time::Max()),
-      m_minRtt(Time::Max()),
-      m_cntRtt(0),
-      m_doingVenoNow(true),
-      m_diff(0),
-      m_inc(true),
-      m_ackCnt(0),
-      m_beta(6)
+    : m_baseRtt(Time::Max()),
+      m_minRtt(Time::Max())
 {
     NS_LOG_FUNCTION(this);
 }
@@ -69,9 +62,7 @@ TcpVeno::TcpVeno(const TcpVeno& sock)
       m_baseRtt(sock.m_baseRtt),
       m_minRtt(sock.m_minRtt),
       m_cntRtt(sock.m_cntRtt),
-      m_doingVenoNow(true),
-      m_diff(0),
-      m_inc(true),
+
       m_ackCnt(sock.m_ackCnt),
       m_beta(sock.m_beta)
 {

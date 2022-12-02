@@ -261,9 +261,7 @@ class Experiment
     std::string m_outputFileName; //!< Output file name.
 };
 
-Experiment::Experiment()
-{
-}
+Experiment::Experiment() = default;
 
 Experiment::Experiment(std::string name)
     : m_output(name),

@@ -29,9 +29,7 @@ namespace ns3
  *                Beacon MAC Payload
  ***********************************************************/
 
-BeaconPayloadHeader::BeaconPayloadHeader()
-{
-}
+BeaconPayloadHeader::BeaconPayloadHeader() = default;
 
 NS_OBJECT_ENSURE_REGISTERED(BeaconPayloadHeader);
 

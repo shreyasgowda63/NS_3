@@ -57,9 +57,7 @@ LteRlcUmTransmitterTestCase::LteRlcUmTransmitterTestCase(std::string name)
     // NS_LOG_UNCOND ("Creating LteRlcUmTransmitterTestCase: " + name);
 }
 
-LteRlcUmTransmitterTestCase::~LteRlcUmTransmitterTestCase()
-{
-}
+LteRlcUmTransmitterTestCase::~LteRlcUmTransmitterTestCase() = default;
 
 void
 LteRlcUmTransmitterTestCase::DoRun()
@@ -124,9 +122,7 @@ LteRlcUmTransmitterOneSduTestCase::LteRlcUmTransmitterOneSduTestCase(std::string
 {
 }
 
-LteRlcUmTransmitterOneSduTestCase::~LteRlcUmTransmitterOneSduTestCase()
-{
-}
+LteRlcUmTransmitterOneSduTestCase::~LteRlcUmTransmitterOneSduTestCase() = default;
 
 void
 LteRlcUmTransmitterOneSduTestCase::DoRun()
@@ -157,9 +153,7 @@ LteRlcUmTransmitterSegmentationTestCase::LteRlcUmTransmitterSegmentationTestCase
 {
 }
 
-LteRlcUmTransmitterSegmentationTestCase::~LteRlcUmTransmitterSegmentationTestCase()
-{
-}
+LteRlcUmTransmitterSegmentationTestCase::~LteRlcUmTransmitterSegmentationTestCase() = default;
 
 void
 LteRlcUmTransmitterSegmentationTestCase::DoRun()
@@ -199,9 +193,7 @@ LteRlcUmTransmitterConcatenationTestCase::LteRlcUmTransmitterConcatenationTestCa
 {
 }
 
-LteRlcUmTransmitterConcatenationTestCase::~LteRlcUmTransmitterConcatenationTestCase()
-{
-}
+LteRlcUmTransmitterConcatenationTestCase::~LteRlcUmTransmitterConcatenationTestCase() = default;
 
 void
 LteRlcUmTransmitterConcatenationTestCase::DoRun()
@@ -235,9 +227,8 @@ LteRlcUmTransmitterReportBufferStatusTestCase::LteRlcUmTransmitterReportBufferSt
 {
 }
 
-LteRlcUmTransmitterReportBufferStatusTestCase::~LteRlcUmTransmitterReportBufferStatusTestCase()
-{
-}
+LteRlcUmTransmitterReportBufferStatusTestCase::~LteRlcUmTransmitterReportBufferStatusTestCase() =
+    default;
 
 void
 LteRlcUmTransmitterReportBufferStatusTestCase::DoRun()

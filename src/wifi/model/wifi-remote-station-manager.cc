@@ -135,10 +135,7 @@ WifiRemoteStationManager::GetTypeId()
 }
 
 WifiRemoteStationManager::WifiRemoteStationManager()
-    : m_useNonErpProtection(false),
-      m_useNonHtProtection(false),
-      m_shortPreambleEnabled(false),
-      m_shortSlotTimeEnabled(false)
+
 {
     NS_LOG_FUNCTION(this);
 }

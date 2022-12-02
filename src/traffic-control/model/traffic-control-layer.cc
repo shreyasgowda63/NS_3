@@ -65,7 +65,6 @@ TrafficControlLayer::GetInstanceTypeId() const
 }
 
 TrafficControlLayer::TrafficControlLayer()
-    : Object()
 {
     NS_LOG_FUNCTION(this);
 }

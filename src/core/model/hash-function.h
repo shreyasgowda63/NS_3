@@ -89,16 +89,12 @@ class Implementation : public SimpleRefCount<Implementation>
     /**
      * Constructor.
      */
-    Implementation()
-    {
-    }
+    Implementation() = default;
 
     /**
      * Destructor.
      */
-    virtual ~Implementation()
-    {
-    }
+    virtual ~Implementation() = default;
 }; // Hashfunction
 
 /*--------------------------------------

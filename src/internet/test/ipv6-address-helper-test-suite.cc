@@ -49,9 +49,7 @@ IpAddressHelperTestCasev6::IpAddressHelperTestCasev6()
 {
 }
 
-IpAddressHelperTestCasev6::~IpAddressHelperTestCasev6()
-{
-}
+IpAddressHelperTestCasev6::~IpAddressHelperTestCasev6() = default;
 
 void
 IpAddressHelperTestCasev6::DoRun()

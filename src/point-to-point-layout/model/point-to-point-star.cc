@@ -46,9 +46,7 @@ PointToPointStarHelper::PointToPointStarHelper(uint32_t numSpokes, PointToPointH
     }
 }
 
-PointToPointStarHelper::~PointToPointStarHelper()
-{
-}
+PointToPointStarHelper::~PointToPointStarHelper() = default;
 
 Ptr<Node>
 PointToPointStarHelper::GetHub() const

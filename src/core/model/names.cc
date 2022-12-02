@@ -89,22 +89,10 @@ NameNode::NameNode()
 }
 
 NameNode::NameNode(const NameNode& nameNode)
-{
-    m_parent = nameNode.m_parent;
-    m_name = nameNode.m_name;
-    m_object = nameNode.m_object;
-    m_nameMap = nameNode.m_nameMap;
-}
 
-NameNode&
-NameNode::operator=(const NameNode& rhs)
-{
-    m_parent = rhs.m_parent;
-    m_name = rhs.m_name;
-    m_object = rhs.m_object;
-    m_nameMap = rhs.m_nameMap;
-    return *this;
-}
+    = default;
+
+NameNode& NameNode::operator=(const NameNode& rhs) = default;
 
 NameNode::NameNode(NameNode* parent, std::string name, Ptr<Object> object)
     : m_parent(parent),

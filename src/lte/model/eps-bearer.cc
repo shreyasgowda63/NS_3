@@ -27,21 +27,6 @@ namespace ns3
 
 NS_OBJECT_ENSURE_REGISTERED(EpsBearer);
 
-GbrQosInformation::GbrQosInformation()
-    : gbrDl(0),
-      gbrUl(0),
-      mbrDl(0),
-      mbrUl(0)
-{
-}
-
-AllocationRetentionPriority::AllocationRetentionPriority()
-    : priorityLevel(0),
-      preemptionCapability(false),
-      preemptionVulnerability(false)
-{
-}
-
 TypeId
 EpsBearer::GetTypeId()
 {
@@ -90,10 +75,10 @@ EpsBearer::EpsBearer(Qci x, struct GbrQosInformation y)
 }
 
 EpsBearer::EpsBearer(const EpsBearer& o)
-    : ObjectBase(o)
+    : ObjectBase(o),
+      qci(o.qci),
+      gbrQosInfo(o.gbrQosInfo)
 {
-    qci = o.qci;
-    gbrQosInfo = o.gbrQosInfo;
     ObjectBase::ConstructSelf(AttributeConstructionList());
 }
 

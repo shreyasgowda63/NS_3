@@ -79,9 +79,7 @@ class Ns3TcpLossTestCase : public TestCase
      */
     Ns3TcpLossTestCase(std::string tcpModel, uint32_t testCase);
 
-    ~Ns3TcpLossTestCase() override
-    {
-    }
+    ~Ns3TcpLossTestCase() override = default;
 
   private:
     void DoSetup() override;

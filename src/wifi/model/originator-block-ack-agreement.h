@@ -200,7 +200,7 @@ class OriginatorBlockAckAgreement : public BlockAckAgreement
      */
     void AdvanceTxWindow();
 
-    State m_state;             ///< state
+    State m_state{PENDING};    ///< state
     BlockAckWindow m_txWindow; ///< originator's transmit window
 };
 

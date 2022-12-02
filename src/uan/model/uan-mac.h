@@ -137,7 +137,7 @@ class UanMac : public Object
 
   private:
     /** Modulation type */
-    uint32_t m_txModeIndex;
+    uint32_t m_txModeIndex{0};
     /** The MAC address. */
     Mac8Address m_address;
 

@@ -50,13 +50,9 @@ NS_OBJECT_ENSURE_REGISTERED(UanPhyPerUmodem);
 NS_OBJECT_ENSURE_REGISTERED(UanPhyPerCommonModes);
 
 /*************** UanPhyCalcSinrDefault definition *****************/
-UanPhyCalcSinrDefault::UanPhyCalcSinrDefault()
-{
-}
+UanPhyCalcSinrDefault::UanPhyCalcSinrDefault() = default;
 
-UanPhyCalcSinrDefault::~UanPhyCalcSinrDefault()
-{
-}
+UanPhyCalcSinrDefault::~UanPhyCalcSinrDefault() = default;
 
 TypeId
 UanPhyCalcSinrDefault::GetTypeId()
@@ -99,13 +95,9 @@ UanPhyCalcSinrDefault::CalcSinrDb(Ptr<Packet> pkt,
 }
 
 /*************** UanPhyCalcSinrFhFsk definition *****************/
-UanPhyCalcSinrFhFsk::UanPhyCalcSinrFhFsk()
-{
-}
+UanPhyCalcSinrFhFsk::UanPhyCalcSinrFhFsk() = default;
 
-UanPhyCalcSinrFhFsk::~UanPhyCalcSinrFhFsk()
-{
-}
+UanPhyCalcSinrFhFsk::~UanPhyCalcSinrFhFsk() = default;
 
 TypeId
 UanPhyCalcSinrFhFsk::GetTypeId()
@@ -216,13 +208,9 @@ UanPhyCalcSinrFhFsk::CalcSinrDb(Ptr<Packet> pkt,
 }
 
 /*************** UanPhyPerGenDefault definition *****************/
-UanPhyPerGenDefault::UanPhyPerGenDefault()
-{
-}
+UanPhyPerGenDefault::UanPhyPerGenDefault() = default;
 
-UanPhyPerGenDefault::~UanPhyPerGenDefault()
-{
-}
+UanPhyPerGenDefault::~UanPhyPerGenDefault() = default;
 
 TypeId
 UanPhyPerGenDefault::GetTypeId()
@@ -260,9 +248,7 @@ UanPhyPerCommonModes::UanPhyPerCommonModes()
 {
 }
 
-UanPhyPerCommonModes::~UanPhyPerCommonModes()
-{
-}
+UanPhyPerCommonModes::~UanPhyPerCommonModes() = default;
 
 TypeId
 UanPhyPerCommonModes::GetTypeId()
@@ -390,13 +376,9 @@ UanPhyPerCommonModes::CalcPer(Ptr<Packet> pkt, double sinrDb, UanTxMode mode)
 }
 
 /*************** UanPhyPerUmodem definition *****************/
-UanPhyPerUmodem::UanPhyPerUmodem()
-{
-}
+UanPhyPerUmodem::UanPhyPerUmodem() = default;
 
-UanPhyPerUmodem::~UanPhyPerUmodem()
-{
-}
+UanPhyPerUmodem::~UanPhyPerUmodem() = default;
 
 TypeId
 UanPhyPerUmodem::GetTypeId()
@@ -492,26 +474,19 @@ UanPhyPerUmodem::CalcPer(Ptr<Packet> pkt, double sinr, UanTxMode mode)
 /*************** UanPhyGen definition *****************/
 UanPhyGen::UanPhyGen()
     : UanPhy(),
-      m_state(IDLE),
       m_channel(nullptr),
       m_transducer(nullptr),
       m_device(nullptr),
       m_mac(nullptr),
-      m_txPwrDb(0),
-      m_rxThreshDb(0),
-      m_ccaThreshDb(0),
       m_pktRx(nullptr),
-      m_pktTx(nullptr),
-      m_cleared(false)
+      m_pktTx(nullptr)
 {
     m_pg = CreateObject<UniformRandomVariable>();
 
     m_energyCallback.Nullify();
 }
 
-UanPhyGen::~UanPhyGen()
-{
-}
+UanPhyGen::~UanPhyGen() = default;
 
 void
 UanPhyGen::Clear()

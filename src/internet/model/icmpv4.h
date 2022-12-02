@@ -95,9 +95,9 @@ class Icmpv4Header : public Header
     void Print(std::ostream& os) const override;
 
   private:
-    uint8_t m_type;      //!< ICMP type
-    uint8_t m_code;      //!< ICMP code
-    bool m_calcChecksum; //!< true if checksum is calculated
+    uint8_t m_type{0};          //!< ICMP type
+    uint8_t m_code{0};          //!< ICMP code
+    bool m_calcChecksum{false}; //!< true if checksum is calculated
 };
 
 /**
@@ -159,10 +159,10 @@ class Icmpv4Echo : public Header
     void Print(std::ostream& os) const override;
 
   private:
-    uint16_t m_identifier; //!< identifier
-    uint16_t m_sequence;   //!< sequence number
-    uint8_t* m_data;       //!< data
-    uint32_t m_dataSize;   //!< data size
+    uint16_t m_identifier{0}; //!< identifier
+    uint16_t m_sequence{0};   //!< sequence number
+    uint8_t* m_data;          //!< data
+    uint32_t m_dataSize{0};   //!< data size
 };
 
 /**

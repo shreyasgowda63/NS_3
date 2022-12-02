@@ -141,8 +141,8 @@ class TcpOptionUnknown : public TcpOption
     uint32_t GetSerializedSize() const override;
 
   private:
-    uint8_t m_kind;        //!< The unknown option kind
-    uint32_t m_size;       //!< The unknown option size
+    uint8_t m_kind{0xFF};  //!< The unknown option kind
+    uint32_t m_size{0};    //!< The unknown option size
     uint8_t m_content[40]; //!< The option data
 };
 

@@ -207,7 +207,7 @@ class PacketSocket : public Socket
     Address m_destAddr;               //!< Default destination address
 
     std::queue<std::pair<Ptr<Packet>, Address>> m_deliveryQueue; //!< Rx queue
-    uint32_t m_rxAvailable;                                      //!< Rx queue size [Bytes]
+    uint32_t m_rxAvailable{0};                                   //!< Rx queue size [Bytes]
 
     /// Traced callback: dropped packets
     TracedCallback<Ptr<const Packet>> m_dropTrace;

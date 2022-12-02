@@ -37,9 +37,7 @@ NS_LOG_COMPONENT_DEFINE("UplinkSchedulerMBQoS");
 
 NS_OBJECT_ENSURE_REGISTERED(UplinkSchedulerMBQoS);
 
-UplinkSchedulerMBQoS::UplinkSchedulerMBQoS()
-{
-}
+UplinkSchedulerMBQoS::UplinkSchedulerMBQoS() = default;
 
 UplinkSchedulerMBQoS::UplinkSchedulerMBQoS(Time time)
     : m_windowInterval(time)

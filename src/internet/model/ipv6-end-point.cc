@@ -31,9 +31,7 @@ NS_LOG_COMPONENT_DEFINE("Ipv6EndPoint");
 Ipv6EndPoint::Ipv6EndPoint(Ipv6Address addr, uint16_t port)
     : m_localAddr(addr),
       m_localPort(port),
-      m_peerAddr(Ipv6Address::GetAny()),
-      m_peerPort(0),
-      m_rxEnabled(true)
+      m_peerAddr(Ipv6Address::GetAny())
 {
 }
 

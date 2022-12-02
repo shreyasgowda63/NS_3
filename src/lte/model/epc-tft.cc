@@ -75,16 +75,8 @@ operator<<(std::ostream& os, const EpcTft::PacketFilter& f)
 }
 
 EpcTft::PacketFilter::PacketFilter()
-    : precedence(255),
-      direction(BIDIRECTIONAL),
-      remoteMask("0.0.0.0"),
-      localMask("0.0.0.0"),
-      remotePortStart(0),
-      remotePortEnd(65535),
-      localPortStart(0),
-      localPortEnd(65535),
-      typeOfService(0),
-      typeOfServiceMask(0)
+    : remoteMask("0.0.0.0"),
+      localMask("0.0.0.0")
 {
     NS_LOG_FUNCTION(this);
 }
@@ -235,7 +227,6 @@ EpcTft::Default()
 }
 
 EpcTft::EpcTft()
-    : m_numFilters(0)
 {
     NS_LOG_FUNCTION(this);
 }

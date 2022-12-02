@@ -59,11 +59,11 @@ class SixlowpanFragmentationTest : public TestCase
 
     Ptr<Socket> m_socketServer; //!< Socket on the server.
     Ptr<Socket> m_socketClient; //!< Socket on the client.
-    uint32_t m_dataSize;        //!< Size of the data (if any).
-    uint8_t* m_data;            //!< Data to be carried in the packet
-    uint32_t m_size;            //!< Size of the packet if no data has been provided.
-    uint8_t m_icmpType;         //!< ICMP type.
-    uint8_t m_icmpCode;         //!< ICMP code.
+    uint32_t m_dataSize{0};     //!< Size of the data (if any).
+    uint8_t* m_data{nullptr};   //!< Data to be carried in the packet
+    uint32_t m_size{0};         //!< Size of the packet if no data has been provided.
+    uint8_t m_icmpType{0};      //!< ICMP type.
+    uint8_t m_icmpCode{0};      //!< ICMP code.
 
   public:
     void DoRun() override;
@@ -126,11 +126,6 @@ SixlowpanFragmentationTest::SixlowpanFragmentationTest()
     : TestCase("Verify the 6LoWPAN protocol fragmentation and reassembly")
 {
     m_socketServer = nullptr;
-    m_data = nullptr;
-    m_dataSize = 0;
-    m_size = 0;
-    m_icmpType = 0;
-    m_icmpCode = 0;
 }
 
 SixlowpanFragmentationTest::~SixlowpanFragmentationTest()

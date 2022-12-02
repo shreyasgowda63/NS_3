@@ -64,9 +64,7 @@ DhcpTestCase::DhcpTestCase()
 {
 }
 
-DhcpTestCase::~DhcpTestCase()
-{
-}
+DhcpTestCase::~DhcpTestCase() = default;
 
 void
 DhcpTestCase::LeaseObtained(std::string context, const Ipv4Address& newAddress)

@@ -44,9 +44,7 @@ namespace ns3
 class TlvValue
 {
   public:
-    virtual ~TlvValue()
-    {
-    }
+    virtual ~TlvValue() = default;
 
     /**
      * Get serialized size in bytes
@@ -161,9 +159,9 @@ class Tlv : public Header
     Tlv(const Tlv& tlv);
 
   private:
-    uint8_t m_type;    ///< type
-    uint64_t m_length; ///< length
-    TlvValue* m_value; ///< value
+    uint8_t m_type{0};          ///< type
+    uint64_t m_length{0};       ///< length
+    TlvValue* m_value{nullptr}; ///< value
 };
 
 // ==============================================================================
@@ -203,7 +201,7 @@ class U8TlvValue : public TlvValue
     U8TlvValue* Copy() const override;
 
   private:
-    uint8_t m_value; ///< value
+    uint8_t m_value{0}; ///< value
 };
 
 // ==============================================================================
@@ -243,7 +241,7 @@ class U16TlvValue : public TlvValue
     U16TlvValue* Copy() const override;
 
   private:
-    uint16_t m_value; ///< value
+    uint16_t m_value{0}; ///< value
 };
 
 // ==============================================================================
@@ -284,7 +282,7 @@ class U32TlvValue : public TlvValue
     U32TlvValue* Copy() const override;
 
   private:
-    uint32_t m_value; ///< value
+    uint32_t m_value{0}; ///< value
 };
 
 // ==============================================================================
@@ -470,9 +468,9 @@ class TosTlvValue : public TlvValue
     TosTlvValue* Copy() const override;
 
   private:
-    uint8_t m_low;  ///< low
-    uint8_t m_high; ///< high
-    uint8_t m_mask; ///< mask
+    uint8_t m_low{0};  ///< low
+    uint8_t m_high{0}; ///< high
+    uint8_t m_mask{0}; ///< mask
 };
 
 // ==============================================================================

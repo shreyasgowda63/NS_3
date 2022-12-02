@@ -75,7 +75,7 @@ class X2CellInfo : public SimpleRefCount<X2CellInfo>
      * \param remoteCellIds remote cell IDs
      */
     X2CellInfo(std::vector<uint16_t> localCellIds, std::vector<uint16_t> remoteCellIds);
-    virtual ~X2CellInfo();
+    virtual ~X2CellInfo() = default;
 
     /**
      * Assignment operator
@@ -225,11 +225,11 @@ class EpcX2 : public Object
     /**
      * UDP ports to be used for the X2-C interface
      */
-    uint16_t m_x2cUdpPort;
+    uint16_t m_x2cUdpPort{4444};
     /**
      * UDP ports to be used for the X2-U interface
      */
-    uint16_t m_x2uUdpPort;
+    uint16_t m_x2uUdpPort{2152};
 };
 
 } // namespace ns3

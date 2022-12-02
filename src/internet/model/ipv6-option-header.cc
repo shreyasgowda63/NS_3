@@ -47,14 +47,10 @@ Ipv6OptionHeader::GetInstanceTypeId() const
 }
 
 Ipv6OptionHeader::Ipv6OptionHeader()
-    : m_type(0),
-      m_length(0)
-{
-}
 
-Ipv6OptionHeader::~Ipv6OptionHeader()
-{
-}
+    = default;
+
+Ipv6OptionHeader::~Ipv6OptionHeader() = default;
 
 void
 Ipv6OptionHeader::SetType(uint8_t type)
@@ -150,9 +146,7 @@ Ipv6OptionPad1Header::Ipv6OptionPad1Header()
     SetType(0);
 }
 
-Ipv6OptionPad1Header::~Ipv6OptionPad1Header()
-{
-}
+Ipv6OptionPad1Header::~Ipv6OptionPad1Header() = default;
 
 void
 Ipv6OptionPad1Header::Print(std::ostream& os) const
@@ -209,9 +203,7 @@ Ipv6OptionPadnHeader::Ipv6OptionPadnHeader(uint32_t pad)
     SetLength(pad - 2);
 }
 
-Ipv6OptionPadnHeader::~Ipv6OptionPadnHeader()
-{
-}
+Ipv6OptionPadnHeader::~Ipv6OptionPadnHeader() = default;
 
 void
 Ipv6OptionPadnHeader::Print(std::ostream& os) const
@@ -272,12 +264,9 @@ Ipv6OptionJumbogramHeader::Ipv6OptionJumbogramHeader()
 {
     SetType(0xC2);
     SetLength(4);
-    m_dataLength = 0;
 }
 
-Ipv6OptionJumbogramHeader::~Ipv6OptionJumbogramHeader()
-{
-}
+Ipv6OptionJumbogramHeader::~Ipv6OptionJumbogramHeader() = default;
 
 void
 Ipv6OptionJumbogramHeader::SetDataLength(uint32_t dataLength)
@@ -351,15 +340,12 @@ Ipv6OptionRouterAlertHeader::GetInstanceTypeId() const
 }
 
 Ipv6OptionRouterAlertHeader::Ipv6OptionRouterAlertHeader()
-    : m_value(0)
 {
     SetType(5);
     SetLength(2);
 }
 
-Ipv6OptionRouterAlertHeader::~Ipv6OptionRouterAlertHeader()
-{
-}
+Ipv6OptionRouterAlertHeader::~Ipv6OptionRouterAlertHeader() = default;
 
 void
 Ipv6OptionRouterAlertHeader::SetValue(uint16_t value)

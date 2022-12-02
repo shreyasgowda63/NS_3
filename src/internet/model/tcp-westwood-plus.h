@@ -118,10 +118,10 @@ class TcpWestwoodPlus : public TcpNewReno
     DataRate m_lastBW;                 //!< Last bandwidth sample after being filtered
     FilterType m_fType;                //!< 0 for none, 1 for Tustin
 
-    uint32_t m_ackedSegments;  //!< The number of segments ACKed between RTTs
-    bool m_IsCount;            //!< Start keeping track of m_ackedSegments for Westwood+ if TRUE
-    EventId m_bwEstimateEvent; //!< The BW estimation event for Westwood+
-    Time m_lastAck;            //!< The last ACK time
+    uint32_t m_ackedSegments{0}; //!< The number of segments ACKed between RTTs
+    bool m_IsCount{false};       //!< Start keeping track of m_ackedSegments for Westwood+ if TRUE
+    EventId m_bwEstimateEvent;   //!< The BW estimation event for Westwood+
+    Time m_lastAck;              //!< The last ACK time
 };
 
 } // namespace ns3

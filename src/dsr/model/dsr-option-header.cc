@@ -65,14 +65,10 @@ DsrOptionHeader::GetInstanceTypeId() const
 }
 
 DsrOptionHeader::DsrOptionHeader()
-    : m_type(0),
-      m_length(0)
-{
-}
 
-DsrOptionHeader::~DsrOptionHeader()
-{
-}
+    = default;
+
+DsrOptionHeader::~DsrOptionHeader() = default;
 
 void
 DsrOptionHeader::SetType(uint8_t type)
@@ -168,9 +164,7 @@ DsrOptionPad1Header::DsrOptionPad1Header()
     SetType(224);
 }
 
-DsrOptionPad1Header::~DsrOptionPad1Header()
-{
-}
+DsrOptionPad1Header::~DsrOptionPad1Header() = default;
 
 void
 DsrOptionPad1Header::Print(std::ostream& os) const
@@ -227,9 +221,7 @@ DsrOptionPadnHeader::DsrOptionPadnHeader(uint32_t pad)
     SetLength(pad - 2);
 }
 
-DsrOptionPadnHeader::~DsrOptionPadnHeader()
-{
-}
+DsrOptionPadnHeader::~DsrOptionPadnHeader() = default;
 
 void
 DsrOptionPadnHeader::Print(std::ostream& os) const
@@ -293,9 +285,7 @@ DsrOptionRreqHeader::DsrOptionRreqHeader()
     SetLength(6 + m_ipv4Address.size() * 4);
 }
 
-DsrOptionRreqHeader::~DsrOptionRreqHeader()
-{
-}
+DsrOptionRreqHeader::~DsrOptionRreqHeader() = default;
 
 void
 DsrOptionRreqHeader::SetNumberAddress(uint8_t n)
@@ -462,9 +452,7 @@ DsrOptionRrepHeader::DsrOptionRrepHeader()
     SetLength(2 + m_ipv4Address.size() * 4);
 }
 
-DsrOptionRrepHeader::~DsrOptionRrepHeader()
-{
-}
+DsrOptionRrepHeader::~DsrOptionRrepHeader() = default;
 
 void
 DsrOptionRrepHeader::SetNumberAddress(uint8_t n)
@@ -594,16 +582,13 @@ DsrOptionSRHeader::GetInstanceTypeId() const
 }
 
 DsrOptionSRHeader::DsrOptionSRHeader()
-    : m_segmentsLeft(0),
-      m_ipv4Address(0)
+    : m_ipv4Address(0)
 {
     SetType(96);
     SetLength(2 + m_ipv4Address.size() * 4);
 }
 
-DsrOptionSRHeader::~DsrOptionSRHeader()
-{
-}
+DsrOptionSRHeader::~DsrOptionSRHeader() = default;
 
 void
 DsrOptionSRHeader::SetSegmentsLeft(uint8_t segmentsLeft)
@@ -757,17 +742,13 @@ DsrOptionRerrHeader::GetInstanceTypeId() const
 }
 
 DsrOptionRerrHeader::DsrOptionRerrHeader()
-    : m_errorType(0),
-      m_salvage(0),
-      m_errorLength(4)
+
 {
     SetType(3);
     SetLength(18);
 }
 
-DsrOptionRerrHeader::~DsrOptionRerrHeader()
-{
-}
+DsrOptionRerrHeader::~DsrOptionRerrHeader() = default;
 
 void
 DsrOptionRerrHeader::SetErrorType(uint8_t errorType)
@@ -893,16 +874,13 @@ DsrOptionRerrUnreachHeader::GetInstanceTypeId() const
 }
 
 DsrOptionRerrUnreachHeader::DsrOptionRerrUnreachHeader()
-    : m_salvage(0)
 {
     SetType(3);
     SetLength(18);
     SetErrorType(1);
 }
 
-DsrOptionRerrUnreachHeader::~DsrOptionRerrUnreachHeader()
-{
-}
+DsrOptionRerrUnreachHeader::~DsrOptionRerrUnreachHeader() = default;
 
 void
 DsrOptionRerrUnreachHeader::SetSalvage(uint8_t salvage)
@@ -1037,16 +1015,13 @@ DsrOptionRerrUnsupportHeader::GetInstanceTypeId() const
 }
 
 DsrOptionRerrUnsupportHeader::DsrOptionRerrUnsupportHeader()
-    : m_salvage(0)
 {
     SetType(3);
     SetLength(14);
     SetErrorType(3);
 }
 
-DsrOptionRerrUnsupportHeader::~DsrOptionRerrUnsupportHeader()
-{
-}
+DsrOptionRerrUnsupportHeader::~DsrOptionRerrUnsupportHeader() = default;
 
 void
 DsrOptionRerrUnsupportHeader::SetSalvage(uint8_t salvage)
@@ -1167,16 +1142,13 @@ DsrOptionAckReqHeader::GetInstanceTypeId() const
 }
 
 DsrOptionAckReqHeader::DsrOptionAckReqHeader()
-    : m_identification(0)
 
 {
     SetType(160);
     SetLength(2);
 }
 
-DsrOptionAckReqHeader::~DsrOptionAckReqHeader()
-{
-}
+DsrOptionAckReqHeader::~DsrOptionAckReqHeader() = default;
 
 void
 DsrOptionAckReqHeader::SetAckId(uint16_t identification)
@@ -1251,15 +1223,12 @@ DsrOptionAckHeader::GetInstanceTypeId() const
 }
 
 DsrOptionAckHeader::DsrOptionAckHeader()
-    : m_identification(0)
 {
     SetType(32);
     SetLength(10);
 }
 
-DsrOptionAckHeader::~DsrOptionAckHeader()
-{
-}
+DsrOptionAckHeader::~DsrOptionAckHeader() = default;
 
 void
 DsrOptionAckHeader::SetAckId(uint16_t identification)

@@ -201,9 +201,7 @@ class TcpRateLinux : public TcpRateOps
      */
     static TypeId GetTypeId();
 
-    ~TcpRateLinux() override
-    {
-    }
+    ~TcpRateLinux() override = default;
 
     void SkbSent(TcpTxItem* skb, bool isStartOfTransmission) override;
     void SkbDelivered(TcpTxItem* skb) override;

@@ -85,19 +85,19 @@ class TcpHtcp : public TcpNewReno
     void UpdateBeta();
 
     // h-tcp variables
-    double m_alpha;           //!< AIMD additive increase parameter
-    double m_beta;            //!< AIMD multiplicative decrease factor
+    double m_alpha{0};        //!< AIMD additive increase parameter
+    double m_beta{0};         //!< AIMD multiplicative decrease factor
     double m_defaultBackoff;  //!< default value when throughput ratio less than default
     double m_throughputRatio; //!< ratio of two consequence throughput
     Time m_delta;             //!< Time in second that has elapsed since the
                               // last congestion event experienced by a flow
-    Time m_deltaL;         //!< Threshold for switching between standard and new increase function
-    Time m_lastCon;        //!< Time of the last congestion for the flow
-    Time m_minRtt;         //!< Minimum RTT in each congestion period
-    Time m_maxRtt;         //!< Maximum RTT in each congestion period
-    uint32_t m_throughput; //!< Current throughput since last congestion
-    uint32_t m_lastThroughput; //!< Throughput in last congestion period
-    uint32_t m_dataSent;       //!< Current amount of data sent since last congestion
+    Time m_deltaL;  //!< Threshold for switching between standard and new increase function
+    Time m_lastCon; //!< Time of the last congestion for the flow
+    Time m_minRtt;  //!< Minimum RTT in each congestion period
+    Time m_maxRtt;  //!< Maximum RTT in each congestion period
+    uint32_t m_throughput{0};     //!< Current throughput since last congestion
+    uint32_t m_lastThroughput{0}; //!< Throughput in last congestion period
+    uint32_t m_dataSent{0};       //!< Current amount of data sent since last congestion
 };
 
 } // namespace ns3

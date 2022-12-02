@@ -47,9 +47,7 @@ class QueueDiscFactory
      */
     QueueDiscFactory(ObjectFactory factory);
 
-    virtual ~QueueDiscFactory()
-    {
-    }
+    virtual ~QueueDiscFactory() = default;
 
     // Delete default constructor to avoid misuse
     QueueDiscFactory() = delete;
@@ -123,9 +121,7 @@ class TrafficControlHelper
      */
     TrafficControlHelper();
 
-    virtual ~TrafficControlHelper()
-    {
-    }
+    virtual ~TrafficControlHelper() = default;
 
     /**
      * \param nTxQueues the number of Tx queue disc classes

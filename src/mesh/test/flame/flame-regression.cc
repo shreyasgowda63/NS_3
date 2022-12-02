@@ -42,9 +42,7 @@ const char* const PREFIX = "flame-regression-test";
 
 FlameRegressionTest::FlameRegressionTest()
     : TestCase("FLAME regression test"),
-      m_nodes(nullptr),
-      m_time(Seconds(10)),
-      m_sentPktsCounter(0)
+      m_time(Seconds(10))
 {
 }
 

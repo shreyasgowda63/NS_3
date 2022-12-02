@@ -50,9 +50,7 @@ Ns3WimaxFragmentationTestCase::Ns3WimaxFragmentationTestCase()
 {
 }
 
-Ns3WimaxFragmentationTestCase::~Ns3WimaxFragmentationTestCase()
-{
-}
+Ns3WimaxFragmentationTestCase::~Ns3WimaxFragmentationTestCase() = default;
 
 void
 Ns3WimaxFragmentationTestCase::DoRun()

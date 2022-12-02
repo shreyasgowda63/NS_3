@@ -232,9 +232,7 @@ BuildingsPathlossTestCase::BuildingsPathlossTestCase(double freq,
 {
 }
 
-BuildingsPathlossTestCase::~BuildingsPathlossTestCase()
-{
-}
+BuildingsPathlossTestCase::~BuildingsPathlossTestCase() = default;
 
 void
 BuildingsPathlossTestCase::DoRun()

@@ -107,7 +107,7 @@ class ConnectionManager : public Object
     std::vector<Ptr<WimaxConnection>> m_transportConnections; ///< transport connections
     std::vector<Ptr<WimaxConnection>> m_multicastConnections; ///< multicast connections
     // only for BS
-    CidFactory* m_cidFactory; ///< the factory
+    CidFactory* m_cidFactory{nullptr}; ///< the factory
 };
 
 } // namespace ns3

@@ -80,7 +80,6 @@ ThreeGppPropagationLossModel::GetTypeId()
 }
 
 ThreeGppPropagationLossModel::ThreeGppPropagationLossModel()
-    : PropagationLossModel()
 {
     NS_LOG_FUNCTION(this);
 
@@ -526,7 +525,6 @@ ThreeGppRmaPropagationLossModel::GetTypeId()
 }
 
 ThreeGppRmaPropagationLossModel::ThreeGppRmaPropagationLossModel()
-    : ThreeGppPropagationLossModel()
 {
     NS_LOG_FUNCTION(this);
 
@@ -756,7 +754,6 @@ ThreeGppUmaPropagationLossModel::GetTypeId()
 }
 
 ThreeGppUmaPropagationLossModel::ThreeGppUmaPropagationLossModel()
-    : ThreeGppPropagationLossModel()
 {
     NS_LOG_FUNCTION(this);
     m_uniformVar = CreateObject<UniformRandomVariable>();
@@ -994,7 +991,6 @@ ThreeGppUmiStreetCanyonPropagationLossModel::GetTypeId()
 }
 
 ThreeGppUmiStreetCanyonPropagationLossModel::ThreeGppUmiStreetCanyonPropagationLossModel()
-    : ThreeGppPropagationLossModel()
 {
     NS_LOG_FUNCTION(this);
 
@@ -1233,7 +1229,6 @@ ThreeGppIndoorOfficePropagationLossModel::GetTypeId()
 }
 
 ThreeGppIndoorOfficePropagationLossModel::ThreeGppIndoorOfficePropagationLossModel()
-    : ThreeGppPropagationLossModel()
 {
     NS_LOG_FUNCTION(this);
 

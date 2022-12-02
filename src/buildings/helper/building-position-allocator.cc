@@ -44,8 +44,8 @@ NS_LOG_COMPONENT_DEFINE("BuildingPositionAllocator");
 NS_OBJECT_ENSURE_REGISTERED(RandomBuildingPositionAllocator);
 
 RandomBuildingPositionAllocator::RandomBuildingPositionAllocator()
+    : m_rand(CreateObject<UniformRandomVariable>())
 {
-    m_rand = CreateObject<UniformRandomVariable>();
 }
 
 TypeId
@@ -110,9 +110,7 @@ RandomBuildingPositionAllocator::AssignStreams(int64_t stream)
 
 NS_OBJECT_ENSURE_REGISTERED(OutdoorPositionAllocator);
 
-OutdoorPositionAllocator::OutdoorPositionAllocator()
-{
-}
+OutdoorPositionAllocator::OutdoorPositionAllocator() = default;
 
 TypeId
 OutdoorPositionAllocator::GetTypeId()
@@ -232,8 +230,8 @@ OutdoorPositionAllocator::AssignStreams(int64_t stream)
 NS_OBJECT_ENSURE_REGISTERED(RandomRoomPositionAllocator);
 
 RandomRoomPositionAllocator::RandomRoomPositionAllocator()
+    : m_rand(CreateObject<UniformRandomVariable>())
 {
-    m_rand = CreateObject<UniformRandomVariable>();
 }
 
 TypeId
@@ -321,9 +319,9 @@ SameRoomPositionAllocator::SameRoomPositionAllocator()
 }
 
 SameRoomPositionAllocator::SameRoomPositionAllocator(NodeContainer c)
-    : m_nodes(c)
+    : m_nodes(c),
+      m_rand(CreateObject<UniformRandomVariable>())
 {
-    m_rand = CreateObject<UniformRandomVariable>();
     m_nodeIt = m_nodes.Begin();
     // this is needed to make sure the building models associated with c have been initialized
     for (NodeContainer::Iterator it = m_nodes.Begin(); it != m_nodes.End(); ++it)
@@ -410,12 +408,12 @@ FixedRoomPositionAllocator::FixedRoomPositionAllocator(uint32_t x,
                                                        uint32_t y,
                                                        uint32_t z,
                                                        Ptr<Building> pbtr)
+    : roomx(x),
+      roomy(y),
+      floor(z),
+      bptr(pbtr),
+      m_rand(CreateObject<UniformRandomVariable>())
 {
-    m_rand = CreateObject<UniformRandomVariable>();
-    roomx = x;
-    roomy = y;
-    floor = z;
-    bptr = pbtr;
 }
 
 TypeId

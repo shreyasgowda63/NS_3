@@ -84,9 +84,7 @@ RadvdTestCase::RadvdTestCase()
 {
 }
 
-RadvdTestCase::~RadvdTestCase()
-{
-}
+RadvdTestCase::~RadvdTestCase() = default;
 
 void
 RadvdTestCase::CheckAddresses(Ptr<NetDevice> n0Dev,

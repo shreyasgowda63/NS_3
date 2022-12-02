@@ -46,9 +46,7 @@ DsdvHeader::DsdvHeader(Ipv4Address dst, uint32_t hopCount, uint32_t dstSeqNo)
 {
 }
 
-DsdvHeader::~DsdvHeader()
-{
-}
+DsdvHeader::~DsdvHeader() = default;
 
 TypeId
 DsdvHeader::GetTypeId()

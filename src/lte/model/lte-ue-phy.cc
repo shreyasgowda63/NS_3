@@ -151,7 +151,9 @@ LteUePhy::LteUePhy()
 
 LteUePhy::LteUePhy(Ptr<LteSpectrumPhy> dlPhy, Ptr<LteSpectrumPhy> ulPhy)
     : LtePhy(dlPhy, ulPhy),
+      m_uePhySapProvider(new UeMemberLteUePhySapProvider(this)),
       m_uePhySapUser(nullptr),
+      m_ueCphySapProvider(new MemberLteUeCphySapProvider<LteUePhy>(this)),
       m_ueCphySapUser(nullptr),
       m_state(CELL_SEARCH),
       m_subframeNo(0),
@@ -166,8 +168,7 @@ LteUePhy::LteUePhy(Ptr<LteSpectrumPhy> dlPhy, Ptr<LteSpectrumPhy> ulPhy)
 {
     m_amc = CreateObject<LteAmc>();
     m_powerControl = CreateObject<LteUePowerControl>();
-    m_uePhySapProvider = new UeMemberLteUePhySapProvider(this);
-    m_ueCphySapProvider = new MemberLteUeCphySapProvider<LteUePhy>(this);
+
     m_macChTtiDelay = UL_PUSCH_TTIS_DELAY;
 
     NS_ASSERT_MSG(Simulator::Now().GetNanoSeconds() == 0,

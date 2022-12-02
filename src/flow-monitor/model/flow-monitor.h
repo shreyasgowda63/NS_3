@@ -300,7 +300,7 @@ class FlowMonitor : public Object
 
     EventId m_startEvent;               //!< Start event
     EventId m_stopEvent;                //!< Stop event
-    bool m_enabled;                     //!< FlowMon is enabled
+    bool m_enabled{false};              //!< FlowMon is enabled
     double m_delayBinWidth;             //!< Delay bin width (for histograms)
     double m_jitterBinWidth;            //!< Jitter bin width (for histograms)
     double m_packetSizeBinWidth;        //!< packet size bin width (for histograms)

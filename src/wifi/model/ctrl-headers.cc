@@ -37,14 +37,11 @@ namespace ns3
 NS_OBJECT_ENSURE_REGISTERED(CtrlBAckRequestHeader);
 
 CtrlBAckRequestHeader::CtrlBAckRequestHeader()
-    : m_barAckPolicy(false),
-      m_barType(BlockAckReqType::BASIC)
+    : m_barType(BlockAckReqType::BASIC)
 {
 }
 
-CtrlBAckRequestHeader::~CtrlBAckRequestHeader()
-{
-}
+CtrlBAckRequestHeader::~CtrlBAckRequestHeader() = default;
 
 TypeId
 CtrlBAckRequestHeader::GetTypeId()
@@ -273,15 +270,12 @@ CtrlBAckRequestHeader::IsMultiTid() const
 NS_OBJECT_ENSURE_REGISTERED(CtrlBAckResponseHeader);
 
 CtrlBAckResponseHeader::CtrlBAckResponseHeader()
-    : m_baAckPolicy(false),
-      m_tidInfo(0)
+
 {
     SetType(BlockAckType::BASIC);
 }
 
-CtrlBAckResponseHeader::~CtrlBAckResponseHeader()
-{
-}
+CtrlBAckResponseHeader::~CtrlBAckResponseHeader() = default;
 
 TypeId
 CtrlBAckResponseHeader::GetTypeId()
@@ -1069,21 +1063,12 @@ CtrlBAckResponseHeader::ResetBitmap(std::size_t index)
  ***********************************/
 
 CtrlTriggerUserInfoField::CtrlTriggerUserInfoField(uint8_t triggerType)
-    : m_aid12(0),
-      m_ruAllocation(0),
-      m_ulFecCodingType(false),
-      m_ulMcs(0),
-      m_ulDcm(false),
-      m_ulTargetRssi(0),
-      m_triggerType(triggerType),
-      m_basicTriggerDependentUserInfo(0)
+    : m_triggerType(triggerType)
 {
     memset(&m_bits26To31, 0, sizeof(m_bits26To31));
 }
 
-CtrlTriggerUserInfoField::~CtrlTriggerUserInfoField()
-{
-}
+CtrlTriggerUserInfoField::~CtrlTriggerUserInfoField() = default;
 
 CtrlTriggerUserInfoField&
 CtrlTriggerUserInfoField::operator=(const CtrlTriggerUserInfoField& userInfo)
@@ -1550,9 +1535,9 @@ CtrlTriggerHeader::CtrlTriggerHeader()
 }
 
 CtrlTriggerHeader::CtrlTriggerHeader(TriggerFrameType type, const WifiTxVector& txVector)
-    : CtrlTriggerHeader()
+    : CtrlTriggerHeader(),
+      m_triggerType(type)
 {
-    m_triggerType = type;
     SetUlBandwidth(txVector.GetChannelWidth());
     SetUlLength(txVector.GetLength());
     uint16_t gi = txVector.GetGuardInterval();
@@ -1574,9 +1559,7 @@ CtrlTriggerHeader::CtrlTriggerHeader(TriggerFrameType type, const WifiTxVector& 
     }
 }
 
-CtrlTriggerHeader::~CtrlTriggerHeader()
-{
-}
+CtrlTriggerHeader::~CtrlTriggerHeader() = default;
 
 CtrlTriggerHeader&
 CtrlTriggerHeader::operator=(const CtrlTriggerHeader& trigger)

@@ -185,9 +185,8 @@ SimpleOfdmWimaxPhy::InitSimpleOfdmWimaxPhy()
 }
 
 SimpleOfdmWimaxPhy::SimpleOfdmWimaxPhy()
+    : m_URNG(CreateObject<UniformRandomVariable>())
 {
-    m_URNG = CreateObject<UniformRandomVariable>();
-
     InitSimpleOfdmWimaxPhy();
     m_snrToBlockErrorRateManager->SetTraceFilePath((char*)"");
     m_snrToBlockErrorRateManager->LoadTraces();
@@ -200,9 +199,7 @@ SimpleOfdmWimaxPhy::SimpleOfdmWimaxPhy(char* tracesPath)
     m_snrToBlockErrorRateManager->LoadTraces();
 }
 
-SimpleOfdmWimaxPhy::~SimpleOfdmWimaxPhy()
-{
-}
+SimpleOfdmWimaxPhy::~SimpleOfdmWimaxPhy() = default;
 
 void
 SimpleOfdmWimaxPhy::ActivateLoss(bool loss)

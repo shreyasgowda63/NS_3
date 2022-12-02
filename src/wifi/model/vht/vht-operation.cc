@@ -23,12 +23,8 @@ namespace ns3
 {
 
 VhtOperation::VhtOperation()
-    : m_channelWidth(0),
-      m_channelCenterFrequencySegment0(0),
-      m_channelCenterFrequencySegment1(0),
-      m_basicVhtMcsAndNssSet(0)
-{
-}
+
+    = default;
 
 WifiInformationElementId
 VhtOperation::ElementId() const

@@ -174,17 +174,17 @@ class A2A4RsrqHandoverAlgorithm : public LteHandoverAlgorithm
      * Expressed in quantized range of [0..34] as per Section 9.1.7 of
      * 3GPP TS 36.133.
      */
-    uint8_t m_servingCellThreshold;
+    uint8_t m_servingCellThreshold{30};
 
     /**
      * The `NeighbourCellOffset` attribute. Minimum offset between the serving
      * and the best neighbour cell to trigger the handover. Expressed in
      * quantized range of [0..34] as per Section 9.1.7 of 3GPP TS 36.133.
      */
-    uint8_t m_neighbourCellOffset;
+    uint8_t m_neighbourCellOffset{1};
 
     /// Interface to the eNodeB RRC instance.
-    LteHandoverManagementSapUser* m_handoverManagementSapUser;
+    LteHandoverManagementSapUser* m_handoverManagementSapUser{nullptr};
     /// Receive API calls from the eNodeB RRC instance.
     LteHandoverManagementSapProvider* m_handoverManagementSapProvider;
 

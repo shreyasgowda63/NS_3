@@ -22,9 +22,7 @@
 namespace ns3
 {
 
-StatusCode::StatusCode()
-{
-}
+StatusCode::StatusCode() = default;
 
 void
 StatusCode::SetSuccess()

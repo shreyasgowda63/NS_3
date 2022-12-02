@@ -209,8 +209,8 @@ class HwmpProtocol : public MeshL2RoutingProtocol
         Ptr<Packet> pkt;          ///< the packet
         Mac48Address src;         ///< src address
         Mac48Address dst;         ///< dst address
-        uint16_t protocol;        ///< protocol number
-        uint32_t inInterface;     ///< incoming device interface ID. (if packet has come from upper
+        uint16_t protocol{0};     ///< protocol number
+        uint32_t inInterface{0};  ///< incoming device interface ID. (if packet has come from upper
                                   ///< layers, this is Mesh point ID)
         RouteReplyCallback reply; ///< how to reply
 
@@ -467,15 +467,15 @@ class HwmpProtocol : public MeshL2RoutingProtocol
     /// Statistics structure
     struct Statistics
     {
-        uint16_t txUnicast;     ///< transmit unicast
-        uint16_t txBroadcast;   ///< transmit broadcast
-        uint32_t txBytes;       ///< transmit bytes
-        uint16_t droppedTtl;    ///< dropped TTL
-        uint16_t totalQueued;   ///< total queued
-        uint16_t totalDropped;  ///< total dropped
-        uint16_t initiatedPreq; ///< initiated PREQ
-        uint16_t initiatedPrep; ///< initiated PREP
-        uint16_t initiatedPerr; ///< initiated PERR
+        uint16_t txUnicast{0};     ///< transmit unicast
+        uint16_t txBroadcast{0};   ///< transmit broadcast
+        uint32_t txBytes{0};       ///< transmit bytes
+        uint16_t droppedTtl{0};    ///< dropped TTL
+        uint16_t totalQueued{0};   ///< total queued
+        uint16_t totalDropped{0};  ///< total dropped
+        uint16_t initiatedPreq{0}; ///< initiated PREQ
+        uint16_t initiatedPrep{0}; ///< initiated PREP
+        uint16_t initiatedPerr{0}; ///< initiated PERR
 
         /**
          * Print function
@@ -490,9 +490,9 @@ class HwmpProtocol : public MeshL2RoutingProtocol
 
     HwmpProtocolMacMap m_interfaces; ///< interfaces
     Mac48Address m_address;          ///< address
-    uint32_t m_dataSeqno;            ///< data sequence no
-    uint32_t m_hwmpSeqno;            ///< HWMP sequence no
-    uint32_t m_preqId;               ///< PREQ ID
+    uint32_t m_dataSeqno{1};         ///< data sequence no
+    uint32_t m_hwmpSeqno{1};         ///< HWMP sequence no
+    uint32_t m_preqId{0};            ///< PREQ ID
     /// \name Sequence number filters
     ///@{
     /// Data sequence number database
@@ -521,9 +521,9 @@ class HwmpProtocol : public MeshL2RoutingProtocol
     /// \name HWMP-protocol parameters
     /// These are all Attributes
     ///@{
-    uint16_t m_maxQueueSize; //!< Maximum number of packets we can store when resolving route
-    uint8_t m_dot11MeshHWMPmaxPREQretries; //!< Maximum number of retries before we suppose the
-                                           //!< destination to be unreachable
+    uint16_t m_maxQueueSize{255}; //!< Maximum number of packets we can store when resolving route
+    uint8_t m_dot11MeshHWMPmaxPREQretries{3}; //!< Maximum number of retries before we suppose the
+                                              //!< destination to be unreachable
     Time m_dot11MeshHWMPnetDiameterTraversalTime; //!< Time we suppose the packet to go from one
                                                   //!< edge of the network to another
     Time m_dot11MeshHWMPpreqMinInterval;          //!< Minimal interval between to successive PREQs
@@ -532,16 +532,16 @@ class HwmpProtocol : public MeshL2RoutingProtocol
     Time m_dot11MeshHWMPactivePathTimeout;        //!< Lifetime of reactive routing information
     Time m_dot11MeshHWMPpathToRootInterval; //!< Interval between two successive proactive PREQs
     Time m_dot11MeshHWMPrannInterval;       //!< Lifetime of proactive routing information
-    bool m_isRoot;                          //!< True if the node is a root
-    uint8_t m_maxTtl;                       //!< Initial value of Time To Live field
-    uint8_t m_unicastPerrThreshold; //!< Maximum number of PERR receivers, when we send a PERR as a
-                                    //!< chain of unicasts
-    uint8_t m_unicastPreqThreshold; //!< Maximum number of PREQ receivers, when we send a PREQ as a
-                                    //!< chain of unicasts
-    uint8_t m_unicastDataThreshold; //!< Maximum number of broadcast receivers, when we send a
-                                    //!< broadcast as a chain of unicasts
-    bool m_doFlag;                  //!< Destination only HWMP flag
-    bool m_rfFlag;                  //!< Reply and forward flag
+    bool m_isRoot{false};                   //!< True if the node is a root
+    uint8_t m_maxTtl{32};                   //!< Initial value of Time To Live field
+    uint8_t m_unicastPerrThreshold{32}; //!< Maximum number of PERR receivers, when we send a PERR
+                                        //!< as a chain of unicasts
+    uint8_t m_unicastPreqThreshold{1}; //!< Maximum number of PREQ receivers, when we send a PREQ as
+                                       //!< a chain of unicasts
+    uint8_t m_unicastDataThreshold{1}; //!< Maximum number of broadcast receivers, when we send a
+                                       //!< broadcast as a chain of unicasts
+    bool m_doFlag{false};              //!< Destination only HWMP flag
+    bool m_rfFlag{false};              //!< Reply and forward flag
     ///@}
 
     /// Random variable for random start time

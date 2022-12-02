@@ -47,15 +47,11 @@ Ipv6ExtensionHeader::GetInstanceTypeId() const
 }
 
 Ipv6ExtensionHeader::Ipv6ExtensionHeader()
-    : m_length(0),
-      m_nextHeader(0),
-      m_data(0)
+    : m_data(0)
 {
 }
 
-Ipv6ExtensionHeader::~Ipv6ExtensionHeader()
-{
-}
+Ipv6ExtensionHeader::~Ipv6ExtensionHeader() = default;
 
 void
 Ipv6ExtensionHeader::SetNextHeader(uint8_t nextHeader)
@@ -143,9 +139,7 @@ OptionField::OptionField(uint32_t optionsOffset)
 {
 }
 
-OptionField::~OptionField()
-{
-}
+OptionField::~OptionField() = default;
 
 uint32_t
 OptionField::GetSerializedSize() const
@@ -250,9 +244,7 @@ Ipv6ExtensionHopByHopHeader::Ipv6ExtensionHopByHopHeader()
 {
 }
 
-Ipv6ExtensionHopByHopHeader::~Ipv6ExtensionHopByHopHeader()
-{
-}
+Ipv6ExtensionHopByHopHeader::~Ipv6ExtensionHopByHopHeader() = default;
 
 void
 Ipv6ExtensionHopByHopHeader::Print(std::ostream& os) const
@@ -312,9 +304,7 @@ Ipv6ExtensionDestinationHeader::Ipv6ExtensionDestinationHeader()
 {
 }
 
-Ipv6ExtensionDestinationHeader::~Ipv6ExtensionDestinationHeader()
-{
-}
+Ipv6ExtensionDestinationHeader::~Ipv6ExtensionDestinationHeader() = default;
 
 void
 Ipv6ExtensionDestinationHeader::Print(std::ostream& os) const
@@ -370,15 +360,12 @@ Ipv6ExtensionFragmentHeader::GetInstanceTypeId() const
 }
 
 Ipv6ExtensionFragmentHeader::Ipv6ExtensionFragmentHeader()
-    : m_offset(0),
-      m_identification(0)
+
 {
     m_length = 0;
 }
 
-Ipv6ExtensionFragmentHeader::~Ipv6ExtensionFragmentHeader()
-{
-}
+Ipv6ExtensionFragmentHeader::~Ipv6ExtensionFragmentHeader() = default;
 
 void
 Ipv6ExtensionFragmentHeader::SetOffset(uint16_t offset)
@@ -477,14 +464,10 @@ Ipv6ExtensionRoutingHeader::GetInstanceTypeId() const
 }
 
 Ipv6ExtensionRoutingHeader::Ipv6ExtensionRoutingHeader()
-    : m_typeRouting(0),
-      m_segmentsLeft(0)
-{
-}
 
-Ipv6ExtensionRoutingHeader::~Ipv6ExtensionRoutingHeader()
-{
-}
+    = default;
+
+Ipv6ExtensionRoutingHeader::~Ipv6ExtensionRoutingHeader() = default;
 
 void
 Ipv6ExtensionRoutingHeader::SetTypeRouting(uint8_t typeRouting)
@@ -571,9 +554,7 @@ Ipv6ExtensionLooseRoutingHeader::Ipv6ExtensionLooseRoutingHeader()
 {
 }
 
-Ipv6ExtensionLooseRoutingHeader::~Ipv6ExtensionLooseRoutingHeader()
-{
-}
+Ipv6ExtensionLooseRoutingHeader::~Ipv6ExtensionLooseRoutingHeader() = default;
 
 void
 Ipv6ExtensionLooseRoutingHeader::SetNumberAddress(uint8_t n)
@@ -693,13 +674,9 @@ Ipv6ExtensionESPHeader::GetInstanceTypeId() const
     return GetTypeId();
 }
 
-Ipv6ExtensionESPHeader::Ipv6ExtensionESPHeader()
-{
-}
+Ipv6ExtensionESPHeader::Ipv6ExtensionESPHeader() = default;
 
-Ipv6ExtensionESPHeader::~Ipv6ExtensionESPHeader()
-{
-}
+Ipv6ExtensionESPHeader::~Ipv6ExtensionESPHeader() = default;
 
 void
 Ipv6ExtensionESPHeader::Print(std::ostream& os) const
@@ -745,13 +722,9 @@ Ipv6ExtensionAHHeader::GetInstanceTypeId() const
     return GetTypeId();
 }
 
-Ipv6ExtensionAHHeader::Ipv6ExtensionAHHeader()
-{
-}
+Ipv6ExtensionAHHeader::Ipv6ExtensionAHHeader() = default;
 
-Ipv6ExtensionAHHeader::~Ipv6ExtensionAHHeader()
-{
-}
+Ipv6ExtensionAHHeader::~Ipv6ExtensionAHHeader() = default;
 
 void
 Ipv6ExtensionAHHeader::Print(std::ostream& os) const

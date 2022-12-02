@@ -193,16 +193,6 @@ operator<<(std::ostream& os, const SuperframeField& superframeField)
 /***********************************************************
  *         Guaranteed Time Slots (GTS) Fields
  ***********************************************************/
-
-GtsFields::GtsFields()
-{
-    // GTS Specification Field
-    m_gtsSpecDescCount = 0;
-    m_gtsSpecPermit = 0;
-    // GTS Direction Field
-    m_gtsDirMask = 0;
-}
-
 uint8_t
 GtsFields::GetGtsSpecField() const
 {
@@ -321,11 +311,7 @@ operator<<(std::ostream& os, const GtsFields& gtsFields)
  *              Pending Address Fields
  ***********************************************************/
 
-PendingAddrFields::PendingAddrFields()
-{
-    m_pndAddrSpecNumShortAddr = 0;
-    m_pndAddrSpecNumExtAddr = 0;
-}
+PendingAddrFields::PendingAddrFields() = default;
 
 uint8_t
 PendingAddrFields::GetNumShortAddr() const
@@ -483,14 +469,7 @@ operator<<(std::ostream& os, const PendingAddrFields& pendingAddrFields)
  *              Capability Information Field
  ***********************************************************/
 
-CapabilityField::CapabilityField()
-{
-    m_deviceType = true;
-    m_powerSource = false;
-    m_receiverOnWhenIdle = true;
-    m_securityCap = false;
-    m_allocAddr = true;
-}
+CapabilityField::CapabilityField() = default;
 
 uint32_t
 CapabilityField::GetSerializedSize() const

@@ -402,16 +402,16 @@ class RoutingTableEntry
     /// Output interface address
     Ipv4InterfaceAddress m_iface;
     /// Routing flags: valid, invalid or in search
-    RouteFlags m_flag;
+    RouteFlags m_flag{VALID};
 
     /// List of precursors
     std::vector<Ipv4Address> m_precursorList;
     /// When I can send another request
     Time m_routeRequestTimout;
     /// Number of route requests
-    uint8_t m_reqCount;
+    uint8_t m_reqCount{0};
     /// Indicate if this entry is in "blacklist"
-    bool m_blackListState;
+    bool m_blackListState{false};
     /// Time for which the node is put into the blacklist
     Time m_blackListTimeout;
 };

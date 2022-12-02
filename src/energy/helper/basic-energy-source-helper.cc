@@ -29,9 +29,7 @@ BasicEnergySourceHelper::BasicEnergySourceHelper()
     m_basicEnergySource.SetTypeId("ns3::BasicEnergySource");
 }
 
-BasicEnergySourceHelper::~BasicEnergySourceHelper()
-{
-}
+BasicEnergySourceHelper::~BasicEnergySourceHelper() = default;
 
 void
 BasicEnergySourceHelper::Set(std::string name, const AttributeValue& v)

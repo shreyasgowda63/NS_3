@@ -286,7 +286,7 @@ class RngRsp : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint8_t m_reserved; ///< changed as per the amendment 802.16e-2005
+    uint8_t m_reserved{0}; ///< changed as per the amendment 802.16e-2005
 
     // TLV Encoded Information
 
@@ -294,7 +294,7 @@ class RngRsp : public Header
      * Tx timing offset adjustment (signed 32-bit). The time required to advance SS transmission so
      * frames arrive at the expected time instance at the BS.
      */
-    uint32_t m_timingAdjust;
+    uint32_t m_timingAdjust{0};
 
     /**
      * Specifies the relative change in transmission power level that the SS is to make in order
@@ -302,28 +302,28 @@ class RngRsp : public Header
      * the subscriber shall interpret the power offset adjustment as a required change to the
      * transmitted power density.
      */
-    uint8_t m_powerLevelAdjust;
+    uint8_t m_powerLevelAdjust{0};
 
     /**
      * Specifies the relative change in transmission frequency that the SS is to make in order to
      * better match the BS. This is fine-frequency adjustment within a channel, not reassignment to
      * a different channel.
      */
-    uint32_t m_offsetFreqAdjust;
+    uint32_t m_offsetFreqAdjust{0};
 
     /**
      * range status.
      */
-    uint8_t m_rangStatus;
+    uint8_t m_rangStatus{0};
 
     /// Center frequency, in kHz, of new downlink channel where the SS should redo initial ranging.
-    uint32_t m_dlFreqOverride;
+    uint32_t m_dlFreqOverride{0};
 
     /**
      * Licensed bands: The identifier of the uplink channel with which the SS is to redo initial
      * ranging (not used with PHYs without channelized uplinks).
      */
-    uint8_t m_ulChnlIdOverride;
+    uint8_t m_ulChnlIdOverride{0};
 
     /**
      * This parameter is sent in response to the RNG-REQ Requested Downlink Burst Profile parameter.
@@ -331,30 +331,30 @@ class RngRsp : public Header
      * SS. Byte 1: Configuration Change Count value of DCD defining the burst profile associated
      * with DIUC.
      */
-    uint16_t m_dlOperBurstProfile;
+    uint16_t m_dlOperBurstProfile{0};
 
-    Mac48Address m_macAddress;     ///< MAC address
-    Cid m_basicCid;                ///< basic CID
-    Cid m_primaryCid;              ///< primary CID
-    uint8_t m_aasBdcastPermission; ///< AAS broadcast permission
+    Mac48Address m_macAddress;        ///< MAC address
+    Cid m_basicCid;                   ///< basic CID
+    Cid m_primaryCid;                 ///< primary CID
+    uint8_t m_aasBdcastPermission{0}; ///< AAS broadcast permission
 
     /**
      * Frame number where the associated RNG_REQ message was detected by the BS. Usage is mutually
      * exclusive with SS MAC Address
      */
-    uint32_t m_frameNumber;
+    uint32_t m_frameNumber{0};
 
     /**
      * Initial Ranging opportunity (1–255) in which the associated RNG_REQ message was detected by
      * the BS. Usage is mutually exclusive with SS MAC Address
      */
-    uint8_t m_initRangOppNumber;
+    uint8_t m_initRangOppNumber{0};
 
     /**
      * Used to indicate the OFDM subchannel reference that was used to transmit the initial ranging
      * message (OFDM with subchannelization).
      */
-    uint8_t m_rangSubchnl;
+    uint8_t m_rangSubchnl{0};
 };
 
 } // namespace ns3
@@ -557,11 +557,11 @@ class DsaRsp : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint16_t m_transactionId;   ///< transaction ID
-    uint8_t m_confirmationCode; ///< confirmation code
+    uint16_t m_transactionId{0};   ///< transaction ID
+    uint8_t m_confirmationCode{0}; ///< confirmation code
     // TLV Encoded Information
     ServiceFlow m_serviceFlow; ///< service flow
-    uint32_t m_sfid;           ///< SFID
+    uint32_t m_sfid{0};        ///< SFID
     Cid m_cid;                 ///< CID
 };
 
@@ -633,8 +633,8 @@ class DsaAck : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint16_t m_transactionId;   ///< transaction ID
-    uint8_t m_confirmationCode; ///< confirmation code
+    uint16_t m_transactionId{0};   ///< transaction ID
+    uint8_t m_confirmationCode{0}; ///< confirmation code
 };
 
 } // namespace ns3
@@ -719,12 +719,12 @@ class RngReq : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    uint8_t m_reserved; ///< changed as per the amendment 802.16e-2005
+    uint8_t m_reserved{0}; ///< changed as per the amendment 802.16e-2005
 
     // TLV Encoded Information
-    uint8_t m_reqDlBurstProfile; ///< request DL burst profile
-    Mac48Address m_macAddress;   ///< MAC address
-    uint8_t m_rangingAnomalies;  ///< ranging anomalies
+    uint8_t m_reqDlBurstProfile{0}; ///< request DL burst profile
+    Mac48Address m_macAddress;      ///< MAC address
+    uint8_t m_rangingAnomalies{0};  ///< ranging anomalies
 };
 
 } // namespace ns3

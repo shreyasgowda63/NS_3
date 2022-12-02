@@ -30,7 +30,6 @@ NS_LOG_COMPONENT_DEFINE("FfMacScheduler");
 NS_OBJECT_ENSURE_REGISTERED(FfMacScheduler);
 
 FfMacScheduler::FfMacScheduler()
-    : m_ulCqiFilter(SRS_UL_CQI)
 {
     NS_LOG_FUNCTION(this);
 }

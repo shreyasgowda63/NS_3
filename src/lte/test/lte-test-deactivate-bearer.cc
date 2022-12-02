@@ -128,9 +128,7 @@ LenaDeactivateBearerTestCase::LenaDeactivateBearerTestCase(std::vector<uint16_t>
 {
 }
 
-LenaDeactivateBearerTestCase::~LenaDeactivateBearerTestCase()
-{
-}
+LenaDeactivateBearerTestCase::~LenaDeactivateBearerTestCase() = default;
 
 void
 LenaDeactivateBearerTestCase::DoRun()

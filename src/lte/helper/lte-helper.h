@@ -787,7 +787,7 @@ class LteHelper : public Object
      * True if a random variable stream number has been assigned for the fading
      * model. Used to prevent such assignment to be done more than once.
      */
-    bool m_fadingStreamsAssigned;
+    bool m_fadingStreamsAssigned{false};
 
     /// Container of PHY layer statistics.
     Ptr<PhyStatsCalculator> m_phyStats;
@@ -816,13 +816,13 @@ class LteHelper : public Object
      * new UE is installed (by InstallSingleUeDevice()). The first UE will have
      * an IMSI of 1. The maximum number of UE is 2^64 (~4.2e9).
      */
-    uint64_t m_imsiCounter;
+    uint64_t m_imsiCounter{0};
     /**
      * Keep track of the number of cell ID allocated. Increases by one every time
      * a new eNodeB is installed (by InstallSingleEnbDevice()). The first eNodeB
      * will have a cell ID of 1. The maximum number of eNodeB is 65535.
      */
-    uint16_t m_cellIdCounter;
+    uint16_t m_cellIdCounter{1};
 
     /**
      * The `UseIdealRrc` attribute. If true, LteRrcProtocolIdeal will be used for

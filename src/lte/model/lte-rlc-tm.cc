@@ -31,8 +31,7 @@ NS_LOG_COMPONENT_DEFINE("LteRlcTm");
 NS_OBJECT_ENSURE_REGISTERED(LteRlcTm);
 
 LteRlcTm::LteRlcTm()
-    : m_maxTxBufferSize(0),
-      m_txBufferSize(0)
+
 {
     NS_LOG_FUNCTION(this);
 }

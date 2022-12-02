@@ -47,13 +47,9 @@ NS_LOG_COMPONENT_DEFINE("RadioEnvironmentMapHelper");
 
 NS_OBJECT_ENSURE_REGISTERED(RadioEnvironmentMapHelper);
 
-RadioEnvironmentMapHelper::RadioEnvironmentMapHelper()
-{
-}
+RadioEnvironmentMapHelper::RadioEnvironmentMapHelper() = default;
 
-RadioEnvironmentMapHelper::~RadioEnvironmentMapHelper()
-{
-}
+RadioEnvironmentMapHelper::~RadioEnvironmentMapHelper() = default;
 
 void
 RadioEnvironmentMapHelper::DoDispose()

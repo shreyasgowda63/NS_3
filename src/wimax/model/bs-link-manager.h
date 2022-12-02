@@ -166,10 +166,10 @@ class BSLinkManager : public Object
     Ptr<BaseStationNetDevice> m_bs; ///< base station
 
     // ranging parameters
-    uint32_t m_signalQuality;         ///< signal quality
-    uint8_t m_signalQualityThreshold; ///< signal quality threshold
-    int tries; ///< variable to test multiple RNG-REQ by the SS for example undecodable at BS or
-               ///< lost RNG-RSP
+    uint32_t m_signalQuality{10};         ///< signal quality
+    uint8_t m_signalQualityThreshold{10}; ///< signal quality threshold (arbitrary value)
+    int tries{0}; ///< variable to test multiple RNG-REQ by the SS for example undecodable at BS or
+                  ///< lost RNG-RSP
 };
 
 } // namespace ns3

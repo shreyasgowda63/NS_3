@@ -83,9 +83,7 @@ AcousticModemEnergyModel::AcousticModemEnergyModel()
     m_source = nullptr;
 }
 
-AcousticModemEnergyModel::~AcousticModemEnergyModel()
-{
-}
+AcousticModemEnergyModel::~AcousticModemEnergyModel() = default;
 
 void
 AcousticModemEnergyModel::SetNode(Ptr<Node> node)

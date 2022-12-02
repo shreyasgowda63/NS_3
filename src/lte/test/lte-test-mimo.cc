@@ -112,9 +112,7 @@ LenaMimoTestCase::LenaMimoTestCase(uint16_t dist,
 {
 }
 
-LenaMimoTestCase::~LenaMimoTestCase()
-{
-}
+LenaMimoTestCase::~LenaMimoTestCase() = default;
 
 void
 LenaMimoTestCase::DoRun()

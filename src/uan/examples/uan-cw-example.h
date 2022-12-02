@@ -66,16 +66,16 @@ class Experiment
      */
     void IncrementCw(uint32_t cw);
 
-    uint32_t m_numNodes;   //!< Number of transmitting nodes.
-    uint32_t m_dataRate;   //!< DataRate in bps.
-    double m_depth;        //!< Depth of transmitting and sink nodes.
-    double m_boundary;     //!< Size of boundary in meters.
-    uint32_t m_packetSize; //!< Generated packet size in bytes.
-    uint32_t m_bytesTotal; //!< Total bytes received.
-    uint32_t m_cwMin;      //!< Min CW to simulate.
-    uint32_t m_cwMax;      //!< Max CW to simulate.
-    uint32_t m_cwStep;     //!< CW step size, default 10.
-    uint32_t m_avgs;       //!< Number of topologies to test for each cw point.
+    uint32_t m_numNodes{15};   //!< Number of transmitting nodes.
+    uint32_t m_dataRate{80};   //!< DataRate in bps.
+    double m_depth{70};        //!< Depth of transmitting and sink nodes.
+    double m_boundary{500};    //!< Size of boundary in meters.
+    uint32_t m_packetSize{32}; //!< Generated packet size in bytes.
+    uint32_t m_bytesTotal{0};  //!< Total bytes received.
+    uint32_t m_cwMin{10};      //!< Min CW to simulate.
+    uint32_t m_cwMax{400};     //!< Max CW to simulate.
+    uint32_t m_cwStep{10};     //!< CW step size, default 10.
+    uint32_t m_avgs{3};        //!< Number of topologies to test for each cw point.
 
     Time m_slotTime; //!< Slot time duration.
     Time m_simTime;  //!< Simulation run time, default 1000 s.

@@ -38,7 +38,7 @@ namespace ns3
 class LteAsSapProvider
 {
   public:
-    virtual ~LteAsSapProvider();
+    virtual ~LteAsSapProvider() = default;
 
     /**
      * \brief Set the selected Closed Subscriber Group subscription list to be
@@ -97,7 +97,7 @@ class LteAsSapProvider
 class LteAsSapUser
 {
   public:
-    virtual ~LteAsSapUser();
+    virtual ~LteAsSapUser() = default;
 
     /**
      * \brief Notify the NAS that RRC Connection Establishment was successful.

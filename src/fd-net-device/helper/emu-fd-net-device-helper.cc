@@ -57,11 +57,7 @@ NS_LOG_COMPONENT_DEFINE("EmuFdNetDeviceHelper");
 
 #define EMU_MAGIC 65867
 
-EmuFdNetDeviceHelper::EmuFdNetDeviceHelper()
-{
-    m_deviceName = "undefined";
-    m_hostQdiscBypass = false;
-}
+EmuFdNetDeviceHelper::EmuFdNetDeviceHelper() = default;
 
 void
 EmuFdNetDeviceHelper::SetDeviceName(std::string deviceName)

@@ -39,8 +39,7 @@ SpectrumAnalyzer::SpectrumAnalyzer()
       m_channel(nullptr),
       m_spectrumModel(nullptr),
       m_sumPowerSpectralDensity(nullptr),
-      m_resolution(MilliSeconds(50)),
-      m_active(false)
+      m_resolution(MilliSeconds(50))
 {
     NS_LOG_FUNCTION(this);
 }

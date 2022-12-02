@@ -159,54 +159,17 @@ LrWpanMac::GetTypeId()
 }
 
 LrWpanMac::LrWpanMac()
+    : m_macResponseWaitTime(aBaseSuperframeDuration * 32),
+      m_maxTxQueueSize(m_txQueue.max_size()),
+      m_maxIndTxQueueSize(m_indTxQueue.max_size())
 {
-    // First set the state to a known value, call ChangeMacState to fire trace source.
-    m_lrWpanMacState = MAC_IDLE;
+    // Call ChangeMacState to fire trace source
+    ChangeMacState(m_lrWpanMacState.Get());
 
-    ChangeMacState(MAC_IDLE);
-
-    m_incSuperframeStatus = INACTIVE;
-    m_outSuperframeStatus = INACTIVE;
-
-    m_macRxOnWhenIdle = true;
-    m_macPanId = 0xffff;
     m_macCoordShortAddress = Mac16Address("ff:ff");
     m_macCoordExtendedAddress = Mac64Address("ff:ff:ff:ff:ff:ff:ff:ed");
-    m_deviceCapability = DeviceType::FFD;
-    m_associationStatus = ASSOCIATED;
+
     m_selfExt = Mac64Address::Allocate();
-    m_macPromiscuousMode = false;
-    m_macMaxFrameRetries = 3;
-    m_retransmission = 0;
-    m_numCsmacaRetry = 0;
-    m_txPkt = nullptr;
-    m_rxPkt = nullptr;
-    m_ifs = 0;
-
-    m_macLIFSPeriod = 40;
-    m_macSIFSPeriod = 12;
-
-    m_panCoor = false;
-    m_macBeaconOrder = 15;
-    m_macSuperframeOrder = 15;
-    m_macTransactionPersistenceTime = 500; // 0x01F5
-    m_macAssociationPermit = true;
-    m_macAutoRequest = true;
-
-    m_incomingBeaconOrder = 15;
-    m_incomingSuperframeOrder = 15;
-    m_beaconTrackingOn = false;
-    m_numLostBeacons = 0;
-
-    m_pendPrimitive = MLME_NONE;
-    m_channelScanIndex = 0;
-    m_maxEnergyLevel = 0;
-
-    m_macResponseWaitTime = aBaseSuperframeDuration * 32;
-    m_assocRespCmdWaitTime = 960;
-
-    m_maxTxQueueSize = m_txQueue.max_size();
-    m_maxIndTxQueueSize = m_indTxQueue.max_size();
 
     Ptr<UniformRandomVariable> uniformVar = CreateObject<UniformRandomVariable>();
     uniformVar->SetAttribute("Min", DoubleValue(0.0));
@@ -216,9 +179,7 @@ LrWpanMac::LrWpanMac()
     m_shortAddress = Mac16Address("00:00");
 }
 
-LrWpanMac::~LrWpanMac()
-{
-}
+LrWpanMac::~LrWpanMac() = default;
 
 void
 LrWpanMac::DoInitialize()

@@ -82,9 +82,7 @@ BuildingsShadowingTestCase::BuildingsShadowingTestCase(uint16_t m1,
 {
 }
 
-BuildingsShadowingTestCase::~BuildingsShadowingTestCase()
-{
-}
+BuildingsShadowingTestCase::~BuildingsShadowingTestCase() = default;
 
 void
 BuildingsShadowingTestCase::DoRun()

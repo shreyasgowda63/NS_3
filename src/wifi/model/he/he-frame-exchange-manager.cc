@@ -54,7 +54,6 @@ HeFrameExchangeManager::GetTypeId()
 }
 
 HeFrameExchangeManager::HeFrameExchangeManager()
-    : m_triggerFrameInAmpdu(false)
 {
     NS_LOG_FUNCTION(this);
 }

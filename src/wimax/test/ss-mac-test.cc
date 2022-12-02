@@ -50,9 +50,7 @@ Ns3WimaxNetworkEntryTestCase::Ns3WimaxNetworkEntryTestCase()
 {
 }
 
-Ns3WimaxNetworkEntryTestCase::~Ns3WimaxNetworkEntryTestCase()
-{
-}
+Ns3WimaxNetworkEntryTestCase::~Ns3WimaxNetworkEntryTestCase() = default;
 
 void
 Ns3WimaxNetworkEntryTestCase::DoRun()
@@ -113,9 +111,7 @@ Ns3WimaxManagementConnectionsTestCase::Ns3WimaxManagementConnectionsTestCase()
 {
 }
 
-Ns3WimaxManagementConnectionsTestCase::~Ns3WimaxManagementConnectionsTestCase()
-{
-}
+Ns3WimaxManagementConnectionsTestCase::~Ns3WimaxManagementConnectionsTestCase() = default;
 
 void
 Ns3WimaxManagementConnectionsTestCase::DoRun()

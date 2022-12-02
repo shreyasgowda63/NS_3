@@ -33,8 +33,7 @@ NS_LOG_COMPONENT_DEFINE("MacStatsCalculator");
 NS_OBJECT_ENSURE_REGISTERED(MacStatsCalculator);
 
 MacStatsCalculator::MacStatsCalculator()
-    : m_dlFirstWrite(true),
-      m_ulFirstWrite(true)
+
 {
     NS_LOG_FUNCTION(this);
 }

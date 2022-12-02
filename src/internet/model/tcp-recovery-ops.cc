@@ -40,7 +40,6 @@ TcpRecoveryOps::GetTypeId()
 }
 
 TcpRecoveryOps::TcpRecoveryOps()
-    : Object()
 {
     NS_LOG_FUNCTION(this);
 }
@@ -77,7 +76,6 @@ TcpClassicRecovery::GetTypeId()
 }
 
 TcpClassicRecovery::TcpClassicRecovery()
-    : TcpRecoveryOps()
 {
     NS_LOG_FUNCTION(this);
 }

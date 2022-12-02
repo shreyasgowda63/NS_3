@@ -145,9 +145,7 @@ LteEnbNetDevice::GetTypeId()
 }
 
 LteEnbNetDevice::LteEnbNetDevice()
-    : m_isConstructed(false),
-      m_isConfigured(false),
-      m_anr(nullptr),
+    : m_anr(nullptr),
       m_componentCarrierManager(nullptr)
 {
     NS_LOG_FUNCTION(this);

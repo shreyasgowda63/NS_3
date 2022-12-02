@@ -27,9 +27,7 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("SpectrumValue");
 
-SpectrumValue::SpectrumValue()
-{
-}
+SpectrumValue::SpectrumValue() = default;
 
 SpectrumValue::SpectrumValue(Ptr<const SpectrumModel> sof)
     : m_spectrumModel(sof),

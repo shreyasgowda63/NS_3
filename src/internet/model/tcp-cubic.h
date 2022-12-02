@@ -119,20 +119,20 @@ class TcpCubic : public TcpCongestionOps
     double m_c; //!< Cubic Scaling factor
 
     // Cubic parameters
-    uint32_t m_cWndCnt;        //!<  cWnd integer-to-float counter
-    uint32_t m_lastMaxCwnd;    //!<  Last maximum cWnd
-    uint32_t m_bicOriginPoint; //!<  Origin point of bic function
-    double m_bicK;             //!<  Time to origin point from the beginning
-                               //    of the current epoch (in s)
-    Time m_delayMin;           //!<  Min delay
-    Time m_epochStart;         //!<  Beginning of an epoch
-    bool m_found;              //!<  The exit point is found?
-    Time m_roundStart;         //!<  Beginning of each round
-    SequenceNumber32 m_endSeq; //!<  End sequence of the round
-    Time m_lastAck;            //!<  Last time when the ACK spacing is close
-    Time m_cubicDelta;         //!<  Time to wait after recovery before update
-    Time m_currRtt;            //!<  Current Rtt
-    uint32_t m_sampleCnt;      //!<  Count of samples for HyStart
+    uint32_t m_cWndCnt{0};        //!<  cWnd integer-to-float counter
+    uint32_t m_lastMaxCwnd{0};    //!<  Last maximum cWnd
+    uint32_t m_bicOriginPoint{0}; //!<  Origin point of bic function
+    double m_bicK{0.0};           //!<  Time to origin point from the beginning
+                                  //    of the current epoch (in s)
+    Time m_delayMin;              //!<  Min delay
+    Time m_epochStart;            //!<  Beginning of an epoch
+    bool m_found{false};          //!<  The exit point is found?
+    Time m_roundStart;            //!<  Beginning of each round
+    SequenceNumber32 m_endSeq;    //!<  End sequence of the round
+    Time m_lastAck;               //!<  Last time when the ACK spacing is close
+    Time m_cubicDelta;            //!<  Time to wait after recovery before update
+    Time m_currRtt;               //!<  Current Rtt
+    uint32_t m_sampleCnt{0};      //!<  Count of samples for HyStart
 
   private:
     /**

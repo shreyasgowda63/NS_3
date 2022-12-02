@@ -44,8 +44,8 @@ NS_LOG_COMPONENT_DEFINE("BasicEnergyModelTestSuite");
 class BasicEnergyUpdateTest
 {
   public:
-    BasicEnergyUpdateTest();
-    virtual ~BasicEnergyUpdateTest();
+    BasicEnergyUpdateTest() = default;
+    virtual ~BasicEnergyUpdateTest() = default;
 
     /**
      * Performs some tests involving state updates and the relative energy consumption
@@ -64,22 +64,12 @@ class BasicEnergyUpdateTest
     bool StateSwitchTest(WifiPhyState state);
 
   private:
-    double m_timeS;     //!< Time in seconds
-    double m_tolerance; //!< Tolerance for power estimation
+    double m_timeS{15.5};       //!< Time in seconds (idle for 15 seconds before changing state)
+    double m_tolerance{1.0e-5}; //!< Tolerance for power estimation
 
     ObjectFactory m_energySource;      //!< Energy source factory
     ObjectFactory m_deviceEnergyModel; //!< Device energy model factory
 };
-
-BasicEnergyUpdateTest::BasicEnergyUpdateTest()
-{
-    m_timeS = 15.5;       // idle for 15 seconds before changing state
-    m_tolerance = 1.0e-5; //
-}
-
-BasicEnergyUpdateTest::~BasicEnergyUpdateTest()
-{
-}
 
 bool
 BasicEnergyUpdateTest::DoRun()
@@ -276,25 +266,16 @@ class BasicEnergyDepletionTest
     bool DepletionTestCase(double simTimeS, double updateIntervalS);
 
   private:
-    int m_numOfNodes;         //!< number of nodes in simulation
-    int m_callbackCount;      //!< counter for # of callbacks invoked
-    double m_simTimeS;        //!< maximum simulation time, in seconds
-    double m_timeStepS;       //!< simulation time step size, in seconds
-    double m_updateIntervalS; //!< update interval of each device model
+    int m_numOfNodes{10};          //!< number of nodes in simulation
+    int m_callbackCount{0};        //!< counter for # of callbacks invoked
+    double m_simTimeS{4.5};        //!< maximum simulation time, in seconds
+    double m_timeStepS{0.5};       //!< simulation time step size, in seconds
+    double m_updateIntervalS{1.5}; //!< update interval of each device model
 };
 
-BasicEnergyDepletionTest::BasicEnergyDepletionTest()
-{
-    m_numOfNodes = 10;
-    m_callbackCount = 0;
-    m_simTimeS = 4.5;
-    m_timeStepS = 0.5;
-    m_updateIntervalS = 1.5;
-}
+BasicEnergyDepletionTest::BasicEnergyDepletionTest() = default;
 
-BasicEnergyDepletionTest::~BasicEnergyDepletionTest()
-{
-}
+BasicEnergyDepletionTest::~BasicEnergyDepletionTest() = default;
 
 bool
 BasicEnergyDepletionTest::DoRun()

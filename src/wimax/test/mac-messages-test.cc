@@ -49,9 +49,7 @@ DsaRequestTestCase::DsaRequestTestCase()
 {
 }
 
-DsaRequestTestCase::~DsaRequestTestCase()
-{
-}
+DsaRequestTestCase::~DsaRequestTestCase() = default;
 
 void
 DsaRequestTestCase::DoRun()

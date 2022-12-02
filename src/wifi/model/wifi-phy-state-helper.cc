@@ -66,9 +66,7 @@ WifiPhyStateHelper::GetTypeId()
 }
 
 WifiPhyStateHelper::WifiPhyStateHelper()
-    : m_sleeping(false),
-      m_isOff(false),
-      m_endTx(Seconds(0)),
+    : m_endTx(Seconds(0)),
       m_endRx(Seconds(0)),
       m_endCcaBusy(Seconds(0)),
       m_endSwitching(Seconds(0)),

@@ -63,9 +63,8 @@ AsciiLrWpanMacTransmitSinkWithoutContext(Ptr<OutputStreamWrapper> stream, Ptr<co
 }
 
 LrWpanHelper::LrWpanHelper()
+    : m_channel(CreateObject<SingleModelSpectrumChannel>())
 {
-    m_channel = CreateObject<SingleModelSpectrumChannel>();
-
     Ptr<LogDistancePropagationLossModel> lossModel =
         CreateObject<LogDistancePropagationLossModel>();
     m_channel->AddPropagationLossModel(lossModel);

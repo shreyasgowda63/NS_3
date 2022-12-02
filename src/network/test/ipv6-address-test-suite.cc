@@ -39,9 +39,7 @@ Ipv6AddressTestCase::Ipv6AddressTestCase()
 {
 }
 
-Ipv6AddressTestCase::~Ipv6AddressTestCase()
-{
-}
+Ipv6AddressTestCase::~Ipv6AddressTestCase() = default;
 
 void
 Ipv6AddressTestCase::DoRun()

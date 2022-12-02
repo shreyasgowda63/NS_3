@@ -29,15 +29,10 @@ namespace ns3
 {
 
 DcdChannelEncodings::DcdChannelEncodings()
-    : m_bsEirp(0),
-      m_eirXPIrMax(0),
-      m_frequency(0)
-{
-}
 
-DcdChannelEncodings::~DcdChannelEncodings()
-{
-}
+    = default;
+
+DcdChannelEncodings::~DcdChannelEncodings() = default;
 
 void
 DcdChannelEncodings::SetBsEirp(uint16_t bs_eirp)
@@ -104,18 +99,11 @@ DcdChannelEncodings::Read(Buffer::Iterator start)
 // ----------------------------------------------------------------------------------------------------------
 
 OfdmDcdChannelEncodings::OfdmDcdChannelEncodings()
-    : m_channelNr(0),
-      m_ttg(0),
-      m_rtg(0),
-      m_baseStationId(Mac48Address("00:00:00:00:00:00")),
-      m_frameDurationCode(0),
-      m_frameNumber(0)
+    : m_baseStationId(Mac48Address("00:00:00:00:00:00"))
 {
 }
 
-OfdmDcdChannelEncodings::~OfdmDcdChannelEncodings()
-{
-}
+OfdmDcdChannelEncodings::~OfdmDcdChannelEncodings() = default;
 
 void
 OfdmDcdChannelEncodings::SetChannelNr(uint8_t channelNr)
@@ -225,16 +213,8 @@ OfdmDcdChannelEncodings::DoRead(Buffer::Iterator start)
 // ----------------------------------------------------------------------------------------------------------
 
 OfdmDlBurstProfile::OfdmDlBurstProfile()
-    : m_type(0),
-      m_length(0),
-      m_diuc(0),
-      m_fecCodeType(0)
-{
-}
 
-OfdmDlBurstProfile::~OfdmDlBurstProfile()
-{
-}
+    = default;
 
 void
 OfdmDlBurstProfile::SetType(uint8_t type)
@@ -317,15 +297,10 @@ OfdmDlBurstProfile::Read(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(Dcd);
 
 Dcd::Dcd()
-    : m_reserved(0),
-      m_configurationChangeCount(0),
-      m_nrDlBurstProfiles(0)
-{
-}
 
-Dcd::~Dcd()
-{
-}
+    = default;
+
+Dcd::~Dcd() = default;
 
 void
 Dcd::SetConfigurationChangeCount(uint8_t configurationChangeCount)
@@ -456,16 +431,8 @@ Dcd::Deserialize(Buffer::Iterator start)
 // ----------------------------------------------------------------------------------------------------------
 
 OfdmDlMapIe::OfdmDlMapIe()
-    : m_cid(),
-      m_diuc(0),
-      m_preamblePresent(0),
-      m_startTime(0)
-{
-}
 
-OfdmDlMapIe::~OfdmDlMapIe()
-{
-}
+    = default;
 
 void
 OfdmDlMapIe::SetCid(Cid cid)
@@ -548,14 +515,11 @@ OfdmDlMapIe::Read(Buffer::Iterator start)
 NS_OBJECT_ENSURE_REGISTERED(DlMap);
 
 DlMap::DlMap()
-    : m_dcdCount(0),
-      m_baseStationId(Mac48Address("00:00:00:00:00:00"))
+    : m_baseStationId(Mac48Address("00:00:00:00:00:00"))
 {
 }
 
-DlMap::~DlMap()
-{
-}
+DlMap::~DlMap() = default;
 
 void
 DlMap::SetDcdCount(uint8_t dcdCount)

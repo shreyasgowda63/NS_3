@@ -470,8 +470,8 @@ class StaWifiMac : public WifiMac
     void DoInitialize() override;
     void DoDispose() override;
 
-    MacState m_state;                       ///< MAC state
-    uint16_t m_aid;                         ///< Association AID
+    MacState m_state{UNASSOCIATED};         ///< MAC state
+    uint16_t m_aid{0};                      ///< Association AID
     Ptr<WifiAssocManager> m_assocManager;   ///< Association Manager
     Time m_waitBeaconTimeout;               ///< wait beacon timeout
     Time m_probeRequestTimeout;             ///< probe request timeout

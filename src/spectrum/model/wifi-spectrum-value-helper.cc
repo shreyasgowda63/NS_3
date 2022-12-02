@@ -846,13 +846,9 @@ WifiSpectrumValueHelper::GetBandPowerW(Ptr<SpectrumValue> psd, const WifiSpectru
 
 static Ptr<SpectrumModel> g_WifiSpectrumModel5Mhz; ///< static initializer for the class
 
-WifiSpectrumValueHelper::~WifiSpectrumValueHelper()
-{
-}
+WifiSpectrumValueHelper::~WifiSpectrumValueHelper() = default;
 
-WifiSpectrumValue5MhzFactory::~WifiSpectrumValue5MhzFactory()
-{
-}
+WifiSpectrumValue5MhzFactory::~WifiSpectrumValue5MhzFactory() = default;
 
 /**
  * Static class to initialize the values for the 2.4 GHz Wi-Fi spectrum model

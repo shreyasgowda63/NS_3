@@ -50,9 +50,7 @@ HwmpRtable::HwmpRtable()
     DeleteProactivePath();
 }
 
-HwmpRtable::~HwmpRtable()
-{
-}
+HwmpRtable::~HwmpRtable() = default;
 
 void
 HwmpRtable::DoDispose()

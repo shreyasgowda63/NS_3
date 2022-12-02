@@ -1436,9 +1436,7 @@ class LengthValueTestCase : public TestCase
     /**
      * Destructor
      */
-    ~LengthValueTestCase() override
-    {
-    }
+    ~LengthValueTestCase() override = default;
 
   private:
     /// Class with Length attribute
@@ -1452,13 +1450,10 @@ class LengthValueTestCase : public TestCase
         static TypeId GetTypeId();
 
         TestObject()
-            : m_length()
-        {
-        }
 
-        ~TestObject() override
-        {
-        }
+            = default;
+
+        ~TestObject() override = default;
 
       private:
         Length m_length; //!< Length object

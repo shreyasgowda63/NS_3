@@ -46,7 +46,7 @@ class XmlConfigSave : public FileConfig
     void Attributes() override;
 
   private:
-    xmlTextWriterPtr m_writer; ///< XML writer
+    xmlTextWriterPtr m_writer{nullptr}; ///< XML writer
 };
 
 /**

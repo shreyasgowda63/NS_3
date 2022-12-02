@@ -76,7 +76,7 @@ class GridBuildingAllocator : public Object
      */
     void PushAttributes() const;
 
-    mutable uint32_t m_current;                          //!< current building number
+    mutable uint32_t m_current{0};                       //!< current building number
     enum GridPositionAllocator::LayoutType m_layoutType; //!< Layout type
     double m_xMin;                                       //!< The x coordinate where the grid starts
     double m_yMin;                                       //!< The y coordinate where the grid starts

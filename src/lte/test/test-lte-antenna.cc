@@ -116,9 +116,7 @@ LteEnbAntennaTestCase::LteEnbAntennaTestCase(double orientationDegrees,
     NS_LOG_FUNCTION(this);
 }
 
-LteEnbAntennaTestCase::~LteEnbAntennaTestCase()
-{
-}
+LteEnbAntennaTestCase::~LteEnbAntennaTestCase() = default;
 
 void
 LteEnbAntennaTestCase::DoRun()

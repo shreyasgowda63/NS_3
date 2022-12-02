@@ -46,13 +46,10 @@ static const int TtaType0AllocationRbg[4] = {
 NS_OBJECT_ENSURE_REGISTERED(TtaFfMacScheduler);
 
 TtaFfMacScheduler::TtaFfMacScheduler()
-    : m_cschedSapUser(nullptr),
-      m_schedSapUser(nullptr),
-      m_nextRntiUl(0)
+    : m_cschedSapProvider(new MemberCschedSapProvider<TtaFfMacScheduler>(this)),
+      m_schedSapProvider(new MemberSchedSapProvider<TtaFfMacScheduler>(this))
 {
     m_amc = CreateObject<LteAmc>();
-    m_cschedSapProvider = new MemberCschedSapProvider<TtaFfMacScheduler>(this);
-    m_schedSapProvider = new MemberSchedSapProvider<TtaFfMacScheduler>(this);
 }
 
 TtaFfMacScheduler::~TtaFfMacScheduler()

@@ -107,8 +107,8 @@ class FlameHeader : public Header
     uint16_t GetProtocol() const;
 
   private:
-    uint8_t m_cost;         ///< cost
-    uint16_t m_seqno;       ///< sequence number
+    uint8_t m_cost{0};      ///< cost
+    uint16_t m_seqno{0};    ///< sequence number
     Mac48Address m_origDst; ///< origin destination
     Mac48Address m_origSrc; ///< origin source
     uint16_t m_protocol;    ///< protocol

@@ -134,8 +134,7 @@ SixLowPanNetDevice::GetTypeId()
 
 SixLowPanNetDevice::SixLowPanNetDevice()
     : m_node(nullptr),
-      m_netDevice(nullptr),
-      m_ifIndex(0)
+      m_netDevice(nullptr)
 {
     NS_LOG_FUNCTION(this);
     m_netDevice = nullptr;

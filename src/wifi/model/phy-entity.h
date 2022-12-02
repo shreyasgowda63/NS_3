@@ -152,9 +152,7 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
         /**
          * Default constructor.
          */
-        SnrPer()
-        {
-        }
+        SnrPer() = default;
 
         /**
          * Constructor for SnrPer.

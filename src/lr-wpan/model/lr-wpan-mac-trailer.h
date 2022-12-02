@@ -116,13 +116,13 @@ class LrWpanMacTrailer : public Trailer
     /**
      * The FCS value stored in this trailer.
      */
-    uint16_t m_fcs;
+    uint16_t m_fcs{0};
 
     /**
      * Only if m_calcFcs is true, FCS values will be calculated and used in the
      * trailer
      */
-    bool m_calcFcs;
+    bool m_calcFcs{false};
 };
 
 } // namespace ns3

@@ -49,9 +49,7 @@ Ipv4L3ProtocolTestCase::Ipv4L3ProtocolTestCase()
 {
 }
 
-Ipv4L3ProtocolTestCase::~Ipv4L3ProtocolTestCase()
-{
-}
+Ipv4L3ProtocolTestCase::~Ipv4L3ProtocolTestCase() = default;
 
 void
 Ipv4L3ProtocolTestCase::DoRun()

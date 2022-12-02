@@ -99,9 +99,9 @@ class CarrierAggregationConfigTestCase : public TestCase
           m_numberOfNodes(numberOfNodes),
           m_numberOfComponentCarriers(numberOfComponentCarriers),
           m_configToCheck(configToCheck),
+
           m_simulationDuration(simulationDuration)
     {
-        m_connectionCounter = 0.0;
     }
 
   private:
@@ -140,9 +140,9 @@ class CarrierAggregationConfigTestCase : public TestCase
     uint32_t m_numberOfNodes;             ///< Numer of nodes
     uint16_t m_numberOfComponentCarriers; ///< Number of component carriers
     std::vector<ConfigToCheck>
-        m_configToCheck;          ///< Vector containing all the configurations to check
-    uint32_t m_connectionCounter; ///< Connection counter
-    Time m_simulationDuration;    ///< Simulation duration
+        m_configToCheck; ///< Vector containing all the configurations to check
+    uint32_t m_connectionCounter{static_cast<uint32_t>(0.0)}; ///< Connection counter
+    Time m_simulationDuration;                                ///< Simulation duration
     std::vector<std::map<uint16_t, ConfigToCheck>>
         m_configToCheckContainer; ///< Vector of maps containing the per component carrier
                                   ///< configuration

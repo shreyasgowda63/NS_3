@@ -84,9 +84,9 @@ class FlameRtableTest : public TestCase
   private:
     Mac48Address dst;       ///< destination address
     Mac48Address hop;       ///< hop address
-    uint32_t iface;         ///< interface
-    uint8_t cost;           ///< cost
-    uint16_t seqnum;        ///< sequence number
+    uint32_t iface{8010};   ///< interface
+    uint8_t cost{10};       ///< cost
+    uint16_t seqnum{1};     ///< sequence number
     Ptr<FlameRtable> table; ///< table
 };
 
@@ -96,10 +96,7 @@ static FlameRtableTest g_FlameRtableTest;
 FlameRtableTest::FlameRtableTest()
     : TestCase("FlameRtable"),
       dst("01:00:00:01:00:01"),
-      hop("01:00:00:01:00:03"),
-      iface(8010),
-      cost(10),
-      seqnum(1)
+      hop("01:00:00:01:00:03")
 {
 }
 

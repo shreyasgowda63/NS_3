@@ -470,10 +470,10 @@ class InterferenceHelper : public Object
 
     double m_noiseFigure;                 //!< noise figure (linear)
     Ptr<ErrorRateModel> m_errorRateModel; //!< error rate model
-    uint8_t m_numRxAntennas; //!< the number of RX antennas in the corresponding receiver
+    uint8_t m_numRxAntennas{1}; //!< the number of RX antennas in the corresponding receiver
     NiChangesPerBand m_niChangesPerBand;                    //!< NI Changes for each band
     std::map<WifiSpectrumBand, double> m_firstPowerPerBand; //!< first power of each band in watts
-    bool m_rxing; //!< flag whether it is in receiving state
+    bool m_rxing{false}; //!< flag whether it is in receiving state
 
     /**
      * Returns an iterator to the first NiChange that is later than moment

@@ -212,33 +212,33 @@ class VhtCapabilities : public WifiInformationElement
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 
     // Capabilities Info fields
-    uint8_t m_maxMpduLength;               ///< maximum MPDU length
-    uint8_t m_supportedChannelWidthSet;    ///< supported channel width set
-    uint8_t m_rxLdpc;                      ///< receive LDPC
-    uint8_t m_shortGuardIntervalFor80Mhz;  ///< short guard interval for 80 MHz
-    uint8_t m_shortGuardIntervalFor160Mhz; ///< short guard interval for 160 MHz
-    uint8_t m_txStbc;                      ///< transmit STBC
-    uint8_t m_rxStbc;                      ///< receive STBC
-    uint8_t m_suBeamformerCapable;         ///< SU beamformer capable
-    uint8_t m_suBeamformeeCapable;         ///< SU beamformee capable
-    uint8_t m_beamformeeStsCapable;        ///< beamformee STS capable
-    uint8_t m_numberOfSoundingDimensions;  ///< number of sounding dimensions
-    uint8_t m_muBeamformerCapable;         ///< MU beamformer capable
-    uint8_t m_muBeamformeeCapable;         ///< MU beamformee capable
-    uint8_t m_vhtTxopPs;                   ///< VHT TXOP PS
-    uint8_t m_htcVhtCapable;               ///< HTC VHT capable
-    uint8_t m_maxAmpduLengthExponent;      ///< maximum A-MPDU length exponent
-    uint8_t m_vhtLinkAdaptationCapable;    ///< VHT link adaptation capable
-    uint8_t m_rxAntennaPatternConsistency; ///< receive antenna pattern consistency
-    uint8_t m_txAntennaPatternConsistency; ///< transmit antenna pattern consistency
+    uint8_t m_maxMpduLength{0};               ///< maximum MPDU length
+    uint8_t m_supportedChannelWidthSet{0};    ///< supported channel width set
+    uint8_t m_rxLdpc{0};                      ///< receive LDPC
+    uint8_t m_shortGuardIntervalFor80Mhz{0};  ///< short guard interval for 80 MHz
+    uint8_t m_shortGuardIntervalFor160Mhz{0}; ///< short guard interval for 160 MHz
+    uint8_t m_txStbc{0};                      ///< transmit STBC
+    uint8_t m_rxStbc{0};                      ///< receive STBC
+    uint8_t m_suBeamformerCapable{0};         ///< SU beamformer capable
+    uint8_t m_suBeamformeeCapable{0};         ///< SU beamformee capable
+    uint8_t m_beamformeeStsCapable{0};        ///< beamformee STS capable
+    uint8_t m_numberOfSoundingDimensions{0};  ///< number of sounding dimensions
+    uint8_t m_muBeamformerCapable{0};         ///< MU beamformer capable
+    uint8_t m_muBeamformeeCapable{0};         ///< MU beamformee capable
+    uint8_t m_vhtTxopPs{0};                   ///< VHT TXOP PS
+    uint8_t m_htcVhtCapable{0};               ///< HTC VHT capable
+    uint8_t m_maxAmpduLengthExponent{0};      ///< maximum A-MPDU length exponent
+    uint8_t m_vhtLinkAdaptationCapable{0};    ///< VHT link adaptation capable
+    uint8_t m_rxAntennaPatternConsistency{0}; ///< receive antenna pattern consistency
+    uint8_t m_txAntennaPatternConsistency{0}; ///< transmit antenna pattern consistency
 
     // MCS and NSS field information
-    std::vector<uint8_t> m_rxMcsMap;                        ///< receive MCS map
-    uint16_t m_rxHighestSupportedLongGuardIntervalDataRate; ///< receive highest supported long
-                                                            ///< guard interval data rate
-    std::vector<uint8_t> m_txMcsMap;                        ///< transmit MCS map
-    uint16_t m_txHighestSupportedLongGuardIntervalDataRate; ///< transmit highest supported long
-                                                            ///< guard interval data rate
+    std::vector<uint8_t> m_rxMcsMap;                           ///< receive MCS map
+    uint16_t m_rxHighestSupportedLongGuardIntervalDataRate{0}; ///< receive highest supported long
+                                                               ///< guard interval data rate
+    std::vector<uint8_t> m_txMcsMap;                           ///< transmit MCS map
+    uint16_t m_txHighestSupportedLongGuardIntervalDataRate{0}; ///< transmit highest supported long
+                                                               ///< guard interval data rate
 };
 
 /**

@@ -461,15 +461,11 @@ LteFrTestCase::LteFrTestCase(std::string name,
       m_dlBandwidth(dlBandwidth),
       m_ulBandwidth(ulBandwidth),
       m_availableDlRb(availableDlRb),
-      m_usedMutedDlRbg(false),
-      m_availableUlRb(availableUlRb),
-      m_usedMutedUlRbg(false)
+      m_availableUlRb(availableUlRb)
 {
 }
 
-LteFrTestCase::~LteFrTestCase()
-{
-}
+LteFrTestCase::~LteFrTestCase() = default;
 
 void
 LteFrTestCase::DlDataRxStart(Ptr<const SpectrumValue> spectrumValue)
@@ -537,9 +533,7 @@ LteHardFrTestCase::LteHardFrTestCase(std::string name,
     NS_LOG_INFO("Creating LteDownlinkFrTestCase");
 }
 
-LteHardFrTestCase::~LteHardFrTestCase()
-{
-}
+LteHardFrTestCase::~LteHardFrTestCase() = default;
 
 void
 LteHardFrTestCase::DoRun()
@@ -668,9 +662,7 @@ LteStrictFrTestCase::LteStrictFrTestCase(std::string name,
     NS_LOG_INFO("Creating LteFrTestCase");
 }
 
-LteStrictFrTestCase::~LteStrictFrTestCase()
-{
-}
+LteStrictFrTestCase::~LteStrictFrTestCase() = default;
 
 void
 LteStrictFrTestCase::DoRun()
@@ -797,15 +789,9 @@ LteFrAreaTestCase::LteFrAreaTestCase(std::string name, std::string schedulerType
     : TestCase("Test: " + name),
       m_schedulerType(schedulerType)
 {
-    m_dlBandwidth = 25;
-    m_ulBandwidth = 25;
-    m_usedWrongDlRbg = false;
-    m_usedWrongUlRbg = false;
 }
 
-LteFrAreaTestCase::~LteFrAreaTestCase()
-{
-}
+LteFrAreaTestCase::~LteFrAreaTestCase() = default;
 
 void
 LteFrAreaTestCase::DlDataRxStart(Ptr<const SpectrumValue> spectrumValue)
@@ -962,9 +948,7 @@ LteStrictFrAreaTestCase::LteStrictFrAreaTestCase(std::string name, std::string s
     NS_LOG_INFO("Creating LteFrTestCase");
 }
 
-LteStrictFrAreaTestCase::~LteStrictFrAreaTestCase()
-{
-}
+LteStrictFrAreaTestCase::~LteStrictFrAreaTestCase() = default;
 
 void
 LteStrictFrAreaTestCase::DoRun()
@@ -1181,9 +1165,7 @@ LteSoftFrAreaTestCase::LteSoftFrAreaTestCase(std::string name, std::string sched
     NS_LOG_INFO("Creating LteSoftFrAreaTestCase");
 }
 
-LteSoftFrAreaTestCase::~LteSoftFrAreaTestCase()
-{
-}
+LteSoftFrAreaTestCase::~LteSoftFrAreaTestCase() = default;
 
 void
 LteSoftFrAreaTestCase::DoRun()
@@ -1405,9 +1387,7 @@ LteSoftFfrAreaTestCase::LteSoftFfrAreaTestCase(std::string name, std::string sch
     NS_LOG_INFO("Creating LteSoftFfrAreaTestCase");
 }
 
-LteSoftFfrAreaTestCase::~LteSoftFfrAreaTestCase()
-{
-}
+LteSoftFfrAreaTestCase::~LteSoftFfrAreaTestCase() = default;
 
 void
 LteSoftFfrAreaTestCase::DoRun()
@@ -1671,9 +1651,7 @@ LteEnhancedFfrAreaTestCase::LteEnhancedFfrAreaTestCase(std::string name, std::st
     NS_LOG_INFO("Creating LteEnhancedFfrAreaTestCase");
 }
 
-LteEnhancedFfrAreaTestCase::~LteEnhancedFfrAreaTestCase()
-{
-}
+LteEnhancedFfrAreaTestCase::~LteEnhancedFfrAreaTestCase() = default;
 
 void
 LteEnhancedFfrAreaTestCase::DoRun()
@@ -1948,9 +1926,7 @@ LteDistributedFfrAreaTestCase::LteDistributedFfrAreaTestCase(std::string name,
     NS_LOG_INFO("Creating LteDistributedFfrAreaTestCase");
 }
 
-LteDistributedFfrAreaTestCase::~LteDistributedFfrAreaTestCase()
-{
-}
+LteDistributedFfrAreaTestCase::~LteDistributedFfrAreaTestCase() = default;
 
 void
 LteDistributedFfrAreaTestCase::DoRun()

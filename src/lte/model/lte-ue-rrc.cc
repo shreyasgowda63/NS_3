@@ -114,27 +114,7 @@ static const std::string g_ueRrcStateName[LteUeRrc::NUM_STATES] = {
 NS_OBJECT_ENSURE_REGISTERED(LteUeRrc);
 
 LteUeRrc::LteUeRrc()
-    : m_cmacSapProvider(0),
-      m_rrcSapUser(nullptr),
-      m_macSapProvider(nullptr),
-      m_asSapUser(nullptr),
-      m_ccmRrcSapProvider(nullptr),
-      m_state(IDLE_START),
-      m_imsi(0),
-      m_rnti(0),
-      m_cellId(0),
-      m_useRlcSm(true),
-      m_connectionPending(false),
-      m_hasReceivedMib(false),
-      m_hasReceivedSib1(false),
-      m_hasReceivedSib2(false),
-      m_csgWhiteList(0),
-      m_noOfSyncIndications(0),
-      m_leaveConnectedMode(false),
-      m_previousCellId(0),
-      m_connEstFailCountLimit(0),
-      m_connEstFailCount(0),
-      m_numberOfComponentCarriers(MIN_NO_CC)
+    : m_cmacSapProvider(0)
 {
     NS_LOG_FUNCTION(this);
     m_cphySapUser.push_back(new MemberLteUeCphySapUser<LteUeRrc>(this));

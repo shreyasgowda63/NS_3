@@ -87,23 +87,13 @@ const char* const PeerLink::PeerStateNames[6] =
 PeerLink::PeerLink()
     : m_peerAddress(Mac48Address::GetBroadcast()),
       m_peerMeshPointAddress(Mac48Address::GetBroadcast()),
-      m_localLinkId(0),
-      m_peerLinkId(0),
-      m_assocId(0),
-      m_peerAssocId(0),
       m_lastBeacon(Seconds(0)),
-      m_beaconInterval(Seconds(0)),
-      m_packetFail(0),
-      m_state(IDLE),
-      m_retryCounter(0),
-      m_maxPacketFail(3)
+      m_beaconInterval(Seconds(0))
 {
     NS_LOG_FUNCTION(this);
 }
 
-PeerLink::~PeerLink()
-{
-}
+PeerLink::~PeerLink() = default;
 
 void
 PeerLink::DoDispose()

@@ -200,9 +200,7 @@ LenaRrFfMacSchedulerTestCase::LenaRrFfMacSchedulerTestCase(uint16_t nUser,
 {
 }
 
-LenaRrFfMacSchedulerTestCase::~LenaRrFfMacSchedulerTestCase()
-{
-}
+LenaRrFfMacSchedulerTestCase::~LenaRrFfMacSchedulerTestCase() = default;
 
 void
 LenaRrFfMacSchedulerTestCase::DoRun()

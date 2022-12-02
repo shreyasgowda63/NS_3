@@ -94,7 +94,6 @@ WaveNetDevice::GetTypeId()
 }
 
 WaveNetDevice::WaveNetDevice()
-    : m_txProfile(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }

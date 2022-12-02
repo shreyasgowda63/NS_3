@@ -38,7 +38,6 @@ EventImpl::~EventImpl()
 }
 
 EventImpl::EventImpl()
-    : m_cancel(false)
 {
     NS_LOG_FUNCTION(this);
 }

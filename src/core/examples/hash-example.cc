@@ -269,7 +269,6 @@ class Dictionary
   public:
     /** Constructor. */
     Dictionary()
-        : m_nphrases(0)
     {
         m_words.reserve(320000);
     }
@@ -419,7 +418,7 @@ class Dictionary
     } // Time ()
 
   private:
-    unsigned long m_nphrases;         /**< Number of strings hashed. */
+    unsigned long m_nphrases{0};      /**< Number of strings hashed. */
     std::vector<Collider> m_hashes;   /**< List of hash Colliders. */
     std::vector<std::string> m_words; /**< List of unique words. */
 

@@ -418,10 +418,10 @@ class LogComponent
      */
     void EnvVarCheck();
 
-    int32_t m_levels;   //!< Enabled LogLevels.
-    int32_t m_mask;     //!< Blocked LogLevels.
-    std::string m_name; //!< LogComponent name.
-    std::string m_file; //!< File defining this LogComponent.
+    int32_t m_levels{0}; //!< Enabled LogLevels.
+    int32_t m_mask;      //!< Blocked LogLevels.
+    std::string m_name;  //!< LogComponent name.
+    std::string m_file;  //!< File defining this LogComponent.
 
 }; // class LogComponent
 

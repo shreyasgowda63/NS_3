@@ -750,7 +750,7 @@ class Ipv6L3Protocol : public Ipv6
     /**
      * \brief Number of IPv6 interfaces managed by the stack.
      */
-    uint32_t m_nInterfaces;
+    uint32_t m_nInterfaces{0};
 
     /**
      * \brief Default TTL for outgoing packets.

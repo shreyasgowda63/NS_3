@@ -121,9 +121,9 @@ class BlockAckWindow
     void Advance(std::size_t count);
 
   private:
-    uint16_t m_winStart;        ///< window start (sequence number)
+    uint16_t m_winStart{0};     ///< window start (sequence number)
     std::vector<bool> m_window; ///< window
-    std::size_t m_head;         ///< index of winStart in the vector
+    std::size_t m_head{0};      ///< index of winStart in the vector
 };
 
 } // namespace ns3

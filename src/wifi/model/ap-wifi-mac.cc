@@ -106,7 +106,6 @@ ApWifiMac::GetTypeId()
 }
 
 ApWifiMac::ApWifiMac()
-    : m_enableBeaconGeneration(false)
 {
     NS_LOG_FUNCTION(this);
     m_beaconTxop = CreateObject<Txop>(CreateObject<WifiMacQueue>(AC_BEACON));

@@ -594,7 +594,7 @@ class RrcConnectionRequestHeader : public RrcUlCcchMessage
         SPARE3,
         SPARE2,
         SPARE1
-    } m_establishmentCause; ///< the establishent cause
+    } m_establishmentCause{MO_SIGNALLING}; ///< the establishent cause
 
     std::bitset<1> m_spare; ///< spare bit
 };

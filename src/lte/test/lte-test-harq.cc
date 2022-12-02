@@ -96,9 +96,7 @@ LenaHarqTestCase::LenaHarqTestCase(uint16_t nUser,
 {
 }
 
-LenaHarqTestCase::~LenaHarqTestCase()
-{
-}
+LenaHarqTestCase::~LenaHarqTestCase() = default;
 
 void
 LenaHarqTestCase::DoRun()

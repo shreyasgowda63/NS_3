@@ -116,13 +116,12 @@ class NodeStatistics
     Gnuplot2dDataset GetDatafile();
 
   private:
-    uint32_t m_bytesTotal;     //!< total bytes
+    uint32_t m_bytesTotal{0};  //!< total bytes
     Gnuplot2dDataset m_output; //!< gnuplot 2d dataset
 };
 
 NodeStatistics::NodeStatistics(NetDeviceContainer aps, NetDeviceContainer stas)
 {
-    m_bytesTotal = 0;
 }
 
 void

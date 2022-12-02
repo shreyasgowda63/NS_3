@@ -372,10 +372,10 @@ class WifiRadioEnergyModel : public DeviceEnergyModel
     TracedValue<double> m_totalEnergyConsumption;
 
     // State variables.
-    WifiPhyState m_currentState; ///< current state the radio is in
-    Time m_lastUpdateTime;       ///< time stamp of previous energy update
+    WifiPhyState m_currentState{WifiPhyState::IDLE}; ///< current state the radio is in
+    Time m_lastUpdateTime;                           ///< time stamp of previous energy update
 
-    uint8_t m_nPendingChangeState; ///< pending state change
+    uint8_t m_nPendingChangeState{0}; ///< pending state change
 
     /// Energy depletion callback
     WifiRadioEnergyDepletionCallback m_energyDepletionCallback;

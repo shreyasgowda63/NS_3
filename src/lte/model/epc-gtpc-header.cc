@@ -41,19 +41,6 @@ GtpcHeader::GetTypeId()
     return tid;
 }
 
-GtpcHeader::GtpcHeader()
-    : m_teidFlag(false),
-      m_messageType(0),
-      m_messageLength(4),
-      m_teid(0),
-      m_sequenceNumber(0)
-{
-}
-
-GtpcHeader::~GtpcHeader()
-{
-}
-
 TypeId
 GtpcHeader::GetInstanceTypeId() const
 {
@@ -495,12 +482,6 @@ GtpcCreateSessionRequestMessage::GtpcCreateSessionRequestMessage()
 {
     SetMessageType(GtpcHeader::CreateSessionRequest);
     SetSequenceNumber(0);
-    m_imsi = 0;
-    m_uliEcgi = 0;
-}
-
-GtpcCreateSessionRequestMessage::~GtpcCreateSessionRequestMessage()
-{
 }
 
 TypeId
@@ -657,11 +638,6 @@ GtpcCreateSessionResponseMessage::GtpcCreateSessionResponseMessage()
 {
     SetMessageType(GtpcHeader::CreateSessionResponse);
     SetSequenceNumber(0);
-    m_cause = Cause_t::RESERVED;
-}
-
-GtpcCreateSessionResponseMessage::~GtpcCreateSessionResponseMessage()
-{
 }
 
 TypeId
@@ -804,12 +780,6 @@ GtpcModifyBearerRequestMessage::GtpcModifyBearerRequestMessage()
 {
     SetMessageType(GtpcHeader::ModifyBearerRequest);
     SetSequenceNumber(0);
-    m_imsi = 0;
-    m_uliEcgi = 0;
-}
-
-GtpcModifyBearerRequestMessage::~GtpcModifyBearerRequestMessage()
-{
 }
 
 TypeId
@@ -936,11 +906,6 @@ GtpcModifyBearerResponseMessage::GtpcModifyBearerResponseMessage()
 {
     SetMessageType(GtpcHeader::ModifyBearerResponse);
     SetSequenceNumber(0);
-    m_cause = Cause_t::RESERVED;
-}
-
-GtpcModifyBearerResponseMessage::~GtpcModifyBearerResponseMessage()
-{
 }
 
 TypeId
@@ -1015,10 +980,6 @@ GtpcDeleteBearerCommandMessage::GtpcDeleteBearerCommandMessage()
 {
     SetMessageType(GtpcHeader::DeleteBearerCommand);
     SetSequenceNumber(0);
-}
-
-GtpcDeleteBearerCommandMessage::~GtpcDeleteBearerCommandMessage()
-{
 }
 
 TypeId
@@ -1116,10 +1077,6 @@ GtpcDeleteBearerRequestMessage::GtpcDeleteBearerRequestMessage()
     SetSequenceNumber(0);
 }
 
-GtpcDeleteBearerRequestMessage::~GtpcDeleteBearerRequestMessage()
-{
-}
-
 TypeId
 GtpcDeleteBearerRequestMessage::GetInstanceTypeId() const
 {
@@ -1206,10 +1163,6 @@ GtpcDeleteBearerResponseMessage::GtpcDeleteBearerResponseMessage()
 {
     SetMessageType(GtpcHeader::DeleteBearerResponse);
     SetSequenceNumber(0);
-}
-
-GtpcDeleteBearerResponseMessage::~GtpcDeleteBearerResponseMessage()
-{
 }
 
 TypeId

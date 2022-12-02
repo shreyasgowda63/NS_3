@@ -110,8 +110,8 @@ class TcpBytesInFlightTest : public TcpGeneralTest
     void FinalChecks() override;
 
   private:
-    uint32_t m_guessedBytesInFlight;    //!< Guessed bytes in flight.
-    uint32_t m_dupAckRecv;              //!< Number of DupACKs received.
+    uint32_t m_guessedBytesInFlight{0}; //!< Guessed bytes in flight.
+    uint32_t m_dupAckRecv{0};           //!< Number of DupACKs received.
     SequenceNumber32 m_lastAckRecv;     //!< Last ACK received.
     SequenceNumber32 m_greatestSeqSent; //!< greatest sequence number sent.
     std::vector<uint32_t> m_toDrop;     //!< List of SequenceNumber to drop
@@ -119,8 +119,7 @@ class TcpBytesInFlightTest : public TcpGeneralTest
 
 TcpBytesInFlightTest::TcpBytesInFlightTest(const std::string& desc, std::vector<uint32_t>& toDrop)
     : TcpGeneralTest(desc),
-      m_guessedBytesInFlight(0),
-      m_dupAckRecv(0),
+
       m_lastAckRecv(1),
       m_greatestSeqSent(0),
       m_toDrop(toDrop)

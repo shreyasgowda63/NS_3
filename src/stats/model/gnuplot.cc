@@ -39,7 +39,7 @@ struct GnuplotDataset::Data
 {
     // *** Data Variables ***
 
-    unsigned int m_references; //!< ref/unref counter for garbage collection
+    unsigned int m_references{1}; //!< ref/unref counter for garbage collection
 
     std::string m_title; //!< Dataset title
     std::string m_extra; //!< Extra parameters for the plot
@@ -95,15 +95,12 @@ struct GnuplotDataset::Data
 };
 
 GnuplotDataset::Data::Data(const std::string& title)
-    : m_references(1),
-      m_title(title),
+    : m_title(title),
       m_extra(m_defaultExtra)
 {
 }
 
-GnuplotDataset::Data::~Data()
-{
-}
+GnuplotDataset::Data::~Data() = default;
 
 // --- GnuplotDataset ------------------------------------------------------ //
 
@@ -727,9 +724,7 @@ Gnuplot3dFunction::SetFunction(const std::string& function)
 Gnuplot::Gnuplot(const std::string& outputFilename, const std::string& title)
     : m_outputFilename(outputFilename),
       m_terminal(DetectTerminal(outputFilename)),
-      m_title(title),
-      m_generateOneOutputFile(false),
-      m_dataFileDatasetIndex(0)
+      m_title(title)
 {
 }
 

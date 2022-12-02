@@ -87,12 +87,7 @@ const uint16_t NUM_UPLINK_CONFS(sizeof(g_frHardUplinkDefaultConfiguration) /
                                 sizeof(FrHardUplinkDefaultConfiguration));
 
 LteFrHardAlgorithm::LteFrHardAlgorithm()
-    : m_ffrSapUser(nullptr),
-      m_ffrRrcSapUser(nullptr),
-      m_dlOffset(0),
-      m_dlSubBand(0),
-      m_ulOffset(0),
-      m_ulSubBand(0)
+
 {
     NS_LOG_FUNCTION(this);
     m_ffrSapProvider = new MemberLteFfrSapProvider<LteFrHardAlgorithm>(this);

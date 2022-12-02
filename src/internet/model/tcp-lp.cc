@@ -42,13 +42,7 @@ TcpLp::GetTypeId()
 }
 
 TcpLp::TcpLp()
-    : TcpNewReno(),
-      m_flag(0),
-      m_sOwd(0),
-      m_owdMin(0xffffffff),
-      m_owdMax(0),
-      m_owdMaxRsv(0),
-      m_lastDrop(Time(0)),
+    : m_lastDrop(Time(0)),
       m_inference(Time(0))
 {
     NS_LOG_FUNCTION(this);

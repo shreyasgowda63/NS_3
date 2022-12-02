@@ -61,19 +61,17 @@ class BasicMultiLinkElementTest : public HeaderSerializationTestCase
   private:
     void DoRun() override;
 
-    WifiMacType m_frameType; //!< the type of frame possibly included in the MLE
+    WifiMacType m_frameType{
+        WIFI_MAC_MGT_ASSOCIATION_REQUEST}; //!< the type of frame possibly included in the MLE
 };
 
 BasicMultiLinkElementTest::BasicMultiLinkElementTest()
     : HeaderSerializationTestCase(
-          "Check serialization and deserialization of Basic variant Multi-Link elements"),
-      m_frameType(WIFI_MAC_MGT_ASSOCIATION_REQUEST)
+          "Check serialization and deserialization of Basic variant Multi-Link elements")
 {
 }
 
-BasicMultiLinkElementTest::~BasicMultiLinkElementTest()
-{
-}
+BasicMultiLinkElementTest::~BasicMultiLinkElementTest() = default;
 
 MultiLinkElement
 BasicMultiLinkElementTest::GetMultiLinkElement(
@@ -206,9 +204,7 @@ ReducedNeighborReportTest::ReducedNeighborReportTest()
 {
 }
 
-ReducedNeighborReportTest::~ReducedNeighborReportTest()
-{
-}
+ReducedNeighborReportTest::~ReducedNeighborReportTest() = default;
 
 ReducedNeighborReport
 ReducedNeighborReportTest::GetReducedNeighborReport(PhyOpChannelIt channel2_4It,

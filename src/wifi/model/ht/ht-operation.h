@@ -357,40 +357,40 @@ class HtOperation : public WifiInformationElement
     void SerializeInformationField(Buffer::Iterator start) const override;
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 
-    uint8_t m_primaryChannel; ///< primary channel
+    uint8_t m_primaryChannel{0}; ///< primary channel
 
     // HT Information Subset 1
-    uint8_t m_secondaryChannelOffset;     ///< secondary channel offset
-    uint8_t m_staChannelWidth;            ///< STA channel width
-    uint8_t m_rifsMode;                   ///< RIFS mode
-    uint8_t m_reservedInformationSubset1; ///< reserved information subset 1
+    uint8_t m_secondaryChannelOffset{0};     ///< secondary channel offset
+    uint8_t m_staChannelWidth{0};            ///< STA channel width
+    uint8_t m_rifsMode{0};                   ///< RIFS mode
+    uint8_t m_reservedInformationSubset1{0}; ///< reserved information subset 1
 
     // HT Information Subset 2
-    uint8_t m_htProtection;                 ///< HT protection
-    uint8_t m_nonGfHtStasPresent;           ///< non GF HT STAs present
-    uint8_t m_reservedInformationSubset2_1; ///< reserved information subset 2-1
-    uint8_t m_obssNonHtStasPresent;         ///< OBSS NON HT STAs present
-    uint8_t m_reservedInformationSubset2_2; ///< reserved information subset 2-2
+    uint8_t m_htProtection{0};                 ///< HT protection
+    uint8_t m_nonGfHtStasPresent{1};           ///< non GF HT STAs present
+    uint8_t m_reservedInformationSubset2_1{0}; ///< reserved information subset 2-1
+    uint8_t m_obssNonHtStasPresent{0};         ///< OBSS NON HT STAs present
+    uint8_t m_reservedInformationSubset2_2{0}; ///< reserved information subset 2-2
 
     // HT Information Subset 3
-    uint8_t m_reservedInformationSubset3_1;  ///< reserved information subset 3-1
-    uint8_t m_dualBeacon;                    ///< dual beacon
-    uint8_t m_dualCtsProtection;             ///< dual CTS protection
-    uint8_t m_stbcBeacon;                    ///< STBC beacon
-    uint8_t m_lSigTxopProtectionFullSupport; ///< L-SIG TXOP protection full support
-    uint8_t m_pcoActive;                     ///< PCO active
-    uint8_t m_pcoPhase;                      ///< PCO phase
-    uint8_t m_reservedInformationSubset3_2;  ///< reserved information subset 3-2
+    uint8_t m_reservedInformationSubset3_1{0};  ///< reserved information subset 3-1
+    uint8_t m_dualBeacon{0};                    ///< dual beacon
+    uint8_t m_dualCtsProtection{0};             ///< dual CTS protection
+    uint8_t m_stbcBeacon{0};                    ///< STBC beacon
+    uint8_t m_lSigTxopProtectionFullSupport{0}; ///< L-SIG TXOP protection full support
+    uint8_t m_pcoActive{0};                     ///< PCO active
+    uint8_t m_pcoPhase{0};                      ///< PCO phase
+    uint8_t m_reservedInformationSubset3_2{0};  ///< reserved information subset 3-2
 
     // Basic MCS Set field
-    uint8_t m_reservedMcsSet1;                 ///< reserved MCS set 1
-    uint16_t m_rxHighestSupportedDataRate;     ///< receive highest supported data rate
-    uint8_t m_reservedMcsSet2;                 ///< reserved MCS set2
-    uint8_t m_txMcsSetDefined;                 ///< transmit MCS set defined
-    uint8_t m_txRxMcsSetUnequal;               ///< transmit / receive MCS set unequal
-    uint8_t m_txMaxNSpatialStreams;            ///< transmit maximum number spatial streams
-    uint8_t m_txUnequalModulation;             ///< transmit unequal modulation
-    uint32_t m_reservedMcsSet3;                ///< reserved MCS set 3
+    uint8_t m_reservedMcsSet1{0};              ///< reserved MCS set 1
+    uint16_t m_rxHighestSupportedDataRate{0};  ///< receive highest supported data rate
+    uint8_t m_reservedMcsSet2{0};              ///< reserved MCS set2
+    uint8_t m_txMcsSetDefined{0};              ///< transmit MCS set defined
+    uint8_t m_txRxMcsSetUnequal{0};            ///< transmit / receive MCS set unequal
+    uint8_t m_txMaxNSpatialStreams{0};         ///< transmit maximum number spatial streams
+    uint8_t m_txUnequalModulation{0};          ///< transmit unequal modulation
+    uint32_t m_reservedMcsSet3{0};             ///< reserved MCS set 3
     uint8_t m_rxMcsBitmask[MAX_SUPPORTED_MCS]; ///< receive MCS bitmask
 };
 

@@ -508,7 +508,7 @@ class UanHeaderRcAck : public Header
     TypeId GetInstanceTypeId() const override;
 
   private:
-    uint8_t m_frameNo;                //!< Next frame number.
+    uint8_t m_frameNo{0};             //!< Next frame number.
     std::set<uint8_t> m_nackedFrames; //!< Marker for nacked frames.
 
 }; // class UanHeaderRcAck

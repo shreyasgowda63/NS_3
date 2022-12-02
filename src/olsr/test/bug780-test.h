@@ -59,9 +59,9 @@ class Bug780Test : public TestCase
     /// Socket
     Ptr<Socket> m_socket;
     /// Sequence number
-    uint16_t m_seq;
+    uint16_t m_seq{0};
     /// Received ECHO Reply counter
-    uint16_t m_recvCount;
+    uint16_t m_recvCount{0};
 };
 
 } // namespace olsr

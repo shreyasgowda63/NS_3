@@ -46,16 +46,12 @@ NS_LOG_COMPONENT_DEFINE("Rip");
 NS_OBJECT_ENSURE_REGISTERED(Rip);
 
 Rip::Rip()
-    : m_ipv4(nullptr),
-      m_splitHorizonStrategy(Rip::POISON_REVERSE),
-      m_initialized(false)
+    : m_ipv4(nullptr)
 {
     m_rng = CreateObject<UniformRandomVariable>();
 }
 
-Rip::~Rip()
-{
-}
+Rip::~Rip() = default;
 
 TypeId
 Rip::GetTypeId()
@@ -1442,9 +1438,7 @@ RipRoutingTableEntry::RipRoutingTableEntry(Ipv4Address network,
 {
 }
 
-RipRoutingTableEntry::~RipRoutingTableEntry()
-{
-}
+RipRoutingTableEntry::~RipRoutingTableEntry() = default;
 
 void
 RipRoutingTableEntry::SetRouteTag(uint16_t routeTag)

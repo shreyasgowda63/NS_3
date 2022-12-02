@@ -141,9 +141,7 @@ LteUplinkDataSinrTestCase::LteUplinkDataSinrTestCase(Ptr<SpectrumValue> sv1,
     NS_LOG_INFO("Creating LteUplinkDataSinrTestCase");
 }
 
-LteUplinkDataSinrTestCase::~LteUplinkDataSinrTestCase()
-{
-}
+LteUplinkDataSinrTestCase::~LteUplinkDataSinrTestCase() = default;
 
 void
 LteUplinkDataSinrTestCase::DoRun()
@@ -338,9 +336,7 @@ LteUplinkSrsSinrTestCase::LteUplinkSrsSinrTestCase(Ptr<SpectrumValue> sv1,
     NS_LOG_INFO("Creating LteUplinkSrsSinrTestCase");
 }
 
-LteUplinkSrsSinrTestCase::~LteUplinkSrsSinrTestCase()
-{
-}
+LteUplinkSrsSinrTestCase::~LteUplinkSrsSinrTestCase() = default;
 
 void
 LteUplinkSrsSinrTestCase::ReportSinr(const SpectrumValue& sinr)

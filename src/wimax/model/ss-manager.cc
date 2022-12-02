@@ -42,8 +42,8 @@ SSManager::GetTypeId()
 }
 
 SSManager::SSManager()
+    : m_ssRecords(new std::vector<SSRecord*>())
 {
-    m_ssRecords = new std::vector<SSRecord*>();
 }
 
 SSManager::~SSManager()

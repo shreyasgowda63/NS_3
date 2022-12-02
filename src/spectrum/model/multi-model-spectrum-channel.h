@@ -161,7 +161,7 @@ class MultiModelSpectrumChannel : public SpectrumChannel
     /**
      * Number of devices connected to the channel.
      */
-    std::size_t m_numDevices;
+    std::size_t m_numDevices{0};
 };
 
 } // namespace ns3

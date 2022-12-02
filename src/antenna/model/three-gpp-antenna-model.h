@@ -77,13 +77,13 @@ class ThreeGppAntennaModel : public AntennaModel
     double GetAntennaElementGain() const;
 
   private:
-    double m_verticalBeamwidthDegrees; //!< beamwidth in the vertical direction \f$(\theta_{3dB})\f$
-                                       //!< [deg]
-    double m_horizontalBeamwidthDegrees; //!< beamwidth in the horizontal direction
-                                         //!< \f$(\phi_{3dB})\f$ [deg]
-    double m_aMax;                       //!< maximum attenuation (A_{max}) [dB]
-    double m_slaV;  //!< side-lobe attenuation in the vertical direction (SLA_V) [dB]
-    double m_geMax; //!< maximum directional gain of the antenna element (G_{E,max}) [dBi]
+    double m_verticalBeamwidthDegrees{65};   //!< beamwidth in the vertical direction
+                                             //!< \f$(\theta_{3dB})\f$ [deg]
+    double m_horizontalBeamwidthDegrees{65}; //!< beamwidth in the horizontal direction
+                                             //!< \f$(\phi_{3dB})\f$ [deg]
+    double m_aMax{30};                       //!< maximum attenuation (A_{max}) [dB]
+    double m_slaV{30};   //!< side-lobe attenuation in the vertical direction (SLA_V) [dB]
+    double m_geMax{8.0}; //!< maximum directional gain of the antenna element (G_{E,max}) [dBi]
 };
 
 } // namespace ns3

@@ -43,9 +43,7 @@ OhBuildingsPropagationLossModel::OhBuildingsPropagationLossModel()
     m_okumuraHata = CreateObject<OkumuraHataPropagationLossModel>();
 }
 
-OhBuildingsPropagationLossModel::~OhBuildingsPropagationLossModel()
-{
-}
+OhBuildingsPropagationLossModel::~OhBuildingsPropagationLossModel() = default;
 
 TypeId
 OhBuildingsPropagationLossModel::GetTypeId()

@@ -126,8 +126,8 @@ class WifiInformationElementVector : public Header
      * \returns the number of bytes
      */
     uint32_t GetSize() const;
-    IE_VECTOR m_elements; //!< Information element vector
-    uint16_t m_maxSize;   //!< Size in bytes (actually, max packet length)
+    IE_VECTOR m_elements;     //!< Information element vector
+    uint16_t m_maxSize{1500}; //!< Size in bytes (actually, max packet length)
 };
 
 } // namespace ns3

@@ -47,16 +47,11 @@ static const int TdTbfqType0AllocationRbg[4] = {
 NS_OBJECT_ENSURE_REGISTERED(TdTbfqFfMacScheduler);
 
 TdTbfqFfMacScheduler::TdTbfqFfMacScheduler()
-    : m_cschedSapUser(nullptr),
-      m_schedSapUser(nullptr),
-      m_nextRntiUl(0),
-      bankSize(0)
+    : m_cschedSapProvider(new MemberCschedSapProvider<TdTbfqFfMacScheduler>(this)),
+      m_ffrSapUser(new MemberLteFfrSapUser<TdTbfqFfMacScheduler>(this)),
+      m_schedSapProvider(new MemberSchedSapProvider<TdTbfqFfMacScheduler>(this))
 {
     m_amc = CreateObject<LteAmc>();
-    m_cschedSapProvider = new MemberCschedSapProvider<TdTbfqFfMacScheduler>(this);
-    m_schedSapProvider = new MemberSchedSapProvider<TdTbfqFfMacScheduler>(this);
-    m_ffrSapProvider = nullptr;
-    m_ffrSapUser = new MemberLteFfrSapUser<TdTbfqFfMacScheduler>(this);
 }
 
 TdTbfqFfMacScheduler::~TdTbfqFfMacScheduler()

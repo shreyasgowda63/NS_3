@@ -180,9 +180,7 @@ OcbWifiMacTestCase::OcbWifiMacTestCase()
 {
 }
 
-OcbWifiMacTestCase::~OcbWifiMacTestCase()
-{
-}
+OcbWifiMacTestCase::~OcbWifiMacTestCase() = default;
 
 // mobility is like walk on line with velocity 5 m/s
 // We prefer to update 0.5m every 0.1s rather than 5m every 1s

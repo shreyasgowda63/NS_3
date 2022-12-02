@@ -49,7 +49,6 @@ ThreeGppV2vUrbanPropagationLossModel::GetTypeId()
 }
 
 ThreeGppV2vUrbanPropagationLossModel::ThreeGppV2vUrbanPropagationLossModel()
-    : ThreeGppPropagationLossModel()
 {
     NS_LOG_FUNCTION(this);
     m_uniformVar = CreateObject<UniformRandomVariable>();
@@ -255,7 +254,6 @@ ThreeGppV2vHighwayPropagationLossModel::GetTypeId()
 }
 
 ThreeGppV2vHighwayPropagationLossModel::ThreeGppV2vHighwayPropagationLossModel()
-    : ThreeGppV2vUrbanPropagationLossModel()
 {
     NS_LOG_FUNCTION(this);
 }

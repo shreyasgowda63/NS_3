@@ -257,17 +257,15 @@ BaseStationNetDevice::BaseStationNetDevice(Ptr<Node> node,
                                            Ptr<WimaxPhy> phy,
                                            Ptr<UplinkScheduler> uplinkScheduler,
                                            Ptr<BSScheduler> bsScheduler)
+    : m_uplinkScheduler(uplinkScheduler),
+      m_scheduler(bsScheduler)
 {
     InitBaseStationNetDevice();
     this->SetNode(node);
     this->SetPhy(phy);
-    m_uplinkScheduler = uplinkScheduler;
-    m_scheduler = bsScheduler;
 }
 
-BaseStationNetDevice::~BaseStationNetDevice()
-{
-}
+BaseStationNetDevice::~BaseStationNetDevice() = default;
 
 void
 BaseStationNetDevice::DoDispose()

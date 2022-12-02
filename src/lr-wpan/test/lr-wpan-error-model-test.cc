@@ -66,7 +66,7 @@ class LrWpanErrorDistanceTestCase : public TestCase
      * \param p The packet.
      */
     void Callback(McpsDataIndicationParams params, Ptr<Packet> p);
-    uint32_t m_received; //!< The number of received packets.
+    uint32_t m_received{0}; //!< The number of received packets.
 };
 
 /**
@@ -86,14 +86,11 @@ class LrWpanErrorModelTestCase : public TestCase
 };
 
 LrWpanErrorDistanceTestCase::LrWpanErrorDistanceTestCase()
-    : TestCase("Test the 802.15.4 error model vs distance"),
-      m_received(0)
+    : TestCase("Test the 802.15.4 error model vs distance")
 {
 }
 
-LrWpanErrorDistanceTestCase::~LrWpanErrorDistanceTestCase()
-{
-}
+LrWpanErrorDistanceTestCase::~LrWpanErrorDistanceTestCase() = default;
 
 void
 LrWpanErrorDistanceTestCase::Callback(McpsDataIndicationParams params, Ptr<Packet> p)
@@ -167,9 +164,7 @@ LrWpanErrorModelTestCase::LrWpanErrorModelTestCase()
 {
 }
 
-LrWpanErrorModelTestCase::~LrWpanErrorModelTestCase()
-{
-}
+LrWpanErrorModelTestCase::~LrWpanErrorModelTestCase() = default;
 
 void
 LrWpanErrorModelTestCase::DoRun()

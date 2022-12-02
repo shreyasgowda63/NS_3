@@ -30,10 +30,7 @@ namespace ns3
 NS_OBJECT_ENSURE_REGISTERED(RipNgRte);
 
 RipNgRte::RipNgRte()
-    : m_prefix("::"),
-      m_tag(0),
-      m_prefixLen(0),
-      m_metric(16)
+    : m_prefix("::")
 {
 }
 
@@ -155,9 +152,8 @@ NS_LOG_COMPONENT_DEFINE("RipNgHeader");
 NS_OBJECT_ENSURE_REGISTERED(RipNgHeader);
 
 RipNgHeader::RipNgHeader()
-    : m_command(0)
-{
-}
+
+    = default;
 
 TypeId
 RipNgHeader::GetTypeId()

@@ -29,15 +29,10 @@ NS_LOG_COMPONENT_DEFINE("TcpOptionTS");
 NS_OBJECT_ENSURE_REGISTERED(TcpOptionTS);
 
 TcpOptionTS::TcpOptionTS()
-    : TcpOption(),
-      m_timestamp(0),
-      m_echo(0)
-{
-}
 
-TcpOptionTS::~TcpOptionTS()
-{
-}
+    = default;
+
+TcpOptionTS::~TcpOptionTS() = default;
 
 TypeId
 TcpOptionTS::GetTypeId()

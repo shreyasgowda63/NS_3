@@ -59,24 +59,16 @@ class TcpSocketMsgBase : public ns3::TcpSocketBase
     static TypeId GetTypeId();
 
     TcpSocketMsgBase()
-        : TcpSocketBase()
-    {
-    }
+
+        = default;
 
     /**
      * \brief Constructor.
      * \param other The object to copy from.
      */
     TcpSocketMsgBase(const TcpSocketMsgBase& other)
-        : TcpSocketBase(other)
-    {
-        m_rcvAckCb = other.m_rcvAckCb;
-        m_processedAckCb = other.m_processedAckCb;
-        m_beforeRetrCallback = other.m_beforeRetrCallback;
-        m_afterRetrCallback = other.m_afterRetrCallback;
-        m_forkCb = other.m_forkCb;
-        m_updateRttCb = other.m_updateRttCb;
-    }
+
+        = default;
 
     /// Callback for the ACK management.
     typedef Callback<void, Ptr<const Packet>, const TcpHeader&, Ptr<const TcpSocketBase>>
@@ -176,10 +168,7 @@ class TcpSocketSmallAcks : public TcpSocketMsgBase
     static TypeId GetTypeId();
 
     TcpSocketSmallAcks()
-        : TcpSocketMsgBase(),
-          m_bytesToAck(125),
-          m_bytesLeftToBeAcked(0),
-          m_lastAckedSeq(1)
+        : m_lastAckedSeq(1)
     {
     }
 
@@ -188,12 +177,8 @@ class TcpSocketSmallAcks : public TcpSocketMsgBase
      * \param other The object to copy from.
      */
     TcpSocketSmallAcks(const TcpSocketSmallAcks& other)
-        : TcpSocketMsgBase(other),
-          m_bytesToAck(other.m_bytesToAck),
-          m_bytesLeftToBeAcked(other.m_bytesLeftToBeAcked),
-          m_lastAckedSeq(other.m_lastAckedSeq)
-    {
-    }
+
+        = default;
 
     /**
      * \brief Set the bytes to be ACKed.
@@ -208,9 +193,9 @@ class TcpSocketSmallAcks : public TcpSocketMsgBase
     void SendEmptyPacket(uint8_t flags) override;
     Ptr<TcpSocketBase> Fork() override;
 
-    uint32_t m_bytesToAck;           //!< Number of bytes to be ACKed.
-    uint32_t m_bytesLeftToBeAcked;   //!< Number of bytes to be ACKed left.
-    SequenceNumber32 m_lastAckedSeq; //!< Last sequence number ACKed.
+    uint32_t m_bytesToAck{125};       //!< Number of bytes to be ACKed.
+    uint32_t m_bytesLeftToBeAcked{0}; //!< Number of bytes to be ACKed left.
+    SequenceNumber32 m_lastAckedSeq;  //!< Last sequence number ACKed.
 };
 
 /**

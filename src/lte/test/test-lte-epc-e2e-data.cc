@@ -121,9 +121,7 @@ LteEpcE2eDataTestCase::LteEpcE2eDataTestCase(std::string name, std::vector<EnbTe
     NS_LOG_FUNCTION(this << name);
 }
 
-LteEpcE2eDataTestCase::~LteEpcE2eDataTestCase()
-{
-}
+LteEpcE2eDataTestCase::~LteEpcE2eDataTestCase() = default;
 
 void
 LteEpcE2eDataTestCase::DoRun()

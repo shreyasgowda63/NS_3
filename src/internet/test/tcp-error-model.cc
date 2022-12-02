@@ -122,11 +122,8 @@ TcpFlagErrorModel::GetTypeId()
 }
 
 TcpFlagErrorModel::TcpFlagErrorModel()
-    : TcpGeneralErrorModel(),
-      m_flagsToKill(TcpHeader::NONE),
-      m_killNumber(0)
-{
-}
+
+    = default;
 
 bool
 TcpFlagErrorModel::ShouldDrop(const Ipv4Header& ipHeader,

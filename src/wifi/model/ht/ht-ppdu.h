@@ -128,12 +128,12 @@ class HtPpdu : public OfdmPpdu
         uint16_t GetHtLength() const;
 
       private:
-        uint8_t m_mcs;         ///< Modulation and Coding Scheme index
-        uint8_t m_cbw20_40;    ///< CBW 20/40
-        uint16_t m_htLength;   ///< HT length
-        uint8_t m_aggregation; ///< Aggregation
-        uint8_t m_sgi;         ///< Short Guard Interval
-    };                         // HtSigHeader
+        uint8_t m_mcs{0};         ///< Modulation and Coding Scheme index
+        uint8_t m_cbw20_40{0};    ///< CBW 20/40
+        uint16_t m_htLength{0};   ///< HT length
+        uint8_t m_aggregation{0}; ///< Aggregation
+        uint8_t m_sgi{0};         ///< Short Guard Interval
+    };                            // HtSigHeader
 
     /**
      * Create an HT PPDU.

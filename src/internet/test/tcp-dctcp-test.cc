@@ -63,17 +63,15 @@ class TcpDctcpCodePointsTest : public TcpGeneralTest
     void ConfigureEnvironment() override;
 
   private:
-    uint32_t m_senderSent;     //!< Number of packets sent by the sender
-    uint32_t m_receiverSent;   //!< Number of packets sent by the receiver
-    uint32_t m_senderReceived; //!< Number of packets received by the sender
-    uint8_t m_testCase;        //!< Test type
+    uint32_t m_senderSent{0};     //!< Number of packets sent by the sender
+    uint32_t m_receiverSent{0};   //!< Number of packets sent by the receiver
+    uint32_t m_senderReceived{0}; //!< Number of packets received by the sender
+    uint8_t m_testCase;           //!< Test type
 };
 
 TcpDctcpCodePointsTest::TcpDctcpCodePointsTest(uint8_t testCase, const std::string& desc)
     : TcpGeneralTest(desc),
-      m_senderSent(0),
-      m_receiverSent(0),
-      m_senderReceived(0),
+
       m_testCase(testCase)
 {
 }
@@ -227,14 +225,12 @@ class TcpDctcpCongestedRouter : public TcpSocketMsgBase
      */
     static TypeId GetTypeId();
 
-    uint32_t m_dataPacketSent; //!< Number of packets sent
-    uint8_t m_testCase;        //!< Test type
+    uint32_t m_dataPacketSent{0}; //!< Number of packets sent
+    uint8_t m_testCase;           //!< Test type
 
     TcpDctcpCongestedRouter()
-        : TcpSocketMsgBase()
-    {
-        m_dataPacketSent = 0;
-    }
+
+        = default;
 
     /**
      * \brief Constructor.

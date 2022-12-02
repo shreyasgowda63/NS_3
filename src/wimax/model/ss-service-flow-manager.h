@@ -131,7 +131,7 @@ class SsServiceFlowManager : public ServiceFlowManager
   private:
     Ptr<SubscriberStationNetDevice> m_device; ///< the device
 
-    uint8_t m_maxDsaReqRetries; ///< maximum DSA request retries
+    uint8_t m_maxDsaReqRetries{100}; ///< maximum DSA request retries
 
     EventId m_dsaRspTimeoutEvent; ///< DSA response timeout event
     EventId m_dsaAckTimeoutEvent; ///< DSA ack timeout event
@@ -139,12 +139,12 @@ class SsServiceFlowManager : public ServiceFlowManager
     DsaReq m_dsaReq; ///< DSA request
     DsaAck m_dsaAck; ///< DSA ack
 
-    uint16_t m_currentTransactionId; ///< current transaction ID
-    uint16_t m_transactionIdIndex;   ///< transaction ID index
-    uint8_t m_dsaReqRetries;         ///< DSA request retries
+    uint16_t m_currentTransactionId{0}; ///< current transaction ID
+    uint16_t m_transactionIdIndex{1};   ///< transaction ID index
+    uint8_t m_dsaReqRetries{0};         ///< DSA request retries
 
     // pointer to the service flow currently being configured
-    ServiceFlow* m_pendingServiceFlow; ///< pending service flow
+    ServiceFlow* m_pendingServiceFlow{nullptr}; ///< pending service flow
 };
 
 } // namespace ns3

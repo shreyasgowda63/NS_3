@@ -53,7 +53,7 @@ class WaveformGeneratorTestCase : public TestCase
     double m_period;    //!< waveform period (seconds)
     double m_dutyCycle; //!< waveform duty cycle
     double m_stop;      //!< stop time (seconds)
-    int m_fails;        //!< failure check
+    int m_fails{0};     //!< failure check
 };
 
 void
@@ -69,14 +69,11 @@ WaveformGeneratorTestCase::WaveformGeneratorTestCase(double period, double dutyC
     : TestCase("Check stop method"),
       m_period(period),
       m_dutyCycle(dutyCycle),
-      m_stop(stop),
-      m_fails(0)
+      m_stop(stop)
 {
 }
 
-WaveformGeneratorTestCase::~WaveformGeneratorTestCase()
-{
-}
+WaveformGeneratorTestCase::~WaveformGeneratorTestCase() = default;
 
 void
 WaveformGeneratorTestCase::DoRun()

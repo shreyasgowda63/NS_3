@@ -24,8 +24,6 @@
 
 #include <cmath>
 
-#define DEFAULT_BIN_WIDTH 1
-
 // #define RESERVED_BINS_INC 10
 
 namespace ns3
@@ -93,14 +91,11 @@ Histogram::AddValue(double value)
 }
 
 Histogram::Histogram(double binWidth)
+    : m_binWidth(binWidth)
 {
-    m_binWidth = binWidth;
 }
 
-Histogram::Histogram()
-{
-    m_binWidth = DEFAULT_BIN_WIDTH;
-}
+Histogram::Histogram() = default;
 
 void
 Histogram::SerializeToXmlStream(std::ostream& os, uint16_t indent, std::string elementName) const

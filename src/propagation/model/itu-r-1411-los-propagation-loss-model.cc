@@ -52,13 +52,10 @@ ItuR1411LosPropagationLossModel::GetTypeId()
 }
 
 ItuR1411LosPropagationLossModel::ItuR1411LosPropagationLossModel()
-    : PropagationLossModel()
-{
-}
 
-ItuR1411LosPropagationLossModel::~ItuR1411LosPropagationLossModel()
-{
-}
+    = default;
+
+ItuR1411LosPropagationLossModel::~ItuR1411LosPropagationLossModel() = default;
 
 double
 ItuR1411LosPropagationLossModel::GetLoss(Ptr<MobilityModel> a, Ptr<MobilityModel> b) const

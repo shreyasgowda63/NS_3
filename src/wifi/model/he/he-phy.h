@@ -602,7 +602,7 @@ class HePhy : public VhtPhy
 
     static const PpduFormats m_hePpduFormats; //!< HE PPDU formats
 
-    std::size_t m_rxHeTbPpdus;                 //!< Number of successfully received HE TB PPDUS
+    std::size_t m_rxHeTbPpdus{0};              //!< Number of successfully received HE TB PPDUS
     Ptr<ObssPdAlgorithm> m_obssPdAlgorithm;    //!< OBSS-PD algorithm
     std::vector<Time> m_lastPer20MHzDurations; //!< Hold the last per-20 MHz CCA durations vector
 };                                             // class HePhy

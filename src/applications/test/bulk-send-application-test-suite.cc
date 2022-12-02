@@ -72,9 +72,7 @@ BulkSendBasicTestCase::BulkSendBasicTestCase()
 {
 }
 
-BulkSendBasicTestCase::~BulkSendBasicTestCase()
-{
-}
+BulkSendBasicTestCase::~BulkSendBasicTestCase() = default;
 
 void
 BulkSendBasicTestCase::SendTx(Ptr<const Packet> p)
@@ -182,9 +180,7 @@ BulkSendSeqTsSizeTestCase::BulkSendSeqTsSizeTestCase()
 {
 }
 
-BulkSendSeqTsSizeTestCase::~BulkSendSeqTsSizeTestCase()
-{
-}
+BulkSendSeqTsSizeTestCase::~BulkSendSeqTsSizeTestCase() = default;
 
 void
 BulkSendSeqTsSizeTestCase::SendTx(Ptr<const Packet> p,

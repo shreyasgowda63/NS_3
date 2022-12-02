@@ -79,9 +79,7 @@ PointToPointGridHelper::PointToPointGridHelper(uint32_t nRows,
     }
 }
 
-PointToPointGridHelper::~PointToPointGridHelper()
-{
-}
+PointToPointGridHelper::~PointToPointGridHelper() = default;
 
 void
 PointToPointGridHelper::InstallStack(InternetStackHelper stack)

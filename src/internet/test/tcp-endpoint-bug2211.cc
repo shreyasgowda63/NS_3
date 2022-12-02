@@ -105,9 +105,9 @@ TcpEndPointBug2211Test::HandleConnect(Ptr<Socket> socket)
 }
 
 TcpEndPointBug2211Test::TcpEndPointBug2211Test(std::string desc, bool ipVersion)
-    : TestCase(desc)
+    : TestCase(desc),
+      m_v6(ipVersion)
 {
-    m_v6 = ipVersion;
 }
 
 void

@@ -24,27 +24,7 @@ namespace ns3
 {
 
 VhtCapabilities::VhtCapabilities()
-    : m_maxMpduLength(0),
-      m_supportedChannelWidthSet(0),
-      m_rxLdpc(0),
-      m_shortGuardIntervalFor80Mhz(0),
-      m_shortGuardIntervalFor160Mhz(0),
-      m_txStbc(0),
-      m_rxStbc(0),
-      m_suBeamformerCapable(0),
-      m_suBeamformeeCapable(0),
-      m_beamformeeStsCapable(0),
-      m_numberOfSoundingDimensions(0),
-      m_muBeamformerCapable(0),
-      m_muBeamformeeCapable(0),
-      m_vhtTxopPs(0),
-      m_htcVhtCapable(0),
-      m_maxAmpduLengthExponent(0),
-      m_vhtLinkAdaptationCapable(0),
-      m_rxAntennaPatternConsistency(0),
-      m_txAntennaPatternConsistency(0),
-      m_rxHighestSupportedLongGuardIntervalDataRate(0),
-      m_txHighestSupportedLongGuardIntervalDataRate(0)
+
 {
     m_rxMcsMap.resize(8, 0);
     m_txMcsMap.resize(8, 0);

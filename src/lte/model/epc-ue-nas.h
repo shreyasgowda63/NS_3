@@ -209,7 +209,7 @@ class EpcUeNas : public Object
     void SwitchToState(State s);
 
     /// The current UE NAS state.
-    State m_state;
+    State m_state{OFF};
 
     /**
      * The `StateTransition` trace source. Fired upon every UE NAS state
@@ -225,14 +225,14 @@ class EpcUeNas : public Object
     uint64_t m_imsi;
 
     /// Closed Subscriber Group identity.
-    uint32_t m_csgId;
+    uint32_t m_csgId{0};
 
     /// LTE SAP provider
-    LteAsSapProvider* m_asSapProvider;
+    LteAsSapProvider* m_asSapProvider{nullptr};
     /// LTE SAP user
     LteAsSapUser* m_asSapUser;
 
-    uint8_t m_bidCounter;             ///< bid counter
+    uint8_t m_bidCounter{0};          ///< bid counter
     EpcTftClassifier m_tftClassifier; ///< tft classifier
 
     Callback<void, Ptr<Packet>> m_forwardUpCallback; ///< upward callback

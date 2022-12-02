@@ -106,7 +106,7 @@ class UeManager : public Object
      */
     UeManager(Ptr<LteEnbRrc> rrc, uint16_t rnti, State s, uint8_t componentCarrierId);
 
-    ~UeManager() override;
+    ~UeManager() override = default;
 
     // inherited from Object
   protected:
@@ -534,7 +534,7 @@ class UeManager : public Object
      */
     void SwitchToState(State s);
 
-    uint8_t m_lastAllocatedDrbid; ///< last allocated Data Radio Bearer ID
+    uint8_t m_lastAllocatedDrbid{0}; ///< last allocated Data Radio Bearer ID
 
     /**
      * The `DataRadioBearerMap` attribute. List of UE DataRadioBearerInfo by
@@ -559,13 +559,13 @@ class UeManager : public Object
      * International Mobile Subscriber Identity assigned to this UE. A globally
      * unique UE identifier.
      */
-    uint64_t m_imsi;
+    uint64_t m_imsi{0};
     /**
      * ID of the primary CC for this UE
      */
     uint8_t m_componentCarrierId;
 
-    uint8_t m_lastRrcTransactionIdentifier; ///< last RRC transaction identifier
+    uint8_t m_lastRrcTransactionIdentifier{0}; ///< last RRC transaction identifier
 
     LteRrcSap::PhysicalConfigDedicated m_physicalConfigDedicated; ///< physical config dedicated
     /// Pointer to the parent eNodeB RRC.
@@ -575,7 +575,7 @@ class UeManager : public Object
 
     LtePdcpSapUser* m_drbPdcpSapUser; ///< DRB PDCP SAP user
 
-    bool m_pendingRrcConnectionReconfiguration; ///< pending RRC connection reconfiguration
+    bool m_pendingRrcConnectionReconfiguration{false}; ///< pending RRC connection reconfiguration
 
     /**
      * The `StateTransition` trace source. Fired upon every UE state transition
@@ -591,12 +591,12 @@ class UeManager : public Object
      */
     TracedCallback<uint64_t, uint16_t, uint16_t, uint8_t> m_drbCreatedTrace;
 
-    uint16_t m_sourceX2apId;              ///< source X2 ap ID
-    uint16_t m_targetX2apId;              ///< target X2 ap ID
-    uint16_t m_sourceCellId;              ///< source cell ID
-    uint16_t m_targetCellId;              ///< target cell ID
-    std::list<uint8_t> m_drbsToBeStarted; ///< DRBS to be started
-    bool m_needPhyMacConfiguration;       ///< need Phy MAC configuration
+    uint16_t m_sourceX2apId{0};            ///< source X2 ap ID
+    uint16_t m_targetX2apId;               ///< target X2 ap ID
+    uint16_t m_sourceCellId{0};            ///< source cell ID
+    uint16_t m_targetCellId;               ///< target cell ID
+    std::list<uint8_t> m_drbsToBeStarted;  ///< DRBS to be started
+    bool m_needPhyMacConfiguration{false}; ///< need Phy MAC configuration
 
     /**
      * Time limit before a _connection request timeout_ occurs. Set after a new
@@ -633,10 +633,10 @@ class UeManager : public Object
     EventId m_handoverLeavingTimeout;
 
     /// Define if the Carrier Aggregation was already configure for the current UE on not
-    bool m_caSupportConfigured;
+    bool m_caSupportConfigured{false};
 
     /// Pending start data radio bearers
-    bool m_pendingStartDataRadioBearers;
+    bool m_pendingStartDataRadioBearers{false};
 
     /**
      * Packet buffer for when UE is doing the handover.
@@ -1537,7 +1537,7 @@ class LteEnbRrc : public Object
     /// Interface to receive messages from neighbour eNodeB over the X2 interface.
     EpcX2SapUser* m_x2SapUser;
     /// Interface to send messages to neighbour eNodeB over the X2 interface.
-    EpcX2SapProvider* m_x2SapProvider;
+    EpcX2SapProvider* m_x2SapProvider{nullptr};
 
     /// Receive API calls from the eNodeB MAC instance.
     std::vector<LteEnbCmacSapUser*> m_cmacSapUser;
@@ -1547,17 +1547,17 @@ class LteEnbRrc : public Object
     /// Receive API calls from the handover algorithm instance.
     LteHandoverManagementSapUser* m_handoverManagementSapUser;
     /// Interface to the handover algorithm instance.
-    LteHandoverManagementSapProvider* m_handoverManagementSapProvider;
+    LteHandoverManagementSapProvider* m_handoverManagementSapProvider{nullptr};
 
     /// Receive API calls from the LteEnbComponentCarrierManager instance.
     LteCcmRrcSapUser* m_ccmRrcSapUser;
     /// Interface to the LteEnbComponentCarrierManager instance.
-    LteCcmRrcSapProvider* m_ccmRrcSapProvider;
+    LteCcmRrcSapProvider* m_ccmRrcSapProvider{nullptr};
 
     /// Receive API calls from the ANR instance.
     LteAnrSapUser* m_anrSapUser;
     /// Interface to the ANR instance.
-    LteAnrSapProvider* m_anrSapProvider;
+    LteAnrSapProvider* m_anrSapProvider{nullptr};
 
     /// Receive API calls from the FFR algorithm instance.
     std::vector<LteFfrRrcSapUser*> m_ffrRrcSapUser;
@@ -1565,15 +1565,15 @@ class LteEnbRrc : public Object
     std::vector<LteFfrRrcSapProvider*> m_ffrRrcSapProvider;
 
     /// Interface to send messages to UE over the RRC protocol.
-    LteEnbRrcSapUser* m_rrcSapUser;
+    LteEnbRrcSapUser* m_rrcSapUser{nullptr};
     /// Interface to receive messages from UE over the RRC protocol.
     LteEnbRrcSapProvider* m_rrcSapProvider;
 
     /// Interface to the eNodeB MAC instance, to be used by RLC instances.
-    LteMacSapProvider* m_macSapProvider;
+    LteMacSapProvider* m_macSapProvider{nullptr};
 
     /// Interface to send messages to core network over the S1 protocol.
-    EpcEnbS1SapProvider* m_s1SapProvider;
+    EpcEnbS1SapProvider* m_s1SapProvider{nullptr};
     /// Interface to receive messages from core network over the S1 protocol.
     EpcEnbS1SapUser* m_s1SapUser;
 
@@ -1583,7 +1583,7 @@ class LteEnbRrc : public Object
     std::vector<LteEnbCphySapProvider*> m_cphySapProvider;
 
     /// True if ConfigureCell() has been completed.
-    bool m_configured;
+    bool m_configured{false};
     /// Downlink E-UTRA Absolute Radio Frequency Channel Number.
     uint32_t m_dlEarfcn;
     /// Uplink E-UTRA Absolute Radio Frequency Channel Number.
@@ -1593,7 +1593,7 @@ class LteEnbRrc : public Object
     /// Uplink transmission bandwidth configuration in number of Resource Blocks.
     uint16_t m_ulBandwidth;
     /// Last allocated RNTI
-    uint16_t m_lastAllocatedRnti;
+    uint16_t m_lastAllocatedRnti{0};
 
     /// The System Information Block Type 1 that is currently broadcasted over BCH.
     std::vector<LteRrcSap::SystemInformationBlockType1> m_sib1;
@@ -1646,10 +1646,10 @@ class LteEnbRrc : public Object
     /**
      * The `SrsPeriodicity` attribute. The SRS periodicity in milliseconds.
      */
-    uint16_t m_srsCurrentPeriodicityId;              ///< SRS current periodicity ID
+    uint16_t m_srsCurrentPeriodicityId{0};           ///< SRS current periodicity ID
     std::set<uint16_t> m_ueSrsConfigurationIndexSet; ///< UE SRS configuration index set
-    uint16_t m_lastAllocatedConfigurationIndex;      ///< last allocated configuration index
-    bool m_reconfigureUes;                           ///< reconfigure UEs?
+    uint16_t m_lastAllocatedConfigurationIndex{0};   ///< last allocated configuration index
+    bool m_reconfigureUes{false};                    ///< reconfigure UEs?
 
     /**
      * The `QRxLevMin` attribute. One of information transmitted within the SIB1
@@ -1783,9 +1783,9 @@ class LteEnbRrc : public Object
      */
     TracedCallback<uint64_t, uint16_t, uint16_t> m_handoverFailureJoiningTrace;
 
-    uint16_t m_numberOfComponentCarriers; ///< number of component carriers
+    uint16_t m_numberOfComponentCarriers{0}; ///< number of component carriers
 
-    bool m_carriersConfigured; ///< are carriers configured
+    bool m_carriersConfigured{false}; ///< are carriers configured
 
     std::map<uint8_t, Ptr<ComponentCarrierBaseStation>>
         m_componentCarrierPhyConf; ///< component carrier phy configuration

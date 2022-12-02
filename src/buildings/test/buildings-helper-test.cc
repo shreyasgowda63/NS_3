@@ -39,21 +39,16 @@ NS_LOG_COMPONENT_DEFINE("BuildingsHelperTest");
 struct PositionInBuilding
 {
     PositionInBuilding();
-    Vector pos;   //!< coordinates of the mobility model instance
-    bool indoor;  //!< true if indoor, false otherwise
-    uint32_t bid; //!< building id
-    uint16_t rx;  //!< room x
-    uint16_t ry;  //!< room y
-    uint16_t fn;  //!< floor number
+    Vector pos;               //!< coordinates of the mobility model instance
+    bool indoor{false};       //!< true if indoor, false otherwise
+    uint32_t bid{0xffffffff}; //!< building id
+    uint16_t rx{0};           //!< room x
+    uint16_t ry{0};           //!< room y
+    uint16_t fn{0};           //!< floor number
 };
 
 PositionInBuilding::PositionInBuilding()
-    : pos(0, 0, 0),
-      indoor(false),
-      bid(0xffffffff),
-      rx(0),
-      ry(0),
-      fn(0)
+    : pos(0, 0, 0)
 {
 }
 
@@ -70,29 +65,20 @@ PositionInBuilding::PositionInBuilding()
 struct BuildingData
 {
     BuildingData();
-    double xmin;  //!< X min coordinate
-    double xmax;  //!< X max coordinate
-    double ymin;  //!< Y min coordinate
-    double ymax;  //!< Y max coordinate
-    double zmin;  //!< Z min coordinate
-    double zmax;  //!< Z max coordinate
-    uint16_t nrx; //!< Number of rooms (X coord)
-    uint16_t nry; //!< Number of rooms (Y coord)
-    uint16_t nf;  //!< Number of floors
+    double xmin{0};  //!< X min coordinate
+    double xmax{0};  //!< X max coordinate
+    double ymin{0};  //!< Y min coordinate
+    double ymax{0};  //!< Y max coordinate
+    double zmin{0};  //!< Z min coordinate
+    double zmax{0};  //!< Z max coordinate
+    uint16_t nrx{0}; //!< Number of rooms (X coord)
+    uint16_t nry{0}; //!< Number of rooms (Y coord)
+    uint16_t nf{0};  //!< Number of floors
 };
 
 BuildingData::BuildingData()
-    : xmin(0),
-      xmax(0),
-      ymin(0),
-      ymax(0),
-      zmin(0),
-      zmax(0),
-      nrx(0),
-      nry(0),
-      nf(0)
-{
-}
+
+    = default;
 
 /**
  * \ingroup building-test

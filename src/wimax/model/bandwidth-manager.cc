@@ -49,14 +49,11 @@ BandwidthManager::GetTypeId()
 }
 
 BandwidthManager::BandwidthManager(Ptr<WimaxNetDevice> device)
-    : m_device(device),
-      m_nrBwReqsSent(0)
+    : m_device(device)
 {
 }
 
-BandwidthManager::~BandwidthManager()
-{
-}
+BandwidthManager::~BandwidthManager() = default;
 
 void
 BandwidthManager::DoDispose()

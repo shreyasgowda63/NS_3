@@ -162,11 +162,11 @@ class LteUeRrcProtocolReal : public Object
      */
     void DoReceivePdcpSdu(LtePdcpSapUser::ReceivePdcpSduParameters params);
 
-    Ptr<LteUeRrc> m_rrc;                       ///< the RRC
-    uint16_t m_rnti;                           ///< the RNTI
-    LteUeRrcSapProvider* m_ueRrcSapProvider;   ///< UE RRC SAP provider
-    LteUeRrcSapUser* m_ueRrcSapUser;           ///< UE RRC SAP user
-    LteEnbRrcSapProvider* m_enbRrcSapProvider; ///< ENB RRC SAP provider
+    Ptr<LteUeRrc> m_rrc;                                ///< the RRC
+    uint16_t m_rnti;                                    ///< the RNTI
+    LteUeRrcSapProvider* m_ueRrcSapProvider{nullptr};   ///< UE RRC SAP provider
+    LteUeRrcSapUser* m_ueRrcSapUser;                    ///< UE RRC SAP user
+    LteEnbRrcSapProvider* m_enbRrcSapProvider{nullptr}; ///< ENB RRC SAP provider
 
     LteUeRrcSapUser::SetupParameters m_setupParameters; ///< setup parameters
     LteUeRrcSapProvider::CompleteSetupParameters
@@ -358,7 +358,7 @@ class LteEnbRrcProtocolReal : public Object
 
     uint16_t m_rnti;                                                 ///< the RNTI
     uint16_t m_cellId;                                               ///< the cell ID
-    LteEnbRrcSapProvider* m_enbRrcSapProvider;                       ///< ENB RRC SAP provider
+    LteEnbRrcSapProvider* m_enbRrcSapProvider{nullptr};              ///< ENB RRC SAP provider
     LteEnbRrcSapUser* m_enbRrcSapUser;                               ///< ENB RRC SAP user
     std::map<uint16_t, LteUeRrcSapProvider*> m_enbRrcSapProviderMap; ///< ENB RRC SAP provider map
     std::map<uint16_t, LteEnbRrcSapUser::SetupUeParameters>

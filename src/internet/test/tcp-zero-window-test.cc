@@ -62,19 +62,15 @@ class TcpZeroWindowTest : public TcpGeneralTest
     void IncreaseBufSize();
 
   protected:
-    EventId m_receivePktEvent; //!< Receive packet event.
-    bool m_zeroWindowProbe;    //!< ZeroWindow probe.
-    bool m_windowUpdated;      //!< Window updated.
-    bool m_senderFinished;     //!< Send finished.
-    bool m_receiverFinished;   //!< Receiver finished.
+    EventId m_receivePktEvent;      //!< Receive packet event.
+    bool m_zeroWindowProbe{false};  //!< ZeroWindow probe.
+    bool m_windowUpdated{false};    //!< Window updated.
+    bool m_senderFinished{false};   //!< Send finished.
+    bool m_receiverFinished{false}; //!< Receiver finished.
 };
 
 TcpZeroWindowTest::TcpZeroWindowTest(const std::string& desc)
-    : TcpGeneralTest(desc),
-      m_zeroWindowProbe(false),
-      m_windowUpdated(false),
-      m_senderFinished(false),
-      m_receiverFinished(false)
+    : TcpGeneralTest(desc)
 {
 }
 

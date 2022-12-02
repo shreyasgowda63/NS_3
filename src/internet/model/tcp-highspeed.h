@@ -95,7 +95,7 @@ class TcpHighSpeed : public TcpNewReno
     void CongestionAvoidance(Ptr<TcpSocketState> tcb, uint32_t segmentsAcked) override;
 
   private:
-    uint32_t m_ackCnt; //!< Number of received ACK, corrected with the coefficient a
+    uint32_t m_ackCnt{0}; //!< Number of received ACK, corrected with the coefficient a
 };
 
 } // namespace ns3

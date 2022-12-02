@@ -78,9 +78,7 @@ SpectrumInterferenceTestCase::SpectrumInterferenceTestCase(Ptr<SpectrumValue> s,
 {
 }
 
-SpectrumInterferenceTestCase::~SpectrumInterferenceTestCase()
-{
-}
+SpectrumInterferenceTestCase::~SpectrumInterferenceTestCase() = default;
 
 void
 SpectrumInterferenceTestCase::DoRun()

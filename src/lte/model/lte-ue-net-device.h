@@ -170,7 +170,7 @@ class LteUeNetDevice : public LteNetDevice
     void DoInitialize() override;
 
   private:
-    bool m_isConstructed; ///< is constructed?
+    bool m_isConstructed{false}; ///< is constructed?
 
     /**
      * \brief Propagate attributes and configuration to sub-modules.

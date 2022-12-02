@@ -37,12 +37,7 @@ NS_LOG_COMPONENT_DEFINE("RemSpectrumPhy");
 NS_OBJECT_ENSURE_REGISTERED(RemSpectrumPhy);
 
 RemSpectrumPhy::RemSpectrumPhy()
-    : m_mobility(nullptr),
-      m_referenceSignalPower(0),
-      m_sumPower(0),
-      m_active(true),
-      m_useDataChannel(false),
-      m_rbId(-1)
+    : m_mobility(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }

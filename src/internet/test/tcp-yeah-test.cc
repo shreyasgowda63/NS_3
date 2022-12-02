@@ -78,9 +78,9 @@ class TcpYeahIncrementTest : public TestCase
     uint32_t m_segmentsAcked;        //!< Number of segments ACKed.
     Time m_baseRtt;                  //!< Base RTT.
     Time m_minRtt;                   //!< Min RTT.
-    uint32_t m_doingRenoNow;         //!< TCP Reno fallback.
-    uint32_t m_cntRtt;               //!< RTT counter.
-    uint32_t m_renoCount;            //!< Reno counter.
+    uint32_t m_doingRenoNow{0};      //!< TCP Reno fallback.
+    uint32_t m_cntRtt{4};            //!< RTT counter.
+    uint32_t m_renoCount{2};         //!< Reno counter.
 };
 
 TcpYeahIncrementTest::TcpYeahIncrementTest(uint32_t cWnd,
@@ -99,10 +99,7 @@ TcpYeahIncrementTest::TcpYeahIncrementTest(uint32_t cWnd,
       m_lastAckedSeq(lastAckedSeq),
       m_segmentsAcked(segmentsAcked),
       m_baseRtt(MilliSeconds(100)),
-      m_minRtt(minRtt),
-      m_doingRenoNow(0),
-      m_cntRtt(4),
-      m_renoCount(2)
+      m_minRtt(minRtt)
 {
 }
 
@@ -255,12 +252,12 @@ class TcpYeahDecrementTest : public TestCase
     uint32_t m_cWnd;                 //!< Congestion window.
     uint32_t m_ssThresh;             //!< Slow Start Threshold.
     uint32_t m_segmentSize;          //!< Segment size.
-    uint32_t m_doingRenoNow;         //!< TCP Reno fallback.
+    uint32_t m_doingRenoNow{0};      //!< TCP Reno fallback.
     SequenceNumber32 m_nextTxSeq;    //!< Next Tx sequence number.
     SequenceNumber32 m_lastAckedSeq; //!< Last ACKed sequence number.
     Time m_minRtt;                   //!< Min RTT.
     Time m_baseRtt;                  //!< Base RTT.
-    uint32_t m_segmentsAcked;        //!< Number of segments ACKed.
+    uint32_t m_segmentsAcked{2};     //!< Number of segments ACKed.
     UintegerValue m_rho;             //!< TCP Yeah rho param.
 };
 
@@ -276,12 +273,12 @@ TcpYeahDecrementTest::TcpYeahDecrementTest(uint32_t cWnd,
       m_cWnd(cWnd),
       m_ssThresh(ssThresh),
       m_segmentSize(segmentSize),
-      m_doingRenoNow(0),
+
       m_nextTxSeq(nextTxSeq),
       m_lastAckedSeq(lastAckedSeq),
       m_minRtt(minRtt),
       m_baseRtt(MilliSeconds(100)),
-      m_segmentsAcked(2),
+
       m_rho(rho)
 {
 }

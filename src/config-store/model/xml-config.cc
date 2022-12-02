@@ -37,7 +37,6 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("XmlConfig");
 
 XmlConfigSave::XmlConfigSave()
-    : m_writer(nullptr)
 {
     NS_LOG_FUNCTION(this);
 }
@@ -110,8 +109,8 @@ XmlConfigSave::Default()
     {
       public:
         XmlDefaultIterator(xmlTextWriterPtr writer)
+            : m_writer(writer)
         {
-            m_writer = writer;
         }
 
         void SetSaveDeprecated(bool saveDeprecated)

@@ -107,8 +107,8 @@ class LoopbackNetDevice : public NetDevice
     NetDevice::PromiscReceiveCallback m_promiscCallback;
 
     Ptr<Node> m_node;       //!< the node this NetDevice is associated with
-    uint16_t m_mtu;         //!< device MTU
-    uint32_t m_ifIndex;     //!< interface index
+    uint16_t m_mtu{0xffff}; //!< device MTU
+    uint32_t m_ifIndex{0};  //!< interface index
     Mac48Address m_address; //!< NetDevice MAC address
 };
 

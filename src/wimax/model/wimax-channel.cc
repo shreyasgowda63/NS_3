@@ -38,13 +38,9 @@ WimaxChannel::GetTypeId()
     return tid;
 }
 
-WimaxChannel::WimaxChannel()
-{
-}
+WimaxChannel::WimaxChannel() = default;
 
-WimaxChannel::~WimaxChannel()
-{
-}
+WimaxChannel::~WimaxChannel() = default;
 
 void
 WimaxChannel::Attach(Ptr<WimaxPhy> phy)

@@ -67,13 +67,10 @@ OkumuraHataPropagationLossModel::GetTypeId()
 }
 
 OkumuraHataPropagationLossModel::OkumuraHataPropagationLossModel()
-    : PropagationLossModel()
-{
-}
 
-OkumuraHataPropagationLossModel::~OkumuraHataPropagationLossModel()
-{
-}
+    = default;
+
+OkumuraHataPropagationLossModel::~OkumuraHataPropagationLossModel() = default;
 
 double
 OkumuraHataPropagationLossModel::GetLoss(Ptr<MobilityModel> a, Ptr<MobilityModel> b) const

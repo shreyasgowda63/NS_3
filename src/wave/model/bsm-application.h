@@ -151,17 +151,17 @@ class BsmApplication : public Application
     Ptr<WaveBsmStats> m_waveBsmStats; ///< BSM stats
     /// tx safety range squared, for optimization
     std::vector<double> m_txSafetyRangesSq;
-    Time m_TotalSimTime;                         ///< total sim time
-    uint32_t m_wavePacketSize;                   ///< bytes
-    uint32_t m_numWavePackets;                   ///< number of wave packets
-    Time m_waveInterval;                         ///< wave interval
-    double m_gpsAccuracyNs;                      ///< GPS accuracy
-    Ipv4InterfaceContainer* m_adhocTxInterfaces; ///< transmit interfaces
-    std::vector<int>* m_nodesMoving;             ///< nodes moving
-    Ptr<UniformRandomVariable> m_unirv;          ///< random variable
-    int m_nodeId;                                ///< node ID
+    Time m_TotalSimTime;                                  ///< total sim time
+    uint32_t m_wavePacketSize{200};                       ///< bytes
+    uint32_t m_numWavePackets{1};                         ///< number of wave packets
+    Time m_waveInterval;                                  ///< wave interval
+    double m_gpsAccuracyNs{10000};                        ///< GPS accuracy
+    Ipv4InterfaceContainer* m_adhocTxInterfaces{nullptr}; ///< transmit interfaces
+    std::vector<int>* m_nodesMoving{nullptr};             ///< nodes moving
+    Ptr<UniformRandomVariable> m_unirv;                   ///< random variable
+    int m_nodeId{0};                                      ///< node ID
     /// WAVE channel access mode.  0=continuous PHY; 1=channel-switching
-    int m_chAccessMode;
+    int m_chAccessMode{0};
     /**
      * When transmitting at a default rate of 10 Hz,
      * the subsystem shall transmit every 100 ms +/-

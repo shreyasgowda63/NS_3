@@ -31,17 +31,7 @@ NS_LOG_COMPONENT_DEFINE("LteFfrSimple");
 NS_OBJECT_ENSURE_REGISTERED(LteFfrSimple);
 
 LteFfrSimple::LteFfrSimple()
-    : m_ffrSapUser(nullptr),
-      m_ffrRrcSapUser(nullptr),
-      m_dlOffset(0),
-      m_dlSubBand(0),
-      m_ulOffset(0),
-      m_ulSubBand(0),
-      m_measId(0),
-      m_changePdschConfigDedicated(false),
-      m_tpc(1),
-      m_tpcNum(0),
-      m_accumulatedMode(false)
+
 {
     NS_LOG_FUNCTION(this);
     m_ffrSapProvider = new MemberLteFfrSapProvider<LteFfrSimple>(this);

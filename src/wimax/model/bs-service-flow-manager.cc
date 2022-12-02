@@ -45,16 +45,12 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("BsServiceFlowManager");
 
 BsServiceFlowManager::BsServiceFlowManager(Ptr<BaseStationNetDevice> device)
-    : m_device(device),
-      m_sfidIndex(100),
-      m_maxDsaRspRetries(100) // default value
+    : m_device(device)
 {
     m_inuseScheduleDsaRspCid = Cid::InitialRanging();
 }
 
-BsServiceFlowManager::~BsServiceFlowManager()
-{
-}
+BsServiceFlowManager::~BsServiceFlowManager() = default;
 
 /* static */
 TypeId

@@ -40,7 +40,7 @@ namespace ns3
 class LteFfrSapProvider
 {
   public:
-    virtual ~LteFfrSapProvider();
+    virtual ~LteFfrSapProvider() = default;
 
     /**
      * \brief Get vector of available RBG in DL for this Cell
@@ -140,7 +140,7 @@ class LteFfrSapProvider
 class LteFfrSapUser
 {
   public:
-    virtual ~LteFfrSapUser();
+    virtual ~LteFfrSapUser() = default;
 
 }; // end of class LteFfrSapUser
 

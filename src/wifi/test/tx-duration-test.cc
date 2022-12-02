@@ -134,9 +134,7 @@ TxDurationTest::TxDurationTest()
 {
 }
 
-TxDurationTest::~TxDurationTest()
-{
-}
+TxDurationTest::~TxDurationTest() = default;
 
 bool
 TxDurationTest::CheckPayloadDuration(uint32_t size,
@@ -1325,9 +1323,7 @@ HeSigBDurationTest::HeSigBDurationTest()
 {
 }
 
-HeSigBDurationTest::~HeSigBDurationTest()
-{
-}
+HeSigBDurationTest::~HeSigBDurationTest() = default;
 
 WifiTxVector
 HeSigBDurationTest::BuildTxVector(uint16_t bw, std::list<HeMuUserInfo> userInfos)
@@ -1485,9 +1481,7 @@ PhyHeaderSectionsTest::PhyHeaderSectionsTest()
 {
 }
 
-PhyHeaderSectionsTest::~PhyHeaderSectionsTest()
-{
-}
+PhyHeaderSectionsTest::~PhyHeaderSectionsTest() = default;
 
 void
 PhyHeaderSectionsTest::CheckPhyHeaderSections(PhyEntity::PhyHeaderSections obtained,

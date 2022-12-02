@@ -36,7 +36,7 @@ NS_LOG_COMPONENT_DEFINE("Timer");
 Timer::Timer()
     : m_flags(CHECK_ON_DESTROY),
       m_delay(FemtoSeconds(0)),
-      m_event(),
+
       m_impl(nullptr)
 {
     NS_LOG_FUNCTION(this);
@@ -45,7 +45,7 @@ Timer::Timer()
 Timer::Timer(enum DestroyPolicy destroyPolicy)
     : m_flags(destroyPolicy),
       m_delay(FemtoSeconds(0)),
-      m_event(),
+
       m_impl(nullptr)
 {
     NS_LOG_FUNCTION(this << destroyPolicy);

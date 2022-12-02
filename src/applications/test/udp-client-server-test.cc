@@ -65,9 +65,7 @@ UdpClientServerTestCase::UdpClientServerTestCase()
 {
 }
 
-UdpClientServerTestCase::~UdpClientServerTestCase()
-{
-}
+UdpClientServerTestCase::~UdpClientServerTestCase() = default;
 
 void
 UdpClientServerTestCase::DoRun()
@@ -142,9 +140,7 @@ UdpTraceClientServerTestCase::UdpTraceClientServerTestCase()
 {
 }
 
-UdpTraceClientServerTestCase::~UdpTraceClientServerTestCase()
-{
-}
+UdpTraceClientServerTestCase::~UdpTraceClientServerTestCase() = default;
 
 void
 UdpTraceClientServerTestCase::DoRun()
@@ -212,9 +208,7 @@ PacketLossCounterTestCase::PacketLossCounterTestCase()
 {
 }
 
-PacketLossCounterTestCase::~PacketLossCounterTestCase()
-{
-}
+PacketLossCounterTestCase::~PacketLossCounterTestCase() = default;
 
 void
 PacketLossCounterTestCase::DoRun()
@@ -289,9 +283,7 @@ UdpEchoClientSetFillTestCase::UdpEchoClientSetFillTestCase()
 {
 }
 
-UdpEchoClientSetFillTestCase::~UdpEchoClientSetFillTestCase()
-{
-}
+UdpEchoClientSetFillTestCase::~UdpEchoClientSetFillTestCase() = default;
 
 void
 UdpEchoClientSetFillTestCase::DoRun()

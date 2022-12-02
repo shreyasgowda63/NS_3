@@ -31,10 +31,8 @@ NS_OBJECT_ENSURE_REGISTERED(LrWpanMacTrailer);
 const uint16_t LrWpanMacTrailer::LR_WPAN_MAC_FCS_LENGTH = 2;
 
 LrWpanMacTrailer::LrWpanMacTrailer()
-    : m_fcs(0),
-      m_calcFcs(false)
-{
-}
+
+    = default;
 
 TypeId
 LrWpanMacTrailer::GetTypeId()

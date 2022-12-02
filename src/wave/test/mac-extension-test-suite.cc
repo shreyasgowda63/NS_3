@@ -100,9 +100,7 @@ class CoordinationTestListener : public ChannelCoordinationListener
     {
     }
 
-    ~CoordinationTestListener() override
-    {
-    }
+    ~CoordinationTestListener() override = default;
 
     void NotifyCchSlotStart(Time duration) override
     {
@@ -127,9 +125,7 @@ ChannelCoordinationTestCase::ChannelCoordinationTestCase()
 {
 }
 
-ChannelCoordinationTestCase::~ChannelCoordinationTestCase()
-{
-}
+ChannelCoordinationTestCase::~ChannelCoordinationTestCase() = default;
 
 void
 ChannelCoordinationTestCase::TestIntervalAfter(bool cchi, bool schi, bool guardi)
@@ -501,9 +497,7 @@ ChannelRoutingTestCase::ChannelRoutingTestCase()
 {
 }
 
-ChannelRoutingTestCase::~ChannelRoutingTestCase()
-{
-}
+ChannelRoutingTestCase::~ChannelRoutingTestCase() = default;
 
 void
 ChannelRoutingTestCase::SendWsmp(bool shouldSucceed, const TxInfo& txInfo)
@@ -823,9 +817,7 @@ ChannelAccessTestCase::ChannelAccessTestCase()
 {
 }
 
-ChannelAccessTestCase::~ChannelAccessTestCase()
-{
-}
+ChannelAccessTestCase::~ChannelAccessTestCase() = default;
 
 void
 ChannelAccessTestCase::TestContinuous(SchInfo& info, bool shouldSucceed)
@@ -1394,9 +1386,7 @@ AnnexC_TestCase::AnnexC_TestCase()
 {
 }
 
-AnnexC_TestCase::~AnnexC_TestCase()
-{
-}
+AnnexC_TestCase::~AnnexC_TestCase() = default;
 
 void
 AnnexC_TestCase::SendPacket(uint32_t packetSize, const TxInfo& txInfo, uint32_t sequence)

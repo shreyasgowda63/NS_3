@@ -212,9 +212,7 @@ LteInterferenceTestCase::LteInterferenceTestCase(std::string name,
 {
 }
 
-LteInterferenceTestCase::~LteInterferenceTestCase()
-{
-}
+LteInterferenceTestCase::~LteInterferenceTestCase() = default;
 
 void
 LteInterferenceTestCase::DoRun()

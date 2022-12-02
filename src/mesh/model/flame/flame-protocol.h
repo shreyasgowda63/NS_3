@@ -196,20 +196,20 @@ class FlameProtocol : public MeshL2RoutingProtocol
     Time m_lastBroadcast;
     //\}
     /// Max Cost value (or TTL, because cost is actually hopcount)
-    uint8_t m_maxCost;
+    uint8_t m_maxCost{32};
     /// Sequence number:
-    uint16_t m_myLastSeqno;
+    uint16_t m_myLastSeqno{1};
     /// Routing table:
     Ptr<FlameRtable> m_rtable;
 
     /// Statistics structure
     struct Statistics
     {
-        uint16_t txUnicast;    ///< transmit unicast
-        uint16_t txBroadcast;  ///< transmit broadcast
-        uint32_t txBytes;      ///< transmit bytes
-        uint16_t droppedTtl;   ///< dropped TTL
-        uint16_t totalDropped; ///< total dropped
+        uint16_t txUnicast{0};    ///< transmit unicast
+        uint16_t txBroadcast{0};  ///< transmit broadcast
+        uint32_t txBytes{0};      ///< transmit bytes
+        uint16_t droppedTtl{0};   ///< dropped TTL
+        uint16_t totalDropped{0}; ///< total dropped
         /**
          * Print function
          * \param os the output stream to print to
