@@ -577,7 +577,7 @@ HtFrameExchangeManager::ForwardMpduDown(Ptr<WifiMpdu> mpdu, WifiTxVector& txVect
 }
 
 Ptr<WifiPsdu>
-HtFrameExchangeManager::GetWifiPsdu(Ptr<WifiMpdu> mpdu, const WifiTxVector& txVector) const
+HtFrameExchangeManager::GetWifiPsdu(Ptr<WifiMpdu> mpdu, const WifiTxVector& /*txVector*/) const
 {
     return Create<WifiPsdu>(mpdu, false);
 }
@@ -1502,7 +1502,7 @@ void
 HtFrameExchangeManager::EndReceiveAmpdu(Ptr<const WifiPsdu> psdu,
                                         const RxSignalInfo& rxSignalInfo,
                                         const WifiTxVector& txVector,
-                                        const std::vector<bool>& perMpduStatus)
+                                        const std::vector<bool>& /*perMpduStatus*/)
 {
     std::set<uint8_t> tids = psdu->GetTids();
 

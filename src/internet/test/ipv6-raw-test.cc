@@ -114,13 +114,17 @@ Ipv6RawSocketImplTest::Ipv6RawSocketImplTest()
 }
 
 void
-Ipv6RawSocketImplTest::ReceivePacket(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from)
+Ipv6RawSocketImplTest::ReceivePacket(Ptr<Socket> /*socket*/,
+                                     Ptr<Packet> packet,
+                                     const Address& /*from*/)
 {
     m_receivedPacket = packet;
 }
 
 void
-Ipv6RawSocketImplTest::ReceivePacket2(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from)
+Ipv6RawSocketImplTest::ReceivePacket2(Ptr<Socket> /*socket*/,
+                                      Ptr<Packet> packet,
+                                      const Address& /*from*/)
 {
     m_receivedPacket2 = packet;
 }

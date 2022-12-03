@@ -127,13 +127,15 @@ WifiChannelSwitchingTest::~WifiChannelSwitchingTest()
 }
 
 void
-WifiChannelSwitchingTest::Associated(Mac48Address bssid)
+WifiChannelSwitchingTest::Associated(Mac48Address /*bssid*/)
 {
     m_assocCount++;
 }
 
 void
-WifiChannelSwitchingTest::Transmit(WifiConstPsduMap psduMap, WifiTxVector txVector, double txPowerW)
+WifiChannelSwitchingTest::Transmit(WifiConstPsduMap psduMap,
+                                   WifiTxVector txVector,
+                                   double /*txPowerW*/)
 {
     for (const auto& psduPair : psduMap)
     {
@@ -160,7 +162,7 @@ WifiChannelSwitchingTest::Transmit(WifiConstPsduMap psduMap, WifiTxVector txVect
 }
 
 void
-WifiChannelSwitchingTest::L7Receive(Ptr<const Packet> p, const Address& addr)
+WifiChannelSwitchingTest::L7Receive(Ptr<const Packet> p, const Address& /*addr*/)
 {
     if (p->GetSize() == m_payloadSize)
     {
@@ -207,8 +209,8 @@ WifiChannelSwitchingTest::ChannelSwitch()
 
 void
 WifiChannelSwitchingTest::StateChange(uint32_t nodeId,
-                                      ns3::Time start,
-                                      ns3::Time duration,
+                                      ns3::Time /*start*/,
+                                      ns3::Time /*duration*/,
                                       WifiPhyState state)
 {
     if (state == WifiPhyState::SWITCHING)

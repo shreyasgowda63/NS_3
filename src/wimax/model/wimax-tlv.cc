@@ -507,7 +507,7 @@ U8TlvValue::Serialize(Buffer::Iterator i) const
 }
 
 uint32_t
-U8TlvValue::Deserialize(Buffer::Iterator i, uint64_t valueLen)
+U8TlvValue::Deserialize(Buffer::Iterator i, uint64_t /*valueLen*/)
 {
     return Deserialize(i);
 }
@@ -560,7 +560,7 @@ U16TlvValue::Serialize(Buffer::Iterator i) const
 }
 
 uint32_t
-U16TlvValue::Deserialize(Buffer::Iterator i, uint64_t valueLen)
+U16TlvValue::Deserialize(Buffer::Iterator i, uint64_t /*valueLen*/)
 {
     return Deserialize(i);
 }
@@ -613,7 +613,7 @@ U32TlvValue::Serialize(Buffer::Iterator i) const
 }
 
 uint32_t
-U32TlvValue::Deserialize(Buffer::Iterator i, uint64_t valueLen)
+U32TlvValue::Deserialize(Buffer::Iterator i, uint64_t /*valueLen*/)
 {
     return Deserialize(i);
 }
@@ -835,7 +835,7 @@ TosTlvValue::Serialize(Buffer::Iterator i) const
 }
 
 uint32_t
-TosTlvValue::Deserialize(Buffer::Iterator i, uint64_t valueLength)
+TosTlvValue::Deserialize(Buffer::Iterator i, uint64_t /*valueLength*/)
 {
     m_low = i.ReadU8();
     m_high = i.ReadU8();

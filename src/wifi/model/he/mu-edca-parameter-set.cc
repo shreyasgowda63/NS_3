@@ -153,7 +153,7 @@ MuEdcaParameterSet::SerializeInformationField(Buffer::Iterator start) const
 }
 
 uint16_t
-MuEdcaParameterSet::DeserializeInformationField(Buffer::Iterator start, uint16_t length)
+MuEdcaParameterSet::DeserializeInformationField(Buffer::Iterator start, uint16_t /*length*/)
 {
     Buffer::Iterator i = start;
     m_qosInfo = i.ReadU8();

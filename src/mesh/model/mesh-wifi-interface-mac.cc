@@ -92,7 +92,7 @@ MeshWifiInterfaceMac::~MeshWifiInterfaceMac()
 // WifiMac inherited
 //-----------------------------------------------------------------------------
 bool
-MeshWifiInterfaceMac::CanForwardPacketsTo(Mac48Address to) const
+MeshWifiInterfaceMac::CanForwardPacketsTo(Mac48Address /*to*/) const
 {
     return true;
 }
@@ -438,7 +438,7 @@ MeshWifiInterfaceMac::SendBeacon()
 }
 
 void
-MeshWifiInterfaceMac::Receive(Ptr<const WifiMpdu> mpdu, uint8_t linkId)
+MeshWifiInterfaceMac::Receive(Ptr<const WifiMpdu> mpdu, uint8_t /*linkId*/)
 {
     const WifiMacHeader* hdr = &mpdu->GetHeader();
     Ptr<Packet> packet = mpdu->GetPacket()->Copy();

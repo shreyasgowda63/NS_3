@@ -908,8 +908,8 @@ ChannelAccessTestCase::SendX(uint32_t channel, uint32_t receiverId)
 bool
 ChannelAccessTestCase::Receive(Ptr<NetDevice> dev,
                                Ptr<const Packet> pkt,
-                               uint16_t mode,
-                               const Address& sender)
+                               uint16_t /*mode*/,
+                               const Address& /*sender*/)
 {
     uint8_t* data = new uint8_t[pkt->GetSize()];
     pkt->CopyData(data, pkt->GetSize());
@@ -1428,10 +1428,10 @@ AnnexC_TestCase::SendPacket(uint32_t packetSize, const TxInfo& txInfo, uint32_t 
 }
 
 bool
-AnnexC_TestCase::Receive(Ptr<NetDevice> dev,
+AnnexC_TestCase::Receive(Ptr<NetDevice> /*dev*/,
                          Ptr<const Packet> pkt,
-                         uint16_t mode,
-                         const Address& sender)
+                         uint16_t /*mode*/,
+                         const Address& /*sender*/)
 {
     uint8_t* data = new uint8_t[pkt->GetSize()];
     pkt->CopyData(data, pkt->GetSize());

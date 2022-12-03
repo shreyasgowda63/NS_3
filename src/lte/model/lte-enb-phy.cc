@@ -505,7 +505,7 @@ LteEnbPhy::CreateTxPowerSpectralDensityWithPowerAllocation()
 }
 
 void
-LteEnbPhy::CalcChannelQualityForUe(std::vector<double> sinr, Ptr<LteSpectrumPhy> ue)
+LteEnbPhy::CalcChannelQualityForUe(std::vector<double> /*sinr*/, Ptr<LteSpectrumPhy> /*ue*/)
 {
     NS_LOG_FUNCTION(this);
 }

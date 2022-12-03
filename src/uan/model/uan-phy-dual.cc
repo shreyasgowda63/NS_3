@@ -66,11 +66,11 @@ UanPhyCalcSinrDual::GetTypeId()
 
 double
 UanPhyCalcSinrDual::CalcSinrDb(Ptr<Packet> pkt,
-                               Time arrTime,
+                               Time /*arrTime*/,
                                double rxPowerDb,
                                double ambNoiseDb,
                                UanTxMode mode,
-                               UanPdp pdp,
+                               UanPdp /*pdp*/,
                                const UanTransducer::ArrivalList& arrivalList) const
 {
     if (mode.GetModType() != UanTxMode::OTHER)
@@ -251,7 +251,7 @@ UanPhyDual::GetTypeId()
 }
 
 void
-UanPhyDual::SetEnergyModelCallback(DeviceEnergyModel::ChangeStateCallback callback)
+UanPhyDual::SetEnergyModelCallback(DeviceEnergyModel::ChangeStateCallback /*callback*/)
 {
     NS_LOG_DEBUG("Not Implemented");
 }

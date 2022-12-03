@@ -123,19 +123,19 @@ PrintProgress(Time interval)
 }
 
 void
-TraceS1R1Sink(std::size_t index, Ptr<const Packet> p, const Address& a)
+TraceS1R1Sink(std::size_t index, Ptr<const Packet> p, const Address& /*a*/)
 {
     rxS1R1Bytes[index] += p->GetSize();
 }
 
 void
-TraceS2R2Sink(std::size_t index, Ptr<const Packet> p, const Address& a)
+TraceS2R2Sink(std::size_t index, Ptr<const Packet> p, const Address& /*a*/)
 {
     rxS2R2Bytes[index] += p->GetSize();
 }
 
 void
-TraceS3R1Sink(std::size_t index, Ptr<const Packet> p, const Address& a)
+TraceS3R1Sink(std::size_t index, Ptr<const Packet> p, const Address& /*a*/)
 {
     rxS3R1Bytes[index] += p->GetSize();
 }

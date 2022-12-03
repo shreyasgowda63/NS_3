@@ -47,14 +47,14 @@
 using namespace ns3;
 
 static void
-BeaconIndication(MlmeBeaconNotifyIndicationParams params, Ptr<Packet> p)
+BeaconIndication(MlmeBeaconNotifyIndicationParams /*params*/, Ptr<Packet> p)
 {
     NS_LOG_UNCOND(Simulator::Now().GetSeconds()
                   << " secs | Received BEACON packet of size " << p->GetSize());
 }
 
 static void
-DataIndication(McpsDataIndicationParams params, Ptr<Packet> p)
+DataIndication(McpsDataIndicationParams /*params*/, Ptr<Packet> p)
 {
     NS_LOG_UNCOND(Simulator::Now().GetSeconds()
                   << " secs | Received DATA packet of size " << p->GetSize());
@@ -72,7 +72,7 @@ TransEndIndication(McpsDataConfirmParams params)
 }
 
 static void
-DataIndicationCoordinator(McpsDataIndicationParams params, Ptr<Packet> p)
+DataIndicationCoordinator(McpsDataIndicationParams /*params*/, Ptr<Packet> p)
 {
     NS_LOG_UNCOND(Simulator::Now().GetSeconds()
                   << "s Coordinator Received DATA packet (size " << p->GetSize() << " bytes)");
@@ -88,7 +88,7 @@ StartConfirm(MlmeStartConfirmParams params)
 }
 
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     LogComponentEnableAll(LOG_PREFIX_TIME);
     LogComponentEnableAll(LOG_PREFIX_FUNC);

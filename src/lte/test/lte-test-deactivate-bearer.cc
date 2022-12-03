@@ -100,7 +100,7 @@ LenaTestBearerDeactivateSuite::LenaTestBearerDeactivateSuite()
 static LenaTestBearerDeactivateSuite lenaTestBearerDeactivateSuite; ///< the test suite
 
 std::string
-LenaDeactivateBearerTestCase::BuildNameString(uint16_t nUser, std::vector<uint16_t> dist)
+LenaDeactivateBearerTestCase::BuildNameString(uint16_t /*nUser*/, std::vector<uint16_t> dist)
 {
     std::ostringstream oss;
     oss << "distances (m) = [ ";
@@ -117,7 +117,7 @@ LenaDeactivateBearerTestCase::LenaDeactivateBearerTestCase(std::vector<uint16_t>
                                                            std::vector<uint16_t> packetSize,
                                                            uint16_t interval,
                                                            bool errorModelEnabled,
-                                                           bool useIdealRrc)
+                                                           bool /*useIdealRrc*/)
     : TestCase(BuildNameString(dist.size(), dist)),
       m_nUser(dist.size()),
       m_dist(dist),

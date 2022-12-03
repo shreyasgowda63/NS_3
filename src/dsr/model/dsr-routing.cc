@@ -1102,7 +1102,7 @@ DsrRouting::CheckSendBuffer()
 }
 
 bool
-DsrRouting::PromiscReceive(Ptr<NetDevice> device,
+DsrRouting::PromiscReceive(Ptr<NetDevice> /*device*/,
                            Ptr<const Packet> packet,
                            uint16_t protocol,
                            const Address& from,
@@ -2861,7 +2861,7 @@ DsrRouting::NetworkScheduleTimerExpire(DsrMaintainBuffEntry& mb, uint8_t protoco
 void
 DsrRouting::ForwardPacket(Ptr<const Packet> packet,
                           DsrOptionSRHeader& sourceRoute,
-                          const Ipv4Header& ipv4Header,
+                          const Ipv4Header& /*ipv4Header*/,
                           Ipv4Address source,
                           Ipv4Address nextHop,
                           Ipv4Address targetAddress,
@@ -3753,7 +3753,7 @@ DsrRouting::SetDownTarget(DownTargetCallback callback)
 }
 
 void
-DsrRouting::SetDownTarget6(DownTargetCallback6 callback)
+DsrRouting::SetDownTarget6(DownTargetCallback6 /*callback*/)
 {
     NS_FATAL_ERROR("Unimplemented");
 }

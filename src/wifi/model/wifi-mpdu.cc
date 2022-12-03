@@ -190,13 +190,13 @@ WifiMpdu::IsQueued() const
 }
 
 void
-WifiMpdu::SetQueueIt(std::optional<Iterator> queueIt, WmqIteratorTag tag)
+WifiMpdu::SetQueueIt(std::optional<Iterator> queueIt, WmqIteratorTag /*tag*/)
 {
     m_queueIt = queueIt;
 }
 
 WifiMpdu::Iterator
-WifiMpdu::GetQueueIt(WmqIteratorTag tag) const
+WifiMpdu::GetQueueIt(WmqIteratorTag /*tag*/) const
 {
     NS_ASSERT(IsQueued());
     return m_queueIt.value();

@@ -369,10 +369,10 @@ ThreeGppPropagationLossModel::GetO2iHighPenetrationLoss(
 }
 
 double
-ThreeGppPropagationLossModel::GetLossNlosv(double distance2D,
-                                           double distance3D,
-                                           double hUt,
-                                           double hBs) const
+ThreeGppPropagationLossModel::GetLossNlosv(double /*distance2D*/,
+                                           double /*distance3D*/,
+                                           double /*hUt*/,
+                                           double /*hBs*/) const
 {
     NS_LOG_FUNCTION(this);
     NS_FATAL_ERROR("Unsupported channel condition (NLOSv)");

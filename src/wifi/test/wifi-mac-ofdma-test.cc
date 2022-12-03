@@ -468,7 +468,9 @@ OfdmaAckSequenceTest::~OfdmaAckSequenceTest()
 }
 
 void
-OfdmaAckSequenceTest::L7Receive(std::string context, Ptr<const Packet> p, const Address& addr)
+OfdmaAckSequenceTest::L7Receive(std::string /*context*/,
+                                Ptr<const Packet> p,
+                                const Address& /*addr*/)
 {
     if (p->GetSize() >= 1400 && Simulator::Now() > Seconds(1.5))
     {
@@ -488,10 +490,10 @@ OfdmaAckSequenceTest::TraceCw(uint32_t staIndex, uint32_t cw, uint8_t /* linkId 
 }
 
 void
-OfdmaAckSequenceTest::Transmit(std::string context,
+OfdmaAckSequenceTest::Transmit(std::string /*context*/,
                                WifiConstPsduMap psduMap,
                                WifiTxVector txVector,
-                               double txPowerW)
+                               double /*txPowerW*/)
 {
     // skip beacon frames and frames transmitted before 1.5s (association
     // request/response, ADDBA request, ...)

@@ -120,7 +120,7 @@ WifiUseAvailBwTest::~WifiUseAvailBwTest()
 }
 
 void
-WifiUseAvailBwTest::L7Receive(uint8_t bss, Ptr<const Packet> p, const Address& addr)
+WifiUseAvailBwTest::L7Receive(uint8_t bss, Ptr<const Packet> p, const Address& /*addr*/)
 {
     NS_LOG_INFO("Received " << p->GetSize() << " bytes in BSS " << +bss);
     m_rcvPkts[bss]++;
@@ -130,7 +130,7 @@ void
 WifiUseAvailBwTest::Transmit(uint8_t bss,
                              WifiConstPsduMap psduMap,
                              WifiTxVector txVector,
-                             double txPowerW)
+                             double /*txPowerW*/)
 {
     auto psdu = psduMap.begin()->second;
     Time now = Simulator::Now();

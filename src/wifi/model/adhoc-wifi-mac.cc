@@ -60,7 +60,7 @@ AdhocWifiMac::~AdhocWifiMac()
 }
 
 bool
-AdhocWifiMac::CanForwardPacketsTo(Mac48Address to) const
+AdhocWifiMac::CanForwardPacketsTo(Mac48Address /*to*/) const
 {
     return true;
 }

@@ -208,7 +208,7 @@ BSSchedulerRtps::CreateUgsBurst(ServiceFlow* serviceFlow,
 }
 
 bool
-BSSchedulerRtps::SelectConnection(Ptr<WimaxConnection>& connection)
+BSSchedulerRtps::SelectConnection(Ptr<WimaxConnection>& /*connection*/)
 {
     return false;
 }

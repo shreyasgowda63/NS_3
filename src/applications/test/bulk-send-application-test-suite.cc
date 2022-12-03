@@ -83,7 +83,7 @@ BulkSendBasicTestCase::SendTx(Ptr<const Packet> p)
 }
 
 void
-BulkSendBasicTestCase::ReceiveRx(Ptr<const Packet> p, const Address& addr)
+BulkSendBasicTestCase::ReceiveRx(Ptr<const Packet> p, const Address& /*addr*/)
 {
     m_received += p->GetSize();
 }
@@ -188,8 +188,8 @@ BulkSendSeqTsSizeTestCase::~BulkSendSeqTsSizeTestCase()
 
 void
 BulkSendSeqTsSizeTestCase::SendTx(Ptr<const Packet> p,
-                                  const Address& from,
-                                  const Address& to,
+                                  const Address& /*from*/,
+                                  const Address& /*to*/,
                                   const SeqTsSizeHeader& header)
 {
     // The header is not serialized onto the packet in this trace
@@ -202,8 +202,8 @@ BulkSendSeqTsSizeTestCase::SendTx(Ptr<const Packet> p,
 
 void
 BulkSendSeqTsSizeTestCase::ReceiveRx(Ptr<const Packet> p,
-                                     const Address& from,
-                                     const Address& to,
+                                     const Address& /*from*/,
+                                     const Address& /*to*/,
                                      const SeqTsSizeHeader& header)
 {
     // The header is not serialized onto the packet in this trace

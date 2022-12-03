@@ -142,13 +142,13 @@ TcpNewRenoCongAvoidNormalTest::CWndTrace(uint32_t oldValue, uint32_t newValue)
 }
 
 void
-TcpNewRenoCongAvoidNormalTest::QueueDrop(SocketWho who)
+TcpNewRenoCongAvoidNormalTest::QueueDrop(SocketWho /*who*/)
 {
     NS_FATAL_ERROR("Drop on the queue; cannot validate congestion avoidance");
 }
 
 void
-TcpNewRenoCongAvoidNormalTest::PhyDrop(SocketWho who)
+TcpNewRenoCongAvoidNormalTest::PhyDrop(SocketWho /*who*/)
 {
     NS_FATAL_ERROR("Drop on the phy: cannot validate congestion avoidance");
 }

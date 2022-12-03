@@ -24,7 +24,7 @@
 using namespace ns3;
 
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     Packet::EnablePrinting();
     Packet::EnableChecking();

@@ -279,14 +279,14 @@ TestCounter::PacketDequeued(Ptr<const QueueDiscItem> item)
 }
 
 void
-TestCounter::PacketDbe(Ptr<const QueueDiscItem> item, const char* reason)
+TestCounter::PacketDbe(Ptr<const QueueDiscItem> item, const char* /*reason*/)
 {
     m_nDbePackets++;
     m_nDbeBytes += item->GetSize();
 }
 
 void
-TestCounter::PacketDad(Ptr<const QueueDiscItem> item, const char* reason)
+TestCounter::PacketDad(Ptr<const QueueDiscItem> item, const char* /*reason*/)
 {
     m_nDadPackets++;
     m_nDadBytes += item->GetSize();

@@ -203,8 +203,9 @@ ThreeGppV2vHighwayChannelConditionModel::GetChCondWithBuildings(Ptr<const Mobili
 }
 
 Ptr<ChannelCondition>
-ThreeGppV2vHighwayChannelConditionModel::GetChCondWithNoBuildings(Ptr<const MobilityModel> a,
-                                                                  Ptr<const MobilityModel> b) const
+ThreeGppV2vHighwayChannelConditionModel::GetChCondWithNoBuildings(
+    Ptr<const MobilityModel> /*a*/,
+    Ptr<const MobilityModel> /*b*/) const
 {
     Ptr<ChannelCondition> cond = CreateObject<ChannelCondition>();
     cond->SetO2iCondition(ChannelCondition::O2iConditionValue::O2O);

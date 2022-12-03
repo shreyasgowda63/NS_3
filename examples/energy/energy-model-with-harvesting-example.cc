@@ -141,7 +141,7 @@ GenerateTraffic(Ptr<Socket> socket,
  * \param remainingEnergy New value
  */
 void
-RemainingEnergy(double oldValue, double remainingEnergy)
+RemainingEnergy(double /*oldValue*/, double remainingEnergy)
 {
     NS_LOG_UNCOND(Simulator::Now().GetSeconds()
                   << "s Current remaining energy = " << remainingEnergy << "J");
@@ -154,7 +154,7 @@ RemainingEnergy(double oldValue, double remainingEnergy)
  * \param totalEnergy New value
  */
 void
-TotalEnergy(double oldValue, double totalEnergy)
+TotalEnergy(double /*oldValue*/, double totalEnergy)
 {
     NS_LOG_UNCOND(Simulator::Now().GetSeconds()
                   << "s Total energy consumed by radio = " << totalEnergy << "J");
@@ -167,7 +167,7 @@ TotalEnergy(double oldValue, double totalEnergy)
  * \param harvestedPower New value
  */
 void
-HarvestedPower(double oldValue, double harvestedPower)
+HarvestedPower(double /*oldValue*/, double harvestedPower)
 {
     NS_LOG_UNCOND(Simulator::Now().GetSeconds()
                   << "s Current harvested power = " << harvestedPower << " W");
@@ -180,7 +180,7 @@ HarvestedPower(double oldValue, double harvestedPower)
  * \param totalEnergyHarvested New value
  */
 void
-TotalEnergyHarvested(double oldValue, double totalEnergyHarvested)
+TotalEnergyHarvested(double /*oldValue*/, double totalEnergyHarvested)
 {
     NS_LOG_UNCOND(Simulator::Now().GetSeconds()
                   << "s Total energy harvested by harvester = " << totalEnergyHarvested << " J");

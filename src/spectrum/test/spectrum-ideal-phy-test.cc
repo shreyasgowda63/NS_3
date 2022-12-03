@@ -57,7 +57,7 @@ static uint64_t g_rxBytes;
 static double g_bandwidth = 20e6; // Hz
 
 void
-PhyRxEndOkTrace(std::string context, Ptr<const Packet> p)
+PhyRxEndOkTrace(std::string /*context*/, Ptr<const Packet> p)
 {
     g_rxBytes += p->GetSize();
 }

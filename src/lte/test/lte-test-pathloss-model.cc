@@ -59,7 +59,7 @@ NS_LOG_COMPONENT_DEFINE("LtePathlossModelTest");
 
 void
 LteTestPathlossDlSchedCallback(LtePathlossModelSystemTestCase* testcase,
-                               std::string path,
+                               std::string /*path*/,
                                DlSchedulingCallbackInfo dlInfo)
 {
     testcase->DlScheduling(dlInfo);

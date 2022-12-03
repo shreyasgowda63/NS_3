@@ -423,7 +423,7 @@ WimaxHelper::EnableLogComponents()
 void
 WimaxHelper::AsciiRxEvent(Ptr<OutputStreamWrapper> stream,
                           std::string path,
-                          Ptr<const Packet> packet,
+                          Ptr<const Packet> /*packet*/,
                           const Mac48Address& source)
 {
     *stream->GetStream() << "r " << Simulator::Now().GetSeconds() << " from: " << source << " ";
@@ -433,7 +433,7 @@ WimaxHelper::AsciiRxEvent(Ptr<OutputStreamWrapper> stream,
 void
 WimaxHelper::AsciiTxEvent(Ptr<OutputStreamWrapper> stream,
                           std::string path,
-                          Ptr<const Packet> packet,
+                          Ptr<const Packet> /*packet*/,
                           const Mac48Address& dest)
 {
     *stream->GetStream() << "t " << Simulator::Now().GetSeconds() << " to: " << dest << " ";
@@ -650,7 +650,7 @@ void
 WimaxHelper::EnablePcapInternal(std::string prefix,
                                 Ptr<NetDevice> nd,
                                 bool explicitFilename,
-                                bool promiscuous)
+                                bool /*promiscuous*/)
 {
     //
     // All of the Pcap enable functions vector through here including the ones

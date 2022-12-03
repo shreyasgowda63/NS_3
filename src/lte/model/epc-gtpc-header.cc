@@ -67,7 +67,7 @@ GtpcHeader::GetSerializedSize() const
 }
 
 void
-GtpcHeader::Serialize(Buffer::Iterator start) const
+GtpcHeader::Serialize(Buffer::Iterator /*start*/) const
 {
     NS_FATAL_ERROR("Serialize GTP-C header is forbidden");
 }

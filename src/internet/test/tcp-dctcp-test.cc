@@ -79,7 +79,7 @@ TcpDctcpCodePointsTest::TcpDctcpCodePointsTest(uint8_t testCase, const std::stri
 }
 
 void
-TcpDctcpCodePointsTest::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpDctcpCodePointsTest::Tx(const Ptr<const Packet> p, const TcpHeader& /*h*/, SocketWho who)
 {
     bool foundTag = false; // IpTosTag will only be found if ECN bits are set
     if (who == SENDER && (m_testCase == 1 || m_testCase == 2))
@@ -168,7 +168,7 @@ TcpDctcpCodePointsTest::Tx(const Ptr<const Packet> p, const TcpHeader& h, Socket
 }
 
 void
-TcpDctcpCodePointsTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpDctcpCodePointsTest::Rx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (who == SENDER && m_testCase == 3)
     {

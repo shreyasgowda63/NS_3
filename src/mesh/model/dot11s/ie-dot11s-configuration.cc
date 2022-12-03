@@ -157,7 +157,7 @@ IeConfiguration::SerializeInformationField(Buffer::Iterator i) const
 }
 
 uint16_t
-IeConfiguration::DeserializeInformationField(Buffer::Iterator i, uint16_t length)
+IeConfiguration::DeserializeInformationField(Buffer::Iterator i, uint16_t /*length*/)
 {
     Buffer::Iterator start = i;
     // Active Path Selection Protocol ID:

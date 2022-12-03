@@ -74,7 +74,7 @@ NS_LOG_COMPONENT_DEFINE("BenchmarkQueueDiscs");
  * \param newVal New value.
  */
 void
-LimitsTrace(Ptr<OutputStreamWrapper> stream, uint32_t oldVal, uint32_t newVal)
+LimitsTrace(Ptr<OutputStreamWrapper> stream, uint32_t /*oldVal*/, uint32_t newVal)
 {
     *stream->GetStream() << Simulator::Now().GetSeconds() << " " << newVal << std::endl;
 }
@@ -87,7 +87,7 @@ LimitsTrace(Ptr<OutputStreamWrapper> stream, uint32_t oldVal, uint32_t newVal)
  * \param newVal New value.
  */
 void
-BytesInQueueTrace(Ptr<OutputStreamWrapper> stream, uint32_t oldVal, uint32_t newVal)
+BytesInQueueTrace(Ptr<OutputStreamWrapper> stream, uint32_t /*oldVal*/, uint32_t newVal)
 {
     *stream->GetStream() << Simulator::Now().GetSeconds() << " " << newVal << std::endl;
 }

@@ -56,7 +56,7 @@ CheckQueueSize(Ptr<QueueDisc> queue, std::string queue_disc_type)
 }
 
 static void
-CwndTrace(Ptr<OutputStreamWrapper> stream, uint32_t oldCwnd, uint32_t newCwnd)
+CwndTrace(Ptr<OutputStreamWrapper> stream, uint32_t /*oldCwnd*/, uint32_t newCwnd)
 {
     *stream->GetStream() << Simulator::Now().GetSeconds() << " " << newCwnd / 1446.0 << std::endl;
 }
@@ -249,7 +249,7 @@ experiment(std::string queue_disc_type)
 }
 
 int
-main(int argc, char** argv)
+main(int /*argc*/, char** /*argv*/)
 {
     std::cout << "Simulation with COBALT QueueDisc: Start\n" << std::flush;
     experiment("CobaltQueueDisc");

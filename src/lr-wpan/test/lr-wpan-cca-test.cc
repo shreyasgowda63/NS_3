@@ -130,7 +130,7 @@ LrWpanCcaTestCase::PlmeCcaConfirm(LrWpanCcaTestCase* testcase,
 }
 
 void
-LrWpanCcaTestCase::PhyTxBegin(LrWpanCcaTestCase* testcase,
+LrWpanCcaTestCase::PhyTxBegin(LrWpanCcaTestCase* /*testcase*/,
                               Ptr<LrWpanNetDevice> device,
                               Ptr<const Packet> packet)
 {
@@ -142,7 +142,7 @@ LrWpanCcaTestCase::PhyTxBegin(LrWpanCcaTestCase* testcase,
 }
 
 void
-LrWpanCcaTestCase::PhyTxEnd(LrWpanCcaTestCase* testcase,
+LrWpanCcaTestCase::PhyTxEnd(LrWpanCcaTestCase* /*testcase*/,
                             Ptr<LrWpanNetDevice> device,
                             Ptr<const Packet> packet)
 {
@@ -154,7 +154,7 @@ LrWpanCcaTestCase::PhyTxEnd(LrWpanCcaTestCase* testcase,
 }
 
 void
-LrWpanCcaTestCase::PhyRxBegin(LrWpanCcaTestCase* testcase,
+LrWpanCcaTestCase::PhyRxBegin(LrWpanCcaTestCase* /*testcase*/,
                               Ptr<LrWpanNetDevice> device,
                               Ptr<const Packet> packet)
 {
@@ -166,7 +166,7 @@ LrWpanCcaTestCase::PhyRxBegin(LrWpanCcaTestCase* testcase,
 }
 
 void
-LrWpanCcaTestCase::PhyRxEnd(LrWpanCcaTestCase* testcase,
+LrWpanCcaTestCase::PhyRxEnd(LrWpanCcaTestCase* /*testcase*/,
                             Ptr<LrWpanNetDevice> device,
                             Ptr<const Packet> packet,
                             double sinr)
@@ -183,7 +183,7 @@ LrWpanCcaTestCase::PhyRxEnd(LrWpanCcaTestCase* testcase,
 }
 
 void
-LrWpanCcaTestCase::PhyRxDrop(LrWpanCcaTestCase* testcase,
+LrWpanCcaTestCase::PhyRxDrop(LrWpanCcaTestCase* /*testcase*/,
                              Ptr<LrWpanNetDevice> device,
                              Ptr<const Packet> packet)
 {

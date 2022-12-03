@@ -99,7 +99,7 @@ NonCommunicatingNetDevice::GetMtu() const
 }
 
 void
-NonCommunicatingNetDevice::SetAddress(Address address)
+NonCommunicatingNetDevice::SetAddress(Address /*address*/)
 {
     NS_LOG_FUNCTION(this);
 }

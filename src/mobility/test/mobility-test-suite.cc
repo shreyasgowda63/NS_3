@@ -82,7 +82,8 @@ WaypointLazyNotifyFalse::TestXPosition(double expectedXPos)
 }
 
 void
-WaypointLazyNotifyFalse::CourseChangeCallback(std::string path, Ptr<const MobilityModel> model)
+WaypointLazyNotifyFalse::CourseChangeCallback(std::string /*path*/,
+                                              Ptr<const MobilityModel> /*model*/)
 {
     // All waypoints (at 10 second intervals) should trigger a course change
     NS_TEST_EXPECT_MSG_EQ_TOL(m_courseChanges * 10.0,
@@ -157,7 +158,8 @@ WaypointLazyNotifyTrue::TestXPosition(double expectedXPos)
 }
 
 void
-WaypointLazyNotifyTrue::CourseChangeCallback(std::string path, Ptr<const MobilityModel> model)
+WaypointLazyNotifyTrue::CourseChangeCallback(std::string /*path*/,
+                                             Ptr<const MobilityModel> /*model*/)
 {
     // This should trigger at time 15 only, since that is the first time that
     // position is updated due to LazyNotify

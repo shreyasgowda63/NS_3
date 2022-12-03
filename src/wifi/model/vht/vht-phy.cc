@@ -196,7 +196,7 @@ VhtPhy::GetHtSigDuration() const
 }
 
 Time
-VhtPhy::GetTrainingDuration(const WifiTxVector& txVector,
+VhtPhy::GetTrainingDuration(const WifiTxVector& /*txVector*/,
                             uint8_t nDataLtf,
                             uint8_t nExtensionLtf /* = 0 */) const
 {

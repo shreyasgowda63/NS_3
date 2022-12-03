@@ -57,7 +57,7 @@ MqQueueDisc::GetWakeMode() const
 }
 
 bool
-MqQueueDisc::DoEnqueue(Ptr<QueueDiscItem> item)
+MqQueueDisc::DoEnqueue(Ptr<QueueDiscItem> /*item*/)
 {
     NS_FATAL_ERROR("MqQueueDisc: DoEnqueue should never be called");
 }

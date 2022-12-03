@@ -202,7 +202,7 @@ NetDeviceQueueInterface::NetDeviceQueueInterface()
     NS_LOG_FUNCTION(this);
 
     // the default select queue callback returns 0
-    m_selectQueueCallback = [](Ptr<QueueItem> item) { return 0; };
+    m_selectQueueCallback = [](Ptr<QueueItem> /*item*/) { return 0; };
 }
 
 NetDeviceQueueInterface::~NetDeviceQueueInterface()

@@ -403,10 +403,10 @@ RadioBearerStatsConnector::ConnectTracesDrbUe(std::string context,
 }
 
 void
-RadioBearerStatsConnector::DisconnectTracesEnb(std::string context,
-                                               uint64_t imsi,
-                                               uint16_t cellId,
-                                               uint16_t rnti)
+RadioBearerStatsConnector::DisconnectTracesEnb(std::string /*context*/,
+                                               uint64_t /*imsi*/,
+                                               uint16_t /*cellId*/,
+                                               uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
     /**
@@ -421,10 +421,10 @@ RadioBearerStatsConnector::DisconnectTracesEnb(std::string context,
 }
 
 void
-RadioBearerStatsConnector::DisconnectTracesUe(std::string context,
-                                              uint64_t imsi,
-                                              uint16_t cellId,
-                                              uint16_t rnti)
+RadioBearerStatsConnector::DisconnectTracesUe(std::string /*context*/,
+                                              uint64_t /*imsi*/,
+                                              uint16_t /*cellId*/,
+                                              uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
     /**

@@ -1981,11 +1981,11 @@ IncrementCounter(std::map<Mac48Address, uint64_t>& counter,
 void
 TracePacketReception(std::string context,
                      Ptr<const Packet> p,
-                     uint16_t channelFreqMhz,
+                     uint16_t /*channelFreqMhz*/,
                      WifiTxVector txVector,
-                     MpduInfo aMpdu,
-                     SignalNoiseDbm signalNoise,
-                     uint16_t staId)
+                     MpduInfo /*aMpdu*/,
+                     SignalNoiseDbm /*signalNoise*/,
+                     uint16_t /*staId*/)
 {
     Ptr<Packet> packet = p->Copy();
     if (txVector.IsAggregation())
@@ -2069,7 +2069,7 @@ BackoffTrace(std::string context, uint32_t newVal, uint8_t /* linkId */)
  * \param power The Rx power.
  */
 void
-PhyRxTrace(std::string context, Ptr<const Packet> p, RxPowerWattPerChannelBand power)
+PhyRxTrace(std::string context, Ptr<const Packet> p, RxPowerWattPerChannelBand /*power*/)
 {
     NS_LOG_INFO("PHY-RX-START time=" << Simulator::Now() << " node=" << ContextToNodeId(context)
                                      << " size=" << p->GetSize());
@@ -2083,7 +2083,7 @@ PhyRxTrace(std::string context, Ptr<const Packet> p, RxPowerWattPerChannelBand p
  * \param psduDuration The PDSU diration.
  */
 void
-PhyRxPayloadTrace(std::string context, WifiTxVector txVector, Time psduDuration)
+PhyRxPayloadTrace(std::string context, WifiTxVector /*txVector*/, Time psduDuration)
 {
     NS_LOG_INFO("PHY-RX-PAYLOAD-START time=" << Simulator::Now()
                                              << " node=" << ContextToNodeId(context)
@@ -2337,7 +2337,7 @@ SocketSendTrace(std::string context, Ptr<const Packet> p, const Address& addr)
  * \param address The MAC address.
  */
 void
-AssociationLog(std::string context, Mac48Address address)
+AssociationLog(std::string context, Mac48Address /*address*/)
 {
     uint32_t nodeId = ContextToNodeId(context);
     auto it = associated.find(nodeId);
@@ -2359,7 +2359,7 @@ AssociationLog(std::string context, Mac48Address address)
  * \param address The MAC address.
  */
 void
-DisassociationLog(std::string context, Mac48Address address)
+DisassociationLog(std::string context, Mac48Address /*address*/)
 {
     uint32_t nodeId = ContextToNodeId(context);
     NS_LOG_DEBUG("Disassociation: time=" << Simulator::Now() << " node=" << nodeId);

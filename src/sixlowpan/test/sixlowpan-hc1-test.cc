@@ -87,7 +87,9 @@ SixlowpanHc1ImplTest::SixlowpanHc1ImplTest()
 }
 
 void
-SixlowpanHc1ImplTest::ReceivePacket(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from)
+SixlowpanHc1ImplTest::ReceivePacket(Ptr<Socket> /*socket*/,
+                                    Ptr<Packet> packet,
+                                    const Address& /*from*/)
 {
     m_receivedPacket = packet;
 }

@@ -154,13 +154,17 @@ TcpLargeTransferLossTest::CreateReceiverErrorModel()
 }
 
 void
-TcpLargeTransferLossTest::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpLargeTransferLossTest::Tx(const Ptr<const Packet> /*p*/,
+                             const TcpHeader& /*h*/,
+                             SocketWho /*who*/)
 {
     m_sent++;
 }
 
 void
-TcpLargeTransferLossTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpLargeTransferLossTest::Rx(const Ptr<const Packet> /*p*/,
+                             const TcpHeader& /*h*/,
+                             SocketWho /*who*/)
 {
     m_received++;
 }

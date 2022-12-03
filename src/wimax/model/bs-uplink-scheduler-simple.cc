@@ -90,8 +90,8 @@ UplinkSchedulerSimple::GetUplinkAllocations() const
 }
 
 void
-UplinkSchedulerSimple::GetChannelDescriptorsToUpdate(bool& updateDcd,
-                                                     bool& updateUcd,
+UplinkSchedulerSimple::GetChannelDescriptorsToUpdate(bool& /*updateDcd*/,
+                                                     bool& /*updateUcd*/,
                                                      bool& sendDcd,
                                                      bool& sendUcd)
 {

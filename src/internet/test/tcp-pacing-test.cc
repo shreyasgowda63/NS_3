@@ -245,7 +245,7 @@ TcpPacingTest::CWndTrace(uint32_t oldValue, uint32_t newValue)
 }
 
 void
-TcpPacingTest::BytesInFlightTrace(uint32_t oldValue, uint32_t newValue)
+TcpPacingTest::BytesInFlightTrace(uint32_t /*oldValue*/, uint32_t newValue)
 {
     m_bytesInFlight = newValue;
 }
@@ -278,7 +278,7 @@ TcpPacingTest::UpdateExpectedInterval()
 }
 
 void
-TcpPacingTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpPacingTest::Rx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (who == SENDER)
     {
@@ -351,13 +351,13 @@ TcpPacingTest::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
 }
 
 void
-TcpPacingTest::QueueDrop(SocketWho who)
+TcpPacingTest::QueueDrop(SocketWho /*who*/)
 {
     NS_FATAL_ERROR("Drop on the queue; cannot validate congestion avoidance");
 }
 
 void
-TcpPacingTest::PhyDrop(SocketWho who)
+TcpPacingTest::PhyDrop(SocketWho /*who*/)
 {
     NS_FATAL_ERROR("Drop on the phy: cannot validate congestion avoidance");
 }

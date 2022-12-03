@@ -246,7 +246,7 @@ operator<<(std::ostream& os, const OrganizationIdentifier& oi)
  * \returns input stream
  */
 std::istream&
-operator>>(std::istream& is, const OrganizationIdentifier& oi)
+operator>>(std::istream& is, const OrganizationIdentifier& /*oi*/)
 {
     return is;
 }

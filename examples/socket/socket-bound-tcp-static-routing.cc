@@ -211,7 +211,7 @@ StartFlow(Ptr<Socket> localSocket, Ipv4Address servAddress, uint16_t servPort)
 }
 
 void
-WriteUntilBufferFull(Ptr<Socket> localSocket, uint32_t txSpace)
+WriteUntilBufferFull(Ptr<Socket> localSocket, uint32_t /*txSpace*/)
 {
     while (currentTxBytes < totalTxBytes && localSocket->GetTxAvailable() > 0)
     {

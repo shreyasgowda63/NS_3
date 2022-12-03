@@ -925,7 +925,7 @@ CobaltQueueDiscCeThresholdTest::EnqueueWithDelay(Ptr<CobaltQueueDisc> queue,
 }
 
 void
-CobaltQueueDiscCeThresholdTest::Dequeue(Ptr<CobaltQueueDisc> queue, uint32_t modeSize)
+CobaltQueueDiscCeThresholdTest::Dequeue(Ptr<CobaltQueueDisc> queue, uint32_t /*modeSize*/)
 {
     Ptr<QueueDiscItem> item = queue->Dequeue();
 

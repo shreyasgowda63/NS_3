@@ -41,7 +41,7 @@ NS_LOG_COMPONENT_DEFINE("LteInterferenceTest");
 
 void
 LteTestDlSchedulingCallback(LteInterferenceTestCase* testcase,
-                            std::string path,
+                            std::string /*path*/,
                             DlSchedulingCallbackInfo dlInfo)
 {
     testcase->DlScheduling(dlInfo);
@@ -49,13 +49,13 @@ LteTestDlSchedulingCallback(LteInterferenceTestCase* testcase,
 
 void
 LteTestUlSchedulingCallback(LteInterferenceTestCase* testcase,
-                            std::string path,
+                            std::string /*path*/,
                             uint32_t frameNo,
                             uint32_t subframeNo,
                             uint16_t rnti,
                             uint8_t mcs,
                             uint16_t sizeTb,
-                            uint8_t ccId)
+                            uint8_t /*ccId*/)
 {
     testcase->UlScheduling(frameNo, subframeNo, rnti, mcs, sizeTb);
 }
@@ -198,8 +198,8 @@ LteInterferenceTestCase::LteInterferenceTestCase(std::string name,
                                                  double d2,
                                                  double dlSinr,
                                                  double ulSinr,
-                                                 double dlSe,
-                                                 double ulSe,
+                                                 double /*dlSe*/,
+                                                 double /*ulSe*/,
                                                  uint16_t dlMcs,
                                                  uint16_t ulMcs)
     : TestCase(name),

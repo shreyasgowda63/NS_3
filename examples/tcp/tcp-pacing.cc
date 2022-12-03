@@ -103,35 +103,35 @@ std::ofstream ssThreshStream;
 std::ofstream packetTraceStream;
 
 static void
-CwndTracer(uint32_t oldval, uint32_t newval)
+CwndTracer(uint32_t /*oldval*/, uint32_t newval)
 {
     cwndStream << std::fixed << std::setprecision(6) << Simulator::Now().GetSeconds()
                << std::setw(12) << newval << std::endl;
 }
 
 static void
-PacingRateTracer(DataRate oldval, DataRate newval)
+PacingRateTracer(DataRate /*oldval*/, DataRate newval)
 {
     pacingRateStream << std::fixed << std::setprecision(6) << Simulator::Now().GetSeconds()
                      << std::setw(12) << newval.GetBitRate() / 1e6 << std::endl;
 }
 
 static void
-SsThreshTracer(uint32_t oldval, uint32_t newval)
+SsThreshTracer(uint32_t /*oldval*/, uint32_t newval)
 {
     ssThreshStream << std::fixed << std::setprecision(6) << Simulator::Now().GetSeconds()
                    << std::setw(12) << newval << std::endl;
 }
 
 static void
-TxTracer(Ptr<const Packet> p, Ptr<Ipv4> ipv4, uint32_t interface)
+TxTracer(Ptr<const Packet> p, Ptr<Ipv4> /*ipv4*/, uint32_t /*interface*/)
 {
     packetTraceStream << std::fixed << std::setprecision(6) << Simulator::Now().GetSeconds()
                       << " tx " << p->GetSize() << std::endl;
 }
 
 static void
-RxTracer(Ptr<const Packet> p, Ptr<Ipv4> ipv4, uint32_t interface)
+RxTracer(Ptr<const Packet> p, Ptr<Ipv4> /*ipv4*/, uint32_t /*interface*/)
 {
     packetTraceStream << std::fixed << std::setprecision(6) << Simulator::Now().GetSeconds()
                       << " rx " << p->GetSize() << std::endl;

@@ -32,7 +32,7 @@ Ipv4GlobalRoutingHelper::Ipv4GlobalRoutingHelper()
 {
 }
 
-Ipv4GlobalRoutingHelper::Ipv4GlobalRoutingHelper(const Ipv4GlobalRoutingHelper& o)
+Ipv4GlobalRoutingHelper::Ipv4GlobalRoutingHelper(const Ipv4GlobalRoutingHelper& /*o*/)
 {
 }
 

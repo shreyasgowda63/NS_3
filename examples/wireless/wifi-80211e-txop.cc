@@ -82,7 +82,7 @@ struct TxopDurationTracer
 };
 
 void
-TxopDurationTracer::Trace(Time startTime, Time duration, uint8_t linkId)
+TxopDurationTracer::Trace(Time /*startTime*/, Time duration, uint8_t /*linkId*/)
 {
     if (duration > m_max)
     {

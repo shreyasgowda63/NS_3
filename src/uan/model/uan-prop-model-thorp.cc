@@ -64,13 +64,13 @@ UanPropModelThorp::GetPathLossDb(Ptr<MobilityModel> a, Ptr<MobilityModel> b, Uan
 }
 
 UanPdp
-UanPropModelThorp::GetPdp(Ptr<MobilityModel> a, Ptr<MobilityModel> b, UanTxMode mode)
+UanPropModelThorp::GetPdp(Ptr<MobilityModel> /*a*/, Ptr<MobilityModel> /*b*/, UanTxMode /*mode*/)
 {
     return UanPdp::CreateImpulsePdp();
 }
 
 Time
-UanPropModelThorp::GetDelay(Ptr<MobilityModel> a, Ptr<MobilityModel> b, UanTxMode mode)
+UanPropModelThorp::GetDelay(Ptr<MobilityModel> a, Ptr<MobilityModel> b, UanTxMode /*mode*/)
 {
     return Seconds(a->GetDistanceFrom(b) / 1500.0);
 }

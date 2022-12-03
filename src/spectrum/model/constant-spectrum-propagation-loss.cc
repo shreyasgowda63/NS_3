@@ -78,8 +78,8 @@ ConstantSpectrumPropagationLossModel::GetLossDb() const
 Ptr<SpectrumValue>
 ConstantSpectrumPropagationLossModel::DoCalcRxPowerSpectralDensity(
     Ptr<const SpectrumSignalParameters> params,
-    Ptr<const MobilityModel> a,
-    Ptr<const MobilityModel> b) const
+    Ptr<const MobilityModel> /*a*/,
+    Ptr<const MobilityModel> /*b*/) const
 {
     NS_LOG_FUNCTION(this);
 

@@ -512,7 +512,7 @@ FrameExchangeManager::DequeueMpdu(Ptr<const WifiMpdu> mpdu)
 }
 
 uint32_t
-FrameExchangeManager::GetPsduSize(Ptr<const WifiMpdu> mpdu, const WifiTxVector& txVector) const
+FrameExchangeManager::GetPsduSize(Ptr<const WifiMpdu> mpdu, const WifiTxVector& /*txVector*/) const
 {
     return mpdu->GetSize();
 }
@@ -572,7 +572,7 @@ FrameExchangeManager::CalculateAcknowledgmentTime(WifiAcknowledgment* acknowledg
 
 Time
 FrameExchangeManager::GetTxDuration(uint32_t ppduPayloadSize,
-                                    Mac48Address receiver,
+                                    Mac48Address /*receiver*/,
                                     const WifiTxParameters& txParams) const
 {
     return m_phy->CalculateTxDuration(ppduPayloadSize, txParams.m_txVector, m_phy->GetPhyBand());
@@ -1316,10 +1316,10 @@ FrameExchangeManager::NotifyReceivedNormalAck(Ptr<WifiMpdu> mpdu)
 }
 
 void
-FrameExchangeManager::EndReceiveAmpdu(Ptr<const WifiPsdu> psdu,
-                                      const RxSignalInfo& rxSignalInfo,
-                                      const WifiTxVector& txVector,
-                                      const std::vector<bool>& perMpduStatus)
+FrameExchangeManager::EndReceiveAmpdu(Ptr<const WifiPsdu> /*psdu*/,
+                                      const RxSignalInfo& /*rxSignalInfo*/,
+                                      const WifiTxVector& /*txVector*/,
+                                      const std::vector<bool>& /*perMpduStatus*/)
 {
     NS_ASSERT_MSG(false, "A non-QoS station should not receive an A-MPDU");
 }

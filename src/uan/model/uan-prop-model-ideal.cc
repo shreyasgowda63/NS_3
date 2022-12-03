@@ -47,19 +47,21 @@ UanPropModelIdeal::GetTypeId()
 }
 
 double
-UanPropModelIdeal::GetPathLossDb(Ptr<MobilityModel> a, Ptr<MobilityModel> b, UanTxMode mode)
+UanPropModelIdeal::GetPathLossDb(Ptr<MobilityModel> /*a*/,
+                                 Ptr<MobilityModel> /*b*/,
+                                 UanTxMode /*mode*/)
 {
     return 0;
 }
 
 UanPdp
-UanPropModelIdeal::GetPdp(Ptr<MobilityModel> a, Ptr<MobilityModel> b, UanTxMode mode)
+UanPropModelIdeal::GetPdp(Ptr<MobilityModel> /*a*/, Ptr<MobilityModel> /*b*/, UanTxMode /*mode*/)
 {
     return UanPdp::CreateImpulsePdp();
 }
 
 Time
-UanPropModelIdeal::GetDelay(Ptr<MobilityModel> a, Ptr<MobilityModel> b, UanTxMode mode)
+UanPropModelIdeal::GetDelay(Ptr<MobilityModel> a, Ptr<MobilityModel> b, UanTxMode /*mode*/)
 {
     return Seconds(a->GetDistanceFrom(b) / 1500.0);
 }

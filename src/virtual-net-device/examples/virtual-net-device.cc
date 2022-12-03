@@ -85,9 +85,9 @@ class Tunnel
      * \return true (always)
      */
     bool N0VirtualSend(Ptr<Packet> packet,
-                       const Address& source,
-                       const Address& dest,
-                       uint16_t protocolNumber)
+                       const Address& /*source*/,
+                       const Address& /*dest*/,
+                       uint16_t /*protocolNumber*/)
     {
         NS_LOG_DEBUG("Send to " << m_n3Address << ": " << *packet);
         m_n0Socket->SendTo(packet, 0, InetSocketAddress(m_n3Address, 667));
@@ -103,9 +103,9 @@ class Tunnel
      * \return true (always)
      */
     bool N1VirtualSend(Ptr<Packet> packet,
-                       const Address& source,
-                       const Address& dest,
-                       uint16_t protocolNumber)
+                       const Address& /*source*/,
+                       const Address& /*dest*/,
+                       uint16_t /*protocolNumber*/)
     {
         NS_LOG_DEBUG("Send to " << m_n3Address << ": " << *packet);
         m_n1Socket->SendTo(packet, 0, InetSocketAddress(m_n3Address, 667));
@@ -121,9 +121,9 @@ class Tunnel
      * \return true (always)
      */
     bool N3VirtualSend(Ptr<Packet> packet,
-                       const Address& source,
-                       const Address& dest,
-                       uint16_t protocolNumber)
+                       const Address& /*source*/,
+                       const Address& /*dest*/,
+                       uint16_t /*protocolNumber*/)
     {
         if (m_rng->GetValue() < 0.25)
         {

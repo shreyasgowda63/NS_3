@@ -167,7 +167,7 @@ ComputeSnr(const ComputeSnrParams& params)
 }
 
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     double frequency = 2125.0e6;  // operating frequency in Hz (corresponds to EARFCN 2100)
     double txPow = 49.0;          // tx power in dBm

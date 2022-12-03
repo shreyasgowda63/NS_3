@@ -95,7 +95,7 @@ class GlobalPathlossDatabase
 };
 
 void
-GlobalPathlossDatabase::UpdatePathloss(std::string context,
+GlobalPathlossDatabase::UpdatePathloss(std::string /*context*/,
                                        Ptr<const SpectrumPhy> txPhyConst,
                                        Ptr<const SpectrumPhy> rxPhyConst,
                                        double lossDb)

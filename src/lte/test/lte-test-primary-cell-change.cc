@@ -210,7 +210,7 @@ LtePrimaryCellChangeTestCase::DoRun()
 } // end of void LtePrimaryCellChangeTestCase::DoRun ()
 
 void
-LtePrimaryCellChangeTestCase::StateTransitionCallback(std::string context,
+LtePrimaryCellChangeTestCase::StateTransitionCallback(std::string /*context*/,
                                                       uint64_t imsi,
                                                       uint16_t cellId,
                                                       uint16_t rnti,
@@ -222,7 +222,7 @@ LtePrimaryCellChangeTestCase::StateTransitionCallback(std::string context,
 }
 
 void
-LtePrimaryCellChangeTestCase::ConnectionEstablishedCallback(std::string context,
+LtePrimaryCellChangeTestCase::ConnectionEstablishedCallback(std::string /*context*/,
                                                             uint64_t imsi,
                                                             uint16_t cellId,
                                                             uint16_t rnti)

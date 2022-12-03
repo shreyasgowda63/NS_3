@@ -216,7 +216,7 @@ CarrierAggregationConfigTestCase::EquallySpacedCcs()
 }
 
 void
-CarrierAggregationConfigTestCase::Evaluate(std::string context,
+CarrierAggregationConfigTestCase::Evaluate(std::string /*context*/,
                                            Ptr<LteUeRrc> ueRrc,
                                            std::list<LteRrcSap::SCellToAddMod> sCellToAddModList)
 {

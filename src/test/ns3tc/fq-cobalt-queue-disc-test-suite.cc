@@ -93,13 +93,13 @@ Ipv4FqCobaltTestPacketFilter::~Ipv4FqCobaltTestPacketFilter()
 }
 
 int32_t
-Ipv4FqCobaltTestPacketFilter::DoClassify(Ptr<QueueDiscItem> item) const
+Ipv4FqCobaltTestPacketFilter::DoClassify(Ptr<QueueDiscItem> /*item*/) const
 {
     return g_hash;
 }
 
 bool
-Ipv4FqCobaltTestPacketFilter::CheckProtocol(Ptr<QueueDiscItem> item) const
+Ipv4FqCobaltTestPacketFilter::CheckProtocol(Ptr<QueueDiscItem> /*item*/) const
 {
     return true;
 }

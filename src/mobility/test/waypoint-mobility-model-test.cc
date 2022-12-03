@@ -238,7 +238,7 @@ WaypointMobilityModelAddWaypointTest::DoRun()
 }
 
 void
-WaypointMobilityModelAddWaypointTest::CourseChangeCallback(Ptr<const MobilityModel> model)
+WaypointMobilityModelAddWaypointTest::CourseChangeCallback(Ptr<const MobilityModel> /*model*/)
 {
     const Time now = Simulator::Now();
     Ptr<WaypointMobilityModel> mob = DynamicCast<WaypointMobilityModel>(m_mobilityModel);

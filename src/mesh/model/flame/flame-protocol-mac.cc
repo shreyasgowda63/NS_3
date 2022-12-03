@@ -80,8 +80,8 @@ FlameProtocolMac::Receive(Ptr<Packet> packet, const WifiMacHeader& header)
 bool
 FlameProtocolMac::UpdateOutcomingFrame(Ptr<Packet> packet,
                                        WifiMacHeader& header,
-                                       Mac48Address from,
-                                       Mac48Address to)
+                                       Mac48Address /*from*/,
+                                       Mac48Address /*to*/)
 {
     if (!header.IsData())
     {

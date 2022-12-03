@@ -903,7 +903,7 @@ PrintSize(std::ostream& os, const TypeId tid)
  * \param [in,out] os The output stream.
  */
 void
-PrintTypeIdBlocks(std::ostream& os)
+PrintTypeIdBlocks(std::ostream& /*os*/)
 {
     NS_LOG_FUNCTION_NOARGS();
 

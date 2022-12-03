@@ -871,7 +871,7 @@ NixVectorRouting<T>::RouteInput(Ptr<const Packet> p,
                                 const IpHeader& header,
                                 Ptr<const NetDevice> idev,
                                 UnicastForwardCallback ucb,
-                                MulticastForwardCallback mcb,
+                                MulticastForwardCallback /*mcb*/,
                                 LocalDeliverCallback lcb,
                                 ErrorCallback ecb)
 {
@@ -1078,50 +1078,50 @@ NixVectorRouting<T>::PrintRoutingTable(Ptr<OutputStreamWrapper> stream, Time::Un
 // virtual functions from Ipv4RoutingProtocol
 template <typename T>
 void
-NixVectorRouting<T>::NotifyInterfaceUp(uint32_t i)
+NixVectorRouting<T>::NotifyInterfaceUp(uint32_t /*i*/)
 {
     g_isCacheDirty = true;
 }
 
 template <typename T>
 void
-NixVectorRouting<T>::NotifyInterfaceDown(uint32_t i)
+NixVectorRouting<T>::NotifyInterfaceDown(uint32_t /*i*/)
 {
     g_isCacheDirty = true;
 }
 
 template <typename T>
 void
-NixVectorRouting<T>::NotifyAddAddress(uint32_t interface, IpInterfaceAddress address)
+NixVectorRouting<T>::NotifyAddAddress(uint32_t /*interface*/, IpInterfaceAddress /*address*/)
 {
     g_isCacheDirty = true;
 }
 
 template <typename T>
 void
-NixVectorRouting<T>::NotifyRemoveAddress(uint32_t interface, IpInterfaceAddress address)
+NixVectorRouting<T>::NotifyRemoveAddress(uint32_t /*interface*/, IpInterfaceAddress /*address*/)
 {
     g_isCacheDirty = true;
 }
 
 template <typename T>
 void
-NixVectorRouting<T>::NotifyAddRoute(IpAddress dst,
-                                    Ipv6Prefix mask,
-                                    IpAddress nextHop,
-                                    uint32_t interface,
-                                    IpAddress prefixToUse)
+NixVectorRouting<T>::NotifyAddRoute(IpAddress /*dst*/,
+                                    Ipv6Prefix /*mask*/,
+                                    IpAddress /*nextHop*/,
+                                    uint32_t /*interface*/,
+                                    IpAddress /*prefixToUse*/)
 {
     g_isCacheDirty = true;
 }
 
 template <typename T>
 void
-NixVectorRouting<T>::NotifyRemoveRoute(IpAddress dst,
-                                       Ipv6Prefix mask,
-                                       IpAddress nextHop,
-                                       uint32_t interface,
-                                       IpAddress prefixToUse)
+NixVectorRouting<T>::NotifyRemoveRoute(IpAddress /*dst*/,
+                                       Ipv6Prefix /*mask*/,
+                                       IpAddress /*nextHop*/,
+                                       uint32_t /*interface*/,
+                                       IpAddress /*prefixToUse*/)
 {
     g_isCacheDirty = true;
 }

@@ -145,7 +145,7 @@ IeRann::SerializeInformationField(Buffer::Iterator i) const
 }
 
 uint16_t
-IeRann::DeserializeInformationField(Buffer::Iterator start, uint16_t length)
+IeRann::DeserializeInformationField(Buffer::Iterator start, uint16_t /*length*/)
 {
     Buffer::Iterator i = start;
     m_flags = i.ReadU8();

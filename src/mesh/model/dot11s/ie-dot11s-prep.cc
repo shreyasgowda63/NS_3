@@ -189,7 +189,7 @@ IePrep::SerializeInformationField(Buffer::Iterator i) const
 }
 
 uint16_t
-IePrep::DeserializeInformationField(Buffer::Iterator start, uint16_t length)
+IePrep::DeserializeInformationField(Buffer::Iterator start, uint16_t /*length*/)
 {
     Buffer::Iterator i = start;
     m_flags = i.ReadU8();

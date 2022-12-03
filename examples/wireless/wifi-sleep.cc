@@ -74,7 +74,7 @@ NS_LOG_COMPONENT_DEFINE("WifiSleep");
  */
 template <int node>
 void
-RemainingEnergyTrace(double oldValue, double newValue)
+RemainingEnergyTrace(double /*oldValue*/, double newValue)
 {
     std::stringstream ss;
     ss << "energy_" << node << ".log";
@@ -95,7 +95,7 @@ RemainingEnergyTrace(double oldValue, double newValue)
  */
 template <int node>
 void
-PhyStateTrace(std::string context, Time start, Time duration, WifiPhyState state)
+PhyStateTrace(std::string /*context*/, Time start, Time duration, WifiPhyState state)
 {
     std::stringstream ss;
     ss << "state_" << node << ".log";

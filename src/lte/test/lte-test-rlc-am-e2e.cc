@@ -119,14 +119,14 @@ LteRlcAmE2eTestCase::~LteRlcAmE2eTestCase()
 }
 
 void
-LteRlcAmE2eTestCase::DlDropEvent(Ptr<const Packet> p)
+LteRlcAmE2eTestCase::DlDropEvent(Ptr<const Packet> /*p*/)
 {
     // NS_LOG_FUNCTION (this);
     m_dlDrops++;
 }
 
 void
-LteRlcAmE2eTestCase::UlDropEvent(Ptr<const Packet> p)
+LteRlcAmE2eTestCase::UlDropEvent(Ptr<const Packet> /*p*/)
 {
     // NS_LOG_FUNCTION (this);
     m_ulDrops++;

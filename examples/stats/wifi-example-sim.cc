@@ -53,7 +53,9 @@ NS_LOG_COMPONENT_DEFINE("WiFiDistanceExperiment");
  * \param packet The transmitted packet.
  */
 void
-TxCallback(Ptr<CounterCalculator<uint32_t>> datac, std::string path, Ptr<const Packet> packet)
+TxCallback(Ptr<CounterCalculator<uint32_t>> datac,
+           std::string /*path*/,
+           Ptr<const Packet> /*packet*/)
 {
     NS_LOG_INFO("Sent frame counted in " << datac->GetKey());
     datac->Update();

@@ -74,8 +74,8 @@ WifiNoAck::Copy() const
 }
 
 bool
-WifiNoAck::CheckQosAckPolicy(Mac48Address receiver,
-                             uint8_t tid,
+WifiNoAck::CheckQosAckPolicy(Mac48Address /*receiver*/,
+                             uint8_t /*tid*/,
                              WifiMacHeader::QosAckPolicy ackPolicy) const
 {
     if (ackPolicy == WifiMacHeader::NO_ACK || ackPolicy == WifiMacHeader::BLOCK_ACK)
@@ -107,8 +107,8 @@ WifiNormalAck::Copy() const
 }
 
 bool
-WifiNormalAck::CheckQosAckPolicy(Mac48Address receiver,
-                                 uint8_t tid,
+WifiNormalAck::CheckQosAckPolicy(Mac48Address /*receiver*/,
+                                 uint8_t /*tid*/,
                                  WifiMacHeader::QosAckPolicy ackPolicy) const
 {
     if (ackPolicy == WifiMacHeader::NORMAL_ACK)
@@ -140,8 +140,8 @@ WifiBlockAck::Copy() const
 }
 
 bool
-WifiBlockAck::CheckQosAckPolicy(Mac48Address receiver,
-                                uint8_t tid,
+WifiBlockAck::CheckQosAckPolicy(Mac48Address /*receiver*/,
+                                uint8_t /*tid*/,
                                 WifiMacHeader::QosAckPolicy ackPolicy) const
 {
     if (ackPolicy == WifiMacHeader::NORMAL_ACK)
@@ -173,8 +173,8 @@ WifiBarBlockAck::Copy() const
 }
 
 bool
-WifiBarBlockAck::CheckQosAckPolicy(Mac48Address receiver,
-                                   uint8_t tid,
+WifiBarBlockAck::CheckQosAckPolicy(Mac48Address /*receiver*/,
+                                   uint8_t /*tid*/,
                                    WifiMacHeader::QosAckPolicy ackPolicy) const
 {
     if (ackPolicy == WifiMacHeader::BLOCK_ACK)
@@ -207,7 +207,7 @@ WifiDlMuBarBaSequence::Copy() const
 
 bool
 WifiDlMuBarBaSequence::CheckQosAckPolicy(Mac48Address receiver,
-                                         uint8_t tid,
+                                         uint8_t /*tid*/,
                                          WifiMacHeader::QosAckPolicy ackPolicy) const
 {
     if (ackPolicy == WifiMacHeader::NORMAL_ACK)
@@ -272,8 +272,8 @@ WifiDlMuTfMuBar::Copy() const
 }
 
 bool
-WifiDlMuTfMuBar::CheckQosAckPolicy(Mac48Address receiver,
-                                   uint8_t tid,
+WifiDlMuTfMuBar::CheckQosAckPolicy(Mac48Address /*receiver*/,
+                                   uint8_t /*tid*/,
                                    WifiMacHeader::QosAckPolicy ackPolicy) const
 {
     // the only admitted ack policy is Block Ack because stations need to wait for a MU-BAR
@@ -313,8 +313,8 @@ WifiDlMuAggregateTf::Copy() const
 }
 
 bool
-WifiDlMuAggregateTf::CheckQosAckPolicy(Mac48Address receiver,
-                                       uint8_t tid,
+WifiDlMuAggregateTf::CheckQosAckPolicy(Mac48Address /*receiver*/,
+                                       uint8_t /*tid*/,
                                        WifiMacHeader::QosAckPolicy ackPolicy) const
 {
     // the only admitted ack policy is No explicit acknowledgment or TB PPDU Ack policy
@@ -354,9 +354,9 @@ WifiUlMuMultiStaBa::Copy() const
 }
 
 bool
-WifiUlMuMultiStaBa::CheckQosAckPolicy(Mac48Address receiver,
-                                      uint8_t tid,
-                                      WifiMacHeader::QosAckPolicy ackPolicy) const
+WifiUlMuMultiStaBa::CheckQosAckPolicy(Mac48Address /*receiver*/,
+                                      uint8_t /*tid*/,
+                                      WifiMacHeader::QosAckPolicy /*ackPolicy*/) const
 {
     // a Basic Trigger Frame has no QoS ack policy
     return true;
@@ -389,8 +389,8 @@ WifiAckAfterTbPpdu::Copy() const
 }
 
 bool
-WifiAckAfterTbPpdu::CheckQosAckPolicy(Mac48Address receiver,
-                                      uint8_t tid,
+WifiAckAfterTbPpdu::CheckQosAckPolicy(Mac48Address /*receiver*/,
+                                      uint8_t /*tid*/,
                                       WifiMacHeader::QosAckPolicy ackPolicy) const
 {
     if (ackPolicy == WifiMacHeader::NORMAL_ACK)

@@ -378,7 +378,7 @@ UanHeaderRcCtsGlobal::Deserialize(Buffer::Iterator start)
 }
 
 void
-UanHeaderRcCtsGlobal::Print(std::ostream& os, Time::Unit unit) const
+UanHeaderRcCtsGlobal::Print(std::ostream& os, Time::Unit /*unit*/) const
 {
     os << "CTS Global (Rate #=" << m_rateNum << ", Retry Rate=" << m_retryRate
        << ", TX Time=" << m_timeStampTx.As(Time::S) << ", Win Time=" << m_winTime.As(Time::S)

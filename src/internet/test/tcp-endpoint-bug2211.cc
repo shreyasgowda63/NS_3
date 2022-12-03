@@ -90,7 +90,7 @@ TcpEndPointBug2211Test::Recv(Ptr<Socket> socket)
 }
 
 void
-TcpEndPointBug2211Test::HandleAccept(Ptr<Socket> s, const Address& from)
+TcpEndPointBug2211Test::HandleAccept(Ptr<Socket> s, const Address& /*from*/)
 {
     s->SetRecvCallback(MakeCallback(&TcpEndPointBug2211Test::Recv, this));
 }

@@ -69,7 +69,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("OlsrHna");
 
 void
-ReceivePacket(Ptr<Socket> socket)
+ReceivePacket(Ptr<Socket> /*socket*/)
 {
     NS_LOG_UNCOND("Received one packet!");
 }

@@ -833,7 +833,7 @@ Buffer::Iterator::Iterator(const Buffer* buffer)
     m_current = m_dataStart;
 }
 
-Buffer::Iterator::Iterator(const Buffer* buffer, bool dummy)
+Buffer::Iterator::Iterator(const Buffer* buffer, bool /*dummy*/)
 {
     Construct(buffer);
     m_current = m_dataEnd;

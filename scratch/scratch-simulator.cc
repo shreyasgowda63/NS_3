@@ -20,7 +20,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("ScratchSimulator");
 
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     NS_LOG_UNCOND("Scratch Simulator");
 

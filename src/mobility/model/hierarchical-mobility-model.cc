@@ -187,13 +187,13 @@ HierarchicalMobilityModel::DoGetVelocity() const
 }
 
 void
-HierarchicalMobilityModel::ParentChanged(Ptr<const MobilityModel> model)
+HierarchicalMobilityModel::ParentChanged(Ptr<const MobilityModel> /*model*/)
 {
     MobilityModel::NotifyCourseChange();
 }
 
 void
-HierarchicalMobilityModel::ChildChanged(Ptr<const MobilityModel> model)
+HierarchicalMobilityModel::ChildChanged(Ptr<const MobilityModel> /*model*/)
 {
     MobilityModel::NotifyCourseChange();
 }

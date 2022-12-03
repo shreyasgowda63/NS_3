@@ -77,7 +77,7 @@ MobilityModel::GetPositionWithReference(const Vector& referencePosition) const
 
 // Default implementation ignores referencePosition
 Vector
-MobilityModel::DoGetPositionWithReference(const Vector& referencePosition) const
+MobilityModel::DoGetPositionWithReference(const Vector& /*referencePosition*/) const
 {
     return DoGetPosition();
 }
@@ -122,7 +122,7 @@ MobilityModel::AssignStreams(int64_t start)
 
 // Default implementation does nothing
 int64_t
-MobilityModel::DoAssignStreams(int64_t start)
+MobilityModel::DoAssignStreams(int64_t /*start*/)
 {
     return 0;
 }

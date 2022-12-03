@@ -254,8 +254,8 @@ ThompsonSamplingWifiManager::DoReportDataOk(WifiRemoteStation* st,
                                             double ackSnr,
                                             WifiMode ackMode,
                                             double dataSnr,
-                                            uint16_t dataChannelWidth,
-                                            uint8_t dataNss)
+                                            uint16_t /*dataChannelWidth*/,
+                                            uint8_t /*dataNss*/)
 {
     NS_LOG_FUNCTION(this << st << ackSnr << ackMode.GetUniqueName() << dataSnr);
     InitializeStation(st);
@@ -271,8 +271,8 @@ ThompsonSamplingWifiManager::DoReportAmpduTxStatus(WifiRemoteStation* st,
                                                    uint16_t nFailedMpdus,
                                                    double rxSnr,
                                                    double dataSnr,
-                                                   uint16_t dataChannelWidth,
-                                                   uint8_t dataNss)
+                                                   uint16_t /*dataChannelWidth*/,
+                                                   uint8_t /*dataNss*/)
 {
     NS_LOG_FUNCTION(this << st << nSuccessfulMpdus << nFailedMpdus << rxSnr << dataSnr);
     InitializeStation(st);

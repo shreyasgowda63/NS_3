@@ -191,7 +191,7 @@ class FrameExchangeManagerStub : public FrameExchangeManager
      * \param allowedWidth the maximum allowed TX width in MHz
      * \return true if a frame exchange sequence was started, false otherwise
      */
-    bool StartTransmission(Ptr<Txop> dcf, uint16_t allowedWidth) override
+    bool StartTransmission(Ptr<Txop> dcf, uint16_t /*allowedWidth*/) override
     {
         dcf->NotifyChannelAccessed(0);
         return true;
@@ -204,7 +204,7 @@ class FrameExchangeManagerStub : public FrameExchangeManager
     }
 
     /// \copydoc ns3::FrameExchangeManager::NotifySwitchingStartNow
-    void NotifySwitchingStartNow(Time duration) override
+    void NotifySwitchingStartNow(Time /*duration*/) override
     {
         m_test->NotifyChannelSwitching();
     }
@@ -438,7 +438,7 @@ TxopTest<TxopType>::DoDispose()
 
 template <typename TxopType>
 void
-TxopTest<TxopType>::NotifyChannelAccessed(uint8_t linkId, Time txopDuration)
+TxopTest<TxopType>::NotifyChannelAccessed(uint8_t /*linkId*/, Time /*txopDuration*/)
 {
     Txop::GetLink(0).access = Txop::NOT_REQUESTED;
     m_test->NotifyAccessGranted(m_i);
@@ -446,14 +446,14 @@ TxopTest<TxopType>::NotifyChannelAccessed(uint8_t linkId, Time txopDuration)
 
 template <typename TxopType>
 void
-TxopTest<TxopType>::GenerateBackoff(uint8_t linkId)
+TxopTest<TxopType>::GenerateBackoff(uint8_t /*linkId*/)
 {
     m_test->GenerateBackoff(m_i);
 }
 
 template <typename TxopType>
 bool
-TxopTest<TxopType>::HasFramesToTransmit(uint8_t linkId)
+TxopTest<TxopType>::HasFramesToTransmit(uint8_t /*linkId*/)
 {
     return !m_expectedGrants.empty();
 }

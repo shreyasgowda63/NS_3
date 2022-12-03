@@ -161,7 +161,7 @@ NoOpComponentCarrierManager::DoAddUe(uint16_t rnti, uint8_t state)
 }
 
 void
-NoOpComponentCarrierManager::DoAddLc(LteEnbCmacSapProvider::LcInfo lcInfo, LteMacSapUser* msu)
+NoOpComponentCarrierManager::DoAddLc(LteEnbCmacSapProvider::LcInfo lcInfo, LteMacSapUser* /*msu*/)
 {
     NS_LOG_FUNCTION(this);
     m_ueInfo.at(lcInfo.rnti).m_rlcLcInstantiated.emplace(lcInfo.lcId, lcInfo);
@@ -178,7 +178,7 @@ NoOpComponentCarrierManager::DoRemoveUe(uint16_t rnti)
 
 std::vector<LteCcmRrcSapProvider::LcsConfig>
 NoOpComponentCarrierManager::DoSetupDataRadioBearer(EpsBearer bearer,
-                                                    uint8_t bearerId,
+                                                    uint8_t /*bearerId*/,
                                                     uint16_t rnti,
                                                     uint8_t lcid,
                                                     uint8_t lcGroup,

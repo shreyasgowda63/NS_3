@@ -39,7 +39,7 @@ NS_LOG_COMPONENT_DEFINE("LrWpanErrorModelPlot");
 // Plot 802.15.4 BER curve (compare against Figure E.2 of IEEE-802.15.4-2006)
 //
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     std::ofstream berfile("802.15.4-ber.plt");
     Ptr<LrWpanErrorModel> lrWpanError = CreateObject<LrWpanErrorModel>();

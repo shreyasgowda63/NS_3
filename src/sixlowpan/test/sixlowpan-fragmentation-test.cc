@@ -209,11 +209,11 @@ SixlowpanFragmentationTest::HandleReadClient(Ptr<Socket> socket)
 }
 
 void
-SixlowpanFragmentationTest::HandleReadIcmpClient(Ipv6Address icmpSource,
-                                                 uint8_t icmpTtl,
+SixlowpanFragmentationTest::HandleReadIcmpClient(Ipv6Address /*icmpSource*/,
+                                                 uint8_t /*icmpTtl*/,
                                                  uint8_t icmpType,
                                                  uint8_t icmpCode,
-                                                 uint32_t icmpInfo)
+                                                 uint32_t /*icmpInfo*/)
 {
     m_icmpType = icmpType;
     m_icmpCode = icmpCode;

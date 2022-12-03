@@ -294,11 +294,11 @@ Ipv4FragmentationTest::HandleReadClient(Ptr<Socket> socket)
 }
 
 void
-Ipv4FragmentationTest::HandleReadIcmpClient(Ipv4Address icmpSource,
-                                            uint8_t icmpTtl,
+Ipv4FragmentationTest::HandleReadIcmpClient(Ipv4Address /*icmpSource*/,
+                                            uint8_t /*icmpTtl*/,
                                             uint8_t icmpType,
-                                            uint8_t icmpCode,
-                                            uint32_t icmpInfo)
+                                            uint8_t /*icmpCode*/,
+                                            uint32_t /*icmpInfo*/)
 {
     m_icmpType = icmpType;
 }

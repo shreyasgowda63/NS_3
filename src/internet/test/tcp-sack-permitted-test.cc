@@ -122,7 +122,7 @@ SackPermittedTestCase::CreateSenderSocket(Ptr<Node> node)
 }
 
 void
-SackPermittedTestCase::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+SackPermittedTestCase::Tx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (!(h.GetFlags() & TcpHeader::SYN))
     {

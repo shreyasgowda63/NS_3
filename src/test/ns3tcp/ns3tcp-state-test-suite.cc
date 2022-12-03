@@ -281,7 +281,7 @@ Ns3TcpStateTestCase::Ipv4L3Tx(std::string, Ptr<const Packet> packet, Ptr<Ipv4>, 
 ////////////////////////////////////////////////////////////////////
 // Implementing an "application" to send bytes over a TCP connection
 void
-Ns3TcpStateTestCase::WriteUntilBufferFull(Ptr<Socket> localSocket, uint32_t txSpace)
+Ns3TcpStateTestCase::WriteUntilBufferFull(Ptr<Socket> localSocket, uint32_t /*txSpace*/)
 {
     while (m_currentTxBytes < m_totalTxBytes)
     {

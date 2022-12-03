@@ -446,7 +446,7 @@ LteUePowerControl::GetPuschTxPower(std::vector<int> dlRb)
 }
 
 double
-LteUePowerControl::GetPucchTxPower(std::vector<int> dlRb)
+LteUePowerControl::GetPucchTxPower(std::vector<int> /*dlRb*/)
 {
     NS_LOG_FUNCTION(this);
 

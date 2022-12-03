@@ -131,7 +131,7 @@ ListPositionAllocator::GetNext() const
 }
 
 int64_t
-ListPositionAllocator::AssignStreams(int64_t stream)
+ListPositionAllocator::AssignStreams(int64_t /*stream*/)
 {
     return 0;
 }
@@ -294,7 +294,7 @@ GridPositionAllocator::GetNext() const
 }
 
 int64_t
-GridPositionAllocator::AssignStreams(int64_t stream)
+GridPositionAllocator::AssignStreams(int64_t /*stream*/)
 {
     return 0;
 }

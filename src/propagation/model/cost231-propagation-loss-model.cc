@@ -184,7 +184,7 @@ Cost231PropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-Cost231PropagationLossModel::DoAssignStreams(int64_t stream)
+Cost231PropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }

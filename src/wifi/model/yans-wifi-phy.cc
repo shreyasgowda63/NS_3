@@ -96,7 +96,7 @@ YansWifiPhy::StartTx(Ptr<const WifiPpdu> ppdu)
 }
 
 uint16_t
-YansWifiPhy::GetGuardBandwidth(uint16_t currentChannelWidth) const
+YansWifiPhy::GetGuardBandwidth(uint16_t /*currentChannelWidth*/) const
 {
     NS_ABORT_MSG("Guard bandwidth not relevant for Yans");
     return 0;

@@ -150,7 +150,7 @@ RoutingExperiment::RoutingExperiment()
 }
 
 static inline std::string
-PrintReceivedPacket(Ptr<Socket> socket, Ptr<Packet> packet, Address senderAddress)
+PrintReceivedPacket(Ptr<Socket> socket, Address senderAddress)
 {
     std::ostringstream oss;
 
@@ -177,7 +177,7 @@ RoutingExperiment::ReceivePacket(Ptr<Socket> socket)
     {
         bytesTotal += packet->GetSize();
         packetsReceived += 1;
-        NS_LOG_UNCOND(PrintReceivedPacket(socket, packet, senderAddress));
+        NS_LOG_UNCOND(PrintReceivedPacket(socket, senderAddress));
     }
 }
 

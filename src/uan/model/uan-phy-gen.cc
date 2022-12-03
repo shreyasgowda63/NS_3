@@ -69,12 +69,12 @@ UanPhyCalcSinrDefault::GetTypeId()
 }
 
 double
-UanPhyCalcSinrDefault::CalcSinrDb(Ptr<Packet> pkt,
-                                  Time arrTime,
+UanPhyCalcSinrDefault::CalcSinrDb(Ptr<Packet> /*pkt*/,
+                                  Time /*arrTime*/,
                                   double rxPowerDb,
                                   double ambNoiseDb,
                                   UanTxMode mode,
-                                  UanPdp pdp,
+                                  UanPdp /*pdp*/,
                                   const UanTransducer::ArrivalList& arrivalList) const
 {
     if (mode.GetModType() == UanTxMode::OTHER)
@@ -123,7 +123,7 @@ UanPhyCalcSinrFhFsk::GetTypeId()
 }
 
 double
-UanPhyCalcSinrFhFsk::CalcSinrDb(Ptr<Packet> pkt,
+UanPhyCalcSinrFhFsk::CalcSinrDb(Ptr<Packet> /*pkt*/,
                                 Time arrTime,
                                 double rxPowerDb,
                                 double ambNoiseDb,
@@ -242,7 +242,7 @@ UanPhyPerGenDefault::GetTypeId()
 // Default PER calculation simply compares SINR to a threshold which is configurable
 // via an attribute.
 double
-UanPhyPerGenDefault::CalcPer(Ptr<Packet> pkt, double sinrDb, UanTxMode mode)
+UanPhyPerGenDefault::CalcPer(Ptr<Packet> /*pkt*/, double sinrDb, UanTxMode /*mode*/)
 {
     if (sinrDb >= m_thresh)
     {

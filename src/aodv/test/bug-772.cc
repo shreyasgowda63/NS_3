@@ -83,7 +83,7 @@ Bug772ChainTest::SendData(Ptr<Socket> socket)
 }
 
 void
-Bug772ChainTest::HandleRead(Ptr<Socket> socket)
+Bug772ChainTest::HandleRead(Ptr<Socket> /*socket*/)
 {
     m_receivedPackets++;
 }

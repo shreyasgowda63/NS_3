@@ -468,9 +468,9 @@ Gnuplot2dFunction::Function2d::GetCommand() const
 
 void
 Gnuplot2dFunction::Function2d::PrintExpression(std::ostream& os,
-                                               bool generateOneOutputFile,
-                                               unsigned int dataFileDatasetIndex,
-                                               std::string& dataFileName) const
+                                               bool /*generateOneOutputFile*/,
+                                               unsigned int /*dataFileDatasetIndex*/,
+                                               std::string& /*dataFileName*/) const
 {
     os << m_function;
 
@@ -553,9 +553,9 @@ Gnuplot3dDataset::Data3d::GetCommand() const
 
 void
 Gnuplot3dDataset::Data3d::PrintExpression(std::ostream& os,
-                                          bool generateOneOutputFile,
-                                          unsigned int dataFileDatasetIndex,
-                                          std::string& dataFileName) const
+                                          bool /*generateOneOutputFile*/,
+                                          unsigned int /*dataFileDatasetIndex*/,
+                                          std::string& /*dataFileName*/) const
 {
     os << "\"-\" ";
 
@@ -576,7 +576,7 @@ Gnuplot3dDataset::Data3d::PrintExpression(std::ostream& os,
 }
 
 void
-Gnuplot3dDataset::Data3d::PrintDataFile(std::ostream& os, bool generateOneOutputFile) const
+Gnuplot3dDataset::Data3d::PrintDataFile(std::ostream& os, bool /*generateOneOutputFile*/) const
 {
     for (PointSet::const_iterator i = m_pointset.begin(); i != m_pointset.end(); ++i)
     {
@@ -681,9 +681,9 @@ Gnuplot3dFunction::Function3d::GetCommand() const
 
 void
 Gnuplot3dFunction::Function3d::PrintExpression(std::ostream& os,
-                                               bool generateOneOutputFile,
-                                               unsigned int dataFileDatasetIndex,
-                                               std::string& dataFileName) const
+                                               bool /*generateOneOutputFile*/,
+                                               unsigned int /*dataFileDatasetIndex*/,
+                                               std::string& /*dataFileName*/) const
 {
     os << m_function;
 

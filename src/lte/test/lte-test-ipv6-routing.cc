@@ -116,7 +116,9 @@ LteIpv6RoutingTestCase::~LteIpv6RoutingTestCase()
 }
 
 void
-LteIpv6RoutingTestCase::SentAtClient(Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface)
+LteIpv6RoutingTestCase::SentAtClient(Ptr<const Packet> p,
+                                     Ptr<Ipv6> /*ipv6*/,
+                                     uint32_t /*interface*/)
 {
     Ipv6Header ipv6Header;
     p->PeekHeader(ipv6Header);
@@ -127,7 +129,9 @@ LteIpv6RoutingTestCase::SentAtClient(Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32
 }
 
 void
-LteIpv6RoutingTestCase::ReceivedAtClient(Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface)
+LteIpv6RoutingTestCase::ReceivedAtClient(Ptr<const Packet> p,
+                                         Ptr<Ipv6> /*ipv6*/,
+                                         uint32_t /*interface*/)
 {
     Ipv6Header ipv6Header;
     p->PeekHeader(ipv6Header);

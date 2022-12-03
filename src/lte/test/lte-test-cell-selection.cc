@@ -391,7 +391,7 @@ LteCellSelectionTestCase::CheckPoint(Ptr<LteUeNetDevice> ueDev,
 }
 
 void
-LteCellSelectionTestCase::StateTransitionCallback(std::string context,
+LteCellSelectionTestCase::StateTransitionCallback(std::string /*context*/,
                                                   uint64_t imsi,
                                                   uint16_t cellId,
                                                   uint16_t rnti,
@@ -403,7 +403,7 @@ LteCellSelectionTestCase::StateTransitionCallback(std::string context,
 }
 
 void
-LteCellSelectionTestCase::InitialCellSelectionEndOkCallback(std::string context,
+LteCellSelectionTestCase::InitialCellSelectionEndOkCallback(std::string /*context*/,
                                                             uint64_t imsi,
                                                             uint16_t cellId)
 {
@@ -411,7 +411,7 @@ LteCellSelectionTestCase::InitialCellSelectionEndOkCallback(std::string context,
 }
 
 void
-LteCellSelectionTestCase::InitialCellSelectionEndErrorCallback(std::string context,
+LteCellSelectionTestCase::InitialCellSelectionEndErrorCallback(std::string /*context*/,
                                                                uint64_t imsi,
                                                                uint16_t cellId)
 {
@@ -419,7 +419,7 @@ LteCellSelectionTestCase::InitialCellSelectionEndErrorCallback(std::string conte
 }
 
 void
-LteCellSelectionTestCase::ConnectionEstablishedCallback(std::string context,
+LteCellSelectionTestCase::ConnectionEstablishedCallback(std::string /*context*/,
                                                         uint64_t imsi,
                                                         uint16_t cellId,
                                                         uint16_t rnti)

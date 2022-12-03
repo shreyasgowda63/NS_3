@@ -524,9 +524,9 @@ void
 PyViz::TraceIpv4Drop(std::string context,
                      const ns3::Ipv4Header& hdr,
                      Ptr<const Packet> packet,
-                     ns3::Ipv4L3Protocol::DropReason reason,
-                     Ptr<Ipv4> dummy_ipv4,
-                     uint32_t interface)
+                     ns3::Ipv4L3Protocol::DropReason /*reason*/,
+                     Ptr<Ipv4> /*dummy_ipv4*/,
+                     uint32_t /*interface*/)
 {
     Ptr<Packet> packetCopy = packet->Copy();
     packetCopy->AddHeader(hdr);

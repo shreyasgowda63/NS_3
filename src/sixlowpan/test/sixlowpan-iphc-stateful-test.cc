@@ -116,7 +116,7 @@ SixlowpanIphcStatefulImplTest::SixlowpanIphcStatefulImplTest()
 }
 
 bool
-SixlowpanIphcStatefulImplTest::ReceiveFromMockDevice(Ptr<NetDevice> device,
+SixlowpanIphcStatefulImplTest::ReceiveFromMockDevice(Ptr<NetDevice> /*device*/,
                                                      Ptr<const Packet> packet,
                                                      uint16_t protocol,
                                                      const Address& source,
@@ -147,12 +147,13 @@ SixlowpanIphcStatefulImplTest::ReceiveFromMockDevice(Ptr<NetDevice> device,
 }
 
 bool
-SixlowpanIphcStatefulImplTest::PromiscReceiveFromSixLowPanDevice(Ptr<NetDevice> device,
-                                                                 Ptr<const Packet> packet,
-                                                                 uint16_t protocol,
-                                                                 const Address& source,
-                                                                 const Address& destination,
-                                                                 NetDevice::PacketType packetType)
+SixlowpanIphcStatefulImplTest::PromiscReceiveFromSixLowPanDevice(
+    Ptr<NetDevice> /*device*/,
+    Ptr<const Packet> packet,
+    uint16_t /*protocol*/,
+    const Address& source,
+    const Address& destination,
+    NetDevice::PacketType /*packetType*/)
 {
     Data incomingPkt;
     incomingPkt.packet = packet->Copy();

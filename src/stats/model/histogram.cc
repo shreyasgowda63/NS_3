@@ -58,7 +58,7 @@ Histogram::GetBinEnd(uint32_t index)
 }
 
 double
-Histogram::GetBinWidth(uint32_t index) const
+Histogram::GetBinWidth(uint32_t /*index*/) const
 {
     return m_binWidth;
 }

@@ -255,7 +255,7 @@ MeshPointDevice::IsLinkUp() const
 }
 
 void
-MeshPointDevice::AddLinkChangeCallback(Callback<void> callback)
+MeshPointDevice::AddLinkChangeCallback(Callback<void> /*callback*/)
 {
     NS_LOG_FUNCTION(this);
     // do nothing

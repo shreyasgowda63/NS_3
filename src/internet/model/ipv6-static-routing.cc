@@ -679,7 +679,7 @@ Ipv6StaticRouting::RemoveRoute(Ipv6Address network,
 }
 
 Ptr<Ipv6Route>
-Ipv6StaticRouting::RouteOutput(Ptr<Packet> p,
+Ipv6StaticRouting::RouteOutput(Ptr<Packet> /*p*/,
                                const Ipv6Header& header,
                                Ptr<NetDevice> oif,
                                Socket::SocketErrno& sockerr)
@@ -717,7 +717,7 @@ Ipv6StaticRouting::RouteInput(Ptr<const Packet> p,
                               Ptr<const NetDevice> idev,
                               UnicastForwardCallback ucb,
                               MulticastForwardCallback mcb,
-                              LocalDeliverCallback lcb,
+                              LocalDeliverCallback /*lcb*/,
                               ErrorCallback ecb)
 {
     NS_LOG_FUNCTION(this << p << header << header.GetSource() << header.GetDestination() << idev);
@@ -824,7 +824,7 @@ Ipv6StaticRouting::NotifyInterfaceDown(uint32_t i)
 }
 
 void
-Ipv6StaticRouting::NotifyAddAddress(uint32_t interface, Ipv6InterfaceAddress address)
+Ipv6StaticRouting::NotifyAddAddress(uint32_t interface, Ipv6InterfaceAddress /*address*/)
 {
     if (!m_ipv6->IsUp(interface))
     {

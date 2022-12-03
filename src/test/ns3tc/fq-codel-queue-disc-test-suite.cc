@@ -91,13 +91,13 @@ Ipv4TestPacketFilter::~Ipv4TestPacketFilter()
 }
 
 int32_t
-Ipv4TestPacketFilter::DoClassify(Ptr<QueueDiscItem> item) const
+Ipv4TestPacketFilter::DoClassify(Ptr<QueueDiscItem> /*item*/) const
 {
     return g_hash;
 }
 
 bool
-Ipv4TestPacketFilter::CheckProtocol(Ptr<QueueDiscItem> item) const
+Ipv4TestPacketFilter::CheckProtocol(Ptr<QueueDiscItem> /*item*/) const
 {
     return true;
 }

@@ -98,13 +98,13 @@ Ipv4FqPieTestPacketFilter::~Ipv4FqPieTestPacketFilter()
 }
 
 int32_t
-Ipv4FqPieTestPacketFilter::DoClassify(Ptr<QueueDiscItem> item) const
+Ipv4FqPieTestPacketFilter::DoClassify(Ptr<QueueDiscItem> /*item*/) const
 {
     return g_hash;
 }
 
 bool
-Ipv4FqPieTestPacketFilter::CheckProtocol(Ptr<QueueDiscItem> item) const
+Ipv4FqPieTestPacketFilter::CheckProtocol(Ptr<QueueDiscItem> /*item*/) const
 {
     return true;
 }

@@ -314,11 +314,11 @@ HwmpProtocol::RequestRoute(uint32_t sourceIface,
 }
 
 bool
-HwmpProtocol::RemoveRoutingStuff(uint32_t fromIface,
-                                 const Mac48Address source,
-                                 const Mac48Address destination,
+HwmpProtocol::RemoveRoutingStuff(uint32_t /*fromIface*/,
+                                 const Mac48Address /*source*/,
+                                 const Mac48Address /*destination*/,
                                  Ptr<Packet> packet,
-                                 uint16_t& protocolType)
+                                 uint16_t& /*protocolType*/)
 {
     HwmpTag tag;
     if (!packet->RemovePacketTag(tag))

@@ -163,7 +163,7 @@ OkumuraHataPropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-OkumuraHataPropagationLossModel::DoAssignStreams(int64_t stream)
+OkumuraHataPropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }

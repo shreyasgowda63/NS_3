@@ -162,7 +162,7 @@ void
 EpcMmeApplication::DoInitialContextSetupResponse(
     uint64_t mmeUeS1Id,
     uint16_t enbUeS1Id,
-    std::list<EpcS1apSapMme::ErabSetupItem> erabSetupList)
+    std::list<EpcS1apSapMme::ErabSetupItem> /*erabSetupList*/)
 {
     NS_LOG_FUNCTION(this << mmeUeS1Id << enbUeS1Id);
     NS_FATAL_ERROR("unimplemented");

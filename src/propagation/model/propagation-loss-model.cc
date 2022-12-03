@@ -126,8 +126,8 @@ RandomPropagationLossModel::~RandomPropagationLossModel()
 
 double
 RandomPropagationLossModel::DoCalcRxPower(double txPowerDbm,
-                                          Ptr<MobilityModel> a,
-                                          Ptr<MobilityModel> b) const
+                                          Ptr<MobilityModel> /*a*/,
+                                          Ptr<MobilityModel> /*b*/) const
 {
     double rxc = -m_variable->GetValue();
     NS_LOG_DEBUG("attenuation coefficient=" << rxc << "Db");
@@ -282,7 +282,7 @@ FriisPropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-FriisPropagationLossModel::DoAssignStreams(int64_t stream)
+FriisPropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }
@@ -463,7 +463,7 @@ TwoRayGroundPropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-TwoRayGroundPropagationLossModel::DoAssignStreams(int64_t stream)
+TwoRayGroundPropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }
@@ -555,7 +555,7 @@ LogDistancePropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-LogDistancePropagationLossModel::DoAssignStreams(int64_t stream)
+LogDistancePropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }
@@ -654,7 +654,7 @@ ThreeLogDistancePropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-ThreeLogDistancePropagationLossModel::DoAssignStreams(int64_t stream)
+ThreeLogDistancePropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }
@@ -811,15 +811,15 @@ FixedRssLossModel::SetRss(double rss)
 }
 
 double
-FixedRssLossModel::DoCalcRxPower(double txPowerDbm,
-                                 Ptr<MobilityModel> a,
-                                 Ptr<MobilityModel> b) const
+FixedRssLossModel::DoCalcRxPower(double /*txPowerDbm*/,
+                                 Ptr<MobilityModel> /*a*/,
+                                 Ptr<MobilityModel> /*b*/) const
 {
     return m_rss;
 }
 
 int64_t
-FixedRssLossModel::DoAssignStreams(int64_t stream)
+FixedRssLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }
@@ -904,7 +904,7 @@ MatrixPropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-MatrixPropagationLossModel::DoAssignStreams(int64_t stream)
+MatrixPropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }
@@ -949,7 +949,7 @@ RangePropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-RangePropagationLossModel::DoAssignStreams(int64_t stream)
+RangePropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }

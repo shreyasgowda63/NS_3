@@ -245,7 +245,7 @@ struct SortProcessPtr
      * \param right right side input
      * \returns true if left is logically less then right for given comparison
      */
-    bool operator()(Ptr<PriorityUlJob>& left, Ptr<PriorityUlJob>& right) const
+    bool operator()(Ptr<PriorityUlJob>& left, Ptr<PriorityUlJob>& /*right*/) const
     {
         if (left->GetPriority() < right->GetPriority())
         {

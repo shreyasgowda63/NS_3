@@ -60,7 +60,7 @@ IntTrace(int32_t oldValue, int32_t newValue)
 }
 
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     Ptr<MyObject> myObject = CreateObject<MyObject>();
     myObject->TraceConnectWithoutContext("MyInteger", MakeCallback(&IntTrace));

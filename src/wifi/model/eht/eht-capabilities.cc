@@ -51,14 +51,14 @@ EhtCapabilities::SerializeInformationField(Buffer::Iterator start) const
 }
 
 uint16_t
-EhtCapabilities::DeserializeInformationField(Buffer::Iterator start, uint16_t length)
+EhtCapabilities::DeserializeInformationField(Buffer::Iterator /*start*/, uint16_t length)
 {
     // TODO
     return length;
 }
 
 std::ostream&
-operator<<(std::ostream& os, const EhtCapabilities& ehtCapabilities)
+operator<<(std::ostream& os, const EhtCapabilities& /*ehtCapabilities*/)
 {
     // TODO
     return os;

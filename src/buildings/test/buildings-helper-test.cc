@@ -126,7 +126,7 @@ class BuildingsHelperOneTestCase : public TestCase
 };
 
 std::string
-BuildingsHelperOneTestCase::BuildNameString(PositionInBuilding pib, BuildingData bd)
+BuildingsHelperOneTestCase::BuildNameString(PositionInBuilding pib, BuildingData /*bd*/)
 {
     std::ostringstream oss;
     oss << "pos=" << pib.pos;

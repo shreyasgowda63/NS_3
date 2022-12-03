@@ -85,7 +85,7 @@ CsmaBridgeTestCase::~CsmaBridgeTestCase()
 }
 
 void
-CsmaBridgeTestCase::SinkRx(Ptr<const Packet> p, const Address& ad)
+CsmaBridgeTestCase::SinkRx(Ptr<const Packet> /*p*/, const Address& /*ad*/)
 {
     m_count++;
 }
@@ -216,19 +216,19 @@ CsmaBroadcastTestCase::~CsmaBroadcastTestCase()
 }
 
 void
-CsmaBroadcastTestCase::SinkRxNode1(Ptr<const Packet> p, const Address& ad)
+CsmaBroadcastTestCase::SinkRxNode1(Ptr<const Packet> /*p*/, const Address& /*ad*/)
 {
     m_countNode1++;
 }
 
 void
-CsmaBroadcastTestCase::SinkRxNode2(Ptr<const Packet> p, const Address& ad)
+CsmaBroadcastTestCase::SinkRxNode2(Ptr<const Packet> /*p*/, const Address& /*ad*/)
 {
     m_countNode2++;
 }
 
 void
-CsmaBroadcastTestCase::DropEvent(Ptr<const Packet> p)
+CsmaBroadcastTestCase::DropEvent(Ptr<const Packet> /*p*/)
 {
     m_drops++;
 }
@@ -354,13 +354,13 @@ CsmaMulticastTestCase::~CsmaMulticastTestCase()
 }
 
 void
-CsmaMulticastTestCase::SinkRx(Ptr<const Packet> p, const Address& ad)
+CsmaMulticastTestCase::SinkRx(Ptr<const Packet> /*p*/, const Address& /*ad*/)
 {
     m_count++;
 }
 
 void
-CsmaMulticastTestCase::DropEvent(Ptr<const Packet> p)
+CsmaMulticastTestCase::DropEvent(Ptr<const Packet> /*p*/)
 {
     m_drops++;
 }
@@ -541,19 +541,19 @@ CsmaOneSubnetTestCase::~CsmaOneSubnetTestCase()
 }
 
 void
-CsmaOneSubnetTestCase::SinkRxNode0(Ptr<const Packet> p, const Address& ad)
+CsmaOneSubnetTestCase::SinkRxNode0(Ptr<const Packet> /*p*/, const Address& /*ad*/)
 {
     m_countNode0++;
 }
 
 void
-CsmaOneSubnetTestCase::SinkRxNode1(Ptr<const Packet> p, const Address& ad)
+CsmaOneSubnetTestCase::SinkRxNode1(Ptr<const Packet> /*p*/, const Address& /*ad*/)
 {
     m_countNode1++;
 }
 
 void
-CsmaOneSubnetTestCase::DropEvent(Ptr<const Packet> p)
+CsmaOneSubnetTestCase::DropEvent(Ptr<const Packet> /*p*/)
 {
     m_drops++;
 }
@@ -687,13 +687,15 @@ CsmaPacketSocketTestCase::~CsmaPacketSocketTestCase()
 }
 
 void
-CsmaPacketSocketTestCase::SinkRx(std::string path, Ptr<const Packet> p, const Address& address)
+CsmaPacketSocketTestCase::SinkRx(std::string /*path*/,
+                                 Ptr<const Packet> /*p*/,
+                                 const Address& /*address*/)
 {
     m_count++;
 }
 
 void
-CsmaPacketSocketTestCase::DropEvent(Ptr<const Packet> p)
+CsmaPacketSocketTestCase::DropEvent(Ptr<const Packet> /*p*/)
 {
     m_drops++;
 }
@@ -821,19 +823,19 @@ CsmaPingTestCase::~CsmaPingTestCase()
 }
 
 void
-CsmaPingTestCase::SinkRx(Ptr<const Packet> p, const Address& ad)
+CsmaPingTestCase::SinkRx(Ptr<const Packet> /*p*/, const Address& /*ad*/)
 {
     m_countSinkRx++;
 }
 
 void
-CsmaPingTestCase::PingRtt(std::string context, Time rtt)
+CsmaPingTestCase::PingRtt(std::string /*context*/, Time /*rtt*/)
 {
     m_countPingRtt++;
 }
 
 void
-CsmaPingTestCase::DropEvent(Ptr<const Packet> p)
+CsmaPingTestCase::DropEvent(Ptr<const Packet> /*p*/)
 {
     m_drops++;
 }
@@ -960,13 +962,13 @@ CsmaRawIpSocketTestCase::~CsmaRawIpSocketTestCase()
 }
 
 void
-CsmaRawIpSocketTestCase::SinkRx(Ptr<const Packet> p, const Address& ad)
+CsmaRawIpSocketTestCase::SinkRx(Ptr<const Packet> /*p*/, const Address& /*ad*/)
 {
     m_count++;
 }
 
 void
-CsmaRawIpSocketTestCase::DropEvent(Ptr<const Packet> p)
+CsmaRawIpSocketTestCase::DropEvent(Ptr<const Packet> /*p*/)
 {
     m_drops++;
 }
@@ -1077,13 +1079,13 @@ CsmaStarTestCase::~CsmaStarTestCase()
 }
 
 void
-CsmaStarTestCase::SinkRx(Ptr<const Packet> p, const Address& ad)
+CsmaStarTestCase::SinkRx(Ptr<const Packet> /*p*/, const Address& /*ad*/)
 {
     m_count++;
 }
 
 void
-CsmaStarTestCase::DropEvent(Ptr<const Packet> p)
+CsmaStarTestCase::DropEvent(Ptr<const Packet> /*p*/)
 {
     m_drops++;
 }

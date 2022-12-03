@@ -60,7 +60,7 @@ using namespace ns3;
 
 // Prints actual position and velocity when a course change event occurs
 static void
-CourseChange(std::ostream* os, std::string foo, Ptr<const MobilityModel> mobility)
+CourseChange(std::ostream* os, std::string /*foo*/, Ptr<const MobilityModel> mobility)
 {
     Vector pos = mobility->GetPosition(); // Get position
     Vector vel = mobility->GetVelocity(); // Get velocity

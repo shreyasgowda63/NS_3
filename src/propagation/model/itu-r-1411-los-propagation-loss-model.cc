@@ -105,7 +105,7 @@ ItuR1411LosPropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-ItuR1411LosPropagationLossModel::DoAssignStreams(int64_t stream)
+ItuR1411LosPropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }

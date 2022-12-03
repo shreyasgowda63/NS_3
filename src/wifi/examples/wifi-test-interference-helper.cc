@@ -165,7 +165,7 @@ InterferenceExperiment::SendB() const
 }
 
 void
-InterferenceExperiment::PacketDropped(Ptr<const Packet> packet, WifiPhyRxfailureReason reason)
+InterferenceExperiment::PacketDropped(Ptr<const Packet> packet, WifiPhyRxfailureReason /*reason*/)
 {
     if (packet->GetUid() == m_uidA)
     {

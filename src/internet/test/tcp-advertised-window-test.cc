@@ -252,9 +252,9 @@ TcpDropRatioErrorModel::GetTypeId()
 }
 
 bool
-TcpDropRatioErrorModel::ShouldDrop(const Ipv4Header& ipHeader,
-                                   const TcpHeader& tcpHeader,
-                                   uint32_t packetSize)
+TcpDropRatioErrorModel::ShouldDrop(const Ipv4Header& /*ipHeader*/,
+                                   const TcpHeader& /*tcpHeader*/,
+                                   uint32_t /*packetSize*/)
 {
     return m_prng->GetValue() < m_dropRatio;
 }

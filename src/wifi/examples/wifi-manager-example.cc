@@ -78,7 +78,7 @@ uint64_t g_intervalRate = 0; //!< Rate in an interval.
  * \param addr The sender address.
  */
 void
-PacketRx(Ptr<const Packet> pkt, const Address& addr)
+PacketRx(Ptr<const Packet> pkt, const Address& /*addr*/)
 {
     g_intervalBytes += pkt->GetSize();
 }

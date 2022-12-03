@@ -86,8 +86,8 @@ UplinkSchedulerRtps::GetUplinkAllocations() const
 }
 
 void
-UplinkSchedulerRtps::GetChannelDescriptorsToUpdate(bool& updateDcd,
-                                                   bool& updateUcd,
+UplinkSchedulerRtps::GetChannelDescriptorsToUpdate(bool& /*updateDcd*/,
+                                                   bool& /*updateUcd*/,
                                                    bool& sendDcd,
                                                    bool& sendUcd)
 {

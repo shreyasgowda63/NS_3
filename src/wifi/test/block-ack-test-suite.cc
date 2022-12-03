@@ -805,7 +805,7 @@ BlockAckRecipientBufferTest::~BlockAckRecipientBufferTest()
 }
 
 void
-BlockAckRecipientBufferTest::ForwardUp(Ptr<const WifiMpdu> mpdu, uint8_t linkId)
+BlockAckRecipientBufferTest::ForwardUp(Ptr<const WifiMpdu> mpdu, uint8_t /*linkId*/)
 {
     m_fwup.push_back(mpdu);
 }
@@ -1764,9 +1764,9 @@ class BlockAckAggregationDisabledTest : public TestCase
 };
 
 void
-BlockAckAggregationDisabledTest::TxopDurationTracer::Trace(Time startTime,
+BlockAckAggregationDisabledTest::TxopDurationTracer::Trace(Time /*startTime*/,
                                                            Time duration,
-                                                           uint8_t linkId)
+                                                           uint8_t /*linkId*/)
 {
     if (duration > m_max)
     {
@@ -1790,9 +1790,9 @@ BlockAckAggregationDisabledTest::~BlockAckAggregationDisabledTest()
 }
 
 void
-BlockAckAggregationDisabledTest::L7Receive(std::string context,
+BlockAckAggregationDisabledTest::L7Receive(std::string /*context*/,
                                            Ptr<const Packet> p,
-                                           const Address& adr)
+                                           const Address& /*adr*/)
 {
     if (p->GetSize() == 1400)
     {
@@ -1801,7 +1801,9 @@ BlockAckAggregationDisabledTest::L7Receive(std::string context,
 }
 
 void
-BlockAckAggregationDisabledTest::Transmit(std::string context, Ptr<const Packet> p, double power)
+BlockAckAggregationDisabledTest::Transmit(std::string /*context*/,
+                                          Ptr<const Packet> p,
+                                          double /*power*/)
 {
     WifiMacHeader hdr;
     p->PeekHeader(hdr);
@@ -1844,9 +1846,9 @@ BlockAckAggregationDisabledTest::Transmit(std::string context, Ptr<const Packet>
 }
 
 void
-BlockAckAggregationDisabledTest::Receive(std::string context,
+BlockAckAggregationDisabledTest::Receive(std::string /*context*/,
                                          Ptr<const Packet> p,
-                                         RxPowerWattPerChannelBand rxPowersW)
+                                         RxPowerWattPerChannelBand /*rxPowersW*/)
 {
     WifiMacHeader hdr;
     p->PeekHeader(hdr);

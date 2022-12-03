@@ -715,7 +715,7 @@ StaWifiMac::IsWaitAssocResp() const
 }
 
 bool
-StaWifiMac::CanForwardPacketsTo(Mac48Address to) const
+StaWifiMac::CanForwardPacketsTo(Mac48Address /*to*/) const
 {
     return (IsAssociated());
 }

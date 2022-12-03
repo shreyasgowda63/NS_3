@@ -120,7 +120,7 @@ LrWpanSlottedCsmacaTestCase::~LrWpanSlottedCsmacaTestCase()
 
 void
 LrWpanSlottedCsmacaTestCase::TransEndIndication(LrWpanSlottedCsmacaTestCase* testcase,
-                                                Ptr<LrWpanNetDevice> dev,
+                                                Ptr<LrWpanNetDevice> /*dev*/,
                                                 McpsDataConfirmParams params)
 {
     // In the case of transmissions with the acknowledgment flag activated, the transmission is only
@@ -133,9 +133,9 @@ LrWpanSlottedCsmacaTestCase::TransEndIndication(LrWpanSlottedCsmacaTestCase* tes
 }
 
 void
-LrWpanSlottedCsmacaTestCase::DataIndicationCoordinator(LrWpanSlottedCsmacaTestCase* testcase,
-                                                       Ptr<LrWpanNetDevice> dev,
-                                                       McpsDataIndicationParams params,
+LrWpanSlottedCsmacaTestCase::DataIndicationCoordinator(LrWpanSlottedCsmacaTestCase* /*testcase*/,
+                                                       Ptr<LrWpanNetDevice> /*dev*/,
+                                                       McpsDataIndicationParams /*params*/,
                                                        Ptr<Packet> p)
 {
     NS_LOG_UNCOND(Simulator::Now().As(Time::S)
@@ -143,17 +143,17 @@ LrWpanSlottedCsmacaTestCase::DataIndicationCoordinator(LrWpanSlottedCsmacaTestCa
 }
 
 void
-LrWpanSlottedCsmacaTestCase::StartConfirm(LrWpanSlottedCsmacaTestCase* testcase,
-                                          Ptr<LrWpanNetDevice> dev,
-                                          MlmeStartConfirmParams params)
+LrWpanSlottedCsmacaTestCase::StartConfirm(LrWpanSlottedCsmacaTestCase* /*testcase*/,
+                                          Ptr<LrWpanNetDevice> /*dev*/,
+                                          MlmeStartConfirmParams /*params*/)
 {
     NS_LOG_UNCOND(Simulator::Now().As(Time::S) << "s Beacon Sent");
 }
 
 void
 LrWpanSlottedCsmacaTestCase::IncomingSuperframeStatus(LrWpanSlottedCsmacaTestCase* testcase,
-                                                      Ptr<LrWpanNetDevice> dev,
-                                                      SuperframeStatus oldValue,
+                                                      Ptr<LrWpanNetDevice> /*dev*/,
+                                                      SuperframeStatus /*oldValue*/,
                                                       SuperframeStatus newValue)
 {
     if (newValue == SuperframeStatus::CAP)
@@ -165,7 +165,7 @@ LrWpanSlottedCsmacaTestCase::IncomingSuperframeStatus(LrWpanSlottedCsmacaTestCas
 
 void
 LrWpanSlottedCsmacaTestCase::TransactionCost(LrWpanSlottedCsmacaTestCase* testcase,
-                                             Ptr<LrWpanNetDevice> dev,
+                                             Ptr<LrWpanNetDevice> /*dev*/,
                                              uint32_t trans)
 {
     testcase->m_apBoundary = Simulator::Now();

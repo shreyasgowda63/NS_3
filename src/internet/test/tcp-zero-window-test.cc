@@ -228,7 +228,7 @@ TcpZeroWindowTest::FinalChecks()
 }
 
 void
-TcpZeroWindowTest::ProcessedAck(const Ptr<const TcpSocketState> tcb,
+TcpZeroWindowTest::ProcessedAck(const Ptr<const TcpSocketState> /*tcb*/,
                                 const TcpHeader& h,
                                 SocketWho who)
 {

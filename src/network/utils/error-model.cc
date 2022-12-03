@@ -369,7 +369,7 @@ BurstErrorModel::AssignStreams(int64_t stream)
 }
 
 bool
-BurstErrorModel::DoCorrupt(Ptr<Packet> p)
+BurstErrorModel::DoCorrupt(Ptr<Packet> /*p*/)
 {
     NS_LOG_FUNCTION(this);
     if (!IsEnabled())
@@ -577,7 +577,7 @@ BinaryErrorModel::~BinaryErrorModel()
 }
 
 bool
-BinaryErrorModel::DoCorrupt(Ptr<Packet> p)
+BinaryErrorModel::DoCorrupt(Ptr<Packet> /*p*/)
 {
     NS_LOG_FUNCTION(this);
     if (!IsEnabled())

@@ -120,13 +120,13 @@ class NodeStatistics
     Gnuplot2dDataset m_output; //!< gnuplot 2d dataset
 };
 
-NodeStatistics::NodeStatistics(NetDeviceContainer aps, NetDeviceContainer stas)
+NodeStatistics::NodeStatistics(NetDeviceContainer /*aps*/, NetDeviceContainer /*stas*/)
 {
     m_bytesTotal = 0;
 }
 
 void
-NodeStatistics::RxCallback(std::string path, Ptr<const Packet> packet, const Address& from)
+NodeStatistics::RxCallback(std::string /*path*/, Ptr<const Packet> packet, const Address& /*from*/)
 {
     m_bytesTotal += packet->GetSize();
 }
@@ -169,7 +169,7 @@ NodeStatistics::GetDatafile()
 }
 
 void
-RateCallback(std::string path, uint64_t rate, Mac48Address dest)
+RateCallback(std::string /*path*/, uint64_t rate, Mac48Address dest)
 {
     NS_LOG_INFO((Simulator::Now()).GetSeconds() << " " << dest << " Rate " << rate / 1000000.0);
 }

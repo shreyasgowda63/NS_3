@@ -51,7 +51,7 @@ std::ofstream g_os;
  * \param address The sender address.
  */
 static void
-SinkRx(std::string path, Ptr<const Packet> p, const Address& address)
+SinkRx(std::string /*path*/, Ptr<const Packet> p, const Address& /*address*/)
 {
     g_os << p->GetSize() << std::endl;
 }

@@ -59,7 +59,7 @@ BSScheduler::BSScheduler()
     // wimax-bs-net-device::sendBurst and wimax-ss-net-device::sendBurst
 }
 
-BSScheduler::BSScheduler(Ptr<BaseStationNetDevice> bs)
+BSScheduler::BSScheduler(Ptr<BaseStationNetDevice> /*bs*/)
     : m_downlinkBursts(new std::list<std::pair<OfdmDlMapIe*, Ptr<PacketBurst>>>())
 {
 }

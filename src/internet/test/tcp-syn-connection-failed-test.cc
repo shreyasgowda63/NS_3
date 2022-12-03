@@ -61,7 +61,7 @@ TcpSynConnectionFailedTest::TcpSynConnectionFailedTest(std::string desc, bool us
 }
 
 void
-TcpSynConnectionFailedTest::HandleConnectionFailed(Ptr<Socket> socket)
+TcpSynConnectionFailedTest::HandleConnectionFailed(Ptr<Socket> /*socket*/)
 {
     m_connectionFailed = true;
 }

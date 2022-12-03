@@ -205,7 +205,7 @@ void
 TestThresholdPreambleDetectionWithoutFrameCapture::RxSuccess(Ptr<const WifiPsdu> psdu,
                                                              RxSignalInfo rxSignalInfo,
                                                              WifiTxVector txVector,
-                                                             std::vector<bool> statusPerMpdu)
+                                                             std::vector<bool> /*statusPerMpdu*/)
 {
     NS_LOG_FUNCTION(this << *psdu << rxSignalInfo << txVector);
     m_countRxSuccess++;
@@ -876,9 +876,9 @@ TestThresholdPreambleDetectionWithFrameCapture::CheckRxPacketCount(uint32_t expe
 
 void
 TestThresholdPreambleDetectionWithFrameCapture::RxSuccess(Ptr<const WifiPsdu> psdu,
-                                                          RxSignalInfo rxSignalInfo,
+                                                          RxSignalInfo /*rxSignalInfo*/,
                                                           WifiTxVector txVector,
-                                                          std::vector<bool> statusPerMpdu)
+                                                          std::vector<bool> /*statusPerMpdu*/)
 {
     NS_LOG_FUNCTION(this << *psdu << txVector);
     m_countRxSuccess++;
@@ -1889,7 +1889,7 @@ void
 TestSimpleFrameCaptureModel::RxSuccess(Ptr<const WifiPsdu> psdu,
                                        RxSignalInfo rxSignalInfo,
                                        WifiTxVector txVector,
-                                       std::vector<bool> statusPerMpdu)
+                                       std::vector<bool> /*statusPerMpdu*/)
 {
     NS_LOG_FUNCTION(this << *psdu << rxSignalInfo << txVector);
     NS_ASSERT(!psdu->IsAggregate() || psdu->IsSingle());
@@ -4134,8 +4134,8 @@ TestUnsupportedModulationReception::~TestUnsupportedModulationReception()
 }
 
 void
-TestUnsupportedModulationReception::Dropped(std::string context,
-                                            Ptr<const Packet> packet,
+TestUnsupportedModulationReception::Dropped(std::string /*context*/,
+                                            Ptr<const Packet> /*packet*/,
                                             WifiPhyRxfailureReason reason)
 {
     // Print if the test is executed through test-runner

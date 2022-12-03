@@ -653,7 +653,10 @@ LteTestMac::DoReportBufferStatus(LteMacSapProvider::ReportBufferStatusParameters
 }
 
 bool
-LteTestMac::Receive(Ptr<NetDevice> nd, Ptr<const Packet> p, uint16_t protocol, const Address& addr)
+LteTestMac::Receive(Ptr<NetDevice> /*nd*/,
+                    Ptr<const Packet> p,
+                    uint16_t protocol,
+                    const Address& addr)
 {
     NS_LOG_FUNCTION(this << addr << protocol << p->GetSize());
 

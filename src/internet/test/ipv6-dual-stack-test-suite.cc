@@ -232,25 +232,25 @@ DualStackTestCase::SetUpSim()
 }
 
 void
-DualStackTestCase::ServerHandleConnectionCreated1(Ptr<Socket> s, const Address& addr)
+DualStackTestCase::ServerHandleConnectionCreated1(Ptr<Socket> /*s*/, const Address& addr)
 {
     receivedAddr1 = addr;
 }
 
 void
-DualStackTestCase::ServerHandleConnectionCreated2(Ptr<Socket> s, const Address& addr)
+DualStackTestCase::ServerHandleConnectionCreated2(Ptr<Socket> /*s*/, const Address& addr)
 {
     receivedAddr2 = addr;
 }
 
 void
-DualStackTestCase::ServerHandleConnectionCreated3(Ptr<Socket> s, const Address& addr)
+DualStackTestCase::ServerHandleConnectionCreated3(Ptr<Socket> /*s*/, const Address& addr)
 {
     receivedAddr3 = addr;
 }
 
 void
-DualStackTestCase::ServerHandleConnectionCreated4(Ptr<Socket> s, const Address& addr)
+DualStackTestCase::ServerHandleConnectionCreated4(Ptr<Socket> /*s*/, const Address& addr)
 {
     receivedAddr4 = addr;
 }

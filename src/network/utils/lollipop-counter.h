@@ -336,7 +336,7 @@ class LollipopCounter
      * \param [in] noop ignored argument (used to mark it as a postfix, blame c++).
      * \return The result of the Postfix increment.
      */
-    friend LollipopCounter operator++(LollipopCounter& val, int noop) // postfix ++
+    friend LollipopCounter operator++(LollipopCounter& val, int /*noop*/) // postfix ++
     {
         LollipopCounter ans = val;
         ++(val); // or just call operator++()

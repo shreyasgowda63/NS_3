@@ -307,14 +307,13 @@ MakeSimpleAttributeChecker(std::string name, std::string underlying)
     {                                                                                              \
         return ns3::Create<name##Value>(*this);                                                    \
     }                                                                                              \
-    std::string name##Value::SerializeToString(Ptr<const AttributeChecker> checker) const          \
+    std::string name##Value::SerializeToString(Ptr<const AttributeChecker>) const                  \
     {                                                                                              \
         std::ostringstream oss;                                                                    \
         oss << m_value;                                                                            \
         return oss.str();                                                                          \
     }                                                                                              \
-    bool name##Value::DeserializeFromString(std::string value,                                     \
-                                            Ptr<const AttributeChecker> checker)                   \
+    bool name##Value::DeserializeFromString(std::string value, Ptr<const AttributeChecker>)        \
     {                                                                                              \
         std::istringstream iss;                                                                    \
         iss.str(value);                                                                            \

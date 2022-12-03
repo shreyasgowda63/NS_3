@@ -61,7 +61,7 @@ LrWpanPlmeAndPdInterfaceTestCase::~LrWpanPlmeAndPdInterfaceTestCase()
 
 void
 LrWpanPlmeAndPdInterfaceTestCase::ReceivePdDataIndication(uint32_t psduLength,
-                                                          Ptr<Packet> p,
+                                                          Ptr<Packet> /*p*/,
                                                           uint8_t lqi)
 {
     NS_LOG_UNCOND("At: " << Simulator::Now() << " Received frame size: " << psduLength

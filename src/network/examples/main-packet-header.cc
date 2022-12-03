@@ -115,7 +115,7 @@ MyHeader::GetData() const
 }
 
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     // Enable the packet printing through Packet::Print command.
     Packet::EnablePrinting();
