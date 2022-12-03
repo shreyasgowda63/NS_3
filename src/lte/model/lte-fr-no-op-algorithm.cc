@@ -113,7 +113,7 @@ LteFrNoOpAlgorithm::DoGetAvailableDlRbg()
 }
 
 bool
-LteFrNoOpAlgorithm::DoIsDlRbgAvailableForUe(int i, uint16_t rnti)
+LteFrNoOpAlgorithm::DoIsDlRbgAvailableForUe(int /*i*/, uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
     return true;
@@ -129,7 +129,7 @@ LteFrNoOpAlgorithm::DoGetAvailableUlRbg()
 }
 
 bool
-LteFrNoOpAlgorithm::DoIsUlRbgAvailableForUe(int i, uint16_t rnti)
+LteFrNoOpAlgorithm::DoIsUlRbgAvailableForUe(int /*i*/, uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
     return true;
@@ -137,7 +137,7 @@ LteFrNoOpAlgorithm::DoIsUlRbgAvailableForUe(int i, uint16_t rnti)
 
 void
 LteFrNoOpAlgorithm::DoReportDlCqiInfo(
-    const struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
@@ -145,21 +145,21 @@ LteFrNoOpAlgorithm::DoReportDlCqiInfo(
 
 void
 LteFrNoOpAlgorithm::DoReportUlCqiInfo(
-    const struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
 }
 
 void
-LteFrNoOpAlgorithm::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> ulCqiMap)
+LteFrNoOpAlgorithm::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> /*ulCqiMap*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
 }
 
 uint8_t
-LteFrNoOpAlgorithm::DoGetTpc(uint16_t rnti)
+LteFrNoOpAlgorithm::DoGetTpc(uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
     return 1; // 1 is mapped to 0 for Accumulated mode, and to -1 in Absolute mode TS36.213
@@ -181,7 +181,7 @@ LteFrNoOpAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measRes
 }
 
 void
-LteFrNoOpAlgorithm::DoRecvLoadInformation(EpcX2Sap::LoadInformationParams params)
+LteFrNoOpAlgorithm::DoRecvLoadInformation(EpcX2Sap::LoadInformationParams /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");

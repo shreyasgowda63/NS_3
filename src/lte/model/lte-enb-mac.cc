@@ -915,7 +915,7 @@ LteEnbMac::DoAddLc(LteEnbCmacSapProvider::LcInfo lcinfo, LteMacSapUser* msu)
 }
 
 void
-LteEnbMac::DoReconfigureLc(LteEnbCmacSapProvider::LcInfo lcinfo)
+LteEnbMac::DoReconfigureLc(LteEnbCmacSapProvider::LcInfo /*lcinfo*/)
 {
     NS_FATAL_ERROR("not implemented");
 }
@@ -1246,19 +1246,19 @@ LteEnbMac::DoSchedUlConfigInd(FfMacSchedSapUser::SchedUlConfigIndParameters ind)
 // ////////////////////////////////////////////
 
 void
-LteEnbMac::DoCschedCellConfigCnf(FfMacCschedSapUser::CschedCellConfigCnfParameters params)
+LteEnbMac::DoCschedCellConfigCnf(FfMacCschedSapUser::CschedCellConfigCnfParameters /*params*/)
 {
     NS_LOG_FUNCTION(this);
 }
 
 void
-LteEnbMac::DoCschedUeConfigCnf(FfMacCschedSapUser::CschedUeConfigCnfParameters params)
+LteEnbMac::DoCschedUeConfigCnf(FfMacCschedSapUser::CschedUeConfigCnfParameters /*params*/)
 {
     NS_LOG_FUNCTION(this);
 }
 
 void
-LteEnbMac::DoCschedLcConfigCnf(FfMacCschedSapUser::CschedLcConfigCnfParameters params)
+LteEnbMac::DoCschedLcConfigCnf(FfMacCschedSapUser::CschedLcConfigCnfParameters /*params*/)
 {
     NS_LOG_FUNCTION(this);
     // Call the CSCHED primitive
@@ -1266,13 +1266,13 @@ LteEnbMac::DoCschedLcConfigCnf(FfMacCschedSapUser::CschedLcConfigCnfParameters p
 }
 
 void
-LteEnbMac::DoCschedLcReleaseCnf(FfMacCschedSapUser::CschedLcReleaseCnfParameters params)
+LteEnbMac::DoCschedLcReleaseCnf(FfMacCschedSapUser::CschedLcReleaseCnfParameters /*params*/)
 {
     NS_LOG_FUNCTION(this);
 }
 
 void
-LteEnbMac::DoCschedUeReleaseCnf(FfMacCschedSapUser::CschedUeReleaseCnfParameters params)
+LteEnbMac::DoCschedUeReleaseCnf(FfMacCschedSapUser::CschedUeReleaseCnfParameters /*params*/)
 {
     NS_LOG_FUNCTION(this);
 }
@@ -1290,7 +1290,7 @@ LteEnbMac::DoCschedUeConfigUpdateInd(FfMacCschedSapUser::CschedUeConfigUpdateInd
 
 void
 LteEnbMac::DoCschedCellConfigUpdateInd(
-    FfMacCschedSapUser::CschedCellConfigUpdateIndParameters params)
+    FfMacCschedSapUser::CschedCellConfigUpdateIndParameters /*params*/)
 {
     NS_LOG_FUNCTION(this);
 }

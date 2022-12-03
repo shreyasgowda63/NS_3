@@ -1176,7 +1176,7 @@ void
 TcpSocketBase::ForwardUp(Ptr<Packet> packet,
                          Ipv4Header header,
                          uint16_t port,
-                         Ptr<Ipv4Interface> incomingInterface)
+                         Ptr<Ipv4Interface> /*incomingInterface*/)
 {
     NS_LOG_LOGIC("Socket " << this << " forward up " << m_endPoint->GetPeerAddress() << ":"
                            << m_endPoint->GetPeerPort() << " to " << m_endPoint->GetLocalAddress()
@@ -1216,7 +1216,7 @@ void
 TcpSocketBase::ForwardUp6(Ptr<Packet> packet,
                           Ipv6Header header,
                           uint16_t port,
-                          Ptr<Ipv6Interface> incomingInterface)
+                          Ptr<Ipv6Interface> /*incomingInterface*/)
 {
     NS_LOG_LOGIC("Socket " << this << " forward up " << m_endPoint6->GetPeerAddress() << ":"
                            << m_endPoint6->GetPeerPort() << " to " << m_endPoint6->GetLocalAddress()
@@ -2554,7 +2554,7 @@ TcpSocketBase::ProcessWait(Ptr<Packet> packet, const TcpHeader& tcpHeader)
 
 /* Received a packet upon CLOSING */
 void
-TcpSocketBase::ProcessClosing(Ptr<Packet> packet, const TcpHeader& tcpHeader)
+TcpSocketBase::ProcessClosing(Ptr<Packet> /*packet*/, const TcpHeader& tcpHeader)
 {
     NS_LOG_FUNCTION(this << tcpHeader);
 

@@ -588,7 +588,7 @@ WaveNetDevice::IsLinkUp() const
 }
 
 void
-WaveNetDevice::AddLinkChangeCallback(Callback<void> callback)
+WaveNetDevice::AddLinkChangeCallback(Callback<void> /*callback*/)
 {
     NS_LOG_WARN("WaveNetDevice is linkup forever, so this callback will be never called");
 }

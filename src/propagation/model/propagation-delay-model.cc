@@ -75,7 +75,7 @@ RandomPropagationDelayModel::~RandomPropagationDelayModel()
 }
 
 Time
-RandomPropagationDelayModel::GetDelay(Ptr<MobilityModel> a, Ptr<MobilityModel> b) const
+RandomPropagationDelayModel::GetDelay(Ptr<MobilityModel> /*a*/, Ptr<MobilityModel> /*b*/) const
 {
     return Seconds(m_variable->GetValue());
 }
@@ -131,7 +131,7 @@ ConstantSpeedPropagationDelayModel::GetSpeed() const
 }
 
 int64_t
-ConstantSpeedPropagationDelayModel::DoAssignStreams(int64_t stream)
+ConstantSpeedPropagationDelayModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }

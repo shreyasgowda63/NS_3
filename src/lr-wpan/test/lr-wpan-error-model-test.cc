@@ -96,7 +96,7 @@ LrWpanErrorDistanceTestCase::~LrWpanErrorDistanceTestCase()
 }
 
 void
-LrWpanErrorDistanceTestCase::Callback(McpsDataIndicationParams params, Ptr<Packet> p)
+LrWpanErrorDistanceTestCase::Callback(McpsDataIndicationParams /*params*/, Ptr<Packet> /*p*/)
 {
     m_received++;
 }

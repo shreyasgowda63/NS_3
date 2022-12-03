@@ -1755,7 +1755,7 @@ CartesianToGeoTestCase::CartesianToGeoTestCase(double latitude,
                                                double longitude,
                                                double altitude,
                                                GeographicPositions::EarthSpheroidType sphType,
-                                               int i)
+                                               int /*i*/)
     : TestCase(Name(latitude, longitude, altitude, sphType)),
       m_latitude(latitude),
       m_longitude(longitude),

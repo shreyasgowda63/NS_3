@@ -79,7 +79,9 @@ Ns3TcpSocketTestCaseP2P::Ns3TcpSocketTestCaseP2P()
 }
 
 void
-Ns3TcpSocketTestCaseP2P::SinkRx(std::string path, Ptr<const Packet> p, const Address& address)
+Ns3TcpSocketTestCaseP2P::SinkRx(std::string /*path*/,
+                                Ptr<const Packet> p,
+                                const Address& /*address*/)
 {
     m_responses.Add(p->GetSize());
 }
@@ -204,7 +206,9 @@ Ns3TcpSocketTestCaseCsma::Ns3TcpSocketTestCaseCsma()
 }
 
 void
-Ns3TcpSocketTestCaseCsma::SinkRx(std::string path, Ptr<const Packet> p, const Address& address)
+Ns3TcpSocketTestCaseCsma::SinkRx(std::string /*path*/,
+                                 Ptr<const Packet> p,
+                                 const Address& /*address*/)
 {
     m_responses.Add(p->GetSize());
 }

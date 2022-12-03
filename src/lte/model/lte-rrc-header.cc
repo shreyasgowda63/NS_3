@@ -7133,7 +7133,7 @@ RrcUlDcchMessage::Deserialize(Buffer::Iterator bIterator)
 }
 
 void
-RrcUlDcchMessage::Print(std::ostream& os) const
+RrcUlDcchMessage::Print(std::ostream& /*os*/) const
 {
     std::cout << "UL DCCH MSG TYPE: " << m_messageType << std::endl;
 }
@@ -7195,7 +7195,7 @@ RrcDlDcchMessage::Deserialize(Buffer::Iterator bIterator)
 }
 
 void
-RrcDlDcchMessage::Print(std::ostream& os) const
+RrcDlDcchMessage::Print(std::ostream& /*os*/) const
 {
     std::cout << "DL DCCH MSG TYPE: " << m_messageType << std::endl;
 }
@@ -7257,7 +7257,7 @@ RrcUlCcchMessage::Deserialize(Buffer::Iterator bIterator)
 }
 
 void
-RrcUlCcchMessage::Print(std::ostream& os) const
+RrcUlCcchMessage::Print(std::ostream& /*os*/) const
 {
     std::cout << "UL CCCH MSG TYPE: " << m_messageType << std::endl;
 }
@@ -7319,7 +7319,7 @@ RrcDlCcchMessage::Deserialize(Buffer::Iterator bIterator)
 }
 
 void
-RrcDlCcchMessage::Print(std::ostream& os) const
+RrcDlCcchMessage::Print(std::ostream& /*os*/) const
 {
     std::cout << "DL CCCH MSG TYPE: " << m_messageType << std::endl;
 }

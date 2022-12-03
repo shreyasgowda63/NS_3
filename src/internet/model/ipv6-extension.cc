@@ -385,7 +385,7 @@ Ipv6ExtensionFragment::Process(Ptr<Packet>& packet,
                                uint8_t* nextHeader,
                                bool& stopProcessing,
                                bool& isDropped,
-                               Ipv6L3Protocol::DropReason& dropReason)
+                               Ipv6L3Protocol::DropReason& /*dropReason*/)
 {
     NS_LOG_FUNCTION(this << packet << offset << ipv6Header << dst << nextHeader << isDropped);
 
@@ -1232,9 +1232,9 @@ Ipv6ExtensionESP::Process(Ptr<Packet>& packet,
                           const Ipv6Header& ipv6Header,
                           Ipv6Address dst,
                           uint8_t* nextHeader,
-                          bool& stopProcessing,
+                          bool& /*stopProcessing*/,
                           bool& isDropped,
-                          Ipv6L3Protocol::DropReason& dropReason)
+                          Ipv6L3Protocol::DropReason& /*dropReason*/)
 {
     NS_LOG_FUNCTION(this << packet << offset << ipv6Header << dst << nextHeader << isDropped);
 
@@ -1275,9 +1275,9 @@ Ipv6ExtensionAH::Process(Ptr<Packet>& packet,
                          const Ipv6Header& ipv6Header,
                          Ipv6Address dst,
                          uint8_t* nextHeader,
-                         bool& stopProcessing,
+                         bool& /*stopProcessing*/,
                          bool& isDropped,
-                         Ipv6L3Protocol::DropReason& dropReason)
+                         Ipv6L3Protocol::DropReason& /*dropReason*/)
 {
     NS_LOG_FUNCTION(this << packet << offset << ipv6Header << dst << nextHeader << isDropped);
 

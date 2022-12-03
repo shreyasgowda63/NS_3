@@ -61,7 +61,7 @@ PacketCounterCalculator::DoDispose()
 }
 
 void
-PacketCounterCalculator::PacketUpdate(std::string path, Ptr<const Packet> packet)
+PacketCounterCalculator::PacketUpdate(std::string /*path*/, Ptr<const Packet> /*packet*/)
 {
     NS_LOG_FUNCTION_NOARGS();
 
@@ -71,9 +71,9 @@ PacketCounterCalculator::PacketUpdate(std::string path, Ptr<const Packet> packet
 }
 
 void
-PacketCounterCalculator::FrameUpdate(std::string path,
-                                     Ptr<const Packet> packet,
-                                     Mac48Address realto)
+PacketCounterCalculator::FrameUpdate(std::string /*path*/,
+                                     Ptr<const Packet> /*packet*/,
+                                     Mac48Address /*realto*/)
 {
     NS_LOG_FUNCTION_NOARGS();
 
@@ -115,7 +115,7 @@ PacketSizeMinMaxAvgTotalCalculator::DoDispose()
 }
 
 void
-PacketSizeMinMaxAvgTotalCalculator::PacketUpdate(std::string path, Ptr<const Packet> packet)
+PacketSizeMinMaxAvgTotalCalculator::PacketUpdate(std::string /*path*/, Ptr<const Packet> packet)
 {
     NS_LOG_FUNCTION_NOARGS();
 
@@ -125,9 +125,9 @@ PacketSizeMinMaxAvgTotalCalculator::PacketUpdate(std::string path, Ptr<const Pac
 }
 
 void
-PacketSizeMinMaxAvgTotalCalculator::FrameUpdate(std::string path,
+PacketSizeMinMaxAvgTotalCalculator::FrameUpdate(std::string /*path*/,
                                                 Ptr<const Packet> packet,
-                                                Mac48Address realto)
+                                                Mac48Address /*realto*/)
 {
     NS_LOG_FUNCTION_NOARGS();
 

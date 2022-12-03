@@ -68,7 +68,7 @@ CheckQueueSize(Ptr<QueueDisc> queue)
 
 // Function to trace change in cwnd at n0
 static void
-CwndChange(uint32_t oldCwnd, uint32_t newCwnd)
+CwndChange(uint32_t /*oldCwnd*/, uint32_t newCwnd)
 {
     std::ofstream fPlotQueue(dir + "cwndTraces/n0.dat", std::ios::out | std::ios::app);
     fPlotQueue << Simulator::Now().GetSeconds() << " " << newCwnd / segmentSize << std::endl;

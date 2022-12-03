@@ -123,13 +123,13 @@ LrWpanAckTestCase::LrWpanAckTestCase(const char* const prefix, TestMode_e mode)
 }
 
 void
-LrWpanAckTestCase::DataIndicationDev0(McpsDataIndicationParams params, Ptr<Packet> p)
+LrWpanAckTestCase::DataIndicationDev0(McpsDataIndicationParams /*params*/, Ptr<Packet> /*p*/)
 {
     m_replyArrivalTime = Simulator::Now();
 }
 
 void
-LrWpanAckTestCase::DataIndicationDev1(McpsDataIndicationParams params, Ptr<Packet> p)
+LrWpanAckTestCase::DataIndicationDev1(McpsDataIndicationParams /*params*/, Ptr<Packet> /*p*/)
 {
     Ptr<Packet> pkt = Create<Packet>(10); // 10 bytes of dummy data
     McpsDataRequestParams replyParams;
@@ -154,13 +154,13 @@ LrWpanAckTestCase::DataIndicationDev1(McpsDataIndicationParams params, Ptr<Packe
 }
 
 void
-LrWpanAckTestCase::DataConfirmDev0(McpsDataConfirmParams params)
+LrWpanAckTestCase::DataConfirmDev0(McpsDataConfirmParams /*params*/)
 {
     m_requestSentTime = Simulator::Now();
 }
 
 void
-LrWpanAckTestCase::DataConfirmDev1(McpsDataConfirmParams params)
+LrWpanAckTestCase::DataConfirmDev1(McpsDataConfirmParams /*params*/)
 {
     m_replySentTime = Simulator::Now();
 }

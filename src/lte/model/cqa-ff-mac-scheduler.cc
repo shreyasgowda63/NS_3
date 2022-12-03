@@ -500,7 +500,7 @@ CqaFfMacScheduler::DoSchedDlRlcBufferReq(
 
 void
 CqaFfMacScheduler::DoSchedDlPagingBufferReq(
-    const struct FfMacSchedSapProvider::SchedDlPagingBufferReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedDlPagingBufferReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_FATAL_ERROR("method not implemented");
@@ -508,7 +508,7 @@ CqaFfMacScheduler::DoSchedDlPagingBufferReq(
 
 void
 CqaFfMacScheduler::DoSchedDlMacBufferReq(
-    const struct FfMacSchedSapProvider::SchedDlMacBufferReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedDlMacBufferReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_FATAL_ERROR("method not implemented");
@@ -2326,14 +2326,14 @@ CqaFfMacScheduler::DoSchedUlTriggerReq(
 
 void
 CqaFfMacScheduler::DoSchedUlNoiseInterferenceReq(
-    const struct FfMacSchedSapProvider::SchedUlNoiseInterferenceReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedUlNoiseInterferenceReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
 }
 
 void
 CqaFfMacScheduler::DoSchedUlSrInfoReq(
-    const struct FfMacSchedSapProvider::SchedUlSrInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedUlSrInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
 }

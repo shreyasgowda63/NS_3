@@ -644,7 +644,7 @@ RoutingHelper::SetupRoutingMessages(NodeContainer& c, Ipv4InterfaceContainer& ad
  * \return the built string
  */
 static inline std::string
-PrintReceivedRoutingPacket(Ptr<Socket> socket, Ptr<Packet> packet, Address srcAddress)
+PrintReceivedRoutingPacket(Ptr<Socket> socket, Address srcAddress)
 {
     std::ostringstream oss;
 
@@ -675,14 +675,13 @@ RoutingHelper::ReceiveRoutingPacket(Ptr<Socket> socket)
         GetRoutingStats().IncRxPkts();
         if (m_log)
         {
-            NS_LOG_UNCOND(m_protocolName + " " +
-                          PrintReceivedRoutingPacket(socket, packet, srcAddress));
+            NS_LOG_UNCOND(m_protocolName + " " + PrintReceivedRoutingPacket(socket, srcAddress));
         }
     }
 }
 
 void
-RoutingHelper::OnOffTrace(std::string context, Ptr<const Packet> packet)
+RoutingHelper::OnOffTrace(std::string /*context*/, Ptr<const Packet> packet)
 {
     uint32_t pktBytes = packet->GetSize();
     routingStats.IncTxBytes(pktBytes);
@@ -788,8 +787,8 @@ void
 WifiPhyStats::PhyTxTrace(std::string context,
                          Ptr<const Packet> packet,
                          WifiMode mode,
-                         WifiPreamble preamble,
-                         uint8_t txPower)
+                         WifiPreamble /*preamble*/,
+                         uint8_t /*txPower*/)
 {
     NS_LOG_FUNCTION(this << context << packet << "PHYTX mode=" << mode);
     ++m_phyTxPkts;
@@ -800,15 +799,15 @@ WifiPhyStats::PhyTxTrace(std::string context,
 }
 
 void
-WifiPhyStats::PhyTxDrop(std::string context, Ptr<const Packet> packet)
+WifiPhyStats::PhyTxDrop(std::string /*context*/, Ptr<const Packet> /*packet*/)
 {
     NS_LOG_UNCOND("PHY Tx Drop");
 }
 
 void
-WifiPhyStats::PhyRxDrop(std::string context,
-                        Ptr<const Packet> packet,
-                        WifiPhyRxfailureReason reason)
+WifiPhyStats::PhyRxDrop(std::string /*context*/,
+                        Ptr<const Packet> /*packet*/,
+                        WifiPhyRxfailureReason /*reason*/)
 {
     NS_LOG_UNCOND("PHY Rx Drop");
 }
@@ -1767,7 +1766,7 @@ VanetRoutingExperiment::Run()
 // Prints actual position and velocity when a course change event occurs
 void
 VanetRoutingExperiment::CourseChange(std::ostream* os,
-                                     std::string context,
+                                     std::string /*context*/,
                                      Ptr<const MobilityModel> mobility)
 {
     Vector pos = mobility->GetPosition(); // Get position

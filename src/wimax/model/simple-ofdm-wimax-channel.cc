@@ -144,11 +144,11 @@ SimpleOfdmWimaxChannel::DoGetDevice(std::size_t index) const
 }
 
 void
-SimpleOfdmWimaxChannel::Send(Time BlockTime,
+SimpleOfdmWimaxChannel::Send(Time /*BlockTime*/,
                              uint32_t burstSize,
                              Ptr<WimaxPhy> phy,
                              bool isFirstBlock,
-                             bool isLastBlock,
+                             bool /*isLastBlock*/,
                              uint64_t frequency,
                              WimaxPhy::ModulationType modulationType,
                              uint8_t direction,

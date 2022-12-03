@@ -275,7 +275,7 @@ NodeStatistics::GetCalcTxTime(DataRate rate)
 }
 
 void
-NodeStatistics::PhyCallback(std::string path, Ptr<const Packet> packet, double powerW)
+NodeStatistics::PhyCallback(std::string /*path*/, Ptr<const Packet> packet, double /*powerW*/)
 {
     WifiMacHeader head;
     packet->PeekHeader(head);
@@ -290,14 +290,17 @@ NodeStatistics::PhyCallback(std::string path, Ptr<const Packet> packet, double p
 }
 
 void
-NodeStatistics::PowerCallback(std::string path, double oldPower, double newPower, Mac48Address dest)
+NodeStatistics::PowerCallback(std::string /*path*/,
+                              double /*oldPower*/,
+                              double newPower,
+                              Mac48Address dest)
 {
     m_currentPower[dest] = newPower;
 }
 
 void
-NodeStatistics::RateCallback(std::string path,
-                             DataRate oldRate,
+NodeStatistics::RateCallback(std::string /*path*/,
+                             DataRate /*oldRate*/,
                              DataRate newRate,
                              Mac48Address dest)
 {
@@ -305,7 +308,7 @@ NodeStatistics::RateCallback(std::string path,
 }
 
 void
-NodeStatistics::RxCallback(std::string path, Ptr<const Packet> packet, const Address& from)
+NodeStatistics::RxCallback(std::string /*path*/, Ptr<const Packet> packet, const Address& /*from*/)
 {
     m_bytesTotal += packet->GetSize();
 }
@@ -368,7 +371,7 @@ NodeStatistics::GetPowerDatafile()
  * \param dest Destination of the transmission.
  */
 void
-PowerCallback(std::string path, double oldPower, double newPower, Mac48Address dest)
+PowerCallback(std::string /*path*/, double oldPower, double newPower, Mac48Address dest)
 {
     NS_LOG_INFO((Simulator::Now()).GetSeconds()
                 << " " << dest << " Old power=" << oldPower << " New power=" << newPower);
@@ -383,7 +386,7 @@ PowerCallback(std::string path, double oldPower, double newPower, Mac48Address d
  * \param dest Destination of the transmission.
  */
 void
-RateCallback(std::string path, DataRate oldRate, DataRate newRate, Mac48Address dest)
+RateCallback(std::string /*path*/, DataRate oldRate, DataRate newRate, Mac48Address dest)
 {
     NS_LOG_INFO((Simulator::Now()).GetSeconds()
                 << " " << dest << " Old rate=" << oldRate << " New rate=" << newRate);

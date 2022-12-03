@@ -162,7 +162,7 @@ void
 SpectrumWifiPhyBasicTest::SpectrumWifiPhyRxSuccess(Ptr<const WifiPsdu> psdu,
                                                    RxSignalInfo rxSignalInfo,
                                                    WifiTxVector txVector,
-                                                   std::vector<bool> statusPerMpdu)
+                                                   std::vector<bool> /*statusPerMpdu*/)
 {
     NS_LOG_FUNCTION(this << *psdu << rxSignalInfo << txVector);
     m_count++;
@@ -457,7 +457,7 @@ SpectrumWifiPhyFilterTest::~SpectrumWifiPhyFilterTest()
 }
 
 void
-SpectrumWifiPhyFilterTest::RxCallback(Ptr<const Packet> p, RxPowerWattPerChannelBand rxPowersW)
+SpectrumWifiPhyFilterTest::RxCallback(Ptr<const Packet> /*p*/, RxPowerWattPerChannelBand rxPowersW)
 {
     for (const auto& pair : rxPowersW)
     {

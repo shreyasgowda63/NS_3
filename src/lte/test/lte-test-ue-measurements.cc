@@ -57,20 +57,20 @@ NS_LOG_COMPONENT_DEFINE("LteUeMeasurementsTest");
 
 void
 ReportUeMeasurementsCallback(LteUeMeasurementsTestCase* testcase,
-                             std::string path,
+                             std::string /*path*/,
                              uint16_t rnti,
                              uint16_t cellId,
                              double rsrp,
                              double rsrq,
                              bool servingCell,
-                             uint8_t componentCarrierId)
+                             uint8_t /*componentCarrierId*/)
 {
     testcase->ReportUeMeasurements(rnti, cellId, rsrp, rsrq, servingCell);
 }
 
 void
 RecvMeasurementReportCallback(LteUeMeasurementsTestCase* testcase,
-                              std::string path,
+                              std::string /*path*/,
                               uint64_t imsi,
                               uint16_t cellId,
                               uint16_t rnti,
@@ -345,7 +345,7 @@ LteUeMeasurementsTestCase::DoRun()
 }
 
 void
-LteUeMeasurementsTestCase::ReportUeMeasurements(uint16_t rnti,
+LteUeMeasurementsTestCase::ReportUeMeasurements(uint16_t /*rnti*/,
                                                 uint16_t cellId,
                                                 double rsrp,
                                                 double rsrq,
@@ -857,7 +857,7 @@ LteUeMeasurementsPiecewiseTestCase1::DoTeardown()
 void
 LteUeMeasurementsPiecewiseTestCase1::RecvMeasurementReportCallback(
     std::string context,
-    uint64_t imsi,
+    uint64_t /*imsi*/,
     uint16_t cellId,
     uint16_t rnti,
     LteRrcSap::MeasurementReport report)
@@ -1561,7 +1561,7 @@ LteUeMeasurementsPiecewiseTestCase2::DoTeardown()
 void
 LteUeMeasurementsPiecewiseTestCase2::RecvMeasurementReportCallback(
     std::string context,
-    uint64_t imsi,
+    uint64_t /*imsi*/,
     uint16_t cellId,
     uint16_t rnti,
     LteRrcSap::MeasurementReport report)
@@ -1850,7 +1850,7 @@ LteUeMeasurementsPiecewiseTestCase3::DoTeardown()
 void
 LteUeMeasurementsPiecewiseTestCase3::RecvMeasurementReportCallback(
     std::string context,
-    uint64_t imsi,
+    uint64_t /*imsi*/,
     uint16_t cellId,
     uint16_t rnti,
     LteRrcSap::MeasurementReport report)
@@ -2459,9 +2459,9 @@ LteUeMeasurementsHandoverTestCase::DoTeardown()
 void
 LteUeMeasurementsHandoverTestCase::RecvMeasurementReportCallback(
     std::string context,
-    uint64_t imsi,
+    uint64_t /*imsi*/,
     uint16_t cellId,
-    uint16_t rnti,
+    uint16_t /*rnti*/,
     LteRrcSap::MeasurementReport report)
 {
     uint8_t measId = report.measResults.measId;

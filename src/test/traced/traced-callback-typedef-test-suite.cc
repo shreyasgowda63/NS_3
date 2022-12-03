@@ -135,7 +135,7 @@ std::set<std::string> g_dupes = Duplicates();
  */
 template <typename T>
 inline std::string
-TypeName(int N)
+TypeName(int N [[maybe_unused]])
 {
     return "unknown";
 }

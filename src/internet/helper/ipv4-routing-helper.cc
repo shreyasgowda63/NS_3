@@ -174,7 +174,9 @@ Ipv4RoutingHelper::PrintNeighborCacheEvery(Time printInterval,
 }
 
 void
-Ipv4RoutingHelper::PrintArpCache(Ptr<Node> node, Ptr<OutputStreamWrapper> stream, Time::Unit unit)
+Ipv4RoutingHelper::PrintArpCache(Ptr<Node> node,
+                                 Ptr<OutputStreamWrapper> stream,
+                                 Time::Unit /*unit*/)
 {
     Ptr<Ipv4L3Protocol> ipv4 = node->GetObject<Ipv4L3Protocol>();
     if (ipv4)

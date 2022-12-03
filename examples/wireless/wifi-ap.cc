@@ -43,7 +43,7 @@ static bool g_verbose = true;
  * \param p The packet.
  */
 void
-DevTxTrace(std::string context, Ptr<const Packet> p)
+DevTxTrace(std::string /*context*/, Ptr<const Packet> p)
 {
     if (g_verbose)
     {
@@ -58,7 +58,7 @@ DevTxTrace(std::string context, Ptr<const Packet> p)
  * \param p The packet.
  */
 void
-DevRxTrace(std::string context, Ptr<const Packet> p)
+DevRxTrace(std::string /*context*/, Ptr<const Packet> p)
 {
     if (g_verbose)
     {
@@ -76,11 +76,11 @@ DevRxTrace(std::string context, Ptr<const Packet> p)
  * \param preamble The preamble.
  */
 void
-PhyRxOkTrace(std::string context,
+PhyRxOkTrace(std::string /*context*/,
              Ptr<const Packet> packet,
              double snr,
              WifiMode mode,
-             WifiPreamble preamble)
+             WifiPreamble /*preamble*/)
 {
     if (g_verbose)
     {
@@ -96,7 +96,7 @@ PhyRxOkTrace(std::string context,
  * \param snr The SNR.
  */
 void
-PhyRxErrorTrace(std::string context, Ptr<const Packet> packet, double snr)
+PhyRxErrorTrace(std::string /*context*/, Ptr<const Packet> packet, double snr)
 {
     if (g_verbose)
     {
@@ -114,11 +114,11 @@ PhyRxErrorTrace(std::string context, Ptr<const Packet> packet, double snr)
  * \param txPower The TX power.
  */
 void
-PhyTxTrace(std::string context,
+PhyTxTrace(std::string /*context*/,
            Ptr<const Packet> packet,
            WifiMode mode,
-           WifiPreamble preamble,
-           uint8_t txPower)
+           WifiPreamble /*preamble*/,
+           uint8_t /*txPower*/)
 {
     if (g_verbose)
     {
@@ -135,7 +135,7 @@ PhyTxTrace(std::string context,
  * \param state The state.
  */
 void
-PhyStateTrace(std::string context, Time start, Time duration, WifiPhyState state)
+PhyStateTrace(std::string /*context*/, Time start, Time duration, WifiPhyState state)
 {
     if (g_verbose)
     {

@@ -32,21 +32,21 @@ using namespace ns3;
 class Ipv6ARouting : public Ipv6RoutingProtocol
 {
   public:
-    Ptr<Ipv6Route> RouteOutput(Ptr<Packet> p,
-                               const Ipv6Header& header,
-                               Ptr<NetDevice> oif,
-                               Socket::SocketErrno& sockerr) override
+    Ptr<Ipv6Route> RouteOutput(Ptr<Packet> /*p*/,
+                               const Ipv6Header& /*header*/,
+                               Ptr<NetDevice> /*oif*/,
+                               Socket::SocketErrno& /*sockerr*/) override
     {
         return nullptr;
     }
 
-    bool RouteInput(Ptr<const Packet> p,
-                    const Ipv6Header& header,
-                    Ptr<const NetDevice> idev,
-                    UnicastForwardCallback ucb,
-                    MulticastForwardCallback mcb,
-                    LocalDeliverCallback lcb,
-                    ErrorCallback ecb) override
+    bool RouteInput(Ptr<const Packet> /*p*/,
+                    const Ipv6Header& /*header*/,
+                    Ptr<const NetDevice> /*idev*/,
+                    UnicastForwardCallback /*ucb*/,
+                    MulticastForwardCallback /*mcb*/,
+                    LocalDeliverCallback /*lcb*/,
+                    ErrorCallback /*ecb*/) override
     {
         return false;
     }
@@ -99,21 +99,21 @@ class Ipv6ARouting : public Ipv6RoutingProtocol
 class Ipv6BRouting : public Ipv6RoutingProtocol
 {
   public:
-    Ptr<Ipv6Route> RouteOutput(Ptr<Packet> p,
-                               const Ipv6Header& header,
-                               Ptr<NetDevice> oif,
-                               Socket::SocketErrno& sockerr) override
+    Ptr<Ipv6Route> RouteOutput(Ptr<Packet> /*p*/,
+                               const Ipv6Header& /*header*/,
+                               Ptr<NetDevice> /*oif*/,
+                               Socket::SocketErrno& /*sockerr*/) override
     {
         return nullptr;
     }
 
-    bool RouteInput(Ptr<const Packet> p,
-                    const Ipv6Header& header,
-                    Ptr<const NetDevice> idev,
-                    UnicastForwardCallback ucb,
-                    MulticastForwardCallback mcb,
-                    LocalDeliverCallback lcb,
-                    ErrorCallback ecb) override
+    bool RouteInput(Ptr<const Packet> /*p*/,
+                    const Ipv6Header& /*header*/,
+                    Ptr<const NetDevice> /*idev*/,
+                    UnicastForwardCallback /*ucb*/,
+                    MulticastForwardCallback /*mcb*/,
+                    LocalDeliverCallback /*lcb*/,
+                    ErrorCallback /*ecb*/) override
     {
         return false;
     }

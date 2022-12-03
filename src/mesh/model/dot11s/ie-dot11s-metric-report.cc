@@ -66,7 +66,7 @@ IeLinkMetricReport::SerializeInformationField(Buffer::Iterator i) const
 }
 
 uint16_t
-IeLinkMetricReport::DeserializeInformationField(Buffer::Iterator start, uint16_t length)
+IeLinkMetricReport::DeserializeInformationField(Buffer::Iterator start, uint16_t /*length*/)
 {
     Buffer::Iterator i = start;
     m_metric = i.ReadLsbtohU32();

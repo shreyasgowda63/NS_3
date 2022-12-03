@@ -71,7 +71,7 @@ PointToPointHelper::DisableFlowControl()
 void
 PointToPointHelper::EnablePcapInternal(std::string prefix,
                                        Ptr<NetDevice> nd,
-                                       bool promiscuous,
+                                       bool /*promiscuous*/,
                                        bool explicitFilename)
 {
     //

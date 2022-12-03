@@ -287,7 +287,7 @@ Icmpv6L4Protocol::DoDAD(Ipv6Address target, Ptr<Ipv6Interface> interface)
 enum IpL4Protocol::RxStatus
 Icmpv6L4Protocol::Receive(Ptr<Packet> packet,
                           const Ipv4Header& header,
-                          Ptr<Ipv4Interface> interface)
+                          Ptr<Ipv4Interface> /*interface*/)
 {
     NS_LOG_FUNCTION(this << packet << header);
     return IpL4Protocol::RX_ENDPOINT_UNREACH;

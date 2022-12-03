@@ -119,9 +119,9 @@ TcpCloseWithLossTestCase::CreateReceiverErrorModel()
 }
 
 void
-TcpCloseWithLossTestCase::PktDropped(const Ipv4Header& ipH,
+TcpCloseWithLossTestCase::PktDropped(const Ipv4Header& /*ipH*/,
                                      const TcpHeader& tcpH,
-                                     Ptr<const Packet> pkt)
+                                     Ptr<const Packet> /*pkt*/)
 {
     NS_LOG_INFO("Dropped " << tcpH);
 }

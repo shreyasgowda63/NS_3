@@ -26,7 +26,7 @@ using namespace ns3;
  * \param mobility a pointer to the mobility model
  */
 static void
-CourseChange(std::string context, Ptr<const MobilityModel> mobility)
+CourseChange(std::string /*context*/, Ptr<const MobilityModel> mobility)
 {
     Vector pos = mobility->GetPosition();
     Vector vel = mobility->GetVelocity();

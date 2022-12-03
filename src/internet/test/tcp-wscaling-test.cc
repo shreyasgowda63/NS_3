@@ -139,7 +139,7 @@ WScalingTestCase::CreateSenderSocket(Ptr<Node> node)
 }
 
 void
-WScalingTestCase::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+WScalingTestCase::Tx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     NS_LOG_INFO(h);
 

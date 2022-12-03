@@ -138,7 +138,7 @@ FormattingTestObjectHelper::CreateFromFactory()
 } // unnamed namespace
 
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     // CreateObject parsing
     Ptr<FormattingTestObject> obj = CreateObject<FormattingTestObject>();

@@ -139,7 +139,7 @@ HistoryHeader<N>::GetInstanceTypeId() const
 
 template <int N>
 void
-HistoryHeader<N>::Print(std::ostream& os) const
+HistoryHeader<N>::Print(std::ostream& /*os*/) const
 {
     NS_ASSERT(false);
 }
@@ -280,7 +280,7 @@ HistoryTrailer<N>::GetInstanceTypeId() const
 
 template <int N>
 void
-HistoryTrailer<N>::Print(std::ostream& os) const
+HistoryTrailer<N>::Print(std::ostream& /*os*/) const
 {
     NS_ASSERT(false);
 }

@@ -259,7 +259,7 @@ TcpTestCase::DoTeardown()
 }
 
 void
-TcpTestCase::ServerHandleConnectionCreated(Ptr<Socket> s, const Address& addr)
+TcpTestCase::ServerHandleConnectionCreated(Ptr<Socket> s, const Address& /*addr*/)
 {
     s->SetRecvCallback(MakeCallback(&TcpTestCase::ServerHandleRecv, this));
     s->SetSendCallback(MakeCallback(&TcpTestCase::ServerHandleSend, this));
@@ -287,7 +287,7 @@ TcpTestCase::ServerHandleRecv(Ptr<Socket> sock)
 }
 
 void
-TcpTestCase::ServerHandleSend(Ptr<Socket> sock, uint32_t available)
+TcpTestCase::ServerHandleSend(Ptr<Socket> sock, uint32_t /*available*/)
 {
     while (sock->GetTxAvailable() > 0 && m_currentServerTxBytes < m_currentServerRxBytes)
     {
@@ -307,7 +307,7 @@ TcpTestCase::ServerHandleSend(Ptr<Socket> sock, uint32_t available)
 }
 
 void
-TcpTestCase::SourceHandleSend(Ptr<Socket> sock, uint32_t available)
+TcpTestCase::SourceHandleSend(Ptr<Socket> sock, uint32_t /*available*/)
 {
     while (sock->GetTxAvailable() > 0 && m_currentSourceTxBytes < m_totalBytes)
     {

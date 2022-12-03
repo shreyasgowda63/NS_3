@@ -253,7 +253,7 @@ class Ns2MobilityHelperTest : public TestCase
      * \param context event context
      * \param mobility a pointer to the mobility model
      */
-    void CourseChange(std::string context, Ptr<const MobilityModel> mobility)
+    void CourseChange(std::string /*context*/, Ptr<const MobilityModel> mobility)
     {
         Time time = Simulator::Now();
         Ptr<Node> node = mobility->GetObject<Node>();

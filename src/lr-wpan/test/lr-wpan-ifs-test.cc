@@ -115,8 +115,8 @@ LrWpanDataIfsTestCase::~LrWpanDataIfsTestCase()
 
 void
 LrWpanDataIfsTestCase::DataConfirm(LrWpanDataIfsTestCase* testcase,
-                                   Ptr<LrWpanNetDevice> dev,
-                                   McpsDataConfirmParams params)
+                                   Ptr<LrWpanNetDevice> /*dev*/,
+                                   McpsDataConfirmParams /*params*/)
 {
     // get the end time of transmission
     testcase->m_lastTxTime = Simulator::Now();
@@ -124,7 +124,7 @@ LrWpanDataIfsTestCase::DataConfirm(LrWpanDataIfsTestCase* testcase,
 
 void
 LrWpanDataIfsTestCase::DataReceivedDev0(LrWpanDataIfsTestCase* testcase,
-                                        Ptr<LrWpanNetDevice> dev,
+                                        Ptr<LrWpanNetDevice> /*dev*/,
                                         Ptr<const Packet> p)
 {
     // Callback for Data received in the Dev0
@@ -145,7 +145,7 @@ LrWpanDataIfsTestCase::DataReceivedDev0(LrWpanDataIfsTestCase* testcase,
 
 void
 LrWpanDataIfsTestCase::PhyDataRxStart(LrWpanDataIfsTestCase* testcase,
-                                      Ptr<LrWpanNetDevice> dev,
+                                      Ptr<LrWpanNetDevice> /*dev*/,
                                       Ptr<const Packet>)
 {
     // get the start time the phy in dev 0 ( Node 0) start receiving a frame
@@ -153,7 +153,7 @@ LrWpanDataIfsTestCase::PhyDataRxStart(LrWpanDataIfsTestCase* testcase,
 }
 
 void
-LrWpanDataIfsTestCase::DataReceivedDev1(LrWpanDataIfsTestCase* testcase,
+LrWpanDataIfsTestCase::DataReceivedDev1(LrWpanDataIfsTestCase* /*testcase*/,
                                         Ptr<LrWpanNetDevice> dev,
                                         Ptr<const Packet> p)
 {
@@ -182,8 +182,8 @@ LrWpanDataIfsTestCase::DataReceivedDev1(LrWpanDataIfsTestCase* testcase,
 
 void
 LrWpanDataIfsTestCase::IfsEnd(LrWpanDataIfsTestCase* testcase,
-                              Ptr<LrWpanNetDevice> dev,
-                              Time IfsTime)
+                              Ptr<LrWpanNetDevice> /*dev*/,
+                              Time /*IfsTime*/)
 {
     // take the time of the end of the IFS
     testcase->m_endIfs = Simulator::Now();

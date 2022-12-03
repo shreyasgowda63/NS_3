@@ -70,7 +70,7 @@ WifiInformationElementVector::Serialize(Buffer::Iterator start) const
 }
 
 uint32_t
-WifiInformationElementVector::Deserialize(Buffer::Iterator start)
+WifiInformationElementVector::Deserialize(Buffer::Iterator /*start*/)
 {
     NS_FATAL_ERROR("This variant should not be called on a variable-sized header");
     return 0;

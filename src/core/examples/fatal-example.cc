@@ -68,7 +68,7 @@ Fatal()
 }
 
 int
-main(int argc, char** argv)
+main(int /*argc*/, char** /*argv*/)
 {
     // First schedule some events
     Simulator::Schedule(Seconds(1), FatalNoMsg);

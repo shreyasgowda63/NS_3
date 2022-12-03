@@ -401,14 +401,14 @@ PeerManagementProtocol::IsActiveLink(uint32_t interface, Mac48Address peerAddres
 }
 
 bool
-PeerManagementProtocol::ShouldSendOpen(uint32_t interface, Mac48Address peerAddress)
+PeerManagementProtocol::ShouldSendOpen(uint32_t /*interface*/, Mac48Address /*peerAddress*/)
 {
     return (m_stats.linksTotal < m_maxNumberOfPeerLinks);
 }
 
 bool
-PeerManagementProtocol::ShouldAcceptOpen(uint32_t interface,
-                                         Mac48Address peerAddress,
+PeerManagementProtocol::ShouldAcceptOpen(uint32_t /*interface*/,
+                                         Mac48Address /*peerAddress*/,
                                          PmpReasonCode& reasonCode)
 {
     if (m_stats.linksTotal >= m_maxNumberOfPeerLinks)

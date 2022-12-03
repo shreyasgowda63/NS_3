@@ -349,7 +349,7 @@ SimpleUeComponentCarrierManager::DoAddLc(uint8_t lcId,
 LteMacSapUser*
 SimpleUeComponentCarrierManager::DoConfigureSignalBearer(
     uint8_t lcid,
-    LteUeCmacSapProvider::LogicalChannelConfig lcConfig,
+    LteUeCmacSapProvider::LogicalChannelConfig /*lcConfig*/,
     LteMacSapUser* msu)
 {
     NS_LOG_FUNCTION(this);

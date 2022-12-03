@@ -71,7 +71,7 @@ Kun2600MhzPropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-Kun2600MhzPropagationLossModel::DoAssignStreams(int64_t stream)
+Kun2600MhzPropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }

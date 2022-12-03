@@ -94,7 +94,7 @@ LteUeRrcProtocolIdeal::SetUeRrc(Ptr<LteUeRrc> rrc)
 }
 
 void
-LteUeRrcProtocolIdeal::DoSetup(LteUeRrcSapUser::SetupParameters params)
+LteUeRrcProtocolIdeal::DoSetup(LteUeRrcSapUser::SetupParameters /*params*/)
 {
     NS_LOG_FUNCTION(this);
     // We don't care about SRB0/SRB1 since we use ideal RRC messages.
@@ -307,7 +307,7 @@ LteEnbRrcProtocolIdeal::SetUeRrcSapProvider(uint16_t rnti, LteUeRrcSapProvider* 
 }
 
 void
-LteEnbRrcProtocolIdeal::DoSetupUe(uint16_t rnti, LteEnbRrcSapUser::SetupUeParameters params)
+LteEnbRrcProtocolIdeal::DoSetupUe(uint16_t rnti, LteEnbRrcSapUser::SetupUeParameters /*params*/)
 {
     NS_LOG_FUNCTION(this << rnti);
 

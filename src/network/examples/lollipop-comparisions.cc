@@ -22,7 +22,7 @@
 using namespace ns3;
 
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     LollipopCounter8 counterA;
     LollipopCounter8 counterB;

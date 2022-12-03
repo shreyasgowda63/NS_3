@@ -435,7 +435,7 @@ TcpEcnTest::CWndTrace(uint32_t oldValue, uint32_t newValue)
 }
 
 void
-TcpEcnTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpEcnTest::Rx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (who == RECEIVER)
     {
@@ -513,7 +513,7 @@ TcpEcnTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
 }
 
 void
-TcpEcnTest::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpEcnTest::Tx(const Ptr<const Packet> p, const TcpHeader& /*h*/, SocketWho who)
 {
     if (who == SENDER)
     {

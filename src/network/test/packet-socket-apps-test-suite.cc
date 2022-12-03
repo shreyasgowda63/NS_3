@@ -61,7 +61,7 @@ PacketSocketAppsTest::PacketSocketAppsTest()
 }
 
 void
-PacketSocketAppsTest::ReceivePkt(Ptr<const Packet> packet, const Address& from)
+PacketSocketAppsTest::ReceivePkt(Ptr<const Packet> packet, const Address& /*from*/)
 {
     if (packet)
     {

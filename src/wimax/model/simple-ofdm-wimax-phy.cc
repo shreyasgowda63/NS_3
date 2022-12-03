@@ -265,7 +265,7 @@ SimpleOfdmWimaxPhy::DoDispose()
 }
 
 void
-SimpleOfdmWimaxPhy::DoAttach(Ptr<WimaxChannel> channel)
+SimpleOfdmWimaxPhy::DoAttach(Ptr<WimaxChannel> /*channel*/)
 {
     GetChannel()->Attach(this);
 }
@@ -463,8 +463,8 @@ SimpleOfdmWimaxPhy::StartReceive(uint32_t burstSize,
 
 void
 SimpleOfdmWimaxPhy::EndReceiveFecBlock(uint32_t burstSize,
-                                       WimaxPhy::ModulationType modulationType,
-                                       uint8_t direction,
+                                       WimaxPhy::ModulationType /*modulationType*/,
+                                       uint8_t /*direction*/,
                                        bool drop,
                                        Ptr<PacketBurst> burst)
 {
@@ -592,7 +592,7 @@ SimpleOfdmWimaxPhy::ConvertBitsToBurst(bvec buffer)
 }
 
 void
-SimpleOfdmWimaxPhy::CreateFecBlocks(const bvec& buffer, WimaxPhy::ModulationType modulationType)
+SimpleOfdmWimaxPhy::CreateFecBlocks(const bvec& buffer, WimaxPhy::ModulationType /*modulationType*/)
 {
     bvec fecBlock(m_blockSize);
     for (uint32_t i = 0, j = m_nrBlocks; j > 0; i += m_blockSize, j--)

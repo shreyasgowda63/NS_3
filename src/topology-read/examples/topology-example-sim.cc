@@ -71,7 +71,7 @@ NS_LOG_COMPONENT_DEFINE("TopologyCreationExperiment");
  * \param ad sender address
  */
 static void
-SinkRx(Ptr<const Packet> p, const Address& ad)
+SinkRx(Ptr<const Packet> p, const Address& /*ad*/)
 {
     Ipv4Header ipv4;
     p->PeekHeader(ipv4);

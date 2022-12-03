@@ -119,7 +119,7 @@ TcpRttEstimationTest::CreateSenderSocket(Ptr<Node> node)
 }
 
 void
-TcpRttEstimationTest::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpRttEstimationTest::Tx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (who == SENDER && h.GetFlags() != TcpHeader::SYN)
     {
@@ -141,7 +141,7 @@ TcpRttEstimationTest::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWh
 }
 
 void
-TcpRttEstimationTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpRttEstimationTest::Rx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (who == RECEIVER)
     {
@@ -153,7 +153,7 @@ void
 TcpRttEstimationTest::UpdatedRttHistory(const SequenceNumber32& seq,
                                         uint32_t sz,
                                         bool isRetransmission,
-                                        SocketWho who)
+                                        SocketWho /*who*/)
 {
     if (sz == 0)
     {
@@ -178,7 +178,7 @@ TcpRttEstimationTest::UpdatedRttHistory(const SequenceNumber32& seq,
 }
 
 void
-TcpRttEstimationTest::RttTrace(Time oldTime, Time newTime)
+TcpRttEstimationTest::RttTrace(Time /*oldTime*/, Time newTime)
 {
     NS_LOG_DEBUG("Rtt changed to " << newTime.GetSeconds());
     m_rttChanged = true;

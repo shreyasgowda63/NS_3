@@ -129,10 +129,10 @@ LteNetDevice::SetReceiveCallback(ReceiveCallback cb)
 }
 
 bool
-LteNetDevice::SendFrom(Ptr<Packet> packet,
-                       const Address& source,
-                       const Address& dest,
-                       uint16_t protocolNumber)
+LteNetDevice::SendFrom(Ptr<Packet> /*packet*/,
+                       const Address& /*source*/,
+                       const Address& /*dest*/,
+                       uint16_t /*protocolNumber*/)
 {
     NS_FATAL_ERROR("SendFrom () not supported");
     return false;
@@ -258,7 +258,7 @@ LteNetDevice::AddLinkChangeCallback(Callback<void> callback)
 }
 
 void
-LteNetDevice::SetPromiscReceiveCallback(PromiscReceiveCallback cb)
+LteNetDevice::SetPromiscReceiveCallback(PromiscReceiveCallback /*cb*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Promisc mode not supported");

@@ -235,7 +235,7 @@ MemberLteUeCcmRrcSapUser<C>::MemberLteUeCcmRrcSapUser(C* owner)
 
 template <class C>
 void
-MemberLteUeCcmRrcSapUser<C>::ComponentCarrierEnabling(std::vector<uint8_t> componentCarrierList)
+MemberLteUeCcmRrcSapUser<C>::ComponentCarrierEnabling(std::vector<uint8_t> /*componentCarrierList*/)
 {
     NS_FATAL_ERROR("Function should not be called because it is not implemented.");
     // m_owner->DoComponentCarrierEnabling (componentCarrierList);

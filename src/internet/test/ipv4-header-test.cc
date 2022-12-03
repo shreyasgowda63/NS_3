@@ -110,7 +110,7 @@ Ipv4HeaderTest::Ipv4HeaderTest()
 }
 
 void
-Ipv4HeaderTest::ReceivePacket(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from)
+Ipv4HeaderTest::ReceivePacket(Ptr<Socket> /*socket*/, Ptr<Packet> packet, const Address& /*from*/)
 {
     m_receivedPacket = packet;
 }

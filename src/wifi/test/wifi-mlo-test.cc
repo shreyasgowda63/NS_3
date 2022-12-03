@@ -317,10 +317,10 @@ MultiLinkSetupTest::~MultiLinkSetupTest()
 
 void
 MultiLinkSetupTest::Transmit(uint8_t linkId,
-                             std::string context,
+                             std::string /*context*/,
                              WifiConstPsduMap psduMap,
                              WifiTxVector txVector,
-                             double txPowerW)
+                             double /*txPowerW*/)
 {
     m_txPsdus.push_back({Simulator::Now(), psduMap, txVector, linkId});
 

@@ -115,12 +115,12 @@ uint32_t g_samples;    //!< Number of samples
  * \param staId The STA ID.
  */
 void
-MonitorSniffRx(Ptr<const Packet> packet,
-               uint16_t channelFreqMhz,
-               WifiTxVector txVector,
-               MpduInfo aMpdu,
+MonitorSniffRx(Ptr<const Packet> /*packet*/,
+               uint16_t /*channelFreqMhz*/,
+               WifiTxVector /*txVector*/,
+               MpduInfo /*aMpdu*/,
                SignalNoiseDbm signalNoise,
-               uint16_t staId)
+               uint16_t /*staId*/)
 
 {
     g_samples++;

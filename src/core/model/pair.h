@@ -233,7 +233,7 @@ PairChecker<A, B>::GetCheckers() const
 
 template <class A, class B>
 Ptr<AttributeChecker>
-MakePairChecker(const PairValue<A, B>& value)
+MakePairChecker(const PairValue<A, B>& /*value*/)
 {
     return MakePairChecker<A, B>();
 }

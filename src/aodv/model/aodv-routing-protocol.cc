@@ -498,7 +498,7 @@ RoutingProtocol::RouteInput(Ptr<const Packet> p,
                             const Ipv4Header& header,
                             Ptr<const NetDevice> idev,
                             UnicastForwardCallback ucb,
-                            MulticastForwardCallback mcb,
+                            MulticastForwardCallback /*mcb*/,
                             LocalDeliverCallback lcb,
                             ErrorCallback ecb)
 {
@@ -647,7 +647,7 @@ bool
 RoutingProtocol::Forwarding(Ptr<const Packet> p,
                             const Ipv4Header& header,
                             UnicastForwardCallback ucb,
-                            ErrorCallback ecb)
+                            ErrorCallback /*ecb*/)
 {
     NS_LOG_FUNCTION(this);
     Ipv4Address dst = header.GetDestination();
@@ -800,7 +800,7 @@ RoutingProtocol::NotifyInterfaceUp(uint32_t i)
 }
 
 void
-RoutingProtocol::NotifyTxError(WifiMacDropReason reason, Ptr<const WifiMpdu> mpdu)
+RoutingProtocol::NotifyTxError(WifiMacDropReason /*reason*/, Ptr<const WifiMpdu> mpdu)
 {
     m_nb.GetTxErrorCallback()(mpdu->GetHeader());
 }

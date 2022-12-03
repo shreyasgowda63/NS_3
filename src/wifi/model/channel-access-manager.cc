@@ -70,7 +70,7 @@ class PhyListener : public ns3::WifiPhyListener
         m_cam->NotifyRxEndErrorNow();
     }
 
-    void NotifyTxStart(Time duration, double txPowerDbm) override
+    void NotifyTxStart(Time duration, double /*txPowerDbm*/) override
     {
         m_cam->NotifyTxStartNow(duration);
     }

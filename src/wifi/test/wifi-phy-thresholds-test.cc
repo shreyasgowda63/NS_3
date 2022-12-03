@@ -200,7 +200,7 @@ void
 WifiPhyThresholdsTest::RxSuccess(Ptr<const WifiPsdu> psdu,
                                  RxSignalInfo rxSignalInfo,
                                  WifiTxVector txVector,
-                                 std::vector<bool> statusPerMpdu)
+                                 std::vector<bool> /*statusPerMpdu*/)
 {
     NS_LOG_FUNCTION(this << *psdu << rxSignalInfo << txVector);
     m_rxSuccess++;

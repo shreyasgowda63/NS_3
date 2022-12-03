@@ -1755,35 +1755,37 @@ WifiRemoteStationManager::GetNonUnicastMode() const
 }
 
 bool
-WifiRemoteStationManager::DoNeedRts(WifiRemoteStation* station, uint32_t size, bool normally)
+WifiRemoteStationManager::DoNeedRts(WifiRemoteStation* /*station*/,
+                                    uint32_t /*size*/,
+                                    bool normally)
 {
     return normally;
 }
 
 bool
-WifiRemoteStationManager::DoNeedRetransmission(WifiRemoteStation* station,
-                                               Ptr<const Packet> packet,
+WifiRemoteStationManager::DoNeedRetransmission(WifiRemoteStation* /*station*/,
+                                               Ptr<const Packet> /*packet*/,
                                                bool normally)
 {
     return normally;
 }
 
 bool
-WifiRemoteStationManager::DoNeedFragmentation(WifiRemoteStation* station,
-                                              Ptr<const Packet> packet,
+WifiRemoteStationManager::DoNeedFragmentation(WifiRemoteStation* /*station*/,
+                                              Ptr<const Packet> /*packet*/,
                                               bool normally)
 {
     return normally;
 }
 
 void
-WifiRemoteStationManager::DoReportAmpduTxStatus(WifiRemoteStation* station,
-                                                uint16_t nSuccessfulMpdus,
-                                                uint16_t nFailedMpdus,
-                                                double rxSnr,
-                                                double dataSnr,
-                                                uint16_t dataChannelWidth,
-                                                uint8_t dataNss)
+WifiRemoteStationManager::DoReportAmpduTxStatus(WifiRemoteStation* /*station*/,
+                                                uint16_t /*nSuccessfulMpdus*/,
+                                                uint16_t /*nFailedMpdus*/,
+                                                double /*rxSnr*/,
+                                                double /*dataSnr*/,
+                                                uint16_t /*dataChannelWidth*/,
+                                                uint8_t /*dataNss*/)
 {
     NS_LOG_DEBUG("DoReportAmpduTxStatus received but the manager does not handle A-MPDUs!");
 }

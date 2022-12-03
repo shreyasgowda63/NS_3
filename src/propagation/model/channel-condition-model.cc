@@ -212,7 +212,7 @@ AlwaysLosChannelConditionModel::GetChannelCondition(Ptr<const MobilityModel> /* 
 }
 
 int64_t
-AlwaysLosChannelConditionModel::AssignStreams(int64_t stream)
+AlwaysLosChannelConditionModel::AssignStreams(int64_t /*stream*/)
 {
     return 0;
 }
@@ -249,7 +249,7 @@ NeverLosChannelConditionModel::GetChannelCondition(Ptr<const MobilityModel> /* a
 }
 
 int64_t
-NeverLosChannelConditionModel::AssignStreams(int64_t stream)
+NeverLosChannelConditionModel::AssignStreams(int64_t /*stream*/)
 {
     return 0;
 }

@@ -130,7 +130,7 @@ SSLinkManager::GetDlMapSyncTimeoutEvent()
 }
 
 void
-SSLinkManager::StartScanning(SubscriberStationNetDevice::EventType type, bool deleteParameters)
+SSLinkManager::StartScanning(SubscriberStationNetDevice::EventType /*type*/, bool deleteParameters)
 {
     // temp parameter "type" just to check on expiry of which event the function was called
 

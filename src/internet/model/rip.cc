@@ -204,7 +204,7 @@ Rip::DoInitialize()
 }
 
 Ptr<Ipv4Route>
-Rip::RouteOutput(Ptr<Packet> p,
+Rip::RouteOutput(Ptr<Packet> /*p*/,
                  const Ipv4Header& header,
                  Ptr<NetDevice> oif,
                  Socket::SocketErrno& sockerr)
@@ -242,7 +242,7 @@ Rip::RouteInput(Ptr<const Packet> p,
                 const Ipv4Header& header,
                 Ptr<const NetDevice> idev,
                 UnicastForwardCallback ucb,
-                MulticastForwardCallback mcb,
+                MulticastForwardCallback /*mcb*/,
                 LocalDeliverCallback lcb,
                 ErrorCallback ecb)
 {

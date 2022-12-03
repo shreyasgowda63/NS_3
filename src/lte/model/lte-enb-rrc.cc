@@ -1093,7 +1093,7 @@ UeManager::RecvSnStatusTransfer(EpcX2SapUser::SnStatusTransferParams params)
 }
 
 void
-UeManager::RecvUeContextRelease(EpcX2SapUser::UeContextReleaseParams params)
+UeManager::RecvUeContextRelease(EpcX2SapUser::UeContextReleaseParams /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_ASSERT_MSG(m_state == HANDOVER_LEAVING, "method unexpected in state " << ToString(m_state));
@@ -1101,7 +1101,7 @@ UeManager::RecvUeContextRelease(EpcX2SapUser::UeContextReleaseParams params)
 }
 
 void
-UeManager::RecvHandoverCancel(EpcX2SapUser::HandoverCancelParams params)
+UeManager::RecvHandoverCancel(EpcX2SapUser::HandoverCancelParams /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_ASSERT_MSG(m_state == HANDOVER_JOINING, "method unexpected in state " << ToString(m_state));
@@ -1188,7 +1188,7 @@ UeManager::RecvRrcConnectionRequest(LteRrcSap::RrcConnectionRequest msg)
 }
 
 void
-UeManager::RecvRrcConnectionSetupCompleted(LteRrcSap::RrcConnectionSetupCompleted msg)
+UeManager::RecvRrcConnectionSetupCompleted(LteRrcSap::RrcConnectionSetupCompleted /*msg*/)
 {
     NS_LOG_FUNCTION(this);
     switch (m_state)
@@ -1223,7 +1223,7 @@ UeManager::RecvRrcConnectionSetupCompleted(LteRrcSap::RrcConnectionSetupComplete
 
 void
 UeManager::RecvRrcConnectionReconfigurationCompleted(
-    LteRrcSap::RrcConnectionReconfigurationCompleted msg)
+    LteRrcSap::RrcConnectionReconfigurationCompleted /*msg*/)
 {
     NS_LOG_FUNCTION(this);
     switch (m_state)
@@ -1312,7 +1312,7 @@ UeManager::RecvRrcConnectionReconfigurationCompleted(
 
 void
 UeManager::RecvRrcConnectionReestablishmentRequest(
-    LteRrcSap::RrcConnectionReestablishmentRequest msg)
+    LteRrcSap::RrcConnectionReestablishmentRequest /*msg*/)
 {
     NS_LOG_FUNCTION(this);
     switch (m_state)
@@ -1338,7 +1338,7 @@ UeManager::RecvRrcConnectionReestablishmentRequest(
 
 void
 UeManager::RecvRrcConnectionReestablishmentComplete(
-    LteRrcSap::RrcConnectionReestablishmentComplete msg)
+    LteRrcSap::RrcConnectionReestablishmentComplete /*msg*/)
 {
     NS_LOG_FUNCTION(this);
     SwitchToState(CONNECTED_NORMALLY);
@@ -3134,7 +3134,7 @@ LteEnbRrc::DoRrcConfigurationUpdateInd(LteEnbCmacSapUser::UeConfig cmacParams)
 }
 
 void
-LteEnbRrc::DoNotifyLcConfigResult(uint16_t rnti, uint8_t lcid, bool success)
+LteEnbRrc::DoNotifyLcConfigResult(uint16_t rnti, uint8_t /*lcid*/, bool /*success*/)
 {
     NS_LOG_FUNCTION(this << (uint32_t)rnti);
     NS_FATAL_ERROR("not implemented");

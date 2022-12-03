@@ -101,7 +101,7 @@ ErrorRateModel::IsAwgn() const
 }
 
 int64_t
-ErrorRateModel::AssignStreams(int64_t stream)
+ErrorRateModel::AssignStreams(int64_t /*stream*/)
 {
     // Override this method if the error model uses random variables
     return 0;

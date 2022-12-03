@@ -563,21 +563,21 @@ LteRrcConnectionEstablishmentTestCase::CheckNotConnected(Ptr<NetDevice> ueDevice
 }
 
 void
-LteRrcConnectionEstablishmentTestCase::ConnectionEstablishedCallback(std::string context,
+LteRrcConnectionEstablishmentTestCase::ConnectionEstablishedCallback(std::string /*context*/,
                                                                      uint64_t imsi,
                                                                      uint16_t cellId,
-                                                                     uint16_t rnti)
+                                                                     uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this << imsi << cellId);
     m_isConnectionEstablished[imsi] = true;
 }
 
 void
-LteRrcConnectionEstablishmentTestCase::ConnectionTimeoutCallback(std::string context,
+LteRrcConnectionEstablishmentTestCase::ConnectionTimeoutCallback(std::string /*context*/,
                                                                  uint64_t imsi,
                                                                  uint16_t cellId,
-                                                                 uint16_t rnti,
-                                                                 uint8_t connEstFailCount)
+                                                                 uint16_t /*rnti*/,
+                                                                 uint8_t /*connEstFailCount*/)
 {
     NS_LOG_FUNCTION(this << imsi << cellId);
 }

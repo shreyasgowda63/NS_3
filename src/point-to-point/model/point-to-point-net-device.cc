@@ -482,7 +482,7 @@ PointToPointNetDevice::IsMulticast() const
 }
 
 Address
-PointToPointNetDevice::GetMulticast(Ipv4Address multicastGroup) const
+PointToPointNetDevice::GetMulticast(Ipv4Address /*multicastGroup*/) const
 {
     NS_LOG_FUNCTION(this);
     return Mac48Address("01:00:5e:00:00:00");

@@ -210,7 +210,7 @@ LteFrHardAlgorithm::Reconfigure()
 }
 
 void
-LteFrHardAlgorithm::SetDownlinkConfiguration(uint16_t cellId, uint8_t bandwidth)
+LteFrHardAlgorithm::SetDownlinkConfiguration(uint16_t cellId, uint8_t /*bandwidth*/)
 {
     NS_LOG_FUNCTION(this);
     for (uint16_t i = 0; i < NUM_DOWNLINK_CONFS; ++i)
@@ -225,7 +225,7 @@ LteFrHardAlgorithm::SetDownlinkConfiguration(uint16_t cellId, uint8_t bandwidth)
 }
 
 void
-LteFrHardAlgorithm::SetUplinkConfiguration(uint16_t cellId, uint8_t bandwidth)
+LteFrHardAlgorithm::SetUplinkConfiguration(uint16_t cellId, uint8_t /*bandwidth*/)
 {
     NS_LOG_FUNCTION(this);
     for (uint16_t i = 0; i < NUM_UPLINK_CONFS; ++i)
@@ -301,7 +301,7 @@ LteFrHardAlgorithm::DoGetAvailableDlRbg()
 }
 
 bool
-LteFrHardAlgorithm::DoIsDlRbgAvailableForUe(int rbId, uint16_t rnti)
+LteFrHardAlgorithm::DoIsDlRbgAvailableForUe(int rbId, uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
     return !m_dlRbgMap[rbId];
@@ -321,7 +321,7 @@ LteFrHardAlgorithm::DoGetAvailableUlRbg()
 }
 
 bool
-LteFrHardAlgorithm::DoIsUlRbgAvailableForUe(int rbId, uint16_t rnti)
+LteFrHardAlgorithm::DoIsUlRbgAvailableForUe(int rbId, uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
 
@@ -335,7 +335,7 @@ LteFrHardAlgorithm::DoIsUlRbgAvailableForUe(int rbId, uint16_t rnti)
 
 void
 LteFrHardAlgorithm::DoReportDlCqiInfo(
-    const struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
@@ -343,21 +343,21 @@ LteFrHardAlgorithm::DoReportDlCqiInfo(
 
 void
 LteFrHardAlgorithm::DoReportUlCqiInfo(
-    const struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
 }
 
 void
-LteFrHardAlgorithm::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> ulCqiMap)
+LteFrHardAlgorithm::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> /*ulCqiMap*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
 }
 
 uint8_t
-LteFrHardAlgorithm::DoGetTpc(uint16_t rnti)
+LteFrHardAlgorithm::DoGetTpc(uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
     return 1; // 1 is mapped to 0 for Accumulated mode, and to -1 in Absolute mode TS36.213
@@ -385,7 +385,7 @@ LteFrHardAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measRes
 }
 
 void
-LteFrHardAlgorithm::DoRecvLoadInformation(EpcX2Sap::LoadInformationParams params)
+LteFrHardAlgorithm::DoRecvLoadInformation(EpcX2Sap::LoadInformationParams /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");

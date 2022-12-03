@@ -438,7 +438,7 @@ DsrOptionPad1::Process(Ptr<Packet> packet,
                        const Ipv4Header& ipv4Header,
                        uint8_t protocol,
                        bool& isPromisc,
-                       Ipv4Address promiscSource)
+                       Ipv4Address /*promiscSource*/)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
                          << (uint32_t)protocol << isPromisc);
@@ -488,7 +488,7 @@ DsrOptionPadn::Process(Ptr<Packet> packet,
                        const Ipv4Header& ipv4Header,
                        uint8_t protocol,
                        bool& isPromisc,
-                       Ipv4Address promiscSource)
+                       Ipv4Address /*promiscSource*/)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
                          << (uint32_t)protocol << isPromisc);
@@ -546,7 +546,7 @@ DsrOptionRreq::Process(Ptr<Packet> packet,
                        const Ipv4Header& ipv4Header,
                        uint8_t protocol,
                        bool& isPromisc,
-                       Ipv4Address promiscSource)
+                       Ipv4Address /*promiscSource*/)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
                          << (uint32_t)protocol << isPromisc);
@@ -1080,7 +1080,7 @@ DsrOptionRrep::Process(Ptr<Packet> packet,
                        const Ipv4Header& ipv4Header,
                        uint8_t protocol,
                        bool& isPromisc,
-                       Ipv4Address promiscSource)
+                       Ipv4Address /*promiscSource*/)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
                          << (uint32_t)protocol << isPromisc);
@@ -1580,7 +1580,7 @@ DsrOptionRerr::Process(Ptr<Packet> packet,
                        const Ipv4Header& ipv4Header,
                        uint8_t protocol,
                        bool& isPromisc,
-                       Ipv4Address promiscSource)
+                       Ipv4Address /*promiscSource*/)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
                          << (uint32_t)protocol << isPromisc);
@@ -1773,7 +1773,7 @@ DsrOptionAckReq::Process(Ptr<Packet> packet,
                          const Ipv4Header& ipv4Header,
                          uint8_t protocol,
                          bool& isPromisc,
-                         Ipv4Address promiscSource)
+                         Ipv4Address /*promiscSource*/)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
                          << (uint32_t)protocol << isPromisc);
@@ -1841,7 +1841,7 @@ DsrOptionAck::Process(Ptr<Packet> packet,
                       const Ipv4Header& ipv4Header,
                       uint8_t protocol,
                       bool& isPromisc,
-                      Ipv4Address promiscSource)
+                      Ipv4Address /*promiscSource*/)
 {
     NS_LOG_FUNCTION(this << packet << dsrP << ipv4Address << source << ipv4Header
                          << (uint32_t)protocol << isPromisc);

@@ -67,7 +67,7 @@ WifiMacTrailer::Serialize(Buffer::Iterator start) const
 }
 
 uint32_t
-WifiMacTrailer::Deserialize(Buffer::Iterator start)
+WifiMacTrailer::Deserialize(Buffer::Iterator /*start*/)
 {
     return WIFI_MAC_FCS_LENGTH;
 }

@@ -293,7 +293,7 @@ LrWpanNetDevice::GetAddress() const
 }
 
 bool
-LrWpanNetDevice::SetMtu(const uint16_t mtu)
+LrWpanNetDevice::SetMtu(const uint16_t /*mtu*/)
 {
     NS_ABORT_MSG("Unsupported");
     return false;
@@ -350,7 +350,7 @@ LrWpanNetDevice::IsMulticast() const
 }
 
 Address
-LrWpanNetDevice::GetMulticast(Ipv4Address multicastGroup) const
+LrWpanNetDevice::GetMulticast(Ipv4Address /*multicastGroup*/) const
 {
     NS_ABORT_MSG("Unsupported");
     return Address();
@@ -426,10 +426,10 @@ LrWpanNetDevice::Send(Ptr<Packet> packet, const Address& dest, uint16_t protocol
 }
 
 bool
-LrWpanNetDevice::SendFrom(Ptr<Packet> packet,
-                          const Address& source,
-                          const Address& dest,
-                          uint16_t protocolNumber)
+LrWpanNetDevice::SendFrom(Ptr<Packet> /*packet*/,
+                          const Address& /*source*/,
+                          const Address& /*dest*/,
+                          uint16_t /*protocolNumber*/)
 {
     NS_ABORT_MSG("Unsupported");
     // TODO: To support SendFrom, the MACs McpsDataRequest has to use the provided source address,
@@ -467,7 +467,7 @@ LrWpanNetDevice::SetReceiveCallback(ReceiveCallback cb)
 }
 
 void
-LrWpanNetDevice::SetPromiscReceiveCallback(PromiscReceiveCallback cb)
+LrWpanNetDevice::SetPromiscReceiveCallback(PromiscReceiveCallback /*cb*/)
 {
     // This method basically assumes an 802.3-compliant device, but a raw
     // 802.15.4 device does not have an ethertype, and requires specific

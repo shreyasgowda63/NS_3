@@ -82,8 +82,8 @@ UplinkSchedulerMBQoS::GetUplinkAllocations() const
 }
 
 void
-UplinkSchedulerMBQoS::GetChannelDescriptorsToUpdate(bool& updateDcd,
-                                                    bool& updateUcd,
+UplinkSchedulerMBQoS::GetChannelDescriptorsToUpdate(bool& /*updateDcd*/,
+                                                    bool& /*updateUcd*/,
                                                     bool& sendDcd,
                                                     bool& sendUcd)
 {
@@ -521,13 +521,14 @@ UplinkSchedulerMBQoS::Schedule()
 }
 
 bool
-UplinkSchedulerMBQoS::ServiceBandwidthRequestsBytes(ServiceFlow* serviceFlow,
-                                                    enum ServiceFlow::SchedulingType schedulingType,
-                                                    OfdmUlMapIe& ulMapIe,
-                                                    const WimaxPhy::ModulationType modulationType,
-                                                    uint32_t& symbolsToAllocation,
-                                                    uint32_t& availableSymbols,
-                                                    uint32_t allocationSizeBytes)
+UplinkSchedulerMBQoS::ServiceBandwidthRequestsBytes(
+    ServiceFlow* serviceFlow,
+    enum ServiceFlow::SchedulingType /*schedulingType*/,
+    OfdmUlMapIe& ulMapIe,
+    const WimaxPhy::ModulationType modulationType,
+    uint32_t& symbolsToAllocation,
+    uint32_t& availableSymbols,
+    uint32_t allocationSizeBytes)
 {
     uint32_t allocSizeBytes = allocationSizeBytes;
     uint32_t allocSizeSymbols = 0;
@@ -871,7 +872,7 @@ void
 UplinkSchedulerMBQoS::ServiceUnsolicitedGrants(const SSRecord* ssRecord,
                                                enum ServiceFlow::SchedulingType schedulingType,
                                                OfdmUlMapIe& ulMapIe,
-                                               const WimaxPhy::ModulationType modulationType,
+                                               const WimaxPhy::ModulationType /*modulationType*/,
                                                uint32_t& symbolsToAllocation,
                                                uint32_t& availableSymbols)
 {
@@ -963,7 +964,7 @@ UplinkSchedulerMBQoS::ServiceBandwidthRequests(const SSRecord* ssRecord,
 
 bool
 UplinkSchedulerMBQoS::ServiceBandwidthRequests(ServiceFlow* serviceFlow,
-                                               enum ServiceFlow::SchedulingType schedulingType,
+                                               enum ServiceFlow::SchedulingType /*schedulingType*/,
                                                OfdmUlMapIe& ulMapIe,
                                                const WimaxPhy::ModulationType modulationType,
                                                uint32_t& symbolsToAllocation,

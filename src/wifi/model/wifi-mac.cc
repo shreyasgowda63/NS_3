@@ -1091,7 +1091,7 @@ WifiMac::SetLinkDownCallback(Callback<void> linkDown)
 }
 
 void
-WifiMac::Enqueue(Ptr<Packet> packet, Mac48Address to, Mac48Address from)
+WifiMac::Enqueue(Ptr<Packet> /*packet*/, Mac48Address /*to*/, Mac48Address /*from*/)
 {
     // We expect WifiMac subclasses which do support forwarding (e.g.,
     // AP) to override this method. Therefore, we throw a fatal error if

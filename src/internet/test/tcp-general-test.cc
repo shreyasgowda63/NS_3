@@ -347,7 +347,7 @@ TcpGeneralTest::CreateReceiverSocket(Ptr<Node> node)
 }
 
 void
-TcpGeneralTest::QueueDropCb(std::string context, Ptr<const Packet> p)
+TcpGeneralTest::QueueDropCb(std::string context, Ptr<const Packet> /*p*/)
 {
     if (context == "SENDER")
     {
@@ -500,7 +500,7 @@ TcpGeneralTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
 }
 
 void
-TcpGeneralTest::RcvAckCb(const Ptr<const Packet> p,
+TcpGeneralTest::RcvAckCb(const Ptr<const Packet> /*p*/,
                          const TcpHeader& h,
                          const Ptr<const TcpSocketBase> tcp)
 {
@@ -557,7 +557,7 @@ TcpGeneralTest::RxPacketCb(const Ptr<const Packet> p,
 }
 
 void
-TcpGeneralTest::ProcessedAckCb(Ptr<const Packet> p,
+TcpGeneralTest::ProcessedAckCb(Ptr<const Packet> /*p*/,
                                const TcpHeader& h,
                                Ptr<const TcpSocketBase> tcp)
 {

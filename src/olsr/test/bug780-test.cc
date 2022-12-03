@@ -146,7 +146,7 @@ Bug780Test::SendPing()
 }
 
 void
-Bug780Test::Receive(Ptr<Socket> socket)
+Bug780Test::Receive(Ptr<Socket> /*socket*/)
 {
     while (m_socket->GetRxAvailable() > 0)
     {

@@ -355,7 +355,7 @@ TcpRateLinuxWithSocketsTest::CreateReceiverErrorModel()
 }
 
 void
-TcpRateLinuxWithSocketsTest::PktDropped(const Ipv4Header& ipH,
+TcpRateLinuxWithSocketsTest::PktDropped(const Ipv4Header& /*ipH*/,
                                         const TcpHeader& tcpH,
                                         Ptr<const Packet> p)
 {
@@ -363,7 +363,7 @@ TcpRateLinuxWithSocketsTest::PktDropped(const Ipv4Header& ipH,
 }
 
 void
-TcpRateLinuxWithSocketsTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpRateLinuxWithSocketsTest::Rx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (who == SENDER)
     {

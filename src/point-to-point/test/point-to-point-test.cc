@@ -85,10 +85,10 @@ PointToPointTest::SendOnePacket(Ptr<PointToPointNetDevice> device,
 }
 
 bool
-PointToPointTest::RxPacket(Ptr<NetDevice> dev,
+PointToPointTest::RxPacket(Ptr<NetDevice> /*dev*/,
                            Ptr<const Packet> pkt,
-                           uint16_t mode,
-                           const Address& sender)
+                           uint16_t /*mode*/,
+                           const Address& /*sender*/)
 {
     m_recvdPacket = pkt;
     return true;

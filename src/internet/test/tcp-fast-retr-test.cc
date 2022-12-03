@@ -150,7 +150,7 @@ TcpFastRetrTest::CreateSenderSocket(Ptr<Node> node)
 }
 
 void
-TcpFastRetrTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpFastRetrTest::Rx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (who == SENDER)
     {
@@ -380,7 +380,7 @@ TcpFastRetrTest::ProcessedAck(const Ptr<const TcpSocketState> tcb,
 }
 
 void
-TcpFastRetrTest::AfterRTOExpired(const Ptr<const TcpSocketState> tcb, SocketWho who)
+TcpFastRetrTest::AfterRTOExpired(const Ptr<const TcpSocketState> /*tcb*/, SocketWho /*who*/)
 {
     NS_TEST_ASSERT_MSG_EQ(true, false, "RTO isn't expected here");
 }
@@ -409,7 +409,7 @@ TcpFastRetrTest::CongStateTrace(const TcpSocketState::TcpCongState_t oldValue,
 }
 
 void
-TcpFastRetrTest::PktDropped(const Ipv4Header& ipH, const TcpHeader& tcpH, Ptr<const Packet> p)
+TcpFastRetrTest::PktDropped(const Ipv4Header& ipH, const TcpHeader& tcpH, Ptr<const Packet> /*p*/)
 {
     NS_LOG_FUNCTION(this << ipH << tcpH);
 

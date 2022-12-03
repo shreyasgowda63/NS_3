@@ -212,7 +212,7 @@ EpcEnbApplication::DoUeContextRelease(uint16_t rnti)
 void
 EpcEnbApplication::DoInitialContextSetupRequest(
     uint64_t mmeUeS1Id,
-    uint16_t enbUeS1Id,
+    uint16_t /*enbUeS1Id*/,
     std::list<EpcS1apSapEnb::ErabToBeSetupItem> erabToBeSetupList)
 {
     NS_LOG_FUNCTION(this);
@@ -248,10 +248,10 @@ EpcEnbApplication::DoInitialContextSetupRequest(
 
 void
 EpcEnbApplication::DoPathSwitchRequestAcknowledge(
-    uint64_t enbUeS1Id,
+    uint64_t /*enbUeS1Id*/,
     uint64_t mmeUeS1Id,
-    uint16_t gci,
-    std::list<EpcS1apSapEnb::ErabSwitchedInUplinkItem> erabToBeSwitchedInUplinkList)
+    uint16_t /*gci*/,
+    std::list<EpcS1apSapEnb::ErabSwitchedInUplinkItem> /*erabToBeSwitchedInUplinkList*/)
 {
     NS_LOG_FUNCTION(this);
 

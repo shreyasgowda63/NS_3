@@ -203,7 +203,7 @@ NistErrorRateModel::GetBValue(WifiCodeRate codeRate) const
 
 double
 NistErrorRateModel::DoGetChunkSuccessRate(WifiMode mode,
-                                          const WifiTxVector& txVector,
+                                          const WifiTxVector& /*txVector*/,
                                           double snr,
                                           uint64_t nbits,
                                           uint8_t numRxAntennas,

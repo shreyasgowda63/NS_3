@@ -684,7 +684,7 @@ AnimationInterface::AddByteTag(uint64_t animUid, Ptr<const Packet> p)
 
 void
 AnimationInterface::RemainingEnergyTrace(std::string context,
-                                         double previousEnergy,
+                                         double /*previousEnergy*/,
                                          double currentEnergy)
 {
     CHECK_STARTED_INTIMEWINDOW;
@@ -706,7 +706,7 @@ AnimationInterface::RemainingEnergyTrace(std::string context,
 }
 
 void
-AnimationInterface::WifiPhyTxDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::WifiPhyTxDropTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiPhyTxDrop[node->GetId()];
@@ -714,64 +714,64 @@ AnimationInterface::WifiPhyTxDropTrace(std::string context, Ptr<const Packet> p)
 
 void
 AnimationInterface::WifiPhyRxDropTrace(std::string context,
-                                       Ptr<const Packet> p,
-                                       WifiPhyRxfailureReason reason)
+                                       Ptr<const Packet> /*p*/,
+                                       WifiPhyRxfailureReason /*reason*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiPhyRxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacTxTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::WifiMacTxTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacTx[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacTxDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::WifiMacTxDropTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacTxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacRxTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::WifiMacRxTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacRx[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacRxDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::WifiMacRxDropTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacRxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacTxTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::LrWpanMacTxTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacTx[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacTxDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::LrWpanMacTxDropTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacTxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacRxTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::LrWpanMacRxTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacRx[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacRxDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::LrWpanMacRxDropTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacRxDrop[node->GetId()];
@@ -779,9 +779,9 @@ AnimationInterface::LrWpanMacRxDropTrace(std::string context, Ptr<const Packet> 
 
 void
 AnimationInterface::Ipv4TxTrace(std::string context,
-                                Ptr<const Packet> p,
-                                Ptr<Ipv4> ipv4,
-                                uint32_t interfaceIndex)
+                                Ptr<const Packet> /*p*/,
+                                Ptr<Ipv4> /*ipv4*/,
+                                uint32_t /*interfaceIndex*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeIpv4Tx[node->GetId()];
@@ -789,9 +789,9 @@ AnimationInterface::Ipv4TxTrace(std::string context,
 
 void
 AnimationInterface::Ipv4RxTrace(std::string context,
-                                Ptr<const Packet> p,
-                                Ptr<Ipv4> ipv4,
-                                uint32_t interfaceIndex)
+                                Ptr<const Packet> /*p*/,
+                                Ptr<Ipv4> /*ipv4*/,
+                                uint32_t /*interfaceIndex*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeIpv4Rx[node->GetId()];
@@ -799,10 +799,10 @@ AnimationInterface::Ipv4RxTrace(std::string context,
 
 void
 AnimationInterface::Ipv4DropTrace(std::string context,
-                                  const Ipv4Header& ipv4Header,
-                                  Ptr<const Packet> p,
-                                  Ipv4L3Protocol::DropReason dropReason,
-                                  Ptr<Ipv4> ipv4,
+                                  const Ipv4Header& /*ipv4Header*/,
+                                  Ptr<const Packet> /*p*/,
+                                  Ipv4L3Protocol::DropReason /*dropReason*/,
+                                  Ptr<Ipv4> /*ipv4*/,
                                   uint32_t)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
@@ -810,28 +810,28 @@ AnimationInterface::Ipv4DropTrace(std::string context,
 }
 
 void
-AnimationInterface::EnqueueTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::EnqueueTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeQueueEnqueue[node->GetId()];
 }
 
 void
-AnimationInterface::DequeueTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::DequeueTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeQueueDequeue[node->GetId()];
 }
 
 void
-AnimationInterface::QueueDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterface::QueueDropTrace(std::string context, Ptr<const Packet> /*p*/)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeQueueDrop[node->GetId()];
 }
 
 void
-AnimationInterface::DevTxTrace(std::string context,
+AnimationInterface::DevTxTrace(std::string /*context*/,
                                Ptr<const Packet> p,
                                Ptr<NetDevice> tx,
                                Ptr<NetDevice> rx,
@@ -977,7 +977,7 @@ AnimationInterface::WifiPhyTxBeginTrace(std::string context,
 void
 AnimationInterface::WifiPhyRxBeginTrace(std::string context,
                                         Ptr<const Packet> p,
-                                        RxPowerWattPerChannelBand rxPowersW)
+                                        RxPowerWattPerChannelBand /*rxPowersW*/)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1137,28 +1137,32 @@ AnimationInterface::WavePhyRxBeginTrace(std::string context, Ptr<const Packet> p
 }
 
 void
-AnimationInterface::WimaxTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+AnimationInterface::WimaxTxTrace(std::string context,
+                                 Ptr<const Packet> p,
+                                 const Mac48Address& /*m*/)
 {
     NS_LOG_FUNCTION(this);
     return GenericWirelessTxTrace(context, p, AnimationInterface::WIMAX);
 }
 
 void
-AnimationInterface::WimaxRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+AnimationInterface::WimaxRxTrace(std::string context,
+                                 Ptr<const Packet> p,
+                                 const Mac48Address& /*m*/)
 {
     NS_LOG_FUNCTION(this);
     return GenericWirelessRxTrace(context, p, AnimationInterface::WIMAX);
 }
 
 void
-AnimationInterface::LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+AnimationInterface::LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& /*m*/)
 {
     NS_LOG_FUNCTION(this);
     return GenericWirelessTxTrace(context, p, AnimationInterface::LTE);
 }
 
 void
-AnimationInterface::LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+AnimationInterface::LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& /*m*/)
 {
     NS_LOG_FUNCTION(this);
     return GenericWirelessRxTrace(context, p, AnimationInterface::LTE);
@@ -1326,7 +1330,7 @@ AnimationInterface::OutputWirelessPacketTxInfo(Ptr<const Packet> p,
 }
 
 void
-AnimationInterface::OutputWirelessPacketRxInfo(Ptr<const Packet> p,
+AnimationInterface::OutputWirelessPacketRxInfo(Ptr<const Packet> /*p*/,
                                                AnimPacketInfo& pktInfo,
                                                uint64_t animUid)
 {
@@ -2541,7 +2545,7 @@ AnimationInterface::WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::stri
 }
 
 void
-AnimationInterface::WriteXmlLink(uint32_t fromId, uint32_t toLp, uint32_t toId)
+AnimationInterface::WriteXmlLink(uint32_t fromId, uint32_t /*toLp*/, uint32_t toId)
 {
     AnimXmlElement element("link");
     element.AddAttribute("fromId", fromId);
@@ -2814,7 +2818,7 @@ AnimationInterface::WriteXmlNonP2pLinkProperties(uint32_t id,
 
 /***** AnimXmlElement  *****/
 
-AnimationInterface::AnimXmlElement::AnimXmlElement(std::string tagName, bool emptyElement)
+AnimationInterface::AnimXmlElement::AnimXmlElement(std::string tagName, bool /*emptyElement*/)
     : m_tagName(tagName),
       m_text("")
 {

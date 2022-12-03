@@ -147,7 +147,7 @@ PhyEntity::end() const
 }
 
 WifiMode
-PhyEntity::GetSigMode(WifiPpduField field, const WifiTxVector& txVector) const
+PhyEntity::GetSigMode(WifiPpduField field, const WifiTxVector& /*txVector*/) const
 {
     NS_FATAL_ERROR("PPDU field is not a SIG field (no sense in retrieving the signaled mode) or is "
                    "unsupported: "
@@ -187,7 +187,7 @@ PhyEntity::GetNextField(WifiPpduField currentField, WifiPreamble preamble) const
 }
 
 Time
-PhyEntity::GetDuration(WifiPpduField field, const WifiTxVector& txVector) const
+PhyEntity::GetDuration(WifiPpduField field, const WifiTxVector& /*txVector*/) const
 {
     if (field > WIFI_PPDU_FIELD_EHT_SIG)
     {
@@ -208,7 +208,7 @@ PhyEntity::CalculatePhyPreambleAndHeaderDuration(const WifiTxVector& txVector) c
 }
 
 WifiConstPsduMap
-PhyEntity::GetWifiConstPsduMap(Ptr<const WifiPsdu> psdu, const WifiTxVector& txVector) const
+PhyEntity::GetWifiConstPsduMap(Ptr<const WifiPsdu> psdu, const WifiTxVector& /*txVector*/) const
 {
     return WifiConstPsduMap({std::make_pair(SU_STA_ID, psdu)});
 }

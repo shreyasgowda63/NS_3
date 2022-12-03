@@ -160,7 +160,7 @@ BurstProfileManager::GetBurstProfileForSS(const SSRecord* ssRecord,
 }
 
 WimaxPhy::ModulationType
-BurstProfileManager::GetModulationTypeForSS(const SSRecord* ssRecord, const RngReq* rngreq)
+BurstProfileManager::GetModulationTypeForSS(const SSRecord* /*ssRecord*/, const RngReq* rngreq)
 {
     return GetModulationType(rngreq->GetReqDlBurstProfile(), WimaxNetDevice::DIRECTION_DOWNLINK);
 }

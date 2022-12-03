@@ -45,7 +45,7 @@ GetSetTRXStateConfirm(LrWpanPhyEnumeration status)
  * \param lqi link quality indication
  */
 void
-ReceivePdDataIndication(uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
+ReceivePdDataIndication(uint32_t psduLength, Ptr<Packet> /*p*/, uint8_t lqi)
 {
     NS_LOG_UNCOND("At: " << Simulator::Now() << " Received frame size: " << psduLength
                          << " LQI: " << (uint16_t)lqi);
@@ -57,7 +57,7 @@ ReceivePdDataIndication(uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
  * \param receiver receiver PHY
  */
 void
-SendOnePacket(Ptr<LrWpanPhy> sender, Ptr<LrWpanPhy> receiver)
+SendOnePacket(Ptr<LrWpanPhy> sender, Ptr<LrWpanPhy> /*receiver*/)
 {
     uint32_t n = 10;
     Ptr<Packet> p = Create<Packet>(n);

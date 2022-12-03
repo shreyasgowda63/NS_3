@@ -131,13 +131,13 @@ TcpLinuxRenoSSTest::ConfigureProperties()
 }
 
 void
-TcpLinuxRenoSSTest::QueueDrop(SocketWho who)
+TcpLinuxRenoSSTest::QueueDrop(SocketWho /*who*/)
 {
     NS_FATAL_ERROR("Drop on the queue; cannot validate slow start");
 }
 
 void
-TcpLinuxRenoSSTest::PhyDrop(SocketWho who)
+TcpLinuxRenoSSTest::PhyDrop(SocketWho /*who*/)
 {
     NS_FATAL_ERROR("Drop on the phy: cannot validate slow start");
 }
@@ -338,13 +338,13 @@ TcpLinuxRenoCongAvoidTest::CWndTrace(uint32_t oldValue, uint32_t newValue)
 }
 
 void
-TcpLinuxRenoCongAvoidTest::QueueDrop(SocketWho who)
+TcpLinuxRenoCongAvoidTest::QueueDrop(SocketWho /*who*/)
 {
     NS_FATAL_ERROR("Drop on the queue; cannot validate congestion avoidance");
 }
 
 void
-TcpLinuxRenoCongAvoidTest::PhyDrop(SocketWho who)
+TcpLinuxRenoCongAvoidTest::PhyDrop(SocketWho /*who*/)
 {
     NS_FATAL_ERROR("Drop on the phy: cannot validate congestion avoidance");
 }

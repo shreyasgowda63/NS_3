@@ -299,7 +299,7 @@ TupleValue<Args...>::DeserializeFromString(std::string value, Ptr<const Attribut
 
 template <class... Args>
 std::string
-TupleValue<Args...>::SerializeToString(Ptr<const AttributeChecker> checker) const
+TupleValue<Args...>::SerializeToString(Ptr<const AttributeChecker> /*checker*/) const
 {
     std::ostringstream oss;
     oss << "{" << Get() << "}";

@@ -103,7 +103,7 @@ YansWifiPhyHelper::SetChannel(std::string channelName)
 }
 
 std::vector<Ptr<WifiPhy>>
-YansWifiPhyHelper::Create(Ptr<Node> node, Ptr<WifiNetDevice> device) const
+YansWifiPhyHelper::Create(Ptr<Node> /*node*/, Ptr<WifiNetDevice> device) const
 {
     Ptr<YansWifiPhy> phy = m_phy.at(0).Create<YansWifiPhy>();
     Ptr<InterferenceHelper> interference = m_interferenceHelper.Create<InterferenceHelper>();

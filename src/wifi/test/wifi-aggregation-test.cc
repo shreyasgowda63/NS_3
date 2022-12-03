@@ -838,8 +838,8 @@ PreservePacketsInAmpdus::NotifyMacTransmit(Ptr<const Packet> packet)
 
 void
 PreservePacketsInAmpdus::NotifyPsduForwardedDown(WifiConstPsduMap psduMap,
-                                                 WifiTxVector txVector,
-                                                 double txPowerW)
+                                                 WifiTxVector /*txVector*/,
+                                                 double /*txPowerW*/)
 {
     NS_TEST_EXPECT_MSG_EQ((psduMap.size() == 1 && psduMap.begin()->first == SU_STA_ID),
                           true,

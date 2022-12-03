@@ -101,7 +101,7 @@ TcpRtoTest::CreateSenderSocket(Ptr<Node> node)
 }
 
 void
-TcpRtoTest::AfterRTOExpired(const Ptr<const TcpSocketState> tcb, SocketWho who)
+TcpRtoTest::AfterRTOExpired(const Ptr<const TcpSocketState> tcb, SocketWho /*who*/)
 {
     // In this test, the RTO fires for the first segment (and no more).
     // This function is called after the management of the RTO expiration,
@@ -115,7 +115,7 @@ TcpRtoTest::AfterRTOExpired(const Ptr<const TcpSocketState> tcb, SocketWho who)
 }
 
 void
-TcpRtoTest::RcvAck(const Ptr<const TcpSocketState> tcb, const TcpHeader& h, SocketWho who)
+TcpRtoTest::RcvAck(const Ptr<const TcpSocketState> tcb, const TcpHeader& /*h*/, SocketWho who)
 {
     // Called after the first ack is received (the lost segment has been
     // successfully retransmitted. We must check on the sender that variables
@@ -139,7 +139,7 @@ TcpRtoTest::RcvAck(const Ptr<const TcpSocketState> tcb, const TcpHeader& h, Sock
 }
 
 void
-TcpRtoTest::ProcessedAck(const Ptr<const TcpSocketState> tcb, const TcpHeader& h, SocketWho who)
+TcpRtoTest::ProcessedAck(const Ptr<const TcpSocketState> tcb, const TcpHeader& /*h*/, SocketWho who)
 {
     // Called after the ACK processing. Every time we should be in OPEN state,
     // without any packet lost or marked as retransmitted, in both the sockets
@@ -265,27 +265,29 @@ TcpSsThreshRtoTest::CreateReceiverErrorModel()
 }
 
 void
-TcpSsThreshRtoTest::PktDropped(const Ipv4Header& ipH, const TcpHeader& tcpH, Ptr<const Packet> p)
+TcpSsThreshRtoTest::PktDropped(const Ipv4Header& /*ipH*/,
+                               const TcpHeader& tcpH,
+                               Ptr<const Packet> /*p*/)
 {
     NS_LOG_DEBUG("DROPPED! " << tcpH);
 }
 
 void
-TcpSsThreshRtoTest::BytesInFlightTrace(uint32_t oldValue, uint32_t newValue)
+TcpSsThreshRtoTest::BytesInFlightTrace(uint32_t /*oldValue*/, uint32_t newValue)
 {
     NS_LOG_DEBUG("Socket BytesInFlight=" << newValue);
     m_bytesInFlight = newValue;
 }
 
 void
-TcpSsThreshRtoTest::SsThreshTrace(uint32_t oldValue, uint32_t newValue)
+TcpSsThreshRtoTest::SsThreshTrace(uint32_t /*oldValue*/, uint32_t newValue)
 {
     NS_LOG_DEBUG("Socket ssThresh=" << newValue);
     m_ssThreshSocket = newValue;
 }
 
 void
-TcpSsThreshRtoTest::BeforeRTOExpired(const Ptr<const TcpSocketState> tcb, SocketWho who)
+TcpSsThreshRtoTest::BeforeRTOExpired(const Ptr<const TcpSocketState> /*tcb*/, SocketWho who)
 {
     NS_LOG_DEBUG("Before RTO for connection " << who);
 
@@ -468,13 +470,13 @@ TcpTimeRtoTest::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
 }
 
 void
-TcpTimeRtoTest::ErrorClose(SocketWho who)
+TcpTimeRtoTest::ErrorClose(SocketWho /*who*/)
 {
     m_closed = true;
 }
 
 void
-TcpTimeRtoTest::AfterRTOExpired(const Ptr<const TcpSocketState> tcb, SocketWho who)
+TcpTimeRtoTest::AfterRTOExpired(const Ptr<const TcpSocketState> /*tcb*/, SocketWho who)
 {
     NS_TEST_ASSERT_MSG_EQ(who, SENDER, "RTO in Receiver. That's unexpected");
 
@@ -495,7 +497,9 @@ TcpTimeRtoTest::AfterRTOExpired(const Ptr<const TcpSocketState> tcb, SocketWho w
 }
 
 void
-TcpTimeRtoTest::PktDropped(const Ipv4Header& ipH, const TcpHeader& tcpH, Ptr<const Packet> p)
+TcpTimeRtoTest::PktDropped(const Ipv4Header& /*ipH*/,
+                           const TcpHeader& tcpH,
+                           Ptr<const Packet> /*p*/)
 {
     NS_LOG_INFO("DROPPED! " << tcpH);
 }

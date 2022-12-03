@@ -721,7 +721,7 @@ Ipv6ExtensionESPHeader::Serialize(Buffer::Iterator start) const
 }
 
 uint32_t
-Ipv6ExtensionESPHeader::Deserialize(Buffer::Iterator start)
+Ipv6ExtensionESPHeader::Deserialize(Buffer::Iterator /*start*/)
 {
     /** \todo */
     return 0;
@@ -773,7 +773,7 @@ Ipv6ExtensionAHHeader::Serialize(Buffer::Iterator start) const
 }
 
 uint32_t
-Ipv6ExtensionAHHeader::Deserialize(Buffer::Iterator start)
+Ipv6ExtensionAHHeader::Deserialize(Buffer::Iterator /*start*/)
 {
     /** \todo */
     return 0;

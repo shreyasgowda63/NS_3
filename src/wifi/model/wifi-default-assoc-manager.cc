@@ -305,13 +305,13 @@ WifiDefaultAssocManager::ChannelSwitchTimeout(uint8_t linkId)
 }
 
 bool
-WifiDefaultAssocManager::CanBeInserted(const StaWifiMac::ApInfo& apInfo) const
+WifiDefaultAssocManager::CanBeInserted(const StaWifiMac::ApInfo& /*apInfo*/) const
 {
     return (m_waitBeaconEvent.IsRunning() || m_probeRequestEvent.IsRunning());
 }
 
 bool
-WifiDefaultAssocManager::CanBeReturned(const StaWifiMac::ApInfo& apInfo) const
+WifiDefaultAssocManager::CanBeReturned(const StaWifiMac::ApInfo& /*apInfo*/) const
 {
     return true;
 }

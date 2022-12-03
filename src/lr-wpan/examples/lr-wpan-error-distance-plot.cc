@@ -62,7 +62,7 @@ NS_LOG_COMPONENT_DEFINE("LrWpanErrorDistancePlot");
  * \param p packet
  */
 static void
-LrWpanErrorDistanceCallback(McpsDataIndicationParams params, Ptr<Packet> p)
+LrWpanErrorDistanceCallback(McpsDataIndicationParams /*params*/, Ptr<Packet> /*p*/)
 {
     g_received++;
 }

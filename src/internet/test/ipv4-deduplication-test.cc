@@ -214,8 +214,8 @@ Ipv4DeduplicationTest::ReceivePkt(Ptr<Socket> socket)
 }
 
 void
-Ipv4DeduplicationTest::DropPkt(const Ipv4Header& ipHeader,
-                               Ptr<const Packet> packet,
+Ipv4DeduplicationTest::DropPkt(const Ipv4Header& /*ipHeader*/,
+                               Ptr<const Packet> /*packet*/,
                                Ipv4L3Protocol::DropReason reason,
                                Ptr<Ipv4> ipv4,
                                uint32_t interface)

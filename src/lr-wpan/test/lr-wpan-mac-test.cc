@@ -95,7 +95,8 @@ TestRxOffWhenIdleAfterCsmaFailure::~TestRxOffWhenIdleAfterCsmaFailure()
 }
 
 void
-TestRxOffWhenIdleAfterCsmaFailure::DataIndication(McpsDataIndicationParams params, Ptr<Packet> p)
+TestRxOffWhenIdleAfterCsmaFailure::DataIndication(McpsDataIndicationParams /*params*/,
+                                                  Ptr<Packet> p)
 {
     NS_LOG_DEBUG("Received packet of size " << p->GetSize());
 }

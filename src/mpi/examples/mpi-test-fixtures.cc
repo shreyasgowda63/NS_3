@@ -46,9 +46,9 @@ SinkTracer::Init()
 }
 
 void
-SinkTracer::SinkTrace(const ns3::Ptr<const ns3::Packet> packet,
-                      const ns3::Address& srcAddress,
-                      const ns3::Address& destAddress)
+SinkTracer::SinkTrace(const ns3::Ptr<const ns3::Packet> /*packet*/,
+                      const ns3::Address& /*srcAddress*/,
+                      const ns3::Address& /*destAddress*/)
 {
     m_sinkCount++;
 }

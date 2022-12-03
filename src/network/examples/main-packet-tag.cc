@@ -116,7 +116,7 @@ MyTag::GetSimpleValue() const
 }
 
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     // create a tag.
     MyTag tag;

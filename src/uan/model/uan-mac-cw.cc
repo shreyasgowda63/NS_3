@@ -110,7 +110,7 @@ UanMacCw::GetTypeId()
 }
 
 bool
-UanMacCw::Enqueue(Ptr<Packet> packet, uint16_t protocolNumber, const Address& dest)
+UanMacCw::Enqueue(Ptr<Packet> packet, uint16_t /*protocolNumber*/, const Address& dest)
 {
     switch (m_state)
     {
@@ -254,7 +254,7 @@ UanMacCw::NotifyCcaEnd()
 }
 
 void
-UanMacCw::NotifyTxStart(Time duration)
+UanMacCw::NotifyTxStart(Time /*duration*/)
 {
     m_txOngoing = true;
 

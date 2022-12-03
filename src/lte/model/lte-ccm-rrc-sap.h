@@ -352,7 +352,8 @@ MemberLteCcmRrcSapUser<C>::MemberLteCcmRrcSapUser(C* owner)
 
 template <class C>
 void
-MemberLteCcmRrcSapUser<C>::AddLcs(std::vector<LteEnbRrcSapProvider::LogicalChannelConfig> lcConfig)
+MemberLteCcmRrcSapUser<C>::AddLcs(
+    std::vector<LteEnbRrcSapProvider::LogicalChannelConfig> /*lcConfig*/)
 {
     NS_FATAL_ERROR("Function should not be called because it is not implemented.");
     // m_owner->DoAddLcs (lcConfig);
@@ -360,7 +361,7 @@ MemberLteCcmRrcSapUser<C>::AddLcs(std::vector<LteEnbRrcSapProvider::LogicalChann
 
 template <class C>
 void
-MemberLteCcmRrcSapUser<C>::ReleaseLcs(uint16_t rnti, uint8_t lcid)
+MemberLteCcmRrcSapUser<C>::ReleaseLcs(uint16_t /*rnti*/, uint8_t /*lcid*/)
 {
     NS_FATAL_ERROR("Function should not be called because it is not implemented.");
     // m_owner->DoReleaseLcs (rnti, lcid);
@@ -376,7 +377,7 @@ MemberLteCcmRrcSapUser<C>::AddUeMeasReportConfigForComponentCarrier(
 
 template <class C>
 void
-MemberLteCcmRrcSapUser<C>::TriggerComponentCarrier(uint16_t rnti, uint16_t targetCellId)
+MemberLteCcmRrcSapUser<C>::TriggerComponentCarrier(uint16_t /*rnti*/, uint16_t /*targetCellId*/)
 {
     NS_FATAL_ERROR("Function should not be called because it is not implemented.");
 }

@@ -285,7 +285,7 @@ LteFfrSoftAlgorithm::Reconfigure()
 }
 
 void
-LteFfrSoftAlgorithm::SetDownlinkConfiguration(uint16_t cellId, uint8_t bandwidth)
+LteFfrSoftAlgorithm::SetDownlinkConfiguration(uint16_t cellId, uint8_t /*bandwidth*/)
 {
     NS_LOG_FUNCTION(this);
     for (uint16_t i = 0; i < NUM_DOWNLINK_CONFS; ++i)
@@ -301,7 +301,7 @@ LteFfrSoftAlgorithm::SetDownlinkConfiguration(uint16_t cellId, uint8_t bandwidth
 }
 
 void
-LteFfrSoftAlgorithm::SetUplinkConfiguration(uint16_t cellId, uint8_t bandwidth)
+LteFfrSoftAlgorithm::SetUplinkConfiguration(uint16_t cellId, uint8_t /*bandwidth*/)
 {
     NS_LOG_FUNCTION(this);
     for (uint16_t i = 0; i < NUM_UPLINK_CONFS; ++i)
@@ -521,7 +521,7 @@ LteFfrSoftAlgorithm::DoIsUlRbgAvailableForUe(int rbgId, uint16_t rnti)
 
 void
 LteFfrSoftAlgorithm::DoReportDlCqiInfo(
-    const struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
@@ -529,14 +529,14 @@ LteFfrSoftAlgorithm::DoReportDlCqiInfo(
 
 void
 LteFfrSoftAlgorithm::DoReportUlCqiInfo(
-    const struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
 }
 
 void
-LteFfrSoftAlgorithm::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> ulCqiMap)
+LteFfrSoftAlgorithm::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> /*ulCqiMap*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
@@ -709,7 +709,7 @@ LteFfrSoftAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measRe
 }
 
 void
-LteFfrSoftAlgorithm::DoRecvLoadInformation(EpcX2Sap::LoadInformationParams params)
+LteFfrSoftAlgorithm::DoRecvLoadInformation(EpcX2Sap::LoadInformationParams /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");

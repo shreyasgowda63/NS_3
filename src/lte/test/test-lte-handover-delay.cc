@@ -228,10 +228,10 @@ LteHandoverDelayTestCase::DoRun()
 
 void
 LteHandoverDelayTestCase::UeHandoverStartCallback(std::string context,
-                                                  uint64_t imsi,
-                                                  uint16_t cellid,
-                                                  uint16_t rnti,
-                                                  uint16_t targetCellId)
+                                                  uint64_t /*imsi*/,
+                                                  uint16_t /*cellid*/,
+                                                  uint16_t /*rnti*/,
+                                                  uint16_t /*targetCellId*/)
 {
     NS_LOG_FUNCTION(this << context);
     m_ueHandoverStart = Simulator::Now();
@@ -239,9 +239,9 @@ LteHandoverDelayTestCase::UeHandoverStartCallback(std::string context,
 
 void
 LteHandoverDelayTestCase::UeHandoverEndOkCallback(std::string context,
-                                                  uint64_t imsi,
-                                                  uint16_t cellid,
-                                                  uint16_t rnti)
+                                                  uint64_t /*imsi*/,
+                                                  uint16_t /*cellid*/,
+                                                  uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this << context);
     NS_ASSERT(m_ueHandoverStart > Seconds(0));
@@ -257,10 +257,10 @@ LteHandoverDelayTestCase::UeHandoverEndOkCallback(std::string context,
 
 void
 LteHandoverDelayTestCase::EnbHandoverStartCallback(std::string context,
-                                                   uint64_t imsi,
-                                                   uint16_t cellid,
-                                                   uint16_t rnti,
-                                                   uint16_t targetCellId)
+                                                   uint64_t /*imsi*/,
+                                                   uint16_t /*cellid*/,
+                                                   uint16_t /*rnti*/,
+                                                   uint16_t /*targetCellId*/)
 {
     NS_LOG_FUNCTION(this << context);
     m_enbHandoverStart = Simulator::Now();
@@ -268,9 +268,9 @@ LteHandoverDelayTestCase::EnbHandoverStartCallback(std::string context,
 
 void
 LteHandoverDelayTestCase::EnbHandoverEndOkCallback(std::string context,
-                                                   uint64_t imsi,
-                                                   uint16_t cellid,
-                                                   uint16_t rnti)
+                                                   uint64_t /*imsi*/,
+                                                   uint16_t /*cellid*/,
+                                                   uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this << context);
     NS_ASSERT(m_enbHandoverStart > Seconds(0));

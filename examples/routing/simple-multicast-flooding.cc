@@ -71,7 +71,7 @@ using namespace ns3;
  * across the illustrated topology.
  */
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     // multicast target
     const std::string targetAddr = "239.192.100.1";

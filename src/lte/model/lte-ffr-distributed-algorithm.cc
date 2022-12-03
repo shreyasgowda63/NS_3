@@ -194,13 +194,13 @@ LteFfrDistributedAlgorithm::Reconfigure()
 }
 
 void
-LteFfrDistributedAlgorithm::SetDownlinkConfiguration(uint16_t cellId, uint8_t bandwidth)
+LteFfrDistributedAlgorithm::SetDownlinkConfiguration(uint16_t /*cellId*/, uint8_t /*bandwidth*/)
 {
     NS_LOG_FUNCTION(this);
 }
 
 void
-LteFfrDistributedAlgorithm::SetUplinkConfiguration(uint16_t cellId, uint8_t bandwidth)
+LteFfrDistributedAlgorithm::SetUplinkConfiguration(uint16_t /*cellId*/, uint8_t /*bandwidth*/)
 {
     NS_LOG_FUNCTION(this);
 }
@@ -306,7 +306,7 @@ LteFfrDistributedAlgorithm::DoIsUlRbgAvailableForUe(int rbId, uint16_t rnti)
 
 void
 LteFfrDistributedAlgorithm::DoReportDlCqiInfo(
-    const struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
@@ -314,14 +314,14 @@ LteFfrDistributedAlgorithm::DoReportDlCqiInfo(
 
 void
 LteFfrDistributedAlgorithm::DoReportUlCqiInfo(
-    const struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
 }
 
 void
-LteFfrDistributedAlgorithm::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> ulCqiMap)
+LteFfrDistributedAlgorithm::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> /*ulCqiMap*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");

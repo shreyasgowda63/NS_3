@@ -112,7 +112,7 @@ GenerateTraffic(Ptr<Socket> socket,
  * \param remainingEnergy New value
  */
 void
-RemainingEnergy(double oldValue, double remainingEnergy)
+RemainingEnergy(double /*oldValue*/, double remainingEnergy)
 {
     NS_LOG_UNCOND(Simulator::Now().GetSeconds()
                   << "s Current remaining energy = " << remainingEnergy << "J");
@@ -125,7 +125,7 @@ RemainingEnergy(double oldValue, double remainingEnergy)
  * \param totalEnergy New value
  */
 void
-TotalEnergy(double oldValue, double totalEnergy)
+TotalEnergy(double /*oldValue*/, double totalEnergy)
 {
     NS_LOG_UNCOND(Simulator::Now().GetSeconds()
                   << "s Total energy consumed by radio = " << totalEnergy << "J");

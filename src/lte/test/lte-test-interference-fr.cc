@@ -128,7 +128,7 @@ LteInterferenceHardFrTestCase::LteInterferenceHardFrTestCase(std::string name,
                                                              double d1,
                                                              double d2,
                                                              double dlSinr,
-                                                             double ulSinr)
+                                                             double /*ulSinr*/)
     : TestCase("Test: " + name),
       m_d1(d1),
       m_d2(d2),
@@ -298,9 +298,9 @@ LteInterferenceStrictFrTestCase::LteInterferenceStrictFrTestCase(std::string nam
                                                                  double d1,
                                                                  double d2,
                                                                  double commonDlSinr,
-                                                                 double commonUlSinr,
+                                                                 double /*commonUlSinr*/,
                                                                  double edgeDlSinr,
-                                                                 double edgeUlSinr,
+                                                                 double /*edgeUlSinr*/,
                                                                  uint32_t rspqThreshold)
     : TestCase("Test: " + name),
       m_d1(d1),

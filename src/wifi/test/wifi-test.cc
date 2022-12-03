@@ -504,7 +504,7 @@ DcfImmediateAccessBroadcastTestCase::DcfImmediateAccessBroadcastTestCase()
 }
 
 void
-DcfImmediateAccessBroadcastTestCase::NotifyPhyTxBegin(Ptr<const Packet> p, double txPowerW)
+DcfImmediateAccessBroadcastTestCase::NotifyPhyTxBegin(Ptr<const Packet> /*p*/, double /*txPowerW*/)
 {
     if (m_numSentPackets == 0)
     {
@@ -667,7 +667,7 @@ Bug730TestCase::~Bug730TestCase()
 }
 
 void
-Bug730TestCase::Receive(std::string context, Ptr<const Packet> p, const Address& adr)
+Bug730TestCase::Receive(std::string /*context*/, Ptr<const Packet> p, const Address& /*adr*/)
 {
     if ((p->GetSize() == 1460) && (Simulator::Now() > Seconds(20)))
     {
@@ -816,7 +816,9 @@ QosFragmentationTestCase::~QosFragmentationTestCase()
 }
 
 void
-QosFragmentationTestCase::Receive(std::string context, Ptr<const Packet> p, const Address& adr)
+QosFragmentationTestCase::Receive(std::string /*context*/,
+                                  Ptr<const Packet> p,
+                                  const Address& /*adr*/)
 {
     if (p->GetSize() == 1400)
     {
@@ -825,7 +827,7 @@ QosFragmentationTestCase::Receive(std::string context, Ptr<const Packet> p, cons
 }
 
 void
-QosFragmentationTestCase::Transmit(std::string context, Ptr<const Packet> p, double power)
+QosFragmentationTestCase::Transmit(std::string /*context*/, Ptr<const Packet> p, double /*power*/)
 {
     WifiMacHeader hdr;
     p->PeekHeader(hdr);
@@ -1396,7 +1398,7 @@ Bug2222TestCase::~Bug2222TestCase()
 }
 
 void
-Bug2222TestCase::TxDataFailedTrace(std::string context, Mac48Address adr)
+Bug2222TestCase::TxDataFailedTrace(std::string /*context*/, Mac48Address /*adr*/)
 {
     // Indicate the long retry counter has been increased in the wifi remote station manager
     m_countInternalCollisions++;
@@ -1555,7 +1557,7 @@ Bug2843TestCase::~Bug2843TestCase()
 }
 
 void
-Bug2843TestCase::StoreDistinctTuple(std::string context, Ptr<SpectrumSignalParameters> txParams)
+Bug2843TestCase::StoreDistinctTuple(std::string /*context*/, Ptr<SpectrumSignalParameters> txParams)
 {
     // Extract starting frequency and number of subbands
     Ptr<const SpectrumModel> c = txParams->psd->GetSpectrumModel();
@@ -1776,9 +1778,9 @@ Bug2831TestCase::ChangeSupportedChannelWidth()
 }
 
 void
-Bug2831TestCase::RxCallback(std::string context,
+Bug2831TestCase::RxCallback(std::string /*context*/,
                             Ptr<const Packet> p,
-                            RxPowerWattPerChannelBand rxPowersW)
+                            RxPowerWattPerChannelBand /*rxPowersW*/)
 {
     Ptr<Packet> packet = p->Copy();
     WifiMacHeader hdr;
@@ -1981,7 +1983,7 @@ StaWifiMacScanningTestCase::~StaWifiMacScanningTestCase()
 }
 
 void
-StaWifiMacScanningTestCase::AssocCallback(std::string context, Mac48Address bssid)
+StaWifiMacScanningTestCase::AssocCallback(std::string /*context*/, Mac48Address bssid)
 {
     m_associatedApBssid = bssid;
 }
@@ -2231,10 +2233,10 @@ Bug2470TestCase::~Bug2470TestCase()
 }
 
 void
-Bug2470TestCase::AddbaStateChangedCallback(std::string context,
-                                           Time t,
-                                           Mac48Address recipient,
-                                           uint8_t tid,
+Bug2470TestCase::AddbaStateChangedCallback(std::string /*context*/,
+                                           Time /*t*/,
+                                           Mac48Address /*recipient*/,
+                                           uint8_t /*tid*/,
                                            OriginatorBlockAckAgreement::State state)
 {
     switch (state)
@@ -2258,13 +2260,13 @@ Bug2470TestCase::AddbaStateChangedCallback(std::string context,
 }
 
 void
-Bug2470TestCase::RxCallback(std::string context,
+Bug2470TestCase::RxCallback(std::string /*context*/,
                             Ptr<const Packet> p,
-                            uint16_t channelFreqMhz,
-                            WifiTxVector txVector,
+                            uint16_t /*channelFreqMhz*/,
+                            WifiTxVector /*txVector*/,
                             MpduInfo aMpdu,
-                            SignalNoiseDbm signalNoise,
-                            uint16_t staId)
+                            SignalNoiseDbm /*signalNoise*/,
+                            uint16_t /*staId*/)
 {
     Ptr<Packet> packet = p->Copy();
     if (aMpdu.type != MpduType::NORMAL_MPDU)
@@ -2283,7 +2285,7 @@ Bug2470TestCase::RxCallback(std::string context,
 }
 
 void
-Bug2470TestCase::RxErrorCallback(std::string context, Ptr<const Packet> p, double snr)
+Bug2470TestCase::RxErrorCallback(std::string /*context*/, Ptr<const Packet> p, double /*snr*/)
 {
     Ptr<Packet> packet = p->Copy();
     WifiMacHeader hdr;
@@ -2576,7 +2578,7 @@ Issue40TestCase::~Issue40TestCase()
 }
 
 void
-Issue40TestCase::RxSuccessCallback(std::string context, Ptr<const Packet> p)
+Issue40TestCase::RxSuccessCallback(std::string /*context*/, Ptr<const Packet> /*p*/)
 {
     m_rxCount++;
 }
@@ -2593,7 +2595,7 @@ Issue40TestCase::SendPackets(uint8_t numPackets, Ptr<NetDevice> sourceDevice, Ad
 }
 
 void
-Issue40TestCase::TxFinalDataFailedCallback(std::string context, Mac48Address address)
+Issue40TestCase::TxFinalDataFailedCallback(std::string /*context*/, Mac48Address /*address*/)
 {
     m_txMacFinalDataFailedCount++;
 }
@@ -2814,10 +2816,10 @@ Issue169TestCase::SendPackets(uint8_t numPackets,
 }
 
 void
-Issue169TestCase::TxCallback(std::string context,
+Issue169TestCase::TxCallback(std::string /*context*/,
                              WifiConstPsduMap psdus,
                              WifiTxVector txVector,
-                             double txPowerW)
+                             double /*txPowerW*/)
 {
     if (psdus.begin()->second->GetSize() >= 1000)
     {
@@ -2978,10 +2980,10 @@ IdealRateManagerChannelWidthTest::SendPacket(Ptr<NetDevice> sourceDevice, Addres
 }
 
 void
-IdealRateManagerChannelWidthTest::TxCallback(std::string context,
+IdealRateManagerChannelWidthTest::TxCallback(std::string /*context*/,
                                              WifiConstPsduMap psduMap,
                                              WifiTxVector txVector,
-                                             double txPowerW)
+                                             double /*txPowerW*/)
 {
     if (psduMap.begin()->second->GetSize() >= 1000)
     {
@@ -3199,10 +3201,10 @@ IdealRateManagerMimoTest::SendPacket(Ptr<NetDevice> sourceDevice, Address& desti
 }
 
 void
-IdealRateManagerMimoTest::TxCallback(std::string context,
+IdealRateManagerMimoTest::TxCallback(std::string /*context*/,
                                      WifiConstPsduMap psdus,
                                      WifiTxVector txVector,
-                                     double txPowerW)
+                                     double /*txPowerW*/)
 {
     if (psdus.begin()->second->GetSize() >= 1000)
     {

@@ -572,7 +572,7 @@ MinstrelHtWifiManager::CheckInit(MinstrelHtWifiRemoteStation* station)
 }
 
 void
-MinstrelHtWifiManager::DoReportRxOk(WifiRemoteStation* st, double rxSnr, WifiMode txMode)
+MinstrelHtWifiManager::DoReportRxOk(WifiRemoteStation* st, double /*rxSnr*/, WifiMode /*txMode*/)
 {
     NS_LOG_FUNCTION(this << st);
     NS_LOG_DEBUG(
@@ -595,9 +595,9 @@ MinstrelHtWifiManager::DoReportRtsFailed(WifiRemoteStation* st)
 
 void
 MinstrelHtWifiManager::DoReportRtsOk(WifiRemoteStation* st,
-                                     double ctsSnr,
-                                     WifiMode ctsMode,
-                                     double rtsSnr)
+                                     double /*ctsSnr*/,
+                                     WifiMode /*ctsMode*/,
+                                     double /*rtsSnr*/)
 {
     NS_LOG_FUNCTION(this << st);
 }

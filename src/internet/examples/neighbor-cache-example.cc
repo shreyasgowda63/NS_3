@@ -341,7 +341,7 @@ NeighborCacheExample::NeighborCacheExample()
 }
 
 void
-NeighborCacheExample::ReceivePacket(Ptr<const Packet> pkt,
+NeighborCacheExample::ReceivePacket(Ptr<const Packet> /*pkt*/,
                                     const Address& from,
                                     const Address& dst,
                                     const SeqTsSizeHeader& header)

@@ -121,13 +121,13 @@ PrioQueueDiscTestFilter::SetReturnValue(int32_t ret)
 }
 
 bool
-PrioQueueDiscTestFilter::CheckProtocol(Ptr<QueueDiscItem> item) const
+PrioQueueDiscTestFilter::CheckProtocol(Ptr<QueueDiscItem> /*item*/) const
 {
     return m_cls;
 }
 
 int32_t
-PrioQueueDiscTestFilter::DoClassify(Ptr<QueueDiscItem> item) const
+PrioQueueDiscTestFilter::DoClassify(Ptr<QueueDiscItem> /*item*/) const
 {
     return m_ret;
 }

@@ -417,7 +417,7 @@ BasicEnergyDepletionTest::DepletionTestCase(double simTimeS, double updateInterv
 // -------------------------------------------------------------------------- //
 
 int
-main(int argc, char** argv)
+main(int /*argc*/, char** /*argv*/)
 {
     BasicEnergyUpdateTest testEnergyUpdate;
     if (testEnergyUpdate.DoRun())

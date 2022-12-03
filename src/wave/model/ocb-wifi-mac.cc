@@ -108,7 +108,7 @@ OcbWifiMac::RemoveReceiveVscCallback(OrganizationIdentifier oi)
 }
 
 void
-OcbWifiMac::SetSsid(Ssid ssid)
+OcbWifiMac::SetSsid(Ssid /*ssid*/)
 {
     NS_LOG_WARN("in OCB mode we should not call SetSsid");
 }
@@ -122,7 +122,7 @@ OcbWifiMac::GetSsid() const
 }
 
 void
-OcbWifiMac::SetBssid(Mac48Address bssid)
+OcbWifiMac::SetBssid(Mac48Address /*bssid*/)
 {
     NS_LOG_WARN("in OCB mode we should not call SetBsid");
 }
@@ -155,7 +155,7 @@ OcbWifiMac::SetLinkDownCallback(Callback<void> linkDown)
 }
 
 bool
-OcbWifiMac::CanForwardPacketsTo(Mac48Address to) const
+OcbWifiMac::CanForwardPacketsTo(Mac48Address /*to*/) const
 {
     return true;
 }
@@ -516,7 +516,7 @@ OcbWifiMac::EnableForWave(Ptr<WaveNetDevice> device)
 }
 
 std::optional<uint8_t>
-OcbWifiMac::GetLinkIdByAddress(const Mac48Address& address) const
+OcbWifiMac::GetLinkIdByAddress(const Mac48Address& /*address*/) const
 {
     return 0;
 }

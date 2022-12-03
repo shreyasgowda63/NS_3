@@ -130,7 +130,7 @@ class AdhocAlohaNoackIdealPhyHelper
 
 template <typename... Ts>
 void
-AdhocAlohaNoackIdealPhyHelper::SetAntenna(std::string type, Ts&&... args)
+AdhocAlohaNoackIdealPhyHelper::SetAntenna(std::string /*type*/, Ts&&... args)
 {
     m_antenna = ObjectFactory(std::forward<Ts>(args)...);
 }

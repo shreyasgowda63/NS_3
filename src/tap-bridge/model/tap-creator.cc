@@ -281,12 +281,7 @@ SendSocket(const char* path, int fd)
 }
 
 static int
-CreateTap(const char* dev,
-          const char* gw,
-          const char* ip,
-          const char* mac,
-          const char* mode,
-          const char* netmask)
+CreateTap(const char* dev, const char* ip, const char* mac, const char* mode, const char* netmask)
 {
     //
     // Creation and management of Tap devices is done via the tun device
@@ -477,7 +472,7 @@ main(int argc, char* argv[])
     // us to exeucte the following code:
     //
     LOG("Creating Tap");
-    int sock = CreateTap(dev, gw, ip, mac, operatingMode, netmask);
+    int sock = CreateTap(dev, ip, mac, operatingMode, netmask);
     ABORT_IF(sock == -1, "main(): Unable to create tap socket", 1);
 
     //

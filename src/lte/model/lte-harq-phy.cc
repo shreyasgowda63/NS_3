@@ -47,7 +47,7 @@ LteHarqPhy::~LteHarqPhy()
 }
 
 void
-LteHarqPhy::SubframeIndication(uint32_t frameNo, uint32_t subframeNo)
+LteHarqPhy::SubframeIndication(uint32_t /*frameNo*/, uint32_t /*subframeNo*/)
 {
     NS_LOG_FUNCTION(this);
 

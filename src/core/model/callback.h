@@ -226,7 +226,7 @@ class CallbackComponent<T, false> : public CallbackComponentBase
      * \param [in] other CallbackParam Ptr
      * \return \c true if we are equal
      */
-    bool IsEqual(std::shared_ptr<const CallbackComponentBase> other) const override
+    bool IsEqual(std::shared_ptr<const CallbackComponentBase> /*other*/) const override
     {
         return false;
     }
@@ -525,7 +525,7 @@ class Callback : public CallbackBase
      * The integer sequence is 0..N-1, where N is the number of arguments left unbound.
      */
     template <std::size_t... INDEX, typename... BoundArgs>
-    auto BindImpl(std::index_sequence<INDEX...> seq, BoundArgs... bargs)
+    auto BindImpl(std::index_sequence<INDEX...> /*seq*/, BoundArgs... bargs)
     {
         return Callback<R, std::tuple_element_t<sizeof...(bargs) + INDEX, std::tuple<UArgs...>>...>(
             *this,

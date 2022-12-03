@@ -55,7 +55,7 @@ QueueItem::GetSize() const
 }
 
 bool
-QueueItem::GetUint8Value(QueueItem::Uint8Values field, uint8_t& value) const
+QueueItem::GetUint8Value(QueueItem::Uint8Values /*field*/, uint8_t& /*value*/) const
 {
     NS_LOG_FUNCTION(this);
     return false;
@@ -140,7 +140,7 @@ QueueDiscItem::Print(std::ostream& os) const
 }
 
 uint32_t
-QueueDiscItem::Hash(uint32_t perturbation) const
+QueueDiscItem::Hash(uint32_t /*perturbation*/) const
 {
     NS_LOG_WARN("The Hash method should be redefined by subclasses");
     return 0;

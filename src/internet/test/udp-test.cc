@@ -582,13 +582,17 @@ Udp6SocketImplTest::Udp6SocketImplTest()
 }
 
 void
-Udp6SocketImplTest::ReceivePacket(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from)
+Udp6SocketImplTest::ReceivePacket(Ptr<Socket> /*socket*/,
+                                  Ptr<Packet> packet,
+                                  const Address& /*from*/)
 {
     m_receivedPacket = packet;
 }
 
 void
-Udp6SocketImplTest::ReceivePacket2(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from)
+Udp6SocketImplTest::ReceivePacket2(Ptr<Socket> /*socket*/,
+                                   Ptr<Packet> packet,
+                                   const Address& /*from*/)
 {
     m_receivedPacket2 = packet;
 }

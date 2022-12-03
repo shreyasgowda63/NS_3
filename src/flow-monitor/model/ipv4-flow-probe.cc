@@ -323,7 +323,7 @@ Ipv4FlowProbe::DoDispose()
 void
 Ipv4FlowProbe::SendOutgoingLogger(const Ipv4Header& ipHeader,
                                   Ptr<const Packet> ipPayload,
-                                  uint32_t interface)
+                                  uint32_t /*interface*/)
 {
     FlowId flowId;
     FlowPacketId packetId;
@@ -362,7 +362,7 @@ Ipv4FlowProbe::SendOutgoingLogger(const Ipv4Header& ipHeader,
 void
 Ipv4FlowProbe::ForwardLogger(const Ipv4Header& ipHeader,
                              Ptr<const Packet> ipPayload,
-                             uint32_t interface)
+                             uint32_t /*interface*/)
 {
     Ipv4FlowProbeTag fTag;
     bool found = ipPayload->FindFirstMatchingByteTag(fTag);
@@ -393,7 +393,7 @@ Ipv4FlowProbe::ForwardLogger(const Ipv4Header& ipHeader,
 void
 Ipv4FlowProbe::ForwardUpLogger(const Ipv4Header& ipHeader,
                                Ptr<const Packet> ipPayload,
-                               uint32_t interface)
+                               uint32_t /*interface*/)
 {
     Ipv4FlowProbeTag fTag;
     bool found = ipPayload->FindFirstMatchingByteTag(fTag);
@@ -420,8 +420,8 @@ void
 Ipv4FlowProbe::DropLogger(const Ipv4Header& ipHeader,
                           Ptr<const Packet> ipPayload,
                           Ipv4L3Protocol::DropReason reason,
-                          Ptr<Ipv4> ipv4,
-                          uint32_t ifIndex)
+                          Ptr<Ipv4> /*ipv4*/,
+                          uint32_t /*ifIndex*/)
 {
 #if 0
   switch (reason)

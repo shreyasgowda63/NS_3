@@ -57,7 +57,7 @@ class WaveformGeneratorTestCase : public TestCase
 };
 
 void
-WaveformGeneratorTestCase::TraceWave(Ptr<const Packet> newPkt)
+WaveformGeneratorTestCase::TraceWave(Ptr<const Packet> /*newPkt*/)
 {
     if (Now().GetSeconds() > m_stop)
     {

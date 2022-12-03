@@ -124,13 +124,17 @@ Ipv4RawSocketImplTest::Ipv4RawSocketImplTest()
 }
 
 void
-Ipv4RawSocketImplTest::ReceivePacket(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from)
+Ipv4RawSocketImplTest::ReceivePacket(Ptr<Socket> /*socket*/,
+                                     Ptr<Packet> packet,
+                                     const Address& /*from*/)
 {
     m_receivedPacket = packet;
 }
 
 void
-Ipv4RawSocketImplTest::ReceivePacket2(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from)
+Ipv4RawSocketImplTest::ReceivePacket2(Ptr<Socket> /*socket*/,
+                                      Ptr<Packet> packet,
+                                      const Address& /*from*/)
 {
     m_receivedPacket2 = packet;
 }

@@ -39,7 +39,7 @@ Ipv4StaticRoutingHelper::Ipv4StaticRoutingHelper()
 {
 }
 
-Ipv4StaticRoutingHelper::Ipv4StaticRoutingHelper(const Ipv4StaticRoutingHelper& o)
+Ipv4StaticRoutingHelper::Ipv4StaticRoutingHelper(const Ipv4StaticRoutingHelper& /*o*/)
 {
 }
 
@@ -50,7 +50,7 @@ Ipv4StaticRoutingHelper::Copy() const
 }
 
 Ptr<Ipv4RoutingProtocol>
-Ipv4StaticRoutingHelper::Create(Ptr<Node> node) const
+Ipv4StaticRoutingHelper::Create(Ptr<Node> /*node*/) const
 {
     return CreateObject<Ipv4StaticRouting>();
 }

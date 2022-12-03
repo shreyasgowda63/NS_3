@@ -235,7 +235,7 @@ ItuR1411NlosOverRooftopPropagationLossModel::DoCalcRxPower(double txPowerDbm,
 }
 
 int64_t
-ItuR1411NlosOverRooftopPropagationLossModel::DoAssignStreams(int64_t stream)
+ItuR1411NlosOverRooftopPropagationLossModel::DoAssignStreams(int64_t /*stream*/)
 {
     return 0;
 }

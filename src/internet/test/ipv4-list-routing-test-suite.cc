@@ -31,21 +31,21 @@ using namespace ns3;
 class Ipv4ARouting : public Ipv4RoutingProtocol
 {
   public:
-    Ptr<Ipv4Route> RouteOutput(Ptr<Packet> p,
-                               const Ipv4Header& header,
-                               Ptr<NetDevice> oif,
-                               Socket::SocketErrno& sockerr) override
+    Ptr<Ipv4Route> RouteOutput(Ptr<Packet> /*p*/,
+                               const Ipv4Header& /*header*/,
+                               Ptr<NetDevice> /*oif*/,
+                               Socket::SocketErrno& /*sockerr*/) override
     {
         return nullptr;
     }
 
-    bool RouteInput(Ptr<const Packet> p,
-                    const Ipv4Header& header,
-                    Ptr<const NetDevice> idev,
-                    UnicastForwardCallback ucb,
-                    MulticastForwardCallback mcb,
-                    LocalDeliverCallback lcb,
-                    ErrorCallback ecb) override
+    bool RouteInput(Ptr<const Packet> /*p*/,
+                    const Ipv4Header& /*header*/,
+                    Ptr<const NetDevice> /*idev*/,
+                    UnicastForwardCallback /*ucb*/,
+                    MulticastForwardCallback /*mcb*/,
+                    LocalDeliverCallback /*lcb*/,
+                    ErrorCallback /*ecb*/) override
     {
         return false;
     }
@@ -84,21 +84,21 @@ class Ipv4ARouting : public Ipv4RoutingProtocol
 class Ipv4BRouting : public Ipv4RoutingProtocol
 {
   public:
-    Ptr<Ipv4Route> RouteOutput(Ptr<Packet> p,
-                               const Ipv4Header& header,
-                               Ptr<NetDevice> oif,
-                               Socket::SocketErrno& sockerr) override
+    Ptr<Ipv4Route> RouteOutput(Ptr<Packet> /*p*/,
+                               const Ipv4Header& /*header*/,
+                               Ptr<NetDevice> /*oif*/,
+                               Socket::SocketErrno& /*sockerr*/) override
     {
         return nullptr;
     }
 
-    bool RouteInput(Ptr<const Packet> p,
-                    const Ipv4Header& header,
-                    Ptr<const NetDevice> idev,
-                    UnicastForwardCallback ucb,
-                    MulticastForwardCallback mcb,
-                    LocalDeliverCallback lcb,
-                    ErrorCallback ecb) override
+    bool RouteInput(Ptr<const Packet> /*p*/,
+                    const Ipv4Header& /*header*/,
+                    Ptr<const NetDevice> /*idev*/,
+                    UnicastForwardCallback /*ucb*/,
+                    MulticastForwardCallback /*mcb*/,
+                    LocalDeliverCallback /*lcb*/,
+                    ErrorCallback /*ecb*/) override
     {
         return false;
     }

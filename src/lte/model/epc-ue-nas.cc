@@ -267,7 +267,7 @@ EpcUeNas::DoNotifyConnectionReleased()
 }
 
 void
-EpcUeNas::DoActivateEpsBearer(EpsBearer bearer, Ptr<EpcTft> tft)
+EpcUeNas::DoActivateEpsBearer(EpsBearer /*bearer*/, Ptr<EpcTft> tft)
 {
     NS_LOG_FUNCTION(this);
     NS_ASSERT_MSG(m_bidCounter < 11, "cannot have more than 11 EPS bearers");

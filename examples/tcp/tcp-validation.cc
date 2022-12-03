@@ -177,7 +177,7 @@ bool g_validationFailed = false;    //!< True if validation failed.
  * \param newCwnd new value.
  */
 void
-TraceFirstCwnd(std::ofstream* ofStream, uint32_t oldCwnd, uint32_t newCwnd)
+TraceFirstCwnd(std::ofstream* ofStream, uint32_t /*oldCwnd*/, uint32_t newCwnd)
 {
     // TCP segment size is configured below to be 1448 bytes
     // so that we can report cwnd in units of segments
@@ -223,7 +223,10 @@ TraceFirstCwnd(std::ofstream* ofStream, uint32_t oldCwnd, uint32_t newCwnd)
  * \param alpha Alpha.
  */
 void
-TraceFirstDctcp(std::ofstream* ofStream, uint32_t bytesMarked, uint32_t bytesAcked, double alpha)
+TraceFirstDctcp(std::ofstream* ofStream,
+                uint32_t /*bytesMarked*/,
+                uint32_t /*bytesAcked*/,
+                double alpha)
 {
     if (g_validate == "")
     {
@@ -275,7 +278,7 @@ TraceFirstDctcp(std::ofstream* ofStream, uint32_t bytesMarked, uint32_t bytesAck
  * \param newRtt New value.
  */
 void
-TraceFirstRtt(std::ofstream* ofStream, Time oldRtt, Time newRtt)
+TraceFirstRtt(std::ofstream* ofStream, Time /*oldRtt*/, Time newRtt)
 {
     if (g_validate == "")
     {
@@ -292,7 +295,7 @@ TraceFirstRtt(std::ofstream* ofStream, Time oldRtt, Time newRtt)
  * \param newCwnd new value.
  */
 void
-TraceSecondCwnd(std::ofstream* ofStream, uint32_t oldCwnd, uint32_t newCwnd)
+TraceSecondCwnd(std::ofstream* ofStream, uint32_t /*oldCwnd*/, uint32_t newCwnd)
 {
     // TCP segment size is configured below to be 1448 bytes
     // so that we can report cwnd in units of segments
@@ -311,7 +314,7 @@ TraceSecondCwnd(std::ofstream* ofStream, uint32_t oldCwnd, uint32_t newCwnd)
  * \param newRtt New value.
  */
 void
-TraceSecondRtt(std::ofstream* ofStream, Time oldRtt, Time newRtt)
+TraceSecondRtt(std::ofstream* ofStream, Time /*oldRtt*/, Time newRtt)
 {
     if (g_validate == "")
     {
@@ -329,7 +332,10 @@ TraceSecondRtt(std::ofstream* ofStream, Time oldRtt, Time newRtt)
  * \param alpha Alpha.
  */
 void
-TraceSecondDctcp(std::ofstream* ofStream, uint32_t bytesMarked, uint32_t bytesAcked, double alpha)
+TraceSecondDctcp(std::ofstream* ofStream,
+                 uint32_t /*bytesMarked*/,
+                 uint32_t /*bytesAcked*/,
+                 double alpha)
 {
     if (g_validate == "")
     {
@@ -359,7 +365,7 @@ TracePingRtt(std::ofstream* ofStream, Time rtt)
  * \param address The sender address.
  */
 void
-TraceFirstRx(Ptr<const Packet> packet, const Address& address)
+TraceFirstRx(Ptr<const Packet> packet, const Address& /*address*/)
 {
     g_firstBytesReceived += packet->GetSize();
 }
@@ -371,7 +377,7 @@ TraceFirstRx(Ptr<const Packet> packet, const Address& address)
  * \param address The sender address.
  */
 void
-TraceSecondRx(Ptr<const Packet> packet, const Address& address)
+TraceSecondRx(Ptr<const Packet> packet, const Address& /*address*/)
 {
     g_secondBytesReceived += packet->GetSize();
 }
@@ -400,7 +406,7 @@ TraceQueueDrop(std::ofstream* ofStream, Ptr<const QueueDiscItem> item)
  * \param reason The reason.
  */
 void
-TraceQueueMark(std::ofstream* ofStream, Ptr<const QueueDiscItem> item, const char* reason)
+TraceQueueMark(std::ofstream* ofStream, Ptr<const QueueDiscItem> item, const char* /*reason*/)
 {
     if (g_validate == "")
     {
@@ -418,7 +424,10 @@ TraceQueueMark(std::ofstream* ofStream, Ptr<const QueueDiscItem> item, const cha
  * \param newVal New value.
  */
 void
-TraceQueueLength(std::ofstream* ofStream, DataRate queueLinkRate, uint32_t oldVal, uint32_t newVal)
+TraceQueueLength(std::ofstream* ofStream,
+                 DataRate queueLinkRate,
+                 uint32_t /*oldVal*/,
+                 uint32_t newVal)
 {
     // output in units of ms
     if (g_validate == "")

@@ -127,7 +127,7 @@ ProbeTestCase1::~ProbeTestCase1()
 }
 
 void
-ProbeTestCase1::TraceSink(std::string context, double oldValue, double newValue)
+ProbeTestCase1::TraceSink(std::string context, double /*oldValue*/, double newValue)
 {
     NS_TEST_ASSERT_MSG_GT(Simulator::Now(),
                           Seconds(100),

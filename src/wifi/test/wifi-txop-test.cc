@@ -118,7 +118,7 @@ WifiTxopTest::~WifiTxopTest()
 }
 
 void
-WifiTxopTest::L7Receive(std::string context, Ptr<const Packet> p, const Address& addr)
+WifiTxopTest::L7Receive(std::string /*context*/, Ptr<const Packet> p, const Address& /*addr*/)
 {
     if (p->GetSize() >= 500)
     {
@@ -127,10 +127,10 @@ WifiTxopTest::L7Receive(std::string context, Ptr<const Packet> p, const Address&
 }
 
 void
-WifiTxopTest::Transmit(std::string context,
+WifiTxopTest::Transmit(std::string /*context*/,
                        WifiConstPsduMap psduMap,
                        WifiTxVector txVector,
-                       double txPowerW)
+                       double /*txPowerW*/)
 {
     // Log all transmitted frames that are not beacon frames and have been transmitted
     // after 400ms (so as to skip association requests/responses)

@@ -124,7 +124,7 @@ TimestampTestCase::CreateSenderSocket(Ptr<Node> node)
 }
 
 void
-TimestampTestCase::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TimestampTestCase::Tx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (m_configuration == DISABLED)
     {
@@ -198,7 +198,7 @@ TimestampTestCase::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho w
 }
 
 void
-TimestampTestCase::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TimestampTestCase::Rx(const Ptr<const Packet> /*p*/, const TcpHeader& /*h*/, SocketWho who)
 {
     if (who == SENDER)
     {

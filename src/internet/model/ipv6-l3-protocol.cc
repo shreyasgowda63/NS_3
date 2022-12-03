@@ -1444,7 +1444,7 @@ Ipv6L3Protocol::IpForward(Ptr<const NetDevice> idev,
 }
 
 void
-Ipv6L3Protocol::IpMulticastForward(Ptr<const NetDevice> idev,
+Ipv6L3Protocol::IpMulticastForward(Ptr<const NetDevice> /*idev*/,
                                    Ptr<Ipv6MulticastRoute> mrtentry,
                                    Ptr<const Packet> p,
                                    const Ipv6Header& header)

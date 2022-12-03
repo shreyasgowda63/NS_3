@@ -81,7 +81,7 @@ class FlameProtocolMac : public MeshWifiInterfaceMacPlugin
      * \param stream
      * \returns 0 (no streams used)
      */
-    int64_t AssignStreams(int64_t stream) override
+    int64_t AssignStreams(int64_t /*stream*/) override
     {
         return 0;
     }

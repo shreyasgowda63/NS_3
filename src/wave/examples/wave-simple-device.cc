@@ -119,10 +119,10 @@ WaveNetDeviceExample::CreateWaveNodes()
 }
 
 bool
-WaveNetDeviceExample::Receive(Ptr<NetDevice> dev,
+WaveNetDeviceExample::Receive(Ptr<NetDevice> /*dev*/,
                               Ptr<const Packet> pkt,
                               uint16_t mode,
-                              const Address& sender)
+                              const Address& /*sender*/)
 {
     SeqTsHeader seqTs;
     pkt->PeekHeader(seqTs);
@@ -244,7 +244,10 @@ WaveNetDeviceExample::SendIpExample()
 }
 
 bool
-WaveNetDeviceExample::ReceiveVsa(Ptr<const Packet> pkt, const Address& address, uint32_t, uint32_t)
+WaveNetDeviceExample::ReceiveVsa(Ptr<const Packet> /*pkt*/,
+                                 const Address& /*address*/,
+                                 uint32_t,
+                                 uint32_t)
 {
     std::cout << "receive a VSA management frame: recvTime = " << Now().As(Time::S) << "."
               << std::endl;

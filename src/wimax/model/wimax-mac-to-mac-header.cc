@@ -134,7 +134,7 @@ WimaxMacToMacHeader::Serialize(Buffer::Iterator i) const
 }
 
 uint32_t
-WimaxMacToMacHeader::Deserialize(Buffer::Iterator start)
+WimaxMacToMacHeader::Deserialize(Buffer::Iterator /*start*/)
 {
     // not needed here
     return 20;

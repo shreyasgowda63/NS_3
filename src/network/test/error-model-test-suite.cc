@@ -124,17 +124,17 @@ ErrorModelSimple::~ErrorModelSimple()
 }
 
 bool
-ErrorModelSimple::Receive(Ptr<NetDevice> nd,
-                          Ptr<const Packet> p,
-                          uint16_t protocol,
-                          const Address& addr)
+ErrorModelSimple::Receive(Ptr<NetDevice> /*nd*/,
+                          Ptr<const Packet> /*p*/,
+                          uint16_t /*protocol*/,
+                          const Address& /*addr*/)
 {
     m_count++;
     return true;
 }
 
 void
-ErrorModelSimple::DropEvent(Ptr<const Packet> p)
+ErrorModelSimple::DropEvent(Ptr<const Packet> /*p*/)
 {
     m_drops++;
 }
@@ -227,17 +227,17 @@ BurstErrorModelSimple::~BurstErrorModelSimple()
 }
 
 bool
-BurstErrorModelSimple::Receive(Ptr<NetDevice> nd,
-                               Ptr<const Packet> p,
-                               uint16_t protocol,
-                               const Address& addr)
+BurstErrorModelSimple::Receive(Ptr<NetDevice> /*nd*/,
+                               Ptr<const Packet> /*p*/,
+                               uint16_t /*protocol*/,
+                               const Address& /*addr*/)
 {
     m_count++;
     return true;
 }
 
 void
-BurstErrorModelSimple::DropEvent(Ptr<const Packet> p)
+BurstErrorModelSimple::DropEvent(Ptr<const Packet> /*p*/)
 {
     m_drops++;
 }

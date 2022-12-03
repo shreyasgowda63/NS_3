@@ -1154,7 +1154,7 @@ LteUeRrc::DoRecvRrcConnectionReconfiguration(LteRrcSap::RrcConnectionReconfigura
 }
 
 void
-LteUeRrc::DoRecvRrcConnectionReestablishment(LteRrcSap::RrcConnectionReestablishment msg)
+LteUeRrc::DoRecvRrcConnectionReestablishment(LteRrcSap::RrcConnectionReestablishment /*msg*/)
 {
     NS_LOG_FUNCTION(this << " RNTI " << m_rnti);
     switch (m_state)
@@ -1178,7 +1178,7 @@ LteUeRrc::DoRecvRrcConnectionReestablishment(LteRrcSap::RrcConnectionReestablish
 
 void
 LteUeRrc::DoRecvRrcConnectionReestablishmentReject(
-    LteRrcSap::RrcConnectionReestablishmentReject msg)
+    LteRrcSap::RrcConnectionReestablishmentReject /*msg*/)
 {
     NS_LOG_FUNCTION(this << " RNTI " << m_rnti);
     switch (m_state)
@@ -1216,7 +1216,7 @@ LteUeRrc::DoRecvRrcConnectionRelease(LteRrcSap::RrcConnectionRelease msg)
 }
 
 void
-LteUeRrc::DoRecvRrcConnectionReject(LteRrcSap::RrcConnectionReject msg)
+LteUeRrc::DoRecvRrcConnectionReject(LteRrcSap::RrcConnectionReject /*msg*/)
 {
     NS_LOG_FUNCTION(this);
     m_connectionTimeout.Cancel();

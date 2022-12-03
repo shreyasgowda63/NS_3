@@ -279,7 +279,7 @@ Ipv6FlowProbe::DoDispose()
 void
 Ipv6FlowProbe::SendOutgoingLogger(const Ipv6Header& ipHeader,
                                   Ptr<const Packet> ipPayload,
-                                  uint32_t interface)
+                                  uint32_t /*interface*/)
 {
     FlowId flowId;
     FlowPacketId packetId;
@@ -301,7 +301,7 @@ Ipv6FlowProbe::SendOutgoingLogger(const Ipv6Header& ipHeader,
 void
 Ipv6FlowProbe::ForwardLogger(const Ipv6Header& ipHeader,
                              Ptr<const Packet> ipPayload,
-                             uint32_t interface)
+                             uint32_t /*interface*/)
 {
     Ipv6FlowProbeTag fTag;
     bool found = ipPayload->FindFirstMatchingByteTag(fTag);
@@ -321,7 +321,7 @@ Ipv6FlowProbe::ForwardLogger(const Ipv6Header& ipHeader,
 void
 Ipv6FlowProbe::ForwardUpLogger(const Ipv6Header& ipHeader,
                                Ptr<const Packet> ipPayload,
-                               uint32_t interface)
+                               uint32_t /*interface*/)
 {
     Ipv6FlowProbeTag fTag;
     bool found = ipPayload->FindFirstMatchingByteTag(fTag);
@@ -342,8 +342,8 @@ void
 Ipv6FlowProbe::DropLogger(const Ipv6Header& ipHeader,
                           Ptr<const Packet> ipPayload,
                           Ipv6L3Protocol::DropReason reason,
-                          Ptr<Ipv6> ipv6,
-                          uint32_t ifIndex)
+                          Ptr<Ipv6> /*ipv6*/,
+                          uint32_t /*ifIndex*/)
 {
 #if 0
   switch (reason)

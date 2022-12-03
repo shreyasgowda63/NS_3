@@ -103,7 +103,9 @@ class DummyCongControl : public TcpNewReno
         m_test = test;
     }
 
-    void PktsAcked(Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Time& rtt) override
+    void PktsAcked(Ptr<TcpSocketState> /*tcb*/,
+                   uint32_t segmentsAcked,
+                   const Time& /*rtt*/) override
     {
         m_test(segmentsAcked);
     }
@@ -155,7 +157,7 @@ TcpPktsAckedOpenTest::PktsAckedCalled(uint32_t segmentsAcked)
 }
 
 void
-TcpPktsAckedOpenTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpPktsAckedOpenTest::Rx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (who == SENDER && (!(h.GetFlags() & TcpHeader::SYN)))
     {

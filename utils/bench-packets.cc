@@ -113,7 +113,7 @@ BenchHeader<N>::GetInstanceTypeId() const
 
 template <int N>
 void
-BenchHeader<N>::Print(std::ostream& os) const
+BenchHeader<N>::Print(std::ostream& /*os*/) const
 {
     NS_ASSERT(false);
 }

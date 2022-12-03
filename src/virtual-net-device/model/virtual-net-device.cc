@@ -234,13 +234,13 @@ VirtualNetDevice::IsMulticast() const
 }
 
 Address
-VirtualNetDevice::GetMulticast(Ipv4Address multicastGroup) const
+VirtualNetDevice::GetMulticast(Ipv4Address /*multicastGroup*/) const
 {
     return Mac48Address("ff:ff:ff:ff:ff:ff");
 }
 
 Address
-VirtualNetDevice::GetMulticast(Ipv6Address addr) const
+VirtualNetDevice::GetMulticast(Ipv6Address /*addr*/) const
 {
     return Mac48Address("ff:ff:ff:ff:ff:ff");
 }

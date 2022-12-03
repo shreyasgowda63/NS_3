@@ -60,7 +60,7 @@ const std::string ulResultsFileName = "carrier_aggregation_results_ul.txt";
 
 void
 LteTestDlSchedulingCallback(CarrierAggregationTestCase* testcase,
-                            std::string path,
+                            std::string /*path*/,
                             DlSchedulingCallbackInfo dlInfo)
 {
     testcase->DlScheduling(dlInfo);
@@ -68,7 +68,7 @@ LteTestDlSchedulingCallback(CarrierAggregationTestCase* testcase,
 
 void
 LteTestUlSchedulingCallback(CarrierAggregationTestCase* testcase,
-                            std::string path,
+                            std::string /*path*/,
                             uint32_t frameNo,
                             uint32_t subframeNo,
                             uint16_t rnti,
@@ -508,10 +508,10 @@ CarrierAggregationTestCase::DlScheduling(DlSchedulingCallbackInfo dlInfo)
 }
 
 void
-CarrierAggregationTestCase::UlScheduling(uint32_t frameNo,
-                                         uint32_t subframeNo,
-                                         uint16_t rnti,
-                                         uint8_t mcs,
+CarrierAggregationTestCase::UlScheduling(uint32_t /*frameNo*/,
+                                         uint32_t /*subframeNo*/,
+                                         uint16_t /*rnti*/,
+                                         uint8_t /*mcs*/,
                                          uint16_t sizeTb,
                                          uint8_t componentCarrierId)
 {

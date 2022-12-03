@@ -585,7 +585,7 @@ LteRadioLinkFailureTestCase::CheckUeExistAtEnb(uint16_t rnti, Ptr<NetDevice> enb
 }
 
 void
-LteRadioLinkFailureTestCase::UeStateTransitionCallback(std::string context,
+LteRadioLinkFailureTestCase::UeStateTransitionCallback(std::string /*context*/,
                                                        uint64_t imsi,
                                                        uint16_t cellId,
                                                        uint16_t rnti,
@@ -597,7 +597,7 @@ LteRadioLinkFailureTestCase::UeStateTransitionCallback(std::string context,
 }
 
 void
-LteRadioLinkFailureTestCase::ConnectionEstablishedEnbCallback(std::string context,
+LteRadioLinkFailureTestCase::ConnectionEstablishedEnbCallback(std::string /*context*/,
                                                               uint64_t imsi,
                                                               uint16_t cellId,
                                                               uint16_t rnti)
@@ -606,7 +606,7 @@ LteRadioLinkFailureTestCase::ConnectionEstablishedEnbCallback(std::string contex
 }
 
 void
-LteRadioLinkFailureTestCase::ConnectionEstablishedUeCallback(std::string context,
+LteRadioLinkFailureTestCase::ConnectionEstablishedUeCallback(std::string /*context*/,
                                                              uint64_t imsi,
                                                              uint16_t cellId,
                                                              uint16_t rnti)
@@ -621,7 +621,7 @@ LteRadioLinkFailureTestCase::ConnectionEstablishedUeCallback(std::string context
 }
 
 void
-LteRadioLinkFailureTestCase::ConnectionReleaseAtEnbCallback(std::string context,
+LteRadioLinkFailureTestCase::ConnectionReleaseAtEnbCallback(std::string /*context*/,
                                                             uint64_t imsi,
                                                             uint16_t cellId,
                                                             uint16_t rnti)
@@ -630,7 +630,7 @@ LteRadioLinkFailureTestCase::ConnectionReleaseAtEnbCallback(std::string context,
 }
 
 void
-LteRadioLinkFailureTestCase::PhySyncDetectionCallback(std::string context,
+LteRadioLinkFailureTestCase::PhySyncDetectionCallback(std::string /*context*/,
                                                       uint64_t imsi,
                                                       uint16_t rnti,
                                                       uint16_t cellId,
@@ -649,7 +649,7 @@ LteRadioLinkFailureTestCase::PhySyncDetectionCallback(std::string context,
 }
 
 void
-LteRadioLinkFailureTestCase::RadioLinkFailureCallback(std::string context,
+LteRadioLinkFailureTestCase::RadioLinkFailureCallback(std::string /*context*/,
                                                       uint64_t imsi,
                                                       uint16_t cellId,
                                                       uint16_t rnti)

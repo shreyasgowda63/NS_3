@@ -289,7 +289,7 @@ WimaxNetDevice::GetMulticast() const
 }
 
 Address
-WimaxNetDevice::MakeMulticastAddress(Ipv4Address multicastGroup) const
+WimaxNetDevice::MakeMulticastAddress(Ipv4Address /*multicastGroup*/) const
 {
     return GetMulticast();
 }
@@ -344,7 +344,9 @@ WimaxNetDevice::SetReceiveCallback(ReceiveCallback cb)
 }
 
 void
-WimaxNetDevice::ForwardUp(Ptr<Packet> packet, const Mac48Address& source, const Mac48Address& dest)
+WimaxNetDevice::ForwardUp(Ptr<Packet> packet,
+                          const Mac48Address& source,
+                          const Mac48Address& /*dest*/)
 {
     m_traceRx(packet, source);
     LlcSnapHeader llc;
@@ -639,7 +641,7 @@ WimaxNetDevice::GetMulticast(Ipv6Address addr) const
 }
 
 void
-WimaxNetDevice::AddLinkChangeCallback(Callback<void> callback)
+WimaxNetDevice::AddLinkChangeCallback(Callback<void> /*callback*/)
 {
     /* \todo Add a callback invoked whenever the link
      * status changes to UP. This callback is typically used

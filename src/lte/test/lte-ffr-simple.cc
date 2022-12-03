@@ -192,7 +192,7 @@ LteFfrSimple::DoGetAvailableDlRbg()
 }
 
 bool
-LteFfrSimple::DoIsDlRbgAvailableForUe(int i, uint16_t rnti)
+LteFfrSimple::DoIsDlRbgAvailableForUe(int /*i*/, uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
     return true;
@@ -217,7 +217,7 @@ LteFfrSimple::DoGetAvailableUlRbg()
 }
 
 bool
-LteFfrSimple::DoIsUlRbgAvailableForUe(int i, uint16_t rnti)
+LteFfrSimple::DoIsUlRbgAvailableForUe(int /*i*/, uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
     return true;
@@ -225,26 +225,26 @@ LteFfrSimple::DoIsUlRbgAvailableForUe(int i, uint16_t rnti)
 
 void
 LteFfrSimple::DoReportDlCqiInfo(
-    const struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedDlCqiInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
 }
 
 void
 LteFfrSimple::DoReportUlCqiInfo(
-    const struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& params)
+    const struct FfMacSchedSapProvider::SchedUlCqiInfoReqParameters& /*params*/)
 {
     NS_LOG_FUNCTION(this);
 }
 
 void
-LteFfrSimple::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> ulCqiMap)
+LteFfrSimple::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> /*ulCqiMap*/)
 {
     NS_LOG_FUNCTION(this);
 }
 
 uint8_t
-LteFfrSimple::DoGetTpc(uint16_t rnti)
+LteFfrSimple::DoGetTpc(uint16_t /*rnti*/)
 {
     NS_LOG_FUNCTION(this);
 
@@ -317,7 +317,7 @@ LteFfrSimple::UpdatePdschConfigDedicated()
 }
 
 void
-LteFfrSimple::DoRecvLoadInformation(EpcX2Sap::LoadInformationParams params)
+LteFfrSimple::DoRecvLoadInformation(EpcX2Sap::LoadInformationParams /*params*/)
 {
     NS_LOG_FUNCTION(this);
 }

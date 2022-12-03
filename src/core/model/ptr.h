@@ -550,14 +550,14 @@ operator!=(const Ptr<T1>& lhs, const Ptr<T2>& rhs)
 
 template <typename T1, typename T2>
 typename std::enable_if<std::is_same<T2, std::nullptr_t>::value, bool>::type
-operator==(const Ptr<T1>& lhs, T2 rhs)
+operator==(const Ptr<T1>& lhs, T2 /*rhs*/)
 {
     return PeekPointer(lhs) == nullptr;
 }
 
 template <typename T1, typename T2>
 typename std::enable_if<std::is_same<T2, std::nullptr_t>::value, bool>::type
-operator!=(const Ptr<T1>& lhs, T2 rhs)
+operator!=(const Ptr<T1>& lhs, T2 /*rhs*/)
 {
     return PeekPointer(lhs) != nullptr;
 }

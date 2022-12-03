@@ -287,7 +287,7 @@ UanNetDevice::GetMulticast(Ipv4Address /* multicastGroup */) const
 }
 
 Address
-UanNetDevice::GetMulticast(Ipv6Address addr) const
+UanNetDevice::GetMulticast(Ipv6Address /*addr*/) const
 {
     return m_mac->GetBroadcast();
 }
@@ -392,7 +392,7 @@ UanNetDevice::AddLinkChangeCallback(Callback<void> callback)
 }
 
 void
-UanNetDevice::SetPromiscReceiveCallback(PromiscReceiveCallback cb)
+UanNetDevice::SetPromiscReceiveCallback(PromiscReceiveCallback /*cb*/)
 {
     // Not implemented yet
     NS_ASSERT_MSG(0, "Not yet implemented");

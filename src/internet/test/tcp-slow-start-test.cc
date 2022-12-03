@@ -87,7 +87,7 @@ class TcpSlowStartNormalTest : public TcpGeneralTest
 
 TcpSlowStartNormalTest::TcpSlowStartNormalTest(uint32_t segmentSize,
                                                uint32_t packetSize,
-                                               uint32_t initSsTh,
+                                               uint32_t /*initSsTh*/,
                                                uint32_t packets,
                                                const TypeId& typeId,
                                                const std::string& desc)
@@ -122,13 +122,13 @@ TcpSlowStartNormalTest::ConfigureProperties()
 }
 
 void
-TcpSlowStartNormalTest::QueueDrop(SocketWho who)
+TcpSlowStartNormalTest::QueueDrop(SocketWho /*who*/)
 {
     NS_FATAL_ERROR("Drop on the queue; cannot validate slow start");
 }
 
 void
-TcpSlowStartNormalTest::PhyDrop(SocketWho who)
+TcpSlowStartNormalTest::PhyDrop(SocketWho /*who*/)
 {
     NS_FATAL_ERROR("Drop on the phy: cannot validate slow start");
 }

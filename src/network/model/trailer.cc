@@ -43,7 +43,7 @@ Trailer::GetTypeId()
 // This default implementation is provided for backward compatibility
 // reasons.  Subclasses should implement this method themselves.
 uint32_t
-Trailer::Deserialize(Buffer::Iterator start, Buffer::Iterator end)
+Trailer::Deserialize(Buffer::Iterator /*start*/, Buffer::Iterator end)
 {
     return Deserialize(end);
 }

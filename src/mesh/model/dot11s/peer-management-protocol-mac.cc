@@ -60,7 +60,7 @@ PeerManagementProtocolMac::SetParent(Ptr<MeshWifiInterfaceMac> parent)
 }
 
 void
-PeerManagementProtocolMac::TxError(WifiMacDropReason reason, Ptr<const WifiMpdu> mpdu)
+PeerManagementProtocolMac::TxError(WifiMacDropReason /*reason*/, Ptr<const WifiMpdu> mpdu)
 {
     m_protocol->TransmissionFailure(m_ifIndex, mpdu->GetHeader().GetAddr1());
 }

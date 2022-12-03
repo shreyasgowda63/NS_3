@@ -538,7 +538,7 @@ LenaTdTbfqFfMacSchedulerTestCase1::DoRun()
 // --------------- T E S T - C A S E   # 2 ------------------------------
 
 std::string
-LenaTdTbfqFfMacSchedulerTestCase2::BuildNameString(uint16_t nUser, std::vector<double> dist)
+LenaTdTbfqFfMacSchedulerTestCase2::BuildNameString(uint16_t /*nUser*/, std::vector<double> dist)
 {
     std::ostringstream oss;
     oss << "distances (m) = [ ";

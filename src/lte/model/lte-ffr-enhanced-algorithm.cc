@@ -296,7 +296,7 @@ LteFfrEnhancedAlgorithm::Reconfigure()
 }
 
 void
-LteFfrEnhancedAlgorithm::SetDownlinkConfiguration(uint16_t cellId, uint8_t bandwidth)
+LteFfrEnhancedAlgorithm::SetDownlinkConfiguration(uint16_t cellId, uint8_t /*bandwidth*/)
 {
     NS_LOG_FUNCTION(this);
     for (uint16_t i = 0; i < NUM_DOWNLINK_CONFS; ++i)
@@ -314,7 +314,7 @@ LteFfrEnhancedAlgorithm::SetDownlinkConfiguration(uint16_t cellId, uint8_t bandw
 }
 
 void
-LteFfrEnhancedAlgorithm::SetUplinkConfiguration(uint16_t cellId, uint8_t bandwidth)
+LteFfrEnhancedAlgorithm::SetUplinkConfiguration(uint16_t cellId, uint8_t /*bandwidth*/)
 {
     NS_LOG_FUNCTION(this);
     for (uint16_t i = 0; i < NUM_UPLINK_CONFS; ++i)
@@ -785,7 +785,7 @@ LteFfrEnhancedAlgorithm::DoReportUlCqiInfo(
 }
 
 void
-LteFfrEnhancedAlgorithm::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> ulCqiMap)
+LteFfrEnhancedAlgorithm::DoReportUlCqiInfo(std::map<uint16_t, std::vector<double>> /*ulCqiMap*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");
@@ -938,7 +938,7 @@ LteFfrEnhancedAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults me
 }
 
 void
-LteFfrEnhancedAlgorithm::DoRecvLoadInformation(EpcX2Sap::LoadInformationParams params)
+LteFfrEnhancedAlgorithm::DoRecvLoadInformation(EpcX2Sap::LoadInformationParams /*params*/)
 {
     NS_LOG_FUNCTION(this);
     NS_LOG_WARN("Method should not be called, because it is empty");

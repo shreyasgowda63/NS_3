@@ -76,7 +76,7 @@ Create2dPlot()
 } // unnamed namespace
 
 int
-main(int argc, char* argv[])
+main(int /*argc*/, char* /*argv*/[])
 {
     Create2dPlot();
 

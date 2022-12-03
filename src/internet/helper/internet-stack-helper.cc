@@ -604,7 +604,7 @@ static void
 Ipv4L3ProtocolDropSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
                                      const Ipv4Header& header,
                                      Ptr<const Packet> packet,
-                                     Ipv4L3Protocol::DropReason reason,
+                                     Ipv4L3Protocol::DropReason /*reason*/,
                                      Ptr<Ipv4> ipv4,
                                      uint32_t interface)
 {
@@ -687,7 +687,7 @@ Ipv4L3ProtocolDropSinkWithContext(Ptr<OutputStreamWrapper> stream,
                                   std::string context,
                                   const Ipv4Header& header,
                                   Ptr<const Packet> packet,
-                                  Ipv4L3Protocol::DropReason reason,
+                                  Ipv4L3Protocol::DropReason /*reason*/,
                                   Ptr<Ipv4> ipv4,
                                   uint32_t interface)
 {
@@ -948,7 +948,7 @@ static void
 Ipv6L3ProtocolDropSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
                                      const Ipv6Header& header,
                                      Ptr<const Packet> packet,
-                                     Ipv6L3Protocol::DropReason reason,
+                                     Ipv6L3Protocol::DropReason /*reason*/,
                                      Ptr<Ipv6> ipv6,
                                      uint32_t interface)
 {
@@ -1031,7 +1031,7 @@ Ipv6L3ProtocolDropSinkWithContext(Ptr<OutputStreamWrapper> stream,
                                   std::string context,
                                   const Ipv6Header& header,
                                   Ptr<const Packet> packet,
-                                  Ipv6L3Protocol::DropReason reason,
+                                  Ipv6L3Protocol::DropReason /*reason*/,
                                   Ptr<Ipv6> ipv6,
                                   uint32_t interface)
 {

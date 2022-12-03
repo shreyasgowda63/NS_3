@@ -196,7 +196,7 @@ RipNg::DoInitialize()
 }
 
 Ptr<Ipv6Route>
-RipNg::RouteOutput(Ptr<Packet> p,
+RipNg::RouteOutput(Ptr<Packet> /*p*/,
                    const Ipv6Header& header,
                    Ptr<NetDevice> oif,
                    Socket::SocketErrno& sockerr)
@@ -234,8 +234,8 @@ RipNg::RouteInput(Ptr<const Packet> p,
                   const Ipv6Header& header,
                   Ptr<const NetDevice> idev,
                   UnicastForwardCallback ucb,
-                  MulticastForwardCallback mcb,
-                  LocalDeliverCallback lcb,
+                  MulticastForwardCallback /*mcb*/,
+                  LocalDeliverCallback /*lcb*/,
                   ErrorCallback ecb)
 {
     NS_LOG_FUNCTION(this << p << header << header.GetSource() << header.GetDestination() << idev);
@@ -477,7 +477,7 @@ RipNg::NotifyRemoveRoute(Ipv6Address dst,
                          Ipv6Prefix mask,
                          Ipv6Address nextHop,
                          uint32_t interface,
-                         Ipv6Address prefixToUse)
+                         Ipv6Address /*prefixToUse*/)
 {
     NS_LOG_FUNCTION(this << dst << mask << nextHop << interface);
     // \todo this can be used to delete delegate routes

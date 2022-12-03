@@ -552,7 +552,7 @@ NotifyConnectionReconfigurationEnb(
 void
 ChangePdschConfigDedicatedCallback(
     LteDownlinkPowerControlRrcConnectionReconfigurationTestCase* testcase,
-    std::string context,
+    std::string /*context*/,
     uint16_t rnti,
     uint8_t pa)
 {
@@ -576,10 +576,10 @@ LteDownlinkPowerControlRrcConnectionReconfigurationTestCase::
 
 void
 LteDownlinkPowerControlRrcConnectionReconfigurationTestCase::ConnectionReconfigurationEnb(
-    std::string context,
-    uint64_t imsi,
-    uint16_t cellid,
-    uint16_t rnti)
+    std::string /*context*/,
+    uint64_t /*imsi*/,
+    uint16_t /*cellid*/,
+    uint16_t /*rnti*/)
 {
     if (Simulator::Now() > MilliSeconds(100))
     {
@@ -590,10 +590,10 @@ LteDownlinkPowerControlRrcConnectionReconfigurationTestCase::ConnectionReconfigu
 
 void
 LteDownlinkPowerControlRrcConnectionReconfigurationTestCase::ConnectionReconfigurationUe(
-    std::string context,
-    uint64_t imsi,
-    uint16_t cellid,
-    uint16_t rnti)
+    std::string /*context*/,
+    uint64_t /*imsi*/,
+    uint16_t /*cellid*/,
+    uint16_t /*rnti*/)
 {
     if (Simulator::Now() > MilliSeconds(100))
     {
@@ -604,8 +604,8 @@ LteDownlinkPowerControlRrcConnectionReconfigurationTestCase::ConnectionReconfigu
 
 void
 LteDownlinkPowerControlRrcConnectionReconfigurationTestCase::ChangePdschConfigDedicated(
-    uint16_t rnti,
-    uint8_t pa)
+    uint16_t /*rnti*/,
+    uint8_t /*pa*/)
 {
     NS_LOG_DEBUG("FFR Algorithm ChangePdschConfigDedicated");
     m_changePdschConfigDedicatedTriggered = true;

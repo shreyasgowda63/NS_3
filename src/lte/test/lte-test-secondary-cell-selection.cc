@@ -173,7 +173,7 @@ LteSecondaryCellSelectionTestCase::DoRun()
 } // end of void LteSecondaryCellSelectionTestCase::DoRun ()
 
 void
-LteSecondaryCellSelectionTestCase::StateTransitionCallback(std::string context,
+LteSecondaryCellSelectionTestCase::StateTransitionCallback(std::string /*context*/,
                                                            uint64_t imsi,
                                                            uint16_t cellId,
                                                            uint16_t rnti,
@@ -186,7 +186,7 @@ LteSecondaryCellSelectionTestCase::StateTransitionCallback(std::string context,
 }
 
 void
-LteSecondaryCellSelectionTestCase::ConnectionEstablishedCallback(std::string context,
+LteSecondaryCellSelectionTestCase::ConnectionEstablishedCallback(std::string /*context*/,
                                                                  uint64_t imsi,
                                                                  uint16_t cellId,
                                                                  uint16_t rnti)

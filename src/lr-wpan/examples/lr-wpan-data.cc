@@ -44,7 +44,7 @@ using namespace ns3;
  * \param p packet
  */
 static void
-DataIndication(McpsDataIndicationParams params, Ptr<Packet> p)
+DataIndication(McpsDataIndicationParams /*params*/, Ptr<Packet> p)
 {
     NS_LOG_UNCOND("Received packet of size " << p->GetSize());
 }

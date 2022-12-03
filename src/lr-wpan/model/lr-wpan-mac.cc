@@ -808,7 +808,7 @@ LrWpanMac::MlmeSyncRequest(MlmeSyncRequestParams params)
 }
 
 void
-LrWpanMac::MlmePollRequest(MlmePollRequestParams params)
+LrWpanMac::MlmePollRequest(MlmePollRequestParams /*params*/)
 {
     NS_LOG_FUNCTION(this);
 

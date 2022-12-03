@@ -94,7 +94,7 @@ MacHeaderType::Serialize(Buffer::Iterator start) const
 }
 
 uint32_t
-MacHeaderType::Deserialize(Buffer::Iterator start)
+MacHeaderType::Deserialize(Buffer::Iterator /*start*/)
 {
     return 0;
 }

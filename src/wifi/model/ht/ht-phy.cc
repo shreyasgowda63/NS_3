@@ -247,13 +247,13 @@ HtPhy::GetDuration(WifiPpduField field, const WifiTxVector& txVector) const
 }
 
 Time
-HtPhy::GetLSigDuration(WifiPreamble preamble) const
+HtPhy::GetLSigDuration(WifiPreamble /*preamble*/) const
 {
     return MicroSeconds(4);
 }
 
 Time
-HtPhy::GetTrainingDuration(const WifiTxVector& txVector,
+HtPhy::GetTrainingDuration(const WifiTxVector& /*txVector*/,
                            uint8_t nDataLtf,
                            uint8_t nExtensionLtf /* = 0 */) const
 {

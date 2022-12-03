@@ -330,7 +330,7 @@ AttributeContainerChecker<A, C>::GetItemChecker() const
 
 template <class A, template <class...> class C>
 Ptr<AttributeChecker>
-MakeAttributeContainerChecker(const AttributeContainerValue<A, C>& value)
+MakeAttributeContainerChecker(const AttributeContainerValue<A, C>& /*value*/)
 {
     return MakeAttributeContainerChecker<A, C>();
 }

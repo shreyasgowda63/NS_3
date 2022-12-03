@@ -122,10 +122,10 @@ AttributeDefaultIterator::DoVisitAttribute(std::string name, std::string default
 }
 
 void
-AttributeDefaultIterator::VisitAttribute(TypeId tid,
+AttributeDefaultIterator::VisitAttribute(TypeId /*tid*/,
                                          std::string name,
                                          std::string defaultValue,
-                                         uint32_t index)
+                                         uint32_t /*index*/)
 {
     DoVisitAttribute(name, defaultValue);
 }

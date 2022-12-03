@@ -153,7 +153,7 @@ TcpBytesInFlightTest::CreateReceiverErrorModel()
 }
 
 void
-TcpBytesInFlightTest::BeforeRTOExpired(const Ptr<const TcpSocketState> tcb, SocketWho who)
+TcpBytesInFlightTest::BeforeRTOExpired(const Ptr<const TcpSocketState> /*tcb*/, SocketWho who)
 {
     NS_LOG_DEBUG("Before RTO for " << who);
     GetSenderSocket()->TraceConnectWithoutContext(
@@ -162,20 +162,22 @@ TcpBytesInFlightTest::BeforeRTOExpired(const Ptr<const TcpSocketState> tcb, Sock
 }
 
 void
-TcpBytesInFlightTest::RTOExpired(Time oldVal, Time newVal)
+TcpBytesInFlightTest::RTOExpired(Time /*oldVal*/, Time newVal)
 {
     NS_LOG_DEBUG("RTO expired at " << newVal.GetSeconds());
     m_guessedBytesInFlight = 0;
 }
 
 void
-TcpBytesInFlightTest::PktDropped(const Ipv4Header& ipH, const TcpHeader& tcpH, Ptr<const Packet> p)
+TcpBytesInFlightTest::PktDropped(const Ipv4Header& /*ipH*/,
+                                 const TcpHeader& tcpH,
+                                 Ptr<const Packet> p)
 {
     NS_LOG_DEBUG("Drop seq= " << tcpH.GetSequenceNumber() << " size " << p->GetSize());
 }
 
 void
-TcpBytesInFlightTest::Rx(const Ptr<const Packet> p, const TcpHeader& h, SocketWho who)
+TcpBytesInFlightTest::Rx(const Ptr<const Packet> /*p*/, const TcpHeader& h, SocketWho who)
 {
     if (who == RECEIVER)
     {
@@ -264,7 +266,7 @@ TcpBytesInFlightTest::Tx(const Ptr<const Packet> p, const TcpHeader& h, SocketWh
 }
 
 void
-TcpBytesInFlightTest::BytesInFlightTrace(uint32_t oldValue, uint32_t newValue)
+TcpBytesInFlightTest::BytesInFlightTrace(uint32_t /*oldValue*/, uint32_t newValue)
 {
     NS_LOG_DEBUG("Socket BytesInFlight=" << newValue << " mine is=" << m_guessedBytesInFlight);
     NS_TEST_ASSERT_MSG_EQ(m_guessedBytesInFlight,

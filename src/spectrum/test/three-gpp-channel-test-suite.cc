@@ -524,7 +524,7 @@ void
 ThreeGppSpectrumPropagationLossModelTest::DoBeamforming(Ptr<NetDevice> thisDevice,
                                                         Ptr<PhasedArrayModel> thisAntenna,
                                                         Ptr<NetDevice> otherDevice,
-                                                        Ptr<PhasedArrayModel> otherAntenna)
+                                                        Ptr<PhasedArrayModel> /*otherAntenna*/)
 {
     Vector aPos = thisDevice->GetNode()->GetObject<MobilityModel>()->GetPosition();
     Vector bPos = otherDevice->GetNode()->GetObject<MobilityModel>()->GetPosition();

@@ -195,7 +195,7 @@ TcpVegasTest::IncreaseWindow(Ptr<TcpVegas> cong)
 }
 
 void
-TcpVegasTest::GetSsThresh(Ptr<TcpVegas> cong)
+TcpVegasTest::GetSsThresh(Ptr<TcpVegas> /*cong*/)
 {
     m_ssThresh = std::max(std::min(m_ssThresh, m_cWnd - m_segmentSize), 2 * m_segmentSize);
 }
