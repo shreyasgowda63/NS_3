@@ -1,4 +1,5 @@
 cppyy-22.04:
+  stage: test
   image: ubuntu:22.04 # python 3.10
   only:
     variables:
@@ -34,6 +35,7 @@ cppyy-22.04:
   timeout: 9h
 
 cppyy-20.04:
+  stage: test
   image: ubuntu:20.04 # python 3.8
   only:
     variables:
@@ -59,6 +61,7 @@ cppyy-20.04:
   timeout: 9h
 
 cppyy-18.04:
+  stage: test
   image: ubuntu:18.04 # python 3.6
   only:
     variables:
