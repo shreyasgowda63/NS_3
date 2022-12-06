@@ -4,11 +4,12 @@
 
 .base-default-build:
   extends: .base-build
-  except:
-    variables:
-      - $CPPYY == "True"
-      - $RELEASE == "weekly"
-      - $RELEASE == "daily"
+  rules:
+    - !reference [.common_rules, dont_run_if_daily_pipeline]
+    - !reference [.common_rules, dont_run_if_weekly_pipeline]
+    - if: $CPPYY == "True"
+      when: never
+    - when: on_success
   image: archlinux
   before_script:
     - pacman-key --init

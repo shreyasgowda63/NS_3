@@ -24,6 +24,8 @@ stages:
   - documentation
 
 include:
+  - "utils/tests/gitlab-ci-rules.yml"
+
   - "utils/tests/gitlab-ci-build.yml"
   - "utils/tests/gitlab-ci-test.yml"
   - "utils/tests/gitlab-ci-code-linting.yml"
