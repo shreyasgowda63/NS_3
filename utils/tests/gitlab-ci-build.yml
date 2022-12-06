@@ -37,8 +37,8 @@
 # Specific build jobs
 include:
   - "utils/tests/gitlab-ci-build-default.yml"
-  - "utils/tests/gitlab-ci-alpine.yml"
-  - "utils/tests/gitlab-ci-clang.yml"
-  - "utils/tests/gitlab-ci-fedora.yml"
-  - "utils/tests/gitlab-ci-gcc.yml"
-  - "utils/tests/gitlab-ci-ubuntu.yml"
+  - "utils/tests/gitlab-ci-build-alpine.yml"
+  - "utils/tests/gitlab-ci-build-clang.yml"
+  - "utils/tests/gitlab-ci-build-fedora.yml"
+  - "utils/tests/gitlab-ci-build-gcc.yml"
+  - "utils/tests/gitlab-ci-build-ubuntu.yml"
