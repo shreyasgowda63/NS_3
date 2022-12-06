@@ -1,0 +1,50 @@
+# GitLab CI/CD common rules
+#
+# Contains common rules that can be referenced in other jobs.
+# Rules should be referenced as !reference [.common_rules, RULE_NAME]
+
+.common_rules:
+  # Whether to run job if the branch is default (i.e., master)
+  run_if_default_branch:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+
+  dont_run_if_default_branch:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
+
+  # Whether to run job if pipeline is triggered by a merge request
+  run_if_merge_request_pipeline:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
+
+  dont_run_if_merge_request_pipeline:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+
+  # Whether to run job on daily pipeline
+  run_if_daily_pipeline:
+    - if: $RELEASE == "daily"
+      when: on_success
+
+  dont_run_if_daily_pipeline:
+    - if: $RELEASE == "daily"
+      when: never
+
+  # Whether to run job on weekly pipeline
+  run_if_weekly_pipeline:
+    - if: $RELEASE == "weekly"
+      when: on_success
+
+  dont_run_if_weekly_pipeline:
+    - if: $RELEASE == "weekly"
+      when: never
+
+  # Whether to run job if manual release
+  run_if_manual_release:
+    - if: $RELEASE == "manual"
+      when: on_success
+
+  dont_run_if_manual_release:
+    - if: $RELEASE == "manual"
+      when: on_success
