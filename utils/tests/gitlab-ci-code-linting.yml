@@ -25,6 +25,7 @@ clang-tidy:
       python3 python3-pip
       libboost-all-dev
       libgtk-3-dev
+      libdpdk-dev nmap
       gsl-bin libgsl-dev libgsl27
       libopenmpi-dev
       libsqlite3-dev
@@ -35,6 +36,7 @@ clang-tidy:
       --enable-clang-tidy
       --enable-examples --enable-tests
       --enable-asserts
+      --enable-dpdk
       --enable-mpi
       --enable-python-bindings
     - run-clang-tidy-14 -p cmake-cache/ -quiet
