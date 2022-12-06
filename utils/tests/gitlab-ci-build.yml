@@ -1,0 +1,44 @@
+# ns-3 GitLab CI/CD build stage
+#
+# Defines the build base job.
+# All build jobs should extend this job with "extends: .base-build" and set the following variables:
+#   COMPILER: g++, clang++, ...
+#   MODE: debug, release, optimized
+
+.base-build:
+  stage: build
+  script:
+    - mkdir -p $CCACHE_BASEDIR_VALUE
+    - export CCACHE_BASEDIR=${PWD}
+    - export CCACHE_DIR=${PWD}/$CCACHE_BASEDIR_VALUE
+    - export MPI_CI=1
+    - CXX=$COMPILER ./ns3 configure -d $MODE -GNinja --enable-examples --enable-tests --enable-asserts $ENABLE_MPI
+    - ccache -z
+    - ./ns3 build
+    - if [ "$MODE" != "debug" ] && [ "`./utils/ccache-miss-rate.py`" != "0" ]; then ./test.py -n; fi
+    - ccache -s
+    - ./ns3 clean
+  cache:
+    # Use separate key for each (debug/default/optimized) jobs because
+    # they run in parallel and will otherwise overwrite each other
+    # cache when they upload the cache archive at the end of the job,
+    # resulting in only the cache for the last finished configuration
+    # being stored.
+    #
+    # Do not distinguish between branches though to avoid
+    # recompilation of all the files when a new branch is created.
+    key: "ccache-$CI_JOB_NAME"
+    paths:
+      - $CCACHE_BASEDIR_VALUE/
+  timeout: 12h
+  variables:
+    CCACHE_BASEDIR_VALUE: ns-3-ccache-storage
+
+# Specific build jobs
+include:
+  - "utils/tests/gitlab-ci-build-default.yml"
+  - "utils/tests/gitlab-ci-alpine.yml"
+  - "utils/tests/gitlab-ci-clang.yml"
+  - "utils/tests/gitlab-ci-fedora.yml"
+  - "utils/tests/gitlab-ci-gcc.yml"
+  - "utils/tests/gitlab-ci-ubuntu.yml"

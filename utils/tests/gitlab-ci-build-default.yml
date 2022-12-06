@@ -1,0 +1,45 @@
+# ns-3 GitLab CI/CD default build jobs
+#
+# Contains the default build jobs that should run for every commit
+
+.base-default-build:
+  extends: .base-build
+  except:
+    variables:
+      - $CPPYY == "True"
+      - $RELEASE == "weekly"
+      - $RELEASE == "daily"
+  image: archlinux
+  before_script:
+    - pacman-key --init
+    - pacman -Syu --noconfirm
+      base-devel gcc clang cmake ninja ccache
+      python
+      boost gsl gtk3 openmpi
+      openssh
+  variables:
+    ENABLE_MPI: --enable-mpi
+
+build-clang-debug:
+  extends: .base-default-build
+  variables:
+    MODE: debug
+    COMPILER: clang++
+
+build-gcc-debug:
+  extends: .base-default-build
+  variables:
+    MODE: debug
+    COMPILER: g++
+
+build-gcc-default:
+  extends: .base-default-build
+  variables:
+    MODE: default
+    COMPILER: g++
+
+build-gcc-optimized:
+  extends: .base-default-build
+  variables:
+    MODE: optimized
+    COMPILER: g++
