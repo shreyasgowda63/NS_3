@@ -153,7 +153,7 @@ main(int argc, char* argv[])
     NS_LOG_INFO("Assign Addresses to Nodes.");
 
     Ipv4AddressHelper ipv4_n;
-    ipv4_n.SetBase("10.0.0.0", "255.255.255.252");
+    ipv4_n.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(30));
 
     NS_LOG_INFO("Create Links Between Nodes.");
 

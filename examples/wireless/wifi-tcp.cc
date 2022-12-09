@@ -157,7 +157,7 @@ main(int argc, char* argv[])
     stack.Install(networkNodes);
 
     Ipv4AddressHelper address;
-    address.SetBase("10.0.0.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer apInterface;
     apInterface = address.Assign(apDevice);
     Ipv4InterfaceContainer staInterface;

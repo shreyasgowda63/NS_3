@@ -955,19 +955,19 @@ main(int argc, char* argv[])
     tchBottleneck.Install(wanLanDevices.Get(0));
 
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer pingServerIfaces = ipv4.Assign(pingServerDevices);
-    ipv4.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer firstServerIfaces = ipv4.Assign(firstServerDevices);
-    ipv4.SetBase("10.1.3.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer secondServerIfaces = ipv4.Assign(secondServerDevices);
-    ipv4.SetBase("172.16.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("172.16.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer wanLanIfaces = ipv4.Assign(wanLanDevices);
-    ipv4.SetBase("192.168.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer pingClientIfaces = ipv4.Assign(pingClientDevices);
-    ipv4.SetBase("192.168.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("192.168.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer firstClientIfaces = ipv4.Assign(firstClientDevices);
-    ipv4.SetBase("192.168.3.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("192.168.3.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer secondClientIfaces = ipv4.Assign(secondClientDevices);
 
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();
@@ -975,7 +975,7 @@ main(int argc, char* argv[])
     ////////////////////////////////////////////////////////////
     // application setup                                      //
     ////////////////////////////////////////////////////////////
-    V4PingHelper pingHelper("192.168.1.2");
+    V4PingHelper pingHelper(Ipv4Address("192.168.1.2"));
     pingHelper.SetAttribute("Interval", TimeValue(pingInterval));
     pingHelper.SetAttribute("Size", UintegerValue(pingSize));
     ApplicationContainer pingContainer = pingHelper.Install(pingServer);

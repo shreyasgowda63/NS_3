@@ -114,7 +114,7 @@ main(int argc, char* argv[])
     stack.Install(nodes);
 
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.252");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer interfaces = address.Assign(devices);
 
     uint16_t sinkPort = 8080;

@@ -320,25 +320,25 @@ main(int argc, char* argv[])
     stack.Install(wifiStaNodes);
 
     Ipv4AddressHelper address;
-    address.SetBase("192.168.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer StaInterfaceA;
     StaInterfaceA = address.Assign(staDeviceA);
     Ipv4InterfaceContainer ApInterfaceA;
     ApInterfaceA = address.Assign(apDeviceA);
 
-    address.SetBase("192.168.2.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("192.168.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer StaInterfaceB;
     StaInterfaceB = address.Assign(staDeviceB);
     Ipv4InterfaceContainer ApInterfaceB;
     ApInterfaceB = address.Assign(apDeviceB);
 
-    address.SetBase("192.168.3.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("192.168.3.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer StaInterfaceC;
     StaInterfaceC = address.Assign(staDeviceC);
     Ipv4InterfaceContainer ApInterfaceC;
     ApInterfaceC = address.Assign(apDeviceC);
 
-    address.SetBase("192.168.4.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("192.168.4.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer StaInterfaceD;
     StaInterfaceD = address.Assign(staDeviceD);
     Ipv4InterfaceContainer ApInterfaceD;

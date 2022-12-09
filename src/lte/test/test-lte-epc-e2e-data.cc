@@ -164,7 +164,7 @@ LteEpcE2eDataTestCase::DoRun()
     p2ph.SetChannelAttribute("Delay", TimeValue(Seconds(0.010)));
     NetDeviceContainer internetDevices = p2ph.Install(pgw, remoteHost);
     Ipv4AddressHelper ipv4h;
-    ipv4h.SetBase("1.0.0.0", "255.0.0.0");
+    ipv4h.SetBase(Ipv4Address("1.0.0.0"), Ipv4Mask(8));
     Ipv4InterfaceContainer internetIpIfaces = ipv4h.Assign(internetDevices);
     Ipv4Address remoteHostAddr = internetIpIfaces.GetAddress(1);
 
@@ -174,9 +174,7 @@ LteEpcE2eDataTestCase::DoRun()
         ipv4RoutingHelper.GetStaticRouting(remoteHost->GetObject<Ipv4>());
 
     // hardcoded UE addresses for now
-    remoteHostStaticRouting->AddNetworkRouteTo(Ipv4Address("7.0.0.0"),
-                                               Ipv4Mask("255.255.255.0"),
-                                               1);
+    remoteHostStaticRouting->AddNetworkRouteTo(Ipv4Address("7.0.0.0"), Ipv4Mask(24), 1);
 
     NodeContainer enbs;
     enbs.Create(m_enbTestData.size());

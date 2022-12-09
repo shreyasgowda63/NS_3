@@ -104,7 +104,7 @@ BulkSendBasicTestCase::DoRun()
     InternetStackHelper internet;
     internet.Install(nodes);
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = ipv4.Assign(devices);
     uint16_t port = 9;
     BulkSendHelper sourceHelper("ns3::TcpSocketFactory", InetSocketAddress(i.GetAddress(1), port));
@@ -230,7 +230,7 @@ BulkSendSeqTsSizeTestCase::DoRun()
     InternetStackHelper internet;
     internet.Install(nodes);
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i = ipv4.Assign(devices);
     uint16_t port = 9;
     BulkSendHelper sourceHelper("ns3::TcpSocketFactory", InetSocketAddress(i.GetAddress(1), port));

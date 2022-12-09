@@ -149,7 +149,7 @@ experiment(std::string queue_disc_type)
     QueueDiscContainer queueDiscs = tch.Install(devices_gateway);
 
     Ipv4AddressHelper address;
-    address.SetBase("10.0.0.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
 
     Ipv4InterfaceContainer interfaces[5];
     Ipv4InterfaceContainer interfaces_sink;

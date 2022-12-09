@@ -101,7 +101,7 @@ LteAggregationThroughputScaleTestCase::GetThroughput(uint8_t numberOfComponentCa
     internet.Install(ueNode);
 
     Ipv4AddressHelper ipv4h;
-    ipv4h.SetBase("1.0.0.0", "255.0.0.0");
+    ipv4h.SetBase(Ipv4Address("1.0.0.0"), Ipv4Mask(8));
 
     Ipv4StaticRoutingHelper ipv4RoutingHelper;
     auto ueStaticRouting = ipv4RoutingHelper.GetStaticRouting(ueNode->GetObject<Ipv4>());

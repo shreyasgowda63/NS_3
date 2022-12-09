@@ -231,25 +231,25 @@ Ipv4RipTest::DoRun()
     // Setup IPv4 addresses and forwarding
     Ipv4AddressHelper ipv4;
 
-    ipv4.SetBase(Ipv4Address("10.0.1.0"), Ipv4Mask("255.255.255.0"));
+    ipv4.SetBase(Ipv4Address("10.0.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iic1 = ipv4.Assign(net1);
 
-    ipv4.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask("255.255.255.0"));
+    ipv4.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iic2 = ipv4.Assign(net2);
 
-    ipv4.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask("255.255.255.0"));
+    ipv4.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iic3 = ipv4.Assign(net3);
 
-    ipv4.SetBase(Ipv4Address("10.0.2.0"), Ipv4Mask("255.255.255.0"));
+    ipv4.SetBase(Ipv4Address("10.0.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iic4 = ipv4.Assign(net4);
 
     Ptr<Ipv4StaticRouting> staticRouting;
     staticRouting = Ipv4RoutingHelper::GetRouting<Ipv4StaticRouting>(
         txNode->GetObject<Ipv4>()->GetRoutingProtocol());
-    staticRouting->SetDefaultRoute("10.0.1.2", 1);
+    staticRouting->SetDefaultRoute(Ipv4Address("10.0.1.2"), 1);
     staticRouting = Ipv4RoutingHelper::GetRouting<Ipv4StaticRouting>(
         rxNode->GetObject<Ipv4>()->GetRoutingProtocol());
-    staticRouting->SetDefaultRoute("10.0.2.1", 1);
+    staticRouting->SetDefaultRoute(Ipv4Address("10.0.2.1"), 1);
 
     // Create the UDP sockets
     Ptr<SocketFactory> rxSocketFactory = rxNode->GetObject<UdpSocketFactory>();
@@ -468,25 +468,25 @@ Ipv4RipCountToInfinityTest::DoRun()
     // Setup IPv4 addresses and forwarding
     Ipv4AddressHelper ipv4;
 
-    ipv4.SetBase(Ipv4Address("10.0.1.0"), Ipv4Mask("255.255.255.0"));
+    ipv4.SetBase(Ipv4Address("10.0.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iic1 = ipv4.Assign(net1);
 
-    ipv4.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask("255.255.255.0"));
+    ipv4.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iic2 = ipv4.Assign(net2);
 
-    ipv4.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask("255.255.255.0"));
+    ipv4.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iic3 = ipv4.Assign(net3);
 
-    ipv4.SetBase(Ipv4Address("10.0.2.0"), Ipv4Mask("255.255.255.0"));
+    ipv4.SetBase(Ipv4Address("10.0.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iic4 = ipv4.Assign(net4);
 
     Ptr<Ipv4StaticRouting> staticRouting;
     staticRouting = Ipv4RoutingHelper::GetRouting<Ipv4StaticRouting>(
         txNode->GetObject<Ipv4>()->GetRoutingProtocol());
-    staticRouting->SetDefaultRoute("10.0.1.2", 1);
+    staticRouting->SetDefaultRoute(Ipv4Address("10.0.1.2"), 1);
     staticRouting = Ipv4RoutingHelper::GetRouting<Ipv4StaticRouting>(
         rxNode->GetObject<Ipv4>()->GetRoutingProtocol());
-    staticRouting->SetDefaultRoute("10.0.2.1", 1);
+    staticRouting->SetDefaultRoute(Ipv4Address("10.0.2.1"), 1);
 
     // Create the UDP sockets
     Ptr<SocketFactory> rxSocketFactory = rxNode->GetObject<UdpSocketFactory>();
@@ -553,7 +553,7 @@ Ipv4RipSplitHorizonStrategyTest::ReceivePktProbe(Ptr<Socket> socket)
                           "Received Packet size is not equal to the Rx buffer size");
     Ipv4Address senderAddress = InetSocketAddress::ConvertFrom(srcAddr).GetIpv4();
 
-    if (senderAddress == "192.168.0.2")
+    if (senderAddress == Ipv4Address("192.168.0.2"))
     {
         RipHeader hdr;
         receivedPacketProbe->RemoveHeader(hdr);
@@ -563,7 +563,7 @@ Ipv4RipSplitHorizonStrategyTest::ReceivePktProbe(Ptr<Socket> socket)
         // validate the RTEs before processing
         for (std::list<RipRte>::iterator iter = rtes.begin(); iter != rtes.end(); iter++)
         {
-            if (iter->GetPrefix() == "10.0.1.0")
+            if (iter->GetPrefix() == Ipv4Address("10.0.1.0"))
             {
                 bool correct = false;
                 if (iter->GetRouteMetric() == 16)
@@ -669,10 +669,10 @@ Ipv4RipSplitHorizonStrategyTest::DoRun()
     // Setup IPv6 addresses and forwarding
     Ipv4AddressHelper ipv4;
 
-    ipv4.SetBase(Ipv4Address("10.0.1.0"), Ipv4Mask("255.255.255.0"));
+    ipv4.SetBase(Ipv4Address("10.0.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iic0 = ipv4.Assign(net0);
 
-    ipv4.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask("255.255.255.0"));
+    ipv4.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iic1 = ipv4.Assign(net1);
 
     // Create the UDP sockets

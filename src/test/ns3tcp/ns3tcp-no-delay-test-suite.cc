@@ -114,7 +114,7 @@ Ns3TcpNoDelayTestCase::DoRun()
     internet.InstallAll();
 
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.252");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(30));
     Ipv4InterfaceContainer ifContainer = address.Assign(devices);
 
     Ptr<SocketWriter> socketWriter = CreateObject<SocketWriter>();

@@ -124,7 +124,7 @@ main(int argc, char* argv[])
     InternetStackHelper internet;
     internet.Install(nodes);
     Ipv4AddressHelper ipAddrs;
-    ipAddrs.SetBase("192.168.0.0", "255.255.255.0");
+    ipAddrs.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24));
     ipAddrs.Assign(nodeDevices);
 
     //--------------------------------------------
@@ -153,7 +153,7 @@ main(int argc, char* argv[])
     receiver->SetStartTime(Seconds(0));
 
     Config::Set("/NodeList/*/ApplicationList/*/$Sender/Destination",
-                Ipv4AddressValue("192.168.0.2"));
+                Ipv4AddressValue(Ipv4Address("192.168.0.2")));
 
     //--------------------------------------------
     //-- Setup stats and data collection

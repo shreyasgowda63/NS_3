@@ -225,15 +225,15 @@ NixVectorRoutingTest::DoRun()
     dAdC = devHelper.Install(nAnC);
 
     Ipv4AddressHelper aSrcaAv4;
-    aSrcaAv4.SetBase("10.1.0.0", "255.255.255.0");
+    aSrcaAv4.SetBase(Ipv4Address("10.1.0.0"), Ipv4Mask(24));
     Ipv4AddressHelper aAaBv4;
-    aAaBv4.SetBase("10.1.1.0", "255.255.255.0");
+    aAaBv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4AddressHelper aBaCv4;
-    aBaCv4.SetBase("10.1.2.0", "255.255.255.0");
+    aBaCv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     Ipv4AddressHelper aCaDstv4;
-    aCaDstv4.SetBase("10.1.3.0", "255.255.255.0");
+    aCaDstv4.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     Ipv4AddressHelper aAaCv4;
-    aAaCv4.SetBase("10.1.4.0", "255.255.255.0");
+    aAaCv4.SetBase(Ipv4Address("10.1.4.0"), Ipv4Mask(24));
 
     Ipv6AddressHelper aSrcaAv6;
     aSrcaAv6.SetBase(Ipv6Address("2001:0::"), Ipv6Prefix(64));

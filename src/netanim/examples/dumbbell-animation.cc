@@ -70,9 +70,9 @@ main(int argc, char* argv[])
     d.InstallStack(stack);
 
     // Assign IP Addresses
-    d.AssignIpv4Addresses(Ipv4AddressHelper("10.1.1.0", "255.255.255.0"),
-                          Ipv4AddressHelper("10.2.1.0", "255.255.255.0"),
-                          Ipv4AddressHelper("10.3.1.0", "255.255.255.0"));
+    d.AssignIpv4Addresses(Ipv4AddressHelper(Ipv4Address("10.1.1.0"), Ipv4Mask(24)),
+                          Ipv4AddressHelper(Ipv4Address("10.2.1.0"), Ipv4Mask(24)),
+                          Ipv4AddressHelper(Ipv4Address("10.3.1.0"), Ipv4Mask(24)));
 
     // Install on/off app on all right side nodes
     OnOffHelper clientHelper("ns3::UdpSocketFactory", Address());

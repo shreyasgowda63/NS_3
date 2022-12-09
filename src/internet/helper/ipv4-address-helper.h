@@ -62,7 +62,9 @@ class Ipv4AddressHelper
      * @param mask the address mask
      * @param base the host part to start from
      */
-    Ipv4AddressHelper(Ipv4Address network, Ipv4Mask mask, Ipv4Address base = "0.0.0.1");
+    Ipv4AddressHelper(Ipv4Address network,
+                      Ipv4Mask mask,
+                      Ipv4Address base = Ipv4Address("0.0.0.1"));
 
     /**
      * @brief Set the base network number, network mask and base address.
@@ -75,12 +77,12 @@ class Ipv4AddressHelper
      * start allocating IP addresses out of that network beginning at 192.168.1.3,
      * you would call
      *
-     *   SetBase ("192.168.1.0", "255.255.255.0", "0.0.0.3");
+     *   SetBase (Ipv4Address("192.168.1.0"), Ipv4Mask(24), Ipv4Address("0.0.0.3"));
      *
      * If you don't care about the initial address it defaults to "0.0.0.1" in
      * which case you can simply use,
      *
-     *   SetBase ("192.168.1.0", "255.255.255.0");
+     *   SetBase (Ipv4Address("192.168.1.0"), Ipv4Mask(24));
      *
      * and the first address generated will be 192.168.1.1.
      *
@@ -92,7 +94,7 @@ class Ipv4AddressHelper
      * IP address allocation.  Will be combined (ORed) with the network number to
      * generate the first IP address.  Defaults to 0.0.0.1.
      */
-    void SetBase(Ipv4Address network, Ipv4Mask mask, Ipv4Address base = "0.0.0.1");
+    void SetBase(Ipv4Address network, Ipv4Mask mask, Ipv4Address base = Ipv4Address("0.0.0.1"));
 
     /**
      * @brief Increment the network number and reset the IP address counter to

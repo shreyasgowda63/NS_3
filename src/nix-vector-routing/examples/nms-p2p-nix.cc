@@ -281,13 +281,13 @@ main(int argc, char* argv[])
         if (!useIpv6)
         {
             oss << 10 + z << ".1.252.0";
-            addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+            addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
             addressHelperv4.Assign(ndc0_1);
         }
         else
         {
             oss << 2001 + z << ":1:252::";
-            addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+            addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
             addressHelperv6.Assign(ndc0_1);
         }
         // Create Net2
@@ -323,12 +323,12 @@ main(int argc, char* argv[])
             if (!useIpv6)
             {
                 oss << 10 + z << ".4." << 15 + i << ".0";
-                addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+                addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
             }
             else
             {
                 oss << 2001 + z << ":4:" << 15 + i << "::";
-                addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+                addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
             }
             for (int j = 0; j < nLANClients; ++j)
             {
@@ -378,12 +378,12 @@ main(int argc, char* argv[])
             if (!useIpv6)
             {
                 oss << 10 + z << ".5." << 10 + i << ".0";
-                addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+                addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
             }
             else
             {
                 oss << 2001 + z << ":5:" << 10 + i << "::";
-                addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+                addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
             }
             for (int j = 0; j < nLANClients; ++j)
             {
@@ -450,32 +450,32 @@ main(int argc, char* argv[])
             // ndc0_4
             oss.str("");
             oss << 10 + z << ".1.253.0";
-            addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+            addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
             addressHelperv4.Assign(ndc0_4);
             // ndc0_5
             oss.str("");
             oss << 10 + z << ".1.254.0";
-            addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+            addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
             addressHelperv4.Assign(ndc0_5);
             // ndc2_4a
             oss.str("");
             oss << 10 + z << ".4.253.0";
-            addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+            addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
             addressHelperv4.Assign(ndc2_4a);
             // ndc2_4b
             oss.str("");
             oss << 10 + z << ".4.254.0";
-            addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+            addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
             addressHelperv4.Assign(ndc2_4b);
             // ndc3_5a
             oss.str("");
             oss << 10 + z << ".5.253.0";
-            addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+            addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
             addressHelperv4.Assign(ndc3_5a);
             // ndc3_5b
             oss.str("");
             oss << 10 + z << ".5.254.0";
-            addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+            addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
             addressHelperv4.Assign(ndc3_5b);
         }
         else
@@ -483,32 +483,32 @@ main(int argc, char* argv[])
             // ndc0_4
             oss.str("");
             oss << 2001 + z << ":1:253::";
-            addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+            addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
             addressHelperv6.Assign(ndc0_4);
             // ndc0_5
             oss.str("");
             oss << 2001 + z << ":1:254::";
-            addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+            addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
             addressHelperv6.Assign(ndc0_5);
             // ndc2_4a
             oss.str("");
             oss << 2001 + z << ":4:253::";
-            addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+            addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
             addressHelperv6.Assign(ndc2_4a);
             // ndc2_4b
             oss.str("");
             oss << 2001 + z << ":4:254::";
-            addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+            addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
             addressHelperv6.Assign(ndc2_4b);
             // ndc3_5a
             oss.str("");
             oss << 2001 + z << ":5:253::";
-            addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+            addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
             addressHelperv6.Assign(ndc3_5a);
             // ndc3_5b
             oss.str("");
             oss << 2001 + z << ":5:254::";
-            addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+            addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
             addressHelperv6.Assign(ndc3_5b);
         }
 
@@ -519,13 +519,13 @@ main(int argc, char* argv[])
             if (!useIpv6)
             {
                 oss << 10 + z << ".1." << 1 + i << ".0";
-                addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+                addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
                 addressHelperv4.Assign(ndc0[i]);
             }
             else
             {
                 oss << 2001 + z << ":1:" << 1 + i << "::";
-                addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+                addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
                 addressHelperv6.Assign(ndc0[i]);
             }
         }
@@ -539,13 +539,13 @@ main(int argc, char* argv[])
             if (!useIpv6)
             {
                 oss << 10 + z << ".2." << 1 + i << ".0";
-                addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+                addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
                 addressHelperv4.Assign(ndc1[i]);
             }
             else
             {
                 oss << 2001 + z << ":2:" << 1 + i << "::";
-                addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+                addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
                 addressHelperv6.Assign(ndc1[i]);
             }
         }
@@ -553,13 +553,13 @@ main(int argc, char* argv[])
         if (!useIpv6)
         {
             oss << 10 + z << ".3.1.0";
-            addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+            addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
             addressHelperv4.Assign(ndcLR);
         }
         else
         {
             oss << 2001 + z << ":3:1::";
-            addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+            addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
             addressHelperv6.Assign(ndcLR);
         }
         for (int i = 0; i < 14; ++i)
@@ -568,13 +568,13 @@ main(int argc, char* argv[])
             if (!useIpv6)
             {
                 oss << 10 + z << ".4." << 1 + i << ".0";
-                addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+                addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
                 addressHelperv4.Assign(ndc2[i]);
             }
             else
             {
                 oss << 2001 + z << ":4:" << 1 + i << "::";
-                addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+                addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
                 addressHelperv6.Assign(ndc2[i]);
             }
         }
@@ -584,13 +584,13 @@ main(int argc, char* argv[])
             if (!useIpv6)
             {
                 oss << 10 + z << ".5." << 1 + i << ".0";
-                addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+                addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
                 addressHelperv4.Assign(ndc3[i]);
             }
             else
             {
                 oss << 2001 + z << ":5:" << 1 + i << "::";
-                addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+                addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
                 addressHelperv6.Assign(ndc3[i]);
             }
         }
@@ -615,13 +615,13 @@ main(int argc, char* argv[])
             if (!useIpv6)
             {
                 oss << "254.1." << z + 1 << ".0";
-                addressHelperv4.SetBase(oss.str().c_str(), "255.255.255.0");
+                addressHelperv4.SetBase(oss.str(), Ipv4Mask(24));
                 addressHelperv4.Assign(ndc_ring[z]);
             }
             else
             {
                 oss << "254:1:" << z + 1 << "::";
-                addressHelperv6.SetBase(oss.str().c_str(), Ipv6Prefix(64));
+                addressHelperv6.SetBase(oss.str(), Ipv6Prefix(64));
                 addressHelperv6.Assign(ndc_ring[z]);
             }
         }

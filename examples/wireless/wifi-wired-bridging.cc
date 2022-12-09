@@ -85,7 +85,7 @@ main(int argc, char* argv[])
     InternetStackHelper stack;
     CsmaHelper csma;
     Ipv4AddressHelper ip;
-    ip.SetBase("192.168.0.0", "255.255.255.0");
+    ip.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24));
 
     backboneNodes.Create(nWifis);
     stack.Install(backboneNodes);

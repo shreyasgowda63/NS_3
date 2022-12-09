@@ -57,19 +57,19 @@ NetworkAllocatorHelperTestCase::DoRun()
     Ipv4Address network;
     Ipv4AddressHelper h;
 
-    h.SetBase("1.0.0.0", "255.0.0.0");
+    h.SetBase(Ipv4Address("1.0.0.0"), Ipv4Mask(8));
     network = h.NewNetwork();
     NS_TEST_EXPECT_MSG_EQ(network, Ipv4Address("2.0.0.0"), "100");
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("2.0.0.1"), "101");
 
-    h.SetBase("0.1.0.0", "255.255.0.0");
+    h.SetBase(Ipv4Address("0.1.0.0"), Ipv4Mask(16));
     network = h.NewNetwork();
     NS_TEST_EXPECT_MSG_EQ(network, Ipv4Address("0.2.0.0"), "102");
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("0.2.0.1"), "103");
 
-    h.SetBase("0.0.1.0", "255.255.255.0");
+    h.SetBase(Ipv4Address("0.0.1.0"), Ipv4Mask(24), Ipv4Address("0.0.0.3"));
     network = h.NewNetwork();
     NS_TEST_EXPECT_MSG_EQ(network, Ipv4Address("0.0.2.0"), "104");
     address = h.NewAddress();
@@ -111,19 +111,19 @@ AddressAllocatorHelperTestCase::DoRun()
     Ipv4Address address;
     Ipv4AddressHelper h;
 
-    h.SetBase("1.0.0.0", "255.0.0.0", "0.0.0.3");
+    h.SetBase(Ipv4Address("1.0.0.0"), Ipv4Mask(8), Ipv4Address("0.0.0.3"));
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("1.0.0.3"), "200");
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("1.0.0.4"), "201");
 
-    h.SetBase("0.1.0.0", "255.255.0.0", "0.0.0.3");
+    h.SetBase(Ipv4Address("0.1.0.0"), Ipv4Mask(16), Ipv4Address("0.0.0.3"));
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("0.1.0.3"), "202");
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("0.1.0.4"), "203");
 
-    h.SetBase("0.0.1.0", "255.255.255.0", "0.0.0.3");
+    h.SetBase(Ipv4Address("0.0.1.0"), Ipv4Mask(24), Ipv4Address("0.0.0.3"));
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("0.0.1.3"), "204");
     address = h.NewAddress();
@@ -161,7 +161,7 @@ ResetAllocatorHelperTestCase::DoRun()
     // so reset the Ipv4AddressGenerator to make it forget we did.
     //
 
-    h.SetBase("1.0.0.0", "255.0.0.0", "0.0.0.3");
+    h.SetBase(Ipv4Address("1.0.0.0"), Ipv4Mask(8), Ipv4Address("0.0.0.3"));
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("1.0.0.3"), "301");
     address = h.NewAddress();
@@ -171,7 +171,7 @@ ResetAllocatorHelperTestCase::DoRun()
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("2.0.0.3"), "304");
 
-    h.SetBase("0.1.0.0", "255.255.0.0", "0.0.0.3");
+    h.SetBase(Ipv4Address("0.1.0.0"), Ipv4Mask(16), Ipv4Address("0.0.0.3"));
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("0.1.0.3"), "305");
     address = h.NewAddress();
@@ -181,7 +181,7 @@ ResetAllocatorHelperTestCase::DoRun()
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("0.2.0.3"), "308");
 
-    h.SetBase("0.0.1.0", "255.255.255.0", "0.0.0.3");
+    h.SetBase(Ipv4Address("0.0.1.0"), Ipv4Mask(24), Ipv4Address("0.0.0.3"));
     address = h.NewAddress();
     NS_TEST_EXPECT_MSG_EQ(address, Ipv4Address("0.0.1.3"), "309");
     address = h.NewAddress();
@@ -234,7 +234,7 @@ IpAddressHelperTestCasev4::DoRun()
     // Ipv4AddressHelper that is unconfigured
     NS_TEST_ASSERT_MSG_EQ(ipAddr1, Ipv4Address("255.255.255.255"), "Ipv4AddressHelper failure");
 
-    ip1.SetBase("192.168.0.0", "255.255.255.0");
+    ip1.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24));
     ipAddr1 = ip1.NewAddress();
     NS_TEST_ASSERT_MSG_EQ(ipAddr1, Ipv4Address("192.168.0.1"), "Ipv4AddressHelper failure");
     ipAddr1 = ip1.NewAddress();
@@ -251,25 +251,30 @@ IpAddressHelperTestCasev4::DoRun()
     NS_TEST_ASSERT_MSG_EQ(ipAddr1, Ipv4Address("192.168.4.3"), "Ipv4AddressHelper failure");
 
     // reset base to start at 192.168.0.100
-    ip1.SetBase("192.168.0.0", "255.255.255.0", "0.0.0.100");
+    ip1.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24), Ipv4Address("0.0.0.100"));
     ipAddr1 = ip1.NewAddress();
     NS_TEST_ASSERT_MSG_EQ(ipAddr1, Ipv4Address("192.168.0.100"), "Ipv4AddressHelper failure");
 
     // rollover
-    ip1.SetBase("192.168.0.0", "255.255.255.0", "0.0.0.254");
+    ip1.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24), Ipv4Address("0.0.0.254"));
     ipAddr1 = ip1.NewAddress(); // .254
     NS_TEST_ASSERT_MSG_EQ(ipAddr1, Ipv4Address("192.168.0.254"), "Ipv4AddressHelper failure");
     // The below will overflow and assert, so it is commented out
     // ipAddr1 = ip1.NewAddress (); // .255
 
     // create with arguments
-    Ipv4AddressHelper ip2 = Ipv4AddressHelper("192.168.1.0", "255.255.255.0", "0.0.0.1");
+    Ipv4AddressHelper ip2 =
+        Ipv4AddressHelper(Ipv4Address("192.168.1.0"), Ipv4Mask(24), Ipv4Address("0.0.0.1"));
+
     // duplicate assignment
     ip2.NewNetwork(); // 192.168.2
     ip2.NewNetwork(); // 192.168.3
     ip2.NewNetwork(); // 192.168.4
-                      // Uncomment below, and 192.168.4.1 will crash since it was allocated above
-                      // ipAddr1 = ip2.NewAddress (); // 4.1
+                      // Uncomment below, and
+                      // 192.168.4.1 will crash since
+                      // it was allocated above
+                      // ipAddr1 = ip2.NewAddress ();
+                      // // 4.1
 }
 
 void

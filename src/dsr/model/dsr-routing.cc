@@ -733,7 +733,7 @@ DsrRouting::GetIPfromMAC(Mac48Address address)
             return ipv4->GetAddress(1, 0).GetLocal();
         }
     }
-    return nullptr;
+    return Ipv4Address::GetAny();
 }
 
 void
@@ -787,7 +787,7 @@ DsrRouting::SearchNextHop(Ipv4Address ipv4Address, std::vector<Ipv4Address>& vec
         }
     }
     NS_LOG_DEBUG("Next hop address not found");
-    Ipv4Address none = "0.0.0.0";
+    Ipv4Address none = Ipv4Address::GetAny();
     return none;
 }
 
@@ -831,7 +831,7 @@ DsrRouting::GetIPfromID(uint16_t id)
     if (id >= 256)
     {
         NS_LOG_DEBUG("Exceed the node range");
-        return "0.0.0.0";
+        return Ipv4Address::GetAny();
     }
     else
     {
@@ -940,7 +940,7 @@ DsrRouting::CheckSendBuffer()
                     Ipv4Address nextHop =
                         SearchNextHop(m_mainAddress, errorRoute); // Get the next hop address
 
-                    if (nextHop == "0.0.0.0")
+                    if (nextHop == Ipv4Address::GetAny())
                     {
                         PacketNewRoute(dsrPacket, m_mainAddress, destination, protocol);
                         return;
@@ -1002,7 +1002,7 @@ DsrRouting::CheckSendBuffer()
                 Ipv4Address nextHop =
                     SearchNextHop(m_mainAddress,
                                   nodeList); // Get the next hop address for the route
-                if (nextHop == "0.0.0.0")
+                if (nextHop == Ipv4Address::GetAny())
                 {
                     PacketNewRoute(dsrPacket, m_mainAddress, destination, protocol);
                     return;
@@ -1268,7 +1268,7 @@ DsrRouting::PacketNewRoute(Ptr<Packet> packet,
             toDst.GetVector(); // Get the route from the route entry we found
         Ipv4Address nextHop =
             SearchNextHop(m_mainAddress, nodeList); // Get the next hop address for the route
-        if (nextHop == "0.0.0.0")
+        if (nextHop == Ipv4Address::GetAny())
         {
             PacketNewRoute(cleanP, source, destination, protocol);
             return;
@@ -1426,7 +1426,7 @@ DsrRouting::SendUnreachError(Ipv4Address unreachNode,
     {
         std::vector<Ipv4Address> nodeList = toDst.GetVector();
         Ipv4Address nextHop = SearchNextHop(m_mainAddress, nodeList);
-        if (nextHop == "0.0.0.0")
+        if (nextHop == Ipv4Address::GetAny())
         {
             NS_LOG_DEBUG("The route is not right");
             PacketNewRoute(newPacket, m_mainAddress, destination, protocol);
@@ -1595,7 +1595,7 @@ DsrRouting::Send(Ptr<Packet> packet,
                 toDst.GetVector(); // Get the route from the route entry we found
             Ipv4Address nextHop =
                 SearchNextHop(m_mainAddress, nodeList); // Get the next hop address for the route
-            if (nextHop == "0.0.0.0")
+            if (nextHop == Ipv4Address::GetAny())
             {
                 PacketNewRoute(cleanP, source, destination, protocol);
                 return;
@@ -2498,7 +2498,7 @@ DsrRouting::SalvagePacket(Ptr<const Packet> packet,
             toDst.GetVector(); // Get the route from the route entry we found
         Ipv4Address nextHop =
             SearchNextHop(m_mainAddress, nodeList); // Get the next hop address for the route
-        if (nextHop == "0.0.0.0")
+        if (nextHop == Ipv4Address::GetAny())
         {
             PacketNewRoute(p, source, dst, protocol);
             return;
@@ -3021,7 +3021,7 @@ DsrRouting::SendErrorRequest(DsrOptionRerrUnreachHeader& rerr, uint8_t protocol)
         Ipv4Address nextHop = SearchNextHop(m_mainAddress, ip); // Get the next hop address
         NS_LOG_DEBUG("The nextHop address " << nextHop);
         Ptr<Packet> packet = Create<Packet>();
-        if (nextHop == "0.0.0.0")
+        if (nextHop == Ipv4Address::GetAny())
         {
             NS_LOG_DEBUG("Error next hop address");
             PacketNewRoute(packet, m_mainAddress, dst, protocol);
@@ -3259,7 +3259,7 @@ DsrRouting::RouteRequestTimerExpire(Ptr<Packet> packet,
         sourceRoute.SetSalvage(0);
         Ipv4Address nextHop = SearchNextHop(m_mainAddress, ip); // Get the next hop address
         NS_LOG_INFO("The nextHop address is " << nextHop);
-        if (nextHop == "0.0.0.0")
+        if (nextHop == Ipv4Address::GetAny())
         {
             NS_LOG_DEBUG("Error next hop address");
             PacketNewRoute(dsrP, source, dst, protocol);

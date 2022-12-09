@@ -603,7 +603,7 @@ RoutingHelper::AssignIpAddresses(NetDeviceContainer& d, Ipv4InterfaceContainer& 
     Ipv4AddressHelper addressAdhoc;
     // we may have a lot of nodes, and want them all
     // in same subnet, to support broadcast
-    addressAdhoc.SetBase("10.1.0.0", "255.255.0.0");
+    addressAdhoc.SetBase(Ipv4Address("10.1.0.0"), Ipv4Mask(16));
     adhocTxInterfaces = addressAdhoc.Assign(d);
 }
 

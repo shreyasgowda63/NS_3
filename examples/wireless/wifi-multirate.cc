@@ -528,7 +528,7 @@ Experiment::Run(const WifiHelper& wifi,
     internet.Install(c);
 
     Ipv4AddressHelper address;
-    address.SetBase("10.0.0.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
 
     Ipv4InterfaceContainer ipInterfaces;
     ipInterfaces = address.Assign(devices);

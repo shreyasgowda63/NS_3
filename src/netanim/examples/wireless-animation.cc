@@ -133,13 +133,13 @@ main(int argc, char* argv[])
     // Install Ipv4 addresses
 
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer p2pInterfaces;
     p2pInterfaces = address.Assign(p2pDevices);
-    address.SetBase("10.1.2.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer csmaInterfaces;
     csmaInterfaces = address.Assign(csmaDevices);
-    address.SetBase("10.1.3.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer staInterfaces;
     staInterfaces = address.Assign(staDevices);
     Ipv4InterfaceContainer apInterface;

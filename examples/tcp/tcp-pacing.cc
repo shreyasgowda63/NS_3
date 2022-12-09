@@ -240,19 +240,19 @@ main(int argc, char* argv[])
 
     NS_LOG_INFO("Assign IP Addresses.");
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer regLinkInterface0 = ipv4.Assign(d0d2);
 
-    ipv4.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer regLinkInterface1 = ipv4.Assign(d1d2);
 
-    ipv4.SetBase("10.1.3.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer bottleneckInterface = ipv4.Assign(d2d3);
 
-    ipv4.SetBase("10.1.4.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.4.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer regLinkInterface4 = ipv4.Assign(d3d4);
 
-    ipv4.SetBase("10.1.5.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.5.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer regLinkInterface5 = ipv4.Assign(d3d5);
 
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();

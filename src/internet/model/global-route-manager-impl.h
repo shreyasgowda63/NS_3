@@ -919,7 +919,7 @@ class GlobalRouteManagerImpl
      * \param amask the target subnet mask
      * \return the outgoing interface number
      */
-    int32_t FindOutgoingInterfaceId(Ipv4Address a, Ipv4Mask amask = Ipv4Mask("255.255.255.255"));
+    int32_t FindOutgoingInterfaceId(Ipv4Address a, Ipv4Mask amask = Ipv4Mask(32));
 };
 
 } // namespace ns3

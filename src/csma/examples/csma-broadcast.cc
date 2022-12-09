@@ -75,9 +75,9 @@ main(int argc, char* argv[])
 
     NS_LOG_INFO("Assign IP Addresses.");
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.0.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.0.0"), Ipv4Mask(24));
     ipv4.Assign(n0);
-    ipv4.SetBase("192.168.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     ipv4.Assign(n1);
 
     // RFC 863 discard port ("9") indicates packet should be thrown away

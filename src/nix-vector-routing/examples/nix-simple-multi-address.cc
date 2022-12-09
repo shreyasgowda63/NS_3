@@ -174,15 +174,15 @@ main(int argc, char* argv[])
     devices34 = pointToPoint.Install(nodes34);
 
     Ipv4AddressHelper address1;
-    address1.SetBase("10.1.1.0", "255.255.255.0");
+    address1.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4AddressHelper address2;
-    address2.SetBase("10.1.2.0", "255.255.255.0");
+    address2.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     Ipv4AddressHelper address3;
-    address3.SetBase("10.1.3.0", "255.255.255.0");
+    address3.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     Ipv4AddressHelper address4;
-    address4.SetBase("10.2.1.0", "255.255.255.0");
+    address4.SetBase(Ipv4Address("10.2.1.0"), Ipv4Mask(24));
     Ipv4AddressHelper address5;
-    address5.SetBase("10.2.3.0", "255.255.255.0");
+    address5.SetBase(Ipv4Address("10.2.3.0"), Ipv4Mask(24));
 
     address1.Assign(devices12);
     address2.Assign(devices23);

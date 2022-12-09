@@ -135,7 +135,7 @@ Ipv4PacketInfoTagTest::DoRun()
     Ptr<Ipv4> ipv4 = node0->GetObject<Ipv4>();
 
     uint32_t index = ipv4->AddInterface(device);
-    Ipv4InterfaceAddress ifaceAddr1 = Ipv4InterfaceAddress("10.1.1.1", "255.255.255.0");
+    Ipv4InterfaceAddress ifaceAddr1 = Ipv4InterfaceAddress(Ipv4Address("10.1.1.1"), Ipv4Mask(24));
     ipv4->AddAddress(index, ifaceAddr1);
     ipv4->SetMetric(index, 1);
     ipv4->SetUp(index);
@@ -146,7 +146,7 @@ Ipv4PacketInfoTagTest::DoRun()
     ipv4 = node1->GetObject<Ipv4>();
 
     index = ipv4->AddInterface(device2);
-    Ipv4InterfaceAddress ifaceAddr2 = Ipv4InterfaceAddress("10.1.1.2", "255.255.255.0");
+    Ipv4InterfaceAddress ifaceAddr2 = Ipv4InterfaceAddress(Ipv4Address("10.1.1.2"), Ipv4Mask(24));
     ipv4->AddAddress(index, ifaceAddr2);
     ipv4->SetMetric(index, 1);
     ipv4->SetUp(index);

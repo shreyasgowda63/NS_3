@@ -469,11 +469,11 @@ main(int argc, char* argv[])
 
     NS_LOG_INFO("Assign IP Addresses");
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer serverCmtsInterface = ipv4.Assign(serverCmtsDev);
-    ipv4.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer cmtsRouterInterface = ipv4.Assign(cmtsRouterDev);
-    ipv4.SetBase("10.1.3.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer routerHostInterface = ipv4.Assign(routerHostDev);
 
     NS_LOG_INFO("Initialize Global Routing");

@@ -220,13 +220,13 @@ main(int argc, char* argv[])
         stack.Install(nodes);
 
         Ipv4AddressHelper address1;
-        address1.SetBase("10.1.1.0", "255.255.255.0");
+        address1.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
         Ipv4AddressHelper address2;
-        address2.SetBase("10.1.2.0", "255.255.255.0");
+        address2.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
         Ipv4AddressHelper address3;
-        address3.SetBase("10.1.3.0", "255.255.255.0");
+        address3.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
         Ipv4AddressHelper address4;
-        address4.SetBase("10.1.4.0", "255.255.255.0");
+        address4.SetBase(Ipv4Address("10.1.4.0"), Ipv4Mask(24));
 
         Ipv4InterfaceContainer interfaces01 = address1.Assign(devices01);
         Ipv4InterfaceContainer interfaces12 = address2.Assign(devices12);

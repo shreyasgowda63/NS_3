@@ -114,7 +114,7 @@ main(int argc, char* argv[])
     {
         std::ostringstream subnet;
         subnet << "10.1." << i + 1 << ".0";
-        ipv4.SetBase(subnet.str().c_str(), "255.255.255.0");
+        ipv4.SetBase(subnet.str(), Ipv4Mask(24));
         interfaceAdjacencyList[i] = ipv4.Assign(deviceAdjacencyList[i]);
     }
 

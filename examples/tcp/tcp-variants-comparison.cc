@@ -461,7 +461,7 @@ main(int argc, char* argv[])
     tchCoDel.SetRootQueueDisc("ns3::CoDelQueueDisc");
 
     Ipv4AddressHelper address;
-    address.SetBase("10.0.0.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
 
     // Configure the sources and sinks net devices
     // and the channels between the sources/sinks and the gateways

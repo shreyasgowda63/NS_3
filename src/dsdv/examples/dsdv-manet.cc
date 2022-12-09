@@ -371,7 +371,7 @@ DsdvManetExample::InstallInternetStack(std::string tr_name)
     stack.SetRoutingHelper(dsdv); // has effect on the next Install ()
     stack.Install(nodes);
     Ipv4AddressHelper address;
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     interfaces = address.Assign(devices);
     if (m_printRoutes)
     {

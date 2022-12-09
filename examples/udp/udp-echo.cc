@@ -84,14 +84,14 @@ main(int argc, char* argv[])
     if (useV6 == false)
     {
         Ipv4AddressHelper ipv4;
-        ipv4.SetBase("10.1.1.0", "255.255.255.0");
+        ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
         Ipv4InterfaceContainer i = ipv4.Assign(d);
         serverAddress = Address(i.GetAddress(1));
     }
     else
     {
         Ipv6AddressHelper ipv6;
-        ipv6.SetBase("2001:0000:f00d:cafe::", Ipv6Prefix(64));
+        ipv6.SetBase(Ipv6Address("2001:0000:f00d:cafe::"), Ipv6Prefix(64));
         Ipv6InterfaceContainer i6 = ipv6.Assign(d);
         serverAddress = Address(i6.GetAddress(1, 1));
     }

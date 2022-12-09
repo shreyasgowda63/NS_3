@@ -436,29 +436,29 @@ main(int argc, char* argv[])
     ipS3T2.reserve(10);
     std::vector<Ipv4InterfaceContainer> ipR2T2;
     ipR2T2.reserve(20);
-    address.SetBase("172.16.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("172.16.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer ipT1T2 = address.Assign(T1T2);
-    address.SetBase("192.168.0.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("192.168.0.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer ipR1T2 = address.Assign(R1T2);
-    address.SetBase("10.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     for (std::size_t i = 0; i < 10; i++)
     {
         ipS1T1.push_back(address.Assign(S1T1[i]));
         address.NewNetwork();
     }
-    address.SetBase("10.2.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.2.1.0"), Ipv4Mask(24));
     for (std::size_t i = 0; i < 20; i++)
     {
         ipS2T1.push_back(address.Assign(S2T1[i]));
         address.NewNetwork();
     }
-    address.SetBase("10.3.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.3.1.0"), Ipv4Mask(24));
     for (std::size_t i = 0; i < 10; i++)
     {
         ipS3T2.push_back(address.Assign(S3T2[i]));
         address.NewNetwork();
     }
-    address.SetBase("10.4.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.4.1.0"), Ipv4Mask(24));
     for (std::size_t i = 0; i < 20; i++)
     {
         ipR2T2.push_back(address.Assign(R2T2[i]));

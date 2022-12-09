@@ -107,7 +107,7 @@ experiment(bool enableCtsRts, std::string wifiManager)
     InternetStackHelper internet;
     internet.Install(nodes);
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.0.0.0", "255.0.0.0");
+    ipv4.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(8));
     ipv4.Assign(devices);
 
     // 7. Install applications: two CBR streams each saturating the channel

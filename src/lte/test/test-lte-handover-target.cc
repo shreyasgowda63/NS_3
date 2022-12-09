@@ -314,14 +314,14 @@ LteHandoverTargetTestCase::DoRun()
     p2ph.SetChannelAttribute("Delay", TimeValue(Seconds(0.010)));
     NetDeviceContainer internetDevices = p2ph.Install(pgw, remoteHost);
     Ipv4AddressHelper ipv4h;
-    ipv4h.SetBase("1.0.0.0", "255.0.0.0");
+    ipv4h.SetBase(Ipv4Address("1.0.0.0"), Ipv4Mask(8));
     Ipv4InterfaceContainer internetIpIfaces = ipv4h.Assign(internetDevices);
 
     // Routing of the Internet Host (towards the LTE network)
     Ipv4StaticRoutingHelper ipv4RoutingHelper;
     Ptr<Ipv4StaticRouting> remoteHostStaticRouting =
         ipv4RoutingHelper.GetStaticRouting(remoteHost->GetObject<Ipv4>());
-    remoteHostStaticRouting->AddNetworkRouteTo(Ipv4Address("7.0.0.0"), Ipv4Mask("255.0.0.0"), 1);
+    remoteHostStaticRouting->AddNetworkRouteTo(Ipv4Address("7.0.0.0"), Ipv4Mask(8), 1);
 
     // Create Devices and install them in the Nodes (eNB and UE)
     NetDeviceContainer enbDevs;

@@ -102,13 +102,13 @@ main(int argc, char* argv[])
     // Later, we add IP addresses.
     NS_LOG_INFO("Assign IP Addresses.");
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     ipv4.Assign(d0d2);
 
-    ipv4.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i1i2 = ipv4.Assign(d1d2);
 
-    ipv4.SetBase("10.1.3.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer i3i2 = ipv4.Assign(d3d2);
 
     NS_LOG_INFO("Use global routing.");

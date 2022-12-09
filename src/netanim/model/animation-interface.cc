@@ -2344,7 +2344,7 @@ AnimationInterface::TrackIpv4RoutePaths()
         std::ostringstream oss;
         oss << rt->GetGateway();
         NS_LOG_INFO("Node:" << trackElement.fromNodeId << "-->" << rt->GetGateway());
-        if (rt->GetGateway() == "0.0.0.0")
+        if (rt->GetGateway() == Ipv4Address::GetAny())
         {
             Ipv4RoutePathElement elem = {trackElement.fromNodeId, "C"};
             rpElements.push_back(elem);
@@ -2354,7 +2354,7 @@ AnimationInterface::TrackIpv4RoutePaths()
                 rpElements.push_back(elem2);
             }
         }
-        else if (rt->GetGateway() == "127.0.0.1")
+        else if (rt->GetGateway() == Ipv4Address::GetLoopback())
         {
             Ipv4RoutePathElement elem = {trackElement.fromNodeId, "-1"};
             rpElements.push_back(elem);

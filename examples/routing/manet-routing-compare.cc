@@ -364,7 +364,7 @@ RoutingExperiment::Run(int nSinks, double txp, std::string CSVfileName)
     NS_LOG_INFO("assigning ip address");
 
     Ipv4AddressHelper addressAdhoc;
-    addressAdhoc.SetBase("10.1.1.0", "255.255.255.0");
+    addressAdhoc.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer adhocInterfaces;
     adhocInterfaces = addressAdhoc.Assign(adhocDevices);
 

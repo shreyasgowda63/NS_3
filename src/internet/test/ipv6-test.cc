@@ -28,6 +28,8 @@
 #include "ns3/simulator.h"
 #include "ns3/test.h"
 
+#include <string>
+
 using namespace ns3;
 
 /**
@@ -97,15 +99,17 @@ Ipv6L3ProtocolTestCase::DoRun()
                           "interface has always a link-local address"); /* interface has always a
                                                                            link-local address */
 
+    using namespace std::string_literals;
+
     Ipv6InterfaceAddress ifaceAddr1 =
-        Ipv6InterfaceAddress("2001:1234:5678:9000::1", Ipv6Prefix(64));
+        Ipv6InterfaceAddress("2001:1234:5678:9000::1"s, Ipv6Prefix(64));
     interface->AddAddress(ifaceAddr1);
     Ipv6InterfaceAddress ifaceAddr2 =
-        Ipv6InterfaceAddress("2001:ffff:5678:9000::1", Ipv6Prefix(64));
+        Ipv6InterfaceAddress("2001:ffff:5678:9000::1"s, Ipv6Prefix(64));
     interface->AddAddress(ifaceAddr2);
 
     Ipv6InterfaceAddress ifaceAddr3 =
-        Ipv6InterfaceAddress("2001:ffff:5678:9001::2", Ipv6Prefix(64));
+        Ipv6InterfaceAddress("2001:ffff:5678:9001::2"s, Ipv6Prefix(64));
     interface2->AddAddress(ifaceAddr3);
 
     uint32_t num = interface->GetNAddresses();
@@ -127,15 +131,15 @@ Ipv6L3ProtocolTestCase::DoRun()
     Ipv6InterfaceAddress output = interface->GetAddress(1);
     NS_TEST_ASSERT_MSG_EQ(ifaceAddr1, output, "Should be the interface address 1?");
 
-    index = ipv6->GetInterfaceForPrefix("2001:1234:5678:9000::0", Ipv6Prefix(64));
+    index = ipv6->GetInterfaceForPrefix("2001:1234:5678:9000::0"s, Ipv6Prefix(64));
     NS_TEST_ASSERT_MSG_EQ(index,
                           1,
                           "We should get one address??"); /* link-local address is always index 0 */
 
-    index = ipv6->GetInterfaceForAddress("2001:ffff:5678:9001::2");
+    index = ipv6->GetInterfaceForAddress("2001:ffff:5678:9001::2"s);
     NS_TEST_ASSERT_MSG_EQ(index, 2, "Number of addresses should be 2??");
 
-    index = ipv6->GetInterfaceForAddress("2001:ffff:5678:9000::1"); /* address we just remove */
+    index = ipv6->GetInterfaceForAddress("2001:ffff:5678:9000::1"s); /* address we just remove */
     NS_TEST_ASSERT_MSG_EQ(index, (uint32_t)-1, "Address should not be found??");
 
     /* Test Ipv6Interface()::RemoveAddress(address) */
@@ -157,7 +161,7 @@ Ipv6L3ProtocolTestCase::DoRun()
     NS_TEST_ASSERT_MSG_EQ(num, 1, "Number of addresses should be 1??");
 
     /* Test Ipv6Address::RemoveAddress(index, address) */
-    index = ipv6->GetInterfaceForAddress("2001:ffff:5678:9001::2");
+    index = ipv6->GetInterfaceForAddress("2001:ffff:5678:9001::2"s);
     bool result = ipv6->RemoveAddress(index, Ipv6Address("2001:ffff:5678:9001::2"));
     NS_TEST_ASSERT_MSG_EQ(result, true, "Unable to remove Address??");
     num = interface2->GetNAddresses();

@@ -100,15 +100,15 @@ main(int argc, char* argv[])
 
     // Later, we add IP addresses.
     Ipv4AddressHelper ipv4;
-    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iSrciRtr1 = ipv4.Assign(dSrcdRtr1);
-    ipv4.SetBase("10.1.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iSrciRtr2 = ipv4.Assign(dSrcdRtr2);
-    ipv4.SetBase("10.10.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.10.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iRtr1iDstRtr = ipv4.Assign(dRtr1dDstRtr);
-    ipv4.SetBase("10.10.2.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.10.2.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iRtr2iDstRtr = ipv4.Assign(dRtr2dDstRtr);
-    ipv4.SetBase("10.20.1.0", "255.255.255.0");
+    ipv4.SetBase(Ipv4Address("10.20.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer iDstRtrDst = ipv4.Assign(dDstRtrdDst);
 
     Ptr<Ipv4> ipv4Src = nSrc->GetObject<Ipv4>();

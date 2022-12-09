@@ -142,7 +142,7 @@ main(int argc, char* argv[])
 
     Ipv4AddressHelper address;
 
-    address.SetBase("192.168.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer staIf;
     Ipv4InterfaceContainer apIf;
     staIf = address.Assign(staDevice);

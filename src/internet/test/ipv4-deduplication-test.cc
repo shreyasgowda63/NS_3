@@ -333,7 +333,7 @@ Ipv4DeduplicationTest::DoRun()
     internet.Install(nodes);
 
     Ipv4AddressHelper ipv4address;
-    ipv4address.SetBase("10.0.0.0", "255.255.255.0");
+    ipv4address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
     ipv4address.Assign(devices);
 
     // add static routes for each node / device
@@ -343,7 +343,7 @@ Ipv4DeduplicationTest::DoRun()
         // route for forwarding
         staticRouting.AddMulticastRoute(*iter,
                                         Ipv4Address::GetAny(),
-                                        targetAddr.c_str(),
+                                        targetAddr,
                                         *diter,
                                         NetDeviceContainer(*diter));
 
@@ -360,7 +360,7 @@ Ipv4DeduplicationTest::DoRun()
                               true,
                               "Node " << Names::FindName(*iter) << " does not have Ipv4 aggregate");
         auto routing = staticRouting.GetStaticRouting(ipv4);
-        routing->AddHostRouteTo(targetAddr.c_str(), ipv4->GetInterfaceForDevice(*diter), 0);
+        routing->AddHostRouteTo(targetAddr, ipv4->GetInterfaceForDevice(*diter), 0);
 
         ++diter;
     }
@@ -646,7 +646,7 @@ Ipv4DeduplicationPerformanceTest::DoRun()
     internet.Install(nodes);
 
     Ipv4AddressHelper ipv4address;
-    ipv4address.SetBase("10.0.0.0", "255.255.255.0");
+    ipv4address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
     ipv4address.Assign(devices);
 
     // add static routes for each node / device
@@ -656,7 +656,7 @@ Ipv4DeduplicationPerformanceTest::DoRun()
         // route for forwarding
         staticRouting.AddMulticastRoute(*iter,
                                         Ipv4Address::GetAny(),
-                                        targetAddr.c_str(),
+                                        targetAddr,
                                         *diter,
                                         NetDeviceContainer(*diter));
 
@@ -673,7 +673,7 @@ Ipv4DeduplicationPerformanceTest::DoRun()
                               true,
                               "Node " << (*iter)->GetId() << " does not have Ipv4 aggregate");
         auto routing = staticRouting.GetStaticRouting(ipv4);
-        routing->AddHostRouteTo(targetAddr.c_str(), ipv4->GetInterfaceForDevice(*diter), 0);
+        routing->AddHostRouteTo(targetAddr, ipv4->GetInterfaceForDevice(*diter), 0);
 
         ++diter;
     }
@@ -681,7 +681,7 @@ Ipv4DeduplicationPerformanceTest::DoRun()
     // Create the UDP sockets
     Ptr<UniformRandomVariable> jitter =
         CreateObjectWithAttributes<UniformRandomVariable>("Max", DoubleValue(4));
-    Address to = InetSocketAddress(Ipv4Address(targetAddr.c_str()), 1234);
+    Address to = InetSocketAddress(Ipv4Address(targetAddr), 1234);
     for (auto iter = nodes.Begin(); iter != nodes.End(); ++iter)
     {
         Ptr<SocketFactory> udpSocketFactory = (*iter)->GetObject<UdpSocketFactory>();

@@ -89,7 +89,7 @@ main(int argc, char* argv[])
     // assign ip addresses
     NS_LOG_INFO("Assign ip addresses.");
     Ipv4AddressHelper ip;
-    ip.SetBase("192.168.1.0", "255.255.255.0");
+    ip.SetBase(Ipv4Address("192.168.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer addresses = ip.Assign(devs);
 
     NS_LOG_INFO("Create Source");

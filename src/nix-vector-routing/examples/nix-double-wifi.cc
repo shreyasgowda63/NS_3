@@ -189,15 +189,15 @@ main(int argc, char* argv[])
 
         Ipv4AddressHelper address;
 
-        address.SetBase("10.1.1.0", "255.255.255.0");
+        address.SetBase(Ipv4Address("10.1.1.0"), Ipv4Mask(24));
         address.Assign(staDevices1);
         address.Assign(apDevices1);
 
-        address.SetBase("10.1.2.0", "255.255.255.0");
+        address.SetBase(Ipv4Address("10.1.2.0"), Ipv4Mask(24));
         Ipv4InterfaceContainer p2pInterfaces;
         p2pInterfaces = address.Assign(p2pDevices);
 
-        address.SetBase("10.1.3.0", "255.255.255.0");
+        address.SetBase(Ipv4Address("10.1.3.0"), Ipv4Mask(24));
         Ipv4InterfaceContainer staDevicesInterfaces2;
         staDevicesInterfaces2 = address.Assign(staDevices2);
         address.Assign(apDevices2);

@@ -229,7 +229,7 @@ TracerouteExample::InstallInternetStack()
     stack.SetRoutingHelper(aodv); // has effect on the next Install ()
     stack.Install(nodes);
     Ipv4AddressHelper address;
-    address.SetBase("10.0.0.0", "255.0.0.0");
+    address.SetBase(Ipv4Address("10.0.0.0"), Ipv4Mask(8));
     interfaces = address.Assign(devices);
 
     if (printRoutes)

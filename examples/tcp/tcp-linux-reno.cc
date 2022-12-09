@@ -189,7 +189,7 @@ main(int argc, char* argv[])
     internetStack.Install(routers);
 
     // Assign IP addresses to all the network devices
-    Ipv4AddressHelper ipAddresses("10.0.0.0", "255.255.255.0");
+    Ipv4AddressHelper ipAddresses(Ipv4Address("10.0.0.0"), Ipv4Mask(24));
 
     Ipv4InterfaceContainer r1r2IPAddress = ipAddresses.Assign(r1r2ND);
     ipAddresses.NewNetwork();

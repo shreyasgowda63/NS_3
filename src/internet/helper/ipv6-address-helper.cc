@@ -169,7 +169,7 @@ Ipv6AddressHelper::NewAddress()
             break;
         }
     }
-    m_address = Ipv6Address(hostBuf);
+    m_address.Set(hostBuf);
 
     Ipv6AddressGenerator::AddAllocated(addr);
     return addr;
@@ -212,7 +212,7 @@ Ipv6AddressHelper::NewNetwork()
         }
     }
 
-    m_network = Ipv6Address(netBuf);
+    m_network.Set(netBuf);
     m_address = m_base;
 }
 

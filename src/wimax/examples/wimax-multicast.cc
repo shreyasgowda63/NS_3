@@ -235,16 +235,16 @@ main(int argc, char* argv[])
 
     Ipv4AddressHelper address;
 
-    address.SetBase("10.1.0.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("10.1.0.0"), Ipv4Mask(24));
     bsDevsOne.Add(bs);
     BSinterfaces = address.Assign(bsDevsOne);
     SSinterfaces = address.Assign(ssDevs);
 
-    address.SetBase("11.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("11.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer BSCSMAInterfaces = address.Assign(BS_CSMADevs);
     Ipv4InterfaceContainer ASNCSMAInterfaces1 = address.Assign(ASN_Devs1);
 
-    address.SetBase("12.1.1.0", "255.255.255.0");
+    address.SetBase(Ipv4Address("12.1.1.0"), Ipv4Mask(24));
     Ipv4InterfaceContainer ASNCSMAInterfaces2 = address.Assign(ASN_Devs2);
     Ipv4InterfaceContainer StreamerCSMAInterfaces = address.Assign(STREAMER_Devs);
 

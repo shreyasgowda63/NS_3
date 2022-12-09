@@ -102,7 +102,7 @@ main(int argc, char* argv[])
     NS_LOG_INFO("Assign IP Addresses.");
     if (useIpv6 == 0)
     {
-        star.AssignIpv4Addresses(Ipv4AddressHelper("10.1.0.0", "255.255.255.0"));
+        star.AssignIpv4Addresses(Ipv4AddressHelper(Ipv4Address("10.1.0.0"), Ipv4Mask(24)));
     }
     else
     {
@@ -128,7 +128,7 @@ main(int argc, char* argv[])
             std::ostringstream subnet;
             subnet << "10.1." << i << ".0";
             NS_LOG_INFO("Assign IP Addresses for CSMA subnet " << subnet.str());
-            address.SetBase(subnet.str().c_str(), "255.255.255.0", "0.0.0.3");
+            address.SetBase(subnet.str(), Ipv4Mask(24), Ipv4Address("0.0.0.3"));
 
             for (uint32_t j = 0; j < nFill; ++j)
             {
