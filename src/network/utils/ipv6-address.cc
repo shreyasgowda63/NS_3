@@ -170,11 +170,16 @@ Ipv6Address::Ipv6Address(const Ipv6Address* addr)
     m_initialized = true;
 }
 
-Ipv6Address::Ipv6Address(const char* address)
+// Ipv6Address::Ipv6Address(const char* address)
+//     : Ipv6Address(std::string(address))
+// {
+// }
+
+Ipv6Address::Ipv6Address(const std::string& address)
 {
     NS_LOG_FUNCTION(this << address);
 
-    if (inet_pton(AF_INET6, address, m_address) <= 0)
+    if (inet_pton(AF_INET6, address.c_str(), m_address) <= 0)
     {
         memset(m_address, 0x00, 16);
         NS_LOG_LOGIC("Error, can not build an IPv6 address from an invalid string: " << address);
@@ -198,11 +203,18 @@ Ipv6Address::~Ipv6Address()
     NS_LOG_FUNCTION(this);
 }
 
+// void
+// Ipv6Address::Set(const char* address)
+// {
+//     std::string addressString(address);
+//     Set(addressString);
+// }
+
 void
-Ipv6Address::Set(const char* address)
+Ipv6Address::Set(const std::string& address)
 {
     NS_LOG_FUNCTION(this << address);
-    if (inet_pton(AF_INET6, address, m_address) <= 0)
+    if (inet_pton(AF_INET6, address.c_str(), m_address) <= 0)
     {
         memset(m_address, 0x00, 16);
         NS_LOG_LOGIC("Error, can not build an IPv6 address from an invalid string: " << address);
@@ -814,10 +826,10 @@ Ipv6Prefix::Ipv6Prefix()
     m_prefixLength = 64;
 }
 
-Ipv6Prefix::Ipv6Prefix(const char* prefix)
+Ipv6Prefix::Ipv6Prefix(const std::string& prefix)
 {
     NS_LOG_FUNCTION(this << prefix);
-    if (inet_pton(AF_INET6, prefix, m_prefix) <= 0)
+    if (inet_pton(AF_INET6, prefix.c_str(), m_prefix) <= 0)
     {
         NS_ABORT_MSG("Error, can not build an IPv6 prefix from an invalid string: " << prefix);
     }
@@ -831,10 +843,10 @@ Ipv6Prefix::Ipv6Prefix(uint8_t prefix[16])
     m_prefixLength = GetMinimumPrefixLength();
 }
 
-Ipv6Prefix::Ipv6Prefix(const char* prefix, uint8_t prefixLength)
+Ipv6Prefix::Ipv6Prefix(const std::string& prefix, uint8_t prefixLength)
 {
     NS_LOG_FUNCTION(this << prefix);
-    if (inet_pton(AF_INET6, prefix, m_prefix) <= 0)
+    if (inet_pton(AF_INET6, prefix.c_str(), m_prefix) <= 0)
     {
         NS_ABORT_MSG("Error, can not build an IPv6 prefix from an invalid string: " << prefix);
     }

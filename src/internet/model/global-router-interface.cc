@@ -838,7 +838,7 @@ GlobalRouter::ProcessSingleBroadcastLink(Ptr<NetDevice> nd,
         // Let's double-check that any designated router we find out on our
         // network is really on our network.
         //
-        if (desigRtr != "255.255.255.255")
+        if (desigRtr != Ipv4Address::GetBroadcast())
         {
             Ipv4Address networkHere = addrLocal.CombineMask(maskLocal);
             Ipv4Address networkThere = desigRtr.CombineMask(maskLocal);
@@ -921,7 +921,7 @@ GlobalRouter::ProcessBridgedBroadcastLink(Ptr<NetDevice> nd,
   //
 
   bool areTransitNetwork = false;
-  Ipv4Address desigRtr ("255.255.255.255");
+  Ipv4Address desigRtr (Ipv4Address::GetBroadcast());
 
   for (uint32_t i = 0; i < bnd->GetNBridgePorts (); ++i)
     {
@@ -951,7 +951,7 @@ GlobalRouter::ProcessBridgedBroadcastLink(Ptr<NetDevice> nd,
           // Let's double-check that any designated router we find out on our
           // network is really on our network.
           //
-          if (desigRtrTemp != "255.255.255.255")
+          if (desigRtrTemp != Ipv4Address::GetBroadcast())
             {
               Ipv4Address networkHere = addrLocal.CombineMask (maskLocal);
               Ipv4Address networkThere = desigRtrTemp.CombineMask (maskLocal);
@@ -1337,7 +1337,7 @@ GlobalRouter::FindDesignatedRouterForLink(Ptr<NetDevice> ndLocal) const
     NS_LOG_LOGIC("Looking for designated router off of net device " << ndLocal << " on node "
                                                                     << ndLocal->GetNode()->GetId());
 
-    Ipv4Address desigRtr("255.255.255.255");
+    Ipv4Address desigRtr(Ipv4Address::GetBroadcast());
 
     //
     // Look through all of the devices on the channel to which the net device

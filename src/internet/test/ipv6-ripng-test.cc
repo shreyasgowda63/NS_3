@@ -552,7 +552,7 @@ Ipv6RipngSplitHorizonStrategyTest::ReceivePktProbe(Ptr<Socket> socket)
                           "ReceivedPacketProbe size is not equal to the Rx buffer size");
     Ipv6Address senderAddress = Inet6SocketAddress::ConvertFrom(srcAddr).GetIpv6();
 
-    if (senderAddress == "fe80::200:ff:fe00:4")
+    if (senderAddress == Ipv6Address("fe80::200:ff:fe00:4"))
     {
         RipNgHeader hdr;
         receivedPacketProbe->RemoveHeader(hdr);
@@ -561,7 +561,7 @@ Ipv6RipngSplitHorizonStrategyTest::ReceivePktProbe(Ptr<Socket> socket)
         // validate the RTEs before processing
         for (std::list<RipNgRte>::iterator iter = rtes.begin(); iter != rtes.end(); iter++)
         {
-            if (iter->GetPrefix() == "2001:1::")
+            if (iter->GetPrefix() == Ipv6Address("2001:1::"))
             {
                 bool correct = false;
                 if (iter->GetRouteMetric() == 16)

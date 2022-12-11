@@ -175,18 +175,18 @@ main(int argc, char* argv[])
 
     if (serverMode)
     {
-        remoteIp = Ipv4Address(client.c_str());
-        localIp = Ipv4Address(server.c_str());
+        remoteIp = Ipv4Address(client);
+        localIp = Ipv4Address(server);
         localMac = Mac48AddressValue(macServer.c_str());
     }
     else
     {
-        remoteIp = Ipv4Address(server.c_str());
-        localIp = Ipv4Address(client.c_str());
+        remoteIp = Ipv4Address(server);
+        localIp = Ipv4Address(client);
         localMac = Mac48AddressValue(macClient.c_str());
     }
 
-    Ipv4Mask localMask(netmask.c_str());
+    Ipv4Mask localMask(netmask);
 
     GlobalValue::Bind("SimulatorImplementationType", StringValue("ns3::RealtimeSimulatorImpl"));
 

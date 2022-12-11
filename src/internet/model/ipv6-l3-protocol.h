@@ -197,20 +197,11 @@ class Ipv6L3Protocol : public Ipv6
      */
     uint32_t GetNInterfaces() const override;
 
-    /**
-     * \brief Get interface index which has specified IPv6 address
-     * \param addr IPv6 address
-     * \return interface index or -1 if not found
-     */
     int32_t GetInterfaceForAddress(Ipv6Address addr) const override;
+    int32_t GetInterfaceForAddress(const std::string& addr) const override;
 
-    /**
-     * \brief Get interface index which match specified address/prefix.
-     * \param addr IPv6 address
-     * \param mask IPv6 prefix (mask)
-     * \return interface index or -1 if not found
-     */
-    int32_t GetInterfaceForPrefix(Ipv6Address addr, Ipv6Prefix mask) const override;
+    int32_t GetInterfaceForPrefix(Ipv6Address addr, Ipv6Prefix prefix) const override;
+    int32_t GetInterfaceForPrefix(const std::string& addr, Ipv6Prefix prefix) const override;
 
     /**
      * \brief Get interface index which is on a specified net device.

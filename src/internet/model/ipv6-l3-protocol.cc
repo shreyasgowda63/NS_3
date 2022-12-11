@@ -279,9 +279,15 @@ Ipv6L3Protocol::GetInterfaceForAddress(Ipv6Address address) const
 }
 
 int32_t
-Ipv6L3Protocol::GetInterfaceForPrefix(Ipv6Address address, Ipv6Prefix mask) const
+Ipv6L3Protocol::GetInterfaceForAddress(const std::string& address) const
 {
-    NS_LOG_FUNCTION(this << address << mask);
+    return GetInterfaceForAddress(Ipv6Address(address));
+}
+
+int32_t
+Ipv6L3Protocol::GetInterfaceForPrefix(Ipv6Address address, Ipv6Prefix prefix) const
+{
+    NS_LOG_FUNCTION(this << address << prefix);
     int32_t index = 0;
 
     for (Ipv6InterfaceList::const_iterator it = m_interfaces.begin(); it != m_interfaces.end();
@@ -290,8 +296,8 @@ Ipv6L3Protocol::GetInterfaceForPrefix(Ipv6Address address, Ipv6Prefix mask) cons
         uint32_t j = 0;
         for (j = 0; j < (*it)->GetNAddresses(); j++)
         {
-            if ((*it)->GetAddress(j).GetAddress().CombinePrefix(mask) ==
-                address.CombinePrefix(mask))
+            if ((*it)->GetAddress(j).GetAddress().CombinePrefix(prefix) ==
+                address.CombinePrefix(prefix))
             {
                 return index;
             }
@@ -299,6 +305,12 @@ Ipv6L3Protocol::GetInterfaceForPrefix(Ipv6Address address, Ipv6Prefix mask) cons
         index++;
     }
     return -1;
+}
+
+int32_t
+Ipv6L3Protocol::GetInterfaceForPrefix(const std::string& address, Ipv6Prefix prefix) const
+{
+    return GetInterfaceForPrefix(Ipv6Address(address), prefix);
 }
 
 Ptr<NetDevice>

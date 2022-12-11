@@ -48,6 +48,11 @@ Ipv4InterfaceAddress::Ipv4InterfaceAddress(Ipv4Address local, Ipv4Mask mask)
     m_broadcast = Ipv4Address(local.Get() | (~mask.Get()));
 }
 
+Ipv4InterfaceAddress::Ipv4InterfaceAddress(const std::string& local, const std::string& mask)
+    : Ipv4InterfaceAddress(Ipv4Address(local), Ipv4Mask(mask))
+{
+}
+
 Ipv4InterfaceAddress::Ipv4InterfaceAddress(const Ipv4InterfaceAddress& o)
     : m_local(o.m_local),
       m_mask(o.m_mask),

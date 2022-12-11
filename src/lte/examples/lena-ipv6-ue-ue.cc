@@ -122,8 +122,11 @@ main(int argc, char* argv[])
 
     Ptr<Ipv6StaticRouting> remoteHostStaticRouting =
         ipv6RoutingHelper.GetStaticRouting(remoteHost->GetObject<Ipv6>());
-    remoteHostStaticRouting
-        ->AddNetworkRouteTo("7777:f00d::", Ipv6Prefix(64), internetIpIfaces.GetAddress(0, 1), 1, 0);
+    remoteHostStaticRouting->AddNetworkRouteTo(Ipv6Address("7777:f00d::"),
+                                               Ipv6Prefix(64),
+                                               internetIpIfaces.GetAddress(0, 1),
+                                               1,
+                                               0);
 
     // Start applications on UEs and remote host
 

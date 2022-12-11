@@ -672,7 +672,8 @@ main(int argc, char* argv[])
          ++i)
     {
         Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow(i->first);
-        if ((t.sourceAddress == "10.1.1.3" && t.destinationAddress == "10.1.1.1"))
+        if ((t.sourceAddress == Ipv4Address("10.1.1.3") &&
+             t.destinationAddress == Ipv4Address("10.1.1.1")))
         {
             NS_LOG_INFO("Flow " << i->first << " (" << t.sourceAddress << " -> "
                                 << t.destinationAddress << ")\n");
@@ -690,7 +691,8 @@ main(int argc, char* argv[])
                         << i->second.jitterSum.GetSeconds() / (i->second.rxPackets - 1) << "\n");
             NS_LOG_INFO("  Tx Opp: " << 1 - (statisticsAp0.GetBusyTime() / simuTime));
         }
-        if ((t.sourceAddress == "10.1.1.4" && t.destinationAddress == "10.1.1.2"))
+        if ((t.sourceAddress == Ipv4Address("10.1.1.4") &&
+             t.destinationAddress == Ipv4Address("10.1.1.2")))
         {
             NS_LOG_INFO("Flow " << i->first << " (" << t.sourceAddress << " -> "
                                 << t.destinationAddress << ")\n");

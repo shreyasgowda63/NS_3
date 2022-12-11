@@ -134,14 +134,14 @@ main(int argc, char* argv[])
             NS_ASSERT_MSG((bool)ipv4,
                           "Node " << Names::FindName(node) << " does not have Ipv4 aggregate");
             auto routing = staticRouting.GetStaticRouting(ipv4);
-            routing->AddHostRouteTo(targetAddr.c_str(), ipv4->GetInterfaceForDevice(*diter), 0);
+            routing->AddHostRouteTo(targetAddr, ipv4->GetInterfaceForDevice(*diter), 0);
         }
         else
         {
             // route for forwarding
             staticRouting.AddMulticastRoute(node,
                                             Ipv4Address::GetAny(),
-                                            targetAddr.c_str(),
+                                            targetAddr,
                                             *diter,
                                             NetDeviceContainer(*diter));
         }

@@ -113,7 +113,7 @@ OlsrMprTestCase::DoRun()
     protocol->MprComputation();
     MprSet mpr = state.GetMprSet();
     NS_TEST_EXPECT_MSG_EQ(mpr.size(), 1, "An only address must be chosen.");
-    NS_TEST_EXPECT_MSG_EQ((mpr.find("10.0.0.2") != mpr.end()),
+    NS_TEST_EXPECT_MSG_EQ((mpr.find(Ipv4Address("10.0.0.2")) != mpr.end()),
                           true,
                           "Node 1 must select node 2 as MPR");
     /*
@@ -132,10 +132,10 @@ OlsrMprTestCase::DoRun()
     protocol->MprComputation();
     mpr = state.GetMprSet();
     NS_TEST_EXPECT_MSG_EQ(mpr.size(), 2, "An only address must be chosen.");
-    NS_TEST_EXPECT_MSG_EQ((mpr.find("10.0.0.2") != mpr.end()),
+    NS_TEST_EXPECT_MSG_EQ((mpr.find(Ipv4Address("10.0.0.2")) != mpr.end()),
                           true,
                           "Node 1 must select node 2 as MPR");
-    NS_TEST_EXPECT_MSG_EQ((mpr.find("10.0.0.3") != mpr.end()),
+    NS_TEST_EXPECT_MSG_EQ((mpr.find(Ipv4Address("10.0.0.3")) != mpr.end()),
                           true,
                           "Node 1 must select node 3 as MPR");
     /*
@@ -156,7 +156,7 @@ OlsrMprTestCase::DoRun()
     protocol->MprComputation();
     mpr = state.GetMprSet();
     NS_TEST_EXPECT_MSG_EQ(mpr.size(), 3, "An only address must be chosen.");
-    NS_TEST_EXPECT_MSG_EQ((mpr.find("10.0.0.7") != mpr.end()),
+    NS_TEST_EXPECT_MSG_EQ((mpr.find(Ipv4Address("10.0.0.7")) != mpr.end()),
                           true,
                           "Node 1 must select node 7 as MPR");
     /*
@@ -181,7 +181,7 @@ OlsrMprTestCase::DoRun()
     protocol->MprComputation();
     mpr = state.GetMprSet();
     NS_TEST_EXPECT_MSG_EQ(mpr.size(), 3, "An only address must be chosen.");
-    NS_TEST_EXPECT_MSG_EQ((mpr.find("10.0.0.9") == mpr.end()),
+    NS_TEST_EXPECT_MSG_EQ((mpr.find(Ipv4Address("10.0.0.9")) == mpr.end()),
                           true,
                           "Node 1 must NOT select node 8 as MPR");
 }

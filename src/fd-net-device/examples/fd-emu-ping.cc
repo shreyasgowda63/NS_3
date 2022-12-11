@@ -131,9 +131,9 @@ main(int argc, char* argv[])
     cmd.AddValue("emuMode", "Emulation mode in {raw, netmap, dpdk}", emuMode);
     cmd.Parse(argc, argv);
 
-    Ipv4Address remoteIp(remote.c_str());
-    Ipv4Address localIp(localAddress.c_str());
-    NS_ABORT_MSG_IF(localIp == "1.2.3.4",
+    Ipv4Address remoteIp(remote);
+    Ipv4Address localIp(localAddress);
+    NS_ABORT_MSG_IF(localIp == Ipv4Address("1.2.3.4"),
                     "You must change the local IP address before running this example");
 
     Ipv4Mask localMask("255.255.255.0");
@@ -255,8 +255,8 @@ main(int argc, char* argv[])
     // the default gateway on your host and add it below, replacing the
     // "1.2.3.4" string.
     //
-    Ipv4Address gateway(localGateway.c_str());
-    NS_ABORT_MSG_IF(gateway == "1.2.3.4",
+    Ipv4Address gateway(localGateway);
+    NS_ABORT_MSG_IF(gateway == Ipv4Address("1.2.3.4"),
                     "You must change the gateway IP address before running this example");
 
     Ipv4StaticRoutingHelper ipv4RoutingHelper;

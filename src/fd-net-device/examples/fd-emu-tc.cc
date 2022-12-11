@@ -113,10 +113,10 @@ main(int argc, char* argv[])
     cmd.AddValue("emuMode", "Emulation mode in {raw, netmap}", emuMode);
     cmd.Parse(argc, argv);
 
-    Ipv4Address localIp0(ip0.c_str());
-    Ipv4Address localIp1(ip1.c_str());
-    Ipv4Mask netmask0(mask0.c_str());
-    Ipv4Mask netmask1(mask1.c_str());
+    Ipv4Address localIp0(ip0);
+    Ipv4Address localIp1(ip1);
+    Ipv4Mask netmask0(mask0);
+    Ipv4Mask netmask1(mask1);
     Mac48AddressValue mac0(m0.c_str());
     Mac48AddressValue mac1(m1.c_str());
 

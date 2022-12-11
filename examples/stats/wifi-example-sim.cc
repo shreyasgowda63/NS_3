@@ -153,7 +153,7 @@ main(int argc, char* argv[])
     receiver->SetStartTime(Seconds(0));
 
     Config::Set("/NodeList/*/ApplicationList/*/$Sender/Destination",
-                Ipv4AddressValue("192.168.0.2"));
+                Ipv4AddressValue(Ipv4Address("192.168.0.2")));
 
     //--------------------------------------------
     //-- Setup stats and data collection

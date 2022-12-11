@@ -247,7 +247,7 @@ Ipv4DeduplicationTest::DoSendData(Ptr<Socket> socket, std::string to)
 void
 Ipv4DeduplicationTest::DoSendPacket(Ptr<Socket> socket, Ptr<Packet> packet, std::string to)
 {
-    Address realTo = InetSocketAddress(Ipv4Address(to.c_str()), 1234);
+    Address realTo = InetSocketAddress(Ipv4Address(to), 1234);
     NS_TEST_EXPECT_MSG_EQ(socket->SendTo(packet, 0, realTo), 123, "100");
 }
 
@@ -343,7 +343,7 @@ Ipv4DeduplicationTest::DoRun()
         // route for forwarding
         staticRouting.AddMulticastRoute(*iter,
                                         Ipv4Address::GetAny(),
-                                        targetAddr.c_str(),
+                                        targetAddr,
                                         *diter,
                                         NetDeviceContainer(*diter));
 
@@ -360,7 +360,7 @@ Ipv4DeduplicationTest::DoRun()
                               true,
                               "Node " << Names::FindName(*iter) << " does not have Ipv4 aggregate");
         auto routing = staticRouting.GetStaticRouting(ipv4);
-        routing->AddHostRouteTo(targetAddr.c_str(), ipv4->GetInterfaceForDevice(*diter), 0);
+        routing->AddHostRouteTo(targetAddr, ipv4->GetInterfaceForDevice(*diter), 0);
 
         ++diter;
     }
@@ -402,7 +402,7 @@ Ipv4DeduplicationTest::DoRun()
                               "Could not bind socket for node " << Names::FindName(*iter));
 
         auto udpSocket = socket->GetObject<UdpSocket>();
-        udpSocket->MulticastJoinGroup(0, Ipv4Address(targetAddr.c_str())); // future proof?
+        udpSocket->MulticastJoinGroup(0, Ipv4Address(targetAddr)); // future proof?
         udpSocket->SetAttribute("IpMulticastTtl", StringValue("4"));
 
         socket->SetRecvCallback(MakeCallback(&Ipv4DeduplicationTest::ReceivePkt, this));
@@ -656,7 +656,7 @@ Ipv4DeduplicationPerformanceTest::DoRun()
         // route for forwarding
         staticRouting.AddMulticastRoute(*iter,
                                         Ipv4Address::GetAny(),
-                                        targetAddr.c_str(),
+                                        targetAddr,
                                         *diter,
                                         NetDeviceContainer(*diter));
 
@@ -673,7 +673,7 @@ Ipv4DeduplicationPerformanceTest::DoRun()
                               true,
                               "Node " << (*iter)->GetId() << " does not have Ipv4 aggregate");
         auto routing = staticRouting.GetStaticRouting(ipv4);
-        routing->AddHostRouteTo(targetAddr.c_str(), ipv4->GetInterfaceForDevice(*diter), 0);
+        routing->AddHostRouteTo(targetAddr, ipv4->GetInterfaceForDevice(*diter), 0);
 
         ++diter;
     }
@@ -681,7 +681,7 @@ Ipv4DeduplicationPerformanceTest::DoRun()
     // Create the UDP sockets
     Ptr<UniformRandomVariable> jitter =
         CreateObjectWithAttributes<UniformRandomVariable>("Max", DoubleValue(4));
-    Address to = InetSocketAddress(Ipv4Address(targetAddr.c_str()), 1234);
+    Address to = InetSocketAddress(Ipv4Address(targetAddr), 1234);
     for (auto iter = nodes.Begin(); iter != nodes.End(); ++iter)
     {
         Ptr<SocketFactory> udpSocketFactory = (*iter)->GetObject<UdpSocketFactory>();

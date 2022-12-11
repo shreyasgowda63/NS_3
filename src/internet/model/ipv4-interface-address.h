@@ -57,12 +57,15 @@ class Ipv4InterfaceAddress
 
     Ipv4InterfaceAddress();
 
+    ///@{
     /**
      * \brief Configure local address, mask and broadcast address
      * \param local the local address
      * \param mask the network mask
      */
     Ipv4InterfaceAddress(Ipv4Address local, Ipv4Mask mask);
+    Ipv4InterfaceAddress(const std::string& local, const std::string& mask);
+    ///@}
     /**
      * Copy constructor
      * \param o the object to copy

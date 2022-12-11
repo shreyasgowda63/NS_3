@@ -118,12 +118,12 @@ main(int argc, char* argv[])
                  pi);
     cmd.Parse(argc, argv);
 
-    NS_ABORT_MSG_IF(network == "1.2.3.4",
+    NS_ABORT_MSG_IF(network == Ipv4Address("1.2.3.4"),
                     "You must change the local IP address before running this example");
 
-    Ipv4Address remoteIp(remote.c_str());
-    Ipv4Address tapNetwork(network.c_str());
-    Ipv4Mask tapMask(mask.c_str());
+    Ipv4Address remoteIp(remote);
+    Ipv4Address tapNetwork(network);
+    Ipv4Mask tapMask(mask);
 
     bool modePi = (pi == "yes");
 

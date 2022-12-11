@@ -98,6 +98,7 @@ class Ipv6AddressHelper
                       Ipv6Prefix prefix,
                       Ipv6Address base = Ipv6Address("::1"));
 
+    ///@{
     /**
      * \brief Set the base network number, network prefix, and base interface ID
      *
@@ -106,6 +107,8 @@ class Ipv6AddressHelper
      * \param base The base interface ID
      */
     void SetBase(Ipv6Address network, Ipv6Prefix prefix, Ipv6Address base = Ipv6Address("::1"));
+    void SetBase(const std::string& network, Ipv6Prefix prefix, const std::string& base = "::1");
+    ///@}
 
     /**
      * \brief Allocate a new network.

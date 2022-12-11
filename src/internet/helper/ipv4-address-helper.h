@@ -54,6 +54,7 @@ class Ipv4AddressHelper
      */
     Ipv4AddressHelper();
 
+    ///@{
     /**
      * @brief Construct a helper class to make life easier while doing simple IPv4
      * address assignment in scripts.  This version sets the base and mask
@@ -62,8 +63,15 @@ class Ipv4AddressHelper
      * @param mask the address mask
      * @param base the host part to start from
      */
-    Ipv4AddressHelper(Ipv4Address network, Ipv4Mask mask, Ipv4Address base = "0.0.0.1");
+    Ipv4AddressHelper(Ipv4Address network,
+                      Ipv4Mask mask,
+                      Ipv4Address base = Ipv4Address("0.0.0.1"));
+    Ipv4AddressHelper(const std::string& network,
+                      const std::string& mask,
+                      const std::string& base = "0.0.0.1");
+    ///@}
 
+    ///@{
     /**
      * @brief Set the base network number, network mask and base address.
      *
@@ -92,7 +100,11 @@ class Ipv4AddressHelper
      * IP address allocation.  Will be combined (ORed) with the network number to
      * generate the first IP address.  Defaults to 0.0.0.1.
      */
-    void SetBase(Ipv4Address network, Ipv4Mask mask, Ipv4Address base = "0.0.0.1");
+    void SetBase(Ipv4Address network, Ipv4Mask mask, Ipv4Address base = Ipv4Address("0.0.0.1"));
+    void SetBase(const std::string& network,
+                 const std::string& mask,
+                 const std::string& base = "0.0.0.1");
+    ///@}
 
     /**
      * @brief Increment the network number and reset the IP address counter to

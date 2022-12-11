@@ -208,7 +208,7 @@ DsrOptions::SearchNextHop(Ipv4Address ipv4Address, std::vector<Ipv4Address>& vec
         }
     }
     NS_LOG_DEBUG("next hop address not found, route corrupted");
-    Ipv4Address none = "0.0.0.0";
+    Ipv4Address none = Ipv4Address::GetAny();
     return none;
 }
 
@@ -235,7 +235,7 @@ DsrOptions::ReverseSearchNextHop(Ipv4Address ipv4Address, std::vector<Ipv4Addres
         }
     }
     NS_LOG_DEBUG("next hop address not found, route corrupted");
-    Ipv4Address none = "0.0.0.0";
+    Ipv4Address none = Ipv4Address::GetAny();
     return none;
 }
 
@@ -255,7 +255,7 @@ DsrOptions::ReverseSearchNextTwoHop(Ipv4Address ipv4Address, std::vector<Ipv4Add
         }
     }
     NS_FATAL_ERROR("next hop address not found, route corrupted");
-    Ipv4Address none = "0.0.0.0";
+    Ipv4Address none = Ipv4Address::GetAny();
     return none;
 }
 
@@ -790,7 +790,7 @@ DsrOptionRreq::Process(Ptr<Packet> packet,
                         SearchNextHop(ipv4Address, m_finalRoute); // Get the next hop address
                     NS_LOG_DEBUG("The nextHop address " << nextHop);
 
-                    if (nextHop == "0.0.0.0")
+                    if (nextHop == Ipv4Address::GetAny())
                     {
                         dsr->PacketNewRoute(dsrP, ipv4Address, dst, protocol);
                         return 0;
@@ -896,7 +896,7 @@ DsrOptionRreq::Process(Ptr<Packet> packet,
                         SearchNextHop(ipv4Address, saveRoute); // Get the next hop address
                     NS_LOG_DEBUG("The nextHop address " << nextHop);
 
-                    if (nextHop == "0.0.0.0")
+                    if (nextHop == Ipv4Address::GetAny())
                     {
                         dsr->PacketNewRoute(dsrP, ipv4Address, dst, protocol);
                         return 0;
@@ -1156,7 +1156,7 @@ DsrOptionRrep::Process(Ptr<Packet> packet,
             sourceRoute.SetSalvage(0);
             Ipv4Address nextHop = SearchNextHop(ipv4Address, nodeList); // Get the next hop address
             NS_LOG_DEBUG("The nextHop address " << nextHop);
-            if (nextHop == "0.0.0.0")
+            if (nextHop == Ipv4Address::GetAny())
             {
                 dsr->PacketNewRoute(dsrP, ipv4Address, dst, protocol);
                 return 0;
@@ -1503,7 +1503,7 @@ DsrOptionSR::Process(Ptr<Packet> packet,
         Ipv4Address nextHop = SearchNextHop(ipv4Address, nodeList);
         PrintVector(nodeList);
 
-        if (nextHop == "0.0.0.0")
+        if (nextHop == Ipv4Address::GetAny())
         {
             NS_LOG_DEBUG("Before new packet " << *dsrP);
             dsr->PacketNewRoute(dsrP, realSource, targetAddress, protocol);

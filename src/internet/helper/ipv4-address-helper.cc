@@ -60,6 +60,14 @@ Ipv4AddressHelper::Ipv4AddressHelper(const Ipv4Address network,
     SetBase(network, mask, address);
 }
 
+Ipv4AddressHelper::Ipv4AddressHelper(const std::string& network,
+                                     const std::string& mask,
+                                     const std::string& address)
+{
+    NS_LOG_FUNCTION_NOARGS();
+    SetBase(network, mask, address);
+}
+
 void
 Ipv4AddressHelper::SetBase(const Ipv4Address network,
                            const Ipv4Mask mask,
@@ -94,6 +102,15 @@ Ipv4AddressHelper::SetBase(const Ipv4Address network,
     NS_LOG_LOGIC("m_network == " << m_network);
     NS_LOG_LOGIC("m_mask == " << m_mask);
     NS_LOG_LOGIC("m_address == " << m_address);
+}
+
+void
+Ipv4AddressHelper::SetBase(const std::string& network,
+                           const std::string& mask,
+                           const std::string& address)
+{
+    NS_LOG_FUNCTION_NOARGS();
+    SetBase(Ipv4Address(network), Ipv4Mask(mask), Ipv4Address(address));
 }
 
 Ipv4Address
