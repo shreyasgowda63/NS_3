@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010 CTTC
+ * Copyright (c) 2020 Lawrence Livermore National Laboratory
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,9 +16,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
+ * Modified By: Mathew Bielejeski <bielejeski1@llnl.gov> (WaveformGenerator updates)
  */
 
 #include <ns3/adhoc-aloha-noack-ideal-phy-helper.h>
+#include <ns3/advanced-waveform-generator-helper.h>
 #include <ns3/applications-module.h>
 #include <ns3/core-module.h>
 #include <ns3/friis-spectrum-propagation-loss.h>
@@ -33,7 +36,6 @@
 #include <ns3/spectrum-helper.h>
 #include <ns3/spectrum-model-300kHz-300GHz-log.h>
 #include <ns3/spectrum-model-ism2400MHz-res1MHz.h>
-#include <ns3/waveform-generator-helper.h>
 #include <ns3/waveform-generator.h>
 #include <ns3/wifi-spectrum-value-helper.h>
 
@@ -243,13 +245,33 @@ main(int argc, char** argv)
     Ptr<SpectrumValue> mwoPsd = MicrowaveOvenSpectrumValueHelper::CreatePowerSpectralDensityMwo1();
     NS_LOG_INFO("mwoPsd : " << *mwoPsd);
 
-    WaveformGeneratorHelper waveformGeneratorHelper;
+    AdvancedWaveformGeneratorHelper waveformGeneratorHelper;
     waveformGeneratorHelper.SetChannel(channel);
-    waveformGeneratorHelper.SetTxPowerSpectralDensity(mwoPsd);
+    waveformGeneratorHelper.SetModel(mwoPsd->GetSpectrumModel());
 
-    waveformGeneratorHelper.SetPhyAttribute("Period",
-                                            TimeValue(Seconds(1.0 / 60))); // corresponds to 60 Hz
-    waveformGeneratorHelper.SetPhyAttribute("DutyCycle", DoubleValue(0.5));
+    Time txPeriod = Seconds(1.0 / 60.0) * 0.5; // Half of a 60Hz signal
+    waveformGeneratorHelper.AddTxPowerSpectralDensity(txPeriod, mwoPsd);
+
+    // The original waveform generator would schedule the next waveform at the
+    // start of each transmission.  The new waveform generator schedules
+    // the next waveform at the end of each transmission.  This change caused
+    // the output using the old and new waveform generators to be slightly different
+    // due to floating point imprecision.
+    //
+    // Interval between waveforms: 1/60 == 0.016666667
+    // Transmission Time:  1/60 * 0.5 == 0.008333334
+    // Off period:         1/120 == 0.008333333
+    //
+    // Technically, (1/60 * 0.5) should equal 1/120 but they don't because the
+    // values can't be precisely represented in a floating point type.
+    //
+    // If we just used the transmission time as the off interval then we would be 1ns
+    // later than the desired interval.  Using Transmission Time + Off Period gives
+    // us the desired interval between waveforms.
+    Time offPeriod = Seconds(1.0) / 120.0;
+    waveformGeneratorHelper.SetInterval(offPeriod);
+
+>>>>>>> complex-waveform-generator
     NetDeviceContainer waveformGeneratorDevices =
         waveformGeneratorHelper.Install(waveformGeneratorNodes);
 

@@ -68,6 +68,7 @@ Changes from ns-3.36 to ns-3.37
 * (wifi) Added a new attribute **CcaSensitivity** in WifiPhy for configuring the threshold that corresponds to the minimum received power of a PPDU, that occupies the primary channel, should have to report a CCA-BUSY indication.
 * (wifi) Added a new attribute **SecondaryCcaSensitivityThresholds** in VhtConfiguration for configuring the thresholds that corresponds to the minimum received power of a PPDU, that does not occupy the primary 20 MHz channel, should have to report a CCA-BUSY indication. This is made of a tuple, where the first threshold is used for 20 MHz PPDUs, the second one is used for 40 MHz PPDUs and the third one is used for 80 MHz PPDUs.
 * (wifi) Added two new trace sources to `StaWifiMac`: **LinkSetupCompleted**, which is fired when a link is setup in the context of an 11be ML setup, and **LinkSetupCanceled**, which is fired when the setup of a link is terminated. Both sources provide the ID of the setup link and the MAC address of the corresponding AP.
+* (spectrum) Added a new helper class `AdvancedWaveformGeneratorHelper` to the spectrum module.  This helper class is capable of creating `WaveformGenerator` instances which can transmit multiple power spectral density vectors.
 
 ### Changes to existing API
 
@@ -78,6 +79,8 @@ Changes from ns-3.36 to ns-3.37
 * (wifi) The maximum allowed channel width (in MHz) for a data transmission is passed to the **GetDataTxVector** method of the `WifiRemoteStationManager`.
 * (wifi) The **WifiMacQueueItem** class has been renamed as **WifiMpdu**.
 * (wifi) The **Assoc** and **DeAssoc** trace sources of `StaWifiMac` provide the AP MLD address in case (de)association takes place between a non-AP MLD and an AP MLD.
+* (spectrum) The `WaveformGenerator` API has been modified to support multiple `SpectrumValue` objects. Each SpectrumValue has its own duration, allowing for the generation of waveforms that vary over time.
+* (spectrum) The `WaveformGeneratorHelper` has been deprecated. Please use the new `AdvancedWaveformGeneratorHelper`
 
 ### Changes to build system
 

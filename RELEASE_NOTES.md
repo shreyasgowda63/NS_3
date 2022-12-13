@@ -76,6 +76,8 @@ Python API requires [Cppyy](https://cppyy.readthedocs.io/en/latest/installation.
 - (wifi) PPDUs are transmitted on the largest primary channel that is found to be idle (according to the CCA-BUSY indication provided by the PHY) when gaining a TXOP.
 - (wifi) Add support for fragmentation of Information Elements.
 - (wifi) Implement 802.11be Multi-link discovery and setup
+- (spectrum) Adds support for creating WaveformGenerators which can transmit multiple signals with
+  different durations.
 
 ### Bugs fixed
 

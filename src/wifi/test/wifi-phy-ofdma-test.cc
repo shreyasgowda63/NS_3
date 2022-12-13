@@ -159,6 +159,12 @@ class OfdmaSpectrumWifiPhy : public SpectrumWifiPhy
     typedef void (*TxPpduUidCallback)(uint64_t uid);
 
     /**
+     * \param ppdu the PPDU to send
+     * \param txVector the TXVECTOR used for the transmission of the PPDU
+     */
+    void StartTx(Ptr<const WifiPpdu> ppdu, const WifiTxVector& txVector) override;
+
+    /**
      * Set the global PPDU UID counter.
      *
      * \param uid the value to which the global PPDU UID counter should be set
@@ -266,6 +272,7 @@ OfdmaSpectrumWifiPhy::StartTx(Ptr<const WifiPpdu> ppdu)
 
 std::map<std::pair<uint64_t, WifiPreamble>, Ptr<Event>>&
 OfdmaSpectrumWifiPhy::GetCurrentPreambleEvents()
+
 {
     return m_currentPreambleEvents;
 }
@@ -553,8 +560,8 @@ TestDlOfdmaPhyTransmission::SendMuPpdu(uint16_t rxStaId1, uint16_t rxStaId2)
 void
 TestDlOfdmaPhyTransmission::GenerateInterference(Ptr<SpectrumValue> interferencePsd, Time duration)
 {
-    m_phyInterferer->SetTxPowerSpectralDensity(interferencePsd);
-    m_phyInterferer->SetPeriod(duration);
+    m_phyInterferer->ClearTimeSlots();
+    m_phyInterferer->AddTimeSlot(duration, interferencePsd);
     m_phyInterferer->Start();
     Simulator::Schedule(duration, &TestDlOfdmaPhyTransmission::StopInterference, this);
 }
@@ -788,7 +795,7 @@ TestDlOfdmaPhyTransmission::DoSetup()
     m_phyInterferer = CreateObject<WaveformGenerator>();
     m_phyInterferer->SetDevice(interfererDev);
     m_phyInterferer->SetChannel(spectrumChannel);
-    m_phyInterferer->SetDutyCycle(1);
+    m_phyInterferer->SetFixedInterval(Seconds(0));
     interfererNode->AddDevice(interfererDev);
 }
 
@@ -1437,8 +1444,8 @@ void
 TestDlOfdmaPhyPuncturing::GenerateInterference(Ptr<SpectrumValue> interferencePsd, Time duration)
 {
     NS_LOG_FUNCTION(this << duration);
-    m_phyInterferer->SetTxPowerSpectralDensity(interferencePsd);
-    m_phyInterferer->SetPeriod(duration);
+    m_phyInterferer->ClearTimeSlots();
+    m_phyInterferer->AddTimeSlot(duration, interferencePsd);
     m_phyInterferer->Start();
     Simulator::Schedule(duration, &TestDlOfdmaPhyPuncturing::StopInterference, this);
 }
@@ -1614,7 +1621,7 @@ TestDlOfdmaPhyPuncturing::DoSetup()
     m_phyInterferer = CreateObject<WaveformGenerator>();
     m_phyInterferer->SetDevice(interfererDev);
     m_phyInterferer->SetChannel(spectrumChannel);
-    m_phyInterferer->SetDutyCycle(1);
+    m_phyInterferer->SetFixedInterval(Seconds(0));
     interfererNode->AddDevice(interfererDev);
 }
 
@@ -3443,8 +3450,8 @@ void
 TestUlOfdmaPhyTransmission::GenerateInterference(Ptr<SpectrumValue> interferencePsd, Time duration)
 {
     NS_LOG_FUNCTION(this << duration);
-    m_phyInterferer->SetTxPowerSpectralDensity(interferencePsd);
-    m_phyInterferer->SetPeriod(duration);
+    m_phyInterferer->ClearTimeSlots();
+    m_phyInterferer->AddTimeSlot(duration, interferencePsd);
     m_phyInterferer->Start();
     Simulator::Schedule(duration, &TestUlOfdmaPhyTransmission::StopInterference, this);
 }
@@ -3804,7 +3811,6 @@ TestUlOfdmaPhyTransmission::DoSetup()
     m_phyInterferer = CreateObject<WaveformGenerator>();
     m_phyInterferer->SetDevice(interfererDev);
     m_phyInterferer->SetChannel(spectrumChannel);
-    m_phyInterferer->SetDutyCycle(1);
     interfererNode->AddDevice(interfererDev);
 
     // Configure power attributes of all wifi devices
@@ -4970,8 +4976,8 @@ TestPhyPaddingExclusion::SendHeTbPpdu(uint16_t txStaId,
 void
 TestPhyPaddingExclusion::GenerateInterference(Ptr<SpectrumValue> interferencePsd, Time duration)
 {
-    m_phyInterferer->SetTxPowerSpectralDensity(interferencePsd);
-    m_phyInterferer->SetPeriod(duration);
+    m_phyInterferer->ClearTimeSlots();
+    m_phyInterferer->AddTimeSlot(duration, interferencePsd);
     m_phyInterferer->Start();
     Simulator::Schedule(duration, &TestPhyPaddingExclusion::StopInterference, this);
 }
@@ -5200,7 +5206,6 @@ TestPhyPaddingExclusion::DoSetup()
     m_phyInterferer = CreateObject<WaveformGenerator>();
     m_phyInterferer->SetDevice(interfererDev);
     m_phyInterferer->SetChannel(spectrumChannel);
-    m_phyInterferer->SetDutyCycle(1);
     interfererNode->AddDevice(interfererDev);
 }
 

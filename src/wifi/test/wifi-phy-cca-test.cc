@@ -857,8 +857,8 @@ WifiPhyCcaIndicationTest::StartSignal(Ptr<WaveformGenerator> signalGenerator,
     Ptr<SpectrumValue> signalPsd = Create<SpectrumValue>(spectrumSignal);
     *signalPsd = DbmToW(txPowerDbm) / (bandwidth * 1e6);
 
-    signalGenerator->SetTxPowerSpectralDensity(signalPsd);
-    signalGenerator->SetPeriod(duration);
+    signalGenerator->ClearTimeSlots();
+    signalGenerator->AddTimeSlot(duration, signalPsd);
     signalGenerator->Start();
     Simulator::Schedule(duration, &WifiPhyCcaIndicationTest::StopSignal, this, signalGenerator);
 }
@@ -1064,9 +1064,10 @@ WifiPhyCcaIndicationTest::DoSetup()
         Ptr<NonCommunicatingNetDevice> signalGeneratorDev =
             CreateObject<NonCommunicatingNetDevice>();
         Ptr<WaveformGenerator> signalGenerator = CreateObject<WaveformGenerator>();
+        signalGenerator->SetFixedInterval(Seconds(0));
         signalGenerator->SetDevice(signalGeneratorDev);
         signalGenerator->SetChannel(spectrumChannel);
-        signalGenerator->SetDutyCycle(1);
+        signalGenerator->SetFixedInterval(Seconds(0));
         signalGeneratorNode->AddDevice(signalGeneratorDev);
         m_signalGenerators.push_back(signalGenerator);
     }

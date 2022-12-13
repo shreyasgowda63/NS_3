@@ -3,6 +3,9 @@ set(source_files
     helper/spectrum-analyzer-helper.cc
     helper/spectrum-helper.cc
     helper/tv-spectrum-transmitter-helper.cc
+    helper/advanced-waveform-generator-helper.cc
+    helper/waveform-config-lexer.cc
+    helper/waveform-config-loader.cc
     helper/waveform-generator-helper.cc
     model/aloha-noack-mac-header.cc
     model/aloha-noack-net-device.cc
@@ -41,6 +44,9 @@ set(header_files
     helper/spectrum-analyzer-helper.h
     helper/spectrum-helper.h
     helper/tv-spectrum-transmitter-helper.h
+    helper/advanced-waveform-generator-helper.h
+    helper/waveform-config-lexer.h
+    helper/waveform-config-loader.h
     helper/waveform-generator-helper.h
     model/aloha-noack-mac-header.h
     model/aloha-noack-net-device.h
@@ -89,4 +95,5 @@ build_lib(
     test/three-gpp-channel-test-suite.cc
     test/tv-helper-distribution-test.cc
     test/tv-spectrum-transmitter-test.cc
+    test/waveform-config-loader-test.cc
 )
