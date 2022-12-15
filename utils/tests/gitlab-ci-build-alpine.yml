@@ -7,10 +7,9 @@
 # Alpine base
 .weekly-build-alpine:
   extends: .base-build
-  only:
-    variables:
-      - $RELEASE == "weekly"
-      - $ALPINE == "True"
+  rules:
+    - !reference [.common_rules, run_if_weekly_pipeline]
+    - if: $ALPINE == "True"
   variables:
     COMPILER: g++
 

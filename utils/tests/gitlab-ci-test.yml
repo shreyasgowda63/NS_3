@@ -43,9 +43,8 @@ daily-test-debug:
   extends: .base-test
   variables:
     MODE: debug
-  only:
-    variables:
-      - $RELEASE == "daily"
+  rules:
+    - !reference [.common_rules, run_if_daily_pipeline]
   tags:
     - nsnam
     - linux
@@ -55,18 +54,16 @@ daily-test-default:
   extends: .base-test
   variables:
     MODE: default
-  only:
-    variables:
-      - $RELEASE == "daily"
+  rules:
+    - !reference [.common_rules, run_if_daily_pipeline]
 
 # Run the test.py script with files compiled in optimized mode
 daily-test-optimized:
   extends: .base-test
   variables:
     MODE: optimized
-  only:
-    variables:
-      - $RELEASE == "daily"
+  rules:
+    - !reference [.common_rules, run_if_daily_pipeline]
 
 ### Valgrind tests
 # Run the test.py script with files compiled in optimized mode + valgrind (daily)
@@ -75,9 +72,8 @@ daily-test-optimized-valgrind:
   variables:
     MODE: optimized
     VALGRIND_FLAG: -g
-  only:
-    variables:
-      - $RELEASE == "daily"
+  rules:
+    - !reference [.common_rules, run_if_daily_pipeline]
   tags:
     - nsnam
     - linux
@@ -88,9 +84,8 @@ weekly-test-debug-valgrind:
   variables:
     MODE: debug
     VALGRIND_FLAG: -g
-  only:
-    variables:
-      - $RELEASE == "weekly"
+  rules:
+    - !reference [.common_rules, run_if_weekly_pipeline]
   tags:
     - nsnam
     - linux
@@ -101,9 +96,8 @@ weekly-test-default-valgrind:
   variables:
     MODE: default
     VALGRIND_FLAG: -g
-  only:
-    variables:
-      - $RELEASE == "weekly"
+  rules:
+    - !reference [.common_rules, run_if_weekly_pipeline]
   tags:
     - nsnam
     - linux
@@ -114,9 +108,8 @@ weekly-test-optimized-valgrind:
   variables:
     MODE: optimized
     VALGRIND_FLAG: -g
-  only:
-    variables:
-      - $RELEASE == "weekly"
+  rules:
+    - !reference [.common_rules, run_if_weekly_pipeline]
   tags:
     - nsnam
     - linux
@@ -127,9 +120,8 @@ weekly-test-takes-forever-optimized:
   variables:
     MODE: optimized
     FULLNESS: "-f TAKES_FOREVER"
-  only:
-    variables:
-      - $RELEASE == "weekly"
+  rules:
+    - !reference [.common_rules, run_if_weekly_pipeline]
   tags:
     - nsnam
     - linux

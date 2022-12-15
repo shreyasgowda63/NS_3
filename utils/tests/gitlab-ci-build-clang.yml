@@ -11,10 +11,9 @@
 .weekly-build-clang-ubuntu18.04:
   image: ubuntu:18.04
   extends: .base-build
-  only:
-    variables:
-      - $RELEASE == "weekly"
-      - $CLANG_BUILD_ENABLE == "True"
+  rules:
+    - !reference [.common_rules, run_if_weekly_pipeline]
+    - if: $CLANG_BUILD_ENABLE == "True"
   before_script:
     - apt update
     - apt upgrade -y
@@ -33,10 +32,9 @@
 .weekly-build-clang-ubuntu22.04:
   image: ubuntu:22.04
   extends: .base-build
-  only:
-    variables:
-      - $RELEASE == "weekly"
-      - $CLANG_BUILD_ENABLE == "True"
+  rules:
+    - !reference [.common_rules, run_if_weekly_pipeline]
+    - if: $CLANG_BUILD_ENABLE == "True"
   before_script:
     - apt update
     - apt upgrade -y

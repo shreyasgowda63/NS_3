@@ -9,10 +9,9 @@
 # Weekly jobs: Fedora
 .weekly-build-fedora:
   extends: .base-build
-  only:
-    variables:
-      - $RELEASE == "weekly"
-      - $FEDORA == "True"
+  rules:
+    - !reference [.common_rules, run_if_weekly_pipeline]
+    - if: $FEDORA == "True"
   before_script:
     - dnf update --assumeyes
     - dnf install --assumeyes

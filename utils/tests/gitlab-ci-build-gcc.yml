@@ -9,10 +9,9 @@
 
 .weekly-build-gcc:
   extends: .base-build
-  only:
-    variables:
-      - $RELEASE == "weekly"
-      - $GCC_BUILD_ENABLE == "True"
+  rules:
+    - !reference [.common_rules, run_if_weekly_pipeline]
+    - if: $GCC_BUILD_ENABLE == "True"
   before_script:
     - apt update
     - update-alternatives --install /usr/bin/gfortran gfortran /usr/local/bin/gfortran 999

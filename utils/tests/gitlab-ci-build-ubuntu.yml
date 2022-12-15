@@ -9,10 +9,9 @@
 # Ubuntu base
 .weekly-build-ubuntu:
   extends: .base-build
-  only:
-    variables:
-      - $RELEASE == "weekly"
-      - $UBUNTU == "True"
+  rules:
+    - !reference [.common_rules, run_if_weekly_pipeline]
+    - if: $UBUNTU == "True"
   before_script:
     - apt update
     - apt upgrade -y

@@ -46,8 +46,7 @@ check-style-clang-format:
 clang-tidy:
   extends: .base-clang-tidy
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: on_success
+    - !reference [.common_rules, run_if_default_branch]
     - changes:
         paths:
           - .clang-tidy
@@ -63,10 +62,8 @@ clang-tidy:
 clang-tidy-diff:
   extends: .base-clang-tidy
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: never
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: never
+    - !reference [.common_rules, dont_run_if_merge_request_pipeline]
+    - !reference [.common_rules, dont_run_if_default_branch]
     - changes:
         paths:
           - .clang-tidy
