@@ -162,7 +162,7 @@ class OfdmaSpectrumWifiPhy : public SpectrumWifiPhy
      * \param ppdu the PPDU to send
      * \param txVector the TXVECTOR used for the transmission of the PPDU
      */
-    void StartTx(Ptr<const WifiPpdu> ppdu, const WifiTxVector& txVector) override;
+    void StartTx(Ptr<const WifiPpdu> ppdu, const WifiTxVector& txVector);
 
     /**
      * Set the global PPDU UID counter.
