@@ -271,7 +271,6 @@ main(int argc, char** argv)
     Time offPeriod = Seconds(1.0) / 120.0;
     waveformGeneratorHelper.SetInterval(offPeriod);
 
->>>>>>> complex-waveform-generator
     NetDeviceContainer waveformGeneratorDevices =
         waveformGeneratorHelper.Install(waveformGeneratorNodes);
 
