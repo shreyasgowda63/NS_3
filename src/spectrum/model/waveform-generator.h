@@ -85,7 +85,7 @@ class WaveformGenerator : public SpectrumPhy
      * \brief Get the type ID.
      * \return the object TypeId
      */
-    static TypeId GetTypeId(void);
+    static TypeId GetTypeId();
 
     // inherited from SpectrumPhy
     void SetChannel(Ptr<SpectrumChannel> c) override;
@@ -219,7 +219,7 @@ class WaveformGenerator : public SpectrumPhy
 
   private:
     // Inherited functions
-    void DoDispose(void) override;
+    void DoDispose() override;
 
   private:
     Ptr<MobilityModel> m_mobility;  //!< Mobility model

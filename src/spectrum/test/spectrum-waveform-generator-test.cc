@@ -40,10 +40,10 @@ class WaveformGeneratorTestCase : public TestCase
      * \param stop Time when generator should stop transmitting
      */
     WaveformGeneratorTestCase(Time offInterval, Time txTime, Time stop);
-    virtual ~WaveformGeneratorTestCase();
+    ~WaveformGeneratorTestCase() override;
 
   private:
-    virtual void DoRun(void);
+    void DoRun() override;
 
     /**
      * Trace if the waveform is active

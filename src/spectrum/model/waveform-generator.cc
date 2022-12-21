@@ -251,7 +251,7 @@ WaveformGenerator::GenerateWaveform()
     m_nextSlot = 0;
 
     // trigger the start callback
-    m_phyTxStartTrace(0);
+    m_phyTxStartTrace(nullptr);
 
     TransmitSlot(m_nextSlot);
 }
@@ -288,7 +288,7 @@ WaveformGenerator::TransmitSlot(std::size_t slotIndex)
         NS_LOG_LOGIC("Finished waveform");
 
         // trigger the end callback
-        m_phyTxEndTrace(0);
+        m_phyTxEndTrace(nullptr);
 
         Time sleepTime = Seconds(m_interval->GetValue());
         m_nextEvent = Simulator::Schedule(sleepTime, &WaveformGenerator::GenerateWaveform, this);

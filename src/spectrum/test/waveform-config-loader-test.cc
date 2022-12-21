@@ -168,7 +168,7 @@ class WaveformConfigLoaderTest : public TestCase
      * Compares the configuration of the generator objects to the data
      * stored in the generator tests.
      */
-    void DoRun()
+    void DoRun() override
     {
         NS_TEST_ASSERT_MSG_EQ(m_input.empty(), false, "No input supplied");
 

@@ -252,7 +252,7 @@ class AllocatedFileStream : public WaveformConfigLexer::StreamContainer
     /**
      * Destructor
      */
-    virtual ~AllocatedFileStream()
+    ~AllocatedFileStream() override
     {
     }
 
@@ -281,7 +281,7 @@ class AllocatedFileStream : public WaveformConfigLexer::StreamContainer
      *
      * \return reference to the underlying stream object.
      */
-    virtual std::istream& DoGetStream()
+    std::istream& DoGetStream() override
     {
         return *m_stream;
     }
@@ -318,7 +318,7 @@ class ExternalStream : public WaveformConfigLexer::StreamContainer
     /**
      * Destructor
      */
-    virtual ~ExternalStream()
+    ~ExternalStream() override
     {
         m_stream = nullptr;
     }
@@ -328,7 +328,7 @@ class ExternalStream : public WaveformConfigLexer::StreamContainer
      * Returns a reference to the input stream.
      * \return reference to the underlying stream object
      */
-    virtual std::istream& DoGetStream()
+    std::istream& DoGetStream() override
     {
         return *m_stream;
     }
@@ -424,8 +424,7 @@ make_unique_traits(WaveformConfigLexer::TokenType type,
                    ValueMatcher matcher,
                    TerminatorMatcher checker)
 {
-    return std::unique_ptr<WaveformConfigLexer::TokenTraits>(
-        new WaveformConfigLexer::TokenTraits(type, std::move(matcher), std::move(checker)));
+    return std::make_unique<WaveformConfigLexer::TokenTraits>(type, std::move(matcher), std::move(checker));
 }
 
 /**
@@ -448,7 +447,7 @@ make_unique_traits(
 WaveformConfigLexer::WaveformConfigLexer(const std::string& filepath)
     : WaveformConfigLexer()
 {
-    m_stream.reset(new AllocatedFileStream(filepath));
+    m_stream = std::make_unique<AllocatedFileStream>(filepath);
     m_traitsTable = GenerateTraitsTable();
 
     ReadBlock();
@@ -458,7 +457,7 @@ WaveformConfigLexer::WaveformConfigLexer(std::istream& stream)
     : WaveformConfigLexer()
 
 {
-    m_stream.reset(new ExternalStream(stream));
+    m_stream = std::make_unique<ExternalStream>(stream);
     m_traitsTable = GenerateTraitsTable();
 
     ReadBlock();
@@ -536,7 +535,7 @@ WaveformConfigLexer::GetNextToken()
 WaveformConfigLexer::TokenTraits*
 WaveformConfigLexer::FindTokenTraits(const std::string& value) const
 {
-    TokenTraits* unknownTrait = 0;
+    TokenTraits* unknownTrait = nullptr;
 
     for (const UniqueTokenTraits& traits : m_traitsTable)
     {

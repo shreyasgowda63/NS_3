@@ -450,7 +450,7 @@ class Parser
     {
         WaveformConfigLexer lexer(stream);
 
-        m_context.reset(new Context());
+        m_context = std::make_unique<Context>();
 
         m_context->channel = channel;
         m_context->nodeStore = &nodeStore;
@@ -906,7 +906,7 @@ class Parser
 
         PointerValue ptrValue;
 
-        bool valid = ptrValue.DeserializeFromString(serializedObject, 0);
+        bool valid = ptrValue.DeserializeFromString(serializedObject, nullptr);
 
         if (!valid)
         {
@@ -1135,7 +1135,7 @@ class Parser
      */
     bool ValidateParameters(const WaveformParameters& params)
     {
-        if (m_context->nodeStore->Get(params.nodeIndex) == 0)
+        if (!m_context->nodeStore->Get(params.nodeIndex))
         {
             NS_LOG_ERROR("Validation error: nodeIndex " << params.nodeIndex
                                                         << " does not reference a valid node");
