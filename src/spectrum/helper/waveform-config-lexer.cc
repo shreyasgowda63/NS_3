@@ -424,7 +424,9 @@ make_unique_traits(WaveformConfigLexer::TokenType type,
                    ValueMatcher matcher,
                    TerminatorMatcher checker)
 {
-    return std::make_unique<WaveformConfigLexer::TokenTraits>(type, std::move(matcher), std::move(checker));
+    return std::make_unique<WaveformConfigLexer::TokenTraits>(type,
+                                                              std::move(matcher),
+                                                              std::move(checker));
 }
 
 /**
