@@ -25,6 +25,7 @@ Release 3-dev
 - (core) !1236 - Added some macros to silence compiler warnings. The new macros are in **warnings.h**, and their use is not suggested unless for very specific cases.
 - (internet-apps) - A new Ping model that works for both IPv4 and IPv6 has been added, to replace the address family specific v4Ping and Ping6.
 - (lr-wpan) !1268 - Adding beacon payload now its possible using MLME-SET.request primitive.
+- (spectrum) Adds support for creating WaveformGenerators which can transmit multiple signals with different durations.
 
 ### Bugs fixed
 
@@ -76,8 +77,6 @@ Python API requires [Cppyy](https://cppyy.readthedocs.io/en/latest/installation.
 - (wifi) PPDUs are transmitted on the largest primary channel that is found to be idle (according to the CCA-BUSY indication provided by the PHY) when gaining a TXOP.
 - (wifi) Add support for fragmentation of Information Elements.
 - (wifi) Implement 802.11be Multi-link discovery and setup
-- (spectrum) Adds support for creating WaveformGenerators which can transmit multiple signals with
-  different durations.
 
 ### Bugs fixed
 
