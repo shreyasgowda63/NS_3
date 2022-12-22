@@ -199,7 +199,7 @@ WaveformGenerator::GetTimeSlotSpectrumModel(std::size_t index) const
 {
     NS_LOG_FUNCTION(this << index);
 
-    Ptr<const SpectrumModel> model = 0;
+    Ptr<const SpectrumModel> model;
 
     if (index < m_timeSlots.size())
     {
@@ -214,7 +214,7 @@ WaveformGenerator::GetTimeSlotSpectrumValue(std::size_t index) const
 {
     NS_LOG_FUNCTION(this << index);
 
-    Ptr<const SpectrumValue> value = 0;
+    Ptr<const SpectrumValue> value;
 
     if (index < m_timeSlots.size())
     {
