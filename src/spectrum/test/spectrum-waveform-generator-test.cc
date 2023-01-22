@@ -35,11 +35,11 @@ class WaveformGeneratorTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param period waveform period (seconds)
-     * \param dutyCycle waveform duty cycle
-     * \param stop stop time (seconds)
+     * \param offInterval Length of time between end of one transmission and start of the next
+     * \param txTime Length of transmission time
+     * \param stop Time when generator should stop transmitting
      */
-    WaveformGeneratorTestCase(double period, double dutyCycle, double stop);
+    WaveformGeneratorTestCase(Time offInterval, Time txTime, Time stop);
     ~WaveformGeneratorTestCase() override;
 
   private:
@@ -50,25 +50,25 @@ class WaveformGeneratorTestCase : public TestCase
      * \param newPkt unused.
      */
     void TraceWave(Ptr<const Packet> newPkt);
-    double m_period;    //!< waveform period (seconds)
-    double m_dutyCycle; //!< waveform duty cycle
-    double m_stop;      //!< stop time (seconds)
+    Time m_offInterval; //!< waveform period
+    Time m_txInterval;  //!< waveform duty cycle
+    Time m_stop;        //!< stop time
     int m_fails;        //!< failure check
 };
 
 void
 WaveformGeneratorTestCase::TraceWave(Ptr<const Packet> newPkt)
 {
-    if (Now().GetSeconds() > m_stop)
+    if (Now() > m_stop)
     {
         m_fails++;
     }
 }
 
-WaveformGeneratorTestCase::WaveformGeneratorTestCase(double period, double dutyCycle, double stop)
+WaveformGeneratorTestCase::WaveformGeneratorTestCase(Time offInterval, Time txInterval, Time stop)
     : TestCase("Check stop method"),
-      m_period(period),
-      m_dutyCycle(dutyCycle),
+      m_offInterval(offInterval),
+      m_txInterval(txInterval),
       m_stop(stop),
       m_fails(0)
 {
@@ -89,11 +89,10 @@ WaveformGeneratorTestCase::DoRun()
 
     Ptr<Node> n = CreateObject<Node>();
 
-    WaveformGeneratorHelper waveformGeneratorHelper;
-    waveformGeneratorHelper.SetTxPowerSpectralDensity(txPsd);
+    AdvancedWaveformGeneratorHelper waveformGeneratorHelper;
     waveformGeneratorHelper.SetChannel(channel);
-    waveformGeneratorHelper.SetPhyAttribute("Period", TimeValue(Seconds(m_period)));
-    waveformGeneratorHelper.SetPhyAttribute("DutyCycle", DoubleValue(m_dutyCycle));
+    waveformGeneratorHelper.SetInterval(m_offInterval);
+    waveformGeneratorHelper.AddTxPowerSpectralDensity(m_txInterval, txPsd);
     NetDeviceContainer waveformGeneratorDevices = waveformGeneratorHelper.Install(n);
 
     Ptr<WaveformGenerator> wave = waveformGeneratorDevices.Get(0)
@@ -105,9 +104,9 @@ WaveformGeneratorTestCase::DoRun()
                                      MakeCallback(&WaveformGeneratorTestCase::TraceWave, this));
 
     Simulator::Schedule(Seconds(1.0), &WaveformGenerator::Start, wave);
-    Simulator::Schedule(Seconds(m_stop), &WaveformGenerator::Stop, wave);
+    Simulator::Schedule(m_stop, &WaveformGenerator::Stop, wave);
 
-    Simulator::Stop(Seconds(3.0));
+    Simulator::Stop(Seconds(5.0));
     Simulator::Run();
 
     NS_TEST_ASSERT_MSG_EQ(m_fails, 0, "Wave started after the stop method was called");
@@ -131,10 +130,13 @@ WaveformGeneratorTestSuite::WaveformGeneratorTestSuite()
 {
     NS_LOG_INFO("creating WaveformGeneratorTestSuite");
 
+    Time offInterval = Seconds(1.0);
+    Time txTime = Seconds(0.5);
+
     // Stop while wave is active
-    AddTestCase(new WaveformGeneratorTestCase(1.0, 0.5, 1.2), TestCase::QUICK);
+    AddTestCase(new WaveformGeneratorTestCase(offInterval, txTime, Seconds(1.2)), TestCase::QUICK);
     // Stop after wave
-    AddTestCase(new WaveformGeneratorTestCase(1.0, 0.5, 1.7), TestCase::QUICK);
+    AddTestCase(new WaveformGeneratorTestCase(offInterval, txTime, Seconds(1.7)), TestCase::QUICK);
 }
 
 /// Static variable for test initialization

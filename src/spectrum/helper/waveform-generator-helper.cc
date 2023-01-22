@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010 CTTC
+ * Copyright (c) 2020 Lawrence Livermore National Laboratory
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Nicola Baldo <nbaldo@cttc.es>
+ * Modified By: Mathew Bielejeski <bielejeski1@llnl.gov> (Refactoring)
  */
 #include "waveform-generator-helper.h"
 
@@ -27,6 +29,7 @@
 #include "ns3/propagation-delay-model.h"
 #include "ns3/simulator.h"
 #include "ns3/spectrum-channel.h"
+#include "ns3/spectrum-model.h"
 #include "ns3/spectrum-propagation-loss-model.h"
 #include "ns3/waveform-generator.h"
 
@@ -36,6 +39,10 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("WaveformGeneratorHelper");
 
 WaveformGeneratorHelper::WaveformGeneratorHelper()
+    : m_periodSet(false),
+      m_period(),
+      m_dutyCycleSet(false),
+      m_dutyCycle(0)
 {
     m_phy.SetTypeId("ns3::WaveformGenerator");
     m_device.SetTypeId("ns3::NonCommunicatingNetDevice");
@@ -60,22 +67,67 @@ WaveformGeneratorHelper::SetChannel(std::string channelName)
 }
 
 void
-WaveformGeneratorHelper::SetTxPowerSpectralDensity(Ptr<SpectrumValue> txPsd)
+WaveformGeneratorHelper::SetPeriod(Time duration)
 {
-    NS_LOG_FUNCTION(this << txPsd);
-    m_txPsd = txPsd;
+    NS_LOG_FUNCTION(this << duration);
+
+    NS_ASSERT_MSG(duration.IsStrictlyPositive(), "Waveform period must be > 0");
+
+    m_periodSet = true;
+    m_period = duration;
+}
+
+void
+WaveformGeneratorHelper::SetDutyCycle(double percentage)
+{
+    NS_LOG_FUNCTION(this << percentage);
+
+    NS_ASSERT_MSG(percentage > 0, "Duty cycle must be greater than 0");
+    NS_ASSERT_MSG(percentage <= 1.0, "Duty cycle must be less than or equal to 1");
+
+    m_dutyCycleSet = true;
+    m_dutyCycle = percentage;
+}
+
+void
+WaveformGeneratorHelper::SetTxPowerSpectralDensity(Ptr<SpectrumValue> psd)
+{
+    m_txPsd = psd;
+
+    NS_LOG_INFO("SpectrumValue: " << *m_txPsd);
 }
 
 void
 WaveformGeneratorHelper::SetPhyAttribute(std::string name, const AttributeValue& v)
 {
-    m_phy.Set(name, v);
-}
+    if (name == "Period")
+    {
+        Ptr<const AttributeChecker> checker = MakeTimeChecker();
 
-void
-WaveformGeneratorHelper::SetDeviceAttribute(std::string name, const AttributeValue& v)
-{
-    m_device.Set(name, v);
+        Ptr<AttributeValue> attrVal = checker->CreateValidValue(v);
+        TimeValue* tval = dynamic_cast<TimeValue*>(PeekPointer(attrVal));
+
+        NS_ASSERT_MSG(tval,
+                      "AttributeValue for attribute " << name << " is not a TimeValue instance");
+
+        SetPeriod(tval->Get());
+    }
+    else if (name == "DutyCycle")
+    {
+        Ptr<const AttributeChecker> checker = MakeDoubleChecker<double>();
+
+        Ptr<AttributeValue> attrVal = checker->CreateValidValue(v);
+        DoubleValue* dval = dynamic_cast<DoubleValue*>(PeekPointer(attrVal));
+
+        NS_ASSERT_MSG(dval,
+                      "AttributeValue for attribute " << name << " is not a DoubleValue instance");
+
+        SetDutyCycle(dval->Get());
+    }
+    else
+    {
+        m_phy.Set(name, v);
+    }
 }
 
 NetDeviceContainer
@@ -86,45 +138,65 @@ WaveformGeneratorHelper::Install(NodeContainer c) const
     {
         Ptr<Node> node = *i;
 
-        Ptr<NonCommunicatingNetDevice> dev =
-            m_device.Create()->GetObject<NonCommunicatingNetDevice>();
+        Ptr<NetDevice> device = Install(node);
 
-        Ptr<WaveformGenerator> phy = m_phy.Create()->GetObject<WaveformGenerator>();
-        NS_ASSERT(phy);
-
-        dev->SetPhy(phy);
-
-        NS_ASSERT(node);
-        phy->SetMobility(node->GetObject<MobilityModel>());
-
-        NS_ASSERT(dev);
-        phy->SetDevice(dev);
-
-        NS_ASSERT_MSG(m_txPsd,
-                      "you forgot to call WaveformGeneratorHelper::SetTxPowerSpectralDensity ()");
-        phy->SetTxPowerSpectralDensity(m_txPsd);
-
-        NS_ASSERT_MSG(m_channel, "you forgot to call WaveformGeneratorHelper::SetChannel ()");
-        phy->SetChannel(m_channel);
-        dev->SetChannel(m_channel);
-
-        Ptr<AntennaModel> antenna = (m_antenna.Create())->GetObject<AntennaModel>();
-        NS_ASSERT_MSG(antenna, "error in creating the AntennaModel object");
-        phy->SetAntenna(antenna);
-
-        node->AddDevice(dev);
-        devices.Add(dev);
+        devices.Add(device);
     }
+
     return devices;
 }
 
-NetDeviceContainer
+Ptr<NetDevice>
 WaveformGeneratorHelper::Install(Ptr<Node> node) const
 {
-    return Install(NodeContainer(node));
+    NS_ASSERT(node);
+
+    Ptr<NonCommunicatingNetDevice> dev = m_device.Create()->GetObject<NonCommunicatingNetDevice>();
+
+    NS_ASSERT(dev);
+
+    Ptr<WaveformGenerator> phy = m_phy.Create()->GetObject<WaveformGenerator>();
+    NS_ASSERT(phy);
+
+    NS_ASSERT_MSG(m_periodSet, "Waveform period is not set");
+    NS_ASSERT_MSG(m_dutyCycle, "Waveform duty cycle is not set");
+
+    // The duty cycle is the percentage of the period where the waveform is "on"
+    // This calculation matches the one used by the original waveform generator
+    Time onTime(m_period.GetTimeStep() * m_dutyCycle);
+
+    NS_LOG_INFO("Calculated waveform duration: " << onTime);
+
+    phy->AddTimeSlot(onTime, m_txPsd);
+
+    Time offTime = m_period - onTime;
+    phy->SetFixedInterval(offTime);
+
+    NS_LOG_INFO("Calculated waveform interval: " << offTime);
+
+    dev->SetPhy(phy);
+
+    phy->SetMobility(node->GetObject<MobilityModel>());
+
+    phy->SetDevice(dev);
+
+    NS_ASSERT_MSG(m_channel,
+                  "missing call to "
+                  "WaveformGeneratorHelper::SetChannel ()");
+
+    phy->SetChannel(m_channel);
+    dev->SetChannel(m_channel);
+
+    Ptr<AntennaModel> antenna = m_antenna.Create()->GetObject<AntennaModel>();
+    NS_ASSERT_MSG(antenna, "error in creating the AntennaModel object");
+    phy->SetAntenna(antenna);
+
+    node->AddDevice(dev);
+
+    return dev;
 }
 
-NetDeviceContainer
+Ptr<NetDevice>
 WaveformGeneratorHelper::Install(std::string nodeName) const
 {
     Ptr<Node> node = Names::Find<Node>(nodeName);

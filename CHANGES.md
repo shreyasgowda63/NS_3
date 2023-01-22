@@ -22,6 +22,7 @@ Changes from ns-3.37 to ns-3.38
 * (wifi) Added a new attribute **NMaxInflights** to QosTxop to set the maximum number of links on which an MPDU can be simultaneously in-flight.
 * (core) Added several macros in **warnings.h** to silence compiler warnings in specific sections of code. Their use is discouraged, unless really necessary.
 * (internet-apps) Add class `Ping` for a ping model that works for both IPv4 and IPv6.
+* (spectrum) Added a new helper class `AdvancedWaveformGeneratorHelper` to the spectrum module.  This helper class is capable of creating `WaveformGenerator` instances which can transmit multiple power spectral density vectors.
 
 ### Changes to existing API
 
@@ -32,6 +33,8 @@ Changes from ns-3.37 to ns-3.38
 * (lr-wpan) Add file `src/lr-wpan/model/lr-wpan-constants.h` with common constants of the LR-WPAN module.
 * (lr-wpan) Remove the functions `LrWpanCsmaCa::GetUnitBackoffPeriod()` and `LrWpanCsmaCa::SetUnitBackoffPeriod()`, and move the constant `m_aUnitBackoffPeriod` to `src/lr-wpan/model/lr-wpan-constants.h`.
 * (lr-wpan) Adds beacon payload handle support (MLME-SET.request) in  **LrWpanMac**.
+* (spectrum) The `WaveformGenerator` API has been modified to support multiple `SpectrumValue` objects. Each SpectrumValue has its own duration, allowing for the generation of waveforms that vary over time.
+* (spectrum) The `WaveformGeneratorHelper` has been deprecated. Please use the new `AdvancedWaveformGeneratorHelper`
 
 ### Changes to build system
 

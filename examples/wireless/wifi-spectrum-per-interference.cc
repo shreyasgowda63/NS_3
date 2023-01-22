@@ -22,6 +22,7 @@
  * Adapted from wifi-ht-network.cc example
  */
 
+#include "ns3/advanced-waveform-generator-helper.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
 #include "ns3/internet-stack-helper.h"
@@ -37,7 +38,6 @@
 #include "ns3/ssid.h"
 #include "ns3/string.h"
 #include "ns3/udp-client-server-helper.h"
-#include "ns3/waveform-generator-helper.h"
 #include "ns3/waveform-generator.h"
 #include "ns3/wifi-net-device.h"
 #include "ns3/yans-wifi-channel.h"
@@ -562,24 +562,29 @@ main(int argc, char* argv[])
         }
 
         // Configure waveform generator
-        Ptr<SpectrumValue> wgPsd =
-            Create<SpectrumValue>(i <= 15 ? SpectrumModelWifi5180MHz : SpectrumModelWifi5190MHz);
-        *wgPsd = waveformPower / 20e6; // PSD spread across 20 MHz
-        NS_LOG_INFO("wgPsd : " << *wgPsd
-                               << " integrated power: " << Integral(*(GetPointer(wgPsd))));
-
         if (wifiType == "ns3::SpectrumWifiPhy")
         {
-            WaveformGeneratorHelper waveformGeneratorHelper;
+            // Configure waveform generator
+            AdvancedWaveformGeneratorHelper waveformGeneratorHelper;
             waveformGeneratorHelper.SetChannel(spectrumChannel);
-            waveformGeneratorHelper.SetTxPowerSpectralDensity(wgPsd);
 
-            waveformGeneratorHelper.SetPhyAttribute("Period", TimeValue(Seconds(0.0007)));
-            waveformGeneratorHelper.SetPhyAttribute("DutyCycle", DoubleValue(1));
+            if (i <= 15)
+            {
+                waveformGeneratorHelper.SetModel(SpectrumModelWifi5180MHz);
+            }
+            else
+            {
+                waveformGeneratorHelper.SetModel(SpectrumModelWifi5190MHz);
+            }
+
+            std::vector<double> psd{waveformPower / 20e6}; // PSD spread across 20 MHz
+            waveformGeneratorHelper.AddTxPowerSpectralDensity(MicroSeconds(700), psd);
+            waveformGeneratorHelper.SetInterval(Seconds(0));
+
             NetDeviceContainer waveformGeneratorDevices =
                 waveformGeneratorHelper.Install(interferingNode);
 
-            Simulator::Schedule(Seconds(0.002),
+            Simulator::Schedule(MilliSeconds(2),
                                 &WaveformGenerator::Start,
                                 waveformGeneratorDevices.Get(0)
                                     ->GetObject<NonCommunicatingNetDevice>()

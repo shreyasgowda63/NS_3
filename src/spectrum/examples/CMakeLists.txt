@@ -55,3 +55,13 @@ build_lib_example(
     ${libcore}
     ${liblte}
 )
+
+build_lib_example(
+  NAME microwave-oven-with-sweep-example
+  SOURCE_FILES microwave-oven-with-sweep-example.cc
+  LIBRARIES_TO_LINK
+    ${libspectrum}
+    ${libmobility}
+    ${libcore}
+    ${libnetwork}
+)
