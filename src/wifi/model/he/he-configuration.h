@@ -69,6 +69,57 @@ class HeConfiguration : public Object
      */
     Time GetMaxTbPpduDelay() const;
 
+    /**
+     * \param ng subcarrier grouping parameter Ng for SU channel sounding feedback
+     */
+    void SetNgforSuFeedback(uint8_t ng);
+    /**
+     * \return subcarrier grouping parameter Ng for SU channel sounding feedback
+     */
+    uint8_t GetNgforSuFeedback() const;
+
+    /**
+     * \param ng subcarrier grouping parameter Ng for MU channel sounding feedback
+     */
+    void SetNgforMuFeedback(uint8_t ng);
+    /**
+     * \return subcarrier grouping parameter Ng for MU channel sounding feedback
+     */
+    uint8_t GetNgforMuFeedback() const;
+
+    /**
+     * \param codebookSize codebook size for SU beamforming report
+     */
+    void SetCodebookSizeforSu(std::string codebookSize);
+    /**
+     * \return codebook size for SU beamforming report
+     */
+    std::string GetCodebookSizeforSu() const;
+
+    /**
+     * \param codebookSize codebook size for MU beamforming report
+     */
+    void SetCodebookSizeforMu(std::string codebookSize);
+
+    /**
+     * \return codebook size for MU beamforming report
+     */
+    std::string GetCodebookSizeforMu() const;
+
+    /**
+     * Set to the maximum supported Nc for an HE compressed beamforming/CQI report minus 1.
+     *
+     * \param nc max Nc for beamforming report
+     */
+    void SetMaxNc(uint8_t nc);
+
+    /**
+     * Return max Nc for beamforming report
+     *
+     * \return max Nc for beamforming report
+     */
+    uint8_t GetMaxNc() const;
+
   private:
     Time m_guardInterval;      //!< Supported HE guard interval
     uint8_t m_bssColor;        //!< BSS color
@@ -90,6 +141,14 @@ class HeConfiguration : public Object
     Time m_bkMuEdcaTimer;      //!< Timer for BK in MU EDCA Parameter Set
     Time m_viMuEdcaTimer;      //!< Timer for VI in MU EDCA Parameter Set
     Time m_voMuEdcaTimer;      //!< Timer for VO in MU EDCA Parameter Set
+
+    uint8_t m_ngforSuFeedback;       //!< Subcarrier grouping parameter Ng for SU
+                                     //!< feedback
+    uint8_t m_ngforMuFeedback;       //!< Enable subcarrier grouping parameter Ng to be 16 for MU
+                                     //!< feedback
+    std::string m_codebookSizeforSu; //!< Codebook size for SU feedback
+    std::string m_codebookSizeforMu; //!< Codebook size for MU feedback
+    uint8_t m_maxNc;                 //!< Max Nc for beamforming report
 };
 
 } // namespace ns3
