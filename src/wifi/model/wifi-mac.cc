@@ -2161,6 +2161,12 @@ WifiMac::GetHeCapabilities(uint8_t linkId) const
     capabilities.SetHighestMcsSupported(maxMcs);
     capabilities.SetHighestNssSupported(phy->GetMaxSupportedTxSpatialStreams());
 
+    capabilities.SetNgforSuFeedback(heConfiguration->GetNgforSuFeedback());
+    capabilities.SetNgforMuFeedback(heConfiguration->GetNgforMuFeedback());
+    capabilities.SetCodebookSizeforSu(heConfiguration->GetCodebookSizeforSu());
+    capabilities.SetCodebookSizeforMu(heConfiguration->GetCodebookSizeforMu());
+    capabilities.SetMaxNc(heConfiguration->GetMaxNc());
+
     return capabilities;
 }
 
