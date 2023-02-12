@@ -45,6 +45,7 @@ enum WifiMacType
     WIFI_MAC_CTL_BACKRESP,
     WIFI_MAC_CTL_END,
     WIFI_MAC_CTL_END_ACK,
+    WIFI_MAC_CTL_NDPA,
 
     WIFI_MAC_CTL_DMG_POLL,
     WIFI_MAC_CTL_DMG_SPR,
@@ -433,6 +434,18 @@ class WifiMacHeader : public Header
      * \return true if the header is a Trigger header, false otherwise
      */
     bool IsTrigger() const;
+    /**
+     * Return true if the header is an NDPA header.
+     *
+     * \return true if the header is an NDPA header, false otherwise
+     */
+    bool IsNdpa(void) const;
+    /**
+     * Return true if the header is an NDP header.
+     *
+     * \return true if the header is an NDP header, false otherwise
+     */
+    bool IsNdp(void) const;
     /**
      * Return true if the header is an Association Request header.
      *

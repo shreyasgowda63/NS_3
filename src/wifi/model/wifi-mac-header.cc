@@ -136,6 +136,10 @@ WifiMacHeader::SetType(WifiMacType type, bool resetToDsFromDs)
 {
     switch (type)
     {
+    case WIFI_MAC_CTL_NDPA:
+        m_ctrlType = TYPE_CTL;
+        m_ctrlSubtype = SUBTYPE_CTL_NDPANNOUNCE;
+        break;
     case WIFI_MAC_CTL_TRIGGER:
         m_ctrlType = TYPE_CTL;
         m_ctrlSubtype = SUBTYPE_CTL_TRIGGER;
@@ -522,6 +526,8 @@ WifiMacHeader::GetType() const
     case TYPE_CTL:
         switch (m_ctrlSubtype)
         {
+        case SUBTYPE_CTL_NDPANNOUNCE:
+            return WIFI_MAC_CTL_NDPA;
         case SUBTYPE_CTL_TRIGGER:
             return WIFI_MAC_CTL_TRIGGER;
         case SUBTYPE_CTL_BACKREQ:
@@ -806,6 +812,18 @@ WifiMacHeader::IsTrigger() const
     return (GetType() == WIFI_MAC_CTL_TRIGGER);
 }
 
+bool
+WifiMacHeader::IsNdpa(void) const
+{
+    return (GetType() == WIFI_MAC_CTL_NDPA);
+}
+
+bool
+WifiMacHeader::IsNdp(void) const
+{
+    return (GetType() == WIFI_MAC_DATA_NULL);
+}
+
 uint16_t
 WifiMacHeader::GetRawDuration() const
 {
@@ -1015,6 +1033,7 @@ WifiMacHeader::GetSize() const
         case SUBTYPE_CTL_TRIGGER:
         case SUBTYPE_CTL_END:
         case SUBTYPE_CTL_END_ACK:
+        case SUBTYPE_CTL_NDPANNOUNCE:
             size = 2 + 2 + 6 + 6;
             break;
         case SUBTYPE_CTL_CTS:
@@ -1059,6 +1078,7 @@ WifiMacHeader::GetTypeString() const
         CASE_WIFI_MAC_TYPE(CTL_END_ACK);
         CASE_WIFI_MAC_TYPE(CTL_PSPOLL);
         CASE_WIFI_MAC_TYPE(CTL_TRIGGER);
+        CASE_WIFI_MAC_TYPE(CTL_NDPA);
 
         CASE_WIFI_MAC_TYPE(MGT_BEACON);
         CASE_WIFI_MAC_TYPE(MGT_ASSOCIATION_REQUEST);
@@ -1132,6 +1152,10 @@ WifiMacHeader::Print(std::ostream& os) const
     os << GetTypeString() << " ";
     switch (GetType())
     {
+    case WIFI_MAC_CTL_NDPA:
+        os << "Duration/ID=" << m_duration << "us"
+           << ", RA=" << m_addr1 << ", TA=" << m_addr2;
+        break;
     case WIFI_MAC_CTL_PSPOLL:
         os << "Duration/ID=" << std::hex << m_duration << std::dec << ", BSSID(RA)=" << m_addr1
            << ", TA=" << m_addr2;
@@ -1256,6 +1280,9 @@ WifiMacHeader::Serialize(Buffer::Iterator i) const
         case SUBTYPE_CTL_BACKRESP:
         case SUBTYPE_CTL_END:
         case SUBTYPE_CTL_END_ACK:
+            WriteTo(i, m_addr2);
+            break;
+        case SUBTYPE_CTL_NDPANNOUNCE:
             WriteTo(i, m_addr2);
             break;
         case SUBTYPE_CTL_CTS:
