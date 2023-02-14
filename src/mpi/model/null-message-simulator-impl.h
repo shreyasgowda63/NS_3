@@ -77,6 +77,7 @@ class NullMessageSimulatorImpl : public SimulatorImpl
     void Run() override;
 
     Time Now() const override;
+    Time GetNextEventTime() const override;
     Time GetDelayLeft(const EventId& id) const override;
     Time GetMaximumSimulationTime() const override;
     void SetScheduler(ObjectFactory schedulerFactory) override;

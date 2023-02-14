@@ -301,6 +301,12 @@ DefaultSimulatorImpl::Now() const
 }
 
 Time
+DefaultSimulatorImpl::GetNextEventTime() const
+{
+    return TimeStep(m_events->PeekNext().key.m_ts);
+}
+
+Time
 DefaultSimulatorImpl::GetDelayLeft(const EventId& id) const
 {
     if (IsExpired(id))

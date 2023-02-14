@@ -182,6 +182,12 @@ VisualSimulatorImpl::Now() const
 }
 
 Time
+VisualSimulatorImpl::GetNextEventTime() const
+{
+    return m_simulator->GetNextEventTime();
+}
+
+Time
 VisualSimulatorImpl::GetDelayLeft(const EventId& id) const
 {
     return m_simulator->GetDelayLeft(id);

@@ -205,6 +205,12 @@ Simulator::Now()
 }
 
 Time
+Simulator::GetNextEventTime()
+{
+    return GetImpl()->GetNextEventTime();
+}
+
+Time
 Simulator::GetDelayLeft(const EventId& id)
 {
     NS_LOG_FUNCTION(&id);
