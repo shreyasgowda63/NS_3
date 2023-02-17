@@ -501,7 +501,7 @@ Ipv6RawSocketImpl::ForwardUp(Ptr<const Packet> p, Ipv6Header hdr, Ptr<NetDevice>
         data.fromIp = hdr.GetSource();
         data.fromProtocol = hdr.GetNextHeader();
         m_data.push_back(data);
-        NotifyDataRecv();
+        NotifyDataRecv(copy->GetSize());
         return true;
     }
     return false;

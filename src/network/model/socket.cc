@@ -61,6 +61,8 @@ Socket::Socket()
     m_ipTtl = 0;
     m_ipv6Tclass = 0;
     m_ipv6HopLimit = 0;
+    m_bytesSent = 0;
+    m_bytesReceived = 0;
 }
 
 Socket::~Socket()
@@ -280,6 +282,7 @@ void
 Socket::NotifyDataSent(uint32_t size)
 {
     NS_LOG_FUNCTION(this << size);
+    m_bytesSent += size;
     if (!m_dataSent.IsNull())
     {
         m_dataSent(this, size);
@@ -297,9 +300,10 @@ Socket::NotifySend(uint32_t spaceAvailable)
 }
 
 void
-Socket::NotifyDataRecv()
+Socket::NotifyDataRecv(uint32_t size=0)
 {
     NS_LOG_FUNCTION(this);
+    m_bytesReceived += size;
     if (!m_receivedData.IsNull())
     {
         m_receivedData(this);
@@ -588,6 +592,19 @@ Socket::Ipv6LeaveGroup()
     Ipv6JoinGroup(m_ipv6MulticastGroupAddress, INCLUDE, sourceAddresses);
     m_ipv6MulticastGroupAddress = Ipv6Address::GetAny();
 }
+
+uint32_t
+Socket::GetBytesSent() const
+{
+    return m_bytesSent;
+}
+
+uint32_t
+Socket::GetBytesRcvd() const
+{
+    return m_bytesReceived;
+}
+
 
 /***************************************************************
  *           Socket Tags
