@@ -41,6 +41,7 @@ set(source_files
     model/fcfs-wifi-queue-scheduler.cc
     model/frame-capture-model.cc
     model/frame-exchange-manager.cc
+    model/he/channel-sounding.cc
     model/he/constant-obss-pd-algorithm.cc
     model/he/he-capabilities.cc
     model/he/he-configuration.cc
@@ -194,6 +195,7 @@ set(header_files
     model/fcfs-wifi-queue-scheduler.h
     model/frame-capture-model.h
     model/frame-exchange-manager.h
+    model/he/channel-sounding.h
     model/he/constant-obss-pd-algorithm.h
     model/he/he-capabilities.h
     model/he/he-configuration.h
