@@ -187,6 +187,12 @@ WifiTxTimer::SetPsduMapResponseTimeoutCallback(PsduMapResponseTimeout callback) 
 }
 
 void
+WifiTxTimer::SetBfReportTimeoutCallback(BfReportTimeout callback) const
+{
+    m_bfReportTimeoutCallback = callback;
+}
+
+void
 WifiTxTimer::FeedTraceSource(WifiPsduMap* psduMap, std::size_t nTotalStations)
 {
     if (!m_psduMapResponseTimeoutCallback.IsNull())
@@ -195,6 +201,15 @@ WifiTxTimer::FeedTraceSource(WifiPsduMap* psduMap, std::size_t nTotalStations)
                                          psduMap,
                                          &m_staExpectResponseFrom,
                                          nTotalStations);
+    }
+}
+
+void
+WifiTxTimer::FeedTraceSource(void)
+{
+    if (!m_bfReportTimeoutCallback.IsNull())
+    {
+        m_bfReportTimeoutCallback(m_reason);
     }
 }
 
