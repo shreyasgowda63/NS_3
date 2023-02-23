@@ -4,16 +4,13 @@
 ## Table of Contents:
 
 1) [What is](#what-is)
-2) [Testing script](#testing-script)
-3) [Gitlab CI infrastructure](#gitlab-ci-infrastructure)
-4) [Test your changes](#test-your-changes)
+2) [Gitlab CI infrastructure](#gitlab-ci-infrastructure)
+3) [Test your changes](#test-your-changes)
+4) [Additional testing scripts](#additional-testing-scripts)
 
 ## What is
 
-In this directory, we store documents related to our testing infrastructure.
-
-## Testing script
-To fill.
+In this directory, we store files related to our testing infrastructure.
 
 ## Gitlab CI infrastructure
 
@@ -25,7 +22,7 @@ We store our YML files under the directory ./utils/tests. The main file is named
 
 ### Per commit jobs description
 
-After each commit, the infrastructure will test the grammar correctness by doing a build, with tests and examples enabled, in three modes: debug, release, optimized. The build is done with the default GCC of the Arch Linux distribution: more deep check are done daily and weekly. You can see the job script in `gitlab-ci.yml`. If the build stage is passed, the commits done on the master branch will also trigger a documentation update. Currently, we do not use the generated documentation as Gitlab pages, but we use a separate service to display the documentation through the web.
+After each commit, the infrastructure will test the build, with tests and examples enabled, in three modes: debug, release, optimized. The build is done with the default GCC of the Arch Linux distribution: more deep check are done daily and weekly. You can see the job script in `gitlab-ci.yml`. If the build stage is passed, the next check will be for code style (clang-format) and linting (clang-tidy).  If these style checks pass, the completeness of Doxygen and successful builds of the documentation will be checked.  Currently, we do not use the generated documentation as Gitlab pages, but we use a separate service to display the documentation through the web.
 
 ### Daily jobs description
 
@@ -33,18 +30,19 @@ Thanks to the "Schedule" feature of Gitlab, we setup pipelines that have to be r
 
 ### Weekly jobs description
 
-As weekly jobs, we perform the build, testing, and documentation stage in every platform we support (Ubuntu, Fedora, Arch Linux) with all the compilers we support (GCC and CLang). Weekly pipelines should define a variable, named `RELEASE`, as `weekly`. To add the support for your platform, please see how the jobs are constructed (for instance, the GCC jobs are in `gitlab-ci-gcc.yml`). We currently miss the jobs for OS X and Windows.
+As weekly jobs, we perform the build, testing, and documentation stage in every platform we support (Ubuntu, Fedora, Arch Linux) with all the compilers we support (GCC and CLang) and with extended tests. Weekly pipelines should define a variable, named `RELEASE`, as `weekly`. To add the support for your platform, please see how the jobs are constructed (for instance, the GCC jobs are in `gitlab-ci-gcc.yml`). We currently miss the jobs for OS X and Windows.
 
 ## Test your changes
 
-When you fork ns-3-dev on Gitlab, you get access to 2000 free hours of execution time on the Gitlab CI infrastructure. You automatically inherit all the scripts as well, so you can test your changes before requesting a merge. As mentioned previously, we store our YML files under the directory ./utils/tests, therefore, to execute per-commit script automatically, Gitlab CI/CD requires a custom path to the YML file.
+When you fork ns-3-dev on Gitlab, you get access to 50,000 free minutes (833 hours) per month of execution time on the Gitlab CI infrastructure. You automatically inherit all the scripts as well, so you can test your changes before requesting a merge. As mentioned previously, we store our YML files under the directory ./utils/tests, therefore, to execute per-commit script automatically, Gitlab CI/CD requires a custom path to the YML file.
 
 To customize the path:
 
 1. Go to the project’s **Settings > CI / CD**.
 2. Expand the **General pipelines** section.
 3. Provide `utils/tests/gitlab-ci.yml` as a value in the **Custom CI configuration path** field.
-4. Click **Save changes**.
+4. Set the Timeout to '9h' for nine hours.
+5. Click **Save changes**.
 
 To perform a deeper test, you can manually run the daily or the weekly test. Go to the Gitlab interface, then enter in the CI/CD menu and select Pipelines. On the top, you can manually run a pipeline: select the branch, and add a variable `RELEASE` set to `daily` or `weekly` following your need, and then run it.
 
@@ -79,3 +77,14 @@ CLANG_BUILD_ENABLE = True
 ```
 
 ... and then click Save, and run it manually from the "Schedules" page.
+
+All of the above relies on using the cloud-based GitLab.com CI infrastructure.
+It is possible to instead run these tests locally, using a tool called
+``gitlab-ci-local`` and a Docker container.  Instructions on how to do
+this are maintained in the [ns-3 manual](https://www.nsnam.org/docs/manual/html/working-with-gitlab-ci-local.html).
+
+## Additional testing scripts
+
+This directory contains two Python programs, ``test-ns3.py`` and ``test-test.py``.  These programs can be run manually to test the operation of the
+``ns3`` and ``test.py`` programs, respectively, in the top-level directory.
+
