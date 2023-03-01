@@ -11,12 +11,6 @@
     variables:
       - $RELEASE == "weekly"
       - $ALPINE == "True"
-  variables:
-    COMPILER: g++
-
-weekly-build-alpine-latest-default:
-  extends: .weekly-build-alpine
-  image: alpine:latest
   before_script:
     - apk update
     - apk upgrade
@@ -26,4 +20,24 @@ weekly-build-alpine-latest-default:
       bash
       iproute2 linux-headers
   variables:
+    COMPILER: g++
+
+weekly-alpine-latest-default:
+  extends: .weekly-build-alpine
+  image: alpine:latest
+  stage: build
+  variables:
     MODE: default
+
+weekly-alpine-latest-default-test:
+  extends: .weekly-build-alpine
+  image: alpine:latest
+  stage: test
+  needs: ["weekly-alpine-latest-default"]
+  cache:
+    key: "weekly-alpine-latest-default"
+    paths:
+      - $CCACHE_BASEDIR_VALUE/
+  variables:
+    MODE: default
+

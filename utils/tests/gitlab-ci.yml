@@ -30,7 +30,6 @@ stages:
 # the following variables: COMPILER (g++, clang++, ...) and
 # MODE (debug, default, optimized)
 .base-build:
-  stage: build
   script:
     - mkdir -p $CCACHE_BASEDIR_VALUE
     - export CCACHE_BASEDIR=${PWD}
@@ -39,7 +38,20 @@ stages:
     - CXX=$COMPILER ./ns3 configure -d $MODE -GNinja --enable-examples --enable-tests --enable-asserts $ENABLE_MPI
     - ccache -z
     - ./ns3 build
-    - if [ "$MODE" != "debug" ] && [ "`./utils/ccache-miss-rate.py`" != "0" ]; then ./test.py -n; fi
+    - if [ "$CI_JOB_STAGE" == "build" ] && [ "`./utils/ccache-miss-rate.py`" != "0" ];
+      then `touch $CCACHE_BASEDIR_VALUE/tests-$CI_COMMIT_REF_SLUG.txt`;
+      fi
+    # - echo "zero"
+    # - if [ "$PHASE" == "test" ] && [ "$MODE" != "debug" ]; then echo "first"; fi
+    # - if ( [[ -f $CCACHE_BASEDIR_VALUE/tests-ccache-dirty.txt ]] || [[ -f $CCACHE_BASEDIR_VALUE/tests-failure.txt ]] ); then echo "second"; fi
+    # - if [ "$PHASE" == "test" ] && [ "$MODE" != "debug" ] && ( [[ -f $CCACHE_BASEDIR_VALUE/tests-CI_COMMIT_REF_SLUG.txt ]] || [[ -f $CCACHE_BASEDIR_VALUE/tests-failure.txt ]] );
+    - if [ "$CI_JOB_STAGE" == "test" ] && [ "$MODE" != "debug" ] && [[ -f $CCACHE_BASEDIR_VALUE/tests-$CI_COMMIT_REF_SLUG.txt ]];
+      then ./test.py -n;
+    - if [ $? == 0 ];
+      then `rm $CCACHE_BASEDIR_VALUE/tests-$CI_COMMIT_REF_SLUG.txt` || true;
+      fi;
+      fi
+    - ls -l $CCACHE_BASEDIR_VALUE/
     - ccache -s
     - ./ns3 clean
   cache:
@@ -79,24 +91,54 @@ stages:
 
 per-commit-clang-debug:
   extends: .base-per-commit-compile
+  stage: build
   variables:
     MODE: debug
     COMPILER: clang++
 
 per-commit-gcc-debug:
   extends: .base-per-commit-compile
+  stage: build
   variables:
     MODE: debug
     COMPILER: g++
 
 per-commit-gcc-default:
   extends: .base-per-commit-compile
+  stage: build
   variables:
     MODE: default
     COMPILER: g++
 
 per-commit-gcc-optimized:
   extends: .base-per-commit-compile
+  stage: build
+  variables:
+    MODE: optimized
+    COMPILER: g++
+
+per-commit-gcc-default-test:
+  extends: .base-per-commit-compile
+  stage: test
+  needs: ["per-commit-gcc-default"]
+  cache:
+    # Reuse the ccache from the per-commit-gcc-default job
+    key: "ccache-per-commit-gcc-default"
+    paths:
+      - $CCACHE_BASEDIR_VALUE/
+  variables:
+    MODE: default
+    COMPILER: g++
+
+per-commit-gcc-optimized-test:
+  extends: .base-per-commit-compile
+  stage: test
+  needs: ["per-commit-gcc-optimized"]
+  cache:
+    # Reuse the ccache from the per-commit-gcc-optimized job
+    key: "ccache-per-commit-gcc-optimized"
+    paths:
+      - $CCACHE_BASEDIR_VALUE/
   variables:
     MODE: optimized
     COMPILER: g++
@@ -108,7 +150,7 @@ include:
   - "utils/tests/gitlab-ci-fedora.yml"
   - "utils/tests/gitlab-ci-gcc.yml"
   - "utils/tests/gitlab-ci-clang.yml"
-  - "utils/tests/gitlab-ci-test.yml"
+  - "utils/tests/gitlab-ci-daily.yml"
   - "utils/tests/gitlab-ci-code-linting.yml"
   - "utils/tests/gitlab-ci-doc.yml"
   - "utils/tests/gitlab-ci-cppyy.yml"
