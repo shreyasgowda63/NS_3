@@ -44,9 +44,10 @@ daily-test-debug:
   extends: .base-test
   variables:
     MODE: debug
-  only:
-    variables:
-      - $RELEASE == "daily"
+  rules:
+    - if: $RELEASE == "daily"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
   tags:
     - nsnam
     - linux
@@ -57,9 +58,10 @@ daily-build-default:
   extends: .base-test
   variables:
     MODE: default
-  only:
-    variables:
-      - $RELEASE == "daily"
+  rules:
+    - if: $RELEASE == "daily"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
 
 daily-test-default:
   stage: test
@@ -71,9 +73,10 @@ daily-test-default:
       - $CCACHE_BASEDIR_VALUE/
   variables:
     MODE: default
-  only:
-    variables:
-      - $RELEASE == "daily"
+  rules:
+    - if: $RELEASE == "daily"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
 
 # Run the test.py script with files compiled in optimized mode
 daily-build-optimized:
@@ -81,9 +84,10 @@ daily-build-optimized:
   extends: .base-test
   variables:
     MODE: optimized
-  only:
-    variables:
-      - $RELEASE == "daily"
+  rules:
+    - if: $RELEASE == "daily"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
 
 daily-test-optimized:
   stage: test
@@ -95,9 +99,10 @@ daily-test-optimized:
       - $CCACHE_BASEDIR_VALUE/
   variables:
     MODE: optimized
-  only:
-    variables:
-      - $RELEASE == "daily"
+  rules:
+    - if: $RELEASE == "daily"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
 
 ### Valgrind tests
 # Run the test.py script with files compiled in optimized mode + valgrind (daily)
@@ -107,9 +112,10 @@ daily-test-optimized-valgrind:
   variables:
     MODE: optimized
     VALGRIND_FLAG: -g
-  only:
-    variables:
-      - $RELEASE == "daily"
+  rules:
+    - if: $RELEASE == "daily"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
   tags:
     - nsnam
     - linux
@@ -121,9 +127,10 @@ weekly-test-debug-valgrind:
   variables:
     MODE: debug
     VALGRIND_FLAG: -g
-  only:
-    variables:
-      - $RELEASE == "weekly"
+  rules:
+    - if: $RELEASE == "weekly"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
   tags:
     - nsnam
     - linux
@@ -135,9 +142,10 @@ weekly-test-default-valgrind:
   variables:
     MODE: default
     VALGRIND_FLAG: -g
-  only:
-    variables:
-      - $RELEASE == "weekly"
+  rules:
+    - if: $RELEASE == "weekly"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
   tags:
     - nsnam
     - linux
@@ -149,9 +157,10 @@ weekly-test-optimized-valgrind:
   variables:
     MODE: optimized
     VALGRIND_FLAG: -g
-  only:
-    variables:
-      - $RELEASE == "weekly"
+  rules:
+    - if: $RELEASE == "weekly"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
   tags:
     - nsnam
     - linux
@@ -163,9 +172,10 @@ weekly-test-takes-forever-optimized:
   variables:
     MODE: optimized
     FULLNESS: "-f TAKES_FOREVER"
-  only:
-    variables:
-      - $RELEASE == "weekly"
+  rules:
+    - if: $RELEASE == "weekly"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
   tags:
     - nsnam
     - linux

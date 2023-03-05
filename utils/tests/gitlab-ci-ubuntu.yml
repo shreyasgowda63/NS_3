@@ -9,10 +9,11 @@
 # Ubuntu base
 .weekly-base-ubuntu:
   extends: .base-build
-  only:
-    variables:
-      - $RELEASE == "weekly"
-      - $UBUNTU == "True"
+  rules:
+    - if: $RELEASE == "weekly"
+    - if: $UBUNTU == "True"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
   before_script:
     # The following ppa is needed only for Ubuntu 18.04 to install g++9
     - add-apt-repository ppa:ubuntu-toolchain-r/test -y

@@ -9,10 +9,11 @@
 # Weekly jobs: Fedora
 .weekly-build-fedora:
   extends: .base-build
-  only:
-    variables:
-      - $RELEASE == "weekly"
-      - $FEDORA == "True"
+  rules:
+    - if: $RELEASE == "weekly"
+    - if: $FEDORA == "True"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
   before_script:
     - dnf update --assumeyes
     - dnf install --assumeyes
