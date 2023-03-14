@@ -18,25 +18,26 @@
  * Authors:
  *  Aditya R Rudra <adityarrudra@gmail.com>
  *  Sharvani Somayaji <sharvanilaxmisomayaji@gmail.com>
+ *  Saurabh Mokashi <sherumokashi@gmail.com>
  */
 
-#ifndef SOCKET_STATS_H
-#define SOCKET_STATS_H
+#ifndef SOCKET_STATS_HELPER_H
+#define SOCKET_STATS_HELPER_H
 
-#include "ns3/event-id.h"
-#include "ns3/histogram.h"
-#include "ns3/nstime.h"
-#include "ns3/object.h"
-#include "ns3/ptr.h"
-#include "ns3/ss.h"
-#include "ns3/socket.h"
-#include "time.h"
-#include "ns3/node-container.h"
-#include "ns3/tcp-socket-base.h"
+#include <ns3/event-id.h>
+#include <ns3/histogram.h>
+#include <ns3/node-container.h>
+#include <ns3/nstime.h>
+#include <ns3/object.h>
+#include <ns3/ptr.h>
+#include <ns3/socket.h>
+#include <ns3/ss.h>
+#include <ns3/tcp-socket-base.h>
 
 #include <map>
-#include <vector>
 #include <string>
+#include <time.h>
+#include <vector>
 
 namespace ns3
 {
@@ -48,7 +49,7 @@ namespace ns3
 
 /**
  * \ingroup socket-stats
- * \brief An object that monitors and reports back the socket statistics observed during a simulation
+ * \brief An object that monitors and reports back socket statistics observed during a simulation
  *
  * The SocketStatisticsHelper class is responsible for coordinating efforts
  * regarding sockets, and collects end-to-end flow statistics.
@@ -185,7 +186,8 @@ class SocketStatisticsHelper : public Object
      * \param higherPort the higher port number
      * \param addr the IPv4 address to filter
      */
-    void Filter(NodeContainer nodeContainer, std::vector<std::string> states, uint16_t lowerPort, uint16_t higherPort, std::string addr);
+    void Filter(NodeContainer nodeContainer, std::vector<std::string> states, uint16_t lowerPort,
+      uint16_t higherPort, std::string addr);
 
     /**
      * \brief Get the collection of statistics for a specific socket 
@@ -193,7 +195,8 @@ class SocketStatisticsHelper : public Object
      * \param socketId ID of the socket
      * \return Collection of statistics for a specific socket 
      */
-    std::vector<SocketStatistics::SocketStatInstance> GetStatistics(uint32_t nodeId, uint32_t socketId);
+    std::vector<SocketStatistics::SocketStatInstance> GetStatistics(uint32_t nodeId,
+      uint32_t socketId);
 
   protected:
     void DoDispose() override;
@@ -220,13 +223,14 @@ class SocketStatisticsHelper : public Object
     void ProcessSocketData(Time currentTime);
 
     /**
-     * \brief Dumps the stats like socket type, socket state, bytes sent, bytes received, local address and peer address for a socket at a given instant
+     * \brief Dump stats like socket type, bytes sent and received, for a socket at an instance
      * \param statistic Instance of SocketStatistics::SocketStatInstance 
      * \param nodeId ID of the node
      * \param socketId ID of the socket
      * \param currentTime Current Time Instance
      */
-    void DumpSocketStats(SocketStatistics::SocketStatInstance statistic, uint32_t nodeId, uint32_t socketId, Time currentTime);
+    void DumpSocketStats(SocketStatistics::SocketStatInstance statistic, uint32_t nodeId,
+      uint32_t socketId, Time currentTime);
 
     /**
      * \brief Dumps TCP metrics like RTT, RTO and Congestion Window
@@ -236,7 +240,8 @@ class SocketStatisticsHelper : public Object
      * \param socketId ID of the socket
      * \param currentTime current time
      */
-    void DumpTcpMetric(std::string metricName, TcpSocketBase::TcpSocketInfo tcpInfo, uint32_t nodeId, uint32_t socketId, Time currentTime);
+    void DumpTcpMetric(std::string metricName, TcpSocketBase::TcpSocketInfo tcpInfo,
+      uint32_t nodeId, uint32_t socketId, Time currentTime);
 
 
   private:
@@ -250,9 +255,10 @@ class SocketStatisticsHelper : public Object
     Time m_interval;                          //!< Interval at which ss should run
     Time m_end;                               //!< Absolute time at which ss should stop
     SocketStatistics m_ss;                    //!< Associated ss object
-    std::unordered_map<std::string, std::vector<SocketStatistics::SocketStatInstance>> m_statsCollection;   //!< Collection of statistics for all sockets
+    std::unordered_map<std::string, std::vector<SocketStatistics::SocketStatInstance>>
+      m_statsCollection;   //!< Collection of statistics for all sockets
 };
 
 } // namespace ns3
 
-#endif /* SOCKET_STATS_H */
+#endif /* SOCKET_STATS_HELPER_H */

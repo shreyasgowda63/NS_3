@@ -18,17 +18,18 @@
  * Authors:
  *  Aditya R Rudra <adityarrudra@gmail.com>
  *  Sharvani Somayaji <sharvanilaxmisomayaji@gmail.com>
+ *  Saurabh Mokashi <sherumokashi@gmail.com>
  */
 
-#ifndef SOCKET_STATS_HELPER_H
-#define SOCKET_STATS_HELPER_H
+#ifndef SOCKET_STATS_H
+#define SOCKET_STATS_H
 
-#include "ns3/node-container.h"
-#include "ns3/object-factory.h"
-#include "ns3/tcp-socket-base.h"
-#include "ns3/udp-socket-impl.h"
-#include "ns3/timer.h"
-#include "ns3/node-container.h"
+#include <ns3/node-container.h>
+#include <ns3/object-factory.h>
+#include <ns3/tcp-socket-base.h>
+#include <ns3/timer.h>
+#include <ns3/udp-socket-impl.h>
+
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -48,7 +49,13 @@ class UdpL4Protocol;
 class SocketStatistics: public Object
 {
   public:
+  /**
+     * \brief Constructs a new Socket Statistics object
+     */
     SocketStatistics();
+    /**
+     * \brief Constructs a new Socket Statistics destructor
+     */
     ~SocketStatistics();
 
     // Delete copy constructor and assignment operator to avoid misuse
@@ -121,13 +128,13 @@ class SocketStatistics: public Object
     void SetSocketStatisticsAttribute(std::string n1, const AttributeValue& v1);
 
     /**
-     * \brief Aggregate TCP sockets satisfying the filter criteria at the time of run of Socket Stats utility
+     * \brief Aggregate TCP sockets satisfying the filter at runtime of Socket Stats utility
      * \returns a vector containing the references to the TCP socket objects
      */
     std::vector<Ptr<TcpSocketBase>> ProcessTCPSockets();
 
     /**
-     * \brief Aggregate UDP sockets satisfying the filter criteria at the time of run of Socket Stats utility
+     * \brief Aggregate UDP sockets satisfying the filter at runtime of Socket Stats utility
      * \returns a vector containing the references to the UDP socket objects
      */
     std::vector<Ptr<UdpSocketImpl>> ProcessUDPSockets();
@@ -196,14 +203,14 @@ class SocketStatistics: public Object
     /**
      * \brief Processes and returns the data associated with a TCP socket
      * \param socket a pointer to the TCP socket
-     * \returns an instance of SocketStatInstance with data such as bytesSent, bytesReceived, state, etc.
+     * \returns an instance of SocketStatInstance with data such as bytesSent, state, etc.
      */
     SocketStatInstance GetDataForSocket(Ptr<TcpSocketBase> socket);
 
     /**
      * \brief Processes and returns the data associated with a UDP socket
      * \param socket a pointer to the UDP socket
-     * \returns an instance of SocketStatInstance with data such as bytesSent, bytesReceived, state, etc.
+     * \returns an instance of SocketStatInstance with data such as bytesSent, state, etc.
      */
     SocketStatInstance GetDataForSocket(Ptr<UdpSocketImpl> socket);
 
@@ -257,4 +264,4 @@ class SocketStatistics: public Object
 
 } // namespace ns3
 
-#endif /* SOCKET_STATS_HELPER_H */
+#endif /* SOCKET_STATS_H */

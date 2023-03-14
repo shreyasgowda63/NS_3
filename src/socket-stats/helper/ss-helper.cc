@@ -18,22 +18,23 @@
  * Authors:
  *  Aditya R Rudra <adityarrudra@gmail.com>
  *  Sharvani Somayaji <sharvanilaxmisomayaji@gmail.com>
+ *  Saurabh Mokashi <sherumokashi@gmail.com>
  */
 
 
 #include "ss-helper.h"
-#include "ns3/double.h"
-#include "ns3/log.h"
-#include "ns3/simulator.h"
-#include "ns3/ss.h"
-#include "ns3/tcp-socket-base.h"
-#include "time.h"
+
+#include <ns3/double.h>
+#include <ns3/log.h>
+#include <ns3/simulator.h>
+#include <ns3/ss.h>
+#include <ns3/tcp-socket-base.h>
 
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <time.h>
 #include <vector>
-#include <nlohmann/json.hpp>
 
 #define PERIODIC_CHECK_INTERVAL (Seconds(1))
 
@@ -52,12 +53,6 @@ SocketStatisticsHelper::GetTypeId()
             .SetParent<Object>()
             .SetGroupName("SocketStatisticsHelper")
             .AddConstructor<SocketStatisticsHelper>();
-            // .AddAttribute("StartTime",
-            //               ("The time when socket statistics starts collecting statistics."),
-            //               TimeValue(Seconds(0.0))
-            //               MakeTimeAccessor(&SocketStatisticsHelper::Start),
-            //               MakeTimeChecker());
-
     return tid;
 }
 
@@ -92,7 +87,6 @@ SocketStatisticsHelper::SocketStatisticsHelper(bool dump, bool tcpInfoEnabled)
     m_onlyTcp = false;
 }
 
-// TODO
 void
 SocketStatisticsHelper::DoDispose()
 {
@@ -111,7 +105,6 @@ SocketStatisticsHelper::EnableTcpInfo()
 void
 SocketStatisticsHelper::Start(const Time& startTime, const Time& interval, const Time& endTime)
 {
-    // NS_LOG_FUNCTION(this << time.As(Time::S));
     if (m_enabled)
     {
         NS_LOG_DEBUG("SocketStatisticsHelper already enabled; returning");
@@ -165,7 +158,8 @@ SocketStatisticsHelper::Capture(const Time& startTime)
         exit(1);
     }
     m_resultsDirectory = dir;
-    m_startEvent = Simulator::Schedule(Simulator::Now() + startTime, &SocketStatisticsHelper::SocketStatsRunner, this);
+    m_startEvent = Simulator::Schedule(Simulator::Now() + startTime,
+        &SocketStatisticsHelper::SocketStatsRunner, this);
 }
 
 void 
@@ -201,7 +195,8 @@ SocketStatisticsHelper::ProcessSocketData(Time currentTime)
             this->DumpTcpMetric("rtt", stat.tcpInfo, nodeId,  i, currentTime);
             this->DumpTcpMetric("rto", stat.tcpInfo, nodeId,  i, currentTime);
             this->DumpSocketStats(stat, nodeId,  i, currentTime);
-            m_statsCollection[std::to_string(tcpSockets[i]->GetNode()->GetId()) + "-" + std::to_string(i)].push_back(stat);
+            m_statsCollection[std::to_string(tcpSockets[i]->GetNode()->GetId()) + "-" +
+                std::to_string(i)].push_back(stat);
         }
     }
     if (!m_onlyTcp)
@@ -215,15 +210,18 @@ SocketStatisticsHelper::ProcessSocketData(Time currentTime)
                 m_ss.GetDataForSocket(udpSockets[i]);
             nodeId = udpSockets[i]->GetNode()->GetId();
             this->DumpSocketStats(stat, nodeId,  i, currentTime);
-            m_statsCollection[std::to_string(udpSockets[i]->GetNode()->GetId()) + "-" + std::to_string(i)].push_back(stat);
+            m_statsCollection[std::to_string(udpSockets[i]->GetNode()->GetId()) + "-" +
+                std::to_string(i)].push_back(stat);
         }
     }
 }
 
 void 
-SocketStatisticsHelper::DumpTcpMetric(std::string metricName, TcpSocketBase::TcpSocketInfo tcpInfo, uint32_t nodeId, uint32_t socketId, Time currentTime)
+SocketStatisticsHelper::DumpTcpMetric(std::string metricName, TcpSocketBase::TcpSocketInfo tcpInfo,
+    uint32_t nodeId, uint32_t socketId, Time currentTime)
 {
-    std::string fileName = m_resultsDirectory + "ss-" + std::to_string(nodeId) + "-" + std::to_string(socketId) + "." + metricName;
+    std::string fileName = m_resultsDirectory + "ss-" + std::to_string(nodeId) + "-"
+        + std::to_string(socketId) + "." + metricName;
     std::ofstream dump;
     dump.open(fileName, std::ofstream::out | std::ofstream::app);
     if (!dump.is_open())
@@ -244,9 +242,11 @@ SocketStatisticsHelper::DumpTcpMetric(std::string metricName, TcpSocketBase::Tcp
 }
 
 void
-SocketStatisticsHelper::DumpSocketStats(SocketStatistics::SocketStatInstance statistic, uint32_t nodeId, uint32_t socketId, Time currentTime)
+SocketStatisticsHelper::DumpSocketStats(SocketStatistics::SocketStatInstance statistic,
+    uint32_t nodeId, uint32_t socketId, Time currentTime)
 {
-    std::string fileName = m_resultsDirectory + "ss-" + std::to_string(nodeId) + "-" + std::to_string(socketId) + ".ss";
+    std::string fileName = m_resultsDirectory + "ss-" + std::to_string(nodeId) +
+        "-" + std::to_string(socketId) + ".ss";
     std::ofstream dump;
     dump.open(fileName, std::ofstream::out | std::ofstream::app);
     if (!dump.is_open())
@@ -361,7 +361,7 @@ SocketStatisticsHelper::Set(std::string option)
 void
 SocketStatisticsHelper::Set(std::vector<std::string> options)
 {
-    for(int i = 0; i < options.size(); i++) {
+    for(long unsigned int i = 0; i < options.size(); i++) {
         Set(options[i]);
     }
 }
