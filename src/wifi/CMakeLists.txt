@@ -347,6 +347,7 @@ build_lib(
     test/wifi-emlsr-test.cc
     test/wifi-error-rate-models-test.cc
     test/wifi-ie-fragment-test.cc
+    test/wifi-mac-channel-sounding-test.cc
     test/wifi-mac-ofdma-test.cc
     test/wifi-mac-queue-test.cc
     test/wifi-mlo-test.cc
