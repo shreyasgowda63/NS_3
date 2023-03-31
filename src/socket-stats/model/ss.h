@@ -64,7 +64,7 @@ class SocketStatistics: public Object
 
     /**
      * \brief Get the Type Id object
-     * \return TypeId 
+     * \return TypeId
      */
     static TypeId GetTypeId();
 
@@ -72,15 +72,15 @@ class SocketStatistics: public Object
     std:: map<SocketType, std::string> SocketTypes{{tcp, "tcp"}, {udp, "udp"}};
 
     /**
-     * \brief Structure representing the metrics associated with the socket 
+     * \brief Structure representing the metrics associated with the socket
      */
     struct SocketStatInstance
     {
       std::string socketType;
       uint64_t bytesReceived;
-      uint64_t bytesSent; 
+      uint64_t bytesSent;
       std::string localAddress;
-      std::string peerAddress; 
+      std::string peerAddress;
       TcpSocket::TcpStates_t socketState;
       TcpSocketBase::TcpSocketInfo tcpInfo;
     };
@@ -90,12 +90,12 @@ class SocketStatistics: public Object
      */
     std::unordered_map<std::string, TcpSocket::TcpStates_t> statesDirectory = {
       {"UNCONN", TcpSocket::CLOSED},
-      {"LISTEN", TcpSocket::LISTEN}, 
+      {"LISTEN", TcpSocket::LISTEN},
       {"SYN-SENT", TcpSocket::SYN_SENT},
       {"SYN-RECV", TcpSocket::SYN_RCVD},
       {"ESTAB", TcpSocket::ESTABLISHED},
       {"CLOSE-WAIT", TcpSocket::CLOSE_WAIT},
-      {"LAST-ACK", TcpSocket::LAST_ACK}, 
+      {"LAST-ACK", TcpSocket::LAST_ACK},
       {"FIN-WAIT-1", TcpSocket::FIN_WAIT_1},
       {"FIN-WAIT-2", TcpSocket::FIN_WAIT_2},
       {"CLOSING", TcpSocket::CLOSING},
@@ -116,7 +116,7 @@ class SocketStatistics: public Object
       [TcpSocket::FIN_WAIT_1] = "FIN-WAIT-1",
       [TcpSocket::FIN_WAIT_2] = "FIN-WAIT-2",
       [TcpSocket::CLOSING] = "CLOSING",
-      [TcpSocket::TIME_WAIT] = "TIME-WAIT"  
+      [TcpSocket::TIME_WAIT] = "TIME-WAIT"
     };
 
 
@@ -238,7 +238,7 @@ class SocketStatistics: public Object
      * \param higherPort the higher port number
      */
     void FilterByPortRange(uint16_t lowerPort, uint16_t higherPort);
-    
+
     /**
      * \brief Sets the filter criteria of port for the run of `ss` utility.
      * \param port the port number

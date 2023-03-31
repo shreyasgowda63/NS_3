@@ -58,7 +58,7 @@ namespace ns3
 class SocketStatisticsHelper : public Object
 {
   public:
-   
+
     const char *sstate_name[TcpSocket::LAST_STATE] = {
       [TcpSocket::CLOSED] = "UNCONN",
       [TcpSocket::LISTEN] = "LISTEN",
@@ -70,7 +70,7 @@ class SocketStatisticsHelper : public Object
       [TcpSocket::FIN_WAIT_1] = "FIN-WAIT-1",
       [TcpSocket::FIN_WAIT_2] = "FIN-WAIT-2",
       [TcpSocket::CLOSING] = "CLOSING",
-      [TcpSocket::TIME_WAIT] = "TIME-WAIT"  
+      [TcpSocket::TIME_WAIT] = "TIME-WAIT"
     };
 
     // --- basic methods ---
@@ -82,7 +82,7 @@ class SocketStatisticsHelper : public Object
 
     /**
      * \brief Get the Instance Type Id object
-     * \return TypeId 
+     * \return TypeId
      */
     TypeId GetInstanceTypeId() const override;
 
@@ -125,13 +125,13 @@ class SocketStatisticsHelper : public Object
 
     /**
      * \brief Sets the option specified for the Socket Stats run, i.e. "-i", etc
-     * \param option 
+     * \param option
      */
     void Set(std::string option);
 
     /**
      * \brief Sets the option specified for the Socket Stats run, i.e. "-i", etc
-     * \param option 
+     * \param option
      */
     void Set(std::vector<std::string> options);
 
@@ -190,10 +190,10 @@ class SocketStatisticsHelper : public Object
       uint16_t higherPort, std::string addr);
 
     /**
-     * \brief Get the collection of statistics for a specific socket 
+     * \brief Get the collection of statistics for a specific socket
      * \param nodeId Node ID of the node, the socket is associated with.
      * \param socketId ID of the socket
-     * \return Collection of statistics for a specific socket 
+     * \return Collection of statistics for a specific socket
      */
     std::vector<SocketStatistics::SocketStatInstance> GetStatistics(uint32_t nodeId,
       uint32_t socketId);
@@ -211,20 +211,20 @@ class SocketStatisticsHelper : public Object
      * \brief Schedules the run of socket collection at a fixed interval
      */
     void ScheduleSocketCollectionRun();
-    
+
     /**
      * \brief Aggregates sockets and collects the statistics.
      */
     void SocketStatsRunner();
 
     /**
-     * \brief a utility function to process the sockets. 
+     * \brief a utility function to process the sockets.
      */
     void ProcessSocketData(Time currentTime);
 
     /**
      * \brief Dump stats like socket type, bytes sent and received, for a socket at an instance
-     * \param statistic Instance of SocketStatistics::SocketStatInstance 
+     * \param statistic Instance of SocketStatistics::SocketStatInstance
      * \param nodeId ID of the node
      * \param socketId ID of the socket
      * \param currentTime Current Time Instance

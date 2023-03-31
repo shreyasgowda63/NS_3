@@ -7,7 +7,7 @@ Model Description
 The source code for the new module lives in the directory ``src/socket-stats``.
 
 The main goals behind the development of SocketStatistics is to automate most of the tasks of gathering statistics
-in a simple yet efficient way in terms of memory and system resources consumption. The module tracks the sockets 
+in a simple yet efficient way in terms of memory and system resources consumption. The module tracks the sockets
 in the simulation and records metrics like bytesSent, bytesReceived, state, congestion window, RTT, RTO, etc.
 
 The statistics are collected for each socket can be exported as a dump. Moreover,
@@ -18,8 +18,8 @@ Design
 
 Socket Stats module is designed in a modular way. It can be extended by subclassing
 ``ns3::SocketStatisticsHelper`` and ``ns3::SocketStatistics``.
-Typically, an instance of ``ns3::SocketStatisticsHelper`` works by listening to the 
-existing sockets in the simulation, and then uses its own ``ns3::SocketStatistics`` 
+Typically, an instance of ``ns3::SocketStatisticsHelper`` works by listening to the
+existing sockets in the simulation, and then uses its own ``ns3::SocketStatistics``
 instance to record the statistics for each socket.
 
 Usage
@@ -50,7 +50,7 @@ The helper API follows the pattern usage of normal helpers.
 Through the helper, the `ss` utility probes the nodes, extracts the sockets, and
 print the statistics.
 
-One important thing is: the :cpp:class:`ns3::SocketStatisticsHelper` must be instantiated 
+One important thing is: the :cpp:class:`ns3::SocketStatisticsHelper` must be instantiated
 only once in the simulation and the :cpp:class:`ns3::SocketStatistics` should not be manually
 instantiated in the simulation as it is installed internally by the class :cpp:class:`ns3::SocketStatistics`.
 
@@ -102,7 +102,7 @@ Filtering:
 ==========
 
 Consider a `:cpp:class:ns3::SocketStatisticsHelper` instance initialised as:
-   
+
    SocketStatisticsHelper ss;
 
 The module allows for filtering the sockets based on the following attributes:
@@ -110,7 +110,7 @@ The module allows for filtering the sockets based on the following attributes:
 * Filtering by port or port range:
 
 To filter sockets with a specific port:
- 
+
    ss.FilterByPort(port_number);
 
 To filter sockets with ports within a range:
@@ -126,9 +126,9 @@ The typical way to assign node filtering criteria is to pass in a pointer to a n
 
 The utility provides option to filter sockets having a particular state or from a list of states.
 This is specific to TCP sockets only.
-   
+
    ss.FilterByState(state);
-  
+
 * Filtering by IPv4 Address:
 
 The typical way is to pass in a string containing the associated IPv4 address.
@@ -150,7 +150,7 @@ or "rto".
 The utility also provides access to the socket statistics data structures to the end user.
 To get the statistics of a specific socket:
      ss.GetStatistics(nodeId, socketId)
-    
+
 Scope and Limitations
 =====================
 

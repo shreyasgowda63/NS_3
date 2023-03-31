@@ -21,7 +21,6 @@
  *  Saurabh Mokashi <sherumokashi@gmail.com>
  */
 
-
 #include "ss-helper.h"
 
 #include <ns3/double.h>
@@ -48,11 +47,10 @@ NS_OBJECT_ENSURE_REGISTERED(SocketStatisticsHelper);
 TypeId
 SocketStatisticsHelper::GetTypeId()
 {
-    static TypeId tid =
-        TypeId("ns3::SocketStatisticsHelper")
-            .SetParent<Object>()
-            .SetGroupName("SocketStatisticsHelper")
-            .AddConstructor<SocketStatisticsHelper>();
+    static TypeId tid = TypeId("ns3::SocketStatisticsHelper")
+                            .SetParent<Object>()
+                            .SetGroupName("SocketStatisticsHelper")
+                            .AddConstructor<SocketStatisticsHelper>();
     return tid;
 }
 
@@ -75,7 +73,7 @@ SocketStatisticsHelper::SocketStatisticsHelper(bool dump)
     NS_LOG_FUNCTION(this);
     m_dump = dump;
     m_onlyTcp = false;
-    m_onlyUdp = false; 
+    m_onlyUdp = false;
 }
 
 SocketStatisticsHelper::SocketStatisticsHelper(bool dump, bool tcpInfoEnabled)
@@ -113,10 +111,10 @@ SocketStatisticsHelper::Start(const Time& startTime, const Time& interval, const
     Simulator::Cancel(m_startEvent);
     m_interval = interval;
 
-    if(endTime != Seconds(0)) {
+    if (endTime != Seconds(0))
+    {
         m_end = Simulator::Now() + endTime;
     }
-    
 
     time_t rawtime;
     struct tm* timeinfo;
@@ -125,14 +123,16 @@ SocketStatisticsHelper::Start(const Time& startTime, const Time& interval, const
     timeinfo = localtime(&rawtime);
     strftime(buffer, sizeof(buffer), "%d-%m-%Y-%I-%M-%S", timeinfo);
     std::string currentTime(buffer);
-    std::string dir = "ss-results/" + currentTime+ "/";
+    std::string dir = "ss-results/" + currentTime + "/";
     std::string dirToSave = "mkdir -p " + dir;
     if (system(dirToSave.c_str()) == -1)
     {
         exit(1);
     }
     m_resultsDirectory = dir;
-    m_startEvent = Simulator::Schedule(Simulator::Now() + startTime, &SocketStatisticsHelper::ScheduleSocketCollectionRun, this);
+    m_startEvent = Simulator::Schedule(Simulator::Now() + startTime,
+                                       &SocketStatisticsHelper::ScheduleSocketCollectionRun,
+                                       this);
 }
 
 void
@@ -151,7 +151,7 @@ SocketStatisticsHelper::Capture(const Time& startTime)
     timeinfo = localtime(&rawtime);
     strftime(buffer, sizeof(buffer), "%d-%m-%Y-%I-%M-%S", timeinfo);
     std::string currentTime(buffer);
-    std::string dir = "ss-results/" + currentTime+ "/";
+    std::string dir = "ss-results/" + currentTime + "/";
     std::string dirToSave = "mkdir -p " + dir;
     if (system(dirToSave.c_str()) == -1)
     {
@@ -159,16 +159,19 @@ SocketStatisticsHelper::Capture(const Time& startTime)
     }
     m_resultsDirectory = dir;
     m_startEvent = Simulator::Schedule(Simulator::Now() + startTime,
-        &SocketStatisticsHelper::SocketStatsRunner, this);
+                                       &SocketStatisticsHelper::SocketStatsRunner,
+                                       this);
 }
 
-void 
+void
 SocketStatisticsHelper::ScheduleSocketCollectionRun()
 {
-    if(m_end != Seconds(0) && m_end <= Simulator::Now()) {
+    if (m_end != Seconds(0) && m_end <= Simulator::Now())
+    {
         return;
     }
-    if(m_end == Seconds(0) && Simulator::IsFinished()) {
+    if (m_end == Seconds(0) && Simulator::IsFinished())
+    {
         return;
     }
     this->SocketStatsRunner();
@@ -178,25 +181,26 @@ SocketStatisticsHelper::ScheduleSocketCollectionRun()
 void
 SocketStatisticsHelper::ProcessSocketData(Time currentTime)
 {
-    if(!m_onlyUdp){
+    if (!m_onlyUdp)
+    {
         std::vector<Ptr<TcpSocketBase>> tcpSockets = m_ss.ProcessTCPSockets();
         uint16_t tcpSocketsCount = tcpSockets.size();
         uint32_t nodeId;
         for (uint32_t i = 0; i < tcpSocketsCount; i++)
         {
-            SocketStatistics::SocketStatInstance stat =
-                m_ss.GetDataForSocket(tcpSockets[i]);
+            SocketStatistics::SocketStatInstance stat = m_ss.GetDataForSocket(tcpSockets[i]);
             if (m_tcpInfo)
             {
                 stat.tcpInfo = tcpSockets[i]->ProcessTcpSocketInfo();
             }
             nodeId = tcpSockets[i]->GetNode()->GetId();
-            this->DumpTcpMetric("cwnd", stat.tcpInfo, nodeId,  i, currentTime);
-            this->DumpTcpMetric("rtt", stat.tcpInfo, nodeId,  i, currentTime);
-            this->DumpTcpMetric("rto", stat.tcpInfo, nodeId,  i, currentTime);
-            this->DumpSocketStats(stat, nodeId,  i, currentTime);
+            this->DumpTcpMetric("cwnd", stat.tcpInfo, nodeId, i, currentTime);
+            this->DumpTcpMetric("rtt", stat.tcpInfo, nodeId, i, currentTime);
+            this->DumpTcpMetric("rto", stat.tcpInfo, nodeId, i, currentTime);
+            this->DumpSocketStats(stat, nodeId, i, currentTime);
             m_statsCollection[std::to_string(tcpSockets[i]->GetNode()->GetId()) + "-" +
-                std::to_string(i)].push_back(stat);
+                              std::to_string(i)]
+                .push_back(stat);
         }
     }
     if (!m_onlyTcp)
@@ -206,22 +210,25 @@ SocketStatisticsHelper::ProcessSocketData(Time currentTime)
         uint32_t nodeId;
         for (uint32_t i = 0; i < udpSocketsCount; i++)
         {
-            SocketStatistics::SocketStatInstance stat =
-                m_ss.GetDataForSocket(udpSockets[i]);
+            SocketStatistics::SocketStatInstance stat = m_ss.GetDataForSocket(udpSockets[i]);
             nodeId = udpSockets[i]->GetNode()->GetId();
-            this->DumpSocketStats(stat, nodeId,  i, currentTime);
+            this->DumpSocketStats(stat, nodeId, i, currentTime);
             m_statsCollection[std::to_string(udpSockets[i]->GetNode()->GetId()) + "-" +
-                std::to_string(i)].push_back(stat);
+                              std::to_string(i)]
+                .push_back(stat);
         }
     }
 }
 
-void 
-SocketStatisticsHelper::DumpTcpMetric(std::string metricName, TcpSocketBase::TcpSocketInfo tcpInfo,
-    uint32_t nodeId, uint32_t socketId, Time currentTime)
+void
+SocketStatisticsHelper::DumpTcpMetric(std::string metricName,
+                                      TcpSocketBase::TcpSocketInfo tcpInfo,
+                                      uint32_t nodeId,
+                                      uint32_t socketId,
+                                      Time currentTime)
 {
-    std::string fileName = m_resultsDirectory + "ss-" + std::to_string(nodeId) + "-"
-        + std::to_string(socketId) + "." + metricName;
+    std::string fileName = m_resultsDirectory + "ss-" + std::to_string(nodeId) + "-" +
+                           std::to_string(socketId) + "." + metricName;
     std::ofstream dump;
     dump.open(fileName, std::ofstream::out | std::ofstream::app);
     if (!dump.is_open())
@@ -229,13 +236,16 @@ SocketStatisticsHelper::DumpTcpMetric(std::string metricName, TcpSocketBase::Tcp
         std::cout << "Error dumping stats!" << std::endl;
         return;
     }
-    if(metricName == "cwnd") {
+    if (metricName == "cwnd")
+    {
         dump << currentTime.GetSeconds() << std::setw(40) << tcpInfo.cwnd << std::endl;
     }
-    else if(metricName == "rtt") {
+    else if (metricName == "rtt")
+    {
         dump << currentTime.GetSeconds() << std::setw(40) << tcpInfo.rtt << std::endl;
     }
-    else if(metricName == "rto") {
+    else if (metricName == "rto")
+    {
         dump << currentTime.GetSeconds() << std::setw(40) << tcpInfo.rto << std::endl;
     }
     dump.close();
@@ -243,10 +253,12 @@ SocketStatisticsHelper::DumpTcpMetric(std::string metricName, TcpSocketBase::Tcp
 
 void
 SocketStatisticsHelper::DumpSocketStats(SocketStatistics::SocketStatInstance statistic,
-    uint32_t nodeId, uint32_t socketId, Time currentTime)
+                                        uint32_t nodeId,
+                                        uint32_t socketId,
+                                        Time currentTime)
 {
-    std::string fileName = m_resultsDirectory + "ss-" + std::to_string(nodeId) +
-        "-" + std::to_string(socketId) + ".ss";
+    std::string fileName = m_resultsDirectory + "ss-" + std::to_string(nodeId) + "-" +
+                           std::to_string(socketId) + ".ss";
     std::ofstream dump;
     dump.open(fileName, std::ofstream::out | std::ofstream::app);
     if (!dump.is_open())
@@ -255,11 +267,10 @@ SocketStatisticsHelper::DumpSocketStats(SocketStatistics::SocketStatInstance sta
         return;
     }
     dump << currentTime.GetSeconds() << std::setw(40) << statistic.socketType << std::setw(40)
-             << (statistic.socketType == "tcp" ? sstate_name[statistic.socketState] : "")
-             << std::setw(40) << statistic.bytesSent << std::setw(40)
-             << statistic.bytesReceived << std::setw(40)
-             << statistic.localAddress << std::setw(40)
-             << statistic.peerAddress << std::endl;
+         << (statistic.socketType == "tcp" ? sstate_name[statistic.socketState] : "")
+         << std::setw(40) << statistic.bytesSent << std::setw(40) << statistic.bytesReceived
+         << std::setw(40) << statistic.localAddress << std::setw(40) << statistic.peerAddress
+         << std::endl;
     dump.close();
 }
 
@@ -319,10 +330,10 @@ SocketStatisticsHelper::FilterByIPv4Address(std::string addr)
 
 void
 SocketStatisticsHelper::Filter(NodeContainer nodeContainer,
-                         std::vector<std::string> states,
-                         uint16_t lowerPort,
-                         uint16_t higherPort,
-                         std::string addr)
+                               std::vector<std::string> states,
+                               uint16_t lowerPort,
+                               uint16_t higherPort,
+                               std::string addr)
 {
     FilterByNodes(nodeContainer);
     FilterByState(states);
@@ -331,10 +342,11 @@ SocketStatisticsHelper::Filter(NodeContainer nodeContainer,
 }
 
 std::vector<SocketStatistics::SocketStatInstance>
-SocketStatisticsHelper::GetStatistics(uint32_t nodeId, uint32_t socketId) 
+SocketStatisticsHelper::GetStatistics(uint32_t nodeId, uint32_t socketId)
 {
     std::string socketKey = std::to_string(nodeId) + "-" + std::to_string(socketId);
-    if(m_statsCollection.find(socketKey) == m_statsCollection.end()) {
+    if (m_statsCollection.find(socketKey) == m_statsCollection.end())
+    {
         std::cout << "ERROR: There doesn't exist a record for the given socket" << std::endl;
         exit(1);
     }
@@ -344,16 +356,20 @@ SocketStatisticsHelper::GetStatistics(uint32_t nodeId, uint32_t socketId)
 void
 SocketStatisticsHelper::Set(std::string option)
 {
-    if(option == "-i") {
+    if (option == "-i")
+    {
         m_tcpInfo = true;
     }
-    else if(option == "-t") {
+    else if (option == "-t")
+    {
         m_onlyTcp = true;
     }
-    else if(option == "-u") {
+    else if (option == "-u")
+    {
         m_onlyUdp = true;
-    } 
-    else {
+    }
+    else
+    {
         std::cout << "Error: Unknown Option " << option << std::endl;
     }
 }
@@ -361,7 +377,8 @@ SocketStatisticsHelper::Set(std::string option)
 void
 SocketStatisticsHelper::Set(std::vector<std::string> options)
 {
-    for(long unsigned int i = 0; i < options.size(); i++) {
+    for (long unsigned int i = 0; i < options.size(); i++)
+    {
         Set(options[i]);
     }
 }

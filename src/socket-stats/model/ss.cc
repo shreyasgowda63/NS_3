@@ -49,17 +49,16 @@ SocketStatistics::~SocketStatistics()
 {
 }
 
-NS_OBJECT_ENSURE_REGISTERED (SocketStatistics);
+NS_OBJECT_ENSURE_REGISTERED(SocketStatistics);
 
 TypeId
 SocketStatistics::GetTypeId()
 {
-    static TypeId tid =
-        TypeId("ns3::SocketStatistics")
-            .SetParent<Object>()
-            .SetGroupName("SocketStatistics")
-            .AddConstructor<SocketStatistics>();
-            
+    static TypeId tid = TypeId("ns3::SocketStatistics")
+                            .SetParent<Object>()
+                            .SetGroupName("SocketStatistics")
+                            .AddConstructor<SocketStatistics>();
+
     return tid;
 }
 
