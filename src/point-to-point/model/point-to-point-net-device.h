@@ -116,6 +116,13 @@ class PointToPointNetDevice : public NetDevice
     bool Attach(Ptr<PointToPointChannel> ch);
 
     /**
+     * Detach the device from the channel.
+     * 
+     * \param ch Pointer to the attached channel.
+     */
+    bool Detach (Ptr<PointToPointChannel> ch);
+
+    /**
      * Attach a queue to the PointToPointNetDevice.
      *
      * The PointToPointNetDevice "owns" a queue that implements a queueing
@@ -267,6 +274,17 @@ class PointToPointNetDevice : public NetDevice
      * It calls also the linkChange callback.
      */
     void NotifyLinkUp();
+
+    /**
+     * \brief Bring the link down and call
+     * linkChange callback.
+     */
+    void NotifyLinkDown ();
+
+    /**
+     * Abort a packet send event.
+     */
+    void TransmitAbort ();
 
     /**
      * Enumeration of the states of the transmit machine of the net device.
@@ -443,6 +461,8 @@ class PointToPointNetDevice : public NetDevice
     uint32_t m_mtu;
 
     Ptr<Packet> m_currentPkt; //!< Current packet processed
+
+    EventId m_transmitCompleteEvent; //!< EventId for Scheduled TransmitComplete event.
 
     /**
      * \brief PPP to Ethernet protocol number mapping

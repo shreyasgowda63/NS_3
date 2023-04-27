@@ -22,14 +22,17 @@ build_lib(
     helper/point-to-point-helper.cc
     model/point-to-point-channel.cc
     model/point-to-point-net-device.cc
+    model/point-to-point-net-device-state.cc
     model/ppp-header.cc
   HEADER_FILES
     ${mpi_headers}
     helper/point-to-point-helper.h
     model/point-to-point-channel.h
     model/point-to-point-net-device.h
+    model/point-to-point-net-device-state.h
     model/ppp-header.h
   LIBRARIES_TO_LINK ${libnetwork}
                     ${mpi_libraries}
   TEST_SOURCES test/point-to-point-test.cc
+               test/point-to-point-net-device-state-test.cc
 )

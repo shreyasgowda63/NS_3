@@ -73,6 +73,12 @@ class PointToPointChannel : public Channel
     void Attach(Ptr<PointToPointNetDevice> device);
 
     /**
+     * \brief Detach a given netdevice to this channel
+     * \param device pointer to the netdevice to detach to the channel
+     */
+    void Detach (Ptr<PointToPointNetDevice> device);
+
+    /**
      * \brief Transmit a packet over this channel
      * \param p Packet to transmit
      * \param src Source PointToPointNetDevice
