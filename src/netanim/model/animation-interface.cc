@@ -1001,8 +1001,8 @@ AnimationInterface::WifiPhyRxBeginTrace(std::string context,
         NS_LOG_WARN("WifiPhyRxBegin: unknown Uid, but we are adding a wifi packet");
     }
     /// \todo NS_ASSERT (WifiPacketIsPending (animUid) == true);
-    m_pendingWifiPackets[animUid].ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
-    OutputWirelessPacketRxInfo(p, m_pendingWifiPackets[animUid], animUid);
+    m_pendingPackets["Wifi"][animUid].ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
+    OutputWirelessPacketRxInfo(p, m_pendingPackets["Wifi"][animUid], animUid);
 }
 
 void
@@ -1053,7 +1053,7 @@ AnimationInterface::LrWpanPhyTxBeginTrace(std::string context, Ptr<const Packet>
     AnimPacketInfo pktInfo(ndev, Simulator::Now());
     AddPendingPacket(AnimationInterface::LRWPAN, gAnimUid, pktInfo);
 
-    OutputWirelessPacketTxInfo(p, m_pendingLrWpanPackets[gAnimUid], gAnimUid);
+    OutputWirelessPacketTxInfo(p, m_pendingPackets["LrWpan"][gAnimUid], gAnimUid);
 }
 
 void
@@ -1080,8 +1080,8 @@ AnimationInterface::LrWpanPhyRxBeginTrace(std::string context, Ptr<const Packet>
     }
 
     UpdatePosition(n);
-    m_pendingLrWpanPackets[animUid].ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
-    OutputWirelessPacketRxInfo(p, m_pendingLrWpanPackets[animUid], animUid);
+    m_pendingPackets["LrWpan"][animUid].ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
+    OutputWirelessPacketRxInfo(p, m_pendingPackets["LrWpan"][animUid], animUid);
 }
 
 void
@@ -1124,8 +1124,8 @@ AnimationInterface::WavePhyRxBeginTrace(std::string context, Ptr<const Packet> p
         NS_LOG_WARN("WavePhyRxBegin: unknown Uid, but we are adding a wave packet");
     }
     /// \todo NS_ASSERT (WavePacketIsPending (animUid) == true);
-    m_pendingWavePackets[animUid].ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
-    OutputWirelessPacketRxInfo(p, m_pendingWavePackets[animUid], animUid);
+    m_pendingPackets["Wave"][animUid].ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
+    OutputWirelessPacketRxInfo(p, m_pendingPackets["Wave"][animUid], animUid);
 }
 
 void
@@ -1210,7 +1210,7 @@ AnimationInterface::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketB
             NS_LOG_WARN("LteSpectrumPhyRxTrace: unknown Uid");
             return;
         }
-        AnimPacketInfo& pktInfo = m_pendingLtePackets[animUid];
+        AnimPacketInfo& pktInfo = m_pendingPackets["Lte"][animUid];
         pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
         OutputWirelessPacketRxInfo(p, pktInfo, animUid);
     }
@@ -1251,7 +1251,7 @@ AnimationInterface::CsmaPhyTxEndTrace(std::string context, Ptr<const Packet> p)
         NS_LOG_WARN("Unknown Uid, but adding Csma Packet anyway");
     }
     /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true);
-    AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
+    AnimPacketInfo& pktInfo = m_pendingPackets["Csma"][animUid];
     pktInfo.m_lbTx = Simulator::Now().GetSeconds();
 }
 
@@ -1270,7 +1270,7 @@ AnimationInterface::CsmaPhyRxEndTrace(std::string context, Ptr<const Packet> p)
         return;
     }
     /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
-    AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
+    AnimPacketInfo& pktInfo = m_pendingPackets["Csma"][animUid];
     pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
     NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << animUid);
     NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << animUid << " complete");
@@ -1291,7 +1291,7 @@ AnimationInterface::CsmaMacRxTrace(std::string context, Ptr<const Packet> p)
         return;
     }
     /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
-    AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
+    AnimPacketInfo& pktInfo = m_pendingPackets["Csma"][animUid];
     NS_LOG_INFO("MacRxTrace for packet:" << animUid << " complete");
     OutputCsmaPacket(p, pktInfo);
 }
@@ -1396,31 +1396,31 @@ AnimationInterface::ProtocolTypeToPendingPackets(AnimationInterface::ProtocolTyp
     switch (protocolType)
     {
     case AnimationInterface::WIFI: {
-        pendingPackets = &m_pendingWifiPackets;
+        pendingPackets = &m_pendingPackets["Wifi"];
         break;
     }
     case AnimationInterface::UAN: {
-        pendingPackets = &m_pendingUanPackets;
+        pendingPackets = &m_pendingPackets["Uan"];
         break;
     }
     case AnimationInterface::CSMA: {
-        pendingPackets = &m_pendingCsmaPackets;
+        pendingPackets = &m_pendingPackets["Csma"];
         break;
     }
     case AnimationInterface::WIMAX: {
-        pendingPackets = &m_pendingWimaxPackets;
+        pendingPackets = &m_pendingPackets["Wimax"];
         break;
     }
     case AnimationInterface::LTE: {
-        pendingPackets = &m_pendingLtePackets;
+        pendingPackets = &m_pendingPackets["Lte"];
         break;
     }
     case AnimationInterface::LRWPAN: {
-        pendingPackets = &m_pendingLrWpanPackets;
+        pendingPackets = &m_pendingPackets["LrWpan"];
         break;
     }
     case AnimationInterface::WAVE: {
-        pendingPackets = &m_pendingWavePackets;
+        pendingPackets = &m_pendingPackets["Wave"];
         break;
     }
     }
