@@ -42,6 +42,9 @@ NS_LOG_COMPONENT_DEFINE("WifiNetDevice");
 
 NS_OBJECT_ENSURE_REGISTERED(WifiNetDevice);
 
+/// This value conforms to the 802.11 specification
+constexpr uint16_t MAX_MSDU_SIZE = 2304;
+
 TypeId
 WifiNetDevice::GetTypeId()
 {

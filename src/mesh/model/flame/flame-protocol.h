@@ -163,8 +163,6 @@ class FlameProtocol : public MeshL2RoutingProtocol
     void ResetStats();
 
   private:
-    /// LLC protocol number reserved by flame
-    static const uint16_t FLAME_PROTOCOL = 0x4040;
     /**
      * \brief Handles a packet: adds a routing information and drops packets by TTL or Seqno
      *

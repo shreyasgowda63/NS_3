@@ -48,6 +48,12 @@ NS_LOG_COMPONENT_DEFINE("WimaxNetDevice");
 
 NS_OBJECT_ENSURE_REGISTERED(WimaxNetDevice);
 
+/// Maximum MSDU size
+constexpr uint16_t MAX_MSDU_SIZE = 1500;
+
+/// Recommended by WiMax forum
+constexpr uint16_t DEFAULT_MSDU_SIZE = 1400;
+
 uint32_t WimaxNetDevice::m_nrFrames = 0;
 uint8_t WimaxNetDevice::m_direction = ~0;
 Time WimaxNetDevice::m_frameStartTime = Seconds(0);

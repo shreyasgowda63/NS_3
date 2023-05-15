@@ -39,9 +39,6 @@ class VhtConfiguration;
 class HeConfiguration;
 class EhtConfiguration;
 
-/// This value conforms to the 802.11 specification
-constexpr uint16_t MAX_MSDU_SIZE = 2304;
-
 /**
  * \defgroup wifi Wifi Models
  *

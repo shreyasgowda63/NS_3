@@ -42,6 +42,9 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("DhcpServer");
 NS_OBJECT_ENSURE_REGISTERED(DhcpServer);
 
+/// Port number of DHCP server
+constexpr uint16_t PORT = 67;
+
 TypeId
 DhcpServer::GetTypeId()
 {

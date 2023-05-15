@@ -35,10 +35,13 @@ NS_LOG_COMPONENT_DEFINE("TcpHeader");
 
 NS_OBJECT_ENSURE_REGISTERED(TcpHeader);
 
+/// Maximum options length
+constexpr uint8_t MAX_OPTIONS_LEN = 40;
+
 std::string
 TcpHeader::FlagsToString(uint8_t flags, const std::string& delimiter)
 {
-    static const char* flagNames[8] = {"FIN", "SYN", "RST", "PSH", "ACK", "URG", "ECE", "CWR"};
+    const char* flagNames[8] = {"FIN", "SYN", "RST", "PSH", "ACK", "URG", "ECE", "CWR"};
     std::string flagsDescription = "";
     for (uint8_t i = 0; i < 8; ++i)
     {
@@ -141,7 +144,7 @@ TcpHeader::GetOptionLength() const
 uint8_t
 TcpHeader::GetMaxOptionLength() const
 {
-    return m_maxOptionsLen;
+    return MAX_OPTIONS_LEN;
 }
 
 uint8_t
@@ -345,7 +348,7 @@ TcpHeader::Deserialize(Buffer::Iterator start)
     // Deserialize options if they exist
     m_options.clear();
     uint32_t optionLen = (m_length - 5) * 4;
-    if (optionLen > m_maxOptionsLen)
+    if (optionLen > MAX_OPTIONS_LEN)
     {
         NS_LOG_ERROR("Illegal TCP option length " << optionLen << "; options discarded");
         return 20;
@@ -431,7 +434,7 @@ TcpHeader::CalculateHeaderLength() const
 bool
 TcpHeader::AppendOption(Ptr<const TcpOption> option)
 {
-    if (m_optionsLen + option->GetSerializedSize() <= m_maxOptionsLen)
+    if (m_optionsLen + option->GetSerializedSize() <= MAX_OPTIONS_LEN)
     {
         if (!TcpOption::IsKindKnown(option->GetKind()))
         {

@@ -199,12 +199,6 @@ class BriteTopologyHelper
 
   private:
     /**
-     * brite values are unitless however all examples provided use mbps to specify rate
-     * this constant value is used to convert the mbps provided by brite to bps.
-     */
-    static const int mbpsToBps = 1000000;
-
-    /**
      * \brief Node information from BRITE
      *
      * The BRITE code generates a graph and returns

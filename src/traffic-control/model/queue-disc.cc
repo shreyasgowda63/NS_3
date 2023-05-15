@@ -36,6 +36,9 @@ NS_LOG_COMPONENT_DEFINE("QueueDisc");
 
 NS_OBJECT_ENSURE_REGISTERED(QueueDiscClass);
 
+/// Default quota (as in /proc/sys/net/core/dev_weight)
+constexpr uint32_t DEFAULT_QUOTA = 64;
+
 TypeId
 QueueDiscClass::GetTypeId()
 {

@@ -684,9 +684,6 @@ class QueueDisc : public Object
      */
     void PacketDequeued(Ptr<const QueueDiscItem> item);
 
-    /// Default quota (as in /proc/sys/net/core/dev_weight)
-    static const uint32_t DEFAULT_QUOTA = 64;
-
     std::vector<Ptr<InternalQueue>> m_queues;   //!< Internal queues
     std::vector<Ptr<PacketFilter>> m_filters;   //!< Packet filters
     std::vector<Ptr<QueueDiscClass>> m_classes; //!< Classes

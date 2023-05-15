@@ -345,9 +345,8 @@ class TcpHeader : public Header
     bool m_calcChecksum{false}; //!< Flag to calculate checksum
     bool m_goodChecksum{true};  //!< Flag to indicate that checksum is correct
 
-    static const uint8_t m_maxOptionsLen = 40; //!< Maximum options length
-    TcpOptionList m_options;                   //!< TcpOption present in the header
-    uint8_t m_optionsLen{0};                   //!< Tcp options length.
+    TcpOptionList m_options; //!< TcpOption present in the header
+    uint8_t m_optionsLen{0}; //!< Tcp options length.
 };
 
 } // namespace ns3

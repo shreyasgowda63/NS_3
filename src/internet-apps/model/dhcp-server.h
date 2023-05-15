@@ -71,8 +71,6 @@ class DhcpServer : public Application
     void StartApplication() override;
     void StopApplication() override;
 
-    static const int PORT = 67; //!< Port number of DHCP server
-
     /**
      * \brief Handles incoming packets from the network
      * \param socket Socket bound to port 67 of the DHCP server

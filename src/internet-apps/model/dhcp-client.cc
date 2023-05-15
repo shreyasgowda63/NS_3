@@ -40,6 +40,9 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("DhcpClient");
 NS_OBJECT_ENSURE_REGISTERED(DhcpClient);
 
+/// DHCP server port
+constexpr uint16_t DHCP_PEER_PORT = 67;
+
 TypeId
 DhcpClient::GetTypeId()
 {
