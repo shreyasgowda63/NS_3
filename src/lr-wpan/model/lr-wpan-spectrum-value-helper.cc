@@ -111,9 +111,9 @@ LrWpanSpectrumValueHelper::CreateNoisePowerSpectralDensity(uint32_t channel)
     NS_LOG_FUNCTION(this);
     Ptr<SpectrumValue> noisePsd = Create<SpectrumValue>(g_LrWpanSpectrumModel);
 
-    static const double BOLTZMANN = 1.3803e-23;
+    constexpr double BOLTZMANN = 1.3803e-23;
     // Nt  is the power of thermal noise in W
-    double Nt = BOLTZMANN * 290.0;
+    constexpr double Nt = BOLTZMANN * 290.0;
     // noise Floor (W) which accounts for thermal noise and non-idealities of the receiver
     double noisePowerDensity = m_noiseFactor * Nt;
 

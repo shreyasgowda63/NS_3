@@ -60,7 +60,9 @@ class RoutingProtocol : public Ipv4RoutingProtocol
      * \return the object TypeId
      */
     static TypeId GetTypeId();
-    static const uint32_t DSDV_PORT;
+
+    /// UDP Port for DSDV control traffic
+    static constexpr uint32_t DSDV_PORT{269};
 
     /// c-tor
     RoutingProtocol();

@@ -46,7 +46,7 @@ namespace ns3
  * Number of bits discarded from the time representation.
  * The time is assumed to be in nanoseconds.
  */
-static const int CODEL_SHIFT = 10;
+constexpr int CODEL_SHIFT = 10;
 
 constexpr uint32_t DEFAULT_CODEL_LIMIT = 1000;
 constexpr uint32_t REC_INV_SQRT_BITS = 8 * sizeof(uint16_t);

@@ -48,7 +48,7 @@ class TcpBbr : public TcpCongestionOps
     /**
      * \brief The number of phases in the BBR ProbeBW gain cycle.
      */
-    static const uint8_t GAIN_CYCLE_LENGTH = 8;
+    static constexpr uint8_t GAIN_CYCLE_LENGTH{8};
 
     /**
      * \brief BBR uses an eight-phase cycle with the given pacing_gain value

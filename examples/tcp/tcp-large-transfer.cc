@@ -44,16 +44,16 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("TcpLargeTransfer");
 
 /// The number of bytes to send in this simulation.
-static const uint32_t totalTxBytes = 2000000;
+constexpr uint32_t TOTAL_TX_BYTES = 2000000;
 /// The actual number of sent bytes.
 static uint32_t currentTxBytes = 0;
 
 // Perform series of 1040 byte writes (this is a multiple of 26 since
 // we want to detect data splicing in the output stream)
 /// Write size.
-static const uint32_t writeSize = 1040;
+constexpr uint32_t WRITE_SIZE = 1040;
 /// Data to be written.
-uint8_t data[writeSize];
+uint8_t data[WRITE_SIZE];
 
 // These are for starting the writing process, and handling the sending
 // socket's notification upcalls (events).  These two together more or less
@@ -103,7 +103,7 @@ main(int argc, char* argv[])
     cmd.Parse(argc, argv);
 
     // initialize the tx buffer.
-    for (uint32_t i = 0; i < writeSize; ++i)
+    for (uint32_t i = 0; i < WRITE_SIZE; ++i)
     {
         char m = toascii(97 + i % 26);
         data[i] = m;
@@ -221,11 +221,11 @@ StartFlow(Ptr<Socket> localSocket, Ipv4Address servAddress, uint16_t servPort)
 void
 WriteUntilBufferFull(Ptr<Socket> localSocket, uint32_t txSpace)
 {
-    while (currentTxBytes < totalTxBytes && localSocket->GetTxAvailable() > 0)
+    while (currentTxBytes < TOTAL_TX_BYTES && localSocket->GetTxAvailable() > 0)
     {
-        uint32_t left = totalTxBytes - currentTxBytes;
-        uint32_t dataOffset = currentTxBytes % writeSize;
-        uint32_t toWrite = writeSize - dataOffset;
+        uint32_t left = TOTAL_TX_BYTES - currentTxBytes;
+        uint32_t dataOffset = currentTxBytes % WRITE_SIZE;
+        uint32_t toWrite = WRITE_SIZE - dataOffset;
         toWrite = std::min(toWrite, left);
         toWrite = std::min(toWrite, localSocket->GetTxAvailable());
         int amountSent = localSocket->Send(&data[dataOffset], toWrite, 0);
@@ -236,7 +236,7 @@ WriteUntilBufferFull(Ptr<Socket> localSocket, uint32_t txSpace)
         }
         currentTxBytes += amountSent;
     }
-    if (currentTxBytes >= totalTxBytes)
+    if (currentTxBytes >= TOTAL_TX_BYTES)
     {
         localSocket->Close();
     }

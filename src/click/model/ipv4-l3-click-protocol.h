@@ -72,7 +72,7 @@ class Ipv4L3ClickProtocol : public Ipv4
     /**
      * Protocol number for Ipv4 L3 (0x0800).
      */
-    static const uint16_t PROT_NUMBER;
+    static constexpr uint16_t PROT_NUMBER{0x0800};
 
     Ipv4L3ClickProtocol();
     ~Ipv4L3ClickProtocol() override;

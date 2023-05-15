@@ -146,7 +146,7 @@ class LteFfConverter
      */
     static double getMinFpS11dot3Value();
 
-    // static const double MIN_FP_S11DOT3_VALUE = -4096;
+    // static constexpr double MIN_FP_S11DOT3_VALUE{-4096};
 };
 
 /// BufferSizeLevelBsr class

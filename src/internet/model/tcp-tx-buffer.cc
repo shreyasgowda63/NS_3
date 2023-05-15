@@ -1415,9 +1415,9 @@ TcpTxBuffer::AddRenoSack()
 void
 TcpTxBuffer::ConsistencyCheck() const
 {
-    static const bool enable = false;
+    constexpr bool ENABLE = false;
 
-    if (!enable)
+    if (!ENABLE)
     {
         return;
     }

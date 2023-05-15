@@ -104,8 +104,10 @@ class DsrRouting : public IpL4Protocol
     static TypeId GetTypeId();
     /**
      * \brief Define the dsr protocol number.
+     * See http://www.iana.org/assignments/protocol-numbers
      */
-    static const uint8_t PROT_NUMBER;
+    static constexpr uint8_t PROT_NUMBER{48};
+
     /**
      * \brief Constructor.
      */

@@ -89,7 +89,9 @@ class RoutingProtocol : public Ipv4RoutingProtocol
      */
     friend class ::OlsrMprTestCase;
 
-    static const uint16_t OLSR_PORT_NUMBER; //!< port number (698)
+    /// OLSR port number (698).
+    /// See https://www.iana.org/assignments/service-names-port-numbers
+    static constexpr uint16_t OLSR_PORT_NUMBER{698};
 
     /**
      * \brief Get the type ID.

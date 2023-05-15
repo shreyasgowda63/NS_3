@@ -40,7 +40,7 @@ NS_LOG_COMPONENT_DEFINE("RttEstimator");
 NS_OBJECT_ENSURE_REGISTERED(RttEstimator);
 
 /// Tolerance used to check reciprocal of two numbers.
-static const double TOLERANCE = 1e-6;
+constexpr double TOLERANCE = 1e-6;
 
 TypeId
 RttEstimator::GetTypeId()

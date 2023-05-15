@@ -35,11 +35,6 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("DsssErrorRateModel");
 
-#ifndef HAVE_GSL
-const double DsssErrorRateModel::WLAN_SIR_PERFECT = 10.0;
-const double DsssErrorRateModel::WLAN_SIR_IMPOSSIBLE = 0.1;
-#endif
-
 double
 DsssErrorRateModel::DqpskFunction(double x)
 {

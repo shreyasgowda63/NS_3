@@ -93,7 +93,7 @@ class LtePdcp : public Object // SimpleRefCount<LtePdcp>
     LteRlcSapUser* GetLteRlcSapUser();
 
     /// maximum PDCP SN
-    static const uint16_t MAX_PDCP_SN = 4096;
+    static constexpr uint16_t MAX_PDCP_SN{4096};
 
     /**
      * Status variables of the PDCP
@@ -189,7 +189,7 @@ class LtePdcp : public Object // SimpleRefCount<LtePdcp>
     /**
      * Constants. See section 7.2 in TS 36.323
      */
-    static const uint16_t m_maxPdcpSn = 4095;
+    static constexpr uint16_t m_maxPdcpSn{4095};
 };
 
 } // namespace ns3

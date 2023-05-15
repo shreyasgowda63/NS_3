@@ -1210,8 +1210,7 @@ PacketTagListTest::DoRun()
     }
 
     // Removal
-    {
-        // Remove single tags from list
+    { // Remove single tags from list
         {
             std::cout << GetName() << "check removal of each tag" << std::endl;
             RemoveTagCheck(ref, t1, 1);

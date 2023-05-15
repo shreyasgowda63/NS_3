@@ -65,11 +65,11 @@ class TestCaseBase : public TestCase
 {
   public:
     /** Number of bins for sampling the distributions. */
-    static const uint32_t N_BINS{50};
+    static constexpr uint32_t N_BINS{50};
     /** Number of samples to draw when populating the distributions. */
-    static const uint32_t N_MEASUREMENTS{1000000};
+    static constexpr uint32_t N_MEASUREMENTS{1000000};
     /** Number of retry attempts to pass a chi-square test. */
-    static const uint32_t N_RUNS{5};
+    static constexpr uint32_t N_RUNS{5};
 
     /**
      * Constructor
@@ -432,8 +432,8 @@ UniformTestCase::DoRun()
     }
 
     // Boundary checking on GetInteger; should be [min,max]; from bug 1964
-    static const uint32_t UNIFORM_INTEGER_MIN{0};
-    static const uint32_t UNIFORM_INTEGER_MAX{4294967295U};
+    static constexpr uint32_t UNIFORM_INTEGER_MIN{0};
+    static constexpr uint32_t UNIFORM_INTEGER_MAX{4294967295U};
     // [0,0] should return 0
     uint32_t intValue;
     intValue = x->GetInteger(UNIFORM_INTEGER_MIN, UNIFORM_INTEGER_MIN);

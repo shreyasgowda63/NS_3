@@ -48,7 +48,7 @@ static constexpr double DEG2RAD = M_PI / 180.0;
 
 /// The ray offset angles within a cluster, given for rms angle spread normalized to 1.
 /// (Table 7.5-3)
-static const double offSetAlpha[20] = {
+constexpr double offSetAlpha[]{
     0.0447, -0.0447, 0.1413, -0.1413, 0.2492, -0.2492, 0.3715, -0.3715, 0.5129, -0.5129,
     0.6797, -0.6797, 0.8844, -0.8844, 1.1481, -1.1481, 1.5195, -1.5195, 2.1551, -2.1551,
 };
@@ -61,7 +61,7 @@ static const double offSetAlpha[20] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_RMa_LOS[7][7] = {
+constexpr double sqrtC_RMa_LOS[7][7]{
     {1, 0, 0, 0, 0, 0, 0},
     {0, 1, 0, 0, 0, 0, 0},
     {-0.5, 0, 0.866025, 0, 0, 0, 0},
@@ -80,7 +80,7 @@ static const double sqrtC_RMa_LOS[7][7] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_RMa_NLOS[6][6] = {
+constexpr double sqrtC_RMa_NLOS[6][6]{
     {1, 0, 0, 0, 0, 0},
     {-0.5, 0.866025, 0, 0, 0, 0},
     {0.6, -0.11547, 0.791623, 0, 0, 0},
@@ -97,7 +97,7 @@ static const double sqrtC_RMa_NLOS[6][6] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_RMa_O2I[6][6] = {
+constexpr double sqrtC_RMa_O2I[6][6]{
     {1, 0, 0, 0, 0, 0},
     {0, 1, 0, 0, 0, 0},
     {0, 0, 1, 0, 0, 0},
@@ -114,7 +114,7 @@ static const double sqrtC_RMa_O2I[6][6] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_UMa_LOS[7][7] = {
+constexpr double sqrtC_UMa_LOS[7][7]{
     {1, 0, 0, 0, 0, 0, 0},
     {0, 1, 0, 0, 0, 0, 0},
     {-0.4, -0.4, 0.824621, 0, 0, 0, 0},
@@ -133,7 +133,7 @@ static const double sqrtC_UMa_LOS[7][7] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_UMa_NLOS[6][6] = {
+constexpr double sqrtC_UMa_NLOS[6][6]{
     {1, 0, 0, 0, 0, 0},
     {-0.4, 0.916515, 0, 0, 0, 0},
     {-0.6, 0.174574, 0.78072, 0, 0, 0},
@@ -150,7 +150,7 @@ static const double sqrtC_UMa_NLOS[6][6] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_UMa_O2I[6][6] = {
+constexpr double sqrtC_UMa_O2I[6][6]{
     {1, 0, 0, 0, 0, 0},
     {-0.5, 0.866025, 0, 0, 0, 0},
     {0.2, 0.57735, 0.791623, 0, 0, 0},
@@ -168,7 +168,7 @@ static const double sqrtC_UMa_O2I[6][6] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_UMi_LOS[7][7] = {
+constexpr double sqrtC_UMi_LOS[7][7]{
     {1, 0, 0, 0, 0, 0, 0},
     {0.5, 0.866025, 0, 0, 0, 0, 0},
     {-0.4, -0.57735, 0.711805, 0, 0, 0, 0},
@@ -187,7 +187,7 @@ static const double sqrtC_UMi_LOS[7][7] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_UMi_NLOS[6][6] = {
+constexpr double sqrtC_UMi_NLOS[6][6]{
     {1, 0, 0, 0, 0, 0},
     {-0.7, 0.714143, 0, 0, 0, 0},
     {0, 0, 1, 0, 0, 0},
@@ -204,7 +204,7 @@ static const double sqrtC_UMi_NLOS[6][6] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_UMi_O2I[6][6] = {
+constexpr double sqrtC_UMi_O2I[6][6]{
     {1, 0, 0, 0, 0, 0},
     {-0.5, 0.866025, 0, 0, 0, 0},
     {0.2, 0.57735, 0.791623, 0, 0, 0},
@@ -221,7 +221,7 @@ static const double sqrtC_UMi_O2I[6][6] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_office_LOS[7][7] = {
+constexpr double sqrtC_office_LOS[7][7]{
     {1, 0, 0, 0, 0, 0, 0},
     {0.5, 0.866025, 0, 0, 0, 0, 0},
     {-0.8, -0.11547, 0.588784, 0, 0, 0, 0},
@@ -240,7 +240,7 @@ static const double sqrtC_office_LOS[7][7] = {
  * The Matlab file to generate the matrices can be found in
  * https://github.com/nyuwireless-unipd/ns3-mmwave/blob/master/src/mmwave/model/BeamFormingMatrix/SqrtMatrix.m
  */
-static const double sqrtC_office_NLOS[6][6] = {
+constexpr double sqrtC_office_NLOS[6][6]{
     {1, 0, 0, 0, 0, 0},
     {-0.5, 0.866025, 0, 0, 0, 0},
     {0, 0.46188, 0.886942, 0, 0, 0},

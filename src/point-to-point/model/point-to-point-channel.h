@@ -149,7 +149,7 @@ class PointToPointChannel : public Channel
 
   private:
     /** Each point to point link has exactly two net devices. */
-    static const std::size_t N_DEVICES = 2;
+    static constexpr std::size_t N_DEVICES{2};
 
     Time m_delay;           //!< Propagation delay
     std::size_t m_nDevices; //!< Devices of this channel

@@ -293,7 +293,7 @@ class DsrOptionPad1 : public DsrOptions
     /**
      * \brief Pad1 option number.
      */
-    static const uint8_t OPT_NUMBER = 224;
+    static constexpr uint8_t OPT_NUMBER{224};
 
     /**
      * \brief Get the type ID.
@@ -325,7 +325,7 @@ class DsrOptionPadn : public DsrOptions
     /**
      * \brief PadN option number.
      */
-    static const uint8_t OPT_NUMBER = 0;
+    static constexpr uint8_t OPT_NUMBER{0};
 
     /**
      * \brief Get the type ID.
@@ -357,7 +357,7 @@ class DsrOptionRreq : public DsrOptions
     /**
      * \brief Rreq option number.
      */
-    static const uint8_t OPT_NUMBER = 1;
+    static constexpr uint8_t OPT_NUMBER{1};
 
     /**
      * \brief Get the type ID.
@@ -409,7 +409,7 @@ class DsrOptionRrep : public DsrOptions
     /**
      * \brief Router alert option number.
      */
-    static const uint8_t OPT_NUMBER = 2;
+    static constexpr uint8_t OPT_NUMBER{2};
 
     /**
      * \brief Get the type ID.
@@ -456,7 +456,7 @@ class DsrOptionSR : public DsrOptions
     /**
      * \brief Source Route option number.
      */
-    static const uint8_t OPT_NUMBER = 96;
+    static constexpr uint8_t OPT_NUMBER{96};
 
     /**
      * \brief Get the type ID.
@@ -499,7 +499,7 @@ class DsrOptionRerr : public DsrOptions
     /**
      * \brief Dsr Route Error option number.
      */
-    static const uint8_t OPT_NUMBER = 3;
+    static constexpr uint8_t OPT_NUMBER{3};
 
     /**
      * \brief Get the type ID.
@@ -561,7 +561,7 @@ class DsrOptionAckReq : public DsrOptions
     /**
      * \brief Dsr ack request option number.
      */
-    static const uint8_t OPT_NUMBER = 160;
+    static constexpr uint8_t OPT_NUMBER{160};
 
     /**
      * \brief Get the type ID.
@@ -608,7 +608,7 @@ class DsrOptionAck : public DsrOptions
     /**
      * \brief The Dsr Ack option number.
      */
-    static const uint8_t OPT_NUMBER = 32;
+    static constexpr uint8_t OPT_NUMBER{32};
 
     /**
      * \brief Get the type ID.

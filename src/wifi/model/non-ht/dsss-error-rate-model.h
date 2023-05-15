@@ -125,9 +125,9 @@ class DsssErrorRateModel
 
   protected:
     /// WLAN perfect
-    static const double WLAN_SIR_PERFECT;
+    static constexpr double WLAN_SIR_PERFECT{10.0};
     /// WLAN impossible
-    static const double WLAN_SIR_IMPOSSIBLE;
+    static constexpr double WLAN_SIR_IMPOSSIBLE{0.1};
 #endif
 };
 

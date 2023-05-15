@@ -52,8 +52,6 @@ NS_LOG_COMPONENT_DEFINE("Ipv6L3Protocol");
 
 NS_OBJECT_ENSURE_REGISTERED(Ipv6L3Protocol);
 
-const uint16_t Ipv6L3Protocol::PROT_NUMBER = 0x86DD;
-
 /// Minimum IPv6 MTU, as defined by \RFC{2460}
 constexpr uint16_t IPV6_MIN_MTU = 1280;
 

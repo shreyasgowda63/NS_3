@@ -140,12 +140,12 @@ class Ipv6MulticastRoute : public SimpleRefCount<Ipv6MulticastRoute>
     /**
      * \brief Maximum number of multicast interfaces on a router.
      */
-    static const uint32_t MAX_INTERFACES = 16;
+    static constexpr uint32_t MAX_INTERFACES{16};
 
     /**
      * \brief Maximum Time-To-Live (TTL).
      */
-    static const uint32_t MAX_TTL = 255;
+    static constexpr uint32_t MAX_TTL{255};
 
     /**
      * \brief Constructor.

@@ -199,9 +199,6 @@ operator<<(std::ostream& os, NeighborType neighborType)
 
 NS_OBJECT_ENSURE_REGISTERED(RoutingProtocol);
 
-/* see https://www.iana.org/assignments/service-names-port-numbers */
-const uint16_t RoutingProtocol::OLSR_PORT_NUMBER = 698;
-
 TypeId
 RoutingProtocol::GetTypeId()
 {

@@ -40,9 +40,9 @@ class HwmpRtable : public Object
 {
   public:
     /// Means all interfaces
-    const static uint32_t INTERFACE_ANY = 0xffffffff;
+    static constexpr uint32_t INTERFACE_ANY{0xffffffff};
     /// Maximum (the best?) path metric
-    const static uint32_t MAX_METRIC = 0xffffffff;
+    static constexpr uint32_t MAX_METRIC{0xffffffff};
 
     /// Route lookup result, return type of LookupXXX methods
     struct LookupResult

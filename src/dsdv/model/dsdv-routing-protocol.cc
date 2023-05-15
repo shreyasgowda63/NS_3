@@ -49,9 +49,6 @@ namespace dsdv
 
 NS_OBJECT_ENSURE_REGISTERED(RoutingProtocol);
 
-/// UDP Port for DSDV control traffic
-const uint32_t RoutingProtocol::DSDV_PORT = 269;
-
 /// Tag used by DSDV implementation
 struct DeferredRouteOutputTag : public Tag
 {

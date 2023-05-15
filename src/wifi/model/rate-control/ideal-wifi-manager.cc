@@ -50,7 +50,7 @@ struct IdealWifiRemoteStation : public WifiRemoteStation
 };
 
 /// To avoid using the cache before a valid value has been cached
-static const double CACHE_INITIAL_VALUE = -100;
+constexpr double CACHE_INITIAL_VALUE = -100;
 
 NS_OBJECT_ENSURE_REGISTERED(IdealWifiManager);
 

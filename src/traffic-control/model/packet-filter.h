@@ -46,7 +46,7 @@ class PacketFilter : public Object
     /**
      * Standard value used by packet filters to indicate that no match was possible.
      */
-    static const int PF_NO_MATCH = -1;
+    static constexpr int PF_NO_MATCH{-1};
 
     /**
      * \brief Classify a packet.

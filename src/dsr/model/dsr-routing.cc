@@ -89,9 +89,6 @@ namespace dsr
 
 NS_OBJECT_ENSURE_REGISTERED(DsrRouting);
 
-/* see http://www.iana.org/assignments/protocol-numbers */
-const uint8_t DsrRouting::PROT_NUMBER = 48;
-
 /*
  * The extension header is the fixed size dsr header, it is response for recognizing DSR option
  types

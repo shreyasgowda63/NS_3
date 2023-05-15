@@ -59,7 +59,7 @@ class NdiscCache : public Object
     /**
      * \brief Default value for unres qlen.
      */
-    static const uint32_t DEFAULT_UNRES_QLEN = 3;
+    static constexpr uint32_t DEFAULT_UNRES_QLEN{3};
 
     /**
      * \brief Constructor.
