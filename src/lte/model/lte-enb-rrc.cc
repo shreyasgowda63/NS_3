@@ -207,7 +207,7 @@ UeManager::DoInitialize()
         // m_rnti and lcid will be used from passed lcinfo structure. See FF LTE MAC Scheduler
         // Iinterface Specification v1.11, 4.3.4 logicalChannelConfigListElement
         lcinfo.lcGroup = 0;
-        lcinfo.qci = 0;
+        lcinfo.qci = EpsBearer::Qci(0);
         lcinfo.resourceType = 0;
         lcinfo.mbrUl = 0;
         lcinfo.mbrDl = 0;
@@ -3483,7 +3483,7 @@ LteEnbRrc::GetLogicalChannelGroup(EpsBearer bearer)
 uint8_t
 LteEnbRrc::GetLogicalChannelPriority(EpsBearer bearer)
 {
-    return bearer.qci;
+    return static_cast<uint8_t>(bearer.qci);
 }
 
 void

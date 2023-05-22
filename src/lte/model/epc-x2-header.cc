@@ -222,7 +222,7 @@ EpcX2HandoverRequestHeader::Serialize(Buffer::Iterator start) const
     for (int j = 0; j < (int)sz; j++)
     {
         i.WriteHtonU16(m_erabsToBeSetupList[j].erabId);
-        i.WriteHtonU16(m_erabsToBeSetupList[j].erabLevelQosParameters.qci);
+        i.WriteHtonU16(static_cast<uint8_t>(m_erabsToBeSetupList[j].erabLevelQosParameters.qci));
         i.WriteHtonU64(m_erabsToBeSetupList[j].erabLevelQosParameters.gbrQosInfo.gbrDl);
         i.WriteHtonU64(m_erabsToBeSetupList[j].erabLevelQosParameters.gbrQosInfo.gbrUl);
         i.WriteHtonU64(m_erabsToBeSetupList[j].erabLevelQosParameters.gbrQosInfo.mbrDl);

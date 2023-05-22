@@ -303,7 +303,7 @@ GtpcIes::SerializeBearerQos(Buffer::Iterator& i, EpsBearer bearerQos) const
     i.WriteHtonU16(22); // Length
     i.WriteU8(0);       // Spare + Instance
     i.WriteU8(0);       // MRE TODO: bearerQos.arp
-    i.WriteU8(bearerQos.qci);
+    i.WriteU8(static_cast<uint8_t>(bearerQos.qci));
     WriteHtonU40(i, bearerQos.gbrQosInfo.mbrUl);
     WriteHtonU40(i, bearerQos.gbrQosInfo.mbrDl);
     WriteHtonU40(i, bearerQos.gbrQosInfo.gbrUl);
