@@ -17,6 +17,7 @@
 #
 
 import argparse
+import ast
 import fnmatch
 import os
 import queue
@@ -629,10 +630,10 @@ def read_ns3_config():
             for line in f:
                 if line.startswith("top_dir ="):
                     key, val = line.split('=')
-                    top_dir = eval(val.strip())
+                    top_dir = ast.literal_eval(val.strip())
                 if line.startswith("out_dir ="):
                     key, val = line.split('=')
-                    out_dir = eval(val.strip())
+                    out_dir = ast.literal_eval(val.strip())
 
     except FileNotFoundError:
         print('The .lock-ns3 file was not found.  You must configure before running test.py.', file=sys.stderr)
@@ -651,7 +652,7 @@ def read_ns3_config():
 
     if args.verbose:
         for item in interesting_config_items:
-            print("%s ==" % item, eval(item))
+            print("%s ==" % item, ast.literal_eval(item))
 
 #
 # It seems pointless to fork a process to run ns3 to fork a process to run
@@ -1561,7 +1562,7 @@ def run_tests():
 
                     # Don't try to run this example if it isn't runnable.
                     if test_name in ns3_runnable_programs_dictionary:
-                        if eval(do_run):
+                        if ast.literal_eval(do_run):
                             job = Job()
                             job.set_is_example(True)
                             job.set_is_pyexample(False)
@@ -1573,7 +1574,7 @@ def run_tests():
                             job.set_shell_command(test)
                             job.set_build_path(args.buildpath)
 
-                            if args.valgrind and not eval(do_valgrind_run):
+                            if args.valgrind and not ast.literal_eval(do_valgrind_run):
                                 job.set_is_skip(True)
                                 job.set_skip_reason("skip in valgrind runs")
 
@@ -1655,7 +1656,7 @@ def run_tests():
 
                 # Don't try to run this example if it isn't runnable.
                 if test_name in ns3_runnable_scripts:
-                    if eval(do_run):
+                    if ast.literal_eval(do_run):
                         job = Job()
                         job.set_is_example(False)
                         job.set_is_pyexample(True)
