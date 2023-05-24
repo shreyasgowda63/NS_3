@@ -27,9 +27,5 @@ main(int argc, char* argv[])
     Simulator::Run();
     Simulator::Destroy();
 
-#ifdef NS3_NETANIM
-    std::cout << "NS3_NETANIM is defined" << std::endl;
-#endif
-
     return 0;
 }
