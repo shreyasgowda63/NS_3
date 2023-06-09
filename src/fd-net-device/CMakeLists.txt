@@ -155,10 +155,8 @@ if(${ENABLE_FDNETDEV})
     )
     build_exec(
       EXECNAME raw-sock-creator
-      SOURCE_FILES
-        helper/creator-utils.cc
-        helper/encode-decode.cc
-        helper/raw-sock-creator.cc
+      SOURCE_FILES helper/raw-sock-creator.cc
+      LIBRARIES_TO_LINK ${libtun-tap}
       EXECUTABLE_DIRECTORY_PATH
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/
       INSTALL_DIRECTORY_PATH ${CMAKE_INSTALL_LIBEXECDIR}/ns3
@@ -194,9 +192,8 @@ if(${ENABLE_FDNETDEV})
     build_exec(
       EXECNAME tap-device-creator
       SOURCE_FILES
-        helper/creator-utils.cc
-        helper/encode-decode.cc
         helper/tap-device-creator.cc
+      LIBRARIES_TO_LINK ${libtun-tap}
       EXECUTABLE_DIRECTORY_PATH
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/
       INSTALL_DIRECTORY_PATH ${CMAKE_INSTALL_LIBEXECDIR}/ns3
@@ -233,10 +230,8 @@ if(${ENABLE_FDNETDEV})
 
     build_exec(
       EXECNAME netmap-device-creator
-      SOURCE_FILES
-        helper/creator-utils.cc
-        helper/encode-decode.cc
-        helper/netmap-device-creator.cc
+      SOURCE_FILES helper/netmap-device-creator.cc
+      LIBRARIES_TO_LINK ${libtun-tap}
       EXECUTABLE_DIRECTORY_PATH
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/fd-net-device/
       INSTALL_DIRECTORY_PATH ${CMAKE_INSTALL_LIBEXECDIR}/ns3
@@ -275,8 +270,6 @@ if(${ENABLE_FDNETDEV})
       ${emu_sources}
       ${netmap_sources}
       ${dpdk_sources}
-      helper/creator-utils.cc
-      helper/encode-decode.cc
       helper/fd-net-device-helper.cc
       model/fd-net-device.cc
   )
@@ -292,6 +285,7 @@ if(${ENABLE_FDNETDEV})
 
   set(libraries_to_link
       ${libnetwork}
+      ${libtun-tap}
       ${dpdk_libraries}
   )
 
