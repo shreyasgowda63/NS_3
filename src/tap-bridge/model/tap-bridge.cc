@@ -17,8 +17,6 @@
 
 #include "tap-bridge.h"
 
-#include "tap-encode-decode.h"
-
 #include "ns3/abort.h"
 #include "ns3/boolean.h"
 #include "ns3/channel.h"
@@ -34,6 +32,7 @@
 #include "ns3/simulator.h"
 #include "ns3/string.h"
 #include "ns3/uinteger.h"
+#include <ns3/encode-decode.h>
 
 #include <cerrno>
 #include <cstdlib>
@@ -354,7 +353,7 @@ TapBridge::CreateTap()
     //
     // Now encode that socket name (family and path) as a string of hex digits
     //
-    std::string path = TapBufferToString((uint8_t*)&un, len);
+    std::string path = BufferToString((uint8_t*)&un, len);
     NS_LOG_INFO("Encoded Unix socket as \"" << path << "\"");
 
     //
