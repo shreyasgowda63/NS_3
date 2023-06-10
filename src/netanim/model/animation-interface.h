@@ -663,13 +663,8 @@ class AnimationInterface
     uint32_t m_wifiPhyTxDropCounterId; ///< wifi Phy transmit drop counter ID
     uint32_t m_wifiPhyRxDropCounterId; ///< wifi Phy receive drop counter ID
 
-    AnimUidPacketInfoMap m_pendingWifiPackets;   ///< pending wifi packets
-    AnimUidPacketInfoMap m_pendingWimaxPackets;  ///< pending wimax packets
-    AnimUidPacketInfoMap m_pendingLrWpanPackets; ///< pending LR-WPAN packets
-    AnimUidPacketInfoMap m_pendingLtePackets;    ///< pending LTE packets
-    AnimUidPacketInfoMap m_pendingCsmaPackets;   ///< pending CSMA packets
-    AnimUidPacketInfoMap m_pendingUanPackets;    ///< pending UAN packets
-    AnimUidPacketInfoMap m_pendingWavePackets;   ///< pending WAVE packets
+    std::unordered_map<std::string, AnimUidPacketInfoMap>
+        m_pendingPackets; ///< net-device to net-device pending packets map
 
     std::map<uint32_t, Vector> m_nodeLocation;         ///< node location
     std::map<std::string, uint32_t> m_macToNodeIdMap;  ///< MAC to node ID map
