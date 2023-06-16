@@ -504,7 +504,7 @@ TapBridge::CreateTap()
         NS_LOG_DEBUG("Executing: " << TAP_CREATOR << " " << ossDeviceName.str() << " "
                                    << ossIp.str() << " " << ossMac.str() << " " << ossNetmask.str()
                                    << " " << ossMode.str() << " " << ossPath.str() << " "
-                                   << ossVerbose.str());
+                                   << ossVerbose.str() << " -t");
 
         //
         // Execute the socket creation process image.
@@ -518,6 +518,7 @@ TapBridge::CreateTap()
                           ossMode.str().c_str(),       // argv[5] (-o<operating mode>)
                           ossPath.str().c_str(),       // argv[6] (-p<path>)
                           ossVerbose.str().c_str(),    // argv[7] (-v)
+                          "-t",                        // argv[8] (-t <tap>)
                           (char*)nullptr);
 
         //
