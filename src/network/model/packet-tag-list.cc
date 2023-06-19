@@ -328,7 +328,7 @@ PacketTagList::GetSerializedSize() const
     return size;
 }
 
-uint32_t
+bool
 PacketTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
 {
     NS_LOG_FUNCTION(this << buffer << maxSize);
@@ -346,7 +346,7 @@ PacketTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
     }
     else
     {
-        return 0;
+        return false;
     }
 
     for (TagData* cur = m_next; cur != nullptr; cur = cur->next)
@@ -358,7 +358,7 @@ PacketTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
 
         NS_LOG_INFO("Serializing tag id " << cur->tid);
@@ -374,7 +374,7 @@ PacketTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
 
         // ensure size is multiple of 4 bytes for 4 byte boundaries
@@ -387,14 +387,14 @@ PacketTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
 
         (*numberOfTags)++;
     }
 
     // Serialized successfully
-    return 1;
+    return true;
 }
 
 uint32_t

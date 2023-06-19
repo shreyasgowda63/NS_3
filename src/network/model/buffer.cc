@@ -578,7 +578,7 @@ Buffer::GetSerializedSize() const
     return sz;
 }
 
-uint32_t
+bool
 Buffer::Serialize(uint8_t* buffer, uint32_t maxSize) const
 {
     NS_LOG_FUNCTION(this << &buffer << maxSize);
@@ -593,7 +593,7 @@ Buffer::Serialize(uint8_t* buffer, uint32_t maxSize) const
     }
     else
     {
-        return 0;
+        return false;
     }
 
     // Add the length of actual start data
@@ -605,7 +605,7 @@ Buffer::Serialize(uint8_t* buffer, uint32_t maxSize) const
     }
     else
     {
-        return 0;
+        return false;
     }
 
     // Add the actual data
@@ -617,7 +617,7 @@ Buffer::Serialize(uint8_t* buffer, uint32_t maxSize) const
     }
     else
     {
-        return 0;
+        return false;
     }
 
     // Add the length of the actual end data
@@ -629,7 +629,7 @@ Buffer::Serialize(uint8_t* buffer, uint32_t maxSize) const
     }
     else
     {
-        return 0;
+        return false;
     }
 
     // Add the actual data
@@ -643,11 +643,11 @@ Buffer::Serialize(uint8_t* buffer, uint32_t maxSize) const
     }
     else
     {
-        return 0;
+        return false;
     }
 
     // Serialized everything successfully
-    return 1;
+    return true;
 }
 
 uint32_t

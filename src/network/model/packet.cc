@@ -659,7 +659,7 @@ Packet::GetSerializedSize() const
     return size;
 }
 
-uint32_t
+bool
 Packet::Serialize(uint8_t* buffer, uint32_t maxSize) const
 {
     auto p = reinterpret_cast<uint32_t*>(buffer);
@@ -687,12 +687,12 @@ Packet::Serialize(uint8_t* buffer, uint32_t maxSize) const
             }
             else
             {
-                return 0;
+                return false;
             }
         }
         else
         {
-            return 0;
+            return false;
         }
     }
     else
@@ -707,7 +707,7 @@ Packet::Serialize(uint8_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
     }
 
@@ -731,12 +731,12 @@ Packet::Serialize(uint8_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
     }
     else
     {
-        return 0;
+        return false;
     }
 
     // Serialize packet tag list
@@ -759,12 +759,12 @@ Packet::Serialize(uint8_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
     }
     else
     {
-        return 0;
+        return false;
     }
 
     // Serialize Metadata
@@ -787,12 +787,12 @@ Packet::Serialize(uint8_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
     }
     else
     {
-        return 0;
+        return false;
     }
 
     // Serialize the packet contents
@@ -808,16 +808,16 @@ Packet::Serialize(uint8_t* buffer, uint32_t maxSize) const
         uint32_t serialized = m_buffer.Serialize(reinterpret_cast<uint8_t*>(p), bufSize);
         if (!serialized)
         {
-            return 0;
+            return false;
         }
     }
     else
     {
-        return 0;
+        return false;
     }
 
     // Serialized successfully
-    return 1;
+    return true;
 }
 
 uint32_t
