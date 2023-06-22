@@ -50,8 +50,8 @@
 #include "ns3/ipv6.h"
 #include "ns3/lr-wpan-mac-header.h"
 #include "ns3/lr-wpan-net-device.h"
-#include "ns3/lte-enb-phy.h"
-#include "ns3/lte-ue-phy.h"
+// #include "ns3/lte-enb-phy.h"
+// #include "ns3/lte-ue-phy.h"
 #include "ns3/mobility-model.h"
 #include "ns3/node.h"
 #include "ns3/packet.h"
@@ -416,45 +416,72 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns current node's remaining energy (between [0, 1])
      */
     double GetNodeEnergyFraction(Ptr<const Node> node) const;
+    /**
+     * Is in time window function
+     * \returns true if in the time window
+     */
+    bool IsInTimeWindow();
+    bool IsTracking();
+    /**
+     * Get net device from context
+     * \param context the context string
+     * \returns the device
+     */
+    Ptr<NetDevice> GetNetDeviceFromContext(std::string context);
+    /**
+     * Update position function
+     * \param ndev the device
+     * \returns the position vector
+     */
+    Vector UpdatePosition(Ptr<NetDevice> ndev);
+    void IncrementAnimUid();
+    uint64_t GetAnimUid();
+    /**
+     * Add byte tag function
+     * \param animUid the UID
+     * \param p the packet
+     */
+    void AddByteTag(uint64_t animUid, Ptr<const Packet> p);
+    /**
+     * Add pending packet function
+     * \param protocolType the protocol type
+     * \param animUid the UID
+     * \param pktInfo the packet info
+     */
+    void AddPendingPacket(AnimationInterface::ProtocolType protocolType,
+                          uint64_t animUid,
+                          AnimPacketInfo pktInfo);
+    /**
+     * Get anim UID from packet function
+     * \param p the packet
+     * \returns the UID
+     */
+    uint64_t GetAnimUidFromPacket(Ptr<const Packet> p);
+    /**
+     * Is packet pending function
+     * \param animUid the UID
+     * \param protocolType the protocol type
+     * \returns true if a packet is pending
+     */
+    bool IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType);
+    /**
+     * Output CSMA packet function
+     * \param p the packet
+     * \param pktInfo the packet info
+     */
+    void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
+    std::map<uint64_t, AnimPacketInfo> GetPendingCsmaPacketsMap();
+    /**
+     * Get node from context
+     * \param context the context string
+     * \returns the node
+     */
+    Ptr<Node> GetNodeFromContext(const std::string& context) const;
+    void AddNodeToNodeEnqueueMap(uint32_t nodeId);
+    void AddNodeToNodeDequeueMap(uint32_t nodeId);
+    void AddNodeToNodeDropMap(uint32_t nodeId);
 
   private:
-    /**
-     * AnimPacketInfo class
-     */
-    class AnimPacketInfo
-
-    {
-      public:
-        AnimPacketInfo();
-        /**
-         * Constructor
-         *
-         * \param pInfo anim packet info
-         */
-        AnimPacketInfo(const AnimPacketInfo& pInfo);
-        /**
-         * Constructor
-         *
-         * \param tx_nd transmit device
-         * \param fbTx fb transmit
-         * \param txNodeId transmit node ID
-         */
-        AnimPacketInfo(Ptr<const NetDevice> tx_nd, const Time fbTx, uint32_t txNodeId = 0);
-        Ptr<const NetDevice> m_txnd; ///< transmit device
-        uint32_t m_txNodeId;         ///< node ID
-        double m_fbTx;               ///< fb transmit
-        double m_lbTx;               ///< lb transmit
-        double m_fbRx;               ///< fb receive
-        double m_lbRx;               ///< lb receive
-        Ptr<const NetDevice> m_rxnd; ///< receive device
-        /**
-         * Process receive begin
-         * \param nd the device
-         * \param fbRx
-         */
-        void ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx);
-    };
-
     /// RGB structure
     struct Rgb
     {
@@ -518,17 +545,17 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
         std::string nextHop; ///< next hop
     };                       ///< IPv4 route path element
 
-    /// ProtocolType enumeration
-    enum ProtocolType
-    {
-        UAN,
-        LTE,
-        WIFI,
-        WIMAX,
-        CSMA,
-        LRWPAN,
-        WAVE
-    };
+    // /// ProtocolType enumeration
+    // enum ProtocolType
+    // {
+    //     UAN,
+    //     LTE,
+    //     WIFI,
+    //     WIMAX,
+    //     CSMA,
+    //     LRWPAN,
+    //     WAVE
+    // };
 
     /// NodeSize structure
     struct NodeSize
@@ -648,10 +675,10 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     AnimUidPacketInfoMap m_pendingWifiPackets;   ///< pending wifi packets
     AnimUidPacketInfoMap m_pendingWimaxPackets;  ///< pending wimax packets
     AnimUidPacketInfoMap m_pendingLrWpanPackets; ///< pending LR-WPAN packets
-    AnimUidPacketInfoMap m_pendingLtePackets;    ///< pending LTE packets
-    AnimUidPacketInfoMap m_pendingCsmaPackets;   ///< pending CSMA packets
-    AnimUidPacketInfoMap m_pendingUanPackets;    ///< pending UAN packets
-    AnimUidPacketInfoMap m_pendingWavePackets;   ///< pending WAVE packets
+    // AnimUidPacketInfoMap m_pendingLtePackets;    ///< pending LTE packets
+    AnimUidPacketInfoMap m_pendingCsmaPackets; ///< pending CSMA packets
+    AnimUidPacketInfoMap m_pendingUanPackets;  ///< pending UAN packets
+    AnimUidPacketInfoMap m_pendingWavePackets; ///< pending WAVE packets
 
     std::map<uint32_t, Vector> m_nodeLocation;         ///< node location
     std::map<std::string, uint32_t> m_macToNodeIdMap;  ///< MAC to node ID map
@@ -694,18 +721,12 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns the elements
      */
     const std::vector<std::string> GetElementsFromContext(const std::string& context) const;
-    /**
-     * Get node from context
-     * \param context the context string
-     * \returns the node
-     */
-    Ptr<Node> GetNodeFromContext(const std::string& context) const;
-    /**
-     * Get net device from context
-     * \param context the context string
-     * \returns the device
-     */
-    Ptr<NetDevice> GetNetDeviceFromContext(std::string context);
+    // /**
+    //  * Get node from context
+    //  * \param context the context string
+    //  * \returns the node
+    //  */
+    // Ptr<Node> GetNodeFromContext(const std::string& context) const;
 
     // ##### General #####
     /**
@@ -739,12 +760,12 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns the meta data
      */
     std::string GetPacketMetadata(Ptr<const Packet> p);
-    /**
-     * Add byte tag function
-     * \param animUid the UID
-     * \param p the packet
-     */
-    void AddByteTag(uint64_t animUid, Ptr<const Packet> p);
+    // /**
+    //  * Add byte tag function
+    //  * \param animUid the UID
+    //  * \param p the packet
+    //  */
+    // void AddByteTag(uint64_t animUid, Ptr<const Packet> p);
     /**
      * WriteN function
      * \param data the data t write
@@ -798,43 +819,44 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     std::string GetNetAnimVersion();
     /// Mobility auto check function
     void MobilityAutoCheck();
-    /**
-     * Is packet pending function
-     * \param animUid the UID
-     * \param protocolType the protocol type
-     * \returns true if a packet is pending
-     */
-    bool IsPacketPending(uint64_t animUid, ProtocolType protocolType);
+    // /**
+    //  * Is packet pending function
+    //  * \param animUid the UID
+    //  * \param protocolType the protocol type
+    //  * \returns true if a packet is pending
+    //  */
+    // bool IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType);
     /**
      * Purge pending packets function
      * \param protocolType the protocol type
      */
-    void PurgePendingPackets(ProtocolType protocolType);
+    void PurgePendingPackets(AnimationInterface::ProtocolType protocolType);
     /**
      * Protocol type to pending packets function
      * \param protocolType the protocol type
      * \returns AnimUidPacketInfoMap *
      */
-    AnimUidPacketInfoMap* ProtocolTypeToPendingPackets(ProtocolType protocolType);
+    AnimUidPacketInfoMap* ProtocolTypeToPendingPackets(
+        AnimationInterface::ProtocolType protocolType);
     /**
      * Protocol type to string function
      * \param protocolType the protocol type
      * \returns the protocol type string
      */
-    std::string ProtocolTypeToString(ProtocolType protocolType);
-    /**
-     * Add pending packet function
-     * \param protocolType the protocol type
-     * \param animUid the UID
-     * \param pktInfo the packet info
-     */
-    void AddPendingPacket(ProtocolType protocolType, uint64_t animUid, AnimPacketInfo pktInfo);
-    /**
-     * Get anim UID from packet function
-     * \param p the packet
-     * \returns the UID
-     */
-    uint64_t GetAnimUidFromPacket(Ptr<const Packet>);
+    std::string ProtocolTypeToString(AnimationInterface::ProtocolType protocolType);
+    // /**
+    //  * Add pending packet function
+    //  * \param protocolType the protocol type
+    //  * \param animUid the UID
+    //  * \param pktInfo the packet info
+    //  */
+    // void AddPendingPacket(ProtocolType protocolType, uint64_t animUid, AnimPacketInfo pktInfo);
+    // /**
+    //  * Get anim UID from packet function
+    //  * \param p the packet
+    //  * \returns the UID
+    //  */
+    // uint64_t GetAnimUidFromPacket(Ptr<const Packet> p);
     /**
      * Add to IPv4 address node ID table function
      * \param ipv4Address the IPv4 address
@@ -859,11 +881,11 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \param nodeId the node ID
      */
     void AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Addresses, uint32_t nodeId);
-    /**
-     * Is in time window function
-     * \returns true if in the time window
-     */
-    bool IsInTimeWindow();
+    // /**
+    //  * Is in time window function
+    //  * \returns true if in the time window
+    //  */
+    // bool IsInTimeWindow();
     /// Check maximum packets per trace file function
     void CheckMaxPktsPerTraceFile();
 
@@ -1133,31 +1155,31 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \param p the packet
      * \param m the MAC address
      */
-    void LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
-    /**
-     * LTE receive trace function
-     * \param context the context
-     * \param p the packet
-     * \param m the MAC address
-     */
-    void LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
-    /**
-     * LTE Spectrum Phy transmit start function
-     * \param context the context
-     * \param pb the packet burst
-     */
-    void LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb);
-    /**
-     * LTE Spectrum Phy receive start function
-     * \param context the context
-     * \param pb the packet burst
-     */
-    void LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb);
-    /**
-     * UAN Phy gen transmit trace function
-     * \param context the context
-     * \param p the packet
-     */
+    // void LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
+    // /**
+    //  * LTE receive trace function
+    //  * \param context the context
+    //  * \param p the packet
+    //  * \param m the MAC address
+    //  */
+    // void LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
+    // /**
+    //  * LTE Spectrum Phy transmit start function
+    //  * \param context the context
+    //  * \param pb the packet burst
+    //  */
+    // void LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb);
+    // /**
+    //  * LTE Spectrum Phy receive start function
+    //  * \param context the context
+    //  * \param pb the packet burst
+    //  */
+    // void LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb);
+    // /**
+    //  * UAN Phy gen transmit trace function
+    //  * \param context the context
+    //  * \param p the packet
+    //  */
     void UanPhyGenTxTrace(std::string context, Ptr<const Packet>);
     /**
      * UAN Phy gen receive trace function
@@ -1180,7 +1202,7 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      */
     void GenericWirelessTxTrace(std::string context,
                                 Ptr<const Packet> p,
-                                ProtocolType protocolType);
+                                AnimationInterface::ProtocolType protocolType);
     /**
      * Generic wireless receive trace function
      * \param context the context
@@ -1189,26 +1211,26 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      */
     void GenericWirelessRxTrace(std::string context,
                                 Ptr<const Packet> p,
-                                ProtocolType protocolType);
+                                AnimationInterface::ProtocolType protocolType);
 
     /// Connect callbacks function
     void ConnectCallbacks();
-    /// Connect LTE function
-    void ConnectLte();
-    /**
-     * Connect LTE ue function
-     * \param n the node
-     * \param nd the device
-     * \param devIndex the device index
-     */
-    void ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex);
-    /**
-     * Connect LTE ENB function
-     * \param n the node
-     * \param nd the device
-     * \param devIndex the device index
-     */
-    void ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex);
+    // /// Connect LTE function
+    // void ConnectLte();
+    // /**
+    //  * Connect LTE ue function
+    //  * \param n the node
+    //  * \param nd the device
+    //  * \param devIndex the device index
+    //  */
+    // void ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex);
+    // /**
+    //  * Connect LTE ENB function
+    //  * \param n the node
+    //  * \param nd the device
+    //  * \param devIndex the device index
+    //  */
+    // void ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex);
 
     // ##### Mobility #####
     /**
@@ -1230,12 +1252,12 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns the position vector
      */
     Vector UpdatePosition(Ptr<Node> n, Vector v);
-    /**
-     * Update position function
-     * \param ndev the device
-     * \returns the position vector
-     */
-    Vector UpdatePosition(Ptr<NetDevice> ndev);
+    // /**
+    //  * Update position function
+    //  * \param ndev the device
+    //  * \returns the position vector
+    //  */
+    // Vector UpdatePosition(Ptr<NetDevice> ndev);
     /**
      * Node has moved function
      * \param n the node
@@ -1282,12 +1304,12 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \param animUid the UID
      */
     void OutputWirelessPacketRxInfo(Ptr<const Packet> p, AnimPacketInfo& pktInfo, uint64_t animUid);
-    /**
-     * Output CSMA packet function
-     * \param p the packet
-     * \param pktInfo the packet info
-     */
-    void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
+    // /**
+    //  * Output CSMA packet function
+    //  * \param p the packet
+    //  * \param pktInfo the packet info
+    //  */
+    // void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
     /// Write link properties function
     void WriteLinkProperties();
     /// Write IPv4 Addresses function
@@ -1964,12 +1986,12 @@ AnimationInterfaceSingleton::MobilityAutoCheck()
     }
     if (!Simulator::IsFinished())
     {
-        PurgePendingPackets(AnimationInterfaceSingleton::WIFI);
-        PurgePendingPackets(AnimationInterfaceSingleton::WIMAX);
-        PurgePendingPackets(AnimationInterfaceSingleton::LTE);
-        PurgePendingPackets(AnimationInterfaceSingleton::CSMA);
-        PurgePendingPackets(AnimationInterfaceSingleton::LRWPAN);
-        PurgePendingPackets(AnimationInterfaceSingleton::WAVE);
+        PurgePendingPackets(AnimationInterface::WIFI);
+        PurgePendingPackets(AnimationInterface::WIMAX);
+        // PurgePendingPackets(AnimationInterfaceSingleton::LTE);
+        PurgePendingPackets(AnimationInterface::CSMA);
+        PurgePendingPackets(AnimationInterface::LRWPAN);
+        PurgePendingPackets(AnimationInterface::WAVE);
         Simulator::Schedule(m_mobilityPollInterval,
                             &AnimationInterfaceSingleton::MobilityAutoCheck,
                             this);
@@ -2329,7 +2351,7 @@ AnimationInterfaceSingleton::DevTxTrace(std::string context,
 void
 AnimationInterfaceSingleton::GenericWirelessTxTrace(std::string context,
                                                     Ptr<const Packet> p,
-                                                    ProtocolType protocolType)
+                                                    AnimationInterface::ProtocolType protocolType)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -2362,7 +2384,7 @@ AnimationInterfaceSingleton::GenericWirelessTxTrace(std::string context,
 void
 AnimationInterfaceSingleton::GenericWirelessRxTrace(std::string context,
                                                     Ptr<const Packet> p,
-                                                    ProtocolType protocolType)
+                                                    AnimationInterface::ProtocolType protocolType)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -2385,14 +2407,14 @@ void
 AnimationInterfaceSingleton::UanPhyGenTxTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessTxTrace(context, p, AnimationInterfaceSingleton::UAN);
+    return GenericWirelessTxTrace(context, p, AnimationInterface::UAN);
 }
 
 void
 AnimationInterfaceSingleton::UanPhyGenRxTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessRxTrace(context, p, AnimationInterfaceSingleton::UAN);
+    return GenericWirelessRxTrace(context, p, AnimationInterface::UAN);
 }
 
 void
@@ -2408,7 +2430,7 @@ AnimationInterfaceSingleton::WifiPhyTxBeginTrace(std::string context,
     UpdatePosition(ndev);
 
     AnimPacketInfo pktInfo(ndev, Simulator::Now());
-    AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(WIFI);
+    AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(AnimationInterface::WIFI);
     for (auto& psdu : psduMap)
     {
         for (auto& mpdu : *PeekPointer(psdu.second))
@@ -2417,7 +2439,7 @@ AnimationInterfaceSingleton::WifiPhyTxBeginTrace(std::string context,
             NS_LOG_INFO("WifiPhyTxTrace for MPDU:" << gAnimUid);
             AddByteTag(gAnimUid,
                        mpdu->GetPacket()); // the underlying MSDU/A-MSDU should be handed off
-            AddPendingPacket(WIFI, gAnimUid, pktInfo);
+            AddPendingPacket(AnimationInterface::WIFI, gAnimUid, pktInfo);
             OutputWirelessPacketTxInfo(
                 mpdu->GetProtocolDataUnit(),
                 pendingPackets->at(gAnimUid),
@@ -2454,7 +2476,7 @@ AnimationInterfaceSingleton::WifiPhyRxBeginTrace(std::string context,
     UpdatePosition(ndev);
     uint64_t animUid = GetAnimUidFromPacket(p);
     NS_LOG_INFO("Wifi RxBeginTrace for packet: " << animUid);
-    if (!IsPacketPending(animUid, AnimationInterfaceSingleton::WIFI))
+    if (!IsPacketPending(animUid, AnimationInterface::WIFI))
     {
         NS_ASSERT_MSG(false, "WifiPhyRxBeginTrace: unknown Uid");
         std::ostringstream oss;
@@ -2473,7 +2495,7 @@ AnimationInterfaceSingleton::WifiPhyRxBeginTrace(std::string context,
         Ptr<Node> txNode = NodeList::GetNode(m_macToNodeIdMap[oss.str()]);
         UpdatePosition(txNode);
         AnimPacketInfo pktInfo(nullptr, Simulator::Now(), m_macToNodeIdMap[oss.str()]);
-        AddPendingPacket(AnimationInterfaceSingleton::WIFI, animUid, pktInfo);
+        AddPendingPacket(AnimationInterface::WIFI, animUid, pktInfo);
         NS_LOG_WARN("WifiPhyRxBegin: unknown Uid, but we are adding a wifi packet");
     }
     /// \todo NS_ASSERT (WifiPacketIsPending (animUid) == true);
@@ -2527,7 +2549,7 @@ AnimationInterfaceSingleton::LrWpanPhyTxBeginTrace(std::string context, Ptr<cons
     AddByteTag(gAnimUid, p);
 
     AnimPacketInfo pktInfo(ndev, Simulator::Now());
-    AddPendingPacket(AnimationInterfaceSingleton::LRWPAN, gAnimUid, pktInfo);
+    AddPendingPacket(AnimationInterface::LRWPAN, gAnimUid, pktInfo);
 
     OutputWirelessPacketTxInfo(p, m_pendingLrWpanPackets[gAnimUid], gAnimUid);
 }
@@ -2550,7 +2572,7 @@ AnimationInterfaceSingleton::LrWpanPhyRxBeginTrace(std::string context, Ptr<cons
 
     uint64_t animUid = GetAnimUidFromPacket(p);
     NS_LOG_INFO("LrWpan RxBeginTrace for packet:" << animUid);
-    if (!IsPacketPending(animUid, AnimationInterfaceSingleton::LRWPAN))
+    if (!IsPacketPending(animUid, AnimationInterface::LRWPAN))
     {
         NS_LOG_WARN("LrWpanPhyRxBeginTrace: unknown Uid - most probably it's an ACK.");
     }
@@ -2564,7 +2586,7 @@ void
 AnimationInterfaceSingleton::WavePhyTxBeginTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessTxTrace(context, p, AnimationInterfaceSingleton::WAVE);
+    return GenericWirelessTxTrace(context, p, AnimationInterface::WAVE);
 }
 
 void
@@ -2577,7 +2599,7 @@ AnimationInterfaceSingleton::WavePhyRxBeginTrace(std::string context, Ptr<const 
     UpdatePosition(ndev);
     uint64_t animUid = GetAnimUidFromPacket(p);
     NS_LOG_INFO("Wave RxBeginTrace for packet:" << animUid);
-    if (!IsPacketPending(animUid, AnimationInterfaceSingleton::WAVE))
+    if (!IsPacketPending(animUid, AnimationInterface::WAVE))
     {
         NS_ASSERT_MSG(false, "WavePhyRxBeginTrace: unknown Uid");
         std::ostringstream oss;
@@ -2596,7 +2618,7 @@ AnimationInterfaceSingleton::WavePhyRxBeginTrace(std::string context, Ptr<const 
         Ptr<Node> txNode = NodeList::GetNode(m_macToNodeIdMap[oss.str()]);
         UpdatePosition(txNode);
         AnimPacketInfo pktInfo(nullptr, Simulator::Now(), m_macToNodeIdMap[oss.str()]);
-        AddPendingPacket(AnimationInterfaceSingleton::WAVE, animUid, pktInfo);
+        AddPendingPacket(AnimationInterface::WAVE, animUid, pktInfo);
         NS_LOG_WARN("WavePhyRxBegin: unknown Uid, but we are adding a wave packet");
     }
     /// \todo NS_ASSERT (WavePacketIsPending (animUid) == true);
@@ -2610,7 +2632,7 @@ AnimationInterfaceSingleton::WimaxTxTrace(std::string context,
                                           const Mac48Address& m)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessTxTrace(context, p, AnimationInterfaceSingleton::WIMAX);
+    return GenericWirelessTxTrace(context, p, AnimationInterface::WIMAX);
 }
 
 void
@@ -2619,166 +2641,168 @@ AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
                                           const Mac48Address& m)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessRxTrace(context, p, AnimationInterfaceSingleton::WIMAX);
+    return GenericWirelessRxTrace(context, p, AnimationInterface::WIMAX);
 }
 
-void
-AnimationInterfaceSingleton::LteTxTrace(std::string context,
-                                        Ptr<const Packet> p,
-                                        const Mac48Address& m)
-{
-    NS_LOG_FUNCTION(this);
-    return GenericWirelessTxTrace(context, p, AnimationInterfaceSingleton::LTE);
-}
+// void
+// AnimationInterfaceSingleton::LteTxTrace(std::string context,
+//                                         Ptr<const Packet> p,
+//                                         const Mac48Address& m)
+// {
+//     NS_LOG_FUNCTION(this);
+//     return GenericWirelessTxTrace(context, p, AnimationInterfaceSingleton::LTE);
+// }
 
-void
-AnimationInterfaceSingleton::LteRxTrace(std::string context,
-                                        Ptr<const Packet> p,
-                                        const Mac48Address& m)
-{
-    NS_LOG_FUNCTION(this);
-    return GenericWirelessRxTrace(context, p, AnimationInterfaceSingleton::LTE);
-}
+// void
+// AnimationInterfaceSingleton::LteRxTrace(std::string context,
+//                                         Ptr<const Packet> p,
+//                                         const Mac48Address& m)
+// {
+//     NS_LOG_FUNCTION(this);
+//     return GenericWirelessRxTrace(context, p, AnimationInterfaceSingleton::LTE);
+// }
 
-void
-AnimationInterfaceSingleton::LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    if (!pb)
-    {
-        NS_LOG_WARN("pb == 0. Not yet supported");
-        return;
-    }
-    context = "/" + context;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
+// void
+// AnimationInterfaceSingleton::LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst>
+// pb)
+// {
+//     NS_LOG_FUNCTION(this);
+//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
+//     if (!pb)
+//     {
+//         NS_LOG_WARN("pb == 0. Not yet supported");
+//         return;
+//     }
+//     context = "/" + context;
+//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
+//     NS_ASSERT(ndev);
+//     UpdatePosition(ndev);
 
-    std::list<Ptr<Packet>> pbList = pb->GetPackets();
-    for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
-    {
-        Ptr<Packet> p = *i;
-        ++gAnimUid;
-        NS_LOG_INFO("LteSpectrumPhyTxTrace for packet:" << gAnimUid);
-        AnimPacketInfo pktInfo(ndev, Simulator::Now());
-        AddByteTag(gAnimUid, p);
-        AddPendingPacket(AnimationInterfaceSingleton::LTE, gAnimUid, pktInfo);
-        OutputWirelessPacketTxInfo(p, pktInfo, gAnimUid);
-    }
-}
+//     std::list<Ptr<Packet>> pbList = pb->GetPackets();
+//     for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
+//     {
+//         Ptr<Packet> p = *i;
+//         ++gAnimUid;
+//         NS_LOG_INFO("LteSpectrumPhyTxTrace for packet:" << gAnimUid);
+//         AnimPacketInfo pktInfo(ndev, Simulator::Now());
+//         AddByteTag(gAnimUid, p);
+//         AddPendingPacket(AnimationInterfaceSingleton::LTE, gAnimUid, pktInfo);
+//         OutputWirelessPacketTxInfo(p, pktInfo, gAnimUid);
+//     }
+// }
 
-void
-AnimationInterfaceSingleton::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    if (!pb)
-    {
-        NS_LOG_WARN("pb == 0. Not yet supported");
-        return;
-    }
-    context = "/" + context;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
+// void
+// AnimationInterfaceSingleton::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst>
+// pb)
+// {
+//     NS_LOG_FUNCTION(this);
+//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
+//     if (!pb)
+//     {
+//         NS_LOG_WARN("pb == 0. Not yet supported");
+//         return;
+//     }
+//     context = "/" + context;
+//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
+//     NS_ASSERT(ndev);
+//     UpdatePosition(ndev);
 
-    std::list<Ptr<Packet>> pbList = pb->GetPackets();
-    for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
-    {
-        Ptr<Packet> p = *i;
-        uint64_t animUid = GetAnimUidFromPacket(p);
-        NS_LOG_INFO("LteSpectrumPhyRxTrace for packet:" << gAnimUid);
-        if (!IsPacketPending(animUid, AnimationInterfaceSingleton::LTE))
-        {
-            NS_LOG_WARN("LteSpectrumPhyRxTrace: unknown Uid");
-            return;
-        }
-        AnimPacketInfo& pktInfo = m_pendingLtePackets[animUid];
-        pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
-        OutputWirelessPacketRxInfo(p, pktInfo, animUid);
-    }
-}
+//     std::list<Ptr<Packet>> pbList = pb->GetPackets();
+//     for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
+//     {
+//         Ptr<Packet> p = *i;
+//         uint64_t animUid = GetAnimUidFromPacket(p);
+//         NS_LOG_INFO("LteSpectrumPhyRxTrace for packet:" << gAnimUid);
+//         if (!IsPacketPending(animUid, AnimationInterfaceSingleton::LTE))
+//         {
+//             NS_LOG_WARN("LteSpectrumPhyRxTrace: unknown Uid");
+//             return;
+//         }
+//         AnimPacketInfo& pktInfo = m_pendingLtePackets[animUid];
+//         pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
+//         OutputWirelessPacketRxInfo(p, pktInfo, animUid);
+//     }
+// }
 
-void
-AnimationInterfaceSingleton::CsmaPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
-    ++gAnimUid;
-    NS_LOG_INFO("CsmaPhyTxBeginTrace for packet:" << gAnimUid);
-    AddByteTag(gAnimUid, p);
-    UpdatePosition(ndev);
-    AnimPacketInfo pktInfo(ndev, Simulator::Now());
-    AddPendingPacket(AnimationInterfaceSingleton::CSMA, gAnimUid, pktInfo);
-}
+// void
+// AnimationInterfaceSingleton::CsmaPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
+// {
+//     NS_LOG_FUNCTION(this);
+//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
+//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
+//     NS_ASSERT(ndev);
+//     UpdatePosition(ndev);
+//     ++gAnimUid;
+//     NS_LOG_INFO("CsmaPhyTxBeginTrace for packet:" << gAnimUid);
+//     AddByteTag(gAnimUid, p);
+//     UpdatePosition(ndev);
+//     AnimPacketInfo pktInfo(ndev, Simulator::Now());
+//     AddPendingPacket(AnimationInterfaceSingleton::CSMA, gAnimUid, pktInfo);
+// }
 
-void
-AnimationInterfaceSingleton::CsmaPhyTxEndTrace(std::string context, Ptr<const Packet> p)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
-    uint64_t animUid = GetAnimUidFromPacket(p);
-    NS_LOG_INFO("CsmaPhyTxEndTrace for packet:" << animUid);
-    if (!IsPacketPending(animUid, AnimationInterfaceSingleton::CSMA))
-    {
-        NS_LOG_WARN("CsmaPhyTxEndTrace: unknown Uid");
-        NS_FATAL_ERROR("CsmaPhyTxEndTrace: unknown Uid");
-        AnimPacketInfo pktInfo(ndev, Simulator::Now());
-        AddPendingPacket(AnimationInterfaceSingleton::CSMA, animUid, pktInfo);
-        NS_LOG_WARN("Unknown Uid, but adding Csma Packet anyway");
-    }
-    /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true);
-    AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
-    pktInfo.m_lbTx = Simulator::Now().GetSeconds();
-}
+// void
+// AnimationInterfaceSingleton::CsmaPhyTxEndTrace(std::string context, Ptr<const Packet> p)
+// {
+//     NS_LOG_FUNCTION(this);
+//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
+//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
+//     NS_ASSERT(ndev);
+//     UpdatePosition(ndev);
+//     uint64_t animUid = GetAnimUidFromPacket(p);
+//     NS_LOG_INFO("CsmaPhyTxEndTrace for packet:" << animUid);
+//     if (!IsPacketPending(animUid, AnimationInterfaceSingleton::CSMA))
+//     {
+//         NS_LOG_WARN("CsmaPhyTxEndTrace: unknown Uid");
+//         NS_FATAL_ERROR("CsmaPhyTxEndTrace: unknown Uid");
+//         AnimPacketInfo pktInfo(ndev, Simulator::Now());
+//         AddPendingPacket(AnimationInterfaceSingleton::CSMA, animUid, pktInfo);
+//         NS_LOG_WARN("Unknown Uid, but adding Csma Packet anyway");
+//     }
+//     /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true);
+//     AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
+//     pktInfo.m_lbTx = Simulator::Now().GetSeconds();
+// }
 
-void
-AnimationInterfaceSingleton::CsmaPhyRxEndTrace(std::string context, Ptr<const Packet> p)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
-    uint64_t animUid = GetAnimUidFromPacket(p);
-    if (!IsPacketPending(animUid, AnimationInterfaceSingleton::CSMA))
-    {
-        NS_LOG_WARN("CsmaPhyRxEndTrace: unknown Uid");
-        return;
-    }
-    /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
-    AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
-    pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
-    NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << animUid);
-    NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << animUid << " complete");
-    OutputCsmaPacket(p, pktInfo);
-}
+// void
+// AnimationInterfaceSingleton::CsmaPhyRxEndTrace(std::string context, Ptr<const Packet> p)
+// {
+//     NS_LOG_FUNCTION(this);
+//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
+//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
+//     NS_ASSERT(ndev);
+//     UpdatePosition(ndev);
+//     uint64_t animUid = GetAnimUidFromPacket(p);
+//     if (!IsPacketPending(animUid, AnimationInterfaceSingleton::CSMA))
+//     {
+//         NS_LOG_WARN("CsmaPhyRxEndTrace: unknown Uid");
+//         return;
+//     }
+//     /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
+//     AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
+//     pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
+//     NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << animUid);
+//     NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << animUid << " complete");
+//     OutputCsmaPacket(p, pktInfo);
+// }
 
-void
-AnimationInterfaceSingleton::CsmaMacRxTrace(std::string context, Ptr<const Packet> p)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    uint64_t animUid = GetAnimUidFromPacket(p);
-    if (!IsPacketPending(animUid, AnimationInterfaceSingleton::CSMA))
-    {
-        NS_LOG_WARN("CsmaMacRxTrace: unknown Uid");
-        return;
-    }
-    /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
-    AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
-    NS_LOG_INFO("MacRxTrace for packet:" << animUid << " complete");
-    OutputCsmaPacket(p, pktInfo);
-}
+// void
+// AnimationInterfaceSingleton::CsmaMacRxTrace(std::string context, Ptr<const Packet> p)
+// {
+//     NS_LOG_FUNCTION(this);
+//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
+//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
+//     NS_ASSERT(ndev);
+//     uint64_t animUid = GetAnimUidFromPacket(p);
+//     if (!IsPacketPending(animUid, AnimationInterfaceSingleton::CSMA))
+//     {
+//         NS_LOG_WARN("CsmaMacRxTrace: unknown Uid");
+//         return;
+//     }
+//     /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
+//     AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
+//     NS_LOG_INFO("MacRxTrace for packet:" << animUid << " complete");
+//     OutputCsmaPacket(p, pktInfo);
+// }
 
 void
 AnimationInterfaceSingleton::OutputWirelessPacketTxInfo(Ptr<const Packet> p,
@@ -2830,7 +2854,7 @@ AnimationInterfaceSingleton::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInf
 }
 
 void
-AnimationInterfaceSingleton::AddPendingPacket(ProtocolType protocolType,
+AnimationInterfaceSingleton::AddPendingPacket(AnimationInterface::ProtocolType protocolType,
                                               uint64_t animUid,
                                               AnimPacketInfo pktInfo)
 {
@@ -2841,7 +2865,7 @@ AnimationInterfaceSingleton::AddPendingPacket(ProtocolType protocolType,
 
 bool
 AnimationInterfaceSingleton::IsPacketPending(uint64_t animUid,
-                                             AnimationInterfaceSingleton::ProtocolType protocolType)
+                                             AnimationInterface::ProtocolType protocolType)
 {
     AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(protocolType);
     NS_ASSERT(pendingPackets);
@@ -2849,8 +2873,7 @@ AnimationInterfaceSingleton::IsPacketPending(uint64_t animUid,
 }
 
 void
-AnimationInterfaceSingleton::PurgePendingPackets(
-    AnimationInterfaceSingleton::ProtocolType protocolType)
+AnimationInterfaceSingleton::PurgePendingPackets(AnimationInterface::ProtocolType protocolType)
 {
     AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(protocolType);
     NS_ASSERT(pendingPackets);
@@ -2877,36 +2900,36 @@ AnimationInterfaceSingleton::PurgePendingPackets(
 
 AnimationInterfaceSingleton::AnimUidPacketInfoMap*
 AnimationInterfaceSingleton::ProtocolTypeToPendingPackets(
-    AnimationInterfaceSingleton::ProtocolType protocolType)
+    AnimationInterface::ProtocolType protocolType)
 {
     AnimUidPacketInfoMap* pendingPackets = nullptr;
     switch (protocolType)
     {
-    case AnimationInterfaceSingleton::WIFI: {
+    case AnimationInterface::WIFI: {
         pendingPackets = &m_pendingWifiPackets;
         break;
     }
-    case AnimationInterfaceSingleton::UAN: {
+    case AnimationInterface::UAN: {
         pendingPackets = &m_pendingUanPackets;
         break;
     }
-    case AnimationInterfaceSingleton::CSMA: {
+    case AnimationInterface::CSMA: {
         pendingPackets = &m_pendingCsmaPackets;
         break;
     }
-    case AnimationInterfaceSingleton::WIMAX: {
+    case AnimationInterface::WIMAX: {
         pendingPackets = &m_pendingWimaxPackets;
         break;
     }
-    case AnimationInterfaceSingleton::LTE: {
-        pendingPackets = &m_pendingLtePackets;
-        break;
-    }
-    case AnimationInterfaceSingleton::LRWPAN: {
+    // case AnimationInterfaceSingleton::LTE: {
+    //     pendingPackets = &m_pendingLtePackets;
+    //     break;
+    // }
+    case AnimationInterface::LRWPAN: {
         pendingPackets = &m_pendingLrWpanPackets;
         break;
     }
-    case AnimationInterfaceSingleton::WAVE: {
+    case AnimationInterface::WAVE: {
         pendingPackets = &m_pendingWavePackets;
         break;
     }
@@ -2915,37 +2938,36 @@ AnimationInterfaceSingleton::ProtocolTypeToPendingPackets(
 }
 
 std::string
-AnimationInterfaceSingleton::ProtocolTypeToString(
-    AnimationInterfaceSingleton::ProtocolType protocolType)
+AnimationInterfaceSingleton::ProtocolTypeToString(AnimationInterface::ProtocolType protocolType)
 {
     std::string result = "Unknown";
     switch (protocolType)
     {
-    case AnimationInterfaceSingleton::WIFI: {
+    case AnimationInterface::WIFI: {
         result = "WIFI";
         break;
     }
-    case AnimationInterfaceSingleton::UAN: {
+    case AnimationInterface::UAN: {
         result = "UAN";
         break;
     }
-    case AnimationInterfaceSingleton::CSMA: {
+    case AnimationInterface::CSMA: {
         result = "CSMA";
         break;
     }
-    case AnimationInterfaceSingleton::WIMAX: {
+    case AnimationInterface::WIMAX: {
         result = "WIMAX";
         break;
     }
-    case AnimationInterfaceSingleton::LTE: {
-        result = "LTE";
-        break;
-    }
-    case AnimationInterfaceSingleton::LRWPAN: {
+    // case AnimationInterfaceSingleton::LTE: {
+    //     result = "LTE";
+    //     break;
+    // }
+    case AnimationInterface::LRWPAN: {
         result = "LRWPAN";
         break;
     }
-    case AnimationInterfaceSingleton::WAVE: {
+    case AnimationInterface::WAVE: {
         result = "WAVE";
         break;
     }
@@ -3076,101 +3098,102 @@ AnimationInterfaceSingleton::AddToIpv6AddressNodeIdTable(std::vector<std::string
 }
 
 // Callbacks
-void
-AnimationInterfaceSingleton::ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex)
-{
-    Ptr<LteEnbPhy> lteEnbPhy = nd->GetPhy();
-    Ptr<LteSpectrumPhy> dlPhy = lteEnbPhy->GetDownlinkSpectrumPhy();
-    Ptr<LteSpectrumPhy> ulPhy = lteEnbPhy->GetUplinkSpectrumPhy();
-    std::ostringstream oss;
-    // NodeList/*/DeviceList/*/
-    oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
-    if (dlPhy)
-    {
-        dlPhy->TraceConnect(
-            "TxStart",
-            oss.str(),
-            MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
-        dlPhy->TraceConnect(
-            "RxStart",
-            oss.str(),
-            MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
-    }
-    if (ulPhy)
-    {
-        ulPhy->TraceConnect(
-            "TxStart",
-            oss.str(),
-            MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
-        ulPhy->TraceConnect(
-            "RxStart",
-            oss.str(),
-            MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
-    }
-}
+// void
+// AnimationInterfaceSingleton::ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t
+// devIndex)
+// {
+//     Ptr<LteEnbPhy> lteEnbPhy = nd->GetPhy();
+//     Ptr<LteSpectrumPhy> dlPhy = lteEnbPhy->GetDownlinkSpectrumPhy();
+//     Ptr<LteSpectrumPhy> ulPhy = lteEnbPhy->GetUplinkSpectrumPhy();
+//     std::ostringstream oss;
+//     // NodeList/*/DeviceList/*/
+//     oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
+//     if (dlPhy)
+//     {
+//         dlPhy->TraceConnect(
+//             "TxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
+//         dlPhy->TraceConnect(
+//             "RxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
+//     }
+//     if (ulPhy)
+//     {
+//         ulPhy->TraceConnect(
+//             "TxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
+//         ulPhy->TraceConnect(
+//             "RxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
+//     }
+// }
 
-void
-AnimationInterfaceSingleton::ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex)
-{
-    Ptr<LteUePhy> lteUePhy = nd->GetPhy();
-    Ptr<LteSpectrumPhy> dlPhy = lteUePhy->GetDownlinkSpectrumPhy();
-    Ptr<LteSpectrumPhy> ulPhy = lteUePhy->GetUplinkSpectrumPhy();
-    std::ostringstream oss;
-    // NodeList/*/DeviceList/*/
-    oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
-    if (dlPhy)
-    {
-        dlPhy->TraceConnect(
-            "TxStart",
-            oss.str(),
-            MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
-        dlPhy->TraceConnect(
-            "RxStart",
-            oss.str(),
-            MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
-    }
-    if (ulPhy)
-    {
-        ulPhy->TraceConnect(
-            "TxStart",
-            oss.str(),
-            MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
-        ulPhy->TraceConnect(
-            "RxStart",
-            oss.str(),
-            MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
-    }
-}
+// void
+// AnimationInterfaceSingleton::ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex)
+// {
+//     Ptr<LteUePhy> lteUePhy = nd->GetPhy();
+//     Ptr<LteSpectrumPhy> dlPhy = lteUePhy->GetDownlinkSpectrumPhy();
+//     Ptr<LteSpectrumPhy> ulPhy = lteUePhy->GetUplinkSpectrumPhy();
+//     std::ostringstream oss;
+//     // NodeList/*/DeviceList/*/
+//     oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
+//     if (dlPhy)
+//     {
+//         dlPhy->TraceConnect(
+//             "TxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
+//         dlPhy->TraceConnect(
+//             "RxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
+//     }
+//     if (ulPhy)
+//     {
+//         ulPhy->TraceConnect(
+//             "TxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
+//         ulPhy->TraceConnect(
+//             "RxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
+//     }
+// }
 
-void
-AnimationInterfaceSingleton::ConnectLte()
-{
-    for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
-    {
-        Ptr<Node> n = *i;
-        NS_ASSERT(n);
-        uint32_t nDevices = n->GetNDevices();
-        for (uint32_t devIndex = 0; devIndex < nDevices; ++devIndex)
-        {
-            Ptr<NetDevice> nd = n->GetDevice(devIndex);
-            if (!nd)
-            {
-                continue;
-            }
-            Ptr<LteUeNetDevice> lteUeNetDevice = DynamicCast<LteUeNetDevice>(nd);
-            if (lteUeNetDevice)
-            {
-                ConnectLteUe(n, lteUeNetDevice, devIndex);
-                continue;
-            }
-            Ptr<LteEnbNetDevice> lteEnbNetDevice = DynamicCast<LteEnbNetDevice>(nd);
-            if (lteEnbNetDevice)
-            {
-                ConnectLteEnb(n, lteEnbNetDevice, devIndex);
-            }
-        }
-    }
-}
+// void
+// AnimationInterfaceSingleton::ConnectLte()
+// {
+//     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
+//     {
+//         Ptr<Node> n = *i;
+//         NS_ASSERT(n);
+//         uint32_t nDevices = n->GetNDevices();
+//         for (uint32_t devIndex = 0; devIndex < nDevices; ++devIndex)
+//         {
+//             Ptr<NetDevice> nd = n->GetDevice(devIndex);
+//             if (!nd)
+//             {
+//                 continue;
+//             }
+//             Ptr<LteUeNetDevice> lteUeNetDevice = DynamicCast<LteUeNetDevice>(nd);
+//             if (lteUeNetDevice)
+//             {
+//                 ConnectLteUe(n, lteUeNetDevice, devIndex);
+//                 continue;
+//             }
+//             Ptr<LteEnbNetDevice> lteEnbNetDevice = DynamicCast<LteEnbNetDevice>(nd);
+//             if (lteEnbNetDevice)
+//             {
+//                 ConnectLteEnb(n, lteEnbNetDevice, devIndex);
+//             }
+//         }
+//     }
+// }
 
 void
 AnimationInterfaceSingleton::ConnectCallbacks()
@@ -3189,18 +3212,19 @@ AnimationInterfaceSingleton::ConnectCallbacks()
                             MakeCallback(&AnimationInterfaceSingleton::WimaxTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WimaxNetDevice/Rx",
                             MakeCallback(&AnimationInterfaceSingleton::WimaxRxTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Tx",
-                            MakeCallback(&AnimationInterfaceSingleton::LteTxTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Rx",
-                            MakeCallback(&AnimationInterfaceSingleton::LteRxTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxBegin",
-                            MakeCallback(&AnimationInterfaceSingleton::CsmaPhyTxBeginTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxEnd",
-                            MakeCallback(&AnimationInterfaceSingleton::CsmaPhyTxEndTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyRxEnd",
-                            MakeCallback(&AnimationInterfaceSingleton::CsmaPhyRxEndTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/MacRx",
-                            MakeCallback(&AnimationInterfaceSingleton::CsmaMacRxTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Tx",
+    //                         MakeCallback(&AnimationInterfaceSingleton::LteTxTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Rx",
+    //                         MakeCallback(&AnimationInterfaceSingleton::LteRxTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxBegin",
+    //                         MakeCallback(&AnimationInterfaceSingleton::CsmaPhyTxBeginTrace,
+    //                         this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxEnd",
+    //                         MakeCallback(&AnimationInterfaceSingleton::CsmaPhyTxEndTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyRxEnd",
+    //                         MakeCallback(&AnimationInterfaceSingleton::CsmaPhyRxEndTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/MacRx",
+    //                         MakeCallback(&AnimationInterfaceSingleton::CsmaMacRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyTxBegin",
                             MakeCallback(&AnimationInterfaceSingleton::UanPhyGenTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyRxBegin",
@@ -3208,7 +3232,7 @@ AnimationInterfaceSingleton::ConnectCallbacks()
     Config::ConnectFailSafe("/NodeList/*/$ns3::BasicEnergySource/RemainingEnergy",
                             MakeCallback(&AnimationInterfaceSingleton::RemainingEnergyTrace, this));
 
-    ConnectLte();
+    // ConnectLte();
 
     Config::ConnectFailSafe("/NodeList/*/$ns3::Ipv4L3Protocol/Tx",
                             MakeCallback(&AnimationInterfaceSingleton::Ipv4TxTrace, this));
@@ -3221,8 +3245,8 @@ AnimationInterfaceSingleton::ConnectCallbacks()
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Enqueue",
                             MakeCallback(&AnimationInterfaceSingleton::EnqueueTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Enqueue",
-                            MakeCallback(&AnimationInterfaceSingleton::EnqueueTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Enqueue",
+    //                         MakeCallback(&AnimationInterfaceSingleton::EnqueueTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Enqueue",
                             MakeCallback(&AnimationInterfaceSingleton::EnqueueTrace, this));
 
@@ -3230,8 +3254,8 @@ AnimationInterfaceSingleton::ConnectCallbacks()
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Dequeue",
                             MakeCallback(&AnimationInterfaceSingleton::DequeueTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Dequeue",
-                            MakeCallback(&AnimationInterfaceSingleton::DequeueTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Dequeue",
+    //                         MakeCallback(&AnimationInterfaceSingleton::DequeueTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Dequeue",
                             MakeCallback(&AnimationInterfaceSingleton::DequeueTrace, this));
 
@@ -3239,8 +3263,8 @@ AnimationInterfaceSingleton::ConnectCallbacks()
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Drop",
                             MakeCallback(&AnimationInterfaceSingleton::QueueDropTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Drop",
-                            MakeCallback(&AnimationInterfaceSingleton::QueueDropTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Drop",
+    //                         MakeCallback(&AnimationInterfaceSingleton::QueueDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Drop",
                             MakeCallback(&AnimationInterfaceSingleton::QueueDropTrace, this));
 
@@ -4473,7 +4497,7 @@ AnimByteTag::Get() const
     return m_AnimUid;
 }
 
-AnimationInterfaceSingleton::AnimPacketInfo::AnimPacketInfo()
+AnimPacketInfo::AnimPacketInfo()
     : m_txnd(nullptr),
       m_txNodeId(0),
       m_fbTx(0),
@@ -4482,7 +4506,7 @@ AnimationInterfaceSingleton::AnimPacketInfo::AnimPacketInfo()
 {
 }
 
-AnimationInterfaceSingleton::AnimPacketInfo::AnimPacketInfo(const AnimPacketInfo& pInfo)
+AnimPacketInfo::AnimPacketInfo(const AnimPacketInfo& pInfo)
 {
     m_txnd = pInfo.m_txnd;
     m_txNodeId = pInfo.m_txNodeId;
@@ -4491,9 +4515,7 @@ AnimationInterfaceSingleton::AnimPacketInfo::AnimPacketInfo(const AnimPacketInfo
     m_lbRx = pInfo.m_lbRx;
 }
 
-AnimationInterfaceSingleton::AnimPacketInfo::AnimPacketInfo(Ptr<const NetDevice> txnd,
-                                                            const Time fbTx,
-                                                            uint32_t txNodeId)
+AnimPacketInfo::AnimPacketInfo(Ptr<const NetDevice> txnd, const Time fbTx, uint32_t txNodeId)
     : m_txnd(txnd),
       m_txNodeId(0),
       m_fbTx(fbTx.GetSeconds()),
@@ -4507,8 +4529,7 @@ AnimationInterfaceSingleton::AnimPacketInfo::AnimPacketInfo(Ptr<const NetDevice>
 }
 
 void
-AnimationInterfaceSingleton::AnimPacketInfo::ProcessRxBegin(Ptr<const NetDevice> nd,
-                                                            const double fbRx)
+AnimPacketInfo::ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx)
 {
     Ptr<Node> n = nd->GetNode();
     m_fbRx = fbRx;
@@ -4754,5 +4775,145 @@ AnimationInterface::GetNodeEnergyFraction(Ptr<const Node> node) const
 {
     return AnimationInterfaceSingleton::Get()->GetNodeEnergyFraction(node);
 };
+
+bool
+AnimationInterface::IsInTimeWindow()
+{
+    return AnimationInterfaceSingleton::Get()->IsInTimeWindow();
+}
+
+bool
+AnimationInterfaceSingleton::IsTracking()
+{
+    return m_trackPackets;
+}
+
+bool
+AnimationInterface::IsTracking()
+{
+    return AnimationInterfaceSingleton::Get()->IsTracking();
+}
+
+Ptr<NetDevice>
+AnimationInterface::GetNetDeviceFromContext(std::string context)
+{
+    return AnimationInterfaceSingleton::Get()->GetNetDeviceFromContext(context);
+}
+
+Vector
+AnimationInterface::UpdatePosition(Ptr<NetDevice> ndev)
+{
+    return AnimationInterfaceSingleton::Get()->UpdatePosition(ndev);
+}
+
+void
+AnimationInterface::IncrementAnimUid()
+{
+    return AnimationInterfaceSingleton::Get()->IncrementAnimUid();
+}
+
+void
+AnimationInterfaceSingleton::IncrementAnimUid()
+{
+    gAnimUid++;
+}
+
+uint64_t
+AnimationInterface::GetAnimUid()
+{
+    return AnimationInterfaceSingleton::Get()->GetAnimUid();
+}
+
+uint64_t
+AnimationInterfaceSingleton::GetAnimUid()
+{
+    return gAnimUid;
+}
+
+void
+AnimationInterface::AddByteTag(uint64_t animUid, Ptr<const Packet> p)
+{
+    return AnimationInterfaceSingleton::Get()->AddByteTag(animUid, p);
+}
+
+uint64_t
+AnimationInterface::GetAnimUidFromPacket(Ptr<const Packet> p)
+{
+    return AnimationInterfaceSingleton::Get()->GetAnimUidFromPacket(p);
+}
+
+bool
+AnimationInterface::IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType)
+{
+    return AnimationInterfaceSingleton::Get()->IsPacketPending(animUid, protocolType);
+}
+
+void
+AnimationInterface::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo)
+{
+    return AnimationInterfaceSingleton::Get()->OutputCsmaPacket(p, pktInfo);
+}
+
+std::map<uint64_t, AnimPacketInfo>
+AnimationInterfaceSingleton::GetPendingCsmaPacketsMap()
+{
+    return m_pendingCsmaPackets;
+}
+
+std::map<uint64_t, AnimPacketInfo>
+AnimationInterface::GetPendingCsmaPacketsMap()
+{
+    return AnimationInterfaceSingleton::Get()->GetPendingCsmaPacketsMap();
+}
+
+void
+AnimationInterface::AddPendingPacket(ProtocolType protocolType,
+                                     uint64_t animUid,
+                                     AnimPacketInfo pktInfo)
+{
+    return AnimationInterfaceSingleton::Get()->AddPendingPacket(protocolType, animUid, pktInfo);
+}
+
+Ptr<Node>
+AnimationInterface::GetNodeFromContext(const std::string& context) const
+{
+    return AnimationInterfaceSingleton::Get()->GetNodeFromContext(context);
+}
+
+void
+AnimationInterfaceSingleton::AddNodeToNodeEnqueueMap(uint32_t nodeId)
+{
+    ++m_nodeQueueEnqueue[nodeId];
+}
+
+void
+AnimationInterface::AddNodeToNodeEnqueueMap(uint32_t nodeId)
+{
+    return AnimationInterfaceSingleton::Get()->AddNodeToNodeEnqueueMap(nodeId);
+}
+
+void
+AnimationInterfaceSingleton::AddNodeToNodeDequeueMap(uint32_t nodeId)
+{
+    ++m_nodeQueueDequeue[nodeId];
+}
+
+void
+AnimationInterface::AddNodeToNodeDequeueMap(uint32_t nodeId)
+{
+    return AnimationInterfaceSingleton::Get()->AddNodeToNodeDequeueMap(nodeId);
+}
+
+void
+AnimationInterfaceSingleton::AddNodeToNodeDropMap(uint32_t nodeId)
+{
+    ++m_nodeQueueDrop[nodeId];
+}
+
+void
+AnimationInterface::AddNodeToNodeDropMap(uint32_t nodeId)
+{
+    return AnimationInterfaceSingleton::Get()->AddNodeToNodeDropMap(nodeId);
+}
 
 } // namespace ns3

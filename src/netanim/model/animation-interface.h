@@ -27,8 +27,8 @@
 #include "ns3/ipv4-l3-protocol.h"
 #include "ns3/ipv4.h"
 #include "ns3/log.h"
-#include "ns3/lte-enb-net-device.h"
-#include "ns3/lte-ue-net-device.h"
+// #include "ns3/lte-enb-net-device.h"
+// #include "ns3/lte-ue-net-device.h"
 #include "ns3/mac48-address.h"
 #include "ns3/net-device.h"
 #include "ns3/node-container.h"
@@ -87,6 +87,43 @@ class WifiPsdu;
  * external or internal network animator.
  */
 
+/**
+ * AnimPacketInfo class
+ */
+class AnimPacketInfo
+
+{
+  public:
+    AnimPacketInfo();
+    /**
+     * Constructor
+     *
+     * \param pInfo anim packet info
+     */
+    AnimPacketInfo(const AnimPacketInfo& pInfo);
+    /**
+     * Constructor
+     *
+     * \param tx_nd transmit device
+     * \param fbTx fb transmit
+     * \param txNodeId transmit node ID
+     */
+    AnimPacketInfo(Ptr<const NetDevice> tx_nd, const Time fbTx, uint32_t txNodeId = 0);
+    Ptr<const NetDevice> m_txnd; ///< transmit device
+    uint32_t m_txNodeId;         ///< node ID
+    double m_fbTx;               ///< fb transmit
+    double m_lbTx;               ///< lb transmit
+    double m_fbRx;               ///< fb receive
+    double m_lbRx;               ///< lb receive
+    Ptr<const NetDevice> m_rxnd; ///< receive device
+    /**
+     * Process receive begin
+     * \param nd the device
+     * \param fbRx
+     */
+    void ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx);
+};
+
 class AnimationInterface
 {
   public:
@@ -95,7 +132,9 @@ class AnimationInterface
      * \param filename The Filename for the trace file used by the Animator
      *
      */
-    AnimationInterface(const std::string& filename);
+    AnimationInterface(const std::string& filename = nullptr);
+
+    // AnimationInterface();
 
     /**
      * Counter Types
@@ -427,6 +466,72 @@ class AnimationInterface
      * \returns current node's remaining energy (between [0, 1])
      */
     double GetNodeEnergyFraction(Ptr<const Node> node) const;
+    bool IsInTimeWindow();
+    bool IsTracking();
+    /**
+     * Get net device from context
+     * \param context the context string
+     * \returns the device
+     */
+    Ptr<NetDevice> GetNetDeviceFromContext(std::string context);
+    Vector UpdatePosition(Ptr<NetDevice> ndev);
+    void IncrementAnimUid();
+    uint64_t GetAnimUid();
+    /**
+     * Add byte tag function
+     * \param animUid the UID
+     * \param p the packet
+     */
+    void AddByteTag(uint64_t animUid, Ptr<const Packet> p);
+
+    /// ProtocolType enumeration
+    enum ProtocolType
+    {
+        UAN,
+        // LTE,
+        WIFI,
+        WIMAX,
+        CSMA,
+        LRWPAN,
+        WAVE
+    };
+
+    /**
+     * Add pending packet function
+     * \param protocolType the protocol type
+     * \param animUid the UID
+     * \param pktInfo the packet info
+     */
+    void AddPendingPacket(ProtocolType protocolType, uint64_t animUid, AnimPacketInfo pktInfo);
+    /**
+     * Get anim UID from packet function
+     * \param p the packet
+     * \returns the UID
+     */
+    uint64_t GetAnimUidFromPacket(Ptr<const Packet> p);
+    /**
+     * Is packet pending function
+     * \param animUid the UID
+     * \param protocolType the protocol type
+     * \returns true if a packet is pending
+     */
+    bool IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType);
+    /**
+     * Output CSMA packet function
+     * \param p the packet
+     * \param pktInfo the packet info
+     */
+    void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
+    std::map<uint64_t, AnimPacketInfo> GetPendingCsmaPacketsMap();
+    /**
+     * Get node from context
+     * \param context the context string
+     * \returns the node
+     */
+    Ptr<Node> GetNodeFromContext(const std::string& context) const;
+    void AddNodeToNodeEnqueueMap(uint32_t nodeId);
+    void AddNodeToNodeDequeueMap(uint32_t nodeId);
+    void AddNodeToNodeDropMap(uint32_t nodeId);
 };
 
 } // namespace ns3

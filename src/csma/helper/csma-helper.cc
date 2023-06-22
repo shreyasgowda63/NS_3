@@ -22,6 +22,7 @@
 #include "ns3/abort.h"
 #include "ns3/config.h"
 #include "ns3/csma-channel.h"
+#include "ns3/csma-net-device-anim.h"
 #include "ns3/csma-net-device.h"
 #include "ns3/log.h"
 #include "ns3/names.h"
@@ -44,6 +45,7 @@ CsmaHelper::CsmaHelper()
     m_deviceFactory.SetTypeId("ns3::CsmaNetDevice");
     m_channelFactory.SetTypeId("ns3::CsmaChannel");
     m_enableFlowControl = true;
+    CreateObject<CsmaNetDeviceAnim>()->ConnectCallbacks();
 }
 
 void
