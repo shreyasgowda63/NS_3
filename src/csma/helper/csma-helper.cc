@@ -45,7 +45,6 @@ CsmaHelper::CsmaHelper()
     m_deviceFactory.SetTypeId("ns3::CsmaNetDevice");
     m_channelFactory.SetTypeId("ns3::CsmaChannel");
     m_enableFlowControl = true;
-    CreateObject<CsmaNetDeviceAnim>()->ConnectCallbacks();
 }
 
 void
@@ -327,6 +326,9 @@ CsmaHelper::InstallPriv(Ptr<Node> node, Ptr<CsmaChannel> channel) const
         ndqi->GetTxQueue(0)->ConnectQueueTraces(queue);
         device->AggregateObject(ndqi);
     }
+    Ptr<CsmaNetDeviceAnim> deviceAnim = CreateObject<CsmaNetDeviceAnim>();
+    device->AggregateObject(deviceAnim);
+    deviceAnim->ConnectCallbacks();
     return device;
 }
 

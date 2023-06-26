@@ -52,6 +52,7 @@
 #include "ns3/lr-wpan-net-device.h"
 // #include "ns3/lte-enb-phy.h"
 // #include "ns3/lte-ue-phy.h"
+#include "ns3/csma-net-device-anim.h"
 #include "ns3/mobility-model.h"
 #include "ns3/node.h"
 #include "ns3/packet.h"
@@ -470,7 +471,7 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \param pktInfo the packet info
      */
     void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
-    std::map<uint64_t, AnimPacketInfo> GetPendingCsmaPacketsMap();
+    std::map<uint64_t, AnimPacketInfo>& GetPendingCsmaPacketsMap();
     /**
      * Get node from context
      * \param context the context string
@@ -4541,6 +4542,11 @@ AnimationInterface::AnimationInterface(const std::string& filename)
     AnimationInterfaceSingleton::Get()->Initialize(filename);
 }
 
+AnimationInterface::AnimationInterface()
+{
+    return;
+}
+
 void
 AnimationInterface::EnableIpv4L3ProtocolCounters(Time startTime, Time stopTime, Time pollInterval)
 {
@@ -4854,13 +4860,13 @@ AnimationInterface::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInf
     return AnimationInterfaceSingleton::Get()->OutputCsmaPacket(p, pktInfo);
 }
 
-std::map<uint64_t, AnimPacketInfo>
+std::map<uint64_t, AnimPacketInfo>&
 AnimationInterfaceSingleton::GetPendingCsmaPacketsMap()
 {
     return m_pendingCsmaPackets;
 }
 
-std::map<uint64_t, AnimPacketInfo>
+std::map<uint64_t, AnimPacketInfo>&
 AnimationInterface::GetPendingCsmaPacketsMap()
 {
     return AnimationInterfaceSingleton::Get()->GetPendingCsmaPacketsMap();

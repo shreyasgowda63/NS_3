@@ -132,9 +132,8 @@ class AnimationInterface
      * \param filename The Filename for the trace file used by the Animator
      *
      */
-    AnimationInterface(const std::string& filename = nullptr);
-
-    // AnimationInterface();
+    AnimationInterface(const std::string& filename);
+    AnimationInterface();
 
     /**
      * Counter Types
@@ -522,7 +521,7 @@ class AnimationInterface
      * \param pktInfo the packet info
      */
     void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
-    std::map<uint64_t, AnimPacketInfo> GetPendingCsmaPacketsMap();
+    std::map<uint64_t, AnimPacketInfo>& GetPendingCsmaPacketsMap();
     /**
      * Get node from context
      * \param context the context string
