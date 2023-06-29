@@ -1989,7 +1989,7 @@ AnimationInterfaceSingleton::MobilityAutoCheck()
     {
         PurgePendingPackets(AnimationInterface::WIFI);
         PurgePendingPackets(AnimationInterface::WIMAX);
-        // PurgePendingPackets(AnimationInterfaceSingleton::LTE);
+        // PurgePendingPackets(AnimationInterface::LTE);
         PurgePendingPackets(AnimationInterface::CSMA);
         PurgePendingPackets(AnimationInterface::LRWPAN);
         PurgePendingPackets(AnimationInterface::WAVE);
@@ -2651,7 +2651,7 @@ AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
 //                                         const Mac48Address& m)
 // {
 //     NS_LOG_FUNCTION(this);
-//     return GenericWirelessTxTrace(context, p, AnimationInterfaceSingleton::LTE);
+//     return GenericWirelessTxTrace(context, p, AnimationInterface::LTE);
 // }
 
 // void
@@ -2660,7 +2660,7 @@ AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
 //                                         const Mac48Address& m)
 // {
 //     NS_LOG_FUNCTION(this);
-//     return GenericWirelessRxTrace(context, p, AnimationInterfaceSingleton::LTE);
+//     return GenericWirelessRxTrace(context, p, AnimationInterface::LTE);
 // }
 
 // void
@@ -2687,7 +2687,7 @@ AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
 //         NS_LOG_INFO("LteSpectrumPhyTxTrace for packet:" << gAnimUid);
 //         AnimPacketInfo pktInfo(ndev, Simulator::Now());
 //         AddByteTag(gAnimUid, p);
-//         AddPendingPacket(AnimationInterfaceSingleton::LTE, gAnimUid, pktInfo);
+//         AddPendingPacket(AnimationInterface::LTE, gAnimUid, pktInfo);
 //         OutputWirelessPacketTxInfo(p, pktInfo, gAnimUid);
 //     }
 // }
@@ -2714,7 +2714,7 @@ AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
 //         Ptr<Packet> p = *i;
 //         uint64_t animUid = GetAnimUidFromPacket(p);
 //         NS_LOG_INFO("LteSpectrumPhyRxTrace for packet:" << gAnimUid);
-//         if (!IsPacketPending(animUid, AnimationInterfaceSingleton::LTE))
+//         if (!IsPacketPending(animUid, AnimationInterface::LTE))
 //         {
 //             NS_LOG_WARN("LteSpectrumPhyRxTrace: unknown Uid");
 //             return;
@@ -2738,7 +2738,7 @@ AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
 //     AddByteTag(gAnimUid, p);
 //     UpdatePosition(ndev);
 //     AnimPacketInfo pktInfo(ndev, Simulator::Now());
-//     AddPendingPacket(AnimationInterfaceSingleton::CSMA, gAnimUid, pktInfo);
+//     AddPendingPacket(AnimationInterface::CSMA, gAnimUid, pktInfo);
 // }
 
 // void
@@ -2751,12 +2751,12 @@ AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
 //     UpdatePosition(ndev);
 //     uint64_t animUid = GetAnimUidFromPacket(p);
 //     NS_LOG_INFO("CsmaPhyTxEndTrace for packet:" << animUid);
-//     if (!IsPacketPending(animUid, AnimationInterfaceSingleton::CSMA))
+//     if (!IsPacketPending(animUid, AnimationInterface::CSMA))
 //     {
 //         NS_LOG_WARN("CsmaPhyTxEndTrace: unknown Uid");
 //         NS_FATAL_ERROR("CsmaPhyTxEndTrace: unknown Uid");
 //         AnimPacketInfo pktInfo(ndev, Simulator::Now());
-//         AddPendingPacket(AnimationInterfaceSingleton::CSMA, animUid, pktInfo);
+//         AddPendingPacket(AnimationInterface::CSMA, animUid, pktInfo);
 //         NS_LOG_WARN("Unknown Uid, but adding Csma Packet anyway");
 //     }
 //     /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true);
@@ -2773,7 +2773,7 @@ AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
 //     NS_ASSERT(ndev);
 //     UpdatePosition(ndev);
 //     uint64_t animUid = GetAnimUidFromPacket(p);
-//     if (!IsPacketPending(animUid, AnimationInterfaceSingleton::CSMA))
+//     if (!IsPacketPending(animUid, AnimationInterface::CSMA))
 //     {
 //         NS_LOG_WARN("CsmaPhyRxEndTrace: unknown Uid");
 //         return;
@@ -2794,7 +2794,7 @@ AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
 //     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
 //     NS_ASSERT(ndev);
 //     uint64_t animUid = GetAnimUidFromPacket(p);
-//     if (!IsPacketPending(animUid, AnimationInterfaceSingleton::CSMA))
+//     if (!IsPacketPending(animUid, AnimationInterface::CSMA))
 //     {
 //         NS_LOG_WARN("CsmaMacRxTrace: unknown Uid");
 //         return;
@@ -2922,7 +2922,7 @@ AnimationInterfaceSingleton::ProtocolTypeToPendingPackets(
         pendingPackets = &m_pendingWimaxPackets;
         break;
     }
-    // case AnimationInterfaceSingleton::LTE: {
+    // case AnimationInterface::LTE: {
     //     pendingPackets = &m_pendingLtePackets;
     //     break;
     // }
@@ -2960,7 +2960,7 @@ AnimationInterfaceSingleton::ProtocolTypeToString(AnimationInterface::ProtocolTy
         result = "WIMAX";
         break;
     }
-    // case AnimationInterfaceSingleton::LTE: {
+    // case AnimationInterface::LTE: {
     //     result = "LTE";
     //     break;
     // }
@@ -3321,7 +3321,7 @@ AnimationInterfaceSingleton::UpdatePosition(Ptr<Node> n)
     else
     {
         NS_LOG_UNCOND(
-            "AnimationInterfaceSingleton WARNING:Node:"
+            "AnimationInterface WARNING:Node:"
             << n->GetId()
             << " Does not have a mobility model. Use SetConstantPosition if it is stationary");
         Ptr<UniformRandomVariable> x = CreateObject<UniformRandomVariable>();

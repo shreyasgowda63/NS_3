@@ -54,19 +54,19 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
      * \param context the context
      * \param p the packet
      */
-    void EnqueueTrace(Ptr<const Packet>);
+    void EnqueueTrace(Ptr<const Packet> p);
     /**
      * Dequeue trace function
      * \param context the context
      * \param p the packet
      */
-    void DequeueTrace(Ptr<const Packet>);
+    void DequeueTrace(Ptr<const Packet> p);
     /**
      * Queue trace function
      * \param context the context
      * \param p the packet
      */
-    void QueueDropTrace(Ptr<const Packet>);
+    void QueueDropTrace(Ptr<const Packet> p);
 
   private:
     /**
