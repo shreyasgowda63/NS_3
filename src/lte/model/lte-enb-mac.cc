@@ -526,6 +526,14 @@ LteEnbMac::DoSubframeIndication(uint32_t frameNo, uint32_t subframeNo)
                 else
                 {
                     rnti = m_cmacSapUser->AllocateTemporaryCellRnti();
+
+                    if (rnti == 0)
+                    {
+                        // If rnti = 0, UE context was not created (not enough SRS)
+                        // Therefore don't send RAR for this preamble
+                        NS_LOG_INFO("UE context not created, no RAR to send");
+                        continue;
+                    }
                     NS_LOG_INFO("preambleId " << (uint32_t)it->first << ": allocated T-C-RNTI "
                                               << (uint32_t)rnti << ", sending RAR");
                 }

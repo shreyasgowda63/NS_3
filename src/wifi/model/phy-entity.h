@@ -75,7 +75,7 @@ struct RxSignalInfo
 /**
  * A map of the received power (Watts) for each band
  */
-typedef std::map<WifiSpectrumBand, double> RxPowerWattPerChannelBand;
+using RxPowerWattPerChannelBand = std::map<WifiSpectrumBandInfo, double>;
 
 class WifiPsdu;
 class WifiPhy;
@@ -775,7 +775,7 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
      * \param staId the station ID of the PSDU
      * \return a pair of channel width (MHz) and band
      */
-    virtual std::pair<uint16_t, WifiSpectrumBand> GetChannelWidthAndBand(
+    virtual std::pair<uint16_t, WifiSpectrumBandInfo> GetChannelWidthAndBand(
         const WifiTxVector& txVector,
         uint16_t staId) const;
 
@@ -893,27 +893,27 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
     void NotifyPayloadBegin(const WifiTxVector& txVector, const Time& payloadDuration);
 
     /**
-     * If the operating channel width is a multiple of 20 MHz, return the start
-     * band index and the stop band index for the primary channel of the given
+     * If the operating channel width is a multiple of 20 MHz, return the info
+     * corresponding to the primary channel of the given
      * bandwidth (which must be a multiple of 20 MHz and not exceed the operating
      * channel width). Otherwise, this call is equivalent to GetBand with
      * <i>bandIndex</i> equal to zero.
      *
      * \param bandWidth the width of the band to be returned (MHz)
      *
-     * \return a pair of start and stop indexes that defines the band
+     * \return the info corresponding to the band
      */
-    WifiSpectrumBand GetPrimaryBand(uint16_t bandWidth) const;
+    WifiSpectrumBandInfo GetPrimaryBand(uint16_t bandWidth) const;
     /**
-     * If the channel bonding is used, return the start band index and the stop band index
-     * for the secondary channel of the given bandwidth (which must be a multiple of 20 MHz
+     * If the channel bonding is used, return the info corresponding to
+     * the secondary channel of the given bandwidth (which must be a multiple of 20 MHz
      * and not exceed the operating channel width).
      *
      * \param bandWidth the width of the band to be returned (MHz)
      *
-     * \return a pair of start and stop indexes that defines the band
+     * \return the info corresponding to the band
      */
-    WifiSpectrumBand GetSecondaryBand(uint16_t bandWidth) const;
+    WifiSpectrumBandInfo GetSecondaryBand(uint16_t bandWidth) const;
 
     /**
      * Return the channel width used to measure the RSSI.
@@ -939,7 +939,7 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
      * \param band identify the requested band
      * \return the delay until CCA busy is ended
      */
-    Time GetDelayUntilCcaEnd(double thresholdDbm, WifiSpectrumBand band);
+    Time GetDelayUntilCcaEnd(double thresholdDbm, const WifiSpectrumBandInfo& band);
 
     /**
      * \param currentChannelWidth channel width of the current transmission (MHz)

@@ -75,7 +75,8 @@ if(WIN32)
       CACHE BOOL "Precompile module headers to speed up compilation" FORCE
   )
 
-  # For whatever reason getting M_PI and other math.h definitions from cmath requires this definition
+  # For whatever reason getting M_PI and other math.h definitions from cmath
+  # requires this definition
   # https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants?view=vs-2019
   add_definitions(/D_USE_MATH_DEFINES)
 endif()
@@ -342,7 +343,6 @@ macro(clear_global_cached_variables)
   unset(ns3-headers-to-module-map CACHE)
   unset(ns3-libs CACHE)
   unset(ns3-libs-tests CACHE)
-  unset(ns3-python-bindings-modules CACHE)
   mark_as_advanced(
     build_profile
     build_profile_suffix
@@ -356,7 +356,6 @@ macro(clear_global_cached_variables)
     ns3-headers-to-module-map
     ns3-libs
     ns3-libs-tests
-    ns3-python-bindings-modules
   )
 endmacro()
 
@@ -589,11 +588,11 @@ macro(process_options)
       cmake-format
       COMMAND
         ${CMAKE_FORMAT_PROGRAM} -c
-        ${PROJECT_SOURCE_DIR}/build-support/cmake-format.txt -i
+        ${PROJECT_SOURCE_DIR}/build-support/cmake-format.yaml -i
         ${INTERNAL_CMAKE_FILES}
       COMMAND
         ${CMAKE_FORMAT_PROGRAM} -c
-        ${PROJECT_SOURCE_DIR}/build-support/cmake-format-modules.txt -i
+        ${PROJECT_SOURCE_DIR}/build-support/cmake-format-modules.yaml -i
         ${MODULES_CMAKE_FILES}
     )
     unset(MODULES_CMAKE_FILES)
@@ -1392,8 +1391,6 @@ macro(process_options)
   set(ns3-contrib-libs)
   set(lib-ns3-static-objs)
   set(ns3-external-libs)
-  set(ns3-python-bindings ns${NS3_VER}-pybindings${build_profile_suffix})
-  set(ns3-python-bindings-modules)
 
   foreach(libname ${scanned_modules})
     # Create libname of output library of module

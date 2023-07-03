@@ -136,7 +136,7 @@ HePpdu::SetHeSigHeader(const WifiTxVector& txVector)
             .m_giLtfSize = GetGuardIntervalAndNltfEncoding(txVector.GetGuardInterval(),
                                                            2 /*NLTF currently unused*/),
             .m_ruAllocation = txVector.GetRuAllocation(p20Index),
-            .m_contentChannels = txVector.GetContentChannels(p20Index),
+            .m_contentChannels = GetHeSigBContentChannels(txVector, p20Index),
             .m_center26ToneRuIndication =
                 (txVector.GetChannelWidth() >= 80)
                     ? std::optional{txVector.GetCenter26ToneRuIndication()}
@@ -145,7 +145,7 @@ HePpdu::SetHeSigHeader(const WifiTxVector& txVector)
     else
     {
         const auto mcs = txVector.GetMode().GetMcsValue();
-        // NS_ASSERT (mcs <= 11); // TODO: reactivate once EHT PHY headers are implemented
+        NS_ASSERT(mcs <= 11);
         m_heSig.emplace<HeSuSigHeader>(HeSuSigHeader{
             .m_bssColor = bssColor,
             .m_mcs = mcs,
@@ -217,6 +217,10 @@ HePpdu::SetHeMuUserInfos(WifiTxVector& txVector,
         auto ruAllocIndex = contentChannelIndex;
         for (const auto& userInfo : contentChannel)
         {
+            if (userInfo.staId == NO_USER_STA_ID)
+            {
+                continue;
+            }
             auto ruSpecs = HeRu::GetRuSpecs(ruAllocation.at(ruAllocIndex));
             if (ruSpecs.empty())
             {
@@ -489,6 +493,69 @@ HePpdu::GetNumRusPerHeSigBContentChannel(uint16_t channelWidth, const RuAllocati
     return chSize;
 }
 
+HePpdu::HeSigBContentChannels
+HePpdu::GetHeSigBContentChannels(const WifiTxVector& txVector, uint8_t p20Index)
+{
+    HeSigBContentChannels contentChannels{{}};
+
+    const auto channelWidth = txVector.GetChannelWidth();
+    if (channelWidth > 20)
+    {
+        contentChannels.emplace_back();
+    }
+
+    const auto& orderedMap = txVector.GetUserInfoMapOrderedByRus(p20Index);
+    for (const auto& [ru, staId] : orderedMap)
+    {
+        auto ruType = ru.GetRuType();
+        auto ruIdx = ru.GetIndex();
+        const auto& userInfo = txVector.GetHeMuUserInfo(staId);
+        NS_ASSERT(ru == userInfo.ru);
+
+        if (ruType > HeRu::RU_242_TONE)
+        {
+            for (auto i = 0; i < ((ruType == HeRu::RU_2x996_TONE) ? 2 : 1); ++i)
+            {
+                contentChannels[0].push_back({staId, userInfo.nss, userInfo.mcs});
+                contentChannels[1].push_back({staId, userInfo.nss, userInfo.mcs});
+            }
+            continue;
+        }
+
+        std::size_t numRus = (ruType >= HeRu::RU_242_TONE)
+                                 ? 1
+                                 : HeRu::m_heRuSubcarrierGroups.at({20, ruType}).size();
+        if (((ruIdx - 1) / numRus) % 2 == 0)
+        {
+            contentChannels.at(0).push_back({staId, userInfo.nss, userInfo.mcs});
+        }
+        else
+        {
+            contentChannels.at(1).push_back({staId, userInfo.nss, userInfo.mcs});
+        }
+    }
+
+    // Add unassigned RUs
+    auto numNumRusPerHeSigBContentChannel =
+        GetNumRusPerHeSigBContentChannel(channelWidth, txVector.GetRuAllocation(p20Index));
+    std::size_t contentChannelIndex = 1;
+    for (auto& contentChannel : contentChannels)
+    {
+        const auto totalUsersInContentChannel = (contentChannelIndex == 1)
+                                                    ? numNumRusPerHeSigBContentChannel.first
+                                                    : numNumRusPerHeSigBContentChannel.second;
+        NS_ASSERT(contentChannel.size() <= totalUsersInContentChannel);
+        std::size_t unallocatedRus = totalUsersInContentChannel - contentChannel.size();
+        for (std::size_t i = 0; i < unallocatedRus; i++)
+        {
+            contentChannel.push_back({NO_USER_STA_ID, 0, 0});
+        }
+        contentChannelIndex++;
+    }
+
+    return contentChannels;
+}
+
 uint32_t
 HePpdu::GetSigBFieldSize(uint16_t channelWidth, const RuAllocation& ruAllocation)
 {
@@ -506,14 +573,14 @@ HePpdu::GetSigBFieldSize(uint16_t channelWidth, const RuAllocation& ruAllocation
             8 * (channelWidth / 40) /* one allocation field per 40 MHz */ + 1 /* center RU */;
     }
 
-    auto numStaPerContentChannel = GetNumRusPerHeSigBContentChannel(channelWidth, ruAllocation);
-    auto maxNumStaPerContentChannel =
-        std::max(numStaPerContentChannel.first, numStaPerContentChannel.second);
-    auto maxNumUserBlockFields = maxNumStaPerContentChannel /
+    auto numRusPerContentChannel = GetNumRusPerHeSigBContentChannel(channelWidth, ruAllocation);
+    auto maxNumRusPerContentChannel =
+        std::max(numRusPerContentChannel.first, numRusPerContentChannel.second);
+    auto maxNumUserBlockFields = maxNumRusPerContentChannel /
                                  2; // handle last user block with single user, if any, further down
     std::size_t userSpecificFieldSize =
         maxNumUserBlockFields * (2 * 21 /* user fields (2 users) */ + 4 /* tail */ + 6 /* CRC */);
-    if (maxNumStaPerContentChannel % 2 != 0)
+    if (maxNumRusPerContentChannel % 2 != 0)
     {
         userSpecificFieldSize += 21 /* last user field */ + 4 /* CRC */ + 6 /* tail */;
     }
