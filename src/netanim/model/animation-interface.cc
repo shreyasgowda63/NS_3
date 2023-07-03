@@ -102,230 +102,86 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      */
     ~AnimationInterfaceSingleton() override;
 
-    /**
-     * \brief Enable tracking of Ipv4 L3 Protocol Counters such as Tx, Rx, Drop
-     *
-     * \param startTime Start Time for capturing values
-     * \param stopTime Stop Time for capturing values
-     * \param pollInterval The periodic interval at which the counters are written to the trace file
-     *        Default: 1s
-     */
+    /** \copydoc ns3::AnimationInterface::EnableIpv4L3ProtocolCounters(Time, Time, Time ) */
     void EnableIpv4L3ProtocolCounters(Time startTime,
                                       Time stopTime,
                                       Time pollInterval = Seconds(1));
 
-    /**
-     * \brief Enable tracking of Queue Counters such as Enqueue, Dequeue, Queue Drops
-     *
-     * \param startTime Start Time for capturing values
-     * \param stopTime Stop Time for capturing values
-     * \param pollInterval The periodic interval at which the counters are written to the trace file
-     *        Default: 1s
-     */
+    /** \copydoc ns3::AnimationInterface::EnableQueueCounters(Time, Time, Time ) */
     void EnableQueueCounters(Time startTime, Time stopTime, Time pollInterval = Seconds(1));
 
-    /**
-     * \brief Enable tracking of Wifi Mac Counters such as Tx, TxDrop, Rx, RxDrop
-     *
-     * \param startTime Start Time for capturing values
-     * \param stopTime Stop Time for capturing values
-     * \param pollInterval The periodic interval at which the counters are written to the trace file
-     *        Default: 1s
-     */
+    /** \copydoc ns3::AnimationInterface::EnableWifiMacCounters(Time, Time, Time ) */
     void EnableWifiMacCounters(Time startTime, Time stopTime, Time pollInterval = Seconds(1));
 
-    /**
-     * \brief Enable tracking of Wifi Phy Counters such as TxDrop, RxDrop
-     *
-     * \param startTime Start Time for capturing values
-     * \param stopTime Stop Time for capturing values
-     * \param pollInterval The periodic interval at which the counters are written to the trace file
-     *        Default: 1s
-     */
+    /** \copydoc ns3::AnimationInterface::EnableWifiMacCounters(Time, Time, Time ) */
     void EnableWifiPhyCounters(Time startTime, Time stopTime, Time pollInterval = Seconds(1));
 
-    /**
-     * \brief Enable tracking of the Ipv4 routing table for all Nodes
-     *
-     * \param fileName Trace file for storing routing table information
-     * \param startTime Start time for capture
-     * \param stopTime  End time for capture
-     * \param pollInterval The periodic interval at which routing table information is polled
-     *        Default: 5s
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::EnableIpv4RouteTracking(std::string, Time, Time, Time ) */
     void EnableIpv4RouteTracking(std::string fileName,
                                  Time startTime,
                                  Time stopTime,
                                  Time pollInterval = Seconds(5));
 
-    /**
-     * \brief Enable tracking of the Ipv4 routing table for a set of Nodes
-     *
-     * \param fileName Trace file for storing routing table information
-     * \param startTime Start time for capture
-     * \param stopTime  End time for capture
-     * \param nc A NodeContainer containing nodes for which Routing table has to be tracked
-     * \param pollInterval The periodic interval at which routing table information is polled
-     *        Default: 5s
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::EnableIpv4RouteTracking(std::string, Time, Time,
+     * NodeContainer, Time ) */
     void EnableIpv4RouteTracking(std::string fileName,
                                  Time startTime,
                                  Time stopTime,
                                  NodeContainer nc,
                                  Time pollInterval = Seconds(5));
 
-    /**
-     * \brief Check if AnimationInterfaceSingleton is initialized
-     *
-     * \returns true if AnimationInterfaceSingleton was already initialized
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::IsInitialized()*/
     static bool IsInitialized();
 
-    /**
-     * \brief Specify the time at which capture should start
-     *
-     * \param t The time at which AnimationInterfaceSingleton should begin capture of traffic info
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::SetStartTime(Time)*/
     void SetStartTime(Time t);
 
-    /**
-     * \brief Specify the time at which capture should stop
-     *
-     * \param t The time at which AnimationInterfaceSingleton should stop capture of traffic info
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::SetStopTime(Time)*/
     void SetStopTime(Time t);
 
-    /**
-     * \brief Set Max packets per trace file
-     * \param maxPktsPerFile The maximum number of packets per trace file.
-              AnimationInterfaceSingleton will create trace files with the following
-              filenames : filename, filename-1, filename-2..., filename-N
-              where each file contains packet info for 'maxPktsPerFile' number of packets
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::SetMaxPktsPerTraceFile(uint64_t)*/
     void SetMaxPktsPerTraceFile(uint64_t maxPktsPerFile);
 
-    /**
-     * \brief Set mobility poll interval:WARNING: setting a low interval can
-     * cause slowness
-     *
-     * \param t Time interval between fetching mobility/position information
-     * Default: 0.25s
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::SetMobilityPollInterval(Time)*/
     void SetMobilityPollInterval(Time t);
 
-    /**
-     * \brief Set a callback function to listen to AnimationInterfaceSingleton write events
-     *
-     * \param cb Address of callback function
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::SetAnimWriteCallback(AnimWriteCallback)*/
     void SetAnimWriteCallback(AnimWriteCallback cb);
 
-    /**
-     * \brief Reset the write callback function
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::ResetAnimWriteCallback()*/
     void ResetAnimWriteCallback();
 
-    /**
-     * \brief Helper function to set Constant Position for a given node
-     * \param n Ptr to the node
-     * \param x X coordinate of the node
-     * \param y Y coordinate of the node
-     * \param z Z coordinate of the node
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::SetConstantPosition(Ptr<Node>, double, double,
+     * double)*/
     static void SetConstantPosition(Ptr<Node> n, double x, double y, double z = 0);
 
-    /**
-     * \brief Helper function to update the description for a given node
-     * \param n Ptr to the node
-     * \param descr A string to briefly describe the node
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::UpdateNodeDescription(Ptr<Node>, std::string)*/
     void UpdateNodeDescription(Ptr<Node> n, std::string descr);
 
-    /**
-     * \brief Helper function to update the description for a given node
-     * \param nodeId Id of the node
-     * \param descr A string to briefly describe the node
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::UpdateNodeDescription(uint32_t, std::string)*/
     void UpdateNodeDescription(uint32_t nodeId, std::string descr);
 
-    /**
-     * \brief Helper function to update the image of a node
-     * \param nodeId Id of the node
-     * \param resourceId Id of the image resource that was previously added
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::UpdateNodeImage(uint32_t, uint32_t)*/
     void UpdateNodeImage(uint32_t nodeId, uint32_t resourceId);
 
-    /**
-     * \brief Helper function to update the size of a node
-     * \param n Ptr to the node
-     * \param width Width of the node
-     * \param height Height of the node
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::UpdateNodeSize(Ptr<Node>, double, double)*/
     void UpdateNodeSize(Ptr<Node> n, double width, double height);
 
-    /**
-     * \brief Helper function to update the size of a node
-     * \param nodeId Id of the node
-     * \param width Width of the node
-     * \param height Height of the node
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::UpdateNodeSize(uint32_t, double, double)*/
     void UpdateNodeSize(uint32_t nodeId, double width, double height);
 
-    /**
-     * \brief Helper function to update the node color
-     * \param n Ptr to the node
-     * \param r Red component value (0-255)
-     * \param g Green component value (0-255)
-     * \param b Blue component value (0-255)
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::UpdateNodeColor(Ptr<Node>, uint8_t, uint8_t, uint8_t)*/
     void UpdateNodeColor(Ptr<Node> n, uint8_t r, uint8_t g, uint8_t b);
 
-    /**
-     * \brief Helper function to update the node color
-     * \param nodeId Id of the node
-     * \param r Red component value (0-255)
-     * \param g Green component value (0-255)
-     * \param b Blue component value (0-255)
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::UpdateNodeColor(uint32_t, uint8_t, uint8_t,
+     * uint8_t)*/
     void UpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b);
 
-    /**
-     * \brief Helper function to update a node's counter referenced by the nodeCounterId
-     * \param nodeCounterId The counter Id obtained from AddNodeCounter
-     * \param nodeId Node Id of the node
-     * \param counter Current value of the counter
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::UpdateNodeCounter(uint32_t, uint32_t, double)*/
     void UpdateNodeCounter(uint32_t nodeCounterId, uint32_t nodeId, double counter);
 
-    /**
-     * \brief Helper function to set the background image
-     * \param fileName File name of the background image
-     * \param x X coordinate of the image
-     * \param y Y coordinate of the image
-     * \param scaleX X scale of the image
-     * \param scaleY Y scale of the image
-     * \param opacity Opacity of the background: A value between 0.0 and 1.0. 0.0 is transparent,
-     *        1.0 is opaque
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::SetBackgroundImage(std::string, double, double, double,
+     * double, double)*/
     void SetBackgroundImage(std::string fileName,
                             double x,
                             double y,
@@ -333,79 +189,32 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
                             double scaleY,
                             double opacity);
 
-    /**
-     * \brief Helper function to update the description for a link
-     * \param fromNode Node Id of the "from Node" of the p2p link
-     * \param toNode Node Id of the "to Node" of the p2p link
-     * \param linkDescription Description of the link such as link bandwidth
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::UpdateLinkDescription(uint32_t, uint32_t, std::string)*/
     void UpdateLinkDescription(uint32_t fromNode, uint32_t toNode, std::string linkDescription);
 
-    /**
-     * \brief Helper function to update the description for a link
-     * \param fromNode Ptr to the "from Node" of the p2p link
-     * \param toNode Ptr to the "to Node" of the p2p link
-     * \param linkDescription Description of the link such as link bandwidth
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::UpdateLinkDescription(Ptr<Node>, Ptr<Node>, std::string)*/
     void UpdateLinkDescription(Ptr<Node> fromNode, Ptr<Node> toNode, std::string linkDescription);
 
-    /**
-     * \brief Helper function to print the routing path from a source node to destination IP
-     * \param fromNodeId The source node
-     * \param destinationIpv4Address The destination Ipv4 Address
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::AddSourceDestination(uint32_t, std::string)*/
     void AddSourceDestination(uint32_t fromNodeId, std::string destinationIpv4Address);
 
-    /**
-     * \brief Is AnimationInterfaceSingleton started
-     *
-     * \returns true if AnimationInterfaceSingleton was started
-     */
+    /** \copydoc ns3::AnimationInterface::IsStarted()*/
     bool IsStarted() const;
 
-    /**
-     * \brief Do not trace packets. This helps reduce the trace file size if
-     * AnimationInterfaceSingleton is solely used for tracking mobility, routing paths and counters
-     */
+    /** \copydoc ns3::AnimationInterface::SkipPacketTracing()*/
     void SkipPacketTracing();
 
-    /**
-     *
-     * \brief Enable Packet metadata
-     * \param enable if true enables writing the packet metadata to the XML trace file
-     *        if false disables writing the packet metadata
-     *
-     */
+    /** \copydoc ns3::AnimationInterface::EnablePacketMetadata(bool)*/
     void EnablePacketMetadata(bool enable = true);
 
-    /**
-     *
-     * \brief Get trace file packet count (This used only for testing)
-     *
-     * \returns Number of packets recorded in the current trace file
-     */
+    /** \copydoc ns3::AnimationInterface::GetTracePktCount()*/
     uint64_t GetTracePktCount() const;
 
-    /**
-     *
-     * \brief Setup a node counter
-     * \param counterName A string to identify the counter
-     * \param counterType The type of the counter, such as uint32, double etc
-     *
-     * \returns The id of the counter to be used as a reference for future
-     */
+    /** \copydoc ns3::AnimationInterface::AddNodeCounter(std::string,
+     * AnimationInterface::CounterType)*/
     uint32_t AddNodeCounter(std::string counterName, AnimationInterface::CounterType counterType);
 
-    /**
-     *
-     * \brief Add a resource such as the path to an image file
-     * \param resourcePath Absolute Path to an image/resource
-     *
-     * \returns a number identifying the resource
-     */
+    /** \copydoc ns3::AnimationInterface::AddResource(std::string)*/
     uint32_t AddResource(std::string resourcePath);
 
     /**
