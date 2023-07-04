@@ -491,8 +491,7 @@ class AnimationInterface
         WIFI,
         WIMAX,
         CSMA,
-        LRWPAN,
-        WAVE
+        LRWPAN
     };
 
     /**

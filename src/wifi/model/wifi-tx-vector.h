@@ -33,6 +33,9 @@
 namespace ns3
 {
 
+/// STA_ID for a RU that is intended for no user (Section 26.11.1 802.11ax-2021)
+static constexpr uint16_t NO_USER_STA_ID = 2046;
+
 /// HE MU specific user transmission parameters.
 struct HeMuUserInfo
 {
@@ -55,17 +58,6 @@ struct HeMuUserInfo
      */
     bool operator!=(const HeMuUserInfo& other) const;
 };
-
-/// User Specific Fields in HE-SIG-Bs.
-struct HeSigBUserSpecificField
-{
-    uint16_t staId : 11; ///< STA-ID
-    uint8_t nss : 4;     ///< number of spatial streams
-    uint8_t mcs : 4;     ///< MCS index
-};
-
-/// HE SIG-B Content Channels
-using HeSigBContentChannels = std::vector<std::vector<HeSigBUserSpecificField>>;
 
 /// 8 bit RU_ALLOCATION per 20 MHz
 using RuAllocation = std::vector<uint8_t>;
@@ -431,6 +423,17 @@ class WifiTxVector
      */
     HeMuUserInfoMap& GetHeMuUserInfoMap();
 
+    /// map of specific user info parameters ordered per increasing frequency RUs
+    using UserInfoMapOrderedByRus = std::map<HeRu::RuSpec, uint16_t, HeRu::RuSpecCompare>;
+
+    /**
+     * Get the map of specific user info parameters ordered per increasing frequency RUs.
+     *
+     * \param p20Index the index of the primary20 channel
+     * \return the map of specific user info parameters ordered per increasing frequency RUs
+     */
+    UserInfoMapOrderedByRus GetUserInfoMapOrderedByRus(uint8_t p20Index) const;
+
     /**
      * Set the 20 MHz subchannels that are punctured.
      *
@@ -473,14 +476,6 @@ class WifiTxVector
      * \param p20Index the index of the primary20 channel
      */
     const RuAllocation& GetRuAllocation(uint8_t p20Index) const;
-
-    /**
-     * Get the HE SIG-B content channels
-     * IEEE 802.11ax-2021 27.3.11.8.2 HE-SIG-B content channels
-     * \param p20Index the index of the primary20 channel
-     * \return HE-SIG-B content channels
-     */
-    HeSigBContentChannels GetContentChannels(uint8_t p20Index) const;
 
     /**
      * Set CENTER_26_TONE_RU field
@@ -527,17 +522,6 @@ class WifiTxVector
      * \return the CENTER_26_TONE_RU field
      */
     Center26ToneRuIndication DeriveCenter26ToneRuIndication() const;
-
-    /// Ordered RUs per increasing frequency
-    using OrderedRus = std::map<HeRu::RuSpec, uint16_t, HeRu::RuSpecCompare>;
-
-    /**
-     * Get the ordered RUs with their associated STA-IDs per increasing frequency.
-     *
-     * \param p20Index the index of the primary20 channel
-     * \return the ordered RUs with their associated STA-IDs
-     */
-    OrderedRus GetOrderedRus(uint8_t p20Index) const;
 
     WifiMode m_mode;          /**< The DATARATE parameter in Table 15-4.
                               It is the value that will be passed

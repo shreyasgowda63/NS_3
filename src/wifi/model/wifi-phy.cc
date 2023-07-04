@@ -1846,24 +1846,9 @@ WifiPhy::StartReceivePreamble(Ptr<const WifiPpdu> ppdu,
         // TODO find a fallback PHY for receiving the PPDU (e.g. 11a for 11ax due to preamble
         // structure)
         NS_LOG_DEBUG("Unsupported modulation received (" << modulation << "), consider as noise");
-        m_interference->Add(ppdu,
-                            ppdu->GetTxVector(),
-                            rxDuration,
-                            rxPowersW,
-                            GetCurrentFrequencyRange());
+        m_interference->Add(ppdu, ppdu->GetTxVector(), rxDuration, rxPowersW);
         SwitchMaybeToCcaBusy(nullptr);
     }
-}
-
-WifiSpectrumBand
-WifiPhy::ConvertHeRuSubcarriers(uint16_t bandWidth,
-                                uint16_t guardBandwidth,
-                                HeRu::SubcarrierRange range,
-                                uint8_t bandIndex) const
-{
-    NS_ASSERT_MSG(false, "802.11ax can only be used with SpectrumWifiPhy");
-    WifiSpectrumBand convertedSubcarriers;
-    return convertedSubcarriers;
 }
 
 void
@@ -2213,6 +2198,40 @@ uint8_t
 WifiPhy::GetPrimaryChannelNumber(uint16_t primaryChannelWidth) const
 {
     return m_operatingChannel.GetPrimaryChannelNumber(primaryChannelWidth, m_standard);
+}
+
+uint32_t
+WifiPhy::GetSubcarrierSpacing() const
+{
+    uint32_t subcarrierSpacing = 0;
+    switch (GetStandard())
+    {
+    case WIFI_STANDARD_80211a:
+    case WIFI_STANDARD_80211g:
+    case WIFI_STANDARD_80211b:
+    case WIFI_STANDARD_80211n:
+    case WIFI_STANDARD_80211ac:
+        subcarrierSpacing = 312500;
+        break;
+    case WIFI_STANDARD_80211p:
+        if (GetChannelWidth() == 5)
+        {
+            subcarrierSpacing = 78125;
+        }
+        else
+        {
+            subcarrierSpacing = 156250;
+        }
+        break;
+    case WIFI_STANDARD_80211ax:
+    case WIFI_STANDARD_80211be:
+        subcarrierSpacing = 78125;
+        break;
+    default:
+        NS_FATAL_ERROR("Standard unknown: " << GetStandard());
+        break;
+    }
+    return subcarrierSpacing;
 }
 
 } // namespace ns3
