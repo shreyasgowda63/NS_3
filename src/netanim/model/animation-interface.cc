@@ -70,14 +70,8 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("AnimationInterface");
 
 /**
- * \ingroup netanim
- *
- * \brief Interface to network animator
- *
- * Provides functions that facilitate communications with an
- * external or internal network animator.
+ * \copydetails AnimationInterface::AnimationInterface
  */
-
 class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton>
 {
   public:
@@ -89,40 +83,49 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     void Initialize(const std::string filename);
 
     /**
-     * \brief typedef for WriteCallBack used for listening to AnimationInterfaceSingleton
-     * write messages
-     *
-     */
-    typedef void (*AnimWriteCallback)(const char* str);
-
-    /**
      * \brief Destructor for the animator interface.
      *
      */
     ~AnimationInterfaceSingleton() override;
 
-    /** \copydoc ns3::AnimationInterface::EnableIpv4L3ProtocolCounters(Time, Time, Time ) */
+    /** \copydoc ns3::AnimationInterface::EnableIpv4L3ProtocolCounters() */
     void EnableIpv4L3ProtocolCounters(Time startTime,
                                       Time stopTime,
                                       Time pollInterval = Seconds(1));
 
-    /** \copydoc ns3::AnimationInterface::EnableQueueCounters(Time, Time, Time ) */
+    /** \copydoc ns3::AnimationInterface::EnableQueueCounters() */
     void EnableQueueCounters(Time startTime, Time stopTime, Time pollInterval = Seconds(1));
 
-    /** \copydoc ns3::AnimationInterface::EnableWifiMacCounters(Time, Time, Time ) */
+    /** \copydoc ns3::AnimationInterface::EnableWifiMacCounters() */
     void EnableWifiMacCounters(Time startTime, Time stopTime, Time pollInterval = Seconds(1));
 
-    /** \copydoc ns3::AnimationInterface::EnableWifiMacCounters(Time, Time, Time ) */
+    /** \copydoc ns3::AnimationInterface::EnableWifiMacCounters() */
     void EnableWifiPhyCounters(Time startTime, Time stopTime, Time pollInterval = Seconds(1));
 
-    /** \copydoc ns3::AnimationInterface::EnableIpv4RouteTracking(std::string, Time, Time, Time ) */
+    /**
+     * \brief Enable tracking of the Ipv4 routing table for all Nodes
+     *
+     * \param fileName Trace file for storing routing table information
+     * \param startTime Start time for capture
+     * \param stopTime  End time for capture
+     * \param pollInterval The periodic interval at which routing table information is polled
+     *        Default: 5s
+     */
     void EnableIpv4RouteTracking(std::string fileName,
                                  Time startTime,
                                  Time stopTime,
                                  Time pollInterval = Seconds(5));
 
-    /** \copydoc ns3::AnimationInterface::EnableIpv4RouteTracking(std::string, Time, Time,
-     * NodeContainer, Time ) */
+    /**
+     * \brief Enable tracking of the Ipv4 routing table for a set of Nodes
+     *
+     * \param fileName Trace file for storing routing table information
+     * \param startTime Start time for capture
+     * \param stopTime  End time for capture
+     * \param nc A NodeContainer containing nodes for which Routing table has to be tracked
+     * \param pollInterval The periodic interval at which routing table information is polled
+     *        Default: 5s
+     */
     void EnableIpv4RouteTracking(std::string fileName,
                                  Time startTime,
                                  Time stopTime,
@@ -132,26 +135,25 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     /** \copydoc ns3::AnimationInterface::IsInitialized()*/
     static bool IsInitialized();
 
-    /** \copydoc ns3::AnimationInterface::SetStartTime(Time)*/
+    /** \copydoc ns3::AnimationInterface::SetStartTime()*/
     void SetStartTime(Time t);
 
-    /** \copydoc ns3::AnimationInterface::SetStopTime(Time)*/
+    /** \copydoc ns3::AnimationInterface::SetStopTime()*/
     void SetStopTime(Time t);
 
-    /** \copydoc ns3::AnimationInterface::SetMaxPktsPerTraceFile(uint64_t)*/
+    /** \copydoc ns3::AnimationInterface::SetMaxPktsPerTraceFile()*/
     void SetMaxPktsPerTraceFile(uint64_t maxPktsPerFile);
 
-    /** \copydoc ns3::AnimationInterface::SetMobilityPollInterval(Time)*/
+    /** \copydoc ns3::AnimationInterface::SetMobilityPollInterval()*/
     void SetMobilityPollInterval(Time t);
 
-    /** \copydoc ns3::AnimationInterface::SetAnimWriteCallback(AnimWriteCallback)*/
-    void SetAnimWriteCallback(AnimWriteCallback cb);
+    /** \copydoc ns3::AnimationInterface::SetAnimWriteCallback()*/
+    void SetAnimWriteCallback(AnimationInterface::AnimWriteCallback cb);
 
     /** \copydoc ns3::AnimationInterface::ResetAnimWriteCallback()*/
     void ResetAnimWriteCallback();
 
-    /** \copydoc ns3::AnimationInterface::SetConstantPosition(Ptr<Node>, double, double,
-     * double)*/
+    /** \copydoc ns3::AnimationInterface::SetConstantPosition()*/
     static void SetConstantPosition(Ptr<Node> n, double x, double y, double z = 0);
 
     /** \copydoc ns3::AnimationInterface::UpdateNodeDescription(Ptr<Node>, std::string)*/
@@ -160,7 +162,7 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     /** \copydoc ns3::AnimationInterface::UpdateNodeDescription(uint32_t, std::string)*/
     void UpdateNodeDescription(uint32_t nodeId, std::string descr);
 
-    /** \copydoc ns3::AnimationInterface::UpdateNodeImage(uint32_t, uint32_t)*/
+    /** \copydoc ns3::AnimationInterface::UpdateNodeImage()*/
     void UpdateNodeImage(uint32_t nodeId, uint32_t resourceId);
 
     /** \copydoc ns3::AnimationInterface::UpdateNodeSize(Ptr<Node>, double, double)*/
@@ -176,11 +178,10 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * uint8_t)*/
     void UpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b);
 
-    /** \copydoc ns3::AnimationInterface::UpdateNodeCounter(uint32_t, uint32_t, double)*/
+    /** \copydoc ns3::AnimationInterface::UpdateNodeCounter()*/
     void UpdateNodeCounter(uint32_t nodeCounterId, uint32_t nodeId, double counter);
 
-    /** \copydoc ns3::AnimationInterface::SetBackgroundImage(std::string, double, double, double,
-     * double, double)*/
+    /** \copydoc ns3::AnimationInterface::SetBackgroundImage()*/
     void SetBackgroundImage(std::string fileName,
                             double x,
                             double y,
@@ -194,7 +195,11 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     /** \copydoc ns3::AnimationInterface::UpdateLinkDescription(Ptr<Node>, Ptr<Node>, std::string)*/
     void UpdateLinkDescription(Ptr<Node> fromNode, Ptr<Node> toNode, std::string linkDescription);
 
-    /** \copydoc ns3::AnimationInterface::AddSourceDestination(uint32_t, std::string)*/
+    /**
+     * \brief Helper function to print the routing path from a source node to destination IP
+     * \param fromNodeId The source node
+     * \param destinationIpv4Address The destination Ipv4 Address
+     */
     void AddSourceDestination(uint32_t fromNodeId, std::string destinationIpv4Address);
 
     /** \copydoc ns3::AnimationInterface::IsStarted()*/
@@ -203,26 +208,19 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     /** \copydoc ns3::AnimationInterface::SkipPacketTracing()*/
     void SkipPacketTracing();
 
-    /** \copydoc ns3::AnimationInterface::EnablePacketMetadata(bool)*/
+    /** \copydoc ns3::AnimationInterface::EnablePacketMetadata()*/
     void EnablePacketMetadata(bool enable = true);
 
     /** \copydoc ns3::AnimationInterface::GetTracePktCount()*/
     uint64_t GetTracePktCount() const;
 
-    /** \copydoc ns3::AnimationInterface::AddNodeCounter(std::string,
-     * AnimationInterface::CounterType)*/
+    /** \copydoc ns3::AnimationInterface::AddNodeCounter()*/
     uint32_t AddNodeCounter(std::string counterName, AnimationInterface::CounterType counterType);
 
-    /** \copydoc ns3::AnimationInterface::AddResource(std::string)*/
+    /** \copydoc ns3::AnimationInterface::AddResource()*/
     uint32_t AddResource(std::string resourcePath);
 
-    /**
-     *
-     * \brief Get node's energy fraction (This used only for testing)
-     * \param node
-     *
-     * \returns current node's remaining energy (between [0, 1])
-     */
+    /** \copydoc ns3::AnimationInterface::GetNodeEnergyFraction()*/
     double GetNodeEnergyFraction(Ptr<const Node> node) const;
 
   private:
@@ -250,10 +248,10 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
         AnimPacketInfo(Ptr<const NetDevice> tx_nd, const Time fbTx, uint32_t txNodeId = 0);
         Ptr<const NetDevice> m_txnd; ///< transmit device
         uint32_t m_txNodeId;         ///< node ID
-        double m_fbTx;               ///< fb transmit
-        double m_lbTx;               ///< lb transmit
-        double m_fbRx;               ///< fb receive
-        double m_lbRx;               ///< lb receive
+        double m_fbTx;               ///< time of the first bit being transmitted
+        double m_lbTx;               ///< time of the last bit being transmitted
+        double m_fbRx;               ///< time of the first bit being received
+        double m_lbRx;               ///< time of the last bit being received
         Ptr<const NetDevice> m_rxnd; ///< receive device
         /**
          * Process receive begin
@@ -411,18 +409,18 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     Time m_mobilityPollInterval;  ///< mobility poll interval
     std::string m_outputFileName; ///< output file name
     uint64_t gAnimUid;            ///< Packet unique identifier used by AnimationInterfaceSingleton
-    AnimWriteCallback m_writeCallback;         ///< write callback
-    bool m_started;                            ///< started
-    bool m_enablePacketMetadata;               ///< enable packet metadata
-    Time m_startTime;                          ///< start time
-    Time m_stopTime;                           ///< stop time
-    uint64_t m_maxPktsPerFile;                 ///< maximum packets per file
-    std::string m_originalFileName;            ///< original file name
-    Time m_routingStopTime;                    ///< routing stop time
-    std::string m_routingFileName;             ///< routing file name
-    Time m_routingPollInterval;                ///< routing poll interval
-    NodeContainer m_routingNc;                 ///< routing node container
-    Time m_ipv4L3ProtocolCountersStopTime;     ///< IPv4 L3 protocol counters stop time
+    AnimationInterface::AnimWriteCallback m_writeCallback; ///< write callback
+    bool m_started;                                        ///< started
+    bool m_enablePacketMetadata;                           ///< enable packet metadata
+    Time m_startTime;                                      ///< start time
+    Time m_stopTime;                                       ///< stop time
+    uint64_t m_maxPktsPerFile;                             ///< maximum packets per file
+    std::string m_originalFileName;                        ///< original file name
+    Time m_routingStopTime;                                ///< routing stop time
+    std::string m_routingFileName;                         ///< routing file name
+    Time m_routingPollInterval;                            ///< routing poll interval
+    NodeContainer m_routingNc;                             ///< routing node container
+    Time m_ipv4L3ProtocolCountersStopTime;                 ///< IPv4 L3 protocol counters stop time
     Time m_ipv4L3ProtocolCountersPollInterval; ///< IPv4 L3 protocol counters poll interval
     Time m_queueCountersStopTime;              ///< queue counters stop time
     Time m_queueCountersPollInterval;          ///< queue counters poll interval
@@ -1571,7 +1569,7 @@ AnimationInterfaceSingleton::IsStarted() const
 }
 
 void
-AnimationInterfaceSingleton::SetAnimWriteCallback(AnimWriteCallback cb)
+AnimationInterfaceSingleton::SetAnimWriteCallback(AnimationInterface::AnimWriteCallback cb)
 {
     m_writeCallback = cb;
 }
@@ -3531,7 +3529,7 @@ AnimationInterfaceSingleton::TrackIpv4RoutePaths()
             NS_FATAL_ERROR("Node: " << trackElement.fromNodeId << " Not found");
             continue;
         }
-        Ptr<ns3::Ipv4> ipv4 = fromNode->GetObject<ns3::Ipv4>();
+        Ptr<Ipv4> ipv4 = fromNode->GetObject<Ipv4>();
         if (!ipv4)
         {
             NS_LOG_WARN("ipv4 object not found");
@@ -3619,7 +3617,7 @@ std::string
 AnimationInterfaceSingleton::GetIpv4RoutingTable(Ptr<Node> n)
 {
     NS_ASSERT(n);
-    Ptr<ns3::Ipv4> ipv4 = n->GetObject<ns3::Ipv4>();
+    Ptr<Ipv4> ipv4 = n->GetObject<Ipv4>();
     if (!ipv4)
     {
         NS_LOG_WARN("Node " << n->GetId() << " Does not have an Ipv4 object");
@@ -3660,7 +3658,7 @@ AnimationInterfaceSingleton::RecursiveIpv4RoutePathSearch(std::string from,
         NS_FATAL_ERROR("Node: " << m_ipv4ToNodeIdMap[to] << " Not found");
         return;
     }
-    Ptr<ns3::Ipv4> ipv4 = fromNode->GetObject<ns3::Ipv4>();
+    Ptr<Ipv4> ipv4 = fromNode->GetObject<Ipv4>();
     if (!ipv4)
     {
         NS_LOG_WARN("ipv4 object not found");
@@ -4283,30 +4281,32 @@ AnimationInterface::EnableWifiPhyCounters(Time startTime, Time stopTime, Time po
                                                                      pollInterval);
 }
 
-void
+AnimationInterface&
 AnimationInterface::EnableIpv4RouteTracking(std::string fileName,
                                             Time startTime,
                                             Time stopTime,
                                             Time pollInterval)
 {
-    return AnimationInterfaceSingleton::Get()->EnableIpv4RouteTracking(fileName,
-                                                                       startTime,
-                                                                       stopTime,
-                                                                       pollInterval);
+    AnimationInterfaceSingleton::Get()->EnableIpv4RouteTracking(fileName,
+                                                                startTime,
+                                                                stopTime,
+                                                                pollInterval);
+    return *this;
 }
 
-void
+AnimationInterface&
 AnimationInterface::EnableIpv4RouteTracking(std::string fileName,
                                             Time startTime,
                                             Time stopTime,
                                             NodeContainer nc,
                                             Time pollInterval)
 {
-    return AnimationInterfaceSingleton::Get()->EnableIpv4RouteTracking(fileName,
-                                                                       startTime,
-                                                                       stopTime,
-                                                                       nc,
-                                                                       pollInterval);
+    AnimationInterfaceSingleton::Get()->EnableIpv4RouteTracking(fileName,
+                                                                startTime,
+                                                                stopTime,
+                                                                nc,
+                                                                pollInterval);
+    return *this;
 }
 
 bool
@@ -4437,11 +4437,11 @@ AnimationInterface::UpdateLinkDescription(Ptr<Node> fromNode,
                                                                      linkDescription);
 }
 
-void
+AnimationInterface&
 AnimationInterface::AddSourceDestination(uint32_t fromNodeId, std::string destinationIpv4Address)
 {
-    return AnimationInterfaceSingleton::Get()->AddSourceDestination(fromNodeId,
-                                                                    destinationIpv4Address);
+    AnimationInterfaceSingleton::Get()->AddSourceDestination(fromNodeId, destinationIpv4Address);
+    return *this;
 }
 
 bool

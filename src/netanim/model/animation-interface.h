@@ -38,7 +38,6 @@
 #include "ns3/random-variable-stream.h"
 #include "ns3/rectangle.h"
 #include "ns3/simulator.h"
-#include "ns3/singleton.h"
 #include "ns3/uan-phy-gen.h"
 #include "ns3/wifi-phy.h"
 
@@ -86,7 +85,6 @@ class WifiPsdu;
  * Provides functions that facilitate communications with an
  * external or internal network animator.
  */
-
 class AnimationInterface
 {
   public:
@@ -109,7 +107,7 @@ class AnimationInterface
     /**
      * \brief typedef for WriteCallBack used for listening to AnimationInterfaceSingleton
      * write messages
-     *
+     * \param str The Callback passed to listen to messages
      */
     typedef void (*AnimWriteCallback)(const char* str);
 
@@ -163,12 +161,12 @@ class AnimationInterface
      * \param stopTime  End time for capture
      * \param pollInterval The periodic interval at which routing table information is polled
      *        Default: 5s
-     *
+     * \returns reference to this AnimationInterface object
      */
-    void EnableIpv4RouteTracking(std::string fileName,
-                                 Time startTime,
-                                 Time stopTime,
-                                 Time pollInterval = Seconds(5));
+    AnimationInterface& EnableIpv4RouteTracking(std::string fileName,
+                                                Time startTime,
+                                                Time stopTime,
+                                                Time pollInterval = Seconds(5));
 
     /**
      * \brief Enable tracking of the Ipv4 routing table for a set of Nodes
@@ -179,13 +177,13 @@ class AnimationInterface
      * \param nc A NodeContainer containing nodes for which Routing table has to be tracked
      * \param pollInterval The periodic interval at which routing table information is polled
      *        Default: 5s
-     *
+     * \returns reference to this AnimationInterface object
      */
-    void EnableIpv4RouteTracking(std::string fileName,
-                                 Time startTime,
-                                 Time stopTime,
-                                 NodeContainer nc,
-                                 Time pollInterval = Seconds(5));
+    AnimationInterface& EnableIpv4RouteTracking(std::string fileName,
+                                                Time startTime,
+                                                Time stopTime,
+                                                NodeContainer nc,
+                                                Time pollInterval = Seconds(5));
 
     /**
      * \brief Check if AnimationInterfaceSingleton is initialized
@@ -366,9 +364,10 @@ class AnimationInterface
      * \brief Helper function to print the routing path from a source node to destination IP
      * \param fromNodeId The source node
      * \param destinationIpv4Address The destination Ipv4 Address
-     *
+     * \returns reference to this AnimationInterface object
      */
-    void AddSourceDestination(uint32_t fromNodeId, std::string destinationIpv4Address);
+    AnimationInterface& AddSourceDestination(uint32_t fromNodeId,
+                                             std::string destinationIpv4Address);
 
     /**
      * \brief Is AnimationInterfaceSingleton started
@@ -421,7 +420,7 @@ class AnimationInterface
 
     /**
      *
-     * \brief Get node's energy fraction (This used only for testing)
+     * \brief Get node's energy fraction (This is used only for testing)
      * \param node
      *
      * \returns current node's remaining energy (between [0, 1])
