@@ -1,6 +1,3 @@
-#ifndef NETDEVICE_H
-#define NETDEVICE_H
-
 #include "net-device-anim.h"
 
 #include "ns3/object.h"
@@ -22,5 +19,3 @@ NetDeviceAnim::GetInstanceTypeId() const
     return GetTypeId();
 }
 } // namespace ns3
-
-#endif
