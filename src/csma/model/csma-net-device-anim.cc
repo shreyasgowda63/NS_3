@@ -97,7 +97,7 @@ CsmaNetDeviceAnim::CsmaPhyTxEndTrace(Ptr<const Packet> p)
         m_pendingCsmaPackets.insert(CsmaAnimUidPacketInfoMap::value_type(csmaAnimUid, pktInfo));
         NS_LOG_WARN("Unknown Uid, but adding Csma Packet anyway");
     }
-    /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true); (should i remove this)
+    /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true);
     CsmaAnimPacketInfo& pktInfo = m_pendingCsmaPackets[csmaAnimUid];
     pktInfo.m_lastBitTxTime = Simulator::Now().GetSeconds();
 }
@@ -119,7 +119,7 @@ CsmaNetDeviceAnim::CsmaPhyRxEndTrace(Ptr<const Packet> p)
         NS_LOG_WARN("CsmaPhyRxEndTrace: unknown Uid");
         return;
     }
-    /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true); (same here)
+    /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
     CsmaAnimPacketInfo& pktInfo = m_pendingCsmaPackets[csmaAnimUid];
     m_firstBitRxTime = Simulator::Now().GetSeconds();
     NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << csmaAnimUid);
@@ -143,7 +143,7 @@ CsmaNetDeviceAnim::CsmaMacRxTrace(Ptr<const Packet> p)
         NS_LOG_WARN("CsmaMacRxTrace: unknown Uid");
         return;
     }
-    /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true); (same here)
+    /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
     CsmaAnimPacketInfo& pktInfo = m_pendingCsmaPackets[csmaAnimUid];
     NS_LOG_INFO("MacRxTrace for packet:" << csmaAnimUid << " complete");
     OutputCsmaPacket(p, pktInfo);

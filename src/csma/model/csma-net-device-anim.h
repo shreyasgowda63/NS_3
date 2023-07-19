@@ -15,6 +15,9 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
 
     {
       public:
+        /**
+         * Constructor
+         */
         CsmaAnimPacketInfo();
         /**
          * Constructor
@@ -36,17 +39,9 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
                                  ///< start the Tx)
         double m_lastBitTxTime;  ///< time of the last bit being transmitted (when the packet did
                                  ///< start the Tx)
-
-        // double m_firstBitRxTime; ///< fb receive
-        // double m_lastBitRxTime;  ///< lb receive
-        // /**
-        //  * Process receive begin
-        //  * \param nd the device
-        //  * \param fbRx
-        //  */
-        // void ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx);
     };
 
+    /// Connect callbacks function
     void ConnectCallbacks();
     /**
      * \brief Get the type identificator.
@@ -119,9 +114,10 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
                              ///< the Rx)
     double m_lastBitRxTime;  ///< time of the last bit being received (when the packet did start
                              ///< the Rx)
-    typedef std::map<uint64_t, CsmaAnimPacketInfo> CsmaAnimUidPacketInfoMap;
+    typedef std::map<uint64_t, CsmaAnimPacketInfo>
+        CsmaAnimUidPacketInfoMap;                         ///< CsmaAnimUidPacketInfoMap typedef
     static CsmaAnimUidPacketInfoMap m_pendingCsmaPackets; ///< pending CSMA packets
-    static uint64_t csmaAnimUid;
+    static uint64_t csmaAnimUid;                          ///< Csma AnimUid
 };
 
 } // namespace ns3
