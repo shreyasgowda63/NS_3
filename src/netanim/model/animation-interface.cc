@@ -464,12 +464,12 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns true if a packet is pending
      */
     bool IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType);
-    /**
-     * Output CSMA packet function
-     * \param p the packet
-     * \param pktInfo the packet info
-     */
-    void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
+    // /**
+    //  * Output CSMA packet function
+    //  * \param p the packet
+    //  * \param pktInfo the packet info
+    //  */
+    // void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
     std::map<uint64_t, AnimPacketInfo>& GetPendingCsmaPacketsMap();
     /**
      * Get node from context
@@ -480,6 +480,41 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     void AddNodeToNodeEnqueueMap(uint32_t nodeId);
     void AddNodeToNodeDequeueMap(uint32_t nodeId);
     void AddNodeToNodeDropMap(uint32_t nodeId);
+    /// Check maximum packets per trace file function
+    void CheckMaxPktsPerTraceFile();
+    /**
+     * Write XMLP function
+     * \param pktType the packet type
+     * \param fId the FID
+     * \param fbTx the FB transmit
+     * \param lbTx the LB transmit
+     * \param tId the TID
+     * \param fbRx the FB receive
+     * \param lbRx the LB receive
+     * \param metaInfo the meta info
+     */
+    void WriteXmlP(std::string pktType,
+                   uint32_t fId,
+                   double fbTx,
+                   double lbTx,
+                   uint32_t tId,
+                   double fbRx,
+                   double lbRx,
+                   std::string metaInfo = "");
+
+    bool IsEnablePacketMetadata();
+    /**
+     * Get packet metadata function
+     * \param p the packet
+     * \returns the meta data
+     */
+    std::string GetPacketMetadata(Ptr<const Packet> p);
+    /**
+     * Output CSMA packet function
+     * \param p the packet
+     * \param pktInfo the packet info
+     */
+    void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
 
   private:
     /// RGB structure
@@ -754,12 +789,12 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns the string
      */
     std::string CounterTypeToString(AnimationInterface::CounterType counterType);
-    /**
-     * Get packet metadata function
-     * \param p the packet
-     * \returns the meta data
-     */
-    std::string GetPacketMetadata(Ptr<const Packet> p);
+    // /**
+    //  * Get packet metadata function
+    //  * \param p the packet
+    //  * \returns the meta data
+    //  */
+    // std::string GetPacketMetadata(Ptr<const Packet> p);
     // /**
     //  * Add byte tag function
     //  * \param animUid the UID
@@ -886,9 +921,6 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     //  * \returns true if in the time window
     //  */
     // bool IsInTimeWindow();
-    /// Check maximum packets per trace file function
-    void CheckMaxPktsPerTraceFile();
-
     /// Track wifi phy counters function
     void TrackWifiPhyCounters();
     /// Track wifi MAC counters function
@@ -1406,25 +1438,25 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \param linkDescription the link description
      */
     void WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::string linkDescription);
-    /**
-     * Write XMLP function
-     * \param pktType the packet type
-     * \param fId the FID
-     * \param fbTx the FB transmit
-     * \param lbTx the LB transmit
-     * \param tId the TID
-     * \param fbRx the FB receive
-     * \param lbRx the LB receive
-     * \param metaInfo the meta info
-     */
-    void WriteXmlP(std::string pktType,
-                   uint32_t fId,
-                   double fbTx,
-                   double lbTx,
-                   uint32_t tId,
-                   double fbRx,
-                   double lbRx,
-                   std::string metaInfo = "");
+    // /**
+    //  * Write XMLP function
+    //  * \param pktType the packet type
+    //  * \param fId the FID
+    //  * \param fbTx the FB transmit
+    //  * \param lbTx the LB transmit
+    //  * \param tId the TID
+    //  * \param fbRx the FB receive
+    //  * \param lbRx the LB receive
+    //  * \param metaInfo the meta info
+    //  */
+    // void WriteXmlP(std::string pktType,
+    //                uint32_t fId,
+    //                double fbTx,
+    //                double lbTx,
+    //                uint32_t tId,
+    //                double fbRx,
+    //                double lbRx,
+    //                std::string metaInfo = "");
     /**
      * Write XMLP function
      * \param animUid the UID
@@ -4791,11 +4823,11 @@ AnimationInterface::IsPacketPending(uint64_t animUid, AnimationInterface::Protoc
     return AnimationInterfaceSingleton::Get()->IsPacketPending(animUid, protocolType);
 }
 
-void
-AnimationInterface::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo)
-{
-    return AnimationInterfaceSingleton::Get()->OutputCsmaPacket(p, pktInfo);
-}
+// void
+// AnimationInterface::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo)
+// {
+//     return AnimationInterfaceSingleton::Get()->OutputCsmaPacket(p, pktInfo);
+// }
 
 std::map<uint64_t, AnimPacketInfo>&
 AnimationInterfaceSingleton::GetPendingCsmaPacketsMap()
@@ -4859,4 +4891,41 @@ AnimationInterface::AddNodeToNodeDropMap(uint32_t nodeId)
     return AnimationInterfaceSingleton::Get()->AddNodeToNodeDropMap(nodeId);
 }
 
+void
+AnimationInterface::CheckMaxPktsPerTraceFile()
+{
+    return AnimationInterfaceSingleton::Get()->CheckMaxPktsPerTraceFile();
+}
+
+void
+AnimationInterface::WriteXmlP(std::string pktType,
+                              uint32_t fId,
+                              double fbTx,
+                              double lbTx,
+                              uint32_t tId,
+                              double fbRx,
+                              double lbRx,
+                              std::string metaInfo)
+{
+    return AnimationInterfaceSingleton::Get()
+        ->WriteXmlP(pktType, fId, fbTx, lbTx, tId, fbRx, lbRx, metaInfo);
+}
+
+bool
+AnimationInterfaceSingleton::IsEnablePacketMetadata()
+{
+    return m_enablePacketMetadata;
+}
+
+bool
+AnimationInterface::IsEnablePacketMetadata()
+{
+    return AnimationInterfaceSingleton::Get()->IsEnablePacketMetadata();
+}
+
+std::string
+AnimationInterface::GetPacketMetadata(Ptr<const Packet> p)
+{
+    return AnimationInterfaceSingleton::Get()->GetPacketMetadata(p);
+}
 } // namespace ns3

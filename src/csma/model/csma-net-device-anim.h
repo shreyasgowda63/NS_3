@@ -11,6 +11,42 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
 
 {
   public:
+    class CsmaAnimPacketInfo
+
+    {
+      public:
+        CsmaAnimPacketInfo();
+        /**
+         * Constructor
+         *
+         * \param pInfo anim packet info
+         */
+        CsmaAnimPacketInfo(const CsmaAnimPacketInfo& pInfo);
+        /**
+         * Constructor
+         *
+         * \param tx_nd transmit device
+         * \param fbTx fb transmit
+         * \param txNodeId transmit node ID
+         */
+        CsmaAnimPacketInfo(Ptr<const NetDevice> tx_nd, const Time fbTx, uint32_t txNodeId = 0);
+        Ptr<const NetDevice> m_txnd; ///< transmit device
+        uint32_t m_txNodeId;         ///< node ID
+        double m_firstBitTxTime; ///< time of the first bit being transmitted (when the packet did
+                                 ///< start the Tx)
+        double m_lastBitTxTime;  ///< time of the last bit being transmitted (when the packet did
+                                 ///< start the Tx)
+
+        // double m_firstBitRxTime; ///< fb receive
+        // double m_lastBitRxTime;  ///< lb receive
+        // /**
+        //  * Process receive begin
+        //  * \param nd the device
+        //  * \param fbRx
+        //  */
+        // void ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx);
+    };
+
     void ConnectCallbacks();
     /**
      * \brief Get the type identificator.
@@ -67,12 +103,25 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
      * \param p the packet
      */
     void QueueDropTrace(Ptr<const Packet> p);
+    /**
+     * Output CSMA packet function
+     * \param p the packet
+     * \param pktInfo the packet info
+     */
+    void OutputCsmaPacket(Ptr<const Packet> p, CsmaAnimPacketInfo& pktInfo);
 
   private:
     /**
      * \brief AnimationInterface object
      */
     AnimationInterface m_anim;
+    double m_firstBitRxTime; ///< time of the first bit being received (when the packet did start
+                             ///< the Rx)
+    double m_lastBitRxTime;  ///< time of the last bit being received (when the packet did start
+                             ///< the Rx)
+    typedef std::map<uint64_t, CsmaAnimPacketInfo> CsmaAnimUidPacketInfoMap;
+    static CsmaAnimUidPacketInfoMap m_pendingCsmaPackets; ///< pending CSMA packets
+    static uint64_t csmaAnimUid;
 };
 
 } // namespace ns3

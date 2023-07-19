@@ -530,6 +530,30 @@ class AnimationInterface
     void AddNodeToNodeEnqueueMap(uint32_t nodeId);
     void AddNodeToNodeDequeueMap(uint32_t nodeId);
     void AddNodeToNodeDropMap(uint32_t nodeId);
+    /// Check maximum packets per trace file function
+    void CheckMaxPktsPerTraceFile();
+    /**
+     * Write XMLP function
+     * \param pktType the packet type
+     * \param fId the FID
+     * \param fbTx the FB transmit
+     * \param lbTx the LB transmit
+     * \param tId the TID
+     * \param fbRx the FB receive
+     * \param lbRx the LB receive
+     * \param metaInfo the meta info
+     */
+    void WriteXmlP(std::string pktType,
+                   uint32_t fId,
+                   double fbTx,
+                   double lbTx,
+                   uint32_t tId,
+                   double fbRx,
+                   double lbRx,
+                   std::string metaInfo = "");
+
+    bool IsEnablePacketMetadata();
+    std::string GetPacketMetadata(Ptr<const Packet> p);
 };
 
 } // namespace ns3
