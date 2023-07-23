@@ -99,7 +99,7 @@ CsmaNetDeviceAnim::CsmaPhyTxEndTrace(Ptr<const Packet> p)
     }
     /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true);
     CsmaAnimPacketInfo& pktInfo = m_pendingCsmaPackets[csmaAnimUid];
-    pktInfo.m_lastBitTxTime = Simulator::Now().GetSeconds();
+    pktInfo.m_lastBitTxTime = Simulator::Now();
 }
 
 void
@@ -174,14 +174,14 @@ void
 CsmaNetDeviceAnim::OutputCsmaPacket(Ptr<const Packet> p, CsmaAnimPacketInfo& pktInfo)
 {
     m_anim.CheckMaxPktsPerTraceFile();
-    NS_ASSERT(pktInfo.m_txnd);
-    uint32_t nodeId = pktInfo.m_txnd->GetNode()->GetId();
+    // NS_ASSERT(pktInfo.m_txnd);
+    uint32_t nodeId = pktInfo.m_txNodeId;
     uint32_t rxId = this->GetObject<CsmaNetDevice>()->GetNode()->GetId();
 
     m_anim.WriteXmlP("p",
                      nodeId,
-                     pktInfo.m_firstBitTxTime,
-                     pktInfo.m_lastBitTxTime,
+                     pktInfo.m_firstBitTxTime.GetSeconds(),
+                     pktInfo.m_lastBitTxTime.GetSeconds(),
                      rxId,
                      m_firstBitRxTime,
                      m_lastBitRxTime,
@@ -189,8 +189,8 @@ CsmaNetDeviceAnim::OutputCsmaPacket(Ptr<const Packet> p, CsmaAnimPacketInfo& pkt
 }
 
 CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo()
-    : m_txnd(nullptr),
-      m_txNodeId(0),
+    // : m_txnd(nullptr),
+    : m_txNodeId(0),
       m_firstBitTxTime(0),
       m_lastBitTxTime(0)
 //   m_lbRx(0)
@@ -199,7 +199,7 @@ CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo()
 
 CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo(const CsmaAnimPacketInfo& pInfo)
 {
-    m_txnd = pInfo.m_txnd;
+    // m_txnd = pInfo.m_txnd;
     m_txNodeId = pInfo.m_txNodeId;
     m_firstBitTxTime = pInfo.m_firstBitTxTime;
     m_lastBitTxTime = pInfo.m_firstBitTxTime;
@@ -209,15 +209,17 @@ CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo(const CsmaAnimPacketIn
 CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo(Ptr<const NetDevice> txnd,
                                                           const Time fbTx,
                                                           uint32_t txNodeId)
-    : m_txnd(txnd),
-      m_txNodeId(0),
-      m_firstBitTxTime(fbTx.GetSeconds()),
+    // : m_txnd(txnd),
+    : m_txNodeId(txnd->GetNode()->GetId()),
+      m_firstBitTxTime(fbTx),
       m_lastBitTxTime(0)
 //   m_lbRx(0)
 {
-    if (!m_txnd)
-    {
-        m_txNodeId = txNodeId;
-    }
+    // if (!txnd)
+    // {
+    //     m_txNodeId = txNodeId;
+    // }
+    // m_txNodeId = txNodeId;
 }
+
 } // namespace ns3

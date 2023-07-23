@@ -33,12 +33,12 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
          * \param txNodeId transmit node ID
          */
         CsmaAnimPacketInfo(Ptr<const NetDevice> tx_nd, const Time fbTx, uint32_t txNodeId = 0);
-        Ptr<const NetDevice> m_txnd; ///< transmit device
-        uint32_t m_txNodeId;         ///< node ID
-        double m_firstBitTxTime; ///< time of the first bit being transmitted (when the packet did
-                                 ///< start the Tx)
-        double m_lastBitTxTime;  ///< time of the last bit being transmitted (when the packet did
-                                 ///< start the Tx)
+        // Ptr<const NetDevice> m_txnd; ///< transmit device
+        uint32_t m_txNodeId;   ///< node ID
+        Time m_firstBitTxTime; ///< time of the first bit being transmitted (when the packet did
+                               ///< start the Tx)
+        Time m_lastBitTxTime;  ///< time of the last bit being transmitted (when the packet did
+                               ///< start the Tx)
     };
 
     /// Connect callbacks function
