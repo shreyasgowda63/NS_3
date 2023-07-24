@@ -13,6 +13,7 @@ NS_OBJECT_ENSURE_REGISTERED(CsmaNetDeviceAnim);
 
 CsmaNetDeviceAnim::CsmaAnimUidPacketInfoMap CsmaNetDeviceAnim::m_pendingCsmaPackets;
 uint64_t CsmaNetDeviceAnim::csmaAnimUid = 0;
+EventId CsmaNetDeviceAnim::m_purgeCsmaAnimPendingPacketsEventId = EventId();
 
 TypeId
 CsmaNetDeviceAnim::GetTypeId()
@@ -74,6 +75,10 @@ CsmaNetDeviceAnim::CsmaPhyTxBeginTrace(Ptr<const Packet> p)
     m_anim.UpdatePosition(ndev);
     CsmaAnimPacketInfo pktInfo(ndev, Simulator::Now());
     m_pendingCsmaPackets.insert(CsmaAnimUidPacketInfoMap::value_type(csmaAnimUid, pktInfo));
+    if (!m_purgeCsmaAnimPendingPacketsEventId.IsRunning())
+    {
+        Simulator::Schedule(Seconds(0.25), &CsmaNetDeviceAnim::PurgePendingPackets);
+    }
 }
 
 void
@@ -174,7 +179,6 @@ void
 CsmaNetDeviceAnim::OutputCsmaPacket(Ptr<const Packet> p, CsmaAnimPacketInfo& pktInfo)
 {
     m_anim.CheckMaxPktsPerTraceFile();
-    // NS_ASSERT(pktInfo.m_txnd);
     uint32_t nodeId = pktInfo.m_txNodeId;
     uint32_t rxId = this->GetObject<CsmaNetDevice>()->GetNode()->GetId();
 
@@ -189,37 +193,53 @@ CsmaNetDeviceAnim::OutputCsmaPacket(Ptr<const Packet> p, CsmaAnimPacketInfo& pkt
 }
 
 CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo()
-    // : m_txnd(nullptr),
     : m_txNodeId(0),
       m_firstBitTxTime(0),
       m_lastBitTxTime(0)
-//   m_lbRx(0)
 {
 }
 
 CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo(const CsmaAnimPacketInfo& pInfo)
 {
-    // m_txnd = pInfo.m_txnd;
     m_txNodeId = pInfo.m_txNodeId;
     m_firstBitTxTime = pInfo.m_firstBitTxTime;
     m_lastBitTxTime = pInfo.m_firstBitTxTime;
-    // m_lastBitRxTime = m_lastBitTRxTime;
 }
 
 CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo(Ptr<const NetDevice> txnd,
                                                           const Time fbTx,
                                                           uint32_t txNodeId)
-    // : m_txnd(txnd),
     : m_txNodeId(txnd->GetNode()->GetId()),
       m_firstBitTxTime(fbTx),
       m_lastBitTxTime(0)
-//   m_lbRx(0)
 {
-    // if (!txnd)
-    // {
-    //     m_txNodeId = txNodeId;
-    // }
-    // m_txNodeId = txNodeId;
+}
+
+void
+CsmaNetDeviceAnim::PurgePendingPackets()
+{
+    std::vector<uint64_t> purgeList;
+    for (CsmaAnimUidPacketInfoMap::iterator i = m_pendingCsmaPackets.begin();
+         i != m_pendingCsmaPackets.end();
+         ++i)
+    {
+        CsmaAnimPacketInfo pktInfo = i->second;
+        Time delta = (Simulator::Now() - pktInfo.m_firstBitTxTime);
+        if (delta > CSMA_PURGE_INTERVAL)
+        {
+            purgeList.push_back(i->first);
+        }
+    }
+    for (std::vector<uint64_t>::iterator i = purgeList.begin(); i != purgeList.end(); ++i)
+    {
+        m_pendingCsmaPackets.erase(*i);
+    }
+}
+
+void
+CsmaNetDeviceAnim::DoDispose()
+{
+    NetDeviceAnim::DoDispose();
 }
 
 } // namespace ns3

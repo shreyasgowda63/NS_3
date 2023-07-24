@@ -4,6 +4,8 @@
 #include "ns3/animation-interface.h"
 #include "ns3/net-device-anim.h"
 
+#define CSMA_PURGE_INTERVAL Seconds(5)
+
 namespace ns3
 {
 
@@ -33,7 +35,6 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
          * \param txNodeId transmit node ID
          */
         CsmaAnimPacketInfo(Ptr<const NetDevice> tx_nd, const Time fbTx, uint32_t txNodeId = 0);
-        // Ptr<const NetDevice> m_txnd; ///< transmit device
         uint32_t m_txNodeId;   ///< node ID
         Time m_firstBitTxTime; ///< time of the first bit being transmitted (when the packet did
                                ///< start the Tx)
@@ -104,6 +105,12 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
      * \param pktInfo the packet info
      */
     void OutputCsmaPacket(Ptr<const Packet> p, CsmaAnimPacketInfo& pktInfo);
+    /**
+     * Purge pending packets function
+     */
+    static void PurgePendingPackets();
+    // Inherited from Object base class.
+    void DoDispose() override;
 
   private:
     /**
@@ -118,6 +125,7 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
         CsmaAnimUidPacketInfoMap;                         ///< CsmaAnimUidPacketInfoMap typedef
     static CsmaAnimUidPacketInfoMap m_pendingCsmaPackets; ///< pending CSMA packets
     static uint64_t csmaAnimUid;                          ///< Csma AnimUid
+    static EventId m_purgeCsmaAnimPendingPacketsEventId;  ///< PurgeCsmaAnimPackets EventId
 };
 
 } // namespace ns3
