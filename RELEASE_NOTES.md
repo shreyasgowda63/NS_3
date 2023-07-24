@@ -29,6 +29,9 @@ Python API requires [Cppyy](https://cppyy.readthedocs.io/en/latest/installation.
 
 ### New user-visible features
 
+- (wifi) Added support for 802.11be TID-to-Link Mapping
+- (energy) - !1329 - Extensions to battery discharge module
+
 ### Bugs fixed
 
 ## Release 3.39

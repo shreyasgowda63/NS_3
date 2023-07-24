@@ -162,14 +162,24 @@ class StaWifiMac : public WifiMac
      */
     struct ApInfo
     {
+        /**
+         * Information about links to setup
+         */
+        struct SetupLinksInfo
+        {
+            uint8_t localLinkId; ///< local link ID
+            uint8_t apLinkId;    ///< AP link ID
+            Mac48Address bssid;  ///< BSSID
+        };
+
         Mac48Address m_bssid;  ///< BSSID
         Mac48Address m_apAddr; ///< AP MAC address
         double m_snr;          ///< SNR in linear scale
         MgtFrameType m_frame;  ///< The body of the management frame used to update AP info
         WifiScanParams::Channel m_channel; ///< The channel the management frame was received on
         uint8_t m_linkId;                  ///< ID of the link used to communicate with the AP
-        /// list of (local link ID, AP link ID) pairs identifying the links to setup between MLDs
-        std::list<std::pair<uint8_t, uint8_t>> m_setupLinks;
+        std::list<SetupLinksInfo>
+            m_setupLinks; ///< information about the links to setup between MLDs
     };
 
     /**
@@ -247,12 +257,6 @@ class StaWifiMac : public WifiMac
     std::set<uint8_t> GetSetupLinkIds() const;
 
     /**
-     * \param linkId the IO of the given link
-     * \return the ID (as set by the AP) of the given link, if the given link has been setup
-     */
-    std::optional<uint8_t> GetApLinkId(uint8_t linkId) const;
-
-    /**
      * Return the association ID.
      *
      * \return the association ID
@@ -314,8 +318,6 @@ class StaWifiMac : public WifiMac
 
         bool sendAssocReq;                 //!< whether this link is used to send the
                                            //!< Association Request frame
-        std::optional<uint8_t> apLinkId;   //!< ID (as set by the AP) of the link we have
-                                           //!< setup or are setting up
         std::optional<Mac48Address> bssid; //!< BSSID of the AP to associate with over this link
         EventId beaconWatchdog;            //!< beacon watchdog
         Time beaconWatchdogEnd{0};         //!< beacon watchdog end
@@ -331,6 +333,14 @@ class StaWifiMac : public WifiMac
      * \return a reference to the link associated with the given ID
      */
     StaLinkEntity& GetLink(uint8_t linkId) const;
+
+    /**
+     * Cast the given LinkEntity object to StaLinkEntity.
+     *
+     * \param link the given LinkEntity object
+     * \return a reference to the object casted to StaLinkEntity
+     */
+    StaLinkEntity& GetStaLink(const std::unique_ptr<WifiMac::LinkEntity>& link) const;
 
   private:
     /**
@@ -494,6 +504,13 @@ class StaWifiMac : public WifiMac
      * \return the Multi-Link Element
      */
     MultiLinkElement GetMultiLinkElement(bool isReassoc, uint8_t linkId) const;
+
+    /**
+     * \param apNegSupport the negotiation type supported by the AP MLD
+     * \return the TID-to-Link Mapping element(s) to include in Association Request frame.
+     */
+    std::vector<TidToLinkMapping> GetTidToLinkMappingElements(uint8_t apNegSupport);
+
     /**
      * Set the current MAC state.
      *
@@ -579,6 +596,11 @@ class StaWifiMac : public WifiMac
     Ptr<RandomVariableStream> m_probeDelay; ///< RandomVariable used to randomize the time
                                             ///< of the first Probe Response on each channel
     Time m_pmModeSwitchTimeout;             ///< PM mode switch timeout
+
+    /// store the DL TID-to-Link Mapping included in the Association Request frame
+    WifiTidLinkMapping m_dlTidLinkMappingInAssocReq;
+    /// store the UL TID-to-Link Mapping included in the Association Request frame
+    WifiTidLinkMapping m_ulTidLinkMappingInAssocReq;
 
     TracedCallback<Mac48Address> m_assocLogger;             ///< association logger
     TracedCallback<uint8_t, Mac48Address> m_setupCompleted; ///< link setup completed logger
