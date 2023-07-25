@@ -1387,10 +1387,10 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
                 self.assertIn("Invalid library name: %s" % invalid_or_nonexistent_library, stderr)
             elif invalid_or_nonexistent_library in ["gsd", "libfi", "calibre"]:
                 self.assertEqual(return_code, 2)  # should fail due to missing library
-                # GCC's LD says cannot find
-                # LLVM's LLD says unable to find
                 if "lld" in stdout + stderr:
                     self.assertIn("unable to find library -l%s" % invalid_or_nonexistent_library, stderr)
+                elif "mold" in stdout + stderr:
+                    self.assertIn("library not found: %s" % invalid_or_nonexistent_library, stderr)
                 else:
                     self.assertIn("cannot find -l%s" % invalid_or_nonexistent_library, stderr)
             else:
@@ -2337,7 +2337,7 @@ class NS3BuildBaseTestCase(NS3BaseTestCase):
 
         # First enable examples and static build
         return_code, stdout, stderr = run_ns3(
-            "configure -G \"{generator}\" --enable-python-bindings")
+            "configure -G \"{generator}\" --enable-examples --enable-python-bindings")
 
         # If configuration passes, we are half way done
         self.assertEqual(return_code, 0)

@@ -42,6 +42,10 @@ class WifiMac;
 enum class WifiQueueBlockedReason : uint8_t
 {
     WAITING_ADDBA_RESP = 0,
+    POWER_SAVE_MODE,
+    USING_OTHER_EMLSR_LINK,
+    WAITING_EMLSR_TRANSITION_DELAY,
+    TID_NOT_MAPPED,
     REASONS_COUNT
 };
 
@@ -59,6 +63,14 @@ operator<<(std::ostream& os, WifiQueueBlockedReason reason)
     {
     case WifiQueueBlockedReason::WAITING_ADDBA_RESP:
         return (os << "WAITING_ADDBA_RESP");
+    case WifiQueueBlockedReason::POWER_SAVE_MODE:
+        return (os << "POWER_SAVE_MODE");
+    case WifiQueueBlockedReason::USING_OTHER_EMLSR_LINK:
+        return (os << "USING_OTHER_EMLSR_LINK");
+    case WifiQueueBlockedReason::WAITING_EMLSR_TRANSITION_DELAY:
+        return (os << "WAITING_EMLSR_TRANSITION_DELAY");
+    case WifiQueueBlockedReason::TID_NOT_MAPPED:
+        return (os << "TID_NOT_MAPPED");
     case WifiQueueBlockedReason::REASONS_COUNT:
         return (os << "REASONS_COUNT");
     default:

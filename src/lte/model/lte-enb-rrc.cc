@@ -961,7 +961,6 @@ UeManager::SendData(uint8_t bid, Ptr<Packet> p)
     case CONNECTION_SETUP:
         NS_LOG_WARN("not connected, discarding packet");
         return;
-        break;
 
     case CONNECTED_NORMALLY:
     case CONNECTION_RECONFIGURATION:
@@ -3124,6 +3123,7 @@ LteEnbRrc::DoAllocateTemporaryCellRnti(uint8_t componentCarrierId)
     // if no SRS index is available, then do not create a new UE context.
     if (IsMaxSrsReached())
     {
+        NS_LOG_WARN("Not enough SRS configuration indices, UE context not created");
         return 0; // return 0 since new RNTI was not assigned for the received preamble
     }
     return AddUe(UeManager::INITIAL_RANDOM_ACCESS, componentCarrierId);
@@ -3313,15 +3313,12 @@ LteEnbRrc::GetRlcType(EpsBearer bearer)
     {
     case RLC_SM_ALWAYS:
         return LteRlcSm::GetTypeId();
-        break;
 
     case RLC_UM_ALWAYS:
         return LteRlcUm::GetTypeId();
-        break;
 
     case RLC_AM_ALWAYS:
         return LteRlcAm::GetTypeId();
-        break;
 
     case PER_BASED:
         if (bearer.GetPacketErrorLossRate() > 1.0e-5)
@@ -3332,11 +3329,9 @@ LteEnbRrc::GetRlcType(EpsBearer bearer)
         {
             return LteRlcAm::GetTypeId();
         }
-        break;
 
     default:
         return LteRlcSm::GetTypeId();
-        break;
     }
 }
 
@@ -3557,10 +3552,8 @@ LteEnbRrc::IsRandomAccessCompleted(uint16_t rnti)
     case UeManager::CONNECTED_NORMALLY:
     case UeManager::CONNECTION_RECONFIGURATION:
         return true;
-        break;
     default:
         return false;
-        break;
     }
 }
 

@@ -30,6 +30,7 @@
 #include "ns3/boolean.h"
 #include "ns3/eht-configuration.h"
 #include "ns3/enum.h"
+#include "ns3/erp-ofdm-phy.h"
 #include "ns3/he-configuration.h"
 #include "ns3/ht-configuration.h"
 #include "ns3/ht-phy.h"
@@ -552,21 +553,28 @@ WifiRemoteStationManager::GetStaId(Mac48Address address, const WifiTxVector& txV
     return staId;
 }
 
-void
-WifiRemoteStationManager::SetMldAddress(const Mac48Address& address, const Mac48Address& mldAddress)
+bool
+WifiRemoteStationManager::IsInPsMode(const Mac48Address& address) const
 {
-    NS_LOG_FUNCTION(this << address << mldAddress);
+    return LookupState(address)->m_isInPsMode;
+}
 
-    auto state = LookupState(address);
-    state->m_mldAddress = mldAddress;
-    // insert another entry in m_states indexed by the MLD address and pointing to the same state
-    const_cast<WifiRemoteStationManager*>(this)->m_states.insert({mldAddress, state});
+void
+WifiRemoteStationManager::SetPsMode(const Mac48Address& address, bool isInPsMode)
+{
+    LookupState(address)->m_isInPsMode = isInPsMode;
 }
 
 std::optional<Mac48Address>
 WifiRemoteStationManager::GetMldAddress(const Mac48Address& address) const
 {
-    return LookupState(address)->m_mldAddress;
+    if (auto stateIt = m_states.find(address);
+        stateIt != m_states.end() && stateIt->second->m_mleCommonInfo)
+    {
+        return stateIt->second->m_mleCommonInfo->m_mldMacAddress;
+    }
+
+    return std::nullopt;
 }
 
 std::optional<Mac48Address>
@@ -574,13 +582,13 @@ WifiRemoteStationManager::GetAffiliatedStaAddress(const Mac48Address& mldAddress
 {
     auto stateIt = m_states.find(mldAddress);
 
-    if (stateIt == m_states.end() || !stateIt->second->m_mldAddress)
+    if (stateIt == m_states.end() || !stateIt->second->m_mleCommonInfo)
     {
         // MLD address not found
         return std::nullopt;
     }
 
-    NS_ASSERT(*stateIt->second->m_mldAddress == mldAddress);
+    NS_ASSERT(stateIt->second->m_mleCommonInfo->m_mldMacAddress == mldAddress);
     return stateIt->second->m_address;
 }
 
@@ -732,6 +740,39 @@ WifiRemoteStationManager::GetCtsTxVector(Mac48Address to, WifiMode rtsTxMode) co
     v.SetGuardInterval(ctsTxGuardInterval);
     v.SetNss(1);
     return v;
+}
+
+void
+WifiRemoteStationManager::AdjustTxVectorForIcf(WifiTxVector& txVector) const
+{
+    NS_LOG_FUNCTION(this << txVector);
+
+    auto txMode = txVector.GetMode();
+    if (txMode.GetModulationClass() >= WIFI_MOD_CLASS_HT)
+    {
+        auto rate = txMode.GetDataRate(txVector);
+        if (rate >= 24e6)
+        {
+            rate = 24e6;
+        }
+        else if (rate >= 12e6)
+        {
+            rate = 12e6;
+        }
+        else
+        {
+            rate = 6e6;
+        }
+        txVector.SetPreambleType(WIFI_PREAMBLE_LONG);
+        if (m_wifiPhy->GetPhyBand() == WIFI_PHY_BAND_2_4GHZ)
+        {
+            txVector.SetMode(ErpOfdmPhy::GetErpOfdmRate(rate));
+        }
+        else
+        {
+            txVector.SetMode(OfdmPhy::GetOfdmRate(rate));
+        }
+    }
 }
 
 WifiTxVector
@@ -1376,11 +1417,14 @@ WifiRemoteStationManager::LookupState(Mac48Address address) const
     state->m_vhtCapabilities = nullptr;
     state->m_heCapabilities = nullptr;
     state->m_ehtCapabilities = nullptr;
+    state->m_mleCommonInfo = nullptr;
+    state->m_emlsrEnabled = false;
     state->m_channelWidth = m_wifiPhy->GetChannelWidth();
     state->m_guardInterval = GetGuardInterval();
     state->m_ness = 0;
     state->m_aggregation = false;
     state->m_qosSupported = false;
+    state->m_isInPsMode = false;
     const_cast<WifiRemoteStationManager*>(this)->m_states.insert({address, state});
     NS_LOG_DEBUG("WifiRemoteStationManager::LookupState returning new state");
     return state;
@@ -1416,6 +1460,13 @@ WifiRemoteStationManager::SetQosSupport(Mac48Address from, bool qosSupported)
 {
     NS_LOG_FUNCTION(this << from << qosSupported);
     LookupState(from)->m_qosSupported = qosSupported;
+}
+
+void
+WifiRemoteStationManager::SetEmlsrEnabled(const Mac48Address& from, bool emlsrEnabled)
+{
+    NS_LOG_FUNCTION(this << from << emlsrEnabled);
+    LookupState(from)->m_emlsrEnabled = emlsrEnabled;
 }
 
 void
@@ -1543,6 +1594,19 @@ WifiRemoteStationManager::AddStationEhtCapabilities(Mac48Address from,
     SetQosSupport(from, true);
 }
 
+void
+WifiRemoteStationManager::AddStationMleCommonInfo(
+    Mac48Address from,
+    const std::shared_ptr<CommonInfoBasicMle>& mleCommonInfo)
+{
+    NS_LOG_FUNCTION(this << from);
+    auto state = LookupState(from);
+    state->m_mleCommonInfo = mleCommonInfo;
+    // insert another entry in m_states indexed by the MLD address and pointing to the same state
+    const_cast<WifiRemoteStationManager*>(this)->m_states.insert(
+        {mleCommonInfo->m_mldMacAddress, state});
+}
+
 Ptr<const HtCapabilities>
 WifiRemoteStationManager::GetStationHtCapabilities(Mac48Address from)
 {
@@ -1565,6 +1629,28 @@ Ptr<const EhtCapabilities>
 WifiRemoteStationManager::GetStationEhtCapabilities(Mac48Address from)
 {
     return LookupState(from)->m_ehtCapabilities;
+}
+
+std::optional<std::reference_wrapper<CommonInfoBasicMle::EmlCapabilities>>
+WifiRemoteStationManager::GetStationEmlCapabilities(const Mac48Address& from)
+{
+    if (auto state = LookupState(from);
+        state->m_mleCommonInfo && state->m_mleCommonInfo->m_emlCapabilities)
+    {
+        return state->m_mleCommonInfo->m_emlCapabilities.value();
+    }
+    return std::nullopt;
+}
+
+std::optional<std::reference_wrapper<CommonInfoBasicMle::MldCapabilities>>
+WifiRemoteStationManager::GetStationMldCapabilities(const Mac48Address& from)
+{
+    if (auto state = LookupState(from);
+        state->m_mleCommonInfo && state->m_mleCommonInfo->m_mldCapabilities)
+    {
+        return state->m_mleCommonInfo->m_mldCapabilities.value();
+    }
+    return std::nullopt;
 }
 
 bool
@@ -1940,6 +2026,20 @@ WifiRemoteStationManager::GetEhtSupported(const WifiRemoteStation* station) cons
     return (bool)(station->m_state->m_ehtCapabilities);
 }
 
+bool
+WifiRemoteStationManager::GetEmlsrSupported(const WifiRemoteStation* station) const
+{
+    auto mleCommonInfo = station->m_state->m_mleCommonInfo;
+    return mleCommonInfo && mleCommonInfo->m_emlCapabilities &&
+           mleCommonInfo->m_emlCapabilities->emlsrSupport == 1;
+}
+
+bool
+WifiRemoteStationManager::GetEmlsrEnabled(const WifiRemoteStation* station) const
+{
+    return station->m_state->m_emlsrEnabled;
+}
+
 uint8_t
 WifiRemoteStationManager::GetNMcsSupported(const WifiRemoteStation* station) const
 {
@@ -2039,6 +2139,24 @@ bool
 WifiRemoteStationManager::GetEhtSupported(Mac48Address address) const
 {
     return (bool)(LookupState(address)->m_ehtCapabilities);
+}
+
+bool
+WifiRemoteStationManager::GetEmlsrSupported(const Mac48Address& address) const
+{
+    auto mleCommonInfo = LookupState(address)->m_mleCommonInfo;
+    return mleCommonInfo && mleCommonInfo->m_emlCapabilities &&
+           mleCommonInfo->m_emlCapabilities->emlsrSupport == 1;
+}
+
+bool
+WifiRemoteStationManager::GetEmlsrEnabled(const Mac48Address& address) const
+{
+    if (auto stateIt = m_states.find(address); stateIt != m_states.cend())
+    {
+        return stateIt->second->m_emlsrEnabled;
+    }
+    return false;
 }
 
 void

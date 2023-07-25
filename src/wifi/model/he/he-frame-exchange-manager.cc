@@ -54,6 +54,14 @@ IsTrigger(const WifiPsduMap& psduMap)
            psduMap.cbegin()->second->GetHeader(0).IsTrigger();
 }
 
+bool
+IsTrigger(const WifiConstPsduMap& psduMap)
+{
+    return psduMap.size() == 1 && psduMap.cbegin()->first == SU_STA_ID &&
+           psduMap.cbegin()->second->GetNMpdus() == 1 &&
+           psduMap.cbegin()->second->GetHeader(0).IsTrigger();
+}
+
 TypeId
 HeFrameExchangeManager::GetTypeId()
 {
@@ -282,23 +290,62 @@ HeFrameExchangeManager::SendPsduMapWithProtection(WifiPsduMap psduMap, WifiTxPar
         }
     }
 
-    if (m_txParams.m_protection->method == WifiProtection::RTS_CTS)
+    StartProtection(m_txParams);
+}
+
+void
+HeFrameExchangeManager::StartProtection(const WifiTxParameters& txParams)
+{
+    NS_LOG_FUNCTION(this << &txParams);
+
+    NS_ABORT_MSG_IF(m_psduMap.size() > 1 &&
+                        txParams.m_protection->method == WifiProtection::RTS_CTS,
+                    "Cannot use RTS/CTS with MU PPDUs");
+    if (txParams.m_protection->method == WifiProtection::MU_RTS_CTS)
     {
-        NS_ABORT_MSG_IF(m_psduMap.size() > 1, "Cannot use RTS/CTS with MU PPDUs");
-        SendRts(m_txParams);
-    }
-    else if (m_txParams.m_protection->method == WifiProtection::MU_RTS_CTS)
-    {
-        SendMuRts(m_txParams);
-    }
-    else if (m_txParams.m_protection->method == WifiProtection::NONE)
-    {
-        SendPsduMap();
+        RecordSentMuRtsTo(txParams);
+        SendMuRts(txParams);
     }
     else
     {
-        NS_ABORT_MSG("Unknown or prohibited protection type: " << m_txParams.m_protection.get());
+        VhtFrameExchangeManager::StartProtection(txParams);
     }
+}
+
+void
+HeFrameExchangeManager::RecordSentMuRtsTo(const WifiTxParameters& txParams)
+{
+    NS_LOG_FUNCTION(this << &txParams);
+
+    NS_ASSERT(txParams.m_protection && txParams.m_protection->method == WifiProtection::MU_RTS_CTS);
+    WifiMuRtsCtsProtection* protection =
+        static_cast<WifiMuRtsCtsProtection*>(txParams.m_protection.get());
+
+    NS_ASSERT(protection->muRts.IsMuRts());
+    NS_ASSERT_MSG(m_apMac, "APs only can send MU-RTS TF");
+    const auto& aidAddrMap = m_apMac->GetStaList(m_linkId);
+    NS_ASSERT(m_sentRtsTo.empty());
+
+    for (const auto& userInfo : protection->muRts)
+    {
+        const auto addressIt = aidAddrMap.find(userInfo.GetAid12());
+        NS_ASSERT_MSG(addressIt != aidAddrMap.end(), "AID not found");
+        m_sentRtsTo.insert(addressIt->second);
+    }
+}
+
+void
+HeFrameExchangeManager::ProtectionCompleted()
+{
+    NS_LOG_FUNCTION(this);
+    if (!m_psduMap.empty())
+    {
+        m_protectedStas.merge(m_sentRtsTo);
+        m_sentRtsTo.clear();
+        SendPsduMap();
+        return;
+    }
+    VhtFrameExchangeManager::ProtectionCompleted();
 }
 
 Time
@@ -387,8 +434,15 @@ HeFrameExchangeManager::CtsAfterMuRtsTimeout(Ptr<WifiMpdu> muRts, const WifiTxVe
 {
     NS_LOG_FUNCTION(this << *muRts << txVector);
 
-    NS_ASSERT(!m_psduMap.empty());
+    if (m_psduMap.empty())
+    {
+        // A CTS Timeout occurred when protecting a single PSDU that is not included
+        // in a DL MU PPDU is handled by the parent classes
+        VhtFrameExchangeManager::CtsTimeout(muRts, txVector);
+        return;
+    }
 
+    m_sentRtsTo.clear();
     for (const auto& psdu : m_psduMap)
     {
         for (const auto& mpdu : *PeekPointer(psdu.second))
@@ -873,9 +927,10 @@ HeFrameExchangeManager::ForwardPsduMapDown(WifiConstPsduMap psduMap, WifiTxVecto
         NS_LOG_DEBUG("Transmitting: [STAID=" << psdu.first << ", " << *psdu.second << "]");
     }
     NS_LOG_DEBUG("TXVECTOR: " << txVector);
-    for (const auto& psdu : psduMap)
+    for (const auto& [staId, psdu] : psduMap)
     {
-        NotifyTxToEdca(psdu.second);
+        FinalizeMacHeader(psdu);
+        NotifyTxToEdca(psdu);
     }
     if (psduMap.size() > 1 || psduMap.begin()->second->IsAggregate() ||
         psduMap.begin()->second->IsSingle())
@@ -2294,9 +2349,11 @@ HeFrameExchangeManager::ReceiveMpdu(Ptr<const WifiMpdu> mpdu,
 
             m_txTimer.Cancel();
             m_channelAccessManager->NotifyCtsTimeoutResetNow();
-            Simulator::Schedule(m_phy->GetSifs(), &HeFrameExchangeManager::SendPsduMap, this);
+            Simulator::Schedule(m_phy->GetSifs(),
+                                &HeFrameExchangeManager::ProtectionCompleted,
+                                this);
         }
-        else if (hdr.IsCts() && !m_psduMap.empty() && m_txTimer.IsRunning() &&
+        else if (hdr.IsCts() && m_txTimer.IsRunning() &&
                  m_txTimer.GetReason() == WifiTxTimer::WAIT_CTS_AFTER_MU_RTS)
         {
             NS_ABORT_MSG_IF(inAmpdu, "Received CTS as part of an A-MPDU");
@@ -2306,7 +2363,9 @@ HeFrameExchangeManager::ReceiveMpdu(Ptr<const WifiMpdu> mpdu,
 
             m_txTimer.Cancel();
             m_channelAccessManager->NotifyCtsTimeoutResetNow();
-            Simulator::Schedule(m_phy->GetSifs(), &HeFrameExchangeManager::SendPsduMap, this);
+            Simulator::Schedule(m_phy->GetSifs(),
+                                &HeFrameExchangeManager::ProtectionCompleted,
+                                this);
         }
         else if (hdr.IsAck() && m_txTimer.IsRunning() &&
                  m_txTimer.GetReason() == WifiTxTimer::WAIT_NORMAL_ACK_AFTER_DL_MU_PPDU)

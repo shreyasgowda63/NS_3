@@ -30,6 +30,7 @@
 #include "ns3/antenna-model.h"
 
 #include <map>
+#include <optional>
 
 class SpectrumWifiPhyFilterTest;
 
@@ -74,8 +75,10 @@ class SpectrumWifiPhy : public WifiPhy
     Ptr<Channel> GetChannel() const override;
     uint16_t GetGuardBandwidth(uint16_t currentChannelWidth) const override;
     std::tuple<double, double, double> GetTxMaskRejectionParams() const override;
-    WifiSpectrumBand GetBand(uint16_t bandWidth, uint8_t bandIndex = 0) override;
+    WifiSpectrumBandInfo GetBand(uint16_t bandWidth, uint8_t bandIndex = 0) override;
     FrequencyRange GetCurrentFrequencyRange() const override;
+    WifiSpectrumBandFrequencies ConvertIndicesToFrequencies(
+        const WifiSpectrumBandIndices& indices) const override;
 
     /**
      * Attach a SpectrumChannel to use for a given frequency range.
@@ -116,27 +119,6 @@ class SpectrumWifiPhy : public WifiPhy
     Ptr<AntennaModel> GetAntenna() const;
 
     /**
-     * \return the width of each band (Hz)
-     */
-    uint32_t GetBandBandwidth() const;
-
-    /**
-     * Get the start band index and the stop band index for a given band and a given spectrum PHY
-     * interface
-     *
-     * \param bandWidth the width of the band to be returned (MHz)
-     * \param bandIndex the index of the band to be returned
-     * \param range the frequency range identifying the spectrum PHY interface
-     * \param channelWidth the channel width currently used by the spectrum PHY interface
-     *
-     * \return a pair of start and stop indexes that defines the band
-     */
-    WifiSpectrumBand GetBandForInterface(uint16_t bandWidth,
-                                         uint8_t bandIndex,
-                                         FrequencyRange range,
-                                         uint16_t channelWidth);
-
-    /**
      * Callback invoked when the PHY model starts to process a signal
      *
      * \param signalType Whether signal is WiFi (true) or foreign (false)
@@ -169,6 +151,13 @@ class SpectrumWifiPhy : public WifiPhy
      */
     Ptr<const WifiPpdu> GetRxPpduFromTxPpdu(Ptr<const WifiPpdu> ppdu);
 
+    /**
+     * Get the currently active spectrum PHY interface
+     *
+     * \return the current spectrum PHY interface
+     */
+    Ptr<WifiSpectrumPhyInterface> GetCurrentInterface() const;
+
   protected:
     void DoDispose() override;
     void DoInitialize() override;
@@ -182,25 +171,11 @@ class SpectrumWifiPhy : public WifiPhy
 
   private:
     /**
-     * \param bandWidth the width (MHz) of the band used for the OFDMA transmission. Must be
-     *                  a multiple of 20 MHz
-     * \param guardBandwidth width of the guard band (MHz)
-     * \param range the subcarrier range of the HE RU
-     * \param bandIndex the index (starting at 0) of the band within the operating channel
-     * \return the converted subcarriers
-     *
-     * This is a helper function to convert HE RU subcarriers, which are relative to the center
-     * frequency subcarrier, to the indexes used by the Spectrum model.
+     * Perform run-time spectrum model change if the one used by the current Spectrum PHY interface
+     * has changed
      */
-    WifiSpectrumBand ConvertHeRuSubcarriers(uint16_t bandWidth,
-                                            uint16_t guardBandwidth,
-                                            HeRu::SubcarrierRange range,
-                                            uint8_t bandIndex = 0) const override;
+    void ResetSpectrumModelIfNeeded();
 
-    /**
-     * Perform run-time spectrum model change
-     */
-    void ResetSpectrumModel();
     /**
      * This function is called to update the bands handled by the InterferenceHelper.
      */
@@ -229,13 +204,7 @@ class SpectrumWifiPhy : public WifiPhy
 
     Ptr<AntennaModel> m_antenna; //!< antenna model
 
-    /// Map a spectrum band associated with an RU to the RU specification
-    typedef std::map<WifiSpectrumBand, HeRu::RuSpec> RuBand;
-
-    std::map<uint16_t, RuBand>
-        m_ruBands;               /**< For each channel width, store all the distinct spectrum
-                                      bands associated with every RU in a channel of that width */
-    bool m_disableWifiReception; //!< forces this PHY to fail to sync on any signal
+    bool m_disableWifiReception;           //!< forces this PHY to fail to sync on any signal
     bool m_trackSignalsInactiveInterfaces; //!< flag whether signals coming from inactive spectrum
                                            //!< PHY interfaces are tracked
 
