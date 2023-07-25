@@ -13,6 +13,23 @@ Note that users who upgrade the simulator across versions, or who work directly 
 
 This file is a best-effort approach to solving this issue; we will do our best but can guarantee that there will be things that fall through the cracks, unfortunately. If you, as a user, can suggest improvements to this file based on your experience, please contribute a patch or drop us a note on ns-developers mailing list.
 
+Changes from ns-3.39 to ns-3-dev
+--------------------------------
+
+### New API
+
+### Changes to existing API
+
+* (energy) Added `GenericBatteryModel` to the energy module with working examples.
+* (energy) Support for battery presets and cell packs.
+* (energy) Documentation was updated and reformatted.
+
+### Changes to build system
+
+### Changed behavior
+
+* (wifi) Upon ML setup, a non-AP MLD updates the IDs of the setup links to match the IDs used by the AP MLD.
+
 Changes from ns-3.38 to ns-3.39
 -------------------------------
 

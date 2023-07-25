@@ -13,8 +13,25 @@ a [GitLab.com issue tracker](https://gitlab.com/nsnam/ns-3-dev/-/issues) number,
 and references prefixed by '!' refer to a
 [GitLab.com merge request](https://gitlab.com/nsnam/ns-3-dev/-/merge_requests) number.
 
+Release 3-dev
+-------------
+
+### Supported platforms
+
+### New user-visible features
+
+- (wifi) Added support for 802.11be TID-to-Link Mapping
+- (energy) - !1329 - Extensions to battery discharge module
+
+### Bugs fixed
+
 Release 3.39
 ------------
+
+### Availability
+
+This release is available from:
+<https://www.nsnam.org/release/ns-allinone-3.39.tar.bz2>
 
 ### Supported platforms
 
@@ -27,7 +44,7 @@ requirements (Note: not all ns-3 features are available on all systems):
 - (macOS only) Xcode 11 or later
 - (Windows only) Msys2/MinGW64 toolchain or WSL2
 
-Python API requires [Cppyy](https://cppyy.readthedocs.io/en/latest/installation.html).
+Python API requires [Cppyy](https://cppyy.readthedocs.io/en/latest/installation.html).  Specifically, avoid Cppyy version 3; stay with version 2.4.2 for this release.
 
 ### New user-visible features
 
