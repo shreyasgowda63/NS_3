@@ -421,7 +421,7 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns true if in the time window
      */
     bool IsInTimeWindow();
-    bool IsTracking();
+    bool IsTracking() const;
     /**
      * Get net device from context
      * \param context the context string
@@ -435,7 +435,7 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      */
     Vector UpdatePosition(Ptr<NetDevice> ndev);
     void IncrementAnimUid();
-    uint64_t GetAnimUid();
+    uint64_t GetAnimUid() const;
     /**
      * Add byte tag function
      * \param animUid the UID
@@ -502,7 +502,7 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
                    double lbRx,
                    std::string metaInfo = "");
 
-    bool IsEnablePacketMetadata();
+    bool IsEnablePacketMetadata() const;
     /**
      * Get packet metadata function
      * \param p the packet
@@ -4513,7 +4513,6 @@ AnimationInterface::AnimationInterface(const std::string& filename)
 
 AnimationInterface::AnimationInterface()
 {
-    return;
 }
 
 void
@@ -4758,7 +4757,7 @@ AnimationInterface::IsInTimeWindow()
 }
 
 bool
-AnimationInterfaceSingleton::IsTracking()
+AnimationInterfaceSingleton::IsTracking() const
 {
     return m_trackPackets;
 }
@@ -4800,7 +4799,7 @@ AnimationInterface::GetAnimUid()
 }
 
 uint64_t
-AnimationInterfaceSingleton::GetAnimUid()
+AnimationInterfaceSingleton::GetAnimUid() const
 {
     return gAnimUid;
 }
@@ -4822,12 +4821,6 @@ AnimationInterface::IsPacketPending(uint64_t animUid, AnimationInterface::Protoc
 {
     return AnimationInterfaceSingleton::Get()->IsPacketPending(animUid, protocolType);
 }
-
-// void
-// AnimationInterface::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo)
-// {
-//     return AnimationInterfaceSingleton::Get()->OutputCsmaPacket(p, pktInfo);
-// }
 
 std::map<uint64_t, AnimPacketInfo>&
 AnimationInterfaceSingleton::GetPendingCsmaPacketsMap()
@@ -4912,7 +4905,7 @@ AnimationInterface::WriteXmlP(std::string pktType,
 }
 
 bool
-AnimationInterfaceSingleton::IsEnablePacketMetadata()
+AnimationInterfaceSingleton::IsEnablePacketMetadata() const
 {
     return m_enablePacketMetadata;
 }

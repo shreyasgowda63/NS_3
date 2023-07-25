@@ -10,7 +10,7 @@ class NetDeviceAnim : public Object
 {
   public:
     static TypeId GetTypeId();
-    TypeId GetInstanceTypeId() const;
+    TypeId GetInstanceTypeId() const override;
 };
 } // namespace ns3
 
