@@ -53,7 +53,7 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
      * \brief Get the instance type ID.
      * \return instance type ID
      */
-    TypeId GetInstanceTypeId() const;
+    TypeId GetInstanceTypeId() const override;
     /**
      * CSMA Phy transmit begin trace function
      * \param context the context
