@@ -64,3 +64,7 @@ References
 .. [magrin2021mu] \ D. Magrin, S. Avallone, S. Roy, and M. Zorzi, 'Validation of the ns-3 802.11ax OFDMA implementation', in Proceedings of WNS3 2021.
 
 .. [avallone2021wcm] \ S. Avallone, P. Imputato, G. Redieteab, C. Ghosh and S. Roy, "Will OFDMA Improve the Performance of 802.11 WiFi Networks?", in IEEE Wireless Communications Magazine, DOI: 10.1109/MWC.001.2000332, to appear.
+
+.. [grunblatt] \ Rémy Grünblatt, Isabelle Guérin-Lassous, and Olivier Simonin. 2019. Simulation and Performance Evaluation of the Intel Rate Adaptation Algorithm. In MSWiM 2019 - 22nd ACM International Conference on Modeling, Analysis and Simulation of Wireless and Mobile Systems. ACM, Miami Beach, United States, 27–34.
+
+.. [leon] \ Juan V. Leon Rosas, Thomas R. Henderson and Sumit Roy, “ Verification of ns-3 Wi-Fi Rate Adaptation Models on AWGN Channels” WNS3, 2023.

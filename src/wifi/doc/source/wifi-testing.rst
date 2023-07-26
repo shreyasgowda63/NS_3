@@ -300,3 +300,40 @@ The implementation of the OFDMA support has been validated against a theoretical
 A preliminary evaluation of the usage of OFDMA in 802.11ax, in terms of latency in non-saturated
 conditions, throughput in saturated conditions and transmission range with UL OFDMA, is provided
 in [avallone2021wcm]_ .
+
+Rate control algorithm validation
+*********************************
+
+A verification and validation of rate control algorithms in ns-3 (``ns3::MinstrelHtWifiManager``,
+``ns3::IdealWifiManager``, and ``ns3::ThompsonSamplingWifiManager``) was done in [leon]_.
+If users want to run and/or modify these scripts please refer to the paper publication were a
+link to the scripts is provided. In this work, the basic operation and convergence was evaluated
+for a variety of parameter combinations.
+
+Basic Operation
++++++++++++++++
+
+To confirm the basic operation, the authors created a script that configures each possible
+combination of channel width, spatial streams and guard interval for a given standard
+(802.11n, 802.11ac, or 802.11ax OFDM). The script is derived from that developed by [grunblatt]_
+and is similar to the ``wifi-manager-example.cc`` script in the ns-3 codebase.
+The highest rate selected by each manager is then compared across possible configurations
+and with published MCS tables. The ns-3 RAAs are able to select appropriate MCSes
+(in alignment with MCS tables and AWGN error tables) in most cases.
+
+Convergence
++++++++++++
+
+One key aspect of rate control algorithms is their ability to quickly converge to an appropriate
+MCS in response to changing channel conditions.  Upon a change in the channel that affects reception
+statistics, both the ns-3 MinstrelHt and ThompsonSampling models require time to sample possible
+alternative configurations. This section examines the response of both models to the most basic
+exploratory scenario: a step change in the received SNR of the channel. In the case of
+``ns3::IdealWifiManager`` this study cannot be performed since convergence is immediate due to
+only requiring to consult a lookup table after each transmission acknowledgement.
+
+A key finding users should be aware of is that convergence time will vary depending on whether
+the channel conditions can successfully support (PER smaller than a certain value) a specific MCS or not.
+If the channel conditions allow for a higher MCS to be successful but with high PER then it is not clear
+if the rate control should lower the MCS. This is because there will be tradeoff between latency and throughput
+depending if a higher or lower MCS is chosen. Therefore, causing ambiguity to which MCS should be supported.

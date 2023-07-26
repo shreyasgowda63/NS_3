@@ -1189,6 +1189,21 @@ information provided by the remote station manager.
 Rate control algorithms
 #######################
 
+The ns-3 WifiRemoteStationManager is the base class for ns-3 rate control models, responsible
+for selecting physical layer parameters for the upcoming data, control, and management
+frame transmissions, and for storing information regarding link capabilities to each
+remote station, such as whether a short guard interval is supported.
+
+In principle, rate control algorithms could dynamically adapt multiple transmission parameters -
+transmit power, RTS/CTS (Request To Send/Clear To Send) handshake, spatial diversity or multiple streams,
+dynamic channel bonding, etc.  However in ns-3 implementation, the current RAAs only adapt
+the modulation and coding scheme (MCS), the use of short guard intervals, the channel width,
+and the number of spatial streams, for both data and selected control frames.
+
+.. figure:: figures/RAA-Architecture.*
+
+   *ns-3's implementation of RAAs*
+
 Multiple rate control algorithms are available in |ns3|.
 Some rate control algorithms are modeled after real algorithms used in real devices;
 others are found in literature.
@@ -1260,20 +1275,12 @@ By doing this, *A* is able to learn the SNR of the packet sent to *B*
 using an out-of-band mechanism (thus the name 'ideal').
 *A* then uses the SNR to select a transmission mode based
 on a set of SNR thresholds, which was built from a target BER and
-mode-specific SNR/BER curves.
-
-Available attribute:
-
-* BerThreshold (default 1e-6): The maximum Bit Error Rate
-  that is used to calculate the SNR threshold for each mode.
-
-Note that the BerThreshold has to be low enough to select a robust enough MCS
-(or mode) for a given SNR value, without being too restrictive on the target BER.
-Indeed we had noticed that the previous default value (i.e. 1e-5) led to the
-selection of HE MCS-11 which resulted in high PER.
-With this new default value (i.e. 1e-6), a HE STA moving away from a HE AP has
-smooth throughput decrease (whereas with 1e-5, better performance was seen further
-away, which is not "ideal").
+mode-specific SNR/BER curves. In other words, ideal rate control
+algorithm is measurement-based RAA that performs no filtering of
+past SNR history only using the most immediate history. RTS frames
+will be sent using the highest rate within the (legacy) basic rate set;
+the use of High Throughput (HT) is not supported for RTS, although it
+is allowed in the standard.
 
 ThompsonSamplingWifiManager
 ###########################
@@ -1330,7 +1337,27 @@ For a more detailed information about minstrel, see [linuxminstrel]_.
 MinstrelHtWifiManager
 #####################
 
-This is the extension of minstrel for 802.11n/ac/ax.
+This is the extension of minstrel for 802.11n/ac/ax. MinstrelHt is a sampling-based approach that
+organizes possible combinations of rate control parameters into groups, and tracks the history of
+successful and failed receptions for each MCS in each group.
+
+MinstrelHt uses sampling and maintains statistics of its groups and rates within, to identify three
+rates in particular: 1. the maximum throughput rate, 2. the next highest throughput rate, and 3. the
+rate with the highest probability of success.  MinstrelHt uses these three rates in what is called
+a `retry chain`, corresponding to the initial and (possible) retransmissions of a frame. There is
+a certain amount of retransmissions for each of the three rates and the amount of retransmissions is
+calculated by taking into account how many transmission attempts could be done with that particular rate
+in an interval of 6 ms. If the rate for which these calculations are being done has a success probability
+lower than one then it is only allowed to be retried once. Most frames are sent according to this retry chain,
+but MinstrelHt also uses a small number of frames to replace the maximum throughput rate with a randomly
+selected rate (to explore performance of additional groups and rates). Randomly selected rates are selected
+more-or-less in a round-robin fashion. Statistics on the probability of success for each MCS, and on the
+average Aggregated MAC Protocol Unit (A-MPDU) length, are aged out every 50 ms by an Exponentially
+Weighted Moving Average (EWMA). This algorithm has evolved in Linux due to concerns about convergence,
+including replacing the EWMA with a different low-pass filter but the ns-3 implementation has not been updated.
+
+For more detailed information of ns-3 MinstrelHt implementation and the differences with the
+current Linux kernel, see [grunblatt]_, [leon]_.
 
 802.11ax OBSS PD spatial reuse
 ##############################
