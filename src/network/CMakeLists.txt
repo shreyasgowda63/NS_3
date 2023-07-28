@@ -1,3 +1,40 @@
+# Check if we can enable packet stack tracing
+set(packet_stacktrace_libraries)
+if(${NS3_STACKTRACE})
+  find_library(
+    DL
+    dl
+  )
+  find_file(
+    BOOST_STACKTRACE
+    boost/stacktrace.hpp
+  )
+  # Supported by either compiler or third-party libbacktrace
+  check_include_file(
+    backtrace.h
+    BACKTRACE_H
+  )
+  if(NOT
+     (${DL}
+      STREQUAL
+      DL-NOTFOUND)
+     AND NOT
+         (${BOOST_BACKTRACE_H}
+          STREQUAL
+          BOOST_BACKTRACE_H-NOTFOUND)
+     AND NOT
+         (${BACKTRACE_H}
+          STREQUAL
+          BACKTRACE_H-NOTFOUND)
+  )
+    add_definitions(-DTRACE_PACKET_ORIGINS)
+    set(packet_stacktrace_libraries
+        dl
+        backtrace
+    )
+  endif()
+endif()
+
 set(source_files
     helper/application-container.cc
     helper/delay-jitter-estimation.cc
@@ -154,8 +191,10 @@ build_lib(
   LIBNAME network
   SOURCE_FILES ${source_files}
   HEADER_FILES ${header_files}
-  LIBRARIES_TO_LINK ${libcore}
-                    ${libstats}
+  LIBRARIES_TO_LINK
+    ${libcore}
+    ${libstats}
+    ${packet_stacktrace_libraries}
   TEST_SOURCES
     test/bit-serializer-test.cc
     test/buffer-test.cc

@@ -766,6 +766,21 @@ class Packet : public SimpleRefCount<Packet>
      */
     typedef void (*SinrTracedCallback)(Ptr<const Packet> packet, double sinr);
 
+    /**
+     * Save the graph with the ancestry of packets.
+     *
+     * \param [in] dotFilePath The directory for the output graphviz dot file.
+     */
+    static void SavePacketAncestryDot(std::string dotFilePath);
+
+    /**
+     * Save the graph with the ancestry of packets along with
+     * the network layers crossed between them.
+     *
+     * \param [in] dotFilePath The directory for the output graphviz dot file.
+     */
+    static void SavePacketStackTraceDot(std::string dotFilePath);
+
   private:
     /**
      * \brief Constructor
@@ -787,15 +802,31 @@ class Packet : public SimpleRefCount<Packet>
      */
     uint32_t Deserialize(const uint8_t* buffer, uint32_t size);
 
-    Buffer m_buffer;               //!< the packet buffer (it's actual contents)
-    ByteTagList m_byteTagList;     //!< the ByteTag list
-    PacketTagList m_packetTagList; //!< the packet's Tag list
-    PacketMetadata m_metadata;     //!< the packet's metadata
+    Buffer m_buffer;                         //!< the packet buffer (it's actual contents)
+    ByteTagList m_byteTagList;               //!< the ByteTag list
+    PacketTagList m_packetTagList;           //!< the packet's Tag list
+    PacketMetadata m_metadata;               //!< the packet's metadata
+    uint32_t m_copyUid [[maybe_unused]] = 0; //!< Uid of copy
 
     /* Please see comments above about nix-vector */
     mutable Ptr<NixVector> m_nixVector; //!< the packet's Nix vector
 
-    static uint32_t m_globalUid; //!< Global counter of packets Uid
+    static uint32_t m_globalUid;     //!< Global counter of packets Uid
+    static uint32_t m_globalCopyUid; //!< Global counter of packet copies
+
+#ifdef TRACE_PACKET_ORIGINS
+    /**
+     * \brief Collects a stacktrace and translates the
+     *        function names to network layers.
+     * \returns a vector with the network layers crossed to create a packet.
+     */
+    static std::vector<std::string> GetNetworkLayersFromStackTrace();
+
+    static std::map<uint32_t, std::vector<uint32_t>>
+        m_packetOriginTrace; //!< Parent packet and its children
+    static std::map<uint32_t, std::vector<std::string>>
+        m_packetStackTrace; //!< Stack traces of packets
+#endif
 };
 
 /**

@@ -76,3 +76,13 @@ build_example(
     ${libinternet}
     ${libapplications}
 )
+
+build_example(
+  NAME packet-trace-origins
+  SOURCE_FILES packet-trace-origins.cc
+  LIBRARIES_TO_LINK
+    ${libcore}
+    ${libstats}
+    ${liblte}
+    ${libapplications}
+)
