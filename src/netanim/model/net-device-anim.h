@@ -9,8 +9,13 @@ namespace ns3
 class NetDeviceAnim : public Object
 {
   public:
+    /**
+     * \brief Get the type identificator.
+     * \return type identificator
+     */
     static TypeId GetTypeId();
-    TypeId GetInstanceTypeId() const override;
+    // inherited from Object
+    void DoInitialize() override;
 };
 } // namespace ns3
 

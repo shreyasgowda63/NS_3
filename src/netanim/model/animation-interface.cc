@@ -421,6 +421,10 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns true if in the time window
      */
     bool IsInTimeWindow();
+    /**
+     * Checks if packets are being tracked
+     * \returns true if packets are being tracked
+     */
     bool IsTracking() const;
     /**
      * Get net device from context
@@ -434,8 +438,6 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns the position vector
      */
     Vector UpdatePosition(Ptr<NetDevice> ndev);
-    void IncrementAnimUid();
-    uint64_t GetAnimUid() const;
     /**
      * Add byte tag function
      * \param animUid the UID
@@ -458,27 +460,19 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      */
     uint64_t GetAnimUidFromPacket(Ptr<const Packet> p);
     /**
-     * Is packet pending function
-     * \param animUid the UID
-     * \param protocolType the protocol type
-     * \returns true if a packet is pending
+     * Add node to node enqueue map
+     * \param nodeId Node Id
      */
-    bool IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType);
-    // /**
-    //  * Output CSMA packet function
-    //  * \param p the packet
-    //  * \param pktInfo the packet info
-    //  */
-    // void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
-    std::map<uint64_t, AnimPacketInfo>& GetPendingCsmaPacketsMap();
-    /**
-     * Get node from context
-     * \param context the context string
-     * \returns the node
-     */
-    Ptr<Node> GetNodeFromContext(const std::string& context) const;
     void AddNodeToNodeEnqueueMap(uint32_t nodeId);
+    /**
+     * Add node to node Dequeue map
+     * \param nodeId Node Id
+     */
     void AddNodeToNodeDequeueMap(uint32_t nodeId);
+    /**
+     * Add node to node Drop map
+     * \param nodeId Node Id
+     */
     void AddNodeToNodeDropMap(uint32_t nodeId);
     /// Check maximum packets per trace file function
     void CheckMaxPktsPerTraceFile();
@@ -501,20 +495,17 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
                    double fbRx,
                    double lbRx,
                    std::string metaInfo = "");
-
+    /**
+     * Checks if packet metadata is enabled
+     * \returns true if packet metadata is enabled
+     */
     bool IsEnablePacketMetadata() const;
     /**
      * Get packet metadata function
      * \param p the packet
-     * \returns the meta data
+     * \returns the metadata
      */
     std::string GetPacketMetadata(Ptr<const Packet> p);
-    /**
-     * Output CSMA packet function
-     * \param p the packet
-     * \param pktInfo the packet info
-     */
-    void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
 
   private:
     /// RGB structure
@@ -579,18 +570,6 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
         uint32_t nodeId;     ///< node ID
         std::string nextHop; ///< next hop
     };                       ///< IPv4 route path element
-
-    // /// ProtocolType enumeration
-    // enum ProtocolType
-    // {
-    //     UAN,
-    //     LTE,
-    //     WIFI,
-    //     WIMAX,
-    //     CSMA,
-    //     LRWPAN,
-    //     WAVE
-    // };
 
     /// NodeSize structure
     struct NodeSize
@@ -756,12 +735,12 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns the elements
      */
     const std::vector<std::string> GetElementsFromContext(const std::string& context) const;
-    // /**
-    //  * Get node from context
-    //  * \param context the context string
-    //  * \returns the node
-    //  */
-    // Ptr<Node> GetNodeFromContext(const std::string& context) const;
+    /**
+     * Get node from context
+     * \param context the context string
+     * \returns the node
+     */
+    Ptr<Node> GetNodeFromContext(const std::string& context) const;
 
     // ##### General #####
     /**
@@ -789,18 +768,6 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns the string
      */
     std::string CounterTypeToString(AnimationInterface::CounterType counterType);
-    // /**
-    //  * Get packet metadata function
-    //  * \param p the packet
-    //  * \returns the meta data
-    //  */
-    // std::string GetPacketMetadata(Ptr<const Packet> p);
-    // /**
-    //  * Add byte tag function
-    //  * \param animUid the UID
-    //  * \param p the packet
-    //  */
-    // void AddByteTag(uint64_t animUid, Ptr<const Packet> p);
     /**
      * WriteN function
      * \param data the data t write
@@ -854,13 +821,13 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     std::string GetNetAnimVersion();
     /// Mobility auto check function
     void MobilityAutoCheck();
-    // /**
-    //  * Is packet pending function
-    //  * \param animUid the UID
-    //  * \param protocolType the protocol type
-    //  * \returns true if a packet is pending
-    //  */
-    // bool IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType);
+    /**
+     * Is packet pending function
+     * \param animUid the UID
+     * \param protocolType the protocol type
+     * \returns true if a packet is pending
+     */
+    bool IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType);
     /**
      * Purge pending packets function
      * \param protocolType the protocol type
@@ -879,19 +846,6 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns the protocol type string
      */
     std::string ProtocolTypeToString(AnimationInterface::ProtocolType protocolType);
-    // /**
-    //  * Add pending packet function
-    //  * \param protocolType the protocol type
-    //  * \param animUid the UID
-    //  * \param pktInfo the packet info
-    //  */
-    // void AddPendingPacket(ProtocolType protocolType, uint64_t animUid, AnimPacketInfo pktInfo);
-    // /**
-    //  * Get anim UID from packet function
-    //  * \param p the packet
-    //  * \returns the UID
-    //  */
-    // uint64_t GetAnimUidFromPacket(Ptr<const Packet> p);
     /**
      * Add to IPv4 address node ID table function
      * \param ipv4Address the IPv4 address
@@ -916,11 +870,6 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \param nodeId the node ID
      */
     void AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Addresses, uint32_t nodeId);
-    // /**
-    //  * Is in time window function
-    //  * \returns true if in the time window
-    //  */
-    // bool IsInTimeWindow();
     /// Track wifi phy counters function
     void TrackWifiPhyCounters();
     /// Track wifi MAC counters function
@@ -1114,19 +1063,6 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
                              Ptr<const Packet> p,
                              RxPowerWattPerChannelBand rxPowersW);
     /**
-     * WAVE Phy transmit begin trace function
-     * \param context the context
-     * \param p the packet
-     */
-    void WavePhyTxBeginTrace(std::string context, Ptr<const Packet> p);
-    /**
-     * WAVE Phy receive begin trace function
-     *
-     * \param context the context
-     * \param p the packet
-     */
-    void WavePhyRxBeginTrace(std::string context, Ptr<const Packet> p);
-    /**
      * LR-WPAN Phy receive begin trace function
      *
      * \param context the context
@@ -1154,39 +1090,12 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \param m the MAC address
      */
     void WimaxRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
-    /**
-     * CSMA Phy transmit begin trace function
-     * \param context the context
-     * \param p the packet
-     */
-    void CsmaPhyTxBeginTrace(std::string context, Ptr<const Packet> p);
-    /**
-     * CSMA Phy transmit end trace function
-     *
-     * \param context the context
-     * \param p the packet
-     */
-    void CsmaPhyTxEndTrace(std::string context, Ptr<const Packet> p);
-    /**
-     * CSMA Phy receive end trace function
-     *
-     * \param context the context
-     * \param p the packet
-     */
-    void CsmaPhyRxEndTrace(std::string context, Ptr<const Packet> p);
-    /**
-     * CSMA MAC receive trace function
-     *
-     * \param context the context
-     * \param p the packet
-     */
-    void CsmaMacRxTrace(std::string context, Ptr<const Packet> p);
-    /**
-     * LTE transmit trace function
-     * \param context the context
-     * \param p the packet
-     * \param m the MAC address
-     */
+    // /**
+    //  * LTE transmit trace function
+    //  * \param context the context
+    //  * \param p the packet
+    //  * \param m the MAC address
+    //  */
     // void LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
     // /**
     //  * LTE receive trace function
@@ -1207,11 +1116,11 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
     //  * \param pb the packet burst
     //  */
     // void LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb);
-    // /**
-    //  * UAN Phy gen transmit trace function
-    //  * \param context the context
-    //  * \param p the packet
-    //  */
+    /**
+     * UAN Phy gen transmit trace function
+     * \param context the context
+     * \param p the packet
+     */
     void UanPhyGenTxTrace(std::string context, Ptr<const Packet>);
     /**
      * UAN Phy gen receive trace function
@@ -1284,12 +1193,6 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \returns the position vector
      */
     Vector UpdatePosition(Ptr<Node> n, Vector v);
-    // /**
-    //  * Update position function
-    //  * \param ndev the device
-    //  * \returns the position vector
-    //  */
-    // Vector UpdatePosition(Ptr<NetDevice> ndev);
     /**
      * Node has moved function
      * \param n the node
@@ -1336,12 +1239,6 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \param animUid the UID
      */
     void OutputWirelessPacketRxInfo(Ptr<const Packet> p, AnimPacketInfo& pktInfo, uint64_t animUid);
-    // /**
-    //  * Output CSMA packet function
-    //  * \param p the packet
-    //  * \param pktInfo the packet info
-    //  */
-    // void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
     /// Write link properties function
     void WriteLinkProperties();
     /// Write IPv4 Addresses function
@@ -1438,25 +1335,6 @@ class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton
      * \param linkDescription the link description
      */
     void WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::string linkDescription);
-    // /**
-    //  * Write XMLP function
-    //  * \param pktType the packet type
-    //  * \param fId the FID
-    //  * \param fbTx the FB transmit
-    //  * \param lbTx the LB transmit
-    //  * \param tId the TID
-    //  * \param fbRx the FB receive
-    //  * \param lbRx the LB receive
-    //  * \param metaInfo the meta info
-    //  */
-    // void WriteXmlP(std::string pktType,
-    //                uint32_t fId,
-    //                double fbTx,
-    //                double lbTx,
-    //                uint32_t tId,
-    //                double fbRx,
-    //                double lbRx,
-    //                std::string metaInfo = "");
     /**
      * Write XMLP function
      * \param animUid the UID
@@ -2710,86 +2588,6 @@ AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
 //     }
 // }
 
-// void
-// AnimationInterfaceSingleton::CsmaPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
-// {
-//     NS_LOG_FUNCTION(this);
-//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-//     NS_ASSERT(ndev);
-//     UpdatePosition(ndev);
-//     ++gAnimUid;
-//     NS_LOG_INFO("CsmaPhyTxBeginTrace for packet:" << gAnimUid);
-//     AddByteTag(gAnimUid, p);
-//     UpdatePosition(ndev);
-//     AnimPacketInfo pktInfo(ndev, Simulator::Now());
-//     AddPendingPacket(AnimationInterface::CSMA, gAnimUid, pktInfo);
-// }
-
-// void
-// AnimationInterfaceSingleton::CsmaPhyTxEndTrace(std::string context, Ptr<const Packet> p)
-// {
-//     NS_LOG_FUNCTION(this);
-//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-//     NS_ASSERT(ndev);
-//     UpdatePosition(ndev);
-//     uint64_t animUid = GetAnimUidFromPacket(p);
-//     NS_LOG_INFO("CsmaPhyTxEndTrace for packet:" << animUid);
-//     if (!IsPacketPending(animUid, AnimationInterface::CSMA))
-//     {
-//         NS_LOG_WARN("CsmaPhyTxEndTrace: unknown Uid");
-//         NS_FATAL_ERROR("CsmaPhyTxEndTrace: unknown Uid");
-//         AnimPacketInfo pktInfo(ndev, Simulator::Now());
-//         AddPendingPacket(AnimationInterface::CSMA, animUid, pktInfo);
-//         NS_LOG_WARN("Unknown Uid, but adding Csma Packet anyway");
-//     }
-//     /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true);
-//     AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
-//     pktInfo.m_lbTx = Simulator::Now().GetSeconds();
-// }
-
-// void
-// AnimationInterfaceSingleton::CsmaPhyRxEndTrace(std::string context, Ptr<const Packet> p)
-// {
-//     NS_LOG_FUNCTION(this);
-//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-//     NS_ASSERT(ndev);
-//     UpdatePosition(ndev);
-//     uint64_t animUid = GetAnimUidFromPacket(p);
-//     if (!IsPacketPending(animUid, AnimationInterface::CSMA))
-//     {
-//         NS_LOG_WARN("CsmaPhyRxEndTrace: unknown Uid");
-//         return;
-//     }
-//     /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
-//     AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
-//     pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
-//     NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << animUid);
-//     NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << animUid << " complete");
-//     OutputCsmaPacket(p, pktInfo);
-// }
-
-// void
-// AnimationInterfaceSingleton::CsmaMacRxTrace(std::string context, Ptr<const Packet> p)
-// {
-//     NS_LOG_FUNCTION(this);
-//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-//     NS_ASSERT(ndev);
-//     uint64_t animUid = GetAnimUidFromPacket(p);
-//     if (!IsPacketPending(animUid, AnimationInterface::CSMA))
-//     {
-//         NS_LOG_WARN("CsmaMacRxTrace: unknown Uid");
-//         return;
-//     }
-//     /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
-//     AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
-//     NS_LOG_INFO("MacRxTrace for packet:" << animUid << " complete");
-//     OutputCsmaPacket(p, pktInfo);
-// }
-
 void
 AnimationInterfaceSingleton::OutputWirelessPacketTxInfo(Ptr<const Packet> p,
                                                         AnimPacketInfo& pktInfo,
@@ -2819,24 +2617,6 @@ AnimationInterfaceSingleton::OutputWirelessPacketRxInfo(Ptr<const Packet> p,
     CheckMaxPktsPerTraceFile();
     uint32_t rxId = pktInfo.m_rxnd->GetNode()->GetId();
     WriteXmlP(animUid, "wpr", rxId, pktInfo.m_fbRx, pktInfo.m_lbRx);
-}
-
-void
-AnimationInterfaceSingleton::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo)
-{
-    CheckMaxPktsPerTraceFile();
-    NS_ASSERT(pktInfo.m_txnd);
-    uint32_t nodeId = pktInfo.m_txnd->GetNode()->GetId();
-    uint32_t rxId = pktInfo.m_rxnd->GetNode()->GetId();
-
-    WriteXmlP("p",
-              nodeId,
-              pktInfo.m_fbTx,
-              pktInfo.m_lbTx,
-              rxId,
-              pktInfo.m_fbRx,
-              pktInfo.m_lbRx,
-              m_enablePacketMetadata ? GetPacketMetadata(p) : "");
 }
 
 void
@@ -3194,15 +2974,6 @@ AnimationInterfaceSingleton::ConnectCallbacks()
     //                         MakeCallback(&AnimationInterfaceSingleton::LteTxTrace, this));
     // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Rx",
     //                         MakeCallback(&AnimationInterfaceSingleton::LteRxTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxBegin",
-    //                         MakeCallback(&AnimationInterfaceSingleton::CsmaPhyTxBeginTrace,
-    //                         this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxEnd",
-    //                         MakeCallback(&AnimationInterfaceSingleton::CsmaPhyTxEndTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyRxEnd",
-    //                         MakeCallback(&AnimationInterfaceSingleton::CsmaPhyRxEndTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/MacRx",
-    //                         MakeCallback(&AnimationInterfaceSingleton::CsmaMacRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyTxBegin",
                             MakeCallback(&AnimationInterfaceSingleton::UanPhyGenTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyRxBegin",
@@ -3223,8 +2994,6 @@ AnimationInterfaceSingleton::ConnectCallbacks()
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Enqueue",
                             MakeCallback(&AnimationInterfaceSingleton::EnqueueTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Enqueue",
-    //                         MakeCallback(&AnimationInterfaceSingleton::EnqueueTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Enqueue",
                             MakeCallback(&AnimationInterfaceSingleton::EnqueueTrace, this));
 
@@ -3232,8 +3001,6 @@ AnimationInterfaceSingleton::ConnectCallbacks()
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Dequeue",
                             MakeCallback(&AnimationInterfaceSingleton::DequeueTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Dequeue",
-    //                         MakeCallback(&AnimationInterfaceSingleton::DequeueTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Dequeue",
                             MakeCallback(&AnimationInterfaceSingleton::DequeueTrace, this));
 
@@ -3241,8 +3008,6 @@ AnimationInterfaceSingleton::ConnectCallbacks()
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Drop",
                             MakeCallback(&AnimationInterfaceSingleton::QueueDropTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Drop",
-    //                         MakeCallback(&AnimationInterfaceSingleton::QueueDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Drop",
                             MakeCallback(&AnimationInterfaceSingleton::QueueDropTrace, this));
 
@@ -4781,30 +4546,6 @@ AnimationInterface::UpdatePosition(Ptr<NetDevice> ndev)
 }
 
 void
-AnimationInterface::IncrementAnimUid()
-{
-    return AnimationInterfaceSingleton::Get()->IncrementAnimUid();
-}
-
-void
-AnimationInterfaceSingleton::IncrementAnimUid()
-{
-    gAnimUid++;
-}
-
-uint64_t
-AnimationInterface::GetAnimUid()
-{
-    return AnimationInterfaceSingleton::Get()->GetAnimUid();
-}
-
-uint64_t
-AnimationInterfaceSingleton::GetAnimUid() const
-{
-    return gAnimUid;
-}
-
-void
 AnimationInterface::AddByteTag(uint64_t animUid, Ptr<const Packet> p)
 {
     return AnimationInterfaceSingleton::Get()->AddByteTag(animUid, p);
@@ -4816,36 +4557,12 @@ AnimationInterface::GetAnimUidFromPacket(Ptr<const Packet> p)
     return AnimationInterfaceSingleton::Get()->GetAnimUidFromPacket(p);
 }
 
-bool
-AnimationInterface::IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType)
-{
-    return AnimationInterfaceSingleton::Get()->IsPacketPending(animUid, protocolType);
-}
-
-std::map<uint64_t, AnimPacketInfo>&
-AnimationInterfaceSingleton::GetPendingCsmaPacketsMap()
-{
-    return m_pendingCsmaPackets;
-}
-
-std::map<uint64_t, AnimPacketInfo>&
-AnimationInterface::GetPendingCsmaPacketsMap()
-{
-    return AnimationInterfaceSingleton::Get()->GetPendingCsmaPacketsMap();
-}
-
 void
 AnimationInterface::AddPendingPacket(ProtocolType protocolType,
                                      uint64_t animUid,
                                      AnimPacketInfo pktInfo)
 {
     return AnimationInterfaceSingleton::Get()->AddPendingPacket(protocolType, animUid, pktInfo);
-}
-
-Ptr<Node>
-AnimationInterface::GetNodeFromContext(const std::string& context) const
-{
-    return AnimationInterfaceSingleton::Get()->GetNodeFromContext(context);
 }
 
 void

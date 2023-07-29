@@ -2,17 +2,22 @@
 #define CSMANETDEVICE_H
 
 #include "ns3/animation-interface.h"
+#include "ns3/csma-net-device.h"
 #include "ns3/net-device-anim.h"
-
-#define CSMA_PURGE_INTERVAL Seconds(5)
+#include "ns3/ptr.h"
 
 namespace ns3
 {
+
+class CsmaNetDeviceAnim;
 
 class CsmaNetDeviceAnim : public NetDeviceAnim
 
 {
   public:
+    /**
+     * CsmaAnimPacketInfo class
+     */
     class CsmaAnimPacketInfo
 
     {
@@ -29,12 +34,10 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
         CsmaAnimPacketInfo(const CsmaAnimPacketInfo& pInfo);
         /**
          * Constructor
-         *
-         * \param tx_nd transmit device
-         * \param fbTx fb transmit
          * \param txNodeId transmit node ID
+         * \param firstBitTxTime time of the first bit being transmitted
          */
-        CsmaAnimPacketInfo(Ptr<const NetDevice> tx_nd, const Time fbTx, uint32_t txNodeId = 0);
+        CsmaAnimPacketInfo(uint32_t txNodeId, const Time firstBitTxTime);
         uint32_t m_txNodeId;   ///< node ID
         Time m_firstBitTxTime; ///< time of the first bit being transmitted (when the packet did
                                ///< start the Tx)
@@ -50,52 +53,37 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
      */
     static TypeId GetTypeId();
     /**
-     * \brief Get the instance type ID.
-     * \return instance type ID
-     */
-    TypeId GetInstanceTypeId() const override;
-    /**
      * CSMA Phy transmit begin trace function
-     * \param context the context
      * \param p the packet
      */
     void CsmaPhyTxBeginTrace(Ptr<const Packet> p);
     /**
      * CSMA Phy transmit end trace function
-     *
-     * \param context the context
      * \param p the packet
      */
     void CsmaPhyTxEndTrace(Ptr<const Packet> p);
     /**
      * CSMA Phy receive end trace function
-     *
-     * \param context the context
      * \param p the packet
      */
     void CsmaPhyRxEndTrace(Ptr<const Packet> p);
     /**
      * CSMA MAC receive trace function
-     *
-     * \param context the context
      * \param p the packet
      */
     void CsmaMacRxTrace(Ptr<const Packet> p);
     /**
      * Enqueue trace function
-     * \param context the context
      * \param p the packet
      */
     void EnqueueTrace(Ptr<const Packet> p);
     /**
      * Dequeue trace function
-     * \param context the context
      * \param p the packet
      */
     void DequeueTrace(Ptr<const Packet> p);
     /**
      * Queue trace function
-     * \param context the context
      * \param p the packet
      */
     void QueueDropTrace(Ptr<const Packet> p);
@@ -111,6 +99,14 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
     static void PurgePendingPackets();
     // Inherited from Object base class.
     void DoDispose() override;
+    // inherited from Object
+    void DoInitialize() override;
+    // Checks if Animation Interface has been enabled
+    /**
+     * \brief Checks if Animation Interface has been enabled
+     * \return If Trace is enabled
+     */
+    bool IsEnabled();
 
   private:
     /**
@@ -126,6 +122,10 @@ class CsmaNetDeviceAnim : public NetDeviceAnim
     static CsmaAnimUidPacketInfoMap m_pendingCsmaPackets; ///< pending CSMA packets
     static uint64_t csmaAnimUid;                          ///< Csma AnimUid
     static EventId m_purgeCsmaAnimPendingPacketsEventId;  ///< PurgeCsmaAnimPackets EventId
+    Ptr<CsmaNetDevice> m_netDev{nullptr};                 ///< Pointer to NetDevice
+    static Time csmaPurgeInterval; ///< Minimum time interval to purge pending packets
+    static Time
+        schedulePurgePendingPackets; ///< Scheduled time interval to call PurgePendingPackets
 };
 
 } // namespace ns3

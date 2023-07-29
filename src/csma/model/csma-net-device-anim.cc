@@ -14,6 +14,8 @@ NS_OBJECT_ENSURE_REGISTERED(CsmaNetDeviceAnim);
 CsmaNetDeviceAnim::CsmaAnimUidPacketInfoMap CsmaNetDeviceAnim::m_pendingCsmaPackets;
 uint64_t CsmaNetDeviceAnim::csmaAnimUid = 0;
 EventId CsmaNetDeviceAnim::m_purgeCsmaAnimPendingPacketsEventId = EventId();
+Time CsmaNetDeviceAnim::csmaPurgeInterval = Seconds(5);
+Time CsmaNetDeviceAnim::schedulePurgePendingPackets = MilliSeconds(25);
 
 TypeId
 CsmaNetDeviceAnim::GetTypeId()
@@ -26,34 +28,31 @@ CsmaNetDeviceAnim::GetTypeId()
     return tid;
 }
 
-TypeId
-CsmaNetDeviceAnim::GetInstanceTypeId() const
-{
-    return GetTypeId();
-}
-
 void
 CsmaNetDeviceAnim::ConnectCallbacks()
 {
-    GetObject<CsmaNetDevice>()->TraceConnectWithoutContext(
+    if (!m_netDev)
+    {
+        m_netDev = GetObject<CsmaNetDevice>();
+        NS_ASSERT_MSG(true, "Failed to retrieve net-device");
+    }
+    m_netDev->TraceConnectWithoutContext(
         "PhyTxBegin",
         MakeCallback(&ns3::CsmaNetDeviceAnim::CsmaPhyTxBeginTrace, this));
-    GetObject<CsmaNetDevice>()->TraceConnectWithoutContext(
+    m_netDev->TraceConnectWithoutContext(
         "PhyTxEnd",
         MakeCallback(&ns3::CsmaNetDeviceAnim::CsmaPhyTxEndTrace, this));
-    GetObject<CsmaNetDevice>()->TraceConnectWithoutContext(
+    m_netDev->TraceConnectWithoutContext(
         "PhyRxEnd",
         MakeCallback(&ns3::CsmaNetDeviceAnim::CsmaPhyRxEndTrace, this));
-    GetObject<CsmaNetDevice>()->TraceConnectWithoutContext(
+    m_netDev->TraceConnectWithoutContext(
         "MacRx",
         MakeCallback(&ns3::CsmaNetDeviceAnim::CsmaMacRxTrace, this));
-    GetObject<CsmaNetDevice>()->TraceConnectWithoutContext(
-        "TxQueue/Enqueue",
-        MakeCallback(&ns3::CsmaNetDeviceAnim::EnqueueTrace, this));
-    GetObject<CsmaNetDevice>()->TraceConnectWithoutContext(
-        "TxQueue/Dequeue",
-        MakeCallback(&ns3::CsmaNetDeviceAnim::DequeueTrace, this));
-    GetObject<CsmaNetDevice>()->TraceConnectWithoutContext(
+    m_netDev->TraceConnectWithoutContext("TxQueue/Enqueue",
+                                         MakeCallback(&ns3::CsmaNetDeviceAnim::EnqueueTrace, this));
+    m_netDev->TraceConnectWithoutContext("TxQueue/Dequeue",
+                                         MakeCallback(&ns3::CsmaNetDeviceAnim::DequeueTrace, this));
+    m_netDev->TraceConnectWithoutContext(
         "TxQueue/Drop",
         MakeCallback(&ns3::CsmaNetDeviceAnim::QueueDropTrace, this));
 }
@@ -62,22 +61,20 @@ void
 CsmaNetDeviceAnim::CsmaPhyTxBeginTrace(Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
-    if (!m_anim.IsStarted() || !m_anim.IsInTimeWindow() || !m_anim.IsTracking())
+    if (!IsEnabled())
     {
         return;
     }
-    Ptr<NetDevice> ndev = this->GetObject<CsmaNetDevice>();
-    NS_ASSERT(ndev);
-    m_anim.UpdatePosition(ndev);
+    m_anim.UpdatePosition(m_netDev);
     csmaAnimUid++;
     NS_LOG_INFO("CsmaPhyTxBeginTrace for packet:" << csmaAnimUid);
     m_anim.AddByteTag(csmaAnimUid, p);
-    m_anim.UpdatePosition(ndev);
-    CsmaAnimPacketInfo pktInfo(ndev, Simulator::Now());
+    m_anim.UpdatePosition(m_netDev);
+    CsmaAnimPacketInfo pktInfo(m_netDev->GetNode()->GetId(), Simulator::Now());
     m_pendingCsmaPackets.insert(CsmaAnimUidPacketInfoMap::value_type(csmaAnimUid, pktInfo));
     if (!m_purgeCsmaAnimPendingPacketsEventId.IsRunning())
     {
-        Simulator::Schedule(Seconds(0.25), &CsmaNetDeviceAnim::PurgePendingPackets);
+        Simulator::Schedule(schedulePurgePendingPackets, &CsmaNetDeviceAnim::PurgePendingPackets);
     }
 }
 
@@ -85,24 +82,21 @@ void
 CsmaNetDeviceAnim::CsmaPhyTxEndTrace(Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
-    if (!m_anim.IsStarted() || !m_anim.IsInTimeWindow() || !m_anim.IsTracking())
+    if (!IsEnabled())
     {
         return;
     }
-    Ptr<NetDevice> ndev = this->GetObject<CsmaNetDevice>();
-    NS_ASSERT(ndev);
-    m_anim.UpdatePosition(ndev);
+    m_anim.UpdatePosition(m_netDev);
     uint64_t csmaAnimUid = m_anim.GetAnimUidFromPacket(p);
     NS_LOG_INFO("CsmaPhyTxEndTrace for packet:" << csmaAnimUid);
     if (m_pendingCsmaPackets.find(csmaAnimUid) == m_pendingCsmaPackets.end())
     {
         NS_LOG_WARN("CsmaPhyTxEndTrace: unknown Uid");
         NS_FATAL_ERROR("CsmaPhyTxEndTrace: unknown Uid");
-        CsmaAnimPacketInfo pktInfo(ndev, Simulator::Now());
+        CsmaAnimPacketInfo pktInfo(m_netDev->GetNode()->GetId(), Simulator::Now());
         m_pendingCsmaPackets.insert(CsmaAnimUidPacketInfoMap::value_type(csmaAnimUid, pktInfo));
         NS_LOG_WARN("Unknown Uid, but adding Csma Packet anyway");
     }
-    /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true);
     CsmaAnimPacketInfo& pktInfo = m_pendingCsmaPackets[csmaAnimUid];
     pktInfo.m_lastBitTxTime = Simulator::Now();
 }
@@ -111,13 +105,11 @@ void
 CsmaNetDeviceAnim::CsmaPhyRxEndTrace(Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
-    if (!m_anim.IsStarted() || !m_anim.IsInTimeWindow() || !m_anim.IsTracking())
+    if (!IsEnabled())
     {
         return;
     }
-    Ptr<NetDevice> ndev = this->GetObject<CsmaNetDevice>();
-    NS_ASSERT(ndev);
-    m_anim.UpdatePosition(ndev);
+    m_anim.UpdatePosition(m_netDev);
     uint64_t csmaAnimUid = m_anim.GetAnimUidFromPacket(p);
     if (m_pendingCsmaPackets.find(csmaAnimUid) == m_pendingCsmaPackets.end())
     {
@@ -136,12 +128,10 @@ void
 CsmaNetDeviceAnim::CsmaMacRxTrace(Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
-    if (!m_anim.IsStarted() || !m_anim.IsInTimeWindow() || !m_anim.IsTracking())
+    if (!IsEnabled())
     {
         return;
     }
-    Ptr<NetDevice> ndev = this->GetObject<CsmaNetDevice>();
-    NS_ASSERT(ndev);
     uint64_t csmaAnimUid = m_anim.GetAnimUidFromPacket(p);
     if (m_pendingCsmaPackets.find(csmaAnimUid) == m_pendingCsmaPackets.end())
     {
@@ -157,21 +147,21 @@ CsmaNetDeviceAnim::CsmaMacRxTrace(Ptr<const Packet> p)
 void
 CsmaNetDeviceAnim::EnqueueTrace(Ptr<const Packet> p)
 {
-    const Ptr<const Node> node = this->GetObject<CsmaNetDevice>()->GetNode();
+    const Ptr<const Node> node = m_netDev->GetNode();
     m_anim.AddNodeToNodeEnqueueMap(node->GetId());
 }
 
 void
 CsmaNetDeviceAnim::DequeueTrace(Ptr<const Packet> p)
 {
-    const Ptr<const Node> node = this->GetObject<CsmaNetDevice>()->GetNode();
+    const Ptr<const Node> node = m_netDev->GetNode();
     m_anim.AddNodeToNodeDequeueMap(node->GetId());
 }
 
 void
 CsmaNetDeviceAnim::QueueDropTrace(Ptr<const Packet> p)
 {
-    const Ptr<const Node> node = this->GetObject<CsmaNetDevice>()->GetNode();
+    const Ptr<const Node> node = m_netDev->GetNode();
     m_anim.AddNodeToNodeDropMap(node->GetId());
 }
 
@@ -180,7 +170,7 @@ CsmaNetDeviceAnim::OutputCsmaPacket(Ptr<const Packet> p, CsmaAnimPacketInfo& pkt
 {
     m_anim.CheckMaxPktsPerTraceFile();
     uint32_t nodeId = pktInfo.m_txNodeId;
-    uint32_t rxId = this->GetObject<CsmaNetDevice>()->GetNode()->GetId();
+    uint32_t rxId = m_netDev->GetNode()->GetId();
 
     m_anim.WriteXmlP("p",
                      nodeId,
@@ -206,11 +196,10 @@ CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo(const CsmaAnimPacketIn
     m_lastBitTxTime = pInfo.m_firstBitTxTime;
 }
 
-CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo(Ptr<const NetDevice> txnd,
-                                                          const Time fbTx,
-                                                          uint32_t txNodeId)
-    : m_txNodeId(txnd->GetNode()->GetId()),
-      m_firstBitTxTime(fbTx),
+CsmaNetDeviceAnim::CsmaAnimPacketInfo::CsmaAnimPacketInfo(uint32_t txNodeId,
+                                                          const Time firstBitTxTime)
+    : m_txNodeId(txNodeId),
+      m_firstBitTxTime(firstBitTxTime),
       m_lastBitTxTime(0)
 {
 }
@@ -225,7 +214,7 @@ CsmaNetDeviceAnim::PurgePendingPackets()
     {
         CsmaAnimPacketInfo pktInfo = i->second;
         Time delta = (Simulator::Now() - pktInfo.m_firstBitTxTime);
-        if (delta > CSMA_PURGE_INTERVAL)
+        if (delta > csmaPurgeInterval)
         {
             purgeList.push_back(i->first);
         }
@@ -239,7 +228,20 @@ CsmaNetDeviceAnim::PurgePendingPackets()
 void
 CsmaNetDeviceAnim::DoDispose()
 {
+    m_netDev = nullptr;
     NetDeviceAnim::DoDispose();
 }
 
+void
+CsmaNetDeviceAnim::DoInitialize()
+{
+    m_netDev = GetObject<CsmaNetDevice>();
+    NetDeviceAnim::DoInitialize();
+}
+
+bool
+CsmaNetDeviceAnim::IsEnabled()
+{
+    return (m_anim.IsStarted() && m_anim.IsInTimeWindow() && m_anim.IsTracking());
+}
 } // namespace ns3

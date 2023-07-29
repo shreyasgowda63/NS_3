@@ -79,15 +79,6 @@ class WifiPsdu;
  */
 
 /**
- * \ingroup netanim
- *
- * \brief Interface to network animator
- *
- * Provides functions that facilitate communications with an
- * external or internal network animator.
- */
-
-/**
  * AnimPacketInfo class
  */
 class AnimPacketInfo
@@ -124,6 +115,14 @@ class AnimPacketInfo
     void ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx);
 };
 
+/**
+ * \ingroup netanim
+ *
+ * \brief Interface to network animator
+ *
+ * Provides functions that facilitate communications with an
+ * external or internal network animator.
+ */
 class AnimationInterface
 {
   public:
@@ -465,7 +464,15 @@ class AnimationInterface
      * \returns current node's remaining energy (between [0, 1])
      */
     double GetNodeEnergyFraction(Ptr<const Node> node) const;
+    /**
+     * Is in time window function
+     * \returns true if in the time window
+     */
     bool IsInTimeWindow();
+    /**
+     * Checks if packets are being tracked
+     * \returns true if packets are being tracked
+     */
     bool IsTracking();
     /**
      * Get net device from context
@@ -473,9 +480,12 @@ class AnimationInterface
      * \returns the device
      */
     Ptr<NetDevice> GetNetDeviceFromContext(std::string context);
+    /**
+     * Update position function
+     * \param ndev the device
+     * \returns the position vector
+     */
     Vector UpdatePosition(Ptr<NetDevice> ndev);
-    void IncrementAnimUid();
-    uint64_t GetAnimUid();
     /**
      * Add byte tag function
      * \param animUid the UID
@@ -508,27 +518,19 @@ class AnimationInterface
      */
     uint64_t GetAnimUidFromPacket(Ptr<const Packet> p);
     /**
-     * Is packet pending function
-     * \param animUid the UID
-     * \param protocolType the protocol type
-     * \returns true if a packet is pending
+     * Add node to node enqueue map
+     * \param nodeId Node Id
      */
-    bool IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType);
-    /**
-     * Output CSMA packet function
-     * \param p the packet
-     * \param pktInfo the packet info
-     */
-    void OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo);
-    std::map<uint64_t, AnimPacketInfo>& GetPendingCsmaPacketsMap();
-    /**
-     * Get node from context
-     * \param context the context string
-     * \returns the node
-     */
-    Ptr<Node> GetNodeFromContext(const std::string& context) const;
     void AddNodeToNodeEnqueueMap(uint32_t nodeId);
+    /**
+     * Add node to node Dequeue map
+     * \param nodeId Node Id
+     */
     void AddNodeToNodeDequeueMap(uint32_t nodeId);
+    /**
+     * Add node to node Drop map
+     * \param nodeId Node Id
+     */
     void AddNodeToNodeDropMap(uint32_t nodeId);
     /// Check maximum packets per trace file function
     void CheckMaxPktsPerTraceFile();
@@ -551,8 +553,16 @@ class AnimationInterface
                    double fbRx,
                    double lbRx,
                    std::string metaInfo = "");
-
+    /**
+     * Checks if packet metadata is enabled
+     * \returns true if packet metadata is enabled
+     */
     bool IsEnablePacketMetadata();
+    /**
+     * Get packet metadata function
+     * \param p the packet
+     * \returns the metadata
+     */
     std::string GetPacketMetadata(Ptr<const Packet> p);
 };
 

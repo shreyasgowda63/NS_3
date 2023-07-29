@@ -13,9 +13,9 @@ NetDeviceAnim::GetTypeId()
     return tid;
 }
 
-TypeId
-NetDeviceAnim::GetInstanceTypeId() const
+void
+NetDeviceAnim::DoInitialize()
 {
-    return GetTypeId();
+    Object::DoInitialize();
 }
 } // namespace ns3
