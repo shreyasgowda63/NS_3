@@ -113,6 +113,7 @@ struct MinstrelHtRateInfo
     bool supported;      //!< If the rate is supported.
     uint8_t mcsIndex;    //!< The index in the operationalMcsSet of the WifiRemoteStationManager.
     uint32_t retryCount; //!< Retry limit.
+    uint32_t retryCountRtsCts;   //!< Retry limit when using RTS/CTS.
     uint32_t adjustedRetryCount; //!< Adjust the retry limit for this rate.
     uint32_t numRateAttempt;     //!< Number of transmission attempts so far.
     uint32_t numRateSuccess;     //!< Number of successful frames transmitted so far.
@@ -167,7 +168,10 @@ struct RetryChainInfo
     WifiTxVector m_maxTp2;  //!< The second max throughput TxVector.
     WifiTxVector m_maxProb; //!< The highest success probability TxVector.
 
-    uint32_t m_maxTpCount;  //!< The amount of retries allowed using the max throughput rate.
+    uint32_t m_maxTpCount; //!< The amount of retries allowed using the max throughput rate when not
+                           //!< sampling.
+    uint32_t m_maxTpCountSampling; //!< The amount of retries allowed using the max throughput rate
+                                   //!< when sampling.
     uint32_t m_maxTp2Count; //!< The amount of retries allowed using the second max throughput rate.
     uint32_t m_maxProbCount; //!< The amount of retries allowed using the highest success
                              //!< probability rate.
