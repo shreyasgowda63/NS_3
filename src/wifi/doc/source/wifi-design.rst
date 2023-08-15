@@ -765,6 +765,41 @@ which would be ignored otherwise. This is illustrated in Figure :ref:`fig-cca-ch
 
    Illustration of signals tracking upon channel switching
 
+Channel Bonding
+###############
+
+Channel bonding is the process of combining (typically adjacent) 20 MHz channels to form larger bandwidth channels.
+
+When using channel bonding in |ns3|, the transmitter will use the largest primary channel,
+less than or equal to the operating channel width, considered idle.
+The process of determining if channel access can be granted is handled by the Channel Access Manager and once it
+has been granted it will also determine which is the largest primary channel considered idle. A channel is
+considered busy if the CCA-BUSY indication has been set or if another indication like TXING or RXING has
+been set by the PHY. Once the largest primary channel is determined, this information is passed on
+to the Frame Exchange Manager, which in turn informs the Multi-User Scheduler (if any) and the Wifi
+Remote Station Manager.
+
+The specific function in which this happens is the
+``ChannelAccessManager::RequestAccess``, this function will call ``DoGrantDcfAccess`` and to then determine the
+largest idle primary channel a call to ``ChannelAccessManager::GetLargestIdlePrimaryChannel`` is made.
+The largest idle primary channel returned has to be currently idle and must have been idle for a duration greater
+or equal to PIFS (if using the 2.4 GHz band then a duration greater or equal to: SIFS + 2 * slot is required).
+It is important to note that the Channel Access Manager will not provide a primary channel
+whose width is larger than the largest operating channel configured.
+
+At a high level, when receiving a signal the ``SpectrumWifiPhy`` is in charge of determining if it is a Wi-Fi signal
+or not. Signals that do not overlap the primary channel will be considered to be non-Wi-Fi signals. They will be
+considered non-Wi-Fi signals because they are not subjected to preamble detection but only to energy detection.
+Non-Wi-Fi signals will be treated as interference and can raise the CCA-BUSY state for the PHY if their energy is above
+the ED-Threshold per secondary channel in which they overlap. The check per secondary channel is performed in the phy entity
+and depends on the configured operating channel width. For example, if the configured operating channel width is less than 80 MHz then
+the check is performed in the ``HtPhy::GetCcaIndication`` but if the configured operating channel width is less than
+40 MHz then the check is performed in the ``PhyEntity::GetCcaIndication``.
+
+If the signal is considered to be a strong enough Wi-Fi signal (power greater than the value of the ``WifiPhy::RxSensitivity``
+attribute) then the normal reception process continues as described in the YansWifiPhy and WifiPhyStateHelper
+section above.
+
 The MAC model
 =============
 
