@@ -418,6 +418,7 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
 
     if (wifiRxParams->txPhy)
     {
+        // Check whether the signal overlaps the primary channel
         if (!CanStartRx(ppdu, txWidth))
         {
             NS_LOG_INFO("Cannot start reception of the PPDU, consider it as interference");

@@ -2086,6 +2086,7 @@ void
 WifiPhy::SwitchMaybeToCcaBusy(const Ptr<const WifiPpdu> ppdu)
 {
     NS_LOG_FUNCTION(this);
+    // Gets the PHY entity corresponding to the configured standard
     GetLatestPhyEntity()->SwitchMaybeToCcaBusy(ppdu);
 }
 
