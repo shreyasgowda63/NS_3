@@ -34,6 +34,7 @@
 #include "ns3/node-container.h"
 #include "ns3/node-list.h"
 #include "ns3/nstime.h"
+#include "ns3/object.h"
 #include "ns3/ptr.h"
 #include "ns3/random-variable-stream.h"
 #include "ns3/rectangle.h"
@@ -84,7 +85,7 @@ class WifiPsdu;
  * Provides functions that facilitate communications with an
  * external or internal network animator.
  */
-class AnimationInterface
+class NetAnimWriter : public Object
 {
   public:
     /**
@@ -92,7 +93,7 @@ class AnimationInterface
      * \param filename The Filename for the trace file used by the Animator
      *
      */
-    AnimationInterface(const std::string filename);
+    NetAnimWriter(const std::string filename);
 
     /**
      * Counter Types
@@ -104,7 +105,7 @@ class AnimationInterface
     };
 
     /**
-     * \brief typedef for WriteCallBack used for listening to AnimationInterface
+     * \brief typedef for WriteCallBack used for listening to NetAnimWriter
      * write messages
      *
      */
@@ -114,7 +115,7 @@ class AnimationInterface
      * \brief Destructor for the animator interface.
      *
      */
-    ~AnimationInterface();
+    ~NetAnimWriter();
 
     /**
      * \brief Enable tracking of Ipv4 L3 Protocol Counters such as Tx, Rx, Drop
@@ -167,12 +168,12 @@ class AnimationInterface
      * \param pollInterval The periodic interval at which routing table information is polled
      *        Default: 5s
      *
-     * \returns reference to this AnimationInterface object
+     * \returns reference to this NetAnimWriter object
      */
-    AnimationInterface& EnableIpv4RouteTracking(std::string fileName,
-                                                Time startTime,
-                                                Time stopTime,
-                                                Time pollInterval = Seconds(5));
+    NetAnimWriter& EnableIpv4RouteTracking(std::string fileName,
+                                           Time startTime,
+                                           Time stopTime,
+                                           Time pollInterval = Seconds(5));
 
     /**
      * \brief Enable tracking of the Ipv4 routing table for a set of Nodes
@@ -184,18 +185,18 @@ class AnimationInterface
      * \param pollInterval The periodic interval at which routing table information is polled
      *        Default: 5s
      *
-     * \returns reference to this AnimationInterface object
+     * \returns reference to this NetAnimWriter object
      */
-    AnimationInterface& EnableIpv4RouteTracking(std::string fileName,
-                                                Time startTime,
-                                                Time stopTime,
-                                                NodeContainer nc,
-                                                Time pollInterval = Seconds(5));
+    NetAnimWriter& EnableIpv4RouteTracking(std::string fileName,
+                                           Time startTime,
+                                           Time stopTime,
+                                           NodeContainer nc,
+                                           Time pollInterval = Seconds(5));
 
     /**
-     * \brief Check if AnimationInterface is initialized
+     * \brief Check if NetAnimWriter is initialized
      *
-     * \returns true if AnimationInterface was already initialized
+     * \returns true if NetAnimWriter was already initialized
      *
      */
     static bool IsInitialized();
@@ -203,7 +204,7 @@ class AnimationInterface
     /**
      * \brief Specify the time at which capture should start
      *
-     * \param t The time at which AnimationInterface should begin capture of traffic info
+     * \param t The time at which NetAnimWriter should begin capture of traffic info
      *
      */
     void SetStartTime(Time t);
@@ -211,7 +212,7 @@ class AnimationInterface
     /**
      * \brief Specify the time at which capture should stop
      *
-     * \param t The time at which AnimationInterface should stop capture of traffic info
+     * \param t The time at which NetAnimWriter should stop capture of traffic info
      *
      */
     void SetStopTime(Time t);
@@ -219,7 +220,7 @@ class AnimationInterface
     /**
      * \brief Set Max packets per trace file
      * \param maxPktsPerFile The maximum number of packets per trace file.
-              AnimationInterface will create trace files with the following
+              NetAnimWriter will create trace files with the following
               filenames : filename, filename-1, filename-2..., filename-N
               where each file contains packet info for 'maxPktsPerFile' number of packets
      *
@@ -237,7 +238,7 @@ class AnimationInterface
     void SetMobilityPollInterval(Time t);
 
     /**
-     * \brief Set a callback function to listen to AnimationInterface write events
+     * \brief Set a callback function to listen to NetAnimWriter write events
      *
      * \param cb Address of callback function
      *
@@ -372,20 +373,19 @@ class AnimationInterface
      * \param fromNodeId The source node
      * \param destinationIpv4Address The destination Ipv4 Address
      *
-     * \returns reference to this AnimationInterface object
+     * \returns reference to this NetAnimWriter object
      */
-    AnimationInterface& AddSourceDestination(uint32_t fromNodeId,
-                                             std::string destinationIpv4Address);
+    NetAnimWriter& AddSourceDestination(uint32_t fromNodeId, std::string destinationIpv4Address);
 
     /**
-     * \brief Is AnimationInterface started
+     * \brief Is NetAnimWriter started
      *
-     * \returns true if AnimationInterface was started
+     * \returns true if NetAnimWriter was started
      */
     bool IsStarted() const;
 
     /**
-     * \brief Do not trace packets. This helps reduce the trace file size if AnimationInterface is
+     * \brief Do not trace packets. This helps reduce the trace file size if NetAnimWriter is
      * solely used for tracking mobility, routing paths and counters
      */
     void SkipPacketTracing();
@@ -620,7 +620,7 @@ class AnimationInterface
     FILE* m_routingF;                      ///< File handle for routing table output (0 if None);
     Time m_mobilityPollInterval;           ///< mobility poll interval
     std::string m_outputFileName;          ///< output file name
-    uint64_t gAnimUid;                     ///< Packet unique identifier used by AnimationInterface
+    uint64_t gAnimUid;                     ///< Packet unique identifier used by NetAnimWriter
     AnimWriteCallback m_writeCallback;     ///< write callback
     bool m_started;                        ///< started
     bool m_enablePacketMetadata;           ///< enable packet metadata
@@ -1541,6 +1541,17 @@ class AnimByteTag : public Tag
 
   private:
     uint64_t m_AnimUid; ///< the UID
+};
+
+class AnimationInterface
+{
+  public:
+    /**
+     * \brief Constructor
+     * \param filename The Filename for the trace file used by the Animator
+     *
+     */
+    AnimationInterface(const std::string filename);
 };
 
 } // namespace ns3

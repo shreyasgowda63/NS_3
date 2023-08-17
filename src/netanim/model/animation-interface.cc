@@ -53,7 +53,9 @@
 #include "ns3/lte-ue-phy.h"
 #include "ns3/mobility-model.h"
 #include "ns3/node.h"
+#include "ns3/object.h"
 #include "ns3/packet.h"
+#include "ns3/proxy.h"
 #include "ns3/simulator.h"
 #include "ns3/uan-mac.h"
 #include "ns3/uan-net-device.h"
@@ -66,7 +68,7 @@
 namespace ns3
 {
 
-NS_LOG_COMPONENT_DEFINE("AnimationInterface");
+NS_LOG_COMPONENT_DEFINE("NetAnimWriter");
 
 // Globals
 
@@ -74,7 +76,7 @@ static bool initialized = false; //!< Initialization flag
 
 // Public methods
 
-AnimationInterface::AnimationInterface(const std::string fn)
+NetAnimWriter::NetAnimWriter(const std::string fn)
     : m_f(nullptr),
       m_routingF(nullptr),
       m_mobilityPollInterval(Seconds(0.25)),
@@ -118,24 +120,24 @@ AnimationInterface::AnimationInterface(const std::string fn)
 #endif
 }
 
-AnimationInterface::~AnimationInterface()
+NetAnimWriter::~NetAnimWriter()
 {
     StopAnimation();
 }
 
 void
-AnimationInterface::SkipPacketTracing()
+NetAnimWriter::SkipPacketTracing()
 {
     m_trackPackets = false;
 }
 
 void
-AnimationInterface::EnableWifiPhyCounters(Time startTime, Time stopTime, Time pollInterval)
+NetAnimWriter::EnableWifiPhyCounters(Time startTime, Time stopTime, Time pollInterval)
 {
     m_wifiPhyCountersStopTime = stopTime;
     m_wifiPhyCountersPollInterval = pollInterval;
-    m_wifiPhyTxDropCounterId = AddNodeCounter("WifiPhy TxDrop", AnimationInterface::DOUBLE_COUNTER);
-    m_wifiPhyRxDropCounterId = AddNodeCounter("WifiPhy RxDrop", AnimationInterface::DOUBLE_COUNTER);
+    m_wifiPhyTxDropCounterId = AddNodeCounter("WifiPhy TxDrop", NetAnimWriter::DOUBLE_COUNTER);
+    m_wifiPhyRxDropCounterId = AddNodeCounter("WifiPhy RxDrop", NetAnimWriter::DOUBLE_COUNTER);
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
         Ptr<Node> n = *i;
@@ -144,18 +146,18 @@ AnimationInterface::EnableWifiPhyCounters(Time startTime, Time stopTime, Time po
         UpdateNodeCounter(m_wifiPhyTxDropCounterId, n->GetId(), 0);
         UpdateNodeCounter(m_wifiPhyRxDropCounterId, n->GetId(), 0);
     }
-    Simulator::Schedule(startTime, &AnimationInterface::TrackWifiPhyCounters, this);
+    Simulator::Schedule(startTime, &NetAnimWriter::TrackWifiPhyCounters, this);
 }
 
 void
-AnimationInterface::EnableWifiMacCounters(Time startTime, Time stopTime, Time pollInterval)
+NetAnimWriter::EnableWifiMacCounters(Time startTime, Time stopTime, Time pollInterval)
 {
     m_wifiMacCountersStopTime = stopTime;
     m_wifiMacCountersPollInterval = pollInterval;
-    m_wifiMacTxCounterId = AddNodeCounter("WifiMac Tx", AnimationInterface::DOUBLE_COUNTER);
-    m_wifiMacTxDropCounterId = AddNodeCounter("WifiMac TxDrop", AnimationInterface::DOUBLE_COUNTER);
-    m_wifiMacRxCounterId = AddNodeCounter("WifiMac Rx", AnimationInterface::DOUBLE_COUNTER);
-    m_wifiMacRxDropCounterId = AddNodeCounter("WifiMac RxDrop", AnimationInterface::DOUBLE_COUNTER);
+    m_wifiMacTxCounterId = AddNodeCounter("WifiMac Tx", NetAnimWriter::DOUBLE_COUNTER);
+    m_wifiMacTxDropCounterId = AddNodeCounter("WifiMac TxDrop", NetAnimWriter::DOUBLE_COUNTER);
+    m_wifiMacRxCounterId = AddNodeCounter("WifiMac Rx", NetAnimWriter::DOUBLE_COUNTER);
+    m_wifiMacRxDropCounterId = AddNodeCounter("WifiMac RxDrop", NetAnimWriter::DOUBLE_COUNTER);
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
         Ptr<Node> n = *i;
@@ -168,17 +170,17 @@ AnimationInterface::EnableWifiMacCounters(Time startTime, Time stopTime, Time po
         UpdateNodeCounter(m_wifiMacRxCounterId, n->GetId(), 0);
         UpdateNodeCounter(m_wifiMacRxDropCounterId, n->GetId(), 0);
     }
-    Simulator::Schedule(startTime, &AnimationInterface::TrackWifiMacCounters, this);
+    Simulator::Schedule(startTime, &NetAnimWriter::TrackWifiMacCounters, this);
 }
 
 void
-AnimationInterface::EnableQueueCounters(Time startTime, Time stopTime, Time pollInterval)
+NetAnimWriter::EnableQueueCounters(Time startTime, Time stopTime, Time pollInterval)
 {
     m_queueCountersStopTime = stopTime;
     m_queueCountersPollInterval = pollInterval;
-    m_queueEnqueueCounterId = AddNodeCounter("Enqueue", AnimationInterface::DOUBLE_COUNTER);
-    m_queueDequeueCounterId = AddNodeCounter("Dequeue", AnimationInterface::DOUBLE_COUNTER);
-    m_queueDropCounterId = AddNodeCounter("Queue Drop", AnimationInterface::DOUBLE_COUNTER);
+    m_queueEnqueueCounterId = AddNodeCounter("Enqueue", NetAnimWriter::DOUBLE_COUNTER);
+    m_queueDequeueCounterId = AddNodeCounter("Dequeue", NetAnimWriter::DOUBLE_COUNTER);
+    m_queueDropCounterId = AddNodeCounter("Queue Drop", NetAnimWriter::DOUBLE_COUNTER);
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
         Ptr<Node> n = *i;
@@ -189,17 +191,17 @@ AnimationInterface::EnableQueueCounters(Time startTime, Time stopTime, Time poll
         UpdateNodeCounter(m_queueDequeueCounterId, n->GetId(), 0);
         UpdateNodeCounter(m_queueDropCounterId, n->GetId(), 0);
     }
-    Simulator::Schedule(startTime, &AnimationInterface::TrackQueueCounters, this);
+    Simulator::Schedule(startTime, &NetAnimWriter::TrackQueueCounters, this);
 }
 
 void
-AnimationInterface::EnableIpv4L3ProtocolCounters(Time startTime, Time stopTime, Time pollInterval)
+NetAnimWriter::EnableIpv4L3ProtocolCounters(Time startTime, Time stopTime, Time pollInterval)
 {
     m_ipv4L3ProtocolCountersStopTime = stopTime;
     m_ipv4L3ProtocolCountersPollInterval = pollInterval;
-    m_ipv4L3ProtocolTxCounterId = AddNodeCounter("Ipv4 Tx", AnimationInterface::DOUBLE_COUNTER);
-    m_ipv4L3ProtocolRxCounterId = AddNodeCounter("Ipv4 Rx", AnimationInterface::DOUBLE_COUNTER);
-    m_ipv4L3ProtocolDropCounterId = AddNodeCounter("Ipv4 Drop", AnimationInterface::DOUBLE_COUNTER);
+    m_ipv4L3ProtocolTxCounterId = AddNodeCounter("Ipv4 Tx", NetAnimWriter::DOUBLE_COUNTER);
+    m_ipv4L3ProtocolRxCounterId = AddNodeCounter("Ipv4 Rx", NetAnimWriter::DOUBLE_COUNTER);
+    m_ipv4L3ProtocolDropCounterId = AddNodeCounter("Ipv4 Drop", NetAnimWriter::DOUBLE_COUNTER);
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
         Ptr<Node> n = *i;
@@ -210,36 +212,36 @@ AnimationInterface::EnableIpv4L3ProtocolCounters(Time startTime, Time stopTime, 
         UpdateNodeCounter(m_ipv4L3ProtocolRxCounterId, n->GetId(), 0);
         UpdateNodeCounter(m_ipv4L3ProtocolDropCounterId, n->GetId(), 0);
     }
-    Simulator::Schedule(startTime, &AnimationInterface::TrackIpv4L3ProtocolCounters, this);
+    Simulator::Schedule(startTime, &NetAnimWriter::TrackIpv4L3ProtocolCounters, this);
 }
 
-AnimationInterface&
-AnimationInterface::EnableIpv4RouteTracking(std::string fileName,
-                                            Time startTime,
-                                            Time stopTime,
-                                            Time pollInterval)
+NetAnimWriter&
+NetAnimWriter::EnableIpv4RouteTracking(std::string fileName,
+                                       Time startTime,
+                                       Time stopTime,
+                                       Time pollInterval)
 {
     SetOutputFile(fileName, true);
     m_routingStopTime = stopTime;
     m_routingPollInterval = pollInterval;
     WriteXmlAnim(true);
-    Simulator::Schedule(startTime, &AnimationInterface::TrackIpv4Route, this);
+    Simulator::Schedule(startTime, &NetAnimWriter::TrackIpv4Route, this);
     return *this;
 }
 
-AnimationInterface&
-AnimationInterface::EnableIpv4RouteTracking(std::string fileName,
-                                            Time startTime,
-                                            Time stopTime,
-                                            NodeContainer nc,
-                                            Time pollInterval)
+NetAnimWriter&
+NetAnimWriter::EnableIpv4RouteTracking(std::string fileName,
+                                       Time startTime,
+                                       Time stopTime,
+                                       NodeContainer nc,
+                                       Time pollInterval)
 {
     m_routingNc = nc;
     return EnableIpv4RouteTracking(fileName, startTime, stopTime, pollInterval);
 }
 
-AnimationInterface&
-AnimationInterface::AddSourceDestination(uint32_t fromNodeId, std::string ipv4Address)
+NetAnimWriter&
+NetAnimWriter::AddSourceDestination(uint32_t fromNodeId, std::string ipv4Address)
 {
     Ipv4RouteTrackElement element = {ipv4Address, fromNodeId};
     m_ipv4RouteTrackElements.push_back(element);
@@ -247,25 +249,25 @@ AnimationInterface::AddSourceDestination(uint32_t fromNodeId, std::string ipv4Ad
 }
 
 void
-AnimationInterface::SetStartTime(Time t)
+NetAnimWriter::SetStartTime(Time t)
 {
     m_startTime = t;
 }
 
 void
-AnimationInterface::SetStopTime(Time t)
+NetAnimWriter::SetStopTime(Time t)
 {
     m_stopTime = t;
 }
 
 void
-AnimationInterface::SetMaxPktsPerTraceFile(uint64_t maxPacketsPerFile)
+NetAnimWriter::SetMaxPktsPerTraceFile(uint64_t maxPacketsPerFile)
 {
     m_maxPktsPerFile = maxPacketsPerFile;
 }
 
 uint32_t
-AnimationInterface::AddNodeCounter(std::string counterName, CounterType counterType)
+NetAnimWriter::AddNodeCounter(std::string counterName, CounterType counterType)
 {
     m_nodeCounters.push_back(counterName);
     uint32_t counterId = m_nodeCounters.size() - 1; // counter ID is zero-indexed
@@ -274,7 +276,7 @@ AnimationInterface::AddNodeCounter(std::string counterName, CounterType counterT
 }
 
 uint32_t
-AnimationInterface::AddResource(std::string resourcePath)
+NetAnimWriter::AddResource(std::string resourcePath)
 {
     m_resources.push_back(resourcePath);
     uint32_t resourceId = m_resources.size() - 1; // resource ID is zero-indexed
@@ -283,7 +285,7 @@ AnimationInterface::AddResource(std::string resourcePath)
 }
 
 void
-AnimationInterface::EnablePacketMetadata(bool enable)
+NetAnimWriter::EnablePacketMetadata(bool enable)
 {
     m_enablePacketMetadata = enable;
     if (enable)
@@ -293,37 +295,37 @@ AnimationInterface::EnablePacketMetadata(bool enable)
 }
 
 bool
-AnimationInterface::IsInitialized()
+NetAnimWriter::IsInitialized()
 {
     return initialized;
 }
 
 bool
-AnimationInterface::IsStarted() const
+NetAnimWriter::IsStarted() const
 {
     return m_started;
 }
 
 void
-AnimationInterface::SetAnimWriteCallback(AnimWriteCallback cb)
+NetAnimWriter::SetAnimWriteCallback(AnimWriteCallback cb)
 {
     m_writeCallback = cb;
 }
 
 void
-AnimationInterface::ResetAnimWriteCallback()
+NetAnimWriter::ResetAnimWriteCallback()
 {
     m_writeCallback = nullptr;
 }
 
 void
-AnimationInterface::SetMobilityPollInterval(Time t)
+NetAnimWriter::SetMobilityPollInterval(Time t)
 {
     m_mobilityPollInterval = t;
 }
 
 void
-AnimationInterface::SetConstantPosition(Ptr<Node> n, double x, double y, double z)
+NetAnimWriter::SetConstantPosition(Ptr<Node> n, double x, double y, double z)
 {
     NS_ASSERT(n);
     Ptr<ConstantPositionMobilityModel> loc = n->GetObject<ConstantPositionMobilityModel>();
@@ -338,7 +340,7 @@ AnimationInterface::SetConstantPosition(Ptr<Node> n, double x, double y, double 
 }
 
 void
-AnimationInterface::UpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
+NetAnimWriter::UpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
 {
     NS_LOG_INFO("Setting node image for Node Id:" << nodeId);
     if (resourceId > (m_resources.size() - 1))
@@ -349,7 +351,7 @@ AnimationInterface::UpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
 }
 
 void
-AnimationInterface::UpdateNodeCounter(uint32_t nodeCounterId, uint32_t nodeId, double counter)
+NetAnimWriter::UpdateNodeCounter(uint32_t nodeCounterId, uint32_t nodeId, double counter)
 {
     if (nodeCounterId > (m_nodeCounters.size() - 1))
     {
@@ -360,12 +362,12 @@ AnimationInterface::UpdateNodeCounter(uint32_t nodeCounterId, uint32_t nodeId, d
 }
 
 void
-AnimationInterface::SetBackgroundImage(std::string fileName,
-                                       double x,
-                                       double y,
-                                       double scaleX,
-                                       double scaleY,
-                                       double opacity)
+NetAnimWriter::SetBackgroundImage(std::string fileName,
+                                  double x,
+                                  double y,
+                                  double scaleX,
+                                  double scaleY,
+                                  double opacity)
 {
     if ((opacity < 0) || (opacity > 1))
     {
@@ -375,27 +377,27 @@ AnimationInterface::SetBackgroundImage(std::string fileName,
 }
 
 void
-AnimationInterface::UpdateNodeSize(Ptr<Node> n, double width, double height)
+NetAnimWriter::UpdateNodeSize(Ptr<Node> n, double width, double height)
 {
     UpdateNodeSize(n->GetId(), width, height);
 }
 
 void
-AnimationInterface::UpdateNodeSize(uint32_t nodeId, double width, double height)
+NetAnimWriter::UpdateNodeSize(uint32_t nodeId, double width, double height)
 {
-    AnimationInterface::NodeSize s = {width, height};
+    NetAnimWriter::NodeSize s = {width, height};
     m_nodeSizes[nodeId] = s;
     WriteXmlUpdateNodeSize(nodeId, s.width, s.height);
 }
 
 void
-AnimationInterface::UpdateNodeColor(Ptr<Node> n, uint8_t r, uint8_t g, uint8_t b)
+NetAnimWriter::UpdateNodeColor(Ptr<Node> n, uint8_t r, uint8_t g, uint8_t b)
 {
     UpdateNodeColor(n->GetId(), r, g, b);
 }
 
 void
-AnimationInterface::UpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b)
+NetAnimWriter::UpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b)
 {
     NS_ASSERT(NodeList::GetNode(nodeId));
     NS_LOG_INFO("Setting node color for Node Id:" << nodeId);
@@ -405,17 +407,17 @@ AnimationInterface::UpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8
 }
 
 void
-AnimationInterface::UpdateLinkDescription(uint32_t fromNode,
-                                          uint32_t toNode,
-                                          std::string linkDescription)
+NetAnimWriter::UpdateLinkDescription(uint32_t fromNode,
+                                     uint32_t toNode,
+                                     std::string linkDescription)
 {
     WriteXmlUpdateLink(fromNode, toNode, linkDescription);
 }
 
 void
-AnimationInterface::UpdateLinkDescription(Ptr<Node> fromNode,
-                                          Ptr<Node> toNode,
-                                          std::string linkDescription)
+NetAnimWriter::UpdateLinkDescription(Ptr<Node> fromNode,
+                                     Ptr<Node> toNode,
+                                     std::string linkDescription)
 {
     NS_ASSERT(fromNode);
     NS_ASSERT(toNode);
@@ -423,13 +425,13 @@ AnimationInterface::UpdateLinkDescription(Ptr<Node> fromNode,
 }
 
 void
-AnimationInterface::UpdateNodeDescription(Ptr<Node> n, std::string descr)
+NetAnimWriter::UpdateNodeDescription(Ptr<Node> n, std::string descr)
 {
     UpdateNodeDescription(n->GetId(), descr);
 }
 
 void
-AnimationInterface::UpdateNodeDescription(uint32_t nodeId, std::string descr)
+NetAnimWriter::UpdateNodeDescription(uint32_t nodeId, std::string descr)
 {
     NS_ASSERT(NodeList::GetNode(nodeId));
     m_nodeDescriptions[nodeId] = descr;
@@ -439,7 +441,7 @@ AnimationInterface::UpdateNodeDescription(uint32_t nodeId, std::string descr)
 // Private methods
 
 double
-AnimationInterface::GetNodeEnergyFraction(Ptr<const Node> node) const
+NetAnimWriter::GetNodeEnergyFraction(Ptr<const Node> node) const
 {
     const EnergyFractionMap::const_iterator fractionIter = m_nodeEnergyFraction.find(node->GetId());
     NS_ASSERT(fractionIter != m_nodeEnergyFraction.end());
@@ -447,7 +449,7 @@ AnimationInterface::GetNodeEnergyFraction(Ptr<const Node> node) const
 }
 
 void
-AnimationInterface::MobilityCourseChangeTrace(Ptr<const MobilityModel> mobility)
+NetAnimWriter::MobilityCourseChangeTrace(Ptr<const MobilityModel> mobility)
 {
     CHECK_STARTED_INTIMEWINDOW;
     Ptr<Node> n = mobility->GetObject<Node>();
@@ -466,7 +468,7 @@ AnimationInterface::MobilityCourseChangeTrace(Ptr<const MobilityModel> mobility)
 }
 
 bool
-AnimationInterface::NodeHasMoved(Ptr<Node> n, Vector newLocation)
+NetAnimWriter::NodeHasMoved(Ptr<Node> n, Vector newLocation)
 {
     Vector oldLocation = GetPosition(n);
     bool moved = !((ceil(oldLocation.x) == ceil(newLocation.x)) &&
@@ -475,7 +477,7 @@ AnimationInterface::NodeHasMoved(Ptr<Node> n, Vector newLocation)
 }
 
 void
-AnimationInterface::MobilityAutoCheck()
+NetAnimWriter::MobilityAutoCheck()
 {
     CHECK_STARTED_INTIMEWINDOW;
     std::vector<Ptr<Node>> MovedNodes = GetMovedNodes();
@@ -488,17 +490,17 @@ AnimationInterface::MobilityAutoCheck()
     }
     if (!Simulator::IsFinished())
     {
-        PurgePendingPackets(AnimationInterface::WIFI);
-        PurgePendingPackets(AnimationInterface::WIMAX);
-        PurgePendingPackets(AnimationInterface::LTE);
-        PurgePendingPackets(AnimationInterface::CSMA);
-        PurgePendingPackets(AnimationInterface::LRWPAN);
-        Simulator::Schedule(m_mobilityPollInterval, &AnimationInterface::MobilityAutoCheck, this);
+        PurgePendingPackets(NetAnimWriter::WIFI);
+        PurgePendingPackets(NetAnimWriter::WIMAX);
+        PurgePendingPackets(NetAnimWriter::LTE);
+        PurgePendingPackets(NetAnimWriter::CSMA);
+        PurgePendingPackets(NetAnimWriter::LRWPAN);
+        Simulator::Schedule(m_mobilityPollInterval, &NetAnimWriter::MobilityAutoCheck, this);
     }
 }
 
 std::vector<Ptr<Node>>
-AnimationInterface::GetMovedNodes()
+NetAnimWriter::GetMovedNodes()
 {
     std::vector<Ptr<Node>> movedNodes;
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
@@ -529,7 +531,7 @@ AnimationInterface::GetMovedNodes()
 }
 
 int
-AnimationInterface::WriteN(const std::string& st, FILE* f)
+NetAnimWriter::WriteN(const std::string& st, FILE* f)
 {
     if (!f)
     {
@@ -543,7 +545,7 @@ AnimationInterface::WriteN(const std::string& st, FILE* f)
 }
 
 int
-AnimationInterface::WriteN(const char* data, uint32_t count, FILE* f)
+NetAnimWriter::WriteN(const char* data, uint32_t count, FILE* f)
 {
     if (!f)
     {
@@ -568,9 +570,9 @@ AnimationInterface::WriteN(const char* data, uint32_t count, FILE* f)
 }
 
 void
-AnimationInterface::WriteRoutePath(uint32_t nodeId,
-                                   std::string destination,
-                                   Ipv4RoutePathElements rpElements)
+NetAnimWriter::WriteRoutePath(uint32_t nodeId,
+                              std::string destination,
+                              Ipv4RoutePathElements rpElements)
 {
     NS_LOG_INFO("Writing Route Path From :" << nodeId << " To: " << destination);
     WriteXmlRp(nodeId, destination, rpElements);
@@ -587,15 +589,15 @@ AnimationInterface::WriteRoutePath(uint32_t nodeId,
 }
 
 void
-AnimationInterface::WriteNonP2pLinkProperties(uint32_t id,
-                                              std::string ipv4Address,
-                                              std::string channelType)
+NetAnimWriter::WriteNonP2pLinkProperties(uint32_t id,
+                                         std::string ipv4Address,
+                                         std::string channelType)
 {
     WriteXmlNonP2pLinkProperties(id, ipv4Address, channelType);
 }
 
 const std::vector<std::string>
-AnimationInterface::GetElementsFromContext(const std::string& context) const
+NetAnimWriter::GetElementsFromContext(const std::string& context) const
 {
     std::vector<std::string> elements;
     std::size_t pos1 = 0;
@@ -612,7 +614,7 @@ AnimationInterface::GetElementsFromContext(const std::string& context) const
 }
 
 Ptr<Node>
-AnimationInterface::GetNodeFromContext(const std::string& context) const
+NetAnimWriter::GetNodeFromContext(const std::string& context) const
 {
     // Use "NodeList/*/ as reference
     // where element [1] is the Node Id
@@ -625,7 +627,7 @@ AnimationInterface::GetNodeFromContext(const std::string& context) const
 }
 
 Ptr<NetDevice>
-AnimationInterface::GetNetDeviceFromContext(std::string context)
+NetAnimWriter::GetNetDeviceFromContext(std::string context)
 {
     // Use "NodeList/*/DeviceList/*/ as reference
     // where element [1] is the Node Id
@@ -638,7 +640,7 @@ AnimationInterface::GetNetDeviceFromContext(std::string context)
 }
 
 uint64_t
-AnimationInterface::GetAnimUidFromPacket(Ptr<const Packet> p)
+NetAnimWriter::GetAnimUidFromPacket(Ptr<const Packet> p)
 {
     AnimByteTag tag;
     TypeId tid = tag.GetInstanceTypeId();
@@ -664,7 +666,7 @@ AnimationInterface::GetAnimUidFromPacket(Ptr<const Packet> p)
 }
 
 void
-AnimationInterface::AddByteTag(uint64_t animUid, Ptr<const Packet> p)
+NetAnimWriter::AddByteTag(uint64_t animUid, Ptr<const Packet> p)
 {
     AnimByteTag tag;
     tag.Set(animUid);
@@ -672,9 +674,9 @@ AnimationInterface::AddByteTag(uint64_t animUid, Ptr<const Packet> p)
 }
 
 void
-AnimationInterface::RemainingEnergyTrace(std::string context,
-                                         double previousEnergy,
-                                         double currentEnergy)
+NetAnimWriter::RemainingEnergyTrace(std::string context,
+                                    double previousEnergy,
+                                    double currentEnergy)
 {
     CHECK_STARTED_INTIMEWINDOW;
     const Ptr<const Node> node = GetNodeFromContext(context);
@@ -695,137 +697,137 @@ AnimationInterface::RemainingEnergyTrace(std::string context,
 }
 
 void
-AnimationInterface::WifiPhyTxDropTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::WifiPhyTxDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiPhyTxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::WifiPhyRxDropTrace(std::string context,
-                                       Ptr<const Packet> p,
-                                       WifiPhyRxfailureReason reason)
+NetAnimWriter::WifiPhyRxDropTrace(std::string context,
+                                  Ptr<const Packet> p,
+                                  WifiPhyRxfailureReason reason)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiPhyRxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacTxTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::WifiMacTxTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacTx[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacTxDropTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::WifiMacTxDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacTxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacRxTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::WifiMacRxTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacRx[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacRxDropTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::WifiMacRxDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacRxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacTxTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::LrWpanMacTxTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacTx[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacTxDropTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::LrWpanMacTxDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacTxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacRxTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::LrWpanMacRxTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacRx[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacRxDropTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::LrWpanMacRxDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacRxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::Ipv4TxTrace(std::string context,
-                                Ptr<const Packet> p,
-                                Ptr<Ipv4> ipv4,
-                                uint32_t interfaceIndex)
+NetAnimWriter::Ipv4TxTrace(std::string context,
+                           Ptr<const Packet> p,
+                           Ptr<Ipv4> ipv4,
+                           uint32_t interfaceIndex)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeIpv4Tx[node->GetId()];
 }
 
 void
-AnimationInterface::Ipv4RxTrace(std::string context,
-                                Ptr<const Packet> p,
-                                Ptr<Ipv4> ipv4,
-                                uint32_t interfaceIndex)
+NetAnimWriter::Ipv4RxTrace(std::string context,
+                           Ptr<const Packet> p,
+                           Ptr<Ipv4> ipv4,
+                           uint32_t interfaceIndex)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeIpv4Rx[node->GetId()];
 }
 
 void
-AnimationInterface::Ipv4DropTrace(std::string context,
-                                  const Ipv4Header& ipv4Header,
-                                  Ptr<const Packet> p,
-                                  Ipv4L3Protocol::DropReason dropReason,
-                                  Ptr<Ipv4> ipv4,
-                                  uint32_t)
+NetAnimWriter::Ipv4DropTrace(std::string context,
+                             const Ipv4Header& ipv4Header,
+                             Ptr<const Packet> p,
+                             Ipv4L3Protocol::DropReason dropReason,
+                             Ptr<Ipv4> ipv4,
+                             uint32_t)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeIpv4Drop[node->GetId()];
 }
 
 void
-AnimationInterface::EnqueueTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::EnqueueTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeQueueEnqueue[node->GetId()];
 }
 
 void
-AnimationInterface::DequeueTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::DequeueTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeQueueDequeue[node->GetId()];
 }
 
 void
-AnimationInterface::QueueDropTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::QueueDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeQueueDrop[node->GetId()];
 }
 
 void
-AnimationInterface::DevTxTrace(std::string context,
-                               Ptr<const Packet> p,
-                               Ptr<NetDevice> tx,
-                               Ptr<NetDevice> rx,
-                               Time txTime,
-                               Time rxTime)
+NetAnimWriter::DevTxTrace(std::string context,
+                          Ptr<const Packet> p,
+                          Ptr<NetDevice> tx,
+                          Ptr<NetDevice> rx,
+                          Time txTime,
+                          Time rxTime)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -848,9 +850,9 @@ AnimationInterface::DevTxTrace(std::string context,
 }
 
 void
-AnimationInterface::GenericWirelessTxTrace(std::string context,
-                                           Ptr<const Packet> p,
-                                           ProtocolType protocolType)
+NetAnimWriter::GenericWirelessTxTrace(std::string context,
+                                      Ptr<const Packet> p,
+                                      ProtocolType protocolType)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -881,9 +883,9 @@ AnimationInterface::GenericWirelessTxTrace(std::string context,
 }
 
 void
-AnimationInterface::GenericWirelessRxTrace(std::string context,
-                                           Ptr<const Packet> p,
-                                           ProtocolType protocolType)
+NetAnimWriter::GenericWirelessRxTrace(std::string context,
+                                      Ptr<const Packet> p,
+                                      ProtocolType protocolType)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -903,24 +905,24 @@ AnimationInterface::GenericWirelessRxTrace(std::string context,
 }
 
 void
-AnimationInterface::UanPhyGenTxTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::UanPhyGenTxTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessTxTrace(context, p, AnimationInterface::UAN);
+    return GenericWirelessTxTrace(context, p, NetAnimWriter::UAN);
 }
 
 void
-AnimationInterface::UanPhyGenRxTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::UanPhyGenRxTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessRxTrace(context, p, AnimationInterface::UAN);
+    return GenericWirelessRxTrace(context, p, NetAnimWriter::UAN);
 }
 
 void
-AnimationInterface::WifiPhyTxBeginTrace(std::string context,
-                                        WifiConstPsduMap psduMap,
-                                        WifiTxVector /* txVector */,
-                                        double /* txPowerW */)
+NetAnimWriter::WifiPhyTxBeginTrace(std::string context,
+                                   WifiConstPsduMap psduMap,
+                                   WifiTxVector /* txVector */,
+                                   double /* txPowerW */)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -964,9 +966,9 @@ AnimationInterface::WifiPhyTxBeginTrace(std::string context,
 }
 
 void
-AnimationInterface::WifiPhyRxBeginTrace(std::string context,
-                                        Ptr<const Packet> p,
-                                        RxPowerWattPerChannelBand rxPowersW)
+NetAnimWriter::WifiPhyRxBeginTrace(std::string context,
+                                   Ptr<const Packet> p,
+                                   RxPowerWattPerChannelBand rxPowersW)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -975,7 +977,7 @@ AnimationInterface::WifiPhyRxBeginTrace(std::string context,
     UpdatePosition(ndev);
     uint64_t animUid = GetAnimUidFromPacket(p);
     NS_LOG_INFO("Wifi RxBeginTrace for packet: " << animUid);
-    if (!IsPacketPending(animUid, AnimationInterface::WIFI))
+    if (!IsPacketPending(animUid, NetAnimWriter::WIFI))
     {
         NS_ASSERT_MSG(false, "WifiPhyRxBeginTrace: unknown Uid");
         std::ostringstream oss;
@@ -994,7 +996,7 @@ AnimationInterface::WifiPhyRxBeginTrace(std::string context,
         Ptr<Node> txNode = NodeList::GetNode(m_macToNodeIdMap[oss.str()]);
         UpdatePosition(txNode);
         AnimPacketInfo pktInfo(nullptr, Simulator::Now(), m_macToNodeIdMap[oss.str()]);
-        AddPendingPacket(AnimationInterface::WIFI, animUid, pktInfo);
+        AddPendingPacket(NetAnimWriter::WIFI, animUid, pktInfo);
         NS_LOG_WARN("WifiPhyRxBegin: unknown Uid, but we are adding a wifi packet");
     }
     /// \todo NS_ASSERT (WifiPacketIsPending (animUid) == true);
@@ -1003,7 +1005,7 @@ AnimationInterface::WifiPhyRxBeginTrace(std::string context,
 }
 
 void
-AnimationInterface::LrWpanPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::LrWpanPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1048,13 +1050,13 @@ AnimationInterface::LrWpanPhyTxBeginTrace(std::string context, Ptr<const Packet>
     AddByteTag(gAnimUid, p);
 
     AnimPacketInfo pktInfo(ndev, Simulator::Now());
-    AddPendingPacket(AnimationInterface::LRWPAN, gAnimUid, pktInfo);
+    AddPendingPacket(NetAnimWriter::LRWPAN, gAnimUid, pktInfo);
 
     OutputWirelessPacketTxInfo(p, m_pendingLrWpanPackets[gAnimUid], gAnimUid);
 }
 
 void
-AnimationInterface::LrWpanPhyRxBeginTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::LrWpanPhyRxBeginTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1071,7 +1073,7 @@ AnimationInterface::LrWpanPhyRxBeginTrace(std::string context, Ptr<const Packet>
 
     uint64_t animUid = GetAnimUidFromPacket(p);
     NS_LOG_INFO("LrWpan RxBeginTrace for packet:" << animUid);
-    if (!IsPacketPending(animUid, AnimationInterface::LRWPAN))
+    if (!IsPacketPending(animUid, NetAnimWriter::LRWPAN))
     {
         NS_LOG_WARN("LrWpanPhyRxBeginTrace: unknown Uid - most probably it's an ACK.");
     }
@@ -1082,35 +1084,35 @@ AnimationInterface::LrWpanPhyRxBeginTrace(std::string context, Ptr<const Packet>
 }
 
 void
-AnimationInterface::WimaxTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+NetAnimWriter::WimaxTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessTxTrace(context, p, AnimationInterface::WIMAX);
+    return GenericWirelessTxTrace(context, p, NetAnimWriter::WIMAX);
 }
 
 void
-AnimationInterface::WimaxRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+NetAnimWriter::WimaxRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessRxTrace(context, p, AnimationInterface::WIMAX);
+    return GenericWirelessRxTrace(context, p, NetAnimWriter::WIMAX);
 }
 
 void
-AnimationInterface::LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+NetAnimWriter::LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessTxTrace(context, p, AnimationInterface::LTE);
+    return GenericWirelessTxTrace(context, p, NetAnimWriter::LTE);
 }
 
 void
-AnimationInterface::LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+NetAnimWriter::LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
 {
     NS_LOG_FUNCTION(this);
-    return GenericWirelessRxTrace(context, p, AnimationInterface::LTE);
+    return GenericWirelessRxTrace(context, p, NetAnimWriter::LTE);
 }
 
 void
-AnimationInterface::LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb)
+NetAnimWriter::LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1132,13 +1134,13 @@ AnimationInterface::LteSpectrumPhyTxStart(std::string context, Ptr<const PacketB
         NS_LOG_INFO("LteSpectrumPhyTxTrace for packet:" << gAnimUid);
         AnimPacketInfo pktInfo(ndev, Simulator::Now());
         AddByteTag(gAnimUid, p);
-        AddPendingPacket(AnimationInterface::LTE, gAnimUid, pktInfo);
+        AddPendingPacket(NetAnimWriter::LTE, gAnimUid, pktInfo);
         OutputWirelessPacketTxInfo(p, pktInfo, gAnimUid);
     }
 }
 
 void
-AnimationInterface::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb)
+NetAnimWriter::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1158,7 +1160,7 @@ AnimationInterface::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketB
         Ptr<Packet> p = *i;
         uint64_t animUid = GetAnimUidFromPacket(p);
         NS_LOG_INFO("LteSpectrumPhyRxTrace for packet:" << gAnimUid);
-        if (!IsPacketPending(animUid, AnimationInterface::LTE))
+        if (!IsPacketPending(animUid, NetAnimWriter::LTE))
         {
             NS_LOG_WARN("LteSpectrumPhyRxTrace: unknown Uid");
             return;
@@ -1170,7 +1172,7 @@ AnimationInterface::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketB
 }
 
 void
-AnimationInterface::CsmaPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::CsmaPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1182,11 +1184,11 @@ AnimationInterface::CsmaPhyTxBeginTrace(std::string context, Ptr<const Packet> p
     AddByteTag(gAnimUid, p);
     UpdatePosition(ndev);
     AnimPacketInfo pktInfo(ndev, Simulator::Now());
-    AddPendingPacket(AnimationInterface::CSMA, gAnimUid, pktInfo);
+    AddPendingPacket(NetAnimWriter::CSMA, gAnimUid, pktInfo);
 }
 
 void
-AnimationInterface::CsmaPhyTxEndTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::CsmaPhyTxEndTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1195,12 +1197,12 @@ AnimationInterface::CsmaPhyTxEndTrace(std::string context, Ptr<const Packet> p)
     UpdatePosition(ndev);
     uint64_t animUid = GetAnimUidFromPacket(p);
     NS_LOG_INFO("CsmaPhyTxEndTrace for packet:" << animUid);
-    if (!IsPacketPending(animUid, AnimationInterface::CSMA))
+    if (!IsPacketPending(animUid, NetAnimWriter::CSMA))
     {
         NS_LOG_WARN("CsmaPhyTxEndTrace: unknown Uid");
         NS_FATAL_ERROR("CsmaPhyTxEndTrace: unknown Uid");
         AnimPacketInfo pktInfo(ndev, Simulator::Now());
-        AddPendingPacket(AnimationInterface::CSMA, animUid, pktInfo);
+        AddPendingPacket(NetAnimWriter::CSMA, animUid, pktInfo);
         NS_LOG_WARN("Unknown Uid, but adding Csma Packet anyway");
     }
     /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true);
@@ -1209,7 +1211,7 @@ AnimationInterface::CsmaPhyTxEndTrace(std::string context, Ptr<const Packet> p)
 }
 
 void
-AnimationInterface::CsmaPhyRxEndTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::CsmaPhyRxEndTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1217,7 +1219,7 @@ AnimationInterface::CsmaPhyRxEndTrace(std::string context, Ptr<const Packet> p)
     NS_ASSERT(ndev);
     UpdatePosition(ndev);
     uint64_t animUid = GetAnimUidFromPacket(p);
-    if (!IsPacketPending(animUid, AnimationInterface::CSMA))
+    if (!IsPacketPending(animUid, NetAnimWriter::CSMA))
     {
         NS_LOG_WARN("CsmaPhyRxEndTrace: unknown Uid");
         return;
@@ -1231,14 +1233,14 @@ AnimationInterface::CsmaPhyRxEndTrace(std::string context, Ptr<const Packet> p)
 }
 
 void
-AnimationInterface::CsmaMacRxTrace(std::string context, Ptr<const Packet> p)
+NetAnimWriter::CsmaMacRxTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
     NS_ASSERT(ndev);
     uint64_t animUid = GetAnimUidFromPacket(p);
-    if (!IsPacketPending(animUid, AnimationInterface::CSMA))
+    if (!IsPacketPending(animUid, NetAnimWriter::CSMA))
     {
         NS_LOG_WARN("CsmaMacRxTrace: unknown Uid");
         return;
@@ -1250,9 +1252,9 @@ AnimationInterface::CsmaMacRxTrace(std::string context, Ptr<const Packet> p)
 }
 
 void
-AnimationInterface::OutputWirelessPacketTxInfo(Ptr<const Packet> p,
-                                               AnimPacketInfo& pktInfo,
-                                               uint64_t animUid)
+NetAnimWriter::OutputWirelessPacketTxInfo(Ptr<const Packet> p,
+                                          AnimPacketInfo& pktInfo,
+                                          uint64_t animUid)
 {
     CheckMaxPktsPerTraceFile();
     uint32_t nodeId = 0;
@@ -1271,9 +1273,9 @@ AnimationInterface::OutputWirelessPacketTxInfo(Ptr<const Packet> p,
 }
 
 void
-AnimationInterface::OutputWirelessPacketRxInfo(Ptr<const Packet> p,
-                                               AnimPacketInfo& pktInfo,
-                                               uint64_t animUid)
+NetAnimWriter::OutputWirelessPacketRxInfo(Ptr<const Packet> p,
+                                          AnimPacketInfo& pktInfo,
+                                          uint64_t animUid)
 {
     CheckMaxPktsPerTraceFile();
     uint32_t rxId = pktInfo.m_rxnd->GetNode()->GetId();
@@ -1281,7 +1283,7 @@ AnimationInterface::OutputWirelessPacketRxInfo(Ptr<const Packet> p,
 }
 
 void
-AnimationInterface::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo)
+NetAnimWriter::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo)
 {
     CheckMaxPktsPerTraceFile();
     NS_ASSERT(pktInfo.m_txnd);
@@ -1299,9 +1301,7 @@ AnimationInterface::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInf
 }
 
 void
-AnimationInterface::AddPendingPacket(ProtocolType protocolType,
-                                     uint64_t animUid,
-                                     AnimPacketInfo pktInfo)
+NetAnimWriter::AddPendingPacket(ProtocolType protocolType, uint64_t animUid, AnimPacketInfo pktInfo)
 {
     AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(protocolType);
     NS_ASSERT(pendingPackets);
@@ -1309,7 +1309,7 @@ AnimationInterface::AddPendingPacket(ProtocolType protocolType,
 }
 
 bool
-AnimationInterface::IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType)
+NetAnimWriter::IsPacketPending(uint64_t animUid, NetAnimWriter::ProtocolType protocolType)
 {
     AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(protocolType);
     NS_ASSERT(pendingPackets);
@@ -1317,7 +1317,7 @@ AnimationInterface::IsPacketPending(uint64_t animUid, AnimationInterface::Protoc
 }
 
 void
-AnimationInterface::PurgePendingPackets(AnimationInterface::ProtocolType protocolType)
+NetAnimWriter::PurgePendingPackets(NetAnimWriter::ProtocolType protocolType)
 {
     AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(protocolType);
     NS_ASSERT(pendingPackets);
@@ -1342,33 +1342,33 @@ AnimationInterface::PurgePendingPackets(AnimationInterface::ProtocolType protoco
     }
 }
 
-AnimationInterface::AnimUidPacketInfoMap*
-AnimationInterface::ProtocolTypeToPendingPackets(AnimationInterface::ProtocolType protocolType)
+NetAnimWriter::AnimUidPacketInfoMap*
+NetAnimWriter::ProtocolTypeToPendingPackets(NetAnimWriter::ProtocolType protocolType)
 {
     AnimUidPacketInfoMap* pendingPackets = nullptr;
     switch (protocolType)
     {
-    case AnimationInterface::WIFI: {
+    case NetAnimWriter::WIFI: {
         pendingPackets = &m_pendingWifiPackets;
         break;
     }
-    case AnimationInterface::UAN: {
+    case NetAnimWriter::UAN: {
         pendingPackets = &m_pendingUanPackets;
         break;
     }
-    case AnimationInterface::CSMA: {
+    case NetAnimWriter::CSMA: {
         pendingPackets = &m_pendingCsmaPackets;
         break;
     }
-    case AnimationInterface::WIMAX: {
+    case NetAnimWriter::WIMAX: {
         pendingPackets = &m_pendingWimaxPackets;
         break;
     }
-    case AnimationInterface::LTE: {
+    case NetAnimWriter::LTE: {
         pendingPackets = &m_pendingLtePackets;
         break;
     }
-    case AnimationInterface::LRWPAN: {
+    case NetAnimWriter::LRWPAN: {
         pendingPackets = &m_pendingLrWpanPackets;
         break;
     }
@@ -1377,32 +1377,32 @@ AnimationInterface::ProtocolTypeToPendingPackets(AnimationInterface::ProtocolTyp
 }
 
 std::string
-AnimationInterface::ProtocolTypeToString(AnimationInterface::ProtocolType protocolType)
+NetAnimWriter::ProtocolTypeToString(NetAnimWriter::ProtocolType protocolType)
 {
     std::string result = "Unknown";
     switch (protocolType)
     {
-    case AnimationInterface::WIFI: {
+    case NetAnimWriter::WIFI: {
         result = "WIFI";
         break;
     }
-    case AnimationInterface::UAN: {
+    case NetAnimWriter::UAN: {
         result = "UAN";
         break;
     }
-    case AnimationInterface::CSMA: {
+    case NetAnimWriter::CSMA: {
         result = "CSMA";
         break;
     }
-    case AnimationInterface::WIMAX: {
+    case NetAnimWriter::WIMAX: {
         result = "WIMAX";
         break;
     }
-    case AnimationInterface::LTE: {
+    case NetAnimWriter::LTE: {
         result = "LTE";
         break;
     }
-    case AnimationInterface::LRWPAN: {
+    case NetAnimWriter::LRWPAN: {
         result = "LRWPAN";
         break;
     }
@@ -1413,7 +1413,7 @@ AnimationInterface::ProtocolTypeToString(AnimationInterface::ProtocolType protoc
 // Counters
 
 std::string
-AnimationInterface::CounterTypeToString(CounterType counterType)
+NetAnimWriter::CounterTypeToString(CounterType counterType)
 {
     std::string typeString = "unknown";
     switch (counterType)
@@ -1433,7 +1433,7 @@ AnimationInterface::CounterTypeToString(CounterType counterType)
 // General
 
 std::string
-AnimationInterface::GetPacketMetadata(Ptr<const Packet> p)
+NetAnimWriter::GetPacketMetadata(Ptr<const Packet> p)
 {
     std::ostringstream oss;
     p->Print(oss);
@@ -1441,13 +1441,13 @@ AnimationInterface::GetPacketMetadata(Ptr<const Packet> p)
 }
 
 uint64_t
-AnimationInterface::GetTracePktCount() const
+NetAnimWriter::GetTracePktCount() const
 {
     return m_currentPktCount;
 }
 
 void
-AnimationInterface::StopAnimation(bool onlyAnimation)
+NetAnimWriter::StopAnimation(bool onlyAnimation)
 {
     m_started = false;
     NS_LOG_INFO("Stopping Animation");
@@ -1472,7 +1472,7 @@ AnimationInterface::StopAnimation(bool onlyAnimation)
 }
 
 void
-AnimationInterface::StartAnimation(bool restart)
+NetAnimWriter::StartAnimation(bool restart)
 {
     m_currentPktCount = 0;
     m_started = true;
@@ -1487,21 +1487,20 @@ AnimationInterface::StartAnimation(bool restart)
     WriteNodeEnergies();
     if (!restart)
     {
-        Simulator::Schedule(m_mobilityPollInterval, &AnimationInterface::MobilityAutoCheck, this);
+        Simulator::Schedule(m_mobilityPollInterval, &NetAnimWriter::MobilityAutoCheck, this);
         ConnectCallbacks();
     }
 }
 
 void
-AnimationInterface::AddToIpv4AddressNodeIdTable(std::string ipv4Address, uint32_t nodeId)
+NetAnimWriter::AddToIpv4AddressNodeIdTable(std::string ipv4Address, uint32_t nodeId)
 {
     m_ipv4ToNodeIdMap[ipv4Address] = nodeId;
     m_nodeIdIpv4Map.insert(NodeIdIpv4Pair(nodeId, ipv4Address));
 }
 
 void
-AnimationInterface::AddToIpv4AddressNodeIdTable(std::vector<std::string> ipv4Addresses,
-                                                uint32_t nodeId)
+NetAnimWriter::AddToIpv4AddressNodeIdTable(std::vector<std::string> ipv4Addresses, uint32_t nodeId)
 {
     for (std::vector<std::string>::const_iterator i = ipv4Addresses.begin();
          i != ipv4Addresses.end();
@@ -1512,15 +1511,14 @@ AnimationInterface::AddToIpv4AddressNodeIdTable(std::vector<std::string> ipv4Add
 }
 
 void
-AnimationInterface::AddToIpv6AddressNodeIdTable(std::string ipv6Address, uint32_t nodeId)
+NetAnimWriter::AddToIpv6AddressNodeIdTable(std::string ipv6Address, uint32_t nodeId)
 {
     m_ipv6ToNodeIdMap[ipv6Address] = nodeId;
     m_nodeIdIpv6Map.insert(NodeIdIpv6Pair(nodeId, ipv6Address));
 }
 
 void
-AnimationInterface::AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Addresses,
-                                                uint32_t nodeId)
+NetAnimWriter::AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Addresses, uint32_t nodeId)
 {
     for (std::vector<std::string>::const_iterator i = ipv6Addresses.begin();
          i != ipv6Addresses.end();
@@ -1532,7 +1530,7 @@ AnimationInterface::AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Add
 
 // Callbacks
 void
-AnimationInterface::ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex)
+NetAnimWriter::ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex)
 {
     Ptr<LteEnbPhy> lteEnbPhy = nd->GetPhy();
     Ptr<LteSpectrumPhy> dlPhy = lteEnbPhy->GetDownlinkSpectrumPhy();
@@ -1544,24 +1542,24 @@ AnimationInterface::ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t
     {
         dlPhy->TraceConnect("TxStart",
                             oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyTxStart, this));
+                            MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
         dlPhy->TraceConnect("RxStart",
                             oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyRxStart, this));
+                            MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
     }
     if (ulPhy)
     {
         ulPhy->TraceConnect("TxStart",
                             oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyTxStart, this));
+                            MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
         ulPhy->TraceConnect("RxStart",
                             oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyRxStart, this));
+                            MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
     }
 }
 
 void
-AnimationInterface::ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex)
+NetAnimWriter::ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex)
 {
     Ptr<LteUePhy> lteUePhy = nd->GetPhy();
     Ptr<LteSpectrumPhy> dlPhy = lteUePhy->GetDownlinkSpectrumPhy();
@@ -1573,24 +1571,24 @@ AnimationInterface::ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t d
     {
         dlPhy->TraceConnect("TxStart",
                             oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyTxStart, this));
+                            MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
         dlPhy->TraceConnect("RxStart",
                             oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyRxStart, this));
+                            MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
     }
     if (ulPhy)
     {
         ulPhy->TraceConnect("TxStart",
                             oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyTxStart, this));
+                            MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
         ulPhy->TraceConnect("RxStart",
                             oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyRxStart, this));
+                            MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
     }
 }
 
 void
-AnimationInterface::ConnectLte()
+NetAnimWriter::ConnectLte()
 {
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
@@ -1620,110 +1618,110 @@ AnimationInterface::ConnectLte()
 }
 
 void
-AnimationInterface::ConnectCallbacks()
+NetAnimWriter::ConnectCallbacks()
 {
     // Connect the callbacks
     Config::ConnectFailSafe("/ChannelList/*/TxRxPointToPoint",
-                            MakeCallback(&AnimationInterface::DevTxTrace, this));
+                            MakeCallback(&NetAnimWriter::DevTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxPsduBegin",
-                            MakeCallback(&AnimationInterface::WifiPhyTxBeginTrace, this));
+                            MakeCallback(&NetAnimWriter::WifiPhyTxBeginTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyRxBegin",
-                            MakeCallback(&AnimationInterface::WifiPhyRxBeginTrace, this));
+                            MakeCallback(&NetAnimWriter::WifiPhyRxBeginTrace, this));
     Config::ConnectWithoutContextFailSafe(
         "/NodeList/*/$ns3::MobilityModel/CourseChange",
-        MakeCallback(&AnimationInterface::MobilityCourseChangeTrace, this));
+        MakeCallback(&NetAnimWriter::MobilityCourseChangeTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WimaxNetDevice/Tx",
-                            MakeCallback(&AnimationInterface::WimaxTxTrace, this));
+                            MakeCallback(&NetAnimWriter::WimaxTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WimaxNetDevice/Rx",
-                            MakeCallback(&AnimationInterface::WimaxRxTrace, this));
+                            MakeCallback(&NetAnimWriter::WimaxRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Tx",
-                            MakeCallback(&AnimationInterface::LteTxTrace, this));
+                            MakeCallback(&NetAnimWriter::LteTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Rx",
-                            MakeCallback(&AnimationInterface::LteRxTrace, this));
+                            MakeCallback(&NetAnimWriter::LteRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxBegin",
-                            MakeCallback(&AnimationInterface::CsmaPhyTxBeginTrace, this));
+                            MakeCallback(&NetAnimWriter::CsmaPhyTxBeginTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxEnd",
-                            MakeCallback(&AnimationInterface::CsmaPhyTxEndTrace, this));
+                            MakeCallback(&NetAnimWriter::CsmaPhyTxEndTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyRxEnd",
-                            MakeCallback(&AnimationInterface::CsmaPhyRxEndTrace, this));
+                            MakeCallback(&NetAnimWriter::CsmaPhyRxEndTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/MacRx",
-                            MakeCallback(&AnimationInterface::CsmaMacRxTrace, this));
+                            MakeCallback(&NetAnimWriter::CsmaMacRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyTxBegin",
-                            MakeCallback(&AnimationInterface::UanPhyGenTxTrace, this));
+                            MakeCallback(&NetAnimWriter::UanPhyGenTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyRxBegin",
-                            MakeCallback(&AnimationInterface::UanPhyGenRxTrace, this));
+                            MakeCallback(&NetAnimWriter::UanPhyGenRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/$ns3::BasicEnergySource/RemainingEnergy",
-                            MakeCallback(&AnimationInterface::RemainingEnergyTrace, this));
+                            MakeCallback(&NetAnimWriter::RemainingEnergyTrace, this));
 
     ConnectLte();
 
     Config::ConnectFailSafe("/NodeList/*/$ns3::Ipv4L3Protocol/Tx",
-                            MakeCallback(&AnimationInterface::Ipv4TxTrace, this));
+                            MakeCallback(&NetAnimWriter::Ipv4TxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/$ns3::Ipv4L3Protocol/Rx",
-                            MakeCallback(&AnimationInterface::Ipv4RxTrace, this));
+                            MakeCallback(&NetAnimWriter::Ipv4RxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/$ns3::Ipv4L3Protocol/Drop",
-                            MakeCallback(&AnimationInterface::Ipv4DropTrace, this));
+                            MakeCallback(&NetAnimWriter::Ipv4DropTrace, this));
 
     // Queue Enqueues
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Enqueue",
-                            MakeCallback(&AnimationInterface::EnqueueTrace, this));
+                            MakeCallback(&NetAnimWriter::EnqueueTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Enqueue",
-                            MakeCallback(&AnimationInterface::EnqueueTrace, this));
+                            MakeCallback(&NetAnimWriter::EnqueueTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Enqueue",
-                            MakeCallback(&AnimationInterface::EnqueueTrace, this));
+                            MakeCallback(&NetAnimWriter::EnqueueTrace, this));
 
     // Queue Dequeues
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Dequeue",
-                            MakeCallback(&AnimationInterface::DequeueTrace, this));
+                            MakeCallback(&NetAnimWriter::DequeueTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Dequeue",
-                            MakeCallback(&AnimationInterface::DequeueTrace, this));
+                            MakeCallback(&NetAnimWriter::DequeueTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Dequeue",
-                            MakeCallback(&AnimationInterface::DequeueTrace, this));
+                            MakeCallback(&NetAnimWriter::DequeueTrace, this));
 
     // Queue Drops
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Drop",
-                            MakeCallback(&AnimationInterface::QueueDropTrace, this));
+                            MakeCallback(&NetAnimWriter::QueueDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Drop",
-                            MakeCallback(&AnimationInterface::QueueDropTrace, this));
+                            MakeCallback(&NetAnimWriter::QueueDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Drop",
-                            MakeCallback(&AnimationInterface::QueueDropTrace, this));
+                            MakeCallback(&NetAnimWriter::QueueDropTrace, this));
 
     // Wifi Mac
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacTx",
-                            MakeCallback(&AnimationInterface::WifiMacTxTrace, this));
+                            MakeCallback(&NetAnimWriter::WifiMacTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacTxDrop",
-                            MakeCallback(&AnimationInterface::WifiMacTxDropTrace, this));
+                            MakeCallback(&NetAnimWriter::WifiMacTxDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacRx",
-                            MakeCallback(&AnimationInterface::WifiMacRxTrace, this));
+                            MakeCallback(&NetAnimWriter::WifiMacRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacRxDrop",
-                            MakeCallback(&AnimationInterface::WifiMacRxDropTrace, this));
+                            MakeCallback(&NetAnimWriter::WifiMacRxDropTrace, this));
 
     // Wifi Phy
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxDrop",
-                            MakeCallback(&AnimationInterface::WifiPhyTxDropTrace, this));
+                            MakeCallback(&NetAnimWriter::WifiPhyTxDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyRxDrop",
-                            MakeCallback(&AnimationInterface::WifiPhyRxDropTrace, this));
+                            MakeCallback(&NetAnimWriter::WifiPhyRxDropTrace, this));
 
     // LrWpan
     Config::ConnectFailSafe("NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
-                            MakeCallback(&AnimationInterface::LrWpanPhyTxBeginTrace, this));
+                            MakeCallback(&NetAnimWriter::LrWpanPhyTxBeginTrace, this));
     Config::ConnectFailSafe("NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyRxBegin",
-                            MakeCallback(&AnimationInterface::LrWpanPhyRxBeginTrace, this));
+                            MakeCallback(&NetAnimWriter::LrWpanPhyRxBeginTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Mac/MacTx",
-                            MakeCallback(&AnimationInterface::LrWpanMacTxTrace, this));
+                            MakeCallback(&NetAnimWriter::LrWpanMacTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Mac/MacTxDrop",
-                            MakeCallback(&AnimationInterface::LrWpanMacTxDropTrace, this));
+                            MakeCallback(&NetAnimWriter::LrWpanMacTxDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Mac/MacRx",
-                            MakeCallback(&AnimationInterface::LrWpanMacRxTrace, this));
+                            MakeCallback(&NetAnimWriter::LrWpanMacRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Mac/MacRxDrop",
-                            MakeCallback(&AnimationInterface::LrWpanMacRxDropTrace, this));
+                            MakeCallback(&NetAnimWriter::LrWpanMacRxDropTrace, this));
 }
 
 Vector
-AnimationInterface::UpdatePosition(Ptr<Node> n)
+NetAnimWriter::UpdatePosition(Ptr<Node> n)
 {
     Ptr<MobilityModel> loc = n->GetObject<MobilityModel>();
     if (loc)
@@ -1733,7 +1731,7 @@ AnimationInterface::UpdatePosition(Ptr<Node> n)
     else
     {
         NS_LOG_UNCOND(
-            "AnimationInterface WARNING:Node:"
+            "NetAnimWriter WARNING:Node:"
             << n->GetId()
             << " Does not have a mobility model. Use SetConstantPosition if it is stationary");
         Ptr<UniformRandomVariable> x = CreateObject<UniformRandomVariable>();
@@ -1748,14 +1746,14 @@ AnimationInterface::UpdatePosition(Ptr<Node> n)
 }
 
 Vector
-AnimationInterface::UpdatePosition(Ptr<Node> n, Vector v)
+NetAnimWriter::UpdatePosition(Ptr<Node> n, Vector v)
 {
     m_nodeLocation[n->GetId()] = v;
     return v;
 }
 
 Vector
-AnimationInterface::UpdatePosition(Ptr<NetDevice> ndev)
+NetAnimWriter::UpdatePosition(Ptr<NetDevice> ndev)
 {
     Ptr<Node> n = ndev->GetNode();
     NS_ASSERT(n);
@@ -1763,7 +1761,7 @@ AnimationInterface::UpdatePosition(Ptr<NetDevice> ndev)
 }
 
 Vector
-AnimationInterface::GetPosition(Ptr<Node> n)
+NetAnimWriter::GetPosition(Ptr<Node> n)
 {
     if (m_nodeLocation.find(n->GetId()) == m_nodeLocation.end())
     {
@@ -1773,7 +1771,7 @@ AnimationInterface::GetPosition(Ptr<Node> n)
 }
 
 std::string
-AnimationInterface::GetMacAddress(Ptr<NetDevice> nd)
+NetAnimWriter::GetMacAddress(Ptr<NetDevice> nd)
 {
     Address nodeAddr = nd->GetAddress();
     std::ostringstream oss;
@@ -1782,7 +1780,7 @@ AnimationInterface::GetMacAddress(Ptr<NetDevice> nd)
 }
 
 std::string
-AnimationInterface::GetIpv4Address(Ptr<NetDevice> nd)
+NetAnimWriter::GetIpv4Address(Ptr<NetDevice> nd)
 {
     Ptr<Ipv4> ipv4 = NodeList::GetNode(nd->GetNode()->GetId())->GetObject<Ipv4>();
     if (!ipv4)
@@ -1803,7 +1801,7 @@ AnimationInterface::GetIpv4Address(Ptr<NetDevice> nd)
 }
 
 std::string
-AnimationInterface::GetIpv6Address(Ptr<NetDevice> nd)
+NetAnimWriter::GetIpv6Address(Ptr<NetDevice> nd)
 {
     Ptr<Ipv6> ipv6 = NodeList::GetNode(nd->GetNode()->GetId())->GetObject<Ipv6>();
     if (!ipv6)
@@ -1839,7 +1837,7 @@ AnimationInterface::GetIpv6Address(Ptr<NetDevice> nd)
 }
 
 std::vector<std::string>
-AnimationInterface::GetIpv4Addresses(Ptr<NetDevice> nd)
+NetAnimWriter::GetIpv4Addresses(Ptr<NetDevice> nd)
 {
     std::vector<std::string> ipv4Addresses;
     Ptr<Ipv4> ipv4 = NodeList::GetNode(nd->GetNode()->GetId())->GetObject<Ipv4>();
@@ -1865,7 +1863,7 @@ AnimationInterface::GetIpv4Addresses(Ptr<NetDevice> nd)
 }
 
 std::vector<std::string>
-AnimationInterface::GetIpv6Addresses(Ptr<NetDevice> nd)
+NetAnimWriter::GetIpv6Addresses(Ptr<NetDevice> nd)
 {
     std::vector<std::string> ipv6Addresses;
     Ptr<Ipv6> ipv6 = NodeList::GetNode(nd->GetNode()->GetId())->GetObject<Ipv6>();
@@ -1891,7 +1889,7 @@ AnimationInterface::GetIpv6Addresses(Ptr<NetDevice> nd)
 }
 
 void
-AnimationInterface::WriteIpv4Addresses()
+NetAnimWriter::WriteIpv4Addresses()
 {
     for (NodeIdIpv4Map::const_iterator i = m_nodeIdIpv4Map.begin(); i != m_nodeIdIpv4Map.end(); ++i)
     {
@@ -1907,7 +1905,7 @@ AnimationInterface::WriteIpv4Addresses()
 }
 
 void
-AnimationInterface::WriteIpv6Addresses()
+NetAnimWriter::WriteIpv6Addresses()
 {
     for (NodeIdIpv6Map::const_iterator i = m_nodeIdIpv6Map.begin(); i != m_nodeIdIpv6Map.end();
          i = m_nodeIdIpv6Map.upper_bound(i->first))
@@ -1924,7 +1922,7 @@ AnimationInterface::WriteIpv6Addresses()
 }
 
 void
-AnimationInterface::WriteLinkProperties()
+NetAnimWriter::WriteLinkProperties()
 {
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
@@ -2025,7 +2023,7 @@ AnimationInterface::WriteLinkProperties()
 }
 
 void
-AnimationInterface::WriteNodes()
+NetAnimWriter::WriteNodes()
 {
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
@@ -2037,7 +2035,7 @@ AnimationInterface::WriteNodes()
 }
 
 void
-AnimationInterface::WriteNodeColors()
+NetAnimWriter::WriteNodeColors()
 {
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
@@ -2052,23 +2050,22 @@ AnimationInterface::WriteNodeColors()
 }
 
 void
-AnimationInterface::WriteNodeSizes()
+NetAnimWriter::WriteNodeSizes()
 {
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
         Ptr<Node> n = *i;
         NS_LOG_INFO("Update Size for Node: " << n->GetId());
-        AnimationInterface::NodeSize s = {1, 1};
+        NetAnimWriter::NodeSize s = {1, 1};
         m_nodeSizes[n->GetId()] = s;
         UpdateNodeSize(n->GetId(), s.width, s.height);
     }
 }
 
 void
-AnimationInterface::WriteNodeEnergies()
+NetAnimWriter::WriteNodeEnergies()
 {
-    m_remainingEnergyCounterId =
-        AddNodeCounter("RemainingEnergy", AnimationInterface::DOUBLE_COUNTER);
+    m_remainingEnergyCounterId = AddNodeCounter("RemainingEnergy", NetAnimWriter::DOUBLE_COUNTER);
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
         Ptr<Node> n = *i;
@@ -2080,13 +2077,13 @@ AnimationInterface::WriteNodeEnergies()
 }
 
 bool
-AnimationInterface::IsInTimeWindow()
+NetAnimWriter::IsInTimeWindow()
 {
     return Simulator::Now() >= m_startTime && Simulator::Now() <= m_stopTime;
 }
 
 void
-AnimationInterface::SetOutputFile(const std::string& fn, bool routing)
+NetAnimWriter::SetOutputFile(const std::string& fn, bool routing)
 {
     if (!routing && m_f)
     {
@@ -2119,7 +2116,7 @@ AnimationInterface::SetOutputFile(const std::string& fn, bool routing)
 }
 
 void
-AnimationInterface::CheckMaxPktsPerTraceFile()
+NetAnimWriter::CheckMaxPktsPerTraceFile()
 {
     // Start a new trace file if the current packet count exceeded max packets per file
     ++m_currentPktCount;
@@ -2132,13 +2129,13 @@ AnimationInterface::CheckMaxPktsPerTraceFile()
 }
 
 std::string
-AnimationInterface::GetNetAnimVersion()
+NetAnimWriter::GetNetAnimVersion()
 {
     return NETANIM_VERSION;
 }
 
 void
-AnimationInterface::TrackQueueCounters()
+NetAnimWriter::TrackQueueCounters()
 {
     if (Simulator::Now() > m_queueCountersStopTime)
     {
@@ -2152,11 +2149,11 @@ AnimationInterface::TrackQueueCounters()
         UpdateNodeCounter(m_queueDequeueCounterId, nodeId, m_nodeQueueDequeue[nodeId]);
         UpdateNodeCounter(m_queueDropCounterId, nodeId, m_nodeQueueDrop[nodeId]);
     }
-    Simulator::Schedule(m_queueCountersPollInterval, &AnimationInterface::TrackQueueCounters, this);
+    Simulator::Schedule(m_queueCountersPollInterval, &NetAnimWriter::TrackQueueCounters, this);
 }
 
 void
-AnimationInterface::TrackWifiMacCounters()
+NetAnimWriter::TrackWifiMacCounters()
 {
     if (Simulator::Now() > m_wifiMacCountersStopTime)
     {
@@ -2171,13 +2168,11 @@ AnimationInterface::TrackWifiMacCounters()
         UpdateNodeCounter(m_wifiMacRxCounterId, nodeId, m_nodeWifiMacRx[nodeId]);
         UpdateNodeCounter(m_wifiMacRxDropCounterId, nodeId, m_nodeWifiMacRxDrop[nodeId]);
     }
-    Simulator::Schedule(m_wifiMacCountersPollInterval,
-                        &AnimationInterface::TrackWifiMacCounters,
-                        this);
+    Simulator::Schedule(m_wifiMacCountersPollInterval, &NetAnimWriter::TrackWifiMacCounters, this);
 }
 
 void
-AnimationInterface::TrackWifiPhyCounters()
+NetAnimWriter::TrackWifiPhyCounters()
 {
     if (Simulator::Now() > m_wifiPhyCountersStopTime)
     {
@@ -2190,13 +2185,11 @@ AnimationInterface::TrackWifiPhyCounters()
         UpdateNodeCounter(m_wifiPhyTxDropCounterId, nodeId, m_nodeWifiPhyTxDrop[nodeId]);
         UpdateNodeCounter(m_wifiPhyRxDropCounterId, nodeId, m_nodeWifiPhyRxDrop[nodeId]);
     }
-    Simulator::Schedule(m_wifiPhyCountersPollInterval,
-                        &AnimationInterface::TrackWifiPhyCounters,
-                        this);
+    Simulator::Schedule(m_wifiPhyCountersPollInterval, &NetAnimWriter::TrackWifiPhyCounters, this);
 }
 
 void
-AnimationInterface::TrackIpv4L3ProtocolCounters()
+NetAnimWriter::TrackIpv4L3ProtocolCounters()
 {
     if (Simulator::Now() > m_ipv4L3ProtocolCountersStopTime)
     {
@@ -2211,14 +2204,14 @@ AnimationInterface::TrackIpv4L3ProtocolCounters()
         UpdateNodeCounter(m_ipv4L3ProtocolDropCounterId, nodeId, m_nodeIpv4Drop[nodeId]);
     }
     Simulator::Schedule(m_ipv4L3ProtocolCountersPollInterval,
-                        &AnimationInterface::TrackIpv4L3ProtocolCounters,
+                        &NetAnimWriter::TrackIpv4L3ProtocolCounters,
                         this);
 }
 
 /***** Routing-related *****/
 
 void
-AnimationInterface::TrackIpv4RoutePaths()
+NetAnimWriter::TrackIpv4RoutePaths()
 {
     if (m_ipv4RouteTrackElements.empty())
     {
@@ -2292,7 +2285,7 @@ AnimationInterface::TrackIpv4RoutePaths()
 }
 
 void
-AnimationInterface::TrackIpv4Route()
+NetAnimWriter::TrackIpv4Route()
 {
     if (Simulator::Now() > m_routingStopTime)
     {
@@ -2316,11 +2309,11 @@ AnimationInterface::TrackIpv4Route()
         }
     }
     TrackIpv4RoutePaths();
-    Simulator::Schedule(m_routingPollInterval, &AnimationInterface::TrackIpv4Route, this);
+    Simulator::Schedule(m_routingPollInterval, &NetAnimWriter::TrackIpv4Route, this);
 }
 
 std::string
-AnimationInterface::GetIpv4RoutingTable(Ptr<Node> n)
+NetAnimWriter::GetIpv4RoutingTable(Ptr<Node> n)
 {
     NS_ASSERT(n);
     Ptr<ns3::Ipv4> ipv4 = n->GetObject<ns3::Ipv4>();
@@ -2336,9 +2329,9 @@ AnimationInterface::GetIpv4RoutingTable(Ptr<Node> n)
 }
 
 void
-AnimationInterface::RecursiveIpv4RoutePathSearch(std::string from,
-                                                 std::string to,
-                                                 Ipv4RoutePathElements& rpElements)
+NetAnimWriter::RecursiveIpv4RoutePathSearch(std::string from,
+                                            std::string to,
+                                            Ipv4RoutePathElements& rpElements)
 {
     NS_LOG_INFO("RecursiveIpv4RoutePathSearch from:" << from << " to:" << to);
     if (from == "0.0.0.0" || from == "127.0.0.1")
@@ -2409,7 +2402,7 @@ AnimationInterface::RecursiveIpv4RoutePathSearch(std::string from,
 /***** WriteXml *****/
 
 void
-AnimationInterface::WriteXmlAnim(bool routing)
+NetAnimWriter::WriteXmlAnim(bool routing)
 {
     AnimXmlElement element("anim");
     element.AddAttribute("ver", GetNetAnimVersion());
@@ -2427,7 +2420,7 @@ AnimationInterface::WriteXmlAnim(bool routing)
 }
 
 void
-AnimationInterface::WriteXmlClose(std::string name, bool routing)
+NetAnimWriter::WriteXmlClose(std::string name, bool routing)
 {
     std::string closeString = "</" + name + ">\n";
     if (!routing)
@@ -2441,7 +2434,7 @@ AnimationInterface::WriteXmlClose(std::string name, bool routing)
 }
 
 void
-AnimationInterface::WriteXmlNode(uint32_t id, uint32_t sysId, double locX, double locY)
+NetAnimWriter::WriteXmlNode(uint32_t id, uint32_t sysId, double locX, double locY)
 {
     AnimXmlElement element("node");
     element.AddAttribute("id", id);
@@ -2452,7 +2445,7 @@ AnimationInterface::WriteXmlNode(uint32_t id, uint32_t sysId, double locX, doubl
 }
 
 void
-AnimationInterface::WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::string linkDescription)
+NetAnimWriter::WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::string linkDescription)
 {
     AnimXmlElement element("linkupdate");
     element.AddAttribute("t", Simulator::Now().GetSeconds());
@@ -2463,7 +2456,7 @@ AnimationInterface::WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::stri
 }
 
 void
-AnimationInterface::WriteXmlLink(uint32_t fromId, uint32_t toLp, uint32_t toId)
+NetAnimWriter::WriteXmlLink(uint32_t fromId, uint32_t toLp, uint32_t toId)
 {
     AnimXmlElement element("link");
     element.AddAttribute("fromId", fromId);
@@ -2492,7 +2485,7 @@ AnimationInterface::WriteXmlLink(uint32_t fromId, uint32_t toLp, uint32_t toId)
 }
 
 void
-AnimationInterface::WriteXmlIpv4Addresses(uint32_t nodeId, std::vector<std::string> ipv4Addresses)
+NetAnimWriter::WriteXmlIpv4Addresses(uint32_t nodeId, std::vector<std::string> ipv4Addresses)
 {
     AnimXmlElement element("ip");
     element.AddAttribute("n", nodeId);
@@ -2508,7 +2501,7 @@ AnimationInterface::WriteXmlIpv4Addresses(uint32_t nodeId, std::vector<std::stri
 }
 
 void
-AnimationInterface::WriteXmlIpv6Addresses(uint32_t nodeId, std::vector<std::string> ipv6Addresses)
+NetAnimWriter::WriteXmlIpv6Addresses(uint32_t nodeId, std::vector<std::string> ipv6Addresses)
 {
     AnimXmlElement element("ipv6");
     element.AddAttribute("n", nodeId);
@@ -2524,7 +2517,7 @@ AnimationInterface::WriteXmlIpv6Addresses(uint32_t nodeId, std::vector<std::stri
 }
 
 void
-AnimationInterface::WriteXmlRouting(uint32_t nodeId, std::string routingInfo)
+NetAnimWriter::WriteXmlRouting(uint32_t nodeId, std::string routingInfo)
 {
     AnimXmlElement element("rt");
     element.AddAttribute("t", Simulator::Now().GetSeconds());
@@ -2534,9 +2527,9 @@ AnimationInterface::WriteXmlRouting(uint32_t nodeId, std::string routingInfo)
 }
 
 void
-AnimationInterface::WriteXmlRp(uint32_t nodeId,
-                               std::string destination,
-                               Ipv4RoutePathElements rpElements)
+NetAnimWriter::WriteXmlRp(uint32_t nodeId,
+                          std::string destination,
+                          Ipv4RoutePathElements rpElements)
 {
     std::string tagName = "rp";
     AnimXmlElement element(tagName, false);
@@ -2556,7 +2549,7 @@ AnimationInterface::WriteXmlRp(uint32_t nodeId,
 }
 
 void
-AnimationInterface::WriteXmlPRef(uint64_t animUid, uint32_t fId, double fbTx, std::string metaInfo)
+NetAnimWriter::WriteXmlPRef(uint64_t animUid, uint32_t fId, double fbTx, std::string metaInfo)
 {
     AnimXmlElement element("pr");
     element.AddAttribute("uId", animUid);
@@ -2570,11 +2563,11 @@ AnimationInterface::WriteXmlPRef(uint64_t animUid, uint32_t fId, double fbTx, st
 }
 
 void
-AnimationInterface::WriteXmlP(uint64_t animUid,
-                              std::string pktType,
-                              uint32_t tId,
-                              double fbRx,
-                              double lbRx)
+NetAnimWriter::WriteXmlP(uint64_t animUid,
+                         std::string pktType,
+                         uint32_t tId,
+                         double fbRx,
+                         double lbRx)
 {
     AnimXmlElement element(pktType);
     element.AddAttribute("uId", animUid);
@@ -2585,14 +2578,14 @@ AnimationInterface::WriteXmlP(uint64_t animUid,
 }
 
 void
-AnimationInterface::WriteXmlP(std::string pktType,
-                              uint32_t fId,
-                              double fbTx,
-                              double lbTx,
-                              uint32_t tId,
-                              double fbRx,
-                              double lbRx,
-                              std::string metaInfo)
+NetAnimWriter::WriteXmlP(std::string pktType,
+                         uint32_t fId,
+                         double fbTx,
+                         double lbTx,
+                         uint32_t tId,
+                         double fbRx,
+                         double lbRx,
+                         std::string metaInfo)
 {
     AnimXmlElement element(pktType);
     element.AddAttribute("fId", fId);
@@ -2609,9 +2602,9 @@ AnimationInterface::WriteXmlP(std::string pktType,
 }
 
 void
-AnimationInterface::WriteXmlAddNodeCounter(uint32_t nodeCounterId,
-                                           std::string counterName,
-                                           CounterType counterType)
+NetAnimWriter::WriteXmlAddNodeCounter(uint32_t nodeCounterId,
+                                      std::string counterName,
+                                      CounterType counterType)
 {
     AnimXmlElement element("ncs");
     element.AddAttribute("ncId", nodeCounterId);
@@ -2621,7 +2614,7 @@ AnimationInterface::WriteXmlAddNodeCounter(uint32_t nodeCounterId,
 }
 
 void
-AnimationInterface::WriteXmlAddResource(uint32_t resourceId, std::string resourcePath)
+NetAnimWriter::WriteXmlAddResource(uint32_t resourceId, std::string resourcePath)
 {
     AnimXmlElement element("res");
     element.AddAttribute("rid", resourceId);
@@ -2630,7 +2623,7 @@ AnimationInterface::WriteXmlAddResource(uint32_t resourceId, std::string resourc
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
+NetAnimWriter::WriteXmlUpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
 {
     AnimXmlElement element("nu");
     element.AddAttribute("p", "i");
@@ -2641,7 +2634,7 @@ AnimationInterface::WriteXmlUpdateNodeImage(uint32_t nodeId, uint32_t resourceId
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodeSize(uint32_t nodeId, double width, double height)
+NetAnimWriter::WriteXmlUpdateNodeSize(uint32_t nodeId, double width, double height)
 {
     AnimXmlElement element("nu");
     element.AddAttribute("p", "s");
@@ -2653,7 +2646,7 @@ AnimationInterface::WriteXmlUpdateNodeSize(uint32_t nodeId, double width, double
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodePosition(uint32_t nodeId, double x, double y)
+NetAnimWriter::WriteXmlUpdateNodePosition(uint32_t nodeId, double x, double y)
 {
     AnimXmlElement element("nu");
     element.AddAttribute("p", "p");
@@ -2665,7 +2658,7 @@ AnimationInterface::WriteXmlUpdateNodePosition(uint32_t nodeId, double x, double
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b)
+NetAnimWriter::WriteXmlUpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b)
 {
     AnimXmlElement element("nu");
     element.AddAttribute("p", "c");
@@ -2678,7 +2671,7 @@ AnimationInterface::WriteXmlUpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t 
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodeDescription(uint32_t nodeId)
+NetAnimWriter::WriteXmlUpdateNodeDescription(uint32_t nodeId)
 {
     AnimXmlElement element("nu");
     element.AddAttribute("p", "d");
@@ -2692,9 +2685,9 @@ AnimationInterface::WriteXmlUpdateNodeDescription(uint32_t nodeId)
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodeCounter(uint32_t nodeCounterId,
-                                              uint32_t nodeId,
-                                              double counterValue)
+NetAnimWriter::WriteXmlUpdateNodeCounter(uint32_t nodeCounterId,
+                                         uint32_t nodeId,
+                                         double counterValue)
 {
     AnimXmlElement element("nc");
     element.AddAttribute("c", nodeCounterId);
@@ -2705,12 +2698,12 @@ AnimationInterface::WriteXmlUpdateNodeCounter(uint32_t nodeCounterId,
 }
 
 void
-AnimationInterface::WriteXmlUpdateBackground(std::string fileName,
-                                             double x,
-                                             double y,
-                                             double scaleX,
-                                             double scaleY,
-                                             double opacity)
+NetAnimWriter::WriteXmlUpdateBackground(std::string fileName,
+                                        double x,
+                                        double y,
+                                        double scaleX,
+                                        double scaleY,
+                                        double opacity)
 {
     AnimXmlElement element("bg");
     element.AddAttribute("f", fileName);
@@ -2723,9 +2716,9 @@ AnimationInterface::WriteXmlUpdateBackground(std::string fileName,
 }
 
 void
-AnimationInterface::WriteXmlNonP2pLinkProperties(uint32_t id,
-                                                 std::string ipAddress,
-                                                 std::string channelType)
+NetAnimWriter::WriteXmlNonP2pLinkProperties(uint32_t id,
+                                            std::string ipAddress,
+                                            std::string channelType)
 {
     AnimXmlElement element("nonp2plinkproperties");
     element.AddAttribute("id", id);
@@ -2736,7 +2729,7 @@ AnimationInterface::WriteXmlNonP2pLinkProperties(uint32_t id,
 
 /***** AnimXmlElement  *****/
 
-AnimationInterface::AnimXmlElement::AnimXmlElement(std::string tagName, bool emptyElement)
+NetAnimWriter::AnimXmlElement::AnimXmlElement(std::string tagName, bool emptyElement)
     : m_tagName(tagName),
       m_text("")
 {
@@ -2744,7 +2737,7 @@ AnimationInterface::AnimXmlElement::AnimXmlElement(std::string tagName, bool emp
 
 template <typename T>
 void
-AnimationInterface::AnimXmlElement::AddAttribute(std::string attribute, T value, bool xmlEscape)
+NetAnimWriter::AnimXmlElement::AddAttribute(std::string attribute, T value, bool xmlEscape)
 {
     std::ostringstream oss;
     oss << std::setprecision(10);
@@ -2788,19 +2781,19 @@ AnimationInterface::AnimXmlElement::AddAttribute(std::string attribute, T value,
 }
 
 void
-AnimationInterface::AnimXmlElement::AppendChild(AnimXmlElement e)
+NetAnimWriter::AnimXmlElement::AppendChild(AnimXmlElement e)
 {
     m_children.push_back(e.ToString());
 }
 
 void
-AnimationInterface::AnimXmlElement::SetText(std::string text)
+NetAnimWriter::AnimXmlElement::SetText(std::string text)
 {
     m_text = text;
 }
 
 std::string
-AnimationInterface::AnimXmlElement::ToString(bool autoClose)
+NetAnimWriter::AnimXmlElement::ToString(bool autoClose)
 {
     std::string elementString = "<" + m_tagName + " ";
 
@@ -2896,7 +2889,7 @@ AnimByteTag::Get() const
     return m_AnimUid;
 }
 
-AnimationInterface::AnimPacketInfo::AnimPacketInfo()
+NetAnimWriter::AnimPacketInfo::AnimPacketInfo()
     : m_txnd(nullptr),
       m_txNodeId(0),
       m_fbTx(0),
@@ -2905,7 +2898,7 @@ AnimationInterface::AnimPacketInfo::AnimPacketInfo()
 {
 }
 
-AnimationInterface::AnimPacketInfo::AnimPacketInfo(const AnimPacketInfo& pInfo)
+NetAnimWriter::AnimPacketInfo::AnimPacketInfo(const AnimPacketInfo& pInfo)
 {
     m_txnd = pInfo.m_txnd;
     m_txNodeId = pInfo.m_txNodeId;
@@ -2914,9 +2907,9 @@ AnimationInterface::AnimPacketInfo::AnimPacketInfo(const AnimPacketInfo& pInfo)
     m_lbRx = pInfo.m_lbRx;
 }
 
-AnimationInterface::AnimPacketInfo::AnimPacketInfo(Ptr<const NetDevice> txnd,
-                                                   const Time fbTx,
-                                                   uint32_t txNodeId)
+NetAnimWriter::AnimPacketInfo::AnimPacketInfo(Ptr<const NetDevice> txnd,
+                                              const Time fbTx,
+                                              uint32_t txNodeId)
     : m_txnd(txnd),
       m_txNodeId(0),
       m_fbTx(fbTx.GetSeconds()),
@@ -2930,11 +2923,21 @@ AnimationInterface::AnimPacketInfo::AnimPacketInfo(Ptr<const NetDevice> txnd,
 }
 
 void
-AnimationInterface::AnimPacketInfo::ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx)
+NetAnimWriter::AnimPacketInfo::ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx)
 {
     Ptr<Node> n = nd->GetNode();
     m_fbRx = fbRx;
     m_rxnd = nd;
 }
 
+AnimationInterface::AnimationInterface(const std::string fn)
+{
+    auto netanim = CreateObject<NetAnimWriter>(fn);
+    NodeList::Iterator listEnd = NodeList::End();
+    for (NodeList::Iterator i = NodeList::Begin(); i != listEnd; i++)
+    {
+        Ptr<Node> node = *i;
+        node->AggregateObject(Proxy(netanim));
+    }
+}
 } // namespace ns3
