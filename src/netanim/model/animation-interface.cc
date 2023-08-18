@@ -2933,11 +2933,14 @@ NetAnimWriter::AnimPacketInfo::ProcessRxBegin(Ptr<const NetDevice> nd, const dou
 AnimationInterface::AnimationInterface(const std::string fn)
 {
     auto netanim = CreateObject<NetAnimWriter>(fn);
+    auto proxy = CreateObject<Proxy<NetAnimWriter>>(netanim);
+
     NodeList::Iterator listEnd = NodeList::End();
     for (NodeList::Iterator i = NodeList::Begin(); i != listEnd; i++)
     {
         Ptr<Node> node = *i;
-        node->AggregateObject(Proxy(netanim));
+        node->AggregateObject(proxy);
     }
 }
+
 } // namespace ns3

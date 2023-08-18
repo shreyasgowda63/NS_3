@@ -24,5 +24,4 @@ class Proxy : public Object
 
     Ptr<T> m_item;
 };
-
 } // namespace ns3
