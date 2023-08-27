@@ -12,15 +12,15 @@ class Proxy : public Object
     {
     }
 
-    T operator*()
-    {
-        return (*m_item);
-    }
+    // T operator*()
+    // {
+    //     return (*m_item);
+    // }
 
-    T* operator->()
-    {
-        return &(*m_item);
-    } // Support drill-down
+    // T* operator->()
+    // {
+    //     return &(*m_item);
+    // } // Support drill-down
 
     Ptr<T> m_item;
 };

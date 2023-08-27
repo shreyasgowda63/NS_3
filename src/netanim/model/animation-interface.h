@@ -27,8 +27,8 @@
 #include "ns3/ipv4-l3-protocol.h"
 #include "ns3/ipv4.h"
 #include "ns3/log.h"
-#include "ns3/lte-enb-net-device.h"
-#include "ns3/lte-ue-net-device.h"
+// #include "ns3/lte-enb-net-device.h"
+// #include "ns3/lte-ue-net-device.h"
 #include "ns3/mac48-address.h"
 #include "ns3/net-device.h"
 #include "ns3/node-container.h"
@@ -595,7 +595,7 @@ class NetAnimWriter : public Object
     enum ProtocolType
     {
         UAN,
-        LTE,
+        // LTE,
         WIFI,
         WIMAX,
         CSMA,
@@ -720,9 +720,9 @@ class NetAnimWriter : public Object
     AnimUidPacketInfoMap m_pendingWifiPackets;   ///< pending wifi packets
     AnimUidPacketInfoMap m_pendingWimaxPackets;  ///< pending wimax packets
     AnimUidPacketInfoMap m_pendingLrWpanPackets; ///< pending LR-WPAN packets
-    AnimUidPacketInfoMap m_pendingLtePackets;    ///< pending LTE packets
-    AnimUidPacketInfoMap m_pendingCsmaPackets;   ///< pending CSMA packets
-    AnimUidPacketInfoMap m_pendingUanPackets;    ///< pending UAN packets
+    // AnimUidPacketInfoMap m_pendingLtePackets;    ///< pending LTE packets
+    AnimUidPacketInfoMap m_pendingCsmaPackets; ///< pending CSMA packets
+    AnimUidPacketInfoMap m_pendingUanPackets;  ///< pending UAN packets
 
     std::map<uint32_t, Vector> m_nodeLocation;         ///< node location
     std::map<std::string, uint32_t> m_macToNodeIdMap;  ///< MAC to node ID map
@@ -1159,32 +1159,32 @@ class NetAnimWriter : public Object
      * \param p the packet
      */
     void CsmaMacRxTrace(std::string context, Ptr<const Packet> p);
-    /**
-     * LTE transmit trace function
-     * \param context the context
-     * \param p the packet
-     * \param m the MAC address
-     */
-    void LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
-    /**
-     * LTE receive trace function
-     * \param context the context
-     * \param p the packet
-     * \param m the MAC address
-     */
-    void LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
-    /**
-     * LTE Spectrum Phy transmit start function
-     * \param context the context
-     * \param pb the packet burst
-     */
-    void LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb);
-    /**
-     * LTE Spectrum Phy receive start function
-     * \param context the context
-     * \param pb the packet burst
-     */
-    void LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb);
+    // /**
+    //  * LTE transmit trace function
+    //  * \param context the context
+    //  * \param p the packet
+    //  * \param m the MAC address
+    //  */
+    // void LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
+    // /**
+    //  * LTE receive trace function
+    //  * \param context the context
+    //  * \param p the packet
+    //  * \param m the MAC address
+    //  */
+    // void LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
+    // /**
+    //  * LTE Spectrum Phy transmit start function
+    //  * \param context the context
+    //  * \param pb the packet burst
+    //  */
+    // void LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb);
+    // /**
+    //  * LTE Spectrum Phy receive start function
+    //  * \param context the context
+    //  * \param pb the packet burst
+    //  */
+    // void LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb);
     /**
      * UAN Phy gen transmit trace function
      * \param context the context
@@ -1226,21 +1226,21 @@ class NetAnimWriter : public Object
     /// Connect callbacks function
     void ConnectCallbacks();
     /// Connect LTE function
-    void ConnectLte();
-    /**
-     * Connect LTE ue function
-     * \param n the node
-     * \param nd the device
-     * \param devIndex the device index
-     */
-    void ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex);
-    /**
-     * Connect LTE ENB function
-     * \param n the node
-     * \param nd the device
-     * \param devIndex the device index
-     */
-    void ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex);
+    // void ConnectLte();
+    // /**
+    //  * Connect LTE ue function
+    //  * \param n the node
+    //  * \param nd the device
+    //  * \param devIndex the device index
+    //  */
+    // void ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex);
+    // /**
+    //  * Connect LTE ENB function
+    //  * \param n the node
+    //  * \param nd the device
+    //  * \param devIndex the device index
+    //  */
+    // void ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex);
 
     // ##### Mobility #####
     /**

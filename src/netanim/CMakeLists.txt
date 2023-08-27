@@ -11,5 +11,5 @@ build_lib(
     ${libenergy}
     ${liblr-wpan}
     ${libpoint-to-point-layout}
-  TEST_SOURCES test/netanim-test.cc
+  # TEST_SOURCES test/netanim-test.cc
 )

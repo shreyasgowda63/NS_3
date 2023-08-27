@@ -49,8 +49,8 @@
 #include "ns3/ipv6.h"
 #include "ns3/lr-wpan-mac-header.h"
 #include "ns3/lr-wpan-net-device.h"
-#include "ns3/lte-enb-phy.h"
-#include "ns3/lte-ue-phy.h"
+// #include "ns3/lte-enb-phy.h"
+// #include "ns3/lte-ue-phy.h"
 #include "ns3/mobility-model.h"
 #include "ns3/node.h"
 #include "ns3/object.h"
@@ -492,7 +492,7 @@ NetAnimWriter::MobilityAutoCheck()
     {
         PurgePendingPackets(NetAnimWriter::WIFI);
         PurgePendingPackets(NetAnimWriter::WIMAX);
-        PurgePendingPackets(NetAnimWriter::LTE);
+        // PurgePendingPackets(NetAnimWriter::LTE);
         PurgePendingPackets(NetAnimWriter::CSMA);
         PurgePendingPackets(NetAnimWriter::LRWPAN);
         Simulator::Schedule(m_mobilityPollInterval, &NetAnimWriter::MobilityAutoCheck, this);
@@ -1097,79 +1097,79 @@ NetAnimWriter::WimaxRxTrace(std::string context, Ptr<const Packet> p, const Mac4
     return GenericWirelessRxTrace(context, p, NetAnimWriter::WIMAX);
 }
 
-void
-NetAnimWriter::LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
-{
-    NS_LOG_FUNCTION(this);
-    return GenericWirelessTxTrace(context, p, NetAnimWriter::LTE);
-}
+// void
+// NetAnimWriter::LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+// {
+//     NS_LOG_FUNCTION(this);
+//     return GenericWirelessTxTrace(context, p, NetAnimWriter::LTE);
+// }
 
-void
-NetAnimWriter::LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
-{
-    NS_LOG_FUNCTION(this);
-    return GenericWirelessRxTrace(context, p, NetAnimWriter::LTE);
-}
+// void
+// NetAnimWriter::LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+// {
+//     NS_LOG_FUNCTION(this);
+//     return GenericWirelessRxTrace(context, p, NetAnimWriter::LTE);
+// }
 
-void
-NetAnimWriter::LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    if (!pb)
-    {
-        NS_LOG_WARN("pb == 0. Not yet supported");
-        return;
-    }
-    context = "/" + context;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
+// void
+// NetAnimWriter::LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb)
+// {
+//     NS_LOG_FUNCTION(this);
+//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
+//     if (!pb)
+//     {
+//         NS_LOG_WARN("pb == 0. Not yet supported");
+//         return;
+//     }
+//     context = "/" + context;
+//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
+//     NS_ASSERT(ndev);
+//     UpdatePosition(ndev);
 
-    std::list<Ptr<Packet>> pbList = pb->GetPackets();
-    for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
-    {
-        Ptr<Packet> p = *i;
-        ++gAnimUid;
-        NS_LOG_INFO("LteSpectrumPhyTxTrace for packet:" << gAnimUid);
-        AnimPacketInfo pktInfo(ndev, Simulator::Now());
-        AddByteTag(gAnimUid, p);
-        AddPendingPacket(NetAnimWriter::LTE, gAnimUid, pktInfo);
-        OutputWirelessPacketTxInfo(p, pktInfo, gAnimUid);
-    }
-}
+//     std::list<Ptr<Packet>> pbList = pb->GetPackets();
+//     for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
+//     {
+//         Ptr<Packet> p = *i;
+//         ++gAnimUid;
+//         NS_LOG_INFO("LteSpectrumPhyTxTrace for packet:" << gAnimUid);
+//         AnimPacketInfo pktInfo(ndev, Simulator::Now());
+//         AddByteTag(gAnimUid, p);
+//         AddPendingPacket(NetAnimWriter::LTE, gAnimUid, pktInfo);
+//         OutputWirelessPacketTxInfo(p, pktInfo, gAnimUid);
+//     }
+// }
 
-void
-NetAnimWriter::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    if (!pb)
-    {
-        NS_LOG_WARN("pb == 0. Not yet supported");
-        return;
-    }
-    context = "/" + context;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
+// void
+// NetAnimWriter::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb)
+// {
+//     NS_LOG_FUNCTION(this);
+//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
+//     if (!pb)
+//     {
+//         NS_LOG_WARN("pb == 0. Not yet supported");
+//         return;
+//     }
+//     context = "/" + context;
+//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
+//     NS_ASSERT(ndev);
+//     UpdatePosition(ndev);
 
-    std::list<Ptr<Packet>> pbList = pb->GetPackets();
-    for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
-    {
-        Ptr<Packet> p = *i;
-        uint64_t animUid = GetAnimUidFromPacket(p);
-        NS_LOG_INFO("LteSpectrumPhyRxTrace for packet:" << gAnimUid);
-        if (!IsPacketPending(animUid, NetAnimWriter::LTE))
-        {
-            NS_LOG_WARN("LteSpectrumPhyRxTrace: unknown Uid");
-            return;
-        }
-        AnimPacketInfo& pktInfo = m_pendingLtePackets[animUid];
-        pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
-        OutputWirelessPacketRxInfo(p, pktInfo, animUid);
-    }
-}
+//     std::list<Ptr<Packet>> pbList = pb->GetPackets();
+//     for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
+//     {
+//         Ptr<Packet> p = *i;
+//         uint64_t animUid = GetAnimUidFromPacket(p);
+//         NS_LOG_INFO("LteSpectrumPhyRxTrace for packet:" << gAnimUid);
+//         if (!IsPacketPending(animUid, NetAnimWriter::LTE))
+//         {
+//             NS_LOG_WARN("LteSpectrumPhyRxTrace: unknown Uid");
+//             return;
+//         }
+//         AnimPacketInfo& pktInfo = m_pendingLtePackets[animUid];
+//         pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
+//         OutputWirelessPacketRxInfo(p, pktInfo, animUid);
+//     }
+// }
 
 void
 NetAnimWriter::CsmaPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
@@ -1364,10 +1364,10 @@ NetAnimWriter::ProtocolTypeToPendingPackets(NetAnimWriter::ProtocolType protocol
         pendingPackets = &m_pendingWimaxPackets;
         break;
     }
-    case NetAnimWriter::LTE: {
-        pendingPackets = &m_pendingLtePackets;
-        break;
-    }
+    // case NetAnimWriter::LTE: {
+    //     pendingPackets = &m_pendingLtePackets;
+    //     break;
+    // }
     case NetAnimWriter::LRWPAN: {
         pendingPackets = &m_pendingLrWpanPackets;
         break;
@@ -1398,10 +1398,10 @@ NetAnimWriter::ProtocolTypeToString(NetAnimWriter::ProtocolType protocolType)
         result = "WIMAX";
         break;
     }
-    case NetAnimWriter::LTE: {
-        result = "LTE";
-        break;
-    }
+    // case NetAnimWriter::LTE: {
+    //     result = "LTE";
+    //     break;
+    // }
     case NetAnimWriter::LRWPAN: {
         result = "LRWPAN";
         break;
@@ -1529,93 +1529,93 @@ NetAnimWriter::AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Addresse
 }
 
 // Callbacks
-void
-NetAnimWriter::ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex)
-{
-    Ptr<LteEnbPhy> lteEnbPhy = nd->GetPhy();
-    Ptr<LteSpectrumPhy> dlPhy = lteEnbPhy->GetDownlinkSpectrumPhy();
-    Ptr<LteSpectrumPhy> ulPhy = lteEnbPhy->GetUplinkSpectrumPhy();
-    std::ostringstream oss;
-    // NodeList/*/DeviceList/*/
-    oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
-    if (dlPhy)
-    {
-        dlPhy->TraceConnect("TxStart",
-                            oss.str(),
-                            MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
-        dlPhy->TraceConnect("RxStart",
-                            oss.str(),
-                            MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
-    }
-    if (ulPhy)
-    {
-        ulPhy->TraceConnect("TxStart",
-                            oss.str(),
-                            MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
-        ulPhy->TraceConnect("RxStart",
-                            oss.str(),
-                            MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
-    }
-}
+// void
+// NetAnimWriter::ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex)
+// {
+//     Ptr<LteEnbPhy> lteEnbPhy = nd->GetPhy();
+//     Ptr<LteSpectrumPhy> dlPhy = lteEnbPhy->GetDownlinkSpectrumPhy();
+//     Ptr<LteSpectrumPhy> ulPhy = lteEnbPhy->GetUplinkSpectrumPhy();
+//     std::ostringstream oss;
+//     // NodeList/*/DeviceList/*/
+//     oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
+//     if (dlPhy)
+//     {
+//         dlPhy->TraceConnect("TxStart",
+//                             oss.str(),
+//                             MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
+//         dlPhy->TraceConnect("RxStart",
+//                             oss.str(),
+//                             MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
+//     }
+//     if (ulPhy)
+//     {
+//         ulPhy->TraceConnect("TxStart",
+//                             oss.str(),
+//                             MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
+//         ulPhy->TraceConnect("RxStart",
+//                             oss.str(),
+//                             MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
+//     }
+// }
 
-void
-NetAnimWriter::ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex)
-{
-    Ptr<LteUePhy> lteUePhy = nd->GetPhy();
-    Ptr<LteSpectrumPhy> dlPhy = lteUePhy->GetDownlinkSpectrumPhy();
-    Ptr<LteSpectrumPhy> ulPhy = lteUePhy->GetUplinkSpectrumPhy();
-    std::ostringstream oss;
-    // NodeList/*/DeviceList/*/
-    oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
-    if (dlPhy)
-    {
-        dlPhy->TraceConnect("TxStart",
-                            oss.str(),
-                            MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
-        dlPhy->TraceConnect("RxStart",
-                            oss.str(),
-                            MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
-    }
-    if (ulPhy)
-    {
-        ulPhy->TraceConnect("TxStart",
-                            oss.str(),
-                            MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
-        ulPhy->TraceConnect("RxStart",
-                            oss.str(),
-                            MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
-    }
-}
+// void
+// NetAnimWriter::ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex)
+// {
+//     Ptr<LteUePhy> lteUePhy = nd->GetPhy();
+//     Ptr<LteSpectrumPhy> dlPhy = lteUePhy->GetDownlinkSpectrumPhy();
+//     Ptr<LteSpectrumPhy> ulPhy = lteUePhy->GetUplinkSpectrumPhy();
+//     std::ostringstream oss;
+//     // NodeList/*/DeviceList/*/
+//     oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
+//     if (dlPhy)
+//     {
+//         dlPhy->TraceConnect("TxStart",
+//                             oss.str(),
+//                             MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
+//         dlPhy->TraceConnect("RxStart",
+//                             oss.str(),
+//                             MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
+//     }
+//     if (ulPhy)
+//     {
+//         ulPhy->TraceConnect("TxStart",
+//                             oss.str(),
+//                             MakeCallback(&NetAnimWriter::LteSpectrumPhyTxStart, this));
+//         ulPhy->TraceConnect("RxStart",
+//                             oss.str(),
+//                             MakeCallback(&NetAnimWriter::LteSpectrumPhyRxStart, this));
+//     }
+// }
 
-void
-NetAnimWriter::ConnectLte()
-{
-    for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
-    {
-        Ptr<Node> n = *i;
-        NS_ASSERT(n);
-        uint32_t nDevices = n->GetNDevices();
-        for (uint32_t devIndex = 0; devIndex < nDevices; ++devIndex)
-        {
-            Ptr<NetDevice> nd = n->GetDevice(devIndex);
-            if (!nd)
-            {
-                continue;
-            }
-            Ptr<LteUeNetDevice> lteUeNetDevice = DynamicCast<LteUeNetDevice>(nd);
-            if (lteUeNetDevice)
-            {
-                ConnectLteUe(n, lteUeNetDevice, devIndex);
-                continue;
-            }
-            Ptr<LteEnbNetDevice> lteEnbNetDevice = DynamicCast<LteEnbNetDevice>(nd);
-            if (lteEnbNetDevice)
-            {
-                ConnectLteEnb(n, lteEnbNetDevice, devIndex);
-            }
-        }
-    }
-}
+// void
+// NetAnimWriter::ConnectLte()
+// {
+//     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
+//     {
+//         Ptr<Node> n = *i;
+//         NS_ASSERT(n);
+//         uint32_t nDevices = n->GetNDevices();
+//         for (uint32_t devIndex = 0; devIndex < nDevices; ++devIndex)
+//         {
+//             Ptr<NetDevice> nd = n->GetDevice(devIndex);
+//             if (!nd)
+//             {
+//                 continue;
+//             }
+//             Ptr<LteUeNetDevice> lteUeNetDevice = DynamicCast<LteUeNetDevice>(nd);
+//             if (lteUeNetDevice)
+//             {
+//                 ConnectLteUe(n, lteUeNetDevice, devIndex);
+//                 continue;
+//             }
+//             Ptr<LteEnbNetDevice> lteEnbNetDevice = DynamicCast<LteEnbNetDevice>(nd);
+//             if (lteEnbNetDevice)
+//             {
+//                 ConnectLteEnb(n, lteEnbNetDevice, devIndex);
+//             }
+//         }
+//     }
+// }
 
 void
 NetAnimWriter::ConnectCallbacks()
@@ -1634,10 +1634,10 @@ NetAnimWriter::ConnectCallbacks()
                             MakeCallback(&NetAnimWriter::WimaxTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WimaxNetDevice/Rx",
                             MakeCallback(&NetAnimWriter::WimaxRxTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Tx",
-                            MakeCallback(&NetAnimWriter::LteTxTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Rx",
-                            MakeCallback(&NetAnimWriter::LteRxTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Tx",
+    //                         MakeCallback(&NetAnimWriter::LteTxTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Rx",
+    //                         MakeCallback(&NetAnimWriter::LteRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxBegin",
                             MakeCallback(&NetAnimWriter::CsmaPhyTxBeginTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxEnd",
@@ -1653,7 +1653,7 @@ NetAnimWriter::ConnectCallbacks()
     Config::ConnectFailSafe("/NodeList/*/$ns3::BasicEnergySource/RemainingEnergy",
                             MakeCallback(&NetAnimWriter::RemainingEnergyTrace, this));
 
-    ConnectLte();
+    // ConnectLte();
 
     Config::ConnectFailSafe("/NodeList/*/$ns3::Ipv4L3Protocol/Tx",
                             MakeCallback(&NetAnimWriter::Ipv4TxTrace, this));
@@ -2933,12 +2933,11 @@ NetAnimWriter::AnimPacketInfo::ProcessRxBegin(Ptr<const NetDevice> nd, const dou
 AnimationInterface::AnimationInterface(const std::string fn)
 {
     auto netanim = CreateObject<NetAnimWriter>(fn);
-    auto proxy = CreateObject<Proxy<NetAnimWriter>>(netanim);
-
     NodeList::Iterator listEnd = NodeList::End();
     for (NodeList::Iterator i = NodeList::Begin(); i != listEnd; i++)
     {
         Ptr<Node> node = *i;
+        auto proxy = CreateObject<Proxy<NetAnimWriter>>(netanim);
         node->AggregateObject(proxy);
     }
 }
