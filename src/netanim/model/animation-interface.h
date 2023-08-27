@@ -434,6 +434,61 @@ class NetAnimWriter : public Object
      * \returns current node's remaining energy (between [0, 1])
      */
     double GetNodeEnergyFraction(Ptr<const Node> node) const;
+    /**
+     * Is in time window function
+     * \returns true if in the time window
+     */
+    bool IsInTimeWindow();
+    bool IsTracking();
+    bool IsEnablePacketMetadata();
+    /**
+     * Write XMLP function
+     * \param pktType the packet type
+     * \param fId the FID
+     * \param fbTx the FB transmit
+     * \param lbTx the LB transmit
+     * \param tId the TID
+     * \param fbRx the FB receive
+     * \param lbRx the LB receive
+     * \param metaInfo the meta info
+     */
+    void WriteXmlP(std::string pktType,
+                   uint32_t fId,
+                   double fbTx,
+                   double lbTx,
+                   uint32_t tId,
+                   double fbRx,
+                   double lbRx,
+                   std::string metaInfo = "");
+    /**
+     * Get packet metadata function
+     * \param p the packet
+     * \returns the meta data
+     */
+    std::string GetPacketMetadata(Ptr<const Packet> p);
+    /// Check maximum packets per trace file function
+    void CheckMaxPktsPerTraceFile();
+    /**
+     * Update position function
+     * \param n the node
+     * \returns the position vector
+     */
+    Vector UpdatePosition(Ptr<Node> n);
+    /**
+     * Add byte tag function
+     * \param animUid the UID
+     * \param p the packet
+     */
+    void AddByteTag(uint64_t animUid, Ptr<const Packet> p);
+    /**
+     * Get anim UID from packet function
+     * \param p the packet
+     * \returns the UID
+     */
+    uint64_t GetAnimUidFromPacket(Ptr<const Packet>);
+    void AddNodeToNodeEnqueueMap(uint32_t nodeId);
+    void AddNodeToNodeDequeueMap(uint32_t nodeId);
+    void AddNodeToNodeDropMap(uint32_t nodeId);
 
   private:
     /**
@@ -750,18 +805,6 @@ class NetAnimWriter : public Object
      */
     std::string CounterTypeToString(CounterType counterType);
     /**
-     * Get packet metadata function
-     * \param p the packet
-     * \returns the meta data
-     */
-    std::string GetPacketMetadata(Ptr<const Packet> p);
-    /**
-     * Add byte tag function
-     * \param animUid the UID
-     * \param p the packet
-     */
-    void AddByteTag(uint64_t animUid, Ptr<const Packet> p);
-    /**
      * WriteN function
      * \param data the data t write
      * \param count the number of bytes to write
@@ -846,12 +889,6 @@ class NetAnimWriter : public Object
      */
     void AddPendingPacket(ProtocolType protocolType, uint64_t animUid, AnimPacketInfo pktInfo);
     /**
-     * Get anim UID from packet function
-     * \param p the packet
-     * \returns the UID
-     */
-    uint64_t GetAnimUidFromPacket(Ptr<const Packet>);
-    /**
      * Add to IPv4 address node ID table function
      * \param ipv4Address the IPv4 address
      * \param nodeId the node ID
@@ -875,14 +912,6 @@ class NetAnimWriter : public Object
      * \param nodeId the node ID
      */
     void AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Addresses, uint32_t nodeId);
-    /**
-     * Is in time window function
-     * \returns true if in the time window
-     */
-    bool IsInTimeWindow();
-    /// Check maximum packets per trace file function
-    void CheckMaxPktsPerTraceFile();
-
     /// Track wifi phy counters function
     void TrackWifiPhyCounters();
     /// Track wifi MAC counters function
@@ -1223,12 +1252,6 @@ class NetAnimWriter : public Object
     /**
      * Update position function
      * \param n the node
-     * \returns the position vector
-     */
-    Vector UpdatePosition(Ptr<Node> n);
-    /**
-     * Update position function
-     * \param n the node
      * \param v the vector
      * \returns the position vector
      */
@@ -1387,25 +1410,6 @@ class NetAnimWriter : public Object
      * \param linkDescription the link description
      */
     void WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::string linkDescription);
-    /**
-     * Write XMLP function
-     * \param pktType the packet type
-     * \param fId the FID
-     * \param fbTx the FB transmit
-     * \param lbTx the LB transmit
-     * \param tId the TID
-     * \param fbRx the FB receive
-     * \param lbRx the LB receive
-     * \param metaInfo the meta info
-     */
-    void WriteXmlP(std::string pktType,
-                   uint32_t fId,
-                   double fbTx,
-                   double lbTx,
-                   uint32_t tId,
-                   double fbRx,
-                   double lbRx,
-                   std::string metaInfo = "");
     /**
      * Write XMLP function
      * \param animUid the UID

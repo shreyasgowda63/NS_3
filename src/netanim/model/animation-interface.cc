@@ -2943,4 +2943,33 @@ AnimationInterface::AnimationInterface(const std::string fn)
     }
 }
 
+bool
+NetAnimWriter::IsTracking()
+{
+    return m_trackPackets;
+}
+
+bool
+NetAnimWriter::IsEnablePacketMetadata()
+{
+    return m_enablePacketMetadata;
+}
+
+void
+NetAnimWriter::AddNodeToNodeEnqueueMap(uint32_t nodeId)
+{
+    ++m_nodeQueueEnqueue[nodeId];
+}
+
+void
+NetAnimWriter::AddNodeToNodeDequeueMap(uint32_t nodeId)
+{
+    ++m_nodeQueueDequeue[nodeId];
+}
+
+void
+NetAnimWriter::AddNodeToNodeDropMap(uint32_t nodeId)
+{
+    ++m_nodeQueueDrop[nodeId];
+}
 } // namespace ns3

@@ -20,14 +20,17 @@
 #include "csma-helper.h"
 
 #include "ns3/abort.h"
+#include "ns3/animation-interface.h"
 #include "ns3/config.h"
 #include "ns3/csma-channel.h"
+#include "ns3/csma-net-device-anim.h"
 #include "ns3/csma-net-device.h"
 #include "ns3/log.h"
 #include "ns3/names.h"
 #include "ns3/net-device-queue-interface.h"
 #include "ns3/object-factory.h"
 #include "ns3/packet.h"
+#include "ns3/proxy.h"
 #include "ns3/simulator.h"
 #include "ns3/trace-helper.h"
 
@@ -325,6 +328,9 @@ CsmaHelper::InstallPriv(Ptr<Node> node, Ptr<CsmaChannel> channel) const
         ndqi->GetTxQueue(0)->ConnectQueueTraces(queue);
         device->AggregateObject(ndqi);
     }
+    // if you can find the proxy object then aggregate all nodes to csma net device anim
+    Ptr<CsmaNetDeviceAnim> deviceAnim = CreateObject<CsmaNetDeviceAnim>();
+    device->AggregateObject(deviceAnim);
     return device;
 }
 

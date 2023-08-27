@@ -7,8 +7,6 @@ build_lib(
     ${libmobility}
     ${libwimax}
     ${libwifi}
-    ${libcsma}
-    ${liblte}
     ${libuan}
     ${libenergy}
     ${liblr-wpan}
