@@ -1646,14 +1646,6 @@ NetAnimWriter::ConnectCallbacks()
     //                         MakeCallback(&NetAnimWriter::LteTxTrace, this));
     // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Rx",
     //                         MakeCallback(&NetAnimWriter::LteRxTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxBegin",
-    //                         MakeCallback(&NetAnimWriter::CsmaPhyTxBeginTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxEnd",
-    //                         MakeCallback(&NetAnimWriter::CsmaPhyTxEndTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyRxEnd",
-    //                         MakeCallback(&NetAnimWriter::CsmaPhyRxEndTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/MacRx",
-    //                         MakeCallback(&NetAnimWriter::CsmaMacRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyTxBegin",
                             MakeCallback(&NetAnimWriter::UanPhyGenTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyRxBegin",
