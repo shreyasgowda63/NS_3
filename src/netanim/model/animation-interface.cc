@@ -67,8 +67,9 @@
 
 namespace ns3
 {
-
+NS_OBJECT_TEMPLATE_CLASS_DEFINE(Proxy, NetAnimWriter);
 NS_LOG_COMPONENT_DEFINE("NetAnimWriter");
+NS_OBJECT_ENSURE_REGISTERED(NetAnimWriter);
 
 // Globals
 
@@ -123,6 +124,13 @@ NetAnimWriter::NetAnimWriter(const std::string fn)
 NetAnimWriter::~NetAnimWriter()
 {
     StopAnimation();
+}
+
+TypeId
+NetAnimWriter::GetTypeId()
+{
+    static TypeId tid = TypeId("ns3::NetAnimWriter").SetParent<Object>().SetGroupName("Animation");
+    return tid;
 }
 
 void

@@ -328,9 +328,6 @@ CsmaHelper::InstallPriv(Ptr<Node> node, Ptr<CsmaChannel> channel) const
         ndqi->GetTxQueue(0)->ConnectQueueTraces(queue);
         device->AggregateObject(ndqi);
     }
-    // if you can find the proxy object then aggregate all nodes to csma net device anim
-    Ptr<CsmaNetDeviceAnim> deviceAnim = CreateObject<CsmaNetDeviceAnim>();
-    device->AggregateObject(deviceAnim);
     return device;
 }
 

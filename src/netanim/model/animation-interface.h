@@ -94,6 +94,7 @@ class NetAnimWriter : public Object
      *
      */
     NetAnimWriter(const std::string filename);
+    static TypeId GetTypeId();
 
     /**
      * Counter Types

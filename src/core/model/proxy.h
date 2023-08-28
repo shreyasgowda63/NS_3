@@ -12,15 +12,26 @@ class Proxy : public Object
     {
     }
 
-    // T operator*()
-    // {
-    //     return (*m_item);
-    // }
+    static TypeId GetTypeId()
+    {
+        static TypeId tid = TypeId("ns3::Proxy").SetParent<Object>().SetGroupName("Core");
+        return tid;
+    }
 
-    // T* operator->()
-    // {
-    //     return &(*m_item);
-    // } // Support drill-down
+    T operator*()
+    {
+        return (*m_item);
+    }
+
+    T* operator->()
+    {
+        return &(*m_item);
+    } // Support drill-down
+
+    Ptr<T> GetProxied()
+    {
+        return (m_item);
+    }
 
     Ptr<T> m_item;
 };
