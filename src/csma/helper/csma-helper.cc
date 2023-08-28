@@ -328,6 +328,8 @@ CsmaHelper::InstallPriv(Ptr<Node> node, Ptr<CsmaChannel> channel) const
         ndqi->GetTxQueue(0)->ConnectQueueTraces(queue);
         device->AggregateObject(ndqi);
     }
+    Ptr<CsmaNetDeviceAnim> deviceAnim = CreateObject<CsmaNetDeviceAnim>();
+    device->AggregateObject(deviceAnim);
     return device;
 }
 
