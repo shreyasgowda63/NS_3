@@ -238,7 +238,6 @@ void
 CsmaNetDeviceAnim::DoInitialize()
 {
     m_netDev = GetObject<CsmaNetDevice>();
-    auto proxy = GetObject<CsmaNetDevice>()->GetNode()->GetObject<Proxy<NetAnimWriter>>();
     m_anim = DynamicCast<NetAnimWriter>(
         GetObject<CsmaNetDevice>()->GetNode()->GetObject<Proxy<NetAnimWriter>>()->GetProxied());
     ConnectCallbacks();
