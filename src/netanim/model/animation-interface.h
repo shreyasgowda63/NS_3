@@ -85,6 +85,11 @@ class WifiPsdu;
  * Provides functions that facilitate communications with an
  * external or internal network animator.
  */
+
+class NetAnimWriter;
+NS_DEPRECATED_3_40("Use NetAnimWriter instead of AnimationInterface.")
+typedef NetAnimWriter AnimationInterface;
+
 class NetAnimWriter : public Object
 {
   public:
@@ -94,6 +99,10 @@ class NetAnimWriter : public Object
      *
      */
     NetAnimWriter(const std::string filename);
+    /**
+     * \brief Get the type ID.
+     * \return The object TypeId.
+     */
     static TypeId GetTypeId();
 
     /**
@@ -440,8 +449,16 @@ class NetAnimWriter : public Object
      * \returns true if in the time window
      */
     bool IsInTimeWindow();
-    bool IsTracking();
-    bool IsEnablePacketMetadata();
+    /**
+     * Checks if packets are being tracked
+     * \returns true if packets are being tracked
+     */
+    bool IsTracking() const;
+    /**
+     * Checks if packet metadata is enabled
+     * \returns true if packet metadata is enabled
+     */
+    bool IsEnablePacketMetadata() const;
     /**
      * Write XMLP function
      * \param pktType the packet type
@@ -487,8 +504,20 @@ class NetAnimWriter : public Object
      * \returns the UID
      */
     uint64_t GetAnimUidFromPacket(Ptr<const Packet>);
+    /**
+     * Add node to node enqueue map
+     * \param nodeId Node Id
+     */
     void AddNodeToNodeEnqueueMap(uint32_t nodeId);
+    /**
+     * Add node to node Dequeue map
+     * \param nodeId Node Id
+     */
     void AddNodeToNodeDequeueMap(uint32_t nodeId);
+    /**
+     * Add node to node Drop map
+     * \param nodeId Node Id
+     */
     void AddNodeToNodeDropMap(uint32_t nodeId);
 
   private:
@@ -1546,17 +1575,6 @@ class AnimByteTag : public Tag
 
   private:
     uint64_t m_AnimUid; ///< the UID
-};
-
-class AnimationInterface
-{
-  public:
-    /**
-     * \brief Constructor
-     * \param filename The Filename for the trace file used by the Animator
-     *
-     */
-    AnimationInterface(const std::string filename);
 };
 
 } // namespace ns3

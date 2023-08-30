@@ -97,6 +97,13 @@ NetAnimWriter::NetAnimWriter(const std::string fn)
 {
     initialized = true;
     StartAnimation();
+    NodeList::Iterator listEnd = NodeList::End();
+    for (NodeList::Iterator i = NodeList::Begin(); i != listEnd; i++)
+    {
+        Ptr<Node> node = *i;
+        auto proxy = CreateObject<Proxy<NetAnimWriter>>(this);
+        node->AggregateObject(proxy);
+    }
 
 #ifdef __WIN32__
     /**
@@ -2930,26 +2937,14 @@ NetAnimWriter::AnimPacketInfo::ProcessRxBegin(Ptr<const NetDevice> nd, const dou
     m_rxnd = nd;
 }
 
-AnimationInterface::AnimationInterface(const std::string fn)
-{
-    auto netanim = CreateObject<NetAnimWriter>(fn);
-    NodeList::Iterator listEnd = NodeList::End();
-    for (NodeList::Iterator i = NodeList::Begin(); i != listEnd; i++)
-    {
-        Ptr<Node> node = *i;
-        auto proxy = CreateObject<Proxy<NetAnimWriter>>(netanim);
-        node->AggregateObject(proxy);
-    }
-}
-
 bool
-NetAnimWriter::IsTracking()
+NetAnimWriter::IsTracking() const
 {
     return m_trackPackets;
 }
 
 bool
-NetAnimWriter::IsEnablePacketMetadata()
+NetAnimWriter::IsEnablePacketMetadata() const
 {
     return m_enablePacketMetadata;
 }
