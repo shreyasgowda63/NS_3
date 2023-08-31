@@ -125,7 +125,7 @@ class NetAnimWriter : public Object
      * \brief Destructor for the animator interface.
      *
      */
-    ~NetAnimWriter();
+    ~NetAnimWriter() override;
 
     /**
      * \brief Enable tracking of Ipv4 L3 Protocol Counters such as Tx, Rx, Drop
