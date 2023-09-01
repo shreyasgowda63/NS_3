@@ -21,7 +21,9 @@
 
 #include "csma-channel.h"
 
+#include "ns3/animation-interface.h"
 #include "ns3/boolean.h"
+#include "ns3/csma-net-device-anim.h"
 #include "ns3/enum.h"
 #include "ns3/error-model.h"
 #include "ns3/ethernet-header.h"
@@ -29,6 +31,7 @@
 #include "ns3/llc-snap-header.h"
 #include "ns3/log.h"
 #include "ns3/pointer.h"
+#include "ns3/proxy.h"
 #include "ns3/queue.h"
 #include "ns3/simulator.h"
 #include "ns3/trace-source-accessor.h"
@@ -1075,4 +1078,14 @@ CsmaNetDevice::AssignStreams(int64_t stream)
     return m_backoff.AssignStreams(stream);
 }
 
+void
+CsmaNetDevice::DoInitialize()
+{
+    if (GetNode()->GetObject<Proxy<NetAnimWriter>>() != nullptr)
+    {
+        Ptr<CsmaNetDeviceAnim> deviceAnim = CreateObject<CsmaNetDeviceAnim>();
+        AggregateObject(deviceAnim);
+    }
+    NetDevice::DoInitialize();
+}
 } // namespace ns3

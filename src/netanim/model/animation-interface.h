@@ -88,7 +88,7 @@ class WifiPsdu;
 
 class NetAnimWriter;
 
-NS_DEPRECATED_3_40("Use NetAnimWriter instead of AnimationInterface.");
+NS_DEPRECATED_3_40("Use NetAnimWriter instead of AnimationInterface.")
 
 /**
  * AnimationInterface to NetAnimWriter typedef
