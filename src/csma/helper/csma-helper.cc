@@ -325,7 +325,6 @@ CsmaHelper::InstallPriv(Ptr<Node> node, Ptr<CsmaChannel> channel) const
         ndqi->GetTxQueue(0)->ConnectQueueTraces(queue);
         device->AggregateObject(ndqi);
     }
-
     return device;
 }
 

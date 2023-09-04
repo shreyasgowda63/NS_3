@@ -72,7 +72,7 @@ class Proxy : public Object
      * Pointer to proxied object
      * \returns A pointer to the proxied object.
      */
-    Ptr<T> GetProxied()
+    Ptr<T> PeekPointer()
     {
         return (m_item);
     }
@@ -80,6 +80,40 @@ class Proxy : public Object
     /** The pointer to the proxied object */
     Ptr<T> m_item;
 };
+
+/**
+ * Template specialization for casting a Proxy<Ptr<T>>
+ * into the underlying Prt<T>.
+ *
+ * \tparam T \deduced The desired type to cast to.
+ * \param [in] p The original Ptr.
+ * \return The result of the cast.
+ */
+/** @{ */
+
+template <typename T>
+Ptr<T>
+ConstCast(const Ptr<Proxy<T>>& p)
+{
+    return p->PeekPointer();
+}
+
+template <typename T>
+Ptr<T>
+DynamicCast(const Ptr<Proxy<T>>& p)
+{
+    return p->PeekPointer();
+}
+
+template <typename T>
+Ptr<T>
+StaticCast(const Ptr<Proxy<T>>& p)
+{
+    return p->PeekPointer();
+}
+
+/** @} */
+
 } // namespace ns3
 
 #endif /* PROXY_H */
