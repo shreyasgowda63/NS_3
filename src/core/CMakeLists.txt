@@ -292,6 +292,7 @@ set(header_files
     model/wall-clock-synchronizer.h
     model/val-array.h
     model/matrix-array.h
+    model/proxy.h
 )
 
 set(test_sources
@@ -329,6 +330,7 @@ set(test_sources
     test/watchdog-test-suite.cc
     test/val-array-test-suite.cc
     test/matrix-array-test-suite.cc
+    test/proxy-test-suite.cc
 )
 
 # Build core lib
