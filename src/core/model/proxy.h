@@ -79,6 +79,7 @@ class Proxy : public Object
         return (m_item);
     }
 
+  private:
     /** The pointer to the proxied object */
     Ptr<T> m_item;
 };

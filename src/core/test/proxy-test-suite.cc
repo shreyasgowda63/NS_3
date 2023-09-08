@@ -40,9 +40,9 @@ namespace tests
 
 /**
  * \ingroup proxy-tests
- * Simple test object to be proxied.
+ * Simple test object which is aggregated with the proxy.
  */
-class TestObject : public Object
+class MainObject : public Object
 {
   public:
     /**
@@ -51,25 +51,20 @@ class TestObject : public Object
      */
     static TypeId GetTypeId()
     {
-        static TypeId tid = TypeId("TestObject")
+        static TypeId tid = TypeId("MainObject")
                                 .SetParent<Object>()
                                 .SetGroupName("Core")
                                 .HideFromDocumentation()
-                                .AddConstructor<TestObject>();
+                                .AddConstructor<MainObject>();
         return tid;
-    }
-
-    /** Constructor. */
-    TestObject()
-    {
     }
 };
 
 /**
  * \ingroup proxy-tests
- * Simple Alternate test object which is aggregated with the proxy of the Test Object.
+ * Simple test object which is to be proxied.
  */
-class AlternateTestObject : public Object
+class AggregatedObject : public Object
 {
   public:
     /**
@@ -78,44 +73,12 @@ class AlternateTestObject : public Object
      */
     static TypeId GetTypeId()
     {
-        static TypeId tid = TypeId("TestObjectA")
+        static TypeId tid = TypeId("AggregatedObject")
                                 .SetParent<Object>()
                                 .SetGroupName("Core")
                                 .HideFromDocumentation()
-                                .AddConstructor<AlternateTestObject>();
+                                .AddConstructor<AggregatedObject>();
         return tid;
-    }
-
-    /** Constructor. */
-    AlternateTestObject()
-    {
-    }
-};
-
-/**
- * \ingroup proxy-tests
- * Simple Common test object which is aggregated with Test Object and Alternate Test Object.
- */
-class CommonTestObject : public Object
-{
-  public:
-    /**
-     * Register this type.
-     * \return The TypeId.
-     */
-    static TypeId GetTypeId()
-    {
-        static TypeId tid = TypeId("TestObjectA")
-                                .SetParent<Object>()
-                                .SetGroupName("Core")
-                                .HideFromDocumentation()
-                                .AddConstructor<CommonTestObject>();
-        return tid;
-    }
-
-    /** Constructor. */
-    CommonTestObject()
-    {
     }
 };
 
@@ -128,12 +91,9 @@ class BasicTestCase : public TestCase
   public:
     /** Constructor. */
     BasicTestCase();
-    /** Destructor. */
-    ~BasicTestCase() override;
 
   private:
     void DoRun() override;
-    void DoTeardown() override;
 };
 
 BasicTestCase::BasicTestCase()
@@ -141,27 +101,27 @@ BasicTestCase::BasicTestCase()
 {
 }
 
-BasicTestCase::~BasicTestCase()
-{
-}
-
-void
-BasicTestCase::DoTeardown()
-{
-}
-
 void
 BasicTestCase::DoRun()
 {
-    auto m_testObject = CreateObject<TestObject>();
-    auto m_alternateTestObject = CreateObject<AlternateTestObject>();
-    auto m_commonTestObject = CreateObject<CommonTestObject>();
-    m_testObject->AggregateObject(m_commonTestObject);
-    m_alternateTestObject->AggregateObject(m_commonTestObject);
-    auto proxy = CreateObject<Proxy<TestObject>>(m_testObject);
-    m_alternateTestObject->AggregateObject(proxy);
-    bool flag = (m_alternateTestObject->GetObject<Proxy<TestObject>>() != nullptr);
-    NS_TEST_ASSERT_MSG_EQ(flag, true, "Unable to get proxied object");
+    auto aggregated = CreateObject<AggregatedObject>();
+    auto mainObjectA = CreateObject<MainObject>();
+    auto mainObjectB = CreateObject<MainObject>();
+    // The following would fail:
+    // mainObjectA->AggregateObject(aggregated);
+    // mainObjectB->AggregateObject(aggregated);
+
+    // The following works:
+    auto proxyA = CreateObject<Proxy<AggregatedObject>>(aggregated);
+    mainObjectA->AggregateObject(proxyA);
+    auto proxyB = CreateObject<Proxy<AggregatedObject>>(aggregated);
+    mainObjectB->AggregateObject(proxyB);
+
+    auto proxiedByA = mainObjectA->GetObject<Proxy<AggregatedObject>>()->PeekPointer();
+    auto proxiedByB = mainObjectB->GetObject<Proxy<AggregatedObject>>()->PeekPointer();
+    NS_TEST_ASSERT_MSG_NE(proxiedByA, nullptr, "Unable to get proxied object");
+    NS_TEST_ASSERT_MSG_NE(proxiedByB, nullptr, "Unable to get proxied object");
+    NS_TEST_ASSERT_MSG_EQ(proxiedByA, proxiedByB, "Proxied objects are different");
 }
 
 /**
