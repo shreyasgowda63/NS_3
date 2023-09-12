@@ -996,7 +996,7 @@ TcpSocketBase::GetPeerName(Address& address) const
     }
     else
     {
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Invalid end point");
     }
 
     return 0;

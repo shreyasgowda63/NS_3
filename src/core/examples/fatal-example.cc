@@ -87,7 +87,6 @@ main(int argc, char** argv)
 
     // Should not get here
     NS_FATAL_ERROR("fatal error, terminating");
-    NS_ASSERT_MSG(false, "Should not get here.");
 
     return 0;
 }

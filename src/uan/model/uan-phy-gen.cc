@@ -764,7 +764,7 @@ UanPhyGen::StartRxPacket(Ptr<Packet> pkt, double rxPowerDb, UanTxMode txMode, Ua
         return;
     case TX:
         NotifyRxDrop(pkt); // traced source netanim
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Started receiving packet while transmitting");
         break;
     case RX: {
         NS_ASSERT(m_pktRx);

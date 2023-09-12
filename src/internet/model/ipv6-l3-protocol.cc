@@ -689,7 +689,7 @@ Ipv6L3Protocol::SourceAddressSelection(uint32_t interface, Ipv6Address dest)
                 return test.GetAddress();
             }
         }
-        NS_ASSERT_MSG(false, "No link-local address found on interface " << interface);
+        NS_FATAL_ERROR("No link-local address found on interface " << interface);
     }
 
     for (uint32_t i = 0; i < GetNAddresses(interface); i++)

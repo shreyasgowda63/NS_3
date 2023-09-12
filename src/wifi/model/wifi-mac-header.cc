@@ -579,7 +579,7 @@ WifiMacHeader::GetType() const
         break;
     }
     // NOTREACHED
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Unknown Wi-Fi control type");
     return (WifiMacType)-1;
 }
 
@@ -1263,7 +1263,7 @@ WifiMacHeader::Serialize(Buffer::Iterator i) const
             break;
         default:
             // NOTREACHED
-            NS_ASSERT(false);
+            NS_FATAL_ERROR("Unknown Wi-Fi control subtype");
             break;
         }
         break;
@@ -1283,7 +1283,7 @@ WifiMacHeader::Serialize(Buffer::Iterator i) const
     break;
     default:
         // NOTREACHED
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Unknown Wi-Fi control type");
         break;
     }
 }

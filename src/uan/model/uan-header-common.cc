@@ -105,7 +105,7 @@ UanHeaderCommon::SetProtocolNumber(uint16_t protocolNumber)
     }
     else
     {
-        NS_ASSERT_MSG(false, "UanHeaderCommon::SetProtocolNumber(): Protocol not supported");
+        NS_FATAL_ERROR("UanHeaderCommon::SetProtocolNumber(): Protocol not supported");
     }
 }
 

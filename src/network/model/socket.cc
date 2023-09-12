@@ -560,7 +560,7 @@ Socket::Ipv6JoinGroup(Ipv6Address address,
                       std::vector<Ipv6Address> sourceAddresses)
 {
     NS_LOG_FUNCTION(this << address << &filterMode << &sourceAddresses);
-    NS_ASSERT_MSG(false, "Ipv6JoinGroup not implemented on this socket");
+    NS_FATAL_ERROR("Ipv6JoinGroup not implemented on this socket");
 }
 
 void

@@ -305,7 +305,7 @@ VhtPhy::GetFailureReason(WifiPpduField field) const
     case WIFI_PPDU_FIELD_SIG_B:
         return SIG_B_FAILURE;
     default:
-        NS_ASSERT_MSG(false, "Unknown PPDU field");
+        NS_FATAL_ERROR("Unknown PPDU field");
         return UNKNOWN;
     }
 }
@@ -563,7 +563,7 @@ VhtPhy::GetCcaThreshold(const Ptr<const WifiPpdu> ppdu, WifiChannelListType chan
             NS_ASSERT_MSG(ppduBw <= 80, "Invalid channel width " << ppduBw);
             break;
         default:
-            NS_ASSERT_MSG(false, "Invalid channel list type");
+            NS_FATAL_ERROR("Invalid channel list type");
         }
         auto vhtConfiguration = m_wifiPhy->GetDevice()->GetVhtConfiguration();
         NS_ASSERT(vhtConfiguration);

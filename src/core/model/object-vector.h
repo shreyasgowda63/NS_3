@@ -104,7 +104,7 @@ MakeObjectVectorAccessor(U T::*memberVector)
                     return *j;
                 }
             }
-            NS_ASSERT(false);
+            NS_FATAL_ERROR("Unable to get object vector");
             // quiet compiler.
             return nullptr;
         }

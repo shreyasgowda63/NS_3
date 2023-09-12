@@ -167,7 +167,7 @@ ArpL3Protocol::FindCache(Ptr<NetDevice> device)
             return *i;
         }
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Unable to find cache entry");
     // quiet compiler
     return nullptr;
 }

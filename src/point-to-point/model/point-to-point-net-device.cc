@@ -628,7 +628,7 @@ PointToPointNetDevice::GetRemote() const
             return tmp->GetAddress();
         }
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Unable to get remote");
     // quiet compiler.
     return Address();
 }
@@ -659,7 +659,7 @@ PointToPointNetDevice::PppToEther(uint16_t proto)
     case 0x0057:
         return 0x86DD; // IPv6
     default:
-        NS_ASSERT_MSG(false, "PPP Protocol number not defined!");
+        NS_FATAL_ERROR("PPP Protocol number not defined!");
     }
     return 0;
 }
@@ -675,7 +675,7 @@ PointToPointNetDevice::EtherToPpp(uint16_t proto)
     case 0x86DD:
         return 0x0057; // IPv6
     default:
-        NS_ASSERT_MSG(false, "PPP Protocol number not defined!");
+        NS_FATAL_ERROR("PPP Protocol number not defined!");
     }
     return 0;
 }

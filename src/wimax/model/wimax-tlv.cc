@@ -200,7 +200,7 @@ Tlv::Deserialize(Buffer::Iterator i)
         NS_FATAL_ERROR("Not implemented-- please implement and contribute a patch");
         break;
     default:
-        NS_ASSERT_MSG(false, "Unknown tlv type.");
+        NS_FATAL_ERROR("Unknown tlv type.");
         break;
     }
 
@@ -470,7 +470,7 @@ SfVectorTlvValue::Deserialize(Buffer::Iterator i, uint64_t valueLen)
             break;
         }
         default:
-            NS_ASSERT_MSG(false, "Unknown tlv type.");
+            NS_FATAL_ERROR("Unknown tlv type.");
             break;
         }
         i.Next(length);

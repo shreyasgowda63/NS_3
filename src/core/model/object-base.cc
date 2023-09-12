@@ -172,10 +172,9 @@ ObjectBase::ConstructSelf(const AttributeConstructionList& attributes)
                   below DoSet, but there be dragons.
                 */
                 /*
-                NS_ASSERT_MSG(false,
-                              "Failed to set attribute '" << info.name << "' from '"
-                                                          << value->SerializeToString(info.checker)
-                                                          << "'");
+                NS_FATAL_ERROR("Failed to set attribute '" << info.name << "' from '"
+                                                           << value->SerializeToString(info.checker)
+                                                           << "'");
                 */
             }
 

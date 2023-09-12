@@ -233,7 +233,7 @@ PacketMetadata::ReadUleb128(const uint8_t** pBuffer) const
     /* This means that the LEB128 number was not valid.
      * ie: the last (5th) byte did not have the high-order bit zeroed.
      */
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Invalid LEB128 number");
     return 0;
 }
 
@@ -1106,7 +1106,7 @@ PacketMetadata::ItemIterator::Next()
     }
     else
     {
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Invalid TID");
     }
     m_offset += extraItem.fragmentEnd - extraItem.fragmentStart;
     return item;

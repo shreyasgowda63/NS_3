@@ -262,7 +262,6 @@ UanMacCw::NotifyTxStart(Time duration)
 
     if (m_state == RUNNING)
     {
-        NS_ASSERT(0);
         m_state = CCABUSY;
         SaveTimer();
     }

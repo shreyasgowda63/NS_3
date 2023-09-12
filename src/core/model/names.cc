@@ -348,7 +348,7 @@ NamesPriv::Add(std::string name, Ptr<Object> object)
         offset = name.find('/');
         if (offset == 0)
         {
-            NS_ASSERT_MSG(false, "NamesPriv::Add(): Name begins with '/' but not \"/Names\"");
+            NS_FATAL_ERROR("NamesPriv::Add(): Name begins with '/' but not \"/Names\"");
             return false;
         }
 
@@ -459,7 +459,7 @@ NamesPriv::Rename(std::string oldpath, std::string newname)
         offset = oldpath.find('/');
         if (offset == 0)
         {
-            NS_ASSERT_MSG(false, "NamesPriv::Add(): Name begins with '/' but not \"/Names\"");
+            NS_FATAL_ERROR("NamesPriv::Add(): Name begins with '/' but not \"/Names\"");
             return false;
         }
 

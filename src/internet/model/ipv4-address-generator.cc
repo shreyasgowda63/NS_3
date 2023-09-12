@@ -541,7 +541,7 @@ Ipv4AddressGeneratorImpl::MaskToIndex(Ipv4Mask mask) const
         }
         maskBits >>= 1;
     }
-    NS_ASSERT_MSG(false, "Ipv4AddressGenerator::MaskToIndex(): Impossible");
+    NS_FATAL_ERROR("Ipv4AddressGenerator::MaskToIndex(): Impossible");
     return 0;
 }
 

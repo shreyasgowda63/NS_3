@@ -149,7 +149,7 @@ OfdmPpdu::LSigHeader::SetRate(uint64_t rate, uint16_t channelWidth)
         m_rate = 0b0011;
         break;
     default:
-        NS_ASSERT_MSG(false, "Invalid rate");
+        NS_FATAL_ERROR("Invalid rate");
         break;
     }
 }
@@ -185,7 +185,7 @@ OfdmPpdu::LSigHeader::GetRate(uint16_t channelWidth) const
         rate = 54000000;
         break;
     default:
-        NS_ASSERT_MSG(false, "Invalid rate");
+        NS_FATAL_ERROR("Invalid rate");
         break;
     }
     if (channelWidth == 5)

@@ -280,7 +280,7 @@ Ipv4GlobalRouting::GetRoute(uint32_t index) const
         }
         tmp++;
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Route not found");
     // quiet compiler.
     return nullptr;
 }
@@ -336,7 +336,7 @@ Ipv4GlobalRouting::RemoveRoute(uint32_t index)
         }
         tmp++;
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Route not found");
 }
 
 int64_t

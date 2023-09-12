@@ -134,7 +134,7 @@ Box::CalculateIntersection(const Vector& current, const Vector& speed) const
     }
     else
     {
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Invalid intersection");
         // quiet compiler
         return Vector(0.0, 0.0, 0.0);
     }

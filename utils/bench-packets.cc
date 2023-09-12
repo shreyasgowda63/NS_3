@@ -115,7 +115,7 @@ template <int N>
 void
 BenchHeader<N>::Print(std::ostream& os) const
 {
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Not yet implemented");
 }
 
 template <int N>

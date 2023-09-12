@@ -169,7 +169,7 @@ UdpClient::StartApplication()
         }
         else
         {
-            NS_ASSERT_MSG(false, "Incompatible address type: " << m_peerAddress);
+            NS_FATAL_ERROR("Incompatible address type: " << m_peerAddress);
         }
     }
 

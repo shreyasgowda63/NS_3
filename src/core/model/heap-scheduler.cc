@@ -240,7 +240,7 @@ HeapScheduler::Remove(const Event& ev)
             return;
         }
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Event UID " << uid << " not found");
 }
 
 } // namespace ns3

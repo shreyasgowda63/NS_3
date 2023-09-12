@@ -668,7 +668,7 @@ Ipv6AddressGeneratorImpl::PrefixToIndex(Ipv6Prefix prefix) const
             prefixBits[i] >>= 1;
         }
     }
-    NS_ASSERT_MSG(false, "Ipv6AddressGenerator::PrefixToIndex(): Impossible");
+    NS_FATAL_ERROR("Ipv6AddressGenerator::PrefixToIndex(): Impossible");
     return 0;
 }
 

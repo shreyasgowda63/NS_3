@@ -653,7 +653,7 @@ PyViz::TraceNetDevRxCommon(const std::string& context,
     }
     else
     {
-        // NS_ASSERT (0);
+        // NS_FATAL_ERROR("Packet has no byte tag; wimax link?");
         NS_LOG_WARN("Packet has no byte tag; wimax link?");
         uid = packet->GetUid();
     }

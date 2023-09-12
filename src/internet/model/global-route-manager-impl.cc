@@ -383,7 +383,7 @@ SPFVertex::GetChild(uint32_t n) const
             return *i;
         }
     }
-    NS_ASSERT_MSG(false, "Index <n> out of range.");
+    NS_FATAL_ERROR("Index <n> out of range.");
     return nullptr;
 }
 
@@ -813,7 +813,7 @@ GlobalRouteManagerImpl::SPFNext(SPFVertex* v, CandidateQueue& candidate)
             }
             else
             {
-                NS_ASSERT_MSG(0, "illegal Link Type");
+                NS_FATAL_ERROR("Illegal Link Type");
             }
         }
         // Get w_lsa:  In case of V is Network-LSA
@@ -884,9 +884,7 @@ GlobalRouteManagerImpl::SPFNext(SPFVertex* v, CandidateQueue& candidate)
             }
             else
             {
-                NS_ASSERT_MSG(0,
-                              "SPFNexthopCalculation never "
-                                  << "return false, but it does now!");
+                NS_FATAL_ERROR("SPFNexthopCalculation never return false, but it does now!");
             }
         }
         else if (w_lsa->GetStatus() == GlobalRoutingLSA::LSA_SPF_CANDIDATE)
@@ -990,7 +988,7 @@ GlobalRouteManagerImpl::SPFNexthopCalculation(SPFVertex* v,
     /*
       if (w->GetVertexType () == SPFVertex::VertexNetwork && l)
         {
-            NS_ASSERT_MSG (0, "Error:  SPFNexthopCalculation parameter problem");
+            NS_FATAL_ERROR("SPFNexthopCalculation parameter problem");
         }
     */
 
@@ -1474,7 +1472,7 @@ GlobalRouteManagerImpl::SPFCalculate(Ipv4Address root)
         }
         else
         {
-            NS_ASSERT_MSG(0, "illegal SPFVertex type");
+            NS_FATAL_ERROR("Illegal SPFVertex type");
         }
         //
         // RFC2328 16.1. (5).

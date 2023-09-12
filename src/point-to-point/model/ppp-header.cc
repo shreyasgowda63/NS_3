@@ -69,7 +69,7 @@ PppHeader::Print(std::ostream& os) const
         proto = "IPv6 (0x0057)";
         break;
     default:
-        NS_ASSERT_MSG(false, "PPP Protocol number not defined!");
+        NS_FATAL_ERROR("PPP Protocol number not defined!");
     }
     os << "Point-to-Point Protocol: " << proto;
 }

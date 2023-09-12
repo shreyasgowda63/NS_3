@@ -1232,7 +1232,7 @@ RoutingProtocol::RecvAodv(Ptr<Socket> socket)
     }
     else
     {
-        NS_ASSERT_MSG(false, "Received a packet from an unknown socket");
+        NS_FATAL_ERROR("Received a packet from an unknown socket");
     }
     NS_LOG_DEBUG("AODV node " << this << " received a AODV packet from " << sender << " to "
                               << receiver);

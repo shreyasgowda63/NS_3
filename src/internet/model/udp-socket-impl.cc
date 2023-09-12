@@ -942,7 +942,7 @@ UdpSocketImpl::GetPeerName(Address& address) const
     }
     else
     {
-        NS_ASSERT_MSG(false, "unexpected address type");
+        NS_FATAL_ERROR("unexpected address type");
     }
 
     return 0;

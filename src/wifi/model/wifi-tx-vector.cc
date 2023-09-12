@@ -841,7 +841,7 @@ WifiTxVector::DeriveRuAllocation(uint8_t p20Index) const
             }
             else
             {
-                NS_ASSERT_MSG(false, "unsupported RU combination");
+                NS_FATAL_ERROR("unsupported RU combination");
             }
         }
         for (auto i = 0; i < numSubchannelsForRu; ++i)

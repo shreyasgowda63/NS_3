@@ -158,7 +158,7 @@ Ping::GetApplicationSignature() const
             return appSignature;
         }
     }
-    NS_ASSERT_MSG(false, "forgot to add application to node");
+    NS_FATAL_ERROR("forgot to add application to node");
     return 0; // quiet compiler
 }
 

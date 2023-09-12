@@ -203,7 +203,7 @@ Ipv4AddressHelper::NumAddressBits(uint32_t maskbits) const
         maskbits >>= 1;
     }
 
-    NS_ASSERT_MSG(false, "Ipv4AddressHelper::NumAddressBits(): Bad Mask");
+    NS_FATAL_ERROR("Ipv4AddressHelper::NumAddressBits(): Bad Mask");
     return 0;
 }
 

@@ -321,7 +321,7 @@ UanNetDevice::SendFrom(Ptr<Packet> /* packet */,
                        uint16_t /* protocolNumber */)
 {
     // Not yet implemented
-    NS_ASSERT_MSG(false, "Not yet implemented");
+    NS_FATAL_ERROR("Not yet implemented");
     return false;
 }
 
@@ -395,7 +395,7 @@ void
 UanNetDevice::SetPromiscReceiveCallback(PromiscReceiveCallback cb)
 {
     // Not implemented yet
-    NS_ASSERT_MSG(0, "Not yet implemented");
+    NS_FATAL_ERROR("Not yet implemented");
 }
 
 bool

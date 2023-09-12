@@ -522,7 +522,7 @@ EhtCapabilities::SetSupportedRxEhtMcsAndNss(EhtMcsAndNssSet::EhtMcsMapType mapTy
         index = (mapType == EhtMcsAndNssSet::EHT_MCS_MAP_TYPE_20_MHZ_ONLY) ? 3 : 2;
         break;
     default:
-        NS_ASSERT_MSG(false, "Invalid upper MCS " << +upperMcs);
+        NS_FATAL_ERROR("Invalid upper MCS " << +upperMcs);
     }
     uint8_t nBytes = 0;
     switch (mapType)
@@ -536,7 +536,7 @@ EhtCapabilities::SetSupportedRxEhtMcsAndNss(EhtMcsAndNssSet::EhtMcsMapType mapTy
         nBytes = 3;
         break;
     default:
-        NS_ASSERT_MSG(false, "Invalid map type " << mapType);
+        NS_FATAL_ERROR("Invalid map type " << mapType);
     }
     auto it = m_supportedEhtMcsAndNssSet.supportedEhtMcsAndNssSet.find(mapType);
     if (it == m_supportedEhtMcsAndNssSet.supportedEhtMcsAndNssSet.end())
@@ -574,7 +574,7 @@ EhtCapabilities::SetSupportedTxEhtMcsAndNss(EhtMcsAndNssSet::EhtMcsMapType mapTy
         index = (mapType == EhtMcsAndNssSet::EHT_MCS_MAP_TYPE_20_MHZ_ONLY) ? 3 : 2;
         break;
     default:
-        NS_ASSERT_MSG(false, "Invalid upper MCS " << upperMcs);
+        NS_FATAL_ERROR("Invalid upper MCS " << upperMcs);
     }
     uint8_t nBytes = 0;
     switch (mapType)
@@ -588,7 +588,7 @@ EhtCapabilities::SetSupportedTxEhtMcsAndNss(EhtMcsAndNssSet::EhtMcsMapType mapTy
         nBytes = 3;
         break;
     default:
-        NS_ASSERT_MSG(false, "Invalid map type " << mapType);
+        NS_FATAL_ERROR("Invalid map type " << mapType);
     }
     auto it = m_supportedEhtMcsAndNssSet.supportedEhtMcsAndNssSet.find(mapType);
     if (it == m_supportedEhtMcsAndNssSet.supportedEhtMcsAndNssSet.end())
@@ -634,7 +634,7 @@ EhtCapabilities::GetHighestSupportedRxMcs(EhtMcsAndNssSet::EhtMcsMapType mapType
         NS_ASSERT(mapType == EhtMcsAndNssSet::EHT_MCS_MAP_TYPE_20_MHZ_ONLY);
         return 13;
     default:
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Invalid EHT-MCS and NSS set subfield");
     }
     return 0;
 }
@@ -669,7 +669,7 @@ EhtCapabilities::GetHighestSupportedTxMcs(EhtMcsAndNssSet::EhtMcsMapType mapType
         NS_ASSERT(mapType == EhtMcsAndNssSet::EHT_MCS_MAP_TYPE_20_MHZ_ONLY);
         return 13;
     default:
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Invalid EHT-MCS and NSS set subfield");
     }
     return 0;
 }

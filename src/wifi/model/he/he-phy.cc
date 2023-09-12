@@ -599,7 +599,7 @@ HePhy::ProcessSig(Ptr<Event> event, PhyFieldRxStatus status, WifiPpduField field
     case WIFI_PPDU_FIELD_SIG_B:
         return ProcessSigB(event, status);
     default:
-        NS_ASSERT_MSG(false, "Invalid PPDU field");
+        NS_FATAL_ERROR("Invalid PPDU field");
     }
     return status;
 }
@@ -1259,7 +1259,7 @@ HePhy::GetPer20MHzDurations(const Ptr<const WifiPpdu> ppdu)
                     // Not defined in the standard: keep -62 dBm
                     break;
                 default:
-                    NS_ASSERT_MSG(false, "Invalid channel width: " << ppduBw);
+                    NS_FATAL_ERROR("Invalid channel width: " << ppduBw);
                 }
             }
             Time ppduCcaDuration = GetDelayUntilCcaEnd(ccaThresholdDbm, band);

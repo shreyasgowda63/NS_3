@@ -99,7 +99,7 @@ Timer::GetDelayLeft() const
     case Timer::SUSPENDED:
         return m_delayLeft;
     default:
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Unknown Timer state");
         return TimeStep(0);
     }
 }

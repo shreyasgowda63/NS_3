@@ -157,7 +157,7 @@ NistErrorRateModel::CalculatePe(double p, uint8_t bValue) const
     }
     else
     {
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Invalid bValue: " << bValue);
     }
     return pe;
 }

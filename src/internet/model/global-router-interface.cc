@@ -264,7 +264,7 @@ GlobalRoutingLSA::GetLinkRecord(uint32_t n) const
             return *i;
         }
     }
-    NS_ASSERT_MSG(false, "GlobalRoutingLSA::GetLinkRecord (): invalid index");
+    NS_FATAL_ERROR("GlobalRoutingLSA::GetLinkRecord (): invalid index");
     return nullptr;
 }
 
@@ -367,7 +367,7 @@ GlobalRoutingLSA::GetAttachedRouter(uint32_t n) const
             return *i;
         }
     }
-    NS_ASSERT_MSG(false, "GlobalRoutingLSA::GetAttachedRouter (): invalid index");
+    NS_FATAL_ERROR("GlobalRoutingLSA::GetAttachedRouter (): invalid index");
     return Ipv4Address("0.0.0.0");
 }
 
@@ -486,7 +486,7 @@ GlobalRoutingLSA::Print(std::ostream& os) const
     }
     else
     {
-        NS_ASSERT_MSG(0, "Illegal LSA LSType: " << m_lsType);
+        NS_FATAL_ERROR("Illegal LSA LSType: " << m_lsType);
     }
     os << "========== End Global Routing LSA ==========" << std::endl;
 }
@@ -693,7 +693,7 @@ GlobalRouter::DiscoverLSAs()
         }
         else
         {
-            NS_ASSERT_MSG(0, "GlobalRouter::DiscoverLSAs (): unknown link type");
+            NS_FATAL_ERROR("GlobalRouter::DiscoverLSAs (): unknown link type");
         }
     }
 
@@ -1648,7 +1648,7 @@ GlobalRouter::GetInjectedRoute(uint32_t index)
             tmp++;
         }
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Invalid injected route index");
     // quiet compiler.
     return nullptr;
 }
@@ -1726,7 +1726,7 @@ GlobalRouter::GetAdjacent(Ptr<NetDevice> nd, Ptr<Channel> ch) const
     }
     else
     {
-        NS_ASSERT_MSG(false, "GlobalRouter::GetAdjacent (): Wrong or confused channel?");
+        NS_FATAL_ERROR("GlobalRouter::GetAdjacent (): Wrong or confused channel?");
         return nullptr;
     }
 }

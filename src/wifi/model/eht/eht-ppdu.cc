@@ -100,7 +100,7 @@ EhtPpdu::GetType() const
     case WIFI_PREAMBLE_EHT_TB:
         return WIFI_PPDU_TYPE_UL_MU;
     default:
-        NS_ASSERT_MSG(false, "invalid preamble " << m_preamble);
+        NS_FATAL_ERROR("invalid preamble " << m_preamble);
         return WIFI_PPDU_TYPE_SU;
     }
 }

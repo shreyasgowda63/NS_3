@@ -1079,7 +1079,7 @@ WifiEhtCapabilitiesIeTest::DoRun()
         expectedEhtMcsAndNssSetSize = (3 * 3);
         break;
     default:
-        NS_ASSERT_MSG(false, "Invalid upper channel width " << m_channelWidth);
+        NS_FATAL_ERROR("Invalid upper channel width " << m_channelWidth);
     }
 
     uint16_t expectedSize = 1 +                          // Element ID
