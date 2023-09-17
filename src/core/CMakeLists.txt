@@ -314,6 +314,7 @@ set(header_files
     model/wall-clock-synchronizer.h
     model/val-array.h
     model/matrix-array.h
+    model/proxy.h
 )
 
 set(test_sources

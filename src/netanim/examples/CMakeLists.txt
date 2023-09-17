@@ -16,6 +16,7 @@ foreach(
     LIBRARIES_TO_LINK
       ${libnetanim}
       ${libapplications}
+      ${libcsma}
       ${libpoint-to-point-layout}
   )
 endforeach()

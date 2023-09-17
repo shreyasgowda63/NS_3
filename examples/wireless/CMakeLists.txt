@@ -6,6 +6,7 @@ build_example(
     ${libapplications}
     ${libolsr}
     ${libnetanim}
+    ${libcsma}
 )
 
 build_example(

@@ -27,13 +27,14 @@
 #include "ns3/ipv4-l3-protocol.h"
 #include "ns3/ipv4.h"
 #include "ns3/log.h"
-#include "ns3/lte-enb-net-device.h"
-#include "ns3/lte-ue-net-device.h"
+// #include "ns3/lte-enb-net-device.h"
+// #include "ns3/lte-ue-net-device.h"
 #include "ns3/mac48-address.h"
 #include "ns3/net-device.h"
 #include "ns3/node-container.h"
 #include "ns3/node-list.h"
 #include "ns3/nstime.h"
+#include "ns3/object.h"
 #include "ns3/ptr.h"
 #include "ns3/random-variable-stream.h"
 #include "ns3/rectangle.h"
@@ -84,7 +85,16 @@ class WifiPsdu;
  * Provides functions that facilitate communications with an
  * external or internal network animator.
  */
-class AnimationInterface
+
+class NetAnimWriter;
+
+/**
+ * AnimationInterface to NetAnimWriter typedef
+ */
+NS_DEPRECATED_3_40("Use NetAnimWriter instead of AnimationInterface.")
+typedef NetAnimWriter AnimationInterface;
+
+class NetAnimWriter : public Object
 {
   public:
     /**
@@ -92,7 +102,12 @@ class AnimationInterface
      * \param filename The Filename for the trace file used by the Animator
      *
      */
-    AnimationInterface(const std::string filename);
+    NetAnimWriter(const std::string filename);
+    /**
+     * \brief Get the type ID.
+     * \return The object TypeId.
+     */
+    static TypeId GetTypeId();
 
     /**
      * Counter Types
@@ -104,7 +119,7 @@ class AnimationInterface
     };
 
     /**
-     * \brief typedef for WriteCallBack used for listening to AnimationInterface
+     * \brief typedef for WriteCallBack used for listening to NetAnimWriter
      * write messages
      *
      */
@@ -114,7 +129,7 @@ class AnimationInterface
      * \brief Destructor for the animator interface.
      *
      */
-    ~AnimationInterface();
+    ~NetAnimWriter() override;
 
     /**
      * \brief Enable tracking of Ipv4 L3 Protocol Counters such as Tx, Rx, Drop
@@ -167,12 +182,12 @@ class AnimationInterface
      * \param pollInterval The periodic interval at which routing table information is polled
      *        Default: 5s
      *
-     * \returns reference to this AnimationInterface object
+     * \returns reference to this NetAnimWriter object
      */
-    AnimationInterface& EnableIpv4RouteTracking(std::string fileName,
-                                                Time startTime,
-                                                Time stopTime,
-                                                Time pollInterval = Seconds(5));
+    NetAnimWriter& EnableIpv4RouteTracking(std::string fileName,
+                                           Time startTime,
+                                           Time stopTime,
+                                           Time pollInterval = Seconds(5));
 
     /**
      * \brief Enable tracking of the Ipv4 routing table for a set of Nodes
@@ -184,18 +199,18 @@ class AnimationInterface
      * \param pollInterval The periodic interval at which routing table information is polled
      *        Default: 5s
      *
-     * \returns reference to this AnimationInterface object
+     * \returns reference to this NetAnimWriter object
      */
-    AnimationInterface& EnableIpv4RouteTracking(std::string fileName,
-                                                Time startTime,
-                                                Time stopTime,
-                                                NodeContainer nc,
-                                                Time pollInterval = Seconds(5));
+    NetAnimWriter& EnableIpv4RouteTracking(std::string fileName,
+                                           Time startTime,
+                                           Time stopTime,
+                                           NodeContainer nc,
+                                           Time pollInterval = Seconds(5));
 
     /**
-     * \brief Check if AnimationInterface is initialized
+     * \brief Check if NetAnimWriter is initialized
      *
-     * \returns true if AnimationInterface was already initialized
+     * \returns true if NetAnimWriter was already initialized
      *
      */
     static bool IsInitialized();
@@ -203,7 +218,7 @@ class AnimationInterface
     /**
      * \brief Specify the time at which capture should start
      *
-     * \param t The time at which AnimationInterface should begin capture of traffic info
+     * \param t The time at which NetAnimWriter should begin capture of traffic info
      *
      */
     void SetStartTime(Time t);
@@ -211,7 +226,7 @@ class AnimationInterface
     /**
      * \brief Specify the time at which capture should stop
      *
-     * \param t The time at which AnimationInterface should stop capture of traffic info
+     * \param t The time at which NetAnimWriter should stop capture of traffic info
      *
      */
     void SetStopTime(Time t);
@@ -219,7 +234,7 @@ class AnimationInterface
     /**
      * \brief Set Max packets per trace file
      * \param maxPktsPerFile The maximum number of packets per trace file.
-              AnimationInterface will create trace files with the following
+              NetAnimWriter will create trace files with the following
               filenames : filename, filename-1, filename-2..., filename-N
               where each file contains packet info for 'maxPktsPerFile' number of packets
      *
@@ -237,7 +252,7 @@ class AnimationInterface
     void SetMobilityPollInterval(Time t);
 
     /**
-     * \brief Set a callback function to listen to AnimationInterface write events
+     * \brief Set a callback function to listen to NetAnimWriter write events
      *
      * \param cb Address of callback function
      *
@@ -372,20 +387,19 @@ class AnimationInterface
      * \param fromNodeId The source node
      * \param destinationIpv4Address The destination Ipv4 Address
      *
-     * \returns reference to this AnimationInterface object
+     * \returns reference to this NetAnimWriter object
      */
-    AnimationInterface& AddSourceDestination(uint32_t fromNodeId,
-                                             std::string destinationIpv4Address);
+    NetAnimWriter& AddSourceDestination(uint32_t fromNodeId, std::string destinationIpv4Address);
 
     /**
-     * \brief Is AnimationInterface started
+     * \brief Is NetAnimWriter started
      *
-     * \returns true if AnimationInterface was started
+     * \returns true if NetAnimWriter was started
      */
     bool IsStarted() const;
 
     /**
-     * \brief Do not trace packets. This helps reduce the trace file size if AnimationInterface is
+     * \brief Do not trace packets. This helps reduce the trace file size if NetAnimWriter is
      * solely used for tracking mobility, routing paths and counters
      */
     void SkipPacketTracing();
@@ -434,6 +448,81 @@ class AnimationInterface
      * \returns current node's remaining energy (between [0, 1])
      */
     double GetNodeEnergyFraction(Ptr<const Node> node) const;
+    /**
+     * Is in time window function
+     * \returns true if in the time window
+     */
+    bool IsInTimeWindow();
+    /**
+     * Checks if packets are being tracked
+     * \returns true if packets are being tracked
+     */
+    bool IsTracking() const;
+    /**
+     * Checks if packet metadata is enabled
+     * \returns true if packet metadata is enabled
+     */
+    bool IsEnablePacketMetadata() const;
+    /**
+     * Write XMLP function
+     * \param pktType the packet type
+     * \param fId the FID
+     * \param fbTx the FB transmit
+     * \param lbTx the LB transmit
+     * \param tId the TID
+     * \param fbRx the FB receive
+     * \param lbRx the LB receive
+     * \param metaInfo the meta info
+     */
+    void WriteXmlP(std::string pktType,
+                   uint32_t fId,
+                   double fbTx,
+                   double lbTx,
+                   uint32_t tId,
+                   double fbRx,
+                   double lbRx,
+                   std::string metaInfo = "");
+    /**
+     * Get packet metadata function
+     * \param p the packet
+     * \returns the meta data
+     */
+    std::string GetPacketMetadata(Ptr<const Packet> p);
+    /// Check maximum packets per trace file function
+    void CheckMaxPktsPerTraceFile();
+    /**
+     * Update position function
+     * \param n the node
+     * \returns the position vector
+     */
+    Vector UpdatePosition(Ptr<Node> n);
+    /**
+     * Add byte tag function
+     * \param animUid the UID
+     * \param p the packet
+     */
+    void AddByteTag(uint64_t animUid, Ptr<const Packet> p);
+    /**
+     * Get anim UID from packet function
+     * \param p the packet
+     * \returns the UID
+     */
+    uint64_t GetAnimUidFromPacket(Ptr<const Packet>);
+    /**
+     * Add node to node enqueue map
+     * \param nodeId Node Id
+     */
+    void AddNodeToNodeEnqueueMap(uint32_t nodeId);
+    /**
+     * Add node to node Dequeue map
+     * \param nodeId Node Id
+     */
+    void AddNodeToNodeDequeueMap(uint32_t nodeId);
+    /**
+     * Add node to node Drop map
+     * \param nodeId Node Id
+     */
+    void AddNodeToNodeDropMap(uint32_t nodeId);
 
   private:
     /**
@@ -540,7 +629,7 @@ class AnimationInterface
     enum ProtocolType
     {
         UAN,
-        LTE,
+        // LTE,
         WIFI,
         WIMAX,
         CSMA,
@@ -620,7 +709,7 @@ class AnimationInterface
     FILE* m_routingF;                      ///< File handle for routing table output (0 if None);
     Time m_mobilityPollInterval;           ///< mobility poll interval
     std::string m_outputFileName;          ///< output file name
-    uint64_t gAnimUid;                     ///< Packet unique identifier used by AnimationInterface
+    uint64_t gAnimUid;                     ///< Packet unique identifier used by NetAnimWriter
     AnimWriteCallback m_writeCallback;     ///< write callback
     bool m_started;                        ///< started
     bool m_enablePacketMetadata;           ///< enable packet metadata
@@ -665,9 +754,9 @@ class AnimationInterface
     AnimUidPacketInfoMap m_pendingWifiPackets;   ///< pending wifi packets
     AnimUidPacketInfoMap m_pendingWimaxPackets;  ///< pending wimax packets
     AnimUidPacketInfoMap m_pendingLrWpanPackets; ///< pending LR-WPAN packets
-    AnimUidPacketInfoMap m_pendingLtePackets;    ///< pending LTE packets
-    AnimUidPacketInfoMap m_pendingCsmaPackets;   ///< pending CSMA packets
-    AnimUidPacketInfoMap m_pendingUanPackets;    ///< pending UAN packets
+    // AnimUidPacketInfoMap m_pendingLtePackets;    ///< pending LTE packets
+    AnimUidPacketInfoMap m_pendingCsmaPackets; ///< pending CSMA packets
+    AnimUidPacketInfoMap m_pendingUanPackets;  ///< pending UAN packets
 
     std::map<uint32_t, Vector> m_nodeLocation;         ///< node location
     std::map<std::string, uint32_t> m_macToNodeIdMap;  ///< MAC to node ID map
@@ -749,18 +838,6 @@ class AnimationInterface
      * \returns the string
      */
     std::string CounterTypeToString(CounterType counterType);
-    /**
-     * Get packet metadata function
-     * \param p the packet
-     * \returns the meta data
-     */
-    std::string GetPacketMetadata(Ptr<const Packet> p);
-    /**
-     * Add byte tag function
-     * \param animUid the UID
-     * \param p the packet
-     */
-    void AddByteTag(uint64_t animUid, Ptr<const Packet> p);
     /**
      * WriteN function
      * \param data the data t write
@@ -846,12 +923,6 @@ class AnimationInterface
      */
     void AddPendingPacket(ProtocolType protocolType, uint64_t animUid, AnimPacketInfo pktInfo);
     /**
-     * Get anim UID from packet function
-     * \param p the packet
-     * \returns the UID
-     */
-    uint64_t GetAnimUidFromPacket(Ptr<const Packet>);
-    /**
      * Add to IPv4 address node ID table function
      * \param ipv4Address the IPv4 address
      * \param nodeId the node ID
@@ -875,14 +946,6 @@ class AnimationInterface
      * \param nodeId the node ID
      */
     void AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Addresses, uint32_t nodeId);
-    /**
-     * Is in time window function
-     * \returns true if in the time window
-     */
-    bool IsInTimeWindow();
-    /// Check maximum packets per trace file function
-    void CheckMaxPktsPerTraceFile();
-
     /// Track wifi phy counters function
     void TrackWifiPhyCounters();
     /// Track wifi MAC counters function
@@ -1130,32 +1193,32 @@ class AnimationInterface
      * \param p the packet
      */
     void CsmaMacRxTrace(std::string context, Ptr<const Packet> p);
-    /**
-     * LTE transmit trace function
-     * \param context the context
-     * \param p the packet
-     * \param m the MAC address
-     */
-    void LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
-    /**
-     * LTE receive trace function
-     * \param context the context
-     * \param p the packet
-     * \param m the MAC address
-     */
-    void LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
-    /**
-     * LTE Spectrum Phy transmit start function
-     * \param context the context
-     * \param pb the packet burst
-     */
-    void LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb);
-    /**
-     * LTE Spectrum Phy receive start function
-     * \param context the context
-     * \param pb the packet burst
-     */
-    void LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb);
+    // /**
+    //  * LTE transmit trace function
+    //  * \param context the context
+    //  * \param p the packet
+    //  * \param m the MAC address
+    //  */
+    // void LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
+    // /**
+    //  * LTE receive trace function
+    //  * \param context the context
+    //  * \param p the packet
+    //  * \param m the MAC address
+    //  */
+    // void LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
+    // /**
+    //  * LTE Spectrum Phy transmit start function
+    //  * \param context the context
+    //  * \param pb the packet burst
+    //  */
+    // void LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb);
+    // /**
+    //  * LTE Spectrum Phy receive start function
+    //  * \param context the context
+    //  * \param pb the packet burst
+    //  */
+    // void LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb);
     /**
      * UAN Phy gen transmit trace function
      * \param context the context
@@ -1197,21 +1260,21 @@ class AnimationInterface
     /// Connect callbacks function
     void ConnectCallbacks();
     /// Connect LTE function
-    void ConnectLte();
-    /**
-     * Connect LTE ue function
-     * \param n the node
-     * \param nd the device
-     * \param devIndex the device index
-     */
-    void ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex);
-    /**
-     * Connect LTE ENB function
-     * \param n the node
-     * \param nd the device
-     * \param devIndex the device index
-     */
-    void ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex);
+    // void ConnectLte();
+    // /**
+    //  * Connect LTE ue function
+    //  * \param n the node
+    //  * \param nd the device
+    //  * \param devIndex the device index
+    //  */
+    // void ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex);
+    // /**
+    //  * Connect LTE ENB function
+    //  * \param n the node
+    //  * \param nd the device
+    //  * \param devIndex the device index
+    //  */
+    // void ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex);
 
     // ##### Mobility #####
     /**
@@ -1220,12 +1283,6 @@ class AnimationInterface
      * \returns the position vector
      */
     Vector GetPosition(Ptr<Node> n);
-    /**
-     * Update position function
-     * \param n the node
-     * \returns the position vector
-     */
-    Vector UpdatePosition(Ptr<Node> n);
     /**
      * Update position function
      * \param n the node
@@ -1387,25 +1444,6 @@ class AnimationInterface
      * \param linkDescription the link description
      */
     void WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::string linkDescription);
-    /**
-     * Write XMLP function
-     * \param pktType the packet type
-     * \param fId the FID
-     * \param fbTx the FB transmit
-     * \param lbTx the LB transmit
-     * \param tId the TID
-     * \param fbRx the FB receive
-     * \param lbRx the LB receive
-     * \param metaInfo the meta info
-     */
-    void WriteXmlP(std::string pktType,
-                   uint32_t fId,
-                   double fbTx,
-                   double lbTx,
-                   uint32_t tId,
-                   double fbRx,
-                   double lbRx,
-                   std::string metaInfo = "");
     /**
      * Write XMLP function
      * \param animUid the UID

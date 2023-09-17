@@ -341,6 +341,8 @@ class CsmaNetDevice : public NetDevice
      * \return the number of stream indices assigned by this model
      */
     int64_t AssignStreams(int64_t stream);
+    // inherited from Object
+    void DoInitialize() override;
 
   protected:
     /**
