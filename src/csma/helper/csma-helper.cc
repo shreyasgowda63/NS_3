@@ -22,6 +22,7 @@
 #include "ns3/abort.h"
 #include "ns3/config.h"
 #include "ns3/csma-channel.h"
+#include "ns3/csma-net-device-anim.h"
 #include "ns3/csma-net-device.h"
 #include "ns3/log.h"
 #include "ns3/names.h"
@@ -325,6 +326,9 @@ CsmaHelper::InstallPriv(Ptr<Node> node, Ptr<CsmaChannel> channel) const
         ndqi->GetTxQueue(0)->ConnectQueueTraces(queue);
         device->AggregateObject(ndqi);
     }
+    Ptr<CsmaNetDeviceAnim> deviceAnim = CreateObject<CsmaNetDeviceAnim>();
+    device->AggregateObject(deviceAnim);
+    deviceAnim->ConnectCallbacks();
     return device;
 }
 

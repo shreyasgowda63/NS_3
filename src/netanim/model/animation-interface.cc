@@ -49,12 +49,14 @@
 #include "ns3/ipv6.h"
 #include "ns3/lr-wpan-mac-header.h"
 #include "ns3/lr-wpan-net-device.h"
-#include "ns3/lte-enb-phy.h"
-#include "ns3/lte-ue-phy.h"
+// #include "ns3/lte-enb-phy.h"
+// #include "ns3/lte-ue-phy.h"
+#include "ns3/csma-net-device-anim.h"
 #include "ns3/mobility-model.h"
 #include "ns3/node.h"
 #include "ns3/packet.h"
 #include "ns3/simulator.h"
+#include "ns3/singleton.h"
 #include "ns3/uan-mac.h"
 #include "ns3/uan-net-device.h"
 #include "ns3/wifi-mac-header.h"
@@ -68,30 +70,1433 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("AnimationInterface");
 
+/**
+ * \ingroup netanim
+ *
+ * \brief Interface to network animator
+ *
+ * Provides functions that facilitate communications with an
+ * external or internal network animator.
+ */
+
+class AnimationInterfaceSingleton : public Singleton<AnimationInterfaceSingleton>
+{
+  public:
+    /**
+     * \brief Constructor alias
+     * \param filename The Filename for the trace file used by the Animator
+     *
+     */
+    void Initialize(const std::string filename);
+
+    /**
+     * \brief typedef for WriteCallBack used for listening to AnimationInterfaceSingleton
+     * write messages
+     *
+     */
+    typedef void (*AnimWriteCallback)(const char* str);
+
+    /**
+     * \brief Destructor for the animator interface.
+     *
+     */
+    ~AnimationInterfaceSingleton() override;
+
+    /**
+     * \brief Enable tracking of Ipv4 L3 Protocol Counters such as Tx, Rx, Drop
+     *
+     * \param startTime Start Time for capturing values
+     * \param stopTime Stop Time for capturing values
+     * \param pollInterval The periodic interval at which the counters are written to the trace file
+     *        Default: 1s
+     */
+    void EnableIpv4L3ProtocolCounters(Time startTime,
+                                      Time stopTime,
+                                      Time pollInterval = Seconds(1));
+
+    /**
+     * \brief Enable tracking of Queue Counters such as Enqueue, Dequeue, Queue Drops
+     *
+     * \param startTime Start Time for capturing values
+     * \param stopTime Stop Time for capturing values
+     * \param pollInterval The periodic interval at which the counters are written to the trace file
+     *        Default: 1s
+     */
+    void EnableQueueCounters(Time startTime, Time stopTime, Time pollInterval = Seconds(1));
+
+    /**
+     * \brief Enable tracking of Wifi Mac Counters such as Tx, TxDrop, Rx, RxDrop
+     *
+     * \param startTime Start Time for capturing values
+     * \param stopTime Stop Time for capturing values
+     * \param pollInterval The periodic interval at which the counters are written to the trace file
+     *        Default: 1s
+     */
+    void EnableWifiMacCounters(Time startTime, Time stopTime, Time pollInterval = Seconds(1));
+
+    /**
+     * \brief Enable tracking of Wifi Phy Counters such as TxDrop, RxDrop
+     *
+     * \param startTime Start Time for capturing values
+     * \param stopTime Stop Time for capturing values
+     * \param pollInterval The periodic interval at which the counters are written to the trace file
+     *        Default: 1s
+     */
+    void EnableWifiPhyCounters(Time startTime, Time stopTime, Time pollInterval = Seconds(1));
+
+    /**
+     * \brief Enable tracking of the Ipv4 routing table for all Nodes
+     *
+     * \param fileName Trace file for storing routing table information
+     * \param startTime Start time for capture
+     * \param stopTime  End time for capture
+     * \param pollInterval The periodic interval at which routing table information is polled
+     *        Default: 5s
+     *
+     */
+    void EnableIpv4RouteTracking(std::string fileName,
+                                 Time startTime,
+                                 Time stopTime,
+                                 Time pollInterval = Seconds(5));
+
+    /**
+     * \brief Enable tracking of the Ipv4 routing table for a set of Nodes
+     *
+     * \param fileName Trace file for storing routing table information
+     * \param startTime Start time for capture
+     * \param stopTime  End time for capture
+     * \param nc A NodeContainer containing nodes for which Routing table has to be tracked
+     * \param pollInterval The periodic interval at which routing table information is polled
+     *        Default: 5s
+     *
+     */
+    void EnableIpv4RouteTracking(std::string fileName,
+                                 Time startTime,
+                                 Time stopTime,
+                                 NodeContainer nc,
+                                 Time pollInterval = Seconds(5));
+
+    /**
+     * \brief Check if AnimationInterfaceSingleton is initialized
+     *
+     * \returns true if AnimationInterfaceSingleton was already initialized
+     *
+     */
+    static bool IsInitialized();
+
+    /**
+     * \brief Specify the time at which capture should start
+     *
+     * \param t The time at which AnimationInterfaceSingleton should begin capture of traffic info
+     *
+     */
+    void SetStartTime(Time t);
+
+    /**
+     * \brief Specify the time at which capture should stop
+     *
+     * \param t The time at which AnimationInterfaceSingleton should stop capture of traffic info
+     *
+     */
+    void SetStopTime(Time t);
+
+    /**
+     * \brief Set Max packets per trace file
+     * \param maxPktsPerFile The maximum number of packets per trace file.
+              AnimationInterfaceSingleton will create trace files with the following
+              filenames : filename, filename-1, filename-2..., filename-N
+              where each file contains packet info for 'maxPktsPerFile' number of packets
+     *
+     */
+    void SetMaxPktsPerTraceFile(uint64_t maxPktsPerFile);
+
+    /**
+     * \brief Set mobility poll interval:WARNING: setting a low interval can
+     * cause slowness
+     *
+     * \param t Time interval between fetching mobility/position information
+     * Default: 0.25s
+     *
+     */
+    void SetMobilityPollInterval(Time t);
+
+    /**
+     * \brief Set a callback function to listen to AnimationInterfaceSingleton write events
+     *
+     * \param cb Address of callback function
+     *
+     */
+    void SetAnimWriteCallback(AnimWriteCallback cb);
+
+    /**
+     * \brief Reset the write callback function
+     *
+     */
+    void ResetAnimWriteCallback();
+
+    /**
+     * \brief Helper function to set Constant Position for a given node
+     * \param n Ptr to the node
+     * \param x X coordinate of the node
+     * \param y Y coordinate of the node
+     * \param z Z coordinate of the node
+     *
+     */
+    static void SetConstantPosition(Ptr<Node> n, double x, double y, double z = 0);
+
+    /**
+     * \brief Helper function to update the description for a given node
+     * \param n Ptr to the node
+     * \param descr A string to briefly describe the node
+     *
+     */
+    void UpdateNodeDescription(Ptr<Node> n, std::string descr);
+
+    /**
+     * \brief Helper function to update the description for a given node
+     * \param nodeId Id of the node
+     * \param descr A string to briefly describe the node
+     *
+     */
+    void UpdateNodeDescription(uint32_t nodeId, std::string descr);
+
+    /**
+     * \brief Helper function to update the image of a node
+     * \param nodeId Id of the node
+     * \param resourceId Id of the image resource that was previously added
+     *
+     */
+    void UpdateNodeImage(uint32_t nodeId, uint32_t resourceId);
+
+    /**
+     * \brief Helper function to update the size of a node
+     * \param n Ptr to the node
+     * \param width Width of the node
+     * \param height Height of the node
+     *
+     */
+    void UpdateNodeSize(Ptr<Node> n, double width, double height);
+
+    /**
+     * \brief Helper function to update the size of a node
+     * \param nodeId Id of the node
+     * \param width Width of the node
+     * \param height Height of the node
+     *
+     */
+    void UpdateNodeSize(uint32_t nodeId, double width, double height);
+
+    /**
+     * \brief Helper function to update the node color
+     * \param n Ptr to the node
+     * \param r Red component value (0-255)
+     * \param g Green component value (0-255)
+     * \param b Blue component value (0-255)
+     *
+     */
+    void UpdateNodeColor(Ptr<Node> n, uint8_t r, uint8_t g, uint8_t b);
+
+    /**
+     * \brief Helper function to update the node color
+     * \param nodeId Id of the node
+     * \param r Red component value (0-255)
+     * \param g Green component value (0-255)
+     * \param b Blue component value (0-255)
+     *
+     */
+    void UpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b);
+
+    /**
+     * \brief Helper function to update a node's counter referenced by the nodeCounterId
+     * \param nodeCounterId The counter Id obtained from AddNodeCounter
+     * \param nodeId Node Id of the node
+     * \param counter Current value of the counter
+     *
+     */
+    void UpdateNodeCounter(uint32_t nodeCounterId, uint32_t nodeId, double counter);
+
+    /**
+     * \brief Helper function to set the background image
+     * \param fileName File name of the background image
+     * \param x X coordinate of the image
+     * \param y Y coordinate of the image
+     * \param scaleX X scale of the image
+     * \param scaleY Y scale of the image
+     * \param opacity Opacity of the background: A value between 0.0 and 1.0. 0.0 is transparent,
+     *        1.0 is opaque
+     *
+     */
+    void SetBackgroundImage(std::string fileName,
+                            double x,
+                            double y,
+                            double scaleX,
+                            double scaleY,
+                            double opacity);
+
+    /**
+     * \brief Helper function to update the description for a link
+     * \param fromNode Node Id of the "from Node" of the p2p link
+     * \param toNode Node Id of the "to Node" of the p2p link
+     * \param linkDescription Description of the link such as link bandwidth
+     *
+     */
+    void UpdateLinkDescription(uint32_t fromNode, uint32_t toNode, std::string linkDescription);
+
+    /**
+     * \brief Helper function to update the description for a link
+     * \param fromNode Ptr to the "from Node" of the p2p link
+     * \param toNode Ptr to the "to Node" of the p2p link
+     * \param linkDescription Description of the link such as link bandwidth
+     *
+     */
+    void UpdateLinkDescription(Ptr<Node> fromNode, Ptr<Node> toNode, std::string linkDescription);
+
+    /**
+     * \brief Helper function to print the routing path from a source node to destination IP
+     * \param fromNodeId The source node
+     * \param destinationIpv4Address The destination Ipv4 Address
+     *
+     */
+    void AddSourceDestination(uint32_t fromNodeId, std::string destinationIpv4Address);
+
+    /**
+     * \brief Is AnimationInterfaceSingleton started
+     *
+     * \returns true if AnimationInterfaceSingleton was started
+     */
+    bool IsStarted() const;
+
+    /**
+     * \brief Do not trace packets. This helps reduce the trace file size if
+     * AnimationInterfaceSingleton is solely used for tracking mobility, routing paths and counters
+     */
+    void SkipPacketTracing();
+
+    /**
+     *
+     * \brief Enable Packet metadata
+     * \param enable if true enables writing the packet metadata to the XML trace file
+     *        if false disables writing the packet metadata
+     *
+     */
+    void EnablePacketMetadata(bool enable = true);
+
+    /**
+     *
+     * \brief Get trace file packet count (This used only for testing)
+     *
+     * \returns Number of packets recorded in the current trace file
+     */
+    uint64_t GetTracePktCount() const;
+
+    /**
+     *
+     * \brief Setup a node counter
+     * \param counterName A string to identify the counter
+     * \param counterType The type of the counter, such as uint32, double etc
+     *
+     * \returns The id of the counter to be used as a reference for future
+     */
+    uint32_t AddNodeCounter(std::string counterName, AnimationInterface::CounterType counterType);
+
+    /**
+     *
+     * \brief Add a resource such as the path to an image file
+     * \param resourcePath Absolute Path to an image/resource
+     *
+     * \returns a number identifying the resource
+     */
+    uint32_t AddResource(std::string resourcePath);
+
+    /**
+     *
+     * \brief Get node's energy fraction (This used only for testing)
+     * \param node
+     *
+     * \returns current node's remaining energy (between [0, 1])
+     */
+    double GetNodeEnergyFraction(Ptr<const Node> node) const;
+    /**
+     * Is in time window function
+     * \returns true if in the time window
+     */
+    bool IsInTimeWindow();
+    /**
+     * Checks if packets are being tracked
+     * \returns true if packets are being tracked
+     */
+    bool IsTracking() const;
+    /**
+     * Get net device from context
+     * \param context the context string
+     * \returns the device
+     */
+    Ptr<NetDevice> GetNetDeviceFromContext(std::string context);
+    /**
+     * Update position function
+     * \param ndev the device
+     * \returns the position vector
+     */
+    Vector UpdatePosition(Ptr<NetDevice> ndev);
+    /**
+     * Add byte tag function
+     * \param animUid the UID
+     * \param p the packet
+     */
+    void AddByteTag(uint64_t animUid, Ptr<const Packet> p);
+    /**
+     * Add pending packet function
+     * \param protocolType the protocol type
+     * \param animUid the UID
+     * \param pktInfo the packet info
+     */
+    void AddPendingPacket(AnimationInterface::ProtocolType protocolType,
+                          uint64_t animUid,
+                          AnimPacketInfo pktInfo);
+    /**
+     * Get anim UID from packet function
+     * \param p the packet
+     * \returns the UID
+     */
+    uint64_t GetAnimUidFromPacket(Ptr<const Packet> p);
+    /**
+     * Add node to node enqueue map
+     * \param nodeId Node Id
+     */
+    void AddNodeToNodeEnqueueMap(uint32_t nodeId);
+    /**
+     * Add node to node Dequeue map
+     * \param nodeId Node Id
+     */
+    void AddNodeToNodeDequeueMap(uint32_t nodeId);
+    /**
+     * Add node to node Drop map
+     * \param nodeId Node Id
+     */
+    void AddNodeToNodeDropMap(uint32_t nodeId);
+    /// Check maximum packets per trace file function
+    void CheckMaxPktsPerTraceFile();
+    /**
+     * Write XMLP function
+     * \param pktType the packet type
+     * \param fId the FID
+     * \param fbTx the FB transmit
+     * \param lbTx the LB transmit
+     * \param tId the TID
+     * \param fbRx the FB receive
+     * \param lbRx the LB receive
+     * \param metaInfo the meta info
+     */
+    void WriteXmlP(std::string pktType,
+                   uint32_t fId,
+                   double fbTx,
+                   double lbTx,
+                   uint32_t tId,
+                   double fbRx,
+                   double lbRx,
+                   std::string metaInfo = "");
+    /**
+     * Checks if packet metadata is enabled
+     * \returns true if packet metadata is enabled
+     */
+    bool IsEnablePacketMetadata() const;
+    /**
+     * Get packet metadata function
+     * \param p the packet
+     * \returns the metadata
+     */
+    std::string GetPacketMetadata(Ptr<const Packet> p);
+
+  private:
+    /// RGB structure
+    struct Rgb
+    {
+        uint8_t r; ///< r
+        uint8_t g; ///< g
+        uint8_t b; ///< b
+    };             ///< RGB structure
+
+    /// P2pLinkNodeIdPair structure
+    struct P2pLinkNodeIdPair
+    {
+        uint32_t fromNode; ///< from node
+        uint32_t toNode;   ///< to node
+    };                     ///< P2P link node id pair
+
+    /// LinkProperties structure
+    struct LinkProperties
+    {
+        std::string fromNodeDescription; ///< from node description
+        std::string toNodeDescription;   ///< to node description
+        std::string linkDescription;     ///< link description
+    };                                   ///< link properties
+
+    /// LinkPairCompare structure
+    struct LinkPairCompare
+    {
+        /**
+         * comparison operator
+         *
+         * \param first
+         * \param second
+         * \return true if equal
+         */
+        bool operator()(P2pLinkNodeIdPair first, P2pLinkNodeIdPair second) const
+        {
+            // Check if they are the same node pairs but flipped
+            if (((first.fromNode == second.fromNode) && (first.toNode == second.toNode)) ||
+                ((first.fromNode == second.toNode) && (first.toNode == second.fromNode)))
+            {
+                return false;
+            }
+            std::ostringstream oss1;
+            oss1 << first.fromNode << first.toNode;
+            std::ostringstream oss2;
+            oss2 << second.fromNode << second.toNode;
+            return oss1.str() < oss2.str();
+        }
+    };
+
+    /// Ipv4RouteTrackElement structure
+    struct Ipv4RouteTrackElement
+    {
+        std::string destination; ///< destination
+        uint32_t fromNodeId;     ///< from node ID
+    };                           ///< IPv4 route track element
+
+    /// Ipv4RoutePathElement structure
+    struct Ipv4RoutePathElement
+    {
+        uint32_t nodeId;     ///< node ID
+        std::string nextHop; ///< next hop
+    };                       ///< IPv4 route path element
+
+    /// NodeSize structure
+    struct NodeSize
+    {
+        double width;  ///< width
+        double height; ///< height
+    };                 ///< node size
+
+    typedef std::map<P2pLinkNodeIdPair, LinkProperties, LinkPairCompare>
+        LinkPropertiesMap;                                       ///< LinkPropertiesMap typedef
+    typedef std::map<uint32_t, std::string> NodeDescriptionsMap; ///< NodeDescriptionsMap typedef
+    typedef std::map<uint32_t, Rgb> NodeColorsMap;               ///< NodeColorsMap typedef
+    typedef std::map<uint64_t, AnimPacketInfo>
+        AnimUidPacketInfoMap;                             ///< AnimUidPacketInfoMap typedef
+    typedef std::map<uint32_t, double> EnergyFractionMap; ///< EnergyFractionMap typedef
+    typedef std::vector<Ipv4RoutePathElement>
+        Ipv4RoutePathElements;                                  ///< Ipv4RoutePathElements typedef
+    typedef std::multimap<uint32_t, std::string> NodeIdIpv4Map; ///< NodeIdIpv4Map typedef
+    typedef std::multimap<uint32_t, std::string> NodeIdIpv6Map; ///< NodeIdIpv6Map typedef
+    typedef std::pair<uint32_t, std::string> NodeIdIpv4Pair;    ///< NodeIdIpv4Pair typedef
+    typedef std::pair<uint32_t, std::string> NodeIdIpv6Pair;    ///< NodeIdIpv6Pair typedef
+
+    // Node Counters
+    typedef std::map<uint32_t, uint64_t> NodeCounterMap64; ///< NodeCounterMap64 typedef
+
+    /// AnimXmlElement class
+    class AnimXmlElement
+    {
+      public:
+        /**
+         * Constructor
+         *
+         * \param tagName tag name
+         * \param emptyElement empty element?
+         */
+        AnimXmlElement(std::string tagName, bool emptyElement = true);
+        template <typename T>
+        /**
+         * Add attribute function
+         * \param attribute the attribute name
+         * \param value the attribute value
+         * \param xmlEscape true to escape
+         */
+        void AddAttribute(std::string attribute, T value, bool xmlEscape = false);
+        /**
+         * Set text function
+         * \param text the text for the element
+         */
+        void SetText(std::string text);
+        /**
+         * Append child function
+         * \param e the element to add as a child
+         */
+        void AppendChild(AnimXmlElement e);
+        /**
+         * Get text for the element function
+         * \param autoClose auto close the element
+         * \returns the text
+         */
+        std::string ToString(bool autoClose = true);
+
+      private:
+        std::string m_tagName;                 ///< tag name
+        std::string m_text;                    ///< element string
+        std::vector<std::string> m_attributes; ///< list of attributes
+        std::vector<std::string> m_children;   ///< list of children
+    };
+
+    // ##### State #####
+
+    FILE* m_f;                    ///< File handle for output (0 if none)
+    FILE* m_routingF;             ///< File handle for routing table output (0 if None);
+    Time m_mobilityPollInterval;  ///< mobility poll interval
+    std::string m_outputFileName; ///< output file name
+    uint64_t gAnimUid;            ///< Packet unique identifier used by AnimationInterfaceSingleton
+    AnimWriteCallback m_writeCallback;         ///< write callback
+    bool m_started;                            ///< started
+    bool m_enablePacketMetadata;               ///< enable packet metadata
+    Time m_startTime;                          ///< start time
+    Time m_stopTime;                           ///< stop time
+    uint64_t m_maxPktsPerFile;                 ///< maximum packets per file
+    std::string m_originalFileName;            ///< original file name
+    Time m_routingStopTime;                    ///< routing stop time
+    std::string m_routingFileName;             ///< routing file name
+    Time m_routingPollInterval;                ///< routing poll interval
+    NodeContainer m_routingNc;                 ///< routing node container
+    Time m_ipv4L3ProtocolCountersStopTime;     ///< IPv4 L3 protocol counters stop time
+    Time m_ipv4L3ProtocolCountersPollInterval; ///< IPv4 L3 protocol counters poll interval
+    Time m_queueCountersStopTime;              ///< queue counters stop time
+    Time m_queueCountersPollInterval;          ///< queue counters poll interval
+    Time m_wifiMacCountersStopTime;            ///< wifi MAC counters stop time
+    Time m_wifiMacCountersPollInterval;        ///< wifi MAC counters poll interval
+    Time m_wifiPhyCountersStopTime;            ///< wifi Phy counters stop time
+    Time m_wifiPhyCountersPollInterval;        ///< wifi Phy counters poll interval
+    static Rectangle* userBoundary;            ///< user boundary
+    bool m_trackPackets;                       ///< track packets
+
+    // Counter ID
+    uint32_t m_remainingEnergyCounterId; ///< remaining energy counter ID
+
+    uint32_t m_ipv4L3ProtocolTxCounterId;   ///< IPv4 L3 protocol transmit counter ID
+    uint32_t m_ipv4L3ProtocolRxCounterId;   ///< IPv4 L3 protocol receive counter ID
+    uint32_t m_ipv4L3ProtocolDropCounterId; ///< IPv4 protocol drop counter ID
+
+    uint32_t m_queueEnqueueCounterId; ///< queue enqueue counter ID
+    uint32_t m_queueDequeueCounterId; ///< queue dequeue counter ID
+    uint32_t m_queueDropCounterId;    ///< queue drop counter ID
+
+    uint32_t m_wifiMacTxCounterId;     ///< wifi MAC transmit counter ID
+    uint32_t m_wifiMacTxDropCounterId; ///< wifi MAC transmit drop counter ID
+    uint32_t m_wifiMacRxCounterId;     ///< wifi MAC receive counter ID
+    uint32_t m_wifiMacRxDropCounterId; ///< wifi MAC receive drop counter ID
+
+    uint32_t m_wifiPhyTxDropCounterId; ///< wifi Phy transmit drop counter ID
+    uint32_t m_wifiPhyRxDropCounterId; ///< wifi Phy receive drop counter ID
+
+    AnimUidPacketInfoMap m_pendingWifiPackets;   ///< pending wifi packets
+    AnimUidPacketInfoMap m_pendingWimaxPackets;  ///< pending wimax packets
+    AnimUidPacketInfoMap m_pendingLrWpanPackets; ///< pending LR-WPAN packets
+    // AnimUidPacketInfoMap m_pendingLtePackets;    ///< pending LTE packets
+    AnimUidPacketInfoMap m_pendingCsmaPackets; ///< pending CSMA packets
+    AnimUidPacketInfoMap m_pendingUanPackets;  ///< pending UAN packets
+    AnimUidPacketInfoMap m_pendingWavePackets; ///< pending WAVE packets
+
+    std::map<uint32_t, Vector> m_nodeLocation;         ///< node location
+    std::map<std::string, uint32_t> m_macToNodeIdMap;  ///< MAC to node ID map
+    std::map<std::string, uint32_t> m_ipv4ToNodeIdMap; ///< IPv4 to node ID map
+    std::map<std::string, uint32_t> m_ipv6ToNodeIdMap; ///< IPv6 to node ID map
+    NodeIdIpv4Map m_nodeIdIpv4Map;                     ///< node ID to IPv4 map
+    NodeIdIpv6Map m_nodeIdIpv6Map;                     ///< node ID to IPv6 map
+
+    NodeColorsMap m_nodeColors;                                  ///< node colors
+    NodeDescriptionsMap m_nodeDescriptions;                      ///< node description
+    LinkPropertiesMap m_linkProperties;                          ///< link properties
+    EnergyFractionMap m_nodeEnergyFraction;                      ///< node energy fraction
+    uint64_t m_currentPktCount;                                  ///< current packet count
+    std::vector<Ipv4RouteTrackElement> m_ipv4RouteTrackElements; ///< IPv route track elements
+    std::map<uint32_t, NodeSize> m_nodeSizes;                    ///< node sizes
+    std::vector<std::string> m_resources;                        ///< resources
+    std::vector<std::string> m_nodeCounters;                     ///< node counters
+
+    /* Value-added custom counters */
+    NodeCounterMap64 m_nodeIpv4Drop;        ///< node IPv4 drop
+    NodeCounterMap64 m_nodeIpv4Tx;          ///< node IPv4 transmit
+    NodeCounterMap64 m_nodeIpv4Rx;          ///< node IPv4 receive
+    NodeCounterMap64 m_nodeQueueEnqueue;    ///< node queue enqueue
+    NodeCounterMap64 m_nodeQueueDequeue;    ///< node queue dequeue
+    NodeCounterMap64 m_nodeQueueDrop;       ///< node queue drop
+    NodeCounterMap64 m_nodeWifiMacTx;       ///< node wifi MAC transmit
+    NodeCounterMap64 m_nodeWifiMacTxDrop;   ///< node wifi MAC transmit drop
+    NodeCounterMap64 m_nodeWifiMacRx;       ///< node wifi MAC receive
+    NodeCounterMap64 m_nodeWifiMacRxDrop;   ///< node wifi MAC receive drop
+    NodeCounterMap64 m_nodeWifiPhyTxDrop;   ///< node wifi Phy transmit drop
+    NodeCounterMap64 m_nodeWifiPhyRxDrop;   ///< node wifi Phy receive drop
+    NodeCounterMap64 m_nodeLrWpanMacTx;     ///< node LR-WPAN MAC transmit
+    NodeCounterMap64 m_nodeLrWpanMacTxDrop; ///< node LR-WPAN MAC transmit drop
+    NodeCounterMap64 m_nodeLrWpanMacRx;     ///< node LR-WPAN MAC receive
+    NodeCounterMap64 m_nodeLrWpanMacRxDrop; ///< node LR-WPAN MAC receive drop
+
+    /**
+     * Get elements from context
+     * \param context the context string
+     * \returns the elements
+     */
+    const std::vector<std::string> GetElementsFromContext(const std::string& context) const;
+    /**
+     * Get node from context
+     * \param context the context string
+     * \returns the node
+     */
+    Ptr<Node> GetNodeFromContext(const std::string& context) const;
+
+    // ##### General #####
+    /**
+     * Start animation function
+     *
+     * \param restart
+     */
+    void StartAnimation(bool restart = false);
+    /**
+     * Set output file function
+     *
+     * \param fn the file name
+     * \param routing
+     */
+    void SetOutputFile(const std::string& fn, bool routing = false);
+    /**
+     * Stop animation function
+     *
+     * \param onlyAnimation
+     */
+    void StopAnimation(bool onlyAnimation = false);
+    /**
+     * Counter type to string function
+     * \param counterType the counter type
+     * \returns the string
+     */
+    std::string CounterTypeToString(AnimationInterface::CounterType counterType);
+    /**
+     * WriteN function
+     * \param data the data t write
+     * \param count the number of bytes to write
+     * \param f the file to write to
+     * \returns the number of bytes written
+     */
+    int WriteN(const char* data, uint32_t count, FILE* f);
+    /**
+     * WriteN function
+     * \param st the string to output
+     * \param f the file to write to
+     * \returns the number of bytes written
+     */
+    int WriteN(const std::string& st, FILE* f);
+    /**
+     * Get MAC address function
+     * \param nd the device
+     * \returns the MAC address
+     */
+    std::string GetMacAddress(Ptr<NetDevice> nd);
+    /**
+     * Get IPv4 address
+     * \param nd the device
+     * \returns the IPv4 address
+     */
+    std::string GetIpv4Address(Ptr<NetDevice> nd);
+    /**
+     * Get IPv6 address
+     * \param nd the device
+     * \returns the IPv6 address
+     */
+    std::string GetIpv6Address(Ptr<NetDevice> nd);
+    /**
+     * Get IPv4 addresses
+     * \param nd the device
+     * \returns the IPv4 address list
+     */
+    std::vector<std::string> GetIpv4Addresses(Ptr<NetDevice> nd);
+    /**
+     * Get IPv6 addresses
+     * \param nd the device
+     * \returns the IPv6 address list
+     */
+    std::vector<std::string> GetIpv6Addresses(Ptr<NetDevice> nd);
+
+    /**
+     * Get netanim version function
+     * \returns the net anim version string
+     */
+    std::string GetNetAnimVersion();
+    /// Mobility auto check function
+    void MobilityAutoCheck();
+    /**
+     * Is packet pending function
+     * \param animUid the UID
+     * \param protocolType the protocol type
+     * \returns true if a packet is pending
+     */
+    bool IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType);
+    /**
+     * Purge pending packets function
+     * \param protocolType the protocol type
+     */
+    void PurgePendingPackets(AnimationInterface::ProtocolType protocolType);
+    /**
+     * Protocol type to pending packets function
+     * \param protocolType the protocol type
+     * \returns AnimUidPacketInfoMap *
+     */
+    AnimUidPacketInfoMap* ProtocolTypeToPendingPackets(
+        AnimationInterface::ProtocolType protocolType);
+    /**
+     * Protocol type to string function
+     * \param protocolType the protocol type
+     * \returns the protocol type string
+     */
+    std::string ProtocolTypeToString(AnimationInterface::ProtocolType protocolType);
+    /**
+     * Add to IPv4 address node ID table function
+     * \param ipv4Address the IPv4 address
+     * \param nodeId the node ID
+     */
+    void AddToIpv4AddressNodeIdTable(std::string ipv4Address, uint32_t nodeId);
+    /**
+     * Add to IPv4 address node ID table function
+     * \param ipv4Addresses the list of IPv4 addresses
+     * \param nodeId the node ID
+     */
+    void AddToIpv4AddressNodeIdTable(std::vector<std::string> ipv4Addresses, uint32_t nodeId);
+    /**
+     * Add to IPv6 address node ID table function
+     * \param ipv6Address the IPv6 address
+     * \param nodeId the node ID
+     */
+    void AddToIpv6AddressNodeIdTable(std::string ipv6Address, uint32_t nodeId);
+    /**
+     * Add to IPv6 address node ID table function
+     * \param ipv6Addresses the list of IPv6 addresses
+     * \param nodeId the node ID
+     */
+    void AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Addresses, uint32_t nodeId);
+    /// Track wifi phy counters function
+    void TrackWifiPhyCounters();
+    /// Track wifi MAC counters function
+    void TrackWifiMacCounters();
+    /// Track IPv4 L3 protocol counters function
+    void TrackIpv4L3ProtocolCounters();
+    /// Track queue counters function
+    void TrackQueueCounters();
+    // ##### Routing #####
+    /// Track IPv4 router function
+    void TrackIpv4Route();
+    /// Track IPv4 route paths function
+    void TrackIpv4RoutePaths();
+    /**
+     * Get IPv4 routing table function
+     * \param n the node
+     * \returns the IPv4 routing table
+     */
+    std::string GetIpv4RoutingTable(Ptr<Node> n);
+    /**
+     * Recursive IPv4 route path search function
+     * \param from the source node
+     * \param to the destination node
+     * \param rpElements the IPv4 routing path elements
+     */
+    void RecursiveIpv4RoutePathSearch(std::string from,
+                                      std::string to,
+                                      Ipv4RoutePathElements& rpElements);
+    /**
+     * Write route path function
+     * \param nodeId the node ID
+     * \param destination the destination
+     * \param rpElements the IPv4 routing path elements
+     */
+    void WriteRoutePath(uint32_t nodeId, std::string destination, Ipv4RoutePathElements rpElements);
+
+    // ##### Trace #####
+    /**
+     * Enqueue trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void EnqueueTrace(std::string context, Ptr<const Packet>);
+    /**
+     * Dequeue trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void DequeueTrace(std::string context, Ptr<const Packet>);
+    /**
+     * Queue trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void QueueDropTrace(std::string context, Ptr<const Packet>);
+    /**
+     * IPv4 transmit trace function
+     * \param context the context
+     * \param p the packet
+     * \param ipv4 the IP
+     * \param interfaceIndex the interface index
+     */
+    void Ipv4TxTrace(std::string context,
+                     Ptr<const Packet> p,
+                     Ptr<Ipv4> ipv4,
+                     uint32_t interfaceIndex);
+    /**
+     * IPv4 receive trace function
+     * \param context the context
+     * \param p the packet
+     * \param ipv4 the IP
+     * \param interfaceIndex the interface index
+     */
+    void Ipv4RxTrace(std::string context,
+                     Ptr<const Packet> p,
+                     Ptr<Ipv4> ipv4,
+                     uint32_t interfaceIndex);
+    /**
+     * IPv4 drop trace function
+     * \param context the context
+     * \param ipv4Header the IPv4 header
+     * \param p the packet
+     * \param dropReason the reason for the drop
+     * \param ipv4 the IP
+     * \param interfaceIndex the interface index
+     */
+    void Ipv4DropTrace(std::string context,
+                       const Ipv4Header& ipv4Header,
+                       Ptr<const Packet> p,
+                       Ipv4L3Protocol::DropReason dropReason,
+                       Ptr<Ipv4> ipv4,
+                       uint32_t interfaceIndex);
+
+    /**
+     * wifi MAC transmit trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void WifiMacTxTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * wifi MAC transmit drop trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void WifiMacTxDropTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * wifi MAC receive trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void WifiMacRxTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * wifi MAC receive drop trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void WifiMacRxDropTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * wifi Phy transmit drop trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void WifiPhyTxDropTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * wifi Phy receive drop trace function
+     * \param context the context
+     * \param p the packet
+     * \param reason the reason
+     */
+    void WifiPhyRxDropTrace(std::string context,
+                            Ptr<const Packet> p,
+                            WifiPhyRxfailureReason reason);
+    /**
+     * LR-WPAN MAC transmit trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void LrWpanMacTxTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * LR-WPAN MAC transmit drop trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void LrWpanMacTxDropTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * LR-WPAN MAC receive trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void LrWpanMacRxTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * LR-WPAN MAC receive drop trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void LrWpanMacRxDropTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * Device transmit trace function
+     * \param context the context
+     * \param p the packet
+     * \param tx the transmit device
+     * \param rx the receive device
+     * \param txTime the transmit time
+     * \param rxTime the receive time
+     */
+    void DevTxTrace(std::string context,
+                    Ptr<const Packet> p,
+                    Ptr<NetDevice> tx,
+                    Ptr<NetDevice> rx,
+                    Time txTime,
+                    Time rxTime);
+    /**
+     * wifi Phy transmit PSDU begin trace function
+     * \param context the context
+     * \param psduMap the PSDU map
+     * \param txVector the TXVECTOR
+     * \param txPowerW the tx power in Watts
+     */
+    void WifiPhyTxBeginTrace(std::string context,
+                             WifiConstPsduMap psduMap,
+                             WifiTxVector txVector,
+                             double txPowerW);
+    /**
+     * wifi Phy receive begin trace function
+     *
+     * \param context the context
+     * \param p the packet
+     * \param rxPowersW the receive power per channel band in Watts
+     */
+    void WifiPhyRxBeginTrace(std::string context,
+                             Ptr<const Packet> p,
+                             RxPowerWattPerChannelBand rxPowersW);
+    /**
+     * LR-WPAN Phy receive begin trace function
+     *
+     * \param context the context
+     * \param p the packet
+     */
+    void LrWpanPhyTxBeginTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * LR-WPAN Phy receive begin trace function
+     *
+     * \param context the context
+     * \param p the packet
+     */
+    void LrWpanPhyRxBeginTrace(std::string context, Ptr<const Packet> p);
+    /**
+     * WIMax transmit trace function
+     * \param context the context
+     * \param p the packet
+     * \param m the MAC address
+     */
+    void WimaxTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
+    /**
+     * WIMax receive trace function
+     * \param context the context
+     * \param p the packet
+     * \param m the MAC address
+     */
+    void WimaxRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
+    // /**
+    //  * LTE transmit trace function
+    //  * \param context the context
+    //  * \param p the packet
+    //  * \param m the MAC address
+    //  */
+    // void LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
+    // /**
+    //  * LTE receive trace function
+    //  * \param context the context
+    //  * \param p the packet
+    //  * \param m the MAC address
+    //  */
+    // void LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m);
+    // /**
+    //  * LTE Spectrum Phy transmit start function
+    //  * \param context the context
+    //  * \param pb the packet burst
+    //  */
+    // void LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb);
+    // /**
+    //  * LTE Spectrum Phy receive start function
+    //  * \param context the context
+    //  * \param pb the packet burst
+    //  */
+    // void LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb);
+    /**
+     * UAN Phy gen transmit trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void UanPhyGenTxTrace(std::string context, Ptr<const Packet>);
+    /**
+     * UAN Phy gen receive trace function
+     * \param context the context
+     * \param p the packet
+     */
+    void UanPhyGenRxTrace(std::string context, Ptr<const Packet>);
+    /**
+     * Remaining energy trace function
+     * \param context the context
+     * \param previousEnergy The previous energy
+     * \param currentEnergy The current energy
+     */
+    void RemainingEnergyTrace(std::string context, double previousEnergy, double currentEnergy);
+    /**
+     * Generic wireless transmit trace function
+     * \param context the context
+     * \param p the packet
+     * \param protocolType the protocol type
+     */
+    void GenericWirelessTxTrace(std::string context,
+                                Ptr<const Packet> p,
+                                AnimationInterface::ProtocolType protocolType);
+    /**
+     * Generic wireless receive trace function
+     * \param context the context
+     * \param p the packet
+     * \param protocolType the protocol type
+     */
+    void GenericWirelessRxTrace(std::string context,
+                                Ptr<const Packet> p,
+                                AnimationInterface::ProtocolType protocolType);
+
+    /// Connect callbacks function
+    void ConnectCallbacks();
+    // /// Connect LTE function
+    // void ConnectLte();
+    // /**
+    //  * Connect LTE ue function
+    //  * \param n the node
+    //  * \param nd the device
+    //  * \param devIndex the device index
+    //  */
+    // void ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex);
+    // /**
+    //  * Connect LTE ENB function
+    //  * \param n the node
+    //  * \param nd the device
+    //  * \param devIndex the device index
+    //  */
+    // void ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex);
+
+    // ##### Mobility #####
+    /**
+     * Get position function
+     * \param n the node
+     * \returns the position vector
+     */
+    Vector GetPosition(Ptr<Node> n);
+    /**
+     * Update position function
+     * \param n the node
+     * \returns the position vector
+     */
+    Vector UpdatePosition(Ptr<Node> n);
+    /**
+     * Update position function
+     * \param n the node
+     * \param v the vector
+     * \returns the position vector
+     */
+    Vector UpdatePosition(Ptr<Node> n, Vector v);
+    /**
+     * Node has moved function
+     * \param n the node
+     * \param newLocation the new location vector
+     * \returns true if the node has moved
+     */
+    bool NodeHasMoved(Ptr<Node> n, Vector newLocation);
+    /**
+     * Get moved nodes function
+     * \returns the list of moved nodes
+     */
+    std::vector<Ptr<Node>> GetMovedNodes();
+    /**
+     * Mobility course change trace function
+     * \param mob the mobility model
+     */
+    void MobilityCourseChangeTrace(Ptr<const MobilityModel> mob);
+
+    // ##### XML Helpers #####
+
+    /**
+     * Write non P2P link properties function
+     * \param id the ID
+     * \param ipv4Address the IP address
+     * \param channelType the channel type
+     */
+    void WriteNonP2pLinkProperties(uint32_t id, std::string ipv4Address, std::string channelType);
+    /**
+     * Write node update function
+     * \param nodeId the node ID
+     */
+    void WriteNodeUpdate(uint32_t nodeId);
+    /**
+     * Output wireless packet transmit info
+     * \param p the packet
+     * \param pktInfo the packet info
+     * \param animUid the UID
+     */
+    void OutputWirelessPacketTxInfo(Ptr<const Packet> p, AnimPacketInfo& pktInfo, uint64_t animUid);
+    /**
+     * Output wireless packet receive info
+     * \param p the packet
+     * \param pktInfo the packet info
+     * \param animUid the UID
+     */
+    void OutputWirelessPacketRxInfo(Ptr<const Packet> p, AnimPacketInfo& pktInfo, uint64_t animUid);
+    /// Write link properties function
+    void WriteLinkProperties();
+    /// Write IPv4 Addresses function
+    void WriteIpv4Addresses();
+    /// Write IPv6 Addresses function
+    void WriteIpv6Addresses();
+    /// Write nodes function
+    void WriteNodes();
+    /// Write node colors function
+    void WriteNodeColors();
+    /// Write node sizes function
+    void WriteNodeSizes();
+    /// Write node energies function
+    void WriteNodeEnergies();
+    /**
+     * Write XML anim function
+     * \param routing the routing
+     */
+    void WriteXmlAnim(bool routing = false);
+    /**
+     * Write XML update node position function
+     * \param nodeId the node ID
+     * \param x the X position
+     * \param y the Y position
+     */
+    void WriteXmlUpdateNodePosition(uint32_t nodeId, double x, double y);
+    /**
+     * Write XML update node color function
+     * \param nodeId the node ID
+     * \param r the red color
+     * \param g the green color
+     * \param b the blue color
+     */
+    void WriteXmlUpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b);
+    /**
+     * Write XML update node description function
+     * \param nodeId the node ID
+     */
+    void WriteXmlUpdateNodeDescription(uint32_t nodeId);
+    /**
+     * Write XML update node size function
+     * \param nodeId the node ID
+     * \param width the width
+     * \param height the height
+     */
+    void WriteXmlUpdateNodeSize(uint32_t nodeId, double width, double height);
+    /**
+     * Write XML add resource function
+     * \param resourceId the resource ID
+     * \param resourcePath the resource path
+     */
+    void WriteXmlAddResource(uint32_t resourceId, std::string resourcePath);
+    /**
+     * Write XML add node counter function
+     * \param counterId the counter ID
+     * \param counterName the counter name
+     * \param counterType the counter type
+     */
+    void WriteXmlAddNodeCounter(uint32_t counterId,
+                                std::string counterName,
+                                AnimationInterface::CounterType counterType);
+    /**
+     * Write XML update node image function
+     * \param nodeId the node ID
+     * \param resourceId the resource ID
+     */
+    void WriteXmlUpdateNodeImage(uint32_t nodeId, uint32_t resourceId);
+    /**
+     * Write XML update node counter function
+     * \param counterId the counter ID
+     * \param nodeId the node ID
+     * \param value the node counter value
+     */
+    void WriteXmlUpdateNodeCounter(uint32_t counterId, uint32_t nodeId, double value);
+    /**
+     * Write XML node function
+     * \param id the ID
+     * \param sysId the system ID
+     * \param locX the x location
+     * \param locY the y location
+     */
+    void WriteXmlNode(uint32_t id, uint32_t sysId, double locX, double locY);
+    /**
+     * Write XML link counter function
+     * \param fromId the from device
+     * \param toLp the to device
+     * \param toId the to ID
+     */
+    void WriteXmlLink(uint32_t fromId, uint32_t toLp, uint32_t toId);
+    /**
+     * Write XML update link counter function
+     * \param fromId the from device
+     * \param toId the to device
+     * \param linkDescription the link description
+     */
+    void WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::string linkDescription);
+    /**
+     * Write XMLP function
+     * \param animUid the UID
+     * \param pktType the packet type
+     * \param fId the FID
+     * \param fbTx the FB transmit
+     * \param lbTx the LB transmit
+     */
+    void WriteXmlP(uint64_t animUid, std::string pktType, uint32_t fId, double fbTx, double lbTx);
+    /**
+     * Write XMLP Ref function
+     * \param animUid the UID
+     * \param fId the FID
+     * \param fbTx the FB transmit
+     * \param metaInfo the meta info
+     */
+    void WriteXmlPRef(uint64_t animUid, uint32_t fId, double fbTx, std::string metaInfo = "");
+    /**
+     * Write XML close function
+     * \param name the name
+     * \param routing true if routing
+     */
+    void WriteXmlClose(std::string name, bool routing = false);
+    /**
+     * Write XML non P2P link properties function
+     * \param id the ID
+     * \param ipAddress the IP address
+     * \param channelType the channel type
+     */
+    void WriteXmlNonP2pLinkProperties(uint32_t id, std::string ipAddress, std::string channelType);
+    /**
+     * Write XML routing function
+     * \param id the ID
+     * \param routingInfo the routing info
+     */
+    void WriteXmlRouting(uint32_t id, std::string routingInfo);
+    /**
+     * Write XMLRP function
+     * \param nodeId the node ID
+     * \param destination the destination
+     * \param rpElements the route path elements
+     */
+    void WriteXmlRp(uint32_t nodeId, std::string destination, Ipv4RoutePathElements rpElements);
+    /**
+     * Write XML update background function
+     * \param fileName the file name
+     * \param x the X value
+     * \param y the Y value
+     * \param scaleX the X scale
+     * \param scaleY the Y scale
+     * \param opacity the opacity
+     */
+    void WriteXmlUpdateBackground(std::string fileName,
+                                  double x,
+                                  double y,
+                                  double scaleX,
+                                  double scaleY,
+                                  double opacity);
+    /**
+     * Write XML Ipv4 addresses function
+     * \param nodeId the node ID
+     * \param ipv4Addresses the list of Ipv4 addresses
+     */
+    void WriteXmlIpv4Addresses(uint32_t nodeId, std::vector<std::string> ipv4Addresses);
+    /**
+     * Write XML Ipv6 addresses function
+     * \param nodeId the node ID
+     * \param ipv6Addresses the list of Ipv6 addresses
+     */
+    void WriteXmlIpv6Addresses(uint32_t nodeId, std::vector<std::string> ipv6Addresses);
+};
+
+/**
+ * \ingroup netanim
+ *
+ * \brief Byte tag using by Anim to uniquely identify packets
+ *
+ * When Anim receives a Tx Notification we tag the packet with a unique global uint64_t identifier
+ * before recording Tx information
+ * When Anim receives Rx notifications the tag is used to retrieve Tx information recorded earlier
+ */
+
+class AnimByteTag : public Tag
+{
+  public:
+    /**
+     * \brief Get Type Id
+     * \returns Type Id
+     */
+    static TypeId GetTypeId();
+
+    /**
+     * \brief Get Instance Type Id
+     * \returns Type Id
+     */
+    TypeId GetInstanceTypeId() const override;
+
+    /**
+     * \brief Get Serialized Size
+     * \returns Serialized Size (i.e size of uint64_t)
+     */
+    uint32_t GetSerializedSize() const override;
+
+    /**
+     * \brief Serialize function
+     * \param i Tag Buffer
+     */
+    void Serialize(TagBuffer i) const override;
+
+    /**
+     * \brief Deserialize function
+     * \param i Tag Buffer
+     */
+    void Deserialize(TagBuffer i) override;
+
+    /**
+     * \brief Print tag info
+     * \param os Reference of ostream object
+     */
+    void Print(std::ostream& os) const override;
+
+    /**
+     * \brief Set global Uid in tag
+     * \param AnimUid global Uid
+     */
+    void Set(uint64_t AnimUid);
+
+    /**
+     * \brief Get Uid in tag
+     * \returns Uid in tag
+     */
+    uint64_t Get() const;
+
+  private:
+    uint64_t m_AnimUid; ///< the UID
+};
+
 // Globals
 
 static bool initialized = false; //!< Initialization flag
 
 // Public methods
 
-AnimationInterface::AnimationInterface(const std::string fn)
-    : m_f(nullptr),
-      m_routingF(nullptr),
-      m_mobilityPollInterval(Seconds(0.25)),
-      m_outputFileName(fn),
-      gAnimUid(0),
-      m_writeCallback(nullptr),
-      m_started(false),
-      m_enablePacketMetadata(false),
-      m_startTime(Seconds(0)),
-      m_stopTime(Seconds(3600 * 1000)),
-      m_maxPktsPerFile(MAX_PKTS_PER_TRACE_FILE),
-      m_originalFileName(fn),
-      m_routingStopTime(Seconds(0)),
-      m_routingFileName(""),
-      m_routingPollInterval(Seconds(5)),
-      m_trackPackets(true)
+void
+AnimationInterfaceSingleton::Initialize(const std::string filename)
 {
+    m_f = nullptr;
+    m_routingF = nullptr;
+    m_mobilityPollInterval = Seconds(0.25);
+    m_outputFileName = filename;
+    gAnimUid = 0;
+    m_writeCallback = nullptr;
+    m_started = false;
+    m_enablePacketMetadata = false;
+    m_startTime = Seconds(0);
+    m_stopTime = Seconds(3600 * 1000);
+    m_maxPktsPerFile = MAX_PKTS_PER_TRACE_FILE;
+    m_originalFileName = filename;
+    m_routingStopTime = Seconds(0);
+    m_routingFileName = "";
+    m_routingPollInterval = Seconds(5);
+    m_trackPackets = true;
     initialized = true;
     StartAnimation();
 
@@ -118,19 +1523,19 @@ AnimationInterface::AnimationInterface(const std::string fn)
 #endif
 }
 
-AnimationInterface::~AnimationInterface()
+AnimationInterfaceSingleton::~AnimationInterfaceSingleton()
 {
     StopAnimation();
 }
 
 void
-AnimationInterface::SkipPacketTracing()
+AnimationInterfaceSingleton::SkipPacketTracing()
 {
     m_trackPackets = false;
 }
 
 void
-AnimationInterface::EnableWifiPhyCounters(Time startTime, Time stopTime, Time pollInterval)
+AnimationInterfaceSingleton::EnableWifiPhyCounters(Time startTime, Time stopTime, Time pollInterval)
 {
     m_wifiPhyCountersStopTime = stopTime;
     m_wifiPhyCountersPollInterval = pollInterval;
@@ -144,11 +1549,11 @@ AnimationInterface::EnableWifiPhyCounters(Time startTime, Time stopTime, Time po
         UpdateNodeCounter(m_wifiPhyTxDropCounterId, n->GetId(), 0);
         UpdateNodeCounter(m_wifiPhyRxDropCounterId, n->GetId(), 0);
     }
-    Simulator::Schedule(startTime, &AnimationInterface::TrackWifiPhyCounters, this);
+    Simulator::Schedule(startTime, &AnimationInterfaceSingleton::TrackWifiPhyCounters, this);
 }
 
 void
-AnimationInterface::EnableWifiMacCounters(Time startTime, Time stopTime, Time pollInterval)
+AnimationInterfaceSingleton::EnableWifiMacCounters(Time startTime, Time stopTime, Time pollInterval)
 {
     m_wifiMacCountersStopTime = stopTime;
     m_wifiMacCountersPollInterval = pollInterval;
@@ -168,11 +1573,11 @@ AnimationInterface::EnableWifiMacCounters(Time startTime, Time stopTime, Time po
         UpdateNodeCounter(m_wifiMacRxCounterId, n->GetId(), 0);
         UpdateNodeCounter(m_wifiMacRxDropCounterId, n->GetId(), 0);
     }
-    Simulator::Schedule(startTime, &AnimationInterface::TrackWifiMacCounters, this);
+    Simulator::Schedule(startTime, &AnimationInterfaceSingleton::TrackWifiMacCounters, this);
 }
 
 void
-AnimationInterface::EnableQueueCounters(Time startTime, Time stopTime, Time pollInterval)
+AnimationInterfaceSingleton::EnableQueueCounters(Time startTime, Time stopTime, Time pollInterval)
 {
     m_queueCountersStopTime = stopTime;
     m_queueCountersPollInterval = pollInterval;
@@ -189,11 +1594,13 @@ AnimationInterface::EnableQueueCounters(Time startTime, Time stopTime, Time poll
         UpdateNodeCounter(m_queueDequeueCounterId, n->GetId(), 0);
         UpdateNodeCounter(m_queueDropCounterId, n->GetId(), 0);
     }
-    Simulator::Schedule(startTime, &AnimationInterface::TrackQueueCounters, this);
+    Simulator::Schedule(startTime, &AnimationInterfaceSingleton::TrackQueueCounters, this);
 }
 
 void
-AnimationInterface::EnableIpv4L3ProtocolCounters(Time startTime, Time stopTime, Time pollInterval)
+AnimationInterfaceSingleton::EnableIpv4L3ProtocolCounters(Time startTime,
+                                                          Time stopTime,
+                                                          Time pollInterval)
 {
     m_ipv4L3ProtocolCountersStopTime = stopTime;
     m_ipv4L3ProtocolCountersPollInterval = pollInterval;
@@ -210,62 +1617,60 @@ AnimationInterface::EnableIpv4L3ProtocolCounters(Time startTime, Time stopTime, 
         UpdateNodeCounter(m_ipv4L3ProtocolRxCounterId, n->GetId(), 0);
         UpdateNodeCounter(m_ipv4L3ProtocolDropCounterId, n->GetId(), 0);
     }
-    Simulator::Schedule(startTime, &AnimationInterface::TrackIpv4L3ProtocolCounters, this);
+    Simulator::Schedule(startTime, &AnimationInterfaceSingleton::TrackIpv4L3ProtocolCounters, this);
 }
 
-AnimationInterface&
-AnimationInterface::EnableIpv4RouteTracking(std::string fileName,
-                                            Time startTime,
-                                            Time stopTime,
-                                            Time pollInterval)
+void
+AnimationInterfaceSingleton::EnableIpv4RouteTracking(std::string fileName,
+                                                     Time startTime,
+                                                     Time stopTime,
+                                                     Time pollInterval)
 {
     SetOutputFile(fileName, true);
     m_routingStopTime = stopTime;
     m_routingPollInterval = pollInterval;
     WriteXmlAnim(true);
-    Simulator::Schedule(startTime, &AnimationInterface::TrackIpv4Route, this);
-    return *this;
-}
-
-AnimationInterface&
-AnimationInterface::EnableIpv4RouteTracking(std::string fileName,
-                                            Time startTime,
-                                            Time stopTime,
-                                            NodeContainer nc,
-                                            Time pollInterval)
-{
-    m_routingNc = nc;
-    return EnableIpv4RouteTracking(fileName, startTime, stopTime, pollInterval);
-}
-
-AnimationInterface&
-AnimationInterface::AddSourceDestination(uint32_t fromNodeId, std::string ipv4Address)
-{
-    Ipv4RouteTrackElement element = {ipv4Address, fromNodeId};
-    m_ipv4RouteTrackElements.push_back(element);
-    return *this;
+    Simulator::Schedule(startTime, &AnimationInterfaceSingleton::TrackIpv4Route, this);
 }
 
 void
-AnimationInterface::SetStartTime(Time t)
+AnimationInterfaceSingleton::EnableIpv4RouteTracking(std::string fileName,
+                                                     Time startTime,
+                                                     Time stopTime,
+                                                     NodeContainer nc,
+                                                     Time pollInterval)
+{
+    m_routingNc = nc;
+}
+
+void
+AnimationInterfaceSingleton::AddSourceDestination(uint32_t fromNodeId, std::string ipv4Address)
+{
+    Ipv4RouteTrackElement element = {ipv4Address, fromNodeId};
+    m_ipv4RouteTrackElements.push_back(element);
+}
+
+void
+AnimationInterfaceSingleton::SetStartTime(Time t)
 {
     m_startTime = t;
 }
 
 void
-AnimationInterface::SetStopTime(Time t)
+AnimationInterfaceSingleton::SetStopTime(Time t)
 {
     m_stopTime = t;
 }
 
 void
-AnimationInterface::SetMaxPktsPerTraceFile(uint64_t maxPacketsPerFile)
+AnimationInterfaceSingleton::SetMaxPktsPerTraceFile(uint64_t maxPacketsPerFile)
 {
     m_maxPktsPerFile = maxPacketsPerFile;
 }
 
 uint32_t
-AnimationInterface::AddNodeCounter(std::string counterName, CounterType counterType)
+AnimationInterfaceSingleton::AddNodeCounter(std::string counterName,
+                                            AnimationInterface::CounterType counterType)
 {
     m_nodeCounters.push_back(counterName);
     uint32_t counterId = m_nodeCounters.size() - 1; // counter ID is zero-indexed
@@ -274,7 +1679,7 @@ AnimationInterface::AddNodeCounter(std::string counterName, CounterType counterT
 }
 
 uint32_t
-AnimationInterface::AddResource(std::string resourcePath)
+AnimationInterfaceSingleton::AddResource(std::string resourcePath)
 {
     m_resources.push_back(resourcePath);
     uint32_t resourceId = m_resources.size() - 1; // resource ID is zero-indexed
@@ -283,7 +1688,7 @@ AnimationInterface::AddResource(std::string resourcePath)
 }
 
 void
-AnimationInterface::EnablePacketMetadata(bool enable)
+AnimationInterfaceSingleton::EnablePacketMetadata(bool enable)
 {
     m_enablePacketMetadata = enable;
     if (enable)
@@ -293,37 +1698,37 @@ AnimationInterface::EnablePacketMetadata(bool enable)
 }
 
 bool
-AnimationInterface::IsInitialized()
+AnimationInterfaceSingleton::IsInitialized()
 {
     return initialized;
 }
 
 bool
-AnimationInterface::IsStarted() const
+AnimationInterfaceSingleton::IsStarted() const
 {
     return m_started;
 }
 
 void
-AnimationInterface::SetAnimWriteCallback(AnimWriteCallback cb)
+AnimationInterfaceSingleton::SetAnimWriteCallback(AnimWriteCallback cb)
 {
     m_writeCallback = cb;
 }
 
 void
-AnimationInterface::ResetAnimWriteCallback()
+AnimationInterfaceSingleton::ResetAnimWriteCallback()
 {
     m_writeCallback = nullptr;
 }
 
 void
-AnimationInterface::SetMobilityPollInterval(Time t)
+AnimationInterfaceSingleton::SetMobilityPollInterval(Time t)
 {
     m_mobilityPollInterval = t;
 }
 
 void
-AnimationInterface::SetConstantPosition(Ptr<Node> n, double x, double y, double z)
+AnimationInterfaceSingleton::SetConstantPosition(Ptr<Node> n, double x, double y, double z)
 {
     NS_ASSERT(n);
     Ptr<ConstantPositionMobilityModel> loc = n->GetObject<ConstantPositionMobilityModel>();
@@ -338,7 +1743,7 @@ AnimationInterface::SetConstantPosition(Ptr<Node> n, double x, double y, double 
 }
 
 void
-AnimationInterface::UpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
+AnimationInterfaceSingleton::UpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
 {
     NS_LOG_INFO("Setting node image for Node Id:" << nodeId);
     if (resourceId > (m_resources.size() - 1))
@@ -349,7 +1754,9 @@ AnimationInterface::UpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
 }
 
 void
-AnimationInterface::UpdateNodeCounter(uint32_t nodeCounterId, uint32_t nodeId, double counter)
+AnimationInterfaceSingleton::UpdateNodeCounter(uint32_t nodeCounterId,
+                                               uint32_t nodeId,
+                                               double counter)
 {
     if (nodeCounterId > (m_nodeCounters.size() - 1))
     {
@@ -360,12 +1767,12 @@ AnimationInterface::UpdateNodeCounter(uint32_t nodeCounterId, uint32_t nodeId, d
 }
 
 void
-AnimationInterface::SetBackgroundImage(std::string fileName,
-                                       double x,
-                                       double y,
-                                       double scaleX,
-                                       double scaleY,
-                                       double opacity)
+AnimationInterfaceSingleton::SetBackgroundImage(std::string fileName,
+                                                double x,
+                                                double y,
+                                                double scaleX,
+                                                double scaleY,
+                                                double opacity)
 {
     if ((opacity < 0) || (opacity > 1))
     {
@@ -375,27 +1782,27 @@ AnimationInterface::SetBackgroundImage(std::string fileName,
 }
 
 void
-AnimationInterface::UpdateNodeSize(Ptr<Node> n, double width, double height)
+AnimationInterfaceSingleton::UpdateNodeSize(Ptr<Node> n, double width, double height)
 {
     UpdateNodeSize(n->GetId(), width, height);
 }
 
 void
-AnimationInterface::UpdateNodeSize(uint32_t nodeId, double width, double height)
+AnimationInterfaceSingleton::UpdateNodeSize(uint32_t nodeId, double width, double height)
 {
-    AnimationInterface::NodeSize s = {width, height};
+    AnimationInterfaceSingleton::NodeSize s = {width, height};
     m_nodeSizes[nodeId] = s;
     WriteXmlUpdateNodeSize(nodeId, s.width, s.height);
 }
 
 void
-AnimationInterface::UpdateNodeColor(Ptr<Node> n, uint8_t r, uint8_t g, uint8_t b)
+AnimationInterfaceSingleton::UpdateNodeColor(Ptr<Node> n, uint8_t r, uint8_t g, uint8_t b)
 {
     UpdateNodeColor(n->GetId(), r, g, b);
 }
 
 void
-AnimationInterface::UpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b)
+AnimationInterfaceSingleton::UpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b)
 {
     NS_ASSERT(NodeList::GetNode(nodeId));
     NS_LOG_INFO("Setting node color for Node Id:" << nodeId);
@@ -405,17 +1812,17 @@ AnimationInterface::UpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8
 }
 
 void
-AnimationInterface::UpdateLinkDescription(uint32_t fromNode,
-                                          uint32_t toNode,
-                                          std::string linkDescription)
+AnimationInterfaceSingleton::UpdateLinkDescription(uint32_t fromNode,
+                                                   uint32_t toNode,
+                                                   std::string linkDescription)
 {
     WriteXmlUpdateLink(fromNode, toNode, linkDescription);
 }
 
 void
-AnimationInterface::UpdateLinkDescription(Ptr<Node> fromNode,
-                                          Ptr<Node> toNode,
-                                          std::string linkDescription)
+AnimationInterfaceSingleton::UpdateLinkDescription(Ptr<Node> fromNode,
+                                                   Ptr<Node> toNode,
+                                                   std::string linkDescription)
 {
     NS_ASSERT(fromNode);
     NS_ASSERT(toNode);
@@ -423,13 +1830,13 @@ AnimationInterface::UpdateLinkDescription(Ptr<Node> fromNode,
 }
 
 void
-AnimationInterface::UpdateNodeDescription(Ptr<Node> n, std::string descr)
+AnimationInterfaceSingleton::UpdateNodeDescription(Ptr<Node> n, std::string descr)
 {
     UpdateNodeDescription(n->GetId(), descr);
 }
 
 void
-AnimationInterface::UpdateNodeDescription(uint32_t nodeId, std::string descr)
+AnimationInterfaceSingleton::UpdateNodeDescription(uint32_t nodeId, std::string descr)
 {
     NS_ASSERT(NodeList::GetNode(nodeId));
     m_nodeDescriptions[nodeId] = descr;
@@ -439,7 +1846,7 @@ AnimationInterface::UpdateNodeDescription(uint32_t nodeId, std::string descr)
 // Private methods
 
 double
-AnimationInterface::GetNodeEnergyFraction(Ptr<const Node> node) const
+AnimationInterfaceSingleton::GetNodeEnergyFraction(Ptr<const Node> node) const
 {
     const EnergyFractionMap::const_iterator fractionIter = m_nodeEnergyFraction.find(node->GetId());
     NS_ASSERT(fractionIter != m_nodeEnergyFraction.end());
@@ -447,7 +1854,7 @@ AnimationInterface::GetNodeEnergyFraction(Ptr<const Node> node) const
 }
 
 void
-AnimationInterface::MobilityCourseChangeTrace(Ptr<const MobilityModel> mobility)
+AnimationInterfaceSingleton::MobilityCourseChangeTrace(Ptr<const MobilityModel> mobility)
 {
     CHECK_STARTED_INTIMEWINDOW;
     Ptr<Node> n = mobility->GetObject<Node>();
@@ -466,7 +1873,7 @@ AnimationInterface::MobilityCourseChangeTrace(Ptr<const MobilityModel> mobility)
 }
 
 bool
-AnimationInterface::NodeHasMoved(Ptr<Node> n, Vector newLocation)
+AnimationInterfaceSingleton::NodeHasMoved(Ptr<Node> n, Vector newLocation)
 {
     Vector oldLocation = GetPosition(n);
     bool moved = !((ceil(oldLocation.x) == ceil(newLocation.x)) &&
@@ -475,7 +1882,7 @@ AnimationInterface::NodeHasMoved(Ptr<Node> n, Vector newLocation)
 }
 
 void
-AnimationInterface::MobilityAutoCheck()
+AnimationInterfaceSingleton::MobilityAutoCheck()
 {
     CHECK_STARTED_INTIMEWINDOW;
     std::vector<Ptr<Node>> MovedNodes = GetMovedNodes();
@@ -490,15 +1897,17 @@ AnimationInterface::MobilityAutoCheck()
     {
         PurgePendingPackets(AnimationInterface::WIFI);
         PurgePendingPackets(AnimationInterface::WIMAX);
-        PurgePendingPackets(AnimationInterface::LTE);
+        // PurgePendingPackets(AnimationInterface::LTE);
         PurgePendingPackets(AnimationInterface::CSMA);
         PurgePendingPackets(AnimationInterface::LRWPAN);
-        Simulator::Schedule(m_mobilityPollInterval, &AnimationInterface::MobilityAutoCheck, this);
+        Simulator::Schedule(m_mobilityPollInterval,
+                            &AnimationInterfaceSingleton::MobilityAutoCheck,
+                            this);
     }
 }
 
 std::vector<Ptr<Node>>
-AnimationInterface::GetMovedNodes()
+AnimationInterfaceSingleton::GetMovedNodes()
 {
     std::vector<Ptr<Node>> movedNodes;
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
@@ -529,7 +1938,7 @@ AnimationInterface::GetMovedNodes()
 }
 
 int
-AnimationInterface::WriteN(const std::string& st, FILE* f)
+AnimationInterfaceSingleton::WriteN(const std::string& st, FILE* f)
 {
     if (!f)
     {
@@ -543,7 +1952,7 @@ AnimationInterface::WriteN(const std::string& st, FILE* f)
 }
 
 int
-AnimationInterface::WriteN(const char* data, uint32_t count, FILE* f)
+AnimationInterfaceSingleton::WriteN(const char* data, uint32_t count, FILE* f)
 {
     if (!f)
     {
@@ -568,9 +1977,9 @@ AnimationInterface::WriteN(const char* data, uint32_t count, FILE* f)
 }
 
 void
-AnimationInterface::WriteRoutePath(uint32_t nodeId,
-                                   std::string destination,
-                                   Ipv4RoutePathElements rpElements)
+AnimationInterfaceSingleton::WriteRoutePath(uint32_t nodeId,
+                                            std::string destination,
+                                            Ipv4RoutePathElements rpElements)
 {
     NS_LOG_INFO("Writing Route Path From :" << nodeId << " To: " << destination);
     WriteXmlRp(nodeId, destination, rpElements);
@@ -587,15 +1996,15 @@ AnimationInterface::WriteRoutePath(uint32_t nodeId,
 }
 
 void
-AnimationInterface::WriteNonP2pLinkProperties(uint32_t id,
-                                              std::string ipv4Address,
-                                              std::string channelType)
+AnimationInterfaceSingleton::WriteNonP2pLinkProperties(uint32_t id,
+                                                       std::string ipv4Address,
+                                                       std::string channelType)
 {
     WriteXmlNonP2pLinkProperties(id, ipv4Address, channelType);
 }
 
 const std::vector<std::string>
-AnimationInterface::GetElementsFromContext(const std::string& context) const
+AnimationInterfaceSingleton::GetElementsFromContext(const std::string& context) const
 {
     std::vector<std::string> elements;
     std::size_t pos1 = 0;
@@ -612,7 +2021,7 @@ AnimationInterface::GetElementsFromContext(const std::string& context) const
 }
 
 Ptr<Node>
-AnimationInterface::GetNodeFromContext(const std::string& context) const
+AnimationInterfaceSingleton::GetNodeFromContext(const std::string& context) const
 {
     // Use "NodeList/*/ as reference
     // where element [1] is the Node Id
@@ -625,7 +2034,7 @@ AnimationInterface::GetNodeFromContext(const std::string& context) const
 }
 
 Ptr<NetDevice>
-AnimationInterface::GetNetDeviceFromContext(std::string context)
+AnimationInterfaceSingleton::GetNetDeviceFromContext(std::string context)
 {
     // Use "NodeList/*/DeviceList/*/ as reference
     // where element [1] is the Node Id
@@ -638,7 +2047,7 @@ AnimationInterface::GetNetDeviceFromContext(std::string context)
 }
 
 uint64_t
-AnimationInterface::GetAnimUidFromPacket(Ptr<const Packet> p)
+AnimationInterfaceSingleton::GetAnimUidFromPacket(Ptr<const Packet> p)
 {
     AnimByteTag tag;
     TypeId tid = tag.GetInstanceTypeId();
@@ -664,7 +2073,7 @@ AnimationInterface::GetAnimUidFromPacket(Ptr<const Packet> p)
 }
 
 void
-AnimationInterface::AddByteTag(uint64_t animUid, Ptr<const Packet> p)
+AnimationInterfaceSingleton::AddByteTag(uint64_t animUid, Ptr<const Packet> p)
 {
     AnimByteTag tag;
     tag.Set(animUid);
@@ -672,9 +2081,9 @@ AnimationInterface::AddByteTag(uint64_t animUid, Ptr<const Packet> p)
 }
 
 void
-AnimationInterface::RemainingEnergyTrace(std::string context,
-                                         double previousEnergy,
-                                         double currentEnergy)
+AnimationInterfaceSingleton::RemainingEnergyTrace(std::string context,
+                                                  double previousEnergy,
+                                                  double currentEnergy)
 {
     CHECK_STARTED_INTIMEWINDOW;
     const Ptr<const Node> node = GetNodeFromContext(context);
@@ -695,137 +2104,137 @@ AnimationInterface::RemainingEnergyTrace(std::string context,
 }
 
 void
-AnimationInterface::WifiPhyTxDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::WifiPhyTxDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiPhyTxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::WifiPhyRxDropTrace(std::string context,
-                                       Ptr<const Packet> p,
-                                       WifiPhyRxfailureReason reason)
+AnimationInterfaceSingleton::WifiPhyRxDropTrace(std::string context,
+                                                Ptr<const Packet> p,
+                                                WifiPhyRxfailureReason reason)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiPhyRxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacTxTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::WifiMacTxTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacTx[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacTxDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::WifiMacTxDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacTxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacRxTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::WifiMacRxTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacRx[node->GetId()];
 }
 
 void
-AnimationInterface::WifiMacRxDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::WifiMacRxDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiMacRxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacTxTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::LrWpanMacTxTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacTx[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacTxDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::LrWpanMacTxDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacTxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacRxTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::LrWpanMacRxTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacRx[node->GetId()];
 }
 
 void
-AnimationInterface::LrWpanMacRxDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::LrWpanMacRxDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeLrWpanMacRxDrop[node->GetId()];
 }
 
 void
-AnimationInterface::Ipv4TxTrace(std::string context,
-                                Ptr<const Packet> p,
-                                Ptr<Ipv4> ipv4,
-                                uint32_t interfaceIndex)
+AnimationInterfaceSingleton::Ipv4TxTrace(std::string context,
+                                         Ptr<const Packet> p,
+                                         Ptr<Ipv4> ipv4,
+                                         uint32_t interfaceIndex)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeIpv4Tx[node->GetId()];
 }
 
 void
-AnimationInterface::Ipv4RxTrace(std::string context,
-                                Ptr<const Packet> p,
-                                Ptr<Ipv4> ipv4,
-                                uint32_t interfaceIndex)
+AnimationInterfaceSingleton::Ipv4RxTrace(std::string context,
+                                         Ptr<const Packet> p,
+                                         Ptr<Ipv4> ipv4,
+                                         uint32_t interfaceIndex)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeIpv4Rx[node->GetId()];
 }
 
 void
-AnimationInterface::Ipv4DropTrace(std::string context,
-                                  const Ipv4Header& ipv4Header,
-                                  Ptr<const Packet> p,
-                                  Ipv4L3Protocol::DropReason dropReason,
-                                  Ptr<Ipv4> ipv4,
-                                  uint32_t)
+AnimationInterfaceSingleton::Ipv4DropTrace(std::string context,
+                                           const Ipv4Header& ipv4Header,
+                                           Ptr<const Packet> p,
+                                           Ipv4L3Protocol::DropReason dropReason,
+                                           Ptr<Ipv4> ipv4,
+                                           uint32_t)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeIpv4Drop[node->GetId()];
 }
 
 void
-AnimationInterface::EnqueueTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::EnqueueTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeQueueEnqueue[node->GetId()];
 }
 
 void
-AnimationInterface::DequeueTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::DequeueTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeQueueDequeue[node->GetId()];
 }
 
 void
-AnimationInterface::QueueDropTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::QueueDropTrace(std::string context, Ptr<const Packet> p)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeQueueDrop[node->GetId()];
 }
 
 void
-AnimationInterface::DevTxTrace(std::string context,
-                               Ptr<const Packet> p,
-                               Ptr<NetDevice> tx,
-                               Ptr<NetDevice> rx,
-                               Time txTime,
-                               Time rxTime)
+AnimationInterfaceSingleton::DevTxTrace(std::string context,
+                                        Ptr<const Packet> p,
+                                        Ptr<NetDevice> tx,
+                                        Ptr<NetDevice> rx,
+                                        Time txTime,
+                                        Time rxTime)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -848,9 +2257,9 @@ AnimationInterface::DevTxTrace(std::string context,
 }
 
 void
-AnimationInterface::GenericWirelessTxTrace(std::string context,
-                                           Ptr<const Packet> p,
-                                           ProtocolType protocolType)
+AnimationInterfaceSingleton::GenericWirelessTxTrace(std::string context,
+                                                    Ptr<const Packet> p,
+                                                    AnimationInterface::ProtocolType protocolType)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -881,9 +2290,9 @@ AnimationInterface::GenericWirelessTxTrace(std::string context,
 }
 
 void
-AnimationInterface::GenericWirelessRxTrace(std::string context,
-                                           Ptr<const Packet> p,
-                                           ProtocolType protocolType)
+AnimationInterfaceSingleton::GenericWirelessRxTrace(std::string context,
+                                                    Ptr<const Packet> p,
+                                                    AnimationInterface::ProtocolType protocolType)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -903,24 +2312,24 @@ AnimationInterface::GenericWirelessRxTrace(std::string context,
 }
 
 void
-AnimationInterface::UanPhyGenTxTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::UanPhyGenTxTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
     return GenericWirelessTxTrace(context, p, AnimationInterface::UAN);
 }
 
 void
-AnimationInterface::UanPhyGenRxTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::UanPhyGenRxTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
     return GenericWirelessRxTrace(context, p, AnimationInterface::UAN);
 }
 
 void
-AnimationInterface::WifiPhyTxBeginTrace(std::string context,
-                                        WifiConstPsduMap psduMap,
-                                        WifiTxVector /* txVector */,
-                                        double /* txPowerW */)
+AnimationInterfaceSingleton::WifiPhyTxBeginTrace(std::string context,
+                                                 WifiConstPsduMap psduMap,
+                                                 WifiTxVector /* txVector */,
+                                                 double /* txPowerW */)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -929,7 +2338,7 @@ AnimationInterface::WifiPhyTxBeginTrace(std::string context,
     UpdatePosition(ndev);
 
     AnimPacketInfo pktInfo(ndev, Simulator::Now());
-    AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(WIFI);
+    AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(AnimationInterface::WIFI);
     for (auto& psdu : psduMap)
     {
         for (auto& mpdu : *PeekPointer(psdu.second))
@@ -938,7 +2347,7 @@ AnimationInterface::WifiPhyTxBeginTrace(std::string context,
             NS_LOG_INFO("WifiPhyTxTrace for MPDU:" << gAnimUid);
             AddByteTag(gAnimUid,
                        mpdu->GetPacket()); // the underlying MSDU/A-MSDU should be handed off
-            AddPendingPacket(WIFI, gAnimUid, pktInfo);
+            AddPendingPacket(AnimationInterface::WIFI, gAnimUid, pktInfo);
             OutputWirelessPacketTxInfo(
                 mpdu->GetProtocolDataUnit(),
                 pendingPackets->at(gAnimUid),
@@ -964,9 +2373,9 @@ AnimationInterface::WifiPhyTxBeginTrace(std::string context,
 }
 
 void
-AnimationInterface::WifiPhyRxBeginTrace(std::string context,
-                                        Ptr<const Packet> p,
-                                        RxPowerWattPerChannelBand rxPowersW)
+AnimationInterfaceSingleton::WifiPhyRxBeginTrace(std::string context,
+                                                 Ptr<const Packet> p,
+                                                 RxPowerWattPerChannelBand rxPowersW)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1003,7 +2412,7 @@ AnimationInterface::WifiPhyRxBeginTrace(std::string context,
 }
 
 void
-AnimationInterface::LrWpanPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::LrWpanPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1054,7 +2463,7 @@ AnimationInterface::LrWpanPhyTxBeginTrace(std::string context, Ptr<const Packet>
 }
 
 void
-AnimationInterface::LrWpanPhyRxBeginTrace(std::string context, Ptr<const Packet> p)
+AnimationInterfaceSingleton::LrWpanPhyRxBeginTrace(std::string context, Ptr<const Packet> p)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -1082,177 +2491,107 @@ AnimationInterface::LrWpanPhyRxBeginTrace(std::string context, Ptr<const Packet>
 }
 
 void
-AnimationInterface::WimaxTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+AnimationInterfaceSingleton::WimaxTxTrace(std::string context,
+                                          Ptr<const Packet> p,
+                                          const Mac48Address& m)
 {
     NS_LOG_FUNCTION(this);
     return GenericWirelessTxTrace(context, p, AnimationInterface::WIMAX);
 }
 
 void
-AnimationInterface::WimaxRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
+AnimationInterfaceSingleton::WimaxRxTrace(std::string context,
+                                          Ptr<const Packet> p,
+                                          const Mac48Address& m)
 {
     NS_LOG_FUNCTION(this);
     return GenericWirelessRxTrace(context, p, AnimationInterface::WIMAX);
 }
 
-void
-AnimationInterface::LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
-{
-    NS_LOG_FUNCTION(this);
-    return GenericWirelessTxTrace(context, p, AnimationInterface::LTE);
-}
+// void
+// AnimationInterfaceSingleton::LteTxTrace(std::string context,
+//                                         Ptr<const Packet> p,
+//                                         const Mac48Address& m)
+// {
+//     NS_LOG_FUNCTION(this);
+//     return GenericWirelessTxTrace(context, p, AnimationInterface::LTE);
+// }
+
+// void
+// AnimationInterfaceSingleton::LteRxTrace(std::string context,
+//                                         Ptr<const Packet> p,
+//                                         const Mac48Address& m)
+// {
+//     NS_LOG_FUNCTION(this);
+//     return GenericWirelessRxTrace(context, p, AnimationInterface::LTE);
+// }
+
+// void
+// AnimationInterfaceSingleton::LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst>
+// pb)
+// {
+//     NS_LOG_FUNCTION(this);
+//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
+//     if (!pb)
+//     {
+//         NS_LOG_WARN("pb == 0. Not yet supported");
+//         return;
+//     }
+//     context = "/" + context;
+//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
+//     NS_ASSERT(ndev);
+//     UpdatePosition(ndev);
+
+//     std::list<Ptr<Packet>> pbList = pb->GetPackets();
+//     for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
+//     {
+//         Ptr<Packet> p = *i;
+//         ++gAnimUid;
+//         NS_LOG_INFO("LteSpectrumPhyTxTrace for packet:" << gAnimUid);
+//         AnimPacketInfo pktInfo(ndev, Simulator::Now());
+//         AddByteTag(gAnimUid, p);
+//         AddPendingPacket(AnimationInterface::LTE, gAnimUid, pktInfo);
+//         OutputWirelessPacketTxInfo(p, pktInfo, gAnimUid);
+//     }
+// }
+
+// void
+// AnimationInterfaceSingleton::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst>
+// pb)
+// {
+//     NS_LOG_FUNCTION(this);
+//     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
+//     if (!pb)
+//     {
+//         NS_LOG_WARN("pb == 0. Not yet supported");
+//         return;
+//     }
+//     context = "/" + context;
+//     Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
+//     NS_ASSERT(ndev);
+//     UpdatePosition(ndev);
+
+//     std::list<Ptr<Packet>> pbList = pb->GetPackets();
+//     for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
+//     {
+//         Ptr<Packet> p = *i;
+//         uint64_t animUid = GetAnimUidFromPacket(p);
+//         NS_LOG_INFO("LteSpectrumPhyRxTrace for packet:" << gAnimUid);
+//         if (!IsPacketPending(animUid, AnimationInterface::LTE))
+//         {
+//             NS_LOG_WARN("LteSpectrumPhyRxTrace: unknown Uid");
+//             return;
+//         }
+//         AnimPacketInfo& pktInfo = m_pendingLtePackets[animUid];
+//         pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
+//         OutputWirelessPacketRxInfo(p, pktInfo, animUid);
+//     }
+// }
 
 void
-AnimationInterface::LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
-{
-    NS_LOG_FUNCTION(this);
-    return GenericWirelessRxTrace(context, p, AnimationInterface::LTE);
-}
-
-void
-AnimationInterface::LteSpectrumPhyTxStart(std::string context, Ptr<const PacketBurst> pb)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    if (!pb)
-    {
-        NS_LOG_WARN("pb == 0. Not yet supported");
-        return;
-    }
-    context = "/" + context;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
-
-    std::list<Ptr<Packet>> pbList = pb->GetPackets();
-    for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
-    {
-        Ptr<Packet> p = *i;
-        ++gAnimUid;
-        NS_LOG_INFO("LteSpectrumPhyTxTrace for packet:" << gAnimUid);
-        AnimPacketInfo pktInfo(ndev, Simulator::Now());
-        AddByteTag(gAnimUid, p);
-        AddPendingPacket(AnimationInterface::LTE, gAnimUid, pktInfo);
-        OutputWirelessPacketTxInfo(p, pktInfo, gAnimUid);
-    }
-}
-
-void
-AnimationInterface::LteSpectrumPhyRxStart(std::string context, Ptr<const PacketBurst> pb)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    if (!pb)
-    {
-        NS_LOG_WARN("pb == 0. Not yet supported");
-        return;
-    }
-    context = "/" + context;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
-
-    std::list<Ptr<Packet>> pbList = pb->GetPackets();
-    for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
-    {
-        Ptr<Packet> p = *i;
-        uint64_t animUid = GetAnimUidFromPacket(p);
-        NS_LOG_INFO("LteSpectrumPhyRxTrace for packet:" << gAnimUid);
-        if (!IsPacketPending(animUid, AnimationInterface::LTE))
-        {
-            NS_LOG_WARN("LteSpectrumPhyRxTrace: unknown Uid");
-            return;
-        }
-        AnimPacketInfo& pktInfo = m_pendingLtePackets[animUid];
-        pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
-        OutputWirelessPacketRxInfo(p, pktInfo, animUid);
-    }
-}
-
-void
-AnimationInterface::CsmaPhyTxBeginTrace(std::string context, Ptr<const Packet> p)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
-    ++gAnimUid;
-    NS_LOG_INFO("CsmaPhyTxBeginTrace for packet:" << gAnimUid);
-    AddByteTag(gAnimUid, p);
-    UpdatePosition(ndev);
-    AnimPacketInfo pktInfo(ndev, Simulator::Now());
-    AddPendingPacket(AnimationInterface::CSMA, gAnimUid, pktInfo);
-}
-
-void
-AnimationInterface::CsmaPhyTxEndTrace(std::string context, Ptr<const Packet> p)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
-    uint64_t animUid = GetAnimUidFromPacket(p);
-    NS_LOG_INFO("CsmaPhyTxEndTrace for packet:" << animUid);
-    if (!IsPacketPending(animUid, AnimationInterface::CSMA))
-    {
-        NS_LOG_WARN("CsmaPhyTxEndTrace: unknown Uid");
-        NS_FATAL_ERROR("CsmaPhyTxEndTrace: unknown Uid");
-        AnimPacketInfo pktInfo(ndev, Simulator::Now());
-        AddPendingPacket(AnimationInterface::CSMA, animUid, pktInfo);
-        NS_LOG_WARN("Unknown Uid, but adding Csma Packet anyway");
-    }
-    /// \todo NS_ASSERT (IsPacketPending (AnimUid) == true);
-    AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
-    pktInfo.m_lbTx = Simulator::Now().GetSeconds();
-}
-
-void
-AnimationInterface::CsmaPhyRxEndTrace(std::string context, Ptr<const Packet> p)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    UpdatePosition(ndev);
-    uint64_t animUid = GetAnimUidFromPacket(p);
-    if (!IsPacketPending(animUid, AnimationInterface::CSMA))
-    {
-        NS_LOG_WARN("CsmaPhyRxEndTrace: unknown Uid");
-        return;
-    }
-    /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
-    AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
-    pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
-    NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << animUid);
-    NS_LOG_INFO("CsmaPhyRxEndTrace for packet:" << animUid << " complete");
-    OutputCsmaPacket(p, pktInfo);
-}
-
-void
-AnimationInterface::CsmaMacRxTrace(std::string context, Ptr<const Packet> p)
-{
-    NS_LOG_FUNCTION(this);
-    CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
-    Ptr<NetDevice> ndev = GetNetDeviceFromContext(context);
-    NS_ASSERT(ndev);
-    uint64_t animUid = GetAnimUidFromPacket(p);
-    if (!IsPacketPending(animUid, AnimationInterface::CSMA))
-    {
-        NS_LOG_WARN("CsmaMacRxTrace: unknown Uid");
-        return;
-    }
-    /// \todo NS_ASSERT (CsmaPacketIsPending (AnimUid) == true);
-    AnimPacketInfo& pktInfo = m_pendingCsmaPackets[animUid];
-    NS_LOG_INFO("MacRxTrace for packet:" << animUid << " complete");
-    OutputCsmaPacket(p, pktInfo);
-}
-
-void
-AnimationInterface::OutputWirelessPacketTxInfo(Ptr<const Packet> p,
-                                               AnimPacketInfo& pktInfo,
-                                               uint64_t animUid)
+AnimationInterfaceSingleton::OutputWirelessPacketTxInfo(Ptr<const Packet> p,
+                                                        AnimPacketInfo& pktInfo,
+                                                        uint64_t animUid)
 {
     CheckMaxPktsPerTraceFile();
     uint32_t nodeId = 0;
@@ -1271,9 +2610,9 @@ AnimationInterface::OutputWirelessPacketTxInfo(Ptr<const Packet> p,
 }
 
 void
-AnimationInterface::OutputWirelessPacketRxInfo(Ptr<const Packet> p,
-                                               AnimPacketInfo& pktInfo,
-                                               uint64_t animUid)
+AnimationInterfaceSingleton::OutputWirelessPacketRxInfo(Ptr<const Packet> p,
+                                                        AnimPacketInfo& pktInfo,
+                                                        uint64_t animUid)
 {
     CheckMaxPktsPerTraceFile();
     uint32_t rxId = pktInfo.m_rxnd->GetNode()->GetId();
@@ -1281,27 +2620,9 @@ AnimationInterface::OutputWirelessPacketRxInfo(Ptr<const Packet> p,
 }
 
 void
-AnimationInterface::OutputCsmaPacket(Ptr<const Packet> p, AnimPacketInfo& pktInfo)
-{
-    CheckMaxPktsPerTraceFile();
-    NS_ASSERT(pktInfo.m_txnd);
-    uint32_t nodeId = pktInfo.m_txnd->GetNode()->GetId();
-    uint32_t rxId = pktInfo.m_rxnd->GetNode()->GetId();
-
-    WriteXmlP("p",
-              nodeId,
-              pktInfo.m_fbTx,
-              pktInfo.m_lbTx,
-              rxId,
-              pktInfo.m_fbRx,
-              pktInfo.m_lbRx,
-              m_enablePacketMetadata ? GetPacketMetadata(p) : "");
-}
-
-void
-AnimationInterface::AddPendingPacket(ProtocolType protocolType,
-                                     uint64_t animUid,
-                                     AnimPacketInfo pktInfo)
+AnimationInterfaceSingleton::AddPendingPacket(AnimationInterface::ProtocolType protocolType,
+                                              uint64_t animUid,
+                                              AnimPacketInfo pktInfo)
 {
     AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(protocolType);
     NS_ASSERT(pendingPackets);
@@ -1309,7 +2630,8 @@ AnimationInterface::AddPendingPacket(ProtocolType protocolType,
 }
 
 bool
-AnimationInterface::IsPacketPending(uint64_t animUid, AnimationInterface::ProtocolType protocolType)
+AnimationInterfaceSingleton::IsPacketPending(uint64_t animUid,
+                                             AnimationInterface::ProtocolType protocolType)
 {
     AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(protocolType);
     NS_ASSERT(pendingPackets);
@@ -1317,7 +2639,7 @@ AnimationInterface::IsPacketPending(uint64_t animUid, AnimationInterface::Protoc
 }
 
 void
-AnimationInterface::PurgePendingPackets(AnimationInterface::ProtocolType protocolType)
+AnimationInterfaceSingleton::PurgePendingPackets(AnimationInterface::ProtocolType protocolType)
 {
     AnimUidPacketInfoMap* pendingPackets = ProtocolTypeToPendingPackets(protocolType);
     NS_ASSERT(pendingPackets);
@@ -1342,8 +2664,9 @@ AnimationInterface::PurgePendingPackets(AnimationInterface::ProtocolType protoco
     }
 }
 
-AnimationInterface::AnimUidPacketInfoMap*
-AnimationInterface::ProtocolTypeToPendingPackets(AnimationInterface::ProtocolType protocolType)
+AnimationInterfaceSingleton::AnimUidPacketInfoMap*
+AnimationInterfaceSingleton::ProtocolTypeToPendingPackets(
+    AnimationInterface::ProtocolType protocolType)
 {
     AnimUidPacketInfoMap* pendingPackets = nullptr;
     switch (protocolType)
@@ -1364,10 +2687,10 @@ AnimationInterface::ProtocolTypeToPendingPackets(AnimationInterface::ProtocolTyp
         pendingPackets = &m_pendingWimaxPackets;
         break;
     }
-    case AnimationInterface::LTE: {
-        pendingPackets = &m_pendingLtePackets;
-        break;
-    }
+    // case AnimationInterface::LTE: {
+    //     pendingPackets = &m_pendingLtePackets;
+    //     break;
+    // }
     case AnimationInterface::LRWPAN: {
         pendingPackets = &m_pendingLrWpanPackets;
         break;
@@ -1377,7 +2700,7 @@ AnimationInterface::ProtocolTypeToPendingPackets(AnimationInterface::ProtocolTyp
 }
 
 std::string
-AnimationInterface::ProtocolTypeToString(AnimationInterface::ProtocolType protocolType)
+AnimationInterfaceSingleton::ProtocolTypeToString(AnimationInterface::ProtocolType protocolType)
 {
     std::string result = "Unknown";
     switch (protocolType)
@@ -1398,10 +2721,10 @@ AnimationInterface::ProtocolTypeToString(AnimationInterface::ProtocolType protoc
         result = "WIMAX";
         break;
     }
-    case AnimationInterface::LTE: {
-        result = "LTE";
-        break;
-    }
+    // case AnimationInterface::LTE: {
+    //     result = "LTE";
+    //     break;
+    // }
     case AnimationInterface::LRWPAN: {
         result = "LRWPAN";
         break;
@@ -1413,16 +2736,16 @@ AnimationInterface::ProtocolTypeToString(AnimationInterface::ProtocolType protoc
 // Counters
 
 std::string
-AnimationInterface::CounterTypeToString(CounterType counterType)
+AnimationInterfaceSingleton::CounterTypeToString(AnimationInterface::CounterType counterType)
 {
     std::string typeString = "unknown";
     switch (counterType)
     {
-    case UINT32_COUNTER: {
+    case AnimationInterface::UINT32_COUNTER: {
         typeString = "UINT32";
         break;
     }
-    case DOUBLE_COUNTER: {
+    case AnimationInterface::DOUBLE_COUNTER: {
         typeString = "DOUBLE";
         break;
     }
@@ -1433,7 +2756,7 @@ AnimationInterface::CounterTypeToString(CounterType counterType)
 // General
 
 std::string
-AnimationInterface::GetPacketMetadata(Ptr<const Packet> p)
+AnimationInterfaceSingleton::GetPacketMetadata(Ptr<const Packet> p)
 {
     std::ostringstream oss;
     p->Print(oss);
@@ -1441,13 +2764,13 @@ AnimationInterface::GetPacketMetadata(Ptr<const Packet> p)
 }
 
 uint64_t
-AnimationInterface::GetTracePktCount() const
+AnimationInterfaceSingleton::GetTracePktCount() const
 {
     return m_currentPktCount;
 }
 
 void
-AnimationInterface::StopAnimation(bool onlyAnimation)
+AnimationInterfaceSingleton::StopAnimation(bool onlyAnimation)
 {
     m_started = false;
     NS_LOG_INFO("Stopping Animation");
@@ -1472,7 +2795,7 @@ AnimationInterface::StopAnimation(bool onlyAnimation)
 }
 
 void
-AnimationInterface::StartAnimation(bool restart)
+AnimationInterfaceSingleton::StartAnimation(bool restart)
 {
     m_currentPktCount = 0;
     m_started = true;
@@ -1487,21 +2810,23 @@ AnimationInterface::StartAnimation(bool restart)
     WriteNodeEnergies();
     if (!restart)
     {
-        Simulator::Schedule(m_mobilityPollInterval, &AnimationInterface::MobilityAutoCheck, this);
+        Simulator::Schedule(m_mobilityPollInterval,
+                            &AnimationInterfaceSingleton::MobilityAutoCheck,
+                            this);
         ConnectCallbacks();
     }
 }
 
 void
-AnimationInterface::AddToIpv4AddressNodeIdTable(std::string ipv4Address, uint32_t nodeId)
+AnimationInterfaceSingleton::AddToIpv4AddressNodeIdTable(std::string ipv4Address, uint32_t nodeId)
 {
     m_ipv4ToNodeIdMap[ipv4Address] = nodeId;
     m_nodeIdIpv4Map.insert(NodeIdIpv4Pair(nodeId, ipv4Address));
 }
 
 void
-AnimationInterface::AddToIpv4AddressNodeIdTable(std::vector<std::string> ipv4Addresses,
-                                                uint32_t nodeId)
+AnimationInterfaceSingleton::AddToIpv4AddressNodeIdTable(std::vector<std::string> ipv4Addresses,
+                                                         uint32_t nodeId)
 {
     for (std::vector<std::string>::const_iterator i = ipv4Addresses.begin();
          i != ipv4Addresses.end();
@@ -1512,15 +2837,15 @@ AnimationInterface::AddToIpv4AddressNodeIdTable(std::vector<std::string> ipv4Add
 }
 
 void
-AnimationInterface::AddToIpv6AddressNodeIdTable(std::string ipv6Address, uint32_t nodeId)
+AnimationInterfaceSingleton::AddToIpv6AddressNodeIdTable(std::string ipv6Address, uint32_t nodeId)
 {
     m_ipv6ToNodeIdMap[ipv6Address] = nodeId;
     m_nodeIdIpv6Map.insert(NodeIdIpv6Pair(nodeId, ipv6Address));
 }
 
 void
-AnimationInterface::AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Addresses,
-                                                uint32_t nodeId)
+AnimationInterfaceSingleton::AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Addresses,
+                                                         uint32_t nodeId)
 {
     for (std::vector<std::string>::const_iterator i = ipv6Addresses.begin();
          i != ipv6Addresses.end();
@@ -1531,199 +2856,196 @@ AnimationInterface::AddToIpv6AddressNodeIdTable(std::vector<std::string> ipv6Add
 }
 
 // Callbacks
-void
-AnimationInterface::ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex)
-{
-    Ptr<LteEnbPhy> lteEnbPhy = nd->GetPhy();
-    Ptr<LteSpectrumPhy> dlPhy = lteEnbPhy->GetDownlinkSpectrumPhy();
-    Ptr<LteSpectrumPhy> ulPhy = lteEnbPhy->GetUplinkSpectrumPhy();
-    std::ostringstream oss;
-    // NodeList/*/DeviceList/*/
-    oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
-    if (dlPhy)
-    {
-        dlPhy->TraceConnect("TxStart",
-                            oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyTxStart, this));
-        dlPhy->TraceConnect("RxStart",
-                            oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyRxStart, this));
-    }
-    if (ulPhy)
-    {
-        ulPhy->TraceConnect("TxStart",
-                            oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyTxStart, this));
-        ulPhy->TraceConnect("RxStart",
-                            oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyRxStart, this));
-    }
-}
+// void
+// AnimationInterfaceSingleton::ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t
+// devIndex)
+// {
+//     Ptr<LteEnbPhy> lteEnbPhy = nd->GetPhy();
+//     Ptr<LteSpectrumPhy> dlPhy = lteEnbPhy->GetDownlinkSpectrumPhy();
+//     Ptr<LteSpectrumPhy> ulPhy = lteEnbPhy->GetUplinkSpectrumPhy();
+//     std::ostringstream oss;
+//     // NodeList/*/DeviceList/*/
+//     oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
+//     if (dlPhy)
+//     {
+//         dlPhy->TraceConnect(
+//             "TxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
+//         dlPhy->TraceConnect(
+//             "RxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
+//     }
+//     if (ulPhy)
+//     {
+//         ulPhy->TraceConnect(
+//             "TxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
+//         ulPhy->TraceConnect(
+//             "RxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
+//     }
+// }
+
+// void
+// AnimationInterfaceSingleton::ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex)
+// {
+//     Ptr<LteUePhy> lteUePhy = nd->GetPhy();
+//     Ptr<LteSpectrumPhy> dlPhy = lteUePhy->GetDownlinkSpectrumPhy();
+//     Ptr<LteSpectrumPhy> ulPhy = lteUePhy->GetUplinkSpectrumPhy();
+//     std::ostringstream oss;
+//     // NodeList/*/DeviceList/*/
+//     oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
+//     if (dlPhy)
+//     {
+//         dlPhy->TraceConnect(
+//             "TxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
+//         dlPhy->TraceConnect(
+//             "RxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
+//     }
+//     if (ulPhy)
+//     {
+//         ulPhy->TraceConnect(
+//             "TxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyTxStart, this));
+//         ulPhy->TraceConnect(
+//             "RxStart",
+//             oss.str(),
+//             MakeCallback(&AnimationInterfaceSingleton::LteSpectrumPhyRxStart, this));
+//     }
+// }
+
+// void
+// AnimationInterfaceSingleton::ConnectLte()
+// {
+//     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
+//     {
+//         Ptr<Node> n = *i;
+//         NS_ASSERT(n);
+//         uint32_t nDevices = n->GetNDevices();
+//         for (uint32_t devIndex = 0; devIndex < nDevices; ++devIndex)
+//         {
+//             Ptr<NetDevice> nd = n->GetDevice(devIndex);
+//             if (!nd)
+//             {
+//                 continue;
+//             }
+//             Ptr<LteUeNetDevice> lteUeNetDevice = DynamicCast<LteUeNetDevice>(nd);
+//             if (lteUeNetDevice)
+//             {
+//                 ConnectLteUe(n, lteUeNetDevice, devIndex);
+//                 continue;
+//             }
+//             Ptr<LteEnbNetDevice> lteEnbNetDevice = DynamicCast<LteEnbNetDevice>(nd);
+//             if (lteEnbNetDevice)
+//             {
+//                 ConnectLteEnb(n, lteEnbNetDevice, devIndex);
+//             }
+//         }
+//     }
+// }
 
 void
-AnimationInterface::ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t devIndex)
-{
-    Ptr<LteUePhy> lteUePhy = nd->GetPhy();
-    Ptr<LteSpectrumPhy> dlPhy = lteUePhy->GetDownlinkSpectrumPhy();
-    Ptr<LteSpectrumPhy> ulPhy = lteUePhy->GetUplinkSpectrumPhy();
-    std::ostringstream oss;
-    // NodeList/*/DeviceList/*/
-    oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
-    if (dlPhy)
-    {
-        dlPhy->TraceConnect("TxStart",
-                            oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyTxStart, this));
-        dlPhy->TraceConnect("RxStart",
-                            oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyRxStart, this));
-    }
-    if (ulPhy)
-    {
-        ulPhy->TraceConnect("TxStart",
-                            oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyTxStart, this));
-        ulPhy->TraceConnect("RxStart",
-                            oss.str(),
-                            MakeCallback(&AnimationInterface::LteSpectrumPhyRxStart, this));
-    }
-}
-
-void
-AnimationInterface::ConnectLte()
-{
-    for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
-    {
-        Ptr<Node> n = *i;
-        NS_ASSERT(n);
-        uint32_t nDevices = n->GetNDevices();
-        for (uint32_t devIndex = 0; devIndex < nDevices; ++devIndex)
-        {
-            Ptr<NetDevice> nd = n->GetDevice(devIndex);
-            if (!nd)
-            {
-                continue;
-            }
-            Ptr<LteUeNetDevice> lteUeNetDevice = DynamicCast<LteUeNetDevice>(nd);
-            if (lteUeNetDevice)
-            {
-                ConnectLteUe(n, lteUeNetDevice, devIndex);
-                continue;
-            }
-            Ptr<LteEnbNetDevice> lteEnbNetDevice = DynamicCast<LteEnbNetDevice>(nd);
-            if (lteEnbNetDevice)
-            {
-                ConnectLteEnb(n, lteEnbNetDevice, devIndex);
-            }
-        }
-    }
-}
-
-void
-AnimationInterface::ConnectCallbacks()
+AnimationInterfaceSingleton::ConnectCallbacks()
 {
     // Connect the callbacks
     Config::ConnectFailSafe("/ChannelList/*/TxRxPointToPoint",
-                            MakeCallback(&AnimationInterface::DevTxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::DevTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxPsduBegin",
-                            MakeCallback(&AnimationInterface::WifiPhyTxBeginTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::WifiPhyTxBeginTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyRxBegin",
-                            MakeCallback(&AnimationInterface::WifiPhyRxBeginTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::WifiPhyRxBeginTrace, this));
     Config::ConnectWithoutContextFailSafe(
         "/NodeList/*/$ns3::MobilityModel/CourseChange",
-        MakeCallback(&AnimationInterface::MobilityCourseChangeTrace, this));
+        MakeCallback(&AnimationInterfaceSingleton::MobilityCourseChangeTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WimaxNetDevice/Tx",
-                            MakeCallback(&AnimationInterface::WimaxTxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::WimaxTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WimaxNetDevice/Rx",
-                            MakeCallback(&AnimationInterface::WimaxRxTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Tx",
-                            MakeCallback(&AnimationInterface::LteTxTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Rx",
-                            MakeCallback(&AnimationInterface::LteRxTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxBegin",
-                            MakeCallback(&AnimationInterface::CsmaPhyTxBeginTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyTxEnd",
-                            MakeCallback(&AnimationInterface::CsmaPhyTxEndTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/PhyRxEnd",
-                            MakeCallback(&AnimationInterface::CsmaPhyRxEndTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/MacRx",
-                            MakeCallback(&AnimationInterface::CsmaMacRxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::WimaxRxTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Tx",
+    //                         MakeCallback(&AnimationInterfaceSingleton::LteTxTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Rx",
+    //                         MakeCallback(&AnimationInterfaceSingleton::LteRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyTxBegin",
-                            MakeCallback(&AnimationInterface::UanPhyGenTxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::UanPhyGenTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyRxBegin",
-                            MakeCallback(&AnimationInterface::UanPhyGenRxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::UanPhyGenRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/$ns3::BasicEnergySource/RemainingEnergy",
-                            MakeCallback(&AnimationInterface::RemainingEnergyTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::RemainingEnergyTrace, this));
 
-    ConnectLte();
+    // ConnectLte();
 
     Config::ConnectFailSafe("/NodeList/*/$ns3::Ipv4L3Protocol/Tx",
-                            MakeCallback(&AnimationInterface::Ipv4TxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::Ipv4TxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/$ns3::Ipv4L3Protocol/Rx",
-                            MakeCallback(&AnimationInterface::Ipv4RxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::Ipv4RxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/$ns3::Ipv4L3Protocol/Drop",
-                            MakeCallback(&AnimationInterface::Ipv4DropTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::Ipv4DropTrace, this));
 
     // Queue Enqueues
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Enqueue",
-                            MakeCallback(&AnimationInterface::EnqueueTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Enqueue",
-                            MakeCallback(&AnimationInterface::EnqueueTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::EnqueueTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Enqueue",
-                            MakeCallback(&AnimationInterface::EnqueueTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::EnqueueTrace, this));
 
     // Queue Dequeues
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Dequeue",
-                            MakeCallback(&AnimationInterface::DequeueTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Dequeue",
-                            MakeCallback(&AnimationInterface::DequeueTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::DequeueTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Dequeue",
-                            MakeCallback(&AnimationInterface::DequeueTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::DequeueTrace, this));
 
     // Queue Drops
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Drop",
-                            MakeCallback(&AnimationInterface::QueueDropTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::CsmaNetDevice/TxQueue/Drop",
-                            MakeCallback(&AnimationInterface::QueueDropTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::QueueDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Drop",
-                            MakeCallback(&AnimationInterface::QueueDropTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::QueueDropTrace, this));
 
     // Wifi Mac
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacTx",
-                            MakeCallback(&AnimationInterface::WifiMacTxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::WifiMacTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacTxDrop",
-                            MakeCallback(&AnimationInterface::WifiMacTxDropTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::WifiMacTxDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacRx",
-                            MakeCallback(&AnimationInterface::WifiMacRxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::WifiMacRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacRxDrop",
-                            MakeCallback(&AnimationInterface::WifiMacRxDropTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::WifiMacRxDropTrace, this));
 
     // Wifi Phy
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxDrop",
-                            MakeCallback(&AnimationInterface::WifiPhyTxDropTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::WifiPhyTxDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyRxDrop",
-                            MakeCallback(&AnimationInterface::WifiPhyRxDropTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::WifiPhyRxDropTrace, this));
 
     // LrWpan
-    Config::ConnectFailSafe("NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
-                            MakeCallback(&AnimationInterface::LrWpanPhyTxBeginTrace, this));
-    Config::ConnectFailSafe("NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyRxBegin",
-                            MakeCallback(&AnimationInterface::LrWpanPhyRxBeginTrace, this));
+    Config::ConnectFailSafe(
+        "NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
+        MakeCallback(&AnimationInterfaceSingleton::LrWpanPhyTxBeginTrace, this));
+    Config::ConnectFailSafe(
+        "NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyRxBegin",
+        MakeCallback(&AnimationInterfaceSingleton::LrWpanPhyRxBeginTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Mac/MacTx",
-                            MakeCallback(&AnimationInterface::LrWpanMacTxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::LrWpanMacTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Mac/MacTxDrop",
-                            MakeCallback(&AnimationInterface::LrWpanMacTxDropTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::LrWpanMacTxDropTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Mac/MacRx",
-                            MakeCallback(&AnimationInterface::LrWpanMacRxTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::LrWpanMacRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Mac/MacRxDrop",
-                            MakeCallback(&AnimationInterface::LrWpanMacRxDropTrace, this));
+                            MakeCallback(&AnimationInterfaceSingleton::LrWpanMacRxDropTrace, this));
 }
 
 Vector
-AnimationInterface::UpdatePosition(Ptr<Node> n)
+AnimationInterfaceSingleton::UpdatePosition(Ptr<Node> n)
 {
     Ptr<MobilityModel> loc = n->GetObject<MobilityModel>();
     if (loc)
@@ -1748,14 +3070,14 @@ AnimationInterface::UpdatePosition(Ptr<Node> n)
 }
 
 Vector
-AnimationInterface::UpdatePosition(Ptr<Node> n, Vector v)
+AnimationInterfaceSingleton::UpdatePosition(Ptr<Node> n, Vector v)
 {
     m_nodeLocation[n->GetId()] = v;
     return v;
 }
 
 Vector
-AnimationInterface::UpdatePosition(Ptr<NetDevice> ndev)
+AnimationInterfaceSingleton::UpdatePosition(Ptr<NetDevice> ndev)
 {
     Ptr<Node> n = ndev->GetNode();
     NS_ASSERT(n);
@@ -1763,7 +3085,7 @@ AnimationInterface::UpdatePosition(Ptr<NetDevice> ndev)
 }
 
 Vector
-AnimationInterface::GetPosition(Ptr<Node> n)
+AnimationInterfaceSingleton::GetPosition(Ptr<Node> n)
 {
     if (m_nodeLocation.find(n->GetId()) == m_nodeLocation.end())
     {
@@ -1773,7 +3095,7 @@ AnimationInterface::GetPosition(Ptr<Node> n)
 }
 
 std::string
-AnimationInterface::GetMacAddress(Ptr<NetDevice> nd)
+AnimationInterfaceSingleton::GetMacAddress(Ptr<NetDevice> nd)
 {
     Address nodeAddr = nd->GetAddress();
     std::ostringstream oss;
@@ -1782,7 +3104,7 @@ AnimationInterface::GetMacAddress(Ptr<NetDevice> nd)
 }
 
 std::string
-AnimationInterface::GetIpv4Address(Ptr<NetDevice> nd)
+AnimationInterfaceSingleton::GetIpv4Address(Ptr<NetDevice> nd)
 {
     Ptr<Ipv4> ipv4 = NodeList::GetNode(nd->GetNode()->GetId())->GetObject<Ipv4>();
     if (!ipv4)
@@ -1803,7 +3125,7 @@ AnimationInterface::GetIpv4Address(Ptr<NetDevice> nd)
 }
 
 std::string
-AnimationInterface::GetIpv6Address(Ptr<NetDevice> nd)
+AnimationInterfaceSingleton::GetIpv6Address(Ptr<NetDevice> nd)
 {
     Ptr<Ipv6> ipv6 = NodeList::GetNode(nd->GetNode()->GetId())->GetObject<Ipv6>();
     if (!ipv6)
@@ -1839,7 +3161,7 @@ AnimationInterface::GetIpv6Address(Ptr<NetDevice> nd)
 }
 
 std::vector<std::string>
-AnimationInterface::GetIpv4Addresses(Ptr<NetDevice> nd)
+AnimationInterfaceSingleton::GetIpv4Addresses(Ptr<NetDevice> nd)
 {
     std::vector<std::string> ipv4Addresses;
     Ptr<Ipv4> ipv4 = NodeList::GetNode(nd->GetNode()->GetId())->GetObject<Ipv4>();
@@ -1865,7 +3187,7 @@ AnimationInterface::GetIpv4Addresses(Ptr<NetDevice> nd)
 }
 
 std::vector<std::string>
-AnimationInterface::GetIpv6Addresses(Ptr<NetDevice> nd)
+AnimationInterfaceSingleton::GetIpv6Addresses(Ptr<NetDevice> nd)
 {
     std::vector<std::string> ipv6Addresses;
     Ptr<Ipv6> ipv6 = NodeList::GetNode(nd->GetNode()->GetId())->GetObject<Ipv6>();
@@ -1891,7 +3213,7 @@ AnimationInterface::GetIpv6Addresses(Ptr<NetDevice> nd)
 }
 
 void
-AnimationInterface::WriteIpv4Addresses()
+AnimationInterfaceSingleton::WriteIpv4Addresses()
 {
     for (NodeIdIpv4Map::const_iterator i = m_nodeIdIpv4Map.begin(); i != m_nodeIdIpv4Map.end(); ++i)
     {
@@ -1907,7 +3229,7 @@ AnimationInterface::WriteIpv4Addresses()
 }
 
 void
-AnimationInterface::WriteIpv6Addresses()
+AnimationInterfaceSingleton::WriteIpv6Addresses()
 {
     for (NodeIdIpv6Map::const_iterator i = m_nodeIdIpv6Map.begin(); i != m_nodeIdIpv6Map.end();
          i = m_nodeIdIpv6Map.upper_bound(i->first))
@@ -1924,7 +3246,7 @@ AnimationInterface::WriteIpv6Addresses()
 }
 
 void
-AnimationInterface::WriteLinkProperties()
+AnimationInterfaceSingleton::WriteLinkProperties()
 {
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
@@ -2025,7 +3347,7 @@ AnimationInterface::WriteLinkProperties()
 }
 
 void
-AnimationInterface::WriteNodes()
+AnimationInterfaceSingleton::WriteNodes()
 {
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
@@ -2037,7 +3359,7 @@ AnimationInterface::WriteNodes()
 }
 
 void
-AnimationInterface::WriteNodeColors()
+AnimationInterfaceSingleton::WriteNodeColors()
 {
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
@@ -2052,20 +3374,20 @@ AnimationInterface::WriteNodeColors()
 }
 
 void
-AnimationInterface::WriteNodeSizes()
+AnimationInterfaceSingleton::WriteNodeSizes()
 {
     for (NodeList::Iterator i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
         Ptr<Node> n = *i;
         NS_LOG_INFO("Update Size for Node: " << n->GetId());
-        AnimationInterface::NodeSize s = {1, 1};
+        AnimationInterfaceSingleton::NodeSize s = {1, 1};
         m_nodeSizes[n->GetId()] = s;
         UpdateNodeSize(n->GetId(), s.width, s.height);
     }
 }
 
 void
-AnimationInterface::WriteNodeEnergies()
+AnimationInterfaceSingleton::WriteNodeEnergies()
 {
     m_remainingEnergyCounterId =
         AddNodeCounter("RemainingEnergy", AnimationInterface::DOUBLE_COUNTER);
@@ -2080,13 +3402,13 @@ AnimationInterface::WriteNodeEnergies()
 }
 
 bool
-AnimationInterface::IsInTimeWindow()
+AnimationInterfaceSingleton::IsInTimeWindow()
 {
     return Simulator::Now() >= m_startTime && Simulator::Now() <= m_stopTime;
 }
 
 void
-AnimationInterface::SetOutputFile(const std::string& fn, bool routing)
+AnimationInterfaceSingleton::SetOutputFile(const std::string& fn, bool routing)
 {
     if (!routing && m_f)
     {
@@ -2119,7 +3441,7 @@ AnimationInterface::SetOutputFile(const std::string& fn, bool routing)
 }
 
 void
-AnimationInterface::CheckMaxPktsPerTraceFile()
+AnimationInterfaceSingleton::CheckMaxPktsPerTraceFile()
 {
     // Start a new trace file if the current packet count exceeded max packets per file
     ++m_currentPktCount;
@@ -2132,13 +3454,13 @@ AnimationInterface::CheckMaxPktsPerTraceFile()
 }
 
 std::string
-AnimationInterface::GetNetAnimVersion()
+AnimationInterfaceSingleton::GetNetAnimVersion()
 {
     return NETANIM_VERSION;
 }
 
 void
-AnimationInterface::TrackQueueCounters()
+AnimationInterfaceSingleton::TrackQueueCounters()
 {
     if (Simulator::Now() > m_queueCountersStopTime)
     {
@@ -2152,11 +3474,13 @@ AnimationInterface::TrackQueueCounters()
         UpdateNodeCounter(m_queueDequeueCounterId, nodeId, m_nodeQueueDequeue[nodeId]);
         UpdateNodeCounter(m_queueDropCounterId, nodeId, m_nodeQueueDrop[nodeId]);
     }
-    Simulator::Schedule(m_queueCountersPollInterval, &AnimationInterface::TrackQueueCounters, this);
+    Simulator::Schedule(m_queueCountersPollInterval,
+                        &AnimationInterfaceSingleton::TrackQueueCounters,
+                        this);
 }
 
 void
-AnimationInterface::TrackWifiMacCounters()
+AnimationInterfaceSingleton::TrackWifiMacCounters()
 {
     if (Simulator::Now() > m_wifiMacCountersStopTime)
     {
@@ -2172,12 +3496,12 @@ AnimationInterface::TrackWifiMacCounters()
         UpdateNodeCounter(m_wifiMacRxDropCounterId, nodeId, m_nodeWifiMacRxDrop[nodeId]);
     }
     Simulator::Schedule(m_wifiMacCountersPollInterval,
-                        &AnimationInterface::TrackWifiMacCounters,
+                        &AnimationInterfaceSingleton::TrackWifiMacCounters,
                         this);
 }
 
 void
-AnimationInterface::TrackWifiPhyCounters()
+AnimationInterfaceSingleton::TrackWifiPhyCounters()
 {
     if (Simulator::Now() > m_wifiPhyCountersStopTime)
     {
@@ -2191,12 +3515,12 @@ AnimationInterface::TrackWifiPhyCounters()
         UpdateNodeCounter(m_wifiPhyRxDropCounterId, nodeId, m_nodeWifiPhyRxDrop[nodeId]);
     }
     Simulator::Schedule(m_wifiPhyCountersPollInterval,
-                        &AnimationInterface::TrackWifiPhyCounters,
+                        &AnimationInterfaceSingleton::TrackWifiPhyCounters,
                         this);
 }
 
 void
-AnimationInterface::TrackIpv4L3ProtocolCounters()
+AnimationInterfaceSingleton::TrackIpv4L3ProtocolCounters()
 {
     if (Simulator::Now() > m_ipv4L3ProtocolCountersStopTime)
     {
@@ -2211,14 +3535,14 @@ AnimationInterface::TrackIpv4L3ProtocolCounters()
         UpdateNodeCounter(m_ipv4L3ProtocolDropCounterId, nodeId, m_nodeIpv4Drop[nodeId]);
     }
     Simulator::Schedule(m_ipv4L3ProtocolCountersPollInterval,
-                        &AnimationInterface::TrackIpv4L3ProtocolCounters,
+                        &AnimationInterfaceSingleton::TrackIpv4L3ProtocolCounters,
                         this);
 }
 
 /***** Routing-related *****/
 
 void
-AnimationInterface::TrackIpv4RoutePaths()
+AnimationInterfaceSingleton::TrackIpv4RoutePaths()
 {
     if (m_ipv4RouteTrackElements.empty())
     {
@@ -2292,7 +3616,7 @@ AnimationInterface::TrackIpv4RoutePaths()
 }
 
 void
-AnimationInterface::TrackIpv4Route()
+AnimationInterfaceSingleton::TrackIpv4Route()
 {
     if (Simulator::Now() > m_routingStopTime)
     {
@@ -2316,11 +3640,11 @@ AnimationInterface::TrackIpv4Route()
         }
     }
     TrackIpv4RoutePaths();
-    Simulator::Schedule(m_routingPollInterval, &AnimationInterface::TrackIpv4Route, this);
+    Simulator::Schedule(m_routingPollInterval, &AnimationInterfaceSingleton::TrackIpv4Route, this);
 }
 
 std::string
-AnimationInterface::GetIpv4RoutingTable(Ptr<Node> n)
+AnimationInterfaceSingleton::GetIpv4RoutingTable(Ptr<Node> n)
 {
     NS_ASSERT(n);
     Ptr<ns3::Ipv4> ipv4 = n->GetObject<ns3::Ipv4>();
@@ -2336,9 +3660,9 @@ AnimationInterface::GetIpv4RoutingTable(Ptr<Node> n)
 }
 
 void
-AnimationInterface::RecursiveIpv4RoutePathSearch(std::string from,
-                                                 std::string to,
-                                                 Ipv4RoutePathElements& rpElements)
+AnimationInterfaceSingleton::RecursiveIpv4RoutePathSearch(std::string from,
+                                                          std::string to,
+                                                          Ipv4RoutePathElements& rpElements)
 {
     NS_LOG_INFO("RecursiveIpv4RoutePathSearch from:" << from << " to:" << to);
     if (from == "0.0.0.0" || from == "127.0.0.1")
@@ -2409,7 +3733,7 @@ AnimationInterface::RecursiveIpv4RoutePathSearch(std::string from,
 /***** WriteXml *****/
 
 void
-AnimationInterface::WriteXmlAnim(bool routing)
+AnimationInterfaceSingleton::WriteXmlAnim(bool routing)
 {
     AnimXmlElement element("anim");
     element.AddAttribute("ver", GetNetAnimVersion());
@@ -2427,7 +3751,7 @@ AnimationInterface::WriteXmlAnim(bool routing)
 }
 
 void
-AnimationInterface::WriteXmlClose(std::string name, bool routing)
+AnimationInterfaceSingleton::WriteXmlClose(std::string name, bool routing)
 {
     std::string closeString = "</" + name + ">\n";
     if (!routing)
@@ -2441,7 +3765,7 @@ AnimationInterface::WriteXmlClose(std::string name, bool routing)
 }
 
 void
-AnimationInterface::WriteXmlNode(uint32_t id, uint32_t sysId, double locX, double locY)
+AnimationInterfaceSingleton::WriteXmlNode(uint32_t id, uint32_t sysId, double locX, double locY)
 {
     AnimXmlElement element("node");
     element.AddAttribute("id", id);
@@ -2452,7 +3776,9 @@ AnimationInterface::WriteXmlNode(uint32_t id, uint32_t sysId, double locX, doubl
 }
 
 void
-AnimationInterface::WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::string linkDescription)
+AnimationInterfaceSingleton::WriteXmlUpdateLink(uint32_t fromId,
+                                                uint32_t toId,
+                                                std::string linkDescription)
 {
     AnimXmlElement element("linkupdate");
     element.AddAttribute("t", Simulator::Now().GetSeconds());
@@ -2463,7 +3789,7 @@ AnimationInterface::WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::stri
 }
 
 void
-AnimationInterface::WriteXmlLink(uint32_t fromId, uint32_t toLp, uint32_t toId)
+AnimationInterfaceSingleton::WriteXmlLink(uint32_t fromId, uint32_t toLp, uint32_t toId)
 {
     AnimXmlElement element("link");
     element.AddAttribute("fromId", fromId);
@@ -2492,7 +3818,8 @@ AnimationInterface::WriteXmlLink(uint32_t fromId, uint32_t toLp, uint32_t toId)
 }
 
 void
-AnimationInterface::WriteXmlIpv4Addresses(uint32_t nodeId, std::vector<std::string> ipv4Addresses)
+AnimationInterfaceSingleton::WriteXmlIpv4Addresses(uint32_t nodeId,
+                                                   std::vector<std::string> ipv4Addresses)
 {
     AnimXmlElement element("ip");
     element.AddAttribute("n", nodeId);
@@ -2508,7 +3835,8 @@ AnimationInterface::WriteXmlIpv4Addresses(uint32_t nodeId, std::vector<std::stri
 }
 
 void
-AnimationInterface::WriteXmlIpv6Addresses(uint32_t nodeId, std::vector<std::string> ipv6Addresses)
+AnimationInterfaceSingleton::WriteXmlIpv6Addresses(uint32_t nodeId,
+                                                   std::vector<std::string> ipv6Addresses)
 {
     AnimXmlElement element("ipv6");
     element.AddAttribute("n", nodeId);
@@ -2524,7 +3852,7 @@ AnimationInterface::WriteXmlIpv6Addresses(uint32_t nodeId, std::vector<std::stri
 }
 
 void
-AnimationInterface::WriteXmlRouting(uint32_t nodeId, std::string routingInfo)
+AnimationInterfaceSingleton::WriteXmlRouting(uint32_t nodeId, std::string routingInfo)
 {
     AnimXmlElement element("rt");
     element.AddAttribute("t", Simulator::Now().GetSeconds());
@@ -2534,9 +3862,9 @@ AnimationInterface::WriteXmlRouting(uint32_t nodeId, std::string routingInfo)
 }
 
 void
-AnimationInterface::WriteXmlRp(uint32_t nodeId,
-                               std::string destination,
-                               Ipv4RoutePathElements rpElements)
+AnimationInterfaceSingleton::WriteXmlRp(uint32_t nodeId,
+                                        std::string destination,
+                                        Ipv4RoutePathElements rpElements)
 {
     std::string tagName = "rp";
     AnimXmlElement element(tagName, false);
@@ -2556,7 +3884,10 @@ AnimationInterface::WriteXmlRp(uint32_t nodeId,
 }
 
 void
-AnimationInterface::WriteXmlPRef(uint64_t animUid, uint32_t fId, double fbTx, std::string metaInfo)
+AnimationInterfaceSingleton::WriteXmlPRef(uint64_t animUid,
+                                          uint32_t fId,
+                                          double fbTx,
+                                          std::string metaInfo)
 {
     AnimXmlElement element("pr");
     element.AddAttribute("uId", animUid);
@@ -2570,11 +3901,11 @@ AnimationInterface::WriteXmlPRef(uint64_t animUid, uint32_t fId, double fbTx, st
 }
 
 void
-AnimationInterface::WriteXmlP(uint64_t animUid,
-                              std::string pktType,
-                              uint32_t tId,
-                              double fbRx,
-                              double lbRx)
+AnimationInterfaceSingleton::WriteXmlP(uint64_t animUid,
+                                       std::string pktType,
+                                       uint32_t tId,
+                                       double fbRx,
+                                       double lbRx)
 {
     AnimXmlElement element(pktType);
     element.AddAttribute("uId", animUid);
@@ -2585,14 +3916,14 @@ AnimationInterface::WriteXmlP(uint64_t animUid,
 }
 
 void
-AnimationInterface::WriteXmlP(std::string pktType,
-                              uint32_t fId,
-                              double fbTx,
-                              double lbTx,
-                              uint32_t tId,
-                              double fbRx,
-                              double lbRx,
-                              std::string metaInfo)
+AnimationInterfaceSingleton::WriteXmlP(std::string pktType,
+                                       uint32_t fId,
+                                       double fbTx,
+                                       double lbTx,
+                                       uint32_t tId,
+                                       double fbRx,
+                                       double lbRx,
+                                       std::string metaInfo)
 {
     AnimXmlElement element(pktType);
     element.AddAttribute("fId", fId);
@@ -2609,9 +3940,9 @@ AnimationInterface::WriteXmlP(std::string pktType,
 }
 
 void
-AnimationInterface::WriteXmlAddNodeCounter(uint32_t nodeCounterId,
-                                           std::string counterName,
-                                           CounterType counterType)
+AnimationInterfaceSingleton::WriteXmlAddNodeCounter(uint32_t nodeCounterId,
+                                                    std::string counterName,
+                                                    AnimationInterface::CounterType counterType)
 {
     AnimXmlElement element("ncs");
     element.AddAttribute("ncId", nodeCounterId);
@@ -2621,7 +3952,7 @@ AnimationInterface::WriteXmlAddNodeCounter(uint32_t nodeCounterId,
 }
 
 void
-AnimationInterface::WriteXmlAddResource(uint32_t resourceId, std::string resourcePath)
+AnimationInterfaceSingleton::WriteXmlAddResource(uint32_t resourceId, std::string resourcePath)
 {
     AnimXmlElement element("res");
     element.AddAttribute("rid", resourceId);
@@ -2630,7 +3961,7 @@ AnimationInterface::WriteXmlAddResource(uint32_t resourceId, std::string resourc
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
+AnimationInterfaceSingleton::WriteXmlUpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
 {
     AnimXmlElement element("nu");
     element.AddAttribute("p", "i");
@@ -2641,7 +3972,7 @@ AnimationInterface::WriteXmlUpdateNodeImage(uint32_t nodeId, uint32_t resourceId
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodeSize(uint32_t nodeId, double width, double height)
+AnimationInterfaceSingleton::WriteXmlUpdateNodeSize(uint32_t nodeId, double width, double height)
 {
     AnimXmlElement element("nu");
     element.AddAttribute("p", "s");
@@ -2653,7 +3984,7 @@ AnimationInterface::WriteXmlUpdateNodeSize(uint32_t nodeId, double width, double
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodePosition(uint32_t nodeId, double x, double y)
+AnimationInterfaceSingleton::WriteXmlUpdateNodePosition(uint32_t nodeId, double x, double y)
 {
     AnimXmlElement element("nu");
     element.AddAttribute("p", "p");
@@ -2665,7 +3996,10 @@ AnimationInterface::WriteXmlUpdateNodePosition(uint32_t nodeId, double x, double
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b)
+AnimationInterfaceSingleton::WriteXmlUpdateNodeColor(uint32_t nodeId,
+                                                     uint8_t r,
+                                                     uint8_t g,
+                                                     uint8_t b)
 {
     AnimXmlElement element("nu");
     element.AddAttribute("p", "c");
@@ -2678,7 +4012,7 @@ AnimationInterface::WriteXmlUpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t 
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodeDescription(uint32_t nodeId)
+AnimationInterfaceSingleton::WriteXmlUpdateNodeDescription(uint32_t nodeId)
 {
     AnimXmlElement element("nu");
     element.AddAttribute("p", "d");
@@ -2692,9 +4026,9 @@ AnimationInterface::WriteXmlUpdateNodeDescription(uint32_t nodeId)
 }
 
 void
-AnimationInterface::WriteXmlUpdateNodeCounter(uint32_t nodeCounterId,
-                                              uint32_t nodeId,
-                                              double counterValue)
+AnimationInterfaceSingleton::WriteXmlUpdateNodeCounter(uint32_t nodeCounterId,
+                                                       uint32_t nodeId,
+                                                       double counterValue)
 {
     AnimXmlElement element("nc");
     element.AddAttribute("c", nodeCounterId);
@@ -2705,12 +4039,12 @@ AnimationInterface::WriteXmlUpdateNodeCounter(uint32_t nodeCounterId,
 }
 
 void
-AnimationInterface::WriteXmlUpdateBackground(std::string fileName,
-                                             double x,
-                                             double y,
-                                             double scaleX,
-                                             double scaleY,
-                                             double opacity)
+AnimationInterfaceSingleton::WriteXmlUpdateBackground(std::string fileName,
+                                                      double x,
+                                                      double y,
+                                                      double scaleX,
+                                                      double scaleY,
+                                                      double opacity)
 {
     AnimXmlElement element("bg");
     element.AddAttribute("f", fileName);
@@ -2723,9 +4057,9 @@ AnimationInterface::WriteXmlUpdateBackground(std::string fileName,
 }
 
 void
-AnimationInterface::WriteXmlNonP2pLinkProperties(uint32_t id,
-                                                 std::string ipAddress,
-                                                 std::string channelType)
+AnimationInterfaceSingleton::WriteXmlNonP2pLinkProperties(uint32_t id,
+                                                          std::string ipAddress,
+                                                          std::string channelType)
 {
     AnimXmlElement element("nonp2plinkproperties");
     element.AddAttribute("id", id);
@@ -2736,7 +4070,7 @@ AnimationInterface::WriteXmlNonP2pLinkProperties(uint32_t id,
 
 /***** AnimXmlElement  *****/
 
-AnimationInterface::AnimXmlElement::AnimXmlElement(std::string tagName, bool emptyElement)
+AnimationInterfaceSingleton::AnimXmlElement::AnimXmlElement(std::string tagName, bool emptyElement)
     : m_tagName(tagName),
       m_text("")
 {
@@ -2744,7 +4078,9 @@ AnimationInterface::AnimXmlElement::AnimXmlElement(std::string tagName, bool emp
 
 template <typename T>
 void
-AnimationInterface::AnimXmlElement::AddAttribute(std::string attribute, T value, bool xmlEscape)
+AnimationInterfaceSingleton::AnimXmlElement::AddAttribute(std::string attribute,
+                                                          T value,
+                                                          bool xmlEscape)
 {
     std::ostringstream oss;
     oss << std::setprecision(10);
@@ -2788,19 +4124,19 @@ AnimationInterface::AnimXmlElement::AddAttribute(std::string attribute, T value,
 }
 
 void
-AnimationInterface::AnimXmlElement::AppendChild(AnimXmlElement e)
+AnimationInterfaceSingleton::AnimXmlElement::AppendChild(AnimXmlElement e)
 {
     m_children.push_back(e.ToString());
 }
 
 void
-AnimationInterface::AnimXmlElement::SetText(std::string text)
+AnimationInterfaceSingleton::AnimXmlElement::SetText(std::string text)
 {
     m_text = text;
 }
 
 std::string
-AnimationInterface::AnimXmlElement::ToString(bool autoClose)
+AnimationInterfaceSingleton::AnimXmlElement::ToString(bool autoClose)
 {
     std::string elementString = "<" + m_tagName + " ";
 
@@ -2896,7 +4232,7 @@ AnimByteTag::Get() const
     return m_AnimUid;
 }
 
-AnimationInterface::AnimPacketInfo::AnimPacketInfo()
+AnimPacketInfo::AnimPacketInfo()
     : m_txnd(nullptr),
       m_txNodeId(0),
       m_fbTx(0),
@@ -2905,7 +4241,7 @@ AnimationInterface::AnimPacketInfo::AnimPacketInfo()
 {
 }
 
-AnimationInterface::AnimPacketInfo::AnimPacketInfo(const AnimPacketInfo& pInfo)
+AnimPacketInfo::AnimPacketInfo(const AnimPacketInfo& pInfo)
 {
     m_txnd = pInfo.m_txnd;
     m_txNodeId = pInfo.m_txNodeId;
@@ -2914,9 +4250,7 @@ AnimationInterface::AnimPacketInfo::AnimPacketInfo(const AnimPacketInfo& pInfo)
     m_lbRx = pInfo.m_lbRx;
 }
 
-AnimationInterface::AnimPacketInfo::AnimPacketInfo(Ptr<const NetDevice> txnd,
-                                                   const Time fbTx,
-                                                   uint32_t txNodeId)
+AnimPacketInfo::AnimPacketInfo(Ptr<const NetDevice> txnd, const Time fbTx, uint32_t txNodeId)
     : m_txnd(txnd),
       m_txNodeId(0),
       m_fbTx(fbTx.GetSeconds()),
@@ -2930,11 +4264,378 @@ AnimationInterface::AnimPacketInfo::AnimPacketInfo(Ptr<const NetDevice> txnd,
 }
 
 void
-AnimationInterface::AnimPacketInfo::ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx)
+AnimPacketInfo::ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx)
 {
     Ptr<Node> n = nd->GetNode();
     m_fbRx = fbRx;
     m_rxnd = nd;
 }
 
+AnimationInterface::AnimationInterface(const std::string& filename)
+{
+    AnimationInterfaceSingleton::Get()->Initialize(filename);
+}
+
+AnimationInterface::AnimationInterface()
+{
+}
+
+void
+AnimationInterface::EnableIpv4L3ProtocolCounters(Time startTime, Time stopTime, Time pollInterval)
+{
+    return AnimationInterfaceSingleton::Get()->EnableIpv4L3ProtocolCounters(startTime,
+                                                                            stopTime,
+                                                                            pollInterval);
+}
+
+void
+AnimationInterface::EnableQueueCounters(Time startTime, Time stopTime, Time pollInterval)
+{
+    return AnimationInterfaceSingleton::Get()->EnableQueueCounters(startTime,
+                                                                   stopTime,
+                                                                   pollInterval);
+}
+
+void
+AnimationInterface::EnableWifiMacCounters(Time startTime, Time stopTime, Time pollInterval)
+{
+    return AnimationInterfaceSingleton::Get()->EnableWifiMacCounters(startTime,
+                                                                     stopTime,
+                                                                     pollInterval);
+}
+
+void
+AnimationInterface::EnableWifiPhyCounters(Time startTime, Time stopTime, Time pollInterval)
+{
+    return AnimationInterfaceSingleton::Get()->EnableWifiPhyCounters(startTime,
+                                                                     stopTime,
+                                                                     pollInterval);
+}
+
+void
+AnimationInterface::EnableIpv4RouteTracking(std::string fileName,
+                                            Time startTime,
+                                            Time stopTime,
+                                            Time pollInterval)
+{
+    return AnimationInterfaceSingleton::Get()->EnableIpv4RouteTracking(fileName,
+                                                                       startTime,
+                                                                       stopTime,
+                                                                       pollInterval);
+}
+
+void
+AnimationInterface::EnableIpv4RouteTracking(std::string fileName,
+                                            Time startTime,
+                                            Time stopTime,
+                                            NodeContainer nc,
+                                            Time pollInterval)
+{
+    return AnimationInterfaceSingleton::Get()->EnableIpv4RouteTracking(fileName,
+                                                                       startTime,
+                                                                       stopTime,
+                                                                       nc,
+                                                                       pollInterval);
+}
+
+bool
+AnimationInterface::IsInitialized()
+{
+    return AnimationInterfaceSingleton::IsInitialized();
+}
+
+void
+AnimationInterface::SetStartTime(Time t)
+{
+    return AnimationInterfaceSingleton::Get()->SetStartTime(t);
+}
+
+void
+AnimationInterface::SetStopTime(Time t)
+{
+    return AnimationInterfaceSingleton::Get()->SetStopTime(t);
+}
+
+void
+AnimationInterface::SetMaxPktsPerTraceFile(uint64_t maxPktsPerFile)
+{
+    return AnimationInterfaceSingleton::Get()->SetMaxPktsPerTraceFile(maxPktsPerFile);
+}
+
+void
+AnimationInterface::SetMobilityPollInterval(Time t)
+{
+    return AnimationInterfaceSingleton::Get()->SetMobilityPollInterval(t);
+}
+
+void
+AnimationInterface::SetAnimWriteCallback(AnimWriteCallback cb)
+{
+    return AnimationInterfaceSingleton::Get()->SetAnimWriteCallback(cb);
+}
+
+void
+AnimationInterface::ResetAnimWriteCallback()
+{
+    return AnimationInterfaceSingleton::Get()->ResetAnimWriteCallback();
+}
+
+void
+AnimationInterface::SetConstantPosition(Ptr<Node> n, double x, double y, double z)
+{
+    return AnimationInterfaceSingleton::SetConstantPosition(n, x, y, z);
+}
+
+void
+AnimationInterface::UpdateNodeDescription(Ptr<Node> n, std::string descr)
+{
+    return AnimationInterfaceSingleton::Get()->UpdateNodeDescription(n, descr);
+}
+
+void
+AnimationInterface::UpdateNodeDescription(uint32_t nodeId, std::string descr)
+{
+    return AnimationInterfaceSingleton::Get()->UpdateNodeDescription(nodeId, descr);
+}
+
+void
+AnimationInterface::UpdateNodeImage(uint32_t nodeId, uint32_t resourceId)
+{
+    return AnimationInterfaceSingleton::Get()->UpdateNodeImage(nodeId, resourceId);
+}
+
+void
+AnimationInterface::UpdateNodeSize(Ptr<Node> n, double width, double height)
+{
+    return AnimationInterfaceSingleton::Get()->UpdateNodeSize(n, width, height);
+}
+
+void
+AnimationInterface::UpdateNodeSize(uint32_t nodeId, double width, double height)
+{
+    return AnimationInterfaceSingleton::Get()->UpdateNodeSize(nodeId, width, height);
+}
+
+void
+AnimationInterface::UpdateNodeColor(Ptr<Node> n, uint8_t r, uint8_t g, uint8_t b)
+{
+    return AnimationInterfaceSingleton::Get()->UpdateNodeColor(n, r, g, b);
+}
+
+void
+AnimationInterface::UpdateNodeColor(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b)
+{
+    return AnimationInterfaceSingleton::Get()->UpdateNodeColor(nodeId, r, g, b);
+}
+
+void
+AnimationInterface::UpdateNodeCounter(uint32_t nodeCounterId, uint32_t nodeId, double counter)
+{
+    return AnimationInterfaceSingleton::Get()->UpdateNodeCounter(nodeCounterId, nodeId, counter);
+}
+
+void
+AnimationInterface::SetBackgroundImage(std::string fileName,
+                                       double x,
+                                       double y,
+                                       double scaleX,
+                                       double scaleY,
+                                       double opacity)
+{
+    return AnimationInterfaceSingleton::Get()
+        ->SetBackgroundImage(fileName, x, y, scaleX, scaleY, opacity);
+}
+
+void
+AnimationInterface::UpdateLinkDescription(uint32_t fromNode,
+                                          uint32_t toNode,
+                                          std::string linkDescription)
+{
+    return AnimationInterfaceSingleton::Get()->UpdateLinkDescription(fromNode,
+                                                                     toNode,
+                                                                     linkDescription);
+}
+
+void
+AnimationInterface::UpdateLinkDescription(Ptr<Node> fromNode,
+                                          Ptr<Node> toNode,
+                                          std::string linkDescription)
+{
+    return AnimationInterfaceSingleton::Get()->UpdateLinkDescription(fromNode,
+                                                                     toNode,
+                                                                     linkDescription);
+}
+
+void
+AnimationInterface::AddSourceDestination(uint32_t fromNodeId, std::string destinationIpv4Address)
+{
+    return AnimationInterfaceSingleton::Get()->AddSourceDestination(fromNodeId,
+                                                                    destinationIpv4Address);
+}
+
+bool
+AnimationInterface::IsStarted() const
+{
+    return AnimationInterfaceSingleton::Get()->IsStarted();
+}
+
+void
+AnimationInterface::SkipPacketTracing()
+{
+    return AnimationInterfaceSingleton::Get()->SkipPacketTracing();
+}
+
+void
+AnimationInterface::EnablePacketMetadata(bool enable)
+{
+    return AnimationInterfaceSingleton::Get()->EnablePacketMetadata(enable);
+}
+
+uint64_t
+AnimationInterface::GetTracePktCount() const
+{
+    return AnimationInterfaceSingleton::Get()->GetTracePktCount();
+}
+
+uint32_t
+AnimationInterface::AddNodeCounter(std::string counterName, CounterType counterType)
+{
+    return AnimationInterfaceSingleton::Get()->AddNodeCounter(counterName, counterType);
+}
+
+uint32_t
+AnimationInterface::AddResource(std::string resourcePath)
+{
+    return AnimationInterfaceSingleton::Get()->AddResource(resourcePath);
+}
+
+double
+AnimationInterface::GetNodeEnergyFraction(Ptr<const Node> node) const
+{
+    return AnimationInterfaceSingleton::Get()->GetNodeEnergyFraction(node);
+};
+
+bool
+AnimationInterface::IsInTimeWindow()
+{
+    return AnimationInterfaceSingleton::Get()->IsInTimeWindow();
+}
+
+bool
+AnimationInterfaceSingleton::IsTracking() const
+{
+    return m_trackPackets;
+}
+
+bool
+AnimationInterface::IsTracking()
+{
+    return AnimationInterfaceSingleton::Get()->IsTracking();
+}
+
+Ptr<NetDevice>
+AnimationInterface::GetNetDeviceFromContext(std::string context)
+{
+    return AnimationInterfaceSingleton::Get()->GetNetDeviceFromContext(context);
+}
+
+Vector
+AnimationInterface::UpdatePosition(Ptr<NetDevice> ndev)
+{
+    return AnimationInterfaceSingleton::Get()->UpdatePosition(ndev);
+}
+
+void
+AnimationInterface::AddByteTag(uint64_t animUid, Ptr<const Packet> p)
+{
+    return AnimationInterfaceSingleton::Get()->AddByteTag(animUid, p);
+}
+
+uint64_t
+AnimationInterface::GetAnimUidFromPacket(Ptr<const Packet> p)
+{
+    return AnimationInterfaceSingleton::Get()->GetAnimUidFromPacket(p);
+}
+
+void
+AnimationInterface::AddPendingPacket(ProtocolType protocolType,
+                                     uint64_t animUid,
+                                     AnimPacketInfo pktInfo)
+{
+    return AnimationInterfaceSingleton::Get()->AddPendingPacket(protocolType, animUid, pktInfo);
+}
+
+void
+AnimationInterfaceSingleton::AddNodeToNodeEnqueueMap(uint32_t nodeId)
+{
+    ++m_nodeQueueEnqueue[nodeId];
+}
+
+void
+AnimationInterface::AddNodeToNodeEnqueueMap(uint32_t nodeId)
+{
+    return AnimationInterfaceSingleton::Get()->AddNodeToNodeEnqueueMap(nodeId);
+}
+
+void
+AnimationInterfaceSingleton::AddNodeToNodeDequeueMap(uint32_t nodeId)
+{
+    ++m_nodeQueueDequeue[nodeId];
+}
+
+void
+AnimationInterface::AddNodeToNodeDequeueMap(uint32_t nodeId)
+{
+    return AnimationInterfaceSingleton::Get()->AddNodeToNodeDequeueMap(nodeId);
+}
+
+void
+AnimationInterfaceSingleton::AddNodeToNodeDropMap(uint32_t nodeId)
+{
+    ++m_nodeQueueDrop[nodeId];
+}
+
+void
+AnimationInterface::AddNodeToNodeDropMap(uint32_t nodeId)
+{
+    return AnimationInterfaceSingleton::Get()->AddNodeToNodeDropMap(nodeId);
+}
+
+void
+AnimationInterface::CheckMaxPktsPerTraceFile()
+{
+    return AnimationInterfaceSingleton::Get()->CheckMaxPktsPerTraceFile();
+}
+
+void
+AnimationInterface::WriteXmlP(std::string pktType,
+                              uint32_t fId,
+                              double fbTx,
+                              double lbTx,
+                              uint32_t tId,
+                              double fbRx,
+                              double lbRx,
+                              std::string metaInfo)
+{
+    return AnimationInterfaceSingleton::Get()
+        ->WriteXmlP(pktType, fId, fbTx, lbTx, tId, fbRx, lbRx, metaInfo);
+}
+
+bool
+AnimationInterfaceSingleton::IsEnablePacketMetadata() const
+{
+    return m_enablePacketMetadata;
+}
+
+bool
+AnimationInterface::IsEnablePacketMetadata()
+{
+    return AnimationInterfaceSingleton::Get()->IsEnablePacketMetadata();
+}
+
+std::string
+AnimationInterface::GetPacketMetadata(Ptr<const Packet> p)
+{
+    return AnimationInterfaceSingleton::Get()->GetPacketMetadata(p);
+}
 } // namespace ns3

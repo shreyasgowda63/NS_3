@@ -4,6 +4,7 @@ build_example(
   LIBRARIES_TO_LINK
     ${libwifi}
     ${libapplications}
+    ${libcsma}
     ${libolsr}
     ${libnetanim}
 )
