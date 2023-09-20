@@ -69,6 +69,8 @@ class PointToPointNetDevice : public NetDevice
      * \return The TypeId for this class
      */
     static TypeId GetTypeId();
+    // inherited from Object
+    void DoInitialize() override;
 
     /**
      * Construct a PointToPointNetDevice

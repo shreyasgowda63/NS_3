@@ -18,13 +18,16 @@
 #include "point-to-point-net-device.h"
 
 #include "point-to-point-channel.h"
+#include "point-to-point-net-device-anim.h"
 #include "ppp-header.h"
 
+#include "ns3/animation-interface.h"
 #include "ns3/error-model.h"
 #include "ns3/llc-snap-header.h"
 #include "ns3/log.h"
 #include "ns3/mac48-address.h"
 #include "ns3/pointer.h"
+#include "ns3/proxy.h"
 #include "ns3/queue.h"
 #include "ns3/simulator.h"
 #include "ns3/trace-source-accessor.h"
@@ -678,6 +681,17 @@ PointToPointNetDevice::EtherToPpp(uint16_t proto)
         NS_ASSERT_MSG(false, "PPP Protocol number not defined!");
     }
     return 0;
+}
+
+void
+PointToPointNetDevice::DoInitialize()
+{
+    if (GetNode()->GetObject<Proxy<NetAnimWriter>>() != nullptr)
+    {
+        Ptr<PointToPointNetDeviceAnim> deviceAnim = CreateObject<PointToPointNetDeviceAnim>();
+        AggregateObject(deviceAnim);
+    }
+    NetDevice::DoInitialize();
 }
 
 } // namespace ns3

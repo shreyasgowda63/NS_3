@@ -22,14 +22,17 @@ build_lib(
     helper/point-to-point-helper.cc
     model/point-to-point-channel.cc
     model/point-to-point-net-device.cc
+    model/point-to-point-net-device-anim.cc
     model/ppp-header.cc
   HEADER_FILES
     ${mpi_headers}
     helper/point-to-point-helper.h
     model/point-to-point-channel.h
     model/point-to-point-net-device.h
+    model/point-to-point-net-device-anim.h
     model/ppp-header.h
-  LIBRARIES_TO_LINK ${libnetwork}
+  LIBRARIES_TO_LINK ${libnetanim}
+                    ${libnetwork}
                     ${mpi_libraries}
   TEST_SOURCES test/point-to-point-test.cc
 )
