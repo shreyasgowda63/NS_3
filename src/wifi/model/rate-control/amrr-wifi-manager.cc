@@ -23,8 +23,6 @@
 #include "ns3/simulator.h"
 #include "ns3/wifi-tx-vector.h"
 
-#define Min(a, b) ((a < b) ? a : b)
-
 namespace ns3
 {
 

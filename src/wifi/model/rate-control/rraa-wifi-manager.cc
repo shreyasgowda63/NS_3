@@ -25,8 +25,6 @@
 #include "ns3/wifi-mac.h"
 #include "ns3/wifi-phy.h"
 
-#define Min(a, b) ((a < b) ? a : b)
-
 namespace ns3
 {
 
