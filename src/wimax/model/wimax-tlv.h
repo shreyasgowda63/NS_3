@@ -21,7 +21,7 @@
 #ifndef WIMAX_TLV_H
 #define WIMAX_TLV_H
 
-#define WIMAX_TLV_EXTENDED_LENGTH_MASK 0x80
+constexpr auto WIMAX_TLV_EXTENDED_LENGTH_MASK = 0x80;
 
 #include "ns3/assert.h"
 #include "ns3/header.h"

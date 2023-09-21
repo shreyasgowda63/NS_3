@@ -111,7 +111,7 @@ static const EutraChannelNumbers g_eutraChannelNumbers[]{
 };
 
 /// number of EUTRA bands
-#define NUM_EUTRA_BANDS (sizeof(g_eutraChannelNumbers) / sizeof(EutraChannelNumbers))
+constexpr uint16_t NUM_EUTRA_BANDS = sizeof(g_eutraChannelNumbers) / sizeof(EutraChannelNumbers);
 
 double
 LteSpectrumValueHelper::GetCarrierFrequency(uint32_t earfcn)

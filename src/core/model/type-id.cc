@@ -370,13 +370,13 @@ IidManager::Hasher(const std::string name)
  * \internal
  * IidManager shorthand for use in NS_LOG
  */
-#define IID "IidManager"
+constexpr auto IID = "IidManager";
 /**
  * \ingroup object
  * \internal
  * IidManager shorthand for use in NS_LOG
  */
-#define IIDL IID << ": "
+constexpr auto IIDL = "IidManager: ";
 
 uint16_t
 IidManager::AllocateUid(std::string name)

@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <vector>
 
-#define BUFFER_FREE_LIST 1
+#define BUFFER_FREE_LIST
 
 namespace ns3
 {
