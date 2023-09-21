@@ -56,6 +56,14 @@
 #include <iomanip>
 #include <iostream>
 
+namespace ns3
+{
+
+NS_LOG_COMPONENT_DEFINE("OlsrRoutingProtocol");
+
+namespace olsr
+{
+
 /********** Useful macros **********/
 
 ///
@@ -111,14 +119,6 @@ constexpr uint16_t OLSR_MAX_SEQ_NUM = 65535;
 
 /// Maximum number of messages per packet.
 constexpr uint32_t OLSR_MAX_MSGS = 64;
-
-namespace ns3
-{
-
-NS_LOG_COMPONENT_DEFINE("OlsrRoutingProtocol");
-
-namespace olsr
-{
 
 /**
  * \ingroup olsr

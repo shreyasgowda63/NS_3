@@ -55,12 +55,12 @@
 #include <fstream>
 #include <vector>
 
-/// Avoid std::numbers::pi because it's C++20
-constexpr double PI = 3.1415926535;
+using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("WifiBianchi");
 
-using namespace ns3;
+/// Avoid std::numbers::pi because it's C++20
+constexpr double PI = 3.1415926535;
 
 std::ofstream cwTraceFile;      ///< File that traces CW over time
 std::ofstream backoffTraceFile; ///< File that traces backoff over time

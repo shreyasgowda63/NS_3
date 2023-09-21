@@ -29,18 +29,18 @@
 
 #include <iostream>
 
-/// Minimum number of carrier components allowed by 3GPP up to R13
-constexpr uint16_t MIN_CC = 1;
-
-/// Maximum number of carrier components allowed by 3GPP up to R13
-constexpr uint16_t MAX_CC = 2;
-
 namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE("CcHelper");
 
 NS_OBJECT_ENSURE_REGISTERED(CcHelper);
+
+/// Minimum number of carrier components allowed by 3GPP up to R13
+constexpr uint16_t MIN_CC = 1;
+
+/// Maximum number of carrier components allowed by 3GPP up to R13
+constexpr uint16_t MAX_CC = 2;
 
 CcHelper::CcHelper()
 {

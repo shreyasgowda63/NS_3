@@ -27,6 +27,9 @@
 #include <sstream>
 #include <stdio.h>
 
+namespace ns3
+{
+
 constexpr int MAX_DRB = 11; // According to section 6.4 3GPP TS 36.331
 constexpr int MAX_EARFCN = 262143;
 constexpr int MAX_RAT_CAPABILITIES = 8;
@@ -40,9 +43,6 @@ constexpr int MAX_CELL_MEAS = 32;
 constexpr int MAX_CELL_REPORT = 8;
 
 constexpr int MAX_SCELL_REPORT = 5;
-
-namespace ns3
-{
 
 NS_LOG_COMPONENT_DEFINE("RrcHeader");
 

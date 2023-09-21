@@ -25,6 +25,9 @@
 
 #include <vector>
 
+namespace ns3
+{
+
 /**
  * Constants. See section 4.4
  */
@@ -52,9 +55,6 @@ constexpr uint32_t MAX_HL_SB = 25;
 constexpr uint32_t MAX_SINR_RB_LIST = 100;
 constexpr uint32_t MAX_SR_LIST = 30;
 constexpr uint32_t MAX_MAC_CE_LIST = 30;
-
-namespace ns3
-{
 
 /// Result_e enumeration
 enum Result_e

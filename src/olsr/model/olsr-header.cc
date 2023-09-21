@@ -24,10 +24,6 @@
 
 #include <cmath>
 
-constexpr uint32_t IPV4_ADDRESS_SIZE = 4;
-constexpr uint32_t OLSR_MSG_HEADER_SIZE = 12;
-constexpr uint32_t OLSR_PKT_HEADER_SIZE = 4;
-
 namespace ns3
 {
 
@@ -35,6 +31,10 @@ NS_LOG_COMPONENT_DEFINE("OlsrHeader");
 
 namespace olsr
 {
+
+constexpr uint32_t IPV4_ADDRESS_SIZE = 4;
+constexpr uint32_t OLSR_MSG_HEADER_SIZE = 12;
+constexpr uint32_t OLSR_PKT_HEADER_SIZE = 4;
 
 /// Scaling factor used in RFC 3626.
 constexpr double OLSR_C = 0.0625;

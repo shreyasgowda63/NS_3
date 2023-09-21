@@ -25,13 +25,14 @@
 #include <vector>
 
 #define USE_FREE_LIST
-constexpr uint32_t FREE_LIST_SIZE = 1000;
-constexpr int32_t OFFSET_MAX = std::numeric_limits<int32_t>::max();
 
 namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE("ByteTagList");
+
+constexpr uint32_t FREE_LIST_SIZE = 1000;
+constexpr int32_t OFFSET_MAX = std::numeric_limits<int32_t>::max();
 
 /**
  * \ingroup packet

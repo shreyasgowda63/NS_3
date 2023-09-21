@@ -36,15 +36,15 @@
 
 #include <iomanip>
 
-constexpr auto RIPNG_ALL_NODE = "ff02::9";
-constexpr uint16_t RIPNG_PORT = 521;
-
 namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE("RipNg");
 
 NS_OBJECT_ENSURE_REGISTERED(RipNg);
+
+constexpr auto RIPNG_ALL_NODE = "ff02::9";
+constexpr uint16_t RIPNG_PORT = 521;
 
 RipNg::RipNg()
     : m_ipv6(nullptr),
