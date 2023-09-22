@@ -211,13 +211,10 @@ class TestRunnerImpl : public Singleton<TestRunnerImpl>
     /**
      * Print the list of all requested test suites.
      *
-     * \param [in] begin Iterator to the first TestCase to print.
-     * \param [in] end Iterator to the end of the list.
+     * \param [in] testCaseList List of TestCase to print.
      * \param [in] printTestType Prepend the test type label if \c true.
      */
-    void PrintTestNameList(std::list<TestCase*>::const_iterator begin,
-                           std::list<TestCase*>::const_iterator end,
-                           bool printTestType) const;
+    void PrintTestNameList(const std::list<TestCase*>& testCaseList, bool printTestType) const;
     /** Print the list of test types. */
     void PrintTestTypeList() const;
     /**
@@ -780,11 +777,10 @@ TestRunnerImpl::PrintHelp(const std::string& programName) const
 }
 
 void
-TestRunnerImpl::PrintTestNameList(std::list<TestCase*>::const_iterator begin,
-                                  std::list<TestCase*>::const_iterator end,
+TestRunnerImpl::PrintTestNameList(const std::list<TestCase*>& testCaseList,
                                   bool printTestType) const
 {
-    NS_LOG_FUNCTION(this << &begin << &end << printTestType);
+    NS_LOG_FUNCTION(this << &testCaseList << printTestType);
     std::map<TestSuite::Type, std::string> label;
 
     label[TestSuite::ALL] = "all          ";
@@ -1029,7 +1025,7 @@ TestRunnerImpl::Run(int argc, char* argv[])
     }
     if (printTestNameList)
     {
-        PrintTestNameList(tests.begin(), tests.end(), printTestTypeAndName);
+        PrintTestNameList(tests, printTestTypeAndName);
         return 0;
     }
     if (printTestTypeList)
