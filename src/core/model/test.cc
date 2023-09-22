@@ -353,16 +353,23 @@ TestCase::Run(TestRunnerImpl* runner)
     m_runner = runner;
     DoSetup();
     m_result->clock.Start();
+
+    bool testFailed = false;
+
     for (auto test : m_children)
     {
         test->Run(runner);
         if (IsFailed())
         {
-            goto out;
+            testFailed = true;
+            break;
         }
     }
-    DoRun();
-out:
+
+    if (!testFailed)
+    {
+        DoRun();
+    }
     m_result->clock.End();
     DoTeardown();
     m_runner = nullptr;
