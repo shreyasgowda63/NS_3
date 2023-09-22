@@ -331,7 +331,7 @@ TestCase::AddTestCase(TestCase* testCase, TestCase::TestDuration duration)
 
     testCase->m_duration = duration;
     testCase->m_parent = this;
-    m_children.push_back(testCase);
+    m_children.emplace_back(testCase);
 }
 
 bool
@@ -523,7 +523,7 @@ void
 TestRunnerImpl::AddTestSuite(TestSuite* testSuite)
 {
     NS_LOG_FUNCTION(this << testSuite);
-    m_suites.push_back(testSuite);
+    m_suites.emplace_back(testSuite);
 }
 
 bool
@@ -681,7 +681,7 @@ TestRunnerImpl::PrintReport(TestCase* test, std::ostream* os, bool xml, int leve
         return;
     }
     // Report times in seconds, from ms timer
-    const double MS_PER_SEC = 1000.;
+    constexpr double MS_PER_SEC = 1000.;
     double real = test->m_result->clock.GetElapsedReal() / MS_PER_SEC;
     double user = test->m_result->clock.GetElapsedUser() / MS_PER_SEC;
     double system = test->m_result->clock.GetElapsedSystem() / MS_PER_SEC;
@@ -872,7 +872,7 @@ TestRunnerImpl::FilterTests(std::string testName,
         }
 
         // Add this test suite.
-        tests.push_back(test);
+        tests.emplace_back(test);
     }
     return tests;
 }
