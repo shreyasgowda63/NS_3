@@ -24,8 +24,10 @@
 #include "singleton.h"
 #include "system-path.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <iomanip>
 #include <list>
 #include <map>
 #include <vector>
@@ -781,21 +783,32 @@ TestRunnerImpl::PrintTestNameList(const std::list<TestCase*>& testCaseList,
                                   bool printTestType) const
 {
     NS_LOG_FUNCTION(this << &testCaseList << printTestType);
-    std::map<TestSuite::Type, std::string> label;
 
-    label[TestSuite::ALL] = "all          ";
-    label[TestSuite::UNIT] = "unit         ";
-    label[TestSuite::SYSTEM] = "system       ";
-    label[TestSuite::EXAMPLE] = "example      ";
-    label[TestSuite::PERFORMANCE] = "performance  ";
+    const std::map<TestSuite::Type, std::string> labels{
+        {TestSuite::ALL, "all"},
+        {TestSuite::UNIT, "unit"},
+        {TestSuite::SYSTEM, "system"},
+        {TestSuite::EXAMPLE, "example"},
+        {TestSuite::PERFORMANCE, "performance"},
+    };
 
+    // Determine the maximum width to left-align the labels above
+    auto maxLabel =
+        std::max_element(labels.begin(), labels.end(), [](const auto& l1, const auto& l2) {
+            return l1.second.length() < l2.second.length();
+        });
+
+    auto labelWidth = maxLabel->second.length();
+
+    // Print tests
     for (auto testCase : testCaseList)
     {
         auto test = dynamic_cast<TestSuite*>(testCase);
         NS_ASSERT(test);
         if (printTestType)
         {
-            std::cout << label[test->GetTestType()];
+            std::cout << std::setw(labelWidth) << std::left << labels.at(test->GetTestType())
+                      << "  ";
         }
         std::cout << test->GetName() << std::endl;
     }
