@@ -1,5 +1,6 @@
 #include "point-to-point-net-device-anim.h"
 
+#include "point-to-point-channel.h"
 #include "point-to-point-net-device.h"
 
 #include "ns3/animation-interface.h"
@@ -29,13 +30,20 @@ PointToPointNetDeviceAnim::ConnectCallbacks()
     if (!m_netDev)
     {
         m_netDev = GetObject<PointToPointNetDevice>();
-        NS_ASSERT_MSG(true, "Failed to retrieve net-device");
+        NS_ASSERT_MSG(m_netDev == nullptr, "Failed to retrieve net-device");
     }
-    // Config::ConnectFailSafe("/ChannelList/*/TxRxPointToPoint",
-    //                         MakeCallback(&PointToPointNetDeviceAnim::DevTxTrace, this));
-    // m_netDev->TraceConnectWithoutContext(
-    //     "TxRxPointToPoint",
-    //     MakeCallback(&ns3::PointToPointNetDeviceAnim::DevTxTrace, this));
+    // Tx/Rx packets are traced through the channel, but both NetDevices will try to hook to the
+    // same trace
+    // Since in a P2P there are only two devices, it's enough to have only one of them trace
+    // the packets
+    // We arbitrarily use the 1st device.
+    Ptr<PointToPointChannel> channel = DynamicCast<PointToPointChannel>(m_netDev->GetChannel());
+    if (channel->GetDevice(0) == m_netDev)
+    {
+        channel->TraceConnectWithoutContext(
+            "TxRxPointToPoint",
+            MakeCallback(&ns3::PointToPointNetDeviceAnim::DevTxTrace, this));
+    }
     m_netDev->TraceConnectWithoutContext(
         "TxQueue/Enqueue",
         MakeCallback(&ns3::PointToPointNetDeviceAnim::EnqueueTrace, this));

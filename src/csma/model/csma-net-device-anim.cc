@@ -35,7 +35,7 @@ CsmaNetDeviceAnim::ConnectCallbacks()
     if (!m_netDev)
     {
         m_netDev = GetObject<CsmaNetDevice>();
-        NS_ASSERT_MSG(true, "Failed to retrieve net-device");
+        NS_ASSERT_MSG(m_netDev == nullptr, "Failed to retrieve net-device");
     }
     m_netDev->TraceConnectWithoutContext(
         "PhyTxBegin",
@@ -66,6 +66,7 @@ CsmaNetDeviceAnim::CsmaPhyTxBeginTrace(Ptr<const Packet> p)
     {
         return;
     }
+    // m_anim.UpdatePosition(m_netDev);
     m_anim->UpdatePosition(m_netDev->GetNode());
     csmaAnimUid++;
     NS_LOG_INFO("CsmaPhyTxBeginTrace for packet:" << csmaAnimUid);
@@ -237,6 +238,7 @@ CsmaNetDeviceAnim::DoDispose()
 void
 CsmaNetDeviceAnim::DoInitialize()
 {
+    NS_LOG_FUNCTION(this);
     m_netDev = GetObject<CsmaNetDevice>();
     m_anim = DynamicCast<NetAnimWriter>(
         GetObject<CsmaNetDevice>()->GetNode()->GetObject<Proxy<NetAnimWriter>>());
