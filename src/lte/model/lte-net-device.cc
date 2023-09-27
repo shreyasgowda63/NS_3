@@ -20,6 +20,9 @@
 
 #include "lte-net-device.h"
 
+#include "lte-net-device-anim.h"
+
+#include "ns3/animation-interface.h"
 #include "ns3/callback.h"
 #include "ns3/channel.h"
 #include "ns3/enum.h"
@@ -30,6 +33,7 @@
 #include "ns3/packet-burst.h"
 #include "ns3/packet.h"
 #include "ns3/pointer.h"
+#include "ns3/proxy.h"
 #include "ns3/simulator.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/uinteger.h"
@@ -285,4 +289,17 @@ LteNetDevice::Receive(Ptr<Packet> p)
         NS_ABORT_MSG("LteNetDevice::Receive - Unknown IP type...");
     }
 }
+
+void
+LteNetDevice::DoInitialize()
+{
+    std::cout << "called doinitialize" << std::endl;
+    if (GetNode()->GetObject<Proxy<NetAnimWriter>>() != nullptr)
+    {
+        Ptr<LteNetDeviceAnim> deviceAnim = CreateObject<LteNetDeviceAnim>();
+        AggregateObject(deviceAnim);
+    }
+    NetDevice::DoInitialize();
+}
+
 } // namespace ns3

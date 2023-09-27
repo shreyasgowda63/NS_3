@@ -27,8 +27,6 @@
 #include "ns3/ipv4-l3-protocol.h"
 #include "ns3/ipv4.h"
 #include "ns3/log.h"
-// #include "ns3/lte-enb-net-device.h"
-// #include "ns3/lte-ue-net-device.h"
 #include "ns3/mac48-address.h"
 #include "ns3/net-device.h"
 #include "ns3/node-container.h"
@@ -523,6 +521,23 @@ class NetAnimWriter : public Object
      * \param nodeId Node Id
      */
     void AddNodeToNodeDropMap(uint32_t nodeId);
+    /**
+     * Write XMLP Ref function
+     * \param animUid the UID
+     * \param fId the FID
+     * \param fbTx the FB transmit
+     * \param metaInfo the meta info
+     */
+    void WriteXmlPRef(uint64_t animUid, uint32_t fId, double fbTx, std::string metaInfo = "");
+    /**
+     * Write XMLP function
+     * \param animUid the UID
+     * \param pktType the packet type
+     * \param fId the FID
+     * \param fbTx the FB transmit
+     * \param lbTx the LB transmit
+     */
+    void WriteXmlP(uint64_t animUid, std::string pktType, uint32_t fId, double fbTx, double lbTx);
 
   private:
     /**
@@ -1316,7 +1331,7 @@ class NetAnimWriter : public Object
 
     // ##### XML Helpers #####
 
-    /**
+    /*WriteXmlPRef
      * Write non P2P link properties function
      * \param id the ID
      * \param ipv4Address the IP address
@@ -1444,23 +1459,6 @@ class NetAnimWriter : public Object
      * \param linkDescription the link description
      */
     void WriteXmlUpdateLink(uint32_t fromId, uint32_t toId, std::string linkDescription);
-    /**
-     * Write XMLP function
-     * \param animUid the UID
-     * \param pktType the packet type
-     * \param fId the FID
-     * \param fbTx the FB transmit
-     * \param lbTx the LB transmit
-     */
-    void WriteXmlP(uint64_t animUid, std::string pktType, uint32_t fId, double fbTx, double lbTx);
-    /**
-     * Write XMLP Ref function
-     * \param animUid the UID
-     * \param fId the FID
-     * \param fbTx the FB transmit
-     * \param metaInfo the meta info
-     */
-    void WriteXmlPRef(uint64_t animUid, uint32_t fId, double fbTx, std::string metaInfo = "");
     /**
      * Write XML close function
      * \param name the name

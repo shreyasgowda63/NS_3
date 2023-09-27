@@ -60,6 +60,8 @@ class LteNetDevice : public NetDevice
     LteNetDevice& operator=(const LteNetDevice&) = delete;
 
     void DoDispose() override;
+    // inherited from Object
+    void DoInitialize() override;
 
     // inherited from NetDevice
     void SetIfIndex(const uint32_t index) override;

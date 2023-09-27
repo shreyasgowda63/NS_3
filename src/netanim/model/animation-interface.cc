@@ -1649,18 +1649,12 @@ NetAnimWriter::ConnectCallbacks()
                             MakeCallback(&NetAnimWriter::WimaxTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WimaxNetDevice/Rx",
                             MakeCallback(&NetAnimWriter::WimaxRxTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Tx",
-    //                         MakeCallback(&NetAnimWriter::LteTxTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::LteNetDevice/Rx",
-    //                         MakeCallback(&NetAnimWriter::LteRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyTxBegin",
                             MakeCallback(&NetAnimWriter::UanPhyGenTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::UanNetDevice/Phy/PhyRxBegin",
                             MakeCallback(&NetAnimWriter::UanPhyGenRxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/$ns3::BasicEnergySource/RemainingEnergy",
                             MakeCallback(&NetAnimWriter::RemainingEnergyTrace, this));
-
-    // ConnectLte();
 
     Config::ConnectFailSafe("/NodeList/*/$ns3::Ipv4L3Protocol/Tx",
                             MakeCallback(&NetAnimWriter::Ipv4TxTrace, this));

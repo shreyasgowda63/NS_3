@@ -99,6 +99,7 @@ set(source_files
     model/lte-mac-sap.cc
     model/lte-mi-error-model.cc
     model/lte-net-device.cc
+    model/lte-net-device-anim.cc
     model/lte-pdcp-header.cc
     model/lte-pdcp-sap.cc
     model/lte-pdcp-tag.cc
@@ -230,6 +231,7 @@ set(header_files
     model/lte-mac-sap.h
     model/lte-mi-error-model.h
     model/lte-net-device.h
+    model/lte-net-device-anim.h
     model/lte-pdcp-header.h
     model/lte-pdcp-sap.h
     model/lte-pdcp-tag.h
@@ -360,6 +362,7 @@ build_lib(
     ${libinternet}
     ${libcsma}
     ${libconfig-store}
+    ${libnetanim}
   TEST_SOURCES ${test_sources}
   MODULE_ENABLED_FEATURES ${emu_features}
 )
