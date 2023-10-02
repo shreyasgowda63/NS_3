@@ -799,7 +799,7 @@ LteHelper::InstallSingleEnbDevice(Ptr<Node> n)
         }
     } // end for
     rrc->SetForwardUpCallback(MakeCallback(&LteEnbNetDevice::Receive, dev));
-    dev->Initialize();
+    dev->FinishSetup();
     n->AddDevice(dev);
 
     for (it = ccMap.begin(); it != ccMap.end(); ++it)
@@ -1030,7 +1030,7 @@ LteHelper::InstallSingleUeDevice(Ptr<Node> n)
         m_epcHelper->AddUe(dev, dev->GetImsi());
     }
 
-    dev->Initialize();
+    dev->FinishSetup();
 
     return dev;
 }

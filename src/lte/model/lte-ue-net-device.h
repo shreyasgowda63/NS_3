@@ -164,12 +164,11 @@ class LteUeNetDevice : public LteNetDevice
      */
     std::map<uint8_t, Ptr<ComponentCarrierUe>> GetCcMap();
 
-  protected:
-    // inherited from Object
-    void DoInitialize() override;
+    // inherited from LteNetDevice
+    void FinishSetup() override;
 
   private:
-    bool m_isConstructed; ///< is constructed?
+    bool m_isSetupComplete; ///< is setup complete?
 
     /**
      * \brief Propagate attributes and configuration to sub-modules.
