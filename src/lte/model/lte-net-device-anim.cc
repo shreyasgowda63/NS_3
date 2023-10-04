@@ -41,11 +41,6 @@ LteNetDeviceAnim::ConnectCallbacks()
         m_netDev = GetObject<LteNetDevice>();
         NS_ASSERT_MSG(true, "Failed to retrieve net-device");
     }
-    // trace sources don't exisit for the below 2
-    // m_netDev->TraceConnectWithoutContext("Tx",
-    //                                      MakeCallback(&ns3::LteNetDeviceAnim::LteTxTrace, this));
-    // m_netDev->TraceConnectWithoutContext("Rx",
-    //                                      MakeCallback(&ns3::LteNetDeviceAnim::LteRxTrace, this));
 
     for (auto i = NodeList::Begin(); i != NodeList::End(); ++i)
     {
@@ -73,20 +68,6 @@ LteNetDeviceAnim::ConnectCallbacks()
         }
     }
 }
-
-// void
-// LteNetDeviceAnim::LteTxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
-// {
-//     NS_LOG_FUNCTION(this);
-//     return GenericWirelessTxTrace(context, p, AnimationInterface::LTE);
-// }
-
-// void
-// LteNetDeviceAnim::LteRxTrace(std::string context, Ptr<const Packet> p, const Mac48Address& m)
-// {
-//     NS_LOG_FUNCTION(this);
-//     return GenericWirelessRxTrace(context, p, AnimationInterface::LTE);
-// }
 
 void
 LteNetDeviceAnim::ConnectLteEnb(Ptr<Node> n, Ptr<LteEnbNetDevice> nd, uint32_t devIndex)
@@ -128,28 +109,27 @@ LteNetDeviceAnim::ConnectLteUe(Ptr<Node> n, Ptr<LteUeNetDevice> nd, uint32_t dev
     oss << "NodeList/" << n->GetId() << "/DeviceList/" << devIndex << "/";
     if (dlPhy)
     {
-        dlPhy->TraceConnect("TxStart",
-                            oss.str(),
-                            MakeCallback(&LteNetDeviceAnim::LteSpectrumPhyTxStart, this));
-        dlPhy->TraceConnect("RxStart",
-                            oss.str(),
-                            MakeCallback(&LteNetDeviceAnim::LteSpectrumPhyRxStart, this));
+        dlPhy->TraceConnectWithoutContext(
+            "TxStart",
+            MakeCallback(&ns3::LteNetDeviceAnim::LteSpectrumPhyTxStart, this));
+        dlPhy->TraceConnectWithoutContext(
+            "RxStart",
+            MakeCallback(&ns3::LteNetDeviceAnim::LteSpectrumPhyRxStart, this));
     }
     if (ulPhy)
     {
-        ulPhy->TraceConnect("TxStart",
-                            oss.str(),
-                            MakeCallback(&LteNetDeviceAnim::LteSpectrumPhyTxStart, this));
-        ulPhy->TraceConnect("RxStart",
-                            oss.str(),
-                            MakeCallback(&LteNetDeviceAnim::LteSpectrumPhyRxStart, this));
+        ulPhy->TraceConnectWithoutContext(
+            "TxStart",
+            MakeCallback(&ns3::LteNetDeviceAnim::LteSpectrumPhyTxStart, this));
+        ulPhy->TraceConnectWithoutContext(
+            "RxStart",
+            MakeCallback(&ns3::LteNetDeviceAnim::LteSpectrumPhyRxStart, this));
     }
 }
 
 void
 LteNetDeviceAnim::LteSpectrumPhyTxStart(Ptr<const PacketBurst> pb)
 {
-    std::cout << "a" << std::endl;
     NS_LOG_FUNCTION(this);
     if (!IsEnabled())
     {
@@ -169,7 +149,7 @@ LteNetDeviceAnim::LteSpectrumPhyTxStart(Ptr<const PacketBurst> pb)
         Ptr<Packet> p = *i;
         ++lteAnimUid;
         NS_LOG_INFO("LteSpectrumPhyTxTrace for packet:" << lteAnimUid);
-        LteAnimPacketInfo pktInfo(m_netDev->GetNode()->GetId(), Simulator::Now());
+        LteAnimPacketInfo pktInfo(m_netDev, Simulator::Now());
         m_anim->AddByteTag(lteAnimUid, p);
         m_pendingLtePackets.insert(LteAnimUidPacketInfoMap::value_type(lteAnimUid, pktInfo));
         OutputWirelessPacketTxInfo(p, pktInfo, lteAnimUid);
@@ -179,7 +159,6 @@ LteNetDeviceAnim::LteSpectrumPhyTxStart(Ptr<const PacketBurst> pb)
 void
 LteNetDeviceAnim::LteSpectrumPhyRxStart(Ptr<const PacketBurst> pb)
 {
-    std::cout << "b" << std::endl;
     NS_LOG_FUNCTION(this);
     if (!IsEnabled())
     {
@@ -192,22 +171,20 @@ LteNetDeviceAnim::LteSpectrumPhyRxStart(Ptr<const PacketBurst> pb)
     }
     NS_ASSERT(m_netDev);
     m_anim->UpdatePosition(m_netDev->GetNode());
-
     std::list<Ptr<Packet>> pbList = pb->GetPackets();
     for (std::list<Ptr<Packet>>::iterator i = pbList.begin(); i != pbList.end(); ++i)
     {
         Ptr<Packet> p = *i;
         uint64_t animUid = m_anim->GetAnimUidFromPacket(p);
-        NS_LOG_INFO("LteSpectrumPhyRxTrace for packet:" << lteAnimUid);
-        if (m_pendingLtePackets.find(lteAnimUid) == m_pendingLtePackets.end())
+        // check the below line it was ganimUid but should be animUid
+        NS_LOG_INFO("LteSpectrumPhyRxTrace for packet:" << animUid);
+        if (m_pendingLtePackets.find(animUid) == m_pendingLtePackets.end())
         {
             NS_LOG_WARN("LteSpectrumPhyRxTrace: unknown Uid");
             return;
         }
-        // AnimPacketInfo& pktInfo = m_pendingLtePackets[animUid];
-        LteAnimPacketInfo& pktInfo = m_pendingLtePackets[lteAnimUid];
-        pktInfo.m_lastBitTxTime = Simulator::Now();
-        // pktInfo.ProcessRxBegin(ndev, Simulator::Now().GetSeconds());
+        LteAnimPacketInfo& pktInfo = m_pendingLtePackets[animUid];
+        pktInfo.ProcessRxBegin(m_netDev, Simulator::Now().GetSeconds());
         OutputWirelessPacketRxInfo(p, pktInfo, animUid);
     }
 }
@@ -217,12 +194,19 @@ LteNetDeviceAnim::OutputWirelessPacketTxInfo(Ptr<const Packet> p,
                                              LteAnimPacketInfo& pktInfo,
                                              uint64_t animUid)
 {
-    std::cout << "c" << std::endl;
     m_anim->CheckMaxPktsPerTraceFile();
-    uint32_t nodeId = pktInfo.m_txNodeId;
+    uint32_t nodeId = 0;
+    if (pktInfo.m_txnd)
+    {
+        nodeId = pktInfo.m_txnd->GetNode()->GetId();
+    }
+    else
+    {
+        nodeId = pktInfo.m_txNodeId;
+    }
     m_anim->WriteXmlPRef(animUid,
                          nodeId,
-                         pktInfo.m_firstBitTxTime.GetSeconds(),
+                         pktInfo.m_fbTx,
                          m_anim->IsEnablePacketMetadata() ? m_anim->GetPacketMetadata(p) : "");
 }
 
@@ -231,37 +215,50 @@ LteNetDeviceAnim::OutputWirelessPacketRxInfo(Ptr<const Packet> p,
                                              LteAnimPacketInfo& pktInfo,
                                              uint64_t animUid)
 {
-    std::cout << "d" << std::endl;
     m_anim->CheckMaxPktsPerTraceFile();
-    // uint32_t rxId = pktInfo.m_rxnd->GetNode()->GetId();
-    uint32_t rxId = m_netDev->GetNode()->GetId();
-    // std::cout << "r" << std::endl;
-    m_anim->WriteXmlP(animUid,
-                      "wpr",
-                      rxId,
-                      pktInfo.m_firstBitTxTime.GetSeconds(),
-                      pktInfo.m_lastBitTxTime.GetSeconds());
+    uint32_t rxId = pktInfo.m_rxnd->GetNode()->GetId();
+    m_anim->WriteXmlP(animUid, "wpr", rxId, pktInfo.m_fbRx, pktInfo.m_lbRx);
 }
 
 LteNetDeviceAnim::LteAnimPacketInfo::LteAnimPacketInfo()
-    : m_txNodeId(0),
-      m_firstBitTxTime(0),
-      m_lastBitTxTime(0)
+    : m_txnd(nullptr),
+      m_txNodeId(0),
+      m_fbTx(0),
+      m_lbTx(0),
+      m_lbRx(0)
 {
 }
 
 LteNetDeviceAnim::LteAnimPacketInfo::LteAnimPacketInfo(const LteAnimPacketInfo& pInfo)
 {
+    m_txnd = pInfo.m_txnd;
     m_txNodeId = pInfo.m_txNodeId;
-    m_firstBitTxTime = pInfo.m_firstBitTxTime;
-    m_lastBitTxTime = pInfo.m_firstBitTxTime;
+    m_fbTx = pInfo.m_fbTx;
+    m_lbTx = pInfo.m_lbTx;
+    m_lbRx = pInfo.m_lbRx;
 }
 
-LteNetDeviceAnim::LteAnimPacketInfo::LteAnimPacketInfo(uint32_t txNodeId, const Time firstBitTxTime)
-    : m_txNodeId(txNodeId),
-      m_firstBitTxTime(firstBitTxTime),
-      m_lastBitTxTime(0)
+LteNetDeviceAnim::LteAnimPacketInfo::LteAnimPacketInfo(Ptr<const NetDevice> txnd,
+                                                       const Time fbTx,
+                                                       uint32_t txNodeId)
+    : m_txnd(txnd),
+      m_txNodeId(0),
+      m_fbTx(fbTx.GetSeconds()),
+      m_lbTx(0),
+      m_lbRx(0)
 {
+    if (!m_txnd)
+    {
+        m_txNodeId = txNodeId;
+    }
+}
+
+void
+LteNetDeviceAnim::LteAnimPacketInfo::ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx)
+{
+    Ptr<Node> n = nd->GetNode();
+    m_fbRx = fbRx;
+    m_rxnd = nd;
 }
 
 void
@@ -273,7 +270,7 @@ LteNetDeviceAnim::PurgePendingPackets()
          ++i)
     {
         LteAnimPacketInfo pktInfo = i->second;
-        Time delta = (Simulator::Now() - pktInfo.m_firstBitTxTime);
+        Time delta = (Simulator::Now() - Seconds(pktInfo.m_fbTx));
         if (delta > ltePurgeInterval)
         {
             purgeList.push_back(i->first);

@@ -1636,8 +1636,6 @@ void
 NetAnimWriter::ConnectCallbacks()
 {
     // Connect the callbacks
-    // Config::ConnectFailSafe("/ChannelList/*/TxRxPointToPoint",
-    //                         MakeCallback(&NetAnimWriter::DevTxTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxPsduBegin",
                             MakeCallback(&NetAnimWriter::WifiPhyTxBeginTrace, this));
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyRxBegin",
@@ -1667,23 +1665,16 @@ NetAnimWriter::ConnectCallbacks()
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Enqueue",
                             MakeCallback(&NetAnimWriter::EnqueueTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Enqueue",
-    //                         MakeCallback(&NetAnimWriter::EnqueueTrace, this));
 
     // Queue Dequeues
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Dequeue",
                             MakeCallback(&NetAnimWriter::DequeueTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Dequeue",
-    //                         MakeCallback(&NetAnimWriter::DequeueTrace, this));
 
     // Queue Drops
 
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Drop",
                             MakeCallback(&NetAnimWriter::QueueDropTrace, this));
-    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/TxQueue/Drop",
-    //                         MakeCallback(&NetAnimWriter::QueueDropTrace, this));
-
     // Wifi Mac
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacTx",
                             MakeCallback(&NetAnimWriter::WifiMacTxTrace, this));

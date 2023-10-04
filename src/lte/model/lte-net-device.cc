@@ -293,13 +293,23 @@ LteNetDevice::Receive(Ptr<Packet> p)
 void
 LteNetDevice::DoInitialize()
 {
-    std::cout << "called doinitialize" << std::endl;
-    if (GetNode()->GetObject<Proxy<NetAnimWriter>>() != nullptr)
+    Simulator::ScheduleWithContext(m_node->GetId(),
+                                   Seconds(0.0),
+                                   &LteNetDevice::DoInitializePrivate,
+                                   this);
+
+    NetDevice::DoInitialize();
+}
+
+void
+LteNetDevice::DoInitializePrivate()
+{
+    if (m_node->GetObject<Proxy<NetAnimWriter>>() != nullptr)
     {
         Ptr<LteNetDeviceAnim> deviceAnim = CreateObject<LteNetDeviceAnim>();
         AggregateObject(deviceAnim);
     }
-    NetDevice::DoInitialize();
+    else
+        std::cout << "No NetAnimWriter" << std::endl;
 }
-
 } // namespace ns3

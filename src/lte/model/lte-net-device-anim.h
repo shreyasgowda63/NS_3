@@ -22,9 +22,6 @@ class LteNetDeviceAnim : public Object
 
     {
       public:
-        /**
-         * Constructor
-         */
         LteAnimPacketInfo();
         /**
          * Constructor
@@ -34,15 +31,25 @@ class LteNetDeviceAnim : public Object
         LteAnimPacketInfo(const LteAnimPacketInfo& pInfo);
         /**
          * Constructor
+         *
+         * \param tx_nd transmit device
+         * \param fbTx fb transmit
          * \param txNodeId transmit node ID
-         * \param firstBitTxTime time of the first bit being transmitted
          */
-        LteAnimPacketInfo(uint32_t txNodeId, const Time firstBitTxTime);
-        uint32_t m_txNodeId;   ///< node ID
-        Time m_firstBitTxTime; ///< time of the first bit being transmitted (when the packet did
-                               ///< start the Tx)
-        Time m_lastBitTxTime;  ///< time of the last bit being transmitted (when the packet did
-                               ///< start the Tx)
+        LteAnimPacketInfo(Ptr<const NetDevice> tx_nd, const Time fbTx, uint32_t txNodeId = 0);
+        Ptr<const NetDevice> m_txnd; ///< transmit device
+        uint32_t m_txNodeId;         ///< node ID
+        double m_fbTx;               ///< fb transmit
+        double m_lbTx;               ///< lb transmit
+        double m_fbRx;               ///< fb receive
+        double m_lbRx;               ///< lb receive
+        Ptr<const NetDevice> m_rxnd; ///< receive device
+        /**
+         * Process receive begin
+         * \param nd the device
+         * \param fbRx
+         */
+        void ProcessRxBegin(Ptr<const NetDevice> nd, const double fbRx);
     };
 
     /// Connect callbacks function
@@ -114,10 +121,6 @@ class LteNetDeviceAnim : public Object
      * \brief AnimationInterface object
      */
     Ptr<NetAnimWriter> m_anim{nullptr};
-    double m_firstBitRxTime; ///< time of the first bit being received (when the packet did start
-                             ///< the Rx)
-    double m_lastBitRxTime;  ///< time of the last bit being received (when the packet did start
-                             ///< the Rx)
     typedef std::map<uint64_t, LteAnimPacketInfo>
         LteAnimUidPacketInfoMap;                        ///< LteAnimUidPacketInfoMap typedef
     static LteAnimUidPacketInfoMap m_pendingLtePackets; ///< pending CSMA packets

@@ -389,6 +389,8 @@ LteEnbNetDevice::DoInitialize()
     }
 
     m_ffrAlgorithm->Initialize();
+
+    LteNetDevice::DoInitialize();
 }
 
 bool

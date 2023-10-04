@@ -274,6 +274,8 @@ LteUeNetDevice::DoInitialize()
         it->second->GetMac()->Initialize();
     }
     m_rrc->Initialize();
+
+    LteNetDevice::DoInitialize();
 }
 
 bool
