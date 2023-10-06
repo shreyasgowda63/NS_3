@@ -21,8 +21,10 @@
 
 #include "frame-exchange-manager.h"
 #include "sta-wifi-mac.h"
+#include "wifi-net-device-anim.h"
 #include "wifi-phy.h"
 
+#include "ns3/animation-interface.h"
 #include "ns3/channel.h"
 #include "ns3/eht-configuration.h"
 #include "ns3/he-configuration.h"
@@ -32,6 +34,7 @@
 #include "ns3/node.h"
 #include "ns3/object-vector.h"
 #include "ns3/pointer.h"
+#include "ns3/proxy.h"
 #include "ns3/uinteger.h"
 #include "ns3/vht-configuration.h"
 
@@ -204,6 +207,11 @@ WifiNetDevice::DoInitialize()
         {
             stationManager->Initialize();
         }
+    }
+    if (GetNode()->GetObject<Proxy<NetAnimWriter>>() != nullptr)
+    {
+        Ptr<WifiNetDeviceAnim> deviceAnim = CreateObject<WifiNetDeviceAnim>();
+        AggregateObject(deviceAnim);
     }
     NetDevice::DoInitialize();
 }

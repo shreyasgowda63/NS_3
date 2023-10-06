@@ -539,6 +539,20 @@ class NetAnimWriter : public Object
      */
     void WriteXmlP(uint64_t animUid, std::string pktType, uint32_t fId, double fbTx, double lbTx);
 
+    void AddNodeToNodeWifiMacTxMap(uint32_t nodeId);
+
+    void AddNodeToNodeWifiMacTxDropMap(uint32_t nodeId);
+
+    void AddNodeToNodeWifiMacRxMap(uint32_t nodeId);
+
+    void AddNodeToNodeWifiMacRxDropMap(uint32_t nodeId);
+
+    void AddNodeToNodeWifiPhyTxDropMap(uint32_t nodeId);
+
+    void AddNodeToNodeWifiPhyRxDropMap(uint32_t nodeId);
+
+    std::map<std::string, uint32_t>& GetMacToNodeIdMap();
+
   private:
     /**
      * AnimPacketInfo class

@@ -1636,10 +1636,10 @@ void
 NetAnimWriter::ConnectCallbacks()
 {
     // Connect the callbacks
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxPsduBegin",
-                            MakeCallback(&NetAnimWriter::WifiPhyTxBeginTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyRxBegin",
-                            MakeCallback(&NetAnimWriter::WifiPhyRxBeginTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxPsduBegin",
+    //                         MakeCallback(&NetAnimWriter::WifiPhyTxBeginTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyRxBegin",
+    //                         MakeCallback(&NetAnimWriter::WifiPhyRxBeginTrace, this));
     Config::ConnectWithoutContextFailSafe(
         "/NodeList/*/$ns3::MobilityModel/CourseChange",
         MakeCallback(&NetAnimWriter::MobilityCourseChangeTrace, this));
@@ -1676,20 +1676,20 @@ NetAnimWriter::ConnectCallbacks()
     Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::AlohaNoackNetDevice/Queue/Drop",
                             MakeCallback(&NetAnimWriter::QueueDropTrace, this));
     // Wifi Mac
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacTx",
-                            MakeCallback(&NetAnimWriter::WifiMacTxTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacTxDrop",
-                            MakeCallback(&NetAnimWriter::WifiMacTxDropTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacRx",
-                            MakeCallback(&NetAnimWriter::WifiMacRxTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacRxDrop",
-                            MakeCallback(&NetAnimWriter::WifiMacRxDropTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacTx",
+    //                         MakeCallback(&NetAnimWriter::WifiMacTxTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacTxDrop",
+    //                         MakeCallback(&NetAnimWriter::WifiMacTxDropTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacRx",
+    //                         MakeCallback(&NetAnimWriter::WifiMacRxTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Mac/MacRxDrop",
+    //                         MakeCallback(&NetAnimWriter::WifiMacRxDropTrace, this));
 
     // Wifi Phy
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxDrop",
-                            MakeCallback(&NetAnimWriter::WifiPhyTxDropTrace, this));
-    Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyRxDrop",
-                            MakeCallback(&NetAnimWriter::WifiPhyRxDropTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxDrop",
+    //                         MakeCallback(&NetAnimWriter::WifiPhyTxDropTrace, this));
+    // Config::ConnectFailSafe("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyRxDrop",
+    //                         MakeCallback(&NetAnimWriter::WifiPhyRxDropTrace, this));
 
     // LrWpan
     Config::ConnectFailSafe("NodeList/*/DeviceList/*/$ns3::LrWpanNetDevice/Phy/PhyTxBegin",
@@ -2945,4 +2945,47 @@ NetAnimWriter::AddNodeToNodeDropMap(uint32_t nodeId)
 {
     ++m_nodeQueueDrop[nodeId];
 }
+
+void
+NetAnimWriter::AddNodeToNodeWifiMacTxMap(uint32_t nodeId)
+{
+    ++m_nodeWifiMacTx[nodeId];
+}
+
+void
+NetAnimWriter::AddNodeToNodeWifiMacTxDropMap(uint32_t nodeId)
+{
+    ++m_nodeWifiMacTxDrop[nodeId];
+}
+
+void
+NetAnimWriter::AddNodeToNodeWifiMacRxMap(uint32_t nodeId)
+{
+    ++m_nodeWifiMacRx[nodeId];
+}
+
+void
+NetAnimWriter::AddNodeToNodeWifiMacRxDropMap(uint32_t nodeId)
+{
+    ++m_nodeWifiMacRxDrop[nodeId];
+}
+
+void
+NetAnimWriter::AddNodeToNodeWifiPhyTxDropMap(uint32_t nodeId)
+{
+    ++m_nodeWifiPhyTxDrop[nodeId];
+}
+
+void
+NetAnimWriter::AddNodeToNodeWifiPhyRxDropMap(uint32_t nodeId)
+{
+    ++m_nodeWifiPhyRxDrop[nodeId];
+}
+
+std::map<std::string, uint32_t>&
+NetAnimWriter::GetMacToNodeIdMap()
+{
+    return m_macToNodeIdMap;
+}
+
 } // namespace ns3

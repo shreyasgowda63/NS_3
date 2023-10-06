@@ -6,7 +6,6 @@ build_lib(
     ${libinternet}
     ${libmobility}
     ${libwimax}
-    ${libwifi}
     ${libuan}
     ${libenergy}
     ${liblr-wpan}
