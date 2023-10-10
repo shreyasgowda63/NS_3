@@ -1,0 +1,10 @@
+__pycache__/
+.git/
+.github/
+build/
+cmake-cache/
+testpy-output/
+venv/
+.lock-ns3_*
+.ns3rc
+Dockerfile
