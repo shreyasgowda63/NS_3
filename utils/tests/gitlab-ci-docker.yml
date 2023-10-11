@@ -1,0 +1,55 @@
+# ns-3 CI/CD script with the Docker jobs
+#
+# Contains the jobs to build and publish ns-3 Docker images
+#
+# Author: Eduardo Nuno Almeida <enmsa@outlook.pt> [INESC TEC and FEUP, Portugal]
+
+#############################
+# BASE DOCKER CONFIGURATION
+#############################
+.base-docker:
+  stage: docker
+  image: docker
+  services:
+    - docker:dind
+  interruptible: true
+
+  variables:
+    GIT_STRATEGY: fetch
+    GIT_DEPTH: 1
+
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+#############################
+# BUILD DOCKER IMAGES
+#############################
+.build-docker:
+  extends: .base-docker
+
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/ns-3:base-image || true
+    - docker build --pull -t $CI_REGISTRY_IMAGE/ns-3:$DOCKER_TAG
+      $DOCKER_TARGET
+      $DOCKER_BUILD_ARGS
+      --label "maintainer=nsnam"
+      --label "created=${CI_JOB_STARTED_AT}"
+      --label "version=${CI_COMMIT_SHA}"
+      .
+    - docker push $CI_REGISTRY_IMAGE/ns-3:$DOCKER_TAG
+
+build-docker-base-image:
+  extends: .build-docker
+  variables:
+    DOCKER_TAG: "base-image"
+    DOCKER_TARGET: "--target=base-image"
+
+build-docker-dev-default:
+  extends: .build-docker
+  needs: ["build-docker-base-image"]
+  variables:
+    DOCKER_TAG: "dev-default"
+    DOCKER_BUILD_ARGS: "--build-arg build_profile=default"
