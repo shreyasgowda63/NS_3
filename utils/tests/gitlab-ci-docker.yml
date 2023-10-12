@@ -54,3 +54,20 @@ build-docker-dev-default:
   variables:
     DOCKER_TAG: "dev-default"
     DOCKER_BUILD_ARGS: "--build-arg build_profile=default"
+
+#############################
+# PUSH DOCKER IMAGES
+#############################
+
+# Push the "dev-default" tag as the "latest" tag.
+# This is temporary until images for stable releases of ns-3 are published.
+# Then, the "latest" tag should point to the latest stable release, which will be the default
+# image pulled by users.
+
+push-docker-latest:
+  extends: .base-docker
+  needs: ["build-docker-dev-default"]
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/ns-3:dev-default
+    - docker tag $CI_REGISTRY_IMAGE/ns-3:dev-default $CI_REGISTRY_IMAGE/ns-3:latest
+    - docker push $CI_REGISTRY_IMAGE/ns-3:latest
