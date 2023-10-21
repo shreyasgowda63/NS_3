@@ -66,6 +66,17 @@ build_lib_example(
 )
 
 build_lib_example(
+  NAME drr-example
+  SOURCE_FILES drr-example.cc
+  LIBRARIES_TO_LINK
+    ${libpoint-to-point}
+    ${libinternet}
+    ${libapplications}
+    ${libtraffic-control}
+    ${libflow-monitor}
+)
+
+build_lib_example(
   NAME pie-example
   SOURCE_FILES pie-example.cc
   LIBRARIES_TO_LINK
