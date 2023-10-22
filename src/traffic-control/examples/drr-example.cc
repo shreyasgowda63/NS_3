@@ -143,7 +143,7 @@ main (int argc, char *argv[])
   std::string DRRLinkDelay = "20ms";
 
   std::string pathOut;
-  bool writeForPlot = false;
+  bool writeForPlot = true;
   bool writePcap = false;
   bool flowMonitor = false;
 
@@ -201,8 +201,8 @@ main (int argc, char *argv[])
 
   TrafficControlHelper tchPfifo;
   uint16_t handle = tchPfifo.SetRootQueueDisc ("ns3::PfifoFastQueueDisc");
-  // tchPfifo.AddInternalQueues (handle, 3, "ns3::DropTailQueue", "MaxPackets", UintegerValue (1000));
-  tchPfifo.AddInternalQueues(handle, 3, "ns3::DropTailQueue");
+  tchPfifo.AddInternalQueues (handle, 3, "ns3::DropTailQueue", "MaxSize", StringValue("1000p"));
+  
 
   TrafficControlHelper tchDRR;
   tchDRR.SetRootQueueDisc ("ns3::DRRQueueDisc");

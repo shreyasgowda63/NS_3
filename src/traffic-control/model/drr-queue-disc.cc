@@ -281,10 +281,10 @@ DRRQueueDisc::CheckConfig (void)
 {
   NS_LOG_FUNCTION(this);
   if (GetNQueueDiscClasses () > 0)
-    {
-      NS_LOG_ERROR ("DRRQueueDisc cannot have classes");
+  {
+      NS_LOG_ERROR("DRRQueueDisc cannot have classes");
       return false;
-    }
+  }
 
   if (GetNPacketFilters () == 0)
     {
