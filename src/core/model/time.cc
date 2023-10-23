@@ -420,7 +420,18 @@ Time::As(const Unit unit /* = Time::AUTO */) const
 std::ostream&
 operator<<(std::ostream& os, const Time& time)
 {
-    os << time.As(Time::GetResolution());
+    if (time == Time::Min())
+    {
+        os << "Time::Min()";
+    }
+    else if (time == Time::Max())
+    {
+        os << "Time::Max()";
+    }
+    else
+    {
+        os << time.As(Time::GetResolution());
+    }
     return os;
 }
 
