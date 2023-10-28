@@ -143,7 +143,7 @@ main (int argc, char *argv[])
   std::string DRRLinkDelay = "20ms";
 
   std::string pathOut;
-  bool writeForPlot = true;
+  bool writeForPlot = false;
   bool writePcap = false;
   bool flowMonitor = false;
 

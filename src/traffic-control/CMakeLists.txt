@@ -44,6 +44,7 @@ build_lib(
     test/adaptive-red-queue-disc-test-suite.cc
     test/cobalt-queue-disc-test-suite.cc
     test/codel-queue-disc-test-suite.cc
+    test/drr-test-suite.cc
     test/fifo-queue-disc-test-suite.cc
     test/pie-queue-disc-test-suite.cc
     test/prio-queue-disc-test-suite.cc
