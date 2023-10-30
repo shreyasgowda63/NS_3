@@ -15,9 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Authors: Akhil Udathu <akhilu077@gmail.com>
- *					Kaushik S Kalmady <kaushikskalmady@gmail.com>
- *					Vilas M <vilasnitk19@gmail.com>
+ * Authors: Abhiraj Mengade <abhiraj.mengade@outlook.com>
+ *					Asim Jawahir <asimjawahir123@gmail.com>
+ *					Mehul Todi <mehultodi116@gmail.com>
+ *          Rohan Kamat <rohankamat20022002@gmail.com>
  *
  */
 
