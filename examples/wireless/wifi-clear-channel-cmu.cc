@@ -268,6 +268,7 @@ main(int argc, char* argv[])
 
             NS_LOG_DEBUG(modes[i]);
             experiment = Experiment(modes[i]);
+            wifiPhy.DisablePreambleDetectionModel();
             wifiPhy.Set("TxPowerStart", DoubleValue(15.0));
             wifiPhy.Set("TxPowerEnd", DoubleValue(15.0));
             wifiPhy.Set("RxGain", DoubleValue(0));
@@ -281,6 +282,7 @@ main(int argc, char* argv[])
     gnuplot.SetTerminal("postscript eps color enh \"Times-BoldItalic\"");
     gnuplot.SetLegend("RSS(dBm)", "Number of packets received");
     gnuplot.SetExtra("set xrange [-102:-83]");
+    gnuplot.SetExtra("set yrange [0:200]");
     gnuplot.GenerateOutput(outfile);
     outfile.close();
 
