@@ -195,6 +195,7 @@ main(int argc, char* argv[])
     }
 
     // run simulation
+    Simulator::Stop(Seconds(30));
     Simulator::Run();
 
     std::cout << "Node A sent " << 10 * 1024 << " bytes" << std::endl;

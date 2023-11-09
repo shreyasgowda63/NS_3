@@ -248,6 +248,7 @@ main(int argc, char* argv[])
     //-- Run the simulation
     //--------------------------------------------
     NS_LOG_INFO("Run Simulation.");
+    Simulator::Stop(Seconds(60));
     Simulator::Run();
 
     //--------------------------------------------

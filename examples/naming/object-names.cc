@@ -204,6 +204,7 @@ main(int argc, char* argv[])
     csma.EnablePcap("client-device.pcap", d.Get(0), false, true);
 
     std::cout << "Running simulation..." << std::endl;
+    Simulator::Stop(Seconds(11));
     Simulator::Run();
     Simulator::Destroy();
 
