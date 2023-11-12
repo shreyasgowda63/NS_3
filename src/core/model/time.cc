@@ -446,6 +446,11 @@ operator<<(std::ostream& os, const TimeWithUnit& timeU)
         auto value = static_cast<long double>(timeU.m_time.GetTimeStep());
         // convert to finest scale (fs)
         value *= Scale(Time::GetResolution());
+
+        NS_ABORT_MSG_IF((timeU.m_time.GetInteger() < 0 && value > 0) ||
+                            (timeU.m_time.GetInteger() > 0 && value < 0),
+                        "Overflow/underflow detected");
+
         // find the best unit
         int u = Time::Y;
         while (u != Time::LAST && UNIT_VALUE[u] > value)
