@@ -15,7 +15,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+
 import argparse
+import ast
 import fnmatch
 import os
 import queue
@@ -27,23 +29,40 @@ import threading
 import time
 import xml.etree.ElementTree as ET
 
-
-from utils import get_list_from_file
-
 # Global variable
 args = None
 
 # imported from waflib Logs
-colors_lst={'USE':True,'BOLD':'\x1b[01;1m','RED':'\x1b[01;31m','GREEN':'\x1b[32m','YELLOW':'\x1b[33m','PINK':'\x1b[35m','BLUE':'\x1b[01;34m','CYAN':'\x1b[36m','GREY':'\x1b[37m','NORMAL':'\x1b[0m','cursor_on':'\x1b[?25h','cursor_off':'\x1b[?25l',}
+colors_lst = {
+    'USE': True,
+    'BOLD': '\x1b[01;1m',
+    'RED': '\x1b[01;31m',
+    'GREEN': '\x1b[32m',
+    'YELLOW': '\x1b[33m',
+    'PINK': '\x1b[35m',
+    'BLUE': '\x1b[01;34m',
+    'CYAN': '\x1b[36m',
+    'GREY': '\x1b[37m',
+    'NORMAL': '\x1b[0m',
+    'cursor_on': '\x1b[?25h',
+    'cursor_off': '\x1b[?25l',
+}
+
+
 def get_color(cl):
     if colors_lst['USE']:
         return colors_lst.get(cl, '')
     return ''
+
+
 class color_dict(object):
     def __getattr__(self, a):
         return get_color(a)
+
     def __call__(self, a):
         return get_color(a)
+
+
 colors = color_dict()
 
 #
@@ -117,19 +136,47 @@ core_valgrind_skip_tests = [
     "lte-pss-ff-mac-scheduler",
 ]
 
-#
-# Parse the examples-to-run file if it exists.
-#
-# This function adds any C++ examples or Python examples that are to be run
-# to the lists in example_tests and python_tests, respectively.
-#
+
+def get_list_from_file(file_path: str, list_name: str) -> list:
+    """
+    Looks for a Python list called "list_name" in the file specified by "file_path"
+    and returns it.
+    If the file or list name isn't found, this function will return an empty list.
+
+    @param file_path Path to the file containing the list.
+    @param list_name Name of the list variable.
+    @return List content.
+    """
+
+    # Check if file exists
+    if not os.path.exists(file_path):
+        return []
+
+    variables = {}
+
+    with open(file_path, 'r', encoding="utf-8") as f:
+        exec(f.read(), {}, variables)
+
+    if list_name in variables:
+        return variables[list_name]
+    else:
+        return []
+
+
 def parse_examples_to_run_file(
     examples_to_run_path,
     cpp_executable_dir,
     python_script_dir,
     example_tests,
     example_names_original,
-    python_tests):
+    python_tests,
+):
+    """
+    Parse the examples-to-run file if it exists.
+
+    This function adds any C++ examples or Python examples that are to be run
+    to the lists in example_tests and python_tests, respectively.
+    """
 
     # Look for the examples-to-run file exists.
     if not os.path.exists(examples_to_run_path):
@@ -157,11 +204,11 @@ def parse_examples_to_run_file(
         # Separate the example name from its arguments.
         example_name_original = example_name
         example_name_parts = example_name.split(' ', 1)
+        example_name = example_name_parts[0]
+
         if len(example_name_parts) == 1:
-            example_name      = example_name_parts[0]
             example_arguments = ""
         else:
-            example_name      = example_name_parts[0]
             example_arguments = example_name_parts[1]
 
         # Add the proper prefix and suffix to the example name to
@@ -202,11 +249,11 @@ def parse_examples_to_run_file(
     for example_name, do_run in python_examples:
         # Separate the example name from its arguments.
         example_name_parts = example_name.split(' ', 1)
+        example_name = example_name_parts[0]
+
         if len(example_name_parts) == 1:
-            example_name      = example_name_parts[0]
             example_arguments = ""
         else:
-            example_name      = example_name_parts[0]
             example_arguments = example_name_parts[1]
 
         # Set the full path for the example.
@@ -222,6 +269,7 @@ def parse_examples_to_run_file(
             # Add this example.
             python_tests.append((example_path, do_run))
 
+
 #
 # The test suites are going to want to output status.  They are running
 # concurrently.  This means that unless we are careful, the output of
@@ -236,24 +284,27 @@ def parse_examples_to_run_file(
 #
 TMP_OUTPUT_DIR = "testpy-output"
 
+
 def read_test(test):
     result = test.find('Result').text
     name = test.find('Name').text
-    if not test.find('Reason') is None:
+    if test.find('Reason'):
         reason = test.find('Reason').text
     else:
         reason = ''
-    if not test.find('Time') is None:
+    if test.find('Time'):
         time_real = test.find('Time').get('real')
     else:
         time_real = ''
     return (result, name, reason, time_real)
 
-#
-# A simple example of writing a text file with a test result summary.  It is
-# expected that this output will be fine for developers looking for problems.
-#
+
 def node_to_text(test, f, test_type='Suite'):
+    """
+    A simple example of writing a text file with a test result summary.  It is
+    expected that this output will be fine for developers looking for problems.
+    """
+
     (result, name, reason, time_real) = read_test(test)
     if reason:
         reason = " (%s)" % reason
@@ -271,6 +322,7 @@ def node_to_text(test, f, test_type='Suite'):
     for child in test.findall('Test'):
         node_to_text(child, f, 'Case')
 
+
 def translate_to_text(results_file, text_file):
     text_file += ('.txt' if '.txt' not in text_file else '')
     print('Writing results to text file \"%s\"...' % text_file, end='')
@@ -283,7 +335,7 @@ def translate_to_text(results_file, text_file):
         for example in et.findall('Example'):
             result = example.find('Result').text
             name = example.find('Name').text
-            if not example.find('Time') is None:
+            if example.find('Time'):
                 time_real = example.find('Time').get('real')
             else:
                 time_real = ''
@@ -292,13 +344,15 @@ def translate_to_text(results_file, text_file):
 
     print('done.')
 
-#
-# A simple example of writing an HTML file with a test result summary.  It is
-# expected that this will eventually be made prettier as time progresses and
-# we have time to tweak it.  This may end up being moved to a separate module
-# since it will probably grow over time.
-#
+
 def translate_to_html(results_file, html_file):
+    """
+    A simple example of writing an HTML file with a test result summary.  It is
+    expected that this will eventually be made prettier as time progresses and
+    we have time to tweak it.  This may end up being moved to a separate module
+    since it will probably grow over time.
+    """
+
     html_file += ('.html' if '.html' not in html_file else '')
     print('Writing results to html file %s...' % html_file, end='')
 
@@ -329,11 +383,13 @@ def translate_to_html(results_file, html_file):
             # and print in red.
             #
             if result == "PASS":
-                f.write("<h3 style=\"color:green\">%s: %s (%s)</h3>\n" % (result, name, time))
+                result_color = "green"
             elif result == "SKIP":
-                f.write("<h3 style=\"color:#ff6600\">%s: %s (%s) (%s)</h3>\n" % (result, name, time, reason))
+                result_color = "#ff6600"
             else:
-                f.write("<h3 style=\"color:red\">%s: %s (%s)</h3>\n" % (result, name, time))
+                result_color = "red"
+
+            f.write("<h3 style=\"color:%s\">%s: %s (%s)</h3>\n" % (result_color, result, name, time))
 
             #
             # The test case information goes in a table.
@@ -358,11 +414,12 @@ def translate_to_html(results_file, html_file):
             # Then go on to the next test suite.  Valgrind and skipped errors look the same.
             #
             if result in ["CRASH", "SKIP", "VALGR"]:
-                f.write("<tr>\n")
                 if result == "SKIP":
-                    f.write("<td style=\"color:#ff6600\">%s</td>\n" % result)
+                    result_color = "#ff6600"
                 else:
-                    f.write("<td style=\"color:red\">%s</td>\n" % result)
+                    result_color = "red"
+                f.write("<tr>\n")
+                f.write("<td style=\"color:%s\">%s</td>\n" % (result_color, result))
                 f.write("</tr>\n")
                 f.write("</table>\n")
                 continue
@@ -520,11 +577,12 @@ def translate_to_html(results_file, html_file):
             # in red; otherwise green.  This goes in a <td> ... </td> table data
             #
             if result == "PASS":
-                f.write("<td style=\"color:green\">%s</td>\n" % result)
+                result_color = "green"
             elif result == "SKIP":
-                f.write("<td style=\"color:#ff6600\">%s</fd>\n" % result)
+                result_color = "#ff6600"
             else:
-                f.write("<td style=\"color:red\">%s</td>\n" % result)
+                result_color = "red"
+            f.write("<td style=\"color:%s\">%s</td>\n" % (result_color, result))
 
             #
             # Write the example name as a new tag data.
@@ -559,6 +617,7 @@ def translate_to_html(results_file, html_file):
 
     print('done.')
 
+
 #
 # Python Control-C handling is broken in the presence of multiple threads.
 # Signals get delivered to the runnable/running thread by default and if
@@ -567,29 +626,31 @@ def translate_to_html(results_file, html_file):
 #
 thread_exit = False
 
+
 def sigint_hook(signal, frame):
     global thread_exit
     thread_exit = True
     return 0
 
 
-#
-# In general, the build process itself naturally takes care of figuring out
-# which tests are built into the test runner.  For example, if ns3 configure
-# determines that ENABLE_EMU is false due to some missing dependency,
-# the tests for the emu net device simply will not be built and will
-# therefore not be included in the built test runner.
-#
-# Examples, however, are a different story.  In that case, we are just given
-# a list of examples that could be run.  Instead of just failing, for example,
-# an example if its library support is not present, we look into the ns3
-# saved configuration for relevant configuration items.
-#
-# XXX This function pokes around in the ns3 internal state file.  To be a
-# little less hacky, we should add a command to ns3 to return this info
-# and use that result.
-#
 def read_ns3_config():
+    """
+     In general, the build process itself naturally takes care of figuring out
+     which tests are built into the test runner.  For example, if ns3 configure
+     determines that ENABLE_EMU is false due to some missing dependency,
+     the tests for the emu net device simply will not be built and will
+     therefore not be included in the built test runner.
+
+     Examples, however, are a different story.  In that case, we are just given
+     a list of examples that could be run.  Instead of just failing, for example,
+     an example if its library support is not present, we look into the ns3
+     saved configuration for relevant configuration items.
+
+     XXX This function pokes around in the ns3 internal state file.  To be a
+     little less hacky, we should add a command to ns3 to return this info
+     and use that result.
+    """
+
     lock_filename = ".lock-ns3_%s_build" % sys.platform
 
     try:
@@ -598,10 +659,10 @@ def read_ns3_config():
             for line in f:
                 if line.startswith("top_dir ="):
                     key, val = line.split('=')
-                    top_dir = eval(val.strip())
+                    top_dir = ast.literal_eval(val.strip())
                 if line.startswith("out_dir ="):
                     key, val = line.split('=')
-                    out_dir = eval(val.strip())
+                    out_dir = ast.literal_eval(val.strip())
 
     except FileNotFoundError:
         print('The .lock-ns3 file was not found.  You must configure before running test.py.', file=sys.stderr)
@@ -620,19 +681,21 @@ def read_ns3_config():
 
     if args.verbose:
         for item in interesting_config_items:
-            print("%s ==" % item, eval(item))
+            print("%s ==" % item, ast.literal_eval(item))
 
-#
-# It seems pointless to fork a process to run ns3 to fork a process to run
-# the test runner, so we just run the test runner directly.  The main thing
-# that ns3 would do for us would be to sort out the shared library path but
-# we can deal with that easily and do here.
-#
-# There can be many different ns-3 repositories on a system, and each has
-# its own shared libraries, so ns-3 doesn't hardcode a shared library search
-# path -- it is cooked up dynamically, so we do that too.
-#
+
 def make_paths():
+    """
+    It seems pointless to fork a process to run ns3 to fork a process to run
+    the test runner, so we just run the test runner directly.  The main thing
+    that ns3 would do for us would be to sort out the shared library path but
+    we can deal with that easily and do here.
+
+    There can be many different ns-3 repositories on a system, and each has
+    its own shared libraries, so ns-3 doesn't hardcode a shared library search
+    path -- it is cooked up dynamically, so we do that too.
+    """
+
     have_DYLD_LIBRARY_PATH = False
     have_LD_LIBRARY_PATH = False
     have_PATH = False
@@ -687,6 +750,7 @@ def make_paths():
             os.environ["LD_LIBRARY_PATH"] += ":" + str(path)
         if args.verbose:
             print("os.environ[\"LD_LIBRARY_PATH\"] == %s" % os.environ["LD_LIBRARY_PATH"])
+
 
 #
 # Short note on generating suppressions:
@@ -774,10 +838,22 @@ def make_paths():
 # VALGRIND_SUPPRESSIONS_FILE = "testpy.supp"
 VALGRIND_SUPPRESSIONS_FILE = None
 
+
 def run_job_synchronously(shell_command, directory, valgrind, is_python, build_path=""):
 
-    if VALGRIND_SUPPRESSIONS_FILE is not None:
-        suppressions_path = os.path.join(NS3_BASEDIR, VALGRIND_SUPPRESSIONS_FILE)
+    cmd = []
+
+    if valgrind:
+        cmd = [
+            "valgrind",
+            "--leak-check=full",
+            "--show-reachable=yes",
+            "--error-exitcode=2",
+            "--errors-for-leak-kinds=all",
+        ]
+        if VALGRIND_SUPPRESSIONS_FILE:
+            suppressions_path = os.path.join(NS3_BASEDIR, VALGRIND_SUPPRESSIONS_FILE)
+            cmd.append(f"--suppressions={suppressions_path}")
 
     if is_python:
         path_cmd = PYTHON[0] + " " + os.path.join(NS3_BASEDIR, shell_command)
@@ -787,46 +863,19 @@ def run_job_synchronously(shell_command, directory, valgrind, is_python, build_p
         else:
             path_cmd = os.path.join(NS3_BUILDDIR, shell_command)
 
-    if valgrind:
-        if VALGRIND_SUPPRESSIONS_FILE:
-            cmd = "valgrind --suppressions=%s --leak-check=full --show-reachable=yes --error-exitcode=2 --errors-for-leak-kinds=all %s" % (suppressions_path,
-                path_cmd)
-        else:
-            cmd = "valgrind --leak-check=full --show-reachable=yes --error-exitcode=2 --errors-for-leak-kinds=all %s" % (path_cmd)
-    else:
-        cmd = path_cmd
+    cmd.extend(path_cmd.split(" "))
 
     if args.verbose:
         print("Synchronously execute %s" % cmd)
 
     start_time = time.time()
-    proc = subprocess.Popen(cmd, shell=True, cwd=directory, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout_results, stderr_results = proc.communicate()
+
+    proc = subprocess.run(cmd, shell=True, cwd=directory, capture_output=True, text=True, check=False)
+    stdout_results = proc.stdout.strip()
+    stderr_results = proc.stderr.strip()
+
     elapsed_time = time.time() - start_time
-
     retval = proc.returncode
-
-    def decode_stream_results(stream_results: bytes, stream_name: str) -> str:
-        try:
-            stream_results = stream_results.decode()
-        except UnicodeDecodeError:
-            def decode(byte_array: bytes):
-                try:
-                    byte_array.decode()
-                except UnicodeDecodeError:
-                    return byte_array
-
-            # Find lines where the decoding error happened
-            non_utf8_lines = list(map(lambda line: decode(line), stream_results.splitlines()))
-            non_utf8_lines = list(filter(lambda line: line is not None, non_utf8_lines))
-            print(f"Non-decodable characters found in {stream_name} output of {cmd}: {non_utf8_lines}")
-
-            # Continue decoding on errors
-            stream_results = stream_results.decode(errors="backslashreplace")
-        return stream_results
-
-    stdout_results = decode_stream_results(stdout_results, "stdout")
-    stderr_results = decode_stream_results(stderr_results, "stderr")
 
     if args.verbose:
         print("Return code = ", retval)
@@ -834,11 +883,13 @@ def run_job_synchronously(shell_command, directory, valgrind, is_python, build_p
 
     return (retval, stdout_results, stderr_results, elapsed_time)
 
-#
-# This class defines a unit of testing work.  It will typically refer to
-# a test suite to run using the test-runner, or an example to run directly.
-#
+
 class Job:
+    """
+    This class defines a unit of testing work.  It will typically refer to
+    a test suite to run using the test-runner, or an example to run directly.
+    """
+
     def __init__(self):
         self.is_break = False
         self.is_skip = False
@@ -855,126 +906,127 @@ class Job:
         self.elapsed_time = 0
         self.build_path = ""
 
-    #
-    # A job is either a standard job or a special job indicating that a worker
-    # thread should exist.  This special job is indicated by setting is_break
-    # to true.
-    #
     def set_is_break(self, is_break):
+        """
+        A job is either a standard job or a special job indicating that a worker
+        thread should exist.  This special job is indicated by setting is_break
+        to true.
+        """
         self.is_break = is_break
 
-    #
-    # If a job is to be skipped, we actually run it through the worker threads
-    # to keep the PASS, FAIL, CRASH and SKIP processing all in one place.
-    #
     def set_is_skip(self, is_skip):
+        """
+        If a job is to be skipped, we actually run it through the worker threads
+        to keep the PASS, FAIL, CRASH and SKIP processing all in one place.
+        """
         self.is_skip = is_skip
 
-    #
-    # If a job is to be skipped, log the reason.
-    #
     def set_skip_reason(self, skip_reason):
+        """
+        If a job is to be skipped, log the reason.
+        """
         self.skip_reason = skip_reason
 
-    #
-    # Examples are treated differently than standard test suites.  This is
-    # mostly because they are completely unaware that they are being run as
-    # tests.  So we have to do some special case processing to make them look
-    # like tests.
-    #
     def set_is_example(self, is_example):
+        """
+        Examples are treated differently than standard test suites.  This is
+        mostly because they are completely unaware that they are being run as
+        tests.  So we have to do some special case processing to make them look
+        like tests.
+        """
         self.is_example = is_example
 
-    #
-    # Examples are treated differently than standard test suites.  This is
-    # mostly because they are completely unaware that they are being run as
-    # tests.  So we have to do some special case processing to make them look
-    # like tests.
-    #
     def set_is_pyexample(self, is_pyexample):
+        """
+        Examples are treated differently than standard test suites.  This is
+        mostly because they are completely unaware that they are being run as
+        tests.  So we have to do some special case processing to make them look
+        like tests.
+        """
         self.is_pyexample = is_pyexample
 
-    #
-    # This is the shell command that will be executed in the job.  For example,
-    #
-    #  "utils/ns3-dev-test-runner-debug --test-name=some-test-suite"
-    #
     def set_shell_command(self, shell_command):
+        """
+        This is the shell command that will be executed in the job.  For example,
+
+        "utils/ns3-dev-test-runner-debug --test-name=some-test-suite"
+        """
         self.shell_command = shell_command
 
-    #
-    # This is the build path where ns-3 was built.  For example,
-    #
-    #  "/home/craigdo/repos/ns-3-allinone-test/ns-3-dev/build/debug"
-    #
     def set_build_path(self, build_path):
+        """
+        This is the build path where ns-3 was built.  For example,
+
+        "/home/craigdo/repos/ns-3-allinone-test/ns-3-dev/build/debug"
+        """
         self.build_path = build_path
 
-    #
-    # This is the display name of the job, typically the test suite or example
-    # name.  For example,
-    #
-    #  "some-test-suite" or "udp-echo"
-    #
     def set_display_name(self, display_name):
+        """
+        This is the display name of the job, typically the test suite or example
+        name.  For example,
+        "some-test-suite" or "udp-echo"
+        """
         self.display_name = display_name
 
-    #
-    # This is the base directory of the repository out of which the tests are
-    # being run.  It will be used deep down in the testing framework to determine
-    # where the source directory of the test was, and therefore where to find
-    # provided test vectors.  For example,
-    #
-    #  "/home/user/repos/ns-3-dev"
-    #
     def set_basedir(self, basedir):
+        """
+        This is the base directory of the repository out of which the tests are
+        being run.  It will be used deep down in the testing framework to determine
+        where the source directory of the test was, and therefore where to find
+        provided test vectors.  For example,
+
+        "/home/user/repos/ns-3-dev"
+        """
         self.basedir = basedir
 
-    #
-    # This is the directory to which a running test suite should write any
-    # temporary files.
-    #
     def set_tempdir(self, tempdir):
+        """
+        This is the directory to which a running test suite should write any
+        temporary files.
+        """
         self.tempdir = tempdir
 
-    #
-    # This is the current working directory that will be given to an executing
-    # test as it is being run.  It will be used for examples to tell them where
-    # to write all of the pcap files that we will be carefully ignoring.  For
-    # example,
-    #
-    #  "/tmp/unchecked-traces"
-    #
     def set_cwd(self, cwd):
+        """
+        This is the current working directory that will be given to an executing
+        test as it is being run.  It will be used for examples to tell them where
+        to write all of the pcap files that we will be carefully ignoring.  For
+        example,
+
+        "/tmp/unchecked-traces"
+        """
         self.cwd = cwd
 
-    #
-    # This is the temporary results file name that will be given to an executing
-    # test as it is being run.  We will be running all of our tests in parallel
-    # so there must be multiple temporary output files.  These will be collected
-    # into a single XML file at the end and then be deleted.
-    #
     def set_tmp_file_name(self, tmp_file_name):
+        """
+        This is the temporary results file name that will be given to an executing
+        test as it is being run.  We will be running all of our tests in parallel
+        so there must be multiple temporary output files.  These will be collected
+        into a single XML file at the end and then be deleted.
+        """
         self.tmp_file_name = tmp_file_name
 
-    #
-    # The return code received when the job process is executed.
-    #
     def set_returncode(self, returncode):
+        """
+        The return code received when the job process is executed.
+        """
         self.returncode = returncode
 
-    #
-    # The elapsed real time for the job execution.
-    #
     def set_elapsed_time(self, elapsed_time):
+        """
+        The elapsed real time for the job execution.
+        """
         self.elapsed_time = elapsed_time
 
-#
-# The worker thread class that handles the actual running of a given test.
-# Once spawned, it receives requests for work through its input_queue and
-# ships the results back through the output_queue.
-#
+
 class worker_thread(threading.Thread):
+    """
+    The worker thread class that handles the actual running of a given test.
+    Once spawned, it receives requests for work through its input_queue and
+    ships the results back through the output_queue.
+    """
+
     def __init__(self, input_queue, output_queue):
         threading.Thread.__init__(self)
         self.input_queue = input_queue
@@ -1023,7 +1075,7 @@ class worker_thread(threading.Thread):
                     # "examples/wireless/mixed-wireless.py"
                     #
                     (job.returncode, job.standard_out, job.standard_err, et) = run_job_synchronously(job.shell_command,
-                        job.cwd, args.valgrind, job.is_pyexample, job.build_path)
+                                                                                                     job.cwd, args.valgrind, job.is_pyexample, job.build_path)
                 else:
                     #
                     # If we're a test suite, we need to provide a little more info
@@ -1035,8 +1087,9 @@ class worker_thread(threading.Thread):
                     else:
                         update_data = ''
                     (job.returncode, job.standard_out, job.standard_err, et) = run_job_synchronously(job.shell_command +
-                        " --xml --tempdir=%s --out=%s %s" % (job.tempdir, job.tmp_file_name, update_data),
-                        job.cwd, args.valgrind, False)
+                                                                                                     " --xml --tempdir=%s --out=%s %s" % (
+                                                                                                         job.tempdir, job.tmp_file_name, update_data),
+                                                                                                     job.cwd, args.valgrind, False)
 
                 job.set_elapsed_time(et)
 
@@ -1050,10 +1103,12 @@ class worker_thread(threading.Thread):
 
                 self.output_queue.put(job)
 
-#
-# This function loads the list of previously successful or skipped examples and test suites.
-#
+
 def load_previously_successful_tests():
+    """
+    This function loads the list of previously successful or skipped examples and test suites.
+    """
+
     import glob
     previously_run_tests_to_skip = {"test": [], "example": []}
     previous_results = glob.glob(f"{TMP_OUTPUT_DIR}/*-results.xml")
@@ -1079,11 +1134,13 @@ def load_previously_successful_tests():
             previously_run_tests_to_skip[test_type.lower()] = temp
     return previously_run_tests_to_skip
 
-#
-# This is the main function that does the work of interacting with the
-# test-runner itself.
-#
+
 def run_tests():
+    """
+    This is the main function that does the work of interacting with the
+    test-runner itself.
+    """
+
     #
     # Pull some interesting configuration information out of ns3, primarily
     # so we can know where executables can be found, but also to tell us what
@@ -1138,7 +1195,6 @@ def run_tests():
             print("ns3 died. Not running tests", file=sys.stderr)
             return proc.returncode
 
-
     #
     # Dynamically set up paths.
     #
@@ -1173,10 +1229,10 @@ def run_tests():
     python_tests = []
     for directory in EXAMPLE_DIRECTORIES:
         # Set the directories and paths for this example.
-        example_directory   = os.path.join("examples", directory)
+        example_directory = os.path.join("examples", directory)
         examples_to_run_path = os.path.join(example_directory, "examples-to-run.py")
-        cpp_executable_dir   = os.path.join(NS3_BUILDDIR, example_directory)
-        python_script_dir    = os.path.join(example_directory)
+        cpp_executable_dir = os.path.join(NS3_BUILDDIR, example_directory)
+        python_script_dir = os.path.join(example_directory)
 
         # Parse this example directory's file.
         parse_examples_to_run_file(
@@ -1192,11 +1248,11 @@ def run_tests():
         module = module[len("ns3-"):]
 
         # Set the directories and paths for this example.
-        module_directory     = os.path.join("src", module)
-        example_directory    = os.path.join(module_directory, "examples")
+        module_directory = os.path.join("src", module)
+        example_directory = os.path.join(module_directory, "examples")
         examples_to_run_path = os.path.join(module_directory, "test", "examples-to-run.py")
-        cpp_executable_dir   = os.path.join(NS3_BUILDDIR, example_directory)
-        python_script_dir    = os.path.join(example_directory)
+        cpp_executable_dir = os.path.join(NS3_BUILDDIR, example_directory)
+        python_script_dir = os.path.join(example_directory)
 
         # Parse this module's file.
         parse_examples_to_run_file(
@@ -1212,11 +1268,11 @@ def run_tests():
         module = module[len("ns3-"):]
 
         # Set the directories and paths for this example.
-        module_directory     = os.path.join("contrib", module)
-        example_directory    = os.path.join(module_directory, "examples")
+        module_directory = os.path.join("contrib", module)
+        example_directory = os.path.join(module_directory, "examples")
         examples_to_run_path = os.path.join(module_directory, "test", "examples-to-run.py")
-        cpp_executable_dir   = os.path.join(NS3_BUILDDIR, example_directory)
-        python_script_dir    = os.path.join(example_directory)
+        cpp_executable_dir = os.path.join(NS3_BUILDDIR, example_directory)
+        python_script_dir = os.path.join(example_directory)
 
         # Parse this module's file.
         parse_examples_to_run_file(
@@ -1249,14 +1305,15 @@ def run_tests():
         list_items = []
         if ENABLE_TESTS:
             if len(args.constrain):
-                path_cmd = os.path.join("utils", test_runner_name + " --print-test-name-list --print-test-types --test-type=%s" % args.constrain)
+                path_cmd = os.path.join("utils", test_runner_name +
+                                        " --print-test-name-list --print-test-types --test-type=%s" % args.constrain)
             else:
                 path_cmd = os.path.join("utils", test_runner_name + " --print-test-name-list --print-test-types")
             (rc, standard_out, standard_err, et) = run_job_synchronously(path_cmd, os.getcwd(), False, False)
             if rc != 0:
                 # This is usually a sign that ns-3 crashed or exited uncleanly
-                print(('test.py error:  test-runner return code returned {}'.format(rc)))
-                print(('To debug, try running {}\n'.format('\'./ns3 run \"test-runner --print-test-name-list\"\'')))
+                print('test.py error:  test-runner return code returned {}'.format(rc))
+                print('To debug, try running {}\n'.format('\'./ns3 run \"test-runner --print-test-name-list\"\''))
                 return
             if isinstance(standard_out, bytes):
                 standard_out = standard_out.decode()
@@ -1380,7 +1437,8 @@ def run_tests():
 
     elif ENABLE_TESTS and len(args.example) == 0 and len(args.pyexample) == 0:
         if len(args.constrain):
-            path_cmd = os.path.join("utils", test_runner_name + " --print-test-name-list --test-type=%s" % args.constrain)
+            path_cmd = os.path.join("utils", test_runner_name +
+                                    " --print-test-name-list --test-type=%s" % args.constrain)
             (rc, suites, standard_err, et) = run_job_synchronously(path_cmd, os.getcwd(), False, False)
         else:
             path_cmd = os.path.join("utils", test_runner_name + " --print-test-name-list")
@@ -1428,25 +1486,7 @@ def run_tests():
 
     jobs = 0
     threads = []
-
-    #
-    # In Python 2.6 you can just use multiprocessing module, but we don't want
-    # to introduce that dependency yet; so we jump through a few hoops.
-    #
-    processors = 1
-
-    if sys.platform != "win32":
-        if 'SC_NPROCESSORS_ONLN' in os.sysconf_names:
-            processors = os.sysconf('SC_NPROCESSORS_ONLN')
-        else:
-            proc = subprocess.Popen("sysctl -n hw.ncpu", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout_results, stderr_results = proc.communicate()
-            stdout_results = stdout_results.decode()
-            stderr_results = stderr_results.decode()
-            if len(stderr_results) == 0:
-                processors = int(stdout_results)
-    else:
-        processors = os.cpu_count()
+    processors = os.cpu_count() or 1
 
     if args.process_limit:
         if processors < args.process_limit:
@@ -1564,7 +1604,7 @@ def run_tests():
 
                     # Don't try to run this example if it isn't runnable.
                     if test_name in ns3_runnable_programs_dictionary:
-                        if eval(do_run):
+                        if ast.literal_eval(do_run):
                             job = Job()
                             job.set_is_example(True)
                             job.set_is_pyexample(False)
@@ -1576,7 +1616,7 @@ def run_tests():
                             job.set_shell_command(test)
                             job.set_build_path(args.buildpath)
 
-                            if args.valgrind and not eval(do_valgrind_run):
+                            if args.valgrind and not ast.literal_eval(do_valgrind_run):
                                 job.set_is_skip(True)
                                 job.set_skip_reason("skip in valgrind runs")
 
@@ -1658,7 +1698,7 @@ def run_tests():
 
                 # Don't try to run this example if it isn't runnable.
                 if test_name in ns3_runnable_scripts:
-                    if eval(do_run):
+                    if ast.literal_eval(do_run):
                         job = Job()
                         job.set_is_example(False)
                         job.set_is_pyexample(True)
@@ -1816,20 +1856,8 @@ def run_tests():
             #
             with open(xml_results_file, 'a', encoding='utf-8') as f:
                 f.write('<Example>\n')
-                example_name = "  <Name>%s</Name>\n" % job.display_name
-                f.write(example_name)
-
-                if status == "PASS":
-                    f.write('  <Result>PASS</Result>\n')
-                elif status == "FAIL":
-                    f.write('  <Result>FAIL</Result>\n')
-                elif status == "VALGR":
-                    f.write('  <Result>VALGR</Result>\n')
-                elif status == "SKIP":
-                    f.write('  <Result>SKIP</Result>\n')
-                else:
-                    f.write('  <Result>CRASH</Result>\n')
-
+                f.write('  <Name>%s</Name>\n' % job.display_name)
+                f.write('  <Result>%s</Result>\n' % status)
                 f.write('  <Time real="%.3f"/>\n' % job.elapsed_time)
                 f.write('</Example>\n')
 
@@ -1887,7 +1915,7 @@ def run_tests():
                     f.write("</Test>\n")
             else:
                 failed_jobs.append(job)
-                if job.returncode == 0 or job.returncode == 1 or job.returncode == 2:
+                if job.returncode in [0, 1, 2]:
                     with open(xml_results_file, 'a', encoding='utf-8') as f_to, open(job.tmp_file_name, encoding='utf-8') as f_from:
                         contents = f_from.read()
                         if status == "VALGR":
@@ -1926,7 +1954,7 @@ def run_tests():
     # Print a quick summary of events
     #
     print("%d of %d tests passed (%d passed, %d skipped, %d failed, %d crashed, %d valgrind errors)" % (passed_tests,
-        total_tests, passed_tests, skipped_tests, failed_tests, crashed_tests, valgrind_errors))
+                                                                                                        total_tests, passed_tests, skipped_tests, failed_tests, crashed_tests, valgrind_errors))
     #
     # Repeat summary of skipped, failed, crashed, valgrind events
     #
@@ -2005,9 +2033,10 @@ def run_tests():
         shutil.rmtree(testpy_output_dir)
 
     if passed_tests + skipped_tests == total_tests:
-        return 0 # success
+        return 0  # success
     else:
-        return 1 # catchall for general errors
+        return 1  # catchall for general errors
+
 
 def main(argv):
     parser = argparse.ArgumentParser()
@@ -2092,6 +2121,7 @@ def main(argv):
         colors_lst['USE'] = False
 
     return run_tests()
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
