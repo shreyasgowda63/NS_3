@@ -1451,6 +1451,17 @@ Miscellaneous items
         ...
     };
 
+- When declaring or manipulating ``Time`` objects, always prefer to use integer-based representations and arguments over floating-point fractions, where possible.  This means preferring the use of ``NanoSeconds``, ``MicroSeconds``, and ``MilliSeconds`` over ``Seconds``.  For example, to represent a tenth of a second, prefer ``MilliSeconds(100)`` to ``Seconds(0.1)``.
+
+  .. sourcecode:: cpp
+  Time t;  // OK, will be value-initialized to integer zero
+  Time t{Seconds(0.1)};  // avoid, will initialize from non-integer double
+  Time t{"0.1s"}; // avoid; will initialize from a non-integer double
+  Time t{MilliSeconds(100)};  // OK, no floating point involved
+  Time t{"100ms"}; // also OK, will initialize from a whole integer
+
+- When checking whether a Time value is zero, use ``Time::IsZero()`` rather than comparing it to a zero-valued time object with ``operator==``.
+
 Clang-tidy rules
 ================
 
