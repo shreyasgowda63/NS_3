@@ -749,7 +749,7 @@ Ipv6ExtensionFragment::Fragments::AddFragment(Ptr<Packet> fragment,
         m_moreFragment = moreFragment;
     }
 
-    m_packetFragments.insert(it, std::pair<Ptr<Packet>, uint16_t>(fragment, fragmentOffset));
+    m_packetFragments.insert(it, {fragment, fragmentOffset});
 }
 
 void

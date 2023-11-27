@@ -96,8 +96,7 @@ LteEnbComponentCarrierManager::SetMacSapProvider(uint8_t componentCarrierId, Lte
     }
     else
     {
-        m_macSapProvidersMap.insert(
-            std::pair<uint8_t, LteMacSapProvider*>(componentCarrierId, sap));
+        m_macSapProvidersMap.emplace(componentCarrierId, sap);
         res = true;
     }
     return res;
@@ -113,8 +112,7 @@ LteEnbComponentCarrierManager::SetCcmMacSapProviders(uint8_t componentCarrierId,
 
     if (it == m_ccmMacSapProviderMap.end())
     {
-        m_ccmMacSapProviderMap.insert(
-            std::pair<uint8_t, LteCcmMacSapProvider*>(componentCarrierId, sap));
+        m_ccmMacSapProviderMap.emplace(componentCarrierId, sap);
     }
 
     res = true;

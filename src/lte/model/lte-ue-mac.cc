@@ -341,9 +341,7 @@ LteUeMac::DoReportBufferStatus(LteMacSapProvider::ReportBufferStatusParameters p
     }
     else
     {
-        m_ulBsrReceived.insert(
-            std::pair<uint8_t, LteMacSapProvider::ReportBufferStatusParameters>(params.lcid,
-                                                                                params));
+        m_ulBsrReceived.emplace(params.lcid, params);
     }
     m_freshUlBsr = true;
 }

@@ -193,7 +193,7 @@ CarrierAggregationConfigTestCase::EquallySpacedCcs()
             cc.m_ulBandwidth = it.m_ulBandwidth;
             cc.m_ulEarfcn = ulEarfcn;
 
-            ccmap.insert(std::pair<uint16_t, ConfigToCheck>(i, cc));
+            ccmap.emplace(i, cc);
 
             NS_LOG_INFO("UL BW: " << it.m_ulBandwidth << ", DL BW: " << it.m_dlBandwidth
                                   << ", UL Earfcn: " << ulEarfcn << ", DL Earfcn: " << dlEarfcn);

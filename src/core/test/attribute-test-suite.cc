@@ -352,7 +352,7 @@ class AttributeObjectTest : public Object
      */
     void AddToMap1(uint32_t i)
     {
-        m_map1.insert(std::pair<uint32_t, Ptr<Derived>>(i, CreateObject<Derived>()));
+        m_map1.emplace(i, CreateObject<Derived>());
     }
 
     /**

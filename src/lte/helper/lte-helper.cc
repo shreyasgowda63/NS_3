@@ -860,7 +860,7 @@ LteHelper::InstallSingleUeDevice(Ptr<Node> n)
         cc->SetMac(mac);
         // cc->GetPhy ()->Initialize (); // it is initialized within the
         // LteUeNetDevice::DoInitialize ()
-        ueCcMap.insert(std::pair<uint8_t, Ptr<ComponentCarrierUe>>(it->first, cc));
+        ueCcMap.emplace(it->first, cc);
     }
     // CC map is not needed anymore
     m_componentCarrierPhyParams.clear();

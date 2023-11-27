@@ -427,7 +427,7 @@ LteFfrSoftAlgorithm::DoIsDlRbgAvailableForUe(int rbgId, uint16_t rnti)
     auto it = m_ues.find(rnti);
     if (it == m_ues.end())
     {
-        m_ues.insert(std::pair<uint16_t, uint8_t>(rnti, AreaUnset));
+        m_ues.emplace(rnti, AreaUnset);
     }
 
     it = m_ues.find(rnti);
@@ -488,7 +488,7 @@ LteFfrSoftAlgorithm::DoIsUlRbgAvailableForUe(int rbgId, uint16_t rnti)
     auto it = m_ues.find(rnti);
     if (it == m_ues.end())
     {
-        m_ues.insert(std::pair<uint16_t, uint8_t>(rnti, AreaUnset));
+        m_ues.emplace(rnti, AreaUnset);
     }
 
     it = m_ues.find(rnti);
@@ -665,7 +665,7 @@ LteFfrSoftAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measRe
         auto it = m_ues.find(rnti);
         if (it == m_ues.end())
         {
-            m_ues.insert(std::pair<uint16_t, uint8_t>(rnti, AreaUnset));
+            m_ues.emplace(rnti, AreaUnset);
         }
 
         it = m_ues.find(rnti);

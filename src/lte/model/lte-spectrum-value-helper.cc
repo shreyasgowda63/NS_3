@@ -275,7 +275,7 @@ LteSpectrumValueHelper::GetSpectrumModel(uint32_t earfcn, uint16_t txBandwidthCo
             rbs.push_back(rb);
         }
         ret = Create<SpectrumModel>(rbs);
-        g_lteSpectrumModelMap.insert(std::pair<LteSpectrumModelId, Ptr<SpectrumModel>>(key, ret));
+        g_lteSpectrumModelMap.emplace(key, ret);
     }
     NS_LOG_LOGIC("returning SpectrumModel::GetUid () == " << ret->GetUid());
     return ret;

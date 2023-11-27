@@ -651,7 +651,7 @@ ThreeGppHttpServerTxBuffer::AddSocket(Ptr<Socket> socket)
     txBuffer.txBufferSize = 0;
     txBuffer.isClosing = false;
     txBuffer.hasTxedPartOfObject = false;
-    m_txBuffer.insert(std::pair<Ptr<Socket>, TxBuffer_t>(socket, txBuffer));
+    m_txBuffer.emplace(socket, txBuffer);
 }
 
 void

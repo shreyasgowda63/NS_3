@@ -919,7 +919,7 @@ LteSpectrumPhy::AddExpectedTb(uint16_t rnti,
     }
     // insert new entry
     tbInfo_t tbInfo = {ndi, size, mcs, map, harqId, rv, 0.0, downlink, false, false};
-    m_expectedTbs.insert(std::pair<TbId_t, tbInfo_t>(tbId, tbInfo));
+    m_expectedTbs.emplace(tbId, tbInfo);
 }
 
 void
@@ -1122,8 +1122,7 @@ LteSpectrumPhy::EndRxData()
                                 m_harqPhyModule->ResetDlHarqProcessStatus(
                                     (*itTb).second.harqProcessId);
                             }
-                            harqDlInfoMap.insert(
-                                std::pair<uint16_t, DlInfoListElement_s>(tbId.m_rnti, harqDlInfo));
+                            harqDlInfoMap.emplace(tbId.m_rnti, harqDlInfo);
                         }
                         else
                         {

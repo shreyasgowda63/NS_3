@@ -187,9 +187,9 @@ FdTbfqFfMacScheduler::DoCschedUeConfigReq(
     auto it = m_uesTxMode.find(params.m_rnti);
     if (it == m_uesTxMode.end())
     {
-        m_uesTxMode.insert(std::pair<uint16_t, double>(params.m_rnti, params.m_transmissionMode));
+        m_uesTxMode.emplace(params.m_rnti, params.m_transmissionMode);
         // generate HARQ buffers
-        m_dlHarqCurrentProcessId.insert(std::pair<uint16_t, uint8_t>(params.m_rnti, 0));
+        m_dlHarqCurrentProcessId.emplace(params.m_rnti, 0);
         DlHarqProcessesStatus_t dlHarqPrcStatus;
         dlHarqPrcStatus.resize(8, 0);
         m_dlHarqProcessesStatus[params.m_rnti] = dlHarqPrcStatus;
@@ -204,7 +204,7 @@ FdTbfqFfMacScheduler::DoCschedUeConfigReq(
         dlHarqRlcPdu.at(0).resize(8);
         dlHarqRlcPdu.at(1).resize(8);
         m_dlHarqProcessesRlcPduListBuffer[params.m_rnti] = dlHarqRlcPdu;
-        m_ulHarqCurrentProcessId.insert(std::pair<uint16_t, uint8_t>(params.m_rnti, 0));
+        m_ulHarqCurrentProcessId.emplace(params.m_rnti, 0);
         UlHarqProcessesStatus_t ulHarqPrcStatus;
         ulHarqPrcStatus.resize(8, 0);
         m_ulHarqProcessesStatus[params.m_rnti] = ulHarqPrcStatus;
@@ -246,8 +246,7 @@ FdTbfqFfMacScheduler::DoCschedLcConfigReq(
             flowStatsDl.burstCredit = m_creditLimit; // bytes
             flowStatsDl.debtLimit = m_debtLimit;     // bytes
             flowStatsDl.creditableThreshold = m_creditableThreshold;
-            m_flowStatsDl.insert(
-                std::pair<uint16_t, fdtbfqsFlowPerf_t>(params.m_rnti, flowStatsDl));
+            m_flowStatsDl.emplace(params.m_rnti, flowStatsDl);
             fdtbfqsFlowPerf_t flowStatsUl;
             flowStatsUl.flowStart = Simulator::Now();
             flowStatsUl.packetArrivalRate = 0;
@@ -258,8 +257,7 @@ FdTbfqFfMacScheduler::DoCschedLcConfigReq(
             flowStatsUl.burstCredit = m_creditLimit; // bytes
             flowStatsUl.debtLimit = m_debtLimit;     // bytes
             flowStatsUl.creditableThreshold = m_creditableThreshold;
-            m_flowStatsUl.insert(
-                std::pair<uint16_t, fdtbfqsFlowPerf_t>(params.m_rnti, flowStatsUl));
+            m_flowStatsUl.emplace(params.m_rnti, flowStatsUl);
         }
         else
         {
@@ -1566,7 +1564,7 @@ FdTbfqFfMacScheduler::DoSchedDlCqiInfoReq(
                 m_p10CqiRxed[rnti] =
                     params.m_cqiList.at(i).m_wbCqi.at(0); // only codeword 0 at this stage (SISO)
                 // generate correspondent timer
-                m_p10CqiTimers.insert(std::pair<uint16_t, uint32_t>(rnti, m_cqiTimersThreshold));
+                m_p10CqiTimers.emplace(rnti, m_cqiTimersThreshold);
             }
             else
             {
@@ -1586,7 +1584,7 @@ FdTbfqFfMacScheduler::DoSchedDlCqiInfoReq(
             {
                 // create the new entry
                 m_a30CqiRxed[rnti] = params.m_cqiList.at(i).m_sbMeasResult;
-                m_a30CqiTimers.insert(std::pair<uint16_t, uint32_t>(rnti, m_cqiTimersThreshold));
+                m_a30CqiTimers.emplace(rnti, m_cqiTimersThreshold);
             }
             else
             {
@@ -2070,7 +2068,7 @@ FdTbfqFfMacScheduler::DoSchedUlMacCtrlInfoReq(
             if (it == m_ceBsrRxed.end())
             {
                 // create the new entry
-                m_ceBsrRxed.insert(std::pair<uint16_t, uint32_t>(rnti, buffer));
+                m_ceBsrRxed.emplace(rnti, buffer);
             }
             else
             {
@@ -2184,9 +2182,9 @@ FdTbfqFfMacScheduler::DoSchedUlCqiInfoReq(
                 NS_LOG_INFO(this << " RNTI " << rnti << " new SRS-CQI for RB  " << j << " value "
                                  << sinr);
             }
-            m_ueCqi.insert(std::pair<uint16_t, std::vector<double>>(rnti, newCqi));
+            m_ueCqi.emplace(rnti, newCqi);
             // generate correspondent timer
-            m_ueCqiTimers.insert(std::pair<uint16_t, uint32_t>(rnti, m_cqiTimersThreshold));
+            m_ueCqiTimers.emplace(rnti, m_cqiTimersThreshold);
         }
         else
         {

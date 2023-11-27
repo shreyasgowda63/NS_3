@@ -1212,7 +1212,7 @@ LteUePhy::ReceivePss(uint16_t cellId, Ptr<SpectrumValue> p)
         newEl.rsrpNum = 1;
         newEl.rsrqSum = 0;
         newEl.rsrqNum = 0;
-        m_ueMeasurementsMap.insert(std::pair<uint16_t, UeMeasurementsElement>(cellId, newEl));
+        m_ueMeasurementsMap.emplace(cellId, newEl);
     }
     else
     {

@@ -89,8 +89,7 @@ LteUeComponentCarrierManager::SetComponentCarrierMacSapProviders(uint8_t compone
     }
     else
     {
-        m_macSapProvidersMap.insert(
-            std::pair<uint8_t, LteMacSapProvider*>(componentCarrierId, sap));
+        m_macSapProvidersMap.emplace(componentCarrierId, sap);
         result = true;
     }
     return result;
