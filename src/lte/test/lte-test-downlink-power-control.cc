@@ -61,11 +61,12 @@ LteDownlinkPowerControlTestSuite::LteDownlinkPowerControlTestSuite()
 
     // Spectrum helper test
     {
-        std::vector<int> activeRbs_txpowdB30nrb6run1earfcn500(4);
-        activeRbs_txpowdB30nrb6run1earfcn500[0] = 0;
-        activeRbs_txpowdB30nrb6run1earfcn500[1] = 2;
-        activeRbs_txpowdB30nrb6run1earfcn500[2] = 3;
-        activeRbs_txpowdB30nrb6run1earfcn500[3] = 5;
+        std::vector<int> activeRbs_txpowdB30nrb6run1earfcn500{
+            0,
+            2,
+            3,
+            5,
+        };
 
         uint16_t earfcn = 500;
         uint8_t bw = 6;
@@ -99,11 +100,12 @@ LteDownlinkPowerControlTestSuite::LteDownlinkPowerControlTestSuite()
     }
     {
         // if power for RB not present, but RB is active, use powerTx
-        std::vector<int> activeRbs_txpowdB30nrb6run1earfcn500(4);
-        activeRbs_txpowdB30nrb6run1earfcn500[0] = 0;
-        activeRbs_txpowdB30nrb6run1earfcn500[1] = 2;
-        activeRbs_txpowdB30nrb6run1earfcn500[2] = 3;
-        activeRbs_txpowdB30nrb6run1earfcn500[3] = 5;
+        std::vector<int> activeRbs_txpowdB30nrb6run1earfcn500{
+            0,
+            2,
+            3,
+            5,
+        };
 
         uint16_t earfcn = 500;
         uint8_t bw = 6;
@@ -135,22 +137,23 @@ LteDownlinkPowerControlTestSuite::LteDownlinkPowerControlTestSuite()
                     TestCase::QUICK);
     }
     {
-        std::vector<int> activeRbs_txpowdB30nrb25run1earfcn500(15);
-        activeRbs_txpowdB30nrb25run1earfcn500[0] = 0;
-        activeRbs_txpowdB30nrb25run1earfcn500[1] = 1;
-        activeRbs_txpowdB30nrb25run1earfcn500[2] = 2;
-        activeRbs_txpowdB30nrb25run1earfcn500[3] = 3;
-        activeRbs_txpowdB30nrb25run1earfcn500[4] = 7;
-        activeRbs_txpowdB30nrb25run1earfcn500[5] = 8;
-        activeRbs_txpowdB30nrb25run1earfcn500[6] = 9;
-        activeRbs_txpowdB30nrb25run1earfcn500[7] = 11;
-        activeRbs_txpowdB30nrb25run1earfcn500[8] = 13;
-        activeRbs_txpowdB30nrb25run1earfcn500[9] = 14;
-        activeRbs_txpowdB30nrb25run1earfcn500[10] = 18;
-        activeRbs_txpowdB30nrb25run1earfcn500[11] = 19;
-        activeRbs_txpowdB30nrb25run1earfcn500[12] = 20;
-        activeRbs_txpowdB30nrb25run1earfcn500[13] = 21;
-        activeRbs_txpowdB30nrb25run1earfcn500[14] = 24;
+        std::vector<int> activeRbs_txpowdB30nrb25run1earfcn500{
+            0,
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            11,
+            13,
+            14,
+            18,
+            19,
+            20,
+            21,
+            24,
+        };
 
         uint16_t earfcn = 500;
         uint8_t bw = 25;
@@ -214,22 +217,23 @@ LteDownlinkPowerControlTestSuite::LteDownlinkPowerControlTestSuite()
     }
     {
         // if power for RB not present, but RB is active, use powerTx
-        std::vector<int> activeRbs_txpowdB30nrb25run1earfcn500(15);
-        activeRbs_txpowdB30nrb25run1earfcn500[0] = 0;
-        activeRbs_txpowdB30nrb25run1earfcn500[1] = 1;
-        activeRbs_txpowdB30nrb25run1earfcn500[2] = 2;
-        activeRbs_txpowdB30nrb25run1earfcn500[3] = 3;
-        activeRbs_txpowdB30nrb25run1earfcn500[4] = 7;
-        activeRbs_txpowdB30nrb25run1earfcn500[5] = 8;
-        activeRbs_txpowdB30nrb25run1earfcn500[6] = 9;
-        activeRbs_txpowdB30nrb25run1earfcn500[7] = 11;
-        activeRbs_txpowdB30nrb25run1earfcn500[8] = 13;
-        activeRbs_txpowdB30nrb25run1earfcn500[9] = 14;
-        activeRbs_txpowdB30nrb25run1earfcn500[10] = 18;
-        activeRbs_txpowdB30nrb25run1earfcn500[11] = 19;
-        activeRbs_txpowdB30nrb25run1earfcn500[12] = 20;
-        activeRbs_txpowdB30nrb25run1earfcn500[13] = 21;
-        activeRbs_txpowdB30nrb25run1earfcn500[14] = 24;
+        std::vector<int> activeRbs_txpowdB30nrb25run1earfcn500{
+            0,
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            11,
+            13,
+            14,
+            18,
+            19,
+            20,
+            21,
+            24,
+        };
 
         uint16_t earfcn = 500;
         uint8_t bw = 25;
