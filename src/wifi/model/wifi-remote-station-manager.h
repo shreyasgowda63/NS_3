@@ -188,17 +188,35 @@ class WifiRemoteStationManager : public Object
     virtual int64_t AssignStreams(int64_t stream);
 
     /**
+     * Return the maximum STA short retry count (SSRC).
+     *
+     * \return maxSsrc the maximum SSRC
+     */
+    uint32_t GetMaxSsrc() const;
+    /**
      * Sets the maximum STA short retry count (SSRC).
      *
      * \param maxSsrc the maximum SSRC
      */
     void SetMaxSsrc(uint32_t maxSsrc);
     /**
+     * Return the maximum STA long retry count (SLRC).
+     *
+     * \return maxSlrc the maximum SLRC
+     */
+    uint32_t GetMaxSlrc() const;
+    /**
      * Sets the maximum STA long retry count (SLRC).
      *
      * \param maxSlrc the maximum SLRC
      */
     void SetMaxSlrc(uint32_t maxSlrc);
+    /**
+     * Return the RTS threshold.
+     *
+     * \return threshold the RTS threshold
+     */
+    uint32_t GetRtsCtsThreshold() const;
     /**
      * Sets the RTS threshold.
      *

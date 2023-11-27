@@ -58,21 +58,24 @@ WifiRemoteStationManager::GetTypeId()
                           "<= RtsCtsThreshold. "
                           "This value will not have any effect on some rate control algorithms.",
                           UintegerValue(7),
-                          MakeUintegerAccessor(&WifiRemoteStationManager::SetMaxSsrc),
+                          MakeUintegerAccessor(&WifiRemoteStationManager::SetMaxSsrc,
+                                               &WifiRemoteStationManager::GetMaxSsrc),
                           MakeUintegerChecker<uint32_t>())
             .AddAttribute("MaxSlrc",
                           "The maximum number of retransmission attempts for any packet with size "
                           "> RtsCtsThreshold. "
                           "This value will not have any effect on some rate control algorithms.",
                           UintegerValue(4),
-                          MakeUintegerAccessor(&WifiRemoteStationManager::SetMaxSlrc),
+                          MakeUintegerAccessor(&WifiRemoteStationManager::SetMaxSlrc,
+                                               &WifiRemoteStationManager::GetMaxSlrc),
                           MakeUintegerChecker<uint32_t>())
             .AddAttribute("RtsCtsThreshold",
                           "If the size of the PSDU is bigger than this value, we use an RTS/CTS "
                           "handshake before sending the data frame."
                           "This value will not have any effect on some rate control algorithms.",
                           UintegerValue(65535),
-                          MakeUintegerAccessor(&WifiRemoteStationManager::SetRtsCtsThreshold),
+                          MakeUintegerAccessor(&WifiRemoteStationManager::SetRtsCtsThreshold,
+                                               &WifiRemoteStationManager::GetRtsCtsThreshold),
                           MakeUintegerChecker<uint32_t>())
             .AddAttribute(
                 "FragmentationThreshold",
@@ -192,6 +195,12 @@ WifiRemoteStationManager::AssignStreams(int64_t stream)
     return 0;
 }
 
+uint32_t
+WifiRemoteStationManager::GetMaxSsrc() const
+{
+    return m_maxSsrc;
+}
+
 void
 WifiRemoteStationManager::SetMaxSsrc(uint32_t maxSsrc)
 {
@@ -199,11 +208,23 @@ WifiRemoteStationManager::SetMaxSsrc(uint32_t maxSsrc)
     m_maxSsrc = maxSsrc;
 }
 
+uint32_t
+WifiRemoteStationManager::GetMaxSlrc() const
+{
+    return m_maxSlrc;
+}
+
 void
 WifiRemoteStationManager::SetMaxSlrc(uint32_t maxSlrc)
 {
     NS_LOG_FUNCTION(this << maxSlrc);
     m_maxSlrc = maxSlrc;
+}
+
+uint32_t
+WifiRemoteStationManager::GetRtsCtsThreshold() const
+{
+    return m_rtsCtsThreshold;
 }
 
 void

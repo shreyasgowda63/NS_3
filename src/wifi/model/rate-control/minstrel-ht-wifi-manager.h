@@ -28,6 +28,7 @@
 #include "minstrel-wifi-manager.h"
 
 #include "ns3/wifi-mpdu-type.h"
+#include "ns3/wifi-phy.h"
 #include "ns3/wifi-remote-station-manager.h"
 
 namespace ns3
@@ -112,6 +113,7 @@ struct MinstrelHtRateInfo
     bool supported;      //!< If the rate is supported.
     uint8_t mcsIndex;    //!< The index in the operationalMcsSet of the WifiRemoteStationManager.
     uint32_t retryCount; //!< Retry limit.
+    uint32_t retryCountRtsCts;   //!< Retry limit when using RTS/CTS.
     uint32_t adjustedRetryCount; //!< Adjust the retry limit for this rate.
     uint32_t numRateAttempt;     //!< Number of transmission attempts so far.
     uint32_t numRateSuccess;     //!< Number of successful frames transmitted so far.
@@ -155,6 +157,24 @@ struct GroupInfo
     uint16_t m_maxTpRate2;       //!< The second max throughput rate of this group in bps.
     uint16_t m_maxProbRate;      //!< The highest success probability rate of this group in bps.
     MinstrelHtRate m_ratesTable; //!< Information about rates of this group.
+};
+
+/**
+ * A struct to contain information of the current state of the retry chain.
+ */
+struct RetryChainInfo
+{
+    WifiTxVector m_maxTp;   //!< The max throughput TxVector.
+    WifiTxVector m_maxTp2;  //!< The second max throughput TxVector.
+    WifiTxVector m_maxProb; //!< The highest success probability TxVector.
+
+    uint32_t m_maxTpCount; //!< The amount of retries allowed using the max throughput rate when not
+                           //!< sampling.
+    uint32_t m_maxTpCountSampling; //!< The amount of retries allowed using the max throughput rate
+                                   //!< when sampling.
+    uint32_t m_maxTp2Count; //!< The amount of retries allowed using the second max throughput rate.
+    uint32_t m_maxProbCount; //!< The amount of retries allowed using the highest success
+                             //!< probability rate.
 };
 
 /**
@@ -255,6 +275,21 @@ class MinstrelHtWifiManager : public WifiRemoteStationManager
      * \param [in] address The remote station MAC address.
      */
     typedef void (*RateChangeTracedCallback)(const uint64_t rate, const Mac48Address remoteAddress);
+
+    /**
+     * TracedCallback signature for retry chain update.
+     *
+     * \param retryChain Changes to the best TP, second best TP and max prob and their respective
+     * retry counts
+     */
+    typedef void (*MinstrelHtRetryChainTracedCallback)(RetryChainInfo retryChain);
+
+    /**
+     * TracedCallback signature for SampleRate update.
+     *
+     * \param sampleRate The new sample rate
+     */
+    typedef void (*MinstrelHtSampleRateTracedCallback)(WifiTxVector sampleRate);
 
   private:
     void DoInitialize() override;
@@ -675,6 +710,13 @@ class MinstrelHtWifiManager : public WifiRemoteStationManager
     Ptr<UniformRandomVariable> m_uniformRandomVariable; //!< Provides uniform random variables.
 
     TracedValue<uint64_t> m_currentRate; //!< Trace rate changes
+
+    TracedCallback<WifiTxVector> m_samplingRate; //!< Trace sample rate changes
+
+    /**
+     * The trace source fired when best TP, second best TP and best prob get updated
+     */
+    TracedCallback<RetryChainInfo> m_retryChain;
 };
 
 } // namespace ns3
