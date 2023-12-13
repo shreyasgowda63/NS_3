@@ -25,12 +25,19 @@
 #include <cstdarg>
 #include <string>
 
+#ifdef TRACE_PACKET_ORIGINS
+#define BOOST_STACKTRACE_USE_BACKTRACE
+#include <boost/stacktrace.hpp>
+#include <regex>
+#endif
+
 namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE("Packet");
 
 uint32_t Packet::m_globalUid = 0;
+uint32_t Packet::m_globalCopyUid = 0;
 
 TypeId
 ByteTagIterator::Item::GetTypeId() const
@@ -127,6 +134,165 @@ PacketTagIterator::Item::GetTag(Tag& tag) const
     tag.Deserialize(TagBuffer((uint8_t*)m_data->data, (uint8_t*)m_data->data + m_data->size));
 }
 
+#ifndef TRACE_PACKET_ORIGINS
+void
+Packet::SavePacketAncestryDot(std::string dotFilePath)
+{
+    NS_ABORT_MSG("Unsupported feature. Rebuild the network module with NS3_STACKTRACE=ON.");
+}
+
+void
+Packet::SavePacketStackTraceDot(std::string dotFilePath)
+{
+    NS_ABORT_MSG("Unsupported feature. Rebuild the network module with NS3_STACKTRACE=ON.");
+}
+#else // TRACE_PACKET_ORIGINS
+std::map<uint32_t, std::vector<uint32_t>> Packet::m_packetOriginTrace{};
+std::map<uint32_t, std::vector<std::string>> Packet::m_packetStackTrace{};
+
+void
+Packet::SavePacketAncestryDot(std::string dotFilePath)
+{
+    std::ofstream dotFile(dotFilePath);
+    dotFile << "digraph packetAncestry {\n";
+
+    // We save the dot file in two steps
+    // First creating all vertices
+    for (auto& [parent, children] : m_packetOriginTrace)
+    {
+        dotFile << "Packet_" << std::to_string(parent) << ";\n";
+    }
+    // Then creating all edges
+    for (auto& [parent, children] : m_packetOriginTrace)
+    {
+        for (auto& child : children)
+        {
+            dotFile << "Packet_" << std::to_string(parent);
+            dotFile << " -> Packet_" << std::to_string(child) << ";\n";
+        }
+    }
+    dotFile << "}" << std::endl;
+    dotFile.close();
+    return;
+}
+
+void
+Packet::SavePacketStackTraceDot(std::string dotFilePath)
+{
+    std::ofstream dotFile(dotFilePath);
+    dotFile << "digraph packetAncestry {\n";
+    dotFile << "subgraph clusterapp {label=app}\n";
+    dotFile << "subgraph clustertran {label=tran}\n";
+    dotFile << "subgraph clusternet {label=net}\n";
+    dotFile << "subgraph clusterlink {label=link}\n";
+    dotFile << "subgraph clusterphy {label=phy}\n";
+    dotFile << "subgraph clusterchannel {label=channel}\n";
+
+    uint64_t countVertices = 0;
+    std::map<uint64_t, uint64_t> copyUidToVertexId;
+    // We save the dot file in two steps
+    // First creating all vertices and vertices for each layer until its point of creation
+    for (auto& [parent, children] : m_packetOriginTrace)
+    {
+        // Trim overlapping layers between parent and children
+        for (auto& child : children)
+        {
+            if (m_packetStackTrace[child].size() > 1 &&
+                *m_packetStackTrace[child].rbegin() == *m_packetStackTrace[parent].begin())
+            {
+                m_packetStackTrace[child].pop_back();
+            }
+        }
+        // Create a vertex for each layer crossed to allocate the packet
+        bool printedPacketCopyLayerLabel = false;
+        for (auto& stackLayer : m_packetStackTrace.at(parent))
+        {
+            // Print vertex in a subgraph associated with the layer
+            dotFile << "subgraph cluster" << stackLayer << "{ ";
+            dotFile << "Vertex_" << std::to_string(countVertices);
+            if (!printedPacketCopyLayerLabel)
+            {
+                dotFile << "[label=\"Packet_" << std::to_string(parent) << "(" << stackLayer
+                        << ")\"]";
+                // Keep track of this packet for later use, connecting the tracebacks of children
+                copyUidToVertexId[parent] = countVertices;
+                printedPacketCopyLayerLabel = true;
+            }
+            else
+            {
+                // Connect layers vertices leading to the packet copy
+                dotFile << "[label=\"(" << stackLayer << ")\",style=dashed]; ";
+                dotFile << "Vertex_" << std::to_string(countVertices) << " -> ";
+                dotFile << "Vertex_" << std::to_string(countVertices - 1) << ";";
+            }
+            dotFile << "};";
+            dotFile << "\n";
+            countVertices++;
+        }
+    }
+    // Then create edges connecting parent backtraces to the children ones
+    for (auto& [parent, children] : m_packetOriginTrace)
+    {
+        for (auto& child : children)
+        {
+            auto parentVertex = copyUidToVertexId.at(parent);
+            if (copyUidToVertexId.find(child) == copyUidToVertexId.end())
+                continue;
+            auto childrenVertex = copyUidToVertexId.at(child);
+            auto offsetToChildrenTraceStart = m_packetStackTrace.at(child).size() - 1;
+            dotFile << "Vertex_" << std::to_string(parentVertex);
+            dotFile << " -> Vertex_" << std::to_string(childrenVertex + offsetToChildrenTraceStart)
+                    << ";\n";
+        }
+    }
+    dotFile << "}" << std::endl;
+    dotFile.close();
+    return;
+}
+
+std::vector<std::string>
+Packet::GetNetworkLayersFromStackTrace()
+{
+    auto trace = boost::stacktrace::stacktrace().as_vector();
+
+    std::vector<std::pair<std::string, std::regex>> layerFilters = {
+        {"app", std::regex(".*(Application|App).*")},
+        {"tran", std::regex(".*(Socket|Tcp|Udp).*")},
+        {"net", std::regex(".*(Ipv4|IPv4|Ipv6|IPv6|Rrc).*")},
+        {"link", std::regex(".*(Mac|Rlc).*")},
+        {"phy", std::regex(".*(Phy).*")},
+        {"channel", std::regex(".*(Channel|Spectrum).*")}};
+    // Translate function names to respective layers
+    std::vector<std::string> layers;
+    for (auto& stackEntry : trace)
+    {
+        std::string functionName = stackEntry.name();
+        std::smatch regex_result;
+        for (auto&& [filteredLayer, filteredRegex] : layerFilters)
+        {
+            std::regex_match(functionName, regex_result, filteredRegex);
+            if (!regex_result.empty())
+            {
+                layers.push_back(filteredLayer); // filteredLayer for "educational" stack,
+                                                 // functionName for real stack
+                break;
+            }
+        }
+    }
+    // Remove adjacent duplicate layers
+    for (int i = layers.size() - 1; i > 0; i--)
+    {
+        if (layers[i - 1] == layers[i])
+        {
+            auto it = layers.begin();
+            std::advance(it, i);
+            layers.erase(it, it + 1);
+        }
+    }
+    return layers;
+}
+#endif
+
 Ptr<Packet>
 Packet::Copy() const
 {
@@ -150,6 +316,12 @@ Packet::Packet()
       m_nixVector(nullptr)
 {
     m_globalUid++;
+#ifdef TRACE_PACKET_ORIGINS
+    m_globalCopyUid++;
+    m_copyUid = m_globalCopyUid;
+    m_packetOriginTrace[m_copyUid] = {};
+    m_packetStackTrace[m_copyUid] = GetNetworkLayersFromStackTrace();
+#endif
 }
 
 Packet::Packet(const Packet& o)
@@ -159,6 +331,14 @@ Packet::Packet(const Packet& o)
       m_metadata(o.m_metadata)
 {
     o.m_nixVector ? m_nixVector = o.m_nixVector->Copy() : m_nixVector = nullptr;
+
+#ifdef TRACE_PACKET_ORIGINS
+    m_globalCopyUid++;
+    m_copyUid = m_globalCopyUid;
+    m_packetOriginTrace[m_copyUid] = {};
+    m_packetOriginTrace[o.m_copyUid].push_back(m_copyUid);
+    m_packetStackTrace[m_copyUid] = GetNetworkLayersFromStackTrace();
+#endif
 }
 
 Packet&
@@ -190,6 +370,12 @@ Packet::Packet(uint32_t size)
       m_nixVector(nullptr)
 {
     m_globalUid++;
+#ifdef TRACE_PACKET_ORIGINS
+    m_globalCopyUid++;
+    m_copyUid = m_globalCopyUid;
+    m_packetOriginTrace[m_copyUid] = {};
+    m_packetStackTrace[m_copyUid] = GetNetworkLayersFromStackTrace();
+#endif
 }
 
 Packet::Packet(const uint8_t* buffer, uint32_t size, bool magic)
@@ -201,6 +387,12 @@ Packet::Packet(const uint8_t* buffer, uint32_t size, bool magic)
 {
     NS_ASSERT(magic);
     Deserialize(buffer, size);
+#ifdef TRACE_PACKET_ORIGINS
+    m_globalCopyUid++;
+    m_copyUid = m_globalCopyUid;
+    m_packetOriginTrace[m_copyUid] = {};
+    m_packetStackTrace[m_copyUid] = GetNetworkLayersFromStackTrace();
+#endif
 }
 
 Packet::Packet(const uint8_t* buffer, uint32_t size)
@@ -220,6 +412,12 @@ Packet::Packet(const uint8_t* buffer, uint32_t size)
     m_buffer.AddAtStart(size);
     Buffer::Iterator i = m_buffer.Begin();
     i.Write(buffer, size);
+#ifdef TRACE_PACKET_ORIGINS
+    m_globalCopyUid++;
+    m_copyUid = m_globalCopyUid;
+    m_packetOriginTrace[m_copyUid] = {};
+    m_packetStackTrace[m_copyUid] = GetNetworkLayersFromStackTrace();
+#endif
 }
 
 Packet::Packet(const Buffer& buffer,
@@ -232,6 +430,12 @@ Packet::Packet(const Buffer& buffer,
       m_metadata(metadata),
       m_nixVector(nullptr)
 {
+#ifdef TRACE_PACKET_ORIGINS
+    m_globalCopyUid++;
+    m_copyUid = m_globalCopyUid;
+    m_packetOriginTrace[m_copyUid] = {};
+    m_packetStackTrace[m_copyUid] = GetNetworkLayersFromStackTrace();
+#endif
 }
 
 Ptr<Packet>
