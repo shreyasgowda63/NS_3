@@ -20,6 +20,7 @@
 #ifndef MULTI_USER_SCHEDULER_H
 #define MULTI_USER_SCHEDULER_H
 
+#include "channel-sounding.h"
 #include "he-ru.h"
 
 #include "ns3/ap-wifi-mac.h"
@@ -65,7 +66,8 @@ class MultiUserScheduler : public Object
         NO_TX = 0,
         SU_TX,
         DL_MU_TX,
-        UL_MU_TX
+        UL_MU_TX,
+        CS_TX
     };
 
     /// Information to be provided in case of DL MU transmission
