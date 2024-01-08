@@ -29,6 +29,7 @@ Changes from ns-3.40 to ns-3-dev
 * (lr-wpan) Change the CapabilityField parameter in `LrWpanMac::MlmeAssociateRequest` and `LrWpanMac::MlmeAssociateIndication` to a standard bitmap.
 * (lr-wpan) Change the MAC SuperframeField usage to a standard bitmap, this change impact parameters in the `BeaconPayloadHeader`.
 * (lr-wpan) Create a new abstract class that defines the form of any Lr-wpan MAC layers (`LrWpanMacBase`).
+* (network) The return type of `Buffer::Serialize`, `ByteTagList::Serialize`, `NixVector::Serialize`, `PacketMetadata::Serialize`, `PacketTagList::Serialize` and `Packet::Serialize` changed from `uint32_t` to `bool`.
 * (wifi) The `HeConfiguration::MpduBufferSize` attribute is now obsolete. Use the `WifiMac::MpduBufferSize` attribute instead.
 * (wifi) The `LinkSetupCanceled` trace source of `StaWifiMac` has been obsoleted because disassociation does not occur at link level for non-AP MLDs.
 * (antenna) `UniformPlannarArray` has new attributes `NumVerticalPorts`, `NumHorizontalPorts`, and `IsDualPolarized`.

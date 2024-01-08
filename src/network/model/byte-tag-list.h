@@ -249,9 +249,9 @@ class ByteTagList
      * \param [in,out] buffer The byte buffer to which the tag list will be serialized
      * \param [in] maxSize Max The max size of the buffer for bounds checking
      *
-     * \returns zero if complete tag list is not serialized
+     * \return `true` if complete tag list is serialized, `false` otherwise
      */
-    uint32_t Serialize(uint32_t* buffer, uint32_t maxSize) const;
+    bool Serialize(uint32_t* buffer, uint32_t maxSize) const;
     /**
      * Deserialize tag list from the provided buffer.
      *

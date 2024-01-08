@@ -1157,7 +1157,7 @@ PacketMetadata::GetSerializedSize() const
     return totalSize;
 }
 
-uint32_t
+bool
 PacketMetadata::Serialize(uint8_t* buffer, uint32_t maxSize) const
 {
     NS_LOG_FUNCTION(this << &buffer << maxSize);
@@ -1166,7 +1166,7 @@ PacketMetadata::Serialize(uint8_t* buffer, uint32_t maxSize) const
     buffer = AddToRawU64(m_packetUid, start, buffer, maxSize);
     if (buffer == nullptr)
     {
-        return 0;
+        return false;
     }
 
     PacketMetadata::SmallItem item;
@@ -1192,7 +1192,7 @@ PacketMetadata::Serialize(uint8_t* buffer, uint32_t maxSize) const
             buffer = AddToRawU32(uidStringSize, start, buffer, maxSize);
             if (buffer == nullptr)
             {
-                return 0;
+                return false;
             }
             buffer = AddToRaw(reinterpret_cast<const uint8_t*>(uidString.c_str()),
                               uidStringSize,
@@ -1201,7 +1201,7 @@ PacketMetadata::Serialize(uint8_t* buffer, uint32_t maxSize) const
                               maxSize);
             if (buffer == nullptr)
             {
-                return 0;
+                return false;
             }
         }
         else
@@ -1209,7 +1209,7 @@ PacketMetadata::Serialize(uint8_t* buffer, uint32_t maxSize) const
             buffer = AddToRawU32(0, start, buffer, maxSize);
             if (buffer == nullptr)
             {
-                return 0;
+                return false;
             }
         }
 
@@ -1217,37 +1217,37 @@ PacketMetadata::Serialize(uint8_t* buffer, uint32_t maxSize) const
         buffer = AddToRawU8(isBig, start, buffer, maxSize);
         if (buffer == nullptr)
         {
-            return 0;
+            return false;
         }
 
         buffer = AddToRawU32(item.size, start, buffer, maxSize);
         if (buffer == nullptr)
         {
-            return 0;
+            return false;
         }
 
         buffer = AddToRawU16(item.chunkUid, start, buffer, maxSize);
         if (buffer == nullptr)
         {
-            return 0;
+            return false;
         }
 
         buffer = AddToRawU32(extraItem.fragmentStart, start, buffer, maxSize);
         if (buffer == nullptr)
         {
-            return 0;
+            return false;
         }
 
         buffer = AddToRawU32(extraItem.fragmentEnd, start, buffer, maxSize);
         if (buffer == nullptr)
         {
-            return 0;
+            return false;
         }
 
         buffer = AddToRawU64(extraItem.packetUid, start, buffer, maxSize);
         if (buffer == nullptr)
         {
-            return 0;
+            return false;
         }
 
         if (current == m_tail)
@@ -1260,7 +1260,7 @@ PacketMetadata::Serialize(uint8_t* buffer, uint32_t maxSize) const
     }
 
     NS_ASSERT(static_cast<uint32_t>(buffer - start) == maxSize);
-    return 1;
+    return true;
 }
 
 uint32_t

@@ -274,9 +274,9 @@ class PacketMetadata
      * \brief Serialization to raw uint8_t*
      * \param buffer the buffer to serialize to
      * \param maxSize the maximum serialization size
-     * \return 1 on success, 0 on failure
+     * \return `true` on success, `false` on failure
      */
-    uint32_t Serialize(uint8_t* buffer, uint32_t maxSize) const;
+    bool Serialize(uint8_t* buffer, uint32_t maxSize) const;
     /**
      * \brief Deserialization from raw uint8_t*
      * \param buffer the buffer to deserialize from

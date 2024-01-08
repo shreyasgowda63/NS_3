@@ -462,7 +462,7 @@ ByteTagList::GetSerializedSize() const
     return size;
 }
 
-uint32_t
+bool
 ByteTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
 {
     NS_LOG_FUNCTION(this << buffer << maxSize);
@@ -480,7 +480,7 @@ ByteTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
     }
     else
     {
-        return 0;
+        return false;
     }
 
     ByteTagList::Iterator i = BeginAll();
@@ -501,7 +501,7 @@ ByteTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
 
         if (size + 4 <= maxSize)
@@ -511,7 +511,7 @@ ByteTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
 
         if (size + 4 <= maxSize)
@@ -521,7 +521,7 @@ ByteTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
 
         if (size + 4 <= maxSize)
@@ -531,7 +531,7 @@ ByteTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
 
         // ensure size is multiple of 4 bytes for 4 byte boundaries
@@ -545,14 +545,14 @@ ByteTagList::Serialize(uint32_t* buffer, uint32_t maxSize) const
         }
         else
         {
-            return 0;
+            return false;
         }
 
         (*numberOfTags)++;
     }
 
     // Serialized successfully
-    return 1;
+    return true;
 }
 
 uint32_t
