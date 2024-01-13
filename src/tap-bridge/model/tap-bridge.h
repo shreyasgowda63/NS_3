@@ -410,11 +410,6 @@ class TapBridge : public NetDevice
     std::string m_tapDeviceName;
 
     /**
-     * The IP address to use as the device default gateway on the host.
-     */
-    Ipv4Address m_tapGateway;
-
-    /**
      * The IP address to use as the device IP on the host.
      */
     Ipv4Address m_tapIp;
