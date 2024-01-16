@@ -23,6 +23,7 @@ Check and apply the ns-3 coding style recursively to all files in the PATH argum
 The coding style is defined with the clang-format tool, whose definitions are in
 the ".clang-format" file. This script performs the following checks / fixes:
 - Check / fix local #include headers with "ns3/" prefix. Respects clang-format guards.
+- Check / fix ns-3 #include headers with angle brackets. Respects clang-format guards.
 - Check / apply clang-format. Respects clang-format guards.
 - Check / trim trailing whitespace. Always checked.
 - Check / replace tabs with spaces. Respects clang-format guards.
@@ -79,6 +80,7 @@ FILE_EXTENSIONS_TO_CHECK_FORMATTING = [
 ]
 
 FILE_EXTENSIONS_TO_CHECK_INCLUDE_PREFIXES = FILE_EXTENSIONS_TO_CHECK_FORMATTING
+FILE_EXTENSIONS_TO_CHECK_INCLUDE_BRACKETS = FILE_EXTENSIONS_TO_CHECK_FORMATTING
 
 FILE_EXTENSIONS_TO_CHECK_WHITESPACE = [
     ".c",
@@ -172,12 +174,13 @@ def should_analyze_file(
 
 def find_files_to_check_style(
     paths: List[str],
-) -> Tuple[List[str], List[str], List[str], List[str]]:
+) -> Tuple[List[str], List[str], List[str], List[str], List[str]]:
     """
     Find all files to be checked in a given list of paths.
 
     @param paths List of paths to the files to check.
     @return Tuple [List of files to check include prefixes,
+                   List of files to check include brackets,
                    List of files to check formatting,
                    List of files to check trailing whitespace,
                    List of files to check tabs].
@@ -206,6 +209,7 @@ def find_files_to_check_style(
     files_to_check.sort()
 
     files_to_check_include_prefixes: List[str] = []
+    files_to_check_include_brackets: List[str] = []
     files_to_check_formatting: List[str] = []
     files_to_check_whitespace: List[str] = []
     files_to_check_tabs: List[str] = []
@@ -213,6 +217,9 @@ def find_files_to_check_style(
     for f in files_to_check:
         if should_analyze_file(f, [], FILE_EXTENSIONS_TO_CHECK_INCLUDE_PREFIXES):
             files_to_check_include_prefixes.append(f)
+
+        if should_analyze_file(f, [], FILE_EXTENSIONS_TO_CHECK_INCLUDE_BRACKETS):
+            files_to_check_include_brackets.append(f)
 
         if should_analyze_file(f, [], FILE_EXTENSIONS_TO_CHECK_FORMATTING):
             files_to_check_formatting.append(f)
@@ -225,6 +232,7 @@ def find_files_to_check_style(
 
     return (
         files_to_check_include_prefixes,
+        files_to_check_include_brackets,
         files_to_check_formatting,
         files_to_check_whitespace,
         files_to_check_tabs,
@@ -276,6 +284,7 @@ def find_clang_format_path() -> str:
 def check_style_clang_format(
     paths: List[str],
     enable_check_include_prefixes: bool,
+    enable_check_include_brackets: bool,
     enable_check_formatting: bool,
     enable_check_whitespace: bool,
     enable_check_tabs: bool,
@@ -288,6 +297,7 @@ def check_style_clang_format(
 
     @param paths List of paths to the files to check.
     @param enable_check_include_prefixes Whether to enable checking #include headers from the same module with the "ns3/" prefix.
+    @param enable_check_include_brackets Whether to enable ns-3 #include headers with angle brackets checking.
     @param enable_check_formatting Whether to enable checking code formatting.
     @param enable_check_whitespace Whether to enable checking trailing whitespace.
     @param enable_check_tabs Whether to enable checking tabs.
@@ -299,12 +309,14 @@ def check_style_clang_format(
 
     (
         files_to_check_include_prefixes,
+        files_to_check_include_brackets,
         files_to_check_formatting,
         files_to_check_whitespace,
         files_to_check_tabs,
     ) = find_files_to_check_style(paths)
 
     check_include_prefixes_successful = True
+    check_include_brackets_successful = True
     check_formatting_successful = True
     check_whitespace_successful = True
     check_tabs_successful = True
@@ -319,6 +331,20 @@ def check_style_clang_format(
             n_jobs,
             respect_clang_format_guards=True,
             check_style_line_function=check_include_prefixes_line,
+        )
+
+        print("")
+
+    if enable_check_include_brackets:
+        check_include_brackets_successful = check_style_files(
+            "ns-3 #include headers with angle brackets",
+            check_manually_file,
+            files_to_check_include_brackets,
+            fix,
+            verbose,
+            n_jobs,
+            respect_clang_format_guards=True,
+            check_style_line_function=check_include_brackets_line,
         )
 
         print("")
@@ -365,6 +391,7 @@ def check_style_clang_format(
     return all(
         [
             check_include_prefixes_successful,
+            check_include_brackets_successful,
             check_formatting_successful,
             check_whitespace_successful,
             check_tabs_successful,
@@ -614,6 +641,44 @@ def check_include_prefixes_line(
     return (is_line_compliant, line_fixed, verbose_infos)
 
 
+def check_include_brackets_line(
+    line: str,
+    filename: str,
+    line_number: int,
+) -> Tuple[bool, str, List[str]]:
+    """
+    Check / fix ns-3 #include headers with angle brackets in a line.
+
+    @param line The line to check.
+    @param filename Name of the file to be checked.
+    @param line_number The number of the line checked.
+    @return Tuple [Whether the line is compliant with the style (before the check),
+                   Fixed line,
+                   Verbose information].
+    """
+
+    is_line_compliant = True
+    line_fixed = line
+    verbose_infos: List[str] = []
+
+    # Check if the line is an #include <ns3/...>
+    header_file = re.findall(r"^#include <ns3/.*\.h>", line)
+
+    if header_file:
+        is_line_compliant = False
+        line_fixed = line.replace("<", '"').replace(">", '"') + "\n"
+
+        header_index = len("#include ")
+
+        verbose_infos = [
+            f"{filename}:{line_number + 1}:{header_index + 1}: error: ns-3 #include headers with angle brackets detected",
+            f"    {line}",
+            f'    {"":{header_index}}^',
+        ]
+
+    return (is_line_compliant, line_fixed, verbose_infos)
+
+
 def check_whitespace_line(
     line: str,
     filename: str,
@@ -690,8 +755,8 @@ if __name__ == "__main__":
         description="Check and apply the ns-3 coding style recursively to all files in the given PATHs. "
         "The script checks the formatting of the file with clang-format. "
         'Additionally, it checks #include headers from the same module with the "ns3/" prefix, '
-        "the presence of trailing whitespace and tabs. "
-        'Formatting, local #include "ns3/" prefixes and tabs checks respect clang-format guards. '
+        "ns-3 #include headers with angle brackets, the presence of trailing whitespace and tabs. "
+        'Formatting, local #include "ns3/" prefixes and angle brackets, and tabs checks respect clang-format guards. '
         'When used in "check mode" (default), the script checks if all files are well '
         "formatted and do not have trailing whitespace nor tabs. "
         "If it detects non-formatted files, they will be printed and this process exits with a "
@@ -710,6 +775,12 @@ if __name__ == "__main__":
         "--no-include-prefixes",
         action="store_true",
         help='Do not check / fix #include headers from the same module with the "ns3/" prefix',
+    )
+
+    parser.add_argument(
+        "--no-include-brackets",
+        action="store_true",
+        help="Do not check / fix ns-3 #include headers with angle brackets",
     )
 
     parser.add_argument(
@@ -757,6 +828,7 @@ if __name__ == "__main__":
         all_checks_successful = check_style_clang_format(
             paths=args.paths,
             enable_check_include_prefixes=(not args.no_include_prefixes),
+            enable_check_include_brackets=(not args.no_include_brackets),
             enable_check_formatting=(not args.no_formatting),
             enable_check_whitespace=(not args.no_whitespace),
             enable_check_tabs=(not args.no_tabs),
