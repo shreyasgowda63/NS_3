@@ -20,7 +20,7 @@
 #ifndef LR_WPAN_SPECTRUM_SIGNAL_PARAMETERS_H
 #define LR_WPAN_SPECTRUM_SIGNAL_PARAMETERS_H
 
-#include <ns3/spectrum-signal-parameters.h>
+#include "ns3/spectrum-signal-parameters.h"
 
 namespace ns3
 {

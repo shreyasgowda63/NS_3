@@ -21,7 +21,7 @@
 #include "lte-fr-strict-algorithm.h"
 
 #include "ns3/boolean.h"
-#include <ns3/log.h>
+#include "ns3/log.h"
 
 namespace ns3
 {

@@ -20,7 +20,7 @@
 #ifndef LTE_MAC_SAP_H
 #define LTE_MAC_SAP_H
 
-#include <ns3/packet.h>
+#include "ns3/packet.h"
 
 namespace ns3
 {

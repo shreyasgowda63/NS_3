@@ -23,9 +23,9 @@
 
 #include "three-gpp-http-header.h"
 
-#include <ns3/address.h>
-#include <ns3/application.h>
-#include <ns3/traced-callback.h>
+#include "ns3/address.h"
+#include "ns3/application.h"
+#include "ns3/traced-callback.h"
 
 namespace ns3
 {

@@ -21,9 +21,9 @@
 
 #include "spectrum-value.h"
 
-#include <ns3/mobility-model.h>
-#include <ns3/object.h>
-#include <ns3/phased-array-model.h>
+#include "ns3/mobility-model.h"
+#include "ns3/object.h"
+#include "ns3/phased-array-model.h"
 
 namespace ns3
 {

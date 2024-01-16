@@ -25,7 +25,7 @@
 
 #include "three-gpp-http-helper.h"
 
-#include <ns3/names.h>
+#include "ns3/names.h"
 
 namespace ns3
 {

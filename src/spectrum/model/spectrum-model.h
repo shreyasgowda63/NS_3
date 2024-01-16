@@ -20,7 +20,7 @@
 #ifndef SPECTRUM_MODEL_H
 #define SPECTRUM_MODEL_H
 
-#include <ns3/simple-ref-count.h>
+#include "ns3/simple-ref-count.h"
 
 #include <vector>
 

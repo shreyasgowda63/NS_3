@@ -20,7 +20,7 @@
 #ifndef LTE_SPECTRUM_VALUE_HELPER_H
 #define LTE_SPECTRUM_VALUE_HELPER_H
 
-#include <ns3/spectrum-value.h>
+#include "ns3/spectrum-value.h"
 
 #include <map>
 #include <vector>

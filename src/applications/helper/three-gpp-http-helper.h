@@ -26,9 +26,9 @@
 #ifndef THREE_GPP_HTTP_HELPER_H
 #define THREE_GPP_HTTP_HELPER_H
 
-#include <ns3/application-container.h>
-#include <ns3/node-container.h>
-#include <ns3/object-factory.h>
+#include "ns3/application-container.h"
+#include "ns3/node-container.h"
+#include "ns3/object-factory.h"
 
 namespace ns3
 {

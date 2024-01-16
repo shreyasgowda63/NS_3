@@ -18,7 +18,7 @@
  */
 #include "lr-wpan-mac-header.h"
 
-#include <ns3/address-utils.h>
+#include "ns3/address-utils.h"
 
 namespace ns3
 {

@@ -29,9 +29,9 @@
 
 #include "null-message-simulator-impl.h"
 
-#include <ns3/channel.h>
-#include <ns3/pointer.h>
-#include <ns3/ptr.h>
+#include "ns3/channel.h"
+#include "ns3/pointer.h"
+#include "ns3/ptr.h"
 
 #include <unordered_map>
 

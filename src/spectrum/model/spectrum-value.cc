@@ -20,8 +20,8 @@
 
 #include "spectrum-value.h"
 
-#include <ns3/log.h>
-#include <ns3/math.h>
+#include "ns3/log.h"
+#include "ns3/math.h"
 
 namespace ns3
 {

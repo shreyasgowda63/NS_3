@@ -22,8 +22,8 @@
 
 #include "energy-model-helper.h"
 
-#include <ns3/generic-battery-model.h>
-#include <ns3/node.h>
+#include "ns3/generic-battery-model.h"
+#include "ns3/node.h"
 
 namespace ns3
 {

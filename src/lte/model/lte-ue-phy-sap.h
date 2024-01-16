@@ -20,7 +20,7 @@
 #ifndef LTE_UE_PHY_SAP_H
 #define LTE_UE_PHY_SAP_H
 
-#include <ns3/packet.h>
+#include "ns3/packet.h"
 
 namespace ns3
 {
