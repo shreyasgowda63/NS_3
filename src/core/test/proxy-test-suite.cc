@@ -117,8 +117,8 @@ BasicTestCase::DoRun()
     auto proxyB = CreateObject<Proxy<AggregatedObject>>(aggregated);
     mainObjectB->AggregateObject(proxyB);
 
-    auto proxiedByA = mainObjectA->GetObject<Proxy<AggregatedObject>>()->PeekPointer();
-    auto proxiedByB = mainObjectB->GetObject<Proxy<AggregatedObject>>()->PeekPointer();
+    auto proxiedByA = mainObjectA->GetObject<Proxy<AggregatedObject>>()->GetPointer();
+    auto proxiedByB = mainObjectB->GetObject<Proxy<AggregatedObject>>()->GetPointer();
     NS_TEST_ASSERT_MSG_NE(proxiedByA, nullptr, "Unable to get proxied object");
     NS_TEST_ASSERT_MSG_NE(proxiedByB, nullptr, "Unable to get proxied object");
     NS_TEST_ASSERT_MSG_EQ(proxiedByA, proxiedByB, "Proxied objects are different");

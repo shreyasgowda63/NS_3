@@ -217,12 +217,12 @@ set(header_files
     model/des-metrics.h
     model/double.h
     model/enum.h
+    model/environment-variable.h
     model/event-id.h
     model/event-impl.h
     model/fatal-error.h
     model/fatal-impl.h
     model/fd-reader.h
-    model/environment-variable.h
     model/global-value.h
     model/hash-fnv.h
     model/hash-function.h
@@ -241,6 +241,7 @@ set(header_files
     model/make-event.h
     model/map-scheduler.h
     model/math.h
+    model/matrix-array.h
     model/names.h
     model/node-printer.h
     model/nstime.h
@@ -253,8 +254,10 @@ set(header_files
     model/pair.h
     model/pointer.h
     model/priority-queue-scheduler.h
+    model/proxy.h
     model/ptr.h
     model/random-variable-stream.h
+    model/realtime-simulator-impl.h
     model/rng-seed-manager.h
     model/rng-stream.h
     model/scheduler.h
@@ -284,15 +287,12 @@ set(header_files
     model/uinteger.h
     model/uniform-random-bit-generator.h
     model/unused.h
+    model/val-array.h
     model/valgrind.h
     model/vector.h
+    model/wall-clock-synchronizer.h
     model/warnings.h
     model/watchdog.h
-    model/realtime-simulator-impl.h
-    model/wall-clock-synchronizer.h
-    model/val-array.h
-    model/matrix-array.h
-    model/proxy.h
 )
 
 set(test_sources
@@ -311,10 +311,12 @@ set(test_sources
     test/int64x64-test-suite.cc
     test/length-test-suite.cc
     test/many-uniform-random-variables-one-get-value-call-test-suite.cc
+    test/matrix-array-test-suite.cc
     test/names-test-suite.cc
     test/object-test-suite.cc
     test/one-uniform-random-variable-many-get-value-calls-test-suite.cc
     test/pair-value-test-suite.cc
+    test/proxy-test-suite.cc
     test/ptr-test-suite.cc
     test/sample-test-suite.cc
     test/simulator-test-suite.cc
@@ -327,10 +329,8 @@ set(test_sources
     test/tuple-value-test-suite.cc
     test/type-id-test-suite.cc
     test/type-traits-test-suite.cc
-    test/watchdog-test-suite.cc
     test/val-array-test-suite.cc
-    test/matrix-array-test-suite.cc
-    test/proxy-test-suite.cc
+    test/watchdog-test-suite.cc
 )
 
 # Build core lib
