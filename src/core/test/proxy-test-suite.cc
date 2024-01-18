@@ -127,6 +127,29 @@ BasicTestCase::DoRun()
     NS_TEST_ASSERT_MSG_NE(proxiedByA, nullptr, "Unable to get proxied object");
     NS_TEST_ASSERT_MSG_NE(proxiedByB, nullptr, "Unable to get proxied object");
     NS_TEST_ASSERT_MSG_EQ(proxiedByA, proxiedByB, "Proxied objects are different");
+
+    // the following should also work.
+    auto aggregatedOneWay = CreateObject<ProxyTestAggregatedObject>();
+    auto mainObjectOneWayA = CreateObject<ProxyTestMainObject>();
+    auto mainObjectOneWayB = CreateObject<ProxyTestMainObject>();
+
+    mainObjectOneWayA->AggregateObjectOneWay(aggregatedOneWay);
+    mainObjectOneWayB->AggregateObjectOneWay(aggregatedOneWay);
+
+    auto proxiedByANew = mainObjectOneWayA->GetObject<ProxyTestAggregatedObject>();
+    auto proxiedByBNew = mainObjectOneWayB->GetObject<ProxyTestAggregatedObject>();
+
+    std::cout << proxiedByANew << std::endl;
+    std::cout << proxiedByBNew << std::endl;
+
+    auto iter = mainObjectOneWayA->GetAggregateIterator();
+    while (iter.HasNext())
+    {
+        std::cout << "aggregated " << iter.Next()->GetInstanceTypeId() << std::endl;
+    }
+
+    std::cout << proxiedByANew->GetTypeId() << std::endl;
+    std::cout << proxiedByBNew->GetTypeId() << std::endl;
 }
 
 /**

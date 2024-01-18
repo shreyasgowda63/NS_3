@@ -323,6 +323,65 @@ Object::AggregateObject(Ptr<Object> o)
     std::free(b);
 }
 
+void
+Object::AggregateObjectOneWay(Ptr<Object> o)
+{
+    NS_LOG_FUNCTION(this << o);
+    NS_ASSERT(!m_disposed);
+    NS_ASSERT(!o->m_disposed);
+    NS_ASSERT(CheckLoose());
+    NS_ASSERT(o->CheckLoose());
+
+    Object* other = PeekPointer(o);
+    // first create the new aggregate buffer.
+    uint32_t total = m_aggregates->n + 1;
+    auto aggregates = (Aggregates*)std::malloc(sizeof(Aggregates) + (total - 1) * sizeof(Object*));
+    aggregates->n = total;
+
+    // copy our buffer to the new buffer
+    std::memcpy(&aggregates->buffer[0],
+                &m_aggregates->buffer[0],
+                m_aggregates->n * sizeof(Object*));
+
+    // add the other object
+    aggregates->buffer[total - 1] = other;
+    const TypeId typeId = other->GetInstanceTypeId();
+    if (DoGetObject(typeId))
+    {
+        NS_FATAL_ERROR("Object::AggregateObject(): "
+                       "Multiple aggregation of objects of type "
+                       << other->GetInstanceTypeId() << " on objects of type " << typeId);
+    }
+    UpdateSortedArray(aggregates, m_aggregates->n);
+
+    // keep track of the old aggregate buffers for the iteration
+    // of NotifyNewAggregates
+    Aggregates* a = m_aggregates;
+
+    // Then, assign the new aggregation buffer to every object in the current one
+    // do not touch the aggregates in the aggregated object.
+    uint32_t n = m_aggregates->n;
+    for (uint32_t i = 0; i < n; i++)
+    {
+        Object* current = m_aggregates->buffer[i];
+        current->m_aggregates = aggregates;
+    }
+
+    // Finally, call NotifyNewAggregate on all the objects aggregates together.
+    // We purposely use the old aggregate buffers to iterate over the objects
+    // because this allows us to assume that they will not change from under
+    // our feet, even if our users call AggregateObject from within their
+    // NotifyNewAggregate method.
+    for (uint32_t i = 0; i < a->n; i++)
+    {
+        Object* current = a->buffer[i];
+        current->NotifyNewAggregate();
+    }
+
+    // Now that we are done with them, we can free our old aggregate buffers
+    std::free(a);
+}
+
 /**
  * This function must be implemented in the stack that needs to notify
  * other stacks connected to the node of their presence in the node.
