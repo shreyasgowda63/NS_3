@@ -28,16 +28,16 @@ namespace ns3
 /**
  * Proxy Object class
  * \ingroup core
- * 
+ *
  * This class have the goal to break the automatic Aggregation mechanism, so that
  * the same Object can be aggregated to two different Objects. Under normal
  * aggregation rules this would result in an error, as the aggregation is mutual.
  * Hence, an object aggregated to two different classes (of the same type) would
  * have two objects of the same type aggregated to itself.
- * 
+ *
  * The Proxy class solves this problem. However, the syntax to access the
  * underlying object is a bit more convoluted than normal.
- * 
+ *
  * \tparam T \explicit The type of the underlying object.
  */
 template <typename T>

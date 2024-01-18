@@ -40,9 +40,9 @@ namespace tests
 
 /**
  * \ingroup proxy-tests
- * Simple test object which is aggregated with the proxy.
+ * Simple test object with another object aggregated through a Proxy.
  */
-class MainObject : public Object
+class ProxyTestMainObject : public Object
 {
   public:
     /**
@@ -51,11 +51,10 @@ class MainObject : public Object
      */
     static TypeId GetTypeId()
     {
-        static TypeId tid = TypeId("MainObject")
+        static TypeId tid = TypeId("ProxyTestMainObject")
                                 .SetParent<Object>()
                                 .SetGroupName("Core")
-                                .HideFromDocumentation()
-                                .AddConstructor<MainObject>();
+                                .AddConstructor<ProxyTestMainObject>();
         return tid;
     }
 };
@@ -64,7 +63,7 @@ class MainObject : public Object
  * \ingroup proxy-tests
  * Simple test object which is to be proxied.
  */
-class AggregatedObject : public Object
+class ProxyTestAggregatedObject : public Object
 {
   public:
     /**
@@ -73,11 +72,10 @@ class AggregatedObject : public Object
      */
     static TypeId GetTypeId()
     {
-        static TypeId tid = TypeId("AggregatedObject")
+        static TypeId tid = TypeId("ProxyTestAggregatedObject")
                                 .SetParent<Object>()
                                 .SetGroupName("Core")
-                                .HideFromDocumentation()
-                                .AddConstructor<AggregatedObject>();
+                                .AddConstructor<ProxyTestAggregatedObject>();
         return tid;
     }
 };
@@ -104,21 +102,21 @@ BasicTestCase::BasicTestCase()
 void
 BasicTestCase::DoRun()
 {
-    auto aggregated = CreateObject<AggregatedObject>();
-    auto mainObjectA = CreateObject<MainObject>();
-    auto mainObjectB = CreateObject<MainObject>();
+    auto aggregated = CreateObject<ProxyTestAggregatedObject>();
+    auto mainObjectA = CreateObject<ProxyTestMainObject>();
+    auto mainObjectB = CreateObject<ProxyTestMainObject>();
     // The following would fail:
     // mainObjectA->AggregateObject(aggregated);
     // mainObjectB->AggregateObject(aggregated);
 
     // The following works:
-    auto proxyA = CreateObject<Proxy<AggregatedObject>>(aggregated);
+    auto proxyA = CreateObject<Proxy<ProxyTestAggregatedObject>>(aggregated);
     mainObjectA->AggregateObject(proxyA);
-    auto proxyB = CreateObject<Proxy<AggregatedObject>>(aggregated);
+    auto proxyB = CreateObject<Proxy<ProxyTestAggregatedObject>>(aggregated);
     mainObjectB->AggregateObject(proxyB);
 
-    auto proxiedByA = mainObjectA->GetObject<Proxy<AggregatedObject>>()->GetPointer();
-    auto proxiedByB = mainObjectB->GetObject<Proxy<AggregatedObject>>()->GetPointer();
+    auto proxiedByA = mainObjectA->GetObject<Proxy<ProxyTestAggregatedObject>>()->GetPointer();
+    auto proxiedByB = mainObjectB->GetObject<Proxy<ProxyTestAggregatedObject>>()->GetPointer();
     NS_TEST_ASSERT_MSG_NE(proxiedByA, nullptr, "Unable to get proxied object");
     NS_TEST_ASSERT_MSG_NE(proxiedByB, nullptr, "Unable to get proxied object");
     NS_TEST_ASSERT_MSG_EQ(proxiedByA, proxiedByB, "Proxied objects are different");
@@ -143,7 +141,7 @@ ProxyTestSuite::ProxyTestSuite()
 
 /**
  * \ingroup proxy-tests
- *  ProxyTestSuite instance variable.
+ * ProxyTestSuite instance variable.
  */
 static ProxyTestSuite g_proxyTestSuite;
 
