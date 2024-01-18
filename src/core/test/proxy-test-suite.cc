@@ -36,7 +36,6 @@
 namespace ns3
 {
 
-
 /**
  * \ingroup proxy-tests
  * Simple test object which is to be proxied.
