@@ -129,7 +129,6 @@ BasicTestCase::DoRun()
 class ProxyTestSuite : public TestSuite
 {
   public:
-    /** Constructor. */
     ProxyTestSuite();
 };
 

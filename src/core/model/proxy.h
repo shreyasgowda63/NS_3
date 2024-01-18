@@ -59,12 +59,13 @@ class Proxy : public Object
      */
     static TypeId GetTypeId()
     {
-        static TypeId tid = TypeId("ns3::Proxy").SetParent<Object>().SetGroupName("Core");
+        static TypeId tid =
+            TypeId(GetTemplateClassName<Proxy<T>>()).SetParent<Object>().SetGroupName("Core");
         return tid;
     }
 
     /**
-     * A dereference.
+     * A dereference, necessary to support drill-down.
      * \returns The proxied Object.
      */
     T operator*()
@@ -73,13 +74,13 @@ class Proxy : public Object
     }
 
     /**
-     * An lvalue member access.
+     * An lvalue member access, necessary to support drill-down.
      * \returns Address of the proxied object.
      */
     T* operator->()
     {
         return &(*m_item);
-    } // Support drill-down
+    }
 
     /**
      * Pointer to proxied object
