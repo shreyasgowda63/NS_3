@@ -35,6 +35,31 @@
 
 namespace ns3
 {
+
+
+/**
+ * \ingroup proxy-tests
+ * Simple test object which is to be proxied.
+ */
+class ProxyTestAggregatedObject : public Object
+{
+  public:
+    /**
+     * Register this type.
+     * \return The TypeId.
+     */
+    static TypeId GetTypeId()
+    {
+        static TypeId tid = TypeId("ProxyTestAggregatedObject")
+                                .SetParent<Object>()
+                                .SetGroupName("Core")
+                                .AddConstructor<ProxyTestAggregatedObject>();
+        return tid;
+    }
+};
+
+NS_OBJECT_TEMPLATE_CLASS_DEFINE(Proxy, ProxyTestAggregatedObject);
+
 namespace tests
 {
 
@@ -55,27 +80,6 @@ class ProxyTestMainObject : public Object
                                 .SetParent<Object>()
                                 .SetGroupName("Core")
                                 .AddConstructor<ProxyTestMainObject>();
-        return tid;
-    }
-};
-
-/**
- * \ingroup proxy-tests
- * Simple test object which is to be proxied.
- */
-class ProxyTestAggregatedObject : public Object
-{
-  public:
-    /**
-     * Register this type.
-     * \return The TypeId.
-     */
-    static TypeId GetTypeId()
-    {
-        static TypeId tid = TypeId("ProxyTestAggregatedObject")
-                                .SetParent<Object>()
-                                .SetGroupName("Core")
-                                .AddConstructor<ProxyTestAggregatedObject>();
         return tid;
     }
 };
@@ -117,6 +121,10 @@ BasicTestCase::DoRun()
 
     auto proxiedByA = mainObjectA->GetObject<Proxy<ProxyTestAggregatedObject>>()->GetPointer();
     auto proxiedByB = mainObjectB->GetObject<Proxy<ProxyTestAggregatedObject>>()->GetPointer();
+
+    auto dunno = mainObjectA->GetObject<Proxy<ProxyTestAggregatedObject>>();
+    std::cout << "dunno object is of type " << dunno->GetTypeId() << std::endl;
+
     NS_TEST_ASSERT_MSG_NE(proxiedByA, nullptr, "Unable to get proxied object");
     NS_TEST_ASSERT_MSG_NE(proxiedByB, nullptr, "Unable to get proxied object");
     NS_TEST_ASSERT_MSG_EQ(proxiedByA, proxiedByB, "Proxied objects are different");
@@ -145,4 +153,5 @@ ProxyTestSuite::ProxyTestSuite()
 static ProxyTestSuite g_proxyTestSuite;
 
 } // namespace tests
+
 } // namespace ns3

@@ -57,12 +57,7 @@ class Proxy : public Object
      * \brief Get the type ID.
      * \return The object TypeId.
      */
-    static TypeId GetTypeId()
-    {
-        static TypeId tid =
-            TypeId(GetTemplateClassName<Proxy<T>>()).SetParent<Object>().SetGroupName("Core");
-        return tid;
-    }
+    static TypeId GetTypeId();
 
     /**
      * A dereference, necessary to support drill-down.
@@ -95,6 +90,20 @@ class Proxy : public Object
     /** The pointer to the proxied object */
     Ptr<T> m_item;
 };
+
+/*
+ * Implementation of the templates declared above.
+ */
+template <typename T>
+TypeId 
+Proxy<T>::GetTypeId()
+{
+    static TypeId tid =
+        TypeId(GetTemplateClassName<Proxy<T>>())
+        .SetParent<Object>()
+        .SetGroupName("Core");
+    return tid;
+}
 
 /**
  * Template specialization for casting a Proxy<Ptr<T>>
