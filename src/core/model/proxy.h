@@ -21,7 +21,7 @@
 #ifndef PROXY_H
 #define PROXY_H
 
-#include "ns3/object.h"
+#include "object.h"
 
 namespace ns3
 {
