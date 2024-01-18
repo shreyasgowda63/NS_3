@@ -95,48 +95,13 @@ class Proxy : public Object
  * Implementation of the templates declared above.
  */
 template <typename T>
-TypeId 
+TypeId
 Proxy<T>::GetTypeId()
 {
     static TypeId tid =
-        TypeId(GetTemplateClassName<Proxy<T>>())
-        .SetParent<Object>()
-        .SetGroupName("Core");
+        TypeId(GetTemplateClassName<Proxy<T>>()).SetParent<Object>().SetGroupName("Core");
     return tid;
 }
-
-/**
- * Template specialization for casting a Proxy<Ptr<T>>
- * into the underlying Prt<T>.
- *
- * \tparam T \deduced The desired type to cast to.
- * \param [in] p The original Ptr.
- * \return The result of the cast.
- */
-/** @{ */
-
-template <typename T>
-Ptr<T>
-ConstCast(const Ptr<Proxy<T>>& p)
-{
-    return p->PeekPointer();
-}
-
-template <typename T>
-Ptr<T>
-DynamicCast(const Ptr<Proxy<T>>& p)
-{
-    return p->PeekPointer();
-}
-
-template <typename T>
-Ptr<T>
-StaticCast(const Ptr<Proxy<T>>& p)
-{
-    return p->PeekPointer();
-}
-
-/** @} */
 
 } // namespace ns3
 
