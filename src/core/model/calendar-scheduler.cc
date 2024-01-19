@@ -280,7 +280,7 @@ CalendarScheduler::Remove(const Event& ev)
             return;
         }
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Event UID " << ev.key.m_uid << " not found");
 }
 
 void

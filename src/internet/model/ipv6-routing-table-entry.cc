@@ -269,7 +269,7 @@ operator<<(std::ostream& os, const Ipv6RoutingTableEntry& route)
     }
     else
     {
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Invalid route");
     }
     return os;
 }

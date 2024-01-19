@@ -399,7 +399,7 @@ EpcX2::RecvFromX2cSocket(Ptr<Socket> socket)
     }
     else
     {
-        NS_ASSERT_MSG(false, "ProcedureCode NOT SUPPORTED!!!");
+        NS_FATAL_ERROR("ProcedureCode NOT SUPPORTED!!!");
     }
 }
 

@@ -238,7 +238,7 @@ GetModulationClassForStandard(WifiStandard standard)
     case WIFI_STANDARD_UNSPECIFIED:
         [[fallthrough]];
     default:
-        NS_ASSERT_MSG(false, "Unsupported standard " << standard);
+        NS_FATAL_ERROR("Unsupported standard " << standard);
         break;
     }
     return modulationClass;

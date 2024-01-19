@@ -1423,7 +1423,7 @@ FrameExchangeManager::EndReceiveAmpdu(Ptr<const WifiPsdu> psdu,
                                       const WifiTxVector& txVector,
                                       const std::vector<bool>& perMpduStatus)
 {
-    NS_ASSERT_MSG(false, "A non-QoS station should not receive an A-MPDU");
+    NS_FATAL_ERROR("A non-QoS station should not receive an A-MPDU");
 }
 
 } // namespace ns3

@@ -205,7 +205,7 @@ RrpaaWifiManager::GetCalcTxTime(WifiMode mode) const
             return i->first;
         }
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("WifiMode not found");
     return Seconds(0);
 }
 

@@ -291,7 +291,7 @@ NodeStatistics::GetCalcTxTime(DataRate rate)
             return i->first;
         }
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Data rate: " << rate << " not found");
     return Seconds(0);
 }
 

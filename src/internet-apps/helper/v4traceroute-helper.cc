@@ -88,7 +88,7 @@ V4TraceRouteHelper::PrintTraceRouteAt(Ptr<Node> node, Ptr<OutputStreamWrapper> s
             return;
         }
     }
-    NS_ASSERT_MSG(false, "No V4TraceRoute application found in node " << node->GetId());
+    NS_FATAL_ERROR("No V4TraceRoute application found in node " << node->GetId());
 }
 
 } // namespace ns3

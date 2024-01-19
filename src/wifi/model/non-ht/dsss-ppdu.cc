@@ -121,7 +121,7 @@ DsssPpdu::DsssSigHeader::SetRate(uint64_t rate)
         m_rate = 0b01101110;
         break;
     default:
-        NS_ASSERT_MSG(false, "Invalid rate");
+        NS_FATAL_ERROR("Invalid rate");
         break;
     }
 }
@@ -145,7 +145,7 @@ DsssPpdu::DsssSigHeader::GetRate() const
         rate = 11000000;
         break;
     default:
-        NS_ASSERT_MSG(false, "Invalid rate");
+        NS_FATAL_ERROR("Invalid rate");
         break;
     }
     return rate;

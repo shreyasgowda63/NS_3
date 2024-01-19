@@ -425,7 +425,7 @@ Ipv4StaticRouting::GetRoute(uint32_t index) const
         }
         tmp++;
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Invalid route index");
     // quiet compiler.
     return nullptr;
 }
@@ -443,7 +443,7 @@ Ipv4StaticRouting::GetMetric(uint32_t index) const
         }
         tmp++;
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Invalid metric index");
     // quiet compiler.
     return 0;
 }
@@ -463,7 +463,7 @@ Ipv4StaticRouting::RemoveRoute(uint32_t index)
         }
         tmp++;
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Invalid route index");
 }
 
 Ptr<Ipv4Route>

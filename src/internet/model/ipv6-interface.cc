@@ -398,7 +398,7 @@ Ipv6Interface::GetAddressMatchingDestination(Ipv6Address dst)
         }
     }
 
-    /*  NS_ASSERT_MSG (false, "Not matching address."); */
+    // NS_FATAL_ERROR("No matching address");
     Ipv6InterfaceAddress ret;
     return ret; /* quiet compiler */
 }

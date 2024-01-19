@@ -250,7 +250,7 @@ RateErrorModel::DoCorrupt(Ptr<Packet> p)
     case ERROR_UNIT_BIT:
         return DoCorruptBit(p);
     default:
-        NS_ASSERT_MSG(false, "m_unit not supported yet");
+        NS_FATAL_ERROR("m_unit not supported yet");
         break;
     }
     return false;

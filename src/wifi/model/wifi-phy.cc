@@ -1006,7 +1006,7 @@ WifiPhy::ConfigureStandard(WifiStandard standard)
         break;
     case WIFI_STANDARD_UNSPECIFIED:
     default:
-        NS_ASSERT_MSG(false, "Unsupported standard");
+        NS_FATAL_ERROR("Unsupported standard");
         break;
     }
 }
@@ -1157,7 +1157,7 @@ WifiPhy::GetDelayUntilChannelSwitch()
         NS_LOG_DEBUG("channel switching ignored in sleep mode");
         break;
     default:
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Unknown WifiPhyState");
         break;
     }
 
@@ -1359,7 +1359,7 @@ WifiPhy::SetSleepMode()
         NS_LOG_DEBUG("already in sleep mode");
         break;
     default:
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Unknown WifiPhyState");
         break;
     }
 }
@@ -1395,7 +1395,7 @@ WifiPhy::ResumeFromSleep()
         break;
     }
     default: {
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Unknown WifiPhyState");
         break;
     }
     }
@@ -1423,7 +1423,7 @@ WifiPhy::ResumeFromOff()
         break;
     }
     default: {
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Unknown WifiPhyState");
         break;
     }
     }
@@ -1920,7 +1920,7 @@ WifiPhy::GetDefaultMode() const
             return mode;
         }
     }
-    NS_ASSERT_MSG(false, "Should have found at least one default mode");
+    NS_FATAL_ERROR("Should have found at least one default mode");
     return WifiMode();
 }
 

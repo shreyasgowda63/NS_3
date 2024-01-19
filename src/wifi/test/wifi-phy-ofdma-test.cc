@@ -515,7 +515,7 @@ TestDlOfdmaPhyTransmission::SendMuPpdu(uint16_t rxStaId1, uint16_t rxStaId2)
     }
     else
     {
-        NS_ASSERT_MSG(false, "Unsupported channel width");
+        NS_FATAL_ERROR("Unsupported channel width");
     }
 
     txVector.SetSigBMode(VhtPhy::GetVhtMcs5());
@@ -3303,7 +3303,7 @@ TestUlOfdmaPhyTransmission::GetTxVectorForHeTbPpdu(uint16_t txStaId,
     }
     else
     {
-        NS_ASSERT_MSG(false, "Unsupported channel width");
+        NS_FATAL_ERROR("Unsupported channel width");
     }
 
     bool primary80MHz = true;
@@ -3360,7 +3360,7 @@ TestUlOfdmaPhyTransmission::SetTrigVector(uint8_t bssColor, TrigVectorInfo error
     }
     else
     {
-        NS_ASSERT_MSG(false, "Unsupported channel width");
+        NS_FATAL_ERROR("Unsupported channel width");
     }
 
     uint16_t aid1 = (error == AID ? 3 : 1);

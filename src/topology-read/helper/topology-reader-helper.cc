@@ -79,7 +79,7 @@ TopologyReaderHelper::GetTopologyReader()
         }
         else
         {
-            NS_ASSERT_MSG(false, "Wrong (unknown) File Type");
+            NS_FATAL_ERROR("Wrong (unknown) File Type");
         }
 
         m_inputModel->SetFileName(m_fileName);

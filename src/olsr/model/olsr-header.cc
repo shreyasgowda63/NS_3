@@ -204,7 +204,7 @@ MessageHeader::GetSerializedSize() const
         size += m_message.hna.GetSerializedSize();
         break;
     default:
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Unknown OLSR message type");
     }
     return size;
 }
@@ -250,7 +250,7 @@ MessageHeader::Print(std::ostream& os) const
         m_message.hna.Print(os);
         break;
     default:
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Unknown OLSR message type");
     }
 }
 
@@ -281,7 +281,7 @@ MessageHeader::Serialize(Buffer::Iterator start) const
         m_message.hna.Serialize(i);
         break;
     default:
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Unknown OLSR message type");
     }
 }
 
@@ -314,7 +314,7 @@ MessageHeader::Deserialize(Buffer::Iterator start)
         size += m_message.hna.Deserialize(i, m_messageSize - OLSR_MSG_HEADER_SIZE);
         break;
     default:
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Unknown OLSR message type");
     }
     return size;
 }

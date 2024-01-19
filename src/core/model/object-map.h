@@ -104,7 +104,7 @@ MakeObjectMapAccessor(U T::*memberVector)
                     return (*j).second;
                 }
             }
-            NS_ASSERT(false);
+            NS_FATAL_ERROR("Unable to get object map");
             // quiet compiler.
             return nullptr;
         }

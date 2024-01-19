@@ -141,7 +141,7 @@ template <int N>
 void
 HistoryHeader<N>::Print(std::ostream& os) const
 {
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Not yet implemented");
 }
 
 template <int N>
@@ -282,7 +282,7 @@ template <int N>
 void
 HistoryTrailer<N>::Print(std::ostream& os) const
 {
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Not yet implemented");
 }
 
 template <int N>

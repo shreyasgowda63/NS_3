@@ -1685,7 +1685,7 @@ Icmpv6L4Protocol::FindCache(Ptr<NetDevice> device)
         }
     }
 
-    NS_ASSERT_MSG(false, "Icmpv6L4Protocol can not find a NDIS Cache for device " << device);
+    NS_FATAL_ERROR("Icmpv6L4Protocol can not find a NDIS Cache for device " << device);
     /* quiet compiler */
     return nullptr;
 }

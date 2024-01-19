@@ -975,7 +975,7 @@ AnimationInterface::WifiPhyRxBeginTrace(std::string context,
     NS_LOG_INFO("Wifi RxBeginTrace for packet: " << animUid);
     if (!IsPacketPending(animUid, AnimationInterface::WIFI))
     {
-        NS_ASSERT_MSG(false, "WifiPhyRxBeginTrace: unknown Uid");
+        NS_FATAL_ERROR("WifiPhyRxBeginTrace: unknown Uid");
         std::ostringstream oss;
         WifiMacHeader hdr;
         if (!p->PeekHeader(hdr))

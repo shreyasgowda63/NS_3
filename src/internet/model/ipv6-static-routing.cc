@@ -613,7 +613,7 @@ Ipv6StaticRouting::GetRoute(uint32_t index) const
         }
         tmp++;
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Invalid route index");
     // quiet compiler.
     return nullptr;
 }
@@ -632,7 +632,7 @@ Ipv6StaticRouting::GetMetric(uint32_t index) const
         }
         tmp++;
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Invalid metric index");
     // quiet compiler.
     return 0;
 }
@@ -653,7 +653,7 @@ Ipv6StaticRouting::RemoveRoute(uint32_t index)
         }
         tmp++;
     }
-    NS_ASSERT(false);
+    NS_FATAL_ERROR("Invalid route index");
 }
 
 void

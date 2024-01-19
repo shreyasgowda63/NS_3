@@ -90,6 +90,20 @@ clang-tidy-17:
   interruptible: true
   timeout: 3h
 
+# Asserts
+ns-assert-false:
+  stage: .pre
+  image: ubuntu:latest
+  script:
+    - if ( egrep -rn --include="*.h" --include="*.cc" "NS_ASSERT(_MSG)?\((false|0)(,|\))" ) ; then
+      echo "Found the above NS_ASSERT() whose conditions are always false. Prefer to use NS_FATAL_ERROR()." ;
+      exit 1 ;
+      else
+      echo "Did not find NS_ASSERT() whose conditions are always false" ;
+      exit 0 ;
+      fi
+  timeout: 1h
+
 # Emacs line
 emacs-line:
   stage: .pre

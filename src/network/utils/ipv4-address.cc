@@ -225,8 +225,7 @@ Ipv4Address::GetSubnetDirectedBroadcast(const Ipv4Mask& mask) const
     NS_LOG_FUNCTION(this << mask);
     if (mask == Ipv4Mask::GetOnes())
     {
-        NS_ASSERT_MSG(false,
-                      "Trying to get subnet-directed broadcast address with an all-ones netmask");
+        NS_FATAL_ERROR("Trying to get subnet-directed broadcast address with an all-ones netmask");
     }
     return Ipv4Address(Get() | mask.GetInverse());
 }

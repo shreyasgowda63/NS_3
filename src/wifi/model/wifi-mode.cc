@@ -167,12 +167,10 @@ WifiMode::GetMcsValue() const
     {
         return item->mcsValue;
     }
-    else
-    {
-        // We should not go here!
-        NS_ASSERT(false);
-        return 0;
-    }
+
+    // We should not go here!
+    NS_FATAL_ERROR("Invalid WifiModeItem");
+    return 0;
 }
 
 uint32_t

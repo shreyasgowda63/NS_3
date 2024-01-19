@@ -205,10 +205,9 @@ LteRlcAm::DoNotifyTxOpportunity(LteMacSapUser::TxOpportunityParameters txOpParam
         // Stingy MAC: In general, we need more bytes.
         // There are a more restrictive test for each particular case
         NS_LOG_LOGIC("TxOpportunity (size = " << txOpParams.bytes << ") too small");
-        NS_ASSERT_MSG(false,
-                      "TxOpportunity (size = "
-                          << txOpParams.bytes << ") too small.\n"
-                          << "Your MAC scheduler is assigned too few resource blocks.");
+        NS_FATAL_ERROR("TxOpportunity (size = "
+                       << txOpParams.bytes << ") too small.\n"
+                       << "Your MAC scheduler is assigned too few resource blocks.");
         return;
     }
 
@@ -220,11 +219,10 @@ LteRlcAm::DoNotifyTxOpportunity(LteMacSapUser::TxOpportunityParameters txOpParam
             NS_LOG_LOGIC("TxOpportunity (size = " << txOpParams.bytes
                                                   << ") too small for the STATUS PDU (size = "
                                                   << m_statusPduBufferSize << ")");
-            NS_ASSERT_MSG(false,
-                          "TxOpportunity (size = "
-                              << txOpParams.bytes << ") too small for the STATUS PDU (size = "
-                              << m_statusPduBufferSize << ")\n"
-                              << "Your MAC scheduler is assigned too few resource blocks.");
+            NS_FATAL_ERROR("TxOpportunity (size = "
+                           << txOpParams.bytes << ") too small for the STATUS PDU (size = "
+                           << m_statusPduBufferSize << ")\n"
+                           << "Your MAC scheduler is assigned too few resource blocks.");
             return;
         }
 
@@ -420,7 +418,7 @@ LteRlcAm::DoNotifyTxOpportunity(LteMacSapUser::TxOpportunityParameters txOpParam
                 }
             }
         }
-        NS_ASSERT_MSG(false, "m_retxBufferSize > 0, but no PDU considered for retx found");
+        NS_FATAL_ERROR("m_retxBufferSize > 0, but no PDU considered for retx found");
     }
     else if (m_txonBufferSize > 0)
     {
@@ -429,10 +427,9 @@ LteRlcAm::DoNotifyTxOpportunity(LteMacSapUser::TxOpportunityParameters txOpParam
             // Stingy MAC: We need more bytes for new DATA PDUs.
             NS_LOG_LOGIC("TxOpportunity (size = " << txOpParams.bytes
                                                   << ") too small for DATA PDU");
-            NS_ASSERT_MSG(false,
-                          "TxOpportunity (size = "
-                              << txOpParams.bytes << ") too small for DATA PDU\n"
-                              << "Your MAC scheduler is assigned too few resource blocks.");
+            NS_FATAL_ERROR("TxOpportunity (size = "
+                           << txOpParams.bytes << ") too small for DATA PDU\n"
+                           << "Your MAC scheduler is assigned too few resource blocks.");
             return;
         }
 
@@ -874,7 +871,7 @@ LteRlcAm::DoReceivePdu(LteMacSapUser::ReceivePduParameters rxPduParams)
         }
         else
         {
-            NS_ASSERT_MSG(false, "Neither a PDU segment nor a PDU received");
+            NS_FATAL_ERROR("Neither a PDU segment nor a PDU received");
             return;
         }
 

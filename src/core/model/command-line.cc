@@ -217,8 +217,7 @@ CommandLine::Parse(std::vector<std::string> args)
             }
 
             // is this possible?
-            NS_ASSERT_MSG(false,
-                          "unexpected error parsing command line parameter: '" << param << "'");
+            NS_FATAL_ERROR("unexpected error parsing command line parameter: '" << param << "'");
         }
     }
 

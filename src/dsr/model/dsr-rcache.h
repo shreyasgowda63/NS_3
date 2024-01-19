@@ -353,7 +353,7 @@ class DsrRouteCacheEntry
     {
         if (m_path.size() != o.m_path.size())
         {
-            NS_ASSERT(false);
+            NS_FATAL_ERROR("Vectors have different sizes");
             return false;
         }
         auto j = o.m_path.begin();

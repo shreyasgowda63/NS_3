@@ -532,7 +532,7 @@ RoutingProtocol::RecvOlsr(Ptr<Socket> socket)
         MessageHeader messageHeader;
         if (packet->RemoveHeader(messageHeader) == 0)
         {
-            NS_ASSERT(false);
+            NS_FATAL_ERROR("Could not remove packet header");
         }
 
         sizeLeft -= messageHeader.GetSerializedSize();
@@ -3128,7 +3128,8 @@ RoutingProtocol::AddEntry(const Ipv4Address& dest,
             }
         }
     }
-    NS_ASSERT(false); // should not be reached
+    // should not be reached
+    NS_FATAL_ERROR("Unable to add entry");
     AddEntry(dest, next, 0, distance);
 }
 

@@ -85,7 +85,7 @@ GetWildcardMatches(const std::string& configPath,
         // Make sure that the token is found.
         if (token == std::string::npos)
         {
-            NS_ASSERT_MSG(false, "Error: non-wildcard token not found in matched path");
+            NS_FATAL_ERROR("Error: non-wildcard token not found in matched path");
         }
 
         // Save the position of this non-wildcard token.

@@ -1486,7 +1486,7 @@ LrWpanPhy::EndCca()
     }
     else
     {
-        NS_ASSERT_MSG(false, "Invalid CCA mode");
+        NS_FATAL_ERROR("Invalid CCA mode");
     }
 
     NS_LOG_LOGIC(this << "channel sensed state: " << sensedChannelState);

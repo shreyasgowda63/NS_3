@@ -224,7 +224,7 @@ MeshInformationElementVector::operator==(const MeshInformationElementVector& a) 
 {
     if (m_elements.size() != a.m_elements.size())
     {
-        NS_ASSERT(false);
+        NS_FATAL_ERROR("Vectors have different sizes");
         return false;
     }
     // In principle we could bypass some of the faffing about (and speed

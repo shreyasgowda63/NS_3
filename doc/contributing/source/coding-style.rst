@@ -1477,6 +1477,9 @@ Miscellaneous items
         ...
     };
 
+- Do not use always-false asserts, such as ``NS_ASSERT(false, ...)`` or ``NS_ASSERT_MSG(false, ...)``.
+  Prefer to use ``NS_FATAL_ERROR()`` or ``NS_ABORT_MSG()``.
+
 Clang-tidy rules
 ================
 
