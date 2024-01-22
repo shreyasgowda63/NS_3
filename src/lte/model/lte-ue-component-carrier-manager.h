@@ -24,7 +24,7 @@
 #include "lte-mac-sap.h"
 #include "lte-ue-ccm-rrc-sap.h"
 
-#include <ns3/object.h>
+#include "ns3/object.h"
 
 #include <map>
 #include <vector>

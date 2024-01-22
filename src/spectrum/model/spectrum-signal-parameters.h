@@ -20,8 +20,8 @@
 #ifndef SPECTRUM_SIGNAL_PARAMETERS_H
 #define SPECTRUM_SIGNAL_PARAMETERS_H
 
-#include <ns3/matrix-array.h>
-#include <ns3/nstime.h>
+#include "ns3/matrix-array.h"
+#include "ns3/nstime.h"
 
 namespace ns3
 {

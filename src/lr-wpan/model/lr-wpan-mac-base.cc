@@ -19,8 +19,8 @@
 
 #include "lr-wpan-mac-base.h"
 
-#include <ns3/log.h>
-#include <ns3/uinteger.h>
+#include "ns3/log.h"
+#include "ns3/uinteger.h"
 
 namespace ns3
 {

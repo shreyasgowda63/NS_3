@@ -17,11 +17,11 @@
  * Author: Benjamin Cizdziel <ben.cizdziel@gmail.com>
  */
 
-#include <ns3/core-module.h>
-#include <ns3/mobility-module.h>
-#include <ns3/spectrum-analyzer-helper.h>
-#include <ns3/spectrum-helper.h>
-#include <ns3/tv-spectrum-transmitter-helper.h>
+#include "ns3/core-module.h"
+#include "ns3/mobility-module.h"
+#include "ns3/spectrum-analyzer-helper.h"
+#include "ns3/spectrum-helper.h"
+#include "ns3/tv-spectrum-transmitter-helper.h"
 
 #include <iostream>
 #include <stdlib.h>

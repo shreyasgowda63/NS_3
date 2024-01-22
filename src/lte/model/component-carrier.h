@@ -20,7 +20,7 @@
 #ifndef COMPONENT_CARRIER_H
 #define COMPONENT_CARRIER_H
 
-#include <ns3/object.h>
+#include "ns3/object.h"
 
 namespace ns3
 {

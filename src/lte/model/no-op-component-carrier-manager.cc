@@ -24,8 +24,8 @@
 
 #include "lte-common.h"
 
-#include <ns3/log.h>
-#include <ns3/random-variable-stream.h>
+#include "ns3/log.h"
+#include "ns3/random-variable-stream.h"
 
 namespace ns3
 {

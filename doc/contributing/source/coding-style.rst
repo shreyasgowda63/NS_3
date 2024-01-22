@@ -123,13 +123,15 @@ as a Merge Request.
 
 The script has multiple modes of operation. By default, the script checks if
 source code files are well formatted, if there are no #include headers from the same
-module with the "ns3/" prefix, and text files do not have trailing whitespace
-nor tabs. The process returns a zero exit code if all files adhere to these rules.
+module with the "ns3/" prefix, if |ns3| #include headers use quotes ("") instead of
+angle brackets (<>), and text files do not have trailing whitespace nor tabs.
+The process returns a zero exit code if all files adhere to these rules.
 If there are files that do not comply with the rules, the process returns a non-zero
 exit code and lists the respective files. This mode is useful for developers editing
 their code and for the GitLab CI/CD pipeline to check if the codebase is well formatted.
 All checks are enabled by default. Users can disable specific checks using the corresponding
-flags: ``--no-include-prefixes``, ``--no-formatting``, ``--no-whitespace`` and ``--no-tabs``.
+flags: ``--no-include-prefixes``, ``--no-include-brackets``, ``--no-formatting``,
+``--no-whitespace`` and ``--no-tabs``.
 
 Additional information about the formatting issues detected by the script can be enabled
 by adding the ``-v, --verbose`` flag.
@@ -742,7 +744,7 @@ For standard headers, use the C++ style of inclusion:
 
   .. sourcecode:: cpp
 
-    #include <ns3/header.h>
+    #include "ns3/header.h"
 
 - inside .cc files, use
 
@@ -754,7 +756,7 @@ For standard headers, use the C++ style of inclusion:
 
   .. sourcecode:: cpp
 
-    #include <ns3/header.h>
+    #include "ns3/header.h"
 
 Variables and constants
 =======================

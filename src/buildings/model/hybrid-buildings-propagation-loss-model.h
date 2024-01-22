@@ -24,7 +24,7 @@
 
 #include "buildings-propagation-loss-model.h"
 
-#include <ns3/propagation-environment.h>
+#include "ns3/propagation-environment.h"
 
 namespace ns3
 {

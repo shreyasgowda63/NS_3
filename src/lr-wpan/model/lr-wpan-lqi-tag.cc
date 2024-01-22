@@ -19,7 +19,7 @@
  */
 #include "lr-wpan-lqi-tag.h"
 
-#include <ns3/integer.h>
+#include "ns3/integer.h"
 
 namespace ns3
 {
