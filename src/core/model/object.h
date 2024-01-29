@@ -198,6 +198,7 @@ class Object : public SimpleRefCount<Object, ObjectBase, ObjectDeleter>
      * \sa NotifyNewAggregate()
      */
     void AggregateObject(Ptr<Object> other);
+    void AggregateObjectOneWay(Ptr<Object> other);
 
     /**
      * Get an iterator to the Objects aggregated to this one.
