@@ -158,7 +158,7 @@ If there are files that do not comply with the rules, the process returns a non-
 exit code and lists the respective files. This mode is useful for developers editing
 their code and for the GitLab CI/CD pipeline to check if the codebase is well formatted.
 All checks are enabled by default. Users can disable specific checks using the corresponding
-flags: ``--no-include-prefixes``, ``--no-formatting``, ``--no-whitespace`` and ``--no-tabs``.
+flags: ``--no-include-prefixes``, ``--no-doxygen-tags``, ``--no-formatting``, ``--no-whitespace`` and ``--no-tabs``.
 
 Additional information about the formatting issues detected by the script can be enabled
 by adding the ``-v, --verbose`` flag.
