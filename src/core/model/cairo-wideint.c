@@ -43,6 +43,8 @@
  * Implementation of the cairo_x functions which implement high precision arithmetic.
  */
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #if HAVE_UINT64_T
 
 const char * cairo_impl64 = "uint64_t";
@@ -826,6 +828,8 @@ _cairo_int_96by64_32x64_divrem (cairo_int128_t num, cairo_int64_t den)
 	qr.quo = uqr.quo;
     return qr;
 }
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 // clang-format on
 // NOLINTEND

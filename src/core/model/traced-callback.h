@@ -48,6 +48,9 @@ namespace ns3
  * number of arguments.
  *
  * \tparam Ts \explicit Types of the functor arguments.
+ *
+ * Inheritance graph was not generated because of its size.
+ * \hideinheritancegraph
  */
 template <typename... Ts>
 class TracedCallback
