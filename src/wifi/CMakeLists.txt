@@ -162,6 +162,10 @@ set(source_files
     model/yans-wifi-channel.cc
     model/yans-wifi-phy.cc
     model/wifi-spectrum-value-helper.cc
+    model/si-units/units-angle.cc
+    model/si-units/units-attributes.cc
+    model/si-units/units-energy.cc
+    model/si-units/units-frequency.cc
 )
 
 set(header_files
@@ -329,6 +333,13 @@ set(header_files
     model/yans-wifi-channel.h
     model/yans-wifi-phy.h
     model/wifi-spectrum-value-helper.h
+    model/si-units/format-string.h
+    model/si-units/si-units.h
+    model/si-units/units-aliases.h
+    model/si-units/units-angle.h
+    model/si-units/units-attributes.h
+    model/si-units/units-energy.h
+    model/si-units/units-frequency.h
 )
 
 build_lib(
@@ -372,4 +383,5 @@ build_lib(
     test/wifi-non-ht-dup-test.cc
     test/wifi-phy-mu-mimo-test.cc
     test/wifi-operating-channel-test.cc
+    test/si-units-test.cc
 )
