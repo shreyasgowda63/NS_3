@@ -42,8 +42,6 @@
  * high precision arithmetic implementation.
  */
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 // Adapt to ns-3 environment
 // Additional changes from upstream are marked with `//PDB'
 #include "ns3/core-config.h"
@@ -361,8 +359,6 @@ _cairo_int_96by64_32x64_divrem (cairo_int128_t num,
 #ifdef __cplusplus
 };
 #endif
-
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 #endif /* CAIRO_WIDEINT_H */
 
