@@ -3232,22 +3232,82 @@ LteEnbRrc::DoSendLoadInformation(EpcX2Sap::LoadInformationParams params)
 }
 
 uint16_t
-LteEnbRrc::AddUe(UeManager::State state, uint8_t componentCarrierId)
+LteEnbRrc::AllocateRnti()
 {
-    NS_LOG_FUNCTION(this);
-    bool found = false;
-    uint16_t rnti;
-    for (rnti = m_lastAllocatedRnti + 1; (rnti != m_lastAllocatedRnti - 1) && (!found); ++rnti)
+    // rnti == 0 is reserved
+    m_rntiBitmap[0] |= (uint64_t)0x01 << 63;
+
+    // We reuse the last allocated RNTI to reduce the search space
+    auto lastAllocatedSlotGroup = m_lastAllocatedRnti / 64;
+
+    // We search for the first slot group with an available RNTI (0 bit)
+    auto slotGroupIt =
+        std::find_if(m_rntiBitmap.begin() + lastAllocatedSlotGroup,
+                     m_rntiBitmap.end(),
+                     [](uint64_t a) { return a != std::numeric_limits<uint64_t>::max(); });
+    // If an empty slot as not found, we wrap around the search (slow path)
+    if (slotGroupIt == m_rntiBitmap.end())
     {
-        if ((rnti != 0) && (m_ueMap.find(rnti) == m_ueMap.end()))
+        slotGroupIt =
+            std::find_if(m_rntiBitmap.begin(),
+                         m_rntiBitmap.begin() + lastAllocatedSlotGroup,
+                         [](uint64_t a) { return a != std::numeric_limits<uint64_t>::max(); });
+        // If we can't find in the subsearch, return the end of the container
+        if (slotGroupIt == m_rntiBitmap.begin() + lastAllocatedSlotGroup)
         {
-            found = true;
+            slotGroupIt = m_rntiBitmap.end();
+        }
+    }
+    // If am empty slot as not found, we return 0
+    if (slotGroupIt == m_rntiBitmap.end())
+    {
+        return 0;
+    }
+
+    // If slot group was found, search for the exact bit position using a linear search
+    uint16_t slotGroup = std::distance(m_rntiBitmap.begin(), slotGroupIt);
+    uint16_t rnti = 0;
+    uint8_t slotI = 0;
+    for (; slotI < 64; slotI++)
+    {
+        if (!(*slotGroupIt & ((uint64_t)0x01 << (63 - slotI))))
+        {
+            rnti = slotGroup * 64 + slotI;
             break;
         }
     }
+    // Set rnti bit to mark as used
+    m_rntiBitmap[slotGroup] |= (uint64_t)0x01 << (63 - slotI);
 
-    NS_ASSERT_MSG(found, "no more RNTIs available (do you have more than 65535 UEs in a cell?)");
+    // Remember last allocated rnti
     m_lastAllocatedRnti = rnti;
+    return rnti;
+}
+
+void
+LteEnbRrc::DeallocateRnti(uint16_t rnti)
+{
+    // rnti == 0 is reserved
+    if (rnti == 0)
+    {
+        return;
+    }
+    // Calculate slot group and offset
+    auto slotGroup = rnti / 64;
+    auto slotI = rnti % 64;
+
+    // Mask bit off
+    m_rntiBitmap[slotGroup] &= ~((uint64_t)0x01 << (63 - slotI));
+    m_lastAllocatedRnti = m_lastAllocatedRnti <= rnti - 1 ? m_lastAllocatedRnti : rnti - 1;
+}
+
+uint16_t
+LteEnbRrc::AddUe(UeManager::State state, uint8_t componentCarrierId)
+{
+    NS_LOG_FUNCTION(this);
+    uint16_t rnti = AllocateRnti();
+    NS_ABORT_MSG_UNLESS(rnti != 0,
+                        "no more RNTIs available (do you have more than 65535 UEs in a cell?)");
     Ptr<UeManager> ueManager = CreateObject<UeManager>(this, rnti, state, componentCarrierId);
     m_ccmRrcSapProvider->AddUe(rnti, (uint8_t)state);
     m_ueMap.insert(std::pair<uint16_t, Ptr<UeManager>>(rnti, ueManager));
@@ -3291,6 +3351,7 @@ LteEnbRrc::RemoveUe(uint16_t rnti)
     }
 
     m_rrcSapUser->RemoveUe(rnti); // Remove UE context at RRC protocol
+    DeallocateRnti(rnti);
 }
 
 TypeId
