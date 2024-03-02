@@ -618,6 +618,8 @@ class TcpSocketBase : public TcpSocket
     int GetSockName(Address& address) const override; // Return local addr:port in address
     int GetPeerName(Address& address) const override;
     void BindToNetDevice(Ptr<NetDevice> netdevice) override; // NetDevice with my m_endPoint
+    int MulticastJoinGroup(uint32_t interface, const Address& groupAddress) override;
+    int MulticastLeaveGroup(uint32_t interface, const Address& groupAddress) override;
 
     /**
      * TracedCallback signature for tcp packet transmission or reception events.

@@ -530,6 +530,26 @@ PacketSocket::GetAllowBroadcast() const
     return false;
 }
 
+int
+PacketSocket::MulticastJoinGroup(uint32_t interface, const Address& groupAddress)
+{
+    NS_LOG_FUNCTION(this << interface << groupAddress);
+
+    NS_ABORT_MSG("Unimplemented (yet)");
+
+    return 0;
+}
+
+int
+PacketSocket::MulticastLeaveGroup(uint32_t interface, const Address& groupAddress)
+{
+    NS_LOG_FUNCTION(this << interface << groupAddress);
+
+    NS_ABORT_MSG("Unimplemented (yet)");
+
+    return 0;
+}
+
 /***************************************************************
  *           PacketSocket Tags
  ***************************************************************/

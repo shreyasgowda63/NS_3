@@ -146,7 +146,18 @@ PacketSink::StartApplication() // Called at time specified by Start
             if (udpSocket)
             {
                 // equivalent to setsockopt (MCAST_JOIN_GROUP)
-                udpSocket->MulticastJoinGroup(0, m_local);
+                if (InetSocketAddress::IsMatchingType(m_local))
+                {
+                    udpSocket->MulticastJoinGroup(
+                        0,
+                        InetSocketAddress::ConvertFrom(m_local).GetIpv4());
+                }
+                else if (Inet6SocketAddress::IsMatchingType(m_local))
+                {
+                    udpSocket->MulticastJoinGroup(
+                        0,
+                        Inet6SocketAddress::ConvertFrom(m_local).GetIpv6());
+                }
             }
             else
             {

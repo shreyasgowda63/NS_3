@@ -360,6 +360,26 @@ Ipv6RawSocketImpl::RecvFrom(uint32_t maxSize, uint32_t flags, Address& fromAddre
     return data.packet;
 }
 
+int
+Ipv6RawSocketImpl::MulticastJoinGroup(uint32_t interface, const Address& groupAddress)
+{
+    NS_LOG_FUNCTION(this << interface << groupAddress);
+
+    NS_ABORT_MSG("Unimplemented (yet)");
+
+    return 0;
+}
+
+int
+Ipv6RawSocketImpl::MulticastLeaveGroup(uint32_t interface, const Address& groupAddress)
+{
+    NS_LOG_FUNCTION(this << interface << groupAddress);
+
+    NS_ABORT_MSG("Unimplemented (yet)");
+
+    return 0;
+}
+
 // void
 // Ipv6RawSocketImpl::Ipv6JoinGroup(Ipv6Address address,
 //                                  Socket::Ipv6MulticastFilterMode filterMode,

@@ -4737,6 +4737,26 @@ TcpSocketBase::GetHighRxAck() const
     return m_highRxAckMark.Get();
 }
 
+int
+TcpSocketBase::MulticastJoinGroup(uint32_t interface, const Address& groupAddress)
+{
+    NS_LOG_FUNCTION(this << interface << groupAddress);
+
+    NS_ABORT_MSG("TCP can not join or leave multicast groups");
+
+    return 0;
+}
+
+int
+TcpSocketBase::MulticastLeaveGroup(uint32_t interface, const Address& groupAddress)
+{
+    NS_LOG_FUNCTION(this << interface << groupAddress);
+
+    NS_ABORT_MSG("TCP can not join or leave multicast groups");
+
+    return 0;
+}
+
 // RttHistory methods
 RttHistory::RttHistory(SequenceNumber32 s, uint32_t c, Time t)
     : seq(s),

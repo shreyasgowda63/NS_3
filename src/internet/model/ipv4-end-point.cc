@@ -171,4 +171,41 @@ Ipv4EndPoint::IsRxEnabled() const
     return m_rxEnabled;
 }
 
+void
+Ipv4EndPoint::AddMulticastAddress(Ipv4Address address, uint32_t interfaceIndex)
+{
+    if (address.IsMulticast())
+    {
+        m_multicastAddresses.insert({address, interfaceIndex});
+    }
+}
+
+void
+Ipv4EndPoint::RemoveMulticastAddress(Ipv4Address address, uint32_t interfaceIndex)
+{
+    m_multicastAddresses.erase({address, interfaceIndex});
+}
+
+bool
+Ipv4EndPoint::IsMulticastAddressHandled(Ipv4Address address, uint32_t interfaceIndex)
+{
+    return m_multicastAddresses.contains({address, interfaceIndex});
+}
+
+void
+Ipv4EndPoint::CleanMulticastAddresses(Ptr<Ipv4L3Protocol> ipv4)
+{
+    for (auto iter : m_multicastAddresses)
+    {
+        if (iter.second)
+        {
+            ipv4->RemoveMulticastAddress(iter.first, iter.second);
+        }
+        else
+        {
+            ipv4->RemoveMulticastAddress(iter.first);
+        }
+    }
+    m_multicastAddresses.clear();
+}
 } // namespace ns3

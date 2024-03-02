@@ -248,6 +248,7 @@ Ipv4EndPointDemux::Lookup(Ipv4Address daddr,
         bool localAddressMatchesExact = false;
         bool localAddressIsAny = false;
         bool localAddressIsSubnetAny = false;
+        bool isMulticastHandledByInterface = false;
 
         // We have 3 cases:
         // 1) Exact local / destination address match
@@ -255,7 +256,13 @@ Ipv4EndPointDemux::Lookup(Ipv4Address daddr,
         // 3) Local endpoint bound to x.y.z.0 -> matches Subnet-directed broadcast packet (e.g.,
         // x.y.z.255 in a /24 net) and direct destination match.
 
-        if (endP->GetLocalAddress() == daddr)
+        if (daddr.IsMulticast())
+        {
+            isMulticastHandledByInterface =
+                endP->IsMulticastAddressHandled(daddr, incomingInterface->GetIndex());
+        }
+
+        if (endP->GetLocalAddress() == daddr || isMulticastHandledByInterface)
         {
             // Case 1:
             localAddressMatchesExact = true;
