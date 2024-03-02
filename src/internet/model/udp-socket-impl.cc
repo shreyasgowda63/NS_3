@@ -399,7 +399,6 @@ UdpSocketImpl::Close()
         m_errno = Socket::ERROR_BADF;
         return -1;
     }
-    Ipv6LeaveGroup();
     m_shutdownRecv = true;
     m_shutdownSend = true;
     DeallocateEndPoint();
@@ -1248,51 +1247,52 @@ UdpSocketImpl::GetAllowBroadcast() const
     return m_allowBroadcast;
 }
 
-void
-UdpSocketImpl::Ipv6JoinGroup(Ipv6Address address,
-                             Socket::Ipv6MulticastFilterMode filterMode,
-                             std::vector<Ipv6Address> sourceAddresses)
-{
-    NS_LOG_FUNCTION(this << address << &filterMode << &sourceAddresses);
+// void
+// UdpSocketImpl::Ipv6JoinGroup(Ipv6Address address,
+//                              Socket::Ipv6MulticastFilterMode filterMode,
+//                              std::vector<Ipv6Address> sourceAddresses)
+// {
+//     NS_LOG_FUNCTION(this << address << &filterMode << &sourceAddresses);
 
-    // We can join only one multicast group (or change its params)
-    NS_ASSERT_MSG((m_ipv6MulticastGroupAddress == address || m_ipv6MulticastGroupAddress.IsAny()),
-                  "Can join only one IPv6 multicast group.");
+//     // We can join only one multicast group (or change its params)
+//     NS_ASSERT_MSG((m_ipv6MulticastGroupAddress == address ||
+//     m_ipv6MulticastGroupAddress.IsAny()),
+//                   "Can join only one IPv6 multicast group.");
 
-    m_ipv6MulticastGroupAddress = address;
+//     m_ipv6MulticastGroupAddress = address;
 
-    Ptr<Ipv6L3Protocol> ipv6l3 = m_node->GetObject<Ipv6L3Protocol>();
-    if (ipv6l3)
-    {
-        if (filterMode == INCLUDE && sourceAddresses.empty())
-        {
-            // it is a leave
-            if (m_boundnetdevice)
-            {
-                int32_t index = ipv6l3->GetInterfaceForDevice(m_boundnetdevice);
-                NS_ASSERT_MSG(index >= 0, "Interface without a valid index");
-                ipv6l3->RemoveMulticastAddress(address, index);
-            }
-            else
-            {
-                ipv6l3->RemoveMulticastAddress(address);
-            }
-        }
-        else
-        {
-            // it is a join or a modification
-            if (m_boundnetdevice)
-            {
-                int32_t index = ipv6l3->GetInterfaceForDevice(m_boundnetdevice);
-                NS_ASSERT_MSG(index >= 0, "Interface without a valid index");
-                ipv6l3->AddMulticastAddress(address, index);
-            }
-            else
-            {
-                ipv6l3->AddMulticastAddress(address);
-            }
-        }
-    }
-}
+//     Ptr<Ipv6L3Protocol> ipv6l3 = m_node->GetObject<Ipv6L3Protocol>();
+//     if (ipv6l3)
+//     {
+//         if (filterMode == INCLUDE && sourceAddresses.empty())
+//         {
+//             // it is a leave
+//             if (m_boundnetdevice)
+//             {
+//                 int32_t index = ipv6l3->GetInterfaceForDevice(m_boundnetdevice);
+//                 NS_ASSERT_MSG(index >= 0, "Interface without a valid index");
+//                 ipv6l3->RemoveMulticastAddress(address, index);
+//             }
+//             else
+//             {
+//                 ipv6l3->RemoveMulticastAddress(address);
+//             }
+//         }
+//         else
+//         {
+//             // it is a join or a modification
+//             if (m_boundnetdevice)
+//             {
+//                 int32_t index = ipv6l3->GetInterfaceForDevice(m_boundnetdevice);
+//                 NS_ASSERT_MSG(index >= 0, "Interface without a valid index");
+//                 ipv6l3->AddMulticastAddress(address, index);
+//             }
+//             else
+//             {
+//                 ipv6l3->AddMulticastAddress(address);
+//             }
+//         }
+//     }
+// }
 
 } // namespace ns3

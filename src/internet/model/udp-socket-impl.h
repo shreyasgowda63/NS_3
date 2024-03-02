@@ -117,9 +117,6 @@ class UdpSocketImpl : public UdpSocket
     void BindToNetDevice(Ptr<NetDevice> netdevice) override;
     bool SetAllowBroadcast(bool allowBroadcast) override;
     bool GetAllowBroadcast() const override;
-    void Ipv6JoinGroup(Ipv6Address address,
-                       Socket::Ipv6MulticastFilterMode filterMode,
-                       std::vector<Ipv6Address> sourceAddresses) override;
 
   private:
     // Attributes set through UdpSocket base class
