@@ -361,9 +361,9 @@ Ipv6RawSocketImpl::RecvFrom(uint32_t maxSize, uint32_t flags, Address& fromAddre
 }
 
 int
-Ipv6RawSocketImpl::MulticastJoinGroup(uint32_t interface, const Address& groupAddress)
+Ipv6RawSocketImpl::MulticastJoinGroup(const Address& groupAddress, uint32_t interfaceIndex)
 {
-    NS_LOG_FUNCTION(this << interface << groupAddress);
+    NS_LOG_FUNCTION(this << groupAddress << interfaceIndex);
 
     NS_ABORT_MSG("Unimplemented (yet)");
 
@@ -371,9 +371,9 @@ Ipv6RawSocketImpl::MulticastJoinGroup(uint32_t interface, const Address& groupAd
 }
 
 int
-Ipv6RawSocketImpl::MulticastLeaveGroup(uint32_t interface, const Address& groupAddress)
+Ipv6RawSocketImpl::MulticastLeaveGroup(const Address& groupAddress, uint32_t interfaceIndex)
 {
-    NS_LOG_FUNCTION(this << interface << groupAddress);
+    NS_LOG_FUNCTION(this << groupAddress << interfaceIndex);
 
     NS_ABORT_MSG("Unimplemented (yet)");
 

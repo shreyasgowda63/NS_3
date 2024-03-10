@@ -531,9 +531,9 @@ PacketSocket::GetAllowBroadcast() const
 }
 
 int
-PacketSocket::MulticastJoinGroup(uint32_t interface, const Address& groupAddress)
+PacketSocket::MulticastJoinGroup(const Address& groupAddress, uint32_t interfaceIndex)
 {
-    NS_LOG_FUNCTION(this << interface << groupAddress);
+    NS_LOG_FUNCTION(this << groupAddress << interfaceIndex);
 
     NS_ABORT_MSG("Unimplemented (yet)");
 
@@ -541,9 +541,9 @@ PacketSocket::MulticastJoinGroup(uint32_t interface, const Address& groupAddress
 }
 
 int
-PacketSocket::MulticastLeaveGroup(uint32_t interface, const Address& groupAddress)
+PacketSocket::MulticastLeaveGroup(const Address& groupAddress, uint32_t interfaceIndex)
 {
-    NS_LOG_FUNCTION(this << interface << groupAddress);
+    NS_LOG_FUNCTION(this << groupAddress << interfaceIndex);
 
     NS_ABORT_MSG("Unimplemented (yet)");
 

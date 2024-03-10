@@ -189,7 +189,10 @@ Ipv4EndPoint::RemoveMulticastAddress(Ipv4Address address, uint32_t interfaceInde
 bool
 Ipv4EndPoint::IsMulticastAddressHandled(Ipv4Address address, uint32_t interfaceIndex)
 {
-    return m_multicastAddresses.contains({address, interfaceIndex});
+    bool specific = m_multicastAddresses.contains({address, interfaceIndex});
+    bool generic = m_multicastAddresses.contains({address, 0});
+
+    return specific || generic;
 }
 
 void

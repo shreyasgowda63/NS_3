@@ -941,15 +941,15 @@ class Socket : public Object
     /**
      * \brief Corresponds to socket option MCAST_JOIN_GROUP
      *
-     * \param interface interface number, or 0
      * \param groupAddress multicast group address
+     * \param interfaceIndex IP interface index, or 0 (any interface)
      * \returns on success, zero is returned.  On error, -1 is returned,
      *          and errno is set appropriately
      *
      * Enable reception of multicast datagrams for this socket on the
-     * interface number specified.  If zero is specified as
-     * the interface, then a single local interface is chosen by
-     * system.  In the future, this function will generate trigger IGMP
+     * interface number specified.
+     *
+     * In the future, this function will generate trigger IGMP
      * joins as necessary when IGMP is implemented, but for now, this
      * just enables multicast datagram reception in the system if not already
      * enabled for this interface/groupAddress combination.
@@ -961,28 +961,32 @@ class Socket : public Object
      * multicast address but on a different interface from previous joins.
      * This enables host multihoming, and the ability to join the same
      * group on different interfaces.
+     *
+     * \note to force the socket to receive only packets from the loopback
+     * interface - which has an index equal to zero - it is necessary to
+     * bind the socket to the `LoopbackNetDevice` using `Socket::BindToNetDevice`.
      */
-    virtual int MulticastJoinGroup(uint32_t interface, const Address& groupAddress) = 0;
+    virtual int MulticastJoinGroup(const Address& groupAddress, uint32_t interfaceIndex) = 0;
 
     /**
      * \brief Corresponds to socket option MCAST_LEAVE_GROUP
      *
-     * \param interface interface number, or 0
      * \param groupAddress multicast group address
+     * \param interfaceIndex IP interface index, or 0 (any interface)
      * \returns on success, zero is returned.  On error, -1 is returned,
      *          and errno is set appropriately
      *
      * Disable reception of multicast datagrams for this socket on the
-     * interface number specified.  If zero is specified as
-     * the interfaceIndex, then a single local interface is chosen by
-     * system.  In the future, this function will generate trigger IGMP
+     * interface number specified.
+     *
+     * In the future, this function will generate trigger IGMP
      * leaves as necessary when IGMP is implemented, but for now, this
      * just disables multicast datagram reception in the system if this
      * socket is the last for this interface/groupAddress combination.
      *
      * \attention IGMP is not yet implemented in ns-3
      */
-    virtual int MulticastLeaveGroup(uint32_t interface, const Address& groupAddress) = 0;
+    virtual int MulticastLeaveGroup(const Address& groupAddress, uint32_t interfaceIndex) = 0;
 
   protected:
     /**

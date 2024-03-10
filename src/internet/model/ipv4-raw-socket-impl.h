@@ -69,8 +69,8 @@ class Ipv4RawSocketImpl : public Socket
     uint32_t GetRxAvailable() const override;
     Ptr<Packet> Recv(uint32_t maxSize, uint32_t flags) override;
     Ptr<Packet> RecvFrom(uint32_t maxSize, uint32_t flags, Address& fromAddress) override;
-    int MulticastJoinGroup(uint32_t interface, const Address& groupAddress) override;
-    int MulticastLeaveGroup(uint32_t interface, const Address& groupAddress) override;
+    int MulticastJoinGroup(const Address& groupAddress, uint32_t interfaceIndex) override;
+    int MulticastLeaveGroup(const Address& groupAddress, uint32_t interfaceIndex) override;
 
     /**
      * \brief Set protocol field.

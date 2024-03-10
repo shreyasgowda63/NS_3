@@ -402,7 +402,7 @@ Ipv4DeduplicationTest::DoRun()
 
         auto udpSocket = socket->GetObject<UdpSocket>();
         // Join the multicast group on interface 1
-        udpSocket->MulticastJoinGroup(1, Ipv4Address(targetAddr.c_str()));
+        udpSocket->MulticastJoinGroup(Ipv4Address(targetAddr.c_str()), 1);
         udpSocket->SetAttribute("IpMulticastTtl", StringValue("4"));
 
         socket->SetRecvCallback(MakeCallback(&Ipv4DeduplicationTest::ReceivePkt, this));

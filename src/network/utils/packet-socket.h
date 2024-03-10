@@ -151,8 +151,8 @@ class PacketSocket : public Socket
     int GetPeerName(Address& address) const override;
     bool SetAllowBroadcast(bool allowBroadcast) override;
     bool GetAllowBroadcast() const override;
-    int MulticastJoinGroup(uint32_t interface, const Address& groupAddress) override;
-    int MulticastLeaveGroup(uint32_t interface, const Address& groupAddress) override;
+    int MulticastJoinGroup(const Address& groupAddress, uint32_t interfaceIndex) override;
+    int MulticastLeaveGroup(const Address& groupAddress, uint32_t interfaceIndex) override;
 
   private:
     /**

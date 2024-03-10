@@ -4738,9 +4738,9 @@ TcpSocketBase::GetHighRxAck() const
 }
 
 int
-TcpSocketBase::MulticastJoinGroup(uint32_t interface, const Address& groupAddress)
+TcpSocketBase::MulticastJoinGroup(const Address& groupAddress, uint32_t interfaceIndex)
 {
-    NS_LOG_FUNCTION(this << interface << groupAddress);
+    NS_LOG_FUNCTION(this << groupAddress << interfaceIndex);
 
     NS_ABORT_MSG("TCP can not join or leave multicast groups");
 
@@ -4748,9 +4748,9 @@ TcpSocketBase::MulticastJoinGroup(uint32_t interface, const Address& groupAddres
 }
 
 int
-TcpSocketBase::MulticastLeaveGroup(uint32_t interface, const Address& groupAddress)
+TcpSocketBase::MulticastLeaveGroup(const Address& groupAddress, uint32_t interfaceIndex)
 {
-    NS_LOG_FUNCTION(this << interface << groupAddress);
+    NS_LOG_FUNCTION(this << groupAddress << interfaceIndex);
 
     NS_ABORT_MSG("TCP can not join or leave multicast groups");
 

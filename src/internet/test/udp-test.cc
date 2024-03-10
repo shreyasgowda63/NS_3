@@ -468,7 +468,7 @@ UdpSocketImplTest::DoRun()
     // Simple Link-local multicast test
 
     // the packet is sent to the interface 0.
-    rxSocket2->MulticastJoinGroup(netdevIdxRx[0], Ipv4Address("224.0.0.9"));
+    rxSocket2->MulticastJoinGroup(Ipv4Address("224.0.0.9"), netdevIdxRx[0]);
 
     txSocket->BindToNetDevice(net1.Get(1));
     SendDataTo(txSocket, "224.0.0.9");

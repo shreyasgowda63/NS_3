@@ -112,8 +112,8 @@ class UdpSocketImpl : public UdpSocket
     Ptr<Packet> RecvFrom(uint32_t maxSize, uint32_t flags, Address& fromAddress) override;
     int GetSockName(Address& address) const override;
     int GetPeerName(Address& address) const override;
-    int MulticastJoinGroup(uint32_t interfaceIndex, const Address& groupAddress) override;
-    int MulticastLeaveGroup(uint32_t interfaceIndex, const Address& groupAddress) override;
+    int MulticastJoinGroup(const Address& groupAddress, uint32_t interfaceIndex) override;
+    int MulticastLeaveGroup(const Address& groupAddress, uint32_t interfaceIndex) override;
     void BindToNetDevice(Ptr<NetDevice> netdevice) override;
     bool SetAllowBroadcast(bool allowBroadcast) override;
     bool GetAllowBroadcast() const override;

@@ -557,9 +557,9 @@ Ipv4RawSocketImpl::GetAllowBroadcast() const
 }
 
 int
-Ipv4RawSocketImpl::MulticastJoinGroup(uint32_t interface, const Address& groupAddress)
+Ipv4RawSocketImpl::MulticastJoinGroup(const Address& groupAddress, uint32_t interfaceIndex)
 {
-    NS_LOG_FUNCTION(this << interface << groupAddress);
+    NS_LOG_FUNCTION(this << groupAddress << interfaceIndex);
 
     if (!Ipv4Address::IsMatchingType(groupAddress))
     {
@@ -581,9 +581,9 @@ Ipv4RawSocketImpl::MulticastJoinGroup(uint32_t interface, const Address& groupAd
 }
 
 int
-Ipv4RawSocketImpl::MulticastLeaveGroup(uint32_t interface, const Address& groupAddress)
+Ipv4RawSocketImpl::MulticastLeaveGroup(const Address& groupAddress, uint32_t interfaceIndex)
 {
-    NS_LOG_FUNCTION(this << interface << groupAddress);
+    NS_LOG_FUNCTION(this << groupAddress << interfaceIndex);
 
     if (!Ipv4Address::IsMatchingType(groupAddress))
     {

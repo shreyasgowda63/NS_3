@@ -100,7 +100,7 @@ UdpEchoServer::StartApplication()
             if (udpSocket)
             {
                 // equivalent to setsockopt (MCAST_JOIN_GROUP)
-                udpSocket->MulticastJoinGroup(0, m_local);
+                udpSocket->MulticastJoinGroup(m_local, 0);
             }
             else
             {
@@ -124,7 +124,7 @@ UdpEchoServer::StartApplication()
             if (udpSocket)
             {
                 // equivalent to setsockopt (MCAST_JOIN_GROUP)
-                udpSocket->MulticastJoinGroup(0, local6);
+                udpSocket->MulticastJoinGroup(local6, 0);
             }
             else
             {
