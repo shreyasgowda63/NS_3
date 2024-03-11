@@ -195,7 +195,7 @@ HtFrameExchangeManager::SendAddBaRequest(Mac48Address dest,
 
     WifiTxParameters txParams;
     txParams.m_txVector =
-        GetWifiRemoteStationManager()->GetDataTxVector(mpdu->GetHeader(), m_allowedWidth);
+        GetWifiRemoteStationManager()->GetDataTxVector(mpdu->GetHeader(), m_allowedWidth).value();
     if (!TryAddMpdu(mpdu, txParams, availableTime))
     {
         NS_LOG_DEBUG("Not enough time to send the ADDBA Request frame");
@@ -562,7 +562,7 @@ HtFrameExchangeManager::SendMpduFromBaManager(Ptr<WifiMpdu> mpdu,
     // a few lines below.
     WifiTxParameters txParams;
     txParams.m_txVector =
-        GetWifiRemoteStationManager()->GetDataTxVector(mpdu->GetHeader(), m_allowedWidth);
+        GetWifiRemoteStationManager()->GetDataTxVector(mpdu->GetHeader(), m_allowedWidth).value();
 
     if (!TryAddMpdu(mpdu, txParams, availableTime))
     {
@@ -592,8 +592,9 @@ HtFrameExchangeManager::SendDataFrame(Ptr<WifiMpdu> peekedItem,
 
     Ptr<QosTxop> edca = m_mac->GetQosTxop(peekedItem->GetHeader().GetQosTid());
     WifiTxParameters txParams;
-    txParams.m_txVector =
-        GetWifiRemoteStationManager()->GetDataTxVector(peekedItem->GetHeader(), m_allowedWidth);
+    txParams.m_txVector = GetWifiRemoteStationManager()
+                              ->GetDataTxVector(peekedItem->GetHeader(), m_allowedWidth)
+                              .value();
     Ptr<WifiMpdu> mpdu =
         edca->GetNextMpdu(m_linkId, peekedItem, txParams, availableTime, initialFrame);
 
