@@ -764,6 +764,87 @@ LteRrcConnectionEstablishmentErrorTestCase::JumpBack()
 /**
  * \ingroup lte-test
  *
+ * \brief Test rrc RNTI allocation.
+ */
+class LteRrcRntiAllocationTestCase : public TestCase
+{
+    friend class LteEnbRrc;
+
+  public:
+    LteRrcRntiAllocationTestCase()
+        : TestCase("LteRrcRntiAllocationTestCase"){};
+
+    void DoRun()
+    {
+        Config::Reset();
+
+        // normal code
+        auto m_lteHelper = CreateObject<LteHelper>();
+        NodeContainer enbNodes;
+        enbNodes.Create(1);
+
+        MobilityHelper mobility;
+        mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+        mobility.Install(enbNodes);
+
+        NetDeviceContainer enbDevs;
+        enbDevs = m_lteHelper->InstallEnbDevice(enbNodes);
+
+        Ptr<LteEnbRrc> enbRrc = enbDevs.Get(0)->GetObject<LteEnbNetDevice>()->GetRrc();
+        // Allocate and deallocate all possible RNTIs
+        for (int i = 0; i < std::numeric_limits<uint16_t>::max(); i++)
+        {
+            NS_TEST_ASSERT_MSG_NE(0, enbRrc->AllocateRnti(), "Invalid RNTI allocation");
+        }
+
+        // Since RNTI = 0 is reserved, we have a missing slot for RNTI 65536,
+        // which means the next allocation should fail
+        NS_TEST_ASSERT_MSG_EQ(0, enbRrc->AllocateRnti(), "Invalid RNTI allocation");
+
+        // If we free a slot at the beginning, search should wrap around, and
+        // it should get allocated next
+        enbRrc->DeallocateRnti(10);
+        NS_TEST_ASSERT_MSG_EQ(10, enbRrc->AllocateRnti(), "Invalid RNTI allocation");
+
+        // If we free one slot before and one after in the same slot group,
+        // they should be allocated in order
+        enbRrc->DeallocateRnti(9);
+        enbRrc->DeallocateRnti(10);
+        NS_TEST_ASSERT_MSG_EQ(9, enbRrc->AllocateRnti(), "Invalid RNTI allocation");
+        NS_TEST_ASSERT_MSG_EQ(10, enbRrc->AllocateRnti(), "Invalid RNTI allocation");
+
+        // If we free one slot before and one after in different slot groups,
+        // they should be allocated in order
+        enbRrc->DeallocateRnti(62);
+        enbRrc->DeallocateRnti(64);
+        NS_TEST_ASSERT_MSG_EQ(62, enbRrc->AllocateRnti(), "Invalid RNTI allocation");
+        NS_TEST_ASSERT_MSG_EQ(64, enbRrc->AllocateRnti(), "Invalid RNTI allocation");
+
+        // If we free a slot at the end, it should get allocated next
+        enbRrc->DeallocateRnti(std::numeric_limits<uint16_t>::max());
+        enbRrc->DeallocateRnti(std::numeric_limits<uint16_t>::max() - 1);
+        NS_TEST_ASSERT_MSG_EQ(std::numeric_limits<uint16_t>::max() - 1,
+                              enbRrc->AllocateRnti(),
+                              "Invalid RNTI allocation");
+        NS_TEST_ASSERT_MSG_EQ(std::numeric_limits<uint16_t>::max(),
+                              enbRrc->AllocateRnti(),
+                              "Invalid RNTI allocation");
+
+        // Deallocate all rntis (including 0)
+        for (int i = 0; i <= std::numeric_limits<uint16_t>::max(); i++)
+        {
+            enbRrc->DeallocateRnti(i);
+        }
+        //
+        NS_TEST_ASSERT_MSG_EQ(1, enbRrc->AllocateRnti(), "Invalid RNTI allocation");
+
+        Simulator::Destroy();
+    }
+};
+
+/**
+ * \ingroup lte-test
+ *
  * \brief Lte Rrc Test Suite
  */
 class LteRrcTestSuite : public TestSuite
@@ -887,6 +968,7 @@ LteRrcTestSuite::LteRrcTestSuite()
         new LteRrcConnectionEstablishmentErrorTestCase(Seconds(0.030),
                                                        "failure at RRC Connection Setup Complete"),
         TestCase::QUICK);
+    AddTestCase(new LteRrcRntiAllocationTestCase(), TestCase::QUICK);
 }
 
 /**

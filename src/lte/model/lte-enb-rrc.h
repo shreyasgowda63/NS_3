@@ -1477,6 +1477,20 @@ class LteEnbRrc : public Object
      */
     void SetCsgId(uint32_t csgId, bool csgIndication);
 
+    /**
+     * Search an available RNTI and set the corresponding bit up in m_rntiBitmap
+     *
+     * \return available RNTI
+     */
+    uint16_t AllocateRnti();
+
+    /**
+     * Set the RNTI corresponding bit down in m_rntiBitmap
+     *
+     * \param rnti an RNTI currently in use
+     */
+    void DeallocateRnti(uint16_t rnti);
+
   private:
     /**
      * Allocate a new SRS configuration index for a new UE.
@@ -1590,6 +1604,8 @@ class LteEnbRrc : public Object
     uint16_t m_ulBandwidth;
     /// Last allocated RNTI
     uint16_t m_lastAllocatedRnti;
+    /// RNTI bitmap
+    std::array<uint64_t, 1024> m_rntiBitmap{0};
 
     /// The System Information Block Type 1 that is currently broadcasted over BCH.
     std::vector<LteRrcSap::SystemInformationBlockType1> m_sib1;
