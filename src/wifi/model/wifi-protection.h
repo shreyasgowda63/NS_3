@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -144,6 +146,7 @@ struct WifiMuRtsCtsProtection : public WifiProtection
  */
 std::ostream& operator<<(std::ostream& os, const WifiProtection* protection);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_PROTECTION_H */

@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("HtPpdu");
 
@@ -191,4 +193,5 @@ HtPpdu::HtSigHeader::GetShortGuardInterval() const
     return m_sgi;
 }
 
+} // namespace wifi
 } // namespace ns3

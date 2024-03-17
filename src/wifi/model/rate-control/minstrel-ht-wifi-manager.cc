@@ -51,6 +51,8 @@ NS_LOG_COMPONENT_DEFINE("MinstrelHtWifiManager");
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// MinstrelHtWifiRemoteStation structure
 struct MinstrelHtWifiRemoteStation : MinstrelWifiRemoteStation
@@ -2250,4 +2252,5 @@ MinstrelHtWifiManager::GetHtDeviceMcsList() const
     return htMcsList;
 }
 
+} // namespace wifi
 } // namespace ns3

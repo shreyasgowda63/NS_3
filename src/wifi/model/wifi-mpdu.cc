@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiMpdu");
 
@@ -418,4 +420,5 @@ operator<<(std::ostream& os, const WifiMpdu& item)
     return os;
 }
 
+} // namespace wifi
 } // namespace ns3

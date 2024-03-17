@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("ErpOfdmPpdu");
 
@@ -53,4 +55,5 @@ ErpOfdmPpdu::Copy() const
     return Ptr<WifiPpdu>(new ErpOfdmPpdu(*this), false);
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -512,12 +512,12 @@ DsrRouting::Start()
 
                 // Allow neighbor manager use this interface for layer 2 feedback if possible
                 Ptr<NetDevice> dev = m_ipv4->GetNetDevice(m_ipv4->GetInterfaceForAddress(addr));
-                Ptr<WifiNetDevice> wifi = dev->GetObject<WifiNetDevice>();
+                auto wifi = dev->GetObject<wifi::WifiNetDevice>();
                 if (!wifi)
                 {
                     break;
                 }
-                Ptr<WifiMac> mac = wifi->GetMac();
+                auto mac = wifi->GetMac();
                 if (!mac)
                 {
                     break;
@@ -569,13 +569,13 @@ DsrRouting::DoDispose()
     {
         // Disable layer 2 link state monitoring (if possible)
         Ptr<NetDevice> dev = m_ipv4->GetNetDevice(i);
-        Ptr<WifiNetDevice> wifi = dev->GetObject<WifiNetDevice>();
+        auto wifi = dev->GetObject<wifi::WifiNetDevice>();
         if (wifi)
         {
-            Ptr<WifiMac> mac = wifi->GetMac();
+            auto mac = wifi->GetMac();
             if (mac)
             {
-                Ptr<AdhocWifiMac> adhoc = mac->GetObject<AdhocWifiMac>();
+                auto adhoc = mac->GetObject<wifi::AdhocWifiMac>();
                 if (adhoc)
                 {
                     m_routeCache->DelArpCache(m_ipv4->GetInterface(i)->GetArpCache());

@@ -46,13 +46,17 @@ namespace ns3
 {
 
 class Channel;
-class WifiNetDevice;
 class MobilityModel;
+class UniformRandomVariable;
+
+namespace wifi
+{
+
+class WifiNetDevice;
 class WifiPhyStateHelper;
 class FrameCaptureModel;
 class PreambleDetectionModel;
 class WifiRadioEnergyModel;
-class UniformRandomVariable;
 class InterferenceHelper;
 class ErrorRateModel;
 
@@ -1577,6 +1581,7 @@ class WifiPhy : public Object
  */
 std::ostream& operator<<(std::ostream& os, RxSignalInfo rxSignalInfo);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_PHY_H */

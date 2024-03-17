@@ -65,8 +65,8 @@ class WifiOfdmMaskSlopesTestCase : public TestCase
      * (only for 802.11ax and later)
      */
     WifiOfdmMaskSlopesTestCase(const std::string& name,
-                               WifiStandard standard,
-                               WifiPhyBand band,
+                               wifi::WifiStandard standard,
+                               wifi::WifiPhyBand band,
                                uint16_t channelWidth,
                                const IndexPowerVect& maskRefs,
                                double tolerance,
@@ -91,9 +91,9 @@ class WifiOfdmMaskSlopesTestCase : public TestCase
                                     IndexPowerPair start,
                                     IndexPowerPair stop) const;
 
-    WifiStandard m_standard; ///< the wifi standard to use for the test
-    WifiPhyBand m_band;      ///< the wifi PHY band to use for the test
-    uint16_t m_channelWidth; ///< the channel width in MHz to use for the test
+    wifi::WifiStandard m_standard; ///< the wifi standard to use for the test
+    wifi::WifiPhyBand m_band;      ///< the wifi PHY band to use for the test
+    uint16_t m_channelWidth;       ///< the channel width in MHz to use for the test
     std::vector<bool>
         m_puncturedSubchannels; ///< bitmap indicating whether a 20 MHz subchannel is punctured or
                                 ///< not (only used for 802.11ax and later)
@@ -105,8 +105,8 @@ class WifiOfdmMaskSlopesTestCase : public TestCase
 
 WifiOfdmMaskSlopesTestCase::WifiOfdmMaskSlopesTestCase(
     const std::string& name,
-    WifiStandard standard,
-    WifiPhyBand band,
+    wifi::WifiStandard standard,
+    wifi::WifiPhyBand band,
     uint16_t channelWidth,
     const IndexPowerVect& maskRefs,
     double tolerance,
@@ -137,15 +137,16 @@ WifiOfdmMaskSlopesTestCase::DoSetup()
     switch (m_band)
     {
     default:
-    case WIFI_PHY_BAND_5GHZ:
+    case wifi::WIFI_PHY_BAND_5GHZ:
         freq = 5170 + (m_channelWidth / 2); // so as to have 5180/5190/5210/5250 for 20/40/80/160
         outerBandMaximumRejection = -40;    // in dBr
         break;
-    case WIFI_PHY_BAND_2_4GHZ:
+    case wifi::WIFI_PHY_BAND_2_4GHZ:
         freq = 2402 + (m_channelWidth / 2); // so as to have 2412/2422 for 20/40
-        outerBandMaximumRejection = (m_standard >= WIFI_STANDARD_80211n) ? -45 : -40; // in dBr
+        outerBandMaximumRejection =
+            (m_standard >= wifi::WIFI_STANDARD_80211n) ? -45 : -40; // in dBr
         break;
-    case WIFI_PHY_BAND_6GHZ:
+    case wifi::WIFI_PHY_BAND_6GHZ:
         freq = 5945 + (m_channelWidth / 2); // so as to have 5945/5955/5975/6015 for 20/40/80/160
         outerBandMaximumRejection = -40;    // in dBr
         break;
@@ -154,8 +155,8 @@ WifiOfdmMaskSlopesTestCase::DoSetup()
     double refTxPowerW = 1; // have to work in dBr when comparing though
     switch (m_standard)
     {
-    case WIFI_STANDARD_80211p:
-        NS_ASSERT(m_band == WIFI_PHY_BAND_5GHZ);
+    case wifi::WIFI_STANDARD_80211p:
+        NS_ASSERT(m_band == wifi::WIFI_PHY_BAND_5GHZ);
         NS_ASSERT((m_channelWidth == 5) || (m_channelWidth == 10));
         freq = 5860;
         m_actualSpectrum =
@@ -168,8 +169,8 @@ WifiOfdmMaskSlopesTestCase::DoSetup()
                                                                       outerBandMaximumRejection);
         break;
 
-    case WIFI_STANDARD_80211g:
-        NS_ASSERT(m_band == WIFI_PHY_BAND_2_4GHZ);
+    case wifi::WIFI_STANDARD_80211g:
+        NS_ASSERT(m_band == wifi::WIFI_PHY_BAND_2_4GHZ);
         NS_ASSERT(m_channelWidth == 20);
         m_actualSpectrum =
             WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity(freq,
@@ -181,8 +182,8 @@ WifiOfdmMaskSlopesTestCase::DoSetup()
                                                                       outerBandMaximumRejection);
         break;
 
-    case WIFI_STANDARD_80211a:
-        NS_ASSERT(m_band == WIFI_PHY_BAND_5GHZ);
+    case wifi::WIFI_STANDARD_80211a:
+        NS_ASSERT(m_band == wifi::WIFI_PHY_BAND_5GHZ);
         NS_ASSERT(m_channelWidth == 20);
         m_actualSpectrum =
             WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity(freq,
@@ -194,7 +195,7 @@ WifiOfdmMaskSlopesTestCase::DoSetup()
                                                                       outerBandMaximumRejection);
         break;
 
-    case WIFI_STANDARD_80211n:
+    case wifi::WIFI_STANDARD_80211n:
         NS_ASSERT(m_channelWidth == 20 || m_channelWidth == 40);
         m_actualSpectrum =
             WifiSpectrumValueHelper::CreateHtOfdmTxPowerSpectralDensity(freq,
@@ -206,8 +207,8 @@ WifiOfdmMaskSlopesTestCase::DoSetup()
                                                                         outerBandMaximumRejection);
         break;
 
-    case WIFI_STANDARD_80211ac:
-        NS_ASSERT(m_band == WIFI_PHY_BAND_5GHZ);
+    case wifi::WIFI_STANDARD_80211ac:
+        NS_ASSERT(m_band == wifi::WIFI_PHY_BAND_5GHZ);
         NS_ASSERT(m_channelWidth == 20 || m_channelWidth == 40 || m_channelWidth == 80 ||
                   m_channelWidth == 160);
         m_actualSpectrum =
@@ -220,8 +221,8 @@ WifiOfdmMaskSlopesTestCase::DoSetup()
                                                                         outerBandMaximumRejection);
         break;
 
-    case WIFI_STANDARD_80211ax:
-        NS_ASSERT((m_band != WIFI_PHY_BAND_2_4GHZ) ||
+    case wifi::WIFI_STANDARD_80211ax:
+        NS_ASSERT((m_band != wifi::WIFI_PHY_BAND_2_4GHZ) ||
                   (m_channelWidth != 160)); // not enough space in 2.4 GHz bands
         NS_ASSERT(m_channelWidth == 20 || m_channelWidth == 40 || m_channelWidth == 80 ||
                   m_channelWidth == 160);
@@ -356,8 +357,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11p 5MHz",
-                                               WIFI_STANDARD_80211p,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211p,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                5,
                                                maskSlopes,
                                                tol,
@@ -387,8 +388,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11p 10MHz",
-                                               WIFI_STANDARD_80211p,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211p,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                10,
                                                maskSlopes,
                                                tol,
@@ -418,8 +419,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11a",
-                                               WIFI_STANDARD_80211a,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211a,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                20,
                                                maskSlopes,
                                                tol,
@@ -431,8 +432,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     NS_LOG_FUNCTION("Check slopes for 11g");
     // same slopes as 11a
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11g",
-                                               WIFI_STANDARD_80211g,
-                                               WIFI_PHY_BAND_2_4GHZ,
+                                               wifi::WIFI_STANDARD_80211g,
+                                               wifi::WIFI_PHY_BAND_2_4GHZ,
                                                20,
                                                maskSlopes,
                                                tol,
@@ -462,8 +463,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11n_2.4GHz 20MHz",
-                                               WIFI_STANDARD_80211n,
-                                               WIFI_PHY_BAND_2_4GHZ,
+                                               wifi::WIFI_STANDARD_80211n,
+                                               wifi::WIFI_PHY_BAND_2_4GHZ,
                                                20,
                                                maskSlopes,
                                                tol,
@@ -493,8 +494,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11n_5GHz 20MHz",
-                                               WIFI_STANDARD_80211n,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211n,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                20,
                                                maskSlopes,
                                                tol,
@@ -524,8 +525,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11n_2.4GHz 40MHz",
-                                               WIFI_STANDARD_80211n,
-                                               WIFI_PHY_BAND_2_4GHZ,
+                                               wifi::WIFI_STANDARD_80211n,
+                                               wifi::WIFI_PHY_BAND_2_4GHZ,
                                                40,
                                                maskSlopes,
                                                tol,
@@ -555,8 +556,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11n_5GHz 40MHz",
-                                               WIFI_STANDARD_80211n,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211n,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                40,
                                                maskSlopes,
                                                tol,
@@ -586,8 +587,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ac 20MHz",
-                                               WIFI_STANDARD_80211ac,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ac,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                20,
                                                maskSlopes,
                                                tol,
@@ -617,8 +618,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ac 40MHz",
-                                               WIFI_STANDARD_80211ac,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ac,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                40,
                                                maskSlopes,
                                                tol,
@@ -648,8 +649,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ac 80MHz",
-                                               WIFI_STANDARD_80211ac,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ac,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                80,
                                                maskSlopes,
                                                tol,
@@ -679,8 +680,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ac 160MHz",
-                                               WIFI_STANDARD_80211ac,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ac,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                160,
                                                maskSlopes,
                                                tol,
@@ -716,8 +717,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_2.4GHz 20MHz",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_2_4GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_2_4GHZ,
                                                20,
                                                maskSlopes,
                                                tol,
@@ -753,8 +754,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_5GHz 20MHz",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                20,
                                                maskSlopes,
                                                tol,
@@ -790,8 +791,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_2.4GHz 40MHz",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_2_4GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_2_4GHZ,
                                                40,
                                                maskSlopes,
                                                tol,
@@ -827,8 +828,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_5GHz 40MHz",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                40,
                                                maskSlopes,
                                                tol,
@@ -864,8 +865,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_2.4GHz 80MHz",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_2_4GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_2_4GHZ,
                                                80,
                                                maskSlopes,
                                                tol,
@@ -901,8 +902,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_5GHz 80MHz",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                80,
                                                maskSlopes,
                                                tol,
@@ -949,8 +950,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_5GHz 160MHz",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                160,
                                                maskSlopes,
                                                tol,
@@ -988,8 +989,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_5GHz 80MHz first subchannel punctured",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                80,
                                                maskSlopes,
                                                tol,
@@ -1032,8 +1033,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_5GHz 80MHz second subchannel punctured",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                80,
                                                maskSlopes,
                                                tol,
@@ -1076,8 +1077,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_5GHz 80MHz third subchannel punctured",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                80,
                                                maskSlopes,
                                                tol,
@@ -1116,8 +1117,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
     };
 
     AddTestCase(new WifiOfdmMaskSlopesTestCase("11ax_5GHz 80MHz last subchannel punctured",
-                                               WIFI_STANDARD_80211ax,
-                                               WIFI_PHY_BAND_5GHZ,
+                                               wifi::WIFI_STANDARD_80211ax,
+                                               wifi::WIFI_PHY_BAND_5GHZ,
                                                80,
                                                maskSlopes,
                                                tol,
@@ -1164,8 +1165,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
 
     AddTestCase(
         new WifiOfdmMaskSlopesTestCase("11ax_5GHz 160MHz first subchannels punctured",
-                                       WIFI_STANDARD_80211ax,
-                                       WIFI_PHY_BAND_5GHZ,
+                                       wifi::WIFI_STANDARD_80211ax,
+                                       wifi::WIFI_PHY_BAND_5GHZ,
                                        160,
                                        maskSlopes,
                                        tol,
@@ -1214,8 +1215,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
 
     AddTestCase(
         new WifiOfdmMaskSlopesTestCase("11ax_5GHz 160MHz third and fourth subchannels punctured",
-                                       WIFI_STANDARD_80211ax,
-                                       WIFI_PHY_BAND_5GHZ,
+                                       wifi::WIFI_STANDARD_80211ax,
+                                       wifi::WIFI_PHY_BAND_5GHZ,
                                        160,
                                        maskSlopes,
                                        tol,
@@ -1264,8 +1265,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
 
     AddTestCase(
         new WifiOfdmMaskSlopesTestCase("11ax_5GHz 160MHz fifth and sixth subchannels punctured",
-                                       WIFI_STANDARD_80211ax,
-                                       WIFI_PHY_BAND_5GHZ,
+                                       wifi::WIFI_STANDARD_80211ax,
+                                       wifi::WIFI_PHY_BAND_5GHZ,
                                        160,
                                        maskSlopes,
                                        tol,
@@ -1312,8 +1313,8 @@ WifiTransmitMaskTestSuite::WifiTransmitMaskTestSuite()
 
     AddTestCase(
         new WifiOfdmMaskSlopesTestCase("11ax_5GHz 160MHz last subchannels punctured",
-                                       WIFI_STANDARD_80211ax,
-                                       WIFI_PHY_BAND_5GHZ,
+                                       wifi::WIFI_STANDARD_80211ax,
+                                       wifi::WIFI_PHY_BAND_5GHZ,
                                        160,
                                        maskSlopes,
                                        tol,

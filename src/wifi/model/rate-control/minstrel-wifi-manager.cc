@@ -43,6 +43,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("MinstrelWifiManager");
 
@@ -1188,4 +1190,5 @@ MinstrelWifiManager::PrintTable(MinstrelWifiRemoteStation* station)
     station->m_statsFile.flush();
 }
 
+} // namespace wifi
 } // namespace ns3

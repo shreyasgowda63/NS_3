@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// default MediumSyncDelay timer duration (max PPDU TX time rounded to a multiple of 32 us)
 static constexpr uint16_t DEFAULT_MSD_DURATION_USEC = 5484 / 32 * 32;
@@ -119,6 +121,7 @@ class EhtConfiguration : public Object
         m_linkMappingUl; //!< TIDs-indexed Link Mapping for uplink
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* EHT_CONFIGURATION_H */

@@ -45,8 +45,11 @@
 namespace ns3
 {
 
+namespace wifi
+{
 class WifiMpdu;
 enum WifiMacDropReason : uint8_t; // opaque enum declaration
+} // namespace wifi
 
 namespace aodv
 {
@@ -213,7 +216,7 @@ class RoutingProtocol : public Ipv4RoutingProtocol
      * \param reason the reason why the MPDU was dropped
      * \param mpdu the dropped MPDU
      */
-    void NotifyTxError(WifiMacDropReason reason, Ptr<const WifiMpdu> mpdu);
+    void NotifyTxError(wifi::WifiMacDropReason reason, Ptr<const wifi::WifiMpdu> mpdu);
 
     // Protocol parameters.
     uint32_t m_rreqRetries; ///< Maximum number of retransmissions of RREQ with TTL = NetDiameter to

@@ -39,7 +39,11 @@ class NodeContainer;
 class NetDeviceContainer;
 class Packet;
 class Mac48Address;
+
+namespace wifi
+{
 class WifiMode;
+}
 
 /**
  * @brief create AthstatsWifiTraceSink instances and connect them to wifi devices
@@ -177,8 +181,8 @@ class AthstatsWifiTraceSink : public Object
     void PhyRxOkTrace(std::string context,
                       Ptr<const Packet> packet,
                       double snr,
-                      WifiMode mode,
-                      WifiPreamble preamble);
+                      wifi::WifiMode mode,
+                      wifi::WifiPreamble preamble);
 
     /**
      * Function to be called when a frame reception by the PHY
@@ -203,8 +207,8 @@ class AthstatsWifiTraceSink : public Object
      */
     void PhyTxTrace(std::string context,
                     Ptr<const Packet> packet,
-                    WifiMode mode,
-                    WifiPreamble preamble,
+                    wifi::WifiMode mode,
+                    wifi::WifiPreamble preamble,
                     uint8_t txPower);
 
     /**
@@ -216,7 +220,7 @@ class AthstatsWifiTraceSink : public Object
      * @param duration the duration of the state
      * @param state the PHY layer state
      */
-    void PhyStateTrace(std::string context, Time start, Time duration, WifiPhyState state);
+    void PhyStateTrace(std::string context, Time start, Time duration, wifi::WifiPhyState state);
 
     /**
      * Open a file for output

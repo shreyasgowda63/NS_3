@@ -103,7 +103,7 @@ FlameRegressionTest::CreateDevices()
     // This test suite output was originally based on YansErrorRateModel
     wifiPhy.SetErrorRateModel("ns3::YansErrorRateModel");
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
-    Ptr<YansWifiChannel> chan = wifiChannel.Create();
+    auto chan = wifiChannel.Create();
     wifiPhy.SetChannel(chan);
     // This test predates the preamble detection model
     wifiPhy.DisablePreambleDetectionModel();

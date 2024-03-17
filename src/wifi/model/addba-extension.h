@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -58,6 +60,7 @@ class AddbaExtension : public WifiInformationElement
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* ADDBA_EXTENSION_H */

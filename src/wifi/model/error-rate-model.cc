@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(ErrorRateModel);
 
@@ -107,4 +109,5 @@ ErrorRateModel::AssignStreams(int64_t stream)
     return 0;
 }
 
+} // namespace wifi
 } // namespace ns3

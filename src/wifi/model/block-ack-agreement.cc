@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("BlockAckAgreement");
 
@@ -201,4 +203,5 @@ BlockAckAgreement::GetDistance(uint16_t seqNumber, uint16_t startingSeqNumber)
     return (seqNumber - startingSeqNumber + SEQNO_SPACE_SIZE) % SEQNO_SPACE_SIZE;
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -95,6 +97,7 @@ std::istream& operator>>(std::istream& is, Ssid& ssid);
 
 ATTRIBUTE_HELPER_HEADER(Ssid);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* SSID_H */

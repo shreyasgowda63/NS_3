@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiMpdu;
 class WifiMac;
@@ -249,6 +251,7 @@ class WifiMacQueueScheduler : public Object
     Ptr<WifiMac> m_mac; //!< MAC layer
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MAC_QUEUE_SCHEDULER_H */

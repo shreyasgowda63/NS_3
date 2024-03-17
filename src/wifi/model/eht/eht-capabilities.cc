@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 uint16_t
 EhtMacCapabilities::GetSize() const
@@ -732,4 +734,5 @@ EhtCapabilities::DeserializeInformationField(Buffer::Iterator start, uint16_t le
     return count;
 }
 
+} // namespace wifi
 } // namespace ns3

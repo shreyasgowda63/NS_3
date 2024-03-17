@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 WifiInformationElement::~WifiInformationElement()
 {
@@ -268,4 +270,5 @@ operator<<(std::ostream& os, const WifiInformationElement& element)
     return os;
 }
 
+} // namespace wifi
 } // namespace ns3

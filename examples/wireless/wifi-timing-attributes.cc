@@ -86,7 +86,7 @@ main(int argc, char* argv[])
 
     // Default IEEE 802.11n (2.4 GHz)
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211n);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
     wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
                                  "DataMode",
                                  StringValue("HtMcs7"),
@@ -95,13 +95,13 @@ main(int argc, char* argv[])
     WifiMacHelper mac;
 
     // Install PHY and MAC
-    Ssid ssid = Ssid("ns3-wifi");
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+    wifi::Ssid ssid("ns3-wifi");
+    mac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
 
     NetDeviceContainer staDevice;
     staDevice = wifi.Install(phy, mac, wifiStaNode);
 
-    mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
 
     NetDeviceContainer apDevice;
     apDevice = wifi.Install(phy, mac, wifiApNode);

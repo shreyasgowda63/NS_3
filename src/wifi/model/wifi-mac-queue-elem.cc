@@ -23,6 +23,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 WifiMacQueueElem::WifiMacQueueElem(Ptr<WifiMpdu> item)
     : mpdu(item),
@@ -38,4 +40,5 @@ WifiMacQueueElem::~WifiMacQueueElem()
     inflights.clear();
 }
 
+} // namespace wifi
 } // namespace ns3

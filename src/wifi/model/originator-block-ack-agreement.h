@@ -27,6 +27,8 @@ class OriginatorBlockAckWindowTest;
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiMpdu;
 
@@ -204,6 +206,7 @@ class OriginatorBlockAckAgreement : public BlockAckAgreement
     BlockAckWindow m_txWindow; ///< originator's transmit window
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* ORIGINATOR_BLOCK_ACK_AGREEMENT_H */

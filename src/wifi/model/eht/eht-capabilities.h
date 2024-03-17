@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class HeCapabilities;
 
@@ -354,6 +356,7 @@ class EhtCapabilities : public WifiInformationElement
         m_heCapabilities; //!< HE capabilities contained in the same management frame if present
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* EHT_CAPABILITIES_H */

@@ -33,6 +33,7 @@
 #include "ns3/wifi-psdu.h"
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 /**
  * \ingroup wifi-test

@@ -31,6 +31,7 @@
 #include <numeric>
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 template <typename TxopType>
 class ChannelAccessManagerTest;

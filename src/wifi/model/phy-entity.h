@@ -49,6 +49,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// SignalNoiseDbm structure
 struct SignalNoiseDbm
@@ -1022,6 +1024,7 @@ std::ostream& operator<<(std::ostream& os, const PhyEntity::PhyRxFailureAction& 
  */
 std::ostream& operator<<(std::ostream& os, const PhyEntity::PhyFieldRxStatus& status);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* PHY_ENTITY_H */

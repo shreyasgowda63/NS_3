@@ -1014,7 +1014,7 @@ class AnimationInterface
      */
     void WifiPhyRxDropTrace(std::string context,
                             Ptr<const Packet> p,
-                            WifiPhyRxfailureReason reason);
+                            wifi::WifiPhyRxfailureReason reason);
     /**
      * LR-WPAN MAC transmit trace function
      * \param context the context
@@ -1062,8 +1062,8 @@ class AnimationInterface
      * \param txPowerW the tx power in Watts
      */
     void WifiPhyTxBeginTrace(std::string context,
-                             WifiConstPsduMap psduMap,
-                             WifiTxVector txVector,
+                             wifi::WifiConstPsduMap psduMap,
+                             wifi::WifiTxVector txVector,
                              double txPowerW);
     /**
      * wifi Phy receive begin trace function
@@ -1074,7 +1074,7 @@ class AnimationInterface
      */
     void WifiPhyRxBeginTrace(std::string context,
                              Ptr<const Packet> p,
-                             RxPowerWattPerChannelBand rxPowersW);
+                             wifi::RxPowerWattPerChannelBand rxPowersW);
     /**
      * LR-WPAN Phy receive begin trace function
      *

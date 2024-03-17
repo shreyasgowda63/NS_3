@@ -33,6 +33,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiPsdu;
 
@@ -141,6 +143,7 @@ class OfdmPpdu : public WifiPpdu
                              //!< distinguish 5 MHz, 10 MHz or 20 MHz PPDUs)
 };                           // class OfdmPpdu
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* OFDM_PPDU_H */

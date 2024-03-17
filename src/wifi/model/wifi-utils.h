@@ -32,8 +32,12 @@
 namespace ns3
 {
 
-class WifiMacHeader;
 class Packet;
+
+namespace wifi
+{
+
+class WifiMacHeader;
 
 /**
  * Wifi direction. Values are those defined for the TID-to-Link Mapping Control Direction
@@ -194,6 +198,7 @@ static constexpr uint8_t SINGLE_LINK_OP_ID = 0;
 /// Invalid link identifier
 static constexpr uint8_t WIFI_LINKID_UNDEFINED = 0xff;
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_UTILS_H */

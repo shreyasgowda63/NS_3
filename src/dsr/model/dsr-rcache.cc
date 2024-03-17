@@ -1235,7 +1235,7 @@ DsrRouteCache::LookupMacAddress(Ipv4Address addr)
 }
 
 void
-DsrRouteCache::ProcessTxError(const WifiMacHeader& hdr)
+DsrRouteCache::ProcessTxError(const wifi::WifiMacHeader& hdr)
 {
     Mac48Address addr = hdr.GetAddr1();
 

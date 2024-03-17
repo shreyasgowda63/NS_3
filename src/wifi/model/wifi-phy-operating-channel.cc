@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiPhyOperatingChannel");
 
@@ -722,4 +724,5 @@ operator<<(std::ostream& os, const WifiPhyOperatingChannel& channel)
     return os;
 }
 
+} // namespace wifi
 } // namespace ns3

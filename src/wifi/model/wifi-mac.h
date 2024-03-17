@@ -38,6 +38,11 @@
 namespace ns3
 {
 
+class UniformRandomVariable;
+
+namespace wifi
+{
+
 class Txop;
 class WifiNetDevice;
 class QosTxop;
@@ -1210,6 +1215,7 @@ class WifiMac : public Object
     PsduMapResponseTimeoutTracedCallback m_psduMapResponseTimeoutCallback;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MAC_H */

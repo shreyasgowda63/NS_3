@@ -46,6 +46,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("SpectrumWifiPhy");
 
@@ -709,4 +711,5 @@ SpectrumWifiPhy::SetChannelSwitchedCallback(Callback<void> callback)
     m_channelSwitchedCallback = callback;
 }
 
+} // namespace wifi
 } // namespace ns3

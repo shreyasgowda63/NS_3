@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class SpectrumWifiPhy;
 
@@ -168,6 +170,7 @@ class WifiSpectrumPhyInterface : public SpectrumPhy
     HeRuBands m_heRuBands; /**< Store all the distinct spectrum bands associated with every RU */
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_SPECTRUM_PHY_INTERFACE_H */

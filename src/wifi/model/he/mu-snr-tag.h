@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -83,6 +85,7 @@ class MuSnrTag : public Tag
     std::map<uint16_t, double> m_snrMap; //!< Map containing (STA-ID, SNR) pairs
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MU_SNR_TAG_H */

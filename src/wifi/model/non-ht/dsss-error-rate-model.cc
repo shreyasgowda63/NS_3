@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("DsssErrorRateModel");
 
@@ -183,4 +185,5 @@ DsssErrorRateModel::SymbolErrorProb256Cck(double e1)
 
 #endif
 
+} // namespace wifi
 } // namespace ns3

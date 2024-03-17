@@ -64,13 +64,13 @@ WifiMsduAggregatorThroughputTest::DoRun()
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
     wifiPhy.SetChannel(wifiChannel.Create());
 
-    Ssid ssid = Ssid("wifi-amsdu-throughput");
+    wifi::Ssid ssid("wifi-amsdu-throughput");
     // It may seem a little farcical running an 802.11n aggregation
     // scenario with 802.11b rates (transmit rate fixed to 1 Mbps, no
     // less), but this approach tests the bit we need to without unduly
     // increasing the complexity of the simulation.
     std::string phyMode("DsssRate1Mbps");
-    wifi.SetStandard(WIFI_STANDARD_80211b);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211b);
     wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
                                  "DataMode",
                                  StringValue(phyMode),
@@ -85,7 +85,7 @@ WifiMsduAggregatorThroughputTest::DoRun()
                     "QosSupported",
                     BooleanValue(true),
                     "Ssid",
-                    SsidValue(ssid),
+                    wifi::SsidValue(ssid),
                     "BeaconGeneration",
                     BooleanValue(true),
                     "BeaconInterval",
@@ -102,7 +102,7 @@ WifiMsduAggregatorThroughputTest::DoRun()
                     "QosSupported",
                     BooleanValue(true),
                     "Ssid",
-                    SsidValue(ssid),
+                    wifi::SsidValue(ssid),
                     "ActiveProbing",
                     BooleanValue(false));
     NetDeviceContainer staDev = wifi.Install(wifiPhy, wifiMac, sta);

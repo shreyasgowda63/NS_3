@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 struct AparfWifiRemoteStation;
 
@@ -125,6 +127,7 @@ class AparfWifiManager : public WifiRemoteStationManager
     TracedCallback<DataRate, DataRate, Mac48Address> m_rateChange;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* APARF_WIFI_MANAGER_H */

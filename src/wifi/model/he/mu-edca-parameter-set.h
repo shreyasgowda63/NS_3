@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief The MU EDCA Parameter Set
@@ -146,6 +148,7 @@ class MuEdcaParameterSet : public WifiInformationElement
     std::array<ParameterRecord, 4> m_records; ///< MU AC Parameter Record fields
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MU_EDCA_PARAMETER_SET_H */

@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("CaraWifiManager");
 
@@ -273,4 +275,5 @@ CaraWifiManager::DoNeedRts(WifiRemoteStation* st, uint32_t size, bool normally)
     return normally || station->m_failed >= m_probeThreshold;
 }
 
+} // namespace wifi
 } // namespace ns3

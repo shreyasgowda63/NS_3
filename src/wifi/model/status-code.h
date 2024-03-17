@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * Status code for association response.
@@ -91,6 +93,7 @@ class StatusCode
  */
 std::ostream& operator<<(std::ostream& os, const StatusCode& code);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* STATUS_CODE_H */

@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 WifiActionHeader::WifiActionHeader()
 {
@@ -1349,4 +1351,5 @@ MgtEmlOmn::GetLinkBitmap() const
     return list;
 }
 
+} // namespace wifi
 } // namespace ns3

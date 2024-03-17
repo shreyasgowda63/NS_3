@@ -34,6 +34,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief PHY entity for HR/DSSS (11b)
@@ -212,6 +214,7 @@ class DsssPhy : public PhyEntity
                                      //!< corresponding to a unique name of modulation
 };                                   // class DsssPhy
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* DSSS_PHY_H */

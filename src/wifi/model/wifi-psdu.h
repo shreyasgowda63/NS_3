@@ -33,6 +33,9 @@ namespace ns3
 
 class Packet;
 
+namespace wifi
+{
+
 /**
  * \ingroup wifi
  *
@@ -265,6 +268,7 @@ class WifiPsdu : public SimpleRefCount<WifiPsdu>
  */
 std::ostream& operator<<(std::ostream& os, const WifiPsdu& psdu);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_PSDU_H */

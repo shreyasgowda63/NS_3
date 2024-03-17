@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("EhtPpdu");
 
@@ -56,7 +58,7 @@ EhtPpdu::SetEhtPhyHeader(const WifiTxVector& txVector)
 {
     const auto bssColor = txVector.GetBssColor();
     NS_ASSERT(bssColor < 64);
-    if (ns3::IsDlMu(m_preamble))
+    if (wifi::IsDlMu(m_preamble))
     {
         const auto p20Index = m_operatingChannel.GetPrimaryChannelIndex(20);
         m_ehtPhyHeader.emplace<EhtMuPhyHeader>(EhtMuPhyHeader{
@@ -77,7 +79,7 @@ EhtPpdu::SetEhtPhyHeader(const WifiTxVector& txVector)
             // TODO: RU Allocation-B not supported yet
             .m_contentChannels = GetEhtSigContentChannels(txVector, p20Index)});
     }
-    else if (ns3::IsUlMu(m_preamble))
+    else if (wifi::IsUlMu(m_preamble))
     {
         m_ehtPhyHeader.emplace<EhtTbPhyHeader>(EhtTbPhyHeader{
             .m_bandwidth = GetChannelWidthEncodingFromMhz(txVector.GetChannelWidth()),
@@ -122,7 +124,7 @@ EhtPpdu::SetTxVectorFromPhyHeaders(WifiTxVector& txVector) const
 {
     txVector.SetLength(m_lSig.GetLength());
     txVector.SetAggregation(m_psdus.size() > 1 || m_psdus.begin()->second->IsAggregate());
-    if (ns3::IsDlMu(m_preamble))
+    if (wifi::IsDlMu(m_preamble))
     {
         auto ehtPhyHeader = std::get_if<EhtMuPhyHeader>(&m_ehtPhyHeader);
         NS_ASSERT(ehtPhyHeader);
@@ -160,7 +162,7 @@ EhtPpdu::SetTxVectorFromPhyHeaders(WifiTxVector& txVector) const
             txVector.SetNss(ehtPhyHeader->m_contentChannels.front().front().nss);
         }
     }
-    else if (ns3::IsUlMu(m_preamble))
+    else if (wifi::IsUlMu(m_preamble))
     {
         auto ehtPhyHeader = std::get_if<EhtTbPhyHeader>(&m_ehtPhyHeader);
         NS_ASSERT(ehtPhyHeader);
@@ -247,4 +249,5 @@ EhtPpdu::Copy() const
     return Ptr<WifiPpdu>(new EhtPpdu(*this), false);
 }
 
+} // namespace wifi
 } // namespace ns3

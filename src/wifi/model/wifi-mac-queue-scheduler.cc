@@ -23,6 +23,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiMacQueueScheduler");
 
@@ -55,4 +57,5 @@ WifiMacQueueScheduler::GetMac() const
     return m_mac;
 }
 
+} // namespace wifi
 } // namespace ns3

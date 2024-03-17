@@ -49,25 +49,25 @@ WifiMacHelper::~WifiMacHelper()
 {
 }
 
-Ptr<WifiMac>
-WifiMacHelper::Create(Ptr<WifiNetDevice> device, WifiStandard standard) const
+Ptr<wifi::WifiMac>
+WifiMacHelper::Create(Ptr<wifi::WifiNetDevice> device, wifi::WifiStandard standard) const
 {
-    NS_ABORT_MSG_IF(standard == WIFI_STANDARD_UNSPECIFIED, "No standard specified!");
+    NS_ABORT_MSG_IF(standard == wifi::WIFI_STANDARD_UNSPECIFIED, "No standard specified!");
 
     // this is a const method, but we need to force the correct QoS setting
     ObjectFactory macObjectFactory = m_mac;
-    if (standard >= WIFI_STANDARD_80211n)
+    if (standard >= wifi::WIFI_STANDARD_80211n)
     {
         macObjectFactory.Set("QosSupported", BooleanValue(true));
     }
 
-    Ptr<WifiMac> mac = macObjectFactory.Create<WifiMac>();
+    auto mac = macObjectFactory.Create<wifi::WifiMac>();
     mac->SetDevice(device);
     mac->SetAddress(Mac48Address::Allocate());
     device->SetMac(mac);
     mac->ConfigureStandard(standard);
 
-    Ptr<WifiMacQueueScheduler> queueScheduler = m_queueScheduler.Create<WifiMacQueueScheduler>();
+    auto queueScheduler = m_queueScheduler.Create<wifi::WifiMacQueueScheduler>();
     mac->SetMacQueueScheduler(queueScheduler);
 
     // WaveNetDevice (through ns-3.38) stores PHY entities in a different member than WifiNetDevice,
@@ -77,13 +77,12 @@ WifiMacHelper::Create(Ptr<WifiNetDevice> device, WifiStandard standard) const
     {
         auto fem = mac->GetFrameExchangeManager(linkId);
 
-        Ptr<WifiProtectionManager> protectionManager =
-            m_protectionManager.Create<WifiProtectionManager>();
+        auto protectionManager = m_protectionManager.Create<wifi::WifiProtectionManager>();
         protectionManager->SetWifiMac(mac);
         protectionManager->SetLinkId(linkId);
         fem->SetProtectionManager(protectionManager);
 
-        Ptr<WifiAckManager> ackManager = m_ackManager.Create<WifiAckManager>();
+        auto ackManager = m_ackManager.Create<wifi::WifiAckManager>();
         ackManager->SetWifiMac(mac);
         ackManager->SetLinkId(linkId);
         fem->SetAckManager(ackManager);
@@ -101,29 +100,29 @@ WifiMacHelper::Create(Ptr<WifiNetDevice> device, WifiStandard standard) const
     }
 
     // create and install the Multi User Scheduler if this is an HE AP
-    Ptr<ApWifiMac> apMac;
-    if (standard >= WIFI_STANDARD_80211ax && m_muScheduler.IsTypeIdSet() &&
-        (apMac = DynamicCast<ApWifiMac>(mac)))
+    Ptr<wifi::ApWifiMac> apMac;
+    if (standard >= wifi::WIFI_STANDARD_80211ax && m_muScheduler.IsTypeIdSet() &&
+        (apMac = DynamicCast<wifi::ApWifiMac>(mac)))
     {
-        Ptr<MultiUserScheduler> muScheduler = m_muScheduler.Create<MultiUserScheduler>();
+        auto muScheduler = m_muScheduler.Create<wifi::MultiUserScheduler>();
         apMac->AggregateObject(muScheduler);
     }
 
     // create and install the Association Manager if this is a STA
-    auto staMac = DynamicCast<StaWifiMac>(mac);
+    auto staMac = DynamicCast<wifi::StaWifiMac>(mac);
     if (staMac)
     {
-        Ptr<WifiAssocManager> assocManager = m_assocManager.Create<WifiAssocManager>();
+        auto assocManager = m_assocManager.Create<wifi::WifiAssocManager>();
         staMac->SetAssocManager(assocManager);
     }
 
     // create and install the EMLSR Manager if this is an EHT non-AP MLD with EMLSR activated
     if (BooleanValue emlsrActivated;
-        standard >= WIFI_STANDARD_80211be && staMac && staMac->GetNLinks() > 1 &&
+        standard >= wifi::WIFI_STANDARD_80211be && staMac && staMac->GetNLinks() > 1 &&
         device->GetEhtConfiguration()->GetAttributeFailSafe("EmlsrActivated", emlsrActivated) &&
         emlsrActivated.Get())
     {
-        auto emlsrManager = m_emlsrManager.Create<EmlsrManager>();
+        auto emlsrManager = m_emlsrManager.Create<wifi::EmlsrManager>();
         staMac->SetEmlsrManager(emlsrManager);
     }
 

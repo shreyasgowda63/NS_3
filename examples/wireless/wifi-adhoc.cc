@@ -219,7 +219,7 @@ main(int argc, char* argv[])
 
     Experiment experiment;
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211a);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211a);
     WifiMacHelper wifiMac;
     YansWifiPhyHelper wifiPhy;
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();

@@ -26,6 +26,8 @@
 namespace ns3
 {
 
+using namespace wifi;
+
 #define IE11S_MESH_PEERING_PROTOCOL_VERSION                                                        \
     ((WifiInformationElementId)74) // to be removed (Protocol ID should be part of the Mesh Peering
                                    // Management IE)

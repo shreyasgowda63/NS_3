@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// Bitmask with all bits from 63 to 26 set to 1, all the others set to 0
 static constexpr uint64_t BIT_63_TO_26_MASK = 0xfffffffffc000000;
@@ -302,4 +304,5 @@ TidToLinkMapping::DeserializeInformationField(Buffer::Iterator start, uint16_t l
     return count;
 }
 
+} // namespace wifi
 } // namespace ns3

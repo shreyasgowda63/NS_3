@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 void
 WifiMacQueueContainer::clear()
@@ -197,6 +199,7 @@ WifiMacQueueContainer::GetAllExpiredMpdus() const
     return {m_expiredQueue.begin(), m_expiredQueue.end()};
 }
 
+} // namespace wifi
 } // namespace ns3
 
 /****************************************************
@@ -204,7 +207,8 @@ WifiMacQueueContainer::GetAllExpiredMpdus() const
  ***************************************************/
 
 std::size_t
-std::hash<ns3::WifiContainerQueueId>::operator()(ns3::WifiContainerQueueId queueId) const
+std::hash<ns3::wifi::WifiContainerQueueId>::operator()(
+    ns3::wifi::WifiContainerQueueId queueId) const
 {
     auto [type, addrType, address, tid] = queueId;
     const std::size_t size = tid.has_value() ? 8 : 7;

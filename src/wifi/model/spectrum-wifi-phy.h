@@ -39,6 +39,10 @@ namespace ns3
 
 class SpectrumChannel;
 struct SpectrumSignalParameters;
+
+namespace wifi
+{
+
 class WifiSpectrumPhyInterface;
 struct WifiSpectrumSignalParameters;
 
@@ -298,6 +302,7 @@ class SpectrumWifiPhy : public WifiPhy
     Callback<void> m_channelSwitchedCallback; //!< Callback when channel switched
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* SPECTRUM_WIFI_PHY_H */

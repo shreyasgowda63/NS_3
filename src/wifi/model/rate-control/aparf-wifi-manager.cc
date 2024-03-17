@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("AparfWifiManager");
 
@@ -421,4 +423,5 @@ AparfWifiManager::DoGetRtsTxVector(WifiRemoteStation* st)
         GetAggregation(station));
 }
 
+} // namespace wifi
 } // namespace ns3

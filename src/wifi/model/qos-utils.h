@@ -28,10 +28,14 @@
 namespace ns3
 {
 
-class Packet;
-class WifiMacHeader;
-class QueueItem;
 class Mac48Address;
+class Packet;
+class QueueItem;
+
+namespace wifi
+{
+
+class WifiMacHeader;
 
 typedef std::pair<Mac48Address, uint8_t> WifiAddressTidPair; //!< (MAC address, TID) pair
 
@@ -337,6 +341,7 @@ uint8_t GetTid(Ptr<const Packet> packet, const WifiMacHeader hdr);
  */
 uint8_t SelectQueueByDSField(Ptr<QueueItem> item);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* QOS_UTILS_H */

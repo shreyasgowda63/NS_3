@@ -65,6 +65,7 @@
 // Round Robin scheduler to the AP, so that DL MU PPDUs are sent by the AP via DL OFDMA.
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 NS_LOG_COMPONENT_DEFINE("eht-wifi-network");
 

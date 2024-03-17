@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief AARF Rate control algorithm
@@ -80,6 +82,7 @@ class AarfWifiManager : public WifiRemoteStationManager
     TracedValue<uint64_t> m_currentRate; //!< Trace rate changes
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* AARF_WIFI_MANAGER_H */

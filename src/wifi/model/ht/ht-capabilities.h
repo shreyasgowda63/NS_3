@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief The HT Capabilities Information Element
@@ -351,6 +353,7 @@ class HtCapabilities : public WifiInformationElement
     uint8_t m_reservedASel;                             ///< reserved ASEL
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HT_CAPABILITY_H */

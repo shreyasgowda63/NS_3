@@ -263,7 +263,7 @@ RoutingExperiment::Run()
 
     // setting up wifi phy and channel using helpers
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211b);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211b);
 
     YansWifiPhyHelper wifiPhy;
     YansWifiChannelHelper wifiChannel;

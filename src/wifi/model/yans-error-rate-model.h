@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief Model the error rate for different modulations.
@@ -167,6 +169,7 @@ class YansErrorRateModel : public ErrorRateModel
                         uint32_t adFreePlusOne) const;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* YANS_ERROR_RATE_MODEL_H */

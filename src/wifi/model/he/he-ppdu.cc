@@ -33,6 +33,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("HePpdu");
 
@@ -122,13 +124,13 @@ HePpdu::SetHeSigHeader(const WifiTxVector& txVector)
 {
     const auto bssColor = txVector.GetBssColor();
     NS_ASSERT(bssColor < 64);
-    if (ns3::IsUlMu(m_preamble))
+    if (wifi::IsUlMu(m_preamble))
     {
         m_heSig.emplace<HeTbSigHeader>(HeTbSigHeader{
             .m_bssColor = bssColor,
             .m_bandwidth = GetChannelWidthEncodingFromMhz(txVector.GetChannelWidth())});
     }
-    else if (ns3::IsDlMu(m_preamble))
+    else if (wifi::IsDlMu(m_preamble))
     {
         const auto p20Index = m_operatingChannel.GetPrimaryChannelIndex(20);
         const uint8_t noMuMimoUsers{0};
@@ -798,4 +800,5 @@ HePpdu::GetMuMimoUsersFromEncoding(uint8_t encoding)
     return (encoding + 1);
 }
 
+} // namespace wifi
 } // namespace ns3

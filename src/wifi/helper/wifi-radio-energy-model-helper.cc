@@ -45,14 +45,14 @@ WifiRadioEnergyModelHelper::Set(std::string name, const AttributeValue& v)
 
 void
 WifiRadioEnergyModelHelper::SetDepletionCallback(
-    WifiRadioEnergyModel::WifiRadioEnergyDepletionCallback callback)
+    wifi::WifiRadioEnergyModel::WifiRadioEnergyDepletionCallback callback)
 {
     m_depletionCallback = callback;
 }
 
 void
 WifiRadioEnergyModelHelper::SetRechargedCallback(
-    WifiRadioEnergyModel::WifiRadioEnergyRechargedCallback callback)
+    wifi::WifiRadioEnergyModel::WifiRadioEnergyRechargedCallback callback)
 {
     m_rechargedCallback = callback;
 }
@@ -73,17 +73,17 @@ WifiRadioEnergyModelHelper::DoInstall(Ptr<NetDevice> device, Ptr<EnergySource> s
         NS_FATAL_ERROR("NetDevice type is not WifiNetDevice!");
     }
     Ptr<Node> node = device->GetNode();
-    Ptr<WifiRadioEnergyModel> model = m_radioEnergy.Create()->GetObject<WifiRadioEnergyModel>();
+    auto model = m_radioEnergy.Create()->GetObject<wifi::WifiRadioEnergyModel>();
     NS_ASSERT(model);
 
     // set energy depletion callback
     // if none is specified, make a callback to WifiPhy::SetOffMode
-    Ptr<WifiNetDevice> wifiDevice = DynamicCast<WifiNetDevice>(device);
-    Ptr<WifiPhy> wifiPhy = wifiDevice->GetPhy();
+    auto wifiDevice = DynamicCast<wifi::WifiNetDevice>(device);
+    auto wifiPhy = wifiDevice->GetPhy();
     wifiPhy->SetWifiRadioEnergyModel(model);
     if (m_depletionCallback.IsNull())
     {
-        model->SetEnergyDepletionCallback(MakeCallback(&WifiPhy::SetOffMode, wifiPhy));
+        model->SetEnergyDepletionCallback(MakeCallback(&wifi::WifiPhy::SetOffMode, wifiPhy));
     }
     else
     {
@@ -93,7 +93,7 @@ WifiRadioEnergyModelHelper::DoInstall(Ptr<NetDevice> device, Ptr<EnergySource> s
     // if none is specified, make a callback to WifiPhy::ResumeFromOff
     if (m_rechargedCallback.IsNull())
     {
-        model->SetEnergyRechargedCallback(MakeCallback(&WifiPhy::ResumeFromOff, wifiPhy));
+        model->SetEnergyRechargedCallback(MakeCallback(&wifi::WifiPhy::ResumeFromOff, wifiPhy));
     }
     else
     {
@@ -108,7 +108,7 @@ WifiRadioEnergyModelHelper::DoInstall(Ptr<NetDevice> device, Ptr<EnergySource> s
     //
     if (m_txCurrentModel.GetTypeId().GetUid())
     {
-        Ptr<WifiTxCurrentModel> txcurrent = m_txCurrentModel.Create<WifiTxCurrentModel>();
+        auto txcurrent = m_txCurrentModel.Create<wifi::WifiTxCurrentModel>();
         model->SetTxCurrentModel(txcurrent);
     }
     return model;

@@ -49,10 +49,10 @@ YansWifiChannelHelper::Default()
     return helper;
 }
 
-Ptr<YansWifiChannel>
+Ptr<wifi::YansWifiChannel>
 YansWifiChannelHelper::Create() const
 {
-    Ptr<YansWifiChannel> channel = CreateObject<YansWifiChannel>();
+    auto channel = CreateObject<wifi::YansWifiChannel>();
     Ptr<PropagationLossModel> prev = nullptr;
     for (auto i = m_propagationLoss.begin(); i != m_propagationLoss.end(); ++i)
     {
@@ -73,7 +73,7 @@ YansWifiChannelHelper::Create() const
 }
 
 int64_t
-YansWifiChannelHelper::AssignStreams(Ptr<YansWifiChannel> c, int64_t stream)
+YansWifiChannelHelper::AssignStreams(Ptr<wifi::YansWifiChannel> c, int64_t stream)
 {
     return c->AssignStreams(stream);
 }
@@ -88,7 +88,7 @@ YansWifiPhyHelper::YansWifiPhyHelper()
 }
 
 void
-YansWifiPhyHelper::SetChannel(Ptr<YansWifiChannel> channel)
+YansWifiPhyHelper::SetChannel(Ptr<wifi::YansWifiChannel> channel)
 {
     m_channel = channel;
 }
@@ -96,31 +96,32 @@ YansWifiPhyHelper::SetChannel(Ptr<YansWifiChannel> channel)
 void
 YansWifiPhyHelper::SetChannel(std::string channelName)
 {
-    Ptr<YansWifiChannel> channel = Names::Find<YansWifiChannel>(channelName);
+    auto channel = Names::Find<wifi::YansWifiChannel>(channelName);
     m_channel = channel;
 }
 
-std::vector<Ptr<WifiPhy>>
-YansWifiPhyHelper::Create(Ptr<Node> node, Ptr<WifiNetDevice> device) const
+std::vector<Ptr<wifi::WifiPhy>>
+YansWifiPhyHelper::Create(Ptr<Node> node, Ptr<wifi::WifiNetDevice> device) const
 {
-    Ptr<YansWifiPhy> phy = m_phys.front().Create<YansWifiPhy>();
-    Ptr<InterferenceHelper> interference = m_interferenceHelper.Create<InterferenceHelper>();
+    auto phy = m_phys.front().Create<wifi::YansWifiPhy>();
+    auto interference = m_interferenceHelper.Create<wifi::InterferenceHelper>();
     phy->SetInterferenceHelper(interference);
-    Ptr<ErrorRateModel> error = m_errorRateModel.front().Create<ErrorRateModel>();
+    auto error = m_errorRateModel.front().Create<wifi::ErrorRateModel>();
     phy->SetErrorRateModel(error);
     if (m_frameCaptureModel.front().IsTypeIdSet())
     {
-        auto frameCapture = m_frameCaptureModel.front().Create<FrameCaptureModel>();
+        auto frameCapture = m_frameCaptureModel.front().Create<wifi::FrameCaptureModel>();
         phy->SetFrameCaptureModel(frameCapture);
     }
     if (m_preambleDetectionModel.front().IsTypeIdSet())
     {
-        auto preambleDetection = m_preambleDetectionModel.front().Create<PreambleDetectionModel>();
+        auto preambleDetection =
+            m_preambleDetectionModel.front().Create<wifi::PreambleDetectionModel>();
         phy->SetPreambleDetectionModel(preambleDetection);
     }
     phy->SetChannel(m_channel);
     phy->SetDevice(device);
-    return std::vector<Ptr<WifiPhy>>({phy});
+    return std::vector<Ptr<wifi::WifiPhy>>({phy});
 }
 
 } // namespace ns3

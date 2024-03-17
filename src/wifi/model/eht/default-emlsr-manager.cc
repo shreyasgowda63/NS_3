@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("DefaultEmlsrManager");
 
@@ -173,4 +175,5 @@ DefaultEmlsrManager::DoNotifyTxopEnd(uint8_t linkId)
     }
 }
 
+} // namespace wifi
 } // namespace ns3

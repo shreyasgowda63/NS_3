@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(SnrTag);
 
@@ -92,4 +94,5 @@ SnrTag::Get() const
     return m_snr;
 }
 
+} // namespace wifi
 } // namespace ns3

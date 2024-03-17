@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /*
  * WifiAcknowledgment
@@ -378,4 +380,5 @@ operator<<(std::ostream& os, const WifiAcknowledgment* acknowledgment)
     return os;
 }
 
+} // namespace wifi
 } // namespace ns3

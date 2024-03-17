@@ -80,7 +80,7 @@ main(int argc, char* argv[])
 
     WifiMacHelper mac;
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211n);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
 
     std::ostringstream oss;
     oss << "HtMcs" << mcs;
@@ -92,14 +92,14 @@ main(int argc, char* argv[])
                                  "RtsCtsThreshold",
                                  UintegerValue(useRts ? 0 : 999999));
 
-    Ssid ssid = Ssid("ns3-80211n");
+    wifi::Ssid ssid("ns3-80211n");
 
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+    mac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
 
     NetDeviceContainer staDevices;
     staDevices = wifi.Install(phy, mac, wifiStaNodes);
 
-    mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
 
     NetDeviceContainer apDevice;
     apDevice = wifi.Install(phy, mac, wifiApNode);

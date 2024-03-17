@@ -22,6 +22,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(AmpduTag);
 
@@ -100,4 +102,5 @@ AmpduTag::Print(std::ostream& os) const
        << " Remaining A-MPDU duration=" << m_duration;
 }
 
+} // namespace wifi
 } // namespace ns3

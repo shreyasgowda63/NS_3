@@ -42,6 +42,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 struct RxSignalInfo;
 struct WifiProtection;
@@ -664,6 +666,7 @@ class FrameExchangeManager : public Object
     Ptr<WifiAckManager> m_ackManager;               //!< Acknowledgment manager
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* FRAME_EXCHANGE_MANAGER_H */

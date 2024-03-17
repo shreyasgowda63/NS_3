@@ -49,6 +49,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("ApWifiMac");
 
@@ -2448,4 +2450,5 @@ ApWifiMac::GetMaxBufferStatus(Mac48Address address) const
     return 255;
 }
 
+} // namespace wifi
 } // namespace ns3

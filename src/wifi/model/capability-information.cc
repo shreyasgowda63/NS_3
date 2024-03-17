@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 CapabilityInformation::CapabilityInformation()
     : m_capability(0)
@@ -136,4 +138,5 @@ CapabilityInformation::Deserialize(Buffer::Iterator start)
     return start;
 }
 
+} // namespace wifi
 } // namespace ns3

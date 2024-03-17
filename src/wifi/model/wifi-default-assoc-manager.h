@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class StaWifiMac;
 
@@ -83,6 +85,7 @@ class WifiDefaultAssocManager : public WifiAssocManager
     std::vector<ChannelSwitchInfo> m_channelSwitchInfo; ///< per-link channel switch info
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_DEFAULT_ASSOC_MANAGER_H */

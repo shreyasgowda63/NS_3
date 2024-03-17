@@ -36,6 +36,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("MsduAggregator");
 
@@ -302,4 +304,5 @@ MsduAggregator::Deaggregate(Ptr<Packet> aggregatedPacket)
     return set;
 }
 
+} // namespace wifi
 } // namespace ns3

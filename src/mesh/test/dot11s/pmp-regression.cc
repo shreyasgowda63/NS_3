@@ -98,7 +98,7 @@ PeerManagementProtocolRegressionTest::CreateDevices()
     // 1. setup WiFi
     YansWifiPhyHelper wifiPhy;
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
-    Ptr<YansWifiChannel> chan = wifiChannel.Create();
+    auto chan = wifiChannel.Create();
     wifiPhy.SetChannel(chan);
     // 2. setup mesh
     MeshHelper mesh = MeshHelper::Default();

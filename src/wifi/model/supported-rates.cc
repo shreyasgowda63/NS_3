@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("SupportedRates");
 
@@ -241,4 +243,5 @@ ExtendedSupportedRatesIE::ElementId() const
     return IE_EXTENDED_SUPPORTED_RATES;
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("AarfcdWifiManager");
 
@@ -445,4 +447,5 @@ AarfcdWifiManager::ResetRtsWnd(AarfcdWifiRemoteStation* station)
     station->m_rtsWnd = m_minRtsWnd;
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -22,6 +22,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 HtCapabilities::HtCapabilities()
     : m_ldpc(0),
@@ -513,4 +515,5 @@ HtCapabilities::DeserializeInformationField(Buffer::Iterator start, uint16_t len
     return length;
 }
 
+} // namespace wifi
 } // namespace ns3

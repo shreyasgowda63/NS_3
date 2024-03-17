@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief The Extended Capabilities Information Element
@@ -227,6 +229,7 @@ class ExtendedCapabilities : public WifiInformationElement
                             ///< element should be added to the frame or not
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* EXTENDED_CAPABILITIES_H */

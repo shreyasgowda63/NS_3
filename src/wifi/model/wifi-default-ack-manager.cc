@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiDefaultAckManager");
 
@@ -746,4 +748,5 @@ WifiDefaultAckManager::TryUlMuTransmission(Ptr<const WifiMpdu> mpdu,
     return nullptr;
 }
 
+} // namespace wifi
 } // namespace ns3

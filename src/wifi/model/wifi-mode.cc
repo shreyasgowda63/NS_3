@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 bool
 operator==(const WifiMode& a, const WifiMode& b)
@@ -427,4 +429,5 @@ WifiModeFactory::GetFactory()
     return &factory;
 }
 
+} // namespace wifi
 } // namespace ns3

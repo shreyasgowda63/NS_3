@@ -29,8 +29,12 @@
 namespace ns3
 {
 
-class WifiMacHeader;
 class Time;
+
+namespace wifi
+{
+class WifiMacHeader;
+}
 
 /**
  * \brief Beacon is beacon header + list of arbitrary information elements
@@ -74,7 +78,7 @@ class MeshWifiBeacon
      * \param mpAddress is mesh point address
      * \returns the WifiMacHeader
      */
-    WifiMacHeader CreateHeader(Mac48Address address, Mac48Address mpAddress);
+    wifi::WifiMacHeader CreateHeader(Mac48Address address, Mac48Address mpAddress);
     /**
      * Returns the beacon interval of Wifi beacon
      *

@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief TID independent remote station statistics
@@ -71,6 +73,7 @@ class WifiRemoteStationInfo
     double m_failAvg;  ///< moving percentage of failed frames
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_REMOTE_STATION_INFO_H */

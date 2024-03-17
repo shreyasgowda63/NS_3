@@ -24,6 +24,9 @@
 
 namespace ns3
 {
+namespace wifi
+{
+
 /**
  * \ingroup wifi
  *
@@ -75,6 +78,7 @@ class SimpleFrameCaptureModel : public FrameCaptureModel
     double m_margin; ///< margin for determining if a new frame (dB)
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* SIMPLE_FRAME_CAPTURE_MODEL_H */

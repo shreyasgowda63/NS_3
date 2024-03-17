@@ -106,7 +106,7 @@ main(int argc, char* argv[])
 
     WifiMacHelper wifiMac;
     WifiHelper wifiHelper;
-    wifiHelper.SetStandard(WIFI_STANDARD_80211n);
+    wifiHelper.SetStandard(wifi::WIFI_STANDARD_80211n);
 
     /* Set up Legacy Channel */
     YansWifiChannelHelper wifiChannel;
@@ -129,14 +129,14 @@ main(int argc, char* argv[])
     Ptr<Node> staWifiNode = networkNodes.Get(1);
 
     /* Configure AP */
-    Ssid ssid = Ssid("network");
-    wifiMac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    wifi::Ssid ssid("network");
+    wifiMac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
 
     NetDeviceContainer apDevice;
     apDevice = wifiHelper.Install(wifiPhy, wifiMac, apWifiNode);
 
     /* Configure STA */
-    wifiMac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+    wifiMac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
 
     NetDeviceContainer staDevices;
     staDevices = wifiHelper.Install(wifiPhy, wifiMac, staWifiNode);

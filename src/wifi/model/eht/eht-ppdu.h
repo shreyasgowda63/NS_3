@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief EHT PPDU (11be)
@@ -170,6 +172,7 @@ class EhtPpdu : public HePpdu
     EhtPhyHeader m_ehtPhyHeader; //!< the EHT PHY header
 };                               // class EhtPpdu
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* EHT_PPDU_H */

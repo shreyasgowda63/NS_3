@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -63,6 +65,7 @@ class DefaultEmlsrManager : public EmlsrManager
                                       //!< when the main PHY is back operating on its previous link
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* DEFAULT_EMLSR_MANAGER_H */

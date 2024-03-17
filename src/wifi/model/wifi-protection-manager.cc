@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiProtectionManager");
 
@@ -119,4 +121,5 @@ WifiProtectionManager::AddUserInfoToMuRts(CtrlTriggerHeader& muRts,
     }
 }
 
+} // namespace wifi
 } // namespace ns3

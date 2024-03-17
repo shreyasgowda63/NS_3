@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiDefaultAssocManager");
 
@@ -302,4 +304,5 @@ WifiDefaultAssocManager::CanBeReturned(const StaWifiMac::ApInfo& apInfo) const
     return true;
 }
 
+} // namespace wifi
 } // namespace ns3

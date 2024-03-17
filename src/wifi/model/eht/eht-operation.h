@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// IEEE 802.11be D2.0 Figure 9-1002ai
 constexpr uint8_t WIFI_EHT_MAX_MCS_INDEX = 13;
@@ -187,6 +189,7 @@ class EhtOperation : public WifiInformationElement
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* EHT_OPERATION_H */

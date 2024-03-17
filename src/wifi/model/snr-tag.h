@@ -31,6 +31,9 @@ namespace ns3
 
 class Tag;
 
+namespace wifi
+{
+
 class SnrTag : public Tag
 {
   public:
@@ -68,6 +71,7 @@ class SnrTag : public Tag
     double m_snr; //!< SNR value in linear scale
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* SNR_TAG_H */

@@ -33,6 +33,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -456,6 +458,7 @@ class OfdmPhy : public PhyEntity
                                      //!< corresponding to a unique name of modulation
 };                                   // class OfdmPhy
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* OFDM_PHY_H */

@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -53,6 +55,7 @@ class PreambleDetectionModel : public Object
     virtual bool IsPreambleDetected(double rssi, double snr, double channelWidth) const = 0;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* PREAMBLE_DETECTION_MODEL_H */

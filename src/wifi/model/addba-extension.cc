@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 void
 AddbaExtension::Print(std::ostream& os) const
@@ -58,4 +60,5 @@ AddbaExtension::DeserializeInformationField(Buffer::Iterator start, uint16_t len
     return 1;
 }
 
+} // namespace wifi
 } // namespace ns3

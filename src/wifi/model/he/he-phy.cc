@@ -43,6 +43,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("HePhy");
 
@@ -222,7 +224,7 @@ HePhy::GetSigADuration(WifiPreamble preamble) const
 uint32_t
 HePhy::GetSigBSize(const WifiTxVector& txVector) const
 {
-    if (ns3::IsDlMu(txVector.GetPreambleType()))
+    if (wifi::IsDlMu(txVector.GetPreambleType()))
     {
         NS_ASSERT(txVector.GetModulationClass() >= WIFI_MOD_CLASS_HE);
         return HePpdu::GetSigBFieldSize(
@@ -1856,6 +1858,7 @@ HePhy::ConvertHeRuSubcarriers(uint16_t bandWidth,
     return convertedSubcarriers;
 }
 
+} // namespace wifi
 } // namespace ns3
 
 namespace
@@ -1869,8 +1872,9 @@ class ConstructorHe
   public:
     ConstructorHe()
     {
-        ns3::HePhy::InitializeModes();
-        ns3::WifiPhy::AddStaticPhyEntity(ns3::WIFI_MOD_CLASS_HE, ns3::Create<ns3::HePhy>());
+        ns3::wifi::HePhy::InitializeModes();
+        ns3::wifi::WifiPhy::AddStaticPhyEntity(ns3::wifi::WIFI_MOD_CLASS_HE,
+                                               ns3::Create<ns3::wifi::HePhy>());
     }
 } g_constructor_he; ///< the constructor for HE modes
 

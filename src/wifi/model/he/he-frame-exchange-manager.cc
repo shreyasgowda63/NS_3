@@ -41,6 +41,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("HeFrameExchangeManager");
 
@@ -899,7 +901,7 @@ HeFrameExchangeManager::ForwardPsduMapDown(WifiConstPsduMap psduMap, WifiTxVecto
 {
     NS_LOG_FUNCTION(this << psduMap << txVector);
 
-    if (ns3::IsDlMu(txVector.GetPreambleType()))
+    if (wifi::IsDlMu(txVector.GetPreambleType()))
     {
         auto hePhy = StaticCast<HePhy>(m_phy->GetPhyEntity(txVector.GetModulationClass()));
         auto sigBMode = hePhy->GetSigBMode(txVector);
@@ -2785,4 +2787,5 @@ HeFrameExchangeManager::EndReceiveAmpdu(Ptr<const WifiPsdu> psdu,
     VhtFrameExchangeManager::EndReceiveAmpdu(psdu, rxSignalInfo, txVector, perMpduStatus);
 }
 
+} // namespace wifi
 } // namespace ns3

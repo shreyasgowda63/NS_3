@@ -112,7 +112,7 @@ main(int argc, char* argv[])
     phy.Set("ChannelSettings", StringValue("{36, 0, BAND_5GHZ, 0}"));
 
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211n);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
     wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
                                  "DataMode",
                                  StringValue("HtMcs7"),
@@ -120,15 +120,15 @@ main(int argc, char* argv[])
                                  StringValue("HtMcs0"));
     WifiMacHelper mac;
 
-    Ssid ssid = Ssid("simple-mpdu-aggregation");
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+    wifi::Ssid ssid("simple-mpdu-aggregation");
+    mac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
 
     NetDeviceContainer staDevices;
     staDevices = wifi.Install(phy, mac, wifiStaNodes);
 
     mac.SetType("ns3::ApWifiMac",
                 "Ssid",
-                SsidValue(ssid),
+                wifi::SsidValue(ssid),
                 "EnableBeaconJitter",
                 BooleanValue(false));
 

@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 const uint16_t ERROR_TABLE_BCC_SMALL_FRAME_SIZE =
     32; //!< reference size (bytes) of small frames for BCC
@@ -547,6 +549,7 @@ static const SnrPerTable AwgnErrorTableLdpc1458[ERROR_TABLE_LDPC_MAX_NUM_MCS] = 
     },
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* ERROR_RATE_TABLES_H */

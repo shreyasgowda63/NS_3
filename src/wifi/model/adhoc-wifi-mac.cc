@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("AdhocWifiMac");
 
@@ -233,4 +235,5 @@ AdhocWifiMac::Receive(Ptr<const WifiMpdu> mpdu, uint8_t linkId)
     WifiMac::Receive(mpdu, linkId);
 }
 
+} // namespace wifi
 } // namespace ns3

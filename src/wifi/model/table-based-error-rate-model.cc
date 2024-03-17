@@ -35,6 +35,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 static const double SNR_PRECISION = 2;                         //!< precision for SNR
 static const double TABLED_BASED_ERROR_MODEL_PRECISION = 1e-5; //!< precision for PER
@@ -252,4 +254,5 @@ TableBasedErrorRateModel::DoGetChunkSuccessRate(WifiMode mode,
     return 1.0 - per;
 }
 
+} // namespace wifi
 } // namespace ns3

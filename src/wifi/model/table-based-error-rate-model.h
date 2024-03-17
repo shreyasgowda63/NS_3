@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiTxVector;
 
@@ -91,6 +93,7 @@ class TableBasedErrorRateModel : public ErrorRateModel
     uint64_t m_threshold; //!< Threshold in bytes over which the table for large size frames is used
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* TABLE_BASED_ERROR_RATE_MODEL_H */

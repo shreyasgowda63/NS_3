@@ -22,6 +22,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiBandwidthFilter : public SpectrumTransmitFilter
 {
@@ -50,6 +52,7 @@ class WifiBandwidthFilter : public SpectrumTransmitFilter
     int64_t DoAssignStreams(int64_t stream) override;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif

@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * This defines the BSS membership value for EHT PHY.
@@ -292,6 +294,7 @@ class EhtPhy : public HePhy
     static const PpduFormats m_ehtPpduFormats; //!< EHT PPDU formats
 };                                             // class EhtPhy
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* EHT_PHY_H */

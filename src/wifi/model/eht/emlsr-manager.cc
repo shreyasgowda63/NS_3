@@ -33,6 +33,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("EmlsrManager");
 
@@ -995,4 +997,5 @@ EmlsrManager::GetChannelForAuxPhy(uint8_t linkId) const
     return it->second;
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 ReducedNeighborReport::ReducedNeighborReport()
 {
@@ -748,4 +750,5 @@ ReducedNeighborReport::DeserializeInformationField(Buffer::Iterator start, uint1
     return count;
 }
 
+} // namespace wifi
 } // namespace ns3

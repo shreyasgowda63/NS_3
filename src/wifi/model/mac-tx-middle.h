@@ -29,8 +29,12 @@
 namespace ns3
 {
 
-class WifiMacHeader;
 class Mac48Address;
+
+namespace wifi
+{
+
+class WifiMacHeader;
 
 /**
  * \ingroup wifi
@@ -80,6 +84,7 @@ class MacTxMiddle : public SimpleRefCount<MacTxMiddle>
     uint16_t m_sequence;                              ///< current sequence number
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MAC_TX_MIDDLE_H */

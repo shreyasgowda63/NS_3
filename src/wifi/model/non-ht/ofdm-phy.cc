@@ -37,6 +37,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("OfdmPhy");
 
@@ -706,7 +708,7 @@ OfdmPhy::GetRxPpduFromTxPpdu(Ptr<const WifiPpdu> ppdu)
     return PhyEntity::GetRxPpduFromTxPpdu(ppdu);
 }
 
-} // namespace ns3
+} // namespace wifi
 
 namespace
 {
@@ -719,10 +721,12 @@ class ConstructorOfdm
   public:
     ConstructorOfdm()
     {
-        ns3::OfdmPhy::InitializeModes();
-        ns3::WifiPhy::AddStaticPhyEntity(ns3::WIFI_MOD_CLASS_OFDM,
-                                         ns3::Create<ns3::OfdmPhy>()); // default variant will do
+        ns3::wifi::OfdmPhy::InitializeModes();
+        ns3::wifi::WifiPhy::AddStaticPhyEntity(
+            ns3::wifi::WIFI_MOD_CLASS_OFDM,
+            ns3::Create<ns3::wifi::OfdmPhy>()); // default variant will do
     }
 } g_constructor_ofdm; ///< the constructor for OFDM modes
 
 } // namespace
+} // namespace ns3

@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup energy
@@ -101,6 +103,7 @@ class LinearWifiTxCurrentModel : public WifiTxCurrentModel
     double m_idleCurrent; ///< idle current in Amperes
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_TX_CURRENT_MODEL_H */

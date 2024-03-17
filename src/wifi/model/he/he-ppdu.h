@@ -34,6 +34,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// HE SIG-B Content Channels
 constexpr size_t WIFI_MAX_NUM_HE_SIGB_CONTENT_CHANNELS = 2;
@@ -375,6 +377,7 @@ class HePpdu : public OfdmPpdu
  */
 std::ostream& operator<<(std::ostream& os, const HePpdu::TxPsdFlag& flag);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HE_PPDU_H */

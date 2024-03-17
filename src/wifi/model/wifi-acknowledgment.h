@@ -35,6 +35,9 @@ namespace ns3
 
 class Mac48Address;
 
+namespace wifi
+{
+
 /**
  * \ingroup wifi
  *
@@ -358,6 +361,7 @@ struct WifiAckAfterTbPpdu : public WifiAcknowledgment
  */
 std::ostream& operator<<(std::ostream& os, const WifiAcknowledgment* acknowledgment);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_ACKNOWLEDGMENT_H */

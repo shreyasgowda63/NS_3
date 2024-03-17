@@ -36,6 +36,8 @@ class WifiMacQueueDropOldestTest;
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiMpdu;
 class WifiMacQueue;
@@ -743,6 +745,7 @@ WifiMacQueueSchedulerImpl<Priority, Compare>::NotifyRemove(AcIndex ac,
     }
 }
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MAC_QUEUE_SCHEDULER_IMPL_H */

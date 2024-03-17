@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("NistErrorRateModel");
 
@@ -232,4 +234,5 @@ NistErrorRateModel::DoGetChunkSuccessRate(WifiMode mode,
     return 0;
 }
 
+} // namespace wifi
 } // namespace ns3

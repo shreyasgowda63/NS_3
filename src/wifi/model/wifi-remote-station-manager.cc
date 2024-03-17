@@ -41,6 +41,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiRemoteStationManager");
 
@@ -2203,4 +2205,5 @@ WifiRemoteStationManager::UseLdpcForDestination(Mac48Address dest) const
     return (GetLdpcSupported() && GetLdpcSupported(dest));
 }
 
+} // namespace wifi
 } // namespace ns3

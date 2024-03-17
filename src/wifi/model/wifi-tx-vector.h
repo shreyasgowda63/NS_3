@@ -34,6 +34,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// STA_ID for a RU that is intended for no user (Section 26.11.1 802.11ax-2021)
 static constexpr uint16_t NO_USER_STA_ID = 2046;
@@ -610,6 +612,7 @@ class WifiTxVector
  */
 std::ostream& operator<<(std::ostream& os, const WifiTxVector& v);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_TX_VECTOR_H */

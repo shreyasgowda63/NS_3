@@ -84,7 +84,7 @@ class YansWifiChannelHelper
      *
      * Create a channel based on the configuration parameters set previously.
      */
-    Ptr<YansWifiChannel> Create() const;
+    Ptr<wifi::YansWifiChannel> Create() const;
 
     /**
      * Assign a fixed random variable stream number to the random variables
@@ -98,7 +98,7 @@ class YansWifiChannelHelper
      *
      * \return the number of stream indices assigned by this helper
      */
-    int64_t AssignStreams(Ptr<YansWifiChannel> c, int64_t stream);
+    int64_t AssignStreams(Ptr<wifi::YansWifiChannel> c, int64_t stream);
 
   private:
     std::vector<ObjectFactory> m_propagationLoss; ///< vector of propagation loss models
@@ -129,7 +129,7 @@ class YansWifiPhyHelper : public WifiPhyHelper
      *
      * Every PHY created by a call to Install is associated to this channel.
      */
-    void SetChannel(Ptr<YansWifiChannel> channel);
+    void SetChannel(Ptr<wifi::YansWifiChannel> channel);
     /**
      * \param channelName The name of the channel to associate to this helper
      *
@@ -145,9 +145,10 @@ class YansWifiPhyHelper : public WifiPhyHelper
      *
      * This method implements the pure virtual method defined in \ref ns3::WifiPhyHelper.
      */
-    std::vector<Ptr<WifiPhy>> Create(Ptr<Node> node, Ptr<WifiNetDevice> device) const override;
+    std::vector<Ptr<wifi::WifiPhy>> Create(Ptr<Node> node,
+                                           Ptr<wifi::WifiNetDevice> device) const override;
 
-    Ptr<YansWifiChannel> m_channel; ///< YANS wifi channel
+    Ptr<wifi::YansWifiChannel> m_channel; ///< YANS wifi channel
 };
 
 /***************************************************************

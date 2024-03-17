@@ -42,12 +42,16 @@ namespace ns3
 {
 
 class Packet;
+class UniformRandomVariable;
+
+namespace wifi
+{
+
 class ChannelAccessManager;
 class MacTxMiddle;
 class WifiMode;
 class WifiMacQueue;
 class WifiMpdu;
-class UniformRandomVariable;
 class CtrlBAckResponseHeader;
 class WifiMac;
 enum WifiMacDropReason : uint8_t; // opaque enum declaration
@@ -581,6 +585,7 @@ class Txop : public Object
         m_links; //!< ID-indexed map of LinkEntity objects
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* TXOP_H */

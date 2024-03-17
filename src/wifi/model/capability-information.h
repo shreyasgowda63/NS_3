@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -158,6 +160,7 @@ class CapabilityInformation
     uint16_t m_capability; ///< capability
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* CAPABILITY_INFORMATION_H */

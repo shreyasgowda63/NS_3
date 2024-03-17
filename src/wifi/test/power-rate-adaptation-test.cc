@@ -32,6 +32,7 @@
 #include "ns3/yans-wifi-phy.h"
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 /**
  * \ingroup wifi-test

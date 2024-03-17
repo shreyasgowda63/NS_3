@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 struct RrpaaWifiRemoteStation;
 
@@ -237,6 +239,7 @@ class RrpaaWifiManager : public WifiRemoteStationManager
         m_uniformRandomVariable; //!< Provides uniform random variables for probabilistic changes.
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* RRPAA__WIFI_MANAGER_H */

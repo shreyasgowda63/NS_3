@@ -33,6 +33,8 @@ NS_LOG_COMPONENT_DEFINE("RrpaaWifiManager");
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * Hold per-remote-station state for RRPAA Wifi manager.
@@ -642,4 +644,5 @@ RrpaaWifiManager::GetThresholds(RrpaaWifiRemoteStation* station, uint8_t index) 
     return GetThresholds(station, mode);
 }
 
+} // namespace wifi
 } // namespace ns3

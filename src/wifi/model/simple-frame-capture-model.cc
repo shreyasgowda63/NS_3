@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("SimpleFrameCaptureModel");
 
@@ -83,4 +85,5 @@ SimpleFrameCaptureModel::CaptureNewFrame(Ptr<Event> currentEvent, Ptr<Event> new
            IsInCaptureWindow(currentEvent->GetStartTime());
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 struct ParfWifiRemoteStation;
 
@@ -108,6 +110,7 @@ class ParfWifiManager : public WifiRemoteStationManager
     TracedCallback<DataRate, DataRate, Mac48Address> m_rateChange;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* PARF_WIFI_MANAGER_H */

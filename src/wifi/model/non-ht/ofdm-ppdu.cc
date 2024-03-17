@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("OfdmPpdu");
 
@@ -212,4 +214,5 @@ OfdmPpdu::LSigHeader::GetLength() const
     return m_length;
 }
 
+} // namespace wifi
 } // namespace ns3

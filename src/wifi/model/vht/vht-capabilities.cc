@@ -22,6 +22,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 VhtCapabilities::VhtCapabilities()
     : m_maxMpduLength(0),
@@ -390,4 +392,5 @@ VhtCapabilities::GetRxHighestSupportedLgiDataRate() const
     return m_rxHighestSupportedLongGuardIntervalDataRate;
 }
 
+} // namespace wifi
 } // namespace ns3

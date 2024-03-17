@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -242,6 +244,7 @@ class VhtCapabilities : public WifiInformationElement
                                                             ///< guard interval data rate
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* VHT_CAPABILITY_H */

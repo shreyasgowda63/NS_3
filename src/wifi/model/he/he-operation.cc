@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 HeOperation::HeOperation()
     : m_bssColor(0),
@@ -158,4 +160,5 @@ HeOperation::DeserializeInformationField(Buffer::Iterator start, uint16_t length
     return length;
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -45,6 +45,8 @@ NS_LOG_COMPONENT_DEFINE("MpduAggregator");
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(MpduAggregator);
 
@@ -273,4 +275,5 @@ MpduAggregator::GetNextAmpdu(Ptr<WifiMpdu> mpdu,
     return mpduList;
 }
 
+} // namespace wifi
 } // namespace ns3

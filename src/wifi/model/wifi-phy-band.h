@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -68,6 +70,7 @@ operator<<(std::ostream& os, WifiPhyBand band)
     }
 }
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_PHY_BAND_H */

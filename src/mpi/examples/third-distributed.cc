@@ -166,16 +166,20 @@ main(int argc, char* argv[])
     phy.SetChannel(channel.Create());
 
     WifiMacHelper mac;
-    Ssid ssid = Ssid("ns-3-ssid");
+    wifi::Ssid ssid("ns-3-ssid");
 
     WifiHelper wifi;
 
     NetDeviceContainer staDevices;
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid), "ActiveProbing", BooleanValue(false));
+    mac.SetType("ns3::StaWifiMac",
+                "Ssid",
+                wifi::SsidValue(ssid),
+                "ActiveProbing",
+                BooleanValue(false));
     staDevices = wifi.Install(phy, mac, wifiStaNodes);
 
     NetDeviceContainer apDevices;
-    mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
     apDevices = wifi.Install(phy, mac, wifiApNode);
 
     MobilityHelper mobility;

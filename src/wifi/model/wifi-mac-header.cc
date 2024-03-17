@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(WifiMacHeader);
 
@@ -1337,4 +1339,5 @@ WifiMacHeader::Deserialize(Buffer::Iterator start)
     return i.GetDistanceFrom(start);
 }
 
+} // namespace wifi
 } // namespace ns3

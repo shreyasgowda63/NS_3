@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class MgtAssocRequestHeader;
 class MgtReassocRequestHeader;
@@ -620,6 +622,7 @@ class MultiLinkElement : public WifiInformationElement
         m_perStaProfileSubelements; //!< Per-STA Profile Subelements
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MULTI_LINK_ELEMENT_H */

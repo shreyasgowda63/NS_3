@@ -36,8 +36,9 @@
 
 namespace ns3
 {
-
-namespace internal
+namespace wifi
+{
+namespace wifiInternal
 {
 
 /**
@@ -76,7 +77,7 @@ struct GetStoredIe<std::vector<T>>
 template <class T>
 using GetStoredIeT = typename GetStoredIe<T>::type;
 
-} // namespace internal
+} // namespace wifiInternal
 
 /**
  * \ingroup wifi
@@ -195,7 +196,7 @@ class WifiMgtHeader<Derived, std::tuple<Elems...>> : public Header
     Buffer::Iterator DoDeserialize(std::vector<T>& elems, Buffer::Iterator start);
 
     /// type of the Information Elements contained by this frame
-    using Elements = std::tuple<internal::GetStoredIeT<Elems>...>;
+    using Elements = std::tuple<wifiInternal::GetStoredIeT<Elems>...>;
 
     Elements m_elements; //!< Information Elements contained by this frame
 };
@@ -398,7 +399,7 @@ MgtHeaderInPerStaProfile<Derived, std::tuple<Elems...>>::InitForDeserialization(
     optElem.emplace(*static_cast<const Derived*>(this));
 }
 
-namespace internal
+namespace wifiInternal
 {
 
 /**
@@ -427,7 +428,7 @@ DoGetSerializedSize(const std::vector<T>& elems)
     });
 }
 
-} // namespace internal
+} // namespace wifiInternal
 
 template <typename Derived, typename... Elems>
 uint32_t
@@ -440,11 +441,12 @@ template <typename Derived, typename... Elems>
 uint32_t
 WifiMgtHeader<Derived, std::tuple<Elems...>>::GetSerializedSizeImpl() const
 {
-    return std::apply([&](auto&... elems) { return (internal::DoGetSerializedSize(elems) + ...); },
-                      m_elements);
+    return std::apply(
+        [&](auto&... elems) { return (wifiInternal::DoGetSerializedSize(elems) + ...); },
+        m_elements);
 }
 
-namespace internal
+namespace wifiInternal
 {
 
 /**
@@ -476,7 +478,7 @@ DoSerialize(const std::vector<T>& elems, Buffer::Iterator start)
                            [](Buffer::Iterator i, const auto& a) { return a.Serialize(i); });
 }
 
-} // namespace internal
+} // namespace wifiInternal
 
 template <typename Derived, typename... Elems>
 void
@@ -490,7 +492,8 @@ void
 WifiMgtHeader<Derived, std::tuple<Elems...>>::SerializeImpl(Buffer::Iterator start) const
 {
     auto i = start;
-    std::apply([&](auto&... elems) { ((i = internal::DoSerialize(elems, i)), ...); }, m_elements);
+    std::apply([&](auto&... elems) { ((i = wifiInternal::DoSerialize(elems, i)), ...); },
+               m_elements);
 }
 
 template <typename Derived, typename... Elems>
@@ -547,7 +550,7 @@ WifiMgtHeader<Derived, std::tuple<Elems...>>::DeserializeImpl(Buffer::Iterator s
     std::apply(
         // auto cannot be used until gcc 10.4 due to gcc bug 97938
         // (see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=97938)
-        [&](internal::GetStoredIeT<Elems>&... elems) {
+        [&](wifiInternal::GetStoredIeT<Elems>&... elems) {
             (
                 [&] {
                     if constexpr (std::is_same_v<std::remove_reference_t<decltype(elems)>, Elems>)
@@ -569,7 +572,7 @@ WifiMgtHeader<Derived, std::tuple<Elems...>>::DeserializeImpl(Buffer::Iterator s
     return i.GetDistanceFrom(start);
 }
 
-namespace internal
+namespace wifiInternal
 {
 
 /**
@@ -599,7 +602,7 @@ DoPrint(const std::vector<T>& elems, std::ostream& os)
     std::copy(elems.cbegin(), elems.cend(), std::ostream_iterator<T>(os, " , "));
 }
 
-} // namespace internal
+} // namespace wifiInternal
 
 template <typename Derived, typename... Elems>
 void
@@ -612,10 +615,10 @@ template <typename Derived, typename... Elems>
 void
 WifiMgtHeader<Derived, std::tuple<Elems...>>::PrintImpl(std::ostream& os) const
 {
-    std::apply([&](auto&... elems) { ((internal::DoPrint(elems, os)), ...); }, m_elements);
+    std::apply([&](auto&... elems) { ((wifiInternal::DoPrint(elems, os)), ...); }, m_elements);
 }
 
-namespace internal
+namespace wifiInternal
 {
 
 /**
@@ -730,7 +733,7 @@ MustBeListedInNonInheritance(const std::vector<T>& elems, const Derived& frame)
     return std::nullopt;
 }
 
-} // namespace internal
+} // namespace wifiInternal
 
 template <typename Derived, typename... Elems>
 uint32_t
@@ -752,11 +755,11 @@ MgtHeaderInPerStaProfile<Derived, std::tuple<Elems...>>::GetSerializedSizeInPerS
         [&](auto&... elems) {
             (
                 [&] {
-                    if (internal::MustBeSerializedInPerStaProfile(elems, frame))
+                    if (wifiInternal::MustBeSerializedInPerStaProfile(elems, frame))
                     {
-                        size += internal::DoGetSerializedSize(elems);
+                        size += wifiInternal::DoGetSerializedSize(elems);
                     }
-                    else if (auto idPair = internal::MustBeListedInNonInheritance(elems, frame))
+                    else if (auto idPair = wifiInternal::MustBeListedInNonInheritance(elems, frame))
                     {
                         if (!nonInheritance)
                         {
@@ -798,11 +801,11 @@ MgtHeaderInPerStaProfile<Derived, std::tuple<Elems...>>::SerializeInPerStaProfil
         [&](auto&... elems) {
             (
                 [&] {
-                    if (internal::MustBeSerializedInPerStaProfile(elems, frame))
+                    if (wifiInternal::MustBeSerializedInPerStaProfile(elems, frame))
                     {
-                        i = internal::DoSerialize(elems, i);
+                        i = wifiInternal::DoSerialize(elems, i);
                     }
-                    else if (auto idPair = internal::MustBeListedInNonInheritance(elems, frame))
+                    else if (auto idPair = wifiInternal::MustBeListedInNonInheritance(elems, frame))
                     {
                         if (!nonInheritance)
                         {
@@ -821,7 +824,7 @@ MgtHeaderInPerStaProfile<Derived, std::tuple<Elems...>>::SerializeInPerStaProfil
     }
 }
 
-namespace internal
+namespace wifiInternal
 {
 
 /**
@@ -866,7 +869,7 @@ DoCopyIeFromContainingFrame(std::vector<T>& elems, const Derived& frame)
     }
 }
 
-} // namespace internal
+} // namespace wifiInternal
 
 template <typename Derived, typename... Elems>
 uint32_t
@@ -895,7 +898,7 @@ MgtHeaderInPerStaProfile<Derived, std::tuple<Elems...>>::DeserializeFromPerStaPr
                     if (i.GetDistanceFrom(start) < length)
                     {
                         i = static_cast<Derived*>(this)->DoDeserialize(elems, i);
-                        internal::DoCopyIeFromContainingFrame(elems, frame);
+                        wifiInternal::DoCopyIeFromContainingFrame(elems, frame);
                     }
                 }(),
                 ...);
@@ -913,7 +916,7 @@ MgtHeaderInPerStaProfile<Derived, std::tuple<Elems...>>::DeserializeFromPerStaPr
     return distance;
 }
 
-namespace internal
+namespace wifiInternal
 {
 
 /**
@@ -953,7 +956,7 @@ RemoveIfNotInherited(std::vector<T>& elem, const NonInheritance& nonInheritance)
     }
 }
 
-} // namespace internal
+} // namespace wifiInternal
 
 template <typename Derived, typename... Elems>
 void
@@ -963,7 +966,7 @@ MgtHeaderInPerStaProfile<Derived, std::tuple<Elems...>>::CopyIesFromContainingFr
     // copy inherited Information Elements that appear in the containing frame after the
     // MLE (those appearing before have been copied by DeserializeFromPerStaProfileImpl)
     std::apply(
-        [&](auto&... elems) { ((internal::DoCopyIeFromContainingFrame(elems, frame)), ...); },
+        [&](auto&... elems) { ((wifiInternal::DoCopyIeFromContainingFrame(elems, frame)), ...); },
         m_elements);
 
     // we have possibly deserialized a Non-Inheritance element; remove IEs listed therein
@@ -971,7 +974,7 @@ MgtHeaderInPerStaProfile<Derived, std::tuple<Elems...>>::CopyIesFromContainingFr
     {
         std::apply(
             [&](auto&... elems) {
-                ((internal::RemoveIfNotInherited(elems, *m_nonInheritance)), ...);
+                ((wifiInternal::RemoveIfNotInherited(elems, *m_nonInheritance)), ...);
             },
             m_elements);
     }
@@ -987,6 +990,7 @@ MgtHeaderInPerStaProfile<Derived, std::tuple<Elems...>>::SetMleContainingFrame()
     }
 }
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MGT_HEADER_H */

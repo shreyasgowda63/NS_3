@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -334,6 +336,7 @@ class HeCapabilities : public WifiInformationElement
     std::vector<uint8_t> m_rxBwMap;  //!< receive BW map
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HE_CAPABILITY_H */

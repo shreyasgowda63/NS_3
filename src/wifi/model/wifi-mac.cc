@@ -42,6 +42,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiMac");
 
@@ -2297,4 +2299,5 @@ WifiMac::GetMaxAmsduSize(AcIndex ac) const
     return maxSize;
 }
 
+} // namespace wifi
 } // namespace ns3

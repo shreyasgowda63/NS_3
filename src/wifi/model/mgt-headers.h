@@ -48,6 +48,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * Indicate which Information Elements cannot be included in a Per-STA Profile subelement of
@@ -520,6 +522,7 @@ class MgtBeaconHeader : public MgtProbeResponseHeader
     static TypeId GetTypeId();
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MGT_HEADERS_H */

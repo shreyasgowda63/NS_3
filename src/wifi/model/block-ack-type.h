@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -129,6 +131,7 @@ std::ostream& operator<<(std::ostream& os, const BlockAckType& type);
  */
 std::ostream& operator<<(std::ostream& os, const BlockAckReqType& type);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* BLOCK_ACK_TYPE_H */

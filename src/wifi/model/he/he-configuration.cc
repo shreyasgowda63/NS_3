@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("HeConfiguration");
 NS_OBJECT_ENSURE_REGISTERED(HeConfiguration);
@@ -224,4 +226,5 @@ HeConfiguration::SetMaxTbPpduDelay(Time maxTbPpduDelay)
     m_maxTbPpduDelay = maxTbPpduDelay;
 }
 
+} // namespace wifi
 } // namespace ns3

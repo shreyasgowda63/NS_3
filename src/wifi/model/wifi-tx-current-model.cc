@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiTxCurrentModel");
 
@@ -91,4 +93,5 @@ LinearWifiTxCurrentModel::CalcTxCurrent(double txPowerDbm) const
     return DbmToW(txPowerDbm) / (m_voltage * m_eta) + m_idleCurrent;
 }
 
+} // namespace wifi
 } // namespace ns3

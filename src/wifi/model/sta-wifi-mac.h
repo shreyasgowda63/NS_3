@@ -35,9 +35,13 @@ class MultiLinkOperationsTestBase;
 namespace ns3
 {
 
+class RandomVariableStream;
+
+namespace wifi
+{
+
 class SupportedRates;
 class CapabilityInformation;
-class RandomVariableStream;
 class WifiAssocManager;
 class EmlsrManager;
 
@@ -651,6 +655,7 @@ class StaWifiMac : public WifiMac
  */
 std::ostream& operator<<(std::ostream& os, const StaWifiMac::ApInfo& apInfo);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* STA_WIFI_MAC_H */

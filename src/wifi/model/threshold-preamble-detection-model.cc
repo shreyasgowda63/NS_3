@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("ThresholdPreambleDetectionModel");
 
@@ -88,4 +90,5 @@ ThresholdPreambleDetectionModel::IsPreambleDetected(double rssi,
     }
 }
 
+} // namespace wifi
 } // namespace ns3

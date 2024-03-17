@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 DsssParameterSet::DsssParameterSet()
     : m_currentChannel(0)
@@ -59,4 +61,5 @@ DsssParameterSet::DeserializeInformationField(Buffer::Iterator start, uint16_t l
     return length;
 }
 
+} // namespace wifi
 } // namespace ns3

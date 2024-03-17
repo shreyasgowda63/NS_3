@@ -36,10 +36,14 @@
 namespace ns3
 {
 
+class Packet;
+
+namespace wifi
+{
+
 class WifiPhyListener;
 class WifiTxVector;
 class WifiMode;
-class Packet;
 class WifiPsdu;
 struct RxSignalInfo;
 
@@ -379,6 +383,7 @@ class WifiPhyStateHelper : public Object
     RxErrorCallback m_rxErrorCallback; ///< receive error callback
 };
 
+} // namespace wifi
 } // namespace ns3
 
 /***************************************************************
@@ -386,6 +391,8 @@ class WifiPhyStateHelper : public Object
  ***************************************************************/
 
 namespace ns3
+{
+namespace wifi
 {
 
 template <typename FUNC, typename... Ts>
@@ -413,6 +420,7 @@ WifiPhyStateHelper::NotifyListeners(FUNC f, Ts&&... args)
     }
 }
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_PHY_STATE_HELPER_H */

@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("VhtPpdu");
 
@@ -249,4 +251,5 @@ VhtPpdu::VhtSigHeader::GetSuMcs() const
     return m_suMcs;
 }
 
+} // namespace wifi
 } // namespace ns3

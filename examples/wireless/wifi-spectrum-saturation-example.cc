@@ -224,10 +224,10 @@ main(int argc, char* argv[])
         }
 
         WifiHelper wifi;
-        wifi.SetStandard(WIFI_STANDARD_80211n);
+        wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
         WifiMacHelper mac;
 
-        Ssid ssid = Ssid("ns380211n");
+        wifi::Ssid ssid("ns380211n");
 
         double datarate = 0;
         StringValue DataRate;
@@ -570,20 +570,20 @@ main(int argc, char* argv[])
 
         if (wifiType == "ns3::YansWifiPhy")
         {
-            mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+            mac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
             phy.Set("ChannelSettings", StringValue(channelStr));
 
             staDevice = wifi.Install(phy, mac, wifiStaNode);
-            mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+            mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
             phy.Set("ChannelSettings", StringValue(channelStr));
             apDevice = wifi.Install(phy, mac, wifiApNode);
         }
         else if (wifiType == "ns3::SpectrumWifiPhy")
         {
-            mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+            mac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
             phy.Set("ChannelSettings", StringValue(channelStr));
             staDevice = wifi.Install(spectrumPhy, mac, wifiStaNode);
-            mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+            mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
             phy.Set("ChannelSettings", StringValue(channelStr));
             apDevice = wifi.Install(spectrumPhy, mac, wifiApNode);
         }

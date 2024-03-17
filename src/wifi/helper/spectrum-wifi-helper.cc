@@ -85,7 +85,7 @@ SpectrumWifiPhyHelper::AddWifiBandwidthFilter(Ptr<SpectrumChannel> channel)
     bool found = false;
     while (p && !found)
     {
-        if (DynamicCast<const WifiBandwidthFilter>(p))
+        if (DynamicCast<const wifi::WifiBandwidthFilter>(p))
         {
             NS_LOG_DEBUG("Found existing WifiBandwidthFilter for channel " << channel);
             found = true;
@@ -98,7 +98,7 @@ SpectrumWifiPhyHelper::AddWifiBandwidthFilter(Ptr<SpectrumChannel> channel)
     }
     if (!found)
     {
-        Ptr<WifiBandwidthFilter> pWifi = CreateObject<WifiBandwidthFilter>();
+        auto pWifi = CreateObject<wifi::WifiBandwidthFilter>();
         channel->AddSpectrumTransmitFilter(pWifi);
         NS_LOG_DEBUG("Adding WifiBandwidthFilter to channel " << channel);
     }
@@ -123,27 +123,27 @@ SpectrumWifiPhyHelper::ResetPhyToFreqRangeMapping()
     m_interfacesMap.clear();
 }
 
-std::vector<Ptr<WifiPhy>>
-SpectrumWifiPhyHelper::Create(Ptr<Node> node, Ptr<WifiNetDevice> device) const
+std::vector<Ptr<wifi::WifiPhy>>
+SpectrumWifiPhyHelper::Create(Ptr<Node> node, Ptr<wifi::WifiNetDevice> device) const
 {
-    std::vector<Ptr<WifiPhy>> ret;
+    std::vector<Ptr<wifi::WifiPhy>> ret;
 
     for (std::size_t i = 0; i < m_phys.size(); i++)
     {
-        auto phy = m_phys.at(i).Create<SpectrumWifiPhy>();
-        auto interference = m_interferenceHelper.Create<InterferenceHelper>();
+        auto phy = m_phys.at(i).Create<wifi::SpectrumWifiPhy>();
+        auto interference = m_interferenceHelper.Create<wifi::InterferenceHelper>();
         phy->SetInterferenceHelper(interference);
-        auto error = m_errorRateModel.at(i).Create<ErrorRateModel>();
+        auto error = m_errorRateModel.at(i).Create<wifi::ErrorRateModel>();
         phy->SetErrorRateModel(error);
         if (m_frameCaptureModel.at(i).IsTypeIdSet())
         {
-            auto frameCapture = m_frameCaptureModel.at(i).Create<FrameCaptureModel>();
+            auto frameCapture = m_frameCaptureModel.at(i).Create<wifi::FrameCaptureModel>();
             phy->SetFrameCaptureModel(frameCapture);
         }
         if (m_preambleDetectionModel.at(i).IsTypeIdSet())
         {
             auto preambleDetection =
-                m_preambleDetectionModel.at(i).Create<PreambleDetectionModel>();
+                m_preambleDetectionModel.at(i).Create<wifi::PreambleDetectionModel>();
             phy->SetPreambleDetectionModel(preambleDetection);
         }
         InstallPhyInterfaces(i, phy);
@@ -158,7 +158,7 @@ SpectrumWifiPhyHelper::Create(Ptr<Node> node, Ptr<WifiNetDevice> device) const
 }
 
 void
-SpectrumWifiPhyHelper::InstallPhyInterfaces(uint8_t linkId, Ptr<SpectrumWifiPhy> phy) const
+SpectrumWifiPhyHelper::InstallPhyInterfaces(uint8_t linkId, Ptr<wifi::SpectrumWifiPhy> phy) const
 {
     if (m_interfacesMap.count(linkId) == 0)
     {
@@ -178,11 +178,11 @@ SpectrumWifiPhyHelper::InstallPhyInterfaces(uint8_t linkId, Ptr<SpectrumWifiPhy>
 }
 
 void
-SpectrumWifiPhyHelper::SpectrumChannelSwitched(Ptr<SpectrumWifiPhy> phy)
+SpectrumWifiPhyHelper::SpectrumChannelSwitched(Ptr<wifi::SpectrumWifiPhy> phy)
 {
     for (const auto& otherPhy : phy->GetDevice()->GetPhys())
     {
-        auto spectrumPhy = DynamicCast<SpectrumWifiPhy>(otherPhy);
+        auto spectrumPhy = DynamicCast<wifi::SpectrumWifiPhy>(otherPhy);
         NS_ASSERT(spectrumPhy);
         if (spectrumPhy == phy)
         {

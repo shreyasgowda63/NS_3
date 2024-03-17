@@ -175,7 +175,7 @@ Neighbors::LookupMacAddress(Ipv4Address addr)
 }
 
 void
-Neighbors::ProcessTxError(const WifiMacHeader& hdr)
+Neighbors::ProcessTxError(const wifi::WifiMacHeader& hdr)
 {
     Mac48Address addr = hdr.GetAddr1();
 

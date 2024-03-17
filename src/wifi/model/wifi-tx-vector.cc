@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 WifiTxVector::WifiTxVector()
     : m_txPowerLevel(1),
@@ -415,7 +417,7 @@ WifiTxVector::GetSigBMode() const
 void
 WifiTxVector::SetRuAllocation(const RuAllocation& ruAlloc, uint8_t p20Index)
 {
-    if (ns3::IsDlMu(m_preamble) && !m_muUserInfos.empty())
+    if (wifi::IsDlMu(m_preamble) && !m_muUserInfos.empty())
     {
         NS_ASSERT(ruAlloc == DeriveRuAllocation(p20Index));
     }
@@ -425,7 +427,7 @@ WifiTxVector::SetRuAllocation(const RuAllocation& ruAlloc, uint8_t p20Index)
 const RuAllocation&
 WifiTxVector::GetRuAllocation(uint8_t p20Index) const
 {
-    if (ns3::IsDlMu(m_preamble) && m_ruAllocation.empty())
+    if (wifi::IsDlMu(m_preamble) && m_ruAllocation.empty())
     {
         m_ruAllocation = DeriveRuAllocation(p20Index);
     }
@@ -539,13 +541,13 @@ WifiTxVector::IsMu() const
 bool
 WifiTxVector::IsDlMu() const
 {
-    return ns3::IsDlMu(m_preamble) && !(IsEht(m_preamble) && m_ehtPpduType == 1);
+    return wifi::IsDlMu(m_preamble) && !(IsEht(m_preamble) && m_ehtPpduType == 1);
 }
 
 bool
 WifiTxVector::IsUlMu() const
 {
-    return ns3::IsUlMu(m_preamble);
+    return wifi::IsUlMu(m_preamble);
 }
 
 bool
@@ -728,7 +730,7 @@ operator<<(std::ostream& os, const WifiTxVector& v)
     {
         os << " Length: " << v.GetLength();
     }
-    if (ns3::IsDlMu(v.GetPreambleType()))
+    if (wifi::IsDlMu(v.GetPreambleType()))
     {
         os << " SIG-B mode: " << v.GetSigBMode();
     }
@@ -875,4 +877,5 @@ WifiTxVector::DeriveCenter26ToneRuIndication() const
     return static_cast<Center26ToneRuIndication>(center26ToneRuIndication);
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -178,13 +178,13 @@ ChainRegressionTest::CreateDevices()
     YansWifiPhyHelper wifiPhy;
     wifiPhy.DisablePreambleDetectionModel();
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
-    Ptr<YansWifiChannel> chan = wifiChannel.Create();
+    auto chan = wifiChannel.Create();
     wifiPhy.SetChannel(chan);
 
     // This test suite output was originally based on YansErrorRateModel
     wifiPhy.SetErrorRateModel("ns3::YansErrorRateModel");
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211a);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211a);
     wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
                                  "DataMode",
                                  StringValue("OfdmRate6Mbps"),

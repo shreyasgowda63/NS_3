@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiBandwidthFilter");
 
@@ -143,4 +145,5 @@ WifiBandwidthFilter::DoAssignStreams(int64_t stream)
     return 0;
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief The Supported Rates Information Element
@@ -146,6 +148,7 @@ struct AllSupportedRates
     std::optional<ExtendedSupportedRatesIE> extendedRates; //!< supported extended rates
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* SUPPORTED_RATES_H */

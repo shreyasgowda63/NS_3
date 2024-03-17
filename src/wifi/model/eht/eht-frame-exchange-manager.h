@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class MgtEmlOmn;
 
@@ -162,6 +164,7 @@ class EhtFrameExchangeManager : public HeFrameExchangeManager
         m_transDelayTimer; //!< MLD address-indexed map of transition delay timers
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* EHT_FRAME_EXCHANGE_MANAGER_H */

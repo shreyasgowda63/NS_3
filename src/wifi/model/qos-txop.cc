@@ -46,6 +46,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("QosTxop");
 
@@ -56,7 +58,7 @@ QosTxop::GetTypeId()
 {
     static TypeId tid =
         TypeId("ns3::QosTxop")
-            .SetParent<ns3::Txop>()
+            .SetParent<Txop>()
             .SetGroupName("Wifi")
             .AddConstructor<QosTxop>()
             .AddAttribute("UseExplicitBarAfterMissedBlockAck",
@@ -798,4 +800,5 @@ QosTxop::GetAccessCategory() const
     return m_ac;
 }
 
+} // namespace wifi
 } // namespace ns3

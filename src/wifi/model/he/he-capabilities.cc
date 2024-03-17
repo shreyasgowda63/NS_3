@@ -23,6 +23,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 HeCapabilities::HeCapabilities()
     : m_plusHtcHeSupport(0),
@@ -617,4 +619,5 @@ HeCapabilities::GetMaxAmpduLength() const
     return std::min<uint32_t>((1UL << (20 + m_maxAmpduLengthExponent)) - 1, 6500631);
 }
 
+} // namespace wifi
 } // namespace ns3

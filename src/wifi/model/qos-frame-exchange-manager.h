@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -201,6 +203,7 @@ class QosFrameExchangeManager : public FrameExchangeManager
     Ptr<Txop> m_edcaBackingOff;  //!< channel access function that invoked backoff during TXOP
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* QOS_FRAME_EXCHANGE_MANAGER_H */

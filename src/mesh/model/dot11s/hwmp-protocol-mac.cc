@@ -110,9 +110,9 @@ HwmpProtocolMac::ReceiveAction(Ptr<Packet> packet, const WifiMacHeader& header)
     NS_LOG_FUNCTION(this << packet << header);
     m_stats.rxMgt++;
     m_stats.rxMgtBytes += packet->GetSize();
-    WifiActionHeader actionHdr;
+    wifi::WifiActionHeader actionHdr;
     packet->RemoveHeader(actionHdr);
-    if (actionHdr.GetCategory() != WifiActionHeader::MESH)
+    if (actionHdr.GetCategory() != wifi::WifiActionHeader::MESH)
     {
         return true;
     }
@@ -236,13 +236,13 @@ HwmpProtocolMac::UpdateOutcomingFrame(Ptr<Packet> packet,
     return true;
 }
 
-WifiActionHeader
+wifi::WifiActionHeader
 HwmpProtocolMac::GetWifiActionHeader()
 {
-    WifiActionHeader actionHdr;
-    WifiActionHeader::ActionValue action;
-    action.meshAction = WifiActionHeader::PATH_SELECTION;
-    actionHdr.SetAction(WifiActionHeader::MESH, action);
+    wifi::WifiActionHeader actionHdr;
+    wifi::WifiActionHeader::ActionValue action;
+    action.meshAction = wifi::WifiActionHeader::PATH_SELECTION;
+    actionHdr.SetAction(wifi::WifiActionHeader::MESH, action);
     return actionHdr;
 }
 

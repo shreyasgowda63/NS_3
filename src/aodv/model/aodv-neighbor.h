@@ -39,7 +39,10 @@
 namespace ns3
 {
 
+namespace wifi
+{
 class WifiMacHeader;
+}
 
 namespace aodv
 {
@@ -131,7 +134,7 @@ class Neighbors
      * Get callback to ProcessTxError
      * \returns the callback function
      */
-    Callback<void, const WifiMacHeader&> GetTxErrorCallback() const
+    Callback<void, const wifi::WifiMacHeader&> GetTxErrorCallback() const
     {
         return m_txErrorCallback;
     }
@@ -158,7 +161,7 @@ class Neighbors
     /// link failure callback
     Callback<void, Ipv4Address> m_handleLinkFailure;
     /// TX error callback
-    Callback<void, const WifiMacHeader&> m_txErrorCallback;
+    Callback<void, const wifi::WifiMacHeader&> m_txErrorCallback;
     /// Timer for neighbor's list. Schedule Purge().
     Timer m_ntimer;
     /// vector of entries
@@ -177,7 +180,7 @@ class Neighbors
      * Process layer 2 TX error notification
      * \param hdr header of the packet
      */
-    void ProcessTxError(const WifiMacHeader& hdr);
+    void ProcessTxError(const wifi::WifiMacHeader& hdr);
 };
 
 } // namespace aodv

@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("RraaWifiManager");
 
@@ -491,4 +493,5 @@ RraaWifiManager::GetThresholds(RraaWifiRemoteStation* station, uint8_t index) co
     return GetThresholds(station, mode);
 }
 
+} // namespace wifi
 } // namespace ns3

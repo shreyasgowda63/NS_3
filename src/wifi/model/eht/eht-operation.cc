@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 void
 EhtOperation::Print(std::ostream& os) const
@@ -286,4 +288,5 @@ EhtOperation::DeserializeInformationField(Buffer::Iterator start, uint16_t lengt
                                              << +count << ")");
     return length;
 }
+} // namespace wifi
 } // namespace ns3

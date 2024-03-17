@@ -23,6 +23,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /*
  * WifiProtection
@@ -130,4 +132,5 @@ operator<<(std::ostream& os, const WifiProtection* protection)
     return os;
 }
 
+} // namespace wifi
 } // namespace ns3

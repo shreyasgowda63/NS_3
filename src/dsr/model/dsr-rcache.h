@@ -60,7 +60,11 @@ namespace ns3
 {
 
 class Time;
+
+namespace wifi
+{
 class WifiMacHeader;
+}
 
 namespace dsr
 {
@@ -892,7 +896,7 @@ class DsrRouteCache : public Object
 
     /// Process layer 2 TX error notification
     /// \param hdr Wi-Fi Mac Header
-    void ProcessTxError(const WifiMacHeader& hdr);
+    void ProcessTxError(const wifi::WifiMacHeader& hdr);
 };
 } // namespace dsr
 } // namespace ns3

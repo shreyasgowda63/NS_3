@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiPhyOperatingChannel;
 
@@ -341,6 +343,7 @@ class ReducedNeighborReport : public WifiInformationElement
         m_nbrApInfoFields; //!< one or more Neighbor AP Information fields
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* REDUCED_NEIGHBOR_REPORT_H */

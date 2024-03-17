@@ -23,6 +23,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(AmpduSubframeHeader);
 
@@ -116,4 +118,5 @@ AmpduSubframeHeader::IsSignatureValid() const
     return m_signature == 0x4E;
 }
 
+} // namespace wifi
 } // namespace ns3

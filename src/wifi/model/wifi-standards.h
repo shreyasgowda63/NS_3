@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -181,6 +183,7 @@ GetDefaultPhyBand(WifiStandard standard)
     }
 }
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_STANDARD_H */

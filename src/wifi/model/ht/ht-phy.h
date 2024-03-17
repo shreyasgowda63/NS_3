@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * This defines the BSS membership value for HT PHY.
@@ -586,6 +588,7 @@ class HtPhy : public OfdmPhy
     static const PpduFormats m_htPpduFormats; //!< HT PPDU formats
 };                                            // class HtPhy
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HT_PHY_H */

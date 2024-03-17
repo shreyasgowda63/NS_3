@@ -37,6 +37,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiNetDevice");
 
@@ -674,4 +676,5 @@ WifiNetDevice::GetEhtConfiguration() const
     return (m_standard >= WIFI_STANDARD_80211be ? m_ehtConfiguration : nullptr);
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -31,6 +31,11 @@
 namespace ns3
 {
 
+class UniformRandomVariable;
+
+namespace wifi
+{
+
 struct AllSupportedRates;
 class CapabilityInformation;
 class DsssParameterSet;
@@ -44,7 +49,6 @@ class VhtOperation;
 class HeOperation;
 class EhtOperation;
 class CfParameterSet;
-class UniformRandomVariable;
 class MgtAssocRequestHeader;
 class MgtReassocRequestHeader;
 class MgtAssocResponseHeader;
@@ -550,6 +554,7 @@ class ApWifiMac : public WifiMac
     TracedCallback<uint16_t /* AID */, Mac48Address> m_deAssocLogger; ///< deassociation logger
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* AP_WIFI_MAC_H */

@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -172,6 +174,7 @@ class RrMultiUserScheduler : public MultiUserScheduler
     WifiTxParameters m_txParams;           //!< TX parameters
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* RR_MULTI_USER_SCHEDULER_H */

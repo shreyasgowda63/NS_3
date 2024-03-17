@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("EhtPhy");
 
@@ -135,7 +137,7 @@ EhtPhy::GetDuration(WifiPpduField field, const WifiTxVector& txVector) const
 uint32_t
 EhtPhy::GetSigBSize(const WifiTxVector& txVector) const
 {
-    if (ns3::IsDlMu(txVector.GetPreambleType()) && ns3::IsEht(txVector.GetPreambleType()))
+    if (wifi::IsDlMu(txVector.GetPreambleType()) && wifi::IsEht(txVector.GetPreambleType()))
     {
         return EhtPpdu::GetEhtSigFieldSize(
             txVector.GetChannelWidth(),
@@ -415,6 +417,7 @@ EhtPhy::CalculateNonHtReferenceRate(WifiCodeRate codeRate, uint16_t constellatio
     return dataRate;
 }
 
+} // namespace wifi
 } // namespace ns3
 
 namespace
@@ -428,8 +431,9 @@ class ConstructorEht
   public:
     ConstructorEht()
     {
-        ns3::EhtPhy::InitializeModes();
-        ns3::WifiPhy::AddStaticPhyEntity(ns3::WIFI_MOD_CLASS_EHT, ns3::Create<ns3::EhtPhy>());
+        ns3::wifi::EhtPhy::InitializeModes();
+        ns3::wifi::WifiPhy::AddStaticPhyEntity(ns3::wifi::WIFI_MOD_CLASS_EHT,
+                                               ns3::Create<ns3::wifi::EhtPhy>());
     }
 } g_constructor_eht; ///< the constructor for EHT modes
 

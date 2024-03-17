@@ -28,9 +28,13 @@ namespace ns3
 class NetDevice;
 class PropagationLossModel;
 class PropagationDelayModel;
-class YansWifiPhy;
 class Packet;
 class Time;
+
+namespace wifi
+{
+
+class YansWifiPhy;
 class WifiPpdu;
 
 /**
@@ -118,6 +122,7 @@ class YansWifiChannel : public Channel
     Ptr<PropagationDelayModel> m_delay; //!< Propagation delay model
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* YANS_WIFI_CHANNEL_H */

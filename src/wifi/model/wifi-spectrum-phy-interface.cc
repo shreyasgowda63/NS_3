@@ -29,6 +29,8 @@ NS_LOG_COMPONENT_DEFINE("WifiSpectrumPhyInterface");
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(WifiSpectrumPhyInterface);
 
@@ -195,4 +197,5 @@ WifiSpectrumPhyInterface::StartTx(Ptr<SpectrumSignalParameters> params)
     m_channel->StartTx(params);
 }
 
+} // namespace wifi
 } // namespace ns3

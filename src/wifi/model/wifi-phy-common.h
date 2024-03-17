@@ -44,9 +44,13 @@
 namespace ns3
 {
 
+class Time;
+
+namespace wifi
+{
+
 class WifiNetDevice;
 class WifiMode;
-class Time;
 
 /// maximum propagation delay
 static constexpr uint8_t MAX_PROPAGATION_DELAY_USEC = 1;
@@ -649,6 +653,7 @@ uint16_t GetMaximumChannelWidth(WifiModulationClass modulation);
  */
 bool IsEht(WifiPreamble preamble);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_PHY_COMMON_H */

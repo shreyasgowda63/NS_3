@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("MacRxMiddle");
 
@@ -343,4 +345,5 @@ MacRxMiddle::Receive(Ptr<const WifiMpdu> mpdu, uint8_t linkId)
     }
 }
 
+} // namespace wifi
 } // namespace ns3

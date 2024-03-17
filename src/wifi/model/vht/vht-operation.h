@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief The VHT Operation Information Element
@@ -116,6 +118,7 @@ class VhtOperation : public WifiInformationElement
     uint16_t m_basicVhtMcsAndNssSet; ///< basic VHT MCS NSS set
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* VHT_OPERATION_H */
