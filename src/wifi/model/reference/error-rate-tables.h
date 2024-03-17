@@ -25,6 +25,9 @@
 #ifndef ERROR_RATE_TABLES_H
 #define ERROR_RATE_TABLES_H
 
+#include <cstdint>
+#include <vector>
+
 namespace ns3
 {
 namespace wifi
