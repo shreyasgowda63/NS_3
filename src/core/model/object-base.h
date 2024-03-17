@@ -73,7 +73,7 @@
  * operator (::)
  *
  * \tparam type the template class
- * \tparam param the first template parameter
+ * \tparam param the template parameter
  */
 #define NS_OBJECT_TEMPLATE_CLASS_DEFINE(type, param)                                               \
     template class type<param>;                                                                    \
@@ -92,6 +92,41 @@
             tid.GetParent();                                                                       \
         }                                                                                          \
     } Object##type##param##RegistrationVariable
+
+/**
+ * \ingroup object
+ * \brief Explicitly instantiate a template class with one template parameter
+ *        and register the resulting instance with the TypeId system.
+ *
+ * This macro should be invoked once for every required instance of a template
+ * class with one template parameter which derives from the Object class and
+ * defines a new GetTypeId method.
+ *
+ * If the template class is in a namespace, then the macro call should also be
+ * in the namespace. This macro should be used when the template parameter belongs
+ * to a different namespace than the template class.
+ *
+ * \tparam type the template class
+ * \tparam ns the namespace of the first template parameter
+ * \tparam param the template parameter
+ */
+#define NS_OBJECT_TEMPLATE_CLASS_WITH_NS_DEFINE(type, ns, param)                                   \
+    template class type<ns::param>;                                                                \
+    template <>                                                                                    \
+    std::string DoGetTemplateClassName<type<ns::param>>()                                          \
+    {                                                                                              \
+        return std::string("ns3::") + std::string(#type) + std::string("<") + std::string(#ns) +   \
+               std::string("::") + std::string(#param) + std::string(">");                         \
+    }                                                                                              \
+    static struct Object##type##ns##param##RegistrationClass                                       \
+    {                                                                                              \
+        Object##type##ns##param##RegistrationClass()                                               \
+        {                                                                                          \
+            ns3::TypeId tid = type<ns::param>::GetTypeId();                                        \
+            tid.SetSize(sizeof(type<ns::param>));                                                  \
+            tid.GetParent();                                                                       \
+        }                                                                                          \
+    } Object##type##ns##param##RegistrationVariable
 
 /**
  * \ingroup object
@@ -130,6 +165,44 @@
             tid.GetParent();                                                                       \
         }                                                                                          \
     } Object##type##param1##param2##RegistrationVariable
+
+/**
+ * \ingroup object
+ * \brief Explicitly instantiate a template class with two template parameters
+ *        and register the resulting instance with the TypeId system.
+ *
+ * This macro should be invoked once for every required instance of a template
+ * class with two template parameters which derives from the Object class and
+ * defines a new GetTypeId method.
+ *
+ * If the template class is in a namespace, then the macro call should also be
+ * in the namespace. This macro should be used when a template parameter belongs
+ * to a different namespace than the template class.
+ *
+ * \tparam type the template class
+ * \tparam ns1 the namespace of the first template parameter
+ * \tparam param1 the first template parameter
+ * \tparam ns2 the namespace of the second template parameter
+ * \tparam param2 the second template parameter
+ */
+#define NS_OBJECT_TEMPLATE_CLASS_TWO_WITH_NS_DEFINE(type, ns1, param1, ns2, param2)                \
+    template class type<ns1::param1, ns2::param2>;                                                 \
+    template <>                                                                                    \
+    std::string DoGetTemplateClassName<type<ns1::param1, ns2::param2>>()                           \
+    {                                                                                              \
+        return std::string("ns3::") + std::string(#type) + std::string("<") + std::string(#ns1) +  \
+               std::string("::") + std::string(#param1) + std::string(",") + std::string(#ns2) +   \
+               std::string("::") + std::string(#param2) + std::string(">");                        \
+    }                                                                                              \
+    static struct Object##type##ns1##param1##ns2##param2##RegistrationClass                        \
+    {                                                                                              \
+        Object##type##ns1##param1##ns2##param2##RegistrationClass()                                \
+        {                                                                                          \
+            ns3::TypeId tid = type<ns1::param1, ns2::param2>::GetTypeId();                         \
+            tid.SetSize(sizeof(type<ns1::param1, ns2::param2>));                                   \
+            tid.GetParent();                                                                       \
+        }                                                                                          \
+    } Object##type##ns1##param1##ns2##param2##RegistrationVariable
 
 namespace ns3
 {
