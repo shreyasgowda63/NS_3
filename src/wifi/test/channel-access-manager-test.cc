@@ -65,17 +65,17 @@ class TxopTest : public TxopType
     /// allow ChannelAccessManagerTest class access
     friend class ChannelAccessManagerTest<TxopType>;
 
-    /// \copydoc ns3::Txop::DoDispose
+    /// \copydoc ns3::wifi::Txop::DoDispose
     void DoDispose() override;
-    /// \copydoc ns3::Txop::NotifyChannelAccessed
+    /// \copydoc ns3::wifi::Txop::NotifyChannelAccessed
     void NotifyChannelAccessed(uint8_t linkId, Time txopDuration = Seconds(0)) override;
-    /// \copydoc ns3::Txop::HasFramesToTransmit
+    /// \copydoc ns3::wifi::Txop::HasFramesToTransmit
     bool HasFramesToTransmit(uint8_t linkId) override;
-    /// \copydoc ns3::Txop::NotifySleep
+    /// \copydoc ns3::wifi::Txop::NotifySleep
     void NotifySleep(uint8_t linkId) override;
-    /// \copydoc ns3::Txop::NotifyWakeUp
+    /// \copydoc ns3::wifi::Txop::NotifyWakeUp
     void NotifyWakeUp(uint8_t linkId) override;
-    /// \copydoc ns3::Txop::GenerateBackoff
+    /// \copydoc ns3::wifi::Txop::GenerateBackoff
     void GenerateBackoff(uint8_t linkId) override;
 
     typedef std::pair<uint64_t, uint64_t> ExpectedGrant; //!< the expected grant typedef
@@ -201,13 +201,13 @@ class FrameExchangeManagerStub : public FrameExchangeManager
         return true;
     }
 
-    /// \copydoc ns3::FrameExchangeManager::NotifyInternalCollision
+    /// \copydoc ns3::wifi::FrameExchangeManager::NotifyInternalCollision
     void NotifyInternalCollision(Ptr<Txop> txop) override
     {
         m_test->NotifyInternalCollision(DynamicCast<TxopTest<TxopType>>(txop));
     }
 
-    /// \copydoc ns3::FrameExchangeManager::NotifySwitchingStartNow
+    /// \copydoc ns3::wifi::FrameExchangeManager::NotifySwitchingStartNow
     void NotifySwitchingStartNow(Time duration) override
     {
         m_test->NotifyChannelSwitching();

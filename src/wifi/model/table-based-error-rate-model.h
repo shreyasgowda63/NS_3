@@ -35,10 +35,9 @@ namespace wifi
 
 class WifiTxVector;
 
-/*
+/**
  * \ingroup wifi
  * \brief the interface for the table-driven OFDM error model
- *
  */
 class TableBasedErrorRateModel : public ErrorRateModel
 {

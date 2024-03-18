@@ -34,6 +34,12 @@ class Tag;
 namespace wifi
 {
 
+/**
+ * \ingroup wifi
+ *
+ * A tag to be attached to a response to a single-user frame, that carries the SNR
+ * value with which the frame has been received.
+ */
 class SnrTag : public Tag
 {
   public:

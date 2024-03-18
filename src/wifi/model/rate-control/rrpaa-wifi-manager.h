@@ -73,6 +73,10 @@ typedef std::vector<std::pair<WifiRrpaaThresholds, WifiMode>> RrpaaThresholdsTab
  */
 typedef std::vector<std::vector<double>> RrpaaProbabilitiesTable;
 
+/**
+ * \brief RRPAA Rate control algorithm
+ * \ingroup wifi
+ */
 class RrpaaWifiManager : public WifiRemoteStationManager
 {
   public:

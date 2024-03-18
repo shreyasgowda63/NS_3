@@ -25,6 +25,10 @@ namespace ns3
 namespace wifi
 {
 
+/**
+ * \brief Spectrum filter for Wi-Fi devices
+ * \ingroup wifi
+ */
 class WifiBandwidthFilter : public SpectrumTransmitFilter
 {
   public:
