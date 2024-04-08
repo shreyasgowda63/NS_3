@@ -43,7 +43,6 @@ class UdpClient : public Application
     static TypeId GetTypeId();
 
     UdpClient();
-
     ~UdpClient() override;
 
     static constexpr uint16_t DEFAULT_PORT{100}; //!< default port
