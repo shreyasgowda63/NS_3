@@ -121,22 +121,6 @@ UeMemberLteUePhySapProvider::NotifyConnectionSuccessful()
 // LteUePhy methods
 ////////////////////////////////////////
 
-/// Map each of UE PHY states to its string representation.
-static const std::string g_uePhyStateName[LteUePhy::NUM_STATES] = {
-    "CELL_SEARCH",
-    "SYNCHRONIZED",
-};
-
-/**
- * \param s The UE PHY state.
- * \return The string representation of the given state.
- */
-static inline const std::string&
-ToString(LteUePhy::State s)
-{
-    return g_uePhyStateName[s];
-}
-
 NS_OBJECT_ENSURE_REGISTERED(LteUePhy);
 
 LteUePhy::LteUePhy()
@@ -149,7 +133,7 @@ LteUePhy::LteUePhy(Ptr<LteSpectrumPhy> dlPhy, Ptr<LteSpectrumPhy> ulPhy)
     : LtePhy(dlPhy, ulPhy),
       m_uePhySapUser(nullptr),
       m_ueCphySapUser(nullptr),
-      m_state(CELL_SEARCH),
+      m_state(State::CELL_SEARCH),
       m_subframeNo(0),
       m_rsReceivedPowerUpdated(false),
       m_rsInterferencePowerUpdated(false),
@@ -566,7 +550,7 @@ LteUePhy::GenerateCqiRsrpRsrq(const SpectrumValue& sinr)
 {
     NS_LOG_FUNCTION(this << sinr);
 
-    NS_ASSERT(m_state != CELL_SEARCH);
+    NS_ASSERT(m_state != State::CELL_SEARCH);
     NS_ASSERT(m_cellId > 0);
 
     if (m_dlConfigured && m_ulConfigured && (m_rnti > 0))
@@ -742,7 +726,7 @@ LteUePhy::GenerateMixedCqiReport(const SpectrumValue& sinr)
         return;
     }
 
-    NS_ASSERT(m_state != CELL_SEARCH);
+    NS_ASSERT(m_state != State::CELL_SEARCH);
     // NOTE: The SINR received by this method is
     // based on CTRL, which is not used to compute
     // PDSCH (i.e., data) based SINR. It is used
@@ -1412,7 +1396,7 @@ LteUePhy::DoStartCellSearch(uint32_t dlEarfcn)
     NS_LOG_FUNCTION(this << dlEarfcn);
     m_dlEarfcn = dlEarfcn;
     DoSetDlBandwidth(6); // configure DL for receiving PSS
-    SwitchToState(CELL_SEARCH);
+    SwitchToState(State::CELL_SEARCH);
 }
 
 void
@@ -1443,7 +1427,7 @@ LteUePhy::DoSynchronizeWithEnb(uint16_t cellId)
     m_dlConfigured = false;
     m_ulConfigured = false;
 
-    SwitchToState(SYNCHRONIZED);
+    SwitchToState(State::SYNCHRONIZED);
 }
 
 uint16_t
@@ -1774,9 +1758,22 @@ LteUePhy::SwitchToState(State newState)
     NS_LOG_FUNCTION(this << newState);
     State oldState = m_state;
     m_state = newState;
-    NS_LOG_INFO(this << " cellId=" << m_cellId << " rnti=" << m_rnti << " UePhy "
-                     << ToString(oldState) << " --> " << ToString(newState));
+    NS_LOG_INFO(this << " cellId=" << m_cellId << " rnti=" << m_rnti << " UePhy " << oldState
+                     << " --> " << newState);
     m_stateTransitionTrace(m_cellId, m_rnti, oldState, newState);
+}
+
+std::ostream&
+operator<<(std::ostream& os, LteUePhy::State state)
+{
+    switch (state)
+    {
+    case LteUePhy::State::CELL_SEARCH:
+        return os << "CELL_SEARCH";
+    case LteUePhy::State::SYNCHRONIZED:
+        return os << "SYNCHRONIZED";
+    };
+    return os << "UNKNOWN(" << static_cast<uint32_t>(state) << ")";
 }
 
 } // namespace ns3

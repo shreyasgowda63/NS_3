@@ -599,7 +599,9 @@ LteX2HandoverMeasuresTestCase::CheckConnected(Ptr<NetDevice> ueDevice, Ptr<NetDe
 
     Ptr<LteUeNetDevice> ueLteDevice = ueDevice->GetObject<LteUeNetDevice>();
     Ptr<LteUeRrc> ueRrc = ueLteDevice->GetRrc();
-    NS_TEST_ASSERT_MSG_EQ(ueRrc->GetState(), LteUeRrc::CONNECTED_NORMALLY, "Wrong LteUeRrc state!");
+    NS_TEST_ASSERT_MSG_EQ(ueRrc->GetState(),
+                          LteUeRrc::State::CONNECTED_NORMALLY,
+                          "Wrong LteUeRrc state!");
 
     Ptr<LteEnbNetDevice> enbLteDevice = enbDevice->GetObject<LteEnbNetDevice>();
     Ptr<LteEnbRrc> enbRrc = enbLteDevice->GetRrc();
@@ -608,8 +610,10 @@ LteX2HandoverMeasuresTestCase::CheckConnected(Ptr<NetDevice> ueDevice, Ptr<NetDe
     NS_TEST_ASSERT_MSG_NE(ueManager, nullptr, "RNTI " << rnti << " not found in eNB");
 
     UeManager::State ueManagerState = ueManager->GetState();
-    NS_TEST_ASSERT_MSG_EQ(ueManagerState, UeManager::CONNECTED_NORMALLY, "Wrong UeManager state!");
-    NS_ASSERT_MSG(ueManagerState == UeManager::CONNECTED_NORMALLY, "Wrong UeManager state!");
+    NS_TEST_ASSERT_MSG_EQ(ueManagerState,
+                          UeManager::State::CONNECTED_NORMALLY,
+                          "Wrong UeManager state!");
+    NS_ASSERT_MSG(ueManagerState == UeManager::State::CONNECTED_NORMALLY, "Wrong UeManager state!");
 
     uint16_t ueCellId = ueRrc->GetCellId();
     uint16_t enbCellId = enbLteDevice->GetCellId();

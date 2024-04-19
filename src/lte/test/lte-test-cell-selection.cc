@@ -132,7 +132,7 @@ LteCellSelectionTestCase::LteCellSelectionTestCase(std::string name,
       m_ueSetupList(ueSetupList)
 {
     NS_LOG_FUNCTION(this << GetName());
-    m_lastState.resize(m_ueSetupList.size(), LteUeRrc::NUM_STATES);
+    m_lastState.resize(m_ueSetupList.size(), static_cast<LteUeRrc::State>(-1));
 }
 
 LteCellSelectionTestCase::~LteCellSelectionTestCase()
@@ -389,7 +389,7 @@ LteCellSelectionTestCase::CheckPoint(Ptr<LteUeNetDevice> ueDev,
     if (expectedCellId1 > 0)
     {
         NS_TEST_ASSERT_MSG_EQ(m_lastState.at(static_cast<unsigned int>(ueDev->GetImsi() - 1)),
-                              LteUeRrc::CONNECTED_NORMALLY,
+                              LteUeRrc::State::CONNECTED_NORMALLY,
                               "UE " << ueDev->GetImsi() << " is not at CONNECTED_NORMALLY state");
     }
 }

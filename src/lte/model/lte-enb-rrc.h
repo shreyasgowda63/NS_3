@@ -41,6 +41,7 @@
 #include "lte-pdcp-sap.h"
 #include "lte-rrc-sap.h"
 
+#include <ns3/deprecated.h>
 #include <ns3/event-id.h>
 #include <ns3/nstime.h>
 #include <ns3/object.h>
@@ -74,7 +75,7 @@ class UeManager : public Object
      * The state of the UeManager at the eNB RRC
      *
      */
-    enum State
+    enum class State
     {
         INITIAL_RANDOM_ACCESS = 0,
         CONNECTION_SETUP,
@@ -86,9 +87,42 @@ class UeManager : public Object
         HANDOVER_PREPARATION,
         HANDOVER_JOINING,
         HANDOVER_PATH_SWITCH,
-        HANDOVER_LEAVING,
-        NUM_STATES
+        HANDOVER_LEAVING
     };
+
+    /// \deprecated See State::INITIAL_RANDOM_ACCESS
+    NS_DEPRECATED_3_42("Use State::INITIAL_RANDOM_ACCESS instead")
+    static constexpr auto INITIAL_RANDOM_ACCESS = State::INITIAL_RANDOM_ACCESS;
+    /// \deprecated See State::CONNECTION_SETUP
+    NS_DEPRECATED_3_42("Use State::CONNECTION_SETUP instead")
+    static constexpr auto CONNECTION_SETUP = State::CONNECTION_SETUP;
+    /// \deprecated See State::CONNECTION_REJECTED
+    NS_DEPRECATED_3_42("Use State::CONNECTION_REJECTED instead")
+    static constexpr auto CONNECTION_REJECTED = State::CONNECTION_REJECTED;
+    /// \deprecated See State::ATTACH_REQUEST
+    NS_DEPRECATED_3_42("Use State::ATTACH_REQUEST instead")
+    static constexpr auto ATTACH_REQUEST = State::ATTACH_REQUEST;
+    /// \deprecated See State::CONNECTED_NORMALLY
+    NS_DEPRECATED_3_42("Use State::CONNECTED_NORMALLY instead")
+    static constexpr auto CONNECTED_NORMALLY = State::CONNECTED_NORMALLY;
+    /// \deprecated See State::CONNECTION_RECONFIGURATION
+    NS_DEPRECATED_3_42("Use State::CONNECTION_RECONFIGURATION instead")
+    static constexpr auto CONNECTION_RECONFIGURATION = State::CONNECTION_RECONFIGURATION;
+    /// \deprecated See State::CONNECTION_REESTABLISHMENT
+    NS_DEPRECATED_3_42("Use State::CONNECTION_REESTABLISHMENT instead")
+    static constexpr auto CONNECTION_REESTABLISHMENT = State::CONNECTION_REESTABLISHMENT;
+    /// \deprecated See State::HANDOVER_PREPARATION
+    NS_DEPRECATED_3_42("Use State::HANDOVER_PREPARATION instead")
+    static constexpr auto HANDOVER_PREPARATION = State::HANDOVER_PREPARATION;
+    /// \deprecated See State::HANDOVER_JOINING
+    NS_DEPRECATED_3_42("Use State::HANDOVER_JOINING instead")
+    static constexpr auto HANDOVER_JOINING = State::HANDOVER_JOINING;
+    /// \deprecated See State::HANDOVER_PATH_SWITCH
+    NS_DEPRECATED_3_42("Use State::HANDOVER_PATH_SWITCH instead")
+    static constexpr auto HANDOVER_PATH_SWITCH = State::HANDOVER_PATH_SWITCH;
+    /// \deprecated See State::HANDOVER_LEAVING
+    NS_DEPRECATED_3_42("Use State::HANDOVER_LEAVING instead")
+    static constexpr auto HANDOVER_LEAVING = State::HANDOVER_LEAVING;
 
     UeManager();
 
@@ -1787,6 +1821,14 @@ class LteEnbRrc : public Object
         m_componentCarrierPhyConf; ///< component carrier phy configuration
 
 }; // end of `class LteEnbRrc`
+
+/**
+ * @brief Stream insertion operator.
+ * @param [in] os The reference to the output stream.
+ * @param [in] state The UeManager::State.
+ * @return The reference to the output stream.
+ */
+std::ostream& operator<<(std::ostream& os, UeManager::State state);
 
 } // namespace ns3
 

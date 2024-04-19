@@ -423,7 +423,7 @@ LteRrcConnectionEstablishmentTestCase::CheckConnected(Ptr<NetDevice> ueDevice,
                           true,
                           "RNTI " << rnti << " fails to establish connection");
     NS_TEST_ASSERT_MSG_EQ(ueRrc->GetState(),
-                          LteUeRrc::CONNECTED_NORMALLY,
+                          LteUeRrc::State::CONNECTED_NORMALLY,
                           "RNTI " << rnti << " is not at CONNECTED_NORMALLY state");
 
     // Verifying UE context state in eNodeB RRC.
@@ -437,7 +437,7 @@ LteRrcConnectionEstablishmentTestCase::CheckConnected(Ptr<NetDevice> ueDevice,
         Ptr<UeManager> ueManager = enbRrc->GetUeManager(rnti);
         NS_ASSERT(ueManager);
         NS_TEST_ASSERT_MSG_EQ(ueManager->GetState(),
-                              UeManager::CONNECTED_NORMALLY,
+                              UeManager::State::CONNECTED_NORMALLY,
                               "The context of RNTI " << rnti << " is in invalid state");
     }
     else
@@ -481,7 +481,7 @@ LteRrcConnectionEstablishmentTestCase::CheckConnected(Ptr<NetDevice> ueDevice,
         uint16_t enbImsi = ueManager->GetImsi();
         NS_TEST_ASSERT_MSG_EQ(ueImsi, enbImsi, "inconsistent Imsi");
 
-        if (state == UeManager::CONNECTED_NORMALLY)
+        if (state == UeManager::State::CONNECTED_NORMALLY)
         {
             ObjectMapValue enbDataRadioBearerMapValue;
             ueManager->GetAttribute("DataRadioBearerMap", enbDataRadioBearerMapValue);
@@ -542,7 +542,7 @@ LteRrcConnectionEstablishmentTestCase::CheckNotConnected(Ptr<NetDevice> ueDevice
     NS_ASSERT_MSG(m_isConnectionEstablished.find(imsi) != m_isConnectionEstablished.end(),
                   "Invalid IMSI " << imsi);
 
-    bool ueStateIsConnectedNormally = (LteUeRrc::CONNECTED_NORMALLY == ueRrc->GetState());
+    bool ueStateIsConnectedNormally = (LteUeRrc::State::CONNECTED_NORMALLY == ueRrc->GetState());
 
     Ptr<LteEnbNetDevice> enbLteDevice = enbDevice->GetObject<LteEnbNetDevice>();
     Ptr<LteEnbRrc> enbRrc = enbLteDevice->GetRrc();
@@ -552,7 +552,8 @@ LteRrcConnectionEstablishmentTestCase::CheckNotConnected(Ptr<NetDevice> ueDevice
     {
         Ptr<UeManager> ueManager = enbRrc->GetUeManager(rnti);
         NS_ASSERT(ueManager);
-        contextStateIsConnectedNormally = (UeManager::CONNECTED_NORMALLY == ueManager->GetState());
+        contextStateIsConnectedNormally =
+            (UeManager::State::CONNECTED_NORMALLY == ueManager->GetState());
     }
     NS_TEST_ASSERT_MSG_EQ(
         (!m_isConnectionEstablished[imsi] || !ueStateIsConnectedNormally || !hasContext ||

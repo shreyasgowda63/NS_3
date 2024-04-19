@@ -1271,14 +1271,14 @@ DrbActivator::ActivateDrb(uint64_t imsi, uint16_t cellId, uint16_t rnti)
     if ((!m_active) && (imsi == m_imsi))
     {
         Ptr<LteUeRrc> ueRrc = m_ueDevice->GetObject<LteUeNetDevice>()->GetRrc();
-        NS_ASSERT(ueRrc->GetState() == LteUeRrc::CONNECTED_NORMALLY);
+        NS_ASSERT(ueRrc->GetState() == LteUeRrc::State::CONNECTED_NORMALLY);
         uint16_t rnti = ueRrc->GetRnti();
         Ptr<LteEnbNetDevice> enbLteDevice = m_ueDevice->GetObject<LteUeNetDevice>()->GetTargetEnb();
         Ptr<LteEnbRrc> enbRrc = enbLteDevice->GetObject<LteEnbNetDevice>()->GetRrc();
         NS_ASSERT(ueRrc->GetCellId() == enbLteDevice->GetCellId());
         Ptr<UeManager> ueManager = enbRrc->GetUeManager(rnti);
-        NS_ASSERT(ueManager->GetState() == UeManager::CONNECTED_NORMALLY ||
-                  ueManager->GetState() == UeManager::CONNECTION_RECONFIGURATION);
+        NS_ASSERT(ueManager->GetState() == UeManager::State::CONNECTED_NORMALLY ||
+                  ueManager->GetState() == UeManager::State::CONNECTION_RECONFIGURATION);
         EpcEnbS1SapUser::DataRadioBearerSetupRequestParameters params;
         params.rnti = rnti;
         params.bearer = m_bearer;

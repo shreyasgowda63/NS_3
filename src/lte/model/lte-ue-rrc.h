@@ -33,6 +33,7 @@
 #include "lte-ue-cmac-sap.h"
 #include "lte-ue-cphy-sap.h"
 
+#include <ns3/deprecated.h>
 #include <ns3/object.h>
 #include <ns3/packet.h>
 #include <ns3/traced-callback.h>
@@ -95,7 +96,7 @@ class LteUeRrc : public Object
      * The states of the UE RRC entity
      *
      */
-    enum State
+    enum class State
     {
         IDLE_START = 0,
         IDLE_CELL_SEARCH,
@@ -109,9 +110,48 @@ class LteUeRrc : public Object
         CONNECTED_NORMALLY,
         CONNECTED_HANDOVER,
         CONNECTED_PHY_PROBLEM,
-        CONNECTED_REESTABLISHING,
-        NUM_STATES
+        CONNECTED_REESTABLISHING
     };
+
+    /// \deprecated See State::IDLE_START
+    NS_DEPRECATED_3_42("Use State::IDLE_START instead")
+    static constexpr auto IDLE_START = State::IDLE_START;
+    /// \deprecated See State::IDLE_CELL_SEARCH
+    NS_DEPRECATED_3_42("Use State::IDLE_CELL_SEARCH instead")
+    static constexpr auto IDLE_CELL_SEARCH = State::IDLE_CELL_SEARCH;
+    /// \deprecated See State::IDLE_WAIT_MIB_SIB1
+    NS_DEPRECATED_3_42("Use State::IDLE_WAIT_MIB_SIB1 instead")
+    static constexpr auto IDLE_WAIT_MIB_SIB1 = State::IDLE_WAIT_MIB_SIB1;
+    /// \deprecated See State::IDLE_WAIT_MIB
+    NS_DEPRECATED_3_42("Use State::IDLE_WAIT_MIB instead")
+    static constexpr auto IDLE_WAIT_MIB = State::IDLE_WAIT_MIB;
+    /// \deprecated See State::IDLE_WAIT_SIB1
+    NS_DEPRECATED_3_42("Use State::IDLE_WAIT_SIB1 instead")
+    static constexpr auto IDLE_WAIT_SIB1 = State::IDLE_WAIT_SIB1;
+    /// \deprecated See State::IDLE_CAMPED_NORMALLY
+    NS_DEPRECATED_3_42("Use State::IDLE_CAMPED_NORMALLY instead")
+    static constexpr auto IDLE_CAMPED_NORMALLY = State::IDLE_CAMPED_NORMALLY;
+    /// \deprecated See State::IDLE_WAIT_SIB2
+    NS_DEPRECATED_3_42("Use State::IDLE_WAIT_SIB2 instead")
+    static constexpr auto IDLE_WAIT_SIB2 = State::IDLE_WAIT_SIB2;
+    /// \deprecated See State::IDLE_RANDOM_ACCESS
+    NS_DEPRECATED_3_42("Use State::IDLE_RANDOM_ACCESS instead")
+    static constexpr auto IDLE_RANDOM_ACCESS = State::IDLE_RANDOM_ACCESS;
+    /// \deprecated See State::IDLE_CONNECTING
+    NS_DEPRECATED_3_42("Use State::IDLE_CONNECTING instead")
+    static constexpr auto IDLE_CONNECTING = State::IDLE_CONNECTING;
+    /// \deprecated See State::CONNECTED_NORMALLY
+    NS_DEPRECATED_3_42("Use State::CONNECTED_NORMALLY instead")
+    static constexpr auto CONNECTED_NORMALLY = State::CONNECTED_NORMALLY;
+    /// \deprecated See State::CONNECTED_HANDOVER
+    NS_DEPRECATED_3_42("Use State::CONNECTED_HANDOVER instead")
+    static constexpr auto CONNECTED_HANDOVER = State::CONNECTED_HANDOVER;
+    /// \deprecated See State::CONNECTED_PHY_PROBLEM
+    NS_DEPRECATED_3_42("Use State::CONNECTED_PHY_PROBLEM instead")
+    static constexpr auto CONNECTED_PHY_PROBLEM = State::CONNECTED_PHY_PROBLEM;
+    /// \deprecated See State::CONNECTED_REESTABLISHING
+    NS_DEPRECATED_3_42("Use State::CONNECTED_REESTABLISHING instead")
+    static constexpr auto CONNECTED_REESTABLISHING = State::CONNECTED_REESTABLISHING;
 
     /**
      * create an RRC instance for use within an ue
@@ -324,6 +364,7 @@ class LteUeRrc : public Object
      * \param s The UE RRC state.
      * \return The string representation of the given state.
      */
+    NS_DEPRECATED_3_42("Use operator<< instead")
     static const std::string ToString(LteUeRrc::State s);
 
     /**
@@ -1343,6 +1384,14 @@ class LteUeRrc : public Object
     uint16_t m_numberOfComponentCarriers;
 
 }; // end of class LteUeRrc
+
+/**
+ * @brief Stream insertion operator.
+ * @param [in] os The reference to the output stream.
+ * @param [in] state The LteUeRrc::State.
+ * @return The reference to the output stream.
+ */
+std::ostream& operator<<(std::ostream& os, LteUeRrc::State state);
 
 } // namespace ns3
 
