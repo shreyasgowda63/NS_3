@@ -84,7 +84,7 @@ class PairValue : public AttributeValue
     PairValue(const result_type& value)
     {
         Set(value);
-    }; // "import" constructor
+    } // "import" constructor
 
     // Inherited
     Ptr<AttributeValue> Copy() const override;
