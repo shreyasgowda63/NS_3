@@ -1020,26 +1020,27 @@ class MakeCallbackTemplatesTestCase : public TestCase
     bool m_test1; //!< true if Target1 has been called, false otherwise.
 };
 
+// clang-format off
 /**
  * Test function - does nothing.
  * @{
  */
-void TestFZero(){};
-void TestFOne(int){};
-void TestFTwo(int, int){};
-void TestFThree(int, int, int){};
-void TestFFour(int, int, int, int){};
-void TestFFive(int, int, int, int, int){};
-void TestFSix(int, int, int, int, int, int){};
+void TestFZero() {}
+void TestFOne(int) {}
+void TestFTwo(int, int) {}
+void TestFThree(int, int, int) {}
+void TestFFour(int, int, int, int) {}
+void TestFFive(int, int, int, int, int) {}
+void TestFSix(int, int, int, int, int, int) {}
 
-void TestFROne(int&){};
-void TestFRTwo(int&, int&){};
-void TestFRThree(int&, int&, int&){};
-void TestFRFour(int&, int&, int&, int&){};
-void TestFRFive(int&, int&, int&, int&, int&){};
-void TestFRSix(int&, int&, int&, int&, int&, int&){};
-
+void TestFROne(int&) {}
+void TestFRTwo(int&, int&) {}
+void TestFRThree(int&, int&, int&) {}
+void TestFRFour(int&, int&, int&, int&) {}
+void TestFRFive(int&, int&, int&, int&, int&) {}
+void TestFRSix(int&, int&, int&, int&, int&, int&) {}
 /** @} */
+// clang-format on
 
 /**
  * \ingroup callback-tests
@@ -1082,26 +1083,27 @@ class CallbackTestParent
 class CallbackTestClass : public CallbackTestParent
 {
   public:
+    // clang-format off
     /**
      * Test function - does nothing.
      * @{
      */
-    void TestZero(){};
-    void TestOne(int){};
-    void TestTwo(int, int){};
-    void TestThree(int, int, int){};
-    void TestFour(int, int, int, int){};
-    void TestFive(int, int, int, int, int){};
-    void TestSix(int, int, int, int, int, int){};
-    void TestCZero() const {};
-    void TestCOne(int) const {};
-    void TestCTwo(int, int) const {};
-    void TestCThree(int, int, int) const {};
-    void TestCFour(int, int, int, int) const {};
-    void TestCFive(int, int, int, int, int) const {};
-    void TestCSix(int, int, int, int, int, int) const {};
-
+    void TestZero() {}
+    void TestOne(int) {}
+    void TestTwo(int, int) {}
+    void TestThree(int, int, int) {}
+    void TestFour(int, int, int, int) {}
+    void TestFive(int, int, int, int, int) {}
+    void TestSix(int, int, int, int, int, int) {}
+    void TestCZero() const {}
+    void TestCOne(int) const {}
+    void TestCTwo(int, int) const {}
+    void TestCThree(int, int, int) const {}
+    void TestCFour(int, int, int, int) const {}
+    void TestCFive(int, int, int, int, int) const {}
+    void TestCSix(int, int, int, int, int, int) const {}
     /** @} */
+    // clang-format on
 
     /**
      * Tries to make a callback to public and protected functions of a class.

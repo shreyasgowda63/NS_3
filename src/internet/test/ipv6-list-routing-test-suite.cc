@@ -87,7 +87,9 @@ class Ipv6ARouting : public Ipv6RoutingProtocol
     {
     }
 
-    void PrintRoutingTable(Ptr<OutputStreamWrapper> stream, Time::Unit unit) const override{};
+    void PrintRoutingTable(Ptr<OutputStreamWrapper> stream, Time::Unit unit) const override
+    {
+    }
 };
 
 /**
@@ -153,7 +155,9 @@ class Ipv6BRouting : public Ipv6RoutingProtocol
     {
     }
 
-    void PrintRoutingTable(Ptr<OutputStreamWrapper> stream, Time::Unit unit) const override{};
+    void PrintRoutingTable(Ptr<OutputStreamWrapper> stream, Time::Unit unit) const override
+    {
+    }
 };
 
 /**

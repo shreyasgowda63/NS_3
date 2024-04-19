@@ -35,8 +35,13 @@ template <class T>
 class PropagationCache
 {
   public:
-    PropagationCache(){};
-    ~PropagationCache(){};
+    PropagationCache()
+    {
+    }
+
+    ~PropagationCache()
+    {
+    }
 
     /**
      * Get the model associated with the path
@@ -100,7 +105,10 @@ class PropagationCache
                                   uint32_t modelUid)
             : m_srcMobility(a),
               m_dstMobility(b),
-              m_spectrumModelUid(modelUid){};
+              m_spectrumModelUid(modelUid)
+        {
+        }
+
         Ptr<const MobilityModel> m_srcMobility; //!< 1st node mobility model
         Ptr<const MobilityModel> m_dstMobility; //!< 2nd node mobility model
         uint32_t m_spectrumModelUid;            //!< model UID

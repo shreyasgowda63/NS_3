@@ -237,7 +237,10 @@ class TcpDropRatioErrorModel : public TcpGeneralErrorModel
                     uint32_t packetSize) override;
 
   private:
-    void DoReset() override{};
+    void DoReset() override
+    {
+    }
+
     double m_dropRatio;                //!< Drop ratio
     Ptr<UniformRandomVariable> m_prng; //!< Random variable
 };

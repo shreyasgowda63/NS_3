@@ -68,7 +68,10 @@ struct RxSignalInfo;
  */
 struct WifiRemoteStation
 {
-    virtual ~WifiRemoteStation(){};
+    virtual ~WifiRemoteStation()
+    {
+    }
+
     WifiRemoteStationState* m_state; //!< Remote station state
     std::pair<double, Time>
         m_rssiAndUpdateTimePair; //!< RSSI (in dBm) of the most recent packet received from the

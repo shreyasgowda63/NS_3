@@ -278,8 +278,13 @@ class TracedCallbackTypedefTestCase::Checker : public Object
     TracedCallback<Ts...> m_cb;
 
   public:
-    Checker(){};
-    ~Checker() override{};
+    Checker()
+    {
+    }
+
+    ~Checker() override
+    {
+    }
 
     /// Arguments of the TracedCallback.
     std::tuple<typename TypeTraits<Ts>::BaseType...> m_items;
