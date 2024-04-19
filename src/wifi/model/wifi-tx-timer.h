@@ -31,10 +31,14 @@
 namespace ns3
 {
 
+class Mac48Address;
+
+namespace wifi
+{
+
 class WifiMpdu;
 class WifiPsdu;
 class WifiTxVector;
-class Mac48Address;
 
 typedef std::unordered_map<uint16_t /* staId */, Ptr<WifiPsdu> /* PSDU */> WifiPsduMap;
 
@@ -254,6 +258,7 @@ class WifiTxTimer
     mutable PsduMapResponseTimeout m_psduMapResponseTimeoutCallback;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 /***************************************************************
@@ -261,6 +266,8 @@ class WifiTxTimer
  ***************************************************************/
 
 namespace ns3
+{
+namespace wifi
 {
 
 template <typename MEM, typename OBJ, typename... Args>
@@ -298,6 +305,7 @@ WifiTxTimer::Timeout(MEM mem_ptr, OBJ obj, Args... args)
     ((*obj).*mem_ptr)(std::forward<Args>(args)...);
 }
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_TX_TIMER_H */

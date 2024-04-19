@@ -34,6 +34,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("RrMultiUserScheduler");
 
@@ -959,4 +961,5 @@ RrMultiUserScheduler::ComputeUlMuInfo()
     return UlMuInfo{m_trigger, m_triggerMacHdr, std::move(m_txParams)};
 }
 
+} // namespace wifi
 } // namespace ns3

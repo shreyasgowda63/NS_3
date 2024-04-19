@@ -139,7 +139,7 @@ main(int argc, char* argv[])
     {
         WifiHelper::EnableLogComponents(); // Turn on all Wifi logging
     }
-    wifi.SetStandard(WIFI_STANDARD_80211b);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211b);
 
     YansWifiPhyHelper wifiPhy;
     // This is one parameter that matters when using FixedRssLossModel

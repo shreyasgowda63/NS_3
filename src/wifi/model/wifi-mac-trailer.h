@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * The length in octets of the IEEE 802.11 MAC FCS field
@@ -53,6 +55,7 @@ class WifiMacTrailer : public Trailer
     uint32_t Deserialize(Buffer::Iterator start) override;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MAC_TRAILER_H */

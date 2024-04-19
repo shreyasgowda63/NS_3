@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 struct RrpaaWifiRemoteStation;
 
@@ -71,6 +73,10 @@ typedef std::vector<std::pair<WifiRrpaaThresholds, WifiMode>> RrpaaThresholdsTab
  */
 typedef std::vector<std::vector<double>> RrpaaProbabilitiesTable;
 
+/**
+ * \brief RRPAA Rate control algorithm
+ * \ingroup wifi
+ */
 class RrpaaWifiManager : public WifiRemoteStationManager
 {
   public:
@@ -237,6 +243,7 @@ class RrpaaWifiManager : public WifiRemoteStationManager
         m_uniformRandomVariable; //!< Provides uniform random variables for probabilistic changes.
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* RRPAA__WIFI_MANAGER_H */

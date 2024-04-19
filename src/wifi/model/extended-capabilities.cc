@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 ExtendedCapabilities::ExtendedCapabilities()
     : m_20_40_bssCoexistenceManagementSupport(0),
@@ -379,4 +381,5 @@ ExtendedCapabilities::DeserializeInformationField(Buffer::Iterator start, uint16
     return length;
 }
 
+} // namespace wifi
 } // namespace ns3

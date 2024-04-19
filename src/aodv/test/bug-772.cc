@@ -143,7 +143,7 @@ Bug772ChainTest::CreateDevices()
     // This test suite output was originally based on YansErrorRateModel
     wifiPhy.SetErrorRateModel("ns3::YansErrorRateModel");
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
-    Ptr<YansWifiChannel> chan = wifiChannel.Create();
+    auto chan = wifiChannel.Create();
     wifiPhy.SetChannel(chan);
     wifiPhy.Set(
         "TxGain",
@@ -152,7 +152,7 @@ Bug772ChainTest::CreateDevices()
         "RxGain",
         DoubleValue(1.0)); // this configuration should go away in future revision to the test
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211a);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211a);
     wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
                                  "DataMode",
                                  StringValue("OfdmRate6Mbps"),

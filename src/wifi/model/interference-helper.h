@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiPpdu;
 class WifiPsdu;
@@ -563,6 +565,7 @@ class InterferenceHelper : public Object
     bool IsSameMuMimoTransmission(Ptr<const Event> currentEvent, Ptr<const Event> otherEvent) const;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* INTERFERENCE_HELPER_H */

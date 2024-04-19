@@ -28,10 +28,14 @@
 namespace ns3
 {
 
-class WifiMacHeader;
-class OriginatorRxStatus;
-class Packet;
 class Mac48Address;
+class Packet;
+
+namespace wifi
+{
+
+class OriginatorRxStatus;
+class WifiMacHeader;
 class WifiMpdu;
 
 /**
@@ -135,6 +139,7 @@ class MacRxMiddle : public SimpleRefCount<MacRxMiddle>
     ForwardUpCallback m_callback;         ///< forward up callback
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MAC_RX_MIDDLE_H */

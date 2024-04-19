@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// enumeration of container queue types
 enum WifiContainerQueueType
@@ -78,6 +80,7 @@ enum WifiReceiverAddressType : uint8_t
 using WifiContainerQueueId = std::
     tuple<WifiContainerQueueType, WifiReceiverAddressType, Mac48Address, std::optional<uint8_t>>;
 
+} // namespace wifi
 } // namespace ns3
 
 /****************************************************
@@ -90,17 +93,19 @@ using WifiContainerQueueId = std::
  * For use with `unordered_map` and `unordered_set`.
  */
 template <>
-struct std::hash<ns3::WifiContainerQueueId>
+struct std::hash<ns3::wifi::WifiContainerQueueId>
 {
     /**
      * The functor.
      * \param queueId The QueueId value to hash.
      * \return the hash
      */
-    std::size_t operator()(ns3::WifiContainerQueueId queueId) const;
+    std::size_t operator()(ns3::wifi::WifiContainerQueueId queueId) const;
 };
 
 namespace ns3
+{
+namespace wifi
 {
 
 /**
@@ -222,6 +227,7 @@ class WifiMacQueueContainer
         m_nBytesPerQueue; //!< size in bytes of the container queues
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MAC_QUEUE_CONTAINER_H */

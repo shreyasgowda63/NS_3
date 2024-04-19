@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("VhtConfiguration");
 
@@ -113,4 +115,5 @@ VhtConfiguration::GetSecondaryCcaSensitivityThresholdsPerBw() const
     return m_secondaryCcaSensitivityThresholds;
 }
 
+} // namespace wifi
 } // namespace ns3

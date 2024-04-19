@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief HT configuration
@@ -92,6 +94,7 @@ class HtConfiguration : public Object
     bool m_40MHzSupported; ///< whether 40 MHz operation is supported
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HT_CONFIGURATION_H */

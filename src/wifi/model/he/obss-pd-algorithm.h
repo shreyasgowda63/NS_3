@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 struct HeSigAParameters;
 
@@ -114,6 +116,7 @@ class ObssPdAlgorithm : public Object
     TracedCallback<uint8_t, double, bool, double, double> m_resetEvent;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* OBSS_PD_ALGORITHM_H */

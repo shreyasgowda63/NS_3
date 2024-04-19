@@ -33,6 +33,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * A structure containing parameters of a single rate and its
@@ -418,4 +420,5 @@ ThompsonSamplingWifiManager::AssignStreams(int64_t stream)
     return 1;
 }
 
+} // namespace wifi
 } // namespace ns3

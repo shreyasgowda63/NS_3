@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief PHY entity for ERP-OFDM (11g)
@@ -213,6 +215,7 @@ class ErpOfdmPhy : public OfdmPhy
                                         //!< size corresponding to a unique name of modulation
 };                                      // class ErpOfdmPhy
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* ERP_OFDM_PHY_H */

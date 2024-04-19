@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -52,6 +54,7 @@ class AdhocWifiMac : public WifiMac
     void Receive(Ptr<const WifiMpdu> mpdu, uint8_t linkId) override;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* ADHOC_WIFI_MAC_H */

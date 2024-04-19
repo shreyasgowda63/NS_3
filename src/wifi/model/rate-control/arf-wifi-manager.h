@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -83,6 +85,7 @@ class ArfWifiManager : public WifiRemoteStationManager
     TracedValue<uint64_t> m_currentRate; //!< Trace rate changes
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* ARF_WIFI_MANAGER_H */

@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 uint16_t
 ConvertGuardIntervalToNanoSeconds(WifiMode mode, const Ptr<WifiNetDevice> device)
@@ -274,4 +276,5 @@ IsEht(WifiPreamble preamble)
     return ((preamble == WIFI_PREAMBLE_EHT_MU) || (preamble == WIFI_PREAMBLE_EHT_TB));
 }
 
+} // namespace wifi
 } // namespace ns3

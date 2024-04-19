@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 const HeRu::SubcarrierGroups HeRu::m_heRuSubcarrierGroups = {
     // RUs in a 20 MHz HE PPDU (Table 28-6)
@@ -901,4 +903,5 @@ HeRu::RuSpec::operator<(const RuSpec& other) const
            std::tie(other.m_ruType, other.m_index, other.m_primary80MHz);
 }
 
+} // namespace wifi
 } // namespace ns3

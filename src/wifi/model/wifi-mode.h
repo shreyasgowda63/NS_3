@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// STA_ID to identify a single user (SU)
 static constexpr uint16_t SU_STA_ID = 65535;
@@ -459,6 +461,7 @@ class WifiModeFactory
     WifiModeItemList m_itemList; ///< item list
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MODE_H */

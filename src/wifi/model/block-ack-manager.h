@@ -36,6 +36,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class MgtAddBaResponseHeader;
 class MgtAddBaRequestHeader;
@@ -523,6 +525,7 @@ class BlockAckManager : public Object
         m_originatorAgreementState;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* BLOCK_ACK_MANAGER_H */

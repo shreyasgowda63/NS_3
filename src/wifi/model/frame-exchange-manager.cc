@@ -38,6 +38,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("FrameExchangeManager");
 
@@ -1426,4 +1428,5 @@ FrameExchangeManager::EndReceiveAmpdu(Ptr<const WifiPsdu> psdu,
     NS_ASSERT_MSG(false, "A non-QoS station should not receive an A-MPDU");
 }
 
+} // namespace wifi
 } // namespace ns3

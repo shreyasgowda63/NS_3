@@ -43,10 +43,14 @@
 namespace ns3
 {
 
+class Packet;
+
+namespace wifi
+{
+
 class WifiPhy;
 class WifiMac;
 class WifiMacHeader;
-class Packet;
 class WifiMpdu;
 class WifiTxVector;
 
@@ -1531,6 +1535,7 @@ class WifiRemoteStationManager : public Object
     TracedCallback<Mac48Address> m_macTxFinalDataFailed;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_REMOTE_STATION_MANAGER_H */

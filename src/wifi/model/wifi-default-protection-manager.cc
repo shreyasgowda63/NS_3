@@ -34,6 +34,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiDefaultProtectionManager");
 
@@ -416,4 +418,5 @@ WifiDefaultProtectionManager::TryUlMuTransmission(Ptr<const WifiMpdu> mpdu,
     return protection;
 }
 
+} // namespace wifi
 } // namespace ns3

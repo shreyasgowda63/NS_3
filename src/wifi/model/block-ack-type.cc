@@ -23,6 +23,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 BlockAckType::BlockAckType(Variant v)
     : m_variant(v)
@@ -134,4 +136,5 @@ operator<<(std::ostream& os, const BlockAckReqType& type)
     return os;
 }
 
+} // namespace wifi
 } // namespace ns3

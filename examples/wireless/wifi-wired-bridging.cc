@@ -102,7 +102,7 @@ main(int argc, char* argv[])
         // calculate ssid for wifi subnetwork
         std::ostringstream oss;
         oss << "wifi-default-" << i;
-        Ssid ssid = Ssid(oss.str());
+        wifi::Ssid ssid(oss.str());
 
         NodeContainer sta;
         NetDeviceContainer staDev;
@@ -134,7 +134,7 @@ main(int argc, char* argv[])
         // setup the AP.
         mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
         mobility.Install(backboneNodes.Get(i));
-        wifiMac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+        wifiMac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
         apDev = wifi.Install(wifiPhy, wifiMac, backboneNodes.Get(i));
 
         NetDeviceContainer bridgeDev;
@@ -157,7 +157,7 @@ main(int argc, char* argv[])
             "Bounds",
             RectangleValue(Rectangle(wifiX, wifiX + 5.0, 0.0, (nStas + 1) * 5.0)));
         mobility.Install(sta);
-        wifiMac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+        wifiMac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
         staDev = wifi.Install(wifiPhy, wifiMac, sta);
         staInterface = ip.Assign(staDev);
 

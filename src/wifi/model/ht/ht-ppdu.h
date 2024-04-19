@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiPsdu;
 
@@ -185,6 +187,7 @@ class HtPpdu : public OfdmPpdu
     HtSigHeader m_htSig; //!< the HT-SIG PHY header
 };                       // class HtPpdu
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HT_PPDU_H */

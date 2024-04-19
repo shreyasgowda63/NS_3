@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("VhtFrameExchangeManager");
 
@@ -66,4 +68,5 @@ VhtFrameExchangeManager::GetPsduSize(Ptr<const WifiMpdu> mpdu, const WifiTxVecto
                 : HtFrameExchangeManager::GetPsduSize(mpdu, txVector));
 }
 
+} // namespace wifi
 } // namespace ns3

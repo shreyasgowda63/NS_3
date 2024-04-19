@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiMpdu;
 class MacRxMiddle;
@@ -140,6 +142,7 @@ class RecipientBlockAckAgreement : public BlockAckAgreement
     Ptr<MacRxMiddle> m_rxMiddle; ///< the MAC RX Middle on this station
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* RECIPIENT_BLOCK_ACK_AGREEMENT_H */

@@ -779,12 +779,12 @@ RoutingProtocol::NotifyInterfaceUp(uint32_t i)
     }
 
     // Allow neighbor manager use this interface for layer 2 feedback if possible
-    Ptr<WifiNetDevice> wifi = dev->GetObject<WifiNetDevice>();
+    auto wifi = dev->GetObject<wifi::WifiNetDevice>();
     if (!wifi)
     {
         return;
     }
-    Ptr<WifiMac> mac = wifi->GetMac();
+    auto mac = wifi->GetMac();
     if (!mac)
     {
         return;
@@ -795,7 +795,7 @@ RoutingProtocol::NotifyInterfaceUp(uint32_t i)
 }
 
 void
-RoutingProtocol::NotifyTxError(WifiMacDropReason reason, Ptr<const WifiMpdu> mpdu)
+RoutingProtocol::NotifyTxError(wifi::WifiMacDropReason reason, Ptr<const wifi::WifiMpdu> mpdu)
 {
     m_nb.GetTxErrorCallback()(mpdu->GetHeader());
 }
@@ -808,10 +808,10 @@ RoutingProtocol::NotifyInterfaceDown(uint32_t i)
     // Disable layer 2 link state monitoring (if possible)
     Ptr<Ipv4L3Protocol> l3 = m_ipv4->GetObject<Ipv4L3Protocol>();
     Ptr<NetDevice> dev = l3->GetNetDevice(i);
-    Ptr<WifiNetDevice> wifi = dev->GetObject<WifiNetDevice>();
+    auto wifi = dev->GetObject<wifi::WifiNetDevice>();
     if (wifi)
     {
-        Ptr<WifiMac> mac = wifi->GetMac()->GetObject<AdhocWifiMac>();
+        auto mac = wifi->GetMac()->GetObject<wifi::AdhocWifiMac>();
         if (mac)
         {
             mac->TraceDisconnectWithoutContext("DroppedMpdu",

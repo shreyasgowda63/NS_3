@@ -59,14 +59,16 @@ class WifiRadioEnergyModelHelper : public DeviceEnergyModelHelper
      *
      * Sets the callback to be invoked when energy is depleted.
      */
-    void SetDepletionCallback(WifiRadioEnergyModel::WifiRadioEnergyDepletionCallback callback);
+    void SetDepletionCallback(
+        wifi::WifiRadioEnergyModel::WifiRadioEnergyDepletionCallback callback);
 
     /**
      * \param callback Callback function for energy recharged handling.
      *
      * Sets the callback to be invoked when energy is recharged.
      */
-    void SetRechargedCallback(WifiRadioEnergyModel::WifiRadioEnergyRechargedCallback callback);
+    void SetRechargedCallback(
+        wifi::WifiRadioEnergyModel::WifiRadioEnergyRechargedCallback callback);
 
     /**
      * \tparam Ts \deduced Argument types
@@ -91,9 +93,9 @@ class WifiRadioEnergyModelHelper : public DeviceEnergyModelHelper
 
   private:
     ObjectFactory m_radioEnergy; ///< radio energy
-    WifiRadioEnergyModel::WifiRadioEnergyDepletionCallback
+    wifi::WifiRadioEnergyModel::WifiRadioEnergyDepletionCallback
         m_depletionCallback; ///< radio energy depletion callback
-    WifiRadioEnergyModel::WifiRadioEnergyRechargedCallback
+    wifi::WifiRadioEnergyModel::WifiRadioEnergyRechargedCallback
         m_rechargedCallback;        ///< radio energy recharged callback
     ObjectFactory m_txCurrentModel; ///< transmit current model
 };

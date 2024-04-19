@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -67,6 +69,7 @@ class ConstantRateWifiManager : public WifiRemoteStationManager
     WifiMode m_ctlMode;  //!< Wifi mode for RTS frames
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* CONSTANT_RATE_WIFI_MANAGER_H */

@@ -34,6 +34,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiPhyStateHelper");
 
@@ -627,4 +629,5 @@ WifiPhyStateHelper::SwitchFromOff()
     NotifyListeners(&WifiPhyListener::NotifyOn);
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 Ssid::Ssid()
 {
@@ -121,4 +123,5 @@ operator>>(std::istream& is, Ssid& ssid)
     return is;
 }
 
+} // namespace wifi
 } // namespace ns3

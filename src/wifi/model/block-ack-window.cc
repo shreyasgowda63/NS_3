@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("BlockAckWindow");
 
@@ -102,4 +104,5 @@ BlockAckWindow::Advance(std::size_t count)
     m_winStart = (m_winStart + count) % SEQNO_SPACE_SIZE;
 }
 
+} // namespace wifi
 } // namespace ns3

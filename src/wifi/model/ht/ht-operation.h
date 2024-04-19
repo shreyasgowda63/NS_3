@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// HtProtectionType enumeration
 enum HtProtectionType
@@ -395,6 +397,7 @@ class HtOperation : public WifiInformationElement
     uint8_t m_rxMcsBitmask[MAX_SUPPORTED_MCS]; ///< receive MCS bitmask
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HT_OPERATION_H */

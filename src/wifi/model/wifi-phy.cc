@@ -55,6 +55,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiPhy");
 
@@ -2311,6 +2313,7 @@ WifiPhy::GetSubcarrierSpacing() const
         break;
     }
     return subcarrierSpacing;
-}
+} // namespace wifi
+} // namespace wifi
 
 } // namespace ns3

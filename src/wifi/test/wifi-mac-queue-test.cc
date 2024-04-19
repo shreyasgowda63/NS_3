@@ -55,11 +55,12 @@ WifiMacQueueDropOldestTest::WifiMacQueueDropOldestTest()
 void
 WifiMacQueueDropOldestTest::DoRun()
 {
-    auto wifiMacQueue = CreateObject<WifiMacQueue>(AC_BE);
+    auto wifiMacQueue = CreateObject<wifi::WifiMacQueue>(wifi::AC_BE);
     wifiMacQueue->SetMaxSize(QueueSize("5p"));
-    auto wifiMacScheduler = CreateObject<FcfsWifiQueueScheduler>();
-    wifiMacScheduler->SetAttribute("DropPolicy", EnumValue(FcfsWifiQueueScheduler::DROP_OLDEST));
-    wifiMacScheduler->m_perAcInfo[AC_BE].wifiMacQueue = wifiMacQueue;
+    auto wifiMacScheduler = CreateObject<wifi::FcfsWifiQueueScheduler>();
+    wifiMacScheduler->SetAttribute("DropPolicy",
+                                   EnumValue(wifi::FcfsWifiQueueScheduler::DROP_OLDEST));
+    wifiMacScheduler->m_perAcInfo[wifi::AC_BE].wifiMacQueue = wifiMacQueue;
     wifiMacQueue->SetScheduler(wifiMacScheduler);
 
     Mac48Address addr1 = Mac48Address::Allocate();
@@ -68,12 +69,12 @@ WifiMacQueueDropOldestTest::DoRun()
     std::list<uint64_t> packetUids;
     for (uint32_t i = 0; i < 5; i++)
     {
-        WifiMacHeader header;
-        header.SetType(WIFI_MAC_QOSDATA);
+        wifi::WifiMacHeader header;
+        header.SetType(wifi::WIFI_MAC_QOSDATA);
         header.SetAddr1(addr1);
         header.SetQosTid(0);
         auto packet = Create<Packet>();
-        auto item = Create<WifiMpdu>(packet, header);
+        auto item = Create<wifi::WifiMpdu>(packet, header);
         wifiMacQueue->Enqueue(item);
 
         packetUids.push_back(packet->GetUid());
@@ -93,12 +94,12 @@ WifiMacQueueDropOldestTest::DoRun()
     }
 
     // Push another element into the queue.
-    WifiMacHeader header;
-    header.SetType(WIFI_MAC_QOSDATA);
+    wifi::WifiMacHeader header;
+    header.SetType(wifi::WIFI_MAC_QOSDATA);
     header.SetAddr1(addr1);
     header.SetQosTid(0);
     auto packet = Create<Packet>();
-    auto item = Create<WifiMpdu>(packet, header);
+    auto item = Create<wifi::WifiMpdu>(packet, header);
     wifiMacQueue->Enqueue(item);
 
     // Update the list of expected packet UIDs.
@@ -149,9 +150,9 @@ class WifiExtractExpiredMpdusTest : public TestCase
      */
     void Enqueue(Mac48Address rxAddr, bool inflight, Time expiryTime);
 
-    WifiMacQueueContainer m_container; //!< MAC queue container
-    uint16_t m_currentSeqNo{0};        //!< sequence number of current MPDU
-    Mac48Address m_txAddr;             //!< Transmitter Address of MPDUs
+    wifi::WifiMacQueueContainer m_container; //!< MAC queue container
+    uint16_t m_currentSeqNo{0};              //!< sequence number of current MPDU
+    Mac48Address m_txAddr;                   //!< Transmitter Address of MPDUs
 };
 
 WifiExtractExpiredMpdusTest::WifiExtractExpiredMpdusTest()
@@ -162,14 +163,14 @@ WifiExtractExpiredMpdusTest::WifiExtractExpiredMpdusTest()
 void
 WifiExtractExpiredMpdusTest::Enqueue(Mac48Address rxAddr, bool inflight, Time expiryTime)
 {
-    WifiMacHeader header(WIFI_MAC_QOSDATA);
+    wifi::WifiMacHeader header(wifi::WIFI_MAC_QOSDATA);
     header.SetAddr1(rxAddr);
     header.SetAddr2(m_txAddr);
     header.SetQosTid(0);
     header.SetSequenceNumber(m_currentSeqNo++);
-    auto mpdu = Create<WifiMpdu>(Create<Packet>(), header);
+    auto mpdu = Create<wifi::WifiMpdu>(Create<Packet>(), header);
 
-    auto queueId = WifiMacQueueContainer::GetQueueId(mpdu);
+    auto queueId = wifi::WifiMacQueueContainer::GetQueueId(mpdu);
     auto elemIt = m_container.insert(m_container.GetQueue(queueId).cend(), mpdu);
     elemIt->expiryTime = expiryTime;
     if (inflight)
@@ -225,8 +226,8 @@ WifiExtractExpiredMpdusTest::DoRun()
     Enqueue(rxAddr2, false, MilliSeconds(70));
     Enqueue(rxAddr2, false, MilliSeconds(75));
 
-    WifiContainerQueueId queueId1{WIFI_QOSDATA_QUEUE, WIFI_UNICAST, rxAddr1, 0};
-    WifiContainerQueueId queueId2{WIFI_QOSDATA_QUEUE, WIFI_UNICAST, rxAddr2, 0};
+    wifi::WifiContainerQueueId queueId1{wifi::WIFI_QOSDATA_QUEUE, wifi::WIFI_UNICAST, rxAddr1, 0};
+    wifi::WifiContainerQueueId queueId2{wifi::WIFI_QOSDATA_QUEUE, wifi::WIFI_UNICAST, rxAddr2, 0};
 
     Simulator::Schedule(MilliSeconds(25), [&]() {
         /**

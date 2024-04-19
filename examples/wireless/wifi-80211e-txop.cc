@@ -63,6 +63,7 @@
 // duration than AC_BE and AC_BK.
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 NS_LOG_COMPONENT_DEFINE("80211eTxop");
 

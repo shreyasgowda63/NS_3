@@ -32,8 +32,12 @@ namespace ns3
 
 class NetDeviceContainer;
 class WifiPhyHelper;
-class WifiNetDevice;
 class NodeContainer;
+
+namespace wifi
+{
+class WifiNetDevice;
+}
 
 /**
  * \ingroup dot11s
@@ -87,7 +91,7 @@ class MeshHelper
      * Set standard
      * \param standard the wifi phy standard
      */
-    void SetStandard(WifiStandard standard);
+    void SetStandard(wifi::WifiStandard standard);
 
     /// \todo SetMeshId
     // void SetMeshId (std::string s);
@@ -171,9 +175,9 @@ class MeshHelper
      * \param channelId
      * \returns a WifiNetDevice with ready-to-use interface
      */
-    Ptr<WifiNetDevice> CreateInterface(const WifiPhyHelper& phyHelper,
-                                       Ptr<Node> node,
-                                       uint16_t channelId) const;
+    Ptr<wifi::WifiNetDevice> CreateInterface(const WifiPhyHelper& phyHelper,
+                                             Ptr<Node> node,
+                                             uint16_t channelId) const;
     uint32_t m_nInterfaces;              ///< number of interfaces
     ChannelPolicy m_spreadChannelPolicy; ///< spread channel policy
     Ptr<MeshStack> m_stack;              ///< stack
@@ -183,7 +187,7 @@ class MeshHelper
     ObjectFactory m_mac;                  ///< the MAC
     ObjectFactory m_stationManager;       ///< the station manager
     ObjectFactory m_ackPolicySelector[4]; ///< ack policy selector for all ACs
-    WifiStandard m_standard;              ///< standard
+    wifi::WifiStandard m_standard;        ///< standard
 };
 
 /***************************************************************

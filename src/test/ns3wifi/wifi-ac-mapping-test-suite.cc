@@ -80,7 +80,7 @@ class WifiAcMappingTest : public TestCase
      */
     static void PacketEnqueuedInWifiMacQueue(uint8_t tos,
                                              uint16_t* count,
-                                             Ptr<const WifiMpdu> item);
+                                             Ptr<const wifi::WifiMpdu> item);
     uint8_t m_tos;                   //!< type of service
     uint16_t m_expectedQueue;        //!< expected queue disc index
     uint16_t m_QueueDiscCount[4];    //!< packet counter per queue disc
@@ -116,7 +116,7 @@ WifiAcMappingTest::PacketEnqueuedInQueueDisc(uint8_t tos,
 void
 WifiAcMappingTest::PacketEnqueuedInWifiMacQueue(uint8_t tos,
                                                 uint16_t* count,
-                                                Ptr<const WifiMpdu> item)
+                                                Ptr<const wifi::WifiMpdu> item)
 {
     LlcSnapHeader llc;
     Ptr<Packet> packet = item->GetPacket()->Copy();
@@ -142,19 +142,27 @@ WifiAcMappingTest::DoRun()
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
     wifiPhy.SetChannel(wifiChannel.Create());
 
-    Ssid ssid = Ssid("wifi-ac-mapping");
+    wifi::Ssid ssid("wifi-ac-mapping");
 
     // Setup the AP, which will be the source of traffic for this test
     NodeContainer ap;
     ap.Create(1);
-    wifiMac.SetType("ns3::ApWifiMac", "QosSupported", BooleanValue(true), "Ssid", SsidValue(ssid));
+    wifiMac.SetType("ns3::ApWifiMac",
+                    "QosSupported",
+                    BooleanValue(true),
+                    "Ssid",
+                    wifi::SsidValue(ssid));
 
     NetDeviceContainer apDev = wifi.Install(wifiPhy, wifiMac, ap);
 
     // Setup one STA, which will be the sink for traffic in this test.
     NodeContainer sta;
     sta.Create(1);
-    wifiMac.SetType("ns3::StaWifiMac", "QosSupported", BooleanValue(true), "Ssid", SsidValue(ssid));
+    wifiMac.SetType("ns3::StaWifiMac",
+                    "QosSupported",
+                    BooleanValue(true),
+                    "Ssid",
+                    wifi::SsidValue(ssid));
     NetDeviceContainer staDev = wifi.Install(wifiPhy, wifiMac, sta);
 
     // Our devices will have fixed positions
@@ -252,7 +260,7 @@ WifiAcMappingTest::DoRun()
                           m_tos,
                           m_QueueDiscCount + 3));
 
-    Ptr<WifiMac> apMac = DynamicCast<WifiNetDevice>(apDev.Get(0))->GetMac();
+    auto apMac = DynamicCast<wifi::WifiNetDevice>(apDev.Get(0))->GetMac();
     PointerValue ptr;
     // Get the four wifi mac queues and connect their Enqueue trace to the
     // PacketEnqueuedInWifiMacQueue method, which counts how many packets with the given ToS value
@@ -261,28 +269,28 @@ WifiAcMappingTest::DoRun()
     // to a pointer type, so that the type of that argument matches the type of the second
     // parameter of the PacketEnqueuedInWifiMacQueue function
     apMac->GetAttribute("BE_Txop", ptr);
-    ptr.Get<QosTxop>()->GetWifiMacQueue()->TraceConnectWithoutContext(
+    ptr.Get<wifi::QosTxop>()->GetWifiMacQueue()->TraceConnectWithoutContext(
         "Enqueue",
         MakeBoundCallback(&WifiAcMappingTest::PacketEnqueuedInWifiMacQueue,
                           m_tos,
                           +m_WifiMacQueueCount));
 
     apMac->GetAttribute("BK_Txop", ptr);
-    ptr.Get<QosTxop>()->GetWifiMacQueue()->TraceConnectWithoutContext(
+    ptr.Get<wifi::QosTxop>()->GetWifiMacQueue()->TraceConnectWithoutContext(
         "Enqueue",
         MakeBoundCallback(&WifiAcMappingTest::PacketEnqueuedInWifiMacQueue,
                           m_tos,
                           m_WifiMacQueueCount + 1));
 
     apMac->GetAttribute("VI_Txop", ptr);
-    ptr.Get<QosTxop>()->GetWifiMacQueue()->TraceConnectWithoutContext(
+    ptr.Get<wifi::QosTxop>()->GetWifiMacQueue()->TraceConnectWithoutContext(
         "Enqueue",
         MakeBoundCallback(&WifiAcMappingTest::PacketEnqueuedInWifiMacQueue,
                           m_tos,
                           m_WifiMacQueueCount + 2));
 
     apMac->GetAttribute("VO_Txop", ptr);
-    ptr.Get<QosTxop>()->GetWifiMacQueue()->TraceConnectWithoutContext(
+    ptr.Get<wifi::QosTxop>()->GetWifiMacQueue()->TraceConnectWithoutContext(
         "Enqueue",
         MakeBoundCallback(&WifiAcMappingTest::PacketEnqueuedInWifiMacQueue,
                           m_tos,

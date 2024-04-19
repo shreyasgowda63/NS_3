@@ -38,6 +38,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("Txop");
 
@@ -685,4 +687,5 @@ Txop::IsQosTxop() const
     return false;
 }
 
+} // namespace wifi
 } // namespace ns3

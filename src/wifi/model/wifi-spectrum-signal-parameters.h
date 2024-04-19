@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiPpdu;
 
@@ -52,6 +54,7 @@ struct WifiSpectrumSignalParameters : public SpectrumSignalParameters
     Ptr<const WifiPpdu> ppdu; ///< The PPDU being transmitted
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_SPECTRUM_SIGNAL_PARAMETERS_H */

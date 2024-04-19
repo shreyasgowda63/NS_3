@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief Thompson Sampling rate control algorithm
@@ -130,6 +132,7 @@ class ThompsonSamplingWifiManager : public WifiRemoteStationManager
     TracedValue<uint64_t> m_currentRate; //!< Trace rate changes
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* THOMPSON_SAMPLING_WIFI_MANAGER_H */

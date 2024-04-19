@@ -35,6 +35,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("ChannelAccessManager");
 
@@ -47,7 +49,7 @@ NS_OBJECT_ENSURE_REGISTERED(ChannelAccessManager);
  * ignored by the ChannelAccessManager, except for the channel switch notification.
  * Inactive PHY listeners are typically configured by 11be EMLSR clients.
  */
-class PhyListener : public ns3::WifiPhyListener
+class PhyListener : public WifiPhyListener
 {
   public:
     /**
@@ -55,7 +57,7 @@ class PhyListener : public ns3::WifiPhyListener
      *
      * \param cam the ChannelAccessManager
      */
-    PhyListener(ns3::ChannelAccessManager* cam)
+    PhyListener(ChannelAccessManager* cam)
         : m_cam(cam),
           m_active(true)
     {
@@ -163,8 +165,8 @@ class PhyListener : public ns3::WifiPhyListener
     }
 
   private:
-    ns3::ChannelAccessManager* m_cam; //!< ChannelAccessManager to forward events to
-    bool m_active;                    //!< whether this PHY listener is active
+    ChannelAccessManager* m_cam; //!< ChannelAccessManager to forward events to
+    bool m_active;               //!< whether this PHY listener is active
 };
 
 /****************************************************************
@@ -1174,4 +1176,5 @@ ChannelAccessManager::UpdateLastIdlePeriod()
     }
 }
 
+} // namespace wifi
 } // namespace ns3

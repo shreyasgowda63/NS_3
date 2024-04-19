@@ -141,11 +141,11 @@ main(int argc, char* argv[])
             WifiHelper wifi;
             if (frequency == 5.0)
             {
-                wifi.SetStandard(WIFI_STANDARD_80211n);
+                wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
             }
             else if (frequency == 2.4)
             {
-                wifi.SetStandard(WIFI_STANDARD_80211n);
+                wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
                 Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
                                    DoubleValue(40.046));
             }
@@ -170,14 +170,14 @@ main(int argc, char* argv[])
                                          "ControlMode",
                                          ctrlRate);
 
-            Ssid ssid = Ssid("ns3-80211n");
+            wifi::Ssid ssid("ns3-80211n");
 
-            mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+            mac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
 
             NetDeviceContainer staDevice;
             staDevice = wifi.Install(phy, mac, wifiStaNode);
 
-            mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+            mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
 
             NetDeviceContainer apDevice;
             apDevice = wifi.Install(phy, mac, wifiApNode);
@@ -214,10 +214,10 @@ main(int argc, char* argv[])
             apNodeInterface = address.Assign(apDevice);
 
             /* Setting applications */
-            const auto maxLoad = HtPhy::GetDataRate(i,
-                                                    channelBonding ? 40 : 20,
-                                                    shortGuardInterval ? 400 : 800,
-                                                    nStreams);
+            const auto maxLoad = wifi::HtPhy::GetDataRate(i,
+                                                          channelBonding ? 40 : 20,
+                                                          shortGuardInterval ? 400 : 800,
+                                                          nStreams);
             ApplicationContainer serverApp;
             if (udp)
             {

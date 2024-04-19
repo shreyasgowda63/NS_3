@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -83,6 +85,7 @@ class AmpduTag : public Tag
     Time m_duration;     //!< Remaining duration of the A-MPDU
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* AMPDU_TAG_H */

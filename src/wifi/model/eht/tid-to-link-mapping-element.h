@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// whether to enforce the default link mapping
 constexpr auto DEFAULT_WIFI_TID_LINK_MAPPING{true};
@@ -145,6 +147,7 @@ class TidToLinkMapping : public WifiInformationElement
     uint16_t DeserializeInformationField(Buffer::Iterator start, uint16_t length) override;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* TID_TO_LINK_MAPPING_H */

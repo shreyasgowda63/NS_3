@@ -32,10 +32,16 @@
 namespace ns3
 {
 
+namespace wifi
+{
 NS_LOG_COMPONENT_DEFINE("WifiMacQueue");
-
 NS_OBJECT_ENSURE_REGISTERED(WifiMacQueue);
-NS_OBJECT_TEMPLATE_CLASS_TWO_DEFINE(Queue, WifiMpdu, WifiMacQueueContainer);
+} // namespace wifi
+
+NS_OBJECT_TEMPLATE_CLASS_TWO_WITH_NS_DEFINE(Queue, wifi, WifiMpdu, wifi, WifiMacQueueContainer);
+
+namespace wifi
+{
 
 TypeId
 WifiMacQueue::GetTypeId()
@@ -546,4 +552,5 @@ WifiMacQueue::DoRemove(ConstIterator pos)
     return item;
 }
 
+} // namespace wifi
 } // namespace ns3

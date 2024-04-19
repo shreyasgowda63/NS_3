@@ -33,6 +33,10 @@ namespace ns3
 {
 
 class Packet;
+
+namespace wifi
+{
+
 class QosTxop;
 class WifiTxVector;
 class WifiMac;
@@ -158,6 +162,7 @@ class MsduAggregator : public Object
     uint8_t m_linkId{0};                 //!< ID of the link this object is connected to
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MSDU_AGGREGATOR_H */

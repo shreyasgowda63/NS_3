@@ -127,24 +127,32 @@ main(int argc, char* argv[])
     WifiHelper wifi;
 
     WifiMacHelper mac;
-    Ssid ssid = Ssid("ns-3-ssid-first");
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid), "ActiveProbing", BooleanValue(false));
+    wifi::Ssid ssid("ns-3-ssid-first");
+    mac.SetType("ns3::StaWifiMac",
+                "Ssid",
+                wifi::SsidValue(ssid),
+                "ActiveProbing",
+                BooleanValue(false));
 
     NetDeviceContainer staDevices1;
     staDevices1 = wifi.Install(phy, mac, wifiStaNodes1);
 
-    mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
 
     NetDeviceContainer apDevices1;
     apDevices1 = wifi.Install(phy, mac, wifiApNode1);
 
-    ssid = Ssid("ns-3-ssid-second");
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid), "ActiveProbing", BooleanValue(false));
+    ssid = wifi::Ssid("ns-3-ssid-second");
+    mac.SetType("ns3::StaWifiMac",
+                "Ssid",
+                wifi::SsidValue(ssid),
+                "ActiveProbing",
+                BooleanValue(false));
 
     NetDeviceContainer staDevices2;
     staDevices2 = wifi.Install(phy, mac, wifiStaNodes2);
 
-    mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
 
     NetDeviceContainer apDevices2;
     apDevices2 = wifi.Install(phy, mac, wifiApNode2);

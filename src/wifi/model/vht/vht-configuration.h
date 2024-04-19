@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief VHT configuration
@@ -92,6 +94,7 @@ class VhtConfiguration : public Object
                                              ///< bandwidth (MHz)
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* VHT_CONFIGURATION_H */

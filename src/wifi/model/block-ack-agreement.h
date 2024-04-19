@@ -27,6 +27,9 @@
 
 namespace ns3
 {
+namespace wifi
+{
+
 /**
  * \brief Maintains information for a block ack agreement.
  * \ingroup wifi
@@ -186,6 +189,7 @@ class BlockAckAgreement
     mutable EventId m_inactivityEvent; //!< inactivity event
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* BLOCK_ACK_AGREEMENT_H */

@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 struct AarfcdWifiRemoteStation;
 
@@ -133,6 +135,7 @@ class AarfcdWifiManager : public WifiRemoteStationManager
     TracedValue<uint64_t> m_currentRate; //!< Trace rate changes
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* AARFCD_WIFI_MANAGER_H */

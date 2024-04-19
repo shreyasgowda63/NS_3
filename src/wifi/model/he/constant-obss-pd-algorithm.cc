@@ -33,6 +33,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("ConstantObssPdAlgorithm");
 NS_OBJECT_ENSURE_REGISTERED(ConstantObssPdAlgorithm);
@@ -115,4 +117,5 @@ ConstantObssPdAlgorithm::ReceiveHeSigA(HeSigAParameters params)
     }
 }
 
+} // namespace wifi
 } // namespace ns3

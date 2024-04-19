@@ -48,6 +48,7 @@
 // ./ns3 run "wifi-backward-compatibility --apVersion=80211a --staVersion=80211ac --staRaa=Ideal"
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 NS_LOG_COMPONENT_DEFINE("wifi-backward-compatibility");
 

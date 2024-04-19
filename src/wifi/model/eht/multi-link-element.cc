@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * CommonInfoBasicMle
@@ -933,4 +935,5 @@ MultiLinkElement::DeserializeInformationField(Buffer::Iterator start, uint16_t l
     return count;
 }
 
+} // namespace wifi
 } // namespace ns3

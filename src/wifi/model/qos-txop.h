@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class MgtAddBaResponseHeader;
 class MgtDelBaHeader;
@@ -487,6 +489,7 @@ class QosTxop : public Txop
     TxopTracedCallback m_txopTrace; //!< TXOP trace callback
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* QOS_TXOP_H */

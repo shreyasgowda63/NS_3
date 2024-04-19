@@ -61,6 +61,7 @@
 // Example: ./ns3 run "wifi-mixed-network --isUdp=1"
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 NS_LOG_COMPONENT_DEFINE("MixedNetwork");
 

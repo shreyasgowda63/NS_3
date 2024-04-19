@@ -36,6 +36,8 @@ class WifiMacQueueDropOldestTest;
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiMpdu;
 class WifiMacQueue;
@@ -65,20 +67,20 @@ class WifiMacQueueSchedulerImpl : public WifiMacQueueScheduler
      */
     WifiMacQueueSchedulerImpl();
 
-    /** \copydoc ns3::WifiMacQueueScheduler::SetWifiMac */
+    /** \copydoc ns3::wifi::WifiMacQueueScheduler::SetWifiMac */
     void SetWifiMac(Ptr<WifiMac> mac) final;
-    /** \copydoc ns3::WifiMacQueueScheduler::GetNext(AcIndex,std::optional<uint8_t>) */
+    /** \copydoc ns3::wifi::WifiMacQueueScheduler::GetNext(AcIndex,std::optional<uint8_t>) */
     std::optional<WifiContainerQueueId> GetNext(AcIndex ac, std::optional<uint8_t> linkId) final;
     /**
-     *  \copydoc ns3::WifiMacQueueScheduler::GetNext(AcIndex,std::optional<uint8_t>,
+     *  \copydoc ns3::wifi::WifiMacQueueScheduler::GetNext(AcIndex,std::optional<uint8_t>,
      *           const WifiContainerQueueId&)
      */
     std::optional<WifiContainerQueueId> GetNext(AcIndex ac,
                                                 std::optional<uint8_t> linkId,
                                                 const WifiContainerQueueId& prevQueueId) final;
-    /** \copydoc ns3::WifiMacQueueScheduler::GetLinkIds */
+    /** \copydoc ns3::wifi::WifiMacQueueScheduler::GetLinkIds */
     std::list<uint8_t> GetLinkIds(AcIndex ac, Ptr<const WifiMpdu> mpdu) final;
-    /** \copydoc ns3::WifiMacQueueScheduler::BlockQueues */
+    /** \copydoc ns3::wifi::WifiMacQueueScheduler::BlockQueues */
     void BlockQueues(WifiQueueBlockedReason reason,
                      AcIndex ac,
                      const std::list<WifiContainerQueueType>& types,
@@ -86,7 +88,7 @@ class WifiMacQueueSchedulerImpl : public WifiMacQueueScheduler
                      const Mac48Address& txAddress,
                      const std::set<uint8_t>& tids,
                      const std::set<uint8_t>& linkIds) final;
-    /** \copydoc ns3::WifiMacQueueScheduler::UnblockQueues */
+    /** \copydoc ns3::wifi::WifiMacQueueScheduler::UnblockQueues */
     void UnblockQueues(WifiQueueBlockedReason reason,
                        AcIndex ac,
                        const std::list<WifiContainerQueueType>& types,
@@ -94,17 +96,17 @@ class WifiMacQueueSchedulerImpl : public WifiMacQueueScheduler
                        const Mac48Address& txAddress,
                        const std::set<uint8_t>& tids,
                        const std::set<uint8_t>& linkIds) final;
-    /** \copydoc ns3::WifiMacQueueScheduler::GetQueueLinkMask */
+    /** \copydoc ns3::wifi::WifiMacQueueScheduler::GetQueueLinkMask */
     std::optional<Mask> GetQueueLinkMask(AcIndex ac,
                                          const WifiContainerQueueId& queueId,
                                          uint8_t linkId) final;
-    /** \copydoc ns3::WifiMacQueueScheduler::HasToDropBeforeEnqueue */
+    /** \copydoc ns3::wifi::WifiMacQueueScheduler::HasToDropBeforeEnqueue */
     Ptr<WifiMpdu> HasToDropBeforeEnqueue(AcIndex ac, Ptr<WifiMpdu> mpdu) final;
-    /** \copydoc ns3::WifiMacQueueScheduler::NotifyEnqueue */
+    /** \copydoc ns3::wifi::WifiMacQueueScheduler::NotifyEnqueue */
     void NotifyEnqueue(AcIndex ac, Ptr<WifiMpdu> mpdu) final;
-    /** \copydoc ns3::WifiMacQueueScheduler::NotifyDequeue */
+    /** \copydoc ns3::wifi::WifiMacQueueScheduler::NotifyDequeue */
     void NotifyDequeue(AcIndex ac, const std::list<Ptr<WifiMpdu>>& mpdus) final;
-    /** \copydoc ns3::WifiMacQueueScheduler::NotifyRemove */
+    /** \copydoc ns3::wifi::WifiMacQueueScheduler::NotifyRemove */
     void NotifyRemove(AcIndex ac, const std::list<Ptr<WifiMpdu>>& mpdus) final;
 
   protected:
@@ -743,6 +745,7 @@ WifiMacQueueSchedulerImpl<Priority, Compare>::NotifyRemove(AcIndex ac,
     }
 }
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MAC_QUEUE_SCHEDULER_IMPL_H */

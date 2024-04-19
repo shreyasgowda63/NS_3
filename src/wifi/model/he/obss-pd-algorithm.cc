@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("ObssPdAlgorithm");
 NS_OBJECT_ENSURE_REGISTERED(ObssPdAlgorithm);
@@ -133,4 +135,5 @@ ObssPdAlgorithm::GetObssPdLevel() const
     return m_obssPdLevel;
 }
 
+} // namespace wifi
 } // namespace ns3

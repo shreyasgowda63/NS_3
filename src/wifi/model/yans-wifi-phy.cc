@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("YansWifiPhy");
 
@@ -124,4 +126,5 @@ YansWifiPhy::ConvertIndicesToFrequencies(const WifiSpectrumBandIndices& /*indice
     return {0, 0};
 }
 
+} // namespace wifi
 } // namespace ns3

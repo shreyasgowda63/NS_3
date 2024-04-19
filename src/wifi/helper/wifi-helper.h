@@ -34,7 +34,11 @@
 namespace ns3
 {
 
+namespace wifi
+{
 class WifiNetDevice;
+}
+
 class Node;
 class RadiotapHeader;
 class QueueItem;
@@ -65,7 +69,8 @@ class WifiPhyHelper : public PcapHelperForDevice, public AsciiTraceHelperForDevi
      * Subclasses must implement this method to allow the ns3::WifiHelper class
      * to create PHY objects from ns3::WifiHelper::Install.
      */
-    virtual std::vector<Ptr<WifiPhy>> Create(Ptr<Node> node, Ptr<WifiNetDevice> device) const = 0;
+    virtual std::vector<Ptr<wifi::WifiPhy>> Create(Ptr<Node> node,
+                                                   Ptr<wifi::WifiNetDevice> device) const = 0;
 
     /**
      * \param name the name of the attribute to set
@@ -213,9 +218,9 @@ class WifiPhyHelper : public PcapHelperForDevice, public AsciiTraceHelperForDevi
     static void PcapSniffTxEvent(Ptr<PcapFileWrapper> file,
                                  Ptr<const Packet> packet,
                                  uint16_t channelFreqMhz,
-                                 WifiTxVector txVector,
-                                 MpduInfo aMpdu,
-                                 uint16_t staId = SU_STA_ID);
+                                 wifi::WifiTxVector txVector,
+                                 wifi::MpduInfo aMpdu,
+                                 uint16_t staId = wifi::SU_STA_ID);
     /**
      * \param file the pcap file wrapper
      * \param packet the packet
@@ -230,10 +235,10 @@ class WifiPhyHelper : public PcapHelperForDevice, public AsciiTraceHelperForDevi
     static void PcapSniffRxEvent(Ptr<PcapFileWrapper> file,
                                  Ptr<const Packet> packet,
                                  uint16_t channelFreqMhz,
-                                 WifiTxVector txVector,
-                                 MpduInfo aMpdu,
-                                 SignalNoiseDbm signalNoise,
-                                 uint16_t staId = SU_STA_ID);
+                                 wifi::WifiTxVector txVector,
+                                 wifi::MpduInfo aMpdu,
+                                 wifi::SignalNoiseDbm signalNoise,
+                                 uint16_t staId = wifi::SU_STA_ID);
 
     std::vector<ObjectFactory> m_phys;                   ///< PHY objects
     ObjectFactory m_interferenceHelper;                  ///< interference helper
@@ -255,8 +260,8 @@ class WifiPhyHelper : public PcapHelperForDevice, public AsciiTraceHelperForDevi
     static void GetRadiotapHeader(RadiotapHeader& header,
                                   Ptr<Packet> packet,
                                   uint16_t channelFreqMhz,
-                                  WifiTxVector txVector,
-                                  MpduInfo aMpdu,
+                                  wifi::WifiTxVector txVector,
+                                  wifi::MpduInfo aMpdu,
                                   uint16_t staId);
 
     /**
@@ -273,10 +278,10 @@ class WifiPhyHelper : public PcapHelperForDevice, public AsciiTraceHelperForDevi
     static void GetRadiotapHeader(RadiotapHeader& header,
                                   Ptr<Packet> packet,
                                   uint16_t channelFreqMhz,
-                                  WifiTxVector txVector,
-                                  MpduInfo aMpdu,
+                                  wifi::WifiTxVector txVector,
+                                  wifi::MpduInfo aMpdu,
                                   uint16_t staId,
-                                  SignalNoiseDbm signalNoise);
+                                  wifi::SignalNoiseDbm signalNoise);
 
     /**
      * \brief Enable pcap output the indicated net device.
@@ -453,7 +458,7 @@ class WifiHelper
      * \sa WifiMac::ConfigureStandard
      * \sa Config::Set
      */
-    virtual void SetStandard(WifiStandard standard);
+    virtual void SetStandard(wifi::WifiStandard standard);
 
     /**
      * Helper function used to configure the HT options listed as attributes of
@@ -519,7 +524,7 @@ class WifiHelper
 
   protected:
     mutable std::vector<ObjectFactory> m_stationManager; ///< station manager
-    WifiStandard m_standard;                             ///< wifi standard
+    wifi::WifiStandard m_standard;                       ///< wifi standard
     ObjectFactory m_htConfig;                            ///< HT configuration
     ObjectFactory m_vhtConfig;                           ///< VHT configuration
     ObjectFactory m_heConfig;                            ///< HE configuration

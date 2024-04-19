@@ -31,10 +31,14 @@
 namespace ns3
 {
 
+class Packet;
+
+namespace wifi
+{
+
 class AmpduSubframeHeader;
 class WifiTxVector;
 class QosTxop;
-class Packet;
 class WifiMac;
 class WifiMpdu;
 class WifiTxParameters;
@@ -171,6 +175,7 @@ class MpduAggregator : public Object
     uint8_t m_linkId{0};                 //!< ID of the link this object is connected to
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MPDU_AGGREGATOR_H */

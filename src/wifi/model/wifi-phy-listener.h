@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief receive notifications about PHY events.
@@ -127,6 +129,7 @@ class WifiPhyListener
     virtual void NotifyOn() = 0;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_PHY_LISTENER_H */

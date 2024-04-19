@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("OriginatorBlockAckAgreement");
 
@@ -176,4 +178,5 @@ OriginatorBlockAckAgreement::NotifyDiscardedMpdu(Ptr<const WifiMpdu> mpdu)
                  << m_txWindow.GetWinStart());
 }
 
+} // namespace wifi
 } // namespace ns3

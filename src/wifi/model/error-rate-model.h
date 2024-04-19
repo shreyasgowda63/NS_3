@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -125,6 +127,7 @@ class ErrorRateModel : public Object
                                          uint16_t staId) const = 0;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* ERROR_RATE_MODEL_H */

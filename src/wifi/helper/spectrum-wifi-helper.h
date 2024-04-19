@@ -29,7 +29,11 @@ namespace ns3
 {
 
 class SpectrumChannel;
+
+namespace wifi
+{
 class SpectrumWifiPhy;
+}
 
 /**
  * \brief Make it easy to create and manage PHY objects for the spectrum model.
@@ -108,7 +112,8 @@ class SpectrumWifiPhyHelper : public WifiPhyHelper
      *
      * This method implements the pure virtual method defined in \ref ns3::WifiPhyHelper.
      */
-    std::vector<Ptr<WifiPhy>> Create(Ptr<Node> node, Ptr<WifiNetDevice> device) const override;
+    std::vector<Ptr<wifi::WifiPhy>> Create(Ptr<Node> node,
+                                           Ptr<wifi::WifiNetDevice> device) const override;
 
     /**
      * \brief Install PHY interfaces to the PHY instance of a given link
@@ -117,7 +122,7 @@ class SpectrumWifiPhyHelper : public WifiPhyHelper
      * \param linkId ID of the link to setup
      * \param phy spectrum PHY instance of the link
      */
-    void InstallPhyInterfaces(uint8_t linkId, Ptr<SpectrumWifiPhy> phy) const;
+    void InstallPhyInterfaces(uint8_t linkId, Ptr<wifi::SpectrumWifiPhy> phy) const;
 
     /**
      * \param channel The channel to inspect to possibly add a WifiBandwidthFilter
@@ -131,7 +136,7 @@ class SpectrumWifiPhyHelper : public WifiPhyHelper
      * Function that is notified when a spectrum channel switched
      * \param phy spectrum PHY instance that has switched its channel
      */
-    static void SpectrumChannelSwitched(Ptr<SpectrumWifiPhy> phy);
+    static void SpectrumChannelSwitched(Ptr<wifi::SpectrumWifiPhy> phy);
 
     std::map<FrequencyRange, Ptr<SpectrumChannel>> m_channels; ///< the spectrum channels
     std::map<uint8_t /* linkId */, std::set<FrequencyRange>>

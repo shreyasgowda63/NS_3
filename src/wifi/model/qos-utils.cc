@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 std::size_t
 WifiAddressTidHash::operator()(const WifiAddressTidPair& addressTidPair) const
@@ -273,4 +275,5 @@ SelectQueueByDSField(Ptr<QueueItem> item)
     return static_cast<uint8_t>(QosUtilsMapTidToAc(priority));
 }
 
+} // namespace wifi
 } // namespace ns3

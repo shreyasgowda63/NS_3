@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("QosFrameExchangeManager");
 
@@ -810,4 +812,5 @@ QosFrameExchangeManager::ReceiveMpdu(Ptr<const WifiMpdu> mpdu,
     return FrameExchangeManager::ReceiveMpdu(mpdu, rxSignalInfo, txVector, inAmpdu);
 }
 
+} // namespace wifi
 } // namespace ns3

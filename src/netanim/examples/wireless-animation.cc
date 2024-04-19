@@ -56,12 +56,16 @@ main(int argc, char* argv[])
     WifiHelper wifi;
 
     WifiMacHelper mac;
-    Ssid ssid = Ssid("ns-3-ssid");
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid), "ActiveProbing", BooleanValue(false));
+    wifi::Ssid ssid("ns-3-ssid");
+    mac.SetType("ns3::StaWifiMac",
+                "Ssid",
+                wifi::SsidValue(ssid),
+                "ActiveProbing",
+                BooleanValue(false));
 
     NetDeviceContainer staDevices;
     staDevices = wifi.Install(phy, mac, wifiStaNodes);
-    mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
 
     NetDeviceContainer apDevices;
     apDevices = wifi.Install(phy, mac, wifiApNode);
@@ -116,7 +120,7 @@ main(int argc, char* argv[])
     AnimationInterface::SetConstantPosition(csmaNodes.Get(1), 10, 33);
 
     Ptr<BasicEnergySource> energySource = CreateObject<BasicEnergySource>();
-    Ptr<WifiRadioEnergyModel> energyModel = CreateObject<WifiRadioEnergyModel>();
+    auto energyModel = CreateObject<wifi::WifiRadioEnergyModel>();
 
     energySource->SetInitialEnergy(300);
     energyModel->SetEnergySource(energySource);

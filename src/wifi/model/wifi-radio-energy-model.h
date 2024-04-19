@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiTxCurrentModel;
 
@@ -389,6 +391,7 @@ class WifiRadioEnergyModel : public DeviceEnergyModel
     EventId m_switchToOffEvent; ///< switch to off event
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_RADIO_ENERGY_MODEL_H */

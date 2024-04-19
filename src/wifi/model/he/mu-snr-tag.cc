@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(MuSnrTag);
 
@@ -107,4 +109,5 @@ MuSnrTag::Print(std::ostream& os) const
     os << std::endl;
 }
 
+} // namespace wifi
 } // namespace ns3

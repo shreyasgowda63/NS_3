@@ -35,6 +35,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("BlockAckManager");
 
@@ -891,4 +893,5 @@ BlockAckManager::GetOriginatorStartingSequence(const Mac48Address& recipient, ui
     return seqNum;
 }
 
+} // namespace wifi
 } // namespace ns3

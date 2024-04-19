@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("RecipientBlockAckAgreement");
 
@@ -263,4 +265,5 @@ RecipientBlockAckAgreement::FillBlockAckBitmap(CtrlBAckResponseHeader* blockAckH
     }
 }
 
+} // namespace wifi
 } // namespace ns3

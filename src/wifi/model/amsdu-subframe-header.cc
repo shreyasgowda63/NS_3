@@ -23,6 +23,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(AmsduSubframeHeader);
 
@@ -117,4 +119,5 @@ AmsduSubframeHeader::GetLength() const
     return m_length;
 }
 
+} // namespace wifi
 } // namespace ns3

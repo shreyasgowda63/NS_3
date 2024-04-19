@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief Constant OBSS PD algorithm
@@ -54,6 +56,7 @@ class ConstantObssPdAlgorithm : public ObssPdAlgorithm
     void ReceiveHeSigA(HeSigAParameters params) override;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* CONSTANT_OBSS_PD_ALGORITHM_H */

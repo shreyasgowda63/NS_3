@@ -39,6 +39,10 @@ namespace ns3
 {
 
 class Packet;
+
+namespace wifi
+{
+
 class WifiPsdu;
 class WifiPhyOperatingChannel;
 
@@ -248,6 +252,7 @@ std::ostream& operator<<(std::ostream& os, const Ptr<const WifiPpdu>& ppdu);
  */
 std::ostream& operator<<(std::ostream& os, const WifiConstPsduMap& psdus);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_PPDU_H */

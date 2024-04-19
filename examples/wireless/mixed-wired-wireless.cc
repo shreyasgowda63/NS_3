@@ -306,12 +306,12 @@ main(int argc, char* argv[])
         std::stringstream ss;
         ss << i;
         ssidString += ss.str();
-        Ssid ssid = Ssid(ssidString);
+        wifi::Ssid ssid(ssidString);
         // setup stas
-        macInfra.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+        macInfra.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
         NetDeviceContainer staDevices = wifiInfra.Install(wifiPhy, macInfra, stas);
         // setup ap.
-        macInfra.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+        macInfra.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
         NetDeviceContainer apDevices = wifiInfra.Install(wifiPhy, macInfra, backbone.Get(i));
         // Collect all of these new devices
         NetDeviceContainer infraDevices(apDevices, staDevices);

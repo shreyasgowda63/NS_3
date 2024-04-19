@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class EhtFrameExchangeManager;
 class MgtEmlOmn;
@@ -474,6 +476,7 @@ class EmlsrManager : public Object
         m_auxPhyChannels; //!< link ID-indexed map of operating channels for the aux PHYs
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* EMLSR_MANAGER_H */

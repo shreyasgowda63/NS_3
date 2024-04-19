@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 WifiInformationElementId
 NonInheritance::ElementId() const
@@ -103,4 +105,5 @@ NonInheritance::IsPresent(uint8_t elemId, uint8_t elemIdExt) const
                                   : m_elemIdExtList.count(elemIdExt) == 1;
 }
 
+} // namespace wifi
 } // namespace ns3

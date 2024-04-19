@@ -22,6 +22,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -43,6 +45,7 @@ enum MpduType
     LAST_MPDU_IN_AGGREGATE
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MPDU_TYPE_H */

@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class MultiUserScheduler;
 class ApWifiMac;
@@ -382,6 +384,7 @@ class HeFrameExchangeManager : public VhtFrameExchangeManager
     bool m_triggerFrameInAmpdu;            //!< True if the received A-MPDU contains an MU-BAR
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HE_FRAME_EXCHANGE_MANAGER_H */

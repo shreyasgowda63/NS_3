@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 MuEdcaParameterSet::MuEdcaParameterSet()
     : m_qosInfo(0),
@@ -166,4 +168,5 @@ MuEdcaParameterSet::DeserializeInformationField(Buffer::Iterator start, uint16_t
     return 13;
 }
 
+} // namespace wifi
 } // namespace ns3

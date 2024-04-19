@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiTxVector;
 enum AcIndex : uint8_t;
@@ -1345,6 +1347,7 @@ class CtrlTriggerHeader : public Header
     std::list<CtrlTriggerUserInfoField> m_userInfoFields; //!< list of User Info fields
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* CTRL_HEADERS_H */

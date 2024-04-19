@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiMpdu;
 
@@ -89,6 +91,7 @@ class FcfsWifiQueueScheduler : public WifiMacQueueSchedulerImpl<FcfsPrio>
     NS_LOG_TEMPLATE_DECLARE; //!< redefinition of the log component
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* FCFS_WIFI_QUEUE_SCHEDULER_H */

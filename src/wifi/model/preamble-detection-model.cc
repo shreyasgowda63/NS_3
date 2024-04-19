@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(PreambleDetectionModel);
 
@@ -32,4 +34,5 @@ PreambleDetectionModel::GetTypeId()
     return tid;
 }
 
+} // namespace wifi
 } // namespace ns3

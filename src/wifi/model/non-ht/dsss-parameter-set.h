@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief The DSSS Parameter Set
@@ -54,6 +56,7 @@ class DsssParameterSet : public WifiInformationElement
     uint8_t m_currentChannel; ///< current channel number
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* DSSS_PARAMETER_SET_H */

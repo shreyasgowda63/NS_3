@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 #ifdef HAVE_GSL
 /**
@@ -131,6 +133,7 @@ class DsssErrorRateModel
 #endif
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* DSSS_ERROR_RATE_MODEL_H */

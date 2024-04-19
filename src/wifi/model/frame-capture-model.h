@@ -26,8 +26,12 @@
 namespace ns3
 {
 
-class Event;
 class Time;
+
+namespace wifi
+{
+
+class Event;
 
 /**
  * \ingroup wifi
@@ -71,6 +75,7 @@ class FrameCaptureModel : public Object
     Time m_captureWindow; //!< Capture window duration
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* FRAME_CAPTURE_MODEL_H */

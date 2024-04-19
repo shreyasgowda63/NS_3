@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 VhtOperation::VhtOperation()
     : m_channelWidth(0),
@@ -136,4 +138,5 @@ VhtOperation::DeserializeInformationField(Buffer::Iterator start, uint16_t lengt
     return length;
 }
 
+} // namespace wifi
 } // namespace ns3

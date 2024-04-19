@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class YansWifiChannel;
 
@@ -80,6 +82,7 @@ class YansWifiPhy : public WifiPhy
     Ptr<YansWifiChannel> m_channel; //!< YansWifiChannel that this YansWifiPhy is connected to
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* YANS_WIFI_PHY_H */

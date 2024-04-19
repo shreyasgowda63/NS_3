@@ -36,6 +36,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("InterferenceHelper");
 
@@ -871,4 +873,5 @@ InterferenceHelper::IsSameMuMimoTransmission(Ptr<const Event> currentEvent,
     return false;
 }
 
+} // namespace wifi
 } // namespace ns3

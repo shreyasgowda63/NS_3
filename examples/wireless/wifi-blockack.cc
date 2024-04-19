@@ -79,20 +79,20 @@ main(int argc, char* argv[])
     phy.SetChannel(channel.Create());
 
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211n);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
     WifiMacHelper mac;
     /* disable fragmentation */
     wifi.SetRemoteStationManager("ns3::IdealWifiManager",
                                  "FragmentationThreshold",
                                  UintegerValue(2500));
 
-    Ssid ssid("My-network");
+    wifi::Ssid ssid("My-network");
 
     mac.SetType("ns3::StaWifiMac",
                 "QosSupported",
                 BooleanValue(true),
                 "Ssid",
-                SsidValue(ssid),
+                wifi::SsidValue(ssid),
                 /* setting blockack threshold for sta's BE queue */
                 "BE_BlockAckThreshold",
                 UintegerValue(2),
@@ -105,7 +105,7 @@ main(int argc, char* argv[])
                 "QosSupported",
                 BooleanValue(true),
                 "Ssid",
-                SsidValue(ssid),
+                wifi::SsidValue(ssid),
                 "BE_BlockAckThreshold",
                 UintegerValue(0));
     NetDeviceContainer apDevice = wifi.Install(phy, mac, ap);

@@ -56,6 +56,7 @@
 #include <memory>
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 NS_LOG_COMPONENT_DEFINE("WifiPhyOfdmaTest");
 
@@ -2800,7 +2801,7 @@ TestMultipleHeTbPreambles::DoRun()
  *
  * \brief PHY listener for OFDMA tests
  */
-class OfdmaTestPhyListener : public ns3::WifiPhyListener
+class OfdmaTestPhyListener : public ns3::wifi::WifiPhyListener
 {
   public:
     OfdmaTestPhyListener() = default;

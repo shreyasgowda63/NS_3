@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief The ErpInformation Information Element
@@ -95,6 +97,7 @@ class ErpInformation : public WifiInformationElement
  */
 std::ostream& operator<<(std::ostream& os, const ErpInformation& erpInformation);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* ERP_INFORMATION_H */

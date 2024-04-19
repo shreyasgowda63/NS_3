@@ -47,6 +47,7 @@
 #include <vector>
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 NS_LOG_COMPONENT_DEFINE("WifiPhyCcaTest");
 
@@ -594,7 +595,7 @@ WifiPhyCcaThresholdsTest::DoRun()
  *
  * \brief PHY listener for CCA tests
  */
-class CcaTestPhyListener : public ns3::WifiPhyListener
+class CcaTestPhyListener : public ns3::wifi::WifiPhyListener
 {
   public:
     CcaTestPhyListener() = default;

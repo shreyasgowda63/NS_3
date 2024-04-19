@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiPsdu;
 
@@ -135,6 +137,7 @@ class DsssPpdu : public WifiPpdu
     DsssSigHeader m_dsssSig; //!< the DSSS SIG PHY header
 };                           // class DsssPpdu
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* DSSS_PPDU_H */

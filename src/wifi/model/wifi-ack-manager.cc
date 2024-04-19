@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiAckManager");
 
@@ -111,4 +113,5 @@ WifiAckManager::SetQosAckPolicy(Ptr<WifiPsdu> psdu, const WifiAcknowledgment* ac
     }
 }
 
+} // namespace wifi
 } // namespace ns3

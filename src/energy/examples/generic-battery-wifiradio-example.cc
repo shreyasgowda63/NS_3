@@ -175,7 +175,7 @@ main(int argc, char* argv[])
     {
         WifiHelper::EnableLogComponents();
     }
-    wifi.SetStandard(WIFI_STANDARD_80211b);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211b);
 
     ////////////////////////
     // Wifi PHY and MAC   //
@@ -186,7 +186,7 @@ main(int argc, char* argv[])
     wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
     wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel");
 
-    Ptr<YansWifiChannel> wifiChannelPtr = wifiChannel.Create();
+    auto wifiChannelPtr = wifiChannel.Create();
     wifiPhy.SetChannel(wifiChannelPtr);
 
     WifiMacHelper wifiMac;

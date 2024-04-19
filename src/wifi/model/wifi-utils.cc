@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 double
 DbToRatio(double dB)
@@ -177,4 +179,5 @@ TidToLinkMappingValidForNegType1(const WifiTidLinkMapping& dlLinkMapping,
     return true;
 }
 
+} // namespace wifi
 } // namespace ns3

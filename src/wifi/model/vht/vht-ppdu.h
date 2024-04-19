@@ -33,6 +33,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiPsdu;
 
@@ -200,6 +202,7 @@ class VhtPpdu : public OfdmPpdu
     VhtSigHeader m_vhtSig; //!< the VHT-SIG PHY header
 };                         // class VhtPpdu
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* VHT_PPDU_H */

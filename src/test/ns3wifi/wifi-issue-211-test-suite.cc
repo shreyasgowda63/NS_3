@@ -130,7 +130,7 @@ Issue211Test::DoRun()
     phy.SetChannel(spectrumChannel);
 
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211n);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
     wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
                                  "DataMode",
                                  StringValue("HtMcs0"),
@@ -140,13 +140,13 @@ Issue211Test::DoRun()
     Config::SetDefault("ns3::WifiMacQueue::MaxSize", QueueSizeValue(QueueSize("50p")));
 
     WifiMacHelper mac;
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(Ssid("issue211-test")));
+    mac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(wifi::Ssid("issue211-test")));
 
     NetDeviceContainer staDevices = wifi.Install(phy, mac, wifiStaNode);
 
     mac.SetType("ns3::ApWifiMac",
                 "Ssid",
-                SsidValue(Ssid("issue211-test")),
+                wifi::SsidValue(wifi::Ssid("issue211-test")),
                 "EnableBeaconJitter",
                 BooleanValue(false));
 

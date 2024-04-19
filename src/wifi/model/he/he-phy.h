@@ -39,6 +39,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class ObssPdAlgorithm;
 
@@ -641,6 +643,7 @@ class HePhy : public VhtPhy
     std::vector<Time> m_lastPer20MHzDurations; //!< Hold the last per-20 MHz CCA durations vector
 };                                             // class HePhy
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HE_PHY_H */

@@ -79,8 +79,8 @@ void
 PhyRxOkTrace(std::string context,
              Ptr<const Packet> packet,
              double snr,
-             WifiMode mode,
-             WifiPreamble preamble)
+             wifi::WifiMode mode,
+             wifi::WifiPreamble preamble)
 {
     if (g_verbose)
     {
@@ -116,8 +116,8 @@ PhyRxErrorTrace(std::string context, Ptr<const Packet> packet, double snr)
 void
 PhyTxTrace(std::string context,
            Ptr<const Packet> packet,
-           WifiMode mode,
-           WifiPreamble preamble,
+           wifi::WifiMode mode,
+           wifi::WifiPreamble preamble,
            uint8_t txPower)
 {
     if (g_verbose)
@@ -135,7 +135,7 @@ PhyTxTrace(std::string context,
  * \param state The state.
  */
 void
-PhyStateTrace(std::string context, Time start, Time duration, WifiPhyState state)
+PhyStateTrace(std::string context, Time start, Time duration, wifi::WifiPhyState state)
 {
     if (g_verbose)
     {
@@ -191,16 +191,16 @@ main(int argc, char* argv[])
     YansWifiPhyHelper wifiPhy;
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
     wifiPhy.SetChannel(wifiChannel.Create());
-    Ssid ssid = Ssid("wifi-default");
+    wifi::Ssid ssid("wifi-default");
     // setup stas.
     wifiMac.SetType("ns3::StaWifiMac",
                     "ActiveProbing",
                     BooleanValue(true),
                     "Ssid",
-                    SsidValue(ssid));
+                    wifi::SsidValue(ssid));
     staDevs = wifi.Install(wifiPhy, wifiMac, stas);
     // setup ap.
-    wifiMac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    wifiMac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
     wifi.Install(wifiPhy, wifiMac, ap);
 
     // mobility.

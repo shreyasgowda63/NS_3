@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("MultiUserScheduler");
 
@@ -353,4 +355,5 @@ MultiUserScheduler::GetMaxSizeOfQosNullAmpdu(const CtrlTriggerHeader& trigger) c
     return maxSize;
 }
 
+} // namespace wifi
 } // namespace ns3

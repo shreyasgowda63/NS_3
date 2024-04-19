@@ -34,6 +34,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("HtPhy");
 
@@ -875,6 +877,7 @@ HtPhy::GetCcaIndication(const Ptr<const WifiPpdu> ppdu)
     return std::nullopt;
 }
 
+} // namespace wifi
 } // namespace ns3
 
 namespace
@@ -888,9 +891,9 @@ class ConstructorHt
   public:
     ConstructorHt()
     {
-        ns3::HtPhy::InitializeModes();
-        ns3::WifiPhy::AddStaticPhyEntity(ns3::WIFI_MOD_CLASS_HT,
-                                         ns3::Create<ns3::HtPhy>()); // dummy Nss
+        ns3::wifi::HtPhy::InitializeModes();
+        ns3::wifi::WifiPhy::AddStaticPhyEntity(ns3::wifi::WIFI_MOD_CLASS_HT,
+                                               ns3::Create<ns3::wifi::HtPhy>()); // dummy Nss
     }
 } g_constructor_ht; ///< the constructor for HT modes
 

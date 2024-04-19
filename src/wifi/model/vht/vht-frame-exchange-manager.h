@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -47,6 +49,7 @@ class VhtFrameExchangeManager : public HtFrameExchangeManager
     uint32_t GetPsduSize(Ptr<const WifiMpdu> mpdu, const WifiTxVector& txVector) const override;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* VHT_FRAME_EXCHANGE_MANAGER_H */

@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiTxParameters;
 class WifiMpdu;
@@ -102,6 +104,7 @@ class WifiDefaultProtectionManager : public WifiProtectionManager
     bool m_sendMuRts; //!< true for sending an MU-RTS to protect DL MU PPDUs
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_DEFAULT_PROTECTION_MANAGER_H */

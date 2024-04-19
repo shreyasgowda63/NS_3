@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiRadioEnergyModel");
 
@@ -644,4 +646,5 @@ WifiRadioEnergyModelPhyListener::SwitchToIdle()
     m_changeStateCallback(static_cast<int>(WifiPhyState::IDLE));
 }
 
+} // namespace wifi
 } // namespace ns3

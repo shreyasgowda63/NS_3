@@ -23,6 +23,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 EdcaParameterSet::EdcaParameterSet()
     : m_qosInfo(0),
@@ -314,4 +316,5 @@ EdcaParameterSet::DeserializeInformationField(Buffer::Iterator start, uint16_t l
     return length;
 }
 
+} // namespace wifi
 } // namespace ns3

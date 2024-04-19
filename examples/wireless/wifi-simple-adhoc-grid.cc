@@ -201,7 +201,7 @@ main(int argc, char* argv[])
 
     // Add an upper mac and disable rate control
     WifiMacHelper wifiMac;
-    wifi.SetStandard(WIFI_STANDARD_80211b);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211b);
     wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
                                  "DataMode",
                                  StringValue(phyMode),

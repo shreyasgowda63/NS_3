@@ -24,6 +24,9 @@
 
 namespace ns3
 {
+namespace wifi
+{
+
 /**
  * \ingroup wifi
  *
@@ -62,6 +65,7 @@ class ThresholdPreambleDetectionModel : public PreambleDetectionModel
     double m_rssiMin;   ///< Minimum RSSI in dBm that shall be received to start the decision
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* THRESHOLD_PREAMBLE_DETECTION_MODEL_H */

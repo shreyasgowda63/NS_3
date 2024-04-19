@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * This class stores the subcarrier groups of all the available HE RUs.
@@ -329,6 +331,7 @@ std::ostream& operator<<(std::ostream& os, const HeRu::RuType& ruType);
  */
 std::ostream& operator<<(std::ostream& os, const HeRu::RuSpec& ru);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HE_RU_H */

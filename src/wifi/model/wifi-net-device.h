@@ -30,6 +30,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiRemoteStationManager;
 class WifiPhy;
@@ -276,6 +278,7 @@ class WifiNetDevice : public NetDevice
     bool m_configComplete;          //!< configuration complete
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_NET_DEVICE_H */

@@ -75,7 +75,7 @@ class WifiChannelSwitchingTest : public TestCase
      * \param txVector the TX vector
      * \param txPowerW the tx power in Watts
      */
-    void Transmit(WifiConstPsduMap psduMap, WifiTxVector txVector, double txPowerW);
+    void Transmit(wifi::WifiConstPsduMap psduMap, wifi::WifiTxVector txVector, double txPowerW);
     /**
      * Function to trace packets received by the server application
      *
@@ -99,7 +99,7 @@ class WifiChannelSwitchingTest : public TestCase
      * \param duration the time the PHY will stay in the new state
      * \param state the new PHY state
      */
-    void StateChange(uint32_t nodeId, Time start, Time duration, WifiPhyState state);
+    void StateChange(uint32_t nodeId, Time start, Time duration, wifi::WifiPhyState state);
 
   private:
     NodeContainer m_apNode;         ///< AP node container
@@ -133,7 +133,9 @@ WifiChannelSwitchingTest::Associated(Mac48Address bssid)
 }
 
 void
-WifiChannelSwitchingTest::Transmit(WifiConstPsduMap psduMap, WifiTxVector txVector, double txPowerW)
+WifiChannelSwitchingTest::Transmit(wifi::WifiConstPsduMap psduMap,
+                                   wifi::WifiTxVector txVector,
+                                   double txPowerW)
 {
     for (const auto& psduPair : psduMap)
     {
@@ -153,7 +155,8 @@ WifiChannelSwitchingTest::Transmit(WifiConstPsduMap psduMap, WifiTxVector txVect
         {
             // packet transmitted after first association. Switch channel during its
             // transmission
-            Time txDuration = WifiPhy::CalculateTxDuration(psduMap, txVector, WIFI_PHY_BAND_5GHZ);
+            Time txDuration =
+                wifi::WifiPhy::CalculateTxDuration(psduMap, txVector, wifi::WIFI_PHY_BAND_5GHZ);
             Simulator::Schedule(txDuration / 2, &WifiChannelSwitchingTest::ChannelSwitch, this);
         }
     }
@@ -209,9 +212,9 @@ void
 WifiChannelSwitchingTest::StateChange(uint32_t nodeId,
                                       ns3::Time start,
                                       ns3::Time duration,
-                                      WifiPhyState state)
+                                      wifi::WifiPhyState state)
 {
-    if (state == WifiPhyState::SWITCHING)
+    if (state == wifi::WifiPhyState::SWITCHING)
     {
         m_channelSwitchCount[nodeId]++;
     }
@@ -240,17 +243,17 @@ WifiChannelSwitchingTest::DoRun()
     phy.Set("ChannelSettings", StringValue("{36, 20, BAND_5GHZ, 0}"));
 
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211ax);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211ax);
     wifi.SetRemoteStationManager("ns3::IdealWifiManager");
 
     WifiMacHelper mac;
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(Ssid("channel-switching-test")));
+    mac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(wifi::Ssid("channel-switching-test")));
 
     m_staDevice = wifi.Install(phy, mac, m_staNode);
 
     mac.SetType("ns3::ApWifiMac",
                 "Ssid",
-                SsidValue(Ssid("channel-switching-test")),
+                wifi::SsidValue(wifi::Ssid("channel-switching-test")),
                 "EnableBeaconJitter",
                 BooleanValue(false));
 

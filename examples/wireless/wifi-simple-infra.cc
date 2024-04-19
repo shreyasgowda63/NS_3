@@ -170,7 +170,7 @@ main(int argc, char* argv[])
     {
         WifiHelper::EnableLogComponents(); // Turn on all Wifi logging
     }
-    wifi.SetStandard(WIFI_STANDARD_80211b);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211b);
 
     YansWifiPhyHelper wifiPhy;
     // This is one parameter that matters when using FixedRssLossModel
@@ -195,13 +195,13 @@ main(int argc, char* argv[])
                                  StringValue(phyMode));
 
     // Setup the rest of the MAC
-    Ssid ssid = Ssid("wifi-default");
+    wifi::Ssid ssid("wifi-default");
     // setup STA
-    wifiMac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+    wifiMac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
     NetDeviceContainer staDevice = wifi.Install(wifiPhy, wifiMac, c.Get(0));
     NetDeviceContainer devices = staDevice;
     // setup AP
-    wifiMac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    wifiMac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
     NetDeviceContainer apDevice = wifi.Install(wifiPhy, wifiMac, c.Get(1));
     devices.Add(apDevice);
 

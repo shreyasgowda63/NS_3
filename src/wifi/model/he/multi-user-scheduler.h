@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class HeFrameExchangeManager;
 
@@ -250,6 +252,7 @@ class MultiUserScheduler : public Object
                                    ///< upon channel access
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MULTI_USER_SCHEDULER_H */

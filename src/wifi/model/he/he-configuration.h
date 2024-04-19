@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief HE configuration
@@ -92,6 +94,7 @@ class HeConfiguration : public Object
     Time m_voMuEdcaTimer;      //!< Timer for VO in MU EDCA Parameter Set
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HE_CONFIGURATION_H */

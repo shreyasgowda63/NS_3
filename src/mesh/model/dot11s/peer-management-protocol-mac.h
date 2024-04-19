@@ -25,8 +25,12 @@
 namespace ns3
 {
 class MeshWifiInterfaceMac;
+
+namespace wifi
+{
 class WifiMpdu;
 enum WifiMacDropReason : uint8_t; // opaque enum declaration
+} // namespace wifi
 
 namespace dot11s
 {

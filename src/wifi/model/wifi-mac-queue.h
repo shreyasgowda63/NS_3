@@ -36,14 +36,17 @@
 namespace ns3
 {
 
-class WifiMacQueueScheduler;
-
 // The following explicit template instantiation declaration prevents modules
 // including this header file from implicitly instantiating Queue<WifiMpdu>.
 // This would cause python examples using wifi to crash at runtime with the
 // following error message: "Trying to allocate twice the same UID:
 // ns3::Queue<WifiMpdu>"
-extern template class Queue<WifiMpdu, ns3::WifiMacQueueContainer>;
+extern template class Queue<wifi::WifiMpdu, wifi::WifiMacQueueContainer>;
+
+namespace wifi
+{
+
+class WifiMacQueueScheduler;
 
 /**
  * \ingroup wifi
@@ -63,7 +66,7 @@ extern template class Queue<WifiMpdu, ns3::WifiMacQueueContainer>;
  * Compiling python bindings fails if the namespace (ns3) is not
  * specified for WifiMacQueueContainerT.
  */
-class WifiMacQueue : public Queue<WifiMpdu, ns3::WifiMacQueueContainer>
+class WifiMacQueue : public Queue<WifiMpdu, WifiMacQueueContainer>
 {
   public:
     /**
@@ -357,6 +360,7 @@ class WifiMacQueue : public Queue<WifiMpdu, ns3::WifiMacQueueContainer>
     NS_LOG_TEMPLATE_DECLARE; //!< redefinition of the log component
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MAC_QUEUE_H */

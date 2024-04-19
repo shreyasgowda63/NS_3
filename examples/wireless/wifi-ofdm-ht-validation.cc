@@ -58,11 +58,11 @@ main(int argc, char* argv[])
     Gnuplot yansplot = Gnuplot("yans-frame-success-rate-n.eps");
     Gnuplot nistplot = Gnuplot("nist-frame-success-rate-n.eps");
     Gnuplot tableplot = Gnuplot("table-frame-success-rate-n.eps");
-    WifiTxVector txVector;
+    wifi::WifiTxVector txVector;
 
-    Ptr<YansErrorRateModel> yans = CreateObject<YansErrorRateModel>();
-    Ptr<NistErrorRateModel> nist = CreateObject<NistErrorRateModel>();
-    Ptr<TableBasedErrorRateModel> table = CreateObject<TableBasedErrorRateModel>();
+    auto yans = CreateObject<wifi::YansErrorRateModel>();
+    auto nist = CreateObject<wifi::NistErrorRateModel>();
+    auto table = CreateObject<wifi::TableBasedErrorRateModel>();
 
     uint32_t frameSizeBits = frameSizeBytes * 8;
 
@@ -74,7 +74,7 @@ main(int argc, char* argv[])
         Gnuplot2dDataset tabledataset(mode);
         txVector.SetMode(mode);
 
-        WifiMode wifiMode(mode);
+        wifi::WifiMode wifiMode(mode);
 
         for (double snrDb = -5.0; snrDb <= 30.0; snrDb += 0.1)
         {

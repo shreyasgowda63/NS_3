@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiTxParameters;
 class WifiMpdu;
@@ -117,6 +119,7 @@ class WifiProtectionManager : public Object
     uint8_t m_linkId;   //!< ID of the link this Protection Manager is operating on
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_PROTECTION_MANAGER_H */

@@ -70,7 +70,7 @@ main(int argc, char** argv)
     cmd.Parse(argc, argv);
 
     WifiHelper wifi;
-    Ssid ssid;
+    wifi::Ssid ssid;
     std::string dataRate;
     int freq;
     Time dataStartTime =
@@ -79,8 +79,8 @@ main(int argc, char** argv)
         MicroSeconds(300); // leaving enough time for data transfer (+ acknowledgment)
     if (standard == "11a")
     {
-        wifi.SetStandard(WIFI_STANDARD_80211a);
-        ssid = Ssid("ns380211a");
+        wifi.SetStandard(wifi::WIFI_STANDARD_80211a);
+        ssid = wifi::Ssid("ns380211a");
         dataRate = "OfdmRate6Mbps";
         freq = 5180;
         if (bw != 20)
@@ -91,8 +91,8 @@ main(int argc, char** argv)
     }
     else if (standard == "11p_10MHZ")
     {
-        wifi.SetStandard(WIFI_STANDARD_80211p);
-        ssid = Ssid("ns380211p_10MHZ");
+        wifi.SetStandard(wifi::WIFI_STANDARD_80211p);
+        ssid = wifi::Ssid("ns380211p_10MHZ");
         dataRate = "OfdmRate3MbpsBW10MHz";
         freq = 5860;
         dataStartTime = MicroSeconds(1400);
@@ -105,8 +105,8 @@ main(int argc, char** argv)
     }
     else if (standard == "11p_5MHZ")
     {
-        wifi.SetStandard(WIFI_STANDARD_80211p);
-        ssid = Ssid("ns380211p_5MHZ");
+        wifi.SetStandard(wifi::WIFI_STANDARD_80211p);
+        ssid = wifi::Ssid("ns380211p_5MHZ");
         dataRate = "OfdmRate1_5MbpsBW5MHz";
         freq = 5860;
         dataStartTime = MicroSeconds(2500);
@@ -119,8 +119,8 @@ main(int argc, char** argv)
     }
     else if (standard == "11n_2_4GHZ")
     {
-        wifi.SetStandard(WIFI_STANDARD_80211n);
-        ssid = Ssid("ns380211n_2_4GHZ");
+        wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
+        ssid = wifi::Ssid("ns380211n_2_4GHZ");
         dataRate = "HtMcs0";
         freq = 2402 + (bw / 2); // so as to have 2412/2422 for 20/40
         dataStartTime = MicroSeconds(4700);
@@ -133,8 +133,8 @@ main(int argc, char** argv)
     }
     else if (standard == "11n_5GHZ")
     {
-        wifi.SetStandard(WIFI_STANDARD_80211n);
-        ssid = Ssid("ns380211n_5GHZ");
+        wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
+        ssid = wifi::Ssid("ns380211n_5GHZ");
         dataRate = "HtMcs0";
         freq = 5170 + (bw / 2); // so as to have 5180/5190 for 20/40
         dataStartTime = MicroSeconds(1000);
@@ -146,8 +146,8 @@ main(int argc, char** argv)
     }
     else if (standard == "11ac")
     {
-        wifi.SetStandard(WIFI_STANDARD_80211ac);
-        ssid = Ssid("ns380211ac");
+        wifi.SetStandard(wifi::WIFI_STANDARD_80211ac);
+        ssid = wifi::Ssid("ns380211ac");
         dataRate = "VhtMcs0";
         freq = 5170 + (bw / 2); // so as to have 5180/5190/5210/5250 for 20/40/80/160
         dataStartTime = MicroSeconds(1100);
@@ -160,8 +160,8 @@ main(int argc, char** argv)
     }
     else if (standard == "11ax_2_4GHZ")
     {
-        wifi.SetStandard(WIFI_STANDARD_80211ax);
-        ssid = Ssid("ns380211ax_2_4GHZ");
+        wifi.SetStandard(wifi::WIFI_STANDARD_80211ax);
+        ssid = wifi::Ssid("ns380211ax_2_4GHZ");
         dataRate = "HeMcs0";
         freq = 2402 + (bw / 2); // so as to have 2412/2422/2442 for 20/40/80
         dataStartTime = MicroSeconds(5500);
@@ -174,8 +174,8 @@ main(int argc, char** argv)
     }
     else if (standard == "11ax_5GHZ")
     {
-        wifi.SetStandard(WIFI_STANDARD_80211ax);
-        ssid = Ssid("ns380211ax_5GHZ");
+        wifi.SetStandard(wifi::WIFI_STANDARD_80211ax);
+        ssid = wifi::Ssid("ns380211ax_5GHZ");
         dataRate = "HeMcs0";
         freq = 5170 + (bw / 2); // so as to have 5180/5190/5210/5250 for 20/40/80/160
         dataStartTime = MicroSeconds(1200);
@@ -238,11 +238,15 @@ main(int argc, char** argv)
                                  "ControlMode",
                                  StringValue(dataRate));
 
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid), "ActiveProbing", BooleanValue(false));
+    mac.SetType("ns3::StaWifiMac",
+                "Ssid",
+                wifi::SsidValue(ssid),
+                "ActiveProbing",
+                BooleanValue(false));
     NetDeviceContainer staDevice = wifi.Install(spectrumPhy, mac, wifiStaNode);
     mac.SetType("ns3::ApWifiMac",
                 "Ssid",
-                SsidValue(ssid),
+                wifi::SsidValue(ssid),
                 "EnableBeaconJitter",
                 BooleanValue(false)); // so as to be sure that first beacon arrives quickly
     NetDeviceContainer apDevice = wifi.Install(spectrumPhy, mac, wifiApNode);

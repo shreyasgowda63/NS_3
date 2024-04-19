@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * A tuple (number, frequency, width, type, band) identifying a frequency channel
@@ -311,6 +313,7 @@ class WifiPhyOperatingChannel
  */
 std::ostream& operator<<(std::ostream& os, const WifiPhyOperatingChannel& channel);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_PHY_OPERATING_CHANNEL_H */

@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 StatusCode::StatusCode()
 {
@@ -78,4 +80,5 @@ operator<<(std::ostream& os, const StatusCode& code)
     return os;
 }
 
+} // namespace wifi
 } // namespace ns3

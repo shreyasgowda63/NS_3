@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /***********************************
  *       Block ack request
@@ -2285,4 +2287,5 @@ CtrlTriggerHeader::IsValid() const
     return true;
 }
 
+} // namespace wifi
 } // namespace ns3

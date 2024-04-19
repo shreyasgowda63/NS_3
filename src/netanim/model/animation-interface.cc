@@ -702,7 +702,7 @@ AnimationInterface::WifiPhyTxDropTrace(std::string context, Ptr<const Packet> p)
 void
 AnimationInterface::WifiPhyRxDropTrace(std::string context,
                                        Ptr<const Packet> p,
-                                       WifiPhyRxfailureReason reason)
+                                       wifi::WifiPhyRxfailureReason reason)
 {
     const Ptr<const Node> node = GetNodeFromContext(context);
     ++m_nodeWifiPhyRxDrop[node->GetId()];
@@ -863,7 +863,7 @@ AnimationInterface::GenericWirelessTxTrace(std::string context,
     AnimPacketInfo pktInfo(ndev, Simulator::Now());
     AddPendingPacket(protocolType, gAnimUid, pktInfo);
 
-    Ptr<WifiNetDevice> netDevice = DynamicCast<WifiNetDevice>(ndev);
+    auto netDevice = DynamicCast<wifi::WifiNetDevice>(ndev);
     if (netDevice)
     {
         Mac48Address nodeAddr = netDevice->GetMac()->GetAddress();
@@ -916,8 +916,8 @@ AnimationInterface::UanPhyGenRxTrace(std::string context, Ptr<const Packet> p)
 
 void
 AnimationInterface::WifiPhyTxBeginTrace(std::string context,
-                                        WifiConstPsduMap psduMap,
-                                        WifiTxVector /* txVector */,
+                                        wifi::WifiConstPsduMap psduMap,
+                                        wifi::WifiTxVector /* txVector */,
                                         double /* txPowerW */)
 {
     NS_LOG_FUNCTION(this);
@@ -944,7 +944,7 @@ AnimationInterface::WifiPhyTxBeginTrace(std::string context,
         }
     }
 
-    Ptr<WifiNetDevice> netDevice = DynamicCast<WifiNetDevice>(ndev);
+    auto netDevice = DynamicCast<wifi::WifiNetDevice>(ndev);
     if (netDevice)
     {
         Mac48Address nodeAddr = netDevice->GetMac()->GetAddress();
@@ -964,7 +964,7 @@ AnimationInterface::WifiPhyTxBeginTrace(std::string context,
 void
 AnimationInterface::WifiPhyRxBeginTrace(std::string context,
                                         Ptr<const Packet> p,
-                                        RxPowerWattPerChannelBand rxPowersW)
+                                        wifi::RxPowerWattPerChannelBand rxPowersW)
 {
     NS_LOG_FUNCTION(this);
     CHECK_STARTED_INTIMEWINDOW_TRACKPACKETS;
@@ -977,7 +977,7 @@ AnimationInterface::WifiPhyRxBeginTrace(std::string context,
     {
         NS_ASSERT_MSG(false, "WifiPhyRxBeginTrace: unknown Uid");
         std::ostringstream oss;
-        WifiMacHeader hdr;
+        wifi::WifiMacHeader hdr;
         if (!p->PeekHeader(hdr))
         {
             NS_LOG_WARN("WifiMacHeader not present");

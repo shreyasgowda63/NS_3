@@ -27,6 +27,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiTxTimer");
 
@@ -198,4 +200,5 @@ WifiTxTimer::FeedTraceSource(WifiPsduMap* psduMap, std::size_t nTotalStations)
     }
 }
 
+} // namespace wifi
 } // namespace ns3

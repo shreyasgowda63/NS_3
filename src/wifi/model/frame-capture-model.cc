@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(FrameCaptureModel);
 
@@ -47,4 +49,5 @@ FrameCaptureModel::IsInCaptureWindow(Time timePreambleDetected) const
     return (timePreambleDetected + m_captureWindow >= Simulator::Now());
 }
 
+} // namespace wifi
 } // namespace ns3

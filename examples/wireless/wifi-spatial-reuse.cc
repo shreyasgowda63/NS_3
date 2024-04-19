@@ -105,6 +105,7 @@
 #include "ns3/wifi-net-device.h"
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 std::vector<uint32_t> bytesReceived(4);
 std::ofstream g_resetFile1;

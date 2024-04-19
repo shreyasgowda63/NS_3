@@ -32,6 +32,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * Data structure to save transmission time calculations per rate.
@@ -677,6 +679,7 @@ class MinstrelHtWifiManager : public WifiRemoteStationManager
     TracedValue<uint64_t> m_currentRate; //!< Trace rate changes
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MINSTREL_HT_WIFI_MANAGER_H */

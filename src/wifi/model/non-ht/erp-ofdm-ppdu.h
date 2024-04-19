@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiPsdu;
 
@@ -63,6 +65,7 @@ class ErpOfdmPpdu : public OfdmPpdu
     void SetTxVectorFromLSigHeader(WifiTxVector& txVector, const LSigHeader& lSig) const override;
 }; // class ErpOfdmPpdu
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* ERP_OFDM_PPDU_H */

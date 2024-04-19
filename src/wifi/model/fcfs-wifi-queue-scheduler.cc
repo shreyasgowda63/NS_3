@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("FcfsWifiQueueScheduler");
 
@@ -186,4 +188,5 @@ FcfsWifiQueueScheduler::DoNotifyRemove(AcIndex ac, const std::list<Ptr<WifiMpdu>
     }
 }
 
+} // namespace wifi
 } // namespace ns3

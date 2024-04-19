@@ -80,13 +80,13 @@ experiment(bool enableCtsRts, std::string wifiManager)
                        50); // set symmetric loss 2 <-> 1 to 50 dB
 
     // 4. Create & setup wifi channel
-    Ptr<YansWifiChannel> wifiChannel = CreateObject<YansWifiChannel>();
+    auto wifiChannel = CreateObject<wifi::YansWifiChannel>();
     wifiChannel->SetPropagationLossModel(lossModel);
     wifiChannel->SetPropagationDelayModel(CreateObject<ConstantSpeedPropagationDelayModel>());
 
     // 5. Install wireless devices
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211b);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211b);
     wifi.SetRemoteStationManager("ns3::" + wifiManager + "WifiManager");
     YansWifiPhyHelper wifiPhy;
     wifiPhy.SetChannel(wifiChannel);

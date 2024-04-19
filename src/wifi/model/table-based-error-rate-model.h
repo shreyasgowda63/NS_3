@@ -30,13 +30,14 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiTxVector;
 
-/*
+/**
  * \ingroup wifi
  * \brief the interface for the table-driven OFDM error model
- *
  */
 class TableBasedErrorRateModel : public ErrorRateModel
 {
@@ -91,6 +92,7 @@ class TableBasedErrorRateModel : public ErrorRateModel
     uint64_t m_threshold; //!< Threshold in bytes over which the table for large size frames is used
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* TABLE_BASED_ERROR_RATE_MODEL_H */

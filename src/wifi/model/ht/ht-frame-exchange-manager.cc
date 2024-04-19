@@ -39,6 +39,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("HtFrameExchangeManager");
 
@@ -1686,4 +1688,5 @@ HtFrameExchangeManager::EndReceiveAmpdu(Ptr<const WifiPsdu> psdu,
     }
 }
 
+} // namespace wifi
 } // namespace ns3

@@ -235,7 +235,7 @@ main(int argc, char* argv[])
     {
         WifiHelper::EnableLogComponents();
     }
-    wifi.SetStandard(WIFI_STANDARD_80211b);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211b);
 
     /** Wifi PHY **/
     /***************************************************************************/
@@ -247,7 +247,7 @@ main(int argc, char* argv[])
     wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel");
 
     // create wifi channel
-    Ptr<YansWifiChannel> wifiChannelPtr = wifiChannel.Create();
+    auto wifiChannelPtr = wifiChannel.Create();
     wifiPhy.SetChannel(wifiChannelPtr);
 
     /** MAC layer **/

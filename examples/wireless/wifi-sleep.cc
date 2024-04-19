@@ -95,7 +95,7 @@ RemainingEnergyTrace(double oldValue, double newValue)
  */
 template <int node>
 void
-PhyStateTrace(std::string context, Time start, Time duration, WifiPhyState state)
+PhyStateTrace(std::string context, Time start, Time duration, wifi::WifiPhyState state)
 {
     std::stringstream ss;
     ss << "state_" << node << ".log";
@@ -149,7 +149,7 @@ main(int argc, char* argv[])
     {
         WifiHelper::EnableLogComponents(); // Turn on all Wifi logging
     }
-    wifi.SetStandard(WIFI_STANDARD_80211b);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211b);
 
     YansWifiPhyHelper wifiPhy;
     wifiPhy.Set("TxPowerStart", DoubleValue(txPowerStart));
@@ -217,7 +217,7 @@ main(int argc, char* argv[])
 
     // compute the efficiency of the power amplifier (eta) assuming that the provided value for tx
     // current corresponds to the minimum tx power level
-    double eta = DbmToW(txPowerStart) / ((txCurrent - idleCurrent) * voltage);
+    double eta = wifi::DbmToW(txPowerStart) / ((txCurrent - idleCurrent) * voltage);
 
     radioEnergyHelper.SetTxCurrentModel("ns3::LinearWifiTxCurrentModel",
                                         "Voltage",
@@ -232,11 +232,11 @@ main(int argc, char* argv[])
     {
         eSources.Add(basicSourceHelper.Install(*n));
 
-        Ptr<WifiNetDevice> wnd;
+        Ptr<wifi::WifiNetDevice> wnd;
 
         for (uint32_t i = 0; i < (*n)->GetNDevices(); ++i)
         {
-            wnd = (*n)->GetDevice(i)->GetObject<WifiNetDevice>();
+            wnd = (*n)->GetDevice(i)->GetObject<wifi::WifiNetDevice>();
             // if it is a WifiNetDevice
             if (wnd)
             {

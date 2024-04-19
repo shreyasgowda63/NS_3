@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiTxParameters;
 class WifiMpdu;
@@ -154,6 +156,7 @@ class WifiDefaultAckManager : public WifiAckManager
     uint8_t m_maxMcsForBlockAckInTbPpdu;      //!< Max MCS used to send a BlockAck in a TB PPDU
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_DEFAULT_ACK_MANAGER_H */

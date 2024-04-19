@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// Size in bytes of the Element ID Extension field (IEEE 802.11-2020 9.4.2.1 General)
 constexpr uint8_t WIFI_IE_ELEMENT_ID_EXT_SIZE = 1;
@@ -414,6 +416,7 @@ class WifiInformationElement : public SimpleRefCount<WifiInformationElement>
  */
 std::ostream& operator<<(std::ostream& os, const WifiInformationElement& element);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_INFORMATION_ELEMENT_H */

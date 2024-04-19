@@ -29,6 +29,8 @@ class AmpduAggregationTest;
 
 namespace ns3
 {
+namespace wifi
+{
 
 class MgtAddBaResponseHeader;
 class RecipientBlockAckAgreement;
@@ -366,6 +368,7 @@ class HtFrameExchangeManager : public QosFrameExchangeManager
     WifiTxParameters m_txParams; //!< the TX parameters for the current frame
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HT_FRAME_EXCHANGE_MANAGER_H */

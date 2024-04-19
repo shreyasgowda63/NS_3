@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -250,6 +252,7 @@ class WifiAssocManager : public Object
     std::unordered_map<Mac48Address, SortedList::const_iterator, WifiAddressHash> m_apListIt;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_ASSOC_MANAGER_H */

@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("EhtConfiguration");
 
@@ -208,4 +210,5 @@ EhtConfiguration::SetTidLinkMapping(WifiDirection dir,
     }
 }
 
+} // namespace wifi
 } // namespace ns3

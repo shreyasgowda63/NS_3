@@ -34,6 +34,9 @@ namespace ns3
 
 class Packet;
 
+namespace wifi
+{
+
 /**
  * \ingroup wifi
  *
@@ -666,6 +669,7 @@ class MgtEmlOmn : public Header
     std::optional<EmlsrParamUpdate> m_emlsrParamUpdate{}; //!< EMLSR Parameter Update field
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* MGT_ACTION_HEADERS_H */

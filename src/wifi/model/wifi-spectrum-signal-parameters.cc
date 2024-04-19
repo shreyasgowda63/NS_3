@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiSpectrumSignalParameters");
 
@@ -57,4 +59,5 @@ WifiSpectrumSignalParameters::Copy() const
     return wssp;
 }
 
+} // namespace wifi
 } // namespace ns3

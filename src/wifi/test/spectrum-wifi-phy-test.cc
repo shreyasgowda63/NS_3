@@ -42,6 +42,7 @@
 #include <vector>
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 NS_LOG_COMPONENT_DEFINE("SpectrumWifiPhyTest");
 
@@ -260,7 +261,7 @@ SpectrumWifiPhyBasicTest::DoRun()
  *
  * \brief Test Phy Listener
  */
-class TestPhyListener : public ns3::WifiPhyListener
+class TestPhyListener : public ns3::wifi::WifiPhyListener
 {
   public:
     /**

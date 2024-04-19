@@ -29,6 +29,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("ConstantRateWifiManager");
 
@@ -164,4 +166,5 @@ ConstantRateWifiManager::DoGetRtsTxVector(WifiRemoteStation* st)
         GetAggregation(st));
 }
 
+} // namespace wifi
 } // namespace ns3

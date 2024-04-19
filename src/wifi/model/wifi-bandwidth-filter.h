@@ -22,7 +22,13 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
+/**
+ * \brief Spectrum filter for Wi-Fi devices
+ * \ingroup wifi
+ */
 class WifiBandwidthFilter : public SpectrumTransmitFilter
 {
   public:
@@ -50,6 +56,7 @@ class WifiBandwidthFilter : public SpectrumTransmitFilter
     int64_t DoAssignStreams(int64_t stream) override;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif

@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -87,6 +89,7 @@ class AmpduSubframeHeader : public Header
                          //!< assumed valid)
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* AMPDU_SUBFRAME_HEADER_H */

@@ -35,6 +35,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("ErpOfdmPhy");
 
@@ -248,7 +250,7 @@ ErpOfdmPhy::GetMaxPsduSize() const
     return 4095;
 }
 
-} // namespace ns3
+} // namespace wifi
 
 namespace
 {
@@ -261,10 +263,11 @@ class ConstructorErpOfdm
   public:
     ConstructorErpOfdm()
     {
-        ns3::ErpOfdmPhy::InitializeModes();
-        ns3::WifiPhy::AddStaticPhyEntity(ns3::WIFI_MOD_CLASS_ERP_OFDM,
-                                         ns3::Create<ns3::ErpOfdmPhy>());
+        ns3::wifi::ErpOfdmPhy::InitializeModes();
+        ns3::wifi::WifiPhy::AddStaticPhyEntity(ns3::wifi::WIFI_MOD_CLASS_ERP_OFDM,
+                                               ns3::Create<ns3::wifi::ErpOfdmPhy>());
     }
 } g_constructor_erp_ofdm; ///< the constructor for ERP-OFDM modes
 
 } // namespace
+} // namespace ns3

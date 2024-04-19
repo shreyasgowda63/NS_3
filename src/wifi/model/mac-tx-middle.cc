@@ -28,6 +28,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("MacTxMiddle");
 
@@ -143,4 +145,5 @@ MacTxMiddle::SetSequenceNumberFor(const WifiMacHeader* hdr)
     }
 }
 
+} // namespace wifi
 } // namespace ns3

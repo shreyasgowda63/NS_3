@@ -37,6 +37,8 @@ class EmlsrUlTxopTest;
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiPhy;
 class PhyListener;
@@ -485,6 +487,7 @@ class ChannelAccessManager : public Object
     uint8_t m_linkId;                      //!< the ID of the link this object is associated with
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* CHANNEL_ACCESS_MANAGER_H */

@@ -23,6 +23,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 WifiRemoteStationInfo::WifiRemoteStationInfo()
     : m_memoryTime(Seconds(1.0)),
@@ -64,4 +66,5 @@ WifiRemoteStationInfo::GetFrameErrorRate() const
     return m_failAvg;
 }
 
+} // namespace wifi
 } // namespace ns3

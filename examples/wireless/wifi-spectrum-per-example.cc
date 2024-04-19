@@ -112,9 +112,9 @@ uint32_t g_samples;    //!< Number of samples
 void
 MonitorSniffRx(Ptr<const Packet> packet,
                uint16_t channelFreqMhz,
-               WifiTxVector txVector,
-               MpduInfo aMpdu,
-               SignalNoiseDbm signalNoise,
+               wifi::WifiTxVector txVector,
+               wifi::MpduInfo aMpdu,
+               wifi::SignalNoiseDbm signalNoise,
                uint16_t staId)
 
 {
@@ -217,10 +217,10 @@ main(int argc, char* argv[])
         }
 
         WifiHelper wifi;
-        wifi.SetStandard(WIFI_STANDARD_80211n);
+        wifi.SetStandard(wifi::WIFI_STANDARD_80211n);
         WifiMacHelper mac;
 
-        Ssid ssid = Ssid("ns380211n");
+        wifi::Ssid ssid("ns380211n");
 
         double datarate = 0;
         StringValue DataRate;
@@ -396,20 +396,20 @@ main(int argc, char* argv[])
 
         if (wifiType == "ns3::YansWifiPhy")
         {
-            mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+            mac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
             phy.Set("ChannelSettings",
                     StringValue(std::string("{0, ") + (i <= 15 ? "20" : "40") + ", BAND_5GHZ, 0}"));
             staDevice = wifi.Install(phy, mac, wifiStaNode);
-            mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+            mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
             apDevice = wifi.Install(phy, mac, wifiApNode);
         }
         else if (wifiType == "ns3::SpectrumWifiPhy")
         {
-            mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
+            mac.SetType("ns3::StaWifiMac", "Ssid", wifi::SsidValue(ssid));
             phy.Set("ChannelSettings",
                     StringValue(std::string("{0, ") + (i <= 15 ? "20" : "40") + ", BAND_5GHZ, 0}"));
             staDevice = wifi.Install(spectrumPhy, mac, wifiStaNode);
-            mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+            mac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
             apDevice = wifi.Install(spectrumPhy, mac, wifiApNode);
         }
 

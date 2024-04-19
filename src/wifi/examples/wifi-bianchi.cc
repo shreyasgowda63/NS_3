@@ -61,6 +61,7 @@
 NS_LOG_COMPONENT_DEFINE("WifiBianchi");
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 std::ofstream cwTraceFile;      ///< File that traces CW over time
 std::ofstream backoffTraceFile; ///< File that traces backoff over time

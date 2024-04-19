@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief hold per-remote-station state for Ideal Wifi manager.
@@ -643,4 +645,5 @@ IdealWifiManager::IsCandidateModulationClass(WifiModulationClass mc,
     return true;
 }
 
+} // namespace wifi
 } // namespace ns3

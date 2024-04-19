@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -130,6 +132,7 @@ class NistErrorRateModel : public ErrorRateModel
                         uint8_t bValue) const;
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* NIST_ERROR_RATE_MODEL_H */

@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("WifiAssocManager");
 
@@ -374,4 +376,5 @@ WifiAssocManager::GetAllAffiliatedAps(const ReducedNeighborReport& rnr)
     return apList;
 }
 
+} // namespace wifi
 } // namespace ns3

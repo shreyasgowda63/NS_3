@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * This defines the BSS membership value for VHT PHY.
@@ -360,6 +362,7 @@ class VhtPhy : public HtPhy
     static const PpduFormats m_vhtPpduFormats;    //!< VHT PPDU formats
 };                                                // class VhtPhy
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* VHT_PHY_H */

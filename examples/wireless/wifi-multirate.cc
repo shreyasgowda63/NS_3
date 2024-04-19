@@ -712,7 +712,7 @@ main(int argc, char* argv[])
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
 
     wifiMac.SetType("ns3::AdhocWifiMac", "Ssid", StringValue("Testbed"));
-    wifi.SetStandard(WIFI_STANDARD_80211a);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211a);
     wifi.SetRemoteStationManager(experiment.GetRateManager());
 
     NS_LOG_INFO("Scenario: " << experiment.GetScenario());

@@ -49,6 +49,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("StaWifiMac");
 
@@ -2108,4 +2110,5 @@ operator<<(std::ostream& os, const StaWifiMac::ApInfo& apInfo)
     return os;
 }
 
+} // namespace wifi
 } // namespace ns3

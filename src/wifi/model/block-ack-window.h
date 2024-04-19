@@ -25,6 +25,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \ingroup wifi
@@ -126,6 +128,7 @@ class BlockAckWindow
     std::size_t m_head;         ///< index of winStart in the vector
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* BLOCK_ACK_WINDOW_H */

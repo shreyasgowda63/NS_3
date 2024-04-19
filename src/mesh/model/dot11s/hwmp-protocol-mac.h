@@ -28,7 +28,11 @@ namespace ns3
 {
 
 class MeshWifiInterfaceMac;
+
+namespace wifi
+{
 class WifiActionHeader;
+}
 
 namespace dot11s
 {
@@ -71,7 +75,7 @@ class HwmpProtocolMac : public MeshWifiInterfaceMacPlugin
     /**
      * \returns a path selection action header
      */
-    static WifiActionHeader GetWifiActionHeader();
+    static wifi::WifiActionHeader GetWifiActionHeader();
     /// \name Interaction with HWMP:
     ///@{
     /**

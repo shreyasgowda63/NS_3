@@ -31,6 +31,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 class WifiMpdu;
 struct WifiProtection;
@@ -177,6 +179,7 @@ class WifiTxParameters
  */
 std::ostream& operator<<(std::ostream& os, const WifiTxParameters* txParams);
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_TX_PARAMETERS_H */

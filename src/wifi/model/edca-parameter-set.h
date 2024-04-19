@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief The EDCA Parameter Set
@@ -282,6 +284,7 @@ class EdcaParameterSet : public WifiInformationElement
     uint32_t m_acVO;    ///< AC_VO
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* EDCA_PARAMETER_SET_H */

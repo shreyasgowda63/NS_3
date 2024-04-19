@@ -67,10 +67,10 @@ main(int argc, char* argv[])
     std::ofstream errormodelfile("wifi-error-rate-models.plt");
     Gnuplot plot = Gnuplot("wifi-error-rate-models.eps");
 
-    Ptr<YansErrorRateModel> yans = CreateObject<YansErrorRateModel>();
-    Ptr<NistErrorRateModel> nist = CreateObject<NistErrorRateModel>();
-    Ptr<TableBasedErrorRateModel> table = CreateObject<TableBasedErrorRateModel>();
-    WifiTxVector txVector;
+    auto yans = CreateObject<wifi::YansErrorRateModel>();
+    auto nist = CreateObject<wifi::NistErrorRateModel>();
+    auto table = CreateObject<wifi::TableBasedErrorRateModel>();
+    wifi::WifiTxVector txVector;
     std::vector<std::string> modes;
 
     std::stringstream mode;
@@ -94,7 +94,7 @@ main(int argc, char* argv[])
         Gnuplot2dDataset tabledataset(mode);
         txVector.SetMode(mode);
 
-        WifiMode wifiMode(mode);
+        wifi::WifiMode wifiMode(mode);
 
         for (double snrDb = -5.0; snrDb <= (endMcs * 5); snrDb += 0.1)
         {

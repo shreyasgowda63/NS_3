@@ -26,6 +26,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /***********************************************************
  *          Probe Request
@@ -585,4 +587,5 @@ MgtAssocResponseHeader::DeserializeFromPerStaProfileImpl(Buffer::Iterator start,
                           DeserializeFromPerStaProfileImpl(i, length - distance, frame);
 }
 
+} // namespace wifi
 } // namespace ns3

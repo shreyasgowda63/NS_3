@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_OBJECT_ENSURE_REGISTERED(WifiMacTrailer);
 
@@ -72,4 +74,5 @@ WifiMacTrailer::Deserialize(Buffer::Iterator start)
     return WIFI_MAC_FCS_LENGTH;
 }
 
+} // namespace wifi
 } // namespace ns3

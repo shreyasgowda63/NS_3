@@ -24,6 +24,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /**
  * \brief The HE Operation Information Element
@@ -102,6 +104,7 @@ class HeOperation : public WifiInformationElement
     // TODO: VHT Operation Information subfields not defined in the standard yet.
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* HE_OPERATION_H */

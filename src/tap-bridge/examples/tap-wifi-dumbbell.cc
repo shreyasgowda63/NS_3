@@ -141,17 +141,17 @@ main(int argc, char* argv[])
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
     wifiPhy.SetChannel(wifiChannel.Create());
 
-    Ssid ssid = Ssid("left");
+    wifi::Ssid ssid("left");
     WifiHelper wifi;
     WifiMacHelper wifiMac;
-    wifi.SetStandard(WIFI_STANDARD_80211a);
+    wifi.SetStandard(wifi::WIFI_STANDARD_80211a);
 
-    wifiMac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    wifiMac.SetType("ns3::ApWifiMac", "Ssid", wifi::SsidValue(ssid));
     NetDeviceContainer devicesLeft = wifi.Install(wifiPhy, wifiMac, nodesLeft.Get(0));
 
     wifiMac.SetType("ns3::StaWifiMac",
                     "Ssid",
-                    SsidValue(ssid),
+                    wifi::SsidValue(ssid),
                     "ActiveProbing",
                     BooleanValue(false));
     devicesLeft.Add(

@@ -35,6 +35,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 /// aRxPHYStartDelay value to use when waiting for a new frame in the context of EMLSR operations
 /// (Sec. 35.3.17 of 802.11be D3.1)
@@ -1108,4 +1110,5 @@ EhtFrameExchangeManager::UpdateTxopEndOnRxEnd(Time durationId)
     m_ongoingTxopEnd = Simulator::Schedule(delay, &EhtFrameExchangeManager::TxopEnd, this);
 }
 
+} // namespace wifi
 } // namespace ns3

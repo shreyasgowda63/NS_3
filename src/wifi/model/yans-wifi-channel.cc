@@ -35,6 +35,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 NS_LOG_COMPONENT_DEFINE("YansWifiChannel");
 
@@ -177,4 +179,5 @@ YansWifiChannel::AssignStreams(int64_t stream)
     return (currentStream - stream);
 }
 
+} // namespace wifi
 } // namespace ns3

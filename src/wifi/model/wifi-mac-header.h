@@ -30,6 +30,9 @@ namespace ns3
 
 class Time;
 
+namespace wifi
+{
+
 /**
  * Combination of valid MAC header type/subtype.
  */
@@ -700,6 +703,7 @@ class WifiMacHeader : public Header
     uint8_t m_qosStuff;     ///< QoS stuff
 };
 
+} // namespace wifi
 } // namespace ns3
 
 #endif /* WIFI_MAC_HEADER_H */

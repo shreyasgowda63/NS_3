@@ -60,6 +60,7 @@
 #include <optional>
 
 using namespace ns3;
+using namespace ns3::wifi;
 
 // Helper function to assign streams to random variables, to control
 // randomness in the tests

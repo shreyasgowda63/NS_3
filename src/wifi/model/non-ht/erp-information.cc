@@ -21,6 +21,8 @@
 
 namespace ns3
 {
+namespace wifi
+{
 
 ErpInformation::ErpInformation()
     : m_erpInformation(0)
@@ -98,4 +100,5 @@ operator<<(std::ostream& os, const ErpInformation& erpInformation)
     return os;
 }
 
+} // namespace wifi
 } // namespace ns3
