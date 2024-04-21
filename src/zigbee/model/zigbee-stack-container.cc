@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Tokushima University, Japan
+ * Copyright (c) 2024 Tokushima University, Japan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -23,6 +23,8 @@
 #include <ns3/names.h>
 
 namespace ns3
+{
+namespace zigbee
 {
 
 ZigbeeStackContainer::ZigbeeStackContainer()
@@ -86,4 +88,5 @@ ZigbeeStackContainer::Add(std::string stackName)
     m_stacks.emplace_back(stack);
 }
 
+} // namespace zigbee
 } // namespace ns3

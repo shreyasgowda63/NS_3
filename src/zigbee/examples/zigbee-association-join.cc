@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Tokushima University, Japan
+ * Copyright (c) 2024 Tokushima University, Japan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -54,9 +54,10 @@
 #include <iostream>
 
 using namespace ns3;
-using namespace zigbee;
+using namespace ns3::lrwpan;
+using namespace ns3::zigbee;
 
-NS_LOG_COMPONENT_DEFINE("ZigbeeExample");
+NS_LOG_COMPONENT_DEFINE("ZigbeeAssociationJoin");
 
 static void
 NwkDataIndication(Ptr<ZigbeeStack> stack, NldeDataIndicationParams params, Ptr<Packet> p)
@@ -96,11 +97,11 @@ NwkNetworkDiscoveryConfirm(Ptr<ZigbeeStack> stack, NlmeNetworkDiscoveryConfirmPa
         capaInfo.SetDeviceType(ROUTER);
         capaInfo.SetAllocateAddrOn(true);
 
-        joinParams.m_rejoinNetwork = ASSOCIATION;
+        joinParams.m_rejoinNetwork = zigbee::JoiningMethod::ASSOCIATION;
         joinParams.m_capabilityInfo = capaInfo.GetCapability();
         joinParams.m_extendedPanId = params.m_netDescList[0].m_extPanId;
 
-        Simulator::ScheduleNow(&zigbee::ZigbeeNwk::NlmeJoinRequest, stack->GetNwk(), joinParams);
+        Simulator::ScheduleNow(&ZigbeeNwk::NlmeJoinRequest, stack->GetNwk(), joinParams);
     }
     else
     {
@@ -121,8 +122,8 @@ NwkJoinConfirm(Ptr<ZigbeeStack> stack, NlmeJoinConfirmParams params)
 
         // 3 - After dev 1 is associated, it should be started as a router
         //     (i.e. it becomes able to accept request from other devices to join the network)
-        zigbee::NlmeStartRouterRequestParams startRouterParams;
-        Simulator::ScheduleNow(&zigbee::ZigbeeNwk::NlmeStartRouterRequest,
+        NlmeStartRouterRequestParams startRouterParams;
+        Simulator::ScheduleNow(&ZigbeeNwk::NlmeStartRouterRequest,
                                stack->GetNwk(),
                                startRouterParams);
     }
@@ -220,7 +221,7 @@ main(int argc, char* argv[])
     zstack2->GetNwk()->SetNlmeJoinConfirmCallback(MakeBoundCallback(&NwkJoinConfirm, zstack2));
 
     // 1 - Initiate the Zigbee coordinator, start the network
-    zigbee::NlmeNetworkFormationRequestParams netFormParams;
+    NlmeNetworkFormationRequestParams netFormParams;
     netFormParams.m_scanChannelList.channelPageCount = 1;
     netFormParams.m_scanChannelList.channelsField[0] = 0x07FFF800;
     netFormParams.m_scanDuration = 0;
@@ -229,19 +230,19 @@ main(int argc, char* argv[])
 
     Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
                                    Seconds(1.0),
-                                   &zigbee::ZigbeeNwk::NlmeNetworkFormationRequest,
+                                   &ZigbeeNwk::NlmeNetworkFormationRequest,
                                    zstack0->GetNwk(),
                                    netFormParams);
 
     // 2- Let the dev1 (Router) discovery the coordinator and join the network, after
     //    this, it will become router itself(call to NLME-START-ROUTER.request).
-    zigbee::NlmeNetworkDiscoveryRequestParams netDiscParams;
+    NlmeNetworkDiscoveryRequestParams netDiscParams;
     netDiscParams.m_scanChannelList.channelPageCount = 1;
     netDiscParams.m_scanChannelList.channelsField[0] = 0x7800;
     netDiscParams.m_scanDuration = 14;
     Simulator::ScheduleWithContext(zstack1->GetNode()->GetId(),
                                    Seconds(3.0),
-                                   &zigbee::ZigbeeNwk::NlmeNetworkDiscoveryRequest,
+                                   &ZigbeeNwk::NlmeNetworkDiscoveryRequest,
                                    zstack1->GetNwk(),
                                    netDiscParams);
 
@@ -249,13 +250,13 @@ main(int argc, char* argv[])
     // Let the dev2 discover the PAN coordinator or a router and join the network,
     // after this, it will become a router itself
 
-    zigbee::NlmeNetworkDiscoveryRequestParams netDiscParams2;
+    NlmeNetworkDiscoveryRequestParams netDiscParams2;
     netDiscParams2.m_scanChannelList.channelPageCount = 1;
     netDiscParams2.m_scanChannelList.channelsField[0] = 0x7800;
     netDiscParams2.m_scanDuration = 14;
     Simulator::ScheduleWithContext(zstack2->GetNode()->GetId(),
                                    Seconds(1020.0),
-                                   &zigbee::ZigbeeNwk::NlmeNetworkDiscoveryRequest,
+                                   &ZigbeeNwk::NlmeNetworkDiscoveryRequest,
                                    zstack2->GetNwk(),
                                    netDiscParams2);
 

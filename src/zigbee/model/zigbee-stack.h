@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Tokushima University, Japan
+ * Copyright (c) 2024 Tokushima University, Japan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -34,6 +34,10 @@ namespace ns3
 {
 
 class Node;
+
+namespace zigbee
+{
+
 class ZigbeeNwk;
 
 /**
@@ -79,19 +83,19 @@ class ZigbeeStack : public Object
      *
      * \return the NWK object
      */
-    Ptr<zigbee::ZigbeeNwk> GetNwk() const;
+    Ptr<ZigbeeNwk> GetNwk() const;
     /**
      * Set the NWK layer used by this ZigbeeStack.
      *
      * \param nwk The NWK layer object
      */
-    void SetNwk(Ptr<zigbee::ZigbeeNwk> nwk);
+    void SetNwk(Ptr<ZigbeeNwk> nwk);
     /**
      * \brief Returns a smart pointer to the underlying LrWpanNetDevice.
      *
      * \return A smart pointer to the underlying LrWpanNetDevice.
      */
-    Ptr<LrWpanNetDevice> GetLrWpanNetDevice() const;
+    Ptr<lrwpan::LrWpanNetDevice> GetLrWpanNetDevice() const;
     /**
      * \brief Setup Zigbee to be the next set of higher layers for the specified LrWpanNetDevice.
      * All the packets incoming and outgoing from the LrWpanNetDevice will be
@@ -99,7 +103,7 @@ class ZigbeeStack : public Object
      *
      * \param [in] lrwpanDevice A smart pointer to the LrWpanNetDevice used by Zigbee.
      */
-    void SetLrWpanNetDevice(Ptr<LrWpanNetDevice> lrwpanDevice);
+    void SetLrWpanNetDevice(Ptr<lrwpan::LrWpanNetDevice> lrwpanDevice);
 
   protected:
     /**
@@ -113,12 +117,14 @@ class ZigbeeStack : public Object
      */
     void CompleteConfig();
 
-    Ptr<LrWpanMacBase> m_mac;     //!< The underlying LrWpan MAC connected to this Zigbee Stack.
-    Ptr<zigbee::ZigbeeNwk> m_nwk; //!< The Zigbee Network layer.
-    Ptr<Node> m_node;             //!< The node associated with this NetDevice.
-    Ptr<LrWpanNetDevice> m_lrwpanNetDevice; //!< Smart pointer to the underlying LrWpanNetDevice.
+    Ptr<lrwpan::LrWpanMacBase> m_mac; //!< The underlying LrWpan MAC connected to this Zigbee Stack.
+    Ptr<ZigbeeNwk> m_nwk;             //!< The Zigbee Network layer.
+    Ptr<Node> m_node;                 //!< The node associated with this NetDevice.
+    Ptr<lrwpan::LrWpanNetDevice>
+        m_lrwpanNetDevice; //!< Smart pointer to the underlying LrWpanNetDevice.
 };
 
+} // namespace zigbee
 } // namespace ns3
 
 #endif /* ZIGBEE_STACK_H */

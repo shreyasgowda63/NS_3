@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Tokushima University, Japan
+ * Copyright (c) 2024 Tokushima University, Japan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -37,7 +37,6 @@
 
 namespace ns3
 {
-
 namespace zigbee
 {
 

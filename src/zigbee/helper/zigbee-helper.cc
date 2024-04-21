@@ -45,24 +45,24 @@ ZigbeeHelper::SetDeviceAttribute(std::string n1, const AttributeValue& v1)
     m_stackFactory.Set(n1, v1);
 }
 
-ZigbeeStackContainer
+zigbee::ZigbeeStackContainer
 ZigbeeHelper::Install(const NetDeviceContainer c)
 {
     NS_LOG_FUNCTION(this);
 
-    ZigbeeStackContainer zigbeeStackContainer;
+    zigbee::ZigbeeStackContainer zigbeeStackContainer;
 
     for (uint32_t i = 0; i < c.GetN(); ++i)
     {
         Ptr<NetDevice> device = c.Get(i);
 
         NS_ASSERT_MSG(device != nullptr, "No LrWpanNetDevice found in the node " << i);
-        Ptr<LrWpanNetDevice> lrwpanNetdevice = DynamicCast<LrWpanNetDevice>(device);
+        Ptr<lrwpan::LrWpanNetDevice> lrwpanNetdevice = DynamicCast<lrwpan::LrWpanNetDevice>(device);
 
         Ptr<Node> node = lrwpanNetdevice->GetNode();
         NS_LOG_LOGIC("**** Install Zigbee on node " << node->GetId());
 
-        Ptr<ZigbeeStack> zigbeeStack = m_stackFactory.Create<ZigbeeStack>();
+        Ptr<zigbee::ZigbeeStack> zigbeeStack = m_stackFactory.Create<zigbee::ZigbeeStack>();
         zigbeeStackContainer.Add(zigbeeStack);
         node->AggregateObject(zigbeeStack);
         zigbeeStack->SetLrWpanNetDevice(lrwpanNetdevice);

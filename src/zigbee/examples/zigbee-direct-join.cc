@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Tokushima University, Japan
+ * Copyright (c) 2024 Tokushima University, Japan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -56,31 +56,32 @@
 #include <iostream>
 
 using namespace ns3;
-using namespace zigbee;
+using namespace ns3::lrwpan;
+using namespace ns3::zigbee;
 
-NS_LOG_COMPONENT_DEFINE("ZigbeeExample");
+NS_LOG_COMPONENT_DEFINE("ZigbeeDirectJoin");
 
 static void
-NwkDataIndication(Ptr<ZigbeeStack> stack, zigbee::NldeDataIndicationParams params, Ptr<Packet> p)
+NwkDataIndication(Ptr<ZigbeeStack> stack, NldeDataIndicationParams params, Ptr<Packet> p)
 {
     std::cout << "Received packet of size " << p->GetSize() << "\n";
 }
 
 static void
-NwkNetworkFormationConfirm(Ptr<ZigbeeStack> stack, zigbee::NlmeNetworkFormationConfirmParams params)
+NwkNetworkFormationConfirm(Ptr<ZigbeeStack> stack, NlmeNetworkFormationConfirmParams params)
 {
     std::cout << "NlmeNetworkFormationConfirmStatus = " << static_cast<uint32_t>(params.m_status)
               << "\n";
 }
 
 static void
-NwkDirectJoinConfirm(Ptr<ZigbeeStack> stack, zigbee::NlmeDirectJoinConfirmParams params)
+NwkDirectJoinConfirm(Ptr<ZigbeeStack> stack, NlmeDirectJoinConfirmParams params)
 {
     std::cout << "NlmeDirectJoinConfirmStatus = " << static_cast<uint32_t>(params.m_status) << "\n";
 }
 
 static void
-NwkJoinConfirm(Ptr<ZigbeeStack> stack, zigbee::NlmeJoinConfirmParams params)
+NwkJoinConfirm(Ptr<ZigbeeStack> stack, NlmeJoinConfirmParams params)
 {
     if (params.m_status == ZigbeeNwkStatus::SUCCESS)
     {
@@ -179,7 +180,7 @@ main(int argc, char* argv[])
     zstack2->GetNwk()->SetNlmeJoinConfirmCallback(MakeBoundCallback(&NwkJoinConfirm, zstack2));
 
     // 1 - Initiate the Zigbee coordinator, start the network
-    zigbee::NlmeNetworkFormationRequestParams netFormParams;
+    NlmeNetworkFormationRequestParams netFormParams;
     netFormParams.m_scanChannelList.channelPageCount = 1;
     netFormParams.m_scanChannelList.channelsField[0] = 0x07FFF800;
     netFormParams.m_scanDuration = 0;
@@ -188,23 +189,23 @@ main(int argc, char* argv[])
 
     Simulator::ScheduleWithContext(0,
                                    Seconds(0.0),
-                                   &zigbee::ZigbeeNwk::NlmeNetworkFormationRequest,
+                                   &ZigbeeNwk::NlmeNetworkFormationRequest,
                                    zstack0->GetNwk(),
                                    netFormParams);
 
     // Configure the capability information used in the joining devices.
-    zigbee::CapabilityInformation capaInfo;
-    capaInfo.SetDeviceType(zigbee::ROUTER);
+    CapabilityInformation capaInfo;
+    capaInfo.SetDeviceType(zigbee::MacDeviceType::ROUTER);
     capaInfo.SetAllocateAddrOn(true);
 
     // 2- Register dev 1 (Mac64Addr .....00:01) to Zigbee coordinator (dev 0) directly
-    zigbee::NlmeDirectJoinRequestParams directParams;
+    NlmeDirectJoinRequestParams directParams;
     directParams.m_capabilityInfo = capaInfo.GetCapability();
     directParams.m_deviceAddr = Mac64Address("00:00:00:00:00:00:00:01");
 
     Simulator::ScheduleWithContext(0,
                                    Seconds(5.0),
-                                   &zigbee::ZigbeeNwk::NlmeDirectJoinRequest,
+                                   &ZigbeeNwk::NlmeDirectJoinRequest,
                                    zstack0->GetNwk(),
                                    directParams);
 
@@ -216,8 +217,8 @@ main(int argc, char* argv[])
     // - Future communications can fail if extendendPanId is set incorrectly,
     //   this value is the value of the PAN coordinator extended address (IEEEAddress).
     //   This value cannot be verified during a DIRECT_OR_REJOIN join type.
-    zigbee::NlmeJoinRequestParams joinParams;
-    joinParams.m_rejoinNetwork = zigbee::DIRECT_OR_REJOIN;
+    NlmeJoinRequestParams joinParams;
+    joinParams.m_rejoinNetwork = zigbee::JoiningMethod::DIRECT_OR_REJOIN;
     joinParams.m_scanChannelList.channelPageCount = 1;
     joinParams.m_scanChannelList.channelsField[0] = 0x07FFF800;
     joinParams.m_capabilityInfo = capaInfo.GetCapability();
@@ -225,31 +226,31 @@ main(int argc, char* argv[])
 
     Simulator::ScheduleWithContext(1,
                                    Seconds(5.5),
-                                   &zigbee::ZigbeeNwk::NlmeJoinRequest,
+                                   &ZigbeeNwk::NlmeJoinRequest,
                                    zstack1->GetNwk(),
                                    joinParams);
 
     // 4 - Use start-router on device 1, to initiate it as router
     //     (i.e. it becomes able to accept request from other devices to join the network)
-    zigbee::NlmeStartRouterRequestParams startRouterParams;
+    NlmeStartRouterRequestParams startRouterParams;
     Simulator::ScheduleWithContext(1,
                                    Seconds(5.6),
-                                   &zigbee::ZigbeeNwk::NlmeStartRouterRequest,
+                                   &ZigbeeNwk::NlmeStartRouterRequest,
                                    zstack1->GetNwk(),
                                    startRouterParams);
 
-    zigbee::NlmeDirectJoinRequestParams directParams2;
+    NlmeDirectJoinRequestParams directParams2;
     directParams2.m_capabilityInfo = capaInfo.GetCapability();
     directParams2.m_deviceAddr = Mac64Address("00:00:00:00:00:00:00:02");
 
     Simulator::ScheduleWithContext(1,
                                    Seconds(6.0),
-                                   &zigbee::ZigbeeNwk::NlmeDirectJoinRequest,
+                                   &ZigbeeNwk::NlmeDirectJoinRequest,
                                    zstack1->GetNwk(),
                                    directParams2);
 
-    zigbee::NlmeJoinRequestParams joinParams2;
-    joinParams2.m_rejoinNetwork = zigbee::DIRECT_OR_REJOIN;
+    NlmeJoinRequestParams joinParams2;
+    joinParams2.m_rejoinNetwork = zigbee::JoiningMethod::DIRECT_OR_REJOIN;
     joinParams2.m_scanChannelList.channelPageCount = 1;
     joinParams2.m_scanChannelList.channelsField[0] = 0x07FFF800;
     joinParams2.m_capabilityInfo = capaInfo.GetCapability();
@@ -257,7 +258,7 @@ main(int argc, char* argv[])
 
     Simulator::ScheduleWithContext(2,
                                    Seconds(6.1),
-                                   &zigbee::ZigbeeNwk::NlmeJoinRequest,
+                                   &ZigbeeNwk::NlmeJoinRequest,
                                    zstack2->GetNwk(),
                                    joinParams2);
 

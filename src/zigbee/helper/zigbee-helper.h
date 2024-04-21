@@ -71,7 +71,7 @@ class ZigbeeHelper
      * \param [in] c The NetDevice container with LrWpanNetDevices.
      * \return A container with the newly created ZigbeeStacks.
      */
-    ZigbeeStackContainer Install(NetDeviceContainer c);
+    zigbee::ZigbeeStackContainer Install(NetDeviceContainer c);
 
     /**
      * Assign a fixed random variable stream number to the random variables

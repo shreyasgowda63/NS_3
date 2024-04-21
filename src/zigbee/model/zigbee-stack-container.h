@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Tokushima University, Japan
+ * Copyright (c) 2024 Tokushima University, Japan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -27,6 +27,8 @@
 #include <vector>
 
 namespace ns3
+{
+namespace zigbee
 {
 
 /**
@@ -115,6 +117,7 @@ class ZigbeeStackContainer
     std::vector<Ptr<ZigbeeStack>> m_stacks; //!< ZigbeeStack smart pointers
 };
 
+} // namespace zigbee
 } // namespace ns3
 
 #endif /* ZIGBEE_STACK_CONTAINER_H */

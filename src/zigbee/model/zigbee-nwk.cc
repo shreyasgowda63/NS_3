@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Tokushima University, Japan
+ * Copyright (c) 2024 Tokushima University, Japan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -28,18 +28,18 @@
 #include <ns3/packet.h>
 #include <ns3/simulator.h>
 
+using namespace ns3::lrwpan;
+
 #undef NS_LOG_APPEND_CONTEXT
 #define NS_LOG_APPEND_CONTEXT                                                                      \
     std::clog << "[" << m_nwkNetworkAddress << " | " << m_nwkIeeeAddress << "] ";
 
 namespace ns3
 {
-
-NS_LOG_COMPONENT_DEFINE("ZigbeeNwk");
-
 namespace zigbee
 {
 
+NS_LOG_COMPONENT_DEFINE("ZigbeeNwk");
 NS_OBJECT_ENSURE_REGISTERED(ZigbeeNwk);
 
 TypeId
@@ -178,7 +178,7 @@ ZigbeeNwk::SetMac(Ptr<LrWpanMacBase> mac)
     m_mac = mac;
     //  m_nwkIeeeAddress = m_mac->GetExtendedAddress();
     // Update IEEE Nwk Address
-    m_mac->MlmeGetRequest(LrWpanMacPibAttributeIdentifier::macExtendedAddress);
+    m_mac->MlmeGetRequest(MacPibAttributeIdentifier::macExtendedAddress);
 }
 
 Ptr<LrWpanMacBase>
@@ -575,7 +575,7 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
 
     if (m_pendPrimitiveNwk == NLME_NETWORK_FORMATION && params.m_scanType == MLMESCAN_ED)
     {
-        if (params.m_status != LrWpanMacStatus::SUCCESS)
+        if (params.m_status != MacStatus::SUCCESS)
         {
             m_pendPrimitiveNwk = NLDE_NLME_NONE;
             m_netFormParams = {};
@@ -644,8 +644,7 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
     else if (m_pendPrimitiveNwk == NLME_NETWORK_FORMATION && params.m_scanType == MLMESCAN_ACTIVE)
     {
         // See Zigbee specification r22.1.0, Section 3.2.2.5.3,
-        if (params.m_status == LrWpanMacStatus::NO_BEACON ||
-            params.m_status == LrWpanMacStatus::SUCCESS)
+        if (params.m_status == MacStatus::NO_BEACON || params.m_status == MacStatus::SUCCESS)
         {
             uint8_t channel = 0;
             uint8_t page = 0;
@@ -654,7 +653,7 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
             // TODO: We should  scanned channels on each interface
             //       (only possible when more interfaces are supported.)
 
-            if (params.m_status == LrWpanMacStatus::NO_BEACON)
+            if (params.m_status == MacStatus::NO_BEACON)
             {
                 // All channels provided in the active scan were acceptable
                 // (No coordinators found). Take the first channel in the list an
@@ -704,7 +703,7 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
                          << std::dec << " chosen.");
 
             // Set the device short address (3.2.2.5.3 , 6.f)
-            Ptr<LrWpanMacPibAttributes> pibAttr = Create<LrWpanMacPibAttributes>();
+            Ptr<MacPibAttributes> pibAttr = Create<MacPibAttributes>();
             if (m_netFormParams.m_distributedNetwork)
             {
                 pibAttr->macShortAddress = m_netFormParams.m_distributedNetworkAddress;
@@ -716,7 +715,7 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
                 m_nwkNetworkAddress = Mac16Address("00:00");
             }
             // Set Short Address and continue with beacon payload afterwards.
-            m_mac->MlmeSetRequest(LrWpanMacPibAttributeIdentifier::macShortAddress, pibAttr);
+            m_mac->MlmeSetRequest(MacPibAttributeIdentifier::macShortAddress, pibAttr);
         }
         else
         {
@@ -732,16 +731,16 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
                 NlmeNetworkFormationConfirmParams confirmParams;
                 switch (params.m_status)
                 {
-                case LrWpanMacStatus::COUNTER_ERROR:
+                case MacStatus::COUNTER_ERROR:
                     confirmParams.m_status = ZigbeeNwkStatus::COUNTER_ERROR;
                     break;
-                case LrWpanMacStatus::FRAME_TOO_LONG:
+                case MacStatus::FRAME_TOO_LONG:
                     confirmParams.m_status = ZigbeeNwkStatus::FRAME_TOO_LONG;
                     break;
-                case LrWpanMacStatus::UNAVAILABLE_KEY:
+                case MacStatus::UNAVAILABLE_KEY:
                     confirmParams.m_status = ZigbeeNwkStatus::UNAVAILABLE_KEY;
                     break;
-                case LrWpanMacStatus::UNSUPPORTED_SECURITY:
+                case MacStatus::UNSUPPORTED_SECURITY:
                     confirmParams.m_status = ZigbeeNwkStatus::UNSUPPORTED_SECURITY;
                     break;
                 default:
@@ -756,7 +755,7 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
         NlmeNetworkDiscoveryConfirmParams netDiscConfirmParams;
         m_pendPrimitiveNwk = NLDE_NLME_NONE;
 
-        if (params.m_status == LrWpanMacStatus::SUCCESS)
+        if (params.m_status == MacStatus::SUCCESS)
         {
             NS_LOG_DEBUG("[NLME-NETWORK-DISCOVERY.request]: Active scan complete, "
                          << m_networkDescriptorList.size() << " join capable device(s) found");
@@ -774,25 +773,25 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
 
             switch (params.m_status)
             {
-            case LrWpanMacStatus::LIMIT_REACHED:
+            case MacStatus::LIMIT_REACHED:
                 netDiscConfirmParams.m_status = ZigbeeNwkStatus::LIMIT_REACHED;
                 break;
-            case LrWpanMacStatus::NO_BEACON:
+            case MacStatus::NO_BEACON:
                 netDiscConfirmParams.m_status = ZigbeeNwkStatus::NO_NETWORKS;
                 break;
-            case LrWpanMacStatus::SCAN_IN_PROGRESS:
+            case MacStatus::SCAN_IN_PROGRESS:
                 netDiscConfirmParams.m_status = ZigbeeNwkStatus::SCAN_IN_PROGRESS;
                 break;
-            case LrWpanMacStatus::COUNTER_ERROR:
+            case MacStatus::COUNTER_ERROR:
                 netDiscConfirmParams.m_status = ZigbeeNwkStatus::COUNTER_ERROR;
                 break;
-            case LrWpanMacStatus::FRAME_TOO_LONG:
+            case MacStatus::FRAME_TOO_LONG:
                 netDiscConfirmParams.m_status = ZigbeeNwkStatus::FRAME_TOO_LONG;
                 break;
-            case LrWpanMacStatus::UNAVAILABLE_KEY:
+            case MacStatus::UNAVAILABLE_KEY:
                 netDiscConfirmParams.m_status = ZigbeeNwkStatus::UNAVAILABLE_KEY;
                 break;
-            case LrWpanMacStatus::UNSUPPORTED_SECURITY:
+            case MacStatus::UNSUPPORTED_SECURITY:
                 netDiscConfirmParams.m_status = ZigbeeNwkStatus::UNSUPPORTED_SECURITY;
                 break;
             default:
@@ -808,7 +807,7 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
     else if (m_pendPrimitiveNwk == NLME_JOIN && params.m_scanType == MLMESCAN_ORPHAN)
     {
         // TODO: Add macInterfaceIndex and channelListStructure params when supported
-        if (params.m_status == LrWpanMacStatus::SUCCESS)
+        if (params.m_status == MacStatus::SUCCESS)
         {
             // Orphan scan was successful (Join success), first update the extended
             // PAN id and the capability information, then the
@@ -817,7 +816,7 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
             // and finally the join confirmation
             m_nwkExtendedPanId = m_joinParams.m_extendedPanId;
             m_nwkCapabilityInformation = m_joinParams.m_capabilityInfo;
-            m_mac->MlmeGetRequest(LrWpanMacPibAttributeIdentifier::macShortAddress);
+            m_mac->MlmeGetRequest(MacPibAttributeIdentifier::macShortAddress);
         }
         else
         {
@@ -849,7 +848,7 @@ ZigbeeNwk::MlmeAssociateConfirm(MlmeAssociateConfirmParams params)
 
         Ptr<NeighborTableEntry> entry;
 
-        if (params.m_status == LrWpanMacStatus::SUCCESS)
+        if (params.m_status == MacStatus::SUCCESS)
         {
             joinConfirmParams.m_status = ZigbeeNwkStatus::SUCCESS;
             joinConfirmParams.m_networkAddress = params.m_assocShortAddr;
@@ -878,8 +877,8 @@ ZigbeeNwk::MlmeAssociateConfirm(MlmeAssociateConfirmParams params)
         {
             switch (params.m_status)
             {
-            case LrWpanMacStatus::ACCESS_DENIED:
-            case LrWpanMacStatus::FULL_CAPACITY:
+            case MacStatus::ACCESS_DENIED:
+            case MacStatus::FULL_CAPACITY:
                 // Discard neighbor as potential parent
                 if (m_nwkNeighborTable.LookUpEntry(m_associateParams.extAddress, entry))
                 {
@@ -892,10 +891,10 @@ ZigbeeNwk::MlmeAssociateConfirm(MlmeAssociateConfirmParams params)
                 }
                 joinConfirmParams.m_status = ZigbeeNwkStatus::NOT_PERMITED;
                 break;
-            case LrWpanMacStatus::NO_ACK:
+            case MacStatus::NO_ACK:
                 joinConfirmParams.m_status = ZigbeeNwkStatus::NO_ACK;
                 break;
-            case LrWpanMacStatus::CHANNEL_ACCESS_FAILURE:
+            case MacStatus::CHANNEL_ACCESS_FAILURE:
                 joinConfirmParams.m_status = ZigbeeNwkStatus::CHANNEL_ACCESS_FAILURE;
                 break;
             default:
@@ -923,34 +922,34 @@ ZigbeeNwk::MlmeStartConfirm(MlmeStartConfirmParams params)
     ZigbeeNwkStatus nwkConfirmStatus;
     switch (params.m_status)
     {
-    case LrWpanMacStatus::SUCCESS:
+    case MacStatus::SUCCESS:
         nwkConfirmStatus = ZigbeeNwkStatus::SUCCESS;
         break;
-    case LrWpanMacStatus::NO_SHORT_ADDRESS:
+    case MacStatus::NO_SHORT_ADDRESS:
         nwkConfirmStatus = ZigbeeNwkStatus::NO_SHORT_ADDRESS;
         break;
-    case LrWpanMacStatus::SUPERFRAME_OVERLAP:
+    case MacStatus::SUPERFRAME_OVERLAP:
         nwkConfirmStatus = ZigbeeNwkStatus::SUPERFRAME_OVERLAP;
         break;
-    case LrWpanMacStatus::TRACKING_OFF:
+    case MacStatus::TRACKING_OFF:
         nwkConfirmStatus = ZigbeeNwkStatus::TRACKING_OFF;
         break;
-    case LrWpanMacStatus::INVALID_PARAMETER:
+    case MacStatus::INVALID_PARAMETER:
         nwkConfirmStatus = ZigbeeNwkStatus::INVALID_PARAMETER;
         break;
-    case LrWpanMacStatus::COUNTER_ERROR:
+    case MacStatus::COUNTER_ERROR:
         nwkConfirmStatus = ZigbeeNwkStatus::COUNTER_ERROR;
         break;
-    case LrWpanMacStatus::UNAVAILABLE_KEY:
+    case MacStatus::UNAVAILABLE_KEY:
         nwkConfirmStatus = ZigbeeNwkStatus::UNAVAILABLE_KEY;
         break;
-    case LrWpanMacStatus::UNSUPPORTED_SECURITY:
+    case MacStatus::UNSUPPORTED_SECURITY:
         nwkConfirmStatus = ZigbeeNwkStatus::UNSUPPORTED_SECURITY;
         break;
-    case LrWpanMacStatus::CHANNEL_ACCESS_FAILURE:
+    case MacStatus::CHANNEL_ACCESS_FAILURE:
         nwkConfirmStatus = ZigbeeNwkStatus::CHANNEL_ACCESS_FAILURE;
         break;
-    case LrWpanMacStatus::FRAME_TOO_LONG:
+    case MacStatus::FRAME_TOO_LONG:
         nwkConfirmStatus = ZigbeeNwkStatus::FRAME_TOO_LONG;
         break;
     default:
@@ -1009,15 +1008,15 @@ ZigbeeNwk::MlmeSetConfirm(MlmeSetConfirmParams params)
 {
     if (m_pendPrimitiveNwk == NLME_NETWORK_FORMATION)
     {
-        if (params.m_status == LrWpanMacStatus::SUCCESS &&
-            params.id == LrWpanMacPibAttributeIdentifier::macShortAddress)
+        if (params.m_status == MacStatus::SUCCESS &&
+            params.id == MacPibAttributeIdentifier::macShortAddress)
         {
             // Section (3.2.2.5.3 , 6.g)
             // Getting this device MAC extended address using MLME-GET
-            m_mac->MlmeGetRequest(LrWpanMacPibAttributeIdentifier::macExtendedAddress);
+            m_mac->MlmeGetRequest(MacPibAttributeIdentifier::macExtendedAddress);
         }
-        else if (params.m_status == LrWpanMacStatus::SUCCESS &&
-                 params.id == LrWpanMacPibAttributeIdentifier::macBeaconPayload)
+        else if (params.m_status == MacStatus::SUCCESS &&
+                 params.id == MacPibAttributeIdentifier::macBeaconPayload)
         {
             // Finalize Network Formation (Start network)
             MlmeStartRequestParams startParams;
@@ -1059,8 +1058,8 @@ ZigbeeNwk::MlmeSetConfirm(MlmeSetConfirmParams params)
     }
     else if (m_pendPrimitiveNwk == NLME_START_ROUTER)
     {
-        if (params.m_status == LrWpanMacStatus::SUCCESS &&
-            params.id == LrWpanMacPibAttributeIdentifier::macBeaconPayload)
+        if (params.m_status == MacStatus::SUCCESS &&
+            params.id == MacPibAttributeIdentifier::macBeaconPayload)
         {
             m_pendPrimitiveNwk = NLDE_NLME_NONE;
             if (!m_nlmeStartRouterConfirmCallback.IsNull())
@@ -1078,14 +1077,13 @@ ZigbeeNwk::MlmeSetConfirm(MlmeSetConfirmParams params)
 }
 
 void
-ZigbeeNwk::MlmeGetConfirm(LrWpanMacStatus status,
-                          LrWpanMacPibAttributeIdentifier id,
-                          Ptr<LrWpanMacPibAttributes> attribute)
+ZigbeeNwk::MlmeGetConfirm(MacStatus status,
+                          MacPibAttributeIdentifier id,
+                          Ptr<MacPibAttributes> attribute)
 {
     if (m_pendPrimitiveNwk == NLME_NETWORK_FORMATION)
     {
-        if (id == LrWpanMacPibAttributeIdentifier::macExtendedAddress &&
-            status == LrWpanMacStatus::SUCCESS)
+        if (id == MacPibAttributeIdentifier::macExtendedAddress && status == MacStatus::SUCCESS)
         {
             // Section (3.2.2.5.3 , 6.g)
             // Set nwkExtendedPanId and m_nwkIeeeAddress and nwkPanId
@@ -1095,7 +1093,7 @@ ZigbeeNwk::MlmeGetConfirm(LrWpanMacStatus status,
 
             // Configure the capability information of the PAN coordinator
             CapabilityInformation capaInfo;
-            capaInfo.SetDeviceType(zigbee::ROUTER);
+            capaInfo.SetDeviceType(zigbee::MacDeviceType::ROUTER);
             m_nwkCapabilityInformation = capaInfo.GetCapability();
 
             // Set Beacon payload before starting a network
@@ -1117,14 +1115,14 @@ ZigbeeNwk::MlmeGetConfirm(LrWpanMacStatus status,
             }
         }
     }
-    else if (m_pendPrimitiveNwk == NLME_JOIN && status == LrWpanMacStatus::SUCCESS)
+    else if (m_pendPrimitiveNwk == NLME_JOIN && status == MacStatus::SUCCESS)
     {
-        if (id == LrWpanMacPibAttributeIdentifier::macShortAddress)
+        if (id == MacPibAttributeIdentifier::macShortAddress)
         {
             m_nwkNetworkAddress = attribute->macShortAddress;
-            m_mac->MlmeGetRequest(LrWpanMacPibAttributeIdentifier::macPanId);
+            m_mac->MlmeGetRequest(MacPibAttributeIdentifier::macPanId);
         }
-        else if (id == LrWpanMacPibAttributeIdentifier::macPanId)
+        else if (id == MacPibAttributeIdentifier::macPanId)
         {
             m_nwkPanId = attribute->macPanId;
 
@@ -1144,21 +1142,21 @@ ZigbeeNwk::MlmeGetConfirm(LrWpanMacStatus status,
             }
         }
     }
-    else if (status == LrWpanMacStatus::SUCCESS)
+    else if (status == MacStatus::SUCCESS)
     {
-        if (id == LrWpanMacPibAttributeIdentifier::macExtendedAddress)
+        if (id == MacPibAttributeIdentifier::macExtendedAddress)
         {
             m_nwkIeeeAddress = attribute->macExtendedAddress;
         }
-        else if (id == LrWpanMacPibAttributeIdentifier::macShortAddress)
+        else if (id == MacPibAttributeIdentifier::macShortAddress)
         {
             m_nwkNetworkAddress = attribute->macShortAddress;
         }
-        else if (id == LrWpanMacPibAttributeIdentifier::macPanId)
+        else if (id == MacPibAttributeIdentifier::macPanId)
         {
             m_nwkPanId = attribute->macPanId;
         }
-        else if (id == LrWpanMacPibAttributeIdentifier::pCurrentChannel)
+        else if (id == MacPibAttributeIdentifier::pCurrentChannel)
         {
             m_currentChannel = attribute->pCurrentChannel;
         }
@@ -1209,7 +1207,7 @@ ZigbeeNwk::MlmeCommStatusIndication(MlmeCommStatusIndicationParams params)
 {
     // Return the results to the next layer of the router or coordinator
     // only after a SUCCESSFUL join to the network.
-    if (params.m_status == LrWpanMacStatus::SUCCESS)
+    if (params.m_status == MacStatus::SUCCESS)
     {
         if (params.m_dstExtAddr == m_joinIndParams.m_extendedAddress &&
             m_joinIndParams.m_rejoinNetwork == DIRECT_OR_REJOIN)
@@ -1245,7 +1243,7 @@ ZigbeeNwk::MlmeBeaconNotifyIndication(MlmeBeaconNotifyIndicationParams params)
     // during a network-discovery
 
     if ((params.m_sdu->GetSize() == 0) ||
-        (params.m_panDescriptor.m_coorAddrMode != LrWpanAddressMode::SHORT_ADDR))
+        (params.m_panDescriptor.m_coorAddrMode != lrwpan::AddressMode::SHORT_ADDR))
     {
         // The beacon do not contain beacon payload or is for a different network
         // stop any further process.
@@ -1359,7 +1357,7 @@ ZigbeeNwk::MlmeAssociateIndication(MlmeAssociateIndicationParams params)
         if (entry->GetDeviceType() == devType)
         {
             MlmeAssociateResponseParams responseParams;
-            responseParams.m_status = LrWpanMacStatus::SUCCESS;
+            responseParams.m_status = MacStatus::SUCCESS;
             responseParams.m_assocShortAddr = entry->GetNwkAddr();
             responseParams.m_extDevAddr = entry->GetExtAddr();
             m_mac->MlmeAssociateResponse(responseParams);
@@ -1412,7 +1410,7 @@ ZigbeeNwk::MlmeAssociateIndication(MlmeAssociateIndicationParams params)
 
         if (m_nwkNeighborTable.AddEntry(newEntry))
         {
-            responseParams.m_status = LrWpanMacStatus::SUCCESS;
+            responseParams.m_status = MacStatus::SUCCESS;
             responseParams.m_assocShortAddr = allocatedAddr;
 
             // Temporally store the NLME-JOIN.indications parameters that will be
@@ -1425,7 +1423,7 @@ ZigbeeNwk::MlmeAssociateIndication(MlmeAssociateIndicationParams params)
         }
         else
         {
-            responseParams.m_status = LrWpanMacStatus::FULL_CAPACITY;
+            responseParams.m_status = MacStatus::FULL_CAPACITY;
             responseParams.m_assocShortAddr = Mac16Address("FF:FF");
         }
 
@@ -1932,7 +1930,7 @@ ZigbeeNwk::NlmeJoinRequest(NlmeJoinRequestParams params)
 
             if (bestParentEntry->GetNwkAddr() != Mac16Address("FF:FE"))
             {
-                assocParams.m_coordAddrMode = LrWpanAddressMode::SHORT_ADDR;
+                assocParams.m_coordAddrMode = lrwpan::AddressMode::SHORT_ADDR;
                 assocParams.m_coordShortAddr = bestParentEntry->GetNwkAddr();
                 NS_LOG_DEBUG("Send Assoc. Req. to [" << bestParentEntry->GetNwkAddr()
                                                      << "] in \nPAN id and Ext PAN id: " << std::hex
@@ -1941,7 +1939,7 @@ ZigbeeNwk::NlmeJoinRequest(NlmeJoinRequestParams params)
             }
             else
             {
-                assocParams.m_coordAddrMode = LrWpanAddressMode::EXT_ADDR;
+                assocParams.m_coordAddrMode = lrwpan::AddressMode::EXT_ADDR;
                 assocParams.m_coordExtAddr = bestParentEntry->GetExtAddr();
                 NS_LOG_DEBUG("Send Assoc. Req. to [" << bestParentEntry->GetNwkAddr()
                                                      << "] in \nPAN id and Ext PAN id: " << std::hex
@@ -2006,7 +2004,7 @@ ZigbeeNwk::NlmeStartRouterRequest(NlmeStartRouterRequestParams params)
         m_pendPrimitiveNwk = NLME_START_ROUTER;
 
         // request an update of the current channel in use in the PHY
-        m_mac->MlmeGetRequest(LrWpanMacPibAttributeIdentifier::pCurrentChannel);
+        m_mac->MlmeGetRequest(MacPibAttributeIdentifier::pCurrentChannel);
 
         // TODO: MLME-START.request should be issue to all the interfaces in the
         // nwkMacInterfaceTable (currently not supported), for the moment only a single
@@ -2261,7 +2259,7 @@ ZigbeeNwk::UpdateBeaconPayload()
 {
     NS_LOG_FUNCTION(this);
 
-    Ptr<LrWpanMacPibAttributes> pibAttr = Create<LrWpanMacPibAttributes>();
+    Ptr<MacPibAttributes> pibAttr = Create<MacPibAttributes>();
     ZigbeeBeaconPayload beaconPayload;
     Ptr<Packet> payload = Create<Packet>();
     beaconPayload.SetStackProfile(static_cast<uint8_t>(m_nwkStackProfile));
@@ -2274,7 +2272,7 @@ ZigbeeNwk::UpdateBeaconPayload()
     payload->AddHeader(beaconPayload);
     pibAttr->macBeaconPayload = payload;
     pibAttr->macBeaconPayloadLength = payload->GetSize();
-    m_mac->MlmeSetRequest(LrWpanMacPibAttributeIdentifier::macBeaconPayload, pibAttr);
+    m_mac->MlmeSetRequest(MacPibAttributeIdentifier::macBeaconPayload, pibAttr);
 }
 
 } // namespace zigbee

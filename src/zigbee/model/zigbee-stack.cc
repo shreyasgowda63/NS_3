@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Tokushima University, Japan
+ * Copyright (c) 2024 Tokushima University, Japan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -27,9 +27,12 @@
 #include "ns3/pointer.h"
 #include "ns3/simulator.h"
 
+using namespace ns3::lrwpan;
+
 namespace ns3
 {
-
+namespace zigbee
+{
 NS_LOG_COMPONENT_DEFINE("ZigbeeStack");
 
 NS_OBJECT_ENSURE_REGISTERED(ZigbeeStack);
@@ -75,27 +78,24 @@ ZigbeeStack::CompleteConfig()
     }
 
     m_nwk->SetMac(m_mac);
-    m_mac->SetMcpsDataIndicationCallback(
-        MakeCallback(&zigbee::ZigbeeNwk::McpsDataIndication, m_nwk));
-    m_mac->SetMlmeOrphanIndicationCallback(
-        MakeCallback(&zigbee::ZigbeeNwk::MlmeOrphanIndication, m_nwk));
+    m_mac->SetMcpsDataIndicationCallback(MakeCallback(&ZigbeeNwk::McpsDataIndication, m_nwk));
+    m_mac->SetMlmeOrphanIndicationCallback(MakeCallback(&ZigbeeNwk::MlmeOrphanIndication, m_nwk));
     m_mac->SetMlmeCommStatusIndicationCallback(
-        MakeCallback(&zigbee::ZigbeeNwk::MlmeCommStatusIndication, m_nwk));
+        MakeCallback(&ZigbeeNwk::MlmeCommStatusIndication, m_nwk));
     m_mac->SetMlmeBeaconNotifyIndicationCallback(
-        MakeCallback(&zigbee::ZigbeeNwk::MlmeBeaconNotifyIndication, m_nwk));
+        MakeCallback(&ZigbeeNwk::MlmeBeaconNotifyIndication, m_nwk));
     m_mac->SetMlmeAssociateIndicationCallback(
-        MakeCallback(&zigbee::ZigbeeNwk::MlmeAssociateIndication, m_nwk));
-    m_mac->SetMcpsDataConfirmCallback(MakeCallback(&zigbee::ZigbeeNwk::McpsDataConfirm, m_nwk));
-    m_mac->SetMlmeScanConfirmCallback(MakeCallback(&zigbee::ZigbeeNwk::MlmeScanConfirm, m_nwk));
-    m_mac->SetMlmeStartConfirmCallback(MakeCallback(&zigbee::ZigbeeNwk::MlmeStartConfirm, m_nwk));
-    m_mac->SetMlmeSetConfirmCallback(MakeCallback(&zigbee::ZigbeeNwk::MlmeSetConfirm, m_nwk));
-    m_mac->SetMlmeGetConfirmCallback(MakeCallback(&zigbee::ZigbeeNwk::MlmeGetConfirm, m_nwk));
-    m_mac->SetMlmeAssociateConfirmCallback(
-        MakeCallback(&zigbee::ZigbeeNwk::MlmeAssociateConfirm, m_nwk));
+        MakeCallback(&ZigbeeNwk::MlmeAssociateIndication, m_nwk));
+    m_mac->SetMcpsDataConfirmCallback(MakeCallback(&ZigbeeNwk::McpsDataConfirm, m_nwk));
+    m_mac->SetMlmeScanConfirmCallback(MakeCallback(&ZigbeeNwk::MlmeScanConfirm, m_nwk));
+    m_mac->SetMlmeStartConfirmCallback(MakeCallback(&ZigbeeNwk::MlmeStartConfirm, m_nwk));
+    m_mac->SetMlmeSetConfirmCallback(MakeCallback(&ZigbeeNwk::MlmeSetConfirm, m_nwk));
+    m_mac->SetMlmeGetConfirmCallback(MakeCallback(&ZigbeeNwk::MlmeGetConfirm, m_nwk));
+    m_mac->SetMlmeAssociateConfirmCallback(MakeCallback(&ZigbeeNwk::MlmeAssociateConfirm, m_nwk));
     // TODO: complete other callback hooks with the MAC
 
     // Obtain Extended address as soon as NWK is set to begin operations
-    m_mac->MlmeGetRequest(LrWpanMacPibAttributeIdentifier::macExtendedAddress);
+    m_mac->MlmeGetRequest(MacPibAttributeIdentifier::macExtendedAddress);
 }
 
 void
@@ -150,4 +150,5 @@ ZigbeeStack::SetNwk(Ptr<zigbee::ZigbeeNwk> nwk)
     CompleteConfig();
 }
 
+} // namespace zigbee
 } // namespace ns3

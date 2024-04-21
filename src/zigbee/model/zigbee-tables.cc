@@ -30,11 +30,10 @@
 
 namespace ns3
 {
-
-NS_LOG_COMPONENT_DEFINE("ZigbeeNwkTables");
-
 namespace zigbee
 {
+
+NS_LOG_COMPONENT_DEFINE("ZigbeeNwkTables");
 
 RoutingTableEntry::RoutingTableEntry(Mac16Address dst,
                                      RouteStatus status,

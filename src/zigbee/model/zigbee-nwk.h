@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Tokushima University, Japan
+ * Copyright (c) 2024 Tokushima University, Japan
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -642,14 +642,14 @@ class ZigbeeNwk : public Object
      *
      * \param mac The pointer to the underlying LrWpan MAC to set to this Zigbee NWK
      */
-    void SetMac(Ptr<LrWpanMacBase> mac);
+    void SetMac(Ptr<lrwpan::LrWpanMacBase> mac);
 
     /**
      * Get the underlying MAC used by the current Zigbee NWK.
      *
      * \return The pointer to the underlying MAC object currently connected to the Zigbee NWK.
      */
-    Ptr<LrWpanMacBase> GetMac();
+    Ptr<lrwpan::LrWpanMacBase> GetMac();
 
     /**
      * Print the entries in the routing table
@@ -680,7 +680,7 @@ class ZigbeeNwk : public Object
      *  @param params The MCPS-DATA.indication parameters.
      *  @param msdu The set of octets forming the MSDU.
      */
-    void McpsDataIndication(McpsDataIndicationParams params, Ptr<Packet> msdu);
+    void McpsDataIndication(lrwpan::McpsDataIndicationParams params, Ptr<Packet> msdu);
 
     /**
      *  IEEE 802.15.4-2011 section 6.3.2
@@ -689,7 +689,7 @@ class ZigbeeNwk : public Object
      *
      *  @param params The MCPS-DATA.confirm parameters.
      */
-    void McpsDataConfirm(McpsDataConfirmParams params);
+    void McpsDataConfirm(lrwpan::McpsDataConfirmParams params);
 
     /**
      *  IEEE 802.15.4-2011 section 6.2.10.2
@@ -698,7 +698,7 @@ class ZigbeeNwk : public Object
      *
      *  @param params The MLME-SCAN.confirm parameters.
      */
-    void MlmeScanConfirm(MlmeScanConfirmParams params);
+    void MlmeScanConfirm(lrwpan::MlmeScanConfirmParams params);
 
     /**
      * IEEE 802.15.4-2011 section
@@ -707,7 +707,7 @@ class ZigbeeNwk : public Object
      *
      *  @param params The MLME-ASSOCIATE.confirm parameters.
      */
-    void MlmeAssociateConfirm(MlmeAssociateConfirmParams params);
+    void MlmeAssociateConfirm(lrwpan::MlmeAssociateConfirmParams params);
 
     /**
      *  IEEE 802.15.4-2011 section 7.1.14.2
@@ -716,7 +716,7 @@ class ZigbeeNwk : public Object
      *
      *  @param params The MLME-START.confirm parameters.
      */
-    void MlmeStartConfirm(MlmeStartConfirmParams params);
+    void MlmeStartConfirm(lrwpan::MlmeStartConfirmParams params);
 
     /**
      * IEEE 802.15.4-2011 section 6.2.11.2
@@ -725,7 +725,7 @@ class ZigbeeNwk : public Object
      *
      * @param params The MLME-SET.confirm params
      */
-    void MlmeSetConfirm(MlmeSetConfirmParams params);
+    void MlmeSetConfirm(lrwpan::MlmeSetConfirmParams params);
 
     /**
      * IEEE 802.15.4-2011 section 6.2.5.1
@@ -736,9 +736,9 @@ class ZigbeeNwk : public Object
      * @param id The identififier of the attribute requested
      * @param attribute The value of of the attribute requested
      */
-    void MlmeGetConfirm(LrWpanMacStatus status,
-                        LrWpanMacPibAttributeIdentifier id,
-                        Ptr<LrWpanMacPibAttributes> attribute);
+    void MlmeGetConfirm(lrwpan::MacStatus status,
+                        lrwpan::MacPibAttributeIdentifier id,
+                        Ptr<lrwpan::MacPibAttributes> attribute);
 
     /**
      *  IEEE 802.15.4-2011 sections 6.2.7.1,
@@ -750,7 +750,7 @@ class ZigbeeNwk : public Object
      *
      *  @param params The MLME-ORPHAN.indication parameters
      */
-    void MlmeOrphanIndication(MlmeOrphanIndicationParams params);
+    void MlmeOrphanIndication(lrwpan::MlmeOrphanIndicationParams params);
 
     /**
      *  IEEE 802.15.4-2011 section 6.2.4.2
@@ -759,7 +759,7 @@ class ZigbeeNwk : public Object
      *
      *  @param params The MLME-COMM-STATUS.indication parameters
      */
-    void MlmeCommStatusIndication(MlmeCommStatusIndicationParams params);
+    void MlmeCommStatusIndication(lrwpan::MlmeCommStatusIndicationParams params);
 
     /**
      *  IEEE 802.15.4-2011, Section 6.2.4.1
@@ -768,7 +768,7 @@ class ZigbeeNwk : public Object
      *
      *  @param params The MLME-BEACON-NOTIFY.indication parameters
      */
-    void MlmeBeaconNotifyIndication(MlmeBeaconNotifyIndicationParams params);
+    void MlmeBeaconNotifyIndication(lrwpan::MlmeBeaconNotifyIndicationParams params);
 
     /**
      *  IEEE 802.15.4-2011, Section 6.2.2.2.
@@ -780,7 +780,7 @@ class ZigbeeNwk : public Object
      *
      *  @param params The MLME-ASSOCIATE.indication parameters
      */
-    void MlmeAssociateIndication(MlmeAssociateIndicationParams params);
+    void MlmeAssociateIndication(lrwpan::MlmeAssociateIndicationParams params);
 
     /**
      *  Zigbee Specification r22.1.0, Section 3.2.1.1
@@ -946,7 +946,8 @@ class ZigbeeNwk : public Object
     void DoDispose() override;
 
   private:
-    Ptr<LrWpanMacBase> m_mac; //!< Pointer to the underlying MAC connected to this Zigbee NWK.
+    Ptr<lrwpan::LrWpanMacBase>
+        m_mac; //!< Pointer to the underlying MAC connected to this Zigbee NWK.
 
     ///////////////
     // Callbacks //
