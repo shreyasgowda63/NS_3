@@ -462,8 +462,7 @@ main(int argc, char* argv[])
     }
     else
     {
-        NS_LOG_DEBUG("Invalid router WAN queue disc type");
-        exit(1);
+        NS_ABORT_MSG("Invalid router WAN queue disc type");
     }
     tchPfifo.Install(routerHostDev);
 

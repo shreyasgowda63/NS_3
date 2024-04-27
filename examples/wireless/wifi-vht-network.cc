@@ -17,6 +17,7 @@
  * Author: Sebastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "ns3/abort.h"
 #include "ns3/boolean.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
@@ -276,8 +277,7 @@ main(int argc, char* argv[])
                 {
                     if (throughput < minExpectedThroughput)
                     {
-                        NS_LOG_ERROR("Obtained throughput " << throughput << " is not expected!");
-                        exit(1);
+                        NS_ABORT_MSG("Obtained throughput " << throughput << " is not expected!");
                     }
                 }
                 // test last element
@@ -285,8 +285,7 @@ main(int argc, char* argv[])
                 {
                     if (maxExpectedThroughput > 0 && throughput > maxExpectedThroughput)
                     {
-                        NS_LOG_ERROR("Obtained throughput " << throughput << " is not expected!");
-                        exit(1);
+                        NS_ABORT_MSG("Obtained throughput " << throughput << " is not expected!");
                     }
                 }
                 // test previous throughput is smaller (for the same mcs)
@@ -296,8 +295,7 @@ main(int argc, char* argv[])
                 }
                 else
                 {
-                    NS_LOG_ERROR("Obtained throughput " << throughput << " is not expected!");
-                    exit(1);
+                    NS_ABORT_MSG("Obtained throughput " << throughput << " is not expected!");
                 }
                 // test previous throughput is smaller (for the same channel width and GI)
                 if (throughput > prevThroughput[index])
@@ -306,8 +304,7 @@ main(int argc, char* argv[])
                 }
                 else
                 {
-                    NS_LOG_ERROR("Obtained throughput " << throughput << " is not expected!");
-                    exit(1);
+                    NS_ABORT_MSG("Obtained throughput " << throughput << " is not expected!");
                 }
                 index++;
             }

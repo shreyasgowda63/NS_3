@@ -17,6 +17,7 @@
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "ns3/abort.h"
 #include "ns3/boolean.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
@@ -363,16 +364,14 @@ main(int argc, char* argv[])
               << throughput << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 59.0 || throughput > 60.0))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
 
     throughput = totalPacketsThroughB * payloadSize * 8 / (simulationTime * 1000000.0);
     std::cout << "Throughput with aggregation disabled: " << throughput << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 30 || throughput > 31))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
 
     throughput = totalPacketsThroughC * payloadSize * 8 / (simulationTime * 1000000.0);
@@ -380,8 +379,7 @@ main(int argc, char* argv[])
               << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 51 || throughput > 52))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
 
     throughput = totalPacketsThroughD * payloadSize * 8 / (simulationTime * 1000000.0);
@@ -389,8 +387,7 @@ main(int argc, char* argv[])
               << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 58 || throughput > 59))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
 
     return 0;

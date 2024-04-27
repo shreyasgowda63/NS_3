@@ -17,6 +17,7 @@
  * Author: Sebastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "ns3/abort.h"
 #include "ns3/boolean.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
@@ -191,8 +192,7 @@ main(int argc, char* argv[])
     }
     else
     {
-        std::cout << "Obtained throughput is 0!" << std::endl;
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput is 0!");
     }
 
     return 0;

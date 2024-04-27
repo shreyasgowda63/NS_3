@@ -482,7 +482,7 @@ main(int argc, char* argv[])
     std::string dirToSave = "mkdir -p " + dir;
     if (system(dirToSave.c_str()) == -1)
     {
-        exit(1);
+        NS_ABORT_MSG("Could not create directory to save");
     }
 
     std::string pingTraceFile = dir + "ping.dat";

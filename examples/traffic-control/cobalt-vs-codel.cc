@@ -235,10 +235,15 @@ experiment(std::string queue_disc_type)
     Simulator::ScheduleNow(&CheckQueueSize, queue, queue_disc_type);
 
     std::string dirToSave = "mkdir -p " + dir + queue_disc_type;
-    if (system((dirToSave + "/cwndTraces/").c_str()) == -1 ||
-        system((dirToSave + "/queueTraces/").c_str()) == -1)
+
+    if (system((dirToSave + "/cwndTraces/").c_str()) == -1)
     {
-        exit(1);
+        NS_ABORT_MSG("Could not create directory: " << dir << queue_disc_type << "/cwndTraces");
+    }
+
+    if (system((dirToSave + "/queueTraces/").c_str()) == -1)
+    {
+        NS_ABORT_MSG("Could not create directory: " << dir << queue_disc_type << "/queueTraces");
     }
 
     Simulator::Schedule(Seconds(0.1), &TraceCwnd, queue_disc_type);

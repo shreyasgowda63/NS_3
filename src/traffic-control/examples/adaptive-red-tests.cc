@@ -226,10 +226,8 @@ main(int argc, char* argv[])
     cmd.Parse(argc, argv);
     if ((aredTest < 1) || (aredTest == 5) || (aredTest > 15))
     {
-        std::cout << "Invalid test number. Supported tests are 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, "
-                     "13, 14 or 15"
-                  << std::endl;
-        exit(1);
+        NS_ABORT_MSG("Invalid test number. Supported tests are 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, "
+                     "13, 14 or 15");
     }
 
     NS_LOG_INFO("Create nodes");
@@ -528,24 +526,21 @@ main(int argc, char* argv[])
     if (st.GetNDroppedPackets(RedQueueDisc::UNFORCED_DROP) == 0 &&
         st.GetNMarkedPackets(RedQueueDisc::UNFORCED_MARK) == 0)
     {
-        std::cout << "There should be some unforced drops or marks" << std::endl;
-        exit(1);
+        NS_ABORT_MSG("There should be some unforced drops or marks");
     }
 
     if (aredTest == 1 || aredTest == 2 || aredTest == 3 || aredTest == 4 || aredTest == 13)
     {
         if (st.GetNDroppedPackets(QueueDisc::INTERNAL_QUEUE_DROP) == 0)
         {
-            std::cout << "There should be some drops due to queue full" << std::endl;
-            exit(1);
+            NS_ABORT_MSG("There should be some drops due to queue full");
         }
     }
     else
     {
         if (st.GetNDroppedPackets(QueueDisc::INTERNAL_QUEUE_DROP) != 0)
         {
-            std::cout << "There should be zero drops due to queue full" << std::endl;
-            exit(1);
+            NS_ABORT_MSG("There should be zero drops due to queue full");
         }
     }
 

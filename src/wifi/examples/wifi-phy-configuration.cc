@@ -22,6 +22,7 @@
 // WifiHelper.SetStandard () and the physical layer channel number,
 // center frequency, and channel width.
 
+#include "ns3/abort.h"
 #include "ns3/boolean.h"
 #include "ns3/command-line.h"
 #include "ns3/config-store.h"
@@ -472,9 +473,7 @@ main(int argc, char* argv[])
         PrintAttributesIfEnabled(printAttributes);
         break;
     default:
-        std::cerr << "Invalid testcase number " << testCase << std::endl;
-        exit(1);
-        break;
+        NS_ABORT_MSG("Invalid testcase number " << testCase);
     }
 
     // No need to Simulator::Run (); this is a configuration example
