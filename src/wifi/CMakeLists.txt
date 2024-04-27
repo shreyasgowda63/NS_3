@@ -358,4 +358,5 @@ build_lib(
     test/wifi-phy-cca-test.cc
     test/wifi-non-ht-dup-test.cc
     test/wifi-phy-mu-mimo-test.cc
+    test/wifi-tx-stats-helper-test.cc
 )

@@ -51,7 +51,7 @@ FrameExchangeManager::GetTypeId()
                             .AddConstructor<FrameExchangeManager>()
                             .SetGroupName("Wifi")
                             .AddTraceSource("AckedMpdu",
-                                            "An MPDU that was successfully acknowledged via non-Block Ack (Normal Ack).",
+                                            "An MPDU that was successfully acknowledged via non-Block Ack.",
                                             MakeTraceSourceAccessor(&FrameExchangeManager::m_ackMpduCallback),
                                             "ns3::FrameExchangeManager::MpduAndLinkIdTracedCallback");
     return tid;

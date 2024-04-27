@@ -40,39 +40,28 @@ struct WifiTxFinalStatistics
     std::map<uint32_t /* Node ID */, double> m_avgFailuresPerNode; // # retransmissions / # successful pkts
     std::map<uint32_t /* Node ID */, uint64_t> m_numFinalFailedPerNode; // # failed pkts
     std::map<uint32_t /* Node ID */, std::map<uint8_t /* Link ID */, double>> m_meanE2eDelayPerNodeLink; // millisecond
-    uint64_t m_numSuccessTotal;
-    uint64_t m_numRetransmittedTotal;
-    double m_avgFailuresTotal;
-    uint64_t m_numFinalFailedTotal;
-    double m_meanE2eDelayTotal;
-    WifiTxFinalStatistics() :
-          m_numSuccessTotal(0), m_numRetransmittedTotal(0),
-          m_avgFailuresTotal(0.0), m_numFinalFailedTotal(0), m_meanE2eDelayTotal(0)
-    {
-
-    }
+    uint64_t m_numSuccessTotal{0};
+    uint64_t m_numRetransmittedTotal{0};
+    double m_avgFailuresTotal{0};
+    uint64_t m_numFinalFailedTotal{0};
+    double m_meanE2eDelayTotal{0};
 };
 
 // Per-packet record, created when enqueued at MAC layer
 struct WifiTxPerPktRecord
 {
-    int m_srcNodeId;
-    int m_seqNum;
-    int m_tid;
-    int m_successLinkId;
-    uint8_t m_failures;
-    Time m_enqueueTime;
-    Time m_txStartTime;
-    Time m_ackTime;
-    Time m_dequeueTime;
-    bool m_txStarted;
-    bool m_acked;
-    bool m_dequeued;
-    WifiTxPerPktRecord() :
-          m_srcNodeId(-1), m_seqNum(-1), m_tid(-1), m_successLinkId(-1), m_failures(0),
-          m_enqueueTime(0), m_txStartTime(0), m_ackTime(0), m_dequeueTime(0),
-          m_txStarted(false), m_acked(false), m_dequeued(false)
-    {}
+    uint32_t m_srcNodeId{0};
+    uint64_t m_seqNum{0};
+    uint8_t m_tid{0};
+    uint8_t m_successLinkId{0};
+    uint32_t m_failures{0};
+    Time m_enqueueTime{0};
+    Time m_txStartTime{0};
+    Time m_ackTime{0};
+    Time m_dequeueTime{0};
+    bool m_txStarted{false};
+    bool m_acked{false};
+    bool m_dequeued{false};
 };
 typedef std::map<uint32_t /* Node ID */, std::map<uint8_t /* Link ID */, std::vector<WifiTxPerPktRecord>>> WifiPktTxRecordMap;
 typedef std::map<uint64_t /* UID */, WifiTxPerPktRecord> WifiPktUidMap;
@@ -96,17 +85,12 @@ class WifiTxStatsHelper
     void Start(const Time& startTime);
     void Stop(const Time& stopTime);
     void Reset();
-    const std::map<AcIndex, std::string> m_aciToString = {
-        {AC_BE, "BE"},
-        {AC_BK, "BK"},
-        {AC_VI, "VI"},
-        {AC_VO, "VO"},
-    };
     const std::list<AcIndex> m_aci = {
         AC_BE,
         AC_BK,
         AC_VI,
-        AC_VO
+        AC_VO,
+        AC_BE_NQOS
     };
 
   private:

@@ -20,11 +20,8 @@
 #include <ns3/nstime.h>
 #include <ns3/wifi-net-device.h>
 #include <ns3/net-device-container.h>
-#include <ns3/wifi-mac.h>
-#include <ns3/qos-txop.h>
 #include <ns3/wifi-mac-queue.h>
-#include <ns3/wifi-phy.h>
-#include <ns3/block-ack-manager.h>
+#include <ns3/frame-exchange-manager.h>
 
 namespace ns3
 {
@@ -43,19 +40,31 @@ WifiTxStatsHelper::Enable(const NetDeviceContainer& devices)
         Ptr<WifiNetDevice> wifiDev = DynamicCast<WifiNetDevice>(*dev);
         for (auto& ac : m_aci)
         {
-            wifiDev->GetMac()->GetTxopQueue(ac)->TraceConnectWithoutContext(
-                "Enqueue",
-                MakeCallback(&WifiTxStatsTraceSink::NotifyMacEnqueue, m_traceSink));
-            wifiDev->GetMac()->GetQosTxop(ac)->GetBaManager()->TraceConnectWithoutContext(
-                "AckedMpdu",
-                MakeCallback(&WifiTxStatsTraceSink::NotifyAcked, m_traceSink));
-            wifiDev->GetMac()->GetTxopQueue(ac)->TraceConnectWithoutContext(
-                "Dequeue",
-                MakeCallback(&WifiTxStatsTraceSink::NotifyMacDequeue, m_traceSink));
+            if (wifiDev->GetMac()->GetTxopQueue(ac))
+            {
+                // Trace enqueue & dequeue for available ACs
+                wifiDev->GetMac()->GetTxopQueue(ac)->TraceConnectWithoutContext(
+                    "Enqueue",
+                    MakeCallback(&WifiTxStatsTraceSink::NotifyMacEnqueue, m_traceSink));
+                wifiDev->GetMac()->GetTxopQueue(ac)->TraceConnectWithoutContext(
+                    "Dequeue",
+                    MakeCallback(&WifiTxStatsTraceSink::NotifyMacDequeue, m_traceSink));
+            }
+            if (wifiDev->GetMac()->GetQosTxop(ac))
+            {
+                // Handle Block Ack for QoS ACs
+                wifiDev->GetMac()->GetQosTxop(ac)->GetBaManager()->TraceConnectWithoutContext(
+                    "AckedMpdu",
+                    MakeCallback(&WifiTxStatsTraceSink::NotifyAcked, m_traceSink));
+            }
         }
 
         for (int i = 0; i < wifiDev->GetNPhys(); i++)
         {
+            // Handle non-Block Ack
+            wifiDev->GetMac()->GetFrameExchangeManager(i)->TraceConnectWithoutContext(
+                "AckedMpdu",
+                MakeCallback(&WifiTxStatsTraceSink::NotifyAcked, m_traceSink));
             wifiDev->GetPhy(i)->TraceConnectWithoutContext(
                 "PhyTxBegin",
                 MakeCallback(&WifiTxStatsTraceSink::NotifyTxStart, m_traceSink));
@@ -66,36 +75,42 @@ WifiTxStatsHelper::Enable(const NetDeviceContainer& devices)
 WifiTxFinalStatistics
 WifiTxStatsHelper::GetFinalStatistics()
 {
+    NS_ABORT_MSG_IF(!m_traceSink, "WifiTxStatsHelper not enabled.");
     return m_traceSink->DoGetFinalStatistics();
 }
 
 const WifiPktTxRecordMap&
 WifiTxStatsHelper::GetSuccessInfoMap()
 {
+    NS_ABORT_MSG_IF(!m_traceSink, "WifiTxStatsHelper not enabled.");
     return m_traceSink->DoGetSuccessInfoMap();
 }
 
 const WifiPktNodeIdMap&
 WifiTxStatsHelper::GetFailureInfoMap()
 {
+    NS_ABORT_MSG_IF(!m_traceSink, "WifiTxStatsHelper not enabled.");
     return m_traceSink->DoGetFailureInfoMap();
 }
 
 void
 WifiTxStatsHelper::Start(const Time& startTime)
 {
+    NS_ABORT_MSG_IF(!m_traceSink, "WifiTxStatsHelper not enabled.");
     Simulator::Schedule(startTime, &WifiTxStatsTraceSink::DoStart, m_traceSink);
 }
 
 void
 WifiTxStatsHelper::Stop(const Time& stopTime)
 {
+    NS_ABORT_MSG_IF(!m_traceSink, "WifiTxStatsHelper not enabled.");
     Simulator::Schedule(stopTime, &WifiTxStatsTraceSink::DoStop, m_traceSink);
 }
 
 void
 WifiTxStatsHelper::Reset()
 {
+    NS_ABORT_MSG_IF(!m_traceSink, "WifiTxStatsHelper not enabled.");
     m_traceSink->DoReset();
 }
 
@@ -230,7 +245,7 @@ WifiTxStatsTraceSink::NotifyMacEnqueue(Ptr<const WifiMpdu> mpdu)
         WifiTxPerPktRecord record;
         record.m_srcNodeId = Simulator::GetContext();
         record.m_enqueueTime = Simulator::Now();
-        record.m_tid = mpdu->GetHeader().GetQosTid();
+        record.m_tid = mpdu->GetHeader().IsQosData() ? mpdu->GetHeader().GetQosTid() : 0;
         m_inflightMap[mpdu->GetPacket()->GetUid()] = record;
     }
 }
@@ -281,6 +296,7 @@ WifiTxStatsTraceSink::NotifyMacDequeue(Ptr<const WifiMpdu> mpdu)
             }
             else
             {
+                mapIt->second.m_failures += 1;
                 // Put record into failure map and remove it from inflight map
                 m_failureMap[mapIt->second.m_srcNodeId].emplace_back(mapIt->second);
             }
