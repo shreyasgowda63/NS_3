@@ -446,6 +446,7 @@ class WimaxNetDevice : public NetDevice
      * The TracedCallback signature will then match \c Packet::Mac48Address
      * and this typedef can be removed.
      */
+    // NS_DEPRECATED() - tag for future removal
     typedef void (*TxRxTracedCallback)(Ptr<const Packet> packet, const Mac48Address& mac);
     /**
      * \deprecated The `const Mac48Address &` argument is deprecated
@@ -454,6 +455,7 @@ class WimaxNetDevice : public NetDevice
      * and this typedef can be removed.
      * \todo This member variable should be private.
      */
+    // NS_DEPRECATED() - tag for future removal
     TracedCallback<Ptr<const Packet>, const Mac48Address&> m_traceRx;
     /**
      * \deprecated The `const Mac48Address &` argument is deprecated
@@ -462,6 +464,7 @@ class WimaxNetDevice : public NetDevice
      * and this typedef can be removed.
      * \todo This member variable should be private.
      */
+    // NS_DEPRECATED() - tag for future removal
     TracedCallback<Ptr<const Packet>, const Mac48Address&> m_traceTx;
 
     void DoDispose() override;

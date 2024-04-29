@@ -483,6 +483,7 @@ class SimpleOfdmWimaxPhy : public WimaxPhy
      * \deprecated The non-const \c Ptr<PacketBurst> argument is deprecated
      * and will be changed to \c Ptrc<PacketBurst> in a future release.
      */
+    // NS_DEPRECATED() - tag for future removal
     TracedCallback<Ptr<PacketBurst>> m_phyTxBeginTrace;
 
     /**
@@ -493,6 +494,7 @@ class SimpleOfdmWimaxPhy : public WimaxPhy
      * \deprecated The non-const \c Ptr<PacketBurst> argument is deprecated
      * and will be changed to \c Ptrc<PacketBurst> in a future release.
      */
+    // NS_DEPRECATED() - tag for future removal
     TracedCallback<Ptr<PacketBurst>> m_phyTxEndTrace;
 
     /**
@@ -503,6 +505,7 @@ class SimpleOfdmWimaxPhy : public WimaxPhy
      * \deprecated The non-const \c Ptr<PacketBurst> argument is deprecated
      * and will be changed to \c Ptrc<PacketBurst> in a future release.
      */
+    // NS_DEPRECATED() - tag for future removal
     TracedCallback<Ptr<PacketBurst>> m_phyTxDropTrace;
 
     /**
@@ -513,6 +516,7 @@ class SimpleOfdmWimaxPhy : public WimaxPhy
      * \deprecated The non-const \c Ptr<PacketBurst> argument is deprecated
      * and will be changed to \c Ptrc<PacketBurst> in a future release.
      */
+    // NS_DEPRECATED() - tag for future removal
     TracedCallback<Ptr<PacketBurst>> m_phyRxBeginTrace;
 
     /**
@@ -523,6 +527,7 @@ class SimpleOfdmWimaxPhy : public WimaxPhy
      * \deprecated The non-const \c Ptr<PacketBurst> argument is deprecated
      * and will be changed to \c Ptrc<PacketBurst> in a future release.
      */
+    // NS_DEPRECATED() - tag for future removal
     TracedCallback<Ptr<PacketBurst>> m_phyRxEndTrace;
 
     /**
@@ -532,6 +537,7 @@ class SimpleOfdmWimaxPhy : public WimaxPhy
      * \deprecated The non-const \c Ptr<PacketBurst> argument is deprecated
      * and will be changed to \c Ptrc<PacketBurst> in a future release.
      */
+    // NS_DEPRECATED() - tag for future removal
     TracedCallback<Ptr<PacketBurst>> m_phyRxDropTrace;
 
     SNRToBlockErrorRateManager* m_snrToBlockErrorRateManager; ///< SNR to block error rate manager
