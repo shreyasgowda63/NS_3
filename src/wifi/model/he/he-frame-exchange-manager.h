@@ -20,6 +20,7 @@
 #ifndef HE_FRAME_EXCHANGE_MANAGER_H
 #define HE_FRAME_EXCHANGE_MANAGER_H
 
+#include "channel-sounding.h"
 #include "mu-snr-tag.h"
 
 #include "ns3/vht-frame-exchange-manager.h"
@@ -88,6 +89,24 @@ class HeFrameExchangeManager : public VhtFrameExchangeManager
      * \param muScheduler the Multi-user Scheduler associated with this Frame Exchange Manager
      */
     void SetMultiUserScheduler(const Ptr<MultiUserScheduler> muScheduler);
+
+    /**
+     * Take necessary actions to send NDPA frame, NDP frame and BFRP trigger frame (if applicable)
+     * from the beamformer.
+     */
+    void SendCsFramesFromBeamformer();
+
+    /**
+     * Get the pointer of channel sounding beamformer
+     * \return channel sounding beamformer pointer
+     */
+    Ptr<CsBeamformer> GetCsBeamformer() const;
+
+    /**
+     * Get the pointer of channel sounding beamformee
+     * \return channel sounding beamformee pointer
+     */
+    Ptr<CsBeamformee> GetCsBeamformee() const;
 
     /**
      * Get the PSDU in the given PSDU map that is addressed to the given MAC address,
@@ -346,6 +365,11 @@ class HeFrameExchangeManager : public VhtFrameExchangeManager
     Time m_intraBssNavEnd;           //!< intra-BSS NAV expiration time
     EventId m_intraBssNavResetEvent; //!< the event to reset the intra-BSS NAV after an RTS
 
+    Ptr<CsBeamformer>
+        m_csBeamformer; //!< The channel sounding beamformer pointer (null if not a beamformer)
+    Ptr<CsBeamformee>
+        m_csBeamformee; //!< The channel sounding beamformee pointer (null if not a beamformee)
+
   private:
     /**
      * Send the current PSDU map as a DL MU PPDU.
@@ -372,6 +396,18 @@ class HeFrameExchangeManager : public VhtFrameExchangeManager
                              uint8_t tid,
                              Time durationId,
                              double snr);
+    /**
+     * Take the necessary actions when receiving a BFRP Trigger Frame.
+     *
+     * \param trigger the BFRP Trigger Frame content
+     * \param hdr the MAC header of the BFRP Trigger Frame
+     */
+    void ReceiveBfrpTrigger(const CtrlTriggerHeader& trigger, const WifiMacHeader& hdr);
+
+    /**
+     * Take the necessary actions after that some beamforming reports are missing.
+     */
+    void BfReportTimeout(void);
 
     WifiPsduMap m_psduMap;                 //!< the A-MPDU being transmitted
     WifiTxParameters m_txParams;           //!< the TX parameters for the current PPDU
@@ -380,6 +416,7 @@ class HeFrameExchangeManager : public VhtFrameExchangeManager
     EventId m_multiStaBaEvent;             //!< Sending a Multi-STA BlockAck event
     MuSnrTag m_muSnrTag;                   //!< Tag to attach to Multi-STA BlockAck frames
     bool m_triggerFrameInAmpdu;            //!< True if the received A-MPDU contains an MU-BAR
+    Time m_lastCsTime;                     //!< Duration of channel sounding process
 };
 
 } // namespace ns3

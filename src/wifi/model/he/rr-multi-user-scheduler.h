@@ -89,6 +89,13 @@ class RrMultiUserScheduler : public MultiUserScheduler
     virtual TxFormat TrySendingDlMuPpdu();
 
     /**
+     * Check if it is possible to have channel sounding given the current time limits.
+     *
+     *  \return CS_TX if it is possible to have channel sounding
+     */
+    virtual TxFormat TryChannelSounding();
+
+    /**
      * Compute a TXVECTOR that can be used to construct a Trigger Frame to solicit
      * transmissions from suitable stations, i.e., stations that have established a
      * BlockAck agreement with the AP and for which the given predicate returns true.
@@ -115,6 +122,12 @@ class RrMultiUserScheduler : public MultiUserScheduler
      * \param address the MAC address of the station
      */
     void NotifyStationDeassociated(uint16_t aid, Mac48Address address);
+
+    /**
+     * Check whether channel sounding is enabled. Channel sounding is disabled if channel sounding
+     * interval is 0. \return whether channel sounding is enabled.
+     */
+    bool IsChannelSoundingEnabled();
 
     /**
      * Information used to sort stations
@@ -170,6 +183,12 @@ class RrMultiUserScheduler : public MultiUserScheduler
     CtrlTriggerHeader m_trigger;           //!< Trigger Frame to send
     WifiMacHeader m_triggerMacHdr;         //!< MAC header for Trigger Frame
     WifiTxParameters m_txParams;           //!< TX parameters
+
+    std::list<CandidateInfo> m_candidatesCs; //!< Candidate stations for channel sounding
+    bool m_enableMuMimo;                     //!< Whether MU-MIMO is used instead of OFDMA
+    uint8_t m_nssPerSta;                     //!< Number of streams per station in downlink MU-MIMO
+    Time m_csInterval;                       //!< Channel sounding interval
+    bool m_csStart;                          //!< Whether channel sounding has occurred
 };
 
 } // namespace ns3

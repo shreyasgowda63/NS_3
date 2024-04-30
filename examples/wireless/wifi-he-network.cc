@@ -89,6 +89,30 @@ main(int argc, char* argv[])
     double maxExpectedThroughput{0};
     Time accessReqInterval{0};
 
+    // Channel-sounding-related parameters
+    // If channel sounding is needed, the following requirements shoudl be met:
+    // (1) phyModel should be "Spectrum" (OFDMA is used in channel sounding for CSI feedback from
+    // stations to the AP.) (2) dlAckSeqType should not be "NO-OFDMA" (3) enableMuMimo should be
+    // true (Currently, channel sounding is only implemented before DL MU-MIMO data transmission.)
+    // (4) channelSoundingInterval should not be 0 (Channel sounding is disabled if the interval is
+    // set as 0)
+
+    // Note that channel sounding MAC-layer protocol is implemented without considering actual
+    // channel matrix in physical layer and random values are put in beamforming report frames.
+
+    Time channelSoundingInterval{"0ms"}; // channel sounding interval
+    bool enableMuMimo = false;           // whether to enable MU-MIMO in DL data tranmission
+    uint8_t ngSu = 16;                   // subcarrier grouping Ng for SU channel sounding (4 or 16)
+    uint8_t ngMu = 16;                   // subcarrier grouping Ng for MU channel sounding (4 or 16)
+    std::string codebookSizeSu =
+        "(6,4)"; // codebook size for SU channel sounding ("(6,4)" or "(4,2)")
+    std::string codebookSizeMu =
+        "(9,7)";             // codebook size for MU channel sounding ("(9,7)" or "(7,5)")
+    uint8_t numAntennas = 2; // number of antennas (up to 4) which indicates the number of rows in
+                             // the compressed beamforming feedback matrix
+    uint8_t nc = 1; // indicates the number of columns in the compressed beamforming feedback matrix
+                    // (<= numAntennas)
+
     CommandLine cmd(__FILE__);
     cmd.AddValue("frequency",
                  "Whether working in the 2.4, 5 or 6 GHz band (other values gets rejected)",
@@ -129,6 +153,19 @@ main(int argc, char* argv[])
     cmd.AddValue("maxExpectedThroughput",
                  "if set, simulation fails if the highest throughput is above this value",
                  maxExpectedThroughput);
+    cmd.AddValue("channelSoundingInterval",
+                 "channel sounding interval (channel sounding is disabled if the interval is 0)",
+                 channelSoundingInterval);
+    cmd.AddValue("enableMuMimo", "whether to enable MU-MIMO in DL data tranmission", enableMuMimo);
+    cmd.AddValue("ngSu", "subcarrier grouping Ng for SU channel sounding", ngSu);
+    cmd.AddValue("ngMu", "subcarrier grouping Ng for MU channel sounding", ngMu);
+    cmd.AddValue("codebookSizeSu", "codebook size for SU channel sounding", codebookSizeSu);
+    cmd.AddValue("codebookSizeMu", "codebook size for MU channel sounding", codebookSizeMu);
+    cmd.AddValue("numAntennas",
+                 "number of antennas (up to 4) which indicates the number of rows in the "
+                 "compressed beamforming feedback matrix",
+                 numAntennas);
+    cmd.AddValue("nc", "number of columns in the compressed beamforming feedback matrix", nc);
     cmd.Parse(argc, argv);
 
     if (useRts)
@@ -191,6 +228,8 @@ main(int argc, char* argv[])
         uint8_t maxChannelWidth = frequency == 2.4 ? 40 : 160;
         for (int channelWidth = 20; channelWidth <= maxChannelWidth;) // MHz
         {
+            // Guard interval (gi) does not affet guard interval used in NDP frame in channel
+            // sounding. Currently, guard interval used in NDP frame is fixed as 0.8us.)
             for (int gi = 3200; gi >= 800;) // Nanoseconds
             {
                 if (!udp)
@@ -252,7 +291,18 @@ main(int argc, char* argv[])
                                              "ControlMode",
                                              ctrlRate);
                 // Set guard interval
-                wifi.ConfigHeOptions("GuardInterval", TimeValue(NanoSeconds(gi)));
+                wifi.ConfigHeOptions("GuardInterval",
+                                     TimeValue(NanoSeconds(gi)),
+                                     "NgSu",
+                                     UintegerValue(ngSu),
+                                     "NgMu",
+                                     UintegerValue(ngMu),
+                                     "CodebookSizeSu",
+                                     StringValue(codebookSizeSu),
+                                     "CodebookSizeMu",
+                                     StringValue(codebookSizeMu),
+                                     "MaxNc",
+                                     UintegerValue(nc - 1));
 
                 Ssid ssid = Ssid("ns3-80211ax");
 
@@ -281,6 +331,10 @@ main(int argc, char* argv[])
                                 "MpduBufferSize",
                                 UintegerValue(useExtendedBlockAck ? 256 : 64));
                     phy.Set("ChannelSettings", StringValue(channelStr));
+                    phy.Set("MaxSupportedTxSpatialStreams", UintegerValue(numAntennas));
+                    phy.Set("MaxSupportedRxSpatialStreams", UintegerValue(numAntennas));
+                    phy.Set("Antennas", UintegerValue(numAntennas));
+
                     staDevices = wifi.Install(phy, mac, wifiStaNodes);
 
                     if (dlAckSeqType != "NO-OFDMA")
@@ -291,7 +345,11 @@ main(int argc, char* argv[])
                                                   "EnableBsrp",
                                                   BooleanValue(enableBsrp),
                                                   "AccessReqInterval",
-                                                  TimeValue(accessReqInterval));
+                                                  TimeValue(accessReqInterval),
+                                                  "ChannelSoundingInterval",
+                                                  TimeValue(channelSoundingInterval),
+                                                  "EnableMuMimo",
+                                                  BooleanValue(enableMuMimo));
                     }
                     mac.SetType("ns3::ApWifiMac",
                                 "EnableBeaconJitter",

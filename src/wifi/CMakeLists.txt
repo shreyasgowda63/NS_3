@@ -41,6 +41,7 @@ set(source_files
     model/fcfs-wifi-queue-scheduler.cc
     model/frame-capture-model.cc
     model/frame-exchange-manager.cc
+    model/he/channel-sounding.cc
     model/he/constant-obss-pd-algorithm.cc
     model/he/he-capabilities.cc
     model/he/he-configuration.cc
@@ -195,6 +196,7 @@ set(header_files
     model/fcfs-wifi-queue-scheduler.h
     model/frame-capture-model.h
     model/frame-exchange-manager.h
+    model/he/channel-sounding.h
     model/he/constant-obss-pd-algorithm.h
     model/he/he-capabilities.h
     model/he/he-configuration.h
@@ -336,11 +338,13 @@ build_lib(
     test/spectrum-wifi-phy-test.cc
     test/tx-duration-test.cc
     test/wifi-aggregation-test.cc
+    test/wifi-channel-sounding-frame-test-suite.cc
     test/wifi-dynamic-bw-op-test.cc
     test/wifi-eht-info-elems-test.cc
     test/wifi-emlsr-test.cc
     test/wifi-error-rate-models-test.cc
     test/wifi-ie-fragment-test.cc
+    test/wifi-mac-channel-sounding-test.cc
     test/wifi-mac-ofdma-test.cc
     test/wifi-mac-queue-test.cc
     test/wifi-mlo-test.cc
