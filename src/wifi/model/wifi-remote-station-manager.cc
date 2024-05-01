@@ -586,7 +586,7 @@ WifiRemoteStationManager::GetAffiliatedStaAddress(const Mac48Address& mldAddress
     return stateIt->second->m_address;
 }
 
-WifiTxVector
+std::optional<WifiTxVector>
 WifiRemoteStationManager::GetDataTxVector(const WifiMacHeader& header, uint16_t allowedWidth)
 {
     NS_LOG_FUNCTION(this << header << allowedWidth);
@@ -604,9 +604,9 @@ WifiRemoteStationManager::GetDataTxVector(const WifiMacHeader& header, uint16_t 
         v.SetNTx(GetNumberOfAntennas());
         v.SetNss(1);
         v.SetNess(0);
-        return v;
+        return std::make_optional<WifiTxVector>(v);
     }
-    WifiTxVector txVector;
+    auto txVectorOpt = std::make_optional<WifiTxVector>();
     if (header.IsMgt())
     {
         // Use the lowest basic rate for management frames
@@ -619,10 +619,10 @@ WifiRemoteStationManager::GetDataTxVector(const WifiMacHeader& header, uint16_t 
         {
             mgtMode = GetDefaultMode();
         }
-        txVector.SetMode(mgtMode);
-        txVector.SetPreambleType(
+        txVectorOpt.value().SetMode(mgtMode);
+        txVectorOpt.value().SetPreambleType(
             GetPreambleForTransmission(mgtMode.GetModulationClass(), GetShortPreambleEnabled()));
-        txVector.SetTxPowerLevel(m_defaultTxPowerLevel);
+        txVectorOpt.value().SetTxPowerLevel(m_defaultTxPowerLevel);
         uint16_t channelWidth = allowedWidth;
         if (!header.GetAddr1().IsGroup())
         {
@@ -633,30 +633,37 @@ WifiRemoteStationManager::GetDataTxVector(const WifiMacHeader& header, uint16_t 
             }
         }
 
-        txVector.SetChannelWidth(m_wifiPhy->GetTxBandwidth(mgtMode, channelWidth));
-        txVector.SetGuardInterval(
+        txVectorOpt.value().SetChannelWidth(m_wifiPhy->GetTxBandwidth(mgtMode, channelWidth));
+        txVectorOpt.value().SetGuardInterval(
             ConvertGuardIntervalToNanoSeconds(mgtMode, m_wifiPhy->GetDevice()));
     }
     else
     {
-        txVector = DoGetDataTxVector(Lookup(address), allowedWidth);
-        txVector.SetLdpc(txVector.GetMode().GetModulationClass() < WIFI_MOD_CLASS_HT
-                             ? false
-                             : UseLdpcForDestination(address));
+        // the below will change to an assignment once DoGetDataTxVector() starts to return
+        // std::optional<>
+        txVectorOpt.emplace(DoGetDataTxVector(Lookup(address), allowedWidth));
+        if (!txVectorOpt.has_value())
+        {
+            return std::nullopt;
+        }
+        txVectorOpt.value().SetLdpc(txVectorOpt.value().GetMode().GetModulationClass() <
+                                            WIFI_MOD_CLASS_HT
+                                        ? false
+                                        : UseLdpcForDestination(address));
     }
     Ptr<HeConfiguration> heConfiguration = m_wifiPhy->GetDevice()->GetHeConfiguration();
     if (heConfiguration)
     {
-        txVector.SetBssColor(heConfiguration->GetBssColor());
+        txVectorOpt.value().SetBssColor(heConfiguration->GetBssColor());
     }
     // If both the allowed width and the TXVECTOR channel width are integer multiple
     // of 20 MHz, then the TXVECTOR channel width must not exceed the allowed width
-    NS_ASSERT_MSG((txVector.GetChannelWidth() % 20 != 0) || (allowedWidth % 20 != 0) ||
-                      (txVector.GetChannelWidth() <= allowedWidth),
-                  "TXVECTOR channel width (" << txVector.GetChannelWidth()
+    NS_ASSERT_MSG((txVectorOpt.value().GetChannelWidth() % 20 != 0) || (allowedWidth % 20 != 0) ||
+                      (txVectorOpt.value().GetChannelWidth() <= allowedWidth),
+                  "TXVECTOR channel width (" << txVectorOpt.value().GetChannelWidth()
                                              << " MHz) exceeds allowed width (" << allowedWidth
                                              << " MHz)");
-    return txVector;
+    return txVectorOpt;
 }
 
 WifiTxVector
@@ -1123,7 +1130,7 @@ WifiRemoteStationManager::NeedRts(const WifiMacHeader& header, uint32_t size)
 {
     NS_LOG_FUNCTION(this << header << size);
     Mac48Address address = header.GetAddr1();
-    WifiTxVector txVector = GetDataTxVector(header, m_wifiPhy->GetChannelWidth());
+    WifiTxVector txVector = GetDataTxVector(header, m_wifiPhy->GetChannelWidth()).value();
     const auto modulationClass = txVector.GetModulationClass();
     if (address.IsGroup())
     {

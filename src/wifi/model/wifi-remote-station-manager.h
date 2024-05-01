@@ -813,7 +813,7 @@ class WifiRemoteStationManager : public Object
      * \param allowedWidth the allowed width in MHz to send this packet
      * \return the TXVECTOR to use to send this packet
      */
-    WifiTxVector GetDataTxVector(const WifiMacHeader& header, uint16_t allowedWidth);
+    std::optional<WifiTxVector> GetDataTxVector(const WifiMacHeader& header, uint16_t allowedWidth);
     /**
      * \param address remote address
      * \param allowedWidth the allowed width in MHz for the data frame being protected

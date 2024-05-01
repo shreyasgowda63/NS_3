@@ -267,7 +267,7 @@ RrMultiUserScheduler::GetTxVectorForUlMu(Func canBeSolicited)
                          .value_or(staIt->address));
         hdr.SetAddr2(m_apMac->GetFrameExchangeManager(m_linkId)->GetAddress());
         WifiTxVector suTxVector =
-            GetWifiRemoteStationManager(m_linkId)->GetDataTxVector(hdr, m_allowedWidth);
+            GetWifiRemoteStationManager(m_linkId)->GetDataTxVector(hdr, m_allowedWidth).value();
         txVector.SetHeMuUserInfo(staIt->aid,
                                  {HeRu::RuSpec(), // assigned later by FinalizeTxVector
                                   suTxVector.GetMode().GetMcsValue(),
@@ -707,8 +707,9 @@ RrMultiUserScheduler::TrySendingDlMuPpdu()
                     // An RU of the computed size is tentatively assigned to the candidate
                     // station, so that the TX duration can be correctly computed.
                     WifiTxVector suTxVector =
-                        GetWifiRemoteStationManager(m_linkId)->GetDataTxVector(mpdu->GetHeader(),
-                                                                               m_allowedWidth);
+                        GetWifiRemoteStationManager(m_linkId)
+                            ->GetDataTxVector(mpdu->GetHeader(), m_allowedWidth)
+                            .value();
 
                     WifiTxVector txVectorCopy = m_txParams.m_txVector;
 
