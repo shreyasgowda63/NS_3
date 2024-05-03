@@ -305,6 +305,27 @@ if [ $skip_doxy -eq 1 ]; then
 
 else
 
+    intro_h="introspected-doxygen.h"
+    if [ $skip_intro -eq 1 ]; then
+        verbose "" "Skipping ./ns3 build"
+        verbose -n "Trying print-introspected-doxygen with doxygen build"
+        (cd "$ROOT" && ./ns3 run print-introspected-doxygen --no-build >doc/$intro_h 2>&6 )
+        status_report $? "./ns3 run print-introspected-doxygen" noexit
+    else
+        # Run introspection, which may require a build
+        verbose -n "Building"
+        (cd "$ROOT" && ./ns3 build >&6 2>&6 )
+        status_report $? "./ns3 build"
+        verbose -n "Running print-introspected-doxygen with doxygen build"
+        (cd "$ROOT" && ./ns3 run print-introspected-doxygen --no-build >doc/$intro_h 2>&6 )
+        status_report $? "./ns3 run print-introspected-doxygen"
+    fi
+
+    # We're going to modify doxygen.conf, but we need to ensure
+    # the original version is restored if the user ^C's out,
+    # otherwise weird things happen
+    trap restore_doxygen_conf SIGINT
+
     # Modify doxygen.conf to generate all the warnings
     # We keep dot active to generate graphs in the documentation
     # (see for example PacketTagList) and warn about ill-formed
@@ -333,34 +354,19 @@ else
     DIRECTORY_GRAPH = no
 EOF
 
-
-    intro_h="introspected-doxygen.h"
-    if [ $skip_intro -eq 1 ]; then
-        verbose "" "Skipping ./ns3 build"
-        verbose -n "Trying print-introspected-doxygen with doxygen build"
-        (cd "$ROOT" && ./ns3 run print-introspected-doxygen --no-build >doc/$intro_h 2>&6 )
-        status_report $? "./ns3 run print-introspected-doxygen" noexit
-    else
-        # Run introspection, which may require a build
-        verbose -n "Building"
-        (cd "$ROOT" && ./ns3 build >&6 2>&6 )
-        status_report $? "./ns3 build"
-        verbose -n "Running print-introspected-doxygen with doxygen build"
-        (cd "$ROOT" && ./ns3 run print-introspected-doxygen --no-build >doc/$intro_h 2>&6 )
-        status_report $? "./ns3 run print-introspected-doxygen"
-    fi
-
-    # Waf insists on writing cruft to stdout
-    sed -i.bak -E '/^Waf:/d' doc/$intro_h
-    rm doc/$intro_h.bak
+    function restore_doxygen_conf()
+    {
+        if [ -e ${conf}.bak ]; then
+            mv -f ${conf}.bak $conf
+        fi
+    }
 
     verbose -n "Rebuilding doxygen docs with full errors"
     (cd "$ROOT" && ./ns3 docs doxygen-no-build >&6 2>&6 )
     status_report $? "./ns3 docs doxygen-no-build"
 
-    # Swap back to original config
-    rm -f $conf
-    mv -f $conf.bak $conf
+    restore_doxygen_conf
+
 fi
 
 # Filter log file
