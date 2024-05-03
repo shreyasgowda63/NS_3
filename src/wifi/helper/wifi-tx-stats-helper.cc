@@ -22,6 +22,7 @@
 #include <ns3/net-device-container.h>
 #include <ns3/wifi-mac-queue.h>
 #include <ns3/frame-exchange-manager.h>
+#include <ns3/node-container.h>
 
 namespace ns3
 {
@@ -30,53 +31,69 @@ WifiTxStatsHelper::WifiTxStatsHelper()
 {
 }
 
+void WifiTxStatsHelper::Enable(NodeContainer nodes, const std::map<Mac48Address, uint32_t> &MacToNodeMap)
+{
+    NetDeviceContainer devCon;
+    for (auto node = nodes.Begin(); node != nodes.End(); ++node)
+    {
+        Ptr<NetDevice> dev = (*node)->GetDevice(0);
+        NS_ASSERT_MSG(dev, "net device should exist");
+        devCon.Add(dev);
+    }
+    Enable(devCon);
+}
+
 void
 WifiTxStatsHelper::Enable(const NetDeviceContainer& devices)
 {
+    NS_ABORT_MSG_IF(m_traceSink, "A trace sink is already configured for this helper");
     m_traceSink = CreateObject<WifiTxStatsTraceSink>();
 
     for (auto dev = devices.Begin(); dev != devices.End(); ++dev)
     {
         Ptr<WifiNetDevice> wifiDev = DynamicCast<WifiNetDevice>(*dev);
-        for (auto& ac : m_aci)
+        if (wifiDev)
         {
-            if (wifiDev->GetMac()->GetTxopQueue(ac))
+            for (auto& ac : m_aci)
             {
-                // Trace enqueue & dequeue for available ACs
-                wifiDev->GetMac()->GetTxopQueue(ac)->TraceConnectWithoutContext(
-                    "Enqueue",
-                    MakeCallback(&WifiTxStatsTraceSink::NotifyMacEnqueue, m_traceSink));
-                wifiDev->GetMac()->GetTxopQueue(ac)->TraceConnectWithoutContext(
-                    "Dequeue",
-                    MakeCallback(&WifiTxStatsTraceSink::NotifyMacDequeue, m_traceSink));
+                if (wifiDev->GetMac()->GetTxopQueue(ac))
+                {
+                    // Trace enqueue & dequeue for available ACs
+                    wifiDev->GetMac()->GetTxopQueue(ac)->TraceConnectWithoutContext(
+                        "Enqueue",
+                        MakeCallback(&WifiTxStatsTraceSink::NotifyMacEnqueue, m_traceSink));
+                    wifiDev->GetMac()->GetTxopQueue(ac)->TraceConnectWithoutContext(
+                        "Dequeue",
+                        MakeCallback(&WifiTxStatsTraceSink::NotifyMacDequeue, m_traceSink));
+                }
+                if (wifiDev->GetMac()->GetQosTxop(ac))
+                {
+                    // Handle Block Ack for QoS ACs
+                    wifiDev->GetMac()->GetQosTxop(ac)->GetBaManager()->TraceConnectWithoutContext(
+                        "AckedMpdu",
+                        MakeCallback(&WifiTxStatsTraceSink::NotifyAcked, m_traceSink));
+                }
             }
-            if (wifiDev->GetMac()->GetQosTxop(ac))
+
+            for (int i = 0; i < wifiDev->GetNPhys(); i++)
             {
-                // Handle Block Ack for QoS ACs
-                wifiDev->GetMac()->GetQosTxop(ac)->GetBaManager()->TraceConnectWithoutContext(
+                // Handle non-Block Ack
+                wifiDev->GetMac()->GetFrameExchangeManager(i)->TraceConnectWithoutContext(
                     "AckedMpdu",
                     MakeCallback(&WifiTxStatsTraceSink::NotifyAcked, m_traceSink));
+                wifiDev->GetPhy(i)->TraceConnectWithoutContext(
+                    "PhyTxBegin",
+                    MakeCallback(&WifiTxStatsTraceSink::NotifyTxStart, m_traceSink));
             }
-        }
-
-        for (int i = 0; i < wifiDev->GetNPhys(); i++)
-        {
-            // Handle non-Block Ack
-            wifiDev->GetMac()->GetFrameExchangeManager(i)->TraceConnectWithoutContext(
-                "AckedMpdu",
-                MakeCallback(&WifiTxStatsTraceSink::NotifyAcked, m_traceSink));
-            wifiDev->GetPhy(i)->TraceConnectWithoutContext(
-                "PhyTxBegin",
-                MakeCallback(&WifiTxStatsTraceSink::NotifyTxStart, m_traceSink));
         }
     }
 }
 
-WifiTxFinalStatistics
-WifiTxStatsHelper::GetFinalStatistics()
+WifiTxStatistics
+WifiTxStatsHelper::GetStatistics()
 {
     NS_ABORT_MSG_IF(!m_traceSink, "WifiTxStatsHelper not enabled.");
-    return m_traceSink->DoGetFinalStatistics();
+    return m_traceSink->DoGetStatistics();
 }
 
 const WifiPktTxRecordMap&
@@ -151,13 +168,11 @@ WifiTxStatsTraceSink::DoReset()
     m_failureMap.clear();
 }
 
-WifiTxFinalStatistics
-WifiTxStatsTraceSink::DoGetFinalStatistics() const
+WifiTxStatistics
+WifiTxStatsTraceSink::DoGetStatistics() const
 {
-    WifiTxFinalStatistics results;
+    WifiTxStatistics results;
     std::map<uint32_t /* Node ID */, uint64_t> numSuccessPerNode;
-    std::map<uint32_t /* Node ID */, std::map<uint8_t /* Link ID */, double>> totalE2eDelayPerNodeLink;
-    double totalE2eDelay{0};
     // Iterate through success map
     for (const auto& [nodeId, linkMap] : m_successMap)
     {
@@ -172,12 +187,7 @@ WifiTxStatsTraceSink::DoGetFinalStatistics() const
                     results.m_numRetransmittedPktsPerNode[nodeId]++;
                     results.m_numRetransmissionPerNode[nodeId] += record.m_failures;
                 }
-                // Delay statistics
-                totalE2eDelayPerNodeLink[nodeId][linkId] +=
-                    record.m_ackTime.ToDouble(Time::MS) - record.m_enqueueTime.ToDouble(Time::MS);
             }
-            results.m_meanE2eDelayPerNodeLink[nodeId][linkId] =
-                totalE2eDelayPerNodeLink[nodeId][linkId] / results.m_numSuccessPerNodeLink[nodeId][linkId];
         }
     }
     // Iterate through failure map
@@ -186,36 +196,28 @@ WifiTxStatsTraceSink::DoGetFinalStatistics() const
         results.m_numFinalFailedPerNode[nodeId] += recordVec.size();
     }
     // Get total results
-    for (const auto& linkMap : results.m_numSuccessPerNodeLink | std::views::values)
+    for (const auto& [nodeId, linkMap] : results.m_numSuccessPerNodeLink)
     {
-        for (const auto& pktNum : linkMap | std::views::values)
+        for (const auto& [linkId, pktNum] : linkMap)
         {
-            results.m_numSuccessTotal += pktNum;
+            results.m_numSuccess += pktNum;
         }
     }
-    for (const auto& linkMap : totalE2eDelayPerNodeLink | std::views::values)
+    for (const auto& [nodeId, num] : results.m_numRetransmittedPktsPerNode)
     {
-        for (const auto& delay : linkMap | std::views::values)
-        {
-            totalE2eDelay += delay;
-        }
+        results.m_numRetransmitted += num;
     }
-    results.m_meanE2eDelayTotal = totalE2eDelay / results.m_numSuccessTotal;
-    for (const auto& num : results.m_numRetransmittedPktsPerNode | std::views::values)
-    {
-        results.m_numRetransmittedTotal += num;
-    }
-    uint64_t numRetransmissionTotal = 0;
+    uint64_t numRetransmission = 0;
     for (const auto&[nodeId, num] : results.m_numRetransmissionPerNode)
     {
         results.m_avgFailuresPerNode[nodeId] = static_cast<long double>(num) /
             numSuccessPerNode[nodeId];
-        numRetransmissionTotal += num;
+        numRetransmission += num;
     }
-    results.m_avgFailuresTotal = static_cast<long double>(numRetransmissionTotal) / results.m_numSuccessTotal;
-    for (const auto &num: results.m_numFinalFailedPerNode | std::views::values)
+    results.m_avgFailures = static_cast<long double>(numRetransmission) / results.m_numSuccess;
+    for (const auto &[nodeId, num]: results.m_numFinalFailedPerNode)
     {
-        results.m_numFinalFailedTotal += num;
+        results.m_numFinalFailed += num;
     }
     return results;
 }

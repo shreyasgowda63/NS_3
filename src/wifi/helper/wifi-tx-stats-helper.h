@@ -32,19 +32,17 @@ namespace ns3
 {
 
 // The final result
-struct WifiTxFinalStatistics
+struct WifiTxStatistics
 {
     std::map<uint32_t /* Node ID */, std::map<uint8_t /* Link ID */, uint64_t>> m_numSuccessPerNodeLink; // # successful pkts
     std::map<uint32_t /* Node ID */, uint64_t> m_numRetransmittedPktsPerNode; // # successful pkts with 2 or more TX
     std::map<uint32_t /* Node ID */, uint64_t> m_numRetransmissionPerNode; // # retransmissions (i.e. failures)
     std::map<uint32_t /* Node ID */, double> m_avgFailuresPerNode; // # retransmissions / # successful pkts
     std::map<uint32_t /* Node ID */, uint64_t> m_numFinalFailedPerNode; // # failed pkts
-    std::map<uint32_t /* Node ID */, std::map<uint8_t /* Link ID */, double>> m_meanE2eDelayPerNodeLink; // millisecond
-    uint64_t m_numSuccessTotal{0};
-    uint64_t m_numRetransmittedTotal{0};
-    double m_avgFailuresTotal{0};
-    uint64_t m_numFinalFailedTotal{0};
-    double m_meanE2eDelayTotal{0};
+    uint64_t m_numSuccess{0};
+    uint64_t m_numRetransmitted{0};
+    double m_avgFailures{0};
+    uint64_t m_numFinalFailed{0};
 };
 
 // Per-packet record, created when enqueued at MAC layer
@@ -69,6 +67,7 @@ typedef std::map<uint32_t /* Node ID */, std::vector<WifiTxPerPktRecord>> WifiPk
 
 // Forward declaration
 class NetDeviceContainer;
+class NodeContainer;
 class Time;
 class Packet;
 class WifiMpdu;
@@ -78,8 +77,15 @@ class WifiTxStatsHelper
 {
   public:
     WifiTxStatsHelper();
+    /**
+     * Enables trace collection for all nodes and WifiNetDevices in the specified NodeContainer.
+     * @param nodes The NodeContainer to which traces are to be connected.
+     * @param MacToNodeMap (optional) A mapping from MAC address to node ID. If not provided, a
+     * mapping is built automatically.
+     */
+    void Enable(NodeContainer nodes, const std::map<Mac48Address, uint32_t>& MacToNodeMap = {});
     void Enable(const NetDeviceContainer& devices);
-    WifiTxFinalStatistics GetFinalStatistics();
+    WifiTxStatistics GetStatistics();
     const WifiPktTxRecordMap& GetSuccessInfoMap();
     const WifiPktNodeIdMap& GetFailureInfoMap();
     void Start(const Time& startTime);
@@ -105,7 +111,7 @@ class WifiTxStatsTraceSink : public Object
     void DoStart();
     void DoStop();
     void DoReset();
-    WifiTxFinalStatistics DoGetFinalStatistics() const;
+    WifiTxStatistics DoGetStatistics() const;
     const WifiPktTxRecordMap& DoGetSuccessInfoMap();
     const WifiPktNodeIdMap& DoGetFailureInfoMap();
 
