@@ -941,6 +941,18 @@ class ZigbeeNwk : public Object
      */
     int64_t AssignStreams(int64_t stream);
 
+    /**
+     * TracedCallback signature for RreqRetriesExhaustedTrace events.
+     *
+     * \param rreqId The RREQ id used in the retries
+     * \param dst The destination address of the RREQ retries
+     * \param rreqRetriesNum The number of rreq retries attempted
+     *
+     */
+    typedef void (*RreqRetriesExhaustedTracedCallback)(uint8_t rreqId,
+                                                       Mac16Address dst,
+                                                       uint8_t rreqRetriesNum);
+
   protected:
     void DoInitialize() override;
     void DoDispose() override;
@@ -952,6 +964,15 @@ class ZigbeeNwk : public Object
     ///////////////
     // Callbacks //
     ///////////////
+
+    /**
+     *  A trace source that fires when a node has reached the maximum number
+     *  of RREQ retries allowed. The trace provides the RREQ Id, the destination
+     *  address of the RREQ and the number of the maximum allowed retries from
+     *  this node.
+     *
+     */
+    TracedCallback<uint8_t, Mac16Address, uint8_t> m_rreqRetriesExhaustedTrace;
 
     /**
      *  This callback is used to notify incoming packets to the APS sublayer.
@@ -1087,6 +1108,11 @@ class ZigbeeNwk : public Object
     RouteDiscoveryTable m_nwkRouteDiscoveryTable;
 
     /**
+     *  Keep track of all the route request retries.
+     */
+    RreqRetryTable m_rreqRetryTable;
+
+    /**
      *  Used by a Zigbee coordinator or router to allocate a
      *  16 bit address (A.K.A short address or network address)
      *  to its associated device upon request.
@@ -1124,13 +1150,16 @@ class ZigbeeNwk : public Object
      *  \param rreqId The RREQ identifier
      *  \param pathcost The pathcost
      *  \param radius The Optional radius parameter supplied
+     *  \param rreqRetries The maximum number of retries the broadcast transmission of a route
+     * request command frame is retried.
      */
     void SendRREQ(Mac16Address src,
                   Mac16Address dst,
                   uint8_t seq,
                   uint8_t rreqId,
                   uint8_t pathcost,
-                  uint8_t radius);
+                  uint8_t radius,
+                  uint8_t rreqRetries);
     /**
      * Handles the reception of a route request command.
      * See Zigbee specification r22.1.0, Section 3.6.3.5.2

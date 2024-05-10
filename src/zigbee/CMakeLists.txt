@@ -19,5 +19,5 @@ build_lib(
     model/zigbee-payload-header.h
     model/zigbee-tables.h
   LIBRARIES_TO_LINK ${liblr-wpan}
-  TEST_SOURCES
+  TEST_SOURCES test/zigbee-rreq-test.cc
 )

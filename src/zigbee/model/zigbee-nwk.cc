@@ -82,22 +82,28 @@ ZigbeeNwk::GetTypeId()
                           MakeUintegerAccessor(&ZigbeeNwk::m_nwkcRREQRetries),
                           MakeUintegerChecker<uint8_t>())
             .AddAttribute("nwkcRREQRetryInterval",
-                          "[Constant] The duration between retries of a broadcast RREQ"
+                          "[Constant] The duration between retries of a broadcast RREQ "
                           "cmd frame.",
                           TimeValue(MilliSeconds(0xFE)),
                           MakeTimeAccessor(&ZigbeeNwk::m_nwkcRREQRetryInterval),
                           MakeTimeChecker())
-            .AddAttribute(
-                "nwkcMinRREQJitter",
-                "[Constant] The minimum jitter for broadcast retransmission of a RREQ (msec)",
-                DoubleValue(2),
-                MakeDoubleAccessor(&ZigbeeNwk::m_nwkcMinRREQJitter),
-                MakeDoubleChecker<double>())
+            .AddAttribute("nwkcMinRREQJitter",
+                          "[Constant] The minimum jitter for broadcast retransmission "
+                          "of a RREQ (msec)",
+                          DoubleValue(2),
+                          MakeDoubleAccessor(&ZigbeeNwk::m_nwkcMinRREQJitter),
+                          MakeDoubleChecker<double>())
             .AddAttribute("nwkcMaxRREQJitter",
                           "[Constant] The duration between retries of a broadcast RREQ (msec)",
                           DoubleValue(128),
                           MakeDoubleAccessor(&ZigbeeNwk::m_nwkcMaxRREQJitter),
-                          MakeDoubleChecker<double>());
+                          MakeDoubleChecker<double>())
+            .AddTraceSource("rreqRetriesExhausted",
+                            "Trace source indicating when a node has "
+                            "reached the maximum allowed number of RREQ retries during a "
+                            "route discovery request",
+                            MakeTraceSourceAccessor(&ZigbeeNwk::m_rreqRetriesExhaustedTrace),
+                            "ns3::ZigbeeNwk::RreqRetriesExhaustedTracedCallback");
     return tid;
 }
 
@@ -153,6 +159,7 @@ ZigbeeNwk::DoDispose()
     m_nwkNeighborTable.Dispose();
     m_nwkRoutingTable.Dispose();
     m_nwkRouteDiscoveryTable.Dispose();
+    m_rreqRetryTable.Dispose();
 
     m_nlmeDirectJoinConfirmCallback = MakeNullCallback<void, NlmeDirectJoinConfirmParams>();
     m_nlmeJoinConfirmCallback = MakeNullCallback<void, NlmeJoinConfirmParams>();
@@ -436,7 +443,8 @@ ZigbeeNwk::ReceiveRREQ(Mac16Address macSrcAddr,
                                 nwkHeader.GetSeqNum(),
                                 payload.GetRouteReqId(),
                                 pathCost,
-                                nwkHeader.GetRadius());
+                                nwkHeader.GetRadius(),
+                                m_nwkcRREQRetries);
         }
     }
 }
@@ -448,6 +456,15 @@ ZigbeeNwk::ReceiveRREP(Mac16Address macSrcAddr,
                        ZigbeePayloadRouteReplyCommand payload)
 {
     NS_LOG_FUNCTION(this);
+
+    // RREP received, cancel any ongoing RREQ retry events for that
+    // RREQ ID and remove entry from RREQ retry table.
+    Ptr<RreqRetryTableEntry> rreqRetryTableEntry;
+    if (m_rreqRetryTable.LookUpEntry(payload.GetRouteReqId(), rreqRetryTableEntry))
+    {
+        rreqRetryTableEntry->GetRreqEventId().Cancel();
+        m_rreqRetryTable.Delete(payload.GetRouteReqId());
+    }
 
     uint8_t pathCost = linkCost + payload.GetPathCost();
 
@@ -1696,7 +1713,8 @@ ZigbeeNwk::NlmeRouteDiscoveryRequest(NlmeRouteDiscoveryRequestParams params)
                             m_nwkSequenceNumber.GetValue(),
                             m_routeRequestId.GetValue(),
                             0,
-                            params.m_radius);
+                            params.m_radius,
+                            m_nwkcInitialRREQRetries);
 
         m_nwkSequenceNumber++;
         m_routeRequestId++;
@@ -2150,7 +2168,8 @@ ZigbeeNwk::SendRREQ(Mac16Address src,
                     uint8_t seq,
                     uint8_t rreqId,
                     uint8_t pathcost,
-                    uint8_t radius)
+                    uint8_t radius,
+                    uint8_t rreqRetries)
 {
     NS_LOG_FUNCTION(this);
 
@@ -2193,10 +2212,61 @@ ZigbeeNwk::SendRREQ(Mac16Address src,
     nsdu->AddHeader(payloadType);
     nsdu->AddHeader(nwkHeader);
 
-    // m_rrepWaitTimeout =  Simulator::Schedule(m_nwkcRREQRetryInterval,
-    //                                        &ZigbeeNwk::RetryRREQ,
-    //                                        this);
+    // Set RREQ RETRIES
+    Time rreqRetryTime =
+        Simulator::Now() + m_nwkcRREQRetryInterval + MilliSeconds(m_rreqJitter->GetValue());
 
+    Ptr<RreqRetryTableEntry> rreqRetryTableEntry;
+
+    if (m_rreqRetryTable.LookUpEntry(rreqId, rreqRetryTableEntry))
+    {
+        if (rreqRetryTableEntry->GetRreqRetryCount() >= rreqRetries)
+        {
+            NS_LOG_DEBUG("Maximum RREQ retries reached for dst " << dst << "and rreq ID "
+                                                                 << rreqId);
+            // Note: The value of rreqRetries is either nwkcInitialRREQRetries or
+            // nwkcRREQRetries depending on where the RREQ is transmitted.
+            // See Zigbee specification r22.1.0, Section 3.6.3.5.1
+            // This trace here is used to keep track when the maximum RREQ retries is reached.
+            m_rreqRetriesExhaustedTrace(rreqId, dst, rreqRetries);
+        }
+        else
+        {
+            // Schedule the next RREQ RETRY event and update entry.
+            EventId rreqRetryEvent = Simulator::Schedule(rreqRetryTime,
+                                                         &ZigbeeNwk::SendRREQ,
+                                                         this,
+                                                         src,
+                                                         dst,
+                                                         seq,
+                                                         rreqId,
+                                                         pathcost,
+                                                         radius,
+                                                         rreqRetries);
+
+            rreqRetryTableEntry->SetRreqRetryCount(rreqRetryTableEntry->GetRreqRetryCount() + 1);
+            rreqRetryTableEntry->SetRreqEventId(rreqRetryEvent);
+        }
+    }
+    else
+    {
+        // Schedule the next RREQ RETRY and add a new record of the event.
+        EventId rreqRetryEvent = Simulator::Schedule(rreqRetryTime,
+                                                     &ZigbeeNwk::SendRREQ,
+                                                     this,
+                                                     src,
+                                                     dst,
+                                                     seq,
+                                                     rreqId,
+                                                     pathcost,
+                                                     radius,
+                                                     rreqRetries);
+
+        Ptr<RreqRetryTableEntry> newEntry = Create<RreqRetryTableEntry>(rreqId, rreqRetryEvent, 0);
+        m_rreqRetryTable.AddEntry(newEntry);
+    }
+
+    // Send the RREQ
     m_mac->McpsDataRequest(params, nsdu);
 }
 

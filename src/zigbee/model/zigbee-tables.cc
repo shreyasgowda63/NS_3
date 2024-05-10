@@ -35,6 +35,110 @@ namespace zigbee
 
 NS_LOG_COMPONENT_DEFINE("ZigbeeNwkTables");
 
+/***********************************************************
+ *                RREQ Retry Table Entry
+ ***********************************************************/
+
+RreqRetryTableEntry::RreqRetryTableEntry(uint8_t rreqId,
+                                         EventId rreqRetryEvent,
+                                         uint8_t rreqRetryCount)
+{
+    m_rreqId = rreqId;
+    m_rreqRetryEventId = rreqRetryEvent;
+    m_rreqRetryCount = rreqRetryCount;
+}
+
+uint8_t
+RreqRetryTableEntry::GetRreqId() const
+{
+    return m_rreqId;
+}
+
+void
+RreqRetryTableEntry::SetRreqRetryCount(uint8_t rreqRetryCount)
+{
+    m_rreqRetryCount = rreqRetryCount;
+}
+
+uint8_t
+RreqRetryTableEntry::GetRreqRetryCount() const
+{
+    return m_rreqRetryCount;
+}
+
+void
+RreqRetryTableEntry::SetRreqEventId(EventId eventId)
+{
+    m_rreqRetryEventId = eventId;
+}
+
+EventId
+RreqRetryTableEntry::GetRreqEventId()
+{
+    return m_rreqRetryEventId;
+}
+
+/***********************************************************
+ *                RREQ Retry Table
+ ***********************************************************/
+bool
+RreqRetryTable::AddEntry(Ptr<RreqRetryTableEntry> entry)
+{
+    m_rreqRetryTable.emplace_back(entry);
+    return true;
+}
+
+bool
+RreqRetryTable::LookUpEntry(uint8_t rreqId, Ptr<RreqRetryTableEntry>& entryFound)
+{
+    NS_LOG_FUNCTION(this << rreqId);
+
+    for (const auto& entry : m_rreqRetryTable)
+    {
+        if (entry->GetRreqId() == rreqId)
+        {
+            entryFound = entry;
+            return true;
+        }
+    }
+    return false;
+}
+
+void
+RreqRetryTable::Delete(uint8_t rreqId)
+{
+    std::deque<Ptr<RreqRetryTableEntry>>::iterator it;
+    it = m_rreqRetryTable.begin();
+    while (it != m_rreqRetryTable.end())
+    {
+        if ((*it)->GetRreqId() == rreqId)
+        {
+            (*it) = nullptr;
+            it = m_rreqRetryTable.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+void
+RreqRetryTable::Dispose()
+{
+    std::deque<Ptr<RreqRetryTableEntry>>::iterator it;
+    it = m_rreqRetryTable.begin();
+    while (it != m_rreqRetryTable.end())
+    {
+        (*it) = nullptr;
+    }
+    m_rreqRetryTable.clear();
+}
+
+/***********************************************************
+ *                Routing Table Entry
+ ***********************************************************/
+
 RoutingTableEntry::RoutingTableEntry(Mac16Address dst,
                                      RouteStatus status,
                                      bool noRouteCache,
@@ -208,6 +312,7 @@ RoutingTableEntry::Print(Ptr<OutputStreamWrapper> stream) const
 /***********************************************************
  *                Routing Table
  ***********************************************************/
+
 RoutingTable::RoutingTable()
 {
     m_maxTableSize = 2000;
@@ -317,6 +422,10 @@ RoutingTable::Dispose()
     m_routingTable.clear();
 }
 
+/***********************************************************
+ *                Routing Discovery Table Entry
+ ***********************************************************/
+
 RouteDiscoveryTableEntry::RouteDiscoveryTableEntry(uint8_t rreqId,
                                                    Mac16Address src,
                                                    Mac16Address snd,
@@ -424,6 +533,7 @@ RouteDiscoveryTableEntry::Print(Ptr<OutputStreamWrapper> stream) const
 /***********************************************************
  *                Route Discovery Table
  ***********************************************************/
+
 RouteDiscoveryTable::RouteDiscoveryTable()
 {
     m_maxTableSize = 2000;
@@ -533,6 +643,10 @@ RouteDiscoveryTable::Dispose()
     }
     m_routeDscTable.clear();
 }
+
+/***********************************************************
+ *                Neighbor Table Entry
+ ***********************************************************/
 
 NeighborTableEntry::NeighborTableEntry(Mac64Address extAddr,
                                        Mac16Address nwkAddr,

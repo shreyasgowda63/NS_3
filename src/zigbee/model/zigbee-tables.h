@@ -783,6 +783,61 @@ class PanIdTable
 };
 
 /**
+ * The route request retry table entry.
+ * It represents information stored about future route requests retries.
+ */
+class RreqRetryTableEntry : public SimpleRefCount<RreqRetryTableEntry>
+{
+  public:
+    /**
+     * The constructor of the RREQ retry table entry
+     *
+     * \param rreqId The RREQ ID
+     * \param rreqRetryEvent The EventId of the next RREQ retry callback
+     * \param rreqRetryCount The current number of RREQ retries for this RREQ ID
+     */
+    RreqRetryTableEntry(uint8_t rreqId, EventId rreqRetryEvent, uint8_t rreqRetryCount);
+
+    /**
+     * Get the RREQ Id from the entry
+     *
+     * \return The RREQ ID from the entry
+     */
+    uint8_t GetRreqId() const;
+
+    /**
+     * Set the RREQ retry count from the entry
+     *
+     * \param rreqRetryCount The value of the RREQ retry count
+     */
+    void SetRreqRetryCount(uint8_t rreqRetryCount);
+
+    /**
+     * Get the RREQ retry count from the entry
+     *
+     * \return The RREQ retry count
+     */
+    uint8_t GetRreqRetryCount() const;
+
+    /**
+     *  Set the event id of the RREQ retry
+     *
+     * \param eventid The event id corresponding to the next RREQ retry callback
+     */
+    void SetRreqEventId(EventId eventId);
+
+    /**
+     * Get the RREQ id of the RREQ retry
+     */
+    EventId GetRreqEventId();
+
+  private:
+    uint8_t m_rreqId;           //!< The RREQ ID
+    EventId m_rreqRetryEventId; //!< The event id of the next RREQ retry callback
+    uint8_t m_rreqRetryCount;   //!< The number of RREQ retries
+};
+
+/**
  *  The network layer Routing Table.
  *  See Zigbee specification r22.1.0, 3.6.3.2
  */
@@ -1008,6 +1063,47 @@ class NeighborTable
 
     std::deque<Ptr<NeighborTableEntry>> m_neighborTable; //!< The neighbor table object
     uint32_t m_maxTableSize;                             //!< The maximum size of the neighbor table
+};
+
+/**
+ *  A table storing information about upcoming route request retries. This table is use to keep
+ *  track of all RREQ retry attempts from a given device.
+ */
+class RreqRetryTable
+{
+  public:
+    /**
+     * Adds an entry to the table
+     *
+     * \param entry The RREQ retry table entry
+     * \return True if the entry was added to the table.
+     */
+    bool AddEntry(Ptr<RreqRetryTableEntry> entry);
+
+    /**
+     *  Look up for an entry in the table
+     *
+     *  \param rreqId The RREQ ID used to look up for an entry in the table
+     *  \param entryFound The returned entry if found in the table
+     *  \return True if a searched entry is found
+     */
+    bool LookUpEntry(uint8_t rreqId, Ptr<RreqRetryTableEntry>& entryFound);
+
+    /**
+     *  Delete an entry from the table using the RREQ ID
+     *
+     *  \param rreqId The RREQ ID use to delete an entry from the table
+     */
+    void Delete(uint8_t rreqId);
+
+    /**
+     * Dispose of the table and all its elements
+     */
+    void Dispose();
+
+  private:
+    std::deque<Ptr<RreqRetryTableEntry>>
+        m_rreqRetryTable; //!< The Table containing  RREQ Table entries.
 };
 
 } // namespace zigbee
