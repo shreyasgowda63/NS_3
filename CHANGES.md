@@ -21,7 +21,11 @@ Changes from ns-3.42 to ns-3-dev
 * (tcp) A new trace source `TcpSocketBase::LastRtt` has been added for tracing the last RTT sample observed. The existing trace source `TcpSocketBase::Rtt` is still providing the smoothed RTT, although it had been incorrectly documented as providing the last RTT.
 * (core) Added `LaplacianRandomVariable` class implementing the Laplacian random variable, and `LargestExtremeValueRandomVariable` class implementing the Largest Extreme Value random variable.
 * (wifi) Added a new trace source to `WifiPhy`: **PhyRxMacHeaderEnd**, which is fired when the reception of the MAC header of an MPDU is completed and provides the MAC header and the remaining PSDU duration. The trace source is actually fired when the new **NotifyMacHdrRxEnd** attribute of `WifiPhy` is set to true (it is set to false by default).
+<<<<<<< HEAD
 * (lr-wpan) Added a new test to `lr-wpan-cca-test.cc` suite. The added test demonstrates a known CCA vulnerability window.
+=======
+* (applications) Added two new base classes for source and sink applications, `SourceApplication` and `SinkApplication`, respectively.
+>>>>>>> 1e0a032ae1 (Update RELEASE_NOTES.md and CHANGES.md)
 
 ### Changes to existing API
 
@@ -38,6 +42,8 @@ Changes from ns-3.42 to ns-3-dev
 * (lr-wpan) Attribute `pCurrentPage` added to the supported attributes in `MacPibAttributes`.
 * (wifi) Attribute `ChannelSettings` has been changed to allow configuration of non-contiguous operating channels by specifying each 80 MHz segment. It has changed from TupleValue to AttributeContainerValue, but the configuration of contiguous channels using a StringValue still works as before.
 * (lr-wpan) Documentation was extended and reformatted.
+* (applications) Deprecated attributes `RemoteAddress` and `RemotePort` in UdpClient, UdpTraceClient and UdpEchoClient. They have been combined into a single `Remote` attribute.
+* (applications) Deprecated attributes `ThreeGppHttpClient::RemoteServerAddress` and `ThreeGppHttpClient::RemoteServerPort`. They have been combined into a single `ThreeGppHttpClient::Remote` attribute.
 
 ### Changes to build system
 
