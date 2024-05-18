@@ -172,6 +172,7 @@ set(header_files
     helper/wifi-radio-energy-model-helper.h
     helper/yans-wifi-helper.h
     helper/wifi-phy-rx-trace-helper.h
+    model/wifi-units.h
     model/addba-extension.h
     model/adhoc-wifi-mac.h
     model/ampdu-subframe-header.h
