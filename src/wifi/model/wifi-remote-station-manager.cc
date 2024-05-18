@@ -698,7 +698,7 @@ WifiRemoteStationManager::GetCtsToSelfTxVector()
 }
 
 WifiTxVector
-WifiRemoteStationManager::GetRtsTxVector(Mac48Address address, uint16_t allowedWidth)
+WifiRemoteStationManager::GetRtsTxVector(Mac48Address address, ChannelWidthMhz allowedWidth)
 {
     NS_LOG_FUNCTION(this << address << allowedWidth);
     WifiTxVector v;

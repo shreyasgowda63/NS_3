@@ -151,7 +151,7 @@ main(int argc, char* argv[])
     uint16_t transitionDelayUsec{128};
     uint16_t channelSwitchDelayUsec{100};
     bool switchAuxPhy{true};
-    uint16_t auxPhyChWidth{20};
+    ChannelWidthMhz auxPhyChWidth{20};
     bool auxPhyTxCapable{true};
     Time simulationTime{"10s"};
     double distance{1.0}; // meters

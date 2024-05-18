@@ -671,7 +671,7 @@ class EmlsrLinkSwitchTest : public EmlsrOperationsTestBase
                           //!<  the Main PHY was operating before moving to the link of the Aux PHY
         bool resetCamState; //!< whether to reset the state of the ChannelAccessManager associated
                             //!< with the link on which the main PHY has just switched to
-        uint16_t auxPhyMaxChWidth; //!< max channel width (MHz) supported by aux PHYs
+        ChannelWidthMhz auxPhyMaxChWidth; //!< max channel width supported by aux PHYs
     };
 
     /**
@@ -726,9 +726,9 @@ class EmlsrLinkSwitchTest : public EmlsrOperationsTestBase
                                the Main PHY was operating before moving to the link of Aux PHY */
     bool m_resetCamState; /**< whether to reset the state of the ChannelAccessManager associated
                                with the link on which the main PHY has just switched to */
-    uint16_t m_auxPhyMaxChWidth;  //!< max channel width (MHz) supported by aux PHYs
-    std::size_t m_countQoSframes; //!< counter for QoS data frames
-    std::size_t m_txPsdusPos;     //!< a position in the vector of TX PSDUs
+    ChannelWidthMhz m_auxPhyMaxChWidth; //!< max channel width supported by aux PHYs
+    std::size_t m_countQoSframes;       //!< counter for QoS data frames
+    std::size_t m_txPsdusPos;           //!< a position in the vector of TX PSDUs
 };
 
 /**
