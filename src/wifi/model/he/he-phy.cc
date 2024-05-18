@@ -1871,7 +1871,8 @@ HePhy::ConvertHeRuSubcarriers(ChannelWidthMhz bandWidth,
     guardBandwidth /= centerFrequencies.size();
     const auto nGuardBands =
         static_cast<uint32_t>(((2 * guardBandwidth * 1e6) / subcarrierSpacing) + 0.5);
-    if (bandWidth > (totalWidth / centerFrequencies.size()))
+    if (const ChannelWidthMhz segmentWidth = (totalWidth / centerFrequencies.size());
+        bandWidth > segmentWidth)
     {
         NS_ASSERT(bandIndex == 0);
         bandWidth /= centerFrequencies.size();

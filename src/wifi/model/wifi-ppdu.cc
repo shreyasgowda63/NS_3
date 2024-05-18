@@ -198,7 +198,7 @@ WifiPpdu::DoesOverlapChannel(uint16_t minFreq, uint16_t maxFreq) const
 {
     NS_LOG_FUNCTION(this << minFreq << maxFreq);
     // all segments have the same width
-    const auto txChannelWidth = (m_txChannelWidth / m_txCenterFreqs.size());
+    const ChannelWidthMhz txChannelWidth = (m_txChannelWidth / m_txCenterFreqs.size());
     for (auto txCenterFreq : m_txCenterFreqs)
     {
         const auto minTxFreq = txCenterFreq - txChannelWidth / 2;

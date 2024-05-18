@@ -25,7 +25,7 @@
 namespace ns3
 {
 
-using ChannelWidthMhz = uint16_t; //!< channel width expressed in MHz
+using ChannelWidthMhz = int64_t; //!< channel width expressed in MHz
 
 /**
  * \ingroup wifi

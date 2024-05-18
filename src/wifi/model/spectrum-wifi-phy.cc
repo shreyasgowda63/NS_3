@@ -713,7 +713,7 @@ SpectrumWifiPhy::GetBandForInterface(Ptr<WifiSpectrumPhyInterface> spectrumPhyIn
     const auto subcarrierSpacing = GetSubcarrierSpacing();
     WifiSpectrumBandInfo bandInfo;
     std::size_t numSegments = 1;
-    if (const auto segmentWidth =
+    if (const ChannelWidthMhz segmentWidth =
             (channelWidth / spectrumPhyInterface->GetCenterFrequencies().size());
         bandWidth > segmentWidth)
     {
