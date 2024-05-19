@@ -141,7 +141,8 @@ IdealWifiManager::BuildSnrThresholds()
                 txVector.SetChannelWidth(j);
                 if (mode.GetModulationClass() == WIFI_MOD_CLASS_HT)
                 {
-                    uint16_t guardInterval = GetShortGuardIntervalSupported() ? 400 : 800;
+                    const auto guardInterval =
+                        GetShortGuardIntervalSupported() ? NanoSeconds(400) : NanoSeconds(800);
                     txVector.SetGuardInterval(guardInterval);
                     // derive NSS from the MCS index
                     nss = (mode.GetMcsValue() / 8) + 1;
@@ -153,10 +154,11 @@ IdealWifiManager::BuildSnrThresholds()
                 }
                 else
                 {
-                    uint16_t guardInterval;
+                    Time guardInterval{};
                     if (mode.GetModulationClass() == WIFI_MOD_CLASS_VHT)
                     {
-                        guardInterval = GetShortGuardIntervalSupported() ? 400 : 800;
+                        guardInterval =
+                            GetShortGuardIntervalSupported() ? NanoSeconds(400) : NanoSeconds(800);
                     }
                     else
                     {
@@ -344,7 +346,7 @@ IdealWifiManager::DoGetDataTxVector(WifiRemoteStation* st, ChannelWidthMhz allow
     WifiTxVector txVector;
     uint64_t bestRate = 0;
     uint8_t selectedNss = 1;
-    uint16_t guardInterval;
+    Time guardInterval{};
     const auto channelWidth = std::min(GetChannelWidth(station), allowedWidth);
     txVector.SetChannelWidth(channelWidth);
     if ((station->m_lastSnrCached != CACHE_INITIAL_VALUE) &&
@@ -373,16 +375,17 @@ IdealWifiManager::DoGetDataTxVector(WifiRemoteStation* st, ChannelWidthMhz allow
                     continue;
                 }
                 txVector.SetMode(mode);
-                uint16_t guardInterval;
+                Time guardInterval{};
                 if (mode.GetModulationClass() >= WIFI_MOD_CLASS_HE)
                 {
                     guardInterval = std::max(GetGuardInterval(station), GetGuardInterval());
                 }
                 else
                 {
-                    guardInterval = static_cast<uint16_t>(
-                        std::max(GetShortGuardIntervalSupported(station) ? 400 : 800,
-                                 GetShortGuardIntervalSupported() ? 400 : 800));
+                    guardInterval = std::max(
+                        GetShortGuardIntervalSupported(station) ? NanoSeconds(400)
+                                                                : NanoSeconds(800),
+                        GetShortGuardIntervalSupported() ? NanoSeconds(400) : NanoSeconds(800));
                 }
                 txVector.SetGuardInterval(guardInterval);
                 if (mode.GetModulationClass() == WIFI_MOD_CLASS_HT)
@@ -501,12 +504,12 @@ IdealWifiManager::DoGetDataTxVector(WifiRemoteStation* st, ChannelWidthMhz allow
     else if ((maxMode.GetModulationClass() >= WIFI_MOD_CLASS_HT))
     {
         guardInterval =
-            static_cast<uint16_t>(std::max(GetShortGuardIntervalSupported(station) ? 400 : 800,
-                                           GetShortGuardIntervalSupported() ? 400 : 800));
+            std::max(GetShortGuardIntervalSupported(station) ? NanoSeconds(400) : NanoSeconds(800),
+                     GetShortGuardIntervalSupported() ? NanoSeconds(400) : NanoSeconds(800));
     }
     else
     {
-        guardInterval = 800;
+        guardInterval = NanoSeconds(800);
     }
     WifiTxVector bestTxVector{
         maxMode,
@@ -558,7 +561,7 @@ IdealWifiManager::DoGetRtsTxVector(WifiRemoteStation* st)
         maxMode,
         GetDefaultTxPowerLevel(),
         GetPreambleForTransmission(maxMode.GetModulationClass(), GetShortPreambleEnabled()),
-        800,
+        NanoSeconds(800),
         GetNumberOfAntennas(),
         nss,
         0,

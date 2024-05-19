@@ -73,13 +73,13 @@ VhtPpdu::SetVhtSigHeader(VhtSigHeader& vhtSig,
 {
     vhtSig.SetMuFlag(m_preamble == WIFI_PREAMBLE_VHT_MU);
     vhtSig.SetChannelWidth(txVector.GetChannelWidth());
-    vhtSig.SetShortGuardInterval(txVector.GetGuardInterval() == 400);
+    vhtSig.SetShortGuardInterval(txVector.GetGuardInterval() == NanoSeconds(400));
     uint32_t nSymbols =
         (static_cast<double>(
              (ppduDuration - WifiPhy::CalculatePhyPreambleAndHeaderDuration(txVector))
                  .GetNanoSeconds()) /
-         (3200 + txVector.GetGuardInterval()));
-    if (txVector.GetGuardInterval() == 400)
+         (3200 + txVector.GetGuardInterval().GetNanoSeconds()));
+    if (txVector.GetGuardInterval() == NanoSeconds(400))
     {
         vhtSig.SetShortGuardIntervalDisambiguation((nSymbols % 10) == 9);
     }
@@ -104,7 +104,7 @@ VhtPpdu::SetTxVectorFromPhyHeaders(WifiTxVector& txVector,
     txVector.SetMode(VhtPhy::GetVhtMcs(vhtSig.GetSuMcs()));
     txVector.SetChannelWidth(vhtSig.GetChannelWidth());
     txVector.SetNss(vhtSig.GetNStreams());
-    txVector.SetGuardInterval(vhtSig.GetShortGuardInterval() ? 400 : 800);
+    txVector.SetGuardInterval(vhtSig.GetShortGuardInterval() ? NanoSeconds(400) : NanoSeconds(800));
     txVector.SetAggregation(GetPsdu()->IsAggregate());
 }
 
@@ -115,7 +115,7 @@ VhtPpdu::GetTxDuration() const
     const auto length = m_lSig.GetLength();
     const auto sgi = m_vhtSig.GetShortGuardInterval();
     const auto sgiDisambiguation = m_vhtSig.GetShortGuardIntervalDisambiguation();
-    const auto tSymbol = NanoSeconds(3200 + txVector.GetGuardInterval());
+    const auto tSymbol = NanoSeconds(3200) + txVector.GetGuardInterval();
     const auto preambleDuration = WifiPhy::CalculatePhyPreambleAndHeaderDuration(txVector);
     const auto calculatedDuration =
         MicroSeconds(((ceil(static_cast<double>(length + 3) / 3)) * 4) + 20);

@@ -2110,7 +2110,7 @@ WifiMac::GetHtCapabilities(uint8_t linkId) const
         uint8_t nss = (mcs.GetMcsValue() / 8) + 1;
         NS_ASSERT(nss > 0 && nss < 5);
         uint64_t dataRate = mcs.GetDataRate(htConfiguration->Get40MHzOperationSupported() ? 40 : 20,
-                                            sgiSupported ? 400 : 800,
+                                            sgiSupported ? NanoSeconds(400) : NanoSeconds(800),
                                             nss);
         if (dataRate > maxSupportedRate)
         {
