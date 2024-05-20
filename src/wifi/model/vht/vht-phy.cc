@@ -89,7 +89,7 @@ const std::map<WifiChannelListType, double> channelTypeToScalingFactorDbm {
 /**
  * \brief map a given secondary channel width to its channel list type
  */
-const std::map<ChannelWidthMhz, WifiChannelListType> secondaryChannels {
+const std::map<MHz_t, WifiChannelListType> secondaryChannels {
     {20, WIFI_CHANLIST_SECONDARY},
     {40, WIFI_CHANLIST_SECONDARY40},
     {80, WIFI_CHANLIST_SECONDARY80},
@@ -430,7 +430,7 @@ VhtPhy::GetConstellationSize(uint8_t mcsValue)
 }
 
 uint64_t
-VhtPhy::GetPhyRate(uint8_t mcsValue, ChannelWidthMhz channelWidth, Time guardInterval, uint8_t nss)
+VhtPhy::GetPhyRate(uint8_t mcsValue, MHz_t channelWidth, Time guardInterval, uint8_t nss)
 {
     WifiCodeRate codeRate = GetCodeRate(mcsValue);
     uint64_t dataRate = GetDataRate(mcsValue, channelWidth, guardInterval, nss);
@@ -456,7 +456,7 @@ VhtPhy::GetDataRateFromTxVector(const WifiTxVector& txVector, uint16_t /* staId 
 }
 
 uint64_t
-VhtPhy::GetDataRate(uint8_t mcsValue, ChannelWidthMhz channelWidth, Time guardInterval, uint8_t nss)
+VhtPhy::GetDataRate(uint8_t mcsValue, MHz_t channelWidth, Time guardInterval, uint8_t nss)
 {
     NS_ASSERT(guardInterval == NanoSeconds(800) || guardInterval == NanoSeconds(400));
     NS_ASSERT(nss <= 8);
@@ -471,7 +471,7 @@ VhtPhy::GetDataRate(uint8_t mcsValue, ChannelWidthMhz channelWidth, Time guardIn
 }
 
 uint16_t
-VhtPhy::GetUsableSubcarriers(ChannelWidthMhz channelWidth)
+VhtPhy::GetUsableSubcarriers(MHz_t channelWidth)
 {
     switch (channelWidth)
     {
@@ -524,7 +524,7 @@ VhtPhy::IsAllowed(const WifiTxVector& txVector)
 }
 
 bool
-VhtPhy::IsCombinationAllowed(uint8_t mcsValue, ChannelWidthMhz channelWidth, uint8_t nss)
+VhtPhy::IsCombinationAllowed(uint8_t mcsValue, MHz_t channelWidth, uint8_t nss)
 {
     if (mcsValue == 9 && channelWidth == 20 && nss != 3)
     {
@@ -602,7 +602,7 @@ VhtPhy::GetCcaIndication(const Ptr<const WifiPpdu> ppdu)
 
     if (ppdu)
     {
-        const ChannelWidthMhz primaryWidth = 20;
+        const MHz_t primaryWidth = 20;
         int64_t p20MinFreq =
             m_wifiPhy->GetOperatingChannel().GetPrimaryChannelCenterFrequency(primaryWidth) -
             (primaryWidth / 2);
@@ -619,7 +619,7 @@ VhtPhy::GetCcaIndication(const Ptr<const WifiPpdu> ppdu)
         }
     }
 
-    std::vector<ChannelWidthMhz> secondaryWidthsToCheck;
+    std::vector<MHz_t> secondaryWidthsToCheck;
     if (ppdu)
     {
         for (const auto& secondaryChannel : secondaryChannels)

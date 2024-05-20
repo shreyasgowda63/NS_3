@@ -109,7 +109,7 @@ WifiPhy::GetTypeId()
                                           EnumValue<WifiPhyBand>,
                                           UintegerValue>(
                     MakeUintegerChecker<uint8_t>(0, 233),
-                    MakeUintegerChecker<ChannelWidthMhz>(0, 160),
+                    MakeUintegerChecker<MHz_t>(0, 160),
                     MakeEnumChecker(WifiPhyBand::WIFI_PHY_BAND_2_4GHZ,
                                     "BAND_2_4GHZ",
                                     WifiPhyBand::WIFI_PHY_BAND_5GHZ,
@@ -138,7 +138,7 @@ WifiPhy::GetTypeId()
                 TypeId::ATTR_GET,
                 UintegerValue(0),
                 MakeUintegerAccessor(&WifiPhy::GetChannelWidth),
-                MakeUintegerChecker<ChannelWidthMhz>(5, 160))
+                MakeUintegerChecker<MHz_t>(5, 160))
             .AddAttribute(
                 "Primary20MHzIndex",
                 "The index of the primary 20 MHz channel within the current operating channel "
@@ -1084,7 +1084,7 @@ WifiPhy::GetChannelNumber() const
     return m_operatingChannel.GetNumber();
 }
 
-ChannelWidthMhz
+MHz_t
 WifiPhy::GetChannelWidth() const
 {
     return m_operatingChannel.GetTotalWidth();
@@ -1108,8 +1108,8 @@ WifiPhy::HasFixedPhyBand() const
     return m_fixedPhyBand;
 }
 
-ChannelWidthMhz
-WifiPhy::GetTxBandwidth(WifiMode mode, ChannelWidthMhz maxAllowedWidth) const
+MHz_t
+WifiPhy::GetTxBandwidth(WifiMode mode, MHz_t maxAllowedWidth) const
 {
     auto modulation = mode.GetModulationClass();
     if (modulation == WIFI_MOD_CLASS_DSSS || modulation == WIFI_MOD_CLASS_HR_DSSS)
@@ -2345,7 +2345,7 @@ operator<<(std::ostream& os, RxSignalInfo rxSignalInfo)
 }
 
 uint8_t
-WifiPhy::GetPrimaryChannelNumber(ChannelWidthMhz primaryChannelWidth) const
+WifiPhy::GetPrimaryChannelNumber(MHz_t primaryChannelWidth) const
 {
     return m_operatingChannel.GetPrimaryChannelNumber(primaryChannelWidth, m_standard);
 }

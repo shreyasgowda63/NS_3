@@ -54,7 +54,7 @@ int
 main(int argc, char** argv)
 {
     std::string standard = "11a";
-    int bw = 20;
+    MHz_t bw = 20;
     double pow = 23; // dBm
     bool verbose = false;
     CommandLine cmd(__FILE__);

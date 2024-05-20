@@ -396,14 +396,14 @@ class HtPhy : public OfdmPhy
      * and is mainly used as a callback for WifiMode operation.
      *
      * \param mcsValue the HT MCS index
-     * \param channelWidth the considered channel width in MHz
+     * \param channelWidth the considered channel width
      * \param guardInterval the considered guard interval duration
      * \param nss the considered number of stream
      *
      * \return the physical bit rate of this signal in bps.
      */
     static uint64_t GetPhyRate(uint8_t mcsValue,
-                               ChannelWidthMhz channelWidth,
+                               MHz_t channelWidth,
                                Time guardInterval,
                                uint8_t nss);
     /**
@@ -435,13 +435,13 @@ class HtPhy : public OfdmPhy
      * callback for WifiMode operation.
      *
      * \param mcsValue the HT MCS index
-     * \param channelWidth the channel width in MHz
+     * \param channelWidth the channel width
      * \param guardInterval the guard interval duration in nanoseconds
      * \param nss the number of spatial streams
      * \return the data bit rate in bps.
      */
     static uint64_t GetDataRate(uint8_t mcsValue,
-                                ChannelWidthMhz channelWidth,
+                                MHz_t channelWidth,
                                 Time guardInterval,
                                 uint8_t nss);
     /**
@@ -538,10 +538,10 @@ class HtPhy : public OfdmPhy
                                       uint8_t nss);
 
     /**
-     * \param channelWidth the channel width in MHz
+     * \param channelWidth the channel width
      * \return the number of usable subcarriers for data
      */
-    static uint16_t GetUsableSubcarriers(ChannelWidthMhz channelWidth);
+    static uint16_t GetUsableSubcarriers(MHz_t channelWidth);
 
     /**
      * \param guardInterval the guard interval duration

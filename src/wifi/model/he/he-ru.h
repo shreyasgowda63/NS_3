@@ -101,11 +101,11 @@ class HeRu
         /**
          * Get the RU PHY index
          *
-         * \param bw the width of the channel of which the RU is part (in MHz)
+         * \param bw the width of the channel of which the RU is part
          * \param p20Index the index of the primary20 channel
          * \return the RU PHY index
          */
-        std::size_t GetPhyIndex(ChannelWidthMhz bw, uint8_t p20Index) const;
+        std::size_t GetPhyIndex(MHz_t bw, uint8_t p20Index) const;
 
         /**
          * Compare this RU to the given RU.
@@ -144,10 +144,10 @@ class HeRu
         /**
          * Constructor.
          *
-         * \param channelWidth the channel width in MHz
+         * \param channelWidth the channel width
          * \param p20Index the index of the primary20 channel
          */
-        RuSpecCompare(ChannelWidthMhz channelWidth, uint8_t p20Index);
+        RuSpecCompare(MHz_t channelWidth, uint8_t p20Index);
         /**
          * Function call operator.
          *
@@ -160,39 +160,39 @@ class HeRu
         bool operator()(const RuSpec& lhs, const RuSpec& rhs) const;
 
       private:
-        ChannelWidthMhz m_channelWidth; ///< The channel width in MHz
-        uint8_t m_p20Index;             ///< Primary20 channel index
+        MHz_t m_channelWidth; ///< The channel width
+        uint8_t m_p20Index;   ///< Primary20 channel index
     };
 
     /**
      * Get the number of distinct RUs of the given type (number of tones)
      * available in a HE PPDU of the given bandwidth.
      *
-     * \param bw the bandwidth (MHz) of the HE PPDU (20, 40, 80, 160)
+     * \param bw the bandwidth of the HE PPDU (20, 40, 80, 160)
      * \param ruType the RU type (number of tones)
      * \return the number of distinct RUs available
      */
-    static std::size_t GetNRus(ChannelWidthMhz bw, RuType ruType);
+    static std::size_t GetNRus(MHz_t bw, RuType ruType);
 
     /**
      * Get the set of distinct RUs of the given type (number of tones)
      * available in a HE PPDU of the given bandwidth.
      *
-     * \param bw the bandwidth (MHz) of the HE PPDU (20, 40, 80, 160)
+     * \param bw the bandwidth of the HE PPDU (20, 40, 80, 160)
      * \param ruType the RU type (number of tones)
      * \return the set of distinct RUs available
      */
-    static std::vector<HeRu::RuSpec> GetRusOfType(ChannelWidthMhz bw, HeRu::RuType ruType);
+    static std::vector<HeRu::RuSpec> GetRusOfType(MHz_t bw, HeRu::RuType ruType);
 
     /**
      * Get the set of 26-tone RUs that can be additionally allocated if the given
      * bandwidth is split in RUs of the given type.
      *
-     * \param bw the bandwidth (MHz) of the HE PPDU (20, 40, 80, 160)
+     * \param bw the bandwidth of the HE PPDU (20, 40, 80, 160)
      * \param ruType the RU type (number of tones)
      * \return the set of 26-tone RUs that can be additionally allocated
      */
-    static std::vector<HeRu::RuSpec> GetCentral26TonesRus(ChannelWidthMhz bw, HeRu::RuType ruType);
+    static std::vector<HeRu::RuSpec> GetCentral26TonesRus(MHz_t bw, HeRu::RuType ruType);
 
     /**
      * Get the subcarrier group of the RU having the given PHY index among all the
@@ -203,39 +203,37 @@ class HeRu
      * the 160 MHz channel (i.e. -1012 to 1012). The PHY index parameter is used to
      * distinguish between lower and higher 80 MHz subchannels.
      *
-     * \param bw the bandwidth (MHz) of the HE PPDU (20, 40, 80, 160)
+     * \param bw the bandwidth of the HE PPDU (20, 40, 80, 160)
      * \param ruType the RU type (number of tones)
      * \param phyIndex the PHY index (starting at 1) of the RU
      * \return the subcarrier range of the specified RU
      */
-    static SubcarrierGroup GetSubcarrierGroup(ChannelWidthMhz bw,
-                                              RuType ruType,
-                                              std::size_t phyIndex);
+    static SubcarrierGroup GetSubcarrierGroup(MHz_t bw, RuType ruType, std::size_t phyIndex);
 
     /**
      * Check whether the given RU overlaps with the given set of RUs.
      * Note that for channel width of 160 MHz the returned range is relative to
      * the 160 MHz channel (i.e. -1012 to 1012).
      *
-     * \param bw the bandwidth (MHz) of the HE PPDU (20, 40, 80, 160)
+     * \param bw the bandwidth of the HE PPDU (20, 40, 80, 160)
      * \param ru the given RU allocation
      * \param v the given set of RUs
      * \return true if the given RU overlaps with the given set of RUs.
      */
-    static bool DoesOverlap(ChannelWidthMhz bw, RuSpec ru, const std::vector<RuSpec>& v);
+    static bool DoesOverlap(MHz_t bw, RuSpec ru, const std::vector<RuSpec>& v);
 
     /**
      * Check whether the given RU overlaps with the given tone ranges.
      * Note that for channel width of 160 MHz the returned range is relative to
      * the 160 MHz channel (i.e. -1012 to 1012).
      *
-     * \param bw the bandwidth (MHz) of the HE PPDU (20, 40, 80, 160)
+     * \param bw the bandwidth of the HE PPDU (20, 40, 80, 160)
      * \param ru the given RU allocation
      * \param toneRanges the given set of tone ranges
      * \param p20Index the index of the primary20 channel
      * \return true if the given RU overlaps with the given set of tone ranges.
      */
-    static bool DoesOverlap(ChannelWidthMhz bw,
+    static bool DoesOverlap(MHz_t bw,
                             RuSpec ru,
                             const SubcarrierGroup& toneRanges,
                             uint8_t p20Index);
@@ -245,28 +243,28 @@ class HeRu
      * reference RU allocation.
      * Note that an assert is generated if the RU allocation is not found.
      *
-     * \param bw the bandwidth (MHz) of the HE PPDU (20, 40, 80, 160)
+     * \param bw the bandwidth of the HE PPDU (20, 40, 80, 160)
      * \param referenceRu the reference RU allocation
      * \param searchedRuType the searched RU type
      * \return the searched RU allocation.
      */
-    static RuSpec FindOverlappingRu(ChannelWidthMhz bw, RuSpec referenceRu, RuType searchedRuType);
+    static RuSpec FindOverlappingRu(MHz_t bw, RuSpec referenceRu, RuType searchedRuType);
 
     /**
      * Get the approximate bandwidth occupied by a RU.
      *
      * \param ruType the RU type
-     * \return the approximate bandwidth (in MHz) occupied by the RU
+     * \return the approximate bandwidth occupied by the RU
      */
-    static ChannelWidthMhz GetBandwidth(RuType ruType);
+    static MHz_t GetBandwidth(RuType ruType);
 
     /**
      * Get the RU corresponding to the approximate bandwidth.
      *
-     * \param bandwidth the approximate bandwidth (in MHz) occupied by the RU
+     * \param bandwidth the approximate bandwidth occupied by the RU
      * \return the RU type
      */
-    static RuType GetRuType(ChannelWidthMhz bandwidth);
+    static RuType GetRuType(MHz_t bandwidth);
 
     /**
      * Given the channel bandwidth and the number of stations candidate for being
@@ -274,19 +272,19 @@ class HeRu
      * an RU subject to the constraint that all the stations must be assigned an RU
      * of the same size (in terms of number of tones).
      *
-     * \param bandwidth the channel bandwidth in MHz
+     * \param bandwidth the channel bandwidth
      * \param nStations the number of candidate stations. On return, it is set to
      *                  the number of stations that are assigned an RU
      * \param[out] nCentral26TonesRus the number of additional 26-tone RUs that can be
      *                                allocated if the returned RU size is greater than 26 tones
      * \return the RU type
      */
-    static RuType GetEqualSizedRusForStations(ChannelWidthMhz bandwidth,
+    static RuType GetEqualSizedRusForStations(MHz_t bandwidth,
                                               std::size_t& nStations,
                                               std::size_t& nCentral26TonesRus);
 
     /// (bandwidth, number of tones) pair
-    typedef std::pair<ChannelWidthMhz, RuType> BwTonesPair;
+    typedef std::pair<MHz_t, RuType> BwTonesPair;
 
     /// map (bandwidth, number of tones) pairs to the group of subcarrier ranges
     typedef std::map<BwTonesPair, std::vector<SubcarrierGroup>> SubcarrierGroups;

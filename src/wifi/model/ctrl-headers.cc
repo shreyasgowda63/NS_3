@@ -2038,7 +2038,7 @@ CtrlTriggerHeader::GetCsRequired() const
 }
 
 void
-CtrlTriggerHeader::SetUlBandwidth(ChannelWidthMhz bw)
+CtrlTriggerHeader::SetUlBandwidth(MHz_t bw)
 {
     switch (bw)
     {
@@ -2060,7 +2060,7 @@ CtrlTriggerHeader::SetUlBandwidth(ChannelWidthMhz bw)
     }
 }
 
-ChannelWidthMhz
+MHz_t
 CtrlTriggerHeader::GetUlBandwidth() const
 {
     return (1 << m_ulBandwidth) * 20;

@@ -827,7 +827,7 @@ PhyEntity::GetReceptionStatus(Ptr<const WifiPsdu> psdu,
     }
 }
 
-std::pair<ChannelWidthMhz, WifiSpectrumBandInfo>
+std::pair<MHz_t, WifiSpectrumBandInfo>
 PhyEntity::GetChannelWidthAndBand(const WifiTxVector& txVector, uint16_t /* staId */) const
 {
     const auto channelWidth = GetRxChannelWidth(txVector);
@@ -1214,7 +1214,7 @@ PhyEntity::GetCurrentEvent() const
 }
 
 WifiSpectrumBandInfo
-PhyEntity::GetPrimaryBand(ChannelWidthMhz bandWidth) const
+PhyEntity::GetPrimaryBand(MHz_t bandWidth) const
 {
     if (m_wifiPhy->GetChannelWidth() % 20 != 0)
     {
@@ -1225,14 +1225,14 @@ PhyEntity::GetPrimaryBand(ChannelWidthMhz bandWidth) const
 }
 
 WifiSpectrumBandInfo
-PhyEntity::GetSecondaryBand(ChannelWidthMhz bandWidth) const
+PhyEntity::GetSecondaryBand(MHz_t bandWidth) const
 {
     NS_ASSERT(m_wifiPhy->GetChannelWidth() >= 40);
     return m_wifiPhy->GetBand(bandWidth,
                               m_wifiPhy->GetOperatingChannel().GetSecondaryChannelIndex(bandWidth));
 }
 
-ChannelWidthMhz
+MHz_t
 PhyEntity::GetRxChannelWidth(const WifiTxVector& txVector) const
 {
     return std::min(m_wifiPhy->GetChannelWidth(), txVector.GetChannelWidth());
@@ -1352,8 +1352,8 @@ PhyEntity::Transmit(Time txDuration,
     spectrumWifiPhy->Transmit(txParams);
 }
 
-ChannelWidthMhz
-PhyEntity::GetGuardBandwidth(ChannelWidthMhz currentChannelWidth) const
+MHz_t
+PhyEntity::GetGuardBandwidth(MHz_t currentChannelWidth) const
 {
     return m_wifiPhy->GetGuardBandwidth(currentChannelWidth);
 }

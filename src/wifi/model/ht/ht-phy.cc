@@ -650,7 +650,7 @@ HtPhy::GetConstellationSize(uint8_t mcsValue)
 }
 
 uint64_t
-HtPhy::GetPhyRate(uint8_t mcsValue, ChannelWidthMhz channelWidth, Time guardInterval, uint8_t nss)
+HtPhy::GetPhyRate(uint8_t mcsValue, MHz_t channelWidth, Time guardInterval, uint8_t nss)
 {
     const auto codeRate = GetHtCodeRate(mcsValue);
     const auto dataRate = GetDataRate(mcsValue, channelWidth, guardInterval, nss);
@@ -694,7 +694,7 @@ HtPhy::GetDataRateFromTxVector(const WifiTxVector& txVector, uint16_t /* staId *
 }
 
 uint64_t
-HtPhy::GetDataRate(uint8_t mcsValue, ChannelWidthMhz channelWidth, Time guardInterval, uint8_t nss)
+HtPhy::GetDataRate(uint8_t mcsValue, MHz_t channelWidth, Time guardInterval, uint8_t nss)
 {
     NS_ASSERT((guardInterval == NanoSeconds(800)) || (guardInterval == NanoSeconds(400)));
     NS_ASSERT(nss <= 4);
@@ -719,7 +719,7 @@ HtPhy::CalculateDataRate(Time symbolDuration,
 }
 
 uint16_t
-HtPhy::GetUsableSubcarriers(ChannelWidthMhz channelWidth)
+HtPhy::GetUsableSubcarriers(MHz_t channelWidth)
 {
     return (channelWidth == 40) ? 108 : 52;
 }
@@ -839,7 +839,7 @@ HtPhy::GetCcaIndication(const Ptr<const WifiPpdu> ppdu)
     }
     if (ppdu)
     {
-        const ChannelWidthMhz primaryWidth = 20;
+        const MHz_t primaryWidth = 20;
         int64_t p20MinFreq =
             m_wifiPhy->GetOperatingChannel().GetPrimaryChannelCenterFrequency(primaryWidth) -
             (primaryWidth / 2);
@@ -856,7 +856,7 @@ HtPhy::GetCcaIndication(const Ptr<const WifiPpdu> ppdu)
         }
     }
 
-    const ChannelWidthMhz secondaryWidth = 20;
+    const MHz_t secondaryWidth = 20;
     int64_t s20MinFreq =
         m_wifiPhy->GetOperatingChannel().GetSecondaryChannelCenterFrequency(secondaryWidth) -
         (secondaryWidth / 2);

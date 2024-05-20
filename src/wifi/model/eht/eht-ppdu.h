@@ -107,7 +107,7 @@ class EhtPpdu : public HePpdu
      * Get the number of RUs per EHT-SIG-B content channel.
      * This function will be used once EHT PHY headers are implemented.
      *
-     * \param channelWidth the channel width occupied by the PPDU (in MHz)
+     * \param channelWidth the channel width occupied by the PPDU
      * \param ehtPpduType the EHT_PPDU_TYPE used by the PPDU
      * \param ruAllocation 8 bit RU_ALLOCATION per 20 MHz
      * \param compression flag whether compression mode is used by the PPDU
@@ -115,7 +115,7 @@ class EhtPpdu : public HePpdu
      * \return a pair containing the number of RUs in each EHT-SIG-B content channel (resp. 1 and 2)
      */
     static std::pair<std::size_t, std::size_t> GetNumRusPerEhtSigBContentChannel(
-        ChannelWidthMhz channelWidth,
+        MHz_t channelWidth,
         uint8_t ehtPpduType,
         const std::vector<uint8_t>& ruAllocation,
         bool compression,
@@ -134,14 +134,14 @@ class EhtPpdu : public HePpdu
 
     /**
      * Get variable length EHT-SIG field size
-     * \param channelWidth the channel width occupied by the PPDU (in MHz)
+     * \param channelWidth the channel width occupied by the PPDU
      * \param ruAllocation 8 bit RU_ALLOCATION per 20 MHz
      * \param ehtPpduType the EHT_PPDU_TYPE used by the PPDU
      * \param compression flag whether compression mode is used by the PPDU
      * \param numMuMimoUsers the number of MU-MIMO users addressed by the PPDU
      * \return field size in bytes
      */
-    static uint32_t GetEhtSigFieldSize(ChannelWidthMhz channelWidth,
+    static uint32_t GetEhtSigFieldSize(MHz_t channelWidth,
                                        const std::vector<uint8_t>& ruAllocation,
                                        uint8_t ehtPpduType,
                                        bool compression,

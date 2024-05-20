@@ -22,7 +22,7 @@
 #ifndef WIFI_SPECTRUM_VALUE_HELPER_H
 #define WIFI_SPECTRUM_VALUE_HELPER_H
 
-#include "wifi-types.h"
+#include "wifi-units.h"
 
 #include <ns3/spectrum-value.h>
 
@@ -65,9 +65,9 @@ class WifiSpectrumValueHelper
      * given carrier frequency and channel width configuration.
      */
     static Ptr<SpectrumModel> GetSpectrumModel(const std::vector<int64_t>& centerFrequencies,
-                                               ChannelWidthMhz channelWidth,
+                                               MHz_t channelWidth,
                                                int64_t carrierSpacing,
-                                               ChannelWidthMhz guardBandwidth);
+                                               MHz_t guardBandwidth);
 
     /**
      * Create a transmit power spectral density corresponding to DSSS
@@ -85,7 +85,7 @@ class WifiSpectrumValueHelper
      */
     static Ptr<SpectrumValue> CreateDsssTxPowerSpectralDensity(int64_t centerFrequency,
                                                                double txPowerW,
-                                                               ChannelWidthMhz guardBandwidth);
+                                                               MHz_t guardBandwidth);
 
     /**
      * Create a transmit power spectral density corresponding to OFDM
@@ -104,9 +104,9 @@ class WifiSpectrumValueHelper
      * Spectral Density in W/Hz for each Band
      */
     static Ptr<SpectrumValue> CreateOfdmTxPowerSpectralDensity(int64_t centerFrequency,
-                                                               ChannelWidthMhz channelWidth,
+                                                               MHz_t channelWidth,
                                                                double txPowerW,
-                                                               ChannelWidthMhz guardBandwidth,
+                                                               MHz_t guardBandwidth,
                                                                double minInnerBandDbr = -20,
                                                                double minOuterbandDbr = -28,
                                                                double lowestPointDbr = -40);
@@ -129,9 +129,9 @@ class WifiSpectrumValueHelper
      */
     static Ptr<SpectrumValue> CreateDuplicated20MhzTxPowerSpectralDensity(
         const std::vector<int64_t>& centerFrequencies,
-        ChannelWidthMhz channelWidth,
+        MHz_t channelWidth,
         double txPowerW,
-        ChannelWidthMhz guardBandwidth,
+        MHz_t guardBandwidth,
         double minInnerBandDbr = -20,
         double minOuterbandDbr = -28,
         double lowestPointDbr = -40,
@@ -155,9 +155,9 @@ class WifiSpectrumValueHelper
      */
     static Ptr<SpectrumValue> CreateHtOfdmTxPowerSpectralDensity(
         const std::vector<int64_t>& centerFrequencies,
-        ChannelWidthMhz channelWidth,
+        MHz_t channelWidth,
         double txPowerW,
-        ChannelWidthMhz guardBandwidth,
+        MHz_t guardBandwidth,
         double minInnerBandDbr = -20,
         double minOuterbandDbr = -28,
         double lowestPointDbr = -40);
@@ -181,9 +181,9 @@ class WifiSpectrumValueHelper
      */
     static Ptr<SpectrumValue> CreateHeOfdmTxPowerSpectralDensity(
         int64_t centerFrequency,
-        ChannelWidthMhz channelWidth,
+        MHz_t channelWidth,
         double txPowerW,
-        ChannelWidthMhz guardBandwidth,
+        MHz_t guardBandwidth,
         double minInnerBandDbr = -20,
         double minOuterbandDbr = -28,
         double lowestPointDbr = -40,
@@ -208,9 +208,9 @@ class WifiSpectrumValueHelper
      */
     static Ptr<SpectrumValue> CreateHeOfdmTxPowerSpectralDensity(
         const std::vector<int64_t>& centerFrequencies,
-        ChannelWidthMhz channelWidth,
+        MHz_t channelWidth,
         double txPowerW,
-        ChannelWidthMhz guardBandwidth,
+        MHz_t guardBandwidth,
         double minInnerBandDbr = -20,
         double minOuterbandDbr = -28,
         double lowestPointDbr = -40,
@@ -231,9 +231,9 @@ class WifiSpectrumValueHelper
      */
     static Ptr<SpectrumValue> CreateHeMuOfdmTxPowerSpectralDensity(
         const std::vector<int64_t>& centerFrequencies,
-        ChannelWidthMhz channelWidth,
+        MHz_t channelWidth,
         double txPowerW,
-        ChannelWidthMhz guardBandwidth,
+        MHz_t guardBandwidth,
         const std::vector<WifiSpectrumBandIndices>& ru);
 
     /**

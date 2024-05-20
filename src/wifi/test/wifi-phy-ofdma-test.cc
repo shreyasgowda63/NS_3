@@ -63,9 +63,9 @@ NS_LOG_COMPONENT_DEFINE("WifiPhyOfdmaTest");
 static const uint8_t DEFAULT_CHANNEL_NUMBER = 36;
 static const int64_t DEFAULT_FREQUENCY = 5180; // MHz
 static const WifiPhyBand DEFAULT_WIFI_BAND = WIFI_PHY_BAND_5GHZ;
-static const ChannelWidthMhz DEFAULT_CHANNEL_WIDTH = 20; // MHz
-static const ChannelWidthMhz DEFAULT_GUARD_WIDTH =
-    DEFAULT_CHANNEL_WIDTH; // MHz (expanded to channel width to model spectrum mask)
+static const MHz_t DEFAULT_CHANNEL_WIDTH = 20;
+static const MHz_t DEFAULT_GUARD_WIDTH =
+    DEFAULT_CHANNEL_WIDTH; // expanded to channel width to model spectrum mask
 
 /**
  * HE PHY slightly modified so as to return a given
@@ -442,9 +442,9 @@ class TestDlOfdmaPhyTransmission : public TestCase
     Ptr<OfdmaSpectrumWifiPhy> m_phySta3;    ///< PHY of STA 3
     Ptr<WaveformGenerator> m_phyInterferer; ///< PHY of interferer
 
-    uint16_t m_frequency;           ///< frequency in MHz
-    ChannelWidthMhz m_channelWidth; ///< channel width in MHz
-    Time m_expectedPpduDuration;    ///< expected duration to send MU PPDU
+    uint16_t m_frequency;        ///< frequency in MHz
+    MHz_t m_channelWidth;        ///< channel width
+    Time m_expectedPpduDuration; ///< expected duration to send MU PPDU
 };
 
 TestDlOfdmaPhyTransmission::TestDlOfdmaPhyTransmission()
@@ -1314,8 +1314,8 @@ class TestDlOfdmaPhyPuncturing : public TestCase
     Ptr<OfdmaSpectrumWifiPhy> m_phySta2;    ///< PHY of STA 2
     Ptr<WaveformGenerator> m_phyInterferer; ///< PHY of interferer
 
-    uint16_t m_frequency;           ///< frequency in MHz
-    ChannelWidthMhz m_channelWidth; ///< channel width in MHz
+    uint16_t m_frequency; ///< frequency in MHz
+    MHz_t m_channelWidth; ///< channel width
 
     uint8_t m_indexSubchannel; ///< Index of the subchannel (starting from 0) that should contain an
                                ///< interference and be punctured during the test run
@@ -2438,8 +2438,8 @@ TestMultipleHeTbPreambles::RxHeTbPpdu(uint64_t uid,
     Time nonOfdmaDuration = m_phy->GetHePhy()->CalculateNonHeDurationForHeTb(txVector);
     uint32_t centerFrequency =
         m_phy->GetHePhy()->GetCenterFrequenciesForNonHePart(ppdu, staId).front();
-    ChannelWidthMhz ruWidth = HeRu::GetBandwidth(txVector.GetRu(staId).GetRuType());
-    ChannelWidthMhz channelWidth = ruWidth < 20 ? 20 : ruWidth;
+    MHz_t ruWidth = HeRu::GetBandwidth(txVector.GetRu(staId).GetRuType());
+    MHz_t channelWidth = ruWidth < 20 ? 20 : ruWidth;
     Ptr<SpectrumValue> rxPsd = WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity(
         centerFrequency,
         channelWidth,
@@ -3200,9 +3200,9 @@ class TestUlOfdmaPhyTransmission : public TestCase
     uint32_t m_countRxBytesFromSta1;   ///< count RX bytes from STA 1
     uint32_t m_countRxBytesFromSta2;   ///< count RX bytes from STA 2
 
-    int64_t m_frequency;            ///< frequency in MHz
-    ChannelWidthMhz m_channelWidth; ///< channel width in MHz
-    Time m_expectedPpduDuration;    ///< expected duration to send MU PPDU
+    int64_t m_frequency;         ///< frequency in MHz
+    MHz_t m_channelWidth;        ///< channel width
+    Time m_expectedPpduDuration; ///< expected duration to send MU PPDU
 };
 
 TestUlOfdmaPhyTransmission::TestUlOfdmaPhyTransmission()

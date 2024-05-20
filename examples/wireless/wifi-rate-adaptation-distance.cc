@@ -192,7 +192,7 @@ main(int argc, char* argv[])
     std::string outputFileName{"minstrelHT"};
     uint32_t BeMaxAmpduSize{65535};
     bool shortGuardInterval{false};
-    uint32_t chWidth{20};
+    MHz_t chWidth{20};
     int ap1_x{0};
     int ap1_y{0};
     int sta1_x{5};
@@ -208,7 +208,7 @@ main(int argc, char* argv[])
     cmd.AddValue("shortGuardInterval",
                  "Enable Short Guard Interval in all stations",
                  shortGuardInterval);
-    cmd.AddValue("channelWidth", "Channel width of all the stations", chWidth);
+    cmd.AddValue("channelWidth", "Channel width of all the stations in MHz", chWidth);
     cmd.AddValue("rtsThreshold", "RTS threshold", rtsThreshold);
     cmd.AddValue("BeMaxAmpduSize", "BE Mac A-MPDU size", BeMaxAmpduSize);
     cmd.AddValue("outputFileName", "Output filename", outputFileName);

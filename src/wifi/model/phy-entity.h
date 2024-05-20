@@ -748,9 +748,9 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
      *
      * \param txVector the transmission parameters
      * \param staId the station ID of the PSDU
-     * \return a pair of channel width (MHz) and band
+     * \return a pair of channel width and band
      */
-    virtual std::pair<ChannelWidthMhz, WifiSpectrumBandInfo> GetChannelWidthAndBand(
+    virtual std::pair<MHz_t, WifiSpectrumBandInfo> GetChannelWidthAndBand(
         const WifiTxVector& txVector,
         uint16_t staId) const;
 
@@ -872,37 +872,37 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
      * channel width). Otherwise, this call is equivalent to GetBand with
      * <i>bandIndex</i> equal to zero.
      *
-     * \param bandWidth the width of the band to be returned (MHz)
+     * \param bandWidth the width of the band to be returned
      *
      * \return the info corresponding to the band
      */
-    WifiSpectrumBandInfo GetPrimaryBand(ChannelWidthMhz bandWidth) const;
+    WifiSpectrumBandInfo GetPrimaryBand(MHz_t bandWidth) const;
     /**
      * If the channel bonding is used, return the info corresponding to
      * the secondary channel of the given bandwidth (which must be a multiple of 20 MHz
      * and not exceed the operating channel width).
      *
-     * \param bandWidth the width of the band to be returned (MHz)
+     * \param bandWidth the width of the band to be returned
      *
      * \return the info corresponding to the band
      */
-    WifiSpectrumBandInfo GetSecondaryBand(ChannelWidthMhz bandWidth) const;
+    WifiSpectrumBandInfo GetSecondaryBand(MHz_t bandWidth) const;
 
     /**
      * Return the channel width used to measure the RSSI.
      *
      * \param ppdu the PPDU that is being received
-     * \return the channel width (in MHz) used for RSSI measurement
+     * \return the channel width used for RSSI measurement
      */
-    virtual ChannelWidthMhz GetMeasurementChannelWidth(const Ptr<const WifiPpdu> ppdu) const = 0;
+    virtual MHz_t GetMeasurementChannelWidth(const Ptr<const WifiPpdu> ppdu) const = 0;
 
     /**
      * Return the channel width used in the reception spectrum model.
      *
      * \param txVector the TXVECTOR of the PPDU that is being received
-     * \return the channel width (in MHz) used for RxSpectrumModel
+     * \return the channel width used for RxSpectrumModel
      */
-    virtual ChannelWidthMhz GetRxChannelWidth(const WifiTxVector& txVector) const;
+    virtual MHz_t GetRxChannelWidth(const WifiTxVector& txVector) const;
 
     /**
      * Return the delay until CCA busy is ended for a given sensitivity threshold (in dBm) and a
@@ -915,13 +915,13 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
     Time GetDelayUntilCcaEnd(double thresholdDbm, const WifiSpectrumBandInfo& band);
 
     /**
-     * \param currentChannelWidth channel width of the current transmission (MHz)
-     * \return the width of the guard band (MHz)
+     * \param currentChannelWidth channel width of the current transmission
+     * \return the width of the guard band
      *
      * Wrapper method used by child classes for PSD generation.
      * Note that this method is necessary for testing UL OFDMA.
      */
-    ChannelWidthMhz GetGuardBandwidth(ChannelWidthMhz currentChannelWidth) const;
+    MHz_t GetGuardBandwidth(MHz_t currentChannelWidth) const;
     /**
      * \return a tuple containing the minimum rejection (in dBr) for the inner band,
      *                            the minimum rejection (in dBr) for the outer band, and

@@ -228,7 +228,7 @@ MinstrelHtWifiManager::DoInitialize()
     if (GetHtSupported())
     {
         // Initialize all HT groups
-        for (ChannelWidthMhz chWidth = 20; chWidth <= MAX_HT_WIDTH; chWidth *= 2)
+        for (MHz_t chWidth = 20; chWidth <= MAX_HT_WIDTH; chWidth *= 2)
         {
             for (int gi = 800; gi >= 400;)
             {
@@ -289,7 +289,7 @@ MinstrelHtWifiManager::DoInitialize()
     if (GetVhtSupported())
     {
         // Initialize all VHT groups
-        for (ChannelWidthMhz chWidth = 20; chWidth <= MAX_VHT_WIDTH; chWidth *= 2)
+        for (MHz_t chWidth = 20; chWidth <= MAX_VHT_WIDTH; chWidth *= 2)
         {
             for (int gi = 800; gi >= 400;)
             {
@@ -353,7 +353,7 @@ MinstrelHtWifiManager::DoInitialize()
     if (GetHeSupported())
     {
         // Initialize all HE groups
-        for (ChannelWidthMhz chWidth = 20; chWidth <= MAX_HE_WIDTH; chWidth *= 2)
+        for (MHz_t chWidth = 20; chWidth <= MAX_HE_WIDTH; chWidth *= 2)
         {
             for (int gi = 3200; gi >= 800;)
             {
@@ -416,10 +416,7 @@ MinstrelHtWifiManager::DoInitialize()
 }
 
 bool
-MinstrelHtWifiManager::IsValidMcs(Ptr<WifiPhy> phy,
-                                  uint8_t streams,
-                                  ChannelWidthMhz chWidth,
-                                  WifiMode mode)
+MinstrelHtWifiManager::IsValidMcs(Ptr<WifiPhy> phy, uint8_t streams, MHz_t chWidth, WifiMode mode)
 {
     NS_LOG_FUNCTION(this << phy << +streams << chWidth << mode);
     WifiTxVector txvector;
@@ -433,7 +430,7 @@ Time
 MinstrelHtWifiManager::CalculateMpduTxDuration(Ptr<WifiPhy> phy,
                                                uint8_t streams,
                                                Time gi,
-                                               ChannelWidthMhz chWidth,
+                                               MHz_t chWidth,
                                                WifiMode mode,
                                                MpduType mpduType)
 {
@@ -646,7 +643,7 @@ MinstrelHtWifiManager::DoReportDataOk(WifiRemoteStation* st,
                                       double ackSnr,
                                       WifiMode ackMode,
                                       double dataSnr,
-                                      ChannelWidthMhz dataChannelWidth,
+                                      MHz_t dataChannelWidth,
                                       uint8_t dataNss)
 {
     NS_LOG_FUNCTION(this << st << ackSnr << ackMode << dataSnr << dataChannelWidth << +dataNss);
@@ -771,7 +768,7 @@ MinstrelHtWifiManager::DoReportAmpduTxStatus(WifiRemoteStation* st,
                                              uint16_t nFailedMpdus,
                                              double rxSnr,
                                              double dataSnr,
-                                             ChannelWidthMhz dataChannelWidth,
+                                             MHz_t dataChannelWidth,
                                              uint8_t dataNss)
 {
     NS_LOG_FUNCTION(this << st << nSuccessfulMpdus << nFailedMpdus << rxSnr << dataSnr
@@ -968,7 +965,7 @@ MinstrelHtWifiManager::UpdatePacketCounters(MinstrelHtWifiRemoteStation* station
 }
 
 uint16_t
-MinstrelHtWifiManager::UpdateRateAfterAllowedWidth(uint16_t txRate, ChannelWidthMhz allowedWidth)
+MinstrelHtWifiManager::UpdateRateAfterAllowedWidth(uint16_t txRate, MHz_t allowedWidth)
 {
     NS_LOG_FUNCTION(this << txRate << allowedWidth);
 
@@ -1026,7 +1023,7 @@ MinstrelHtWifiManager::UpdateRateAfterAllowedWidth(uint16_t txRate, ChannelWidth
 }
 
 WifiTxVector
-MinstrelHtWifiManager::DoGetDataTxVector(WifiRemoteStation* st, ChannelWidthMhz allowedWidth)
+MinstrelHtWifiManager::DoGetDataTxVector(WifiRemoteStation* st, MHz_t allowedWidth)
 {
     NS_LOG_FUNCTION(this << st << allowedWidth);
     auto station = static_cast<MinstrelHtWifiRemoteStation*>(st);
@@ -2115,7 +2112,7 @@ MinstrelHtWifiManager::GetGroupId(uint16_t index)
 }
 
 uint8_t
-MinstrelHtWifiManager::GetHtGroupId(uint8_t txstreams, Time gi, ChannelWidthMhz chWidth)
+MinstrelHtWifiManager::GetHtGroupId(uint8_t txstreams, Time gi, MHz_t chWidth)
 {
     NS_LOG_FUNCTION(this << +txstreams << gi << chWidth);
     uint8_t giIndex = (gi == NanoSeconds(400)) ? 1 : 0;
@@ -2125,7 +2122,7 @@ MinstrelHtWifiManager::GetHtGroupId(uint8_t txstreams, Time gi, ChannelWidthMhz 
 }
 
 uint8_t
-MinstrelHtWifiManager::GetVhtGroupId(uint8_t txstreams, Time gi, ChannelWidthMhz chWidth)
+MinstrelHtWifiManager::GetVhtGroupId(uint8_t txstreams, Time gi, MHz_t chWidth)
 {
     NS_LOG_FUNCTION(this << +txstreams << gi << chWidth);
     uint8_t giIndex = (gi == NanoSeconds(400)) ? 1 : 0;
@@ -2153,7 +2150,7 @@ MinstrelHtWifiManager::GetVhtGroupId(uint8_t txstreams, Time gi, ChannelWidthMhz
 }
 
 uint8_t
-MinstrelHtWifiManager::GetHeGroupId(uint8_t txstreams, Time gi, ChannelWidthMhz chWidth)
+MinstrelHtWifiManager::GetHeGroupId(uint8_t txstreams, Time gi, MHz_t chWidth)
 {
     NS_LOG_FUNCTION(this << +txstreams << gi << chWidth);
     uint8_t giIndex;

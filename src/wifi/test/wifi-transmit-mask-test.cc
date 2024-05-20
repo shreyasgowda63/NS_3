@@ -58,7 +58,7 @@ class WifiOfdmMaskSlopesTestCase : public TestCase
      * \param name test reference name
      * \param standard selected standard
      * \param band selected PHY band
-     * \param channelWidth total channel width (in MHz)
+     * \param channelWidth total channel width
      * \param centerFrequencies the center frequency (in MHz) per contiguous segment
      * \param maskRefs vector of expected power values and corresponding indexes of generated PSD
      *                     (only start and stop indexes/values given)
@@ -70,7 +70,7 @@ class WifiOfdmMaskSlopesTestCase : public TestCase
     WifiOfdmMaskSlopesTestCase(const std::string& name,
                                WifiStandard standard,
                                WifiPhyBand band,
-                               ChannelWidthMhz channelWidth,
+                               MHz_t channelWidth,
                                const std::vector<int64_t>& centerFrequencies,
                                const IndexPowerVect& maskRefs,
                                double tolerance,
@@ -95,9 +95,9 @@ class WifiOfdmMaskSlopesTestCase : public TestCase
                                     IndexPowerPair start,
                                     IndexPowerPair stop) const;
 
-    WifiStandard m_standard;        ///< the wifi standard to test
-    WifiPhyBand m_band;             ///< the wifi PHY band to test
-    ChannelWidthMhz m_channelWidth; ///< the total channel width (MHz) to test
+    WifiStandard m_standard; ///< the wifi standard to test
+    WifiPhyBand m_band;      ///< the wifi PHY band to test
+    MHz_t m_channelWidth;    ///< the total channel width to test
     std::vector<int64_t>
         m_centerFreqs; ///< the center frequency (MHz) per contiguous segment to test
     std::vector<bool>
@@ -113,7 +113,7 @@ WifiOfdmMaskSlopesTestCase::WifiOfdmMaskSlopesTestCase(
     const std::string& name,
     WifiStandard standard,
     WifiPhyBand band,
-    ChannelWidthMhz channelWidth,
+    MHz_t channelWidth,
     const std::vector<int64_t>& centerFrequencies,
     const IndexPowerVect& maskRefs,
     double tolerance,

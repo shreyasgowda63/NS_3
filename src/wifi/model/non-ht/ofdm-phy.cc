@@ -80,8 +80,8 @@ const PhyEntity::ModulationLookupTable OfdmPhy::m_ofdmModulationLookupTable {
     { "OfdmRate13_5MbpsBW5MHz", { WIFI_CODE_RATE_3_4, 64 } }
 };
 
-/// OFDM rates in bits per second for each bandwidth (MHz)
-const std::map<ChannelWidthMhz, std::array<uint64_t, 8> > s_ofdmRatesBpsList =
+/// OFDM rates in bits per second for each bandwidth
+const std::map<MHz_t, std::array<uint64_t, 8> > s_ofdmRatesBpsList =
    {{ 20, // MHz
      {  6000000,  9000000, 12000000, 18000000,
        24000000, 36000000, 48000000, 54000000 }},
@@ -96,11 +96,11 @@ const std::map<ChannelWidthMhz, std::array<uint64_t, 8> > s_ofdmRatesBpsList =
 // clang-format on
 
 /**
- * Get the array of possible OFDM rates for each bandwidth (MHz).
+ * Get the array of possible OFDM rates for each bandwidth.
  *
  * \return the OFDM rates in bits per second
  */
-const std::map<ChannelWidthMhz, std::array<uint64_t, 8>>&
+const std::map<MHz_t, std::array<uint64_t, 8>>&
 GetOfdmRatesBpsList()
 {
     return s_ofdmRatesBpsList;
@@ -413,7 +413,7 @@ OfdmPhy::InitializeModes()
 }
 
 WifiMode
-OfdmPhy::GetOfdmRate(uint64_t rate, ChannelWidthMhz bw)
+OfdmPhy::GetOfdmRate(uint64_t rate, MHz_t bw)
 {
     switch (bw)
     {
@@ -562,7 +562,7 @@ OfdmPhy::GetConstellationSize(const std::string& name)
 }
 
 uint64_t
-OfdmPhy::GetPhyRate(const std::string& name, ChannelWidthMhz channelWidth)
+OfdmPhy::GetPhyRate(const std::string& name, MHz_t channelWidth)
 {
     WifiCodeRate codeRate = GetCodeRate(name);
     uint64_t dataRate = GetDataRate(name, channelWidth);
@@ -606,7 +606,7 @@ OfdmPhy::GetDataRateFromTxVector(const WifiTxVector& txVector, uint16_t /* staId
 }
 
 uint64_t
-OfdmPhy::GetDataRate(const std::string& name, ChannelWidthMhz channelWidth)
+OfdmPhy::GetDataRate(const std::string& name, MHz_t channelWidth)
 {
     WifiCodeRate codeRate = GetCodeRate(name);
     uint16_t constellationSize = GetConstellationSize(name);
@@ -614,9 +614,7 @@ OfdmPhy::GetDataRate(const std::string& name, ChannelWidthMhz channelWidth)
 }
 
 uint64_t
-OfdmPhy::CalculateDataRate(WifiCodeRate codeRate,
-                           uint16_t constellationSize,
-                           ChannelWidthMhz channelWidth)
+OfdmPhy::CalculateDataRate(WifiCodeRate codeRate, uint16_t constellationSize, MHz_t channelWidth)
 {
     return CalculateDataRate(GetSymbolDuration(channelWidth),
                              GetUsableSubcarriers(),
@@ -641,7 +639,7 @@ OfdmPhy::GetUsableSubcarriers()
 }
 
 Time
-OfdmPhy::GetSymbolDuration(ChannelWidthMhz channelWidth)
+OfdmPhy::GetSymbolDuration(MHz_t channelWidth)
 {
     Time symbolDuration = MicroSeconds(4);
     uint8_t bwFactor = 1;
@@ -668,7 +666,7 @@ OfdmPhy::GetMaxPsduSize() const
     return 4095;
 }
 
-ChannelWidthMhz
+MHz_t
 OfdmPhy::GetMeasurementChannelWidth(const Ptr<const WifiPpdu> ppdu) const
 {
     if (!ppdu)

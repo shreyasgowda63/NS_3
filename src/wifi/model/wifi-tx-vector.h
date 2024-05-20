@@ -141,7 +141,7 @@ class WifiTxVector
                  uint8_t nTx,
                  uint8_t nss,
                  uint8_t ness,
-                 ChannelWidthMhz channelWidth,
+                 MHz_t channelWidth,
                  bool aggregation,
                  bool stbc = false,
                  bool ldpc = false,
@@ -210,15 +210,15 @@ class WifiTxVector
      */
     void SetPreambleType(WifiPreamble preamble);
     /**
-     * \returns the channel width (in MHz)
+     * \returns the channel width
      */
-    ChannelWidthMhz GetChannelWidth() const;
+    MHz_t GetChannelWidth() const;
     /**
-     * Sets the selected channelWidth (in MHz)
+     * Sets the selected channelWidth
      *
-     * \param channelWidth the channel width (in MHz)
+     * \param channelWidth the channel width
      */
-    void SetChannelWidth(ChannelWidthMhz channelWidth);
+    void SetChannelWidth(MHz_t channelWidth);
     /**
      * \returns the guard interval duration (in nanoseconds)
      */
@@ -559,24 +559,24 @@ class WifiTxVector
      */
     uint8_t GetNumStasInRu(const HeRu::RuSpec& ru) const;
 
-    WifiMode m_mode;                /**< The DATARATE parameter in Table 15-4.
-                                    It is the value that will be passed
-                                    to PMD_RATE.request */
-    uint8_t m_txPowerLevel;         /**< The TXPWR_LEVEL parameter in Table 15-4.
-                                    It is the value that will be passed
-                                    to PMD_TXPWRLVL.request */
-    WifiPreamble m_preamble;        /**< preamble */
-    ChannelWidthMhz m_channelWidth; /**< channel width in MHz */
-    Time m_guardInterval;           /**< guard interval duration */
-    uint8_t m_nTx;                  /**< number of TX antennas */
-    uint8_t m_nss;                  /**< number of spatial streams */
-    uint8_t m_ness;                 /**< number of spatial streams in beamforming */
-    bool m_aggregation;             /**< Flag whether the PSDU contains A-MPDU. */
-    bool m_stbc;                    /**< STBC used or not */
-    bool m_ldpc;                    /**< LDPC FEC coding if true, BCC otherwise*/
-    uint8_t m_bssColor;             /**< BSS color */
-    uint16_t m_length;              /**< LENGTH field of the L-SIG */
-    bool m_triggerResponding;       /**< The Trigger Responding parameter */
+    WifiMode m_mode;          /**< The DATARATE parameter in Table 15-4.
+                              It is the value that will be passed
+                              to PMD_RATE.request */
+    uint8_t m_txPowerLevel;   /**< The TXPWR_LEVEL parameter in Table 15-4.
+                              It is the value that will be passed
+                              to PMD_TXPWRLVL.request */
+    WifiPreamble m_preamble;  /**< preamble */
+    MHz_t m_channelWidth;     /**< channel width in MHz */
+    Time m_guardInterval;     /**< guard interval duration */
+    uint8_t m_nTx;            /**< number of TX antennas */
+    uint8_t m_nss;            /**< number of spatial streams */
+    uint8_t m_ness;           /**< number of spatial streams in beamforming */
+    bool m_aggregation;       /**< Flag whether the PSDU contains A-MPDU. */
+    bool m_stbc;              /**< STBC used or not */
+    bool m_ldpc;              /**< LDPC FEC coding if true, BCC otherwise*/
+    uint8_t m_bssColor;       /**< BSS color */
+    uint16_t m_length;        /**< LENGTH field of the L-SIG */
+    bool m_triggerResponding; /**< The Trigger Responding parameter */
 
     bool m_modeInitialized; /**< Internal initialization flag */
 

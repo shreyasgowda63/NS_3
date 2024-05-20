@@ -157,19 +157,19 @@ int
 main(int argc, char* argv[])
 {
     Time duration{"10s"};
-    double d1{30.0};            // meters
-    double d2{30.0};            // meters
-    double d3{150.0};           // meters
-    double powSta1{10.0};       // dBm
-    double powSta2{10.0};       // dBm
-    double powAp1{21.0};        // dBm
-    double powAp2{21.0};        // dBm
-    double ccaEdTrSta1{-62};    // dBm
-    double ccaEdTrSta2{-62};    // dBm
-    double ccaEdTrAp1{-62};     // dBm
-    double ccaEdTrAp2{-62};     // dBm
-    double minimumRssi{-82};    // dBm
-    int channelWidth{20};       // MHz
+    double d1{30.0};         // meters
+    double d2{30.0};         // meters
+    double d3{150.0};        // meters
+    double powSta1{10.0};    // dBm
+    double powSta2{10.0};    // dBm
+    double powAp1{21.0};     // dBm
+    double powAp2{21.0};     // dBm
+    double ccaEdTrSta1{-62}; // dBm
+    double ccaEdTrSta2{-62}; // dBm
+    double ccaEdTrAp1{-62};  // dBm
+    double ccaEdTrAp2{-62};  // dBm
+    double minimumRssi{-82}; // dBm
+    MHz_t channelWidth{20};
     uint32_t payloadSize{1500}; // bytes
     uint32_t mcs{0};            // MCS value
     Time interval{"1ms"};

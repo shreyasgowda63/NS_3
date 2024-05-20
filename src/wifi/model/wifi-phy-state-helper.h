@@ -257,9 +257,9 @@ class WifiPhyStateHelper : public Object
     void SwitchFromRxEndError();
     /**
      * Abort current reception following a CCA reset request.
-     * \param operatingWidth the channel width the PHY is operating on (in MHz)
+     * \param operatingWidth the channel width the PHY is operating on
      */
-    void SwitchFromRxAbort(ChannelWidthMhz operatingWidth);
+    void SwitchFromRxAbort(MHz_t operatingWidth);
     /**
      * Switch to CCA busy.
      *

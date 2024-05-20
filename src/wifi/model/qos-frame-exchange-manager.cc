@@ -158,7 +158,7 @@ QosFrameExchangeManager::CancelPifsRecovery()
 }
 
 bool
-QosFrameExchangeManager::StartTransmission(Ptr<Txop> edca, ChannelWidthMhz allowedWidth)
+QosFrameExchangeManager::StartTransmission(Ptr<Txop> edca, MHz_t allowedWidth)
 {
     NS_LOG_FUNCTION(this << edca << allowedWidth);
 

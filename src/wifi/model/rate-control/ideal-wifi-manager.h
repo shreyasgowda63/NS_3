@@ -70,19 +70,18 @@ class IdealWifiManager : public WifiRemoteStationManager
                         double ackSnr,
                         WifiMode ackMode,
                         double dataSnr,
-                        ChannelWidthMhz dataChannelWidth,
+                        MHz_t dataChannelWidth,
                         uint8_t dataNss) override;
     void DoReportAmpduTxStatus(WifiRemoteStation* station,
                                uint16_t nSuccessfulMpdus,
                                uint16_t nFailedMpdus,
                                double rxSnr,
                                double dataSnr,
-                               ChannelWidthMhz dataChannelWidth,
+                               MHz_t dataChannelWidth,
                                uint8_t dataNss) override;
     void DoReportFinalRtsFailed(WifiRemoteStation* station) override;
     void DoReportFinalDataFailed(WifiRemoteStation* station) override;
-    WifiTxVector DoGetDataTxVector(WifiRemoteStation* station,
-                                   ChannelWidthMhz allowedWidth) override;
+    WifiTxVector DoGetDataTxVector(WifiRemoteStation* station, MHz_t allowedWidth) override;
     WifiTxVector DoGetRtsTxVector(WifiRemoteStation* station) override;
 
     /**
@@ -120,9 +119,9 @@ class IdealWifiManager : public WifiRemoteStationManager
     /**
      * Convenience function for selecting a channel width for non-HT mode
      * \param mode non-HT WifiMode
-     * \return the channel width (MHz) for the selected mode
+     * \return the channel width for the selected mode
      */
-    ChannelWidthMhz GetChannelWidthForNonHtMode(WifiMode mode) const;
+    MHz_t GetChannelWidthForNonHtMode(WifiMode mode) const;
 
     /**
      * Convenience function to get the last observed SNR from a given station for a given channel
@@ -131,12 +130,12 @@ class IdealWifiManager : public WifiRemoteStationManager
      * some computations to get the corresponding SNR.
      *
      * \param station the station being queried
-     * \param channelWidth the channel width (in MHz)
+     * \param channelWidth the channel width
      * \param nss the number of spatial streams
      * \return the SNR in linear scale
      */
     double GetLastObservedSnr(IdealWifiRemoteStation* station,
-                              ChannelWidthMhz channelWidth,
+                              MHz_t channelWidth,
                               uint8_t nss) const;
 
     /**

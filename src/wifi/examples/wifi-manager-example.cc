@@ -133,7 +133,7 @@ struct StandardInfo
     StandardInfo(std::string name,
                  WifiStandard standard,
                  WifiPhyBand band,
-                 ChannelWidthMhz width,
+                 MHz_t width,
                  double snrLow,
                  double snrHigh,
                  double xMin,
@@ -154,7 +154,7 @@ struct StandardInfo
     std::string m_name;      ///< name
     WifiStandard m_standard; ///< standard
     WifiPhyBand m_band;      ///< PHY band
-    ChannelWidthMhz m_width; ///< channel width in MHz
+    MHz_t m_width;           ///< channel width
     double m_snrLow;         ///< lowest SNR
     double m_snrHigh;        ///< highest SNR
     double m_xMin;           ///< X minimum

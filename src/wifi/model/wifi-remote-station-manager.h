@@ -120,10 +120,10 @@ struct WifiRemoteStationState
     std::shared_ptr<CommonInfoBasicMle> m_mleCommonInfo;
     bool m_emlsrEnabled; //!< whether EMLSR mode is enabled on this link
 
-    ChannelWidthMhz m_channelWidth; //!< Channel width (in MHz) supported by the remote station
-    Time m_guardInterval;           //!< HE Guard interval durationsupported by the remote station
-    uint8_t m_ness;                 //!< Number of extended spatial streams of the remote station
-    bool m_aggregation;             //!< Flag if MPDU aggregation is used by the remote station
+    MHz_t m_channelWidth; //!< Channel width supported by the remote station
+    Time m_guardInterval; //!< HE Guard interval durationsupported by the remote station
+    uint8_t m_ness;       //!< Number of extended spatial streams of the remote station
+    bool m_aggregation;   //!< Flag if MPDU aggregation is used by the remote station
     bool m_shortPreamble; //!< Flag if short PHY preamble is supported by the remote station
     bool m_shortSlotTime; //!< Flag if short ERP slot time is supported by the remote station
     bool m_qosSupported;  //!< Flag if QoS is supported by the station
@@ -571,7 +571,7 @@ class WifiRemoteStationManager : public Object
      *
      * \return the channel width supported by the station
      */
-    ChannelWidthMhz GetChannelWidthSupported(Mac48Address address) const;
+    MHz_t GetChannelWidthSupported(Mac48Address address) const;
     /**
      * Return whether the station supports HT/VHT short guard interval.
      *
@@ -835,7 +835,7 @@ class WifiRemoteStationManager : public Object
      * \param allowedWidth the allowed width to send this packet
      * \return the TXVECTOR to use to send this packet
      */
-    WifiTxVector GetDataTxVector(const WifiMacHeader& header, ChannelWidthMhz allowedWidth);
+    WifiTxVector GetDataTxVector(const WifiMacHeader& header, MHz_t allowedWidth);
     /**
      * \param address remote address
      * \param allowedWidth the allowed width for the data frame being protected
@@ -843,7 +843,7 @@ class WifiRemoteStationManager : public Object
      * \return the TXVECTOR to use to send the RTS prior to the
      *         transmission of the data packet itself.
      */
-    WifiTxVector GetRtsTxVector(Mac48Address address, ChannelWidthMhz allowedWidth);
+    WifiTxVector GetRtsTxVector(Mac48Address address, MHz_t allowedWidth);
     /**
      * Return a TXVECTOR for the CTS frame given the destination and the mode of the RTS
      * used by the sender.
@@ -1231,9 +1231,9 @@ class WifiRemoteStationManager : public Object
      *
      * \param station the station being queried
      *
-     * \return the channel width (in MHz) supported by the station
+     * \return the channel width supported by the station
      */
-    ChannelWidthMhz GetChannelWidth(const WifiRemoteStation* station) const;
+    MHz_t GetChannelWidth(const WifiRemoteStation* station) const;
     /**
      * Return whether the given station supports HT/VHT short guard interval.
      *
@@ -1336,14 +1336,13 @@ class WifiRemoteStationManager : public Object
     virtual WifiRemoteStation* DoCreateStation() const = 0;
     /**
      * \param station the station that we need to communicate
-     * \param allowedWidth the allowed width in MHz to send a packet to the station
+     * \param allowedWidth the allowed width to send a packet to the station
      * \return the TXVECTOR to use to send a packet to the station
      *
      * Note: This method is called before sending a unicast packet or a fragment
      *       of a unicast packet to decide which transmission mode to use.
      */
-    virtual WifiTxVector DoGetDataTxVector(WifiRemoteStation* station,
-                                           ChannelWidthMhz allowedWidth) = 0;
+    virtual WifiTxVector DoGetDataTxVector(WifiRemoteStation* station, MHz_t allowedWidth) = 0;
     /**
      * \param station the station that we need to communicate
      *
@@ -1389,14 +1388,14 @@ class WifiRemoteStationManager : public Object
      * \param ackSnr the SNR of the ACK we received
      * \param ackMode the WifiMode the receiver used to send the ACK
      * \param dataSnr the SNR of the DATA we sent
-     * \param dataChannelWidth the channel width (in MHz) of the DATA we sent
+     * \param dataChannelWidth the channel width of the DATA we sent
      * \param dataNss the number of spatial streams used to send the DATA
      */
     virtual void DoReportDataOk(WifiRemoteStation* station,
                                 double ackSnr,
                                 WifiMode ackMode,
                                 double dataSnr,
-                                ChannelWidthMhz dataChannelWidth,
+                                MHz_t dataChannelWidth,
                                 uint8_t dataNss) = 0;
     /**
      * This method is a pure virtual method that must be implemented by the sub-class.
@@ -1433,7 +1432,7 @@ class WifiRemoteStationManager : public Object
      * \param nFailedMpdus number of unsuccessfuly transmitted MPDUs.
      * \param rxSnr received SNR of the block ack frame itself
      * \param dataSnr data SNR reported by remote station
-     * \param dataChannelWidth the channel width (in MHz) of the A-MPDU we sent
+     * \param dataChannelWidth the channel width of the A-MPDU we sent
      * \param dataNss the number of spatial streams used to send the A-MPDU
      */
     virtual void DoReportAmpduTxStatus(WifiRemoteStation* station,
@@ -1441,7 +1440,7 @@ class WifiRemoteStationManager : public Object
                                        uint16_t nFailedMpdus,
                                        double rxSnr,
                                        double dataSnr,
-                                       ChannelWidthMhz dataChannelWidth,
+                                       MHz_t dataChannelWidth,
                                        uint8_t dataNss);
 
     /**

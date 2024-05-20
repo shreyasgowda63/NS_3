@@ -40,8 +40,8 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("WifiPhyThresholdsTest");
 
 static const uint8_t CHANNEL_NUMBER = 36;
-static const int64_t FREQUENCY = 5180;    // MHz
-static const uint16_t CHANNEL_WIDTH = 20; // MHz
+static const int64_t FREQUENCY = 5180; // MHz
+static const MHz_t CHANNEL_WIDTH = 20;
 
 /**
  * \ingroup wifi-test

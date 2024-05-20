@@ -244,7 +244,7 @@ class InterferenceHelper : public Object
      * this class.
      *
      * \param event the event corresponding to the first time the corresponding PPDU arrives
-     * \param channelWidth the channel width used to transmit the PSDU (in MHz)
+     * \param channelWidth the channel width used to transmit the PSDU
      * \param band identify the band used by the PSDU
      * \param staId the station ID of the PSDU (only used for MU)
      * \param relativeMpduStartStop the time window (pair of start and end times) of PHY payload to
@@ -253,7 +253,7 @@ class InterferenceHelper : public Object
      * \return struct of SNR and PER (with PER being evaluated over the provided time window)
      */
     PhyEntity::SnrPer CalculatePayloadSnrPer(Ptr<Event> event,
-                                             ChannelWidthMhz channelWidth,
+                                             MHz_t channelWidth,
                                              const WifiSpectrumBandInfo& band,
                                              uint16_t staId,
                                              std::pair<Time, Time> relativeMpduStartStop) const;
@@ -261,14 +261,14 @@ class InterferenceHelper : public Object
      * Calculate the SNIR for the event (starting from now until the event end).
      *
      * \param event the event corresponding to the first time the corresponding PPDU arrives
-     * \param channelWidth the channel width (in MHz)
+     * \param channelWidth the channel width
      * \param nss the number of spatial streams
      * \param band identify the band used by the PSDU
      *
      * \return the SNR for the PPDU in linear scale
      */
     double CalculateSnr(Ptr<Event> event,
-                        ChannelWidthMhz channelWidth,
+                        MHz_t channelWidth,
                         uint8_t nss,
                         const WifiSpectrumBandInfo& band) const;
     /**
@@ -276,14 +276,14 @@ class InterferenceHelper : public Object
      * all SNIR changes in the SNIR vector.
      *
      * \param event the event corresponding to the first time the corresponding PPDU arrives
-     * \param channelWidth the channel width (in MHz) for header measurement
+     * \param channelWidth the channel width for header measurement
      * \param band identify the band used by the PSDU
      * \param header the PHY header to consider
      *
      * \return struct of SNR and PER
      */
     PhyEntity::SnrPer CalculatePhyHeaderSnrPer(Ptr<Event> event,
-                                               ChannelWidthMhz channelWidth,
+                                               MHz_t channelWidth,
                                                const WifiSpectrumBandInfo& band,
                                                WifiPpduField header) const;
 
@@ -316,14 +316,14 @@ class InterferenceHelper : public Object
      *
      * \param signal signal power, W
      * \param noiseInterference noise and interference power, W
-     * \param channelWidth signal width (MHz)
+     * \param channelWidth signal width
      * \param nss the number of spatial streams
      *
      * \return SNR in linear scale
      */
     double CalculateSnr(double signal,
                         double noiseInterference,
-                        ChannelWidthMhz channelWidth,
+                        MHz_t channelWidth,
                         uint8_t nss) const;
     /**
      * Calculate the success rate of the chunk given the SINR, duration, and TXVECTOR.
@@ -478,7 +478,7 @@ class InterferenceHelper : public Object
      * multiple chunks (e.g. due to interference from other transmissions).
      *
      * \param event the event
-     * \param channelWidth the channel width used to transmit the PSDU (in MHz)
+     * \param channelWidth the channel width used to transmit the PSDU
      * \param nis the NiChanges
      * \param band identify the band used by the PSDU
      * \param staId the station ID of the PSDU (only used for MU)
@@ -487,7 +487,7 @@ class InterferenceHelper : public Object
      * \return the error rate of the payload
      */
     double CalculatePayloadPer(Ptr<const Event> event,
-                               ChannelWidthMhz channelWidth,
+                               MHz_t channelWidth,
                                NiChangesPerBand* nis,
                                const WifiSpectrumBandInfo& band,
                                uint16_t staId,
@@ -498,7 +498,7 @@ class InterferenceHelper : public Object
      *
      * \param event the event
      * \param nis the NiChanges
-     * \param channelWidth the channel width (in MHz) for header measurement
+     * \param channelWidth the channel width for header measurement
      * \param band the band
      * \param header the PHY header to consider
      *
@@ -506,7 +506,7 @@ class InterferenceHelper : public Object
      */
     double CalculatePhyHeaderPer(Ptr<const Event> event,
                                  NiChangesPerBand* nis,
-                                 ChannelWidthMhz channelWidth,
+                                 MHz_t channelWidth,
                                  const WifiSpectrumBandInfo& band,
                                  WifiPpduField header) const;
     /**
@@ -514,7 +514,7 @@ class InterferenceHelper : public Object
      *
      * \param event the event
      * \param nis the NiChanges
-     * \param channelWidth the channel width (in MHz) for header measurement
+     * \param channelWidth the channel width for header measurement
      * \param band the band
      * \param phyHeaderSections the map of PHY header sections (\see PhyEntity::PhyHeaderSections)
      *
@@ -522,7 +522,7 @@ class InterferenceHelper : public Object
      */
     double CalculatePhyHeaderSectionPsr(Ptr<const Event> event,
                                         NiChangesPerBand* nis,
-                                        ChannelWidthMhz channelWidth,
+                                        MHz_t channelWidth,
                                         const WifiSpectrumBandInfo& band,
                                         PhyEntity::PhyHeaderSections phyHeaderSections) const;
 

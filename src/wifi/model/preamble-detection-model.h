@@ -20,7 +20,7 @@
 #ifndef PREAMBLE_DETECTION_MODEL_H
 #define PREAMBLE_DETECTION_MODEL_H
 
-#include "wifi-types.h"
+#include "wifi-units.h"
 
 #include "ns3/object.h"
 
@@ -52,9 +52,7 @@ class PreambleDetectionModel : public Object
      * \return true if the preamble has been detected,
      *         false otherwise
      */
-    virtual bool IsPreambleDetected(double rssi,
-                                    double snr,
-                                    ChannelWidthMhz channelWidth) const = 0;
+    virtual bool IsPreambleDetected(double rssi, double snr, MHz_t channelWidth) const = 0;
 };
 
 } // namespace ns3

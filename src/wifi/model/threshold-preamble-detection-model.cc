@@ -66,7 +66,7 @@ ThresholdPreambleDetectionModel::~ThresholdPreambleDetectionModel()
 bool
 ThresholdPreambleDetectionModel::IsPreambleDetected(double rssi,
                                                     double snr,
-                                                    ChannelWidthMhz channelWidth) const
+                                                    MHz_t channelWidth) const
 {
     NS_LOG_FUNCTION(this << rssi << RatioToDb(snr) << channelWidth);
     if (rssi >= m_rssiMin)

@@ -105,8 +105,8 @@ YansWifiPhy::TraceSignalArrival(Ptr<const WifiPpdu> ppdu, double rxPowerDbm, Tim
     m_signalArrivalCb(ppdu, rxPowerDbm, ppdu->GetTxDuration());
 }
 
-ChannelWidthMhz
-YansWifiPhy::GetGuardBandwidth(ChannelWidthMhz currentChannelWidth) const
+MHz_t
+YansWifiPhy::GetGuardBandwidth(MHz_t currentChannelWidth) const
 {
     NS_ABORT_MSG("Guard bandwidth not relevant for Yans");
     return 0;
@@ -120,7 +120,7 @@ YansWifiPhy::GetTxMaskRejectionParams() const
 }
 
 WifiSpectrumBandInfo
-YansWifiPhy::GetBand(ChannelWidthMhz /*bandWidth*/, uint8_t /*bandIndex*/)
+YansWifiPhy::GetBand(MHz_t /*bandWidth*/, uint8_t /*bandIndex*/)
 {
     return {{{0, 0}}, {{0, 0}}};
 }
