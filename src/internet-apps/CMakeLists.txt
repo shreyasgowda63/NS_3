@@ -13,6 +13,8 @@ build_lib(
     model/radvd-prefix.cc
     model/radvd.cc
     model/v4traceroute.cc
+    model/dhcp6-header.cc
+    model/dhcp6-options.cc
   HEADER_FILES
     helper/dhcp-helper.h
     helper/ping-helper.h
@@ -26,6 +28,8 @@ build_lib(
     model/radvd-prefix.h
     model/radvd.h
     model/v4traceroute.h
+    model/dhcp6-header.h
+    model/dhcp6-options.h
   LIBRARIES_TO_LINK ${libinternet}
   TEST_SOURCES
     test/dhcp-test.cc
