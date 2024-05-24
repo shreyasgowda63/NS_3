@@ -135,7 +135,7 @@ IcmpEchoReplyTestCase::SendData(Ptr<Socket> socket, Ipv4Address dst)
     header.SetCode(0);
     p->AddHeader(header);
 
-    Address realTo = InetSocketAddress(dst, 1234);
+    Address realTo = InetSocketAddress(dst, 0);
 
     NS_TEST_EXPECT_MSG_EQ(socket->SendTo(p, 0, realTo),
                           (int)p->GetSize(),
@@ -264,7 +264,7 @@ IcmpTimeExceedTestCase::SendData(Ptr<Socket> socket, Ipv4Address dst)
     header.SetCode(0);
     p->AddHeader(header);
 
-    Address realTo = InetSocketAddress(dst, 1234);
+    Address realTo = InetSocketAddress(dst, 0);
 
     NS_TEST_EXPECT_MSG_EQ(socket->SendTo(p, 0, realTo),
                           (int)p->GetSize(),
@@ -409,7 +409,7 @@ IcmpV6EchoReplyTestCase::SendData(Ptr<Socket> socket, Ipv6Address dst)
     header.SetCode(0);
     p->AddHeader(header);
 
-    Address realTo = Inet6SocketAddress(dst, 1234);
+    Address realTo = Inet6SocketAddress(dst, 0);
 
     NS_TEST_EXPECT_MSG_EQ(socket->SendTo(p, 0, realTo),
                           (int)p->GetSize(),
@@ -547,7 +547,7 @@ IcmpV6TimeExceedTestCase::SendData(Ptr<Socket> socket, Ipv6Address dst)
     header.SetCode(0);
     p->AddHeader(header);
 
-    Address realTo = Inet6SocketAddress(dst, 1234);
+    Address realTo = Inet6SocketAddress(dst, 0);
 
     socket->SendTo(p, 0, realTo);
 }
