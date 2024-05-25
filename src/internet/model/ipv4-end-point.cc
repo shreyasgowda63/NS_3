@@ -196,19 +196,19 @@ Ipv4EndPoint::IsMulticastAddressHandled(Ipv4Address address, uint32_t interfaceI
 }
 
 void
-Ipv4EndPoint::CleanMulticastAddresses(Ptr<Ipv4L3Protocol> ipv4)
+Ipv4EndPoint::CleanMulticastAddresses()
 {
-    for (auto iter : m_multicastAddresses)
-    {
-        if (iter.second)
-        {
-            ipv4->RemoveMulticastAddress(iter.first, iter.second);
-        }
-        else
-        {
-            ipv4->RemoveMulticastAddress(iter.first);
-        }
-    }
+    // for (auto iter : m_multicastAddresses)
+    // {
+    //     if (iter.second)
+    //     {
+    //         ipv4->RemoveMulticastAddress(iter.first, iter.second);
+    //     }
+    //     else
+    //     {
+    //         ipv4->RemoveMulticastAddress(iter.first);
+    //     }
+    // }
     m_multicastAddresses.clear();
 }
 } // namespace ns3

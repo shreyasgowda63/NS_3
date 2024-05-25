@@ -219,14 +219,9 @@ class Ipv4EndPoint
 
     /**
      * Removes any multicast address associated with the endpoint
-     * from the endpoint and the IP protocol.
-     *
-     * This function is automatically called when the socket is
-     * closed or destroyed.
-     *
-     * \param ipv4 the IPv4 protocol.
+     * from the endpoint.
      */
-    void CleanMulticastAddresses(Ptr<Ipv4L3Protocol> ipv4);
+    void CleanMulticastAddresses();
 
   private:
     /**

@@ -201,7 +201,7 @@ UdpSocketImpl::DeallocateEndPoint()
 {
     if (m_endPoint != nullptr)
     {
-        m_endPoint->CleanMulticastAddresses(m_udp->GetObject<Ipv4L3Protocol>());
+        // m_endPoint->CleanMulticastAddresses();
         m_udp->DeAllocate(m_endPoint);
         m_endPoint = nullptr;
     }
@@ -982,17 +982,17 @@ UdpSocketImpl::MulticastJoinGroup(const Address& groupAddress, uint32_t interfac
             int32_t boundInterface = ipv4->GetInterfaceForDevice(m_endPoint->GetBoundNetDevice());
             NS_LOG_LOGIC("UdpSocketImpl: interface is bound, overriding interface index: "
                          << interface << " -> " << boundInterface);
-            ipv4->AddMulticastAddress(addr, boundInterface);
+            // ipv4->AddMulticastAddress(addr, boundInterface);
             m_endPoint->AddMulticastAddress(addr, boundInterface);
         }
         else if (interface)
         {
-            ipv4->AddMulticastAddress(addr, interface);
+            // ipv4->AddMulticastAddress(addr, interface);
             m_endPoint->AddMulticastAddress(addr, interface);
         }
         else
         {
-            ipv4->AddMulticastAddress(addr);
+            // ipv4->AddMulticastAddress(addr);
             m_endPoint->AddMulticastAddress(addr, 0);
         }
         return 0;
@@ -1070,17 +1070,17 @@ UdpSocketImpl::MulticastLeaveGroup(const Address& groupAddress, uint32_t interfa
             int32_t boundInterface = ipv4->GetInterfaceForDevice(m_endPoint->GetBoundNetDevice());
             NS_LOG_LOGIC("UdpSocketImpl: interface is bound, overriding interface index: "
                          << interface << " -> " << boundInterface);
-            ipv4->RemoveMulticastAddress(addr, boundInterface);
+            // ipv4->RemoveMulticastAddress(addr, boundInterface);
             m_endPoint->RemoveMulticastAddress(addr, boundInterface);
         }
         else if (interface)
         {
-            ipv4->RemoveMulticastAddress(addr, interface);
+            // ipv4->RemoveMulticastAddress(addr, interface);
             m_endPoint->RemoveMulticastAddress(addr, interface);
         }
         else
         {
-            ipv4->RemoveMulticastAddress(addr);
+            // ipv4->RemoveMulticastAddress(addr);
             m_endPoint->RemoveMulticastAddress(addr, 0);
         }
         return 0;
