@@ -472,7 +472,7 @@ CsmaMulticastTestCase::DoRun()
 
     // Create an optional packet sink to receive these packets
     PacketSinkHelper sink("ns3::UdpSocketFactory",
-                          InetSocketAddress(multicastGroup, multicastPort));
+                          InetSocketAddress(Ipv4Address::GetAny(), multicastPort));
 
     ApplicationContainer sinkC = sink.Install(c1.Get(2)); // Node n4
     // Start the sink

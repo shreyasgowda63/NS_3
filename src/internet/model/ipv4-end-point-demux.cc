@@ -290,6 +290,7 @@ Ipv4EndPointDemux::Lookup(Ipv4Address daddr,
                     if (addrNetpart == daddrNetPart)
                     {
                         localAddressIsSubnetAny = true;
+                        continue;
                     }
                 }
             }
@@ -338,7 +339,7 @@ Ipv4EndPointDemux::Lookup(Ipv4Address daddr,
             retval2.push_back(endP);
         }
         if (localAddressMatchesWildCard && remoteAddressMatchesWildCard &&
-            remotePortMatchesWildCard)
+            remotePortMatchesWildCard && !daddr.IsMulticast())
         { // Only local port matches exactly - Endpoint open to "any" connection
             NS_LOG_INFO("Found an endpoint for case 1, adding " << endP->GetLocalAddress() << ":"
                                                                 << endP->GetLocalPort());
