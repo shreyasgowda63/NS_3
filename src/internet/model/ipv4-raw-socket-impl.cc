@@ -466,30 +466,31 @@ Ipv4RawSocketImpl::ForwardUp(Ptr<const Packet> p,
         }
     }
 
-    NS_LOG_LOGIC("src = " << m_src << " dst = " << m_dst << " prot = " << +ipHeader.GetProtocol());
-
     if (ipHeader.GetProtocol() == m_protocol)
     {
-        bool unicastForMe = false;
+        bool forMe = false;
         bool multicastForMe = false;
 
-        // This considers both unicast and broadcasts.
-        if (!m_dst.IsMulticast() &&
-            (m_src == Ipv4Address::GetAny() || ipHeader.GetDestination() == m_src) &&
-            (m_dst == Ipv4Address::GetAny() || ipHeader.GetSource() == m_dst))
+        Ipv4Address pktSrc = ipHeader.GetSource();
+        Ipv4Address pktDst = ipHeader.GetDestination();
+
+        // This is for packets directed to the address the socket was bound to.
+        if ((m_src == Ipv4Address::GetAny() || pktDst == m_src) &&
+            (m_dst == Ipv4Address::GetAny() || pktSrc == m_dst))
         {
-            unicastForMe = true;
+            forMe = true;
         }
 
-        if (m_dst.IsMulticast())
+        // THis is for when the multicast addresses added with MulticastJoinGroup
+        if (pktDst.IsMulticast())
         {
-            bool specific = m_multicastAddresses.contains({m_dst, incomingInterface->GetIndex()});
-            bool generic = m_multicastAddresses.contains({m_dst, 0});
+            bool specific = m_multicastAddresses.contains({pktDst, incomingInterface->GetIndex()});
+            bool generic = m_multicastAddresses.contains({pktDst, 0});
 
             multicastForMe = specific || generic;
         }
 
-        if (unicastForMe || multicastForMe)
+        if (forMe || multicastForMe)
         {
             Ptr<Packet> copy = p->Copy();
             // Should check via getsockopt ()..
@@ -497,7 +498,7 @@ Ipv4RawSocketImpl::ForwardUp(Ptr<const Packet> p,
             {
                 Ipv4PacketInfoTag tag;
                 copy->RemovePacketTag(tag);
-                tag.SetAddress(ipHeader.GetDestination());
+                tag.SetAddress(pktDst);
                 tag.SetTtl(ipHeader.GetTtl());
                 tag.SetRecvIf(incomingInterface->GetDevice()->GetIfIndex());
                 copy->AddPacketTag(tag);
@@ -532,7 +533,7 @@ Ipv4RawSocketImpl::ForwardUp(Ptr<const Packet> p,
             copy->AddHeader(ipHeader);
             Data data;
             data.packet = copy;
-            data.fromIp = ipHeader.GetSource();
+            data.fromIp = pktSrc;
             data.fromProtocol = ipHeader.GetProtocol();
             m_recv.push_back(data);
             NotifyDataRecv();
