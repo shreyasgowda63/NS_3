@@ -1535,8 +1535,7 @@ class Bug2843TestCase : public TestCase
      * A tuple of {starting frequency, channelWidth, Number of subbands in SpectrumModel, modulation
      * type}
      */
-    typedef std::tuple<int64_t, MHz_t, uint32_t, WifiModulationClass>
-        FreqWidthSubbandModulationTuple;
+    typedef std::tuple<Hz_t, MHz_t, uint32_t, WifiModulationClass> FreqWidthSubbandModulationTuple;
     std::vector<FreqWidthSubbandModulationTuple>
         m_distinctTuples; ///< vector of distinct {starting frequency, channelWidth, Number of
                           ///< subbands in SpectrumModel, modulation type} tuples
@@ -1577,7 +1576,7 @@ Bug2843TestCase::StoreDistinctTuple(std::string context, Ptr<SpectrumSignalParam
     // Extract starting frequency and number of subbands
     Ptr<const SpectrumModel> c = txParams->psd->GetSpectrumModel();
     std::size_t numBands = c->GetNumBands();
-    double startingFreq = c->Begin()->fl;
+    const Hz_t startingFreq = c->Begin()->fl;
 
     // Get channel bandwidth and modulation class
     Ptr<const WifiSpectrumSignalParameters> wifiTxParams =

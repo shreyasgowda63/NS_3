@@ -27,17 +27,16 @@
 namespace
 {
 /**
- * Get the center frequency (in MHz) of each segment covered by the provided channel width.
- * If the specified channel width is contained in a single frequency segment, a single
- * center frequency is returned. If the specified channel width is spread over multiple
- * frequency segments (e.g. 160 MHz if operating channel is 80+80MHz), multiple center
- * frequencies are returned.
+ * Get the center frequency of each segment covered by the provided channel width. If the specified
+ * channel width is contained in a single frequency segment, a single center frequency is returned.
+ * If the specified channel width is spread over multiple frequency segments (e.g. 160 MHz if
+ * operating channel is 80+80MHz), multiple center frequencies are returned.
  *
  * \param channel the operating channel of the PHY
  * \param channelWidth the channel width
- * \return the center frequency (in MHz) of each segment covered by the given width
+ * \return the center frequency of each segment covered by the given width
  */
-std::vector<int64_t>
+std::vector<ns3::MHz_t>
 GetChannelCenterFrequenciesPerSegment(const ns3::WifiPhyOperatingChannel& channel,
                                       ns3::MHz_t channelWidth)
 {
@@ -45,7 +44,7 @@ GetChannelCenterFrequenciesPerSegment(const ns3::WifiPhyOperatingChannel& channe
     {
         return {};
     }
-    std::vector<int64_t> freqs{};
+    std::vector<ns3::MHz_t> freqs{};
     const auto width = std::min(channelWidth, channel.GetWidth(0));
     const auto primarySegmentIndex = channel.GetPrimarySegmentIndex(width);
     const auto secondarySegmentIndex = channel.GetSecondarySegmentIndex(width);
@@ -187,14 +186,14 @@ WifiPpdu::GetTxChannelWidth() const
     return m_txChannelWidth;
 }
 
-std::vector<int64_t>
+std::vector<MHz_t>
 WifiPpdu::GetTxCenterFreqs() const
 {
     return m_txCenterFreqs;
 }
 
 bool
-WifiPpdu::DoesOverlapChannel(int64_t minFreq, int64_t maxFreq) const
+WifiPpdu::DoesOverlapChannel(MHz_t minFreq, MHz_t maxFreq) const
 {
     NS_LOG_FUNCTION(this << minFreq << maxFreq);
     // all segments have the same width

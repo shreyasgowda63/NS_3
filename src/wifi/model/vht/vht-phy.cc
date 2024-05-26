@@ -487,8 +487,8 @@ VhtPhy::GetUsableSubcarriers(MHz_t channelWidth)
 uint64_t
 VhtPhy::GetNonHtReferenceRate(uint8_t mcsValue)
 {
-    WifiCodeRate codeRate = GetCodeRate(mcsValue);
-    uint16_t constellationSize = GetConstellationSize(mcsValue);
+    const auto codeRate = GetCodeRate(mcsValue);
+    const auto constellationSize = GetConstellationSize(mcsValue);
     return CalculateNonHtReferenceRate(codeRate, constellationSize);
 }
 
@@ -603,10 +603,10 @@ VhtPhy::GetCcaIndication(const Ptr<const WifiPpdu> ppdu)
     if (ppdu)
     {
         const MHz_t primaryWidth = 20;
-        int64_t p20MinFreq =
+        const MHz_t p20MinFreq =
             m_wifiPhy->GetOperatingChannel().GetPrimaryChannelCenterFrequency(primaryWidth) -
             (primaryWidth / 2);
-        int64_t p20MaxFreq =
+        const MHz_t p20MaxFreq =
             m_wifiPhy->GetOperatingChannel().GetPrimaryChannelCenterFrequency(primaryWidth) +
             (primaryWidth / 2);
         if (ppdu->DoesOverlapChannel(p20MinFreq, p20MaxFreq))
@@ -625,11 +625,11 @@ VhtPhy::GetCcaIndication(const Ptr<const WifiPpdu> ppdu)
         for (const auto& secondaryChannel : secondaryChannels)
         {
             const auto secondaryWidth = secondaryChannel.first;
-            int64_t secondaryMinFreq =
+            const MHz_t secondaryMinFreq =
                 m_wifiPhy->GetOperatingChannel().GetSecondaryChannelCenterFrequency(
                     secondaryWidth) -
                 (secondaryWidth / 2);
-            int64_t secondaryMaxFreq =
+            const MHz_t secondaryMaxFreq =
                 m_wifiPhy->GetOperatingChannel().GetSecondaryChannelCenterFrequency(
                     secondaryWidth) +
                 (secondaryWidth / 2);

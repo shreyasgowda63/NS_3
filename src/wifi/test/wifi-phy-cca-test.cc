@@ -50,13 +50,13 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("WifiPhyCcaTest");
 
-constexpr int64_t P20_CENTER_FREQUENCY = 5180; // MHz
-constexpr int64_t S20_CENTER_FREQUENCY = P20_CENTER_FREQUENCY + 20;
-constexpr int64_t P40_CENTER_FREQUENCY = P20_CENTER_FREQUENCY + 10;
-constexpr int64_t S40_CENTER_FREQUENCY = P40_CENTER_FREQUENCY + 40;
-constexpr int64_t P80_CENTER_FREQUENCY = P40_CENTER_FREQUENCY + 20;
-constexpr int64_t S80_CENTER_FREQUENCY = P80_CENTER_FREQUENCY + 80;
-constexpr int64_t P160_CENTER_FREQUENCY = P80_CENTER_FREQUENCY + 40;
+constexpr MHz_t P20_CENTER_FREQUENCY = 5180;
+constexpr MHz_t S20_CENTER_FREQUENCY = P20_CENTER_FREQUENCY + 20;
+constexpr MHz_t P40_CENTER_FREQUENCY = P20_CENTER_FREQUENCY + 10;
+constexpr MHz_t S40_CENTER_FREQUENCY = P40_CENTER_FREQUENCY + 40;
+constexpr MHz_t P80_CENTER_FREQUENCY = P40_CENTER_FREQUENCY + 20;
+constexpr MHz_t S80_CENTER_FREQUENCY = P80_CENTER_FREQUENCY + 80;
+constexpr MHz_t P160_CENTER_FREQUENCY = P80_CENTER_FREQUENCY + 40;
 const Time smallDelta = NanoSeconds(1);
 // add small delta to be right after aCCATime, since test checks are scheduled before wifi events
 const Time aCcaTime = MicroSeconds(4) + smallDelta;
@@ -718,19 +718,19 @@ class WifiPhyCcaIndicationTest : public TestCase
      * \param frequency the center frequency the transmitter is operating on
      * \param bandwidth the bandwidth to use for the transmission
      */
-    void SendHeSuPpdu(double txPowerDbm, int64_t frequency, MHz_t bandwidth);
+    void SendHeSuPpdu(double txPowerDbm, MHz_t frequency, MHz_t bandwidth);
 
     /**
      * Start to generate a signal
      * \param signalGenerator the signal generator to use
      * \param txPowerDbm the transmit power in dBm
-     * \param frequency the center frequency of the signal to send in MHz
+     * \param frequency the center frequency of the signal to send
      * \param bandwidth the bandwidth of the signal to send
      * \param duration the duration of the signal
      */
     void StartSignal(Ptr<WaveformGenerator> signalGenerator,
                      double txPowerDbm,
-                     int64_t frequency,
+                     MHz_t frequency,
                      MHz_t bandwidth,
                      Time duration);
     /**
@@ -772,7 +772,7 @@ class WifiPhyCcaIndicationTest : public TestCase
         double power{0.0};          //!< transmit power to use in dBm
         Time startTime{Seconds(0)}; //!< time at which transmission will be started
         Time duration{Seconds(0)};  //!< the duration of the transmission
-        int64_t centerFreq{0};      //!< center frequency to use in MHz
+        MHz_t centerFreq{0};        //!< center frequency to use in MHz
         MHz_t bandwidth{0};         //!< bandwidth to use
     };
 
@@ -783,7 +783,7 @@ class WifiPhyCcaIndicationTest : public TestCase
     {
         double power{0.0};          //!< transmit power to use in dBm
         Time startTime{Seconds(0)}; //!< time at which transmission will be started
-        int64_t centerFreq{0};      //!< center frequency to use in MHz
+        MHz_t centerFreq{0};        //!< center frequency to use in MHz
         MHz_t bandwidth{0};         //!< bandwidth to use
     };
 
@@ -842,7 +842,7 @@ class WifiPhyCcaIndicationTest : public TestCase
     std::shared_ptr<CcaTestPhyListener>
         m_rxPhyStateListener; ///< Listener for PHY state transitions
 
-    int64_t m_frequency;  ///< Operating frequency in MHz
+    MHz_t m_frequency;    ///< Operating frequency in MHz
     MHz_t m_channelWidth; ///< Operating channel width
 };
 
@@ -857,7 +857,7 @@ WifiPhyCcaIndicationTest::WifiPhyCcaIndicationTest()
 void
 WifiPhyCcaIndicationTest::StartSignal(Ptr<WaveformGenerator> signalGenerator,
                                       double txPowerDbm,
-                                      int64_t frequency,
+                                      MHz_t frequency,
                                       MHz_t bandwidth,
                                       Time duration)
 {
@@ -888,7 +888,7 @@ WifiPhyCcaIndicationTest::StopSignal(Ptr<WaveformGenerator> signalGenerator)
 }
 
 void
-WifiPhyCcaIndicationTest::SendHeSuPpdu(double txPowerDbm, int64_t frequency, MHz_t bandwidth)
+WifiPhyCcaIndicationTest::SendHeSuPpdu(double txPowerDbm, MHz_t frequency, MHz_t bandwidth)
 {
     NS_LOG_FUNCTION(this << txPowerDbm);
 

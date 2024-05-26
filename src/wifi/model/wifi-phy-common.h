@@ -54,9 +54,9 @@ class Time;
 static constexpr uint8_t MAX_PROPAGATION_DELAY_USEC = 1;
 
 /**
- * typedef for a pair of start and stop frequencies in Hz to represent a band
+ * typedef for a pair of start and stop frequencies to represent a band
  */
-using WifiSpectrumBandFrequencies = std::pair<int64_t, int64_t>;
+using WifiSpectrumBandFrequencies = std::pair<Hz_t, Hz_t>;
 
 /// WifiSpectrumBandInfo structure containing info about a spectrum band
 struct WifiSpectrumBandInfo

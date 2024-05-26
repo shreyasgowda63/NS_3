@@ -444,7 +444,7 @@ WifiPhyOperatingChannel::GetDefaultChannelNumber(
 
 WifiPhyOperatingChannel::ConstIterator
 WifiPhyOperatingChannel::FindFirst(uint8_t number,
-                                   int64_t frequency,
+                                   MHz_t frequency,
                                    MHz_t width,
                                    WifiStandard standard,
                                    WifiPhyBand band,
@@ -498,7 +498,7 @@ WifiPhyOperatingChannel::GetNumber(std::size_t segment /* = 0 */) const
     return (*std::next(m_channelIts.begin(), segment))->number;
 }
 
-int64_t
+MHz_t
 WifiPhyOperatingChannel::GetFrequency(std::size_t segment /* = 0 */) const
 {
     NS_ASSERT(IsSet());
@@ -554,11 +554,11 @@ WifiPhyOperatingChannel::GetNumbers() const
     return channelNumbers;
 }
 
-std::vector<int64_t>
+std::vector<MHz_t>
 WifiPhyOperatingChannel::GetFrequencies() const
 {
     NS_ASSERT(IsSet());
-    std::vector<int64_t> centerFrequencies{};
+    std::vector<MHz_t> centerFrequencies{};
     std::transform(m_channelIts.cbegin(),
                    m_channelIts.cend(),
                    std::back_inserter(centerFrequencies),
@@ -687,7 +687,7 @@ WifiPhyOperatingChannel::GetSecondarySegmentIndex(MHz_t primaryChannelWidth) con
     return (secondaryIndex >= (numIndices / 2)) ? 1 : 0;
 }
 
-int64_t
+MHz_t
 WifiPhyOperatingChannel::GetPrimaryChannelCenterFrequency(MHz_t primaryChannelWidth) const
 {
     const auto segmentIndex = GetPrimarySegmentIndex(primaryChannelWidth);
@@ -699,7 +699,7 @@ WifiPhyOperatingChannel::GetPrimaryChannelCenterFrequency(MHz_t primaryChannelWi
                primaryChannelWidth;
 }
 
-int64_t
+MHz_t
 WifiPhyOperatingChannel::GetSecondaryChannelCenterFrequency(MHz_t secondaryChannelWidth) const
 {
     const auto segmentIndex = GetSecondarySegmentIndex(secondaryChannelWidth);

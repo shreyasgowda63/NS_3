@@ -138,18 +138,18 @@ class WifiPpdu : public SimpleRefCount<WifiPpdu>
     virtual MHz_t GetTxChannelWidth() const;
 
     /**
-     * \return the center frequency per segment (MHz) used for the transmission of this PPDU
+     * \return the center frequency per segment used for the transmission of this PPDU
      */
-    std::vector<int64_t> GetTxCenterFreqs() const;
+    std::vector<MHz_t> GetTxCenterFreqs() const;
 
     /**
      * Check whether the given PPDU overlaps a given channel.
      *
-     * \param minFreq the minimum frequency (MHz) of the channel
-     * \param maxFreq the maximum frequency (MHz) of the channel
+     * \param minFreq the minimum frequency of the channel
+     * \param maxFreq the maximum frequency of the channel
      * \return true if this PPDU overlaps the channel, false otherwise
      */
-    bool DoesOverlapChannel(int64_t minFreq, int64_t maxFreq) const;
+    bool DoesOverlapChannel(MHz_t minFreq, MHz_t maxFreq) const;
 
     /**
      * Get the modulation used for the PPDU.
@@ -200,12 +200,12 @@ class WifiPpdu : public SimpleRefCount<WifiPpdu>
      */
     virtual std::string PrintPayload() const;
 
-    WifiPreamble m_preamble;              //!< the PHY preamble
-    WifiModulationClass m_modulation;     //!< the modulation used for the transmission of this PPDU
-    WifiConstPsduMap m_psdus;             //!< the PSDUs contained in this PPDU
-    std::vector<int64_t> m_txCenterFreqs; //!< the center frequency (MHz) per segment used for the
-                                          //!< transmission of this PPDU
-    uint64_t m_uid;                       //!< the unique ID of this PPDU
+    WifiPreamble m_preamble;            //!< the PHY preamble
+    WifiModulationClass m_modulation;   //!< the modulation used for the transmission of this PPDU
+    WifiConstPsduMap m_psdus;           //!< the PSDUs contained in this PPDU
+    std::vector<MHz_t> m_txCenterFreqs; //!< the center frequency per segment used for the
+                                        //!< transmission of this PPDU
+    uint64_t m_uid;                     //!< the unique ID of this PPDU
     mutable std::optional<WifiTxVector>
         m_txVector; //!< the TXVECTOR at TX PHY or the reconstructed TXVECTOR at RX PHY (or
                     //!< std::nullopt if TXVECTOR has not been reconstructed yet)

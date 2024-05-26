@@ -93,13 +93,13 @@ class WifiSpectrumPhyInterface : public SpectrumPhy
     const FrequencyRange& GetFrequencyRange() const;
 
     /**
-     * Get the center frequency in MHz for each segment of the the spectrum channel this interface
-     * is attached to
+     * Get the center frequency for each segment of the the spectrum channel this interface is
+     * attached to
      *
-     * \return the center frequency in MHz for each segment of the the spectrum channel this
-     * interface is attached to to
+     * \return the center frequency for each segment of the the spectrum channel this interface is
+     * attached to to
      */
-    const std::vector<int64_t>& GetCenterFrequencies() const;
+    const std::vector<MHz_t>& GetCenterFrequencies() const;
 
     /**
      * Get the channel width covered by the spectrum channel this interface is attached to
@@ -119,12 +119,12 @@ class WifiSpectrumPhyInterface : public SpectrumPhy
     /**
      * Set the RX spectrum model
      *
-     * \param centerFrequencies the center frequency for each segment in MHz
+     * \param centerFrequencies the center frequency for each segment
      * \param channelWidth the total channel width
      * \param bandBandwidth the width of each band
      * \param guardBandwidth the total width of the guard band
      */
-    void SetRxSpectrumModel(const std::vector<int64_t>& centerFrequencies,
+    void SetRxSpectrumModel(const std::vector<MHz_t>& centerFrequencies,
                             MHz_t channelWidth,
                             Hz_t bandBandwidth,
                             MHz_t guardBandwidth);
@@ -162,7 +162,7 @@ class WifiSpectrumPhyInterface : public SpectrumPhy
     Ptr<SpectrumWifiPhy> m_spectrumWifiPhy;     ///< spectrum PHY
     Ptr<NetDevice> m_netDevice;                 ///< the device
     Ptr<SpectrumChannel> m_channel;             ///< spectrum channel
-    std::vector<int64_t> m_centerFrequencies;   ///< center frequency per segment in MHz
+    std::vector<MHz_t> m_centerFrequencies;     ///< center frequency per segment
     MHz_t m_channelWidth;                       ///< channel width
     Ptr<const SpectrumModel> m_rxSpectrumModel; ///< receive spectrum model
 

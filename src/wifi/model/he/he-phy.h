@@ -221,10 +221,10 @@ class HePhy : public VhtPhy
      *
      * \param ppdu the PPDU
      * \param staId the STA-ID of the station taking part of the UL MU
-     * \return the center frequency in MHz corresponding to the non-HE portion of the HE TB PPDU
+     * \return the center frequency corresponding to the non-HE portion of the HE TB PPDU
      */
-    std::vector<int64_t> GetCenterFrequenciesForNonHePart(const Ptr<const WifiPpdu> ppdu,
-                                                          uint16_t staId) const;
+    std::vector<MHz_t> GetCenterFrequenciesForNonHePart(const Ptr<const WifiPpdu> ppdu,
+                                                        uint16_t staId) const;
 
     /**
      * Sets the OBSS-PD algorithm.
@@ -448,12 +448,12 @@ class HePhy : public VhtPhy
     static Time GetSymbolDuration(Time guardInterval);
 
     /**
-     * \param bandWidth the width of the band used for the OFDMA transmission. Must be
-     *                  a multiple of 20 MHz
+     * \param bandWidth the width of the band used for the OFDMA transmission. Must be a multiple of
+     * 20 MHz
      * \param guardBandwidth width of the guard band
-     * \param centerFrequencies the center frequency of each segment in MHz
+     * \param centerFrequencies the center frequency of each segment
      * \param totalWidth the width of the operating channel
-     * \param subcarrierSpacing the subcarrier spacing (MHz)
+     * \param subcarrierSpacing the subcarrier spacing
      * \param subcarrierRange the subcarrier range of the HE RU
      * \param bandIndex the index (starting at 0) of the band within the operating channel
      * \return the converted subcarriers
@@ -465,9 +465,9 @@ class HePhy : public VhtPhy
     static std::vector<WifiSpectrumBandIndices> ConvertHeRuSubcarriers(
         MHz_t bandWidth,
         MHz_t guardBandwidth,
-        const std::vector<int64_t>& centerFrequencies,
+        const std::vector<MHz_t>& centerFrequencies,
         MHz_t totalWidth,
-        uint32_t subcarrierSpacing,
+        Hz_t subcarrierSpacing,
         HeRu::SubcarrierRange subcarrierRange,
         uint8_t bandIndex = 0);
 
