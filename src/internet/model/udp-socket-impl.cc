@@ -323,7 +323,7 @@ UdpSocketImpl::Bind(const Address& address)
     }
     else if (Inet6SocketAddress::IsMatchingType(address))
     {
-        NS_ASSERT_MSG(m_endPoint == nullptr, "Endpoint already allocated.");
+        NS_ASSERT_MSG(m_endPoint6 == nullptr, "Endpoint already allocated.");
 
         Inet6SocketAddress transport = Inet6SocketAddress::ConvertFrom(address);
         Ipv6Address ipv6 = transport.GetIpv6();
