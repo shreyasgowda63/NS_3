@@ -535,7 +535,7 @@ PacketSocket::MulticastJoinGroup(const Address& groupAddress, uint32_t interface
 {
     NS_LOG_FUNCTION(this << groupAddress << interfaceIndex);
 
-    NS_ABORT_MSG("Unimplemented (yet)");
+    NS_ABORT_MSG("PacketSockets do not support multicast");
 
     return 0;
 }
@@ -545,7 +545,7 @@ PacketSocket::MulticastLeaveGroup(const Address& groupAddress, uint32_t interfac
 {
     NS_LOG_FUNCTION(this << groupAddress << interfaceIndex);
 
-    NS_ABORT_MSG("Unimplemented (yet)");
+    NS_ABORT_MSG("PacketSockets do not support multicast");
 
     return 0;
 }
