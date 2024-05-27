@@ -49,7 +49,7 @@ ThresholdPreambleDetectionModel::GetTypeId()
                           "Preamble is dropped if the RSSI is below this value (expressed in dBm).",
                           DoubleValue(-82),
                           MakeDoubleAccessor(&ThresholdPreambleDetectionModel::m_rssiMin),
-                          MakeDoubleChecker<double>());
+                          MakeDoubleChecker<dBm_t>());
     return tid;
 }
 
@@ -64,7 +64,7 @@ ThresholdPreambleDetectionModel::~ThresholdPreambleDetectionModel()
 }
 
 bool
-ThresholdPreambleDetectionModel::IsPreambleDetected(double rssi,
+ThresholdPreambleDetectionModel::IsPreambleDetected(dBm_t rssi,
                                                     double snr,
                                                     MHz_t channelWidth) const
 {

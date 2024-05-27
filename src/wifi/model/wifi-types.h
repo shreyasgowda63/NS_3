@@ -20,7 +20,7 @@
 #ifndef WIFI_TYPES_H
 #define WIFI_TYPES_H
 
-#include <cstdint>
+#include "wifi-units.h"
 
 namespace ns3
 {
@@ -67,8 +67,8 @@ enum MpduType
 /// SignalNoiseDbm structure
 struct SignalNoiseDbm
 {
-    double signal; ///< signal strength in dBm
-    double noise;  ///< noise power in dBm
+    dBm_t signal; ///< signal strength
+    dBm_t noise;  ///< noise power
 };
 
 /// MpduInfo structure
@@ -81,8 +81,8 @@ struct MpduInfo
 /// RxSignalInfo structure containing info on the received signal
 struct RxSignalInfo
 {
-    double snr;  ///< SNR in linear scale
-    double rssi; ///< RSSI in dBm
+    double snr; ///< SNR in linear scale
+    dBm_t rssi; ///< RSSI
 };
 
 /**

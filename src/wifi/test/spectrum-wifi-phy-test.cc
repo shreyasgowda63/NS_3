@@ -343,9 +343,9 @@ class TestPhyListener : public ns3::WifiPhyListener
         ++m_notifyRxEndError;
     }
 
-    void NotifyTxStart(Time duration, double txPowerDbm) override
+    void NotifyTxStart(Time duration, dBm_t txPower) override
     {
-        NS_LOG_FUNCTION(this << duration << txPowerDbm);
+        NS_LOG_FUNCTION(this << duration << txPower);
     }
 
     void NotifyCcaBusyStart(Time duration,
@@ -1684,11 +1684,10 @@ class SpectrumWifiPhyMultipleInterfacesTest : public TestCase
      * Send PPDU function
      *
      * \param phy the PHY to transmit the signal
-     * \param txPowerDbm the power in dBm to transmit the signal (this is also the received power
-     * since we do not have propagation loss to simplify)
-     * \param payloadSize the payload size in bytes
+     * \param txPower the power to transmit the signal (this is also the received power since we do
+     * not have propagation loss to simplify) \param payloadSize the payload size in bytes
      */
-    void SendPpdu(Ptr<SpectrumWifiPhy> phy, double txPowerDbm, uint32_t payloadSize);
+    void SendPpdu(Ptr<SpectrumWifiPhy> phy, dBm_t txPower, uint32_t payloadSize);
 
     /**
      * Callback triggered when a packet is received by a PHY
@@ -1845,10 +1844,10 @@ SpectrumWifiPhyMultipleInterfacesTest::SwitchChannel(Ptr<SpectrumWifiPhy> phy,
 
 void
 SpectrumWifiPhyMultipleInterfacesTest::SendPpdu(Ptr<SpectrumWifiPhy> phy,
-                                                double txPowerDbm,
+                                                dBm_t txPower,
                                                 uint32_t payloadSize)
 {
-    NS_LOG_FUNCTION(this << phy << txPowerDbm << payloadSize << phy->GetCurrentFrequencyRange()
+    NS_LOG_FUNCTION(this << phy << txPower << payloadSize << phy->GetCurrentFrequencyRange()
                          << phy->GetChannelWidth() << phy->GetChannelNumber());
 
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs11(),
@@ -1873,8 +1872,8 @@ SpectrumWifiPhyMultipleInterfacesTest::SendPpdu(Ptr<SpectrumWifiPhy> phy,
     m_lastTxEnd = m_lastTxStart + WifiPhy::CalculateTxDuration({std::make_pair(SU_STA_ID, psdu)},
                                                                txVector,
                                                                phy->GetPhyBand());
-    phy->SetTxPowerStart(txPowerDbm);
-    phy->SetTxPowerEnd(txPowerDbm);
+    phy->SetTxPowerStart(txPower);
+    phy->SetTxPowerEnd(txPower);
     phy->Send(WifiConstPsduMap({std::make_pair(SU_STA_ID, psdu)}), txVector);
 }
 
@@ -2193,7 +2192,7 @@ SpectrumWifiPhyMultipleInterfacesTest::DoRun()
 {
     NS_LOG_FUNCTION(this);
 
-    const auto ccaEdThresholdDbm = -62.0; ///< CCA-ED threshold in dBm
+    const dBm_t ccaEdThreshold = -62.0; ///< CCA-ED threshold
     const auto txAfterChannelSwitchDelay =
         MicroSeconds((m_chanSwitchScenario == ChannelSwitchScenario::BEFORE_TX)
                          ? 250
@@ -2356,7 +2355,7 @@ SpectrumWifiPhyMultipleInterfacesTest::DoRun()
     }
 
     // verify CCA indication when switching to a channel with an ongoing transmission
-    for (const auto txPowerDbm : {-60.0 /* above CCA-ED */, -70.0 /* below CCA-ED */})
+    for (const dBm_t txPower : {-60.0 /* above CCA-ED */, -70.0 /* below CCA-ED */})
     {
         for (std::size_t i = 0; i < 4; ++i)
         {
@@ -2383,7 +2382,7 @@ SpectrumWifiPhyMultipleInterfacesTest::DoRun()
                                         &SpectrumWifiPhyMultipleInterfacesTest::SendPpdu,
                                         this,
                                         txPpduPhy,
-                                        txPowerDbm,
+                                        txPower,
                                         1000);
                     Simulator::Schedule(delay + txOngoingAfterTxStartedDelay,
                                         &SpectrumWifiPhyMultipleInterfacesTest::SwitchChannel,
@@ -2400,9 +2399,9 @@ SpectrumWifiPhyMultipleInterfacesTest::DoRun()
                             continue;
                         }
                         const auto expectCcaBusyIndication =
-                            (k == i) ? (txPowerDbm >= ccaEdThresholdDbm)
+                            (k == i) ? (txPower >= ccaEdThreshold)
                                      : (m_trackSignalsInactiveInterfaces
-                                            ? ((txPowerDbm >= ccaEdThresholdDbm) ? (j == k) : false)
+                                            ? ((txPower >= ccaEdThreshold) ? (j == k) : false)
                                             : false);
                         Simulator::Schedule(
                             delay + checkResultsDelay,

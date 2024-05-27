@@ -1391,7 +1391,7 @@ WifiRemoteStationManager::GetInfo(Mac48Address address)
     return LookupState(address)->m_info;
 }
 
-std::optional<double>
+std::optional<dBm_t>
 WifiRemoteStationManager::GetMostRecentRssi(Mac48Address address) const
 {
     auto station = Lookup(address);

@@ -70,9 +70,9 @@ VhtConfiguration::GetTypeId()
                               &VhtConfiguration::SetSecondaryCcaSensitivityThresholds,
                               &VhtConfiguration::GetSecondaryCcaSensitivityThresholds),
                           MakeTupleChecker<DoubleValue, DoubleValue, DoubleValue>(
-                              MakeDoubleChecker<double>(),
-                              MakeDoubleChecker<double>(),
-                              MakeDoubleChecker<double>()));
+                              MakeDoubleChecker<dBm_t>(),
+                              MakeDoubleChecker<dBm_t>(),
+                              MakeDoubleChecker<dBm_t>()));
     return tid;
 }
 
@@ -107,7 +107,7 @@ VhtConfiguration::GetSecondaryCcaSensitivityThresholds() const
             m_secondaryCcaSensitivityThresholds.at(80)};
 }
 
-const std::map<MHz_t, double>&
+const std::map<MHz_t, dBm_t>&
 VhtConfiguration::GetSecondaryCcaSensitivityThresholdsPerBw() const
 {
     return m_secondaryCcaSensitivityThresholds;

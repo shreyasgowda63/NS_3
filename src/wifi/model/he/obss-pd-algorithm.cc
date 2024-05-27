@@ -44,27 +44,27 @@ ObssPdAlgorithm::GetTypeId()
                           DoubleValue(-82.0),
                           MakeDoubleAccessor(&ObssPdAlgorithm::SetObssPdLevel,
                                              &ObssPdAlgorithm::GetObssPdLevel),
-                          MakeDoubleChecker<double>(-101, -62))
+                          MakeDoubleChecker<dBm_t>(-101, -62))
             .AddAttribute("ObssPdLevelMin",
                           "Minimum value (dBm) of OBSS PD level.",
                           DoubleValue(-82.0),
                           MakeDoubleAccessor(&ObssPdAlgorithm::m_obssPdLevelMin),
-                          MakeDoubleChecker<double>(-101, -62))
+                          MakeDoubleChecker<dBm_t>(-101, -62))
             .AddAttribute("ObssPdLevelMax",
                           "Maximum value (dBm) of OBSS PD level.",
                           DoubleValue(-62.0),
                           MakeDoubleAccessor(&ObssPdAlgorithm::m_obssPdLevelMax),
-                          MakeDoubleChecker<double>(-101, -62))
+                          MakeDoubleChecker<dBm_t>(-101, -62))
             .AddAttribute("TxPowerRefSiso",
                           "The SISO reference TX power level (dBm).",
                           DoubleValue(21),
                           MakeDoubleAccessor(&ObssPdAlgorithm::m_txPowerRefSiso),
-                          MakeDoubleChecker<double>())
+                          MakeDoubleChecker<dBm_t>())
             .AddAttribute("TxPowerRefMimo",
                           "The MIMO reference TX power level (dBm).",
                           DoubleValue(25),
                           MakeDoubleAccessor(&ObssPdAlgorithm::m_txPowerRefMimo),
-                          MakeDoubleChecker<double>())
+                          MakeDoubleChecker<dBm_t>())
             .AddTraceSource("Reset",
                             "Trace CCA Reset event",
                             MakeTraceSourceAccessor(&ObssPdAlgorithm::m_resetEvent),
@@ -99,8 +99,8 @@ ObssPdAlgorithm::ConnectWifiNetDevice(const Ptr<WifiNetDevice> device)
 void
 ObssPdAlgorithm::ResetPhy(HeSigAParameters params)
 {
-    double txPowerMaxSiso = 0;
-    double txPowerMaxMimo = 0;
+    dBm_t txPowerMaxSiso = 0;
+    dBm_t txPowerMaxMimo = 0;
     bool powerRestricted = false;
     // Fetch my BSS color
     Ptr<HeConfiguration> heConfiguration = m_device->GetHeConfiguration();
@@ -116,18 +116,18 @@ ObssPdAlgorithm::ResetPhy(HeSigAParameters params)
         txPowerMaxMimo = m_txPowerRefMimo - (m_obssPdLevel - m_obssPdLevelMin);
         powerRestricted = true;
     }
-    m_resetEvent(bssColor, params.rssiDbm, powerRestricted, txPowerMaxSiso, txPowerMaxMimo);
+    m_resetEvent(bssColor, params.rssi, powerRestricted, txPowerMaxSiso, txPowerMaxMimo);
     phy->ResetCca(powerRestricted, txPowerMaxSiso, txPowerMaxMimo);
 }
 
 void
-ObssPdAlgorithm::SetObssPdLevel(double level)
+ObssPdAlgorithm::SetObssPdLevel(dBm_t level)
 {
     NS_LOG_FUNCTION(this << level);
     m_obssPdLevel = level;
 }
 
-double
+dBm_t
 ObssPdAlgorithm::GetObssPdLevel() const
 {
     return m_obssPdLevel;

@@ -53,7 +53,7 @@ class ObssPdAlgorithm;
  */
 struct HeSigAParameters
 {
-    double rssiDbm;   ///< RSSI in dBm
+    dBm_t rssi;       ///< RSSI
     uint8_t bssColor; ///< BSS color
 };
 
@@ -112,8 +112,8 @@ class HePhy : public VhtPhy
                              const WifiTxVector& txVector,
                              WifiPhyBand band) const override;
     void SwitchMaybeToCcaBusy(const Ptr<const WifiPpdu> ppdu) override;
-    double GetCcaThreshold(const Ptr<const WifiPpdu> ppdu,
-                           WifiChannelListType channelType) const override;
+    dBm_t GetCcaThreshold(const Ptr<const WifiPpdu> ppdu,
+                          WifiChannelListType channelType) const override;
     void NotifyCcaBusy(const Ptr<const WifiPpdu> ppdu,
                        Time duration,
                        WifiChannelListType channelType) override;
@@ -595,12 +595,12 @@ class HePhy : public VhtPhy
      * Start the transmission of the HE portion of the MU PPDU.
      *
      * \param ppdu the PPDU
-     * \param txPowerDbm the total TX power in dBm
+     * \param txPower the total TX power
      * \param txPowerSpectrum the TX PSD
      * \param hePortionDuration the duration of the HE portion
      */
     void StartTxHePortion(Ptr<const WifiPpdu> ppdu,
-                          double txPowerDbm,
+                          dBm_t txPower,
                           Ptr<SpectrumValue> txPowerSpectrum,
                           Time hePortionDuration);
 

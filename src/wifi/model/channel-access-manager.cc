@@ -107,7 +107,7 @@ class PhyListener : public ns3::WifiPhyListener
         }
     }
 
-    void NotifyTxStart(Time duration, double txPowerDbm) override
+    void NotifyTxStart(Time duration, dBm_t txPower) override
     {
         if (m_active)
         {

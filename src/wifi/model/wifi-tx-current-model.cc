@@ -85,10 +85,10 @@ LinearWifiTxCurrentModel::~LinearWifiTxCurrentModel()
 }
 
 double
-LinearWifiTxCurrentModel::CalcTxCurrent(double txPowerDbm) const
+LinearWifiTxCurrentModel::CalcTxCurrent(dBm_t txPower) const
 {
-    NS_LOG_FUNCTION(this << txPowerDbm);
-    return DbmToW(txPowerDbm) / (m_voltage * m_eta) + m_idleCurrent;
+    NS_LOG_FUNCTION(this << txPower);
+    return DbmToW(txPower) / (m_voltage * m_eta) + m_idleCurrent;
 }
 
 } // namespace ns3

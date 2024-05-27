@@ -87,8 +87,8 @@ class OfdmPhy : public PhyEntity
     Ptr<WifiPpdu> BuildPpdu(const WifiConstPsduMap& psdus,
                             const WifiTxVector& txVector,
                             Time ppduDuration) override;
-    double GetCcaThreshold(const Ptr<const WifiPpdu> ppdu,
-                           WifiChannelListType channelType) const override;
+    dBm_t GetCcaThreshold(const Ptr<const WifiPpdu> ppdu,
+                          WifiChannelListType channelType) const override;
     Ptr<const WifiPpdu> GetRxPpduFromTxPpdu(Ptr<const WifiPpdu> ppdu) override;
 
     /**

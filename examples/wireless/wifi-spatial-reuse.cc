@@ -157,24 +157,24 @@ int
 main(int argc, char* argv[])
 {
     Time duration{"10s"};
-    double d1{30.0};         // meters
-    double d2{30.0};         // meters
-    double d3{150.0};        // meters
-    double powSta1{10.0};    // dBm
-    double powSta2{10.0};    // dBm
-    double powAp1{21.0};     // dBm
-    double powAp2{21.0};     // dBm
-    double ccaEdTrSta1{-62}; // dBm
-    double ccaEdTrSta2{-62}; // dBm
-    double ccaEdTrAp1{-62};  // dBm
-    double ccaEdTrAp2{-62};  // dBm
-    double minimumRssi{-82}; // dBm
+    double d1{30.0};  // meters
+    double d2{30.0};  // meters
+    double d3{150.0}; // meters
+    dBm_t powSta1{10.0};
+    dBm_t powSta2{10.0};
+    dBm_t powAp1{21.0};
+    dBm_t powAp2{21.0};
+    dBm_t ccaEdTrSta1{-62};
+    dBm_t ccaEdTrSta2{-62};
+    dBm_t ccaEdTrAp1{-62};
+    dBm_t ccaEdTrAp2{-62};
+    dBm_t minimumRssi{-82};
     MHz_t channelWidth{20};
     uint32_t payloadSize{1500}; // bytes
     uint32_t mcs{0};            // MCS value
     Time interval{"1ms"};
     bool enableObssPd{true};
-    double obssPdThreshold{-72.0}; // dBm
+    dBm_t obssPdThreshold{-72.0};
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("duration", "Duration of simulation", duration);

@@ -578,7 +578,7 @@ EhtFrameExchangeManager::SendEmlOmn(const Mac48Address& dest, const MgtEmlOmn& f
     m_mac->GetQosTxop(AC_VO)->Queue(Create<WifiMpdu>(packet, hdr));
 }
 
-std::optional<double>
+std::optional<dBm_t>
 EhtFrameExchangeManager::GetMostRecentRssi(const Mac48Address& address) const
 {
     auto optRssi = HeFrameExchangeManager::GetMostRecentRssi(address);

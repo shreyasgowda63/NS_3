@@ -161,8 +161,8 @@ int
 main(int argc, char* argv[])
 {
     std::string phyMode{"DsssRate1Mbps"};
-    double Prss{-80};           // -dBm
-    double Irss{-95};           // -dBm
+    dBm_t Prss{-80};
+    dBm_t Irss{-95};
     double delta{0};            // microseconds
     uint32_t PpacketSize{1000}; // bytes
     uint32_t IpacketSize{1000}; // bytes

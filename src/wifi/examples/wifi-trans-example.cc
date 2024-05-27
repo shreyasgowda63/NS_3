@@ -55,7 +55,7 @@ main(int argc, char** argv)
 {
     std::string standard = "11a";
     MHz_t bw = 20;
-    double pow = 23; // dBm
+    dBm_t pow = 23;
     bool verbose = false;
     CommandLine cmd(__FILE__);
     cmd.AddValue("standard",

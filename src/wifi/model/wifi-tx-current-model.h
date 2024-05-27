@@ -20,6 +20,8 @@
 #ifndef WIFI_TX_CURRENT_MODEL_H
 #define WIFI_TX_CURRENT_MODEL_H
 
+#include "wifi-units.h"
+
 #include "ns3/object.h"
 
 namespace ns3
@@ -44,10 +46,10 @@ class WifiTxCurrentModel : public Object
     ~WifiTxCurrentModel() override;
 
     /**
-     * \param txPowerDbm the nominal TX power in dBm
+     * \param txPower the nominal TX power
      * \returns the transmit current (in Ampere)
      */
-    virtual double CalcTxCurrent(double txPowerDbm) const = 0;
+    virtual double CalcTxCurrent(dBm_t txPower) const = 0;
 };
 
 /**
@@ -93,7 +95,7 @@ class LinearWifiTxCurrentModel : public WifiTxCurrentModel
     LinearWifiTxCurrentModel();
     ~LinearWifiTxCurrentModel() override;
 
-    double CalcTxCurrent(double txPowerDbm) const override;
+    double CalcTxCurrent(dBm_t txPower) const override;
 
   private:
     double m_eta;         ///< ETA
