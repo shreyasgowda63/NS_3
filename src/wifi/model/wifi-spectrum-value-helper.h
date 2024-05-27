@@ -334,17 +334,6 @@ class WifiSpectrumValueHelper
     static void NormalizeSpectrumMask(Ptr<SpectrumValue> c, double txPowerW);
 
     /**
-     * Convert from dBm to Watts.
-     * Taken from wifi-utils since the original method couldn't be called from here
-     * due to resulting circular dependencies of spectrum and wifi modules.
-     *
-     * \param dbm the power in dBm
-     *
-     * \return the equivalent Watts for the given dBm
-     */
-    static double DbmToW(double dbm);
-
-    /**
      * Calculate the power of the specified band composed of uniformly-sized sub-bands.
      *
      * \param psd received Power Spectral Density in W/Hz

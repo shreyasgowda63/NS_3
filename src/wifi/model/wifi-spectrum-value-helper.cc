@@ -23,6 +23,8 @@
 
 #include "wifi-spectrum-value-helper.h"
 
+#include "wifi-utils.h"
+
 #include "ns3/assert.h"
 #include "ns3/fatal-error.h"
 #include "ns3/log.h"
@@ -1130,12 +1132,6 @@ WifiSpectrumValueHelper::NormalizeSpectrumMask(Ptr<SpectrumValue> c, double txPo
     {
         *vit = (*vit) / normalizationRatio;
     }
-}
-
-double
-WifiSpectrumValueHelper::DbmToW(double dBm)
-{
-    return std::pow(10.0, 0.1 * (dBm - 30.0));
 }
 
 double
