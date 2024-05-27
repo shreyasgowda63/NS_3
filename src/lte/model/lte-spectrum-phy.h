@@ -28,6 +28,7 @@
 #include "lte-interference.h"
 
 #include <ns3/data-rate.h>
+#include <ns3/deprecated.h>
 #include <ns3/event-id.h>
 #include <ns3/generic-phy.h>
 #include <ns3/mobility-model.h>
@@ -155,7 +156,7 @@ class LteSpectrumPhy : public SpectrumPhy
     /**
      *  PHY states
      */
-    enum State
+    enum class State
     {
         IDLE,
         TX_DL_CTRL,
@@ -165,6 +166,28 @@ class LteSpectrumPhy : public SpectrumPhy
         RX_DATA,
         RX_UL_SRS
     };
+
+    /// \deprecated See State::IDLE
+    NS_DEPRECATED_3_42("Use State::IDLE instead")
+    static constexpr auto IDLE = State::IDLE;
+    /// \deprecated See State::TX_DL_CTRL
+    NS_DEPRECATED_3_42("Use State::TX_DL_CTRL instead")
+    static constexpr auto TX_DL_CTRL = State::TX_DL_CTRL;
+    /// \deprecated See State::TX_DATA
+    NS_DEPRECATED_3_42("Use State::TX_DATA instead")
+    static constexpr auto TX_DATA = State::TX_DATA;
+    /// \deprecated See State::TX_UL_SRS
+    NS_DEPRECATED_3_42("Use State::TX_UL_SRS instead")
+    static constexpr auto TX_UL_SRS = State::TX_UL_SRS;
+    /// \deprecated See State::RX_DL_CTRL
+    NS_DEPRECATED_3_42("Use State::RX_DL_CTRL instead")
+    static constexpr auto RX_DL_CTRL = State::RX_DL_CTRL;
+    /// \deprecated See State::RX_DATA
+    NS_DEPRECATED_3_42("Use State::RX_DATA instead")
+    static constexpr auto RX_DATA = State::RX_DATA;
+    /// \deprecated See State::RX_UL_SRS
+    NS_DEPRECATED_3_42("Use State::RX_UL_SRS instead")
+    static constexpr auto RX_UL_SRS = State::RX_UL_SRS;
 
     /**
      * \brief Get the type ID.

@@ -32,6 +32,7 @@
 #include "lte-ue-phy-sap.h"
 #include "lte-ue-power-control.h"
 
+#include <ns3/deprecated.h>
 #include <ns3/ptr.h>
 
 #include <set>
@@ -59,12 +60,18 @@ class LteUePhy : public LtePhy
     /**
      * \brief The states of the UE PHY entity
      */
-    enum State
+    enum class State
     {
         CELL_SEARCH = 0,
-        SYNCHRONIZED,
-        NUM_STATES
+        SYNCHRONIZED
     };
+
+    /// \deprecated See State::CELL_SEARCH
+    NS_DEPRECATED_3_42("Use State::CELL_SEARCH instead")
+    static constexpr auto CELL_SEARCH = State::CELL_SEARCH;
+    /// \deprecated See State::SYNCHRONIZED
+    NS_DEPRECATED_3_42("Use State::SYNCHRONIZED instead")
+    static constexpr auto SYNCHRONIZED = State::SYNCHRONIZED;
 
     /**
      * @warning the default constructor should not be used
@@ -854,6 +861,14 @@ class LteUePhy : public LtePhy
     bool m_enableRlfDetection;      ///< Flag to enable/disable RLF detection
 
 }; // end of `class LteUePhy`
+
+/**
+ * @brief Stream insertion operator.
+ * @param [in] os The reference to the output stream.
+ * @param [in] state The LteUePhy::State.
+ * @return The reference to the output stream.
+ */
+std::ostream& operator<<(std::ostream& os, LteUePhy::State state);
 
 } // namespace ns3
 

@@ -93,23 +93,6 @@ UeMemberLteUeCmacSapUser::NotifyRandomAccessFailed()
     m_rrc->DoNotifyRandomAccessFailed();
 }
 
-/// Map each of UE RRC states to its string representation.
-static const std::string g_ueRrcStateName[LteUeRrc::NUM_STATES] = {
-    "IDLE_START",
-    "IDLE_CELL_SEARCH",
-    "IDLE_WAIT_MIB_SIB1",
-    "IDLE_WAIT_MIB",
-    "IDLE_WAIT_SIB1",
-    "IDLE_CAMPED_NORMALLY",
-    "IDLE_WAIT_SIB2",
-    "IDLE_RANDOM_ACCESS",
-    "IDLE_CONNECTING",
-    "CONNECTED_NORMALLY",
-    "CONNECTED_HANDOVER",
-    "CONNECTED_PHY_PROBLEM",
-    "CONNECTED_REESTABLISHING",
-};
-
 /////////////////////////////
 // ue RRC methods
 /////////////////////////////
@@ -122,7 +105,7 @@ LteUeRrc::LteUeRrc()
       m_macSapProvider(nullptr),
       m_asSapUser(nullptr),
       m_ccmRrcSapProvider(nullptr),
-      m_state(IDLE_START),
+      m_state(State::IDLE_START),
       m_imsi(0),
       m_rnti(0),
       m_cellId(0),
@@ -614,29 +597,29 @@ LteUeRrc::DoDisconnect()
 
     switch (m_state)
     {
-    case IDLE_START:
-    case IDLE_CELL_SEARCH:
-    case IDLE_WAIT_MIB_SIB1:
-    case IDLE_WAIT_MIB:
-    case IDLE_WAIT_SIB1:
-    case IDLE_CAMPED_NORMALLY:
+    case State::IDLE_START:
+    case State::IDLE_CELL_SEARCH:
+    case State::IDLE_WAIT_MIB_SIB1:
+    case State::IDLE_WAIT_MIB:
+    case State::IDLE_WAIT_SIB1:
+    case State::IDLE_CAMPED_NORMALLY:
         NS_LOG_INFO("already disconnected");
         break;
 
-    case IDLE_WAIT_SIB2:
-    case IDLE_CONNECTING:
+    case State::IDLE_WAIT_SIB2:
+    case State::IDLE_CONNECTING:
         NS_FATAL_ERROR("cannot abort connection setup procedure");
         break;
 
-    case CONNECTED_NORMALLY:
-    case CONNECTED_HANDOVER:
-    case CONNECTED_PHY_PROBLEM:
-    case CONNECTED_REESTABLISHING:
+    case State::CONNECTED_NORMALLY:
+    case State::CONNECTED_HANDOVER:
+    case State::CONNECTED_PHY_PROBLEM:
+    case State::CONNECTED_REESTABLISHING:
         LeaveConnectedMode();
         break;
 
     default: // i.e. IDLE_RANDOM_ACCESS
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -660,15 +643,15 @@ LteUeRrc::DoSetTemporaryCellRnti(uint16_t rnti)
 void
 LteUeRrc::DoNotifyRandomAccessSuccessful()
 {
-    NS_LOG_FUNCTION(this << m_imsi << ToString(m_state));
+    NS_LOG_FUNCTION(this << m_imsi << m_state);
     m_randomAccessSuccessfulTrace(m_imsi, m_cellId, m_rnti);
 
     switch (m_state)
     {
-    case IDLE_RANDOM_ACCESS: {
+    case State::IDLE_RANDOM_ACCESS: {
         // we just received a RAR with a T-C-RNTI and an UL grant
         // send RRC connection request as message 3 of the random access procedure
-        SwitchToState(IDLE_CONNECTING);
+        SwitchToState(State::IDLE_CONNECTING);
         LteRrcSap::RrcConnectionRequest msg;
         msg.ueIdentity = m_imsi;
         m_rrcSapUser->SendRrcConnectionRequest(msg);
@@ -676,7 +659,7 @@ LteUeRrc::DoNotifyRandomAccessSuccessful()
     }
     break;
 
-    case CONNECTED_HANDOVER: {
+    case State::CONNECTED_HANDOVER: {
         LteRrcSap::RrcConnectionReconfigurationCompleted msg;
         msg.rrcTransactionIdentifier = m_lastRrcTransactionIdentifier;
         m_rrcSapUser->SendRrcConnectionReconfigurationCompleted(msg);
@@ -689,14 +672,14 @@ LteUeRrc::DoNotifyRandomAccessSuccessful()
             VarMeasReportListClear(measIdIt->second.measId);
         }
 
-        SwitchToState(CONNECTED_NORMALLY);
+        SwitchToState(State::CONNECTED_NORMALLY);
         m_cmacSapProvider.at(0)->NotifyConnectionSuccessful(); // RA successful during handover
         m_handoverEndOkTrace(m_imsi, m_cellId, m_rnti);
     }
     break;
 
     default:
-        NS_FATAL_ERROR("unexpected event in state " << ToString(m_state));
+        NS_FATAL_ERROR("unexpected event in state " << m_state);
         break;
     }
 }
@@ -704,18 +687,18 @@ LteUeRrc::DoNotifyRandomAccessSuccessful()
 void
 LteUeRrc::DoNotifyRandomAccessFailed()
 {
-    NS_LOG_FUNCTION(this << m_imsi << ToString(m_state));
+    NS_LOG_FUNCTION(this << m_imsi << m_state);
     m_randomAccessErrorTrace(m_imsi, m_cellId, m_rnti);
 
     switch (m_state)
     {
-    case IDLE_RANDOM_ACCESS: {
-        SwitchToState(IDLE_CAMPED_NORMALLY);
+    case State::IDLE_RANDOM_ACCESS: {
+        SwitchToState(State::IDLE_CAMPED_NORMALLY);
         m_asSapUser->NotifyConnectionFailed();
     }
     break;
 
-    case CONNECTED_HANDOVER: {
+    case State::CONNECTED_HANDOVER: {
         m_handoverEndErrorTrace(m_imsi, m_cellId, m_rnti);
         /**
          * \todo After a handover failure because of a random access failure,
@@ -725,7 +708,7 @@ LteUeRrc::DoNotifyRandomAccessFailed()
         if (!m_leaveConnectedMode)
         {
             m_leaveConnectedMode = true;
-            SwitchToState(CONNECTED_PHY_PROBLEM);
+            SwitchToState(State::CONNECTED_PHY_PROBLEM);
             m_rrcSapUser->SendIdealUeContextRemoveRequest(m_rnti);
             // we should have called NotifyConnectionFailed
             // but that method would immediately ask you UE to
@@ -736,7 +719,7 @@ LteUeRrc::DoNotifyRandomAccessFailed()
     break;
 
     default:
-        NS_FATAL_ERROR("unexpected event in state " << ToString(m_state));
+        NS_FATAL_ERROR("unexpected event in state " << m_state);
         break;
     }
 }
@@ -752,11 +735,11 @@ void
 LteUeRrc::DoStartCellSelection(uint32_t dlEarfcn)
 {
     NS_LOG_FUNCTION(this << m_imsi << dlEarfcn);
-    NS_ASSERT_MSG(m_state == IDLE_START,
-                  "cannot start cell selection from state " << ToString(m_state));
+    NS_ASSERT_MSG(m_state == State::IDLE_START,
+                  "cannot start cell selection from state " << m_state);
     m_dlEarfcn = dlEarfcn;
     m_cphySapProvider.at(0)->StartCellSearch(dlEarfcn);
-    SwitchToState(IDLE_CELL_SEARCH);
+    SwitchToState(State::IDLE_CELL_SEARCH);
 }
 
 void
@@ -766,39 +749,39 @@ LteUeRrc::DoForceCampedOnEnb(uint16_t cellId, uint32_t dlEarfcn)
 
     switch (m_state)
     {
-    case IDLE_START:
+    case State::IDLE_START:
         m_cellId = cellId;
         m_dlEarfcn = dlEarfcn;
         m_cphySapProvider.at(0)->SynchronizeWithEnb(m_cellId, m_dlEarfcn);
-        SwitchToState(IDLE_WAIT_MIB);
+        SwitchToState(State::IDLE_WAIT_MIB);
         break;
 
-    case IDLE_CELL_SEARCH:
-    case IDLE_WAIT_MIB_SIB1:
-    case IDLE_WAIT_SIB1:
-        NS_FATAL_ERROR("cannot abort cell selection " << ToString(m_state));
+    case State::IDLE_CELL_SEARCH:
+    case State::IDLE_WAIT_MIB_SIB1:
+    case State::IDLE_WAIT_SIB1:
+        NS_FATAL_ERROR("cannot abort cell selection " << m_state);
         break;
 
-    case IDLE_WAIT_MIB:
+    case State::IDLE_WAIT_MIB:
         NS_LOG_INFO("already forced to camp to cell " << m_cellId);
         break;
 
-    case IDLE_CAMPED_NORMALLY:
-    case IDLE_WAIT_SIB2:
-    case IDLE_RANDOM_ACCESS:
-    case IDLE_CONNECTING:
+    case State::IDLE_CAMPED_NORMALLY:
+    case State::IDLE_WAIT_SIB2:
+    case State::IDLE_RANDOM_ACCESS:
+    case State::IDLE_CONNECTING:
         NS_LOG_INFO("already camped to cell " << m_cellId);
         break;
 
-    case CONNECTED_NORMALLY:
-    case CONNECTED_HANDOVER:
-    case CONNECTED_PHY_PROBLEM:
-    case CONNECTED_REESTABLISHING:
+    case State::CONNECTED_NORMALLY:
+    case State::CONNECTED_HANDOVER:
+    case State::CONNECTED_PHY_PROBLEM:
+    case State::CONNECTED_REESTABLISHING:
         NS_LOG_INFO("already connected to cell " << m_cellId);
         break;
 
     default:
-        NS_FATAL_ERROR("unexpected event in state " << ToString(m_state));
+        NS_FATAL_ERROR("unexpected event in state " << m_state);
         break;
     }
 }
@@ -810,33 +793,33 @@ LteUeRrc::DoConnect()
 
     switch (m_state)
     {
-    case IDLE_START:
-    case IDLE_CELL_SEARCH:
-    case IDLE_WAIT_MIB_SIB1:
-    case IDLE_WAIT_SIB1:
-    case IDLE_WAIT_MIB:
+    case State::IDLE_START:
+    case State::IDLE_CELL_SEARCH:
+    case State::IDLE_WAIT_MIB_SIB1:
+    case State::IDLE_WAIT_SIB1:
+    case State::IDLE_WAIT_MIB:
         m_connectionPending = true;
         break;
 
-    case IDLE_CAMPED_NORMALLY:
+    case State::IDLE_CAMPED_NORMALLY:
         m_connectionPending = true;
-        SwitchToState(IDLE_WAIT_SIB2);
+        SwitchToState(State::IDLE_WAIT_SIB2);
         break;
 
-    case IDLE_WAIT_SIB2:
-    case IDLE_RANDOM_ACCESS:
-    case IDLE_CONNECTING:
+    case State::IDLE_WAIT_SIB2:
+    case State::IDLE_RANDOM_ACCESS:
+    case State::IDLE_CONNECTING:
         NS_LOG_INFO("already connecting");
         break;
 
-    case CONNECTED_NORMALLY:
-    case CONNECTED_REESTABLISHING:
-    case CONNECTED_HANDOVER:
+    case State::CONNECTED_NORMALLY:
+    case State::CONNECTED_REESTABLISHING:
+    case State::CONNECTED_HANDOVER:
         NS_LOG_INFO("already connected");
         break;
 
     default:
-        NS_FATAL_ERROR("unexpected event in state " << ToString(m_state));
+        NS_FATAL_ERROR("unexpected event in state " << m_state);
         break;
     }
 }
@@ -853,14 +836,14 @@ LteUeRrc::DoRecvMasterInformationBlock(uint16_t cellId, LteRrcSap::MasterInforma
 
     switch (m_state)
     {
-    case IDLE_WAIT_MIB:
+    case State::IDLE_WAIT_MIB:
         // manual attachment
-        SwitchToState(IDLE_CAMPED_NORMALLY);
+        SwitchToState(State::IDLE_CAMPED_NORMALLY);
         break;
 
-    case IDLE_WAIT_MIB_SIB1:
+    case State::IDLE_WAIT_MIB_SIB1:
         // automatic attachment from Idle mode cell selection
-        SwitchToState(IDLE_WAIT_SIB1);
+        SwitchToState(State::IDLE_WAIT_SIB1);
         break;
 
     default:
@@ -876,7 +859,7 @@ LteUeRrc::DoRecvSystemInformationBlockType1(uint16_t cellId,
     NS_LOG_FUNCTION(this);
     switch (m_state)
     {
-    case IDLE_WAIT_SIB1:
+    case State::IDLE_WAIT_SIB1:
         NS_ASSERT_MSG(cellId == msg.cellAccessRelatedInfo.cellIdentity,
                       "Cell identity in SIB1 does not match with the originating cell");
         m_hasReceivedSib1 = true;
@@ -885,13 +868,13 @@ LteUeRrc::DoRecvSystemInformationBlockType1(uint16_t cellId,
         EvaluateCellForSelection();
         break;
 
-    case IDLE_CAMPED_NORMALLY:
-    case IDLE_RANDOM_ACCESS:
-    case IDLE_CONNECTING:
-    case CONNECTED_NORMALLY:
-    case CONNECTED_HANDOVER:
-    case CONNECTED_PHY_PROBLEM:
-    case CONNECTED_REESTABLISHING:
+    case State::IDLE_CAMPED_NORMALLY:
+    case State::IDLE_RANDOM_ACCESS:
+    case State::IDLE_CONNECTING:
+    case State::CONNECTED_NORMALLY:
+    case State::CONNECTED_HANDOVER:
+    case State::CONNECTED_PHY_PROBLEM:
+    case State::CONNECTED_REESTABLISHING:
         NS_ASSERT_MSG(cellId == msg.cellAccessRelatedInfo.cellIdentity,
                       "Cell identity in SIB1 does not match with the originating cell");
         m_hasReceivedSib1 = true;
@@ -899,7 +882,7 @@ LteUeRrc::DoRecvSystemInformationBlockType1(uint16_t cellId,
         m_sib1ReceivedTrace(m_imsi, m_cellId, m_rnti, cellId);
         break;
 
-    case IDLE_WAIT_MIB_SIB1:
+    case State::IDLE_WAIT_MIB_SIB1:
         // MIB has not been received, so ignore this SIB1
 
     default: // e.g. IDLE_START, IDLE_CELL_SEARCH, IDLE_WAIT_MIB, IDLE_WAIT_SIB2
@@ -914,7 +897,7 @@ LteUeRrc::DoReportUeMeasurements(LteUeCphySapUser::UeMeasurementsParameters para
     NS_LOG_FUNCTION(this);
 
     // layer 3 filtering does not apply in IDLE mode
-    bool useLayer3Filtering = (m_state == CONNECTED_NORMALLY);
+    bool useLayer3Filtering = (m_state == State::CONNECTED_NORMALLY);
     bool triggering = true;
     for (auto newMeasIt = params.m_ueMeasurementsList.begin();
          newMeasIt != params.m_ueMeasurementsList.end();
@@ -932,7 +915,7 @@ LteUeRrc::DoReportUeMeasurements(LteUeCphySapUser::UeMeasurementsParameters para
                            params.m_componentCarrierId);
     }
 
-    if (m_state == IDLE_CELL_SEARCH)
+    if (m_state == State::IDLE_CELL_SEARCH)
     {
         // start decoding BCH
         SynchronizeToStrongestCell();
@@ -974,14 +957,14 @@ LteUeRrc::DoRecvSystemInformation(LteRrcSap::SystemInformation msg)
     {
         switch (m_state)
         {
-        case IDLE_CAMPED_NORMALLY:
-        case IDLE_WAIT_SIB2:
-        case IDLE_RANDOM_ACCESS:
-        case IDLE_CONNECTING:
-        case CONNECTED_NORMALLY:
-        case CONNECTED_HANDOVER:
-        case CONNECTED_PHY_PROBLEM:
-        case CONNECTED_REESTABLISHING:
+        case State::IDLE_CAMPED_NORMALLY:
+        case State::IDLE_WAIT_SIB2:
+        case State::IDLE_RANDOM_ACCESS:
+        case State::IDLE_CONNECTING:
+        case State::CONNECTED_NORMALLY:
+        case State::CONNECTED_HANDOVER:
+        case State::CONNECTED_PHY_PROBLEM:
+        case State::CONNECTED_REESTABLISHING:
             m_hasReceivedSib2 = true;
             m_ulBandwidth = msg.sib2.freqInfo.ulBandwidth;
             m_ulEarfcn = msg.sib2.freqInfo.ulCarrierFreq;
@@ -1003,7 +986,7 @@ LteUeRrc::DoRecvSystemInformation(LteRrcSap::SystemInformation msg)
             m_cphySapProvider.at(0)->ConfigureUplink(m_ulEarfcn, m_ulBandwidth);
             m_cphySapProvider.at(0)->ConfigureReferenceSignalPower(
                 msg.sib2.radioResourceConfigCommon.pdschConfigCommon.referenceSignalPower);
-            if (m_state == IDLE_WAIT_SIB2)
+            if (m_state == State::IDLE_WAIT_SIB2)
             {
                 NS_ASSERT(m_connectionPending);
                 StartConnection();
@@ -1023,11 +1006,11 @@ LteUeRrc::DoRecvRrcConnectionSetup(LteRrcSap::RrcConnectionSetup msg)
     NS_LOG_FUNCTION(this << " RNTI " << m_rnti);
     switch (m_state)
     {
-    case IDLE_CONNECTING: {
+    case State::IDLE_CONNECTING: {
         ApplyRadioResourceConfigDedicated(msg.radioResourceConfigDedicated);
         m_connEstFailCount = 0;
         m_connectionTimeout.Cancel();
-        SwitchToState(CONNECTED_NORMALLY);
+        SwitchToState(State::CONNECTED_NORMALLY);
         m_leaveConnectedMode = false;
         LteRrcSap::RrcConnectionSetupCompleted msg2;
         msg2.rrcTransactionIdentifier = msg.rrcTransactionIdentifier;
@@ -1043,7 +1026,7 @@ LteUeRrc::DoRecvRrcConnectionSetup(LteRrcSap::RrcConnectionSetup msg)
     break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -1056,11 +1039,11 @@ LteUeRrc::DoRecvRrcConnectionReconfiguration(LteRrcSap::RrcConnectionReconfigura
                 << msg.haveNonCriticalExtension);
     switch (m_state)
     {
-    case CONNECTED_NORMALLY:
+    case State::CONNECTED_NORMALLY:
         if (msg.haveMobilityControlInfo)
         {
             NS_LOG_INFO("haveMobilityControlInfo == true");
-            SwitchToState(CONNECTED_HANDOVER);
+            SwitchToState(State::CONNECTED_HANDOVER);
             if (m_radioLinkFailureDetected.IsPending())
             {
                 ResetRlfParams();
@@ -1147,7 +1130,7 @@ LteUeRrc::DoRecvRrcConnectionReconfiguration(LteRrcSap::RrcConnectionReconfigura
         break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -1158,7 +1141,7 @@ LteUeRrc::DoRecvRrcConnectionReestablishment(LteRrcSap::RrcConnectionReestablish
     NS_LOG_FUNCTION(this << " RNTI " << m_rnti);
     switch (m_state)
     {
-    case CONNECTED_REESTABLISHING: {
+    case State::CONNECTED_REESTABLISHING: {
         /**
          * \todo After receiving RRC Connection Re-establishment, stop timer
          *       T301, fire a new trace source, reply with RRC Connection
@@ -1170,7 +1153,7 @@ LteUeRrc::DoRecvRrcConnectionReestablishment(LteRrcSap::RrcConnectionReestablish
     break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -1182,7 +1165,7 @@ LteUeRrc::DoRecvRrcConnectionReestablishmentReject(
     NS_LOG_FUNCTION(this << " RNTI " << m_rnti);
     switch (m_state)
     {
-    case CONNECTED_REESTABLISHING: {
+    case State::CONNECTED_REESTABLISHING: {
         /**
          * \todo After receiving RRC Connection Re-establishment Reject, stop
          *       timer T301. See Section 5.3.7.8 of 3GPP TS 36.331.
@@ -1192,7 +1175,7 @@ LteUeRrc::DoRecvRrcConnectionReestablishmentReject(
     break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -1208,7 +1191,7 @@ LteUeRrc::DoRecvRrcConnectionRelease(LteRrcSap::RrcConnectionRelease msg)
     if (!m_leaveConnectedMode)
     {
         m_leaveConnectedMode = true;
-        SwitchToState(CONNECTED_PHY_PROBLEM);
+        SwitchToState(State::CONNECTED_PHY_PROBLEM);
         m_rrcSapUser->SendIdealUeContextRemoveRequest(m_rnti);
         m_asSapUser->NotifyConnectionReleased();
     }
@@ -1224,7 +1207,7 @@ LteUeRrc::DoRecvRrcConnectionReject(LteRrcSap::RrcConnectionReject msg)
         m_cmacSapProvider.at(i)->Reset(); // reset the MAC
     }
     m_hasReceivedSib2 = false; // invalidate the previously received SIB2
-    SwitchToState(IDLE_CAMPED_NORMALLY);
+    SwitchToState(State::IDLE_CAMPED_NORMALLY);
     m_asSapUser->NotifyConnectionFailed(); // inform upper layer
 }
 
@@ -1239,7 +1222,7 @@ void
 LteUeRrc::SynchronizeToStrongestCell()
 {
     NS_LOG_FUNCTION(this);
-    NS_ASSERT(m_state == IDLE_CELL_SEARCH);
+    NS_ASSERT(m_state == State::IDLE_CELL_SEARCH);
 
     uint16_t maxRsrpCellId = 0;
     double maxRsrp = -std::numeric_limits<double>::infinity();
@@ -1271,7 +1254,7 @@ LteUeRrc::SynchronizeToStrongestCell()
         NS_LOG_LOGIC(this << " cell " << maxRsrpCellId
                           << " is the strongest untried surrounding cell");
         m_cphySapProvider.at(0)->SynchronizeWithEnb(maxRsrpCellId, m_dlEarfcn);
-        SwitchToState(IDLE_WAIT_MIB_SIB1);
+        SwitchToState(State::IDLE_WAIT_MIB_SIB1);
     }
 
 } // end of void LteUeRrc::SynchronizeToStrongestCell ()
@@ -1280,7 +1263,7 @@ void
 LteUeRrc::EvaluateCellForSelection()
 {
     NS_LOG_FUNCTION(this);
-    NS_ASSERT(m_state == IDLE_WAIT_SIB1);
+    NS_ASSERT(m_state == State::IDLE_WAIT_SIB1);
     NS_ASSERT(m_hasReceivedMib);
     NS_ASSERT(m_hasReceivedSib1);
     uint16_t cellId = m_lastSib1.cellAccessRelatedInfo.cellIdentity;
@@ -1329,10 +1312,10 @@ LteUeRrc::EvaluateCellForSelection()
         // and start random access.
         if (!m_connectionPending)
         {
-            NS_LOG_DEBUG("Calling DoConnect in state = " << ToString(m_state));
+            NS_LOG_DEBUG("Calling DoConnect in state = " << m_state);
             DoConnect();
         }
-        SwitchToState(IDLE_CAMPED_NORMALLY);
+        SwitchToState(State::IDLE_CAMPED_NORMALLY);
     }
     else
     {
@@ -1351,7 +1334,7 @@ LteUeRrc::EvaluateCellForSelection()
             m_acceptableCell.insert(cellId);
         }
 
-        SwitchToState(IDLE_CELL_SEARCH);
+        SwitchToState(State::IDLE_CELL_SEARCH);
         SynchronizeToStrongestCell(); // retry to a different cell
     }
 
@@ -1438,8 +1421,9 @@ LteUeRrc::ApplyRadioResourceConfigDedicated(LteRrcSap::RadioResourceConfigDedica
         if (!m_srb1)
         {
             // SRB1 not setup yet
-            NS_ASSERT_MSG((m_state == IDLE_CONNECTING) || (m_state == CONNECTED_HANDOVER),
-                          "unexpected state " << ToString(m_state));
+            NS_ASSERT_MSG((m_state == State::IDLE_CONNECTING) ||
+                              (m_state == State::CONNECTED_HANDOVER),
+                          "unexpected state " << m_state);
             NS_ASSERT_MSG(stamIt->srbIdentity == 1, "only SRB1 supported");
 
             const uint8_t lcid = 1; // fixed LCID for SRB1
@@ -1899,9 +1883,9 @@ LteUeRrc::SaveUeMeasurements(uint16_t cellId,
         storedMeasIt = ret.first;
     }
 
-    NS_LOG_DEBUG(this << " IMSI " << m_imsi << " state " << ToString(m_state) << ", measured cell "
-                      << cellId << ", carrier component Id " << componentCarrierId << ", new RSRP "
-                      << rsrp << " stored " << storedMeasIt->second.rsrp << ", new RSRQ " << rsrq
+    NS_LOG_DEBUG(this << " IMSI " << m_imsi << " state " << m_state << ", measured cell " << cellId
+                      << ", carrier component Id " << componentCarrierId << ", new RSRP " << rsrp
+                      << " stored " << storedMeasIt->second.rsrp << ", new RSRQ " << rsrq
                       << " stored " << storedMeasIt->second.rsrq);
 
 } // end of void SaveUeMeasurements
@@ -3122,7 +3106,7 @@ LteUeRrc::StartConnection()
     NS_ASSERT(m_hasReceivedMib);
     NS_ASSERT(m_hasReceivedSib2);
     m_connectionPending = false; // reset the flag
-    SwitchToState(IDLE_RANDOM_ACCESS);
+    SwitchToState(State::IDLE_RANDOM_ACCESS);
     m_cmacSapProvider.at(0)->StartContentionBasedRandomAccessProcedure();
 }
 
@@ -3160,7 +3144,7 @@ LteUeRrc::LeaveConnectedMode()
     {
         m_cphySapProvider.at(i)->ResetPhyAfterRlf(); // reset the PHY
     }
-    SwitchToState(IDLE_START);
+    SwitchToState(State::IDLE_START);
     DoStartCellSelection(m_dlEarfcn);
     // Save the cell id UE was attached to
     StorePreviousCellId(m_cellId);
@@ -3177,7 +3161,7 @@ LteUeRrc::ConnectionTimeout()
     if (m_connEstFailCount >= m_connEstFailCountLimit)
     {
         m_connectionTimeoutTrace(m_imsi, m_cellId, m_rnti, m_connEstFailCount);
-        SwitchToState(CONNECTED_PHY_PROBLEM);
+        SwitchToState(State::CONNECTED_PHY_PROBLEM);
         // Assumption: The eNB connection request timer would expire
         // before the expiration of T300 at UE. Upon which, the eNB deletes
         // the UE context. Therefore, here we don't need to send the UE context
@@ -3192,7 +3176,7 @@ LteUeRrc::ConnectionTimeout()
             m_cmacSapProvider.at(i)->Reset(); // reset the MAC
         }
         m_hasReceivedSib2 = false; // invalidate the previously received SIB2
-        SwitchToState(IDLE_CAMPED_NORMALLY);
+        SwitchToState(State::IDLE_CAMPED_NORMALLY);
         m_connectionTimeoutTrace(m_imsi, m_cellId, m_rnti, m_connEstFailCount);
         // Following call to UE NAS will force the UE to immediately
         // perform the random access to the same cell again.
@@ -3225,16 +3209,16 @@ LteUeRrc::Bid2Drbid(uint8_t bid)
 void
 LteUeRrc::SwitchToState(State newState)
 {
-    NS_LOG_FUNCTION(this << ToString(newState));
+    NS_LOG_FUNCTION(this << newState);
     State oldState = m_state;
     m_state = newState;
-    NS_LOG_INFO(this << " IMSI " << m_imsi << " RNTI " << m_rnti << " UeRrc " << ToString(oldState)
-                     << " --> " << ToString(newState));
+    NS_LOG_INFO(this << " IMSI " << m_imsi << " RNTI " << m_rnti << " UeRrc " << oldState << " --> "
+                     << newState);
     m_stateTransitionTrace(m_imsi, m_cellId, m_rnti, oldState, newState);
 
     switch (newState)
     {
-    case IDLE_START:
+    case State::IDLE_START:
         if (m_leaveConnectedMode)
         {
             NS_LOG_INFO("Starting initial cell selection after RLF");
@@ -3245,20 +3229,20 @@ LteUeRrc::SwitchToState(State newState)
         }
         break;
 
-    case IDLE_CELL_SEARCH:
-    case IDLE_WAIT_MIB_SIB1:
-    case IDLE_WAIT_MIB:
-    case IDLE_WAIT_SIB1:
+    case State::IDLE_CELL_SEARCH:
+    case State::IDLE_WAIT_MIB_SIB1:
+    case State::IDLE_WAIT_MIB:
+    case State::IDLE_WAIT_SIB1:
         break;
 
-    case IDLE_CAMPED_NORMALLY:
+    case State::IDLE_CAMPED_NORMALLY:
         if (m_connectionPending)
         {
-            SwitchToState(IDLE_WAIT_SIB2);
+            SwitchToState(State::IDLE_WAIT_SIB2);
         }
         break;
 
-    case IDLE_WAIT_SIB2:
+    case State::IDLE_WAIT_SIB2:
         if (m_hasReceivedSib2)
         {
             NS_ASSERT(m_connectionPending);
@@ -3266,12 +3250,12 @@ LteUeRrc::SwitchToState(State newState)
         }
         break;
 
-    case IDLE_RANDOM_ACCESS:
-    case IDLE_CONNECTING:
-    case CONNECTED_NORMALLY:
-    case CONNECTED_HANDOVER:
-    case CONNECTED_PHY_PROBLEM:
-    case CONNECTED_REESTABLISHING:
+    case State::IDLE_RANDOM_ACCESS:
+    case State::IDLE_CONNECTING:
+    case State::CONNECTED_NORMALLY:
+    case State::CONNECTED_HANDOVER:
+    case State::CONNECTED_PHY_PROBLEM:
+    case State::CONNECTED_REESTABLISHING:
     default:
         break;
     }
@@ -3282,7 +3266,7 @@ LteUeRrc::RadioLinkFailureDetected()
 {
     NS_LOG_FUNCTION(this << m_imsi << m_rnti);
     m_radioLinkFailureTrace(m_imsi, m_cellId, m_rnti);
-    SwitchToState(CONNECTED_PHY_PROBLEM);
+    SwitchToState(State::CONNECTED_PHY_PROBLEM);
     m_rrcSapUser->SendIdealUeContextRemoveRequest(m_rnti);
     m_asSapUser->NotifyConnectionReleased();
 }
@@ -3343,7 +3327,44 @@ LteUeRrc::ResetRlfParams()
 const std::string
 LteUeRrc::ToString(LteUeRrc::State s)
 {
-    return g_ueRrcStateName[s];
+    std::ostringstream ss;
+    ss << s;
+    return ss.str();
+}
+
+std::ostream&
+operator<<(std::ostream& os, LteUeRrc::State state)
+{
+    switch (state)
+    {
+    case LteUeRrc::State::IDLE_START:
+        return os << "IDLE_START";
+    case LteUeRrc::State::IDLE_CELL_SEARCH:
+        return os << "IDLE_CELL_SEARCH";
+    case LteUeRrc::State::IDLE_WAIT_MIB_SIB1:
+        return os << "IDLE_WAIT_MIB_SIB1";
+    case LteUeRrc::State::IDLE_WAIT_MIB:
+        return os << "IDLE_WAIT_MIB";
+    case LteUeRrc::State::IDLE_WAIT_SIB1:
+        return os << "IDLE_WAIT_SIB1";
+    case LteUeRrc::State::IDLE_CAMPED_NORMALLY:
+        return os << "IDLE_CAMPED_NORMALLY";
+    case LteUeRrc::State::IDLE_WAIT_SIB2:
+        return os << "IDLE_WAIT_SIB2";
+    case LteUeRrc::State::IDLE_RANDOM_ACCESS:
+        return os << "IDLE_RANDOM_ACCESS";
+    case LteUeRrc::State::IDLE_CONNECTING:
+        return os << "IDLE_CONNECTING";
+    case LteUeRrc::State::CONNECTED_NORMALLY:
+        return os << "CONNECTED_NORMALLY";
+    case LteUeRrc::State::CONNECTED_HANDOVER:
+        return os << "CONNECTED_HANDOVER";
+    case LteUeRrc::State::CONNECTED_PHY_PROBLEM:
+        return os << "CONNECTED_PHY_PROBLEM";
+    case LteUeRrc::State::CONNECTED_REESTABLISHING:
+        return os << "CONNECTED_REESTABLISHING";
+    };
+    return os << "UNKNOWN(" << static_cast<uint32_t>(state) << ")";
 }
 
 } // namespace ns3

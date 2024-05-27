@@ -24,6 +24,7 @@
 #include "eps-bearer.h"
 #include "lte-as-sap.h"
 
+#include <ns3/deprecated.h>
 #include <ns3/object.h>
 #include <ns3/traced-callback.h>
 
@@ -158,15 +159,30 @@ class EpcUeNas : public Object
      * Section 3.2.3.2 "Connection Establishment and Release"
      *
      */
-    enum State
+    enum class State
     {
         OFF = 0,
         ATTACHING,
         IDLE_REGISTERED,
         CONNECTING_TO_EPC,
-        ACTIVE,
-        NUM_STATES
+        ACTIVE
     };
+
+    /// \deprecated See State::OFF
+    NS_DEPRECATED_3_42("Use State::OFF instead")
+    static constexpr auto OFF = State::OFF;
+    /// \deprecated See State::ATTACHING
+    NS_DEPRECATED_3_42("Use State::ATTACHING instead")
+    static constexpr auto ATTACHING = State::ATTACHING;
+    /// \deprecated See State::IDLE_REGISTERED
+    NS_DEPRECATED_3_42("Use State::IDLE_REGISTERED instead")
+    static constexpr auto IDLE_REGISTERED = State::IDLE_REGISTERED;
+    /// \deprecated See State::CONNECTING_TO_EPC
+    NS_DEPRECATED_3_42("Use State::CONNECTING_TO_EPC instead")
+    static constexpr auto CONNECTING_TO_EPC = State::CONNECTING_TO_EPC;
+    /// \deprecated See State::ACTIVE
+    NS_DEPRECATED_3_42("Use State::ACTIVE instead")
+    static constexpr auto ACTIVE = State::ACTIVE;
 
     /**
      * \return The current state
@@ -253,6 +269,14 @@ class EpcUeNas : public Object
      */
     std::list<BearerToBeActivated> m_bearersToBeActivatedListForReconnection;
 };
+
+/**
+ * @brief Stream insertion operator.
+ * @param [in] os The reference to the output stream.
+ * @param [in] state The EpcUeNas::State.
+ * @return The reference to the output stream.
+ */
+std::ostream& operator<<(std::ostream& os, EpcUeNas::State state);
 
 } // namespace ns3
 

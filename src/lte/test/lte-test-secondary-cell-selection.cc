@@ -168,7 +168,7 @@ LteSecondaryCellSelectionTestCase::DoRun()
                               "IMSI " << ueDev->GetImsi() << " has attached to an unexpected cell");
 
         NS_TEST_ASSERT_MSG_EQ(m_lastState.at(ueDev->GetImsi()),
-                              LteUeRrc::CONNECTED_NORMALLY,
+                              LteUeRrc::State::CONNECTED_NORMALLY,
                               "UE " << ueDev->GetImsi() << " is not at CONNECTED_NORMALLY state");
     }
 
@@ -184,8 +184,7 @@ LteSecondaryCellSelectionTestCase::StateTransitionCallback(std::string context,
                                                            LteUeRrc::State oldState,
                                                            LteUeRrc::State newState)
 {
-    NS_LOG_FUNCTION(this << imsi << cellId << rnti << LteUeRrc::ToString(oldState)
-                         << LteUeRrc::ToString(newState));
+    NS_LOG_FUNCTION(this << imsi << cellId << rnti << oldState << newState);
     m_lastState[imsi] = newState;
 }
 

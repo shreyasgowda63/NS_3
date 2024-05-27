@@ -113,31 +113,6 @@ EnbRrcMemberLteEnbCmacSapUser::IsRandomAccessCompleted(uint16_t rnti)
 // UeManager
 ///////////////////////////////////////////
 
-/// Map each of UE Manager states to its string representation.
-static const std::string g_ueManagerStateName[UeManager::NUM_STATES] = {
-    "INITIAL_RANDOM_ACCESS",
-    "CONNECTION_SETUP",
-    "CONNECTION_REJECTED",
-    "ATTACH_REQUEST",
-    "CONNECTED_NORMALLY",
-    "CONNECTION_RECONFIGURATION",
-    "CONNECTION_REESTABLISHMENT",
-    "HANDOVER_PREPARATION",
-    "HANDOVER_JOINING",
-    "HANDOVER_PATH_SWITCH",
-    "HANDOVER_LEAVING",
-};
-
-/**
- * \param s The UE manager state.
- * \return The string representation of the given state.
- */
-static const std::string&
-ToString(UeManager::State s)
-{
-    return g_ueManagerStateName[s];
-}
-
 NS_OBJECT_ENSURE_REGISTERED(UeManager);
 
 UeManager::UeManager()
@@ -292,14 +267,14 @@ UeManager::DoInitialize()
     Time maxConnectionDelay;
     switch (m_state)
     {
-    case INITIAL_RANDOM_ACCESS:
+    case State::INITIAL_RANDOM_ACCESS:
         m_connectionRequestTimeout = Simulator::Schedule(m_rrc->m_connectionRequestTimeoutDuration,
                                                          &LteEnbRrc::ConnectionRequestTimeout,
                                                          m_rrc,
                                                          m_rnti);
         break;
 
-    case HANDOVER_JOINING:
+    case State::HANDOVER_JOINING:
         m_handoverJoiningTimeout = Simulator::Schedule(m_rrc->m_handoverJoiningTimeoutDuration,
                                                        &LteEnbRrc::HandoverJoiningTimeout,
                                                        m_rrc,
@@ -307,7 +282,7 @@ UeManager::DoInitialize()
         break;
 
     default:
-        NS_FATAL_ERROR("unexpected state " << ToString(m_state));
+        NS_FATAL_ERROR("unexpected state " << m_state);
         break;
     }
     m_caSupportConfigured = false;
@@ -386,13 +361,13 @@ UeManager::InitialContextSetupRequest()
 {
     NS_LOG_FUNCTION(this << m_rnti);
 
-    if (m_state == ATTACH_REQUEST)
+    if (m_state == State::ATTACH_REQUEST)
     {
-        SwitchToState(CONNECTED_NORMALLY);
+        SwitchToState(State::CONNECTED_NORMALLY);
     }
     else
     {
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
     }
 }
 
@@ -419,7 +394,7 @@ UeManager::SetupDataRadioBearer(EpsBearer bearer,
     drbInfo->m_gtpTeid = gtpTeid;
     drbInfo->m_transportLayerAddress = transportLayerAddress;
 
-    if (m_state == HANDOVER_JOINING)
+    if (m_state == State::HANDOVER_JOINING)
     {
         // setup TEIDs for receiving data eventually forwarded over X2-U
         LteEnbRrc::X2uTeidInfo x2uTeidInfo;
@@ -629,29 +604,29 @@ UeManager::ScheduleRrcConnectionReconfiguration()
     NS_LOG_FUNCTION(this);
     switch (m_state)
     {
-    case INITIAL_RANDOM_ACCESS:
-    case CONNECTION_SETUP:
-    case ATTACH_REQUEST:
-    case CONNECTION_RECONFIGURATION:
-    case CONNECTION_REESTABLISHMENT:
-    case HANDOVER_PREPARATION:
-    case HANDOVER_JOINING:
-    case HANDOVER_LEAVING:
+    case State::INITIAL_RANDOM_ACCESS:
+    case State::CONNECTION_SETUP:
+    case State::ATTACH_REQUEST:
+    case State::CONNECTION_RECONFIGURATION:
+    case State::CONNECTION_REESTABLISHMENT:
+    case State::HANDOVER_PREPARATION:
+    case State::HANDOVER_JOINING:
+    case State::HANDOVER_LEAVING:
         // a previous reconfiguration still ongoing, we need to wait for it to be finished
         m_pendingRrcConnectionReconfiguration = true;
         break;
 
-    case CONNECTED_NORMALLY: {
+    case State::CONNECTED_NORMALLY: {
         m_pendingRrcConnectionReconfiguration = false;
         LteRrcSap::RrcConnectionReconfiguration msg = BuildRrcConnectionReconfiguration();
         m_rrc->m_rrcSapUser->SendRrcConnectionReconfiguration(m_rnti, msg);
         RecordDataRadioBearersToBeStarted();
-        SwitchToState(CONNECTION_RECONFIGURATION);
+        SwitchToState(State::CONNECTION_RECONFIGURATION);
     }
     break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -662,7 +637,7 @@ UeManager::PrepareHandover(uint16_t cellId)
     NS_LOG_FUNCTION(this << cellId);
     switch (m_state)
     {
-    case CONNECTED_NORMALLY: {
+    case State::CONNECTED_NORMALLY: {
         m_targetCellId = cellId;
 
         auto sourceComponentCarrier = DynamicCast<ComponentCarrierEnb>(
@@ -674,7 +649,7 @@ UeManager::PrepareHandover(uint16_t cellId)
             // Intra-eNB handover
             NS_LOG_DEBUG("Intra-eNB handover for cellId " << cellId);
             uint8_t componentCarrierId = m_rrc->CellToComponentCarrierId(cellId);
-            uint16_t rnti = m_rrc->AddUe(UeManager::HANDOVER_JOINING, componentCarrierId);
+            uint16_t rnti = m_rrc->AddUe(UeManager::State::HANDOVER_JOINING, componentCarrierId);
             LteEnbCmacSapProvider::AllocateNcRaPreambleReturnValue anrcrv =
                 m_rrc->m_cmacSapProvider.at(componentCarrierId)->AllocateNcRaPreamble(rnti);
             if (!anrcrv.valid)
@@ -720,7 +695,7 @@ UeManager::PrepareHandover(uint16_t cellId)
             m_rrc->m_rrcSapUser->SendRrcConnectionReconfiguration(m_rnti, handoverCommand);
 
             // We skip handover preparation
-            SwitchToState(HANDOVER_LEAVING);
+            SwitchToState(State::HANDOVER_LEAVING);
             m_handoverLeavingTimeout = Simulator::Schedule(m_rrc->m_handoverLeavingTimeoutDuration,
                                                            &LteEnbRrc::HandoverLeavingTimeout,
                                                            m_rrc,
@@ -785,13 +760,13 @@ UeManager::PrepareHandover(uint16_t cellId)
             NS_LOG_LOGIC("rrcContext   = " << params.rrcContext);
 
             m_rrc->m_x2SapProvider->SendHandoverRequest(params);
-            SwitchToState(HANDOVER_PREPARATION);
+            SwitchToState(State::HANDOVER_PREPARATION);
         }
     }
     break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -831,7 +806,7 @@ UeManager::RecvHandoverRequestAck(EpcX2SapUser::HandoverRequestAckParams params)
         }
     }
     m_rrc->m_rrcSapUser->SendRrcConnectionReconfiguration(m_rnti, handoverCommand);
-    SwitchToState(HANDOVER_LEAVING);
+    SwitchToState(State::HANDOVER_LEAVING);
     m_handoverLeavingTimeout = Simulator::Schedule(m_rrc->m_handoverLeavingTimeoutDuration,
                                                    &LteEnbRrc::HandoverLeavingTimeout,
                                                    m_rrc,
@@ -951,29 +926,29 @@ UeManager::SendData(uint8_t bid, Ptr<Packet> p)
     NS_LOG_FUNCTION(this << p << (uint16_t)bid);
     switch (m_state)
     {
-    case INITIAL_RANDOM_ACCESS:
-    case CONNECTION_SETUP:
+    case State::INITIAL_RANDOM_ACCESS:
+    case State::CONNECTION_SETUP:
         NS_LOG_WARN("not connected, discarding packet");
         return;
 
-    case CONNECTED_NORMALLY:
-    case CONNECTION_RECONFIGURATION:
-    case CONNECTION_REESTABLISHMENT:
-    case HANDOVER_PREPARATION:
-    case HANDOVER_PATH_SWITCH: {
+    case State::CONNECTED_NORMALLY:
+    case State::CONNECTION_RECONFIGURATION:
+    case State::CONNECTION_REESTABLISHMENT:
+    case State::HANDOVER_PREPARATION:
+    case State::HANDOVER_PATH_SWITCH: {
         NS_LOG_INFO("queueing data on PDCP for transmission over the air");
         SendPacket(bid, p);
     }
     break;
 
-    case HANDOVER_JOINING: {
+    case State::HANDOVER_JOINING: {
         // Buffer data until RRC Connection Reconfiguration Complete message is received
         NS_LOG_INFO("buffering data");
         m_packetBuffer.emplace_back(bid, p);
     }
     break;
 
-    case HANDOVER_LEAVING: {
+    case State::HANDOVER_LEAVING: {
         NS_LOG_INFO("forwarding data to target eNB over X2-U");
         uint8_t drbid = Bid2Drbid(bid);
         EpcX2Sap::UeDataParams params;
@@ -986,7 +961,7 @@ UeManager::SendData(uint8_t bid, Ptr<Packet> p)
     break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -1015,7 +990,7 @@ UeManager::SendUeContextRelease()
     NS_LOG_FUNCTION(this);
     switch (m_state)
     {
-    case HANDOVER_PATH_SWITCH:
+    case State::HANDOVER_PATH_SWITCH:
         NS_LOG_INFO("Send UE CONTEXT RELEASE from target eNB to source eNB");
         EpcX2SapProvider::UeContextReleaseParams ueCtxReleaseParams;
         ueCtxReleaseParams.oldEnbUeX2apId = m_sourceX2apId;
@@ -1031,14 +1006,14 @@ UeManager::SendUeContextRelease()
             NS_LOG_INFO("Not sending UE CONTEXT RELEASE because handover is internal");
             m_rrc->DoRecvUeContextRelease(ueCtxReleaseParams);
         }
-        SwitchToState(CONNECTED_NORMALLY);
+        SwitchToState(State::CONNECTED_NORMALLY);
         m_rrc->m_handoverEndOkTrace(m_imsi,
                                     m_rrc->ComponentCarrierToCellId(m_componentCarrierId),
                                     m_rnti);
         break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -1049,12 +1024,12 @@ UeManager::RecvHandoverPreparationFailure(uint16_t cellId)
     NS_LOG_FUNCTION(this << cellId);
     switch (m_state)
     {
-    case HANDOVER_PREPARATION:
+    case State::HANDOVER_PREPARATION:
         NS_ASSERT(cellId == m_targetCellId);
         NS_LOG_INFO("target eNB sent HO preparation failure, aborting HO");
-        SwitchToState(CONNECTED_NORMALLY);
+        SwitchToState(State::CONNECTED_NORMALLY);
         break;
-    case HANDOVER_LEAVING: // case added to tackle HO leaving timer expiration
+    case State::HANDOVER_LEAVING: // case added to tackle HO leaving timer expiration
         NS_ASSERT(cellId == m_targetCellId);
         NS_LOG_INFO("target eNB sent HO preparation failure, aborting HO");
         m_handoverLeavingTimeout.Cancel();
@@ -1062,7 +1037,7 @@ UeManager::RecvHandoverPreparationFailure(uint16_t cellId)
         break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -1089,7 +1064,7 @@ void
 UeManager::RecvUeContextRelease(EpcX2SapUser::UeContextReleaseParams params)
 {
     NS_LOG_FUNCTION(this);
-    NS_ASSERT_MSG(m_state == HANDOVER_LEAVING, "method unexpected in state " << ToString(m_state));
+    NS_ASSERT_MSG(m_state == State::HANDOVER_LEAVING, "method unexpected in state " << m_state);
     m_handoverLeavingTimeout.Cancel();
 }
 
@@ -1097,7 +1072,7 @@ void
 UeManager::RecvHandoverCancel(EpcX2SapUser::HandoverCancelParams params)
 {
     NS_LOG_FUNCTION(this);
-    NS_ASSERT_MSG(m_state == HANDOVER_JOINING, "method unexpected in state " << ToString(m_state));
+    NS_ASSERT_MSG(m_state == State::HANDOVER_JOINING, "method unexpected in state " << m_state);
     m_handoverJoiningTimeout.Cancel();
 }
 
@@ -1135,7 +1110,7 @@ UeManager::RecvRrcConnectionRequest(LteRrcSap::RrcConnectionRequest msg)
     NS_LOG_FUNCTION(this);
     switch (m_state)
     {
-    case INITIAL_RANDOM_ACCESS: {
+    case State::INITIAL_RANDOM_ACCESS: {
         m_connectionRequestTimeout.Cancel();
 
         if (m_rrc->m_admitRrcConnectionRequest)
@@ -1153,7 +1128,7 @@ UeManager::RecvRrcConnectionRequest(LteRrcSap::RrcConnectionRequest msg)
                                                            &LteEnbRrc::ConnectionSetupTimeout,
                                                            m_rrc,
                                                            m_rnti);
-            SwitchToState(CONNECTION_SETUP);
+            SwitchToState(State::CONNECTION_SETUP);
         }
         else
         {
@@ -1169,13 +1144,13 @@ UeManager::RecvRrcConnectionRequest(LteRrcSap::RrcConnectionRequest msg)
                                     &LteEnbRrc::ConnectionRejectedTimeout,
                                     m_rrc,
                                     m_rnti);
-            SwitchToState(CONNECTION_REJECTED);
+            SwitchToState(State::CONNECTION_REJECTED);
         }
     }
     break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -1186,7 +1161,7 @@ UeManager::RecvRrcConnectionSetupCompleted(LteRrcSap::RrcConnectionSetupComplete
     NS_LOG_FUNCTION(this);
     switch (m_state)
     {
-    case CONNECTION_SETUP:
+    case State::CONNECTION_SETUP:
         m_connectionSetupTimeout.Cancel();
         if (!m_caSupportConfigured && m_rrc->m_numberOfComponentCarriers > 1)
         {
@@ -1197,11 +1172,11 @@ UeManager::RecvRrcConnectionSetupCompleted(LteRrcSap::RrcConnectionSetupComplete
         if (m_rrc->m_s1SapProvider != nullptr)
         {
             m_rrc->m_s1SapProvider->InitialUeMessage(m_imsi, m_rnti);
-            SwitchToState(ATTACH_REQUEST);
+            SwitchToState(State::ATTACH_REQUEST);
         }
         else
         {
-            SwitchToState(CONNECTED_NORMALLY);
+            SwitchToState(State::CONNECTED_NORMALLY);
         }
         m_rrc->m_connectionEstablishedTrace(m_imsi,
                                             m_rrc->ComponentCarrierToCellId(m_componentCarrierId),
@@ -1209,7 +1184,7 @@ UeManager::RecvRrcConnectionSetupCompleted(LteRrcSap::RrcConnectionSetupComplete
         break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -1221,7 +1196,7 @@ UeManager::RecvRrcConnectionReconfigurationCompleted(
     NS_LOG_FUNCTION(this);
     switch (m_state)
     {
-    case CONNECTION_RECONFIGURATION:
+    case State::CONNECTION_RECONFIGURATION:
         StartDataRadioBearers();
         if (m_needPhyMacConfiguration)
         {
@@ -1243,7 +1218,7 @@ UeManager::RecvRrcConnectionReconfigurationCompleted(
 
             m_needPhyMacConfiguration = false;
         }
-        SwitchToState(CONNECTED_NORMALLY);
+        SwitchToState(State::CONNECTED_NORMALLY);
         m_rrc->m_connectionReconfigurationTrace(
             m_imsi,
             m_rrc->ComponentCarrierToCellId(m_componentCarrierId),
@@ -1252,17 +1227,15 @@ UeManager::RecvRrcConnectionReconfigurationCompleted(
 
     // This case is added to NS-3 in order to handle bearer de-activation scenario for CONNECTED
     // state UE
-    case CONNECTED_NORMALLY:
-        NS_LOG_INFO("ignoring RecvRrcConnectionReconfigurationCompleted in state "
-                    << ToString(m_state));
+    case State::CONNECTED_NORMALLY:
+        NS_LOG_INFO("ignoring RecvRrcConnectionReconfigurationCompleted in state " << m_state);
         break;
 
-    case HANDOVER_LEAVING:
-        NS_LOG_INFO("ignoring RecvRrcConnectionReconfigurationCompleted in state "
-                    << ToString(m_state));
+    case State::HANDOVER_LEAVING:
+        NS_LOG_INFO("ignoring RecvRrcConnectionReconfigurationCompleted in state " << m_state);
         break;
 
-    case HANDOVER_JOINING: {
+    case State::HANDOVER_JOINING: {
         m_handoverJoiningTimeout.Cancel();
 
         while (!m_packetBuffer.empty())
@@ -1283,7 +1256,7 @@ UeManager::RecvRrcConnectionReconfigurationCompleted(
         params.rnti = m_rnti;
         params.cellId = m_rrc->ComponentCarrierToCellId(m_componentCarrierId);
         params.mmeUeS1Id = m_imsi;
-        SwitchToState(HANDOVER_PATH_SWITCH);
+        SwitchToState(State::HANDOVER_PATH_SWITCH);
         for (auto it = m_drbMap.begin(); it != m_drbMap.end(); ++it)
         {
             EpcEnbS1SapProvider::BearerToBeSwitched b;
@@ -1296,7 +1269,7 @@ UeManager::RecvRrcConnectionReconfigurationCompleted(
     break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 }
@@ -1308,15 +1281,15 @@ UeManager::RecvRrcConnectionReestablishmentRequest(
     NS_LOG_FUNCTION(this);
     switch (m_state)
     {
-    case CONNECTED_NORMALLY:
+    case State::CONNECTED_NORMALLY:
         break;
 
-    case HANDOVER_LEAVING:
+    case State::HANDOVER_LEAVING:
         m_handoverLeavingTimeout.Cancel();
         break;
 
     default:
-        NS_FATAL_ERROR("method unexpected in state " << ToString(m_state));
+        NS_FATAL_ERROR("method unexpected in state " << m_state);
         break;
     }
 
@@ -1324,7 +1297,7 @@ UeManager::RecvRrcConnectionReestablishmentRequest(
     msg2.rrcTransactionIdentifier = GetNewRrcTransactionIdentifier();
     msg2.radioResourceConfigDedicated = BuildRadioResourceConfigDedicated();
     m_rrc->m_rrcSapUser->SendRrcConnectionReestablishment(m_rnti, msg2);
-    SwitchToState(CONNECTION_REESTABLISHMENT);
+    SwitchToState(State::CONNECTION_REESTABLISHMENT);
 }
 
 void
@@ -1332,7 +1305,7 @@ UeManager::RecvRrcConnectionReestablishmentComplete(
     LteRrcSap::RrcConnectionReestablishmentComplete msg)
 {
     NS_LOG_FUNCTION(this);
-    SwitchToState(CONNECTED_NORMALLY);
+    SwitchToState(State::CONNECTED_NORMALLY);
 }
 
 void
@@ -1478,7 +1451,7 @@ UeManager::SetSrsConfigurationIndex(uint16_t srsConfIndex)
     }
     switch (m_state)
     {
-    case INITIAL_RANDOM_ACCESS:
+    case State::INITIAL_RANDOM_ACCESS:
         // do nothing, srs conf index will be correctly enforced upon
         // RRC connection establishment
         break;
@@ -1696,11 +1669,11 @@ UeManager::Bid2Drbid(uint8_t bid)
 void
 UeManager::SwitchToState(State newState)
 {
-    NS_LOG_FUNCTION(this << ToString(newState));
+    NS_LOG_FUNCTION(this << newState);
     State oldState = m_state;
     m_state = newState;
-    NS_LOG_INFO(this << " IMSI " << m_imsi << " RNTI " << m_rnti << " UeManager "
-                     << ToString(oldState) << " --> " << ToString(newState));
+    NS_LOG_INFO(this << " IMSI " << m_imsi << " RNTI " << m_rnti << " UeManager " << oldState
+                     << " --> " << newState);
     m_stateTransitionTrace(m_imsi,
                            m_rrc->ComponentCarrierToCellId(m_componentCarrierId),
                            m_rnti,
@@ -1709,16 +1682,16 @@ UeManager::SwitchToState(State newState)
 
     switch (newState)
     {
-    case INITIAL_RANDOM_ACCESS:
-    case HANDOVER_JOINING:
+    case State::INITIAL_RANDOM_ACCESS:
+    case State::HANDOVER_JOINING:
         NS_FATAL_ERROR("cannot switch to an initial state");
         break;
 
-    case CONNECTION_SETUP:
-    case ATTACH_REQUEST:
+    case State::CONNECTION_SETUP:
+    case State::ATTACH_REQUEST:
         break;
 
-    case CONNECTED_NORMALLY: {
+    case State::CONNECTED_NORMALLY: {
         if (m_pendingRrcConnectionReconfiguration)
         {
             ScheduleRrcConnectionReconfiguration();
@@ -1730,9 +1703,9 @@ UeManager::SwitchToState(State newState)
     }
     break;
 
-    case CONNECTION_RECONFIGURATION:
-    case CONNECTION_REESTABLISHMENT:
-    case HANDOVER_LEAVING:
+    case State::CONNECTION_RECONFIGURATION:
+    case State::CONNECTION_REESTABLISHMENT:
+    case State::HANDOVER_LEAVING:
     default:
         break;
     }
@@ -2617,9 +2590,9 @@ void
 LteEnbRrc::ConnectionRequestTimeout(uint16_t rnti)
 {
     NS_LOG_FUNCTION(this << rnti);
-    NS_ASSERT_MSG(GetUeManager(rnti)->GetState() == UeManager::INITIAL_RANDOM_ACCESS,
+    NS_ASSERT_MSG(GetUeManager(rnti)->GetState() == UeManager::State::INITIAL_RANDOM_ACCESS,
                   "ConnectionRequestTimeout in unexpected state "
-                      << ToString(GetUeManager(rnti)->GetState()));
+                      << GetUeManager(rnti)->GetState());
     m_rrcTimeoutTrace(GetUeManager(rnti)->GetImsi(),
                       rnti,
                       ComponentCarrierToCellId(GetUeManager(rnti)->GetComponentCarrierId()),
@@ -2631,9 +2604,8 @@ void
 LteEnbRrc::ConnectionSetupTimeout(uint16_t rnti)
 {
     NS_LOG_FUNCTION(this << rnti);
-    NS_ASSERT_MSG(GetUeManager(rnti)->GetState() == UeManager::CONNECTION_SETUP,
-                  "ConnectionSetupTimeout in unexpected state "
-                      << ToString(GetUeManager(rnti)->GetState()));
+    NS_ASSERT_MSG(GetUeManager(rnti)->GetState() == UeManager::State::CONNECTION_SETUP,
+                  "ConnectionSetupTimeout in unexpected state " << GetUeManager(rnti)->GetState());
     m_rrcTimeoutTrace(GetUeManager(rnti)->GetImsi(),
                       rnti,
                       ComponentCarrierToCellId(GetUeManager(rnti)->GetComponentCarrierId()),
@@ -2645,9 +2617,9 @@ void
 LteEnbRrc::ConnectionRejectedTimeout(uint16_t rnti)
 {
     NS_LOG_FUNCTION(this << rnti);
-    NS_ASSERT_MSG(GetUeManager(rnti)->GetState() == UeManager::CONNECTION_REJECTED,
+    NS_ASSERT_MSG(GetUeManager(rnti)->GetState() == UeManager::State::CONNECTION_REJECTED,
                   "ConnectionRejectedTimeout in unexpected state "
-                      << ToString(GetUeManager(rnti)->GetState()));
+                      << GetUeManager(rnti)->GetState());
     m_rrcTimeoutTrace(GetUeManager(rnti)->GetImsi(),
                       rnti,
                       ComponentCarrierToCellId(GetUeManager(rnti)->GetComponentCarrierId()),
@@ -2659,9 +2631,8 @@ void
 LteEnbRrc::HandoverJoiningTimeout(uint16_t rnti)
 {
     NS_LOG_FUNCTION(this << rnti);
-    NS_ASSERT_MSG(GetUeManager(rnti)->GetState() == UeManager::HANDOVER_JOINING,
-                  "HandoverJoiningTimeout in unexpected state "
-                      << ToString(GetUeManager(rnti)->GetState()));
+    NS_ASSERT_MSG(GetUeManager(rnti)->GetState() == UeManager::State::HANDOVER_JOINING,
+                  "HandoverJoiningTimeout in unexpected state " << GetUeManager(rnti)->GetState());
     m_handoverFailureJoiningTrace(
         GetUeManager(rnti)->GetImsi(),
         rnti,
@@ -2687,9 +2658,8 @@ void
 LteEnbRrc::HandoverLeavingTimeout(uint16_t rnti)
 {
     NS_LOG_FUNCTION(this << rnti);
-    NS_ASSERT_MSG(GetUeManager(rnti)->GetState() == UeManager::HANDOVER_LEAVING,
-                  "HandoverLeavingTimeout in unexpected state "
-                      << ToString(GetUeManager(rnti)->GetState()));
+    NS_ASSERT_MSG(GetUeManager(rnti)->GetState() == UeManager::State::HANDOVER_LEAVING,
+                  "HandoverLeavingTimeout in unexpected state " << GetUeManager(rnti)->GetState());
     m_handoverFailureLeavingTrace(
         GetUeManager(rnti)->GetImsi(),
         rnti,
@@ -2794,7 +2764,7 @@ LteEnbRrc::DoRecvIdealUeContextRemoveRequest(uint16_t rnti)
     {
         Ptr<UeManager> ueManager = GetUeManager(rnti);
 
-        if (ueManager->GetState() == UeManager::HANDOVER_JOINING)
+        if (ueManager->GetState() == UeManager::State::HANDOVER_JOINING)
         {
             m_handoverFailureMaxRachTrace(
                 GetUeManager(rnti)->GetImsi(),
@@ -2864,7 +2834,7 @@ LteEnbRrc::DoRecvHandoverRequest(EpcX2SapUser::HandoverRequestParams req)
     }
 
     uint8_t componentCarrierId = CellToComponentCarrierId(req.targetCellId);
-    uint16_t rnti = AddUe(UeManager::HANDOVER_JOINING, componentCarrierId);
+    uint16_t rnti = AddUe(UeManager::State::HANDOVER_JOINING, componentCarrierId);
     Ptr<UeManager> ueManager = GetUeManager(rnti);
     ueManager->SetSource(req.sourceCellId, req.oldEnbUeX2apId);
     ueManager->SetImsi(req.mmeUeS1apId);
@@ -3105,7 +3075,7 @@ LteEnbRrc::DoAllocateTemporaryCellRnti(uint8_t componentCarrierId)
         NS_LOG_WARN("Not enough SRS configuration indices, UE context not created");
         return 0; // return 0 since new RNTI was not assigned for the received preamble
     }
-    return AddUe(UeManager::INITIAL_RANDOM_ACCESS, componentCarrierId);
+    return AddUe(UeManager::State::INITIAL_RANDOM_ACCESS, componentCarrierId);
 }
 
 void
@@ -3173,12 +3143,11 @@ LteEnbRrc::DoTriggerHandover(uint16_t rnti, uint16_t targetCellId)
         }
     }
 
-    if (ueManager->GetState() != UeManager::CONNECTED_NORMALLY)
+    if (ueManager->GetState() != UeManager::State::CONNECTED_NORMALLY)
     {
         isHandoverAllowed = false;
         NS_LOG_LOGIC(this << " handover is not allowed because the UE"
-                          << " rnti=" << rnti << " is in " << ToString(ueManager->GetState())
-                          << " state");
+                          << " rnti=" << rnti << " is in " << ueManager->GetState() << " state");
     }
 
     if (isHandoverAllowed)
@@ -3528,12 +3497,43 @@ LteEnbRrc::IsRandomAccessCompleted(uint16_t rnti)
     Ptr<UeManager> ueManager = GetUeManager(rnti);
     switch (ueManager->GetState())
     {
-    case UeManager::CONNECTED_NORMALLY:
-    case UeManager::CONNECTION_RECONFIGURATION:
+    case UeManager::State::CONNECTED_NORMALLY:
+    case UeManager::State::CONNECTION_RECONFIGURATION:
         return true;
     default:
         return false;
     }
+}
+
+std::ostream&
+operator<<(std::ostream& os, UeManager::State state)
+{
+    switch (state)
+    {
+    case UeManager::State::INITIAL_RANDOM_ACCESS:
+        return os << "INITIAL_RANDOM_ACCESS";
+    case UeManager::State::CONNECTION_SETUP:
+        return os << "CONNECTION_SETUP";
+    case UeManager::State::CONNECTION_REJECTED:
+        return os << "CONNECTION_REJECTED";
+    case UeManager::State::ATTACH_REQUEST:
+        return os << "ATTACH_REQUEST";
+    case UeManager::State::CONNECTED_NORMALLY:
+        return os << "CONNECTED_NORMALLY";
+    case UeManager::State::CONNECTION_RECONFIGURATION:
+        return os << "CONNECTION_RECONFIGURATION";
+    case UeManager::State::CONNECTION_REESTABLISHMENT:
+        return os << "CONNECTION_REESTABLISHMENT";
+    case UeManager::State::HANDOVER_PREPARATION:
+        return os << "HANDOVER_PREPARATION";
+    case UeManager::State::HANDOVER_JOINING:
+        return os << "HANDOVER_JOINING";
+    case UeManager::State::HANDOVER_PATH_SWITCH:
+        return os << "HANDOVER_PATH_SWITCH";
+    case UeManager::State::HANDOVER_LEAVING:
+        return os << "HANDOVER_LEAVING";
+    };
+    return os << "UNKNOWN(" << static_cast<uint32_t>(state) << ")";
 }
 
 } // namespace ns3

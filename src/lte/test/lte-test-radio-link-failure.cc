@@ -160,7 +160,7 @@ LteRadioLinkFailureTestCase::LteRadioLinkFailureTestCase(uint32_t numEnbs,
       m_ueJumpAwayPosition(ueJumpAwayPosition)
 {
     NS_LOG_FUNCTION(this << GetName());
-    m_lastState = LteUeRrc::NUM_STATES;
+    m_lastState = static_cast<LteUeRrc::State>(-1);
     m_radioLinkFailureDetected = false;
     m_numOfInSyncIndications = 0;
     m_numOfOutOfSyncIndications = 0;
@@ -453,7 +453,9 @@ LteRadioLinkFailureTestCase::CheckConnected(Ptr<NetDevice> ueDevice, NetDeviceCo
 
     Ptr<LteUeNetDevice> ueLteDevice = ueDevice->GetObject<LteUeNetDevice>();
     Ptr<LteUeRrc> ueRrc = ueLteDevice->GetRrc();
-    NS_TEST_ASSERT_MSG_EQ(ueRrc->GetState(), LteUeRrc::CONNECTED_NORMALLY, "Wrong LteUeRrc state!");
+    NS_TEST_ASSERT_MSG_EQ(ueRrc->GetState(),
+                          LteUeRrc::State::CONNECTED_NORMALLY,
+                          "Wrong LteUeRrc state!");
     uint16_t cellId = ueRrc->GetCellId();
 
     Ptr<LteEnbNetDevice> enbLteDevice;
@@ -473,8 +475,10 @@ LteRadioLinkFailureTestCase::CheckConnected(Ptr<NetDevice> ueDevice, NetDeviceCo
     NS_TEST_ASSERT_MSG_NE(ueManager, nullptr, "RNTI " << rnti << " not found in eNB");
 
     UeManager::State ueManagerState = ueManager->GetState();
-    NS_TEST_ASSERT_MSG_EQ(ueManagerState, UeManager::CONNECTED_NORMALLY, "Wrong UeManager state!");
-    NS_ASSERT_MSG(ueManagerState == UeManager::CONNECTED_NORMALLY, "Wrong UeManager state!");
+    NS_TEST_ASSERT_MSG_EQ(ueManagerState,
+                          UeManager::State::CONNECTED_NORMALLY,
+                          "Wrong UeManager state!");
+    NS_ASSERT_MSG(ueManagerState == UeManager::State::CONNECTED_NORMALLY, "Wrong UeManager state!");
 
     uint16_t ueCellId = ueRrc->GetCellId();
     uint16_t enbCellId = enbLteDevice->GetCellId();
@@ -546,7 +550,7 @@ LteRadioLinkFailureTestCase::CheckIdle(Ptr<NetDevice> ueDevice, NetDeviceContain
     // 1 eNB
     case 1:
         NS_TEST_ASSERT_MSG_EQ(ueRrc->GetState(),
-                              LteUeRrc::IDLE_CELL_SEARCH,
+                              LteUeRrc::State::IDLE_CELL_SEARCH,
                               "Wrong LteUeRrc state!");
         ueManagerFound = CheckUeExistAtEnb(rnti, enbDevices.Get(0));
         NS_TEST_ASSERT_MSG_EQ(ueManagerFound,
@@ -556,7 +560,7 @@ LteRadioLinkFailureTestCase::CheckIdle(Ptr<NetDevice> ueDevice, NetDeviceContain
     // 2 eNBs
     case 2:
         NS_TEST_ASSERT_MSG_EQ(ueRrc->GetState(),
-                              LteUeRrc::CONNECTED_NORMALLY,
+                              LteUeRrc::State::CONNECTED_NORMALLY,
                               "Wrong LteUeRrc state!");
         ueManagerFound = CheckUeExistAtEnb(rnti, enbDevices.Get(1));
         NS_TEST_ASSERT_MSG_EQ(ueManagerFound,

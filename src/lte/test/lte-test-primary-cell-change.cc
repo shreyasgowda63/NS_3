@@ -206,7 +206,7 @@ LtePrimaryCellChangeTestCase::DoRun()
                           "IMSI " << ueDev->GetImsi() << " has attached to an unexpected cell");
 
     NS_TEST_ASSERT_MSG_EQ(m_lastState.at(ueDev->GetImsi()),
-                          LteUeRrc::CONNECTED_NORMALLY,
+                          LteUeRrc::State::CONNECTED_NORMALLY,
                           "UE " << ueDev->GetImsi() << " is not at CONNECTED_NORMALLY state");
 
     // Destroy simulator.
