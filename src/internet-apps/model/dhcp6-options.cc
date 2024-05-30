@@ -42,7 +42,7 @@ Options::Options(uint16_t code, uint16_t length)
 }
 
 uint16_t
-Options::GetOptionCode()
+Options::GetOptionCode() const
 {
     NS_LOG_FUNCTION(this);
     return m_optionCode;
@@ -56,7 +56,7 @@ Options::SetOptionCode(uint16_t code)
 }
 
 uint16_t
-Options::GetOptionLength()
+Options::GetOptionLength() const
 {
     NS_LOG_FUNCTION(this);
     return m_optionLength;
@@ -281,7 +281,7 @@ IntegerOptions<T>::IntegerOptions()
 
 template <typename T>
 T
-IntegerOptions<T>::GetOptionValue()
+IntegerOptions<T>::GetOptionValue() const
 {
     NS_LOG_FUNCTION(this);
     return m_optionValue;

@@ -52,7 +52,7 @@ class Options
      * \brief Get the option code.
      * \return option code
      */
-    uint16_t GetOptionCode();
+    uint16_t GetOptionCode() const;
 
     /**
      * \brief Set the option code.
@@ -64,7 +64,7 @@ class Options
      * \brief Get the option length.
      * \return option length
      */
-    uint16_t GetOptionLength();
+    uint16_t GetOptionLength() const;
 
     /**
      * \brief Set the option length.
@@ -423,7 +423,7 @@ class IntegerOptions : public Options
      * \brief Get the option value
      * \return elapsed time, preference or option list.
      */
-    T GetOptionValue();
+    T GetOptionValue() const;
 
     /**
      * \brief Set the option value.

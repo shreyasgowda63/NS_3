@@ -39,6 +39,17 @@ class Dhcp6Header : public Header
 {
   public:
     /**
+     * \brief Get the type ID.
+     * \return the object TypeId
+     */
+    static TypeId GetTypeId();
+
+    /**
+     * \brief Default constructor.
+     */
+    Dhcp6Header();
+
+    /**
      * \brief Constructor.
      * \param msgType The message type.
      * \param transactId The transaction ID.
@@ -126,7 +137,38 @@ class Dhcp6Header : public Header
         OPTION_INF_MAX_RT = 83,
     };
 
+    /**
+     * \brief Set the elapsed time option.
+     * \param timestamp the time at which the client began the exchange.
+     */
+    void AddElapsedTime(uint16_t timestamp);
+
+    /**
+     * \brief Add the client identifier option.
+     * \param hardwareType the hardware type of the DUID.
+     * \param linkLayerAddress the link layer address of the node.
+     */
+    void AddClientIdentifier(uint16_t hardwareType, Address linkLayerAddress);
+
+    /**
+     * \brief Add the server identifier option.
+     * \param hardwareType the hardware type of the DUID.
+     * \param linkLayerAddress the link layer address of the node.
+     */
+    void AddServerIdentifier(uint16_t hardwareType, Address linkLayerAddress);
+
   private:
+    TypeId GetInstanceTypeId() const override;
+    void Print(std::ostream& os) const override;
+    uint32_t GetSerializedSize() const override;
+    void Serialize(Buffer::Iterator start) const override;
+    uint32_t Deserialize(Buffer::Iterator start) override;
+
+    /**
+     * \brief The message length;
+     */
+    uint32_t m_len;
+
     /**
      * \brief The message type.
      */
@@ -134,8 +176,9 @@ class Dhcp6Header : public Header
 
     /**
      * \brief The transaction ID calculated by the client or the server.
+     * This is a 24-bit integer.
      */
-    uint32_t m_transactId;
+    uint32_t m_transactId : 24;
 
     /**
      * \brief Options present in the header, indexed by option code.
@@ -165,12 +208,30 @@ class Dhcp6Header : public Header
     /**
      * \brief The preference value for the server.
      */
-    IntegerOptions<uint16_t> preference;
+    IntegerOptions<uint8_t> preference;
 
     /**
      * \brief The amount of time since the client began the transaction.
      */
-    IntegerOptions<uint8_t> elapsedTime;
+    IntegerOptions<uint16_t> elapsedTime;
+
+    /**
+     * \brief Add elapsed time options to the header.
+     * \param timestamp the timestamp of the first message sent by the client
+     */
+    void AddTimeOption(uint16_t timestamp);
+
+    /**
+     * \brief Add an identifier option to the header.
+     * \param identifier the client or server identifier option object.
+     * \param optionType identify whether to add a client or server identifier.
+     * \param hardwareType the hardware type of the DUID.
+     * \param linkLayerAddress the link layer address of the node.
+     */
+    void AddIdentifierOption(IdentifierOption& identifier,
+                             uint16_t optionType,
+                             uint16_t hardwareType,
+                             Address linkLayerAddress);
 };
 
 } // namespace ns3
