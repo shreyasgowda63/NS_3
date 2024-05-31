@@ -786,7 +786,7 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
         {
             NS_LOG_DEBUG("[NLME-NETWORK-DISCOVERY.request]: Active scan failed with"
                          " status: "
-                         << static_cast<uint8_t>(params.m_status));
+                         << static_cast<uint32_t>(params.m_status));
 
             switch (params.m_status)
             {
@@ -1277,33 +1277,38 @@ ZigbeeNwk::MlmeBeaconNotifyIndication(MlmeBeaconNotifyIndicationParams params)
 
     // TODO: Add a Permit to join, stack profile , update id and capability  check
 
-    // Keep a network descriptor list from the information in the beacon
-    // to later on pass to the next higher layer when the network-discovery
-    // process is over (NLME-NETWORK-DISCOVERY.confirm)
-    NetworkDescriptor descriptor;
-    descriptor.m_extPanId = beaconPayload.GetExtPanId();
-    descriptor.m_panId = params.m_panDescriptor.m_coorPanId;
-    descriptor.m_updateId = 0; // TODO: unknown
-    descriptor.m_logCh = params.m_panDescriptor.m_logCh;
-    descriptor.m_stackProfile = static_cast<StackProfile>(beaconPayload.GetStackProfile());
-    descriptor.m_zigbeeVersion = beaconPayload.GetProtocolId();
+    if (m_pendPrimitiveNwk == NLME_NET_DISCV)
+    {
+        // Keep a network descriptor list from the information in the beacon
+        // to later on pass to the next higher layer when the network-discovery
+        // process is over (NLME-NETWORK-DISCOVERY.confirm)
+        NetworkDescriptor descriptor;
+        descriptor.m_extPanId = beaconPayload.GetExtPanId();
+        descriptor.m_panId = params.m_panDescriptor.m_coorPanId;
+        descriptor.m_updateId = 0; // TODO: unknown
+        descriptor.m_logCh = params.m_panDescriptor.m_logCh;
+        descriptor.m_stackProfile = static_cast<StackProfile>(beaconPayload.GetStackProfile());
+        descriptor.m_zigbeeVersion = beaconPayload.GetProtocolId();
 
-    SuperframeInformation superframe(params.m_panDescriptor.m_superframeSpec);
-    descriptor.m_beaconOrder = superframe.GetBeaconOrder();
-    descriptor.m_superframeOrder = superframe.GetFrameOrder();
-    descriptor.m_permitJoining = superframe.IsAssocPermit();
+        SuperframeInformation superframe(params.m_panDescriptor.m_superframeSpec);
+        descriptor.m_beaconOrder = superframe.GetBeaconOrder();
+        descriptor.m_superframeOrder = superframe.GetFrameOrder();
+        descriptor.m_permitJoining = superframe.IsAssocPermit();
 
-    descriptor.m_routerCapacity = beaconPayload.GetRouterCapacity();
-    descriptor.m_endDeviceCapacity = beaconPayload.GetEndDevCapacity();
-    m_networkDescriptorList.emplace_back(descriptor);
+        descriptor.m_routerCapacity = beaconPayload.GetRouterCapacity();
+        descriptor.m_endDeviceCapacity = beaconPayload.GetEndDevCapacity();
+        m_networkDescriptorList.emplace_back(descriptor);
 
-    // Keep track of the pan id (16 bits) and the extended PAN id for
-    // future join (association) procedures.
-    m_panIdTable.AddEntry(descriptor.m_extPanId, descriptor.m_panId);
-    // NOTE:  In Zigbee all PAN coordinators or routers work with a
-    //        SOURCE short address addressing mode, therefore the PAN descriptors only
-    //        contain the short address.
-    NS_LOG_DEBUG("Received beacon frame from [" << params.m_panDescriptor.m_coorShortAddr << "]");
+        // Keep track of the pan id (16 bits) and the extended PAN id for
+        // future join (association) procedures.
+        m_panIdTable.AddEntry(descriptor.m_extPanId, descriptor.m_panId);
+        // NOTE:  In Zigbee all PAN coordinators or routers work with a
+        //        SOURCE short address addressing mode, therefore the PAN descriptors only
+        //        contain the short address.
+        NS_LOG_DEBUG("Received beacon frame from [" << params.m_panDescriptor.m_coorShortAddr
+                                                    << "]");
+    }
+
     Ptr<NeighborTableEntry> entry;
     if (m_nwkNeighborTable.LookUpEntry(params.m_panDescriptor.m_coorShortAddr, entry))
     {
@@ -1951,7 +1956,7 @@ ZigbeeNwk::NlmeJoinRequest(NlmeJoinRequestParams params)
                 assocParams.m_coordAddrMode = lrwpan::AddressMode::SHORT_ADDR;
                 assocParams.m_coordShortAddr = bestParentEntry->GetNwkAddr();
                 NS_LOG_DEBUG("Send Assoc. Req. to [" << bestParentEntry->GetNwkAddr()
-                                                     << "] in \nPAN id and Ext PAN id: " << std::hex
+                                                     << "] in PAN id and Ext PAN id: " << std::hex
                                                      << "(0x" << panId << " | 0x"
                                                      << params.m_extendedPanId << ")" << std::dec);
             }
@@ -2105,8 +2110,23 @@ ZigbeeNwk::AllocateNetworkAddress()
     else if (m_nwkAddrAlloc == STOCHASTIC_ALLOC)
     {
         // See nwkNetworkAddress valid range Zigbee specification r22.1.0, 3.5.2
-        uint16_t rndValue = m_uniformRandomVariable->GetInteger(1, 0xFFF7);
-        Mac16Address allocAddr(rndValue);
+        // Valid values in the Zigbee specification goes from 1 to 0xFFF7,
+        // However, the range 0x8000 to 0x9FFF is used for multicast in other networks
+        // (i.e. IPV6 over IEEE 802.15.4) for this reason, we avoid this range as well.
+        // See RFC 4944, Section 9
+        uint16_t rndValue = m_uniformRandomVariable->GetInteger(1, 0x7FFF);
+        uint16_t rndValue2 = m_uniformRandomVariable->GetInteger(0xA000, 0xFFF7);
+        uint16_t rndValue3 = m_uniformRandomVariable->GetInteger(1, 2);
+
+        Mac16Address allocAddr;
+        if (rndValue3 == 1)
+        {
+            allocAddr = Mac16Address(rndValue);
+        }
+        else
+        {
+            allocAddr = Mac16Address(rndValue2);
+        }
         return allocAddr;
     }
     else
@@ -2329,19 +2349,28 @@ ZigbeeNwk::UpdateBeaconPayload()
 {
     NS_LOG_FUNCTION(this);
 
-    Ptr<MacPibAttributes> pibAttr = Create<MacPibAttributes>();
-    ZigbeeBeaconPayload beaconPayload;
-    Ptr<Packet> payload = Create<Packet>();
-    beaconPayload.SetStackProfile(static_cast<uint8_t>(m_nwkStackProfile));
-    beaconPayload.SetRouterCapacity(m_nwkcCoordinatorCapable);
-    beaconPayload.SetDeviceDepth(0); // Not used by stack profile (0x02 =ZIGBEE pro)
-    beaconPayload.SetEndDevCapacity(true);
-    beaconPayload.SetExtPanId(m_nwkExtendedPanId);
-    beaconPayload.SetTxOffset(0xFFFFFF);
+    ZigbeeBeaconPayload beaconPayloadHeader;
+    beaconPayloadHeader.SetStackProfile(static_cast<uint8_t>(m_nwkStackProfile));
+    beaconPayloadHeader.SetRouterCapacity(m_nwkcCoordinatorCapable);
+    beaconPayloadHeader.SetDeviceDepth(0); // Not used by stack profile (0x02 =ZIGBEE pro)
+    beaconPayloadHeader.SetEndDevCapacity(true);
+    beaconPayloadHeader.SetExtPanId(m_nwkExtendedPanId);
+    beaconPayloadHeader.SetTxOffset(0xFFFFFF);
     // TODO: beaconPayload.SetNwkUpdateId(m_nwkUpdateId);
-    payload->AddHeader(beaconPayload);
-    pibAttr->macBeaconPayload = payload;
-    pibAttr->macBeaconPayloadLength = payload->GetSize();
+    Ptr<Packet> payload = Create<Packet>();
+    payload->AddHeader(beaconPayloadHeader);
+
+    // Extract octets from payload
+    // uint32_t payloadSize = payload->GetSize();
+    // uint8_t octets [payloadSize];
+    // uint8_t* octetsPtr =  octets;
+    uint8_t* octetsPtr = new uint8_t[payload->GetSize()];
+    payload->CopyData(octetsPtr, payload->GetSize());
+
+    // Add octets to macBeaconPayload vector
+    Ptr<MacPibAttributes> pibAttr = Create<MacPibAttributes>();
+    pibAttr->macBeaconPayload = std::vector<uint8_t>(octetsPtr, octetsPtr + payload->GetSize());
+    // pibAttr->macBeaconPayloadLength = payload->GetSize();
     m_mac->MlmeSetRequest(MacPibAttributeIdentifier::macBeaconPayload, pibAttr);
 }
 

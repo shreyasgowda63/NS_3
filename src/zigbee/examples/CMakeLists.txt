@@ -2,6 +2,7 @@ set(base_examples
     zigbee-direct-join
     zigbee-association-join
     zigbee-routing
+    zigbee-nwk-routing2
 )
 
 foreach(

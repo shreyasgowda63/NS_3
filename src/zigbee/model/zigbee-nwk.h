@@ -469,8 +469,9 @@ struct NlmeJoinConfirmParams
                                    //!< device is now a member.
     ChannelList m_channelList;     //!< The structure indicating the current channel of the
                                    //!< network that has been joined.
-    bool m_enhancedBeacon;         //!< True if using enhanced beacons.
+    bool m_enhancedBeacon;         //!< True if using enhanced beacons (placeholder, not supported)
     uint8_t m_macInterfaceIndex;   //!< The value of the MAC index from nwkMacInterfaceTable.
+                                   //!< (placeholder, not supported)
 
     NlmeJoinConfirmParams()
         : m_status(ZigbeeNwkStatus::INVALID_REQUEST),
