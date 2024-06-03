@@ -1335,16 +1335,16 @@ HePhy::GetMaxDelayPpduSameUid(const WifiTxVector& txVector)
 }
 
 Ptr<SpectrumValue>
-HePhy::GetTxPowerSpectralDensity(double txPowerW, Ptr<const WifiPpdu> ppdu) const
+HePhy::GetTxPowerSpectralDensity(Watt_t txPower, Ptr<const WifiPpdu> ppdu) const
 {
     auto hePpdu = DynamicCast<const HePpdu>(ppdu);
     NS_ASSERT(hePpdu);
     HePpdu::TxPsdFlag flag = hePpdu->GetTxPsdFlag();
-    return GetTxPowerSpectralDensity(txPowerW, ppdu, flag);
+    return GetTxPowerSpectralDensity(txPower, ppdu, flag);
 }
 
 Ptr<SpectrumValue>
-HePhy::GetTxPowerSpectralDensity(double txPowerW,
+HePhy::GetTxPowerSpectralDensity(Watt_t txPower,
                                  Ptr<const WifiPpdu> ppdu,
                                  HePpdu::TxPsdFlag flag) const
 {
@@ -1359,7 +1359,7 @@ HePhy::GetTxPowerSpectralDensity(double txPowerW,
         }
         return ss.str();
     };
-    NS_LOG_FUNCTION(this << printFrequencies(centerFrequencies) << channelWidth << txPowerW
+    NS_LOG_FUNCTION(this << printFrequencies(centerFrequencies) << channelWidth << txPower
                          << txVector);
     const auto& puncturedSubchannels = txVector.GetInactiveSubchannels();
     if (!puncturedSubchannels.empty())
@@ -1384,7 +1384,7 @@ HePhy::GetTxPowerSpectralDensity(double txPowerW,
             return WifiSpectrumValueHelper::CreateDuplicated20MhzTxPowerSpectralDensity(
                 GetCenterFrequenciesForNonHePart(ppdu, staId),
                 channelWidth,
-                txPowerW,
+                txPower,
                 GetGuardBandwidth(channelWidth),
                 std::get<0>(txMaskRejectionParams),
                 std::get<1>(txMaskRejectionParams),
@@ -1397,7 +1397,7 @@ HePhy::GetTxPowerSpectralDensity(double txPowerW,
             return WifiSpectrumValueHelper::CreateHeMuOfdmTxPowerSpectralDensity(
                 centerFrequencies,
                 channelWidth,
-                txPowerW,
+                txPower,
                 GetGuardBandwidth(channelWidth),
                 band);
         }
@@ -1408,7 +1408,7 @@ HePhy::GetTxPowerSpectralDensity(double txPowerW,
             return WifiSpectrumValueHelper::CreateDuplicated20MhzTxPowerSpectralDensity(
                 centerFrequencies,
                 channelWidth,
-                txPowerW,
+                txPower,
                 GetGuardBandwidth(channelWidth),
                 std::get<0>(txMaskRejectionParams),
                 std::get<1>(txMaskRejectionParams),
@@ -1420,7 +1420,7 @@ HePhy::GetTxPowerSpectralDensity(double txPowerW,
             return WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity(
                 centerFrequencies,
                 channelWidth,
-                txPowerW,
+                txPower,
                 GetGuardBandwidth(channelWidth),
                 std::get<0>(txMaskRejectionParams),
                 std::get<1>(txMaskRejectionParams),
@@ -1434,7 +1434,7 @@ HePhy::GetTxPowerSpectralDensity(double txPowerW,
         return WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity(
             centerFrequencies,
             channelWidth,
-            txPowerW,
+            txPower,
             GetGuardBandwidth(channelWidth),
             std::get<0>(txMaskRejectionParams),
             std::get<1>(txMaskRejectionParams),

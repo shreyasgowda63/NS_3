@@ -38,17 +38,17 @@ DbToRatio(double dB)
     return std::pow(10.0, 0.1 * dB);
 }
 
-double
+Watt_t
 DbmToW(dBm_t pow)
 {
     return std::pow(10.0, 0.1 * (pow - 30.0));
 }
 
 dBm_t
-WToDbm(double w)
+WToDbm(Watt_t power)
 {
-    NS_ASSERT(w > 0.);
-    return 10.0 * std::log10(w) + 30.0;
+    NS_ASSERT(power > 0.);
+    return 10.0 * std::log10(power) + 30.0;
 }
 
 double
