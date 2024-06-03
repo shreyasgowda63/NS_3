@@ -112,6 +112,7 @@ class TcpBbr : public TcpCongestionOps
     void CwndEvent(Ptr<TcpSocketState> tcb, const TcpSocketState::TcpCAEvent_t event) override;
     uint32_t GetSsThresh(Ptr<const TcpSocketState> tcb, uint32_t bytesInFlight) override;
     Ptr<TcpCongestionOps> Fork() override;
+    uint32_t GetAppLimited() override;
 
   protected:
     /**

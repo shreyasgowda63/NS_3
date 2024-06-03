@@ -87,6 +87,12 @@ TcpCongestionOps::CongControl(Ptr<TcpSocketState> tcb,
     NS_LOG_FUNCTION(this << tcb);
 }
 
+uint32_t
+TcpCongestionOps::GetAppLimited()
+{
+    return 0;
+}
+
 // RENO
 
 NS_OBJECT_ENSURE_REGISTERED(TcpNewReno);

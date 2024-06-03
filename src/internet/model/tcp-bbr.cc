@@ -716,9 +716,16 @@ TcpBbr::CongControl(Ptr<TcpSocketState> tcb,
                     const TcpRateOps::TcpRateSample& rs)
 {
     NS_LOG_FUNCTION(this << tcb << rs);
+    m_appLimited = rc.m_appLimited;
     m_delivered = rc.m_delivered;
     UpdateModelAndState(tcb, rs);
     UpdateControlParameters(tcb, rs);
+}
+
+uint32_t
+TcpBbr::GetAppLimited()
+{
+    return m_appLimited;
 }
 
 void

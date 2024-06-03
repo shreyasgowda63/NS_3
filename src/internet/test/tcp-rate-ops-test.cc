@@ -549,7 +549,7 @@ TcpRateLinuxWithBufferTest::TestWithSackBlocks()
         m_txBuf.DiscardUpTo(SequenceNumber32(m_segmentSize * i + 1),
                             MakeCallback(&TcpRateOps::SkbDelivered, m_rateOps));
         m_expectedAckedSacked = m_segmentSize;
-        m_rateOps->GenerateSample(m_segmentSize, 0, false, priorInFlight, Seconds(0));
+        m_rateOps->GenerateSample(m_segmentSize, 0, 0, false, priorInFlight, Seconds(0));
     }
 
     priorInFlight = m_txBuf.BytesInFlight();
@@ -558,21 +558,21 @@ TcpRateLinuxWithBufferTest::TestWithSackBlocks()
     m_expectedDelivered += m_segmentSize;
     m_txBuf.Update(sack->GetSackList(), MakeCallback(&TcpRateOps::SkbDelivered, m_rateOps));
     m_expectedAckedSacked = m_segmentSize;
-    m_rateOps->GenerateSample(m_segmentSize, 0, false, priorInFlight, Seconds(0));
+    m_rateOps->GenerateSample(m_segmentSize, 0, 0, false, priorInFlight, Seconds(0));
 
     priorInFlight = m_txBuf.BytesInFlight();
     sack->AddSackBlock(TcpOptionSack::SackBlock(SequenceNumber32(m_segmentSize * 3 + 1),
                                                 SequenceNumber32(m_segmentSize * 4 + 1)));
     m_expectedDelivered += m_segmentSize;
     m_txBuf.Update(sack->GetSackList(), MakeCallback(&TcpRateOps::SkbDelivered, m_rateOps));
-    m_rateOps->GenerateSample(m_segmentSize, 0, false, priorInFlight, Seconds(0));
+    m_rateOps->GenerateSample(m_segmentSize, 0, 0, false, priorInFlight, Seconds(0));
 
     priorInFlight = m_txBuf.BytesInFlight();
     // Actual delivered should be increased by one segment even multiple blocks are acked.
     m_expectedDelivered += m_segmentSize;
     m_txBuf.DiscardUpTo(SequenceNumber32(m_segmentSize * 5 + 1),
                         MakeCallback(&TcpRateOps::SkbDelivered, m_rateOps));
-    m_rateOps->GenerateSample(m_segmentSize, 0, false, priorInFlight, Seconds(0));
+    m_rateOps->GenerateSample(m_segmentSize, 0, 0, false, priorInFlight, Seconds(0));
 
     priorInFlight = m_txBuf.BytesInFlight();
     // ACK rest of the segments
@@ -584,7 +584,7 @@ TcpRateLinuxWithBufferTest::TestWithSackBlocks()
     }
     m_expectedAckedSacked = 5 * m_segmentSize;
     TcpRateOps::TcpRateSample rateSample =
-        m_rateOps->GenerateSample(5 * m_segmentSize, 0, false, priorInFlight, Seconds(0));
+        m_rateOps->GenerateSample(5 * m_segmentSize, 0, 0, false, priorInFlight, Seconds(0));
 }
 
 void

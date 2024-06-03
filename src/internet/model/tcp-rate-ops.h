@@ -106,6 +106,7 @@ class TcpRateOps : public Object
      * \param delivered number of delivered segments (e.g., receiving a cumulative
      * ACK means having more than 1 segment delivered) relative to the most recent
      * (S)ACK received
+     * \param appLimited number of segments marked as application-limited
      * \param lost number of segments that we detected as lost after the reception
      * of the most recent (S)ACK
      * \param priorInFlight number of segments previously considered in flight
@@ -114,6 +115,7 @@ class TcpRateOps : public Object
      * \return The TcpRateSample that will be used for CA
      */
     virtual const TcpRateSample& GenerateSample(uint32_t delivered,
+                                                uint32_t appLimited,
                                                 uint32_t lost,
                                                 bool is_sack_reneg,
                                                 uint32_t priorInFlight,
@@ -216,6 +218,7 @@ class TcpRateLinux : public TcpRateOps
                              const uint32_t lostOut,
                              const uint32_t retransOut) override;
     const TcpRateSample& GenerateSample(uint32_t delivered,
+                                        uint32_t appLimited,
                                         uint32_t lost,
                                         bool is_sack_reneg,
                                         uint32_t priorInFlight,

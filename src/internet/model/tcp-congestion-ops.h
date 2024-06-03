@@ -184,6 +184,11 @@ class TcpCongestionOps : public Object
                              const TcpRateOps::TcpRateConnection& rc,
                              const TcpRateOps::TcpRateSample& rs);
 
+    /**
+     * \brief Retrieves the index of the last transmitted packet marked as application-limited.
+     * \return The index of the last transmitted packet marked as application-limited.
+     */
+    virtual uint32_t GetAppLimited();
     // Present in Linux but not in ns-3 yet:
     /* call when ack arrives (optional) */
     //     void (*in_ack_event)(struct sock *sk, u32 flags);
