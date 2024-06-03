@@ -157,6 +157,32 @@ class Dhcp6Header : public Header
      */
     void AddServerIdentifier(uint16_t hardwareType, Address linkLayerAddress);
 
+    /**
+     * \brief Add IANA option.
+     * \param iaid
+     * \param t1
+     * \param t2
+     */
+    void AddIanaOption(uint32_t iaid, uint32_t t1, uint32_t t2);
+
+    /**
+     * \brief Add IATA option.
+     * \param iaid
+     */
+    void AddIataOption(uint32_t iaid);
+
+    /**
+     * \brief Add IA address option to the IANA or IATA.
+     * \param iaid the unique identifier of the identity association.
+     * \param address The IPv6 address to be offered.
+     * \param prefLifetime the preferred lifetime in seconds.
+     * \param validLifetime the valid lifetime in seconds.
+     */
+    void AddAddress(uint32_t iaid,
+                    Ipv6Address address,
+                    uint32_t prefLifetime,
+                    uint32_t validLifetime);
+
   private:
     TypeId GetInstanceTypeId() const override;
     void Print(std::ostream& os) const override;
@@ -216,10 +242,14 @@ class Dhcp6Header : public Header
     IntegerOptions<uint16_t> elapsedTime;
 
     /**
-     * \brief Add elapsed time options to the header.
-     * \param timestamp the timestamp of the first message sent by the client
+     * \brief List of IANA options.
      */
-    void AddTimeOption(uint16_t timestamp);
+    std::list<IaOptions> m_ianaList;
+
+    /**
+     * \brief List of IATA options.
+     */
+    std::list<IaOptions> m_iataList;
 
     /**
      * \brief Add an identifier option to the header.
@@ -232,6 +262,15 @@ class Dhcp6Header : public Header
                              uint16_t optionType,
                              uint16_t hardwareType,
                              Address linkLayerAddress);
+
+    /**
+     * \brief Add IANA or IATA option to the header.
+     * \param optionType identify whether to add an IANA or IATA.
+     * \param iaid
+     * \param t1
+     * \param t2
+     */
+    void AddIaOption(uint16_t optionType, uint32_t iaid, uint32_t t1 = 0, uint32_t t2 = 0);
 };
 
 } // namespace ns3

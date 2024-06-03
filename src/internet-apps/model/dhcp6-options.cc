@@ -213,6 +213,13 @@ IaAddressOption::SetValidLifetime(uint32_t validLifetime)
     m_validLifetime = validLifetime;
 }
 
+IaOptions::IaOptions()
+{
+    m_iaid = 0;
+    m_t1 = 0;
+    m_t2 = 0;
+}
+
 uint32_t
 IaOptions::GetIaid()
 {

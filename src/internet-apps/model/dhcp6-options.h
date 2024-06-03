@@ -300,6 +300,9 @@ class IaAddressOption : public Options
 class IaOptions : public Options
 {
   public:
+    /**
+     * \brief Default constructor.
+     */
     IaOptions();
 
     /**
@@ -342,9 +345,14 @@ class IaOptions : public Options
      */
     void SetT2(uint32_t t2);
 
+    /**
+     * \brief The list of IA Address options associated with the IANA.
+     */
+    std::list<IaAddressOption> m_iaAddressOption;
+
   private:
     /**
-     * \brief The unique identifier for the given IANA.
+     * \brief The unique identifier for the given IANA or IATA.
      */
     uint32_t m_iaid;
 
@@ -359,11 +367,6 @@ class IaOptions : public Options
      * available server to extend the address lifetime.
      */
     uint32_t m_t2;
-
-    /**
-     * \brief The list of IA Address options associated with the IANA.
-     */
-    std::list<IaAddressOption> m_iaAddressOption;
 
     /**
      * \brief (optional) The status code of any operation involving the IANA.
