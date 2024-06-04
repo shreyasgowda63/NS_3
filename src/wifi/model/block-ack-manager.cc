@@ -103,11 +103,11 @@ BlockAckManager::GetAgreementAsRecipient(const Mac48Address& originator, uint8_t
 
 void
 BlockAckManager::CreateOriginatorAgreement(const MgtAddBaRequestHeader& reqHdr,
-                                           const Mac48Address& recipient,
-                                           bool htSupported)
+                                           const Mac48Address& recipient)
 {
-    NS_LOG_FUNCTION(this << reqHdr << recipient << htSupported);
-    const uint8_t tid = reqHdr.GetTid();
+    NS_LOG_FUNCTION(this << reqHdr << recipient);
+    const auto tid = reqHdr.GetTid();
+
     OriginatorBlockAckAgreement agreement(recipient, tid);
     agreement.SetStartingSequence(reqHdr.GetStartingSequence());
     /* For now we assume that originator doesn't use this field. Use of this field
@@ -115,7 +115,7 @@ BlockAckManager::CreateOriginatorAgreement(const MgtAddBaRequestHeader& reqHdr,
     agreement.SetBufferSize(reqHdr.GetBufferSize());
     agreement.SetTimeout(reqHdr.GetTimeout());
     agreement.SetAmsduSupport(reqHdr.IsAmsduSupported());
-    agreement.SetHtSupported(htSupported);
+    agreement.SetHtSupported(true);
     if (reqHdr.IsImmediateBlockAck())
     {
         agreement.SetImmediateBlockAck();
@@ -199,11 +199,10 @@ void
 BlockAckManager::CreateRecipientAgreement(const MgtAddBaResponseHeader& respHdr,
                                           const Mac48Address& originator,
                                           uint16_t startingSeq,
-                                          bool htSupported,
                                           Ptr<MacRxMiddle> rxMiddle)
 {
-    NS_LOG_FUNCTION(this << respHdr << originator << startingSeq << htSupported << rxMiddle);
-    uint8_t tid = respHdr.GetTid();
+    NS_LOG_FUNCTION(this << respHdr << originator << startingSeq << rxMiddle);
+    const auto tid = respHdr.GetTid();
 
     RecipientBlockAckAgreement agreement(originator,
                                          respHdr.IsAmsduSupported(),
@@ -211,7 +210,8 @@ BlockAckManager::CreateRecipientAgreement(const MgtAddBaResponseHeader& respHdr,
                                          respHdr.GetBufferSize(),
                                          respHdr.GetTimeout(),
                                          startingSeq,
-                                         htSupported);
+                                         true);
+
     agreement.SetMacRxMiddle(rxMiddle);
     if (respHdr.IsImmediateBlockAck())
     {
@@ -458,7 +458,7 @@ BlockAckManager::NotifyGotBlockAck(uint8_t linkId,
     uint16_t nSuccessfulMpdus = 0;
     uint16_t nFailedMpdus = 0;
 
-    if (it->second.first.m_inactivityEvent.IsRunning())
+    if (it->second.first.m_inactivityEvent.IsPending())
     {
         /* Upon reception of a BlockAck frame, the inactivity timer at the
             originator must be reset.

@@ -216,6 +216,11 @@ class MldSwapLinksTest : public TestCase
         void Enqueue(Ptr<Packet> packet, Mac48Address to) override
         {
         }
+
+      private:
+        void DoCompleteConfig() override
+        {
+        }
     };
 
   public:
@@ -357,6 +362,16 @@ class MultiLinkOperationsTestBase : public TestCase
                           WifiConstPsduMap psduMap,
                           WifiTxVector txVector,
                           double txPowerW);
+
+    /**
+     * Check that the expected Capabilities information elements are present in the given
+     * management frame based on the band in which the given link is operating.
+     *
+     * \param mpdu the given management frame
+     * \param mac the MAC transmitting the management frame
+     * \param phyId the ID of the PHY transmitting the management frame
+     */
+    void CheckCapabilities(Ptr<WifiMpdu> mpdu, Ptr<WifiMac> mac, uint8_t phyId);
 
     /**
      * Function to trace packets received by the server application
@@ -576,8 +591,89 @@ MultiLinkOperationsTestBase::Transmit(Ptr<WifiMac> mac,
             ss << "} TID = " << +psdu->GetHeader(0).GetQosTid();
         }
         NS_LOG_INFO(ss.str());
+
+        CheckCapabilities(*psdu->begin(), mac, phyId);
     }
     NS_LOG_INFO("TXVECTOR = " << txVector << "\n");
+}
+
+void
+MultiLinkOperationsTestBase::CheckCapabilities(Ptr<WifiMpdu> mpdu, Ptr<WifiMac> mac, uint8_t phyId)
+{
+    auto band = mac->GetDevice()->GetPhy(phyId)->GetPhyBand();
+    bool hasHtCapabilities;
+    bool hasVhtCapabilities;
+    bool hasHeCapabilities;
+    bool hasHe6GhzCapabilities;
+    bool hasEhtCapabilities;
+
+    auto findCapabilities = [&](auto&& frame) {
+        hasHtCapabilities = frame.template Get<HtCapabilities>().has_value();
+        hasVhtCapabilities = frame.template Get<VhtCapabilities>().has_value();
+        hasHeCapabilities = frame.template Get<HeCapabilities>().has_value();
+        hasHe6GhzCapabilities = frame.template Get<He6GhzBandCapabilities>().has_value();
+        hasEhtCapabilities = frame.template Get<EhtCapabilities>().has_value();
+    };
+
+    switch (mpdu->GetHeader().GetType())
+    {
+    case WIFI_MAC_MGT_BEACON: {
+        MgtBeaconHeader beacon;
+        mpdu->GetPacket()->PeekHeader(beacon);
+        findCapabilities(beacon);
+    }
+    break;
+
+    case WIFI_MAC_MGT_PROBE_REQUEST: {
+        MgtProbeRequestHeader probeReq;
+        mpdu->GetPacket()->PeekHeader(probeReq);
+        findCapabilities(probeReq);
+    }
+    break;
+
+    case WIFI_MAC_MGT_PROBE_RESPONSE: {
+        MgtProbeResponseHeader probeResp;
+        mpdu->GetPacket()->PeekHeader(probeResp);
+        findCapabilities(probeResp);
+    }
+    break;
+
+    case WIFI_MAC_MGT_ASSOCIATION_REQUEST: {
+        MgtAssocRequestHeader assocReq;
+        mpdu->GetPacket()->PeekHeader(assocReq);
+        findCapabilities(assocReq);
+    }
+    break;
+
+    case WIFI_MAC_MGT_ASSOCIATION_RESPONSE: {
+        MgtAssocResponseHeader assocResp;
+        mpdu->GetPacket()->PeekHeader(assocResp);
+        findCapabilities(assocResp);
+    }
+    break;
+
+    default:
+        return;
+    }
+
+    NS_TEST_EXPECT_MSG_EQ(
+        hasHtCapabilities,
+        (band != WIFI_PHY_BAND_6GHZ),
+        "HT Capabilities should not be present in a mgt frame sent in 6 GHz band");
+    NS_TEST_EXPECT_MSG_EQ(
+        hasVhtCapabilities,
+        (band == WIFI_PHY_BAND_5GHZ),
+        "VHT Capabilities should only be present in a mgt frame sent in 5 GHz band");
+    NS_TEST_EXPECT_MSG_EQ(hasHeCapabilities,
+                          true,
+                          "HE Capabilities should always be present in a mgt frame");
+    NS_TEST_EXPECT_MSG_EQ(
+        hasHe6GhzCapabilities,
+        (band == WIFI_PHY_BAND_6GHZ),
+        "HE 6GHz Band Capabilities should only be present in a mgt frame sent in 6 GHz band");
+    NS_TEST_EXPECT_MSG_EQ(hasEhtCapabilities,
+                          true,
+                          "EHT Capabilities should always be present in a mgt frame");
 }
 
 void
@@ -845,7 +941,9 @@ class MultiLinkSetupTest : public MultiLinkOperationsTestBase
     void CheckMlSetup();
 
     /**
-     * Check that links that are not setup on the non-AP MLD are disabled.
+     * Check that links that are not setup on the non-AP MLD are disabled. Also, on the AP side,
+     * check that the queue storing QoS data frames destined to the non-AP MLD has a mask for a
+     * link if and only if the link has been setup by the non-AO MLD.
      */
     void CheckDisabledLinks();
 
@@ -1583,6 +1681,25 @@ MultiLinkSetupTest::CheckMlSetup()
 void
 MultiLinkSetupTest::CheckDisabledLinks()
 {
+    if (m_apMac->GetNLinks() > 1)
+    {
+        WifiContainerQueueId queueId(WIFI_QOSDATA_QUEUE,
+                                     WIFI_UNICAST,
+                                     m_staMacs[0]->GetAddress(),
+                                     0);
+
+        for (uint8_t linkId = 0; linkId < m_apMac->GetNLinks(); ++linkId)
+        {
+            auto it = std::find(m_setupLinks.cbegin(), m_setupLinks.cend(), linkId);
+
+            // the queue on the AP should have a mask if and only if the link has been setup
+            auto mask = m_apMac->GetMacQueueScheduler()->GetQueueLinkMask(AC_BE, queueId, linkId);
+            NS_TEST_EXPECT_MSG_EQ(mask.has_value(),
+                                  (it != m_setupLinks.cend()),
+                                  "Unexpected presence/absence of mask on link " << +linkId);
+        }
+    }
+
     if (m_staMacs[0]->GetNLinks() == 1)
     {
         // no link is disabled on a single link device

@@ -26,7 +26,7 @@
 #include "ns3/constant-position-mobility-model.h"
 #include "ns3/error-model.h"
 #include "ns3/fcfs-wifi-queue-scheduler.h"
-#include "ns3/frame-exchange-manager.h"
+#include "ns3/he-frame-exchange-manager.h"
 #include "ns3/header-serialization-test.h"
 #include "ns3/ht-configuration.h"
 #include "ns3/interference-helper.h"
@@ -159,17 +159,21 @@ WifiTest::CreateOne(Vector pos, Ptr<YansWifiChannel> channel)
     auto manager = m_manager.Create<WifiRemoteStationManager>();
     dev->SetRemoteStationManager(manager);
 
-    Ptr<WifiMac> mac = m_mac.Create<WifiMac>();
+    auto txop = CreateObjectWithAttributes<Txop>("AcIndex", StringValue("AC_BE_NQOS"));
+    m_mac.Set("Txop", PointerValue(txop));
+    auto mac = m_mac.Create<WifiMac>();
     mac->SetDevice(dev);
     mac->SetAddress(Mac48Address::Allocate());
     dev->SetMac(mac);
-    mac->ConfigureStandard(WIFI_STANDARD_80211a);
+    mac->SetChannelAccessManagers({CreateObject<ChannelAccessManager>()});
+    mac->SetFrameExchangeManagers({CreateObject<FrameExchangeManager>()});
     if (mac->GetTypeOfStation() == STA)
     {
         StaticCast<StaWifiMac>(mac)->SetAssocManager(CreateObject<WifiDefaultAssocManager>());
     }
     mac->SetMacQueueScheduler(CreateObject<FcfsWifiQueueScheduler>());
     Ptr<FrameExchangeManager> fem = mac->GetFrameExchangeManager();
+    fem->SetAddress(mac->GetAddress());
     Ptr<WifiProtectionManager> protectionManager = CreateObject<WifiDefaultProtectionManager>();
     protectionManager->SetWifiMac(mac);
     fem->SetProtectionManager(protectionManager);
@@ -352,13 +356,17 @@ InterferenceHelperSequenceTest::CreateOne(Vector pos, Ptr<YansWifiChannel> chann
     auto manager = m_manager.Create<WifiRemoteStationManager>();
     dev->SetRemoteStationManager(manager);
 
-    Ptr<WifiMac> mac = m_mac.Create<WifiMac>();
+    auto txop = CreateObjectWithAttributes<Txop>("AcIndex", StringValue("AC_BE_NQOS"));
+    m_mac.Set("Txop", PointerValue(txop));
+    auto mac = m_mac.Create<WifiMac>();
     mac->SetDevice(dev);
     mac->SetAddress(Mac48Address::Allocate());
     dev->SetMac(mac);
-    mac->ConfigureStandard(WIFI_STANDARD_80211a);
+    mac->SetChannelAccessManagers({CreateObject<ChannelAccessManager>()});
+    mac->SetFrameExchangeManagers({CreateObject<FrameExchangeManager>()});
     mac->SetMacQueueScheduler(CreateObject<FcfsWifiQueueScheduler>());
     Ptr<FrameExchangeManager> fem = mac->GetFrameExchangeManager();
+    fem->SetAddress(mac->GetAddress());
     Ptr<WifiProtectionManager> protectionManager = CreateObject<WifiDefaultProtectionManager>();
     protectionManager->SetWifiMac(mac);
     fem->SetProtectionManager(protectionManager);
@@ -570,13 +578,17 @@ DcfImmediateAccessBroadcastTestCase::DoRun()
     txDev->SetRemoteStationManager(m_manager.Create<WifiRemoteStationManager>());
     txNode->AddDevice(txDev);
 
+    auto txop = CreateObjectWithAttributes<Txop>("AcIndex", StringValue("AC_BE_NQOS"));
+    m_mac.Set("Txop", PointerValue(txop));
     auto txMac = m_mac.Create<WifiMac>();
     txMac->SetDevice(txDev);
     txMac->SetAddress(Mac48Address::Allocate());
     txDev->SetMac(txMac);
-    txMac->ConfigureStandard(WIFI_STANDARD_80211a);
+    txMac->SetChannelAccessManagers({CreateObject<ChannelAccessManager>()});
+    txMac->SetFrameExchangeManagers({CreateObject<FrameExchangeManager>()});
     txMac->SetMacQueueScheduler(CreateObject<FcfsWifiQueueScheduler>());
     auto fem = txMac->GetFrameExchangeManager();
+    fem->SetAddress(txMac->GetAddress());
     auto protectionManager = CreateObject<WifiDefaultProtectionManager>();
     protectionManager->SetWifiMac(txMac);
     fem->SetProtectionManager(protectionManager);
@@ -1849,13 +1861,21 @@ Bug2831TestCase::DoRun()
     mac.SetTypeId("ns3::ApWifiMac");
     mac.Set("EnableBeaconJitter", BooleanValue(false));
     mac.Set("QosSupported", BooleanValue(true));
-    Ptr<WifiMac> apMac = mac.Create<WifiMac>();
+    for (const std::string ac : {"BE", "BK", "VI", "VO"})
+    {
+        auto qosTxop =
+            CreateObjectWithAttributes<QosTxop>("AcIndex", StringValue(std::string("AC_") + ac));
+        mac.Set(ac + "_Txop", PointerValue(qosTxop));
+    }
+    auto apMac = mac.Create<WifiMac>();
     apMac->SetDevice(apDev);
     apMac->SetAddress(Mac48Address::Allocate());
     apDev->SetMac(apMac);
-    apMac->ConfigureStandard(WIFI_STANDARD_80211ax);
+    apMac->SetChannelAccessManagers({CreateObject<ChannelAccessManager>()});
+    apMac->SetFrameExchangeManagers({CreateObject<HeFrameExchangeManager>()});
     apMac->SetMacQueueScheduler(CreateObject<FcfsWifiQueueScheduler>());
     Ptr<FrameExchangeManager> fem = apMac->GetFrameExchangeManager();
+    fem->SetAddress(apMac->GetAddress());
     Ptr<WifiProtectionManager> protectionManager = CreateObject<WifiDefaultProtectionManager>();
     protectionManager->SetWifiMac(apMac);
     fem->SetProtectionManager(protectionManager);
@@ -1887,14 +1907,22 @@ Bug2831TestCase::DoRun()
     m_staPhy->SetOperatingChannel(WifiPhy::ChannelTuple{36, 20, WIFI_PHY_BAND_5GHZ, 0});
 
     mac.SetTypeId("ns3::StaWifiMac");
+    for (const std::string ac : {"BE", "BK", "VI", "VO"})
+    {
+        auto qosTxop =
+            CreateObjectWithAttributes<QosTxop>("AcIndex", StringValue(std::string("AC_") + ac));
+        mac.Set(ac + "_Txop", PointerValue(qosTxop));
+    }
     auto staMac = mac.Create<WifiMac>();
     staDev->SetMac(staMac);
     staMac->SetDevice(staDev);
     staMac->SetAddress(Mac48Address::Allocate());
-    staMac->ConfigureStandard(WIFI_STANDARD_80211ax);
+    staMac->SetChannelAccessManagers({CreateObject<ChannelAccessManager>()});
+    staMac->SetFrameExchangeManagers({CreateObject<HeFrameExchangeManager>()});
     StaticCast<StaWifiMac>(staMac)->SetAssocManager(CreateObject<WifiDefaultAssocManager>());
     staMac->SetMacQueueScheduler(CreateObject<FcfsWifiQueueScheduler>());
     fem = staMac->GetFrameExchangeManager();
+    fem->SetAddress(staMac->GetAddress());
     protectionManager = CreateObject<WifiDefaultProtectionManager>();
     protectionManager->SetWifiMac(staMac);
     fem->SetProtectionManager(protectionManager);

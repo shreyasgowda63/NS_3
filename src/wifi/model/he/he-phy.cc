@@ -533,14 +533,14 @@ HePhy::HandleRxPpduWithSameContent(Ptr<Event> event,
         (GetCurrentEvent()->GetPpdu()->GetUid() != ppdu->GetUid()))
     {
         NS_LOG_DEBUG("Drop packet because already receiving another HE TB PPDU");
-        m_wifiPhy->NotifyRxDrop(GetAddressedPsduInPpdu(ppdu), RXING);
+        m_wifiPhy->NotifyRxPpduDrop(ppdu, RXING);
     }
     else if (const auto isResponseToTrigger = (m_previouslyTxPpduUid == ppdu->GetUid());
              isResponseToTrigger && GetCurrentEvent() &&
              (GetCurrentEvent()->GetPpdu()->GetUid() != ppdu->GetUid()))
     {
         NS_LOG_DEBUG("Drop packet because already receiving another response to a trigger frame");
-        m_wifiPhy->NotifyRxDrop(GetAddressedPsduInPpdu(ppdu), RXING);
+        m_wifiPhy->NotifyRxPpduDrop(ppdu, RXING);
     }
 }
 
@@ -832,7 +832,7 @@ HePhy::DoStartReceivePayload(Ptr<Event> event)
             Simulator::Schedule(timeToEndRx, &HePhy::ResetReceive, this, event));
         // Cancel all scheduled events for MU payload reception
         NS_ASSERT(!m_beginMuPayloadRxEvents.empty() &&
-                  m_beginMuPayloadRxEvents.begin()->second.IsRunning());
+                  m_beginMuPayloadRxEvents.begin()->second.IsPending());
         for (auto& beginMuPayloadRxEvent : m_beginMuPayloadRxEvents)
         {
             beginMuPayloadRxEvent.second.Cancel();
@@ -850,7 +850,7 @@ HePhy::DoStartReceivePayload(Ptr<Event> event)
         NS_ASSERT(!m_beginMuPayloadRxEvents.empty());
         for (auto& beginMuPayloadRxEvent : m_beginMuPayloadRxEvents)
         {
-            NS_ASSERT(beginMuPayloadRxEvent.second.IsRunning());
+            NS_ASSERT(beginMuPayloadRxEvent.second.IsPending());
         }
     }
 

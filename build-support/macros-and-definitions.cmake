@@ -166,6 +166,14 @@ macro(process_options)
                      "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}"
       )
     endif()
+    # Do not use -Os for gcc 9 default builds due to a bug in gcc that can
+    # result  in extreme memory usage. See MR !1955
+    # https://gitlab.com/nsnam/ns-3-dev/-/merge_requests/1955
+    if(GCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.0.0")
+      string(REPLACE "-Os" "-O2" CMAKE_CXX_FLAGS_RELWITHDEBINFO
+                     "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}"
+      )
+    endif()
     set(CMAKE_CXX_FLAGS_DEFAULT ${CMAKE_CXX_FLAGS_RELWITHDEBINFO})
     add_definitions(-DNS3_BUILD_PROFILE_DEBUG)
   elseif(${cmakeBuildType} STREQUAL "release")
@@ -221,9 +229,7 @@ macro(process_options)
       endif()
     else()
       add_compile_options(-Wall) # -Wextra
-      # Pedantic checks in GCC < 10 include extra semicolon, which we use a lot
-      # to make macros look like function calls
-      if(NOT (DEFINED GCC_PEDANTIC_SEMICOLON))
+      if(${GCC_WORKING_PEDANTIC_SEMICOLON})
         add_compile_options(-Wpedantic)
       endif()
       if(${NS3_WARNINGS_AS_ERRORS})
@@ -980,7 +986,7 @@ macro(process_options)
   # return variable
   check_deps(
     sphinx_docs_missing_deps CMAKE_PACKAGES Sphinx
-    EXECUTABLES epstopdf pdflatex latexmk convert dvipng
+    EXECUTABLES epstopdf pdflatex latexmk convert dvipng dia
   )
   if(sphinx_docs_missing_deps)
     message(
@@ -1153,7 +1159,11 @@ macro(process_options)
   set(PLATFORM_UNSUPPORTED_POST "features. Continuing without them.")
   # Remove from libs_to_build all incompatible libraries or the ones that
   # dependencies couldn't be installed
-  if(APPLE OR WSLv1 OR WIN32)
+  if(APPLE
+     OR WSLv1
+     OR WIN32
+     OR BSD
+  )
     set(ENABLE_TAP OFF)
     set(ENABLE_EMU OFF)
     set(ENABLE_FDNETDEV FALSE)
@@ -1291,7 +1301,11 @@ macro(process_options)
       stdlib_pch${build_profile_suffix} PUBLIC
       "${precompiled_header_libraries}"
     )
-    add_library(stdlib_pch ALIAS stdlib_pch${build_profile_suffix})
+
+    # Alias may collide with actual pch in builds without suffix (e.g. release)
+    if(NOT TARGET stdlib_pch)
+      add_library(stdlib_pch ALIAS stdlib_pch${build_profile_suffix})
+    endif()
 
     add_executable(
       stdlib_pch_exec ${PROJECT_SOURCE_DIR}/build-support/empty-main.cc

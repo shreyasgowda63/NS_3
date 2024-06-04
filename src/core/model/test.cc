@@ -19,6 +19,7 @@
 
 #include "abort.h"
 #include "assert.h"
+#include "config.h"
 #include "des-metrics.h"
 #include "log.h"
 #include "singleton.h"
@@ -351,6 +352,7 @@ TestCase::Run(TestRunnerImpl* runner)
     NS_LOG_FUNCTION(this << runner);
     m_result = new Result();
     m_runner = runner;
+    Config::Reset();
     DoSetup();
     m_result->clock.Start();
     for (auto i = m_children.begin(); i != m_children.end(); ++i)
@@ -366,6 +368,7 @@ TestCase::Run(TestRunnerImpl* runner)
 out:
     m_result->clock.End();
     DoTeardown();
+    Config::Reset();
     m_runner = nullptr;
 }
 
@@ -924,11 +927,6 @@ TestRunnerImpl::Run(int argc, char* argv[])
         {
             m_updateData = true;
         }
-        else if (arg == "--help")
-        {
-            PrintHelp(progname);
-            return 0;
-        }
         else if (arg == "--print-test-name-list" || arg == "--list")
         {
             printTestNameList = true;
@@ -953,11 +951,8 @@ TestRunnerImpl::Run(int argc, char* argv[])
         {
             testTypeString = arg.substr(arg.find_first_of('=') + 1);
         }
-        else if (arg.find("--test-name=") != std::string::npos)
-        {
-            testName = arg.substr(arg.find_first_of('=') + 1);
-        }
-        else if (arg.find("--suite=") != std::string::npos)
+        else if (arg.find("--test-name=") != std::string::npos ||
+                 arg.find("--suite=") != std::string::npos)
         {
             testName = arg.substr(arg.find_first_of('=') + 1);
         }
@@ -995,18 +990,14 @@ TestRunnerImpl::Run(int argc, char* argv[])
         }
         else
         {
-            // un-recognized command-line argument
+            // Print the help if arg == "--help" or arg is an un-recognized command-line argument
             PrintHelp(progname);
             return 0;
         }
         argi++;
     }
     TestSuite::Type testType;
-    if (testTypeString.empty())
-    {
-        testType = TestSuite::Type::ALL;
-    }
-    else if (testTypeString == "core")
+    if (testTypeString.empty() || testTypeString == "core")
     {
         testType = TestSuite::Type::ALL;
     }

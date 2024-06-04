@@ -35,6 +35,7 @@
 #include "wifi-psdu.h"
 #include "wifi-tx-parameters.h"
 
+#include "ns3/ht-configuration.h"
 #include "ns3/ht-frame-exchange-manager.h"
 #include "ns3/log.h"
 #include "ns3/pointer.h"
@@ -99,12 +100,18 @@ QosTxop::GetTypeId()
     return tid;
 }
 
-QosTxop::QosTxop(AcIndex ac)
-    : Txop(CreateObject<WifiMacQueue>(ac)),
-      m_ac(ac)
+QosTxop::QosTxop()
 {
     NS_LOG_FUNCTION(this);
     m_baManager = CreateObject<BlockAckManager>();
+}
+
+void
+QosTxop::CreateQueue(AcIndex aci)
+{
+    NS_LOG_FUNCTION(this << aci);
+    Txop::CreateQueue(aci);
+    m_ac = aci;
     m_baManager->SetQueue(m_queue);
     m_baManager->SetBlockDestinationCallback(
         Callback<void, Mac48Address, uint8_t>([this](Mac48Address recipient, uint8_t tid) {
@@ -387,7 +394,7 @@ QosTxop::PeekNextMpdu(uint8_t linkId, uint8_t tid, Mac48Address recipient, Ptr<c
         }
         WifiContainerQueueId queueId(WIFI_QOSDATA_QUEUE, WIFI_UNICAST, recipient, tid);
         if (auto mask = m_mac->GetMacQueueScheduler()->GetQueueLinkMask(m_ac, queueId, linkId);
-            !mask || mask->none())
+            mask && mask->none())
         {
             return m_queue->PeekByQueueId(queueId, mpdu);
         }
@@ -535,7 +542,7 @@ QosTxop::GetNextMpdu(uint8_t linkId,
 
         // try A-MSDU aggregation if the MPDU does not contain an A-MSDU and does not already
         // have a sequence number assigned (may be a retransmission)
-        if (m_mac->GetHtSupported() && !recipient.IsBroadcast() &&
+        if (m_mac->GetHtConfiguration() && !recipient.IsBroadcast() &&
             !peekedItem->GetHeader().IsQosAmsdu() && !peekedItem->HasSeqNoAssigned() &&
             !peekedItem->IsFragment())
         {

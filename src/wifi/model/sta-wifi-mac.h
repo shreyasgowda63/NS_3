@@ -22,9 +22,10 @@
 #ifndef STA_WIFI_MAC_H
 #define STA_WIFI_MAC_H
 
-#include "eht/eht-configuration.h"
 #include "mgt-headers.h"
 #include "wifi-mac.h"
+
+#include "ns3/eht-configuration.h"
 
 #include <set>
 #include <variant>
@@ -109,7 +110,7 @@ enum WifiPowerManagementMode : uint8_t
      │                │ ┌─────────────────────────────────────┐  │    │
      │                │ │                                     │  │    │
      │  ┌─────────────▼─▼──┐       ┌──────────────┐       ┌───┴──▼────┴───────────────────┐
-     └──►   Unassociated   ├───────►   Scanning   ├───────►   Wait AssociationiResponse   │
+     └──►   Unassociated   ├───────►   Scanning   ├───────►   Wait Association Response   │
         └──────────────────┘       └──────┬──▲────┘       └───────────────┬──▲────────────┘
                                           │  │                            │  │
                                           │  │                            │  │
@@ -379,6 +380,8 @@ class StaWifiMac : public WifiMac
     };
 
   private:
+    void DoCompleteConfig() override;
+
     /**
      * Enable or disable active probing.
      *

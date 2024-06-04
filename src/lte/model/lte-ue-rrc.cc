@@ -901,7 +901,6 @@ LteUeRrc::DoRecvSystemInformationBlockType1(uint16_t cellId,
 
     case IDLE_WAIT_MIB_SIB1:
         // MIB has not been received, so ignore this SIB1
-        break;
 
     default: // e.g. IDLE_START, IDLE_CELL_SEARCH, IDLE_WAIT_MIB, IDLE_WAIT_SIB2
         // do nothing
@@ -1062,7 +1061,7 @@ LteUeRrc::DoRecvRrcConnectionReconfiguration(LteRrcSap::RrcConnectionReconfigura
         {
             NS_LOG_INFO("haveMobilityControlInfo == true");
             SwitchToState(CONNECTED_HANDOVER);
-            if (m_radioLinkFailureDetected.IsRunning())
+            if (m_radioLinkFailureDetected.IsPending())
             {
                 ResetRlfParams();
             }
@@ -2815,7 +2814,7 @@ LteUeRrc::VarMeasReportListAdd(uint8_t measId, ConcernedCells_t enteringCells)
     NS_ASSERT(!measReportIt->second.cellsTriggeredList.empty());
 
     // #issue 224, schedule only when there is no periodic event scheduled already
-    if (!measReportIt->second.periodicReportTimer.IsRunning())
+    if (!measReportIt->second.periodicReportTimer.IsPending())
     {
         measReportIt->second.numberOfReportsSent = 0;
         measReportIt->second.periodicReportTimer =
@@ -3273,8 +3272,6 @@ LteUeRrc::SwitchToState(State newState)
     case CONNECTED_HANDOVER:
     case CONNECTED_PHY_PROBLEM:
     case CONNECTED_REESTABLISHING:
-        break;
-
     default:
         break;
     }
@@ -3315,7 +3312,7 @@ LteUeRrc::DoNotifyOutOfSync()
     {
         m_radioLinkFailureDetected =
             Simulator::Schedule(m_t310, &LteUeRrc::RadioLinkFailureDetected, this);
-        if (m_radioLinkFailureDetected.IsRunning())
+        if (m_radioLinkFailureDetected.IsPending())
         {
             NS_LOG_INFO("t310 started");
         }

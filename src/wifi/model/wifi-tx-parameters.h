@@ -27,6 +27,7 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 
 namespace ns3
@@ -78,7 +79,7 @@ class WifiTxParameters
     WifiTxVector m_txVector;                              //!< TXVECTOR of the frame being prepared
     std::unique_ptr<WifiProtection> m_protection;         //!< protection method
     std::unique_ptr<WifiAcknowledgment> m_acknowledgment; //!< acknowledgment method
-    Time m_txDuration{Time::Min()};                       //!< TX duration of the frame
+    std::optional<Time> m_txDuration;                     //!< TX duration of the frame
 
     /**
      * Reset the TX parameters.
@@ -88,10 +89,25 @@ class WifiTxParameters
     /**
      * Record that an MPDU is being added to the current frame. If an MPDU addressed
      * to the same receiver already exists in the frame, A-MPDU aggregation is considered.
+     * Store information needed to "undo" the addition of the MPDU by calling UndoAddMpdu().
      *
      * \param mpdu the MPDU being added
      */
     void AddMpdu(Ptr<const WifiMpdu> mpdu);
+
+    /**
+     * Undo the addition of the last MPDU added by calling AddMpdu().
+     */
+    void UndoAddMpdu();
+
+    /**
+     * Check if the last added MPDU is the first MPDU for the given receiver.
+     * Call this method only after adding an MPDU for the given receiver.
+     *
+     * \param receiver the MAC address of the given receiver
+     * \return whether the last added MPDU is the first MPDU for the given receiver
+     */
+    bool LastAddedIsFirstMpdu(Mac48Address receiver) const;
 
     /**
      * Record that an MSDU is being aggregated to the last MPDU added to the frame
@@ -113,10 +129,9 @@ class WifiTxParameters
      * Get the size in bytes of the frame in case the given MSDU is aggregated.
      *
      * \param msdu the given MSDU
-     * \return a pair (size in bytes of the current A-MSDU, size in bytes of the frame)
-               in case the given MSDU is aggregated
+     * \return size in bytes of the frame in case the given MSDU is aggregated
      */
-    std::pair<uint32_t, uint32_t> GetSizeIfAggregateMsdu(Ptr<const WifiMpdu> msdu) const;
+    uint32_t GetSizeIfAggregateMsdu(Ptr<const WifiMpdu> msdu) const;
 
     /**
      * Get the size in bytes of the (A-)MPDU addressed to the given receiver.
@@ -164,8 +179,12 @@ class WifiTxParameters
     void Print(std::ostream& os) const;
 
   private:
-    PsduInfoMap m_info; //!< information about the frame being prepared. Handles
-                        //!< multi-TID A-MPDUs, MU PPDUs, etc.
+    PsduInfoMap m_info;    //!< information about the frame being prepared. Handles
+                           //!< multi-TID A-MPDUs, MU PPDUs, etc.
+    PsduInfo m_undoInfo{}; //!< information needed to undo the addition of an MPDU
+    std::optional<PsduInfoMap::iterator>
+        m_lastInfoIt; //!< iterator pointing to the entry in the m_info map
+                      //!< that was created/modified by the last added MPDU
 };
 
 /**

@@ -2167,6 +2167,8 @@ PhyRxDropTrace(std::string context, Ptr<const Packet> p, WifiPhyRxfailureReason 
     case OBSS_PD_CCA_RESET:
         NS_FATAL_ERROR("Unexpected CCA reset!");
         break;
+    case SIGNAL_DETECTION_ABORTED_BY_TX:
+        break;
     case UNKNOWN:
     default:
         NS_FATAL_ERROR("Unknown drop reason!");
@@ -2867,11 +2869,7 @@ main(int argc, char* argv[])
     }
     else if (standard == "11n")
     {
-        if (frequency == 2.4)
-        {
-            wifiStandard = WIFI_STANDARD_80211n;
-        }
-        else if (frequency == 5)
+        if (frequency == 2.4 || frequency == 5)
         {
             wifiStandard = WIFI_STANDARD_80211n;
         }
@@ -2888,15 +2886,7 @@ main(int argc, char* argv[])
     }
     else if (standard == "11ax")
     {
-        if (frequency == 2.4)
-        {
-            wifiStandard = WIFI_STANDARD_80211ax;
-        }
-        else if (frequency == 5)
-        {
-            wifiStandard = WIFI_STANDARD_80211ax;
-        }
-        else if (frequency == 6)
+        if (frequency == 2.4 || frequency == 5 || frequency == 6)
         {
             wifiStandard = WIFI_STANDARD_80211ax;
         }

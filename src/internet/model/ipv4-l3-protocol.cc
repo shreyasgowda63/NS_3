@@ -333,12 +333,12 @@ Ipv4L3Protocol::DoDispose()
 
     m_fragments.clear();
     m_timeoutEventList.clear();
-    if (m_timeoutEvent.IsRunning())
+    if (m_timeoutEvent.IsPending())
     {
         m_timeoutEvent.Cancel();
     }
 
-    if (m_cleanDpd.IsRunning())
+    if (m_cleanDpd.IsPending())
     {
         m_cleanDpd.Cancel();
     }
@@ -1461,7 +1461,7 @@ Ipv4L3Protocol::DoFragmentation(Ptr<Packet> packet,
     // BEWARE: here we do assume that the header options are not present.
     // a much more complex handling is necessary in case there are options.
     // If (when) IPv4 option headers will be implemented, the following code shall be changed.
-    // Of course also the reassemby code shall be changed as well.
+    // Of course also the reassembly code shall be changed as well.
 
     NS_LOG_FUNCTION(this << *packet << outIfaceMtu << &listFragments);
 
@@ -1800,7 +1800,7 @@ Ipv4L3Protocol::UpdateDuplicate(Ptr<const Packet> p, const Ipv4Header& header)
     }
 
     // set cleanup job for new duplicate entries
-    if (!m_cleanDpd.IsRunning() && m_purge.IsStrictlyPositive())
+    if (!m_cleanDpd.IsPending() && m_purge.IsStrictlyPositive())
     {
         m_cleanDpd = Simulator::Schedule(m_expire, &Ipv4L3Protocol::RemoveDuplicates, this);
     }
