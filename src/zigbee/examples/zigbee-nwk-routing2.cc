@@ -161,16 +161,16 @@ int
 main(int argc, char* argv[])
 {
     LogComponentEnableAll(LogLevel(LOG_PREFIX_TIME | LOG_PREFIX_FUNC | LOG_PREFIX_NODE));
-    LogComponentEnable("ZigbeeNwk", LOG_LEVEL_DEBUG);
-    // LogComponentEnable("LrWpanCsmaCa", LOG_LEVEL_DEBUG);
-    // LogComponentEnable("LrWpanMac", LOG_LEVEL_DEBUG);
-    // LogComponentEnable("LrWpanPhy", LOG_LEVEL_DEBUG);
+    // LogComponentEnable("ZigbeeNwk", LOG_LEVEL_DEBUG);
+    //  LogComponentEnable("LrWpanCsmaCa", LOG_LEVEL_DEBUG);
+    LogComponentEnable("LrWpanMac", LOG_LEVEL_DEBUG);
+    LogComponentEnable("LrWpanPhy", LOG_LEVEL_DEBUG);
 
     // RngSeedManager::SetSeed(3);
     // RngSeedManager::SetRun(4);
 
     NodeContainer nodes;
-    nodes.Create(10);
+    nodes.Create(3);
 
     MobilityHelper mobility;
     mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
