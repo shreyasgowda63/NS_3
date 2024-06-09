@@ -50,13 +50,6 @@ class Dhcp6Header : public Header
     Dhcp6Header();
 
     /**
-     * \brief Constructor.
-     * \param msgType The message type.
-     * \param transactId The transaction ID.
-     */
-    Dhcp6Header(uint8_t msgType, uint32_t transactId);
-
-    /**
      * \brief Get the type of message.
      * \return integer corresponding to the message type.
      */
@@ -191,6 +184,12 @@ class Dhcp6Header : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
     /**
+     * \brief Update the message length.
+     * \param len The length to be added to the total.
+     */
+    void AddMessageLength(uint32_t len);
+
+    /**
      * \brief The message length;
      */
     uint32_t m_len;
@@ -198,7 +197,7 @@ class Dhcp6Header : public Header
     /**
      * \brief The message type.
      */
-    uint8_t m_msgType;
+    uint32_t m_msgType : 8;
 
     /**
      * \brief The transaction ID calculated by the client or the server.

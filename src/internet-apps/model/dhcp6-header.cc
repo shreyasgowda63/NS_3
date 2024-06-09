@@ -28,18 +28,10 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("Dhcp6Header");
 
 Dhcp6Header::Dhcp6Header()
-    : m_len(0),
+    : m_len(4),
       m_msgType(0),
       m_transactId(0)
 {
-}
-
-Dhcp6Header::Dhcp6Header(uint8_t msgType, uint32_t transactId)
-{
-    m_msgType = msgType;
-    m_transactId = transactId & 0x00FFFFFF;
-    m_len = 4;
-    elapsedTime = IntegerOptions<uint16_t>();
 }
 
 uint8_t
@@ -68,6 +60,12 @@ Dhcp6Header::SetTransactId(uint32_t transactId)
 {
     NS_LOG_FUNCTION(this << transactId);
     m_transactId = transactId;
+}
+
+void
+Dhcp6Header::AddMessageLength(uint32_t len)
+{
+    m_len += len;
 }
 
 void
@@ -101,8 +99,9 @@ Dhcp6Header::AddElapsedTime(uint16_t timestamp)
 {
     uint16_t now = (uint16_t)Simulator::Now().GetMilliSeconds() / 10; // expressed in 0.01 seconds
     elapsedTime.SetOptionCode(OPTION_ELAPSED_TIME);
-    elapsedTime.SetOptionLength(1);
+    elapsedTime.SetOptionLength(2);
     elapsedTime.SetOptionValue(now - timestamp);
+    AddMessageLength(6);
 }
 
 void
@@ -128,6 +127,8 @@ Dhcp6Header::AddIdentifierOption(IdentifierOption& identifier,
     identifier.SetOptionLength(duidLength);
     identifier.SetHardwareType(hardwareType);
     identifier.SetLinkLayerAddress(linkLayerAddress);
+    AddMessageLength(4 + duidLength);
+    NS_LOG_INFO("message length " << GetSerializedSize());
 }
 
 void
@@ -306,7 +307,28 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 return 0;
             }
             break;
+        case OPTION_CLIENTID:
+            if (len + 2 <= cLen)
+            {
+                clientIdentifier.SetOptionCode(option);
+                clientIdentifier.SetOptionLength(i.ReadU16());
+                len += 2;
+            }
+            if (len + clientIdentifier.GetOptionLength() <= cLen)
+            {
+                // Total length - DUID Type length(2) - Hardware Type length(2)
+                uint32_t addrLen = clientIdentifier.GetOptionLength() - 4;
+                clientIdentifier.SetHardwareType(i.ReadU16());
+                uint8_t addrBuf[16];
+                i.Read(addrBuf, addrLen);
+
+                Address duid;
+                duid.CopyFrom(addrBuf, addrLen);
+                clientIdentifier.SetLinkLayerAddress(duid);
+                len += clientIdentifier.GetOptionLength();
+            }
         default:
+            NS_LOG_WARN("Unidentified Option " << option);
             NS_LOG_WARN("Malformed Packet");
             return 0;
         }

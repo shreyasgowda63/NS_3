@@ -5,6 +5,7 @@ build_lib(
     helper/ping-helper.cc
     helper/radvd-helper.cc
     helper/v4traceroute-helper.cc
+    helper/dhcp6-helper.cc
     model/dhcp-client.cc
     model/dhcp-header.cc
     model/dhcp-server.cc
@@ -15,11 +16,14 @@ build_lib(
     model/v4traceroute.cc
     model/dhcp6-header.cc
     model/dhcp6-options.cc
+    model/dhcp6-server.cc
+    model/dhcp6-client.cc
   HEADER_FILES
     helper/dhcp-helper.h
     helper/ping-helper.h
     helper/radvd-helper.h
     helper/v4traceroute-helper.h
+    helper/dhcp6-helper.h
     model/dhcp-client.h
     model/dhcp-header.h
     model/dhcp-server.h
@@ -30,9 +34,12 @@ build_lib(
     model/v4traceroute.h
     model/dhcp6-header.h
     model/dhcp6-options.h
+    model/dhcp6-server.h
+    model/dhcp6-client.h
   LIBRARIES_TO_LINK ${libinternet}
   TEST_SOURCES
     test/dhcp-test.cc
     test/ipv6-radvd-test.cc
     test/ping-test.cc
+    test/dhcp6-test.cc
 )
