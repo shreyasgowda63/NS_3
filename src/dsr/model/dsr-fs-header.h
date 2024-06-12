@@ -185,11 +185,11 @@ class DsrFsHeader : public Header
      */
     uint16_t m_payloadLen;
     /**
-     * \brief The source node id
+     * \brief The source node id.
      */
     uint16_t m_sourceId;
     /**
-     * \brief The destination node id
+     * \brief The destination node id.
      */
     uint16_t m_destId;
     /**
@@ -200,7 +200,7 @@ class DsrFsHeader : public Header
 
 /**
  * \class DsrOptionField
- * \brief Option field for an DsrFsHeader
+ * \brief Option field for an DsrFsHeader.
  * Enables adding options to an DsrFsHeader
  *
  * Implementor's note: Make sure to add the result of
@@ -238,12 +238,12 @@ class DsrOptionField
      */
     uint32_t Deserialize(Buffer::Iterator start, uint32_t length);
     /**
-     * \brief Serialize the option, prepending pad1 or padn option as necessary
+     * \brief Serialize the option, prepending pad1 or padn option as necessary.
      * \param option the option header to serialize
      */
     void AddDsrOption(const DsrOptionHeader& option);
     /**
-     * \brief Get the offset where the options begin, measured from the start of
+     * \brief Get the offset where the options begin, measured from the start of.
      * the extension header.
      * \return the offset from the start of the extension header
      */
@@ -273,7 +273,7 @@ class DsrOptionField
 
 /**
  * \class DsrRoutingHeader
- * \brief Header of Dsr Routing
+ * \brief Header of Dsr Routing.
  */
 class DsrRoutingHeader : public DsrFsHeader, public DsrOptionField
 {
