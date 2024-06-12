@@ -48,6 +48,17 @@ namespace dsr
 /**
  * \ingroup dsr
  * \brief Header for DSR Options.
+ * \verbatim
+   DSR Option Header
+
+   |      0        |      1        |      2...
+   0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7...
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+   |  Option Type  |  Opt Data Len |  Option Data...
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+  \endverbatim
+ *
+ * Specific sub-classes set the `Option Type` value for their type.
  */
 class DsrOptionHeader : public Header
 {
@@ -148,6 +159,17 @@ class DsrOptionHeader : public Header
 /**
  * \ingroup dsr
  * \brief Header of DSR Option PAD1.
+ * \verbatim
+   DSR Option PAD1
+
+   |      0        |
+   0 1 2 3 4 5 6 7
+   +-+-+-+-+-+-+-+-+
+   |  Option Type  |
+   +-+-+-+-+-+-+-+-+
+   \endverbatim
+ *
+ * The `Option Type` value for PAD1 is `224`.
  */
 class DsrOptionPad1Header : public DsrOptionHeader
 {
@@ -196,6 +218,21 @@ class DsrOptionPad1Header : public DsrOptionHeader
 /**
  * \ingroup dsr
  * \brief Header of DSR Option PADN.
+ *
+ * The minimum value of `N` is 2 (the Option Type and Pad Length fields),
+ * which results in a `Pad Length` of `0`.
+ *
+ * \verbatim
+   DSR Option PADN
+
+   |      0        |      1        |      2...
+   0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7...
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+   |  Option Type  |  Pad Length   |  (N - 2) x '0'...
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+   \endverbatim
+ *
+ * The `Option Type` value for PADN is `0`.
  */
 class DsrOptionPadnHeader : public DsrOptionHeader
 {
@@ -265,6 +302,8 @@ class DsrOptionPadnHeader : public DsrOptionHeader
    |                            Address[n]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * The `Option Type` value for RREQ is `1`.
  */
 class DsrOptionRreqHeader : public DsrOptionHeader
 {
@@ -398,13 +437,16 @@ class DsrOptionRreqHeader : public DsrOptionHeader
  * \ingroup dsr
  * \brief Header of DSR Option Route Reply.
  *
+ * \RFC{4728} specifies the following format for the Route Reply (RREP)
+ * Option:
+ *
  * \verbatim
    Standard Route Reply (RREP) Message Format
 
    |      0        |      1        |      2        |      3        |
    0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
-                  -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-                  |  Option Type  |  Opt Data Len |L|   Reserved   |
+                   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+                   |  Option Type  |  Opt Data Len |L| Reserved '0'|
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                            Address[1]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -424,17 +466,21 @@ class DsrOptionRreqHeader : public DsrOptionHeader
    |      0        |      1        |      2        |      3        |
    0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  Option Type  |  Opt Data Len |L|   Reserved   |   Reserved   |
+   |  Option Type  |  Opt Data Len | Reserved '0'  | Reserved '0'  |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                            Address[1]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                            Address[2]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                               ...                             |
+   .                               ...                             .
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                            Address[n]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * The `L` Last Hop External bit is not encoded.
+ *
+ * The `Option Type` value for RREP is `2`.
  */
 class DsrOptionRrepHeader : public DsrOptionHeader
 {
@@ -536,6 +582,9 @@ class DsrOptionRrepHeader : public DsrOptionHeader
  * \ingroup dsr
  * \brief Header of DSR Option Source Route.
  *
+ * \RFC{4728} specifies the following format for the Source Route
+ * option:
+ *
  * \verbatim
    Source Route (SR) Message Format
 
@@ -553,6 +602,31 @@ class DsrOptionRrepHeader : public DsrOptionHeader
    |                            Address[n]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * ns-3 uses this modified version:
+ *
+ * \verbatim
+   Source Route (SR) Message Format
+
+   |      0        |      1        |      2        |      3        |
+   0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  Option Type |  Opt Data Len |     Salvage    |   Segs Left   |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                            Address[1]                         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                            Address[2]                         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               ...                             |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                            Address[n]                         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   \endverbatim
+ *
+ * The `Salvage` field is encoded in 8 bits; the `F` First Hop External
+ * and `L` Last Hop External flags are not encoded.
+ *
+ * The `Option Type` value for SR is `96`.
  */
 class DsrOptionSRHeader : public DsrOptionHeader
 {
@@ -700,13 +774,15 @@ enum ErrorType
  * \ingroup dsr
  * \brief Header of DSR Option Route Error.
  *
+ * \RFC{4728} specifies the following format for the RERR Option Header:
+ *
  * \verbatim
    Route Error (RERR) Message Format
 
    |      0        |      1        |      2        |      3        |
    0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  Option Type |  Opt Data Len |   Error Type  |Reservd| Salvage|
+   |  Option Type  |  Opt Data Len |   Error Type  |Reservd|Salvage|
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                      Error Source Address                     |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -718,8 +794,34 @@ enum ErrorType
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
  *
+ *
+ * ns-3 uses this modified version:
+ *
+ * \verbatim
+   ns-3 Route Error (RERR) Message Format
+
+   |      0        |      1        |      2        |      3        |
+   0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  Option Type  |  Opt Data Len |   Error Type  |    Salvage    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                      Error Source Address                     |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                    Error Destination Address                  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   .                                                               .
+   .                    Type-Specific Information                  .
+   .                                                               .
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   \endverbatim
+ *
+ * The `Salvage` field is encoded in 8 bits; the `Reservd` field is
+ * not included.
+ *
  * The type-specific information field varies by type of error,
  * as detailed in the derived classes.
+ *
+ * The `Option Type` value for RERR is `3`.
  */
 class DsrOptionRerrHeader : public DsrOptionHeader
 {
@@ -848,7 +950,14 @@ class DsrOptionRerrHeader : public DsrOptionHeader
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                    Unreachable Node Address                   |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                      Original Destination                     |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * This differs from \RFC{4728} in including the original destination,
+ * in addition to the unreachable node address.
+ *
+ * The `Option Type` value for RERR Unreachable is `3` with ErrorType `1`.
  */
 class DsrOptionRerrUnreachHeader : public DsrOptionRerrHeader
 {
@@ -990,6 +1099,8 @@ class DsrOptionRerrUnreachHeader : public DsrOptionRerrHeader
    |Unsupported Opt|
    +-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * The `Option Type` value for RERR Unreachable is `3` with ErrorType `3`.
  */
 class DsrOptionRerrUnsupportedHeader : public DsrOptionRerrHeader
 {
@@ -1115,6 +1226,8 @@ class DsrOptionRerrUnsupportedHeader : public DsrOptionRerrHeader
    |  Option Type |  Opt Data Len |         Identification         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * The `Option Type` value for ACK_RREQ is `160`.
  */
 class DsrOptionAckReqHeader : public DsrOptionHeader
 {
@@ -1198,6 +1311,8 @@ class DsrOptionAckReqHeader : public DsrOptionHeader
    |                     ACK Destination Address                   |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * The `Option Type` value for ACK is `32`.
  */
 class DsrOptionAckHeader : public DsrOptionHeader
 {
