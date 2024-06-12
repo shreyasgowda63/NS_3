@@ -134,8 +134,8 @@ struct StandardInfo
                  WifiStandard standard,
                  WifiPhyBand band,
                  MHz_t width,
-                 double snrLow,
-                 double snrHigh,
+                 dB_t snrLow,
+                 dB_t snrHigh,
                  double xMin,
                  double xMax,
                  double yMax)
@@ -155,8 +155,8 @@ struct StandardInfo
     WifiStandard m_standard; ///< standard
     WifiPhyBand m_band;      ///< PHY band
     MHz_t m_width;           ///< channel width
-    double m_snrLow;         ///< lowest SNR
-    double m_snrHigh;        ///< highest SNR
+    dB_t m_snrLow;           ///< lowest SNR
+    dB_t m_snrHigh;          ///< highest SNR
     double m_xMin;           ///< X minimum
     double m_xMax;           ///< X maximum
     double m_yMax;           ///< Y maximum
@@ -181,7 +181,7 @@ ChangeSignalAndReportRate(Ptr<FixedRssLossModel> rssModel,
                           Gnuplot2dDataset& actualDataset)
 {
     NS_LOG_FUNCTION(rssModel << step.stepSize << step.stepTime << rss);
-    double snr = rss - noise;
+    dB_t snr = rss - noise;
     rateDataset.Add(snr, g_intervalRate / 1e6);
     // Calculate received rate since last interval
     double currentRate = ((g_intervalBytes * 8) / step.stepTime) / 1e6; // Mb/s

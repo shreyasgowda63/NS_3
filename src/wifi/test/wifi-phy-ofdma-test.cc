@@ -5413,7 +5413,7 @@ class TestUlOfdmaPowerControl : public TestCase
     dBm_t m_rssiSta1; ///< expected RSSI from STA 1 at AP for HE TB PPDUs
     dBm_t m_rssiSta2; ///< expected RSSI from STA 2 at AP for HE TB PPDUs
 
-    double m_tol; ///< tolerance (in dB) between received and expected RSSIs
+    dB_t m_tol; ///< tolerance between received and expected RSSIs
 };
 
 TestUlOfdmaPowerControl::TestUlOfdmaPowerControl()

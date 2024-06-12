@@ -21,6 +21,7 @@
 #define SIMPLE_FRAME_CAPTURE_MODEL_H
 
 #include "frame-capture-model.h"
+#include "wifi-units.h"
 
 namespace ns3
 {
@@ -47,17 +48,17 @@ class SimpleFrameCaptureModel : public FrameCaptureModel
     ~SimpleFrameCaptureModel() override;
 
     /**
-     * Sets the frame capture margin (dB).
+     * Sets the frame capture margin.
      *
-     * \param margin the frame capture margin in dB
+     * \param margin the frame capture margin
      */
-    void SetMargin(double margin);
+    void SetMargin(dB_t margin);
     /**
-     * Return the frame capture margin (dB).
+     * Return the frame capture margin.
      *
-     * \return the frame capture margin in dB
+     * \return the frame capture margin
      */
-    double GetMargin() const;
+    dB_t GetMargin() const;
 
     /**
      * This method returns whether the reception should be switched to a
@@ -72,7 +73,7 @@ class SimpleFrameCaptureModel : public FrameCaptureModel
     bool CaptureNewFrame(Ptr<Event> currentEvent, Ptr<Event> newEvent) const override;
 
   private:
-    double m_margin; ///< margin for determining if a new frame (dB)
+    dB_t m_margin; ///< margin for determining if a new frame
 };
 
 } // namespace ns3

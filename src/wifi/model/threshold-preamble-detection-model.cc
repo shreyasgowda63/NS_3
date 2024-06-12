@@ -44,7 +44,7 @@ ThresholdPreambleDetectionModel::GetTypeId()
                           "(expressed in dB).",
                           DoubleValue(4),
                           MakeDoubleAccessor(&ThresholdPreambleDetectionModel::m_threshold),
-                          MakeDoubleChecker<double>())
+                          MakeDoubleChecker<dB_t>())
             .AddAttribute("MinimumRssi",
                           "Preamble is dropped if the RSSI is below this value (expressed in dBm).",
                           DoubleValue(-82),
