@@ -131,6 +131,12 @@ class Dhcp6Header : public Header
     };
 
     /**
+     * \brief Get the client identifier.
+     * \return the client identifier option.
+     */
+    IdentifierOption GetClientIdentifier();
+
+    /**
      * \brief Set the elapsed time option.
      * \param timestamp the time at which the client began the exchange.
      */

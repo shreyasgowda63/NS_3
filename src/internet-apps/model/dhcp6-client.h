@@ -60,6 +60,31 @@ class Dhcp6Client : public Application
     void StopApplication() override;
 
     /**
+     * \brief State of the DHCPv6 client.
+     */
+    enum State
+    {
+        WAIT_ADVERTISE = 1, // Waiting for an advertise message
+        WAIT_REPLY = 2,     // Waiting for a reply message
+    };
+
+    /**
+     * \brief Handles incoming packets from the network
+     * \param socket Socket bound to port 546 of the DHCP client
+     */
+    void NetHandler(Ptr<Socket> socket);
+
+    /**
+     * \brief Handle changes in the link state.
+     */
+    void LinkStateHandler();
+
+    /**
+     * \brief Used to send the Solicit message and start the DHCPv6 client.
+     */
+    void Boot();
+
+    /**
      * \brief The port number of the DHCPv6 client.
      */
     static const int DHCP_CLIENT_PORT = 546;
@@ -83,6 +108,16 @@ class Dhcp6Client : public Application
      * \brief Pointer to the net device of the client.
      */
     Ptr<NetDevice> m_device;
+
+    /**
+     * \brief The state of the DHCPv6 client.
+     */
+    uint8_t m_state;
+
+    /**
+     * \brief First boot of the client.
+     */
+    bool m_firstBoot;
 };
 
 } // namespace ns3

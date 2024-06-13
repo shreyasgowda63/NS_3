@@ -86,7 +86,14 @@ IdentifierOption::IdentifierOption(uint16_t hardwareType, Address linkLayerAddre
 }
 
 uint16_t
-IdentifierOption::GetHardwareType()
+IdentifierOption::GetDuidType() const
+{
+    NS_LOG_FUNCTION(this);
+    return m_duidType;
+}
+
+uint16_t
+IdentifierOption::GetHardwareType() const
 {
     NS_LOG_FUNCTION(this);
     return m_hardwareType;
@@ -100,7 +107,7 @@ IdentifierOption::SetHardwareType(uint16_t hardwareType)
 }
 
 Address
-IdentifierOption::GetLinkLayerAddress()
+IdentifierOption::GetLinkLayerAddress() const
 {
     NS_LOG_FUNCTION(this);
     return m_linkLayerAddress;
@@ -172,7 +179,7 @@ IaAddressOption::IaAddressOption(Ipv6Address iaAddress,
 }
 
 Ipv6Address
-IaAddressOption::GetIaAddress()
+IaAddressOption::GetIaAddress() const
 {
     NS_LOG_FUNCTION(this);
     return m_iaAddress;
@@ -186,7 +193,7 @@ IaAddressOption::SetIaAddress(Ipv6Address iaAddress)
 }
 
 uint32_t
-IaAddressOption::GetPreferredLifetime()
+IaAddressOption::GetPreferredLifetime() const
 {
     NS_LOG_FUNCTION(this);
     return m_preferredLifetime;
@@ -200,7 +207,7 @@ IaAddressOption::SetPreferredLifetime(uint32_t preferredLifetime)
 }
 
 uint32_t
-IaAddressOption::GetValidLifetime()
+IaAddressOption::GetValidLifetime() const
 {
     NS_LOG_FUNCTION(this);
     return m_validLifetime;
@@ -221,7 +228,7 @@ IaOptions::IaOptions()
 }
 
 uint32_t
-IaOptions::GetIaid()
+IaOptions::GetIaid() const
 {
     NS_LOG_FUNCTION(this);
     return m_iaid;
@@ -235,7 +242,7 @@ IaOptions::SetIaid(uint32_t iaid)
 }
 
 uint32_t
-IaOptions::GetT1()
+IaOptions::GetT1() const
 {
     NS_LOG_FUNCTION(this);
     return m_t1;
@@ -249,7 +256,7 @@ IaOptions::SetT1(uint32_t t1)
 }
 
 uint32_t
-IaOptions::GetT2()
+IaOptions::GetT2() const
 {
     NS_LOG_FUNCTION(this);
     return m_t2;

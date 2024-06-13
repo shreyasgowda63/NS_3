@@ -111,10 +111,16 @@ class IdentifierOption : public Options
     IdentifierOption(uint16_t hardwareType, Address linkLayerAddress);
 
     /**
+     * \brief Get the DUID type
+     * \return the DUID type.
+     */
+    uint16_t GetDuidType() const;
+
+    /**
      * \brief Get the hardware type.
      * \return the hardware type
      */
-    uint16_t GetHardwareType();
+    uint16_t GetHardwareType() const;
 
     /**
      * \brief Set the hardware type.
@@ -126,7 +132,7 @@ class IdentifierOption : public Options
      * \brief Get the link-layer address.
      * \return the link layer address of the node.
      */
-    Address GetLinkLayerAddress();
+    Address GetLinkLayerAddress() const;
 
     /**
      * \brief Set the link-layer address.
@@ -237,7 +243,7 @@ class IaAddressOption : public Options
      * \brief Get the IA Address.
      * \return the IPv6 address of the Identity Association
      */
-    Ipv6Address GetIaAddress();
+    Ipv6Address GetIaAddress() const;
 
     /**
      * \brief Set the IA Address.
@@ -249,7 +255,7 @@ class IaAddressOption : public Options
      * \brief Get the preferred lifetime.
      * \return the preferred lifetime
      */
-    uint32_t GetPreferredLifetime();
+    uint32_t GetPreferredLifetime() const;
 
     /**
      * \brief Set the preferred lifetime.
@@ -261,7 +267,7 @@ class IaAddressOption : public Options
      * \brief Get the valid lifetime.
      * \return the lifetime for which the address is valid.
      */
-    uint32_t GetValidLifetime();
+    uint32_t GetValidLifetime() const;
 
     /**
      * \brief Set the valid lifetime.
@@ -309,7 +315,7 @@ class IaOptions : public Options
      * \brief Get the unique identifier for the given IANA or IATA.
      * \return the ID of the IANA or IATA
      */
-    uint32_t GetIaid();
+    uint32_t GetIaid() const;
 
     /**
      * \brief Set the unique identifier for the given IANA or IATA.
@@ -322,7 +328,7 @@ class IaOptions : public Options
      * the server which provided the address to extend the lifetime.
      * \return the time interval T1
      */
-    uint32_t GetT1();
+    uint32_t GetT1() const;
 
     /**
      * \brief Set the time interval in seconds after which the client contacts
@@ -336,7 +342,7 @@ class IaOptions : public Options
      * any available server to extend the address lifetime.
      * \return the time interval T2
      */
-    uint32_t GetT2();
+    uint32_t GetT2() const;
 
     /**
      * \brief Set the time interval in seconds after which the client contacts

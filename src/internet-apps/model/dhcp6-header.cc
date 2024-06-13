@@ -71,6 +71,7 @@ Dhcp6Header::AddMessageLength(uint32_t len)
 void
 Dhcp6Header::ResetOptions()
 {
+    m_len = 4;
     int i;
     for (i = 0; i < 65536; i++)
     {
@@ -94,6 +95,12 @@ Dhcp6Header::GetInstanceTypeId() const
     return GetTypeId();
 }
 
+IdentifierOption
+Dhcp6Header::GetClientIdentifier()
+{
+    return clientIdentifier;
+}
+
 void
 Dhcp6Header::AddElapsedTime(uint16_t timestamp)
 {
@@ -102,6 +109,7 @@ Dhcp6Header::AddElapsedTime(uint16_t timestamp)
     elapsedTime.SetOptionLength(2);
     elapsedTime.SetOptionValue(now - timestamp);
     AddMessageLength(6);
+    m_options[OPTION_ELAPSED_TIME] = true;
 }
 
 void
@@ -127,8 +135,9 @@ Dhcp6Header::AddIdentifierOption(IdentifierOption& identifier,
     identifier.SetOptionLength(duidLength);
     identifier.SetHardwareType(hardwareType);
     identifier.SetLinkLayerAddress(linkLayerAddress);
+
+    m_options[optionType] = true;
     AddMessageLength(4 + duidLength);
-    NS_LOG_INFO("message length " << GetSerializedSize());
 }
 
 void
@@ -179,6 +188,9 @@ Dhcp6Header::AddIaOption(uint16_t optionType, uint32_t iaid, uint32_t t1, uint32
         m_iataList.push_back(newIa);
         break;
     }
+
+    AddMessageLength(4 + optionLength);
+    m_options[optionType] = true;
 }
 
 void
@@ -201,24 +213,25 @@ Dhcp6Header::AddAddress(uint32_t iaid,
         itr++;
     }
 
-    // Check if IAID corresponds to an IATA option.
-    itr = m_iataList.begin();
-    while (itr != m_iataList.end())
+    // Else, check if IAID corresponds to an IATA option.
+    if (!isIana)
     {
-        if (iaid == (*itr).GetIaid())
+        itr = m_iataList.begin();
+        while (itr != m_iataList.end())
         {
-            isIata = true;
-            break;
+            if (iaid == (*itr).GetIaid())
+            {
+                isIata = true;
+                break;
+            }
+            itr++;
         }
-        itr++;
     }
 
     if (!isIana && !isIata)
     {
         NS_LOG_ERROR("Given IAID does not exist, cannot add address.");
     }
-
-    std::list<IaAddressOption> addressOptions = (*itr).m_iaAddressOption;
 
     IaAddressOption adrOpt;
     adrOpt.SetOptionCode(5);
@@ -229,10 +242,12 @@ Dhcp6Header::AddAddress(uint32_t iaid,
     adrOpt.SetPreferredLifetime(prefLifetime);
     adrOpt.SetValidLifetime(validLifetime);
 
-    addressOptions.push_back(adrOpt);
+    (*itr).m_iaAddressOption.push_back(adrOpt);
 
     // Add the address option length to the overall IANA or IATA length.
-    (*itr).SetOptionLength((*itr).GetOptionLength() + 24);
+    (*itr).SetOptionLength((*itr).GetOptionLength() + 28);
+
+    AddMessageLength(4 + 24);
 }
 
 // TODO: Add status code option and update the length accordingly.
@@ -261,6 +276,55 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
         i.WriteU16(elapsedTime.GetOptionCode());
         i.WriteU16(elapsedTime.GetOptionLength());
         i.WriteU16(elapsedTime.GetOptionValue());
+    }
+    if (m_options[OPTION_CLIENTID])
+    {
+        i.WriteU16(clientIdentifier.GetOptionCode());
+        i.WriteU16(clientIdentifier.GetOptionLength());
+        i.WriteU16(clientIdentifier.GetDuidType());
+        i.WriteU16(clientIdentifier.GetHardwareType());
+        Address addr = clientIdentifier.GetLinkLayerAddress();
+        uint8_t addrBuf[16];
+        addr.CopyTo(addrBuf);
+        i.Write(addrBuf, addr.GetLength());
+    }
+    if (m_options[OPTION_SERVERID])
+    {
+        i.WriteU16(serverIdentifier.GetOptionCode());
+        i.WriteU16(serverIdentifier.GetOptionLength());
+        i.WriteU16(clientIdentifier.GetDuidType());
+        i.WriteU16(serverIdentifier.GetHardwareType());
+        Address addr = serverIdentifier.GetLinkLayerAddress();
+        uint8_t addrBuf[16];
+        addr.CopyTo(addrBuf);
+        i.Write(addrBuf, addr.GetLength());
+    }
+    if (m_options[OPTION_IA_NA])
+    {
+        for (auto itr = m_ianaList.begin(); itr != m_ianaList.end(); itr++)
+        {
+            i.WriteU16((*itr).GetOptionCode());
+            i.WriteU16((*itr).GetOptionLength());
+            i.WriteU32((*itr).GetIaid());
+            i.WriteU32((*itr).GetT1());
+            i.WriteU32((*itr).GetT2());
+
+            std::list<IaAddressOption> iaAddresses = (*itr).m_iaAddressOption;
+            auto iaItr = iaAddresses.begin();
+            while (iaItr != iaAddresses.end())
+            {
+                i.WriteU16((*iaItr).GetOptionCode());
+                i.WriteU16((*iaItr).GetOptionLength());
+
+                Address addr = (*iaItr).GetIaAddress();
+                uint8_t addrBuf[16];
+                addr.CopyTo(addrBuf);
+                i.Write(addrBuf, 16);
+                i.WriteU32((*iaItr).GetPreferredLifetime());
+                i.WriteU32((*iaItr).GetValidLifetime());
+                iaItr++;
+            }
+        }
     }
 }
 
@@ -293,6 +357,7 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
         switch (option)
         {
         case OPTION_ELAPSED_TIME:
+            NS_LOG_INFO("Elapsed Time Option");
             if (len + 4 <= cLen)
             {
                 elapsedTime.SetOptionCode(option);
@@ -307,7 +372,9 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 return 0;
             }
             break;
+
         case OPTION_CLIENTID:
+            NS_LOG_INFO("Client Identifier Option");
             if (len + 2 <= cLen)
             {
                 clientIdentifier.SetOptionCode(option);
@@ -318,15 +385,84 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
             {
                 // Total length - DUID Type length(2) - Hardware Type length(2)
                 uint32_t addrLen = clientIdentifier.GetOptionLength() - 4;
+
+                // Read DUID Type. Not used (3 is the only valid value)
+                i.ReadU16();
+
                 clientIdentifier.SetHardwareType(i.ReadU16());
                 uint8_t addrBuf[16];
                 i.Read(addrBuf, addrLen);
-
                 Address duid;
                 duid.CopyFrom(addrBuf, addrLen);
                 clientIdentifier.SetLinkLayerAddress(duid);
                 len += clientIdentifier.GetOptionLength();
             }
+            break;
+
+        case OPTION_SERVERID:
+            NS_LOG_INFO("Server ID Option");
+            if (len + 2 <= cLen)
+            {
+                serverIdentifier.SetOptionCode(option);
+                serverIdentifier.SetOptionLength(i.ReadU16());
+                len += 2;
+            }
+            if (len + clientIdentifier.GetOptionLength() <= cLen)
+            {
+                // Total length - DUID Type length(2) - Hardware Type length(2)
+                uint32_t addrLen = serverIdentifier.GetOptionLength() - 4;
+
+                // Read DUID Type. Not used (3 is the only valid value)
+                i.ReadU16();
+
+                serverIdentifier.SetHardwareType(i.ReadU16());
+                uint8_t addrBuf[16];
+                i.Read(addrBuf, addrLen);
+                Address duid;
+                duid.CopyFrom(addrBuf, addrLen);
+                serverIdentifier.SetLinkLayerAddress(duid);
+                len += serverIdentifier.GetOptionLength();
+            }
+            break;
+
+        case OPTION_IA_NA: {
+            NS_LOG_INFO("IANA Option");
+            IaOptions iana;
+            if (len + 2 <= cLen)
+            {
+                iana.SetOptionCode(option);
+                iana.SetOptionLength(i.ReadU16());
+                len += 2;
+            }
+
+            if (len + 12 <= cLen)
+            {
+                iana.SetIaid(i.ReadU32());
+                iana.SetT1(i.ReadU32());
+                iana.SetT2(i.ReadU32());
+                len += 12;
+            }
+
+            while (len + 28 <= cLen)
+            {
+                IaAddressOption iaAddrOpt;
+                iaAddrOpt.SetOptionCode(i.ReadU16());
+                iaAddrOpt.SetOptionLength(i.ReadU16());
+
+                uint8_t addrBuf[16];
+                i.Read(addrBuf, 16);
+                iaAddrOpt.SetIaAddress(Ipv6Address(addrBuf));
+
+                iaAddrOpt.SetPreferredLifetime(i.ReadU32());
+                iaAddrOpt.SetValidLifetime(i.ReadU32());
+
+                iana.m_iaAddressOption.push_back(iaAddrOpt);
+                len += 4 + iaAddrOpt.GetOptionLength();
+            }
+
+            m_ianaList.push_back(iana);
+            break;
+        }
         default:
             NS_LOG_WARN("Unidentified Option " << option);
             NS_LOG_WARN("Malformed Packet");

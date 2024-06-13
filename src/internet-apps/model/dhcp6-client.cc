@@ -49,6 +49,7 @@ Dhcp6Client::GetTypeId()
 Dhcp6Client::Dhcp6Client()
 {
     NS_LOG_FUNCTION(this);
+    m_firstBoot = true;
 }
 
 void
@@ -62,6 +63,45 @@ void
 Dhcp6Client::SetDhcp6ClientNetDevice(Ptr<NetDevice> netDevice)
 {
     m_device = netDevice;
+}
+
+void
+Dhcp6Client::NetHandler(Ptr<Socket> socket)
+{
+    NS_LOG_FUNCTION(this << socket);
+
+    Address from;
+    Ptr<Packet> packet = m_socket->RecvFrom(from);
+    Dhcp6Header header;
+    if (packet->RemoveHeader(header) == 0)
+    {
+        return;
+    }
+    if (m_state == WAIT_ADVERTISE && header.GetMessageType() == Dhcp6Header::ADVERTISE)
+    {
+        NS_LOG_INFO("Received Advertise");
+    }
+    if (m_state == WAIT_REPLY && header.GetMessageType() == Dhcp6Header::REPLY)
+    {
+        // AcceptReply(header, from);
+    }
+}
+
+void
+Dhcp6Client::LinkStateHandler()
+{
+    NS_LOG_FUNCTION(this);
+
+    if (m_device->IsLinkUp())
+    {
+        NS_LOG_INFO("Link up at " << Simulator::Now().As(Time::S));
+        m_socket->SetRecvCallback(MakeCallback(&Dhcp6Client::NetHandler, this));
+        StartApplication();
+    }
+    else
+    {
+        NS_LOG_INFO("Link down at " << Simulator::Now().As(Time::S));
+    }
 }
 
 void
@@ -83,30 +123,37 @@ Dhcp6Client::StartApplication()
         NS_ABORT_MSG("DHCPv6 daemon must have a link-local address.");
     }
 
-    Dhcp6Header header;
-    Ptr<Packet> packet;
-    packet = Create<Packet>();
-
-    // Dummy link layer address.
-    // TODO: Retrieve actual link layer address.
-    // auto linkLayer = Mac48Address("ab:cd:ef:12:34:56");
-    header.SetTransactId(123);
-    header.SetMessageType(Dhcp6Header::SOLICIT);
-    // header.AddClientIdentifier(1234, linkLayer);
-    header.AddElapsedTime(0);
-    packet->AddHeader(header);
-
     if (!m_socket)
     {
         TypeId tid = TypeId::LookupByName("ns3::UdpSocketFactory");
         m_socket = Socket::CreateSocket(node, tid);
-        Inet6SocketAddress local = Inet6SocketAddress(Ipv6Address::GetAny(), DHCP_CLIENT_PORT);
         m_socket->BindToNetDevice(m_device);
-        m_socket->Bind(local);
         m_socket->Bind6();
     }
-    // m_socket->SetRecvCallback(MakeCallback(&DhcpClient::NetHandler, this));
+    m_socket->SetRecvCallback(MakeCallback(&Dhcp6Client::NetHandler, this));
 
+    if (m_firstBoot)
+    {
+        m_device->AddLinkChangeCallback(MakeCallback(&Dhcp6Client::LinkStateHandler, this));
+        m_firstBoot = false;
+    }
+    Boot();
+}
+
+void
+Dhcp6Client::Boot()
+{
+    Dhcp6Header header;
+    Ptr<Packet> packet;
+    packet = Create<Packet>();
+
+    // Retrieve link layer address of the device.
+    auto linkLayer = m_device->GetAddress();
+    header.SetTransactId(123);
+    header.SetMessageType(Dhcp6Header::SOLICIT);
+    header.AddElapsedTime(0);
+    header.AddClientIdentifier(1234, linkLayer);
+    packet->AddHeader(header);
     if ((m_socket->SendTo(
             packet,
             0,
@@ -118,6 +165,8 @@ Dhcp6Client::StartApplication()
     {
         NS_LOG_INFO("Error while sending DHCP Solicit");
     }
+
+    m_state = WAIT_ADVERTISE;
 }
 
 void

@@ -26,7 +26,7 @@
 namespace ns3
 {
 
-class InetSocketAddress;
+class Inet6SocketAddress;
 class Socket;
 class Packet;
 
@@ -51,6 +51,18 @@ class Dhcp6Server : public Application
     Dhcp6Server();
 
     /**
+     * \brief Add a managed address pool.
+     * \param pool The address pool to be managed by the server.
+     * \param prefix The prefix of the address pool.
+     * \param minAddress The minimum address in the pool.
+     * \param maxAddress The maximum address in the pool.
+     */
+    void AddAddressPool(Ipv6Address pool,
+                        Ipv6Prefix prefix,
+                        Ipv6Address minAddress,
+                        Ipv6Address maxAddress);
+
+    /**
      * \brief Set the net device that the DHCPv6 server will use.
      * \param netDevice The net device that the server will use
      */
@@ -64,6 +76,16 @@ class Dhcp6Server : public Application
     void StopApplication() override;
 
     /**
+     * \brief Stores the type of IA.
+     */
+    enum IaType
+    {
+        IA_NA = 1,
+        IA_TA = 2,
+        IA_PD = 3
+    };
+
+    /**
      * \brief Handles incoming packets from the network
      * \param socket Socket bound to port 547 of the DHCP server
      */
@@ -73,17 +95,17 @@ class Dhcp6Server : public Application
      * \brief Sends DHCPv6 Advertise after receiving DHCPv6 Solicit.
      * \param iDev incoming NetDevice
      * \param header DHCPv6 header of the received message
-     * \param from Address of the DHCPv6 client
+     * \param client Address of the DHCPv6 client
      */
-    void SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, InetSocketAddress from);
+    void SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
 
     /**
      * \brief Sends Reply after receiving Request
      * \param iDev incoming NetDevice
      * \param header DHCPv6 header of the received message
-     * \param from Address of the DHCP client
+     * \param client Address of the DHCP client
      */
-    void SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, InetSocketAddress from);
+    void SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
 
     /**
      * \brief Modifies the remaining lease time of addresses
@@ -94,10 +116,16 @@ class Dhcp6Server : public Application
      * \brief The port number of the DHCPv6 server.
      */
     static const int PORT = 547;
+
     /**
      * \brief The socket bound to port 547.
      */
-    Ptr<Socket> m_socket;
+    Ptr<Socket> m_recvSocket;
+
+    /**
+     * \brief The socket used to send packets.
+     */
+    Ptr<Socket> m_sendSocket;
 
     /**
      * \brief Pointer to the net device used by the server.
@@ -109,6 +137,12 @@ class Dhcp6Server : public Application
      * Address pool + Min address / Max address
      */
     typedef std::map<Ipv6Address, std::pair<Ipv6Address, Ipv6Address>> AddressPool;
+
+    /**
+     * \brief Store the prefixes of the address pool.
+     * Address pool + Prefix
+     */
+    typedef std::map<Ipv6Address, Ipv6Prefix> Prefixes;
 
     /**
      * \brief Leased address container
@@ -135,11 +169,20 @@ class Dhcp6Server : public Application
     typedef std::list<Ipv4Address> AvailableAddress;
 
     /**
-     * \brief List of available address pools.
-     * The first pool corresponds to the subnet that the DHCPv6 server belongs
-     * to.
+     * \brief Map of available address pools.
      */
     AddressPool availablePools;
+
+    /**
+     * \brief Map of prefixes corresponding to the address pools.
+     */
+    Prefixes availablePrefixes;
+
+    /**
+     * \brief Store IA bindings.
+     * DUID + IA Type / IAID
+     */
+    std::map<IdentifierOption, std::pair<IaType, uint32_t>> iaBindings;
 
     /**
      * \brief Addresses that have been leased to clients.
@@ -177,6 +220,16 @@ class Dhcp6Server : public Application
      * rebind timer is 2000 seconds.
      */
     Time m_rebind;
+
+    /**
+     * \brief Counter to keep track of IAIDs in the server.
+     */
+    uint32_t m_iaidCount;
+
+    Ipv6Address m_addressPool; //!< Address pool
+    Ipv6Prefix m_prefix;       //!< Prefix of the address pool
+    Ipv6Address m_minAddress;  //!< Minimum address in the pool
+    Ipv6Address m_maxAddress;  //!< Maximum address in the pool
 };
 
 } // namespace ns3
