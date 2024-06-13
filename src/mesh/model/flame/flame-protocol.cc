@@ -45,6 +45,9 @@ namespace flame
 NS_OBJECT_ENSURE_REGISTERED(FlameTag);
 NS_OBJECT_ENSURE_REGISTERED(FlameProtocol);
 
+/// LLC protocol number reserved by flame
+constexpr uint16_t FLAME_PROTOCOL = 0x4040;
+
 TypeId
 FlameTag::GetTypeId()
 {

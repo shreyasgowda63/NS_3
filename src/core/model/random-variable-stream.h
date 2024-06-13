@@ -970,7 +970,7 @@ class NormalRandomVariable : public RandomVariableStream
 {
   public:
     /** Large constant to bound the range. */
-    static const double INFINITE_VALUE;
+    static constexpr double INFINITE_VALUE{1e307};
 
     /**
      * \brief Register this type.

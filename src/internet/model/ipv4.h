@@ -439,7 +439,7 @@ class Ipv4 : public Object
      */
     virtual void DeleteRawSocket(Ptr<Socket> socket) = 0;
 
-    static const uint32_t IF_ANY = 0xffffffff; //!< interface wildcard, meaning any interface
+    static constexpr uint32_t IF_ANY{0xffffffff}; //!< interface wildcard, meaning any interface
 
   private:
     // Indirect the Ipv4 attributes through private pure virtual methods

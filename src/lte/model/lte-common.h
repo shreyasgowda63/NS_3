@@ -24,11 +24,6 @@
 
 #include <cmath>
 
-// see 36.213 section 8
-#define UL_PUSCH_TTIS_DELAY 4
-
-#define HARQ_PERIOD 7
-
 namespace ns3
 {
 
@@ -37,6 +32,11 @@ constexpr uint32_t MIN_NO_CC = 1;
 
 /// Maximum number of carrier components allowed by 3GPP up to R13
 constexpr uint32_t MAX_NO_CC = 5;
+
+// see 36.213 section 8
+constexpr uint32_t UL_PUSCH_TTIS_DELAY = 4;
+
+constexpr uint32_t HARQ_PERIOD = 7;
 
 /// LteFlowId structure
 struct LteFlowId_t
@@ -146,7 +146,7 @@ class LteFfConverter
      */
     static double getMinFpS11dot3Value();
 
-    // static const double MIN_FP_S11DOT3_VALUE = -4096;
+    // static constexpr double MIN_FP_S11DOT3_VALUE{-4096};
 };
 
 /// BufferSizeLevelBsr class

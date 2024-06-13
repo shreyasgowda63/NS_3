@@ -410,7 +410,7 @@ InterferenceHelper::CalculateSnr(double signal,
 {
     NS_LOG_FUNCTION(this << signal << noiseInterference << channelWidth << +nss);
     // thermal noise at 290K in J/s = W
-    static const double BOLTZMANN = 1.3803e-23;
+    constexpr double BOLTZMANN = 1.3803e-23;
     // Nt is the power of thermal noise in W
     double Nt = BOLTZMANN * 290 * channelWidth * 1e6;
     // receiver noise Floor (W) which accounts for thermal noise and non-idealities of the receiver

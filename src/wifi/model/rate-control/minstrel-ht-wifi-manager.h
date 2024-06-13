@@ -167,27 +167,27 @@ typedef std::vector<GroupInfo> McsGroupData;
  * Constants for maximum values.
  */
 
-static const uint8_t MAX_HT_SUPPORTED_STREAMS =
+constexpr uint8_t MAX_HT_SUPPORTED_STREAMS =
     4; //!< Maximal number of streams supported by the HT PHY layer.
-static const uint8_t MAX_VHT_SUPPORTED_STREAMS =
+constexpr uint8_t MAX_VHT_SUPPORTED_STREAMS =
     8; //!< Maximal number of streams supported by the VHT PHY layer.
-static const uint8_t MAX_HE_SUPPORTED_STREAMS =
+constexpr uint8_t MAX_HE_SUPPORTED_STREAMS =
     8; //!< Maximal number of streams supported by the HE PHY layer.
-static const uint8_t MAX_HT_STREAM_GROUPS =
+constexpr uint8_t MAX_HT_STREAM_GROUPS =
     4; //!< Maximal number of groups per stream in HT (2 possible channel widths and 2 possible GI
        //!< configurations).
-static const uint8_t MAX_VHT_STREAM_GROUPS =
+constexpr uint8_t MAX_VHT_STREAM_GROUPS =
     8; //!< Maximal number of groups per stream in VHT (4 possible channel widths and 2 possible GI
        //!< configurations).
-static const uint8_t MAX_HE_STREAM_GROUPS =
+constexpr uint8_t MAX_HE_STREAM_GROUPS =
     12; //!< Maximal number of groups per stream in HE (4 possible channel widths and 3 possible GI
         //!< configurations).
-static const uint8_t MAX_HT_GROUP_RATES = 8;   //!< Number of rates (or MCS) per HT group.
-static const uint8_t MAX_VHT_GROUP_RATES = 10; //!< Number of rates (or MCS) per VHT group.
-static const uint8_t MAX_HE_GROUP_RATES = 12;  //!< Number of rates (or MCS) per HE group.
-static const uint8_t MAX_HT_WIDTH = 40;        //!< Maximal channel width in MHz.
-static const uint8_t MAX_VHT_WIDTH = 160;      //!< Maximal channel width in MHz.
-static const uint8_t MAX_HE_WIDTH = 160;       //!< Maximal channel width in MHz.
+constexpr uint8_t MAX_HT_GROUP_RATES = 8;   //!< Number of rates (or MCS) per HT group.
+constexpr uint8_t MAX_VHT_GROUP_RATES = 10; //!< Number of rates (or MCS) per VHT group.
+constexpr uint8_t MAX_HE_GROUP_RATES = 12;  //!< Number of rates (or MCS) per HE group.
+constexpr uint8_t MAX_HT_WIDTH = 40;        //!< Maximal channel width in MHz.
+constexpr uint8_t MAX_VHT_WIDTH = 160;      //!< Maximal channel width in MHz.
+constexpr uint8_t MAX_HE_WIDTH = 160;       //!< Maximal channel width in MHz.
 
 /**
  * \brief Implementation of Minstrel-HT Rate Control Algorithm

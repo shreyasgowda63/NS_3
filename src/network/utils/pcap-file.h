@@ -42,9 +42,9 @@ class Header;
 class PcapFile
 {
   public:
-    static const int32_t ZONE_DEFAULT = 0; //!< Time zone offset for current location
-    static const uint32_t SNAPLEN_DEFAULT =
-        65535; //!< Default value for maximum octets to save per packet
+    static constexpr int32_t ZONE_DEFAULT{0}; //!< Time zone offset for current location
+    static constexpr uint32_t SNAPLEN_DEFAULT{
+        65535}; //!< Default value for maximum octets to save per packet
 
   public:
     PcapFile();

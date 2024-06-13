@@ -51,7 +51,7 @@ NS_OBJECT_ENSURE_REGISTERED(UdpSocketImpl);
 // The correct maximum UDP message size is 65507, as determined by the following formula:
 // 0xffff - (sizeof(IP Header) + sizeof(UDP Header)) = 65535-(20+8) = 65507
 // \todo MAX_IPV4_UDP_DATAGRAM_SIZE is correct only for IPv4
-static const uint32_t MAX_IPV4_UDP_DATAGRAM_SIZE = 65507; //!< Maximum UDP datagram size
+constexpr uint32_t MAX_IPV4_UDP_DATAGRAM_SIZE = 65507; //!< Maximum UDP datagram size
 
 // Add attributes generic to all UdpSockets to base class UdpSocket
 TypeId

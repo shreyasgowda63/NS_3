@@ -97,8 +97,6 @@ class DhcpClient : public Application
         WAIT_ACK = 9       //!< State of a client that waits for acknowledgment
     };
 
-    static const int DHCP_PEER_PORT = 67; //!< DHCP server port
-
     /**
      * \brief Handles changes in LinkState
      */

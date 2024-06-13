@@ -394,12 +394,13 @@ class ThreeGppChannelModel : public MatrixBasedChannelModel
     bool m_portraitMode;           //!< true if portrait mode, false if landscape
     double m_blockerSpeed;         //!< the blocker speed
 
-    static const uint8_t PHI_INDEX = 0; //!< index of the PHI value in the m_nonSelfBlocking array
-    static const uint8_t X_INDEX = 1;   //!< index of the X value in the m_nonSelfBlocking array
-    static const uint8_t THETA_INDEX =
-        2;                            //!< index of the THETA value in the m_nonSelfBlocking array
-    static const uint8_t Y_INDEX = 3; //!< index of the Y value in the m_nonSelfBlocking array
-    static const uint8_t R_INDEX = 4; //!< index of the R value in the m_nonSelfBlocking array
+    static constexpr uint8_t PHI_INDEX{
+        0};                              //!< index of the PHI value in the m_nonSelfBlocking array
+    static constexpr uint8_t X_INDEX{1}; //!< index of the X value in the m_nonSelfBlocking array
+    static constexpr uint8_t THETA_INDEX{
+        2}; //!< index of the THETA value in the m_nonSelfBlocking array
+    static constexpr uint8_t Y_INDEX{3}; //!< index of the Y value in the m_nonSelfBlocking array
+    static constexpr uint8_t R_INDEX{4}; //!< index of the R value in the m_nonSelfBlocking array
 };
 } // namespace ns3
 

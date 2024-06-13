@@ -44,10 +44,8 @@
 #include "ns3/wifi-net-device.h"
 #include "ns3/wifi-phy.h"
 
+#include <algorithm>
 #include <iomanip>
-
-#define Min(a, b) ((a < b) ? a : b)
-#define Max(a, b) ((a > b) ? a : b)
 
 NS_LOG_COMPONENT_DEFINE("MinstrelHtWifiManager");
 
@@ -1901,9 +1899,9 @@ MinstrelHtWifiManager::CalculateRetransmits(MinstrelHtWifiRemoteStation* station
 
         /* Contention time for first 2 tries */
         cwTime = (cw / 2) * slotTime;
-        cw = Min((cw + 1) * 2, cwMax);
+        cw = std::min((cw + 1) * 2, cwMax);
         cwTime += (cw / 2) * slotTime;
-        cw = Min((cw + 1) * 2, cwMax);
+        cw = std::min((cw + 1) * 2, cwMax);
 
         /* Total TX time for data and Contention after first 2 tries */
         txTime = cwTime + 2 * (dataTxTime + ackTime);
@@ -1913,7 +1911,7 @@ MinstrelHtWifiManager::CalculateRetransmits(MinstrelHtWifiRemoteStation* station
         {
             /* Contention time for this try */
             cwTime = (cw / 2) * slotTime;
-            cw = Min((cw + 1) * 2, cwMax);
+            cw = std::min((cw + 1) * 2, cwMax);
 
             /* Total TX time after this try */
             txTime += cwTime + ackTime + dataTxTime;
@@ -1994,7 +1992,8 @@ MinstrelHtWifiManager::PrintTable(MinstrelHtWifiRemoteStation* station)
     }
 
     station->m_statsFile << "\nTotal packet count::    ideal "
-                         << Max(0, station->m_totalPacketsCount - station->m_samplePacketsCount)
+                         << std::max(0,
+                                     station->m_totalPacketsCount - station->m_samplePacketsCount)
                          << "              lookaround " << station->m_samplePacketsCount << "\n";
     station->m_statsFile << "Average # of aggregated frames per A-MPDU: " << station->m_avgAmpduLen
                          << "\n\n";

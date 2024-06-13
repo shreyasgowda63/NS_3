@@ -489,11 +489,6 @@ class WimaxNetDevice : public NetDevice
      */
     WimaxNetDevice& operator=(const WimaxNetDevice&);
 
-    /// Maximum MSDU size
-    static const uint16_t MAX_MSDU_SIZE = 1500;
-    /// recommended by wimax forum.
-    static const uint16_t DEFAULT_MSDU_SIZE = 1400;
-
     /**
      * Send a packet
      * \param packet the packet

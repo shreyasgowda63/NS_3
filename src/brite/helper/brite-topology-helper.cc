@@ -36,6 +36,12 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("BriteTopologyHelper");
 
+/**
+ * Brite values are unitless however all examples provided use mbps to specify rate
+ * this constant value is used to convert the mbps provided by brite to bps.
+ */
+constexpr int MBPS_TO_BPS = 1000000;
+
 BriteTopologyHelper::BriteTopologyHelper(std::string confFile,
                                          std::string seedFile,
                                          std::string newseedFile)
@@ -475,7 +481,7 @@ BriteTopologyHelper::ConstructTopology()
         // The brite value for data rate is given in Mbps
         m_britePointToPointHelper.SetDeviceAttribute(
             "DataRate",
-            DataRateValue(DataRate((*it).bandwidth * mbpsToBps)));
+            DataRateValue(DataRate((*it).bandwidth * MBPS_TO_BPS)));
 
         m_netDevices.push_back(
             new NetDeviceContainer(m_britePointToPointHelper.Install(m_nodes.Get((*it).srcId),

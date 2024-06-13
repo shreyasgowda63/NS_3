@@ -41,6 +41,9 @@ NS_LOG_COMPONENT_DEFINE("PieQueueDisc");
 
 NS_OBJECT_ENSURE_REGISTERED(PieQueueDisc);
 
+/// Invalid dqCount value
+constexpr uint64_t DQCOUNT_INVALID = std::numeric_limits<uint64_t>::max();
+
 TypeId
 PieQueueDisc::GetTypeId()
 {

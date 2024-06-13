@@ -55,7 +55,7 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("EmuFdNetDeviceHelper");
 
-#define EMU_MAGIC 65867
+constexpr uint32_t EMU_MAGIC = 65867;
 
 EmuFdNetDeviceHelper::EmuFdNetDeviceHelper()
 {
@@ -150,7 +150,7 @@ EmuFdNetDeviceHelper::SetFileDescriptor(Ptr<FdNetDevice> device) const
     if (m_hostQdiscBypass)
     {
 #ifdef PACKET_QDISC_BYPASS
-        static const int32_t sock_qdisc_bypass = 1;
+        constexpr int32_t sock_qdisc_bypass = 1;
         int32_t sock_qdisc_ret = setsockopt(fd,
                                             SOL_PACKET,
                                             PACKET_QDISC_BYPASS,

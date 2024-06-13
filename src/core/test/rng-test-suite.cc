@@ -68,11 +68,11 @@ class RngUniformTestCase : public TestCase
 {
   public:
     /// Number of runs.
-    static const uint32_t N_RUNS = 5;
+    static constexpr uint32_t N_RUNS{5};
     /// Number of bins.
-    static const uint32_t N_BINS = 50;
+    static constexpr uint32_t N_BINS{50};
     /// Number of measurements.
-    static const uint32_t N_MEASUREMENTS = 1000000;
+    static constexpr uint32_t N_MEASUREMENTS{1000000};
 
     RngUniformTestCase();
     ~RngUniformTestCase() override;
@@ -161,11 +161,11 @@ class RngNormalTestCase : public TestCase
 {
   public:
     /// Number of runs.
-    static const uint32_t N_RUNS = 5;
+    static constexpr uint32_t N_RUNS{5};
     /// Number of bins.
-    static const uint32_t N_BINS = 50;
+    static constexpr uint32_t N_BINS{50};
     /// Number of measurements.
-    static const uint32_t N_MEASUREMENTS = 1000000;
+    static constexpr uint32_t N_MEASUREMENTS{1000000};
 
     RngNormalTestCase();
     ~RngNormalTestCase() override;
@@ -268,11 +268,11 @@ class RngExponentialTestCase : public TestCase
 {
   public:
     /// Number of runs.
-    static const uint32_t N_RUNS = 5;
+    static constexpr uint32_t N_RUNS{5};
     /// Number of bins.
-    static const uint32_t N_BINS = 50;
+    static constexpr uint32_t N_BINS{50};
     /// Number of measurements.
-    static const uint32_t N_MEASUREMENTS = 1000000;
+    static constexpr uint32_t N_MEASUREMENTS{1000000};
 
     RngExponentialTestCase();
     ~RngExponentialTestCase() override;
@@ -374,11 +374,11 @@ class RngParetoTestCase : public TestCase
 {
   public:
     /// Number of runs.
-    static const uint32_t N_RUNS = 5;
+    static constexpr uint32_t N_RUNS{5};
     /// Number of bins.
-    static const uint32_t N_BINS = 50;
+    static constexpr uint32_t N_BINS{50};
     /// Number of measurements.
-    static const uint32_t N_MEASUREMENTS = 1000000;
+    static constexpr uint32_t N_MEASUREMENTS{1000000};
 
     RngParetoTestCase();
     ~RngParetoTestCase() override;

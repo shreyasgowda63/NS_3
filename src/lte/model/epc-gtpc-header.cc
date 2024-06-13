@@ -29,7 +29,7 @@ NS_LOG_COMPONENT_DEFINE("GtpcHeader");
 NS_OBJECT_ENSURE_REGISTERED(GtpcHeader);
 
 /// GTPv2-C protocol version number
-static const uint8_t VERSION = 2;
+constexpr uint8_t VERSION = 2;
 
 TypeId
 GtpcHeader::GetTypeId()

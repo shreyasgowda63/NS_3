@@ -150,8 +150,8 @@ class Ipv4AddressGeneratorImpl
     void TestMode();
 
   private:
-    static const uint32_t N_BITS = 32;                       //!< the number of bits in the address
-    static const uint32_t MOST_SIGNIFICANT_BIT = 0x80000000; //!< MSB set to 1
+    static constexpr uint32_t N_BITS{32}; //!< the number of bits in the address
+    static constexpr uint32_t MOST_SIGNIFICANT_BIT{0x80000000}; //!< MSB set to 1
 
     /**
      * \brief Create an index number for the network mask

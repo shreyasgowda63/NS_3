@@ -40,6 +40,9 @@ NS_LOG_COMPONENT_DEFINE("PropagationLossModel");
 
 NS_OBJECT_ENSURE_REGISTERED(PropagationLossModel);
 
+/// Speed of light in vacuum
+constexpr double C = 299792458.0;
+
 TypeId
 PropagationLossModel::GetTypeId()
 {
@@ -208,7 +211,6 @@ void
 FriisPropagationLossModel::SetFrequency(double frequency)
 {
     m_frequency = frequency;
-    static const double C = 299792458.0; // speed of light in vacuum
     m_lambda = C / frequency;
 }
 
@@ -369,7 +371,6 @@ void
 TwoRayGroundPropagationLossModel::SetFrequency(double frequency)
 {
     m_frequency = frequency;
-    static const double C = 299792458.0; // speed of light in vacuum
     m_lambda = C / frequency;
 }
 

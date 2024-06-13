@@ -66,7 +66,7 @@ const PhyEntity::ModulationLookupTable DsssPhy::m_dsssModulationLookupTable {
 // clang-format on
 
 /// DSSS rates in bits per second
-static const std::array<uint64_t, 4> s_dsssRatesBpsList = {1000000, 2000000, 5500000, 11000000};
+constexpr std::array<uint64_t, 4> s_dsssRatesBpsList = {1000000, 2000000, 5500000, 11000000};
 
 /**
  * Get the array of possible DSSS rates.
@@ -309,6 +309,7 @@ DsssPhy::GetDsssRate(uint64_t rate)
     }
 }
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define GET_DSSS_MODE(x, m)                                                                        \
     WifiMode DsssPhy::Get##x()                                                                     \
     {                                                                                              \

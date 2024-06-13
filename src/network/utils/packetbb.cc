@@ -29,38 +29,38 @@
 #include "ns3/assert.h"
 #include "ns3/log.h"
 
-static const uint8_t VERSION = 0;
-/* Packet flags */
-static const uint8_t PHAS_SEQ_NUM = 0x8;
-static const uint8_t PHAS_TLV = 0x4;
-
-/* PbbMessage flags */
-static const uint8_t MHAS_ORIG = 0x80;
-static const uint8_t MHAS_HOP_LIMIT = 0x40;
-static const uint8_t MHAS_HOP_COUNT = 0x20;
-static const uint8_t MHAS_SEQ_NUM = 0x10;
-
-/* Address block flags */
-static const uint8_t AHAS_HEAD = 0x80;
-static const uint8_t AHAS_FULL_TAIL = 0x40;
-static const uint8_t AHAS_ZERO_TAIL = 0x20;
-static const uint8_t AHAS_SINGLE_PRE_LEN = 0x10;
-static const uint8_t AHAS_MULTI_PRE_LEN = 0x08;
-
-/* TLV Flags */
-static const uint8_t THAS_TYPE_EXT = 0x80;
-static const uint8_t THAS_SINGLE_INDEX = 0x40;
-static const uint8_t THAS_MULTI_INDEX = 0x20;
-static const uint8_t THAS_VALUE = 0x10;
-static const uint8_t THAS_EXT_LEN = 0x08;
-static const uint8_t TIS_MULTIVALUE = 0x04;
-
 namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE("PacketBB");
 
 NS_OBJECT_ENSURE_REGISTERED(PbbPacket);
+
+constexpr uint8_t VERSION = 0;
+/* Packet flags */
+constexpr uint8_t PHAS_SEQ_NUM = 0x8;
+constexpr uint8_t PHAS_TLV = 0x4;
+
+/* PbbMessage flags */
+constexpr uint8_t MHAS_ORIG = 0x80;
+constexpr uint8_t MHAS_HOP_LIMIT = 0x40;
+constexpr uint8_t MHAS_HOP_COUNT = 0x20;
+constexpr uint8_t MHAS_SEQ_NUM = 0x10;
+
+/* Address block flags */
+constexpr uint8_t AHAS_HEAD = 0x80;
+constexpr uint8_t AHAS_FULL_TAIL = 0x40;
+constexpr uint8_t AHAS_ZERO_TAIL = 0x20;
+constexpr uint8_t AHAS_SINGLE_PRE_LEN = 0x10;
+constexpr uint8_t AHAS_MULTI_PRE_LEN = 0x08;
+
+/* TLV Flags */
+constexpr uint8_t THAS_TYPE_EXT = 0x80;
+constexpr uint8_t THAS_SINGLE_INDEX = 0x40;
+constexpr uint8_t THAS_MULTI_INDEX = 0x20;
+constexpr uint8_t THAS_VALUE = 0x10;
+constexpr uint8_t THAS_EXT_LEN = 0x08;
+constexpr uint8_t TIS_MULTIVALUE = 0x04;
 
 PbbTlvBlock::PbbTlvBlock()
 {

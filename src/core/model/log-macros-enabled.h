@@ -32,6 +32,8 @@
 // need to be defined in all configurations (debug, release, optimized)
 // for use by NS_FATAL_...
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
 /**
  * \ingroup logging
  * Implementation details for NS_LOG_APPEND_TIME_PREFIX.
@@ -269,6 +271,8 @@
         std::clog << msg << std::endl;                                                             \
         std::clog.flags(flags);                                                                    \
     } while (false)
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #endif /* NS3_LOG_ENABLE */
 

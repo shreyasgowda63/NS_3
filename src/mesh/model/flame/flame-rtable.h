@@ -39,9 +39,9 @@ class FlameRtable : public Object
 {
   public:
     /// Means all interfaces
-    const static uint32_t INTERFACE_ANY = 0xffffffff;
+    static constexpr uint32_t INTERFACE_ANY{0xffffffff};
     /// Maximum (the best?) path cost
-    const static uint32_t MAX_COST = 0xff;
+    static constexpr uint32_t MAX_COST{0xff};
 
     /// Route lookup result, return type of LookupXXX methods
     struct LookupResult

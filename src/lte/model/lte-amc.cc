@@ -46,7 +46,7 @@ NS_OBJECT_ENSURE_REGISTERED(LteAmc);
  * file `TBS_support.xls` tab "MCS Table" (rounded to 2 decimal digits).
  * The index of the vector (range 0-15) identifies the CQI value.
  */
-static const double SpectralEfficiencyForCqi[16] = {
+constexpr double SpectralEfficiencyForCqi[]{
     0.0, // out of range
     0.15,
     0.23,
@@ -74,7 +74,7 @@ static const double SpectralEfficiencyForCqi[16] = {
  * - a few values are different; and
  * - in R1-081483, a valid MCS index is in the range of 1-30 (not 0-28).
  */
-static const int ModulationSchemeForMcs[32] = {
+constexpr int ModulationSchemeForMcs[]{
   2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
   4, 4, 4, 4, 4, 4, 4,
   6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -93,7 +93,7 @@ static const int ModulationSchemeForMcs[32] = {
  * to the convention in TS 36.213 (i.e., the MCS index reported in R1-081483
  * minus one)
  */
-static const double SpectralEfficiencyForMcs[32] = {
+constexpr double SpectralEfficiencyForMcs[]{
     0.15, 0.19, 0.23, 0.31, 0.38, 0.49, 0.6, 0.74, 0.88, 1.03, 1.18, 1.33, 1.48, 1.7, 1.91, 2.16,
     2.41, 2.57, 2.73, 3.03, 3.32, 3.61, 3.9, 4.21, 4.52, 4.82, 5.12, 5.33, 5.55, 0,   0,    0,
 };
@@ -103,7 +103,7 @@ static const double SpectralEfficiencyForMcs[32] = {
  * 36.213 v8.8.0 Table 7.1.7.1-1: _Modulation and TBS index table for PDSCH_.
  * The index of the vector (range 0-28) identifies the MCS index.
  */
-static const int McsToItbsDl[29] = {
+constexpr int McsToItbsDl[]{
     0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  9,  10, 11, 12, 13,
     14, 15, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
 };
@@ -113,7 +113,7 @@ static const int McsToItbsDl[29] = {
  * 36.213 v8.8.0 Table 8.6.1-1: _Modulation, TBS index and redundancy version table for PUSCH_.
  * The index of the vector (range 0-28) identifies the MCS index.
  */
-static const int McsToItbsUl[29] = {
+constexpr int McsToItbsUl[]{
     0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 10, 11, 12, 13,
     14, 15, 16, 17, 18, 19, 19, 20, 21, 22, 23, 24, 25, 26,
 };
@@ -126,7 +126,7 @@ static const int McsToItbsUl[29] = {
  *       consistent with the other values, therefore we use 88 obtained by
  *       following the sequence of NPRB = 1 values.
  */
-static const int TransportBlockSizeTable[110][27] = {
+constexpr int TransportBlockSizeTable[110][27]{
     /* NPRB 001*/ {16,  24,  32,  40,  56,  72,  88,  104, 120, 136, 144, 176, 208, 224,
                    256, 280, 328, 336, 376, 408, 440, 488, 520, 552, 584, 616, 712},
     /* NPRB 002*/ {32,  56,  72,  104, 120, 144, 176, 224,  256,  296,  328,  376,  440, 488,

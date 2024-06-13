@@ -65,19 +65,19 @@ class Radvd : public Application
     /**
      * \brief Default value for maximum delay of RA (ms)
      */
-    static const uint32_t MAX_RA_DELAY_TIME = 500;
+    static constexpr uint32_t MAX_RA_DELAY_TIME{500};
     /**
      * \brief Default value for maximum initial RA advertisements
      */
-    static const uint32_t MAX_INITIAL_RTR_ADVERTISEMENTS = 3;
+    static constexpr uint32_t MAX_INITIAL_RTR_ADVERTISEMENTS{3};
     /**
      * \brief Default value for maximum initial RA advertisements interval (ms)
      */
-    static const uint32_t MAX_INITIAL_RTR_ADVERT_INTERVAL = 16000;
+    static constexpr uint32_t MAX_INITIAL_RTR_ADVERT_INTERVAL{16000};
     /**
      * \brief Default value for minimum delay between RA advertisements (ms)
      */
-    static const uint32_t MIN_DELAY_BETWEEN_RAS = 3000;
+    static constexpr uint32_t MIN_DELAY_BETWEEN_RAS{3000};
 
     /**
      * \brief Add configuration for an interface;

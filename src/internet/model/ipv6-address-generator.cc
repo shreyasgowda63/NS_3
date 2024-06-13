@@ -152,8 +152,8 @@ class Ipv6AddressGeneratorImpl
     void TestMode();
 
   private:
-    static const uint32_t N_BITS = 128;                //!< the number of bits in the address
-    static const uint32_t MOST_SIGNIFICANT_BIT = 0x80; //!< MSB set to 1
+    static constexpr uint32_t N_BITS{128};                //!< the number of bits in the address
+    static constexpr uint32_t MOST_SIGNIFICANT_BIT{0x80}; //!< MSB set to 1
 
     /**
      * \brief Create an index number for the prefix

@@ -58,9 +58,6 @@ namespace aodv
 {
 NS_OBJECT_ENSURE_REGISTERED(RoutingProtocol);
 
-/// UDP Port for AODV control traffic
-const uint32_t RoutingProtocol::AODV_PORT = 654;
-
 /**
  * \ingroup aodv
  * \brief Tag used by AODV implementation

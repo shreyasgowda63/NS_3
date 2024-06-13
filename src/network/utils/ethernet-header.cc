@@ -153,6 +153,16 @@ uint32_t
 EthernetHeader::GetSerializedSize() const
 {
     NS_LOG_FUNCTION(this);
+
+    // Size of the preamble_sfd header field
+    constexpr int PREAMBLE_SIZE = 8;
+
+    // Size of the length_type header field
+    constexpr int LENGTH_SIZE = 2;
+
+    // Size of src/dest addr header fields
+    constexpr int MAC_ADDR_SIZE = 6;
+
     if (m_enPreambleSfd)
     {
         return PREAMBLE_SIZE + LENGTH_SIZE + 2 * MAC_ADDR_SIZE;

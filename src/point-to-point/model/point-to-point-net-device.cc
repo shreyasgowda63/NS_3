@@ -47,7 +47,7 @@ PointToPointNetDevice::GetTypeId()
             .AddConstructor<PointToPointNetDevice>()
             .AddAttribute("Mtu",
                           "The MAC-level Maximum Transmission Unit",
-                          UintegerValue(DEFAULT_MTU),
+                          UintegerValue(1500),
                           MakeUintegerAccessor(&PointToPointNetDevice::SetMtu,
                                                &PointToPointNetDevice::GetMtu),
                           MakeUintegerChecker<uint16_t>())

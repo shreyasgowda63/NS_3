@@ -36,8 +36,8 @@
 namespace ns3
 {
 
-static const double SNR_PRECISION = 2;                         //!< precision for SNR
-static const double TABLED_BASED_ERROR_MODEL_PRECISION = 1e-5; //!< precision for PER
+constexpr double SNR_PRECISION = 2;                         //!< precision for SNR
+constexpr double TABLED_BASED_ERROR_MODEL_PRECISION = 1e-5; //!< precision for PER
 
 NS_OBJECT_ENSURE_REGISTERED(TableBasedErrorRateModel);
 

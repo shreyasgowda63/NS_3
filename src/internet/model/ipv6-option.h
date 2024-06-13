@@ -102,7 +102,7 @@ class Ipv6OptionPad1 : public Ipv6Option
     /**
      * \brief Pad1 option number.
      */
-    static const uint8_t OPT_NUMBER = 0;
+    static constexpr uint8_t OPT_NUMBER{0};
 
     /**
      * \brief Get the type identificator.
@@ -153,7 +153,7 @@ class Ipv6OptionPadn : public Ipv6Option
     /**
      * \brief PadN option number.
      */
-    static const uint8_t OPT_NUMBER = 60;
+    static constexpr uint8_t OPT_NUMBER{60};
 
     /**
      * \brief Get the type identificator.
@@ -204,7 +204,7 @@ class Ipv6OptionJumbogram : public Ipv6Option
     /**
      * \brief Jumbogram option number.
      */
-    static const uint8_t OPT_NUMBER = 44;
+    static constexpr uint8_t OPT_NUMBER{44};
 
     /**
      * \brief Get the type identificator.
@@ -254,7 +254,7 @@ class Ipv6OptionRouterAlert : public Ipv6Option
     /**
      * \brief Router alert option number.
      */
-    static const uint8_t OPT_NUMBER = 43;
+    static constexpr uint8_t OPT_NUMBER{43};
 
     /**
      * \brief Get the type identificator.

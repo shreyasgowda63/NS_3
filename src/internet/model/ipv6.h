@@ -397,7 +397,7 @@ class Ipv6 : public Object
     /**
      * \brief Any interface magic number.
      */
-    static const uint32_t IF_ANY = 0xffffffff;
+    static constexpr uint32_t IF_ANY{0xffffffff};
 
   private:
     // Indirect the IPv6 attributes through private pure virtual methods

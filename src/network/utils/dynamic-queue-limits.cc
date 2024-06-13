@@ -29,17 +29,17 @@
 #include "ns3/string.h"
 #include "ns3/uinteger.h"
 
-// Set some static maximums
-static const uint32_t UINTMAX = std::numeric_limits<uint32_t>::max();
-static const uint32_t DQL_MAX_OBJECT = UINTMAX / 16;
-static const uint32_t DQL_MAX_LIMIT = (UINTMAX / 2) - DQL_MAX_OBJECT;
-
 namespace ns3
 {
 
 NS_LOG_COMPONENT_DEFINE("DynamicQueueLimits");
 
 NS_OBJECT_ENSURE_REGISTERED(DynamicQueueLimits);
+
+// Set some static maximums
+constexpr uint32_t UINTMAX = std::numeric_limits<uint32_t>::max();
+constexpr uint32_t DQL_MAX_OBJECT = UINTMAX / 16;
+constexpr uint32_t DQL_MAX_LIMIT = (UINTMAX / 2) - DQL_MAX_OBJECT;
 
 TypeId
 DynamicQueueLimits::GetTypeId()

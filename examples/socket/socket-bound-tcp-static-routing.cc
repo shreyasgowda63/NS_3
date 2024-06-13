@@ -46,10 +46,10 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("SocketBoundTcpRoutingExample");
 
-static const uint32_t totalTxBytes = 20000;
+constexpr uint32_t TOTAL_TX_BYTES = 20000;
 static uint32_t currentTxBytes = 0;
-static const uint32_t writeSize = 1040;
-uint8_t data[writeSize];
+constexpr uint32_t WRITE_SIZE = 1040;
+uint8_t data[WRITE_SIZE];
 
 void StartFlow(Ptr<Socket>, Ipv4Address, uint16_t);
 void WriteUntilBufferFull(Ptr<Socket>, uint32_t);
@@ -213,11 +213,11 @@ StartFlow(Ptr<Socket> localSocket, Ipv4Address servAddress, uint16_t servPort)
 void
 WriteUntilBufferFull(Ptr<Socket> localSocket, uint32_t txSpace)
 {
-    while (currentTxBytes < totalTxBytes && localSocket->GetTxAvailable() > 0)
+    while (currentTxBytes < TOTAL_TX_BYTES && localSocket->GetTxAvailable() > 0)
     {
-        uint32_t left = totalTxBytes - currentTxBytes;
-        uint32_t dataOffset = currentTxBytes % writeSize;
-        uint32_t toWrite = writeSize - dataOffset;
+        uint32_t left = TOTAL_TX_BYTES - currentTxBytes;
+        uint32_t dataOffset = currentTxBytes % WRITE_SIZE;
+        uint32_t toWrite = WRITE_SIZE - dataOffset;
         toWrite = std::min(toWrite, left);
         toWrite = std::min(toWrite, localSocket->GetTxAvailable());
         int amountSent = localSocket->Send(&data[dataOffset], toWrite, 0);

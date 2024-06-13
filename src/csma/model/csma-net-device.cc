@@ -56,7 +56,7 @@ CsmaNetDevice::GetTypeId()
                           MakeMac48AddressChecker())
             .AddAttribute("Mtu",
                           "The MAC-level Maximum Transmission Unit",
-                          UintegerValue(DEFAULT_MTU),
+                          UintegerValue(1500),
                           MakeUintegerAccessor(&CsmaNetDevice::SetMtu, &CsmaNetDevice::GetMtu),
                           MakeUintegerChecker<uint16_t>())
             .AddAttribute("EncapsulationMode",

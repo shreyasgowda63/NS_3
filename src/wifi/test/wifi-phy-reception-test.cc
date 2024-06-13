@@ -58,10 +58,10 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("WifiPhyReceptionTest");
 
-static const uint8_t CHANNEL_NUMBER = 36;
-static const uint32_t FREQUENCY = 5180;   // MHz
-static const uint16_t CHANNEL_WIDTH = 20; // MHz
-static const uint16_t GUARD_WIDTH =
+constexpr uint8_t CHANNEL_NUMBER = 36;
+constexpr uint32_t FREQUENCY = 5180;   // MHz
+constexpr uint16_t CHANNEL_WIDTH = 20; // MHz
+constexpr uint16_t GUARD_WIDTH =
     CHANNEL_WIDTH; // MHz (expanded to channel width to model spectrum mask)
 
 /**

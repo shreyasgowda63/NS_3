@@ -37,7 +37,7 @@ NS_LOG_COMPONENT_DEFINE("LteFfrEnhancedAlgorithm");
 NS_OBJECT_ENSURE_REGISTERED(LteFfrEnhancedAlgorithm);
 
 /// Spectral efficiency for CQI table
-static const double SpectralEfficiencyForCqi[16] = {
+constexpr double SpectralEfficiencyForCqi[]{
     0.0, // out of range
     0.15,
     0.23,

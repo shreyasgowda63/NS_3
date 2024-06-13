@@ -33,6 +33,9 @@ bool g_debug = false;
 
 /** Name of this program. */
 std::string g_me;
+
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
 /** Log to std::cout */
 #define LOG(x) std::cout << x << std::endl
 /** Log with program name prefix. */
@@ -43,6 +46,8 @@ std::string g_me;
     {                                                                                              \
         LOGME(x);                                                                                  \
     }
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 /** Output field width for numeric data. */
 int g_fwidth = 6;
@@ -355,6 +360,7 @@ BenchSuite::Log() const
         const auto& run = m_results[n];
         uint64_t count = n + 1;
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define ACCUMULATE(phase, field)                                                                   \
     deltaPre = run.phase.field - average.phase.field;                                              \
     average.phase.field += deltaPre / count;                                                       \

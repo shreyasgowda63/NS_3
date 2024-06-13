@@ -22,10 +22,10 @@
 
 #include "ff-mac-common.h"
 
-#define SRS_CQI_RNTI_VSP 1
-
 namespace ns3
 {
+
+constexpr uint32_t SRS_CQI_RNTI_VSP = 1;
 
 /**
  * \brief Define the RNTI that has generated the

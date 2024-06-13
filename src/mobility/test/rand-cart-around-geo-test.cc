@@ -50,10 +50,10 @@ using namespace ns3;
  * 0.1 meter tolerance for testing, which is very small compared to the maximum
  * distances from origin being tested
  */
-const double TOLERANCE = 0.1;
+constexpr double TOLERANCE = 0.1;
 
 /// earth's radius in meters if modeled as a perfect sphere
-static const double EARTH_RADIUS = 6371e3;
+constexpr double EARTH_RADIUS = 6371e3;
 
 /**
  * \ingroup mobility-test

@@ -24,14 +24,13 @@
 
 #include <cmath>
 
-#define DEFAULT_BIN_WIDTH 1
-
-// #define RESERVED_BINS_INC 10
-
 namespace ns3
 {
-
 NS_LOG_COMPONENT_DEFINE("Histogram");
+
+constexpr double DEFAULT_BIN_WIDTH = 1;
+
+// constexpr double RESERVED_BINS_INC = 10;
 
 // uint32_t
 // Histogram::GetSize () const

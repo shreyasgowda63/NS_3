@@ -36,7 +36,7 @@
 #include "ns3/random-variable-stream.h"
 #include "ns3/timer.h"
 
-#define BURST_RESET_TIMEOUT 1.5
+constexpr double BURST_RESET_TIMEOUT = 1.5;
 
 class PieQueueDiscTestCase; // Forward declaration for unit test
 
@@ -137,9 +137,6 @@ class PieQueueDisc : public QueueDisc
      * is going, up or down
      */
     void CalculateP();
-
-    static const uint64_t DQCOUNT_INVALID =
-        std::numeric_limits<uint64_t>::max(); //!< Invalid dqCount value
 
     // ** Variables supplied by user
     Time m_sUpdate;            //!< Start time of the update timer

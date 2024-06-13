@@ -80,7 +80,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("PowerAdaptationInterference");
 
 /// Packet size generated at the AP.
-static const uint32_t packetSize = 1420;
+constexpr uint32_t PACKET_SIZE = 1420;
 
 /**
  * \brief Class to collect node statistics.
@@ -275,7 +275,7 @@ NodeStatistics::SetupPhy(Ptr<WifiPhy> phy)
         txVector.SetPreambleType(WIFI_PREAMBLE_LONG);
         txVector.SetChannelWidth(phy->GetChannelWidth());
         DataRate dataRate(mode.GetDataRate(phy->GetChannelWidth()));
-        Time time = phy->CalculateTxDuration(packetSize, txVector, phy->GetPhyBand());
+        Time time = phy->CalculateTxDuration(PACKET_SIZE, txVector, phy->GetPhyBand());
         NS_LOG_DEBUG(mode.GetUniqueName() << " " << time.GetSeconds() << " " << dataRate);
         m_timeTable.emplace_back(time, dataRate);
     }
@@ -588,7 +588,7 @@ main(int argc, char* argv[])
     ApplicationContainer apps_sink = sink.Install(wifiStaNodes.Get(0));
 
     OnOffHelper onoff("ns3::UdpSocketFactory", InetSocketAddress(sinkAddress, port));
-    onoff.SetConstantRate(DataRate("54Mb/s"), packetSize);
+    onoff.SetConstantRate(DataRate("54Mb/s"), PACKET_SIZE);
     onoff.SetAttribute("StartTime", TimeValue(Seconds(0.0)));
     onoff.SetAttribute("StopTime", TimeValue(Seconds(100.0)));
     ApplicationContainer apps_source = onoff.Install(wifiApNodes.Get(0));
@@ -597,7 +597,7 @@ main(int argc, char* argv[])
     apps_sink.Add(sink1.Install(wifiStaNodes.Get(1)));
 
     OnOffHelper onoff1("ns3::UdpSocketFactory", InetSocketAddress(sinkAddress1, port));
-    onoff1.SetConstantRate(DataRate("54Mb/s"), packetSize);
+    onoff1.SetConstantRate(DataRate("54Mb/s"), PACKET_SIZE);
     onoff1.SetAttribute("StartTime", TimeValue(Seconds(0.0)));
     onoff1.SetAttribute("StopTime", TimeValue(Seconds(100.0)));
     apps_source.Add(onoff1.Install(wifiApNodes.Get(1)));

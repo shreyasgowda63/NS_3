@@ -438,26 +438,38 @@ error:
     NS_TEST_ASSERT_MSG_EQ(false, true, failure.str());
 }
 
-#define ADD_HEADER(p, n)                                                                           \
-    {                                                                                              \
-        HistoryHeader<n> header;                                                                   \
-        p->AddHeader(header);                                                                      \
-    }
-#define ADD_TRAILER(p, n)                                                                          \
-    {                                                                                              \
-        HistoryTrailer<n> trailer;                                                                 \
-        p->AddTrailer(trailer);                                                                    \
-    }
-#define REM_HEADER(p, n)                                                                           \
-    {                                                                                              \
-        HistoryHeader<n> header;                                                                   \
-        p->RemoveHeader(header);                                                                   \
-    }
-#define REM_TRAILER(p, n)                                                                          \
-    {                                                                                              \
-        HistoryTrailer<n> trailer;                                                                 \
-        p->RemoveTrailer(trailer);                                                                 \
-    }
+template <uint32_t N>
+void
+AddHeader(Ptr<Packet> p)
+{
+    HistoryHeader<N> header;
+    p->AddHeader(header);
+}
+
+template <uint32_t N>
+void
+AddTrailer(Ptr<Packet> p)
+{
+    HistoryTrailer<N> trailer;
+    p->AddTrailer(trailer);
+}
+
+template <uint32_t N>
+void
+RemHeader(Ptr<Packet> p)
+{
+    HistoryHeader<N> header;
+    p->RemoveHeader(header);
+}
+
+template <uint32_t N>
+void
+RemTrailer(Ptr<Packet> p)
+{
+    HistoryTrailer<N> trailer;
+    p->RemoveTrailer(trailer);
+}
+
 #define CHECK_HISTORY(p, ...)                                                                      \
     {                                                                                              \
         CheckHistory(p, __VA_ARGS__);                                                              \
@@ -472,7 +484,7 @@ error:
 Ptr<Packet>
 PacketMetadataTest::DoAddHeader(Ptr<Packet> p)
 {
-    ADD_HEADER(p, 10);
+    AddHeader<10>(p);
     return p;
 }
 
@@ -485,69 +497,69 @@ PacketMetadataTest::DoRun()
     Ptr<Packet> p1 = Create<Packet>(0);
 
     p = Create<Packet>(10);
-    ADD_TRAILER(p, 100);
+    AddTrailer<100>(p);
     CHECK_HISTORY(p, 2, 10, 100);
 
     p = Create<Packet>(10);
-    ADD_HEADER(p, 1);
-    ADD_HEADER(p, 2);
-    ADD_HEADER(p, 3);
+    AddHeader<1>(p);
+    AddHeader<2>(p);
+    AddHeader<3>(p);
     CHECK_HISTORY(p, 4, 3, 2, 1, 10);
-    ADD_HEADER(p, 5);
+    AddHeader<5>(p);
     CHECK_HISTORY(p, 5, 5, 3, 2, 1, 10);
-    ADD_HEADER(p, 6);
+    AddHeader<6>(p);
     CHECK_HISTORY(p, 6, 6, 5, 3, 2, 1, 10);
 
     p = Create<Packet>(10);
-    ADD_HEADER(p, 1);
-    ADD_HEADER(p, 2);
-    ADD_HEADER(p, 3);
-    REM_HEADER(p, 3);
+    AddHeader<1>(p);
+    AddHeader<2>(p);
+    AddHeader<3>(p);
+    RemHeader<3>(p);
     CHECK_HISTORY(p, 3, 2, 1, 10);
 
     p = Create<Packet>(10);
-    ADD_HEADER(p, 1);
-    ADD_HEADER(p, 2);
-    ADD_HEADER(p, 3);
-    REM_HEADER(p, 3);
-    REM_HEADER(p, 2);
+    AddHeader<1>(p);
+    AddHeader<2>(p);
+    AddHeader<3>(p);
+    RemHeader<3>(p);
+    RemHeader<2>(p);
     CHECK_HISTORY(p, 2, 1, 10);
 
     p = Create<Packet>(10);
-    ADD_HEADER(p, 1);
-    ADD_HEADER(p, 2);
-    ADD_HEADER(p, 3);
-    REM_HEADER(p, 3);
-    REM_HEADER(p, 2);
-    REM_HEADER(p, 1);
+    AddHeader<1>(p);
+    AddHeader<2>(p);
+    AddHeader<3>(p);
+    RemHeader<3>(p);
+    RemHeader<2>(p);
+    RemHeader<1>(p);
     CHECK_HISTORY(p, 1, 10);
 
     p = Create<Packet>(10);
-    ADD_HEADER(p, 1);
-    ADD_HEADER(p, 2);
-    ADD_HEADER(p, 3);
+    AddHeader<1>(p);
+    AddHeader<2>(p);
+    AddHeader<3>(p);
     p1 = p->Copy();
-    REM_HEADER(p1, 3);
-    REM_HEADER(p1, 2);
-    REM_HEADER(p1, 1);
+    RemHeader<3>(p1);
+    RemHeader<2>(p1);
+    RemHeader<1>(p1);
     CHECK_HISTORY(p1, 1, 10);
     CHECK_HISTORY(p, 4, 3, 2, 1, 10);
-    ADD_HEADER(p1, 1);
-    ADD_HEADER(p1, 2);
+    AddHeader<1>(p1);
+    AddHeader<2>(p1);
     CHECK_HISTORY(p1, 3, 2, 1, 10);
     CHECK_HISTORY(p, 4, 3, 2, 1, 10);
-    ADD_HEADER(p, 3);
+    AddHeader<3>(p);
     CHECK_HISTORY(p, 5, 3, 3, 2, 1, 10);
-    ADD_TRAILER(p, 4);
+    AddTrailer<4>(p);
     CHECK_HISTORY(p, 6, 3, 3, 2, 1, 10, 4);
-    ADD_TRAILER(p, 5);
+    AddTrailer<5>(p);
     CHECK_HISTORY(p, 7, 3, 3, 2, 1, 10, 4, 5);
-    REM_HEADER(p, 3);
+    RemHeader<3>(p);
     CHECK_HISTORY(p, 6, 3, 2, 1, 10, 4, 5);
-    REM_TRAILER(p, 5);
+    RemTrailer<5>(p);
     CHECK_HISTORY(p, 5, 3, 2, 1, 10, 4);
     p1 = p->Copy();
-    REM_TRAILER(p, 4);
+    RemTrailer<4>(p);
     CHECK_HISTORY(p, 4, 3, 2, 1, 10);
     CHECK_HISTORY(p1, 5, 3, 2, 1, 10, 4);
     p1->RemoveAtStart(3);
@@ -562,34 +574,34 @@ PacketMetadataTest::DoRun()
     CHECK_HISTORY(p1, 1, 10);
 
     p = Create<Packet>(10);
-    ADD_HEADER(p, 8);
-    ADD_TRAILER(p, 8);
-    ADD_TRAILER(p, 8);
+    AddHeader<8>(p);
+    AddTrailer<8>(p);
+    AddTrailer<8>(p);
     p->RemoveAtStart(8 + 10 + 8);
     CHECK_HISTORY(p, 1, 8);
 
     p = Create<Packet>(10);
-    ADD_HEADER(p, 10);
-    ADD_HEADER(p, 8);
-    ADD_TRAILER(p, 6);
-    ADD_TRAILER(p, 7);
-    ADD_TRAILER(p, 9);
+    AddHeader<10>(p);
+    AddHeader<8>(p);
+    AddTrailer<6>(p);
+    AddTrailer<7>(p);
+    AddTrailer<9>(p);
     p->RemoveAtStart(5);
     p->RemoveAtEnd(12);
     CHECK_HISTORY(p, 5, 3, 10, 10, 6, 4);
 
     p = Create<Packet>(10);
-    ADD_HEADER(p, 10);
-    ADD_TRAILER(p, 6);
+    AddHeader<10>(p);
+    AddTrailer<6>(p);
     p->RemoveAtEnd(18);
-    ADD_TRAILER(p, 5);
-    ADD_HEADER(p, 3);
+    AddTrailer<5>(p);
+    AddHeader<3>(p);
     CHECK_HISTORY(p, 3, 3, 8, 5);
     p->RemoveAtStart(12);
     CHECK_HISTORY(p, 1, 4);
     p->RemoveAtEnd(2);
     CHECK_HISTORY(p, 1, 2);
-    ADD_HEADER(p, 10);
+    AddHeader<10>(p);
     CHECK_HISTORY(p, 2, 10, 2);
     p->RemoveAtEnd(5);
     CHECK_HISTORY(p, 1, 7);
@@ -598,8 +610,8 @@ PacketMetadataTest::DoRun()
     Ptr<Packet> p3 = Create<Packet>(0);
 
     p = Create<Packet>(40);
-    ADD_HEADER(p, 5);
-    ADD_HEADER(p, 8);
+    AddHeader<5>(p);
+    AddHeader<8>(p);
     CHECK_HISTORY(p, 3, 8, 5, 40);
     p1 = p->CreateFragment(0, 5);
     p2 = p->CreateFragment(5, 5);
@@ -618,16 +630,16 @@ PacketMetadataTest::DoRun()
     CHECK_HISTORY(p1, 1, 5);
 
     p3 = Create<Packet>(50);
-    ADD_HEADER(p3, 8);
+    AddHeader<8>(p3);
     CHECK_HISTORY(p3, 2, 8, 50);
     CHECK_HISTORY(p1, 1, 5);
     p1->AddAtEnd(p3);
     CHECK_HISTORY(p1, 3, 5, 8, 50);
-    ADD_HEADER(p1, 5);
+    AddHeader<5>(p1);
     CHECK_HISTORY(p1, 4, 5, 5, 8, 50);
-    ADD_TRAILER(p1, 2);
+    AddTrailer<2>(p1);
     CHECK_HISTORY(p1, 5, 5, 5, 8, 50, 2);
-    REM_HEADER(p1, 5);
+    RemHeader<5>(p1);
     CHECK_HISTORY(p1, 4, 5, 8, 50, 2);
     p1->RemoveAtEnd(60);
     CHECK_HISTORY(p1, 1, 5);
@@ -636,8 +648,8 @@ PacketMetadataTest::DoRun()
     CHECK_HISTORY(p2, 2, 3, 2);
 
     p3 = Create<Packet>(40);
-    ADD_HEADER(p3, 5);
-    ADD_HEADER(p3, 5);
+    AddHeader<5>(p3);
+    AddHeader<5>(p3);
     CHECK_HISTORY(p3, 3, 5, 5, 40);
     p1 = p3->CreateFragment(0, 5);
     p2 = p3->CreateFragment(5, 5);
@@ -650,8 +662,8 @@ PacketMetadataTest::DoRun()
     CHECK_HISTORY(p, 0);
 
     p3 = Create<Packet>(0);
-    ADD_HEADER(p3, 5);
-    ADD_HEADER(p3, 5);
+    AddHeader<5>(p3);
+    AddHeader<5>(p3);
     CHECK_HISTORY(p3, 2, 5, 5);
     p1 = p3->CreateFragment(0, 4);
     p2 = p3->CreateFragment(9, 1);
@@ -664,91 +676,91 @@ PacketMetadataTest::DoRun()
     CHECK_HISTORY(p, 1, 2000);
 
     p = Create<Packet>();
-    ADD_TRAILER(p, 10);
-    ADD_HEADER(p, 5);
+    AddTrailer<10>(p);
+    AddHeader<10>(p);
     p1 = p->CreateFragment(0, 8);
     p2 = p->CreateFragment(8, 7);
     p1->AddAtEnd(p2);
     CHECK_HISTORY(p, 2, 5, 10);
 
     p = Create<Packet>();
-    ADD_TRAILER(p, 10);
-    REM_TRAILER(p, 10);
-    ADD_TRAILER(p, 10);
+    AddTrailer<10>(p);
+    RemTrailer<10>(p);
+    AddTrailer<10>(p);
     CHECK_HISTORY(p, 1, 10);
 
     p = Create<Packet>();
-    ADD_HEADER(p, 10);
-    REM_HEADER(p, 10);
-    ADD_HEADER(p, 10);
+    AddHeader<10>(p);
+    RemHeader<10>(p);
+    AddHeader<10>(p);
     CHECK_HISTORY(p, 1, 10);
 
     p = Create<Packet>();
-    ADD_HEADER(p, 10);
+    AddHeader<10>(p);
     p = DoAddHeader(p);
     CHECK_HISTORY(p, 2, 10, 10);
 
     p = Create<Packet>(10);
-    ADD_HEADER(p, 8);
-    ADD_TRAILER(p, 8);
-    ADD_TRAILER(p, 8);
+    AddHeader<8>(p);
+    AddTrailer<8>(p);
+    AddTrailer<8>(p);
     p->RemoveAtStart(8 + 10 + 8);
     CHECK_HISTORY(p, 1, 8);
 
     p = Create<Packet>(0);
-    ADD_HEADER(p, 8);
-    REM_HEADER(p, 8);
+    AddHeader<8>(p);
+    RemHeader<8>(p);
     CHECK_HISTORY(p, 0);
 
     p = Create<Packet>(0);
-    ADD_TRAILER(p, 8);
-    REM_TRAILER(p, 8);
+    AddTrailer<8>(p);
+    RemTrailer<8>(p);
     CHECK_HISTORY(p, 0);
 
     p = Create<Packet>(0);
-    ADD_HEADER(p, 8);
+    AddHeader<8>(p);
     p->RemoveAtStart(8);
     CHECK_HISTORY(p, 0);
 
     p = Create<Packet>(0);
-    ADD_HEADER(p, 8);
-    ADD_TRAILER(p, 8);
-    REM_TRAILER(p, 8);
-    REM_HEADER(p, 8);
+    AddHeader<8>(p);
+    AddTrailer<8>(p);
+    RemTrailer<8>(p);
+    RemHeader<8>(p);
     CHECK_HISTORY(p, 0);
 
     p = Create<Packet>(0);
-    ADD_HEADER(p, 8);
-    ADD_TRAILER(p, 8);
-    REM_HEADER(p, 8);
-    REM_TRAILER(p, 8);
+    AddHeader<8>(p);
+    AddTrailer<8>(p);
+    RemHeader<8>(p);
+    RemTrailer<8>(p);
     CHECK_HISTORY(p, 0);
 
     p = Create<Packet>(0);
-    ADD_HEADER(p, 8);
-    ADD_TRAILER(p, 8);
-    REM_TRAILER(p, 8);
+    AddHeader<8>(p);
+    AddTrailer<8>(p);
+    RemTrailer<8>(p);
     p->RemoveAtStart(8);
     CHECK_HISTORY(p, 0);
 
     p = Create<Packet>(0);
-    ADD_HEADER(p, 8);
-    ADD_TRAILER(p, 8);
-    REM_HEADER(p, 8);
+    AddHeader<8>(p);
+    AddTrailer<8>(p);
+    RemHeader<8>(p);
     p->RemoveAtEnd(8);
     CHECK_HISTORY(p, 0);
 
     p = Create<Packet>(0);
-    ADD_HEADER(p, 8);
-    ADD_TRAILER(p, 8);
-    REM_TRAILER(p, 8);
+    AddHeader<8>(p);
+    AddTrailer<8>(p);
+    RemTrailer<8>(p);
     p->RemoveAtEnd(8);
     CHECK_HISTORY(p, 0);
 
     p = Create<Packet>(0);
-    ADD_HEADER(p, 8);
-    ADD_TRAILER(p, 8);
-    REM_HEADER(p, 8);
+    AddHeader<8>(p);
+    AddTrailer<8>(p);
+    RemHeader<8>(p);
     p->RemoveAtStart(8);
     CHECK_HISTORY(p, 0);
 
@@ -760,68 +772,68 @@ PacketMetadataTest::DoRun()
     p = Create<Packet>(40);
     p2 = p->CreateFragment(5, 5);
     p3 = p->CreateFragment(10, 30);
-    ADD_HEADER(p2, 8);
-    ADD_HEADER(p3, 8);
-    REM_HEADER(p2, 8);
-    REM_HEADER(p3, 8);
+    AddHeader<8>(p2);
+    AddHeader<8>(p3);
+    RemHeader<8>(p2);
+    RemHeader<8>(p3);
     p2->AddAtEnd(p3);
 
     p = Create<Packet>(1000);
-    ADD_HEADER(p, 10);
-    ADD_TRAILER(p, 5);
+    AddHeader<10>(p);
+    AddTrailer<5>(p);
     p1 = p->Copy();
-    ADD_HEADER(p1, 20);
-    REM_HEADER(p1, 20);
-    REM_TRAILER(p1, 5);
+    AddHeader<20>(p1);
+    RemHeader<20>(p1);
+    RemTrailer<5>(p1);
     NS_TEST_EXPECT_MSG_EQ(p->GetSize(), 1015, "Correct size");
 
     p = Create<Packet>(1510);
-    ADD_HEADER(p, 8);
-    ADD_HEADER(p, 25);
-    REM_HEADER(p, 25);
-    ADD_HEADER(p, 1);
+    AddHeader<8>(p);
+    AddHeader<25>(p);
+    RemHeader<25>(p);
+    AddHeader<1>(p);
     p1 = p->CreateFragment(0, 1500);
     p2 = p1->Copy();
-    ADD_HEADER(p2, 24);
+    AddHeader<24>(p2);
     NS_TEST_EXPECT_MSG_EQ(p->GetSize(), 1519, "Correct size");
 
     p = Create<Packet>(1000);
-    ADD_HEADER(p, 2);
-    ADD_TRAILER(p, 3);
+    AddHeader<2>(p);
+    AddTrailer<3>(p);
     p1 = p->Copy();
     CHECK_HISTORY(p1, 3, 2, 1000, 3);
-    REM_HEADER(p, 2);
-    ADD_HEADER(p, 1);
+    RemHeader<2>(p);
+    AddHeader<1>(p);
     CHECK_HISTORY(p, 3, 1, 1000, 3);
     CHECK_HISTORY(p1, 3, 2, 1000, 3);
 
     p = Create<Packet>(200);
-    ADD_HEADER(p, 24);
+    AddHeader<24>(p);
     p1 = p->CreateFragment(0, 100);
     p2 = p->CreateFragment(100, 100);
     p1->AddAtEnd(p2);
 
     p = Create<Packet>();
-    ADD_HEADER(p, 10);
+    AddHeader<10>(p);
     p1 = Create<Packet>();
-    ADD_HEADER(p1, 11);
-    REM_HEADER(p1, 11);
+    AddHeader<11>(p1);
+    RemHeader<11>(p1);
     p->AddAtEnd(p1);
 
     p = Create<Packet>(500);
     CHECK_HISTORY(p, 1, 500);
-    ADD_HEADER(p, 10);
+    AddHeader<10>(p);
     CHECK_HISTORY(p, 2, 10, 500);
-    REM_HEADER(p, 10);
+    RemHeader<10>(p);
     CHECK_HISTORY(p, 1, 500);
     p->RemoveAtEnd(10);
     CHECK_HISTORY(p, 1, 490);
 
     p = Create<Packet>(500);
     CHECK_HISTORY(p, 1, 500);
-    ADD_TRAILER(p, 10);
+    AddTrailer<10>(p);
     CHECK_HISTORY(p, 2, 500, 10);
-    REM_TRAILER(p, 10);
+    RemTrailer<10>(p);
     CHECK_HISTORY(p, 1, 500);
     p->RemoveAtStart(10);
     CHECK_HISTORY(p, 1, 490);
@@ -829,9 +841,9 @@ PacketMetadataTest::DoRun()
     /// \internal
     /// See \bugid{1072}
     p = Create<Packet>(500);
-    ADD_HEADER(p, 10);
-    ADD_HEADER(p, 20);
-    ADD_HEADER(p, 5);
+    AddHeader<10>(p);
+    AddHeader<20>(p);
+    AddHeader<5>(p);
     CHECK_HISTORY(p, 4, 5, 20, 10, 500);
     p1 = p->CreateFragment(0, 6);
     p2 = p->CreateFragment(6, 535 - 6);
@@ -840,25 +852,25 @@ PacketMetadataTest::DoRun()
     /// \internal
     /// See \bugid{1072}
     p = Create<Packet>(reinterpret_cast<const uint8_t*>("hello world"), 11);
-    ADD_HEADER(p, 2);
+    AddHeader<2>(p);
     CHECK_HISTORY(p, 2, 2, 11);
     p1 = p->CreateFragment(0, 5);
     CHECK_HISTORY(p1, 2, 2, 3);
     p2 = p->CreateFragment(5, 8);
     CHECK_HISTORY(p2, 1, 8);
 
-    ADD_HEADER(p1, 8 + 2 + 2 * 6);
-    ADD_TRAILER(p1, 4);
+    AddHeader<8 + 2 + 2 * 6>(p1);
+    AddTrailer<4>(p1);
     CHECK_HISTORY(p1, 4, 22, 2, 3, 4);
-    ADD_HEADER(p2, 8 + 2 + 2 * 6);
-    ADD_TRAILER(p2, 4);
+    AddHeader<8 + 2 + 2 * 6>(p2);
+    AddTrailer<4>(p2);
     CHECK_HISTORY(p2, 3, 22, 8, 4);
 
-    REM_TRAILER(p1, 4);
-    REM_HEADER(p1, 8 + 2 + 2 * 6);
+    RemTrailer<4>(p1);
+    RemHeader<8 + 2 + 2 * 6>(p1);
     CHECK_HISTORY(p1, 2, 2, 3);
-    REM_TRAILER(p2, 4);
-    REM_HEADER(p2, 8 + 2 + 2 * 6);
+    RemTrailer<4>(p2);
+    RemHeader<8 + 2 + 2 * 6>(p2);
     CHECK_HISTORY(p2, 1, 8);
 
     p3 = p1->Copy();
@@ -867,9 +879,9 @@ PacketMetadataTest::DoRun()
     CHECK_HISTORY(p3, 2, 2, 11);
 
     CHECK_HISTORY(p, 2, 2, 11);
-    REM_HEADER(p, 2);
+    RemHeader<2>(p);
     CHECK_HISTORY(p, 1, 11);
-    REM_HEADER(p3, 2);
+    RemHeader<2>(p3);
     CHECK_HISTORY(p3, 1, 11);
 
     auto buf = new uint8_t[p3->GetSize()];

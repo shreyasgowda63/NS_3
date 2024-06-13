@@ -60,7 +60,11 @@ PfifoFastQueueDisc::~PfifoFastQueueDisc()
     NS_LOG_FUNCTION(this);
 }
 
-const uint32_t PfifoFastQueueDisc::prio2band[16] = {1, 2, 2, 2, 1, 2, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
+/**
+ * Priority to band map. Values are taken from the PRIO_2_BAND array used by
+ * the Linux pfifo_fast queue disc.
+ */
+constexpr uint32_t PRIO_2_BAND[]{1, 2, 2, 2, 1, 2, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
 
 bool
 PfifoFastQueueDisc::DoEnqueue(Ptr<QueueDiscItem> item)
@@ -81,7 +85,7 @@ PfifoFastQueueDisc::DoEnqueue(Ptr<QueueDiscItem> item)
         priority = priorityTag.GetPriority();
     }
 
-    uint32_t band = prio2band[priority & 0x0f];
+    uint32_t band = PRIO_2_BAND[priority & 0x0f];
 
     bool retval = GetInternalQueue(band)->Enqueue(item);
 

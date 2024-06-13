@@ -57,6 +57,12 @@ NS_LOG_COMPONENT_DEFINE("DsrRouteCache");
 namespace dsr
 {
 
+/**
+ * The link cache to update all the link status, bi-link is two link for link is a struct
+ * when the weight is calculated we normalized them: 100*weight/max of Weight
+ */
+constexpr auto MAXWEIGHT = 0xFFFF;
+
 bool
 CompareRoutesBoth(const DsrRouteCacheEntry& a, const DsrRouteCacheEntry& b)
 {

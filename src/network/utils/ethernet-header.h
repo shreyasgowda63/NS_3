@@ -120,10 +120,6 @@ class EthernetHeader : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
   private:
-    static const int PREAMBLE_SIZE = 8; //!< size of the preamble_sfd header field
-    static const int LENGTH_SIZE = 2;   //!< size of the length_type header field
-    static const int MAC_ADDR_SIZE = 6; //!< size of src/dest addr header fields
-
     /**
      * If false, the preamble/sfd are not serialised/deserialised.
      */

@@ -95,7 +95,7 @@ class EpcX2Sap
      * it is used in the SN STATUS TRANSFER message.
      * See section 9.1.1.4 for further info about the parameters
      */
-    static const uint16_t m_maxPdcpSn = 4096;
+    static constexpr uint16_t m_maxPdcpSn{4096};
 
     /// ErabsSubjectToStatusTransferItem structure
     struct ErabsSubjectToStatusTransferItem

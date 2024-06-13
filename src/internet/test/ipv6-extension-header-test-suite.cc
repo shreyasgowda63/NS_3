@@ -81,7 +81,7 @@ class TestEmptyOptionField : public TestCase
 class OptionWithoutAlignmentHeader : public Ipv6OptionHeader
 {
   public:
-    static const uint8_t TYPE = 42; //!< Option type.
+    static constexpr uint8_t TYPE{42}; //!< Option type.
 
     uint32_t GetSerializedSize() const override
     {
@@ -154,7 +154,7 @@ class TestOptionWithoutAlignment : public TestCase
 class OptionWithAlignmentHeader : public Ipv6OptionHeader
 {
   public:
-    static const uint8_t TYPE = 73; //!< Option Type.
+    static constexpr uint8_t TYPE{73}; //!< Option Type.
 
     uint32_t GetSerializedSize() const override
     {

@@ -1110,8 +1110,8 @@ ReadFileTestCase::DoTeardown()
 {
 }
 
-static const uint32_t N_KNOWN_PACKETS = 6;
-static const uint32_t N_PACKET_BYTES = 16;
+constexpr uint32_t N_KNOWN_PACKETS = 6;
+constexpr uint32_t N_PACKET_BYTES = 16;
 
 /**
  * PCAP Packet structure

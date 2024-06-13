@@ -22,7 +22,7 @@
 #include "cid.h"
 
 // 0 will match IR CID, -1 will match broadcast CID 0xFFFF, hence 60000
-#define CID_UNINITIALIZED 60000
+constexpr uint16_t CID_UNINITIALIZED = 60000;
 
 namespace ns3
 {

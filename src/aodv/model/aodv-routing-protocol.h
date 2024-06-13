@@ -63,7 +63,9 @@ class RoutingProtocol : public Ipv4RoutingProtocol
      * \return the object TypeId
      */
     static TypeId GetTypeId();
-    static const uint32_t AODV_PORT;
+
+    /// UDP Port for AODV control traffic
+    static constexpr uint32_t AODV_PORT{654};
 
     /// constructor
     RoutingProtocol();
