@@ -1216,14 +1216,14 @@ class WifiPhy : public Object
      */
     virtual MHz_t GetGuardBandwidth(MHz_t currentChannelWidth) const = 0;
     /**
-     * \return a tuple containing the minimum rejection (in dBr) for the inner band,
-     *                            the minimum rejection (in dBr) for the outer band, and
-     *                            the maximum rejection (in dBr) for the outer band
+     * \return a tuple containing the minimum rejection for the inner band,
+     *                            the minimum rejection for the outer band, and
+     *                            the maximum rejection for the outer band
      *                            for the transmit spectrum mask.
      *
      * This method is only relevant for SpectrumWifiPhy.
      */
-    virtual std::tuple<double, double, double> GetTxMaskRejectionParams() const = 0;
+    virtual std::tuple<dBr_t, dBr_t, dBr_t> GetTxMaskRejectionParams() const = 0;
 
     /**
      * Get channel number of the primary channel

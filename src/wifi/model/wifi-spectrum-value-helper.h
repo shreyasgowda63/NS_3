@@ -96,10 +96,9 @@ class WifiSpectrumValueHelper
      * \param channelWidth channel width
      * \param txPower transmit power to allocate
      * \param guardBandwidth width of the guard band
-     * \param minInnerBandDbr the minimum relative power in the inner band (in dBr)
-     * \param minOuterbandDbr the minimum relative power in the outer band (in dBr)
-     * \param lowestPointDbr maximum relative power of the outermost subcarriers of the guard band
-     * (in dBr)
+     * \param minInnerBand the minimum relative power in the inner band
+     * \param minOuterband the minimum relative power in the outer band
+     * \param lowestPoint maximum relative power of the outermost subcarriers of the guard band
      * \return a pointer to a newly allocated SpectrumValue representing the OFDM Transmit Power
      * Spectral Density in W/Hz for each Band
      */
@@ -107,9 +106,9 @@ class WifiSpectrumValueHelper
                                                                MHz_t channelWidth,
                                                                Watt_t txPower,
                                                                MHz_t guardBandwidth,
-                                                               double minInnerBandDbr = -20,
-                                                               double minOuterbandDbr = -28,
-                                                               double lowestPointDbr = -40);
+                                                               dBr_t minInnerBand = -20,
+                                                               dBr_t minOuterband = -28,
+                                                               dBr_t lowestPoint = -40);
 
     /**
      * Create a transmit power spectral density corresponding to OFDM duplicated over multiple 20
@@ -119,10 +118,9 @@ class WifiSpectrumValueHelper
      * \param channelWidth total allocated channel width over all segments
      * \param txPower transmit power to allocate
      * \param guardBandwidth width of the guard band
-     * \param minInnerBandDbr the minimum relative power in the inner band (in dBr)
-     * \param minOuterbandDbr the minimum relative power in the outer band (in dBr)
-     * \param lowestPointDbr maximum relative power of the outermost subcarriers of the guard band
-     * (in dBr)
+     * \param minInnerBand the minimum relative power in the inner band
+     * \param minOuterband the minimum relative power in the outer band
+     * \param lowestPoint maximum relative power of the outermost subcarriers of the guard band
      * \param puncturedSubchannels bitmap indicating whether a 20 MHz subchannel is punctured or not
      * \return a pointer to a newly allocated SpectrumValue representing the duplicated 20 MHz OFDM
      * Transmit Power Spectral Density in W/Hz for each Band
@@ -132,9 +130,9 @@ class WifiSpectrumValueHelper
         MHz_t channelWidth,
         Watt_t txPower,
         MHz_t guardBandwidth,
-        double minInnerBandDbr = -20,
-        double minOuterbandDbr = -28,
-        double lowestPointDbr = -40,
+        dBr_t minInnerBand = -20,
+        dBr_t minOuterband = -28,
+        dBr_t lowestPoint = -40,
         const std::vector<bool>& puncturedSubchannels = {});
 
     /**
@@ -146,10 +144,9 @@ class WifiSpectrumValueHelper
      * \param channelWidth total allocated channel width over all segments
      * \param txPower transmit power to allocate
      * \param guardBandwidth width of the guard band
-     * \param minInnerBandDbr the minimum relative power in the inner band (in dBr)
-     * \param minOuterbandDbr the minimum relative power in the outer band (in dBr)
-     * \param lowestPointDbr maximum relative power of the outermost subcarriers of the guard band
-     * (in dBr)
+     * \param minInnerBand the minimum relative power in the inner band
+     * \param minOuterband the minimum relative power in the outer band
+     * \param lowestPoint maximum relative power of the outermost subcarriers of the guard band
      * \return a pointer to a newly allocated SpectrumValue representing the HT OFDM Transmit Power
      * Spectral Density in W/Hz for each Band
      */
@@ -158,9 +155,9 @@ class WifiSpectrumValueHelper
         MHz_t channelWidth,
         Watt_t txPower,
         MHz_t guardBandwidth,
-        double minInnerBandDbr = -20,
-        double minOuterbandDbr = -28,
-        double lowestPointDbr = -40);
+        dBr_t minInnerBand = -20,
+        dBr_t minOuterband = -28,
+        dBr_t lowestPoint = -40);
 
     /**
      * Create a transmit power spectral density corresponding to OFDM
@@ -171,10 +168,9 @@ class WifiSpectrumValueHelper
      * \param channelWidth channel width
      * \param txPower transmit power to allocate
      * \param guardBandwidth width of the guard band
-     * \param minInnerBandDbr the minimum relative power in the inner band (in dBr)
-     * \param minOuterbandDbr the minimum relative power in the outer band (in dBr)
-     * \param lowestPointDbr maximum relative power of the outermost subcarriers of the guard band
-     * (in dBr)
+     * \param minInnerBand the minimum relative power in the inner band
+     * \param minOuterband the minimum relative power in the outer band
+     * \param lowestPoint maximum relative power of the outermost subcarriers of the guard band
      * \param puncturedSubchannels bitmap indicating whether a 20 MHz subchannel is punctured or not
      * \return a pointer to a newly allocated SpectrumValue representing the HE OFDM Transmit Power
      * Spectral Density in W/Hz for each Band
@@ -184,9 +180,9 @@ class WifiSpectrumValueHelper
         MHz_t channelWidth,
         Watt_t txPower,
         MHz_t guardBandwidth,
-        double minInnerBandDbr = -20,
-        double minOuterbandDbr = -28,
-        double lowestPointDbr = -40,
+        dBr_t minInnerBand = -20,
+        dBr_t minOuterband = -28,
+        dBr_t lowestPoint = -40,
         const std::vector<bool>& puncturedSubchannels = {});
 
     /**
@@ -198,10 +194,9 @@ class WifiSpectrumValueHelper
      * \param channelWidth total allocated channel width over all segments
      * \param txPower transmit power to allocate
      * \param guardBandwidth width of the guard band
-     * \param minInnerBandDbr the minimum relative power in the inner band (in dBr)
-     * \param minOuterbandDbr the minimum relative power in the outer band (in dBr)
-     * \param lowestPointDbr maximum relative power of the outermost subcarriers of the guard band
-     * (in dBr)
+     * \param minInnerBand the minimum relative power in the inner band
+     * \param minOuterband the minimum relative power in the outer band
+     * \param lowestPoint maximum relative power of the outermost subcarriers of the guard band
      * \param puncturedSubchannels bitmap indicating whether a 20 MHz subchannel is punctured or not
      * \return a pointer to a newly allocated SpectrumValue representing the HE OFDM Transmit Power
      * Spectral Density in W/Hz for each Band
@@ -211,9 +206,9 @@ class WifiSpectrumValueHelper
         MHz_t channelWidth,
         Watt_t txPower,
         MHz_t guardBandwidth,
-        double minInnerBandDbr = -20,
-        double minOuterbandDbr = -28,
-        double lowestPointDbr = -40,
+        dBr_t minInnerBand = -20,
+        dBr_t minOuterband = -28,
+        dBr_t lowestPoint = -40,
         const std::vector<bool>& puncturedSubchannels = {});
 
     /**
@@ -273,12 +268,11 @@ class WifiSpectrumValueHelper
      * \param nGuardBands size (in number of subcarriers) of the guard band (left and right)
      * \param innerSlopeWidth size (in number of subcarriers) of the inner band (i.e. slope going
      * from 0 dBr to -20 dBr in the figure above)
-     * \param minInnerBandDbr the minimum relative power in the inner band (i.e., -20 dBr in the
+     * \param minInnerBand the minimum relative power in the inner band (i.e., -20 dBr in the
      * figure above)
-     * \param minOuterbandDbr the minimum relative power in the outer band (i.e., -28 dBr in the
+     * \param minOuterband the minimum relative power in the outer band (i.e., -28 dBr in the
      * figure above)
-     * \param lowestPointDbr maximum relative power of the outermost subcarriers of the guard band
-     * (in dBr)
+     * \param lowestPoint maximum relative power of the outermost subcarriers of the guard band
      * \param puncturedSubBands vector of start and stop subcarrier indexes of the punctured sub
      * bands, for each segment
      * \param puncturedSlopeWidth size (in number of subcarriers) of the punctured band slope
@@ -290,9 +284,9 @@ class WifiSpectrumValueHelper
         Watt_t txPowerPerBand,
         uint32_t nGuardBands,
         uint32_t innerSlopeWidth,
-        double minInnerBandDbr,
-        double minOuterbandDbr,
-        double lowestPointDbr,
+        dBr_t minInnerBand,
+        dBr_t minOuterband,
+        dBr_t lowestPoint,
         const std::vector<std::vector<WifiSpectrumBandIndices>>& puncturedSubBands = {},
         uint32_t puncturedSlopeWidth = 0);
 
