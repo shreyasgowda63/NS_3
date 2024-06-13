@@ -100,7 +100,7 @@ NS_LOG_COMPONENT_DEFINE("WifiSpectrumSaturationExample");
 int
 main(int argc, char* argv[])
 {
-    double distance{1};
+    meter_t distance{1};
     Time simulationTime{"10s"};
     uint16_t index{256};
     std::string wifiType{"ns3::SpectrumWifiPhy"};

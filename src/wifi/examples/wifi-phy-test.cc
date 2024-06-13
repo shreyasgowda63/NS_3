@@ -39,7 +39,7 @@ class PsrExperiment
     struct Input
     {
         Input();
-        double distance;      ///< distance
+        meter_t distance;     ///< distance
         std::string txMode;   ///< transmit mode
         uint8_t txPowerLevel; ///< transmit power level
         uint32_t packetSize;  ///< packet size

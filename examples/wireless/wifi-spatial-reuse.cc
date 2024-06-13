@@ -157,9 +157,9 @@ int
 main(int argc, char* argv[])
 {
     Time duration{"10s"};
-    double d1{30.0};  // meters
-    double d2{30.0};  // meters
-    double d3{150.0}; // meters
+    meter_t d1{30.0};  // meters
+    meter_t d2{30.0};  // meters
+    meter_t d3{150.0}; // meters
     dBm_t powSta1{10.0};
     dBm_t powSta2{10.0};
     dBm_t powAp1{21.0};

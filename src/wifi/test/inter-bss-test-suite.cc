@@ -98,18 +98,18 @@ class TestInterBssConstantObssPdAlgo : public TestCase
 
     /**
      * Allocate the node positions
-     * \param d1 distance d1 (in meters)
-     * \param d2 distance d2 (in meters)
-     * \param d3 distance d3 (in meters)
-     * \param d4 distance d4 (in meters)
-     * \param d5 distance d5 (in meters)
+     * \param d1 distance d1
+     * \param d2 distance d2
+     * \param d3 distance d3
+     * \param d4 distance d4
+     * \param d5 distance d5
      * \return the node positions
      */
-    Ptr<ListPositionAllocator> AllocatePositions(double d1,
-                                                 double d2,
-                                                 double d3,
-                                                 double d4,
-                                                 double d5);
+    Ptr<ListPositionAllocator> AllocatePositions(meter_t d1,
+                                                 meter_t d2,
+                                                 meter_t d3,
+                                                 meter_t d4,
+                                                 meter_t d5);
 
     /**
      * Set the expected transmit power
@@ -244,11 +244,11 @@ TestInterBssConstantObssPdAlgo::~TestInterBssConstantObssPdAlgo()
 }
 
 Ptr<ListPositionAllocator>
-TestInterBssConstantObssPdAlgo::AllocatePositions(double d1,
-                                                  double d2,
-                                                  double d3,
-                                                  double d4,
-                                                  double d5)
+TestInterBssConstantObssPdAlgo::AllocatePositions(meter_t d1,
+                                                  meter_t d2,
+                                                  meter_t d3,
+                                                  meter_t d4,
+                                                  meter_t d5)
 {
     Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator>();
     positionAlloc->Add(Vector(0.0, 0.0, 0.0));                    // AP1

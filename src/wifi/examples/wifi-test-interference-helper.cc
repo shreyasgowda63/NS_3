@@ -84,8 +84,8 @@ class InterferenceExperiment
     {
         Input();
         Time interval;         ///< interval
-        double xA;             ///< x A
-        double xB;             ///< x B
+        meter_t xA;            ///< x A
+        meter_t xB;            ///< x B
         std::string txModeA;   ///< transmit mode A
         std::string txModeB;   ///< transmit mode B
         double txPowerLevelA;  ///< transmit power level A

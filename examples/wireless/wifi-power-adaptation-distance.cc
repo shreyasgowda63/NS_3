@@ -404,7 +404,7 @@ main(int argc, char* argv[])
     int sta1_x{5};
     int sta1_y{0};
     uint32_t steps{200};
-    uint32_t stepsSize{1};
+    meter_t stepsSize{1};
     Time stepsTime{"1s"};
 
     CommandLine cmd(__FILE__);
