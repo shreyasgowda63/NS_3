@@ -74,9 +74,17 @@ class Dhcp6Helper
      * \brief Install DHCPv6 server of a node / NetDevice
      *
      * \param netDevice The NetDevice on which DHCPv6 server application has to be installed
+     * \param pool The address pool to be managed by the server
+     * \param prefix The prefix of the address pool
+     * \param minAddress The minimum address in the pool
+     * \param maxAddress The maximum address in the pool
      * \return The application container with DHCPv6 server installed
      */
-    ApplicationContainer InstallDhcp6Server(Ptr<NetDevice> netDevice);
+    ApplicationContainer InstallDhcp6Server(Ptr<NetDevice> netDevice,
+                                            Ipv6Address pool,
+                                            Ipv6Prefix prefix,
+                                            Ipv6Address minAddress,
+                                            Ipv6Address maxAddress);
 
   private:
     /**

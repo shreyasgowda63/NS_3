@@ -21,7 +21,9 @@
 #include "ns3/dhcp6-helper.h"
 #include "ns3/header-serialization-test.h"
 #include "ns3/internet-stack-helper.h"
-#include "ns3/ipv4-address-helper.h"
+#include "ns3/ipv6-address-helper.h"
+#include "ns3/log.h"
+#include "ns3/ping-helper.h"
 #include "ns3/simple-net-device-helper.h"
 #include "ns3/simple-net-device.h"
 #include "ns3/simulator.h"
@@ -49,7 +51,6 @@ class Dhcp6TestCase : public TestCase
 
   private:
     void DoRun() override;
-    Ipv4Address m_leasedAddress[3]; //!< Address given to the nodes
 };
 
 Dhcp6TestCase::Dhcp6TestCase()
@@ -75,12 +76,22 @@ Dhcp6TestCase::DoRun()
     simpleNetDevice.SetDeviceAttribute("DataRate", DataRateValue(DataRate("5Mbps")));
     NetDeviceContainer devNet = simpleNetDevice.Install(net);
 
-    InternetStackHelper tcpip;
-    tcpip.Install(nodes);
+    InternetStackHelper internetv6;
+    internetv6.SetIpv6StackInstall(true);
+    internetv6.Install(nodes);
+
+    Ipv6AddressHelper ipv6;
+    Ipv6InterfaceContainer i = ipv6.Assign(devNet);
 
     Dhcp6Helper dhcpHelper;
 
-    ApplicationContainer dhcpServerApp = dhcpHelper.InstallDhcp6Server(devNet.Get(0));
+    ApplicationContainer dhcpServerApp =
+        dhcpHelper.InstallDhcp6Server(devNet.Get(0),
+                                      Ipv6Address("2001:db8:1::"),
+                                      Ipv6Prefix(64),
+                                      Ipv6Address("2001:db8:1::1"),
+                                      Ipv6Address("2001:db8:1::ff"));
+    // TODO: Add multiple address pool
     dhcpServerApp.Start(Seconds(0.0));
     dhcpServerApp.Stop(Seconds(20.0));
 
