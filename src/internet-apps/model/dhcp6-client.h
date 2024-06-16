@@ -66,7 +66,30 @@ class Dhcp6Client : public Application
     {
         WAIT_ADVERTISE = 1, // Waiting for an advertise message
         WAIT_REPLY = 2,     // Waiting for a reply message
+        RENEW = 3,          // Renewing the lease
     };
+
+    /**
+     * \brief Verify the incoming advertise message.
+     * \param header The DHCPv6 header received.
+     */
+    void ValidateAdvertise(Dhcp6Header header);
+
+    /**
+     * \brief Send a request to the DHCPv6 server.
+     * \param iDev The net device of the client
+     * \param header The DHCPv6 header
+     * \param server The address of the server
+     */
+    void SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
+
+    /**
+     * \brief Send a request to the DHCPv6 server.
+     * \param iDev The net device of the client
+     * \param header The DHCPv6 header
+     * \param server The address of the server
+     */
+    void AcceptReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
 
     /**
      * \brief Handles incoming packets from the network
@@ -118,6 +141,21 @@ class Dhcp6Client : public Application
      * \brief First boot of the client.
      */
     bool m_firstBoot;
+
+    /**
+     * \brief Store the starting timestamp for the Elapsed Time option
+     */
+    Time m_startTime;
+
+    /**
+     * \brief Store the transaction ID of the initiated message exchange.
+     */
+    uint32_t m_clientTransactId;
+
+    /**
+     * \brief Store the client identifier option.
+     */
+    IdentifierOption m_clientIdentifier;
 };
 
 } // namespace ns3

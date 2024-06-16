@@ -155,6 +155,8 @@ class Dhcp6Server : public Application
      */
     typedef std::map<Address, std::pair<Ipv6Address, uint32_t>>::iterator LeasedAddressesIterator;
 
+    // TODO: track expired addresses
+
     /**
      * \brief Declined addresses
      */
@@ -230,6 +232,7 @@ class Dhcp6Server : public Application
     Ipv6Prefix m_prefix;       //!< Prefix of the address pool
     Ipv6Address m_minAddress;  //!< Minimum address in the pool
     Ipv6Address m_maxAddress;  //!< Maximum address in the pool
+    uint32_t m_numAddresses;   //!< Number of addresses leased.
 };
 
 } // namespace ns3

@@ -137,6 +137,18 @@ class Dhcp6Header : public Header
     IdentifierOption GetClientIdentifier();
 
     /**
+     * \brief Get the server identifier.
+     * \return the server identifier option.
+     */
+    IdentifierOption GetServerIdentifier();
+
+    /**
+     * \brief Get the list of IA_NA options.
+     * \return the list of IA_NA options.
+     */
+    std::list<IaOptions> GetIanaOptions();
+
+    /**
      * \brief Set the elapsed time option.
      * \param timestamp the time at which the client began the exchange.
      */

@@ -81,6 +81,7 @@ Dhcp6Server::GetTypeId()
 Dhcp6Server::Dhcp6Server()
 {
     NS_LOG_FUNCTION(this);
+    m_numAddresses = 0;
 }
 
 void
@@ -140,10 +141,35 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
         Ipv6Address minAddress = itr->second.first;
         Ipv6Address maxAddress = itr->second.second;
 
+        // Obtain the address to be included in the message.
+        uint8_t minAddrBuf[16];
+        minAddress.GetBytes(minAddrBuf);
+
+        uint8_t offeredAddrBuf[16];
+        uint8_t addition[16];
+        // convert m_numAddresses to byte array.
+        // offeredAddrBuf = minAddressBuf | addition
+
+        uint8_t byteCount = 0;
+        for (uint8_t bits = 0; bits <= 120; bits += 8)
+        {
+            addition[byteCount] = (m_numAddresses << bits) & 0xff;
+            byteCount += 1;
+        }
+
+        for (uint8_t i = 0; i < 16; i++)
+        {
+            offeredAddrBuf[i] = minAddrBuf[i] | addition[i];
+        }
+
+        Ipv6Address offeredAddr(offeredAddrBuf);
+        NS_LOG_INFO("min addr is " << minAddress << " offered address is " << offeredAddr);
+        m_numAddresses += 1;
+
         // TODO: Retrieve all existing IA_NA options.
         advertiseHeader.AddIanaOption(m_iaidCount, m_renew.GetSeconds(), m_rebind.GetSeconds());
         advertiseHeader.AddAddress(m_iaidCount,
-                                   pool,
+                                   offeredAddr,
                                    m_prefLifetime.GetSeconds(),
                                    m_validLifetime.GetSeconds());
     }
@@ -158,6 +184,64 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
     else
     {
         NS_LOG_INFO("Error while sending DHCPv6 Advertise.");
+    }
+}
+
+void
+Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
+{
+    NS_LOG_INFO(this << iDev << header << client);
+
+    Ptr<Packet> packet = Create<Packet>();
+    Dhcp6Header replyHeader;
+    replyHeader.ResetOptions();
+    replyHeader.SetMessageType(Dhcp6Header::REPLY);
+    replyHeader.SetTransactId(header.GetTransactId());
+
+    // Add Client Identifier Option, copied from the received header.
+    uint16_t clientHardwareType = header.GetClientIdentifier().GetHardwareType();
+    Address clientAddress = header.GetClientIdentifier().GetLinkLayerAddress();
+    replyHeader.AddClientIdentifier(clientHardwareType, clientAddress);
+
+    // Add Server Identifier Option.
+    auto linkLayer = iDev->GetAddress();
+    replyHeader.AddServerIdentifier(1, linkLayer);
+
+    // Add IA_NA option.
+    // Retrieve requested IA Option from client header.
+    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    IaOptions iaOpt = ianaOptionsList.front();
+    IaAddressOption iaAddrOpt = iaOpt.m_iaAddressOption.front();
+
+    for (auto itr = availablePools.begin(); itr != availablePools.end(); itr++)
+    {
+        Ipv6Address pool = itr->first;
+        Ipv6Prefix prefix = availablePrefixes[pool];
+        Ipv6Address minAddress = itr->second.first;
+        Ipv6Address maxAddress = itr->second.second;
+
+        Ipv6Address requestedAddr = iaAddrOpt.GetIaAddress();
+        // TODO: Check that requestedAddr is within [min, max] range.
+        // TODO: Check that requestedAddr is not in declinedAddresses.
+
+        // TODO: Retrieve all existing IA_NA options.
+        replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
+        replyHeader.AddAddress(iaOpt.GetIaid(),
+                               iaAddrOpt.GetIaAddress(),
+                               iaAddrOpt.GetPreferredLifetime(),
+                               iaAddrOpt.GetValidLifetime());
+    }
+
+    packet->AddHeader(replyHeader);
+    // TODO: Add OPTION_REQUEST Option.
+    // Send the advertise message.
+    if (m_sendSocket->SendTo(packet, 0, client) >= 0)
+    {
+        NS_LOG_INFO("DHCPv6 Reply sent.");
+    }
+    else
+    {
+        NS_LOG_INFO("Error while sending DHCPv6 Reply.");
     }
 }
 
@@ -199,7 +283,7 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
     }
     if (header.GetMessageType() == Dhcp6Header::REQUEST)
     {
-        // SendReply(iDev, header, senderAddr);
+        SendReply(iDev, header, senderAddr);
     }
 }
 
@@ -239,6 +323,19 @@ Dhcp6Server::StartApplication()
     m_recvSocket->SetRecvPktInfo(true);
     m_recvSocket->SetRecvCallback(MakeCallback(&Dhcp6Server::NetHandler, this));
 
+    Ipv6Address linkLocal;
+    for (uint32_t addrIndex = 0; addrIndex < ipv6->GetNAddresses(ifIndex); addrIndex++)
+    {
+        Ipv6InterfaceAddress ifaceAddr = ipv6->GetAddress(ifIndex, addrIndex);
+        Ipv6Address addr = ifaceAddr.GetAddress();
+        if (addr.IsLinkLocal())
+        {
+            linkLocal = addr;
+            break;
+        }
+    }
+
+    m_sendSocket->Bind(Inet6SocketAddress(linkLocal, Dhcp6Server::PORT));
     m_sendSocket->BindToNetDevice(m_device);
 }
 

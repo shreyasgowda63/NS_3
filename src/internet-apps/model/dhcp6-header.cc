@@ -22,6 +22,8 @@
 #include "ns3/log.h"
 #include "ns3/simulator.h"
 
+#include <bitset>
+
 namespace ns3
 {
 
@@ -99,6 +101,18 @@ IdentifierOption
 Dhcp6Header::GetClientIdentifier()
 {
     return clientIdentifier;
+}
+
+IdentifierOption
+Dhcp6Header::GetServerIdentifier()
+{
+    return serverIdentifier;
+}
+
+std::list<IaOptions>
+Dhcp6Header::GetIanaOptions()
+{
+    return m_ianaList;
 }
 
 void
@@ -269,20 +283,19 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
 {
     Buffer::Iterator i = start;
     uint32_t mTTid = m_msgType << 24 | m_transactId;
-    i.WriteU32(mTTid);
+    i.WriteHtonU32(mTTid);
 
-    if (m_options[OPTION_ELAPSED_TIME])
-    {
-        i.WriteU16(elapsedTime.GetOptionCode());
-        i.WriteU16(elapsedTime.GetOptionLength());
-        i.WriteU16(elapsedTime.GetOptionValue());
-    }
     if (m_options[OPTION_CLIENTID])
     {
-        i.WriteU16(clientIdentifier.GetOptionCode());
-        i.WriteU16(clientIdentifier.GetOptionLength());
-        i.WriteU16(clientIdentifier.GetDuidType());
-        i.WriteU16(clientIdentifier.GetHardwareType());
+        std::stringstream stream;
+        stream << std::bitset<16>{clientIdentifier.GetOptionCode()};
+        NS_LOG_INFO("Client Identifier Option " << stream.str());
+
+        // i.WriteU16(clientIdentifier.GetOptionCode());
+        i.WriteHtonU16(clientIdentifier.GetOptionCode());
+        i.WriteHtonU16(clientIdentifier.GetOptionLength());
+        i.WriteHtonU16(clientIdentifier.GetDuidType());
+        i.WriteHtonU16(clientIdentifier.GetHardwareType());
         Address addr = clientIdentifier.GetLinkLayerAddress();
         uint8_t addrBuf[16];
         addr.CopyTo(addrBuf);
@@ -290,10 +303,10 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     }
     if (m_options[OPTION_SERVERID])
     {
-        i.WriteU16(serverIdentifier.GetOptionCode());
-        i.WriteU16(serverIdentifier.GetOptionLength());
-        i.WriteU16(clientIdentifier.GetDuidType());
-        i.WriteU16(serverIdentifier.GetHardwareType());
+        i.WriteHtonU16(serverIdentifier.GetOptionCode());
+        i.WriteHtonU16(serverIdentifier.GetOptionLength());
+        i.WriteHtonU16(clientIdentifier.GetDuidType());
+        i.WriteHtonU16(serverIdentifier.GetHardwareType());
         Address addr = serverIdentifier.GetLinkLayerAddress();
         uint8_t addrBuf[16];
         addr.CopyTo(addrBuf);
@@ -303,28 +316,35 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     {
         for (auto itr = m_ianaList.begin(); itr != m_ianaList.end(); itr++)
         {
-            i.WriteU16((*itr).GetOptionCode());
-            i.WriteU16((*itr).GetOptionLength());
-            i.WriteU32((*itr).GetIaid());
-            i.WriteU32((*itr).GetT1());
-            i.WriteU32((*itr).GetT2());
+            i.WriteHtonU16((*itr).GetOptionCode());
+            i.WriteHtonU16((*itr).GetOptionLength());
+            i.WriteHtonU32((*itr).GetIaid());
+            i.WriteHtonU32((*itr).GetT1());
+            i.WriteHtonU32((*itr).GetT2());
 
             std::list<IaAddressOption> iaAddresses = (*itr).m_iaAddressOption;
             auto iaItr = iaAddresses.begin();
             while (iaItr != iaAddresses.end())
             {
-                i.WriteU16((*iaItr).GetOptionCode());
-                i.WriteU16((*iaItr).GetOptionLength());
+                i.WriteHtonU16((*iaItr).GetOptionCode());
+                i.WriteHtonU16((*iaItr).GetOptionLength());
 
                 Address addr = (*iaItr).GetIaAddress();
                 uint8_t addrBuf[16];
                 addr.CopyTo(addrBuf);
                 i.Write(addrBuf, 16);
-                i.WriteU32((*iaItr).GetPreferredLifetime());
-                i.WriteU32((*iaItr).GetValidLifetime());
+                i.WriteHtonU32((*iaItr).GetPreferredLifetime());
+                i.WriteHtonU32((*iaItr).GetValidLifetime());
                 iaItr++;
             }
         }
+    }
+
+    if (m_options[OPTION_ELAPSED_TIME])
+    {
+        i.WriteHtonU16(elapsedTime.GetOptionCode());
+        i.WriteHtonU16(elapsedTime.GetOptionLength());
+        i.WriteHtonU16(elapsedTime.GetOptionValue());
     }
 }
 
@@ -335,7 +355,7 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
     Buffer::Iterator i = start;
     uint32_t cLen = i.GetSize();
 
-    uint32_t mTTid = i.ReadU32();
+    uint32_t mTTid = i.ReadNtohU32();
     m_msgType = mTTid >> 24;
     m_transactId = mTTid & 0x00FFFFFF;
 
@@ -346,7 +366,7 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
     {
         if (len + 2 <= cLen)
         {
-            option = i.ReadU16();
+            option = i.ReadNtohU16();
             len += 2;
         }
         else
@@ -356,29 +376,12 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
         }
         switch (option)
         {
-        case OPTION_ELAPSED_TIME:
-            NS_LOG_INFO("Elapsed Time Option");
-            if (len + 4 <= cLen)
-            {
-                elapsedTime.SetOptionCode(option);
-                elapsedTime.SetOptionLength(i.ReadU16());
-                elapsedTime.SetOptionValue(i.ReadU16());
-                m_options[OPTION_ELAPSED_TIME] = true;
-                len += 4;
-            }
-            else
-            {
-                NS_LOG_WARN("Malformed Packet");
-                return 0;
-            }
-            break;
-
         case OPTION_CLIENTID:
             NS_LOG_INFO("Client Identifier Option");
             if (len + 2 <= cLen)
             {
                 clientIdentifier.SetOptionCode(option);
-                clientIdentifier.SetOptionLength(i.ReadU16());
+                clientIdentifier.SetOptionLength(i.ReadNtohU16());
                 len += 2;
             }
             if (len + clientIdentifier.GetOptionLength() <= cLen)
@@ -387,9 +390,9 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 uint32_t addrLen = clientIdentifier.GetOptionLength() - 4;
 
                 // Read DUID Type. Not used (3 is the only valid value)
-                i.ReadU16();
+                i.ReadNtohU16();
 
-                clientIdentifier.SetHardwareType(i.ReadU16());
+                clientIdentifier.SetHardwareType(i.ReadNtohU16());
                 uint8_t addrBuf[16];
                 i.Read(addrBuf, addrLen);
                 Address duid;
@@ -404,7 +407,7 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
             if (len + 2 <= cLen)
             {
                 serverIdentifier.SetOptionCode(option);
-                serverIdentifier.SetOptionLength(i.ReadU16());
+                serverIdentifier.SetOptionLength(i.ReadNtohU16());
                 len += 2;
             }
             if (len + clientIdentifier.GetOptionLength() <= cLen)
@@ -413,9 +416,9 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 uint32_t addrLen = serverIdentifier.GetOptionLength() - 4;
 
                 // Read DUID Type. Not used (3 is the only valid value)
-                i.ReadU16();
+                i.ReadNtohU16();
 
-                serverIdentifier.SetHardwareType(i.ReadU16());
+                serverIdentifier.SetHardwareType(i.ReadNtohU16());
                 uint8_t addrBuf[16];
                 i.Read(addrBuf, addrLen);
                 Address duid;
@@ -431,30 +434,30 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
             if (len + 2 <= cLen)
             {
                 iana.SetOptionCode(option);
-                iana.SetOptionLength(i.ReadU16());
+                iana.SetOptionLength(i.ReadNtohU16());
                 len += 2;
             }
 
             if (len + 12 <= cLen)
             {
-                iana.SetIaid(i.ReadU32());
-                iana.SetT1(i.ReadU32());
-                iana.SetT2(i.ReadU32());
+                iana.SetIaid(i.ReadNtohU32());
+                iana.SetT1(i.ReadNtohU32());
+                iana.SetT2(i.ReadNtohU32());
                 len += 12;
             }
 
             while (len + 28 <= cLen)
             {
                 IaAddressOption iaAddrOpt;
-                iaAddrOpt.SetOptionCode(i.ReadU16());
-                iaAddrOpt.SetOptionLength(i.ReadU16());
+                iaAddrOpt.SetOptionCode(i.ReadNtohU16());
+                iaAddrOpt.SetOptionLength(i.ReadNtohU16());
 
                 uint8_t addrBuf[16];
                 i.Read(addrBuf, 16);
                 iaAddrOpt.SetIaAddress(Ipv6Address(addrBuf));
 
-                iaAddrOpt.SetPreferredLifetime(i.ReadU32());
-                iaAddrOpt.SetValidLifetime(i.ReadU32());
+                iaAddrOpt.SetPreferredLifetime(i.ReadNtohU32());
+                iaAddrOpt.SetValidLifetime(i.ReadNtohU32());
 
                 iana.m_iaAddressOption.push_back(iaAddrOpt);
                 len += 4 + iaAddrOpt.GetOptionLength();
@@ -463,6 +466,24 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
             m_ianaList.push_back(iana);
             break;
         }
+
+        case OPTION_ELAPSED_TIME:
+            NS_LOG_INFO("Elapsed Time Option");
+            if (len + 4 <= cLen)
+            {
+                elapsedTime.SetOptionCode(option);
+                elapsedTime.SetOptionLength(i.ReadNtohU16());
+                elapsedTime.SetOptionValue(i.ReadNtohU16());
+                m_options[OPTION_ELAPSED_TIME] = true;
+                len += 4;
+            }
+            else
+            {
+                NS_LOG_WARN("Malformed Packet");
+                return 0;
+            }
+            break;
+
         default:
             NS_LOG_WARN("Unidentified Option " << option);
             NS_LOG_WARN("Malformed Packet");

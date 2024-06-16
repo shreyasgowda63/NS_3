@@ -71,7 +71,7 @@ Options::SetOptionLength(uint16_t length)
 
 IdentifierOption::IdentifierOption()
 {
-    m_duidType = 0;
+    m_duidType = 3;
     m_hardwareType = 0;
     m_linkLayerAddress = Address();
 }

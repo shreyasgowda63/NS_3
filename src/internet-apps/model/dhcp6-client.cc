@@ -66,6 +66,105 @@ Dhcp6Client::SetDhcp6ClientNetDevice(Ptr<NetDevice> netDevice)
 }
 
 void
+Dhcp6Client::ValidateAdvertise(Dhcp6Header header)
+{
+    NS_LOG_INFO(this << header);
+
+    Ptr<Packet> packet = Create<Packet>();
+    uint32_t receivedTransactId = header.GetTransactId();
+    NS_ASSERT_MSG(receivedTransactId == m_clientTransactId, "Transaction ID mismatch.");
+
+    uint16_t clientHwType = header.GetClientIdentifier().GetHardwareType();
+    Address clientHwAddr = header.GetClientIdentifier().GetLinkLayerAddress();
+
+    NS_ASSERT_MSG(clientHwType == m_clientIdentifier.GetHardwareType(),
+                  "Client DUID hardware type mismatch.");
+    NS_ASSERT_MSG(clientHwAddr == m_clientIdentifier.GetLinkLayerAddress(),
+                  "Client DUID link layer address mismatch.");
+}
+
+void
+Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server)
+{
+    NS_LOG_INFO(this << iDev << header << server);
+
+    Ptr<Packet> packet = Create<Packet>();
+    Dhcp6Header requestHeader;
+    requestHeader.ResetOptions();
+    requestHeader.SetMessageType(Dhcp6Header::REQUEST);
+
+    m_clientTransactId = 456;
+    requestHeader.SetTransactId(m_clientTransactId);
+
+    // Add Client Identifier Option.
+    requestHeader.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
+                                      m_clientIdentifier.GetLinkLayerAddress());
+
+    // Add Server Identifier Option, copied from the received header.
+    uint16_t serverHardwareType = header.GetServerIdentifier().GetHardwareType();
+    Address serverAddress = header.GetServerIdentifier().GetLinkLayerAddress();
+    requestHeader.AddServerIdentifier(serverHardwareType, serverAddress);
+
+    requestHeader.AddElapsedTime(0);
+
+    // Add IA_NA option.
+    // Current approach: Use the first available IA Address option in the
+    // advertise message.
+    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    IaOptions iaOpt = ianaOptionsList.front();
+    IaAddressOption iaAddrOpt = iaOpt.m_iaAddressOption.front();
+
+    requestHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
+    requestHeader.AddAddress(iaOpt.GetIaid(),
+                             iaAddrOpt.GetIaAddress(),
+                             iaAddrOpt.GetPreferredLifetime(),
+                             iaAddrOpt.GetValidLifetime());
+
+    packet->AddHeader(requestHeader);
+    // TODO: Add OPTION_REQUEST Option.
+    // TODO: Handle server unicast option.
+
+    // Send the request message.
+    m_state = WAIT_REPLY;
+    if (m_socket->SendTo(packet,
+                         0,
+                         Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT)) >=
+        0)
+    {
+        NS_LOG_INFO("DHCPv6 Request sent.");
+    }
+    else
+    {
+        NS_LOG_INFO("Error while sending DHCPv6 Request.");
+    }
+}
+
+void
+Dhcp6Client::AcceptReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server)
+{
+    NS_LOG_INFO(this << iDev << header << server);
+    m_state = RENEW;
+
+    Ptr<Ipv6> ipv6 = GetNode()->GetObject<Ipv6>();
+    int32_t ifIndex = ipv6->GetInterfaceForDevice(m_device);
+
+    // Read IA_NA option.
+    // Current approach: Use the first available IA Address option in the
+    // advertise message.
+    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    IaOptions iaOpt = ianaOptionsList.front();
+    IaAddressOption iaAddrOpt = iaOpt.m_iaAddressOption.front();
+
+    Ipv6Address offeredAddress = iaAddrOpt.GetIaAddress();
+
+    NS_LOG_INFO("Offered address: " << offeredAddress);
+
+    // TODO: In Linux, all leased addresses seem to be /128. Double-check this.
+    ipv6->AddAddress(ifIndex, Ipv6InterfaceAddress(offeredAddress, 128));
+    ipv6->SetUp(ifIndex);
+}
+
+void
 Dhcp6Client::NetHandler(Ptr<Socket> socket)
 {
     NS_LOG_FUNCTION(this << socket);
@@ -73,17 +172,32 @@ Dhcp6Client::NetHandler(Ptr<Socket> socket)
     Address from;
     Ptr<Packet> packet = m_socket->RecvFrom(from);
     Dhcp6Header header;
+
+    Inet6SocketAddress senderAddr = Inet6SocketAddress::ConvertFrom(from);
+
+    Ipv6PacketInfoTag interfaceInfo;
+    if (!packet->RemovePacketTag(interfaceInfo))
+    {
+        NS_ABORT_MSG("No incoming interface on DHCPv6 message, aborting.");
+    }
+
+    uint32_t incomingIf = interfaceInfo.GetRecvIf();
+    Ptr<NetDevice> iDev = GetNode()->GetDevice(incomingIf);
+
     if (packet->RemoveHeader(header) == 0)
     {
         return;
     }
     if (m_state == WAIT_ADVERTISE && header.GetMessageType() == Dhcp6Header::ADVERTISE)
     {
-        NS_LOG_INFO("Received Advertise");
+        NS_LOG_INFO("Received Advertise.");
+        ValidateAdvertise(header);
+        SendRequest(iDev, header, senderAddr);
     }
     if (m_state == WAIT_REPLY && header.GetMessageType() == Dhcp6Header::REPLY)
     {
-        // AcceptReply(header, from);
+        NS_LOG_INFO("Received Reply.");
+        AcceptReply(iDev, header, senderAddr);
     }
 }
 
@@ -127,8 +241,24 @@ Dhcp6Client::StartApplication()
     {
         TypeId tid = TypeId::LookupByName("ns3::UdpSocketFactory");
         m_socket = Socket::CreateSocket(node, tid);
+
+        Ipv6Address linkLocal;
+        for (uint32_t addrIndex = 0; addrIndex < ipv6->GetNAddresses(interface); addrIndex++)
+        {
+            NS_LOG_INFO("addr index" << addrIndex);
+            Ipv6InterfaceAddress ifaceAddr = ipv6->GetAddress(interface, addrIndex);
+            Ipv6Address addr = ifaceAddr.GetAddress();
+            if (addr.IsLinkLocal())
+            {
+                linkLocal = addr;
+                break;
+            }
+        }
+
+        m_socket->Bind(Inet6SocketAddress(linkLocal, DHCP_CLIENT_PORT));
         m_socket->BindToNetDevice(m_device);
         m_socket->Bind6();
+        m_socket->SetRecvPktInfo(true);
     }
     m_socket->SetRecvCallback(MakeCallback(&Dhcp6Client::NetHandler, this));
 
@@ -137,6 +267,10 @@ Dhcp6Client::StartApplication()
         m_device->AddLinkChangeCallback(MakeCallback(&Dhcp6Client::LinkStateHandler, this));
         m_firstBoot = false;
     }
+
+    m_clientIdentifier.SetHardwareType(1);
+    m_clientIdentifier.SetLinkLayerAddress(m_device->GetAddress());
+
     Boot();
 }
 
@@ -148,11 +282,12 @@ Dhcp6Client::Boot()
     packet = Create<Packet>();
 
     // Retrieve link layer address of the device.
-    auto linkLayer = m_device->GetAddress();
-    header.SetTransactId(123);
+    m_clientTransactId = 123;
+    header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::SOLICIT);
     header.AddElapsedTime(0);
-    header.AddClientIdentifier(1234, linkLayer);
+    header.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
+                               m_clientIdentifier.GetLinkLayerAddress());
     packet->AddHeader(header);
     if ((m_socket->SendTo(
             packet,
