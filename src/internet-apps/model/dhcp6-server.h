@@ -33,6 +33,87 @@ class Packet;
 /**
  * \ingroup dhcp6
  *
+ * \class LeaseInfo
+ * \brief Includes information about available subnets and corresponding leases.
+ */
+class LeaseInfo
+{
+  public:
+    /**
+     * Constructor.
+     * \param addressPool Address pool
+     * \param prefix Prefix of the address pool
+     * \param minAddress Minimum address in the pool
+     * \param maxAddress Maximum address in the pool
+     */
+    LeaseInfo(Ipv6Address addressPool,
+              Ipv6Prefix prefix,
+              Ipv6Address minAddress,
+              Ipv6Address maxAddress);
+
+    /**
+     * \brief Get the address pool.
+     * \return The address pool
+     */
+    Ipv6Address GetAddressPool();
+
+    /**
+     * \brief Get the prefix of the address pool.
+     * \return The prefix of the address pool
+     */
+    Ipv6Prefix GetPrefix();
+
+    /**
+     * \brief Get the minimum address in the pool.
+     * \return The minimum address in the pool
+     */
+    Ipv6Address GetMinAddress();
+
+    /**
+     * \brief Get the maximum address in the pool.
+     * \return The maximum address in the pool
+     */
+    Ipv6Address GetMaxAddress();
+
+    /**
+     * \brief Get the number of addresses leased.
+     * \return The number of addresses leased
+     */
+    uint32_t GetNumAddresses();
+
+  private:
+    /**
+     * \brief Expired Addresses (Section 6.2 of RFC 8415)
+     * Expired time / Ipv6Address
+     */
+    typedef std::map<uint32_t, Ipv6Address> ExpiredAddresses;
+
+    /**
+     * \brief Leased Addresses
+     * Client DUID + Ipv6Address / Lease time
+     */
+    typedef std::map<Address, std::pair<Ipv6Address, uint32_t>> LeasedAddresses;
+
+    /**
+     * \brief Declined Addresses
+     * Client DUID + Ipv6Address
+     */
+    typedef std::map<Address, Ipv6Address> DeclinedAddresses;
+
+    LeasedAddresses m_leasedAddresses;     //!< Leased addresses
+    ExpiredAddresses m_expiredAddresses;   //!< Expired addresses
+    DeclinedAddresses m_declinedAddresses; //!< Declined addresses
+
+    Ipv6Address m_addressPool; //!< Address pool
+    Ipv6Prefix m_prefix;       //!< Prefix of the address pool
+    Ipv6Address m_minAddress;  //!< Minimum address in the pool
+    Ipv6Address m_maxAddress;  //!< Maximum address in the pool
+    uint32_t m_numAddresses;   //!< Number of addresses leased.
+};
+
+/**
+ * \ingroup dhcp6
+ *
  * \class Dhcp6Server
  * \brief Implements the DHCPv6 server.
  */
@@ -51,22 +132,22 @@ class Dhcp6Server : public Application
     Dhcp6Server();
 
     /**
+     * \brief Set the net device that the DHCPv6 server will use.
+     * \param netDevice The net device that the server will use
+     */
+    void SetDhcp6ServerNetDevice(Ptr<NetDevice> netDevice);
+
+    /**
      * \brief Add a managed address pool.
      * \param pool The address pool to be managed by the server.
      * \param prefix The prefix of the address pool.
      * \param minAddress The minimum address in the pool.
      * \param maxAddress The maximum address in the pool.
      */
-    void AddAddressPool(Ipv6Address pool,
-                        Ipv6Prefix prefix,
-                        Ipv6Address minAddress,
-                        Ipv6Address maxAddress);
-
-    /**
-     * \brief Set the net device that the DHCPv6 server will use.
-     * \param netDevice The net device that the server will use
-     */
-    void SetDhcp6ServerNetDevice(Ptr<NetDevice> netDevice);
+    void AddSubnet(Ipv6Address pool,
+                   Ipv6Prefix prefix,
+                   Ipv6Address minAddress,
+                   Ipv6Address maxAddress);
 
   protected:
     void DoDispose() override;
@@ -228,11 +309,10 @@ class Dhcp6Server : public Application
      */
     uint32_t m_iaidCount;
 
-    Ipv6Address m_addressPool; //!< Address pool
-    Ipv6Prefix m_prefix;       //!< Prefix of the address pool
-    Ipv6Address m_minAddress;  //!< Minimum address in the pool
-    Ipv6Address m_maxAddress;  //!< Maximum address in the pool
-    uint32_t m_numAddresses;   //!< Number of addresses leased.
+    /**
+     * \brief List of all managed subnets.
+     */
+    std::vector<LeaseInfo> m_subnets;
 };
 
 } // namespace ns3

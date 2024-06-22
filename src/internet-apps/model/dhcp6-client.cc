@@ -245,7 +245,6 @@ Dhcp6Client::StartApplication()
         Ipv6Address linkLocal;
         for (uint32_t addrIndex = 0; addrIndex < ipv6->GetNAddresses(interface); addrIndex++)
         {
-            NS_LOG_INFO("addr index" << addrIndex);
             Ipv6InterfaceAddress ifaceAddr = ipv6->GetAddress(interface, addrIndex);
             Ipv6Address addr = ifaceAddr.GetAddress();
             if (addr.IsLinkLocal())

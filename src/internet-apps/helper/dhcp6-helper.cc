@@ -47,6 +47,17 @@ Dhcp6Helper::SetServerAttribute(std::string name, const AttributeValue& value)
     m_serverFactory.Set(name, value);
 }
 
+Ptr<Dhcp6Server>
+Dhcp6Helper::GetDhcp6Server(Ptr<NetDevice> netDevice)
+{
+    auto it = m_serverNetDevices.find(netDevice);
+    if (it == m_serverNetDevices.end())
+    {
+        return nullptr;
+    }
+    return it->second;
+}
+
 ApplicationContainer
 Dhcp6Helper::InstallDhcp6Client(Ptr<NetDevice> netDevice) const
 {
@@ -94,17 +105,9 @@ Dhcp6Helper::InstallDhcp6Client(NetDeviceContainer netDevices) const
 }
 
 ApplicationContainer
-Dhcp6Helper::InstallDhcp6Server(Ptr<NetDevice> netDevice,
-                                Ipv6Address pool,
-                                Ipv6Prefix prefix,
-                                Ipv6Address minAddress,
-                                Ipv6Address maxAddress)
+Dhcp6Helper::InstallDhcp6Server(Ptr<NetDevice> netDevice)
 {
     m_serverFactory.Set("LeaseTime", TimeValue(Seconds(30)));
-    m_serverFactory.Set("AddressPool", Ipv6AddressValue(pool));
-    m_serverFactory.Set("Prefix", Ipv6PrefixValue(prefix));
-    m_serverFactory.Set("MinAddress", Ipv6AddressValue(minAddress));
-    m_serverFactory.Set("MaxAddress", Ipv6AddressValue(maxAddress));
 
     Ptr<Node> node = netDevice->GetNode();
     NS_ASSERT_MSG(node, "Dhcp6Helper: NetDevice is not not associated with any node -> fail");
@@ -128,6 +131,9 @@ Dhcp6Helper::InstallDhcp6Server(Ptr<NetDevice> netDevice,
     Ptr<Dhcp6Server> app = m_serverFactory.Create<Dhcp6Server>();
     app->SetDhcp6ServerNetDevice(netDevice);
     node->AddApplication(app);
+
+    // Add DHCPv6 server to the map.
+    m_serverNetDevices[netDevice] = app;
     return ApplicationContainer(app);
 }
 

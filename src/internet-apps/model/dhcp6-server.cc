@@ -54,55 +54,13 @@ Dhcp6Server::GetTypeId()
                                           "Time after which client should rebind.",
                                           TimeValue(Seconds(20)),
                                           MakeTimeAccessor(&Dhcp6Server::m_rebind),
-                                          MakeTimeChecker())
-                            .AddAttribute("AddressPool",
-                                          "Pool of addresses to provide on request.",
-                                          Ipv6AddressValue(),
-                                          MakeIpv6AddressAccessor(&Dhcp6Server::m_addressPool),
-                                          MakeIpv6AddressChecker())
-                            .AddAttribute("Prefix",
-                                          "Prefix of the pool of addresses.",
-                                          Ipv6PrefixValue(),
-                                          MakeIpv6PrefixAccessor(&Dhcp6Server::m_prefix),
-                                          MakeIpv6PrefixChecker())
-                            .AddAttribute("MinAddress",
-                                          "First address in the pool",
-                                          Ipv6PrefixValue(),
-                                          MakeIpv6AddressAccessor(&Dhcp6Server::m_minAddress),
-                                          MakeIpv6AddressChecker())
-                            .AddAttribute("MaxAddress",
-                                          "Final address in the pool.",
-                                          Ipv6PrefixValue(),
-                                          MakeIpv6AddressAccessor(&Dhcp6Server::m_maxAddress),
-                                          MakeIpv6AddressChecker());
+                                          MakeTimeChecker());
     return tid;
 }
 
 Dhcp6Server::Dhcp6Server()
 {
     NS_LOG_FUNCTION(this);
-    m_numAddresses = 0;
-}
-
-void
-Dhcp6Server::AddAddressPool(Ipv6Address pool,
-                            Ipv6Prefix prefix,
-                            Ipv6Address minAddress,
-                            Ipv6Address maxAddress)
-{
-    NS_LOG_FUNCTION(this << pool << prefix << minAddress << maxAddress);
-
-    auto itr = availablePools.find(pool);
-
-    if (itr != availablePools.end())
-    {
-        NS_LOG_INFO("Address pool already exists.");
-    }
-    else
-    {
-        availablePools[pool] = std::make_pair(minAddress, maxAddress);
-        availablePrefixes[pool] = prefix;
-    }
 }
 
 void
@@ -134,14 +92,20 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
 
     // Add IA_NA option.
     // Available address pools and IA information is sent in this option.
-    for (auto itr = availablePools.begin(); itr != availablePools.end(); itr++)
+    for (auto itr = m_subnets.begin(); itr != m_subnets.end(); itr++)
     {
-        Ipv6Address pool = itr->first;
-        Ipv6Prefix prefix = availablePrefixes[pool];
-        Ipv6Address minAddress = itr->second.first;
-        Ipv6Address maxAddress = itr->second.second;
+        LeaseInfo subnet = *itr;
+        Ipv6Address pool = subnet.GetAddressPool();
+        Ipv6Prefix prefix = subnet.GetPrefix();
+        Ipv6Address minAddress = subnet.GetMinAddress();
+        Ipv6Address maxAddress = subnet.GetMaxAddress();
+        uint32_t numAddresses = subnet.GetNumAddresses();
 
         // Obtain the address to be included in the message.
+        // TODO: Check declined addresses, expired addresses and then leased
+        // addresses to find the next available address.
+
+        // Allocate a new address.
         uint8_t minAddrBuf[16];
         minAddress.GetBytes(minAddrBuf);
 
@@ -153,7 +117,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
         uint8_t byteCount = 0;
         for (uint8_t bits = 0; bits <= 120; bits += 8)
         {
-            addition[byteCount] = (m_numAddresses << bits) & 0xff;
+            addition[byteCount] = (numAddresses << bits) & 0xff;
             byteCount += 1;
         }
 
@@ -163,8 +127,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
         }
 
         Ipv6Address offeredAddr(offeredAddrBuf);
-        NS_LOG_INFO("min addr is " << minAddress << " offered address is " << offeredAddr);
-        m_numAddresses += 1;
+        numAddresses += 1;
 
         // TODO: Retrieve all existing IA_NA options.
         advertiseHeader.AddIanaOption(m_iaidCount, m_renew.GetSeconds(), m_rebind.GetSeconds());
@@ -213,12 +176,14 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
     IaOptions iaOpt = ianaOptionsList.front();
     IaAddressOption iaAddrOpt = iaOpt.m_iaAddressOption.front();
 
-    for (auto itr = availablePools.begin(); itr != availablePools.end(); itr++)
+    for (auto itr = m_subnets.begin(); itr != m_subnets.end(); itr++)
     {
-        Ipv6Address pool = itr->first;
-        Ipv6Prefix prefix = availablePrefixes[pool];
-        Ipv6Address minAddress = itr->second.first;
-        Ipv6Address maxAddress = itr->second.second;
+        LeaseInfo subnet = *itr;
+        Ipv6Address pool = subnet.GetAddressPool();
+        Ipv6Prefix prefix = subnet.GetPrefix();
+        Ipv6Address minAddress = subnet.GetMinAddress();
+        Ipv6Address maxAddress = subnet.GetMaxAddress();
+        // uint32_t numAddresses = subnet.GetNumAddresses();
 
         Ipv6Address requestedAddr = iaAddrOpt.GetIaAddress();
         // TODO: Check that requestedAddr is within [min, max] range.
@@ -288,6 +253,17 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
 }
 
 void
+Dhcp6Server::AddSubnet(Ipv6Address addressPool,
+                       Ipv6Prefix prefix,
+                       Ipv6Address minAddress,
+                       Ipv6Address maxAddress)
+{
+    NS_LOG_FUNCTION(this << addressPool << prefix << minAddress << maxAddress);
+    LeaseInfo newSubnet(addressPool, prefix, minAddress, maxAddress);
+    m_subnets.push_back(newSubnet);
+}
+
+void
 Dhcp6Server::StartApplication()
 {
     NS_LOG_FUNCTION(this);
@@ -308,10 +284,6 @@ Dhcp6Server::StartApplication()
     {
         NS_ABORT_MSG("DHCPv6 daemon must have a link-local address.");
     }
-
-    // Add the address pool to the DHCPv6 server.
-    // TODO: Add multiple pools.
-    AddAddressPool(m_addressPool, m_prefix, m_minAddress, m_maxAddress);
 
     TypeId tid = TypeId::LookupByName("ns3::UdpSocketFactory");
     m_recvSocket = Socket::CreateSocket(node, tid);
@@ -351,6 +323,53 @@ Dhcp6Server::StopApplication()
 
     m_leasedAddresses.clear();
     m_declinedAddresses.clear();
+}
+
+LeaseInfo::LeaseInfo(Ipv6Address addressPool,
+                     Ipv6Prefix prefix,
+                     Ipv6Address minAddress,
+                     Ipv6Address maxAddress)
+{
+    m_addressPool = addressPool;
+    m_prefix = prefix;
+    m_minAddress = minAddress;
+    m_maxAddress = maxAddress;
+    m_numAddresses = 0;
+}
+
+Ipv6Address
+LeaseInfo::GetAddressPool()
+{
+    NS_LOG_FUNCTION(this);
+    return m_addressPool;
+}
+
+Ipv6Prefix
+LeaseInfo::GetPrefix()
+{
+    NS_LOG_FUNCTION(this);
+    return m_prefix;
+}
+
+Ipv6Address
+LeaseInfo::GetMinAddress()
+{
+    NS_LOG_FUNCTION(this);
+    return m_minAddress;
+}
+
+Ipv6Address
+LeaseInfo::GetMaxAddress()
+{
+    NS_LOG_FUNCTION(this);
+    return m_maxAddress;
+}
+
+uint32_t
+LeaseInfo::GetNumAddresses()
+{
+    NS_LOG_FUNCTION(this);
+    return m_numAddresses;
 }
 
 } // namespace ns3

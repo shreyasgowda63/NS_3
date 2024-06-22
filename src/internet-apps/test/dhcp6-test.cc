@@ -85,12 +85,14 @@ Dhcp6TestCase::DoRun()
 
     Dhcp6Helper dhcpHelper;
 
-    ApplicationContainer dhcpServerApp =
-        dhcpHelper.InstallDhcp6Server(devNet.Get(0),
-                                      Ipv6Address("2001:db8:1::"),
-                                      Ipv6Prefix(64),
-                                      Ipv6Address("2001:db8:1::1"),
-                                      Ipv6Address("2001:db8:1::ff"));
+    ApplicationContainer dhcpServerApp = dhcpHelper.InstallDhcp6Server(devNet.Get(0));
+
+    Ptr<Dhcp6Server> server = dhcpHelper.GetDhcp6Server(devNet.Get(0));
+    server->AddSubnet(Ipv6Address("2001:db8::"),
+                      Ipv6Prefix(64),
+                      Ipv6Address("2001:db8::1"),
+                      Ipv6Address("2001:db8::ff"));
+
     // TODO: Add multiple address pool
     dhcpServerApp.Start(Seconds(0.0));
     dhcpServerApp.Stop(Seconds(20.0));

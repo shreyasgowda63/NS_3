@@ -73,12 +73,13 @@ main(int argc, char* argv[])
     Dhcp6Helper dhcp6Helper;
 
     // DHCP server
-    ApplicationContainer dhcpServerApp =
-        dhcp6Helper.InstallDhcp6Server(devNet.Get(1),
-                                       Ipv6Address("2001:db8:1::"),
-                                       Ipv6Prefix(64),
-                                       Ipv6Address("2001:db8:1::1"),
-                                       Ipv6Address("2001:db8:1::ff"));
+    ApplicationContainer dhcpServerApp = dhcp6Helper.InstallDhcp6Server(devNet.Get(1));
+
+    Ptr<Dhcp6Server> server = dhcp6Helper.GetDhcp6Server(devNet.Get(1));
+    server->AddSubnet(Ipv6Address("2001:db8::"),
+                      Ipv6Prefix(64),
+                      Ipv6Address("2001:db8::1"),
+                      Ipv6Address("2001:db8::ff"));
 
     dhcpServerApp.Start(Seconds(0.0));
     dhcpServerApp.Stop(stopTime);

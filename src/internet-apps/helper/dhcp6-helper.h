@@ -18,6 +18,7 @@
 #define DHCP6_HELPER_H
 
 #include "ns3/application-container.h"
+#include "ns3/dhcp6-server.h"
 #include "ns3/ipv6-address.h"
 #include "ns3/ipv6-interface-container.h"
 #include "ns3/net-device-container.h"
@@ -57,6 +58,13 @@ class Dhcp6Helper
     void SetServerAttribute(std::string name, const AttributeValue& value);
 
     /**
+     * \brief Get DHCPv6 server of a net device
+     * \param netDevice The NetDevice for which the server is required
+     * \return The pointer to the DHCPv6 server
+     */
+    Ptr<Dhcp6Server> GetDhcp6Server(Ptr<NetDevice> netDevice);
+
+    /**
      * \brief Install DHCPv6 client of a nodes / NetDevice
      * \param netDevice The NetDevice that the client will use
      * \return The application container with DHCPv6 client installed
@@ -72,19 +80,10 @@ class Dhcp6Helper
 
     /**
      * \brief Install DHCPv6 server of a node / NetDevice
-     *
      * \param netDevice The NetDevice on which DHCPv6 server application has to be installed
-     * \param pool The address pool to be managed by the server
-     * \param prefix The prefix of the address pool
-     * \param minAddress The minimum address in the pool
-     * \param maxAddress The maximum address in the pool
      * \return The application container with DHCPv6 server installed
      */
-    ApplicationContainer InstallDhcp6Server(Ptr<NetDevice> netDevice,
-                                            Ipv6Address pool,
-                                            Ipv6Prefix prefix,
-                                            Ipv6Address minAddress,
-                                            Ipv6Address maxAddress);
+    ApplicationContainer InstallDhcp6Server(Ptr<NetDevice> netDevice);
 
   private:
     /**
@@ -103,6 +102,11 @@ class Dhcp6Helper
      * \brief DHCPv6 server factory.
      */
     ObjectFactory m_serverFactory;
+
+    /**
+     * \brief Map of net devices to a DHCPv6 server.
+     */
+    std::map<Ptr<NetDevice>, Ptr<Dhcp6Server>> m_serverNetDevices;
 };
 
 } // namespace ns3
