@@ -218,7 +218,7 @@ GetModulationClassForStandard(WifiStandard standard)
         modulationClass = WIFI_MOD_CLASS_OFDM;
         break;
     case WIFI_STANDARD_80211b:
-        modulationClass = WIFI_MOD_CLASS_DSSS;
+        modulationClass = WIFI_MOD_CLASS_HR_DSSS;
         break;
     case WIFI_STANDARD_80211g:
         modulationClass = WIFI_MOD_CLASS_ERP_OFDM;
