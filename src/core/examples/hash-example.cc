@@ -478,8 +478,7 @@ class DictFiles
             dictStream.open(dictFile);
             if (!dictStream.is_open())
             {
-                std::cerr << "Failed to open dictionary file."
-                          << "'" << dictFile << "'" << std::endl;
+                std::cerr << "Failed to open dictionary file.'" << dictFile << "'" << std::endl;
                 continue;
             }
 
