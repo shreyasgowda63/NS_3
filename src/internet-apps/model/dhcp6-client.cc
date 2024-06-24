@@ -50,12 +50,17 @@ Dhcp6Client::Dhcp6Client()
 {
     NS_LOG_FUNCTION(this);
     m_firstBoot = true;
+
+    m_solicitEvent = EventId();
+    m_solicitInterval = Seconds(5);
 }
 
 void
 Dhcp6Client::DoDispose()
 {
     NS_LOG_FUNCTION(this);
+
+    m_solicitEvent.Cancel();
     Application::DoDispose();
 }
 
@@ -191,6 +196,7 @@ Dhcp6Client::NetHandler(Ptr<Socket> socket)
     if (m_state == WAIT_ADVERTISE && header.GetMessageType() == Dhcp6Header::ADVERTISE)
     {
         NS_LOG_INFO("Received Advertise.");
+        m_solicitEvent.Cancel();
         ValidateAdvertise(header);
         SendRequest(iDev, header, senderAddr);
     }
@@ -214,6 +220,7 @@ Dhcp6Client::LinkStateHandler()
     }
     else
     {
+        m_solicitEvent.Cancel();
         NS_LOG_INFO("Link down at " << Simulator::Now().As(Time::S));
     }
 }
@@ -301,12 +308,15 @@ Dhcp6Client::Boot()
     }
 
     m_state = WAIT_ADVERTISE;
+    m_solicitEvent = Simulator::Schedule(m_solicitInterval, &Dhcp6Client::Boot, this);
 }
 
 void
 Dhcp6Client::StopApplication()
 {
     NS_LOG_FUNCTION(this);
+
+    m_solicitEvent.Cancel();
 
     if (m_socket)
     {

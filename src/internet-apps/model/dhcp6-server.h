@@ -81,7 +81,6 @@ class LeaseInfo
      */
     uint32_t GetNumAddresses();
 
-  private:
     /**
      * \brief Expired Addresses (Section 6.2 of RFC 8415)
      * Expired time / Ipv6Address
@@ -104,6 +103,7 @@ class LeaseInfo
     ExpiredAddresses m_expiredAddresses;   //!< Expired addresses
     DeclinedAddresses m_declinedAddresses; //!< Declined addresses
 
+  private:
     Ipv6Address m_addressPool; //!< Address pool
     Ipv6Prefix m_prefix;       //!< Prefix of the address pool
     Ipv6Address m_minAddress;  //!< Minimum address in the pool

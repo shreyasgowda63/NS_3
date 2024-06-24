@@ -156,6 +156,9 @@ class Dhcp6Client : public Application
      * \brief Store the client identifier option.
      */
     IdentifierOption m_clientIdentifier;
+
+    Time m_solicitInterval; //!< SOL_MAX_RT value, default = 3600 / 100 = 36 sec
+    EventId m_solicitEvent; //!< Event ID for the solicit event
 };
 
 } // namespace ns3

@@ -99,42 +99,73 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
         Ipv6Prefix prefix = subnet.GetPrefix();
         Ipv6Address minAddress = subnet.GetMinAddress();
         Ipv6Address maxAddress = subnet.GetMaxAddress();
-        uint32_t numAddresses = subnet.GetNumAddresses();
+        // uint32_t numAddresses = subnet.GetNumAddresses();
 
         // Obtain the address to be included in the message.
         // TODO: Check declined addresses, expired addresses and then leased
         // addresses to find the next available address.
 
-        // Allocate a new address.
-        uint8_t minAddrBuf[16];
-        minAddress.GetBytes(minAddrBuf);
-
-        uint8_t offeredAddrBuf[16];
-        uint8_t addition[16];
-        // convert m_numAddresses to byte array.
-        // offeredAddrBuf = minAddressBuf | addition
-
-        uint8_t byteCount = 0;
-        for (uint8_t bits = 0; bits <= 120; bits += 8)
+        if (!subnet.m_expiredAddresses.empty())
         {
-            addition[byteCount] = (numAddresses << bits) & 0xff;
-            byteCount += 1;
+            auto itr = subnet.m_expiredAddresses.begin();
+            Ipv6Address nextAddress = itr->second;
+            subnet.m_expiredAddresses.erase(itr->first);
+            advertiseHeader.AddIanaOption(m_iaidCount, m_renew.GetSeconds(), m_rebind.GetSeconds());
+            advertiseHeader.AddAddress(m_iaidCount,
+                                       nextAddress,
+                                       m_prefLifetime.GetSeconds(),
+                                       m_validLifetime.GetSeconds());
+            continue;
         }
-
-        for (uint8_t i = 0; i < 16; i++)
+        else
         {
-            offeredAddrBuf[i] = minAddrBuf[i] | addition[i];
+            // Allocate a new address.
+            uint8_t minAddrBuf[16];
+            minAddress.GetBytes(minAddrBuf);
+
+            // Get the latest leased address.
+            uint8_t lastLeasedAddrBuf[16];
+            uint8_t offeredAddrBuf[16];
+            if (!subnet.m_leasedAddresses.empty())
+            {
+                auto itr = subnet.m_leasedAddresses.rbegin();
+                Ipv6Address lastLeasedAddress = (itr->second).first;
+
+                lastLeasedAddress.GetBytes(lastLeasedAddrBuf);
+                // offeredAddrBuf = lastLeasedAddress | addition
+                memcpy(offeredAddrBuf, lastLeasedAddrBuf, 16);
+
+                bool addedOne = false;
+                for (uint8_t i = 15; !addedOne && i >= 0; i--)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        uint8_t bit = (offeredAddrBuf[i] << j);
+                        if (bit == 0)
+                        {
+                            offeredAddrBuf[i] = offeredAddrBuf[i] | (1 << j);
+                            addedOne = true;
+                            break;
+                        }
+                        offeredAddrBuf[i] = offeredAddrBuf[i] & ~(1 << j);
+                    }
+                }
+            }
+            else
+            {
+                memcpy(offeredAddrBuf, minAddrBuf, 16);
+            }
+
+            Ipv6Address offeredAddr(offeredAddrBuf);
+            NS_LOG_INFO("Offered address: " << offeredAddr);
+
+            // TODO: Retrieve all existing IA_NA options.
+            advertiseHeader.AddIanaOption(m_iaidCount, m_renew.GetSeconds(), m_rebind.GetSeconds());
+            advertiseHeader.AddAddress(m_iaidCount,
+                                       offeredAddr,
+                                       m_prefLifetime.GetSeconds(),
+                                       m_validLifetime.GetSeconds());
         }
-
-        Ipv6Address offeredAddr(offeredAddrBuf);
-        numAddresses += 1;
-
-        // TODO: Retrieve all existing IA_NA options.
-        advertiseHeader.AddIanaOption(m_iaidCount, m_renew.GetSeconds(), m_rebind.GetSeconds());
-        advertiseHeader.AddAddress(m_iaidCount,
-                                   offeredAddr,
-                                   m_prefLifetime.GetSeconds(),
-                                   m_validLifetime.GetSeconds());
     }
 
     packet->AddHeader(advertiseHeader);
