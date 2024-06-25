@@ -161,16 +161,16 @@ int
 main(int argc, char* argv[])
 {
     LogComponentEnableAll(LogLevel(LOG_PREFIX_TIME | LOG_PREFIX_FUNC | LOG_PREFIX_NODE));
-    // LogComponentEnable("ZigbeeNwk", LOG_LEVEL_DEBUG);
-    //  LogComponentEnable("LrWpanCsmaCa", LOG_LEVEL_DEBUG);
-    LogComponentEnable("LrWpanMac", LOG_LEVEL_DEBUG);
-    LogComponentEnable("LrWpanPhy", LOG_LEVEL_DEBUG);
+    LogComponentEnable("ZigbeeNwk", LOG_LEVEL_DEBUG);
+    // LogComponentEnable("LrWpanCsmaCa", LOG_LEVEL_DEBUG);
+    // LogComponentEnable("LrWpanMac", LOG_LEVEL_DEBUG);
+    // LogComponentEnable("LrWpanPhy", LOG_LEVEL_DEBUG);
 
     // RngSeedManager::SetSeed(3);
     // RngSeedManager::SetRun(4);
 
     NodeContainer nodes;
-    nodes.Create(3);
+    nodes.Create(50);
 
     MobilityHelper mobility;
     mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
@@ -258,7 +258,7 @@ main(int argc, char* argv[])
             NlmeNetworkDiscoveryRequestParams netDiscParams;
             netDiscParams.m_scanChannelList.channelPageCount = 1;
             netDiscParams.m_scanChannelList.channelsField[0] = 0x00007800; // 0x00000800;
-            netDiscParams.m_scanDuration = 2;
+            netDiscParams.m_scanDuration = 0;
 
             Simulator::ScheduleWithContext(zstack->GetNode()->GetId(),
                                            Seconds(2 + index * 10), // 2+index * 0.5

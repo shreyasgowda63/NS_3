@@ -774,8 +774,8 @@ ZigbeeNwk::MlmeScanConfirm(MlmeScanConfirmParams params)
 
         if (params.m_status == MacStatus::SUCCESS)
         {
-            NS_LOG_DEBUG("[NLME-NETWORK-DISCOVERY.request]: Active scan complete, "
-                         << m_networkDescriptorList.size() << " join capable device(s) found");
+            NS_LOG_DEBUG("[NLME-NETWORK-DISCOVERY.request]: Active scan, "
+                         << m_networkDescriptorList.size() << " PARENT capable device(s) found");
 
             netDiscConfirmParams.m_netDescList = m_networkDescriptorList;
             netDiscConfirmParams.m_networkCount = m_networkDescriptorList.size();
@@ -2364,7 +2364,7 @@ ZigbeeNwk::UpdateBeaconPayload()
     // uint32_t payloadSize = payload->GetSize();
     // uint8_t octets [payloadSize];
     // uint8_t* octetsPtr =  octets;
-    uint8_t* octetsPtr = new uint8_t[payload->GetSize()];
+    auto octetsPtr = new uint8_t[payload->GetSize()];
     payload->CopyData(octetsPtr, payload->GetSize());
 
     // Add octets to macBeaconPayload vector
