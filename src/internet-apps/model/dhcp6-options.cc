@@ -275,16 +275,16 @@ RequestOptions::RequestOptions()
 }
 
 std::list<uint16_t>
-RequestOptions::GetRequestedOptions()
+RequestOptions::GetRequestedOptions() const
 {
     NS_LOG_FUNCTION(this);
     return m_requestedOptions;
 }
 
 void
-RequestOptions::SetRequestedOptions(std::list<uint16_t> requestedOptions)
+RequestOptions::AddRequestedOption(uint16_t requestedOption)
 {
-    m_requestedOptions = requestedOptions;
+    m_requestedOptions.push_back(requestedOption);
 }
 
 template <typename T>

@@ -157,6 +157,8 @@ class Dhcp6Client : public Application
      */
     IdentifierOption m_clientIdentifier;
 
+    Time m_msgStartTime; //!< Time when message exchange starts.
+
     Time m_solicitInterval; //!< SOL_MAX_RT value, default = 3600 / 100 = 36 sec
     EventId m_solicitEvent; //!< Event ID for the solicit event
 };

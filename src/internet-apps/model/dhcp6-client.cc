@@ -110,7 +110,10 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     Address serverAddress = header.GetServerIdentifier().GetLinkLayerAddress();
     requestHeader.AddServerIdentifier(serverHardwareType, serverAddress);
 
-    requestHeader.AddElapsedTime(0);
+    // Add Elapsed Time Option.
+    uint16_t now = (uint16_t)Simulator::Now().GetMilliSeconds() / 10; // expressed in 0.01 seconds
+    uint16_t elapsed = now - (uint16_t)m_msgStartTime.GetMilliSeconds() / 10;
+    requestHeader.AddElapsedTime(elapsed);
 
     // Add IA_NA option.
     // Current approach: Use the first available IA Address option in the
@@ -291,9 +294,15 @@ Dhcp6Client::Boot()
     m_clientTransactId = 123;
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::SOLICIT);
+
+    // Store start time of the message exchange.
+    Time m_msgStartTime = Simulator::Now();
+
     header.AddElapsedTime(0);
     header.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
                                m_clientIdentifier.GetLinkLayerAddress());
+    header.AddOptionRequest(Dhcp6Header::OPTION_SOL_MAX_RT);
+
     packet->AddHeader(header);
     if ((m_socket->SendTo(
             packet,

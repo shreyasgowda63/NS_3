@@ -168,6 +168,13 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
         }
     }
 
+    std::vector<bool> headerOptions = header.GetOptionList();
+    if (headerOptions[Dhcp6Header::OPTION_ORO])
+    {
+        std::list<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
+        advertiseHeader.HandleOptionRequest(requestedOptions);
+    }
+
     packet->AddHeader(advertiseHeader);
     // TODO: Add OPTION_REQUEST Option.
     // Send the advertise message.

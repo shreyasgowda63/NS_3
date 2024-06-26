@@ -34,6 +34,8 @@ Dhcp6Header::Dhcp6Header()
       m_msgType(0),
       m_transactId(0)
 {
+    m_options = std::vector<bool>(65536, false);
+    m_solMaxRt = 7200;
 }
 
 uint8_t
@@ -118,10 +120,9 @@ Dhcp6Header::GetIanaOptions()
 void
 Dhcp6Header::AddElapsedTime(uint16_t timestamp)
 {
-    uint16_t now = (uint16_t)Simulator::Now().GetMilliSeconds() / 10; // expressed in 0.01 seconds
     elapsedTime.SetOptionCode(OPTION_ELAPSED_TIME);
     elapsedTime.SetOptionLength(2);
-    elapsedTime.SetOptionValue(now - timestamp);
+    elapsedTime.SetOptionValue(timestamp);
     AddMessageLength(6);
     m_options[OPTION_ELAPSED_TIME] = true;
 }
@@ -152,6 +153,51 @@ Dhcp6Header::AddIdentifierOption(IdentifierOption& identifier,
 
     m_options[optionType] = true;
     AddMessageLength(4 + duidLength);
+}
+
+RequestOptions
+Dhcp6Header::GetOptionRequest()
+{
+    return m_optionRequest;
+}
+
+void
+Dhcp6Header::AddOptionRequest(uint16_t optionType)
+{
+    m_options[OPTION_ORO] = true;
+
+    m_optionRequest.SetOptionCode(OPTION_ORO);
+    if (m_optionRequest.GetOptionLength() == 0)
+    {
+        AddMessageLength(4);
+    }
+
+    m_optionRequest.SetOptionLength(m_optionRequest.GetOptionLength() + 2);
+    m_optionRequest.AddRequestedOption(optionType);
+    AddMessageLength(2);
+}
+
+void
+Dhcp6Header::HandleOptionRequest(std::list<uint16_t> requestedOptions)
+{
+    for (auto itr = requestedOptions.begin(); itr != requestedOptions.end(); itr++)
+    {
+        switch (*itr)
+        {
+        case OPTION_SOL_MAX_RT:
+            AddSolMaxRt();
+            break;
+        default:
+            NS_LOG_WARN("Requested Option not supported.");
+        }
+    }
+}
+
+void
+Dhcp6Header::AddSolMaxRt()
+{
+    m_options[OPTION_SOL_MAX_RT] = true;
+    AddMessageLength(4 + 4);
 }
 
 void
@@ -264,6 +310,12 @@ Dhcp6Header::AddAddress(uint32_t iaid,
     AddMessageLength(4 + 24);
 }
 
+std::vector<bool>
+Dhcp6Header::GetOptionList()
+{
+    return m_options;
+}
+
 // TODO: Add status code option and update the length accordingly.
 
 uint32_t
@@ -339,12 +391,28 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
             }
         }
     }
-
     if (m_options[OPTION_ELAPSED_TIME])
     {
         i.WriteHtonU16(elapsedTime.GetOptionCode());
         i.WriteHtonU16(elapsedTime.GetOptionLength());
         i.WriteHtonU16(elapsedTime.GetOptionValue());
+    }
+    if (m_options[OPTION_ORO])
+    {
+        i.WriteHtonU16(m_optionRequest.GetOptionCode());
+        i.WriteHtonU16(m_optionRequest.GetOptionLength());
+
+        std::list<uint16_t> requestedOptions = m_optionRequest.GetRequestedOptions();
+        for (auto itr = requestedOptions.begin(); itr != requestedOptions.end(); itr++)
+        {
+            i.WriteHtonU16(*itr);
+        }
+    }
+    if (m_options[OPTION_SOL_MAX_RT])
+    {
+        i.WriteHtonU16(OPTION_SOL_MAX_RT);
+        i.WriteHtonU16(4);
+        i.WriteHtonU32(m_solMaxRt);
     }
 }
 
@@ -482,6 +550,33 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 NS_LOG_WARN("Malformed Packet");
                 return 0;
             }
+            break;
+
+        case OPTION_ORO:
+            NS_LOG_INFO("Option Request Option");
+            if (len + 2 <= cLen)
+            {
+                m_optionRequest.SetOptionCode(option);
+                m_optionRequest.SetOptionLength(i.ReadNtohU16());
+                len += 2;
+            }
+            while (len + 2 <= cLen)
+            {
+                m_optionRequest.AddRequestedOption(i.ReadNtohU16());
+                len += 2;
+            }
+            m_options[OPTION_ORO] = true;
+            break;
+
+        case OPTION_SOL_MAX_RT:
+            NS_LOG_INFO("Solicit Max RT Option");
+            if (len + 6 <= cLen)
+            {
+                i.ReadNtohU16();
+                m_solMaxRt = i.ReadNtohU32();
+                len += 6;
+            }
+            m_options[OPTION_SOL_MAX_RT] = true;
             break;
 
         default:

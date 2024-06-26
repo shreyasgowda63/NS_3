@@ -169,6 +169,12 @@ class Dhcp6Header : public Header
     void AddServerIdentifier(uint16_t hardwareType, Address linkLayerAddress);
 
     /**
+     * \brief Request additional options.
+     * \param optionType the option to be requested.
+     */
+    void AddOptionRequest(uint16_t optionType);
+
+    /**
      * \brief Add IANA option.
      * \param iaid
      * \param t1
@@ -193,6 +199,29 @@ class Dhcp6Header : public Header
                     Ipv6Address address,
                     uint32_t prefLifetime,
                     uint32_t validLifetime);
+
+    /**
+     * \brief Get the option request option.
+     * \return the option request option.
+     */
+    RequestOptions GetOptionRequest();
+
+    /**
+     * \brief Handle all options requested by client.
+     * \param requestedOptions the list of options requested by the client.
+     */
+    void HandleOptionRequest(std::list<uint16_t> requestedOptions);
+
+    /**
+     * \brief Add the SOL_MAX_RT option.
+     */
+    void AddSolMaxRt();
+
+    /**
+     * \brief Get list of all options set in the header.
+     * \return the list of options.
+     */
+    std::vector<bool> GetOptionList();
 
   private:
     TypeId GetInstanceTypeId() const override;
@@ -226,7 +255,7 @@ class Dhcp6Header : public Header
     /**
      * \brief Options present in the header, indexed by option code.
      */
-    bool m_options[65536];
+    std::vector<bool> m_options;
 
     /**
      * \brief The client identifier option.
@@ -246,7 +275,7 @@ class Dhcp6Header : public Header
     /**
      * \brief List of additional options requested.
      */
-    RequestOptions optionRequest;
+    RequestOptions m_optionRequest;
 
     /**
      * \brief The preference value for the server.
@@ -267,6 +296,11 @@ class Dhcp6Header : public Header
      * \brief List of IATA options.
      */
     std::list<IaOptions> m_iataList;
+
+    /**
+     * \brief Default value for the SOL_MAX_RT option.
+     */
+    uint32_t m_solMaxRt;
 
     /**
      * \brief Add an identifier option to the header.

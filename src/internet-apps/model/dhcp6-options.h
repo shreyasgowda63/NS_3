@@ -398,13 +398,13 @@ class RequestOptions : public Options
      * \brief Get the option values
      * \return requested option list.
      */
-    std::list<uint16_t> GetRequestedOptions();
+    std::list<uint16_t> GetRequestedOptions() const;
 
     /**
      * \brief Set the option values.
-     * \param requestedOptions option list.
+     * \param requestedOption option to be requested from the server.
      */
-    void SetRequestedOptions(std::list<uint16_t> requestedOptions);
+    void AddRequestedOption(uint16_t requestedOption);
 
   private:
     /**
