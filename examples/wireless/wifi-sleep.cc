@@ -113,7 +113,7 @@ main(int argc, char* argv[])
     DataRate dataRate{"1Mb/s"};
     uint32_t packetSize{1000}; // bytes
     Time duration{"10s"};
-    double initialEnergy{7.5}; // joule
+    joule_t initialEnergy{7.5};
     volt_t voltage{3.0};
     dBm_t txPowerStart{0.0};
     dBm_t txPowerEnd{15.0};
