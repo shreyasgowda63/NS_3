@@ -530,8 +530,8 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 iana.m_iaAddressOption.push_back(iaAddrOpt);
                 len += 4 + iaAddrOpt.GetOptionLength();
             }
-
             m_ianaList.push_back(iana);
+            m_options[OPTION_IA_NA] = true;
             break;
         }
 

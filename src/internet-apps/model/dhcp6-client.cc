@@ -53,6 +53,11 @@ Dhcp6Client::Dhcp6Client()
 
     m_solicitEvent = EventId();
     m_solicitInterval = Seconds(5);
+
+    m_renew = Time(Seconds(36));
+    m_rebind = Time(Seconds(54));
+
+    m_ianaIds = 0;
 }
 
 void
@@ -61,6 +66,9 @@ Dhcp6Client::DoDispose()
     NS_LOG_FUNCTION(this);
 
     m_solicitEvent.Cancel();
+    m_renewEvent.Cancel();
+    m_rebindEvent.Cancel();
+
     Application::DoDispose();
 }
 
@@ -86,6 +94,11 @@ Dhcp6Client::ValidateAdvertise(Dhcp6Header header)
                   "Client DUID hardware type mismatch.");
     NS_ASSERT_MSG(clientHwAddr == m_clientIdentifier.GetLinkLayerAddress(),
                   "Client DUID link layer address mismatch.");
+
+    uint16_t serverHwType = header.GetServerIdentifier().GetHardwareType();
+    Address serverHwAddr = header.GetServerIdentifier().GetLinkLayerAddress();
+    m_serverIdentifier.SetHardwareType(serverHwType);
+    m_serverIdentifier.SetLinkLayerAddress(serverHwAddr);
 }
 
 void
@@ -170,6 +183,63 @@ Dhcp6Client::AcceptReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     // TODO: In Linux, all leased addresses seem to be /128. Double-check this.
     ipv6->AddAddress(ifIndex, Ipv6InterfaceAddress(offeredAddress, 128));
     ipv6->SetUp(ifIndex);
+
+    // Add the IPv6 address - IAID association.
+    m_iaidMap[offeredAddress] = iaOpt.GetIaid();
+
+    // Set the renew timer.
+    m_renew = Time(Seconds(iaOpt.GetT1()));
+    m_renewEvent = Simulator::Schedule(m_renew, &Dhcp6Client::SendRenew, this, offeredAddress);
+
+    m_rebind = Time(Seconds(iaOpt.GetT2()));
+}
+
+void
+Dhcp6Client::SendRenew(Ipv6Address address)
+{
+    NS_LOG_FUNCTION(this);
+
+    Dhcp6Header header;
+    Ptr<Packet> packet;
+    packet = Create<Packet>();
+
+    m_clientTransactId = 789;
+    header.SetTransactId(m_clientTransactId);
+    header.SetMessageType(Dhcp6Header::RENEW);
+
+    // Add client identifier option
+    header.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
+                               m_clientIdentifier.GetLinkLayerAddress());
+
+    // Add server identifier option
+    header.AddServerIdentifier(m_serverIdentifier.GetHardwareType(),
+                               m_serverIdentifier.GetLinkLayerAddress());
+
+    Time m_msgStartTime = Simulator::Now();
+    header.AddElapsedTime(0);
+
+    // IA_NA option, IA address option
+    uint32_t iaid = m_iaidMap[address];
+    header.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
+    header.AddAddress(iaid, address, 40, 60);
+
+    // Add Option Request option.
+    header.AddOptionRequest(Dhcp6Header::OPTION_SOL_MAX_RT);
+
+    packet->AddHeader(header);
+    if ((m_socket->SendTo(
+            packet,
+            0,
+            Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT))) >= 0)
+    {
+        NS_LOG_INFO("DHCP Renew sent");
+    }
+    else
+    {
+        NS_LOG_INFO("Error while sending DHCP Renew");
+    }
+
+    m_state = WAIT_REPLY;
 }
 
 void
@@ -303,7 +373,12 @@ Dhcp6Client::Boot()
                                m_clientIdentifier.GetLinkLayerAddress());
     header.AddOptionRequest(Dhcp6Header::OPTION_SOL_MAX_RT);
 
+    // Add IA_NA option.
+    m_ianaIds += 1;
+    header.AddIanaOption(m_ianaIds, m_renew.GetSeconds(), m_rebind.GetSeconds());
+
     packet->AddHeader(header);
+
     if ((m_socket->SendTo(
             packet,
             0,

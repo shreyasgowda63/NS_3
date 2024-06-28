@@ -92,6 +92,12 @@ class Dhcp6Client : public Application
     void AcceptReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
 
     /**
+     * \brief Send a renew message to the DHCPv6 server.
+     * \param address The address whose lease is to be renewed.
+     */
+    void SendRenew(Ipv6Address address);
+
+    /**
      * \brief Handles incoming packets from the network
      * \param socket Socket bound to port 546 of the DHCP client
      */
@@ -157,10 +163,34 @@ class Dhcp6Client : public Application
      */
     IdentifierOption m_clientIdentifier;
 
+    /**
+     * \brief Store the server identifier option.
+     */
+    IdentifierOption m_serverIdentifier;
+
+    /**
+     * \brief Track the IPv6 Address - IAID association.
+     */
+    std::map<Ipv6Address, uint32_t> m_iaidMap;
+
+    /**
+     * \brief Store the list of addresses leased.
+     * Ipv6Address + Server DUID
+     */
+    std::map<Ipv6Address, Address> m_myAddresses;
+
     Time m_msgStartTime; //!< Time when message exchange starts.
 
     Time m_solicitInterval; //!< SOL_MAX_RT value, default = 3600 / 100 = 36 sec
     EventId m_solicitEvent; //!< Event ID for the solicit event
+
+    Time m_renew;         //!< T1 value
+    EventId m_renewEvent; //!< Event ID for the renew event
+
+    Time m_rebind;         //!< T2 value
+    EventId m_rebindEvent; //!< Event ID for the rebind event
+
+    uint32_t m_ianaIds; //!< Track the latest IANA ID
 };
 
 } // namespace ns3

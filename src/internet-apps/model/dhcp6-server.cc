@@ -71,6 +71,23 @@ Dhcp6Server::DoDispose()
 }
 
 void
+Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
+{
+    NS_LOG_INFO(this << iDev << header << client);
+
+    IdentifierOption clientId = header.GetClientIdentifier();
+    Address duid = clientId.GetLinkLayerAddress();
+
+    std::vector<bool> headerOptions = header.GetOptionList();
+
+    if (headerOptions[Dhcp6Header::OPTION_IA_NA])
+    {
+        uint32_t iaid = header.GetIanaOptions().front().GetIaid();
+        iaBindings[duid] = std::make_pair(Dhcp6Header::OPTION_IA_NA, iaid);
+    }
+}
+
+void
 Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
     NS_LOG_INFO(this << iDev << header << client);
@@ -87,11 +104,12 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
     advertiseHeader.AddClientIdentifier(clientHardwareType, clientAddress);
 
     // Add Server Identifier Option.
-    auto linkLayer = iDev->GetAddress();
-    advertiseHeader.AddServerIdentifier(1234, linkLayer);
+    advertiseHeader.AddServerIdentifier(m_serverIdentifier.GetHardwareType(),
+                                        m_serverIdentifier.GetLinkLayerAddress());
 
     // Add IA_NA option.
     // Available address pools and IA information is sent in this option.
+    uint32_t iaid = iaBindings[clientAddress].second;
     for (auto itr = m_subnets.begin(); itr != m_subnets.end(); itr++)
     {
         LeaseInfo subnet = *itr;
@@ -110,8 +128,9 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
             auto itr = subnet.m_expiredAddresses.begin();
             Ipv6Address nextAddress = itr->second;
             subnet.m_expiredAddresses.erase(itr->first);
-            advertiseHeader.AddIanaOption(m_iaidCount, m_renew.GetSeconds(), m_rebind.GetSeconds());
-            advertiseHeader.AddAddress(m_iaidCount,
+
+            advertiseHeader.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
+            advertiseHeader.AddAddress(iaid,
                                        nextAddress,
                                        m_prefLifetime.GetSeconds(),
                                        m_validLifetime.GetSeconds());
@@ -160,8 +179,8 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
             NS_LOG_INFO("Offered address: " << offeredAddr);
 
             // TODO: Retrieve all existing IA_NA options.
-            advertiseHeader.AddIanaOption(m_iaidCount, m_renew.GetSeconds(), m_rebind.GetSeconds());
-            advertiseHeader.AddAddress(m_iaidCount,
+            advertiseHeader.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
+            advertiseHeader.AddAddress(iaid,
                                        offeredAddr,
                                        m_prefLifetime.GetSeconds(),
                                        m_validLifetime.GetSeconds());
@@ -205,8 +224,8 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
     replyHeader.AddClientIdentifier(clientHardwareType, clientAddress);
 
     // Add Server Identifier Option.
-    auto linkLayer = iDev->GetAddress();
-    replyHeader.AddServerIdentifier(1, linkLayer);
+    replyHeader.AddServerIdentifier(m_serverIdentifier.GetHardwareType(),
+                                    m_serverIdentifier.GetLinkLayerAddress());
 
     // Add IA_NA option.
     // Retrieve requested IA Option from client header.
@@ -221,18 +240,23 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
         Ipv6Prefix prefix = subnet.GetPrefix();
         Ipv6Address minAddress = subnet.GetMinAddress();
         Ipv6Address maxAddress = subnet.GetMaxAddress();
-        // uint32_t numAddresses = subnet.GetNumAddresses();
 
         Ipv6Address requestedAddr = iaAddrOpt.GetIaAddress();
-        // TODO: Check that requestedAddr is within [min, max] range.
-        // TODO: Check that requestedAddr is not in declinedAddresses.
 
-        // TODO: Retrieve all existing IA_NA options.
-        replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
-        replyHeader.AddAddress(iaOpt.GetIaid(),
-                               iaAddrOpt.GetIaAddress(),
-                               iaAddrOpt.GetPreferredLifetime(),
-                               iaAddrOpt.GetValidLifetime());
+        // Check whether this subnet matches the requested address.
+        if (prefix.IsMatch(requestedAddr, pool))
+        {
+            // TODO: Check that requestedAddr is within [min, max] range.
+            // TODO: Check that requestedAddr is not in declinedAddresses.
+
+            // TODO: Retrieve all existing IA_NA options.
+            replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
+            replyHeader.AddAddress(iaOpt.GetIaid(),
+                                   iaAddrOpt.GetIaAddress(),
+                                   iaAddrOpt.GetPreferredLifetime(),
+                                   iaAddrOpt.GetValidLifetime());
+            break;
+        }
     }
 
     packet->AddHeader(replyHeader);
@@ -282,9 +306,11 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
     if (header.GetMessageType() == Dhcp6Header::SOLICIT)
     {
         NS_LOG_INFO("Received Solicit");
+        ProcessSolicit(iDev, header, senderAddr);
         SendAdvertise(iDev, header, senderAddr);
     }
-    if (header.GetMessageType() == Dhcp6Header::REQUEST)
+    if ((header.GetMessageType() == Dhcp6Header::REQUEST) ||
+        (header.GetMessageType() == Dhcp6Header::RENEW))
     {
         SendReply(iDev, header, senderAddr);
     }
@@ -344,6 +370,9 @@ Dhcp6Server::StartApplication()
             break;
         }
     }
+
+    m_serverIdentifier.SetHardwareType(1);
+    m_serverIdentifier.SetLinkLayerAddress(m_device->GetAddress());
 
     m_sendSocket->Bind(Inet6SocketAddress(linkLocal, Dhcp6Server::PORT));
     m_sendSocket->BindToNetDevice(m_device);

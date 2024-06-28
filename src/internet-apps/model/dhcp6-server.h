@@ -157,20 +157,18 @@ class Dhcp6Server : public Application
     void StopApplication() override;
 
     /**
-     * \brief Stores the type of IA.
-     */
-    enum IaType
-    {
-        IA_NA = 1,
-        IA_TA = 2,
-        IA_PD = 3
-    };
-
-    /**
      * \brief Handles incoming packets from the network
      * \param socket Socket bound to port 547 of the DHCP server
      */
     void NetHandler(Ptr<Socket> socket);
+
+    /**
+     * \brief Sends DHCPv6 Advertise after receiving DHCPv6 Solicit.
+     * \param iDev incoming NetDevice
+     * \param header DHCPv6 header of the received message
+     * \param client Address of the DHCPv6 client
+     */
+    void ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
 
     /**
      * \brief Sends DHCPv6 Advertise after receiving DHCPv6 Solicit.
@@ -212,6 +210,11 @@ class Dhcp6Server : public Application
      * \brief Pointer to the net device used by the server.
      */
     Ptr<NetDevice> m_device;
+
+    /**
+     * \brief The server identifier.
+     */
+    IdentifierOption m_serverIdentifier;
 
     /**
      * \brief Store the address pool and range.
@@ -265,7 +268,7 @@ class Dhcp6Server : public Application
      * \brief Store IA bindings.
      * DUID + IA Type / IAID
      */
-    std::map<IdentifierOption, std::pair<IaType, uint32_t>> iaBindings;
+    std::map<Address, std::pair<uint8_t, uint32_t>> iaBindings;
 
     /**
      * \brief Addresses that have been leased to clients.
@@ -303,11 +306,6 @@ class Dhcp6Server : public Application
      * rebind timer is 2000 seconds.
      */
     Time m_rebind;
-
-    /**
-     * \brief Counter to keep track of IAIDs in the server.
-     */
-    uint32_t m_iaidCount;
 
     /**
      * \brief List of all managed subnets.
