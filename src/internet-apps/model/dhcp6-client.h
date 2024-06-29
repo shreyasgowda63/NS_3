@@ -98,6 +98,12 @@ class Dhcp6Client : public Application
     void SendRenew(Ipv6Address address);
 
     /**
+     * \brief Send a renew message to the DHCPv6 server.
+     * \param address The address whose lease is to be renewed.
+     */
+    void SendRebind(Ipv6Address address);
+
+    /**
      * \brief Handles incoming packets from the network
      * \param socket Socket bound to port 546 of the DHCP client
      */
@@ -185,9 +191,11 @@ class Dhcp6Client : public Application
     EventId m_solicitEvent; //!< Event ID for the solicit event
 
     Time m_renew;         //!< T1 value
-    EventId m_renewEvent; //!< Event ID for the renew event
+    Time m_rebind;        //!< T2 value
+    Time m_prefLifetime;  //!< Preferred lifetime of the address
+    Time m_validLifetime; //!< Valid lifetime of the address
 
-    Time m_rebind;         //!< T2 value
+    EventId m_renewEvent;  //!< Event ID for the renew event
     EventId m_rebindEvent; //!< Event ID for the rebind event
 
     uint32_t m_ianaIds; //!< Track the latest IANA ID

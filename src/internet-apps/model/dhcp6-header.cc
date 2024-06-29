@@ -339,11 +339,6 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
 
     if (m_options[OPTION_CLIENTID])
     {
-        std::stringstream stream;
-        stream << std::bitset<16>{clientIdentifier.GetOptionCode()};
-        NS_LOG_INFO("Client Identifier Option " << stream.str());
-
-        // i.WriteU16(clientIdentifier.GetOptionCode());
         i.WriteHtonU16(clientIdentifier.GetOptionCode());
         i.WriteHtonU16(clientIdentifier.GetOptionLength());
         i.WriteHtonU16(clientIdentifier.GetDuidType());

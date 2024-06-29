@@ -54,8 +54,10 @@ Dhcp6Client::Dhcp6Client()
     m_solicitEvent = EventId();
     m_solicitInterval = Seconds(5);
 
-    m_renew = Time(Seconds(36));
-    m_rebind = Time(Seconds(54));
+    m_renew = Time(Seconds(10));
+    m_rebind = Time(Seconds(20));
+    m_prefLifetime = Time(Seconds(30));
+    m_validLifetime = Time(Seconds(40));
 
     m_ianaIds = 0;
 }
@@ -141,8 +143,11 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
                              iaAddrOpt.GetPreferredLifetime(),
                              iaAddrOpt.GetValidLifetime());
 
+    // Add Option Request.
+    header.AddOptionRequest(Dhcp6Header::OPTION_SOL_MAX_RT);
+
     packet->AddHeader(requestHeader);
-    // TODO: Add OPTION_REQUEST Option.
+
     // TODO: Handle server unicast option.
 
     // Send the request message.
@@ -192,6 +197,7 @@ Dhcp6Client::AcceptReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     m_renewEvent = Simulator::Schedule(m_renew, &Dhcp6Client::SendRenew, this, offeredAddress);
 
     m_rebind = Time(Seconds(iaOpt.GetT2()));
+    m_rebindEvent = Simulator::Schedule(m_rebind, &Dhcp6Client::SendRebind, this, offeredAddress);
 }
 
 void
@@ -243,6 +249,50 @@ Dhcp6Client::SendRenew(Ipv6Address address)
 }
 
 void
+Dhcp6Client::SendRebind(Ipv6Address address)
+{
+    NS_LOG_FUNCTION(this);
+
+    Dhcp6Header header;
+    Ptr<Packet> packet;
+    packet = Create<Packet>();
+
+    m_clientTransactId = 789;
+    header.SetTransactId(m_clientTransactId);
+    header.SetMessageType(Dhcp6Header::REBIND);
+
+    // Add client identifier option
+    header.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
+                               m_clientIdentifier.GetLinkLayerAddress());
+
+    Time m_msgStartTime = Simulator::Now();
+    header.AddElapsedTime(0);
+
+    // IA_NA option, IA address option
+    uint32_t iaid = m_iaidMap[address];
+    header.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
+    header.AddAddress(iaid, address, 40, 60);
+
+    // Add Option Request option.
+    header.AddOptionRequest(Dhcp6Header::OPTION_SOL_MAX_RT);
+
+    packet->AddHeader(header);
+    if ((m_socket->SendTo(
+            packet,
+            0,
+            Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT))) >= 0)
+    {
+        NS_LOG_INFO("DHCP Rebind sent");
+    }
+    else
+    {
+        NS_LOG_INFO("Error while sending DHCP Renew");
+    }
+
+    m_state = WAIT_REPLY;
+}
+
+void
 Dhcp6Client::NetHandler(Ptr<Socket> socket)
 {
     NS_LOG_FUNCTION(this << socket);
@@ -276,6 +326,8 @@ Dhcp6Client::NetHandler(Ptr<Socket> socket)
     if (m_state == WAIT_REPLY && header.GetMessageType() == Dhcp6Header::REPLY)
     {
         NS_LOG_INFO("Received Reply.");
+        m_renewEvent.Cancel();
+        m_rebindEvent.Cancel();
         AcceptReply(iDev, header, senderAddr);
     }
 }
@@ -294,6 +346,8 @@ Dhcp6Client::LinkStateHandler()
     else
     {
         m_solicitEvent.Cancel();
+        m_renewEvent.Cancel();
+        m_rebindEvent.Cancel();
         NS_LOG_INFO("Link down at " << Simulator::Now().As(Time::S));
     }
 }

@@ -95,9 +95,9 @@ class LeaseInfo
 
     /**
      * \brief Declined Addresses
-     * Client DUID + Ipv6Address
+     * Ipv6Address + Client DUID
      */
-    typedef std::map<Address, Ipv6Address> DeclinedAddresses;
+    typedef std::map<Ipv6Address, Address> DeclinedAddresses;
 
     LeasedAddresses m_leasedAddresses;     //!< Leased addresses
     ExpiredAddresses m_expiredAddresses;   //!< Expired addresses
@@ -255,20 +255,10 @@ class Dhcp6Server : public Application
     typedef std::list<Ipv4Address> AvailableAddress;
 
     /**
-     * \brief Map of available address pools.
-     */
-    AddressPool availablePools;
-
-    /**
-     * \brief Map of prefixes corresponding to the address pools.
-     */
-    Prefixes availablePrefixes;
-
-    /**
      * \brief Store IA bindings.
      * DUID + IA Type / IAID
      */
-    std::map<Address, std::pair<uint8_t, uint32_t>> iaBindings;
+    std::map<Address, std::pair<uint8_t, uint32_t>> m_iaBindings;
 
     /**
      * \brief Addresses that have been leased to clients.
@@ -284,12 +274,14 @@ class Dhcp6Server : public Application
      * \brief Default preferred lifetime for an address.
      * According to ISC's Kea guide, the default preferred lifetime is 3000
      * seconds.
+     * Here, arbitrarily set to 18 seconds.
      */
     Time m_prefLifetime;
 
     /**
      * \brief Default valid lifetime.
      * According to ISC's Kea guide, the default valid lifetime is 4000 seconds.
+     * Here, arbitrarily set to 20 seconds.
      */
     Time m_validLifetime;
 
@@ -297,6 +289,7 @@ class Dhcp6Server : public Application
      * \brief The default renew timer.
      * This defines the T1 timer. According to ISC's Kea guide, the default
      * renew timer is 1000 seconds.
+     * Here, arbitrarily set to 10 seconds (50% of valid lifetime).
      */
     Time m_renew;
 
@@ -304,6 +297,7 @@ class Dhcp6Server : public Application
      * \brief The default rebind timer.
      * This defines the T2 timer. According to ISC's Kea guide, the default
      * rebind timer is 2000 seconds.
+     * Here, arbitrarily set to 16 seconds (80% of valid lifetime).
      */
     Time m_rebind;
 

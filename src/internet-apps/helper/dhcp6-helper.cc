@@ -107,8 +107,6 @@ Dhcp6Helper::InstallDhcp6Client(NetDeviceContainer netDevices) const
 ApplicationContainer
 Dhcp6Helper::InstallDhcp6Server(Ptr<NetDevice> netDevice)
 {
-    m_serverFactory.Set("LeaseTime", TimeValue(Seconds(30)));
-
     Ptr<Node> node = netDevice->GetNode();
     NS_ASSERT_MSG(node, "Dhcp6Helper: NetDevice is not not associated with any node -> fail");
 

@@ -40,11 +40,6 @@ Dhcp6Server::GetTypeId()
                             .SetParent<Application>()
                             .AddConstructor<Dhcp6Server>()
                             .SetGroupName("Internet-Apps")
-                            .AddAttribute("LeaseTime",
-                                          "Preferred lifetime for which address will be leased.",
-                                          TimeValue(Seconds(30)),
-                                          MakeTimeAccessor(&Dhcp6Server::m_prefLifetime),
-                                          MakeTimeChecker())
                             .AddAttribute("RenewTime",
                                           "Time after which client should renew.",
                                           TimeValue(Seconds(10)),
@@ -52,9 +47,20 @@ Dhcp6Server::GetTypeId()
                                           MakeTimeChecker())
                             .AddAttribute("RebindTime",
                                           "Time after which client should rebind.",
-                                          TimeValue(Seconds(20)),
+                                          TimeValue(Seconds(16)),
                                           MakeTimeAccessor(&Dhcp6Server::m_rebind),
+                                          MakeTimeChecker())
+                            .AddAttribute("PreferredLifetime",
+                                          "The preferred lifetime of the leased address.",
+                                          TimeValue(Seconds(18)),
+                                          MakeTimeAccessor(&Dhcp6Server::m_prefLifetime),
+                                          MakeTimeChecker())
+                            .AddAttribute("ValidLifetime",
+                                          "Time after which client should release the address.",
+                                          TimeValue(Seconds(20)),
+                                          MakeTimeAccessor(&Dhcp6Server::m_validLifetime),
                                           MakeTimeChecker());
+
     return tid;
 }
 
@@ -83,7 +89,7 @@ Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
     if (headerOptions[Dhcp6Header::OPTION_IA_NA])
     {
         uint32_t iaid = header.GetIanaOptions().front().GetIaid();
-        iaBindings[duid] = std::make_pair(Dhcp6Header::OPTION_IA_NA, iaid);
+        m_iaBindings[duid] = std::make_pair(Dhcp6Header::OPTION_IA_NA, iaid);
     }
 }
 
@@ -109,7 +115,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
 
     // Add IA_NA option.
     // Available address pools and IA information is sent in this option.
-    uint32_t iaid = iaBindings[clientAddress].second;
+    uint32_t iaid = m_iaBindings[clientAddress].second;
     for (auto itr = m_subnets.begin(); itr != m_subnets.end(); itr++)
     {
         LeaseInfo subnet = *itr;
@@ -117,12 +123,11 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
         Ipv6Prefix prefix = subnet.GetPrefix();
         Ipv6Address minAddress = subnet.GetMinAddress();
         Ipv6Address maxAddress = subnet.GetMaxAddress();
-        // uint32_t numAddresses = subnet.GetNumAddresses();
 
-        // Obtain the address to be included in the message.
-        // TODO: Check declined addresses, expired addresses and then leased
-        // addresses to find the next available address.
-
+        /*
+         * Find the next available address. Checks the expired address map.
+         * If there are no expired addresses, it advertises a new address.
+         */
         if (!subnet.m_expiredAddresses.empty())
         {
             auto itr = subnet.m_expiredAddresses.begin();
@@ -151,7 +156,6 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
                 Ipv6Address lastLeasedAddress = (itr->second).first;
 
                 lastLeasedAddress.GetBytes(lastLeasedAddrBuf);
-                // offeredAddrBuf = lastLeasedAddress | addition
                 memcpy(offeredAddrBuf, lastLeasedAddrBuf, 16);
 
                 bool addedOne = false;
@@ -195,7 +199,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
     }
 
     packet->AddHeader(advertiseHeader);
-    // TODO: Add OPTION_REQUEST Option.
+
     // Send the advertise message.
     if (m_sendSocket->SendTo(packet, 0, client) >= 0)
     {
@@ -243,11 +247,27 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
 
         Ipv6Address requestedAddr = iaAddrOpt.GetIaAddress();
 
+        if (subnet.m_declinedAddresses.find(requestedAddr) != subnet.m_declinedAddresses.end())
+        {
+            NS_LOG_INFO("Requested address is declined.");
+            return;
+        }
+
         // Check whether this subnet matches the requested address.
         if (prefix.IsMatch(requestedAddr, pool))
         {
-            // TODO: Check that requestedAddr is within [min, max] range.
-            // TODO: Check that requestedAddr is not in declinedAddresses.
+            uint8_t minBuf[16];
+            uint8_t maxBuf[16];
+            uint8_t requestedBuf[16];
+            minAddress.GetBytes(minBuf);
+            maxAddress.GetBytes(maxBuf);
+            requestedAddr.GetBytes(requestedBuf);
+
+            if (memcmp(requestedBuf, minBuf, 16) < 0 || memcmp(requestedBuf, maxBuf, 16) > 0)
+            {
+                NS_LOG_INFO("Requested address is not in the range of the subnet.");
+                return;
+            }
 
             // TODO: Retrieve all existing IA_NA options.
             replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
@@ -255,13 +275,23 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
                                    iaAddrOpt.GetIaAddress(),
                                    iaAddrOpt.GetPreferredLifetime(),
                                    iaAddrOpt.GetValidLifetime());
+
+            subnet.m_leasedAddresses[clientAddress] =
+                std::make_pair(requestedAddr, m_prefLifetime.GetSeconds());
             break;
         }
     }
 
+    std::vector<bool> headerOptions = header.GetOptionList();
+    if (headerOptions[Dhcp6Header::OPTION_ORO])
+    {
+        std::list<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
+        replyHeader.HandleOptionRequest(requestedOptions);
+    }
+
     packet->AddHeader(replyHeader);
-    // TODO: Add OPTION_REQUEST Option.
-    // Send the advertise message.
+
+    // Send the Reply message.
     if (m_sendSocket->SendTo(packet, 0, client) >= 0)
     {
         NS_LOG_INFO("DHCPv6 Reply sent.");
