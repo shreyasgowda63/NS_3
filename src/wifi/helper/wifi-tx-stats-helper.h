@@ -48,18 +48,18 @@ struct WifiTxStatistics
 // Per-packet record, created when enqueued at MAC layer
 struct WifiTxPerPktRecord
 {
-    uint32_t m_srcNodeId{0};
-    uint64_t m_seqNum{0};
-    uint8_t m_tid{0};
-    uint8_t m_successLinkId{0};
-    uint32_t m_failures{0};
-    Time m_enqueueTime{0};
-    Time m_txStartTime{0};
-    Time m_ackTime{0};
-    Time m_dequeueTime{0};
     bool m_txStarted{false};
     bool m_acked{false};
     bool m_dequeued{false};
+    uint64_t m_seqNum{0};
+    uint32_t m_srcNodeId{0};
+    uint32_t m_failures{0};
+    double m_enqueueMs{0};
+    double m_txStartMs{0};
+    double m_ackMs{0};
+    double m_dequeueMs{0};
+    uint8_t m_tid{0};
+    uint8_t m_successLinkId{0};
 };
 typedef std::map<uint32_t /* Node ID */, std::map<uint8_t /* Link ID */, std::vector<WifiTxPerPktRecord>>> WifiPktTxRecordMap;
 typedef std::map<uint64_t /* UID */, WifiTxPerPktRecord> WifiPktUidMap;

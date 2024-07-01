@@ -246,7 +246,7 @@ WifiTxStatsTraceSink::NotifyMacEnqueue(Ptr<const WifiMpdu> mpdu)
         }
         WifiTxPerPktRecord record;
         record.m_srcNodeId = Simulator::GetContext();
-        record.m_enqueueTime = Simulator::Now();
+        record.m_enqueueMs = Simulator::Now().ToDouble(Time::MS);
         record.m_tid = mpdu->GetHeader().IsQosData() ? mpdu->GetHeader().GetQosTid() : 0;
         m_inflightMap[mpdu->GetPacket()->GetUid()] = record;
     }
@@ -260,7 +260,7 @@ WifiTxStatsTraceSink::NotifyTxStart(Ptr<const Packet> pkt, double txPowerW)
         if (!mapIt->second.m_txStarted)
         {
             mapIt->second.m_txStarted = true;
-            mapIt->second.m_txStartTime = Simulator::Now();
+            mapIt->second.m_txStartMs = Simulator::Now().ToDouble(Time::MS);
         }
         else
         {
@@ -275,7 +275,7 @@ WifiTxStatsTraceSink::NotifyAcked(Ptr<const WifiMpdu> mpdu, const uint8_t linkId
     if (const auto mapIt = m_inflightMap.find(mpdu->GetPacket()->GetUid()); mapIt != m_inflightMap.end())
     {
         mapIt->second.m_acked = true;
-        mapIt->second.m_ackTime = Simulator::Now();
+        mapIt->second.m_ackMs = Simulator::Now().ToDouble(Time::MS);
         mapIt->second.m_successLinkId = linkId;
     }
 }
@@ -286,7 +286,7 @@ WifiTxStatsTraceSink::NotifyMacDequeue(Ptr<const WifiMpdu> mpdu)
     if (const auto mapIt = m_inflightMap.find(mpdu->GetPacket()->GetUid()); mapIt != m_inflightMap.end())
     {
         mapIt->second.m_dequeued = true;
-        mapIt->second.m_dequeueTime = Simulator::Now();
+        mapIt->second.m_dequeueMs = Simulator::Now().ToDouble(Time::MS);
         mapIt->second.m_seqNum = mpdu->GetHeader().GetSequenceNumber();
 
         if (m_statsCollecting)
