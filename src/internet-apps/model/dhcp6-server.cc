@@ -67,6 +67,7 @@ Dhcp6Server::GetTypeId()
 Dhcp6Server::Dhcp6Server()
 {
     NS_LOG_FUNCTION(this);
+    m_leaseCleanup = Time(Seconds(10.0));
 }
 
 void
@@ -276,8 +277,9 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
                                    iaAddrOpt.GetPreferredLifetime(),
                                    iaAddrOpt.GetValidLifetime());
 
-            subnet.m_leasedAddresses[clientAddress] =
-                std::make_pair(requestedAddr, m_prefLifetime.GetSeconds());
+            itr->m_leasedAddresses[clientAddress] =
+                std::make_pair(requestedAddr, Time(Seconds(m_prefLifetime.GetSeconds())));
+
             break;
         }
     }
@@ -406,6 +408,8 @@ Dhcp6Server::StartApplication()
 
     m_sendSocket->Bind(Inet6SocketAddress(linkLocal, Dhcp6Server::PORT));
     m_sendSocket->BindToNetDevice(m_device);
+
+    m_leaseCleanupEvent = Simulator::Schedule(m_leaseCleanup, &Dhcp6Server::CleanLeases, this);
 }
 
 void
@@ -418,8 +422,40 @@ Dhcp6Server::StopApplication()
         m_recvSocket->SetRecvCallback(MakeNullCallback<void, Ptr<Socket>>());
     }
 
-    m_leasedAddresses.clear();
-    m_declinedAddresses.clear();
+    m_subnets.clear();
+    m_leaseCleanupEvent.Cancel();
+}
+
+void
+Dhcp6Server::CleanLeases()
+{
+    NS_LOG_FUNCTION(this);
+
+    for (auto sub = m_subnets.begin(); sub != m_subnets.end(); sub++)
+    {
+        LeaseInfo subnet = *sub;
+
+        std::vector<Address> expiredAddrs;
+        for (auto itr = subnet.m_leasedAddresses.begin(); itr != subnet.m_leasedAddresses.end();
+             itr++)
+        {
+            Ipv6Address address = itr->second.first;
+            Time leaseTime = itr->second.second;
+
+            if (Simulator::Now() >= leaseTime)
+            {
+                subnet.m_expiredAddresses[leaseTime] = address;
+                expiredAddrs.push_back(itr->first);
+            }
+        }
+
+        for (auto itr = expiredAddrs.begin(); itr != expiredAddrs.end(); itr++)
+        {
+            subnet.m_leasedAddresses.erase(*itr);
+        }
+    }
+
+    m_leaseCleanupEvent = Simulator::Schedule(m_leaseCleanup, &Dhcp6Server::CleanLeases, this);
 }
 
 LeaseInfo::LeaseInfo(Ipv6Address addressPool,

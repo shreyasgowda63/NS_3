@@ -198,6 +198,13 @@ Dhcp6Client::AcceptReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
 
     m_rebind = Time(Seconds(iaOpt.GetT2()));
     m_rebindEvent = Simulator::Schedule(m_rebind, &Dhcp6Client::SendRebind, this, offeredAddress);
+
+    // Set the preferred and valid lifetimes.
+    m_prefLifetime = Time(Seconds(iaAddrOpt.GetPreferredLifetime()));
+    m_validLifetime = Time(Seconds(iaAddrOpt.GetValidLifetime()));
+
+    m_releaseEvent =
+        Simulator::Schedule(m_validLifetime, &Dhcp6Client::SendRelease, this, offeredAddress);
 }
 
 void
@@ -286,7 +293,56 @@ Dhcp6Client::SendRebind(Ipv6Address address)
     }
     else
     {
-        NS_LOG_INFO("Error while sending DHCP Renew");
+        NS_LOG_INFO("Error while sending DHCP Rebind");
+    }
+
+    m_state = WAIT_REPLY;
+}
+
+void
+Dhcp6Client::SendRelease(Ipv6Address address)
+{
+    NS_LOG_FUNCTION(this);
+
+    Ptr<Ipv6> ipv6 = GetNode()->GetObject<Ipv6>();
+    int32_t ifIndex = ipv6->GetInterfaceForDevice(m_device);
+    ipv6->RemoveAddress(ifIndex, address);
+
+    Dhcp6Header header;
+    Ptr<Packet> packet;
+    packet = Create<Packet>();
+
+    m_clientTransactId = 789;
+    header.SetTransactId(m_clientTransactId);
+    header.SetMessageType(Dhcp6Header::REBIND);
+
+    // Add client identifier option
+    header.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
+                               m_clientIdentifier.GetLinkLayerAddress());
+
+    // Add server identifier option
+    header.AddServerIdentifier(m_serverIdentifier.GetHardwareType(),
+                               m_serverIdentifier.GetLinkLayerAddress());
+
+    Time m_msgStartTime = Simulator::Now();
+    header.AddElapsedTime(0);
+
+    // IA_NA option, IA address option
+    uint32_t iaid = m_iaidMap[address];
+    header.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
+    header.AddAddress(iaid, address, 40, 60);
+
+    packet->AddHeader(header);
+    if ((m_socket->SendTo(
+            packet,
+            0,
+            Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT))) >= 0)
+    {
+        NS_LOG_INFO("DHCP Release sent");
+    }
+    else
+    {
+        NS_LOG_INFO("Error while sending DHCP Release");
     }
 
     m_state = WAIT_REPLY;

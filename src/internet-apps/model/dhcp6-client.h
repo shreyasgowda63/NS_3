@@ -104,6 +104,12 @@ class Dhcp6Client : public Application
     void SendRebind(Ipv6Address address);
 
     /**
+     * \brief Send a Release message to the DHCPv6 server.
+     * \param address The address whose lease is to be released.
+     */
+    void SendRelease(Ipv6Address address);
+
+    /**
      * \brief Handles incoming packets from the network
      * \param socket Socket bound to port 546 of the DHCP client
      */
@@ -195,8 +201,9 @@ class Dhcp6Client : public Application
     Time m_prefLifetime;  //!< Preferred lifetime of the address
     Time m_validLifetime; //!< Valid lifetime of the address
 
-    EventId m_renewEvent;  //!< Event ID for the renew event
-    EventId m_rebindEvent; //!< Event ID for the rebind event
+    EventId m_renewEvent;   //!< Event ID for the renew event
+    EventId m_rebindEvent;  //!< Event ID for the rebind event
+    EventId m_releaseEvent; //!< Event ID for the release event
 
     uint32_t m_ianaIds; //!< Track the latest IANA ID
 };

@@ -85,13 +85,13 @@ class LeaseInfo
      * \brief Expired Addresses (Section 6.2 of RFC 8415)
      * Expired time / Ipv6Address
      */
-    typedef std::map<uint32_t, Ipv6Address> ExpiredAddresses;
+    typedef std::map<Time, Ipv6Address> ExpiredAddresses;
 
     /**
      * \brief Leased Addresses
      * Client DUID + Ipv6Address / Lease time
      */
-    typedef std::map<Address, std::pair<Ipv6Address, uint32_t>> LeasedAddresses;
+    typedef std::map<Address, std::pair<Ipv6Address, Time>> LeasedAddresses;
 
     /**
      * \brief Declined Addresses
@@ -192,6 +192,11 @@ class Dhcp6Server : public Application
     void TimerHandler();
 
     /**
+     * \brief Clean up stale lease info.
+     */
+    void CleanLeases();
+
+    /**
      * \brief The port number of the DHCPv6 server.
      */
     static const int PORT = 547;
@@ -217,58 +222,10 @@ class Dhcp6Server : public Application
     IdentifierOption m_serverIdentifier;
 
     /**
-     * \brief Store the address pool and range.
-     * Address pool + Min address / Max address
-     */
-    typedef std::map<Ipv6Address, std::pair<Ipv6Address, Ipv6Address>> AddressPool;
-
-    /**
-     * \brief Store the prefixes of the address pool.
-     * Address pool + Prefix
-     */
-    typedef std::map<Ipv6Address, Ipv6Prefix> Prefixes;
-
-    /**
-     * \brief Leased address container
-     * Client DUID + Ipv6Address / Lease time
-     */
-    typedef std::map<Address, std::pair<Ipv6Address, uint32_t>> LeasedAddresses;
-
-    /**
-     * \brief Leased address container iterator
-     */
-    typedef std::map<Address, std::pair<Ipv6Address, uint32_t>>::iterator LeasedAddressesIterator;
-
-    // TODO: track expired addresses
-
-    /**
-     * \brief Declined addresses
-     */
-    typedef std::list<Ipv6Address> DeclinedAddresses;
-
-    /**
-     * \brief Declined address iterator.
-     */
-    typedef std::list<Ipv6Address>::iterator DeclinedAddressIterator;
-
-    /// Available address container - IP addr
-    typedef std::list<Ipv4Address> AvailableAddress;
-
-    /**
      * \brief Store IA bindings.
      * DUID + IA Type / IAID
      */
     std::map<Address, std::pair<uint8_t, uint32_t>> m_iaBindings;
-
-    /**
-     * \brief Addresses that have been leased to clients.
-     */
-    LeasedAddresses m_leasedAddresses;
-
-    /**
-     * \brief Keeps track of addresses that have been declined by clients.
-     */
-    DeclinedAddresses m_declinedAddresses;
 
     /**
      * \brief Default preferred lifetime for an address.
@@ -305,6 +262,9 @@ class Dhcp6Server : public Application
      * \brief List of all managed subnets.
      */
     std::vector<LeaseInfo> m_subnets;
+
+    Time m_leaseCleanup;         //!< Lease cleanup time
+    EventId m_leaseCleanupEvent; //!< Event ID for lease cleanup
 };
 
 } // namespace ns3
