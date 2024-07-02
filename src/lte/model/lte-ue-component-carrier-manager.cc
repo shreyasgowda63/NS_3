@@ -107,4 +107,4 @@ LteUeComponentCarrierManager::SetNumberOfComponentCarriers(uint8_t noOfComponent
     m_ccmRrcSapUser->SetNumberOfComponentCarriers(noOfComponentCarriers);
 }
 
-} // end of namespace ns3
+} // namespace ns3

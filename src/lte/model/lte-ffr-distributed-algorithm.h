@@ -192,6 +192,6 @@ class LteFfrDistributedAlgorithm : public LteFfrAlgorithm
 
 }; // end of class LteFfrDistributedAlgorithm
 
-} // end of namespace ns3
+} // namespace ns3
 
 #endif /* LTE_FR_DISTRIBUTED_ALGORITHM_H */

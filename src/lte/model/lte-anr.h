@@ -235,6 +235,6 @@ class LteAnr : public Object
 
 }; // end of class LteAnr
 
-} // end of namespace ns3
+} // namespace ns3
 
 #endif /* LTE_ANR_H */

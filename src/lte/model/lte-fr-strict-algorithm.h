@@ -156,6 +156,6 @@ class LteFrStrictAlgorithm : public LteFfrAlgorithm
 
 }; // end of class LteFrStrictAlgorithm
 
-} // end of namespace ns3
+} // namespace ns3
 
 #endif /* LTE_FR_STRICT_ALGORITHM_H */

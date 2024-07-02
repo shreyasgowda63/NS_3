@@ -142,6 +142,6 @@ class SimpleUeComponentCarrierManager : public LteUeComponentCarrierManager
 
 }; // end of class SimpleUeComponentCarrierManager
 
-} // end of namespace ns3
+} // namespace ns3
 
 #endif /* SIMPLE_UE_COMPONENT_CARRIER_MANAGER_H */

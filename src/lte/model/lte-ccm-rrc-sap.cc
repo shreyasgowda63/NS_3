@@ -31,4 +31,4 @@ LteCcmRrcSapUser::~LteCcmRrcSapUser()
 {
 }
 
-} // end of namespace ns3
+} // namespace ns3
