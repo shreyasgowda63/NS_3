@@ -760,6 +760,7 @@ GlobalRouteManagerImpl::SPFNext(SPFVertex* v, CandidateQueue& candidate)
         numRecordsInVertex = v->GetLSA()->GetNAttachedRouters();
     }
 
+    // Loop over the links in V's LSA
     for (uint32_t i = 0; i < numRecordsInVertex; i++)
     {
         // Get w_lsa:  In case of V is Router-LSA
@@ -956,7 +957,7 @@ GlobalRouteManagerImpl::SPFNext(SPFVertex* v, CandidateQueue& candidate)
                 }
             } // new lower cost path found
         }     // end W is already on the candidate list
-    }         // end loop over the links in V's LSA
+    }
 }
 
 //
