@@ -67,7 +67,7 @@ class MyCb
     }
 };
 
-} // unnamed namespace
+} // namespace
 
 int
 main(int argc, char* argv[])

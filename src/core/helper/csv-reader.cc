@@ -66,7 +66,7 @@ GenericTransform(std::string input, T& output)
     return static_cast<bool>(stream);
 }
 
-} // unnamed namespace
+} // namespace
 
 namespace ns3
 {

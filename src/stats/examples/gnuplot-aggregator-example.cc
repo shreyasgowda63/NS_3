@@ -73,7 +73,7 @@ Create2dPlot()
     aggregator->Disable();
 }
 
-} // unnamed namespace
+} // namespace
 
 int
 main(int argc, char* argv[])

@@ -98,7 +98,7 @@ const std::map<ns3::LogLevel, std::string> LOG_LEVEL_LABELS = {[]() {
     return labels;
 }()};
 
-} // Unnamed namespace
+} // namespace
 
 namespace ns3
 {

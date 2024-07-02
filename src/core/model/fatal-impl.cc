@@ -130,7 +130,7 @@ GetStreamList()
     return *pstreams;
 }
 
-} // unnamed namespace
+} // namespace
 
 void
 RegisterStream(std::ostream* stream)
@@ -181,7 +181,7 @@ sigHandler(int sig)
     FlushStreams();
     std::abort();
 }
-} // unnamed namespace
+} // namespace
 
 void
 FlushStreams()

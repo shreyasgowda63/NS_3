@@ -82,7 +82,7 @@ const long double* UNIT_VALUE = InitUnitValue();
 
 /** @} */
 
-} // unnamed namespace
+} // namespace
 
 // The set of marked times
 // static

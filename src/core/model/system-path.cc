@@ -101,7 +101,7 @@ ReadFilesNoThrow(std::string path)
     return std::make_tuple(files, false);
 }
 
-} // unnamed namespace
+} // namespace
 
 namespace SystemPath
 {
