@@ -466,8 +466,7 @@ class LteRrcSap
 
         /// Report config eutra function
         ReportConfigEutra();
-
-    }; // end of struct ReportConfigEutra
+    };
 
     /// MeasObjectToAddMod structure
     struct MeasObjectToAddMod

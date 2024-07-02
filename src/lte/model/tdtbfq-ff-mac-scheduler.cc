@@ -1053,7 +1053,7 @@ TdTbfqFfMacScheduler::DoSchedDlTriggerReq(
             metricMax = metric;
             itMax = it;
         }
-    } // end for m_flowStatsDl
+    }
 
     if (itMax == m_flowStatsDl.end())
     {
@@ -1273,7 +1273,7 @@ TdTbfqFfMacScheduler::DoSchedDlTriggerReq(
         ret.m_buildDataList.push_back(newEl);
 
         itMap++;
-    }                               // end while allocation
+    }
     ret.m_nrOfPdcchOfdmSymbols = 1; /// \todo check correct value according the DCIs txed
 
     m_schedSapUser->SchedDlConfigInd(ret);

@@ -86,8 +86,7 @@ class UanTransducerHd : public UanTransducer
 
   protected:
     void DoDispose() override;
-
-}; // class UanTransducerHd
+};
 
 } // namespace ns3
 

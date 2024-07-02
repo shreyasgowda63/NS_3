@@ -100,7 +100,7 @@ class OfdmaTestHePhy : public HePhy
 
   private:
     uint16_t m_staId; ///< ID of the STA to which this PHY belongs to
-};                    // class OfdmaTestHePhy
+};
 
 OfdmaTestHePhy::OfdmaTestHePhy(uint16_t staId)
     : HePhy(),
@@ -204,7 +204,7 @@ class OfdmaSpectrumWifiPhy : public SpectrumWifiPhy
     Ptr<OfdmaTestHePhy> m_ofdmTestHePhy; ///< Pointer to HE PHY instance used for OFDMA test
     TracedCallback<uint64_t>
         m_phyTxPpduUidTrace; //!< Callback providing UID of the PPDU that is about to be transmitted
-};                           // class OfdmaSpectrumWifiPhy
+};
 
 TypeId
 OfdmaSpectrumWifiPhy::GetTypeId()

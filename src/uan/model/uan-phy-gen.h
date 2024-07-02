@@ -60,8 +60,7 @@ class UanPhyPerGenDefault : public UanPhyPer
 
   private:
     double m_thresh; //!< SINR threshold.
-
-}; // class UanPhyPerGenDefault
+};
 
 /**
  * \ingroup uan
@@ -112,8 +111,7 @@ class UanPhyPerUmodem : public UanPhyPer
      * \return Binomial coefficient n choose k.
      */
     double NChooseK(uint32_t n, uint32_t k);
-
-}; // class UanPhyPerUmodem
+};
 
 /**
  * \ingroup uan
@@ -150,8 +148,7 @@ class UanPhyPerCommonModes : public UanPhyPer
      * \return Probability of packet error.
      */
     double CalcPer(Ptr<Packet> pkt, double sinrDb, UanTxMode mode) override;
-
-}; // class UanPhyPerCommonModes
+};
 
 /**
  * \ingroup uan
@@ -198,8 +195,7 @@ class UanPhyCalcSinrDefault : public UanPhyCalcSinr
                       UanTxMode mode,
                       UanPdp pdp,
                       const UanTransducer::ArrivalList& arrivalList) const override;
-
-}; // class UanPhyCalcSinrDefault
+};
 
 /**
  * \ingroup uan
@@ -244,8 +240,7 @@ class UanPhyCalcSinrFhFsk : public UanPhyCalcSinr
 
   private:
     uint32_t m_hops; //!< Number of hops.
-
-}; // class UanPhyCalcSinrFhFsk
+};
 
 /**
  * \ingroup uan
@@ -445,8 +440,7 @@ class UanPhyGen : public UanPhy
 
   protected:
     void DoDispose() override;
-
-}; // class UanPhyGen
+};
 
 } // namespace ns3
 

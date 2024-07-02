@@ -51,8 +51,7 @@ class LteHandoverManagementSapProvider
      * may be stored and utilised for the purpose of making handover decision.
      */
     virtual void ReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults) = 0;
-
-}; // end of class LteHandoverManagementSapProvider
+};
 
 /**
  * \brief Service Access Point (SAP) offered by the eNodeB RRC instance to the
@@ -99,8 +98,7 @@ class LteHandoverManagementSapUser
      * received through the LteHandoverManagementSapProvider::ReportUeMeas function.
      */
     virtual void TriggerHandover(uint16_t rnti, uint16_t targetCellId) = 0;
-
-}; // end of class LteHandoverManagementSapUser
+};
 
 /**
  * \brief Template for the implementation of the LteHandoverManagementSapProvider
@@ -126,8 +124,7 @@ class MemberLteHandoverManagementSapProvider : public LteHandoverManagementSapPr
 
   private:
     C* m_owner; ///< the owner class
-
-}; // end of class MemberLteHandoverManagementSapProvider
+};
 
 template <class C>
 MemberLteHandoverManagementSapProvider<C>::MemberLteHandoverManagementSapProvider(C* owner)
@@ -169,8 +166,7 @@ class MemberLteHandoverManagementSapUser : public LteHandoverManagementSapUser
 
   private:
     C* m_owner; ///< the owner class
-
-}; // end of class MemberLteAnrSapUser
+};
 
 template <class C>
 MemberLteHandoverManagementSapUser<C>::MemberLteHandoverManagementSapUser(C* owner)

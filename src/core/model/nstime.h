@@ -824,8 +824,7 @@ class Time
     /**@}*/ // Compound assignment
 
     int64_t m_data; //!< Virtual time value, in the current unit.
-
-}; // class Time
+};
 
 namespace TracedValueCallback
 {
@@ -1472,8 +1471,7 @@ class TimeWithUnit
      * \returns The stream.
      */
     friend std::ostream& operator<<(std::ostream& os, const TimeWithUnit& timeU);
-
-}; // class TimeWithUnit
+};
 
 /**
  * \ingroup time

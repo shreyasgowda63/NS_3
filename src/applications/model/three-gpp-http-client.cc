@@ -354,10 +354,8 @@ ThreeGppHttpClient::ReceivedDataCallback(Ptr<Socket> socket)
             NS_FATAL_ERROR("Invalid state " << GetStateString() << " for ReceivedData().");
             break;
         }
-
-    } // end of `while ((packet = socket->RecvFrom (from)))`
-
-} // end of `void ReceivedDataCallback (Ptr<Socket> socket)`
+    }
+}
 
 void
 ThreeGppHttpClient::OpenConnection()
@@ -415,15 +413,12 @@ ThreeGppHttpClient::OpenConnection()
                                     MakeCallback(&ThreeGppHttpClient::ErrorCloseCallback, this));
         m_socket->SetRecvCallback(MakeCallback(&ThreeGppHttpClient::ReceivedDataCallback, this));
         m_socket->SetAttribute("MaxSegLifetime", DoubleValue(0.02)); // 20 ms.
-
-    } // end of `if (m_state == {NOT_STARTED, EXPECTING_EMBEDDED_OBJECT, PARSING_MAIN_OBJECT,
-      // READING})`
+    }
     else
     {
         NS_FATAL_ERROR("Invalid state " << GetStateString() << " for OpenConnection().");
     }
-
-} // end of `void OpenConnection ()`
+}
 
 void
 ThreeGppHttpClient::RequestMainObject()
@@ -462,8 +457,7 @@ ThreeGppHttpClient::RequestMainObject()
     {
         NS_FATAL_ERROR("Invalid state " << GetStateString() << " for RequestMainObject().");
     }
-
-} // end of `void RequestMainObject ()`
+}
 
 void
 ThreeGppHttpClient::RequestEmbeddedObject()
@@ -512,8 +506,7 @@ ThreeGppHttpClient::RequestEmbeddedObject()
     {
         NS_FATAL_ERROR("Invalid state " << GetStateString() << " for RequestEmbeddedObject().");
     }
-
-} // end of `void RequestEmbeddedObject ()`
+}
 
 void
 ThreeGppHttpClient::ReceiveMainObject(Ptr<Packet> packet, const Address& from)
@@ -564,16 +557,13 @@ ThreeGppHttpClient::ReceiveMainObject(Ptr<Packet> packet, const Address& from)
             }
 
             EnterParsingTime();
-
-        } // end of else of `if (m_objectBytesToBeReceived > 0)`
-
-    } // end of `if (m_state == EXPECTING_MAIN_OBJECT)`
+        }
+    }
     else
     {
         NS_FATAL_ERROR("Invalid state " << GetStateString() << " for ReceiveMainObject().");
     }
-
-} // end of `void ReceiveMainObject (Ptr<Packet> packet)`
+}
 
 void
 ThreeGppHttpClient::ReceiveEmbeddedObject(Ptr<Packet> packet, const Address& from)
@@ -640,16 +630,13 @@ ThreeGppHttpClient::ReceiveEmbeddedObject(Ptr<Packet> packet, const Address& fro
                 FinishReceivingPage(); // trigger callback for page loading time
                 EnterReadingTime();
             }
-
-        } // end of else of `if (m_objectBytesToBeReceived > 0)`
-
-    } // end of `if (m_state == EXPECTING_EMBEDDED_OBJECT)`
+        }
+    }
     else
     {
         NS_FATAL_ERROR("Invalid state " << GetStateString() << " for ReceiveEmbeddedObject().");
     }
-
-} // end of `void ReceiveEmbeddedObject (Ptr<Packet> packet)`
+}
 
 void
 ThreeGppHttpClient::Receive(Ptr<Packet> packet)
@@ -704,8 +691,7 @@ ThreeGppHttpClient::Receive(Ptr<Packet> packet)
             m_constructedPacket->AddAtEnd(packetCopy);
         }
     }
-
-} // end of `void Receive (packet)`
+}
 
 void
 ThreeGppHttpClient::EnterParsingTime()
@@ -764,8 +750,7 @@ ThreeGppHttpClient::ParseMainObject()
     {
         NS_FATAL_ERROR("Invalid state " << GetStateString() << " for ParseMainObject().");
     }
-
-} // end of `void ParseMainObject ()`
+}
 
 void
 ThreeGppHttpClient::EnterReadingTime()

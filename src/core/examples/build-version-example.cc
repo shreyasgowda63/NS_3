@@ -18,7 +18,10 @@
  */
 
 #include "ns3/command-line.h"
+
+#ifdef ENABLE_BUILD_VERSION
 #include "ns3/version.h"
+#endif
 
 #include <iomanip>
 #include <iostream>
@@ -49,6 +52,7 @@ main(int argc, char* argv[])
     cmd.PrintVersion(std::cout);
     std::cout << std::endl;
 
+#ifdef ENABLE_BUILD_VERSION
     Version version;
     std::cout << "Version fields:\n"
               << "LongVersion:        " << version.LongVersion() << "\n"
@@ -65,6 +69,11 @@ main(int argc, char* argv[])
               << "BuildProfile:       " << version.BuildProfile() << "\n"
               << "WorkingTree:        " << (version.DirtyWorkingTree() ? "dirty" : "clean")
               << std::endl;
+#else
+    std::cout << "Build version support is not enabled, reconfigure ns-3 with "
+                 "--enable-build-version flag"
+              << std::endl;
+#endif // ENABLE_BUILD_VERSION
 
     return 0;
 }

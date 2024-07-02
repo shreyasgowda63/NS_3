@@ -200,8 +200,7 @@ class LteHandoverFailureTestCase : public TestCase
     Time m_handoverLeavingTimeout;  ///< handover leaving timeout duration at source eNodeB
     uint16_t m_targeteNodeBPosition;   ///< position of the target eNodeB
     bool m_hasHandoverFailureOccurred; ///< has handover failure occurred in simulation
-
-}; // end of class LteHandoverFailureTestCase
+};
 
 void
 LteHandoverFailureTestCase::DoRun()
@@ -299,7 +298,7 @@ LteHandoverFailureTestCase::DoRun()
 
     RngSeedManager::SetSeed(previousSeed);
     RngSeedManager::SetRun(previousRun);
-} // end of void LteHandoverFailureTestCase::DoRun ()
+}
 
 void
 LteHandoverFailureTestCase::UeHandoverStartCallback(std::string context,

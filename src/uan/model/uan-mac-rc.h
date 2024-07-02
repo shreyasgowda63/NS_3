@@ -142,8 +142,7 @@ class Reservation
     uint8_t m_retryNo;
     /** Has this reservation been transmitted. */
     bool m_transmitted;
-
-}; // class Reservation
+};
 
 /**
  * \ingroup uan
@@ -316,8 +315,7 @@ class UanMacRc : public UanMac
 
   protected:
     void DoDispose() override;
-
-}; // class UanMacRc
+};
 
 } // namespace ns3
 

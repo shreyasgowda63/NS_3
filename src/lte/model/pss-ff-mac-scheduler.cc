@@ -1048,9 +1048,9 @@ PssFfMacScheduler::DoSchedDlTriggerReq(
                         metric = achievableRate / (*it).second.lastAveragedThroughput;
                     }
                     ueSet2.emplace_back(metric, (*it).first);
-                } // end of wbCqi
+                }
             }
-        } // end of ueSet
+        }
 
         if (!ueSet1.empty() || !ueSet2.empty())
         {
@@ -1143,11 +1143,11 @@ PssFfMacScheduler::DoSchedDlTriggerReq(
                                 }
                                 sum += sbCqi;
                             }
-                        } // end if cqi
-                    }     // end of rbgNum
+                        }
+                    }
 
                     sbCqiSum[(*it).first] = sum;
-                } // end tdUeSet
+                }
 
                 for (int i = 0; i < rbgNum; i++)
                 {
@@ -1218,7 +1218,7 @@ PssFfMacScheduler::DoSchedDlTriggerReq(
                                 }
                                 colMetric += (double)sbCqi / (double)(*itSbCqiSum).second;
                             }
-                        } // end if cqi
+                        }
 
                         double metric = 0.0;
                         if (colMetric != 0)
@@ -1235,7 +1235,7 @@ PssFfMacScheduler::DoSchedDlTriggerReq(
                             metricMax = metric;
                             itMax = it;
                         }
-                    } // end of tdUeSet
+                    }
 
                     if (itMax == tdUeSet.end())
                     {
@@ -1246,9 +1246,8 @@ PssFfMacScheduler::DoSchedDlTriggerReq(
                         allocationMap[(*itMax).first].push_back(i);
                         rbgMap.at(i) = true;
                     }
-                } // end of rbgNum
-
-            } // end of CoIta
+                }
+            }
 
             if (m_fdSchedulerType == "PFsch")
             {
@@ -1322,7 +1321,7 @@ PssFfMacScheduler::DoSchedDlTriggerReq(
                                                    0.001); // = TB size / TTI
                             }
                             schMetric = achievableRate / (*it).second.secondLastAveragedThroughput;
-                        } // end if cqi
+                        }
 
                         double metric = 0.0;
                         metric = weight * schMetric;
@@ -1332,7 +1331,7 @@ PssFfMacScheduler::DoSchedDlTriggerReq(
                             metricMax = metric;
                             itMax = it;
                         }
-                    } // end of tdUeSet
+                    }
 
                     if (itMax == tdUeSet.end())
                     {
@@ -1343,14 +1342,10 @@ PssFfMacScheduler::DoSchedDlTriggerReq(
                         allocationMap[(*itMax).first].push_back(i);
                         rbgMap.at(i) = true;
                     }
-
-                } // end of rbgNum
-
-            } // end of PFsch
-
-        } // end if ueSet1 || ueSet2
-
-    } // end if ueSet
+                }
+            }
+        }
+    }
 
     // reset TTI stats of users
     for (auto itStats = m_flowStatsDl.begin(); itStats != m_flowStatsDl.end(); itStats++)
@@ -1548,7 +1543,7 @@ PssFfMacScheduler::DoSchedDlTriggerReq(
         }
 
         itMap++;
-    }                               // end while allocation
+    }
     ret.m_nrOfPdcchOfdmSymbols = 1; /// \todo check correct value according the DCIs txed
 
     // update UEs stats

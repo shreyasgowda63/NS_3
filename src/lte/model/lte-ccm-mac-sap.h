@@ -55,8 +55,7 @@ class LteCcmMacSapProvider
      * \see LteCcmMacSapUser::UlReceiveSr
      */
     virtual void ReportSrToScheduler(uint16_t rnti) = 0;
-
-}; // end of class LteCcmMacSapProvider
+};
 
 /**
  * \ingroup lte
@@ -101,8 +100,7 @@ class LteCcmMacSapUser : public LteMacSapUser
      * \param componentCarrierId The component carrier id
      */
     virtual void NotifyPrbOccupancy(double prbOccupancy, uint8_t componentCarrierId) = 0;
-
-}; // end of class LteCcmMacSapUser
+};
 
 /// MemberLteCcmMacSapProvider class
 template <class C>

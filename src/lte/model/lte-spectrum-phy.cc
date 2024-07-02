@@ -1158,8 +1158,8 @@ LteSpectrumPhy::EndRxData()
                                     (*itTb).second.harqProcessId);
                             }
                         }
-                    } // end if ((*itTb).second.downlink) HARQ
-                }     // end if (!(*itTb).second.harqFeedbackSent)
+                    }
+                }
             }
         }
     }

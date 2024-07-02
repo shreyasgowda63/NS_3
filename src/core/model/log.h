@@ -420,8 +420,7 @@ class LogComponent
     int32_t m_mask;     //!< Blocked LogLevels.
     std::string m_name; //!< LogComponent name.
     std::string m_file; //!< File defining this LogComponent.
-
-}; // class LogComponent
+};
 
 /**
  * Get the LogComponent registered with the given name.

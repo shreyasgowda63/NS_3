@@ -81,8 +81,7 @@ ShowProgress::SetInterval(const Time interval)
     }
     Simulator::Cancel(m_event);
     Start();
-
-} // ShowProgress::SetInterval
+}
 
 void
 ShowProgress::SetTimePrinter(TimePrinter lp)
@@ -110,8 +109,7 @@ ShowProgress::ScheduleCheckProgress()
     NS_LOG_FUNCTION(this);
     m_event = Simulator::Schedule(m_vtime, &ShowProgress::CheckProgress, this);
     m_timer.Start();
-
-} // ShowProgress::ScheduleCheckProgress
+}
 
 void
 ShowProgress::GiveFeedback(uint64_t nEvents, int64x64_t ratio, int64x64_t speed)
@@ -142,8 +140,7 @@ ShowProgress::GiveFeedback(uint64_t nEvents, int64x64_t ratio, int64x64_t speed)
     // Restore stream state
     m_os->precision(precision);
     m_os->flags(flags);
-
-} // ShowProgress::GiveFeedback
+}
 
 void
 ShowProgress::CheckProgress()
@@ -266,15 +263,14 @@ ShowProgress::CheckProgress()
 
     // And do it again
     ScheduleCheckProgress();
-
-} // ShowProgress::CheckProgress
+}
 
 void
 ShowProgress::Start()
 {
     m_stamp.Stamp();
     (*m_os) << "Start wall clock: " << m_stamp.ToString() << std::endl;
-} // ShowProgress::Start
+}
 
 void
 ShowProgress::Stop()
@@ -282,6 +278,6 @@ ShowProgress::Stop()
     m_stamp.Stamp();
     (*m_os) << "End wall clock:  " << m_stamp.ToString()
             << "\nElapsed wall clock: " << m_stamp.GetInterval() << "s" << std::endl;
-} // ShowProgress::Stop
+}
 
 } // namespace ns3

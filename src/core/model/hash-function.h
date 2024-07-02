@@ -157,7 +157,7 @@ class Hash32 : public Implementation
 
   private:
     Hash32Function_ptr m_fp; /**< The hash function. */
-};                           // Hash32
+};
 
 /**
  * \ingroup hash
@@ -198,7 +198,7 @@ class Hash64 : public Implementation
 
   private:
     Hash64Function_ptr m_fp; /**< The hash function. */
-};                           // Hash64<Hash64Function_ptr>
+};
 
 } // namespace Function
 

@@ -182,7 +182,7 @@ class Collider
             m_dict.insert(std::make_pair(h, phrase));
         }
         return true;
-    } // Add ()
+    }
 
     /**
      * \return The hash name, including the length.
@@ -219,7 +219,7 @@ class Collider
                       << std::setfill(' ') << "  " << std::setw(20) << std::left
                       << m_dict.find(h)->second << collision.second << std::right << std::endl;
         }
-    } // Report ()
+    }
 
   private:
     /**
@@ -258,8 +258,7 @@ class Collider
 
     /** The list of collisions. */
     collision_t m_coll;
-
-}; // class Collider
+};
 
 /**
  * Word list and hashers to test.
@@ -307,7 +306,7 @@ class Dictionary
             ++m_nphrases;
             m_words.push_back(phrase);
         }
-    } // Add ()
+    }
 
     /**
      * Report the expected number of collisions.
@@ -363,7 +362,7 @@ class Dictionary
         std::cout << "Number of words or phrases: " << n << std::endl;
         std::cout << "Expected number of collisions: (32-bit table) " << Ec32 << std::endl;
         std::cout << "Expected number of collisions: (64-bit table) " << Ec64 << std::endl;
-    } // ReportExpectedCollisions
+    }
 
     /** Print the collisions for each Collider. */
     void Report() const
@@ -374,7 +373,7 @@ class Dictionary
         {
             collider.Report();
         }
-    } // Report ()
+    }
 
     /**
      * Time and report the execution of one hash across the entire Dictionary.
@@ -401,8 +400,7 @@ class Dictionary
         std::cout << std::left << std::setw(32) << collider.GetName() << std::right << std::setw(10)
                   << m_nphrases << std::setw(10) << reps << std::setw(10) << stop - start
                   << std::setw(12) << per << std::endl;
-
-    } // TimeOne ()
+    }
 
     /** Report the execution time of each hash across the entire Dictionary. */
     void Time()
@@ -416,14 +414,13 @@ class Dictionary
         {
             TimeOne(collider);
         }
-    } // Time ()
+    }
 
   private:
     unsigned long m_nphrases;         /**< Number of strings hashed. */
     std::vector<Collider> m_hashes;   /**< List of hash Colliders. */
     std::vector<std::string> m_words; /**< List of unique words. */
-
-}; // class Dictionary
+};
 
 /**
  * Source word list files.
@@ -488,18 +485,15 @@ class DictFiles
                 std::string phrase;
                 getline(dictStream, phrase);
                 dict.Add(phrase);
-            } // while
+            }
 
             dictStream.close();
-
-        } // for m_files
-
-    } // ReadInto
+        }
+    }
 
   private:
     std::vector<std::string> m_files; /**< List of word files to use. */
-
-}; // class DictFiles
+};
 
 } // namespace Example
 
@@ -543,7 +537,7 @@ main(int argc, char* argv[])
     if (timing)
     {
         dict.Time();
-    } // if (timing)
+    }
 
     return 0;
-} // main
+}

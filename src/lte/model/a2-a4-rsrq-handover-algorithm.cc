@@ -168,8 +168,7 @@ A2A4RsrqHandoverAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults 
     {
         NS_LOG_WARN("Ignoring measId " << (uint16_t)measResults.measId);
     }
-
-} // end of DoReportUeMeas
+}
 
 void
 A2A4RsrqHandoverAlgorithm::EvaluateHandover(uint16_t rnti, uint8_t servingCellRsrq)
@@ -213,10 +212,8 @@ A2A4RsrqHandoverAlgorithm::EvaluateHandover(uint16_t rnti, uint8_t servingCellRs
                 m_handoverManagementSapUser->TriggerHandover(rnti, bestNeighbourCellId);
             }
         }
-
-    } // end of else of if (it1 == m_neighbourCellMeasures.end ())
-
-} // end of EvaluateMeasurementReport
+    }
+}
 
 bool
 A2A4RsrqHandoverAlgorithm::IsValidNeighbour(uint16_t cellId)
@@ -267,7 +264,6 @@ A2A4RsrqHandoverAlgorithm::UpdateNeighbourMeasurements(uint16_t rnti, uint16_t c
         neighbourCellMeasures->m_rsrq = rsrq;
         it1->second[cellId] = neighbourCellMeasures;
     }
-
-} // end of UpdateNeighbourMeasurements
+}
 
 } // namespace ns3

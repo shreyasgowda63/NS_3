@@ -71,8 +71,7 @@ class NoOpHandoverAlgorithm : public LteHandoverAlgorithm
     LteHandoverManagementSapUser* m_handoverManagementSapUser;
     /// Receive API calls from the eNodeB RRC instance.
     LteHandoverManagementSapProvider* m_handoverManagementSapProvider;
-
-}; // end of class NoOpHandoverAlgorithm
+};
 
 } // namespace ns3
 

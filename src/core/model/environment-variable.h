@@ -164,8 +164,7 @@ class EnvironmentVariable
         std::string m_variable;
         /** The key, value store. */
         KeyValueStore m_dict;
-
-    }; // class Dictionary
+    };
 
     /**
      * Set an environment variable.
@@ -224,8 +223,7 @@ class EnvironmentVariable
 
     /** Clear the instance, forcing all new lookups. */
     static void Clear();
-
-}; // class EnvironmentVariable
+};
 
 } // namespace ns3
 

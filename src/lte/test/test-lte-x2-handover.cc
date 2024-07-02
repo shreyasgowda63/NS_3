@@ -415,8 +415,7 @@ LteX2HandoverTestCase::DoRun()
                 clientApps.Start(startTime);
 
                 ueData.bearerDataList.push_back(bearerData);
-
-            } // end for b
+            }
 
             m_ueDataVector.push_back(ueData);
         }

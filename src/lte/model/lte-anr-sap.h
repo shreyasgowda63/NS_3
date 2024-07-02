@@ -81,8 +81,7 @@ class LteAnrSapProvider
      *         target cell
      */
     virtual bool GetNoX2(uint16_t cellId) const = 0;
-
-}; // end of class LteAnrSapProvider
+};
 
 /**
  * \brief Service Access Point (SAP) offered by the eNodeB RRC instance to the
@@ -112,8 +111,7 @@ class LteAnrSapUser
      * \note This function is only valid before the simulation begins.
      */
     virtual uint8_t AddUeMeasReportConfigForAnr(LteRrcSap::ReportConfigEutra reportConfig) = 0;
-
-}; // end of class LteAnrSapUser
+};
 
 /**
  * \brief Template for the implementation of the LteAnrSapProvider as a member
@@ -142,8 +140,7 @@ class MemberLteAnrSapProvider : public LteAnrSapProvider
 
   private:
     C* m_owner; ///< the owner class
-
-}; // end of class MemberLteAnrSapProvider
+};
 
 template <class C>
 MemberLteAnrSapProvider<C>::MemberLteAnrSapProvider(C* owner)
@@ -209,8 +206,7 @@ class MemberLteAnrSapUser : public LteAnrSapUser
 
   private:
     C* m_owner; ///< the owner class
-
-}; // end of class MemberLteAnrSapUser
+};
 
 template <class C>
 MemberLteAnrSapUser<C>::MemberLteAnrSapUser(C* owner)

@@ -83,7 +83,7 @@ TracedValueCbSink(T oldValue, T newValue)
     {
         g_Result += std::string(g_Result.empty() ? "" : " | ") + "newValue should be 1";
     }
-} // TracedValueCbSink<>()
+}
 
 /**
  * \ingroup system-tests-traced
@@ -161,7 +161,7 @@ class TracedValueCallbackTestCase : public TestCase
                                     MakeTraceSourceAccessor(&CheckTvCb<T>::m_value),
                                     ("ns3::TracedValueCallback::" + TypeNameGet<T>()));
             return tid;
-        } // GetTypeId ()
+        }
 
         /**
          * Check the sink function against the actual TracedValue invocation.
@@ -196,10 +196,8 @@ class TracedValueCallbackTestCase : public TestCase
             // Odd form here is to accommodate the uneven operator support
             // of Time and SequenceNumber32.
             m_value = m_value + static_cast<T>(1);
-
-        } // Invoke()
-
-    }; // class CheckTvCb<T>
+        }
+    };
 
     /**
      * Check the TracedValue typedef against TracedValueCbSink<T>.
@@ -219,8 +217,7 @@ class TracedValueCallbackTestCase : public TestCase
 
         NS_TEST_ASSERT_MSG_EQ(g_Result.empty(), true, g_Result);
         g_Result = "";
-
-    } // CheckType<>()
+    }
 
     void DoRun() override;
 };

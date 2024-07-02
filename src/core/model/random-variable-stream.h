@@ -170,8 +170,7 @@ class RandomVariableStream : public Object
 
     /** The stream number for the RngStream. */
     int64_t m_stream;
-
-}; // class RandomVariableStream
+};
 
 /**
  * \ingroup randomvariable
@@ -290,8 +289,7 @@ class UniformRandomVariable : public RandomVariableStream
 
     /** The upper bound on values that can be returned by this RNG stream. */
     double m_max;
-
-}; // class UniformRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -345,8 +343,7 @@ class ConstantRandomVariable : public RandomVariableStream
   private:
     /** The constant value returned by this RNG stream. */
     double m_constant;
-
-}; // class ConstantRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -475,8 +472,7 @@ class SequentialRandomVariable : public RandomVariableStream
 
     /** Indicates if the current sequence value has been properly initialized. */
     bool m_isCurrentSet;
-
-}; // class SequentialRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -600,8 +596,7 @@ class ExponentialRandomVariable : public RandomVariableStream
 
     /** The upper bound on values that can be returned by this RNG stream. */
     double m_bound;
-
-}; // class ExponentialRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -739,8 +734,7 @@ class ParetoRandomVariable : public RandomVariableStream
 
     /** The upper bound on values that can be returned by this RNG stream. */
     double m_bound;
-
-}; // class ParetoRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -899,8 +893,7 @@ class WeibullRandomVariable : public RandomVariableStream
 
     /** The upper bound on values that can be returned by this RNG stream. */
     double m_bound;
-
-}; // class WeibullRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -1049,8 +1042,7 @@ class NormalRandomVariable : public RandomVariableStream
     double m_v2;
     /** The algorithm produces two values at a time. Cache parameters for possible reuse.*/
     double m_y;
-
-}; // class NormalRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -1198,8 +1190,7 @@ class LogNormalRandomVariable : public RandomVariableStream
 
     /** The algorithm produces two values at a time. Cache parameters for possible reuse.*/
     double m_normal;
-
-}; // class LogNormalRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -1320,8 +1311,7 @@ class GammaRandomVariable : public RandomVariableStream
     double m_v2;
     /** The algorithm produces two values at a time. Cache parameters for possible reuse.*/
     double m_y;
-
-}; // class GammaRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -1445,8 +1435,7 @@ class ErlangRandomVariable : public RandomVariableStream
 
     /** The lambda value for the Erlang distribution returned by this RNG stream. */
     double m_lambda;
-
-}; // class ErlangRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -1576,8 +1565,7 @@ class TriangularRandomVariable : public RandomVariableStream
 
     /** The upper bound on values that can be returned by this RNG stream. */
     double m_max;
-
-}; // class TriangularRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -1703,8 +1691,7 @@ class ZipfRandomVariable : public RandomVariableStream
 
     /** The normalization constant. */
     double m_c;
-
-}; // class ZipfRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -1805,8 +1792,7 @@ class ZetaRandomVariable : public RandomVariableStream
 
     /** Just for calculus simplifications. */
     double m_b;
-
-}; // class ZetaRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -1892,8 +1878,7 @@ class DeterministicRandomVariable : public RandomVariableStream
 
     /** Array of values to return in sequence. */
     double* m_data;
-
-}; // class DeterministicRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -2085,8 +2070,7 @@ class EmpiricalRandomVariable : public RandomVariableStream
      * otherwise treat CDF as normal histogram.
      */
     bool m_interpolate;
-
-}; // class EmpiricalRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -2188,8 +2172,7 @@ class BinomialRandomVariable : public RandomVariableStream
 
     /** The probability of success in each trial. */
     double m_probability;
-
-}; // class BinomialRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -2281,8 +2264,7 @@ class BernoulliRandomVariable : public RandomVariableStream
   private:
     /** The probability of success. */
     double m_probability;
-
-}; // class BernoulliRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -2387,8 +2369,7 @@ class LaplacianRandomVariable : public RandomVariableStream
 
     /** The bound on values that can be returned by this RNG stream. */
     double m_bound;
-
-}; // class LaplacianRandomVariable
+};
 
 /**
  * \ingroup randomvariable
@@ -2509,8 +2490,7 @@ class LargestExtremeValueRandomVariable : public RandomVariableStream
 
     /** The scale value of the Largest Extreme Value distribution. */
     double m_scale;
-
-}; // class LargestExtremeValueRandomVariable
+};
 
 } // namespace ns3
 

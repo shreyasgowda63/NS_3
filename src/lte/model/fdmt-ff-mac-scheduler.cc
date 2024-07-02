@@ -931,9 +931,8 @@ FdMtFfMacScheduler::DoSchedDlTriggerReq(
                             itMax = it;
                         }
                     }
-                } // end if cqi
-
-            } // end for m_rlcBufferReq
+                }
+            }
 
             if (itMax == m_flowStatsDl.end())
             {
@@ -957,8 +956,8 @@ FdMtFfMacScheduler::DoSchedDlTriggerReq(
                 }
                 NS_LOG_INFO(this << " UE assigned " << (*itMax));
             }
-        } // end for RBG free
-    }     // end for RBGs
+        }
+    }
 
     // generate the transmission opportunities by grouping the RBGs of the same RNTI and
     // creating the correspondent DCIs
@@ -1137,7 +1136,7 @@ FdMtFfMacScheduler::DoSchedDlTriggerReq(
         ret.m_buildDataList.push_back(newEl);
 
         itMap++;
-    }                               // end while allocation
+    }
     ret.m_nrOfPdcchOfdmSymbols = 1; /// \todo check correct value according the DCIs txed
 
     m_schedSapUser->SchedDlConfigInd(ret);

@@ -139,8 +139,7 @@ class LteHandoverTargetTestCase : public TestCase
 
     Ptr<LteEnbNetDevice> m_sourceEnbDev; ///< source ENB device
     bool m_hasHandoverOccurred;          ///< has handover occurred?
-
-}; // end of class LteHandoverTargetTestCase
+};
 
 LteHandoverTargetTestCase::LteHandoverTargetTestCase(std::string name,
                                                      Vector uePosition,
@@ -366,8 +365,7 @@ LteHandoverTargetTestCase::DoRun()
     Simulator::Stop(Seconds(1));
     Simulator::Run();
     Simulator::Destroy();
-
-} // end of void LteX2HandoverTargetTestCase::DoRun ()
+}
 
 void
 LteHandoverTargetTestCase::DoTeardown()
@@ -445,8 +443,7 @@ LteHandoverTargetTestSuite::LteHandoverTargetTestSuite()
                                               2,
                                               "ns3::A3RsrpHandoverAlgorithm"),
                 TestCase::Duration::EXTENSIVE);
-
-} // end of LteHandoverTargetTestSuite ()
+}
 
 /**
  * \ingroup lte-test

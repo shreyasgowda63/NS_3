@@ -209,7 +209,7 @@ class UanNetDevice : public NetDevice
   protected:
     void DoDispose() override;
     void DoInitialize() override;
-}; // class UanNetDevice
+};
 
 } // namespace ns3
 

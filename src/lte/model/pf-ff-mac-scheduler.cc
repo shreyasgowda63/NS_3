@@ -1000,8 +1000,8 @@ PfFfMacScheduler::DoSchedDlTriggerReq(
                             itMax = it;
                         }
                     }
-                } // end if cqi
-            }     // end for m_rlcBufferReq
+                }
+            }
 
             if (itMax == m_flowStatsDl.end())
             {
@@ -1025,8 +1025,8 @@ PfFfMacScheduler::DoSchedDlTriggerReq(
                 }
                 NS_LOG_INFO(this << " UE assigned " << (*itMax).first);
             }
-        } // end for RBG free
-    }     // end for RBGs
+        }
+    }
 
     // reset TTI stats of users
     for (auto itStats = m_flowStatsDl.begin(); itStats != m_flowStatsDl.end(); itStats++)
@@ -1224,7 +1224,7 @@ PfFfMacScheduler::DoSchedDlTriggerReq(
         }
 
         itMap++;
-    }                               // end while allocation
+    }
     ret.m_nrOfPdcchOfdmSymbols = 1; /// \todo check correct value according the DCIs txed
 
     // update UEs stats

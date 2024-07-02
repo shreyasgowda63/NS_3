@@ -124,8 +124,7 @@ class LteFrHardAlgorithm : public LteFfrAlgorithm
 
     std::vector<bool> m_dlRbgMap; ///< DL RBG Map
     std::vector<bool> m_ulRbgMap; ///< UL RBG Map
-
-}; // end of class LteFrHardAlgorithm
+};
 
 } // namespace ns3
 

@@ -57,8 +57,7 @@ class UanPhyCalcSinrDual : public UanPhyCalcSinr
                       UanTxMode mode,
                       UanPdp pdp,
                       const UanTransducer::ArrivalList& arrivalList) const override;
-
-}; // class UanPhyCalcSinrDual
+};
 
 /**
  * \ingroup uan
@@ -267,8 +266,7 @@ class UanPhyDual : public UanPhy
 
   protected:
     void DoDispose() override;
-
-}; // class UanPhyDual
+};
 
 } // namespace ns3
 

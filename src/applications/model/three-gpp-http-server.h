@@ -291,8 +291,7 @@ class ThreeGppHttpServer : public Application
     TracedCallback<const Time&, const Address&> m_rxDelayTrace;
     /// The `StateTransition` trace source.
     TracedCallback<const std::string&, const std::string&> m_stateTransitionTrace;
-
-}; // end of `class ThreeGppHttpServer`
+};
 
 /**
  * \internal
@@ -548,8 +547,7 @@ class ThreeGppHttpServerTxBuffer : public SimpleRefCount<ThreeGppHttpServerTxBuf
 
     /// Collection of accepted sockets and its individual transmission buffer.
     std::map<Ptr<Socket>, TxBuffer_t> m_txBuffer;
-
-}; // end of `class ThreeGppHttpServerTxBuffer`
+};
 
 } // namespace ns3
 

@@ -127,7 +127,7 @@ class LteFfrSapProvider
      * \returns the minimum continuous UL bandwidth
      */
     virtual uint16_t GetMinContinuousUlBandwidth() = 0;
-}; // end of class LteFfrSapProvider
+};
 
 /**
  * \brief Service Access Point (SAP) offered by the eNodeB RRC instance to the
@@ -140,8 +140,7 @@ class LteFfrSapUser
 {
   public:
     virtual ~LteFfrSapUser();
-
-}; // end of class LteFfrSapUser
+};
 
 /**
  * \brief Template for the implementation of the LteFfrSapProvider
@@ -175,8 +174,7 @@ class MemberLteFfrSapProvider : public LteFfrSapProvider
 
   private:
     C* m_owner; ///< the owner class
-
-}; // end of class MemberLteFfrSapProvider
+};
 
 template <class C>
 MemberLteFfrSapProvider<C>::MemberLteFfrSapProvider(C* owner)
@@ -270,8 +268,7 @@ class MemberLteFfrSapUser : public LteFfrSapUser
 
   private:
     C* m_owner; ///< the owner class
-
-}; // end of class LteFfrSapUser
+};
 
 template <class C>
 MemberLteFfrSapUser<C>::MemberLteFfrSapUser(C* owner)
