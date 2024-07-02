@@ -980,6 +980,25 @@ the preceding lines.
   /// Node container with the Wi-Fi stations
   NodeContainer wifiStations(3);
 
+Comments in closing braces should be avoided, in order to not cause realignment with
+preceding comments. The only exception are comments in the closing brace of a namespace,
+which should identify the corresponding namespace.
+
+.. sourcecode:: cpp
+
+  namespace ns3
+  {
+
+  int
+  Func(int x)
+  {
+      while (...)
+      {
+      } // end while  // Do not add this comment
+  } // end Func       // Do not add this comment
+
+  } // namespace ns3  // Keep this comment
+
 Casts
 =====
 
