@@ -48,12 +48,12 @@ main(int argc, char* argv[])
         LogComponentEnable("UdpEchoClientApplication", LOG_LEVEL_INFO);
     }
 
-    Time stopTime = Seconds(20);
+    Time stopTime = Seconds(5.0);
 
     NS_LOG_INFO("Create nodes.");
     NodeContainer nodes;
     NodeContainer router;
-    nodes.Create(2);
+    nodes.Create(3);
     // router.Create(2);
 
     NodeContainer net(nodes);
@@ -66,11 +66,29 @@ main(int argc, char* argv[])
     NetDeviceContainer devNet = csma.Install(net);
 
     InternetStackHelper internetv6;
-    internetv6.SetIpv6StackInstall(true);
     internetv6.Install(nodes);
 
-    NS_LOG_INFO("Setup the IP addresses and create DHCP applications.");
+    Ipv6AddressHelper ipv6;
+    Ipv6InterfaceContainer i = ipv6.AssignWithoutAddress(devNet);
+
+    NS_LOG_INFO("Assign static IP address to the third node.");
+    Ptr<Ipv6> ipv6proto = devNet.Get(2)->GetNode()->GetObject<Ipv6>();
+    int32_t ifIndex = 0;
+    ifIndex = ipv6proto->GetInterfaceForDevice(devNet.Get(2));
+    Ipv6InterfaceAddress ipv6Addr =
+        Ipv6InterfaceAddress(Ipv6Address("2001:db8::1"), Ipv6Prefix(128));
+    ipv6proto->AddAddress(ifIndex, ipv6Addr);
+
+    NS_LOG_INFO("Create DHCP applications.");
     Dhcp6Helper dhcp6Helper;
+
+    // DHCP clients
+    NetDeviceContainer dhcpClientNetDevs;
+    dhcpClientNetDevs.Add(devNet.Get(0));
+
+    ApplicationContainer dhcpClients = dhcp6Helper.InstallDhcp6Client(dhcpClientNetDevs);
+    dhcpClients.Start(Seconds(1.0));
+    dhcpClients.Stop(stopTime);
 
     // DHCP server
     ApplicationContainer dhcpServerApp = dhcp6Helper.InstallDhcp6Server(devNet.Get(1));
@@ -84,15 +102,7 @@ main(int argc, char* argv[])
     dhcpServerApp.Start(Seconds(0.0));
     dhcpServerApp.Stop(stopTime);
 
-    // DHCP clients
-    NetDeviceContainer dhcpClientNetDevs;
-    dhcpClientNetDevs.Add(devNet.Get(0));
-
-    ApplicationContainer dhcpClients = dhcp6Helper.InstallDhcp6Client(dhcpClientNetDevs);
-    dhcpClients.Start(Seconds(1.0));
-    dhcpClients.Stop(stopTime);
-
-    Simulator::Stop(stopTime + Seconds(10.0));
+    Simulator::Stop(stopTime + Seconds(2.0));
 
     if (tracing)
     {

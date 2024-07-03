@@ -21,6 +21,7 @@
 #include "dhcp6-header.h"
 
 #include "ns3/application.h"
+#include "ns3/inet6-socket-address.h"
 #include "ns3/socket.h"
 
 namespace ns3
@@ -84,12 +85,31 @@ class Dhcp6Client : public Application
     void SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
 
     /**
+     * \brief Trace the state transition of the offered address.
+     * \param oldState The old state of the address
+     * \param newState The new state of the address
+     */
+    void AddressStateTransition(const uint32_t& oldState, const uint32_t& newState);
+
+    /**
      * \brief Send a request to the DHCPv6 server.
      * \param iDev The net device of the client
      * \param header The DHCPv6 header
      * \param server The address of the server
      */
-    void AcceptReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
+    void ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
+
+    /**
+     * \brief Accept the DHCPv6 offer.
+     * \param offeredAddress The IPv6 address being accepted by the client.
+     */
+    void AcceptOffer(Ipv6Address offeredAddress);
+
+    /**
+     * \brief Send a Decline message to the DHCPv6 server.
+     * \param offeredAddress The IPv6 address to be declined.
+     */
+    void DeclineOffer(Ipv6Address offeredAddress);
 
     /**
      * \brief Send a renew message to the DHCPv6 server.
@@ -206,6 +226,8 @@ class Dhcp6Client : public Application
     EventId m_releaseEvent; //!< Event ID for the release event
 
     uint32_t m_ianaIds; //!< Track the latest IANA ID
+
+    Ipv6Address m_offeredAddress; //!< The offered address
 };
 
 } // namespace ns3

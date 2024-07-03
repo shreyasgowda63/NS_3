@@ -19,6 +19,8 @@
 
 #include "ns3/address-utils.h"
 #include "ns3/assert.h"
+#include "ns3/icmpv6-l4-protocol.h"
+#include "ns3/ipv6-interface.h"
 #include "ns3/ipv6-l3-protocol.h"
 #include "ns3/ipv6-packet-info-tag.h"
 #include "ns3/ipv6-routing-table-entry.h"
@@ -26,8 +28,12 @@
 #include "ns3/ipv6.h"
 #include "ns3/log.h"
 #include "ns3/mac48-address.h"
+#include "ns3/object.h"
 #include "ns3/simulator.h"
 #include "ns3/socket.h"
+#include "ns3/trace-source-accessor.h"
+#include "ns3/traced-value.h"
+#include "ns3/uinteger.h"
 
 #include <algorithm>
 
@@ -49,6 +55,7 @@ Dhcp6Client::GetTypeId()
 Dhcp6Client::Dhcp6Client()
 {
     NS_LOG_FUNCTION(this);
+
     m_firstBoot = true;
 
     m_solicitEvent = EventId();
@@ -166,10 +173,94 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
 }
 
 void
-Dhcp6Client::AcceptReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server)
+Dhcp6Client::AcceptOffer(Ipv6Address offeredAddress)
+{
+    Ptr<Ipv6> ipv6 = GetNode()->GetObject<Ipv6>();
+    int32_t ifIndex = ipv6->GetInterfaceForDevice(m_device);
+
+    ipv6->SetUp(ifIndex);
+
+    // Schedule the renew and rebind event.
+    m_renewEvent = Simulator::Schedule(m_renew, &Dhcp6Client::SendRenew, this, offeredAddress);
+    m_rebindEvent = Simulator::Schedule(m_rebind, &Dhcp6Client::SendRebind, this, offeredAddress);
+
+    m_releaseEvent =
+        Simulator::Schedule(m_validLifetime, &Dhcp6Client::SendRelease, this, offeredAddress);
+}
+
+void
+Dhcp6Client::DeclineOffer(Ipv6Address offeredAddress)
+{
+    m_state = RENEW;
+
+    Ptr<Ipv6> ipv6 = GetNode()->GetObject<Ipv6>();
+    int32_t ifIndex = ipv6->GetInterfaceForDevice(m_device);
+
+    // Remove address associations.
+    ipv6->RemoveAddress(ifIndex, offeredAddress);
+    m_iaidMap.erase(offeredAddress);
+
+    Dhcp6Header declineHeader;
+    Ptr<Packet> packet;
+    packet = Create<Packet>();
+
+    m_clientTransactId = 789;
+    declineHeader.SetTransactId(m_clientTransactId);
+    declineHeader.SetMessageType(Dhcp6Header::DECLINE);
+
+    // Add client identifier option
+    declineHeader.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
+                                      m_clientIdentifier.GetLinkLayerAddress());
+
+    // Add server identifier option
+    declineHeader.AddServerIdentifier(m_serverIdentifier.GetHardwareType(),
+                                      m_serverIdentifier.GetLinkLayerAddress());
+
+    Time m_msgStartTime = Simulator::Now();
+    declineHeader.AddElapsedTime(0);
+
+    // IA_NA option, IA address option
+    uint32_t iaid = m_iaidMap[offeredAddress];
+    declineHeader.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
+    declineHeader.AddAddress(iaid, offeredAddress, 40, 60);
+
+    packet->AddHeader(declineHeader);
+    if ((m_socket->SendTo(
+            packet,
+            0,
+            Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT))) >= 0)
+    {
+        NS_LOG_INFO("DHCP Decline sent");
+    }
+    else
+    {
+        NS_LOG_INFO("Error while sending DHCP Decline");
+    }
+
+    m_state = WAIT_REPLY;
+}
+
+void
+Dhcp6Client::AddressStateTransition(const uint32_t& oldState, const uint32_t& newState)
+{
+    NS_LOG_FUNCTION(this << oldState << newState);
+
+    if (newState == Ipv6InterfaceAddress::INVALID)
+    {
+        NS_LOG_INFO("DECLINE");
+        DeclineOffer(m_offeredAddress);
+    }
+    else
+    {
+        NS_LOG_INFO("ACCEPT");
+        AcceptOffer(m_offeredAddress);
+    }
+}
+
+void
+Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server)
 {
     NS_LOG_INFO(this << iDev << header << server);
-    m_state = RENEW;
 
     Ptr<Ipv6> ipv6 = GetNode()->GetObject<Ipv6>();
     int32_t ifIndex = ipv6->GetInterfaceForDevice(m_device);
@@ -186,25 +277,31 @@ Dhcp6Client::AcceptReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     NS_LOG_INFO("Offered address: " << offeredAddress);
 
     // TODO: In Linux, all leased addresses seem to be /128. Double-check this.
-    ipv6->AddAddress(ifIndex, Ipv6InterfaceAddress(offeredAddress, 128));
-    ipv6->SetUp(ifIndex);
+    Ipv6InterfaceAddress addr(offeredAddress, 128);
+    ipv6->AddAddress(ifIndex, addr);
+
+    int32_t interfaceId = ipv6->GetInterfaceForDevice(m_device);
+    Ptr<Icmpv6L4Protocol> icmpv6 = DynamicCast<Icmpv6L4Protocol>(
+        ipv6->GetProtocol(Icmpv6L4Protocol::GetStaticProtocolNumber(), interfaceId));
+
+    Ptr<Ipv6Interface> interface = GetNode()->GetObject<Ipv6L3Protocol>()->GetInterface(ifIndex);
+
+    ipv6->GetAddress(ifIndex, 1).SetState(Ipv6InterfaceAddress::TENTATIVE);
+    icmpv6->TraceConnectWithoutContext("AddressState",
+                                       MakeCallback(&Dhcp6Client::AddressStateTransition, this));
+
+    m_offeredAddress = offeredAddress;
+
+    // Set the preferred and valid lifetimes.
+    m_prefLifetime = Time(Seconds(iaAddrOpt.GetPreferredLifetime()));
+    m_validLifetime = Time(Seconds(iaAddrOpt.GetValidLifetime()));
 
     // Add the IPv6 address - IAID association.
     m_iaidMap[offeredAddress] = iaOpt.GetIaid();
 
     // Set the renew timer.
     m_renew = Time(Seconds(iaOpt.GetT1()));
-    m_renewEvent = Simulator::Schedule(m_renew, &Dhcp6Client::SendRenew, this, offeredAddress);
-
     m_rebind = Time(Seconds(iaOpt.GetT2()));
-    m_rebindEvent = Simulator::Schedule(m_rebind, &Dhcp6Client::SendRebind, this, offeredAddress);
-
-    // Set the preferred and valid lifetimes.
-    m_prefLifetime = Time(Seconds(iaAddrOpt.GetPreferredLifetime()));
-    m_validLifetime = Time(Seconds(iaAddrOpt.GetValidLifetime()));
-
-    m_releaseEvent =
-        Simulator::Schedule(m_validLifetime, &Dhcp6Client::SendRelease, this, offeredAddress);
 }
 
 void
@@ -384,7 +481,7 @@ Dhcp6Client::NetHandler(Ptr<Socket> socket)
         NS_LOG_INFO("Received Reply.");
         m_renewEvent.Cancel();
         m_rebindEvent.Cancel();
-        AcceptReply(iDev, header, senderAddr);
+        ProcessReply(iDev, header, senderAddr);
     }
 }
 
