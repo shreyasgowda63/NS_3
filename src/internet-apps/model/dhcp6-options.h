@@ -173,17 +173,10 @@ class StatusCodeOption : public Options
     StatusCodeOption();
 
     /**
-     * \brief Constructor.
-     * \param statusCode The status code of the operation.
-     * \param statusMessage The status message of the operation.
-     */
-    StatusCodeOption(uint16_t statusCode, std::string statusMessage);
-
-    /**
      * \brief Get the status code of the operation.
      * \return the status code.
      */
-    uint16_t GetStatusCode();
+    uint16_t GetStatusCode() const;
 
     /**
      * \brief Set the status code of the operation.
@@ -195,7 +188,7 @@ class StatusCodeOption : public Options
      * \brief Get the status message of the operation.
      * \return the status message
      */
-    std::string GetStatusMessage();
+    std::string GetStatusMessage() const;
 
     /**
      * \brief Set the status message of the operation.

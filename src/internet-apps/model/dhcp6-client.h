@@ -65,9 +65,10 @@ class Dhcp6Client : public Application
      */
     enum State
     {
-        WAIT_ADVERTISE = 1, // Waiting for an advertise message
-        WAIT_REPLY = 2,     // Waiting for a reply message
-        RENEW = 3,          // Renewing the lease
+        WAIT_ADVERTISE = 1,           // Waiting for an advertise message
+        WAIT_REPLY = 2,               // Waiting for a reply message
+        RENEW = 3,                    // Renewing the lease
+        WAIT_REPLY_AFTER_DECLINE = 4, // Waiting for a reply after sending a decline message
     };
 
     /**
@@ -83,13 +84,6 @@ class Dhcp6Client : public Application
      * \param server The address of the server
      */
     void SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
-
-    /**
-     * \brief Trace the state transition of the offered address.
-     * \param oldState The old state of the address
-     * \param newState The new state of the address
-     */
-    void AddressStateTransition(const uint32_t& oldState, const uint32_t& newState);
 
     /**
      * \brief Send a request to the DHCPv6 server.
@@ -109,7 +103,7 @@ class Dhcp6Client : public Application
      * \brief Send a Decline message to the DHCPv6 server.
      * \param offeredAddress The IPv6 address to be declined.
      */
-    void DeclineOffer(Ipv6Address offeredAddress);
+    void DeclineOffer(const Ipv6Address& offeredAddress);
 
     /**
      * \brief Send a renew message to the DHCPv6 server.

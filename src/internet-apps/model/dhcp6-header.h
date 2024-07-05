@@ -131,6 +131,20 @@ class Dhcp6Header : public Header
     };
 
     /**
+     * \brief Enum to identify the status code of the operation.
+     */
+    enum StatusCodeValues
+    {
+        Success = 0,
+        UnspecFail = 1,
+        NoAddrsAvail = 2,
+        NoBinding = 3,
+        NotOnLink = 4,
+        UseMulticast = 5,
+        NoPrefixAvail = 6,
+    };
+
+    /**
      * \brief Get the client identifier.
      * \return the client identifier option.
      */
@@ -173,6 +187,13 @@ class Dhcp6Header : public Header
      * \param optionType the option to be requested.
      */
     void AddOptionRequest(uint16_t optionType);
+
+    /**
+     * \brief Add the status code option.
+     * \param statusCode the status code of the operation.
+     * \param statusMsg the status message.
+     */
+    void AddStatusCode(uint16_t statusCode, std::string statusMsg);
 
     /**
      * \brief Add IANA option.

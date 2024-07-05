@@ -126,16 +126,8 @@ StatusCodeOption::StatusCodeOption()
     m_statusMessage = "";
 }
 
-StatusCodeOption::StatusCodeOption(uint16_t statusCode, std::string statusMessage)
-{
-    m_statusCode = statusCode;
-    m_statusMessage = statusMessage;
-
-    NS_LOG_FUNCTION(this << statusCode << statusMessage);
-}
-
 uint16_t
-StatusCodeOption::GetStatusCode()
+StatusCodeOption::GetStatusCode() const
 {
     NS_LOG_FUNCTION(this);
     return m_statusCode;
@@ -149,7 +141,7 @@ StatusCodeOption::SetStatusCode(uint16_t statusCode)
 }
 
 std::string
-StatusCodeOption::GetStatusMessage()
+StatusCodeOption::GetStatusMessage() const
 {
     NS_LOG_FUNCTION(this);
     return m_statusMessage;

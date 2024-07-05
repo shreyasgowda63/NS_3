@@ -187,6 +187,14 @@ class Dhcp6Server : public Application
     void SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
 
     /**
+     * \brief Sends Reply after receiving Request
+     * \param iDev incoming NetDevice
+     * \param header DHCPv6 header of the received message
+     * \param client Address of the DHCP client
+     */
+    void UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
+
+    /**
      * \brief Modifies the remaining lease time of addresses
      */
     void TimerHandler();

@@ -316,7 +316,18 @@ Dhcp6Header::GetOptionList()
     return m_options;
 }
 
-// TODO: Add status code option and update the length accordingly.
+void
+Dhcp6Header::AddStatusCode(uint16_t status, std::string statusMsg)
+{
+    m_options[OPTION_STATUS_CODE] = true;
+    statusCode.SetOptionCode(OPTION_STATUS_CODE);
+
+    statusCode.SetStatusCode(status);
+    statusCode.SetStatusMessage(statusMsg);
+
+    statusCode.SetOptionLength(2 + statusCode.GetStatusMessage().length());
+    AddMessageLength(4 + statusCode.GetOptionLength());
+}
 
 uint32_t
 Dhcp6Header::GetSerializedSize() const
@@ -408,6 +419,19 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
         i.WriteHtonU16(OPTION_SOL_MAX_RT);
         i.WriteHtonU16(4);
         i.WriteHtonU32(m_solMaxRt);
+    }
+    if (m_options[OPTION_STATUS_CODE])
+    {
+        i.WriteHtonU16(OPTION_STATUS_CODE);
+        i.WriteHtonU16(statusCode.GetOptionLength());
+        i.WriteHtonU16(statusCode.GetStatusCode());
+
+        // Considering a maximum message length of 128 bytes (arbitrary).
+        uint8_t strBuf[128];
+        statusCode.GetStatusMessage().copy((char*)strBuf, statusCode.GetStatusMessage().length());
+        strBuf[statusCode.GetOptionLength() - 2] = '\0';
+
+        i.Write(strBuf, statusCode.GetStatusMessage().length());
     }
 }
 
@@ -572,6 +596,34 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 len += 6;
             }
             m_options[OPTION_SOL_MAX_RT] = true;
+            break;
+
+        case OPTION_STATUS_CODE:
+            NS_LOG_INFO("Status Code Option");
+            if (len + 2 <= cLen)
+            {
+                statusCode.SetOptionCode(option);
+                statusCode.SetOptionLength(i.ReadNtohU16());
+                len += 2;
+            }
+            if (len + 2 <= cLen)
+            {
+                statusCode.SetStatusCode(i.ReadNtohU16());
+                len += 2;
+            }
+
+            if (len + (statusCode.GetOptionLength() - 2) <= cLen)
+            {
+                uint8_t msgLength = statusCode.GetOptionLength() - 2;
+                uint8_t strBuf[128];
+                i.Read(strBuf, msgLength);
+                strBuf[msgLength] = '\0';
+
+                std::string statusMsg((char*)strBuf);
+                statusCode.SetStatusMessage(statusMsg);
+                len += msgLength;
+            }
+            m_options[OPTION_STATUS_CODE] = true;
             break;
 
         default:
