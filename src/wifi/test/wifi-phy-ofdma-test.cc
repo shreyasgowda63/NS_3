@@ -3014,9 +3014,9 @@ class TestUlOfdmaPhyTransmission : public TestCase
     /**
      * Set the PSD limit
      * \param phy the PHY
-     * \param psdLimit the PSD limit in dBm/MHz
+     * \param psdLimit the PSD limit
      */
-    void SetPsdLimit(Ptr<WifiPhy> phy, double psdLimit);
+    void SetPsdLimit(Ptr<WifiPhy> phy, dBm_per_MHz_t psdLimit);
 
     /**
      * Generate interference function
@@ -3696,7 +3696,7 @@ TestUlOfdmaPhyTransmission::SetBssColor(Ptr<WifiPhy> phy, uint8_t bssColor)
 }
 
 void
-TestUlOfdmaPhyTransmission::SetPsdLimit(Ptr<WifiPhy> phy, double psdLimit)
+TestUlOfdmaPhyTransmission::SetPsdLimit(Ptr<WifiPhy> phy, dBm_per_MHz_t psdLimit)
 {
     NS_LOG_FUNCTION(this << phy << psdLimit);
     phy->SetAttribute("PowerDensityLimit", DoubleValue(psdLimit));

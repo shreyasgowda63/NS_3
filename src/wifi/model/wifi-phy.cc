@@ -303,7 +303,7 @@ WifiPhy::GetTypeId()
                           "limit (in dBm/MHz) set by regulators.",
                           DoubleValue(100.0), // set to a high value so as to have no effect
                           MakeDoubleAccessor(&WifiPhy::m_powerDensityLimit),
-                          MakeDoubleChecker<double>())
+                          MakeDoubleChecker<dBm_per_MHz_t>())
             .AddTraceSource("PhyTxBegin",
                             "Trace source indicating a packet "
                             "has begun transmitting over the channel medium",
@@ -2307,7 +2307,7 @@ WifiPhy::GetTxPowerForTransmission(Ptr<const WifiPpdu> ppdu) const
 
     // Apply power density constraint on EIRP
     const auto channelWidth = ppdu->GetTxChannelWidth();
-    double txPowerDbmPerMhz =
+    dBm_per_MHz_t txPowerDbmPerMhz =
         (txPower + GetTxGain()) - RatioToDb(channelWidth); // account for antenna gain since EIRP
     NS_LOG_INFO("txPower=" << txPower << "dBm with txPowerDbmPerMhz=" << txPowerDbmPerMhz
                            << " over " << channelWidth << " MHz");
