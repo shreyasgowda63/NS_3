@@ -41,22 +41,26 @@ Dhcp6Server::GetTypeId()
                             .AddConstructor<Dhcp6Server>()
                             .SetGroupName("Internet-Apps")
                             .AddAttribute("RenewTime",
-                                          "Time after which client should renew.",
+                                          "Time after which client should renew. 1000 seconds by "
+                                          "default, set to 10 seconds here.",
                                           TimeValue(Seconds(10)),
                                           MakeTimeAccessor(&Dhcp6Server::m_renew),
                                           MakeTimeChecker())
                             .AddAttribute("RebindTime",
-                                          "Time after which client should rebind.",
+                                          "Time after which client should rebind. 2000 seconds by "
+                                          "default, set to 16 seconds here.",
                                           TimeValue(Seconds(16)),
                                           MakeTimeAccessor(&Dhcp6Server::m_rebind),
                                           MakeTimeChecker())
                             .AddAttribute("PreferredLifetime",
-                                          "The preferred lifetime of the leased address.",
+                                          "The preferred lifetime of the leased address. 3000 "
+                                          "seconds by default, set to 18 seconds here.",
                                           TimeValue(Seconds(18)),
                                           MakeTimeAccessor(&Dhcp6Server::m_prefLifetime),
                                           MakeTimeChecker())
                             .AddAttribute("ValidLifetime",
-                                          "Time after which client should release the address.",
+                                          "Time after which client should release the address. "
+                                          "4000 seconds by default, set to 20 seconds here.",
                                           TimeValue(Seconds(20)),
                                           MakeTimeAccessor(&Dhcp6Server::m_validLifetime),
                                           MakeTimeChecker());
