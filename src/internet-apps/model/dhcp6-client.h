@@ -69,6 +69,7 @@ class Dhcp6Client : public Application
         WAIT_REPLY = 2,               // Waiting for a reply message
         RENEW = 3,                    // Renewing the lease
         WAIT_REPLY_AFTER_DECLINE = 4, // Waiting for a reply after sending a decline message
+        WAIT_REPLY_AFTER_RELEASE = 5, // Waiting for a reply after sending a release message
     };
 
     /**
@@ -92,6 +93,14 @@ class Dhcp6Client : public Application
      * \param server The address of the server
      */
     void ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
+
+    /**
+     * \brief Check lease status after sending a Decline or Release message.
+     * \param iDev The net device of the client
+     * \param header The DHCPv6 header
+     * \param server The address of the server
+     */
+    void CheckLeaseStatus(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
 
     /**
      * \brief Accept the DHCPv6 offer.

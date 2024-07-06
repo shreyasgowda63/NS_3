@@ -163,6 +163,12 @@ class Dhcp6Header : public Header
     std::list<IaOptions> GetIanaOptions();
 
     /**
+     * \brief Get the status code of the operation.
+     * \return the status code option.
+     */
+    StatusCodeOption GetStatusCodeOption();
+
+    /**
      * \brief Set the elapsed time option.
      * \param timestamp the time at which the client began the exchange.
      */

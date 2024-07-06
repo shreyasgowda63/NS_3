@@ -175,8 +175,6 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
 void
 Dhcp6Client::DeclineOffer(const Ipv6Address& offeredAddress)
 {
-    m_state = RENEW;
-
     m_renewEvent.Cancel();
     m_rebindEvent.Cancel();
     m_releaseEvent.Cancel();
@@ -226,6 +224,24 @@ Dhcp6Client::DeclineOffer(const Ipv6Address& offeredAddress)
     }
 
     m_state = WAIT_REPLY_AFTER_DECLINE;
+}
+
+void
+Dhcp6Client::CheckLeaseStatus(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server)
+{
+    NS_LOG_INFO(this << iDev << header << server);
+
+    // Read Status Code option.
+    uint16_t statusCode = header.GetStatusCodeOption().GetStatusCode();
+
+    if (statusCode == 0)
+    {
+        NS_LOG_INFO("Server bindings updated successfully.");
+    }
+    else
+    {
+        NS_LOG_INFO("Server bindings update failed.");
+    }
 }
 
 void
@@ -388,7 +404,7 @@ Dhcp6Client::SendRelease(Ipv6Address address)
 
     m_clientTransactId = 789;
     header.SetTransactId(m_clientTransactId);
-    header.SetMessageType(Dhcp6Header::REBIND);
+    header.SetMessageType(Dhcp6Header::RELEASE);
 
     // Add client identifier option
     header.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
@@ -419,7 +435,7 @@ Dhcp6Client::SendRelease(Ipv6Address address)
         NS_LOG_INFO("Error while sending DHCP Release");
     }
 
-    m_state = WAIT_REPLY;
+    m_state = WAIT_REPLY_AFTER_RELEASE;
 }
 
 void
@@ -458,7 +474,14 @@ Dhcp6Client::NetHandler(Ptr<Socket> socket)
         NS_LOG_INFO("Received Reply.");
         m_renewEvent.Cancel();
         m_rebindEvent.Cancel();
+        m_releaseEvent.Cancel();
         ProcessReply(iDev, header, senderAddr);
+    }
+    if ((m_state == WAIT_REPLY_AFTER_DECLINE || m_state == WAIT_REPLY_AFTER_RELEASE) &&
+        (header.GetMessageType() == Dhcp6Header::REPLY))
+    {
+        NS_LOG_INFO("Received Reply.");
+        CheckLeaseStatus(iDev, header, senderAddr);
     }
 }
 

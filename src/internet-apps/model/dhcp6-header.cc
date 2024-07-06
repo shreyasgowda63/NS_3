@@ -111,6 +111,12 @@ Dhcp6Header::GetServerIdentifier()
     return serverIdentifier;
 }
 
+StatusCodeOption
+Dhcp6Header::GetStatusCodeOption()
+{
+    return statusCode;
+}
+
 std::list<IaOptions>
 Dhcp6Header::GetIanaOptions()
 {

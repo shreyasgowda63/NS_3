@@ -189,6 +189,13 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
                                        offeredAddr,
                                        m_prefLifetime.GetSeconds(),
                                        m_validLifetime.GetSeconds());
+
+            /*
+            Optimistic assumption that the address will be leased to this client.
+            This is to prevent multiple clients from receiving the same address.
+            */
+            itr->m_leasedAddresses[clientAddress] =
+                std::make_pair(offeredAddr, Time(Seconds(m_prefLifetime.GetSeconds())));
         }
     }
 
@@ -274,8 +281,8 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
             replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
             replyHeader.AddAddress(iaOpt.GetIaid(),
                                    iaAddrOpt.GetIaAddress(),
-                                   iaAddrOpt.GetPreferredLifetime(),
-                                   iaAddrOpt.GetValidLifetime());
+                                   m_prefLifetime.GetSeconds(),
+                                   m_validLifetime.GetSeconds());
 
             itr->m_leasedAddresses[clientAddress] =
                 std::make_pair(requestedAddr, Time(Seconds(m_prefLifetime.GetSeconds())));
@@ -326,6 +333,37 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
 
     // Add Status code option.
     replyHeader.AddStatusCode(Dhcp6Header::Success, "Address declined.");
+
+    // Add the declined or expired address to the subnet information.
+    IaOptions iaOpt = header.GetIanaOptions().front();
+    IaAddressOption iaAddrOpt = iaOpt.m_iaAddressOption.front();
+    Ipv6Address address = iaAddrOpt.GetIaAddress();
+
+    if (header.GetMessageType() == Dhcp6Header::DECLINE)
+    {
+        for (auto itr = m_subnets.begin(); itr != m_subnets.end(); itr++)
+        {
+            LeaseInfo subnet = *itr;
+            if (subnet.m_leasedAddresses.find(clientAddress) != subnet.m_leasedAddresses.end())
+            {
+                subnet.m_leasedAddresses.erase(clientAddress);
+                subnet.m_declinedAddresses[address] = clientAddress;
+            }
+        }
+    }
+    else if (header.GetMessageType() == Dhcp6Header::RELEASE)
+    {
+        for (auto itr = m_subnets.begin(); itr != m_subnets.end(); itr++)
+        {
+            LeaseInfo subnet = *itr;
+            if (subnet.m_leasedAddresses.find(clientAddress) != subnet.m_leasedAddresses.end())
+            {
+                Time expiredTime = subnet.m_leasedAddresses[clientAddress].second;
+                subnet.m_leasedAddresses.erase(clientAddress);
+                subnet.m_expiredAddresses[expiredTime] = address;
+            }
+        }
+    }
 
     packet->AddHeader(replyHeader);
 

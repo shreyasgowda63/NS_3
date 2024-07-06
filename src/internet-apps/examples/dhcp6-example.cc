@@ -48,12 +48,12 @@ main(int argc, char* argv[])
         LogComponentEnable("UdpEchoClientApplication", LOG_LEVEL_INFO);
     }
 
-    Time stopTime = Seconds(5.0);
+    Time stopTime = Seconds(25.0);
 
     NS_LOG_INFO("Create nodes.");
     NodeContainer nodes;
     NodeContainer router;
-    nodes.Create(3);
+    nodes.Create(4);
     // router.Create(2);
 
     NodeContainer net(nodes);
@@ -72,9 +72,9 @@ main(int argc, char* argv[])
     Ipv6InterfaceContainer i = ipv6.AssignWithoutAddress(devNet);
 
     NS_LOG_INFO("Assign static IP address to the third node.");
-    Ptr<Ipv6> ipv6proto = devNet.Get(2)->GetNode()->GetObject<Ipv6>();
+    Ptr<Ipv6> ipv6proto = devNet.Get(3)->GetNode()->GetObject<Ipv6>();
     int32_t ifIndex = 0;
-    ifIndex = ipv6proto->GetInterfaceForDevice(devNet.Get(2));
+    ifIndex = ipv6proto->GetInterfaceForDevice(devNet.Get(3));
     Ipv6InterfaceAddress ipv6Addr =
         Ipv6InterfaceAddress(Ipv6Address("2001:db8::1"), Ipv6Prefix(128));
     ipv6proto->AddAddress(ifIndex, ipv6Addr);
@@ -85,15 +85,16 @@ main(int argc, char* argv[])
     // DHCP clients
     NetDeviceContainer dhcpClientNetDevs;
     dhcpClientNetDevs.Add(devNet.Get(0));
+    dhcpClientNetDevs.Add(devNet.Get(1));
 
     ApplicationContainer dhcpClients = dhcp6Helper.InstallDhcp6Client(dhcpClientNetDevs);
     dhcpClients.Start(Seconds(1.0));
     dhcpClients.Stop(stopTime);
 
     // DHCP server
-    ApplicationContainer dhcpServerApp = dhcp6Helper.InstallDhcp6Server(devNet.Get(1));
+    ApplicationContainer dhcpServerApp = dhcp6Helper.InstallDhcp6Server(devNet.Get(2));
 
-    Ptr<Dhcp6Server> server = dhcp6Helper.GetDhcp6Server(devNet.Get(1));
+    Ptr<Dhcp6Server> server = dhcp6Helper.GetDhcp6Server(devNet.Get(2));
     server->AddSubnet(Ipv6Address("2001:db8::"),
                       Ipv6Prefix(64),
                       Ipv6Address("2001:db8::1"),
