@@ -21,7 +21,8 @@
 #ifndef WIFI_UNITS_H
 #define WIFI_UNITS_H
 
-#include <stdint.h>
+#include <ns3/si-units.h>
+#include <ns3/units-attributes.h>
 
 /**
  * \file
