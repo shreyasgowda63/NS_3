@@ -20,17 +20,14 @@
 
 // Angles are dimensionless but still mentioned in the SI as an accepted unit.
 // This intricacy belongs to SI not to implementation here.
-//
-// M_PI is 3.141.. in numeric value and is defined either in <math.h> or <cmath>.
-// Note it is of radian not of a degree.
 
 #include "format-string.h"
 
 #include <algorithm>
 #include <assert.h>
 #include <cinttypes>
-#include <cmath>
 #include <iostream>
+#include <numbers>
 #include <vector>
 
 namespace ns3
@@ -228,11 +225,11 @@ struct radian
         return *this;
     }
 
-    /// Returns between [-M_PI, +M_PI)
+    /// Returns between [-PI, +PI)
     inline radian& normalize() // NOLINT(readability-identifier-naming)
     {
-        val = std::remainder(val + M_PI, 2 * M_PI);
-        val = (val < 0.0) ? val + M_PI : val - M_PI;
+        val = std::remainder(val + std::numbers::pi, 2 * std::numbers::pi);
+        val = (val < 0.0) ? val + std::numbers::pi : val - std::numbers::pi;
         return *this;
     }
 };
@@ -255,7 +252,7 @@ std::istream& operator>>(std::istream& is, degree& rhs);
 std::istream& operator>>(std::istream& is, radian& rhs);
 
 const auto ZERO_RADIAN = 0_radian;
-const auto PI_RADIANS = radian{M_PI};
+const auto PI_RADIANS = radian{std::numbers::pi};
 
 } // namespace ns3
 
