@@ -178,14 +178,14 @@ WifiPhy::GetTypeId()
                           MakeDoubleChecker<dBm_t>())
             .AddAttribute("TxGain",
                           "Transmission gain (dB).",
-                          DoubleValue(0.0),
-                          MakeDoubleAccessor(&WifiPhy::SetTxGain, &WifiPhy::GetTxGain),
-                          MakeDoubleChecker<dB_t>())
+                          dBValue(0.0_dB),
+                          MakedBAccessor(&WifiPhy::SetTxGain, &WifiPhy::GetTxGain),
+                          MakedBChecker())
             .AddAttribute("RxGain",
                           "Reception gain (dB).",
-                          DoubleValue(0.0),
-                          MakeDoubleAccessor(&WifiPhy::SetRxGain, &WifiPhy::GetRxGain),
-                          MakeDoubleChecker<dB_t>())
+                          dBValue(0.0_dB),
+                          MakedBAccessor(&WifiPhy::SetRxGain, &WifiPhy::GetRxGain),
+                          MakedBChecker())
             .AddAttribute("TxPowerLevels",
                           "Number of transmission power levels available between "
                           "TxPowerStart and TxPowerEnd included.",
@@ -210,9 +210,9 @@ WifiPhy::GetTypeId()
                 " the noise output of the actual receiver to the noise output of an "
                 " ideal receiver with the same overall gain and bandwidth when the receivers "
                 " are connected to sources at the standard noise temperature T0 (usually 290 K)\".",
-                DoubleValue(7),
-                MakeDoubleAccessor(&WifiPhy::SetRxNoiseFigure),
-                MakeDoubleChecker<dB_t>())
+                dBValue(7_dB),
+                MakedBAccessor(&WifiPhy::SetRxNoiseFigure),
+                MakedBChecker())
             .AddAttribute("State",
                           "The state of the PHY layer.",
                           PointerValue(),
@@ -538,7 +538,7 @@ WifiPhy::GetCcaSensitivityThreshold() const
 }
 
 void
-WifiPhy::SetRxNoiseFigure(dB_t noiseFigure)
+WifiPhy::SetRxNoiseFigure(dB noiseFigure)
 {
     NS_LOG_FUNCTION(this << noiseFigure);
     if (m_interference)
@@ -588,26 +588,26 @@ WifiPhy::GetNTxPower() const
 }
 
 void
-WifiPhy::SetTxGain(dB_t gain)
+WifiPhy::SetTxGain(dB gain)
 {
     NS_LOG_FUNCTION(this << gain);
     m_txGain = gain;
 }
 
-dB_t
+dB
 WifiPhy::GetTxGain() const
 {
     return m_txGain;
 }
 
 void
-WifiPhy::SetRxGain(dB_t gain)
+WifiPhy::SetRxGain(dB gain)
 {
     NS_LOG_FUNCTION(this << gain);
     m_rxGain = gain;
 }
 
-dB_t
+dB
 WifiPhy::GetRxGain() const
 {
     return m_rxGain;
@@ -2338,8 +2338,7 @@ WifiPhy::AssignStreams(int64_t stream)
 std::ostream&
 operator<<(std::ostream& os, RxSignalInfo rxSignalInfo)
 {
-    os << "SNR:" << RatioToDb(rxSignalInfo.snr) << " dB"
-       << ", RSSI:" << rxSignalInfo.rssi << " dBm";
+    os << "SNR:" << RatioToDb(rxSignalInfo.snr) << ", RSSI:" << rxSignalInfo.rssi << " dBm";
     return os;
 }
 

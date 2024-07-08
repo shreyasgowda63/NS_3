@@ -90,7 +90,7 @@ Watt_t DbmToW(dBm_t val);
  *
  * \return ratio in linear scale
  */
-double DbToRatio(dB_t val);
+double DbToRatio(dB val);
 /**
  * Convert from Watts to dBm.
  *
@@ -106,7 +106,7 @@ dBm_t WToDbm(Watt_t val);
  *
  * \return the value in dB
  */
-dB_t RatioToDb(double ratio);
+dB RatioToDb(double ratio);
 /**
  * Return the total Ack size (including FCS trailer).
  *

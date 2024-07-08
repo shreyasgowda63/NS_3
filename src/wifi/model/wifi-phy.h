@@ -815,7 +815,7 @@ class WifiPhy : public Object
      *
      * \param noiseFigure noise figure
      */
-    void SetRxNoiseFigure(dB_t noiseFigure);
+    void SetRxNoiseFigure(dB noiseFigure);
     /**
      * Sets the minimum available transmission power level.
      *
@@ -859,25 +859,25 @@ class WifiPhy : public Object
      *
      * \param gain the transmission gain
      */
-    void SetTxGain(dB_t gain);
+    void SetTxGain(dB gain);
     /**
      * Return the transmission gain.
      *
      * \return the transmission gain
      */
-    dB_t GetTxGain() const;
+    dB GetTxGain() const;
     /**
      * Sets the reception gain.
      *
      * \param gain the reception gain
      */
-    void SetRxGain(dB_t gain);
+    void SetRxGain(dB gain);
     /**
      * Return the reception gain.
      *
      * \return the reception gain
      */
-    dB_t GetRxGain() const;
+    dB GetRxGain() const;
 
     /**
      * Sets the device this PHY is associated with.
@@ -1584,8 +1584,8 @@ class WifiPhy : public Object
     dBm_t m_ccaSensitivityThreshold; //!< Clear channel assessment (CCA) modulation and coding
                                      //!< rate sensitivity threshold
 
-    dB_t m_txGain;                     //!< Transmission gain
-    dB_t m_rxGain;                     //!< Reception gain
+    dB m_txGain;                       //!< Transmission gain
+    dB m_rxGain;                       //!< Reception gain
     dBm_t m_txPowerBase;               //!< Minimum transmission power
     dBm_t m_txPowerEnd;                //!< Maximum transmission power
     uint8_t m_nTxPower;                //!< Number of available transmission power levels
@@ -1602,7 +1602,7 @@ class WifiPhy : public Object
     uint8_t m_txSpatialStreams; //!< Number of supported TX spatial streams
     uint8_t m_rxSpatialStreams; //!< Number of supported RX spatial streams
 
-    dB_t m_noiseFigure; //!< The noise figure
+    dB m_noiseFigure; //!< The noise figure
 
     Time m_channelSwitchDelay; //!< Time required to switch between channel
 
