@@ -1757,7 +1757,7 @@ TcpSocketBase::DupAck(uint32_t currentDelivered)
         }
         if (!m_congestionControl->HasCongControl())
         {
-            m_recoveryOps->DoRecovery(m_tcb, currentDelivered);
+            m_recoveryOps->DoRecovery(m_tcb, currentDelivered, true);
             NS_LOG_INFO(m_dupAckCount << " Dupack received in fast recovery mode."
                                          "Increase cwnd to "
                                       << m_tcb->m_cWnd);
@@ -2061,7 +2061,7 @@ TcpSocketBase::ProcessAck(const SequenceNumber32& ackNumber,
             // there is available window
             if (!m_congestionControl->HasCongControl() && segsAcked >= 1)
             {
-                m_recoveryOps->DoRecovery(m_tcb, currentDelivered);
+                m_recoveryOps->DoRecovery(m_tcb, currentDelivered, false);
             }
 
             // If the packet is already retransmitted do not retransmit it
@@ -2122,7 +2122,7 @@ TcpSocketBase::ProcessAck(const SequenceNumber32& ackNumber,
             // and/or packet reordering
             if (!m_congestionControl->HasCongControl() && segsAcked >= 1)
             {
-                m_recoveryOps->DoRecovery(m_tcb, currentDelivered);
+                m_recoveryOps->DoRecovery(m_tcb, currentDelivered, false);
             }
             NewAck(ackNumber, true);
         }
