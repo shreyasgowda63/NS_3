@@ -27,13 +27,16 @@
 #include "ns3/ipv6-static-routing-helper.h"
 #include "ns3/ipv6.h"
 #include "ns3/log.h"
+#include "ns3/loopback-net-device.h"
 #include "ns3/mac48-address.h"
 #include "ns3/object.h"
+#include "ns3/pointer.h"
+#include "ns3/random-variable-stream.h"
 #include "ns3/simulator.h"
 #include "ns3/socket.h"
+#include "ns3/string.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/traced-value.h"
-#include "ns3/uinteger.h"
 
 #include <algorithm>
 
@@ -45,10 +48,16 @@ NS_LOG_COMPONENT_DEFINE("Dhcp6Client");
 TypeId
 Dhcp6Client::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::Dhcp6Client")
-                            .SetParent<Application>()
-                            .AddConstructor<Dhcp6Client>()
-                            .SetGroupName("Internet-Apps");
+    static TypeId tid =
+        TypeId("ns3::Dhcp6Client")
+            .SetParent<Application>()
+            .AddConstructor<Dhcp6Client>()
+            .SetGroupName("Internet-Apps")
+            .AddAttribute("Transactions",
+                          "The possible value of transaction numbers",
+                          StringValue("ns3::UniformRandomVariable[Min=0.0|Max=1000000.0]"),
+                          MakePointerAccessor(&Dhcp6Client::m_rand),
+                          MakePointerChecker<RandomVariableStream>());
     return tid;
 }
 
@@ -79,6 +88,14 @@ Dhcp6Client::DoDispose()
     m_rebindEvent.Cancel();
 
     Application::DoDispose();
+}
+
+int64_t
+Dhcp6Client::AssignStreams(int64_t stream)
+{
+    NS_LOG_FUNCTION(this << stream);
+    m_rand->SetStream(stream);
+    return 1;
 }
 
 void
@@ -120,7 +137,7 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     requestHeader.ResetOptions();
     requestHeader.SetMessageType(Dhcp6Header::REQUEST);
 
-    m_clientTransactId = 456;
+    m_clientTransactId = (uint32_t)(m_rand->GetValue());
     requestHeader.SetTransactId(m_clientTransactId);
 
     // Add Client Identifier Option.
@@ -306,7 +323,8 @@ Dhcp6Client::SendRenew(Ipv6Address address)
     Ptr<Packet> packet;
     packet = Create<Packet>();
 
-    m_clientTransactId = 789;
+    m_clientTransactId = (uint32_t)(m_rand->GetValue());
+    ;
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::RENEW);
 
@@ -354,7 +372,8 @@ Dhcp6Client::SendRebind(Ipv6Address address)
     Ptr<Packet> packet;
     packet = Create<Packet>();
 
-    m_clientTransactId = 789;
+    m_clientTransactId = (uint32_t)(m_rand->GetValue());
+    ;
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::REBIND);
 
@@ -402,7 +421,8 @@ Dhcp6Client::SendRelease(Ipv6Address address)
     Ptr<Packet> packet;
     packet = Create<Packet>();
 
-    m_clientTransactId = 789;
+    m_clientTransactId = (uint32_t)(m_rand->GetValue());
+    ;
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::RELEASE);
 
@@ -554,8 +574,49 @@ Dhcp6Client::StartApplication()
         m_firstBoot = false;
     }
 
+    uint32_t nInterfaces = node->GetNDevices();
+    std::vector<Ptr<NetDevice>> possibleDuidDevices;
+
+    uint32_t maxAddressLength = 0;
+    for (uint32_t i = 0; i < nInterfaces; i++)
+    {
+        Ptr<NetDevice> device = node->GetDevice(i);
+
+        // Discard the loopback device.
+        if (DynamicCast<LoopbackNetDevice>(node->GetDevice(i)))
+        {
+            continue;
+        }
+
+        // Check if the NetDevice is up.
+        if (device->IsLinkUp())
+        {
+            Address address = device->GetAddress();
+            if (address.GetLength() > maxAddressLength)
+            {
+                maxAddressLength = address.GetLength();
+            }
+            possibleDuidDevices.push_back(device);
+        }
+    }
+
+    std::vector<Ptr<NetDevice>> longestDuidDevices;
+    for (uint32_t i = 0; i < possibleDuidDevices.size(); i++)
+    {
+        if (possibleDuidDevices[i]->GetAddress().GetLength() == maxAddressLength)
+        {
+            longestDuidDevices.push_back(possibleDuidDevices[i]);
+        }
+    }
+
+    if (longestDuidDevices.empty())
+    {
+        NS_ABORT_MSG("No suitable NetDevice found for DUID, aborting.");
+    }
+
+    // Consider the link-layer address of the first NetDevice in the list.
     m_clientIdentifier.SetHardwareType(1);
-    m_clientIdentifier.SetLinkLayerAddress(m_device->GetAddress());
+    m_clientIdentifier.SetLinkLayerAddress(longestDuidDevices[0]->GetAddress());
 
     Boot();
 }
@@ -568,7 +629,8 @@ Dhcp6Client::Boot()
     packet = Create<Packet>();
 
     // Retrieve link layer address of the device.
-    m_clientTransactId = 123;
+    m_clientTransactId = (uint32_t)(m_rand->GetValue());
+
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::SOLICIT);
 

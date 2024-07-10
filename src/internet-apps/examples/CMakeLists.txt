@@ -18,6 +18,7 @@ build_lib_example(
     ${libcsma}
     ${libpoint-to-point}
     ${libapplications}
+    ${libwifi}
 )
 
 build_lib_example(

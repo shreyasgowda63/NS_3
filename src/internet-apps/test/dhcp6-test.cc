@@ -85,7 +85,9 @@ Dhcp6TestCase::DoRun()
 
     Dhcp6Helper dhcpHelper;
 
-    ApplicationContainer dhcpServerApp = dhcpHelper.InstallDhcp6Server(devNet.Get(0));
+    std::vector<Ptr<NetDevice>> serverNetDevices;
+    serverNetDevices.push_back(devNet.Get(0));
+    ApplicationContainer dhcpServerApp = dhcpHelper.InstallDhcp6Server(serverNetDevices);
 
     Ptr<Dhcp6Server> server = dhcpHelper.GetDhcp6Server(devNet.Get(0));
     server->AddSubnet(Ipv6Address("2001:db8::"),

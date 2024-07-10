@@ -133,7 +133,7 @@ class Dhcp6Server : public Application
 
     /**
      * \brief Set the list of net devices that the DHCPv6 server will use.
-     * \param netDevice The net devices that the server will listen on.
+     * \param netDevices The net devices that the server will listen on.
      */
     void SetDhcp6ServerNetDevice(std::vector<Ptr<NetDevice>> netDevices);
 

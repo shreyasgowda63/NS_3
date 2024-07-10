@@ -105,33 +105,40 @@ Dhcp6Helper::InstallDhcp6Client(NetDeviceContainer netDevices) const
 }
 
 ApplicationContainer
-Dhcp6Helper::InstallDhcp6Server(Ptr<NetDevice> netDevice)
+Dhcp6Helper::InstallDhcp6Server(std::vector<Ptr<NetDevice>> netDevices)
 {
-    Ptr<Node> node = netDevice->GetNode();
-    NS_ASSERT_MSG(node, "Dhcp6Helper: NetDevice is not not associated with any node -> fail");
-
-    Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
-    NS_ASSERT_MSG(ipv6,
-                  "Dhcp6Helper: NetDevice is associated"
-                  " with a node without IPv6 stack installed -> fail "
-                  "(maybe need to use InternetStackHelper?)");
-
-    int32_t interface = ipv6->GetInterfaceForDevice(netDevice);
-    if (interface == -1)
-    {
-        interface = ipv6->AddInterface(netDevice);
-    }
-    NS_ASSERT_MSG(interface >= 0, "DhcpHelper: Interface index not found");
-
-    ipv6->SetMetric(interface, 1);
-    ipv6->SetUp(interface);
-
     Ptr<Dhcp6Server> app = m_serverFactory.Create<Dhcp6Server>();
-    app->SetDhcp6ServerNetDevice(netDevice);
+    Ptr<Node> node;
+
+    for (auto itr = netDevices.begin(); itr != netDevices.end(); itr++)
+    {
+        Ptr<NetDevice> netDevice = *itr;
+        node = netDevice->GetNode();
+        NS_ASSERT_MSG(node, "Dhcp6Helper: NetDevice is not not associated with any node -> fail");
+
+        Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
+        NS_ASSERT_MSG(ipv6,
+                      "Dhcp6Helper: NetDevice is associated"
+                      " with a node without IPv6 stack installed -> fail "
+                      "(maybe need to use InternetStackHelper?)");
+
+        int32_t interface = ipv6->GetInterfaceForDevice(netDevice);
+        if (interface == -1)
+        {
+            interface = ipv6->AddInterface(netDevice);
+        }
+        NS_ASSERT_MSG(interface >= 0, "DhcpHelper: Interface index not found");
+
+        ipv6->SetMetric(interface, 1);
+        ipv6->SetUp(interface);
+
+        // Add DHCPv6 server to the map.
+        m_serverNetDevices[netDevice] = app;
+    }
+
+    app->SetDhcp6ServerNetDevice(netDevices);
     node->AddApplication(app);
 
-    // Add DHCPv6 server to the map.
-    m_serverNetDevices[netDevice] = app;
     return ApplicationContainer(app);
 }
 

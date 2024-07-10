@@ -27,6 +27,8 @@
 namespace ns3
 {
 
+class RandomVariableStream;
+
 /**
  * \ingroup dhcp6
  *
@@ -52,6 +54,8 @@ class Dhcp6Client : public Application
      * \param netDevice The net device that the client will use
      */
     void SetDhcp6ClientNetDevice(Ptr<NetDevice> netDevice);
+
+    int64_t AssignStreams(int64_t stream) override;
 
   protected:
     void DoDispose() override;
@@ -231,6 +235,8 @@ class Dhcp6Client : public Application
     uint32_t m_ianaIds; //!< Track the latest IANA ID
 
     Ipv6Address m_offeredAddress; //!< The offered address
+
+    Ptr<RandomVariableStream> m_rand; //!< Random variable to set transaction ID
 };
 
 } // namespace ns3
