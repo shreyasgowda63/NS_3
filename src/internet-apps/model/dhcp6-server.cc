@@ -23,6 +23,7 @@
 #include "ns3/ipv6-packet-info-tag.h"
 #include "ns3/ipv6.h"
 #include "ns3/log.h"
+#include "ns3/loopback-net-device.h"
 #include "ns3/simulator.h"
 #include "ns3/socket.h"
 
@@ -168,7 +169,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
                 {
                     for (int j = 0; j < 8; j++)
                     {
-                        uint8_t bit = (offeredAddrBuf[i] << j);
+                        uint8_t bit = (offeredAddrBuf[i] & (1 << j)) >> j;
                         if (bit == 0)
                         {
                             offeredAddrBuf[i] = offeredAddrBuf[i] | (1 << j);
@@ -213,7 +214,8 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
     packet->AddHeader(advertiseHeader);
 
     // Send the advertise message.
-    if (m_sendSocket->SendTo(packet, 0, client) >= 0)
+    Ptr<Socket> sendSocket = m_sendSockets[iDev];
+    if (sendSocket->SendTo(packet, 0, client) >= 0)
     {
         NS_LOG_INFO("DHCPv6 Advertise sent.");
     }
@@ -305,7 +307,8 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
     packet->AddHeader(replyHeader);
 
     // Send the Reply message.
-    if (m_sendSocket->SendTo(packet, 0, client) >= 0)
+    Ptr<Socket> sendSocket = m_sendSockets[iDev];
+    if (sendSocket->SendTo(packet, 0, client) >= 0)
     {
         NS_LOG_INFO("DHCPv6 Reply sent.");
     }
@@ -372,7 +375,8 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
     packet->AddHeader(replyHeader);
 
     // Send the Reply message.
-    if (m_sendSocket->SendTo(packet, 0, client) >= 0)
+    Ptr<Socket> sendSocket = m_sendSockets[iDev];
+    if (sendSocket->SendTo(packet, 0, client) >= 0)
     {
         NS_LOG_INFO("DHCPv6 Reply sent.");
     }
@@ -383,9 +387,9 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
 }
 
 void
-Dhcp6Server::SetDhcp6ServerNetDevice(Ptr<NetDevice> netDevice)
+Dhcp6Server::SetDhcp6ServerNetDevice(std::vector<Ptr<NetDevice>> netDevices)
 {
-    m_device = netDevice;
+    m_devices = netDevices;
 }
 
 void
@@ -451,23 +455,16 @@ Dhcp6Server::StartApplication()
     // TODO: Check that address ranges are valid.
     // TODO: Set all address pools and IA_NA / IA_TA option information.
 
-    if (m_recvSocket && m_sendSocket)
+    if (m_recvSocket)
     {
         NS_ABORT_MSG("DHCPv6 daemon is not meant to be started repeatedly.");
     }
 
-    Ptr<Node> node = m_device->GetNode();
+    Ptr<Node> node = m_devices[0]->GetNode();
     Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
-    uint32_t ifIndex = ipv6->GetInterfaceForDevice(m_device);
-
-    if (ifIndex < 0)
-    {
-        NS_ABORT_MSG("DHCPv6 daemon must have a link-local address.");
-    }
 
     TypeId tid = TypeId::LookupByName("ns3::UdpSocketFactory");
     m_recvSocket = Socket::CreateSocket(node, tid);
-    m_sendSocket = Socket::CreateSocket(node, tid);
 
     Inet6SocketAddress local =
         Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), Dhcp6Server::PORT);
@@ -475,23 +472,79 @@ Dhcp6Server::StartApplication()
     m_recvSocket->SetRecvPktInfo(true);
     m_recvSocket->SetRecvCallback(MakeCallback(&Dhcp6Server::NetHandler, this));
 
-    Ipv6Address linkLocal;
-    for (uint32_t addrIndex = 0; addrIndex < ipv6->GetNAddresses(ifIndex); addrIndex++)
+    for (auto itr = m_devices.begin(); itr != m_devices.end(); itr++)
     {
-        Ipv6InterfaceAddress ifaceAddr = ipv6->GetAddress(ifIndex, addrIndex);
-        Ipv6Address addr = ifaceAddr.GetAddress();
-        if (addr.IsLinkLocal())
+        Ptr<NetDevice> device = *itr;
+        uint32_t ifIndex = ipv6->GetInterfaceForDevice(device);
+
+        if (ifIndex < 0)
         {
-            linkLocal = addr;
-            break;
+            NS_ABORT_MSG("DHCPv6 daemon must have a link-local address.");
+        }
+
+        Ipv6Address linkLocal;
+        for (uint32_t addrIndex = 0; addrIndex < ipv6->GetNAddresses(ifIndex); addrIndex++)
+        {
+            Ipv6InterfaceAddress ifaceAddr = ipv6->GetAddress(ifIndex, addrIndex);
+            Ipv6Address addr = ifaceAddr.GetAddress();
+            if (addr.IsLinkLocal())
+            {
+                linkLocal = addr;
+                break;
+            }
+        }
+
+        Ptr<Socket> socket;
+        socket = Socket::CreateSocket(node, tid);
+        socket->Bind(Inet6SocketAddress(linkLocal, Dhcp6Server::PORT));
+        socket->BindToNetDevice(device);
+
+        m_sendSockets[device] = socket;
+    }
+
+    uint32_t nInterfaces = node->GetNDevices();
+    std::vector<Ptr<NetDevice>> possibleDuidDevices;
+
+    uint32_t maxAddressLength = 0;
+    for (uint32_t i = 0; i < nInterfaces; i++)
+    {
+        Ptr<NetDevice> device = node->GetDevice(i);
+
+        // Discard the loopback device.
+        if (DynamicCast<LoopbackNetDevice>(node->GetDevice(i)))
+        {
+            continue;
+        }
+
+        // Check if the NetDevice is up.
+        if (device->IsLinkUp())
+        {
+            Address address = device->GetAddress();
+            if (address.GetLength() > maxAddressLength)
+            {
+                maxAddressLength = address.GetLength();
+            }
+            possibleDuidDevices.push_back(device);
         }
     }
 
-    m_serverIdentifier.SetHardwareType(1);
-    m_serverIdentifier.SetLinkLayerAddress(m_device->GetAddress());
+    std::vector<Ptr<NetDevice>> longestDuidDevices;
+    for (uint32_t i = 0; i < possibleDuidDevices.size(); i++)
+    {
+        if (possibleDuidDevices[i]->GetAddress().GetLength() == maxAddressLength)
+        {
+            longestDuidDevices.push_back(possibleDuidDevices[i]);
+        }
+    }
 
-    m_sendSocket->Bind(Inet6SocketAddress(linkLocal, Dhcp6Server::PORT));
-    m_sendSocket->BindToNetDevice(m_device);
+    if (longestDuidDevices.empty())
+    {
+        NS_ABORT_MSG("No suitable NetDevice found for DUID, aborting.");
+    }
+
+    // Consider the link-layer address of the first NetDevice in the list.
+    m_serverIdentifier.SetHardwareType(1);
+    m_serverIdentifier.SetLinkLayerAddress(longestDuidDevices[0]->GetAddress());
 
     m_leaseCleanupEvent = Simulator::Schedule(m_leaseCleanup, &Dhcp6Server::CleanLeases, this);
 }

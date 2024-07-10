@@ -132,10 +132,10 @@ class Dhcp6Server : public Application
     Dhcp6Server();
 
     /**
-     * \brief Set the net device that the DHCPv6 server will use.
-     * \param netDevice The net device that the server will use
+     * \brief Set the list of net devices that the DHCPv6 server will use.
+     * \param netDevice The net devices that the server will listen on.
      */
-    void SetDhcp6ServerNetDevice(Ptr<NetDevice> netDevice);
+    void SetDhcp6ServerNetDevice(std::vector<Ptr<NetDevice>> netDevices);
 
     /**
      * \brief Add a managed address pool.
@@ -216,13 +216,14 @@ class Dhcp6Server : public Application
 
     /**
      * \brief The socket used to send packets.
+     * Socket / Corresponding NetDevice
      */
-    Ptr<Socket> m_sendSocket;
+    std::map<Ptr<NetDevice>, Ptr<Socket>> m_sendSockets;
 
     /**
      * \brief Pointer to the net device used by the server.
      */
-    Ptr<NetDevice> m_device;
+    std::vector<Ptr<NetDevice>> m_devices;
 
     /**
      * \brief The server identifier.
