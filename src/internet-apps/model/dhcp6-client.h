@@ -55,6 +55,12 @@ class Dhcp6Client : public Application
      */
     void SetDhcp6ClientNetDevice(Ptr<NetDevice> netDevice);
 
+    /**
+     * \brief Get the identifier option.
+     * \return The client's identifier.
+     */
+    IdentifierOption GetSelfIdentifier();
+
     int64_t AssignStreams(int64_t stream) override;
 
   protected:
@@ -163,11 +169,6 @@ class Dhcp6Client : public Application
     static const int DHCP_PEER_PORT = 547;
 
     /**
-     * \brief The initial address of the client. It is set to the
-     */
-    Ipv6Address m_clientAddress;
-
-    /**
      * \brief The socket used for communication.
      */
     Ptr<Socket> m_socket;
@@ -233,8 +234,6 @@ class Dhcp6Client : public Application
     EventId m_releaseEvent; //!< Event ID for the release event
 
     uint32_t m_ianaIds; //!< Track the latest IANA ID
-
-    Ipv6Address m_offeredAddress; //!< The offered address
 
     Ptr<RandomVariableStream> m_rand; //!< Random variable to set transaction ID
 };

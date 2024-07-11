@@ -76,6 +76,9 @@ Dhcp6Client::Dhcp6Client()
     m_validLifetime = Time(Seconds(40));
 
     m_ianaIds = 0;
+
+    m_clientIdentifier.SetHardwareType(1);
+    m_clientIdentifier.SetLinkLayerAddress(Mac48Address("00:00:00:00:00:00"));
 }
 
 void
@@ -292,8 +295,6 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
     // If DAD fails, the offer is declined.
     icmpv6->TraceConnectWithoutContext("InvalidatedAddress",
                                        MakeCallback(&Dhcp6Client::DeclineOffer, this));
-
-    m_offeredAddress = offeredAddress;
 
     // Set the preferred and valid lifetimes.
     m_prefLifetime = Time(Seconds(iaAddrOpt.GetPreferredLifetime()));
@@ -525,6 +526,12 @@ Dhcp6Client::LinkStateHandler()
     }
 }
 
+IdentifierOption
+Dhcp6Client::GetSelfIdentifier()
+{
+    return m_clientIdentifier;
+}
+
 void
 Dhcp6Client::StartApplication()
 {
@@ -574,49 +581,68 @@ Dhcp6Client::StartApplication()
         m_firstBoot = false;
     }
 
-    uint32_t nInterfaces = node->GetNDevices();
-    std::vector<Ptr<NetDevice>> possibleDuidDevices;
+    uint32_t nApplications = node->GetNApplications();
+    bool validDuid = false;
 
-    uint32_t maxAddressLength = 0;
-    for (uint32_t i = 0; i < nInterfaces; i++)
+    for (uint32_t i = 0; i < nApplications; i++)
     {
-        Ptr<NetDevice> device = node->GetDevice(i);
-
-        // Discard the loopback device.
-        if (DynamicCast<LoopbackNetDevice>(node->GetDevice(i)))
+        Ptr<Application> app = node->GetApplication(i);
+        Ptr<Dhcp6Client> client = app->GetObject<Dhcp6Client>();
+        Address clientLinkLayer = client->GetSelfIdentifier().GetLinkLayerAddress();
+        if (clientLinkLayer != Mac48Address("00:00:00:00:00:00"))
         {
-            continue;
+            validDuid = true;
+            m_clientIdentifier.SetLinkLayerAddress(clientLinkLayer);
+            break;
         }
+    }
 
-        // Check if the NetDevice is up.
-        if (device->IsLinkUp())
+    if (!validDuid)
+    {
+        uint32_t nInterfaces = node->GetNDevices();
+        std::vector<Ptr<NetDevice>> possibleDuidDevices;
+
+        uint32_t maxAddressLength = 0;
+        for (uint32_t i = 0; i < nInterfaces; i++)
         {
-            Address address = device->GetAddress();
-            if (address.GetLength() > maxAddressLength)
+            Ptr<NetDevice> device = node->GetDevice(i);
+
+            // Discard the loopback device.
+            if (DynamicCast<LoopbackNetDevice>(node->GetDevice(i)))
             {
-                maxAddressLength = address.GetLength();
+                continue;
             }
-            possibleDuidDevices.push_back(device);
-        }
-    }
 
-    std::vector<Ptr<NetDevice>> longestDuidDevices;
-    for (uint32_t i = 0; i < possibleDuidDevices.size(); i++)
-    {
-        if (possibleDuidDevices[i]->GetAddress().GetLength() == maxAddressLength)
+            // Check if the NetDevice is up.
+            if (device->IsLinkUp())
+            {
+                Address address = device->GetAddress();
+                if (address.GetLength() > maxAddressLength)
+                {
+                    maxAddressLength = address.GetLength();
+                }
+                possibleDuidDevices.push_back(device);
+            }
+        }
+
+        std::vector<Ptr<NetDevice>> longestDuidDevices;
+        for (uint32_t i = 0; i < possibleDuidDevices.size(); i++)
         {
-            longestDuidDevices.push_back(possibleDuidDevices[i]);
+            if (possibleDuidDevices[i]->GetAddress().GetLength() == maxAddressLength)
+            {
+                longestDuidDevices.push_back(possibleDuidDevices[i]);
+            }
         }
-    }
 
-    if (longestDuidDevices.empty())
-    {
-        NS_ABORT_MSG("No suitable NetDevice found for DUID, aborting.");
-    }
+        if (longestDuidDevices.empty())
+        {
+            NS_ABORT_MSG("No suitable NetDevice found for DUID, aborting.");
+        }
 
-    // Consider the link-layer address of the first NetDevice in the list.
-    m_clientIdentifier.SetHardwareType(1);
-    m_clientIdentifier.SetLinkLayerAddress(longestDuidDevices[0]->GetAddress());
+        // Consider the link-layer address of the first NetDevice in the list.
+        m_clientIdentifier.SetHardwareType(1);
+        m_clientIdentifier.SetLinkLayerAddress(longestDuidDevices[0]->GetAddress());
+    }
 
     Boot();
 }
