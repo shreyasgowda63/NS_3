@@ -72,6 +72,11 @@ class FrameExchangeManager : public Object
      * typedef for a callback to invoke when an MPDU is successfully acknowledged.
      */
     typedef Callback<void, Ptr<const WifiMpdu>> AckedMpdu;
+    /**
+     * typedef for a callback to invoke when an MPDU is ack'ed, giving
+     * the link ID of the link the MPDU was successfully sent on.
+     */
+    typedef TracedCallback<Ptr<const WifiMpdu>, uint8_t> MpduAndLinkIdTracedCallback;
 
     /**
      * Request the FrameExchangeManager to start a frame exchange sequence.
@@ -483,6 +488,7 @@ class FrameExchangeManager : public Object
     bool m_promisc;                    //!< Flag if the device is operating in promiscuous mode
     DroppedMpdu m_droppedMpduCallback; //!< the dropped MPDU callback
     AckedMpdu m_ackedMpduCallback;     //!< the acknowledged MPDU callback
+    MpduAndLinkIdTracedCallback m_ackMpduCallback;    //!< the ack callback with link ID
 
     /**
      * Finalize the MAC header of the MPDUs in the given PSDU before transmission. Tasks

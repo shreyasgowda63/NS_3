@@ -51,7 +51,11 @@ BlockAckManager::GetTypeId()
             .AddTraceSource("AgreementState",
                             "The state of the ADDBA handshake",
                             MakeTraceSourceAccessor(&BlockAckManager::m_originatorAgreementState),
-                            "ns3::BlockAckManager::AgreementStateTracedCallback");
+                            "ns3::BlockAckManager::AgreementStateTracedCallback")
+            .AddTraceSource("AckedMpdu",
+                            "An MPDU that was successfully acknowledged via Block Ack.",
+                            MakeTraceSourceAccessor(&BlockAckManager::m_ackMpduCallback),
+                            "ns3::BlockAckManager::MpduAndLinkIdTracedCallback");
     return tid;
 }
 
@@ -386,6 +390,10 @@ BlockAckManager::NotifyGotAck(uint8_t linkId, Ptr<const WifiMpdu> mpdu)
     {
         if ((*queueIt)->GetHeader().GetSequenceNumber() == mpdu->GetHeader().GetSequenceNumber())
         {
+            if (!m_ackMpduCallback.IsEmpty())
+            {
+                m_ackMpduCallback(*queueIt, *((*queueIt)->GetInFlightLinkIds().begin()));
+            }
             m_queue->DequeueIfQueued({*queueIt});
             HandleInFlightMpdu(linkId, queueIt, ACKNOWLEDGED, it, Simulator::Now());
             break;
@@ -474,6 +482,10 @@ BlockAckManager::NotifyGotBlockAck(uint8_t linkId,
             if (!m_txOkCallback.IsNull())
             {
                 m_txOkCallback(*queueIt);
+            }
+            if (!m_ackMpduCallback.IsEmpty())
+            {
+                m_ackMpduCallback(*queueIt, *((*queueIt)->GetInFlightLinkIds().begin()));
             }
             acked.emplace_back(*queueIt);
             queueIt = HandleInFlightMpdu(linkId, queueIt, ACKNOWLEDGED, it, now);

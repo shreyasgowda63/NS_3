@@ -49,7 +49,11 @@ FrameExchangeManager::GetTypeId()
     static TypeId tid = TypeId("ns3::FrameExchangeManager")
                             .SetParent<Object>()
                             .AddConstructor<FrameExchangeManager>()
-                            .SetGroupName("Wifi");
+                            .SetGroupName("Wifi")
+                            .AddTraceSource("AckedMpdu",
+                                            "An MPDU that was successfully acknowledged via non-Block Ack.",
+                                            MakeTraceSourceAccessor(&FrameExchangeManager::m_ackMpduCallback),
+                                            "ns3::FrameExchangeManager::MpduAndLinkIdTracedCallback");
     return tid;
 }
 
@@ -1375,6 +1379,10 @@ FrameExchangeManager::ReceivedNormalAck(Ptr<WifiMpdu> mpdu,
     // When fragmentation is used, only update manager when the last fragment is acknowledged
     if (!mpdu->GetHeader().IsMoreFragments())
     {
+        if (!m_ackMpduCallback.IsEmpty())
+        {
+            m_ackMpduCallback(mpdu, m_linkId);
+        }
         GetWifiRemoteStationManager()->ReportRxOk(sender, rxInfo, ackTxVector);
         GetWifiRemoteStationManager()->ReportDataOk(mpdu,
                                                     rxInfo.snr,

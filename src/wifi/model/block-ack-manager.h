@@ -353,6 +353,11 @@ class BlockAckManager : public Object
      * typedef for a callback to invoke when an MPDU is dropped.
      */
     typedef Callback<void, Ptr<const WifiMpdu>> DroppedOldMpdu;
+    /**
+     * typedef for a callback to invoke when an MPDU is ack'ed, giving
+     * the link ID of the link the MPDU was successfully sent on.
+     */
+    typedef TracedCallback<Ptr<const WifiMpdu>, uint8_t> MpduAndLinkIdTracedCallback;
 
     /**
      * \param callback the callback to invoke when a
@@ -511,6 +516,7 @@ class BlockAckManager : public Object
     TxOk m_txOkCallback;                                    ///< transmit OK callback
     TxFailed m_txFailedCallback;                            ///< transmit failed callback
     DroppedOldMpdu m_droppedOldMpduCallback;                ///< the dropped MPDU callback
+    MpduAndLinkIdTracedCallback m_ackMpduCallback;          ///< the ack callback with link ID
 
     /**
      * The trace source fired when a state transition occurred.
