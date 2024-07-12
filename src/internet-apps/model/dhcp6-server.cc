@@ -251,49 +251,67 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
     IaOptions iaOpt = ianaOptionsList.front();
     IaAddressOption iaAddrOpt = iaOpt.m_iaAddressOption.front();
 
-    for (auto itr = m_subnets.begin(); itr != m_subnets.end(); itr++)
+    for (auto ianaOptions = ianaOptionsList.begin(); ianaOptions != ianaOptionsList.end();
+         ianaOptions++)
     {
-        LeaseInfo subnet = *itr;
-        Ipv6Address pool = subnet.GetAddressPool();
-        Ipv6Prefix prefix = subnet.GetPrefix();
-        Ipv6Address minAddress = subnet.GetMinAddress();
-        Ipv6Address maxAddress = subnet.GetMaxAddress();
+        IaOptions iaOpt = *ianaOptions;
 
-        Ipv6Address requestedAddr = iaAddrOpt.GetIaAddress();
-
-        if (subnet.m_declinedAddresses.find(requestedAddr) != subnet.m_declinedAddresses.end())
+        // Iterate through the offered addresses.
+        // Current approach: Try to accept all offers.
+        for (auto addrItr = iaOpt.m_iaAddressOption.begin();
+             addrItr != iaOpt.m_iaAddressOption.end();
+             addrItr++)
         {
-            NS_LOG_INFO("Requested address is declined.");
-            return;
-        }
+            IaAddressOption iaAddrOpt = *addrItr;
+            Ipv6Address requestedAddr = iaAddrOpt.GetIaAddress();
 
-        // Check whether this subnet matches the requested address.
-        if (prefix.IsMatch(requestedAddr, pool))
-        {
-            uint8_t minBuf[16];
-            uint8_t maxBuf[16];
-            uint8_t requestedBuf[16];
-            minAddress.GetBytes(minBuf);
-            maxAddress.GetBytes(maxBuf);
-            requestedAddr.GetBytes(requestedBuf);
-
-            if (memcmp(requestedBuf, minBuf, 16) < 0 || memcmp(requestedBuf, maxBuf, 16) > 0)
+            for (auto itr = m_subnets.begin(); itr != m_subnets.end(); itr++)
             {
-                NS_LOG_INFO("Requested address is not in the range of the subnet.");
-                return;
+                LeaseInfo subnet = *itr;
+                Ipv6Address pool = subnet.GetAddressPool();
+                Ipv6Prefix prefix = subnet.GetPrefix();
+                Ipv6Address minAddress = subnet.GetMinAddress();
+                Ipv6Address maxAddress = subnet.GetMaxAddress();
+
+                Ipv6Address requestedAddr = iaAddrOpt.GetIaAddress();
+
+                if (subnet.m_declinedAddresses.find(requestedAddr) !=
+                    subnet.m_declinedAddresses.end())
+                {
+                    NS_LOG_INFO("Requested address is declined.");
+                    return;
+                }
+
+                // Check whether this subnet matches the requested address.
+                if (prefix.IsMatch(requestedAddr, pool))
+                {
+                    uint8_t minBuf[16];
+                    uint8_t maxBuf[16];
+                    uint8_t requestedBuf[16];
+                    minAddress.GetBytes(minBuf);
+                    maxAddress.GetBytes(maxBuf);
+                    requestedAddr.GetBytes(requestedBuf);
+
+                    if (memcmp(requestedBuf, minBuf, 16) < 0 ||
+                        memcmp(requestedBuf, maxBuf, 16) > 0)
+                    {
+                        NS_LOG_INFO("Requested address is not in the range of the subnet.");
+                        return;
+                    }
+
+                    // TODO: Retrieve all existing IA_NA options.
+                    replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
+                    replyHeader.AddAddress(iaOpt.GetIaid(),
+                                           iaAddrOpt.GetIaAddress(),
+                                           m_prefLifetime.GetSeconds(),
+                                           m_validLifetime.GetSeconds());
+
+                    itr->m_leasedAddresses[clientAddress] =
+                        std::make_pair(requestedAddr, Time(Seconds(m_prefLifetime.GetSeconds())));
+
+                    break;
+                }
             }
-
-            // TODO: Retrieve all existing IA_NA options.
-            replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
-            replyHeader.AddAddress(iaOpt.GetIaid(),
-                                   iaAddrOpt.GetIaAddress(),
-                                   m_prefLifetime.GetSeconds(),
-                                   m_validLifetime.GetSeconds());
-
-            itr->m_leasedAddresses[clientAddress] =
-                std::make_pair(requestedAddr, Time(Seconds(m_prefLifetime.GetSeconds())));
-
-            break;
         }
     }
 

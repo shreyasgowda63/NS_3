@@ -119,10 +119,15 @@ class Dhcp6Client : public Application
     void AcceptOffer(Ipv6Address offeredAddress);
 
     /**
-     * \brief Send a Decline message to the DHCPv6 server.
+     * \brief Add a declined address to the list maintained by the client.
      * \param offeredAddress The IPv6 address to be declined.
      */
-    void DeclineOffer(const Ipv6Address& offeredAddress);
+    void AddDeclinedAddress(const Ipv6Address& offeredAddress);
+
+    /**
+     * \brief Send a Decline message to the DHCPv6 server
+     */
+    void DeclineOffer();
 
     /**
      * \brief Send a renew message to the DHCPv6 server.
@@ -219,6 +224,16 @@ class Dhcp6Client : public Application
      */
     std::map<Ipv6Address, Address> m_myAddresses;
 
+    /**
+     * \brief List of addresses to be declined by the client.
+     */
+    std::vector<Ipv6Address> m_declinedAddresses;
+
+    /**
+     * \brief Track whether DAD callback on all addresses has been scheduled.
+     */
+    bool m_addressDadComplete;
+
     Time m_msgStartTime; //!< Time when message exchange starts.
 
     Time m_solicitInterval; //!< SOL_MAX_RT value, default = 3600 / 100 = 36 sec
@@ -229,9 +244,9 @@ class Dhcp6Client : public Application
     Time m_prefLifetime;  //!< Preferred lifetime of the address
     Time m_validLifetime; //!< Valid lifetime of the address
 
-    EventId m_renewEvent;   //!< Event ID for the renew event
-    EventId m_rebindEvent;  //!< Event ID for the rebind event
-    EventId m_releaseEvent; //!< Event ID for the release event
+    std::vector<EventId> m_renewEvent;   //!< Event ID for the renew event
+    std::vector<EventId> m_rebindEvent;  //!< Event ID for the rebind event
+    std::vector<EventId> m_releaseEvent; //!< Event ID for the release event
 
     uint32_t m_ianaIds; //!< Track the latest IANA ID
 

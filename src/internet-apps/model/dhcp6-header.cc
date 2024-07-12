@@ -246,16 +246,45 @@ Dhcp6Header::AddIaOption(uint16_t optionType, uint32_t iaid, uint32_t t1, uint32
 
     switch (optionType)
     {
-    case OPTION_IA_NA:
-        m_ianaList.push_back(newIa);
-        break;
+    case OPTION_IA_NA: {
+        bool iaidPresent = false;
+        for (auto itr = m_ianaList.begin(); itr != m_ianaList.end(); itr++)
+        {
+            if (itr->GetIaid() == newIa.GetIaid())
+            {
+                iaidPresent = true;
+                break;
+            }
+        }
 
-    case OPTION_IA_TA:
-        m_iataList.push_back(newIa);
+        if (!iaidPresent)
+        {
+            m_ianaList.push_back(newIa);
+            AddMessageLength(4 + optionLength);
+        }
         break;
     }
 
-    AddMessageLength(4 + optionLength);
+    case OPTION_IA_TA: {
+        bool iaidPresent = false;
+        for (auto itr = m_iataList.begin(); itr != m_iataList.end(); itr++)
+        {
+            if (itr->GetIaid() == newIa.GetIaid())
+            {
+                iaidPresent = true;
+                break;
+            }
+        }
+
+        if (!iaidPresent)
+        {
+            m_iataList.push_back(newIa);
+            AddMessageLength(4 + optionLength);
+        }
+        break;
+    }
+    }
+
     m_options[optionType] = true;
 }
 
