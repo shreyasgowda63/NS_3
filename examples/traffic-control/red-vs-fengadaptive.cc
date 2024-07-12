@@ -65,10 +65,8 @@ main(int argc, char* argv[])
 
     if ((queueDiscType != "RED") && (queueDiscType != "FengAdaptive"))
     {
-        std::cout
-            << "Invalid queue disc type: Use --queueDiscType=RED or --queueDiscType=FengAdaptive"
-            << std::endl;
-        exit(1);
+        NS_ABORT_MSG(
+            "Invalid queue disc type: Use --queueDiscType=RED or --queueDiscType=FengAdaptive");
     }
 
     Config::SetDefault("ns3::OnOffApplication::PacketSize", UintegerValue(pktSize));
@@ -173,14 +171,12 @@ main(int argc, char* argv[])
 
     if (st.GetNDroppedPackets(RedQueueDisc::UNFORCED_DROP) == 0)
     {
-        std::cout << "There should be some unforced drops" << std::endl;
-        exit(1);
+        NS_ABORT_MSG("There should be some unforced drops");
     }
 
     if (st.GetNDroppedPackets(QueueDisc::INTERNAL_QUEUE_DROP) != 0)
     {
-        std::cout << "There should be zero drops due to queue full" << std::endl;
-        exit(1);
+        NS_ABORT_MSG("There should be zero drops due to queue full");
     }
 
     std::cout << "*** Stats from the bottleneck queue disc ***" << std::endl;

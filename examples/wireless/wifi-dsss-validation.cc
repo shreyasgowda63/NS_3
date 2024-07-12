@@ -20,6 +20,7 @@
 // It outputs plots of the Frame Success Rate versus the Signal-to-noise ratio
 // for the DSSS error rate models and for every DSSS mode.
 
+#include "ns3/abort.h"
 #include "ns3/command-line.h"
 #include "ns3/gnuplot.h"
 #include "ns3/nist-error-rate-model.h"
@@ -73,30 +74,27 @@ main(int argc, char* argv[])
             double psYans = yans->GetChunkSuccessRate(wifiMode, txVector, snr, frameSizeBits);
             if (psYans < 0.0 || psYans > 1.0)
             {
-                // error
-                exit(1);
+                NS_ABORT_MSG("Invalid psYans");
             }
             double psNist = nist->GetChunkSuccessRate(wifiMode, txVector, snr, frameSizeBits);
             if (psNist < 0.0 || psNist > 1.0)
             {
                 std::cout << psNist << std::endl;
-                // error
-                exit(1);
+                NS_ABORT_MSG("Invalid psNist");
             }
             if (psNist != psYans)
             {
-                exit(1);
+                NS_ABORT_MSG("psNist != psYans");
             }
             double psTable = table->GetChunkSuccessRate(wifiMode, txVector, snr, frameSizeBits);
             if (psTable < 0.0 || psTable > 1.0)
             {
                 std::cout << psTable << std::endl;
-                // error
-                exit(1);
+                NS_ABORT_MSG("Invalid psTable");
             }
             if (psTable != psYans)
             {
-                exit(1);
+                NS_ABORT_MSG("psTable != psYans");
             }
             dataset.Add(snrDb, psYans);
         }

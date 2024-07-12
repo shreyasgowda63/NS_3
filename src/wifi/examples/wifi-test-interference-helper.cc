@@ -48,6 +48,7 @@
 // logs associated to the chosen scenario.
 //
 
+#include "ns3/abort.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
 #include "ns3/constant-position-mobility-model.h"
@@ -177,8 +178,7 @@ InterferenceExperiment::PacketDropped(Ptr<const Packet> packet, WifiPhyRxfailure
     }
     else
     {
-        NS_LOG_ERROR("Unknown packet!");
-        exit(1);
+        NS_ABORT_MSG("Unknown packet!");
     }
 }
 
@@ -306,8 +306,7 @@ InterferenceExperiment::Run(InterferenceExperiment::Input input)
 
     if (checkResults && (m_droppedA == expectRxASuccessful || m_droppedB == expectRxBSuccessful))
     {
-        NS_LOG_ERROR("Results are not expected!");
-        exit(1);
+        NS_ABORT_MSG("Results are not expected!");
     }
 }
 

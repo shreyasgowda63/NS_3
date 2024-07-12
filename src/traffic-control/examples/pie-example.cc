@@ -313,8 +313,7 @@ main(int argc, char* argv[])
 
     if (st.GetNDroppedPackets(PieQueueDisc::FORCED_DROP) != 0)
     {
-        std::cout << "There should be no drops due to queue full." << std::endl;
-        exit(1);
+        NS_ABORT_MSG("There should be no drops due to queue full.");
     }
 
     if (flowMonitor)

@@ -395,10 +395,9 @@ readCoordinatesFile(std::string node_coordinates_file_name)
 
         if (n != 2)
         {
-            NS_LOG_ERROR("ERROR: Number of elements at line#"
+            NS_ABORT_MSG("ERROR: Number of elements at line#"
                          << m << " is " << n
                          << " which is not equal to 2 for node coordinates file");
-            exit(1);
         }
 
         else

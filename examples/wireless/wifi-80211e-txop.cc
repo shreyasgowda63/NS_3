@@ -17,6 +17,7 @@
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "ns3/abort.h"
 #include "ns3/command-line.h"
 #include "ns3/internet-stack-helper.h"
 #include "ns3/ipv4-address-helper.h"
@@ -393,8 +394,7 @@ main(int argc, char* argv[])
               << "  Throughput = " << throughput << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 28 || throughput > 29))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
 
     throughput = totalPacketsThroughB * payloadSize * 8 / simulationTime.GetMicroSeconds();
@@ -402,17 +402,15 @@ main(int argc, char* argv[])
               << "  Throughput = " << throughput << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 36.5 || throughput > 37))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "  Maximum TXOP duration = " << beTxopTracer.m_max.GetMicroSeconds() << " us"
               << '\n';
     if (verifyResults &&
         (beTxopTracer.m_max < MicroSeconds(3008) || beTxopTracer.m_max > txopLimit))
     {
-        NS_LOG_ERROR("Maximum TXOP duration " << beTxopTracer.m_max
+        NS_ABORT_MSG("Maximum TXOP duration " << beTxopTracer.m_max
                                               << " is not in the expected boundaries!");
-        exit(1);
     }
 
     throughput = totalPacketsThroughC * payloadSize * 8 / simulationTime.GetMicroSeconds();
@@ -420,17 +418,15 @@ main(int argc, char* argv[])
               << "  Throughput = " << throughput << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 36.5 || throughput > 37.5))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "  Maximum TXOP duration = " << viTxopTracer.m_max.GetMicroSeconds() << " us"
               << '\n';
     if (verifyResults &&
         (viTxopTracer.m_max < MicroSeconds(3008) || viTxopTracer.m_max > txopLimit))
     {
-        NS_LOG_ERROR("Maximum TXOP duration " << viTxopTracer.m_max
+        NS_ABORT_MSG("Maximum TXOP duration " << viTxopTracer.m_max
                                               << " is not in the expected boundaries!");
-        exit(1);
     }
 
     throughput = totalPacketsThroughD * payloadSize * 8 / simulationTime.GetMicroSeconds();
@@ -438,8 +434,7 @@ main(int argc, char* argv[])
               << "  Throughput = " << throughput << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 31.5 || throughput > 32.5))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
 
     return 0;

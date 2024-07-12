@@ -17,6 +17,7 @@
  * Author: Sebastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "ns3/abort.h"
 #include "ns3/boolean.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
@@ -462,8 +463,7 @@ main(int argc, char* argv[])
                 {
                     if (throughput * (1 + tolerance) < minExpectedThroughput)
                     {
-                        NS_LOG_ERROR("Obtained throughput " << throughput << " is not expected!");
-                        exit(1);
+                        NS_ABORT_MSG("Obtained throughput " << throughput << " is not expected!");
                     }
                 }
                 // test last element
@@ -472,8 +472,7 @@ main(int argc, char* argv[])
                     if (maxExpectedThroughput > 0 &&
                         throughput > maxExpectedThroughput * (1 + tolerance))
                     {
-                        NS_LOG_ERROR("Obtained throughput " << throughput << " is not expected!");
-                        exit(1);
+                        NS_ABORT_MSG("Obtained throughput " << throughput << " is not expected!");
                     }
                 }
                 // Skip comparisons with previous cases if more than one stations are present
@@ -488,8 +487,7 @@ main(int argc, char* argv[])
                     }
                     else if (throughput > 0)
                     {
-                        NS_LOG_ERROR("Obtained throughput " << throughput << " is not expected!");
-                        exit(1);
+                        NS_ABORT_MSG("Obtained throughput " << throughput << " is not expected!");
                     }
                     // test previous throughput is smaller (for the same channel width and GI)
                     if (throughput * (1 + tolerance) > prevThroughput[index])
@@ -498,8 +496,7 @@ main(int argc, char* argv[])
                     }
                     else if (throughput > 0)
                     {
-                        NS_LOG_ERROR("Obtained throughput " << throughput << " is not expected!");
-                        exit(1);
+                        NS_ABORT_MSG("Obtained throughput " << throughput << " is not expected!");
                     }
                 }
                 index++;

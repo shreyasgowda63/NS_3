@@ -17,6 +17,7 @@
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "ns3/abort.h"
 #include "ns3/boolean.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
@@ -432,8 +433,7 @@ main(int argc, char* argv[])
               << "  Throughput = " << throughput << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 57.5 || throughput > 58.5))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     if (txopLimit)
     {
@@ -442,9 +442,8 @@ main(int argc, char* argv[])
         if (verifyResults && txopLimit &&
             (netA.m_max < MicroSeconds(3350) || netA.m_max > MicroSeconds(3520)))
         {
-            NS_LOG_ERROR("Maximum TXOP duration " << netA.m_max
+            NS_ABORT_MSG("Maximum TXOP duration " << netA.m_max
                                                   << " is not in the expected boundaries!");
-            exit(1);
         }
     }
 
@@ -453,8 +452,7 @@ main(int argc, char* argv[])
               << "  Throughput = " << throughput << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 38 || throughput > 39))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     if (txopLimit)
     {
@@ -462,9 +460,8 @@ main(int argc, char* argv[])
                   << "us): " << netB.m_max.GetMicroSeconds() << " us" << '\n';
         if (verifyResults && (netB.m_max < MicroSeconds(3350) || netB.m_max > MicroSeconds(3520)))
         {
-            NS_LOG_ERROR("Maximum TXOP duration " << netB.m_max
+            NS_ABORT_MSG("Maximum TXOP duration " << netB.m_max
                                                   << " is not in the expected boundaries!");
-            exit(1);
         }
     }
 
@@ -473,8 +470,7 @@ main(int argc, char* argv[])
               << "  Throughput = " << throughput << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 52 || throughput > 53))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     if (txopLimit)
     {
@@ -482,9 +478,8 @@ main(int argc, char* argv[])
                   << "us): " << netC.m_max.GetMicroSeconds() << " us" << '\n';
         if (verifyResults && (netC.m_max < MicroSeconds(3350) || netC.m_max > MicroSeconds(3520)))
         {
-            NS_LOG_ERROR("Maximum TXOP duration " << netC.m_max
+            NS_ABORT_MSG("Maximum TXOP duration " << netC.m_max
                                                   << " is not in the expected boundaries!");
-            exit(1);
         }
     }
 
@@ -493,8 +488,7 @@ main(int argc, char* argv[])
               << "  Throughput = " << throughput << " Mbit/s" << '\n';
     if (verifyResults && (throughput < 58 || throughput > 59))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     if (txopLimit)
     {
@@ -503,9 +497,8 @@ main(int argc, char* argv[])
         if (verifyResults && txopLimit &&
             (netD.m_max < MicroSeconds(3350) || netD.m_max > MicroSeconds(3520)))
         {
-            NS_LOG_ERROR("Maximum TXOP duration " << netD.m_max
+            NS_ABORT_MSG("Maximum TXOP duration " << netD.m_max
                                                   << " is not in the expected boundaries!");
-            exit(1);
         }
     }
 

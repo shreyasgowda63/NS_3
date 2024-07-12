@@ -31,6 +31,7 @@
  * of TCP i.e. congestion control algorithm to use.
  */
 
+#include "ns3/abort.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
 #include "ns3/internet-stack-helper.h"
@@ -204,8 +205,7 @@ main(int argc, char* argv[])
 
     if (averageThroughput < 50)
     {
-        NS_LOG_ERROR("Obtained throughput is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput is not in the expected boundaries!");
     }
     std::cout << "\nAverage throughput: " << averageThroughput << " Mbit/s" << std::endl;
     return 0;

@@ -23,6 +23,7 @@
 // It outputs plots of the Frame Error Rate versus the Signal-to-noise ratio for
 // Nist, Yans and Table-based error rate models and for MCS 0, 4 and 7 value.
 
+#include "ns3/abort.h"
 #include "ns3/command-line.h"
 #include "ns3/gnuplot.h"
 #include "ns3/nist-error-rate-model.h"
@@ -103,22 +104,19 @@ main(int argc, char* argv[])
             double ps = yans->GetChunkSuccessRate(wifiMode, txVector, snr, size);
             if (ps < 0 || ps > 1)
             {
-                // error
-                exit(1);
+                NS_ABORT_MSG("Invalid ps");
             }
             yansdataset.Add(snrDb, 1 - ps);
             ps = nist->GetChunkSuccessRate(wifiMode, txVector, snr, size);
             if (ps < 0 || ps > 1)
             {
-                // error
-                exit(1);
+                NS_ABORT_MSG("Invalid ps");
             }
             nistdataset.Add(snrDb, 1 - ps);
             ps = table->GetChunkSuccessRate(wifiMode, txVector, snr, size);
             if (ps < 0 || ps > 1)
             {
-                // error
-                exit(1);
+                NS_ABORT_MSG("Invalid ps");
             }
             tabledataset.Add(snrDb, 1 - ps);
         }

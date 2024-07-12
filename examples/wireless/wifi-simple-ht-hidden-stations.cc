@@ -17,6 +17,7 @@
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "ns3/abort.h"
 #include "ns3/boolean.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
@@ -212,8 +213,7 @@ main(int argc, char* argv[])
     if (throughput < minExpectedThroughput ||
         (maxExpectedThroughput > 0 && throughput > maxExpectedThroughput))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     return 0;
 }

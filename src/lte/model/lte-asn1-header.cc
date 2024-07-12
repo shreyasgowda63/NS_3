@@ -19,6 +19,7 @@
 
 #include "lte-asn1-header.h"
 
+#include "ns3/abort.h"
 #include "ns3/log.h"
 
 #include <cmath>
@@ -443,10 +444,8 @@ Asn1Header::SerializeInteger(int n, int nmin, int nmax) const
     case 20:
         SerializeBitset<20>(std::bitset<20>(n));
         break;
-    default: {
-        std::cout << "SerializeInteger " << requiredBits << " Out of range!!" << std::endl;
-        exit(1);
-    }
+    default:
+        NS_ABORT_MSG("SerializeInteger " << requiredBits << " Out of range");
     }
 }
 
@@ -707,10 +706,8 @@ Asn1Header::DeserializeInteger(int* n, int nmin, int nmax, Buffer::Iterator bIte
         bIterator = DeserializeBitset<20>(&bitsRead20, bIterator);
         *n = (int)bitsRead20.to_ulong();
         break;
-    default: {
-        std::cout << "SerializeInteger Out of range!!" << std::endl;
-        exit(1);
-    }
+    default:
+        NS_ABORT_MSG("SerializeInteger out of range");
     }
 
     *n += nmin;

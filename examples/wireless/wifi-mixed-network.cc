@@ -17,6 +17,7 @@
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "ns3/abort.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
 #include "ns3/ht-configuration.h"
@@ -389,8 +390,7 @@ main(int argc, char* argv[])
     throughput = experiment.Run(params);
     if (verifyResults && (throughput < 22.5 || throughput > 23.5))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "Throughput: " << throughput << " Mbit/s \n" << std::endl;
 
@@ -402,8 +402,7 @@ main(int argc, char* argv[])
     throughput = experiment.Run(params);
     if (verifyResults && (throughput < 29 || throughput > 30))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "Throughput: " << throughput << " Mbit/s \n" << std::endl;
 
@@ -415,8 +414,7 @@ main(int argc, char* argv[])
     throughput = experiment.Run(params);
     if (verifyResults && (throughput < 22.5 || throughput > 23.5))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "Throughput: " << throughput << " Mbit/s \n" << std::endl;
 
@@ -428,8 +426,7 @@ main(int argc, char* argv[])
     throughput = experiment.Run(params);
     if (verifyResults && (throughput < 22.5 || throughput > 23.5))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "Throughput: " << throughput << " Mbit/s \n" << std::endl;
 
@@ -442,8 +439,7 @@ main(int argc, char* argv[])
     throughput = experiment.Run(params);
     if (verifyResults && (throughput < 19 || throughput > 20))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "Throughput: " << throughput << " Mbit/s \n" << std::endl;
 
@@ -455,8 +451,7 @@ main(int argc, char* argv[])
     throughput = experiment.Run(params);
     if (verifyResults && (throughput < 19 || throughput > 20))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "Throughput: " << throughput << " Mbit/s \n" << std::endl;
 
@@ -469,8 +464,7 @@ main(int argc, char* argv[])
     throughput = experiment.Run(params);
     if (verifyResults && (throughput < 20.5 || throughput > 21.5))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "Throughput: " << throughput << " Mbit/s \n" << std::endl;
 
@@ -482,8 +476,7 @@ main(int argc, char* argv[])
     throughput = experiment.Run(params);
     if (verifyResults && (throughput < 20.5 || throughput > 21.5))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "Throughput: " << throughput << " Mbit/s \n" << std::endl;
 
@@ -501,8 +494,7 @@ main(int argc, char* argv[])
     throughput = experiment.Run(params);
     if (verifyResults && (throughput < 44 || throughput > 45))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "Throughput: " << throughput << " Mbit/s \n" << std::endl;
 
@@ -520,8 +512,7 @@ main(int argc, char* argv[])
     throughput = experiment.Run(params);
     if (verifyResults && (throughput < 44 || throughput > 45))
     {
-        NS_LOG_ERROR("Obtained throughput " << throughput << " is not in the expected boundaries!");
-        exit(1);
+        NS_ABORT_MSG("Obtained throughput " << throughput << " is not in the expected boundaries!");
     }
     std::cout << "Throughput: " << throughput << " Mbit/s \n" << std::endl;
 

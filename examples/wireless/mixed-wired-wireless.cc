@@ -57,6 +57,7 @@
 // Note that certain mobility patterns may cause packet forwarding
 // to fail (if nodes become disconnected)
 
+#include "ns3/abort.h"
 #include "ns3/animation-interface.h"
 #include "ns3/command-line.h"
 #include "ns3/csma-helper.h"
@@ -136,8 +137,7 @@ main(int argc, char* argv[])
 
     if (stopTime < 10)
     {
-        std::cout << "Use a simulation stop time >= 10 seconds" << std::endl;
-        exit(1);
+        NS_ABORT_MSG("Use a simulation stop time >= 10 seconds");
     }
     ///////////////////////////////////////////////////////////////////////////
     //                                                                       //

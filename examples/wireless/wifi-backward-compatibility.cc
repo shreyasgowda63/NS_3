@@ -17,6 +17,7 @@
  * Author: Sebastien Deronne <sebastien.deronne@gmail.com>
  */
 
+#include "ns3/abort.h"
 #include "ns3/boolean.h"
 #include "ns3/command-line.h"
 #include "ns3/config.h"
@@ -266,8 +267,7 @@ main(int argc, char* argv[])
 
     if (error)
     {
-        NS_LOG_ERROR("No traffic received!");
-        exit(1);
+        NS_ABORT_MSG("No traffic received!");
     }
 
     return 0;

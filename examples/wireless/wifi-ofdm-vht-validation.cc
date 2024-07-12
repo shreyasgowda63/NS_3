@@ -21,6 +21,7 @@
 // Nist, Yans and Table-based error rate models and for every VHT MCS value (MCS 9 is not
 // included since it is forbidden for 20 MHz channels).
 
+#include "ns3/abort.h"
 #include "ns3/command-line.h"
 #include "ns3/gnuplot.h"
 #include "ns3/nist-error-rate-model.h"
@@ -85,16 +86,14 @@ main(int argc, char* argv[])
             double ps = yans->GetChunkSuccessRate(wifiMode, txVector, snr, frameSizeBits);
             if (ps < 0.0 || ps > 1.0)
             {
-                // error
-                exit(1);
+                NS_ABORT_MSG("Invalid ps");
             }
             yansdataset.Add(snrDb, ps);
 
             ps = nist->GetChunkSuccessRate(wifiMode, txVector, snr, frameSizeBits);
             if (ps < 0.0 || ps > 1.0)
             {
-                // error
-                exit(1);
+                NS_ABORT_MSG("Invalid ps");
             }
             nistdataset.Add(snrDb, ps);
 
