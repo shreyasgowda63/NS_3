@@ -57,7 +57,11 @@ Dhcp6Client::GetTypeId()
                           "The possible value of transaction numbers",
                           StringValue("ns3::UniformRandomVariable[Min=0.0|Max=1000000.0]"),
                           MakePointerAccessor(&Dhcp6Client::m_rand),
-                          MakePointerChecker<RandomVariableStream>());
+                          MakePointerChecker<RandomVariableStream>())
+            .AddTraceSource("NewLease",
+                            "Get a new lease",
+                            MakeTraceSourceAccessor(&Dhcp6Client::m_newLease),
+                            "ns3::Ipv6Address::TracedCallback");
     return tid;
 }
 
@@ -374,6 +378,9 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
             Ipv6InterfaceAddress addr(offeredAddress, 128);
             ipv6->AddAddress(ifIndex, addr);
             ipv6->SetUp(ifIndex);
+
+            // TODO: Trace value after DAD completes.
+            m_newLease(offeredAddress);
 
             // Set the preferred and valid lifetimes.
             m_prefLifetime = Time(Seconds(iaAddrOpt.GetPreferredLifetime()));

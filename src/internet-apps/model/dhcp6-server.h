@@ -22,6 +22,9 @@
 
 #include "ns3/application.h"
 #include "ns3/ipv6-address.h"
+#include "ns3/pair.h"
+
+#include <map>
 
 namespace ns3
 {
@@ -90,6 +93,7 @@ class LeaseInfo
     /**
      * \brief Leased Addresses
      * Client DUID + Ipv6Address / Lease time
+     * TODO: Check if multiple leases are correctly stored.
      */
     typedef std::map<Address, std::pair<Ipv6Address, Time>> LeasedAddresses;
 
@@ -97,7 +101,7 @@ class LeaseInfo
      * \brief Declined Addresses
      * Ipv6Address + Client DUID
      */
-    typedef std::map<Ipv6Address, Address> DeclinedAddresses;
+    typedef std::unordered_map<Ipv6Address, Address, Ipv6AddressHash> DeclinedAddresses;
 
     LeasedAddresses m_leasedAddresses;     //!< Leased addresses
     ExpiredAddresses m_expiredAddresses;   //!< Expired addresses
@@ -218,7 +222,7 @@ class Dhcp6Server : public Application
      * \brief The socket used to send packets.
      * Socket / Corresponding NetDevice
      */
-    std::map<Ptr<NetDevice>, Ptr<Socket>> m_sendSockets;
+    std::unordered_map<Ptr<NetDevice>, Ptr<Socket>> m_sendSockets;
 
     /**
      * \brief Pointer to the net device used by the server.

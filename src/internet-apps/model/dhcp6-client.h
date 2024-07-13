@@ -23,6 +23,7 @@
 #include "ns3/application.h"
 #include "ns3/inet6-socket-address.h"
 #include "ns3/socket.h"
+#include "ns3/traced-callback.h"
 
 namespace ns3
 {
@@ -216,13 +217,7 @@ class Dhcp6Client : public Application
     /**
      * \brief Track the IPv6 Address - IAID association.
      */
-    std::map<Ipv6Address, uint32_t> m_iaidMap;
-
-    /**
-     * \brief Store the list of addresses leased.
-     * Ipv6Address + Server DUID
-     */
-    std::map<Ipv6Address, Address> m_myAddresses;
+    std::unordered_map<Ipv6Address, uint32_t, Ipv6AddressHash> m_iaidMap;
 
     /**
      * \brief List of addresses to be declined by the client.
@@ -250,7 +245,8 @@ class Dhcp6Client : public Application
 
     uint32_t m_ianaIds; //!< Track the latest IANA ID
 
-    Ptr<RandomVariableStream> m_rand; //!< Random variable to set transaction ID
+    Ptr<RandomVariableStream> m_rand;              //!< Random variable to set transaction ID
+    TracedCallback<const Ipv6Address&> m_newLease; //!< Trace of new lease obtained
 };
 
 } // namespace ns3
