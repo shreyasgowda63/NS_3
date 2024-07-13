@@ -49,8 +49,16 @@ class Dhcp6TestCase : public TestCase
     Dhcp6TestCase();
     ~Dhcp6TestCase() override;
 
+    /**
+     * Triggered by an address lease on a client.
+     * \param context The test name.
+     * \param newAddress The leased address.
+     */
+    void LeaseObtained(std::string context, const Ipv6Address& newAddress);
+
   private:
     void DoRun() override;
+    Ipv6Address m_leasedAddress[2]; //!< Address given to the nodes
 };
 
 Dhcp6TestCase::Dhcp6TestCase()
@@ -63,11 +71,22 @@ Dhcp6TestCase::~Dhcp6TestCase()
 }
 
 void
+Dhcp6TestCase::LeaseObtained(std::string context, const Ipv6Address& newAddress)
+{
+    uint8_t numericalContext = std::stoi(context, nullptr, 10);
+
+    if (numericalContext >= 0 && numericalContext <= 2)
+    {
+        m_leasedAddress[numericalContext] = newAddress;
+    }
+}
+
+void
 Dhcp6TestCase::DoRun()
 {
     /*Set up devices*/
     NodeContainer nodes;
-    nodes.Create(2);
+    nodes.Create(3);
 
     NodeContainer net(nodes);
 
@@ -101,13 +120,32 @@ Dhcp6TestCase::DoRun()
 
     NetDeviceContainer dhcpClientNetDevs;
     dhcpClientNetDevs.Add(devNet.Get(1));
+    dhcpClientNetDevs.Add(devNet.Get(2));
 
     ApplicationContainer dhcpClientApps = dhcpHelper.InstallDhcp6Client(dhcpClientNetDevs);
     dhcpClientApps.Start(Seconds(1.0));
     dhcpClientApps.Stop(Seconds(20.0));
 
+    dhcpClientApps.Get(0)->TraceConnect("NewLease",
+                                        "0",
+                                        MakeCallback(&Dhcp6TestCase::LeaseObtained, this));
+    dhcpClientApps.Get(1)->TraceConnect("NewLease",
+                                        "1",
+                                        MakeCallback(&Dhcp6TestCase::LeaseObtained, this));
+
     Simulator::Stop(Seconds(21.0));
     Simulator::Run();
+
+    NS_TEST_ASSERT_MSG_EQ(m_leasedAddress[0],
+                          Ipv6Address("2001:db8::1"),
+                          m_leasedAddress[0] << " instead of "
+                                             << "2001:db8::1");
+
+    NS_TEST_ASSERT_MSG_EQ(m_leasedAddress[1],
+                          Ipv6Address("2001:db8::2"),
+                          m_leasedAddress[1] << " instead of "
+                                             << "2001:db8::2");
+
     Simulator::Destroy();
 }
 
