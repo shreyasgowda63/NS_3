@@ -53,7 +53,7 @@ Dhcp6Client::GetTypeId()
             .SetParent<Application>()
             .AddConstructor<Dhcp6Client>()
             .SetGroupName("Internet-Apps")
-            .AddAttribute("Transactions",
+            .AddAttribute("Transactions", // TODO: Change description
                           "The possible value of transaction numbers",
                           StringValue("ns3::UniformRandomVariable[Min=0.0|Max=1000000.0]"),
                           MakePointerAccessor(&Dhcp6Client::m_rand),
@@ -91,18 +91,8 @@ Dhcp6Client::DoDispose()
     NS_LOG_FUNCTION(this);
 
     m_solicitEvent.Cancel();
-    // m_renewEvent.Cancel();
-    // m_rebindEvent.Cancel();
-
-    for (auto itr = m_renewEvent.begin(); itr != m_renewEvent.end(); itr++)
-    {
-        itr->Cancel();
-    }
-
-    for (auto itr = m_rebindEvent.begin(); itr != m_rebindEvent.end(); itr++)
-    {
-        itr->Cancel();
-    }
+    m_renewEvent.Cancel();
+    m_rebindEvent.Cancel();
 
     for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
     {
@@ -159,6 +149,7 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     requestHeader.ResetOptions();
     requestHeader.SetMessageType(Dhcp6Header::REQUEST);
 
+    // TODO: Use min, max for GetValue
     m_clientTransactId = (uint32_t)(m_rand->GetValue());
     requestHeader.SetTransactId(m_clientTransactId);
 
@@ -263,24 +254,13 @@ Dhcp6Client::DeclineOffer()
         return;
     }
 
-    for (auto itr = m_renewEvent.begin(); itr != m_renewEvent.end(); itr++)
-    {
-        itr->Cancel();
-    }
-
-    for (auto itr = m_rebindEvent.begin(); itr != m_rebindEvent.end(); itr++)
-    {
-        itr->Cancel();
-    }
-
     for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
     {
         itr->Cancel();
     }
 
-    // m_renewEvent.Cancel();
-    // m_rebindEvent.Cancel();
-    // m_releaseEvent.Cancel();
+    m_renewEvent.Cancel();
+    m_rebindEvent.Cancel();
 
     Dhcp6Header declineHeader;
     Ptr<Packet> packet;
@@ -359,6 +339,11 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
 
     m_declinedAddresses.clear();
     m_addressDadComplete = false;
+
+    Time earliestRebind;
+    Time earliestRenew;
+    std::vector<uint32_t> iaidList;
+
     for (auto itr = ianaOptionsList.begin(); itr != ianaOptionsList.end(); itr++)
     {
         IaOptions iaOpt = *itr;
@@ -389,25 +374,26 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
             // Add the IPv6 address - IAID association.
             m_iaidMap[offeredAddress] = iaOpt.GetIaid();
 
-            // TODO: Renew and Rebind events should happen for each IA Option,
-            // not for each address.
-
-            // Set the renew timer and schedule the event.
-            m_renew = Time(Seconds(iaOpt.GetT1()));
-            m_renewEvent.push_back(
-                Simulator::Schedule(m_renew, &Dhcp6Client::SendRenew, this, offeredAddress));
-
-            // Set the rebind timer and schedule the event.
-            m_rebind = Time(Seconds(iaOpt.GetT2()));
-            m_rebindEvent.push_back(
-                Simulator::Schedule(m_rebind, &Dhcp6Client::SendRebind, this, offeredAddress));
-
+            // TODO: Check whether Release event happens for each address.
             m_releaseEvent.push_back(Simulator::Schedule(m_validLifetime,
                                                          &Dhcp6Client::SendRelease,
                                                          this,
                                                          offeredAddress));
         }
+
+        earliestRenew = std::min(earliestRenew, Time(Seconds(iaOpt.GetT1())));
+        earliestRebind = std::min(earliestRebind, Time(Seconds(iaOpt.GetT2())));
+        iaidList.push_back(iaOpt.GetIaid());
     }
+
+    // The renew and rebind events are scheduled for the earliest time across
+    // all IA_NA options. RFC 8415, Section 18.2.4.
+    m_renew = earliestRenew;
+    m_renewEvent = Simulator::Schedule(m_renew, &Dhcp6Client::SendRenew, this, iaidList);
+
+    // Set the rebind timer and schedule the event.
+    m_rebind = earliestRebind;
+    m_rebindEvent = Simulator::Schedule(m_rebind, &Dhcp6Client::SendRebind, this, iaidList);
 
     int32_t interfaceId = ipv6->GetInterfaceForDevice(m_device);
     Ptr<Icmpv6L4Protocol> icmpv6 = DynamicCast<Icmpv6L4Protocol>(
@@ -419,7 +405,7 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
 }
 
 void
-Dhcp6Client::SendRenew(Ipv6Address address)
+Dhcp6Client::SendRenew(std::vector<uint32_t> iaidList)
 {
     NS_LOG_FUNCTION(this);
 
@@ -428,7 +414,7 @@ Dhcp6Client::SendRenew(Ipv6Address address)
     packet = Create<Packet>();
 
     m_clientTransactId = (uint32_t)(m_rand->GetValue());
-    ;
+
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::RENEW);
 
@@ -443,10 +429,11 @@ Dhcp6Client::SendRenew(Ipv6Address address)
     Time m_msgStartTime = Simulator::Now();
     header.AddElapsedTime(0);
 
-    // IA_NA option, IA address option
-    uint32_t iaid = m_iaidMap[address];
-    header.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
-    header.AddAddress(iaid, address, 40, 60);
+    // Add IA_NA options.
+    for (uint32_t i = 0; i < iaidList.size(); i++)
+    {
+        header.AddIanaOption(iaidList[i], m_renew.GetSeconds(), m_rebind.GetSeconds());
+    }
 
     // Add Option Request option.
     header.AddOptionRequest(Dhcp6Header::OPTION_SOL_MAX_RT);
@@ -468,7 +455,7 @@ Dhcp6Client::SendRenew(Ipv6Address address)
 }
 
 void
-Dhcp6Client::SendRebind(Ipv6Address address)
+Dhcp6Client::SendRebind(std::vector<uint32_t> iaidList)
 {
     NS_LOG_FUNCTION(this);
 
@@ -488,10 +475,11 @@ Dhcp6Client::SendRebind(Ipv6Address address)
     Time m_msgStartTime = Simulator::Now();
     header.AddElapsedTime(0);
 
-    // IA_NA option, IA address option
-    uint32_t iaid = m_iaidMap[address];
-    header.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
-    header.AddAddress(iaid, address, 40, 60);
+    // Add IA_NA options.
+    for (uint32_t i = 0; i < iaidList.size(); i++)
+    {
+        header.AddIanaOption(iaidList[i], m_renew.GetSeconds(), m_rebind.GetSeconds());
+    }
 
     // Add Option Request option.
     header.AddOptionRequest(Dhcp6Header::OPTION_SOL_MAX_RT);
@@ -597,24 +585,13 @@ Dhcp6Client::NetHandler(Ptr<Socket> socket)
     {
         NS_LOG_INFO("Received Reply.");
 
-        for (auto itr = m_renewEvent.begin(); itr != m_renewEvent.end(); itr++)
-        {
-            itr->Cancel();
-        }
-
-        for (auto itr = m_rebindEvent.begin(); itr != m_rebindEvent.end(); itr++)
-        {
-            itr->Cancel();
-        }
-
+        m_renewEvent.Cancel();
+        m_rebindEvent.Cancel();
         for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
         {
             itr->Cancel();
         }
 
-        // m_renewEvent.Cancel();
-        // m_rebindEvent.Cancel();
-        // m_releaseEvent.Cancel();
         ProcessReply(iDev, header, senderAddr);
     }
     if ((m_state == WAIT_REPLY_AFTER_DECLINE || m_state == WAIT_REPLY_AFTER_RELEASE) &&
@@ -639,19 +616,8 @@ Dhcp6Client::LinkStateHandler()
     else
     {
         m_solicitEvent.Cancel();
-        // m_renewEvent.Cancel();
-        // m_rebindEvent.Cancel();
-
-        for (auto itr = m_renewEvent.begin(); itr != m_renewEvent.end(); itr++)
-        {
-            itr->Cancel();
-        }
-
-        for (auto itr = m_rebindEvent.begin(); itr != m_rebindEvent.end(); itr++)
-        {
-            itr->Cancel();
-        }
-
+        m_renewEvent.Cancel();
+        m_rebindEvent.Cancel();
         for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
         {
             itr->Cancel();
@@ -724,6 +690,10 @@ Dhcp6Client::StartApplication()
         Ptr<Application> app = node->GetApplication(i);
         Ptr<Dhcp6Client> client = app->GetObject<Dhcp6Client>();
         Address clientLinkLayer = client->GetSelfIdentifier().GetLinkLayerAddress();
+
+        // TODO: Link-layer address can be any length. Change this to a more
+        // general approach.
+        // TODO: Valid DUIDs can be all zeroes.
         if (clientLinkLayer != Mac48Address("00:00:00:00:00:00"))
         {
             validDuid = true;

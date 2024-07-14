@@ -93,7 +93,7 @@ class LeaseInfo
     /**
      * \brief Leased Addresses
      * Client DUID + Ipv6Address / Lease time
-     * TODO: Check if multiple leases are correctly stored.
+     * TODO: Check if multiple leases are correctly stored. Move to multimap.
      */
     typedef std::map<Address, std::pair<Ipv6Address, Time>> LeasedAddresses;
 
@@ -196,6 +196,14 @@ class Dhcp6Server : public Application
      * \param header DHCPv6 header of the received message
      * \param client Address of the DHCP client
      */
+    void RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
+
+    /**
+     * \brief Sends Reply after receiving Request
+     * \param iDev incoming NetDevice
+     * \param header DHCPv6 header of the received message
+     * \param client Address of the DHCP client
+     */
     void UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
 
     /**
@@ -237,6 +245,7 @@ class Dhcp6Server : public Application
     /**
      * \brief Store IA bindings.
      * DUID + IA Type / IAID
+     * TODO: One client could have multiple IAIDs.
      */
     std::map<Address, std::pair<uint8_t, uint32_t>> m_iaBindings;
 

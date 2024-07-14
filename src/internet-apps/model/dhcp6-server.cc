@@ -337,6 +337,78 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
 }
 
 void
+Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
+{
+    NS_LOG_INFO(this << iDev << header << client);
+
+    Ptr<Packet> packet = Create<Packet>();
+    Dhcp6Header replyHeader;
+    replyHeader.ResetOptions();
+    replyHeader.SetMessageType(Dhcp6Header::REPLY);
+    replyHeader.SetTransactId(header.GetTransactId());
+
+    // Add Client Identifier Option, copied from the received header.
+    uint16_t clientHardwareType = header.GetClientIdentifier().GetHardwareType();
+    Address clientAddress = header.GetClientIdentifier().GetLinkLayerAddress();
+    replyHeader.AddClientIdentifier(clientHardwareType, clientAddress);
+
+    // Add Server Identifier Option.
+    replyHeader.AddServerIdentifier(m_serverIdentifier.GetHardwareType(),
+                                    m_serverIdentifier.GetLinkLayerAddress());
+
+    // Add IA_NA option.
+    // Retrieve IA_NAs from client header.
+    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    for (auto ianaOptions = ianaOptionsList.begin(); ianaOptions != ianaOptionsList.end();
+         ianaOptions++)
+    {
+        IaOptions iaOpt = *ianaOptions;
+        replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
+
+        for (auto itr = m_subnets.begin(); itr != m_subnets.end(); itr++)
+        {
+            LeaseInfo subnet = *itr;
+            if (subnet.m_leasedAddresses.find(clientAddress) != subnet.m_leasedAddresses.end())
+            {
+                Ipv6Address clientLease = subnet.m_leasedAddresses[clientAddress].first;
+                subnet.m_leasedAddresses[clientAddress] =
+                    std::make_pair(clientLease, Time(Seconds(m_prefLifetime.GetSeconds())));
+
+                replyHeader.AddAddress(iaOpt.GetIaid(),
+                                       clientLease,
+                                       m_prefLifetime.GetSeconds(),
+                                       m_validLifetime.GetSeconds());
+
+                itr->m_leasedAddresses[clientAddress] =
+                    std::make_pair(clientLease, Time(Seconds(m_prefLifetime.GetSeconds())));
+            }
+        }
+
+        break;
+    }
+
+    std::vector<bool> headerOptions = header.GetOptionList();
+    if (headerOptions[Dhcp6Header::OPTION_ORO])
+    {
+        std::list<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
+        replyHeader.HandleOptionRequest(requestedOptions);
+    }
+
+    packet->AddHeader(replyHeader);
+
+    // Send the Reply message.
+    Ptr<Socket> sendSocket = m_sendSockets[iDev];
+    if (sendSocket->SendTo(packet, 0, client) >= 0)
+    {
+        NS_LOG_INFO("DHCPv6 Reply sent.");
+    }
+    else
+    {
+        NS_LOG_INFO("Error while sending DHCPv6 Reply.");
+    }
+}
+
+void
 Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
     NS_LOG_INFO(this << iDev << header << client);
@@ -441,11 +513,14 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
         ProcessSolicit(iDev, header, senderAddr);
         SendAdvertise(iDev, header, senderAddr);
     }
-    if ((header.GetMessageType() == Dhcp6Header::REQUEST) ||
-        (header.GetMessageType() == Dhcp6Header::RENEW) ||
-        (header.GetMessageType() == Dhcp6Header::REBIND))
+    if (header.GetMessageType() == Dhcp6Header::REQUEST)
     {
         SendReply(iDev, header, senderAddr);
+    }
+    if ((header.GetMessageType() == Dhcp6Header::RENEW) ||
+        (header.GetMessageType() == Dhcp6Header::REBIND))
+    {
+        RenewRebindLeases(iDev, header, senderAddr);
     }
     if ((header.GetMessageType() == Dhcp6Header::RELEASE) ||
         (header.GetMessageType() == Dhcp6Header::DECLINE))

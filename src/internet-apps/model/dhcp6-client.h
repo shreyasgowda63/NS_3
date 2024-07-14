@@ -132,15 +132,15 @@ class Dhcp6Client : public Application
 
     /**
      * \brief Send a renew message to the DHCPv6 server.
-     * \param address The address whose lease is to be renewed.
+     * \param iaidList The IAIDs whose leases are to be renewed.
      */
-    void SendRenew(Ipv6Address address);
+    void SendRenew(std::vector<uint32_t> iaidList);
 
     /**
-     * \brief Send a renew message to the DHCPv6 server.
-     * \param address The address whose lease is to be renewed.
+     * \brief Send a rebind message to the DHCPv6 server.
+     * \param iaidList The IAIDs whose leases are to be rebound.
      */
-    void SendRebind(Ipv6Address address);
+    void SendRebind(std::vector<uint32_t> iaidList);
 
     /**
      * \brief Send a Release message to the DHCPv6 server.
@@ -239,8 +239,8 @@ class Dhcp6Client : public Application
     Time m_prefLifetime;  //!< Preferred lifetime of the address
     Time m_validLifetime; //!< Valid lifetime of the address
 
-    std::vector<EventId> m_renewEvent;   //!< Event ID for the renew event
-    std::vector<EventId> m_rebindEvent;  //!< Event ID for the rebind event
+    EventId m_renewEvent;                //!< Event ID for the renew event
+    EventId m_rebindEvent;               //!< Event ID for the rebind event
     std::vector<EventId> m_releaseEvent; //!< Event ID for the release event
 
     uint32_t m_ianaIds; //!< Track the latest IANA ID
