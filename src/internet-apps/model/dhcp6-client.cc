@@ -82,7 +82,7 @@ Dhcp6Client::Dhcp6Client()
     m_ianaIds = 0;
 
     m_clientIdentifier.SetHardwareType(1);
-    m_clientIdentifier.SetLinkLayerAddress(Mac48Address("00:00:00:00:00:00"));
+    m_clientIdentifier.SetLinkLayerAddress(Mac48Address("ff:ff:ff:ff:ff:ff"));
 }
 
 void
@@ -685,14 +685,19 @@ Dhcp6Client::StartApplication()
         Ptr<Dhcp6Client> client = app->GetObject<Dhcp6Client>();
         Address clientLinkLayer = client->GetSelfIdentifier().GetLinkLayerAddress();
 
-        // TODO: Link-layer address can be any length. Change this to a more
-        // general approach.
-        // TODO: Valid DUIDs can be all zeroes.
-        if (clientLinkLayer != Mac48Address("00:00:00:00:00:00"))
+        // Considering an invalid link layer address to be all FF.
+        uint8_t addrLen = clientLinkLayer.GetLength();
+        uint8_t addrBuf[20];
+        clientLinkLayer.CopyTo(addrBuf);
+
+        for (uint8_t j = 0; j < addrLen; j++)
         {
-            validDuid = true;
-            m_clientIdentifier.SetLinkLayerAddress(clientLinkLayer);
-            break;
+            if (addrBuf[j] != 255)
+            {
+                validDuid = true;
+                m_clientIdentifier.SetLinkLayerAddress(clientLinkLayer);
+                break;
+            }
         }
     }
 
