@@ -213,34 +213,23 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
 }
 
 void
+Dhcp6Client::AcceptedAddress(const Ipv6Address& offeredAddress)
+{
+    NS_LOG_INFO("Accepting " << offeredAddress);
+    m_acceptedAddresses += 1;
+
+    if (m_declinedAddresses.size() + m_acceptedAddresses == m_offeredAddresses)
+    {
+        DeclineOffer();
+    }
+}
+
+void
 Dhcp6Client::AddDeclinedAddress(const Ipv6Address& offeredAddress)
 {
     m_declinedAddresses.push_back(offeredAddress);
 
-    Ptr<Ipv6> ipv6 = GetNode()->GetObject<Ipv6>();
-    int32_t ifIndex = ipv6->GetInterfaceForDevice(m_device);
-    uint32_t nAddr = ipv6->GetNAddresses(ifIndex);
-
-    bool addressDadComplete = true;
-    for (uint32_t i = 0; i < nAddr; i++)
-    {
-        Ipv6InterfaceAddress addr = ipv6->GetAddress(ifIndex, i);
-        if (addr.GetState() != Ipv6InterfaceAddress::INVALID &&
-            addr.GetState() != Ipv6InterfaceAddress::PREFERRED &&
-            addr.GetState() != Ipv6InterfaceAddress::PERMANENT)
-        {
-            addressDadComplete = false;
-        }
-
-        // Current address is invalid, so DAD can be considered complete. Status
-        // might not have been updated yet.
-        if (addr.GetAddress() == offeredAddress)
-        {
-            addressDadComplete = true;
-        }
-    }
-
-    if (addressDadComplete)
+    if (m_declinedAddresses.size() + m_acceptedAddresses == m_offeredAddresses)
     {
         DeclineOffer();
     }
@@ -340,8 +329,8 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
     m_declinedAddresses.clear();
     m_addressDadComplete = false;
 
-    Time earliestRebind;
-    Time earliestRenew;
+    Time earliestRebind = Time(Seconds(1000000));
+    Time earliestRenew = Time(Seconds(1000000));
     std::vector<uint32_t> iaidList;
 
     for (auto itr = ianaOptionsList.begin(); itr != ianaOptionsList.end(); itr++)
@@ -379,6 +368,8 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
                                                          &Dhcp6Client::SendRelease,
                                                          this,
                                                          offeredAddress));
+
+            m_offeredAddresses += 1;
         }
 
         earliestRenew = std::min(earliestRenew, Time(Seconds(iaOpt.GetT1())));
@@ -400,8 +391,11 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
         ipv6->GetProtocol(Icmpv6L4Protocol::GetStaticProtocolNumber(), interfaceId));
 
     // If DAD fails, the offer is declined.
-    icmpv6->TraceConnectWithoutContext("FailedDad",
+    icmpv6->TraceConnectWithoutContext("DadFailure",
                                        MakeCallback(&Dhcp6Client::AddDeclinedAddress, this));
+
+    icmpv6->TraceConnectWithoutContext("DadSuccess",
+                                       MakeCallback(&Dhcp6Client::AcceptedAddress, this));
 }
 
 void

@@ -115,9 +115,9 @@ class Dhcp6Client : public Application
 
     /**
      * \brief Accept the DHCPv6 offer.
-     * \param offeredAddress The IPv6 address being accepted by the client.
+     * \param offeredAddress The IPv6 address that has been accepted.
      */
-    void AcceptOffer(Ipv6Address offeredAddress);
+    void AcceptedAddress(const Ipv6Address& offeredAddress);
 
     /**
      * \brief Add a declined address to the list maintained by the client.
@@ -228,6 +228,16 @@ class Dhcp6Client : public Application
      * \brief Track whether DAD callback on all addresses has been scheduled.
      */
     bool m_addressDadComplete;
+
+    /**
+     * \brief The number of addresses offered to the client.
+     */
+    uint8_t m_offeredAddresses;
+
+    /**
+     * \brief The number of addresses accepted by the client.
+     */
+    uint8_t m_acceptedAddresses;
 
     Time m_msgStartTime; //!< Time when message exchange starts.
 
