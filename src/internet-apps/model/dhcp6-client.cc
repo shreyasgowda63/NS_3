@@ -53,9 +53,9 @@ Dhcp6Client::GetTypeId()
             .SetParent<Application>()
             .AddConstructor<Dhcp6Client>()
             .SetGroupName("Internet-Apps")
-            .AddAttribute("Transactions", // TODO: Change description
+            .AddAttribute("Transactions",
                           "The possible value of transaction numbers",
-                          StringValue("ns3::UniformRandomVariable[Min=0.0|Max=1000000.0]"),
+                          StringValue("ns3::UniformRandomVariable[Min=0.0|Max=10.0]"),
                           MakePointerAccessor(&Dhcp6Client::m_rand),
                           MakePointerChecker<RandomVariableStream>())
             .AddTraceSource("NewLease",
@@ -89,6 +89,8 @@ void
 Dhcp6Client::DoDispose()
 {
     NS_LOG_FUNCTION(this);
+
+    m_device = nullptr;
 
     m_solicitEvent.Cancel();
     m_renewEvent.Cancel();
@@ -218,6 +220,9 @@ Dhcp6Client::AcceptedAddress(const Ipv6Address& offeredAddress)
     NS_LOG_INFO("Accepting " << offeredAddress);
     m_acceptedAddresses += 1;
 
+    // Notify the new lease.
+    m_newLease(offeredAddress);
+
     if (m_declinedAddresses.size() + m_acceptedAddresses == m_offeredAddresses)
     {
         DeclineOffer();
@@ -243,13 +248,13 @@ Dhcp6Client::DeclineOffer()
         return;
     }
 
+    // Cancel all scheduled Release, Renew, Rebind events.
+    m_renewEvent.Cancel();
+    m_rebindEvent.Cancel();
     for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
     {
         itr->Cancel();
     }
-
-    m_renewEvent.Cancel();
-    m_rebindEvent.Cancel();
 
     Dhcp6Header declineHeader;
     Ptr<Packet> packet;
@@ -263,10 +268,13 @@ Dhcp6Client::DeclineOffer()
 
         // IA_NA option, IA address option
         declineHeader.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
-        declineHeader.AddAddress(iaid, offer, 40, 60);
+        declineHeader.AddAddress(iaid,
+                                 offer,
+                                 m_prefLifetime.GetSeconds(),
+                                 m_validLifetime.GetSeconds());
     }
 
-    m_clientTransactId = 789;
+    m_clientTransactId = (uint32_t)(m_rand->GetValue());
     declineHeader.SetTransactId(m_clientTransactId);
     declineHeader.SetMessageType(Dhcp6Header::DECLINE);
 
@@ -353,9 +361,6 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
             ipv6->AddAddress(ifIndex, addr);
             ipv6->SetUp(ifIndex);
 
-            // TODO: Trace value after DAD completes.
-            m_newLease(offeredAddress);
-
             // Set the preferred and valid lifetimes.
             m_prefLifetime = Time(Seconds(iaAddrOpt.GetPreferredLifetime()));
             m_validLifetime = Time(Seconds(iaAddrOpt.GetValidLifetime()));
@@ -427,6 +432,21 @@ Dhcp6Client::SendRenew(std::vector<uint32_t> iaidList)
     for (uint32_t i = 0; i < iaidList.size(); i++)
     {
         header.AddIanaOption(iaidList[i], m_renew.GetSeconds(), m_rebind.GetSeconds());
+
+        // Iterate through the IPv6Address - IAID map, and add all addresses
+        // that match the IAID to be renewed.
+        for (auto itr = m_iaidMap.begin(); itr != m_iaidMap.end(); itr++)
+        {
+            Ipv6Address address = itr->first;
+            uint32_t iaid = itr->second;
+            if (iaid == iaidList[i])
+            {
+                header.AddAddress(iaidList[i],
+                                  address,
+                                  m_prefLifetime.GetSeconds(),
+                                  m_validLifetime.GetSeconds());
+            }
+        }
     }
 
     // Add Option Request option.
@@ -508,7 +528,7 @@ Dhcp6Client::SendRelease(Ipv6Address address)
     packet = Create<Packet>();
 
     m_clientTransactId = (uint32_t)(m_rand->GetValue());
-    ;
+
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::RELEASE);
 
@@ -526,7 +546,7 @@ Dhcp6Client::SendRelease(Ipv6Address address)
     // IA_NA option, IA address option
     uint32_t iaid = m_iaidMap[address];
     header.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
-    header.AddAddress(iaid, address, 40, 60);
+    header.AddAddress(iaid, address, m_prefLifetime.GetSeconds(), m_validLifetime.GetSeconds());
 
     packet->AddHeader(header);
     if ((m_socket->SendTo(
@@ -617,6 +637,8 @@ Dhcp6Client::LinkStateHandler()
             itr->Cancel();
         }
 
+        // Stop receiving on the socket.
+        m_socket->SetRecvCallback(MakeNullCallback<void, Ptr<Socket>>());
         NS_LOG_INFO("Link down at " << Simulator::Now().As(Time::S));
     }
 }
@@ -631,11 +653,6 @@ void
 Dhcp6Client::StartApplication()
 {
     NS_LOG_FUNCTION(this);
-
-    if (m_socket)
-    {
-        NS_ABORT_MSG("DHCPv6 daemon is not meant to be started repeatedly.");
-    }
 
     Ptr<Node> node = m_device->GetNode();
     Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
@@ -685,7 +702,7 @@ Dhcp6Client::StartApplication()
         Ptr<Dhcp6Client> client = app->GetObject<Dhcp6Client>();
         Address clientLinkLayer = client->GetSelfIdentifier().GetLinkLayerAddress();
 
-        // Considering an invalid link layer address to be all FF.
+        // Considering an invalid link layer address to be all 'FF'.
         uint8_t addrLen = clientLinkLayer.GetLength();
         uint8_t addrBuf[20];
         clientLinkLayer.CopyTo(addrBuf);
@@ -748,7 +765,9 @@ Dhcp6Client::StartApplication()
         m_clientIdentifier.SetLinkLayerAddress(longestDuidDevices[0]->GetAddress());
     }
 
-    Boot();
+    // Introduce a random delay before sending the Solicit message.
+    uint32_t bootTime = m_rand->GetValue();
+    Simulator::Schedule(Seconds(bootTime), &Dhcp6Client::Boot, this);
 }
 
 void
@@ -800,6 +819,13 @@ Dhcp6Client::StopApplication()
     NS_LOG_FUNCTION(this);
 
     m_solicitEvent.Cancel();
+    m_renewEvent.Cancel();
+    m_rebindEvent.Cancel();
+
+    for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
+    {
+        itr->Cancel();
+    }
 
     if (m_socket)
     {

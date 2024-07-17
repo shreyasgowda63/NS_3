@@ -34,6 +34,25 @@ class Socket;
 class Packet;
 
 /**
+ * \ingroup address
+ *
+ * \brief Class providing an hash for addresses
+ */
+class AddressHash
+{
+  public:
+    /**
+     * \brief Returns the hash of an address.
+     * \param x the address
+     * \return the hash
+     *
+     * This method uses std::hash rather than class Hash
+     * as speed is more important than cryptographic robustness.
+     */
+    size_t operator()(const Address& x) const;
+};
+
+/**
  * \ingroup dhcp6
  *
  * \class LeaseInfo
@@ -88,14 +107,14 @@ class LeaseInfo
      * \brief Expired Addresses (Section 6.2 of RFC 8415)
      * Expired time / Ipv6Address
      */
-    typedef std::map<Time, Ipv6Address> ExpiredAddresses;
+    typedef std::multimap<Time, Ipv6Address> ExpiredAddresses;
 
     /**
      * \brief Leased Addresses
      * Client DUID + Ipv6Address / Lease time
-     * TODO: Check if multiple leases are correctly stored. Move to multimap.
      */
-    typedef std::map<Address, std::pair<Ipv6Address, Time>> LeasedAddresses;
+    typedef std::unordered_multimap<Address, std::pair<Ipv6Address, Time>, AddressHash>
+        LeasedAddresses;
 
     /**
      * \brief Declined Addresses
@@ -106,6 +125,7 @@ class LeaseInfo
     LeasedAddresses m_leasedAddresses;     //!< Leased addresses
     ExpiredAddresses m_expiredAddresses;   //!< Expired addresses
     DeclinedAddresses m_declinedAddresses; //!< Declined addresses
+    Ipv6Address m_maxOfferedAddress;       //!< Maximum address offered so far.
 
   private:
     Ipv6Address m_addressPool; //!< Address pool
@@ -245,9 +265,8 @@ class Dhcp6Server : public Application
     /**
      * \brief Store IA bindings.
      * DUID + IA Type / IAID
-     * TODO: One client could have multiple IAIDs.
      */
-    std::map<Address, std::pair<uint8_t, uint32_t>> m_iaBindings;
+    std::multimap<Address, std::pair<uint8_t, uint32_t>> m_iaBindings;
 
     /**
      * \brief Default preferred lifetime for an address.
