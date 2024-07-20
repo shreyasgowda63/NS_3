@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024 NITK Surathkal
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -13,6 +14,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
+ * Author: Kavya Bhat <kavyabhat@gmail.com>
+ *
  */
 
 #ifndef DHCP6_CLIENT_H
@@ -22,13 +25,12 @@
 
 #include "ns3/application.h"
 #include "ns3/inet6-socket-address.h"
+#include "ns3/random-variable-stream.h"
 #include "ns3/socket.h"
 #include "ns3/traced-callback.h"
 
 namespace ns3
 {
-
-class RandomVariableStream;
 
 /**
  * \ingroup dhcp6
@@ -72,7 +74,7 @@ class Dhcp6Client : public Application
     void StopApplication() override;
 
     /**
-     * \brief State of the DHCPv6 client.
+     * State of the DHCPv6 client.
      */
     enum State
     {
@@ -165,98 +167,144 @@ class Dhcp6Client : public Application
     void Boot();
 
     /**
-     * \brief The port number of the DHCPv6 client.
+     * The port number of the DHCPv6 client.
      */
     static const int DHCP_CLIENT_PORT = 546;
 
     /**
-     * \brief The port number of the DHCPv6 server.
+     * The port number of the DHCPv6 server.
      */
     static const int DHCP_PEER_PORT = 547;
 
     /**
-     * \brief The socket used for communication.
+     * The socket used for communication.
      */
     Ptr<Socket> m_socket;
 
     /**
-     * \brief Pointer to the net device of the client.
+     * Pointer to the net device of the client.
      */
     Ptr<NetDevice> m_device;
 
     /**
-     * \brief The state of the DHCPv6 client.
+     * The state of the DHCPv6 client.
      */
     uint8_t m_state;
 
     /**
-     * \brief First boot of the client.
+     * First boot of the client.
      */
     bool m_firstBoot;
 
     /**
-     * \brief Store the starting timestamp for the Elapsed Time option
+     * Store the starting timestamp for the Elapsed Time option
      */
     Time m_startTime;
 
     /**
-     * \brief Store the transaction ID of the initiated message exchange.
+     * Store the transaction ID of the initiated message exchange.
      */
     uint32_t m_clientTransactId;
 
     /**
-     * \brief Store the client identifier option.
+     * Store the client identifier option.
      */
     IdentifierOption m_clientIdentifier;
 
     /**
-     * \brief Store the server identifier option.
+     * Store the server identifier option.
      */
     IdentifierOption m_serverIdentifier;
 
     /**
-     * \brief Track the IPv6 Address - IAID association.
+     * Track the IPv6 Address - IAID association.
      */
     std::unordered_map<Ipv6Address, uint32_t, Ipv6AddressHash> m_iaidMap;
 
     /**
-     * \brief List of addresses to be declined by the client.
+     * List of addresses to be declined by the client.
      */
     std::vector<Ipv6Address> m_declinedAddresses;
 
     /**
-     * \brief Track whether DAD callback on all addresses has been scheduled.
+     * Track whether DAD callback on all addresses has been scheduled.
      */
     bool m_addressDadComplete;
 
     /**
-     * \brief The number of addresses offered to the client.
+     * The number of addresses offered to the client.
      */
     uint8_t m_offeredAddresses;
 
     /**
-     * \brief The number of addresses accepted by the client.
+     * The number of addresses accepted by the client.
      */
     uint8_t m_acceptedAddresses;
 
-    Time m_msgStartTime; //!< Time when message exchange starts.
+    /**
+     * Time when message exchange starts.
+     */
+    Time m_msgStartTime;
 
-    Time m_solicitInterval; //!< SOL_MAX_RT value, default = 3600 / 100 = 36 sec
-    EventId m_solicitEvent; //!< Event ID for the solicit event
+    /**
+     * SOL_MAX_RT value, default = 3600 / 100 = 36 sec
+     */
+    Time m_solicitInterval;
 
-    Time m_renew;         //!< T1 value
-    Time m_rebind;        //!< T2 value
-    Time m_prefLifetime;  //!< Preferred lifetime of the address
-    Time m_validLifetime; //!< Valid lifetime of the address
+    /**
+     * Event ID for the solicit event
+     */
+    EventId m_solicitEvent;
 
-    EventId m_renewEvent;                //!< Event ID for the renew event
-    EventId m_rebindEvent;               //!< Event ID for the rebind event
-    std::vector<EventId> m_releaseEvent; //!< Event ID for the release event
+    /**
+     * Time after which lease should be renewed.
+     */
+    Time m_renew;
 
-    uint32_t m_ianaIds; //!< Track the latest IANA ID
+    /**
+     * Time after which client should send a Rebind message.
+     */
+    Time m_rebind;
 
-    Ptr<RandomVariableStream> m_rand;              //!< Random variable to set transaction ID
-    TracedCallback<const Ipv6Address&> m_newLease; //!< Trace of new lease obtained
+    /**
+     * Preferred lifetime of the address.
+     */
+    Time m_prefLifetime;
+
+    /**
+     * Valid lifetime of the address
+     */
+    Time m_validLifetime;
+
+    /**
+     * Event ID for the renew event
+     */
+    EventId m_renewEvent;
+
+    /**
+     * Event ID for the rebind event
+     */
+    EventId m_rebindEvent;
+
+    /**
+     * Store all the Event IDs for the addresses being Released.
+     */
+    std::vector<EventId> m_releaseEvent;
+
+    /**
+     * Track the latest IANA ID
+     */
+    uint32_t m_ianaIds;
+
+    /**
+     * Random variable to set transaction ID
+     */
+    Ptr<RandomVariableStream> m_rand;
+
+    /**
+     * Trace the newly obtained lease.
+     */
+    TracedCallback<const Ipv6Address&> m_newLease;
 };
 
 } // namespace ns3

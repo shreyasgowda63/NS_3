@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024 NITK Surathkal
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -12,6 +13,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: Kavya Bhat <kavyabhat@gmail.com>
  *
  */
 
@@ -74,12 +77,12 @@ class Options
 
   private:
     /**
-     * \brief Code associated with the included option.
+     * Code associated with the included option.
      */
     uint16_t m_optionCode;
 
     /**
-     * \brief Length of the included option.
+     * Length of the included option.
      */
     uint16_t m_optionLength;
 };
@@ -142,18 +145,18 @@ class IdentifierOption : public Options
 
   private:
     /**
-     * \brief Type of the DUID.
-     * Here, we implement only DUID type 2, based on the link-layer address.
+     * Type of the DUID.
+     * Here, we implement only DUID type 3, based on the link-layer address.
      */
     uint16_t m_duidType;
 
     /**
-     * \brief Valid hardware type assigned by IANA.
+     * Valid hardware type assigned by IANA.
      */
     uint16_t m_hardwareType;
 
     /**
-     * \brief Link-layer address of the node.
+     * Link-layer address of the node.
      */
     Address m_linkLayerAddress;
 };
@@ -198,13 +201,13 @@ class StatusCodeOption : public Options
 
   private:
     /**
-     * \brief The status code of an operation involving the IANA, IATA or
+     * The status code of an operation involving the IANA, IATA or
      * IA address.
      */
     uint16_t m_statusCode;
 
     /**
-     * \brief The status message of the operation. This is to be UTF-8 encoded
+     * The status message of the operation. This is to be UTF-8 encoded
      * as per RFC 3629.
      */
     std::string m_statusMessage;
@@ -270,22 +273,22 @@ class IaAddressOption : public Options
 
   private:
     /**
-     * \brief The IPv6 address offered to the client.
+     * The IPv6 address offered to the client.
      */
     Ipv6Address m_iaAddress;
 
     /**
-     * \brief The preferred lifetime of the address, in seconds.
+     * The preferred lifetime of the address, in seconds.
      */
     uint32_t m_preferredLifetime;
 
     /**
-     * \brief The valid lifetime of the address, in seconds.
+     * The valid lifetime of the address, in seconds.
      */
     uint32_t m_validLifetime;
 
     /**
-     * \brief (optional) The status code of any operation involving this address
+     * (optional) The status code of any operation involving this address
      */
     StatusCodeOption m_statusCodeOption;
 };
@@ -345,30 +348,30 @@ class IaOptions : public Options
     void SetT2(uint32_t t2);
 
     /**
-     * \brief The list of IA Address options associated with the IANA.
+     * The list of IA Address options associated with the IANA.
      */
     std::list<IaAddressOption> m_iaAddressOption;
 
   private:
     /**
-     * \brief The unique identifier for the given IANA or IATA.
+     * The unique identifier for the given IANA or IATA.
      */
     uint32_t m_iaid;
 
     /**
-     * \brief The time interval in seconds after which the client contacts the
+     * The time interval in seconds after which the client contacts the
      * server which provided the address to extend the lifetime.
      */
     uint32_t m_t1;
 
     /**
-     * \brief The time interval in seconds after which the client contacts any
+     * The time interval in seconds after which the client contacts any
      * available server to extend the address lifetime.
      */
     uint32_t m_t2;
 
     /**
-     * \brief (optional) The status code of any operation involving the IANA.
+     * (optional) The status code of any operation involving the IANA.
      */
     StatusCodeOption m_statusCodeOption;
 };
@@ -401,7 +404,7 @@ class RequestOptions : public Options
 
   private:
     /**
-     * \brief List of requested options.
+     * List of requested options.
      */
     std::list<uint16_t> m_requestedOptions;
 };
@@ -435,8 +438,7 @@ class IntegerOptions : public Options
 
   private:
     /**
-     * \brief Value that indicates the elapsed time, preference value or option
-     * list.
+     * Value that indicates the elapsed time, preference value or option list.
      */
     T m_optionValue;
 };
@@ -466,7 +468,7 @@ class ServerUnicastOption : public Options
 
   private:
     /**
-     * \brief The 128-bit server address to which the client should send
+     * The 128-bit server address to which the client should send
      * unicast messages.
      */
     Ipv6Address m_serverAddress;

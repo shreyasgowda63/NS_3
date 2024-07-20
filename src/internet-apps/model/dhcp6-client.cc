@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024 NITK Surathkal
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -13,18 +14,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
+ * Author: Kavya Bhat <kavyabhat@gmail.com>
+ *
  */
 
 #include "dhcp6-client.h"
 
 #include "ns3/address-utils.h"
-#include "ns3/assert.h"
 #include "ns3/icmpv6-l4-protocol.h"
 #include "ns3/ipv6-interface.h"
-#include "ns3/ipv6-l3-protocol.h"
 #include "ns3/ipv6-packet-info-tag.h"
-#include "ns3/ipv6-routing-table-entry.h"
-#include "ns3/ipv6-static-routing-helper.h"
 #include "ns3/ipv6.h"
 #include "ns3/log.h"
 #include "ns3/loopback-net-device.h"
@@ -737,12 +736,17 @@ Dhcp6Client::StartApplication()
             // Check if the NetDevice is up.
             if (device->IsLinkUp())
             {
+                NS_LOG_INFO("Link is up!");
                 Address address = device->GetAddress();
                 if (address.GetLength() > maxAddressLength)
                 {
                     maxAddressLength = address.GetLength();
                 }
                 possibleDuidDevices.push_back(device);
+            }
+            else
+            {
+                NS_LOG_INFO("Not up yet!");
             }
         }
 

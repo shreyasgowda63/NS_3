@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024 NITK Surathkal
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -13,13 +14,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
+ * Author: Kavya Bhat <kavyabhat@gmail.com>
+ *
  */
 
 #include "dhcp6-server.h"
 
 #include "ns3/address-utils.h"
-#include "ns3/assert.h"
-#include "ns3/ipv6-l3-protocol.h"
 #include "ns3/ipv6-packet-info-tag.h"
 #include "ns3/ipv6.h"
 #include "ns3/log.h"
@@ -92,6 +93,7 @@ Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
 
     std::vector<bool> headerOptions = header.GetOptionList();
 
+    // Add each IA in the header to the IA bindings.
     if (headerOptions[Dhcp6Header::OPTION_IA_NA])
     {
         std::list<IaOptions> iaOpt = header.GetIanaOptions();
@@ -107,6 +109,8 @@ void
 Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
     NS_LOG_INFO(this << iDev << header << client);
+
+    // Options included according to RFC 8415 Section 18.3.9
 
     Ptr<Packet> packet = Create<Packet>();
     Dhcp6Header advertiseHeader;
@@ -160,9 +164,11 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
 
             if (!subnet->m_leasedAddresses.empty())
             {
+                // Obtain the highest address that has been offered.
                 subnet->m_maxOfferedAddress.GetBytes(lastLeasedAddrBuf);
                 memcpy(offeredAddrBuf, lastLeasedAddrBuf, 16);
 
+                // Increment the address by adding 1. Bitwise addition is used.
                 bool addedOne = false;
                 for (uint8_t i = 15; !addedOne && i >= 0; i--)
                 {
@@ -204,6 +210,8 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
             // Pair: IA type + IAID.
             std::pair<uint8_t, uint32_t> iaInfo = iaBinding->second;
             uint32_t iaid = iaInfo.second;
+
+            // Add the IA_NA option and IA Address option.
             advertiseHeader.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
             advertiseHeader.AddAddress(iaid,
                                        offeredAddr,
@@ -221,8 +229,10 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
 
     packet->AddHeader(advertiseHeader);
 
-    // Send the advertise message.
+    // Find the socket corresponding to the NetDevice.
     Ptr<Socket> sendSocket = m_sendSockets[iDev];
+
+    // Send the advertise message.
     if (sendSocket->SendTo(packet, 0, client) >= 0)
     {
         NS_LOG_INFO("DHCPv6 Advertise sent.");
@@ -237,6 +247,8 @@ void
 Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
     NS_LOG_INFO(this << iDev << header << client);
+
+    // Options included according to RFC 8415 Section 18.3.10
 
     Ptr<Packet> packet = Create<Packet>();
     Dhcp6Header replyHeader;
@@ -275,6 +287,8 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
                 Ipv6Address minAddress = subnet->GetMinAddress();
                 Ipv6Address maxAddress = subnet->GetMaxAddress();
 
+                // Check if the requested address has been declined earlier.
+                // In this case, it cannot be leased.
                 if (subnet->m_declinedAddresses.find(requestedAddr) !=
                     subnet->m_declinedAddresses.end())
                 {
@@ -299,13 +313,18 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
                         return;
                     }
 
+                    // Add the IA_NA option and IA Address option.
                     replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
                     replyHeader.AddAddress(iaOpt.GetIaid(),
                                            requestedAddr,
                                            m_prefLifetime.GetSeconds(),
                                            m_validLifetime.GetSeconds());
 
+                    // Update the lease time of the newly leased addresses.
+                    // Find all the leases for this client.
                     auto range = subnet->m_leasedAddresses.equal_range(clientAddress);
+
+                    // Create a new multimap to store the updated lifetimes.
                     std::multimap<Address, std::pair<Ipv6Address, Time>> updatedLifetimes;
                     for (auto it = range.first; it != range.second; it++)
                     {
@@ -313,11 +332,16 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
                         std::pair<Ipv6Address, Time> clientLeaseTime = {
                             clientLease,
                             Time(Seconds(m_prefLifetime.GetSeconds()))};
+
+                        // Add the DUID + Ipv6Address / LeaseTime to the map.
                         updatedLifetimes.insert({clientAddress, clientLeaseTime});
                     }
 
+                    // Remove all the old leases for this client.
+                    // This is done to prevent multiple entries for the same lease.
                     subnet->m_leasedAddresses.erase(range.first->first);
 
+                    // Add the updated leases to the subnet.
                     for (auto itr = updatedLifetimes.begin(); itr != updatedLifetimes.end(); itr++)
                     {
                         subnet->m_leasedAddresses.insert({itr->first, itr->second});
@@ -329,6 +353,8 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
     }
 
     std::vector<bool> headerOptions = header.GetOptionList();
+
+    // Check if the client has requested any options.
     if (headerOptions[Dhcp6Header::OPTION_ORO])
     {
         std::list<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
@@ -337,8 +363,10 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
 
     packet->AddHeader(replyHeader);
 
-    // Send the Reply message.
+    // Find the socket corresponding to the NetDevice.
     Ptr<Socket> sendSocket = m_sendSockets[iDev];
+
+    // Send the Reply message.
     if (sendSocket->SendTo(packet, 0, client) >= 0)
     {
         NS_LOG_INFO("DHCPv6 Reply sent.");
@@ -353,6 +381,8 @@ void
 Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
     NS_LOG_INFO(this << iDev << header << client);
+
+    // Options included according to RFC 8415 Section 18.3.4, 18.3.5
 
     Ptr<Packet> packet = Create<Packet>();
     Dhcp6Header replyHeader;
@@ -377,36 +407,45 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
         IaOptions iaOpt = *ianaOpt;
         std::list<IaAddressOption> iaAddrOptList = iaOpt.m_iaAddressOption;
 
+        // Add the IA_NA option.
         replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
 
         for (auto addrItr = iaAddrOptList.begin(); addrItr != iaAddrOptList.end(); addrItr++)
         {
+            // Find the lease address which is to be renewed or rebound.
             Ipv6Address clientLease = addrItr->GetIaAddress();
 
-            replyHeader.AddAddress(iaOpt.GetIaid(),
-                                   clientLease,
-                                   m_prefLifetime.GetSeconds(),
-                                   m_validLifetime.GetSeconds());
-
+            // Update the lifetime for the address.
+            // Iterate through the subnet list to find the subnet that the
+            // address belongs to.
             for (auto subnet = m_subnets.begin(); subnet != m_subnets.end(); subnet++)
             {
                 Ipv6Prefix prefix = subnet->GetPrefix();
                 Ipv6Address pool = subnet->GetAddressPool();
 
+                // Check if the prefix of the lease matches that of the pool.
                 if (prefix.IsMatch(clientLease, pool))
                 {
+                    // Find all the leases for this client.
                     auto range = subnet->m_leasedAddresses.equal_range(clientAddress);
                     std::multimap<Address, std::pair<Ipv6Address, Time>> newLifetimes;
                     for (auto itr = range.first; itr != range.second; itr++)
                     {
+                        // Check if the IPv6 address matches the client lease.
                         if (itr->second.first == clientLease)
                         {
                             NS_LOG_INFO("Renewing address: " << itr->second.first);
                             std::pair<Ipv6Address, Time> clientLeaseTime = {
                                 clientLease,
                                 Time(Seconds(m_prefLifetime.GetSeconds()))};
+
+                            // Remove the old lease information.
                             subnet->m_leasedAddresses.erase(itr);
+
+                            // Add the new lease information (with updated time)
                             subnet->m_leasedAddresses.insert({clientAddress, clientLeaseTime});
+
+                            // Add the IA Address option.
                             replyHeader.AddAddress(iaOpt.GetIaid(),
                                                    clientLease,
                                                    m_prefLifetime.GetSeconds(),
@@ -428,8 +467,10 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
 
     packet->AddHeader(replyHeader);
 
-    // Send the Reply message.
+    // Find the socket corresponding to the NetDevice.
     Ptr<Socket> sendSocket = m_sendSockets[iDev];
+
+    // Send the Reply message.
     if (sendSocket->SendTo(packet, 0, client) >= 0)
     {
         NS_LOG_INFO("DHCPv6 Reply sent.");
@@ -443,7 +484,10 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
 void
 Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
+    // Invoked in case a Decline or Release message is received.
     NS_LOG_INFO(this << iDev << header << client);
+
+    // Options included in accordance with RFC 8415, Section 18.3.7, 18.3.8
 
     Ptr<Packet> packet = Create<Packet>();
     Dhcp6Header replyHeader;
@@ -550,8 +594,10 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
 
     packet->AddHeader(replyHeader);
 
-    // Send the Reply message.
+    // Find the socket corresponding to the NetDevice.
     Ptr<Socket> sendSocket = m_sendSockets[iDev];
+
+    // Send the Reply message.
     if (sendSocket->SendTo(packet, 0, client) >= 0)
     {
         NS_LOG_INFO("DHCPv6 Reply sent.");
@@ -595,7 +641,6 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
     }
     if (header.GetMessageType() == Dhcp6Header::SOLICIT)
     {
-        NS_LOG_INFO("Received Solicit");
         ProcessSolicit(iDev, header, senderAddr);
         SendAdvertise(iDev, header, senderAddr);
     }

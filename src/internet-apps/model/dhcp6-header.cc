@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024 NITK Surathkal
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -12,6 +13,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: Kavya Bhat <kavyabhat@gmail.com>
  *
  */
 
@@ -126,10 +129,15 @@ Dhcp6Header::GetIanaOptions()
 void
 Dhcp6Header::AddElapsedTime(uint16_t timestamp)
 {
+    // Set the code, length, value.
     elapsedTime.SetOptionCode(OPTION_ELAPSED_TIME);
     elapsedTime.SetOptionLength(2);
     elapsedTime.SetOptionValue(timestamp);
+
+    // Increase the total length by 6 bytes.
     AddMessageLength(6);
+
+    // Set the option flag to true.
     m_options[OPTION_ELAPSED_TIME] = true;
 }
 
@@ -151,14 +159,20 @@ Dhcp6Header::AddIdentifierOption(IdentifierOption& identifier,
                                  uint16_t hardwareType,
                                  Address linkLayerAddress)
 {
+    // DUID type (2 bytes) + hw type (2 bytes) + Link-layer Address (variable)
     uint16_t duidLength = 2 + 2 + linkLayerAddress.GetLength();
+
+    // Set the option code, length, hardware type, link layer address.
     identifier.SetOptionCode(optionType);
     identifier.SetOptionLength(duidLength);
     identifier.SetHardwareType(hardwareType);
     identifier.SetLinkLayerAddress(linkLayerAddress);
 
-    m_options[optionType] = true;
+    // Increase the total length by (4 + duidLength) bytes.
     AddMessageLength(4 + duidLength);
+
+    // Set the option flag to true.
+    m_options[optionType] = true;
 }
 
 RequestOptions
@@ -170,22 +184,28 @@ Dhcp6Header::GetOptionRequest()
 void
 Dhcp6Header::AddOptionRequest(uint16_t optionType)
 {
-    m_options[OPTION_ORO] = true;
-
-    m_optionRequest.SetOptionCode(OPTION_ORO);
+    // Check if this is the first option request.
     if (m_optionRequest.GetOptionLength() == 0)
     {
         AddMessageLength(4);
     }
 
+    // Set the option code, length, and add the requested option.
+    m_optionRequest.SetOptionCode(OPTION_ORO);
     m_optionRequest.SetOptionLength(m_optionRequest.GetOptionLength() + 2);
     m_optionRequest.AddRequestedOption(optionType);
+
+    // Increase the total length by 2 bytes.
     AddMessageLength(2);
+
+    // Set the option flag to true.
+    m_options[OPTION_ORO] = true;
 }
 
 void
 Dhcp6Header::HandleOptionRequest(std::list<uint16_t> requestedOptions)
 {
+    // Currently, only OPTION_SOL_MAX_RT is supported.
     for (auto itr = requestedOptions.begin(); itr != requestedOptions.end(); itr++)
     {
         switch (*itr)
@@ -202,48 +222,43 @@ Dhcp6Header::HandleOptionRequest(std::list<uint16_t> requestedOptions)
 void
 Dhcp6Header::AddSolMaxRt()
 {
-    m_options[OPTION_SOL_MAX_RT] = true;
+    // Increase the total message length.
+    // 4 bytes - for option code + option length.
+    // 4 bytes - for the option value.
     AddMessageLength(4 + 4);
+
+    m_options[OPTION_SOL_MAX_RT] = true;
 }
 
 void
 Dhcp6Header::AddIanaOption(uint32_t iaid, uint32_t t1, uint32_t t2)
 {
-    // TODO: add check for IA_NA IAID number space.
     AddIaOption(OPTION_IA_NA, iaid, t1, t2);
 }
 
 void
 Dhcp6Header::AddIataOption(uint32_t iaid)
 {
-    // TODO: add check for IA_TA IAID number space.
     AddIaOption(OPTION_IA_TA, iaid);
 }
 
 void
 Dhcp6Header::AddIaOption(uint16_t optionType, uint32_t iaid, uint32_t t1, uint32_t t2)
 {
-    // Add a new identity association.
+    // Create a new identity association.
     IaOptions newIa;
     newIa.SetOptionCode(optionType);
+
+    // Minimum option length of an IA is 12 bytes.
     uint16_t optionLength = 12;
-
-    // Obtain the list of IANA or IATA options
-    std::list<IaAddressOption> iaAddresses = newIa.m_iaAddressOption;
-    auto itr = iaAddresses.begin();
-
-    // Add length of each option to the IANA or IATA option length.
-    while (itr != iaAddresses.end())
-    {
-        optionLength += (*itr).GetOptionLength();
-        itr++;
-    }
 
     newIa.SetOptionLength(optionLength);
     newIa.SetIaid(iaid);
     newIa.SetT1(t1);
     newIa.SetT2(t2);
 
+    // Check if the IA is to be added to the list of IANA or IATA options.
+    // If the IAID is already present, it is not added.
     switch (optionType)
     {
     case OPTION_IA_NA: {
@@ -285,6 +300,7 @@ Dhcp6Header::AddIaOption(uint16_t optionType, uint32_t iaid, uint32_t t1, uint32
     }
     }
 
+    // Set the option flag to true.
     m_options[optionType] = true;
 }
 
@@ -294,10 +310,11 @@ Dhcp6Header::AddAddress(uint32_t iaid,
                         uint32_t prefLifetime,
                         uint32_t validLifetime)
 {
-    auto itr = m_ianaList.begin();
     bool isIana = false;
     bool isIata = false;
+
     // Check if IAID corresponds to an IANA option.
+    auto itr = m_ianaList.begin();
     while (itr != m_ianaList.end())
     {
         if (iaid == (*itr).GetIaid())
@@ -342,6 +359,7 @@ Dhcp6Header::AddAddress(uint32_t iaid,
     // Add the address option length to the overall IANA or IATA length.
     (*itr).SetOptionLength((*itr).GetOptionLength() + 28);
 
+    // Increase the total message length.
     AddMessageLength(4 + 24);
 }
 
@@ -354,14 +372,17 @@ Dhcp6Header::GetOptionList()
 void
 Dhcp6Header::AddStatusCode(uint16_t status, std::string statusMsg)
 {
-    m_options[OPTION_STATUS_CODE] = true;
     statusCode.SetOptionCode(OPTION_STATUS_CODE);
-
     statusCode.SetStatusCode(status);
     statusCode.SetStatusMessage(statusMsg);
 
     statusCode.SetOptionLength(2 + statusCode.GetStatusMessage().length());
+
+    // Increase the total message length.
     AddMessageLength(4 + statusCode.GetOptionLength());
+
+    // Set the option flag to true.
+    m_options[OPTION_STATUS_CODE] = true;
 }
 
 uint32_t

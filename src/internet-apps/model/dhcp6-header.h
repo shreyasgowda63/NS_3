@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024 NITK Surathkal
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -12,6 +13,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: Kavya Bhat <kavyabhat@gmail.com>
  *
  */
 
@@ -79,7 +82,7 @@ class Dhcp6Header : public Header
     void ResetOptions();
 
     /**
-     * \brief Enum to identify the message type.
+     * Enum to identify the message type.
      * RELAY_FORW, RELAY_REPL message types are not currently implemented.
      */
     enum MessageType
@@ -100,7 +103,7 @@ class Dhcp6Header : public Header
     };
 
     /**
-     * \brief Enum to identify the option type.
+     * Enum to identify the option type.
      */
     enum OptionType
     {
@@ -131,7 +134,7 @@ class Dhcp6Header : public Header
     };
 
     /**
-     * \brief Enum to identify the status code of the operation.
+     * Enum to identify the status code of the operation.
      */
     enum StatusCodeValues
     {
@@ -264,72 +267,6 @@ class Dhcp6Header : public Header
     void AddMessageLength(uint32_t len);
 
     /**
-     * \brief The message length;
-     */
-    uint32_t m_len;
-
-    /**
-     * \brief The message type.
-     */
-    uint32_t m_msgType : 8;
-
-    /**
-     * \brief The transaction ID calculated by the client or the server.
-     * This is a 24-bit integer.
-     */
-    uint32_t m_transactId : 24;
-
-    /**
-     * \brief Options present in the header, indexed by option code.
-     */
-    std::vector<bool> m_options;
-
-    /**
-     * \brief The client identifier option.
-     */
-    IdentifierOption clientIdentifier;
-
-    /**
-     * \brief The server identifier option.
-     */
-    IdentifierOption serverIdentifier;
-
-    /**
-     * \brief (optional) The status code of the operation just performed.
-     */
-    StatusCodeOption statusCode;
-
-    /**
-     * \brief List of additional options requested.
-     */
-    RequestOptions m_optionRequest;
-
-    /**
-     * \brief The preference value for the server.
-     */
-    IntegerOptions<uint8_t> preference;
-
-    /**
-     * \brief The amount of time since the client began the transaction.
-     */
-    IntegerOptions<uint16_t> elapsedTime;
-
-    /**
-     * \brief List of IANA options.
-     */
-    std::list<IaOptions> m_ianaList;
-
-    /**
-     * \brief List of IATA options.
-     */
-    std::list<IaOptions> m_iataList;
-
-    /**
-     * \brief Default value for the SOL_MAX_RT option.
-     */
-    uint32_t m_solMaxRt;
-
-    /**
      * \brief Add an identifier option to the header.
      * \param identifier the client or server identifier option object.
      * \param optionType identify whether to add a client or server identifier.
@@ -349,6 +286,72 @@ class Dhcp6Header : public Header
      * \param t2
      */
     void AddIaOption(uint16_t optionType, uint32_t iaid, uint32_t t1 = 0, uint32_t t2 = 0);
+
+    /**
+     * The message length;
+     */
+    uint32_t m_len;
+
+    /**
+     * The message type.
+     */
+    uint32_t m_msgType : 8;
+
+    /**
+     * The transaction ID calculated by the client or the server.
+     * This is a 24-bit integer.
+     */
+    uint32_t m_transactId : 24;
+
+    /**
+     * Options present in the header, indexed by option code.
+     */
+    std::vector<bool> m_options;
+
+    /**
+     * The client identifier option.
+     */
+    IdentifierOption clientIdentifier;
+
+    /**
+     * The server identifier option.
+     */
+    IdentifierOption serverIdentifier;
+
+    /**
+     * (optional) The status code of the operation just performed.
+     */
+    StatusCodeOption statusCode;
+
+    /**
+     * List of additional options requested.
+     */
+    RequestOptions m_optionRequest;
+
+    /**
+     * The preference value for the server.
+     */
+    IntegerOptions<uint8_t> preference;
+
+    /**
+     * The amount of time since the client began the transaction.
+     */
+    IntegerOptions<uint16_t> elapsedTime;
+
+    /**
+     * List of IANA options.
+     */
+    std::list<IaOptions> m_ianaList;
+
+    /**
+     * List of IATA options.
+     */
+    std::list<IaOptions> m_iataList;
+
+    /**
+     * Default value for the SOL_MAX_RT option.
+     */
+    uint32_t m_solMaxRt;
 };
 
 } // namespace ns3
