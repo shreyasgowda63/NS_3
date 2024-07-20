@@ -329,3 +329,115 @@ V4TraceRoute
 ************
 
 Documentation is missing for this application.
+
+DHCPv6
+******
+
+The |ns3| implementation of Dynamic Host Configuration Protocol for IPv6 (DHCPv6)
+follows the specifications of :rfc:`8415`.
+
+Model Description
+=================
+This application behaves similarly to the ``dhcpd`` daemon in Linux, although,
+with fewer options supported. The DHCPv6 client installed on a node sends
+Solicit messages to a server configured on the link, which responds with an IPv6
+address offer.
+
+The source code for DHCPv6 is located in ``src/internet-apps/model`` and consists of the
+following 8 files:
+
+* **Server**
+
+  * dhcp6-server.h,
+  * dhcp6-server.cc
+
+* **Client**
+
+  * dhcp6-client.h,
+  * dhcp6-client.cc
+
+* **Header**
+
+  * dhcp6-header.h,
+  * dhcp6-header.cc,
+  * dhcp6-options.h, and
+  * dhcp6-options.cc
+
+.. add image (of general client/server exchange) here
+.. DHCPv6 client, server, headers, options - design details, diagrams
+
+Usage
+=====
+The main way for ns-3 users to use the DHCPv6 application is through the helper
+API, and the publicly visibly attributes of the client and server applications.
+
+Helpers
+#######
+The ``Dhcp6Helper`` supports the typical ``Install`` usage pattern in |ns3|. It
+can be used to easily install DHCPv6 server and client applications on a set of
+interfaces.
+
+.. sourcecode:: cpp
+
+  Dhcp6Helper dhcpHelper;
+  std::vector<Ptr<NetDevice>> serverNetDevices;
+  serverNetDevices.push_back(netdevice);
+  ApplicationContainer dhcpServerApp = dhcpHelper.InstallDhcp6Server(serverNetDevices);
+
+  NetDeviceContainer dhcpClientNetDevs;
+  dhcpClientNetDevs.Add(netdevice1_node1);
+  dhcpClientNetDevs.Add(netdevice1_node2);
+  ApplicationContainer dhcpClientApps = dhcpHelper.InstallDhcp6Client(dhcpClientNetDevs);
+
+Address pools can be configured on the DHCPv6 server using the following API :
+
+..sourcecode:: cpp
+
+  Ptr<Dhcp6Server> server = dhcpHelper.GetDhcp6Server(devNet.Get(0));
+  server->AddSubnet(Ipv6Address("2001:db8::"), Ipv6Prefix(64), Ipv6Address("2001:db8::1"), Ipv6Address("2001:db8::ff"));
+
+Attributes
+##########
+The following attribute can be configured on the client:
+* ``Transactions``: A random variable used to set the transaction numbers.
+
+The following attributes can be configured on the server:
+* ``RenewTime``: Time after which client should renew its lease.
+* ``RebindTime``: Time after which client should rebind its leased addresses.
+* ``PreferredLifetime``: The preferred lifetime of the leased address.
+* ``ValidLifetime``: Time after which client should release the address.
+
+Example
+#######
+
+The following example has been written in ``src/internet-apps/examples/``:
+* ``dhcp6-example.cc``: Demonstrates the working of stateful DHCPv6 with a single server and 2 client nodes.
+
+Test
+====
+
+The following example has been written in ``src/internet-apps/test/``:
+* ``dhcp6-test.cc``: Tests the working of DHCPv6 with a single server and 2 client nodes that have 1 CSMA interface and 1 Wifi interface each.
+
+Scope and Limitations
+=====================
+* Limited options have been included in the DHCPv6 implementation, namely:
+
+  * Server Identifier
+  * Client Identifier
+  * Identity Association for Non-temporary Addresses (IA_NA)
+  * Option Request (for Solicit MAX_RT)
+  * Status Code
+
+* The implementation does not support the use of a DHCP Relay agent. Hence, all the server and client nodes should be on the same link.
+* The application does not yet support prefix delegation. Each client currently receives only one IPv6 address.
+
+Future Work
+===========
+* The Rapid Commit option may be implemented to allow a Solicit / Reply message exchange between the client and server.
+* Implementation of stateless DHCPv6 to allow the client to request only configuration information from the server.
+
+References
+==========
+* :rfc:`8415` - Dynamic Host Configuration Protocol for IPv6 (DHCPv6)
+* Infoblox Blog <https://blogs.infoblox.com/ipv6-coe/slaac-to-basics-part-2-of-2-configuring-slaac/ > to understand how SLAAC and DHCPv6 operate at the same time.
