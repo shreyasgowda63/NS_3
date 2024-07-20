@@ -68,6 +68,9 @@ daily-build-test-debug:
   extends: .base-test
   rules:
     - if: $RELEASE == "daily"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   needs: ["daily-jobs"]
@@ -84,6 +87,9 @@ daily-build-default:
   extends: .base-test
   rules:
     - if: $RELEASE == "daily"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -95,6 +101,9 @@ daily-test-default:
   extends: .base-test
   rules:
     - if: $RELEASE == "daily"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: test
@@ -109,6 +118,9 @@ daily-build-optimized:
   extends: .base-test
   rules:
     - if: $RELEASE == "daily"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -120,6 +132,9 @@ daily-test-optimized:
   extends: .base-test
   rules:
     - if: $RELEASE == "daily"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: test
@@ -134,6 +149,9 @@ weekly-build-test-optimized-sanitizers:
   extends: .base-test
   rules:
     - if: $RELEASE == "weekly"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -153,6 +171,9 @@ daily-build-test-optimized-valgrind:
   extends: .base-test
   rules:
     - if: $RELEASE == "daily"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -171,6 +192,9 @@ weekly-build-test-debug-valgrind:
   extends: .base-test
   rules:
     - if: $RELEASE == "weekly"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -189,6 +213,9 @@ weekly-build-test-default-valgrind:
   extends: .base-test
   rules:
     - if: $RELEASE == "weekly"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -207,6 +234,9 @@ weekly-build-test-optimized-valgrind:
   extends: .base-test
   rules:
     - if: $RELEASE == "weekly"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -225,6 +255,9 @@ weekly-build-test-takes-forever-optimized:
   extends: .base-test
   rules:
     - if: $RELEASE == "weekly"
+    # No pipeline when there is a MR whose title starts with Draft
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
