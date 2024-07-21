@@ -70,7 +70,7 @@ daily-build-test-debug:
     - if: $RELEASE == "daily"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   needs: ["daily-jobs"]
@@ -89,7 +89,7 @@ daily-build-default:
     - if: $RELEASE == "daily"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -103,7 +103,7 @@ daily-test-default:
     - if: $RELEASE == "daily"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: test
@@ -120,7 +120,7 @@ daily-build-optimized:
     - if: $RELEASE == "daily"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -134,7 +134,7 @@ daily-test-optimized:
     - if: $RELEASE == "daily"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: test
@@ -151,7 +151,7 @@ weekly-build-test-optimized-sanitizers:
     - if: $RELEASE == "weekly"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -173,7 +173,7 @@ daily-build-test-optimized-valgrind:
     - if: $RELEASE == "daily"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -194,7 +194,7 @@ weekly-build-test-debug-valgrind:
     - if: $RELEASE == "weekly"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -215,7 +215,7 @@ weekly-build-test-default-valgrind:
     - if: $RELEASE == "weekly"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -236,7 +236,7 @@ weekly-build-test-optimized-valgrind:
     - if: $RELEASE == "weekly"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
@@ -257,7 +257,7 @@ weekly-build-test-takes-forever-optimized:
     - if: $RELEASE == "weekly"
     # No pipeline when there is a MR whose title starts with Draft
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
-      when: never
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: true
   stage: build
