@@ -208,7 +208,7 @@ CcHelper::EquallySpacedCcs()
             pc = true;
         }
         ComponentCarrier cc = CreateSingleCc(m_ulBandwidth, m_dlBandwidth, ulEarfcn, dlEarfcn, pc);
-        ccmap.insert(std::pair<uint8_t, ComponentCarrier>(i, cc));
+        ccmap.emplace(i, cc);
 
         NS_LOG_INFO("ulBandwidth: " << m_ulBandwidth << ", dlBandwidth: " << m_dlBandwidth
                                     << ", ulEarfcn: " << ulEarfcn << ", dlEarfcn: " << dlEarfcn);

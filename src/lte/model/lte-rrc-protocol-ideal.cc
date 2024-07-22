@@ -558,8 +558,7 @@ LteEnbRrcProtocolIdeal::DoEncodeHandoverPreparationInformation(
                       g_handoverPreparationInfoMsgMap.end(),
                   "msgId " << msgId << " already in use");
     NS_LOG_INFO(" encoding msgId = " << msgId);
-    g_handoverPreparationInfoMsgMap.insert(
-        std::pair<uint32_t, LteRrcSap::HandoverPreparationInfo>(msgId, msg));
+    g_handoverPreparationInfoMsgMap.emplace(msgId, msg);
     IdealHandoverPreparationInfoHeader h;
     h.SetMsgId(msgId);
     Ptr<Packet> p = Create<Packet>();
@@ -680,8 +679,7 @@ LteEnbRrcProtocolIdeal::DoEncodeHandoverCommand(LteRrcSap::RrcConnectionReconfig
     NS_ASSERT_MSG(g_handoverCommandMsgMap.find(msgId) == g_handoverCommandMsgMap.end(),
                   "msgId " << msgId << " already in use");
     NS_LOG_INFO(" encoding msgId = " << msgId);
-    g_handoverCommandMsgMap.insert(
-        std::pair<uint32_t, LteRrcSap::RrcConnectionReconfiguration>(msgId, msg));
+    g_handoverCommandMsgMap.emplace(msgId, msg);
     IdealHandoverCommandHeader h;
     h.SetMsgId(msgId);
     Ptr<Packet> p = Create<Packet>();

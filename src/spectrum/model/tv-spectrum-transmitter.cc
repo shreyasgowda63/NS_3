@@ -267,7 +267,7 @@ TvSpectrumTransmitter::CreateTvPsd()
             bands.push_back(bi);
         }
         model = Create<SpectrumModel>(bands);
-        g_tvSpectrumModelMap.insert(std::pair<TvSpectrumModelId, Ptr<SpectrumModel>>(key, model));
+        g_tvSpectrumModelMap.emplace(key, model);
     }
     Ptr<SpectrumValue> psd = Create<SpectrumValue>(model);
     double basePsdWattsHz = pow(10.0, (m_basePsd - 30) / 10.0); // convert dBm to W/Hz

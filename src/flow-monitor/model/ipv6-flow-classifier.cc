@@ -146,7 +146,7 @@ Ipv6FlowClassifier::Classify(const Ipv6Header& ipHeader,
     tuple.destinationPort = dstPort;
 
     // try to insert the tuple, but check if it already exists
-    auto insert = m_flowMap.insert(std::pair<FiveTuple, FlowId>(tuple, 0));
+    auto insert = m_flowMap.emplace(tuple, 0);
 
     // if the insertion succeeded, we need to assign this tuple a new flow identifier
     if (insert.second)
@@ -163,8 +163,7 @@ Ipv6FlowClassifier::Classify(const Ipv6Header& ipHeader,
 
     // increment the counter of packets with the same DSCP value
     Ipv6Header::DscpType dscp = ipHeader.GetDscp();
-    auto dscpInserter = m_flowDscpMap[insert.first->second].insert(
-        std::pair<Ipv6Header::DscpType, uint32_t>(dscp, 1));
+    auto dscpInserter = m_flowDscpMap[insert.first->second].emplace(dscp, 1);
 
     // if the insertion did not succeed, we need to increment the counter
     if (!dscpInserter.second)

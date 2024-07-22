@@ -1408,6 +1408,42 @@ provide return values that can be checked-- in the case of ``try_emplace()``,
 whether the insertion succeeded or did not occur, and in the case of
 ``insert_or_assign()``, whether an insertion or assignment occurred.
 
+Prefer representing pairs and tuples with braces (i.e., ``{item1, item2}``) rather than
+using ``std::pair<Item1Type, Item2Type>(item1, item2)``.
+This makes lines shorter and avoids repeating the type names of the items.
+``std::pair(item1, item2)`` and ``std::make_pair(item1, item2)`` can also be used,
+although lines will not be as short.
+
+- Pairs can be added to an ``std::map`` in two ways, each with a different behavior.
+
+  - To add / update a ``{key, value}`` pair regardless of whether the ``key`` already exists,
+    use ``std::map::operator[]`` or ``std::map::insert_or_assign()``.
+
+  - To add a ``{key, value}`` pair only if the ``key`` does not already exist,
+    use ``std::map::emplace()``, ``std::map::insert()`` or ``std::map::try_emplace()``.
+    Prefer to use ``emplace()``, since it initializes variables in-place.
+    To test if the insertion was successful, the ``emplace()`` and ``insert()`` functions
+    return a pair consisting of an iterator to the inserted element, or the already-existing
+    element if no insertion happened, and a bool indicating whether the insertion happened.
+
+  .. sourcecode:: cpp
+
+    std::map<std::string, int> m;
+
+    // Add pairs if the key does not yet exist
+    m.emplace("x", 1);  // Pair added, since "x" does not exist (preferred method)
+    m.insert({"y", 2}); // Pair added, since "y" does not exist (alternative method)
+
+    m.emplace("x", 3);  // Pair not updated, since "x" already exists
+
+    // Unconditionally add / update pairs
+    m["x"] = 3;
+    m.insert_or_assign("x", 4);
+
+    // Test whether the insertion was successful
+    auto result = m.emplace("x", 5);
+    NS_ABORT_MSG_UNLESS(result.second, "Map insertion failed");
+
 Miscellaneous items
 ===================
 

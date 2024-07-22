@@ -285,8 +285,7 @@ LteFfrSimple::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults measResults)
     {
         LteRrcSap::PdschConfigDedicated pdschConfigDedicated;
         pdschConfigDedicated.pa = LteRrcSap::PdschConfigDedicated::dB0;
-        m_ues.insert(
-            std::pair<uint16_t, LteRrcSap::PdschConfigDedicated>(rnti, pdschConfigDedicated));
+        m_ues.emplace(rnti, pdschConfigDedicated);
     }
 
     if (m_changePdschConfigDedicated)

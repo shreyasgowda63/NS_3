@@ -1557,8 +1557,7 @@ LteUeRrc::ApplyRadioResourceConfigDedicated(LteRrcSap::RadioResourceConfigDedica
 
             m_bid2DrbidMap[dtamIt->epsBearerIdentity] = dtamIt->drbIdentity;
 
-            m_drbMap.insert(
-                std::pair<uint8_t, Ptr<LteDataRadioBearerInfo>>(dtamIt->drbIdentity, drbInfo));
+            m_drbMap.emplace(dtamIt->drbIdentity, drbInfo);
 
             m_drbCreatedTrace(m_imsi, m_cellId, m_rnti, dtamIt->drbIdentity);
 
@@ -3012,7 +3011,7 @@ LteUeRrc::SendMeasurementReport(uint8_t measId)
                         NS_FATAL_ERROR("unsupported triggerQuantity");
                         break;
                     }
-                    sortedNeighCells.insert(std::pair<double, uint16_t>(triggerValue, cellId));
+                    sortedNeighCells.emplace(triggerValue, cellId);
                 }
             }
 

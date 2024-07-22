@@ -250,7 +250,7 @@ LteFfrDistributedAlgorithm::DoIsDlRbgAvailableForUe(int rbgId, uint16_t rnti)
     auto it = m_ues.find(rnti);
     if (it == m_ues.end())
     {
-        m_ues.insert(std::pair<uint16_t, uint8_t>(rnti, AreaUnset));
+        m_ues.emplace(rnti, AreaUnset);
         return !edgeRbg;
     }
 
@@ -291,7 +291,7 @@ LteFfrDistributedAlgorithm::DoIsUlRbgAvailableForUe(int rbId, uint16_t rnti)
     auto it = m_ues.find(rnti);
     if (it == m_ues.end())
     {
-        m_ues.insert(std::pair<uint16_t, uint8_t>(rnti, AreaUnset));
+        m_ues.emplace(rnti, AreaUnset);
         return !edgeRbg;
     }
 
@@ -400,7 +400,7 @@ LteFfrDistributedAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults
         auto it = m_ues.find(rnti);
         if (it == m_ues.end())
         {
-            m_ues.insert(std::pair<uint16_t, uint8_t>(rnti, AreaUnset));
+            m_ues.emplace(rnti, AreaUnset);
         }
 
         it = m_ues.find(rnti);
@@ -434,7 +434,7 @@ LteFfrDistributedAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults
         auto it = m_ues.find(rnti);
         if (it == m_ues.end())
         {
-            m_ues.insert(std::pair<uint16_t, uint8_t>(rnti, AreaUnset));
+            m_ues.emplace(rnti, AreaUnset);
         }
 
         UpdateNeighbourMeasurements(rnti,
@@ -591,7 +591,7 @@ LteFfrDistributedAlgorithm::Calculate()
         std::multimap<uint64_t, uint16_t> sortedMetricA;
         for (auto it = metricA.begin(); it != metricA.end(); ++it)
         {
-            sortedMetricA.insert(std::pair<uint64_t, uint16_t>(it->second, it->first));
+            sortedMetricA.emplace(it->second, it->first);
         }
 
         for (auto it = sortedMetricA.begin(); it != sortedMetricA.end(); ++it)
@@ -669,9 +669,8 @@ LteFfrDistributedAlgorithm::DoRecvLoadInformation(EpcX2Sap::LoadInformationParam
     }
     else
     {
-        m_rntp.insert(std::pair<uint16_t, std::vector<bool>>(
-            neighborCellId,
-            params.cellInformationList[0].relativeNarrowbandTxBand.rntpPerPrbList));
+        m_rntp.emplace(neighborCellId,
+                       params.cellInformationList[0].relativeNarrowbandTxBand.rntpPerPrbList);
     }
 }
 
@@ -689,7 +688,7 @@ LteFfrDistributedAlgorithm::UpdateNeighbourMeasurements(uint16_t rnti,
     {
         // insert a new UE entry
         MeasurementRow_t row;
-        auto ret = m_ueMeasures.insert(std::pair<uint16_t, MeasurementRow_t>(rnti, row));
+        auto ret = m_ueMeasures.emplace(rnti, row);
         NS_ASSERT(ret.second);
         it1 = ret.first;
     }

@@ -188,12 +188,8 @@ TraceFadingLossModel::DoCalcRxPowerSpectralDensity(Ptr<const SpectrumSignalParam
             m_currentStream += 1;
         }
         ChannelRealizationId_t mobilityPair = std::make_pair(a, b);
-        m_startVariableMap.insert(
-            std::pair<ChannelRealizationId_t, Ptr<UniformRandomVariable>>(mobilityPair, startV));
-        itOff =
-            m_windowOffsetsMap
-                .insert(std::pair<ChannelRealizationId_t, int>(mobilityPair, startV->GetValue()))
-                .first;
+        m_startVariableMap.emplace(mobilityPair, startV);
+        itOff = m_windowOffsetsMap.emplace(mobilityPair, startV->GetValue()).first;
     }
 
     Ptr<SpectrumValue> rxPsd = Copy<SpectrumValue>(params->psd);

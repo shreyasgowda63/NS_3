@@ -107,8 +107,7 @@ LteHarqPhy::GetHarqProcessInfoUl(uint16_t rnti, uint8_t harqProcId)
         // new entry
         std::vector<HarqProcessInfoList_t> harqList;
         harqList.resize(8);
-        m_miUlHarqProcessesInfoMap.insert(
-            std::pair<uint16_t, std::vector<HarqProcessInfoList_t>>(rnti, harqList));
+        m_miUlHarqProcessesInfoMap.emplace(rnti, harqList);
         return harqList.at(harqProcId);
     }
     else
@@ -165,8 +164,7 @@ LteHarqPhy::UpdateUlHarqProcessStatus(uint16_t rnti,
         el.m_infoBits = infoBytes * 8;
         el.m_codeBits = codeBytes * 8;
         harqList.at(7).push_back(el);
-        m_miUlHarqProcessesInfoMap.insert(
-            std::pair<uint16_t, std::vector<HarqProcessInfoList_t>>(rnti, harqList));
+        m_miUlHarqProcessesInfoMap.emplace(rnti, harqList);
     }
     else
     {
@@ -201,8 +199,7 @@ LteHarqPhy::ResetUlHarqProcessStatus(uint16_t rnti, uint8_t id)
         // new entry
         std::vector<HarqProcessInfoList_t> harqList;
         harqList.resize(8);
-        m_miUlHarqProcessesInfoMap.insert(
-            std::pair<uint16_t, std::vector<HarqProcessInfoList_t>>(rnti, harqList));
+        m_miUlHarqProcessesInfoMap.emplace(rnti, harqList);
     }
     else
     {

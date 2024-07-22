@@ -567,9 +567,7 @@ CarrierAggregationTestCase::DlScheduling(DlSchedulingCallbackInfo dlInfo)
     {
         if (m_ccDownlinkTraffic.find(dlInfo.componentCarrierId) == m_ccDownlinkTraffic.end())
         {
-            m_ccDownlinkTraffic.insert(
-                std::pair<uint8_t, uint32_t>(dlInfo.componentCarrierId,
-                                             dlInfo.sizeTb1 + dlInfo.sizeTb2));
+            m_ccDownlinkTraffic.emplace(dlInfo.componentCarrierId, dlInfo.sizeTb1 + dlInfo.sizeTb2);
         }
         else
         {
@@ -594,7 +592,7 @@ CarrierAggregationTestCase::UlScheduling(uint32_t frameNo,
     {
         if (m_ccUplinkTraffic.find(componentCarrierId) == m_ccUplinkTraffic.end())
         {
-            m_ccUplinkTraffic.insert(std::pair<uint8_t, uint32_t>(componentCarrierId, sizeTb));
+            m_ccUplinkTraffic.emplace(componentCarrierId, sizeTb);
         }
         else
         {

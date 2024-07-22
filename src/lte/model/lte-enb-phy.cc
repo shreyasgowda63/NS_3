@@ -465,7 +465,7 @@ LteEnbPhy::GeneratePowerAllocationMap(uint16_t rnti, int rbId)
         rbgTxPower = m_txPower + it->second;
     }
 
-    m_dlPowerAllocationMap.insert(std::pair<int, double>(rbId, rbgTxPower));
+    m_dlPowerAllocationMap.emplace(rbId, rbgTxPower);
 }
 
 Ptr<SpectrumValue>
@@ -994,7 +994,7 @@ LteEnbPhy::DoSetPa(uint16_t rnti, double pa)
 
     if (it == m_paMap.end())
     {
-        m_paMap.insert(std::pair<uint16_t, double>(rnti, pa));
+        m_paMap.emplace(rnti, pa);
     }
     else
     {
@@ -1041,7 +1041,7 @@ LteEnbPhy::CreateSrsReport(uint16_t rnti, double srs)
     if (it == m_srsSampleCounterMap.end())
     {
         // create new entry
-        m_srsSampleCounterMap.insert(std::pair<uint16_t, uint16_t>(rnti, 0));
+        m_srsSampleCounterMap.emplace(rnti, 0);
         it = m_srsSampleCounterMap.find(rnti);
     }
     (*it).second++;
@@ -1115,7 +1115,7 @@ LteEnbPhy::DoSetSrsConfigurationIndex(uint16_t rnti, uint16_t srcCi)
     }
     else
     {
-        m_srsCounter.insert(std::pair<uint16_t, uint16_t>(rnti, GetSrsSubframeOffset(srcCi) + 1));
+        m_srsCounter.emplace(rnti, GetSrsSubframeOffset(srcCi) + 1);
     }
     m_srsUeOffset.at(GetSrsSubframeOffset(srcCi)) = rnti;
 }

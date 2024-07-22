@@ -540,7 +540,7 @@ LteEnbMac::DoSubframeIndication(uint32_t frameNo, uint32_t subframeNo)
                 rachLe.m_rnti = rnti;
                 rachLe.m_estimatedSize = 144; // to be confirmed
                 rachInfoReqParams.m_rachList.push_back(rachLe);
-                m_rapIdRntiMap.insert(std::pair<uint16_t, uint32_t>(rnti, it->first));
+                m_rapIdRntiMap.emplace(rnti, it->first);
             }
         }
         m_schedSapProvider->SchedDlRachInfoReq(rachInfoReqParams);
@@ -785,8 +785,7 @@ LteEnbMac::DoAddUe(uint16_t rnti)
 {
     NS_LOG_FUNCTION(this << " rnti=" << rnti);
     std::map<uint8_t, LteMacSapUser*> empty;
-    auto ret =
-        m_rlcAttached.insert(std::pair<uint16_t, std::map<uint8_t, LteMacSapUser*>>(rnti, empty));
+    auto ret = m_rlcAttached.emplace(rnti, empty);
     NS_ASSERT_MSG(ret.second, "element already present, RNTI already existed");
 
     FfMacCschedSapProvider::CschedUeConfigReqParameters params;
@@ -814,7 +813,7 @@ LteEnbMac::DoAddUe(uint16_t rnti)
     DlHarqProcessesBuffer_t buf;
     buf.push_back(dlHarqLayer0pkt);
     buf.push_back(dlHarqLayer1pkt);
-    m_miDlHarqProcessesPackets.insert(std::pair<uint16_t, DlHarqProcessesBuffer_t>(rnti, buf));
+    m_miDlHarqProcessesPackets.emplace(rnti, buf);
 }
 
 void
@@ -873,7 +872,7 @@ LteEnbMac::DoAddLc(LteEnbCmacSapProvider::LcInfo lcinfo, LteMacSapUser* msu)
     auto lcidIt = rntiIt->second.find(lcinfo.lcId);
     if (lcidIt == rntiIt->second.end())
     {
-        rntiIt->second.insert(std::pair<uint8_t, LteMacSapUser*>(lcinfo.lcId, msu));
+        rntiIt->second.emplace(lcinfo.lcId, msu);
     }
     else
     {

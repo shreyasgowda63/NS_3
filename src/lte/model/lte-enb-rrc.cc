@@ -425,8 +425,7 @@ UeManager::SetupDataRadioBearer(EpsBearer bearer,
         LteEnbRrc::X2uTeidInfo x2uTeidInfo;
         x2uTeidInfo.rnti = m_rnti;
         x2uTeidInfo.drbid = drbid;
-        auto ret = m_rrc->m_x2uTeidInfoMap.insert(
-            std::pair<uint32_t, LteEnbRrc::X2uTeidInfo>(gtpTeid, x2uTeidInfo));
+        auto ret = m_rrc->m_x2uTeidInfoMap.emplace(gtpTeid, x2uTeidInfo);
         NS_ASSERT_MSG(ret.second == true, "overwriting a pre-existing entry in m_x2uTeidInfoMap");
     }
 
@@ -1558,7 +1557,7 @@ UeManager::AddDataRadioBearerInfo(Ptr<LteDataRadioBearerInfo> drbInfo)
         {
             if (m_drbMap.find(drbid) == m_drbMap.end())
             {
-                m_drbMap.insert(std::pair<uint8_t, Ptr<LteDataRadioBearerInfo>>(drbid, drbInfo));
+                m_drbMap.emplace(drbid, drbInfo);
                 drbInfo->m_drbIdentity = drbid;
                 m_lastAllocatedDrbid = drbid;
                 return drbid;
@@ -3242,7 +3241,7 @@ LteEnbRrc::AddUe(UeManager::State state, uint8_t componentCarrierId)
     m_lastAllocatedRnti = rnti;
     Ptr<UeManager> ueManager = CreateObject<UeManager>(this, rnti, state, componentCarrierId);
     m_ccmRrcSapProvider->AddUe(rnti, (uint8_t)state);
-    m_ueMap.insert(std::pair<uint16_t, Ptr<UeManager>>(rnti, ueManager));
+    m_ueMap.emplace(rnti, ueManager);
     ueManager->Initialize();
     const uint16_t cellId = ComponentCarrierToCellId(componentCarrierId);
     NS_LOG_DEBUG(this << " New UE RNTI " << rnti << " cellId " << cellId << " srs CI "

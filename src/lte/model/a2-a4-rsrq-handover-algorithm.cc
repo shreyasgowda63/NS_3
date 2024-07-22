@@ -242,7 +242,7 @@ A2A4RsrqHandoverAlgorithm::UpdateNeighbourMeasurements(uint16_t rnti, uint16_t c
     {
         // insert a new UE entry
         MeasurementRow_t row;
-        auto ret = m_neighbourCellMeasures.insert(std::pair<uint16_t, MeasurementRow_t>(rnti, row));
+        auto ret = m_neighbourCellMeasures.emplace(rnti, row);
         NS_ASSERT(ret.second);
         it1 = ret.first;
     }

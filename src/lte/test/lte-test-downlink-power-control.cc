@@ -61,30 +61,23 @@ LteDownlinkPowerControlTestSuite::LteDownlinkPowerControlTestSuite()
 
     // Spectrum helper test
     {
-        std::vector<int> activeRbs_txpowdB30nrb6run1earfcn500(4);
-        activeRbs_txpowdB30nrb6run1earfcn500[0] = 0;
-        activeRbs_txpowdB30nrb6run1earfcn500[1] = 2;
-        activeRbs_txpowdB30nrb6run1earfcn500[2] = 3;
-        activeRbs_txpowdB30nrb6run1earfcn500[3] = 5;
+        std::vector<int> activeRbs_txpowdB30nrb6run1earfcn500{
+            0,
+            2,
+            3,
+            5,
+        };
 
         uint16_t earfcn = 500;
         uint8_t bw = 6;
         double powerTx = 30;
 
-        std::map<int, double> powerTxMap;
-        double rbTxPower = powerTx;
-
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_6);
-        powerTxMap.insert(std::pair<int, double>(0, rbTxPower));
-
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3);
-        powerTxMap.insert(std::pair<int, double>(2, rbTxPower));
-
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB0);
-        powerTxMap.insert(std::pair<int, double>(3, rbTxPower));
-
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2);
-        powerTxMap.insert(std::pair<int, double>(5, rbTxPower));
+        std::map<int, double> powerTxMap{
+            {0, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_6)},
+            {2, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3)},
+            {3, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB0)},
+            {5, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2)},
+        };
 
         SpectrumValue spectrumValue_txpowdB30nrb6run1earfcn500(
             LteSpectrumValueHelper::GetSpectrumModel(500, 6));
@@ -107,27 +100,22 @@ LteDownlinkPowerControlTestSuite::LteDownlinkPowerControlTestSuite()
     }
     {
         // if power for RB not present, but RB is active, use powerTx
-        std::vector<int> activeRbs_txpowdB30nrb6run1earfcn500(4);
-        activeRbs_txpowdB30nrb6run1earfcn500[0] = 0;
-        activeRbs_txpowdB30nrb6run1earfcn500[1] = 2;
-        activeRbs_txpowdB30nrb6run1earfcn500[2] = 3;
-        activeRbs_txpowdB30nrb6run1earfcn500[3] = 5;
+        std::vector<int> activeRbs_txpowdB30nrb6run1earfcn500{
+            0,
+            2,
+            3,
+            5,
+        };
 
         uint16_t earfcn = 500;
         uint8_t bw = 6;
         double powerTx = 30;
 
-        std::map<int, double> powerTxMap;
-        double rbTxPower = powerTx;
-
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3);
-        powerTxMap.insert(std::pair<int, double>(2, rbTxPower));
-
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB0);
-        powerTxMap.insert(std::pair<int, double>(3, rbTxPower));
-
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2);
-        powerTxMap.insert(std::pair<int, double>(5, rbTxPower));
+        std::map<int, double> powerTxMap{
+            {2, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3)},
+            {3, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB0)},
+            {5, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2)},
+        };
 
         SpectrumValue spectrumValue_txpowdB30nrb6run1earfcn500(
             LteSpectrumValueHelper::GetSpectrumModel(500, 6));
@@ -149,59 +137,45 @@ LteDownlinkPowerControlTestSuite::LteDownlinkPowerControlTestSuite()
                     TestCase::Duration::QUICK);
     }
     {
-        std::vector<int> activeRbs_txpowdB30nrb25run1earfcn500(15);
-        activeRbs_txpowdB30nrb25run1earfcn500[0] = 0;
-        activeRbs_txpowdB30nrb25run1earfcn500[1] = 1;
-        activeRbs_txpowdB30nrb25run1earfcn500[2] = 2;
-        activeRbs_txpowdB30nrb25run1earfcn500[3] = 3;
-        activeRbs_txpowdB30nrb25run1earfcn500[4] = 7;
-        activeRbs_txpowdB30nrb25run1earfcn500[5] = 8;
-        activeRbs_txpowdB30nrb25run1earfcn500[6] = 9;
-        activeRbs_txpowdB30nrb25run1earfcn500[7] = 11;
-        activeRbs_txpowdB30nrb25run1earfcn500[8] = 13;
-        activeRbs_txpowdB30nrb25run1earfcn500[9] = 14;
-        activeRbs_txpowdB30nrb25run1earfcn500[10] = 18;
-        activeRbs_txpowdB30nrb25run1earfcn500[11] = 19;
-        activeRbs_txpowdB30nrb25run1earfcn500[12] = 20;
-        activeRbs_txpowdB30nrb25run1earfcn500[13] = 21;
-        activeRbs_txpowdB30nrb25run1earfcn500[14] = 24;
+        std::vector<int> activeRbs_txpowdB30nrb25run1earfcn500{
+            0,
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            11,
+            13,
+            14,
+            18,
+            19,
+            20,
+            21,
+            24,
+        };
 
         uint16_t earfcn = 500;
         uint8_t bw = 25;
         double powerTx = 30;
 
-        std::map<int, double> powerTxMap;
-        double rbTxPower = powerTx;
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3);
-        powerTxMap.insert(std::pair<int, double>(0, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_4dot77);
-        powerTxMap.insert(std::pair<int, double>(1, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_6);
-        powerTxMap.insert(std::pair<int, double>(2, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB1);
-        powerTxMap.insert(std::pair<int, double>(3, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2);
-        powerTxMap.insert(std::pair<int, double>(7, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2);
-        powerTxMap.insert(std::pair<int, double>(8, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2);
-        powerTxMap.insert(std::pair<int, double>(9, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_1dot77);
-        powerTxMap.insert(std::pair<int, double>(11, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2);
-        powerTxMap.insert(std::pair<int, double>(13, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3);
-        powerTxMap.insert(std::pair<int, double>(14, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB0);
-        powerTxMap.insert(std::pair<int, double>(18, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3);
-        powerTxMap.insert(std::pair<int, double>(19, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3);
-        powerTxMap.insert(std::pair<int, double>(20, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_4dot77);
-        powerTxMap.insert(std::pair<int, double>(21, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB3);
-        powerTxMap.insert(std::pair<int, double>(24, rbTxPower));
+        std::map<int, double> powerTxMap{
+            {0, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3)},
+            {1, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_4dot77)},
+            {2, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_6)},
+            {3, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB1)},
+            {7, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2)},
+            {8, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2)},
+            {9, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2)},
+            {11, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_1dot77)},
+            {13, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2)},
+            {14, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3)},
+            {18, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB0)},
+            {19, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3)},
+            {20, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3)},
+            {21, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_4dot77)},
+            {24, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB3)},
+        };
 
         SpectrumValue spectrumValue_txpowdB30nrb25run1earfcn500(
             LteSpectrumValueHelper::GetSpectrumModel(500, bw));
@@ -243,49 +217,40 @@ LteDownlinkPowerControlTestSuite::LteDownlinkPowerControlTestSuite()
     }
     {
         // if power for RB not present, but RB is active, use powerTx
-        std::vector<int> activeRbs_txpowdB30nrb25run1earfcn500(15);
-        activeRbs_txpowdB30nrb25run1earfcn500[0] = 0;
-        activeRbs_txpowdB30nrb25run1earfcn500[1] = 1;
-        activeRbs_txpowdB30nrb25run1earfcn500[2] = 2;
-        activeRbs_txpowdB30nrb25run1earfcn500[3] = 3;
-        activeRbs_txpowdB30nrb25run1earfcn500[4] = 7;
-        activeRbs_txpowdB30nrb25run1earfcn500[5] = 8;
-        activeRbs_txpowdB30nrb25run1earfcn500[6] = 9;
-        activeRbs_txpowdB30nrb25run1earfcn500[7] = 11;
-        activeRbs_txpowdB30nrb25run1earfcn500[8] = 13;
-        activeRbs_txpowdB30nrb25run1earfcn500[9] = 14;
-        activeRbs_txpowdB30nrb25run1earfcn500[10] = 18;
-        activeRbs_txpowdB30nrb25run1earfcn500[11] = 19;
-        activeRbs_txpowdB30nrb25run1earfcn500[12] = 20;
-        activeRbs_txpowdB30nrb25run1earfcn500[13] = 21;
-        activeRbs_txpowdB30nrb25run1earfcn500[14] = 24;
+        std::vector<int> activeRbs_txpowdB30nrb25run1earfcn500{
+            0,
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            11,
+            13,
+            14,
+            18,
+            19,
+            20,
+            21,
+            24,
+        };
 
         uint16_t earfcn = 500;
         uint8_t bw = 25;
         double powerTx = 30;
 
-        std::map<int, double> powerTxMap;
-        double rbTxPower = powerTx;
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3);
-        powerTxMap.insert(std::pair<int, double>(0, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_6);
-        powerTxMap.insert(std::pair<int, double>(2, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB1);
-        powerTxMap.insert(std::pair<int, double>(3, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2);
-        powerTxMap.insert(std::pair<int, double>(7, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2);
-        powerTxMap.insert(std::pair<int, double>(8, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2);
-        powerTxMap.insert(std::pair<int, double>(13, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3);
-        powerTxMap.insert(std::pair<int, double>(14, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB0);
-        powerTxMap.insert(std::pair<int, double>(18, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3);
-        powerTxMap.insert(std::pair<int, double>(19, rbTxPower));
-        rbTxPower = CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB3);
-        powerTxMap.insert(std::pair<int, double>(24, rbTxPower));
+        std::map<int, double> powerTxMap{
+            {0, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3)},
+            {2, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_6)},
+            {3, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB1)},
+            {7, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2)},
+            {8, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2)},
+            {13, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB2)},
+            {14, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3)},
+            {18, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB0)},
+            {19, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB_3)},
+            {24, CalculateRbTxPower(powerTx, LteRrcSap::PdschConfigDedicated::dB3)},
+        };
 
         SpectrumValue spectrumValue_txpowdB30nrb25run1earfcn500(
             LteSpectrumValueHelper::GetSpectrumModel(500, bw));

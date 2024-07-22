@@ -251,9 +251,9 @@ CqaFfMacScheduler::DoCschedUeConfigReq(
     auto it = m_uesTxMode.find(params.m_rnti);
     if (it == m_uesTxMode.end())
     {
-        m_uesTxMode.insert(std::pair<uint16_t, uint8_t>(params.m_rnti, params.m_transmissionMode));
+        m_uesTxMode.emplace(params.m_rnti, params.m_transmissionMode);
         // generate HARQ buffers
-        m_dlHarqCurrentProcessId.insert(std::pair<uint16_t, uint8_t>(params.m_rnti, 0));
+        m_dlHarqCurrentProcessId.emplace(params.m_rnti, 0);
         DlHarqProcessesStatus_t dlHarqPrcStatus;
         dlHarqPrcStatus.resize(8, 0);
         m_dlHarqProcessesStatus[params.m_rnti] = dlHarqPrcStatus;
@@ -268,7 +268,7 @@ CqaFfMacScheduler::DoCschedUeConfigReq(
         dlHarqRlcPdu.at(0).resize(8);
         dlHarqRlcPdu.at(1).resize(8);
         m_dlHarqProcessesRlcPduListBuffer[params.m_rnti] = dlHarqRlcPdu;
-        m_ulHarqCurrentProcessId.insert(std::pair<uint16_t, uint8_t>(params.m_rnti, 0));
+        m_ulHarqCurrentProcessId.emplace(params.m_rnti, 0);
         UlHarqProcessesStatus_t ulHarqPrcStatus;
         ulHarqPrcStatus.resize(8, 0);
         m_ulHarqProcessesStatus[params.m_rnti] = ulHarqPrcStatus;
@@ -319,8 +319,7 @@ CqaFfMacScheduler::DoCschedLcConfigReq(
              lcit++)
         {
             LteFlowId_t flowId = LteFlowId_t(params.m_rnti, lcit->m_logicalChannelIdentity);
-            m_ueLogicalChannelsConfigList.insert(
-                std::pair<LteFlowId_t, LogicalChannelConfigListElement_s>(flowId, *lcit));
+            m_ueLogicalChannelsConfigList.emplace(flowId, *lcit);
         }
     }
 
@@ -342,7 +341,7 @@ CqaFfMacScheduler::DoCschedLcConfigReq(
             flowStatsDl.lastAveragedThroughput = 1;
             flowStatsDl.secondLastAveragedThroughput = 1;
             flowStatsDl.targetThroughput = tbrDlInBytes;
-            m_flowStatsDl.insert(std::pair<uint16_t, CqasFlowPerf_t>(params.m_rnti, flowStatsDl));
+            m_flowStatsDl.emplace(params.m_rnti, flowStatsDl);
             CqasFlowPerf_t flowStatsUl;
             flowStatsUl.flowStart = Simulator::Now();
             flowStatsUl.totalBytesTransmitted = 0;
@@ -350,7 +349,7 @@ CqaFfMacScheduler::DoCschedLcConfigReq(
             flowStatsUl.lastAveragedThroughput = 1;
             flowStatsUl.secondLastAveragedThroughput = 1;
             flowStatsUl.targetThroughput = tbrUlInBytes;
-            m_flowStatsUl.insert(std::pair<uint16_t, CqasFlowPerf_t>(params.m_rnti, flowStatsUl));
+            m_flowStatsUl.emplace(params.m_rnti, flowStatsUl);
         }
         else
         {
@@ -1138,7 +1137,7 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
             continue;
         }
 
-        UEtoHOL.insert(std::pair<LteFlowId_t, int>(itLogicalChannels->first, delay));
+        UEtoHOL.emplace(itLogicalChannels->first, delay);
 
         if (itLogicalChannels->second.m_qosBearerType ==
             LogicalChannelConfigListElement_s::QBT_NON_GBR)
@@ -1147,7 +1146,7 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
             {
                 std::set<LteFlowId_t> v;
                 v.insert(itRlcBufferReq->first);
-                map_nonGBRHOLgroupToUE.insert(std::pair<int, std::set<LteFlowId_t>>(group, v));
+                map_nonGBRHOLgroupToUE.emplace(group, v);
             }
             else
             {
@@ -1163,7 +1162,7 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
             {
                 std::set<LteFlowId_t> v;
                 v.insert(itRlcBufferReq->first);
-                map_GBRHOLgroupToUE.insert(std::pair<int, std::set<LteFlowId_t>>(group, v));
+                map_GBRHOLgroupToUE.emplace(group, v);
             }
             else
             {
@@ -1220,9 +1219,8 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
             8 * ((int)m_rlcBufferReq.find(flowId)->second.m_rlcRetransmissionQueueSize +
                  (int)m_rlcBufferReq.find(flowId)->second.m_rlcTransmissionQueueSize);
 
-        UeToAmountOfDataToTransfer.insert(
-            std::pair<LteFlowId_t, int>(flowId, amountOfDataToTransfer));
-        UeToAmountOfAssignedResources.insert(std::pair<LteFlowId_t, int>(flowId, 0));
+        UeToAmountOfDataToTransfer.emplace(flowId, amountOfDataToTransfer);
+        UeToAmountOfAssignedResources.emplace(flowId, 0);
 
         uint8_t sum = 0;
         for (int i = 0; i < numberOfRBGs; i++)
@@ -1271,7 +1269,7 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
             } // end if cqi
         }     // end of rbgNum
 
-        sbCqiSum.insert(std::pair<uint16_t, uint8_t>((*itrbr).first.m_rnti, sum));
+        sbCqiSum.emplace((*itrbr).first.m_rnti, sum);
     }
 
     // availableRBGs - set that contains indexes of available resource block groups
@@ -1393,8 +1391,8 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
                         }
                     }
                     coita_metric = cqi_value / coita_sum;
-                    UeToCQIValue.insert(std::pair<LteFlowId_t, CQI_value>(flowId, cqi_value));
-                    UeToCoitaMetric.insert(std::pair<LteFlowId_t, double>(flowId, coita_metric));
+                    UeToCQIValue.emplace(flowId, cqi_value);
+                    UeToCoitaMetric.emplace(flowId, coita_metric);
                 }
 
                 if (allocationMapPerRntiPerLCId.find(flowId.m_rnti) ==
@@ -1444,7 +1442,7 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
                         UeToAmountOfAssignedResources.find(flowId)->second <
                     0)
                 {
-                    UeHasReachedGBR.insert(std::pair<LteFlowId_t, bool>(flowId, false));
+                    UeHasReachedGBR.emplace(flowId, false);
                 }
 
                 double bitRateWithNewRBG = 0;
@@ -1464,11 +1462,11 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
 
                 if (bitRateWithNewRBG > lc.m_eRabGuaranteedBitrateDl)
                 {
-                    UeHasReachedGBR.insert(std::pair<LteFlowId_t, bool>(flowId, true));
+                    UeHasReachedGBR.emplace(flowId, true);
                 }
                 else
                 {
-                    UeHasReachedGBR.insert(std::pair<LteFlowId_t, bool>(flowId, false));
+                    UeHasReachedGBR.emplace(flowId, false);
                 }
 
                 int hol = UEtoHOL.find(flowId)->second;
@@ -1514,19 +1512,12 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
             if (itMap == allocationMapPerRntiPerLCId.end())
             {
                 std::multimap<uint8_t, qos_rb_and_CQI_assigned_to_lc> tempMap;
-                tempMap.insert(
-                    std::pair<uint8_t, qos_rb_and_CQI_assigned_to_lc>(userWithMaximumMetric.m_lcId,
-                                                                      s));
-                allocationMapPerRntiPerLCId.insert(
-                    std::pair<uint16_t, std::multimap<uint8_t, qos_rb_and_CQI_assigned_to_lc>>(
-                        userWithMaximumMetric.m_rnti,
-                        tempMap));
+                tempMap.emplace(userWithMaximumMetric.m_lcId, s);
+                allocationMapPerRntiPerLCId.emplace(userWithMaximumMetric.m_rnti, tempMap);
             }
             else
             {
-                itMap->second.insert(
-                    std::pair<uint8_t, qos_rb_and_CQI_assigned_to_lc>(userWithMaximumMetric.m_lcId,
-                                                                      s));
+                itMap->second.emplace(userWithMaximumMetric.m_lcId, s);
             }
 
             // erase current RBG from the list of available RBG
@@ -1575,7 +1566,7 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
         double doubleRBgPerRnti = RbgPerRnti;
         double doubleRbgNum = numberOfRBGs;
         double rrRatio = doubleRBgPerRnti / doubleRbgNum;
-        m_rnti_per_ratio.insert(std::pair<uint16_t, double>((*itMap).first, rrRatio));
+        m_rnti_per_ratio.emplace((*itMap).first, rrRatio);
         uint8_t worstCqi = 15;
 
         // assign the worst value of CQI that user experienced on any of its subbands
@@ -1753,7 +1744,7 @@ CqaFfMacScheduler::DoSchedDlCqiInfoReq(
                 m_p10CqiRxed[rnti] =
                     params.m_cqiList.at(i).m_wbCqi.at(0); // only codeword 0 at this stage (SISO)
                 // generate correspondent timer
-                m_p10CqiTimers.insert(std::pair<uint16_t, uint32_t>(rnti, m_cqiTimersThreshold));
+                m_p10CqiTimers.emplace(rnti, m_cqiTimersThreshold);
             }
             else
             {
@@ -1773,7 +1764,7 @@ CqaFfMacScheduler::DoSchedDlCqiInfoReq(
             {
                 // create the new entry
                 m_a30CqiRxed[rnti] = params.m_cqiList.at(i).m_sbMeasResult;
-                m_a30CqiTimers.insert(std::pair<uint16_t, uint32_t>(rnti, m_cqiTimersThreshold));
+                m_a30CqiTimers.emplace(rnti, m_cqiTimersThreshold);
             }
             else
             {
@@ -2283,7 +2274,7 @@ CqaFfMacScheduler::DoSchedUlMacCtrlInfoReq(
             if (it == m_ceBsrRxed.end())
             {
                 // create the new entry
-                m_ceBsrRxed.insert(std::pair<uint16_t, uint32_t>(rnti, buffer));
+                m_ceBsrRxed.emplace(rnti, buffer);
             }
             else
             {
@@ -2399,9 +2390,9 @@ CqaFfMacScheduler::DoSchedUlCqiInfoReq(
                 NS_LOG_INFO(this << " RNTI " << rnti << " new SRS-CQI for RB  " << j << " value "
                                  << sinr);
             }
-            m_ueCqi.insert(std::pair<uint16_t, std::vector<double>>(rnti, newCqi));
+            m_ueCqi.emplace(rnti, newCqi);
             // generate correspondent timer
-            m_ueCqiTimers.insert(std::pair<uint16_t, uint32_t>(rnti, m_cqiTimersThreshold));
+            m_ueCqiTimers.emplace(rnti, m_cqiTimersThreshold);
         }
         else
         {

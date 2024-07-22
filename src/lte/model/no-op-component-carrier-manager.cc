@@ -307,7 +307,7 @@ NoOpComponentCarrierManager::DoNotifyPrbOccupancy(double prbOccupancy, uint8_t c
     NS_LOG_FUNCTION(this);
     NS_LOG_DEBUG("Update PRB occupancy:" << prbOccupancy
                                          << " at carrier:" << (uint32_t)componentCarrierId);
-    m_ccPrbOccupancy.insert(std::pair<uint8_t, double>(componentCarrierId, prbOccupancy));
+    m_ccPrbOccupancy.emplace(componentCarrierId, prbOccupancy);
 }
 
 void

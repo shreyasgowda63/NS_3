@@ -508,7 +508,7 @@ LteFfrEnhancedAlgorithm::DoIsDlRbgAvailableForUe(int rbgId, uint16_t rnti)
     auto it = m_ues.find(rnti);
     if (it == m_ues.end())
     {
-        m_ues.insert(std::pair<uint16_t, uint8_t>(rnti, AreaUnset));
+        m_ues.emplace(rnti, AreaUnset);
     }
 
     it = m_ues.find(rnti);
@@ -608,7 +608,7 @@ LteFfrEnhancedAlgorithm::DoIsUlRbgAvailableForUe(int rbgId, uint16_t rnti)
     auto it = m_ues.find(rnti);
     if (it == m_ues.end())
     {
-        m_ues.insert(std::pair<uint16_t, uint8_t>(rnti, AreaUnset));
+        m_ues.emplace(rnti, AreaUnset);
     }
 
     it = m_ues.find(rnti);
@@ -687,9 +687,7 @@ LteFfrEnhancedAlgorithm::DoReportDlCqiInfo(
             if (it == m_dlCqi.end())
             {
                 // create the new entry
-                m_dlCqi.insert(
-                    std::pair<uint16_t, SbMeasResult_s>(rnti,
-                                                        params.m_cqiList.at(i).m_sbMeasResult));
+                m_dlCqi.emplace(rnti, params.m_cqiList.at(i).m_sbMeasResult);
             }
             else
             {
@@ -733,7 +731,7 @@ LteFfrEnhancedAlgorithm::DoReportDlCqiInfo(
             rbgAvailableMap.push_back(rbgAvailable);
         }
 
-        m_dlRbgAvailableforUe.insert(std::pair<uint16_t, std::vector<bool>>(rnti, rbgAvailableMap));
+        m_dlRbgAvailableforUe.emplace(rnti, rbgAvailableMap);
     }
 
     m_ulRbAvailableforUe.clear();
@@ -754,7 +752,7 @@ LteFfrEnhancedAlgorithm::DoReportDlCqiInfo(
             }
         }
 
-        m_ulRbAvailableforUe.insert(std::pair<uint16_t, std::vector<bool>>(rnti, ulRbAvailableMap));
+        m_ulRbAvailableforUe.emplace(rnti, ulRbAvailableMap);
     }
 }
 
@@ -900,7 +898,7 @@ LteFfrEnhancedAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults me
         auto it = m_ues.find(rnti);
         if (it == m_ues.end())
         {
-            m_ues.insert(std::pair<uint16_t, uint8_t>(rnti, AreaUnset));
+            m_ues.emplace(rnti, AreaUnset);
         }
 
         it = m_ues.find(rnti);

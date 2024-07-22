@@ -309,7 +309,7 @@ SimpleUeComponentCarrierManager::DoAddLc(uint8_t lcId,
     std::vector<LteUeCcmRrcSapProvider::LcsConfig> res;
     auto it = m_lcAttached.find(lcId);
     NS_ABORT_MSG_IF(it != m_lcAttached.end(), "Warning, LCID " << lcId << " already exist");
-    m_lcAttached.insert(std::pair<uint8_t, LteMacSapUser*>(lcId, msu));
+    m_lcAttached.emplace(lcId, msu);
     LteUeCcmRrcSapProvider::LcsConfig elem;
     for (uint8_t ncc = 0; ncc < m_noOfComponentCarriers; ncc++)
     {
@@ -321,19 +321,16 @@ SimpleUeComponentCarrierManager::DoAddLc(uint8_t lcId,
         auto ccLcMapIt = m_componentCarrierLcMap.find(ncc);
         if (ccLcMapIt != m_componentCarrierLcMap.end())
         {
-            ccLcMapIt->second.insert(
-                std::pair<uint8_t, LteMacSapProvider*>(lcId, m_macSapProvidersMap.at(ncc)));
+            ccLcMapIt->second.emplace(lcId, m_macSapProvidersMap.at(ncc));
         }
         else
         {
             std::map<uint8_t, LteMacSapProvider*> empty;
-            auto ret = m_componentCarrierLcMap.insert(
-                std::pair<uint8_t, std::map<uint8_t, LteMacSapProvider*>>(ncc, empty));
+            auto ret = m_componentCarrierLcMap.emplace(ncc, empty);
             NS_ABORT_MSG_IF(!ret.second,
                             "element already present, ComponentCarrierId already exist");
             ccLcMapIt = m_componentCarrierLcMap.find(ncc);
-            ccLcMapIt->second.insert(
-                std::pair<uint8_t, LteMacSapProvider*>(lcId, m_macSapProvidersMap.at(ncc)));
+            ccLcMapIt->second.emplace(lcId, m_macSapProvidersMap.at(ncc));
         }
     }
 
@@ -353,26 +350,23 @@ SimpleUeComponentCarrierManager::DoConfigureSignalBearer(
     NS_ABORT_MSG_IF(it != m_lcAttached.end(),
                     "Warning, LCID " << (uint8_t)lcid << " already exist");
 
-    m_lcAttached.insert(std::pair<uint8_t, LteMacSapUser*>(lcid, msu));
+    m_lcAttached.emplace(lcid, msu);
 
     for (uint8_t ncc = 0; ncc < m_noOfComponentCarriers; ncc++)
     {
         auto ccLcMapIt = m_componentCarrierLcMap.find(ncc);
         if (ccLcMapIt != m_componentCarrierLcMap.end())
         {
-            ccLcMapIt->second.insert(
-                std::pair<uint8_t, LteMacSapProvider*>(lcid, m_macSapProvidersMap.at(ncc)));
+            ccLcMapIt->second.emplace(lcid, m_macSapProvidersMap.at(ncc));
         }
         else
         {
             std::map<uint8_t, LteMacSapProvider*> empty;
-            auto ret = m_componentCarrierLcMap.insert(
-                std::pair<uint8_t, std::map<uint8_t, LteMacSapProvider*>>(ncc, empty));
+            auto ret = m_componentCarrierLcMap.emplace(ncc, empty);
             NS_ABORT_MSG_IF(!ret.second,
                             "element already present, ComponentCarrierId already existed");
             ccLcMapIt = m_componentCarrierLcMap.find(ncc);
-            ccLcMapIt->second.insert(
-                std::pair<uint8_t, LteMacSapProvider*>(lcid, m_macSapProvidersMap.at(ncc)));
+            ccLcMapIt->second.emplace(lcid, m_macSapProvidersMap.at(ncc));
         }
     }
 
