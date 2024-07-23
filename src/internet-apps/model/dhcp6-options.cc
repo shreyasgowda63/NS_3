@@ -120,6 +120,8 @@ void
 IdentifierOption::SetLinkLayerAddress(Address linkLayerAddress)
 {
     NS_LOG_FUNCTION(this << linkLayerAddress);
+
+    SetHardwareType(1);
     m_linkLayerAddress = linkLayerAddress;
 }
 

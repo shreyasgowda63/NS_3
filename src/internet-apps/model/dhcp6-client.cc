@@ -53,14 +53,50 @@ Dhcp6Client::GetTypeId()
             .AddConstructor<Dhcp6Client>()
             .SetGroupName("Internet-Apps")
             .AddAttribute("Transactions",
-                          "The possible value of transaction numbers",
+                          "A value to be used as the transaction ID.",
+                          StringValue("ns3::UniformRandomVariable[Min=0.0|Max=1000000.0]"),
+                          MakePointerAccessor(&Dhcp6Client::m_transactionId),
+                          MakePointerChecker<RandomVariableStream>())
+            .AddAttribute("SolicitJitter",
+                          "The jitter in ms that a node waits before sending any solicitation. By "
+                          "default, the model will wait for a duration in ms defined by a uniform "
+                          "random-variable between 0 and SolicitJitter",
                           StringValue("ns3::UniformRandomVariable[Min=0.0|Max=10.0]"),
-                          MakePointerAccessor(&Dhcp6Client::m_rand),
+                          MakePointerAccessor(&Dhcp6Client::m_solicitJitter),
                           MakePointerChecker<RandomVariableStream>())
             .AddTraceSource("NewLease",
                             "Get a new lease",
                             MakeTraceSourceAccessor(&Dhcp6Client::m_newLease),
-                            "ns3::Ipv6Address::TracedCallback");
+                            "ns3::Ipv6Address::TracedCallback")
+            .AddAttribute("RenewTime",
+                          "Time after which client should renew. 1000 seconds by "
+                          "default, set to 10 seconds here.",
+                          TimeValue(Seconds(10)),
+                          MakeTimeAccessor(&Dhcp6Client::m_renew),
+                          MakeTimeChecker())
+            .AddAttribute("RebindTime",
+                          "Time after which client should rebind. 2000 seconds by "
+                          "default, set to 20 seconds here.",
+                          TimeValue(Seconds(20)),
+                          MakeTimeAccessor(&Dhcp6Client::m_rebind),
+                          MakeTimeChecker())
+            .AddAttribute("PreferredLifetime",
+                          "The preferred lifetime of the leased address. 3000 "
+                          "seconds by default, set to 30 seconds here.",
+                          TimeValue(Seconds(30)),
+                          MakeTimeAccessor(&Dhcp6Client::m_prefLifetime),
+                          MakeTimeChecker())
+            .AddAttribute("ValidLifetime",
+                          "Time after which client should release the address. "
+                          "4000 seconds by default, set to 40 seconds here.",
+                          TimeValue(Seconds(40)),
+                          MakeTimeAccessor(&Dhcp6Client::m_validLifetime),
+                          MakeTimeChecker())
+            .AddAttribute("SolicitInterval",
+                          "Time after which the client resends the Solicit. ",
+                          TimeValue(Seconds(5)),
+                          MakeTimeAccessor(&Dhcp6Client::m_solicitInterval),
+                          MakeTimeChecker());
     return tid;
 }
 
@@ -71,12 +107,6 @@ Dhcp6Client::Dhcp6Client()
     m_firstBoot = true;
 
     m_solicitEvent = EventId();
-    m_solicitInterval = Seconds(5);
-
-    m_renew = Time(Seconds(10));
-    m_rebind = Time(Seconds(20));
-    m_prefLifetime = Time(Seconds(30));
-    m_validLifetime = Time(Seconds(40));
 
     m_ianaIds = 0;
 
@@ -95,9 +125,9 @@ Dhcp6Client::DoDispose()
     m_renewEvent.Cancel();
     m_rebindEvent.Cancel();
 
-    for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
+    for (auto itr : m_releaseEvent)
     {
-        itr->Cancel();
+        itr.Cancel();
     }
 
     Application::DoDispose();
@@ -107,8 +137,9 @@ int64_t
 Dhcp6Client::AssignStreams(int64_t stream)
 {
     NS_LOG_FUNCTION(this << stream);
-    m_rand->SetStream(stream);
-    return 1;
+    m_solicitJitter->SetStream(stream);
+    m_transactionId->SetStream(stream + 1);
+    return 2;
 }
 
 void
@@ -151,7 +182,7 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     requestHeader.SetMessageType(Dhcp6Header::REQUEST);
 
     // TODO: Use min, max for GetValue
-    m_clientTransactId = (uint32_t)(m_rand->GetValue());
+    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
     requestHeader.SetTransactId(m_clientTransactId);
 
     // Add Client Identifier Option.
@@ -172,17 +203,12 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     // Request all addresses from the Advertise message.
     std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
 
-    for (auto itr = ianaOptionsList.begin(); itr != ianaOptionsList.end(); itr++)
+    for (const auto& iaOpt : ianaOptionsList)
     {
-        IaOptions iaOpt = *itr;
-
         // Iterate through the offered addresses.
         // Current approach: Try to accept all offers.
-        for (auto addrItr = iaOpt.m_iaAddressOption.begin();
-             addrItr != iaOpt.m_iaAddressOption.end();
-             addrItr++)
+        for (const auto& iaAddrOpt : iaOpt.m_iaAddressOption)
         {
-            IaAddressOption iaAddrOpt = *addrItr;
             requestHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
             requestHeader.AddAddress(iaOpt.GetIaid(),
                                      iaAddrOpt.GetIaAddress(),
@@ -200,10 +226,10 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
 
     // Send the request message.
     m_state = WAIT_REPLY;
-    if (m_socket->SendTo(packet,
-                         0,
-                         Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT)) >=
-        0)
+    if (m_socket->SendTo(
+            packet,
+            0,
+            Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), Dhcp6Header::SERVER_PORT)) >= 0)
     {
         NS_LOG_INFO("DHCPv6 Request sent.");
     }
@@ -250,9 +276,9 @@ Dhcp6Client::DeclineOffer()
     // Cancel all scheduled Release, Renew, Rebind events.
     m_renewEvent.Cancel();
     m_rebindEvent.Cancel();
-    for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
+    for (auto itr : m_releaseEvent)
     {
-        itr->Cancel();
+        itr.Cancel();
     }
 
     Dhcp6Header declineHeader;
@@ -273,7 +299,7 @@ Dhcp6Client::DeclineOffer()
                                  m_validLifetime.GetSeconds());
     }
 
-    m_clientTransactId = (uint32_t)(m_rand->GetValue());
+    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
     declineHeader.SetTransactId(m_clientTransactId);
     declineHeader.SetMessageType(Dhcp6Header::DECLINE);
 
@@ -289,10 +315,10 @@ Dhcp6Client::DeclineOffer()
     declineHeader.AddElapsedTime(0);
 
     packet->AddHeader(declineHeader);
-    if ((m_socket->SendTo(
-            packet,
-            0,
-            Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT))) >= 0)
+    if ((m_socket->SendTo(packet,
+                          0,
+                          Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(),
+                                             Dhcp6Header::SERVER_PORT))) >= 0)
     {
         NS_LOG_INFO("DHCP Decline sent");
     }
@@ -340,18 +366,12 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
     Time earliestRenew = Time(Seconds(1000000));
     std::vector<uint32_t> iaidList;
 
-    for (auto itr = ianaOptionsList.begin(); itr != ianaOptionsList.end(); itr++)
+    for (const auto& iaOpt : ianaOptionsList)
     {
-        IaOptions iaOpt = *itr;
-
         // Iterate through the offered addresses.
         // Current approach: Try to accept all offers.
-        for (auto addrItr = iaOpt.m_iaAddressOption.begin();
-             addrItr != iaOpt.m_iaAddressOption.end();
-             addrItr++)
+        for (const auto& iaAddrOpt : iaOpt.m_iaAddressOption)
         {
-            IaAddressOption iaAddrOpt = *addrItr;
-
             Ipv6Address offeredAddress = iaAddrOpt.GetIaAddress();
             NS_LOG_INFO("Offered address: " << offeredAddress);
 
@@ -411,7 +431,7 @@ Dhcp6Client::SendRenew(std::vector<uint32_t> iaidList)
     Ptr<Packet> packet;
     packet = Create<Packet>();
 
-    m_clientTransactId = (uint32_t)(m_rand->GetValue());
+    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
 
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::RENEW);
@@ -434,10 +454,10 @@ Dhcp6Client::SendRenew(std::vector<uint32_t> iaidList)
 
         // Iterate through the IPv6Address - IAID map, and add all addresses
         // that match the IAID to be renewed.
-        for (auto itr = m_iaidMap.begin(); itr != m_iaidMap.end(); itr++)
+        for (const auto& itr : m_iaidMap)
         {
-            Ipv6Address address = itr->first;
-            uint32_t iaid = itr->second;
+            Ipv6Address address = itr.first;
+            uint32_t iaid = itr.second;
             if (iaid == iaidList[i])
             {
                 header.AddAddress(iaidList[i],
@@ -452,10 +472,10 @@ Dhcp6Client::SendRenew(std::vector<uint32_t> iaidList)
     header.AddOptionRequest(Dhcp6Header::OPTION_SOL_MAX_RT);
 
     packet->AddHeader(header);
-    if ((m_socket->SendTo(
-            packet,
-            0,
-            Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT))) >= 0)
+    if ((m_socket->SendTo(packet,
+                          0,
+                          Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(),
+                                             Dhcp6Header::SERVER_PORT))) >= 0)
     {
         NS_LOG_INFO("DHCP Renew sent");
     }
@@ -476,8 +496,8 @@ Dhcp6Client::SendRebind(std::vector<uint32_t> iaidList)
     Ptr<Packet> packet;
     packet = Create<Packet>();
 
-    m_clientTransactId = (uint32_t)(m_rand->GetValue());
-    ;
+    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
+
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::REBIND);
 
@@ -498,10 +518,10 @@ Dhcp6Client::SendRebind(std::vector<uint32_t> iaidList)
     header.AddOptionRequest(Dhcp6Header::OPTION_SOL_MAX_RT);
 
     packet->AddHeader(header);
-    if ((m_socket->SendTo(
-            packet,
-            0,
-            Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT))) >= 0)
+    if ((m_socket->SendTo(packet,
+                          0,
+                          Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(),
+                                             Dhcp6Header::SERVER_PORT))) >= 0)
     {
         NS_LOG_INFO("DHCP Rebind sent");
     }
@@ -526,7 +546,7 @@ Dhcp6Client::SendRelease(Ipv6Address address)
     Ptr<Packet> packet;
     packet = Create<Packet>();
 
-    m_clientTransactId = (uint32_t)(m_rand->GetValue());
+    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
 
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::RELEASE);
@@ -548,10 +568,10 @@ Dhcp6Client::SendRelease(Ipv6Address address)
     header.AddAddress(iaid, address, m_prefLifetime.GetSeconds(), m_validLifetime.GetSeconds());
 
     packet->AddHeader(header);
-    if ((m_socket->SendTo(
-            packet,
-            0,
-            Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT))) >= 0)
+    if ((m_socket->SendTo(packet,
+                          0,
+                          Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(),
+                                             Dhcp6Header::SERVER_PORT))) >= 0)
     {
         NS_LOG_INFO("DHCP Release sent");
     }
@@ -600,9 +620,9 @@ Dhcp6Client::NetHandler(Ptr<Socket> socket)
 
         m_renewEvent.Cancel();
         m_rebindEvent.Cancel();
-        for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
+        for (auto itr : m_releaseEvent)
         {
-            itr->Cancel();
+            itr.Cancel();
         }
 
         ProcessReply(iDev, header, senderAddr);
@@ -631,9 +651,9 @@ Dhcp6Client::LinkStateHandler()
         m_solicitEvent.Cancel();
         m_renewEvent.Cancel();
         m_rebindEvent.Cancel();
-        for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
+        for (auto itr : m_releaseEvent)
         {
-            itr->Cancel();
+            itr.Cancel();
         }
 
         // Stop receiving on the socket.
@@ -654,13 +674,14 @@ Dhcp6Client::StartApplication()
     NS_LOG_FUNCTION(this);
 
     Ptr<Node> node = m_device->GetNode();
-    Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
-    uint32_t interface = ipv6->GetInterfaceForDevice(m_device);
+    NS_ASSERT_MSG(node, "Dhcp6Client::StartApplication: cannot get the node from the device.");
 
-    if (interface < 0)
-    {
-        NS_ABORT_MSG("DHCPv6 daemon must have a link-local address.");
-    }
+    Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
+    NS_ASSERT_MSG(ipv6, "Dhcp6Client::StartApplication: node does not have IPv6.");
+
+    uint32_t interface = ipv6->GetInterfaceForDevice(m_device);
+    NS_ASSERT_MSG(interface >= 0,
+                  "Dhcp6Client::StartApplication: device is not connected to IPv6.");
 
     if (!m_socket)
     {
@@ -679,7 +700,7 @@ Dhcp6Client::StartApplication()
             }
         }
 
-        m_socket->Bind(Inet6SocketAddress(linkLocal, DHCP_CLIENT_PORT));
+        m_socket->Bind(Inet6SocketAddress(linkLocal, Dhcp6Header::CLIENT_PORT));
         m_socket->BindToNetDevice(m_device);
         m_socket->Bind6();
         m_socket->SetRecvPktInfo(true);
@@ -697,22 +718,24 @@ Dhcp6Client::StartApplication()
 
     for (uint32_t i = 0; i < nApplications; i++)
     {
-        Ptr<Application> app = node->GetApplication(i);
-        Ptr<Dhcp6Client> client = app->GetObject<Dhcp6Client>();
-        Address clientLinkLayer = client->GetSelfIdentifier().GetLinkLayerAddress();
-
-        // Considering an invalid link layer address to be all 'FF'.
-        uint8_t addrLen = clientLinkLayer.GetLength();
-        uint8_t addrBuf[20];
-        clientLinkLayer.CopyTo(addrBuf);
-
-        for (uint8_t j = 0; j < addrLen; j++)
+        Ptr<Dhcp6Client> client = DynamicCast<Dhcp6Client>(node->GetApplication(i));
+        if (client)
         {
-            if (addrBuf[j] != 255)
+            Address clientLinkLayer = client->GetSelfIdentifier().GetLinkLayerAddress();
+
+            // Considering an invalid link layer address to be all 'FF'.
+            uint8_t addrLen = clientLinkLayer.GetLength();
+            uint8_t addrBuf[20];
+            clientLinkLayer.CopyTo(addrBuf);
+
+            for (uint8_t j = 0; j < addrLen; j++)
             {
-                validDuid = true;
-                m_clientIdentifier.SetLinkLayerAddress(clientLinkLayer);
-                break;
+                if (addrBuf[j] != 255)
+                {
+                    validDuid = true;
+                    m_clientIdentifier.SetLinkLayerAddress(clientLinkLayer);
+                    break;
+                }
             }
         }
     }
@@ -765,13 +788,11 @@ Dhcp6Client::StartApplication()
         }
 
         // Consider the link-layer address of the first NetDevice in the list.
-        m_clientIdentifier.SetHardwareType(1);
         m_clientIdentifier.SetLinkLayerAddress(longestDuidDevices[0]->GetAddress());
     }
 
     // Introduce a random delay before sending the Solicit message.
-    uint32_t bootTime = m_rand->GetValue();
-    Simulator::Schedule(Seconds(bootTime), &Dhcp6Client::Boot, this);
+    Simulator::Schedule(Time(MilliSeconds(m_solicitJitter->GetValue())), &Dhcp6Client::Boot, this);
 }
 
 void
@@ -782,7 +803,7 @@ Dhcp6Client::Boot()
     packet = Create<Packet>();
 
     // Retrieve link layer address of the device.
-    m_clientTransactId = (uint32_t)(m_rand->GetValue());
+    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
 
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::SOLICIT);
@@ -801,10 +822,10 @@ Dhcp6Client::Boot()
 
     packet->AddHeader(header);
 
-    if ((m_socket->SendTo(
-            packet,
-            0,
-            Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), DHCP_PEER_PORT))) >= 0)
+    if ((m_socket->SendTo(packet,
+                          0,
+                          Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(),
+                                             Dhcp6Header::SERVER_PORT))) >= 0)
     {
         NS_LOG_INFO("DHCP Solicit sent");
     }
@@ -826,9 +847,9 @@ Dhcp6Client::StopApplication()
     m_renewEvent.Cancel();
     m_rebindEvent.Cancel();
 
-    for (auto itr = m_releaseEvent.begin(); itr != m_releaseEvent.end(); itr++)
+    for (auto itr : m_releaseEvent)
     {
-        itr->Cancel();
+        itr.Cancel();
     }
 
     if (m_socket)

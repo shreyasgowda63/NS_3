@@ -97,9 +97,9 @@ Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
     if (headerOptions[Dhcp6Header::OPTION_IA_NA])
     {
         std::list<IaOptions> iaOpt = header.GetIanaOptions();
-        for (auto itr = iaOpt.begin(); itr != iaOpt.end(); itr++)
+        for (const auto& itr : iaOpt)
         {
-            uint32_t iaid = itr->GetIaid();
+            uint32_t iaid = itr.GetIaid();
             m_iaBindings.insert({duid, std::make_pair(Dhcp6Header::OPTION_IA_NA, iaid)});
         }
     }
@@ -132,12 +132,12 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
 
     // Add IA_NA option.
     // Available address pools and IA information is sent in this option.
-    for (auto subnet = m_subnets.begin(); subnet != m_subnets.end(); subnet++)
+    for (auto& subnet : m_subnets)
     {
-        Ipv6Address pool = subnet->GetAddressPool();
-        Ipv6Prefix prefix = subnet->GetPrefix();
-        Ipv6Address minAddress = subnet->GetMinAddress();
-        Ipv6Address maxAddress = subnet->GetMaxAddress();
+        Ipv6Address pool = subnet.GetAddressPool();
+        Ipv6Prefix prefix = subnet.GetPrefix();
+        Ipv6Address minAddress = subnet.GetMinAddress();
+        Ipv6Address maxAddress = subnet.GetMaxAddress();
 
         /*
          * Find the next available address. Checks the expired address map.
@@ -145,11 +145,11 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
          */
 
         uint8_t offeredAddrBuf[16];
-        if (!subnet->m_expiredAddresses.empty())
+        if (!subnet.m_expiredAddresses.empty())
         {
-            auto firstExpiredAddress = subnet->m_expiredAddresses.begin();
+            auto firstExpiredAddress = subnet.m_expiredAddresses.begin();
             Ipv6Address nextAddress = firstExpiredAddress->second;
-            subnet->m_expiredAddresses.erase(firstExpiredAddress);
+            subnet.m_expiredAddresses.erase(firstExpiredAddress);
 
             nextAddress.GetBytes(offeredAddrBuf);
         }
@@ -162,10 +162,10 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
             // Get the latest leased address.
             uint8_t lastLeasedAddrBuf[16];
 
-            if (!subnet->m_leasedAddresses.empty())
+            if (!subnet.m_leasedAddresses.empty())
             {
                 // Obtain the highest address that has been offered.
-                subnet->m_maxOfferedAddress.GetBytes(lastLeasedAddrBuf);
+                subnet.m_maxOfferedAddress.GetBytes(lastLeasedAddrBuf);
                 memcpy(offeredAddrBuf, lastLeasedAddrBuf, 16);
 
                 // Increment the address by adding 1. Bitwise addition is used.
@@ -191,13 +191,13 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
             }
 
             Ipv6Address offer(offeredAddrBuf);
-            subnet->m_maxOfferedAddress = offer;
+            subnet.m_maxOfferedAddress = offer;
 
             /*
             Optimistic assumption that the address will be leased to this client.
             This is to prevent multiple clients from receiving the same address.
             */
-            subnet->m_leasedAddresses.insert(
+            subnet.m_leasedAddresses.insert(
                 {clientAddress, std::make_pair(offer, Time(Seconds(m_prefLifetime.GetSeconds())))});
         }
 
@@ -269,28 +269,26 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
     // Retrieve requested IA Option from client header.
     std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
 
-    for (auto ianaOpt = ianaOptionsList.begin(); ianaOpt != ianaOptionsList.end(); ianaOpt++)
+    for (auto& iaOpt : ianaOptionsList)
     {
-        IaOptions iaOpt = *ianaOpt;
-
         // Iterate through the offered addresses.
         // Current approach: Try to accept all offers.
         std::list<IaAddressOption> iaAddrOptList = iaOpt.m_iaAddressOption;
-        for (auto addrItr = iaAddrOptList.begin(); addrItr != iaAddrOptList.end(); addrItr++)
+        for (auto& addrItr : iaAddrOptList)
         {
-            Ipv6Address requestedAddr = addrItr->GetIaAddress();
+            Ipv6Address requestedAddr = addrItr.GetIaAddress();
 
-            for (auto subnet = m_subnets.begin(); subnet != m_subnets.end(); subnet++)
+            for (auto& subnet : m_subnets)
             {
-                Ipv6Address pool = subnet->GetAddressPool();
-                Ipv6Prefix prefix = subnet->GetPrefix();
-                Ipv6Address minAddress = subnet->GetMinAddress();
-                Ipv6Address maxAddress = subnet->GetMaxAddress();
+                Ipv6Address pool = subnet.GetAddressPool();
+                Ipv6Prefix prefix = subnet.GetPrefix();
+                Ipv6Address minAddress = subnet.GetMinAddress();
+                Ipv6Address maxAddress = subnet.GetMaxAddress();
 
                 // Check if the requested address has been declined earlier.
                 // In this case, it cannot be leased.
-                if (subnet->m_declinedAddresses.find(requestedAddr) !=
-                    subnet->m_declinedAddresses.end())
+                if (subnet.m_declinedAddresses.find(requestedAddr) !=
+                    subnet.m_declinedAddresses.end())
                 {
                     NS_LOG_INFO("Requested address is declined.");
                     return;
@@ -322,7 +320,7 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
 
                     // Update the lease time of the newly leased addresses.
                     // Find all the leases for this client.
-                    auto range = subnet->m_leasedAddresses.equal_range(clientAddress);
+                    auto range = subnet.m_leasedAddresses.equal_range(clientAddress);
 
                     // Create a new multimap to store the updated lifetimes.
                     std::multimap<Address, std::pair<Ipv6Address, Time>> updatedLifetimes;
@@ -339,12 +337,12 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
 
                     // Remove all the old leases for this client.
                     // This is done to prevent multiple entries for the same lease.
-                    subnet->m_leasedAddresses.erase(range.first->first);
+                    subnet.m_leasedAddresses.erase(range.first->first);
 
                     // Add the updated leases to the subnet.
-                    for (auto itr = updatedLifetimes.begin(); itr != updatedLifetimes.end(); itr++)
+                    for (auto& itr : updatedLifetimes)
                     {
-                        subnet->m_leasedAddresses.insert({itr->first, itr->second});
+                        subnet.m_leasedAddresses.insert({itr.first, itr.second});
                     }
                     break;
                 }
@@ -402,32 +400,31 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
     // Add IA_NA option.
     // Retrieve IA_NAs from client header.
     std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
-    for (auto ianaOpt = ianaOptionsList.begin(); ianaOpt != ianaOptionsList.end(); ianaOpt++)
+    for (auto& iaOpt : ianaOptionsList)
     {
-        IaOptions iaOpt = *ianaOpt;
         std::list<IaAddressOption> iaAddrOptList = iaOpt.m_iaAddressOption;
 
         // Add the IA_NA option.
         replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
 
-        for (auto addrItr = iaAddrOptList.begin(); addrItr != iaAddrOptList.end(); addrItr++)
+        for (const auto& addrItr : iaAddrOptList)
         {
             // Find the lease address which is to be renewed or rebound.
-            Ipv6Address clientLease = addrItr->GetIaAddress();
+            Ipv6Address clientLease = addrItr.GetIaAddress();
 
             // Update the lifetime for the address.
             // Iterate through the subnet list to find the subnet that the
             // address belongs to.
-            for (auto subnet = m_subnets.begin(); subnet != m_subnets.end(); subnet++)
+            for (auto& subnet : m_subnets)
             {
-                Ipv6Prefix prefix = subnet->GetPrefix();
-                Ipv6Address pool = subnet->GetAddressPool();
+                Ipv6Prefix prefix = subnet.GetPrefix();
+                Ipv6Address pool = subnet.GetAddressPool();
 
                 // Check if the prefix of the lease matches that of the pool.
                 if (prefix.IsMatch(clientLease, pool))
                 {
                     // Find all the leases for this client.
-                    auto range = subnet->m_leasedAddresses.equal_range(clientAddress);
+                    auto range = subnet.m_leasedAddresses.equal_range(clientAddress);
                     std::multimap<Address, std::pair<Ipv6Address, Time>> newLifetimes;
                     for (auto itr = range.first; itr != range.second; itr++)
                     {
@@ -440,10 +437,10 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
                                 Time(Seconds(m_prefLifetime.GetSeconds()))};
 
                             // Remove the old lease information.
-                            subnet->m_leasedAddresses.erase(itr);
+                            subnet.m_leasedAddresses.erase(itr);
 
                             // Add the new lease information (with updated time)
-                            subnet->m_leasedAddresses.insert({clientAddress, clientLeaseTime});
+                            subnet.m_leasedAddresses.insert({clientAddress, clientLeaseTime});
 
                             // Add the IA Address option.
                             replyHeader.AddAddress(iaOpt.GetIaid(),
@@ -509,21 +506,20 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
 
     // Add the declined or expired address to the subnet information.
     std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
-    for (auto ianaOpt = ianaOptionsList.begin(); ianaOpt != ianaOptionsList.end(); ianaOpt++)
+    for (const auto& iaOpt : ianaOptionsList)
     {
-        IaOptions iaOpt = *ianaOpt;
         std::list<IaAddressOption> iaAddrOptList = iaOpt.m_iaAddressOption;
 
-        for (auto addrItr = iaAddrOptList.begin(); addrItr != iaAddrOptList.end(); addrItr++)
+        for (const auto& addrItr : iaAddrOptList)
         {
-            Ipv6Address address = addrItr->GetIaAddress();
+            Ipv6Address address = addrItr.GetIaAddress();
             if (header.GetMessageType() == Dhcp6Header::DECLINE)
             {
                 // Find the subnet that this address belongs to.
-                for (auto subnet = m_subnets.begin(); subnet != m_subnets.end(); subnet++)
+                for (auto& subnet : m_subnets)
                 {
                     // Find the client that the address currently belongs to.
-                    auto range = subnet->m_leasedAddresses.equal_range(clientAddress);
+                    auto range = subnet.m_leasedAddresses.equal_range(clientAddress);
                     std::vector<Ipv6Address> declinedAddrs;
                     for (auto itr = range.first; itr != range.second; itr++)
                     {
@@ -531,22 +527,22 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
                         if (leaseAddr == address)
                         {
                             declinedAddrs.push_back(leaseAddr);
-                            subnet->m_declinedAddresses[address] = clientAddress;
+                            subnet.m_declinedAddresses[address] = clientAddress;
                         }
                     }
 
-                    for (auto itr = declinedAddrs.begin(); itr != declinedAddrs.end(); itr++)
+                    for (const auto& itr : declinedAddrs)
                     {
                         // Remove declined address from the leased address map.
-                        for (auto lease = subnet->m_leasedAddresses.begin();
-                             lease != subnet->m_leasedAddresses.end();
+                        for (auto lease = subnet.m_leasedAddresses.begin();
+                             lease != subnet.m_leasedAddresses.end();
                              lease++)
                         {
                             Ipv6Address address = lease->second.first;
 
-                            if (address == *itr)
+                            if (address == itr)
                             {
-                                subnet->m_leasedAddresses.erase(lease);
+                                subnet.m_leasedAddresses.erase(lease);
                                 break;
                             }
                         }
@@ -556,10 +552,10 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
             else if (header.GetMessageType() == Dhcp6Header::RELEASE)
             {
                 // Find the subnet that this address belongs to.
-                for (auto subnet = m_subnets.begin(); subnet != m_subnets.end(); subnet++)
+                for (auto& subnet : m_subnets)
                 {
                     // Find the client that the address currently belongs to.
-                    auto range = subnet->m_leasedAddresses.equal_range(clientAddress);
+                    auto range = subnet.m_leasedAddresses.equal_range(clientAddress);
                     std::vector<Ipv6Address> expiredAddrs;
                     for (auto itr = range.first; itr != range.second; itr++)
                     {
@@ -568,21 +564,21 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
                         if (leaseAddr == address)
                         {
                             expiredAddrs.push_back(leaseAddr);
-                            subnet->m_expiredAddresses.insert({expiredTime, leaseAddr});
+                            subnet.m_expiredAddresses.insert({expiredTime, leaseAddr});
                         }
                     }
 
-                    for (auto itr = expiredAddrs.begin(); itr != expiredAddrs.end(); itr++)
+                    for (const auto& itr : expiredAddrs)
                     {
                         // Remove expired address from the leased address map.
-                        for (auto lease = subnet->m_leasedAddresses.begin();
-                             lease != subnet->m_leasedAddresses.end();
+                        for (auto lease = subnet.m_leasedAddresses.begin();
+                             lease != subnet.m_leasedAddresses.end();
                              lease++)
                         {
                             Ipv6Address address = lease->second.first;
-                            if (address == *itr)
+                            if (address == itr)
                             {
-                                subnet->m_leasedAddresses.erase(lease);
+                                subnet.m_leasedAddresses.erase(lease);
                                 break;
                             }
                         }
@@ -689,14 +685,13 @@ Dhcp6Server::StartApplication()
     m_recvSocket = Socket::CreateSocket(node, tid);
 
     Inet6SocketAddress local =
-        Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), Dhcp6Server::PORT);
+        Inet6SocketAddress(Ipv6Address::GetAllNodesMulticast(), Dhcp6Header::SERVER_PORT);
     m_recvSocket->Bind(local);
     m_recvSocket->SetRecvPktInfo(true);
     m_recvSocket->SetRecvCallback(MakeCallback(&Dhcp6Server::NetHandler, this));
 
-    for (auto itr = m_devices.begin(); itr != m_devices.end(); itr++)
+    for (const auto& device : m_devices)
     {
-        Ptr<NetDevice> device = *itr;
         uint32_t ifIndex = ipv6->GetInterfaceForDevice(device);
 
         if (ifIndex < 0)
@@ -718,7 +713,7 @@ Dhcp6Server::StartApplication()
 
         Ptr<Socket> socket;
         socket = Socket::CreateSocket(node, tid);
-        socket->Bind(Inet6SocketAddress(linkLocal, Dhcp6Server::PORT));
+        socket->Bind(Inet6SocketAddress(linkLocal, Dhcp6Header::SERVER_PORT));
         socket->BindToNetDevice(device);
 
         m_sendSockets[device] = socket;
@@ -765,7 +760,6 @@ Dhcp6Server::StartApplication()
     }
 
     // Consider the link-layer address of the first NetDevice in the list.
-    m_serverIdentifier.SetHardwareType(1);
     m_serverIdentifier.SetLinkLayerAddress(longestDuidDevices[0]->GetAddress());
 
     m_leaseCleanupEvent = Simulator::Schedule(m_leaseCleanup, &Dhcp6Server::CleanLeases, this);
@@ -790,32 +784,29 @@ Dhcp6Server::CleanLeases()
 {
     NS_LOG_FUNCTION(this);
 
-    for (auto sub = m_subnets.begin(); sub != m_subnets.end(); sub++)
+    for (auto& subnet : m_subnets)
     {
-        LeaseInfo subnet = *sub;
-
         std::vector<Ipv6Address> expiredAddrs;
-        for (auto itr = subnet.m_leasedAddresses.begin(); itr != subnet.m_leasedAddresses.end();
-             itr++)
+        for (auto& itr : subnet.m_leasedAddresses)
         {
-            Ipv6Address address = itr->second.first;
-            Time leaseTime = itr->second.second;
+            Ipv6Address address = itr.second.first;
+            Time leaseTime = itr.second.second;
 
             if (Simulator::Now() >= leaseTime)
             {
                 subnet.m_expiredAddresses.insert({leaseTime, address});
-                expiredAddrs.push_back(itr->second.first);
+                expiredAddrs.push_back(itr.second.first);
             }
         }
 
-        for (auto itr = expiredAddrs.begin(); itr != expiredAddrs.end(); itr++)
+        for (const auto& itr : expiredAddrs)
         {
             for (auto it = subnet.m_leasedAddresses.begin(); it != subnet.m_leasedAddresses.end();
                  it++)
             {
                 Ipv6Address address = it->second.first;
 
-                if (address == *itr)
+                if (address == itr)
                 {
                     subnet.m_leasedAddresses.erase(it);
                     break;

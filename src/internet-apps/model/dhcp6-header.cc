@@ -206,9 +206,9 @@ void
 Dhcp6Header::HandleOptionRequest(std::list<uint16_t> requestedOptions)
 {
     // Currently, only OPTION_SOL_MAX_RT is supported.
-    for (auto itr = requestedOptions.begin(); itr != requestedOptions.end(); itr++)
+    for (auto itr : requestedOptions)
     {
-        switch (*itr)
+        switch (itr)
         {
         case OPTION_SOL_MAX_RT:
             AddSolMaxRt();
@@ -263,9 +263,9 @@ Dhcp6Header::AddIaOption(uint16_t optionType, uint32_t iaid, uint32_t t1, uint32
     {
     case OPTION_IA_NA: {
         bool iaidPresent = false;
-        for (auto itr = m_ianaList.begin(); itr != m_ianaList.end(); itr++)
+        for (const auto& itr : m_ianaList)
         {
-            if (itr->GetIaid() == newIa.GetIaid())
+            if (itr.GetIaid() == newIa.GetIaid())
             {
                 iaidPresent = true;
                 break;
@@ -282,9 +282,9 @@ Dhcp6Header::AddIaOption(uint16_t optionType, uint32_t iaid, uint32_t t1, uint32
 
     case OPTION_IA_TA: {
         bool iaidPresent = false;
-        for (auto itr = m_iataList.begin(); itr != m_iataList.end(); itr++)
+        for (const auto& itr : m_iataList)
         {
-            if (itr->GetIaid() == newIa.GetIaid())
+            if (itr.GetIaid() == newIa.GetIaid())
             {
                 iaidPresent = true;
                 break;
@@ -428,28 +428,26 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     }
     if (m_options[OPTION_IA_NA])
     {
-        for (auto itr = m_ianaList.begin(); itr != m_ianaList.end(); itr++)
+        for (const auto& itr : m_ianaList)
         {
-            i.WriteHtonU16((*itr).GetOptionCode());
-            i.WriteHtonU16((*itr).GetOptionLength());
-            i.WriteHtonU32((*itr).GetIaid());
-            i.WriteHtonU32((*itr).GetT1());
-            i.WriteHtonU32((*itr).GetT2());
+            i.WriteHtonU16(itr.GetOptionCode());
+            i.WriteHtonU16(itr.GetOptionLength());
+            i.WriteHtonU32(itr.GetIaid());
+            i.WriteHtonU32(itr.GetT1());
+            i.WriteHtonU32(itr.GetT2());
 
-            std::list<IaAddressOption> iaAddresses = (*itr).m_iaAddressOption;
-            auto iaItr = iaAddresses.begin();
-            while (iaItr != iaAddresses.end())
+            std::list<IaAddressOption> iaAddresses = itr.m_iaAddressOption;
+            for (const auto& iaItr : iaAddresses)
             {
-                i.WriteHtonU16((*iaItr).GetOptionCode());
-                i.WriteHtonU16((*iaItr).GetOptionLength());
+                i.WriteHtonU16(iaItr.GetOptionCode());
+                i.WriteHtonU16(iaItr.GetOptionLength());
 
-                Address addr = (*iaItr).GetIaAddress();
+                Address addr = iaItr.GetIaAddress();
                 uint8_t addrBuf[16];
                 addr.CopyTo(addrBuf);
                 i.Write(addrBuf, 16);
-                i.WriteHtonU32((*iaItr).GetPreferredLifetime());
-                i.WriteHtonU32((*iaItr).GetValidLifetime());
-                iaItr++;
+                i.WriteHtonU32(iaItr.GetPreferredLifetime());
+                i.WriteHtonU32(iaItr.GetValidLifetime());
             }
         }
     }
@@ -465,9 +463,9 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
         i.WriteHtonU16(m_optionRequest.GetOptionLength());
 
         std::list<uint16_t> requestedOptions = m_optionRequest.GetRequestedOptions();
-        for (auto itr = requestedOptions.begin(); itr != requestedOptions.end(); itr++)
+        for (const auto& itr : requestedOptions)
         {
-            i.WriteHtonU16(*itr);
+            i.WriteHtonU16(itr);
         }
     }
     if (m_options[OPTION_SOL_MAX_RT])

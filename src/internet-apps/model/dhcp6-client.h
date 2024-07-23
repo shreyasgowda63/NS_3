@@ -167,16 +167,6 @@ class Dhcp6Client : public Application
     void Boot();
 
     /**
-     * The port number of the DHCPv6 client.
-     */
-    static const int DHCP_CLIENT_PORT = 546;
-
-    /**
-     * The port number of the DHCPv6 server.
-     */
-    static const int DHCP_PEER_PORT = 547;
-
-    /**
      * The socket used for communication.
      */
     Ptr<Socket> m_socket;
@@ -299,7 +289,12 @@ class Dhcp6Client : public Application
     /**
      * Random variable to set transaction ID
      */
-    Ptr<RandomVariableStream> m_rand;
+    Ptr<RandomVariableStream> m_transactionId;
+
+    /**
+     * Random jitter before sending the first Solicit.
+     */
+    Ptr<RandomVariableStream> m_solicitJitter;
 
     /**
      * Trace the newly obtained lease.

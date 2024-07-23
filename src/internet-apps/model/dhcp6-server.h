@@ -240,11 +240,6 @@ class Dhcp6Server : public Application
     void CleanLeases();
 
     /**
-     * \brief The port number of the DHCPv6 server.
-     */
-    static const int PORT = 547;
-
-    /**
      * \brief The socket bound to port 547.
      */
     Ptr<Socket> m_recvSocket;

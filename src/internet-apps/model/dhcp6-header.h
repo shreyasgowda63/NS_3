@@ -253,6 +253,16 @@ class Dhcp6Header : public Header
      */
     std::vector<bool> GetOptionList();
 
+    /**
+     * \brief The port number of the DHCPv6 client.
+     */
+    static const uint16_t CLIENT_PORT = 546;
+
+    /**
+     * \brief The port number of the DHCPv6 server.
+     */
+    static const uint16_t SERVER_PORT = 547;
+
   private:
     TypeId GetInstanceTypeId() const override;
     void Print(std::ostream& os) const override;
