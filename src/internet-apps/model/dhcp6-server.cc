@@ -638,7 +638,7 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
     if (header.GetMessageType() == Dhcp6Header::SOLICIT)
     {
         ProcessSolicit(iDev, header, senderAddr);
-        SendAdvertise(iDev, header, senderAddr);
+        // SendAdvertise(iDev, header, senderAddr);
     }
     if (header.GetMessageType() == Dhcp6Header::REQUEST)
     {

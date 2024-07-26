@@ -36,6 +36,7 @@
 #include "ns3/string.h"
 #include "ns3/trace-source-accessor.h"
 #include "ns3/traced-value.h"
+#include "ns3/trickle-timer.h"
 
 #include <algorithm>
 
@@ -781,7 +782,6 @@ Dhcp6Client::StartApplication()
                 std::vector<uint32_t> iaidList = client->GetIaids();
 
                 existingIaNaIds.insert(existingIaNaIds.end(), iaidList.begin(), iaidList.end());
-                NS_LOG_INFO("Existing IAIDs: " << iaidList.size());
             }
         }
 
@@ -799,21 +799,21 @@ Dhcp6Client::StartApplication()
                 break;
             }
         }
-
-        NS_LOG_INFO("IAID Count " << m_iaNaIds.size());
-        for (auto item : m_iaNaIds)
-        {
-            NS_LOG_INFO("IAID: " << item);
-        }
     }
 
     // Introduce a random delay before sending the Solicit message.
     Simulator::Schedule(Time(MilliSeconds(m_solicitJitter->GetValue())), &Dhcp6Client::Boot, this);
+
+    uint32_t minInterval = m_solicitInterval.GetSeconds() / 2;
+    TrickleTimer m_solicitTimer(Time(minInterval), 4, 1);
+    m_solicitTimer.SetFunction(&Dhcp6Client::Boot, this);
+    m_solicitTimer.Enable();
 }
 
 void
 Dhcp6Client::Boot()
 {
+    NS_LOG_INFO("BOOTING");
     Dhcp6Header header;
     Ptr<Packet> packet;
     packet = Create<Packet>();
@@ -854,7 +854,7 @@ Dhcp6Client::Boot()
     }
 
     m_state = WAIT_ADVERTISE;
-    m_solicitEvent = Simulator::Schedule(m_solicitInterval, &Dhcp6Client::Boot, this);
+    // m_solicitEvent = Simulator::Schedule(m_solicitInterval, &Dhcp6Client::Boot, this);
 }
 
 void

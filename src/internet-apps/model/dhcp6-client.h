@@ -168,6 +168,7 @@ class Dhcp6Client : public Application
 
     /**
      * \brief Retrieve all existing IAIDs.
+     * \return A list of all IAIDs.
      */
     std::vector<uint32_t> GetIaids();
 
