@@ -572,10 +572,12 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
         case OPTION_IA_NA: {
             NS_LOG_INFO("IANA Option");
             IaOptions iana;
+            uint32_t iaAddrOptLen = 0;
             if (len + 2 <= cLen)
             {
                 iana.SetOptionCode(option);
                 iana.SetOptionLength(i.ReadNtohU16());
+                iaAddrOptLen = iana.GetOptionLength();
                 len += 2;
             }
 
@@ -585,9 +587,11 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 iana.SetT1(i.ReadNtohU32());
                 iana.SetT2(i.ReadNtohU32());
                 len += 12;
+                iaAddrOptLen -= 12;
             }
 
-            while (len + 28 <= cLen)
+            uint32_t readLen = 0;
+            while (readLen < iaAddrOptLen)
             {
                 IaAddressOption iaAddrOpt;
                 iaAddrOpt.SetOptionCode(i.ReadNtohU16());
@@ -602,6 +606,9 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
 
                 iana.m_iaAddressOption.push_back(iaAddrOpt);
                 len += 4 + iaAddrOpt.GetOptionLength();
+
+                readLen += 4 + iaAddrOpt.GetOptionLength();
+                NS_LOG_INFO("reading " << Ipv6Address(addrBuf));
             }
             m_ianaList.push_back(iana);
             m_options[OPTION_IA_NA] = true;

@@ -127,8 +127,13 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
     advertiseHeader.AddServerIdentifier(m_serverIdentifier.GetHardwareType(),
                                         m_serverIdentifier.GetLinkLayerAddress());
 
-    // Find all IAIDs for this client.
-    auto range = m_iaBindings.equal_range(clientAddress);
+    // Find all requested IAIDs for this client.
+    std::vector<uint32_t> requestedIa;
+    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    for (const auto& iaOpt : ianaOptionsList)
+    {
+        requestedIa.push_back(iaOpt.GetIaid());
+    }
 
     // Add IA_NA option.
     // Available address pools and IA information is sent in this option.
@@ -204,13 +209,8 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
         Ipv6Address offeredAddr(offeredAddrBuf);
         NS_LOG_INFO("Offered address: " << offeredAddr);
 
-        // Add the IA option for each IAID listed in the header.
-        for (auto iaBinding = range.first; iaBinding != range.second; iaBinding++)
+        for (const auto& iaid : requestedIa)
         {
-            // Pair: IA type + IAID.
-            std::pair<uint8_t, uint32_t> iaInfo = iaBinding->second;
-            uint32_t iaid = iaInfo.second;
-
             // Add the IA_NA option and IA Address option.
             advertiseHeader.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
             advertiseHeader.AddAddress(iaid,
@@ -723,6 +723,7 @@ Dhcp6Server::StartApplication()
     std::vector<Ptr<NetDevice>> possibleDuidDevices;
 
     uint32_t maxAddressLength = 0;
+    Address duidAddress;
     for (uint32_t i = 0; i < nInterfaces; i++)
     {
         Ptr<NetDevice> device = node->GetDevice(i);
@@ -740,27 +741,18 @@ Dhcp6Server::StartApplication()
             if (address.GetLength() > maxAddressLength)
             {
                 maxAddressLength = address.GetLength();
+                duidAddress = address;
             }
-            possibleDuidDevices.push_back(device);
         }
     }
 
-    std::vector<Ptr<NetDevice>> longestDuidDevices;
-    for (uint32_t i = 0; i < possibleDuidDevices.size(); i++)
+    if (duidAddress.IsInvalid())
     {
-        if (possibleDuidDevices[i]->GetAddress().GetLength() == maxAddressLength)
-        {
-            longestDuidDevices.push_back(possibleDuidDevices[i]);
-        }
-    }
-
-    if (longestDuidDevices.empty())
-    {
-        NS_ABORT_MSG("No suitable NetDevice found for DUID, aborting.");
+        NS_ABORT_MSG("DHCPv6 server: No suitable NetDevice found for DUID, aborting.");
     }
 
     // Consider the link-layer address of the first NetDevice in the list.
-    m_serverIdentifier.SetLinkLayerAddress(longestDuidDevices[0]->GetAddress());
+    m_serverIdentifier.SetLinkLayerAddress(duidAddress);
 
     m_leaseCleanupEvent = Simulator::Schedule(m_leaseCleanup, &Dhcp6Server::CleanLeases, this);
 }

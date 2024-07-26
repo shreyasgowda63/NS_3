@@ -60,9 +60,9 @@ class Dhcp6Client : public Application
 
     /**
      * \brief Get the identifier option.
-     * \return The client's identifier.
+     * \return The DUID-LL which identifies the client.
      */
-    IdentifierOption GetSelfIdentifier();
+    IdentifierOption GetDuid();
 
     int64_t AssignStreams(int64_t stream) override;
 
@@ -167,6 +167,11 @@ class Dhcp6Client : public Application
     void Boot();
 
     /**
+     * \brief Retrieve all existing IAIDs.
+     */
+    std::vector<uint32_t> GetIaids();
+
+    /**
      * The socket used for communication.
      */
     Ptr<Socket> m_socket;
@@ -180,11 +185,6 @@ class Dhcp6Client : public Application
      * The state of the DHCPv6 client.
      */
     uint8_t m_state;
-
-    /**
-     * First boot of the client.
-     */
-    bool m_firstBoot;
 
     /**
      * Store the starting timestamp for the Elapsed Time option
@@ -282,9 +282,10 @@ class Dhcp6Client : public Application
     std::vector<EventId> m_releaseEvent;
 
     /**
-     * Track the latest IANA ID
+     * Track the IA_NA IDs being used.
+     * These are initialized before sending the Solicit message.
      */
-    uint32_t m_ianaIds;
+    std::vector<uint32_t> m_iaNaIds;
 
     /**
      * Random variable to set transaction ID
