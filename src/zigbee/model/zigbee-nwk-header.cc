@@ -32,7 +32,7 @@ ZigbeeNwkHeader::ZigbeeNwkHeader()
 {
     SetFrameType(DATA);
     SetProtocolVer(3);
-    SetDiscoverRoute(SUPPRESS);
+    SetDiscoverRoute(DiscoverRouteType::SUPPRESS_ROUTE_DISCOVERY);
     m_fctrlMcst = false;
     m_fctrlSecurity = false;
     m_fctrlSrcRoute = false;
@@ -79,6 +79,12 @@ DiscoverRouteType
 ZigbeeNwkHeader::GetDiscoverRoute() const
 {
     return m_fctrlDscvRoute;
+}
+
+void
+ZigbeeNwkHeader::SetMulticast()
+{
+    m_fctrlMcst = true;
 }
 
 bool
@@ -373,10 +379,10 @@ ZigbeeNwkHeader::Print(std::ostream& os) const
 
     switch (m_fctrlDscvRoute)
     {
-    case SUPPRESS:
+    case DiscoverRouteType::SUPPRESS_ROUTE_DISCOVERY:
         os << " | Enable Route Discovery = SUPPRESS ";
         break;
-    case ENABLE:
+    case DiscoverRouteType::ENABLE_ROUTE_DISCOVERY:
         os << " | Enable Route Discovery = ENABLED ";
         break;
     }

@@ -70,7 +70,8 @@ NS_LOG_COMPONENT_DEFINE("ZigbeeRouting");
 static void
 NwkDataIndication(Ptr<ZigbeeStack> stack, NldeDataIndicationParams params, Ptr<Packet> p)
 {
-    std::cout << "Received packet of size " << p->GetSize() << "\n";
+    std::cout << Simulator::Now().As(Time::S) << " Node " << stack->GetNode()->GetId() << " | "
+              << "NsdeDataIndication:  Received packet of size " << p->GetSize() << "\n";
 }
 
 static void
@@ -209,6 +210,12 @@ main(int argc, char* argv[])
     Ptr<ZigbeeStack> zstack3 = zigbeeStackContainer.Get(3)->GetObject<ZigbeeStack>();
     Ptr<ZigbeeStack> zstack4 = zigbeeStackContainer.Get(4)->GetObject<ZigbeeStack>();
 
+    zstack0->GetNwk()->AssignStreams(0);
+    zstack1->GetNwk()->AssignStreams(10);
+    zstack2->GetNwk()->AssignStreams(20);
+    zstack3->GetNwk()->AssignStreams(30);
+    zstack4->GetNwk()->AssignStreams(40);
+
     //// Configure Nodes Mobility
 
     Ptr<ConstantPositionMobilityModel> dev0Mobility = CreateObject<ConstantPositionMobilityModel>();
@@ -232,15 +239,15 @@ main(int argc, char* argv[])
     dev4->GetPhy()->SetMobility(dev4Mobility);
 
     // NWK callbacks hooks, these hooks are usually directly connected to the APS layer
-    // where all these calls inform the result of a request originated the APS layer.
+    // where all these calls inform the result of a request originated in this layer.
 
     zstack0->GetNwk()->SetNlmeNetworkFormationConfirmCallback(
         MakeBoundCallback(&NwkNetworkFormationConfirm, zstack0));
-    zstack0->GetNwk()->SetNldeDataIndicationCallback(
-        MakeBoundCallback(&NwkDataIndication, zstack0));
     zstack0->GetNwk()->SetNlmeRouteDiscoveryConfirmCallback(
         MakeBoundCallback(&NwkRouteDiscoveryConfirm, zstack0));
 
+    zstack0->GetNwk()->SetNldeDataIndicationCallback(
+        MakeBoundCallback(&NwkDataIndication, zstack0));
     zstack1->GetNwk()->SetNldeDataIndicationCallback(
         MakeBoundCallback(&NwkDataIndication, zstack1));
     zstack2->GetNwk()->SetNldeDataIndicationCallback(
@@ -323,36 +330,48 @@ main(int argc, char* argv[])
                                    netDiscParams4);
 
     // 5- Find a route to the given device short address
-    NlmeRouteDiscoveryRequestParams routeDiscParams;
-    routeDiscParams.m_dstAddr = Mac16Address("0d:10");
+    /*NlmeRouteDiscoveryRequestParams routeDiscParams;
+    routeDiscParams.m_dstAddr = Mac16Address("ad:6e");
     Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
                                    Seconds(8),
                                    &ZigbeeNwk::NlmeRouteDiscoveryRequest,
                                    zstack0->GetNwk(),
-                                   routeDiscParams);
+                                   routeDiscParams);*/
+
+    Ptr<Packet> p = Create<Packet>(5);
+    NldeDataRequestParams dataReqParams;
+    dataReqParams.m_dstAddrMode = UCST_BCST;
+    dataReqParams.m_dstAddr = Mac16Address("ad:6e");
+    dataReqParams.m_nsduHandle = 1;
+    dataReqParams.m_discoverRoute = ENABLE_ROUTE_DISCOVERY;
+    Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
+                                   Seconds(8),
+                                   &ZigbeeNwk::NldeDataRequest,
+                                   zstack0->GetNwk(),
+                                   dataReqParams,
+                                   p);
 
     // Print routing tables of coordinator (originator of route request) at
     // the end of the simulation
-
     Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
     Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
-                                   Seconds(11),
+                                   Seconds(17),
                                    &ZigbeeNwk::PrintNeighborTable,
                                    zstack0->GetNwk(),
                                    stream);
 
     Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
-                                   Seconds(11),
+                                   Seconds(17),
                                    &ZigbeeNwk::PrintRoutingTable,
                                    zstack0->GetNwk(),
                                    stream);
 
     Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
-                                   Seconds(11),
+                                   Seconds(17),
                                    &ZigbeeNwk::PrintRouteDiscoveryTable,
                                    zstack0->GetNwk(),
                                    stream);
-
+    Simulator::Stop(Seconds(20));
     Simulator::Run();
     Simulator::Destroy();
     return 0;

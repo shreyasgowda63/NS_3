@@ -422,6 +422,24 @@ RoutingTable::Dispose()
     m_routingTable.clear();
 }
 
+uint32_t
+RoutingTable::GetSize()
+{
+    return m_routingTable.size();
+}
+
+void
+RoutingTable::SetMaxTableSize(uint32_t size)
+{
+    m_maxTableSize = size;
+}
+
+uint32_t
+RoutingTable::GetMaxTableSize() const
+{
+    return m_maxTableSize;
+}
+
 /***********************************************************
  *                Routing Discovery Table Entry
  ***********************************************************/
@@ -1090,6 +1108,23 @@ NeighborTable::LookUpEntry(Mac64Address extAddr, Ptr<NeighborTableEntry>& entryF
     for (const auto& entry : m_neighborTable)
     {
         if (entry->GetExtAddr() == extAddr)
+        {
+            entryFound = entry;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool
+NeighborTable::GetParent(Ptr<NeighborTableEntry>& entryFound)
+{
+    NS_LOG_FUNCTION(this);
+
+    for (const auto& entry : m_neighborTable)
+    {
+        if (entry->GetRelationship() == NBR_PARENT)
         {
             entryFound = entry;
             return true;

@@ -68,7 +68,8 @@ enum PendingPrimitiveNwk
     NLME_START_ROUTER = 4,      //!< Pending NLME-START-ROUTER.request primitive
     NLME_NET_DISCV = 5,         //!< Pending NLME-NETWORK-DISCOVERY.request primitive
     NLME_JOIN_INDICATION = 6,   //!< Pending NLME-JOIN.indication primitive
-    NLME_ROUTE_DISCOVERY = 7    //!< Pending NLME-ROUTE-DISCOVERY.request primitive
+    NLME_ROUTE_DISCOVERY = 7,   //!< Pending NLME-ROUTE-DISCOVERY.request primitive
+    NLDE_DATA = 8               //!< Pending NLDE-DATA.request primitive
 };
 
 /**
@@ -190,6 +191,36 @@ enum ZigbeeNwkStatus : std::uint8_t
 };
 
 /**
+ * \ingroup zigbee
+ *
+ *  Status codes for network status command frame and route discovery failures.
+ *
+ */
+enum NetworkStatusCode : std::uint8_t
+{
+    NO_ROUTE_AVAILABLE = 0x00,          //!< No route available
+    TREE_LINK_FAILURE = 0x01,           //!< Tree link failure
+    NON_TREE_LINK_FAILURE = 0x02,       //!< Non tree link failure
+    LOW_BATTERY = 0x03,                 //!< Low battery
+    NO_ROUTING_CAPACITY = 0x04,         //!< No routing capacity
+    NO_INDIRECT_CAPACITY = 0x05,        //!< No indirect capacity
+    INDIRECT_TRANSACTION_EXPIRY = 0x06, //!< Indirect transaction expiry
+    TARGET_DEVICE_UNAVAILABLE = 0x07,   //!< Target device unavailable
+    TARGET_ADDRESS_UNALLOCATED = 0x08,  //!< Target address unallocated
+    PARENT_LINK_FAILURE = 0x09,         //!< Parent link failure
+    VALIDATE_ROUTE = 0x0a,              //!< Validate route
+    SOURCE_ROUTE_FAILURE = 0x0b,        //!< Source route failure
+    MANY_TO_ONE_ROUTE_FAILURE = 0x0c,   //!< Many to one route failure
+    ADDRESS_CONFLICT = 0x0d,            //!< Address conflict
+    VERIFY_ADDRESS = 0x0e,              //!< Verify address
+    PAN_IDENTIFIER_UPDATE = 0x0f,       //!< PAN identifier update
+    NETWORK_ADDRESS_UPDATE = 0x10,      //!< Network address update
+    BAD_FRAME_COUNTER = 0x11,           //!< Bad frame counter
+    BAD_KEY_SEQUENCE_NUMBER = 0x12,     //!< Bad key sequence number
+    UNKNOWN_COMMAND = 0x13              //!< Unknown command
+};
+
+/**
  *  \ingroup zigbee
  *
  *  Channel List Structure. See Zigbee Specification 3.2.2.2.1
@@ -262,7 +293,7 @@ struct NldeDataRequestParams
                                       //!< travel through the network.
     uint8_t m_nonMemberRadius{0}; //!< Distance in hops that a multicast frame will be relayed by
                                   //!< nodes not a member of the group. 0x07 = Infinity.
-    bool m_discoverRoute{false};  //!< T: Enable Route Discovery | F: Suppress Route discovery
+    uint8_t m_discoverRoute{0};   //!< 0x01 Enable Route Discovery | 0x00: Suppress Route discovery
     bool m_securityEnable{false}; //!< Enable NWK layer security for the current frame.
 };
 
@@ -346,7 +377,9 @@ struct NlmeRouteDiscoveryConfirmParams
 {
     ZigbeeNwkStatus m_status{ZigbeeNwkStatus::INVALID_PARAMETER}; //!< The status as a result of
                                                                   //!< this request.
-    // TODO: here   NetworkStatusCode
+    NetworkStatusCode m_networkStatusCode{NetworkStatusCode::UNKNOWN_COMMAND}; //!< In case where
+    //!< the status parameter has a value of ROUTE_ERROR, this code gives further information about
+    //!< the error occurred. Otherwise, it should be ignored.
 };
 
 /**
@@ -678,8 +711,8 @@ class ZigbeeNwk : public Object
      *  MCPS-DATA.indication
      *  Indicates the reception of an MSDU from MAC to NWK (receiving)
      *
-     *  @param params The MCPS-DATA.indication parameters.
-     *  @param msdu The set of octets forming the MSDU.
+     *  \param params The MCPS-DATA.indication parameters.
+     *  \param msdu The set of octets forming the MSDU.
      */
     void McpsDataIndication(lrwpan::McpsDataIndicationParams params, Ptr<Packet> msdu);
 
@@ -688,7 +721,7 @@ class ZigbeeNwk : public Object
      *  MCPS-DATA.confirm
      *  Reports the results of a request to a transfer data to another device.
      *
-     *  @param params The MCPS-DATA.confirm parameters.
+     *  \param params The MCPS-DATA.confirm parameters.
      */
     void McpsDataConfirm(lrwpan::McpsDataConfirmParams params);
 
@@ -697,7 +730,7 @@ class ZigbeeNwk : public Object
      *  MLME-SCAN.confirm
      *  Reports the results of a scan request.
      *
-     *  @param params The MLME-SCAN.confirm parameters.
+     *  \param params The MLME-SCAN.confirm parameters.
      */
     void MlmeScanConfirm(lrwpan::MlmeScanConfirmParams params);
 
@@ -706,7 +739,7 @@ class ZigbeeNwk : public Object
      * MlME-ASSOCIATE.confirm
      * Report the results of an associate request attempt.
      *
-     *  @param params The MLME-ASSOCIATE.confirm parameters.
+     *  \param params The MLME-ASSOCIATE.confirm parameters.
      */
     void MlmeAssociateConfirm(lrwpan::MlmeAssociateConfirmParams params);
 
@@ -715,7 +748,7 @@ class ZigbeeNwk : public Object
      *  MLME-START.confirm
      *  Reports the results of a network start request.
      *
-     *  @param params The MLME-START.confirm parameters.
+     *  \param params The MLME-START.confirm parameters.
      */
     void MlmeStartConfirm(lrwpan::MlmeStartConfirmParams params);
 
@@ -724,7 +757,7 @@ class ZigbeeNwk : public Object
      * MLME-SET.confirm
      * Reports the result of an attempt to change a MAC PIB attribute.
      *
-     * @param params The MLME-SET.confirm params
+     * \param params The MLME-SET.confirm params
      */
     void MlmeSetConfirm(lrwpan::MlmeSetConfirmParams params);
 
@@ -733,9 +766,9 @@ class ZigbeeNwk : public Object
      * MLME-GET.confirm
      * Reports the result of an attempt to obtain a MAC PIB attribute.
      *
-     * @param status The status as a result of a MLME-GET.request operation
-     * @param id The identififier of the attribute requested
-     * @param attribute The value of of the attribute requested
+     * \param status The status as a result of a MLME-GET.request operation
+     * \param id The identififier of the attribute requested
+     * \param attribute The value of of the attribute requested
      */
     void MlmeGetConfirm(lrwpan::MacStatus status,
                         lrwpan::MacPibAttributeIdentifier id,
@@ -749,7 +782,7 @@ class ZigbeeNwk : public Object
      *  layer on receipt of an orphan notification command, as defined
      *  in 5.3.6.
      *
-     *  @param params The MLME-ORPHAN.indication parameters
+     *  \param params The MLME-ORPHAN.indication parameters
      */
     void MlmeOrphanIndication(lrwpan::MlmeOrphanIndicationParams params);
 
@@ -758,7 +791,7 @@ class ZigbeeNwk : public Object
      *  MLME-COMM-STATUS.indication
      *  Allows the MAC MLME to indicate a communication status.
      *
-     *  @param params The MLME-COMM-STATUS.indication parameters
+     *  \param params The MLME-COMM-STATUS.indication parameters
      */
     void MlmeCommStatusIndication(lrwpan::MlmeCommStatusIndicationParams params);
 
@@ -767,7 +800,7 @@ class ZigbeeNwk : public Object
      *  MLME-BEACON-NOTIFY.indication
      *  Allows the MAC MLME to indicate the reception of a beacon with payload.
      *
-     *  @param params The MLME-BEACON-NOTIFY.indication parameters
+     *  \param params The MLME-BEACON-NOTIFY.indication parameters
      */
     void MlmeBeaconNotifyIndication(lrwpan::MlmeBeaconNotifyIndicationParams params);
 
@@ -779,7 +812,7 @@ class ZigbeeNwk : public Object
      *  the parent procedure when a device join a network through association
      *  (See Zigbee specification r22.1.0, Section 3.6.1.4.1)
      *
-     *  @param params The MLME-ASSOCIATE.indication parameters
+     *  \param params The MLME-ASSOCIATE.indication parameters
      */
     void MlmeAssociateIndication(lrwpan::MlmeAssociateIndicationParams params);
 
@@ -788,17 +821,17 @@ class ZigbeeNwk : public Object
      *  NLDE-DATA.request
      *  Request to transfer a NSDU.
      *
-     *  @param params the request parameters
-     *  @param nsdu the NSDU to be transmitted
+     *  \param params the request parameters
+     *  \param packet the NSDU to be transmitted
      */
-    void NldeDataRequest(NldeDataRequestParams params, Ptr<Packet> nsdu);
+    void NldeDataRequest(NldeDataRequestParams params, Ptr<Packet> packet);
 
     /**
      *  Zigbee Specification r22.1.0, Section 3.2.2.5 and 3.6.1.1
      *  NLME-NETWORK-FORMATION.request
      *  Request the formation of a network in a capable device.
      *
-     *  @param params the network formation request params
+     *  \param params the network formation request params
      */
     void NlmeNetworkFormationRequest(NlmeNetworkFormationRequestParams params);
 
@@ -807,7 +840,7 @@ class ZigbeeNwk : public Object
      *  NLME-ROUTE-DISCOVERY.request
      *  Allows the next higher layer to initiate route discovery.
      *
-     *  @param params the route discovery request params
+     *  \param params the route discovery request params
      */
     void NlmeRouteDiscoveryRequest(NlmeRouteDiscoveryRequestParams params);
 
@@ -817,7 +850,7 @@ class ZigbeeNwk : public Object
      *  Allows the next higher layer to request that the NWK layer discover
      *  networks currently operating within the personal operating space (POS).
      *
-     *  @param params the network discovery request params
+     *  \param params the network discovery request params
      */
     void NlmeNetworkDiscoveryRequest(NlmeNetworkDiscoveryRequestParams params);
 
@@ -827,7 +860,7 @@ class ZigbeeNwk : public Object
      *  Allows the next layer of a Zigbee coordinator or router to request to
      *  directly join another device to its network
      *
-     *  @param params the direct join request params
+     *  \param params the direct join request params
      */
     void NlmeDirectJoinRequest(NlmeDirectJoinRequestParams params);
 
@@ -838,7 +871,7 @@ class ZigbeeNwk : public Object
      *  network, or to change the operating channel for the device while within an
      *  operating network.
      *
-     *  @param params the join request params
+     *  \param params the join request params
      */
     void NlmeJoinRequest(NlmeJoinRequestParams params);
 
@@ -850,7 +883,7 @@ class ZigbeeNwk : public Object
      *  framaes, route discovery, and the accepting of request to join the network
      *  from other devices.
      *
-     *  @param params the join request params
+     *  \param params the join request params
      */
     void NlmeStartRouterRequest(NlmeStartRouterRequestParams params);
 
@@ -858,7 +891,7 @@ class ZigbeeNwk : public Object
      *  Set the callback for the end of a RX, as part of the
      *  interconnections between the NWK and the APS sublayer. The callback
      *  implements the callback used in a NLDE-DATA.indication.
-     *  @param c the NldeDataIndication callback
+     *  \param c the NldeDataIndication callback
      */
     void SetNldeDataIndicationCallback(NldeDataIndicationCallback c);
 
@@ -867,7 +900,7 @@ class ZigbeeNwk : public Object
      *  the APS sublayer (or any other higher layer). The callback
      *  implements the callback used in a NLDE-DATA.confirm
      *
-     *  @param c the NldeDataConfirm callback
+     *  \param c the NldeDataConfirm callback
      */
     void SetNldeDataConfirmCallback(NldeDataConfirmCallback c);
 
@@ -875,7 +908,7 @@ class ZigbeeNwk : public Object
      *  Set the callback as part of the interconnections between the NWK and the
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-NETWORK-FORMATION.confirm
-     *  @param c the NlmeNetworkFormationConfirm callback
+     *  \param c the NlmeNetworkFormationConfirm callback
      */
     void SetNlmeNetworkFormationConfirmCallback(NlmeNetworkFormationConfirmCallback c);
 
@@ -883,7 +916,7 @@ class ZigbeeNwk : public Object
      *  Set the callback as part of the interconnections between the NWK and the
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-NETWORK-DISCOVERY.confirm
-     *  @param c the NlmeNetworkDiscoveryConfirm callback
+     *  \param c the NlmeNetworkDiscoveryConfirm callback
      */
     void SetNlmeNetworkDiscoveryConfirmCallback(NlmeNetworkDiscoveryConfirmCallback c);
 
@@ -892,7 +925,7 @@ class ZigbeeNwk : public Object
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-ROUTE-DISCOVERY.confirm
      *
-     *  @param c the NlmeRouteDiscoveryConfirm callback
+     *  \param c the NlmeRouteDiscoveryConfirm callback
      */
     void SetNlmeRouteDiscoveryConfirmCallback(NlmeRouteDiscoveryConfirmCallback c);
 
@@ -901,7 +934,7 @@ class ZigbeeNwk : public Object
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-DIRECT-JOIN.confirm
      *
-     *  @param c the NlmeDirectJoinConfirm callback
+     *  \param c the NlmeDirectJoinConfirm callback
      */
     void SetNlmeDirectJoinConfirmCallback(NlmeDirectJoinConfirmCallback c);
 
@@ -910,7 +943,7 @@ class ZigbeeNwk : public Object
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-JOIN.confirm
      *
-     *  @param c the NlmeJoinConfirm callback
+     *  \param c the NlmeJoinConfirm callback
      */
     void SetNlmeJoinConfirmCallback(NlmeJoinConfirmCallback c);
 
@@ -919,7 +952,7 @@ class ZigbeeNwk : public Object
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-JOIN.indication
      *
-     *  @param c the NlmeJoinIndication callback
+     *  \param c the NlmeJoinIndication callback
      */
     void SetNlmeJoinIndicationCallback(NlmeJoinIndicationCallback c);
 
@@ -928,7 +961,7 @@ class ZigbeeNwk : public Object
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-START-ROUTER.confirm
      *
-     *  @param c the NlmeStartRouterConfirm callback
+     *  \param c the NlmeStartRouterConfirm callback
      */
     void SetNlmeStartRouterConfirmCallback(NlmeStartRouterConfirmCallback c);
 
@@ -959,8 +992,30 @@ class ZigbeeNwk : public Object
     void DoDispose() override;
 
   private:
-    Ptr<lrwpan::LrWpanMacBase>
-        m_mac; //!< Pointer to the underlying MAC connected to this Zigbee NWK.
+    Ptr<lrwpan::LrWpanMacBase> m_mac; //!< Pointer to the underlying MAC
+                                      //!< connected to this Zigbee NWK.
+
+    /**
+     * Structure representing an element in the pending transaction queue.
+     */
+    struct PendingTxPkt : public SimpleRefCount<PendingTxPkt>
+    {
+        uint8_t nsduHandle;   //!< The NSDU handle
+        Mac16Address dstAddr; //!< The destination network Address
+        Ptr<Packet> txPkt;    //!< The pending packet.
+        Time expireTime;      //!< The expiration time of the packet
+    };
+
+    /**
+     * The pending transaction queue of data packets awaiting to be transmitted
+     * until a route to the destination becomes available.
+     */
+    std::deque<Ptr<PendingTxPkt>> m_pendingTxQueue;
+
+    /**
+     * The maximum size of the pending transaction queue.
+     */
+    uint32_t m_maxPendingTxQueueSize;
 
     ///////////////
     // Callbacks //
@@ -1114,6 +1169,22 @@ class ZigbeeNwk : public Object
     RreqRetryTable m_rreqRetryTable;
 
     /**
+     * Enqueue a packet in the pending transaction queue until
+     * a route is discovered for its destination.
+     *
+     * \param p The packet to enqueue.
+     */
+    void EnqueueTx(Ptr<Packet> p, uint8_t nsduHandle);
+
+    /**
+     * Dequeue a packet in the pending transaction queue.
+     *
+     * \param dst The destination of the packet
+     * \param entry The pending packet element
+     */
+    bool DequeueTx(Mac16Address dst, Ptr<PendingTxPkt> entry);
+
+    /**
      *  Used by a Zigbee coordinator or router to allocate a
      *  16 bit address (A.K.A short address or network address)
      *  to its associated device upon request.
@@ -1204,6 +1275,41 @@ class ZigbeeNwk : public Object
                      uint8_t linkCost,
                      ZigbeeNwkHeader nwkHeader,
                      ZigbeePayloadRouteReplyCommand payload);
+
+    /**
+     *  Returns true if the address is a broadcast address according to
+     *  Zigbee specification r22.1.0, Section 3.6.5, Table 3-69
+     *
+     *  \param address The address to compare to a broadcast address
+     *  \return True if the address in a broadcast address
+     */
+    bool IsBroadcastAddress(Mac16Address address);
+
+    /**
+     * Send a Unicasta packet, and if necessary look for the next hop route
+     * and store the pending data transmission until a route is found.
+     *
+     * \param packet The NPDU (nwkHeader + payload) to transmit.
+     * \param handle The MSDU handle.
+     */
+    void SendUnicast(Ptr<Packet> packet, uint8_t handle);
+
+    /**
+     * Find the next hope in route to a destination.
+     *
+     * \param dst The final destination of the requested route.
+     * \param radius Distance in hops that the frame is allowed to travel through the network.
+     * \param noRouteCache  Determines whether the NWK should establish a route record table.
+     * \param discoverRoute An indication of whether or no a RREQ should be used if needed.
+     * \param nextHop Contains the address of the next hop towards the destination.
+     *
+     * \return True if the next hop in route was found.
+     */
+    bool FindNextHop(Mac16Address dst,
+                     uint16_t radius,
+                     bool noRouteCache,
+                     bool discoverRoute,
+                     Mac16Address& nextHop);
 
     /**
      *  Provides uniform random values
@@ -1388,6 +1494,11 @@ class ZigbeeNwk : public Object
      * The counter used to identify route request commands
      */
     SequenceNumber8 m_routeRequestId;
+
+    /**
+     * The handle assigned during a data transmission
+     */
+    SequenceNumber8 m_dataHandle;
 
     /**
      * This NIB attribute indicates whether the NWK layer should assume the ability to

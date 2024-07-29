@@ -98,6 +98,12 @@ ZigbeeNwk::GetTypeId()
                           DoubleValue(128),
                           MakeDoubleAccessor(&ZigbeeNwk::m_nwkcMaxRREQJitter),
                           MakeDoubleChecker<double>())
+            .AddAttribute("maxPendingTxQueueSize",
+                          "The maximum size of the table storing pending packets awaiting "
+                          "to be transmitted after discovering a route to the destination.",
+                          UintegerValue(10),
+                          MakeUintegerAccessor(&ZigbeeNwk::m_maxPendingTxQueueSize),
+                          MakeUintegerChecker<uint32_t>())
             .AddTraceSource("rreqRetriesExhausted",
                             "Trace source indicating when a node has "
                             "reached the maximum allowed number of RREQ retries during a "
@@ -136,6 +142,7 @@ ZigbeeNwk::ZigbeeNwk()
     m_uniformRandomVariable->SetAttribute("Max", DoubleValue(255.0));
     m_nwkSequenceNumber = SequenceNumber8(m_uniformRandomVariable->GetValue());
     m_routeRequestId = SequenceNumber8(m_uniformRandomVariable->GetValue());
+    m_dataHandle = SequenceNumber8(m_uniformRandomVariable->GetValue());
 
     m_rreqJitter = CreateObject<UniformRandomVariable>();
     m_rreqJitter->SetAttribute("Min", DoubleValue(m_nwkcMinRREQJitter));
@@ -256,44 +263,74 @@ ZigbeeNwk::McpsDataIndication(McpsDataIndicationParams params, Ptr<Packet> msdu)
 {
     NS_LOG_FUNCTION(this);
 
-    ZigbeeNwkHeader nwkHeader;
-    msdu->RemoveHeader(nwkHeader);
+    ZigbeeNwkHeader peekedNwkHeader;
+    msdu->PeekHeader(peekedNwkHeader);
 
     // Check if the received frame is from a neighbor and update LQI if necessary
     Ptr<NeighborTableEntry> neighborEntry;
-    if (m_nwkNeighborTable.LookUpEntry(nwkHeader.GetSrcAddr(), neighborEntry))
+    if (m_nwkNeighborTable.LookUpEntry(peekedNwkHeader.GetSrcAddr(), neighborEntry))
     {
         neighborEntry->SetLqi(params.m_mpduLinkQuality);
     }
 
-    uint8_t linkCost = GetLinkCost(params.m_mpduLinkQuality);
-
-    switch (nwkHeader.GetFrameType())
+    switch (peekedNwkHeader.GetFrameType())
     {
     case DATA:
-        if (nwkHeader.GetDstAddr() == m_nwkNetworkAddress)
+        if (peekedNwkHeader.IsMulticast())
         {
-            // Zigbee specification r22.1.0 Sections 3.6.2.2 and 3.6.3.3
-            if (!m_nldeDataIndicationCallback.IsNull())
-            {
-                NldeDataIndicationParams dataParams;
-                dataParams.m_srcAddr = nwkHeader.GetSrcAddr();
-                dataParams.m_dstAddr = nwkHeader.GetDstAddr();
-                dataParams.m_dstAddrMode = UCST_BCST;
-                dataParams.m_linkQuality = params.m_mpduLinkQuality;
-                dataParams.m_nsduLength = msdu->GetSize();
-                dataParams.m_rxTime = Simulator::Now();
-                dataParams.m_securityUse = false;
-                m_nldeDataIndicationCallback(dataParams, msdu);
-            }
         }
         else
         {
-            // Route packet to the next hop
-        }
+            if (IsBroadcastAddress(peekedNwkHeader.GetDstAddr()))
+            {
+                // TODO check if you can rebroadcast.
 
+                if (!m_nldeDataIndicationCallback.IsNull())
+                {
+                    NldeDataIndicationParams dataParams;
+                    dataParams.m_srcAddr = peekedNwkHeader.GetSrcAddr();
+                    dataParams.m_dstAddr = peekedNwkHeader.GetDstAddr();
+                    dataParams.m_dstAddrMode = UCST_BCST;
+                    dataParams.m_linkQuality = params.m_mpduLinkQuality;
+                    dataParams.m_nsduLength = msdu->GetSize();
+                    dataParams.m_rxTime = Simulator::Now();
+                    dataParams.m_securityUse = false;
+                    m_nldeDataIndicationCallback(dataParams, msdu);
+                }
+            }
+            else
+            {
+                if (peekedNwkHeader.GetDstAddr() == m_nwkNetworkAddress)
+                {
+                    ZigbeeNwkHeader nwkHeader;
+                    msdu->RemoveHeader(nwkHeader);
+                    // Zigbee specification r22.1.0 Sections 3.6.2.2 and 3.6.3.3
+                    if (!m_nldeDataIndicationCallback.IsNull())
+                    {
+                        NldeDataIndicationParams dataParams;
+                        dataParams.m_srcAddr = nwkHeader.GetSrcAddr();
+                        dataParams.m_dstAddr = nwkHeader.GetDstAddr();
+                        dataParams.m_dstAddrMode = UCST_BCST;
+                        dataParams.m_linkQuality = params.m_mpduLinkQuality;
+                        dataParams.m_nsduLength = msdu->GetSize();
+                        dataParams.m_rxTime = Simulator::Now();
+                        dataParams.m_securityUse = false;
+                        m_nldeDataIndicationCallback(dataParams, msdu);
+                    }
+                }
+                else
+                {
+                    // Route packet to the next hop
+                    SendUnicast(msdu, m_dataHandle.GetValue());
+                    m_dataHandle++;
+                }
+            }
+        }
         break;
     case NWK_COMMAND: {
+        ZigbeeNwkHeader nwkHeader;
+        msdu->RemoveHeader(nwkHeader);
+
         ZigbeePayloadType payloadType;
         msdu->RemoveHeader(payloadType);
 
@@ -310,6 +347,8 @@ ZigbeeNwk::McpsDataIndication(McpsDataIndicationParams params, Ptr<Packet> msdu)
         }
         // NOTE: this cover the cases for MESH routing
         // TREE routing is not supported
+        uint8_t linkCost = GetLinkCost(params.m_mpduLinkQuality);
+
         if (payloadType.GetCmdType() == ROUTE_REQ)
         {
             ZigbeePayloadRouteRequestCommand payload;
@@ -326,8 +365,6 @@ ZigbeeNwk::McpsDataIndication(McpsDataIndicationParams params, Ptr<Packet> msdu)
         }
         break;
     }
-    case INTER_PAN:
-        break;
     default:
         NS_LOG_ERROR("Unknown frame received in NWK layer");
     }
@@ -340,7 +377,6 @@ ZigbeeNwk::ReceiveRREQ(Mac16Address macSrcAddr,
                        ZigbeePayloadRouteRequestCommand payload)
 {
     NS_LOG_FUNCTION(this);
-
     bool skipRREQ = false;
 
     // Calculate the pathcost on the RREQ receiving device
@@ -471,7 +507,6 @@ ZigbeeNwk::ReceiveRREP(Mac16Address macSrcAddr,
     if (payload.GetOrigAddr() == m_nwkNetworkAddress)
     {
         // The RREP is destined for this device
-
         Ptr<RouteDiscoveryTableEntry> discEntry;
         if (m_nwkRouteDiscoveryTable.LookUpEntry(payload.GetRouteReqId(),
                                                  payload.GetOrigAddr(),
@@ -511,6 +546,24 @@ ZigbeeNwk::ReceiveRREP(Mac16Address macSrcAddr,
                     NlmeRouteDiscoveryConfirmParams routeDiscConfirmParams;
                     routeDiscConfirmParams.m_status = ZigbeeNwkStatus::SUCCESS;
                     m_nlmeRouteDiscoveryConfirmCallback(routeDiscConfirmParams);
+                }
+
+                Ptr<PendingTxPkt> pendingTxPkt = Create<PendingTxPkt>();
+                if (!m_pendingTxQueue.empty() && DequeueTx(payload.GetRespAddr(), pendingTxPkt))
+                {
+                    std::cout << " In Zigbee " << m_nwkNetworkAddress
+                              << " sending pending data to next hop "
+                              << routeEntry->GetNextHopAddr() << "\n";
+                    // There is a pending packet awaiting to be transmitted
+                    // to the next hop, send it.
+                    McpsDataRequestParams mcpsDataparams;
+                    mcpsDataparams.m_txOptions = 0x01; // Acknowledment on.
+                    mcpsDataparams.m_dstPanId = m_nwkPanId;
+                    mcpsDataparams.m_msduHandle = pendingTxPkt->nsduHandle;
+                    mcpsDataparams.m_srcAddrMode = SHORT_ADDR;
+                    mcpsDataparams.m_dstAddrMode = SHORT_ADDR;
+                    mcpsDataparams.m_dstAddr = routeEntry->GetNextHopAddr();
+                    m_mac->McpsDataRequest(mcpsDataparams, pendingTxPkt->txPkt);
                 }
             }
             else
@@ -557,6 +610,143 @@ ZigbeeNwk::ReceiveRREP(Mac16Address macSrcAddr,
     }
 }
 
+bool
+ZigbeeNwk::IsBroadcastAddress(Mac16Address address)
+{
+    return address == "FF:FF" || address == "FF:FD" || address == "FF:FC" || address == "FF:FB";
+}
+
+bool
+ZigbeeNwk::FindNextHop(Mac16Address dst,
+                       uint16_t radius,
+                       bool noRouteCache,
+                       bool discoverRoute,
+                       Mac16Address& nextHop)
+{
+    NS_LOG_FUNCTION(this);
+
+    // Check if the destination is our neighbor
+    Ptr<NeighborTableEntry> neighborEntry;
+    if (m_nwkNeighborTable.LookUpEntry(dst, neighborEntry))
+    {
+        nextHop = dst;
+        return true;
+    }
+
+    Ptr<RoutingTableEntry> entry;
+    if (m_nwkRoutingTable.LookUpEntry(dst, entry))
+    {
+        if (!(entry->GetStatus() == ROUTE_ACTIVE) &&
+            !(entry->GetStatus() == ROUTE_VALIDATION_UNDERWAY))
+        {
+            // Entry found but is not valid
+            entry->SetStatus(ROUTE_DISCOVERY_UNDERWAY);
+            return false;
+        }
+        else
+        {
+            // Entry found
+            nextHop = entry->GetNextHopAddr();
+            return true;
+        }
+    }
+    else
+    {
+        if (discoverRoute)
+        {
+            // Check that the max routing capacity has not been reached.
+            if (m_nwkRoutingTable.GetSize() == m_nwkRoutingTable.GetMaxTableSize())
+            {
+                if (!m_nlmeRouteDiscoveryConfirmCallback.IsNull())
+                {
+                    NlmeRouteDiscoveryConfirmParams confirmParams;
+                    confirmParams.m_status = ROUTE_ERROR;
+                    confirmParams.m_networkStatusCode = NO_ROUTING_CAPACITY;
+                    m_nlmeRouteDiscoveryConfirmCallback(confirmParams);
+                }
+            }
+
+            // Entry not found
+            Ptr<RoutingTableEntry> newRoutingEntry =
+                Create<RoutingTableEntry>(dst,
+                                          ROUTE_DISCOVERY_UNDERWAY,
+                                          noRouteCache,
+                                          false, // TODO: Many to one
+                                          false, // TODO: Route record
+                                          false, // TODO: Group id
+                                          Mac16Address("FF:FF"));
+            m_nwkRoutingTable.AddEntry(newRoutingEntry);
+
+            Ptr<RouteDiscoveryTableEntry> newDiscEntry =
+                Create<RouteDiscoveryTableEntry>(m_routeRequestId.GetValue(),
+                                                 m_nwkNetworkAddress,
+                                                 dst,
+                                                 0,    // Initial forward cost
+                                                 0xff, // Initial residual cost
+                                                 Time(Simulator::Now() + m_nwkcRouteDiscoveryTime));
+            m_nwkRouteDiscoveryTable.AddEntry(newDiscEntry);
+        }
+    }
+    return false;
+}
+
+void
+ZigbeeNwk::SendUnicast(Ptr<Packet> packet, uint8_t handle)
+{
+    NS_LOG_FUNCTION(this);
+
+    ZigbeeNwkHeader nwkHeader;
+    packet->PeekHeader(nwkHeader);
+
+    Mac16Address nextHop;
+    if (FindNextHop(nwkHeader.GetDstAddr(),
+                    nwkHeader.GetRadius(),
+                    false,
+                    nwkHeader.GetDiscoverRoute(),
+                    nextHop))
+    {
+        // Parameters as described in Section 3.6.3.3
+        McpsDataRequestParams mcpsDataparams;
+        mcpsDataparams.m_dstPanId = m_nwkPanId;
+        mcpsDataparams.m_msduHandle = handle;
+        mcpsDataparams.m_txOptions = 0x01; // Acknowledment on.
+        mcpsDataparams.m_srcAddrMode = SHORT_ADDR;
+        mcpsDataparams.m_dstAddrMode = SHORT_ADDR;
+        mcpsDataparams.m_dstAddr = nextHop;
+        m_mac->McpsDataRequest(mcpsDataparams, packet);
+    }
+    else
+    {
+        if (nwkHeader.GetDiscoverRoute())
+        {
+            // Route discovery underway, add packet to pending Tx Queue
+            EnqueueTx(packet, handle);
+            Simulator::Schedule(MilliSeconds(m_rreqJitter->GetValue()),
+                                &ZigbeeNwk::SendRREQ,
+                                this,
+                                m_nwkNetworkAddress,
+                                nwkHeader.GetDstAddr(),
+                                m_nwkSequenceNumber.GetValue(),
+                                m_routeRequestId.GetValue(),
+                                0,
+                                nwkHeader.GetRadius(),
+                                m_nwkcInitialRREQRetries);
+            m_nwkSequenceNumber++;
+            m_routeRequestId++;
+        }
+        else
+        {
+            if (!m_nlmeRouteDiscoveryConfirmCallback.IsNull())
+            {
+                NlmeRouteDiscoveryConfirmParams confirmParams;
+                confirmParams.m_status = ROUTE_ERROR;
+                confirmParams.m_networkStatusCode = NO_ROUTE_AVAILABLE;
+                m_nlmeRouteDiscoveryConfirmCallback(confirmParams);
+            }
+        }
+    }
+}
+
 void
 ZigbeeNwk::McpsDataConfirm(McpsDataConfirmParams params)
 {
@@ -566,6 +756,8 @@ ZigbeeNwk::McpsDataConfirm(McpsDataConfirmParams params)
     }
     else
     {
+        // Zigbee Specification r22.1.0, End of Section 3.2.1.1.3
+        // Report the the results of a request to a transmission of a packet
         if (!m_nldeDataConfirmCallback.IsNull())
         {
             NldeDataConfirmParams nldeDataConfirmParams;
@@ -573,16 +765,6 @@ ZigbeeNwk::McpsDataConfirm(McpsDataConfirmParams params)
             m_nldeDataConfirmCallback(nldeDataConfirmParams);
         }
     }
-    // Zigbee Specification r22.1.0, End of Section 3.2.1.1.3
-    // Report the the results of a request to a transmission of a packet
-    /* NldeDataConfirmParams nldeDataConfirmParams;
-
-
-     if (!m_nldeDataConfirmCallback.IsNull())
-     {
-         NS_LOG_DEBUG("Pushing up a confirm to a previous data request.");
-         m_nldeDataConfirmCallback(nldeDataConfirmParams);
-     }*/
 }
 
 void
@@ -1458,60 +1640,137 @@ ZigbeeNwk::MlmeAssociateIndication(MlmeAssociateIndicationParams params)
 }
 
 void
-ZigbeeNwk::NldeDataRequest(NldeDataRequestParams params, Ptr<Packet> nsdu)
+ZigbeeNwk::NldeDataRequest(NldeDataRequestParams params, Ptr<Packet> packet)
 {
-    NS_LOG_FUNCTION(this << nsdu);
+    NS_LOG_FUNCTION(this << packet);
 
-    // As described in Zigbee specification r22.1.0, Section 3.2.1.1.3
+    // Zigbee specification r22.1.0, Section 3.2.1.1.3 and Section 3.6.2.1
+    // check that we are associated
+    if (m_nwkNetworkAddress == "FF:FF")
+    {
+        NS_LOG_DEBUG("Cannot send data, the device is not currently associated");
+        if (!m_nldeDataConfirmCallback.IsNull())
+        {
+            NldeDataConfirmParams confirmParams;
+            confirmParams.m_status = ZigbeeNwkStatus::INVALID_REQUEST;
+            confirmParams.m_txTime = Simulator::Now();
+            confirmParams.m_nsduHandle = params.m_nsduHandle;
+            m_nldeDataConfirmCallback(confirmParams);
+        }
+        return;
+    }
 
-    NS_ABORT_MSG_UNLESS(params.m_dstAddrMode == UCST_BCST, " Only Unicast supported!");
-    NS_ABORT_MSG_UNLESS(!params.m_discoverRoute,
-                        " Route discovery not supported in NLDE-DATA.request");
+    m_pendPrimitiveNwk = NLDE_DATA;
 
-    // TODO: Check that devices are currently associated.
-    // TODO: Construct NPDU by making  NWK header and add it to the nsdu here.
-
-    // Example constructing and adding a network header
+    // Constructing the NPDU (Zigbee specification r22.1.0, Section 3.2.1.1.3 and Section 3.6.2.1)
     ZigbeeNwkHeader nwkHeader;
-    nwkHeader.SetFrameType(NWK_COMMAND);
+    nwkHeader.SetFrameType(DATA);
     nwkHeader.SetProtocolVer(3);
-    nwkHeader.SetDiscoverRoute(ENABLE);
-    nwkHeader.SetDstIeeeAddr(Mac64Address("FF:FF:FF:FF:FF:FF:FF:FE"));
-    nwkHeader.SetSrcIeeeAddr(Mac64Address("FF:FF:FF:FF:FF:FF:FF:FE"));
+    nwkHeader.SetDiscoverRoute(static_cast<DiscoverRouteType>(params.m_discoverRoute));
     nwkHeader.SetDstAddr(params.m_dstAddr);
-    nwkHeader.SetSrcAddr(params.m_aliasSrcAddr);
-    nwkHeader.SetEndDeviceInitiator();
 
-    ZigbeePayloadType plHeaderType(ROUTE_REQ);
-
-    if (plHeaderType.GetCmdType() == ROUTE_REQ)
+    if (params.m_useAlias)
     {
-        ZigbeePayloadRouteRequestCommand plHeaderRreq;
-        plHeaderRreq.SetCmdOptManyToOneField(ZigbeePayloadRouteRequestCommand::MANYTOONE_ROUTE_REC);
-        plHeaderRreq.SetDstAddr(15);
-        plHeaderRreq.SetPathCost(15);
-        plHeaderRreq.SetDstIeeeAddr(Mac64Address("00:00:00:00:CA:FE:CA:FE"));
-        nsdu->AddHeader(plHeaderRreq);
+        nwkHeader.SetSrcAddr(params.m_aliasSrcAddr);
+        nwkHeader.SetSeqNum(params.m_aliasSeqNumber.GetValue());
     }
-    else if (plHeaderType.GetCmdType() == ROUTE_REP)
+    else
     {
-        ZigbeePayloadRouteReplyCommand plHeaderRrep;
+        nwkHeader.SetSrcAddr(m_nwkNetworkAddress);
+        nwkHeader.SetSeqNum(m_nwkSequenceNumber.GetValue());
     }
 
-    nsdu->AddHeader(plHeaderType);
-    nsdu->AddHeader(nwkHeader);
+    if (params.m_radius == 0)
+    {
+        nwkHeader.SetRadius(m_nwkMaxDepth * 2);
+    }
+    else
+    {
+        nwkHeader.SetRadius(params.m_radius);
+    }
 
-    // This mcpsDataRequest should be called after the confirmation of the route.
-    McpsDataRequestParams mcpsDataparams;
-    mcpsDataparams.m_dstPanId = m_nwkPanId;
-    mcpsDataparams.m_srcAddrMode = SHORT_ADDR;
-    mcpsDataparams.m_dstAddrMode = SHORT_ADDR;
-    mcpsDataparams.m_dstAddr = params.m_dstAddr;
-    // TODO: replace with value determined by route discovery (next-hop address)
-    mcpsDataparams.m_msduHandle = 0;
-    m_mac->McpsDataRequest(mcpsDataparams,
-                           nsdu); // TODO: replace the nsdu for the NPDU once the NWK header is
-                                  // created and combined with the nsdu.
+    if (params.m_securityEnable)
+    {
+        // TODO: Secure processing (Section 3.6.2.1)
+        NS_ABORT_MSG("Security processing is currently not supported");
+    }
+
+    // Check the current device capabilities
+    CapabilityInformation capability;
+    capability.SetCapability(m_nwkCapabilityInformation);
+
+    if (capability.GetDeviceType() == ENDDEVICE)
+    {
+        nwkHeader.SetEndDeviceInitiator();
+    }
+
+    if (params.m_dstAddrMode == MCST)
+    {
+        nwkHeader.SetMulticast();
+        // TODO:
+        // set the nwkHeader multicast control according to
+        // the values of the non-member radios parameter
+        // See 3.2.1.1.3
+    }
+
+    packet->AddHeader(nwkHeader);
+
+    if (capability.GetDeviceType() == ROUTER)
+    {
+        if (params.m_dstAddrMode == MCST)
+        {
+            // The destination is MULTICAST (See 3.6.2)
+            NS_ABORT_MSG("Multicast is currently not supported");
+            // TODO
+            return;
+        }
+        else if (IsBroadcastAddress(params.m_dstAddr))
+        {
+            // The destination is BROADCAST (See 3.6.5)
+            NS_ABORT_MSG("Broadcast is currently not supported");
+            // SendBroadcast(packet);
+            // TODO
+            return;
+        }
+        else
+        {
+            // The destination is UNICAST (See 3.6.3.3)
+            SendUnicast(packet, params.m_nsduHandle);
+        }
+    }
+    else
+    {
+        // The device is an END DEVICE
+        // direct message to its Parent device (Coordinator)
+        Ptr<NeighborTableEntry> entry;
+        if (m_nwkNeighborTable.GetParent(entry))
+        {
+            McpsDataRequestParams mcpsDataparams;
+            mcpsDataparams.m_txOptions = 0x01; // Acknowledment on.
+            mcpsDataparams.m_dstPanId = m_nwkPanId;
+            mcpsDataparams.m_msduHandle = params.m_nsduHandle;
+            mcpsDataparams.m_srcAddrMode = SHORT_ADDR;
+            mcpsDataparams.m_dstAddrMode = SHORT_ADDR;
+            mcpsDataparams.m_dstAddr = entry->GetNwkAddr();
+            m_mac->McpsDataRequest(mcpsDataparams, packet);
+        }
+        else
+        {
+            // Section 3.6.3.7.1
+            // Link failure with Parent device
+            // TODO
+            /*
+            if (!m_nlmeNwkStatusIndicationCallback.IsNull())
+            {
+                NlmeNetworkStatusIndication indicationParams;
+
+                 m_networkStatusCode = PARENT_LINK_FAILURE;
+                m_nlmeNwkStatusIndicationCallback(confirmParams);
+            }
+            */
+        }
+    }
+    m_pendPrimitiveNwk = NLDE_NLME_NONE;
 }
 
 void
@@ -1632,9 +1891,10 @@ ZigbeeNwk::NlmeRouteDiscoveryRequest(NlmeRouteDiscoveryRequestParams params)
         return;
     }
 
-    // Check if the destination is our neighbor
-    Ptr<NeighborTableEntry> neighborEntry;
-    if (m_nwkNeighborTable.LookUpEntry(params.m_dstAddr, neighborEntry))
+    m_pendPrimitiveNwk = NLME_ROUTE_DISCOVERY;
+
+    Mac16Address nextHop;
+    if (FindNextHop(params.m_dstAddr, params.m_radius, params.m_noRouteCache, true, nextHop))
     {
         if (!m_nlmeRouteDiscoveryConfirmCallback.IsNull())
         {
@@ -1642,73 +1902,8 @@ ZigbeeNwk::NlmeRouteDiscoveryRequest(NlmeRouteDiscoveryRequestParams params)
             confirmParams.m_status = ZigbeeNwkStatus::SUCCESS;
             m_nlmeRouteDiscoveryConfirmCallback(confirmParams);
         }
-        return;
-    }
-
-    /* // TODO:
-    // Check that the max routing capacity has not been reached.
-    if (m_nwkRoutingTable.GetSize() == m_nwkRoutingTable.GetMaxSize())
-    {
-        if (!m_nlmeRouteDiscoveryConfirmCallback.IsNull())
-        {
-            NlmeRouteDiscoveryConfirmParams confirmParams;
-            confirmParams.m_status = NWK_ROUTE_ERROR;
-            confirmParams.m_networkStatusCode = NO_ROUTING_CAPACITY;
-            m_nlmeRouteDiscoveryConfirmCallback(confirmParams);
-        }
-        return;
-    }*/
-
-    if (params.m_dstAddrMode != UCST_BCST)
-    {
-        NS_LOG_ERROR("Currently, only unicast route discovery supported");
-    }
-
-    m_pendPrimitiveNwk = NLME_ROUTE_DISCOVERY;
-
-    bool rreqRequired = false;
-    Ptr<RoutingTableEntry> entry;
-
-    if (m_nwkRoutingTable.LookUpEntry(params.m_dstAddr, entry))
-    {
-        // Entry found
-        if (!(entry->GetStatus() == ROUTE_ACTIVE) &&
-            !(entry->GetStatus() == ROUTE_VALIDATION_UNDERWAY))
-        {
-            entry->SetStatus(ROUTE_DISCOVERY_UNDERWAY);
-            rreqRequired = true; // todo: Is rreq required if route is underway?
-        }
-        else
-        {
-            // return active entry
-        }
     }
     else
-    {
-        // Entry not found
-        Ptr<RoutingTableEntry> newRoutingEntry =
-            Create<RoutingTableEntry>(params.m_dstAddr,
-                                      ROUTE_DISCOVERY_UNDERWAY,
-                                      params.m_noRouteCache,
-                                      false, // TODO: Many to one
-                                      false, // TODO: Route record
-                                      false, // TODO: Group id
-                                      Mac16Address("FF:FF"));
-        m_nwkRoutingTable.AddEntry(newRoutingEntry);
-
-        Ptr<RouteDiscoveryTableEntry> newDiscEntry =
-            Create<RouteDiscoveryTableEntry>(m_routeRequestId.GetValue(),
-                                             m_nwkNetworkAddress,
-                                             params.m_dstAddr,
-                                             0,    // Initial forward cost
-                                             0xff, // Initial residual cost
-                                             Time(Simulator::Now() + m_nwkcRouteDiscoveryTime));
-        m_nwkRouteDiscoveryTable.AddEntry(newDiscEntry);
-
-        rreqRequired = true;
-    }
-
-    if (rreqRequired)
     {
         Simulator::Schedule(MilliSeconds(m_rreqJitter->GetValue()),
                             &ZigbeeNwk::SendRREQ,
@@ -1939,17 +2134,6 @@ ZigbeeNwk::NlmeJoinRequest(NlmeJoinRequestParams params)
             assocParams.m_chPage = 0; // Zigbee assumes Page is always 0
             assocParams.m_capabilityInfo = params.m_capabilityInfo;
             assocParams.m_coordPanId = panId;
-            // DELETE this : TODO: How is the addressing mode of the coordinator decided?
-            /*if (bestParentEntry.GetExtAddr() == Mac64Address())
-            {
-                assocParams.m_coordShortAddr = bestParentEntry.GetNwkAddr();
-            }
-            else
-            {
-                assocParams.m_coordAddrMode = LrWpanAddressMode::EXT_ADDR;
-                assocParams.m_coordExtAddr = bestParentEntry.GetExtAddr();
-
-            }*/
 
             if (bestParentEntry->GetNwkAddr() != Mac16Address("FF:FE"))
             {
@@ -2099,6 +2283,47 @@ ZigbeeNwk::SetNlmeStartRouterConfirmCallback(NlmeStartRouterConfirmCallback c)
     m_nlmeStartRouterConfirmCallback = c;
 }
 
+void
+ZigbeeNwk::EnqueueTx(Ptr<Packet> p, uint8_t nsduHandle)
+{
+    // TODO : PurgeTxQueue();
+    if (m_pendingTxQueue.size() < m_maxPendingTxQueueSize)
+    {
+        ZigbeeNwkHeader peekedNwkHeader;
+        p->PeekHeader(peekedNwkHeader);
+
+        Ptr<PendingTxPkt> pendingTxPkt = Create<PendingTxPkt>();
+        pendingTxPkt->dstAddr = peekedNwkHeader.GetDstAddr();
+        pendingTxPkt->nsduHandle = nsduHandle;
+        pendingTxPkt->txPkt = p;
+        // TODO: expiration time here
+        m_pendingTxQueue.emplace_back(pendingTxPkt);
+        // TODO: pending trace here
+    }
+    else
+    {
+        // TODO: Drop trace here
+    }
+}
+
+bool
+ZigbeeNwk::DequeueTx(Mac16Address dst, Ptr<PendingTxPkt> entry)
+{
+    // TODO : PurgeTxQueue();
+
+    for (auto iter = m_pendingTxQueue.begin(); iter != m_pendingTxQueue.end(); iter++)
+    {
+        if ((*iter)->dstAddr == dst)
+        {
+            *entry = **iter;
+            // TODO: Dequeue trace if needed here.
+            m_pendingTxQueue.erase(iter);
+            return true;
+        }
+    }
+    return false;
+}
+
 Mac16Address
 ZigbeeNwk::AllocateNetworkAddress()
 {
@@ -2196,7 +2421,7 @@ ZigbeeNwk::SendRREQ(Mac16Address src,
     ZigbeeNwkHeader nwkHeader;
     nwkHeader.SetFrameType(NWK_COMMAND);
     nwkHeader.SetProtocolVer(m_nwkcProtocolVersion);
-    nwkHeader.SetDiscoverRoute(ENABLE);
+    nwkHeader.SetDiscoverRoute(DiscoverRouteType::ENABLE_ROUTE_DISCOVERY);
     // See r22.1.0, Table 3-69
     // Set destination to broadcast (all routers and coordinator)
     nwkHeader.SetDstAddr(Mac16Address("FF:FC"));
@@ -2242,8 +2467,8 @@ ZigbeeNwk::SendRREQ(Mac16Address src,
     {
         if (rreqRetryTableEntry->GetRreqRetryCount() >= rreqRetries)
         {
-            NS_LOG_DEBUG("Maximum RREQ retries reached for dst " << dst << "and rreq ID "
-                                                                 << rreqId);
+            NS_LOG_DEBUG("Maximum RREQ retries reached for dst [" << dst << "] and rreq ID "
+                                                                  << static_cast<uint32_t>(rreqId));
             // Note: The value of rreqRetries is either nwkcInitialRREQRetries or
             // nwkcRREQRetries depending on where the RREQ is transmitted.
             // See Zigbee specification r22.1.0, Section 3.6.3.5.1
@@ -2302,7 +2527,7 @@ ZigbeeNwk::SendRREP(Mac16Address nextHop,
     ZigbeeNwkHeader nwkHeader;
     nwkHeader.SetFrameType(NWK_COMMAND);
     nwkHeader.SetProtocolVer(m_nwkcProtocolVersion);
-    nwkHeader.SetDiscoverRoute(ENABLE);
+    nwkHeader.SetDiscoverRoute(DiscoverRouteType::ENABLE_ROUTE_DISCOVERY);
 
     nwkHeader.SetDstAddr(nextHop);
     nwkHeader.SetSrcAddr(m_nwkNetworkAddress);

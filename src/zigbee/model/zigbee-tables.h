@@ -196,25 +196,25 @@ class RoutingTableEntry : public SimpleRefCount<RoutingTableEntry>
     void Print(Ptr<OutputStreamWrapper> stream) const;
 
   private:
-    Mac16Address m_destination; //!< The 16 bit network address or group id of this route.
-                                //!< If the dst device is a router, coordinator or end device, and
-                                //!< nwkAddrAlloc has a value of STOCHASTIC_ALLOC this field shall
-                                //!< contain the actual 16 bit addr of that device. If the dst
-                                //!< device is an end device and nwkAddrAlloc has a value of
-                                //!< DISTRIBUTED_ALLOC, this field shall contain the 16 bit
-                                //!< nwk address of the device's parent.
-    RouteStatus m_status;       //!< The status of the route.
-                                //!< Also see Zigbee specification r22.1.0, Table 3-67
-    bool m_noRouteCache;   //!< A flag indicating that the destination indicated by this address
-                           //!< does not store source routes.
-    bool m_manyToOne;      //!< A flag indicating  that the destination is a concentrator
-                           //!< that issued a  many-to-one route request
-    bool m_routeRecordReq; //!< A flag indicating that the route record command frame should be
-                           //!< sent to the destination prior to the next data packet.
-    bool m_groupId;        //!< A flag indicating that the destination address is a group id.
-    Mac16Address m_nextHopAddr; //!< The 16 bit network address of the next hop on the way to the
-                                //!< destination.
-    Time m_lifeTime;            //!< Indicates the lifetime of the entry
+    Mac16Address m_destination;   //!< The 16 bit network address or group id of this route.
+                                  //!< If the dst device is a router, coordinator or end device, and
+                                  //!< nwkAddrAlloc has a value of STOCHASTIC_ALLOC this field shall
+                                  //!< contain the actual 16 bit addr of that device. If the dst
+                                  //!< device is an end device and nwkAddrAlloc has a value of
+                                  //!< DISTRIBUTED_ALLOC, this field shall contain the 16 bit
+                                  //!< nwk address of the device's parent.
+    RouteStatus m_status;         //!< The status of the route.
+                                  //!< Also see Zigbee specification r22.1.0, Table 3-67
+    bool m_noRouteCache{false};   //!< A flag indicating that the destination indicated by
+                                  //!< this address does not store source routes.
+    bool m_manyToOne{false};      //!< A flag indicating  that the destination is a concentrator
+                                  //!< that issued a  many-to-one route request
+    bool m_routeRecordReq{false}; //!< A flag indicating that the route record command frame should
+                                  //!< be sent to the destination prior to the next data packet.
+    bool m_groupId{false};        //!< A flag indicating that the destination address is a group id.
+    Mac16Address m_nextHopAddr;   //!< The 16 bit network address of the next hop on the way to the
+                                  //!< destination.
+    Time m_lifeTime;              //!< Indicates the lifetime of the entry
 };
 
 /**
@@ -822,12 +822,14 @@ class RreqRetryTableEntry : public SimpleRefCount<RreqRetryTableEntry>
     /**
      *  Set the event id of the RREQ retry
      *
-     * \param eventid The event id corresponding to the next RREQ retry callback
+     * \param eventId The event id corresponding to the next RREQ retry callback
      */
     void SetRreqEventId(EventId eventId);
 
     /**
      * Get the RREQ id of the RREQ retry
+     *
+     * \return The event id
      */
     EventId GetRreqEventId();
 
@@ -889,6 +891,27 @@ class RoutingTable
      * Dispose of the table and all its elements
      */
     void Dispose();
+
+    /**
+     * Get the size of the routing table.
+     *
+     * \return The current size of the routing table
+     */
+    uint32_t GetSize();
+
+    /**
+     * Set the maximum size of the routing table
+     *
+     * \param size The size of the routing table.
+     */
+    void SetMaxTableSize(uint32_t size);
+
+    /**
+     *  Get the maximum size of the routing table.
+     *
+     *  \return The maximum size of the routing table.
+     */
+    uint32_t GetMaxTableSize() const;
 
   private:
     uint32_t m_maxTableSize;                           //!< The maximum size of the routing table;
@@ -994,6 +1017,14 @@ class NeighborTable
      * \return True if the entry was found false otherwise.
      */
     bool LookUpEntry(Mac64Address extAddr, Ptr<NeighborTableEntry>& entryFound);
+
+    /**
+     *  Look for this device Parent neighbor (A.K.A coordinator).
+     *
+     * \param entryFound The returned entry if found in the neighbor table.
+     * \return True if the parent was found in the neighbor table.
+     */
+    bool GetParent(Ptr<NeighborTableEntry>& entryFound);
 
     /**
      * Perform a search for the best candidate parent based on some attributes.
