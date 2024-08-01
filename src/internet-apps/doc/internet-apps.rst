@@ -338,41 +338,83 @@ follows the specifications of :rfc:`8415`.
 
 Model Description
 =================
-This application behaves similarly to the ``dhcpd`` daemon in Linux, although,
-with fewer options supported. The DHCPv6 client installed on a node sends
-Solicit messages to a server configured on the link, which responds with an IPv6
-address offer.
 
-The source code for DHCPv6 is located in ``src/internet-apps/model`` and consists of the
-following 8 files:
+The aim of the DHCPv6 application is to provide a method for dynamically assigning IPv6 addresses to nodes.
+This application functions similarly to the ``dhcpd`` daemon in Linux, although it supports fewer options.
+The DHCPv6 client installed on a node sends Solicit messages to a server configured on the link,
+which then responds with an IPv6 address offer.
 
-* **Server**
+The source code for DHCPv6 is located in ``src/internet-apps/model``.
 
-  * dhcp6-server.h,
-  * dhcp6-server.cc
+There are two major operational models for DHCPv6: stateful and stateless.
+Stateless DHCP is used when the client only needs to request configuration parameters from the server.
 
-* **Client**
+Typically, the DHCPv6 server is used to assign both addresses and other options like DNS information.
+The server maintains information about the Identity Associations (IAs), which are collections of leases assigned to a client.
+There are three types of IAs: IA_NA (non-temporary addresses), IA_TA (temporary addresses), and IA_PD (prefix delegation).
+Currently, the application uses only IA_NA options to lease addresses to clients.
+The state of the lease changes over time, which is why this is known as stateful DHCPv6.
 
-  * dhcp6-client.h,
-  * dhcp6-client.cc
+The DHCPv6 client application is installed on each NetDevice (interface) of the client node.
+Therefore, if there are two NetDevices installed on a single node, two client applications must be installed.
+The DHCPv6 server application is installed on a single server node.
+However, the user can specify multiple interfaces for the server to listen on.
 
-* **Header**
+Notes:
 
-  * dhcp6-header.h,
-  * dhcp6-header.cc,
-  * dhcp6-options.h, and
-  * dhcp6-options.cc
+* Stateless DHCPv6 has not been implemented, as it is used to request DNS configuration information that is not currently used in |ns3|.
+* All client and server nodes must be on the same link. The application does not support DHCPv6 relays and hence cannot work when the client and server are in entirely different subnets.
 
-.. add image (of general client/server exchange) here
-.. DHCPv6 client, server, headers, options - design details, diagrams
+Stateful DHCPv6
+###############
+
+The server listens on port 547 for any incoming messages on the link.
+Upon receiving a **Solicit** message from a client, the server sends an **Advertise** message with the available address pool.
+The server is designed to advertise one available address from each address pool that is configured on it.
+When the client sends a **Request** message, the server updates lease bindings with the new expiry time, and sends a **Reply** message.
+
+The client attempts to accept all addresses present in the server's **Reply**.
+However, before using the offered address, the client checks whether any other node on the link is using the same address (Duplicate Address Detection).
+If the address is already in use, the client sends a **Decline** message to the server, which updates the lease bindings accordingly.
+
+At the end of the preferred lifetime, the client sends a **Renew** message to the server.
+The server should update the lease bindings with the new expiry time, and send a **Reply** with the corresponding status code.
+In case the client does not receive a **Reply** from the server, it sends a **Rebind** message at the end of the valid lifetime.
+The server is expected to update the lease bindings and send a **Reply** message back to the client.
+
+The order of the message exchange between the client and the server is as follows:
+
+.. figure:: figures/dhcpv6-message-exchange.png
+
+The formats of the messages between a client and server are as follows:
+
+.. figure:: figures/stateful-dhcpv6-format.png
+
+Identifiers
+###########
+
+Each client and server has a unique identifier (DHCP Unique Identifier), which is used to identify the client and server in the message exchange.
+There are four types of DUIDs that can be used in DHCPv6:
+
+1. DUID-LLT (Link-layer Address plus Time): The DUID-LLT consists of a 32-bit timestamp and a variable-length link layer address. Not supported in this implementation.
+2. Vendor-assigned unique ID based on Enterprise Number: This consists of the vendor's enterprise number and an identifier whose source is defined by the vendor. Not supported in this implementation.
+3. **DUID-LL (Link-layer address)**: DUID-LL consists of a variable-length link-layer address as the identifier. Supported in this implementation.
+4. UUID (Universally unique identifier): This should be an identifier that is persistent across system restarts and reconfigurations. Not supported in this implementation.
 
 Usage
 =====
-The main way for ns-3 users to use the DHCPv6 application is through the helper
-API, and the publicly visibly attributes of the client and server applications.
+
+The main way for |ns3| users to use the DHCPv6 application is through the helper
+API and the publicly visible attributes of the client and server applications.
+
+To use the DHCPv6 application, the user must install the client application on each interface of the node by passing a ``NetDeviceContainer`` object to the ``InstallDhcp6Client`` helper.
+
+The server application is installed on the node of interest.
+Users select the interfaces on which the server should listen for incoming messages and add them to a ``NetDeviceContainer``. This is then passed to the ``InstallDhcp6Server`` helper method.
 
 Helpers
 #######
+
 The ``Dhcp6Helper`` supports the typical ``Install`` usage pattern in |ns3|. It
 can be used to easily install DHCPv6 server and client applications on a set of
 interfaces.
@@ -389,34 +431,45 @@ interfaces.
   dhcpClientNetDevs.Add(netdevice1_node2);
   ApplicationContainer dhcpClientApps = dhcpHelper.InstallDhcp6Client(dhcpClientNetDevs);
 
-Address pools can be configured on the DHCPv6 server using the following API :
+Address pools can be configured on the DHCPv6 server using the following API:
 
-..sourcecode:: cpp
+.. sourcecode:: cpp
 
   Ptr<Dhcp6Server> server = dhcpHelper.GetDhcp6Server(devNet.Get(0));
   server->AddSubnet(Ipv6Address("2001:db8::"), Ipv6Prefix(64), Ipv6Address("2001:db8::1"), Ipv6Address("2001:db8::ff"));
 
 Attributes
 ##########
-The following attribute can be configured on the client:
-* ``Transactions``: A random variable used to set the transaction numbers.
 
-The following attributes can be configured on the server:
-* ``RenewTime``: Time after which client should renew its lease.
-* ``RebindTime``: Time after which client should rebind its leased addresses.
+The following attributes can be configured on the client:
+
+* ``Transactions``: A random variable used to set the transaction numbers.
+* ``SolicitJitter``: The jitter in milliseconds that a node waits before sending a Solicit to the server.
+
+The following values can be initially set on the client interface before stateful DHCPv6 begins. However, they are overridden with values received from the server during the message exchange:
+* ``RenewTime``: The time after which client should renew its lease.
+* ``RebindTime``: The time after which client should rebind its leased addresses.
 * ``PreferredLifetime``: The preferred lifetime of the leased address.
 * ``ValidLifetime``: Time after which client should release the address.
+
+The following attributes can be configured on the server:
+* ``RenewTime``: The time after which client should renew its lease.
+* ``RebindTime``: The time after which client should rebind its leased addresses.
+* ``PreferredLifetime``: The preferred lifetime of the leased address.
+* ``ValidLifetime``: The time after which client should release the address.
 
 Example
 #######
 
 The following example has been written in ``src/internet-apps/examples/``:
+
 * ``dhcp6-example.cc``: Demonstrates the working of stateful DHCPv6 with a single server and 2 client nodes.
 
 Test
 ====
 
 The following example has been written in ``src/internet-apps/test/``:
+
 * ``dhcp6-test.cc``: Tests the working of DHCPv6 with a single server and 2 client nodes that have 1 CSMA interface and 1 Wifi interface each.
 
 Scope and Limitations
@@ -435,6 +488,7 @@ Scope and Limitations
 Future Work
 ===========
 * The Rapid Commit option may be implemented to allow a Solicit / Reply message exchange between the client and server.
+* Addition of DHCPv6 relays to allow the client and server to be in different subnets.
 * Implementation of stateless DHCPv6 to allow the client to request only configuration information from the server.
 
 References
