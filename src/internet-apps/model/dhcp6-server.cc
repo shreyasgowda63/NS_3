@@ -21,6 +21,8 @@
 #include "dhcp6-server.h"
 
 #include "ns3/address-utils.h"
+#include "ns3/ipv6-interface.h"
+#include "ns3/ipv6-l3-protocol.h"
 #include "ns3/ipv6-packet-info-tag.h"
 #include "ns3/ipv6.h"
 #include "ns3/log.h"
@@ -132,7 +134,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
     std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
     for (const auto& iaOpt : ianaOptionsList)
     {
-        requestedIa.push_back(iaOpt.GetIaid());
+        requestedIa.emplace_back(iaOpt.GetIaid());
     }
 
     // Add IA_NA option.
@@ -519,33 +521,18 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
                 for (auto& subnet : m_subnets)
                 {
                     // Find the client that the address currently belongs to.
-                    auto range = subnet.m_leasedAddresses.equal_range(clientAddress);
-                    std::vector<Ipv6Address> declinedAddrs;
-                    for (auto itr = range.first; itr != range.second; itr++)
+
+                    for (auto itr = subnet.m_leasedAddresses.begin();
+                         itr != subnet.m_leasedAddresses.end();)
                     {
                         Ipv6Address leaseAddr = itr->second.first;
                         if (leaseAddr == address)
                         {
-                            declinedAddrs.push_back(leaseAddr);
+                            itr = subnet.m_leasedAddresses.erase(itr);
                             subnet.m_declinedAddresses[address] = clientAddress;
+                            continue;
                         }
-                    }
-
-                    for (const auto& itr : declinedAddrs)
-                    {
-                        // Remove declined address from the leased address map.
-                        for (auto lease = subnet.m_leasedAddresses.begin();
-                             lease != subnet.m_leasedAddresses.end();
-                             lease++)
-                        {
-                            Ipv6Address address = lease->second.first;
-
-                            if (address == itr)
-                            {
-                                subnet.m_leasedAddresses.erase(lease);
-                                break;
-                            }
-                        }
+                        itr++;
                     }
                 }
             }
@@ -555,33 +542,19 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
                 for (auto& subnet : m_subnets)
                 {
                     // Find the client that the address currently belongs to.
-                    auto range = subnet.m_leasedAddresses.equal_range(clientAddress);
-                    std::vector<Ipv6Address> expiredAddrs;
-                    for (auto itr = range.first; itr != range.second; itr++)
+
+                    for (auto itr = subnet.m_leasedAddresses.begin();
+                         itr != subnet.m_leasedAddresses.end();)
                     {
                         Ipv6Address leaseAddr = itr->second.first;
                         Time expiredTime = itr->second.second;
                         if (leaseAddr == address)
                         {
-                            expiredAddrs.push_back(leaseAddr);
+                            itr = subnet.m_leasedAddresses.erase(itr);
                             subnet.m_expiredAddresses.insert({expiredTime, leaseAddr});
+                            continue;
                         }
-                    }
-
-                    for (const auto& itr : expiredAddrs)
-                    {
-                        // Remove expired address from the leased address map.
-                        for (auto lease = subnet.m_leasedAddresses.begin();
-                             lease != subnet.m_leasedAddresses.end();
-                             lease++)
-                        {
-                            Ipv6Address address = lease->second.first;
-                            if (address == itr)
-                            {
-                                subnet.m_leasedAddresses.erase(lease);
-                                break;
-                            }
-                        }
+                        itr++;
                     }
                 }
             }
@@ -623,10 +596,8 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
     Inet6SocketAddress senderAddr = Inet6SocketAddress::ConvertFrom(from);
 
     Ipv6PacketInfoTag interfaceInfo;
-    if (!packet->RemovePacketTag(interfaceInfo))
-    {
-        NS_ABORT_MSG("No incoming interface on DHCPv6 message, aborting.");
-    }
+    NS_ASSERT_MSG(packet->RemovePacketTag(interfaceInfo),
+                  "No incoming interface on DHCPv6 message.");
 
     uint32_t incomingIf = interfaceInfo.GetRecvIf();
     Ptr<NetDevice> iDev = GetNode()->GetDevice(incomingIf);
@@ -638,7 +609,7 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
     if (header.GetMessageType() == Dhcp6Header::SOLICIT)
     {
         ProcessSolicit(iDev, header, senderAddr);
-        // SendAdvertise(iDev, header, senderAddr);
+        SendAdvertise(iDev, header, senderAddr);
     }
     if (header.GetMessageType() == Dhcp6Header::REQUEST)
     {
@@ -664,7 +635,7 @@ Dhcp6Server::AddSubnet(Ipv6Address addressPool,
 {
     NS_LOG_FUNCTION(this << addressPool << prefix << minAddress << maxAddress);
     LeaseInfo newSubnet(addressPool, prefix, minAddress, maxAddress);
-    m_subnets.push_back(newSubnet);
+    m_subnets.emplace_back(newSubnet);
 }
 
 void
@@ -675,11 +646,13 @@ Dhcp6Server::StartApplication()
 
     if (m_recvSocket)
     {
-        NS_ABORT_MSG("DHCPv6 daemon is not meant to be started repeatedly.");
+        NS_LOG_INFO("DHCPv6 daemon is not meant to be started repeatedly.");
+        return;
     }
 
     Ptr<Node> node = m_devices[0]->GetNode();
     Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
+    Ptr<Ipv6L3Protocol> ipv6l3 = node->GetObject<Ipv6L3Protocol>();
 
     TypeId tid = TypeId::LookupByName("ns3::UdpSocketFactory");
     m_recvSocket = Socket::CreateSocket(node, tid);
@@ -694,28 +667,14 @@ Dhcp6Server::StartApplication()
     {
         uint32_t ifIndex = ipv6->GetInterfaceForDevice(device);
 
-        if (ifIndex < 0)
-        {
-            NS_ABORT_MSG("DHCPv6 daemon must have a link-local address.");
-        }
+        NS_ASSERT_MSG(ifIndex >= 0,
+                      "Dhcp6Server::StartApplication: device is not connected to IPv6.");
 
-        Ipv6Address linkLocal;
-        for (uint32_t addrIndex = 0; addrIndex < ipv6->GetNAddresses(ifIndex); addrIndex++)
-        {
-            Ipv6InterfaceAddress ifaceAddr = ipv6->GetAddress(ifIndex, addrIndex);
-            Ipv6Address addr = ifaceAddr.GetAddress();
-            if (addr.IsLinkLocal())
-            {
-                linkLocal = addr;
-                break;
-            }
-        }
-
+        Ipv6Address linkLocal = ipv6l3->GetInterface(ifIndex)->GetLinkLocalAddress().GetAddress();
         Ptr<Socket> socket;
         socket = Socket::CreateSocket(node, tid);
         socket->Bind(Inet6SocketAddress(linkLocal, Dhcp6Header::SERVER_PORT));
         socket->BindToNetDevice(device);
-
         m_sendSockets[device] = socket;
     }
 
@@ -746,10 +705,7 @@ Dhcp6Server::StartApplication()
         }
     }
 
-    if (duidAddress.IsInvalid())
-    {
-        NS_ABORT_MSG("DHCPv6 server: No suitable NetDevice found for DUID, aborting.");
-    }
+    NS_ASSERT_MSG(!duidAddress.IsInvalid(), "DHCPv6 client: No suitable NetDevice found for DUID.");
 
     // Consider the link-layer address of the first NetDevice in the list.
     m_serverIdentifier.SetLinkLayerAddress(duidAddress);
@@ -762,10 +718,7 @@ Dhcp6Server::StopApplication()
 {
     NS_LOG_FUNCTION(this);
 
-    if (m_recvSocket)
-    {
-        m_recvSocket->SetRecvCallback(MakeNullCallback<void, Ptr<Socket>>());
-    }
+    m_recvSocket = nullptr;
 
     m_subnets.clear();
     m_leaseCleanupEvent.Cancel();
@@ -778,32 +731,18 @@ Dhcp6Server::CleanLeases()
 
     for (auto& subnet : m_subnets)
     {
-        std::vector<Ipv6Address> expiredAddrs;
-        for (auto& itr : subnet.m_leasedAddresses)
+        for (auto itr = subnet.m_leasedAddresses.begin(); itr != subnet.m_leasedAddresses.end();)
         {
-            Ipv6Address address = itr.second.first;
-            Time leaseTime = itr.second.second;
+            Ipv6Address address = itr->second.first;
+            Time leaseTime = itr->second.second;
 
             if (Simulator::Now() >= leaseTime)
             {
                 subnet.m_expiredAddresses.insert({leaseTime, address});
-                expiredAddrs.push_back(itr.second.first);
+                itr = subnet.m_leasedAddresses.erase(itr);
+                continue;
             }
-        }
-
-        for (const auto& itr : expiredAddrs)
-        {
-            for (auto it = subnet.m_leasedAddresses.begin(); it != subnet.m_leasedAddresses.end();
-                 it++)
-            {
-                Ipv6Address address = it->second.first;
-
-                if (address == itr)
-                {
-                    subnet.m_leasedAddresses.erase(it);
-                    break;
-                }
-            }
+            itr++;
         }
     }
 

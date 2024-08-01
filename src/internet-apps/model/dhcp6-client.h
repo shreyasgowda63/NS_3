@@ -28,6 +28,7 @@
 #include "ns3/random-variable-stream.h"
 #include "ns3/socket.h"
 #include "ns3/traced-callback.h"
+#include "ns3/trickle-timer.h"
 
 namespace ns3
 {
@@ -246,6 +247,11 @@ class Dhcp6Client : public Application
      * Event ID for the solicit event
      */
     EventId m_solicitEvent;
+
+    /**
+     * TrickleTimer to schedule Solicit messages.
+     */
+    TrickleTimer m_solicitTimer;
 
     /**
      * Time after which lease should be renewed.
