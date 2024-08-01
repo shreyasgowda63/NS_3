@@ -205,7 +205,7 @@ class RoutingTableEntry : public SimpleRefCount<RoutingTableEntry>
                                   //!< nwk address of the device's parent.
     RouteStatus m_status;         //!< The status of the route.
                                   //!< Also see Zigbee specification r22.1.0, Table 3-67
-    bool m_noRouteCache{false};   //!< A flag indicating that the destination indicated by
+    bool m_noRouteCache{true};    //!< A flag indicating that the destination indicated by
                                   //!< this address does not store source routes.
     bool m_manyToOne{false};      //!< A flag indicating  that the destination is a concentrator
                                   //!< that issued a  many-to-one route request

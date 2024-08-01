@@ -362,10 +362,10 @@ struct NlmeRouteDiscoveryRequestParams
 {
     ZigbeeAddressMode m_dstAddrMode{UCST_BCST}; //!< Specifies the kind of destination address.
     Mac16Address m_dstAddr;                     //!< The destination of the route discovery.
-    uint16_t m_radius{0};       //!< Optional parameter that describes the number of hops that the
-                                //!< route request will travel through the network.
-    bool m_noRouteCache{false}; //!< This flag determines whether the NWK should establish a
-                                //!< route record table.
+    uint16_t m_radius{0};      //!< Optional parameter that describes the number of hops that the
+                               //!< route request will travel through the network.
+    bool m_noRouteCache{true}; //!< This flag determines whether the NWK should establish a
+                               //!< route record table.
 };
 
 /**
@@ -1173,6 +1173,7 @@ class ZigbeeNwk : public Object
      * a route is discovered for its destination.
      *
      * \param p The packet to enqueue.
+     * \param nsduHandle The handle associated to this packet
      */
     void EnqueueTx(Ptr<Packet> p, uint8_t nsduHandle);
 
@@ -1181,6 +1182,8 @@ class ZigbeeNwk : public Object
      *
      * \param dst The destination of the packet
      * \param entry The pending packet element
+     *
+     * \return True if successfully dequeued
      */
     bool DequeueTx(Mac16Address dst, Ptr<PendingTxPkt> entry);
 
@@ -1232,6 +1235,14 @@ class ZigbeeNwk : public Object
                   uint8_t pathcost,
                   uint8_t radius,
                   uint8_t rreqRetries);
+
+    void SendRREQMTO(Mac16Address src,
+                     uint8_t seq,
+                     uint8_t rreqId,
+                     uint8_t pathcost,
+                     uint8_t radius,
+                     bool rrec);
+
     /**
      * Handles the reception of a route request command.
      * See Zigbee specification r22.1.0, Section 3.6.3.5.2
@@ -1483,6 +1494,28 @@ class ZigbeeNwk : public Object
      * See Zigbee specification r22.1.0, Table 3-58 (NIB attributes)
      */
     uint8_t m_nwkCapabilityInformation;
+
+    /**
+     * This NIB attribute is a flag determining if this device is a concentrator
+     * (Use in Many-To-One routing).
+     * See Zigbee specification r22.1.0, Table 3-58 (NIB attributes)
+     */
+    bool m_nwkIsConcentrator;
+
+    /**
+     * This NIB attribute indicates the hop count radius for concentrator
+     * route discoveries (Used by Many-To-One routing).
+     * See Zigbee specification r22.1.0, Table 3-58 (NIB attributes)
+     */
+    uint8_t m_nwkConcentratorRadius;
+
+    /**
+     * The time in seconds between concentrator route discoveries.
+     * If set to 0x0000, the discoveries are done at the start up
+     * and by the next higher layer only.
+     * See Zigbee specification r22.1.0, Table 3-58 (NIB attributes)
+     */
+    uint8_t m_nwkConcentratorDiscoveryTime;
 
     /**
      * The sequence number used to identify outgoing frames

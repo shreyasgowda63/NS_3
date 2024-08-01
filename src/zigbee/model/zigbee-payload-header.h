@@ -99,13 +99,14 @@ class ZigbeePayloadRouteRequestCommand : public Header
 {
   public:
     /**
-     * Zigbee Specification, Values of the many to one command option field.
+     * Zigbee Specification 3.4.1.3.1 , Table 3-50
+     * Values of the many to one command option field.
      */
     enum ManyToOne
     {
-        NO_MANYTOONE = 0x01,
-        MANYTOONE_ROUTE_REC = 0x02,
-        MANYTOONE_NO_ROUTE_REC = 0x03
+        NO_MANY_TO_ONE = 0,
+        ROUTE_RECORD = 1,
+        NO_ROUTE_RECORD = 2
     };
 
     ZigbeePayloadRouteRequestCommand();

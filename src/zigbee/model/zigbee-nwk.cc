@@ -137,6 +137,10 @@ ZigbeeNwk::ZigbeeNwk()
 
     m_countRREQRetries = 0;
 
+    m_nwkIsConcentrator = false;
+    m_nwkConcentratorRadius = 0x00;
+    m_nwkConcentratorDiscoveryTime = 0x00;
+
     m_uniformRandomVariable = CreateObject<UniformRandomVariable>();
     m_uniformRandomVariable->SetAttribute("Min", DoubleValue(0.0));
     m_uniformRandomVariable->SetAttribute("Max", DoubleValue(255.0));
@@ -701,7 +705,7 @@ ZigbeeNwk::SendUnicast(Ptr<Packet> packet, uint8_t handle)
     Mac16Address nextHop;
     if (FindNextHop(nwkHeader.GetDstAddr(),
                     nwkHeader.GetRadius(),
-                    false,
+                    true,
                     nwkHeader.GetDiscoverRoute(),
                     nextHop))
     {
@@ -1874,13 +1878,10 @@ void
 ZigbeeNwk::NlmeRouteDiscoveryRequest(NlmeRouteDiscoveryRequestParams params)
 {
     NS_LOG_FUNCTION(this);
-
-    // - Check the device has routing capacity (See 3.2.2.33.3)
-    // - Check the device dstAddrMode != NO_ADDRESS && dstAddr == Broadcast address
-    CapabilityInformation capability;
-    capability.SetCapability(m_nwkCapabilityInformation);
-    if (capability.GetDeviceType() != ROUTER ||
-        (params.m_dstAddrMode != NO_ADDRESS && params.m_dstAddr == Mac16Address("FF:FF")))
+    // (See 3.2.2.33.3)
+    // - Check the device has routing capacity
+    // - Check the device dstAddrMode != NO_ADDRESS &&  dst != Broadcast address
+    if (params.m_dstAddrMode != NO_ADDRESS && IsBroadcastAddress(params.m_dstAddr))
     {
         if (!m_nlmeRouteDiscoveryConfirmCallback.IsNull())
         {
@@ -1891,30 +1892,68 @@ ZigbeeNwk::NlmeRouteDiscoveryRequest(NlmeRouteDiscoveryRequestParams params)
         return;
     }
 
-    m_pendPrimitiveNwk = NLME_ROUTE_DISCOVERY;
-
-    Mac16Address nextHop;
-    if (FindNextHop(params.m_dstAddr, params.m_radius, params.m_noRouteCache, true, nextHop))
+    CapabilityInformation capability;
+    capability.SetCapability(m_nwkCapabilityInformation);
+    if (capability.GetDeviceType() != ROUTER && params.m_dstAddrMode != NO_ADDRESS)
     {
         if (!m_nlmeRouteDiscoveryConfirmCallback.IsNull())
         {
             NlmeRouteDiscoveryConfirmParams confirmParams;
-            confirmParams.m_status = ZigbeeNwkStatus::SUCCESS;
+            confirmParams.m_status = ZigbeeNwkStatus::ROUTE_ERROR;
             m_nlmeRouteDiscoveryConfirmCallback(confirmParams);
         }
+        return;
+    }
+
+    m_pendPrimitiveNwk = NLME_ROUTE_DISCOVERY;
+
+    if (params.m_dstAddrMode == UCST_BCST)
+    {
+        Mac16Address nextHop;
+        if (FindNextHop(params.m_dstAddr, params.m_radius, params.m_noRouteCache, true, nextHop))
+        {
+            if (!m_nlmeRouteDiscoveryConfirmCallback.IsNull())
+            {
+                NlmeRouteDiscoveryConfirmParams confirmParams;
+                confirmParams.m_status = ZigbeeNwkStatus::SUCCESS;
+                m_nlmeRouteDiscoveryConfirmCallback(confirmParams);
+            }
+        }
+        else
+        {
+            Simulator::Schedule(MilliSeconds(m_rreqJitter->GetValue()),
+                                &ZigbeeNwk::SendRREQ,
+                                this,
+                                m_nwkNetworkAddress,
+                                params.m_dstAddr,
+                                m_nwkSequenceNumber.GetValue(),
+                                m_routeRequestId.GetValue(),
+                                0,
+                                params.m_radius,
+                                m_nwkcInitialRREQRetries);
+
+            m_nwkSequenceNumber++;
+            m_routeRequestId++;
+        }
+    }
+    else if (params.m_dstAddrMode == MCST)
+    {
+        NS_ABORT_MSG("Multicast Route discovery not supported");
     }
     else
     {
+        // Many-to-one route discovery. (Last paragraph of Section 3.6.3.5.1)
+        // TODO: add entry to discovery Table
+
         Simulator::Schedule(MilliSeconds(m_rreqJitter->GetValue()),
-                            &ZigbeeNwk::SendRREQ,
+                            &ZigbeeNwk::SendRREQMTO,
                             this,
                             m_nwkNetworkAddress,
-                            params.m_dstAddr,
                             m_nwkSequenceNumber.GetValue(),
                             m_routeRequestId.GetValue(),
                             0,
-                            params.m_radius,
-                            m_nwkcInitialRREQRetries);
+                            m_nwkConcentratorRadius,
+                            false);
 
         m_nwkSequenceNumber++;
         m_routeRequestId++;
@@ -2510,6 +2549,68 @@ ZigbeeNwk::SendRREQ(Mac16Address src,
         Ptr<RreqRetryTableEntry> newEntry = Create<RreqRetryTableEntry>(rreqId, rreqRetryEvent, 0);
         m_rreqRetryTable.AddEntry(newEntry);
     }
+
+    // Send the RREQ
+    m_mac->McpsDataRequest(params, nsdu);
+}
+
+void
+ZigbeeNwk::SendRREQMTO(Mac16Address src,
+                       uint8_t seq,
+                       uint8_t rreqId,
+                       uint8_t pathcost,
+                       uint8_t radius,
+                       bool rrec)
+{
+    NS_LOG_FUNCTION(this << "Many-to-one");
+
+    ZigbeeNwkHeader nwkHeader;
+    nwkHeader.SetFrameType(NWK_COMMAND);
+    nwkHeader.SetProtocolVer(m_nwkcProtocolVersion);
+    nwkHeader.SetDiscoverRoute(DiscoverRouteType::ENABLE_ROUTE_DISCOVERY);
+    // See r22.1.0, Table 3-69
+    // Set destination to broadcast (all routers and coordinator)
+    nwkHeader.SetDstAddr(Mac16Address("FF:FC"));
+    nwkHeader.SetSrcAddr(src);
+    nwkHeader.SetSeqNum(seq);
+    // see Zigbee specification 3.2.2.33.3
+    if (radius == 0)
+    {
+        nwkHeader.SetRadius(m_nwkMaxDepth * 2);
+    }
+    else
+    {
+        nwkHeader.SetRadius(radius);
+    }
+
+    ZigbeePayloadType payloadType(ROUTE_REQ);
+
+    ZigbeePayloadRouteRequestCommand payload;
+    if (rrec)
+    {
+        payload.SetCmdOptManyToOneField(ZigbeePayloadRouteRequestCommand::ManyToOne::ROUTE_RECORD);
+    }
+    else
+    {
+        payload.SetCmdOptManyToOneField(
+            ZigbeePayloadRouteRequestCommand::ManyToOne::NO_ROUTE_RECORD);
+    }
+
+    payload.SetRouteReqId(rreqId);
+    payload.SetDstAddr(Mac16Address("FF:FC")); // not described by the standard.
+    payload.SetPathCost(pathcost);
+
+    // See Section 3.4.1.1 Mac Data Service Requirements for RREQ
+    McpsDataRequestParams params;
+    params.m_dstPanId = m_nwkPanId;
+    params.m_srcAddrMode = SHORT_ADDR;
+    params.m_dstAddrMode = SHORT_ADDR;
+    params.m_dstAddr = Mac16Address::GetBroadcast();
+
+    Ptr<Packet> nsdu = Create<Packet>();
+    nsdu->AddHeader(payload);
+    nsdu->AddHeader(payloadType);
+    nsdu->AddHeader(nwkHeader);
 
     // Send the RREQ
     m_mac->McpsDataRequest(params, nsdu);

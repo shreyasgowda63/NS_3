@@ -148,7 +148,7 @@ ZigbeePayloadType::Print(std::ostream& os) const
 
 ZigbeePayloadRouteRequestCommand::ZigbeePayloadRouteRequestCommand()
 {
-    m_cmdOptManyToOne = NO_MANYTOONE;
+    m_cmdOptManyToOne = NO_MANY_TO_ONE;
     m_cmdOptDstIeeeAddr = false;
     m_cmdOptMcst = false;
     m_routeReqId = 0;
@@ -225,14 +225,14 @@ ZigbeePayloadRouteRequestCommand::Print(std::ostream& os) const
        << "| Path cost = " << static_cast<uint32_t>(m_pathCost) << "| CmdOptFieldManyToOne = ";
     switch (m_cmdOptManyToOne)
     {
-    case NO_MANYTOONE:
-        os << "No";
+    case NO_MANY_TO_ONE:
+        os << "NO_MANY_TO_ONE";
         break;
-    case MANYTOONE_ROUTE_REC:
-        os << "Route record";
+    case ROUTE_RECORD:
+        os << "ROUTE_RECORD";
         break;
-    case MANYTOONE_NO_ROUTE_REC:
-        os << "No route record";
+    case NO_ROUTE_RECORD:
+        os << "NO_ROUTE_RECORD";
         break;
     }
 

@@ -338,6 +338,7 @@ main(int argc, char* argv[])
                                    zstack0->GetNwk(),
                                    routeDiscParams);*/
 
+    // Send data packet with route discovery option
     Ptr<Packet> p = Create<Packet>(5);
     NldeDataRequestParams dataReqParams;
     dataReqParams.m_dstAddrMode = UCST_BCST;
