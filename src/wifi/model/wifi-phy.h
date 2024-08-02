@@ -15,7 +15,9 @@
 #include "wifi-phy-state-helper.h"
 #include "wifi-standards.h"
 
+#include "ns3/decibel.h"
 #include "ns3/error-model.h"
+#include "ns3/units.h"
 
 #include <limits>
 
@@ -862,29 +864,29 @@ class WifiPhy : public Object
      */
     uint8_t GetNTxPower() const;
     /**
-     * Sets the transmission gain (dB).
+     * Sets the transmission gain.
      *
      * \param gain the transmission gain in dB
      */
-    void SetTxGain(double gain);
+    void SetTxGain(units::dimensionless::dB_t gain);
     /**
-     * Return the transmission gain (dB).
+     * Return the transmission gain.
      *
      * \return the transmission gain in dB
      */
-    double GetTxGain() const;
+    units::dimensionless::dB_t GetTxGain() const;
     /**
-     * Sets the reception gain (dB).
+     * Sets the reception gain.
      *
      * \param gain the reception gain in dB
      */
-    void SetRxGain(double gain);
+    void SetRxGain(units::dimensionless::dB_t gain);
     /**
-     * Return the reception gain (dB).
+     * Return the reception gain.
      *
      * \return the reception gain in dB
      */
-    double GetRxGain() const;
+    units::dimensionless::dB_t GetRxGain() const;
 
     /**
      * Sets the device this PHY is associated with.
@@ -1604,12 +1606,12 @@ class WifiPhy : public Object
     double m_ccaSensitivityThresholdDbm; //!< Clear channel assessment (CCA) modulation and coding
                                          //!< rate sensitivity threshold in dBm
 
-    double m_txGainDb;          //!< Transmission gain (dB)
-    double m_rxGainDb;          //!< Reception gain (dB)
-    double m_txPowerBaseDbm;    //!< Minimum transmission power (dBm)
-    double m_txPowerEndDbm;     //!< Maximum transmission power (dBm)
-    uint8_t m_nTxPower;         //!< Number of available transmission power levels
-    double m_powerDensityLimit; //!< the power density limit (dBm/MHz)
+    units::dimensionless::dB_t m_txGain; //!< Transmission gain
+    units::dimensionless::dB_t m_rxGain; //!< Reception gain
+    double m_txPowerBaseDbm;             //!< Minimum transmission power (dBm)
+    double m_txPowerEndDbm;              //!< Maximum transmission power (dBm)
+    uint8_t m_nTxPower;                  //!< Number of available transmission power levels
+    double m_powerDensityLimit;          //!< the power density limit (dBm/MHz)
 
     bool m_powerRestricted; //!< Flag whether transmit power is restricted by OBSS PD SR
     double
