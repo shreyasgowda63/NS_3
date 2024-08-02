@@ -22,6 +22,7 @@
 #include "callback.h"
 #include "nstime.h"
 #include "type-id.h"
+#include "units.h"
 
 #include <memory> // shared_ptr
 #include <sstream>
