@@ -725,9 +725,10 @@ NormalRandomVariable::GetValue(double mean, double variance, double bound)
         }
     }
     while (true)
-    { // See Simulation Modeling and Analysis p. 466 (Averill Law)
-        // for algorithm; basically a Box-Muller transform:
-        // http://en.wikipedia.org/wiki/Box-Muller_transform
+    {
+        // See Simulation Modeling and Analysis p. 466 (Averill Law)
+        // for algorithm; basically a Marsaglia polar method:
+        // https://en.wikipedia.org/wiki/Marsaglia_polar_method
         double u1 = Peek()->RandU01();
         double u2 = Peek()->RandU01();
         if (IsAntithetic())
@@ -738,16 +739,22 @@ NormalRandomVariable::GetValue(double mean, double variance, double bound)
         double v1 = 2 * u1 - 1;
         double v2 = 2 * u2 - 1;
         double w = v1 * v1 + v2 * v2;
-        if (w <= 1.0)
+        if (w <= 1.0 && w > 0)
         { // Got good pair
             double y = std::sqrt((-2 * std::log(w)) / w);
             double x1 = mean + v1 * y * std::sqrt(variance);
             // if x1 is in bounds, return it, cache v2 and y
             if (std::fabs(x1 - mean) <= bound)
             {
-                m_nextValid = true;
-                m_y = y;
-                m_v2 = v2;
+                // Deviation from the algorithm
+                // This allows to return the mean value, but prevents
+                // two consecutive identical values.
+                if (y > 0)
+                {
+                    m_nextValid = true;
+                    m_y = y;
+                    m_v2 = v2;
+                }
                 return x1;
             }
             // otherwise try and return the other if it is valid
