@@ -60,7 +60,7 @@ class YansWifiPhy : public WifiPhy
     void StartTx(Ptr<const WifiPpdu> ppdu) override;
     Ptr<Channel> GetChannel() const override;
     MHz_t GetGuardBandwidth(MHz_t currentChannelWidth) const override;
-    std::tuple<dBr_t, dBr_t, dBr_t> GetTxMaskRejectionParams() const override;
+    std::tuple<dB, dB, dB> GetTxMaskRejectionParams() const override;
     WifiSpectrumBandInfo GetBand(MHz_t bandWidth, uint8_t bandIndex = 0) override;
     FrequencyRange GetCurrentFrequencyRange() const override;
     WifiSpectrumBandFrequencies ConvertIndicesToFrequencies(

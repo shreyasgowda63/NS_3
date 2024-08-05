@@ -807,7 +807,7 @@ SpectrumWifiPhy::ConvertIndicesToFrequenciesForInterface(
     return {lowFreq, highFreq};
 }
 
-std::tuple<dBr_t, dBr_t, dBr_t>
+std::tuple<dB, dB, dB>
 SpectrumWifiPhy::GetTxMaskRejectionParams() const
 {
     return std::make_tuple(m_txMaskInnerBandMinimumRejection,

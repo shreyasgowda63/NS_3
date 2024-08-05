@@ -199,9 +199,9 @@ WifiSpectrumValueHelper::CreateOfdmTxPowerSpectralDensity(MHz_t centerFrequency,
                                                           MHz_t channelWidth,
                                                           Watt_t txPower,
                                                           MHz_t guardBandwidth,
-                                                          dBr_t minInnerBand,
-                                                          dBr_t minOuterBand,
-                                                          dBr_t lowestPoint)
+                                                          dB minInnerBand,
+                                                          dB minOuterBand,
+                                                          dB lowestPoint)
 {
     NS_LOG_FUNCTION(centerFrequency << channelWidth << txPower << guardBandwidth << minInnerBand
                                     << minOuterBand << lowestPoint);
@@ -271,9 +271,9 @@ WifiSpectrumValueHelper::CreateDuplicated20MhzTxPowerSpectralDensity(
     MHz_t channelWidth,
     Watt_t txPower,
     MHz_t guardBandwidth,
-    dBr_t minInnerBand,
-    dBr_t minOuterBand,
-    dBr_t lowestPoint,
+    dB minInnerBand,
+    dB minOuterBand,
+    dB lowestPoint,
     const std::vector<bool>& puncturedSubchannels)
 {
     NS_ASSERT_MSG(centerFrequencies.size() == 1 ||
@@ -376,9 +376,9 @@ WifiSpectrumValueHelper::CreateHtOfdmTxPowerSpectralDensity(
     MHz_t channelWidth,
     Watt_t txPower,
     MHz_t guardBandwidth,
-    dBr_t minInnerBand,
-    dBr_t minOuterBand,
-    dBr_t lowestPoint)
+    dB minInnerBand,
+    dB minOuterBand,
+    dB lowestPoint)
 {
     NS_ASSERT_MSG(centerFrequencies.size() == 1 ||
                       (channelWidth == 160 && centerFrequencies.size() <= 2),
@@ -465,9 +465,9 @@ WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity(
     MHz_t channelWidth,
     Watt_t txPower,
     MHz_t guardBandwidth,
-    dBr_t minInnerBand,
-    dBr_t minOuterBand,
-    dBr_t lowestPoint,
+    dB minInnerBand,
+    dB minOuterBand,
+    dB lowestPoint,
     const std::vector<bool>& puncturedSubchannels)
 {
     return CreateHeOfdmTxPowerSpectralDensity(std::vector<MHz_t>{centerFrequency},
@@ -486,9 +486,9 @@ WifiSpectrumValueHelper::CreateHeOfdmTxPowerSpectralDensity(
     MHz_t channelWidth,
     Watt_t txPower,
     MHz_t guardBandwidth,
-    dBr_t minInnerBand,
-    dBr_t minOuterBand,
-    dBr_t lowestPoint,
+    dB minInnerBand,
+    dB minOuterBand,
+    dB lowestPoint,
     const std::vector<bool>& puncturedSubchannels)
 {
     NS_ASSERT_MSG(
@@ -699,9 +699,9 @@ WifiSpectrumValueHelper::CreateSpectrumMaskForOfdm(
     Watt_t txPowerPerBand,
     uint32_t nGuardBands,
     uint32_t innerSlopeWidth,
-    dBr_t minInnerBand,
-    dBr_t minOuterBand,
-    dBr_t lowestPoint,
+    dB minInnerBand,
+    dB minOuterBand,
+    dB lowestPoint,
     const std::vector<std::vector<WifiSpectrumBandIndices>>& puncturedBandsPerSegment,
     uint32_t puncturedSlopeWidth)
 {

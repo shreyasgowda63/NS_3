@@ -1357,7 +1357,7 @@ PhyEntity::GetGuardBandwidth(MHz_t currentChannelWidth) const
     return m_wifiPhy->GetGuardBandwidth(currentChannelWidth);
 }
 
-std::tuple<dBr_t, dBr_t, dBr_t>
+std::tuple<dB, dB, dB>
 PhyEntity::GetTxMaskRejectionParams() const
 {
     return m_wifiPhy->GetTxMaskRejectionParams();

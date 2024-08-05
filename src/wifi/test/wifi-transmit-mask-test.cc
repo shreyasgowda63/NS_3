@@ -45,7 +45,7 @@ class WifiOfdmMaskSlopesTestCase : public TestCase
     /**
      * typedef for a pair of sub-band index and relative power value
      */
-    typedef std::pair<uint32_t, dBr_t> IndexPowerPair;
+    typedef std::pair<uint32_t, dB> IndexPowerPair;
 
     /**
      * typedef for a vector of pairs of sub-band index and relative power value
@@ -140,18 +140,18 @@ WifiOfdmMaskSlopesTestCase::DoSetup()
     NS_ASSERT(!m_centerFreqs.empty());
     NS_ASSERT(m_expectedPsd.size() % 2 == 0); // start/stop pairs expected
 
-    dBr_t outerBandMaximumRejection = 0.0;
+    auto outerBandMaximumRejection = 0.0_dB;
     switch (m_band)
     {
     default:
     case WIFI_PHY_BAND_5GHZ:
-        outerBandMaximumRejection = -40;
+        outerBandMaximumRejection = -40.0_dB;
         break;
     case WIFI_PHY_BAND_2_4GHZ:
-        outerBandMaximumRejection = (m_standard >= WIFI_STANDARD_80211n) ? -45 : -40;
+        outerBandMaximumRejection = (m_standard >= WIFI_STANDARD_80211n) ? -45.0_dB : -40.0_dB;
         break;
     case WIFI_PHY_BAND_6GHZ:
-        outerBandMaximumRejection = -40;
+        outerBandMaximumRejection = -40.0_dB;
         break;
     }
 
@@ -272,8 +272,10 @@ WifiOfdmMaskSlopesTestCase::InterpolateAndAppendValues(IndexPowerVect& vect,
     double slope = (stop.second - start.second) / (stop.first - start.first);
     for (uint32_t i = start.first; i <= stop.first; i++)
     {
-        double val = start.second + slope * (i - start.first);
-        double multiplier = std::round(std::pow(10.0, static_cast<double>(m_precision)));
+        const auto delta{i - start.first};
+        dB inc{slope * delta};
+        auto val{start.second + inc};
+        const auto multiplier = std::round(std::pow(10.0, static_cast<double>(m_precision)));
         val = std::floor(val * multiplier + 0.5) / multiplier;
         vect.emplace_back(i, val);
         NS_LOG_LOGIC("Append (" << i << ", " << val << ")");
@@ -287,7 +289,7 @@ void
 WifiOfdmMaskSlopesTestCase::DoRun()
 {
     NS_LOG_FUNCTION(this);
-    dBr_t currentPower = 0.0; // have to work in dBr so as to compare with expected slopes
+    dB currentPower = 0.0; // have to work in dBr so as to compare with expected slopes
     Watt_t maxPower = (*m_actualSpectrum)[0];
     for (auto&& vit = m_actualSpectrum->ConstValuesBegin();
          vit != m_actualSpectrum->ConstValuesEnd();

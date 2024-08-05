@@ -929,7 +929,7 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
      *
      * Wrapper method used by child classes for PSD generation.
      */
-    std::tuple<dBr_t, dBr_t, dBr_t> GetTxMaskRejectionParams() const;
+    std::tuple<dB, dB, dB> GetTxMaskRejectionParams() const;
 
     using CcaIndication =
         std::optional<std::pair<Time, WifiChannelListType>>; //!< CCA end time and its corresponding
