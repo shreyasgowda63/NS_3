@@ -110,7 +110,7 @@ class LeaseInfo
      * \brief Expired Addresses (Section 6.2 of RFC 8415)
      * Expired time / Ipv6Address
      */
-    typedef std::multimap<Time, Ipv6Address> ExpiredAddresses;
+    typedef std::multimap<Time, std::pair<Address, Ipv6Address>> ExpiredAddresses;
 
     /**
      * \brief Leased Addresses

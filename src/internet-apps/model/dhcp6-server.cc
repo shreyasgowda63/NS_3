@@ -152,15 +152,42 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
          */
 
         uint8_t offeredAddrBuf[16];
+
+        bool foundAddress = false;
         if (!subnet.m_expiredAddresses.empty())
         {
-            auto firstExpiredAddress = subnet.m_expiredAddresses.begin();
-            Ipv6Address nextAddress = firstExpiredAddress->second;
-            subnet.m_expiredAddresses.erase(firstExpiredAddress);
+            Ipv6Address nextAddress;
 
-            nextAddress.GetBytes(offeredAddrBuf);
+            for (auto itr = subnet.m_expiredAddresses.begin();
+                 itr != subnet.m_expiredAddresses.end();)
+            {
+                if (itr->second.first == clientAddress)
+                {
+                    nextAddress = itr->second.second;
+                    nextAddress.GetBytes(offeredAddrBuf);
+                    itr = subnet.m_expiredAddresses.erase(itr);
+                    foundAddress = true;
+                    break;
+                }
+                itr++;
+            }
+
+            /*
+             Prevent Expired Addresses from building up.
+             We set a maximum limit of 30 expired addresses, after which the
+             oldest expired address is removed and offered to a client.
+             */
+            if (!foundAddress && subnet.m_expiredAddresses.size() > 30)
+            {
+                auto firstExpiredAddress = subnet.m_expiredAddresses.begin();
+                nextAddress = firstExpiredAddress->second.second;
+                nextAddress.GetBytes(offeredAddrBuf);
+                subnet.m_expiredAddresses.erase(firstExpiredAddress);
+                foundAddress = true;
+            }
         }
-        else
+
+        if (!foundAddress)
         {
             // Allocate a new address.
             uint8_t minAddrBuf[16];
@@ -546,12 +573,14 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
                     for (auto itr = subnet.m_leasedAddresses.begin();
                          itr != subnet.m_leasedAddresses.end();)
                     {
+                        Address duid = itr->first;
                         Ipv6Address leaseAddr = itr->second.first;
                         Time expiredTime = itr->second.second;
                         if (leaseAddr == address)
                         {
                             itr = subnet.m_leasedAddresses.erase(itr);
-                            subnet.m_expiredAddresses.insert({expiredTime, leaseAddr});
+                            std::pair<Address, Ipv6Address> expiredLease = {duid, leaseAddr};
+                            subnet.m_expiredAddresses.insert({expiredTime, expiredLease});
                             continue;
                         }
                         itr++;
@@ -733,12 +762,14 @@ Dhcp6Server::CleanLeases()
     {
         for (auto itr = subnet.m_leasedAddresses.begin(); itr != subnet.m_leasedAddresses.end();)
         {
+            Address duid = itr->first;
             Ipv6Address address = itr->second.first;
             Time leaseTime = itr->second.second;
 
             if (Simulator::Now() >= leaseTime)
             {
-                subnet.m_expiredAddresses.insert({leaseTime, address});
+                std::pair<Address, Ipv6Address> expiredLease = {duid, address};
+                subnet.m_expiredAddresses.insert({leaseTime, expiredLease});
                 itr = subnet.m_leasedAddresses.erase(itr);
                 continue;
             }
