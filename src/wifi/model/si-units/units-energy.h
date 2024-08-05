@@ -107,6 +107,11 @@ struct dB
         return output;
     }
 
+    inline operator double() const
+    {
+        return val;
+    }
+
     inline bool operator==(const dB& rhs) const
     {
         return val == rhs.val;
@@ -223,6 +228,11 @@ struct dBm
             return static_cast<double>(f.val);
         });
         return output;
+    }
+
+    inline operator double() const
+    {
+        return val;
     }
 
     inline bool operator==(const dBm& rhs) const
