@@ -524,9 +524,14 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
                      << bw << " MHz channel band " << index << ": " << band);
         rxPowerPerBandW *= rxGainRatio;
         rxPowerW.insert({band, rxPowerPerBandW});
-        NS_LOG_DEBUG("Signal power received after antenna gain for "
-                     << bw << " MHz channel band " << index << ": " << rxPowerPerBandW << " W ("
-                     << WToDbm(rxPowerPerBandW) << " dBm)");
+        std::stringstream ss;
+        ss << "Signal power received after antenna gain for " << bw << " MHz channel band " << index
+           << ": " << rxPowerPerBandW << " W";
+        if (rxPowerPerBandW > 0.0)
+        {
+            ss << " (" << WToDbm(rxPowerPerBandW) << " dBm)";
+        }
+        NS_LOG_DEBUG(ss.str());
         if (bw <= 20)
         {
             totalRxPowerW += rxPowerPerBandW;
@@ -548,14 +553,22 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
         }
     }
 
-    NS_LOG_DEBUG("Total signal power received after antenna gain: "
-                 << totalRxPowerW << " W (" << WToDbm(totalRxPowerW) << " dBm)");
+    std::stringstream ss;
+    ss << "Total signal power received after antenna gain: " << totalRxPowerW << " W";
+    if (totalRxPowerW > 0.0)
+    {
+        ss << " (" << WToDbm(totalRxPowerW) << " dBm)";
+    }
+    NS_LOG_DEBUG(ss.str());
 
     Ptr<WifiSpectrumSignalParameters> wifiRxParams =
         DynamicCast<WifiSpectrumSignalParameters>(rxParams);
 
     // Log the signal arrival to the trace source
-    m_signalCb(rxParams, senderNodeId, WToDbm(totalRxPowerW), rxDuration);
+    if (totalRxPowerW > 0.0)
+    {
+        m_signalCb(rxParams, senderNodeId, WToDbm(totalRxPowerW), rxDuration);
+    }
 
     if (!wifiRxParams)
     {
@@ -593,7 +606,7 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
     const auto ppdu = GetRxPpduFromTxPpdu(wifiRxParams->ppdu);
     if (totalRxPowerW < DbmToW(GetRxSensitivity()) * (ppdu->GetTxChannelWidth() / 20.0))
     {
-        NS_LOG_INFO("Received signal too weak to process: " << WToDbm(totalRxPowerW) << " dBm");
+        NS_LOG_INFO("Received signal too weak to process: " << totalRxPowerW << " W");
         m_interference->Add(ppdu, rxDuration, rxPowerW, GetCurrentFrequencyRange());
         SwitchMaybeToCcaBusy(nullptr);
         return;
