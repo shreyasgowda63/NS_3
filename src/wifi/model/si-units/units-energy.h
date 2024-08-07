@@ -23,7 +23,6 @@
 #include "units-frequency.h"
 
 #include <algorithm>
-#include <assert.h>
 #include <cinttypes>
 #include <cmath>
 #include <iostream>
@@ -41,8 +40,8 @@ struct Watt;
 inline double
 ToLogScale(double val)
 {
-    assert(val > 0.);
-    return 10.0 * log10l(val); // NOLINT
+    NS_ASSERT(val > 0.);
+    return 10.0 * std::log10l(val); // NOLINT
 }
 
 /// Convert energy value in log scale into linear scale.
