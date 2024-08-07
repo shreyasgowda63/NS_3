@@ -27,6 +27,7 @@
 #include "ns3/buffer.h"
 #include "ns3/header.h"
 #include "ns3/ipv6-address.h"
+#include "ns3/ptr.h"
 #include "ns3/random-variable-stream.h"
 
 namespace ns3

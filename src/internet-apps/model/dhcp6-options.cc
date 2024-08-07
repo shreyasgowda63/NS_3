@@ -23,6 +23,8 @@
 #include "ns3/address-utils.h"
 #include "ns3/assert.h"
 #include "ns3/log.h"
+#include "ns3/loopback-net-device.h"
+#include "ns3/ptr.h"
 #include "ns3/simulator.h"
 
 namespace ns3
@@ -74,55 +76,145 @@ Options::SetOptionLength(uint16_t length)
 
 IdentifierOption::IdentifierOption()
 {
+    m_duid = Create<Duid>();
+}
+
+IdentifierOption::IdentifierOption(uint16_t hardwareType, Address linkLayerAddress, Time time)
+{
+    if (time.GetSeconds() == 0)
+    {
+        m_duid->SetDuidType(3);
+    }
+    else
+    {
+        m_duid->SetDuidType(1);
+    }
+
+    m_duid->SetHardwareType(hardwareType);
+    m_duid->SetLinkLayerAddress(linkLayerAddress);
+
+    NS_LOG_FUNCTION(this << hardwareType << linkLayerAddress);
+}
+
+Ptr<Duid>
+IdentifierOption::GetDuidPtr() const
+{
+    NS_LOG_FUNCTION(this);
+    return m_duid;
+}
+
+Duid::Duid()
+{
     m_duidType = 3;
     m_hardwareType = 0;
     m_linkLayerAddress = Address();
-}
-
-IdentifierOption::IdentifierOption(uint16_t hardwareType, Address linkLayerAddress)
-{
-    m_duidType = 3;
-    m_hardwareType = hardwareType;
-    m_linkLayerAddress = linkLayerAddress;
-
-    NS_LOG_FUNCTION(this << m_duidType << hardwareType << linkLayerAddress);
+    m_time = Time();
 }
 
 uint16_t
-IdentifierOption::GetDuidType() const
+Duid::GetDuidType() const
 {
     NS_LOG_FUNCTION(this);
     return m_duidType;
 }
 
+void
+Duid::SetDuidType(uint16_t duidType)
+{
+    NS_LOG_FUNCTION(this << duidType);
+    m_duidType = duidType;
+}
+
 uint16_t
-IdentifierOption::GetHardwareType() const
+Duid::GetHardwareType() const
 {
     NS_LOG_FUNCTION(this);
     return m_hardwareType;
 }
 
 void
-IdentifierOption::SetHardwareType(uint16_t hardwareType)
+Duid::SetHardwareType(uint16_t hardwareType)
 {
     NS_LOG_FUNCTION(this << hardwareType);
     m_hardwareType = hardwareType;
 }
 
 Address
-IdentifierOption::GetLinkLayerAddress() const
+Duid::GetLinkLayerAddress() const
 {
     NS_LOG_FUNCTION(this);
     return m_linkLayerAddress;
 }
 
 void
-IdentifierOption::SetLinkLayerAddress(Address linkLayerAddress)
+Duid::SetLinkLayerAddress(Address linkLayerAddress)
 {
     NS_LOG_FUNCTION(this << linkLayerAddress);
 
-    SetHardwareType(1);
+    uint8_t addrLen = linkLayerAddress.GetLength();
+
+    switch (addrLen)
+    {
+    case 6:
+        // Ethernet - 48 bit length
+        SetHardwareType(1);
+        break;
+    case 8:
+        // EUI-64 - 64 bit length
+        SetHardwareType(27);
+        break;
+    }
     m_linkLayerAddress = linkLayerAddress;
+}
+
+void
+Duid::Initialize(Ptr<Node> node)
+{
+    uint32_t nInterfaces = node->GetNDevices();
+
+    uint32_t maxAddressLength = 0;
+    Address duidAddress;
+
+    for (uint32_t i = 0; i < nInterfaces; i++)
+    {
+        Ptr<NetDevice> device = node->GetDevice(i);
+
+        // Discard the loopback device.
+        if (DynamicCast<LoopbackNetDevice>(node->GetDevice(i)))
+        {
+            continue;
+        }
+
+        // Check if the NetDevice is up.
+        if (device->IsLinkUp())
+        {
+            Address address = device->GetAddress();
+            if (address.GetLength() > maxAddressLength)
+            {
+                maxAddressLength = address.GetLength();
+                duidAddress = address;
+            }
+        }
+    }
+
+    NS_ASSERT_MSG(!duidAddress.IsInvalid(), "Duid: No suitable NetDevice found for DUID.");
+
+    // Consider the link-layer address of the first NetDevice in the list.
+    SetLinkLayerAddress(duidAddress);
+}
+
+Time
+Duid::GetTime() const
+{
+    NS_LOG_FUNCTION(this);
+    return m_time;
+}
+
+void
+Duid::SetTime(Time time)
+{
+    NS_LOG_FUNCTION(this << time);
+    m_time = time;
 }
 
 StatusCodeOption::StatusCodeOption()

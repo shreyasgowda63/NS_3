@@ -26,6 +26,7 @@
 #include "ns3/application.h"
 #include "ns3/ipv6-address.h"
 #include "ns3/pair.h"
+#include "ns3/ptr.h"
 
 #include <map>
 
@@ -256,9 +257,9 @@ class Dhcp6Server : public Application
     std::vector<Ptr<NetDevice>> m_devices;
 
     /**
-     * \brief The server identifier.
+     * \brief The server DUID.
      */
-    IdentifierOption m_serverIdentifier;
+    Duid m_serverDuid;
 
     /**
      * \brief Store IA bindings.

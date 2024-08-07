@@ -165,8 +165,8 @@ Dhcp6Header::AddIdentifierOption(IdentifierOption& identifier,
     // Set the option code, length, hardware type, link layer address.
     identifier.SetOptionCode(optionType);
     identifier.SetOptionLength(duidLength);
-    identifier.SetHardwareType(hardwareType);
-    identifier.SetLinkLayerAddress(linkLayerAddress);
+    identifier.GetDuidPtr()->SetHardwareType(hardwareType);
+    identifier.GetDuidPtr()->SetLinkLayerAddress(linkLayerAddress);
 
     // Increase the total length by (4 + duidLength) bytes.
     AddMessageLength(4 + duidLength);
@@ -408,9 +408,9 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     {
         i.WriteHtonU16(clientIdentifier.GetOptionCode());
         i.WriteHtonU16(clientIdentifier.GetOptionLength());
-        i.WriteHtonU16(clientIdentifier.GetDuidType());
-        i.WriteHtonU16(clientIdentifier.GetHardwareType());
-        Address addr = clientIdentifier.GetLinkLayerAddress();
+        i.WriteHtonU16(clientIdentifier.GetDuidPtr()->GetDuidType());
+        i.WriteHtonU16(clientIdentifier.GetDuidPtr()->GetHardwareType());
+        Address addr = clientIdentifier.GetDuidPtr()->GetLinkLayerAddress();
         uint8_t addrBuf[16];
         addr.CopyTo(addrBuf);
         i.Write(addrBuf, addr.GetLength());
@@ -419,9 +419,9 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     {
         i.WriteHtonU16(serverIdentifier.GetOptionCode());
         i.WriteHtonU16(serverIdentifier.GetOptionLength());
-        i.WriteHtonU16(clientIdentifier.GetDuidType());
-        i.WriteHtonU16(serverIdentifier.GetHardwareType());
-        Address addr = serverIdentifier.GetLinkLayerAddress();
+        i.WriteHtonU16(clientIdentifier.GetDuidPtr()->GetDuidType());
+        i.WriteHtonU16(serverIdentifier.GetDuidPtr()->GetHardwareType());
+        Address addr = serverIdentifier.GetDuidPtr()->GetLinkLayerAddress();
         uint8_t addrBuf[16];
         addr.CopyTo(addrBuf);
         i.Write(addrBuf, addr.GetLength());
@@ -533,12 +533,12 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 // Read DUID Type. Not used (3 is the only valid value)
                 i.ReadNtohU16();
 
-                clientIdentifier.SetHardwareType(i.ReadNtohU16());
+                clientIdentifier.GetDuidPtr()->SetHardwareType(i.ReadNtohU16());
                 uint8_t addrBuf[16];
                 i.Read(addrBuf, addrLen);
                 Address duid;
                 duid.CopyFrom(addrBuf, addrLen);
-                clientIdentifier.SetLinkLayerAddress(duid);
+                clientIdentifier.GetDuidPtr()->SetLinkLayerAddress(duid);
                 len += clientIdentifier.GetOptionLength();
             }
             break;
@@ -559,12 +559,12 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 // Read DUID Type. Not used (3 is the only valid value)
                 i.ReadNtohU16();
 
-                serverIdentifier.SetHardwareType(i.ReadNtohU16());
+                serverIdentifier.GetDuidPtr()->SetHardwareType(i.ReadNtohU16());
                 uint8_t addrBuf[16];
                 i.Read(addrBuf, addrLen);
                 Address duid;
                 duid.CopyFrom(addrBuf, addrLen);
-                serverIdentifier.SetLinkLayerAddress(duid);
+                serverIdentifier.GetDuidPtr()->SetLinkLayerAddress(duid);
                 len += serverIdentifier.GetOptionLength();
             }
             break;

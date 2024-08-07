@@ -25,6 +25,7 @@
 
 #include "ns3/application.h"
 #include "ns3/inet6-socket-address.h"
+#include "ns3/ptr.h"
 #include "ns3/random-variable-stream.h"
 #include "ns3/socket.h"
 #include "ns3/traced-callback.h"
@@ -60,10 +61,10 @@ class Dhcp6Client : public Application
     void SetDhcp6ClientNetDevice(Ptr<NetDevice> netDevice);
 
     /**
-     * \brief Get the identifier option.
+     * \brief Get the DUID.
      * \return The DUID-LL which identifies the client.
      */
-    IdentifierOption GetDuid();
+    Ptr<Duid> GetSelfDuid();
 
     int64_t AssignStreams(int64_t stream) override;
 
@@ -199,14 +200,14 @@ class Dhcp6Client : public Application
     uint32_t m_clientTransactId;
 
     /**
-     * Store the client identifier option.
+     * Store the client DUID.
      */
-    IdentifierOption m_clientIdentifier;
+    Duid m_clientDuid;
 
     /**
-     * Store the server identifier option.
+     * Store the server DUID.
      */
-    IdentifierOption m_serverIdentifier;
+    Duid m_serverDuid;
 
     /**
      * Track the IPv6 Address - IAID association.

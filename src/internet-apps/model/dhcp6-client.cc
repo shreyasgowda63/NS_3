@@ -31,6 +31,7 @@
 #include "ns3/mac48-address.h"
 #include "ns3/object.h"
 #include "ns3/pointer.h"
+#include "ns3/ptr.h"
 #include "ns3/random-variable-stream.h"
 #include "ns3/simulator.h"
 #include "ns3/socket.h"
@@ -152,18 +153,18 @@ Dhcp6Client::ValidateAdvertise(Dhcp6Header header)
     uint32_t receivedTransactId = header.GetTransactId();
     NS_ASSERT_MSG(receivedTransactId == m_clientTransactId, "Transaction ID mismatch.");
 
-    uint16_t clientHwType = header.GetClientIdentifier().GetHardwareType();
-    Address clientHwAddr = header.GetClientIdentifier().GetLinkLayerAddress();
+    uint16_t clientHwType = header.GetClientIdentifier().GetDuidPtr()->GetHardwareType();
+    Address clientHwAddr = header.GetClientIdentifier().GetDuidPtr()->GetLinkLayerAddress();
 
-    NS_ASSERT_MSG(clientHwType == m_clientIdentifier.GetHardwareType(),
+    NS_ASSERT_MSG(clientHwType == m_clientDuid.GetHardwareType(),
                   "Client DUID hardware type mismatch.");
-    NS_ASSERT_MSG(clientHwAddr == m_clientIdentifier.GetLinkLayerAddress(),
+    NS_ASSERT_MSG(clientHwAddr == m_clientDuid.GetLinkLayerAddress(),
                   "Client DUID link layer address mismatch.");
 
-    uint16_t serverHwType = header.GetServerIdentifier().GetHardwareType();
-    Address serverHwAddr = header.GetServerIdentifier().GetLinkLayerAddress();
-    m_serverIdentifier.SetHardwareType(serverHwType);
-    m_serverIdentifier.SetLinkLayerAddress(serverHwAddr);
+    uint16_t serverHwType = header.GetServerIdentifier().GetDuidPtr()->GetHardwareType();
+    Address serverHwAddr = header.GetServerIdentifier().GetDuidPtr()->GetLinkLayerAddress();
+    m_serverDuid.SetHardwareType(serverHwType);
+    m_serverDuid.SetLinkLayerAddress(serverHwAddr);
 }
 
 void
@@ -181,12 +182,12 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     requestHeader.SetTransactId(m_clientTransactId);
 
     // Add Client Identifier Option.
-    requestHeader.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
-                                      m_clientIdentifier.GetLinkLayerAddress());
+    requestHeader.AddClientIdentifier(m_clientDuid.GetHardwareType(),
+                                      m_clientDuid.GetLinkLayerAddress());
 
     // Add Server Identifier Option, copied from the received header.
-    uint16_t serverHardwareType = header.GetServerIdentifier().GetHardwareType();
-    Address serverAddress = header.GetServerIdentifier().GetLinkLayerAddress();
+    uint16_t serverHardwareType = header.GetServerIdentifier().GetDuidPtr()->GetHardwareType();
+    Address serverAddress = header.GetServerIdentifier().GetDuidPtr()->GetLinkLayerAddress();
     requestHeader.AddServerIdentifier(serverHardwareType, serverAddress);
 
     // Add Elapsed Time Option.
@@ -299,12 +300,12 @@ Dhcp6Client::DeclineOffer()
     declineHeader.SetMessageType(Dhcp6Header::DECLINE);
 
     // Add client identifier option
-    declineHeader.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
-                                      m_clientIdentifier.GetLinkLayerAddress());
+    declineHeader.AddClientIdentifier(m_clientDuid.GetHardwareType(),
+                                      m_clientDuid.GetLinkLayerAddress());
 
     // Add server identifier option
-    declineHeader.AddServerIdentifier(m_serverIdentifier.GetHardwareType(),
-                                      m_serverIdentifier.GetLinkLayerAddress());
+    declineHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(),
+                                      m_serverDuid.GetLinkLayerAddress());
 
     Time m_msgStartTime = Simulator::Now();
     declineHeader.AddElapsedTime(0);
@@ -432,12 +433,10 @@ Dhcp6Client::SendRenew(std::vector<uint32_t> iaidList)
     header.SetMessageType(Dhcp6Header::RENEW);
 
     // Add client identifier option
-    header.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
-                               m_clientIdentifier.GetLinkLayerAddress());
+    header.AddClientIdentifier(m_clientDuid.GetHardwareType(), m_clientDuid.GetLinkLayerAddress());
 
     // Add server identifier option
-    header.AddServerIdentifier(m_serverIdentifier.GetHardwareType(),
-                               m_serverIdentifier.GetLinkLayerAddress());
+    header.AddServerIdentifier(m_serverDuid.GetHardwareType(), m_serverDuid.GetLinkLayerAddress());
 
     Time m_msgStartTime = Simulator::Now();
     header.AddElapsedTime(0);
@@ -497,8 +496,7 @@ Dhcp6Client::SendRebind(std::vector<uint32_t> iaidList)
     header.SetMessageType(Dhcp6Header::REBIND);
 
     // Add client identifier option
-    header.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
-                               m_clientIdentifier.GetLinkLayerAddress());
+    header.AddClientIdentifier(m_clientDuid.GetHardwareType(), m_clientDuid.GetLinkLayerAddress());
 
     Time m_msgStartTime = Simulator::Now();
     header.AddElapsedTime(0);
@@ -547,12 +545,10 @@ Dhcp6Client::SendRelease(Ipv6Address address)
     header.SetMessageType(Dhcp6Header::RELEASE);
 
     // Add client identifier option
-    header.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
-                               m_clientIdentifier.GetLinkLayerAddress());
+    header.AddClientIdentifier(m_clientDuid.GetHardwareType(), m_clientDuid.GetLinkLayerAddress());
 
     // Add server identifier option
-    header.AddServerIdentifier(m_serverIdentifier.GetHardwareType(),
-                               m_serverIdentifier.GetLinkLayerAddress());
+    header.AddServerIdentifier(m_serverDuid.GetHardwareType(), m_serverDuid.GetLinkLayerAddress());
 
     Time m_msgStartTime = Simulator::Now();
     header.AddElapsedTime(0);
@@ -661,10 +657,10 @@ Dhcp6Client::LinkStateHandler()
     }
 }
 
-IdentifierOption
-Dhcp6Client::GetDuid()
+Ptr<Duid>
+Dhcp6Client::GetSelfDuid()
 {
-    return m_clientIdentifier;
+    return &m_clientDuid;
 }
 
 void
@@ -707,12 +703,12 @@ Dhcp6Client::StartApplication()
         Ptr<Dhcp6Client> client = DynamicCast<Dhcp6Client>(node->GetApplication(i));
         if (client)
         {
-            Address clientLinkLayer = client->GetDuid().GetLinkLayerAddress();
+            Address clientLinkLayer = client->GetSelfDuid()->GetLinkLayerAddress();
 
             if (!clientLinkLayer.IsInvalid())
             {
                 validDuid = true;
-                m_clientIdentifier.SetLinkLayerAddress(clientLinkLayer);
+                m_clientDuid.SetLinkLayerAddress(clientLinkLayer);
                 break;
             }
         }
@@ -720,38 +716,7 @@ Dhcp6Client::StartApplication()
 
     if (!validDuid)
     {
-        uint32_t nInterfaces = node->GetNDevices();
-
-        uint32_t maxAddressLength = 0;
-        Address duidAddress;
-
-        for (uint32_t i = 0; i < nInterfaces; i++)
-        {
-            Ptr<NetDevice> device = node->GetDevice(i);
-
-            // Discard the loopback device.
-            if (DynamicCast<LoopbackNetDevice>(node->GetDevice(i)))
-            {
-                continue;
-            }
-
-            // Check if the NetDevice is up.
-            if (device->IsLinkUp())
-            {
-                Address address = device->GetAddress();
-                if (address.GetLength() > maxAddressLength)
-                {
-                    maxAddressLength = address.GetLength();
-                    duidAddress = address;
-                }
-            }
-        }
-
-        NS_ASSERT_MSG(!duidAddress.IsInvalid(),
-                      "DHCPv6 client: No suitable NetDevice found for DUID.");
-
-        // Consider the link-layer address of the first NetDevice in the list.
-        m_clientIdentifier.SetLinkLayerAddress(duidAddress);
+        m_clientDuid.Initialize(node);
     }
 
     // Create IAs to be used, and assign IAIDs.
@@ -802,6 +767,7 @@ Dhcp6Client::StartApplication()
 void
 Dhcp6Client::Boot()
 {
+    NS_LOG_INFO("Link Layer Address: " << m_clientDuid.GetLinkLayerAddress());
     Dhcp6Header header;
     Ptr<Packet> packet;
     packet = Create<Packet>();
@@ -816,8 +782,7 @@ Dhcp6Client::Boot()
     Time m_msgStartTime = Simulator::Now();
 
     header.AddElapsedTime(0);
-    header.AddClientIdentifier(m_clientIdentifier.GetHardwareType(),
-                               m_clientIdentifier.GetLinkLayerAddress());
+    header.AddClientIdentifier(m_clientDuid.GetHardwareType(), m_clientDuid.GetLinkLayerAddress());
     header.AddOptionRequest(Dhcp6Header::OPTION_SOL_MAX_RT);
 
     // Add IA_NA option.

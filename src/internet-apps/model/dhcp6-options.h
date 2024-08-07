@@ -25,6 +25,9 @@
 #include "ns3/buffer.h"
 #include "ns3/header.h"
 #include "ns3/ipv6-address.h"
+#include "ns3/node.h"
+#include "ns3/nstime.h"
+#include "ns3/ptr.h"
 #include "ns3/random-variable-stream.h"
 
 namespace ns3
@@ -95,29 +98,34 @@ class Options
 /**
  * \ingroup dhcp6
  *
- * \class IdentifierOption
- * \brief Implements the client and server identifier options.
+ * \class Duid
+ * \brief Implements the unique identifier for DHCPv6.
  */
-class IdentifierOption : public Options
+class Duid : public ns3::SimpleRefCount<Duid>
 {
   public:
     /**
      * \brief Default constructor.
      */
-    IdentifierOption();
+    Duid();
 
     /**
-     * \brief Constructor.
-     * \param hardwareType The hardware type.
-     * \param linkLayerAddress The link-layer address.
+     * \brief Initialize the DUID for a client or server.
+     * \param node The node for which the DUID is to be generated.
      */
-    IdentifierOption(uint16_t hardwareType, Address linkLayerAddress);
+    void Initialize(Ptr<Node> node);
 
     /**
      * \brief Get the DUID type
      * \return the DUID type.
      */
     uint16_t GetDuidType() const;
+
+    /**
+     * \brief Set the DUID type
+     * \param duidType the DUID type.
+     */
+    void SetDuidType(uint16_t duidType);
 
     /**
      * \brief Get the hardware type.
@@ -143,6 +151,18 @@ class IdentifierOption : public Options
      */
     void SetLinkLayerAddress(Address linkLayerAddress);
 
+    /**
+     * \brief Get the time at which the DUID is generated.
+     * \return the timestamp.
+     */
+    Time GetTime() const;
+
+    /**
+     * \brief Set the time at which DUID is generated.
+     * \param time the timestamp.
+     */
+    void SetTime(Time time);
+
   private:
     /**
      * Type of the DUID.
@@ -156,9 +176,49 @@ class IdentifierOption : public Options
     uint16_t m_hardwareType;
 
     /**
+     * Time at which DUID is generated. Used in DUID-LLT.
+     */
+    Time m_time;
+
+    /**
      * Link-layer address of the node.
      */
     Address m_linkLayerAddress;
+};
+
+/**
+ * \ingroup dhcp6
+ *
+ * \class IdentifierOption
+ * \brief Implements the client and server identifier options.
+ */
+class IdentifierOption : public Options
+{
+  public:
+    /**
+     * Default constructor.
+     */
+    IdentifierOption();
+
+    /**
+     * \brief Constructor.
+     * \param hardwareType The hardware type.
+     * \param linkLayerAddress The link-layer address.
+     * \param time The time at which the DUID is generated.
+     */
+    IdentifierOption(uint16_t hardwareType, Address linkLayerAddress, Time time = Time());
+
+    /**
+     * \brief Get a pointer to the unique identifier.
+     * \return a pointer to the DUID.
+     */
+    Ptr<Duid> GetDuidPtr() const;
+
+  private:
+    /**
+     * The unique identifier of the node.
+     */
+    Ptr<Duid> m_duid;
 };
 
 /**
