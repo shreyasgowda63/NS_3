@@ -1488,15 +1488,16 @@ HeFrameExchangeManager::GetHeTbTxVector(CtrlTriggerHeader trigger, Mac48Address 
         trigger.GetApTxPower() -
         static_cast<int8_t>(
             *optRssi); // cast RSSI to be on equal footing with AP Tx power information
-    auto reqTxPower = static_cast<dBm_t>(userInfoIt->GetUlTargetRssi() + pathLossDb);
+    const auto reqTxPower = userInfoIt->GetUlTargetRssi() + pathLossDb;
 
     // Convert the transmit power to a power level
     uint8_t numPowerLevels = m_phy->GetNTxPower();
     if (numPowerLevels > 1)
     {
-        dBm_t step = (m_phy->GetTxPowerEnd() - m_phy->GetTxPowerStart()) / (numPowerLevels - 1);
+        const auto step = (m_phy->GetTxPowerEnd().in_dBm() - m_phy->GetTxPowerStart().in_dBm()) /
+                          (numPowerLevels - 1);
         powerLevel = static_cast<uint8_t>(
-            ceil((reqTxPower - m_phy->GetTxPowerStart()) /
+            ceil((reqTxPower - m_phy->GetTxPowerStart().in_dBm()) /
                  step)); // better be slightly above so as to satisfy target UL RSSI
         if (powerLevel > numPowerLevels)
         {
@@ -1519,7 +1520,7 @@ HeFrameExchangeManager::GetHeTbTxVector(CtrlTriggerHeader trigger, Mac48Address 
     return v;
 }
 
-std::optional<dBm_t>
+std::optional<dBm>
 HeFrameExchangeManager::GetMostRecentRssi(const Mac48Address& address) const
 {
     return GetWifiRemoteStationManager()->GetMostRecentRssi(address);

@@ -88,8 +88,8 @@ class InterferenceExperiment
         meter_t xB;            ///< x B
         std::string txModeA;   ///< transmit mode A
         std::string txModeB;   ///< transmit mode B
-        double txPowerLevelA;  ///< transmit power level A
-        double txPowerLevelB;  ///< transmit power level B
+        dBm txPowerLevelA;     ///< transmit power level A
+        dBm txPowerLevelB;     ///< transmit power level B
         uint32_t packetSizeA;  ///< packet size A
         uint32_t packetSizeB;  ///< packet size B
         uint16_t channelA;     ///< channel number A

@@ -110,7 +110,7 @@ int
 main(int argc, char* argv[])
 {
     std::string phyMode("DsssRate1Mbps");
-    dBm_t rss{-80};
+    dBm rss{-80};
     uint32_t packetSize{1000}; // bytes
     uint32_t numPackets{1};
     Time interPacketInterval{"1s"};

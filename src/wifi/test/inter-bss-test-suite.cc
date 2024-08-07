@@ -115,7 +115,7 @@ class TestInterBssConstantObssPdAlgo : public TestCase
      * Set the expected transmit power
      * \param txPower the transmit power
      */
-    void SetExpectedTxPower(dBm_t txPower);
+    void SetExpectedTxPower(dBm txPower);
 
     /**
      * Setup the simulation
@@ -202,10 +202,10 @@ class TestInterBssConstantObssPdAlgo : public TestCase
     NetDeviceContainer m_staDevices; ///< STA devices
     NetDeviceContainer m_apDevices;  ///< AP devices
 
-    dBm_t m_txPower;         ///< configured transmit power
-    dBm_t m_obssPdLevel;     ///< OBSS-PD level
-    dBm_t m_obssRxPower;     ///< forced RX power for OBSS
-    dBm_t m_expectedTxPower; ///< expected transmit power
+    dBm m_txPower;         ///< configured transmit power
+    dBm m_obssPdLevel;     ///< OBSS-PD level
+    dBm m_obssRxPower;     ///< forced RX power for OBSS
+    dBm m_expectedTxPower; ///< expected transmit power
 
     uint8_t m_bssColor1; ///< color for BSS 1
     uint8_t m_bssColor2; ///< color for BSS 2
@@ -435,7 +435,8 @@ TestInterBssConstantObssPdAlgo::SetupSimulation()
     {
         // In this case, we check the TX power is restricted (and set the expected value slightly
         // before transmission should occur)
-        const auto expectedTxPower = std::min(m_txPower, 21 - (m_obssPdLevel + 82));
+        const auto expectedTxPower =
+            std::min(m_txPower, dBm(21.0 - (m_obssPdLevel.in_dBm() + 82.0)));
         Simulator::Schedule(Seconds(2.1) + MicroSeconds(41),
                             &TestInterBssConstantObssPdAlgo::SetExpectedTxPower,
                             this,
@@ -503,7 +504,8 @@ TestInterBssConstantObssPdAlgo::SetupSimulation()
     {
         // In this case, we check the TX power is restricted (and set the expected value slightly
         // before transmission should occur)
-        const auto expectedTxPower = std::min(m_txPower, 21 - (m_obssPdLevel + 82));
+        const auto expectedTxPower =
+            std::min(m_txPower, dBm(21.0 - (m_obssPdLevel.in_dBm() + 82.0)));
         Simulator::Schedule(Seconds(2.2) + MicroSeconds(89),
                             &TestInterBssConstantObssPdAlgo::SetExpectedTxPower,
                             this,
@@ -606,7 +608,8 @@ TestInterBssConstantObssPdAlgo::SetupSimulation()
     {
         // In this case, we check the TX power is restricted (and set the expected value slightly
         // before transmission should occur)
-        const auto expectedTxPower = std::min(m_txPower, 21 - (m_obssPdLevel + 82));
+        const auto expectedTxPower =
+            std::min(m_txPower, dBm(21.0 - (m_obssPdLevel.in_dBm() + 82.0)));
         Simulator::Schedule(Seconds(2.5) + MicroSeconds(338),
                             &TestInterBssConstantObssPdAlgo::SetExpectedTxPower,
                             this,
@@ -679,30 +682,31 @@ TestInterBssConstantObssPdAlgo::NotifyPhyTxBegin(std::string context,
     if ((idx == 0) && ((pktSize == m_payloadSize1) || (pktSize == (m_payloadSize1 / 10))))
     {
         m_numSta1PacketsSent++;
-        NS_TEST_EXPECT_MSG_EQ(TestDoubleIsEqual(WToDbm(txPowerW), m_expectedTxPower, 1e-12),
+        NS_TEST_EXPECT_MSG_EQ(TestDoubleIsEqual(WToDbm(txPowerW), m_expectedTxPower, 1e-12_dB),
                               true,
                               "Tx power is not correct!");
     }
     else if ((idx == 1) && ((pktSize == m_payloadSize2) || (pktSize == (m_payloadSize2 / 10))))
     {
         m_numSta2PacketsSent++;
-        NS_TEST_EXPECT_MSG_EQ(TestDoubleIsEqual(WToDbm(txPowerW), m_expectedTxPower, 1e-12),
+        NS_TEST_EXPECT_MSG_EQ(TestDoubleIsEqual(WToDbm(txPowerW), m_expectedTxPower, 1e-12_dB),
                               true,
                               "Tx power is not correct!");
     }
     else if ((idx == 3) && ((pktSize == m_payloadSize1) || (pktSize == (m_payloadSize1 / 10))))
     {
         m_numAp1PacketsSent++;
-        NS_TEST_EXPECT_MSG_EQ(TestDoubleIsEqual(WToDbm(txPowerW), m_expectedTxPower, 1e-12),
+        NS_TEST_EXPECT_MSG_EQ(TestDoubleIsEqual(WToDbm(txPowerW), m_expectedTxPower, 1e-12_dB),
                               true,
                               "Tx power is not correct!");
     }
     else if ((idx == 4) && ((pktSize == m_payloadSize2) || (pktSize == (m_payloadSize2 / 10))))
     {
         m_numAp2PacketsSent++;
-        NS_TEST_EXPECT_MSG_EQ(TestDoubleIsEqual(WToDbm(txPowerW), m_expectedTxPower, 1e-12),
-                              true,
-                              "Tx power is not correct!");
+        NS_TEST_EXPECT_MSG_EQ(
+            TestDoubleIsEqual(WToDbm(txPowerW).in_dBm(), m_expectedTxPower, 1e-12),
+            true,
+            "Tx power is not correct!");
     }
 }
 
@@ -764,7 +768,7 @@ TestInterBssConstantObssPdAlgo::SendOnePacket(Ptr<WifiNetDevice> tx_dev,
 }
 
 void
-TestInterBssConstantObssPdAlgo::SetExpectedTxPower(dBm_t txPower)
+TestInterBssConstantObssPdAlgo::SetExpectedTxPower(dBm txPower)
 {
     m_expectedTxPower = txPower;
 }
@@ -843,8 +847,9 @@ TestInterBssConstantObssPdAlgo::RunOne()
     wifiApNodes.Create(3);
 
     Ptr<MatrixPropagationLossModel> lossModel = CreateObject<MatrixPropagationLossModel>();
-    lossModel->SetDefaultLoss(m_txPower -
-                              m_obssRxPower); // Force received RSSI to be equal to m_obssRxPower
+    lossModel->SetDefaultLoss(
+        m_txPower.in_dBm() -
+        m_obssRxPower.in_dBm()); // Force received RSSI to be equal to m_obssRxPower
 
     SpectrumWifiPhyHelper phy;
     phy.DisablePreambleDetectionModel();
@@ -853,8 +858,8 @@ TestInterBssConstantObssPdAlgo::RunOne()
     channel->SetPropagationDelayModel(CreateObject<ConstantSpeedPropagationDelayModel>());
     channel->AddPropagationLossModel(lossModel);
     phy.SetChannel(channel);
-    phy.Set("TxPowerStart", DoubleValue(m_txPower));
-    phy.Set("TxPowerEnd", DoubleValue(m_txPower));
+    phy.Set("TxPowerStart", dBmValue(m_txPower));
+    phy.Set("TxPowerEnd", dBmValue(m_txPower));
     phy.Set("ChannelSettings", StringValue("{36, 20, BAND_5GHZ, 0}"));
 
     WifiHelper wifi;
@@ -865,9 +870,7 @@ TestInterBssConstantObssPdAlgo::RunOne()
                                  "ControlMode",
                                  StringValue("HeMcs0"));
 
-    wifi.SetObssPdAlgorithm("ns3::ConstantObssPdAlgorithm",
-                            "ObssPdLevel",
-                            DoubleValue(m_obssPdLevel));
+    wifi.SetObssPdAlgorithm("ns3::ConstantObssPdAlgorithm", "ObssPdLevel", dBmValue(m_obssPdLevel));
 
     WifiMacHelper mac;
     Ssid ssid = Ssid("ns-3-ssid");
@@ -915,13 +918,13 @@ TestInterBssConstantObssPdAlgo::RunOne()
 
     lossModel->SetLoss(wifiStaNodes.Get(0)->GetObject<MobilityModel>(),
                        wifiApNodes.Get(0)->GetObject<MobilityModel>(),
-                       m_txPower + 30); // Low attenuation for IBSS transmissions
+                       m_txPower + 30.0_dB); // Low attenuation for IBSS transmissions
     lossModel->SetLoss(wifiStaNodes.Get(1)->GetObject<MobilityModel>(),
                        wifiApNodes.Get(1)->GetObject<MobilityModel>(),
-                       m_txPower + 30); // Low attenuation for IBSS transmissions
+                       m_txPower + 30.0_dB); // Low attenuation for IBSS transmissions
     lossModel->SetLoss(wifiStaNodes.Get(2)->GetObject<MobilityModel>(),
                        wifiApNodes.Get(2)->GetObject<MobilityModel>(),
-                       m_txPower + 30); // Low attenuation for IBSS transmissions
+                       m_txPower + 30.0_dB); // Low attenuation for IBSS transmissions
 
     Config::Connect("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxBegin",
                     MakeCallback(&TestInterBssConstantObssPdAlgo::NotifyPhyTxBegin, this));

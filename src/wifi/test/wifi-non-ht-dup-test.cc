@@ -704,7 +704,7 @@ class TestMultipleCtsResponsesFromMuRts : public TestCase
     std::size_t m_countStaRxCtsFailure; ///< count the number of unsuccessfully received CTS frames
                                         ///< by the non-participating STA
 
-    dBm_t m_stasTxPower; ///< TX power configured for the STAs
+    dBm m_stasTxPower; ///< TX power configured for the STAs
 };
 
 TestMultipleCtsResponsesFromMuRts::TestMultipleCtsResponsesFromMuRts(
@@ -798,10 +798,11 @@ TestMultipleCtsResponsesFromMuRts::RxCtsSuccess(std::size_t phyIndex,
     const auto isAp = (phyIndex == 0);
     if (isAp)
     {
-        NS_TEST_EXPECT_MSG_EQ_TOL(rxSignalInfo.rssi,
-                                  WToDbm(DbmToW(m_stasTxPower) * successfulCtsInfos.size()),
-                                  0.1,
-                                  "RX power is not correct!");
+        NS_TEST_EXPECT_MSG_EQ_TOL(
+            rxSignalInfo.rssi.in_dBm(),
+            WToDbm(DbmToW(m_stasTxPower) * successfulCtsInfos.size()).in_dBm(),
+            0.1,
+            "RX power is not correct!");
     }
     auto expectedWidth =
         std::max_element(successfulCtsInfos.cbegin(),

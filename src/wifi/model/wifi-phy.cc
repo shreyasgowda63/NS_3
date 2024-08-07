@@ -151,31 +151,29 @@ WifiPhy::GetTypeId()
                           BooleanValue(false),
                           MakeBooleanAccessor(&WifiPhy::SetFixedPhyBand, &WifiPhy::HasFixedPhyBand),
                           MakeBooleanChecker())
-            .AddAttribute(
-                "RxSensitivity",
-                "The energy of a received signal should be higher than "
-                "this threshold (dBm) for the PHY to detect the signal. "
-                "This threshold refers to a width of 20 MHz and will be "
-                "scaled to match the width of the received signal.",
-                DoubleValue(-101.0),
-                MakeDoubleAccessor(&WifiPhy::SetRxSensitivity, &WifiPhy::GetRxSensitivity),
-                MakeDoubleChecker<dBm_t>())
-            .AddAttribute(
-                "CcaEdThreshold",
-                "The energy of all received signals should be higher than "
-                "this threshold (dBm) in the primary channel to allow the PHY layer "
-                "to declare CCA BUSY state.",
-                DoubleValue(-62.0),
-                MakeDoubleAccessor(&WifiPhy::SetCcaEdThreshold, &WifiPhy::GetCcaEdThreshold),
-                MakeDoubleChecker<dBm_t>())
+            .AddAttribute("RxSensitivity",
+                          "The energy of a received signal should be higher than "
+                          "this threshold (dBm) for the PHY to detect the signal. "
+                          "This threshold refers to a width of 20 MHz and will be "
+                          "scaled to match the width of the received signal.",
+                          dBmValue(-101.0_dBm),
+                          MakedBmAccessor(&WifiPhy::SetRxSensitivity, &WifiPhy::GetRxSensitivity),
+                          MakedBmChecker())
+            .AddAttribute("CcaEdThreshold",
+                          "The energy of all received signals should be higher than "
+                          "this threshold (dBm) in the primary channel to allow the PHY layer "
+                          "to declare CCA BUSY state.",
+                          dBmValue(-62.0_dBm),
+                          MakedBmAccessor(&WifiPhy::SetCcaEdThreshold, &WifiPhy::GetCcaEdThreshold),
+                          MakedBmChecker())
             .AddAttribute("CcaSensitivity",
                           "The energy of a received wifi signal should be higher than "
                           "this threshold (dBm) in the primary channel to allow the PHY layer "
                           "to declare CCA BUSY state.",
-                          DoubleValue(-82.0),
-                          MakeDoubleAccessor(&WifiPhy::SetCcaSensitivityThreshold,
-                                             &WifiPhy::GetCcaSensitivityThreshold),
-                          MakeDoubleChecker<dBm_t>())
+                          dBmValue(-82.0_dBm),
+                          MakedBmAccessor(&WifiPhy::SetCcaSensitivityThreshold,
+                                          &WifiPhy::GetCcaSensitivityThreshold),
+                          MakedBmChecker())
             .AddAttribute("TxGain",
                           "Transmission gain (dB).",
                           dBValue(0.0_dB),
@@ -194,14 +192,14 @@ WifiPhy::GetTypeId()
                           MakeUintegerChecker<uint8_t>())
             .AddAttribute("TxPowerEnd",
                           "Maximum available transmission level (dBm).",
-                          DoubleValue(16.0206),
-                          MakeDoubleAccessor(&WifiPhy::SetTxPowerEnd, &WifiPhy::GetTxPowerEnd),
-                          MakeDoubleChecker<dBm_t>())
+                          dBmValue(16.0206_dBm),
+                          MakedBmAccessor(&WifiPhy::SetTxPowerEnd, &WifiPhy::GetTxPowerEnd),
+                          MakedBmChecker())
             .AddAttribute("TxPowerStart",
                           "Minimum available transmission level (dBm).",
-                          DoubleValue(16.0206),
-                          MakeDoubleAccessor(&WifiPhy::SetTxPowerStart, &WifiPhy::GetTxPowerStart),
-                          MakeDoubleChecker<dBm_t>())
+                          dBmValue(16.0206_dBm),
+                          MakedBmAccessor(&WifiPhy::SetTxPowerStart, &WifiPhy::GetTxPowerStart),
+                          MakedBmChecker())
             .AddAttribute(
                 "RxNoiseFigure",
                 "Loss (dB) in the Signal-to-Noise-Ratio due to non-idealities in the receiver."
@@ -499,39 +497,39 @@ WifiPhy::SetCapabilitiesChangedCallback(Callback<void> callback)
 }
 
 void
-WifiPhy::SetRxSensitivity(dBm_t threshold)
+WifiPhy::SetRxSensitivity(dBm threshold)
 {
     NS_LOG_FUNCTION(this << threshold);
     m_rxSensitivity = threshold;
 }
 
-dBm_t
+dBm
 WifiPhy::GetRxSensitivity() const
 {
     return m_rxSensitivity;
 }
 
 void
-WifiPhy::SetCcaEdThreshold(dBm_t threshold)
+WifiPhy::SetCcaEdThreshold(dBm threshold)
 {
     NS_LOG_FUNCTION(this << threshold);
     m_ccaEdThreshold = threshold;
 }
 
-dBm_t
+dBm
 WifiPhy::GetCcaEdThreshold() const
 {
     return m_ccaEdThreshold;
 }
 
 void
-WifiPhy::SetCcaSensitivityThreshold(dBm_t threshold)
+WifiPhy::SetCcaSensitivityThreshold(dBm threshold)
 {
     NS_LOG_FUNCTION(this << threshold);
     m_ccaSensitivityThreshold = threshold;
 }
 
-dBm_t
+dBm
 WifiPhy::GetCcaSensitivityThreshold() const
 {
     return m_ccaSensitivityThreshold;
@@ -549,26 +547,26 @@ WifiPhy::SetRxNoiseFigure(dB noiseFigure)
 }
 
 void
-WifiPhy::SetTxPowerStart(dBm_t start)
+WifiPhy::SetTxPowerStart(dBm start)
 {
     NS_LOG_FUNCTION(this << start);
     m_txPowerBase = start;
 }
 
-dBm_t
+dBm
 WifiPhy::GetTxPowerStart() const
 {
     return m_txPowerBase;
 }
 
 void
-WifiPhy::SetTxPowerEnd(dBm_t end)
+WifiPhy::SetTxPowerEnd(dBm end)
 {
     NS_LOG_FUNCTION(this << end);
     m_txPowerEnd = end;
 }
 
-dBm_t
+dBm
 WifiPhy::GetTxPowerEnd() const
 {
     return m_txPowerEnd;
@@ -705,15 +703,16 @@ WifiPhy::SetWifiRadioEnergyModel(const Ptr<WifiRadioEnergyModel> wifiRadioEnergy
     m_wifiRadioEnergyModel = wifiRadioEnergyModel;
 }
 
-dBm_t
+dBm
 WifiPhy::GetPowerDbm(uint8_t power) const
 {
     NS_ASSERT(m_txPowerBase <= m_txPowerEnd);
     NS_ASSERT(m_nTxPower > 0);
-    dBm_t dbm;
+    dBm dbm;
     if (m_nTxPower > 1)
     {
-        dbm = m_txPowerBase + power * (m_txPowerEnd - m_txPowerBase) / (m_nTxPower - 1);
+        dbm = m_txPowerBase +
+              dB{power * (m_txPowerEnd.in_dBm() - m_txPowerBase.in_dBm()) / (m_nTxPower - 1)};
     }
     else
     {
@@ -1691,7 +1690,7 @@ void
 WifiPhy::NotifyMonitorSniffRx(Ptr<const WifiPsdu> psdu,
                               MHz_t channelFreq,
                               WifiTxVector txVector,
-                              SignalNoiseDbm signalNoise,
+                              SignalNoise signalNoise,
                               std::vector<bool> statusPerMpdu,
                               uint16_t staId)
 {
@@ -1715,7 +1714,10 @@ WifiPhy::NotifyMonitorSniffRx(Ptr<const WifiPsdu> psdu,
                                              static_cast<uint16_t>(channelFreq),
                                              txVector,
                                              aMpdu,
-                                             signalNoise,
+                                             {
+                                                 .signal = signalNoise.signal.in_dBm(),
+                                                 .noise = signalNoise.noise.in_dBm(),
+                                             },
                                              staId);
                 }
                 ++i;
@@ -1735,7 +1737,10 @@ WifiPhy::NotifyMonitorSniffRx(Ptr<const WifiPsdu> psdu,
                                      static_cast<uint16_t>(channelFreq),
                                      txVector,
                                      aMpdu,
-                                     signalNoise,
+                                     {
+                                         .signal = signalNoise.signal.in_dBm(),
+                                         .noise = signalNoise.noise.in_dBm(),
+                                     },
                                      staId);
         }
     }
@@ -2260,7 +2265,7 @@ WifiPhy::AbortCurrentReception(WifiPhyRxfailureReason reason)
 }
 
 void
-WifiPhy::ResetCca(bool powerRestricted, dBm_t txPowerMaxSiso, dBm_t txPowerMaxMimo)
+WifiPhy::ResetCca(bool powerRestricted, dBm txPowerMaxSiso, dBm txPowerMaxMimo)
 {
     NS_LOG_FUNCTION(this << powerRestricted << txPowerMaxSiso << txPowerMaxMimo);
     // This method might be called multiple times when receiving TB PPDUs with a BSS color
@@ -2282,13 +2287,13 @@ WifiPhy::ResetCca(bool powerRestricted, dBm_t txPowerMaxSiso, dBm_t txPowerMaxMi
     }
 }
 
-dBm_t
+dBm
 WifiPhy::GetTxPowerForTransmission(Ptr<const WifiPpdu> ppdu) const
 {
     NS_LOG_FUNCTION(this << m_powerRestricted << ppdu);
     const auto& txVector = ppdu->GetTxVector();
     // Get transmit power before antenna gain
-    dBm_t txPower;
+    dBm txPower;
     if (!m_powerRestricted)
     {
         txPower = GetPowerDbm(txVector.GetTxPowerLevel());
@@ -2309,8 +2314,8 @@ WifiPhy::GetTxPowerForTransmission(Ptr<const WifiPpdu> ppdu) const
     const auto channelWidth = ppdu->GetTxChannelWidth();
     dBm_per_MHz_t txPowerDbmPerMhz =
         (txPower + GetTxGain()) - RatioToDb(channelWidth); // account for antenna gain since EIRP
-    NS_LOG_INFO("txPower=" << txPower << "dBm with txPowerDbmPerMhz=" << txPowerDbmPerMhz
-                           << " over " << channelWidth << " MHz");
+    NS_LOG_INFO("txPower=" << txPower << " with txPowerDbmPerMhz=" << txPowerDbmPerMhz << " over "
+                           << channelWidth << " MHz");
     txPower = std::min(txPowerDbmPerMhz, m_powerDensityLimit) + RatioToDb(channelWidth);
     txPower -= GetTxGain(); // remove antenna gain since will be added right afterwards
     NS_LOG_INFO("txPower=" << txPower
@@ -2338,7 +2343,7 @@ WifiPhy::AssignStreams(int64_t stream)
 std::ostream&
 operator<<(std::ostream& os, RxSignalInfo rxSignalInfo)
 {
-    os << "SNR:" << RatioToDb(rxSignalInfo.snr) << ", RSSI:" << rxSignalInfo.rssi << " dBm";
+    os << "SNR:" << RatioToDb(rxSignalInfo.snr) << ", RSSI:" << rxSignalInfo.rssi;
     return os;
 }
 

@@ -115,8 +115,8 @@ main(int argc, char* argv[])
     Time duration{"10s"};
     joule_t initialEnergy{7.5};
     volt_t voltage{3.0};
-    dBm_t txPowerStart{0.0};
-    dBm_t txPowerEnd{15.0};
+    dBm txPowerStart{0.0};
+    dBm txPowerEnd{15.0};
     uint32_t nTxPowerLevels{16};
     uint32_t txPowerLevel{0};
     ampere_t idleCurrent{0.273};
@@ -153,8 +153,8 @@ main(int argc, char* argv[])
     wifi.SetStandard(WIFI_STANDARD_80211b);
 
     YansWifiPhyHelper wifiPhy;
-    wifiPhy.Set("TxPowerStart", DoubleValue(txPowerStart));
-    wifiPhy.Set("TxPowerEnd", DoubleValue(txPowerEnd));
+    wifiPhy.Set("TxPowerStart", dBmValue(txPowerStart));
+    wifiPhy.Set("TxPowerEnd", dBmValue(txPowerEnd));
     wifiPhy.Set("TxPowerLevels", UintegerValue(nTxPowerLevels));
 
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();

@@ -85,7 +85,7 @@ class YansWifiChannel : public Channel
      * attempts to deliver the PPDU to all other YansWifiPhy objects
      * on the channel (except for the sender).
      */
-    void Send(Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, dBm_t txPower) const;
+    void Send(Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, dBm txPower) const;
 
     /**
      * Assign a fixed random variable stream number to the random variables
@@ -113,7 +113,7 @@ class YansWifiChannel : public Channel
      * \param ppdu the PPDU being sent
      * \param txPower the TX power associated to the packet being sent
      */
-    static void Receive(Ptr<YansWifiPhy> receiver, Ptr<const WifiPpdu> ppdu, dBm_t txPower);
+    static void Receive(Ptr<YansWifiPhy> receiver, Ptr<const WifiPpdu> ppdu, dBm txPower);
 
     PhyList m_phyList;                  //!< List of YansWifiPhys connected to this YansWifiChannel
     Ptr<PropagationLossModel> m_loss;   //!< Propagation loss model

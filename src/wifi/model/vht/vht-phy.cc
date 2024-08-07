@@ -79,7 +79,7 @@ const VhtPhy::NesExceptionMap VhtPhy::m_exceptionsMap {
 /**
  * \brief map a given channel list type to the corresponding scaling factor
  */
-const std::map<WifiChannelListType, dBm_t> channelTypeToScalingFactor {
+const std::map<WifiChannelListType, dBm> channelTypeToScalingFactor {
     {WIFI_CHANLIST_PRIMARY, 0.0},
     {WIFI_CHANLIST_SECONDARY, 0.0},
     {WIFI_CHANLIST_SECONDARY40, 3.0},
@@ -543,7 +543,7 @@ VhtPhy::GetMaxPsduSize() const
     return 4692480;
 }
 
-dBm_t
+dBm
 VhtPhy::GetCcaThreshold(const Ptr<const WifiPpdu> ppdu, WifiChannelListType channelType) const
 {
     if (ppdu)
@@ -579,7 +579,7 @@ VhtPhy::GetCcaThreshold(const Ptr<const WifiPpdu> ppdu, WifiChannelListType chan
     {
         const auto it = channelTypeToScalingFactor.find(channelType);
         NS_ASSERT_MSG(it != std::end(channelTypeToScalingFactor), "Invalid channel list type");
-        return m_wifiPhy->GetCcaEdThreshold() + it->second;
+        return m_wifiPhy->GetCcaEdThreshold().in_dBm() + it->second.in_dBm();
     }
 }
 

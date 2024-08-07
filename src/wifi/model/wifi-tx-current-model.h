@@ -49,7 +49,7 @@ class WifiTxCurrentModel : public Object
      * \param txPower the nominal TX power
      * \returns the transmit current
      */
-    virtual ampere_t CalcTxCurrent(dBm_t txPower) const = 0;
+    virtual ampere_t CalcTxCurrent(dBm txPower) const = 0;
 };
 
 /**
@@ -95,7 +95,7 @@ class LinearWifiTxCurrentModel : public WifiTxCurrentModel
     LinearWifiTxCurrentModel();
     ~LinearWifiTxCurrentModel() override;
 
-    ampere_t CalcTxCurrent(dBm_t txPower) const override;
+    ampere_t CalcTxCurrent(dBm txPower) const override;
 
   private:
     double m_eta;           ///< ETA

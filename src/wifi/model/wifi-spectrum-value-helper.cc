@@ -720,11 +720,11 @@ WifiSpectrumValueHelper::CreateSpectrumMaskForOfdm(
     NS_LOG_LOGIC("Power per band " << txPowerPerBand << "W");
 
     // Different power levels
-    dBm_t txPowerRef = (10.0 * std::log10(txPowerPerBand * 1000.0));
-    dBm_t txPowerInnerBandMin = txPowerRef + minInnerBand;
-    dBm_t txPowerMiddleBandMin = txPowerRef + minOuterBand;
-    dBm_t txPowerOuterBandMin =
-        txPowerRef + lowestPoint; // TODO also take into account dBm/MHz constraints
+    dBm txPowerRef{10.0 * std::log10(txPowerPerBand * 1000.0)};
+    dBm txPowerInnerBandMin{txPowerRef.in_dBm() + minInnerBand};
+    dBm txPowerMiddleBandMin{txPowerRef.in_dBm() + minOuterBand};
+    dBm txPowerOuterBandMin{txPowerRef.in_dBm() +
+                            lowestPoint}; // TODO also take into account dBm/MHz constraints
 
     // Different widths (in number of bands)
     uint32_t outerSlopeWidth =
@@ -881,7 +881,8 @@ WifiSpectrumValueHelper::CreateSpectrumMaskForOfdm(
     // Different slopes
     double innerSlope = (-1 * minInnerBand) / innerSlopeWidth;
     double middleSlope = (-1 * (minOuterBand - minInnerBand)) / middleSlopeWidth;
-    double outerSlope = (txPowerMiddleBandMin - txPowerOuterBandMin) / outerSlopeWidth;
+    double outerSlope =
+        (txPowerMiddleBandMin.in_dBm() - txPowerOuterBandMin.in_dBm()) / outerSlopeWidth;
     double puncturedSlope = (-1 * minInnerBand) / puncturedSlopeWidth;
 
     // Build spectrum mask
@@ -905,14 +906,14 @@ WifiSpectrumValueHelper::CreateSpectrumMaskForOfdm(
             if (i <= middleBandsRight.at(0).second && i >= middleBandsRight.at(0).first)
             {
                 txPowerWPsds.at(0) =
-                    DbmToW(txPowerInnerBandMin -
+                    DbmToW(txPowerInnerBandMin.in_dBm() -
                            ((i - middleBandsRight.at(0).first + 1) *
                             middleSlope)); // +1 so as to be symmetric with left slope
             }
             else if (i <= outerBandsRight.at(0).second && i >= outerBandsRight.at(0).first)
             {
                 txPowerWPsds.at(0) =
-                    DbmToW(txPowerMiddleBandMin -
+                    DbmToW(txPowerMiddleBandMin.in_dBm() -
                            ((i - outerBandsRight.at(0).first + 1) *
                             outerSlope)); // +1 so as to be symmetric with left slope
             }
@@ -932,12 +933,12 @@ WifiSpectrumValueHelper::CreateSpectrumMaskForOfdm(
             }
             else if (i <= outerBandsLeft.at(1).second && i >= outerBandsLeft.at(1).first)
             {
-                txPowerWPsds.at(1) =
-                    DbmToW(txPowerOuterBandMin + ((i - outerBandsLeft.at(1).first) * outerSlope));
+                txPowerWPsds.at(1) = DbmToW(txPowerOuterBandMin.in_dBm() +
+                                            ((i - outerBandsLeft.at(1).first) * outerSlope));
             }
             else if (i <= middleBandsLeft.at(1).second && i >= middleBandsLeft.at(1).first)
             {
-                txPowerWPsds.at(1) = DbmToW(txPowerMiddleBandMin +
+                txPowerWPsds.at(1) = DbmToW(txPowerMiddleBandMin.in_dBm() +
                                             ((i - middleBandsLeft.at(1).first) * middleSlope));
             }
             else
@@ -946,20 +947,20 @@ WifiSpectrumValueHelper::CreateSpectrumMaskForOfdm(
             }
 
             txPower = std::accumulate(txPowerWPsds.cbegin(), txPowerWPsds.cend(), 0.0);
-            txPower = std::max(DbmToW(txPowerRef - 25.0), txPower);
-            txPower = std::min(DbmToW(txPowerRef - 20.0), txPower);
+            txPower = std::max(DbmToW(txPowerRef.in_dBm() - 25.0), txPower);
+            txPower = std::min(DbmToW(txPowerRef.in_dBm() - 20.0), txPower);
         }
         else if (i <= outerBandsLeft.at(psdIndex).second &&
                  i >= outerBandsLeft.at(psdIndex)
                           .first) // better to put greater first (less computation)
         {
-            txPower = DbmToW(txPowerOuterBandMin +
+            txPower = DbmToW(txPowerOuterBandMin.in_dBm() +
                              ((i - outerBandsLeft.at(psdIndex).first) * outerSlope));
         }
         else if (i <= middleBandsLeft.at(psdIndex).second &&
                  i >= middleBandsLeft.at(psdIndex).first)
         {
-            txPower = DbmToW(txPowerMiddleBandMin +
+            txPower = DbmToW(txPowerMiddleBandMin.in_dBm() +
                              ((i - middleBandsLeft.at(psdIndex).first) * middleSlope));
         }
         else if ((i <= flatJunctionsLeft.at(psdIndex).second &&
@@ -977,7 +978,7 @@ WifiSpectrumValueHelper::CreateSpectrumMaskForOfdm(
                         allocatedSubBandsPerSegment.at(psdIndex).front().first))
                           ? DbmToW(txPowerInnerBandMin)
                           : // first 20 MHz band is punctured
-                          DbmToW(txPowerInnerBandMin +
+                          DbmToW(txPowerInnerBandMin.in_dBm() +
                                  ((i - innerBandsLeft.at(psdIndex).first) * innerSlope));
         }
         else if ((i <= allocatedSubBandsPerSegment.at(psdIndex).back().second &&
@@ -1014,14 +1015,14 @@ WifiSpectrumValueHelper::CreateSpectrumMaskForOfdm(
                          puncturedSlopeWidth); // only consecutive subchannels can be punctured
                     if (i >= startPuncturedSlope)
                     {
-                        txPower = DbmToW(txPowerInnerBandMin +
+                        txPower = DbmToW(txPowerInnerBandMin.in_dBm() +
                                          ((i - startPuncturedSlope) * puncturedSlope));
                     }
                     else
                     {
                         txPower = std::max(
                             DbmToW(txPowerInnerBandMin),
-                            DbmToW(txPowerRef -
+                            DbmToW(txPowerRef.in_dBm() -
                                    ((i - puncturedBandsPerSegment.at(psdIndex).at(0).first) *
                                     puncturedSlope)));
                     }
@@ -1040,22 +1041,22 @@ WifiSpectrumValueHelper::CreateSpectrumMaskForOfdm(
                  i >= innerBandsRight.at(psdIndex).first)
         {
             // take min to handle the case where last 20 MHz band is punctured
-            txPower = std::min(
-                previousTxPower,
-                DbmToW(txPowerRef - ((i - innerBandsRight.at(psdIndex).first + 1) *
-                                     innerSlope))); // +1 so as to be symmetric with left slope
+            txPower = std::min(previousTxPower,
+                               DbmToW(txPowerRef.in_dBm() -
+                                      ((i - innerBandsRight.at(psdIndex).first + 1) *
+                                       innerSlope))); // +1 so as to be symmetric with left slope
         }
         else if (i <= middleBandsRight.at(psdIndex).second &&
                  i >= middleBandsRight.at(psdIndex).first)
         {
-            txPower = DbmToW(txPowerInnerBandMin -
+            txPower = DbmToW(txPowerInnerBandMin.in_dBm() -
                              ((i - middleBandsRight.at(psdIndex).first + 1) *
                               middleSlope)); // +1 so as to be symmetric with left slope
         }
         else if (i <= outerBandsRight.at(psdIndex).second &&
                  i >= outerBandsRight.at(psdIndex).first)
         {
-            txPower = DbmToW(txPowerMiddleBandMin -
+            txPower = DbmToW(txPowerMiddleBandMin.in_dBm() -
                              ((i - outerBandsRight.at(psdIndex).first + 1) *
                               outerSlope)); // +1 so as to be symmetric with left slope
         }

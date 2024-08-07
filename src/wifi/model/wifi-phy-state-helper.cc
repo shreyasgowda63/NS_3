@@ -321,7 +321,7 @@ WifiPhyStateHelper::LogPreviousIdleAndCcaBusyStates()
 void
 WifiPhyStateHelper::SwitchToTx(Time txDuration,
                                const WifiConstPsduMap& psdus,
-                               dBm_t txPower,
+                               dBm txPower,
                                const WifiTxVector& txVector)
 {
     NS_LOG_FUNCTION(this << txDuration << psdus << txPower << txVector);

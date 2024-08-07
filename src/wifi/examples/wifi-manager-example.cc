@@ -105,7 +105,7 @@ RateChange(uint64_t oldVal, uint64_t newVal)
 /// Step structure
 struct Step
 {
-    dBm_t stepSize;  ///< step size
+    dBm stepSize;    ///< step size
     double stepTime; ///< step size in seconds
 };
 
@@ -175,27 +175,28 @@ struct StandardInfo
 void
 ChangeSignalAndReportRate(Ptr<FixedRssLossModel> rssModel,
                           Step step,
-                          dBm_t rss,
-                          dBm_t noise,
+                          dBm rss,
+                          dBm noise,
                           Gnuplot2dDataset& rateDataset,
                           Gnuplot2dDataset& actualDataset)
 {
     NS_LOG_FUNCTION(rssModel << step.stepSize << step.stepTime << rss);
-    dB snr = rss - noise;
+    dB snr = rss.in_dBm() - noise.in_dBm();
     rateDataset.Add(snr.in_dB(), g_intervalRate / 1e6);
     // Calculate received rate since last interval
     double currentRate = ((g_intervalBytes * 8) / step.stepTime) / 1e6; // Mb/s
     actualDataset.Add(snr.in_dB(), currentRate);
-    rssModel->SetRss(rss - step.stepSize);
+    const dBm newRss = rss.in_dBm() - step.stepSize.in_dBm();
+    rssModel->SetRss(newRss.in_dBm());
     NS_LOG_INFO("At time " << Simulator::Now().As(Time::S) << "; selected rate "
                            << (g_intervalRate / 1e6) << "; observed rate " << currentRate
-                           << "; setting new power to " << rss - step.stepSize);
+                           << "; setting new power to " << newRss);
     g_intervalBytes = 0;
     Simulator::Schedule(Seconds(step.stepTime),
                         &ChangeSignalAndReportRate,
                         rssModel,
                         step,
-                        (rss - step.stepSize),
+                        newRss,
                         noise,
                         rateDataset,
                         actualDataset);
@@ -209,7 +210,7 @@ main(int argc, char* argv[])
     uint32_t steps;
     uint32_t rtsThreshold = 999999; // disabled even for large A-MPDU
     uint32_t maxAmpduSize = 65535;
-    dBm_t stepSize = 1;
+    dBm stepSize = 1;
     double stepTime = 1;        // seconds
     uint32_t packetSize = 1024; // bytes
     bool broadcast = false;
@@ -625,7 +626,7 @@ main(int argc, char* argv[])
                     "SNR values in wrong order");
     steps = static_cast<uint32_t>(std::abs(static_cast<double>(clientSelectedStandard.m_snrHigh -
                                                                clientSelectedStandard.m_snrLow) /
-                                           stepSize) +
+                                           stepSize.in_dBm()) +
                                   1);
     NS_LOG_DEBUG("Using " << steps << " steps for SNR range " << clientSelectedStandard.m_snrLow
                           << ":" << clientSelectedStandard.m_snrHigh);
@@ -679,7 +680,7 @@ main(int argc, char* argv[])
     // and we have disabled the noise figure, so the noise level in 20 MHz
     // will be about -101 dBm.  Therefore, lower the CCA sensitivity to a
     // value that disables it (e.g. -110 dBm)
-    Config::SetDefault("ns3::WifiPhy::CcaSensitivity", DoubleValue(-110));
+    Config::SetDefault("ns3::WifiPhy::CcaSensitivity", dBmValue(-110_dBm));
 
     WifiHelper wifi;
     wifi.SetStandard(serverSelectedStandard.m_standard);
@@ -806,13 +807,13 @@ main(int argc, char* argv[])
     // Configure signal and noise, and schedule first iteration
     const auto BOLTZMANN = 1.3803e-23;
     const dBm_per_Hz_t noiseDensity = WToDbm(BOLTZMANN * 290); // 290K @ 20 MHz
-    const dBm_t noise = noiseDensity + (10 * log10(clientSelectedStandard.m_width * 1000000));
+    const dBm noise = noiseDensity + dB(10 * log10(clientSelectedStandard.m_width * 1000000));
 
     NS_LOG_DEBUG("Channel width " << wifiPhyPtrClient->GetChannelWidth() << " noise " << noise);
     NS_LOG_DEBUG("NSS " << wifiPhyPtrClient->GetMaxSupportedTxSpatialStreams());
 
-    const dBm_t rssCurrent = (clientSelectedStandard.m_snrHigh.in_dB() + noise);
-    rssLossModel->SetRss(rssCurrent);
+    const auto rssCurrent = (clientSelectedStandard.m_snrHigh + noise);
+    rssLossModel->SetRss(rssCurrent.in_dBm());
     NS_LOG_INFO("Setting initial Rss to " << rssCurrent);
     // Move the STA by stepsSize meters every stepTime seconds
     Simulator::Schedule(Seconds(0.5 + stepTime),

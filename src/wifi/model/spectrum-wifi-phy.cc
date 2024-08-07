@@ -491,7 +491,7 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
         senderNodeId = rxParams->txPhy->GetDevice()->GetNode()->GetId();
     }
     NS_LOG_DEBUG("Received signal from " << senderNodeId << " with unfiltered power "
-                                         << WToDbm(Integral(*receivedSignalPsd)) << " dBm");
+                                         << WToDbm(Integral(*receivedSignalPsd)));
 
     // Integrate over our receive bandwidth (i.e., all that the receive
     // spectral mask representing our filtering allows) to find the
@@ -529,7 +529,7 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
            << ": " << rxPowerPerBand << " W";
         if (rxPowerPerBand > 0.0)
         {
-            ss << " (" << WToDbm(rxPowerPerBand) << " dBm)";
+            ss << " (" << WToDbm(rxPowerPerBand) << ")";
         }
         NS_LOG_DEBUG(ss.str());
         if (bw <= 20)
@@ -557,7 +557,7 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
     ss << "Total signal power received after antenna gain: " << totalRxPower << " W";
     if (totalRxPower > 0.0)
     {
-        ss << " (" << WToDbm(totalRxPower) << " dBm)";
+        ss << " (" << WToDbm(totalRxPower) << ")";
     }
     NS_LOG_DEBUG(ss.str());
 

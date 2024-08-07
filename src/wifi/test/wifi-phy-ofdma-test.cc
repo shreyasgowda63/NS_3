@@ -2526,7 +2526,7 @@ TestMultipleHeTbPreambles::DoSetup()
     Ptr<ThresholdPreambleDetectionModel> preambleDetectionModel =
         CreateObject<ThresholdPreambleDetectionModel>();
     preambleDetectionModel->SetAttribute("Threshold", dBValue(4_dB));
-    preambleDetectionModel->SetAttribute("MinimumRssi", DoubleValue(-82));
+    preambleDetectionModel->SetAttribute("MinimumRssi", dBmValue(-82_dBm));
     m_phy->SetPreambleDetectionModel(preambleDetectionModel);
     Ptr<HeConfiguration> heConfiguration = CreateObject<HeConfiguration>();
     heConfiguration->SetMaxTbPpduDelay(NanoSeconds(400));
@@ -2837,7 +2837,7 @@ class OfdmaTestPhyListener : public ns3::WifiPhyListener
         m_lastRxSuccess = false;
     }
 
-    void NotifyTxStart(Time duration, dBm_t txPower) override
+    void NotifyTxStart(Time duration, dBm txPower) override
     {
         NS_LOG_FUNCTION(this << duration << txPower);
     }
@@ -3717,8 +3717,8 @@ TestUlOfdmaPhyTransmission::DoSetup()
         CreateObject<ThresholdPreambleDetectionModel>();
     preambleDetectionModel->SetAttribute(
         "MinimumRssi",
-        DoubleValue(
-            -8)); // to ensure that transmission in neighboring channel is ignored (16 dBm baseline)
+        dBmValue(-8_dBm)); // to ensure that transmission in neighboring channel is ignored (16 dBm
+                           // baseline)
     preambleDetectionModel->SetAttribute("Threshold", dBValue(-100_dB)); // no limit on SNR
 
     Ptr<Node> apNode = CreateObject<Node>();
@@ -3821,8 +3821,8 @@ TestUlOfdmaPhyTransmission::DoSetup()
     for (auto& phy : phys)
     {
         phy->SetAttribute("TxGain", DoubleValue(1.0));
-        phy->SetAttribute("TxPowerStart", DoubleValue(16.0));
-        phy->SetAttribute("TxPowerEnd", DoubleValue(16.0));
+        phy->SetAttribute("TxPowerStart", dBmValue(16.0_dBm));
+        phy->SetAttribute("TxPowerEnd", dBmValue(16.0_dBm));
         phy->SetAttribute("PowerDensityLimit", DoubleValue(100.0)); // no impact by default
         phy->SetAttribute("RxGain", DoubleValue(2.0));
         // test assumes no rejection power for simplicity
@@ -5402,16 +5402,16 @@ class TestUlOfdmaPowerControl : public TestCase
 
     Ptr<SpectrumWifiPhy> m_phyAp; ///< PHY of AP
 
-    dBm_t m_txPowerAp;       ///< transmit power of AP
-    dBm_t m_txPowerStart;    ///< minimum transmission power for STAs
-    dBm_t m_txPowerEnd;      ///< maximum transmission power for STAs
+    dBm m_txPowerAp;         ///< transmit power of AP
+    dBm m_txPowerStart;      ///< minimum transmission power for STAs
+    dBm m_txPowerEnd;        ///< maximum transmission power for STAs
     uint8_t m_txPowerLevels; ///< number of transmission power levels for STAs
 
-    dBm_t m_requestedRssiSta1; ///< requested RSSI from STA 1 at AP for HE TB PPDUs
-    dBm_t m_requestedRssiSta2; ///< requested RSSI from STA 2 at AP for HE TB PPDUs
+    dBm m_requestedRssiSta1; ///< requested RSSI from STA 1 at AP for HE TB PPDUs
+    dBm m_requestedRssiSta2; ///< requested RSSI from STA 2 at AP for HE TB PPDUs
 
-    dBm_t m_rssiSta1; ///< expected RSSI from STA 1 at AP for HE TB PPDUs
-    dBm_t m_rssiSta2; ///< expected RSSI from STA 2 at AP for HE TB PPDUs
+    dBm m_rssiSta1; ///< expected RSSI from STA 1 at AP for HE TB PPDUs
+    dBm m_rssiSta2; ///< expected RSSI from STA 2 at AP for HE TB PPDUs
 
     dB m_tol; ///< tolerance between received and expected RSSIs
 };
@@ -5699,16 +5699,16 @@ TestUlOfdmaPowerControl::RunOne(bool setupBa)
     phySta1->AssignStreams(streamNumber);
     phySta2->AssignStreams(streamNumber);
 
-    m_phyAp->SetAttribute("TxPowerStart", DoubleValue(m_txPowerAp));
-    m_phyAp->SetAttribute("TxPowerEnd", DoubleValue(m_txPowerAp));
+    m_phyAp->SetAttribute("TxPowerStart", dBmValue(m_txPowerAp));
+    m_phyAp->SetAttribute("TxPowerEnd", dBmValue(m_txPowerAp));
     m_phyAp->SetAttribute("TxPowerLevels", UintegerValue(1));
 
-    phySta1->SetAttribute("TxPowerStart", DoubleValue(m_txPowerStart));
-    phySta1->SetAttribute("TxPowerEnd", DoubleValue(m_txPowerEnd));
+    phySta1->SetAttribute("TxPowerStart", dBmValue(m_txPowerStart));
+    phySta1->SetAttribute("TxPowerEnd", dBmValue(m_txPowerEnd));
     phySta1->SetAttribute("TxPowerLevels", UintegerValue(m_txPowerLevels));
 
-    phySta2->SetAttribute("TxPowerStart", DoubleValue(m_txPowerStart));
-    phySta2->SetAttribute("TxPowerEnd", DoubleValue(m_txPowerEnd));
+    phySta2->SetAttribute("TxPowerStart", dBmValue(m_txPowerStart));
+    phySta2->SetAttribute("TxPowerEnd", dBmValue(m_txPowerEnd));
     phySta2->SetAttribute("TxPowerLevels", UintegerValue(m_txPowerLevels));
 
     Time relativeStart{};

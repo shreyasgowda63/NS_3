@@ -70,8 +70,8 @@ class VhtPhy : public HtPhy
     Ptr<WifiPpdu> BuildPpdu(const WifiConstPsduMap& psdus,
                             const WifiTxVector& txVector,
                             Time ppduDuration) override;
-    dBm_t GetCcaThreshold(const Ptr<const WifiPpdu> ppdu,
-                          WifiChannelListType channelType) const override;
+    dBm GetCcaThreshold(const Ptr<const WifiPpdu> ppdu,
+                        WifiChannelListType channelType) const override;
 
     /**
      * \return the WifiMode used for the SIG-A field

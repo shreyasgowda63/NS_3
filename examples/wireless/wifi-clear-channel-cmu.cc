@@ -268,8 +268,8 @@ main(int argc, char* argv[])
 
             NS_LOG_DEBUG(modes[i]);
             experiment = Experiment(modes[i]);
-            wifiPhy.Set("TxPowerStart", DoubleValue(15.0));
-            wifiPhy.Set("TxPowerEnd", DoubleValue(15.0));
+            wifiPhy.Set("TxPowerStart", dBmValue(15.0_dBm));
+            wifiPhy.Set("TxPowerEnd", dBmValue(15.0_dBm));
             wifiPhy.Set("RxGain", dBValue(0_dB));
             wifiPhy.Set("RxNoiseFigure", dBValue(7_dB));
             uint32_t pktsRecvd = experiment.Run(wifi, wifiPhy, wifiMac, wifiChannel);

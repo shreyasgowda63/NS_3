@@ -87,7 +87,7 @@ YansWifiChannel::SetPropagationDelayModel(const Ptr<PropagationDelayModel> delay
 }
 
 void
-YansWifiChannel::Send(Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, dBm_t txPower) const
+YansWifiChannel::Send(Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, dBm txPower) const
 {
     NS_LOG_FUNCTION(this << sender << ppdu << txPower);
     Ptr<MobilityModel> senderMobility = sender->GetMobility();
@@ -131,22 +131,22 @@ YansWifiChannel::Send(Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, dBm_t t
 }
 
 void
-YansWifiChannel::Receive(Ptr<YansWifiPhy> phy, Ptr<const WifiPpdu> ppdu, dBm_t rxPower)
+YansWifiChannel::Receive(Ptr<YansWifiPhy> phy, Ptr<const WifiPpdu> ppdu, dBm rxPower)
 {
     NS_LOG_FUNCTION(phy << ppdu << rxPower);
-    const auto totalRxPowerDbm = rxPower + phy->GetRxGain();
-    phy->TraceSignalArrival(ppdu, totalRxPowerDbm, ppdu->GetTxDuration());
+    const auto totalRxPower = rxPower + dB{phy->GetRxGain()};
+    phy->TraceSignalArrival(ppdu, totalRxPower.in_dBm(), ppdu->GetTxDuration());
     // Do no further processing if signal is too weak
     // Current implementation assumes constant RX power over the PPDU duration
     // Compare received TX power per MHz to normalized RX sensitivity
     const auto txWidth = ppdu->GetTxChannelWidth();
-    if (totalRxPowerDbm < phy->GetRxSensitivity() + RatioToDb(txWidth / 20.0))
+    if (totalRxPower < phy->GetRxSensitivity() + RatioToDb(txWidth / 20.0))
     {
-        NS_LOG_INFO("Received signal too weak to process: " << rxPower << " dBm");
+        NS_LOG_INFO("Received signal too weak to process: " << rxPower);
         return;
     }
     RxPowerWattPerChannelBand rxPowerW;
-    rxPowerW.insert({{{{0, 0}}, {{0, 0}}}, (DbmToW(totalRxPowerDbm))}); // dummy band for YANS
+    rxPowerW.insert({{{{0, 0}}, {{0, 0}}}, (DbmToW(totalRxPower))}); // dummy band for YANS
     phy->StartReceivePreamble(ppdu, rxPowerW, ppdu->GetTxDuration());
 }
 

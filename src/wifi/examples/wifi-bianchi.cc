@@ -2427,8 +2427,8 @@ class Experiment
             bool infra,
             uint16_t guardIntervalNs,
             meter_t distance,
-            dBm_t apTxPower,
-            dBm_t staTxPower,
+            dBm apTxPower,
+            dBm staTxPower,
             Time pktInterval);
 };
 
@@ -2448,8 +2448,8 @@ Experiment::Run(const WifiHelper& helper,
                 bool infra,
                 uint16_t guardIntervalNs,
                 meter_t distance,
-                dBm_t apTxPower,
-                dBm_t staTxPower,
+                dBm apTxPower,
+                dBm staTxPower,
                 Time pktInterval)
 {
     RngSeedManager::SetSeed(10);
@@ -2485,8 +2485,8 @@ Experiment::Run(const WifiHelper& helper,
                     TimeValue(MicroSeconds(beaconInterval)),
                     "Ssid",
                     SsidValue(ssid));
-        phy.Set("TxPowerStart", DoubleValue(apTxPower));
-        phy.Set("TxPowerEnd", DoubleValue(apTxPower));
+        phy.Set("TxPowerStart", dBmValue(apTxPower));
+        phy.Set("TxPowerEnd", dBmValue(apTxPower));
         devices = wifi.Install(phy, mac, wifiNodes.Get(0));
 
         mac.SetType("ns3::StaWifiMac",
@@ -2494,8 +2494,8 @@ Experiment::Run(const WifiHelper& helper,
                     UintegerValue(std::numeric_limits<uint32_t>::max()),
                     "Ssid",
                     SsidValue(ssid));
-        phy.Set("TxPowerStart", DoubleValue(staTxPower));
-        phy.Set("TxPowerEnd", DoubleValue(staTxPower));
+        phy.Set("TxPowerStart", dBmValue(staTxPower));
+        phy.Set("TxPowerEnd", dBmValue(staTxPower));
         for (uint32_t i = 1; i < nNodes; ++i)
         {
             devices.Add(wifi.Install(phy, mac, wifiNodes.Get(i)));
@@ -2504,8 +2504,8 @@ Experiment::Run(const WifiHelper& helper,
     else
     {
         mac.SetType("ns3::AdhocWifiMac");
-        phy.Set("TxPowerStart", DoubleValue(staTxPower));
-        phy.Set("TxPowerEnd", DoubleValue(staTxPower));
+        phy.Set("TxPowerStart", dBmValue(staTxPower));
+        phy.Set("TxPowerEnd", dBmValue(staTxPower));
         devices = wifi.Install(phy, mac, wifiNodes);
     }
 
@@ -2717,8 +2717,8 @@ main(int argc, char* argv[])
         1000; ///< The socket packet interval in microseconds (a higher value is needed to reach
               ///< saturation conditions as the channel bandwidth or the MCS increases)
     meter_t distance = 0.001; ///< The distance in meters between the AP and the STAs
-    dBm_t apTxPower = 16;     ///< The transmit power of the AP (if infrastructure only)
-    dBm_t staTxPower = 16;    ///< The transmit power of each STA (or all STAs if adhoc)
+    dBm apTxPower = 16;       ///< The transmit power of the AP (if infrastructure only)
+    dBm staTxPower = 16;      ///< The transmit power of each STA (or all STAs if adhoc)
 
     // Disable fragmentation and RTS/CTS
     Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold",

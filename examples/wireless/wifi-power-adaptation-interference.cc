@@ -208,7 +208,7 @@ class NodeStatistics
      */
     Time GetCalcTxTime(DataRate rate);
 
-    std::map<Mac48Address, dBm_t> m_currentPower;   //!< Current Tx power for each sender.
+    std::map<Mac48Address, dBm> m_currentPower;     //!< Current Tx power for each sender.
     std::map<Mac48Address, DataRate> m_currentRate; //!< Current Tx rate for each sender.
     uint32_t m_bytesTotal;                          //!< Number of received bytes.
     double m_totalEnergy;                           //!< Energy used.
@@ -304,8 +304,8 @@ NodeStatistics::PhyCallback(std::string path, Ptr<const Packet> packet, double p
 
     if (head.GetType() == WIFI_MAC_DATA)
     {
-        m_totalEnergy += pow(10.0, m_currentPower[dest] / 10.0) *
-                         GetCalcTxTime(m_currentRate[dest]).GetSeconds();
+        m_totalEnergy +=
+            m_currentPower[dest].in_mWatt() * GetCalcTxTime(m_currentRate[dest]).GetSeconds();
         m_totalTime += GetCalcTxTime(m_currentRate[dest]).GetSeconds();
     }
 }
@@ -456,8 +456,8 @@ main(int argc, char* argv[])
 {
     // LogComponentEnable("ConstantRateWifiManager", LOG_LEVEL_FUNCTION);
 
-    dBm_t maxPower{17};
-    dBm_t minPower{0};
+    dBm maxPower{17};
+    dBm minPower{0};
     uint32_t powerLevels{18};
 
     uint32_t rtsThreshold{2346};
@@ -518,8 +518,8 @@ main(int argc, char* argv[])
     wifi.SetRemoteStationManager("ns3::AarfWifiManager",
                                  "RtsCtsThreshold",
                                  UintegerValue(rtsThreshold));
-    wifiPhy.Set("TxPowerStart", DoubleValue(maxPower));
-    wifiPhy.Set("TxPowerEnd", DoubleValue(maxPower));
+    wifiPhy.Set("TxPowerStart", dBmValue(maxPower));
+    wifiPhy.Set("TxPowerEnd", dBmValue(maxPower));
 
     Ssid ssid = Ssid("AP0");
     wifiMac.SetType("ns3::StaWifiMac",
@@ -539,8 +539,8 @@ main(int argc, char* argv[])
                                  UintegerValue(powerLevels - 1),
                                  "RtsCtsThreshold",
                                  UintegerValue(rtsThreshold));
-    wifiPhy.Set("TxPowerStart", DoubleValue(minPower));
-    wifiPhy.Set("TxPowerEnd", DoubleValue(maxPower));
+    wifiPhy.Set("TxPowerStart", dBmValue(minPower));
+    wifiPhy.Set("TxPowerEnd", dBmValue(maxPower));
     wifiPhy.Set("TxPowerLevels", UintegerValue(powerLevels));
 
     ssid = Ssid("AP0");

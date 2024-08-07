@@ -344,7 +344,7 @@ class TestPhyListener : public ns3::WifiPhyListener
         ++m_notifyRxEndError;
     }
 
-    void NotifyTxStart(Time duration, dBm_t txPower) override
+    void NotifyTxStart(Time duration, dBm txPower) override
     {
         NS_LOG_FUNCTION(this << duration << txPower);
     }
@@ -553,7 +553,7 @@ SpectrumWifiPhyFilterTest::RxCallback(Ptr<const Packet> p, RxPowerWattPerChannel
     for (const auto& pair : rxPowersW)
     {
         NS_LOG_INFO("band: (" << pair.first << ") -> powerW=" << pair.second << " ("
-                              << WToDbm(pair.second) << " dBm)");
+                              << WToDbm(pair.second).in_dBm() << ")");
     }
 
     size_t numBands = rxPowersW.size();
@@ -571,8 +571,8 @@ SpectrumWifiPhyFilterTest::RxCallback(Ptr<const Packet> p, RxPowerWattPerChannel
     MHz_t channelWidth = std::min(m_txChannelWidth, m_rxChannelWidth);
     auto band = m_rxPhy->GetBand(channelWidth, 0);
     auto it = rxPowersW.find(band);
-    NS_LOG_INFO("powerW total band: " << it->second << " (" << WToDbm(it->second) << " dBm)");
-    int totalRxPower = static_cast<int>(WToDbm(it->second) + 0.5);
+    NS_LOG_INFO("powerW total band: " << it->second << " (" << WToDbm(it->second).in_dBm() << ")");
+    int totalRxPower = static_cast<int>(WToDbm(it->second).in_dBm() + 0.5);
     int expectedTotalRxPower;
     if (m_txChannelWidth <= m_rxChannelWidth)
     {
@@ -595,8 +595,8 @@ SpectrumWifiPhyFilterTest::RxCallback(Ptr<const Packet> p, RxPowerWattPerChannel
         band = m_rxPhy->GetBand(20, 0); // primary 20 MHz
         it = rxPowersW.find(band);
         NS_LOG_INFO("powerW in primary 20 MHz channel: " << it->second << " (" << WToDbm(it->second)
-                                                         << " dBm)");
-        const auto rxPowerPrimaryChannel20 = static_cast<int>(WToDbm(it->second) + 0.5);
+                                                         << ")");
+        const auto rxPowerPrimaryChannel20 = static_cast<int>(WToDbm(it->second).in_dBm() + 0.5);
         const auto expectedRxPowerPrimaryChannel20 =
             16 - static_cast<int>(RatioToDb(channelWidth / 20));
         NS_TEST_ASSERT_MSG_EQ(rxPowerPrimaryChannel20,
@@ -1681,7 +1681,7 @@ class SpectrumWifiPhyMultipleInterfacesTest : public TestCase
      * \param txPower the power to transmit the signal (this is also the received power since we do
      * not have propagation loss to simplify) \param payloadSize the payload size in bytes
      */
-    void SendPpdu(Ptr<SpectrumWifiPhy> phy, dBm_t txPower, uint32_t payloadSize);
+    void SendPpdu(Ptr<SpectrumWifiPhy> phy, dBm txPower, uint32_t payloadSize);
 
     /**
      * Callback triggered when a packet is received by a PHY
@@ -1838,7 +1838,7 @@ SpectrumWifiPhyMultipleInterfacesTest::SwitchChannel(Ptr<SpectrumWifiPhy> phy,
 
 void
 SpectrumWifiPhyMultipleInterfacesTest::SendPpdu(Ptr<SpectrumWifiPhy> phy,
-                                                dBm_t txPower,
+                                                dBm txPower,
                                                 uint32_t payloadSize)
 {
     NS_LOG_FUNCTION(this << phy << txPower << payloadSize << phy->GetCurrentFrequencyRange()
@@ -2186,7 +2186,7 @@ SpectrumWifiPhyMultipleInterfacesTest::DoRun()
 {
     NS_LOG_FUNCTION(this);
 
-    const dBm_t ccaEdThreshold = -62.0; ///< CCA-ED threshold
+    const auto ccaEdThreshold = -62.0_dBm; ///< CCA-ED threshold
     const auto txAfterChannelSwitchDelay =
         MicroSeconds((m_chanSwitchScenario == ChannelSwitchScenario::BEFORE_TX)
                          ? 250
@@ -2349,7 +2349,7 @@ SpectrumWifiPhyMultipleInterfacesTest::DoRun()
     }
 
     // verify CCA indication when switching to a channel with an ongoing transmission
-    for (const dBm_t txPower : {-60.0 /* above CCA-ED */, -70.0 /* below CCA-ED */})
+    for (const auto txPower : {-60.0_dBm /* above CCA-ED */, -70.0_dBm /* below CCA-ED */})
     {
         for (std::size_t i = 0; i < 4; ++i)
         {

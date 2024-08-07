@@ -132,29 +132,29 @@ class WifiPhyCcaThresholdsTest : public TestCase
     void VerifyCcaThreshold(const Ptr<PhyEntity> phy,
                             const Ptr<const WifiPpdu> ppdu,
                             WifiChannelListType channelType,
-                            dBm_t expectedCcaThreshold);
+                            dBm expectedCcaThreshold);
 
     Ptr<WifiNetDevice> m_device;              ///< The WifiNetDevice
     Ptr<SpectrumWifiPhy> m_phy;               ///< The spectrum PHY
     Ptr<ObssPdAlgorithm> m_obssPdAlgorithm;   ///< The OBSS-PD algorithm
     Ptr<VhtConfiguration> m_vhtConfiguration; ///< The VHT configuration
 
-    dBm_t m_CcaEdThreshold; ///< The current CCA-ED threshold for a 20 MHz subchannel
-    dBm_t m_CcaSensitivity; ///< The current CCA sensitivity threshold for signals that occupy the
-                            ///< primary 20 MHz channel
+    dBm m_CcaEdThreshold; ///< The current CCA-ED threshold for a 20 MHz subchannel
+    dBm m_CcaSensitivity; ///< The current CCA sensitivity threshold for signals that occupy the
+                          ///< primary 20 MHz channel
 
     VhtConfiguration::SecondaryCcaSensitivityThresholds
         m_secondaryCcaSensitivityThresholds; ///< The current CCA sensitivity thresholds for signals
                                              ///< that do not occupy the primary 20 MHz channel
 
-    dBm_t m_obssPdLevel; ///< The current OBSS-PD level
+    dBm m_obssPdLevel; ///< The current OBSS-PD level
 };
 
 WifiPhyCcaThresholdsTest::WifiPhyCcaThresholdsTest()
     : TestCase("Wi-Fi PHY CCA thresholds test"),
       m_CcaEdThreshold{-62.0},
       m_CcaSensitivity{-82.0},
-      m_secondaryCcaSensitivityThresholds{-72.0, -72.0, -69.0},
+      m_secondaryCcaSensitivityThresholds{-72.0_dBm, -72.0_dBm, -69.0_dBm},
       m_obssPdLevel{-82.0}
 {
 }
@@ -238,7 +238,7 @@ void
 WifiPhyCcaThresholdsTest::VerifyCcaThreshold(const Ptr<PhyEntity> phy,
                                              const Ptr<const WifiPpdu> ppdu,
                                              WifiChannelListType channelType,
-                                             dBm_t expectedCcaThreshold)
+                                             dBm expectedCcaThreshold)
 {
     NS_LOG_FUNCTION(this << phy << channelType << expectedCcaThreshold);
     const auto actualThreshold = phy->GetCcaThreshold(ppdu, channelType);
@@ -246,12 +246,11 @@ WifiPhyCcaThresholdsTest::VerifyCcaThreshold(const Ptr<PhyEntity> phy,
                 << " in " << channelType << " channel: " << actualThreshold << "dBm");
     NS_TEST_EXPECT_MSG_EQ_TOL(actualThreshold,
                               expectedCcaThreshold,
-                              1e-6,
+                              1e-6_dB,
                               "Actual CCA threshold for "
                                   << (ppdu == nullptr ? "any signal" : "a PPDU") << " in "
                                   << channelType << " channel " << actualThreshold
-                                  << "dBm does not match expected threshold "
-                                  << expectedCcaThreshold << "dBm");
+                                  << " does not match expected threshold " << expectedCcaThreshold);
 }
 
 void
@@ -360,13 +359,13 @@ WifiPhyCcaThresholdsTest::RunOne()
     VerifyCcaThreshold(m_phy->GetPhyEntity(WIFI_MOD_CLASS_VHT),
                        nullptr,
                        WIFI_CHANLIST_SECONDARY40,
-                       m_CcaEdThreshold + 3);
+                       m_CcaEdThreshold + 3.0_dB);
 
     // VHT PHY: any signal in secondary80 channel (80 MHz) if power above CCA-ED threshold + 6dB
     VerifyCcaThreshold(m_phy->GetPhyEntity(WIFI_MOD_CLASS_VHT),
                        nullptr,
                        WIFI_CHANLIST_SECONDARY80,
-                       m_CcaEdThreshold + 6);
+                       m_CcaEdThreshold + 6.0_dB);
 
     //-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -460,13 +459,13 @@ WifiPhyCcaThresholdsTest::RunOne()
     VerifyCcaThreshold(m_phy->GetPhyEntity(WIFI_MOD_CLASS_HE),
                        nullptr,
                        WIFI_CHANLIST_SECONDARY40,
-                       m_CcaEdThreshold + 3);
+                       m_CcaEdThreshold + 3.0_dB);
 
     // HE PHY: any signal in secondary80 channel (80 MHz) if power above CCA-ED threshold + 6dB
     VerifyCcaThreshold(m_phy->GetPhyEntity(WIFI_MOD_CLASS_HE),
                        nullptr,
                        WIFI_CHANLIST_SECONDARY80,
-                       m_CcaEdThreshold + 6);
+                       m_CcaEdThreshold + 6.0_dB);
 
     //-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -523,7 +522,7 @@ WifiPhyCcaThresholdsTest::RunOne()
         m_phy->GetPhyEntity(WIFI_MOD_CLASS_HE),
         CreateDummyHePpdu(40, m_phy->GetOperatingChannel()),
         WIFI_CHANLIST_SECONDARY40,
-        std::max(m_obssPdLevel + 3.0, std::get<1>(m_secondaryCcaSensitivityThresholds)));
+        std::max(m_obssPdLevel + dB{3.0}, std::get<1>(m_secondaryCcaSensitivityThresholds)));
 
     // HE PHY: 20 MHz HE PPDU in secondary80 channel (80 MHz) if power above the max between the CCA
     // sensitivity threshold corresponding to a 20 MHz PPDU that does not occupy the primary 20 MHz
@@ -540,7 +539,7 @@ WifiPhyCcaThresholdsTest::RunOne()
         m_phy->GetPhyEntity(WIFI_MOD_CLASS_HE),
         CreateDummyHePpdu(40, m_phy->GetOperatingChannel()),
         WIFI_CHANLIST_SECONDARY80,
-        std::max(m_obssPdLevel + 3.0, std::get<1>(m_secondaryCcaSensitivityThresholds)));
+        std::max(m_obssPdLevel + dB{3.0}, std::get<1>(m_secondaryCcaSensitivityThresholds)));
 
     // HE PHY: 80 MHz HE PPDU in secondary80 channel (80 MHz) if power above the max between the CCA
     // sensitivity threshold corresponding to a 80 MHz PPDU that does not occupy the primary 20 MHz
@@ -549,7 +548,7 @@ WifiPhyCcaThresholdsTest::RunOne()
         m_phy->GetPhyEntity(WIFI_MOD_CLASS_HE),
         CreateDummyHePpdu(80, m_phy->GetOperatingChannel()),
         WIFI_CHANLIST_SECONDARY80,
-        std::max(m_obssPdLevel + 6.0, std::get<2>(m_secondaryCcaSensitivityThresholds)));
+        std::max(m_obssPdLevel + dB{6.0}, std::get<2>(m_secondaryCcaSensitivityThresholds)));
 }
 
 void
@@ -558,56 +557,56 @@ WifiPhyCcaThresholdsTest::DoRun()
     // default attributes
     m_CcaEdThreshold = -62.0;
     m_CcaSensitivity = -82.0;
-    m_secondaryCcaSensitivityThresholds = std::make_tuple(-72.0, -72.0, -69.0);
+    m_secondaryCcaSensitivityThresholds = std::make_tuple(-72.0_dBm, -72.0_dBm, -69.0_dBm);
     m_obssPdLevel = -82.0;
     RunOne();
 
     // default attributes with OBSS-PD level set to -80 dBm
     m_CcaEdThreshold = -62.0;
     m_CcaSensitivity = -82.0;
-    m_secondaryCcaSensitivityThresholds = std::make_tuple(-72.0, -72.0, -69.0);
+    m_secondaryCcaSensitivityThresholds = std::make_tuple(-72.0_dBm, -72.0_dBm, -69.0_dBm);
     m_obssPdLevel = -80.0;
     RunOne();
 
     // default attributes with OBSS-PD level set to -70 dBm
     m_CcaEdThreshold = -62.0;
     m_CcaSensitivity = -82.0;
-    m_secondaryCcaSensitivityThresholds = std::make_tuple(-72.0, -72.0, -69.0);
+    m_secondaryCcaSensitivityThresholds = std::make_tuple(-72.0_dBm, -72.0_dBm, -69.0_dBm);
     m_obssPdLevel = -70.0;
     RunOne();
 
     // CCA-ED set to -65 dBm
     m_CcaEdThreshold = -65.0;
     m_CcaSensitivity = -82.0;
-    m_secondaryCcaSensitivityThresholds = std::make_tuple(-72.0, -72.0, -69.0);
+    m_secondaryCcaSensitivityThresholds = std::make_tuple(-72.0_dBm, -72.0_dBm, -69.0_dBm);
     m_obssPdLevel = -82.0;
     RunOne();
 
     // CCA sensitivity for signals in primary set to -75 dBm
     m_CcaEdThreshold = -62.0;
     m_CcaSensitivity = -75.0;
-    m_secondaryCcaSensitivityThresholds = std::make_tuple(-72.0, -72.0, -69.0);
+    m_secondaryCcaSensitivityThresholds = std::make_tuple(-72.0_dBm, -72.0_dBm, -69.0_dBm);
     m_obssPdLevel = -82.0;
     RunOne();
 
     // custom CCA sensitivities for signals not in primary
     m_CcaEdThreshold = -62.0;
     m_CcaSensitivity = -72.0;
-    m_secondaryCcaSensitivityThresholds = std::make_tuple(-70.0, -70.0, -70.0);
+    m_secondaryCcaSensitivityThresholds = std::make_tuple(-70.0_dBm, -70.0_dBm, -70.0_dBm);
     m_obssPdLevel = -82.0;
     RunOne();
 
     // custom CCA sensitivities for signals not in primary with OBSS-PD level set to -80 dBm
     m_CcaEdThreshold = -62.0;
     m_CcaSensitivity = -72.0;
-    m_secondaryCcaSensitivityThresholds = std::make_tuple(-70.0, -70.0, -70.0);
+    m_secondaryCcaSensitivityThresholds = std::make_tuple(-70.0_dBm, -70.0_dBm, -70.0_dBm);
     m_obssPdLevel = -80.0;
     RunOne();
 
     // custom CCA sensitivities for signals not in primary with OBSS-PD level set to -70 dBm
     m_CcaEdThreshold = -62.0;
     m_CcaSensitivity = -72.0;
-    m_secondaryCcaSensitivityThresholds = std::make_tuple(-70.0, -70.0, -70.0);
+    m_secondaryCcaSensitivityThresholds = std::make_tuple(-70.0_dBm, -70.0_dBm, -70.0_dBm);
     m_obssPdLevel = -70.0;
     RunOne();
 
@@ -640,7 +639,7 @@ class CcaTestPhyListener : public ns3::WifiPhyListener
         NS_LOG_FUNCTION(this);
     }
 
-    void NotifyTxStart(Time duration, dBm_t txPower) override
+    void NotifyTxStart(Time duration, dBm txPower) override
     {
         NS_LOG_FUNCTION(this << duration << txPower);
     }
@@ -717,7 +716,7 @@ class WifiPhyCcaIndicationTest : public TestCase
      * \param frequency the center frequency the transmitter is operating on
      * \param bandwidth the bandwidth to use for the transmission
      */
-    void SendHeSuPpdu(dBm_t txPower, MHz_t frequency, MHz_t bandwidth);
+    void SendHeSuPpdu(dBm txPower, MHz_t frequency, MHz_t bandwidth);
 
     /**
      * Start to generate a signal
@@ -728,7 +727,7 @@ class WifiPhyCcaIndicationTest : public TestCase
      * \param duration the duration of the signal
      */
     void StartSignal(Ptr<WaveformGenerator> signalGenerator,
-                     dBm_t txPower,
+                     dBm txPower,
                      MHz_t frequency,
                      MHz_t bandwidth,
                      Time duration);
@@ -768,7 +767,7 @@ class WifiPhyCcaIndicationTest : public TestCase
      */
     struct TxSignalInfo
     {
-        dBm_t power{0.0};           //!< transmit power to use
+        dBm power{0.0};             //!< transmit power to use
         Time startTime{Seconds(0)}; //!< time at which transmission will be started
         Time duration{Seconds(0)};  //!< the duration of the transmission
         MHz_t centerFreq{0};        //!< center frequency to use in MHz
@@ -780,7 +779,7 @@ class WifiPhyCcaIndicationTest : public TestCase
      */
     struct TxPpduInfo
     {
-        dBm_t power{0.0};           //!< transmit power to use
+        dBm power{0.0};             //!< transmit power to use
         Time startTime{Seconds(0)}; //!< time at which transmission will be started
         MHz_t centerFreq{0};        //!< center frequency to use in MHz
         MHz_t bandwidth{0};         //!< bandwidth to use
@@ -855,7 +854,7 @@ WifiPhyCcaIndicationTest::WifiPhyCcaIndicationTest()
 
 void
 WifiPhyCcaIndicationTest::StartSignal(Ptr<WaveformGenerator> signalGenerator,
-                                      dBm_t txPower,
+                                      dBm txPower,
                                       MHz_t frequency,
                                       MHz_t bandwidth,
                                       Time duration)
@@ -887,7 +886,7 @@ WifiPhyCcaIndicationTest::StopSignal(Ptr<WaveformGenerator> signalGenerator)
 }
 
 void
-WifiPhyCcaIndicationTest::SendHeSuPpdu(dBm_t txPower, MHz_t frequency, MHz_t bandwidth)
+WifiPhyCcaIndicationTest::SendHeSuPpdu(dBm txPower, MHz_t frequency, MHz_t bandwidth)
 {
     NS_LOG_FUNCTION(this << txPower);
 
