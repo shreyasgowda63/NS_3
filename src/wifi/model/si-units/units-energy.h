@@ -292,37 +292,17 @@ struct dBm
         return *this;
     }
 
-    // Disallow addition/subtraction between dBm and mWatt.
-    // Convert operands to the same unit first before addition or subtraction operation
-
-    // Energy's addition and subtraction in dBm
-    // are prohibited due to the fact that those operators have conflicting meanings.
-    // While energy may be added or separated/consumed, + and - have the meanings of
-    // multiplication and division respectively in log scale. In order to avoid this confusion
-    // and potential harm, addition and subtraction of energy is allowed only in the linear scale.
-    inline dBm operator+(const dBm& rhs) const
-    {
-        return dBm{ToLogScale(ToLinearScale(val) + ToLinearScale(rhs.val))};
-    }
-
-    // Subtraction in energy may mean consumption
-    inline dBm operator-(const dBm& rhs) const
-    {
-        return dBm{ToLogScale(ToLinearScale(val) - ToLinearScale(rhs.val))};
-    }
-
-    inline dBm& operator+=(const dBm& rhs)
-    {
-        val = ToLogScale(ToLinearScale(val) + ToLinearScale(rhs.val));
-        return *this;
-    }
-
-    inline dBm& operator-=(const dBm& rhs)
-    {
-        val = ToLogScale(ToLinearScale(val) - ToLinearScale(rhs.val));
-        return *this;
-    }
+    // Disallow addition/subtraction/division/multiplication between dBm and mWatt.
+    dBm& operator+=(const dBm& rhs) = delete;
+    dBm& operator-=(const dBm& rhs) = delete;
+    dBm& operator*=(const dBm& rhs) = delete;
+    dBm& operator/=(const dBm& rhs) = delete;
 };
+
+dBm operator+(const dBm& lhs, const dBm& rhs) = delete;
+dBm operator-(const dBm& lhs, const dBm& rhs) = delete;
+dBm operator*(const dBm& lhs, const dBm& rhs) = delete;
+dBm operator/(const dBm& lhs, const dBm& rhs) = delete;
 
 struct mWatt
 {

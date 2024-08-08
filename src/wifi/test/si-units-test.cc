@@ -298,13 +298,6 @@ class WifiSiUnits : public TestCase
         NS_TEST_ASSERT_MSG_EQ((10_dBm > 20_dBm), false, "");
         NS_TEST_ASSERT_MSG_EQ((10_dBm >= 20_dBm), false, "");
 
-        // Arithmetic
-        NS_TEST_ASSERT_MSG_EQ_TOL((20_dBm + 20_dBm).val, (23.0102999566_dBm).val, 1e-4, "");
-        NS_TEST_ASSERT_MSG_EQ_TOL((20_dBm += 20_dBm).val, (23.0102999566_dBm).val, 1e-4, "");
-        NS_TEST_ASSERT_MSG_EQ_TOL((20_dBm - 10_dBm).val, (19.5424250944_dBm).val, 1e-4, "");
-        NS_TEST_ASSERT_MSG_EQ_TOL((20_dBm -= 10_dBm).val, (19.5424250944_dBm).val, 1e-4, "");
-        NS_TEST_ASSERT_MSG_EQ_TOL((20_dBm - 19_dBm).val, (13.1317467562_dBm).val, 1e-4, "");
-
         // Utilities
         NS_TEST_ASSERT_MSG_EQ(dBm{123}.str(), "123.0 dBm", "");    // NOLINT
         NS_TEST_ASSERT_MSG_EQ(dBm{123.45}.str(), "123.5 dBm", ""); // NOLINT
