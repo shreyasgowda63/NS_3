@@ -158,7 +158,7 @@ main(int argc, char* argv[])
     LogComponentEnableAll(LogLevel(LOG_PREFIX_TIME | LOG_PREFIX_FUNC | LOG_PREFIX_NODE));
     LogComponentEnable("ZigbeeNwk", LOG_LEVEL_DEBUG);
     // LogComponentEnable("LrWpanCsmaCa", LOG_LEVEL_DEBUG);
-    // LogComponentEnable("LrWpanMac", LOG_LEVEL_DEBUG);
+    //LogComponentEnable("LrWpanMac", LOG_LEVEL_DEBUG);
     // LogComponentEnable("LrWpanPhy", LOG_LEVEL_DEBUG);
 
     RngSeedManager::SetSeed(3);
@@ -329,17 +329,20 @@ main(int argc, char* argv[])
                                    zstack4->GetNwk(),
                                    netDiscParams4);
 
+
+
+
     // 5- Find a route to the given device short address
-    /*NlmeRouteDiscoveryRequestParams routeDiscParams;
+    NlmeRouteDiscoveryRequestParams routeDiscParams;
     routeDiscParams.m_dstAddr = Mac16Address("ad:6e");
     Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
                                    Seconds(8),
                                    &ZigbeeNwk::NlmeRouteDiscoveryRequest,
                                    zstack0->GetNwk(),
-                                   routeDiscParams);*/
+                                   routeDiscParams);
 
-    // Send data packet with route discovery option
-    Ptr<Packet> p = Create<Packet>(5);
+    //5- OR Send data packet with route discovery option
+    /*Ptr<Packet> p = Create<Packet>(5);
     NldeDataRequestParams dataReqParams;
     dataReqParams.m_dstAddrMode = UCST_BCST;
     dataReqParams.m_dstAddr = Mac16Address("ad:6e");
@@ -350,11 +353,11 @@ main(int argc, char* argv[])
                                    &ZigbeeNwk::NldeDataRequest,
                                    zstack0->GetNwk(),
                                    dataReqParams,
-                                   p);
+                                   p);*/
 
     // Print routing tables of coordinator (originator of route request) at
     // the end of the simulation
-    Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
+    /*Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
     Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
                                    Seconds(17),
                                    &ZigbeeNwk::PrintNeighborTable,
@@ -371,7 +374,8 @@ main(int argc, char* argv[])
                                    Seconds(17),
                                    &ZigbeeNwk::PrintRouteDiscoveryTable,
                                    zstack0->GetNwk(),
-                                   stream);
+                                   stream);*/
+
     Simulator::Stop(Seconds(20));
     Simulator::Run();
     Simulator::Destroy();

@@ -833,6 +833,13 @@ class RreqRetryTableEntry : public SimpleRefCount<RreqRetryTableEntry>
      */
     EventId GetRreqEventId();
 
+    /**
+     * Print the values of the RREQ retry table entry.
+     *
+     * \param stream The stream object used to print.
+     */
+    void Print(Ptr<OutputStreamWrapper> stream) const;
+
   private:
     uint8_t m_rreqId;           //!< The RREQ ID
     EventId m_rreqRetryEventId; //!< The event id of the next RREQ retry callback
@@ -1126,6 +1133,13 @@ class RreqRetryTable
      *  \param rreqId The RREQ ID use to delete an entry from the table
      */
     void Delete(uint8_t rreqId);
+
+    /**
+     * Print the neighbor table
+     *
+     * \param stream The output stream where the table is printed
+     */
+    void Print(Ptr<OutputStreamWrapper> stream) const;
 
     /**
      * Dispose of the table and all its elements

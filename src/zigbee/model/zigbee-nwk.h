@@ -119,6 +119,17 @@ enum JoiningMethod
                              //!< that identified in the ScanChannel parameter.
 };
 
+
+enum NextHopStatus : std::uint8_t
+{
+    ROUTE_FOUND = 0x01,
+    ROUTE_NOT_FOUND = 0x02,
+    TABLE_FULL = 0x03,
+    ROUTE_UPDATED = 0x04,
+    NO_DISCOVER_ROUTE = 0x05,
+    DISCOVER_UNDERWAY = 0x06
+};
+
 /**
  * \ingroup zigbee
  *
@@ -686,25 +697,32 @@ class ZigbeeNwk : public Object
     Ptr<lrwpan::LrWpanMacBase> GetMac();
 
     /**
-     * Print the entries in the routing table
+     * Print the entries in the routing table.
      *
      * \param stream The stream object used to print.
      */
     void PrintRoutingTable(Ptr<OutputStreamWrapper> stream) const;
 
     /**
-     * Print the entries in the route discovery table
+     * Print the entries in the route discovery table.
      *
      * \param stream The stream object used to print.
      */
     void PrintRouteDiscoveryTable(Ptr<OutputStreamWrapper> stream) const;
 
     /**
-     * Print the entries in the neighbor table
+     * Print the entries in the neighbor table.
      *
      * \param stream The stream object used to print.
      */
     void PrintNeighborTable(Ptr<OutputStreamWrapper> stream) const;
+
+    /**
+     * Print the entries in the RREQ retry table.
+     *
+     * \param stream The stream object used to print.
+     */
+    void PrintRREQRetryTable(Ptr<OutputStreamWrapper> stream) const;
 
     /**
      *  IEEE 802.15.4-2011 section 6.3.3
@@ -1305,6 +1323,14 @@ class ZigbeeNwk : public Object
      */
     void SendUnicast(Ptr<Packet> packet, uint8_t handle);
 
+
+    // bool indicates if it is necessary to find the next hop (rreq required)
+// Found in Neighbor table = RREP  | True
+// Found in Routing table = RREP   | True
+// New Entry = RREQ                | False
+// Better route in discovery table RREQ  | False
+// Routing table or discovery table full = No message
+// No Discover route and route not found = No message
     /**
      * Find the next hope in route to a destination.
      *
@@ -1316,11 +1342,11 @@ class ZigbeeNwk : public Object
      *
      * \return True if the next hop in route was found.
      */
-    bool FindNextHop(Mac16Address dst,
-                     uint16_t radius,
-                     bool noRouteCache,
-                     bool discoverRoute,
-                     Mac16Address& nextHop);
+    NextHopStatus FindNextHop(Mac16Address macSrcAddr,
+                              uint8_t pathCost,
+                              ZigbeeNwkHeader nwkHeader,
+                              ZigbeePayloadRouteRequestCommand payload,
+                              Mac16Address& nextHop);
 
     /**
      *  Provides uniform random values

@@ -268,19 +268,27 @@ main(int argc, char* argv[])
         }
     }
 
-    /*
+
 
 
 
         // 5- Find a route to the given device short address
         NlmeRouteDiscoveryRequestParams routeDiscParams;
-        routeDiscParams.m_dstAddr = Mac16Address("0d:10");
-        Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
-                                       Seconds(8),
+        routeDiscParams.m_dstAddr = Mac16Address("59:bd");//Mac16Address("4d:64");
+        Simulator::ScheduleWithContext(zigbeeStacks.Get(0)->GetNode()->GetId(),
+                                       Seconds(500),
                                        &ZigbeeNwk::NlmeRouteDiscoveryRequest,
-                                       zstack0->GetNwk(),
+                                       zigbeeStacks.Get(0)->GetNwk(),
                                        routeDiscParams);
 
+         Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
+        Simulator::ScheduleWithContext(zigbeeStacks.Get(0)->GetNode()->GetId(),
+                                       Seconds(1001),
+                                       &ZigbeeNwk::PrintRoutingTable,
+                                       zigbeeStacks.Get(0)->GetNwk(),
+                                       stream);
+
+   /*
         // Print routing tables of coordinator (originator of route request) at
         // the end of the simulation
 

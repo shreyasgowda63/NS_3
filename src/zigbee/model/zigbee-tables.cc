@@ -78,6 +78,28 @@ RreqRetryTableEntry::GetRreqEventId()
     return m_rreqRetryEventId;
 }
 
+void
+RreqRetryTableEntry::Print(Ptr<OutputStreamWrapper> stream) const
+{
+    std::ostream* os = stream->GetStream();
+    std::ios oldState(nullptr);
+    oldState.copyfmt(*os);
+
+    *os << std::resetiosflags(std::ios::adjustfield) << std::setiosflags(std::ios::left);
+    *os << std::setw(9) << static_cast<uint32_t>(m_rreqId);
+    *os << std::setw(12) << static_cast<uint32_t>(m_rreqRetryCount);
+    if (m_rreqRetryEventId.IsPending())
+    {
+        *os << std::setw(9) << "TRUE";
+    }
+    else
+    {
+        *os << std::setw(9) << "FALSE";
+    }
+    *os << std::endl;
+    (*os).copyfmt(oldState);
+}
+
 /***********************************************************
  *                RREQ Retry Table
  ***********************************************************/
@@ -133,6 +155,26 @@ RreqRetryTable::Dispose()
         (*it) = nullptr;
     }
     m_rreqRetryTable.clear();
+}
+
+void
+RreqRetryTable::Print(Ptr<OutputStreamWrapper> stream) const
+{
+    std::ostream* os = stream->GetStream();
+    std::ios oldState(nullptr);
+    oldState.copyfmt(*os);
+
+    *os << std::resetiosflags(std::ios::adjustfield) << std::setiosflags(std::ios::left);
+    *os << "ZigBee RREQ retry table\n";
+    *os << std::setw(9) << "RREQ ID";
+    *os << std::setw(12) << "RREQ Count";
+    *os << std::setw(9) << "Pending" << std::endl;
+
+    for (const auto& entry : m_rreqRetryTable)
+    {
+        entry->Print(stream);
+    }
+    *stream->GetStream() << std::endl;
 }
 
 /***********************************************************
