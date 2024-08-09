@@ -245,6 +245,8 @@ filter_blacklistRE=""
 #   External files: adding our own doxygen makes diffs with upstream very hard
 #     cairo-wideint
 REappend filter_blacklistRE "cairo-wideint"
+#     units
+REappend filter_blacklistRE "units"
 
 #   Functions with varying numbers of arguments
 #   Explicit template instantiation declaration
