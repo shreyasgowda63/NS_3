@@ -262,7 +262,6 @@ ZigbeeNwk::PrintNeighborTable(Ptr<OutputStreamWrapper> stream) const
     m_nwkNeighborTable.Print(stream);
 }
 
-
 void
 ZigbeeNwk::PrintRREQRetryTable(Ptr<OutputStreamWrapper> stream) const
 {
@@ -290,11 +289,9 @@ ZigbeeNwk::McpsDataIndication(McpsDataIndicationParams params, Ptr<Packet> msdu)
     ZigbeeNwkHeader peekedNwkHeader;
     msdu->PeekHeader(peekedNwkHeader);
 
-
     // Decrease the radius of the packet as it might be retransmitted.
     uint8_t radius = peekedNwkHeader.GetRadius();
     peekedNwkHeader.SetRadius(radius--);
-
 
     // Check if the received frame is from a neighbor and update LQI if necessary
     Ptr<NeighborTableEntry> neighborEntry;
@@ -414,15 +411,13 @@ ZigbeeNwk::ReceiveRREQ(Mac16Address macSrcAddr,
         return;
     }
 
-
     // Calculate the pathcost on the RREQ receiving device
     uint8_t pathCost = linkCost + payload.GetPathCost();
 
     Mac16Address nextHop;
     NextHopStatus nextHopStatus = FindNextHop(macSrcAddr, pathCost, nwkHeader, payload, nextHop);
 
-    if (payload.GetDstAddr() == m_nwkNetworkAddress ||
-        nextHopStatus == ROUTE_FOUND)
+    if (payload.GetDstAddr() == m_nwkNetworkAddress || nextHopStatus == ROUTE_FOUND)
     {
         // RREQ is for this device or its children
         NS_LOG_DEBUG("RREQ is for me or my children, sending a RREP to [" << macSrcAddr << "]");
@@ -435,19 +430,16 @@ ZigbeeNwk::ReceiveRREQ(Mac16Address macSrcAddr,
     }
     else if (nextHopStatus == ROUTE_NOT_FOUND || nextHopStatus == ROUTE_UPDATED)
     {
-        // RREQ is not for us, forward RREQ
         NS_LOG_DEBUG("Route for device [" << payload.GetDstAddr()
-                                            << "] not found, forwarding RREQ");
+                                          << "] not found, forwarding RREQ");
 
+        // Update path cost and resend the RREQ
+        payload.SetPathCost(pathCost);
         Simulator::Schedule(MilliSeconds(m_rreqJitter->GetValue()),
                             &ZigbeeNwk::SendRREQ,
                             this,
-                            nwkHeader.GetSrcAddr(),
-                            payload.GetDstAddr(),
-                            nwkHeader.GetSeqNum(),
-                            payload.GetRouteReqId(),
-                            pathCost,
-                            nwkHeader.GetRadius(),
+                            nwkHeader,
+                            payload,
                             m_nwkcRREQRetries);
     }
 }
@@ -506,8 +498,8 @@ ZigbeeNwk::ReceiveRREP(Mac16Address macSrcAddr,
                 }
 
                 NS_LOG_DEBUG("RREP from source [" << payload.GetRespAddr()
-                                      << "] is for me; received from last hop ["
-                                      << macSrcAddr << "]");
+                                                  << "] is for me; received from last hop ["
+                                                  << macSrcAddr << "]");
 
                 if (m_pendPrimitiveNwk == NLME_ROUTE_DISCOVERY)
                 {
@@ -521,7 +513,6 @@ ZigbeeNwk::ReceiveRREP(Mac16Address macSrcAddr,
                         m_nlmeRouteDiscoveryConfirmCallback(routeDiscConfirmParams);
                     }
                 }
-
 
                 Ptr<PendingTxPkt> pendingTxPkt = Create<PendingTxPkt>();
                 if (!m_pendingTxQueue.empty() && DequeueTx(payload.GetRespAddr(), pendingTxPkt))
@@ -593,10 +584,10 @@ ZigbeeNwk::IsBroadcastAddress(Mac16Address address)
 
 NextHopStatus
 ZigbeeNwk::FindNextHop(Mac16Address macSrcAddr,
-                        uint8_t pathCost,
-                        ZigbeeNwkHeader nwkHeader,
-                        ZigbeePayloadRouteRequestCommand payload,
-                        Mac16Address& nextHop)
+                       uint8_t pathCost,
+                       ZigbeeNwkHeader nwkHeader,
+                       ZigbeePayloadRouteRequestCommand payload,
+                       Mac16Address& nextHop)
 {
     NS_LOG_FUNCTION(this);
 
@@ -624,7 +615,7 @@ ZigbeeNwk::FindNextHop(Mac16Address macSrcAddr,
             return ROUTE_FOUND;
         }
     }
-    else  if (nwkHeader.GetDiscoverRoute() == DiscoverRouteType::ENABLE_ROUTE_DISCOVERY)
+    else if (nwkHeader.GetDiscoverRoute() == DiscoverRouteType::ENABLE_ROUTE_DISCOVERY)
     {
         // Check that the max routing capacity has not been reached.
         if (m_nwkRoutingTable.GetSize() == m_nwkRoutingTable.GetMaxTableSize())
@@ -642,12 +633,12 @@ ZigbeeNwk::FindNextHop(Mac16Address macSrcAddr,
         // Entry not found
         Ptr<RoutingTableEntry> newRoutingEntry =
             Create<RoutingTableEntry>(payload.GetDstAddr(),
-                                        ROUTE_DISCOVERY_UNDERWAY,
-                                        true , //TODO no route cache
-                                        false, // TODO: Many to one
-                                        false, // TODO: Route record
-                                        false, // TODO: Group id
-                                        Mac16Address("FF:FF"));
+                                      ROUTE_DISCOVERY_UNDERWAY,
+                                      true,  // TODO no route cache
+                                      false, // TODO: Many to one
+                                      false, // TODO: Route record
+                                      false, // TODO: Group id
+                                      Mac16Address("FF:FF"));
         m_nwkRoutingTable.AddEntry(newRoutingEntry);
 
         /*Ptr<RouteDiscoveryTableEntry> newDiscEntry =
@@ -658,7 +649,6 @@ ZigbeeNwk::FindNextHop(Mac16Address macSrcAddr,
                                                 0xff, // Initial residual cost
                                                Time(Simulator::Now() + m_nwkcRouteDiscoveryTime));
         m_nwkRouteDiscoveryTable.AddEntry(newDiscEntry);*/
-
     }
     else
     {
@@ -672,7 +662,7 @@ ZigbeeNwk::FindNextHop(Mac16Address macSrcAddr,
         return NO_DISCOVER_ROUTE;
     }
 
-     // 2- Find entry in DISCOVERY TABLE
+    // 2- Find entry in DISCOVERY TABLE
     Ptr<RouteDiscoveryTableEntry> discEntry;
     if (m_nwkRouteDiscoveryTable.LookUpEntry(payload.GetRouteReqId(),
                                              nwkHeader.GetSrcAddr(),
@@ -697,14 +687,14 @@ ZigbeeNwk::FindNextHop(Mac16Address macSrcAddr,
         Ptr<RouteDiscoveryTableEntry> newDiscEntry =
             Create<RouteDiscoveryTableEntry>(payload.GetRouteReqId(),
                                              nwkHeader.GetSrcAddr(),
-                                             macSrcAddr,//macSrcAddr,
-                                             pathCost,//payload.GetPathCost(), // Forward cost
-                                             0xff,                  // Residual cost
+                                             macSrcAddr, // macSrcAddr,
+                                             pathCost,   // payload.GetPathCost(), // Forward cost
+                                             0xff,       // Residual cost
                                              Time(Simulator::Now() + m_nwkcRouteDiscoveryTime));
 
         if (!m_nwkRouteDiscoveryTable.AddEntry(newDiscEntry))
         {
-            return TABLE_FULL ;
+            return TABLE_FULL;
         }
     }
     return ROUTE_NOT_FOUND;
@@ -715,10 +705,9 @@ ZigbeeNwk::SendUnicast(Ptr<Packet> packet, uint8_t handle)
 {
     NS_LOG_FUNCTION(this);
 
-    // Obtain information from the DATA packet
+    // Obtain information from the DATA packet and construct the RREQ
     ZigbeeNwkHeader nwkHeaderData;
     packet->PeekHeader(nwkHeaderData);
-
 
     ZigbeeNwkHeader nwkHeader;
     nwkHeader.SetFrameType(NWK_COMMAND);
@@ -745,7 +734,7 @@ ZigbeeNwk::SendUnicast(Ptr<Packet> packet, uint8_t handle)
     payload.SetPathCost(0);
 
     Mac16Address nextHop;
-    NextHopStatus nextHopStatus = FindNextHop(m_nwkNetworkAddress,0,nwkHeader,payload,nextHop);
+    NextHopStatus nextHopStatus = FindNextHop(m_nwkNetworkAddress, 0, nwkHeader, payload, nextHop);
 
     if (nextHopStatus == ROUTE_FOUND)
     {
@@ -761,17 +750,16 @@ ZigbeeNwk::SendUnicast(Ptr<Packet> packet, uint8_t handle)
     }
     else if (nextHopStatus == ROUTE_NOT_FOUND)
     {
-        // Route discovery underway, add packet to pending Tx Queue
+        // Route not found. Route marked as DISCOVER UNDERWAY,
+        // packet added to pending Tx Queue and we initiate route
+        // discovery
         EnqueueTx(packet, handle);
+
         Simulator::Schedule(MilliSeconds(m_rreqJitter->GetValue()),
                             &ZigbeeNwk::SendRREQ,
                             this,
-                            m_nwkNetworkAddress,
-                            nwkHeaderData.GetDstAddr(),
-                            m_nwkSequenceNumber.GetValue(),
-                            m_routeRequestId.GetValue(),
-                            0,
-                            nwkHeader.GetRadius(),
+                            nwkHeader,
+                            payload,
                             m_nwkcInitialRREQRetries);
 
         m_nwkSequenceNumber++;
@@ -783,21 +771,21 @@ void
 ZigbeeNwk::McpsDataConfirm(McpsDataConfirmParams params)
 {
     // TODO
-   /* if (m_pendPrimitiveNwk == NLME_ROUTE_DISCOVERY)
-    {
-        //m_pendPrimitiveNwk = NLDE_NLME_NONE;
-    }
-    else
-    {
-        // Zigbee Specification r22.1.0, End of Section 3.2.1.1.3
-        // Report the the results of a request to a transmission of a packet
-        if (!m_nldeDataConfirmCallback.IsNull())
-        {
-            NldeDataConfirmParams nldeDataConfirmParams;
-            nldeDataConfirmParams.m_status = static_cast<ZigbeeNwkStatus>(params.m_status);
-            m_nldeDataConfirmCallback(nldeDataConfirmParams);
-        }
-    }*/
+    /* if (m_pendPrimitiveNwk == NLME_ROUTE_DISCOVERY)
+     {
+         //m_pendPrimitiveNwk = NLDE_NLME_NONE;
+     }
+     else
+     {
+         // Zigbee Specification r22.1.0, End of Section 3.2.1.1.3
+         // Report the the results of a request to a transmission of a packet
+         if (!m_nldeDataConfirmCallback.IsNull())
+         {
+             NldeDataConfirmParams nldeDataConfirmParams;
+             nldeDataConfirmParams.m_status = static_cast<ZigbeeNwkStatus>(params.m_status);
+             m_nldeDataConfirmCallback(nldeDataConfirmParams);
+         }
+     }*/
 }
 
 void
@@ -1677,11 +1665,18 @@ ZigbeeNwk::NldeDataRequest(NldeDataRequestParams params, Ptr<Packet> packet)
 {
     NS_LOG_FUNCTION(this << packet);
 
+    if (params.m_dstAddr == m_nwkNetworkAddress)
+    {
+        NS_LOG_DEBUG("The source and the destination of the route request are the same!");
+        return;
+    }
+
     // Zigbee specification r22.1.0, Section 3.2.1.1.3 and Section 3.6.2.1
     // check that we are associated
     if (m_nwkNetworkAddress == "FF:FF")
     {
         NS_LOG_DEBUG("Cannot send data, the device is not currently associated");
+
         if (!m_nldeDataConfirmCallback.IsNull())
         {
             NldeDataConfirmParams confirmParams;
@@ -1692,8 +1687,6 @@ ZigbeeNwk::NldeDataRequest(NldeDataRequestParams params, Ptr<Packet> packet)
         }
         return;
     }
-
-
 
     // Constructing the NPDU (Zigbee specification r22.1.0, Section 3.2.1.1.3 and Section 3.6.2.1)
     ZigbeeNwkHeader nwkHeader;
@@ -1907,6 +1900,13 @@ void
 ZigbeeNwk::NlmeRouteDiscoveryRequest(NlmeRouteDiscoveryRequestParams params)
 {
     NS_LOG_FUNCTION(this);
+
+    if (params.m_dstAddr == m_nwkNetworkAddress)
+    {
+        NS_LOG_DEBUG("The source and the destination of the route request are the same!");
+        return;
+    }
+
     // (See 3.2.2.33.3)
     // - Check the device has routing capacity
     // - Check the device dstAddrMode != NO_ADDRESS &&  dst != Broadcast address
@@ -1958,12 +1958,12 @@ ZigbeeNwk::NlmeRouteDiscoveryRequest(NlmeRouteDiscoveryRequestParams params)
         }
 
         ZigbeePayloadRouteRequestCommand payload;
-        payload.SetRouteReqId( m_routeRequestId.GetValue());
+        payload.SetRouteReqId(m_routeRequestId.GetValue());
         payload.SetDstAddr(params.m_dstAddr);
         payload.SetPathCost(0);
 
         Mac16Address nextHop;
-        NextHopStatus status = FindNextHop(m_nwkNetworkAddress,0,nwkHeader,payload,nextHop);
+        NextHopStatus status = FindNextHop(m_nwkNetworkAddress, 0, nwkHeader, payload, nextHop);
 
         if (status == ROUTE_FOUND)
         {
@@ -1976,15 +1976,13 @@ ZigbeeNwk::NlmeRouteDiscoveryRequest(NlmeRouteDiscoveryRequestParams params)
         }
         else if (status == ROUTE_NOT_FOUND)
         {
-              Simulator::Schedule(MilliSeconds(m_rreqJitter->GetValue()),
+            // Route not found. Route marked as DISCOVER UNDERWAY,
+            // we initiate route discovery.
+            Simulator::Schedule(MilliSeconds(m_rreqJitter->GetValue()),
                                 &ZigbeeNwk::SendRREQ,
                                 this,
-                                m_nwkNetworkAddress,
-                                params.m_dstAddr,
-                                m_nwkSequenceNumber.GetValue(),
-                                m_routeRequestId.GetValue(),
-                                0,
-                                params.m_radius,
+                                nwkHeader,
+                                payload,
                                 m_nwkcInitialRREQRetries);
 
             m_nwkSequenceNumber++;
@@ -2501,47 +2499,14 @@ ZigbeeNwk::GetLinkCost(uint8_t lqi) const
     }
 }
 
-/*void
+void
 ZigbeeNwk::SendRREQ(ZigbeeNwkHeader nwkHeader,
                     ZigbeePayloadRouteRequestCommand payload,
-                    uint8_t pathcost,
                     uint8_t rreqRetries)
 {
     NS_LOG_FUNCTION(this);
 
-    ZigbeeNwkHeader nwkHeader;
-    nwkHeader.SetFrameType(NWK_COMMAND);
-    nwkHeader.SetProtocolVer(m_nwkcProtocolVersion);
-    nwkHeader.SetDiscoverRoute(DiscoverRouteType::ENABLE_ROUTE_DISCOVERY);
-    // See r22.1.0, Table 3-69
-    // Set destination to broadcast (all routers and coordinator)
-    nwkHeader.SetDstAddr(Mac16Address("FF:FC"));
-    nwkHeader.SetSrcAddr(src);
-    nwkHeader.SetSeqNum(seq);
-    // see Zigbee specification 3.2.2.33.3
-    if (radius == 0)
-    {
-        nwkHeader.SetRadius(m_nwkMaxDepth * 2);
-    }
-    else
-    {
-        nwkHeader.SetRadius(radius);
-    }
-
     ZigbeePayloadType payloadType(ROUTE_REQ);
-
-    ZigbeePayloadRouteRequestCommand payload;
-    payload.SetRouteReqId(rreqId);
-    payload.SetDstAddr(dst);
-    payload.SetPathCost(pathcost);
-
-    // See Section 3.4.1.1 Mac Data Service Requirements for RREQ
-    McpsDataRequestParams params;
-    params.m_dstPanId = m_nwkPanId;
-    params.m_srcAddrMode = SHORT_ADDR;
-    params.m_dstAddrMode = SHORT_ADDR;
-    params.m_dstAddr = Mac16Address::GetBroadcast();
-    // params.m_txOptions
 
     Ptr<Packet> nsdu = Create<Packet>();
     nsdu->AddHeader(payload);
@@ -2553,17 +2518,18 @@ ZigbeeNwk::SendRREQ(ZigbeeNwkHeader nwkHeader,
         Simulator::Now() + m_nwkcRREQRetryInterval + MilliSeconds(m_rreqJitter->GetValue());
 
     Ptr<RreqRetryTableEntry> rreqRetryTableEntry;
-    if (m_rreqRetryTable.LookUpEntry(rreqId, rreqRetryTableEntry))
+    if (m_rreqRetryTable.LookUpEntry(payload.GetRouteReqId(), rreqRetryTableEntry))
     {
         if (rreqRetryTableEntry->GetRreqRetryCount() >= rreqRetries)
         {
-            NS_LOG_DEBUG("Maximum RREQ retries reached for dst [" << dst << "] and rreq ID "
-                                                                  << static_cast<uint32_t>(rreqId));
-            // Note: The value of rreqRetries is either nwkcInitialRREQRetries or
-            // nwkcRREQRetries depending on where the RREQ is transmitted.
+            NS_LOG_DEBUG("Maximum RREQ retries reached for dst ["
+                         << payload.GetDstAddr() << "] and rreq ID "
+                         << static_cast<uint32_t>(payload.GetRouteReqId()));
+            // Note: The value of the maximum number of retries (rreqRetries) is either
+            // nwkcInitialRREQRetries or nwkcRREQRetries depending on where the RREQ is transmitted.
             // See Zigbee specification r22.1.0, Section 3.6.3.5.1
             // This trace here is used to keep track when the maximum RREQ retries is reached.
-            m_rreqRetriesExhaustedTrace(rreqId, dst, rreqRetries);
+            m_rreqRetriesExhaustedTrace(payload.GetRouteReqId(), payload.GetDstAddr(), rreqRetries);
         }
         else
         {
@@ -2571,12 +2537,8 @@ ZigbeeNwk::SendRREQ(ZigbeeNwkHeader nwkHeader,
             EventId rreqRetryEvent = Simulator::Schedule(rreqRetryTime,
                                                          &ZigbeeNwk::SendRREQ,
                                                          this,
-                                                         src,
-                                                         dst,
-                                                         seq,
-                                                         rreqId,
-                                                         pathcost,
-                                                         radius,
+                                                         nwkHeader,
+                                                         payload,
                                                          rreqRetries);
 
             rreqRetryTableEntry->SetRreqRetryCount(rreqRetryTableEntry->GetRreqRetryCount() + 1);
@@ -2589,60 +2551,17 @@ ZigbeeNwk::SendRREQ(ZigbeeNwkHeader nwkHeader,
         EventId rreqRetryEvent = Simulator::Schedule(rreqRetryTime,
                                                      &ZigbeeNwk::SendRREQ,
                                                      this,
-                                                     src,
-                                                     dst,
-                                                     seq,
-                                                     rreqId,
-                                                     pathcost,
-                                                     radius,
+                                                     nwkHeader,
+                                                     payload,
                                                      rreqRetries);
 
-        Ptr<RreqRetryTableEntry> newEntry = Create<RreqRetryTableEntry>(rreqId, rreqRetryEvent, 0);
+        Ptr<RreqRetryTableEntry> newEntry =
+            Create<RreqRetryTableEntry>(payload.GetRouteReqId(), rreqRetryEvent, 0);
+
         m_rreqRetryTable.AddEntry(newEntry);
     }
 
     // Send the RREQ
-    m_mac->McpsDataRequest(params, nsdu);
-}*/
-
-
-void
-ZigbeeNwk::SendRREQ(Mac16Address src,
-                    Mac16Address dst,
-                    uint8_t seq,
-                    uint8_t rreqId,
-                    uint8_t pathcost,
-                    uint8_t radius,
-                    uint8_t rreqRetries)
-{
-    NS_LOG_FUNCTION(this);
-
-    ZigbeeNwkHeader nwkHeader;
-    nwkHeader.SetFrameType(NWK_COMMAND);
-    nwkHeader.SetProtocolVer(m_nwkcProtocolVersion);
-    nwkHeader.SetDiscoverRoute(DiscoverRouteType::ENABLE_ROUTE_DISCOVERY);
-    // See r22.1.0, Table 3-69
-    // Set destination to broadcast (all routers and coordinator)
-    nwkHeader.SetDstAddr(Mac16Address("FF:FC"));
-    nwkHeader.SetSrcAddr(src);
-    nwkHeader.SetSeqNum(seq);
-    // see Zigbee specification 3.2.2.33.3
-    if (radius == 0)
-    {
-        nwkHeader.SetRadius(m_nwkMaxDepth * 2);
-    }
-    else
-    {
-        nwkHeader.SetRadius(radius);
-    }
-
-    ZigbeePayloadType payloadType(ROUTE_REQ);
-
-    ZigbeePayloadRouteRequestCommand payload;
-    payload.SetRouteReqId(rreqId);
-    payload.SetDstAddr(dst);
-    payload.SetPathCost(pathcost);
-
     // See Section 3.4.1.1 Mac Data Service Requirements for RREQ
     McpsDataRequestParams params;
     params.m_dstPanId = m_nwkPanId;
@@ -2650,66 +2569,6 @@ ZigbeeNwk::SendRREQ(Mac16Address src,
     params.m_dstAddrMode = SHORT_ADDR;
     params.m_dstAddr = Mac16Address::GetBroadcast();
     // params.m_txOptions
-
-    Ptr<Packet> nsdu = Create<Packet>();
-    nsdu->AddHeader(payload);
-    nsdu->AddHeader(payloadType);
-    nsdu->AddHeader(nwkHeader);
-
-    // Set RREQ RETRIES
-    Time rreqRetryTime =
-        Simulator::Now() + m_nwkcRREQRetryInterval + MilliSeconds(m_rreqJitter->GetValue());
-
-    Ptr<RreqRetryTableEntry> rreqRetryTableEntry;
-    if (m_rreqRetryTable.LookUpEntry(rreqId, rreqRetryTableEntry))
-    {
-        if (rreqRetryTableEntry->GetRreqRetryCount() >= rreqRetries)
-        {
-            NS_LOG_DEBUG("Maximum RREQ retries reached for dst [" << dst << "] and rreq ID "
-                                                                  << static_cast<uint32_t>(rreqId));
-            // Note: The value of rreqRetries is either nwkcInitialRREQRetries or
-            // nwkcRREQRetries depending on where the RREQ is transmitted.
-            // See Zigbee specification r22.1.0, Section 3.6.3.5.1
-            // This trace here is used to keep track when the maximum RREQ retries is reached.
-            m_rreqRetriesExhaustedTrace(rreqId, dst, rreqRetries);
-        }
-        else
-        {
-            // Schedule the next RREQ RETRY event and update entry.
-            EventId rreqRetryEvent = Simulator::Schedule(rreqRetryTime,
-                                                         &ZigbeeNwk::SendRREQ,
-                                                         this,
-                                                         src,
-                                                         dst,
-                                                         seq,
-                                                         rreqId,
-                                                         pathcost,
-                                                         radius,
-                                                         rreqRetries);
-
-            rreqRetryTableEntry->SetRreqRetryCount(rreqRetryTableEntry->GetRreqRetryCount() + 1);
-            rreqRetryTableEntry->SetRreqEventId(rreqRetryEvent);
-        }
-    }
-    else
-    {
-        // Schedule the next RREQ RETRY and add a new record of the event.
-        EventId rreqRetryEvent = Simulator::Schedule(rreqRetryTime,
-                                                     &ZigbeeNwk::SendRREQ,
-                                                     this,
-                                                     src,
-                                                     dst,
-                                                     seq,
-                                                     rreqId,
-                                                     pathcost,
-                                                     radius,
-                                                     rreqRetries);
-
-        Ptr<RreqRetryTableEntry> newEntry = Create<RreqRetryTableEntry>(rreqId, rreqRetryEvent, 0);
-        m_rreqRetryTable.AddEntry(newEntry);
-    }
-
-    // Send the RREQ
     m_mac->McpsDataRequest(params, nsdu);
 }
 

@@ -119,15 +119,23 @@ enum JoiningMethod
                              //!< that identified in the ScanChannel parameter.
 };
 
-
+/**
+ * The status returned while attempting to find the next hop in route towards a specific
+ * destination.
+ */
 enum NextHopStatus : std::uint8_t
 {
-    ROUTE_FOUND = 0x01,
-    ROUTE_NOT_FOUND = 0x02,
-    TABLE_FULL = 0x03,
-    ROUTE_UPDATED = 0x04,
-    NO_DISCOVER_ROUTE = 0x05,
-    DISCOVER_UNDERWAY = 0x06
+    ROUTE_FOUND = 0x01,       //!< The next hop toward the destination was found in our
+                              //!< routing table or neighbor table.
+    ROUTE_NOT_FOUND = 0x02,   //!< The next hop was not found. A new entry is is registered
+                              //!<  in the routing table with DISCOVER_UNDERWAY status.
+    TABLE_FULL = 0x03,        //!< Either the routing or neighbor table are full.
+    ROUTE_UPDATED = 0x04,     //!< A route was found and updated with a better route.
+    NO_DISCOVER_ROUTE = 0x05, //!< We are currently not allowed to perform a route discovery
+                              //!< for this route (RouteDiscover flag in network header is false).
+    DISCOVER_UNDERWAY = 0x06  //!< The route was found in the tables but currently has no next hop.
+                             //!< i.e. A previous attempt was already made is currently awaiting for
+                             //!< a response (hence the route discover is underway).
 };
 
 /**
@@ -1234,24 +1242,16 @@ class ZigbeeNwk : public Object
     uint8_t GetLinkCost(uint8_t lqi) const;
 
     /**
-     *  Construct and send a route request command.
+     *  Send a route request command.
      *  See Zigbee specification r22.1.0, Section 3.4.1
      *
-     *  \param src The source address of the originator device of the first RREQ
-     *  \param dst The destination address of the RREQ
-     *  \param seq The sequence number of this route request
-     *  \param rreqId The RREQ identifier
-     *  \param pathcost The pathcost
-     *  \param radius The Optional radius parameter supplied
+     *  \param nwkHeader The network header of the RREQ packet to send
+     *  \param payload The payload header of the RREQ packet to send
      *  \param rreqRetries The maximum number of retries the broadcast transmission of a route
      * request command frame is retried.
      */
-    void SendRREQ(Mac16Address src,
-                  Mac16Address dst,
-                  uint8_t seq,
-                  uint8_t rreqId,
-                  uint8_t pathcost,
-                  uint8_t radius,
+    void SendRREQ(ZigbeeNwkHeader nwkHeader,
+                  ZigbeePayloadRouteRequestCommand payload,
                   uint8_t rreqRetries);
 
     void SendRREQMTO(Mac16Address src,
@@ -1323,24 +1323,19 @@ class ZigbeeNwk : public Object
      */
     void SendUnicast(Ptr<Packet> packet, uint8_t handle);
 
-
-    // bool indicates if it is necessary to find the next hop (rreq required)
-// Found in Neighbor table = RREP  | True
-// Found in Routing table = RREP   | True
-// New Entry = RREQ                | False
-// Better route in discovery table RREQ  | False
-// Routing table or discovery table full = No message
-// No Discover route and route not found = No message
     /**
-     * Find the next hope in route to a destination.
+     * Find the next hop in route to a destination.
      *
-     * \param dst The final destination of the requested route.
-     * \param radius Distance in hops that the frame is allowed to travel through the network.
-     * \param noRouteCache  Determines whether the NWK should establish a route record table.
-     * \param discoverRoute An indication of whether or no a RREQ should be used if needed.
-     * \param nextHop Contains the address of the next hop towards the destination.
+     * See NextHopStatus for full information on the returned status.
      *
-     * \return True if the next hop in route was found.
+     * \param macSrcAddr The MAC address received from the previous hop.
+     * \param pathCost The path cost accumulated in the route discovery so far.
+     * \param nwkHeader The network header of initiator or the received RREQ.
+     * \param payload The payload header of the initiator or the received RREQ.
+     * \param nextHop If the destination is found in the routing or neighbor tables
+     * it contains the address of the next hop towards the destination.
+     *
+     * \return The NextHopstatus of the route search attempt
      */
     NextHopStatus FindNextHop(Mac16Address macSrcAddr,
                               uint8_t pathCost,
@@ -1357,6 +1352,17 @@ class ZigbeeNwk : public Object
      *  Provides uniform random values for the route request jitter
      */
     Ptr<UniformRandomVariable> m_rreqJitter;
+
+    /**
+     * Temporarily store beacons information from POS routers and PAN coordinators
+     * during a network-discovery process.
+     */
+    std::vector<NetworkDescriptor> m_networkDescriptorList;
+
+    /**
+     * Used to store the value of the PHY current channel.
+     */
+    uint8_t m_currentChannel;
 
     /////////////////////////////
     // Network layer constants //
@@ -1582,17 +1588,6 @@ class ZigbeeNwk : public Object
      * route is stored during route discovery.
      */
     bool m_nwkSymLink;
-
-    /**
-     * Temporarily store beacons information from POS routers and PAN coordinators
-     * during a network-discovery process.
-     */
-    std::vector<NetworkDescriptor> m_networkDescriptorList;
-
-    /**
-     * Used to store the value of the PHY current channel.
-     */
-    uint8_t m_currentChannel;
 };
 
 } // namespace zigbee

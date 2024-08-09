@@ -166,9 +166,6 @@ main(int argc, char* argv[])
     // LogComponentEnable("LrWpanMac", LOG_LEVEL_DEBUG);
     // LogComponentEnable("LrWpanPhy", LOG_LEVEL_DEBUG);
 
-    // RngSeedManager::SetSeed(3);
-    // RngSeedManager::SetRun(4);
-
     NodeContainer nodes;
     nodes.Create(50);
 
@@ -233,6 +230,12 @@ main(int argc, char* argv[])
     {
         int index = std::distance(zigbeeStacks.Begin(), i);
         Ptr<ZigbeeStack> zstack = *i;
+
+        // Assign streams to the zigbee stacks based on the index to obtain
+        // reprodusable results from random events occurring inside the stack.
+        // For example, to obtain the same assigned short address in each device.
+        zstack->GetNwk()->AssignStreams(index);
+
         if (index == 0)
         {
             // 1 - Initiate the Zigbee coordinator, start the network
@@ -268,48 +271,44 @@ main(int argc, char* argv[])
         }
     }
 
+    // 5- Find a route to the given device short address
+    NlmeRouteDiscoveryRequestParams routeDiscParams;
+    routeDiscParams.m_dstAddr = Mac16Address("30:56");
+    Simulator::ScheduleWithContext(zigbeeStacks.Get(0)->GetNode()->GetId(),
+                                   Seconds(500),
+                                   &ZigbeeNwk::NlmeRouteDiscoveryRequest,
+                                   zigbeeStacks.Get(0)->GetNwk(),
+                                   routeDiscParams);
 
+    Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
+    Simulator::ScheduleWithContext(zigbeeStacks.Get(0)->GetNode()->GetId(),
+                                   Seconds(1001),
+                                   &ZigbeeNwk::PrintRoutingTable,
+                                   zigbeeStacks.Get(0)->GetNwk(),
+                                   stream);
 
-
-
-        // 5- Find a route to the given device short address
-        NlmeRouteDiscoveryRequestParams routeDiscParams;
-        routeDiscParams.m_dstAddr = Mac16Address("59:bd");//Mac16Address("4d:64");
-        Simulator::ScheduleWithContext(zigbeeStacks.Get(0)->GetNode()->GetId(),
-                                       Seconds(500),
-                                       &ZigbeeNwk::NlmeRouteDiscoveryRequest,
-                                       zigbeeStacks.Get(0)->GetNwk(),
-                                       routeDiscParams);
+    /*
+         // Print routing tables of coordinator (originator of route request) at
+         // the end of the simulation
 
          Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
-        Simulator::ScheduleWithContext(zigbeeStacks.Get(0)->GetNode()->GetId(),
-                                       Seconds(1001),
-                                       &ZigbeeNwk::PrintRoutingTable,
-                                       zigbeeStacks.Get(0)->GetNwk(),
-                                       stream);
+         Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
+                                        Seconds(11),
+                                        &ZigbeeNwk::PrintNeighborTable,
+                                        zstack0->GetNwk(),
+                                        stream);
 
-   /*
-        // Print routing tables of coordinator (originator of route request) at
-        // the end of the simulation
+         Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
+                                        Seconds(11),
+                                        &ZigbeeNwk::PrintRoutingTable,
+                                        zstack0->GetNwk(),
+                                        stream);
 
-        Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
-        Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
-                                       Seconds(11),
-                                       &ZigbeeNwk::PrintNeighborTable,
-                                       zstack0->GetNwk(),
-                                       stream);
-
-        Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
-                                       Seconds(11),
-                                       &ZigbeeNwk::PrintRoutingTable,
-                                       zstack0->GetNwk(),
-                                       stream);
-
-        Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
-                                       Seconds(11),
-                                       &ZigbeeNwk::PrintRouteDiscoveryTable,
-                                       zstack0->GetNwk(),
-                                       stream);*/
+         Simulator::ScheduleWithContext(zstack0->GetNode()->GetId(),
+                                        Seconds(11),
+                                        &ZigbeeNwk::PrintRouteDiscoveryTable,
+                                        zstack0->GetNwk(),
+                                        stream);*/
 
     Simulator::Stop(Seconds(1500));
     Simulator::Run();
