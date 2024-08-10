@@ -668,6 +668,7 @@ const double NormalRandomVariable::INFINITE_VALUE = 1e307;
 TypeId
 NormalRandomVariable::GetTypeId()
 {
+    NS_WARNING_PUSH_DEPRECATED;
     static TypeId tid =
         TypeId("ns3::NormalRandomVariable")
             .SetParent<RandomVariableStream>()
@@ -684,18 +685,35 @@ NormalRandomVariable::GetTypeId()
                 DoubleValue(1.0),
                 MakeDoubleAccessor(&NormalRandomVariable::m_variance),
                 MakeDoubleChecker<double>())
-            .AddAttribute("Bound",
-                          "The bound on the values returned by this RNG stream.",
+            .AddAttribute(
+                "Bound",
+                "The bound on the values returned by this RNG stream.",
+                DoubleValue(INFINITE_VALUE),
+                MakeDoubleAccessor(&NormalRandomVariable::SetBound,
+                                   &NormalRandomVariable::GetBound),
+                MakeDoubleChecker<double>(),
+                TypeId::DEPRECATED,
+                "DEPRECATED since ns-3.43. Use the LowerBound and UpperBound attributes instead.")
+            .AddAttribute("LowerBound",
+                          "The lower bound on the values returned by this RNG stream.",
+                          DoubleValue(-INFINITE_VALUE),
+                          MakeDoubleAccessor(&NormalRandomVariable::SetLowerBound,
+                                             &NormalRandomVariable::GetLowerBound),
+                          MakeDoubleChecker<double>())
+            .AddAttribute("UpperBound",
+                          "The upper bound on the values returned by this RNG stream.",
                           DoubleValue(INFINITE_VALUE),
-                          MakeDoubleAccessor(&NormalRandomVariable::m_bound),
+                          MakeDoubleAccessor(&NormalRandomVariable::SetUpperBound,
+                                             &NormalRandomVariable::GetUpperBound),
                           MakeDoubleChecker<double>());
+    NS_WARNING_POP;
     return tid;
 }
 
 NormalRandomVariable::NormalRandomVariable()
     : m_nextValid(false)
 {
-    // m_mean, m_variance, and m_bound are initialized after constructor
+    // m_mean, m_variance, m_lowerBound, and m_upperBound are initialized after constructor
     // by attributes
     NS_LOG_FUNCTION(this);
 }
@@ -712,23 +730,69 @@ NormalRandomVariable::GetVariance() const
     return m_variance;
 }
 
-double
-NormalRandomVariable::GetBound() const
+void
+NormalRandomVariable::SetBound(double bound)
 {
-    return m_bound;
+    m_lowerBound = m_mean - std::abs(bound);
+    m_upperBound = m_mean + std::abs(bound);
 }
 
 double
-NormalRandomVariable::GetValue(double mean, double variance, double bound)
+NormalRandomVariable::GetBound() const
 {
+    if (m_mean - m_lowerBound == m_upperBound - m_mean)
+    {
+        return m_mean - m_lowerBound;
+    }
+    else
+    {
+        NS_FATAL_ERROR("Bounds must be symmetrical with respect to the mean. Mean: "
+                       << m_mean << " Lower bound: " << m_lowerBound
+                       << " Upper bound: " << m_upperBound);
+    }
+}
+
+void
+NormalRandomVariable::SetLowerBound(double lowerBound)
+{
+    m_lowerBound = lowerBound;
+}
+
+double
+NormalRandomVariable::GetLowerBound() const
+{
+    return m_lowerBound;
+}
+
+void
+NormalRandomVariable::SetUpperBound(double upperBound)
+{
+    m_upperBound = upperBound;
+}
+
+double
+NormalRandomVariable::GetUpperBound() const
+{
+    return m_upperBound;
+}
+
+double
+NormalRandomVariable::GetValue(double mean, double variance, double lowerBound, double upperBound)
+{
+    if (lowerBound > upperBound)
+    {
+        NS_FATAL_ERROR("Lower bound must be less than or equal to upper bound. Lower bound: "
+                       << lowerBound << " Upper bound: " << upperBound);
+    }
     if (m_nextValid)
     { // use previously generated
         m_nextValid = false;
         double x2 = mean + m_v2 * m_y * std::sqrt(variance);
-        if (std::fabs(x2 - mean) <= bound)
+        if (x2 >= lowerBound && x2 <= upperBound)
         {
             NS_LOG_DEBUG("value: " << x2 << " stream: " << GetStream() << " mean: " << mean
-                                   << " variance: " << variance << " bound: " << bound);
+                                   << " variance: " << variance << " lower bound: " << lowerBound
+                                   << " upper bound: " << upperBound);
             return x2;
         }
     }
@@ -751,22 +815,24 @@ NormalRandomVariable::GetValue(double mean, double variance, double bound)
             double y = std::sqrt((-2 * std::log(w)) / w);
             double x1 = mean + v1 * y * std::sqrt(variance);
             // if x1 is in bounds, return it, cache v2 and y
-            if (std::fabs(x1 - mean) <= bound)
+            if (x1 >= lowerBound && x1 <= upperBound)
             {
                 m_nextValid = true;
                 m_y = y;
                 m_v2 = v2;
                 NS_LOG_DEBUG("value: " << x1 << " stream: " << GetStream() << " mean: " << mean
-                                       << " variance: " << variance << " bound: " << bound);
+                                       << " variance: " << variance << " lower bound: "
+                                       << lowerBound << " upper bound: " << upperBound);
                 return x1;
             }
             // otherwise try and return the other if it is valid
             double x2 = mean + v2 * y * std::sqrt(variance);
-            if (std::fabs(x2 - mean) <= bound)
+            if (x2 >= lowerBound && x2 <= upperBound)
             {
                 m_nextValid = false;
                 NS_LOG_DEBUG("value: " << x2 << " stream: " << GetStream() << " mean: " << mean
-                                       << " variance: " << variance << " bound: " << bound);
+                                       << " variance: " << variance << " lower bound: "
+                                       << lowerBound << " upper bound: " << upperBound);
                 return x2;
             }
             // otherwise, just run this loop again
@@ -777,16 +843,29 @@ NormalRandomVariable::GetValue(double mean, double variance, double bound)
 uint32_t
 NormalRandomVariable::GetInteger(uint32_t mean, uint32_t variance, uint32_t bound)
 {
-    auto v = static_cast<uint32_t>(GetValue(mean, variance, bound));
+    auto v = static_cast<uint32_t>(GetValue(mean, variance, mean - bound, mean + bound));
     NS_LOG_DEBUG("integer value: " << v << " stream: " << GetStream() << " mean: " << mean
                                    << " variance: " << variance << " bound: " << bound);
+    return v;
+}
+
+uint32_t
+NormalRandomVariable::GetInteger(uint32_t mean,
+                                 uint32_t variance,
+                                 uint32_t lowerBound,
+                                 uint32_t upperBound)
+{
+    auto v = static_cast<uint32_t>(GetValue(mean, variance, lowerBound, upperBound));
+    NS_LOG_DEBUG("integer value: " << v << " stream: " << GetStream() << " mean: " << mean
+                                   << " variance: " << variance << " lower bound: " << lowerBound
+                                   << " upper bound: " << upperBound);
     return v;
 }
 
 double
 NormalRandomVariable::GetValue()
 {
-    return GetValue(m_mean, m_variance, m_bound);
+    return GetValue(m_mean, m_variance, m_lowerBound, m_upperBound);
 }
 
 NS_OBJECT_ENSURE_REGISTERED(LogNormalRandomVariable);

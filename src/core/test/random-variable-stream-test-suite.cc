@@ -2584,8 +2584,8 @@ NormalCachingTestCase::DoRun()
     SetTestSuiteSeed();
 
     Ptr<NormalRandomVariable> n = CreateObject<NormalRandomVariable>();
-    double v1 = n->GetValue(-10, 1, 10); // Mean -10, variance 1, bounded to [-20,0]
-    double v2 = n->GetValue(10, 1, 10);  // Mean 10, variance 1, bounded to [0,20]
+    double v1 = n->GetValue(-10, 1, -20, 0); // Mean -10, variance 1, bounded to [-20,0]
+    double v2 = n->GetValue(10, 1, 0, 20);   // Mean 10, variance 1, bounded to [0,20]
 
     NS_TEST_ASSERT_MSG_LT(v1, 0, "Incorrect value returned, expected < 0");
     NS_TEST_ASSERT_MSG_GT(v2, 0, "Incorrect value returned, expected > 0");
