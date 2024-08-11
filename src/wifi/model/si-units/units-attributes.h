@@ -23,18 +23,32 @@
 
 #include <ns3/attribute-helper.h>
 #include <ns3/attribute.h>
+#include <ns3/double.h>
 
 namespace ns3
 {
 
 // See wifi-si-units-test.cc for usages
-ATTRIBUTE_HELPER_HEADER(dB);         // dBValue
-ATTRIBUTE_HELPER_HEADER(dBm);        // dBmValue
-ATTRIBUTE_HELPER_HEADER(mWatt);      // mWattValue
-ATTRIBUTE_HELPER_HEADER(dBm_per_Hz); // dBm_per_HzValue
-ATTRIBUTE_HELPER_HEADER(Hz);         // HzValue
-ATTRIBUTE_HELPER_HEADER(degree);     // degreeValue
-ATTRIBUTE_HELPER_HEADER(radian);     // radianValue
+
+ATTRIBUTE_VALUE_DEFINE_WITH_NAME(dB, dB);
+ATTRIBUTE_ACCESSOR_DEFINE(dB);
+ATTRIBUTE_CHECKER_DEFINE_WITH_CONVERTER(dB, dB, Double);
+
+ATTRIBUTE_VALUE_DEFINE_WITH_NAME(dBm, dBm);
+ATTRIBUTE_ACCESSOR_DEFINE(dBm);
+ATTRIBUTE_CHECKER_DEFINE_WITH_CONVERTER(dBm, dBm, Double);
+
+ATTRIBUTE_VALUE_DEFINE_WITH_NAME(mWatt, mWatt);
+ATTRIBUTE_ACCESSOR_DEFINE(mWatt);
+ATTRIBUTE_CHECKER_DEFINE_WITH_CONVERTER(mWatt, mWatt, Double);
+
+ATTRIBUTE_VALUE_DEFINE_WITH_NAME(dBm_per_Hz, dBm_per_Hz);
+ATTRIBUTE_ACCESSOR_DEFINE(dBm_per_Hz);
+ATTRIBUTE_CHECKER_DEFINE_WITH_CONVERTER(dBm_per_Hz, dBm_per_Hz, Double);
+
+ATTRIBUTE_HELPER_HEADER(Hz);     // HzValue
+ATTRIBUTE_HELPER_HEADER(degree); // degreeValue
+ATTRIBUTE_HELPER_HEADER(radian); // radianValue
 
 } // namespace ns3
 
