@@ -839,6 +839,118 @@ struct dBm_per_Hz // NOLINT(readability-identifier-naming)
     }
 };
 
+// Power spectral density
+struct dBm_per_MHz // NOLINT(readability-identifier-naming)
+{
+    double val{};
+
+    dBm_per_MHz() = default;
+
+    dBm_per_MHz(double val)
+        : val(val) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    {
+    }
+
+    double in_dBm() const; // NOLINT(readability-identifier-naming). Return quantity only
+
+    dBm to_dBm() const // NOLINT(readability-identifier-naming)
+    {
+        return dBm{val};
+    }
+
+    static std::vector<dBm_per_MHz> from_doubles(
+        std::vector<double>& input) // NOLINT(readability-identifier-naming)
+    {
+        std::vector<dBm_per_MHz> output(input.size());
+        std::transform(input.cbegin(), input.cend(), output.begin(), [](double f) {
+            return dBm_per_MHz{f};
+        });
+        return output;
+    }
+
+    static std::vector<double> to_doubles(
+        std::vector<dBm_per_MHz>& input) // NOLINT(readability-identifier-naming)
+    {
+        std::vector<double> output(input.size());
+        std::transform(input.cbegin(), input.cend(), output.begin(), [](dBm_per_MHz f) {
+            return static_cast<double>(f.val);
+        });
+        return output;
+    }
+
+    std::string str() const // NOLINT(readability-identifier-naming)
+    {
+        return sformat("%.1Lf dBm/Hz", val);
+    }
+
+    static dBm_per_MHz AveragePsd(dBm power, Hz bandwidth)
+    {
+        return dBm_per_MHz{power.val - ToLogScale(bandwidth.in_MHz())};
+    }
+
+    inline dBm OverBandwidth(const Hz& rhs) const
+    {
+        return dBm{val + ToLogScale(rhs.in_MHz())};
+    }
+
+    inline bool operator==(const dBm_per_MHz& rhs) const
+    {
+        return val == rhs.val;
+    }
+
+    inline bool operator!=(const dBm_per_MHz& rhs) const
+    {
+        return !(operator==(rhs));
+    }
+
+    inline bool operator<(const dBm_per_MHz& rhs) const
+    {
+        return val < rhs.val;
+    }
+
+    inline bool operator>(const dBm_per_MHz& rhs) const
+    {
+        return val > rhs.val;
+    }
+
+    inline bool operator<=(const dBm_per_MHz& rhs) const
+    {
+        return val <= rhs.val;
+    }
+
+    inline bool operator>=(const dBm_per_MHz& rhs) const
+    {
+        return val >= rhs.val;
+    }
+
+    inline dBm_per_MHz operator-() const
+    {
+        return dBm_per_MHz{-val};
+    }
+
+    inline dBm_per_MHz operator+(const dB& rhs) const
+    {
+        return dBm_per_MHz{val + rhs.val};
+    }
+
+    inline dBm_per_MHz& operator+=(const dB& rhs)
+    {
+        val += rhs.val;
+        return *this;
+    }
+
+    inline dBm_per_MHz operator-(const dB& rhs) const
+    {
+        return dBm_per_MHz{val - rhs.val};
+    }
+
+    inline dBm_per_MHz& operator-=(const dB& rhs)
+    {
+        val -= rhs.val;
+        return *this;
+    }
+};
+
 dB operator"" _dB(long double val);
 dB operator"" _dB(unsigned long long val);
 dBm operator"" _dBm(long double val);
@@ -850,18 +962,21 @@ mWatt operator"" _pWatt(unsigned long long val);
 Watt operator"" _Watt(long double val);
 Watt operator"" _Watt(unsigned long long val);
 dBm_per_Hz operator"" _dBm_per_Hz(long double val);
+dBm_per_MHz operator"" _dBm_per_MHz(long double val);
 
 std::ostream& operator<<(std::ostream& os, const dB& rhs);
 std::ostream& operator<<(std::ostream& os, const dBm& rhs);
 std::ostream& operator<<(std::ostream& os, const mWatt& rhs);
 std::ostream& operator<<(std::ostream& os, const Watt& rhs);
 std::ostream& operator<<(std::ostream& os, const dBm_per_Hz& rhs);
+std::ostream& operator<<(std::ostream& os, const dBm_per_MHz& rhs);
 
 std::istream& operator>>(std::istream& is, dB& rhs);
 std::istream& operator>>(std::istream& is, dBm& rhs);
 std::istream& operator>>(std::istream& is, mWatt& rhs);
 std::istream& operator>>(std::istream& is, Watt& rhs);
 std::istream& operator>>(std::istream& is, dBm_per_Hz& rhs);
+std::istream& operator>>(std::istream& is, dBm_per_MHz& rhs);
 
 } // namespace ns3
 

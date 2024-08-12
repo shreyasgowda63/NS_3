@@ -473,6 +473,23 @@ class WifiSiUnits : public TestCase
         NS_TEST_ASSERT_MSG_EQ(dBm_per_Hz{123.45}.in_dBm(), 123.45, "");             // NOLINT
     }
 
+    void Unit_dBm_per_MHz() // NOLINT
+    {
+        NS_TEST_ASSERT_MSG_EQ(dBm_per_MHz{-43.21}, -43.21_dBm_per_MHz, ""); // NOLINT
+
+        // Utilities
+        NS_TEST_ASSERT_MSG_EQ(dBm_per_MHz{123}.val, 123.0, "");                // NOLINT
+        NS_TEST_ASSERT_MSG_EQ(dBm_per_MHz{123}.str(), "123.0 dBm/MHz", "");    // NOLINT
+        NS_TEST_ASSERT_MSG_EQ(dBm_per_MHz{123.45}.val, 123.45, "");            // NOLINT
+        NS_TEST_ASSERT_MSG_EQ(dBm_per_MHz{123.45}.str(), "123.5 dBm/MHz", ""); // NOLINT
+
+        NS_TEST_ASSERT_MSG_EQ(dBm_per_MHz::AveragePsd(-20_dBm, 1_MHz),
+                              dBm_per_MHz{-20},
+                              "");                                                   // NOLINT
+        NS_TEST_ASSERT_MSG_EQ(dBm_per_MHz{-80.0}.OverBandwidth(1_MHz), -80_dBm, ""); // NOLINT
+        NS_TEST_ASSERT_MSG_EQ(dBm_per_MHz{123.45}.in_dBm(), 123.45, "");             // NOLINT
+    }
+
     void Vectors()
     {
         { // dB Empty vector
@@ -549,6 +566,18 @@ class WifiSiUnits : public TestCase
             }
         }
 
+        { // dBm_per_MHz
+            auto got1 = dBm_per_MHz::from_doubles(tvs);
+            auto got2 = dBm_per_MHz::to_doubles(got1);
+            auto got3 = dBm_per_MHz::from_doubles(got2);
+            NS_TEST_ASSERT_MSG_EQ((tvs == got2), true, "vector of double's do not match");
+            NS_TEST_ASSERT_MSG_EQ((got1 == got3), true, "vector of dBm_per_MHz's do not match");
+            for (auto idx = 0; idx < tvs.size(); ++idx)
+            {
+                NS_TEST_ASSERT_MSG_EQ(got1[idx].val, tvs[idx], "");
+            }
+        }
+
         { // Hz
             std::vector<double> tvs = {1, -2, 3000, -4000000};
             auto got1 = Hz::from_doubles(tvs);
@@ -613,6 +642,11 @@ class AttributeMock : public Object
                               dBm_per_HzValue(0.0004),
                               MakedBm_per_HzAccessor(&AttributeMock::m_dBm_per_Hz),
                               MakedBm_per_HzChecker())
+                .AddAttribute("dBm_per_MHz",
+                              "help message for dBm_per_MHz",
+                              dBm_per_HzValue(0.001),
+                              MakedBm_per_MHzAccessor(&AttributeMock::m_dBm_per_MHz),
+                              MakedBm_per_MHzChecker())
                 .AddAttribute("Hz",
                               "help message for Hz",
                               HzValue(415000_Hz),
@@ -635,6 +669,7 @@ class AttributeMock : public Object
     dBm m_dBm{};
     mWatt m_mWatt{};
     dBm_per_Hz m_dBm_per_Hz{};
+    dBm_per_MHz m_dBm_per_MHz{};
     Hz m_Hz{};
     degree m_degree{};
     radian m_radian{};
@@ -673,6 +708,11 @@ class WifiSiUnitsAttributes : public TestCase
             auto want = 0.0001_dBm_per_Hz;
             mock->SetAttribute("dBm_per_Hz", dBm_per_HzValue(want));
             NS_TEST_ASSERT_MSG_EQ(mock->m_dBm_per_Hz, want, "");
+        }
+        {
+            auto want = 0.001_dBm_per_MHz;
+            mock->SetAttribute("dBm_per_MHz", dBm_per_MHzValue(want));
+            NS_TEST_ASSERT_MSG_EQ(mock->m_dBm_per_MHz, want, "");
         }
         {
             auto want = 365_Hz;

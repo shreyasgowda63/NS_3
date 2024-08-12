@@ -296,6 +296,12 @@ dBm_per_Hz::in_dBm() const
     return val;
 }
 
+double
+dBm_per_MHz::in_dBm() const
+{
+    return val;
+}
+
 // User defined literals
 dB operator"" _dB(long double val)
 {
@@ -352,6 +358,11 @@ dBm_per_Hz operator"" _dBm_per_Hz(long double val)
     return dBm_per_Hz{static_cast<double>(val)};
 }
 
+dBm_per_MHz operator"" _dBm_per_MHz(long double val)
+{
+    return dBm_per_MHz{static_cast<double>(val)};
+}
+
 // Output-input operators overloading
 std::ostream&
 operator<<(std::ostream& os, const dB& rhs)
@@ -379,6 +390,12 @@ operator<<(std::ostream& os, const Watt& rhs)
 
 std::ostream&
 operator<<(std::ostream& os, const dBm_per_Hz& rhs)
+{
+    return os << rhs.str();
+}
+
+std::ostream&
+operator<<(std::ostream& os, const dBm_per_MHz& rhs)
 {
     return os << rhs.str();
 }
@@ -413,6 +430,13 @@ operator>>(std::istream& is, Watt& rhs)
 
 std::istream&
 operator>>(std::istream& is, dBm_per_Hz& rhs)
+{
+    is >> rhs.val;
+    return is;
+}
+
+std::istream&
+operator>>(std::istream& is, dBm_per_MHz& rhs)
 {
     is >> rhs.val;
     return is;
