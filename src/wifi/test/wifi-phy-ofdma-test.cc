@@ -3016,7 +3016,7 @@ class TestUlOfdmaPhyTransmission : public TestCase
      * \param phy the PHY
      * \param psdLimit the PSD limit
      */
-    void SetPsdLimit(Ptr<WifiPhy> phy, dBm_per_MHz_t psdLimit);
+    void SetPsdLimit(Ptr<WifiPhy> phy, dBm_per_MHz psdLimit);
 
     /**
      * Generate interference function
@@ -3696,10 +3696,10 @@ TestUlOfdmaPhyTransmission::SetBssColor(Ptr<WifiPhy> phy, uint8_t bssColor)
 }
 
 void
-TestUlOfdmaPhyTransmission::SetPsdLimit(Ptr<WifiPhy> phy, dBm_per_MHz_t psdLimit)
+TestUlOfdmaPhyTransmission::SetPsdLimit(Ptr<WifiPhy> phy, dBm_per_MHz psdLimit)
 {
     NS_LOG_FUNCTION(this << phy << psdLimit);
-    phy->SetAttribute("PowerDensityLimit", DoubleValue(psdLimit));
+    phy->SetAttribute("PowerDensityLimit", dBm_per_MHzValue(psdLimit));
 }
 
 void
@@ -3823,7 +3823,8 @@ TestUlOfdmaPhyTransmission::DoSetup()
         phy->SetAttribute("TxGain", DoubleValue(1.0));
         phy->SetAttribute("TxPowerStart", dBmValue(16.0_dBm));
         phy->SetAttribute("TxPowerEnd", dBmValue(16.0_dBm));
-        phy->SetAttribute("PowerDensityLimit", DoubleValue(100.0)); // no impact by default
+        phy->SetAttribute("PowerDensityLimit",
+                          dBm_per_MHzValue(100.0_dBm_per_MHz)); // no impact by default
         phy->SetAttribute("RxGain", DoubleValue(2.0));
         // test assumes no rejection power for simplicity
         phy->SetAttribute("TxMaskInnerBandMinimumRejection", DoubleValue(-100.0));

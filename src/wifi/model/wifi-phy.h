@@ -1586,12 +1586,12 @@ class WifiPhy : public Object
     dBm m_ccaSensitivityThreshold; //!< Clear channel assessment (CCA) modulation and coding
                                    //!< rate sensitivity threshold
 
-    dB m_txGain;                       //!< Transmission gain
-    dB m_rxGain;                       //!< Reception gain
-    dBm m_txPowerBase;                 //!< Minimum transmission power
-    dBm m_txPowerEnd;                  //!< Maximum transmission power
-    uint8_t m_nTxPower;                //!< Number of available transmission power levels
-    dBm_per_MHz_t m_powerDensityLimit; //!< the power density limit
+    dB m_txGain;                     //!< Transmission gain
+    dB m_rxGain;                     //!< Reception gain
+    dBm m_txPowerBase;               //!< Minimum transmission power
+    dBm m_txPowerEnd;                //!< Maximum transmission power
+    uint8_t m_nTxPower;              //!< Number of available transmission power levels
+    dBm_per_MHz m_powerDensityLimit; //!< the power density limit
 
     bool m_powerRestricted; //!< Flag whether transmit power is restricted by OBSS PD SR
     dBm m_txPowerMaxSiso;   //!< SISO maximum transmit power due to OBSS PD SR power restriction

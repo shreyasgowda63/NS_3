@@ -296,12 +296,13 @@ WifiPhy::GetTypeId()
                           TimeValue(MicroSeconds(0)),
                           MakeTimeAccessor(&WifiPhy::m_pifs),
                           MakeTimeChecker())
-            .AddAttribute("PowerDensityLimit",
-                          "The mean equivalent isotropically radiated power density"
-                          "limit (in dBm/MHz) set by regulators.",
-                          DoubleValue(100.0), // set to a high value so as to have no effect
-                          MakeDoubleAccessor(&WifiPhy::m_powerDensityLimit),
-                          MakeDoubleChecker<dBm_per_MHz_t>())
+            .AddAttribute(
+                "PowerDensityLimit",
+                "The mean equivalent isotropically radiated power density"
+                "limit (in dBm/MHz) set by regulators.",
+                dBm_per_MHzValue(100.0_dBm_per_MHz), // set to a high value so as to have no effect
+                MakedBm_per_MHzAccessor(&WifiPhy::m_powerDensityLimit),
+                MakedBm_per_MHzChecker())
             .AddTraceSource("PhyTxBegin",
                             "Trace source indicating a packet "
                             "has begun transmitting over the channel medium",
@@ -2312,11 +2313,12 @@ WifiPhy::GetTxPowerForTransmission(Ptr<const WifiPpdu> ppdu) const
 
     // Apply power density constraint on EIRP
     const auto channelWidth = ppdu->GetTxChannelWidth();
-    dBm_per_MHz_t txPowerDbmPerMhz =
-        (txPower + GetTxGain()) - RatioToDb(channelWidth); // account for antenna gain since EIRP
+    const auto txPowerDbmPerMhz =
+        dBm_per_MHz::AveragePsd(txPower + GetTxGain(),
+                                MHz(channelWidth)); // account for antenna gain since EIRP
     NS_LOG_INFO("txPower=" << txPower << " with txPowerDbmPerMhz=" << txPowerDbmPerMhz << " over "
                            << channelWidth << " MHz");
-    txPower = std::min(txPowerDbmPerMhz, m_powerDensityLimit) + RatioToDb(channelWidth);
+    txPower = std::min(txPowerDbmPerMhz, m_powerDensityLimit).OverBandwidth(MHz(channelWidth));
     txPower -= GetTxGain(); // remove antenna gain since will be added right afterwards
     NS_LOG_INFO("txPower=" << txPower
                            << "dBm after applying m_powerDensityLimit=" << m_powerDensityLimit);
