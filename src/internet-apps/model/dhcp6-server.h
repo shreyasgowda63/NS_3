@@ -21,6 +21,7 @@
 #ifndef DHCP6_SERVER_H
 #define DHCP6_SERVER_H
 
+#include "dhcp6-duid.h"
 #include "dhcp6-header.h"
 
 #include "ns3/application.h"

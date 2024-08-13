@@ -18,6 +18,7 @@ build_lib(
     model/dhcp6-options.cc
     model/dhcp6-server.cc
     model/dhcp6-client.cc
+    model/dhcp6-duid.cc
   HEADER_FILES
     helper/dhcp-helper.h
     helper/ping-helper.h
@@ -36,6 +37,7 @@ build_lib(
     model/dhcp6-options.h
     model/dhcp6-server.h
     model/dhcp6-client.h
+    model/dhcp6-duid.h
   LIBRARIES_TO_LINK ${libinternet}
   TEST_SOURCES
     test/dhcp-test.cc

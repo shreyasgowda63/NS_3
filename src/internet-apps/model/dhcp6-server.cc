@@ -20,6 +20,8 @@
 
 #include "dhcp6-server.h"
 
+#include "dhcp6-duid.h"
+
 #include "ns3/address-utils.h"
 #include "ns3/ipv6-interface.h"
 #include "ns3/ipv6-l3-protocol.h"
@@ -90,8 +92,7 @@ Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
 {
     NS_LOG_INFO(this << iDev << header << client);
 
-    Ptr<Duid> clientId = header.GetClientIdentifier().GetDuidPtr();
-    Address duid = clientId->GetLinkLayerAddress();
+    Address duid = header.GetClientIdentifier().GetDuidAddress();
 
     std::vector<bool> headerOptions = header.GetOptionList();
 
@@ -121,14 +122,13 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
     advertiseHeader.SetTransactId(header.GetTransactId());
 
     // Add Client Identifier Option, copied from the received header.
-    uint16_t clientHardwareType = header.GetClientIdentifier().GetDuidPtr()->GetHardwareType();
-    Address clientAddress = header.GetClientIdentifier().GetDuidPtr()->GetLinkLayerAddress();
+    uint16_t clientHardwareType = header.GetClientIdentifier().GetHwType();
+    Address clientAddress = header.GetClientIdentifier().GetDuidAddress();
 
     advertiseHeader.AddClientIdentifier(clientHardwareType, clientAddress);
 
     // Add Server Identifier Option.
-    advertiseHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(),
-                                        m_serverDuid.GetLinkLayerAddress());
+    advertiseHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(), m_serverDuid.GetDuid());
 
     // Find all requested IAIDs for this client.
     std::vector<uint32_t> requestedIa;
@@ -287,13 +287,12 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
     replyHeader.SetTransactId(header.GetTransactId());
 
     // Add Client Identifier Option, copied from the received header.
-    uint16_t clientHardwareType = header.GetClientIdentifier().GetDuidPtr()->GetHardwareType();
-    Address clientAddress = header.GetClientIdentifier().GetDuidPtr()->GetLinkLayerAddress();
+    uint16_t clientHardwareType = header.GetClientIdentifier().GetHwType();
+    Address clientAddress = header.GetClientIdentifier().GetDuidAddress();
     replyHeader.AddClientIdentifier(clientHardwareType, clientAddress);
 
     // Add Server Identifier Option.
-    replyHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(),
-                                    m_serverDuid.GetLinkLayerAddress());
+    replyHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(), m_serverDuid.GetDuid());
 
     // Add IA_NA option.
     // Retrieve requested IA Option from client header.
@@ -419,13 +418,12 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
     replyHeader.SetTransactId(header.GetTransactId());
 
     // Add Client Identifier Option, copied from the received header.
-    uint16_t clientHardwareType = header.GetClientIdentifier().GetDuidPtr()->GetHardwareType();
-    Address clientAddress = header.GetClientIdentifier().GetDuidPtr()->GetLinkLayerAddress();
+    uint16_t clientHardwareType = header.GetClientIdentifier().GetHwType();
+    Address clientAddress = header.GetClientIdentifier().GetDuidAddress();
     replyHeader.AddClientIdentifier(clientHardwareType, clientAddress);
 
     // Add Server Identifier Option.
-    replyHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(),
-                                    m_serverDuid.GetLinkLayerAddress());
+    replyHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(), m_serverDuid.GetDuid());
 
     // Add IA_NA option.
     // Retrieve IA_NAs from client header.
@@ -523,13 +521,12 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
     replyHeader.SetTransactId(header.GetTransactId());
 
     // Add Client Identifier Option, copied from the received header.
-    uint16_t clientHardwareType = header.GetClientIdentifier().GetDuidPtr()->GetHardwareType();
-    Address clientAddress = header.GetClientIdentifier().GetDuidPtr()->GetLinkLayerAddress();
+    uint16_t clientHardwareType = header.GetClientIdentifier().GetHwType();
+    Address clientAddress = header.GetClientIdentifier().GetDuidAddress();
     replyHeader.AddClientIdentifier(clientHardwareType, clientAddress);
 
     // Add Server Identifier Option.
-    replyHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(),
-                                    m_serverDuid.GetLinkLayerAddress());
+    replyHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(), m_serverDuid.GetDuid());
 
     // Add Status code option.
     replyHeader.AddStatusCode(Dhcp6Header::Success, "Address declined.");

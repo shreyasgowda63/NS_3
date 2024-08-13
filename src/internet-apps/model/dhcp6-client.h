@@ -21,11 +21,11 @@
 #ifndef DHCP6_CLIENT_H
 #define DHCP6_CLIENT_H
 
+#include "dhcp6-duid.h"
 #include "dhcp6-header.h"
 
 #include "ns3/application.h"
 #include "ns3/inet6-socket-address.h"
-#include "ns3/ptr.h"
 #include "ns3/random-variable-stream.h"
 #include "ns3/socket.h"
 #include "ns3/traced-callback.h"
@@ -64,7 +64,7 @@ class Dhcp6Client : public Application
      * \brief Get the DUID.
      * \return The DUID-LL which identifies the client.
      */
-    Ptr<Duid> GetSelfDuid();
+    Duid GetSelfDuid();
 
     int64_t AssignStreams(int64_t stream) override;
 
