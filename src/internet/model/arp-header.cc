@@ -31,7 +31,8 @@ NS_LOG_COMPONENT_DEFINE("ArpHeader");
 NS_OBJECT_ENSURE_REGISTERED(ArpHeader);
 
 void
-ArpHeader::SetRequest(Address sourceHardwareAddress,
+ArpHeader::SetRequest(HardwareType_e hardwareType,
+                      Address sourceHardwareAddress,
                       Ipv4Address sourceProtocolAddress,
                       Address destinationHardwareAddress,
                       Ipv4Address destinationProtocolAddress)
@@ -39,6 +40,7 @@ ArpHeader::SetRequest(Address sourceHardwareAddress,
     NS_LOG_FUNCTION(this << sourceHardwareAddress << sourceProtocolAddress
                          << destinationHardwareAddress << destinationProtocolAddress);
     m_type = ARP_TYPE_REQUEST;
+    m_hardwareType = hardwareType;
     m_macSource = sourceHardwareAddress;
     m_macDest = destinationHardwareAddress;
     m_ipv4Source = sourceProtocolAddress;
@@ -46,7 +48,8 @@ ArpHeader::SetRequest(Address sourceHardwareAddress,
 }
 
 void
-ArpHeader::SetReply(Address sourceHardwareAddress,
+ArpHeader::SetReply(HardwareType_e hardwareType,
+                    Address sourceHardwareAddress,
                     Ipv4Address sourceProtocolAddress,
                     Address destinationHardwareAddress,
                     Ipv4Address destinationProtocolAddress)
@@ -54,6 +57,7 @@ ArpHeader::SetReply(Address sourceHardwareAddress,
     NS_LOG_FUNCTION(this << sourceHardwareAddress << sourceProtocolAddress
                          << destinationHardwareAddress << destinationProtocolAddress);
     m_type = ARP_TYPE_REPLY;
+    m_hardwareType = hardwareType;
     m_macSource = sourceHardwareAddress;
     m_macDest = destinationHardwareAddress;
     m_ipv4Source = sourceProtocolAddress;
@@ -72,6 +76,13 @@ ArpHeader::IsReply() const
 {
     NS_LOG_FUNCTION(this);
     return m_type == ARP_TYPE_REPLY;
+}
+
+ArpHeader::HardwareType_e
+ArpHeader::GetHardwareType() const
+{
+    NS_LOG_FUNCTION(this);
+    return HardwareType_e(m_hardwareType);
 }
 
 Address
@@ -102,6 +113,39 @@ ArpHeader::GetDestinationIpv4Address() const
     return m_ipv4Dest;
 }
 
+std::string
+ArpHeader::HardwareTypeToString(HardwareType_e hardwareType) const
+{
+    NS_LOG_FUNCTION(this << hardwareType);
+    switch (hardwareType)
+    {
+    case HRD_TYPE_ETHERNET:
+        return "Ethernet";
+    case HRD_TYPE_IEEE_802:
+        return "IEEE 802 Networks";
+    case HRD_TYPE_ARCNET:
+        return "ARCNET";
+    case HRD_TYPE_FRAMERELAY:
+        return "Frame Relay";
+    case HRD_TYPE_ATM:
+        return "Asynchronous Transmission Mode (ATM)";
+    case HRD_TYPE_FIBRE_CHANNEL:
+        return "Fibre Channel";
+    case HRD_TYPE_SERIAL_LINE:
+        return "Serial Line";
+    case HRD_TYPE_MIL_STD_188_220:
+        return "MIL-STD-188-220";
+    case HRD_TYPE_EUI_64:
+        return "EUI-64";
+    case HRD_TYPE_HIPARP:
+        return "HIPARP";
+    case HRD_TYPE_INFINIBAND:
+        return "InfiniBand (TM)";
+    default:
+        return "Unrecognized Hardware Type";
+    };
+}
+
 TypeId
 ArpHeader::GetTypeId()
 {
@@ -125,7 +169,8 @@ ArpHeader::Print(std::ostream& os) const
     NS_LOG_FUNCTION(this << &os);
     if (IsRequest())
     {
-        os << "request "
+        os << "hardware type: " << HardwareTypeToString(GetHardwareType()) << " "
+           << "request "
            << "source mac: " << m_macSource << " "
            << "source ipv4: " << m_ipv4Source << " "
            << "dest ipv4: " << m_ipv4Dest;
@@ -133,7 +178,8 @@ ArpHeader::Print(std::ostream& os) const
     else
     {
         NS_ASSERT(IsReply());
-        os << "reply "
+        os << "hardware type: " << HardwareTypeToString(GetHardwareType()) << " "
+           << "request "
            << "source mac: " << m_macSource << " "
            << "source ipv4: " << m_ipv4Source << " "
            << "dest mac: " << m_macDest << " "
@@ -162,8 +208,7 @@ ArpHeader::Serialize(Buffer::Iterator start) const
     Buffer::Iterator i = start;
     NS_ASSERT(m_macSource.GetLength() == m_macDest.GetLength());
 
-    /* ethernet */
-    i.WriteHtonU16(0x0001);
+    i.WriteHtonU16(m_hardwareType);
     /* ipv4 */
     i.WriteHtonU16(0x0800);
     i.WriteU8(m_macSource.GetLength());
@@ -180,7 +225,7 @@ ArpHeader::Deserialize(Buffer::Iterator start)
 {
     NS_LOG_FUNCTION(this << &start);
     Buffer::Iterator i = start;
-    i.Next(2);                                // Skip HRD
+    m_hardwareType = i.ReadNtohU16();         // Read HTYPE
     uint32_t protocolType = i.ReadNtohU16();  // Read PRO
     uint32_t hardwareAddressLen = i.ReadU8(); // Read HLN
     uint32_t protocolAddressLen = i.ReadU8(); // Read PLN

@@ -36,26 +36,57 @@ class ArpHeader : public Header
 {
   public:
     /**
+     * \brief Enumeration listing the possible ARP types
+     */
+    enum ArpType_e
+    {
+        ARP_TYPE_REQUEST = 1,
+        ARP_TYPE_REPLY = 2
+    };
+
+    /**
+     * \brief Enumeration listing the possible hardware types
+     */
+    enum HardwareType_e
+    {
+        HRD_TYPE_ETHERNET = 1,
+        HRD_TYPE_IEEE_802 = 6,
+        HRD_TYPE_ARCNET = 7,
+        HRD_TYPE_FRAMERELAY = 15,
+        HRD_TYPE_ATM = 16,
+        HRD_TYPE_FIBRE_CHANNEL = 18,
+        HRD_TYPE_SERIAL_LINE = 20,
+        HRD_TYPE_MIL_STD_188_220 = 22,
+        HRD_TYPE_EUI_64 = 27,
+        HRD_TYPE_HIPARP = 28,
+        HRD_TYPE_INFINIBAND = 32,
+    };
+
+    /**
      * \brief Set the ARP request parameters
+     * \param hardwareType the hardware type
      * \param sourceHardwareAddress the source hardware address
      * \param sourceProtocolAddress the source IP address
      * \param destinationHardwareAddress the destination hardware address (usually the
      * broadcast address)
      * \param destinationProtocolAddress the destination IP address
      */
-    void SetRequest(Address sourceHardwareAddress,
+    void SetRequest(HardwareType_e hardwareType,
+                    Address sourceHardwareAddress,
                     Ipv4Address sourceProtocolAddress,
                     Address destinationHardwareAddress,
                     Ipv4Address destinationProtocolAddress);
     /**
      * \brief Set the ARP reply parameters
+     * \param hardwareType the hardware type
      * \param sourceHardwareAddress the source hardware address
      * \param sourceProtocolAddress the source IP address
      * \param destinationHardwareAddress the destination hardware address (usually the
      * broadcast address)
      * \param destinationProtocolAddress the destination IP address
      */
-    void SetReply(Address sourceHardwareAddress,
+    void SetReply(HardwareType_e hardwareType,
+                  Address sourceHardwareAddress,
                   Ipv4Address sourceProtocolAddress,
                   Address destinationHardwareAddress,
                   Ipv4Address destinationProtocolAddress);
@@ -71,6 +102,12 @@ class ArpHeader : public Header
      * \returns true if it is a reply
      */
     bool IsReply() const;
+
+    /**
+     * \brief Get the hardware type
+     * \returns the hardware type
+     */
+    HardwareType_e GetHardwareType() const;
 
     /**
      * \brief Returns the source hardware address
@@ -97,6 +134,12 @@ class ArpHeader : public Header
     Ipv4Address GetDestinationIpv4Address() const;
 
     /**
+     * \param hardwareType the hardware type
+     * \returns std::string of HardwareType_e
+     */
+    std::string HardwareTypeToString(HardwareType_e hardwareType) const;
+
+    /**
      * \brief Get the type ID.
      * \return the object TypeId
      */
@@ -107,16 +150,8 @@ class ArpHeader : public Header
     void Serialize(Buffer::Iterator start) const override;
     uint32_t Deserialize(Buffer::Iterator start) override;
 
-    /**
-     * \brief Enumeration listing the possible ARP types
-     */
-    enum ArpType_e
-    {
-        ARP_TYPE_REQUEST = 1,
-        ARP_TYPE_REPLY = 2
-    };
-
-    uint16_t m_type;          //!< type of the ICMP (ARP_TYPE_REQUEST)
+    uint16_t m_hardwareType;  //!< hardware type
+    uint16_t m_type;          //!< type of the ICMP packet
     Address m_macSource;      //!< hardware source address
     Address m_macDest;        //!< hardware destination address
     Ipv4Address m_ipv4Source; //!< IP source address
