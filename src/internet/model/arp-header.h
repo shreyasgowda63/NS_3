@@ -50,46 +50,49 @@ class ArpHeader : public Header
     enum HardwareType_e
     {
         HRD_TYPE_ETHERNET = 1,
-        HRD_TYPE_IEEE_802 = 6,
-        HRD_TYPE_ARCNET = 7,
-        HRD_TYPE_FRAMERELAY = 15,
-        HRD_TYPE_ATM = 16,
-        HRD_TYPE_FIBRE_CHANNEL = 18,
-        HRD_TYPE_SERIAL_LINE = 20,
-        HRD_TYPE_MIL_STD_188_220 = 22,
         HRD_TYPE_EUI_64 = 27,
-        HRD_TYPE_HIPARP = 28,
-        HRD_TYPE_INFINIBAND = 32,
     };
 
     /**
      * \brief Set the ARP request parameters
-     * \param hardwareType the hardware type
      * \param sourceHardwareAddress the source hardware address
      * \param sourceProtocolAddress the source IP address
      * \param destinationHardwareAddress the destination hardware address (usually the
      * broadcast address)
      * \param destinationProtocolAddress the destination IP address
      */
-    void SetRequest(HardwareType_e hardwareType,
-                    Address sourceHardwareAddress,
+    void SetRequest(Address sourceHardwareAddress,
                     Ipv4Address sourceProtocolAddress,
                     Address destinationHardwareAddress,
                     Ipv4Address destinationProtocolAddress);
     /**
      * \brief Set the ARP reply parameters
-     * \param hardwareType the hardware type
      * \param sourceHardwareAddress the source hardware address
      * \param sourceProtocolAddress the source IP address
      * \param destinationHardwareAddress the destination hardware address (usually the
      * broadcast address)
      * \param destinationProtocolAddress the destination IP address
      */
-    void SetReply(HardwareType_e hardwareType,
-                  Address sourceHardwareAddress,
+    void SetReply(Address sourceHardwareAddress,
                   Ipv4Address sourceProtocolAddress,
                   Address destinationHardwareAddress,
                   Ipv4Address destinationProtocolAddress);
+
+    /**
+     * @brief Determines the hardware type based on the length of the address.
+     *
+     * This method determines the hardware type based on the length of the address.
+     * It supports two common hardware address lengths:
+     * - 6 bytes: Assumed to be Ethernet.
+     * - 8 bytes: Assumed to be EUI-64.
+     *
+     * If the length of the address does not match these common lengths, the method defaults
+     * to Ethernet.
+     *
+     * @param address The address whose length is used to determine the hardware type.
+     * @return The corresponding hardware type.
+     */
+    HardwareType_e DetermineHardwareType(const Address& address) const;
 
     /**
      * \brief Check if the ARP is a request

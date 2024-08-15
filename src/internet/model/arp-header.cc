@@ -31,16 +31,15 @@ NS_LOG_COMPONENT_DEFINE("ArpHeader");
 NS_OBJECT_ENSURE_REGISTERED(ArpHeader);
 
 void
-ArpHeader::SetRequest(HardwareType_e hardwareType,
-                      Address sourceHardwareAddress,
+ArpHeader::SetRequest(Address sourceHardwareAddress,
                       Ipv4Address sourceProtocolAddress,
                       Address destinationHardwareAddress,
                       Ipv4Address destinationProtocolAddress)
 {
     NS_LOG_FUNCTION(this << sourceHardwareAddress << sourceProtocolAddress
                          << destinationHardwareAddress << destinationProtocolAddress);
+    m_hardwareType = DetermineHardwareType(sourceHardwareAddress);
     m_type = ARP_TYPE_REQUEST;
-    m_hardwareType = hardwareType;
     m_macSource = sourceHardwareAddress;
     m_macDest = destinationHardwareAddress;
     m_ipv4Source = sourceProtocolAddress;
@@ -48,20 +47,35 @@ ArpHeader::SetRequest(HardwareType_e hardwareType,
 }
 
 void
-ArpHeader::SetReply(HardwareType_e hardwareType,
-                    Address sourceHardwareAddress,
+ArpHeader::SetReply(Address sourceHardwareAddress,
                     Ipv4Address sourceProtocolAddress,
                     Address destinationHardwareAddress,
                     Ipv4Address destinationProtocolAddress)
 {
     NS_LOG_FUNCTION(this << sourceHardwareAddress << sourceProtocolAddress
                          << destinationHardwareAddress << destinationProtocolAddress);
+    m_hardwareType = DetermineHardwareType(sourceHardwareAddress);
     m_type = ARP_TYPE_REPLY;
-    m_hardwareType = hardwareType;
     m_macSource = sourceHardwareAddress;
     m_macDest = destinationHardwareAddress;
     m_ipv4Source = sourceProtocolAddress;
     m_ipv4Dest = destinationProtocolAddress;
+}
+
+ArpHeader::HardwareType_e
+ArpHeader::DetermineHardwareType(const Address& address) const
+{
+    NS_LOG_FUNCTION(this << address);
+    uint8_t addressLength = address.GetLength();
+    switch (addressLength)
+    {
+    case 6:
+        return HRD_TYPE_ETHERNET;
+    case 8:
+        return HRD_TYPE_EUI_64;
+    default:
+        return HRD_TYPE_ETHERNET;
+    }
 }
 
 bool
@@ -121,26 +135,8 @@ ArpHeader::HardwareTypeToString(HardwareType_e hardwareType) const
     {
     case HRD_TYPE_ETHERNET:
         return "Ethernet";
-    case HRD_TYPE_IEEE_802:
-        return "IEEE 802 Networks";
-    case HRD_TYPE_ARCNET:
-        return "ARCNET";
-    case HRD_TYPE_FRAMERELAY:
-        return "Frame Relay";
-    case HRD_TYPE_ATM:
-        return "Asynchronous Transmission Mode (ATM)";
-    case HRD_TYPE_FIBRE_CHANNEL:
-        return "Fibre Channel";
-    case HRD_TYPE_SERIAL_LINE:
-        return "Serial Line";
-    case HRD_TYPE_MIL_STD_188_220:
-        return "MIL-STD-188-220";
     case HRD_TYPE_EUI_64:
         return "EUI-64";
-    case HRD_TYPE_HIPARP:
-        return "HIPARP";
-    case HRD_TYPE_INFINIBAND:
-        return "InfiniBand (TM)";
     default:
         return "Unrecognized Hardware Type";
     };

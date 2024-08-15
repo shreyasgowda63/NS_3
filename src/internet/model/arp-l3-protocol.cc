@@ -398,11 +398,7 @@ ArpL3Protocol::SendArpRequest(Ptr<const ArpCache> cache, Ipv4Address to)
     NS_LOG_LOGIC("ARP: sending request from node "
                  << m_node->GetId() << " || src: " << device->GetAddress() << " / " << source
                  << " || dst: " << device->GetBroadcast() << " / " << to);
-    arp.SetRequest(ArpHeader::HRD_TYPE_ETHERNET,
-                   device->GetAddress(),
-                   source,
-                   device->GetBroadcast(),
-                   to);
+    arp.SetRequest(device->GetAddress(), source, device->GetBroadcast(), to);
     NS_ASSERT(m_tc);
     m_tc->Send(device, Create<ArpQueueDiscItem>(packet, device->GetBroadcast(), PROT_NUMBER, arp));
 }
@@ -418,7 +414,7 @@ ArpL3Protocol::SendArpReply(Ptr<const ArpCache> cache,
     NS_LOG_LOGIC("ARP: sending reply from node "
                  << m_node->GetId() << "|| src: " << cache->GetDevice()->GetAddress() << " / "
                  << myIp << " || dst: " << toMac << " / " << toIp);
-    arp.SetReply(ArpHeader::HRD_TYPE_ETHERNET, cache->GetDevice()->GetAddress(), myIp, toMac, toIp);
+    arp.SetReply(cache->GetDevice()->GetAddress(), myIp, toMac, toIp);
     Ptr<Packet> packet = Create<Packet>();
     NS_ASSERT(m_tc);
     m_tc->Send(cache->GetDevice(), Create<ArpQueueDiscItem>(packet, toMac, PROT_NUMBER, arp));
