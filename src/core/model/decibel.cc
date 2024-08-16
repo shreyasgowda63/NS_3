@@ -34,7 +34,7 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("Decibel");
 
-ATTRIBUTE_CHECKER_IMPLEMENT_WITH_NAME(Decibel, "units::dimensionless::dB_t");
+ATTRIBUTE_CHECKER_IMPLEMENT_WITH_CONVERTER(units::dimensionless::dB_t, Decibel);
 ATTRIBUTE_VALUE_IMPLEMENT_WITH_NAME(units::dimensionless::dB_t, Decibel);
 
 } // namespace ns3
