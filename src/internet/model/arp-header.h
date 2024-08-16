@@ -49,6 +49,7 @@ class ArpHeader : public Header
      */
     enum HardwareType_e
     {
+        HRD_TYPE_UNKNOWN = 0,
         HRD_TYPE_ETHERNET = 1,
         HRD_TYPE_EUI_64 = 27,
     };

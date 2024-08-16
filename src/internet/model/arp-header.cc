@@ -74,7 +74,7 @@ ArpHeader::DetermineHardwareType(const Address& address) const
     case 8:
         return HRD_TYPE_EUI_64;
     default:
-        return HRD_TYPE_ETHERNET;
+        return HRD_TYPE_UNKNOWN;
     }
 }
 
