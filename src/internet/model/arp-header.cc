@@ -62,7 +62,7 @@ ArpHeader::SetReply(Address sourceHardwareAddress,
     m_ipv4Dest = destinationProtocolAddress;
 }
 
-ArpHeader::HardwareType_e
+ArpHeader::HardwareType
 ArpHeader::DetermineHardwareType(const Address& address) const
 {
     NS_LOG_FUNCTION(this << address);
@@ -92,11 +92,11 @@ ArpHeader::IsReply() const
     return m_type == ARP_TYPE_REPLY;
 }
 
-ArpHeader::HardwareType_e
+ArpHeader::HardwareType
 ArpHeader::GetHardwareType() const
 {
     NS_LOG_FUNCTION(this);
-    return HardwareType_e(m_hardwareType);
+    return HardwareType(m_hardwareType);
 }
 
 Address
@@ -128,7 +128,7 @@ ArpHeader::GetDestinationIpv4Address() const
 }
 
 std::string
-ArpHeader::HardwareTypeToString(HardwareType_e hardwareType) const
+ArpHeader::HardwareTypeToString(HardwareType hardwareType) const
 {
     NS_LOG_FUNCTION(this << hardwareType);
     switch (hardwareType)

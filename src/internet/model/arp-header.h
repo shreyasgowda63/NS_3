@@ -47,7 +47,7 @@ class ArpHeader : public Header
     /**
      * \brief Enumeration listing the possible hardware types
      */
-    enum HardwareType_e
+    enum HardwareType
     {
         HRD_TYPE_UNKNOWN = 0,
         HRD_TYPE_ETHERNET = 1,
@@ -93,7 +93,7 @@ class ArpHeader : public Header
      * @param address The address whose length is used to determine the hardware type.
      * @return The corresponding hardware type.
      */
-    HardwareType_e DetermineHardwareType(const Address& address) const;
+    HardwareType DetermineHardwareType(const Address& address) const;
 
     /**
      * \brief Check if the ARP is a request
@@ -111,7 +111,7 @@ class ArpHeader : public Header
      * \brief Get the hardware type
      * \returns the hardware type
      */
-    HardwareType_e GetHardwareType() const;
+    HardwareType GetHardwareType() const;
 
     /**
      * \brief Returns the source hardware address
@@ -139,9 +139,9 @@ class ArpHeader : public Header
 
     /**
      * \param hardwareType the hardware type
-     * \returns std::string of HardwareType_e
+     * \returns std::string of HardwareType
      */
-    std::string HardwareTypeToString(HardwareType_e hardwareType) const;
+    std::string HardwareTypeToString(HardwareType hardwareType) const;
 
     /**
      * \brief Get the type ID.
