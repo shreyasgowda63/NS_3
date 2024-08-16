@@ -127,21 +127,6 @@ ArpHeader::GetDestinationIpv4Address() const
     return m_ipv4Dest;
 }
 
-std::string
-ArpHeader::HardwareTypeToString(HardwareType hardwareType) const
-{
-    NS_LOG_FUNCTION(this << hardwareType);
-    switch (hardwareType)
-    {
-    case HRD_TYPE_ETHERNET:
-        return "Ethernet";
-    case HRD_TYPE_EUI_64:
-        return "EUI-64";
-    default:
-        return "Unrecognized Hardware Type";
-    };
-}
-
 TypeId
 ArpHeader::GetTypeId()
 {
@@ -165,7 +150,7 @@ ArpHeader::Print(std::ostream& os) const
     NS_LOG_FUNCTION(this << &os);
     if (IsRequest())
     {
-        os << "hardware type: " << HardwareTypeToString(GetHardwareType()) << " "
+        os << "hardware type: " << GetHardwareType() << " "
            << "request "
            << "source mac: " << m_macSource << " "
            << "source ipv4: " << m_ipv4Source << " "
@@ -174,7 +159,7 @@ ArpHeader::Print(std::ostream& os) const
     else
     {
         NS_ASSERT(IsReply());
-        os << "hardware type: " << HardwareTypeToString(GetHardwareType()) << " "
+        os << "hardware type: " << GetHardwareType() << " "
            << "request "
            << "source mac: " << m_macSource << " "
            << "source ipv4: " << m_ipv4Source << " "
@@ -243,6 +228,20 @@ ArpHeader::Deserialize(Buffer::Iterator start)
     ReadFrom(i, m_macDest, hardwareAddressLen);   // Read THA (size HLN)
     ReadFrom(i, m_ipv4Dest);                      // Read TPA (size PLN == 4)
     return GetSerializedSize();
+}
+
+std::ostream&
+operator<<(std::ostream& os, ArpHeader::HardwareType hardwareType)
+{
+    switch (hardwareType)
+    {
+    case ArpHeader::HRD_TYPE_ETHERNET:
+        return (os << "Ethernet");
+    case ArpHeader::HRD_TYPE_EUI_64:
+        return (os << "EUI-64");
+    default:
+        return (os << "Unrecognized Hardware Type");
+    };
 }
 
 } // namespace ns3

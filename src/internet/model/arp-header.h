@@ -24,7 +24,7 @@
 #include "ns3/header.h"
 #include "ns3/ipv4-address.h"
 
-#include <string>
+#include <iostream>
 
 namespace ns3
 {
@@ -88,7 +88,7 @@ class ArpHeader : public Header
      * - 8 bytes: Assumed to be EUI-64.
      *
      * If the length of the address does not match these common lengths, the method defaults
-     * to Ethernet.
+     * to Unknown hardware type.
      *
      * @param address The address whose length is used to determine the hardware type.
      * @return The corresponding hardware type.
@@ -138,12 +138,6 @@ class ArpHeader : public Header
     Ipv4Address GetDestinationIpv4Address() const;
 
     /**
-     * \param hardwareType the hardware type
-     * \returns std::string of HardwareType
-     */
-    std::string HardwareTypeToString(HardwareType hardwareType) const;
-
-    /**
      * \brief Get the type ID.
      * \return the object TypeId
      */
@@ -161,6 +155,15 @@ class ArpHeader : public Header
     Ipv4Address m_ipv4Source; //!< IP source address
     Ipv4Address m_ipv4Dest;   //!< IP destination address
 };
+
+/**
+ * \brief Stream insertion operator.
+ *
+ * \param os The reference to the output stream
+ * \param hardwareType the hardware type
+ * \returns The reference to the output stream.
+ */
+std::ostream& operator<<(std::ostream& os, ArpHeader::HardwareType hardwareType);
 
 } // namespace ns3
 
