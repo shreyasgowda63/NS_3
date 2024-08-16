@@ -49,7 +49,7 @@ struct FrequencyChannelInfo
      */
     auto operator<=>(const FrequencyChannelInfo& info) const = default;
     uint8_t number{0};                                        ///< the channel number
-    uint16_t frequency{0};                                    ///< the center frequency
+    int64_t frequency{0};                                     ///< the center frequency
     ChannelWidthMhz width{0};                                 ///< the channel width in MHz
     WifiPhyBand band{WifiPhyBand::WIFI_PHY_BAND_UNSPECIFIED}; ///< the PHY band
     FrequencyChannelType type{FrequencyChannelType::OFDM};    ///< the frequency channel type
@@ -204,7 +204,7 @@ class WifiPhyOperatingChannel
      * \param segment the index of the frequency segment (if operating channel is non-contiguous)
      * \return the center frequency for a given frequency segment (in MHz)
      */
-    uint16_t GetFrequency(std::size_t segment = 0) const;
+    int64_t GetFrequency(std::size_t segment = 0) const;
     /**
      * Return the channel width for a given frequency segment (in MHz).
      * Segments are ordered by increasing frequencies, hence by default
@@ -234,7 +234,7 @@ class WifiPhyOperatingChannel
      *
      * \return the center frequency per segment (in MHz)
      */
-    std::vector<uint16_t> GetFrequencies() const;
+    std::vector<int64_t> GetFrequencies() const;
     /**
      * Return the channel width per segment (in MHz).
      * Segments are ordered by increasing frequencies.
@@ -307,7 +307,7 @@ class WifiPhyOperatingChannel
      * \param primaryChannelWidth the width of the primary channel in MHz
      * \return the center frequency of the primary channel of the given width
      */
-    uint16_t GetPrimaryChannelCenterFrequency(ChannelWidthMhz primaryChannelWidth) const;
+    int64_t GetPrimaryChannelCenterFrequency(ChannelWidthMhz primaryChannelWidth) const;
 
     /**
      * Get the center frequency of the secondary channel of the given width.
@@ -315,7 +315,7 @@ class WifiPhyOperatingChannel
      * \param secondaryChannelWidth the width of the secondary channel in MHz
      * \return the center frequency of the secondary channel of the given width
      */
-    uint16_t GetSecondaryChannelCenterFrequency(ChannelWidthMhz secondaryChannelWidth) const;
+    int64_t GetSecondaryChannelCenterFrequency(ChannelWidthMhz secondaryChannelWidth) const;
 
     /**
      * Get the channel indices of all the 20 MHz channels included in the primary
@@ -367,7 +367,7 @@ class WifiPhyOperatingChannel
      *         of the set of available channels
      */
     static ConstIterator FindFirst(uint8_t number,
-                                   uint16_t frequency,
+                                   int64_t frequency,
                                    ChannelWidthMhz width,
                                    WifiStandard standard,
                                    WifiPhyBand band,

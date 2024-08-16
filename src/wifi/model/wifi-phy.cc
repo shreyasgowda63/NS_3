@@ -124,7 +124,7 @@ WifiPhy::GetTypeId()
                           TypeId::ATTR_GET,
                           UintegerValue(0),
                           MakeUintegerAccessor(&WifiPhy::GetFrequency),
-                          MakeUintegerChecker<uint16_t>())
+                          MakeUintegerChecker<int64_t>())
             .AddAttribute("ChannelNumber",
                           "The channel number of the current operating channel.",
                           TypeId::ATTR_GET,
@@ -1072,7 +1072,7 @@ WifiPhy::GetOperatingChannel() const
     return m_operatingChannel;
 }
 
-uint16_t
+int64_t
 WifiPhy::GetFrequency() const
 {
     return m_operatingChannel.GetFrequency();
@@ -1689,7 +1689,7 @@ WifiPhy::NotifyRxPpduDrop(Ptr<const WifiPpdu> ppdu, WifiPhyRxfailureReason reaso
 
 void
 WifiPhy::NotifyMonitorSniffRx(Ptr<const WifiPsdu> psdu,
-                              uint16_t channelFreqMhz,
+                              int64_t channelFreqMhz,
                               WifiTxVector txVector,
                               SignalNoiseDbm signalNoise,
                               std::vector<bool> statusPerMpdu,
@@ -1712,7 +1712,7 @@ WifiPhy::NotifyMonitorSniffRx(Ptr<const WifiPsdu> psdu,
                 if (statusPerMpdu.at(i)) // packet received without error, hand over to sniffer
                 {
                     m_phyMonitorSniffRxTrace(psdu->GetAmpduSubframe(i),
-                                             channelFreqMhz,
+                                             static_cast<uint16_t>(channelFreqMhz),
                                              txVector,
                                              aMpdu,
                                              signalNoise,
@@ -1732,7 +1732,7 @@ WifiPhy::NotifyMonitorSniffRx(Ptr<const WifiPsdu> psdu,
         {
             aMpdu.type = NORMAL_MPDU;
             m_phyMonitorSniffRxTrace(psdu->GetPacket(),
-                                     channelFreqMhz,
+                                     static_cast<uint16_t>(channelFreqMhz),
                                      txVector,
                                      aMpdu,
                                      signalNoise,
@@ -1743,7 +1743,7 @@ WifiPhy::NotifyMonitorSniffRx(Ptr<const WifiPsdu> psdu,
 
 void
 WifiPhy::NotifyMonitorSniffTx(Ptr<const WifiPsdu> psdu,
-                              uint16_t channelFreqMhz,
+                              int64_t channelFreqMhz,
                               WifiTxVector txVector,
                               uint16_t staId)
 {
@@ -2350,10 +2350,10 @@ WifiPhy::GetPrimaryChannelNumber(ChannelWidthMhz primaryChannelWidth) const
     return m_operatingChannel.GetPrimaryChannelNumber(primaryChannelWidth, m_standard);
 }
 
-uint32_t
+int64_t
 WifiPhy::GetSubcarrierSpacing() const
 {
-    uint32_t subcarrierSpacing = 0;
+    int64_t subcarrierSpacing = 0;
     switch (GetStandard())
     {
     case WIFI_STANDARD_80211a:

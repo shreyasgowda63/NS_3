@@ -1535,7 +1535,7 @@ class Bug2843TestCase : public TestCase
      * A tuple of {starting frequency, channelWidth, Number of subbands in SpectrumModel, modulation
      * type}
      */
-    typedef std::tuple<double, ChannelWidthMhz, uint32_t, WifiModulationClass>
+    typedef std::tuple<int64_t, ChannelWidthMhz, uint32_t, WifiModulationClass>
         FreqWidthSubbandModulationTuple;
     std::vector<FreqWidthSubbandModulationTuple>
         m_distinctTuples; ///< vector of distinct {starting frequency, channelWidth, Number of

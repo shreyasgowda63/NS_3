@@ -649,7 +649,7 @@ class WifiPhy : public Object
      * \param staId the STA-ID
      */
     void NotifyMonitorSniffRx(Ptr<const WifiPsdu> psdu,
-                              uint16_t channelFreqMhz,
+                              int64_t channelFreqMhz,
                               WifiTxVector txVector,
                               SignalNoiseDbm signalNoise,
                               std::vector<bool> statusPerMpdu,
@@ -697,7 +697,7 @@ class WifiPhy : public Object
      * \param staId the STA-ID
      */
     void NotifyMonitorSniffTx(Ptr<const WifiPsdu> psdu,
-                              uint16_t channelFreqMhz,
+                              int64_t channelFreqMhz,
                               WifiTxVector txVector,
                               uint16_t staId = SU_STA_ID);
 
@@ -973,7 +973,7 @@ class WifiPhy : public Object
     /**
      * \return the operating center frequency (MHz)
      */
-    uint16_t GetFrequency() const;
+    int64_t GetFrequency() const;
     /**
      * \return the index of the primary 20 MHz channel
      */
@@ -1260,7 +1260,7 @@ class WifiPhy : public Object
     /**
      * \return the subcarrier spacing corresponding to the configure standard (Hz)
      */
-    uint32_t GetSubcarrierSpacing() const;
+    int64_t GetSubcarrierSpacing() const;
 
     /**
      * Callback invoked when the PHY model starts to transmit a signal

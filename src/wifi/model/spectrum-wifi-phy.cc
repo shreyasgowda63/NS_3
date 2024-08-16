@@ -275,7 +275,7 @@ SpectrumWifiPhy::AddChannel(const Ptr<SpectrumChannel> channel, const FrequencyR
 
 void
 SpectrumWifiPhy::ResetSpectrumModel(Ptr<WifiSpectrumPhyInterface> spectrumPhyInterface,
-                                    const std::vector<uint16_t>& centerFrequencies,
+                                    const std::vector<int64_t>& centerFrequencies,
                                     ChannelWidthMhz channelWidth)
 {
     std::stringstream ss;
@@ -310,7 +310,7 @@ SpectrumWifiPhy::DoChannelSwitch()
     NS_LOG_FUNCTION(this);
     m_frequenciesBeforeSwitch = GetOperatingChannel().IsSet()
                                     ? GetOperatingChannel().GetFrequencies()
-                                    : std::vector<uint16_t>{};
+                                    : std::vector<int64_t>{};
     m_widthsBeforeSwitch = GetOperatingChannel().IsSet() ? GetOperatingChannel().GetWidths()
                                                          : std::vector<ChannelWidthMhz>{};
     WifiPhy::DoChannelSwitch();
@@ -414,7 +414,7 @@ SpectrumWifiPhy::NotifyChannelSwitched()
 }
 
 void
-SpectrumWifiPhy::ConfigureInterface(const std::vector<uint16_t>& frequencies, ChannelWidthMhz width)
+SpectrumWifiPhy::ConfigureInterface(const std::vector<int64_t>& frequencies, ChannelWidthMhz width)
 {
     std::stringstream ss;
     for (const auto& centerFrequency : frequencies)
@@ -683,7 +683,7 @@ SpectrumWifiPhy::GetGuardBandwidth(ChannelWidthMhz currentChannelWidth) const
 }
 
 uint32_t
-SpectrumWifiPhy::GetNumBandsBetweenSegments(const std::vector<uint16_t>& centerFrequencies,
+SpectrumWifiPhy::GetNumBandsBetweenSegments(const std::vector<int64_t>& centerFrequencies,
                                             ChannelWidthMhz totalWidth,
                                             uint32_t subcarrierSpacing)
 {
@@ -789,8 +789,8 @@ SpectrumWifiPhy::ConvertIndicesToFrequenciesForInterface(
     auto startGuardBand = rxSpectrumModel->Begin();
     auto startChannel = std::next(startGuardBand, indices.first);
     auto endChannel = std::next(startGuardBand, indices.second + 1);
-    auto lowFreq = static_cast<uint64_t>(startChannel->fc);
-    auto highFreq = static_cast<uint64_t>(endChannel->fc);
+    auto lowFreq = static_cast<int64_t>(startChannel->fc);
+    auto highFreq = static_cast<int64_t>(endChannel->fc);
     return {lowFreq, highFreq};
 }
 
@@ -816,7 +816,7 @@ SpectrumWifiPhy::GetSpectrumPhyInterfaces() const
 }
 
 Ptr<WifiSpectrumPhyInterface>
-SpectrumWifiPhy::GetInterfaceCoveringChannelBand(uint16_t frequency, ChannelWidthMhz width) const
+SpectrumWifiPhy::GetInterfaceCoveringChannelBand(int64_t frequency, ChannelWidthMhz width) const
 {
     const auto lowFreq = frequency - (width / 2);
     const auto highFreq = frequency + (width / 2);
