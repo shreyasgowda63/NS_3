@@ -37,7 +37,7 @@ namespace ns3
 
 ATTRIBUTE_VALUE_DEFINE_WITH_NAME(units::dimensionless::dB_t, Decibel);
 ATTRIBUTE_ACCESSOR_DEFINE(Decibel);
-ATTRIBUTE_CHECKER_WITH_CONVERTER_DEFINE(units::dimensionless::dB_t, Decibel, Double);
+ATTRIBUTE_CHECKER_DEFINE_WITH_CONVERTER(units::dimensionless::dB_t, Decibel, Double);
 
 } // namespace ns3
 
