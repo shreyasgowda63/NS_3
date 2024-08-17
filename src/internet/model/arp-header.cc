@@ -160,7 +160,7 @@ ArpHeader::Print(std::ostream& os) const
     {
         NS_ASSERT(IsReply());
         os << "hardware type: " << GetHardwareType() << " "
-           << "request "
+           << "reply "
            << "source mac: " << m_macSource << " "
            << "source ipv4: " << m_ipv4Source << " "
            << "dest mac: " << m_macDest << " "
