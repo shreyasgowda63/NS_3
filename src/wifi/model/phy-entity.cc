@@ -674,9 +674,10 @@ PhyEntity::EndOfMpdu(Ptr<Event> event,
     NS_ASSERT(signalNoiseIt != m_signalNoiseMap.end());
     signalNoiseIt->second = rxInfo.second;
 
-    RxSignalInfo rxSignalInfo;
-    rxSignalInfo.snr = rxInfo.second.signal / rxInfo.second.noise;
-    rxSignalInfo.rssi = rxInfo.second.signal;
+    RxSignalInfo rxSignalInfo{
+        .snr = DbToRatio(rxInfo.second.signal - rxInfo.second.noise),
+        .rssi = rxInfo.second.signal,
+    };
 
     auto statusPerMpduIt = m_statusPerMpduMap.find({ppdu->GetUid(), staId});
     NS_ASSERT(statusPerMpduIt != m_statusPerMpduMap.end());
