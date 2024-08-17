@@ -240,7 +240,7 @@ operator<<(std::ostream& os, ArpHeader::HardwareType hardwareType)
     case ArpHeader::HRD_TYPE_EUI_64:
         return (os << "EUI-64");
     case ArpHeader::HRD_TYPE_UNKNOWN:
-        return (os << "Unknown Hardware Type");
+        return (os << "Unrecognized Hardware Type");
     default:
         return (os << "Unrecognized Hardware Type");
     };
