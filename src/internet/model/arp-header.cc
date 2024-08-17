@@ -239,6 +239,8 @@ operator<<(std::ostream& os, ArpHeader::HardwareType hardwareType)
         return (os << "Ethernet");
     case ArpHeader::HRD_TYPE_EUI_64:
         return (os << "EUI-64");
+    case ArpHeader::HRD_TYPE_UNKNOWN:
+        return (os << "Unknown Hardware Type");
     default:
         return (os << "Unrecognized Hardware Type");
     };
