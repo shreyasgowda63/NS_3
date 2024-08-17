@@ -37,6 +37,9 @@ class ArpHeader : public Header
   public:
     /**
      * \brief Enumeration listing the possible ARP types
+     *
+     * These ARP types are part of the standard ARP packet format as defined in Section
+     * "Definitions" of \rfc{826}.
      */
     enum ArpType_e
     {
@@ -45,7 +48,12 @@ class ArpHeader : public Header
     };
 
     /**
-     * \brief Enumeration listing the possible hardware types
+     * \brief Enumeration listing the supported hardware types
+     *
+     * \rfc{826} specifies that the Hardware Type field in the ARP packet indicates the type
+     of hardware used.
+     * For the full list of Hardware Types, refer to:
+     * https://www.iana.org/assignments/arp-parameters/arp-parameters.xhtml
      */
     enum HardwareType
     {
