@@ -913,8 +913,8 @@ WifiPhyCcaIndicationTest::SendHeSuPpdu(double txPowerDbm,
     hdr.SetQosTid(0);
     Ptr<WifiPsdu> psdu = Create<WifiPsdu>(pkt, hdr);
 
-    m_txPhy->SetTxPowerStart(txPowerDbm);
-    m_txPhy->SetTxPowerEnd(txPowerDbm);
+    m_txPhy->SetTxPowerStart(units::power::dBm_t(txPowerDbm));
+    m_txPhy->SetTxPowerEnd(units::power::dBm_t(txPowerDbm));
 
     m_txPhy->Send(psdu, txVector);
 }

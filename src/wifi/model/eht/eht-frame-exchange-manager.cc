@@ -454,7 +454,7 @@ EhtFrameExchangeManager::ForwardPsduDown(Ptr<const WifiPsdu> psdu, WifiTxVector&
                 auto txPowerDbm = phy->GetPowerDbm(txVector.GetTxPowerLevel()) + phy->GetTxGain();
                 // generate in-device interference on the other EMLSR link for the duration of this
                 // transmission
-                GenerateInDeviceInterference(linkId, txDuration, DbmToW(txPowerDbm));
+                GenerateInDeviceInterference(linkId, txDuration, DbmToW(txPowerDbm.to<double>()));
             }
         }
     }
@@ -504,7 +504,7 @@ EhtFrameExchangeManager::ForwardPsduMapDown(WifiConstPsduMap psduMap, WifiTxVect
                 auto txPowerDbm = phy->GetPowerDbm(txVector.GetTxPowerLevel()) + phy->GetTxGain();
                 // generate in-device interference on the other EMLSR link for the duration of this
                 // transmission
-                GenerateInDeviceInterference(linkId, txDuration, DbmToW(txPowerDbm));
+                GenerateInDeviceInterference(linkId, txDuration, DbmToW(txPowerDbm.to<double>()));
             }
         }
     }

@@ -1835,8 +1835,8 @@ SpectrumWifiPhyMultipleInterfacesTest::SendPpdu(Ptr<SpectrumWifiPhy> phy,
     m_lastTxEnd = m_lastTxStart + WifiPhy::CalculateTxDuration({std::make_pair(SU_STA_ID, psdu)},
                                                                txVector,
                                                                phy->GetPhyBand());
-    phy->SetTxPowerStart(txPowerDbm);
-    phy->SetTxPowerEnd(txPowerDbm);
+    phy->SetTxPowerStart(DBm(txPowerDbm));
+    phy->SetTxPowerEnd(DBm(txPowerDbm));
     phy->Send(WifiConstPsduMap({std::make_pair(SU_STA_ID, psdu)}), txVector);
 }
 
