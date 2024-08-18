@@ -1494,16 +1494,17 @@ HeFrameExchangeManager::GetHeTbTxVector(CtrlTriggerHeader trigger, Mac48Address 
     uint8_t numPowerLevels = m_phy->GetNTxPower();
     if (numPowerLevels > 1)
     {
-        double stepDbm = (m_phy->GetTxPowerEnd() - m_phy->GetTxPowerStart()) / (numPowerLevels - 1);
+        double stepDbm =
+            (m_phy->GetTxPowerEnd() - m_phy->GetTxPowerStart()).to<double>() / (numPowerLevels - 1);
         powerLevel = static_cast<uint8_t>(
-            ceil((reqTxPowerDbm - m_phy->GetTxPowerStart()) /
+            ceil((reqTxPowerDbm - m_phy->GetTxPowerStart().to<double>()) /
                  stepDbm)); // better be slightly above so as to satisfy target UL RSSI
         if (powerLevel > numPowerLevels)
         {
             powerLevel = numPowerLevels; // capping will trigger warning below
         }
     }
-    if (reqTxPowerDbm > m_phy->GetPowerDbm(powerLevel))
+    if (reqTxPowerDbm > m_phy->GetPowerDbm(powerLevel).to<double>())
     {
         NS_LOG_WARN("The requested power level ("
                     << reqTxPowerDbm << "dBm) cannot be satisfied (max: " << m_phy->GetTxPowerEnd()
@@ -1513,9 +1514,9 @@ HeFrameExchangeManager::GetHeTbTxVector(CtrlTriggerHeader trigger, Mac48Address 
     NS_LOG_LOGIC("UL power control: "
                  << "input {pathLoss=" << pathLossDb << "dB, reqTxPower=" << reqTxPowerDbm << "dBm}"
                  << " output {powerLevel=" << +powerLevel << " -> "
-                 << m_phy->GetPowerDbm(powerLevel) << "dBm}"
-                 << " PHY power capa {min=" << m_phy->GetTxPowerStart() << "dBm, max="
-                 << m_phy->GetTxPowerEnd() << "dBm, levels:" << +numPowerLevels << "}");
+                 << m_phy->GetPowerDbm(powerLevel)
+                 << " PHY power capa {min=" << m_phy->GetTxPowerStart()
+                 << " max=" << m_phy->GetTxPowerEnd() << " levels:" << +numPowerLevels << "}");
 
     return v;
 }
@@ -1533,7 +1534,7 @@ HeFrameExchangeManager::SetTargetRssi(CtrlTriggerHeader& trigger) const
     NS_ASSERT(m_apMac);
 
     trigger.SetApTxPower(static_cast<int8_t>(
-        m_phy->GetPowerDbm(GetWifiRemoteStationManager()->GetDefaultTxPowerLevel())));
+        m_phy->GetPowerDbm(GetWifiRemoteStationManager()->GetDefaultTxPowerLevel()).to<double>()));
     for (auto& userInfo : trigger)
     {
         const auto staList = m_apMac->GetStaList(m_linkId);

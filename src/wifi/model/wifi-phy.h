@@ -829,25 +829,25 @@ class WifiPhy : public Object
      *
      * \param start the minimum transmission power level (dBm)
      */
-    void SetTxPowerStart(double start);
+    void SetTxPowerStart(units::power::dBm_t start);
     /**
      * Return the minimum available transmission power level (dBm).
      *
      * \return the minimum available transmission power level (dBm)
      */
-    double GetTxPowerStart() const;
+    units::power::dBm_t GetTxPowerStart() const;
     /**
      * Sets the maximum available transmission power level (dBm).
      *
      * \param end the maximum transmission power level (dBm)
      */
-    void SetTxPowerEnd(double end);
+    void SetTxPowerEnd(units::power::dBm_t end);
     /**
      * Return the maximum available transmission power level (dBm).
      *
      * \return the maximum available transmission power level (dBm)
      */
-    double GetTxPowerEnd() const;
+    units::power::dBm_t GetTxPowerEnd() const;
     /**
      * Sets the number of transmission power levels available between the
      * minimum level and the maximum level. Transmission power levels are
@@ -1100,7 +1100,7 @@ class WifiPhy : public Object
      *
      * \return the transmission power in dBm at the given power level
      */
-    double GetPowerDbm(uint8_t power) const;
+    units::power::dBm_t GetPowerDbm(uint8_t power) const;
 
     /**
      * Reset PHY to IDLE, with some potential TX power restrictions for the next transmission.
@@ -1596,8 +1596,8 @@ class WifiPhy : public Object
 
     units::dimensionless::dB_t m_txGain; //!< Transmission gain
     units::dimensionless::dB_t m_rxGain; //!< Reception gain
-    double m_txPowerBaseDbm;             //!< Minimum transmission power (dBm)
-    double m_txPowerEndDbm;              //!< Maximum transmission power (dBm)
+    units::power::dBm_t m_txPowerBase;   //!< Minimum transmission power (dBm)
+    units::power::dBm_t m_txPowerEnd;    //!< Maximum transmission power (dBm)
     uint8_t m_nTxPower;                  //!< Number of available transmission power levels
     double m_powerDensityLimit;          //!< the power density limit (dBm/MHz)
 

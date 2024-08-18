@@ -189,15 +189,15 @@ TestWifiPhyRxTraceHelper::DoSetup()
     auto devA = CreateObject<WifiNetDevice>();
     m_txA = CreateObject<SpectrumWifiPhy>();
     m_txA->SetDevice(devA);
-    m_txA->SetTxPowerStart(txPower);
-    m_txA->SetTxPowerEnd(txPower);
+    m_txA->SetTxPowerStart(units::power::dBm_t(txPower));
+    m_txA->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     auto nodeB = CreateObject<Node>();
     auto devB = CreateObject<WifiNetDevice>();
     m_txB = CreateObject<SpectrumWifiPhy>();
     m_txB->SetDevice(devB);
-    m_txB->SetTxPowerStart(txPower);
-    m_txB->SetTxPowerEnd(txPower);
+    m_txB->SetTxPowerStart(units::power::dBm_t(txPower));
+    m_txB->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     nodeRx = CreateObject<Node>();
     auto devRx = CreateObject<WifiNetDevice>();
@@ -266,8 +266,8 @@ TestWifiPhyRxTraceHelper::SendPpduWithTwoMpdus(double rxPowerDbm,
                                                Ptr<ns3::SpectrumWifiPhy> tx_phy)
 {
     double txPower = rxPowerDbm;
-    tx_phy->SetTxPowerStart(txPower);
-    tx_phy->SetTxPowerEnd(txPower);
+    tx_phy->SetTxPowerStart(units::power::dBm_t(txPower));
+    tx_phy->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     WifiTxVector txVector =
         WifiTxVector(HePhy::GetHeMcs0(), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, true);
@@ -299,8 +299,8 @@ TestWifiPhyRxTraceHelper::SendPpduWithOneMpdu(double rxPowerDbm,
                                               Ptr<ns3::SpectrumWifiPhy> tx_phy)
 {
     double txPower = rxPowerDbm;
-    tx_phy->SetTxPowerStart(txPower);
-    tx_phy->SetTxPowerEnd(txPower);
+    tx_phy->SetTxPowerStart(units::power::dBm_t(txPower));
+    tx_phy->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     WifiTxVector txVector =
         WifiTxVector(HePhy::GetHeMcs0(), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, true);
@@ -982,13 +982,13 @@ TestWifiPhyRxTraceHelperMloStr::DoSetup()
 
     m_tx0A = CreateObject<SpectrumWifiPhy>();
     m_tx0A->SetDevice(devA);
-    m_tx0A->SetTxPowerStart(txPower);
-    m_tx0A->SetTxPowerEnd(txPower);
+    m_tx0A->SetTxPowerStart(units::power::dBm_t(txPower));
+    m_tx0A->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     m_tx0B = CreateObject<SpectrumWifiPhy>();
     m_tx0B->SetDevice(devA);
-    m_tx0B->SetTxPowerStart(txPower);
-    m_tx0B->SetTxPowerEnd(txPower);
+    m_tx0B->SetTxPowerStart(units::power::dBm_t(txPower));
+    m_tx0B->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     auto nodeB = CreateObject<Node>();
     auto devB = CreateObject<WifiNetDevice>();
@@ -997,13 +997,13 @@ TestWifiPhyRxTraceHelperMloStr::DoSetup()
 
     m_tx1A = CreateObject<SpectrumWifiPhy>();
     m_tx1A->SetDevice(devB);
-    m_tx1A->SetTxPowerStart(txPower);
-    m_tx1A->SetTxPowerEnd(txPower);
+    m_tx1A->SetTxPowerStart(units::power::dBm_t(txPower));
+    m_tx1A->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     m_tx1B = CreateObject<SpectrumWifiPhy>();
     m_tx1B->SetDevice(devB);
-    m_tx1B->SetTxPowerStart(txPower);
-    m_tx1B->SetTxPowerEnd(txPower);
+    m_tx1B->SetTxPowerStart(units::power::dBm_t(txPower));
+    m_tx1B->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     auto nodeRx = CreateObject<Node>();
     auto devRx = CreateObject<WifiNetDevice>();
@@ -1126,8 +1126,8 @@ TestWifiPhyRxTraceHelperMloStr::SendPpduWithTwoMpdus(double rxPowerDbm,
                                                      Ptr<ns3::SpectrumWifiPhy> tx_phy)
 {
     double txPower = rxPowerDbm;
-    tx_phy->SetTxPowerStart(txPower);
-    tx_phy->SetTxPowerEnd(txPower);
+    tx_phy->SetTxPowerStart(units::power::dBm_t(txPower));
+    tx_phy->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     WifiTxVector txVector =
         WifiTxVector(HePhy::GetHeMcs0(), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, true);
@@ -1159,8 +1159,8 @@ TestWifiPhyRxTraceHelperMloStr::SendPpduWithOneMpdu(double rxPowerDbm,
                                                     Ptr<ns3::SpectrumWifiPhy> tx_phy)
 {
     double txPower = rxPowerDbm;
-    tx_phy->SetTxPowerStart(txPower);
-    tx_phy->SetTxPowerEnd(txPower);
+    tx_phy->SetTxPowerStart(units::power::dBm_t(txPower));
+    tx_phy->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     WifiTxVector txVector =
         WifiTxVector(HePhy::GetHeMcs0(),
@@ -1793,15 +1793,15 @@ TestWifiPhyRxTraceHelperYans::DoSetup()
     auto devA = CreateObject<WifiNetDevice>();
     m_txA = CreateObject<YansWifiPhy>();
     m_txA->SetDevice(devA);
-    m_txA->SetTxPowerStart(txPower);
-    m_txA->SetTxPowerEnd(txPower);
+    m_txA->SetTxPowerStart(units::power::dBm_t(txPower));
+    m_txA->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     auto nodeB = CreateObject<Node>();
     auto devB = CreateObject<WifiNetDevice>();
     m_txB = CreateObject<YansWifiPhy>();
     m_txB->SetDevice(devB);
-    m_txB->SetTxPowerStart(txPower);
-    m_txB->SetTxPowerEnd(txPower);
+    m_txB->SetTxPowerStart(units::power::dBm_t(txPower));
+    m_txB->SetTxPowerEnd(units::power::dBm_t(txPower));
 
     nodeRx = CreateObject<Node>();
     auto devRx = CreateObject<WifiNetDevice>();

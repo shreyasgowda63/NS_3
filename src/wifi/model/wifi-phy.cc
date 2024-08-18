@@ -40,6 +40,7 @@
 #include "ns3/log.h"
 #include "ns3/mobility-model.h"
 #include "ns3/pointer.h"
+#include "ns3/power.h"
 #include "ns3/random-variable-stream.h"
 #include "ns3/simulator.h"
 #include "ns3/string.h"
@@ -195,14 +196,14 @@ WifiPhy::GetTypeId()
                           MakeUintegerChecker<uint8_t>())
             .AddAttribute("TxPowerEnd",
                           "Maximum available transmission level (dBm).",
-                          DoubleValue(16.0206),
-                          MakeDoubleAccessor(&WifiPhy::SetTxPowerEnd, &WifiPhy::GetTxPowerEnd),
-                          MakeDoubleChecker<double>())
+                          PowerValue(units::power::dBm_t(16.0206)),
+                          MakePowerAccessor(&WifiPhy::SetTxPowerEnd, &WifiPhy::GetTxPowerEnd),
+                          MakePowerChecker())
             .AddAttribute("TxPowerStart",
                           "Minimum available transmission level (dBm).",
-                          DoubleValue(16.0206),
-                          MakeDoubleAccessor(&WifiPhy::SetTxPowerStart, &WifiPhy::GetTxPowerStart),
-                          MakeDoubleChecker<double>())
+                          PowerValue(units::power::dBm_t(16.0206)),
+                          MakePowerAccessor(&WifiPhy::SetTxPowerStart, &WifiPhy::GetTxPowerStart),
+                          MakePowerChecker())
             .AddAttribute(
                 "RxNoiseFigure",
                 "Loss (dB) in the Signal-to-Noise-Ratio due to non-idealities in the receiver."
@@ -550,29 +551,29 @@ WifiPhy::SetRxNoiseFigure(double noiseFigureDb)
 }
 
 void
-WifiPhy::SetTxPowerStart(double start)
+WifiPhy::SetTxPowerStart(units::power::dBm_t start)
 {
     NS_LOG_FUNCTION(this << start);
-    m_txPowerBaseDbm = start;
+    m_txPowerBase = start;
 }
 
-double
+units::power::dBm_t
 WifiPhy::GetTxPowerStart() const
 {
-    return m_txPowerBaseDbm;
+    return m_txPowerBase;
 }
 
 void
-WifiPhy::SetTxPowerEnd(double end)
+WifiPhy::SetTxPowerEnd(units::power::dBm_t end)
 {
     NS_LOG_FUNCTION(this << end);
-    m_txPowerEndDbm = end;
+    m_txPowerEnd = end;
 }
 
-double
+units::power::dBm_t
 WifiPhy::GetTxPowerEnd() const
 {
-    return m_txPowerEndDbm;
+    return m_txPowerEnd;
 }
 
 void
@@ -706,21 +707,23 @@ WifiPhy::SetWifiRadioEnergyModel(const Ptr<WifiRadioEnergyModel> wifiRadioEnergy
     m_wifiRadioEnergyModel = wifiRadioEnergyModel;
 }
 
-double
+units::power::dBm_t
 WifiPhy::GetPowerDbm(uint8_t power) const
 {
-    NS_ASSERT(m_txPowerBaseDbm <= m_txPowerEndDbm);
+    NS_ASSERT(m_txPowerBase <= m_txPowerEnd);
     NS_ASSERT(m_nTxPower > 0);
-    double dbm;
+    units::power::dBm_t dbm;
     if (m_nTxPower > 1)
     {
-        dbm = m_txPowerBaseDbm + power * (m_txPowerEndDbm - m_txPowerBaseDbm) / (m_nTxPower - 1);
+        dbm = m_txPowerBase +
+              units::dimensionless::dB_t(power * (m_txPowerEnd - m_txPowerBase).to<double>() /
+                                         (m_nTxPower - 1));
     }
     else
     {
-        NS_ASSERT_MSG(m_txPowerBaseDbm == m_txPowerEndDbm,
+        NS_ASSERT_MSG(m_txPowerBase == m_txPowerEnd,
                       "cannot have TxPowerEnd != TxPowerStart with TxPowerLevels == 1");
-        dbm = m_txPowerBaseDbm;
+        dbm = m_txPowerBase;
     }
     return dbm;
 }
@@ -1895,7 +1898,10 @@ WifiPhy::Send(WifiConstPsduMap psdus, const WifiTxVector& txVector)
     {
         NotifyMonitorSniffTx(psdu.second, GetFrequency(), txVector, psdu.first);
     }
-    m_state->SwitchToTx(txDuration, psdus, GetPowerDbm(txVector.GetTxPowerLevel()), txVector);
+    m_state->SwitchToTx(txDuration,
+                        psdus,
+                        GetPowerDbm(txVector.GetTxPowerLevel()).to<double>(),
+                        txVector);
 
     if (m_wifiRadioEnergyModel &&
         m_wifiRadioEnergyModel->GetMaximumTimeInState(WifiPhyState::TX) < txDuration)
@@ -2290,35 +2296,37 @@ WifiPhy::GetTxPowerForTransmission(Ptr<const WifiPpdu> ppdu) const
     NS_LOG_FUNCTION(this << m_powerRestricted << ppdu);
     const auto& txVector = ppdu->GetTxVector();
     // Get transmit power before antenna gain
-    double txPowerDbm;
+    units::power::dBm_t txPower;
     if (!m_powerRestricted)
     {
-        txPowerDbm = GetPowerDbm(txVector.GetTxPowerLevel());
+        txPower = GetPowerDbm(txVector.GetTxPowerLevel());
     }
     else
     {
         if (txVector.GetNssMax() > 1 || txVector.GetNssTotal() > 1)
         {
-            txPowerDbm = std::min(m_txPowerMaxMimo, GetPowerDbm(txVector.GetTxPowerLevel()));
+            txPower = units::power::dBm_t(
+                std::min(m_txPowerMaxMimo, GetPowerDbm(txVector.GetTxPowerLevel()).to<double>()));
         }
         else
         {
-            txPowerDbm = std::min(m_txPowerMaxSiso, GetPowerDbm(txVector.GetTxPowerLevel()));
+            txPower = units::power::dBm_t(
+                std::min(m_txPowerMaxSiso, GetPowerDbm(txVector.GetTxPowerLevel()).to<double>()));
         }
     }
 
     // Apply power density constraint on EIRP
     const auto channelWidth = ppdu->GetTxChannelWidth();
-    double txPowerDbmPerMhz = (txPowerDbm + GetTxGain().to<double>()) -
+    double txPowerDbmPerMhz = (txPower + GetTxGain()).to<double>() -
                               RatioToDb(channelWidth); // account for antenna gain since EIRP
-    NS_LOG_INFO("txPowerDbm=" << txPowerDbm << " with txPowerDbmPerMhz=" << txPowerDbmPerMhz
+    NS_LOG_INFO("txPowerDbm=" << txPower << " with txPowerDbmPerMhz=" << txPowerDbmPerMhz
                               << " over " << channelWidth << " MHz");
-    txPowerDbm = std::min(txPowerDbmPerMhz, m_powerDensityLimit) + RatioToDb(channelWidth);
-    txPowerDbm -=
-        GetTxGain().to<double>(); // remove antenna gain since will be added right afterwards
-    NS_LOG_INFO("txPowerDbm=" << txPowerDbm
+    txPower = units::power::dBm_t(std::min(txPowerDbmPerMhz, m_powerDensityLimit) +
+                                  RatioToDb(channelWidth));
+    txPower = txPower - GetTxGain(); // remove antenna gain since will be added right afterwards
+    NS_LOG_INFO("txPowerDbm=" << txPower
                               << " after applying m_powerDensityLimit=" << m_powerDensityLimit);
-    return txPowerDbm;
+    return txPower.to<double>();
 }
 
 Ptr<const WifiPsdu>
