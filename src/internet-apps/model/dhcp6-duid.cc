@@ -41,8 +41,7 @@ Duid::Duid()
     m_duidType = 3;
     m_hardwareType = 0;
     m_time = Time();
-    m_linkLayerAddress = nullptr;
-    m_idLen = 0;
+    m_linkLayerAddress = std::vector<uint8_t>();
 }
 
 TypeId
@@ -65,8 +64,7 @@ bool
 Duid::operator==(const Duid& o) const
 {
     return (m_duidType == o.m_duidType && m_hardwareType == o.m_hardwareType &&
-            m_idLen == o.m_idLen &&
-            memcmp(m_linkLayerAddress, o.m_linkLayerAddress, m_idLen) == 0 && m_time == o.m_time);
+            m_linkLayerAddress == o.m_linkLayerAddress);
 }
 
 bool
@@ -106,21 +104,21 @@ operator<(const Duid& a, const Duid& b)
 bool
 Duid::IsInvalid() const
 {
-    return m_linkLayerAddress == nullptr;
+    return m_linkLayerAddress.empty();
 }
 
 uint8_t
 Duid::GetLength() const
 {
-    return m_idLen;
+    return m_linkLayerAddress.size();
 }
 
-uint32_t
-Duid::CopyTo(uint8_t* buffer) const
+std::vector<uint8_t>
+Duid::CopyTo(std::vector<uint8_t> buffer) const
 {
     NS_LOG_FUNCTION(this << &buffer);
-    std::memcpy(buffer, m_linkLayerAddress, m_idLen);
-    return m_idLen;
+    buffer = m_linkLayerAddress;
+    return buffer;
 }
 
 uint16_t
@@ -152,16 +150,16 @@ Duid::SetHardwareType(uint16_t hardwareType)
 }
 
 void
-Duid::SetDuid(uint8_t* linkLayerAddress, uint8_t idLen)
+Duid::SetDuid(std::vector<uint8_t> linkLayerAddress)
 {
-    NS_LOG_FUNCTION(this << linkLayerAddress << idLen);
+    NS_LOG_FUNCTION(this << linkLayerAddress);
 
     m_duidType = 3; // DUID-LL
-    m_idLen = idLen;
+    uint8_t idLen = linkLayerAddress.size();
 
-    NS_ASSERT_MSG(m_idLen == 6 || m_idLen != 8, "Duid: Invalid link layer address length.");
+    NS_ASSERT_MSG(idLen == 6 || idLen == 8, "Duid: Invalid link layer address length.");
 
-    switch (m_idLen)
+    switch (idLen)
     {
     case 6:
         // Ethernet - 48 bit length
@@ -173,13 +171,8 @@ Duid::SetDuid(uint8_t* linkLayerAddress, uint8_t idLen)
         break;
     }
 
-    if (m_linkLayerAddress != nullptr)
-    {
-        delete[] m_linkLayerAddress;
-    }
-    m_linkLayerAddress = new uint8_t[m_idLen]();
-
-    memcpy(m_linkLayerAddress, linkLayerAddress, m_idLen);
+    m_linkLayerAddress.resize(idLen);
+    m_linkLayerAddress = linkLayerAddress;
 }
 
 void
@@ -216,9 +209,12 @@ Duid::Initialize(Ptr<Node> node)
     NS_ASSERT_MSG(!duidAddress.IsInvalid(), "Duid: No suitable NetDevice found for DUID.");
 
     // Consider the link-layer address of the first NetDevice in the list.
-    auto buffer = new uint8_t[duidAddress.GetLength()]();
+    uint8_t buffer[16];
     duidAddress.CopyTo(buffer);
-    SetDuid(buffer, duidAddress.GetLength());
+
+    std::vector<uint8_t> identifier(duidAddress.GetLength());
+    std::copy(buffer, buffer + duidAddress.GetLength(), identifier.begin());
+    SetDuid(identifier);
 }
 
 Time
@@ -238,7 +234,7 @@ Duid::SetTime(Time time)
 uint32_t
 Duid::GetSerializedSize() const
 {
-    return 10;
+    return 4 + m_linkLayerAddress.size();
 }
 
 void
@@ -253,7 +249,11 @@ Duid::Serialize(Buffer::Iterator start) const
     Buffer::Iterator i = start;
     i.WriteHtonU16(m_duidType);
     i.WriteHtonU16(m_hardwareType);
-    i.Write(m_linkLayerAddress, m_idLen);
+
+    for (uint32_t j = 0; j < m_linkLayerAddress.size(); j++)
+    {
+        i.WriteU8(m_linkLayerAddress[j]);
+    }
 }
 
 uint32_t
@@ -270,20 +270,24 @@ uint32_t
 Duid::DeserializeIdentifier(Buffer::Iterator start, uint32_t len)
 {
     Buffer::Iterator i = start;
-    m_idLen = len;
-    m_linkLayerAddress = new uint8_t[m_idLen]();
-    i.Read(m_linkLayerAddress, m_idLen);
-    return m_idLen;
+    m_linkLayerAddress.resize(len);
+
+    for (uint32_t j = 0; j < len; j++)
+    {
+        m_linkLayerAddress[j] = i.ReadU8();
+    }
+
+    return m_linkLayerAddress.size();
 }
 
 size_t
 DuidHash::operator()(const Duid& x) const
 {
-    uint8_t buffer[20];
     uint8_t duidLen = x.GetLength();
+    std::vector<uint8_t> buffer(duidLen);
     x.CopyTo(buffer);
 
-    std::string s(buffer, buffer + duidLen);
+    std::string s(buffer.begin(), buffer.begin() + duidLen);
     return std::hash<std::string>{}(s);
 }
 } // namespace dhcp6

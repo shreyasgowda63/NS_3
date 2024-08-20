@@ -97,7 +97,10 @@ IdentifierOption::IdentifierOption(uint16_t hardwareType, Address linkLayerAddre
 
     uint8_t buffer[16];
     linkLayerAddress.CopyTo(buffer);
-    m_duid.SetDuid(buffer, linkLayerAddress.GetLength());
+
+    std::vector<uint8_t> identifier;
+    std::copy(buffer, buffer + linkLayerAddress.GetLength(), identifier.begin());
+    m_duid.SetDuid(identifier);
 
     NS_LOG_FUNCTION(this << hardwareType << linkLayerAddress);
 }

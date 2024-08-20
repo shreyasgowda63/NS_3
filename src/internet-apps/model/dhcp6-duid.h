@@ -67,13 +67,6 @@ class Duid : public Header
     bool IsInvalid() const;
 
     /**
-     * \brief Copy the link layer address to a buffer.
-     * \param buffer The buffer to which the link layer address is to be copied.
-     * \return the number of bytes copied.
-     */
-    uint32_t CopyTo(uint8_t* buffer) const;
-
-    /**
      * \brief Get the DUID type
      * \return the DUID type.
      */
@@ -102,7 +95,7 @@ class Duid : public Header
      * \param linkLayerAddress the link layer address of the node.
      * \param idLen the length of the identifier.
      */
-    void SetDuid(uint8_t* linkLayerAddress, uint8_t idLen);
+    void SetDuid(std::vector<uint8_t> linkLayerAddress);
 
     /**
      * \brief Get the time at which the DUID is generated.
@@ -135,6 +128,13 @@ class Duid : public Header
      * \return The number of bytes read.
      */
     uint32_t DeserializeIdentifier(Buffer::Iterator start, uint32_t len);
+
+    /**
+     * \brief Copy the link layer address to a buffer.
+     * \param buffer The buffer to which the link layer address is to be copied.
+     * \return the updated buffer.
+     */
+    std::vector<uint8_t> CopyTo(std::vector<uint8_t> buffer) const;
 
     /**
      * \brief Comparison operator
@@ -172,12 +172,7 @@ class Duid : public Header
     /**
      * Identifier of the node in bytes.
      */
-    uint8_t* m_linkLayerAddress;
-
-    /**
-     * Length of the identifier.
-     */
-    uint8_t m_idLen;
+    std::vector<uint8_t> m_linkLayerAddress;
 };
 
 /**
