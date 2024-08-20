@@ -198,15 +198,26 @@ XmlConfigSave::Attributes()
         {
             TypeId tid = object->GetInstanceTypeId();
             ns3::TypeId::SupportLevel supportLevel = TypeId::SupportLevel::SUPPORTED;
-            for (std::size_t i = 0; i < tid.GetAttributeN(); i++)
+            bool found = false;
+
+            while (!found && tid != TypeId())
             {
-                TypeId::AttributeInformation tmp = tid.GetAttribute(i);
-                if (tmp.name == name)
+                for (std::size_t i = 0; i < tid.GetAttributeN(); i++)
                 {
-                    supportLevel = tmp.supportLevel;
-                    break;
+                    TypeId::AttributeInformation tmp = tid.GetAttribute(i);
+                    if (tmp.name == name)
+                    {
+                        supportLevel = tmp.supportLevel;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    tid = tid.GetParent();
                 }
             }
+
             if (supportLevel == TypeId::SupportLevel::OBSOLETE)
             {
                 NS_LOG_WARN("Attribute " << GetCurrentPath()

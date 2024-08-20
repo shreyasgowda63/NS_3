@@ -151,19 +151,32 @@ RawTextConfigSave::Attributes()
         void DoVisitAttribute(Ptr<Object> object, std::string name) override
         {
             StringValue str;
-
             ns3::TypeId::SupportLevel supportLevel = TypeId::SupportLevel::SUPPORTED;
             TypeId tid = object->GetInstanceTypeId();
 
-            for (std::size_t i = 0; i < tid.GetAttributeN(); i++)
+            bool found = false;
+            while (!found && tid != TypeId())
             {
-                TypeId::AttributeInformation tmp = tid.GetAttribute(i);
-                if (tmp.name == name)
+                for (std::size_t i = 0; i < tid.GetAttributeN(); i++)
                 {
-                    supportLevel = tmp.supportLevel;
-                    break;
+                    TypeId::AttributeInformation tmp = tid.GetAttribute(i);
+                    NS_LOG_DEBUG("Checking name " << tmp.name << " against " << name << " i " << i
+                                                  << " num " << tid.GetAttributeN());
+                    NS_LOG_DEBUG("Checking tid name " << tid.GetName() << " against other name "
+                                                      << object->GetTypeId().GetName());
+                    if (tmp.name == name)
+                    {
+                        supportLevel = tmp.supportLevel;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    tid = tid.GetParent();
                 }
             }
+
             if (supportLevel == TypeId::SupportLevel::OBSOLETE)
             {
                 NS_LOG_WARN("Attribute " << GetCurrentPath()
