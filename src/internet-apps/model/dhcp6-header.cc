@@ -122,7 +122,7 @@ Dhcp6Header::GetStatusCodeOption()
     return statusCode;
 }
 
-std::list<IaOptions>
+std::vector<IaOptions>
 Dhcp6Header::GetIanaOptions()
 {
     return m_ianaList;
@@ -201,7 +201,7 @@ Dhcp6Header::AddOptionRequest(uint16_t optionType)
 }
 
 void
-Dhcp6Header::HandleOptionRequest(std::list<uint16_t> requestedOptions)
+Dhcp6Header::HandleOptionRequest(std::vector<uint16_t> requestedOptions)
 {
     // Currently, only OPTION_SOL_MAX_RT is supported.
     for (auto itr : requestedOptions)
@@ -430,7 +430,7 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
             i.WriteHtonU32(itr.GetT1());
             i.WriteHtonU32(itr.GetT2());
 
-            std::list<IaAddressOption> iaAddresses = itr.m_iaAddressOption;
+            std::vector<IaAddressOption> iaAddresses = itr.m_iaAddressOption;
             for (const auto& iaItr : iaAddresses)
             {
                 i.WriteHtonU16(iaItr.GetOptionCode());
@@ -456,7 +456,7 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
         i.WriteHtonU16(m_optionRequest.GetOptionCode());
         i.WriteHtonU16(m_optionRequest.GetOptionLength());
 
-        std::list<uint16_t> requestedOptions = m_optionRequest.GetRequestedOptions();
+        std::vector<uint16_t> requestedOptions = m_optionRequest.GetRequestedOptions();
         for (const auto& itr : requestedOptions)
         {
             i.WriteHtonU16(itr);

@@ -165,7 +165,7 @@ class Dhcp6Header : public Header
      * \brief Get the list of IA_NA options.
      * \return the list of IA_NA options.
      */
-    std::list<IaOptions> GetIanaOptions();
+    std::vector<IaOptions> GetIanaOptions();
 
     /**
      * \brief Get the status code of the operation.
@@ -238,9 +238,9 @@ class Dhcp6Header : public Header
 
     /**
      * \brief Handle all options requested by client.
-     * \param requestedOptions the list of options requested by the client.
+     * \param requestedOptions the options requested by the client.
      */
-    void HandleOptionRequest(std::list<uint16_t> requestedOptions);
+    void HandleOptionRequest(std::vector<uint16_t> requestedOptions);
 
     /**
      * \brief Add the SOL_MAX_RT option.
@@ -345,14 +345,14 @@ class Dhcp6Header : public Header
     IntegerOptions<uint16_t> elapsedTime;
 
     /**
-     * List of IANA options.
+     * Vector of IANA options.
      */
-    std::list<IaOptions> m_ianaList;
+    std::vector<IaOptions> m_ianaList;
 
     /**
-     * List of IATA options.
+     * Vector of IATA options.
      */
-    std::list<IaOptions> m_iataList;
+    std::vector<IaOptions> m_iataList;
 
     /**
      * Default value for the SOL_MAX_RT option.

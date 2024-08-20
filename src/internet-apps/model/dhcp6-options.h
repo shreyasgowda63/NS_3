@@ -327,7 +327,7 @@ class IaOptions : public Options
     /**
      * The list of IA Address options associated with the IANA.
      */
-    std::list<IaAddressOption> m_iaAddressOption;
+    std::vector<IaAddressOption> m_iaAddressOption;
 
   private:
     /**
@@ -371,7 +371,7 @@ class RequestOptions : public Options
      * \brief Get the option values
      * \return requested option list.
      */
-    std::list<uint16_t> GetRequestedOptions() const;
+    std::vector<uint16_t> GetRequestedOptions() const;
 
     /**
      * \brief Set the option values.
@@ -383,7 +383,7 @@ class RequestOptions : public Options
     /**
      * List of requested options.
      */
-    std::list<uint16_t> m_requestedOptions;
+    std::vector<uint16_t> m_requestedOptions;
 };
 
 /**

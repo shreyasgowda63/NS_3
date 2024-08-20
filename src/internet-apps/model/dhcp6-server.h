@@ -26,9 +26,9 @@
 
 #include "ns3/application.h"
 #include "ns3/ipv6-address.h"
+#include "ns3/net-device-container.h"
 #include "ns3/pair.h"
 #include "ns3/ptr.h"
-#include "ns3/net-device-container.h"
 
 #include <map>
 

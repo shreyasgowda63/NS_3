@@ -98,7 +98,7 @@ Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
     // Add each IA in the header to the IA bindings.
     if (headerOptions[Dhcp6Header::OPTION_IA_NA])
     {
-        std::list<IaOptions> iaOpt = header.GetIanaOptions();
+        std::vector<IaOptions> iaOpt = header.GetIanaOptions();
         for (const auto& itr : iaOpt)
         {
             uint32_t iaid = itr.GetIaid();
@@ -129,7 +129,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
 
     // Find all requested IAIDs for this client.
     std::vector<uint32_t> requestedIa;
-    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    std::vector<IaOptions> ianaOptionsList = header.GetIanaOptions();
     for (const auto& iaOpt : ianaOptionsList)
     {
         requestedIa.emplace_back(iaOpt.GetIaid());
@@ -250,7 +250,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
     std::vector<bool> headerOptions = header.GetOptionList();
     if (headerOptions[Dhcp6Header::OPTION_ORO])
     {
-        std::list<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
+        std::vector<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
         advertiseHeader.HandleOptionRequest(requestedOptions);
     }
 
@@ -292,13 +292,13 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
 
     // Add IA_NA option.
     // Retrieve requested IA Option from client header.
-    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    std::vector<IaOptions> ianaOptionsList = header.GetIanaOptions();
 
     for (auto& iaOpt : ianaOptionsList)
     {
         // Iterate through the offered addresses.
         // Current approach: Try to accept all offers.
-        std::list<IaAddressOption> iaAddrOptList = iaOpt.m_iaAddressOption;
+        std::vector<IaAddressOption> iaAddrOptList = iaOpt.m_iaAddressOption;
         for (auto& addrItr : iaAddrOptList)
         {
             Ipv6Address requestedAddr = addrItr.GetIaAddress();
@@ -380,7 +380,7 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
     // Check if the client has requested any options.
     if (headerOptions[Dhcp6Header::OPTION_ORO])
     {
-        std::list<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
+        std::vector<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
         replyHeader.HandleOptionRequest(requestedOptions);
     }
 
@@ -422,10 +422,10 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
 
     // Add IA_NA option.
     // Retrieve IA_NAs from client header.
-    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    std::vector<IaOptions> ianaOptionsList = header.GetIanaOptions();
     for (auto& iaOpt : ianaOptionsList)
     {
-        std::list<IaAddressOption> iaAddrOptList = iaOpt.m_iaAddressOption;
+        std::vector<IaAddressOption> iaAddrOptList = iaOpt.m_iaAddressOption;
 
         // Add the IA_NA option.
         replyHeader.AddIanaOption(iaOpt.GetIaid(), iaOpt.GetT1(), iaOpt.GetT2());
@@ -480,7 +480,7 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
     std::vector<bool> headerOptions = header.GetOptionList();
     if (headerOptions[Dhcp6Header::OPTION_ORO])
     {
-        std::list<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
+        std::vector<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
         replyHeader.HandleOptionRequest(requestedOptions);
     }
 
@@ -525,10 +525,10 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
     replyHeader.AddStatusCode(Dhcp6Header::Success, "Address declined.");
 
     // Add the declined or expired address to the subnet information.
-    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    std::vector<IaOptions> ianaOptionsList = header.GetIanaOptions();
     for (const auto& iaOpt : ianaOptionsList)
     {
-        std::list<IaAddressOption> iaAddrOptList = iaOpt.m_iaAddressOption;
+        std::vector<IaAddressOption> iaAddrOptList = iaOpt.m_iaAddressOption;
 
         for (const auto& addrItr : iaAddrOptList)
         {

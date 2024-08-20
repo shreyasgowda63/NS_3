@@ -257,10 +257,10 @@ IaOptions::SetT2(uint32_t t2)
 
 RequestOptions::RequestOptions()
 {
-    m_requestedOptions = std::list<uint16_t>();
+    m_requestedOptions = std::vector<uint16_t>();
 }
 
-std::list<uint16_t>
+std::vector<uint16_t>
 RequestOptions::GetRequestedOptions() const
 {
     NS_LOG_FUNCTION(this);

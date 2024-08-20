@@ -233,12 +233,12 @@ class Dhcp6Client : public Application
     /**
      * The number of addresses offered to the client.
      */
-    uint8_t m_offeredAddresses;
+    uint8_t m_nOfferedAddresses;
 
     /**
      * The number of addresses accepted by the client.
      */
-    uint8_t m_acceptedAddresses;
+    uint8_t m_nAcceptedAddresses;
 
     /**
      * Time when message exchange starts.

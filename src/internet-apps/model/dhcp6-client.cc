@@ -189,7 +189,7 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
 
     // Add IA_NA option.
     // Request all addresses from the Advertise message.
-    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    std::vector<IaOptions> ianaOptionsList = header.GetIanaOptions();
 
     for (const auto& iaOpt : ianaOptionsList)
     {
@@ -231,12 +231,12 @@ void
 Dhcp6Client::AcceptedAddress(const Ipv6Address& offeredAddress)
 {
     NS_LOG_INFO("Accepting " << offeredAddress);
-    m_acceptedAddresses += 1;
+    m_nAcceptedAddresses += 1;
 
     // Notify the new lease.
     m_newLease(offeredAddress);
 
-    if (m_declinedAddresses.size() + m_acceptedAddresses == m_offeredAddresses)
+    if (m_declinedAddresses.size() + m_nAcceptedAddresses == m_nOfferedAddresses)
     {
         DeclineOffer();
     }
@@ -247,7 +247,7 @@ Dhcp6Client::AddDeclinedAddress(const Ipv6Address& offeredAddress)
 {
     m_declinedAddresses.emplace_back(offeredAddress);
 
-    if (m_declinedAddresses.size() + m_acceptedAddresses == m_offeredAddresses)
+    if (m_declinedAddresses.size() + m_nAcceptedAddresses == m_nOfferedAddresses)
     {
         DeclineOffer();
     }
@@ -343,7 +343,7 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
     int32_t ifIndex = ipv6->GetInterfaceForDevice(m_device);
 
     // Read IA_NA options.
-    std::list<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    std::vector<IaOptions> ianaOptionsList = header.GetIanaOptions();
 
     m_declinedAddresses.clear();
     m_addressDadComplete = false;
@@ -379,7 +379,7 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
                                                             this,
                                                             offeredAddress));
 
-            m_offeredAddresses += 1;
+            m_nOfferedAddresses += 1;
         }
 
         earliestRenew = std::min(earliestRenew, Time(Seconds(iaOpt.GetT1())));
