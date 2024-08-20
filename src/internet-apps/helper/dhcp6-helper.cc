@@ -68,7 +68,7 @@ Ptr<Application>
 Dhcp6Helper::InstallDhcp6ClientPriv(Ptr<NetDevice> netDevice) const
 {
     Ptr<Node> node = netDevice->GetNode();
-    NS_ASSERT_MSG(node, "Dhcp6ClientHelper: NetDevice is not not associated with any node -> fail");
+    NS_ASSERT_MSG(node, "Dhcp6ClientHelper: NetDevice is not associated with any node -> fail");
 
     Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
     NS_ASSERT_MSG(ipv6,
@@ -81,7 +81,6 @@ Dhcp6Helper::InstallDhcp6ClientPriv(Ptr<NetDevice> netDevice) const
     {
         interface = ipv6->AddInterface(netDevice);
     }
-    NS_ASSERT_MSG(interface >= 0, "Dhcp6Helper: Interface index not found");
 
     ipv6->SetMetric(interface, 1);
     ipv6->SetUp(interface);
@@ -105,16 +104,16 @@ Dhcp6Helper::InstallDhcp6Client(NetDeviceContainer netDevices) const
 }
 
 ApplicationContainer
-Dhcp6Helper::InstallDhcp6Server(std::vector<Ptr<NetDevice>> netDevices)
+Dhcp6Helper::InstallDhcp6Server(NetDeviceContainer netDevices)
 {
     Ptr<Dhcp6Server> app = m_serverFactory.Create<Dhcp6Server>();
     Ptr<Node> node;
 
-    for (auto itr = netDevices.begin(); itr != netDevices.end(); itr++)
+    for (auto itr = netDevices.Begin(); itr != netDevices.End(); itr++)
     {
         Ptr<NetDevice> netDevice = *itr;
         node = netDevice->GetNode();
-        NS_ASSERT_MSG(node, "Dhcp6Helper: NetDevice is not not associated with any node -> fail");
+        NS_ASSERT_MSG(node, "Dhcp6Helper: NetDevice is not associated with any node -> fail");
 
         Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
         NS_ASSERT_MSG(ipv6,
@@ -127,7 +126,6 @@ Dhcp6Helper::InstallDhcp6Server(std::vector<Ptr<NetDevice>> netDevices)
         {
             interface = ipv6->AddInterface(netDevice);
         }
-        NS_ASSERT_MSG(interface >= 0, "DhcpHelper: Interface index not found");
 
         ipv6->SetMetric(interface, 1);
         ipv6->SetUp(interface);

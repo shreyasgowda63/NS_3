@@ -83,7 +83,7 @@ class Dhcp6Helper
      * \param netDevices The NetDevices on which DHCPv6 server application has to be installed
      * \return The application container with DHCPv6 server installed
      */
-    ApplicationContainer InstallDhcp6Server(std::vector<Ptr<NetDevice>> netDevices);
+    ApplicationContainer InstallDhcp6Server(NetDeviceContainer netDevices);
 
   private:
     /**

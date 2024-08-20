@@ -1,2 +1,0 @@
-PASS: Test Suite "dhcp6" (0.001)
-PASS: Test Case "Dhcp6 test case " (0.000)

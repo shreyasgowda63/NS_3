@@ -28,6 +28,7 @@
 #include "ns3/ipv6-address.h"
 #include "ns3/pair.h"
 #include "ns3/ptr.h"
+#include "ns3/net-device-container.h"
 
 #include <map>
 
@@ -163,7 +164,7 @@ class Dhcp6Server : public Application
      * \brief Set the list of net devices that the DHCPv6 server will use.
      * \param netDevices The net devices that the server will listen on.
      */
-    void SetDhcp6ServerNetDevice(std::vector<Ptr<NetDevice>> netDevices);
+    void SetDhcp6ServerNetDevice(NetDeviceContainer netDevices);
 
     /**
      * \brief Add a managed address pool.
@@ -254,7 +255,7 @@ class Dhcp6Server : public Application
     /**
      * \brief Pointer to the net device used by the server.
      */
-    std::vector<Ptr<NetDevice>> m_devices;
+    NetDeviceContainer m_devices;
 
     /**
      * \brief The server DUID.
