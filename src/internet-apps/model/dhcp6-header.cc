@@ -34,6 +34,8 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Header");
 
+namespace dhcp6
+{
 Dhcp6Header::Dhcp6Header()
     : m_len(4),
       m_msgType(0),
@@ -686,5 +688,5 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
     m_len = len;
     return m_len;
 }
-
+} // namespace dhcp6
 } // namespace ns3

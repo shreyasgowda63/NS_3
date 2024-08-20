@@ -32,6 +32,8 @@
 namespace ns3
 {
 
+namespace dhcp6
+{
 /**
  * \ingroup dhcp6
  *
@@ -194,6 +196,25 @@ std::ostream& operator<<(std::ostream& os, const Duid& duid);
  */
 std::istream& operator>>(std::istream& is, Duid& duid);
 
+/**
+ * \ingroup dhcp6
+ *
+ * \brief Class providing an hash for DUIDs
+ */
+class DuidHash
+{
+  public:
+    /**
+     * \brief Returns the hash of a DUID.
+     * \param x the DUID
+     * \return the hash
+     *
+     * This method uses std::hash rather than class Hash
+     * as speed is more important than cryptographic robustness.
+     */
+    size_t operator()(const Duid& x) const;
+};
+} // namespace dhcp6
 } // namespace ns3
 
 #endif

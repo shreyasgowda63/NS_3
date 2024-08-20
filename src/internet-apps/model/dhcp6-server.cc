@@ -39,6 +39,8 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Server");
 
+namespace dhcp6
+{
 TypeId
 Dhcp6Server::GetTypeId()
 {
@@ -745,17 +747,6 @@ Dhcp6Server::CleanLeases()
     m_leaseCleanupEvent = Simulator::Schedule(m_leaseCleanup, &Dhcp6Server::CleanLeases, this);
 }
 
-size_t
-DuidHash::operator()(const Duid& x) const
-{
-    uint8_t buffer[20];
-    uint8_t duidLen = x.GetLength();
-    x.CopyTo(buffer);
-
-    std::string s(buffer, buffer + duidLen);
-    return std::hash<std::string>{}(s);
-}
-
 LeaseInfo::LeaseInfo(Ipv6Address addressPool,
                      Ipv6Prefix prefix,
                      Ipv6Address minAddress,
@@ -802,5 +793,5 @@ LeaseInfo::GetNumAddresses()
     NS_LOG_FUNCTION(this);
     return m_numAddresses;
 }
-
+} // namespace dhcp6
 } // namespace ns3

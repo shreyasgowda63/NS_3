@@ -49,6 +49,8 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Client");
 
+namespace dhcp6
+{
 TypeId
 Dhcp6Client::GetTypeId()
 {
@@ -843,5 +845,5 @@ Dhcp6Client::StopApplication()
         m_socket->SetRecvCallback(MakeNullCallback<void, Ptr<Socket>>());
     }
 }
-
+} // namespace dhcp6
 } // namespace ns3

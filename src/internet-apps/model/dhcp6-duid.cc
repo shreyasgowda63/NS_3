@@ -34,6 +34,8 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Duid");
 
+namespace dhcp6
+{
 Duid::Duid()
 {
     m_duidType = 3;
@@ -273,4 +275,16 @@ Duid::DeserializeIdentifier(Buffer::Iterator start, uint32_t len)
     i.Read(m_linkLayerAddress, m_idLen);
     return m_idLen;
 }
+
+size_t
+DuidHash::operator()(const Duid& x) const
+{
+    uint8_t buffer[20];
+    uint8_t duidLen = x.GetLength();
+    x.CopyTo(buffer);
+
+    std::string s(buffer, buffer + duidLen);
+    return std::hash<std::string>{}(s);
+}
+} // namespace dhcp6
 } // namespace ns3

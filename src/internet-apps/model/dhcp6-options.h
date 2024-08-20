@@ -35,6 +35,8 @@
 namespace ns3
 {
 
+namespace dhcp6
+{
 /**
  * \ingroup dhcp6
  *
@@ -450,7 +452,7 @@ class ServerUnicastOption : public Options
      */
     Ipv6Address m_serverAddress;
 };
-
+} // namespace dhcp6
 } // namespace ns3
 
 #endif

@@ -34,6 +34,8 @@
 namespace ns3
 {
 
+namespace dhcp6
+{
 /**
  * \ingroup dhcp6
  *
@@ -359,7 +361,7 @@ class Dhcp6Header : public Header
      */
     uint32_t m_solMaxRt;
 };
-
+} // namespace dhcp6
 } // namespace ns3
 
 #endif

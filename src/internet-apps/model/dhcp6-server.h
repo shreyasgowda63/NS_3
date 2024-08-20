@@ -39,25 +39,8 @@ class Inet6SocketAddress;
 class Socket;
 class Packet;
 
-/**
- * \ingroup dhcp6
- *
- * \brief Class providing an hash for DUIDs
- */
-class DuidHash
+namespace dhcp6
 {
-  public:
-    /**
-     * \brief Returns the hash of a DUID.
-     * \param x the DUID
-     * \return the hash
-     *
-     * This method uses std::hash rather than class Hash
-     * as speed is more important than cryptographic robustness.
-     */
-    size_t operator()(const Duid& x) const;
-};
-
 /**
  * \ingroup dhcp6
  *
@@ -307,7 +290,7 @@ class Dhcp6Server : public Application
     Time m_leaseCleanup;         //!< Lease cleanup time
     EventId m_leaseCleanupEvent; //!< Event ID for lease cleanup
 };
-
+} // namespace dhcp6
 } // namespace ns3
 
 #endif

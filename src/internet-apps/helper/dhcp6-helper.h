@@ -29,6 +29,8 @@
 namespace ns3
 {
 
+using namespace dhcp6;
+
 /**
  * \ingroup dhcp6
  *
