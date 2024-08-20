@@ -37,51 +37,51 @@ namespace ns3
 namespace dhcp6
 {
 /**
- * \ingroup dhcp6
+ * @ingroup dhcp6
  *
- * \class Dhcp6Header
- * \brief Implements the DHCPv6 header.
+ * @class Dhcp6Header
+ * @brief Implements the DHCPv6 header.
  */
 class Dhcp6Header : public Header
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
     /**
-     * \brief Default constructor.
+     * @brief Default constructor.
      */
     Dhcp6Header();
 
     /**
-     * \brief Get the type of message.
-     * \return integer corresponding to the message type.
+     * @brief Get the type of message.
+     * @return integer corresponding to the message type.
      */
     uint8_t GetMessageType();
 
     /**
-     * \brief Set the message type.
-     * \param msgType integer corresponding to the message type.
+     * @brief Set the message type.
+     * @param msgType integer corresponding to the message type.
      */
     void SetMessageType(uint8_t msgType);
 
     /**
-     * \brief Get the transaction ID.
-     * \return the 32-bit transaction ID
+     * @brief Get the transaction ID.
+     * @return the 32-bit transaction ID
      */
     uint32_t GetTransactId();
 
     /**
-     * \brief Set the transaction ID.
-     * \param transactId A 32-bit transaction ID.
+     * @brief Set the transaction ID.
+     * @param transactId A 32-bit transaction ID.
      */
     void SetTransactId(uint32_t transactId);
 
     /**
-     * \brief Reset all options.
+     * @brief Reset all options.
      */
     void ResetOptions();
 
@@ -152,80 +152,80 @@ class Dhcp6Header : public Header
     };
 
     /**
-     * \brief Get the client identifier.
-     * \return the client identifier option.
+     * @brief Get the client identifier.
+     * @return the client identifier option.
      */
     IdentifierOption GetClientIdentifier();
 
     /**
-     * \brief Get the server identifier.
-     * \return the server identifier option.
+     * @brief Get the server identifier.
+     * @return the server identifier option.
      */
     IdentifierOption GetServerIdentifier();
 
     /**
-     * \brief Get the list of IA_NA options.
-     * \return the list of IA_NA options.
+     * @brief Get the list of IA_NA options.
+     * @return the list of IA_NA options.
      */
     std::vector<IaOptions> GetIanaOptions();
 
     /**
-     * \brief Get the status code of the operation.
-     * \return the status code option.
+     * @brief Get the status code of the operation.
+     * @return the status code option.
      */
     StatusCodeOption GetStatusCodeOption();
 
     /**
-     * \brief Set the elapsed time option.
-     * \param timestamp the time at which the client began the exchange.
+     * @brief Set the elapsed time option.
+     * @param timestamp the time at which the client began the exchange.
      */
     void AddElapsedTime(uint16_t timestamp);
 
     /**
-     * \brief Add the client identifier option.
-     * \param duid The DUID which identifies the client.
+     * @brief Add the client identifier option.
+     * @param duid The DUID which identifies the client.
      */
     void AddClientIdentifier(Duid duid);
 
     /**
-     * \brief Add the server identifier option.
-     * \param duid The DUID which identifies the server.
+     * @brief Add the server identifier option.
+     * @param duid The DUID which identifies the server.
      */
     void AddServerIdentifier(Duid duid);
 
     /**
-     * \brief Request additional options.
-     * \param optionType the option to be requested.
+     * @brief Request additional options.
+     * @param optionType the option to be requested.
      */
     void AddOptionRequest(uint16_t optionType);
 
     /**
-     * \brief Add the status code option.
-     * \param statusCode the status code of the operation.
-     * \param statusMsg the status message.
+     * @brief Add the status code option.
+     * @param statusCode the status code of the operation.
+     * @param statusMsg the status message.
      */
     void AddStatusCode(uint16_t statusCode, std::string statusMsg);
 
     /**
-     * \brief Add IANA option.
-     * \param iaid
-     * \param t1
-     * \param t2
+     * @brief Add IANA option.
+     * @param iaid
+     * @param t1
+     * @param t2
      */
     void AddIanaOption(uint32_t iaid, uint32_t t1, uint32_t t2);
 
     /**
-     * \brief Add IATA option.
-     * \param iaid
+     * @brief Add IATA option.
+     * @param iaid
      */
     void AddIataOption(uint32_t iaid);
 
     /**
-     * \brief Add IA address option to the IANA or IATA.
-     * \param iaid the unique identifier of the identity association.
-     * \param address The IPv6 address to be offered.
-     * \param prefLifetime the preferred lifetime in seconds.
-     * \param validLifetime the valid lifetime in seconds.
+     * @brief Add IA address option to the IANA or IATA.
+     * @param iaid the unique identifier of the identity association.
+     * @param address The IPv6 address to be offered.
+     * @param prefLifetime the preferred lifetime in seconds.
+     * @param validLifetime the valid lifetime in seconds.
      */
     void AddAddress(uint32_t iaid,
                     Ipv6Address address,
@@ -233,35 +233,35 @@ class Dhcp6Header : public Header
                     uint32_t validLifetime);
 
     /**
-     * \brief Get the option request option.
-     * \return the option request option.
+     * @brief Get the option request option.
+     * @return the option request option.
      */
     RequestOptions GetOptionRequest();
 
     /**
-     * \brief Handle all options requested by client.
-     * \param requestedOptions the options requested by the client.
+     * @brief Handle all options requested by client.
+     * @param requestedOptions the options requested by the client.
      */
     void HandleOptionRequest(std::vector<uint16_t> requestedOptions);
 
     /**
-     * \brief Add the SOL_MAX_RT option.
+     * @brief Add the SOL_MAX_RT option.
      */
     void AddSolMaxRt();
 
     /**
-     * \brief Get list of all options set in the header.
-     * \return the list of options.
+     * @brief Get list of all options set in the header.
+     * @return the list of options.
      */
     std::map<OptionType, bool> GetOptionList();
 
     /**
-     * \brief The port number of the DHCPv6 client.
+     * @brief The port number of the DHCPv6 client.
      */
     static const uint16_t CLIENT_PORT = 546;
 
     /**
-     * \brief The port number of the DHCPv6 server.
+     * @brief The port number of the DHCPv6 server.
      */
     static const uint16_t SERVER_PORT = 547;
 
@@ -273,25 +273,25 @@ class Dhcp6Header : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
     /**
-     * \brief Update the message length.
-     * \param len The length to be added to the total.
+     * @brief Update the message length.
+     * @param len The length to be added to the total.
      */
     void AddMessageLength(uint32_t len);
 
     /**
-     * \brief Add an identifier option to the header.
-     * \param identifier the client or server identifier option object.
-     * \param optionType identify whether to add a client or server identifier.
-     * \param duid The unique identifier for the client or server.
+     * @brief Add an identifier option to the header.
+     * @param identifier the client or server identifier option object.
+     * @param optionType identify whether to add a client or server identifier.
+     * @param duid The unique identifier for the client or server.
      */
     void AddIdentifierOption(IdentifierOption& identifier, OptionType optionType, Duid duid);
 
     /**
-     * \brief Add IANA or IATA option to the header.
-     * \param optionType identify whether to add an IANA or IATA.
-     * \param iaid
-     * \param t1
-     * \param t2
+     * @brief Add IANA or IATA option to the header.
+     * @param optionType identify whether to add an IANA or IATA.
+     * @param iaid
+     * @param t1
+     * @param t2
      */
     void AddIaOption(OptionType optionType, uint32_t iaid, uint32_t t1 = 0, uint32_t t2 = 0);
 

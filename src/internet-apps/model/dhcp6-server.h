@@ -42,20 +42,20 @@ class Packet;
 namespace dhcp6
 {
 /**
- * \ingroup dhcp6
+ * @ingroup dhcp6
  *
- * \class LeaseInfo
- * \brief Includes information about available subnets and corresponding leases.
+ * @class LeaseInfo
+ * @brief Includes information about available subnets and corresponding leases.
  */
 class LeaseInfo
 {
   public:
     /**
      * Constructor.
-     * \param addressPool Address pool
-     * \param prefix Prefix of the address pool
-     * \param minAddress Minimum address in the pool
-     * \param maxAddress Maximum address in the pool
+     * @param addressPool Address pool
+     * @param prefix Prefix of the address pool
+     * @param minAddress Minimum address in the pool
+     * @param maxAddress Maximum address in the pool
      */
     LeaseInfo(Ipv6Address addressPool,
               Ipv6Prefix prefix,
@@ -66,49 +66,49 @@ class LeaseInfo
 
   private:
     /**
-     * \brief Get the address pool.
-     * \return The address pool
+     * @brief Get the address pool.
+     * @return The address pool
      */
     Ipv6Address GetAddressPool();
 
     /**
-     * \brief Get the prefix of the address pool.
-     * \return The prefix of the address pool
+     * @brief Get the prefix of the address pool.
+     * @return The prefix of the address pool
      */
     Ipv6Prefix GetPrefix();
 
     /**
-     * \brief Get the minimum address in the pool.
-     * \return The minimum address in the pool
+     * @brief Get the minimum address in the pool.
+     * @return The minimum address in the pool
      */
     Ipv6Address GetMinAddress();
 
     /**
-     * \brief Get the maximum address in the pool.
-     * \return The maximum address in the pool
+     * @brief Get the maximum address in the pool.
+     * @return The maximum address in the pool
      */
     Ipv6Address GetMaxAddress();
 
     /**
-     * \brief Get the number of addresses leased.
-     * \return The number of addresses leased
+     * @brief Get the number of addresses leased.
+     * @return The number of addresses leased
      */
     uint32_t GetNumAddresses();
 
     /**
-     * \brief Expired Addresses (Section 6.2 of RFC 8415)
+     * @brief Expired Addresses (Section 6.2 of RFC 8415)
      * Expired time / Ipv6Address
      */
     typedef std::multimap<Time, std::pair<Duid, Ipv6Address>> ExpiredAddresses;
 
     /**
-     * \brief Leased Addresses
+     * @brief Leased Addresses
      * Client DUID + Ipv6Address / Lease time
      */
     typedef std::unordered_multimap<Duid, std::pair<Ipv6Address, Time>, DuidHash> LeasedAddresses;
 
     /**
-     * \brief Declined Addresses
+     * @brief Declined Addresses
      * Ipv6Address + Client DUID
      */
     typedef std::unordered_map<Ipv6Address, Duid, Ipv6AddressHash> DeclinedAddresses;
@@ -126,37 +126,37 @@ class LeaseInfo
 };
 
 /**
- * \ingroup dhcp6
+ * @ingroup dhcp6
  *
- * \class Dhcp6Server
- * \brief Implements the DHCPv6 server.
+ * @class Dhcp6Server
+ * @brief Implements the DHCPv6 server.
  */
 class Dhcp6Server : public Application
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
     /**
-     * \brief Default constructor.
+     * @brief Default constructor.
      */
     Dhcp6Server();
 
     /**
-     * \brief Set the list of net devices that the DHCPv6 server will use.
-     * \param netDevices The net devices that the server will listen on.
+     * @brief Set the list of net devices that the DHCPv6 server will use.
+     * @param netDevices The net devices that the server will listen on.
      */
     void SetDhcp6ServerNetDevice(NetDeviceContainer netDevices);
 
     /**
-     * \brief Add a managed address pool.
-     * \param pool The address pool to be managed by the server.
-     * \param prefix The prefix of the address pool.
-     * \param minAddress The minimum address in the pool.
-     * \param maxAddress The maximum address in the pool.
+     * @brief Add a managed address pool.
+     * @param pool The address pool to be managed by the server.
+     * @param prefix The prefix of the address pool.
+     * @param minAddress The minimum address in the pool.
+     * @param maxAddress The maximum address in the pool.
      */
     void AddSubnet(Ipv6Address pool,
                    Ipv6Prefix prefix,
@@ -171,85 +171,85 @@ class Dhcp6Server : public Application
     void StopApplication() override;
 
     /**
-     * \brief Handles incoming packets from the network
-     * \param socket Socket bound to port 547 of the DHCP server
+     * @brief Handles incoming packets from the network
+     * @param socket Socket bound to port 547 of the DHCP server
      */
     void NetHandler(Ptr<Socket> socket);
 
     /**
-     * \brief Sends DHCPv6 Advertise after receiving DHCPv6 Solicit.
-     * \param iDev incoming NetDevice
-     * \param header DHCPv6 header of the received message
-     * \param client Address of the DHCPv6 client
+     * @brief Sends DHCPv6 Advertise after receiving DHCPv6 Solicit.
+     * @param iDev incoming NetDevice
+     * @param header DHCPv6 header of the received message
+     * @param client Address of the DHCPv6 client
      */
     void ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
 
     /**
-     * \brief Sends DHCPv6 Advertise after receiving DHCPv6 Solicit.
-     * \param iDev incoming NetDevice
-     * \param header DHCPv6 header of the received message
-     * \param client Address of the DHCPv6 client
+     * @brief Sends DHCPv6 Advertise after receiving DHCPv6 Solicit.
+     * @param iDev incoming NetDevice
+     * @param header DHCPv6 header of the received message
+     * @param client Address of the DHCPv6 client
      */
     void SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
 
     /**
-     * \brief Sends Reply after receiving Request
-     * \param iDev incoming NetDevice
-     * \param header DHCPv6 header of the received message
-     * \param client Address of the DHCP client
+     * @brief Sends Reply after receiving Request
+     * @param iDev incoming NetDevice
+     * @param header DHCPv6 header of the received message
+     * @param client Address of the DHCP client
      */
     void SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
 
     /**
-     * \brief Sends Reply after receiving Request
-     * \param iDev incoming NetDevice
-     * \param header DHCPv6 header of the received message
-     * \param client Address of the DHCP client
+     * @brief Sends Reply after receiving Request
+     * @param iDev incoming NetDevice
+     * @param header DHCPv6 header of the received message
+     * @param client Address of the DHCP client
      */
     void RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
 
     /**
-     * \brief Sends Reply after receiving Request
-     * \param iDev incoming NetDevice
-     * \param header DHCPv6 header of the received message
-     * \param client Address of the DHCP client
+     * @brief Sends Reply after receiving Request
+     * @param iDev incoming NetDevice
+     * @param header DHCPv6 header of the received message
+     * @param client Address of the DHCP client
      */
     void UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client);
 
     /**
-     * \brief Modifies the remaining lease time of addresses
+     * @brief Modifies the remaining lease time of addresses
      */
     void TimerHandler();
 
     /**
-     * \brief Clean up stale lease info.
+     * @brief Clean up stale lease info.
      */
     void CleanLeases();
 
     /**
-     * \brief The socket bound to port 547.
+     * @brief The socket bound to port 547.
      */
     Ptr<Socket> m_recvSocket;
 
     /**
-     * \brief The socket used to send packets.
+     * @brief The socket used to send packets.
      * NetDevice / Corresponding socket.
      */
     std::unordered_map<Ptr<NetDevice>, Ptr<Socket>> m_sendSockets;
 
     /**
-     * \brief The server DUID.
+     * @brief The server DUID.
      */
     Duid m_serverDuid;
 
     /**
-     * \brief Store IA bindings.
+     * @brief Store IA bindings.
      * DUID + IA Type / IAID
      */
     std::multimap<Duid, std::pair<uint8_t, uint32_t>> m_iaBindings;
 
     /**
-     * \brief Default preferred lifetime for an address.
+     * @brief Default preferred lifetime for an address.
      * According to ISC's Kea guide, the default preferred lifetime is 3000
      * seconds.
      * Here, arbitrarily set to 18 seconds.
@@ -257,14 +257,14 @@ class Dhcp6Server : public Application
     Time m_prefLifetime;
 
     /**
-     * \brief Default valid lifetime.
+     * @brief Default valid lifetime.
      * According to ISC's Kea guide, the default valid lifetime is 4000 seconds.
      * Here, arbitrarily set to 20 seconds.
      */
     Time m_validLifetime;
 
     /**
-     * \brief The default renew timer.
+     * @brief The default renew timer.
      * This defines the T1 timer. According to ISC's Kea guide, the default
      * renew timer is 1000 seconds.
      * Here, arbitrarily set to 10 seconds (50% of valid lifetime).
@@ -272,7 +272,7 @@ class Dhcp6Server : public Application
     Time m_renew;
 
     /**
-     * \brief The default rebind timer.
+     * @brief The default rebind timer.
      * This defines the T2 timer. According to ISC's Kea guide, the default
      * rebind timer is 2000 seconds.
      * Here, arbitrarily set to 16 seconds (80% of valid lifetime).
@@ -280,7 +280,7 @@ class Dhcp6Server : public Application
     Time m_rebind;
 
     /**
-     * \brief List of all managed subnets.
+     * @brief List of all managed subnets.
      */
     std::vector<LeaseInfo> m_subnets;
 

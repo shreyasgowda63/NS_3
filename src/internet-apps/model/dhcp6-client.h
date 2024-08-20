@@ -37,34 +37,34 @@ namespace ns3
 namespace dhcp6
 {
 /**
- * \ingroup dhcp6
+ * @ingroup dhcp6
  *
- * \class Dhcp6Client
- * \brief Implements the DHCPv6 client.
+ * @class Dhcp6Client
+ * @brief Implements the DHCPv6 client.
  */
 class Dhcp6Client : public Application
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
     /**
-     * \brief Default constructor.
+     * @brief Default constructor.
      */
     Dhcp6Client();
 
     /**
-     * \brief Set the net device that the DHCPv6 client will use.
-     * \param netDevice The net device that the client will use
+     * @brief Set the net device that the DHCPv6 client will use.
+     * @param netDevice The net device that the client will use
      */
     void SetDhcp6ClientNetDevice(Ptr<NetDevice> netDevice);
 
     /**
-     * \brief Get the DUID.
-     * \return The DUID-LL which identifies the client.
+     * @brief Get the DUID.
+     * @return The DUID-LL which identifies the client.
      */
     Duid GetSelfDuid();
 
@@ -90,95 +90,95 @@ class Dhcp6Client : public Application
     };
 
     /**
-     * \brief Verify the incoming advertise message.
-     * \param header The DHCPv6 header received.
+     * @brief Verify the incoming advertise message.
+     * @param header The DHCPv6 header received.
      */
     void ValidateAdvertise(Dhcp6Header header);
 
     /**
-     * \brief Send a request to the DHCPv6 server.
-     * \param iDev The net device of the client
-     * \param header The DHCPv6 header
-     * \param server The address of the server
+     * @brief Send a request to the DHCPv6 server.
+     * @param iDev The net device of the client
+     * @param header The DHCPv6 header
+     * @param server The address of the server
      */
     void SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
 
     /**
-     * \brief Send a request to the DHCPv6 server.
-     * \param iDev The net device of the client
-     * \param header The DHCPv6 header
-     * \param server The address of the server
+     * @brief Send a request to the DHCPv6 server.
+     * @param iDev The net device of the client
+     * @param header The DHCPv6 header
+     * @param server The address of the server
      */
     void ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
 
     /**
-     * \brief Check lease status after sending a Decline or Release message.
-     * \param iDev The net device of the client
-     * \param header The DHCPv6 header
-     * \param server The address of the server
+     * @brief Check lease status after sending a Decline or Release message.
+     * @param iDev The net device of the client
+     * @param header The DHCPv6 header
+     * @param server The address of the server
      */
     void CheckLeaseStatus(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
 
     /**
-     * \brief Accept the DHCPv6 offer.
-     * \param offeredAddress The IPv6 address that has been accepted.
+     * @brief Accept the DHCPv6 offer.
+     * @param offeredAddress The IPv6 address that has been accepted.
      */
     void AcceptedAddress(const Ipv6Address& offeredAddress);
 
     /**
-     * \brief Add a declined address to the list maintained by the client.
-     * \param offeredAddress The IPv6 address to be declined.
+     * @brief Add a declined address to the list maintained by the client.
+     * @param offeredAddress The IPv6 address to be declined.
      */
     void AddDeclinedAddress(const Ipv6Address& offeredAddress);
 
     /**
-     * \brief Send a Decline message to the DHCPv6 server
+     * @brief Send a Decline message to the DHCPv6 server
      */
     void DeclineOffer();
 
     /**
-     * \brief Send a renew message to the DHCPv6 server.
-     * \param iaidList The IAIDs whose leases are to be renewed.
+     * @brief Send a renew message to the DHCPv6 server.
+     * @param iaidList The IAIDs whose leases are to be renewed.
      */
     void SendRenew(std::vector<uint32_t> iaidList);
 
     /**
-     * \brief Send a rebind message to the DHCPv6 server.
-     * \param iaidList The IAIDs whose leases are to be rebound.
+     * @brief Send a rebind message to the DHCPv6 server.
+     * @param iaidList The IAIDs whose leases are to be rebound.
      */
     void SendRebind(std::vector<uint32_t> iaidList);
 
     /**
-     * \brief Send a Release message to the DHCPv6 server.
-     * \param address The address whose lease is to be released.
+     * @brief Send a Release message to the DHCPv6 server.
+     * @param address The address whose lease is to be released.
      */
     void SendRelease(Ipv6Address address);
 
     /**
-     * \brief Handles incoming packets from the network
-     * \param socket Socket bound to port 546 of the DHCP client
+     * @brief Handles incoming packets from the network
+     * @param socket Socket bound to port 546 of the DHCP client
      */
     void NetHandler(Ptr<Socket> socket);
 
     /**
-     * \brief Handle changes in the link state.
+     * @brief Handle changes in the link state.
      */
     void LinkStateHandler();
 
     /**
-     * \brief Callback for when an M flag is received.
-     * \param recvInterface The interface on which the M flag was received.
+     * @brief Callback for when an M flag is received.
+     * @param recvInterface The interface on which the M flag was received.
      */
     void ReceiveMflag(uint32_t recvInterface);
 
     /**
-     * \brief Used to send the Solicit message and start the DHCPv6 client.
+     * @brief Used to send the Solicit message and start the DHCPv6 client.
      */
     void Boot();
 
     /**
-     * \brief Retrieve all existing IAIDs.
-     * \return A list of all IAIDs.
+     * @brief Retrieve all existing IAIDs.
+     * @return A list of all IAIDs.
      */
     std::vector<uint32_t> GetIaids();
 
