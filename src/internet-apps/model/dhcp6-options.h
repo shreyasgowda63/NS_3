@@ -452,6 +452,10 @@ class ServerUnicastOption : public Options
      */
     Ipv6Address m_serverAddress;
 };
+
+typedef IntegerOptions<uint8_t> PreferenceOption;
+typedef IntegerOptions<uint16_t> ElapsedTimeOption;
+
 } // namespace dhcp6
 } // namespace ns3
 

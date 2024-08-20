@@ -109,19 +109,19 @@ Dhcp6Header::GetInstanceTypeId() const
 IdentifierOption
 Dhcp6Header::GetClientIdentifier()
 {
-    return clientIdentifier;
+    return m_clientIdentifier;
 }
 
 IdentifierOption
 Dhcp6Header::GetServerIdentifier()
 {
-    return serverIdentifier;
+    return m_serverIdentifier;
 }
 
 StatusCodeOption
 Dhcp6Header::GetStatusCodeOption()
 {
-    return statusCode;
+    return m_statusCode;
 }
 
 std::vector<IaOptions>
@@ -134,9 +134,9 @@ void
 Dhcp6Header::AddElapsedTime(uint16_t timestamp)
 {
     // Set the code, length, value.
-    elapsedTime.SetOptionCode(OPTION_ELAPSED_TIME);
-    elapsedTime.SetOptionLength(2);
-    elapsedTime.SetOptionValue(timestamp);
+    m_elapsedTime.SetOptionCode(OPTION_ELAPSED_TIME);
+    m_elapsedTime.SetOptionLength(2);
+    m_elapsedTime.SetOptionValue(timestamp);
 
     // Increase the total length by 6 bytes.
     AddMessageLength(6);
@@ -148,13 +148,13 @@ Dhcp6Header::AddElapsedTime(uint16_t timestamp)
 void
 Dhcp6Header::AddClientIdentifier(Duid duid)
 {
-    AddIdentifierOption(clientIdentifier, OPTION_CLIENTID, duid);
+    AddIdentifierOption(m_clientIdentifier, OPTION_CLIENTID, duid);
 }
 
 void
 Dhcp6Header::AddServerIdentifier(Duid duid)
 {
-    AddIdentifierOption(serverIdentifier, OPTION_SERVERID, duid);
+    AddIdentifierOption(m_serverIdentifier, OPTION_SERVERID, duid);
 }
 
 void
@@ -372,14 +372,14 @@ Dhcp6Header::GetOptionList()
 void
 Dhcp6Header::AddStatusCode(uint16_t status, std::string statusMsg)
 {
-    statusCode.SetOptionCode(OPTION_STATUS_CODE);
-    statusCode.SetStatusCode(status);
-    statusCode.SetStatusMessage(statusMsg);
+    m_statusCode.SetOptionCode(OPTION_STATUS_CODE);
+    m_statusCode.SetStatusCode(status);
+    m_statusCode.SetStatusMessage(statusMsg);
 
-    statusCode.SetOptionLength(2 + statusCode.GetStatusMessage().length());
+    m_statusCode.SetOptionLength(2 + m_statusCode.GetStatusMessage().length());
 
     // Increase the total message length.
-    AddMessageLength(4 + statusCode.GetOptionLength());
+    AddMessageLength(4 + m_statusCode.GetOptionLength());
 
     // Set the option flag to true.
     m_options[OPTION_STATUS_CODE] = true;
@@ -406,18 +406,18 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
 
     if (m_options[OPTION_CLIENTID])
     {
-        i.WriteHtonU16(clientIdentifier.GetOptionCode());
-        i.WriteHtonU16(clientIdentifier.GetOptionLength());
-        Duid duid = clientIdentifier.GetDuid();
+        i.WriteHtonU16(m_clientIdentifier.GetOptionCode());
+        i.WriteHtonU16(m_clientIdentifier.GetOptionLength());
+        Duid duid = m_clientIdentifier.GetDuid();
         uint32_t size = duid.GetSerializedSize();
         duid.Serialize(i);
         i.Next(size);
     }
     if (m_options[OPTION_SERVERID])
     {
-        i.WriteHtonU16(serverIdentifier.GetOptionCode());
-        i.WriteHtonU16(serverIdentifier.GetOptionLength());
-        Duid duid = serverIdentifier.GetDuid();
+        i.WriteHtonU16(m_serverIdentifier.GetOptionCode());
+        i.WriteHtonU16(m_serverIdentifier.GetOptionLength());
+        Duid duid = m_serverIdentifier.GetDuid();
         uint32_t size = duid.GetSerializedSize();
         duid.Serialize(i);
         i.Next(size);
@@ -449,9 +449,9 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     }
     if (m_options[OPTION_ELAPSED_TIME])
     {
-        i.WriteHtonU16(elapsedTime.GetOptionCode());
-        i.WriteHtonU16(elapsedTime.GetOptionLength());
-        i.WriteHtonU16(elapsedTime.GetOptionValue());
+        i.WriteHtonU16(m_elapsedTime.GetOptionCode());
+        i.WriteHtonU16(m_elapsedTime.GetOptionLength());
+        i.WriteHtonU16(m_elapsedTime.GetOptionValue());
     }
     if (m_options[OPTION_ORO])
     {
@@ -473,15 +473,16 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     if (m_options[OPTION_STATUS_CODE])
     {
         i.WriteHtonU16(OPTION_STATUS_CODE);
-        i.WriteHtonU16(statusCode.GetOptionLength());
-        i.WriteHtonU16(statusCode.GetStatusCode());
+        i.WriteHtonU16(m_statusCode.GetOptionLength());
+        i.WriteHtonU16(m_statusCode.GetStatusCode());
 
         // Considering a maximum message length of 128 bytes (arbitrary).
         uint8_t strBuf[128];
-        statusCode.GetStatusMessage().copy((char*)strBuf, statusCode.GetStatusMessage().length());
-        strBuf[statusCode.GetOptionLength() - 2] = '\0';
+        m_statusCode.GetStatusMessage().copy((char*)strBuf,
+                                             m_statusCode.GetStatusMessage().length());
+        strBuf[m_statusCode.GetOptionLength() - 2] = '\0';
 
-        i.Write(strBuf, statusCode.GetStatusMessage().length());
+        i.Write(strBuf, m_statusCode.GetStatusMessage().length());
     }
 }
 
@@ -517,14 +518,14 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
             NS_LOG_INFO("Client Identifier Option");
             if (len + 2 <= cLen)
             {
-                clientIdentifier.SetOptionCode(option);
-                clientIdentifier.SetOptionLength(i.ReadNtohU16());
+                m_clientIdentifier.SetOptionCode(option);
+                m_clientIdentifier.SetOptionLength(i.ReadNtohU16());
                 len += 2;
             }
-            if (len + clientIdentifier.GetOptionLength() <= cLen)
+            if (len + m_clientIdentifier.GetOptionLength() <= cLen)
             {
                 // Total length - DUID Type length(2) - Hardware Type length(2)
-                uint32_t addrLen = clientIdentifier.GetOptionLength() - 4;
+                uint32_t addrLen = m_clientIdentifier.GetOptionLength() - 4;
 
                 // Read DUID.
                 Duid duid;
@@ -532,8 +533,8 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 i.Next(read);
                 uint32_t idLen = duid.DeserializeIdentifier(i, addrLen);
                 i.Next(idLen);
-                clientIdentifier.SetDuid(duid);
-                len += clientIdentifier.GetOptionLength();
+                m_clientIdentifier.SetDuid(duid);
+                len += m_clientIdentifier.GetOptionLength();
             }
             break;
 
@@ -541,14 +542,14 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
             NS_LOG_INFO("Server ID Option");
             if (len + 2 <= cLen)
             {
-                serverIdentifier.SetOptionCode(option);
-                serverIdentifier.SetOptionLength(i.ReadNtohU16());
+                m_serverIdentifier.SetOptionCode(option);
+                m_serverIdentifier.SetOptionLength(i.ReadNtohU16());
                 len += 2;
             }
-            if (len + clientIdentifier.GetOptionLength() <= cLen)
+            if (len + m_clientIdentifier.GetOptionLength() <= cLen)
             {
                 // Total length - DUID Type length(2) - Hardware Type length(2)
-                uint32_t addrLen = serverIdentifier.GetOptionLength() - 4;
+                uint32_t addrLen = m_serverIdentifier.GetOptionLength() - 4;
 
                 // Read DUID.
                 Duid duid;
@@ -556,8 +557,8 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
                 i.Next(read);
                 uint32_t idLen = duid.DeserializeIdentifier(i, addrLen);
                 i.Next(idLen);
-                serverIdentifier.SetDuid(duid);
-                len += serverIdentifier.GetOptionLength();
+                m_serverIdentifier.SetDuid(duid);
+                len += m_serverIdentifier.GetOptionLength();
             }
             break;
 
@@ -610,9 +611,9 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
             NS_LOG_INFO("Elapsed Time Option");
             if (len + 4 <= cLen)
             {
-                elapsedTime.SetOptionCode(option);
-                elapsedTime.SetOptionLength(i.ReadNtohU16());
-                elapsedTime.SetOptionValue(i.ReadNtohU16());
+                m_elapsedTime.SetOptionCode(option);
+                m_elapsedTime.SetOptionLength(i.ReadNtohU16());
+                m_elapsedTime.SetOptionValue(i.ReadNtohU16());
                 m_options[OPTION_ELAPSED_TIME] = true;
                 len += 4;
             }
@@ -654,25 +655,25 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
             NS_LOG_INFO("Status Code Option");
             if (len + 2 <= cLen)
             {
-                statusCode.SetOptionCode(option);
-                statusCode.SetOptionLength(i.ReadNtohU16());
+                m_statusCode.SetOptionCode(option);
+                m_statusCode.SetOptionLength(i.ReadNtohU16());
                 len += 2;
             }
             if (len + 2 <= cLen)
             {
-                statusCode.SetStatusCode(i.ReadNtohU16());
+                m_statusCode.SetStatusCode(i.ReadNtohU16());
                 len += 2;
             }
 
-            if (len + (statusCode.GetOptionLength() - 2) <= cLen)
+            if (len + (m_statusCode.GetOptionLength() - 2) <= cLen)
             {
-                uint8_t msgLength = statusCode.GetOptionLength() - 2;
+                uint8_t msgLength = m_statusCode.GetOptionLength() - 2;
                 uint8_t strBuf[128];
                 i.Read(strBuf, msgLength);
                 strBuf[msgLength] = '\0';
 
                 std::string statusMsg((char*)strBuf);
-                statusCode.SetStatusMessage(statusMsg);
+                m_statusCode.SetStatusMessage(statusMsg);
                 len += msgLength;
             }
             m_options[OPTION_STATUS_CODE] = true;

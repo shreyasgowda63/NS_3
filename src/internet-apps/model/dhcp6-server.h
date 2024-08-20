@@ -62,6 +62,9 @@ class LeaseInfo
               Ipv6Address minAddress,
               Ipv6Address maxAddress);
 
+    friend class Dhcp6Server;
+
+  private:
     /**
      * \brief Get the address pool.
      * \return The address pool
@@ -115,7 +118,6 @@ class LeaseInfo
     DeclinedAddresses m_declinedAddresses; //!< Declined addresses
     Ipv6Address m_maxOfferedAddress;       //!< Maximum address offered so far.
 
-  private:
     Ipv6Address m_addressPool; //!< Address pool
     Ipv6Prefix m_prefix;       //!< Prefix of the address pool
     Ipv6Address m_minAddress;  //!< Minimum address in the pool
@@ -231,14 +233,9 @@ class Dhcp6Server : public Application
 
     /**
      * \brief The socket used to send packets.
-     * Socket / Corresponding NetDevice
+     * NetDevice / Corresponding socket.
      */
     std::unordered_map<Ptr<NetDevice>, Ptr<Socket>> m_sendSockets;
-
-    /**
-     * \brief Pointer to the net device used by the server.
-     */
-    NetDeviceContainer m_devices;
 
     /**
      * \brief The server DUID.

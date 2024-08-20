@@ -602,7 +602,10 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
 void
 Dhcp6Server::SetDhcp6ServerNetDevice(NetDeviceContainer netDevices)
 {
-    m_devices = netDevices;
+    for (auto itr = netDevices.Begin(); itr != netDevices.End(); itr++)
+    {
+        m_sendSockets[*itr] = nullptr;
+    }
 }
 
 void
@@ -630,7 +633,7 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
     }
 
     // Initialize the DUID before responding to the client.
-    Ptr<Node> node = m_devices.Get(0)->GetNode();
+    Ptr<Node> node = (m_sendSockets.begin()->first)->GetNode();
     m_serverDuid.Initialize(node);
 
     if (header.GetMessageType() == Dhcp6Header::SOLICIT)
@@ -677,7 +680,7 @@ Dhcp6Server::StartApplication()
         return;
     }
 
-    Ptr<Node> node = m_devices.Get(0)->GetNode();
+    Ptr<Node> node = (m_sendSockets.begin()->first)->GetNode();
     Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
     Ptr<Ipv6L3Protocol> ipv6l3 = node->GetObject<Ipv6L3Protocol>();
 
@@ -690,9 +693,9 @@ Dhcp6Server::StartApplication()
     m_recvSocket->SetRecvPktInfo(true);
     m_recvSocket->SetRecvCallback(MakeCallback(&Dhcp6Server::NetHandler, this));
 
-    for (auto itr = m_devices.Begin(); itr != m_devices.End(); itr++)
+    for (auto itr = m_sendSockets.begin(); itr != m_sendSockets.end(); itr++)
     {
-        Ptr<NetDevice> device = *itr;
+        Ptr<NetDevice> device = itr->first;
         uint32_t ifIndex = ipv6->GetInterfaceForDevice(device);
 
         NS_ASSERT_MSG(ifIndex >= 0,

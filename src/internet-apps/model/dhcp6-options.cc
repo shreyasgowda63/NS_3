@@ -84,7 +84,7 @@ IdentifierOption::IdentifierOption()
 
 IdentifierOption::IdentifierOption(uint16_t hardwareType, Address linkLayerAddress, Time time)
 {
-    if (time.GetSeconds() == 0)
+    if (time.IsZero())
     {
         m_duid.SetDuidType(3);
     }

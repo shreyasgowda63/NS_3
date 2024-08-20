@@ -319,17 +319,17 @@ class Dhcp6Header : public Header
     /**
      * The client identifier option.
      */
-    IdentifierOption clientIdentifier;
+    IdentifierOption m_clientIdentifier;
 
     /**
      * The server identifier option.
      */
-    IdentifierOption serverIdentifier;
+    IdentifierOption m_serverIdentifier;
 
     /**
      * (optional) The status code of the operation just performed.
      */
-    StatusCodeOption statusCode;
+    StatusCodeOption m_statusCode;
 
     /**
      * List of additional options requested.
@@ -339,12 +339,12 @@ class Dhcp6Header : public Header
     /**
      * The preference value for the server.
      */
-    IntegerOptions<uint8_t> preference;
+    PreferenceOption m_preference;
 
     /**
      * The amount of time since the client began the transaction.
      */
-    IntegerOptions<uint16_t> elapsedTime;
+    ElapsedTimeOption m_elapsedTime;
 
     /**
      * Vector of IANA options.
