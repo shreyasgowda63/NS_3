@@ -121,27 +121,15 @@ class IdentifierOption : public Options
 
     /**
      * \brief Set the DUID.
-     * \param duidAddress The address to be used as the unique identifier.
+     * \param duid The DUID.
      */
-    void SetDuid(Address duidAddress);
+    void SetDuid(Duid duid);
 
     /**
-     * \brief Get the DUID type.
-     * \return the type of the DUID.
+     * \brief Get the DUID object.
+     * \return the DUID.
      */
-    uint16_t GetDuidType() const;
-
-    /**
-     * \brief Get the hardware type.
-     * \return the hardware type in the DUID.
-     */
-    uint16_t GetHwType() const;
-
-    /**
-     * \brief Get the identifier.
-     * \return the address used as the DUID identifier.
-     */
-    Address GetDuidAddress() const;
+    Duid GetDuid() const;
 
   private:
     /**

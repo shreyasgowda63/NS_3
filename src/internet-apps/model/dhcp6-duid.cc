@@ -17,11 +17,13 @@
  * Author: Kavya Bhat <kavyabhat@gmail.com>
  *
  */
+
 #include "dhcp6-duid.h"
 
 #include "ns3/address-utils.h"
 #include "ns3/address.h"
 #include "ns3/assert.h"
+#include "ns3/ipv6-l3-protocol.h"
 #include "ns3/log.h"
 #include "ns3/loopback-net-device.h"
 #include "ns3/ptr.h"
@@ -37,8 +39,86 @@ Duid::Duid()
     m_duidType = 3;
     m_hardwareType = 0;
     m_time = Time();
-    memset(m_linkLayerAddress, 0x00, 16);
+    m_linkLayerAddress = nullptr;
     m_idLen = 0;
+}
+
+TypeId
+Duid::GetTypeId()
+{
+    static TypeId tid = TypeId("ns3::Duid")
+                            .SetParent<Header>()
+                            .SetGroupName("Internet-Apps")
+                            .AddConstructor<Duid>();
+    return tid;
+}
+
+TypeId
+Duid::GetInstanceTypeId() const
+{
+    return GetTypeId();
+}
+
+bool
+Duid::operator==(const Duid& o) const
+{
+    return (m_duidType == o.m_duidType && m_hardwareType == o.m_hardwareType &&
+            m_idLen == o.m_idLen &&
+            memcmp(m_linkLayerAddress, o.m_linkLayerAddress, m_idLen) == 0 && m_time == o.m_time);
+}
+
+bool
+operator<(const Duid& a, const Duid& b)
+{
+    if (a.m_duidType < b.m_duidType)
+    {
+        return true;
+    }
+    else if (a.m_duidType > b.m_duidType)
+    {
+        return false;
+    }
+    if (a.m_hardwareType < b.m_hardwareType)
+    {
+        return true;
+    }
+    else if (a.m_hardwareType > b.m_hardwareType)
+    {
+        return false;
+    }
+    NS_ASSERT(a.GetLength() == b.GetLength());
+    for (uint8_t i = 0; i < a.GetLength(); i++)
+    {
+        if (a.m_linkLayerAddress[i] < b.m_linkLayerAddress[i])
+        {
+            return true;
+        }
+        else if (a.m_linkLayerAddress[i] > b.m_linkLayerAddress[i])
+        {
+            return false;
+        }
+    }
+    return false;
+}
+
+bool
+Duid::IsInvalid() const
+{
+    return m_linkLayerAddress == nullptr;
+}
+
+uint8_t
+Duid::GetLength() const
+{
+    return m_idLen;
+}
+
+uint32_t
+Duid::CopyTo(uint8_t* buffer) const
+{
+    NS_LOG_FUNCTION(this << &buffer);
+    std::memcpy(buffer, m_linkLayerAddress, m_idLen);
+    return m_idLen;
 }
 
 uint16_t
@@ -69,22 +149,15 @@ Duid::SetHardwareType(uint16_t hardwareType)
     m_hardwareType = hardwareType;
 }
 
-Address
-Duid::GetDuid() const
-{
-    NS_LOG_FUNCTION(this);
-    Address addr;
-    addr.CopyFrom(m_linkLayerAddress, m_idLen);
-    return addr;
-}
-
 void
-Duid::SetDuid(uint8_t linkLayerAddress[16], uint8_t idLen)
+Duid::SetDuid(uint8_t* linkLayerAddress, uint8_t idLen)
 {
     NS_LOG_FUNCTION(this << linkLayerAddress << idLen);
 
     m_duidType = 3; // DUID-LL
     m_idLen = idLen;
+
+    NS_ASSERT_MSG(m_idLen == 6 || m_idLen != 8, "Duid: Invalid link layer address length.");
 
     switch (m_idLen)
     {
@@ -98,23 +171,30 @@ Duid::SetDuid(uint8_t linkLayerAddress[16], uint8_t idLen)
         break;
     }
 
+    if (m_linkLayerAddress != nullptr)
+    {
+        delete[] m_linkLayerAddress;
+    }
+    m_linkLayerAddress = new uint8_t[m_idLen]();
+
     memcpy(m_linkLayerAddress, linkLayerAddress, m_idLen);
 }
 
 void
 Duid::Initialize(Ptr<Node> node)
 {
-    uint32_t nInterfaces = node->GetNDevices();
+    Ptr<Ipv6L3Protocol> ipv6 = node->GetObject<Ipv6L3Protocol>();
+    uint32_t nInterfaces = ipv6->GetNInterfaces();
 
     uint32_t maxAddressLength = 0;
     Address duidAddress;
 
     for (uint32_t i = 0; i < nInterfaces; i++)
     {
-        Ptr<NetDevice> device = node->GetDevice(i);
+        Ptr<NetDevice> device = ipv6->GetNetDevice(i);
 
         // Discard the loopback device.
-        if (DynamicCast<LoopbackNetDevice>(node->GetDevice(i)))
+        if (DynamicCast<LoopbackNetDevice>(device))
         {
             continue;
         }
@@ -134,7 +214,7 @@ Duid::Initialize(Ptr<Node> node)
     NS_ASSERT_MSG(!duidAddress.IsInvalid(), "Duid: No suitable NetDevice found for DUID.");
 
     // Consider the link-layer address of the first NetDevice in the list.
-    uint8_t buffer[16];
+    auto buffer = new uint8_t[duidAddress.GetLength()]();
     duidAddress.CopyTo(buffer);
     SetDuid(buffer, duidAddress.GetLength());
 }
@@ -151,5 +231,46 @@ Duid::SetTime(Time time)
 {
     NS_LOG_FUNCTION(this << time);
     m_time = time;
+}
+
+uint32_t
+Duid::GetSerializedSize() const
+{
+    return 10;
+}
+
+void
+Duid::Print(std::ostream& os) const
+{
+    os << "( type = " << (uint32_t)m_duidType << " )";
+}
+
+void
+Duid::Serialize(Buffer::Iterator start) const
+{
+    Buffer::Iterator i = start;
+    i.WriteHtonU16(m_duidType);
+    i.WriteHtonU16(m_hardwareType);
+    i.Write(m_linkLayerAddress, m_idLen);
+}
+
+uint32_t
+Duid::Deserialize(Buffer::Iterator start)
+{
+    Buffer::Iterator i = start;
+
+    m_duidType = i.ReadNtohU16();
+    m_hardwareType = i.ReadNtohU16();
+    return 4;
+}
+
+uint32_t
+Duid::DeserializeIdentifier(Buffer::Iterator start, uint32_t len)
+{
+    Buffer::Iterator i = start;
+    m_idLen = len;
+    m_linkLayerAddress = new uint8_t[m_idLen]();
+    i.Read(m_linkLayerAddress, m_idLen);
+    return m_idLen;
 }
 } // namespace ns3

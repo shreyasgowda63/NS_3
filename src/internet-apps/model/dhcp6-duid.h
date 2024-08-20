@@ -31,15 +31,22 @@
 
 namespace ns3
 {
+
 /**
  * \ingroup dhcp6
  *
  * \class Duid
  * \brief Implements the unique identifier for DHCPv6.
  */
-class Duid
+class Duid : public Header
 {
   public:
+    /**
+     * \brief Get the type ID.
+     * \return the object TypeId
+     */
+    static TypeId GetTypeId();
+
     /**
      * \brief Default constructor.
      */
@@ -50,6 +57,19 @@ class Duid
      * \param node The node for which the DUID is to be generated.
      */
     void Initialize(Ptr<Node> node);
+
+    /**
+     * \brief Check if the DUID is invalid.
+     * \return true if the DUID is invalid.
+     */
+    bool IsInvalid() const;
+
+    /**
+     * \brief Copy the link layer address to a buffer.
+     * \param buffer The buffer to which the link layer address is to be copied.
+     * \return the number of bytes copied.
+     */
+    uint32_t CopyTo(uint8_t* buffer) const;
 
     /**
      * \brief Get the DUID type
@@ -76,17 +96,11 @@ class Duid
     void SetHardwareType(uint16_t hardwareType);
 
     /**
-     * \brief Get the link-layer address.
-     * \return the link layer address of the node.
-     */
-    Address GetDuid() const;
-
-    /**
      * \brief Set the identifier as the DUID.
      * \param linkLayerAddress the link layer address of the node.
      * \param idLen the length of the identifier.
      */
-    void SetDuid(uint8_t linkLayerAddress[16], uint8_t idLen);
+    void SetDuid(uint8_t* linkLayerAddress, uint8_t idLen);
 
     /**
      * \brief Get the time at which the DUID is generated.
@@ -95,10 +109,46 @@ class Duid
     Time GetTime() const;
 
     /**
+     * \brief Get the length of the DUID.
+     * \return the DUID length.
+     */
+    uint8_t GetLength() const;
+
+    /**
      * \brief Set the time at which DUID is generated.
      * \param time the timestamp.
      */
     void SetTime(Time time);
+
+    TypeId GetInstanceTypeId() const override;
+    void Print(std::ostream& os) const override;
+    uint32_t GetSerializedSize() const override;
+    void Serialize(Buffer::Iterator start) const override;
+    uint32_t Deserialize(Buffer::Iterator start) override;
+
+    /**
+     * \brief Deserialize the identifier in the DUID.
+     * \param start The buffer iterator.
+     * \param len The number of bytes to be read.
+     * \return The number of bytes read.
+     */
+    uint32_t DeserializeIdentifier(Buffer::Iterator start, uint32_t len);
+
+    /**
+     * \brief Comparison operator
+     * \param duid header to compare
+     * \return true if the headers are equal
+     */
+    bool operator==(const Duid& duid) const;
+
+    /**
+     * \brief Less than operator.
+     *
+     * \param a the first operand
+     * \param b the first operand
+     * \returns true if the operand a is less than operand b
+     */
+    friend bool operator<(const Duid& a, const Duid& b);
 
   private:
     /**
@@ -118,15 +168,32 @@ class Duid
     Time m_time;
 
     /**
-     * Identifier of the node in bytes. At most 128 bits.
+     * Identifier of the node in bytes.
      */
-    uint8_t m_linkLayerAddress[16];
+    uint8_t* m_linkLayerAddress;
 
     /**
      * Length of the identifier.
      */
     uint8_t m_idLen;
 };
+
+/**
+ * \brief Stream output operator
+ * \param os output stream
+ * \param duid The reference to the DUID object.
+ * \return updated stream
+ */
+std::ostream& operator<<(std::ostream& os, const Duid& duid);
+
+/**
+ * Stream extraction operator
+ * \param is input stream
+ * \param duid The reference to the DUID object.
+ * \return std::istream
+ */
+std::istream& operator>>(std::istream& is, Duid& duid);
+
 } // namespace ns3
 
 #endif

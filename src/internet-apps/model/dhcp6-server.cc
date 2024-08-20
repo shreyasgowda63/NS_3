@@ -92,8 +92,7 @@ Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
 {
     NS_LOG_INFO(this << iDev << header << client);
 
-    Address duid = header.GetClientIdentifier().GetDuidAddress();
-
+    Duid clientDuid = header.GetClientIdentifier().GetDuid();
     std::vector<bool> headerOptions = header.GetOptionList();
 
     // Add each IA in the header to the IA bindings.
@@ -103,7 +102,7 @@ Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
         for (const auto& itr : iaOpt)
         {
             uint32_t iaid = itr.GetIaid();
-            m_iaBindings.insert({duid, std::make_pair(Dhcp6Header::OPTION_IA_NA, iaid)});
+            m_iaBindings.insert({clientDuid, std::make_pair(Dhcp6Header::OPTION_IA_NA, iaid)});
         }
     }
 }
@@ -122,13 +121,11 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
     advertiseHeader.SetTransactId(header.GetTransactId());
 
     // Add Client Identifier Option, copied from the received header.
-    uint16_t clientHardwareType = header.GetClientIdentifier().GetHwType();
-    Address clientAddress = header.GetClientIdentifier().GetDuidAddress();
-
-    advertiseHeader.AddClientIdentifier(clientHardwareType, clientAddress);
+    Duid clientDuid = header.GetClientIdentifier().GetDuid();
+    advertiseHeader.AddClientIdentifier(clientDuid);
 
     // Add Server Identifier Option.
-    advertiseHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(), m_serverDuid.GetDuid());
+    advertiseHeader.AddServerIdentifier(m_serverDuid);
 
     // Find all requested IAIDs for this client.
     std::vector<uint32_t> requestedIa;
@@ -162,7 +159,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
             for (auto itr = subnet.m_expiredAddresses.begin();
                  itr != subnet.m_expiredAddresses.end();)
             {
-                if (itr->second.first == clientAddress)
+                if (itr->second.first == clientDuid)
                 {
                     nextAddress = itr->second.second;
                     nextAddress.GetBytes(offeredAddrBuf);
@@ -233,7 +230,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
             This is to prevent multiple clients from receiving the same address.
             */
             subnet.m_leasedAddresses.insert(
-                {clientAddress, std::make_pair(offer, Time(Seconds(m_prefLifetime.GetSeconds())))});
+                {clientDuid, std::make_pair(offer, Time(Seconds(m_prefLifetime.GetSeconds())))});
         }
 
         Ipv6Address offeredAddr(offeredAddrBuf);
@@ -287,12 +284,11 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
     replyHeader.SetTransactId(header.GetTransactId());
 
     // Add Client Identifier Option, copied from the received header.
-    uint16_t clientHardwareType = header.GetClientIdentifier().GetHwType();
-    Address clientAddress = header.GetClientIdentifier().GetDuidAddress();
-    replyHeader.AddClientIdentifier(clientHardwareType, clientAddress);
+    Duid clientDuid = header.GetClientIdentifier().GetDuid();
+    replyHeader.AddClientIdentifier(clientDuid);
 
     // Add Server Identifier Option.
-    replyHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(), m_serverDuid.GetDuid());
+    replyHeader.AddServerIdentifier(m_serverDuid);
 
     // Add IA_NA option.
     // Retrieve requested IA Option from client header.
@@ -349,10 +345,10 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
 
                     // Update the lease time of the newly leased addresses.
                     // Find all the leases for this client.
-                    auto range = subnet.m_leasedAddresses.equal_range(clientAddress);
+                    auto range = subnet.m_leasedAddresses.equal_range(clientDuid);
 
                     // Create a new multimap to store the updated lifetimes.
-                    std::multimap<Address, std::pair<Ipv6Address, Time>> updatedLifetimes;
+                    std::multimap<Duid, std::pair<Ipv6Address, Time>> updatedLifetimes;
                     for (auto it = range.first; it != range.second; it++)
                     {
                         Ipv6Address clientLease = it->second.first;
@@ -361,7 +357,7 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
                             Time(Seconds(m_prefLifetime.GetSeconds()))};
 
                         // Add the DUID + Ipv6Address / LeaseTime to the map.
-                        updatedLifetimes.insert({clientAddress, clientLeaseTime});
+                        updatedLifetimes.insert({clientDuid, clientLeaseTime});
                     }
 
                     // Remove all the old leases for this client.
@@ -418,12 +414,11 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
     replyHeader.SetTransactId(header.GetTransactId());
 
     // Add Client Identifier Option, copied from the received header.
-    uint16_t clientHardwareType = header.GetClientIdentifier().GetHwType();
-    Address clientAddress = header.GetClientIdentifier().GetDuidAddress();
-    replyHeader.AddClientIdentifier(clientHardwareType, clientAddress);
+    Duid clientDuid = header.GetClientIdentifier().GetDuid();
+    replyHeader.AddClientIdentifier(clientDuid);
 
     // Add Server Identifier Option.
-    replyHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(), m_serverDuid.GetDuid());
+    replyHeader.AddServerIdentifier(m_serverDuid);
 
     // Add IA_NA option.
     // Retrieve IA_NAs from client header.
@@ -452,8 +447,7 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
                 if (prefix.IsMatch(clientLease, pool))
                 {
                     // Find all the leases for this client.
-                    auto range = subnet.m_leasedAddresses.equal_range(clientAddress);
-                    std::multimap<Address, std::pair<Ipv6Address, Time>> newLifetimes;
+                    auto range = subnet.m_leasedAddresses.equal_range(clientDuid);
                     for (auto itr = range.first; itr != range.second; itr++)
                     {
                         // Check if the IPv6 address matches the client lease.
@@ -468,7 +462,7 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
                             subnet.m_leasedAddresses.erase(itr);
 
                             // Add the new lease information (with updated time)
-                            subnet.m_leasedAddresses.insert({clientAddress, clientLeaseTime});
+                            subnet.m_leasedAddresses.insert({clientDuid, clientLeaseTime});
 
                             // Add the IA Address option.
                             replyHeader.AddAddress(iaOpt.GetIaid(),
@@ -521,12 +515,11 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
     replyHeader.SetTransactId(header.GetTransactId());
 
     // Add Client Identifier Option, copied from the received header.
-    uint16_t clientHardwareType = header.GetClientIdentifier().GetHwType();
-    Address clientAddress = header.GetClientIdentifier().GetDuidAddress();
-    replyHeader.AddClientIdentifier(clientHardwareType, clientAddress);
+    Duid clientDuid = header.GetClientIdentifier().GetDuid();
+    replyHeader.AddClientIdentifier(clientDuid);
 
     // Add Server Identifier Option.
-    replyHeader.AddServerIdentifier(m_serverDuid.GetHardwareType(), m_serverDuid.GetDuid());
+    replyHeader.AddServerIdentifier(m_serverDuid);
 
     // Add Status code option.
     replyHeader.AddStatusCode(Dhcp6Header::Success, "Address declined.");
@@ -554,7 +547,7 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
                         if (leaseAddr == address)
                         {
                             itr = subnet.m_leasedAddresses.erase(itr);
-                            subnet.m_declinedAddresses[address] = clientAddress;
+                            subnet.m_declinedAddresses[address] = clientDuid;
                             continue;
                         }
                         itr++;
@@ -571,13 +564,13 @@ Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
                     for (auto itr = subnet.m_leasedAddresses.begin();
                          itr != subnet.m_leasedAddresses.end();)
                     {
-                        Address duid = itr->first;
+                        Duid duid = itr->first;
                         Ipv6Address leaseAddr = itr->second.first;
                         Time expiredTime = itr->second.second;
                         if (leaseAddr == address)
                         {
                             itr = subnet.m_leasedAddresses.erase(itr);
-                            std::pair<Address, Ipv6Address> expiredLease = {duid, leaseAddr};
+                            std::pair<Duid, Ipv6Address> expiredLease = {duid, leaseAddr};
                             subnet.m_expiredAddresses.insert({expiredTime, expiredLease});
                             continue;
                         }
@@ -633,6 +626,11 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
     {
         return;
     }
+
+    // Initialize the DUID before responding to the client.
+    Ptr<Node> node = m_devices[0]->GetNode();
+    m_serverDuid.Initialize(node);
+
     if (header.GetMessageType() == Dhcp6Header::SOLICIT)
     {
         ProcessSolicit(iDev, header, senderAddr);
@@ -705,7 +703,6 @@ Dhcp6Server::StartApplication()
         m_sendSockets[device] = socket;
     }
 
-    m_serverDuid.Initialize(node);
     m_leaseCleanupEvent = Simulator::Schedule(m_leaseCleanup, &Dhcp6Server::CleanLeases, this);
 }
 
@@ -729,13 +726,13 @@ Dhcp6Server::CleanLeases()
     {
         for (auto itr = subnet.m_leasedAddresses.begin(); itr != subnet.m_leasedAddresses.end();)
         {
-            Address duid = itr->first;
+            Duid duid = itr->first;
             Ipv6Address address = itr->second.first;
             Time leaseTime = itr->second.second;
 
             if (Simulator::Now() >= leaseTime)
             {
-                std::pair<Address, Ipv6Address> expiredLease = {duid, address};
+                std::pair<Duid, Ipv6Address> expiredLease = {duid, address};
                 subnet.m_expiredAddresses.insert({leaseTime, expiredLease});
                 itr = subnet.m_leasedAddresses.erase(itr);
                 continue;
@@ -748,13 +745,13 @@ Dhcp6Server::CleanLeases()
 }
 
 size_t
-AddressHash::operator()(const Address& x) const
+DuidHash::operator()(const Duid& x) const
 {
     uint8_t buffer[20];
-    uint8_t addrLen = x.GetLength();
+    uint8_t duidLen = x.GetLength();
     x.CopyTo(buffer);
 
-    std::string s(buffer, buffer + addrLen);
+    std::string s(buffer, buffer + duidLen);
     return std::hash<std::string>{}(s);
 }
 

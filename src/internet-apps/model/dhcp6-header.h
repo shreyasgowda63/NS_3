@@ -181,17 +181,15 @@ class Dhcp6Header : public Header
 
     /**
      * \brief Add the client identifier option.
-     * \param hardwareType the hardware type of the DUID.
-     * \param linkLayerAddress the link layer address of the node.
+     * \param duid The DUID which identifies the client.
      */
-    void AddClientIdentifier(uint16_t hardwareType, Address linkLayerAddress);
+    void AddClientIdentifier(Duid duid);
 
     /**
      * \brief Add the server identifier option.
-     * \param hardwareType the hardware type of the DUID.
-     * \param linkLayerAddress the link layer address of the node.
+     * \param duid The DUID which identifies the server.
      */
-    void AddServerIdentifier(uint16_t hardwareType, Address linkLayerAddress);
+    void AddServerIdentifier(Duid duid);
 
     /**
      * \brief Request additional options.
@@ -282,13 +280,9 @@ class Dhcp6Header : public Header
      * \brief Add an identifier option to the header.
      * \param identifier the client or server identifier option object.
      * \param optionType identify whether to add a client or server identifier.
-     * \param hardwareType the hardware type of the DUID.
-     * \param linkLayerAddress the link layer address of the node.
+     * \param duid The unique identifier for the client or server.
      */
-    void AddIdentifierOption(IdentifierOption& identifier,
-                             uint16_t optionType,
-                             uint16_t hardwareType,
-                             Address linkLayerAddress);
+    void AddIdentifierOption(IdentifierOption& identifier, uint16_t optionType, Duid duid);
 
     /**
      * \brief Add IANA or IATA option to the header.

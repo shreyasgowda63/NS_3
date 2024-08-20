@@ -101,34 +101,17 @@ IdentifierOption::IdentifierOption(uint16_t hardwareType, Address linkLayerAddre
 }
 
 void
-IdentifierOption::SetDuid(Address duidAddress)
+IdentifierOption::SetDuid(Duid duid)
 {
     NS_LOG_FUNCTION(this);
-
-    uint8_t buffer[16];
-    duidAddress.CopyTo(buffer);
-    m_duid.SetDuid(buffer, duidAddress.GetLength());
+    m_duid = duid;
 }
 
-uint16_t
-IdentifierOption::GetDuidType() const
+Duid
+IdentifierOption::GetDuid() const
 {
     NS_LOG_FUNCTION(this);
-    return m_duid.GetDuidType();
-}
-
-uint16_t
-IdentifierOption::GetHwType() const
-{
-    NS_LOG_FUNCTION(this);
-    return m_duid.GetHardwareType();
-}
-
-Address
-IdentifierOption::GetDuidAddress() const
-{
-    NS_LOG_FUNCTION(this);
-    return m_duid.GetDuid();
+    return m_duid;
 }
 
 StatusCodeOption::StatusCodeOption()

@@ -164,6 +164,12 @@ class Dhcp6Client : public Application
     void LinkStateHandler();
 
     /**
+     * \brief Callback for when an M flag is received.
+     * \param recvInterface The interface on which the M flag was received.
+     */
+    void ReceiveMflag(uint32_t recvInterface);
+
+    /**
      * \brief Used to send the Solicit message and start the DHCPv6 client.
      */
     void Boot();
