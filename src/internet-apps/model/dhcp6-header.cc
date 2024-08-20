@@ -41,7 +41,6 @@ Dhcp6Header::Dhcp6Header()
       m_msgType(0),
       m_transactId(0)
 {
-    m_options = std::vector<bool>(65536, false);
     m_solMaxRt = 7200;
 }
 
@@ -83,11 +82,7 @@ void
 Dhcp6Header::ResetOptions()
 {
     m_len = 4;
-    int i;
-    for (i = 0; i < 65536; i++)
-    {
-        m_options[i] = false;
-    }
+    m_options.clear();
 }
 
 TypeId
@@ -158,7 +153,7 @@ Dhcp6Header::AddServerIdentifier(Duid duid)
 }
 
 void
-Dhcp6Header::AddIdentifierOption(IdentifierOption& identifier, uint16_t optionType, Duid duid)
+Dhcp6Header::AddIdentifierOption(IdentifierOption& identifier, OptionType optionType, Duid duid)
 {
     // DUID type (2 bytes) + hw type (2 bytes) + Link-layer Address (variable)
     uint16_t duidLength = 2 + 2 + duid.GetLength();
@@ -243,7 +238,7 @@ Dhcp6Header::AddIataOption(uint32_t iaid)
 }
 
 void
-Dhcp6Header::AddIaOption(uint16_t optionType, uint32_t iaid, uint32_t t1, uint32_t t2)
+Dhcp6Header::AddIaOption(OptionType optionType, uint32_t iaid, uint32_t t1, uint32_t t2)
 {
     // Create a new identity association.
     IaOptions newIa;
@@ -363,7 +358,7 @@ Dhcp6Header::AddAddress(uint32_t iaid,
     AddMessageLength(4 + 24);
 }
 
-std::vector<bool>
+std::map<Dhcp6Header::OptionType, bool>
 Dhcp6Header::GetOptionList()
 {
     return m_options;
@@ -404,7 +399,7 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
     uint32_t mTTid = m_msgType << 24 | m_transactId;
     i.WriteHtonU32(mTTid);
 
-    if (m_options[OPTION_CLIENTID])
+    if (m_options.find(OPTION_CLIENTID) != m_options.end())
     {
         i.WriteHtonU16(m_clientIdentifier.GetOptionCode());
         i.WriteHtonU16(m_clientIdentifier.GetOptionLength());
@@ -413,7 +408,7 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
         duid.Serialize(i);
         i.Next(size);
     }
-    if (m_options[OPTION_SERVERID])
+    if (m_options.find(OPTION_SERVERID) != m_options.end())
     {
         i.WriteHtonU16(m_serverIdentifier.GetOptionCode());
         i.WriteHtonU16(m_serverIdentifier.GetOptionLength());
@@ -422,7 +417,7 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
         duid.Serialize(i);
         i.Next(size);
     }
-    if (m_options[OPTION_IA_NA])
+    if (m_options.find(OPTION_IA_NA) != m_options.end())
     {
         for (const auto& itr : m_ianaList)
         {
@@ -447,13 +442,13 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
             }
         }
     }
-    if (m_options[OPTION_ELAPSED_TIME])
+    if (m_options.find(OPTION_ELAPSED_TIME) != m_options.end())
     {
         i.WriteHtonU16(m_elapsedTime.GetOptionCode());
         i.WriteHtonU16(m_elapsedTime.GetOptionLength());
         i.WriteHtonU16(m_elapsedTime.GetOptionValue());
     }
-    if (m_options[OPTION_ORO])
+    if (m_options.find(OPTION_ORO) != m_options.end())
     {
         i.WriteHtonU16(m_optionRequest.GetOptionCode());
         i.WriteHtonU16(m_optionRequest.GetOptionLength());
@@ -464,13 +459,13 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
             i.WriteHtonU16(itr);
         }
     }
-    if (m_options[OPTION_SOL_MAX_RT])
+    if (m_options.find(OPTION_SOL_MAX_RT) != m_options.end())
     {
         i.WriteHtonU16(OPTION_SOL_MAX_RT);
         i.WriteHtonU16(4);
         i.WriteHtonU32(m_solMaxRt);
     }
-    if (m_options[OPTION_STATUS_CODE])
+    if (m_options.find(OPTION_STATUS_CODE) != m_options.end())
     {
         i.WriteHtonU16(OPTION_STATUS_CODE);
         i.WriteHtonU16(m_statusCode.GetOptionLength());

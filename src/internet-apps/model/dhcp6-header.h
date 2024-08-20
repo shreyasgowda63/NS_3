@@ -253,7 +253,7 @@ class Dhcp6Header : public Header
      * \brief Get list of all options set in the header.
      * \return the list of options.
      */
-    std::vector<bool> GetOptionList();
+    std::map<OptionType, bool> GetOptionList();
 
     /**
      * \brief The port number of the DHCPv6 client.
@@ -284,7 +284,7 @@ class Dhcp6Header : public Header
      * \param optionType identify whether to add a client or server identifier.
      * \param duid The unique identifier for the client or server.
      */
-    void AddIdentifierOption(IdentifierOption& identifier, uint16_t optionType, Duid duid);
+    void AddIdentifierOption(IdentifierOption& identifier, OptionType optionType, Duid duid);
 
     /**
      * \brief Add IANA or IATA option to the header.
@@ -293,7 +293,7 @@ class Dhcp6Header : public Header
      * \param t1
      * \param t2
      */
-    void AddIaOption(uint16_t optionType, uint32_t iaid, uint32_t t1 = 0, uint32_t t2 = 0);
+    void AddIaOption(OptionType optionType, uint32_t iaid, uint32_t t1 = 0, uint32_t t2 = 0);
 
     /**
      * The message length;
@@ -314,7 +314,7 @@ class Dhcp6Header : public Header
     /**
      * Options present in the header, indexed by option code.
      */
-    std::vector<bool> m_options;
+    std::map<OptionType, bool> m_options;
 
     /**
      * The client identifier option.

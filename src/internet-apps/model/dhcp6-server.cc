@@ -95,10 +95,10 @@ Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
     NS_LOG_INFO(this << iDev << header << client);
 
     Duid clientDuid = header.GetClientIdentifier().GetDuid();
-    std::vector<bool> headerOptions = header.GetOptionList();
+    std::map<Dhcp6Header::OptionType, bool> headerOptions = header.GetOptionList();
 
     // Add each IA in the header to the IA bindings.
-    if (headerOptions[Dhcp6Header::OPTION_IA_NA])
+    if (headerOptions.find(Dhcp6Header::OPTION_IA_NA) != headerOptions.end())
     {
         std::vector<IaOptions> iaOpt = header.GetIanaOptions();
         for (const auto& itr : iaOpt)
@@ -249,8 +249,8 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
         }
     }
 
-    std::vector<bool> headerOptions = header.GetOptionList();
-    if (headerOptions[Dhcp6Header::OPTION_ORO])
+    std::map<Dhcp6Header::OptionType, bool> headerOptions = header.GetOptionList();
+    if (headerOptions.find(Dhcp6Header::OPTION_ORO) != headerOptions.end())
     {
         std::vector<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
         advertiseHeader.HandleOptionRequest(requestedOptions);
@@ -377,10 +377,10 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
         }
     }
 
-    std::vector<bool> headerOptions = header.GetOptionList();
+    std::map<Dhcp6Header::OptionType, bool> headerOptions = header.GetOptionList();
 
     // Check if the client has requested any options.
-    if (headerOptions[Dhcp6Header::OPTION_ORO])
+    if (headerOptions.find(Dhcp6Header::OPTION_ORO) != headerOptions.end())
     {
         std::vector<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
         replyHeader.HandleOptionRequest(requestedOptions);
@@ -479,8 +479,8 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
         }
     }
 
-    std::vector<bool> headerOptions = header.GetOptionList();
-    if (headerOptions[Dhcp6Header::OPTION_ORO])
+    std::map<Dhcp6Header::OptionType, bool> headerOptions = header.GetOptionList();
+    if (headerOptions.find(Dhcp6Header::OPTION_ORO) != headerOptions.end())
     {
         std::vector<uint16_t> requestedOptions = header.GetOptionRequest().GetRequestedOptions();
         replyHeader.HandleOptionRequest(requestedOptions);
