@@ -130,8 +130,8 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
     advertiseHeader.AddServerIdentifier(m_serverDuid);
 
     // Find all requested IAIDs for this client.
-    std::vector<uint32_t> requestedIa;
     std::vector<IaOptions> ianaOptionsList = header.GetIanaOptions();
+    std::vector<uint32_t> requestedIa(ianaOptionsList.size());
     for (const auto& iaOpt : ianaOptionsList)
     {
         requestedIa.emplace_back(iaOpt.GetIaid());

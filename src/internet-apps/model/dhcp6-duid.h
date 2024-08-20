@@ -93,7 +93,6 @@ class Duid : public Header
     /**
      * \brief Set the identifier as the DUID.
      * \param linkLayerAddress the link layer address of the node.
-     * \param idLen the length of the identifier.
      */
     void SetDuid(std::vector<uint8_t> linkLayerAddress);
 

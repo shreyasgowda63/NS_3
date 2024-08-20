@@ -293,6 +293,9 @@ Dhcp6Header::AddIaOption(OptionType optionType, uint32_t iaid, uint32_t t1, uint
         }
         break;
     }
+
+    default:
+        break;
     }
 
     // Set the option flag to true.
