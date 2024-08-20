@@ -484,12 +484,18 @@ Scope and Limitations
 
 * The implementation does not support the use of a DHCP Relay agent. Hence, all the server and client nodes should be on the same link.
 * The application does not yet support prefix delegation. Each client currently receives only one IPv6 address.
+* If a DUID-LLT (Link-Layer Address plus Time) is used as the client identifier, there is a possibility that the timestamps of two clients may be the same. This could lead to a conflict in the lease bindings on the server if the link-layer addresses are not unique.
+* If a node (such as a Wifi device) leaves the network and rejoins at a later time, the Solicit messages are not automatically restarted.
 
 Future Work
 ===========
 * The Rapid Commit option may be implemented to allow a Solicit / Reply message exchange between the client and server.
 * Addition of DHCPv6 relays to allow the client and server to be in different subnets.
 * Implementation of stateless DHCPv6 to allow the client to request only configuration information from the server.
+* Implement the ability to configure DHCPv6 through a configuration file, similar to how it is done in Linux systems.
+* Allow users to manually set the DUIDs for the client(s) and server(s).
+* Implement support for host reservations, allowing specific IPv6 addresses to be assigned to particular clients based on their DUIDs or other identifying information.
+* Include the ``Preference Option`` in the Advertise message sent by the server. This option allows the client to identify and choose a single server based on the preference value, instead of obtaining leases from each server that responds to the Solicit message
 
 References
 ==========
