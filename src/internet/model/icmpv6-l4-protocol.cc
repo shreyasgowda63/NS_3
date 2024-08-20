@@ -140,7 +140,11 @@ Icmpv6L4Protocol::GetTypeId()
                 "DadSuccess",
                 "Duplicate Address not detected during DAD, the address is now PREFERRED",
                 MakeTraceSourceAccessor(&Icmpv6L4Protocol::m_dadSuccessAddressTrace),
-                "ns3::Ipv6Address::TracedCallback");
+                "ns3::Ipv6Address::TracedCallback")
+            .AddTraceSource("StartDhcpv6",
+                            "M flag received, start sending DHCPv6 Solicit messages",
+                            MakeTraceSourceAccessor(&Icmpv6L4Protocol::m_startDhcpv6Trace),
+                            "ns3::Ipv6Address::TracedCallback");
     return tid;
 }
 
@@ -429,6 +433,7 @@ Icmpv6L4Protocol::HandleRA(Ptr<Packet> packet,
     Ptr<Packet> p = packet->Copy();
     Icmpv6RA raHeader;
     Ptr<Ipv6L3Protocol> ipv6 = m_node->GetObject<Ipv6L3Protocol>();
+
     Icmpv6OptionPrefixInformation prefixHdr;
     Icmpv6OptionMtu mtuHdr;
     Icmpv6OptionLinkLayerAddress llaHdr;
@@ -438,6 +443,12 @@ Icmpv6L4Protocol::HandleRA(Ptr<Packet> packet,
     Ipv6Address defaultRouter = Ipv6Address::GetZero();
 
     p->RemoveHeader(raHeader);
+
+    // If 'M' flag is set, we need to start DHCPv6.
+    if (raHeader.GetFlagM())
+    {
+        m_startDhcpv6Trace(ipv6->GetInterfaceForDevice(interface->GetDevice()));
+    }
 
     if (raHeader.GetLifeTime())
     {
