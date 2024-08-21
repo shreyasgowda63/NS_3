@@ -32,10 +32,16 @@
 #include <thread>
 
 #ifdef __WIN32__
-#include <winsock.h>
+
+#include <BaseTsd.h>
+#include <WinSock2.h>
+using ssize_t = SSIZE_T;
+
 #else
+
 #include <sys/select.h>
 #include <unistd.h> // close()
+
 #endif
 
 /**
