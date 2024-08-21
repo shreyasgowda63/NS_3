@@ -49,6 +49,58 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("FdReader");
 
+/**
+ * Write a buffer of data to a pipe.
+ *
+ * @param fd File descriptor of the pipe.
+ * @param buf Buffer with the data to write to the pipe.
+ * @param n Number of bytes to write.
+ * @return Number of bytes written to the pipe.
+ */
+inline ssize_t
+WritePipe(int fd, const void* buf, size_t n)
+{
+#ifdef __WIN32__
+    return send(fd, (char*)buf, static_cast<int>(n), 0);
+#else
+    return write(fd, buf, n);
+#endif
+}
+
+/**
+ * Read data from a pipe to a buffer.
+ *
+ * @param fd File descriptor of the pipe.
+ * @param buf Buffer where the data read will be saved.
+ * @param n Number of bytes to read.
+ * @return Number of bytes read from the pipe.
+ */
+inline ssize_t
+ReadPipe(int fd, void* buf, size_t n)
+{
+#ifdef __WIN32__
+    return recv(fd, (char*)buf, static_cast<int>(n), 0);
+#else
+    return read(fd, buf, n);
+#endif
+}
+
+/**
+ * Close pipe.
+ *
+ * @param fd File descriptor of the pipe.
+ * @return 0 on success, -1 on error.
+ */
+inline int
+ClosePipe(int fd)
+{
+#ifdef __WIN32__
+    return closesocket(fd);
+#else
+    return close(fd);
+#endif
+}
+
 #ifdef __WIN32__
 bool FdReader::winsock_initialized = false;
 #endif
@@ -167,12 +219,7 @@ FdReader::Stop()
     if (m_evpipe[1] != -1)
     {
         char zero = 0;
-
-#ifdef __WIN32__
-        ssize_t len = send(m_evpipe[1], &zero, sizeof(zero), 0);
-#else
-        ssize_t len = write(m_evpipe[1], &zero, sizeof(zero));
-#endif // __WIN32__
+        ssize_t len = WritePipe(m_evpipe[1], &zero, sizeof(zero));
 
         if (len != sizeof(zero))
         {
@@ -189,22 +236,14 @@ FdReader::Stop()
     // close the write end of the event pipe
     if (m_evpipe[1] != -1)
     {
-#ifdef __WIN32__
-        closesocket(m_evpipe[1]);
-#else
-        close(m_evpipe[1]);
-#endif // __WIN32__
+        ClosePipe(m_evpipe[1]);
         m_evpipe[1] = -1;
     }
 
     // close the read end of the event pipe
     if (m_evpipe[0] != -1)
     {
-#ifdef __WIN32__
-        closesocket(m_evpipe[0]);
-#else
-        close(m_evpipe[0]);
-#endif // __WIN32__
+        ClosePipe(m_evpipe[0]);
         m_evpipe[0] = -1;
     }
 
@@ -243,11 +282,8 @@ FdReader::Run()
             for (;;)
             {
                 char buf[1024];
-#ifdef __WIN32__
-                ssize_t len = recv(m_evpipe[0], buf, sizeof(buf), 0);
-#else
-                ssize_t len = read(m_evpipe[0], buf, sizeof(buf));
-#endif // __WIN32__
+                ssize_t len = ReadPipe(m_evpipe[0], buf, sizeof(buf));
+
                 if (len == 0)
                 {
                     NS_FATAL_ERROR("event pipe closed");
