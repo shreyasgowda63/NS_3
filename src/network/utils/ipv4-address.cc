@@ -20,6 +20,7 @@
 #include "ipv4-address.h"
 
 #include "ns3/assert.h"
+#include "ns3/hash.h"
 #include "ns3/log.h"
 
 #include <cstdlib>
@@ -402,7 +403,9 @@ Ipv4Address::GetLoopback()
 size_t
 Ipv4AddressHash::operator()(const Ipv4Address& x) const
 {
-    return std::hash<uint32_t>()(x.Get());
+    auto buf = x.Get();
+
+    return Hash32(reinterpret_cast<const char*>(&buf), 4);
 }
 
 std::ostream&

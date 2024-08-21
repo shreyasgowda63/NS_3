@@ -686,11 +686,6 @@ operator!=(const Ipv6Prefix& a, const Ipv6Prefix& b)
  *
  * \class Ipv6AddressHash
  * \brief Hash function class for IPv6 addresses.
- *
- * This class uses `std::hash`, which is not stable across different executions,
- * platforms, or compilers. As a result, it should not be used when generating output
- * that requires consistency across runs. If stability is required, consider using
- * the `Hasher` class, which provides a stable hash function.
  */
 class Ipv6AddressHash
 {
@@ -699,8 +694,6 @@ class Ipv6AddressHash
      * \brief Returns the hash of an IPv6 address.
      * \param x IPv6 address to hash
      * \return the hash of the address
-     *
-     * This method uses `std::hash` rather than `Hash` class as speed is prioritized over stability.
      */
     size_t operator()(const Ipv6Address& x) const;
 };
