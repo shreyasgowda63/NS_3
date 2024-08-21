@@ -23,12 +23,12 @@
 
 #include "fatal-error.h"
 #include "log.h"
-#include "simple-ref-count.h"
 #include "simulator.h"
 
 #include <cerrno>
 #include <cstring>
 #include <fcntl.h>
+#include <sys/types.h>
 #include <thread>
 
 #ifdef __WIN32__
