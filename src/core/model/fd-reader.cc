@@ -259,10 +259,8 @@ FdReader::Run()
                     {
                         break;
                     }
-                    else
-                    {
-                        NS_FATAL_ERROR("read() failed: " << std::strerror(errno));
-                    }
+
+                    NS_FATAL_ERROR("read() failed: " << std::strerror(errno));
                 }
             }
         }
@@ -276,14 +274,16 @@ FdReader::Run()
         if (FD_ISSET(m_fd, &readfds))
         {
             FdReader::Data data = DoRead();
+
             // reading stops when m_len is zero
             if (data.m_len == 0)
             {
                 break;
             }
+
             // the callback is only called when m_len is positive (data
             // is ignored if m_len is negative)
-            else if (data.m_len > 0)
+            if (data.m_len > 0)
             {
                 m_readCallback(data.m_buf, data.m_len);
             }
