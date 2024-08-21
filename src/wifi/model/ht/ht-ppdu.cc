@@ -82,7 +82,7 @@ HtPpdu::SetHtSigHeader(HtSigHeader& htSig, const WifiTxVector& txVector, std::si
     htSig.SetChannelWidth(txVector.GetChannelWidth());
     htSig.SetHtLength(psduSize);
     htSig.SetAggregation(txVector.IsAggregation());
-    htSig.SetShortGuardInterval(txVector.GetGuardInterval() == 400);
+    htSig.SetShortGuardInterval(txVector.GetGuardInterval() == NanoSeconds(400));
 }
 
 WifiTxVector
@@ -102,7 +102,7 @@ HtPpdu::SetTxVectorFromPhyHeaders(WifiTxVector& txVector,
     txVector.SetMode(HtPhy::GetHtMcs(htSig.GetMcs()));
     txVector.SetChannelWidth(htSig.GetChannelWidth());
     txVector.SetNss(1 + (htSig.GetMcs() / 8));
-    txVector.SetGuardInterval(htSig.GetShortGuardInterval() ? 400 : 800);
+    txVector.SetGuardInterval(htSig.GetShortGuardInterval() ? NanoSeconds(400) : NanoSeconds(800));
     txVector.SetAggregation(htSig.GetAggregation());
 }
 
@@ -144,12 +144,12 @@ HtPpdu::HtSigHeader::GetMcs() const
 }
 
 void
-HtPpdu::HtSigHeader::SetChannelWidth(ChannelWidthMhz channelWidth)
+HtPpdu::HtSigHeader::SetChannelWidth(MHz_t channelWidth)
 {
     m_cbw20_40 = (channelWidth > 20) ? 1 : 0;
 }
 
-ChannelWidthMhz
+MHz_t
 HtPpdu::HtSigHeader::GetChannelWidth() const
 {
     return m_cbw20_40 ? 40 : 20;

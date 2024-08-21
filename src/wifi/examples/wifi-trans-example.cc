@@ -54,8 +54,8 @@ int
 main(int argc, char** argv)
 {
     std::string standard = "11a";
-    int bw = 20;
-    double pow = 23; // dBm
+    MHz_t bw = 20;
+    dBm pow = 23;
     bool verbose = false;
     CommandLine cmd(__FILE__);
     cmd.AddValue("standard",
@@ -228,8 +228,8 @@ main(int argc, char** argv)
     spectrumPhy.SetErrorRateModel("ns3::NistErrorRateModel");
     spectrumPhy.Set("Frequency", UintegerValue(freq));
     spectrumPhy.Set("ChannelWidth", UintegerValue(bw));
-    spectrumPhy.Set("TxPowerStart", DoubleValue(pow)); // dBm
-    spectrumPhy.Set("TxPowerEnd", DoubleValue(pow));
+    spectrumPhy.Set("TxPowerStart", dBmValue(pow));
+    spectrumPhy.Set("TxPowerEnd", dBmValue(pow));
 
     WifiMacHelper mac;
     wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",

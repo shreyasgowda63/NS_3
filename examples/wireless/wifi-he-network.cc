@@ -74,8 +74,8 @@ main(int argc, char* argv[])
     bool useRts{false};
     bool useExtendedBlockAck{false};
     Time simulationTime{"10s"};
-    double distance{1.0}; // meters
-    double frequency{5};  // whether 2.4, 5 or 6 GHz
+    meter_t distance{1.0};
+    double frequency{5}; // whether 2.4, 5 or 6 GHz
     std::size_t nStations{1};
     std::string dlAckSeqType{"NO-OFDMA"};
     bool enableUlOfdma{false};
@@ -366,7 +366,8 @@ main(int argc, char* argv[])
                     clientNodes.Add(downlink ? wifiApNode.Get(0) : wifiStaNodes.Get(i));
                 }
 
-                const auto maxLoad = HePhy::GetDataRate(mcs, channelWidth, gi, 1) / nStations;
+                const auto maxLoad =
+                    HePhy::GetDataRate(mcs, channelWidth, NanoSeconds(gi), 1) / nStations;
                 if (udp)
                 {
                     // UDP flow

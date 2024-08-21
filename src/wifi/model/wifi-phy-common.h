@@ -54,9 +54,9 @@ class Time;
 static constexpr uint8_t MAX_PROPAGATION_DELAY_USEC = 1;
 
 /**
- * typedef for a pair of start and stop frequencies in Hz to represent a band
+ * typedef for a pair of start and stop frequencies to represent a band
  */
-using WifiSpectrumBandFrequencies = std::pair<uint64_t, uint64_t>;
+using WifiSpectrumBandFrequencies = std::pair<Hz_t, Hz_t>;
 
 /// WifiSpectrumBandInfo structure containing info about a spectrum band
 struct WifiSpectrumBandInfo
@@ -592,27 +592,25 @@ operator<<(std::ostream& os, WifiChannelWidthType width)
 }
 
 /**
- * Convert the guard interval to nanoseconds based on the WifiMode.
+ * Get the guard interval for a given WifiMode.
  *
  * \param mode the WifiMode
  * \param device pointer to the WifiNetDevice object
  *
- * \return the guard interval duration in nanoseconds
+ * \return the guard interval duration to use for the mode
  */
-uint16_t ConvertGuardIntervalToNanoSeconds(WifiMode mode, const Ptr<WifiNetDevice> device);
+Time GetGuardIntervalForMode(WifiMode mode, const Ptr<WifiNetDevice> device);
 
 /**
- * Convert the guard interval to nanoseconds based on the WifiMode.
+ * Get the guard interval for a given WifiMode.
  *
  * \param mode the WifiMode
  * \param htShortGuardInterval whether HT/VHT short guard interval is enabled
  * \param heGuardInterval the HE guard interval duration
  *
- * \return the guard interval duration in nanoseconds
+ * \return the guard interval duration to use for the mode
  */
-uint16_t ConvertGuardIntervalToNanoSeconds(WifiMode mode,
-                                           bool htShortGuardInterval,
-                                           Time heGuardInterval);
+Time GetGuardIntervalForMode(WifiMode mode, bool htShortGuardInterval, Time heGuardInterval);
 
 /**
  * Return the preamble to be used for the transmission.
@@ -694,20 +692,20 @@ bool IsUlMu(WifiPreamble preamble);
 WifiModulationClass GetModulationClassForStandard(WifiStandard standard);
 
 /**
- * Get the maximum channel width in MHz allowed for the given modulation class.
+ * Get the maximum channel width allowed for the given modulation class.
  *
  * \param modulation the modulation class
- * \return the maximum channel width in MHz allowed for the given modulation class
+ * \return the maximum channel width allowed for the given modulation class
  */
-ChannelWidthMhz GetMaximumChannelWidth(WifiModulationClass modulation);
+MHz_t GetMaximumChannelWidth(WifiModulationClass modulation);
 
 /**
- * Get the total channel width in MHz for the channel width type.
+ * Get the total channel width for the channel width type.
  *
  * \param width the channel width type
- * \return the total channel width in MHz for the channel width type
+ * \return the total channel width for the channel width type
  */
-ChannelWidthMhz GetChannelWidthInMhz(WifiChannelWidthType width);
+MHz_t GetChannelWidthInMhz(WifiChannelWidthType width);
 
 /**
  * Return true if a preamble corresponds to an EHT transmission.

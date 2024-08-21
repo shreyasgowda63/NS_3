@@ -49,7 +49,7 @@ class EhtFrameExchangeManager : public HeFrameExchangeManager
 
     void SetLinkId(uint8_t linkId) override;
     Ptr<WifiMpdu> CreateAliasIfNeeded(Ptr<WifiMpdu> mpdu) const override;
-    bool StartTransmission(Ptr<Txop> edca, ChannelWidthMhz allowedWidth) override;
+    bool StartTransmission(Ptr<Txop> edca, MHz_t allowedWidth) override;
 
     /**
      * Send an EML Operating Mode Notification frame to the given station.
@@ -60,15 +60,14 @@ class EhtFrameExchangeManager : public HeFrameExchangeManager
     void SendEmlOmn(const Mac48Address& dest, const MgtEmlOmn& frame);
 
     /**
-     * Get the RSSI (in dBm) of the most recent packet received from the station having
-     * the given address. If there is no such information for the given station and the
-     * station is affiliated with an MLD, return the RSSI (in dBm) of the most recent
-     * packet received from another station of the same MLD.
+     * Get the RSSI of the most recent packet received from the station having the given address. If
+     * there is no such information for the given station and the station is affiliated with an MLD,
+     * return the RSSI of the most recent packet received from another station of the same MLD.
      *
      * \param address of the remote station
-     * \return the RSSI (in dBm) of the most recent packet received from the remote station
+     * \return the RSSI of the most recent packet received from the remote station
      */
-    std::optional<double> GetMostRecentRssi(const Mac48Address& address) const override;
+    std::optional<dBm> GetMostRecentRssi(const Mac48Address& address) const override;
 
     /**
      * \param psdu the given PSDU

@@ -113,14 +113,14 @@ main(int argc, char* argv[])
     DataRate dataRate{"1Mb/s"};
     uint32_t packetSize{1000}; // bytes
     Time duration{"10s"};
-    double initialEnergy{7.5}; // joule
-    double voltage{3.0};       // volts
-    double txPowerStart{0.0};  // dbm
-    double txPowerEnd{15.0};   // dbm
+    joule_t initialEnergy{7.5};
+    volt_t voltage{3.0};
+    dBm txPowerStart{0.0};
+    dBm txPowerEnd{15.0};
     uint32_t nTxPowerLevels{16};
     uint32_t txPowerLevel{0};
-    double idleCurrent{0.273}; // Ampere
-    double txCurrent{0.380};   // Ampere
+    ampere_t idleCurrent{0.273};
+    ampere_t txCurrent{0.380};
     bool verbose{false};
 
     CommandLine cmd(__FILE__);
@@ -153,8 +153,8 @@ main(int argc, char* argv[])
     wifi.SetStandard(WIFI_STANDARD_80211b);
 
     YansWifiPhyHelper wifiPhy;
-    wifiPhy.Set("TxPowerStart", DoubleValue(txPowerStart));
-    wifiPhy.Set("TxPowerEnd", DoubleValue(txPowerEnd));
+    wifiPhy.Set("TxPowerStart", dBmValue(txPowerStart));
+    wifiPhy.Set("TxPowerEnd", dBmValue(txPowerEnd));
     wifiPhy.Set("TxPowerLevels", UintegerValue(nTxPowerLevels));
 
     YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();

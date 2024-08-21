@@ -43,7 +43,7 @@
  * \ingroup wifi
  * Declaration of:
  * - ns3::PhyEntity class
- * - ns3::SignalNoiseDbm, ns3::MpduInfo, and ns3::RxSignalInfo structs
+ * - ns3::SignalNoise, ns3::MpduInfo, and ns3::RxSignalInfo structs
  * - ns3::RxPowerWattPerChannelBand typedef
  */
 
@@ -51,9 +51,9 @@ namespace ns3
 {
 
 /**
- * A map of the received power (Watts) for each band
+ * A map of the received power for each band
  */
-using RxPowerWattPerChannelBand = std::map<WifiSpectrumBandInfo, double>;
+using RxPowerWattPerChannelBand = std::map<WifiSpectrumBandInfo, Watt_t>;
 
 class WifiPsdu;
 class WifiPhy;
@@ -472,13 +472,13 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
      *
      * \param txDuration the duration of the transmission
      * \param ppdu the PPDU to send
-     * \param txPowerDbm the total TX power in dBm
+     * \param txPower the total TX power
      * \param txPowerSpectrum the TX PSD
      * \param type the type of transmission (for logging)
      */
     void Transmit(Time txDuration,
                   Ptr<const WifiPpdu> ppdu,
-                  double txPowerDbm,
+                  dBm txPower,
                   Ptr<SpectrumValue> txPowerSpectrum,
                   const std::string& type);
 
@@ -493,15 +493,15 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
                                      const WifiTxVector& txVector,
                                      WifiPhyBand band) const;
     /**
-     * Return the CCA threshold in dBm for a given channel type.
+     * Return the CCA threshold for a given channel type.
      * If the channel type is not provided, the default CCA threshold is returned.
      *
      * \param ppdu the PPDU that is being received
      * \param channelType the channel type
-     * \return the CCA threshold in dBm
+     * \return the CCA threshold
      */
-    virtual double GetCcaThreshold(const Ptr<const WifiPpdu> ppdu,
-                                   WifiChannelListType channelType) const;
+    virtual dBm GetCcaThreshold(const Ptr<const WifiPpdu> ppdu,
+                                WifiChannelListType channelType) const;
 
     /**
      * The WifiPpdu from the TX PHY is received by each RX PHY attached to the same channel.
@@ -683,11 +683,11 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
      *
      * \return information on MPDU reception: status, signal power (dBm), and noise power (in dBm)
      */
-    std::pair<bool, SignalNoiseDbm> GetReceptionStatus(Ptr<const WifiPsdu> psdu,
-                                                       Ptr<Event> event,
-                                                       uint16_t staId,
-                                                       Time relativeMpduStart,
-                                                       Time mpduDuration);
+    std::pair<bool, SignalNoise> GetReceptionStatus(Ptr<const WifiPsdu> psdu,
+                                                    Ptr<Event> event,
+                                                    uint16_t staId,
+                                                    Time relativeMpduStart,
+                                                    Time mpduDuration);
     /**
      * The last symbol of an MPDU in an A-MPDU has arrived.
      *
@@ -748,9 +748,9 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
      *
      * \param txVector the transmission parameters
      * \param staId the station ID of the PSDU
-     * \return a pair of channel width (MHz) and band
+     * \return a pair of channel width and band
      */
-    virtual std::pair<ChannelWidthMhz, WifiSpectrumBandInfo> GetChannelWidthAndBand(
+    virtual std::pair<MHz_t, WifiSpectrumBandInfo> GetChannelWidthAndBand(
         const WifiTxVector& txVector,
         uint16_t staId) const;
 
@@ -778,13 +778,13 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
      */
     SnrPer GetPhyHeaderSnrPer(WifiPpduField field, Ptr<Event> event) const;
     /**
-     * Obtain the received power (W) for a given band.
+     * Obtain the received power for a given band.
      * Wrapper used by child classes.
      *
      * \param event the event holding incoming PPDU's information
-     * \return the received power (W) for the event over a given band
+     * \return the received power for the event over a given band
      */
-    double GetRxPowerWForPpdu(Ptr<Event> event) const;
+    Watt_t GetRxPowerWForPpdu(Ptr<Event> event) const;
     /**
      * Get the pointer to the current event (stored in WifiPhy).
      * Wrapper used by child classes.
@@ -847,14 +847,14 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
     void NotifyInterferenceRxEndAndClear(bool reset);
 
     /**
-     * \param txPowerW power in W to spread across the bands
+     * \param txPower power to spread across the bands
      * \param ppdu the PPDU that will be transmitted
      * \return Pointer to SpectrumValue
      *
      * This is a helper function to create the right TX PSD corresponding
      * to the amendment of this PHY.
      */
-    virtual Ptr<SpectrumValue> GetTxPowerSpectralDensity(double txPowerW,
+    virtual Ptr<SpectrumValue> GetTxPowerSpectralDensity(Watt_t txPower,
                                                          Ptr<const WifiPpdu> ppdu) const = 0;
 
     /**
@@ -872,65 +872,64 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
      * channel width). Otherwise, this call is equivalent to GetBand with
      * <i>bandIndex</i> equal to zero.
      *
-     * \param bandWidth the width of the band to be returned (MHz)
+     * \param bandWidth the width of the band to be returned
      *
      * \return the info corresponding to the band
      */
-    WifiSpectrumBandInfo GetPrimaryBand(ChannelWidthMhz bandWidth) const;
+    WifiSpectrumBandInfo GetPrimaryBand(MHz_t bandWidth) const;
     /**
      * If the channel bonding is used, return the info corresponding to
      * the secondary channel of the given bandwidth (which must be a multiple of 20 MHz
      * and not exceed the operating channel width).
      *
-     * \param bandWidth the width of the band to be returned (MHz)
+     * \param bandWidth the width of the band to be returned
      *
      * \return the info corresponding to the band
      */
-    WifiSpectrumBandInfo GetSecondaryBand(ChannelWidthMhz bandWidth) const;
+    WifiSpectrumBandInfo GetSecondaryBand(MHz_t bandWidth) const;
 
     /**
      * Return the channel width used to measure the RSSI.
      *
      * \param ppdu the PPDU that is being received
-     * \return the channel width (in MHz) used for RSSI measurement
+     * \return the channel width used for RSSI measurement
      */
-    virtual ChannelWidthMhz GetMeasurementChannelWidth(const Ptr<const WifiPpdu> ppdu) const = 0;
+    virtual MHz_t GetMeasurementChannelWidth(const Ptr<const WifiPpdu> ppdu) const = 0;
 
     /**
      * Return the channel width used in the reception spectrum model.
      *
      * \param txVector the TXVECTOR of the PPDU that is being received
-     * \return the channel width (in MHz) used for RxSpectrumModel
+     * \return the channel width used for RxSpectrumModel
      */
-    virtual ChannelWidthMhz GetRxChannelWidth(const WifiTxVector& txVector) const;
+    virtual MHz_t GetRxChannelWidth(const WifiTxVector& txVector) const;
 
     /**
-     * Return the delay until CCA busy is ended for a given sensitivity threshold (in dBm) and a
-     * given band.
+     * Return the delay until CCA busy is ended for a given sensitivity threshold and a given band.
      *
-     * \param thresholdDbm the CCA sensitivity threshold in dBm
+     * \param threshold the CCA sensitivity threshold
      * \param band identify the requested band
      * \return the delay until CCA busy is ended
      */
-    Time GetDelayUntilCcaEnd(double thresholdDbm, const WifiSpectrumBandInfo& band);
+    Time GetDelayUntilCcaEnd(dBm threshold, const WifiSpectrumBandInfo& band);
 
     /**
-     * \param currentChannelWidth channel width of the current transmission (MHz)
-     * \return the width of the guard band (MHz)
+     * \param currentChannelWidth channel width of the current transmission
+     * \return the width of the guard band
      *
      * Wrapper method used by child classes for PSD generation.
      * Note that this method is necessary for testing UL OFDMA.
      */
-    ChannelWidthMhz GetGuardBandwidth(ChannelWidthMhz currentChannelWidth) const;
+    MHz_t GetGuardBandwidth(MHz_t currentChannelWidth) const;
     /**
-     * \return a tuple containing the minimum rejection (in dBr) for the inner band,
-     *                            the minimum rejection (in dBr) for the outer band, and
-     *                            the maximum rejection (in dBr) for the outer band
+     * \return a tuple containing the minimum rejection for the inner band,
+     *                            the minimum rejection for the outer band, and
+     *                            the maximum rejection for the outer band
      *                            for the transmit spectrum mask.
      *
      * Wrapper method used by child classes for PSD generation.
      */
-    std::tuple<double, double, double> GetTxMaskRejectionParams() const;
+    std::tuple<dB, dB, dB> GetTxMaskRejectionParams() const;
 
     using CcaIndication =
         std::optional<std::pair<Time, WifiChannelListType>>; //!< CCA end time and its corresponding
@@ -967,7 +966,7 @@ class PhyEntity : public SimpleRefCount<PhyEntity>
     std::map<UidStaIdPair, std::vector<bool>>
         m_statusPerMpduMap; //!< Map of the current reception status per MPDU that is filled in as
                             //!< long as MPDUs are being processed by the PHY in case of an A-MPDU
-    std::map<UidStaIdPair, SignalNoiseDbm>
+    std::map<UidStaIdPair, SignalNoise>
         m_signalNoiseMap; //!< Map of the latest signal power and noise power in dBm (noise power
                           //!< includes the noise figure)
 

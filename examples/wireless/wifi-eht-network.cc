@@ -151,10 +151,10 @@ main(int argc, char* argv[])
     uint16_t transitionDelayUsec{128};
     uint16_t channelSwitchDelayUsec{100};
     bool switchAuxPhy{true};
-    uint16_t auxPhyChWidth{20};
+    MHz_t auxPhyChWidth{20};
     bool auxPhyTxCapable{true};
     Time simulationTime{"10s"};
-    double distance{1.0}; // meters
+    meter_t distance{1.0};
     double frequency{5};  // whether the first link operates in the 2.4, 5 or 6 GHz
     double frequency2{0}; // whether the second link operates in the 2.4, 5 or 6 GHz (0 means no
                           // second link exists)
@@ -493,7 +493,7 @@ main(int argc, char* argv[])
                 }
 
                 const auto maxLoad =
-                    nLinks * EhtPhy::GetDataRate(mcs, channelWidth, gi, 1) / nStations;
+                    nLinks * EhtPhy::GetDataRate(mcs, channelWidth, NanoSeconds(gi), 1) / nStations;
                 if (udp)
                 {
                     // UDP flow

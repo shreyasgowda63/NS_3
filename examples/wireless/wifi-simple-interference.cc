@@ -161,8 +161,8 @@ int
 main(int argc, char* argv[])
 {
     std::string phyMode{"DsssRate1Mbps"};
-    double Prss{-80};           // -dBm
-    double Irss{-95};           // -dBm
+    dBm Prss{-80};
+    dBm Irss{-95};
     double delta{0};            // microseconds
     uint32_t PpacketSize{1000}; // bytes
     uint32_t IpacketSize{1000}; // bytes
@@ -172,7 +172,7 @@ main(int argc, char* argv[])
     uint32_t numPackets{1};
     Time interPacketInterval{"1s"};
     Time startTime{"10s"};
-    double distanceToRx{100.0}; // meters
+    meter_t distanceToRx{100.0}; // meters
 
     double offset{91}; // This is a magic number used to set the
                        // transmit power, based on other configuration
@@ -222,9 +222,9 @@ main(int argc, char* argv[])
     NetDeviceContainer devices = wifi.Install(wifiPhy, wifiMac, c.Get(0));
     // This will disable these sending devices from detecting a signal
     // so that they do not backoff
-    wifiPhy.Set("TxGain", DoubleValue(offset + Prss));
+    wifiPhy.Set("TxGain", DoubleValue(offset + Prss.in_dBm()));
     devices.Add(wifi.Install(wifiPhy, wifiMac, c.Get(1)));
-    wifiPhy.Set("TxGain", DoubleValue(offset + Irss));
+    wifiPhy.Set("TxGain", DoubleValue(offset + Irss.in_dBm()));
     devices.Add(wifi.Install(wifiPhy, wifiMac, c.Get(2)));
 
     // Note that with FixedRssLossModel, the positions below are not

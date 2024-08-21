@@ -42,14 +42,14 @@ ThresholdPreambleDetectionModel::GetTypeId()
             .AddAttribute("Threshold",
                           "Preamble is successfully detected if the SNR is at or above this value "
                           "(expressed in dB).",
-                          DoubleValue(4),
-                          MakeDoubleAccessor(&ThresholdPreambleDetectionModel::m_threshold),
-                          MakeDoubleChecker<double>())
+                          dBValue(4_dB),
+                          MakedBAccessor(&ThresholdPreambleDetectionModel::m_threshold),
+                          MakedBChecker())
             .AddAttribute("MinimumRssi",
                           "Preamble is dropped if the RSSI is below this value (expressed in dBm).",
-                          DoubleValue(-82),
-                          MakeDoubleAccessor(&ThresholdPreambleDetectionModel::m_rssiMin),
-                          MakeDoubleChecker<double>());
+                          dBmValue(-82_dBm),
+                          MakedBmAccessor(&ThresholdPreambleDetectionModel::m_rssiMin),
+                          MakedBmChecker());
     return tid;
 }
 
@@ -64,12 +64,10 @@ ThresholdPreambleDetectionModel::~ThresholdPreambleDetectionModel()
 }
 
 bool
-ThresholdPreambleDetectionModel::IsPreambleDetected(double rssi,
-                                                    double snr,
-                                                    ChannelWidthMhz channelWidth) const
+ThresholdPreambleDetectionModel::IsPreambleDetected(dBm rssi, double snr, MHz_t channelWidth) const
 {
-    NS_LOG_FUNCTION(this << WToDbm(rssi) << RatioToDb(snr) << channelWidth);
-    if (WToDbm(rssi) >= m_rssiMin)
+    NS_LOG_FUNCTION(this << rssi << RatioToDb(snr) << channelWidth);
+    if (rssi >= m_rssiMin)
     {
         if (RatioToDb(snr) >= m_threshold)
         {

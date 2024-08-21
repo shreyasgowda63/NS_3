@@ -52,7 +52,7 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("WifiNonHtDuplicateTest");
 
-constexpr uint32_t DEFAULT_FREQUENCY = 5180; // MHz
+constexpr MHz_t DEFAULT_FREQUENCY = 5180;
 
 /**
  * HE PHY used for testing MU-RTS/CTS.
@@ -205,7 +205,7 @@ class TestNonHtDuplicatePhyReception : public TestCase
 {
   public:
     /// A vector containing parameters per STA: the standard, the center frequency and the P20 index
-    using StasParams = std::vector<std::tuple<WifiStandard, uint16_t, uint8_t>>;
+    using StasParams = std::vector<std::tuple<WifiStandard, MHz_t, uint8_t>>;
 
     /**
      * Constructor
@@ -218,7 +218,7 @@ class TestNonHtDuplicatePhyReception : public TestCase
      * interference.
      */
     TestNonHtDuplicatePhyReception(WifiStandard apStandard,
-                                   uint16_t apFrequency,
+                                   MHz_t apFrequency,
                                    uint8_t apP20Index,
                                    StasParams stasParams,
                                    std::vector<bool> per20MhzInterference = {});
@@ -264,9 +264,9 @@ class TestNonHtDuplicatePhyReception : public TestCase
 
     /**
      * Send non-HT duplicate PPDU function
-     * \param channelWidth the channel width to use to transmit the non-HT PPDU (in MHz)
+     * \param channelWidth the channel width to use to transmit the non-HT PPDU
      */
-    void SendNonHtDuplicatePpdu(ChannelWidthMhz channelWidth);
+    void SendNonHtDuplicatePpdu(MHz_t channelWidth);
 
     /**
      * Generate interference function
@@ -284,7 +284,7 @@ class TestNonHtDuplicatePhyReception : public TestCase
     void StopInterference(Ptr<WaveformGenerator> interferer);
 
     WifiStandard m_apStandard; ///< the standard to use for the AP
-    uint16_t m_apFrequency;    ///< the center frequency of the AP (in MHz)
+    MHz_t m_apFrequency;       ///< the center frequency of the AP
     uint8_t m_apP20Index;      ///< the index of the primary 20 MHz channel of the AP
     StasParams m_stasParams;   ///< the parameters of the STAs
     std::vector<bool>
@@ -303,7 +303,7 @@ class TestNonHtDuplicatePhyReception : public TestCase
 
 TestNonHtDuplicatePhyReception::TestNonHtDuplicatePhyReception(
     WifiStandard apStandard,
-    uint16_t apFrequency,
+    MHz_t apFrequency,
     uint8_t apP20Index,
     StasParams stasParams,
     std::vector<bool> per20MhzInterference)
@@ -333,13 +333,13 @@ TestNonHtDuplicatePhyReception::ResetResults()
 }
 
 void
-TestNonHtDuplicatePhyReception::SendNonHtDuplicatePpdu(ChannelWidthMhz channelWidth)
+TestNonHtDuplicatePhyReception::SendNonHtDuplicatePpdu(MHz_t channelWidth)
 {
     NS_LOG_FUNCTION(this << channelWidth);
     WifiTxVector txVector = WifiTxVector(OfdmPhy::GetOfdmRate24Mbps(),
                                          0,
                                          WIFI_PREAMBLE_LONG,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -479,7 +479,8 @@ TestNonHtDuplicatePhyReception::DoSetup()
                                                                        0,
                                                                        m_apStandard,
                                                                        WIFI_PHY_BAND_5GHZ));
-        NS_ASSERT(m_per20MhzInterference.size() == (channelInfo.width / 20));
+        const std::size_t num20MhzSubchannels = channelInfo.width / 20;
+        NS_ASSERT(m_per20MhzInterference.size() == num20MhzSubchannels);
         for (std::size_t i = 0; i < m_per20MhzInterference.size(); ++i)
         {
             auto interfererNode = CreateObject<Node>();
@@ -568,8 +569,8 @@ TestNonHtDuplicatePhyReception::DoRun()
                 bands.push_back(bandInfo);
                 auto spectrumInterference = Create<SpectrumModel>(bands);
                 auto interferencePsd = Create<SpectrumValue>(spectrumInterference);
-                auto interferencePower = 0.005; // in watts (designed to make PHY headers reception
-                                                // successful but payload reception fail)
+                Watt_t interferencePower = 0.005; // designed to make PHY headers reception
+                                                  // successful but payload reception fail
                 *interferencePsd = interferencePower / 10e6;
                 Simulator::Schedule(Seconds(index),
                                     &TestNonHtDuplicatePhyReception::GenerateInterference,
@@ -636,8 +637,8 @@ class TestMultipleCtsResponsesFromMuRts : public TestCase
     /// Information about CTS responses to expect in the test
     struct CtsTxInfos
     {
-        ChannelWidthMhz bw{20}; ///< the width in MHz of the CTS response
-        bool discard{false};    ///< flag whether the CTS response shall be discarded
+        MHz_t bw{20};        ///< the width of the CTS response
+        bool discard{false}; ///< flag whether the CTS response shall be discarded
     };
 
     /**
@@ -703,7 +704,7 @@ class TestMultipleCtsResponsesFromMuRts : public TestCase
     std::size_t m_countStaRxCtsFailure; ///< count the number of unsuccessfully received CTS frames
                                         ///< by the non-participating STA
 
-    double m_stasTxPowerDbm; ///< TX power in dBm configured for the STAs
+    dBm m_stasTxPower; ///< TX power configured for the STAs
 };
 
 TestMultipleCtsResponsesFromMuRts::TestMultipleCtsResponsesFromMuRts(
@@ -714,7 +715,7 @@ TestMultipleCtsResponsesFromMuRts::TestMultipleCtsResponsesFromMuRts(
       m_countApRxCtsFailure{0},
       m_countStaRxCtsSuccess{0},
       m_countStaRxCtsFailure{0},
-      m_stasTxPowerDbm(10.0)
+      m_stasTxPower(10.0)
 {
 }
 
@@ -758,7 +759,7 @@ TestMultipleCtsResponsesFromMuRts::TxNonHtDuplicateCts(std::size_t phyIndex)
         WifiTxVector(OfdmPhy::GetOfdmRate54Mbps(), // use less robust modulation for test purpose
                      0,
                      WIFI_PREAMBLE_LONG,
-                     800,
+                     NanoSeconds(800),
                      1,
                      1,
                      0,
@@ -797,10 +798,11 @@ TestMultipleCtsResponsesFromMuRts::RxCtsSuccess(std::size_t phyIndex,
     const auto isAp = (phyIndex == 0);
     if (isAp)
     {
-        NS_TEST_EXPECT_MSG_EQ_TOL(rxSignalInfo.rssi,
-                                  WToDbm(DbmToW(m_stasTxPowerDbm) * successfulCtsInfos.size()),
-                                  0.1,
-                                  "RX power is not correct!");
+        NS_TEST_EXPECT_MSG_EQ_TOL(
+            rxSignalInfo.rssi.in_dBm(),
+            WToDbm(DbmToW(m_stasTxPower) * successfulCtsInfos.size()).in_dBm(),
+            0.1,
+            "RX power is not correct!");
     }
     auto expectedWidth =
         std::max_element(successfulCtsInfos.cbegin(),
@@ -928,8 +930,8 @@ TestMultipleCtsResponsesFromMuRts::DoSetup()
         phySta->AddChannel(spectrumChannel);
         phySta->ConfigureStandard(WIFI_STANDARD_80211ax);
         phySta->AssignStreams(streamNumber);
-        phySta->SetTxPowerStart(m_stasTxPowerDbm);
-        phySta->SetTxPowerEnd(m_stasTxPowerDbm);
+        phySta->SetTxPowerStart(m_stasTxPower);
+        phySta->SetTxPowerEnd(m_stasTxPower);
 
         auto channelNum = WifiPhyOperatingChannel::FindFirst(0,
                                                              0,

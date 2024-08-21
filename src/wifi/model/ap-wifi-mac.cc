@@ -841,10 +841,11 @@ ApWifiMac::GetHtOperation(uint8_t linkId) const
     {
         uint8_t nss = (mcs.GetMcsValue() / 8) + 1;
         NS_ASSERT(nss > 0 && nss < 5);
-        uint64_t dataRate =
-            mcs.GetDataRate(phy->GetChannelWidth(),
-                            GetHtConfiguration()->GetShortGuardIntervalSupported() ? 400 : 800,
-                            nss);
+        uint64_t dataRate = mcs.GetDataRate(phy->GetChannelWidth(),
+                                            GetHtConfiguration()->GetShortGuardIntervalSupported()
+                                                ? NanoSeconds(400)
+                                                : NanoSeconds(800),
+                                            nss);
         if (dataRate > maxSupportedRate)
         {
             maxSupportedRate = dataRate;
@@ -868,10 +869,12 @@ ApWifiMac::GetHtOperation(uint8_t linkId) const
                 WifiMode mcs = *itMcs++;
                 uint8_t nss = (mcs.GetMcsValue() / 8) + 1;
                 NS_ASSERT(nss > 0 && nss < 5);
-                uint64_t dataRate = mcs.GetDataRate(
-                    remoteStationManager->GetChannelWidthSupported(sta.second),
-                    remoteStationManager->GetShortGuardIntervalSupported(sta.second) ? 400 : 800,
-                    nss);
+                uint64_t dataRate =
+                    mcs.GetDataRate(remoteStationManager->GetChannelWidthSupported(sta.second),
+                                    remoteStationManager->GetShortGuardIntervalSupported(sta.second)
+                                        ? NanoSeconds(400)
+                                        : NanoSeconds(800),
+                                    nss);
                 if (dataRate > maxSupportedRateByHtSta)
                 {
                     maxSupportedRateByHtSta = dataRate;
@@ -2320,8 +2323,8 @@ ApWifiMac::ReceiveEmlOmn(MgtEmlOmn& frame, const Mac48Address& sender, uint8_t l
     // when the transmission of the Ack following the received EML Notification frame is
     // completed. For this purpose, we connect a callback to the PHY TX begin trace to catch
     // the Ack transmitted after the EML Notification frame.
-    CallbackBase cb = Callback<void, WifiConstPsduMap, WifiTxVector, double>(
-        [=, this](WifiConstPsduMap psduMap, WifiTxVector txVector, double /* txPowerW */) {
+    CallbackBase cb = Callback<void, WifiConstPsduMap, WifiTxVector, Watt_t>(
+        [=, this](WifiConstPsduMap psduMap, WifiTxVector txVector, Watt_t /* txPower */) {
             NS_ASSERT_MSG(psduMap.size() == 1 && psduMap.begin()->second->GetNMpdus() == 1 &&
                               psduMap.begin()->second->GetHeader(0).IsAck(),
                           "Expected a Normal Ack after EML Notification frame");

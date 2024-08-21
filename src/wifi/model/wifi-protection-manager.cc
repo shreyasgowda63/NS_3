@@ -80,7 +80,7 @@ WifiProtectionManager::SetLinkId(uint8_t linkId)
 
 void
 WifiProtectionManager::AddUserInfoToMuRts(CtrlTriggerHeader& muRts,
-                                          ChannelWidthMhz txWidth,
+                                          MHz_t txWidth,
                                           const Mac48Address& receiver) const
 {
     NS_LOG_FUNCTION(this << muRts << txWidth << receiver);
@@ -95,7 +95,8 @@ WifiProtectionManager::AddUserInfoToMuRts(CtrlTriggerHeader& muRts,
         std::min(txWidth, GetWifiRemoteStationManager()->GetChannelWidthSupported(receiver));
     auto phy = m_mac->GetWifiPhy(m_linkId);
     std::size_t primaryIdx = phy->GetOperatingChannel().GetPrimaryChannelIndex(ctsTxWidth);
-    if (phy->GetChannelWidth() == 160 && ctsTxWidth <= 40 && primaryIdx >= 80 / ctsTxWidth)
+    std::size_t idx80MHz = 80 / ctsTxWidth;
+    if ((phy->GetChannelWidth() == 160) && (ctsTxWidth <= 40) && (primaryIdx >= idx80MHz))
     {
         // the primary80 is in the higher part of the 160 MHz channel
         primaryIdx -= 80 / ctsTxWidth;

@@ -2410,9 +2410,9 @@ class Experiment
      * \param pcap flag to enable/disable PCAP files generation
      * \param infra flag to enable infrastructure model, ring adhoc network if not set
      * \param guardIntervalNs the guard interval in ns
-     * \param distanceM the distance in meters
-     * \param apTxPowerDbm the AP transmit power in dBm
-     * \param staTxPowerDbm the STA transmit power in dBm
+     * \param distance the distance
+     * \param apTxPower the AP transmit power
+     * \param staTxPower the STA transmit power
      * \param pktInterval the packet interval
      * \return 0 if all went well
      */
@@ -2426,9 +2426,9 @@ class Experiment
             bool pcap,
             bool infra,
             uint16_t guardIntervalNs,
-            double distanceM,
-            double apTxPowerDbm,
-            double staTxPowerDbm,
+            meter_t distance,
+            dBm apTxPower,
+            dBm staTxPower,
             Time pktInterval);
 };
 
@@ -2447,9 +2447,9 @@ Experiment::Run(const WifiHelper& helper,
                 bool pcap,
                 bool infra,
                 uint16_t guardIntervalNs,
-                double distance,
-                double apTxPowerDbm,
-                double staTxPowerDbm,
+                meter_t distance,
+                dBm apTxPower,
+                dBm staTxPower,
                 Time pktInterval)
 {
     RngSeedManager::SetSeed(10);
@@ -2485,8 +2485,8 @@ Experiment::Run(const WifiHelper& helper,
                     TimeValue(MicroSeconds(beaconInterval)),
                     "Ssid",
                     SsidValue(ssid));
-        phy.Set("TxPowerStart", DoubleValue(apTxPowerDbm));
-        phy.Set("TxPowerEnd", DoubleValue(apTxPowerDbm));
+        phy.Set("TxPowerStart", dBmValue(apTxPower));
+        phy.Set("TxPowerEnd", dBmValue(apTxPower));
         devices = wifi.Install(phy, mac, wifiNodes.Get(0));
 
         mac.SetType("ns3::StaWifiMac",
@@ -2494,8 +2494,8 @@ Experiment::Run(const WifiHelper& helper,
                     UintegerValue(std::numeric_limits<uint32_t>::max()),
                     "Ssid",
                     SsidValue(ssid));
-        phy.Set("TxPowerStart", DoubleValue(staTxPowerDbm));
-        phy.Set("TxPowerEnd", DoubleValue(staTxPowerDbm));
+        phy.Set("TxPowerStart", dBmValue(staTxPower));
+        phy.Set("TxPowerEnd", dBmValue(staTxPower));
         for (uint32_t i = 1; i < nNodes; ++i)
         {
             devices.Add(wifi.Install(phy, mac, wifiNodes.Get(i)));
@@ -2504,8 +2504,8 @@ Experiment::Run(const WifiHelper& helper,
     else
     {
         mac.SetType("ns3::AdhocWifiMac");
-        phy.Set("TxPowerStart", DoubleValue(staTxPowerDbm));
-        phy.Set("TxPowerEnd", DoubleValue(staTxPowerDbm));
+        phy.Set("TxPowerStart", dBmValue(staTxPower));
+        phy.Set("TxPowerEnd", dBmValue(staTxPower));
         devices = wifi.Install(phy, mac, wifiNodes);
     }
 
@@ -2539,7 +2539,7 @@ Experiment::Run(const WifiHelper& helper,
     positionAlloc->Add(Vector(1.0, 1.0, 0.0));
 
     // Set position for STAs
-    double angle = (static_cast<double>(360) / (nNodes - 1));
+    const auto angle = (static_cast<degree_t>(360) / (nNodes - 1));
     for (uint32_t i = 0; i < (nNodes - 1); ++i)
     {
         positionAlloc->Add(Vector(1.0 + (distance * cos((i * angle * PI) / 180)),
@@ -2709,16 +2709,16 @@ main(int argc, char* argv[])
     double maxRelativeError =
         0.015; ///< Maximum relative error tolerated between ns-3 results and the Bianchi model
                ///< (used for regression, i.e. when the validate flag is set)
-    double frequency = 5;              ///< The operating frequency band in GHz: 2.4, 5 or 6
-    ChannelWidthMhz channelWidth = 20; ///< The constant channel width in MHz (only for 11n/ac/ax)
+    double frequency = 5;           ///< The operating frequency band in GHz: 2.4, 5 or 6
+    MHz_t channelWidth = 20;        ///< The constant channel width in MHz (only for 11n/ac/ax)
     uint16_t guardIntervalNs = 800; ///< The guard interval in nanoseconds (800 or 400 for 11n/ac,
                                     ///< 800 or 1600 or 3200 for 11 ax)
     uint16_t pktInterval =
         1000; ///< The socket packet interval in microseconds (a higher value is needed to reach
               ///< saturation conditions as the channel bandwidth or the MCS increases)
-    double distance = 0.001; ///< The distance in meters between the AP and the STAs
-    double apTxPower = 16;   ///< The transmit power of the AP in dBm (if infrastructure only)
-    double staTxPower = 16;  ///< The transmit power of each STA in dBm (or all STAs if adhoc)
+    meter_t distance = 0.001; ///< The distance in meters between the AP and the STAs
+    dBm apTxPower = 16;       ///< The transmit power of the AP (if infrastructure only)
+    dBm staTxPower = 16;      ///< The transmit power of each STA (or all STAs if adhoc)
 
     // Disable fragmentation and RTS/CTS
     Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold",

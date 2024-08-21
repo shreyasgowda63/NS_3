@@ -9,3 +9,4 @@
     wifi-testing
     wifi-changelog
     wifi-references
+    si-units

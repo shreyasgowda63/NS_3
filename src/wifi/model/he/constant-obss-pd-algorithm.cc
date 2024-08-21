@@ -72,7 +72,7 @@ ConstantObssPdAlgorithm::ConnectWifiNetDevice(const Ptr<WifiNetDevice> device)
 void
 ConstantObssPdAlgorithm::ReceiveHeSigA(HeSigAParameters params)
 {
-    NS_LOG_FUNCTION(this << +params.bssColor << WToDbm(params.rssiW));
+    NS_LOG_FUNCTION(this << +params.bssColor << params.rssi);
 
     Ptr<StaWifiMac> mac = m_device->GetMac()->GetObject<StaWifiMac>();
     if (mac && !mac->IsAssociated())
@@ -100,12 +100,11 @@ ConstantObssPdAlgorithm::ReceiveHeSigA(HeSigAParameters params)
     bool isObss = (bssColor != params.bssColor);
     if (isObss)
     {
-        const double obssPdLevel = GetObssPdLevel();
-        if (WToDbm(params.rssiW) < obssPdLevel)
+        const auto obssPdLevel = GetObssPdLevel();
+        if (params.rssi < obssPdLevel)
         {
-            NS_LOG_DEBUG("Frame is OBSS and RSSI " << WToDbm(params.rssiW)
-                                                   << " is below OBSS-PD level of " << obssPdLevel
-                                                   << "; reset PHY to IDLE");
+            NS_LOG_DEBUG("Frame is OBSS and RSSI " << params.rssi << " is below OBSS-PD level of "
+                                                   << obssPdLevel << "; reset PHY to IDLE");
             ResetPhy(params);
         }
         else

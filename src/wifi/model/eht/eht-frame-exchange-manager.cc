@@ -173,7 +173,7 @@ EhtFrameExchangeManager::UsingOtherEmlsrLink() const
 }
 
 bool
-EhtFrameExchangeManager::StartTransmission(Ptr<Txop> edca, ChannelWidthMhz allowedWidth)
+EhtFrameExchangeManager::StartTransmission(Ptr<Txop> edca, MHz_t allowedWidth)
 {
     NS_LOG_FUNCTION(this << edca << allowedWidth);
 
@@ -578,7 +578,7 @@ EhtFrameExchangeManager::SendEmlOmn(const Mac48Address& dest, const MgtEmlOmn& f
     m_mac->GetQosTxop(AC_VO)->Queue(Create<WifiMpdu>(packet, hdr));
 }
 
-std::optional<double>
+std::optional<dBm>
 EhtFrameExchangeManager::GetMostRecentRssi(const Mac48Address& address) const
 {
     auto optRssi = HeFrameExchangeManager::GetMostRecentRssi(address);

@@ -160,10 +160,10 @@ class DsssPhy : public PhyEntity
 
   private:
     PhyFieldRxStatus DoEndReceiveField(WifiPpduField field, Ptr<Event> event) override;
-    Ptr<SpectrumValue> GetTxPowerSpectralDensity(double txPowerW,
+    Ptr<SpectrumValue> GetTxPowerSpectralDensity(Watt_t txPower,
                                                  Ptr<const WifiPpdu> ppdu) const override;
-    ChannelWidthMhz GetRxChannelWidth(const WifiTxVector& txVector) const override;
-    ChannelWidthMhz GetMeasurementChannelWidth(const Ptr<const WifiPpdu> ppdu) const override;
+    MHz_t GetRxChannelWidth(const WifiTxVector& txVector) const override;
+    MHz_t GetMeasurementChannelWidth(const Ptr<const WifiPpdu> ppdu) const override;
 
     /**
      * \param txVector the transmission parameters

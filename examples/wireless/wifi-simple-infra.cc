@@ -143,7 +143,7 @@ int
 main(int argc, char* argv[])
 {
     std::string phyMode{"DsssRate1Mbps"};
-    double rss{-80};           // -dBm
+    dBm rss{-80};
     uint32_t packetSize{1000}; // bytes
     uint32_t numPackets{1};
     Time interval{"1s"};
@@ -175,7 +175,7 @@ main(int argc, char* argv[])
     YansWifiPhyHelper wifiPhy;
     // This is one parameter that matters when using FixedRssLossModel
     // set it to zero; otherwise, gain will be added
-    wifiPhy.Set("RxGain", DoubleValue(0));
+    wifiPhy.Set("RxGain", dBValue(0_dB));
     // ns-3 supports RadioTap and Prism tracing extensions for 802.11b
     wifiPhy.SetPcapDataLinkType(WifiPhyHelper::DLT_IEEE802_11_RADIO);
 

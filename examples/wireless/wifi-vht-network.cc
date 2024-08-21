@@ -65,8 +65,8 @@ main(int argc, char* argv[])
     bool udp{true};
     bool useRts{false};
     Time simulationTime{"10s"};
-    double distance{1.0}; // meters
-    int mcs{-1};          // -1 indicates an unset value
+    meter_t distance{1.0};
+    int mcs{-1}; // -1 indicates an unset value
     double minExpectedThroughput{0.0};
     double maxExpectedThroughput{0.0};
 
@@ -211,7 +211,10 @@ main(int argc, char* argv[])
                 apNodeInterface = address.Assign(apDevice);
 
                 /* Setting applications */
-                const auto maxLoad = VhtPhy::GetDataRate(mcs, channelWidth, sgi ? 400 : 800, 1);
+                const auto maxLoad = VhtPhy::GetDataRate(mcs,
+                                                         channelWidth,
+                                                         sgi ? NanoSeconds(400) : NanoSeconds(800),
+                                                         1);
                 ApplicationContainer serverApp;
                 if (udp)
                 {

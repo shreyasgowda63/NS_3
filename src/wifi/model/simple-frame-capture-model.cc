@@ -45,10 +45,10 @@ SimpleFrameCaptureModel::GetTypeId()
                 "Margin",
                 "Reception is switched if the newly arrived frame has a power higher than "
                 "this value above the frame currently being received (expressed in dB).",
-                DoubleValue(5),
-                MakeDoubleAccessor(&SimpleFrameCaptureModel::GetMargin,
-                                   &SimpleFrameCaptureModel::SetMargin),
-                MakeDoubleChecker<double>());
+                dBValue(5_dB),
+                MakedBAccessor(&SimpleFrameCaptureModel::GetMargin,
+                               &SimpleFrameCaptureModel::SetMargin),
+                MakedBChecker());
     return tid;
 }
 
@@ -63,13 +63,13 @@ SimpleFrameCaptureModel::~SimpleFrameCaptureModel()
 }
 
 void
-SimpleFrameCaptureModel::SetMargin(double margin)
+SimpleFrameCaptureModel::SetMargin(dB margin)
 {
     NS_LOG_FUNCTION(this << margin);
     m_margin = margin;
 }
 
-double
+dB
 SimpleFrameCaptureModel::GetMargin() const
 {
     return m_margin;

@@ -129,7 +129,7 @@ int
 main(int argc, char* argv[])
 {
     bool udp{true};
-    double distance{50};
+    meter_t distance{50};
     Time simulationTime{"10s"};
     uint16_t index{256};
     std::string wifiType{"ns3::SpectrumWifiPhy"};
@@ -191,8 +191,8 @@ main(int argc, char* argv[])
                                        DoubleValue(5.180e9));
             channel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
             yansPhy.SetChannel(channel.Create());
-            yansPhy.Set("TxPowerStart", DoubleValue(1)); // dBm (1.26 mW)
-            yansPhy.Set("TxPowerEnd", DoubleValue(1));
+            yansPhy.Set("TxPowerStart", dBmValue(1_dBm)); // dBm (1.26 mW)
+            yansPhy.Set("TxPowerEnd", dBmValue(1_dBm));
         }
         else if (wifiType == "ns3::SpectrumWifiPhy")
         {
@@ -208,8 +208,8 @@ main(int argc, char* argv[])
 
             spectrumPhy.SetChannel(spectrumChannel);
             spectrumPhy.SetErrorRateModel(errorModelType);
-            spectrumPhy.Set("TxPowerStart", DoubleValue(1)); // dBm  (1.26 mW)
-            spectrumPhy.Set("TxPowerEnd", DoubleValue(1));
+            spectrumPhy.Set("TxPowerStart", dBmValue(1_dBm)); // dBm  (1.26 mW)
+            spectrumPhy.Set("TxPowerEnd", dBmValue(1_dBm));
         }
         else
         {

@@ -37,7 +37,7 @@ WifiTxVector::WifiTxVector()
     : m_txPowerLevel(1),
       m_preamble(WIFI_PREAMBLE_LONG),
       m_channelWidth(20),
-      m_guardInterval(800),
+      m_guardInterval(NanoSeconds(800)),
       m_nTx(1),
       m_nss(1),
       m_ness(0),
@@ -58,11 +58,11 @@ WifiTxVector::WifiTxVector()
 WifiTxVector::WifiTxVector(WifiMode mode,
                            uint8_t powerLevel,
                            WifiPreamble preamble,
-                           uint16_t guardInterval,
+                           Time guardInterval,
                            uint8_t nTx,
                            uint8_t nss,
                            uint8_t ness,
-                           ChannelWidthMhz channelWidth,
+                           MHz_t channelWidth,
                            bool aggregation,
                            bool stbc,
                            bool ldpc,
@@ -181,13 +181,13 @@ WifiTxVector::GetPreambleType() const
     return m_preamble;
 }
 
-ChannelWidthMhz
+MHz_t
 WifiTxVector::GetChannelWidth() const
 {
     return m_channelWidth;
 }
 
-uint16_t
+Time
 WifiTxVector::GetGuardInterval() const
 {
     return m_guardInterval;
@@ -309,13 +309,13 @@ WifiTxVector::SetPreambleType(WifiPreamble preamble)
 }
 
 void
-WifiTxVector::SetChannelWidth(ChannelWidthMhz channelWidth)
+WifiTxVector::SetChannelWidth(MHz_t channelWidth)
 {
     m_channelWidth = channelWidth;
 }
 
 void
-WifiTxVector::SetGuardInterval(uint16_t guardInterval)
+WifiTxVector::SetGuardInterval(Time guardInterval)
 {
     m_guardInterval = guardInterval;
 }
@@ -670,8 +670,9 @@ WifiTxVector::SetInactiveSubchannels(const std::vector<bool>& inactiveSubchannel
     NS_ABORT_MSG_IF(
         m_channelWidth < 80,
         "Preamble puncturing only possible for transmission bandwidth of 80 MHz or larger");
+    const std::size_t num20MhzSubchannels = m_channelWidth / 20;
     NS_ABORT_MSG_IF(!inactiveSubchannels.empty() &&
-                        inactiveSubchannels.size() != (m_channelWidth / 20),
+                        inactiveSubchannels.size() != num20MhzSubchannels,
                     "The size of the inactive subchannnels bitmap should be equal to the number of "
                     "20 MHz subchannels");
     m_inactiveSubchannels = inactiveSubchannels;
@@ -828,7 +829,8 @@ WifiTxVector::DeriveRuAllocation(uint8_t p20Index) const
         const auto index =
             (ruBw < 20) ? ((ruIndex - 1) / rusPerSubchannel.size()) : ((ruIndex - 1) * (ruBw / 20));
         const auto numSubchannelsForRu = (ruBw < 20) ? 1 : (ruBw / 20);
-        NS_ABORT_IF(index >= (m_channelWidth / 20));
+        const std::size_t num20MhzSubchannels = m_channelWidth / 20;
+        NS_ABORT_IF(index >= num20MhzSubchannels);
         auto ruAlloc = HeRu::GetEqualizedRuAllocation(ruType, false);
         if (ruAllocations.at(index) != HeRu::EMPTY_242_TONE_RU)
         {

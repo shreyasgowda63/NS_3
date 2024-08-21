@@ -214,10 +214,11 @@ main(int argc, char* argv[])
             apNodeInterface = address.Assign(apDevice);
 
             /* Setting applications */
-            const auto maxLoad = HtPhy::GetDataRate(i,
-                                                    channelBonding ? 40 : 20,
-                                                    shortGuardInterval ? 400 : 800,
-                                                    nStreams);
+            const auto maxLoad =
+                HtPhy::GetDataRate(i,
+                                   channelBonding ? 40 : 20,
+                                   shortGuardInterval ? NanoSeconds(400) : NanoSeconds(800),
+                                   nStreams);
             ApplicationContainer serverApp;
             if (udp)
             {

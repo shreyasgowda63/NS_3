@@ -1124,17 +1124,17 @@ class CtrlTriggerHeader : public Header
      */
     bool GetCsRequired() const;
     /**
-     * Set the bandwidth of the solicited HE TB PPDU (in MHz).
+     * Set the bandwidth of the solicited HE TB PPDU.
      *
      * \param bw bandwidth (allowed values: 20, 40, 80, 160)
      */
-    void SetUlBandwidth(ChannelWidthMhz bw);
+    void SetUlBandwidth(MHz_t bw);
     /**
-     * Get the bandwidth of the solicited HE TB PPDU (in MHz).
+     * Get the bandwidth of the solicited HE TB PPDU.
      *
      * \return the bandwidth (20, 40, 80 or 160)
      */
-    ChannelWidthMhz GetUlBandwidth() const;
+    MHz_t GetUlBandwidth() const;
     /**
      * Set the GI And LTF Type subfield of the Common Info field.
      * Allowed combinations are:
@@ -1142,16 +1142,16 @@ class CtrlTriggerHeader : public Header
      *   - 2x LTF + 1.6us GI
      *   - 4x LTF + 3.2us GI
      *
-     * \param guardInterval the guard interval duration (in nanoseconds)
+     * \param guardInterval the guard interval duration
      * \param ltfType the HE-LTF type (1, 2 or 4)
      */
-    void SetGiAndLtfType(uint16_t guardInterval, uint8_t ltfType);
+    void SetGiAndLtfType(Time guardInterval, uint8_t ltfType);
     /**
-     * Get the guard interval duration (in nanoseconds) of the solicited HE TB PPDU.
+     * Get the guard interval duration of the solicited HE TB PPDU.
      *
-     * \return the guard interval duration (in nanoseconds) of the solicited HE TB PPDU
+     * \return the guard interval duration  of the solicited HE TB PPDU
      */
-    uint16_t GetGuardInterval() const;
+    Time GetGuardInterval() const;
     /**
      * Get the LTF type of the solicited HE TB PPDU.
      *

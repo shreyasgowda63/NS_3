@@ -62,19 +62,18 @@ class ThompsonSamplingWifiManager : public WifiRemoteStationManager
                         double ackSnr,
                         WifiMode ackMode,
                         double dataSnr,
-                        ChannelWidthMhz dataChannelWidth,
+                        MHz_t dataChannelWidth,
                         uint8_t dataNss) override;
     void DoReportAmpduTxStatus(WifiRemoteStation* station,
                                uint16_t nSuccessfulMpdus,
                                uint16_t nFailedMpdus,
                                double rxSnr,
                                double dataSnr,
-                               ChannelWidthMhz dataChannelWidth,
+                               MHz_t dataChannelWidth,
                                uint8_t dataNss) override;
     void DoReportFinalRtsFailed(WifiRemoteStation* station) override;
     void DoReportFinalDataFailed(WifiRemoteStation* station) override;
-    WifiTxVector DoGetDataTxVector(WifiRemoteStation* station,
-                                   ChannelWidthMhz allowedWidth) override;
+    WifiTxVector DoGetDataTxVector(WifiRemoteStation* station, MHz_t allowedWidth) override;
     WifiTxVector DoGetRtsTxVector(WifiRemoteStation* station) override;
 
     /**
@@ -107,13 +106,13 @@ class ThompsonSamplingWifiManager : public WifiRemoteStationManager
     void Decay(WifiRemoteStation* st, size_t i) const;
 
     /**
-     * Returns guard interval in nanoseconds for the given mode.
+     * Returns guard interval for the given mode.
      *
-     * \param st Remote STA.
-     * \param mode The WifiMode.
-     * \return the guard interval in nanoseconds
+     * \param st Remote STA
+     * \param mode The WifiMode
+     * \return the guard interval
      */
-    uint16_t GetModeGuardInterval(WifiRemoteStation* st, WifiMode mode) const;
+    Time GetModeGuardInterval(WifiRemoteStation* st, WifiMode mode) const;
 
     /**
      * Sample beta random variable with given parameters

@@ -100,10 +100,9 @@ NS_LOG_COMPONENT_DEFINE("WifiSpectrumSaturationExample");
 int
 main(int argc, char* argv[])
 {
-    double distance{1};
+    meter_t distance{1};
     Time simulationTime{"10s"};
     uint16_t index{256};
-    uint32_t channelWidth{0};
     std::string wifiType{"ns3::SpectrumWifiPhy"};
     std::string errorModelType{"ns3::NistErrorRateModel"};
     bool enablePcap{false};
@@ -149,8 +148,8 @@ main(int argc, char* argv[])
             channel.AddPropagationLoss("ns3::FriisPropagationLossModel");
             channel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
             yansPhy.SetChannel(channel.Create());
-            yansPhy.Set("TxPowerStart", DoubleValue(1));
-            yansPhy.Set("TxPowerEnd", DoubleValue(1));
+            yansPhy.Set("TxPowerStart", dBmValue(1_dBm));
+            yansPhy.Set("TxPowerEnd", dBmValue(1_dBm));
 
             if (i > 31 && i <= 63)
             {
@@ -172,8 +171,8 @@ main(int argc, char* argv[])
 
             spectrumPhy.SetChannel(spectrumChannel);
             spectrumPhy.SetErrorRateModel(errorModelType);
-            spectrumPhy.Set("TxPowerStart", DoubleValue(1));
-            spectrumPhy.Set("TxPowerEnd", DoubleValue(1));
+            spectrumPhy.Set("TxPowerStart", dBmValue(1_dBm));
+            spectrumPhy.Set("TxPowerEnd", dBmValue(1_dBm));
 
             if (i > 31 && i <= 63)
             {
@@ -529,7 +528,7 @@ main(int argc, char* argv[])
         NetDeviceContainer staDevice;
         NetDeviceContainer apDevice;
 
-        channelWidth = (i <= 15 || (i > 31 && i <= 47) ? 20 : 40);
+        MHz_t channelWidth = (i <= 15 || (i > 31 && i <= 47) ? 20 : 40);
         std::string channelStr = "{0, " + std::to_string(channelWidth) + ", BAND_5GHZ, 0}";
 
         if (wifiType == "ns3::YansWifiPhy")

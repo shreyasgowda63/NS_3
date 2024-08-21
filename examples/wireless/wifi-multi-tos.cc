@@ -49,9 +49,9 @@ main(int argc, char* argv[])
 {
     uint32_t nWifi{4};
     Time simulationTime{"10s"};
-    double distance{1.0}; // meters
+    meter_t distance{1.0};
     uint16_t mcs{7};
-    uint8_t channelWidth{20}; // MHz
+    MHz_t channelWidth{20};
     bool useShortGuardInterval{false};
     bool useRts{false};
 

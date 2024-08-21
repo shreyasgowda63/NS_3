@@ -182,12 +182,12 @@ class WifiPhyStateHelper : public Object
      *
      * \param txDuration the duration of the PPDU to transmit
      * \param psdus the PSDUs in the transmitted PPDU (only one unless it is a MU PPDU)
-     * \param txPowerDbm the nominal TX power in dBm
+     * \param txPower the nominal TX power
      * \param txVector the TX vector for the transmission
      */
     void SwitchToTx(Time txDuration,
                     const WifiConstPsduMap& psdus,
-                    double txPowerDbm,
+                    dBm txPower,
                     const WifiTxVector& txVector);
     /**
      * Switch state to RX for the given duration.
@@ -257,9 +257,9 @@ class WifiPhyStateHelper : public Object
     void SwitchFromRxEndError();
     /**
      * Abort current reception following a CCA reset request.
-     * \param operatingWidth the channel width the PHY is operating on (in MHz)
+     * \param operatingWidth the channel width the PHY is operating on
      */
-    void SwitchFromRxAbort(ChannelWidthMhz operatingWidth);
+    void SwitchFromRxAbort(MHz_t operatingWidth);
     /**
      * Switch to CCA busy.
      *

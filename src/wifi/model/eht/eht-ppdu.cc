@@ -171,7 +171,7 @@ EhtPpdu::SetTxVectorFromPhyHeaders(WifiTxVector& txVector) const
 }
 
 std::pair<std::size_t, std::size_t>
-EhtPpdu::GetNumRusPerEhtSigBContentChannel(ChannelWidthMhz channelWidth,
+EhtPpdu::GetNumRusPerEhtSigBContentChannel(MHz_t channelWidth,
                                            uint8_t ehtPpduType,
                                            const RuAllocation& ruAllocation,
                                            bool compression,
@@ -200,7 +200,7 @@ EhtPpdu::GetEhtSigContentChannels(const WifiTxVector& txVector, uint8_t p20Index
 }
 
 uint32_t
-EhtPpdu::GetEhtSigFieldSize(ChannelWidthMhz channelWidth,
+EhtPpdu::GetEhtSigFieldSize(MHz_t channelWidth,
                             const RuAllocation& ruAllocation,
                             uint8_t ehtPpduType,
                             bool compression,

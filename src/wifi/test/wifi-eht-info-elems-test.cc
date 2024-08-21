@@ -779,9 +779,9 @@ class WifiEhtCapabilitiesIeTest : public HeaderSerializationTestCase
     /**
      * Constructor
      * \param is2_4Ghz whether the PHY is operating in 2.4 GHz
-     * \param channelWidth the supported channel width in MHz
+     * \param channelWidth the supported channel width
      */
-    WifiEhtCapabilitiesIeTest(bool is2_4Ghz, ChannelWidthMhz channelWidth);
+    WifiEhtCapabilitiesIeTest(bool is2_4Ghz, MHz_t channelWidth);
     ~WifiEhtCapabilitiesIeTest() override = default;
 
     /**
@@ -847,11 +847,11 @@ class WifiEhtCapabilitiesIeTest : public HeaderSerializationTestCase
   private:
     void DoRun() override;
 
-    bool m_is2_4Ghz;                //!< whether the PHY is operating in 2.4 GHz
-    ChannelWidthMhz m_channelWidth; //!< Supported channel width by the PHY (in MHz)
+    bool m_is2_4Ghz;      //!< whether the PHY is operating in 2.4 GHz
+    MHz_t m_channelWidth; //!< Supported channel width by the PHY
 };
 
-WifiEhtCapabilitiesIeTest ::WifiEhtCapabilitiesIeTest(bool is2_4Ghz, ChannelWidthMhz channelWidth)
+WifiEhtCapabilitiesIeTest ::WifiEhtCapabilitiesIeTest(bool is2_4Ghz, MHz_t channelWidth)
     : HeaderSerializationTestCase{"Check serialization and deserialization of EHT capabilities IE"},
       m_is2_4Ghz{is2_4Ghz},
       m_channelWidth{channelWidth}

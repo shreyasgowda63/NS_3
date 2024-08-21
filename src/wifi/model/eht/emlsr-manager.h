@@ -328,7 +328,7 @@ class EmlsrManager : public Object
     Time m_emlsrPaddingDelay;    //!< EMLSR Padding delay
     Time m_emlsrTransitionDelay; //!< EMLSR Transition delay
     uint8_t m_mainPhyId; //!< ID of main PHY (position in the vector of PHYs held by WifiNetDevice)
-    ChannelWidthMhz m_auxPhyMaxWidth;        //!< max channel width (MHz) supported by aux PHYs
+    MHz_t m_auxPhyMaxWidth;                  //!< max channel width supported by aux PHYs
     WifiModulationClass m_auxPhyMaxModClass; //!< max modulation class supported by aux PHYs
     bool m_auxPhyTxCapable;                  //!< whether Aux PHYs are capable of transmitting PPDUs
 
@@ -458,10 +458,10 @@ class EmlsrManager : public Object
 
     std::map<uint8_t, MediumSyncDelayStatus>
         m_mediumSyncDelayStatus; //!< the status of MediumSyncDelay timers (link ID-indexed)
-    std::map<Ptr<WifiPhy>, double> m_prevCcaEdThreshold; //!< the CCA sensitivity threshold (dBm)
-                                                         //!< to restore once the MediumSyncDelay
-                                                         //!< timer expires or the PHY moves to a
-                                                         //!< link on which the timer is not running
+    std::map<Ptr<WifiPhy>, dBm> m_prevCcaEdThreshold; //!< the CCA sensitivity threshold
+                                                      //!< to restore once the MediumSyncDelay
+                                                      //!< timer expires or the PHY moves to a
+                                                      //!< link on which the timer is not running
 
     std::set<uint8_t> m_emlsrLinks; //!< ID of the EMLSR links (empty if EMLSR mode is disabled)
     std::optional<std::set<uint8_t>> m_nextEmlsrLinks; /**< ID of the links that will become the

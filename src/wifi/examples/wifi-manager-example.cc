@@ -74,10 +74,6 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("WifiManagerExample");
 
-// 290K @ 20 MHz
-const double NOISE_DBM_Hz = -174.0; //!< Default value for noise.
-double noiseDbm = NOISE_DBM_Hz;     //!< Value for noise.
-
 double g_intervalBytes = 0;  //!< Bytes received in an interval.
 uint64_t g_intervalRate = 0; //!< Rate in an interval.
 
@@ -109,7 +105,7 @@ RateChange(uint64_t oldVal, uint64_t newVal)
 /// Step structure
 struct Step
 {
-    double stepSize; ///< step size in dBm
+    dBm stepSize;    ///< step size
     double stepTime; ///< step size in seconds
 };
 
@@ -137,9 +133,9 @@ struct StandardInfo
     StandardInfo(std::string name,
                  WifiStandard standard,
                  WifiPhyBand band,
-                 ChannelWidthMhz width,
-                 double snrLow,
-                 double snrHigh,
+                 MHz_t width,
+                 dB snrLow,
+                 dB snrHigh,
                  double xMin,
                  double xMax,
                  double yMax)
@@ -158,9 +154,9 @@ struct StandardInfo
     std::string m_name;      ///< name
     WifiStandard m_standard; ///< standard
     WifiPhyBand m_band;      ///< PHY band
-    ChannelWidthMhz m_width; ///< channel width in MHz
-    double m_snrLow;         ///< lowest SNR
-    double m_snrHigh;        ///< highest SNR
+    MHz_t m_width;           ///< channel width
+    dB m_snrLow;             ///< lowest SNR
+    dB m_snrHigh;            ///< highest SNR
     double m_xMin;           ///< X minimum
     double m_xMax;           ///< X maximum
     double m_yMax;           ///< Y maximum
@@ -170,34 +166,38 @@ struct StandardInfo
  * Change the signal model and report the rate.
  *
  * \param rssModel The new RSS model.
- * \param step The step tp use.
+ * \param step The step to use.
  * \param rss The RSS.
+ * \param noise The noise.
  * \param rateDataset The rate dataset.
  * \param actualDataset The actual dataset.
  */
 void
 ChangeSignalAndReportRate(Ptr<FixedRssLossModel> rssModel,
                           Step step,
-                          double rss,
+                          dBm rss,
+                          dBm noise,
                           Gnuplot2dDataset& rateDataset,
                           Gnuplot2dDataset& actualDataset)
 {
     NS_LOG_FUNCTION(rssModel << step.stepSize << step.stepTime << rss);
-    double snr = rss - noiseDbm;
-    rateDataset.Add(snr, g_intervalRate / 1e6);
+    dB snr = rss.in_dBm() - noise.in_dBm();
+    rateDataset.Add(snr.in_dB(), g_intervalRate / 1e6);
     // Calculate received rate since last interval
     double currentRate = ((g_intervalBytes * 8) / step.stepTime) / 1e6; // Mb/s
-    actualDataset.Add(snr, currentRate);
-    rssModel->SetRss(rss - step.stepSize);
+    actualDataset.Add(snr.in_dB(), currentRate);
+    const dBm newRss = rss.in_dBm() - step.stepSize.in_dBm();
+    rssModel->SetRss(newRss.in_dBm());
     NS_LOG_INFO("At time " << Simulator::Now().As(Time::S) << "; selected rate "
                            << (g_intervalRate / 1e6) << "; observed rate " << currentRate
-                           << "; setting new power to " << rss - step.stepSize);
+                           << "; setting new power to " << newRss);
     g_intervalBytes = 0;
     Simulator::Schedule(Seconds(step.stepTime),
                         &ChangeSignalAndReportRate,
                         rssModel,
                         step,
-                        (rss - step.stepSize),
+                        newRss,
+                        noise,
                         rateDataset,
                         actualDataset);
 }
@@ -210,7 +210,7 @@ main(int argc, char* argv[])
     uint32_t steps;
     uint32_t rtsThreshold = 999999; // disabled even for large A-MPDU
     uint32_t maxAmpduSize = 65535;
-    double stepSize = 1;        // dBm
+    dBm stepSize = 1;
     double stepTime = 1;        // seconds
     uint32_t packetSize = 1024; // bytes
     bool broadcast = false;
@@ -398,15 +398,39 @@ main(int argc, char* argv[])
     // SNR, fourth and fifth provide xrange axis limits, and sixth the yaxis
     // maximum
     serverStandards = {
-        StandardInfo("802.11a", WIFI_STANDARD_80211a, WIFI_PHY_BAND_5GHZ, 20, 3, 27, 0, 30, 60),
-        StandardInfo("802.11b", WIFI_STANDARD_80211b, WIFI_PHY_BAND_2_4GHZ, 22, -5, 11, -6, 15, 15),
-        StandardInfo("802.11g", WIFI_STANDARD_80211g, WIFI_PHY_BAND_2_4GHZ, 20, -5, 27, -6, 30, 60),
+        StandardInfo("802.11a",
+                     WIFI_STANDARD_80211a,
+                     WIFI_PHY_BAND_5GHZ,
+                     20,
+                     3_dB,
+                     27_dB,
+                     0,
+                     30,
+                     60),
+        StandardInfo("802.11b",
+                     WIFI_STANDARD_80211b,
+                     WIFI_PHY_BAND_2_4GHZ,
+                     22,
+                     -5_dB,
+                     11_dB,
+                     -6,
+                     15,
+                     15),
+        StandardInfo("802.11g",
+                     WIFI_STANDARD_80211g,
+                     WIFI_PHY_BAND_2_4GHZ,
+                     20,
+                     -5_dB,
+                     27_dB,
+                     -6,
+                     30,
+                     60),
         StandardInfo("802.11n-5GHz",
                      WIFI_STANDARD_80211n,
                      WIFI_PHY_BAND_5GHZ,
                      serverChannelWidth,
-                     3,
-                     30,
+                     3_dB,
+                     30_dB,
                      0,
                      35,
                      80 * channelRateFactor),
@@ -414,8 +438,8 @@ main(int argc, char* argv[])
                      WIFI_STANDARD_80211n,
                      WIFI_PHY_BAND_2_4GHZ,
                      serverChannelWidth,
-                     3,
-                     30,
+                     3_dB,
+                     30_dB,
                      0,
                      35,
                      80 * channelRateFactor),
@@ -423,8 +447,8 @@ main(int argc, char* argv[])
                      WIFI_STANDARD_80211ac,
                      WIFI_PHY_BAND_5GHZ,
                      serverChannelWidth,
-                     5,
-                     50,
+                     5_dB,
+                     50_dB,
                      0,
                      55,
                      120 * channelRateFactor),
@@ -432,18 +456,26 @@ main(int argc, char* argv[])
                      WIFI_STANDARD_80211p,
                      WIFI_PHY_BAND_5GHZ,
                      10,
-                     3,
-                     27,
+                     3_dB,
+                     27_dB,
                      0,
                      30,
                      60),
-        StandardInfo("802.11p-5MHz", WIFI_STANDARD_80211p, WIFI_PHY_BAND_5GHZ, 5, 3, 27, 0, 30, 60),
+        StandardInfo("802.11p-5MHz",
+                     WIFI_STANDARD_80211p,
+                     WIFI_PHY_BAND_5GHZ,
+                     5,
+                     3_dB,
+                     27_dB,
+                     0,
+                     30,
+                     60),
         StandardInfo("802.11ax-6GHz",
                      WIFI_STANDARD_80211ax,
                      WIFI_PHY_BAND_6GHZ,
                      serverChannelWidth,
-                     5,
-                     55,
+                     5_dB,
+                     55_dB,
                      0,
                      60,
                      120 * channelRateFactor),
@@ -451,8 +483,8 @@ main(int argc, char* argv[])
                      WIFI_STANDARD_80211ax,
                      WIFI_PHY_BAND_5GHZ,
                      serverChannelWidth,
-                     5,
-                     55,
+                     5_dB,
+                     55_dB,
                      0,
                      60,
                      120 * channelRateFactor),
@@ -460,23 +492,47 @@ main(int argc, char* argv[])
                      WIFI_STANDARD_80211ax,
                      WIFI_PHY_BAND_2_4GHZ,
                      serverChannelWidth,
-                     5,
-                     55,
+                     5_dB,
+                     55_dB,
                      0,
                      60,
                      120 * channelRateFactor),
     };
 
     clientStandards = {
-        StandardInfo("802.11a", WIFI_STANDARD_80211a, WIFI_PHY_BAND_5GHZ, 20, 3, 27, 0, 30, 60),
-        StandardInfo("802.11b", WIFI_STANDARD_80211b, WIFI_PHY_BAND_2_4GHZ, 22, -5, 11, -6, 15, 15),
-        StandardInfo("802.11g", WIFI_STANDARD_80211g, WIFI_PHY_BAND_2_4GHZ, 20, -5, 27, -6, 30, 60),
+        StandardInfo("802.11a",
+                     WIFI_STANDARD_80211a,
+                     WIFI_PHY_BAND_5GHZ,
+                     20,
+                     3_dB,
+                     27_dB,
+                     0,
+                     30,
+                     60),
+        StandardInfo("802.11b",
+                     WIFI_STANDARD_80211b,
+                     WIFI_PHY_BAND_2_4GHZ,
+                     22,
+                     -5_dB,
+                     11_dB,
+                     -6,
+                     15,
+                     15),
+        StandardInfo("802.11g",
+                     WIFI_STANDARD_80211g,
+                     WIFI_PHY_BAND_2_4GHZ,
+                     20,
+                     -5_dB,
+                     27_dB,
+                     -6,
+                     30,
+                     60),
         StandardInfo("802.11n-5GHz",
                      WIFI_STANDARD_80211n,
                      WIFI_PHY_BAND_5GHZ,
                      clientChannelWidth,
-                     3,
-                     30,
+                     3_dB,
+                     30_dB,
                      0,
                      35,
                      80 * channelRateFactor),
@@ -484,8 +540,8 @@ main(int argc, char* argv[])
                      WIFI_STANDARD_80211n,
                      WIFI_PHY_BAND_2_4GHZ,
                      clientChannelWidth,
-                     3,
-                     30,
+                     3_dB,
+                     30_dB,
                      0,
                      35,
                      80 * channelRateFactor),
@@ -493,8 +549,8 @@ main(int argc, char* argv[])
                      WIFI_STANDARD_80211ac,
                      WIFI_PHY_BAND_5GHZ,
                      clientChannelWidth,
-                     5,
-                     50,
+                     5_dB,
+                     50_dB,
                      0,
                      55,
                      120 * channelRateFactor),
@@ -502,18 +558,26 @@ main(int argc, char* argv[])
                      WIFI_STANDARD_80211p,
                      WIFI_PHY_BAND_5GHZ,
                      10,
-                     3,
-                     27,
+                     3_dB,
+                     27_dB,
                      0,
                      30,
                      60),
-        StandardInfo("802.11p-5MHz", WIFI_STANDARD_80211p, WIFI_PHY_BAND_5GHZ, 5, 3, 27, 0, 30, 60),
+        StandardInfo("802.11p-5MHz",
+                     WIFI_STANDARD_80211p,
+                     WIFI_PHY_BAND_5GHZ,
+                     5,
+                     3_dB,
+                     27_dB,
+                     0,
+                     30,
+                     60),
         StandardInfo("802.11ax-6GHz",
                      WIFI_STANDARD_80211ax,
                      WIFI_PHY_BAND_6GHZ,
                      clientChannelWidth,
-                     5,
-                     55,
+                     5_dB,
+                     55_dB,
                      0,
                      60,
                      160 * channelRateFactor),
@@ -521,8 +585,8 @@ main(int argc, char* argv[])
                      WIFI_STANDARD_80211ax,
                      WIFI_PHY_BAND_5GHZ,
                      clientChannelWidth,
-                     5,
-                     55,
+                     5_dB,
+                     55_dB,
                      0,
                      60,
                      160 * channelRateFactor),
@@ -530,8 +594,8 @@ main(int argc, char* argv[])
                      WIFI_STANDARD_80211ax,
                      WIFI_PHY_BAND_2_4GHZ,
                      clientChannelWidth,
-                     5,
-                     55,
+                     5_dB,
+                     55_dB,
                      0,
                      60,
                      160 * channelRateFactor),
@@ -562,7 +626,7 @@ main(int argc, char* argv[])
                     "SNR values in wrong order");
     steps = static_cast<uint32_t>(std::abs(static_cast<double>(clientSelectedStandard.m_snrHigh -
                                                                clientSelectedStandard.m_snrLow) /
-                                           stepSize) +
+                                           stepSize.in_dBm()) +
                                   1);
     NS_LOG_DEBUG("Using " << steps << " steps for SNR range " << clientSelectedStandard.m_snrLow
                           << ":" << clientSelectedStandard.m_snrHigh);
@@ -608,7 +672,7 @@ main(int argc, char* argv[])
 
     // Disable the default noise figure of 7 dBm in WifiPhy; the calculations
     // of SNR below assume that the only noise is thermal noise
-    Config::SetDefault("ns3::WifiPhy::RxNoiseFigure", DoubleValue(0));
+    Config::SetDefault("ns3::WifiPhy::RxNoiseFigure", dBValue(0_dB));
 
     // By default, the CCA sensitivity is -82 dBm, meaning if the RSS is
     // below this value, the receiver will reject the Wi-Fi frame.
@@ -616,7 +680,7 @@ main(int argc, char* argv[])
     // and we have disabled the noise figure, so the noise level in 20 MHz
     // will be about -101 dBm.  Therefore, lower the CCA sensitivity to a
     // value that disables it (e.g. -110 dBm)
-    Config::SetDefault("ns3::WifiPhy::CcaSensitivity", DoubleValue(-110));
+    Config::SetDefault("ns3::WifiPhy::CcaSensitivity", dBmValue(-110_dBm));
 
     WifiHelper wifi;
     wifi.SetStandard(serverSelectedStandard.m_standard);
@@ -739,14 +803,18 @@ main(int argc, char* argv[])
         wndServer->GetHeConfiguration()->SetGuardInterval(NanoSeconds(serverShortGuardInterval));
         wndClient->GetHeConfiguration()->SetGuardInterval(NanoSeconds(clientShortGuardInterval));
     }
-    NS_LOG_DEBUG("Channel width " << wifiPhyPtrClient->GetChannelWidth() << " noiseDbm "
-                                  << noiseDbm);
-    NS_LOG_DEBUG("NSS " << wifiPhyPtrClient->GetMaxSupportedTxSpatialStreams());
 
     // Configure signal and noise, and schedule first iteration
-    noiseDbm += 10 * log10(clientSelectedStandard.m_width * 1000000);
-    double rssCurrent = (clientSelectedStandard.m_snrHigh + noiseDbm);
-    rssLossModel->SetRss(rssCurrent);
+    const auto BOLTZMANN{1.3803e-23};
+    const dBm_per_Hz noiseDensity{WToDbm(BOLTZMANN * 290)}; // 290K @ 20 MHz
+    const Hz rxWidth{clientSelectedStandard.m_width * 1e6};
+    const auto noise = noiseDensity.OverBandwidth(rxWidth);
+
+    NS_LOG_DEBUG("Channel width " << wifiPhyPtrClient->GetChannelWidth() << " noise " << noise);
+    NS_LOG_DEBUG("NSS " << wifiPhyPtrClient->GetMaxSupportedTxSpatialStreams());
+
+    const auto rssCurrent = (clientSelectedStandard.m_snrHigh + noise);
+    rssLossModel->SetRss(rssCurrent.in_dBm());
     NS_LOG_INFO("Setting initial Rss to " << rssCurrent);
     // Move the STA by stepsSize meters every stepTime seconds
     Simulator::Schedule(Seconds(0.5 + stepTime),
@@ -754,6 +822,7 @@ main(int argc, char* argv[])
                         rssLossModel,
                         step,
                         rssCurrent,
+                        noise,
                         rateDataset,
                         actualDataset);
 

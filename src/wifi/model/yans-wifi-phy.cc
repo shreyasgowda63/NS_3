@@ -95,7 +95,7 @@ YansWifiPhy::StartTx(Ptr<const WifiPpdu> ppdu)
     NS_LOG_DEBUG("Start transmission: signal power before antenna gain="
                  << GetPowerDbm(ppdu->GetTxVector().GetTxPowerLevel()) << "dBm");
     m_signalTransmissionCb(ppdu, ppdu->GetTxVector());
-    m_channel->Send(this, ppdu, GetTxPowerForTransmission(ppdu) + GetTxGain());
+    m_channel->Send(this, ppdu, GetTxPowerForTransmission(ppdu) + dB{GetTxGain()});
 }
 
 void
@@ -105,14 +105,14 @@ YansWifiPhy::TraceSignalArrival(Ptr<const WifiPpdu> ppdu, double rxPowerDbm, Tim
     m_signalArrivalCb(ppdu, rxPowerDbm, ppdu->GetTxDuration());
 }
 
-ChannelWidthMhz
-YansWifiPhy::GetGuardBandwidth(uint16_t currentChannelWidth) const
+MHz_t
+YansWifiPhy::GetGuardBandwidth(MHz_t currentChannelWidth) const
 {
     NS_ABORT_MSG("Guard bandwidth not relevant for Yans");
     return 0;
 }
 
-std::tuple<double, double, double>
+std::tuple<dB, dB, dB>
 YansWifiPhy::GetTxMaskRejectionParams() const
 {
     NS_ABORT_MSG("Tx mask rejection params not relevant for Yans");
@@ -120,7 +120,7 @@ YansWifiPhy::GetTxMaskRejectionParams() const
 }
 
 WifiSpectrumBandInfo
-YansWifiPhy::GetBand(ChannelWidthMhz /*bandWidth*/, uint8_t /*bandIndex*/)
+YansWifiPhy::GetBand(MHz_t /*bandWidth*/, uint8_t /*bandIndex*/)
 {
     return {{{0, 0}}, {{0, 0}}};
 }

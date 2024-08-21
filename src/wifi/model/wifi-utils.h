@@ -21,6 +21,7 @@
 #define WIFI_UTILS_H
 
 #include "block-ack-type.h"
+#include "wifi-types.h"
 
 #include "ns3/fatal-error.h"
 #include "ns3/nstime.h"
@@ -77,27 +78,27 @@ using WifiTidLinkMapping = std::map<uint8_t, std::set<uint8_t>>;
 /**
  * Convert from dBm to Watts.
  *
- * \param dbm the power in dBm
+ * \param val the value in dBm
  *
  * \return the equivalent Watts for the given dBm
  */
-double DbmToW(double dbm);
+Watt_t DbmToW(dBm val);
 /**
  * Convert from dB to ratio.
  *
- * \param db the value in dB
+ * \param val the value in dB
  *
  * \return ratio in linear scale
  */
-double DbToRatio(double db);
+double DbToRatio(dB val);
 /**
  * Convert from Watts to dBm.
  *
- * \param w the power in Watts
+ * \param val the value in Watts
  *
  * \return the equivalent dBm for the given Watts
  */
-double WToDbm(double w);
+dBm WToDbm(Watt val);
 /**
  * Convert from ratio to dB.
  *
@@ -105,7 +106,7 @@ double WToDbm(double w);
  *
  * \return the value in dB
  */
-double RatioToDb(double ratio);
+dB RatioToDb(double ratio);
 /**
  * Return the total Ack size (including FCS trailer).
  *

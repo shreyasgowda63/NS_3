@@ -1189,7 +1189,7 @@ HeFrameExchangeManager::GetCtsTxVectorAfterMuRts(const CtrlTriggerHeader& trigge
 
     auto userInfoIt = trigger.FindUserInfoWithAid(staId);
     NS_ASSERT_MSG(userInfoIt != trigger.end(), "User Info field for AID=" << staId << " not found");
-    ChannelWidthMhz bw = 0;
+    MHz_t bw = 0;
 
     if (uint8_t ru = userInfoIt->GetMuRtsRuAllocation(); ru < 65)
     {
@@ -1488,30 +1488,30 @@ HeFrameExchangeManager::GetHeTbTxVector(CtrlTriggerHeader trigger, Mac48Address 
         trigger.GetApTxPower() -
         static_cast<int8_t>(
             *optRssi); // cast RSSI to be on equal footing with AP Tx power information
-    auto reqTxPowerDbm = static_cast<double>(userInfoIt->GetUlTargetRssi() + pathLossDb);
+    const auto reqTxPower = userInfoIt->GetUlTargetRssi() + pathLossDb;
 
     // Convert the transmit power to a power level
     uint8_t numPowerLevels = m_phy->GetNTxPower();
     if (numPowerLevels > 1)
     {
-        double stepDbm = (m_phy->GetTxPowerEnd() - m_phy->GetTxPowerStart()) / (numPowerLevels - 1);
+        const auto step = (m_phy->GetTxPowerEnd().in_dBm() - m_phy->GetTxPowerStart().in_dBm()) /
+                          (numPowerLevels - 1);
         powerLevel = static_cast<uint8_t>(
-            ceil((reqTxPowerDbm - m_phy->GetTxPowerStart()) /
-                 stepDbm)); // better be slightly above so as to satisfy target UL RSSI
+            ceil((reqTxPower - m_phy->GetTxPowerStart().in_dBm()) /
+                 step)); // better be slightly above so as to satisfy target UL RSSI
         if (powerLevel > numPowerLevels)
         {
             powerLevel = numPowerLevels; // capping will trigger warning below
         }
     }
-    if (reqTxPowerDbm > m_phy->GetPowerDbm(powerLevel))
+    if (reqTxPower > m_phy->GetPowerDbm(powerLevel))
     {
-        NS_LOG_WARN("The requested power level ("
-                    << reqTxPowerDbm << "dBm) cannot be satisfied (max: " << m_phy->GetTxPowerEnd()
-                    << "dBm)");
+        NS_LOG_WARN("The requested power level (" << reqTxPower << "dBm) cannot be satisfied (max: "
+                                                  << m_phy->GetTxPowerEnd() << "dBm)");
     }
     v.SetTxPowerLevel(powerLevel);
     NS_LOG_LOGIC("UL power control: "
-                 << "input {pathLoss=" << pathLossDb << "dB, reqTxPower=" << reqTxPowerDbm << "dBm}"
+                 << "input {pathLoss=" << pathLossDb << "dB, reqTxPower=" << reqTxPower << "dBm}"
                  << " output {powerLevel=" << +powerLevel << " -> "
                  << m_phy->GetPowerDbm(powerLevel) << "dBm}"
                  << " PHY power capa {min=" << m_phy->GetTxPowerStart() << "dBm, max="
@@ -1520,7 +1520,7 @@ HeFrameExchangeManager::GetHeTbTxVector(CtrlTriggerHeader trigger, Mac48Address 
     return v;
 }
 
-std::optional<double>
+std::optional<dBm>
 HeFrameExchangeManager::GetMostRecentRssi(const Mac48Address& address) const
 {
     return GetWifiRemoteStationManager()->GetMostRecentRssi(address);

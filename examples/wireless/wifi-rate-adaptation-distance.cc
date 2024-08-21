@@ -192,7 +192,7 @@ main(int argc, char* argv[])
     std::string outputFileName{"minstrelHT"};
     uint32_t BeMaxAmpduSize{65535};
     bool shortGuardInterval{false};
-    uint32_t chWidth{20};
+    MHz_t chWidth{20};
     int ap1_x{0};
     int ap1_y{0};
     int sta1_x{5};
@@ -208,7 +208,7 @@ main(int argc, char* argv[])
     cmd.AddValue("shortGuardInterval",
                  "Enable Short Guard Interval in all stations",
                  shortGuardInterval);
-    cmd.AddValue("channelWidth", "Channel width of all the stations", chWidth);
+    cmd.AddValue("channelWidth", "Channel width of all the stations in MHz", chWidth);
     cmd.AddValue("rtsThreshold", "RTS threshold", rtsThreshold);
     cmd.AddValue("BeMaxAmpduSize", "BE Mac A-MPDU size", BeMaxAmpduSize);
     cmd.AddValue("outputFileName", "Output filename", outputFileName);
@@ -261,8 +261,8 @@ main(int argc, char* argv[])
     // is around -101 dBm, 2) lower the CCA sensitivity to a value that
     // disables it (e.g. -110 dBm), and 3) disable the Wi-Fi preamble
     // detection model.
-    wifiPhy.Set("CcaSensitivity", DoubleValue(-110));
-    wifiPhy.Set("RxNoiseFigure", DoubleValue(0));
+    wifiPhy.Set("CcaSensitivity", dBmValue(-110_dBm));
+    wifiPhy.Set("RxNoiseFigure", dBValue(0_dB));
     wifiPhy.DisablePreambleDetectionModel();
 
     NetDeviceContainer wifiApDevices;
