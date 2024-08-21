@@ -72,6 +72,9 @@ void
 FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
 {
     NS_LOG_FUNCTION(this << fd << &readCallback);
+
+    NS_ASSERT_MSG(!m_readThread.joinable(), "read thread already exists");
+
     int tmp;
 
 #ifdef __WIN32__
@@ -83,8 +86,6 @@ FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
         winsock_initialized = true;
     }
 #endif // __WIN32__
-
-    NS_ASSERT_MSG(!m_readThread.joinable(), "read thread already exists");
 
     // create a pipe for inter-thread event notification
 #ifdef __WIN32__
