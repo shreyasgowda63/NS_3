@@ -137,10 +137,8 @@ FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
         NS_ASSERT_MSG(tmp != NO_ERROR, "Error at WSAStartup()");
         winsock_initialized = true;
     }
-#endif // __WIN32__
 
     // create a pipe for inter-thread event notification
-#ifdef __WIN32__
     m_evpipe[0] = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     m_evpipe[1] = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if ((static_cast<uint64_t>(m_evpipe[0]) == INVALID_SOCKET) ||
@@ -148,23 +146,24 @@ FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
     {
         NS_FATAL_ERROR("pipe() failed: " << std::strerror(errno));
     }
-#else
-    tmp = pipe(m_evpipe);
-    if (tmp == -1)
-    {
-        NS_FATAL_ERROR("pipe() failed: " << std::strerror(errno));
-    }
-#endif // __WIN32__
 
     // make the read end non-blocking
-#ifdef __WIN32__
     ULONG iMode = 1;
     tmp = ioctlsocket(m_evpipe[0], FIONBIO, &iMode);
     if (tmp != NO_ERROR)
     {
         NS_FATAL_ERROR("fcntl() failed: " << std::strerror(errno));
     }
-#else
+
+#else  // Not __WIN32__
+    // create a pipe for inter-thread event notification
+    tmp = pipe(m_evpipe);
+    if (tmp == -1)
+    {
+        NS_FATAL_ERROR("pipe() failed: " << std::strerror(errno));
+    }
+
+    // make the read end non-blocking
     tmp = fcntl(m_evpipe[0], F_GETFL);
     if (tmp == -1)
     {
