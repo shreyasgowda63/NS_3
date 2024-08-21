@@ -219,10 +219,9 @@ void
 FdReader::Run()
 {
     NS_LOG_FUNCTION(this);
-    int nfds;
-    fd_set rfds;
 
-    nfds = (m_fd > m_evpipe[0] ? m_fd : m_evpipe[0]) + 1;
+    fd_set rfds;
+    int nfds = (m_fd > m_evpipe[0] ? m_fd : m_evpipe[0]) + 1;
 
     FD_ZERO(&rfds);
     FD_SET(m_fd, &rfds);
@@ -230,10 +229,9 @@ FdReader::Run()
 
     for (;;)
     {
-        int r;
         fd_set readfds = rfds;
+        int r = select(nfds, &readfds, nullptr, nullptr, nullptr);
 
-        r = select(nfds, &readfds, nullptr, nullptr, nullptr);
         if (r == -1 && errno != EINTR)
         {
             NS_FATAL_ERROR("select() failed: " << std::strerror(errno));
