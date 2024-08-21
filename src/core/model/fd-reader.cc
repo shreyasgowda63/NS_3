@@ -15,10 +15,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: Tom Goff <thomas.goff@boeing.com>
+ * Modified by: Eduardo Nuno Almeida <enmsa@outlook.pt>
+ *              Merged the files "unix-fd-reader.cc" and "win32-fd-reader.cc".
  */
 
-#include "fatal-error.h"
 #include "fd-reader.h"
+
+#include "fatal-error.h"
 #include "log.h"
 #include "simple-ref-count.h"
 #include "simulator.h"
@@ -26,9 +29,14 @@
 #include <cerrno>
 #include <cstring>
 #include <fcntl.h>
-#include <winsock.h>
+#include <thread>
 
-// #define pipe(fds) _pipe(fds,4096, _O_BINARY)
+#ifdef __WIN32__
+#include <winsock.h>
+#else
+#include <sys/select.h>
+#include <unistd.h> // close()
+#endif
 
 /**
  * \file
@@ -41,7 +49,6 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("FdReader");
 
-// conditional compilation to avoid Doxygen errors
 #ifdef __WIN32__
 bool FdReader::winsock_initialized = false;
 #endif
@@ -68,6 +75,7 @@ FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
     NS_LOG_FUNCTION(this << fd << &readCallback);
     int tmp;
 
+#ifdef __WIN32__
     if (!winsock_initialized)
     {
         WSADATA wsaData;
@@ -75,10 +83,12 @@ FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
         NS_ASSERT_MSG(tmp != NO_ERROR, "Error at WSAStartup()");
         winsock_initialized = true;
     }
+#endif // __WIN32__
 
     NS_ASSERT_MSG(!m_readThread.joinable(), "read thread already exists");
 
     // create a pipe for inter-thread event notification
+#ifdef __WIN32__
     m_evpipe[0] = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     m_evpipe[1] = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if ((static_cast<uint64_t>(m_evpipe[0]) == INVALID_SOCKET) ||
@@ -86,14 +96,33 @@ FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
     {
         NS_FATAL_ERROR("pipe() failed: " << std::strerror(errno));
     }
+#else
+    tmp = pipe(m_evpipe);
+    if (tmp == -1)
+    {
+        NS_FATAL_ERROR("pipe() failed: " << std::strerror(errno));
+    }
+#endif // __WIN32__
 
     // make the read end non-blocking
+#ifdef __WIN32__
     ULONG iMode = 1;
     tmp = ioctlsocket(m_evpipe[0], FIONBIO, &iMode);
     if (tmp != NO_ERROR)
     {
         NS_FATAL_ERROR("fcntl() failed: " << std::strerror(errno));
     }
+#else
+    tmp = fcntl(m_evpipe[0], F_GETFL);
+    if (tmp == -1)
+    {
+        NS_FATAL_ERROR("fcntl() failed: " << std::strerror(errno));
+    }
+    if (fcntl(m_evpipe[0], F_SETFL, tmp | O_NONBLOCK) == -1)
+    {
+        NS_FATAL_ERROR("fcntl() failed: " << std::strerror(errno));
+    }
+#endif // __WIN32__
 
     m_fd = fd;
     m_readCallback = readCallback;
@@ -138,13 +167,20 @@ FdReader::Stop()
     if (m_evpipe[1] != -1)
     {
         char zero = 0;
+
+#ifdef __WIN32__
         ssize_t len = send(m_evpipe[1], &zero, sizeof(zero), 0);
+#else
+        ssize_t len = write(m_evpipe[1], &zero, sizeof(zero));
+#endif // __WIN32__
+
         if (len != sizeof(zero))
         {
             NS_LOG_WARN("incomplete write(): " << std::strerror(errno));
         }
     }
 
+    // join the read thread
     if (m_readThread.joinable())
     {
         m_readThread.join();
@@ -153,14 +189,22 @@ FdReader::Stop()
     // close the write end of the event pipe
     if (m_evpipe[1] != -1)
     {
+#ifdef __WIN32__
         closesocket(m_evpipe[1]);
+#else
+        close(m_evpipe[1]);
+#endif // __WIN32__
         m_evpipe[1] = -1;
     }
 
     // close the read end of the event pipe
     if (m_evpipe[0] != -1)
     {
+#ifdef __WIN32__
         closesocket(m_evpipe[0]);
+#else
+        close(m_evpipe[0]);
+#endif // __WIN32__
         m_evpipe[0] = -1;
     }
 
@@ -201,7 +245,11 @@ FdReader::Run()
             for (;;)
             {
                 char buf[1024];
+#ifdef __WIN32__
                 ssize_t len = recv(m_evpipe[0], buf, sizeof(buf), 0);
+#else
+                ssize_t len = read(m_evpipe[0], buf, sizeof(buf));
+#endif // __WIN32__
                 if (len == 0)
                 {
                     NS_FATAL_ERROR("event pipe closed");
