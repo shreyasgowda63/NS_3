@@ -138,7 +138,7 @@ FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
         winsock_initialized = true;
     }
 
-    // create a pipe for inter-thread event notification
+    // Create a pipe for inter-thread event notification
     m_evpipe[0] = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     m_evpipe[1] = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if ((static_cast<uint64_t>(m_evpipe[0]) == INVALID_SOCKET) ||
@@ -147,7 +147,7 @@ FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
         NS_FATAL_ERROR("pipe() failed: " << std::strerror(errno));
     }
 
-    // make the read end non-blocking
+    // Make the read end non-blocking
     ULONG iMode = 1;
     tmp = ioctlsocket(m_evpipe[0], FIONBIO, &iMode);
     if (tmp != NO_ERROR)
@@ -156,14 +156,14 @@ FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
     }
 
 #else  // Not __WIN32__
-    // create a pipe for inter-thread event notification
+    // Create a pipe for inter-thread event notification
     tmp = pipe(m_evpipe);
     if (tmp == -1)
     {
         NS_FATAL_ERROR("pipe() failed: " << std::strerror(errno));
     }
 
-    // make the read end non-blocking
+    // Make the read end non-blocking
     tmp = fcntl(m_evpipe[0], F_GETFL);
     if (tmp == -1)
     {
@@ -186,7 +186,7 @@ FdReader::Start(int fd, Callback<void, uint8_t*, ssize_t> readCallback)
     //
     if (!m_destroyEvent.IsPending())
     {
-        // hold a reference to ensure that this object is not
+        // Hold a reference to ensure that this object is not
         // deallocated before the destroy-time event fires
         this->Ref();
         m_destroyEvent = Simulator::ScheduleDestroy(&FdReader::DestroyEvent, this);
@@ -214,7 +214,7 @@ FdReader::Stop()
     NS_LOG_FUNCTION(this);
     m_stop = true;
 
-    // signal the read thread
+    // Signal the read thread
     if (m_evpipe[1] != -1)
     {
         char zero = 0;
@@ -226,27 +226,27 @@ FdReader::Stop()
         }
     }
 
-    // join the read thread
+    // Join the read thread
     if (m_readThread.joinable())
     {
         m_readThread.join();
     }
 
-    // close the write end of the event pipe
+    // Close the write end of the event pipe
     if (m_evpipe[1] != -1)
     {
         ClosePipe(m_evpipe[1]);
         m_evpipe[1] = -1;
     }
 
-    // close the read end of the event pipe
+    // Close the read end of the event pipe
     if (m_evpipe[0] != -1)
     {
         ClosePipe(m_evpipe[0]);
         m_evpipe[0] = -1;
     }
 
-    // reset everything else
+    // Reset everything else
     m_fd = -1;
     m_readCallback.Nullify();
     m_stop = false;
@@ -277,7 +277,7 @@ FdReader::Run()
 
         if (FD_ISSET(m_evpipe[0], &readfds))
         {
-            // drain the event pipe
+            // Drain the event pipe
             for (;;)
             {
                 char buf[1024];
@@ -301,7 +301,7 @@ FdReader::Run()
 
         if (m_stop)
         {
-            // this thread is done
+            // This thread is done
             break;
         }
 
@@ -309,14 +309,14 @@ FdReader::Run()
         {
             FdReader::Data data = DoRead();
 
-            // reading stops when m_len is zero
+            // Reading stops when m_len is zero
             if (data.m_len == 0)
             {
                 break;
             }
 
-            // the callback is only called when m_len is positive (data
-            // is ignored if m_len is negative)
+            // The callback is only called when m_len is positive
+            // (data is ignored if m_len is negative)
             if (data.m_len > 0)
             {
                 m_readCallback(data.m_buf, data.m_len);
