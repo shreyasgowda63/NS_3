@@ -55,8 +55,7 @@ bool FdReader::winsock_initialized = false;
 
 FdReader::FdReader()
     : m_fd(-1),
-      m_stop(false),
-      m_destroyEvent()
+      m_stop(false)
 {
     NS_LOG_FUNCTION(this);
     m_evpipe[0] = -1;
