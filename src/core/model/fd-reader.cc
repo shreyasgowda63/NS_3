@@ -39,8 +39,8 @@
 #endif
 
 /**
- * \file
- * \ingroup system
+ * @file
+ * @ingroup system
  * ns3::FdReader implementation.
  */
 
