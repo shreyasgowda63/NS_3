@@ -41,7 +41,7 @@ Duid::Duid()
     m_duidType = 3;
     m_hardwareType = 0;
     m_time = Time();
-    m_linkLayerAddress = std::vector<uint8_t>();
+    m_identifier = std::vector<uint8_t>();
 }
 
 TypeId
@@ -64,7 +64,7 @@ bool
 Duid::operator==(const Duid& o) const
 {
     return (m_duidType == o.m_duidType && m_hardwareType == o.m_hardwareType &&
-            m_linkLayerAddress == o.m_linkLayerAddress);
+            m_identifier == o.m_identifier);
 }
 
 bool
@@ -89,11 +89,11 @@ operator<(const Duid& a, const Duid& b)
     NS_ASSERT(a.GetLength() == b.GetLength());
     for (uint8_t i = 0; i < a.GetLength(); i++)
     {
-        if (a.m_linkLayerAddress[i] < b.m_linkLayerAddress[i])
+        if (a.m_identifier[i] < b.m_identifier[i])
         {
             return true;
         }
-        else if (a.m_linkLayerAddress[i] > b.m_linkLayerAddress[i])
+        else if (a.m_identifier[i] > b.m_identifier[i])
         {
             return false;
         }
@@ -104,21 +104,20 @@ operator<(const Duid& a, const Duid& b)
 bool
 Duid::IsInvalid() const
 {
-    return m_linkLayerAddress.empty();
+    return m_identifier.empty();
 }
 
 uint8_t
 Duid::GetLength() const
 {
-    return m_linkLayerAddress.size();
+    return m_identifier.size();
 }
 
 std::vector<uint8_t>
-Duid::CopyTo(std::vector<uint8_t> buffer) const
+Duid::GetIdentifier() const
 {
-    NS_LOG_FUNCTION(this << &buffer);
-    buffer = m_linkLayerAddress;
-    return buffer;
+    NS_LOG_FUNCTION(this);
+    return m_identifier;
 }
 
 uint16_t
@@ -150,14 +149,14 @@ Duid::SetHardwareType(uint16_t hardwareType)
 }
 
 void
-Duid::SetDuid(std::vector<uint8_t> linkLayerAddress)
+Duid::SetDuid(std::vector<uint8_t> identifier)
 {
-    NS_LOG_FUNCTION(this << linkLayerAddress);
+    NS_LOG_FUNCTION(this << identifier);
 
     m_duidType = 3; // DUID-LL
-    uint8_t idLen = linkLayerAddress.size();
+    uint8_t idLen = identifier.size();
 
-    NS_ASSERT_MSG(idLen == 6 || idLen == 8, "Duid: Invalid link layer address length.");
+    NS_ASSERT_MSG(idLen == 6 || idLen == 8, "Duid: Invalid identifier length.");
 
     switch (idLen)
     {
@@ -171,8 +170,8 @@ Duid::SetDuid(std::vector<uint8_t> linkLayerAddress)
         break;
     }
 
-    m_linkLayerAddress.resize(idLen);
-    m_linkLayerAddress = linkLayerAddress;
+    m_identifier.resize(idLen);
+    m_identifier = identifier;
 }
 
 void
@@ -234,7 +233,7 @@ Duid::SetTime(Time time)
 uint32_t
 Duid::GetSerializedSize() const
 {
-    return 4 + m_linkLayerAddress.size();
+    return 4 + m_identifier.size();
 }
 
 void
@@ -250,9 +249,9 @@ Duid::Serialize(Buffer::Iterator start) const
     i.WriteHtonU16(m_duidType);
     i.WriteHtonU16(m_hardwareType);
 
-    for (uint32_t j = 0; j < m_linkLayerAddress.size(); j++)
+    for (uint32_t j = 0; j < m_identifier.size(); j++)
     {
-        i.WriteU8(m_linkLayerAddress[j]);
+        i.WriteU8(m_identifier[j]);
     }
 }
 
@@ -270,22 +269,21 @@ uint32_t
 Duid::DeserializeIdentifier(Buffer::Iterator start, uint32_t len)
 {
     Buffer::Iterator i = start;
-    m_linkLayerAddress.resize(len);
+    m_identifier.resize(len);
 
     for (uint32_t j = 0; j < len; j++)
     {
-        m_linkLayerAddress[j] = i.ReadU8();
+        m_identifier[j] = i.ReadU8();
     }
 
-    return m_linkLayerAddress.size();
+    return m_identifier.size();
 }
 
 size_t
-DuidHash::operator()(const Duid& x) const
+Duid::DuidHash::operator()(const Duid& x) const noexcept
 {
     uint8_t duidLen = x.GetLength();
-    std::vector<uint8_t> buffer(duidLen);
-    x.CopyTo(buffer);
+    std::vector<uint8_t> buffer = x.GetIdentifier();
 
     std::string s(buffer.begin(), buffer.begin() + duidLen);
     return std::hash<std::string>{}(s);

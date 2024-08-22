@@ -55,6 +55,26 @@ class Duid : public Header
     Duid();
 
     /**
+     * @ingroup dhcp6
+     *
+     * @class DuidHash
+     * @brief Class providing a hash for DUIDs
+     */
+    class DuidHash
+    {
+      public:
+        /**
+         * @brief Returns the hash of a DUID.
+         * @param x the DUID
+         * @return the hash
+         *
+         * This method uses std::hash rather than class Hash
+         * as speed is more important than cryptographic robustness.
+         */
+        size_t operator()(const Duid& x) const noexcept;
+    };
+
+    /**
      * @brief Initialize the DUID for a client or server.
      * @param node The node for which the DUID is to be generated.
      */
@@ -92,9 +112,9 @@ class Duid : public Header
 
     /**
      * @brief Set the identifier as the DUID.
-     * @param linkLayerAddress the link layer address of the node.
+     * @param identifier the identifier of the node.
      */
-    void SetDuid(std::vector<uint8_t> linkLayerAddress);
+    void SetDuid(std::vector<uint8_t> identifier);
 
     /**
      * @brief Get the time at which the DUID is generated.
@@ -129,13 +149,6 @@ class Duid : public Header
     uint32_t DeserializeIdentifier(Buffer::Iterator start, uint32_t len);
 
     /**
-     * @brief Copy the link layer address to a buffer.
-     * @param buffer The buffer to which the link layer address is to be copied.
-     * @return the updated buffer.
-     */
-    std::vector<uint8_t> CopyTo(std::vector<uint8_t> buffer) const;
-
-    /**
      * @brief Comparison operator
      * @param duid header to compare
      * @return true if the headers are equal
@@ -152,6 +165,12 @@ class Duid : public Header
     friend bool operator<(const Duid& a, const Duid& b);
 
   private:
+    /**
+     * @brief Return the identifier of the node.
+     * @return the identifier.
+     */
+    std::vector<uint8_t> GetIdentifier() const;
+
     /**
      * Type of the DUID.
      * Here, we implement only DUID type 3, based on the link-layer address.
@@ -171,7 +190,7 @@ class Duid : public Header
     /**
      * Identifier of the node in bytes.
      */
-    std::vector<uint8_t> m_linkLayerAddress;
+    std::vector<uint8_t> m_identifier;
 };
 
 /**
@@ -190,25 +209,6 @@ std::ostream& operator<<(std::ostream& os, const Duid& duid);
  */
 std::istream& operator>>(std::istream& is, Duid& duid);
 
-/**
- * @ingroup dhcp6
- *
- * @class DuidHash
- * @brief Class providing an hash for DUIDs
- */
-class DuidHash
-{
-  public:
-    /**
-     * @brief Returns the hash of a DUID.
-     * @param x the DUID
-     * @return the hash
-     *
-     * This method uses std::hash rather than class Hash
-     * as speed is more important than cryptographic robustness.
-     */
-    size_t operator()(const Duid& x) const;
-};
 } // namespace dhcp6
 } // namespace ns3
 

@@ -789,7 +789,7 @@ Dhcp6Client::Boot()
     Ptr<Packet> packet;
     packet = Create<Packet>();
 
-    // Retrieve link layer address of the device.
+    // Create a unique transaction ID.
     m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
 
     header.SetTransactId(m_clientTransactId);

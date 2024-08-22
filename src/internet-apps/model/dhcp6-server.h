@@ -105,7 +105,8 @@ class LeaseInfo
      * @brief Leased Addresses
      * Client DUID + Ipv6Address / Lease time
      */
-    typedef std::unordered_multimap<Duid, std::pair<Ipv6Address, Time>, DuidHash> LeasedAddresses;
+    typedef std::unordered_multimap<Duid, std::pair<Ipv6Address, Time>, Duid::DuidHash>
+        LeasedAddresses;
 
     /**
      * @brief Declined Addresses
