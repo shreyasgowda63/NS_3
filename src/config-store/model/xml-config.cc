@@ -196,41 +196,28 @@ XmlConfigSave::Attributes()
       private:
         void DoVisitAttribute(Ptr<Object> object, std::string name) override
         {
-            TypeId tid = object->GetInstanceTypeId();
-            ns3::TypeId::SupportLevel supportLevel = TypeId::SupportLevel::SUPPORTED;
-            bool found = false;
-
-            while (!found && tid != TypeId())
-            {
-                for (std::size_t i = 0; i < tid.GetAttributeN(); i++)
-                {
-                    TypeId::AttributeInformation tmp = tid.GetAttribute(i);
-                    if (tmp.name == name)
-                    {
-                        supportLevel = tmp.supportLevel;
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    tid = tid.GetParent();
-                }
-            }
-
-            if (supportLevel == TypeId::SupportLevel::OBSOLETE)
-            {
-                NS_LOG_WARN("Attribute " << GetCurrentPath()
-                                         << " was not saved because it is OBSOLETE");
-                return;
-            }
-            else if (supportLevel == TypeId::SupportLevel::DEPRECATED && !m_saveDeprecated)
-            {
-                NS_LOG_WARN("Attribute " << GetCurrentPath()
-                                         << " was not saved because it is DEPRECATED");
-                return;
-            }
             StringValue str;
+            TypeId tid = object->GetInstanceTypeId();
+
+            auto [found, inTid, attr] = TypeId::FindAttribute(tid, name);
+
+            if (found)
+            {
+                auto supportLevel = attr.supportLevel;
+                if (supportLevel == TypeId::SupportLevel::OBSOLETE)
+                {
+                    NS_LOG_WARN("Attribute " << GetCurrentPath()
+                                             << " was not saved because it is OBSOLETE");
+                    return;
+                }
+                else if (supportLevel == TypeId::SupportLevel::DEPRECATED && !m_saveDeprecated)
+                {
+                    NS_LOG_WARN("Attribute " << GetCurrentPath()
+                                             << " was not saved because it is DEPRECATED");
+                    return;
+                }
+            }
+
             object->GetAttribute(name, str);
             int rc;
             rc = xmlTextWriterStartElement(m_writer, BAD_CAST "value");

@@ -151,47 +151,30 @@ RawTextConfigSave::Attributes()
         void DoVisitAttribute(Ptr<Object> object, std::string name) override
         {
             StringValue str;
-            ns3::TypeId::SupportLevel supportLevel = TypeId::SupportLevel::SUPPORTED;
             TypeId tid = object->GetInstanceTypeId();
 
-            bool found = false;
-            while (!found && tid != TypeId())
-            {
-                for (std::size_t i = 0; i < tid.GetAttributeN(); i++)
-                {
-                    TypeId::AttributeInformation tmp = tid.GetAttribute(i);
-                    NS_LOG_DEBUG("Checking name " << tmp.name << " against " << name << " i " << i
-                                                  << " num " << tid.GetAttributeN());
-                    NS_LOG_DEBUG("Checking tid name " << tid.GetName() << " against other name "
-                                                      << object->GetTypeId().GetName());
-                    if (tmp.name == name)
-                    {
-                        supportLevel = tmp.supportLevel;
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    tid = tid.GetParent();
-                }
-            }
+            auto [found, inTid, attr] = TypeId::FindAttribute(tid, name);
 
-            if (supportLevel == TypeId::SupportLevel::OBSOLETE)
+            if (found)
             {
-                NS_LOG_WARN("Attribute " << GetCurrentPath()
-                                         << " was not saved because it is OBSOLETE");
-            }
-            else if (supportLevel == TypeId::SupportLevel::DEPRECATED && !m_saveDeprecated)
-            {
-                NS_LOG_WARN("Attribute " << GetCurrentPath()
-                                         << " was not saved because it is DEPRECATED");
-            }
-            else
-            {
-                object->GetAttribute(name, str);
-                NS_LOG_DEBUG("Saving " << GetCurrentPath());
-                *m_os << "value " << GetCurrentPath() << " \"" << str.Get() << "\"" << std::endl;
+                auto supportLevel = attr.supportLevel;
+                if (supportLevel == TypeId::SupportLevel::OBSOLETE)
+                {
+                    NS_LOG_WARN("Attribute " << GetCurrentPath()
+                                             << " was not saved because it is OBSOLETE");
+                }
+                else if (supportLevel == TypeId::SupportLevel::DEPRECATED && !m_saveDeprecated)
+                {
+                    NS_LOG_WARN("Attribute " << GetCurrentPath()
+                                             << " was not saved because it is DEPRECATED");
+                }
+                else
+                {
+                    object->GetAttribute(name, str);
+                    NS_LOG_DEBUG("Saving " << GetCurrentPath());
+                    *m_os << "value " << GetCurrentPath() << " \"" << str.Get() << "\""
+                          << std::endl;
+                }
             }
         }
 

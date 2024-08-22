@@ -454,6 +454,17 @@ class TypeId
     TypeId HideFromDocumentation();
 
     /**
+     * Find an attribute by name in the inheritance tree for a given TypeId.
+     *
+     * \param [in] tid The TypeId to start the search from.
+     * \param [in] name The name of the attribute to search for.
+     * \return A tuple containing a boolean that indicates whether the attribute was found, the
+     * TypeId where the attribute was found, and the AttributeInformation of the found attribute.
+     */
+    static std::tuple<bool, TypeId, AttributeInformation> FindAttribute(TypeId& tid,
+                                                                        const std::string& name);
+
+    /**
      * Find an Attribute by name, retrieving the associated AttributeInformation.
      *
      * \param [in]  name The name of the requested attribute

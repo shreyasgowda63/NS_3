@@ -879,6 +879,24 @@ TypeId::GetRegistered(uint16_t i)
     return TypeId(IidManager::Get()->GetRegistered(i));
 }
 
+std::tuple<bool, TypeId, TypeId::AttributeInformation>
+TypeId::FindAttribute(TypeId& tid, const std::string& name)
+{
+    while (tid != TypeId())
+    {
+        for (std::size_t i = 0; i < tid.GetAttributeN(); i++)
+        {
+            AttributeInformation tmp = tid.GetAttribute(i);
+            if (tmp.name == name)
+            {
+                return {true, tid, tmp};
+            }
+        }
+        tid = tid.GetParent();
+    }
+    return {false, TypeId(), AttributeInformation()};
+}
+
 bool
 TypeId::LookupAttributeByName(std::string name, TypeId::AttributeInformation* info) const
 {
