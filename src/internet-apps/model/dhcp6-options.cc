@@ -31,11 +31,11 @@
 
 namespace ns3
 {
+namespace internetApplications
+{
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Options");
 
-namespace dhcp6
-{
 Options::Options()
 {
     m_optionCode = 0;
@@ -323,5 +323,6 @@ ServerUnicastOption::SetServerAddress(Ipv6Address serverAddress)
 
 template class IntegerOptions<uint16_t>;
 template class IntegerOptions<uint8_t>;
-} // namespace dhcp6
+
+} // namespace internetApplications
 } // namespace ns3

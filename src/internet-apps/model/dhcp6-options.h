@@ -35,8 +35,9 @@
 namespace ns3
 {
 
-namespace dhcp6
+namespace internetApplications
 {
+
 /**
  * @ingroup dhcp6
  *
@@ -456,7 +457,7 @@ class ServerUnicastOption : public Options
 typedef IntegerOptions<uint8_t> PreferenceOption;
 typedef IntegerOptions<uint16_t> ElapsedTimeOption;
 
-} // namespace dhcp6
+} // namespace internetApplications
 } // namespace ns3
 
 #endif

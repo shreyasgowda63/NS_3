@@ -29,8 +29,6 @@
 namespace ns3
 {
 
-using namespace dhcp6;
-
 /**
  * @ingroup dhcp6
  *
@@ -64,7 +62,7 @@ class Dhcp6Helper
      * @param netDevice The NetDevice for which the server is required
      * @return The pointer to the DHCPv6 server
      */
-    Ptr<Dhcp6Server> GetDhcp6Server(Ptr<NetDevice> netDevice);
+    Ptr<internetApplications::Dhcp6Server> GetDhcp6Server(Ptr<NetDevice> netDevice);
 
     /**
      * @brief Install DHCPv6 client of a nodes / NetDevice
@@ -108,7 +106,7 @@ class Dhcp6Helper
     /**
      * @brief Map of net devices to a DHCPv6 server.
      */
-    std::map<Ptr<NetDevice>, Ptr<Dhcp6Server>> m_serverNetDevices;
+    std::map<Ptr<NetDevice>, Ptr<internetApplications::Dhcp6Server>> m_serverNetDevices;
 };
 
 } // namespace ns3

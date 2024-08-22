@@ -39,7 +39,7 @@ class Inet6SocketAddress;
 class Socket;
 class Packet;
 
-namespace dhcp6
+namespace internetApplications
 {
 /**
  * @ingroup dhcp6
@@ -288,7 +288,7 @@ class Dhcp6Server : public Application
     Time m_leaseCleanup;         //!< Lease cleanup time
     EventId m_leaseCleanupEvent; //!< Event ID for lease cleanup
 };
-} // namespace dhcp6
+} // namespace internetApplications
 } // namespace ns3
 
 #endif

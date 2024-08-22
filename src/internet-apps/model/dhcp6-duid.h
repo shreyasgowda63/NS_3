@@ -31,9 +31,9 @@
 
 namespace ns3
 {
-
-namespace dhcp6
+namespace internetApplications
 {
+
 /**
  * @ingroup dhcp6
  *
@@ -209,7 +209,7 @@ std::ostream& operator<<(std::ostream& os, const Duid& duid);
  */
 std::istream& operator>>(std::istream& is, Duid& duid);
 
-} // namespace dhcp6
+} // namespace internetApplications
 } // namespace ns3
 
 #endif

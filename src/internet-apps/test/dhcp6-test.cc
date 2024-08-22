@@ -31,6 +31,7 @@
 #include "ns3/trace-helper.h"
 
 using namespace ns3;
+using namespace ns3::internetApplications;
 
 /**
  * \ingroup dhcp6

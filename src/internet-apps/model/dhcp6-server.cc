@@ -36,11 +36,11 @@
 
 namespace ns3
 {
+namespace internetApplications
+{
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Server");
 
-namespace dhcp6
-{
 TypeId
 Dhcp6Server::GetTypeId()
 {
@@ -796,5 +796,5 @@ LeaseInfo::GetNumAddresses()
     NS_LOG_FUNCTION(this);
     return m_numAddresses;
 }
-} // namespace dhcp6
+} // namespace internetApplications
 } // namespace ns3

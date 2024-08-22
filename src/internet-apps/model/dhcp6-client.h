@@ -33,9 +33,9 @@
 
 namespace ns3
 {
-
-namespace dhcp6
+namespace internetApplications
 {
+
 /**
  * @ingroup dhcp6
  *
@@ -318,7 +318,7 @@ class Dhcp6Client : public Application
      */
     TracedCallback<const Ipv6Address&> m_newLease;
 };
-} // namespace dhcp6
+} // namespace internetApplications
 } // namespace ns3
 
 #endif
