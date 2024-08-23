@@ -34,7 +34,7 @@ namespace zigbee
 
 ZigbeePayloadType::ZigbeePayloadType()
 {
-    m_nwkCmdType = LEAVE;
+    m_nwkCmdType = LEAVE_CMD;
 }
 
 ZigbeePayloadType::ZigbeePayloadType(enum NwkCommandType nwkCmdType)
@@ -98,43 +98,43 @@ ZigbeePayloadType::Print(std::ostream& os) const
     os << "\nPayloadType  = ";
     switch (m_nwkCmdType)
     {
-    case ROUTE_REQ:
+    case ROUTE_REQ_CMD:
         os << "ROUTE_REQ\n";
         break;
-    case ROUTE_REP:
+    case ROUTE_REP_CMD:
         os << "ROUTE_REP\n";
         break;
-    case NWK_STATUS:
+    case NWK_STATUS_CMD:
         os << "NWK_STATUS\n";
         break;
-    case LEAVE:
+    case LEAVE_CMD:
         os << "LEAVE\n";
         break;
-    case ROUTE_RECORD:
+    case ROUTE_RECORD_CMD:
         os << "ROUTE_RECORD\n";
         break;
-    case REJOIN_REQ:
+    case REJOIN_REQ_CMD:
         os << "REJOIN_REQ\n";
         break;
-    case REJOIN_RESP:
+    case REJOIN_RESP_CMD:
         os << "REJOIN_RESP\n";
         break;
-    case LINK_STATUS:
+    case LINK_STATUS_CMD:
         os << "LINK_STATUS\n";
         break;
-    case NWK_REPORT:
+    case NWK_REPORT_CMD:
         os << "NWK_REPORT \n";
         break;
-    case NWK_UPDATE:
+    case NWK_UPDATE_CMD:
         os << "NWK_UPDATE\n";
         break;
-    case TIMEOUT_REQ:
+    case TIMEOUT_REQ_CMD:
         os << "TIMEOUT_REQ\n";
         break;
-    case TIMEOUT_RESP:
+    case TIMEOUT_RESP_CMD:
         os << "TIMEOUT_RESP\n";
         break;
-    case LINK_POWER_DELTA:
+    case LINK_POWER_DELTA_CMD:
         os << "LINK_POWER_DELTA\n";
         break;
     default:

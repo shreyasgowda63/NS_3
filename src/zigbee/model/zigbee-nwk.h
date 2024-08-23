@@ -75,7 +75,7 @@ enum PendingPrimitiveNwk
 /**
  * \ingroup zigbee
  *
- * table 3.2 (Address Mode) NLDE-DATA-Request parameters
+ * Table 3.2 (Address Mode) NLDE-DATA-Request parameters
  */
 enum ZigbeeAddressMode
 {
@@ -121,21 +121,25 @@ enum JoiningMethod
 
 /**
  * The status returned while attempting to find the next hop in route towards a specific
- * destination.
+ * destination or a many-to-one route request attempt.
  */
-enum NextHopStatus : std::uint8_t
+enum RouteDiscoveryStatus : std::uint8_t
 {
     ROUTE_FOUND = 0x01,       //!< The next hop toward the destination was found in our
-                              //!< routing table or neighbor table.
+                              //!< routing table or neighbor table (Mesh route).
     ROUTE_NOT_FOUND = 0x02,   //!< The next hop was not found. A new entry is is registered
-                              //!<  in the routing table with DISCOVER_UNDERWAY status.
+                              //!<  in the routing table with DISCOVER_UNDERWAY status(Mesh route).
     TABLE_FULL = 0x03,        //!< Either the routing or neighbor table are full.
-    ROUTE_UPDATED = 0x04,     //!< A route was found and updated with a better route.
+    ROUTE_UPDATED = 0x04,     //!< A route was found and updated with a better route
+                              //!< (Mesh route or Many-To-One route)
     NO_DISCOVER_ROUTE = 0x05, //!< We are currently not allowed to perform a route discovery
                               //!< for this route (RouteDiscover flag in network header is false).
-    DISCOVER_UNDERWAY = 0x06  //!< The route was found in the tables but currently has no next hop.
-                             //!< i.e. A previous attempt was already made is currently awaiting for
-                             //!< a response (hence the route discover is underway).
+    DISCOVER_UNDERWAY = 0x06, //!< The route was found in the tables but currently has no next hop.
+                              //!< i.e. A previous attempt was already made is currently awaiting
+                              //!< for a response (hence the route discover is underway).
+    MANY_TO_ONE_ROUTE = 0x07, //!< A new Many-To-One route was created
+    NO_ROUTE_CHANGE = 0x08    //!< No route entry was created or updated during
+                              //!< a Many-To-One process
 };
 
 /**
@@ -733,6 +737,41 @@ class ZigbeeNwk : public Object
     void PrintRREQRetryTable(Ptr<OutputStreamWrapper> stream) const;
 
     /**
+     *  Search for a specific destination in this device
+     *  neighbor and routing tables.
+     *  This function is only a quick reference used for debugging
+     *  purposes.
+     *
+     *  @param dst The destination to search in our tables
+     *  @param neighbor A flag indicating whether or not the returned
+     *  next hop was found in our neighbor table.
+     *  @return The nexthop address to the destination.
+     */
+    Mac16Address FindRoute(Mac16Address dst, bool& neighbor);
+
+    /**
+     * Obtain this device 16 bit network address (A.K.A. short address).
+     *
+     * This function should only be used for debugging purposes and it
+     * should not be use by higher layers. Higher layers should use
+     * NLME-GET.request instead to obtain this attribute.
+     *
+     * @return Returns this device's 16 bit network address.
+     */
+    Mac16Address GetNetworkAddress();
+
+    /**
+     * Obtain this device 64 bit IEEE address (A.K.A. extended address).
+     *
+     * This function should only be used for debugging purposes and it
+     * should not be use by higher layers. Higher layers should use
+     * NLME-GET.request instead to obtain this attribute.
+     *
+     * @return Returns this device's 16 bit network address.
+     */
+    Mac64Address GetIeeeAddress();
+
+    /**
      *  IEEE 802.15.4-2011 section 6.3.3
      *  MCPS-DATA.indication
      *  Indicates the reception of an MSDU from MAC to NWK (receiving)
@@ -1228,6 +1267,16 @@ class ZigbeeNwk : public Object
     void UpdateBeaconPayload();
 
     /**
+     *  Get a non linear representation of a Link Quality Indicator (LQI).
+     *  This is used to obtain LQI representations used in the link cost/Path cost
+     *  of a route discovery and the Outgoing cost in the neighbors table.
+     *
+     * @param lqi The LQI value (1-255) mapped
+     * @return The LQI value mapped to a non linear representation (1-7)
+     */
+    uint8_t GetLQINonLinearValue(uint8_t lqi) const;
+
+    /**
      * Obtain the link cost based on the value of the nwkReportConstantCost.
      * If nwkReportConstantCost is True, the link will use a constant value of 7,
      * if false, it will use the LQI to obtain the link cost.
@@ -1248,18 +1297,11 @@ class ZigbeeNwk : public Object
      *  \param nwkHeader The network header of the RREQ packet to send
      *  \param payload The payload header of the RREQ packet to send
      *  \param rreqRetries The maximum number of retries the broadcast transmission of a route
-     * request command frame is retried.
+     * request command frame is retried. Only valid for non Many-To-One RREQs.
      */
     void SendRREQ(ZigbeeNwkHeader nwkHeader,
                   ZigbeePayloadRouteRequestCommand payload,
                   uint8_t rreqRetries);
-
-    void SendRREQMTO(Mac16Address src,
-                     uint8_t seq,
-                     uint8_t rreqId,
-                     uint8_t pathcost,
-                     uint8_t radius,
-                     bool rrec);
 
     /**
      * Handles the reception of a route request command.
@@ -1326,22 +1368,38 @@ class ZigbeeNwk : public Object
     /**
      * Find the next hop in route to a destination.
      *
-     * See NextHopStatus for full information on the returned status.
+     * See RouteDiscoveryStatus enumeration for full information on the returned status.
      *
      * \param macSrcAddr The MAC address received from the previous hop.
      * \param pathCost The path cost accumulated in the route discovery so far.
-     * \param nwkHeader The network header of initiator or the received RREQ.
+     * \param nwkHeader The network header created at the initiator or the received RREQ.
      * \param payload The payload header of the initiator or the received RREQ.
      * \param nextHop If the destination is found in the routing or neighbor tables
      * it contains the address of the next hop towards the destination.
      *
-     * \return The NextHopstatus of the route search attempt
+     * \return The RouteDiscoveryStatus of the route search attempt
      */
-    NextHopStatus FindNextHop(Mac16Address macSrcAddr,
-                              uint8_t pathCost,
-                              ZigbeeNwkHeader nwkHeader,
-                              ZigbeePayloadRouteRequestCommand payload,
-                              Mac16Address& nextHop);
+    RouteDiscoveryStatus FindNextHop(Mac16Address macSrcAddr,
+                                     uint8_t pathCost,
+                                     ZigbeeNwkHeader nwkHeader,
+                                     ZigbeePayloadRouteRequestCommand payload,
+                                     Mac16Address& nextHop);
+
+    /**
+     * Process Many-To-One routes. In essence, creating new routes or updating
+     * existing ones from information contained in the received RREQs.
+     *
+     * @param macSrcAddr The MAC address received from the previous hop
+     * @param pathCost The path cost accumulated in the route discovery so far.
+     * @param nwkHeader The network header created at the initiator or the received RREQ.
+     * @param payload The payload header created at the initiator or the received RREQ.
+     *
+     * @return The resulting RouteDiscoveryStatus of the Many-To-One process request.
+     */
+    RouteDiscoveryStatus ProcessManyToOneRoute(Mac16Address macSrcAddr,
+                                               uint8_t pathCost,
+                                               ZigbeeNwkHeader nwkHeader,
+                                               ZigbeePayloadRouteRequestCommand payload);
 
     /**
      *  Provides uniform random values

@@ -35,19 +35,30 @@ namespace zigbee
  */
 enum NwkCommandType
 {
-    ROUTE_REQ = 0x01,        //!< Route request command
-    ROUTE_REP = 0x02,        //!< Route response command
-    NWK_STATUS = 0X03,       //!< Network status command
-    LEAVE = 0x04,            //!< Leave network command
-    ROUTE_RECORD = 0x05,     //!< Route record command
-    REJOIN_REQ = 0x06,       //!< Rejoin request command
-    REJOIN_RESP = 0x07,      //!< Rejoin response command
-    LINK_STATUS = 0x08,      //!< Link status command
-    NWK_REPORT = 0x09,       //!< Network report command
-    NWK_UPDATE = 0x0a,       //!< Network update command
-    TIMEOUT_REQ = 0x0b,      //!< Time out request command
-    TIMEOUT_RESP = 0x0c,     //!< Time out response command
-    LINK_POWER_DELTA = 0x0d, //!< Link power delta command
+    ROUTE_REQ_CMD = 0x01,        //!< Route request command
+    ROUTE_REP_CMD = 0x02,        //!< Route response command
+    NWK_STATUS_CMD = 0X03,       //!< Network status command
+    LEAVE_CMD = 0x04,            //!< Leave network command
+    ROUTE_RECORD_CMD = 0x05,     //!< Route record command
+    REJOIN_REQ_CMD = 0x06,       //!< Rejoin request command
+    REJOIN_RESP_CMD = 0x07,      //!< Rejoin response command
+    LINK_STATUS_CMD = 0x08,      //!< Link status command
+    NWK_REPORT_CMD = 0x09,       //!< Network report command
+    NWK_UPDATE_CMD = 0x0a,       //!< Network update command
+    TIMEOUT_REQ_CMD = 0x0b,      //!< Time out request command
+    TIMEOUT_RESP_CMD = 0x0c,     //!< Time out response command
+    LINK_POWER_DELTA_CMD = 0x0d, //!< Link power delta command
+};
+
+/**
+ * Zigbee Specification 3.4.1.3.1 , Table 3-50
+ * Values of the many to one command option field.
+ */
+enum ManyToOne
+{
+    NO_MANY_TO_ONE = 0,
+    ROUTE_RECORD = 1,
+    NO_ROUTE_RECORD = 2
 };
 
 /**
@@ -98,17 +109,6 @@ class ZigbeePayloadType : public Header
 class ZigbeePayloadRouteRequestCommand : public Header
 {
   public:
-    /**
-     * Zigbee Specification 3.4.1.3.1 , Table 3-50
-     * Values of the many to one command option field.
-     */
-    enum ManyToOne
-    {
-        NO_MANY_TO_ONE = 0,
-        ROUTE_RECORD = 1,
-        NO_ROUTE_RECORD = 2
-    };
-
     ZigbeePayloadRouteRequestCommand();
     /**
      * \brief Get the type ID.

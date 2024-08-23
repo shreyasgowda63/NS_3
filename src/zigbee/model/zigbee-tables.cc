@@ -192,6 +192,10 @@ RoutingTableEntry::RoutingTableEntry(Mac16Address dst,
     m_destination = dst;
     m_nextHopAddr = nextHopAddr;
     m_status = status;
+    m_noRouteCache = noRouteCache;
+    m_manyToOne = manyToOne;
+    m_routeRecordReq = routeRecordReq;
+    m_groupId = groupID;
 }
 
 RoutingTableEntry::RoutingTableEntry()
