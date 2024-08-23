@@ -218,7 +218,7 @@ XmlConfigSave::Attributes()
                 }
             }
 
-            object->GetAttribute(name, str);
+            object->GetAttribute(name, str, true);
             int rc;
             rc = xmlTextWriterStartElement(m_writer, BAD_CAST "value");
             if (rc < 0)

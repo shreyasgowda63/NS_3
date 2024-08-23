@@ -471,9 +471,13 @@ class TypeId
      * \param [in,out] info A pointer to the TypeId::AttributeInformation
      *              data structure where the result value of this method
      *              will be stored.
+     * \param [in] permissive A boolean flag indicating whether to suppress warnings and errors for
+     * deprecated and obsolete attributes. Defaults to false.
      * \returns \c true if the requested attribute could be found.
      */
-    bool LookupAttributeByName(std::string name, AttributeInformation* info) const;
+    bool LookupAttributeByName(std::string name,
+                               AttributeInformation* info,
+                               bool permissive = false) const;
     /**
      * Find a TraceSource by name.
      *

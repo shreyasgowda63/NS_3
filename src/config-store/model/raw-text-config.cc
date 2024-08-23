@@ -170,7 +170,7 @@ RawTextConfigSave::Attributes()
                 }
                 else
                 {
-                    object->GetAttribute(name, str);
+                    object->GetAttribute(name, str, true);
                     NS_LOG_DEBUG("Saving " << GetCurrentPath());
                     *m_os << "value " << GetCurrentPath() << " \"" << str.Get() << "\""
                           << std::endl;

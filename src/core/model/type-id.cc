@@ -898,7 +898,9 @@ TypeId::FindAttribute(TypeId& tid, const std::string& name)
 }
 
 bool
-TypeId::LookupAttributeByName(std::string name, TypeId::AttributeInformation* info) const
+TypeId::LookupAttributeByName(std::string name,
+                              TypeId::AttributeInformation* info,
+                              bool permissive) const
 {
     NS_LOG_FUNCTION(this << name << info);
     TypeId tid;
@@ -918,12 +920,15 @@ TypeId::LookupAttributeByName(std::string name, TypeId::AttributeInformation* in
                 }
                 else if (tmp.supportLevel == TypeId::DEPRECATED)
                 {
-                    std::cerr << "Attribute '" << name << "' is deprecated: " << tmp.supportMsg
-                              << std::endl;
+                    if (!permissive)
+                    {
+                        std::cerr << "Attribute '" << name << "' is deprecated: " << tmp.supportMsg
+                                  << std::endl;
+                    }
                     *info = tmp;
                     return true;
                 }
-                else if (tmp.supportLevel == TypeId::OBSOLETE)
+                else if (tmp.supportLevel == TypeId::OBSOLETE && !permissive)
                 {
                     NS_FATAL_ERROR("Attribute '" << name << "' is obsolete, with no fallback: "
                                                  << tmp.supportMsg);
