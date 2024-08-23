@@ -45,9 +45,8 @@ Dhcp6Header::Dhcp6Header()
 }
 
 uint8_t
-Dhcp6Header::GetMessageType()
+Dhcp6Header::GetMessageType() const
 {
-    NS_LOG_FUNCTION(this);
     return m_msgType;
 }
 
@@ -59,9 +58,8 @@ Dhcp6Header::SetMessageType(uint8_t msgType)
 }
 
 uint32_t
-Dhcp6Header::GetTransactId()
+Dhcp6Header::GetTransactId() const
 {
-    NS_LOG_FUNCTION(this);
     return m_transactId;
 }
 

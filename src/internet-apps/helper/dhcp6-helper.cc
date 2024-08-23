@@ -1,4 +1,6 @@
 /*
+ * Copyright (c) 2024 NITK Surathkal
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation;
@@ -11,6 +13,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: Kavya Bhat <kavyabhat@gmail.com>
  *
  */
 
@@ -48,11 +52,12 @@ Dhcp6Helper::SetServerAttribute(std::string name, const AttributeValue& value)
 }
 
 Ptr<internetApplications::Dhcp6Server>
-Dhcp6Helper::GetDhcp6Server(Ptr<NetDevice> netDevice)
+Dhcp6Helper::GetDhcp6Server(Ptr<NetDevice> netDevice) const
 {
     auto it = m_serverNetDevices.find(netDevice);
     if (it == m_serverNetDevices.end())
     {
+        NS_LOG_WARN("No server found for the given NetDevice.");
         return nullptr;
     }
     return it->second;

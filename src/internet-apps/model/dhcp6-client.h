@@ -68,15 +68,6 @@ class Dhcp6Client : public Application
      */
     Duid GetSelfDuid();
 
-    int64_t AssignStreams(int64_t stream) override;
-
-  protected:
-    void DoDispose() override;
-
-  private:
-    void StartApplication() override;
-    void StopApplication() override;
-
     /**
      * State of the DHCPv6 client.
      */
@@ -88,6 +79,21 @@ class Dhcp6Client : public Application
         WAIT_REPLY_AFTER_DECLINE = 4, // Waiting for a reply after sending a decline message
         WAIT_REPLY_AFTER_RELEASE = 5, // Waiting for a reply after sending a release message
     };
+
+    /**
+     * \brief Used to print the state of the client.
+     * \param os The output stream.
+     */
+    void Print(std::ostream& os) const;
+
+    int64_t AssignStreams(int64_t stream) override;
+
+  protected:
+    void DoDispose() override;
+
+  private:
+    void StartApplication() override;
+    void StopApplication() override;
 
     /**
      * @brief Verify the incoming advertise message.
@@ -117,7 +123,7 @@ class Dhcp6Client : public Application
      * @param header The DHCPv6 header
      * @param server The address of the server
      */
-    void CheckLeaseStatus(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server);
+    void CheckLeaseStatus(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server) const;
 
     /**
      * @brief Accept the DHCPv6 offer.
@@ -182,40 +188,35 @@ class Dhcp6Client : public Application
      */
     std::vector<uint32_t> GetIaids();
 
-    /**
-     * The socket used for communication.
-     */
-    Ptr<Socket> m_socket;
+    Ptr<Socket> m_socket;    //!< Socket used for communication.
+    Ptr<NetDevice> m_device; //!< Pointer to the net device of the client.
+    uint8_t m_state;         //!< State of the DHCPv6 client.
 
-    /**
-     * Pointer to the net device of the client.
-     */
-    Ptr<NetDevice> m_device;
+    Time m_startTime;            //!< Starting timestamp for Elapsed Time option.
+    uint32_t m_clientTransactId; //!< Transaction ID of the client-initiated message.
 
-    /**
-     * The state of the DHCPv6 client.
-     */
-    uint8_t m_state;
+    Duid m_clientDuid; //!< Store client DUID.
+    Duid m_serverDuid; //!< Store server DUID.
 
-    /**
-     * Store the starting timestamp for the Elapsed Time option
-     */
-    Time m_startTime;
+    uint8_t m_nOfferedAddresses;  //!< Number of addresses offered to client.
+    uint8_t m_nAcceptedAddresses; //!< Number of addresses accepted by client.
 
-    /**
-     * Store the transaction ID of the initiated message exchange.
-     */
-    uint32_t m_clientTransactId;
+    Time m_msgStartTime;    //!< Time when message exchange starts.
+    Time m_solicitInterval; //!< SOL_MAX_RT, default = 36 secs.
 
-    /**
-     * Store the client DUID.
-     */
-    Duid m_clientDuid;
+    EventId m_solicitEvent;      //!< Event ID for the Solicit event.
+    TrickleTimer m_solicitTimer; //!< TrickleTimer to schedule Solicit messages.
 
-    /**
-     * Store the server DUID.
-     */
-    Duid m_serverDuid;
+    Time m_renew;  //!< Time after which lease should be renewed.
+    Time m_rebind; //!< Time after which client should send a Rebind message.
+
+    Time m_prefLifetime;  //!< Preferred lifetime of the address.
+    Time m_validLifetime; //!< Valid lifetime of the address.
+
+    EventId m_renewEvent;  //!< Event ID for the Renew event.
+    EventId m_rebindEvent; //!< Event ID for the rebind event
+
+    TracedCallback<const Ipv6Address&> m_newLease; //!< Trace the new lease.
 
     /**
      * Track the IPv6 Address - IAID association.
@@ -231,66 +232,6 @@ class Dhcp6Client : public Application
      * Track whether DAD callback on all addresses has been scheduled.
      */
     bool m_addressDadComplete;
-
-    /**
-     * The number of addresses offered to the client.
-     */
-    uint8_t m_nOfferedAddresses;
-
-    /**
-     * The number of addresses accepted by the client.
-     */
-    uint8_t m_nAcceptedAddresses;
-
-    /**
-     * Time when message exchange starts.
-     */
-    Time m_msgStartTime;
-
-    /**
-     * SOL_MAX_RT value, default = 3600 / 100 = 36 sec
-     */
-    Time m_solicitInterval;
-
-    /**
-     * Event ID for the solicit event
-     */
-    EventId m_solicitEvent;
-
-    /**
-     * TrickleTimer to schedule Solicit messages.
-     */
-    TrickleTimer m_solicitTimer;
-
-    /**
-     * Time after which lease should be renewed.
-     */
-    Time m_renew;
-
-    /**
-     * Time after which client should send a Rebind message.
-     */
-    Time m_rebind;
-
-    /**
-     * Preferred lifetime of the address.
-     */
-    Time m_prefLifetime;
-
-    /**
-     * Valid lifetime of the address
-     */
-    Time m_validLifetime;
-
-    /**
-     * Event ID for the renew event
-     */
-    EventId m_renewEvent;
-
-    /**
-     * Event ID for the rebind event
-     */
-    EventId m_rebindEvent;
 
     /**
      * Store all the Event IDs for the addresses being Released.
@@ -314,10 +255,19 @@ class Dhcp6Client : public Application
     Ptr<RandomVariableStream> m_solicitJitter;
 
     /**
-     * Trace the newly obtained lease.
+     * Random variable used to create the IAID.
      */
-    TracedCallback<const Ipv6Address&> m_newLease;
+    Ptr<RandomVariableStream> m_iaidStream;
 };
+
+/**
+ * \brief Stream output operator
+ * \param os output stream
+ * \param h the Dhcp6Client
+ * \return updated stream
+ */
+std::ostream& operator<<(std::ostream& os, const Dhcp6Client& h);
+
 } // namespace internetApplications
 } // namespace ns3
 

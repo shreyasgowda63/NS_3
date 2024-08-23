@@ -60,7 +60,7 @@ class Dhcp6Header : public Header
      * @brief Get the type of message.
      * @return integer corresponding to the message type.
      */
-    uint8_t GetMessageType();
+    uint8_t GetMessageType() const;
 
     /**
      * @brief Set the message type.
@@ -72,7 +72,7 @@ class Dhcp6Header : public Header
      * @brief Get the transaction ID.
      * @return the 32-bit transaction ID
      */
-    uint32_t GetTransactId();
+    uint32_t GetTransactId() const;
 
     /**
      * @brief Set the transaction ID.
@@ -295,15 +295,8 @@ class Dhcp6Header : public Header
      */
     void AddIaOption(OptionType optionType, uint32_t iaid, uint32_t t1 = 0, uint32_t t2 = 0);
 
-    /**
-     * The message length;
-     */
-    uint32_t m_len;
-
-    /**
-     * The message type.
-     */
-    uint32_t m_msgType : 8;
+    uint32_t m_len;         //!< The length of the message.
+    uint32_t m_msgType : 8; //!< The message type.
 
     /**
      * The transaction ID calculated by the client or the server.
@@ -313,18 +306,12 @@ class Dhcp6Header : public Header
 
     /**
      * Options present in the header, indexed by option code.
+     * TODO: Use std::set instead.
      */
     std::map<OptionType, bool> m_options;
 
-    /**
-     * The client identifier option.
-     */
-    IdentifierOption m_clientIdentifier;
-
-    /**
-     * The server identifier option.
-     */
-    IdentifierOption m_serverIdentifier;
+    IdentifierOption m_clientIdentifier; //!< The client identifier option.
+    IdentifierOption m_serverIdentifier; //!< The server identifier option.
 
     /**
      * (optional) The status code of the operation just performed.
@@ -346,20 +333,10 @@ class Dhcp6Header : public Header
      */
     ElapsedTimeOption m_elapsedTime;
 
-    /**
-     * Vector of IANA options.
-     */
-    std::vector<IaOptions> m_ianaList;
+    std::vector<IaOptions> m_ianaList; //!< Vector of IA_NA options.
+    std::vector<IaOptions> m_iataList; //!< Vector of IA_TA options.
 
-    /**
-     * Vector of IATA options.
-     */
-    std::vector<IaOptions> m_iataList;
-
-    /**
-     * Default value for the SOL_MAX_RT option.
-     */
-    uint32_t m_solMaxRt;
+    uint32_t m_solMaxRt; //!< Default value for SOL_MAX_RT option.
 };
 } // namespace internetApplications
 } // namespace ns3

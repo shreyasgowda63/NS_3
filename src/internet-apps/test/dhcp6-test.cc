@@ -104,6 +104,10 @@ Dhcp6TestCase::DoRun()
     Ipv6InterfaceContainer i = ipv6.Assign(devNet);
 
     Dhcp6Helper dhcpHelper;
+    dhcpHelper.SetServerAttribute("RenewTime", StringValue("10s"));
+    dhcpHelper.SetServerAttribute("RebindTime", StringValue("16s"));
+    dhcpHelper.SetServerAttribute("PreferredLifetime", StringValue("18s"));
+    dhcpHelper.SetServerAttribute("ValidLifetime", StringValue("20s"));
 
     NetDeviceContainer serverNetDevices;
     serverNetDevices.Add(devNet.Get(0));

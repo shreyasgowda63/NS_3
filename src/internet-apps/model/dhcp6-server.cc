@@ -44,34 +44,33 @@ NS_LOG_COMPONENT_DEFINE("Dhcp6Server");
 TypeId
 Dhcp6Server::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::Dhcp6Server")
-                            .SetParent<Application>()
-                            .AddConstructor<Dhcp6Server>()
-                            .SetGroupName("Internet-Apps")
-                            .AddAttribute("RenewTime",
-                                          "Time after which client should renew. 1000 seconds by "
-                                          "default, set to 10 seconds here.",
-                                          TimeValue(Seconds(10)),
-                                          MakeTimeAccessor(&Dhcp6Server::m_renew),
-                                          MakeTimeChecker())
-                            .AddAttribute("RebindTime",
-                                          "Time after which client should rebind. 2000 seconds by "
-                                          "default, set to 16 seconds here.",
-                                          TimeValue(Seconds(16)),
-                                          MakeTimeAccessor(&Dhcp6Server::m_rebind),
-                                          MakeTimeChecker())
-                            .AddAttribute("PreferredLifetime",
-                                          "The preferred lifetime of the leased address. 3000 "
-                                          "seconds by default, set to 18 seconds here.",
-                                          TimeValue(Seconds(18)),
-                                          MakeTimeAccessor(&Dhcp6Server::m_prefLifetime),
-                                          MakeTimeChecker())
-                            .AddAttribute("ValidLifetime",
-                                          "Time after which client should release the address. "
-                                          "4000 seconds by default, set to 20 seconds here.",
-                                          TimeValue(Seconds(20)),
-                                          MakeTimeAccessor(&Dhcp6Server::m_validLifetime),
-                                          MakeTimeChecker());
+    static TypeId tid =
+        TypeId("ns3::Dhcp6Server")
+            .SetParent<Application>()
+            .AddConstructor<Dhcp6Server>()
+            .SetGroupName("InternetApps")
+            .AddAttribute("RenewTime",
+                          "Time after which client should renew. 1000 seconds by default in Linux",
+                          TimeValue(Seconds(1000)),
+                          MakeTimeAccessor(&Dhcp6Server::m_renew),
+                          MakeTimeChecker())
+            .AddAttribute("RebindTime",
+                          "Time after which client should rebind. 2000 seconds by default in Linux",
+                          TimeValue(Seconds(2000)),
+                          MakeTimeAccessor(&Dhcp6Server::m_rebind),
+                          MakeTimeChecker())
+            .AddAttribute(
+                "PreferredLifetime",
+                "The preferred lifetime of the leased address. 3000 seconds by default in Linux",
+                TimeValue(Seconds(3000)),
+                MakeTimeAccessor(&Dhcp6Server::m_prefLifetime),
+                MakeTimeChecker())
+            .AddAttribute("ValidLifetime",
+                          "Time after which client should release the address. 4000 seconds by "
+                          "default in Linux",
+                          TimeValue(Seconds(4000)),
+                          MakeTimeAccessor(&Dhcp6Server::m_validLifetime),
+                          MakeTimeChecker());
 
     return tid;
 }
@@ -79,7 +78,7 @@ Dhcp6Server::GetTypeId()
 Dhcp6Server::Dhcp6Server()
 {
     NS_LOG_FUNCTION(this);
-    m_leaseCleanup = Time(Seconds(10.0));
+    m_leaseCleanup = Seconds(10.0);
 }
 
 void
@@ -92,8 +91,6 @@ Dhcp6Server::DoDispose()
 void
 Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
-    NS_LOG_INFO(this << iDev << header << client);
-
     Duid clientDuid = header.GetClientIdentifier().GetDuid();
     std::map<Dhcp6Header::OptionType, bool> headerOptions = header.GetOptionList();
 
@@ -112,7 +109,7 @@ Dhcp6Server::ProcessSolicit(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Socket
 void
 Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
-    NS_LOG_INFO(this << iDev << header << client);
+    NS_LOG_FUNCTION(this << iDev << header << client);
 
     // Options included according to RFC 8415 Section 18.3.9
 
@@ -232,7 +229,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
             This is to prevent multiple clients from receiving the same address.
             */
             subnet.m_leasedAddresses.insert(
-                {clientDuid, std::make_pair(offer, Time(Seconds(m_prefLifetime.GetSeconds())))});
+                {clientDuid, std::make_pair(offer, Seconds(m_prefLifetime.GetSeconds()))});
         }
 
         Ipv6Address offeredAddr(offeredAddrBuf);
@@ -275,7 +272,7 @@ Dhcp6Server::SendAdvertise(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketA
 void
 Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
-    NS_LOG_INFO(this << iDev << header << client);
+    NS_LOG_FUNCTION(this << iDev << header << client);
 
     // Options included according to RFC 8415 Section 18.3.10
 
@@ -356,7 +353,7 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
                         Ipv6Address clientLease = it->second.first;
                         std::pair<Ipv6Address, Time> clientLeaseTime = {
                             clientLease,
-                            Time(Seconds(m_prefLifetime.GetSeconds()))};
+                            Seconds(m_prefLifetime.GetSeconds())};
 
                         // Add the DUID + Ipv6Address / LeaseTime to the map.
                         updatedLifetimes.insert({clientDuid, clientLeaseTime});
@@ -405,7 +402,7 @@ Dhcp6Server::SendReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddre
 void
 Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
-    NS_LOG_INFO(this << iDev << header << client);
+    NS_LOG_FUNCTION(this << iDev << header << client);
 
     // Options included according to RFC 8415 Section 18.3.4, 18.3.5
 
@@ -458,7 +455,7 @@ Dhcp6Server::RenewRebindLeases(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Soc
                             NS_LOG_INFO("Renewing address: " << itr->second.first);
                             std::pair<Ipv6Address, Time> clientLeaseTime = {
                                 clientLease,
-                                Time(Seconds(m_prefLifetime.GetSeconds()))};
+                                Seconds(m_prefLifetime.GetSeconds())};
 
                             // Remove the old lease information.
                             subnet.m_leasedAddresses.erase(itr);
@@ -506,7 +503,7 @@ void
 Dhcp6Server::UpdateBindings(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress client)
 {
     // Invoked in case a Decline or Release message is received.
-    NS_LOG_INFO(this << iDev << header << client);
+    NS_LOG_FUNCTION(this << iDev << header << client);
 
     // Options included in accordance with RFC 8415, Section 18.3.7, 18.3.8
 
@@ -763,37 +760,32 @@ LeaseInfo::LeaseInfo(Ipv6Address addressPool,
 }
 
 Ipv6Address
-LeaseInfo::GetAddressPool()
+LeaseInfo::GetAddressPool() const
 {
-    NS_LOG_FUNCTION(this);
     return m_addressPool;
 }
 
 Ipv6Prefix
-LeaseInfo::GetPrefix()
+LeaseInfo::GetPrefix() const
 {
-    NS_LOG_FUNCTION(this);
     return m_prefix;
 }
 
 Ipv6Address
-LeaseInfo::GetMinAddress()
+LeaseInfo::GetMinAddress() const
 {
-    NS_LOG_FUNCTION(this);
     return m_minAddress;
 }
 
 Ipv6Address
-LeaseInfo::GetMaxAddress()
+LeaseInfo::GetMaxAddress() const
 {
-    NS_LOG_FUNCTION(this);
     return m_maxAddress;
 }
 
 uint32_t
-LeaseInfo::GetNumAddresses()
+LeaseInfo::GetNumAddresses() const
 {
-    NS_LOG_FUNCTION(this);
     return m_numAddresses;
 }
 } // namespace internetApplications

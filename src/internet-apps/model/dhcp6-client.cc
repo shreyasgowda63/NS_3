@@ -58,7 +58,7 @@ Dhcp6Client::GetTypeId()
         TypeId("ns3::Dhcp6Client")
             .SetParent<Application>()
             .AddConstructor<Dhcp6Client>()
-            .SetGroupName("Internet-Apps")
+            .SetGroupName("InternetApps")
             .AddAttribute("Transactions",
                           "A value to be used as the transaction ID.",
                           StringValue("ns3::UniformRandomVariable[Min=0.0|Max=1000000.0]"),
@@ -71,32 +71,35 @@ Dhcp6Client::GetTypeId()
                           StringValue("ns3::UniformRandomVariable[Min=0.0|Max=10.0]"),
                           MakePointerAccessor(&Dhcp6Client::m_solicitJitter),
                           MakePointerChecker<RandomVariableStream>())
+            .AddAttribute("IaidValue",
+                          "The identifier for a new IA created by a client.",
+                          StringValue("ns3::UniformRandomVariable[Min=0.0|Max=1000000.0]"),
+                          MakePointerAccessor(&Dhcp6Client::m_iaidStream),
+                          MakePointerChecker<RandomVariableStream>())
             .AddTraceSource("NewLease",
-                            "Get a new lease",
+                            "The client has obtained a lease",
                             MakeTraceSourceAccessor(&Dhcp6Client::m_newLease),
                             "ns3::Ipv6Address::TracedCallback")
             .AddAttribute("RenewTime",
-                          "Time after which client should renew. 1000 seconds by "
-                          "default, set to 10 seconds here.",
-                          TimeValue(Seconds(10)),
+                          "Time after which client should renew. 1000 seconds by default in Linux",
+                          TimeValue(Seconds(1000)),
                           MakeTimeAccessor(&Dhcp6Client::m_renew),
                           MakeTimeChecker())
             .AddAttribute("RebindTime",
-                          "Time after which client should rebind. 2000 seconds by "
-                          "default, set to 20 seconds here.",
-                          TimeValue(Seconds(20)),
+                          "Time after which client should rebind. 2000 seconds by default in Linux",
+                          TimeValue(Seconds(2000)),
                           MakeTimeAccessor(&Dhcp6Client::m_rebind),
                           MakeTimeChecker())
-            .AddAttribute("PreferredLifetime",
-                          "The preferred lifetime of the leased address. 3000 "
-                          "seconds by default, set to 30 seconds here.",
-                          TimeValue(Seconds(30)),
-                          MakeTimeAccessor(&Dhcp6Client::m_prefLifetime),
-                          MakeTimeChecker())
+            .AddAttribute(
+                "PreferredLifetime",
+                "The preferred lifetime of the leased address. 3000 seconds by default in Linux",
+                TimeValue(Seconds(3000)),
+                MakeTimeAccessor(&Dhcp6Client::m_prefLifetime),
+                MakeTimeChecker())
             .AddAttribute("ValidLifetime",
-                          "Time after which client should release the address. "
-                          "4000 seconds by default, set to 40 seconds here.",
-                          TimeValue(Seconds(40)),
+                          "Time after which client should release the address. 4000 seconds by "
+                          "default in Linux",
+                          TimeValue(Seconds(4000)),
                           MakeTimeAccessor(&Dhcp6Client::m_validLifetime),
                           MakeTimeChecker())
             .AddAttribute("SolicitInterval",
@@ -139,7 +142,8 @@ Dhcp6Client::AssignStreams(int64_t stream)
     NS_LOG_FUNCTION(this << stream);
     m_solicitJitter->SetStream(stream);
     m_transactionId->SetStream(stream + 1);
-    return 2;
+    m_iaidStream->SetStream(stream + 2);
+    return 3;
 }
 
 void
@@ -151,8 +155,6 @@ Dhcp6Client::SetDhcp6ClientNetDevice(Ptr<NetDevice> netDevice)
 void
 Dhcp6Client::ValidateAdvertise(Dhcp6Header header)
 {
-    NS_LOG_INFO(this << header);
-
     Ptr<Packet> packet = Create<Packet>();
     uint32_t receivedTransactId = header.GetTransactId();
     NS_ASSERT_MSG(receivedTransactId == m_clientTransactId, "Transaction ID mismatch.");
@@ -166,7 +168,7 @@ Dhcp6Client::ValidateAdvertise(Dhcp6Header header)
 void
 Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server)
 {
-    NS_LOG_INFO(this << iDev << header << server);
+    NS_LOG_FUNCTION(this << iDev << header << server);
 
     Ptr<Packet> packet = Create<Packet>();
     Dhcp6Header requestHeader;
@@ -185,8 +187,8 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     requestHeader.AddServerIdentifier(serverDuid);
 
     // Add Elapsed Time Option.
-    uint16_t now = (uint16_t)Simulator::Now().GetMilliSeconds() / 10; // expressed in 0.01 seconds
-    uint16_t elapsed = now - (uint16_t)m_msgStartTime.GetMilliSeconds() / 10;
+    uint32_t actualElapsedTime = (Simulator::Now() - m_msgStartTime).GetMilliSeconds() / 10;
+    uint16_t elapsed = actualElapsedTime > 65535 ? 65535 : actualElapsedTime;
     requestHeader.AddElapsedTime(elapsed);
 
     // Add IA_NA option.
@@ -299,7 +301,7 @@ Dhcp6Client::DeclineOffer()
     // Add server identifier option
     declineHeader.AddServerIdentifier(m_serverDuid);
 
-    Time m_msgStartTime = Simulator::Now();
+    m_msgStartTime = Simulator::Now();
     declineHeader.AddElapsedTime(0);
 
     packet->AddHeader(declineHeader);
@@ -319,10 +321,10 @@ Dhcp6Client::DeclineOffer()
 }
 
 void
-Dhcp6Client::CheckLeaseStatus(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server)
+Dhcp6Client::CheckLeaseStatus(Ptr<NetDevice> iDev,
+                              Dhcp6Header header,
+                              Inet6SocketAddress server) const
 {
-    NS_LOG_INFO(this << iDev << header << server);
-
     // Read Status Code option.
     uint16_t statusCode = header.GetStatusCodeOption().GetStatusCode();
 
@@ -339,7 +341,7 @@ Dhcp6Client::CheckLeaseStatus(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6Sock
 void
 Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAddress server)
 {
-    NS_LOG_INFO(this << iDev << header << server);
+    NS_LOG_FUNCTION(this << iDev << header << server);
 
     Ptr<Ipv6> ipv6 = GetNode()->GetObject<Ipv6>();
     int32_t ifIndex = ipv6->GetInterfaceForDevice(m_device);
@@ -350,8 +352,8 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
     m_declinedAddresses.clear();
     m_addressDadComplete = false;
 
-    Time earliestRebind = Time(Seconds(1000000));
-    Time earliestRenew = Time(Seconds(1000000));
+    Time earliestRebind{Time::Max()};
+    Time earliestRenew{Time::Max()};
     std::vector<uint32_t> iaidList;
 
     for (const auto& iaOpt : ianaOptionsList)
@@ -361,7 +363,6 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
         for (const auto& iaAddrOpt : iaOpt.m_iaAddressOption)
         {
             Ipv6Address offeredAddress = iaAddrOpt.GetIaAddress();
-            NS_LOG_INFO("Offered address: " << offeredAddress);
 
             // TODO: In Linux, all leased addresses seem to be /128. Double-check this.
             Ipv6InterfaceAddress addr(offeredAddress, 128);
@@ -369,8 +370,8 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
             ipv6->SetUp(ifIndex);
 
             // Set the preferred and valid lifetimes.
-            m_prefLifetime = Time(Seconds(iaAddrOpt.GetPreferredLifetime()));
-            m_validLifetime = Time(Seconds(iaAddrOpt.GetValidLifetime()));
+            m_prefLifetime = Seconds(iaAddrOpt.GetPreferredLifetime());
+            m_validLifetime = Seconds(iaAddrOpt.GetValidLifetime());
 
             // Add the IPv6 address - IAID association.
             m_iaidMap[offeredAddress] = iaOpt.GetIaid();
@@ -384,8 +385,8 @@ Dhcp6Client::ProcessReply(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAd
             m_nOfferedAddresses += 1;
         }
 
-        earliestRenew = std::min(earliestRenew, Time(Seconds(iaOpt.GetT1())));
-        earliestRebind = std::min(earliestRebind, Time(Seconds(iaOpt.GetT2())));
+        earliestRenew = std::min(earliestRenew, Seconds(iaOpt.GetT1()));
+        earliestRebind = std::min(earliestRebind, Seconds(iaOpt.GetT2()));
         iaidList.emplace_back(iaOpt.GetIaid());
     }
 
@@ -430,7 +431,7 @@ Dhcp6Client::SendRenew(std::vector<uint32_t> iaidList)
     // Add server identifier option
     header.AddServerIdentifier(m_serverDuid);
 
-    Time m_msgStartTime = Simulator::Now();
+    m_msgStartTime = Simulator::Now();
     header.AddElapsedTime(0);
 
     // Add IA_NA options.
@@ -490,7 +491,7 @@ Dhcp6Client::SendRebind(std::vector<uint32_t> iaidList)
     // Add client identifier option
     header.AddClientIdentifier(m_clientDuid);
 
-    Time m_msgStartTime = Simulator::Now();
+    m_msgStartTime = Simulator::Now();
     header.AddElapsedTime(0);
 
     // Add IA_NA options.
@@ -542,7 +543,7 @@ Dhcp6Client::SendRelease(Ipv6Address address)
     // Add server identifier option
     header.AddServerIdentifier(m_serverDuid);
 
-    Time m_msgStartTime = Simulator::Now();
+    m_msgStartTime = Simulator::Now();
     header.AddElapsedTime(0);
 
     // IA_NA option, IA address option
@@ -708,12 +709,9 @@ Dhcp6Client::StartApplication()
         }
 
         // Create a new IAID for the client.
-        Ptr<RandomVariableStream> iaidStream = CreateObject<UniformRandomVariable>();
-        iaidStream->SetAttribute("Min", DoubleValue(0.0));
-        iaidStream->SetAttribute("Max", DoubleValue(100000.0));
         while (true)
         {
-            uint32_t iaid = iaidStream->GetInteger();
+            uint32_t iaid = m_iaidStream->GetInteger();
             if (std::find(existingIaNaIds.begin(), existingIaNaIds.end(), iaid) ==
                 existingIaNaIds.end())
             {
@@ -736,7 +734,7 @@ Dhcp6Client::StartApplication()
 void
 Dhcp6Client::ReceiveMflag(uint32_t recvInterface)
 {
-    NS_LOG_INFO(this);
+    NS_LOG_FUNCTION(this);
 
     Ptr<Node> node = m_device->GetNode();
     Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
@@ -753,7 +751,7 @@ Dhcp6Client::ReceiveMflag(uint32_t recvInterface)
     Simulator::Schedule(Time(MilliSeconds(m_solicitJitter->GetValue())), &Dhcp6Client::Boot, this);
 
     uint32_t minInterval = m_solicitInterval.GetSeconds() / 2;
-    m_solicitTimer = TrickleTimer(Time(Seconds(minInterval)), 4, 1);
+    m_solicitTimer = TrickleTimer(Seconds(minInterval), 4, 1);
     m_solicitTimer.SetFunction(&Dhcp6Client::Boot, this);
     m_solicitTimer.Enable();
 }
@@ -796,7 +794,7 @@ Dhcp6Client::Boot()
     header.SetMessageType(Dhcp6Header::SOLICIT);
 
     // Store start time of the message exchange.
-    Time m_msgStartTime = Simulator::Now();
+    m_msgStartTime = Simulator::Now();
 
     header.AddElapsedTime(0);
     header.AddClientIdentifier(m_clientDuid);
@@ -845,5 +843,19 @@ Dhcp6Client::StopApplication()
         m_socket->SetRecvCallback(MakeNullCallback<void, Ptr<Socket>>());
     }
 }
+
+void
+Dhcp6Client::Print(std::ostream& os) const
+{
+    os << "(state=" << m_state << ")";
+}
+
+std::ostream&
+operator<<(std::ostream& os, const Dhcp6Client& h)
+{
+    h.Print(os);
+    return os;
+}
+
 } // namespace internetApplications
 } // namespace ns3

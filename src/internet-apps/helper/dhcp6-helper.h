@@ -1,4 +1,6 @@
 /*
+ * Copyright (c) 2024 NITK Surathkal
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation;
@@ -11,6 +13,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: Kavya Bhat <kavyabhat@gmail.com>
  *
  */
 
@@ -62,24 +66,25 @@ class Dhcp6Helper
      * @param netDevice The NetDevice for which the server is required
      * @return The pointer to the DHCPv6 server
      */
-    Ptr<internetApplications::Dhcp6Server> GetDhcp6Server(Ptr<NetDevice> netDevice);
+    Ptr<internetApplications::Dhcp6Server> GetDhcp6Server(Ptr<NetDevice> netDevice) const;
 
     /**
-     * @brief Install DHCPv6 client of a nodes / NetDevice
+     * @brief Install DHCPv6 client on a node / NetDevice
      * @param netDevice The NetDevice that the client will use
      * @return The application container with DHCPv6 client installed
      */
     ApplicationContainer InstallDhcp6Client(Ptr<NetDevice> netDevice) const;
 
     /**
-     * @brief Install DHCP client of a set of nodes / NetDevices
+     * @brief Install DHCP client on a set of nodes / NetDevices
      * @param netDevices The NetDevices that the DHCP client will use
      * @return The application container with DHCP client installed
      */
     ApplicationContainer InstallDhcp6Client(NetDeviceContainer netDevices) const;
 
     /**
-     * @brief Install DHCPv6 server of a node / NetDevice
+     * @brief Install DHCPv6 server on a node / NetDevice. Also updates the
+     * interface -> server map.
      * @param netDevices The NetDevices on which DHCPv6 server application has to be installed
      * @return The application container with DHCPv6 server installed
      */
@@ -93,18 +98,12 @@ class Dhcp6Helper
      */
     Ptr<Application> InstallDhcp6ClientPriv(Ptr<NetDevice> netDevice) const;
 
-    /**
-     * @brief DHCPv6 client factory.
-     */
-    ObjectFactory m_clientFactory;
+    ObjectFactory m_clientFactory; //!< DHCPv6 client factory.
+
+    ObjectFactory m_serverFactory; //!< DHCPv6 server factory.
 
     /**
-     * @brief DHCPv6 server factory.
-     */
-    ObjectFactory m_serverFactory;
-
-    /**
-     * @brief Map of net devices to a DHCPv6 server.
+     * Map of net devices to a DHCPv6 server.
      */
     std::map<Ptr<NetDevice>, Ptr<internetApplications::Dhcp6Server>> m_serverNetDevices;
 };

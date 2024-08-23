@@ -134,12 +134,6 @@ class Duid : public Header
      */
     void SetTime(Time time);
 
-    TypeId GetInstanceTypeId() const override;
-    void Print(std::ostream& os) const override;
-    uint32_t GetSerializedSize() const override;
-    void Serialize(Buffer::Iterator start) const override;
-    uint32_t Deserialize(Buffer::Iterator start) override;
-
     /**
      * @brief Deserialize the identifier in the DUID.
      * @param start The buffer iterator.
@@ -164,6 +158,12 @@ class Duid : public Header
      */
     friend bool operator<(const Duid& a, const Duid& b);
 
+    TypeId GetInstanceTypeId() const override;
+    void Print(std::ostream& os) const override;
+    uint32_t GetSerializedSize() const override;
+    void Serialize(Buffer::Iterator start) const override;
+    uint32_t Deserialize(Buffer::Iterator start) override;
+
   private:
     /**
      * @brief Return the identifier of the node.
@@ -173,24 +173,13 @@ class Duid : public Header
 
     /**
      * Type of the DUID.
-     * Here, we implement only DUID type 3, based on the link-layer address.
+     * We currently use only DUID type 3, based on the link-layer address.
      */
     uint16_t m_duidType;
 
-    /**
-     * Valid hardware type assigned by IANA.
-     */
-    uint16_t m_hardwareType;
-
-    /**
-     * Time at which DUID is generated. Used in DUID-LLT.
-     */
-    Time m_time;
-
-    /**
-     * Identifier of the node in bytes.
-     */
-    std::vector<uint8_t> m_identifier;
+    uint16_t m_hardwareType;           //!< Valid hardware type assigned by IANA.
+    Time m_time;                       //!< Time at which the DUID is generated. Used in DUID-LLT.
+    std::vector<uint8_t> m_identifier; //!< Identifier of the node in bytes.
 };
 
 /**

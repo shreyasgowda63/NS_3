@@ -84,15 +84,8 @@ class Options
     void SetOptionLength(uint16_t length);
 
   private:
-    /**
-     * Code associated with the included option.
-     */
-    uint16_t m_optionCode;
-
-    /**
-     * Length of the included option.
-     */
-    uint16_t m_optionLength;
+    uint16_t m_optionCode;   //!< Option code
+    uint16_t m_optionLength; //!< Option length
 };
 
 /**
@@ -135,10 +128,7 @@ class IdentifierOption : public Options
     Duid GetDuid() const;
 
   private:
-    /**
-     * The unique identifier of the node.
-     */
-    Duid m_duid;
+    Duid m_duid; //!< Unique identifier of the node.
 };
 
 /**
@@ -181,7 +171,7 @@ class StatusCodeOption : public Options
 
   private:
     /**
-     * The status code of an operation involving the IANA, IATA or
+     * The status code of an operation involving the IA_NA, IA_TA or
      * IA address.
      */
     uint16_t m_statusCode;
@@ -252,20 +242,9 @@ class IaAddressOption : public Options
     void SetValidLifetime(uint32_t validLifetime);
 
   private:
-    /**
-     * The IPv6 address offered to the client.
-     */
-    Ipv6Address m_iaAddress;
-
-    /**
-     * The preferred lifetime of the address, in seconds.
-     */
-    uint32_t m_preferredLifetime;
-
-    /**
-     * The valid lifetime of the address, in seconds.
-     */
-    uint32_t m_validLifetime;
+    Ipv6Address m_iaAddress;      //!< the IPv6 address offered to the client.
+    uint32_t m_preferredLifetime; //!< The preferred lifetime of the address, in seconds.
+    uint32_t m_validLifetime;     //!< The valid lifetime of the address, in seconds.
 
     /**
      * (optional) The status code of any operation involving this address
@@ -334,7 +313,7 @@ class IaOptions : public Options
 
   private:
     /**
-     * The unique identifier for the given IANA or IATA.
+     * The unique identifier for the given IA_NA or IA_TA.
      */
     uint32_t m_iaid;
 
@@ -383,10 +362,7 @@ class RequestOptions : public Options
     void AddRequestedOption(uint16_t requestedOption);
 
   private:
-    /**
-     * List of requested options.
-     */
-    std::vector<uint16_t> m_requestedOptions;
+    std::vector<uint16_t> m_requestedOptions; //!< List of requested options.
 };
 
 /**

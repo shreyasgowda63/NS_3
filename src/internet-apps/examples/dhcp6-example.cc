@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024 NITK Surathkal
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -23,7 +24,7 @@
  * S0 is a DHCPv6 server. It has two interfaces, a CSMA interface and a Wifi
  * interface.
  * N0 and N1 are DHCPv6 clients. They have two interfaces - one CSMA and one
- * Wifi interface.
+ * Wifi interface. Each interface obtains an address lease from the server.
  * R0 is a router with one CSMA interface, and is also set up as the Wifi access
  * point.
  *                ┌-------------------------------------------------┐
@@ -45,10 +46,37 @@
  *    in the link-local domain.
  * 2. N2 has a statically assigned address to demonstrate the operation of the
  *    DHCPv6 Decline message.
+ * 3. The server is usually on the router in practice, but we demonstrate in
+ *    this example a standalone server.
+ * 4. Linux uses fairly large values for address lifetimes (in thousands of
+ *    seconds). In this example, we have set shorter lifetimes for the purpose
+ *    of observing the Renew messages within a shorter simulation run.
+ * 5. The nodes use two interfaces each for the purpose of demonstrating
+ *    DHCPv6 operation when multiple interfaces are present on the client or
+ *    server nodes.
  *
  * This example demonstrates how to set up a simple DHCPv6 server and two DHCPv6
- * clients. The clients begin to request an address lease only after receiving a
- * Router Advertisement containing the 'M' bit from the router, R0.
+ * clients. The clients begin to request an address lease using a Solicit
+ * message only after receiving a Router Advertisement containing the 'M' bit
+ * from the router, R0.
+ *
+ * The server responds with an Advertise message with all available address
+ * offers, and the client sends a Request message to the server for these
+ * addresses. The server then sends a Reply message to the client, which
+ * performs Duplicate Address Detection to check if any other node on the link
+ * already uses this address.
+ * If the address is in use by any other node, the client sends a Decline
+ * message to the server. If the address is not in use, the client begins using
+ * this address.
+ * At the end of the address lease lifetime, the client sends a Renew message
+ * to the server, which renews the lease and allows the client to continue using
+ * the same address.
+ *
+ * The user may enable packet traces in this example to observe the following
+ * message exchanges:
+ * 1. Solicit - Advertise - Request - Reply
+ * 2. Solicit - Advertise - Request - Reply - Decline
+ * 3. Renew - Reply
  *
  */
 
@@ -75,32 +103,31 @@ main(int argc, char* argv[])
     CommandLine cmd(__FILE__);
 
     bool verbose = false;
-    bool tracing = false;
+    bool enablePcap = false;
     cmd.AddValue("verbose", "Turn on the logs", verbose);
-    cmd.AddValue("tracing", "Turn on tracing", tracing);
+    cmd.AddValue("enablePcap", "Enable/Disable pcap file generation", enablePcap);
 
     cmd.Parse(argc, argv);
     GlobalValue::Bind("ChecksumEnabled", BooleanValue(true));
 
     if (verbose)
     {
-        LogComponentEnable("Dhcp6Server", LOG_LEVEL_ALL);
-        LogComponentEnable("Dhcp6Client", LOG_LEVEL_ALL);
+        LogComponentEnable("Dhcp6Server", LOG_LEVEL_INFO);
+        LogComponentEnable("Dhcp6Client", LOG_LEVEL_INFO);
     }
 
     Time stopTime = Seconds(25.0);
 
     NS_LOG_INFO("Create nodes.");
-    NodeContainer nodes;
-    nodes.Create(4);
+    NodeContainer nonRouterNodes;
+    nonRouterNodes.Create(4);
     Ptr<Node> router = CreateObject<Node>();
-    NodeContainer all(nodes, router);
+    NodeContainer all(nonRouterNodes, router);
 
     NS_LOG_INFO("Create channels.");
     CsmaHelper csma;
     csma.SetChannelAttribute("DataRate", StringValue("5Mbps"));
     csma.SetChannelAttribute("Delay", StringValue("2ms"));
-    csma.SetDeviceAttribute("Mtu", UintegerValue(1500));
     NetDeviceContainer devices = csma.Install(all); // all nodes
 
     InternetStackHelper internetv6;
@@ -110,34 +137,20 @@ main(int argc, char* argv[])
 
     Ipv6AddressHelper ipv6;
     ipv6.SetBase(Ipv6Address("2001:db8::"), Ipv6Prefix(64));
-    NetDeviceContainer tmp;
-    tmp.Add(devices.Get(0)); // The server node, S0.
-    tmp.Add(devices.Get(1)); // The first client node, N0.
-    tmp.Add(devices.Get(2)); // The second client node, N1.
-    tmp.Add(devices.Get(3)); // The third client node, N2.
-    Ipv6InterfaceContainer i = ipv6.AssignWithoutAddress(tmp);
+    NetDeviceContainer nonRouterDevices;
+    nonRouterDevices.Add(devices.Get(0)); // The server node, S0.
+    nonRouterDevices.Add(devices.Get(1)); // The first client node, N0.
+    nonRouterDevices.Add(devices.Get(2)); // The second client node, N1.
+    nonRouterDevices.Add(devices.Get(3)); // The third client node, N2.
+    Ipv6InterfaceContainer i = ipv6.AssignWithoutAddress(nonRouterDevices);
 
     NS_LOG_INFO("Assign static IP address to the third node.");
-    Ptr<Ipv6> ipv6proto = nodes.Get(3)->GetObject<Ipv6>();
+    Ptr<Ipv6> ipv6proto = nonRouterNodes.Get(3)->GetObject<Ipv6>();
     int32_t ifIndex = 0;
     ifIndex = ipv6proto->GetInterfaceForDevice(devices.Get(3));
     Ipv6InterfaceAddress ipv6Addr =
         Ipv6InterfaceAddress(Ipv6Address("2001:db8::1"), Ipv6Prefix(128));
     ipv6proto->AddAddress(ifIndex, ipv6Addr);
-
-    NS_LOG_INFO("Assign static IP address to the router node.");
-    NetDeviceContainer tmp1;
-    tmp1.Add(devices.Get(4)); // The router node, R0.
-    Ipv6InterfaceContainer r1 =
-        ipv6.Assign(tmp1); /* R interface to the first subnet is just statically assigned */
-    r1.SetForwarding(0, true);
-
-    NS_LOG_INFO("Create Radvd applications.");
-    RadvdHelper radvdHelper;
-
-    /* Set up unsolicited RAs */
-    radvdHelper.AddAnnouncedPrefix(r1.GetInterfaceIndex(0), Ipv6Address("2001:db8::0"), 64);
-    radvdHelper.GetRadvdInterface(r1.GetInterfaceIndex(0))->SetManagedFlag(true);
 
     YansWifiChannelHelper channel = YansWifiChannelHelper::Default();
     YansWifiPhyHelper phy;
@@ -150,42 +163,48 @@ main(int argc, char* argv[])
 
     NetDeviceContainer staDevices;
     mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid), "ActiveProbing", BooleanValue(false));
-    staDevices = wifi.Install(phy, mac, nodes);
+    staDevices = wifi.Install(phy, mac, nonRouterNodes);
 
     NetDeviceContainer apDevices;
     mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
-    apDevices = wifi.Install(phy, mac, all.Get(4));
+    apDevices = wifi.Install(phy, mac, router);
 
     MobilityHelper mobility;
-    mobility.SetPositionAllocator("ns3::GridPositionAllocator",
-                                  "MinX",
-                                  DoubleValue(0.0),
-                                  "MinY",
-                                  DoubleValue(0.0),
-                                  "DeltaX",
-                                  DoubleValue(5.0),
-                                  "DeltaY",
-                                  DoubleValue(10.0),
-                                  "GridWidth",
-                                  UintegerValue(3),
-                                  "LayoutType",
-                                  StringValue("RowFirst"));
-
-    mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel",
-                              "Bounds",
-                              RectangleValue(Rectangle(-50, 50, -50, 50)));
-    mobility.Install(nodes);
 
     mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-    mobility.Install(all.Get(4)); // Router node
+    mobility.Install(nonRouterNodes); // Clients and server
+    mobility.Install(router);         // Router node
+
+    NS_LOG_INFO("Assign static IP address to the router node.");
+    NetDeviceContainer routerDevice;
+    routerDevice.Add(devices.Get(4));   // CSMA interface of the node R0.
+    routerDevice.Add(apDevices.Get(0)); // Wifi interface of the node R0.
+    Ipv6InterfaceContainer r1 = ipv6.Assign(routerDevice);
+    r1.SetForwarding(0, true);
+
+    NS_LOG_INFO("Create Radvd applications.");
+    RadvdHelper radvdHelper;
+
+    /* Set up unsolicited RAs */
+    radvdHelper.AddAnnouncedPrefix(r1.GetInterfaceIndex(0), Ipv6Address("2001:db8::0"), 64);
+    radvdHelper.GetRadvdInterface(r1.GetInterfaceIndex(0))->SetManagedFlag(true);
+
+    radvdHelper.AddAnnouncedPrefix(r1.GetInterfaceIndex(1), Ipv6Address("2001:cafe::0"), 64);
+    radvdHelper.GetRadvdInterface(r1.GetInterfaceIndex(1))->SetManagedFlag(true);
 
     NS_LOG_INFO("Create DHCP applications.");
     Dhcp6Helper dhcp6Helper;
 
+    NS_LOG_INFO("Set timers to desired values.");
+    dhcp6Helper.SetServerAttribute("RenewTime", StringValue("10s"));
+    dhcp6Helper.SetServerAttribute("RebindTime", StringValue("16s"));
+    dhcp6Helper.SetServerAttribute("PreferredLifetime", StringValue("18s"));
+    dhcp6Helper.SetServerAttribute("ValidLifetime", StringValue("20s"));
+
     // DHCP clients
     NetDeviceContainer dhcpClientNetDevs;
-    dhcpClientNetDevs.Add(devices.Get(1));
-    dhcpClientNetDevs.Add(devices.Get(2));
+    dhcpClientNetDevs.Add(nonRouterDevices.Get(1));
+    dhcpClientNetDevs.Add(nonRouterDevices.Get(2));
 
     dhcpClientNetDevs.Add(staDevices.Get(1));
     dhcpClientNetDevs.Add(staDevices.Get(2));
@@ -196,11 +215,11 @@ main(int argc, char* argv[])
 
     // DHCP server
     NetDeviceContainer serverNetDevices;
-    serverNetDevices.Add(devices.Get(0));
+    serverNetDevices.Add(nonRouterDevices.Get(0));
     serverNetDevices.Add(staDevices.Get(0));
     ApplicationContainer dhcpServerApp = dhcp6Helper.InstallDhcp6Server(serverNetDevices);
 
-    Ptr<Dhcp6Server> server = dhcp6Helper.GetDhcp6Server(devices.Get(0));
+    Ptr<Dhcp6Server> server = dhcp6Helper.GetDhcp6Server(nonRouterDevices.Get(0));
     server->AddSubnet(Ipv6Address("2001:db8::"),
                       Ipv6Prefix(64),
                       Ipv6Address("2001:db8::1"),
@@ -215,7 +234,7 @@ main(int argc, char* argv[])
 
     Simulator::Stop(stopTime + Seconds(2.0));
 
-    if (tracing)
+    if (enablePcap)
     {
         csma.EnablePcapAll("dhcp6-csma");
         phy.SetPcapDataLinkType(WifiPhyHelper::DLT_IEEE802_11_RADIO);

@@ -47,10 +47,8 @@ Duid::Duid()
 TypeId
 Duid::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::Duid")
-                            .SetParent<Header>()
-                            .SetGroupName("Internet-Apps")
-                            .AddConstructor<Duid>();
+    static TypeId tid =
+        TypeId("ns3::Duid").SetParent<Header>().SetGroupName("InternetApps").AddConstructor<Duid>();
     return tid;
 }
 
@@ -116,14 +114,12 @@ Duid::GetLength() const
 std::vector<uint8_t>
 Duid::GetIdentifier() const
 {
-    NS_LOG_FUNCTION(this);
     return m_identifier;
 }
 
 uint16_t
 Duid::GetDuidType() const
 {
-    NS_LOG_FUNCTION(this);
     return m_duidType;
 }
 
@@ -137,7 +133,6 @@ Duid::SetDuidType(uint16_t duidType)
 uint16_t
 Duid::GetHardwareType() const
 {
-    NS_LOG_FUNCTION(this);
     return m_hardwareType;
 }
 
@@ -219,7 +214,6 @@ Duid::Initialize(Ptr<Node> node)
 Time
 Duid::GetTime() const
 {
-    NS_LOG_FUNCTION(this);
     return m_time;
 }
 

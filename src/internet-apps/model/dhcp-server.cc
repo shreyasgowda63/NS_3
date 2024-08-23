@@ -84,7 +84,6 @@ DhcpServer::GetTypeId()
 DhcpServer::DhcpServer()
 {
     NS_LOG_FUNCTION(this);
-    NS_LOG_INFO("m_poolAddress " << m_poolAddress);
 }
 
 DhcpServer::~DhcpServer()

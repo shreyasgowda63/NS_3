@@ -44,16 +44,14 @@ Options::Options()
 
 Options::Options(uint16_t code, uint16_t length)
 {
+    NS_LOG_FUNCTION(this << code << length);
     m_optionCode = code;
     m_optionLength = length;
-
-    NS_LOG_FUNCTION(this << code << length);
 }
 
 uint16_t
 Options::GetOptionCode() const
 {
-    NS_LOG_FUNCTION(this);
     return m_optionCode;
 }
 
@@ -67,7 +65,6 @@ Options::SetOptionCode(uint16_t code)
 uint16_t
 Options::GetOptionLength() const
 {
-    NS_LOG_FUNCTION(this);
     return m_optionLength;
 }
 
@@ -84,6 +81,7 @@ IdentifierOption::IdentifierOption()
 
 IdentifierOption::IdentifierOption(uint16_t hardwareType, Address linkLayerAddress, Time time)
 {
+    NS_LOG_FUNCTION(this << hardwareType << linkLayerAddress);
     if (time.IsZero())
     {
         m_duid.SetDuidType(3);
@@ -101,8 +99,6 @@ IdentifierOption::IdentifierOption(uint16_t hardwareType, Address linkLayerAddre
     std::vector<uint8_t> identifier;
     std::copy(buffer, buffer + linkLayerAddress.GetLength(), identifier.begin());
     m_duid.SetDuid(identifier);
-
-    NS_LOG_FUNCTION(this << hardwareType << linkLayerAddress);
 }
 
 void
@@ -115,7 +111,6 @@ IdentifierOption::SetDuid(Duid duid)
 Duid
 IdentifierOption::GetDuid() const
 {
-    NS_LOG_FUNCTION(this);
     return m_duid;
 }
 
@@ -128,7 +123,6 @@ StatusCodeOption::StatusCodeOption()
 uint16_t
 StatusCodeOption::GetStatusCode() const
 {
-    NS_LOG_FUNCTION(this);
     return m_statusCode;
 }
 
@@ -142,7 +136,6 @@ StatusCodeOption::SetStatusCode(uint16_t statusCode)
 std::string
 StatusCodeOption::GetStatusMessage() const
 {
-    NS_LOG_FUNCTION(this);
     return m_statusMessage;
 }
 
@@ -172,7 +165,6 @@ IaAddressOption::IaAddressOption(Ipv6Address iaAddress,
 Ipv6Address
 IaAddressOption::GetIaAddress() const
 {
-    NS_LOG_FUNCTION(this);
     return m_iaAddress;
 }
 
@@ -186,7 +178,6 @@ IaAddressOption::SetIaAddress(Ipv6Address iaAddress)
 uint32_t
 IaAddressOption::GetPreferredLifetime() const
 {
-    NS_LOG_FUNCTION(this);
     return m_preferredLifetime;
 }
 
@@ -200,7 +191,6 @@ IaAddressOption::SetPreferredLifetime(uint32_t preferredLifetime)
 uint32_t
 IaAddressOption::GetValidLifetime() const
 {
-    NS_LOG_FUNCTION(this);
     return m_validLifetime;
 }
 
@@ -221,7 +211,6 @@ IaOptions::IaOptions()
 uint32_t
 IaOptions::GetIaid() const
 {
-    NS_LOG_FUNCTION(this);
     return m_iaid;
 }
 
@@ -235,7 +224,6 @@ IaOptions::SetIaid(uint32_t iaid)
 uint32_t
 IaOptions::GetT1() const
 {
-    NS_LOG_FUNCTION(this);
     return m_t1;
 }
 
@@ -249,7 +237,6 @@ IaOptions::SetT1(uint32_t t1)
 uint32_t
 IaOptions::GetT2() const
 {
-    NS_LOG_FUNCTION(this);
     return m_t2;
 }
 
@@ -268,7 +255,6 @@ RequestOptions::RequestOptions()
 std::vector<uint16_t>
 RequestOptions::GetRequestedOptions() const
 {
-    NS_LOG_FUNCTION(this);
     return m_requestedOptions;
 }
 
@@ -288,7 +274,6 @@ template <typename T>
 T
 IntegerOptions<T>::GetOptionValue() const
 {
-    NS_LOG_FUNCTION(this);
     return m_optionValue;
 }
 
@@ -308,7 +293,6 @@ ServerUnicastOption::ServerUnicastOption()
 Ipv6Address
 ServerUnicastOption::GetServerAddress()
 {
-    NS_LOG_FUNCTION(this);
     return m_serverAddress;
 }
 

@@ -69,31 +69,31 @@ class LeaseInfo
      * @brief Get the address pool.
      * @return The address pool
      */
-    Ipv6Address GetAddressPool();
+    Ipv6Address GetAddressPool() const;
 
     /**
      * @brief Get the prefix of the address pool.
      * @return The prefix of the address pool
      */
-    Ipv6Prefix GetPrefix();
+    Ipv6Prefix GetPrefix() const;
 
     /**
      * @brief Get the minimum address in the pool.
      * @return The minimum address in the pool
      */
-    Ipv6Address GetMinAddress();
+    Ipv6Address GetMinAddress() const;
 
     /**
      * @brief Get the maximum address in the pool.
      * @return The maximum address in the pool
      */
-    Ipv6Address GetMaxAddress();
+    Ipv6Address GetMaxAddress() const;
 
     /**
      * @brief Get the number of addresses leased.
      * @return The number of addresses leased
      */
-    uint32_t GetNumAddresses();
+    uint32_t GetNumAddresses() const;
 
     /**
      * @brief Expired Addresses (Section 6.2 of RFC 8415)
@@ -227,21 +227,14 @@ class Dhcp6Server : public Application
      */
     void CleanLeases();
 
-    /**
-     * @brief The socket bound to port 547.
-     */
-    Ptr<Socket> m_recvSocket;
+    Ptr<Socket> m_recvSocket; //!< Socket bound to port 547.
+    Duid m_serverDuid;        //!< Server DUID
 
     /**
      * @brief The socket used to send packets.
      * NetDevice / Corresponding socket.
      */
     std::unordered_map<Ptr<NetDevice>, Ptr<Socket>> m_sendSockets;
-
-    /**
-     * @brief The server DUID.
-     */
-    Duid m_serverDuid;
 
     /**
      * @brief Store IA bindings.
@@ -253,14 +246,12 @@ class Dhcp6Server : public Application
      * @brief Default preferred lifetime for an address.
      * According to ISC's Kea guide, the default preferred lifetime is 3000
      * seconds.
-     * Here, arbitrarily set to 18 seconds.
      */
     Time m_prefLifetime;
 
     /**
      * @brief Default valid lifetime.
      * According to ISC's Kea guide, the default valid lifetime is 4000 seconds.
-     * Here, arbitrarily set to 20 seconds.
      */
     Time m_validLifetime;
 
@@ -268,7 +259,6 @@ class Dhcp6Server : public Application
      * @brief The default renew timer.
      * This defines the T1 timer. According to ISC's Kea guide, the default
      * renew timer is 1000 seconds.
-     * Here, arbitrarily set to 10 seconds (50% of valid lifetime).
      */
     Time m_renew;
 
@@ -276,17 +266,12 @@ class Dhcp6Server : public Application
      * @brief The default rebind timer.
      * This defines the T2 timer. According to ISC's Kea guide, the default
      * rebind timer is 2000 seconds.
-     * Here, arbitrarily set to 16 seconds (80% of valid lifetime).
      */
     Time m_rebind;
 
-    /**
-     * @brief List of all managed subnets.
-     */
-    std::vector<LeaseInfo> m_subnets;
-
-    Time m_leaseCleanup;         //!< Lease cleanup time
-    EventId m_leaseCleanupEvent; //!< Event ID for lease cleanup
+    std::vector<LeaseInfo> m_subnets; //!< List of managed subnets.
+    Time m_leaseCleanup;              //!< Lease cleanup time
+    EventId m_leaseCleanupEvent;      //!< Event ID for lease cleanup
 };
 } // namespace internetApplications
 } // namespace ns3

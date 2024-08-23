@@ -351,7 +351,13 @@ Stateless DHCP is used when the client only needs to request configuration param
 
 Typically, the DHCPv6 server is used to assign both addresses and other options like DNS information.
 The server maintains information about the Identity Associations (IAs), which are collections of leases assigned to a client.
+
 There are three types of IAs: IA_NA (non-temporary addresses), IA_TA (temporary addresses), and IA_PD (prefix delegation).
+Temporary addresses were introduced in RFC 4941 to address privacy concerns. In DHCPv6, the IA_TA (Identity Association for Temporary Addresses)
+is used for addresses that are only used for a short time, and their lifetimes are generally not extended. Non-temporary addresses, on the other hand,
+are used for relatively longer durations and are usually renewed by the clients. Note that non-temporary addresses are not permanent leases - the term is
+merely used to differentiate between the IA_TA and IA_NA types.
+
 Currently, the application uses only IA_NA options to lease addresses to clients.
 The state of the lease changes over time, which is why this is known as stateful DHCPv6.
 
@@ -421,10 +427,9 @@ interfaces.
 
 .. sourcecode:: cpp
 
-  Dhcp6Helper dhcpHelper;
-  std::vector<Ptr<NetDevice>> serverNetDevices;
-  serverNetDevices.push_back(netdevice);
-  ApplicationContainer dhcpServerApp = dhcpHelper.InstallDhcp6Server(serverNetDevices);
+  NetDeviceContainer serverNetDevices;
+  serverNetDevices.Add(netdevice);
+  ApplicationContainer dhcpServerApp = dhcp6Helper.InstallDhcp6Server(serverNetDevices);
 
   NetDeviceContainer dhcpClientNetDevs;
   dhcpClientNetDevs.Add(netdevice1_node1);
@@ -438,6 +443,18 @@ Address pools can be configured on the DHCPv6 server using the following API:
   Ptr<Dhcp6Server> server = dhcpHelper.GetDhcp6Server(devNet.Get(0));
   server->AddSubnet(Ipv6Address("2001:db8::"), Ipv6Prefix(64), Ipv6Address("2001:db8::1"), Ipv6Address("2001:db8::ff"));
 
+In the line above, the ``AddSubnet()`` method has the following parameters:
+
+1. ``Ipv6Address("2001:db8::")`` - The address pool that is managed by the server.
+2. ``Ipv6Prefix(64)`` - The prefix of the address pool
+3. ``Ipv6Address("2001:db8::1")`` - The minimum address that can be assigned to a client.
+4. ``Ipv6Address("2001:db8::ff")`` - The maximum address that can be assigned to a client.
+
+Essentially, parameters 1 and 2 define the subnet(s) managed by the server, while parameters
+3 and 4 define the range of addresses that can be assigned.
+If this method is not called, the server will not have any subnet configured and will not be able to assign addresses to clients.
+While it does not throw an error, a user who does not configure any subnets on the server will not see any addresses leased to the client.
+
 Attributes
 ##########
 
@@ -445,6 +462,7 @@ The following attributes can be configured on the client:
 
 * ``Transactions``: A random variable used to set the transaction numbers.
 * ``SolicitJitter``: The jitter in milliseconds that a node waits before sending a Solicit to the server.
+* ``IaidValue``: The identifier of a new Identity Association that is created by a client.
 
 The following values can be initially set on the client interface before stateful DHCPv6 begins. However, they are overridden with values received from the server during the message exchange:
 * ``RenewTime``: The time after which client should renew its lease.
