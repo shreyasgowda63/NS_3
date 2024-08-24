@@ -713,10 +713,10 @@ class Icmpv6L4Protocol : public IpL4Protocol
     ns3::TracedCallback<const Ipv6Address&> m_dadSuccessAddressTrace;
 
     /**
-     * The trace fired when the M flag is received in a Router Advertisement.
-     * Includes the index of the interface on which the RA was received.
+     * The trace fired when a Router Advertisement is received.
+     * Includes the RA header and the interface on which it is received.
      */
-    ns3::TracedCallback<uint32_t> m_startDhcpv6Trace;
+    ns3::TracedCallback<const Icmpv6RA&, uint32_t> m_raReceived;
 };
 
 } /* namespace ns3 */

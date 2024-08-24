@@ -152,9 +152,9 @@ Icmpv6L4Protocol::GetTypeId()
                 "Duplicate Address not detected during DAD, the address is now PREFERRED",
                 MakeTraceSourceAccessor(&Icmpv6L4Protocol::m_dadSuccessAddressTrace),
                 "ns3::Ipv6Address::TracedCallback")
-            .AddTraceSource("StartDhcpv6",
-                            "M flag received, start sending DHCPv6 Solicit from client",
-                            MakeTraceSourceAccessor(&Icmpv6L4Protocol::m_startDhcpv6Trace),
+            .AddTraceSource("RxRouterAdvertisement",
+                            "A router advertisement has been received",
+                            MakeTraceSourceAccessor(&Icmpv6L4Protocol::m_raReceived),
                             "ns3::Ipv6Address::TracedCallback");
     return tid;
 }
@@ -455,11 +455,7 @@ Icmpv6L4Protocol::HandleRA(Ptr<Packet> packet,
 
     p->RemoveHeader(raHeader);
 
-    // Trace the interface index, used when starting the DHCPv6 client.
-    if (raHeader.GetFlagM())
-    {
-        m_startDhcpv6Trace(ipv6->GetInterfaceForDevice(interface->GetDevice()));
-    }
+    m_raReceived(raHeader, ipv6->GetInterfaceForDevice(interface->GetDevice()));
 
     if (raHeader.GetLifeTime())
     {
