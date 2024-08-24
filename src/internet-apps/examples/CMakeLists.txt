@@ -13,11 +13,11 @@ build_lib_example(
   NAME dhcp6-example
   SOURCE_FILES dhcp6-example.cc
   LIBRARIES_TO_LINK
+    ${libapplications}
+    ${libcsma}
     ${libinternet}
     ${libinternet-apps}
-    ${libcsma}
     ${libpoint-to-point}
-    ${libapplications}
     ${libwifi}
 )
 
