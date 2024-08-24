@@ -36,7 +36,7 @@
 
 namespace ns3
 {
-namespace internetApplications
+namespace internet_apps
 {
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Server");
@@ -78,7 +78,6 @@ Dhcp6Server::GetTypeId()
 Dhcp6Server::Dhcp6Server()
 {
     NS_LOG_FUNCTION(this);
-    m_leaseCleanup = Seconds(10.0);
 }
 
 void
@@ -611,9 +610,8 @@ Dhcp6Server::NetHandler(Ptr<Socket> socket)
     NS_LOG_FUNCTION(this << socket);
 
     Dhcp6Header header;
-    Ptr<Packet> packet = nullptr;
     Address from;
-    packet = m_recvSocket->RecvFrom(from);
+    Ptr<Packet> packet = m_recvSocket->RecvFrom(from);
 
     Inet6SocketAddress senderAddr = Inet6SocketAddress::ConvertFrom(from);
 
@@ -699,8 +697,7 @@ Dhcp6Server::StartApplication()
                       "Dhcp6Server::StartApplication: device is not connected to IPv6.");
 
         Ipv6Address linkLocal = ipv6l3->GetInterface(ifIndex)->GetLinkLocalAddress().GetAddress();
-        Ptr<Socket> socket;
-        socket = Socket::CreateSocket(node, tid);
+        Ptr<Socket> socket = Socket::CreateSocket(node, tid);
         socket->Bind(Inet6SocketAddress(linkLocal, Dhcp6Header::SERVER_PORT));
         socket->BindToNetDevice(device);
         m_sendSockets[device] = socket;
@@ -788,5 +785,5 @@ LeaseInfo::GetNumAddresses() const
 {
     return m_numAddresses;
 }
-} // namespace internetApplications
+} // namespace internet_apps
 } // namespace ns3

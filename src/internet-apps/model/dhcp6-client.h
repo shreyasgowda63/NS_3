@@ -33,7 +33,7 @@
 
 namespace ns3
 {
-namespace internetApplications
+namespace internet_apps
 {
 
 /**
@@ -68,9 +68,7 @@ class Dhcp6Client : public Application
      */
     Duid GetSelfDuid();
 
-    /**
-     * State of the DHCPv6 client.
-     */
+    /// State of the DHCPv6 client.
     enum State
     {
         WAIT_ADVERTISE = 1,           // Waiting for an advertise message
@@ -188,54 +186,36 @@ class Dhcp6Client : public Application
      */
     std::vector<uint32_t> GetIaids();
 
-    Ptr<Socket> m_socket;    //!< Socket used for communication.
-    Ptr<NetDevice> m_device; //!< Pointer to the net device of the client.
-    uint8_t m_state;         //!< State of the DHCPv6 client.
-
-    Time m_startTime;            //!< Starting timestamp for Elapsed Time option.
-    uint32_t m_clientTransactId; //!< Transaction ID of the client-initiated message.
-
-    Duid m_clientDuid; //!< Store client DUID.
-    Duid m_serverDuid; //!< Store server DUID.
-
+    Ptr<Socket> m_socket;         //!< Socket used for communication.
+    Ptr<NetDevice> m_device;      //!< Pointer to the net device of the client.
+    Duid m_clientDuid;            //!< Store client DUID.
+    Duid m_serverDuid;            //!< Store server DUID.
+    uint8_t m_state;              //!< State of the DHCPv6 client.
+    uint32_t m_clientTransactId;  //!< Transaction ID of the client-initiated message.
     uint8_t m_nOfferedAddresses;  //!< Number of addresses offered to client.
     uint8_t m_nAcceptedAddresses; //!< Number of addresses accepted by client.
-
-    Time m_msgStartTime;    //!< Time when message exchange starts.
-    Time m_solicitInterval; //!< SOL_MAX_RT, default = 36 secs.
-
-    EventId m_solicitEvent;      //!< Event ID for the Solicit event.
-    TrickleTimer m_solicitTimer; //!< TrickleTimer to schedule Solicit messages.
-
-    Time m_renew;  //!< Time after which lease should be renewed.
-    Time m_rebind; //!< Time after which client should send a Rebind message.
-
-    Time m_prefLifetime;  //!< Preferred lifetime of the address.
-    Time m_validLifetime; //!< Valid lifetime of the address.
-
-    EventId m_renewEvent;  //!< Event ID for the Renew event.
-    EventId m_rebindEvent; //!< Event ID for the rebind event
-
+    TrickleTimer m_solicitTimer;  //!< TrickleTimer to schedule Solicit messages.
+    Time m_msgStartTime;          //!< Time when message exchange starts.
+    Time m_solicitInterval;       //!< SOL_MAX_RT, default = 36 secs.
+    Time m_renew;                 //!< Time after which lease should be renewed.
+    Time m_rebind;                //!< Time after which client should send a Rebind message.
+    Time m_prefLifetime;          //!< Preferred lifetime of the address.
+    Time m_validLifetime;         //!< Valid lifetime of the address.
+    EventId m_solicitEvent;       //!< Event ID for the Solicit event.
+    EventId m_renewEvent;         //!< Event ID for the Renew event.
+    EventId m_rebindEvent;        //!< Event ID for the rebind event
     TracedCallback<const Ipv6Address&> m_newLease; //!< Trace the new lease.
 
-    /**
-     * Track the IPv6 Address - IAID association.
-     */
+    /// Track the IPv6 Address - IAID association.
     std::unordered_map<Ipv6Address, uint32_t, Ipv6AddressHash> m_iaidMap;
 
-    /**
-     * List of addresses to be declined by the client.
-     */
+    /// List of addresses to be declined by the client.
     std::vector<Ipv6Address> m_declinedAddresses;
 
-    /**
-     * Track whether DAD callback on all addresses has been scheduled.
-     */
+    /// Track whether DAD callback on all addresses has been scheduled.
     bool m_addressDadComplete;
 
-    /**
-     * Store all the Event IDs for the addresses being Released.
-     */
+    /// Store all the Event IDs for the addresses being Released.
     std::vector<EventId> m_releaseEvent;
 
     /**
@@ -244,19 +224,13 @@ class Dhcp6Client : public Application
      */
     std::vector<uint32_t> m_iaNaIds;
 
-    /**
-     * Random variable to set transaction ID
-     */
+    /// Random variable to set transaction ID
     Ptr<RandomVariableStream> m_transactionId;
 
-    /**
-     * Random jitter before sending the first Solicit.
-     */
+    /// Random jitter before sending the first Solicit.
     Ptr<RandomVariableStream> m_solicitJitter;
 
-    /**
-     * Random variable used to create the IAID.
-     */
+    /// Random variable used to create the IAID.
     Ptr<RandomVariableStream> m_iaidStream;
 };
 
@@ -268,7 +242,7 @@ class Dhcp6Client : public Application
  */
 std::ostream& operator<<(std::ostream& os, const Dhcp6Client& h);
 
-} // namespace internetApplications
+} // namespace internet_apps
 } // namespace ns3
 
 #endif

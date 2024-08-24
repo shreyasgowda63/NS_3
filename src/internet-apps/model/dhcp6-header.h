@@ -33,7 +33,7 @@
 
 namespace ns3
 {
-namespace internetApplications
+namespace internet_apps
 {
 
 /**
@@ -106,9 +106,7 @@ class Dhcp6Header : public Header
         RELAY_REPL = 13
     };
 
-    /**
-     * Enum to identify the option type.
-     */
+    /// Enum to identify the option type.
     enum OptionType
     {
         OPTION_CLIENTID = 1,
@@ -137,9 +135,7 @@ class Dhcp6Header : public Header
         OPTION_INF_MAX_RT = 83,
     };
 
-    /**
-     * Enum to identify the status code of the operation.
-     */
+    /// Enum to identify the status code of the operation.
     enum StatusCodeValues
     {
         Success = 0,
@@ -295,8 +291,13 @@ class Dhcp6Header : public Header
      */
     void AddIaOption(OptionType optionType, uint32_t iaid, uint32_t t1 = 0, uint32_t t2 = 0);
 
-    uint32_t m_len;         //!< The length of the message.
-    uint32_t m_msgType : 8; //!< The message type.
+    uint32_t m_len;                      //!< The length of the message.
+    uint32_t m_msgType : 8;              //!< The message type.
+    IdentifierOption m_clientIdentifier; //!< The client identifier option.
+    IdentifierOption m_serverIdentifier; //!< The server identifier option.
+    std::vector<IaOptions> m_ianaList;   //!< Vector of IA_NA options.
+    std::vector<IaOptions> m_iataList;   //!< Vector of IA_TA options.
+    uint32_t m_solMaxRt;                 //!< Default value for SOL_MAX_RT option.
 
     /**
      * The transaction ID calculated by the client or the server.
@@ -310,35 +311,19 @@ class Dhcp6Header : public Header
      */
     std::map<OptionType, bool> m_options;
 
-    IdentifierOption m_clientIdentifier; //!< The client identifier option.
-    IdentifierOption m_serverIdentifier; //!< The server identifier option.
-
-    /**
-     * (optional) The status code of the operation just performed.
-     */
+    /// (optional) The status code of the operation just performed.
     StatusCodeOption m_statusCode;
 
-    /**
-     * List of additional options requested.
-     */
+    /// List of additional options requested.
     RequestOptions m_optionRequest;
 
-    /**
-     * The preference value for the server.
-     */
+    /// The preference value for the server.
     PreferenceOption m_preference;
 
-    /**
-     * The amount of time since the client began the transaction.
-     */
+    /// The amount of time since the client began the transaction.
     ElapsedTimeOption m_elapsedTime;
-
-    std::vector<IaOptions> m_ianaList; //!< Vector of IA_NA options.
-    std::vector<IaOptions> m_iataList; //!< Vector of IA_TA options.
-
-    uint32_t m_solMaxRt; //!< Default value for SOL_MAX_RT option.
 };
-} // namespace internetApplications
+} // namespace internet_apps
 } // namespace ns3
 
 #endif

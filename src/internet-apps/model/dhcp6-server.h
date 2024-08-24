@@ -39,7 +39,7 @@ class Inet6SocketAddress;
 class Socket;
 class Packet;
 
-namespace internetApplications
+namespace internet_apps
 {
 /**
  * @ingroup dhcp6
@@ -227,19 +227,16 @@ class Dhcp6Server : public Application
      */
     void CleanLeases();
 
-    Ptr<Socket> m_recvSocket; //!< Socket bound to port 547.
-    Duid m_serverDuid;        //!< Server DUID
+    Ptr<Socket> m_recvSocket;            //!< Socket bound to port 547.
+    Duid m_serverDuid;                   //!< Server DUID
+    std::vector<LeaseInfo> m_subnets;    //!< List of managed subnets.
+    Time m_leaseCleanup = Seconds(10.0); //!< Lease cleanup time
+    EventId m_leaseCleanupEvent;         //!< Event ID for lease cleanup
 
-    /**
-     * @brief The socket used to send packets.
-     * NetDevice / Corresponding socket.
-     */
+    /// Map of NetDevice - Corresponding socket used to send packets.
     std::unordered_map<Ptr<NetDevice>, Ptr<Socket>> m_sendSockets;
 
-    /**
-     * @brief Store IA bindings.
-     * DUID + IA Type / IAID
-     */
+    /// Store IA bindings. Map of DUID + IA Type / IAID
     std::multimap<Duid, std::pair<uint8_t, uint32_t>> m_iaBindings;
 
     /**
@@ -268,12 +265,8 @@ class Dhcp6Server : public Application
      * rebind timer is 2000 seconds.
      */
     Time m_rebind;
-
-    std::vector<LeaseInfo> m_subnets; //!< List of managed subnets.
-    Time m_leaseCleanup;              //!< Lease cleanup time
-    EventId m_leaseCleanupEvent;      //!< Event ID for lease cleanup
 };
-} // namespace internetApplications
+} // namespace internet_apps
 } // namespace ns3
 
 #endif

@@ -31,7 +31,7 @@
 
 namespace ns3
 {
-namespace internetApplications
+namespace internet_apps
 {
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Header");
@@ -485,7 +485,6 @@ Dhcp6Header::Serialize(Buffer::Iterator start) const
 uint32_t
 Dhcp6Header::Deserialize(Buffer::Iterator start)
 {
-    uint32_t len;
     Buffer::Iterator i = start;
     uint32_t cLen = i.GetSize();
 
@@ -493,7 +492,7 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
     m_msgType = mTTid >> 24;
     m_transactId = mTTid & 0x00FFFFFF;
 
-    len = 4;
+    uint32_t len = 4;
     uint16_t option;
     bool loop = true;
     do
@@ -685,5 +684,5 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
     m_len = len;
     return m_len;
 }
-} // namespace internetApplications
+} // namespace internet_apps
 } // namespace ns3

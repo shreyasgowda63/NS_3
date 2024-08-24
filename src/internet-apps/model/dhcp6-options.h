@@ -35,7 +35,7 @@
 namespace ns3
 {
 
-namespace internetApplications
+namespace internet_apps
 {
 
 /**
@@ -246,9 +246,7 @@ class IaAddressOption : public Options
     uint32_t m_preferredLifetime; //!< The preferred lifetime of the address, in seconds.
     uint32_t m_validLifetime;     //!< The valid lifetime of the address, in seconds.
 
-    /**
-     * (optional) The status code of any operation involving this address
-     */
+    /// (optional) The status code of any operation involving this address
     StatusCodeOption m_statusCodeOption;
 };
 
@@ -306,15 +304,11 @@ class IaOptions : public Options
      */
     void SetT2(uint32_t t2);
 
-    /**
-     * The list of IA Address options associated with the IANA.
-     */
+    /// The list of IA Address options associated with the IANA.
     std::vector<IaAddressOption> m_iaAddressOption;
 
   private:
-    /**
-     * The unique identifier for the given IA_NA or IA_TA.
-     */
+    /// The unique identifier for the given IA_NA or IA_TA.
     uint32_t m_iaid;
 
     /**
@@ -329,9 +323,7 @@ class IaOptions : public Options
      */
     uint32_t m_t2;
 
-    /**
-     * (optional) The status code of any operation involving the IANA.
-     */
+    /// (optional) The status code of any operation involving the IANA.
     StatusCodeOption m_statusCodeOption;
 };
 
@@ -382,20 +374,18 @@ class IntegerOptions : public Options
 
     /**
      * @brief Get the option value
-     * @return elapsed time, preference or option list.
+     * @return elapsed time or preference value.
      */
     T GetOptionValue() const;
 
     /**
      * @brief Set the option value.
-     * @param optionValue elapsed time, preference or option list.
+     * @param optionValue elapsed time or preference value.
      */
     void SetOptionValue(T optionValue);
 
   private:
-    /**
-     * Value that indicates the elapsed time, preference value or option list.
-     */
+    /// Indicates the elapsed time or preference value.
     T m_optionValue;
 };
 
@@ -433,7 +423,7 @@ class ServerUnicastOption : public Options
 typedef IntegerOptions<uint8_t> PreferenceOption;
 typedef IntegerOptions<uint16_t> ElapsedTimeOption;
 
-} // namespace internetApplications
+} // namespace internet_apps
 } // namespace ns3
 
 #endif

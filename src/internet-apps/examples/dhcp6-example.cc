@@ -93,7 +93,7 @@
 #include "ns3/yans-wifi-helper.h"
 
 using namespace ns3;
-using namespace ns3::internetApplications;
+using namespace ns3::internet_apps;
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Example");
 
@@ -146,8 +146,7 @@ main(int argc, char* argv[])
 
     NS_LOG_INFO("Assign static IP address to the third node.");
     Ptr<Ipv6> ipv6proto = nonRouterNodes.Get(3)->GetObject<Ipv6>();
-    int32_t ifIndex = 0;
-    ifIndex = ipv6proto->GetInterfaceForDevice(devices.Get(3));
+    int32_t ifIndex = ipv6proto->GetInterfaceForDevice(devices.Get(3));
     Ipv6InterfaceAddress ipv6Addr =
         Ipv6InterfaceAddress(Ipv6Address("2001:db8::1"), Ipv6Prefix(128));
     ipv6proto->AddAddress(ifIndex, ipv6Addr);
@@ -161,16 +160,13 @@ main(int argc, char* argv[])
 
     WifiHelper wifi;
 
-    NetDeviceContainer staDevices;
     mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid), "ActiveProbing", BooleanValue(false));
-    staDevices = wifi.Install(phy, mac, nonRouterNodes);
+    NetDeviceContainer staDevices = wifi.Install(phy, mac, nonRouterNodes);
 
-    NetDeviceContainer apDevices;
     mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
-    apDevices = wifi.Install(phy, mac, router);
+    NetDeviceContainer apDevices = wifi.Install(phy, mac, router);
 
     MobilityHelper mobility;
-
     mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
     mobility.Install(nonRouterNodes); // Clients and server
     mobility.Install(router);         // Router node

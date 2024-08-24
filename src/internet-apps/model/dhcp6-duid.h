@@ -31,7 +31,7 @@
 
 namespace ns3
 {
-namespace internetApplications
+namespace internet_apps
 {
 
 /**
@@ -198,7 +198,7 @@ std::ostream& operator<<(std::ostream& os, const Duid& duid);
  */
 std::istream& operator>>(std::istream& is, Duid& duid);
 
-} // namespace internetApplications
+} // namespace internet_apps
 } // namespace ns3
 
 #endif

@@ -66,7 +66,7 @@ class Dhcp6Helper
      * @param netDevice The NetDevice for which the server is required
      * @return The pointer to the DHCPv6 server
      */
-    Ptr<internetApplications::Dhcp6Server> GetDhcp6Server(Ptr<NetDevice> netDevice) const;
+    Ptr<internet_apps::Dhcp6Server> GetDhcp6Server(Ptr<NetDevice> netDevice) const;
 
     /**
      * @brief Install DHCPv6 client on a node / NetDevice
@@ -99,13 +99,10 @@ class Dhcp6Helper
     Ptr<Application> InstallDhcp6ClientPriv(Ptr<NetDevice> netDevice) const;
 
     ObjectFactory m_clientFactory; //!< DHCPv6 client factory.
-
     ObjectFactory m_serverFactory; //!< DHCPv6 server factory.
 
-    /**
-     * Map of net devices to a DHCPv6 server.
-     */
-    std::map<Ptr<NetDevice>, Ptr<internetApplications::Dhcp6Server>> m_serverNetDevices;
+    /// Map of net devices to a DHCPv6 server.
+    std::map<Ptr<NetDevice>, Ptr<internet_apps::Dhcp6Server>> m_serverNetDevices;
 };
 
 } // namespace ns3

@@ -46,7 +46,7 @@
 
 namespace ns3
 {
-namespace internetApplications
+namespace internet_apps
 {
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Client");
@@ -176,7 +176,7 @@ Dhcp6Client::SendRequest(Ptr<NetDevice> iDev, Dhcp6Header header, Inet6SocketAdd
     requestHeader.SetMessageType(Dhcp6Header::REQUEST);
 
     // TODO: Use min, max for GetValue
-    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
+    m_clientTransactId = static_cast<uint32_t>(m_transactionId->GetValue());
     requestHeader.SetTransactId(m_clientTransactId);
 
     // Add Client Identifier Option.
@@ -274,13 +274,11 @@ Dhcp6Client::DeclineOffer()
     }
 
     Dhcp6Header declineHeader;
-    Ptr<Packet> packet;
-    packet = Create<Packet>();
+    Ptr<Packet> packet = Create<Packet>();
 
     // Remove address associations.
-    for (uint32_t i = 0; i < m_declinedAddresses.size(); i++)
+    for (const auto& offer : m_declinedAddresses)
     {
-        Ipv6Address offer = m_declinedAddresses[i];
         uint32_t iaid = m_iaidMap[offer];
 
         // IA_NA option, IA address option
@@ -291,7 +289,7 @@ Dhcp6Client::DeclineOffer()
                                  m_validLifetime.GetSeconds());
     }
 
-    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
+    m_clientTransactId = static_cast<uint32_t>(m_transactionId->GetValue());
     declineHeader.SetTransactId(m_clientTransactId);
     declineHeader.SetMessageType(Dhcp6Header::DECLINE);
 
@@ -417,10 +415,9 @@ Dhcp6Client::SendRenew(std::vector<uint32_t> iaidList)
     NS_LOG_FUNCTION(this);
 
     Dhcp6Header header;
-    Ptr<Packet> packet;
-    packet = Create<Packet>();
+    Ptr<Packet> packet = Create<Packet>();
 
-    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
+    m_clientTransactId = static_cast<uint32_t>(m_transactionId->GetValue());
 
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::RENEW);
@@ -435,9 +432,9 @@ Dhcp6Client::SendRenew(std::vector<uint32_t> iaidList)
     header.AddElapsedTime(0);
 
     // Add IA_NA options.
-    for (uint32_t i = 0; i < iaidList.size(); i++)
+    for (const auto& iaidRenew : iaidList)
     {
-        header.AddIanaOption(iaidList[i], m_renew.GetSeconds(), m_rebind.GetSeconds());
+        header.AddIanaOption(iaidRenew, m_renew.GetSeconds(), m_rebind.GetSeconds());
 
         // Iterate through the IPv6Address - IAID map, and add all addresses
         // that match the IAID to be renewed.
@@ -445,9 +442,9 @@ Dhcp6Client::SendRenew(std::vector<uint32_t> iaidList)
         {
             Ipv6Address address = itr.first;
             uint32_t iaid = itr.second;
-            if (iaid == iaidList[i])
+            if (iaid == iaidRenew)
             {
-                header.AddAddress(iaidList[i],
+                header.AddAddress(iaidRenew,
                                   address,
                                   m_prefLifetime.GetSeconds(),
                                   m_validLifetime.GetSeconds());
@@ -480,10 +477,9 @@ Dhcp6Client::SendRebind(std::vector<uint32_t> iaidList)
     NS_LOG_FUNCTION(this);
 
     Dhcp6Header header;
-    Ptr<Packet> packet;
-    packet = Create<Packet>();
+    Ptr<Packet> packet = Create<Packet>();
 
-    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
+    m_clientTransactId = static_cast<uint32_t>(m_transactionId->GetValue());
 
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::REBIND);
@@ -495,9 +491,9 @@ Dhcp6Client::SendRebind(std::vector<uint32_t> iaidList)
     header.AddElapsedTime(0);
 
     // Add IA_NA options.
-    for (uint32_t i = 0; i < iaidList.size(); i++)
+    for (const auto& iaid : iaidList)
     {
-        header.AddIanaOption(iaidList[i], m_renew.GetSeconds(), m_rebind.GetSeconds());
+        header.AddIanaOption(iaid, m_renew.GetSeconds(), m_rebind.GetSeconds());
     }
 
     // Add Option Request option.
@@ -529,10 +525,9 @@ Dhcp6Client::SendRelease(Ipv6Address address)
     ipv6->RemoveAddress(ifIndex, address);
 
     Dhcp6Header header;
-    Ptr<Packet> packet;
-    packet = Create<Packet>();
+    Ptr<Packet> packet = Create<Packet>();
 
-    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
+    m_clientTransactId = static_cast<uint32_t>(m_transactionId->GetValue());
 
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::RELEASE);
@@ -784,11 +779,10 @@ Dhcp6Client::Boot()
     }
 
     Dhcp6Header header;
-    Ptr<Packet> packet;
-    packet = Create<Packet>();
+    Ptr<Packet> packet = Create<Packet>();
 
     // Create a unique transaction ID.
-    m_clientTransactId = (uint32_t)(m_transactionId->GetValue());
+    m_clientTransactId = static_cast<uint32_t>(m_transactionId->GetValue());
 
     header.SetTransactId(m_clientTransactId);
     header.SetMessageType(Dhcp6Header::SOLICIT);
@@ -857,5 +851,5 @@ operator<<(std::ostream& os, const Dhcp6Client& h)
     return os;
 }
 
-} // namespace internetApplications
+} // namespace internet_apps
 } // namespace ns3

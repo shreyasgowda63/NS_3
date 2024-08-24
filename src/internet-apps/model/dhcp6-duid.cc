@@ -31,7 +31,7 @@
 
 namespace ns3
 {
-namespace internetApplications
+namespace internet_apps
 {
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Duid");
@@ -233,7 +233,7 @@ Duid::GetSerializedSize() const
 void
 Duid::Print(std::ostream& os) const
 {
-    os << "( type = " << (uint32_t)m_duidType << " )";
+    os << "( type = " << static_cast<uint32_t>(m_duidType) << " )";
 }
 
 void
@@ -243,9 +243,9 @@ Duid::Serialize(Buffer::Iterator start) const
     i.WriteHtonU16(m_duidType);
     i.WriteHtonU16(m_hardwareType);
 
-    for (uint32_t j = 0; j < m_identifier.size(); j++)
+    for (const auto& byte : m_identifier)
     {
-        i.WriteU8(m_identifier[j]);
+        i.WriteU8(byte);
     }
 }
 
@@ -282,5 +282,5 @@ Duid::DuidHash::operator()(const Duid& x) const noexcept
     std::string s(buffer.begin(), buffer.begin() + duidLen);
     return std::hash<std::string>{}(s);
 }
-} // namespace internetApplications
+} // namespace internet_apps
 } // namespace ns3
