@@ -51,18 +51,6 @@ Dhcp6Helper::SetServerAttribute(std::string name, const AttributeValue& value)
     m_serverFactory.Set(name, value);
 }
 
-Ptr<internet_apps::Dhcp6Server>
-Dhcp6Helper::GetDhcp6Server(Ptr<NetDevice> netDevice) const
-{
-    auto it = m_serverNetDevices.find(netDevice);
-    if (it == m_serverNetDevices.end())
-    {
-        NS_LOG_WARN("No server found for the given NetDevice.");
-        return nullptr;
-    }
-    return it->second;
-}
-
 ApplicationContainer
 Dhcp6Helper::InstallDhcp6Client(Ptr<NetDevice> netDevice) const
 {
@@ -133,9 +121,6 @@ Dhcp6Helper::InstallDhcp6Server(NetDeviceContainer netDevices)
 
         ipv6->SetMetric(interface, 1);
         ipv6->SetUp(interface);
-
-        // Add DHCPv6 server to the map.
-        m_serverNetDevices[netDevice] = app;
     }
 
     Ptr<Node> node = netDevices.Get(0)->GetNode();

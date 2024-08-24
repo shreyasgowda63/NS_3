@@ -115,7 +115,7 @@ Dhcp6TestCase::DoRun()
     serverNetDevices.Add(devNet.Get(0));
     ApplicationContainer dhcpServerApp = dhcpHelper.InstallDhcp6Server(serverNetDevices);
 
-    Ptr<Dhcp6Server> server = dhcpHelper.GetDhcp6Server(devNet.Get(0));
+    Ptr<Dhcp6Server> server = DynamicCast<Dhcp6Server>(dhcpServerApp.Get(0));
     server->AddSubnet(Ipv6Address("2001:db8::"),
                       Ipv6Prefix(64),
                       Ipv6Address("2001:db8::1"),

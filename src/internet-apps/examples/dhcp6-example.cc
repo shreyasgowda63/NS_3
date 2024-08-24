@@ -215,7 +215,7 @@ main(int argc, char* argv[])
     serverNetDevices.Add(staDevices.Get(0));
     ApplicationContainer dhcpServerApp = dhcp6Helper.InstallDhcp6Server(serverNetDevices);
 
-    Ptr<Dhcp6Server> server = dhcp6Helper.GetDhcp6Server(nonRouterDevices.Get(0));
+    Ptr<Dhcp6Server> server = DynamicCast<Dhcp6Server>(dhcpServerApp.Get(0));
     server->AddSubnet(Ipv6Address("2001:db8::"),
                       Ipv6Prefix(64),
                       Ipv6Address("2001:db8::1"),
