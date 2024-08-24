@@ -92,6 +92,12 @@ class Ipv4Address
      */
     static Ipv4Address Deserialize(const uint8_t buf[4]);
     /**
+     * \brief Returns the hash of an IPv4 address.
+     * \param address IPv4 address to hash
+     * \return the hash of the address
+     */
+    static size_t Hash(const Ipv4Address& address);
+    /**
      * \brief Print this address to the given output stream
      *
      * The print format is in the typical "192.168.1.1"
@@ -391,23 +397,6 @@ operator<(const Ipv4Address& a, const Ipv4Address& b)
 {
     return a.m_address < b.m_address;
 }
-
-/**
- * \ingroup address
- *
- * \class Ipv4AddressHash
- * \brief Class providing an hash for IPv4 addresses
- */
-class Ipv4AddressHash
-{
-  public:
-    /**
-     * \brief Returns the hash of an IPv4 address.
-     * \param x IPv4 address to hash
-     * \return the hash of the address
-     */
-    size_t operator()(const Ipv4Address& x) const;
-};
 
 inline bool
 operator==(const Ipv4Mask& a, const Ipv4Mask& b)

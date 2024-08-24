@@ -82,9 +82,6 @@ class NixVectorRouting : public std::enable_if_t<std::is_same_v<Ipv4RoutingProto
     /// Alias for Ipv4Route and Ipv6Route classes
     using IpRoute = typename std::conditional_t<IsIpv4, Ipv4Route, Ipv6Route>;
 
-    /// Alias for Ipv4AddressHash and Ipv6AddressHash classes
-    using IpAddressHash = typename std::conditional_t<IsIpv4, Ipv4AddressHash, Ipv6AddressHash>;
-
     /// Alias for Ipv4Header and Ipv6Header classes
     using IpHeader = typename std::conditional_t<IsIpv4, Ipv4Header, Ipv6Header>;
 
@@ -97,6 +94,21 @@ class NixVectorRouting : public std::enable_if_t<std::is_same_v<Ipv4RoutingProto
 
     /// Alias for Ipv4L3Protocol and Ipv4L3Protocol classes
     using IpL3Protocol = typename std::conditional_t<IsIpv4, Ipv4L3Protocol, Ipv6L3Protocol>;
+
+    /// Hash functor for IpAddress
+    struct IpAddressHash
+    {
+        /**
+         * \brief Returns the hash of the given IpAddress instance.
+         *
+         * @param address the IpAddress instance to hash
+         * @return the hash of the address
+         */
+        std::size_t operator()(const IpAddress& address) const
+        {
+            return IpAddress::Hash(address);
+        }
+    };
 
   public:
     NixVectorRouting();

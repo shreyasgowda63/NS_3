@@ -112,6 +112,13 @@ class Ipv6Address
     static Ipv6Address Deserialize(const uint8_t buf[16]);
 
     /**
+     * \brief Returns the hash of an IPv6 address.
+     * \param address IPv6 address to hash
+     * \return the hash of the address
+     */
+    static size_t Hash(const Ipv6Address& address);
+
+    /**
      * \brief Make the solicited IPv6 address.
      * \param addr the IPv6 address
      * \return Solicited IPv6 address
@@ -680,23 +687,6 @@ operator!=(const Ipv6Prefix& a, const Ipv6Prefix& b)
 {
     return std::memcmp(a.m_prefix, b.m_prefix, 16);
 }
-
-/**
- * \ingroup address
- *
- * \class Ipv6AddressHash
- * \brief Hash function class for IPv6 addresses.
- */
-class Ipv6AddressHash
-{
-  public:
-    /**
-     * \brief Returns the hash of an IPv6 address.
-     * \param x IPv6 address to hash
-     * \return the hash of the address
-     */
-    size_t operator()(const Ipv6Address& x) const;
-};
 
 } /* namespace ns3 */
 

@@ -130,6 +130,16 @@ Ipv6Address::Deserialize(const uint8_t buf[16])
     return ipv6;
 }
 
+size_t
+Ipv6Address::Hash(const Ipv6Address& address)
+{
+    uint8_t buf[16];
+
+    address.GetBytes(buf);
+
+    return Hash64(reinterpret_cast<const char*>(buf), 16);
+}
+
 Ipv6Address
 Ipv6Address::MakeIpv4MappedAddress(Ipv4Address addr)
 {
@@ -910,16 +920,6 @@ operator>>(std::istream& is, Ipv6Prefix& prefix)
     is >> str;
     prefix = Ipv6Prefix(str.c_str());
     return is;
-}
-
-size_t
-Ipv6AddressHash::operator()(const Ipv6Address& x) const
-{
-    uint8_t buf[16];
-
-    x.GetBytes(buf);
-
-    return Hash64(reinterpret_cast<const char*>(buf), 16);
 }
 
 ATTRIBUTE_HELPER_CPP(Ipv6Address);

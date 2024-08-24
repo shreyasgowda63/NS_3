@@ -321,6 +321,14 @@ Ipv4Address::Deserialize(const uint8_t buf[4])
     return ipv4;
 }
 
+size_t
+Ipv4Address::Hash(const Ipv4Address& address)
+{
+    auto buf = address.Get();
+
+    return Hash32(reinterpret_cast<const char*>(&buf), 4);
+}
+
 void
 Ipv4Address::Print(std::ostream& os) const
 {
@@ -398,14 +406,6 @@ Ipv4Address::GetLoopback()
     NS_LOG_FUNCTION_NOARGS();
     Ipv4Address loopback("127.0.0.1");
     return loopback;
-}
-
-size_t
-Ipv4AddressHash::operator()(const Ipv4Address& x) const
-{
-    auto buf = x.Get();
-
-    return Hash32(reinterpret_cast<const char*>(&buf), 4);
 }
 
 std::ostream&
