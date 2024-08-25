@@ -33,7 +33,7 @@
 
 namespace ns3
 {
-namespace internet_apps
+namespace internetapps
 {
 
 /**
@@ -242,7 +242,7 @@ class Dhcp6Client : public Application
  */
 std::ostream& operator<<(std::ostream& os, const Dhcp6Client& h);
 
-} // namespace internet_apps
+} // namespace internetapps
 } // namespace ns3
 
 #endif

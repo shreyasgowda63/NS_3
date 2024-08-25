@@ -31,7 +31,7 @@
 
 namespace ns3
 {
-namespace internet_apps
+namespace internetapps
 {
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Options");
@@ -308,5 +308,5 @@ ServerUnicastOption::SetServerAddress(Ipv6Address serverAddress)
 template class IntegerOptions<uint16_t>;
 template class IntegerOptions<uint8_t>;
 
-} // namespace internet_apps
+} // namespace internetapps
 } // namespace ns3

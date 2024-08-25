@@ -31,7 +31,7 @@
 
 namespace ns3
 {
-namespace internet_apps
+namespace internetapps
 {
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Header");
@@ -684,5 +684,5 @@ Dhcp6Header::Deserialize(Buffer::Iterator start)
     m_len = len;
     return m_len;
 }
-} // namespace internet_apps
+} // namespace internetapps
 } // namespace ns3

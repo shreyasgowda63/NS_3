@@ -46,7 +46,7 @@
 
 namespace ns3
 {
-namespace internet_apps
+namespace internetapps
 {
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Client");
@@ -851,5 +851,5 @@ operator<<(std::ostream& os, const Dhcp6Client& h)
     return os;
 }
 
-} // namespace internet_apps
+} // namespace internetapps
 } // namespace ns3

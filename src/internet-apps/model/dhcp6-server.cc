@@ -36,7 +36,7 @@
 
 namespace ns3
 {
-namespace internet_apps
+namespace internetapps
 {
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Server");
@@ -785,5 +785,5 @@ LeaseInfo::GetNumAddresses() const
 {
     return m_numAddresses;
 }
-} // namespace internet_apps
+} // namespace internetapps
 } // namespace ns3

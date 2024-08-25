@@ -33,7 +33,7 @@
 
 namespace ns3
 {
-namespace internet_apps
+namespace internetapps
 {
 
 /**
@@ -323,7 +323,7 @@ class Dhcp6Header : public Header
     /// The amount of time since the client began the transaction.
     ElapsedTimeOption m_elapsedTime;
 };
-} // namespace internet_apps
+} // namespace internetapps
 } // namespace ns3
 
 #endif

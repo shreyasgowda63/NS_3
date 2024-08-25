@@ -35,8 +35,8 @@ NS_LOG_COMPONENT_DEFINE("Dhcp6Helper");
 
 Dhcp6Helper::Dhcp6Helper()
 {
-    m_clientFactory.SetTypeId(internet_apps::Dhcp6Client::GetTypeId());
-    m_serverFactory.SetTypeId(internet_apps::Dhcp6Server::GetTypeId());
+    m_clientFactory.SetTypeId(internetapps::Dhcp6Client::GetTypeId());
+    m_serverFactory.SetTypeId(internetapps::Dhcp6Server::GetTypeId());
 }
 
 void
@@ -89,7 +89,7 @@ Dhcp6Helper::InstallDhcp6ClientPriv(Ptr<NetDevice> netDevice) const
     ipv6->SetMetric(interface, 1);
     ipv6->SetUp(interface);
 
-    Ptr<internet_apps::Dhcp6Client> app = m_clientFactory.Create<internet_apps::Dhcp6Client>();
+    Ptr<internetapps::Dhcp6Client> app = m_clientFactory.Create<internetapps::Dhcp6Client>();
     app->SetDhcp6ClientNetDevice(netDevice);
     node->AddApplication(app);
 
@@ -99,7 +99,7 @@ Dhcp6Helper::InstallDhcp6ClientPriv(Ptr<NetDevice> netDevice) const
 ApplicationContainer
 Dhcp6Helper::InstallDhcp6Server(NetDeviceContainer netDevices)
 {
-    Ptr<internet_apps::Dhcp6Server> app = m_serverFactory.Create<internet_apps::Dhcp6Server>();
+    Ptr<internetapps::Dhcp6Server> app = m_serverFactory.Create<internetapps::Dhcp6Server>();
 
     for (auto itr = netDevices.Begin(); itr != netDevices.End(); itr++)
     {

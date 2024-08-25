@@ -39,7 +39,7 @@ class Inet6SocketAddress;
 class Socket;
 class Packet;
 
-namespace internet_apps
+namespace internetapps
 {
 /**
  * @ingroup dhcp6
@@ -266,7 +266,7 @@ class Dhcp6Server : public Application
      */
     Time m_rebind;
 };
-} // namespace internet_apps
+} // namespace internetapps
 } // namespace ns3
 
 #endif

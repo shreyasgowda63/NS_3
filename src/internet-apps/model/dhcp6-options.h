@@ -35,7 +35,7 @@
 namespace ns3
 {
 
-namespace internet_apps
+namespace internetapps
 {
 
 /**
@@ -423,7 +423,7 @@ class ServerUnicastOption : public Options
 typedef IntegerOptions<uint8_t> PreferenceOption;
 typedef IntegerOptions<uint16_t> ElapsedTimeOption;
 
-} // namespace internet_apps
+} // namespace internetapps
 } // namespace ns3
 
 #endif
