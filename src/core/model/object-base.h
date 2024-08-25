@@ -224,8 +224,9 @@ class ObjectBase
      *
      * \param [in]  name The name of the attribute to read.
      * \param [out] value Where the result should be stored.
-     * \param [in] permissive A boolean flag indicating whether to suppress warnings and errors for
-     * deprecated and obsolete attributes. Defaults to false.
+     * \param [in] permissive If false (by default), will generate warnings and errors for
+     * deprecated and obsolete attributes, respectively. If set to true, both warnings and errors
+     * for deprecated and obsolete attributes will be suppressed.
      */
     void GetAttribute(std::string name, AttributeValue& value, bool permissive = false) const;
     /**
