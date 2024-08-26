@@ -414,9 +414,9 @@ operator!=(const Ipv4Mask& a, const Ipv4Mask& b)
  * \ingroup address
  * Hashing functor taking a Ipv4Address and returning a @c std::size_t.
  * For use with `unordered_map` and `unordered_set`.
- * This functor uses the `Hasher` class to generate stable hash values that are consistent across
- * different runs, platforms, and compilers, making it suitable for generating output where
- * consistency is essential.
+ * This functor simply return the original IPv4 address. It generate stable hash values that are
+ * consistent across different runs, platforms, and compilers, making it suitable for generating
+ * output where consistency is essential.
  */
 template <>
 struct std::hash<ns3::Ipv4Address>

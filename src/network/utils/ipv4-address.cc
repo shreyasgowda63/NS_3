@@ -444,16 +444,5 @@ ATTRIBUTE_HELPER_CPP(Ipv4Mask);
 std::size_t
 std::hash<ns3::Ipv4Address>::operator()(const ns3::Ipv4Address& address) const
 {
-    uint8_t buf[4];
-
-    address.Serialize(buf);
-
-    char buffer[4];
-
-    for (int i = 0; i < 4; ++i)
-    {
-        buffer[i] = buf[i];
-    }
-
-    return ns3::Hash32(buffer, 4);
+    return address.Get();
 }
