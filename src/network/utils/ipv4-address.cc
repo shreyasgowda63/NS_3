@@ -324,9 +324,18 @@ Ipv4Address::Deserialize(const uint8_t buf[4])
 size_t
 Ipv4Address::Hash(const Ipv4Address& address)
 {
-    auto buf = address.Get();
+    uint8_t buf[4];
 
-    return Hash32(reinterpret_cast<const char*>(&buf), 4);
+    address.Serialize(buf);
+
+    char buffer[4];
+
+    for (int i = 0; i < 4; ++i)
+    {
+        buffer[i] = buf[i];
+    }
+
+    return Hash32(buffer, 4);
 }
 
 void
