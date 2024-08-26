@@ -691,6 +691,9 @@ operator!=(const Ipv6Prefix& a, const Ipv6Prefix& b)
  * \ingroup address
  * Hashing functor taking a Ipv6Address and returning a @c std::size_t.
  * For use with `unordered_map` and `unordered_set`.
+ * This functor uses the `Hasher` class to generate stable hash values that are consistent across
+ * different runs, platforms, and compilers, making it suitable for generating output where
+ * consistency is essential.
  */
 template <>
 struct std::hash<ns3::Ipv6Address>
