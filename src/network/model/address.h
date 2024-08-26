@@ -293,4 +293,28 @@ std::istream& operator>>(std::istream& is, Address& address);
 
 } // namespace ns3
 
+/****************************************************
+ *      Global Functions (outside namespace ns3)
+ ***************************************************/
+
+/**
+ * \ingroup address
+ * Hashing functor taking an Address instance and returning a @c std::size_t.
+ * For use with `unordered_map` and `unordered_set`.
+ */
+template <>
+struct std::hash<ns3::Address>
+{
+    /**
+     * The functor.
+     * \param x the address of which calculate the hash
+     * \return the hash of x
+     *
+     * It calculates the hash taking the uint32_t hash value of the IPv4 or IPv6 address.
+     * It works only for InetSocketAddresses (IPv4 version) or Inet6SocketAddresses (IPv6
+     * version)
+     */
+    std::size_t operator()(const ns3::Address& x) const;
+};
+
 #endif /* ADDRESS_H */
