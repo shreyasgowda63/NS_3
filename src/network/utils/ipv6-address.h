@@ -112,13 +112,6 @@ class Ipv6Address
     static Ipv6Address Deserialize(const uint8_t buf[16]);
 
     /**
-     * \brief Returns the hash of an IPv6 address.
-     * \param address IPv6 address to hash
-     * \return the hash of the address
-     */
-    static size_t Hash(const Ipv6Address& address);
-
-    /**
      * \brief Make the solicited IPv6 address.
      * \param addr the IPv6 address
      * \return Solicited IPv6 address
@@ -689,5 +682,25 @@ operator!=(const Ipv6Prefix& a, const Ipv6Prefix& b)
 }
 
 } /* namespace ns3 */
+
+/****************************************************
+ *      Global Functions (outside namespace ns3)
+ ***************************************************/
+
+/**
+ * \ingroup address
+ * Hashing functor taking a Ipv6Address and returning a @c std::size_t.
+ * For use with `unordered_map` and `unordered_set`.
+ */
+template <>
+struct std::hash<ns3::Ipv6Address>
+{
+    /**
+     * The functor.
+     * \param address IPv6 address to hash
+     * \return the hash of the address
+     */
+    std::size_t operator()(const ns3::Ipv6Address& address) const;
+};
 
 #endif /* IPV6_ADDRESS_H */

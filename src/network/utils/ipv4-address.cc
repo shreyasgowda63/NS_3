@@ -321,23 +321,6 @@ Ipv4Address::Deserialize(const uint8_t buf[4])
     return ipv4;
 }
 
-size_t
-Ipv4Address::Hash(const Ipv4Address& address)
-{
-    uint8_t buf[4];
-
-    address.Serialize(buf);
-
-    char buffer[4];
-
-    for (int i = 0; i < 4; ++i)
-    {
-        buffer[i] = buf[i];
-    }
-
-    return Hash32(buffer, 4);
-}
-
 void
 Ipv4Address::Print(std::ostream& os) const
 {
@@ -453,3 +436,24 @@ ATTRIBUTE_HELPER_CPP(Ipv4Address);
 ATTRIBUTE_HELPER_CPP(Ipv4Mask);
 
 } // namespace ns3
+
+/****************************************************
+ *      Global Functions (outside namespace ns3)
+ ***************************************************/
+
+std::size_t
+std::hash<ns3::Ipv4Address>::operator()(const ns3::Ipv4Address& address) const
+{
+    uint8_t buf[4];
+
+    address.Serialize(buf);
+
+    char buffer[4];
+
+    for (int i = 0; i < 4; ++i)
+    {
+        buffer[i] = buf[i];
+    }
+
+    return ns3::Hash32(buffer, 4);
+}

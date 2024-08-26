@@ -95,21 +95,6 @@ class NixVectorRouting : public std::enable_if_t<std::is_same_v<Ipv4RoutingProto
     /// Alias for Ipv4L3Protocol and Ipv4L3Protocol classes
     using IpL3Protocol = typename std::conditional_t<IsIpv4, Ipv4L3Protocol, Ipv6L3Protocol>;
 
-    /// Hash functor for IpAddress
-    struct IpAddressHash
-    {
-        /**
-         * \brief Returns the hash of the given IpAddress instance.
-         *
-         * @param address the IpAddress instance to hash
-         * @return the hash of the address
-         */
-        std::size_t operator()(const IpAddress& address) const
-        {
-            return IpAddress::Hash(address);
-        }
-    };
-
   public:
     NixVectorRouting();
     ~NixVectorRouting();
@@ -522,7 +507,7 @@ class NixVectorRouting : public std::enable_if_t<std::is_same_v<Ipv4RoutingProto
      * GetNodeByIp() method.  NIX vector routing assumes IP addresses
      * are unique so mapping can be done without duplication.
      **/
-    typedef std::unordered_map<IpAddress, ns3::Ptr<ns3::Node>, IpAddressHash> IpAddressToNodeMap;
+    typedef std::unordered_map<IpAddress, ns3::Ptr<ns3::Node>> IpAddressToNodeMap;
     static IpAddressToNodeMap g_ipAddressToNodeMap; //!< Address to node map.
 
     /// Mapping of Ptr<NetDevice> to Ptr<IpInterface>.

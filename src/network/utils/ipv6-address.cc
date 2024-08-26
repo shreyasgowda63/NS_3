@@ -130,16 +130,6 @@ Ipv6Address::Deserialize(const uint8_t buf[16])
     return ipv6;
 }
 
-size_t
-Ipv6Address::Hash(const Ipv6Address& address)
-{
-    uint8_t buf[16];
-
-    address.GetBytes(buf);
-
-    return Hash64(reinterpret_cast<const char*>(buf), 16);
-}
-
 Ipv6Address
 Ipv6Address::MakeIpv4MappedAddress(Ipv4Address addr)
 {
@@ -926,3 +916,17 @@ ATTRIBUTE_HELPER_CPP(Ipv6Address);
 ATTRIBUTE_HELPER_CPP(Ipv6Prefix);
 
 } /* namespace ns3 */
+
+/****************************************************
+ *      Global Functions (outside namespace ns3)
+ ***************************************************/
+
+std::size_t
+std::hash<ns3::Ipv6Address>::operator()(const ns3::Ipv6Address& address) const
+{
+    uint8_t buf[16];
+
+    address.GetBytes(buf);
+
+    return ns3::Hash64(reinterpret_cast<const char*>(buf), 16);
+}

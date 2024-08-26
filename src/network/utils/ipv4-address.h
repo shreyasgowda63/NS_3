@@ -92,12 +92,6 @@ class Ipv4Address
      */
     static Ipv4Address Deserialize(const uint8_t buf[4]);
     /**
-     * \brief Returns the hash of an IPv4 address.
-     * \param address IPv4 address to hash
-     * \return the hash of the address
-     */
-    static size_t Hash(const Ipv4Address& address);
-    /**
      * \brief Print this address to the given output stream
      *
      * The print format is in the typical "192.168.1.1"
@@ -411,5 +405,25 @@ operator!=(const Ipv4Mask& a, const Ipv4Mask& b)
 }
 
 } // namespace ns3
+
+/****************************************************
+ *      Global Functions (outside namespace ns3)
+ ***************************************************/
+
+/**
+ * \ingroup address
+ * Hashing functor taking a Ipv4Address and returning a @c std::size_t.
+ * For use with `unordered_map` and `unordered_set`.
+ */
+template <>
+struct std::hash<ns3::Ipv4Address>
+{
+    /**
+     * The functor.
+     * \param address IPv4 address to hash
+     * \return the hash of the address
+     */
+    std::size_t operator()(const ns3::Ipv4Address& address) const;
+};
 
 #endif /* IPV4_ADDRESS_H */
