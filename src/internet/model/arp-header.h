@@ -41,7 +41,7 @@ class ArpHeader : public Header
      * These ARP types are part of the standard ARP packet format as defined in Section
      * "Definitions" of \RFC{826}.
      */
-    enum ArpType_e
+    enum ArpType_e : uint16_t
     {
         ARP_TYPE_REQUEST = 1,
         ARP_TYPE_REPLY = 2
@@ -55,7 +55,7 @@ class ArpHeader : public Header
      * For the full list of Hardware Types, refer to:
      * https://www.iana.org/assignments/arp-parameters/arp-parameters.xhtml
      */
-    enum HardwareType
+    enum HardwareType : uint16_t
     {
         HRD_TYPE_UNKNOWN = 0,
         HRD_TYPE_ETHERNET = 1,
@@ -156,12 +156,12 @@ class ArpHeader : public Header
     void Serialize(Buffer::Iterator start) const override;
     uint32_t Deserialize(Buffer::Iterator start) override;
 
-    uint16_t m_hardwareType;  //!< hardware type
-    uint16_t m_type;          //!< type of the ICMP packet
-    Address m_macSource;      //!< hardware source address
-    Address m_macDest;        //!< hardware destination address
-    Ipv4Address m_ipv4Source; //!< IP source address
-    Ipv4Address m_ipv4Dest;   //!< IP destination address
+    HardwareType m_hardwareType; //!< hardware type
+    ArpType_e m_type;            //!< type of the ICMP packet
+    Address m_macSource;         //!< hardware source address
+    Address m_macDest;           //!< hardware destination address
+    Ipv4Address m_ipv4Source;    //!< IP source address
+    Ipv4Address m_ipv4Dest;      //!< IP destination address
 };
 
 /**

@@ -96,7 +96,7 @@ ArpHeader::HardwareType
 ArpHeader::GetHardwareType() const
 {
     NS_LOG_FUNCTION(this);
-    return HardwareType(m_hardwareType);
+    return m_hardwareType;
 }
 
 Address
@@ -206,10 +206,10 @@ ArpHeader::Deserialize(Buffer::Iterator start)
 {
     NS_LOG_FUNCTION(this << &start);
     Buffer::Iterator i = start;
-    m_hardwareType = i.ReadNtohU16();         // Read HTYPE
-    uint32_t protocolType = i.ReadNtohU16();  // Read PRO
-    uint32_t hardwareAddressLen = i.ReadU8(); // Read HLN
-    uint32_t protocolAddressLen = i.ReadU8(); // Read PLN
+    m_hardwareType = HardwareType(i.ReadNtohU16()); // Read HTYPE
+    uint32_t protocolType = i.ReadNtohU16();        // Read PRO
+    uint32_t hardwareAddressLen = i.ReadU8();       // Read HLN
+    uint32_t protocolAddressLen = i.ReadU8();       // Read PLN
 
     //
     // It is implicit here that we have a protocol type of 0x800 (IP).
@@ -222,7 +222,7 @@ ArpHeader::Deserialize(Buffer::Iterator start)
         return 0;
     }
 
-    m_type = i.ReadNtohU16();                     // Read OP
+    m_type = ArpType_e(i.ReadNtohU16());          // Read OP
     ReadFrom(i, m_macSource, hardwareAddressLen); // Read SHA (size HLN)
     ReadFrom(i, m_ipv4Source);                    // Read SPA (size PLN == 4)
     ReadFrom(i, m_macDest, hardwareAddressLen);   // Read THA (size HLN)
