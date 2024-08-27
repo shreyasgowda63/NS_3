@@ -741,6 +741,96 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
 };
 
 /**
+ * A broadcast Transaction Record (BTR)
+ * As described in Table 3-70
+ */
+class BroadcastTransactionRecord : public SimpleRefCount<BroadcastTransactionRecord>
+{
+  public:
+    BroadcastTransactionRecord();
+    ~BroadcastTransactionRecord();
+
+    /**
+     * Construct a new Broadcast Transaction Record (BTR) entry.
+     *
+     * @param srcAddr The source address of the BTR.
+     * @param seq The sequence number of the BTR.
+     * @param exp The expiration time of the BTR.
+     * @param count The number of time this data has been broadcasted.
+     */
+    BroadcastTransactionRecord(Mac16Address srcAddr, uint8_t seq, Time exp, uint8_t count);
+
+    /**
+     * Get the source address of the BTR.
+     *
+     * @return The source address.
+     */
+    Mac16Address GetSrcAddr() const;
+
+    /**
+     * Get the sequence number of the BTR.
+     *
+     * @return The sequence number.
+     */
+    uint8_t GetSeqNum() const;
+
+    /**
+     * Get the value of the expiration time in the BTR.
+     *
+     * @return The expiration time
+     */
+    Time GetExpirationTime() const;
+
+    /**
+     * Get the broadcast retry count value
+     *
+     * @return The broadcast retry count value
+     */
+    uint8_t GetBcstRetryCount() const;
+
+    /**
+     * Set the source address of the BTR
+     *
+     * @param srcAddr The source address of the BTR
+     */
+    void SetSrcAddr(Mac16Address srcAddr);
+
+    /**
+     * Set the sequence number of the BTR
+     *
+     * @param seq The sequence number of the BTR
+     */
+    void SetSeqNum(uint8_t seq);
+
+    /**
+     * Set the expiration time object
+     *
+     * @param exp The expiration time of the BTR
+     */
+    void SetExpirationTime(Time exp);
+
+    /**
+     * Set the Broadcast retry count object
+     *
+     * @param count  The value of the counter
+     */
+    void SetBcstRetryCount(uint8_t count);
+
+    /**
+     * Print the values of the BTR.
+     *
+     * @param stream The stream object used to print.
+     */
+    void Print(Ptr<OutputStreamWrapper> stream) const;
+
+  private:
+    Mac16Address m_srcAddr;   //!< The 16-bit network address of the broadcast initiator.
+    uint8_t m_sequenceNumber; //!< The NWK layer sequence number of the initiator's broadcast.
+    Time m_expirationTime;    //!< An indicator of when the entry expires
+                              // uint8_t m_broadcastRetryCount;
+};
+
+/**
  *  A table that keeps record of neighbors devices NWK extended PAN ids (64 bits)
  *  and their related 16 bit MAC pan id. This is not explicitly mentioned
  *  in the Zigbee specification but it is required to keep record of this to

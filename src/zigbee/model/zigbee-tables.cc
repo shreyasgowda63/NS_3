@@ -129,7 +129,11 @@ RreqRetryTable::LookUpEntry(uint8_t rreqId, Ptr<RreqRetryTableEntry>& entryFound
 void
 RreqRetryTable::Delete(uint8_t rreqId)
 {
-    std::deque<Ptr<RreqRetryTableEntry>>::iterator it;
+    std::erase_if(m_rreqRetryTable, [&rreqId](Ptr<RreqRetryTableEntry> entry) {
+        return entry->GetRreqId() == rreqId;
+    });
+
+    /*std::deque<Ptr<RreqRetryTableEntry>>::iterator it;
     it = m_rreqRetryTable.begin();
     while (it != m_rreqRetryTable.end())
     {
@@ -142,7 +146,7 @@ RreqRetryTable::Delete(uint8_t rreqId)
         {
             ++it;
         }
-    }
+    }*/
 }
 
 void
@@ -400,7 +404,10 @@ RoutingTable::Purge()
 void
 RoutingTable::Delete(Mac16Address dst)
 {
-    std::deque<Ptr<RoutingTableEntry>>::iterator it;
+    std::erase_if(m_routingTable,
+                  [&dst](Ptr<RoutingTableEntry> entry) { return entry->GetDestination() == dst; });
+
+    /*std::deque<Ptr<RoutingTableEntry>>::iterator it;
     it = m_routingTable.begin();
     while (it != m_routingTable.end())
     {
@@ -413,7 +420,7 @@ RoutingTable::Delete(Mac16Address dst)
         {
             ++it;
         }
-    }
+    }*/
 }
 
 bool
@@ -657,7 +664,11 @@ RouteDiscoveryTable::Purge()
 void
 RouteDiscoveryTable::Delete(uint8_t id, Mac16Address src)
 {
-    std::deque<Ptr<RouteDiscoveryTableEntry>>::iterator it;
+    std::erase_if(m_routeDscTable, [&id, &src](Ptr<RouteDiscoveryTableEntry> entry) {
+        return (entry->GetRreqId() == id && entry->GetSourceAddr() == src);
+    });
+
+    /*std::deque<Ptr<RouteDiscoveryTableEntry>>::iterator it;
     it = m_routeDscTable.begin();
     while (it != m_routeDscTable.end())
     {
@@ -670,7 +681,7 @@ RouteDiscoveryTable::Delete(uint8_t id, Mac16Address src)
         {
             ++it;
         }
-    }
+    }*/
 }
 
 void
@@ -1111,7 +1122,11 @@ NeighborTable::Purge()
 void
 NeighborTable::Delete(Mac64Address extAddr)
 {
-    std::deque<Ptr<NeighborTableEntry>>::iterator it;
+    std::erase_if(m_neighborTable, [&extAddr](Ptr<NeighborTableEntry> entry) {
+        return entry->GetExtAddr() == extAddr;
+    });
+
+    /*std::deque<Ptr<NeighborTableEntry>>::iterator it;
     it = m_neighborTable.begin();
     while (it != m_neighborTable.end())
     {
@@ -1124,7 +1139,7 @@ NeighborTable::Delete(Mac64Address extAddr)
         {
             ++it;
         }
-    }
+    }*/
 }
 
 bool
