@@ -1608,6 +1608,38 @@ class ZigbeeNwk : public Object
     uint8_t m_nwkConcentratorDiscoveryTime;
 
     /**
+     * This NIB attribute indicates whether the NWK layer should assume the ability to
+     * use hierarchical routing.
+     * True = Hierarchical routing  False = Never use hierarchical routing
+     * See Zigbee specification r22.1.0, Table 3-58 (NIB attributes)
+     */
+    bool m_nwkUseTreeRouting;
+
+    /**
+     * If false, the NWK layer shall calculate the link cost from all neighbor nodes
+     * using the LQI values reported by the MAC layer, otherwise it shall report a
+     * constant value (7).
+     * See Zigbe Specification r22.1.0, Table 3-58 (NIB attributes)
+     */
+    bool m_nwkReportConstantCost;
+
+    /**
+     * Describes the current route symmetry:
+     * True: Routes are considered to be symmetric links. Backward and forward routes
+     * are created during one-route discovery and they are identical.
+     * False: Routes are not consider to be comprised of symmetric links. Only the forward
+     * route is stored during route discovery.
+     * See Zigbe Specification r22.1.0, Table 3-58 (NIB attributes)
+     */
+    bool m_nwkSymLink;
+
+    /**
+     * The maximum number of retries allowed after a broadcast transmission failure
+     * See Zigbe Specification r22.1.0, Table 3-58 (NIB attributes)
+     */
+    uint8_t m_nwkMaxBroadcastRetries;
+
+    /**
      * The sequence number used to identify outgoing frames
      * See Zigbee specification r22.1.0, Table 3-58 (NIB attributes)
      */
@@ -1622,30 +1654,6 @@ class ZigbeeNwk : public Object
      * The handle assigned during a data transmission
      */
     SequenceNumber8 m_dataHandle;
-
-    /**
-     * This NIB attribute indicates whether the NWK layer should assume the ability to
-     * use hierarchical routing.
-     * True = Hierarchical routing  False = Never use hierarchical routing
-     * See Zigbee specification r22.1.0, Table 3-58 (NIB attributes)
-     */
-    bool m_nwkUseTreeRouting;
-
-    /**
-     * If false, the NWK layer shall calculate the link cost from all neighbor nodes
-     * using the LQI values reported by the MAC layer, otherwise it shall report a
-     * constant value (7).
-     */
-    bool m_nwkReportConstantCost;
-
-    /**
-     * Describes the current route symmetry:
-     * True: Routes are considered to be symmetric links. Backward and forward routes
-     * are created during one-route discovery and they are identical.
-     * False: Routes are not consider to be comprised of symmetric links. Only the forward
-     * route is stored during route discovery.
-     */
-    bool m_nwkSymLink;
 };
 
 } // namespace zigbee

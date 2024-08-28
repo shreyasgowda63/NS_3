@@ -1374,5 +1374,103 @@ PanIdTable::Dispose()
     m_panIdTable.clear();
 }
 
+/***********************************************************
+ *                Broadcast Transaction Record (BTR)
+ ***********************************************************/
+
+BroadcastTransactionRecord::BroadcastTransactionRecord(Mac16Address srcAddr,
+                                                       uint8_t seq,
+                                                       Time exp,
+                                                       uint8_t count)
+{
+    m_srcAddr = srcAddr;
+    m_sequenceNumber = seq;
+    m_expirationTime = exp;
+    m_broadcastRetryCount = count;
+}
+
+BroadcastTransactionRecord::BroadcastTransactionRecord()
+{
+}
+
+BroadcastTransactionRecord::~BroadcastTransactionRecord()
+{
+}
+
+Mac16Address
+BroadcastTransactionRecord::GetSrcAddr() const
+{
+    return m_srcAddr;
+}
+
+void
+BroadcastTransactionRecord::SetSrcAddr(Mac16Address src)
+{
+    m_srcAddr = src;
+}
+
+uint8_t
+BroadcastTransactionRecord::GetSeqNum() const
+{
+    return m_sequenceNumber;
+}
+
+void
+BroadcastTransactionRecord::SetSeqNum(uint8_t seq)
+{
+    m_sequenceNumber = seq;
+}
+
+Time
+BroadcastTransactionRecord::GetExpirationTime() const
+{
+    return m_expirationTime;
+}
+
+void
+BroadcastTransactionRecord::SetExpirationTime(Time exp)
+{
+    m_expirationTime = exp;
+}
+
+uint8_t
+BroadcastTransactionRecord::GetBcstRetryCount() const
+{
+    return m_broadcastRetryCount;
+}
+
+void
+BroadcastTransactionRecord::SetBcstRetryCount(uint8_t count)
+{
+    m_broadcastRetryCount = count;
+}
+
+void
+BroadcastTransactionRecord::Print(Ptr<OutputStreamWrapper> stream) const
+{
+    std::ostream* os = stream->GetStream();
+    std::ios oldState(nullptr);
+    oldState.copyfmt(*os);
+
+    std::ostringstream sourceAddr;
+    std::ostringstream seq;
+    std::ostringstream expTime;
+    std::ostringstream count;
+
+    sourceAddr << m_srcAddr;
+    seq << m_sequenceNumber;
+    expTime << (m_expirationTime - Simulator::Now()).As(Time::S);
+    count << m_broadcastRetryCount;
+
+    *os << std::resetiosflags(std::ios::adjustfield) << std::setiosflags(std::ios::left);
+    *os << std::setw(16) << sourceAddr.str();
+    *os << std::setw(16) << static_cast<uint32_t>(m_sequenceNumber);
+    *os << std::setw(16) << expTime.str();
+    *os << std::setw(16) << static_cast<uint32_t>(m_broadcastRetryCount);
+    *os << std::endl;
+
+    (*os).copyfmt(oldState);
+}
+
 } // namespace zigbee
 } // namespace ns3

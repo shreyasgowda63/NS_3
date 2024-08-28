@@ -135,6 +135,8 @@ ZigbeeNwk::ZigbeeNwk()
     m_nwkReportConstantCost = false;
     m_nwkSymLink = false;
 
+    m_nwkMaxBroadcastRetries = 0x03;
+
     m_countRREQRetries = 0;
 
     m_nwkIsConcentrator = false;
