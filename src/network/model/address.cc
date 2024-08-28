@@ -177,7 +177,61 @@ Address::Deserialize(TagBuffer buffer)
     buffer.Read(m_data, m_len);
 }
 
-ATTRIBUTE_HELPER_CPP(Address);
+ATTRIBUTE_CHECKER_IMPLEMENT(Address);
+
+AddressValue::AddressValue()
+    : m_value()
+{
+}
+
+AddressValue::AddressValue(const Address& value)
+    : m_value(value)
+{
+}
+
+void
+AddressValue::Set(const Address& v)
+{
+    m_value = v;
+}
+
+Address
+AddressValue::Get() const
+{
+    return m_value;
+}
+
+Ptr<AttributeValue>
+AddressValue::Copy() const
+{
+    return ns3::Create<AddressValue>(*this);
+}
+
+std::string
+AddressValue::SerializeToString(Ptr<const AttributeChecker> checker) const
+{
+    std::ostringstream oss;
+    oss << m_value;
+    return oss.str();
+}
+
+bool
+AddressValue::DeserializeFromString(std::string value, Ptr<const AttributeChecker> checker)
+{
+    if (value.empty())
+    {
+        m_value = Address();
+        return true;
+    }
+    std::istringstream iss;
+    iss.str(value);
+    iss >> m_value;
+    NS_ABORT_MSG_UNLESS(iss.eof(),
+                        "Attribute value "
+                            << "\"" << value << "\""
+                            << " is not properly formatted");
+    return !iss.bad() && !iss.fail();
+}
 
 bool
 operator==(const Address& a, const Address& b)
