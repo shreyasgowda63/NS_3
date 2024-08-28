@@ -324,6 +324,6 @@ std::hash<ns3::Address>::operator()(const ns3::Address& x) const
         return std::hash<ns3::Ipv6Address>()(a.GetIpv6());
     }
 
-    NS_ABORT_MSG("PacketSink: unexpected address type, neither IPv4 nor IPv6");
+    NS_ABORT_MSG("Unexpected address type, neither IPv4 nor IPv6");
     return 0; // silence the warnings.
 }

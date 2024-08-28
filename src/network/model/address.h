@@ -310,9 +310,8 @@ struct std::hash<ns3::Address>
      * \param x the address of which calculate the hash
      * \return the hash of x
      *
-     * It calculates the hash taking the uint32_t hash value of the IPv4 or IPv6 address.
-     * It works only for InetSocketAddresses (IPv4 version) or Inet6SocketAddresses (IPv6
-     * version)
+     * It works only for InetSocketAddress (the hash is calculated from the included IPv4 address)
+     * or Inet6SocketAddress (the hash is calculated from the included IPv6 address).
      */
     std::size_t operator()(const ns3::Address& x) const;
 };
