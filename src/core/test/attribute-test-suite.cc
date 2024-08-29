@@ -40,21 +40,21 @@ namespace ns3
 {
 
 /**
- * \file
- * \ingroup attribute-tests
+ * @file
+ * @ingroup attribute-tests
  * Attribute test suite
  */
 
 /**
- * \ingroup core-tests
- * \defgroup attribute-tests Attribute tests
+ * @ingroup core-tests
+ * @defgroup attribute-tests Attribute tests
  */
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
  * Test class for TracedValue callbacks attributes.
- * \see attribute_ValueClassTest
+ * @see attribute_ValueClassTest
  */
 class ValueClassTest
 {
@@ -66,8 +66,8 @@ class ValueClassTest
     /**
      * TracedValue callback signature for ValueClassTest
      *
-     * \param [in] oldValue original value of the traced variable
-     * \param [in] newValue new value of the traced variable
+     * @param [in] oldValue original value of the traced variable
+     * @param [in] newValue new value of the traced variable
      */
     typedef void (*TracedValueCallback)(const ValueClassTest oldValue,
                                         const ValueClassTest newValue);
@@ -75,9 +75,9 @@ class ValueClassTest
 
 /**
  * Operator not equal.
- * \param a The left operand.
- * \param b The right operand.
- * \return always true.
+ * @param a The left operand.
+ * @param b The right operand.
+ * @return always true.
  */
 bool
 operator!=(const ValueClassTest& a [[maybe_unused]], const ValueClassTest& b [[maybe_unused]])
@@ -86,11 +86,11 @@ operator!=(const ValueClassTest& a [[maybe_unused]], const ValueClassTest& b [[m
 }
 
 /**
- * \brief Stream insertion operator.
+ * @brief Stream insertion operator.
  *
- * \param [in] os The reference to the output stream.
- * \param [in] v The ValueClassTest object.
- * \returns The reference to the output stream.
+ * @param [in] os The reference to the output stream.
+ * @param [in] v The ValueClassTest object.
+ * @returns The reference to the output stream.
  */
 std::ostream&
 operator<<(std::ostream& os, ValueClassTest v [[maybe_unused]])
@@ -99,11 +99,11 @@ operator<<(std::ostream& os, ValueClassTest v [[maybe_unused]])
 }
 
 /**
- * \brief Stream extraction operator.
+ * @brief Stream extraction operator.
  *
- * \param [in] is The reference to the input stream.
- * \param [out] v The ValueClassTest object.
- * \returns The reference to the input stream.
+ * @param [in] is The reference to the input stream.
+ * @param [out] v The ValueClassTest object.
+ * @returns The reference to the input stream.
  */
 std::istream&
 operator>>(std::istream& is, ValueClassTest& v [[maybe_unused]])
@@ -117,7 +117,7 @@ ATTRIBUTE_HELPER_CPP(ValueClassTest);
 } // namespace ns3
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
  * Simple class derived from ns3::Object, used to check attribute constructors.
  */
@@ -125,8 +125,8 @@ class Derived : public Object
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -142,7 +142,7 @@ class Derived : public Object
 NS_OBJECT_ENSURE_REGISTERED(Derived);
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
  * Class used to check attributes.
  */
@@ -166,8 +166,8 @@ class AttributeObjectTest : public Object
     };
 
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -378,7 +378,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Adds an object to the first map.
-     * \param i The index to assign to the object.
+     * @param i The index to assign to the object.
      */
     void AddToMap1(uint32_t i)
     {
@@ -387,7 +387,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Adds an object to the unordered map.
-     * \param i The index to assign to the object.
+     * @param i The index to assign to the object.
      */
     void AddToUnorderedMap(uint64_t i)
     {
@@ -396,7 +396,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Remove an object from the first map.
-     * \param i The index to assign to the object.
+     * @param i The index to assign to the object.
      */
     void RemoveFromUnorderedMap(uint64_t i)
     {
@@ -405,9 +405,9 @@ class AttributeObjectTest : public Object
 
     /**
      * Invoke the m_cb callback.
-     * \param a The first argument of the callback.
-     * \param b The second argument of the callback.
-     * \param c The third argument of the callback.
+     * @param a The first argument of the callback.
+     * @param b The second argument of the callback.
+     * @param c The third argument of the callback.
      */
     void InvokeCb(double a, int b, float c)
     {
@@ -416,7 +416,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Invoke the m_cbValue callback.
-     * \param a The argument of the callback.
+     * @param a The argument of the callback.
      */
     void InvokeCbValue(int8_t a)
     {
@@ -429,7 +429,7 @@ class AttributeObjectTest : public Object
   private:
     /**
      * Set the m_boolTestA value.
-     * \param v The value to set.
+     * @param v The value to set.
      */
     void DoSetTestA(bool v)
     {
@@ -438,7 +438,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Get the m_boolTestA value.
-     * \return the value of m_boolTestA.
+     * @return the value of m_boolTestA.
      */
     bool DoGetTestA() const
     {
@@ -447,7 +447,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Get the m_int16SetGet value.
-     * \return the value of m_int16SetGet.
+     * @return the value of m_int16SetGet.
      */
     int16_t DoGetInt16() const
     {
@@ -456,7 +456,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Set the m_int16SetGet value.
-     * \param v The value to set.
+     * @param v The value to set.
      */
     void DoSetInt16(int16_t v)
     {
@@ -465,7 +465,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Get the length of m_vector2.
-     * \return the vector size.
+     * @return the vector size.
      */
     std::size_t DoGetVectorN() const
     {
@@ -474,8 +474,8 @@ class AttributeObjectTest : public Object
 
     /**
      * Get the i-th item of m_vector2.
-     * \param i The index of the element to get.
-     * \return i-th item of m_vector2.
+     * @param i The index of the element to get.
+     * @return i-th item of m_vector2.
      */
     Ptr<Derived> DoGetVector(std::size_t i) const
     {
@@ -484,8 +484,8 @@ class AttributeObjectTest : public Object
 
     /**
      * Set the m_intSrc2 value.
-     * \param v The value to set.
-     * \return true.
+     * @param v The value to set.
+     * @return true.
      */
     bool DoSetIntSrc(int8_t v)
     {
@@ -495,7 +495,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Get the m_intSrc2 value.
-     * \return the value of m_intSrc2.
+     * @return the value of m_intSrc2.
      */
     int8_t DoGetIntSrc() const
     {
@@ -504,8 +504,8 @@ class AttributeObjectTest : public Object
 
     /**
      * Set the m_enumSetGet value.
-     * \param v The value to set.
-     * \return true.
+     * @param v The value to set.
+     * @return true.
      */
     bool DoSetEnum(Test_e v)
     {
@@ -515,7 +515,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Get the m_enumSetGet value.
-     * \return the value of m_enumSetGet.
+     * @return the value of m_enumSetGet.
      */
     Test_e DoGetEnum() const
     {
@@ -524,8 +524,8 @@ class AttributeObjectTest : public Object
 
     /**
      * Set the m_enumClassSetGet value.
-     * \param v The value to set.
-     * \return true.
+     * @param v The value to set.
+     * @return true.
      */
     bool DoSetEnumClass(Test_ec v)
     {
@@ -535,7 +535,7 @@ class AttributeObjectTest : public Object
 
     /**
      * Get the m_enumClassSetGet value.
-     * \return the value of m_enumSetGet.
+     * @return the value of m_enumSetGet.
      */
     Test_ec DoGetEnumClass() const
     {
@@ -581,9 +581,9 @@ class AttributeObjectTest : public Object
 NS_OBJECT_ENSURE_REGISTERED(AttributeObjectTest);
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
- * \brief Test case template used for generic Attribute Value types -- used to make
+ * @brief Test case template used for generic Attribute Value types -- used to make
  * sure that Attributes work as expected.
  */
 template <typename T>
@@ -592,7 +592,7 @@ class AttributeTestCase : public TestCase
   public:
     /**
      * Constructor.
-     * \param description The TestCase description.
+     * @param description The TestCase description.
      */
     AttributeTestCase(std::string description);
     ~AttributeTestCase() override;
@@ -601,11 +601,11 @@ class AttributeTestCase : public TestCase
     void DoRun() override;
     /**
      * Check the attribute path and value.
-     * \param p The object to test.
-     * \param attributeName The attribute name.
-     * \param expectedString The expected attribute name.
-     * \param expectedValue The expected attribute value.
-     * \return true if everything is as expected.
+     * @param p The object to test.
+     * @param attributeName The attribute name.
+     * @param expectedString The expected attribute name.
+     * @param expectedValue The expected attribute value.
+     * @return true if everything is as expected.
      */
     bool CheckGetCodePaths(Ptr<Object> p,
                            std::string attributeName,
@@ -1243,7 +1243,7 @@ AttributeTestCase<TimeValue>::DoRun()
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
  * Test the Attributes of type RandomVariableStream.
  */
@@ -1252,7 +1252,7 @@ class RandomVariableStreamAttributeTestCase : public TestCase
   public:
     /**
      * Constructor.
-     * \param description The TestCase description.
+     * @param description The TestCase description.
      */
     RandomVariableStreamAttributeTestCase(std::string description);
 
@@ -1262,7 +1262,7 @@ class RandomVariableStreamAttributeTestCase : public TestCase
 
     /**
      * Invoke the m_cbValue.
-     * \param a The value to use on the callback.
+     * @param a The value to use on the callback.
      */
     void InvokeCbValue(int8_t a)
     {
@@ -1280,7 +1280,7 @@ class RandomVariableStreamAttributeTestCase : public TestCase
 
     /**
      * Function called when the callback is used.
-     * \param a The value of the callback.
+     * @param a The value of the callback.
      */
     void NotifyCallbackValue(int8_t a)
     {
@@ -1318,9 +1318,9 @@ RandomVariableStreamAttributeTestCase::DoRun()
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
- * \brief Test case for Object Vector Attributes.
+ * @brief Test case for Object Vector Attributes.
  *
  * Generic nature is pretty much lost here, so we just break the class out.
  */
@@ -1329,7 +1329,7 @@ class ObjectVectorAttributeTestCase : public TestCase
   public:
     /**
      * Constructor.
-     * \param description The TestCase description.
+     * @param description The TestCase description.
      */
     ObjectVectorAttributeTestCase(std::string description);
 
@@ -1404,16 +1404,16 @@ ObjectVectorAttributeTestCase::DoRun()
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
- * \brief Test case for Object Map Attributes.
+ * @brief Test case for Object Map Attributes.
  */
 class ObjectMapAttributeTestCase : public TestCase
 {
   public:
     /**
      * Constructor.
-     * \param description The TestCase description.
+     * @param description The TestCase description.
      */
     ObjectMapAttributeTestCase(std::string description);
 
@@ -1519,9 +1519,9 @@ ObjectMapAttributeTestCase::DoRun()
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
- * \brief Trace sources with value semantics can be used like Attributes,
+ * @brief Trace sources with value semantics can be used like Attributes,
  * make sure we can use them that way.
  */
 class IntegerTraceSourceAttributeTestCase : public TestCase
@@ -1529,7 +1529,7 @@ class IntegerTraceSourceAttributeTestCase : public TestCase
   public:
     /**
      * Constructor.
-     * \param description The TestCase description.
+     * @param description The TestCase description.
      */
     IntegerTraceSourceAttributeTestCase(std::string description);
 
@@ -1630,9 +1630,9 @@ IntegerTraceSourceAttributeTestCase::DoRun()
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
- * \brief Trace sources used like Attributes must also work as trace sources,
+ * @brief Trace sources used like Attributes must also work as trace sources,
  * make sure we can use them that way.
  */
 class IntegerTraceSourceTestCase : public TestCase
@@ -1640,7 +1640,7 @@ class IntegerTraceSourceTestCase : public TestCase
   public:
     /**
      * Constructor.
-     * \param description The TestCase description.
+     * @param description The TestCase description.
      */
     IntegerTraceSourceTestCase(std::string description);
 
@@ -1653,8 +1653,8 @@ class IntegerTraceSourceTestCase : public TestCase
 
     /**
      * Notify the call of source 1.
-     * \param old First value.
-     * \param n Second value.
+     * @param old First value.
+     * @param n Second value.
      */
     void NotifySource1(int8_t old [[maybe_unused]], int8_t n)
     {
@@ -1729,9 +1729,9 @@ IntegerTraceSourceTestCase::DoRun()
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
- * \brief Trace sources used like Attributes must also work as trace sources,
+ * @brief Trace sources used like Attributes must also work as trace sources,
  * make sure we can use them that way.
  */
 class TracedCallbackTestCase : public TestCase
@@ -1739,7 +1739,7 @@ class TracedCallbackTestCase : public TestCase
   public:
     /**
      * Constructor.
-     * \param description The TestCase description.
+     * @param description The TestCase description.
      */
     TracedCallbackTestCase(std::string description);
 
@@ -1752,9 +1752,9 @@ class TracedCallbackTestCase : public TestCase
 
     /**
      * Notify the call of source 2.
-     * \param a First value.
-     * \param b Second value.
-     * \param c Third value.
+     * @param a First value.
+     * @param b Second value.
+     * @param c Third value.
      */
     void NotifySource2(double a, int b [[maybe_unused]], float c [[maybe_unused]])
     {
@@ -1828,9 +1828,9 @@ TracedCallbackTestCase::DoRun()
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
- * \brief Smart pointers (Ptr) are central to our architecture, so they
+ * @brief Smart pointers (Ptr) are central to our architecture, so they
  * must work as attributes.
  */
 class PointerAttributeTestCase : public TestCase
@@ -1838,7 +1838,7 @@ class PointerAttributeTestCase : public TestCase
   public:
     /**
      * Constructor.
-     * \param description The TestCase description.
+     * @param description The TestCase description.
      */
     PointerAttributeTestCase(std::string description);
 
@@ -1851,9 +1851,9 @@ class PointerAttributeTestCase : public TestCase
 
     /**
      * Notify the call of source 2.
-     * \param a First value.
-     * \param b Second value.
-     * \param c Third value.
+     * @param a First value.
+     * @param b Second value.
+     * @param c Third value.
      */
     void NotifySource2(double a, int b [[maybe_unused]], float c [[maybe_unused]])
     {
@@ -1972,16 +1972,16 @@ PointerAttributeTestCase::DoRun()
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
- * \brief Test the Attributes of type CallbackValue.
+ * @brief Test the Attributes of type CallbackValue.
  */
 class CallbackValueTestCase : public TestCase
 {
   public:
     /**
      * Constructor.
-     * \param description The TestCase description.
+     * @param description The TestCase description.
      */
     CallbackValueTestCase(std::string description);
 
@@ -1991,7 +1991,7 @@ class CallbackValueTestCase : public TestCase
 
     /**
      * Function to invoke the callback.
-     * \param a The value.
+     * @param a The value.
      */
     void InvokeCbValue(int8_t a)
     {
@@ -2008,7 +2008,7 @@ class CallbackValueTestCase : public TestCase
 
     /**
      * Function invoked when the callback is fired.
-     * \param a The value.
+     * @param a The value.
      */
     void NotifyCallbackValue(int8_t a)
     {
@@ -2073,9 +2073,9 @@ CallbackValueTestCase::DoRun()
 }
 
 /**
- * \ingroup attribute-tests
+ * @ingroup attribute-tests
  *
- * \brief The attributes Test Suite.
+ * @brief The attributes Test Suite.
  */
 class AttributesTestSuite : public TestSuite
 {

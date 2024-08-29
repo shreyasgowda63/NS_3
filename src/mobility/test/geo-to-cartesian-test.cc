@@ -1485,15 +1485,15 @@ const double ZWGS84_MATLAB[216] = {
 };
 
 /**
- * \ingroup mobility
- * \ingroup tests
- * \defgroup mobility-test mobility module tests
+ * @ingroup mobility
+ * @ingroup tests
+ * @defgroup mobility-test mobility module tests
  */
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Geo To Cartesian Test Case
+ * @brief Geo To Cartesian Test Case
  *
  * This test verifies the accuracy of the GeographicToCartesianCoordinates()
  * method in the GeographicPositions class, which converts earth
@@ -1512,11 +1512,11 @@ class GeoToCartesianTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param latitude latitude (deg)
-     * \param longitude longitude (deg)
-     * \param altitude altitude (m)
-     * \param sphType sphere type
-     * \param i index
+     * @param latitude latitude (deg)
+     * @param longitude longitude (deg)
+     * @param altitude altitude (m)
+     * @param sphType sphere type
+     * @param i index
      */
     GeoToCartesianTestCase(double latitude,
                            double longitude,
@@ -1530,11 +1530,11 @@ class GeoToCartesianTestCase : public TestCase
 
     /**
      * Name function
-     * \param latitude the latitude (deg)
-     * \param longitude the longitude (deg)
-     * \param altitude the altitude (m)
-     * \param sphType the sphere type
-     * \returns the name string
+     * @param latitude the latitude (deg)
+     * @param longitude the longitude (deg)
+     * @param altitude the altitude (m)
+     * @param sphType the sphere type
+     * @returns the name string
      */
     static std::string Name(double latitude,
                             double longitude,
@@ -1673,9 +1673,9 @@ GeoToCartesianTestCase::DoRun()
 }
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Cartesian to Geo Test Case
+ * @brief Cartesian to Geo Test Case
  *
  * This test verifies the accuracy of the CartesianToGeographicCoordinates()
  * method in the GeographicPositions class, which converts earth
@@ -1690,11 +1690,11 @@ class CartesianToGeoTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param latitude latitude (deg)
-     * \param longitude longitude (deg)
-     * \param altitude altitude (m)
-     * \param sphType sphere type
-     * \param i index
+     * @param latitude latitude (deg)
+     * @param longitude longitude (deg)
+     * @param altitude altitude (m)
+     * @param sphType sphere type
+     * @param i index
      */
     CartesianToGeoTestCase(double latitude,
                            double longitude,
@@ -1708,11 +1708,11 @@ class CartesianToGeoTestCase : public TestCase
 
     /**
      * Name function
-     * \param latitude the latitude (deg)
-     * \param longitude the longitude (deg)
-     * \param altitude the altitude (m)
-     * \param sphType the sphere type
-     * \returns the name string
+     * @param latitude the latitude (deg)
+     * @param longitude the longitude (deg)
+     * @param altitude the altitude (m)
+     * @param sphType the sphere type
+     * @returns the name string
      */
     static std::string Name(double latitude,
                             double longitude,
@@ -1789,9 +1789,9 @@ CartesianToGeoTestCase::DoRun()
 }
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Geo To Cartesian Test Suite
+ * @brief Geo To Cartesian Test Suite
  */
 class GeoToCartesianTestSuite : public TestSuite
 {
@@ -1875,7 +1875,7 @@ GeoToCartesianTestSuite::GeoToCartesianTestSuite()
 }
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  * Static variable for test initialization
  */
 static GeoToCartesianTestSuite g_GeoToCartesianTestSuite;

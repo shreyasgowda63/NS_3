@@ -34,9 +34,9 @@
 using namespace ns3;
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Fifo Queue Disc Test Item
+ * @brief Fifo Queue Disc Test Item
  */
 class FifoQueueDiscTestItem : public QueueDiscItem
 {
@@ -44,8 +44,8 @@ class FifoQueueDiscTestItem : public QueueDiscItem
     /**
      * Constructor
      *
-     * \param p the packet
-     * \param addr the address
+     * @param p the packet
+     * @param addr the address
      */
     FifoQueueDiscTestItem(Ptr<Packet> p, const Address& addr);
     ~FifoQueueDiscTestItem() override;
@@ -80,9 +80,9 @@ FifoQueueDiscTestItem::Mark()
 }
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Fifo Queue Disc Test Case
+ * @brief Fifo Queue Disc Test Case
  */
 class FifoQueueDiscTestCase : public TestCase
 {
@@ -93,14 +93,14 @@ class FifoQueueDiscTestCase : public TestCase
   private:
     /**
      * Run test function
-     * \param mode the test mode
+     * @param mode the test mode
      */
     void RunFifoTest(QueueSizeUnit mode);
     /**
      * Run test function
-     * \param q the queue disc
-     * \param qSize the expected size of the queue disc
-     * \param pktSize the packet size
+     * @param q the queue disc
+     * @param qSize the expected size of the queue disc
+     * @param pktSize the packet size
      */
     void DoRunFifoTest(Ptr<FifoQueueDisc> q, uint32_t qSize, uint32_t pktSize);
 };
@@ -266,9 +266,9 @@ FifoQueueDiscTestCase::DoRun()
 }
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Fifo Queue Disc Test Suite
+ * @brief Fifo Queue Disc Test Suite
  */
 static class FifoQueueDiscTestSuite : public TestSuite
 {

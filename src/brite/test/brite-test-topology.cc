@@ -32,9 +32,9 @@
 using namespace ns3;
 
 /**
- * \ingroup brite-tests
+ * @ingroup brite-tests
  *
- * \brief BRITE topology structure Test
+ * @brief BRITE topology structure Test
  *
  * Test that two brite topologies created with same seed value
  * produce same graph (not an exact test)
@@ -101,9 +101,9 @@ BriteTopologyStructureTestCase::DoRun()
 }
 
 /**
- * \ingroup brite-tests
+ * @ingroup brite-tests
  *
- * \brief BRITE topology function Test
+ * @brief BRITE topology function Test
  *
  * Test that packets can be send across a BRITE topology using UDP
  */
@@ -207,9 +207,9 @@ BriteTopologyFunctionTestCase::DoRun()
 }
 
 /**
- * \ingroup brite-tests
+ * @ingroup brite-tests
  *
- * \brief BRITE TestSuite
+ * @brief BRITE TestSuite
  */
 class BriteTestSuite : public TestSuite
 {

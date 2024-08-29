@@ -22,8 +22,8 @@
 using namespace ns3;
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
  * DropTailQueue unit tests.
  */
@@ -88,10 +88,10 @@ DropTailQueueTestCase::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief DropTail Queue TestSuite
+ * @brief DropTail Queue TestSuite
  */
 class DropTailQueueTestSuite : public TestSuite
 {

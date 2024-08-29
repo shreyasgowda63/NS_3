@@ -30,8 +30,8 @@ namespace ns3
 {
 
 /**
- * \ingroup mobility
- * \brief Random waypoint mobility model.
+ * @ingroup mobility
+ * @brief Random waypoint mobility model.
  *
  * Each object starts by pausing at time zero for the duration governed
  * by the random variable "Pause".  After pausing, the object will pick
@@ -55,7 +55,7 @@ class RandomWaypointMobilityModel : public MobilityModel
   public:
     /**
      * Register this type with the TypeId system.
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 

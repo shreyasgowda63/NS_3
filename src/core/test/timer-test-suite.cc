@@ -22,14 +22,14 @@
 #include "ns3/timer.h"
 
 /**
- * \file
- * \ingroup timer-tests
+ * @file
+ * @ingroup timer-tests
  * Timer test suite
  */
 
 /**
- * \ingroup core-tests
- * \defgroup timer-tests Timer tests
+ * @ingroup core-tests
+ * @defgroup timer-tests Timer tests
  */
 
 namespace
@@ -59,9 +59,9 @@ void barir (int &) {};
 using namespace ns3;
 
 /**
- * \ingroup timer-tests
+ * @ingroup timer-tests
  *
- * \brief Check correct state transitions.
+ * @brief Check correct state transitions.
  */
 class TimerStateTestCase : public TestCase
 {
@@ -110,9 +110,9 @@ TimerStateTestCase::DoRun()
 }
 
 /**
- * \ingroup timer-tests
+ * @ingroup timer-tests
  *
- * \brief Check that Timer template magic is working.
+ * @brief Check that Timer template magic is working.
  */
 class TimerTemplateTestCase : public TestCase
 {
@@ -221,9 +221,9 @@ TimerTemplateTestCase::DoTeardown()
 }
 
 /**
- * \ingroup timer-tests
+ * @ingroup timer-tests
  *
- * \brief The timer Test Suite.
+ * @brief The timer Test Suite.
  */
 class TimerTestSuite : public TestSuite
 {

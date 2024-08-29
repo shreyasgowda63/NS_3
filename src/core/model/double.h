@@ -26,8 +26,8 @@
 #include <stdint.h>
 
 /**
- * \file
- * \ingroup attribute_Double
+ * @file
+ * @ingroup attribute_Double
  * ns3::DoubleValue attribute value declarations and template implementations.
  */
 
@@ -50,9 +50,9 @@ Ptr<const AttributeChecker> MakeDoubleChecker();
  *
  * The minimum value is included in the allowed range.
  *
- * \param [in] min The minimum value.
- * \returns The AttributeChecker.
- * \see AttributeChecker
+ * @param [in] min The minimum value.
+ * @returns The AttributeChecker.
+ * @see AttributeChecker
  */
 template <typename T>
 Ptr<const AttributeChecker> MakeDoubleChecker(double min);
@@ -62,10 +62,10 @@ Ptr<const AttributeChecker> MakeDoubleChecker(double min);
  *
  * The minimum and maximum values are included in the allowed range.
  *
- * \param [in] min The minimum value.
- * \param [in] max The maximum value.
- * \returns The AttributeChecker.
- * \see AttributeChecker
+ * @param [in] min The minimum value.
+ * @param [in] max The maximum value.
+ * @returns The AttributeChecker.
+ * @see AttributeChecker
  */
 template <typename T>
 Ptr<const AttributeChecker> MakeDoubleChecker(double min, double max);

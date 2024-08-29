@@ -20,10 +20,10 @@
 #include "ns3/watchdog.h"
 
 /**
- * \file
- * \ingroup core-tests
- * \ingroup timer
- * \ingroup timer-tests
+ * @file
+ * @ingroup core-tests
+ * @ingroup timer
+ * @ingroup timer-tests
  * Watchdog test suite.
  */
 
@@ -34,7 +34,7 @@ namespace tests
 {
 
 /**
- * \ingroup timer-tests
+ * @ingroup timer-tests
  *  Watchdog test
  */
 class WatchdogTestCase : public TestCase
@@ -45,7 +45,7 @@ class WatchdogTestCase : public TestCase
     void DoRun() override;
     /**
      * Function to invoke when Watchdog expires.
-     * \param arg The argument passed.
+     * @param arg The argument passed.
      */
     void Expire(int arg);
     bool m_expired;        //!< Flag for expired Watchdog
@@ -90,7 +90,7 @@ WatchdogTestCase::DoRun()
 }
 
 /**
- * \ingroup timer-tests
+ * @ingroup timer-tests
  *  Watchdog test suite
  */
 class WatchdogTestSuite : public TestSuite
@@ -105,7 +105,7 @@ class WatchdogTestSuite : public TestSuite
 };
 
 /**
- * \ingroup timer-tests
+ * @ingroup timer-tests
  * WatchdogTestSuite instance variable.
  */
 static WatchdogTestSuite g_watchdogTestSuite;

@@ -24,9 +24,9 @@
 using namespace ns3;
 
 /**
- * \ingroup flame-test
+ * @ingroup flame-test
  *
- * \brief Flame Regression Suite
+ * @brief Flame Regression Suite
  */
 class FlameRegressionSuite : public TestSuite
 {

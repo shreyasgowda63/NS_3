@@ -33,10 +33,10 @@ namespace energy
 {
 
 /**
- * \ingroup energy
- * \brief Model a generic Lithium Ion Battery basing on [1][2].
+ * @ingroup energy
+ * @brief Model a generic Lithium Ion Battery basing on [1][2].
  *
- * \deprecated The LiIonEnergySource was deprecated in ns-3.40 in favor of GenericBatteryModel, and
+ * @deprecated The LiIonEnergySource was deprecated in ns-3.40 in favor of GenericBatteryModel, and
  * will be removed in a future release.
  *
  * The model can be fitted to any type of Li-Ion Battery, simply changing the
@@ -82,22 +82,22 @@ class LiIonEnergySource : public EnergySource
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
     LiIonEnergySource();
     ~LiIonEnergySource() override;
 
     /**
-     * \return Initial energy stored in energy source, in Joules.
+     * @return Initial energy stored in energy source, in Joules.
      *
      * Implements GetInitialEnergy.
      */
     double GetInitialEnergy() const override;
 
     /**
-     * \param initialEnergyJ Initial energy, in Joules
+     * @param initialEnergyJ Initial energy, in Joules
      *
      * Implements SetInitialEnergy. Note that initial energy is assumed to be set
      * before simulation starts and is set only once per simulation.
@@ -105,14 +105,14 @@ class LiIonEnergySource : public EnergySource
     void SetInitialEnergy(double initialEnergyJ);
 
     /**
-     * \returns Supply voltage at the energy source.
+     * @returns Supply voltage at the energy source.
      *
      * Implements GetSupplyVoltage.
      */
     double GetSupplyVoltage() const override;
 
     /**
-     * \param supplyVoltageV Initial Supply voltage at the energy source, in Volts.
+     * @param supplyVoltageV Initial Supply voltage at the energy source, in Volts.
      *
      * Sets the initial supply voltage of the energy source.
      * To be called only once.
@@ -120,21 +120,21 @@ class LiIonEnergySource : public EnergySource
     void SetInitialSupplyVoltage(double supplyVoltageV);
 
     /**
-     * \return Remaining energy in energy source, in Joules
+     * @return Remaining energy in energy source, in Joules
      *
      * Implements GetRemainingEnergy.
      */
     double GetRemainingEnergy() override;
 
     /**
-     * \returns Energy fraction.
+     * @returns Energy fraction.
      *
      * Implements GetEnergyFraction.
      */
     double GetEnergyFraction() override;
 
     /**
-     * \param energyJ Amount of energy (in Joules) to decrease from energy source.
+     * @param energyJ Amount of energy (in Joules) to decrease from energy source.
      *
      * Implements DecreaseRemainingEnergy.
      */
@@ -142,7 +142,7 @@ class LiIonEnergySource : public EnergySource
     virtual void DecreaseRemainingEnergy(double energyJ);
 
     /**
-     * \param energyJ Amount of energy (in Joules) to increase from energy source.
+     * @param energyJ Amount of energy (in Joules) to increase from energy source.
      *
      * Implements IncreaseRemainingEnergy.
      */
@@ -155,14 +155,14 @@ class LiIonEnergySource : public EnergySource
     void UpdateEnergySource() override;
 
     /**
-     * \param interval Energy update interval.
+     * @param interval Energy update interval.
      *
      * This function sets the interval between each energy update.
      */
     void SetEnergyUpdateInterval(Time interval);
 
     /**
-     * \returns The interval between each energy update.
+     * @returns The interval between each energy update.
      */
     Time GetEnergyUpdateInterval() const;
 
@@ -192,8 +192,8 @@ class LiIonEnergySource : public EnergySource
      * It consider different discharge curves for different discharge currents
      * and the remaining energy of the cell.
      *
-     * \param current the actual discharge current value.
-     * \return the cell voltage
+     * @param current the actual discharge current value.
+     * @return the cell voltage
      */
     double GetVoltage(double current) const;
 

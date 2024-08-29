@@ -41,8 +41,8 @@ namespace ns3
 namespace dsr
 {
 /**
- * \ingroup dsr
- * \brief DSR Error Buffer Entry
+ * @ingroup dsr
+ * @brief DSR Error Buffer Entry
  */
 class DsrErrorBuffEntry
 {
@@ -50,12 +50,12 @@ class DsrErrorBuffEntry
     /**
      * Create an DsrErrorBuffEntry with the given parameters.
      *
-     * \param pa packet
-     * \param d IPv4 address of the destination
-     * \param s IPv4 address of the source
-     * \param n IPv4 address of the next hop
-     * \param exp expiration time
-     * \param p protocol number
+     * @param pa packet
+     * @param d IPv4 address of the destination
+     * @param s IPv4 address of the source
+     * @param n IPv4 address of the next hop
+     * @param exp expiration time
+     * @param p protocol number
      */
     DsrErrorBuffEntry(Ptr<const Packet> pa = nullptr,
                       Ipv4Address d = Ipv4Address(),
@@ -74,8 +74,8 @@ class DsrErrorBuffEntry
 
     /**
      * Compare send buffer entries
-     * \param o another DsrErrorBuffEntry
-     * \return true if equal
+     * @param o another DsrErrorBuffEntry
+     * @return true if equal
      */
     bool operator==(const DsrErrorBuffEntry& o) const
     {
@@ -86,7 +86,7 @@ class DsrErrorBuffEntry
     // Fields
     /**
      * Get packet from entry
-     * \returns the packet
+     * @returns the packet
      */
     Ptr<const Packet> GetPacket() const
     {
@@ -95,7 +95,7 @@ class DsrErrorBuffEntry
 
     /**
      * Set packet for entry
-     * \param p the packet
+     * @param p the packet
      */
     void SetPacket(Ptr<const Packet> p)
     {
@@ -104,7 +104,7 @@ class DsrErrorBuffEntry
 
     /**
      * Get destination address
-     * \returns the destination IPv4 address
+     * @returns the destination IPv4 address
      */
     Ipv4Address GetDestination() const
     {
@@ -113,7 +113,7 @@ class DsrErrorBuffEntry
 
     /**
      * Set destination address
-     * \param d the destination IPv4 address
+     * @param d the destination IPv4 address
      */
     void SetDestination(Ipv4Address d)
     {
@@ -122,7 +122,7 @@ class DsrErrorBuffEntry
 
     /**
      * Get source address
-     * \returns the source IPv4 address
+     * @returns the source IPv4 address
      */
     Ipv4Address GetSource() const
     {
@@ -131,7 +131,7 @@ class DsrErrorBuffEntry
 
     /**
      * Set source address
-     * \param s the source IPv4 address
+     * @param s the source IPv4 address
      */
     void SetSource(Ipv4Address s)
     {
@@ -140,7 +140,7 @@ class DsrErrorBuffEntry
 
     /**
      * Get next hop
-     * \returns the next hop address
+     * @returns the next hop address
      */
     Ipv4Address GetNextHop() const
     {
@@ -149,7 +149,7 @@ class DsrErrorBuffEntry
 
     /**
      * Set next hop
-     * \param n the next hop IPv4 address
+     * @param n the next hop IPv4 address
      */
     void SetNextHop(Ipv4Address n)
     {
@@ -158,7 +158,7 @@ class DsrErrorBuffEntry
 
     /**
      * Set expire time
-     * \param exp the expire time
+     * @param exp the expire time
      */
     void SetExpireTime(Time exp)
     {
@@ -167,7 +167,7 @@ class DsrErrorBuffEntry
 
     /**
      * Get expire time
-     * \returns the expire time
+     * @returns the expire time
      */
     Time GetExpireTime() const
     {
@@ -176,7 +176,7 @@ class DsrErrorBuffEntry
 
     /**
      * Set protocol number
-     * \param p the protocol number
+     * @param p the protocol number
      */
     void SetProtocol(uint8_t p)
     {
@@ -185,7 +185,7 @@ class DsrErrorBuffEntry
 
     /**
      * Get protocol number
-     * \returns the protocol number
+     * @returns the protocol number
      */
     uint8_t GetProtocol() const
     {
@@ -208,8 +208,8 @@ class DsrErrorBuffEntry
 };
 
 /**
- * \ingroup dsr
- * \brief DSR error buffer
+ * @ingroup dsr
+ * @brief DSR error buffer
  */
 /************************************************************************************************************************/
 class DsrErrorBuffer
@@ -226,39 +226,39 @@ class DsrErrorBuffer
      * Push entry in queue, if there is no entry with the same packet and destination address in
      * queue.
      *
-     * \param entry error buffer entry
-     * \return true if entry added
+     * @param entry error buffer entry
+     * @return true if entry added
      */
     bool Enqueue(DsrErrorBuffEntry& entry);
     /**
      * Return first found (the earliest) entry for given destination
-     * \param [in] dst The destination to look for
-     * \param [out] entry The entry
-     * \return true if an entry is found
+     * @param [in] dst The destination to look for
+     * @param [out] entry The entry
+     * @return true if an entry is found
      */
     bool Dequeue(Ipv4Address dst, DsrErrorBuffEntry& entry);
     /**
      * Remove all packets with the error link
-     * \param source The source
-     * \param nextHop The next hop
+     * @param source The source
+     * @param nextHop The next hop
      */
     void DropPacketForErrLink(Ipv4Address source, Ipv4Address nextHop);
     /**
      * Finds whether a packet with destination dst exists in the queue
-     * \param dst The destination
-     * \return true if a packet is found.
+     * @param dst The destination
+     * @return true if a packet is found.
      */
     bool Find(Ipv4Address dst);
     /**
      * Returns the number of entries in the queue.
-     * \return the number of entries in the queue.
+     * @return the number of entries in the queue.
      */
     uint32_t GetSize();
 
     // Fields
     /**
      * Get maximum queue length
-     * \returns the maximum queue length
+     * @returns the maximum queue length
      */
     uint32_t GetMaxQueueLen() const
     {
@@ -267,7 +267,7 @@ class DsrErrorBuffer
 
     /**
      * Set maximum queue length
-     * \param len the maximum queue length
+     * @param len the maximum queue length
      */
     void SetMaxQueueLen(uint32_t len)
     {
@@ -276,7 +276,7 @@ class DsrErrorBuffer
 
     /**
      * Get error buffer timeout
-     * \returns the error buffer timeout
+     * @returns the error buffer timeout
      */
     Time GetErrorBufferTimeout() const
     {
@@ -285,7 +285,7 @@ class DsrErrorBuffer
 
     /**
      * Set error buffer timeout
-     * \param t the error buffer timeout
+     * @param t the error buffer timeout
      */
     void SetErrorBufferTimeout(Time t)
     {
@@ -294,7 +294,7 @@ class DsrErrorBuffer
 
     /**
      * Get error buffer entry
-     * \returns the DSR error buffer
+     * @returns the DSR error buffer
      */
     std::vector<DsrErrorBuffEntry>& GetBuffer()
     {
@@ -308,15 +308,15 @@ class DsrErrorBuffer
     void Purge();
     /**
      * Notify that packet is dropped from queue by timeout
-     * \param en Error Buffer Entry
-     * \param reason Drop reason.
+     * @param en Error Buffer Entry
+     * @param reason Drop reason.
      */
     ///
     void Drop(DsrErrorBuffEntry en, std::string reason);
     /**
      * Notify that packet is dropped from queue by link error
-     * \param en Error Buffer Entry
-     * \param reason Drop reason.
+     * @param en Error Buffer Entry
+     * @param reason Drop reason.
      */
     void DropLink(DsrErrorBuffEntry en, std::string reason);
     /// The maximum number of packets that we allow a routing protocol to buffer.

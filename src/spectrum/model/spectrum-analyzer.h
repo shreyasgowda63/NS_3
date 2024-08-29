@@ -36,7 +36,7 @@ namespace ns3
 {
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
  * Simple SpectrumPhy implementation that averages the spectrum power
  * density of incoming transmissions to produce a spectrogram.
@@ -52,8 +52,8 @@ class SpectrumAnalyzer : public SpectrumPhy
     ~SpectrumAnalyzer() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -77,7 +77,7 @@ class SpectrumAnalyzer : public SpectrumPhy
     /**
      * Set the AntennaModel to be used
      *
-     * \param a the Antenna Model
+     * @param a the Antenna Model
      */
     void SetAntenna(Ptr<AntennaModel> a);
 
@@ -111,12 +111,12 @@ class SpectrumAnalyzer : public SpectrumPhy
 
     /**
      * Adds a signal to the data collected.
-     * \param psd signal to add
+     * @param psd signal to add
      */
     void AddSignal(Ptr<const SpectrumValue> psd);
     /**
      * Removes a signal to the data collected.
-     * \param psd signal to subtract
+     * @param psd signal to subtract
      */
     void SubtractSignal(Ptr<const SpectrumValue> psd);
     /**

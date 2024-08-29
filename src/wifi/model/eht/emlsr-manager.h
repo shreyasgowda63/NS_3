@@ -38,7 +38,7 @@ class MgtEmlOmn;
 class WifiMpdu;
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * EmlsrManager is an abstract base class defining the API that EHT non-AP MLDs
  * with EMLSR activated can use to handle the operations on the EMLSR links
@@ -47,8 +47,8 @@ class EmlsrManager : public Object
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     EmlsrManager();
@@ -57,31 +57,31 @@ class EmlsrManager : public Object
     /**
      * Set the wifi MAC. Note that it must be the MAC of an EHT non-AP MLD.
      *
-     * \param mac the wifi MAC
+     * @param mac the wifi MAC
      */
     void SetWifiMac(Ptr<StaWifiMac> mac);
 
     /**
      * Set the Transition Timeout advertised by the associated AP with EMLSR activated.
      *
-     * \param timeout the advertised Transition Timeout
+     * @param timeout the advertised Transition Timeout
      */
     void SetTransitionTimeout(Time timeout);
 
     /**
-     * \return the Transition Timeout, if advertised by the associated AP
+     * @return the Transition Timeout, if advertised by the associated AP
      */
     std::optional<Time> GetTransitionTimeout() const;
 
     /**
      * Set the duration of the MediumSyncDelay timer.
      *
-     * \param duration the duration of the MediumSyncDelay timer
+     * @param duration the duration of the MediumSyncDelay timer
      */
     void SetMediumSyncDuration(Time duration);
 
     /**
-     * \return the duration of the MediumSyncDelay timer
+     * @return the duration of the MediumSyncDelay timer
      */
     Time GetMediumSyncDuration() const;
 
@@ -89,12 +89,12 @@ class EmlsrManager : public Object
      * Set the Medium Synchronization OFDM ED threshold (dBm) to use while the MediumSyncDelay
      * timer is running.
      *
-     * \param threshold the threshold in dBm (ranges from -72 to -62 dBm)
+     * @param threshold the threshold in dBm (ranges from -72 to -62 dBm)
      */
     void SetMediumSyncOfdmEdThreshold(int8_t threshold);
 
     /**
-     * \return the Medium Synchronization OFDM ED threshold (dBm) to use while the MediumSyncDelay
+     * @return the Medium Synchronization OFDM ED threshold (dBm) to use while the MediumSyncDelay
      * timer is running.
      */
     int8_t GetMediumSyncOfdmEdThreshold() const;
@@ -103,19 +103,19 @@ class EmlsrManager : public Object
      * Set the maximum number of TXOPs a non-AP STA is allowed to attempt to initiate while
      * the MediumSyncDelay timer is running. No value indicates no limit.
      *
-     * \param nTxops the maximum number of TXOPs a non-AP STA is allowed to attempt to
+     * @param nTxops the maximum number of TXOPs a non-AP STA is allowed to attempt to
      *               initiate while the MediumSyncDelay timer is running
      */
     void SetMediumSyncMaxNTxops(std::optional<uint8_t> nTxops);
 
     /**
-     * \return the maximum number of TXOPs a non-AP STA is allowed to attempt to initiate while
+     * @return the maximum number of TXOPs a non-AP STA is allowed to attempt to initiate while
      * the MediumSyncDelay timer is running. No value indicates no limit.
      */
     std::optional<uint8_t> GetMediumSyncMaxNTxops() const;
 
     /**
-     * \return the ID of main PHY (position in the vector of PHYs held by WifiNetDevice)
+     * @return the ID of main PHY (position in the vector of PHYs held by WifiNetDevice)
      */
     uint8_t GetMainPhyId() const;
 
@@ -123,13 +123,13 @@ class EmlsrManager : public Object
      * Take actions to enable EMLSR mode on the given set of links, if non-empty, or
      * disable EMLSR mode, otherwise.
      *
-     * \param linkIds the IDs of the links on which EMLSR mode should be enabled
+     * @param linkIds the IDs of the links on which EMLSR mode should be enabled
      *                (empty to disable EMLSR mode)
      */
     void SetEmlsrLinks(const std::set<uint8_t>& linkIds);
 
     /**
-     * \return the set of links on which EMLSR mode is enabled
+     * @return the set of links on which EMLSR mode is enabled
      */
     const std::set<uint8_t>& GetEmlsrLinks() const;
 
@@ -137,12 +137,12 @@ class EmlsrManager : public Object
      * Set the member variable indicating whether the state of the CAM should be reset when
      * the main PHY switches channel and operates on the link associated with the CAM.
      *
-     * \param enable whether the CAM state should be reset
+     * @param enable whether the CAM state should be reset
      */
     void SetCamStateReset(bool enable);
 
     /**
-     * \return the value of the member variable indicating whether the state of the CAM should be
+     * @return the value of the member variable indicating whether the state of the CAM should be
      * reset when the main PHY switches channel and operates on the link associated with the CAM.
      */
     bool GetCamStateReset() const;
@@ -150,35 +150,35 @@ class EmlsrManager : public Object
     /**
      * Set the member variable indicating whether Aux PHYs are capable of transmitting PPDUs.
      *
-     * \param capable whether Aux PHYs are capable of transmitting PPDUs
+     * @param capable whether Aux PHYs are capable of transmitting PPDUs
      */
     void SetAuxPhyTxCapable(bool capable);
 
     /**
-     * \return whether Aux PHYs are capable of transmitting PPDUs
+     * @return whether Aux PHYs are capable of transmitting PPDUs
      */
     bool GetAuxPhyTxCapable() const;
 
     /**
      * Notify the reception of a management frame addressed to us.
      *
-     * \param mpdu the received MPDU
-     * \param linkId the ID of the link over which the MPDU was received
+     * @param mpdu the received MPDU
+     * @param linkId the ID of the link over which the MPDU was received
      */
     void NotifyMgtFrameReceived(Ptr<const WifiMpdu> mpdu, uint8_t linkId);
 
     /**
      * Notify the reception of an initial Control frame on the given link.
      *
-     * \param linkId the ID of the link on which the initial Control frame was received
+     * @param linkId the ID of the link on which the initial Control frame was received
      */
     void NotifyIcfReceived(uint8_t linkId);
 
     /**
      * Notify the start of an UL TXOP on the given link
      *
-     * \param linkId the ID of the given link
-     * \param timeToCtsEnd time remaining to the end of CTS reception, in case the UL TXOP is
+     * @param linkId the ID of the given link
+     * @param timeToCtsEnd time remaining to the end of CTS reception, in case the UL TXOP is
      *                     started by an aux PHY
      */
     void NotifyUlTxopStart(uint8_t linkId, std::optional<Time> timeToCtsEnd);
@@ -186,10 +186,10 @@ class EmlsrManager : public Object
     /**
      * Notify the end of a TXOP on the given link.
      *
-     * \param linkId the ID of the given link
-     * \param ulTxopNotStarted whether this is a notification of the end of an UL TXOP that did
+     * @param linkId the ID of the given link
+     * @param ulTxopNotStarted whether this is a notification of the end of an UL TXOP that did
      *                      not even start (no frame transmitted)
-     * \param ongoingDlTxop whether a DL TXOP is ongoing on the given link (if true, this is
+     * @param ongoingDlTxop whether a DL TXOP is ongoing on the given link (if true, this is
      *                      a notification of the end of an UL TXOP)
      */
     void NotifyTxopEnd(uint8_t linkId, bool ulTxopNotStarted = false, bool ongoingDlTxop = false);
@@ -198,8 +198,8 @@ class EmlsrManager : public Object
      * Check whether the MediumSyncDelay timer is running for the STA operating on the given link.
      * If so, returns the time elapsed since the timer started.
      *
-     * \param linkId the ID of the given link
-     * \return the time elapsed since the MediumSyncDelay timer started, if this timer is running
+     * @param linkId the ID of the given link
+     * @return the time elapsed since the MediumSyncDelay timer started, if this timer is running
      *         for the STA operating on the given link
      */
     std::optional<Time> GetElapsedMediumSyncDelayTimer(uint8_t linkId) const;
@@ -209,7 +209,7 @@ class EmlsrManager : public Object
      * actions. This function must not be called when the MediumSyncDelay timer is not running
      * on the given link.
      *
-     * \param linkId the ID of the link associated with the MediumSyncDelay timer to cancel
+     * @param linkId the ID of the link associated with the MediumSyncDelay timer to cancel
      */
     void CancelMediumSyncDelayTimer(uint8_t linkId);
 
@@ -218,7 +218,7 @@ class EmlsrManager : public Object
      * timer is running. This function must not be called when the MediumSyncDelay timer is not
      * running on the given link.
      *
-     * \param linkId the ID of the link on which a new TXOP attempt may be carried out
+     * @param linkId the ID of the link on which a new TXOP attempt may be carried out
      */
     void DecrementMediumSyncDelayNTxops(uint8_t linkId);
 
@@ -229,7 +229,7 @@ class EmlsrManager : public Object
      * attempt is successful. This function must not be called when the MediumSyncDelay timer is
      * not running on the given link.
      *
-     * \param linkId the ID of the link for which the counter of the TXOP attempts is reset
+     * @param linkId the ID of the link for which the counter of the TXOP attempts is reset
      */
     void ResetMediumSyncDelayNTxops(uint8_t linkId);
 
@@ -237,8 +237,8 @@ class EmlsrManager : public Object
      * Return whether no more TXOP attempt is allowed on the given link. This function must not
      * be called when the MediumSyncDelay timer is not running on the given link.
      *
-     * \param linkId the ID of the link on which a new TXOP attempt may be carried out
-     * \return whether no more TXOP attempt on the given link is allowed
+     * @param linkId the ID of the link on which a new TXOP attempt may be carried out
+     * @return whether no more TXOP attempt on the given link is allowed
      */
     bool MediumSyncDelayNTxopsExceeded(uint8_t linkId);
 
@@ -246,18 +246,18 @@ class EmlsrManager : public Object
     void DoDispose() override;
 
     /**
-     * \return the MAC of the non-AP MLD managed by this EMLSR Manager.
+     * @return the MAC of the non-AP MLD managed by this EMLSR Manager.
      */
     Ptr<StaWifiMac> GetStaMac() const;
 
     /**
-     * \param linkId the ID of the given link
-     * \return the EHT FrameExchangeManager attached to the non-AP STA operating on the given link
+     * @param linkId the ID of the given link
+     * @return the EHT FrameExchangeManager attached to the non-AP STA operating on the given link
      */
     Ptr<EhtFrameExchangeManager> GetEhtFem(uint8_t linkId) const;
 
     /**
-     * \return the ID of the link on which the EML Operating Mode Notification frame has to be sent
+     * @return the ID of the link on which the EML Operating Mode Notification frame has to be sent
      */
     virtual uint8_t GetLinkToSendEmlOmn() = 0;
 
@@ -265,21 +265,21 @@ class EmlsrManager : public Object
      * A previous EML Operating Mode Notification frame was dropped. Ask the subclass whether
      * the frame needs to be re-sent on the given link (if any).
      *
-     * \param mpdu the dropped MPDU that includes the EML Operating Mode Notification frame
-     * \return the ID of the link over which to re-send the frame, if needed
+     * @param mpdu the dropped MPDU that includes the EML Operating Mode Notification frame
+     * @return the ID of the link over which to re-send the frame, if needed
      */
     virtual std::optional<uint8_t> ResendNotification(Ptr<const WifiMpdu> mpdu) = 0;
 
     /**
-     * \param linkId the ID of the given link
-     * \return the operating channel the main PHY must switch to in order to operate
+     * @param linkId the ID of the given link
+     * @return the operating channel the main PHY must switch to in order to operate
      *         on the given link
      */
     const WifiPhyOperatingChannel& GetChannelForMainPhy(uint8_t linkId) const;
 
     /**
-     * \param linkId the ID of the given link
-     * \return the operating channel an aux PHY must switch to in order to operate
+     * @param linkId the ID of the given link
+     * @return the operating channel an aux PHY must switch to in order to operate
      *         on the given link
      */
     const WifiPhyOperatingChannel& GetChannelForAuxPhy(uint8_t linkId) const;
@@ -287,11 +287,11 @@ class EmlsrManager : public Object
     /**
      * Switch channel on the Main PHY so that it operates on the given link.
      *
-     * \param linkId the ID of the link on which the main PHY has to operate
-     * \param noSwitchDelay whether switching delay should be zero
-     * \param resetBackoff whether backoff should be reset on the link on which the main PHY
+     * @param linkId the ID of the link on which the main PHY has to operate
+     * @param noSwitchDelay whether switching delay should be zero
+     * @param resetBackoff whether backoff should be reset on the link on which the main PHY
      *                     is operating
-     * \param requestAccess whether channel access should be requested on the link on which the
+     * @param requestAccess whether channel access should be requested on the link on which the
      *                      main PHY is moving onto
      */
     void SwitchMainPhy(uint8_t linkId, bool noSwitchDelay, bool resetBackoff, bool requestAccess);
@@ -306,8 +306,8 @@ class EmlsrManager : public Object
      * Switch channel on the Aux PHY operating on the given current link so that it operates
      * on the given next link.
      *
-     * \param currLinkId the ID of the link on which the aux PHY is currently operating
-     * \param nextLinkId the ID of the link on which the aux PHY will be operating
+     * @param currLinkId the ID of the link on which the aux PHY is currently operating
+     * @param nextLinkId the ID of the link on which the aux PHY will be operating
      */
     void SwitchAuxPhy(uint8_t currLinkId, uint8_t nextLinkId);
 
@@ -315,13 +315,13 @@ class EmlsrManager : public Object
      * Set the CCA ED threshold (if needed) on the given PHY that is switching channel to
      * operate on the given link.
      *
-     * \param phy the given PHY
-     * \param linkId the ID of the given link
+     * @param phy the given PHY
+     * @param linkId the ID of the given link
      */
     void SetCcaEdThresholdOnLinkSwitch(Ptr<WifiPhy> phy, uint8_t linkId);
 
     /**
-     * \return the EML Operating Mode Notification to send
+     * @return the EML Operating Mode Notification to send
      */
     MgtEmlOmn GetEmlOmn();
 
@@ -337,7 +337,7 @@ class EmlsrManager : public Object
      * Set the ID of main PHY (position in the vector of PHYs held by WifiNetDevice). This
      * method cannot be called during or after initialization.
      *
-     * \param mainPhyId the ID of the main PHY
+     * @param mainPhyId the ID of the main PHY
      */
     void SetMainPhyId(uint8_t mainPhyId);
 
@@ -358,7 +358,7 @@ class EmlsrManager : public Object
      * Start the MediumSyncDelay timer and take the appropriate actions, if the timer is not
      * already running.
      *
-     * \param linkId the ID of the link on which a TXOP was carried out that caused the STAs
+     * @param linkId the ID of the link on which a TXOP was carried out that caused the STAs
      *               operating on other links to lose medium synchronization
      */
     void StartMediumSyncDelayTimer(uint8_t linkId);
@@ -366,51 +366,51 @@ class EmlsrManager : public Object
     /**
      * Take the appropriate actions when the MediumSyncDelay timer expires or is cancelled.
      *
-     * \param linkId the ID of the link associated with the MediumSyncDelay timer to cancel
+     * @param linkId the ID of the link associated with the MediumSyncDelay timer to cancel
      */
     void MediumSyncDelayTimerExpired(uint8_t linkId);
 
     /**
      * Notify the subclass of the reception of a management frame addressed to us.
      *
-     * \param mpdu the received MPDU
-     * \param linkId the ID of the link over which the MPDU was received
+     * @param mpdu the received MPDU
+     * @param linkId the ID of the link over which the MPDU was received
      */
     virtual void DoNotifyMgtFrameReceived(Ptr<const WifiMpdu> mpdu, uint8_t linkId) = 0;
 
     /**
      * Notify the subclass of the reception of an initial Control frame on the given link.
      *
-     * \param linkId the ID of the link on which the initial Control frame was received
+     * @param linkId the ID of the link on which the initial Control frame was received
      */
     virtual void DoNotifyIcfReceived(uint8_t linkId) = 0;
 
     /**
      * Notify the subclass of the start of an UL TXOP on the given link
      *
-     * \param linkId the ID of the given link
+     * @param linkId the ID of the given link
      */
     virtual void DoNotifyUlTxopStart(uint8_t linkId) = 0;
 
     /**
      * Notify the subclass of the end of a TXOP on the given link.
      *
-     * \param linkId the ID of the given link
+     * @param linkId the ID of the given link
      */
     virtual void DoNotifyTxopEnd(uint8_t linkId) = 0;
 
     /**
      * Notify the acknowledgment of the given MPDU.
      *
-     * \param mpdu the acknowledged MPDU
+     * @param mpdu the acknowledged MPDU
      */
     void TxOk(Ptr<const WifiMpdu> mpdu);
 
     /**
      * Notify that the given MPDU has been discarded for the given reason.
      *
-     * \param reason the reason why the MPDU was dropped
-     * \param mpdu the dropped MPDU
+     * @param reason the reason why the MPDU was dropped
+     * @param mpdu the dropped MPDU
      */
     void TxDropped(WifiMacDropReason reason, Ptr<const WifiMpdu> mpdu);
 
@@ -434,8 +434,8 @@ class EmlsrManager : public Object
     /**
      * Notify subclass that the main PHY is switching channel to operate on another link.
      *
-     * \param currLinkId the ID of the link on which the main PHY is operating
-     * \param nextLinkId the ID of the link on which the main PHY will be operating
+     * @param currLinkId the ID of the link on which the main PHY is operating
+     * @param nextLinkId the ID of the link on which the main PHY will be operating
      */
     virtual void NotifyMainPhySwitch(uint8_t currLinkId, uint8_t nextLinkId) = 0;
 

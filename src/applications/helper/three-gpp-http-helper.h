@@ -32,7 +32,7 @@ namespace ns3
 {
 
 /**
- * \ingroup applications
+ * @ingroup applications
  * Helper to make it easier to instantiate an ThreeGppHttpClient on a set of nodes.
  */
 class ThreeGppHttpClientHelper : public ApplicationHelper
@@ -41,13 +41,13 @@ class ThreeGppHttpClientHelper : public ApplicationHelper
     /**
      * Create a ThreeGppHttpClientHelper to make it easier to work with ThreeGppHttpClient
      * applications.
-     * \param address The address of the remote server node to send traffic to.
+     * @param address The address of the remote server node to send traffic to.
      */
     ThreeGppHttpClientHelper(const Address& address);
 }; // end of `class ThreeGppHttpClientHelper`
 
 /**
- * \ingroup http
+ * @ingroup http
  * Helper to make it easier to instantiate an ThreeGppHttpServer on a set of nodes.
  */
 class ThreeGppHttpServerHelper : public ApplicationHelper
@@ -56,7 +56,7 @@ class ThreeGppHttpServerHelper : public ApplicationHelper
     /**
      * Create a ThreeGppHttpServerHelper to make it easier to work with
      * ThreeGppHttpServer applications.
-     * \param address The address of the server.
+     * @param address The address of the server.
      */
     ThreeGppHttpServerHelper(const Address& address);
 }; // end of `class ThreeGppHttpServerHelper`

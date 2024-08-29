@@ -435,7 +435,7 @@ LteFrequencyReuseTestSuite::LteFrequencyReuseTestSuite()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteFrequencyReuseTestSuite lteFrequencyReuseTestSuite;

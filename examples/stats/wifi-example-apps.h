@@ -42,8 +42,8 @@ class Sender : public Application
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
@@ -87,8 +87,8 @@ class Receiver : public Application
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
@@ -97,13 +97,13 @@ class Receiver : public Application
 
     /**
      * Set the counter calculator for received packets.
-     * \param calc The CounterCalculator.
+     * @param calc The CounterCalculator.
      */
     void SetCounter(Ptr<CounterCalculator<>> calc);
 
     /**
      * Set the delay tracker for received packets.
-     * \param delay The Delay calculator.
+     * @param delay The Delay calculator.
      */
     void SetDelayTracker(Ptr<TimeMinMaxAvgTotalCalculator> delay);
 
@@ -116,7 +116,7 @@ class Receiver : public Application
 
     /**
      * Receive a packet.
-     * \param socket The receiving socket.
+     * @param socket The receiving socket.
      */
     void Receive(Ptr<Socket> socket);
 

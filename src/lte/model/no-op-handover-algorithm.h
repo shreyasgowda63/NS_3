@@ -29,7 +29,7 @@ namespace ns3
 {
 
 /**
- * \brief Handover algorithm implementation which simply does nothing.
+ * @brief Handover algorithm implementation which simply does nothing.
  *
  * Selecting this handover algorithm is equivalent to disabling automatic
  * triggering of handover. This is the default choice.
@@ -46,8 +46,8 @@ class NoOpHandoverAlgorithm : public LteHandoverAlgorithm
     ~NoOpHandoverAlgorithm() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 

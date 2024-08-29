@@ -84,8 +84,8 @@ uint64_t g_intervalRate = 0; //!< Rate in an interval.
 /**
  * Packet received.
  *
- * \param pkt The packet.
- * \param addr The sender address.
+ * @param pkt The packet.
+ * @param addr The sender address.
  */
 void
 PacketRx(Ptr<const Packet> pkt, const Address& addr)
@@ -96,8 +96,8 @@ PacketRx(Ptr<const Packet> pkt, const Address& addr)
 /**
  * Rate changed.
  *
- * \param oldVal Old value.
- * \param newVal New value.
+ * @param oldVal Old value.
+ * @param newVal New value.
  */
 void
 RateChange(uint64_t oldVal, uint64_t newVal)
@@ -124,15 +124,15 @@ struct StandardInfo
     /**
      * Constructor
      *
-     * \param name reference name
-     * \param standard wifi standard
-     * \param band PHY band
-     * \param width channel width
-     * \param snrLow SNR low
-     * \param snrHigh SNR high
-     * \param xMin x minimum
-     * \param xMax x maximum
-     * \param yMax y maximum
+     * @param name reference name
+     * @param standard wifi standard
+     * @param band PHY band
+     * @param width channel width
+     * @param snrLow SNR low
+     * @param snrHigh SNR high
+     * @param xMin x minimum
+     * @param xMax x maximum
+     * @param yMax y maximum
      */
     StandardInfo(std::string name,
                  WifiStandard standard,
@@ -169,11 +169,11 @@ struct StandardInfo
 /**
  * Change the signal model and report the rate.
  *
- * \param rssModel The new RSS model.
- * \param step The step tp use.
- * \param rss The RSS.
- * \param rateDataset The rate dataset.
- * \param actualDataset The actual dataset.
+ * @param rssModel The new RSS model.
+ * @param step The step tp use.
+ * @param rss The RSS.
+ * @param rateDataset The rate dataset.
+ * @param actualDataset The actual dataset.
  */
 void
 ChangeSignalAndReportRate(Ptr<FixedRssLossModel> rssModel,

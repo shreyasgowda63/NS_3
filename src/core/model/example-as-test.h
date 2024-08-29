@@ -25,8 +25,8 @@
 #include <string>
 
 /**
- * \file
- * \ingroup testing
+ * @file
+ * @ingroup testing
  * Enable examples to be run as meaningful tests.
  * Declaration of classes ns3::ExampleAsTestSuite and ns3::ExampleAsTestCase.
  */
@@ -35,7 +35,7 @@ namespace ns3
 {
 
 /**
- * \ingroup testing
+ * @ingroup testing
  * Execute an example program as a test, by comparing the output
  * to a reference file.
  *
@@ -43,17 +43,17 @@ namespace ns3
  * GetPostProcessingCommand() methods if more complex
  * example invocation patterns are required.
  *
- * \see examples-as-tests-test-suite.cc
+ * @see examples-as-tests-test-suite.cc
  */
 class ExampleAsTestCase : public TestCase
 {
   public:
     /**
      * Constructor.
-     * \param [in] name The test case name, typically the program name
+     * @param [in] name The test case name, typically the program name
      *                  and summary of the arguments, such as `my-example-foo`
-     * \param [in] program The actual example program names, such as `my-example`
-     * \param [in] dataDir The location of the reference file.
+     * @param [in] program The actual example program names, such as `my-example`
+     * @param [in] dataDir The location of the reference file.
      *                  This is normally provided by the symbol
      *                  `NS_TEST_SOURCEDIR` in the `module-examples-test-suite.cc`
      *                  file.
@@ -63,8 +63,8 @@ class ExampleAsTestCase : public TestCase
      *                  the `--update` argument to `test.py` or
      *                  `test-runner` the reference file will be created
      *                  with the correct name.
-     * \param [in] args Any additional arguments to the program.
-     * \param [in] shouldNotErr Whether an error return status should be
+     * @param [in] args Any additional arguments to the program.
+     * @param [in] shouldNotErr Whether an error return status should be
      *             considered a test failure. This is useful when testing
      *             error detection which might return a non-zero status.
      *             The output (on `std::cout` and `std::cerr`) will
@@ -83,7 +83,7 @@ class ExampleAsTestCase : public TestCase
      * Customization point for more complicated patterns
      * to invoke the example program.
      *
-     * \returns The string to be given to the `ns3 --command-template=` argument.
+     * @returns The string to be given to the `ns3 --command-template=` argument.
      */
     virtual std::string GetCommandTemplate() const;
 
@@ -100,7 +100,7 @@ class ExampleAsTestCase : public TestCase
      *
      * Default is `""`, no additional processing.
      *
-     * \returns The string of post-processing commands
+     * @returns The string of post-processing commands
      */
     virtual std::string GetPostProcessingCommand() const;
 
@@ -116,7 +116,7 @@ class ExampleAsTestCase : public TestCase
 }; // class ExampleAsTestCase
 
 /**
- * \ingroup testing
+ * @ingroup testing
  * Execute an example program as a test suite.
  *
  * You can use this TestSuite to add an example to the test suite with
@@ -128,14 +128,14 @@ class ExampleAsTestCase : public TestCase
  * (non-zero indicates failure).  ExampleAsTestSuite adds checking of
  * output against a specified known "good" reference file.
  *
- * \warning If you are thinking about using this class, strongly
+ * @warning If you are thinking about using this class, strongly
  * consider using a standard test instead.  The TestSuite class has
  * better checking using the NS_TEST_* macros and in almost all cases
  * is the better approach.  If your test can be done with a TestSuite
  * class you will be asked by the reviewers to rewrite the test when
  * you do a pull request.
  *
- * \par Test Addition
+ * @par Test Addition
  *
  * To use an example program as a test you need to create a test suite
  * file and add it to the appropriate list in your module CMakeLists.txt
@@ -167,7 +167,7 @@ class ExampleAsTestCase : public TestCase
  * \code{.py}
  * if (bld.env['ENABLE_EXAMPLES']):
  *    module.source.append('model/mymodule-examples-test-suite.cc')
- * \endcode
+ * @endcode
  *
  * Since you modified a CMakeLists.txt file you need to reconfigure and
  * rebuild everything.
@@ -184,7 +184,7 @@ class ExampleAsTestCase : public TestCase
  * it is valid.  The reference files should be committed with the new
  * test.
  *
- * \par Test Verification
+ * @par Test Verification
  *
  * You can run the test with the standard `test.py` script.  For
  * example to run the suites you just added:
@@ -194,7 +194,7 @@ class ExampleAsTestCase : public TestCase
  * This will run all `mymodule-example-...` tests and report whether they
  * produce output matching the reference files.
  *
- * \par Writing good examples for testing
+ * @par Writing good examples for testing
  *
  * When setting up an example for use by this class you should be very
  * careful about what output the example generates.  For example,
@@ -210,8 +210,8 @@ class ExampleAsTestSuite : public TestSuite
 {
   public:
     /**
-     * \copydoc ExampleAsTestCase::ExampleAsTestCase
-     * \param [in] duration Amount of time this test takes to execute
+     * @copydoc ExampleAsTestCase::ExampleAsTestCase
+     * @param [in] duration Amount of time this test takes to execute
      *             (defaults to QUICK).
      */
     ExampleAsTestSuite(const std::string name,

@@ -27,9 +27,9 @@
 using namespace ns3;
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test suite for interference test.
+ * @brief Test suite for interference test.
  */
 class LteInterferenceTestSuite : public TestSuite
 {
@@ -38,9 +38,9 @@ class LteInterferenceTestSuite : public TestSuite
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test that SINR calculation and MCS selection works fine in a
+ * @brief Test that SINR calculation and MCS selection works fine in a
  * multi-cell interference scenario.
  */
 class LteInterferenceTestCase : public TestCase
@@ -49,15 +49,15 @@ class LteInterferenceTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param name the reference name
-     * \param d1 distance between ENB and UE
-     * \param d2 distance between ENB and other UE
-     * \param dlSinr the DL SINR
-     * \param ulSinr the UL SINR
-     * \param dlSe the DL se
-     * \param ulSe the UL se
-     * \param dlMcs the DL MCS
-     * \param ulMcs the UL MCS
+     * @param name the reference name
+     * @param d1 distance between ENB and UE
+     * @param d2 distance between ENB and other UE
+     * @param dlSinr the DL SINR
+     * @param ulSinr the UL SINR
+     * @param dlSe the DL se
+     * @param ulSe the UL se
+     * @param dlMcs the DL MCS
+     * @param ulMcs the UL MCS
      */
     LteInterferenceTestCase(std::string name,
                             double d1,
@@ -72,17 +72,17 @@ class LteInterferenceTestCase : public TestCase
 
     /**
      * DL scheduling function
-     * \param dlInfo the DL info
+     * @param dlInfo the DL info
      */
     void DlScheduling(DlSchedulingCallbackInfo dlInfo);
 
     /**
      * UL scheduling function
-     * \param frameNo the frame number
-     * \param subframeNo the subframe number
-     * \param rnti the RNTI
-     * \param mcs the MCS
-     * \param sizeTb
+     * @param frameNo the frame number
+     * @param subframeNo the subframe number
+     * @param rnti the RNTI
+     * @param mcs the MCS
+     * @param sizeTb
      */
     void UlScheduling(uint32_t frameNo,
                       uint32_t subframeNo,

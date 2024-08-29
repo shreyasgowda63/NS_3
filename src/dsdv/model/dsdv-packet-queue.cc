@@ -150,9 +150,9 @@ PacketQueue::GetCountForPacketsWithDst(Ipv4Address dst)
 struct IsExpired
 {
     /**
-     * \brief Check for expired entry
-     * \param e QueueEntry to check
-     * \return true if expired
+     * @brief Check for expired entry
+     * @param e QueueEntry to check
+     * @return true if expired
      */
     bool operator()(const QueueEntry& e) const
     {

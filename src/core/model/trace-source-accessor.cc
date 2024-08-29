@@ -21,8 +21,8 @@
 #include "log.h"
 
 /**
- * \file
- * \ingroup tracing
+ * @file
+ * @ingroup tracing
  * ns3::TraceSourceAccessor implementation (constructor and destructor).
  */
 

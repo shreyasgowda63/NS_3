@@ -35,8 +35,8 @@
 #include <thread>
 
 /**
- * \file
- * \ingroup realtime
+ * @file
+ * @ingroup realtime
  * ns3::RealTimeSimulatorImpl implementation.
  */
 

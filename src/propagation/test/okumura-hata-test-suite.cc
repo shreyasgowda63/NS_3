@@ -31,9 +31,9 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("OkumuraHataPropagationLossModelTest");
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
- * \brief OkumuraHataPropagationLossModel Test Case
+ * @brief OkumuraHataPropagationLossModel Test Case
  */
 class OkumuraHataPropagationLossModelTestCase : public TestCase
 {
@@ -41,14 +41,14 @@ class OkumuraHataPropagationLossModelTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param freq carrier frequency in Hz
-     * \param dist 2D distance between UT and BS in meters
-     * \param hb height of BS in meters
-     * \param hm height of UT in meters
-     * \param env environment type
-     * \param city city type
-     * \param refValue reference loss value
-     * \param name TestCase name
+     * @param freq carrier frequency in Hz
+     * @param dist 2D distance between UT and BS in meters
+     * @param hb height of BS in meters
+     * @param hm height of UT in meters
+     * @param env environment type
+     * @param city city type
+     * @param refValue reference loss value
+     * @param name TestCase name
      */
     OkumuraHataPropagationLossModelTestCase(double freq,
                                             double dist,
@@ -65,8 +65,8 @@ class OkumuraHataPropagationLossModelTestCase : public TestCase
 
     /**
      * Create a MobilityModel
-     * \param index mobility model index
-     * \return a new MobilityModel
+     * @param index mobility model index
+     * @return a new MobilityModel
      */
     Ptr<MobilityModel> CreateMobilityModel(uint16_t index);
 
@@ -129,9 +129,9 @@ OkumuraHataPropagationLossModelTestCase::DoRun()
 }
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
- * \brief OkumuraHataPropagationLossModel TestSuite
+ * @brief OkumuraHataPropagationLossModel TestSuite
  *
  * This TestSuite tests the following cases:
  *   - UrbanEnvironment - Large City (original OH and COST231 OH)

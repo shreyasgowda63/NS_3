@@ -41,8 +41,8 @@ namespace aodv
 {
 
 /**
- * \ingroup aodv
- * \brief MessageType enumeration
+ * @ingroup aodv
+ * @brief MessageType enumeration
  */
 enum MessageType
 {
@@ -53,21 +53,21 @@ enum MessageType
 };
 
 /**
- * \ingroup aodv
- * \brief AODV types
+ * @ingroup aodv
+ * @brief AODV types
  */
 class TypeHeader : public Header
 {
   public:
     /**
      * constructor
-     * \param t the AODV RREQ type
+     * @param t the AODV RREQ type
      */
     TypeHeader(MessageType t = AODVTYPE_RREQ);
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -77,7 +77,7 @@ class TypeHeader : public Header
     void Print(std::ostream& os) const override;
 
     /**
-     * \returns the type
+     * @returns the type
      */
     MessageType Get() const
     {
@@ -86,7 +86,7 @@ class TypeHeader : public Header
 
     /**
      * Check that type if valid
-     * \returns true if the type is valid
+     * @returns true if the type is valid
      */
     bool IsValid() const
     {
@@ -94,9 +94,9 @@ class TypeHeader : public Header
     }
 
     /**
-     * \brief Comparison operator
-     * \param o header to compare
-     * \return true if the headers are equal
+     * @brief Comparison operator
+     * @param o header to compare
+     * @return true if the headers are equal
      */
     bool operator==(const TypeHeader& o) const;
 
@@ -106,16 +106,16 @@ class TypeHeader : public Header
 };
 
 /**
- * \brief Stream output operator
- * \param os output stream
- * \param h the TypeHeader
- * \return updated stream
+ * @brief Stream output operator
+ * @param os output stream
+ * @param h the TypeHeader
+ * @return updated stream
  */
 std::ostream& operator<<(std::ostream& os, const TypeHeader& h);
 
 /**
-* \ingroup aodv
-* \brief   Route Request (RREQ) Message Format
+* @ingroup aodv
+* @brief   Route Request (RREQ) Message Format
   \verbatim
   0                   1                   2                   3
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -140,14 +140,14 @@ class RreqHeader : public Header
     /**
      * constructor
      *
-     * \param flags the message flags (0)
-     * \param reserved the reserved bits (0)
-     * \param hopCount the hop count
-     * \param requestID the request ID
-     * \param dst the destination IP address
-     * \param dstSeqNo the destination sequence number
-     * \param origin the origin IP address
-     * \param originSeqNo the origin sequence number
+     * @param flags the message flags (0)
+     * @param reserved the reserved bits (0)
+     * @param hopCount the hop count
+     * @param requestID the request ID
+     * @param dst the destination IP address
+     * @param dstSeqNo the destination sequence number
+     * @param origin the origin IP address
+     * @param originSeqNo the origin sequence number
      */
     RreqHeader(uint8_t flags = 0,
                uint8_t reserved = 0,
@@ -159,8 +159,8 @@ class RreqHeader : public Header
                uint32_t originSeqNo = 0);
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -171,8 +171,8 @@ class RreqHeader : public Header
 
     // Fields
     /**
-     * \brief Set the hop count
-     * \param count the hop count
+     * @brief Set the hop count
+     * @param count the hop count
      */
     void SetHopCount(uint8_t count)
     {
@@ -180,8 +180,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Get the hop count
-     * \return the hop count
+     * @brief Get the hop count
+     * @return the hop count
      */
     uint8_t GetHopCount() const
     {
@@ -189,8 +189,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Set the request ID
-     * \param id the request ID
+     * @brief Set the request ID
+     * @param id the request ID
      */
     void SetId(uint32_t id)
     {
@@ -198,8 +198,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Get the request ID
-     * \return the request ID
+     * @brief Get the request ID
+     * @return the request ID
      */
     uint32_t GetId() const
     {
@@ -207,8 +207,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Set the destination address
-     * \param a the destination address
+     * @brief Set the destination address
+     * @param a the destination address
      */
     void SetDst(Ipv4Address a)
     {
@@ -216,8 +216,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Get the destination address
-     * \return the destination address
+     * @brief Get the destination address
+     * @return the destination address
      */
     Ipv4Address GetDst() const
     {
@@ -225,8 +225,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Set the destination sequence number
-     * \param s the destination sequence number
+     * @brief Set the destination sequence number
+     * @param s the destination sequence number
      */
     void SetDstSeqno(uint32_t s)
     {
@@ -234,8 +234,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Get the destination sequence number
-     * \return the destination sequence number
+     * @brief Get the destination sequence number
+     * @return the destination sequence number
      */
     uint32_t GetDstSeqno() const
     {
@@ -243,8 +243,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Set the origin address
-     * \param a the origin address
+     * @brief Set the origin address
+     * @param a the origin address
      */
     void SetOrigin(Ipv4Address a)
     {
@@ -252,8 +252,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Get the origin address
-     * \return the origin address
+     * @brief Get the origin address
+     * @return the origin address
      */
     Ipv4Address GetOrigin() const
     {
@@ -261,8 +261,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Set the origin sequence number
-     * \param s the origin sequence number
+     * @brief Set the origin sequence number
+     * @param s the origin sequence number
      */
     void SetOriginSeqno(uint32_t s)
     {
@@ -270,8 +270,8 @@ class RreqHeader : public Header
     }
 
     /**
-     * \brief Get the origin sequence number
-     * \return the origin sequence number
+     * @brief Get the origin sequence number
+     * @return the origin sequence number
      */
     uint32_t GetOriginSeqno() const
     {
@@ -280,40 +280,40 @@ class RreqHeader : public Header
 
     // Flags
     /**
-     * \brief Set the gratuitous RREP flag
-     * \param f the gratuitous RREP flag
+     * @brief Set the gratuitous RREP flag
+     * @param f the gratuitous RREP flag
      */
     void SetGratuitousRrep(bool f);
     /**
-     * \brief Get the gratuitous RREP flag
-     * \return the gratuitous RREP flag
+     * @brief Get the gratuitous RREP flag
+     * @return the gratuitous RREP flag
      */
     bool GetGratuitousRrep() const;
     /**
-     * \brief Set the Destination only flag
-     * \param f the Destination only flag
+     * @brief Set the Destination only flag
+     * @param f the Destination only flag
      */
     void SetDestinationOnly(bool f);
     /**
-     * \brief Get the Destination only flag
-     * \return the Destination only flag
+     * @brief Get the Destination only flag
+     * @return the Destination only flag
      */
     bool GetDestinationOnly() const;
     /**
-     * \brief Set the unknown sequence number flag
-     * \param f the unknown sequence number flag
+     * @brief Set the unknown sequence number flag
+     * @param f the unknown sequence number flag
      */
     void SetUnknownSeqno(bool f);
     /**
-     * \brief Get the unknown sequence number flag
-     * \return the unknown sequence number flag
+     * @brief Get the unknown sequence number flag
+     * @return the unknown sequence number flag
      */
     bool GetUnknownSeqno() const;
 
     /**
-     * \brief Comparison operator
-     * \param o RREQ header to compare
-     * \return true if the RREQ headers are equal
+     * @brief Comparison operator
+     * @param o RREQ header to compare
+     * @return true if the RREQ headers are equal
      */
     bool operator==(const RreqHeader& o) const;
 
@@ -329,15 +329,15 @@ class RreqHeader : public Header
 };
 
 /**
- * \brief Stream output operator
- * \param os output stream
- * \return updated stream
+ * @brief Stream output operator
+ * @param os output stream
+ * @return updated stream
  */
 std::ostream& operator<<(std::ostream& os, const RreqHeader&);
 
 /**
-* \ingroup aodv
-* \brief Route Reply (RREP) Message Format
+* @ingroup aodv
+* @brief Route Reply (RREP) Message Format
   \verbatim
   0                   1                   2                   3
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -360,12 +360,12 @@ class RrepHeader : public Header
     /**
      * constructor
      *
-     * \param prefixSize the prefix size (0)
-     * \param hopCount the hop count (0)
-     * \param dst the destination IP address
-     * \param dstSeqNo the destination sequence number
-     * \param origin the origin IP address
-     * \param lifetime the lifetime
+     * @param prefixSize the prefix size (0)
+     * @param hopCount the hop count (0)
+     * @param dst the destination IP address
+     * @param dstSeqNo the destination sequence number
+     * @param origin the origin IP address
+     * @param lifetime the lifetime
      */
     RrepHeader(uint8_t prefixSize = 0,
                uint8_t hopCount = 0,
@@ -374,8 +374,8 @@ class RrepHeader : public Header
                Ipv4Address origin = Ipv4Address(),
                Time lifetime = MilliSeconds(0));
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -386,8 +386,8 @@ class RrepHeader : public Header
 
     // Fields
     /**
-     * \brief Set the hop count
-     * \param count the hop count
+     * @brief Set the hop count
+     * @param count the hop count
      */
     void SetHopCount(uint8_t count)
     {
@@ -395,8 +395,8 @@ class RrepHeader : public Header
     }
 
     /**
-     * \brief Get the hop count
-     * \return the hop count
+     * @brief Get the hop count
+     * @return the hop count
      */
     uint8_t GetHopCount() const
     {
@@ -404,8 +404,8 @@ class RrepHeader : public Header
     }
 
     /**
-     * \brief Set the destination address
-     * \param a the destination address
+     * @brief Set the destination address
+     * @param a the destination address
      */
     void SetDst(Ipv4Address a)
     {
@@ -413,8 +413,8 @@ class RrepHeader : public Header
     }
 
     /**
-     * \brief Get the destination address
-     * \return the destination address
+     * @brief Get the destination address
+     * @return the destination address
      */
     Ipv4Address GetDst() const
     {
@@ -422,8 +422,8 @@ class RrepHeader : public Header
     }
 
     /**
-     * \brief Set the destination sequence number
-     * \param s the destination sequence number
+     * @brief Set the destination sequence number
+     * @param s the destination sequence number
      */
     void SetDstSeqno(uint32_t s)
     {
@@ -431,8 +431,8 @@ class RrepHeader : public Header
     }
 
     /**
-     * \brief Get the destination sequence number
-     * \return the destination sequence number
+     * @brief Get the destination sequence number
+     * @return the destination sequence number
      */
     uint32_t GetDstSeqno() const
     {
@@ -440,8 +440,8 @@ class RrepHeader : public Header
     }
 
     /**
-     * \brief Set the origin address
-     * \param a the origin address
+     * @brief Set the origin address
+     * @param a the origin address
      */
     void SetOrigin(Ipv4Address a)
     {
@@ -449,8 +449,8 @@ class RrepHeader : public Header
     }
 
     /**
-     * \brief Get the origin address
-     * \return the origin address
+     * @brief Get the origin address
+     * @return the origin address
      */
     Ipv4Address GetOrigin() const
     {
@@ -458,51 +458,51 @@ class RrepHeader : public Header
     }
 
     /**
-     * \brief Set the lifetime
-     * \param t the lifetime
+     * @brief Set the lifetime
+     * @param t the lifetime
      */
     void SetLifeTime(Time t);
     /**
-     * \brief Get the lifetime
-     * \return the lifetime
+     * @brief Get the lifetime
+     * @return the lifetime
      */
     Time GetLifeTime() const;
 
     // Flags
     /**
-     * \brief Set the ack required flag
-     * \param f the ack required flag
+     * @brief Set the ack required flag
+     * @param f the ack required flag
      */
     void SetAckRequired(bool f);
     /**
-     * \brief get the ack required flag
-     * \return the ack required flag
+     * @brief get the ack required flag
+     * @return the ack required flag
      */
     bool GetAckRequired() const;
     /**
-     * \brief Set the prefix size
-     * \param sz the prefix size
+     * @brief Set the prefix size
+     * @param sz the prefix size
      */
     void SetPrefixSize(uint8_t sz);
     /**
-     * \brief Set the prefix size
-     * \return the prefix size
+     * @brief Set the prefix size
+     * @return the prefix size
      */
     uint8_t GetPrefixSize() const;
 
     /**
      * Configure RREP to be a Hello message
      *
-     * \param src the source IP address
-     * \param srcSeqNo the source sequence number
-     * \param lifetime the lifetime of the message
+     * @param src the source IP address
+     * @param srcSeqNo the source sequence number
+     * @param lifetime the lifetime of the message
      */
     void SetHello(Ipv4Address src, uint32_t srcSeqNo, Time lifetime);
 
     /**
-     * \brief Comparison operator
-     * \param o RREP header to compare
-     * \return true if the RREP headers are equal
+     * @brief Comparison operator
+     * @param o RREP header to compare
+     * @return true if the RREP headers are equal
      */
     bool operator==(const RrepHeader& o) const;
 
@@ -517,15 +517,15 @@ class RrepHeader : public Header
 };
 
 /**
- * \brief Stream output operator
- * \param os output stream
- * \return updated stream
+ * @brief Stream output operator
+ * @param os output stream
+ * @return updated stream
  */
 std::ostream& operator<<(std::ostream& os, const RrepHeader&);
 
 /**
-* \ingroup aodv
-* \brief Route Reply Acknowledgment (RREP-ACK) Message Format
+* @ingroup aodv
+* @brief Route Reply Acknowledgment (RREP-ACK) Message Format
   \verbatim
   0                   1
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
@@ -541,8 +541,8 @@ class RrepAckHeader : public Header
     RrepAckHeader();
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -552,9 +552,9 @@ class RrepAckHeader : public Header
     void Print(std::ostream& os) const override;
 
     /**
-     * \brief Comparison operator
-     * \param o RREP header to compare
-     * \return true if the RREQ headers are equal
+     * @brief Comparison operator
+     * @param o RREP header to compare
+     * @return true if the RREQ headers are equal
      */
     bool operator==(const RrepAckHeader& o) const;
 
@@ -563,15 +563,15 @@ class RrepAckHeader : public Header
 };
 
 /**
- * \brief Stream output operator
- * \param os output stream
- * \return updated stream
+ * @brief Stream output operator
+ * @param os output stream
+ * @return updated stream
  */
 std::ostream& operator<<(std::ostream& os, const RrepAckHeader&);
 
 /**
-* \ingroup aodv
-* \brief Route Error (RERR) Message Format
+* @ingroup aodv
+* @brief Route Error (RERR) Message Format
   \verbatim
   0                   1                   2                   3
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -595,8 +595,8 @@ class RerrHeader : public Header
     RerrHeader();
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -607,35 +607,35 @@ class RerrHeader : public Header
 
     // No delete flag
     /**
-     * \brief Set the no delete flag
-     * \param f the no delete flag
+     * @brief Set the no delete flag
+     * @param f the no delete flag
      */
     void SetNoDelete(bool f);
     /**
-     * \brief Get the no delete flag
-     * \return the no delete flag
+     * @brief Get the no delete flag
+     * @return the no delete flag
      */
     bool GetNoDelete() const;
 
     /**
-     * \brief Add unreachable node address and its sequence number in RERR header
-     * \param dst unreachable IPv4 address
-     * \param seqNo unreachable sequence number
-     * \return false if we already added maximum possible number of unreachable destinations
+     * @brief Add unreachable node address and its sequence number in RERR header
+     * @param dst unreachable IPv4 address
+     * @param seqNo unreachable sequence number
+     * @return false if we already added maximum possible number of unreachable destinations
      */
     bool AddUnDestination(Ipv4Address dst, uint32_t seqNo);
     /**
-     * \brief Delete pair (address + sequence number) from REER header, if the number of unreachable
+     * @brief Delete pair (address + sequence number) from REER header, if the number of unreachable
      * destinations > 0
-     * \param un unreachable pair (address + sequence number)
-     * \return true on success
+     * @param un unreachable pair (address + sequence number)
+     * @return true on success
      */
     bool RemoveUnDestination(std::pair<Ipv4Address, uint32_t>& un);
     /// Clear header
     void Clear();
 
     /**
-     * \returns number of unreachable destinations in RERR message
+     * @returns number of unreachable destinations in RERR message
      */
     uint8_t GetDestCount() const
     {
@@ -643,9 +643,9 @@ class RerrHeader : public Header
     }
 
     /**
-     * \brief Comparison operator
-     * \param o RERR header to compare
-     * \return true if the RERR headers are equal
+     * @brief Comparison operator
+     * @param o RERR header to compare
+     * @return true if the RERR headers are equal
      */
     bool operator==(const RerrHeader& o) const;
 
@@ -658,9 +658,9 @@ class RerrHeader : public Header
 };
 
 /**
- * \brief Stream output operator
- * \param os output stream
- * \return updated stream
+ * @brief Stream output operator
+ * @param os output stream
+ * @return updated stream
  */
 std::ostream& operator<<(std::ostream& os, const RerrHeader&);
 

@@ -37,10 +37,10 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("WifiOperatingChannelTest");
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the WifiPhyOperatingChannel::Set() method.
+ * @brief Test the WifiPhyOperatingChannel::Set() method.
  */
 class SetWifiOperatingChannelTest : public TestCase
 {
@@ -56,13 +56,13 @@ class SetWifiOperatingChannelTest : public TestCase
 
     /**
      * Run one function.
-     * \param runInfo the string that indicates info about the test case to run
-     * \param segments the info about each frequency segment to set for the operating channel
-     * \param standard the 802.11 standard to consider for the test
-     * \param band the PHY band to consider for the test
-     * \param expectExceptionThrown flag to indicate whether an exception is expected to be thrown
-     * \param expectedWidth the expected width type of the operating channel
-     * \param expectedSegments the info about the expected frequency segments of the operating
+     * @param runInfo the string that indicates info about the test case to run
+     * @param segments the info about each frequency segment to set for the operating channel
+     * @param standard the 802.11 standard to consider for the test
+     * @param band the PHY band to consider for the test
+     * @param expectExceptionThrown flag to indicate whether an exception is expected to be thrown
+     * @param expectedWidth the expected width type of the operating channel
+     * @param expectedSegments the info about the expected frequency segments of the operating
      * channel
      */
     void RunOne(const std::string& runInfo,
@@ -227,10 +227,10 @@ SetWifiOperatingChannelTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the conversion from PHY ChannelSettings attribute to WifiPhyOperatingChannel.
+ * @brief Test the conversion from PHY ChannelSettings attribute to WifiPhyOperatingChannel.
  */
 class PhyChannelSettingsToOperatingChannelTest : public TestCase
 {
@@ -248,10 +248,10 @@ class PhyChannelSettingsToOperatingChannelTest : public TestCase
 
     /**
      * Run one function.
-     * \param channelSettings the string to set the ChannelSettings attribute
-     * \param expectedWidthType the expected width type of the operating channel
-     * \param expectedSegments the info about each expected segment of the operating channel
-     * \param expectedP20Index the expected index of the P20
+     * @param channelSettings the string to set the ChannelSettings attribute
+     * @param expectedWidthType the expected width type of the operating channel
+     * @param expectedSegments the info about each expected segment of the operating channel
+     * @param expectedP20Index the expected index of the P20
      */
     void RunOne(const std::string& channelSettings,
                 WifiChannelWidthType expectedWidthType,
@@ -462,10 +462,10 @@ PhyChannelSettingsToOperatingChannelTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the operating channel functions for 80+80MHz.
+ * @brief Test the operating channel functions for 80+80MHz.
  */
 class WifiPhyChannel80Plus80Test : public TestCase
 {
@@ -481,15 +481,15 @@ class WifiPhyChannel80Plus80Test : public TestCase
 
     /**
      * Create a dummy PSDU whose payload is 1000 bytes
-     * \return a dummy PSDU whose payload is 1000 bytes
+     * @return a dummy PSDU whose payload is 1000 bytes
      */
     Ptr<WifiPsdu> CreateDummyPsdu();
 
     /**
      * Create a HE PPDU
-     * \param bandwidth the bandwidth used for the transmission the PPDU in MHz
-     * \param channel the operating channel of the PHY used for the transmission
-     * \return a HE PPDU
+     * @param bandwidth the bandwidth used for the transmission the PPDU in MHz
+     * @param channel the operating channel of the PHY used for the transmission
+     * @return a HE PPDU
      */
     Ptr<HePpdu> CreateDummyHePpdu(ChannelWidthMhz bandwidth,
                                   const WifiPhyOperatingChannel& channel);
@@ -927,10 +927,10 @@ WifiPhyChannel80Plus80Test::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief wifi operating channel test suite
+ * @brief wifi operating channel test suite
  */
 class WifiOperatingChannelTestSuite : public TestSuite
 {

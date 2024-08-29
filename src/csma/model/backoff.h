@@ -30,8 +30,8 @@ namespace ns3
 {
 
 /**
- * \ingroup csma
- * \brief The backoff class is used for calculating backoff times
+ * @ingroup csma
+ * @brief The backoff class is used for calculating backoff times
  * when many net devices can write to the same channel
  */
 
@@ -68,12 +68,12 @@ class Backoff
 
     Backoff();
     /**
-     * \brief Constructor
-     * \param slotTime Length of one slot
-     * \param minSlots Minimum number of backoff slots
-     * \param maxSlots Maximum number of backoff slots
-     * \param ceiling Cap to the exponential function
-     * \param maxRetries Maximum number of transmission retries
+     * @brief Constructor
+     * @param slotTime Length of one slot
+     * @param minSlots Minimum number of backoff slots
+     * @param maxSlots Maximum number of backoff slots
+     * @param ceiling Cap to the exponential function
+     * @param maxRetries Maximum number of transmission retries
      */
     Backoff(Time slotTime,
             uint32_t minSlots,
@@ -82,7 +82,7 @@ class Backoff
             uint32_t maxRetries);
 
     /**
-     * \return The amount of time that the net device should wait before
+     * @return The amount of time that the net device should wait before
      * trying to retransmit the packet
      */
     Time GetBackoffTime();
@@ -95,7 +95,7 @@ class Backoff
     void ResetBackoffTime();
 
     /**
-     * \return True if the maximum number of retries has been reached
+     * @return True if the maximum number of retries has been reached
      */
     bool MaxRetriesReached() const;
 
@@ -109,8 +109,8 @@ class Backoff
      * used by this model.  Return the number of streams (possibly zero) that
      * have been assigned.
      *
-     * \param stream first stream index to use
-     * \return the number of stream indices assigned by this model
+     * @param stream first stream index to use
+     * @return the number of stream indices assigned by this model
      */
     int64_t AssignStreams(int64_t stream);
 

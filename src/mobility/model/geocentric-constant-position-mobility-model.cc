@@ -23,8 +23,8 @@
 #include <math.h>
 
 /**
- *  \file
- *  \ingroup mobility
+ *  @file
+ *  @ingroup mobility
  *  Class GeocentricConstantPositionMobilityModel implementation.
  */
 

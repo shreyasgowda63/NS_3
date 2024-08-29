@@ -28,7 +28,7 @@ namespace ns3
 {
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * DefaultEmlsrManager is the default EMLSR manager.
  */
@@ -36,8 +36,8 @@ class DefaultEmlsrManager : public EmlsrManager
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 

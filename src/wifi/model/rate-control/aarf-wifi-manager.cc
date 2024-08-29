@@ -31,7 +31,7 @@ namespace ns3
 NS_LOG_COMPONENT_DEFINE("AarfWifiManager");
 
 /**
- * \brief hold per-remote-station state for AARF Wifi manager.
+ * @brief hold per-remote-station state for AARF Wifi manager.
  *
  * This struct extends from WifiRemoteStation struct to hold additional
  * information required by the AARF Wifi manager
@@ -151,7 +151,7 @@ AarfWifiManager::DoReportRtsFailed(WifiRemoteStation* station)
  * The fundamental reason for this is that there is a backoff between each data
  * transmission, be it an initial transmission or a retransmission.
  *
- * \param st the station that we failed to send Data
+ * @param st the station that we failed to send Data
  */
 void
 AarfWifiManager::DoReportDataFailed(WifiRemoteStation* st)
@@ -288,7 +288,7 @@ WifiTxVector
 AarfWifiManager::DoGetRtsTxVector(WifiRemoteStation* st)
 {
     NS_LOG_FUNCTION(this << st);
-    /// \todo we could/should implement the AARF algorithm for
+    /// @todo we could/should implement the AARF algorithm for
     /// RTS only by picking a single rate within the BasicRateSet.
     auto station = static_cast<AarfWifiRemoteStation*>(st);
     auto channelWidth = GetChannelWidth(station);

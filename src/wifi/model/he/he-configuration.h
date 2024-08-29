@@ -26,8 +26,8 @@ namespace ns3
 {
 
 /**
- * \brief HE configuration
- * \ingroup wifi
+ * @brief HE configuration
+ * @ingroup wifi
  *
  * This object stores HE configuration information, for use in modifying
  * AP or STA behavior and for constructing HE-related information elements.
@@ -39,33 +39,33 @@ class HeConfiguration : public Object
     HeConfiguration();
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
     /**
-     * \param guardInterval the supported HE guard interval
+     * @param guardInterval the supported HE guard interval
      */
     void SetGuardInterval(Time guardInterval);
     /**
-     * \return the supported HE guard interval
+     * @return the supported HE guard interval
      */
     Time GetGuardInterval() const;
     /**
-     * \param bssColor the BSS color
+     * @param bssColor the BSS color
      */
     void SetBssColor(uint8_t bssColor);
     /**
-     * \return the BSS color
+     * @return the BSS color
      */
     uint8_t GetBssColor() const;
     /**
-     * \param maxTbPpduDelay the maximum TB PPDU delay
+     * @param maxTbPpduDelay the maximum TB PPDU delay
      */
     void SetMaxTbPpduDelay(Time maxTbPpduDelay);
     /**
-     * \return the maximum TB PPDU delay
+     * @return the maximum TB PPDU delay
      */
     Time GetMaxTbPpduDelay() const;
 

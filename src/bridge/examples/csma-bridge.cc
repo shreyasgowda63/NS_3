@@ -39,8 +39,8 @@
 #include <iostream>
 
 /**
- * \file
- * \ingroup bridge
+ * @file
+ * @ingroup bridge
  * Bridge example connecting four nodes,
  * with the bridge acting as a simple switch.
  */

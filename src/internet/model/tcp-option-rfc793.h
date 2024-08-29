@@ -25,7 +25,7 @@ namespace ns3
 {
 
 /**
- * \ingroup tcp
+ * @ingroup tcp
  *
  * Defines the TCP option of kind 0 (end of option list) as in \RFC{793}
  */
@@ -36,8 +36,8 @@ class TcpOptionEnd : public TcpOption
     ~TcpOptionEnd() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -60,8 +60,8 @@ class TcpOptionNOP : public TcpOption
     ~TcpOptionNOP() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -84,8 +84,8 @@ class TcpOptionMSS : public TcpOption
     ~TcpOptionMSS() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -98,13 +98,13 @@ class TcpOptionMSS : public TcpOption
     uint32_t GetSerializedSize() const override;
 
     /**
-     * \brief Get the Maximum Segment Size stored in the Option
-     * \return The Maximum Segment Size
+     * @brief Get the Maximum Segment Size stored in the Option
+     * @return The Maximum Segment Size
      */
     uint16_t GetMSS() const;
     /**
-     * \brief Set the Maximum Segment Size stored in the Option
-     * \param mss The Maximum Segment Size
+     * @brief Set the Maximum Segment Size stored in the Option
+     * @param mss The Maximum Segment Size
      */
     void SetMSS(uint16_t mss);
 

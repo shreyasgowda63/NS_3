@@ -31,13 +31,13 @@ class Socket;
 class Packet;
 
 /**
- * \ingroup applications
- * \defgroup udpecho UdpEcho
+ * @ingroup applications
+ * @defgroup udpecho UdpEcho
  */
 
 /**
- * \ingroup udpecho
- * \brief A Udp Echo server
+ * @ingroup udpecho
+ * @brief A Udp Echo server
  *
  * Every packet received is sent back.
  */
@@ -45,8 +45,8 @@ class UdpEchoServer : public Application
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     UdpEchoServer();
@@ -57,11 +57,11 @@ class UdpEchoServer : public Application
     void StopApplication() override;
 
     /**
-     * \brief Handle a packet reception.
+     * @brief Handle a packet reception.
      *
      * This function is called by lower layers.
      *
-     * \param socket the socket the packet was received to.
+     * @param socket the socket the packet was received to.
      */
     void HandleRead(Ptr<Socket> socket);
 

@@ -18,8 +18,8 @@
  */
 
 /**
- * \file
- * \ingroup mpi
+ * @file
+ * @ingroup mpi
  * Implementation of class ns3::MpiInterface.
  */
 

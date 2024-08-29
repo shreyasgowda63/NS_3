@@ -29,9 +29,9 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("InternetStackHelperTestSuite");
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief InternetStackHelper Test
+ * @brief InternetStackHelper Test
  */
 class InternetStackHelperTestCase : public TestCase
 {
@@ -140,9 +140,9 @@ InternetStackHelperTestCase::DoTeardown()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief InternetStackHelper TestSuite
+ * @brief InternetStackHelper TestSuite
  */
 class InternetStackHelperTestSuite : public TestSuite
 {

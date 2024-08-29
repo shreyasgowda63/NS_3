@@ -31,9 +31,9 @@ class Packet;
 using namespace ns3;
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test suite for RlcUmE2eTestCase
+ * @brief Test suite for RlcUmE2eTestCase
  */
 class LteRlcUmE2eTestSuite : public TestSuite
 {
@@ -42,9 +42,9 @@ class LteRlcUmE2eTestSuite : public TestSuite
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test end-to-end flow when RLC UM is being used.
+ * @brief Test end-to-end flow when RLC UM is being used.
  */
 class LteRlcUmE2eTestCase : public TestCase
 {
@@ -52,9 +52,9 @@ class LteRlcUmE2eTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param name the reference name
-     * \param seed the random variable seed
-     * \param losses the error rate
+     * @param name the reference name
+     * @param seed the random variable seed
+     * @param losses the error rate
      */
     LteRlcUmE2eTestCase(std::string name, uint32_t seed, double losses);
     LteRlcUmE2eTestCase();
@@ -65,12 +65,12 @@ class LteRlcUmE2eTestCase : public TestCase
 
     /**
      * DL drop event
-     * \param p the packet
+     * @param p the packet
      */
     void DlDropEvent(Ptr<const Packet> p);
     /**
      * UL drop event
-     * \param p the packet
+     * @param p the packet
      */
     void UlDropEvent(Ptr<const Packet> p);
 

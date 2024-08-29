@@ -28,7 +28,7 @@ namespace ns3
 class Packet;
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
  * Signal parameters for HalfDuplexIdealPhy
  */
@@ -43,7 +43,7 @@ struct HalfDuplexIdealPhySignalParameters : public SpectrumSignalParameters
 
     /**
      * copy constructor
-     * \param p object to copy
+     * @param p object to copy
      */
     HalfDuplexIdealPhySignalParameters(const HalfDuplexIdealPhySignalParameters& p);
 

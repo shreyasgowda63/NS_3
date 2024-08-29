@@ -28,8 +28,8 @@
 #include <iostream>
 
 /**
- * \file
- * \ingroup rngimpl
+ * @file
+ * @ingroup rngimpl
  * ns3::RngStream and MRG32k3a implementations.
  */
 
@@ -44,7 +44,7 @@ NS_LOG_COMPONENT_DEFINE("RngStream");
 } // namespace ns3
 
 /**
- * \ingroup rngimpl
+ * @ingroup rngimpl
  * @{
  */
 /** Namespace for MRG32k3a implementation details. */

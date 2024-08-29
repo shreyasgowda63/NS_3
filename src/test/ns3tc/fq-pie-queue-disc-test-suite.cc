@@ -47,7 +47,7 @@ using namespace ns3;
 static int32_t g_hash;
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * Simple test packet filter able to classify IPv4 packets.
  */
@@ -55,8 +55,8 @@ class Ipv4FqPieTestPacketFilter : public Ipv4PacketFilter
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -66,15 +66,15 @@ class Ipv4FqPieTestPacketFilter : public Ipv4PacketFilter
   private:
     /**
      * Classify a QueueDiscItem
-     * \param item The item to classify (unused).
-     * \return a pre-set hash value.
+     * @param item The item to classify (unused).
+     * @return a pre-set hash value.
      */
     int32_t DoClassify(Ptr<QueueDiscItem> item) const override;
 
     /**
      * Check the protocol.
-     * \param item The item to check (unused).
-     * \return true.
+     * @param item The item to check (unused).
+     * @return true.
      */
     bool CheckProtocol(Ptr<QueueDiscItem> item) const override;
 };
@@ -110,7 +110,7 @@ Ipv4FqPieTestPacketFilter::CheckProtocol(Ptr<QueueDiscItem> item) const
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * This class tests packets for which there is no suitable filter.
  */
@@ -168,7 +168,7 @@ FqPieQueueDiscNoSuitableFilter::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * This class tests the IP flows separation and the packet limit.
  */
@@ -182,8 +182,8 @@ class FqPieQueueDiscIPFlowsSeparationAndPacketLimit : public TestCase
     void DoRun() override;
     /**
      * Enqueue a packet.
-     * \param queue the queue disc
-     * \param hdr the IPv4 header
+     * @param queue the queue disc
+     * @param hdr the IPv4 header
      */
     void AddPacket(Ptr<FqPieQueueDisc> queue, Ipv4Header hdr);
 };
@@ -262,7 +262,7 @@ FqPieQueueDiscIPFlowsSeparationAndPacketLimit::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * This class tests the deficit per flow.
  */
@@ -276,8 +276,8 @@ class FqPieQueueDiscDeficit : public TestCase
     void DoRun() override;
     /**
      * Enqueue a packet.
-     * \param queue The queue disc.
-     * \param hdr The IPv4 header.
+     * @param queue The queue disc.
+     * @param hdr The IPv4 header.
      */
     void AddPacket(Ptr<FqPieQueueDisc> queue, Ipv4Header hdr);
 };
@@ -488,7 +488,7 @@ FqPieQueueDiscDeficit::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * This class tests the TCP flows separation.
  */
@@ -502,9 +502,9 @@ class FqPieQueueDiscTCPFlowsSeparation : public TestCase
     void DoRun() override;
     /**
      * Enqueue a packet.
-     * \param queue The queue disc.
-     * \param ipHdr The IPv4 header.
-     * \param tcpHdr The TCP header.
+     * @param queue The queue disc.
+     * @param ipHdr The IPv4 header.
+     * @param tcpHdr The TCP header.
      */
     void AddPacket(Ptr<FqPieQueueDisc> queue, Ipv4Header ipHdr, TcpHeader tcpHdr);
 };
@@ -613,7 +613,7 @@ FqPieQueueDiscTCPFlowsSeparation::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * This class tests the UDP flows separation
  */
@@ -627,9 +627,9 @@ class FqPieQueueDiscUDPFlowsSeparation : public TestCase
     void DoRun() override;
     /**
      * Enqueue a packet.
-     * \param queue The queue disc.
-     * \param ipHdr The IPv4 header.
-     * \param udpHdr The UDP header.
+     * @param queue The queue disc.
+     * @param ipHdr The IPv4 header.
+     * @param udpHdr The UDP header.
      */
     void AddPacket(Ptr<FqPieQueueDisc> queue, Ipv4Header ipHdr, UdpHeader udpHdr);
 };
@@ -738,9 +738,9 @@ FqPieQueueDiscUDPFlowsSeparation::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
- * \brief This class tests linear probing, collision response, and set
+ * @brief This class tests linear probing, collision response, and set
  * creation capability of set associative hashing in FqPIE.
  *
  * This class tests linear probing, collision response, and set
@@ -773,8 +773,8 @@ class FqPieQueueDiscSetLinearProbing : public TestCase
     void DoRun() override;
     /**
      * Enqueue a packet.
-     * \param queue The queue disc.
-     * \param hdr The IPv4 header.
+     * @param queue The queue disc.
+     * @param hdr The IPv4 header.
      */
     void AddPacket(Ptr<FqPieQueueDisc> queue, Ipv4Header hdr);
 };
@@ -876,9 +876,9 @@ FqPieQueueDiscSetLinearProbing::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
- * \brief This class tests L4S mode.
+ * @brief This class tests L4S mode.
  *
  * This test is divided to sub test one without hash collisions and so ECT0 and ECT1 flows are
  * classified into different flows.
@@ -899,30 +899,30 @@ class FqPieQueueDiscL4sMode : public TestCase
     void DoRun() override;
     /**
      * Enqueue the given number of packets.
-     * \param queue The queue disc.
-     * \param hdr The IPv4 header.
-     * \param nPkt The number of packets.
+     * @param queue The queue disc.
+     * @param hdr The IPv4 header.
+     * @param nPkt The number of packets.
      */
     void AddPacket(Ptr<FqPieQueueDisc> queue, Ipv4Header hdr, uint32_t nPkt);
     /**
      * Enqueue the given number of packets at different times.
-     * \param queue The queue disc.
-     * \param hdr The IPv4 header.
-     * \param delay The time between two consecutive enqueue operations.
-     * \param nPkt The number of packets.
+     * @param queue The queue disc.
+     * @param hdr The IPv4 header.
+     * @param delay The time between two consecutive enqueue operations.
+     * @param nPkt The number of packets.
      */
     void AddPacketWithDelay(Ptr<FqPieQueueDisc> queue, Ipv4Header hdr, double delay, uint32_t nPkt);
     /**
      * Dequeue the given number of packets.
-     * \param queue The queue disc.
-     * \param nPkt The number of packets.
+     * @param queue The queue disc.
+     * @param nPkt The number of packets.
      */
     void Dequeue(Ptr<FqPieQueueDisc> queue, uint32_t nPkt);
     /**
      * Dequeue the given number of packets at different times.
-     * \param queue The queue disc.
-     * \param delay The time between two consecutive dequeue operations.
-     * \param nPkt The number of packets.
+     * @param queue The queue disc.
+     * @param delay The time between two consecutive dequeue operations.
+     * @param nPkt The number of packets.
      */
     void DequeueWithDelay(Ptr<FqPieQueueDisc> queue, double delay, uint32_t nPkt);
 };
@@ -1149,7 +1149,7 @@ FqPieQueueDiscL4sMode::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * FQ-PIE queue disc test suite.
  */

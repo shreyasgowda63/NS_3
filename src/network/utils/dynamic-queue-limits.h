@@ -36,7 +36,7 @@ namespace ns3
 {
 
 /**
- * \ingroup network
+ * @ingroup network
  *
  * DynamicQueueLimits would be used in conjunction with a producer/consumer
  * type queue (possibly a netdevice queue).
@@ -66,8 +66,8 @@ class DynamicQueueLimits : public QueueLimits
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -83,9 +83,9 @@ class DynamicQueueLimits : public QueueLimits
     /**
      * Calculates the difference between the two operators and
      * returns the number if positive, zero otherwise.
-     * \param a First operator.
-     * \param b Second operator.
-     * \returns the difference between a and b if positive, zero otherwise.
+     * @param a First operator.
+     * @param b Second operator.
+     * @returns the difference between a and b if positive, zero otherwise.
      */
     int32_t Posdiff(int32_t a, int32_t b);
 

@@ -34,7 +34,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("OutdoorRandomWalkTest");
 
 /**
- * \ingroup building-test
+ * @ingroup building-test
  *
  * Test case for the class OutdoorRandomWalkTestCase. It checks if the
  * positions visited by the user are outside buildings
@@ -50,7 +50,7 @@ class OutdoorRandomWalkTestCase : public TestCase
 
     /**
      * Check that the position is the expected one
-     * \param model Mobility model
+     * @param model Mobility model
      */
     void CheckPositionOutdoor(Ptr<RandomWalk2dOutdoorMobilityModel> model);
 
@@ -162,7 +162,7 @@ OutdoorRandomWalkTestCase::DoRun()
 }
 
 /**
- * \ingroup building-test
+ * @ingroup building-test
  *
  * Test suite for the buildings channel condition model
  */

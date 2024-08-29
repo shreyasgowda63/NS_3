@@ -26,8 +26,8 @@
 #include <utility> // pair
 
 /**
- * \file
- * \ingroup highprec
+ * @file
+ * @ingroup highprec
  * Declaration and implementation of the ns3::int64x64_t type
  * using the double type.
  */
@@ -36,7 +36,7 @@ namespace ns3
 {
 
 /**
- * \internal
+ * @internal
  * The implementation documented here uses native long double.
  */
 class int64x64_t
@@ -72,13 +72,13 @@ class int64x64_t
     }
 
     /**
-     * \name Construct from a floating point value.
+     * @name Construct from a floating point value.
      */
     /**
      * @{
      * Constructor from a floating point.
      *
-     * \param [in] value Floating value to represent.
+     * @param [in] value Floating value to represent.
      */
     inline int64x64_t(double value)
         : _v(value)
@@ -93,13 +93,13 @@ class int64x64_t
     /**@}*/
 
     /**
-     * \name Construct from an integral type.
+     * @name Construct from an integral type.
      */
     /**@{*/
     /**
      * Construct from an integral type.
      *
-     * \param [in] v Integer value to represent
+     * @param [in] v Integer value to represent
      */
     inline int64x64_t(int v)
         : _v(v)
@@ -135,8 +135,8 @@ class int64x64_t
     /**
      * Construct from explicit high and low values.
      *
-     * \param [in] hi Integer portion.
-     * \param [in] lo Fractional portion, already scaled to HP_MAX_64.
+     * @param [in] hi Integer portion.
+     * @param [in] lo Fractional portion, already scaled to HP_MAX_64.
      */
     explicit inline int64x64_t(int64_t hi, uint64_t lo)
     {
@@ -152,7 +152,7 @@ class int64x64_t
     /**
      * Copy constructor.
      *
-     * \param [in] o Value to copy.
+     * @param [in] o Value to copy.
      */
     inline int64x64_t(const int64x64_t& o)
         : _v(o._v)
@@ -162,8 +162,8 @@ class int64x64_t
     /**
      * Assignment.
      *
-     * \param [in] o Value to assign to this int64x64_t.
-     * \returns a copy of \pname{o}
+     * @param [in] o Value to assign to this int64x64_t.
+     * @returns a copy of \pname{o}
      */
     inline int64x64_t& operator=(const int64x64_t& o)
     {
@@ -180,7 +180,7 @@ class int64x64_t
     /**
      * Get this value as a double.
      *
-     * \return This value in floating form.
+     * @return This value in floating form.
      */
     inline double GetDouble() const
     {
@@ -191,7 +191,7 @@ class int64x64_t
     /**
      * Get the high and low portions of this value.
      *
-     * \return A pair of the high and low words
+     * @return A pair of the high and low words
      */
     std::pair<int64_t, uint64_t> GetHighLow() const
     {
@@ -233,7 +233,7 @@ class int64x64_t
     /**
      * Get the integer portion.
      *
-     * \return The integer portion of this value.
+     * @return The integer portion of this value.
      */
     inline int64_t GetHigh() const
     {
@@ -243,7 +243,7 @@ class int64x64_t
     /**
      * Get the fractional portion of this value, unscaled.
      *
-     * \return The fractional portion, unscaled, as an integer.
+     * @return The fractional portion, unscaled, as an integer.
      */
     inline uint64_t GetLow() const
     {
@@ -253,7 +253,7 @@ class int64x64_t
     /**
      * Truncate to an integer.
      * Truncation is always toward zero,
-     * \return The value truncated toward zero.
+     * @return The value truncated toward zero.
      */
     int64_t GetInt() const
     {
@@ -265,7 +265,7 @@ class int64x64_t
      * Round to the nearest int.
      * Similar to std::round this rounds halfway cases away from zero,
      * regardless of the current (floating) rounding mode.
-     * \return The value rounded to the nearest int.
+     * @return The value rounded to the nearest int.
      */
     int64_t Round() const
     {
@@ -277,9 +277,9 @@ class int64x64_t
      * Multiply this value by a Q0.128 value, presumably representing an inverse,
      * completing a division operation.
      *
-     * \param [in] o The inverse operand.
+     * @param [in] o The inverse operand.
      *
-     * \note There is no difference between Q64.64 and Q0.128 in this implementation,
+     * @note There is no difference between Q64.64 and Q0.128 in this implementation,
      * so this function is a simple multiply.
      */
     inline void MulByInvert(const int64x64_t& o)
@@ -290,8 +290,8 @@ class int64x64_t
     /**
      * Compute the inverse of an integer value.
      *
-     * \param [in] v The value to compute the inverse of.
-     * \return The inverse.
+     * @param [in] v The value to compute the inverse of.
+     * @return The inverse.
      */
     static inline int64x64_t Invert(uint64_t v)
     {
@@ -301,15 +301,15 @@ class int64x64_t
 
   private:
     /**
-     * \name Arithmetic Operators
+     * @name Arithmetic Operators
      * Arithmetic operators for int64x64_t.
      */
     /**
      * @{
      * Arithmetic operator.
-     * \param [in] lhs Left hand argument
-     * \param [in] rhs Right hand argument
-     * \return The result of the operator.
+     * @param [in] lhs Left hand argument
+     * @param [in] rhs Right hand argument
+     * @return The result of the operator.
      */
 
     friend inline bool operator==(const int64x64_t& lhs, const int64x64_t& rhs)
@@ -354,14 +354,14 @@ class int64x64_t
     /**@}*/
 
     /**
-     * \name Unary Operators
+     * @name Unary Operators
      * Unary operators for int64x64_t.
      */
     /**
      * @{
      * Unary operator.
-     * \param [in] lhs Left hand argument
-     * \return The result of the operator.
+     * @param [in] lhs Left hand argument
+     * @return The result of the operator.
      */
     friend inline int64x64_t operator+(const int64x64_t& lhs)
     {

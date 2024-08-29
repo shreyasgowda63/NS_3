@@ -32,7 +32,7 @@ class Building;
 class UniformRandomVariable;
 
 /**
- * \ingroup buildings
+ * @ingroup buildings
  *
  * Allocate each position by randomly choosing a building from the list
  * of all buildings, and then randomly choosing a position inside the building.
@@ -43,8 +43,8 @@ class RandomBuildingPositionAllocator : public PositionAllocator
     RandomBuildingPositionAllocator();
 
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
@@ -56,8 +56,8 @@ class RandomBuildingPositionAllocator : public PositionAllocator
      * used by this model.  Return the number of streams (possibly zero) that
      * have been assigned.
      *
-     * \param stream first stream index to use
-     * \return the number of stream indices assigned by this model
+     * @param stream first stream index to use
+     * @return the number of stream indices assigned by this model
      */
     int64_t AssignStreams(int64_t stream) override;
 
@@ -71,8 +71,8 @@ class RandomBuildingPositionAllocator : public PositionAllocator
 };
 
 /**
- * \ingroup buildings
- * \brief allocate outdoor positions
+ * @ingroup buildings
+ * @brief allocate outdoor positions
  *
  * Allocate positions outside of existing buildings using rejection sampling.
  * This class extracts a random position in a box defined by the three
@@ -90,8 +90,8 @@ class OutdoorPositionAllocator : public PositionAllocator
     OutdoorPositionAllocator();
 
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
@@ -99,18 +99,18 @@ class OutdoorPositionAllocator : public PositionAllocator
     Vector GetNext() const override;
 
     /**
-     * \brief Set the random variable stream object that generates x-positions
-     * \param x pointer to a RandomVariableStream object
+     * @brief Set the random variable stream object that generates x-positions
+     * @param x pointer to a RandomVariableStream object
      */
     void SetX(Ptr<RandomVariableStream> x);
     /**
-     * \brief Set the random variable stream object that generates y-positions
-     * \param y pointer to a RandomVariableStream object
+     * @brief Set the random variable stream object that generates y-positions
+     * @param y pointer to a RandomVariableStream object
      */
     void SetY(Ptr<RandomVariableStream> y);
     /**
-     * \brief Set the random variable stream object that generates z-positions
-     * \param z pointer to a RandomVariableStream object
+     * @brief Set the random variable stream object that generates z-positions
+     * @param z pointer to a RandomVariableStream object
      */
     void SetZ(Ptr<RandomVariableStream> z);
 
@@ -119,8 +119,8 @@ class OutdoorPositionAllocator : public PositionAllocator
      * used by this model.  Return the number of streams (possibly zero) that
      * have been assigned.
      *
-     * \param stream first stream index to use
-     * \return the number of stream indices assigned by this model
+     * @param stream first stream index to use
+     * @return the number of stream indices assigned by this model
      */
     int64_t AssignStreams(int64_t stream) override;
 
@@ -144,8 +144,8 @@ class RandomRoomPositionAllocator : public PositionAllocator
     RandomRoomPositionAllocator();
 
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
@@ -157,8 +157,8 @@ class RandomRoomPositionAllocator : public PositionAllocator
      * used by this model.  Return the number of streams (possibly zero) that
      * have been assigned.
      *
-     * \param stream first stream index to use
-     * \return the number of stream indices assigned by this model
+     * @param stream first stream index to use
+     * @return the number of stream indices assigned by this model
      */
     int64_t AssignStreams(int64_t stream) override;
 
@@ -192,13 +192,13 @@ class SameRoomPositionAllocator : public PositionAllocator
 
     /**
      * Constructor
-     * \param c Node container
+     * @param c Node container
      */
     SameRoomPositionAllocator(NodeContainer c);
 
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
@@ -210,8 +210,8 @@ class SameRoomPositionAllocator : public PositionAllocator
      * used by this model.  Return the number of streams (possibly zero) that
      * have been assigned.
      *
-     * \param stream first stream index to use
-     * \return the number of stream indices assigned by this model
+     * @param stream first stream index to use
+     * @return the number of stream indices assigned by this model
      */
     int64_t AssignStreams(int64_t) override;
 
@@ -233,16 +233,16 @@ class FixedRoomPositionAllocator : public PositionAllocator
     /**
      *
      *
-     * \param x index of the room on the x-axis
-     * \param y index of the room on the y-axis
-     * \param z index of the room on the z-axis (i.e., floor number)
-     * \param b pointer to the chosen building
+     * @param x index of the room on the x-axis
+     * @param y index of the room on the y-axis
+     * @param z index of the room on the z-axis (i.e., floor number)
+     * @param b pointer to the chosen building
      *
      */
     FixedRoomPositionAllocator(uint32_t x, uint32_t y, uint32_t z, Ptr<Building> b);
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
     // inherited from PositionAllocator
@@ -253,8 +253,8 @@ class FixedRoomPositionAllocator : public PositionAllocator
      * used by this model.  Return the number of streams (possibly zero) that
      * have been assigned.
      *
-     * \param stream first stream index to use
-     * \return the number of stream indices assigned by this model
+     * @param stream first stream index to use
+     * @return the number of stream indices assigned by this model
      */
     int64_t AssignStreams(int64_t) override;
 

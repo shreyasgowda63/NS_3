@@ -35,17 +35,17 @@ namespace ns3
 {
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test Utils
+ * @brief Test Utils
  */
 class TestUtils
 {
   public:
     /**
      * Function to convert packet contents in hex format
-     * \param pkt the packet
-     * \returns a text string
+     * @param pkt the packet
+     * @returns a text string
      */
     static std::string sprintPacketContentsHex(Ptr<Packet> pkt)
     {
@@ -61,8 +61,8 @@ class TestUtils
 
     /**
      * Function to convert packet contents in binary format
-     * \param pkt the packet
-     * \returns a text string
+     * @param pkt the packet
+     * @returns a text string
      */
     static std::string sprintPacketContentsBin(Ptr<Packet> pkt)
     {
@@ -78,7 +78,7 @@ class TestUtils
 
     /**
      * Function to log packet contents
-     * \param pkt the packet
+     * @param pkt the packet
      */
     static void LogPacketContents(Ptr<Packet> pkt)
     {
@@ -89,8 +89,8 @@ class TestUtils
 
     /**
      * Log packet info function
-     * \param source T
-     * \param s text string to log
+     * @param source T
+     * @param s text string to log
      */
     template <class T>
     static void LogPacketInfo(T source, std::string s)
@@ -103,9 +103,9 @@ class TestUtils
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Rlc Am Status Pdu Test Case
+ * @brief Rlc Am Status Pdu Test Case
  */
 class RlcAmStatusPduTestCase : public TestCase
 {
@@ -113,9 +113,9 @@ class RlcAmStatusPduTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param ackSn the sequence number
-     * \param nackSnList list of nack sequence numbers
-     * \param hex string
+     * @param ackSn the sequence number
+     * @param nackSnList list of nack sequence numbers
+     * @param hex string
      */
     RlcAmStatusPduTestCase(SequenceNumber10 ackSn,
                            std::list<SequenceNumber10> nackSnList,
@@ -181,9 +181,9 @@ RlcAmStatusPduTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Lte Rlc Header Test Suite
+ * @brief Lte Rlc Header Test Suite
  */
 class LteRlcHeaderTestSuite : public TestSuite
 {

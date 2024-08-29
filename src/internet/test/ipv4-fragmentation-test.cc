@@ -58,9 +58,9 @@ using namespace ns3;
 class UdpSocketImpl;
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Tag used in IPv4 Fragmentation Test
+ * @brief Tag used in IPv4 Fragmentation Test
  */
 class IPv4TestTag : public Tag
 {
@@ -68,8 +68,8 @@ class IPv4TestTag : public Tag
     uint64_t token; //!< Token carried by the tag.
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId()
     {
@@ -104,8 +104,8 @@ class IPv4TestTag : public Tag
     }
 
     /**
-     * \brief Set the token.
-     * \param token The token.
+     * @brief Set the token.
+     * @param token The token.
      */
     void SetToken(uint64_t token)
     {
@@ -113,8 +113,8 @@ class IPv4TestTag : public Tag
     }
 
     /**
-     * \brief Get the token.
-     * \returns The token.
+     * @brief Get the token.
+     * @returns The token.
      */
     uint64_t GetToken() const
     {
@@ -123,9 +123,9 @@ class IPv4TestTag : public Tag
 };
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 Fragmentation Test
+ * @brief IPv4 Fragmentation Test
  */
 class Ipv4FragmentationTest : public TestCase
 {
@@ -145,7 +145,7 @@ class Ipv4FragmentationTest : public TestCase
     void DoRun() override;
     /**
      * Constructor
-     * \param broadcast send broadcast packets (true) or unicast packets (false)
+     * @param broadcast send broadcast packets (true) or unicast packets (false)
      */
     Ipv4FragmentationTest(bool broadcast);
     ~Ipv4FragmentationTest() override;
@@ -153,35 +153,35 @@ class Ipv4FragmentationTest : public TestCase
     // server part
 
     /**
-     * \brief Start the server.
-     * \param ServerNode The server.
+     * @brief Start the server.
+     * @param ServerNode The server.
      */
     void StartServer(Ptr<Node> ServerNode);
     /**
-     * \brief Handle incoming packets.
-     * \param socket The receiving socket.
+     * @brief Handle incoming packets.
+     * @param socket The receiving socket.
      */
     void HandleReadServer(Ptr<Socket> socket);
 
     // client part
 
     /**
-     * \brief Start the client.
-     * \param ClientNode The client.
+     * @brief Start the client.
+     * @param ClientNode The client.
      */
     void StartClient(Ptr<Node> ClientNode);
     /**
-     * \brief Handle incoming packets.
-     * \param socket The receiving socket.
+     * @brief Handle incoming packets.
+     * @param socket The receiving socket.
      */
     void HandleReadClient(Ptr<Socket> socket);
     /**
-     * \brief Handle incoming ICMP packets.
-     * \param icmpSource The ICMP sender.
-     * \param icmpTtl The ICMP TTL.
-     * \param icmpType The ICMP Type.
-     * \param icmpCode The ICMP Code.
-     * \param icmpInfo The ICMP Info.
+     * @brief Handle incoming ICMP packets.
+     * @param icmpSource The ICMP sender.
+     * @param icmpTtl The ICMP TTL.
+     * @param icmpType The ICMP Type.
+     * @param icmpCode The ICMP Code.
+     * @param icmpInfo The ICMP Info.
      */
     void HandleReadIcmpClient(Ipv4Address icmpSource,
                               uint8_t icmpTtl,
@@ -190,16 +190,16 @@ class Ipv4FragmentationTest : public TestCase
                               uint32_t icmpInfo);
 
     /**
-     * \brief Set the packet fill.
-     * \param fill The fill.
-     * \param fillSize The fill size.
-     * \param dataSize The packet size.
+     * @brief Set the packet fill.
+     * @param fill The fill.
+     * @param fillSize The fill size.
+     * @param dataSize The packet size.
      */
     void SetFill(uint8_t* fill, uint32_t fillSize, uint32_t dataSize);
 
     /**
-     * \brief Send a packet.
-     * \returns The sent packet.
+     * @brief Send a packet.
+     * @returns The sent packet.
      */
     Ptr<Packet> SendClient();
 };
@@ -576,9 +576,9 @@ Ipv4FragmentationTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 Fragmentation TestSuite
+ * @brief IPv4 Fragmentation TestSuite
  */
 class Ipv4FragmentationTestSuite : public TestSuite
 {

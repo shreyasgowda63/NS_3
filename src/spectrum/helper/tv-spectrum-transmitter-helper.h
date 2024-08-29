@@ -40,7 +40,7 @@ namespace ns3
 {
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
  * Helper class which uses TvSpectrumTransmitter class to create customizable
  * TV transmitter(s) that transmit PSD spectrum specified by user-set attributes.
@@ -50,7 +50,7 @@ namespace ns3
  * and location.
  *
  * Here is an example of how to use this class:
- * \code
+ * @code
    TvSpectrumTransmitterHelper tvTransHelper;
    tvTransHelper.SetChannel (channel); // provided that user has a Ptr<SpectrumChannel> ready.
    tvTransHelper.SetAttribute ("StartFrequency", DoubleValue (524e6));

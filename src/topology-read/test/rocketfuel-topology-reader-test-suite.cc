@@ -33,21 +33,21 @@
 using namespace ns3;
 
 /**
- * \defgroup topology-test Topology module tests
- * \ingroup topology
- * \ingroup tests
+ * @defgroup topology-test Topology module tests
+ * @ingroup topology
+ * @ingroup tests
  */
 
 /**
- * \file
- * \ingroup topology-test
+ * @file
+ * @ingroup topology-test
  * ns3::RockefuelTopologyReader test suite.
  */
 
 /**
- * \ingroup topology-test
+ * @ingroup topology-test
 
- * \brief Rocketfuel Topology Reader Weights Test
+ * @brief Rocketfuel Topology Reader Weights Test
  */
 class RocketfuelTopologyReaderWeightsTest : public TestCase
 {
@@ -89,8 +89,8 @@ RocketfuelTopologyReaderWeightsTest::DoRun()
 }
 
 /**
- * \ingroup topology-test
- * \brief Rocketfuel Topology Reader Maps Test
+ * @ingroup topology-test
+ * @brief Rocketfuel Topology Reader Maps Test
  */
 class RocketfuelTopologyReaderMapsTest : public TestCase
 {
@@ -132,9 +132,9 @@ RocketfuelTopologyReaderMapsTest::DoRun()
 }
 
 /**
- * \ingroup topology-test
+ * @ingroup topology-test
  *
- * \brief Rocketfuel Topology Reader TestSuite
+ * @brief Rocketfuel Topology Reader TestSuite
  */
 class RocketfuelTopologyReaderTestSuite : public TestSuite
 {
@@ -152,7 +152,7 @@ RocketfuelTopologyReaderTestSuite::RocketfuelTopologyReaderTestSuite()
 }
 
 /**
- * \ingroup topology-test
+ * @ingroup topology-test
  * Static variable for test initialization
  */
 static RocketfuelTopologyReaderTestSuite g_rocketfuelTopologyReaderTestSuite;

@@ -36,7 +36,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("ThreeGppNTNPropagationLossModelsTest");
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
  * Test case for the ThreeGppNTNPropagationLossModel classes.
  * It computes the path loss between two nodes and compares it with the value
@@ -215,9 +215,9 @@ ThreeGppNTNPropagationLossModelTestCase::TestChannelGain(TestPoint testPoint)
 }
 
 /**
- * \ingroup propagation-tests
+ * @ingroup propagation-tests
  *
- * \brief 3GPP NTN Propagation models TestSuite
+ * @brief 3GPP NTN Propagation models TestSuite
  *
  * This TestSuite tests the following models:
  *   - ThreeGppNTNDenseUrbanPropagationLossModel

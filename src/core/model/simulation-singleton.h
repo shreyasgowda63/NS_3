@@ -20,8 +20,8 @@
 #define SIMULATION_SINGLETON_H
 
 /**
- * \file
- * \ingroup singleton
+ * @file
+ * @ingroup singleton
  * ns3::SimulationSingleton declaration and template implementation.
  */
 
@@ -29,7 +29,7 @@ namespace ns3
 {
 
 /**
- * \ingroup singleton
+ * @ingroup singleton
  * This singleton class template ensures that the type
  * for which we want a singleton has a lifetime bounded
  * by the simulation run lifetime. That it, the underlying
@@ -54,7 +54,7 @@ class SimulationSingleton
      * This instance will be automatically deleted when the
      * simulation is destroyed by a call to Simulator::Destroy.
      *
-     * \returns A pointer to the singleton instance.
+     * @returns A pointer to the singleton instance.
      */
     static T* Get();
 
@@ -62,11 +62,11 @@ class SimulationSingleton
     /**
      * Get the singleton object, creating a new one if it doesn't exist yet.
      *
-     * \internal
+     * @internal
      * When a new object is created, this method schedules it's own
      * destruction using Simulator::ScheduleDestroy().
      *
-     * \returns The address of the pointer holding the static instance.
+     * @returns The address of the pointer holding the static instance.
      */
     static T** GetObject();
 

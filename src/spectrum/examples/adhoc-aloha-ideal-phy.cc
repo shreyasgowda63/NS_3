@@ -46,8 +46,8 @@ static bool g_verbose = false;
 /**
  * PHY start TX trace.
  *
- * \param context The context.
- * \param p The packet.
+ * @param context The context.
+ * @param p The packet.
  */
 void
 PhyTxStartTrace(std::string context, Ptr<const Packet> p)
@@ -61,8 +61,8 @@ PhyTxStartTrace(std::string context, Ptr<const Packet> p)
 /**
  * PHY end TX trace.
  *
- * \param context The context.
- * \param p The packet.
+ * @param context The context.
+ * @param p The packet.
  */
 void
 PhyTxEndTrace(std::string context, Ptr<const Packet> p)
@@ -76,8 +76,8 @@ PhyTxEndTrace(std::string context, Ptr<const Packet> p)
 /**
  * PHY start RX trace.
  *
- * \param context The context.
- * \param p The packet.
+ * @param context The context.
+ * @param p The packet.
  */
 void
 PhyRxStartTrace(std::string context, Ptr<const Packet> p)
@@ -91,8 +91,8 @@ PhyRxStartTrace(std::string context, Ptr<const Packet> p)
 /**
  * PHY end OK RX trace.
  *
- * \param context The context.
- * \param p The packet.
+ * @param context The context.
+ * @param p The packet.
  */
 void
 PhyRxEndOkTrace(std::string context, Ptr<const Packet> p)
@@ -106,8 +106,8 @@ PhyRxEndOkTrace(std::string context, Ptr<const Packet> p)
 /**
  * PHY end error RX trace.
  *
- * \param context The context.
- * \param p The packet.
+ * @param context The context.
+ * @param p The packet.
  */
 void
 PhyRxEndErrorTrace(std::string context, Ptr<const Packet> p)
@@ -121,7 +121,7 @@ PhyRxEndErrorTrace(std::string context, Ptr<const Packet> p)
 /**
  * Receive callback.
  *
- * \param socket The receiving socket.
+ * @param socket The receiving socket.
  */
 void
 ReceivePacket(Ptr<Socket> socket)
@@ -141,8 +141,8 @@ ReceivePacket(Ptr<Socket> socket)
 /**
  * Create a socket and prepare it for packet reception.
  *
- * \param node The node.
- * \return a new socket
+ * @param node The node.
+ * @return a new socket
  */
 Ptr<Socket>
 SetupPacketReceive(Ptr<Node> node)

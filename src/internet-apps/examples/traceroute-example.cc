@@ -35,9 +35,9 @@
 using namespace ns3;
 
 /**
- * \ingroup aodv-examples
- * \ingroup examples
- * \brief Test script.
+ * @ingroup aodv-examples
+ * @ingroup examples
+ * @brief Test script.
  *
  * This script creates 1-dimensional grid topology and Traceroute the last node from the first one:
  *
@@ -54,17 +54,17 @@ class TracerouteExample
   public:
     TracerouteExample();
     /**
-     * \brief Configure script parameters
-     * \param argc is the command line argument count
-     * \param argv is the command line arguments
-     * \return true on successful configuration
+     * @brief Configure script parameters
+     * @param argc is the command line argument count
+     * @param argv is the command line arguments
+     * @return true on successful configuration
      */
     bool Configure(int argc, char** argv);
     /// Run simulation
     void Run();
     /**
      * Report results
-     * \param os the output stream
+     * @param os the output stream
      */
     void Report(std::ostream& os);
 

@@ -32,9 +32,9 @@
 using namespace ns3;
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Pie Queue Disc Test Item
+ * @brief Pie Queue Disc Test Item
  */
 class PieQueueDiscTestItem : public QueueDiscItem
 {
@@ -42,9 +42,9 @@ class PieQueueDiscTestItem : public QueueDiscItem
     /**
      * Constructor
      *
-     * \param p the packet
-     * \param addr the address
-     * \param ecnCapable ECN capable flag
+     * @param p the packet
+     * @param addr the address
+     * @param ecnCapable ECN capable flag
      */
     PieQueueDiscTestItem(Ptr<Packet> p, const Address& addr, bool ecnCapable);
 
@@ -97,9 +97,9 @@ PieQueueDiscTestItem::Mark()
 }
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Pie Queue Disc Test Case
+ * @brief Pie Queue Disc Test Case
  */
 class PieQueueDiscTestCase : public TestCase
 {
@@ -110,10 +110,10 @@ class PieQueueDiscTestCase : public TestCase
   private:
     /**
      * Enqueue function
-     * \param queue the queue disc
-     * \param size the size
-     * \param nPkt the number of packets
-     * \param testAttributes attributes for testing
+     * @param queue the queue disc
+     * @param size the size
+     * @param nPkt the number of packets
+     * @param testAttributes attributes for testing
      */
     void Enqueue(Ptr<PieQueueDisc> queue,
                  uint32_t size,
@@ -121,10 +121,10 @@ class PieQueueDiscTestCase : public TestCase
                  Ptr<PieQueueDiscTestItem> testAttributes);
     /**
      * Enqueue with delay function
-     * \param queue the queue disc
-     * \param size the size
-     * \param nPkt the number of packets
-     * \param testAttributes attributes for testing
+     * @param queue the queue disc
+     * @param size the size
+     * @param nPkt the number of packets
+     * @param testAttributes attributes for testing
      */
     void EnqueueWithDelay(Ptr<PieQueueDisc> queue,
                           uint32_t size,
@@ -132,38 +132,38 @@ class PieQueueDiscTestCase : public TestCase
                           Ptr<PieQueueDiscTestItem> testAttributes);
     /**
      * Dequeue function
-     * \param queue the queue disc
-     * \param nPkt the number of packets
+     * @param queue the queue disc
+     * @param nPkt the number of packets
      */
     void Dequeue(Ptr<PieQueueDisc> queue, uint32_t nPkt);
     /**
      * Dequeue with delay function
-     * \param queue the queue disc
-     * \param delay the delay
-     * \param nPkt the number of packets
+     * @param queue the queue disc
+     * @param delay the delay
+     * @param nPkt the number of packets
      */
     void DequeueWithDelay(Ptr<PieQueueDisc> queue, double delay, uint32_t nPkt);
     /**
      * Run test function
-     * \param mode the test mode
+     * @param mode the test mode
      */
     void RunPieTest(QueueSizeUnit mode);
     /**
-     * \brief Check Drop Probability
-     * \param queue the queue disc
-     * \param testAttributes attributes for testing
+     * @brief Check Drop Probability
+     * @param queue the queue disc
+     * @param testAttributes attributes for testing
      */
     void CheckDropProb(Ptr<PieQueueDisc> queue, Ptr<PieQueueDiscTestItem> testAttributes);
     /**
-     * \brief Check Accumulated Drop Probability
-     * \param queue the queue disc
-     * \param testAttributes attributes for testing
+     * @brief Check Accumulated Drop Probability
+     * @param queue the queue disc
+     * @param testAttributes attributes for testing
      */
     void CheckAccuProb(Ptr<PieQueueDisc> queue, Ptr<PieQueueDiscTestItem> testAttributes);
     /**
-     * \brief Check Maximum Accumulated Drop Probability
-     * \param queue the queue disc
-     * \param testAttributes attributes for testing
+     * @brief Check Maximum Accumulated Drop Probability
+     * @param queue the queue disc
+     * @param testAttributes attributes for testing
      */
     void CheckMaxAccuProb(Ptr<PieQueueDisc> queue, Ptr<PieQueueDiscTestItem> testAttributes);
 };
@@ -842,9 +842,9 @@ PieQueueDiscTestCase::DoRun()
 }
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Pie Queue Disc Test Suite
+ * @brief Pie Queue Disc Test Suite
  */
 static class PieQueueDiscTestSuite : public TestSuite
 {

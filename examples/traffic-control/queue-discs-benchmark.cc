@@ -69,9 +69,9 @@ NS_LOG_COMPONENT_DEFINE("BenchmarkQueueDiscs");
 /**
  * Print the queue limits.
  *
- * \param stream The output stream.
- * \param oldVal Old value.
- * \param newVal New value.
+ * @param stream The output stream.
+ * @param oldVal Old value.
+ * @param newVal New value.
  */
 void
 LimitsTrace(Ptr<OutputStreamWrapper> stream, uint32_t oldVal, uint32_t newVal)
@@ -82,9 +82,9 @@ LimitsTrace(Ptr<OutputStreamWrapper> stream, uint32_t oldVal, uint32_t newVal)
 /**
  * Print the bytes in the queue.
  *
- * \param stream The output stream.
- * \param oldVal Old value.
- * \param newVal New value.
+ * @param stream The output stream.
+ * @param oldVal Old value.
+ * @param newVal New value.
  */
 void
 BytesInQueueTrace(Ptr<OutputStreamWrapper> stream, uint32_t oldVal, uint32_t newVal)
@@ -95,9 +95,9 @@ BytesInQueueTrace(Ptr<OutputStreamWrapper> stream, uint32_t oldVal, uint32_t new
 /**
  * Sample and print the queue goodput.
  *
- * \param app The Tx app.
- * \param stream The output stream.
- * \param period The sampling period.
+ * @param app The Tx app.
+ * @param stream The output stream.
+ * @param period The sampling period.
  */
 static void
 GoodputSampling(ApplicationContainer app, Ptr<OutputStreamWrapper> stream, float period)
@@ -112,8 +112,8 @@ GoodputSampling(ApplicationContainer app, Ptr<OutputStreamWrapper> stream, float
 /**
  * Print the ping RTT.
  *
- * \param context The context.
- * \param rtt The RTT.
+ * @param context The context.
+ * @param rtt The RTT.
  */
 static void
 PingRtt(std::string context, uint16_t, Time rtt)

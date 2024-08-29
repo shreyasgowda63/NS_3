@@ -34,9 +34,9 @@
 using namespace ns3;
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Test whether course change notifications occur regardless of calls
+ * @brief Test whether course change notifications occur regardless of calls
  * to Update() position (which are triggered by calls to GetPosition())
  */
 class WaypointLazyNotifyFalse : public TestCase
@@ -48,13 +48,13 @@ class WaypointLazyNotifyFalse : public TestCase
   private:
     /**
      * Test X position function
-     * \param expectedXPos the expected X position
+     * @param expectedXPos the expected X position
      */
     void TestXPosition(double expectedXPos);
     /**
      * Course change callback
-     * \param path the path
-     * \param model the mobility model
+     * @param path the path
+     * @param model the mobility model
      */
     void CourseChangeCallback(std::string path, Ptr<const MobilityModel> model);
     void DoRun() override;
@@ -111,9 +111,9 @@ WaypointLazyNotifyFalse::DoRun()
 }
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Waypoint Lazy Notify True
+ * @brief Waypoint Lazy Notify True
  */
 class WaypointLazyNotifyTrue : public TestCase
 {
@@ -124,13 +124,13 @@ class WaypointLazyNotifyTrue : public TestCase
   private:
     /**
      * Text X position function
-     * \param expectedXPos the expected X position
+     * @param expectedXPos the expected X position
      */
     void TestXPosition(double expectedXPos);
     /**
      * Course change callback
-     * \param path the path
-     * \param model the mobility model
+     * @param path the path
+     * @param model the mobility model
      */
     void CourseChangeCallback(std::string path, Ptr<const MobilityModel> model);
     void DoRun() override;
@@ -185,9 +185,9 @@ WaypointLazyNotifyTrue::DoRun()
 }
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Waypoint Initial Position Is Waypoint Test
+ * @brief Waypoint Initial Position Is Waypoint Test
  */
 class WaypointInitialPositionIsWaypoint : public TestCase
 {
@@ -198,14 +198,14 @@ class WaypointInitialPositionIsWaypoint : public TestCase
   private:
     /**
      * Text X position function
-     * \param model the mobility model
-     * \param expectedXPos the expected X position
+     * @param model the mobility model
+     * @param expectedXPos the expected X position
      */
     void TestXPosition(Ptr<const WaypointMobilityModel> model, double expectedXPos);
     /**
      * Test number of way points
-     * \param model the mobility model
-     * \param num the number of way points
+     * @param model the mobility model
+     * @param num the number of way points
      */
     void TestNumWaypoints(Ptr<const WaypointMobilityModel> model, uint32_t num);
     void DoRun() override;
@@ -378,9 +378,9 @@ WaypointInitialPositionIsWaypoint::DoRun()
 }
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Waypoint Mobility Model Via Helper Test
+ * @brief Waypoint Mobility Model Via Helper Test
  */
 class WaypointMobilityModelViaHelper : public TestCase
 {
@@ -391,8 +391,8 @@ class WaypointMobilityModelViaHelper : public TestCase
   private:
     /**
      * Text X position function
-     * \param mob the mobility model
-     * \param expectedXPos the expected X position
+     * @param mob the mobility model
+     * @param expectedXPos the expected X position
      */
     void TestXPosition(Ptr<const WaypointMobilityModel> mob, double expectedXPos);
     void DoRun() override;
@@ -473,9 +473,9 @@ WaypointMobilityModelViaHelper::DoRun()
 }
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  *
- * \brief Mobility Test Suite
+ * @brief Mobility Test Suite
  */
 class MobilityTestSuite : public TestSuite
 {
@@ -493,7 +493,7 @@ MobilityTestSuite::MobilityTestSuite()
 }
 
 /**
- * \ingroup mobility-test
+ * @ingroup mobility-test
  * Static variable for test initialization
  */
 static MobilityTestSuite mobilityTestSuite;

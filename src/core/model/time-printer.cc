@@ -26,8 +26,8 @@
 #include <iomanip>
 
 /**
- * \file
- * \ingroup time
+ * @file
+ * @ingroup time
  * ns3::DefaultTimePrinter implementation.
  */
 

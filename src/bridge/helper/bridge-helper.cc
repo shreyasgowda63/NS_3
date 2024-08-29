@@ -23,8 +23,8 @@
 #include "ns3/node.h"
 
 /**
- * \file
- * \ingroup bridge
+ * @file
+ * @ingroup bridge
  * ns3::BridgeHelper implementation.
  */
 

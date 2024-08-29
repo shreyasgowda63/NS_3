@@ -52,9 +52,9 @@
 using namespace ns3;
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 Header Test
+ * @brief IPv4 Header Test
  */
 class Ipv4HeaderTest : public TestCase
 {
@@ -62,11 +62,11 @@ class Ipv4HeaderTest : public TestCase
     Ipv4Header m_receivedHeader;  //!< Received header.
 
     /**
-     * \brief Send a packet with specific DSCP and ECN fields.
-     * \param socket The source socket.
-     * \param to The destination address.
-     * \param dscp The DSCP field.
-     * \param ecn The ECN field.
+     * @brief Send a packet with specific DSCP and ECN fields.
+     * @param socket The source socket.
+     * @param to The destination address.
+     * @param dscp The DSCP field.
+     * @param ecn The ECN field.
      */
     void DoSendData_IpHdr_Dscp(Ptr<Socket> socket,
                                std::string to,
@@ -74,11 +74,11 @@ class Ipv4HeaderTest : public TestCase
                                Ipv4Header::EcnType ecn);
 
     /**
-     * \brief Send a packet with specific DSCP and ECN fields.
-     * \param socket The source socket.
-     * \param to The destination address.
-     * \param dscp The DSCP field.
-     * \param ecn The ECN field.
+     * @brief Send a packet with specific DSCP and ECN fields.
+     * @param socket The source socket.
+     * @param to The destination address.
+     * @param dscp The DSCP field.
+     * @param ecn The ECN field.
      */
     void SendData_IpHdr_Dscp(Ptr<Socket> socket,
                              std::string to,
@@ -90,15 +90,15 @@ class Ipv4HeaderTest : public TestCase
     Ipv4HeaderTest();
 
     /**
-     * \brief Receives a packet.
-     * \param socket The receiving socket.
-     * \param packet The packet.
-     * \param from The source address.
+     * @brief Receives a packet.
+     * @param socket The receiving socket.
+     * @param packet The packet.
+     * @param from The source address.
      */
     void ReceivePacket(Ptr<Socket> socket, Ptr<Packet> packet, const Address& from);
     /**
-     * \brief Receives a packet.
-     * \param socket The receiving socket.
+     * @brief Receives a packet.
+     * @param socket The receiving socket.
      */
     void ReceivePkt(Ptr<Socket> socket);
 };
@@ -291,9 +291,9 @@ Ipv4HeaderTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 Header TestSuite
+ * @brief IPv4 Header TestSuite
  */
 class Ipv4HeaderTestSuite : public TestSuite
 {

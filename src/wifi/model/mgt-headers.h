@@ -65,25 +65,25 @@ namespace ns3
  * the STA Profile field of the Basic Multi-Link element.
  */
 
-/** \copydoc CanBeInPerStaProfile */
+/** @copydoc CanBeInPerStaProfile */
 template <>
 struct CanBeInPerStaProfile<ReducedNeighborReport> : std::false_type
 {
 };
 
-/** \copydoc CanBeInPerStaProfile */
+/** @copydoc CanBeInPerStaProfile */
 template <>
 struct CanBeInPerStaProfile<TidToLinkMapping> : std::false_type
 {
 };
 
-/** \copydoc CanBeInPerStaProfile */
+/** @copydoc CanBeInPerStaProfile */
 template <>
 struct CanBeInPerStaProfile<MultiLinkElement> : std::false_type
 {
 };
 
-/** \copydoc CanBeInPerStaProfile */
+/** @copydoc CanBeInPerStaProfile */
 template <>
 struct CanBeInPerStaProfile<Ssid> : std::false_type
 {
@@ -154,7 +154,7 @@ using AssocResponseElems = std::tuple<SupportedRates,
                                       std::vector<TidToLinkMapping>>;
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  * Implement the header for management frames of type association request.
  */
 class MgtAssocRequestHeader
@@ -168,45 +168,45 @@ class MgtAssocRequestHeader
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
-    /** \copydoc Header::GetInstanceTypeId */
+    /** @copydoc Header::GetInstanceTypeId */
     TypeId GetInstanceTypeId() const override;
 
     /**
      * Set the listen interval.
      *
-     * \param interval the listen interval
+     * @param interval the listen interval
      */
     void SetListenInterval(uint16_t interval);
     /**
      * Return the listen interval.
      *
-     * \return the listen interval
+     * @return the listen interval
      */
     uint16_t GetListenInterval() const;
     /**
-     * \return a reference to the Capability information
+     * @return a reference to the Capability information
      */
     CapabilityInformation& Capabilities();
     /**
-     * \return a const reference to the Capability information
+     * @return a const reference to the Capability information
      */
     const CapabilityInformation& Capabilities() const;
 
   protected:
-    /** \copydoc Header::GetSerializedSize */
+    /** @copydoc Header::GetSerializedSize */
     uint32_t GetSerializedSizeImpl() const;
-    /** \copydoc Header::Serialize */
+    /** @copydoc Header::Serialize */
     void SerializeImpl(Buffer::Iterator start) const;
-    /** \copydoc Header::Deserialize */
+    /** @copydoc Header::Deserialize */
     uint32_t DeserializeImpl(Buffer::Iterator start);
 
     /**
-     * \param frame the frame containing the Multi-Link Element
-     * \return the number of bytes that are needed to serialize this header into a Per-STA Profile
+     * @param frame the frame containing the Multi-Link Element
+     * @return the number of bytes that are needed to serialize this header into a Per-STA Profile
      *         subelement of the Multi-Link Element
      */
     uint32_t GetSerializedSizeInPerStaProfileImpl(const MgtAssocRequestHeader& frame) const;
@@ -214,8 +214,8 @@ class MgtAssocRequestHeader
     /**
      * Serialize this header into a Per-STA Profile subelement of a Multi-Link Element
      *
-     * \param start an iterator which points to where the header should be written
-     * \param frame the frame containing the Multi-Link Element
+     * @param start an iterator which points to where the header should be written
+     * @param frame the frame containing the Multi-Link Element
      */
     void SerializeInPerStaProfileImpl(Buffer::Iterator start,
                                       const MgtAssocRequestHeader& frame) const;
@@ -223,10 +223,10 @@ class MgtAssocRequestHeader
     /**
      * Deserialize this header from a Per-STA Profile subelement of a Multi-Link Element.
      *
-     * \param start an iterator which points to where the header should be read from
-     * \param length the expected number of bytes to read
-     * \param frame the frame containing the Multi-Link Element
-     * \return the number of bytes read
+     * @param start an iterator which points to where the header should be read from
+     * @param length the expected number of bytes to read
+     * @param frame the frame containing the Multi-Link Element
+     * @return the number of bytes read
      */
     uint32_t DeserializeFromPerStaProfileImpl(Buffer::Iterator start,
                                               uint16_t length,
@@ -238,7 +238,7 @@ class MgtAssocRequestHeader
 };
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  * Implement the header for management frames of type reassociation request.
  */
 class MgtReassocRequestHeader
@@ -252,53 +252,53 @@ class MgtReassocRequestHeader
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
-    /** \copydoc Header::GetInstanceTypeId */
+    /** @copydoc Header::GetInstanceTypeId */
     TypeId GetInstanceTypeId() const override;
 
     /**
      * Set the listen interval.
      *
-     * \param interval the listen interval
+     * @param interval the listen interval
      */
     void SetListenInterval(uint16_t interval);
     /**
      * Return the listen interval.
      *
-     * \return the listen interval
+     * @return the listen interval
      */
     uint16_t GetListenInterval() const;
     /**
-     * \return a reference to the Capability information
+     * @return a reference to the Capability information
      */
     CapabilityInformation& Capabilities();
     /**
-     * \return a const reference to the Capability information
+     * @return a const reference to the Capability information
      */
     const CapabilityInformation& Capabilities() const;
     /**
      * Set the address of the current access point.
      *
-     * \param currentApAddr address of the current access point
+     * @param currentApAddr address of the current access point
      */
     void SetCurrentApAddress(Mac48Address currentApAddr);
 
   protected:
-    /** \copydoc Header::GetSerializedSize */
+    /** @copydoc Header::GetSerializedSize */
     uint32_t GetSerializedSizeImpl() const;
-    /** \copydoc Header::Serialize */
+    /** @copydoc Header::Serialize */
     void SerializeImpl(Buffer::Iterator start) const;
-    /** \copydoc Header::Deserialize */
+    /** @copydoc Header::Deserialize */
     uint32_t DeserializeImpl(Buffer::Iterator start);
-    /** \copydoc Header::Print */
+    /** @copydoc Header::Print */
     void PrintImpl(std::ostream& os) const;
 
     /**
-     * \param frame the frame containing the Multi-Link Element
-     * \return the number of bytes that are needed to serialize this header into a Per-STA Profile
+     * @param frame the frame containing the Multi-Link Element
+     * @return the number of bytes that are needed to serialize this header into a Per-STA Profile
      *         subelement of the Multi-Link Element
      */
     uint32_t GetSerializedSizeInPerStaProfileImpl(const MgtReassocRequestHeader& frame) const;
@@ -306,8 +306,8 @@ class MgtReassocRequestHeader
     /**
      * Serialize this header into a Per-STA Profile subelement of a Multi-Link Element
      *
-     * \param start an iterator which points to where the header should be written
-     * \param frame the frame containing the Multi-Link Element
+     * @param start an iterator which points to where the header should be written
+     * @param frame the frame containing the Multi-Link Element
      */
     void SerializeInPerStaProfileImpl(Buffer::Iterator start,
                                       const MgtReassocRequestHeader& frame) const;
@@ -315,10 +315,10 @@ class MgtReassocRequestHeader
     /**
      * Deserialize this header from a Per-STA Profile subelement of a Multi-Link Element.
      *
-     * \param start an iterator which points to where the header should be read from
-     * \param length the expected number of bytes to read
-     * \param frame the frame containing the Multi-Link Element
-     * \return the number of bytes read
+     * @param start an iterator which points to where the header should be read from
+     * @param length the expected number of bytes to read
+     * @param frame the frame containing the Multi-Link Element
+     * @return the number of bytes read
      */
     uint32_t DeserializeFromPerStaProfileImpl(Buffer::Iterator start,
                                               uint16_t length,
@@ -331,7 +331,7 @@ class MgtReassocRequestHeader
 };
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  * Implement the header for management frames of type association and reassociation response.
  */
 class MgtAssocResponseHeader
@@ -345,59 +345,59 @@ class MgtAssocResponseHeader
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
-    /** \copydoc Header::GetInstanceTypeId */
+    /** @copydoc Header::GetInstanceTypeId */
     TypeId GetInstanceTypeId() const override;
 
     /**
      * Return the status code.
      *
-     * \return the status code
+     * @return the status code
      */
     StatusCode GetStatusCode();
     /**
      * Set the status code.
      *
-     * \param code the status code
+     * @param code the status code
      */
     void SetStatusCode(StatusCode code);
     /**
-     * \return a reference to the Capability information
+     * @return a reference to the Capability information
      */
     CapabilityInformation& Capabilities();
     /**
-     * \return a const reference to the Capability information
+     * @return a const reference to the Capability information
      */
     const CapabilityInformation& Capabilities() const;
     /**
      * Return the association ID.
      *
-     * \return the association ID
+     * @return the association ID
      */
     uint16_t GetAssociationId() const;
     /**
      * Set the association ID.
      *
-     * \param aid the association ID
+     * @param aid the association ID
      */
     void SetAssociationId(uint16_t aid);
 
   protected:
-    /** \copydoc Header::GetSerializedSize */
+    /** @copydoc Header::GetSerializedSize */
     uint32_t GetSerializedSizeImpl() const;
-    /** \copydoc Header::Serialize */
+    /** @copydoc Header::Serialize */
     void SerializeImpl(Buffer::Iterator start) const;
-    /** \copydoc Header::Deserialize */
+    /** @copydoc Header::Deserialize */
     uint32_t DeserializeImpl(Buffer::Iterator start);
-    /** \copydoc Header::Print */
+    /** @copydoc Header::Print */
     void PrintImpl(std::ostream& os) const;
 
     /**
-     * \param frame the frame containing the Multi-Link Element
-     * \return the number of bytes that are needed to serialize this header into a Per-STA Profile
+     * @param frame the frame containing the Multi-Link Element
+     * @return the number of bytes that are needed to serialize this header into a Per-STA Profile
      *         subelement of the Multi-Link Element
      */
     uint32_t GetSerializedSizeInPerStaProfileImpl(const MgtAssocResponseHeader& frame) const;
@@ -405,8 +405,8 @@ class MgtAssocResponseHeader
     /**
      * Serialize this header into a Per-STA Profile subelement of a Multi-Link Element
      *
-     * \param start an iterator which points to where the header should be written
-     * \param frame the frame containing the Multi-Link Element
+     * @param start an iterator which points to where the header should be written
+     * @param frame the frame containing the Multi-Link Element
      */
     void SerializeInPerStaProfileImpl(Buffer::Iterator start,
                                       const MgtAssocResponseHeader& frame) const;
@@ -414,10 +414,10 @@ class MgtAssocResponseHeader
     /**
      * Deserialize this header from a Per-STA Profile subelement of a Multi-Link Element.
      *
-     * \param start an iterator which points to where the header should be read from
-     * \param length the expected number of bytes to read
-     * \param frame the frame containing the Multi-Link Element
-     * \return the number of bytes read
+     * @param start an iterator which points to where the header should be read from
+     * @param length the expected number of bytes to read
+     * @param frame the frame containing the Multi-Link Element
+     * @return the number of bytes read
      */
     uint32_t DeserializeFromPerStaProfileImpl(Buffer::Iterator start,
                                               uint16_t length,
@@ -430,7 +430,7 @@ class MgtAssocResponseHeader
 };
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  * Implement the header for management frames of type probe request.
  */
 class MgtProbeRequestHeader : public WifiMgtHeader<MgtProbeRequestHeader, ProbeRequestElems>
@@ -440,16 +440,16 @@ class MgtProbeRequestHeader : public WifiMgtHeader<MgtProbeRequestHeader, ProbeR
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
-    /** \copydoc Header::GetInstanceTypeId */
+    /** @copydoc Header::GetInstanceTypeId */
     TypeId GetInstanceTypeId() const override;
 };
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  * Implement the header for management frames of type probe response.
  */
 class MgtProbeResponseHeader : public WifiMgtHeader<MgtProbeResponseHeader, ProbeResponseElems>
@@ -461,46 +461,46 @@ class MgtProbeResponseHeader : public WifiMgtHeader<MgtProbeResponseHeader, Prob
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
-    /** \copydoc Header::GetInstanceTypeId */
+    /** @copydoc Header::GetInstanceTypeId */
     TypeId GetInstanceTypeId() const override;
 
     /**
      * Return the beacon interval in microseconds unit.
      *
-     * \return beacon interval in microseconds unit
+     * @return beacon interval in microseconds unit
      */
     uint64_t GetBeaconIntervalUs() const;
     /**
      * Set the beacon interval in microseconds unit.
      *
-     * \param us beacon interval in microseconds unit
+     * @param us beacon interval in microseconds unit
      */
     void SetBeaconIntervalUs(uint64_t us);
     /**
-     * \return a reference to the Capability information
+     * @return a reference to the Capability information
      */
     CapabilityInformation& Capabilities();
     /**
-     * \return a const reference to the Capability information
+     * @return a const reference to the Capability information
      */
     const CapabilityInformation& Capabilities() const;
     /**
      * Return the time stamp.
      *
-     * \return time stamp
+     * @return time stamp
      */
     uint64_t GetTimestamp() const;
 
   protected:
-    /** \copydoc Header::GetSerializedSize */
+    /** @copydoc Header::GetSerializedSize */
     uint32_t GetSerializedSizeImpl() const;
-    /** \copydoc Header::Serialize*/
+    /** @copydoc Header::Serialize*/
     void SerializeImpl(Buffer::Iterator start) const;
-    /** \copydoc Header::Deserialize */
+    /** @copydoc Header::Deserialize */
     uint32_t DeserializeImpl(Buffer::Iterator start);
 
   private:
@@ -510,7 +510,7 @@ class MgtProbeResponseHeader : public WifiMgtHeader<MgtProbeResponseHeader, Prob
 };
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  * Implement the header for management frames of type beacon.
  */
 class MgtBeaconHeader : public MgtProbeResponseHeader
@@ -520,7 +520,7 @@ class MgtBeaconHeader : public MgtProbeResponseHeader
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 };

@@ -65,10 +65,10 @@ static const ChannelWidthMhz GUARD_WIDTH =
     CHANNEL_WIDTH; // MHz (expanded to channel width to model spectrum mask)
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Wifi Phy Reception Test base class
+ * @brief Wifi Phy Reception Test base class
  */
 class WifiPhyReceptionTest : public TestCase
 {
@@ -76,7 +76,7 @@ class WifiPhyReceptionTest : public TestCase
     /**
      * Constructor
      *
-     * \param test_name the test name
+     * @param test_name the test name
      */
     WifiPhyReceptionTest(std::string test_name);
     /**
@@ -90,20 +90,20 @@ class WifiPhyReceptionTest : public TestCase
 
     /**
      * Send packet function
-     * \param rxPowerDbm the transmit power in dBm
-     * \param packetSize the size of the packet in bytes
-     * \param mcs the MCS to transmit the packet
+     * @param rxPowerDbm the transmit power in dBm
+     * @param packetSize the size of the packet in bytes
+     * @param mcs the MCS to transmit the packet
      */
     void SendPacket(double rxPowerDbm, uint32_t packetSize, uint8_t mcs);
 
     /**
      * Schedule now to check  the PHY state
-     * \param expectedState the expected PHY state
+     * @param expectedState the expected PHY state
      */
     void CheckPhyState(WifiPhyState expectedState);
     /**
      * Check the PHY state now
-     * \param expectedState the expected PHY state
+     * @param expectedState the expected PHY state
      */
     void DoCheckPhyState(WifiPhyState expectedState);
 
@@ -199,10 +199,10 @@ WifiPhyReceptionTest::DoTeardown()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Preamble detection test w/o frame capture
+ * @brief Preamble detection test w/o frame capture
  */
 class TestThresholdPreambleDetectionWithoutFrameCapture : public WifiPhyReceptionTest
 {
@@ -214,10 +214,10 @@ class TestThresholdPreambleDetectionWithoutFrameCapture : public WifiPhyReceptio
 
     /**
      * Spectrum wifi receive success function
-     * \param psdu the PSDU
-     * \param rxSignalInfo the info on the received signal (\see RxSignalInfo)
-     * \param txVector the transmit vector
-     * \param statusPerMpdu reception status per MPDU
+     * @param psdu the PSDU
+     * @param rxSignalInfo the info on the received signal (\see RxSignalInfo)
+     * @param txVector the transmit vector
+     * @param statusPerMpdu reception status per MPDU
      */
     void RxSuccess(Ptr<const WifiPsdu> psdu,
                    RxSignalInfo rxSignalInfo,
@@ -225,7 +225,7 @@ class TestThresholdPreambleDetectionWithoutFrameCapture : public WifiPhyReceptio
                    std::vector<bool> statusPerMpdu);
     /**
      * Spectrum wifi receive failure function
-     * \param psdu the PSDU
+     * @param psdu the PSDU
      */
     void RxFailure(Ptr<const WifiPsdu> psdu);
     uint32_t m_countRxSuccess{0}; ///< count RX success
@@ -236,8 +236,8 @@ class TestThresholdPreambleDetectionWithoutFrameCapture : public WifiPhyReceptio
 
     /**
      * Check the number of received packets
-     * \param expectedSuccessCount the number of successfully received packets
-     * \param expectedFailureCount the number of unsuccessfully received packets
+     * @param expectedSuccessCount the number of successfully received packets
+     * @param expectedFailureCount the number of unsuccessfully received packets
      */
     void CheckRxPacketCount(uint32_t expectedSuccessCount, uint32_t expectedFailureCount);
 };
@@ -815,10 +815,10 @@ TestThresholdPreambleDetectionWithoutFrameCapture::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Preamble detection test w/o frame capture
+ * @brief Preamble detection test w/o frame capture
  */
 class TestThresholdPreambleDetectionWithFrameCapture : public WifiPhyReceptionTest
 {
@@ -830,10 +830,10 @@ class TestThresholdPreambleDetectionWithFrameCapture : public WifiPhyReceptionTe
 
     /**
      * Spectrum wifi receive success function
-     * \param psdu the PSDU
-     * \param rxSignalInfo the info on the received signal (\see RxSignalInfo)
-     * \param txVector the transmit vector
-     * \param statusPerMpdu reception status per MPDU
+     * @param psdu the PSDU
+     * @param rxSignalInfo the info on the received signal (\see RxSignalInfo)
+     * @param txVector the transmit vector
+     * @param statusPerMpdu reception status per MPDU
      */
     void RxSuccess(Ptr<const WifiPsdu> psdu,
                    RxSignalInfo rxSignalInfo,
@@ -841,7 +841,7 @@ class TestThresholdPreambleDetectionWithFrameCapture : public WifiPhyReceptionTe
                    std::vector<bool> statusPerMpdu);
     /**
      * Spectrum wifi receive failure function
-     * \param psdu the PSDU
+     * @param psdu the PSDU
      */
     void RxFailure(Ptr<const WifiPsdu> psdu);
     uint32_t m_countRxSuccess{0}; ///< count RX success
@@ -852,8 +852,8 @@ class TestThresholdPreambleDetectionWithFrameCapture : public WifiPhyReceptionTe
 
     /**
      * Check the number of received packets
-     * \param expectedSuccessCount the number of successfully received packets
-     * \param expectedFailureCount the number of unsuccessfuly received packets
+     * @param expectedSuccessCount the number of successfully received packets
+     * @param expectedFailureCount the number of unsuccessfuly received packets
      */
     void CheckRxPacketCount(uint32_t expectedSuccessCount, uint32_t expectedFailureCount);
 };
@@ -1834,10 +1834,10 @@ TestThresholdPreambleDetectionWithFrameCapture::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Simple frame capture model test
+ * @brief Simple frame capture model test
  */
 class TestSimpleFrameCaptureModel : public WifiPhyReceptionTest
 {
@@ -1854,10 +1854,10 @@ class TestSimpleFrameCaptureModel : public WifiPhyReceptionTest
     void Reset();
     /**
      * Spectrum wifi receive success function
-     * \param psdu the PSDU
-     * \param rxSignalInfo the info on the received signal (\see RxSignalInfo)
-     * \param txVector the transmit vector
-     * \param statusPerMpdu reception status per MPDU
+     * @param psdu the PSDU
+     * @param rxSignalInfo the info on the received signal (\see RxSignalInfo)
+     * @param txVector the transmit vector
+     * @param statusPerMpdu reception status per MPDU
      */
     void RxSuccess(Ptr<const WifiPsdu> psdu,
                    RxSignalInfo rxSignalInfo,
@@ -1865,8 +1865,8 @@ class TestSimpleFrameCaptureModel : public WifiPhyReceptionTest
                    std::vector<bool> statusPerMpdu);
     /**
      * RX dropped function
-     * \param p the packet
-     * \param reason the reason
+     * @param p the packet
+     * @param reason the reason
      */
     void RxDropped(Ptr<const Packet> p, WifiPhyRxfailureReason reason);
 
@@ -2076,10 +2076,10 @@ TestSimpleFrameCaptureModel::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test PHY state upon success or failure of L-SIG and SIG-A
+ * @brief Test PHY state upon success or failure of L-SIG and SIG-A
  */
 class TestPhyHeadersReception : public WifiPhyReceptionTest
 {
@@ -2458,10 +2458,10 @@ TestPhyHeadersReception::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief A-MPDU reception test
+ * @brief A-MPDU reception test
  */
 class TestAmpduReception : public WifiPhyReceptionTest
 {
@@ -2474,10 +2474,10 @@ class TestAmpduReception : public WifiPhyReceptionTest
 
     /**
      * RX success function
-     * \param psdu the PSDU
-     * \param rxSignalInfo the info on the received signal (\see RxSignalInfo)
-     * \param txVector the transmit vector
-     * \param statusPerMpdu reception status per MPDU
+     * @param psdu the PSDU
+     * @param rxSignalInfo the info on the received signal (\see RxSignalInfo)
+     * @param txVector the transmit vector
+     * @param statusPerMpdu reception status per MPDU
      */
     void RxSuccess(Ptr<const WifiPsdu> psdu,
                    RxSignalInfo rxSignalInfo,
@@ -2485,23 +2485,23 @@ class TestAmpduReception : public WifiPhyReceptionTest
                    std::vector<bool> statusPerMpdu);
     /**
      * RX failure function
-     * \param psdu the PSDU
+     * @param psdu the PSDU
      */
     void RxFailure(Ptr<const WifiPsdu> psdu);
     /**
      * RX dropped function
-     * \param p the packet
-     * \param reason the reason
+     * @param p the packet
+     * @param reason the reason
      */
     void RxDropped(Ptr<const Packet> p, WifiPhyRxfailureReason reason);
     /**
      * Increment reception success bitmap.
-     * \param size the size of the received packet
+     * @param size the size of the received packet
      */
     void IncrementSuccessBitmap(uint32_t size);
     /**
      * Increment reception failure bitmap.
-     * \param size the size of the received packet
+     * @param size the size of the received packet
      */
     void IncrementFailureBitmap(uint32_t size);
 
@@ -2513,46 +2513,46 @@ class TestAmpduReception : public WifiPhyReceptionTest
     /**
      * Send A-MPDU with 3 MPDUs of different size (i-th MSDU will have 100 bytes more than
      * (i-1)-th).
-     * \param rxPowerDbm the transmit power in dBm
-     * \param referencePacketSize the reference size of the packets in bytes (i-th MSDU will have
+     * @param rxPowerDbm the transmit power in dBm
+     * @param referencePacketSize the reference size of the packets in bytes (i-th MSDU will have
      * 100 bytes more than (i-1)-th)
      */
     void SendAmpduWithThreeMpdus(double rxPowerDbm, uint32_t referencePacketSize);
 
     /**
      * Check the RX success bitmap for A-MPDU 1
-     * \param expected the expected bitmap
+     * @param expected the expected bitmap
      */
     void CheckRxSuccessBitmapAmpdu1(uint8_t expected);
     /**
      * Check the RX success bitmap for A-MPDU 2
-     * \param expected the expected bitmap
+     * @param expected the expected bitmap
      */
     void CheckRxSuccessBitmapAmpdu2(uint8_t expected);
     /**
      * Check the RX failure bitmap for A-MPDU 1
-     * \param expected the expected bitmap
+     * @param expected the expected bitmap
      */
     void CheckRxFailureBitmapAmpdu1(uint8_t expected);
     /**
      * Check the RX failure bitmap for A-MPDU 2
-     * \param expected the expected bitmap
+     * @param expected the expected bitmap
      */
     void CheckRxFailureBitmapAmpdu2(uint8_t expected);
     /**
      * Check the RX dropped bitmap for A-MPDU 1
-     * \param expected the expected bitmap
+     * @param expected the expected bitmap
      */
     void CheckRxDroppedBitmapAmpdu1(uint8_t expected);
     /**
      * Check the RX dropped bitmap for A-MPDU 2
-     * \param expected the expected bitmap
+     * @param expected the expected bitmap
      */
     void CheckRxDroppedBitmapAmpdu2(uint8_t expected);
 
     /**
      * Check the PHY state
-     * \param expectedState the expected PHY state
+     * @param expectedState the expected PHY state
      */
     void CheckPhyState(WifiPhyState expectedState);
 
@@ -3998,10 +3998,10 @@ TestAmpduReception::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Unsupported Modulation Reception Test
+ * @brief Unsupported Modulation Reception Test
  * This test creates a mixed network, in which an HE STA and a VHT
  * STA are associated to an HE AP and send uplink traffic. In the
  * simulated deployment the VHT STA's backoff will expire while the
@@ -4028,9 +4028,9 @@ class TestUnsupportedModulationReception : public TestCase
 
     /**
      * Callback invoked when PHY drops an incoming packet
-     * \param context the context
-     * \param packet the packet that was dropped
-     * \param reason the reason the packet was dropped
+     * @param context the context
+     * @param packet the packet that was dropped
+     * @param reason the reason the packet was dropped
      */
     void Dropped(std::string context, Ptr<const Packet> packet, WifiPhyRxfailureReason reason);
     /**
@@ -4202,10 +4202,10 @@ TestUnsupportedModulationReception::CheckResults()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Unsupported Bandwidth Reception Test
+ * @brief Unsupported Bandwidth Reception Test
  * This test checks whether a PHY receiving a PPDU sent over a channel width
  * larger than the one supported by the PHY is getting dropped at the expected
  * time. The expected time corresponds to the moment the PHY header indicating
@@ -4225,17 +4225,17 @@ class TestUnsupportedBandwidthReception : public TestCase
     /**
      * Function to create a PPDU
      *
-     * \param centerFreqMhz the center frequency used for the transmission of the PPDU (in MHz)
-     * \param bandwidthMhz the bandwidth used for the transmission of the PPDU (in MHz)
+     * @param centerFreqMhz the center frequency used for the transmission of the PPDU (in MHz)
+     * @param bandwidthMhz the bandwidth used for the transmission of the PPDU (in MHz)
      */
     void SendPpdu(uint16_t centerFreqMhz, ChannelWidthMhz bandwidthMhz);
 
     /**
      * Function called upon a PSDU received successfully
-     * \param psdu the PSDU
-     * \param rxSignalInfo the info on the received signal (\see RxSignalInfo)
-     * \param txVector the transmit vector
-     * \param statusPerMpdu reception status per MPDU
+     * @param psdu the PSDU
+     * @param rxSignalInfo the info on the received signal (\see RxSignalInfo)
+     * @param txVector the transmit vector
+     * @param statusPerMpdu reception status per MPDU
      */
     void RxSuccess(Ptr<const WifiPsdu> psdu,
                    RxSignalInfo rxSignalInfo,
@@ -4244,23 +4244,23 @@ class TestUnsupportedBandwidthReception : public TestCase
 
     /**
      * Function called upon a PSDU received unsuccessfuly
-     * \param psdu the PSDU
+     * @param psdu the PSDU
      */
     void RxFailure(Ptr<const WifiPsdu> psdu);
 
     /**
      * Function called upon a PSDU dropped by the PHY
-     * \param packet the packet that was dropped
-     * \param reason the reason the packet was dropped
+     * @param packet the packet that was dropped
+     * @param reason the reason the packet was dropped
      */
     void RxDropped(Ptr<const Packet> packet, WifiPhyRxfailureReason reason);
 
     /**
      * Check the reception results
-     * \param expectedCountRxSuccess the expected number of RX success
-     * \param expectedCountRxFailure the expected number of RX failure
-     * \param expectedCountRxDropped the expected number of RX drop
-     * \param expectedLastRxSucceeded the expected time the last RX success occurred or std::nullopt
+     * @param expectedCountRxSuccess the expected number of RX success
+     * @param expectedCountRxFailure the expected number of RX failure
+     * @param expectedCountRxDropped the expected number of RX drop
+     * @param expectedLastRxSucceeded the expected time the last RX success occurred or std::nullopt
      * if the expected number of RX success is not strictly positive \param expectedLastRxFailed the
      * expected time the last RX failure occurred or std::nullopt if the expected number of RX
      * failure is not strictly positive \param expectedLastRxDropped the expected time the last RX
@@ -4486,10 +4486,10 @@ TestUnsupportedBandwidthReception::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Primary 20 MHz Covered By Ppdu Test
+ * @brief Primary 20 MHz Covered By Ppdu Test
  * This test checks whether the functions WifiPpdu::DoesOverlapChannel and
  * WifiPpdu::DoesCoverChannel are returning the expected results.
  */
@@ -4506,21 +4506,21 @@ class TestPrimary20CoveredByPpdu : public TestCase
     /**
      * Function to create a PPDU
      *
-     * \param ppduCenterFreqMhz the center frequency used for the transmission of the PPDU (in MHz)
-     * \return the created PPDU
+     * @param ppduCenterFreqMhz the center frequency used for the transmission of the PPDU (in MHz)
+     * @return the created PPDU
      */
     Ptr<HePpdu> CreatePpdu(uint16_t ppduCenterFreqMhz);
 
     /**
      * Run one function
      *
-     * \param band the PHY band to use
-     * \param phyCenterFreqMhz the operating center frequency of the PHY (in MHz)
-     * \param p20Index the primary20 index
-     * \param ppduCenterFreqMhz the center frequency used for the transmission of the PPDU (in MHz)
-     * \param expectedP20Overlap flag whether the primary 20 MHz channel is expected to be fully
+     * @param band the PHY band to use
+     * @param phyCenterFreqMhz the operating center frequency of the PHY (in MHz)
+     * @param p20Index the primary20 index
+     * @param ppduCenterFreqMhz the center frequency used for the transmission of the PPDU (in MHz)
+     * @param expectedP20Overlap flag whether the primary 20 MHz channel is expected to be fully
      * covered by the bandwidth of the incoming PPDU
-     * \param expectedP20Covered flag whether the
+     * @param expectedP20Covered flag whether the
      * primary 20 MHz channel is expected to overlap with the bandwidth of the incoming PPDU
      */
     void RunOne(WifiPhyBand band,
@@ -4686,10 +4686,10 @@ TestPrimary20CoveredByPpdu::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief This test verifies the correct function of the WifiBandwidthFilter. 2 SpectrumWifiPhy are
+ * @brief This test verifies the correct function of the WifiBandwidthFilter. 2 SpectrumWifiPhy are
  * setup and connected on the same spectrum channel. The test will
  * send a packet over the channel and if the signal plus guardband overlaps the channel the
  * filter will not discard the signal but if there is no overlap the filter will filter it out.
@@ -4700,8 +4700,8 @@ class TestSpectrumChannelWithBandwidthFilter : public TestCase
     /**
      * Constructor
      *
-     * \param channel channel to be used by transmitter
-     * \param expectedValue expected number of received packets
+     * @param channel channel to be used by transmitter
+     * @param expectedValue expected number of received packets
      */
     TestSpectrumChannelWithBandwidthFilter(uint16_t channel, uint16_t expectedValue);
 
@@ -4713,10 +4713,10 @@ class TestSpectrumChannelWithBandwidthFilter : public TestCase
     /**
      * Callback invoked when the PHY model starts to process a signal
      *
-     * \param signal the arriving signal
-     * \param senderNodeId node Id of the sender of the signal
-     * \param rxPower received signal power (dBm)
-     * \param duration signal duration
+     * @param signal the arriving signal
+     * @param senderNodeId node Id of the sender of the signal
+     * @param rxPower received signal power (dBm)
+     * @param duration signal duration
      */
     void RxBegin(Ptr<const SpectrumSignalParameters> signal,
                  uint32_t senderNodeId,
@@ -4731,7 +4731,7 @@ class TestSpectrumChannelWithBandwidthFilter : public TestCase
     /**
      * Event scheduled at end of simulation for validation
      *
-     * \param expectedValue expected number of receive events
+     * @param expectedValue expected number of receive events
      */
     void CheckRxPacketCount(uint16_t expectedValue);
 
@@ -4860,10 +4860,10 @@ TestSpectrumChannelWithBandwidthFilter::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief This test verifies that the WifiPhyRxfailureReason distinguishes between two cases:  1) a
+ * @brief This test verifies that the WifiPhyRxfailureReason distinguishes between two cases:  1) a
  * drop due to transmitting during the signal detection interval, and 2) a drop due to transmitting
  * after the receiver has detected a preamble but is waiting for the end of the preamble. 2
  * SpectrumWifiPhy are setup and connected on the same spectrum channel. The test will send a packet
@@ -4878,8 +4878,8 @@ class TestPhyDropDueToTx : public TestCase
     /**
      * Constructor
      *
-     * \param delay delay in microseconds to send second packet
-     * \param expectedReason expected failure reason
+     * @param delay delay in microseconds to send second packet
+     * @param expectedReason expected failure reason
      */
     TestPhyDropDueToTx(Time delay, WifiPhyRxfailureReason expectedReason);
 
@@ -4890,14 +4890,14 @@ class TestPhyDropDueToTx : public TestCase
   private:
     /**
      * RX dropped function
-     * \param p the packet
-     * \param reason the reason
+     * @param p the packet
+     * @param reason the reason
      */
     void PhyDropTraceSink(Ptr<const Packet> p, WifiPhyRxfailureReason reason);
 
     /**
      * Send function (sends a single packet)
-     * \param phy the WifiPhy object to send the packet
+     * @param phy the WifiPhy object to send the packet
      */
     void Send(Ptr<WifiPhy> phy) const;
 
@@ -5028,10 +5028,10 @@ TestPhyDropDueToTx::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief wifi PHY reception Test Suite
+ * @brief wifi PHY reception Test Suite
  */
 class WifiPhyReceptionTestSuite : public TestSuite
 {

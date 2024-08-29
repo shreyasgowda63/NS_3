@@ -27,7 +27,7 @@ namespace ns3
 {
 
 /**
- * \ingroup mobility
+ * @ingroup mobility
  *
  * Consists of methods dealing with Earth geographic coordinates and locations.
  */

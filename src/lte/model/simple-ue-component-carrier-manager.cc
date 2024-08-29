@@ -44,7 +44,7 @@ class SimpleUeCcmMacSapProvider : public LteMacSapProvider
     /**
      * Constructor
      *
-     * \param mac the component carrier manager
+     * @param mac the component carrier manager
      */
     SimpleUeCcmMacSapProvider(SimpleUeComponentCarrierManager* mac);
 
@@ -84,7 +84,7 @@ class SimpleUeCcmMacSapUser : public LteMacSapUser
     /**
      * Constructor
      *
-     * \param mac the component carrier manager
+     * @param mac the component carrier manager
      */
     SimpleUeCcmMacSapUser(SimpleUeComponentCarrierManager* mac);
 

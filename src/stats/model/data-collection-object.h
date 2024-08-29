@@ -28,7 +28,7 @@ namespace ns3
 {
 
 /**
- * \ingroup aggregator
+ * @ingroup aggregator
  *
  * Base class for data collection framework objects.
  *
@@ -39,8 +39,8 @@ class DataCollectionObject : public Object
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -54,19 +54,19 @@ class DataCollectionObject : public Object
 
     /**
      * Check the status of an individual object.
-     * \return true if the object is enabled
+     * @return true if the object is enabled
      */
     virtual bool IsEnabled() const;
 
     /**
      * Get the object's name.
-     * \return the object's name
+     * @return the object's name
      */
     std::string GetName() const;
 
     /**
      * Set the object's name.
-     * \param name the object's name
+     * @param name the object's name
      */
     void SetName(std::string name);
 

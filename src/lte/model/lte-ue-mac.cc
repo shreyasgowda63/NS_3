@@ -50,7 +50,7 @@ class UeMemberLteUeCmacSapProvider : public LteUeCmacSapProvider
     /**
      * Constructor
      *
-     * \param mac the UE MAC
+     * @param mac the UE MAC
      */
     UeMemberLteUeCmacSapProvider(LteUeMac* mac);
 
@@ -141,7 +141,7 @@ class UeMemberLteMacSapProvider : public LteMacSapProvider
     /**
      * Constructor
      *
-     * \param mac the UE MAC
+     * @param mac the UE MAC
      */
     UeMemberLteMacSapProvider(LteUeMac* mac);
 
@@ -179,7 +179,7 @@ class UeMemberLteUePhySapUser : public LteUePhySapUser
     /**
      * Constructor
      *
-     * \param mac the UE MAC
+     * @param mac the UE MAC
      */
     UeMemberLteUePhySapUser(LteUeMac* mac);
 
@@ -865,7 +865,7 @@ LteUeMac::DoReceiveLteControlMessage(Ptr<LteControlMessage> msg)
                     if (it->rapId == m_raPreambleId) // RAR is for me
                     {
                         RecvRaResponse(it->rarPayload);
-                        /// \todo RRC generates the RecvRaResponse messaged
+                        /// @todo RRC generates the RecvRaResponse messaged
                         /// for avoiding holes in transmission at PHY layer
                         /// (which produce erroneous UL CQI evaluation)
                     }

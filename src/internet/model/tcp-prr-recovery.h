@@ -28,9 +28,9 @@ namespace ns3
 {
 
 /**
- * \ingroup recoveryOps
+ * @ingroup recoveryOps
  *
- * \brief An implementation of PRR
+ * @brief An implementation of PRR
  *
  * PRR is an algorithm that determines TCP's sending rate in fast
  * recovery. PRR avoids excessive window reductions and aims for
@@ -43,8 +43,8 @@ class TcpPrrRecovery : public TcpClassicRecovery
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -54,15 +54,15 @@ class TcpPrrRecovery : public TcpClassicRecovery
     TcpPrrRecovery();
 
     /**
-     * \brief Copy constructor
-     * \param sock the object to copy
+     * @brief Copy constructor
+     * @param sock the object to copy
      */
     TcpPrrRecovery(const TcpPrrRecovery& sock);
 
     ~TcpPrrRecovery() override;
 
     /**
-     * \brief Reduction Bound variant (CRB or SSRB)
+     * @brief Reduction Bound variant (CRB or SSRB)
      */
     enum ReductionBound_t
     {

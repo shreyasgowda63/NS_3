@@ -27,33 +27,33 @@
 using namespace ns3;
 
 /**
- * \file
- * \ingroup simulator-tests
+ * @file
+ * @ingroup simulator-tests
  * Simulator class test suite
  */
 
 /**
- * \ingroup core-tests
- * \defgroup simulator-tests Simulator class tests
+ * @ingroup core-tests
+ * @defgroup simulator-tests Simulator class tests
  */
 
 /**
- * \ingroup simulator-tests
+ * @ingroup simulator-tests
  *
- * \brief Check that basic event handling is working with different Simulator implementations.
+ * @brief Check that basic event handling is working with different Simulator implementations.
  */
 class SimulatorEventsTestCase : public TestCase
 {
   public:
     /**
      * Constructor.
-     * \param schedulerFactory Scheduler factory.
+     * @param schedulerFactory Scheduler factory.
      */
     SimulatorEventsTestCase(ObjectFactory schedulerFactory);
     void DoRun() override;
     /**
      * Test Event.
-     * \param value Event parameter.
+     * @param value Event parameter.
      * @{
      */
     void EventA(int value);
@@ -69,7 +69,7 @@ class SimulatorEventsTestCase : public TestCase
 
     /**
      * Get the simulator time.
-     * \return The actual time [ms].
+     * @return The actual time [ms].
      */
     uint64_t NowUs();
     /**
@@ -212,9 +212,9 @@ SimulatorEventsTestCase::DoRun()
 }
 
 /**
- * \ingroup simulator-tests
+ * @ingroup simulator-tests
  *
- * \brief Check that all templates are instantiated correctly.
+ * @brief Check that all templates are instantiated correctly.
  *
  * This is a compilation test, it cannot fail at runtime.
  */
@@ -708,9 +708,9 @@ SimulatorTemplateTestCase::DoRun()
 }
 
 /**
- * \ingroup simulator-tests
+ * @ingroup simulator-tests
  *
- * \brief The simulator Test Suite.
+ * @brief The simulator Test Suite.
  */
 class SimulatorTestSuite : public TestSuite
 {

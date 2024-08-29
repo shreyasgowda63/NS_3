@@ -34,7 +34,7 @@ namespace ns3
 class UanChannel;
 
 /**
- * \ingroup uan
+ * @ingroup uan
  *
  * UAN configuration helper.
  */
@@ -47,9 +47,9 @@ class UanHelper
     /**
      * Set MAC attributes.
      *
-     * \tparam Ts \deduced Argument types
-     * \param type The type of ns3::UanMac to create.
-     * \param [in] args Name and AttributeValue pairs to set.
+     * @tparam Ts \deduced Argument types
+     * @param type The type of ns3::UanMac to create.
+     * @param [in] args Name and AttributeValue pairs to set.
      *
      * All the attributes specified in this method should exist
      * in the requested mac.
@@ -60,9 +60,9 @@ class UanHelper
     /**
      * Set PHY attributes.
      *
-     * \tparam Ts \deduced Argument types
-     * \param phyType The type of ns3::UanPhy to create.
-     * \param [in] args Name and AttributeValue pairs to set.
+     * @tparam Ts \deduced Argument types
+     * @param phyType The type of ns3::UanPhy to create.
+     * @param [in] args Name and AttributeValue pairs to set.
      *
      * All the attributes specified in this method should exist
      * in the requested Phy.
@@ -73,9 +73,9 @@ class UanHelper
     /**
      * Set the transducer attributes.
      *
-     * \tparam Ts \deduced Argument types
-     * \param type The type of ns3::Transducer to create.
-     * \param [in] args Name and AttributeValue pairs to set.
+     * @tparam Ts \deduced Argument types
+     * @param type The type of ns3::Transducer to create.
+     * @param [in] args Name and AttributeValue pairs to set.
      *
      * All the attributes specified in this method should exist
      * in the requested transducer.
@@ -87,9 +87,9 @@ class UanHelper
      * specified nodeid if it is of type ns3::UanNetDevice and dump
      * that to the specified stdc++ output stream.
      *
-     * \param os Output stream.
-     * \param nodeid The id of the node to generate ascii output for.
-     * \param deviceid The id of the device to generate ascii output for.
+     * @param os Output stream.
+     * @param nodeid The id of the node to generate ascii output for.
+     * @param deviceid The id of the device to generate ascii output for.
      */
     static void EnableAscii(std::ostream& os, uint32_t nodeid, uint32_t deviceid);
     /**
@@ -98,8 +98,8 @@ class UanHelper
      * device container and dump that to the specified
      * stdc++ output stream.
      *
-     * \param os Output stream.
-     * \param d Device container.
+     * @param os Output stream.
+     * @param d Device container.
      */
     static void EnableAscii(std::ostream& os, NetDeviceContainer d);
     /**
@@ -108,8 +108,8 @@ class UanHelper
      * of the input node and dump that to the specified
      * stdc++ output stream.
      *
-     * \param os Output stream.
-     * \param n Node container.
+     * @param os Output stream.
+     * @param n Node container.
      */
     static void EnableAscii(std::ostream& os, NodeContainer n);
     /**
@@ -117,7 +117,7 @@ class UanHelper
      * ns3::UanNetDevice type and dump that to the specified
      * stdc++ output stream.
      *
-     * \param os Output stream.
+     * @param os Output stream.
      */
     static void EnableAsciiAll(std::ostream& os);
 
@@ -131,8 +131,8 @@ class UanHelper
      * attributes specified in UanHelper::SetTransducer,
      * UanHelper::SetMac, and, UanHelper::SetPhy.
      *
-     * \param c A set of nodes.
-     * \return The installed netdevices.
+     * @param c A set of nodes.
+     * @return The installed netdevices.
      */
     NetDeviceContainer Install(NodeContainer c) const;
 
@@ -144,9 +144,9 @@ class UanHelper
      * specified in UanHelper::SetTransducer, UanHelper::SetMac, and
      * UanHelper::SetPhy.
      *
-     * \param c A set of nodes.
-     * \param channel A channel to use.
-     * \return The installed netdevices.
+     * @param c A set of nodes.
+     * @param channel A channel to use.
+     * @return The installed netdevices.
      */
     NetDeviceContainer Install(NodeContainer c, Ptr<UanChannel> channel) const;
 
@@ -162,9 +162,9 @@ class UanHelper
      * Channel, physical layer, transducer and mac layer are added to the
      * UanNetDevice and then added to the node.
      *
-     * \param node A node where to install the uan components.
-     * \param channel A channel to use.
-     * \return The installed UanNetDevice.
+     * @param node A node where to install the uan components.
+     * @param channel A channel to use.
+     * @return The installed UanNetDevice.
      */
     Ptr<UanNetDevice> Install(Ptr<Node> node, Ptr<UanChannel> channel) const;
 
@@ -174,10 +174,10 @@ class UanHelper
      * have been assigned. The Install() method should have previously been
      * called by the user.
      *
-     * \param c NetDeviceContainer of the set of net devices for which the
+     * @param c NetDeviceContainer of the set of net devices for which the
      *          UanNetDevice should be modified to use a fixed stream.
-     * \param stream First stream index to use.
-     * \return The number of stream indices assigned by this helper.
+     * @param stream First stream index to use.
+     * @return The number of stream indices assigned by this helper.
      */
     int64_t AssignStreams(NetDeviceContainer c, int64_t stream);
 

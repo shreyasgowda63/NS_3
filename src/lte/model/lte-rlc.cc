@@ -39,7 +39,7 @@ class LteRlcSpecificLteMacSapUser : public LteMacSapUser
     /**
      * Constructor
      *
-     * \param rlc the RLC
+     * @param rlc the RLC
      */
     LteRlcSpecificLteMacSapUser(LteRlc* rlc);
 

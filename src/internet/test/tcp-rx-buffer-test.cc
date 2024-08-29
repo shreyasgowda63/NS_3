@@ -24,10 +24,10 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("TcpRxBufferTestSuite");
 
 /**
- * \ingroup internet-test
- * \ingroup tests
+ * @ingroup internet-test
+ * @ingroup tests
  *
- * \brief The TcpRxBuffer Test
+ * @brief The TcpRxBuffer Test
  */
 class TcpRxBufferTestCase : public TestCase
 {
@@ -39,7 +39,7 @@ class TcpRxBufferTestCase : public TestCase
     void DoTeardown() override;
 
     /**
-     * \brief Test the SACK list update.
+     * @brief Test the SACK list update.
      */
     void TestUpdateSACKList();
 };
@@ -294,9 +294,9 @@ TcpRxBufferTestCase::DoTeardown()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief the TestSuite for the TcpRxBuffer test case
+ * @brief the TestSuite for the TcpRxBuffer test case
  */
 class TcpRxBufferTestSuite : public TestSuite
 {

@@ -50,14 +50,14 @@ class BasicEnergyUpdateTest
 
     /**
      * Performs some tests involving state updates and the relative energy consumption
-     * \return true is some error happened.
+     * @return true is some error happened.
      */
     bool DoRun();
 
   private:
     /**
-     * \param state Radio state to switch to.
-     * \return False if no error occurs.
+     * @param state Radio state to switch to.
+     * @return False if no error occurs.
      *
      * Runs simulation for a while, check if final state & remaining energy is
      * correctly updated.
@@ -260,7 +260,7 @@ class BasicEnergyDepletionTest
 
     /**
      * Performs some tests involving energy depletion
-     * \return true is some error happened.
+     * @return true is some error happened.
      */
     bool DoRun();
 
@@ -271,9 +271,9 @@ class BasicEnergyDepletionTest
     void DepletionHandler();
 
     /**
-     * \param simTimeS Simulation time, in seconds.
-     * \param updateIntervalS Device model update interval, in seconds.
-     * \return False if all is good.
+     * @param simTimeS Simulation time, in seconds.
+     * @param updateIntervalS Device model update interval, in seconds.
+     * @return False if all is good.
      *
      * Runs simulation with specified simulation time and update interval.
      */

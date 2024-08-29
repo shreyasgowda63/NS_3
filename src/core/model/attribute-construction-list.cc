@@ -21,8 +21,8 @@
 #include "log.h"
 
 /**
- * \file
- * \ingroup object
+ * @file
+ * @ingroup object
  * ns3::AttributeConstructionList implementation.
  */
 

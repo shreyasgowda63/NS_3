@@ -32,7 +32,7 @@ namespace ns3
 {
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  * Identifies the IEEE 802.11 specifications that a Wifi device can be configured to use.
  */
 enum WifiStandard
@@ -51,11 +51,11 @@ enum WifiStandard
 };
 
 /**
- * \brief Stream insertion operator.
+ * @brief Stream insertion operator.
  *
- * \param os the stream
- * \param standard the standard
- * \returns a reference to the stream
+ * @param os the stream
+ * @param standard the standard
+ * @returns a reference to the stream
  */
 inline std::ostream&
 operator<<(std::ostream& os, WifiStandard standard)
@@ -86,15 +86,15 @@ operator<<(std::ostream& os, WifiStandard standard)
 }
 
 /**
- * \brief map a given standard configured by the user to the allowed PHY bands
+ * @brief map a given standard configured by the user to the allowed PHY bands
  */
 extern const std::map<WifiStandard, std::list<WifiPhyBand>> wifiStandards;
 
 /**
  * Get the type of the frequency channel for the given standard
  *
- * \param standard the standard
- * \return the type of the frequency channel for the given standard
+ * @param standard the standard
+ * @return the type of the frequency channel for the given standard
  */
 inline FrequencyChannelType
 GetFrequencyChannelType(WifiStandard standard)
@@ -113,9 +113,9 @@ GetFrequencyChannelType(WifiStandard standard)
 /**
  * Get the default channel width for the given PHY standard and band.
  *
- * \param standard the given standard
- * \param band the given PHY band
- * \return the default channel width (MHz) for the given standard
+ * @param standard the given standard
+ * @param band the given PHY band
+ * @return the default channel width (MHz) for the given standard
  */
 inline ChannelWidthMhz
 GetDefaultChannelWidth(WifiStandard standard, WifiPhyBand band)
@@ -141,8 +141,8 @@ GetDefaultChannelWidth(WifiStandard standard, WifiPhyBand band)
 /**
  * Get the default PHY band for the given standard.
  *
- * \param standard the given standard
- * \return the default PHY band for the given standard
+ * @param standard the given standard
+ * @return the default PHY band for the given standard
  */
 inline WifiPhyBand
 GetDefaultPhyBand(WifiStandard standard)
@@ -165,9 +165,9 @@ GetDefaultPhyBand(WifiStandard standard)
 /**
  * Get the TypeId name for the FrameExchangeManager corresponding to the given standard.
  *
- * \param standard the given standard
- * \param qosSupported whether QoS is supported (ignored if standard is at least HT)
- * \return the TypeId name for the FrameExchangeManager corresponding to the given standard
+ * @param standard the given standard
+ * @param qosSupported whether QoS is supported (ignored if standard is at least HT)
+ * @return the TypeId name for the FrameExchangeManager corresponding to the given standard
  */
 inline std::string
 GetFrameExchangeManagerTypeIdName(WifiStandard standard, bool qosSupported)

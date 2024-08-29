@@ -31,7 +31,7 @@ namespace energy
 {
 
 /**
- * \ingroup energy
+ * @ingroup energy
  *
  * A simple device energy model where current drain can be set by the user.
  *
@@ -42,49 +42,49 @@ class SimpleDeviceEnergyModel : public DeviceEnergyModel
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
     SimpleDeviceEnergyModel();
     ~SimpleDeviceEnergyModel() override;
 
     /**
-     * \brief Sets pointer to node.
+     * @brief Sets pointer to node.
      *
-     * \param node Pointer to node.
+     * @param node Pointer to node.
      *
      * Implements DeviceEnergyModel::SetNode.
      */
     virtual void SetNode(Ptr<Node> node);
 
     /**
-     * \brief Gets pointer to node.
+     * @brief Gets pointer to node.
      *
-     * \returns Pointer to node.
+     * @returns Pointer to node.
      *
      * Implements DeviceEnergyModel::GetNode.
      */
     virtual Ptr<Node> GetNode() const;
 
     /**
-     * \brief Sets pointer to EnergySource installed on node.
+     * @brief Sets pointer to EnergySource installed on node.
      *
-     * \param source Pointer to EnergySource installed on node.
+     * @param source Pointer to EnergySource installed on node.
      *
      * Implements DeviceEnergyModel::SetEnergySource.
      */
     void SetEnergySource(Ptr<EnergySource> source) override;
 
     /**
-     * \returns Total energy consumption of the vehicle.
+     * @returns Total energy consumption of the vehicle.
      *
      * Implements DeviceEnergyModel::GetTotalEnergyConsumption.
      */
     double GetTotalEnergyConsumption() const override;
 
     /**
-     * \param newState New state the device is in.
+     * @param newState New state the device is in.
      *
      * Not implemented
      */
@@ -93,7 +93,7 @@ class SimpleDeviceEnergyModel : public DeviceEnergyModel
     }
 
     /**
-     * \brief Handles energy depletion.
+     * @brief Handles energy depletion.
      *
      * Not implemented
      */
@@ -102,7 +102,7 @@ class SimpleDeviceEnergyModel : public DeviceEnergyModel
     }
 
     /**
-     * \brief Handles energy recharged.
+     * @brief Handles energy recharged.
      *
      * Not implemented
      */
@@ -111,7 +111,7 @@ class SimpleDeviceEnergyModel : public DeviceEnergyModel
     }
 
     /**
-     * \brief Handles energy changed.
+     * @brief Handles energy changed.
      *
      * Not implemented
      */
@@ -120,7 +120,7 @@ class SimpleDeviceEnergyModel : public DeviceEnergyModel
     }
 
     /**
-     * \param current the current draw of device.
+     * @param current the current draw of device.
      *
      * Set the actual current draw of the device.
      */
@@ -130,7 +130,7 @@ class SimpleDeviceEnergyModel : public DeviceEnergyModel
     void DoDispose() override;
 
     /**
-     * \returns Current draw of device, at current state.
+     * @returns Current draw of device, at current state.
      *
      * Implements DeviceEnergyModel::GetCurrentA.
      */

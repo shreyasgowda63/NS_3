@@ -27,8 +27,8 @@
 #include <string>
 
 /**
- * \file
- * \ingroup scheduler
+ * @file
+ * @ingroup scheduler
  * ns3::MapScheduler implementation.
  */
 

@@ -22,8 +22,8 @@
 #include "ptr.h"
 
 /**
- *  \file
- *  \ingroup object
+ *  @file
+ *  @ingroup object
  *  ns3::TypeTraits introspection declaration and template implementation.
  */
 
@@ -31,9 +31,9 @@ namespace ns3
 {
 
 /**
- * \ingroup object
+ * @ingroup object
  *  Inspect a type to deduce its features.
- *  \tparam T \deduced The type to inspect.
+ *  @tparam T \deduced The type to inspect.
  */
 template <typename T>
 struct TypeTraits
@@ -46,7 +46,7 @@ struct TypeTraits
 
     /**
      *  Not a const type.
-     *  \tparam U \deduced The type being inspected.
+     *  @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct UnConst
@@ -56,7 +56,7 @@ struct TypeTraits
 
     /**
      *  Const type.
-     *  \tparam U \deduced The type being inspected.
+     *  @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct UnConst<const U>
@@ -66,7 +66,7 @@ struct TypeTraits
 
     /**
      *  Not a reference type.
-     *  \tparam U \deduced The type being inspected.
+     *  @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct ReferenceTraits
@@ -82,7 +82,7 @@ struct TypeTraits
 
     /**
      *  Reference type.
-     *  \tparam U \deduced The type being inspected.
+     *  @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct ReferenceTraits<U&>
@@ -98,7 +98,7 @@ struct TypeTraits
 
     /**
      *  Not a pointer type.
-     *  \tparam U \deduced The type being inspected.
+     *  @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct PointerTraits
@@ -115,7 +115,7 @@ struct TypeTraits
 
     /**
      *  Pointer type.
-     *  \tparam U \deduced The type being inspected.
+     *  @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct PointerTraits<U*>
@@ -132,7 +132,7 @@ struct TypeTraits
 
     /**
      *  Ptr type.
-     *  \tparam U \deduced The type being inspected.
+     *  @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct PointerTraits<ns3::Ptr<U>>
@@ -149,7 +149,7 @@ struct TypeTraits
 
     /**
      * Base type, after removing \c &, \c * and \c const.
-     * \tparam U \deduced The type being inspected.
+     * @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct Base
@@ -159,7 +159,7 @@ struct TypeTraits
 
     /**
      * Base type, after removing \c &.
-     * \tparam U \deduced The type being inspected.
+     * @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct Base<U&>
@@ -169,7 +169,7 @@ struct TypeTraits
 
     /**
      * Base type, after removing \c *.
-     * \tparam U \deduced The type being inspected.
+     * @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct Base<U*>
@@ -179,7 +179,7 @@ struct TypeTraits
 
     /**
      * Base type, after removing \c const.
-     * \tparam U \deduced The type being inspected.
+     * @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct Base<const U>
@@ -189,7 +189,7 @@ struct TypeTraits
 
     /**
      * Base type of a Ptr.
-     * \tparam U \deduced The type being inspected.
+     * @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct PtrBase
@@ -199,7 +199,7 @@ struct TypeTraits
 
     /**
      * Base type of a Ptr.
-     * \tparam U \deduced The type being inspected.
+     * @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct PtrBase<ns3::Ptr<U>>
@@ -209,7 +209,7 @@ struct TypeTraits
 
     /**
      *  Not a function pointer type.
-     *  \tparam U \deduced The type being inspected.
+     *  @tparam U \deduced The type being inspected.
      */
     template <typename U>
     struct FunctionPtrTraits
@@ -225,7 +225,7 @@ struct TypeTraits
 
     /**
      *  Function pointer type.
-     *  \tparam U \deduced Return type.
+     *  @tparam U \deduced Return type.
      */
     template <typename U>
     struct FunctionPtrTraits<U (*)()>
@@ -246,8 +246,8 @@ struct TypeTraits
 
     /**
      *  Function pointer type.
-     *  \tparam U \deduced Return type.
-     *  \tparam V1 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V1 \deduced Argument type.
      */
     template <typename U, typename V1>
     struct FunctionPtrTraits<U (*)(V1)>
@@ -269,9 +269,9 @@ struct TypeTraits
 
     /**
      *  Function pointer type.
-     *  \tparam U \deduced Return type.
-     *  \tparam V1 \deduced Argument type.
-     *  \tparam V2 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V1 \deduced Argument type.
+     *  @tparam V2 \deduced Argument type.
      */
     template <typename U, typename V1, typename V2>
     struct FunctionPtrTraits<U (*)(V1, V2)>
@@ -294,10 +294,10 @@ struct TypeTraits
 
     /**
      *  Function pointer type.
-     *  \tparam U \deduced Return type.
-     *  \tparam V1 \deduced Argument type.
-     *  \tparam V2 \deduced Argument type.
-     *  \tparam V3 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V1 \deduced Argument type.
+     *  @tparam V2 \deduced Argument type.
+     *  @tparam V3 \deduced Argument type.
      */
     template <typename U, typename V1, typename V2, typename V3>
     struct FunctionPtrTraits<U (*)(V1, V2, V3)>
@@ -321,11 +321,11 @@ struct TypeTraits
 
     /**
      *  Function pointer type.
-     *  \tparam U \deduced Return type.
-     *  \tparam V1 \deduced Argument type.
-     *  \tparam V2 \deduced Argument type.
-     *  \tparam V3 \deduced Argument type.
-     *  \tparam V4 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V1 \deduced Argument type.
+     *  @tparam V2 \deduced Argument type.
+     *  @tparam V3 \deduced Argument type.
+     *  @tparam V4 \deduced Argument type.
      */
     template <typename U, typename V1, typename V2, typename V3, typename V4>
     struct FunctionPtrTraits<U (*)(V1, V2, V3, V4)>
@@ -350,12 +350,12 @@ struct TypeTraits
 
     /**
      *  Function pointer type.
-     *  \tparam U \deduced Return type.
-     *  \tparam V1 \deduced Argument type.
-     *  \tparam V2 \deduced Argument type.
-     *  \tparam V3 \deduced Argument type.
-     *  \tparam V4 \deduced Argument type.
-     *  \tparam V5 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V1 \deduced Argument type.
+     *  @tparam V2 \deduced Argument type.
+     *  @tparam V3 \deduced Argument type.
+     *  @tparam V4 \deduced Argument type.
+     *  @tparam V5 \deduced Argument type.
      */
     template <typename U, typename V1, typename V2, typename V3, typename V4, typename V5>
     struct FunctionPtrTraits<U (*)(V1, V2, V3, V4, V5)>
@@ -381,13 +381,13 @@ struct TypeTraits
 
     /**
      *  Function pointer type.
-     *  \tparam U \deduced Return type.
-     *  \tparam V1 \deduced Argument type.
-     *  \tparam V2 \deduced Argument type.
-     *  \tparam V3 \deduced Argument type.
-     *  \tparam V4 \deduced Argument type.
-     *  \tparam V5 \deduced Argument type.
-     *  \tparam V6 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V1 \deduced Argument type.
+     *  @tparam V2 \deduced Argument type.
+     *  @tparam V3 \deduced Argument type.
+     *  @tparam V4 \deduced Argument type.
+     *  @tparam V5 \deduced Argument type.
+     *  @tparam V6 \deduced Argument type.
      */
     template <typename U,
               typename V1,
@@ -420,7 +420,7 @@ struct TypeTraits
 
     /**
      *  Not a pointer to member type.
-     *  \tparam U \deduced Return type.
+     *  @tparam U \deduced Return type.
      */
     template <typename U>
     struct PtrToMemberTraits
@@ -434,8 +434,8 @@ struct TypeTraits
 
     /**
      *  Pointer to member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
      */
     template <typename U, typename V>
     struct PtrToMemberTraits<U (V::*)()>
@@ -456,8 +456,8 @@ struct TypeTraits
 
     /**
      *  Pointer to const member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
      */
     template <typename U, typename V>
     struct PtrToMemberTraits<U (V::*)() const>
@@ -478,9 +478,9 @@ struct TypeTraits
 
     /**
      *  Pointer to member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
      */
     template <typename U, typename V, typename W1>
     struct PtrToMemberTraits<U (V::*)(W1)>
@@ -502,9 +502,9 @@ struct TypeTraits
 
     /**
      *  Pointer to const member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
      */
     template <typename U, typename V, typename W1>
     struct PtrToMemberTraits<U (V::*)(W1) const>
@@ -526,10 +526,10 @@ struct TypeTraits
 
     /**
      *  Pointer to member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
-     *  \tparam W2 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
+     *  @tparam W2 \deduced Argument type.
      */
     template <typename U, typename V, typename W1, typename W2>
     struct PtrToMemberTraits<U (V::*)(W1, W2)>
@@ -552,10 +552,10 @@ struct TypeTraits
 
     /**
      *  Pointer to const member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
-     *  \tparam W2 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
+     *  @tparam W2 \deduced Argument type.
      */
     template <typename U, typename V, typename W1, typename W2>
     struct PtrToMemberTraits<U (V::*)(W1, W2) const>
@@ -578,11 +578,11 @@ struct TypeTraits
 
     /**
      *  Pointer to member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
-     *  \tparam W2 \deduced Argument type.
-     *  \tparam W3 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
+     *  @tparam W2 \deduced Argument type.
+     *  @tparam W3 \deduced Argument type.
      */
     template <typename U, typename V, typename W1, typename W2, typename W3>
     struct PtrToMemberTraits<U (V::*)(W1, W2, W3)>
@@ -606,11 +606,11 @@ struct TypeTraits
 
     /**
      *  Pointer to const member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
-     *  \tparam W2 \deduced Argument type.
-     *  \tparam W3 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
+     *  @tparam W2 \deduced Argument type.
+     *  @tparam W3 \deduced Argument type.
      */
     template <typename U, typename V, typename W1, typename W2, typename W3>
     struct PtrToMemberTraits<U (V::*)(W1, W2, W3) const>
@@ -634,12 +634,12 @@ struct TypeTraits
 
     /**
      *  Pointer to member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
-     *  \tparam W2 \deduced Argument type.
-     *  \tparam W3 \deduced Argument type.
-     *  \tparam W4 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
+     *  @tparam W2 \deduced Argument type.
+     *  @tparam W3 \deduced Argument type.
+     *  @tparam W4 \deduced Argument type.
      */
     template <typename U, typename V, typename W1, typename W2, typename W3, typename W4>
     struct PtrToMemberTraits<U (V::*)(W1, W2, W3, W4)>
@@ -664,12 +664,12 @@ struct TypeTraits
 
     /**
      *  Pointer to const member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
-     *  \tparam W2 \deduced Argument type.
-     *  \tparam W3 \deduced Argument type.
-     *  \tparam W4 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
+     *  @tparam W2 \deduced Argument type.
+     *  @tparam W3 \deduced Argument type.
+     *  @tparam W4 \deduced Argument type.
      */
     template <typename U, typename V, typename W1, typename W2, typename W3, typename W4>
     struct PtrToMemberTraits<U (V::*)(W1, W2, W3, W4) const>
@@ -694,13 +694,13 @@ struct TypeTraits
 
     /**
      *  Pointer to member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
-     *  \tparam W2 \deduced Argument type.
-     *  \tparam W3 \deduced Argument type.
-     *  \tparam W4 \deduced Argument type.
-     *  \tparam W5 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
+     *  @tparam W2 \deduced Argument type.
+     *  @tparam W3 \deduced Argument type.
+     *  @tparam W4 \deduced Argument type.
+     *  @tparam W5 \deduced Argument type.
      */
     template <typename U,
               typename V,
@@ -732,13 +732,13 @@ struct TypeTraits
 
     /**
      *  Pointer to const member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
-     *  \tparam W2 \deduced Argument type.
-     *  \tparam W3 \deduced Argument type.
-     *  \tparam W4 \deduced Argument type.
-     *  \tparam W5 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
+     *  @tparam W2 \deduced Argument type.
+     *  @tparam W3 \deduced Argument type.
+     *  @tparam W4 \deduced Argument type.
+     *  @tparam W5 \deduced Argument type.
      */
     template <typename U,
               typename V,
@@ -770,14 +770,14 @@ struct TypeTraits
 
     /**
      *  Pointer to member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
-     *  \tparam W2 \deduced Argument type.
-     *  \tparam W3 \deduced Argument type.
-     *  \tparam W4 \deduced Argument type.
-     *  \tparam W5 \deduced Argument type.
-     *  \tparam W6 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
+     *  @tparam W2 \deduced Argument type.
+     *  @tparam W3 \deduced Argument type.
+     *  @tparam W4 \deduced Argument type.
+     *  @tparam W5 \deduced Argument type.
+     *  @tparam W6 \deduced Argument type.
      */
     template <typename U,
               typename V,
@@ -811,14 +811,14 @@ struct TypeTraits
 
     /**
      *  Pointer to const member function.
-     *  \tparam U \deduced Return type.
-     *  \tparam V \deduced Class type.
-     *  \tparam W1 \deduced Argument type.
-     *  \tparam W2 \deduced Argument type.
-     *  \tparam W3 \deduced Argument type.
-     *  \tparam W4 \deduced Argument type.
-     *  \tparam W5 \deduced Argument type.
-     *  \tparam W6 \deduced Argument type.
+     *  @tparam U \deduced Return type.
+     *  @tparam V \deduced Class type.
+     *  @tparam W1 \deduced Argument type.
+     *  @tparam W2 \deduced Argument type.
+     *  @tparam W3 \deduced Argument type.
+     *  @tparam W4 \deduced Argument type.
+     *  @tparam W5 \deduced Argument type.
+     *  @tparam W6 \deduced Argument type.
      */
     template <typename U,
               typename V,

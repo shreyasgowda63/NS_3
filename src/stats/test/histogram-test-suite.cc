@@ -23,9 +23,9 @@
 using namespace ns3;
 
 /**
- * \ingroup stats-tests
+ * @ingroup stats-tests
  *
- * \brief Histogram Test
+ * @brief Histogram Test
  */
 class HistogramTestCase : public ns3::TestCase
 {
@@ -72,9 +72,9 @@ HistogramTestCase::DoRun()
 }
 
 /**
- * \ingroup stats-tests
+ * @ingroup stats-tests
  *
- * \brief Histogram TestSuite
+ * @brief Histogram TestSuite
  */
 class HistogramTestSuite : public TestSuite
 {

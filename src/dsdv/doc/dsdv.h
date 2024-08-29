@@ -33,7 +33,7 @@
 #define DSDV_H
 
 /**
- * \defgroup dsdv DSDV Routing
+ * @defgroup dsdv DSDV Routing
  *
  * This section documents the API of the ns-3 DSDV module. For a
  * generic functional description, please refer to the ns-3 model

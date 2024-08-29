@@ -76,8 +76,8 @@
 #include <iostream>
 
 /**
- * \file
- * \ingroup bridge
+ * @file
+ * @ingroup bridge
  * Bridge example connecting two broadcast domains.
  */
 

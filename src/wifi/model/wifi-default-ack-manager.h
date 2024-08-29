@@ -29,7 +29,7 @@ class WifiTxParameters;
 class WifiMpdu;
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * WifiDefaultAckManager is the default ack manager.
  */
@@ -37,8 +37,8 @@ class WifiDefaultAckManager : public WifiAckManager
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -56,9 +56,9 @@ class WifiDefaultAckManager : public WifiAckManager
      * of the given MPDU and of all the QoS data frames included in the given TX
      * parameters.
      *
-     * \param mpdu the given MPDU
-     * \param txParams the given TX parameters
-     * \return the maximum distance between the starting sequence number of the Block
+     * @param mpdu the given MPDU
+     * @param txParams the given TX parameters
+     * @return the maximum distance between the starting sequence number of the Block
      *         Ack agreement which the given MPDU belongs to and each of the sequence
      *         numbers of the given MPDU and of all the QoS data frames included in
      *         the given TX parameters
@@ -72,15 +72,15 @@ class WifiDefaultAckManager : public WifiAckManager
      * included in the given TX parameters requires an immediate response (Normal Ack,
      * Block Ack or Block Ack Request followed by Block Ack).
      *
-     * \param mpdu the given MPDU.
-     * \param txParams the given TX parameters.
-     * \return true if the given PSDU requires an immediate response
+     * @param mpdu the given MPDU.
+     * @param txParams the given TX parameters.
+     * @return true if the given PSDU requires an immediate response
      */
     bool IsResponseNeeded(Ptr<const WifiMpdu> mpdu, const WifiTxParameters& txParams) const;
 
     /**
-     * \param mpdu the given MPDU
-     * \return whether there exist MPDUs with lower sequence number than the given MPDU that are
+     * @param mpdu the given MPDU
+     * @return whether there exist MPDUs with lower sequence number than the given MPDU that are
      * inflight on the same link as the given MPDU
      */
     bool ExistInflightOnSameLink(Ptr<const WifiMpdu> mpdu) const;
@@ -94,9 +94,9 @@ class WifiDefaultAckManager : public WifiAckManager
      * This method can only be called if the selected acknowledgment method for DL
      * multi-user frames consists of a sequence of BlockAckReq and BlockAck frames.
      *
-     * \param mpdu the given MPDU
-     * \param txParams the TX parameters describing the current multi-user frame
-     * \return the new acknowledgment method or a null pointer if the acknowledgment method
+     * @param mpdu the given MPDU
+     * @param txParams the TX parameters describing the current multi-user frame
+     * @return the new acknowledgment method or a null pointer if the acknowledgment method
      *         is unchanged
      */
     virtual std::unique_ptr<WifiAcknowledgment> GetAckInfoIfBarBaSequence(
@@ -110,9 +110,9 @@ class WifiDefaultAckManager : public WifiAckManager
      * This method can only be called if the selected acknowledgment method for DL
      * multi-user frames consists of a MU-BAR Trigger Frame sent as single-user frame.
      *
-     * \param mpdu the given MPDU
-     * \param txParams the TX parameters describing the current multi-user frame
-     * \return the new acknowledgment method or a null pointer if the acknowledgment method
+     * @param mpdu the given MPDU
+     * @param txParams the TX parameters describing the current multi-user frame
+     * @return the new acknowledgment method or a null pointer if the acknowledgment method
      *         is unchanged
      */
     virtual std::unique_ptr<WifiAcknowledgment> GetAckInfoIfTfMuBar(
@@ -127,9 +127,9 @@ class WifiDefaultAckManager : public WifiAckManager
      * multi-user frames consists of MU-BAR Trigger Frames aggregated to the PSDUs of
      * the MU PPDU.
      *
-     * \param mpdu the given MPDU
-     * \param txParams the TX parameters describing the current multi-user frame
-     * \return the new acknowledgment method or a null pointer if the acknowledgment method
+     * @param mpdu the given MPDU
+     * @param txParams the TX parameters describing the current multi-user frame
+     * @return the new acknowledgment method or a null pointer if the acknowledgment method
      *         is unchanged
      */
     virtual std::unique_ptr<WifiAcknowledgment> GetAckInfoIfAggregatedMuBar(
@@ -140,9 +140,9 @@ class WifiDefaultAckManager : public WifiAckManager
      * Calculate the acknowledgment method for the TB PPDUs solicited by the given
      * Trigger Frame.
      *
-     * \param mpdu the given Trigger Frame
-     * \param txParams the current TX parameters (just the TXVECTOR needs to be set)
-     * \return the acknowledgment method for the TB PPDUs solicited by the given Trigger Frame
+     * @param mpdu the given Trigger Frame
+     * @param txParams the current TX parameters (just the TXVECTOR needs to be set)
+     * @return the acknowledgment method for the TB PPDUs solicited by the given Trigger Frame
      */
     virtual std::unique_ptr<WifiAcknowledgment> TryUlMuTransmission(
         Ptr<const WifiMpdu> mpdu,

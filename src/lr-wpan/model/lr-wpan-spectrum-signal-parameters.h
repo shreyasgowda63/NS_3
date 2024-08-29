@@ -31,7 +31,7 @@ namespace lrwpan
 {
 
 /**
- * \ingroup lr-wpan
+ * @ingroup lr-wpan
  *
  * Signal parameters for LrWpan.
  */
@@ -46,7 +46,7 @@ struct LrWpanSpectrumSignalParameters : public SpectrumSignalParameters
 
     /**
      * copy constructor
-     * \param p the object to copy from.
+     * @param p the object to copy from.
      */
     LrWpanSpectrumSignalParameters(const LrWpanSpectrumSignalParameters& p);
 

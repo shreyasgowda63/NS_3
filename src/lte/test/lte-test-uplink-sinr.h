@@ -28,9 +28,9 @@
 using namespace ns3;
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test 1.2 SINR calculation in uplink
+ * @brief Test 1.2 SINR calculation in uplink
  */
 class LteUplinkSinrTestSuite : public TestSuite
 {
@@ -39,9 +39,9 @@ class LteUplinkSinrTestSuite : public TestSuite
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test generation of SINR in the uplink. Test schedules the signal and the interference
+ * @brief Test generation of SINR in the uplink. Test schedules the signal and the interference
  * signals and it evaluates if the obtained value for SINR corresponds to the theoretical value
  * in given conditions.
  */
@@ -51,10 +51,10 @@ class LteUplinkDataSinrTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param sv1 spectrum value 1
-     * \param sv2 spectrum value 2
-     * \param sinr the SINR
-     * \param name the reference name
+     * @param sv1 spectrum value 1
+     * @param sv2 spectrum value 2
+     * @param sinr the SINR
+     * @param name the reference name
      */
     LteUplinkDataSinrTestCase(Ptr<SpectrumValue> sv1,
                               Ptr<SpectrumValue> sv2,
@@ -72,9 +72,9 @@ class LteUplinkDataSinrTestCase : public TestCase
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief  In this test one signal will be of interest, i.e., the
+ * @brief  In this test one signal will be of interest, i.e., the
  *  SRS of the first signal will have the same CellId of the
  *  receiving PHY; the others will have a different
  *  CellId and hence will be the interfering signals. The test
@@ -87,10 +87,10 @@ class LteUplinkSrsSinrTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param sv1 spectrum value 1
-     * \param sv2 spectrum value 2
-     * \param sinr the SINR
-     * \param name the reference name
+     * @param sv1 spectrum value 1
+     * @param sv2 spectrum value 2
+     * @param sinr the SINR
+     * @param name the reference name
      */
     LteUplinkSrsSinrTestCase(Ptr<SpectrumValue> sv1,
                              Ptr<SpectrumValue> sv2,
@@ -101,7 +101,7 @@ class LteUplinkSrsSinrTestCase : public TestCase
     /**
      * Callback to be connected to an LteChunkProcessor to collect the reported SINR
      *
-     * \param sinr
+     * @param sinr
      */
     void ReportSinr(const SpectrumValue& sinr);
 

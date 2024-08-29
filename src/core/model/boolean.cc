@@ -22,8 +22,8 @@
 #include "log.h"
 
 /**
- * \file
- * \ingroup attribute_Boolean
+ * @file
+ * @ingroup attribute_Boolean
  * ns3::BooleanValue attribute value implementation.
  */
 

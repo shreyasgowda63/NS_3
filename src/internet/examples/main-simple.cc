@@ -32,8 +32,8 @@ using namespace ns3;
  * the function is scheduled to send a packet of (size-50) after 0.5s.
  * The process is iterated until the packet size is zero.
  *
- * \param socket output socket
- * \param size packet size
+ * @param socket output socket
+ * @param size packet size
  */
 static void
 GenerateTraffic(Ptr<Socket> socket, int32_t size)
@@ -51,7 +51,7 @@ GenerateTraffic(Ptr<Socket> socket, int32_t size)
 
 /**
  * Prints the packets received by a socket
- * \param socket input socket
+ * @param socket input socket
  */
 static void
 SocketPrinter(Ptr<Socket> socket)

@@ -33,22 +33,22 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("TcpPrrRecoveryTestSuite");
 
 /**
- * \brief PRR Recovery algorithm test
+ * @brief PRR Recovery algorithm test
  */
 class PrrRecoveryTest : public TestCase
 {
   public:
     /**
-     * \brief Constructor.
-     * \param cWnd Congestion window.
-     * \param segmentSize Segment size.
-     * \param ssThresh Slow Start Threshold.
-     * \param unAckDataCount Unacknowledged data at the start of recovery.
-     * \param bytesInFlight Current bytes in flight.
-     * \param m_deliveredBytes Bytes SACKed on last acknowledgment.
-     * \param bytesSent Bytes sent while in recovery phase.
-     * \param reductionBound Type of reduction bound to be used.
-     * \param name Test description.
+     * @brief Constructor.
+     * @param cWnd Congestion window.
+     * @param segmentSize Segment size.
+     * @param ssThresh Slow Start Threshold.
+     * @param unAckDataCount Unacknowledged data at the start of recovery.
+     * @param bytesInFlight Current bytes in flight.
+     * @param m_deliveredBytes Bytes SACKed on last acknowledgment.
+     * @param bytesSent Bytes sent while in recovery phase.
+     * @param reductionBound Type of reduction bound to be used.
+     * @param name Test description.
      */
     PrrRecoveryTest(uint32_t cWnd,
                     uint32_t segmentSize,
@@ -144,9 +144,9 @@ PrrRecoveryTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief PRR Recovery TestSuite
+ * @brief PRR Recovery TestSuite
  */
 class PrrRecoveryTestSuite : public TestSuite
 {

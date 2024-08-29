@@ -28,9 +28,9 @@
 using namespace ns3;
 
 /**
- * \ingroup dot11s-test
+ * @ingroup dot11s-test
  *
- * \brief Dot11s Regression Suite
+ * @brief Dot11s Regression Suite
  */
 class Dot11sRegressionSuite : public TestSuite
 {

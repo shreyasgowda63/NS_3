@@ -25,7 +25,7 @@
 namespace ns3
 {
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * A threshold-based model for detecting PHY preamble.
  * This model assumes that a preamble is successfully detected if SNR is at or above a given
@@ -36,8 +36,8 @@ class ThresholdPreambleDetectionModel : public PreambleDetectionModel
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 

@@ -36,17 +36,17 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("Asn1EncodingTest");
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Contains ASN encoding test utility functions.
+ * @brief Contains ASN encoding test utility functions.
  */
 class TestUtils
 {
   public:
     /**
      * Function to convert packet contents in hex format
-     * \param pkt the packet
-     * \returns the text string
+     * @param pkt the packet
+     * @returns the text string
      */
     static std::string sprintPacketContentsHex(Ptr<Packet> pkt)
     {
@@ -62,8 +62,8 @@ class TestUtils
 
     /**
      * Function to convert packet contents in binary format
-     * \param pkt the packet
-     * \returns the text string
+     * @param pkt the packet
+     * @returns the text string
      */
     static std::string sprintPacketContentsBin(Ptr<Packet> pkt)
     {
@@ -79,7 +79,7 @@ class TestUtils
 
     /**
      * Function to log packet contents
-     * \param pkt the packet
+     * @param pkt the packet
      */
     static void LogPacketContents(Ptr<Packet> pkt)
     {
@@ -90,8 +90,8 @@ class TestUtils
 
     /**
      * Function to log packet info
-     * \param source T
-     * \param s the string
+     * @param source T
+     * @param s the string
      */
     template <class T>
     static void LogPacketInfo(T source, std::string s)
@@ -105,9 +105,9 @@ class TestUtils
 
 // --------------------------- CLASS RrcHeaderTestCase -----------------------------
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief This class provides common functions to be inherited
+ * @brief This class provides common functions to be inherited
  * by the children TestCases
  */
 class RrcHeaderTestCase : public TestCase
@@ -115,19 +115,19 @@ class RrcHeaderTestCase : public TestCase
   public:
     /**
      * Constructor
-     * \param s the reference name
+     * @param s the reference name
      */
     RrcHeaderTestCase(std::string s);
     void DoRun() override = 0;
     /**
-     * \brief Create radio resource config dedicated
-     * \returns LteRrcSap::RadioResourceConfigDedicated
+     * @brief Create radio resource config dedicated
+     * @returns LteRrcSap::RadioResourceConfigDedicated
      */
     LteRrcSap::RadioResourceConfigDedicated CreateRadioResourceConfigDedicated();
     /**
-     * \brief Assert equal radio resource config dedicated
-     * \param rrcd1 LteRrcSap::RadioResourceConfigDedicated # 1
-     * \param rrcd2 LteRrcSap::RadioResourceConfigDedicated # 2
+     * @brief Assert equal radio resource config dedicated
+     * @param rrcd1 LteRrcSap::RadioResourceConfigDedicated # 1
+     * @param rrcd2 LteRrcSap::RadioResourceConfigDedicated # 2
      */
     void AssertEqualRadioResourceConfigDedicated(LteRrcSap::RadioResourceConfigDedicated rrcd1,
                                                  LteRrcSap::RadioResourceConfigDedicated rrcd2);
@@ -322,9 +322,9 @@ RrcHeaderTestCase::AssertEqualRadioResourceConfigDedicated(
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Rrc Connection Request Test Case
+ * @brief Rrc Connection Request Test Case
  */
 class RrcConnectionRequestTestCase : public RrcHeaderTestCase
 {
@@ -374,9 +374,9 @@ RrcConnectionRequestTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Rrc Connection Setup Test Case
+ * @brief Rrc Connection Setup Test Case
  */
 class RrcConnectionSetupTestCase : public RrcHeaderTestCase
 {
@@ -431,9 +431,9 @@ RrcConnectionSetupTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Rrc Connection Setup Complete Test Case
+ * @brief Rrc Connection Setup Complete Test Case
  */
 class RrcConnectionSetupCompleteTestCase : public RrcHeaderTestCase
 {
@@ -484,9 +484,9 @@ RrcConnectionSetupCompleteTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Rrc Connection Reconfiguration Complete Test Case
+ * @brief Rrc Connection Reconfiguration Complete Test Case
  */
 class RrcConnectionReconfigurationCompleteTestCase : public RrcHeaderTestCase
 {
@@ -538,9 +538,9 @@ RrcConnectionReconfigurationCompleteTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Rrc Connection Reconfiguration Test Case
+ * @brief Rrc Connection Reconfiguration Test Case
  */
 class RrcConnectionReconfigurationTestCase : public RrcHeaderTestCase
 {
@@ -776,9 +776,9 @@ RrcConnectionReconfigurationTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Handover Preparation Info Test Case
+ * @brief Handover Preparation Info Test Case
  */
 class HandoverPreparationInfoTestCase : public RrcHeaderTestCase
 {
@@ -885,9 +885,9 @@ HandoverPreparationInfoTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Rrc Connection Reestablishment Request Test Case
+ * @brief Rrc Connection Reestablishment Request Test Case
  */
 class RrcConnectionReestablishmentRequestTestCase : public RrcHeaderTestCase
 {
@@ -944,9 +944,9 @@ RrcConnectionReestablishmentRequestTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Rrc Connection Reestablishment Test Case
+ * @brief Rrc Connection Reestablishment Test Case
  */
 class RrcConnectionReestablishmentTestCase : public RrcHeaderTestCase
 {
@@ -1000,9 +1000,9 @@ RrcConnectionReestablishmentTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Rrc Connection Reestablishment Complete Test Case
+ * @brief Rrc Connection Reestablishment Complete Test Case
  */
 class RrcConnectionReestablishmentCompleteTestCase : public RrcHeaderTestCase
 {
@@ -1054,9 +1054,9 @@ RrcConnectionReestablishmentCompleteTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Rrc Connection Reject Test Case
+ * @brief Rrc Connection Reject Test Case
  */
 class RrcConnectionRejectTestCase : public RrcHeaderTestCase
 {
@@ -1107,9 +1107,9 @@ RrcConnectionRejectTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Measurement Report Test Case
+ * @brief Measurement Report Test Case
  */
 class MeasurementReportTestCase : public RrcHeaderTestCase
 {
@@ -1244,9 +1244,9 @@ MeasurementReportTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Asn1Encoding Test Suite
+ * @brief Asn1Encoding Test Suite
  */
 class Asn1EncodingSuite : public TestSuite
 {
@@ -1272,7 +1272,7 @@ Asn1EncodingSuite::Asn1EncodingSuite()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 Asn1EncodingSuite g_asn1EncodingSuite;

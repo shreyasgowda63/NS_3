@@ -319,7 +319,7 @@ DsrRouteCache::RebuildBestRouteTable(Ipv4Address source)
 {
     NS_LOG_FUNCTION(this << source);
     /**
-     * \brief The following are initialize-single-source
+     * @brief The following are initialize-single-source
      */
     // @d shortest-path estimate
     std::map<Ipv4Address, uint32_t> d;
@@ -340,7 +340,7 @@ DsrRouteCache::RebuildBestRouteTable(Ipv4Address source)
     }
     d[source] = 0;
     /**
-     * \brief The following is the core of Dijkstra algorithm
+     * @brief The following is the core of Dijkstra algorithm
      */
     // the node set which shortest distance has been calculated, if true calculated
     std::map<Ipv4Address, bool> s;
@@ -355,7 +355,7 @@ DsrRouteCache::RebuildBestRouteTable(Ipv4Address source)
             if (s.find(ip) == s.end())
             {
                 /*
-                 * \brief The following are for comparison
+                 * @brief The following are for comparison
                  */
                 if (j->second <= temp)
                 {
@@ -500,7 +500,7 @@ DsrRouteCache::UpdateNetGraph()
     for (auto i = m_linkCache.begin(); i != m_linkCache.end(); ++i)
     {
         // Here the weight is set as 1
-        /// \todo May need to set different weight for different link here later
+        /// @todo May need to set different weight for different link here later
         uint32_t weight = 1;
         m_netGraph[i->first.m_low][i->first.m_high] = weight;
         m_netGraph[i->first.m_high][i->first.m_low] = weight;
@@ -521,7 +521,7 @@ DsrRouteCache::IncStability(Ipv4Address node)
     }
     else
     {
-        /// \todo get rid of the debug here
+        /// @todo get rid of the debug here
         NS_LOG_INFO("The node stability " << i->second.GetNodeStability().As(Time::S));
         NS_LOG_INFO("The stability here "
                     << Time(i->second.GetNodeStability() * m_stabilityIncrFactor).As(Time::S));
@@ -545,7 +545,7 @@ DsrRouteCache::DecStability(Ipv4Address node)
     }
     else
     {
-        /// \todo remove it here
+        /// @todo remove it here
         NS_LOG_INFO("The stability here " << i->second.GetNodeStability().As(Time::S));
         NS_LOG_INFO("The stability here "
                     << Time(i->second.GetNodeStability() / m_stabilityDecrFactor).As(Time::S));
@@ -625,7 +625,7 @@ DsrRouteCache::UseExtends(DsrRouteCacheEntry::IP_VECTOR rt)
             if (m_linkCache[link].GetLinkStability() < m_useExtends)
             {
                 m_linkCache[link].SetLinkStability(m_useExtends);
-                /// \todo remove after debug
+                /// @todo remove after debug
                 NS_LOG_INFO("The time of the link "
                             << m_linkCache[link].GetLinkStability().As(Time::S));
             }
@@ -680,7 +680,7 @@ DsrRouteCache::AddRoute(DsrRouteCacheEntry& rt)
     NS_LOG_DEBUG("The existing route size " << rtVector.size() << " for destination address "
                                             << dst);
     /**
-     * \brief Drop the most aged packet when buffer reaches to max
+     * @brief Drop the most aged packet when buffer reaches to max
      */
     if (rtVector.size() >= m_maxEntriesEachDst)
     {
@@ -791,7 +791,7 @@ DsrRouteCache::DeleteAllRoutesIncludeLink(Ipv4Address errorSrc,
         // erase the two kind of links to make sure the link is removed from the link cache
         NS_LOG_DEBUG("Erase the route");
         m_linkCache.erase(link1);
-        /// \todo get rid of this one
+        /// @todo get rid of this one
         NS_LOG_DEBUG("The link cache size " << m_linkCache.size());
         m_linkCache.erase(link2);
         NS_LOG_DEBUG("The link cache size " << m_linkCache.size());
@@ -1164,8 +1164,8 @@ struct CloseNeighbor
     /**
      * Check if the entry is expired
      *
-     * \param nb DsrRouteCache::Neighbor entry
-     * \return true if expired or closed, false otherwise
+     * @param nb DsrRouteCache::Neighbor entry
+     * @return true if expired or closed, false otherwise
      */
     bool operator()(const DsrRouteCache::Neighbor& nb) const
     {
@@ -1189,7 +1189,7 @@ DsrRouteCache::PurgeMac()
             if (pred(*j))
             {
                 NS_LOG_LOGIC("Close link to " << j->m_neighborAddress);
-                /// \todo disable temporarily
+                /// @todo disable temporarily
                 //              m_handleLinkFailure (j->m_neighborAddress);
             }
         }

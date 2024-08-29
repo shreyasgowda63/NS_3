@@ -25,7 +25,7 @@
 namespace ns3
 {
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * A simple threshold-based model for frame capture effect.
  * If the new incoming frame arrives while the receiver is
@@ -38,8 +38,8 @@ class SimpleFrameCaptureModel : public FrameCaptureModel
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -49,13 +49,13 @@ class SimpleFrameCaptureModel : public FrameCaptureModel
     /**
      * Sets the frame capture margin (dB).
      *
-     * \param margin the frame capture margin in dB
+     * @param margin the frame capture margin in dB
      */
     void SetMargin(double margin);
     /**
      * Return the frame capture margin (dB).
      *
-     * \return the frame capture margin in dB
+     * @return the frame capture margin in dB
      */
     double GetMargin() const;
 
@@ -63,10 +63,10 @@ class SimpleFrameCaptureModel : public FrameCaptureModel
      * This method returns whether the reception should be switched to a
      * new incoming frame.
      *
-     * \param currentEvent the event of the current frame
-     * \param newEvent the event of the new incoming frame
+     * @param currentEvent the event of the current frame
+     * @param newEvent the event of the new incoming frame
      *
-     * \return true if the reception should be switched to a new incoming frame,
+     * @return true if the reception should be switched to a new incoming frame,
      *         false otherwise
      */
     bool CaptureNewFrame(Ptr<Event> currentEvent, Ptr<Event> newEvent) const override;

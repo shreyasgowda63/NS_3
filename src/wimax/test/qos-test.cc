@@ -33,10 +33,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax Scheduling Test Case
+ * @brief Ns3 Wimax Scheduling Test Case
  */
 class Ns3WimaxSchedulingTestCase : public TestCase
 {
@@ -48,8 +48,8 @@ class Ns3WimaxSchedulingTestCase : public TestCase
     void DoRun() override;
     /**
      * Run once function
-     * \param scheduler the wimax scheduler type
-     * \returns true if successful
+     * @param scheduler the wimax scheduler type
+     * @returns true if successful
      */
     bool DoRunOnce(WimaxHelper::SchedulerType scheduler);
 };
@@ -165,10 +165,10 @@ Ns3WimaxSchedulingTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax SF Type Test Case
+ * @brief Ns3 Wimax SF Type Test Case
  */
 class Ns3WimaxSFTypeTestCase : public TestCase
 {
@@ -180,8 +180,8 @@ class Ns3WimaxSFTypeTestCase : public TestCase
     void DoRun() override;
     /**
      * Run once function
-     * \param schedulingType the scheduling type
-     * \returns true if successful
+     * @param schedulingType the scheduling type
+     * @returns true if successful
      */
     bool DoRunOnce(ServiceFlow::SchedulingType schedulingType);
 };
@@ -299,10 +299,10 @@ Ns3WimaxSFTypeTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax QoS Test Suite
+ * @brief Ns3 Wimax QoS Test Suite
  */
 class Ns3WimaxQoSTestSuite : public TestSuite
 {

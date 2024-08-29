@@ -40,7 +40,7 @@ using namespace ns3;
 static int32_t g_hash;
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * Simple test packet filter able to classify IPv4 packets.
  */
@@ -48,8 +48,8 @@ class Ipv4TestPacketFilter : public Ipv4PacketFilter
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -59,15 +59,15 @@ class Ipv4TestPacketFilter : public Ipv4PacketFilter
   private:
     /**
      * Classify a QueueDiscItem
-     * \param item The item to classify (unused).
-     * \return a pre-set hash value.
+     * @param item The item to classify (unused).
+     * @return a pre-set hash value.
      */
     int32_t DoClassify(Ptr<QueueDiscItem> item) const override;
 
     /**
      * Check the protocol.
-     * \param item The item to check (unused).
-     * \return true.
+     * @param item The item to check (unused).
+     * @return true.
      */
     bool CheckProtocol(Ptr<QueueDiscItem> item) const override;
 };
@@ -103,7 +103,7 @@ Ipv4TestPacketFilter::CheckProtocol(Ptr<QueueDiscItem> item) const
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * This class tests packets for which there is no suitable filter.
  */
@@ -161,7 +161,7 @@ FqCoDelQueueDiscNoSuitableFilter::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * This class tests the IP flows separation and the packet limit.
  */
@@ -175,8 +175,8 @@ class FqCoDelQueueDiscIPFlowsSeparationAndPacketLimit : public TestCase
     void DoRun() override;
     /**
      * Enqueue a packet.
-     * \param queue The queue disc.
-     * \param hdr The IPv4 header.
+     * @param queue The queue disc.
+     * @param hdr The IPv4 header.
      */
     void AddPacket(Ptr<FqCoDelQueueDisc> queue, Ipv4Header hdr);
 };
@@ -256,7 +256,7 @@ FqCoDelQueueDiscIPFlowsSeparationAndPacketLimit::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * This class tests the deficit per flow.
  */
@@ -270,8 +270,8 @@ class FqCoDelQueueDiscDeficit : public TestCase
     void DoRun() override;
     /**
      * Enqueue a packet.
-     * \param queue The queue disc.
-     * \param hdr The IPv4 header.
+     * @param queue The queue disc.
+     * @param hdr The IPv4 header.
      */
     void AddPacket(Ptr<FqCoDelQueueDisc> queue, Ipv4Header hdr);
 };
@@ -482,7 +482,7 @@ FqCoDelQueueDiscDeficit::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * This class tests the TCP flows separation.
  */
@@ -496,9 +496,9 @@ class FqCoDelQueueDiscTCPFlowsSeparation : public TestCase
     void DoRun() override;
     /**
      * Enqueue a packet.
-     * \param queue The queue disc.
-     * \param ipHdr The IPv4 header.
-     * \param tcpHdr The TCP header.
+     * @param queue The queue disc.
+     * @param ipHdr The IPv4 header.
+     * @param tcpHdr The TCP header.
      */
     void AddPacket(Ptr<FqCoDelQueueDisc> queue, Ipv4Header ipHdr, TcpHeader tcpHdr);
 };
@@ -607,7 +607,7 @@ FqCoDelQueueDiscTCPFlowsSeparation::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * This class tests the UDP flows separation
  */
@@ -621,9 +621,9 @@ class FqCoDelQueueDiscUDPFlowsSeparation : public TestCase
     void DoRun() override;
     /**
      * Enqueue a packet.
-     * \param queue The queue disc.
-     * \param ipHdr The IPv4 header.
-     * \param udpHdr The UDP header.
+     * @param queue The queue disc.
+     * @param ipHdr The IPv4 header.
+     * @param udpHdr The UDP header.
      */
     void AddPacket(Ptr<FqCoDelQueueDisc> queue, Ipv4Header ipHdr, UdpHeader udpHdr);
 };
@@ -732,9 +732,9 @@ FqCoDelQueueDiscUDPFlowsSeparation::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
- * \brief This class tests ECN marking.
+ * @brief This class tests ECN marking.
  *
  * Any future classifier options (e.g. SetAssociativeHash) should be
  * disabled to prevent a hash collision on this test case.
@@ -749,11 +749,11 @@ class FqCoDelQueueDiscECNMarking : public TestCase
     void DoRun() override;
     /**
      * Enqueue some packets.
-     * \param queue The queue disc.
-     * \param hdr The IPv4 header.
-     * \param nPkt The number of packets to enqueue.
-     * \param nPktEnqueued The expected number of queue disc classes.
-     * \param nQueueFlows The expected number of flows in the queue.
+     * @param queue The queue disc.
+     * @param hdr The IPv4 header.
+     * @param nPkt The number of packets to enqueue.
+     * @param nPktEnqueued The expected number of queue disc classes.
+     * @param nQueueFlows The expected number of flows in the queue.
      */
     void AddPacket(Ptr<FqCoDelQueueDisc> queue,
                    Ipv4Header hdr,
@@ -762,15 +762,15 @@ class FqCoDelQueueDiscECNMarking : public TestCase
                    uint32_t nQueueFlows);
     /**
      * Dequeue some packets.
-     * \param queue The queue disc.
-     * \param nPkt The number of packets to dequeue.
+     * @param queue The queue disc.
+     * @param nPkt The number of packets to dequeue.
      */
     void Dequeue(Ptr<FqCoDelQueueDisc> queue, uint32_t nPkt);
     /**
      * Dequeue some packets with delay.
-     * \param queue The queue disc.
-     * \param delay Delay [seconds].
-     * \param nPkt The number of packets to dequeue.
+     * @param queue The queue disc.
+     * @param delay Delay [seconds].
+     * @param nPkt The number of packets to dequeue.
      */
     void DequeueWithDelay(Ptr<FqCoDelQueueDisc> queue, double delay, uint32_t nPkt);
 };
@@ -1352,9 +1352,9 @@ FqCoDelQueueDiscECNMarking::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
- * \brief This class tests linear probing, collision response, and set
+ * @brief This class tests linear probing, collision response, and set
  * creation capability of set associative hashing in FqCodel.
  *
  * We modified DoClassify () and CheckProtocol () so that we could control
@@ -1385,8 +1385,8 @@ class FqCoDelQueueDiscSetLinearProbing : public TestCase
     void DoRun() override;
     /**
      * Enqueue a packet.
-     * \param queue The queue disc.
-     * \param hdr The IPv4 header.
+     * @param queue The queue disc.
+     * @param hdr The IPv4 header.
      */
     void AddPacket(Ptr<FqCoDelQueueDisc> queue, Ipv4Header hdr);
 };
@@ -1489,9 +1489,9 @@ FqCoDelQueueDiscSetLinearProbing::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
- * \brief This class tests L4S mode.
+ * @brief This class tests L4S mode.
  * Any future classifier options (e.g. SetAssociativeHash) should be
  * disabled to prevent a hash collision on this test case.
  */
@@ -1506,18 +1506,18 @@ class FqCoDelQueueDiscL4sMode : public TestCase
 
     /**
      * Enqueue some packets.
-     * \param queue The queue disc.
-     * \param hdr The IPv4 header.
-     * \param nPkt The number of packets to enqueue.
+     * @param queue The queue disc.
+     * @param hdr The IPv4 header.
+     * @param nPkt The number of packets to enqueue.
      */
     void AddPacket(Ptr<FqCoDelQueueDisc> queue, Ipv4Header hdr, uint32_t nPkt);
 
     /**
      * Enqueue some packets with delay.
-     * \param queue The queue disc.
-     * \param hdr The IPv4 header.
-     * \param delay Delay [seconds].
-     * \param nPkt The number of packets to enqueue.
+     * @param queue The queue disc.
+     * @param hdr The IPv4 header.
+     * @param delay Delay [seconds].
+     * @param nPkt The number of packets to enqueue.
      */
     void AddPacketWithDelay(Ptr<FqCoDelQueueDisc> queue,
                             Ipv4Header hdr,
@@ -1526,15 +1526,15 @@ class FqCoDelQueueDiscL4sMode : public TestCase
 
     /**
      * Dequeue some packets.
-     * \param queue The queue disc.
-     * \param nPkt The number of packets to dequeue.
+     * @param queue The queue disc.
+     * @param nPkt The number of packets to dequeue.
      */
     void Dequeue(Ptr<FqCoDelQueueDisc> queue, uint32_t nPkt);
     /**
      * Dequeue some packets with delay.
-     * \param queue The queue disc.
-     * \param delay Delay [seconds].
-     * \param nPkt The number of packets to dequeue.
+     * @param queue The queue disc.
+     * @param delay Delay [seconds].
+     * @param nPkt The number of packets to dequeue.
      */
     void DequeueWithDelay(Ptr<FqCoDelQueueDisc> queue, double delay, uint32_t nPkt);
 };
@@ -1757,7 +1757,7 @@ FqCoDelQueueDiscL4sMode::DoRun()
 }
 
 /**
- * \ingroup system-tests-tc
+ * @ingroup system-tests-tc
  *
  * FQ-CoDel queue disc test suite.
  */

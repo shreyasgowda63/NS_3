@@ -24,14 +24,14 @@
 using namespace ns3;
 
 /**
- * \ingroup system-tests-perf
+ * @ingroup system-tests-perf
  *
  * Check the performance of writing to file.
  *
- * \param file The file to write to.
- * \param n The number of writes to perform.
- * \param buffer The buffer to write.
- * \param size The buffer size.
+ * @param file The file to write to.
+ * @param n The number of writes to perform.
+ * @param buffer The buffer to write.
+ * @param size The buffer size.
  */
 void
 PerfFile(FILE* file, uint32_t n, const char* buffer, uint32_t size)
@@ -46,14 +46,14 @@ PerfFile(FILE* file, uint32_t n, const char* buffer, uint32_t size)
 }
 
 /**
- * \ingroup system-tests-perf
+ * @ingroup system-tests-perf
  *
  * Check the performance of writing to an output stream.
  *
- * \param stream The output stream to write to.
- * \param n The number of writes to perform.
- * \param buffer The buffer to write.
- * \param size The buffer size.
+ * @param stream The output stream to write to.
+ * @param n The number of writes to perform.
+ * @param buffer The buffer to write.
+ * @param size The buffer size.
  */
 void
 PerfStream(std::ostream& stream, uint32_t n, const char* buffer, uint32_t size)

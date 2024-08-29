@@ -32,7 +32,7 @@ class LteUeCmacSapProvider;
 class LteMacSapUser;
 
 /**
- * \brief Service Access Point (SAP) offered by the UE component carrier manager
+ * @brief Service Access Point (SAP) offered by the UE component carrier manager
  *  to the UE RRC.
  *
  * This is the *Component Carrier Management SAP Provider*, i.e., the part of the SAP
@@ -58,11 +58,11 @@ class LteUeCcmRrcSapProvider
     /**
      * add a new Logical Channel (LC)
      *
-     * \param lcId is the Logical Channel Id
-     * \param lcConfig is a single structure contains logical Channel Id, Logical Channel config and
+     * @param lcId is the Logical Channel Id
+     * @param lcConfig is a single structure contains logical Channel Id, Logical Channel config and
      * Component Carrier Id
-     * \param msu is the pointer to LteMacSapUser related to the Rlc instance
-     * \return vector of LcsConfig contains the lc configuration for each Mac
+     * @param msu is the pointer to LteMacSapUser related to the Rlc instance
+     * @return vector of LcsConfig contains the lc configuration for each Mac
      *                the size of the vector is equal to the number of component
      *                carrier enabled.
      *
@@ -75,14 +75,14 @@ class LteUeCcmRrcSapProvider
         LteMacSapUser* msu) = 0;
 
     /**
-     * \brief Remove an existing Logical Channel for a Ue in the LteUeComponentCarrierManager
-     * \param lcid the Logical Channel Id
-     * \return vector of integer the componentCarrierId of the componentCarrier
+     * @brief Remove an existing Logical Channel for a Ue in the LteUeComponentCarrierManager
+     * @param lcid the Logical Channel Id
+     * @return vector of integer the componentCarrierId of the componentCarrier
      *                where the bearer is enabled
      */
     virtual std::vector<uint16_t> RemoveLc(uint8_t lcid) = 0;
     /**
-     * \brief Reset LC maps
+     * @brief Reset LC maps
      *
      */
     virtual void Reset() = 0;
@@ -90,11 +90,11 @@ class LteUeCcmRrcSapProvider
     virtual void NotifyConnectionReconfigurationMsg() = 0;
 
     /**
-     * \brief Add the Signal Bearer for a specific Ue in LteUeComponenCarrierManager
-     * \param lcid the Logical Channel Id
-     * \param lcConfig this structure it is hard-coded in the LteEnbRrc
-     * \param msu it is the MacSapUser of the Rlc instance
-     * \return the LteMacSapUser of the ComponentCarrierManager
+     * @brief Add the Signal Bearer for a specific Ue in LteUeComponenCarrierManager
+     * @param lcid the Logical Channel Id
+     * @param lcConfig this structure it is hard-coded in the LteEnbRrc
+     * @param msu it is the MacSapUser of the Rlc instance
+     * @return the LteMacSapUser of the ComponentCarrierManager
      *
      */
     virtual LteMacSapUser* ConfigureSignalBearer(
@@ -112,7 +112,7 @@ class MemberLteUeCcmRrcSapProvider : public LteUeCcmRrcSapProvider
     /**
      * Constructor
      *
-     * \param owner the owner class
+     * @param owner the owner class
      */
     MemberLteUeCcmRrcSapProvider(C* owner);
 
@@ -180,7 +180,7 @@ MemberLteUeCcmRrcSapProvider<C>::ConfigureSignalBearer(
 }
 
 /**
- * \brief Service Access Point (SAP) offered by the UE RRC to the UE CCM.
+ * @brief Service Access Point (SAP) offered by the UE RRC to the UE CCM.
  *
  * This is the *Component Carrier Management SAP User*, i.e., the part of the SAP
  * that contains the UE RRC methods called by the UE CCM instance.
@@ -194,13 +194,13 @@ class LteUeCcmRrcSapUser
      * this function will be used after the RRC notify to ComponentCarrierManager
      * that a reconfiguration message with Secondary component carrier (SCc) arrived or not
      * the method it is called only if the SCc wasn't set up
-     * \param componentCarrierList component carrier list
+     * @param componentCarrierList component carrier list
      */
     virtual void ComponentCarrierEnabling(std::vector<uint8_t> componentCarrierList) = 0;
     /**
-     * \brief Set the number of component carriers
+     * @brief Set the number of component carriers
      *
-     * \param noOfComponentCarriers The number of component carriers
+     * @param noOfComponentCarriers The number of component carriers
      */
     virtual void SetNumberOfComponentCarriers(uint16_t noOfComponentCarriers) = 0;
 
@@ -214,7 +214,7 @@ class MemberLteUeCcmRrcSapUser : public LteUeCcmRrcSapUser
     /**
      * Constructor
      *
-     * \param owner the owner class
+     * @param owner the owner class
      */
     MemberLteUeCcmRrcSapUser(C* owner);
     // inherited from LteUeCcmRrcSapUser

@@ -29,12 +29,12 @@ namespace
 {
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Test object using sequence numbers
+ * @brief Test object using sequence numbers
  *
- * \note Class internal to sequence-number-test-suite.cc
+ * @note Class internal to sequence-number-test-suite.cc
  */
 class SequenceNumberTestObj : public Object
 {
@@ -48,8 +48,8 @@ class SequenceNumberTestObj : public Object
     }
 
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -80,10 +80,10 @@ class SequenceNumberTestObj : public Object
 } // namespace
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Sequence Number Unit Test
+ * @brief Sequence Number Unit Test
  */
 class SequenceNumberTestCase : public TestCase
 {
@@ -92,8 +92,8 @@ class SequenceNumberTestCase : public TestCase
 
     /**
      * Sequence number tracker
-     * \param oldval Old value
-     * \param newval New value
+     * @param oldval Old value
+     * @param newval New value
      */
     void SequenceNumberTracer(SequenceNumber32 oldval, SequenceNumber32 newval);
 
@@ -217,10 +217,10 @@ SequenceNumberTestCase::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Sequence Number TestSuite
+ * @brief Sequence Number TestSuite
  */
 class SequenceNumberTestSuite : public TestSuite
 {

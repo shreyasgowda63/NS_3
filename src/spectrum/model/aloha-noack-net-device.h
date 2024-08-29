@@ -42,7 +42,7 @@ class Channel;
 class SpectrumErrorModel;
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
  * This devices implements the following features:
  *  - layer 3 protocol multiplexing
@@ -68,8 +68,8 @@ class AlohaNoackNetDevice : public NetDevice
     };
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 

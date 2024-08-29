@@ -32,7 +32,7 @@ namespace energy
 {
 
 /**
- * \ingroup energy
+ * @ingroup energy
  * BasicEnergySource decreases/increases remaining energy stored in itself in
  * linearly.
  *
@@ -41,36 +41,36 @@ class BasicEnergySource : public EnergySource
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
     BasicEnergySource();
     ~BasicEnergySource() override;
 
     /**
-     * \return Initial energy stored in energy source, in Joules.
+     * @return Initial energy stored in energy source, in Joules.
      *
      * Implements GetInitialEnergy.
      */
     double GetInitialEnergy() const override;
 
     /**
-     * \returns Supply voltage at the energy source.
+     * @returns Supply voltage at the energy source.
      *
      * Implements GetSupplyVoltage.
      */
     double GetSupplyVoltage() const override;
 
     /**
-     * \return Remaining energy in energy source, in Joules
+     * @return Remaining energy in energy source, in Joules
      *
      * Implements GetRemainingEnergy.
      */
     double GetRemainingEnergy() override;
 
     /**
-     * \returns Energy fraction.
+     * @returns Energy fraction.
      *
      * Implements GetEnergyFraction.
      */
@@ -82,7 +82,7 @@ class BasicEnergySource : public EnergySource
     void UpdateEnergySource() override;
 
     /**
-     * \param initialEnergyJ Initial energy, in Joules
+     * @param initialEnergyJ Initial energy, in Joules
      *
      * Sets initial energy stored in the energy source. Note that initial energy
      * is assumed to be set before simulation starts and is set only once per
@@ -91,21 +91,21 @@ class BasicEnergySource : public EnergySource
     void SetInitialEnergy(double initialEnergyJ);
 
     /**
-     * \param supplyVoltageV Supply voltage at the energy source, in Volts.
+     * @param supplyVoltageV Supply voltage at the energy source, in Volts.
      *
      * Sets supply voltage of the energy source.
      */
     void SetSupplyVoltage(double supplyVoltageV);
 
     /**
-     * \param interval Energy update interval.
+     * @param interval Energy update interval.
      *
      * This function sets the interval between each energy update.
      */
     void SetEnergyUpdateInterval(Time interval);
 
     /**
-     * \returns The interval between each energy update.
+     * @returns The interval between each energy update.
      */
     Time GetEnergyUpdateInterval() const;
 

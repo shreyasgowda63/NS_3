@@ -54,7 +54,7 @@ PeerLinkOpenStart::PlinkOpenStartFields
 PeerLinkOpenStart::GetFields() const
 {
     PlinkOpenStartFields retval;
-    /// \todo protocol version:
+    /// @todo protocol version:
     retval.capability = m_capability;
     retval.rates = m_rates;
     retval.extendedRates = m_extendedRates;
@@ -180,7 +180,7 @@ PeerLinkCloseStart::PlinkCloseStartFields
 PeerLinkCloseStart::GetFields() const
 {
     PlinkCloseStartFields retval;
-    /// \todo protocol version:
+    /// @todo protocol version:
     retval.meshId = m_meshId;
 
     return retval;
@@ -269,7 +269,7 @@ PeerLinkConfirmStart::PlinkConfirmStartFields
 PeerLinkConfirmStart::GetFields() const
 {
     PlinkConfirmStartFields retval;
-    /// \todo protocol version:
+    /// @todo protocol version:
     retval.capability = m_capability;
     retval.aid = m_aid;
     retval.rates = m_rates;

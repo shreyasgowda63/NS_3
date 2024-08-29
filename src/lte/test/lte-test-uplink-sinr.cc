@@ -123,7 +123,7 @@ LteUplinkSinrTestSuite::LteUplinkSinrTestSuite()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteUplinkSinrTestSuite lteUplinkSinrTestSuite;

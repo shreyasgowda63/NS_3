@@ -33,9 +33,9 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("TestParabolicAntennaModel");
 
 /**
- * \ingroup antenna-tests
+ * @ingroup antenna-tests
  *
- * \brief Test condition (equal to or less than)
+ * @brief Test condition (equal to or less than)
  */
 enum ParabolicAntennaModelGainTestCondition
 {
@@ -44,30 +44,30 @@ enum ParabolicAntennaModelGainTestCondition
 };
 
 /**
- * \ingroup antenna-tests
+ * @ingroup antenna-tests
  *
- * \brief ParabolicAntennaModel Test
+ * @brief ParabolicAntennaModel Test
  */
 class ParabolicAntennaModelTestCase : public TestCase
 {
   public:
     /**
      * Build the test name
-     * \param a Antenna angle
-     * \param b Beamwidth
-     * \param o Orientation
-     * \param g MaxGain
-     * \return the test name
+     * @param a Antenna angle
+     * @param b Beamwidth
+     * @param o Orientation
+     * @param g MaxGain
+     * @return the test name
      */
     static std::string BuildNameString(Angles a, double b, double o, double g);
     /**
      * Constructor
-     * \param a Antenna angle
-     * \param b Beamwidth
-     * \param o Orientation
-     * \param g MaxGain
-     * \param expectedGainDb Expected antenna gain
-     * \param cond Test condition
+     * @param a Antenna angle
+     * @param b Beamwidth
+     * @param o Orientation
+     * @param g MaxGain
+     * @param expectedGainDb Expected antenna gain
+     * @param cond Test condition
      */
     ParabolicAntennaModelTestCase(Angles a,
                                   double b,
@@ -141,9 +141,9 @@ ParabolicAntennaModelTestCase::DoRun()
 }
 
 /**
- * \ingroup antenna-tests
+ * @ingroup antenna-tests
  *
- * \brief ParabolicAntennaModel TestSuite
+ * @brief ParabolicAntennaModel TestSuite
  */
 class ParabolicAntennaModelTestSuite : public TestSuite
 {

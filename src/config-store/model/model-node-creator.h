@@ -30,13 +30,13 @@ enum
 };
 
 /**
- * \ingroup configstore
- * \brief A class used in the implementation of the GtkConfigStore
+ * @ingroup configstore
+ * @brief A class used in the implementation of the GtkConfigStore
  */
 struct ModelNode
 {
     /**
-     * \brief node type structure
+     * @brief node type structure
      */
     enum
     {
@@ -58,8 +58,8 @@ struct ModelNode
 };
 
 /**
- * \ingroup configstore
- * \brief ModelCreator class
+ * @ingroup configstore
+ * @brief ModelCreator class
  *
  */
 class ModelCreator : public AttributeIterator
@@ -69,7 +69,7 @@ class ModelCreator : public AttributeIterator
 
     /**
      * Allocate attribute tree
-     * \param treestore GtkTreeStore *
+     * @param treestore GtkTreeStore *
      */
     void Build(GtkTreeStore* treestore);
 
@@ -91,7 +91,7 @@ class ModelCreator : public AttributeIterator
     void DoEndVisitArrayItem() override;
     /**
      * Add item to attribute tree
-     * \param node The model node
+     * @param node The model node
      */
     void Add(ModelNode* node);
     /// Remove current tree item

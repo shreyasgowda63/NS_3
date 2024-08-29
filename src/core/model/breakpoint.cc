@@ -31,8 +31,8 @@ namespace ns3
 {
 
 /**
- * \file
- * \ingroup breakpoint
+ * @file
+ * @ingroup breakpoint
  * ns3::BreakpointFallback function implementation.
  */
 

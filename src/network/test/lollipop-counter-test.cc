@@ -26,10 +26,10 @@
 using namespace ns3;
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Lollipop Counter Test
+ * @brief Lollipop Counter Test
  */
 class LollipopCounterTest : public TestCase
 {
@@ -145,10 +145,10 @@ LollipopCounterTest::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Lollipop Counter TestSuite
+ * @brief Lollipop Counter TestSuite
  */
 class LollipopCounterTestSuite : public TestSuite
 {

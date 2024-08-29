@@ -30,8 +30,8 @@ namespace ns3
 {
 
 /**
- * \brief VHT configuration
- * \ingroup wifi
+ * @brief VHT configuration
+ * @ingroup wifi
  *
  * This object stores VHT configuration information, for use in modifying
  * AP or STA behavior and for constructing VHT-related information elements.
@@ -44,20 +44,20 @@ class VhtConfiguration : public Object
     ~VhtConfiguration() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
     /**
      * Enable or disable 160 MHz operation support.
      *
-     * \param enable true if 20 MHz, 40 MHz, 80 MHz and 160 MHz operation is to be supported,
+     * @param enable true if 20 MHz, 40 MHz, 80 MHz and 160 MHz operation is to be supported,
      *               false if 20 MHz, 40 MHz and 80 MHz operation is to be supported
      */
     void Set160MHzOperationSupported(bool enable);
     /**
-     * \return true if 20 MHz, 40 MHz, 80 MHz and 160 MHz operation is supported,
+     * @return true if 20 MHz, 40 MHz, 80 MHz and 160 MHz operation is supported,
      *         false if 20 MHz, 40 MHz and 80 MHz operation is supported
      */
     bool Get160MHzOperationSupported() const;
@@ -71,16 +71,16 @@ class VhtConfiguration : public Object
      * The thresholds are defined as a tuple {threshold for 20MHz PPDUs,
      * threshold for 40MHz PPDUs, threshold for 80MHz PPDUs}.
      *
-     * \param thresholds the CCA sensitivity thresholds
+     * @param thresholds the CCA sensitivity thresholds
      */
     void SetSecondaryCcaSensitivityThresholds(const SecondaryCcaSensitivityThresholds& thresholds);
     /**
-     * \return the CCA sensitivity thresholds for PPDUs that do not occupy the primary channel
+     * @return the CCA sensitivity thresholds for PPDUs that do not occupy the primary channel
      */
     SecondaryCcaSensitivityThresholds GetSecondaryCcaSensitivityThresholds() const;
 
     /**
-     * \return the CCA sensitivity thresholds for PPDUs that do not occupy the primary channel,
+     * @return the CCA sensitivity thresholds for PPDUs that do not occupy the primary channel,
      * indexed by signal bandwidth (MHz)
      */
     const std::map<ChannelWidthMhz, double>& GetSecondaryCcaSensitivityThresholdsPerBw() const;

@@ -64,7 +64,7 @@ DsrErrorBuffer::Enqueue(DsrErrorBuffEntry& entry)
                                  << " dst " << i->GetDestination() << " "
                                  << entry.GetDestination());
 
-        /// \todo check the source and destination over here
+        /// @todo check the source and destination over here
         if ((i->GetPacket()->GetUid() == entry.GetPacket()->GetUid()) &&
             (i->GetSource() == entry.GetSource()) && (i->GetNextHop() == entry.GetSource()) &&
             (i->GetDestination() == entry.GetDestination()))
@@ -157,9 +157,9 @@ DsrErrorBuffer::Find(Ipv4Address dst)
 struct IsExpired
 {
     /**
-     * \brief comparison operator
-     * \param e entry to compare
-     * \return true if entry expired
+     * @brief comparison operator
+     * @param e entry to compare
+     * @return true if entry expired
      */
     bool operator()(const DsrErrorBuffEntry& e) const
     {

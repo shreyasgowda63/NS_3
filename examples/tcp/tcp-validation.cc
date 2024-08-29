@@ -172,9 +172,9 @@ bool g_validationFailed = false;    //!< True if validation failed.
 /**
  * Trace first congestion window.
  *
- * \param ofStream Output filestream.
- * \param oldCwnd Old value.
- * \param newCwnd new value.
+ * @param ofStream Output filestream.
+ * @param oldCwnd Old value.
+ * @param newCwnd new value.
  */
 void
 TraceFirstCwnd(std::ofstream* ofStream, uint32_t oldCwnd, uint32_t newCwnd)
@@ -217,10 +217,10 @@ TraceFirstCwnd(std::ofstream* ofStream, uint32_t oldCwnd, uint32_t newCwnd)
 /**
  * Trace first TcpDctcp.
  *
- * \param ofStream Output filestream.
- * \param bytesMarked Bytes marked.
- * \param bytesAcked Bytes ACKed.
- * \param alpha Alpha.
+ * @param ofStream Output filestream.
+ * @param bytesMarked Bytes marked.
+ * @param bytesAcked Bytes ACKed.
+ * @param alpha Alpha.
  */
 void
 TraceFirstDctcp(std::ofstream* ofStream, uint32_t bytesMarked, uint32_t bytesAcked, double alpha)
@@ -270,9 +270,9 @@ TraceFirstDctcp(std::ofstream* ofStream, uint32_t bytesMarked, uint32_t bytesAck
 /**
  * Trace first RTT.
  *
- * \param ofStream Output filestream.
- * \param oldRtt Old value.
- * \param newRtt New value.
+ * @param ofStream Output filestream.
+ * @param oldRtt Old value.
+ * @param newRtt New value.
  */
 void
 TraceFirstRtt(std::ofstream* ofStream, Time oldRtt, Time newRtt)
@@ -287,9 +287,9 @@ TraceFirstRtt(std::ofstream* ofStream, Time oldRtt, Time newRtt)
 /**
  * Trace second congestion window.
  *
- * \param ofStream Output filestream.
- * \param oldCwnd Old value.
- * \param newCwnd new value.
+ * @param ofStream Output filestream.
+ * @param oldCwnd Old value.
+ * @param newCwnd new value.
  */
 void
 TraceSecondCwnd(std::ofstream* ofStream, uint32_t oldCwnd, uint32_t newCwnd)
@@ -306,9 +306,9 @@ TraceSecondCwnd(std::ofstream* ofStream, uint32_t oldCwnd, uint32_t newCwnd)
 /**
  * Trace second RTT.
  *
- * \param ofStream Output filestream.
- * \param oldRtt Old value.
- * \param newRtt New value.
+ * @param ofStream Output filestream.
+ * @param oldRtt Old value.
+ * @param newRtt New value.
  */
 void
 TraceSecondRtt(std::ofstream* ofStream, Time oldRtt, Time newRtt)
@@ -323,10 +323,10 @@ TraceSecondRtt(std::ofstream* ofStream, Time oldRtt, Time newRtt)
 /**
  * Trace second TcpDctcp.
  *
- * \param ofStream Output filestream.
- * \param bytesMarked Bytes marked.
- * \param bytesAcked Bytes ACKed.
- * \param alpha Alpha.
+ * @param ofStream Output filestream.
+ * @param bytesMarked Bytes marked.
+ * @param bytesAcked Bytes ACKed.
+ * @param alpha Alpha.
  */
 void
 TraceSecondDctcp(std::ofstream* ofStream, uint32_t bytesMarked, uint32_t bytesAcked, double alpha)
@@ -340,8 +340,8 @@ TraceSecondDctcp(std::ofstream* ofStream, uint32_t bytesMarked, uint32_t bytesAc
 /**
  * Trace ping RTT.
  *
- * \param ofStream Output filestream.
- * \param rtt RTT value.
+ * @param ofStream Output filestream.
+ * @param rtt RTT value.
  */
 void
 TracePingRtt(std::ofstream* ofStream, uint16_t, Time rtt)
@@ -355,8 +355,8 @@ TracePingRtt(std::ofstream* ofStream, uint16_t, Time rtt)
 /**
  * Trace first Rx.
  *
- * \param packet The packet.
- * \param address The sender address.
+ * @param packet The packet.
+ * @param address The sender address.
  */
 void
 TraceFirstRx(Ptr<const Packet> packet, const Address& address)
@@ -367,8 +367,8 @@ TraceFirstRx(Ptr<const Packet> packet, const Address& address)
 /**
  * Trace second Rx.
  *
- * \param packet The packet.
- * \param address The sender address.
+ * @param packet The packet.
+ * @param address The sender address.
  */
 void
 TraceSecondRx(Ptr<const Packet> packet, const Address& address)
@@ -379,8 +379,8 @@ TraceSecondRx(Ptr<const Packet> packet, const Address& address)
 /**
  * Trace queue drop.
  *
- * \param ofStream Output filestream.
- * \param item The dropped QueueDiscItem.
+ * @param ofStream Output filestream.
+ * @param item The dropped QueueDiscItem.
  */
 void
 TraceQueueDrop(std::ofstream* ofStream, Ptr<const QueueDiscItem> item)
@@ -395,9 +395,9 @@ TraceQueueDrop(std::ofstream* ofStream, Ptr<const QueueDiscItem> item)
 /**
  * Trace queue marks.
  *
- * \param ofStream Output filestream.
- * \param item The marked QueueDiscItem.
- * \param reason The reason.
+ * @param ofStream Output filestream.
+ * @param item The marked QueueDiscItem.
+ * @param reason The reason.
  */
 void
 TraceQueueMark(std::ofstream* ofStream, Ptr<const QueueDiscItem> item, const char* reason)
@@ -412,10 +412,10 @@ TraceQueueMark(std::ofstream* ofStream, Ptr<const QueueDiscItem> item, const cha
 /**
  * Trace queue length.
  *
- * \param ofStream Output filestream.
- * \param queueLinkRate Queue link rate.
- * \param oldVal Old value.
- * \param newVal New value.
+ * @param ofStream Output filestream.
+ * @param queueLinkRate Queue link rate.
+ * @param oldVal Old value.
+ * @param newVal New value.
  */
 void
 TraceQueueLength(std::ofstream* ofStream, DataRate queueLinkRate, uint32_t oldVal, uint32_t newVal)
@@ -432,8 +432,8 @@ TraceQueueLength(std::ofstream* ofStream, DataRate queueLinkRate, uint32_t oldVa
 /**
  * Trace marks frequency.
  *
- * \param ofStream Output filestream.
- * \param marksSamplingInterval The mark sampling interval.
+ * @param ofStream Output filestream.
+ * @param marksSamplingInterval The mark sampling interval.
  */
 void
 TraceMarksFrequency(std::ofstream* ofStream, Time marksSamplingInterval)
@@ -452,8 +452,8 @@ TraceMarksFrequency(std::ofstream* ofStream, Time marksSamplingInterval)
 /**
  * Trace the first throughput.
  *
- * \param ofStream Output filestream.
- * \param throughputInterval The throughput interval.
+ * @param ofStream Output filestream.
+ * @param throughputInterval The throughput interval.
  */
 void
 TraceFirstThroughput(std::ofstream* ofStream, Time throughputInterval)
@@ -502,8 +502,8 @@ TraceFirstThroughput(std::ofstream* ofStream, Time throughputInterval)
 /**
  * Trace the second throughput.
  *
- * \param ofStream Output filestream.
- * \param throughputInterval The throughput interval.
+ * @param ofStream Output filestream.
+ * @param throughputInterval The throughput interval.
  */
 void
 TraceSecondThroughput(std::ofstream* ofStream, Time throughputInterval)
@@ -520,7 +520,7 @@ TraceSecondThroughput(std::ofstream* ofStream, Time throughputInterval)
 /**
  * Schedule trace connection.
  *
- * \param ofStream Output filestream.
+ * @param ofStream Output filestream.
  */
 void
 ScheduleFirstTcpCwndTraceConnection(std::ofstream* ofStream)
@@ -533,7 +533,7 @@ ScheduleFirstTcpCwndTraceConnection(std::ofstream* ofStream)
 /**
  * Schedule trace connection.
  *
- * \param ofStream Output filestream.
+ * @param ofStream Output filestream.
  */
 void
 ScheduleFirstTcpRttTraceConnection(std::ofstream* ofStream)
@@ -545,7 +545,7 @@ ScheduleFirstTcpRttTraceConnection(std::ofstream* ofStream)
 /**
  * Schedule trace connection.
  *
- * \param ofStream Output filestream.
+ * @param ofStream Output filestream.
  */
 void
 ScheduleFirstDctcpTraceConnection(std::ofstream* ofStream)
@@ -558,7 +558,7 @@ ScheduleFirstDctcpTraceConnection(std::ofstream* ofStream)
 /**
  * Schedule trace connection.
  *
- * \param ofStream Output filestream.
+ * @param ofStream Output filestream.
  */
 void
 ScheduleSecondDctcpTraceConnection(std::ofstream* ofStream)
@@ -581,7 +581,7 @@ ScheduleFirstPacketSinkConnection()
 /**
  * Schedule trace connection.
  *
- * \param ofStream Output filestream.
+ * @param ofStream Output filestream.
  */
 void
 ScheduleSecondTcpCwndTraceConnection(std::ofstream* ofStream)
@@ -593,7 +593,7 @@ ScheduleSecondTcpCwndTraceConnection(std::ofstream* ofStream)
 /**
  * Schedule trace connection.
  *
- * \param ofStream Output filestream.
+ * @param ofStream Output filestream.
  */
 void
 ScheduleSecondTcpRttTraceConnection(std::ofstream* ofStream)
