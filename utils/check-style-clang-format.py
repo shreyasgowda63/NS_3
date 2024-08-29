@@ -205,7 +205,7 @@ def find_files_to_check_style(
                 files_to_check.extend([os.path.join(dirpath, f) for f in filenames])
 
         else:
-            raise ValueError(f"Error: {path} is not a file nor a directory")
+            raise ValueError(f"{path} is not a valid file nor a directory")
 
     files_to_check.sort()
 
@@ -261,16 +261,20 @@ def find_clang_format_path() -> str:
             check=True,
         )
 
-        version = process.stdout.strip().split(" ")[-1]
-        major_version = int(version.split(".")[0])
+        clang_format_version = process.stdout.strip()
+        version_regex = re.findall(r"\b(\d+)(\.\d+){0,2}\b", clang_format_version)
 
-        if major_version in CLANG_FORMAT_VERSIONS:
-            return clang_format_path
+        if version_regex:
+            major_version = int(version_regex[0][0])
+
+            if major_version in CLANG_FORMAT_VERSIONS:
+                return clang_format_path
 
     # No supported version of clang-format found
     raise RuntimeError(
         f"Could not find any supported version of clang-format installed on this system. "
-        f"List of supported versions: {CLANG_FORMAT_VERSIONS}."
+        f"List of supported versions: {CLANG_FORMAT_VERSIONS}. "
+        + (f"Found clang-format {major_version}." if version_regex else "")
     )
 
 
@@ -770,7 +774,7 @@ if __name__ == "__main__":
         )
 
     except Exception as e:
-        print(e)
+        print("ERROR:", e)
         sys.exit(1)
 
     if not all_checks_successful:
