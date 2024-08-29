@@ -23,8 +23,8 @@
 #include "log.h"
 
 /**
- * \file
- * \ingroup scheduler
+ * @file
+ * @ingroup scheduler
  * ns3::Scheduler implementation.
  */
 

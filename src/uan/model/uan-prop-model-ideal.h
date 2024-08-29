@@ -29,7 +29,7 @@ namespace ns3
 {
 
 /**
- * \ingroup uan
+ * @ingroup uan
  *
  * Ideal propagation model (no pathloss, impulse PDP).
  */
@@ -43,7 +43,7 @@ class UanPropModelIdeal : public UanPropModel
 
     /**
      * Register this type.
-     * \return The object TypeId.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 

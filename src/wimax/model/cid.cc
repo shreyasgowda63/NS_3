@@ -90,10 +90,10 @@ Cid::InitialRanging()
 }
 
 /**
- * \brief equality operator
- * \param lhs left hand side
- * \param rhs right hand side
- * \returns true if equal
+ * @brief equality operator
+ * @param lhs left hand side
+ * @param rhs right hand side
+ * @returns true if equal
  */
 bool
 operator==(const Cid& lhs, const Cid& rhs)
@@ -102,10 +102,10 @@ operator==(const Cid& lhs, const Cid& rhs)
 }
 
 /**
- * \brief inequality operator
- * \param lhs left hand side
- * \param rhs right hand side
- * \returns true if not equal
+ * @brief inequality operator
+ * @param lhs left hand side
+ * @param rhs right hand side
+ * @returns true if not equal
  */
 bool
 operator!=(const Cid& lhs, const Cid& rhs)
@@ -114,10 +114,10 @@ operator!=(const Cid& lhs, const Cid& rhs)
 }
 
 /**
- * \brief output stream output operator
- * \param os output stream
- * \param cid CID
- * \returns output stream
+ * @brief output stream output operator
+ * @param os output stream
+ * @param cid CID
+ * @returns output stream
  */
 std::ostream&
 operator<<(std::ostream& os, const Cid& cid)

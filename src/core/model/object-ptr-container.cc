@@ -21,8 +21,8 @@
 #include "log.h"
 
 /**
- * \file
- * \ingroup attribute_ObjectPtrContainer
+ * @file
+ * @ingroup attribute_ObjectPtrContainer
  * ns3::ObjectPtrContainerValue attribute value implementations.
  */
 

@@ -34,7 +34,7 @@ const double TOLERANCE = 1e-15;
 double epsilon;
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
  * This test verifies the accuracy of the spectrum/PSD model in the
  * TvSpectrumTransmitter class. To do so, it tests if the max power spectral
@@ -47,10 +47,10 @@ class TvSpectrumTransmitterTestCase : public TestCase
   public:
     /**
      * Constructor
-     * \param startFrequency Start frequency.
-     * \param channelBandwidth Channel Bandwidth.
-     * \param basePsd Base Power Spectral Density (PSD).
-     * \param tvType TV type.
+     * @param startFrequency Start frequency.
+     * @param channelBandwidth Channel Bandwidth.
+     * @param basePsd Base Power Spectral Density (PSD).
+     * @param tvType TV type.
      */
     TvSpectrumTransmitterTestCase(double startFrequency,
                                   double channelBandwidth,
@@ -62,11 +62,11 @@ class TvSpectrumTransmitterTestCase : public TestCase
     void DoRun() override;
     /**
      * Build the test name
-     * \param tvType TV type.
-     * \param startFrequency Start frequency.
-     * \param channelBandwidth Channel Bandwidth.
-     * \param basePsd Base Power Spectral Density (PSD).
-     * \return The test name
+     * @param tvType TV type.
+     * @param startFrequency Start frequency.
+     * @param channelBandwidth Channel Bandwidth.
+     * @param basePsd Base Power Spectral Density (PSD).
+     * @return The test name
      */
     static std::string Name(TvSpectrumTransmitter::TvType tvType,
                             double startFrequency,
@@ -170,7 +170,7 @@ TvSpectrumTransmitterTestCase::DoRun()
 }
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
  * Test suite for the TvSpectrumTransmitter class
  */

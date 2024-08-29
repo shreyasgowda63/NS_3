@@ -243,11 +243,11 @@ LteSimpleHelper::EnableRlcTraces()
 /**
  * DL transmit PDU callback
  *
- * \param rlcStats the stats calculator
- * \param path
- * \param rnti the RNTI
- * \param lcid the LCID
- * \param packetSize the packet size
+ * @param rlcStats the stats calculator
+ * @param path
+ * @param rnti the RNTI
+ * @param lcid the LCID
+ * @param packetSize the packet size
  */
 void
 LteSimpleHelperDlTxPduCallback(Ptr<RadioBearerStatsCalculator> rlcStats,
@@ -265,12 +265,12 @@ LteSimpleHelperDlTxPduCallback(Ptr<RadioBearerStatsCalculator> rlcStats,
 /**
  * DL receive PDU callback
  *
- * \param rlcStats the stats calculator
- * \param path
- * \param rnti the RNTI
- * \param lcid the LCID
- * \param packetSize the packet size
- * \param delay the delay
+ * @param rlcStats the stats calculator
+ * @param path
+ * @param rnti the RNTI
+ * @param lcid the LCID
+ * @param packetSize the packet size
+ * @param delay the delay
  */
 void
 LteSimpleHelperDlRxPduCallback(Ptr<RadioBearerStatsCalculator> rlcStats,
@@ -300,11 +300,11 @@ LteSimpleHelper::EnableDlRlcTraces()
 /**
  * UL transmit PDU callback
  *
- * \param rlcStats the stats calculator
- * \param path
- * \param rnti the RNTI
- * \param lcid the LCID
- * \param packetSize the packet size
+ * @param rlcStats the stats calculator
+ * @param path
+ * @param rnti the RNTI
+ * @param lcid the LCID
+ * @param packetSize the packet size
  */
 void
 LteSimpleHelperUlTxPduCallback(Ptr<RadioBearerStatsCalculator> rlcStats,
@@ -322,12 +322,12 @@ LteSimpleHelperUlTxPduCallback(Ptr<RadioBearerStatsCalculator> rlcStats,
 /**
  * UL receive PDU callback
  *
- * \param rlcStats the stats calculator
- * \param path
- * \param rnti the RNTI
- * \param lcid the LCID
- * \param packetSize the packet size
- * \param delay the delay
+ * @param rlcStats the stats calculator
+ * @param path
+ * @param rnti the RNTI
+ * @param lcid the LCID
+ * @param packetSize the packet size
+ * @param delay the delay
  */
 void
 LteSimpleHelperUlRxPduCallback(Ptr<RadioBearerStatsCalculator> rlcStats,

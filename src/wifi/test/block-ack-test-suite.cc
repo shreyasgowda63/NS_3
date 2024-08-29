@@ -46,10 +46,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Packet Buffering Case A
+ * @brief Packet Buffering Case A
  *
  * This simple test verifies the correctness of buffering for packets received
  * under block ack. In order to completely understand this example is important to cite
@@ -152,10 +152,10 @@ PacketBufferingCaseA::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Packet Buffering Case B
+ * @brief Packet Buffering Case B
  *
  * ----- = old packets
  * +++++ = new packets
@@ -264,10 +264,10 @@ PacketBufferingCaseB::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test for the originator block ack window
+ * @brief Test for the originator block ack window
  */
 class OriginatorBlockAckWindowTest : public TestCase
 {
@@ -668,10 +668,10 @@ OriginatorBlockAckWindowTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test for block ack header
+ * @brief Test for block ack header
  */
 class CtrlBAckResponseHeaderTest : public TestCase
 {
@@ -765,17 +765,17 @@ CtrlBAckResponseHeaderTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test for recipient reordering buffer operations
+ * @brief Test for recipient reordering buffer operations
  */
 class BlockAckRecipientBufferTest : public TestCase
 {
   public:
     /**
-     * \brief Constructor
-     * \param ssn the Starting Sequence Number used to initialize WinStartB
+     * @brief Constructor
+     * @param ssn the Starting Sequence Number used to initialize WinStartB
      */
     BlockAckRecipientBufferTest(uint16_t ssn);
     ~BlockAckRecipientBufferTest() override;
@@ -785,8 +785,8 @@ class BlockAckRecipientBufferTest : public TestCase
     /**
      * Keep track of MPDUs received on the given link that are forwarded up.
      *
-     * \param mpdu an MPDU that is forwarded up
-     * \param linkId the ID of the given link
+     * @param mpdu an MPDU that is forwarded up
+     * @param linkId the ID of the given link
      */
     void ForwardUp(Ptr<const WifiMpdu> mpdu, uint8_t linkId);
 
@@ -992,10 +992,10 @@ BlockAckRecipientBufferTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test for Multi-STA block ack header
+ * @brief Test for Multi-STA block ack header
  */
 class MultiStaCtrlBAckResponseHeaderTest : public TestCase
 {
@@ -1662,10 +1662,10 @@ MultiStaCtrlBAckResponseHeaderTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test for Block Ack Policy with aggregation disabled
+ * @brief Test for Block Ack Policy with aggregation disabled
  *
  * This test aims to check the Block Ack policy when A-MPDU aggregation is disabled.
  * In this case, a QoS station can transmit multiple QoS data frames before requesting
@@ -1714,9 +1714,9 @@ class BlockAckAggregationDisabledTest : public TestCase
     {
         /**
          * Callback for the TxopTrace trace
-         * \param startTime TXOP start time
-         * \param duration TXOP duration
-         * \param linkId the ID of the link
+         * @param startTime TXOP start time
+         * @param duration TXOP duration
+         * @param linkId the ID of the link
          */
         void Trace(Time startTime, Time duration, uint8_t linkId);
         Time m_max{Seconds(0)}; ///< max TXOP duration
@@ -1724,8 +1724,8 @@ class BlockAckAggregationDisabledTest : public TestCase
 
   public:
     /**
-     * \brief Constructor
-     * \param txop true for non-null TXOP limit
+     * @brief Constructor
+     * @param txop true for non-null TXOP limit
      */
     BlockAckAggregationDisabledTest(bool txop);
     ~BlockAckAggregationDisabledTest() override;
@@ -1743,23 +1743,23 @@ class BlockAckAggregationDisabledTest : public TestCase
 
     /**
      * Function to trace packets received by the server application
-     * \param context the context
-     * \param p the packet
-     * \param adr the address
+     * @param context the context
+     * @param p the packet
+     * @param adr the address
      */
     void L7Receive(std::string context, Ptr<const Packet> p, const Address& adr);
     /**
      * Callback invoked when PHY transmits a packet
-     * \param context the context
-     * \param p the packet
-     * \param power the tx power
+     * @param context the context
+     * @param p the packet
+     * @param power the tx power
      */
     void Transmit(std::string context, Ptr<const Packet> p, double power);
     /**
      * Callback invoked when PHY receives a packet
-     * \param context the context
-     * \param p the packet
-     * \param rxPowersW the received power per channel band in watts
+     * @param context the context
+     * @param p the packet
+     * @param rxPowersW the received power per channel band in watts
      */
     void Receive(std::string context, Ptr<const Packet> p, RxPowerWattPerChannelBand rxPowersW);
 };
@@ -2011,10 +2011,10 @@ BlockAckAggregationDisabledTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Block Ack Test Suite
+ * @brief Block Ack Test Suite
  */
 class BlockAckTestSuite : public TestSuite
 {

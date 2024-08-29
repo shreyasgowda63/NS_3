@@ -26,8 +26,8 @@
 #include "ns3/wifi-phy-operating-channel.h"
 
 /**
- * \file
- * \ingroup wifi
+ * @file
+ * @ingroup wifi
  * Declaration of ns3::VhtPpdu class.
  */
 
@@ -37,8 +37,8 @@ namespace ns3
 class WifiPsdu;
 
 /**
- * \brief VHT PPDU (11ac)
- * \ingroup wifi
+ * @brief VHT PPDU (11ac)
+ * @ingroup wifi
  *
  * VhtPpdu stores a preamble, PHY headers and a PSDU of a PPDU with VHT header
  */
@@ -57,69 +57,69 @@ class VhtPpdu : public OfdmPpdu
         /**
          * Set the Multi-User (MU) flag.
          *
-         * \param mu the MU flag
+         * @param mu the MU flag
          */
         void SetMuFlag(bool mu);
 
         /**
          * Fill the channel width field of VHT-SIG-A1 (in MHz).
          *
-         * \param channelWidth the channel width (in MHz)
+         * @param channelWidth the channel width (in MHz)
          */
         void SetChannelWidth(ChannelWidthMhz channelWidth);
         /**
          * Return the channel width (in MHz).
          *
-         * \return the channel width (in MHz)
+         * @return the channel width (in MHz)
          */
         ChannelWidthMhz GetChannelWidth() const;
         /**
          * Fill the number of streams field of VHT-SIG-A1.
          *
-         * \param nStreams the number of streams
+         * @param nStreams the number of streams
          */
         void SetNStreams(uint8_t nStreams);
         /**
          * Return the number of streams.
          *
-         * \return the number of streams
+         * @return the number of streams
          */
         uint8_t GetNStreams() const;
 
         /**
          * Fill the short guard interval field of VHT-SIG-A2.
          *
-         * \param sgi whether short guard interval is used or not
+         * @param sgi whether short guard interval is used or not
          */
         void SetShortGuardInterval(bool sgi);
         /**
          * Return the short GI field of VHT-SIG-A2.
          *
-         * \return the short GI field of VHT-SIG-A2
+         * @return the short GI field of VHT-SIG-A2
          */
         bool GetShortGuardInterval() const;
         /**
          * Fill the short GI NSYM disambiguation field of VHT-SIG-A2.
          *
-         * \param disambiguation whether short GI NSYM disambiguation is set or not
+         * @param disambiguation whether short GI NSYM disambiguation is set or not
          */
         void SetShortGuardIntervalDisambiguation(bool disambiguation);
         /**
          * Return the short GI NSYM disambiguation field of VHT-SIG-A2.
          *
-         * \return the short GI NSYM disambiguation field of VHT-SIG-A2
+         * @return the short GI NSYM disambiguation field of VHT-SIG-A2
          */
         bool GetShortGuardIntervalDisambiguation() const;
         /**
          * Fill the SU VHT MCS field of VHT-SIG-A2.
          *
-         * \param mcs the SU VHT MCS field of VHT-SIG-A2
+         * @param mcs the SU VHT MCS field of VHT-SIG-A2
          */
         void SetSuMcs(uint8_t mcs);
         /**
          * Return the SU VHT MCS field of VHT-SIG-A2.
          *
-         * \return the SU VHT MCS field of VHT-SIG-A2
+         * @return the SU VHT MCS field of VHT-SIG-A2
          */
         uint8_t GetSuMcs() const;
 
@@ -140,11 +140,11 @@ class VhtPpdu : public OfdmPpdu
     /**
      * Create a VHT PPDU.
      *
-     * \param psdu the PHY payload (PSDU)
-     * \param txVector the TXVECTOR that was used for this PPDU
-     * \param channel the operating channel of the PHY used to transmit this PPDU
-     * \param ppduDuration the transmission duration of this PPDU
-     * \param uid the unique ID of this PPDU
+     * @param psdu the PHY payload (PSDU)
+     * @param txVector the TXVECTOR that was used for this PPDU
+     * @param channel the operating channel of the PHY used to transmit this PPDU
+     * @param ppduDuration the transmission duration of this PPDU
+     * @param uid the unique ID of this PPDU
      */
     VhtPpdu(Ptr<const WifiPsdu> psdu,
             const WifiTxVector& txVector,
@@ -162,25 +162,25 @@ class VhtPpdu : public OfdmPpdu
     /**
      * Fill in the PHY headers.
      *
-     * \param txVector the TXVECTOR that was used for this PPDU
-     * \param ppduDuration the transmission duration of this PPDU
+     * @param txVector the TXVECTOR that was used for this PPDU
+     * @param ppduDuration the transmission duration of this PPDU
      */
     virtual void SetPhyHeaders(const WifiTxVector& txVector, Time ppduDuration);
 
     /**
      * Fill in the L-SIG header.
      *
-     * \param lSig the L-SIG header to fill in
-     * \param ppduDuration the transmission duration of this PPDU
+     * @param lSig the L-SIG header to fill in
+     * @param ppduDuration the transmission duration of this PPDU
      */
     virtual void SetLSigHeader(LSigHeader& lSig, Time ppduDuration) const;
 
     /**
      * Fill in the VHT-SIG header.
      *
-     * \param vhtSig the VHT-SIG header to fill in
-     * \param txVector the TXVECTOR that was used for this PPDU
-     * \param ppduDuration the transmission duration of this PPDU
+     * @param vhtSig the VHT-SIG header to fill in
+     * @param txVector the TXVECTOR that was used for this PPDU
+     * @param ppduDuration the transmission duration of this PPDU
      */
     void SetVhtSigHeader(VhtSigHeader& vhtSig,
                          const WifiTxVector& txVector,
@@ -189,9 +189,9 @@ class VhtPpdu : public OfdmPpdu
     /**
      * Fill in the TXVECTOR from PHY headers.
      *
-     * \param txVector the TXVECTOR to fill in
-     * \param lSig the L-SIG header
-     * \param vhtSig the VHT-SIG header
+     * @param txVector the TXVECTOR to fill in
+     * @param lSig the L-SIG header
+     * @param vhtSig the VHT-SIG header
      */
     void SetTxVectorFromPhyHeaders(WifiTxVector& txVector,
                                    const LSigHeader& lSig,

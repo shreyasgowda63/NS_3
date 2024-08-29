@@ -23,9 +23,9 @@
 using namespace ns3;
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 network allocator helper Test
+ * @brief IPv4 network allocator helper Test
  */
 class NetworkAllocatorHelperTestCase : public TestCase
 {
@@ -76,9 +76,9 @@ NetworkAllocatorHelperTestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 address allocator helper Test
+ * @brief IPv4 address allocator helper Test
  */
 class AddressAllocatorHelperTestCase : public TestCase
 {
@@ -129,9 +129,9 @@ AddressAllocatorHelperTestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 reset allocator helper Test
+ * @brief IPv4 reset allocator helper Test
  */
 class ResetAllocatorHelperTestCase : public TestCase
 {
@@ -197,9 +197,9 @@ ResetAllocatorHelperTestCase::DoTeardown()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 address helper Test
+ * @brief IPv4 address helper Test
  */
 class IpAddressHelperTestCasev4 : public TestCase
 {
@@ -276,9 +276,9 @@ IpAddressHelperTestCasev4::DoTeardown()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 Address Helper TestSuite
+ * @brief IPv4 Address Helper TestSuite
  */
 class Ipv4AddressHelperTestSuite : public TestSuite
 {

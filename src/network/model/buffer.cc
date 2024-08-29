@@ -32,8 +32,8 @@ namespace
 {
 
 /**
- * \ingroup packet
- * \brief Zero-filled buffer.
+ * @ingroup packet
+ * @brief Zero-filled buffer.
  */
 struct Zeroes
 {

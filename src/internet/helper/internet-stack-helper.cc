@@ -374,10 +374,10 @@ InternetStackHelper::Install(std::string nodeName) const
 }
 
 /**
- * \brief Sync function for IPv4 packet - Pcap output
- * \param p smart pointer to the packet
- * \param ipv4 smart pointer to the node's IPv4 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv4 packet - Pcap output
+ * @param p smart pointer to the packet
+ * @param ipv4 smart pointer to the node's IPv4 stack
+ * @param interface incoming interface
  */
 static void
 Ipv4L3ProtocolRxTxSink(Ptr<const Packet> p, Ptr<Ipv4> ipv4, uint32_t interface)
@@ -480,10 +480,10 @@ InternetStackHelper::EnablePcapIpv4Internal(std::string prefix,
 }
 
 /**
- * \brief Sync function for IPv6 packet - Pcap output
- * \param p smart pointer to the packet
- * \param ipv6 smart pointer to the node's IPv6 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv6 packet - Pcap output
+ * @param p smart pointer to the packet
+ * @param ipv6 smart pointer to the node's IPv6 stack
+ * @param interface incoming interface
  */
 static void
 Ipv6L3ProtocolRxTxSink(Ptr<const Packet> p, Ptr<Ipv6> ipv6, uint32_t interface)
@@ -586,13 +586,13 @@ InternetStackHelper::EnablePcapIpv6Internal(std::string prefix,
 }
 
 /**
- * \brief Sync function for IPv4 dropped packet - Ascii output
- * \param stream the output stream
- * \param header IPv4 header
- * \param packet smart pointer to the packet
- * \param reason the reason for the dropping
- * \param ipv4 smart pointer to the node's IPv4 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv4 dropped packet - Ascii output
+ * @param stream the output stream
+ * @param header IPv4 header
+ * @param packet smart pointer to the packet
+ * @param reason the reason for the dropping
+ * @param ipv4 smart pointer to the node's IPv4 stack
+ * @param interface incoming interface
  */
 static void
 Ipv4L3ProtocolDropSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
@@ -621,11 +621,11 @@ Ipv4L3ProtocolDropSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv4 transmitted packet - Ascii output
- * \param stream the output stream
- * \param packet smart pointer to the packet
- * \param ipv4 smart pointer to the node's IPv4 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv4 transmitted packet - Ascii output
+ * @param stream the output stream
+ * @param packet smart pointer to the packet
+ * @param ipv4 smart pointer to the node's IPv4 stack
+ * @param interface incoming interface
  */
 static void
 Ipv4L3ProtocolTxSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
@@ -644,11 +644,11 @@ Ipv4L3ProtocolTxSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv4 received packet - Ascii output
- * \param stream the output stream
- * \param packet smart pointer to the packet
- * \param ipv4 smart pointer to the node's IPv4 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv4 received packet - Ascii output
+ * @param stream the output stream
+ * @param packet smart pointer to the packet
+ * @param ipv4 smart pointer to the node's IPv4 stack
+ * @param interface incoming interface
  */
 static void
 Ipv4L3ProtocolRxSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
@@ -667,14 +667,14 @@ Ipv4L3ProtocolRxSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv4 dropped packet - Ascii output
- * \param stream the output stream
- * \param context the context
- * \param header IPv4 header
- * \param packet smart pointer to the packet
- * \param reason the reason for the dropping
- * \param ipv4 smart pointer to the node's IPv4 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv4 dropped packet - Ascii output
+ * @param stream the output stream
+ * @param context the context
+ * @param header IPv4 header
+ * @param packet smart pointer to the packet
+ * @param reason the reason for the dropping
+ * @param ipv4 smart pointer to the node's IPv4 stack
+ * @param interface incoming interface
  */
 static void
 Ipv4L3ProtocolDropSinkWithContext(Ptr<OutputStreamWrapper> stream,
@@ -710,12 +710,12 @@ Ipv4L3ProtocolDropSinkWithContext(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv4 transmitted packet - Ascii output
- * \param stream the output stream
- * \param context the context
- * \param packet smart pointer to the packet
- * \param ipv4 smart pointer to the node's IPv4 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv4 transmitted packet - Ascii output
+ * @param stream the output stream
+ * @param context the context
+ * @param packet smart pointer to the packet
+ * @param ipv4 smart pointer to the node's IPv4 stack
+ * @param interface incoming interface
  */
 static void
 Ipv4L3ProtocolTxSinkWithContext(Ptr<OutputStreamWrapper> stream,
@@ -741,12 +741,12 @@ Ipv4L3ProtocolTxSinkWithContext(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv4 received packet - Ascii output
- * \param stream the output stream
- * \param context the context
- * \param packet smart pointer to the packet
- * \param ipv4 smart pointer to the node's IPv4 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv4 received packet - Ascii output
+ * @param stream the output stream
+ * @param context the context
+ * @param packet smart pointer to the packet
+ * @param ipv4 smart pointer to the node's IPv4 stack
+ * @param interface incoming interface
  */
 static void
 Ipv4L3ProtocolRxSinkWithContext(Ptr<OutputStreamWrapper> stream,
@@ -930,13 +930,13 @@ InternetStackHelper::EnableAsciiIpv4Internal(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv6 dropped packet - Ascii output
- * \param stream the output stream
- * \param header IPv6 header
- * \param packet smart pointer to the packet
- * \param reason the reason for the dropping
- * \param ipv6 smart pointer to the node's IPv6 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv6 dropped packet - Ascii output
+ * @param stream the output stream
+ * @param header IPv6 header
+ * @param packet smart pointer to the packet
+ * @param reason the reason for the dropping
+ * @param ipv6 smart pointer to the node's IPv6 stack
+ * @param interface incoming interface
  */
 static void
 Ipv6L3ProtocolDropSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
@@ -965,11 +965,11 @@ Ipv6L3ProtocolDropSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv6 transmitted packet - Ascii output
- * \param stream the output stream
- * \param packet smart pointer to the packet
- * \param ipv6 smart pointer to the node's IPv6 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv6 transmitted packet - Ascii output
+ * @param stream the output stream
+ * @param packet smart pointer to the packet
+ * @param ipv6 smart pointer to the node's IPv6 stack
+ * @param interface incoming interface
  */
 static void
 Ipv6L3ProtocolTxSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
@@ -988,11 +988,11 @@ Ipv6L3ProtocolTxSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv6 received packet - Ascii output
- * \param stream the output stream
- * \param packet smart pointer to the packet
- * \param ipv6 smart pointer to the node's IPv6 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv6 received packet - Ascii output
+ * @param stream the output stream
+ * @param packet smart pointer to the packet
+ * @param ipv6 smart pointer to the node's IPv6 stack
+ * @param interface incoming interface
  */
 static void
 Ipv6L3ProtocolRxSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
@@ -1011,14 +1011,14 @@ Ipv6L3ProtocolRxSinkWithoutContext(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv6 dropped packet - Ascii output
- * \param stream the output stream
- * \param context the context
- * \param header IPv6 header
- * \param packet smart pointer to the packet
- * \param reason the reason for the dropping
- * \param ipv6 smart pointer to the node's IPv6 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv6 dropped packet - Ascii output
+ * @param stream the output stream
+ * @param context the context
+ * @param header IPv6 header
+ * @param packet smart pointer to the packet
+ * @param reason the reason for the dropping
+ * @param ipv6 smart pointer to the node's IPv6 stack
+ * @param interface incoming interface
  */
 static void
 Ipv6L3ProtocolDropSinkWithContext(Ptr<OutputStreamWrapper> stream,
@@ -1054,12 +1054,12 @@ Ipv6L3ProtocolDropSinkWithContext(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv6 transmitted packet - Ascii output
- * \param stream the output stream
- * \param context the context
- * \param packet smart pointer to the packet
- * \param ipv6 smart pointer to the node's IPv6 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv6 transmitted packet - Ascii output
+ * @param stream the output stream
+ * @param context the context
+ * @param packet smart pointer to the packet
+ * @param ipv6 smart pointer to the node's IPv6 stack
+ * @param interface incoming interface
  */
 static void
 Ipv6L3ProtocolTxSinkWithContext(Ptr<OutputStreamWrapper> stream,
@@ -1085,12 +1085,12 @@ Ipv6L3ProtocolTxSinkWithContext(Ptr<OutputStreamWrapper> stream,
 }
 
 /**
- * \brief Sync function for IPv6 received packet - Ascii output
- * \param stream the output stream
- * \param context the context
- * \param packet smart pointer to the packet
- * \param ipv6 smart pointer to the node's IPv6 stack
- * \param interface incoming interface
+ * @brief Sync function for IPv6 received packet - Ascii output
+ * @param stream the output stream
+ * @param context the context
+ * @param packet smart pointer to the packet
+ * @param ipv6 smart pointer to the node's IPv6 stack
+ * @param interface incoming interface
  */
 static void
 Ipv6L3ProtocolRxSinkWithContext(Ptr<OutputStreamWrapper> stream,

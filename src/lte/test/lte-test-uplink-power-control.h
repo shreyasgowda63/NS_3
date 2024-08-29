@@ -37,9 +37,9 @@ class MobilityModel;
 } // namespace ns3
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test 1.1 Uplink Power Control
+ * @brief Test 1.1 Uplink Power Control
  */
 class LteUplinkPowerControlTestSuite : public TestSuite
 {
@@ -48,9 +48,9 @@ class LteUplinkPowerControlTestSuite : public TestSuite
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Lte Uplink Power Control Test Case
+ * @brief Lte Uplink Power Control Test Case
  */
 class LteUplinkPowerControlTestCase : public TestCase
 {
@@ -58,7 +58,7 @@ class LteUplinkPowerControlTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param name the reference name
+     * @param name the reference name
      */
     LteUplinkPowerControlTestCase(std::string name);
     ~LteUplinkPowerControlTestCase() override;
@@ -66,11 +66,11 @@ class LteUplinkPowerControlTestCase : public TestCase
     /**
      * Teleport UE funcction
      *
-     * \param x the X position
-     * \param y the Y position
-     * \param expectedPuschTxPower the expected PUSCH transmit power
-     * \param expectedPucchTxPower the expected PUCCH transmit power
-     * \param expectedSrsTxPower the expected SRS transmit power
+     * @param x the X position
+     * @param y the Y position
+     * @param expectedPuschTxPower the expected PUSCH transmit power
+     * @param expectedPucchTxPower the expected PUCCH transmit power
+     * @param expectedSrsTxPower the expected SRS transmit power
      */
     void TeleportUe(uint32_t x,
                     uint32_t y,
@@ -81,11 +81,11 @@ class LteUplinkPowerControlTestCase : public TestCase
     /**
      * Set TPC configuration funcction
      *
-     * \param tpc the TPC
-     * \param tpcNum the TPC number
-     * \param expectedPuschTxPower the expected PUSCH transmit power
-     * \param expectedPucchTxPower the expected PUCCH transmit power
-     * \param expectedSrsTxPower the expected SRS transmit power
+     * @param tpc the TPC
+     * @param tpcNum the TPC number
+     * @param expectedPuschTxPower the expected PUSCH transmit power
+     * @param expectedPucchTxPower the expected PUCCH transmit power
+     * @param expectedSrsTxPower the expected SRS transmit power
      */
     void SetTpcConfiguration(uint32_t tpc,
                              uint32_t tpcNum,
@@ -96,25 +96,25 @@ class LteUplinkPowerControlTestCase : public TestCase
     /**
      * PUSCH transmit power trace funcction
      *
-     * \param cellId the cell ID
-     * \param rnti the RNTI
-     * \param txPower the transmit power
+     * @param cellId the cell ID
+     * @param rnti the RNTI
+     * @param txPower the transmit power
      */
     void PuschTxPowerTrace(uint16_t cellId, uint16_t rnti, double txPower);
     /**
      * PUCCH transmit power trace funcction
      *
-     * \param cellId the cell ID
-     * \param rnti the RNTI
-     * \param txPower the transmit power
+     * @param cellId the cell ID
+     * @param rnti the RNTI
+     * @param txPower the transmit power
      */
     void PucchTxPowerTrace(uint16_t cellId, uint16_t rnti, double txPower);
     /**
      * SRS transmit power trace funcction
      *
-     * \param cellId the cell ID
-     * \param rnti the RNTI
-     * \param txPower the transmit power
+     * @param cellId the cell ID
+     * @param rnti the RNTI
+     * @param txPower the transmit power
      */
     void SrsTxPowerTrace(uint16_t cellId, uint16_t rnti, double txPower);
 
@@ -135,9 +135,9 @@ class LteUplinkPowerControlTestCase : public TestCase
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Lte Uplink Open Loop Power Control Test Case
+ * @brief Lte Uplink Open Loop Power Control Test Case
  */
 class LteUplinkOpenLoopPowerControlTestCase : public LteUplinkPowerControlTestCase
 {
@@ -145,7 +145,7 @@ class LteUplinkOpenLoopPowerControlTestCase : public LteUplinkPowerControlTestCa
     /**
      * Constructor
      *
-     * \param name the reference name
+     * @param name the reference name
      */
     LteUplinkOpenLoopPowerControlTestCase(std::string name);
     ~LteUplinkOpenLoopPowerControlTestCase() override;
@@ -155,9 +155,9 @@ class LteUplinkOpenLoopPowerControlTestCase : public LteUplinkPowerControlTestCa
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Lte Uplink Closed Loop Power Control Absolute Mode Test Case
+ * @brief Lte Uplink Closed Loop Power Control Absolute Mode Test Case
  */
 class LteUplinkClosedLoopPowerControlAbsoluteModeTestCase : public LteUplinkPowerControlTestCase
 {
@@ -165,7 +165,7 @@ class LteUplinkClosedLoopPowerControlAbsoluteModeTestCase : public LteUplinkPowe
     /**
      * Constructor
      *
-     * \param name the reference name
+     * @param name the reference name
      */
     LteUplinkClosedLoopPowerControlAbsoluteModeTestCase(std::string name);
     ~LteUplinkClosedLoopPowerControlAbsoluteModeTestCase() override;
@@ -175,9 +175,9 @@ class LteUplinkClosedLoopPowerControlAbsoluteModeTestCase : public LteUplinkPowe
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Lte Uplink Closed Loop Power Control Accumulated Mode Test Case
+ * @brief Lte Uplink Closed Loop Power Control Accumulated Mode Test Case
  */
 class LteUplinkClosedLoopPowerControlAccumulatedModeTestCase : public LteUplinkPowerControlTestCase
 {
@@ -185,7 +185,7 @@ class LteUplinkClosedLoopPowerControlAccumulatedModeTestCase : public LteUplinkP
     /**
      * Constructor
      *
-     * \param name the reference name
+     * @param name the reference name
      */
     LteUplinkClosedLoopPowerControlAccumulatedModeTestCase(std::string name);
     ~LteUplinkClosedLoopPowerControlAccumulatedModeTestCase() override;

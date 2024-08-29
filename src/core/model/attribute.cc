@@ -25,8 +25,8 @@
 #include <sstream>
 
 /**
- * \file
- * \ingroup attributes
+ * @file
+ * @ingroup attributes
  * ns3::AttributeValue, ns3::AttributeAccessor and
  * ns3::AttributeChecker implementations.
  */

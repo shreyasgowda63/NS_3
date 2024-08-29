@@ -26,8 +26,8 @@ namespace ns3
 {
 
 /**
- * \ingroup wifi
- * \brief Headers for A-MPDU subframes
+ * @ingroup wifi
+ * @brief Headers for A-MPDU subframes
  */
 class AmpduSubframeHeader : public Header
 {
@@ -36,8 +36,8 @@ class AmpduSubframeHeader : public Header
     ~AmpduSubframeHeader() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -50,25 +50,25 @@ class AmpduSubframeHeader : public Header
     /**
      * Set the length field.
      *
-     * \param length in bytes
+     * @param length in bytes
      */
     void SetLength(uint16_t length);
     /**
      * Set the EOF field.
      *
-     * \param eof set EOF field if true
+     * @param eof set EOF field if true
      */
     void SetEof(bool eof);
     /**
      * Return the length field.
      *
-     * \return the length field in bytes
+     * @return the length field in bytes
      */
     uint16_t GetLength() const;
     /**
      * Return the EOF field.
      *
-     * \return the EOF field
+     * @return the EOF field
      */
     bool GetEof() const;
     /**
@@ -76,7 +76,7 @@ class AmpduSubframeHeader : public Header
      * signature field is correct, i.e. corresponds to the
      * unique pattern 0x4E.
      *
-     * \return true if the signature is valid, false otherwise
+     * @return true if the signature is valid, false otherwise
      */
     bool IsSignatureValid() const;
 

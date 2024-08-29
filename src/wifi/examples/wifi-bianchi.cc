@@ -1907,8 +1907,8 @@ std::map<std::string /* mode */,
 /**
  * Parse context strings of the form "/NodeList/x/DeviceList/x/..." to extract the NodeId integer
  *
- * \param context The context to parse.
- * \return the NodeId
+ * @param context The context to parse.
+ * @return the NodeId
  */
 uint32_t
 ContextToNodeId(std::string context)
@@ -1921,8 +1921,8 @@ ContextToNodeId(std::string context)
 /**
  * Parse context strings of the form "/NodeList/x/DeviceList/x/..." and fetch the Mac address
  *
- * \param context The context to parse.
- * \return the device MAC address
+ * @param context The context to parse.
+ * @return the device MAC address
  */
 Mac48Address
 ContextToMac(std::string context)
@@ -1948,9 +1948,9 @@ ContextToMac(std::string context)
 /**
  * Incremement the counter for a given address.
  *
- * \param [out] counter The counter to increment.
- * \param addr The address to incremement the counter for.
- * \param increment The incremement (1 if omitted).
+ * @param [out] counter The counter to increment.
+ * @param addr The address to incremement the counter for.
+ * @param increment The incremement (1 if omitted).
  */
 void
 IncrementCounter(std::map<Mac48Address, uint64_t>& counter,
@@ -1971,13 +1971,13 @@ IncrementCounter(std::map<Mac48Address, uint64_t>& counter,
 /**
  * Trace a packet reception.
  *
- * \param context The context.
- * \param p The packet.
- * \param channelFreqMhz The channel frequqncy.
- * \param txVector The TX vector.
- * \param aMpdu The AMPDU.
- * \param signalNoise The signal and noise dBm.
- * \param staId The STA ID.
+ * @param context The context.
+ * @param p The packet.
+ * @param channelFreqMhz The channel frequqncy.
+ * @param txVector The TX vector.
+ * @param aMpdu The AMPDU.
+ * @param signalNoise The signal and noise dBm.
+ * @param staId The STA ID.
  */
 void
 TracePacketReception(std::string context,
@@ -2029,8 +2029,8 @@ TracePacketReception(std::string context,
 /**
  * Contention window trace.
  *
- * \param context The context.
- * \param cw The contention window.
+ * @param context The context.
+ * @param cw The contention window.
  */
 void
 CwTrace(std::string context, uint32_t cw, uint8_t /* linkId */)
@@ -2047,8 +2047,8 @@ CwTrace(std::string context, uint32_t cw, uint8_t /* linkId */)
 /**
  * Backoff trace.
  *
- * \param context The context.
- * \param newVal The backoff value.
+ * @param context The context.
+ * @param newVal The backoff value.
  */
 void
 BackoffTrace(std::string context, uint32_t newVal, uint8_t /* linkId */)
@@ -2065,9 +2065,9 @@ BackoffTrace(std::string context, uint32_t newVal, uint8_t /* linkId */)
 /**
  * PHY Rx trace.
  *
- * \param context The context.
- * \param p The packet.
- * \param power The Rx power.
+ * @param context The context.
+ * @param p The packet.
+ * @param power The Rx power.
  */
 void
 PhyRxTrace(std::string context, Ptr<const Packet> p, RxPowerWattPerChannelBand power)
@@ -2079,9 +2079,9 @@ PhyRxTrace(std::string context, Ptr<const Packet> p, RxPowerWattPerChannelBand p
 /**
  * PHY Rx trace.
  *
- * \param context The context.
- * \param txVector The TX vector.
- * \param psduDuration The PDSU diration.
+ * @param context The context.
+ * @param txVector The TX vector.
+ * @param psduDuration The PDSU diration.
  */
 void
 PhyRxPayloadTrace(std::string context, WifiTxVector txVector, Time psduDuration)
@@ -2094,9 +2094,9 @@ PhyRxPayloadTrace(std::string context, WifiTxVector txVector, Time psduDuration)
 /**
  * PHY Drop trace.
  *
- * \param context The context.
- * \param p The packet.
- * \param reason The drop reason.
+ * @param context The context.
+ * @param p The packet.
+ * @param reason The drop reason.
  */
 void
 PhyRxDropTrace(std::string context, Ptr<const Packet> p, WifiPhyRxfailureReason reason)
@@ -2179,8 +2179,8 @@ PhyRxDropTrace(std::string context, Ptr<const Packet> p, WifiPhyRxfailureReason 
 /**
  * PHY RX end trace
  *
- * \param context The context.
- * \param p The packet.
+ * @param context The context.
+ * @param p The packet.
  */
 void
 PhyRxDoneTrace(std::string context, Ptr<const Packet> p)
@@ -2192,11 +2192,11 @@ PhyRxDoneTrace(std::string context, Ptr<const Packet> p)
 /**
  * PHY successful RX trace
  *
- * \param context The context.
- * \param p The packet.
- * \param snr The SNR.
- * \param mode The WiFi mode.
- * \param preamble The preamble.
+ * @param context The context.
+ * @param p The packet.
+ * @param snr The SNR.
+ * @param mode The WiFi mode.
+ * @param preamble The preamble.
  */
 void
 PhyRxOkTrace(std::string context,
@@ -2231,9 +2231,9 @@ PhyRxOkTrace(std::string context,
 /**
  * PHY RX error trace
  *
- * \param context The context.
- * \param p The packet.
- * \param snr The SNR.
+ * @param context The context.
+ * @param p The packet.
+ * @param snr The SNR.
  */
 void
 PhyRxErrorTrace(std::string context, Ptr<const Packet> p, double snr)
@@ -2250,9 +2250,9 @@ PhyRxErrorTrace(std::string context, Ptr<const Packet> p, double snr)
 /**
  * PHY TX trace
  *
- * \param context The context.
- * \param p The packet.
- * \param txPowerW The TX power.
+ * @param context The context.
+ * @param p The packet.
+ * @param txPowerW The TX power.
  */
 void
 PhyTxTrace(std::string context, Ptr<const Packet> p, double txPowerW)
@@ -2274,8 +2274,8 @@ PhyTxTrace(std::string context, Ptr<const Packet> p, double txPowerW)
 /**
  * PHY TX end trace.
  *
- * \param context The context.
- * \param p The packet.
+ * @param context The context.
+ * @param p The packet.
  */
 void
 PhyTxDoneTrace(std::string context, Ptr<const Packet> p)
@@ -2287,8 +2287,8 @@ PhyTxDoneTrace(std::string context, Ptr<const Packet> p)
 /**
  * MAC TX trace.
  *
- * \param context The context.
- * \param p The packet.
+ * @param context The context.
+ * @param p The packet.
  */
 void
 MacTxTrace(std::string context, Ptr<const Packet> p)
@@ -2303,8 +2303,8 @@ MacTxTrace(std::string context, Ptr<const Packet> p)
 /**
  * MAC RX trace.
  *
- * \param context The context.
- * \param p The packet.
+ * @param context The context.
+ * @param p The packet.
  */
 void
 MacRxTrace(std::string context, Ptr<const Packet> p)
@@ -2319,9 +2319,9 @@ MacRxTrace(std::string context, Ptr<const Packet> p)
 /**
  * Socket send trace.
  *
- * \param context The context.
- * \param p The packet.
- * \param addr destination address.
+ * @param context The context.
+ * @param p The packet.
+ * @param addr destination address.
  */
 void
 SocketSendTrace(std::string context, Ptr<const Packet> p, const Address& addr)
@@ -2336,8 +2336,8 @@ SocketSendTrace(std::string context, Ptr<const Packet> p, const Address& addr)
 /**
  * Association log trace.
  *
- * \param context The context.
- * \param address The MAC address.
+ * @param context The context.
+ * @param address The MAC address.
  */
 void
 AssociationLog(std::string context, Mac48Address address)
@@ -2358,8 +2358,8 @@ AssociationLog(std::string context, Mac48Address address)
 /**
  * Deassociation log trace.
  *
- * \param context The context.
- * \param address The MAC address.
+ * @param context The context.
+ * @param address The MAC address.
  */
 void
 DisassociationLog(std::string context, Mac48Address address)
@@ -2400,21 +2400,21 @@ class Experiment
     /**
      * Configure and run the experiment.
      *
-     * \param wifi the pre-configured WifiHelper
-     * \param wifiPhy the pre-configured YansWifiPhyHelper
-     * \param wifiMac the pre-configured WifiMacHelper
-     * \param wifiChannel the pre-configured YansWifiChannelHelper
-     * \param trialNumber the trial index
-     * \param networkSize the number of stations
-     * \param duration the duration of each simulation run
-     * \param pcap flag to enable/disable PCAP files generation
-     * \param infra flag to enable infrastructure model, ring adhoc network if not set
-     * \param guardIntervalNs the guard interval in ns
-     * \param distanceM the distance in meters
-     * \param apTxPowerDbm the AP transmit power in dBm
-     * \param staTxPowerDbm the STA transmit power in dBm
-     * \param pktInterval the packet interval
-     * \return 0 if all went well
+     * @param wifi the pre-configured WifiHelper
+     * @param wifiPhy the pre-configured YansWifiPhyHelper
+     * @param wifiMac the pre-configured WifiMacHelper
+     * @param wifiChannel the pre-configured YansWifiChannelHelper
+     * @param trialNumber the trial index
+     * @param networkSize the number of stations
+     * @param duration the duration of each simulation run
+     * @param pcap flag to enable/disable PCAP files generation
+     * @param infra flag to enable infrastructure model, ring adhoc network if not set
+     * @param guardIntervalNs the guard interval in ns
+     * @param distanceM the distance in meters
+     * @param apTxPowerDbm the AP transmit power in dBm
+     * @param staTxPowerDbm the STA transmit power in dBm
+     * @param pktInterval the packet interval
+     * @return 0 if all went well
      */
     int Run(const WifiHelper& wifi,
             const YansWifiPhyHelper& wifiPhy,
@@ -2670,9 +2670,9 @@ Experiment::Run(const WifiHelper& helper,
 /**
  * Get the Counter associated with a MAC address.
  *
- * \param counter The map of counters to inspect.
- * \param addr The MAC address.
- * \return the value of the counter,
+ * @param counter The map of counters to inspect.
+ * @param addr The MAC address.
+ * @return the value of the counter,
  */
 uint64_t
 GetCount(const std::map<Mac48Address, uint64_t>& counter, Mac48Address addr)

@@ -24,8 +24,8 @@
 #include <string>
 
 /**
- * \file
- * \ingroup attributeimpl
+ * @file
+ * @ingroup attributeimpl
  * ns3::TypeNameGet() function declarations.
  */
 
@@ -33,14 +33,14 @@ namespace ns3
 {
 
 /**
- * \ingroup attributeimpl
+ * @ingroup attributeimpl
  *
  * Type name strings for AttributeValue types.
  * Custom classes should add a template specialization of this function
  * using the macro \c TYPENAMEGET_DEFINE(T).
  *
- * \tparam T \explicit The type.
- * \returns The type name as a string.
+ * @tparam T \explicit The type.
+ * @returns The type name as a string.
  */
 template <typename T>
 std::string
@@ -51,11 +51,11 @@ TypeNameGet()
 }
 
 /**
- * \ingroup attributeimpl
+ * @ingroup attributeimpl
  *
  * Macro that defines a template specialization for \c TypeNameGet<T>() .
  *
- * \param T The type.
+ * @param T The type.
  */
 #define TYPENAMEGET_DEFINE(T)                                                                      \
     template <>                                                                                    \
@@ -65,9 +65,9 @@ TypeNameGet()
     }
 
 /**
- * \ingroup attributeimpl
+ * @ingroup attributeimpl
  * ns3::TypeNameGet() specialization for numeric types.
- * \returns The numeric type name as a string.
+ * @returns The numeric type name as a string.
  * @{
  */
 TYPENAMEGET_DEFINE(bool);

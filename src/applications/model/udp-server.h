@@ -33,14 +33,14 @@
 namespace ns3
 {
 /**
- * \ingroup applications
- * \defgroup udpclientserver UdpClientServer
+ * @ingroup applications
+ * @defgroup udpclientserver UdpClientServer
  */
 
 /**
- * \ingroup udpclientserver
+ * @ingroup udpclientserver
  *
- * \brief A UDP server, receives UDP packets from a remote host.
+ * @brief A UDP server, receives UDP packets from a remote host.
  *
  * UDP packets carry a 32bits sequence number followed by a 64bits time
  * stamp in their payloads. The application uses the sequence number
@@ -50,34 +50,34 @@ class UdpServer : public Application
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     UdpServer();
     ~UdpServer() override;
     /**
-     * \brief Returns the number of lost packets
-     * \return the number of lost packets
+     * @brief Returns the number of lost packets
+     * @return the number of lost packets
      */
     uint32_t GetLost() const;
 
     /**
-     * \brief Returns the number of received packets
-     * \return the number of received packets
+     * @brief Returns the number of received packets
+     * @return the number of received packets
      */
     uint64_t GetReceived() const;
 
     /**
-     * \brief Returns the size of the window used for checking loss.
-     * \return the size of the window used for checking loss.
+     * @brief Returns the size of the window used for checking loss.
+     * @return the size of the window used for checking loss.
      */
     uint16_t GetPacketWindowSize() const;
 
     /**
-     * \brief Set the size of the window used for checking loss. This value should
+     * @brief Set the size of the window used for checking loss. This value should
      *  be a multiple of 8
-     * \param size the size of the window used for checking loss. This value should
+     * @param size the size of the window used for checking loss. This value should
      *  be a multiple of 8
      */
     void SetPacketWindowSize(uint16_t size);
@@ -87,11 +87,11 @@ class UdpServer : public Application
     void StopApplication() override;
 
     /**
-     * \brief Handle a packet reception.
+     * @brief Handle a packet reception.
      *
      * This function is called by lower layers.
      *
-     * \param socket the socket the packet was received to.
+     * @param socket the socket the packet was received to.
      */
     void HandleRead(Ptr<Socket> socket);
 

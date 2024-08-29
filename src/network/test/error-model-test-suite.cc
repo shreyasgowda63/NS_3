@@ -79,8 +79,8 @@ BuildSimpleTopology(Ptr<Node> a,
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
  * ErrorModel unit tests.
  */
@@ -94,16 +94,16 @@ class ErrorModelSimple : public TestCase
     void DoRun() override;
     /**
      * Receive form a NetDevice
-     * \param nd The NetDevice.
-     * \param p The received packet.
-     * \param protocol The protocol received.
-     * \param addr The sender address.
-     * \return True on success.
+     * @param nd The NetDevice.
+     * @param p The received packet.
+     * @param protocol The protocol received.
+     * @param addr The sender address.
+     * @return True on success.
      */
     bool Receive(Ptr<NetDevice> nd, Ptr<const Packet> p, uint16_t protocol, const Address& addr);
     /**
      * Register a Drop
-     * \param p The dropped packet
+     * @param p The dropped packet
      */
     void DropEvent(Ptr<const Packet> p);
 
@@ -182,8 +182,8 @@ ErrorModelSimple::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
  * BurstErrorModel unit tests.
  */
@@ -197,16 +197,16 @@ class BurstErrorModelSimple : public TestCase
     void DoRun() override;
     /**
      * Receive form a NetDevice
-     * \param nd The NetDevice.
-     * \param p The received packet.
-     * \param protocol The protocol received.
-     * \param addr The sender address.
-     * \return True on success.
+     * @param nd The NetDevice.
+     * @param p The received packet.
+     * @param protocol The protocol received.
+     * @param addr The sender address.
+     * @return True on success.
      */
     bool Receive(Ptr<NetDevice> nd, Ptr<const Packet> p, uint16_t protocol, const Address& addr);
     /**
      * Register a Drop
-     * \param p The dropped packet
+     * @param p The dropped packet
      */
     void DropEvent(Ptr<const Packet> p);
 
@@ -289,10 +289,10 @@ BurstErrorModelSimple::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief ErrorModel TestSuite
+ * @brief ErrorModel TestSuite
  *
  *  This is the start of an error model test suite.  For starters, this is
  *  just testing that the SimpleNetDevice is working but this can be

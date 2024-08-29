@@ -26,17 +26,17 @@ namespace ns3
 {
 
 /**
- * \ingroup energy
+ * @ingroup energy
  *
- * \brief Model the transmit current as a function of the transmit power and mode
+ * @brief Model the transmit current as a function of the transmit power and mode
  *
  */
 class WifiTxCurrentModel : public Object
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -44,16 +44,16 @@ class WifiTxCurrentModel : public Object
     ~WifiTxCurrentModel() override;
 
     /**
-     * \param txPowerDbm the nominal TX power in dBm
-     * \returns the transmit current (in Ampere)
+     * @param txPowerDbm the nominal TX power in dBm
+     * @returns the transmit current (in Ampere)
      */
     virtual double CalcTxCurrent(double txPowerDbm) const = 0;
 };
 
 /**
- * \ingroup energy
+ * @ingroup energy
  *
- * \brief a linear model of the Wifi transmit current
+ * @brief a linear model of the Wifi transmit current
  *
  * This model assumes that the transmit current is a linear function
  * of the nominal transmit power used to send the frame.
@@ -85,8 +85,8 @@ class LinearWifiTxCurrentModel : public WifiTxCurrentModel
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 

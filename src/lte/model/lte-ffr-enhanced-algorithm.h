@@ -36,20 +36,20 @@ namespace ns3
 {
 
 /**
- * \brief Enhanced Fractional Frequency Reuse algorithm implementation
+ * @brief Enhanced Fractional Frequency Reuse algorithm implementation
  */
 class LteFfrEnhancedAlgorithm : public LteFfrAlgorithm
 {
   public:
     /**
-     * \brief Creates a trivial ffr algorithm instance.
+     * @brief Creates a trivial ffr algorithm instance.
      */
     LteFfrEnhancedAlgorithm();
     ~LteFfrEnhancedAlgorithm() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -93,15 +93,15 @@ class LteFfrEnhancedAlgorithm : public LteFfrAlgorithm
     /**
      * Set downlink configuration
      *
-     * \param cellId the cell ID
-     * \param bandwidth the bandwidth
+     * @param cellId the cell ID
+     * @param bandwidth the bandwidth
      */
     void SetDownlinkConfiguration(uint16_t cellId, uint8_t bandwidth);
     /**
      * Set uplink configuration
      *
-     * \param cellId the cell ID
-     * \param bandwidth the bandwidth
+     * @param cellId the cell ID
+     * @param bandwidth the bandwidth
      */
     void SetUplinkConfiguration(uint16_t cellId, uint8_t bandwidth);
     /**
@@ -116,10 +116,10 @@ class LteFfrEnhancedAlgorithm : public LteFfrAlgorithm
     /**
      * Initialize uplink RBG maps
      *
-     * \param rnti the RNTI
-     * \param rb RB
-     * \param ulCqiMap UL CQI map
-     * \returns UL SINR
+     * @param rnti the RNTI
+     * @param rb RB
+     * @param ulCqiMap UL CQI map
+     * @returns UL SINR
      */
     double EstimateUlSinr(uint16_t rnti,
                           uint16_t rb,
@@ -127,8 +127,8 @@ class LteFfrEnhancedAlgorithm : public LteFfrAlgorithm
     /**
      * Get CQI from spectral efficiency
      *
-     * \param s spectral efficiency
-     * \returns CQI
+     * @param s spectral efficiency
+     * @returns CQI
      */
     int GetCqiFromSpectralEfficiency(double s);
 

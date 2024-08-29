@@ -68,7 +68,7 @@ LteSecondaryCellSelectionTestSuite::LteSecondaryCellSelectionTestSuite()
 } // end of LteSecondaryCellSelectionTestSuite::LteSecondaryCellSelectionTestSuite ()
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteSecondaryCellSelectionTestSuite g_lteSecondaryCellSelectionTestSuite;

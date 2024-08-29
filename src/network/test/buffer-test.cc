@@ -25,13 +25,13 @@
 using namespace ns3;
 
 /**
- * \ingroup network
- * \defgroup network-test Network module unit tests
+ * @ingroup network
+ * @defgroup network-test Network module unit tests
  */
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
  * Buffer unit tests.
  */
@@ -40,9 +40,9 @@ class BufferTest : public TestCase
   private:
     /**
      * Checks the buffer content
-     * \param b The buffer to check
-     * \param n The number of bytes to check
-     * \param array The array of bytes that should be in the buffer
+     * @param b The buffer to check
+     * @param n The number of bytes to check
+     * @param array The array of bytes that should be in the buffer
      */
     void EnsureWrittenBytes(Buffer b, uint32_t n, uint8_t array[]);
 
@@ -396,10 +396,10 @@ BufferTest::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Buffer TestSuite
+ * @brief Buffer TestSuite
  */
 class BufferTestSuite : public TestSuite
 {

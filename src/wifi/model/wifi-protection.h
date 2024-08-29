@@ -32,7 +32,7 @@ namespace ns3
 {
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * WifiProtection is an abstract base struct. Each derived struct defines a protection
  * method and stores the information needed to perform protection according to
@@ -41,8 +41,8 @@ namespace ns3
 struct WifiProtection
 {
     /**
-     * \enum Method
-     * \brief Available protection methods
+     * @enum Method
+     * @brief Available protection methods
      */
     enum Method
     {
@@ -54,20 +54,20 @@ struct WifiProtection
 
     /**
      * Constructor.
-     * \param m the protection method for this object
+     * @param m the protection method for this object
      */
     WifiProtection(Method m);
     virtual ~WifiProtection();
 
     /**
      * Clone this object.
-     * \return a pointer to the cloned object
+     * @return a pointer to the cloned object
      */
     virtual std::unique_ptr<WifiProtection> Copy() const = 0;
 
     /**
-     * \brief Print the object contents.
-     * \param os output stream in which the data should be printed.
+     * @brief Print the object contents.
+     * @param os output stream in which the data should be printed.
      */
     virtual void Print(std::ostream& os) const = 0;
 
@@ -76,7 +76,7 @@ struct WifiProtection
 };
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * WifiNoProtection specifies that no protection method is used.
  */
@@ -89,7 +89,7 @@ struct WifiNoProtection : public WifiProtection
 };
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * WifiRtsCtsProtection specifies that RTS/CTS protection method is used.
  */
@@ -105,7 +105,7 @@ struct WifiRtsCtsProtection : public WifiProtection
 };
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * WifiCtsToSelfProtection specifies that CTS-to-self protection method is used.
  */
@@ -120,7 +120,7 @@ struct WifiCtsToSelfProtection : public WifiProtection
 };
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * WifiMuRtsCtsProtection specifies that MU-RTS/CTS protection method is used.
  */
@@ -137,11 +137,11 @@ struct WifiMuRtsCtsProtection : public WifiProtection
 };
 
 /**
- * \brief Stream insertion operator.
+ * @brief Stream insertion operator.
  *
- * \param os the output stream
- * \param protection the protection method
- * \returns a reference to the stream
+ * @param os the output stream
+ * @param protection the protection method
+ * @returns a reference to the stream
  */
 std::ostream& operator<<(std::ostream& os, const WifiProtection* protection);
 

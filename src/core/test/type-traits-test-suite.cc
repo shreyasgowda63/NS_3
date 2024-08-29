@@ -19,10 +19,10 @@
 #include "ns3/type-traits.h"
 
 /**
- * \file
- * \ingroup core-tests
- * \ingroup object
- * \ingroup object-tests
+ * @file
+ * @ingroup core-tests
+ * @ingroup object
+ * @ingroup object-tests
  * TypeTraits test suite.
  */
 
@@ -33,7 +33,7 @@ namespace tests
 {
 
 /**
- * \ingroup object-tests
+ * @ingroup object-tests
  *  Type traits test
  */
 class TypeTraitsTestCase : public TestCase
@@ -82,7 +82,7 @@ TypeTraitsTestCase::DoRun()
 }
 
 /**
- * \ingroup object-tests
+ * @ingroup object-tests
  *  Type traits test suite
  */
 class TypeTraitsTestSuite : public TestSuite
@@ -99,7 +99,7 @@ TypeTraitsTestSuite::TypeTraitsTestSuite()
 }
 
 /**
- * \ingroup object-tests
+ * @ingroup object-tests
  * TypeTraitsTestSuite instance variable.
  */
 static TypeTraitsTestSuite g_typeTraitsTestSuite;

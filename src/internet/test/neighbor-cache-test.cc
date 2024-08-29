@@ -40,67 +40,67 @@
 using namespace ns3;
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Dynamic Neighbor Cache Test
+ * @brief Dynamic Neighbor Cache Test
  */
 class DynamicNeighborCacheTest : public TestCase
 {
     Ptr<Packet> m_receivedPacket; //!< Received packet
 
     /**
-     * \brief Send data immediately after being called.
-     * \param socket The sending socket.
-     * \param to IPv4 Destination address.
+     * @brief Send data immediately after being called.
+     * @param socket The sending socket.
+     * @param to IPv4 Destination address.
      */
     void DoSendDatav4(Ptr<Socket> socket, Ipv4Address to);
 
     /**
-     * \brief Send data immediately after being called.
-     * \param socket The sending socket.
-     * \param to IPv6 Destination address.
+     * @brief Send data immediately after being called.
+     * @param socket The sending socket.
+     * @param to IPv6 Destination address.
      */
     void DoSendDatav6(Ptr<Socket> socket, Ipv6Address to);
 
     /**
-     * \brief Schedules the DoSendData () function to send the data.
-     * \param socket The sending socket.
-     * \param to IPv4 Destination address.
+     * @brief Schedules the DoSendData () function to send the data.
+     * @param socket The sending socket.
+     * @param to IPv4 Destination address.
      */
     void SendData(Ptr<Socket> socket, Ipv4Address to);
 
     /**
-     * \brief Schedules the DoSendData () function to send the data.
-     * \param socket The sending socket.
-     * \param to IPv6 Destination address.
+     * @brief Schedules the DoSendData () function to send the data.
+     * @param socket The sending socket.
+     * @param to IPv6 Destination address.
      */
     void SendData(Ptr<Socket> socket, Ipv6Address to);
 
     /**
-     * \brief Add an IPv4 address to an IPv4 interface
-     * \param ipv4Interface The interface that address will be added.
-     * \param ifaceAddr The added IPv4 address.
+     * @brief Add an IPv4 address to an IPv4 interface
+     * @param ipv4Interface The interface that address will be added.
+     * @param ifaceAddr The added IPv4 address.
      */
     void AddIpv4Address(Ptr<Ipv4Interface> ipv4Interface, Ipv4InterfaceAddress ifaceAddr);
 
     /**
-     * \brief Add an IPv6 address to an IPv6 interface
-     * \param ipv6Interface The interface that address will be added.
-     * \param ifaceAddr The added IPv6 address.
+     * @brief Add an IPv6 address to an IPv6 interface
+     * @param ipv6Interface The interface that address will be added.
+     * @param ifaceAddr The added IPv6 address.
      */
     void AddIpv6Address(Ptr<Ipv6Interface> ipv6Interface, Ipv6InterfaceAddress ifaceAddr);
 
     /**
-     * \brief Remove an IPv4 address from an IPv4 interface
-     * \param ipv4Interface The interface that address will be removed from.
-     * \param index The index of IPv4 address that will be removed.
+     * @brief Remove an IPv4 address from an IPv4 interface
+     * @param ipv4Interface The interface that address will be removed from.
+     * @param index The index of IPv4 address that will be removed.
      */
     void RemoveIpv4Address(Ptr<Ipv4Interface> ipv4Interface, uint32_t index);
 
     /**
-     * \brief Remove an IPv6 address from an IPv6 interface
-     * \param ipv6Interface The interface that address will be removed from.
-     * \param index The index of IPv6 address that will be removed.
+     * @brief Remove an IPv6 address from an IPv6 interface
+     * @param ipv6Interface The interface that address will be removed from.
+     * @param index The index of IPv6 address that will be removed.
      */
     void RemoveIpv6Address(Ptr<Ipv6Interface> ipv6Interface, uint32_t index);
 
@@ -110,8 +110,8 @@ class DynamicNeighborCacheTest : public TestCase
     DynamicNeighborCacheTest();
 
     /**
-     * \brief Receive data.
-     * \param socket The receiving socket.
+     * @brief Receive data.
+     * @param socket The receiving socket.
      */
     void ReceivePkt(Ptr<Socket> socket);
 
@@ -540,9 +540,9 @@ DynamicNeighborCacheTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Neighbor cache on Channel Test
+ * @brief Neighbor cache on Channel Test
  */
 class ChannelTest : public TestCase
 {
@@ -629,9 +629,9 @@ ChannelTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Neighbor Cache on NetDeviceContainer Test
+ * @brief Neighbor Cache on NetDeviceContainer Test
  */
 class NetDeviceContainerTest : public TestCase
 {
@@ -719,9 +719,9 @@ NetDeviceContainerTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Neighbor Cache on InterfaceContainer Test
+ * @brief Neighbor Cache on InterfaceContainer Test
  */
 class InterfaceContainerTest : public TestCase
 {
@@ -809,9 +809,9 @@ InterfaceContainerTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Neighbor Cache Flush Test
+ * @brief Neighbor Cache Flush Test
  */
 class FlushTest : public TestCase
 {
@@ -916,9 +916,9 @@ FlushTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Neighbor Cache on Overlapped Scope Test
+ * @brief Neighbor Cache on Overlapped Scope Test
  */
 class DuplicateTest : public TestCase
 {
@@ -1015,9 +1015,9 @@ DuplicateTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Dynamic Neighbor Cache on Reduced Scope Test
+ * @brief Dynamic Neighbor Cache on Reduced Scope Test
  */
 class DynamicPartialTest : public TestCase
 {
@@ -1026,30 +1026,30 @@ class DynamicPartialTest : public TestCase
     DynamicPartialTest();
 
     /**
-     * \brief Add an IPv4 address to an IPv4 interface
-     * \param ipv4Interface The interface that address will be added.
-     * \param ifaceAddr The added IPv4 address.
+     * @brief Add an IPv4 address to an IPv4 interface
+     * @param ipv4Interface The interface that address will be added.
+     * @param ifaceAddr The added IPv4 address.
      */
     void AddIpv4Address(Ptr<Ipv4Interface> ipv4Interface, Ipv4InterfaceAddress ifaceAddr);
 
     /**
-     * \brief Add an IPv6 address to an IPv6 interface
-     * \param ipv6Interface The interface that address will be added.
-     * \param ifaceAddr The added IPv6 address.
+     * @brief Add an IPv6 address to an IPv6 interface
+     * @param ipv6Interface The interface that address will be added.
+     * @param ifaceAddr The added IPv6 address.
      */
     void AddIpv6Address(Ptr<Ipv6Interface> ipv6Interface, Ipv6InterfaceAddress ifaceAddr);
 
     /**
-     * \brief Remove an IPv4 address from an IPv4 interface
-     * \param ipv4Interface The interface that address will be removed from.
-     * \param index The index of IPv4 address that will be removed.
+     * @brief Remove an IPv4 address from an IPv4 interface
+     * @param ipv4Interface The interface that address will be removed from.
+     * @param index The index of IPv4 address that will be removed.
      */
     void RemoveIpv4Address(Ptr<Ipv4Interface> ipv4Interface, uint32_t index);
 
     /**
-     * \brief Remove an IPv6 address from an IPv6 interface
-     * \param ipv6Interface The interface that address will be removed from.
-     * \param index The index of IPv6 address that will be removed.
+     * @brief Remove an IPv6 address from an IPv6 interface
+     * @param ipv6Interface The interface that address will be removed from.
+     * @param index The index of IPv6 address that will be removed.
      */
     void RemoveIpv6Address(Ptr<Ipv6Interface> ipv6Interface, uint32_t index);
 
@@ -1222,9 +1222,9 @@ DynamicPartialTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief NeighborCache TestSuite
+ * @brief NeighborCache TestSuite
  */
 class NeighborCacheTestSuite : public TestSuite
 {

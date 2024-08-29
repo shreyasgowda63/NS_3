@@ -786,7 +786,7 @@ int
 TcpSocketBase::Close()
 {
     NS_LOG_FUNCTION(this);
-    /// \internal
+    /// @internal
     /// First we check to see if there is any unread rx data.
     /// \bugid{426} claims we should send reset in this case.
     if (m_tcb->m_rxBuffer->Size() != 0)

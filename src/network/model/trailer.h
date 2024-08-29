@@ -29,9 +29,9 @@ namespace ns3
 {
 
 /**
- * \ingroup packet
+ * @ingroup packet
  *
- * \brief Protocol trailer serialization and deserialization.
+ * @brief Protocol trailer serialization and deserialization.
  *
  * Every Protocol trailer which needs to be inserted or removed
  * from a Packet instance must derive from this base class and
@@ -41,13 +41,13 @@ class Trailer : public Chunk
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     ~Trailer() override;
     /**
-     * \returns the expected size of the trailer.
+     * @returns the expected size of the trailer.
      *
      * This method is used by Packet::AddTrailer
      * to store a trailer into the byte buffer of a packet. This method
@@ -56,7 +56,7 @@ class Trailer : public Chunk
      */
     virtual uint32_t GetSerializedSize() const = 0;
     /**
-     * \param start an iterator which points to where the trailer
+     * @param start an iterator which points to where the trailer
      *        should be written.
      *
      * This method is used by Packet::AddTrailer to
@@ -69,9 +69,9 @@ class Trailer : public Chunk
      */
     virtual void Serialize(Buffer::Iterator start) const = 0;
     /**
-     * \param end an iterator which points to the end of the buffer
+     * @param end an iterator which points to the end of the buffer
      *        where the trailer should be read from.
-     * \returns the number of bytes read.
+     * @returns the number of bytes read.
      *
      * This method is used by Packet::RemoveTrailer to
      * re-create a trailer from the byte buffer of a packet.
@@ -83,11 +83,11 @@ class Trailer : public Chunk
      */
     uint32_t Deserialize(Buffer::Iterator end) override = 0;
     /**
-     * \param start an iterator which points to the start of the buffer
+     * @param start an iterator which points to the start of the buffer
      *        where the trailer should be read from.
-     * \param end an iterator which points to the end of the buffer
+     * @param end an iterator which points to the end of the buffer
      *        where the trailer should be read from.
-     * \returns the number of bytes read.
+     * @returns the number of bytes read.
      *
      * This method is used by Packet::RemoveTrailer to
      * re-create a trailer from the byte buffer of a packet.
@@ -101,7 +101,7 @@ class Trailer : public Chunk
      */
     uint32_t Deserialize(Buffer::Iterator start, Buffer::Iterator end) override;
     /**
-     * \param os output stream
+     * @param os output stream
      * This method is used by Packet::Print to print the
      * content of a trailer as ascii data to a c++ output stream.
      * Although the trailer is free to format its output as it
@@ -116,11 +116,11 @@ class Trailer : public Chunk
 };
 
 /**
- * \brief Stream insertion operator.
+ * @brief Stream insertion operator.
  *
- * \param os the stream
- * \param trailer the trailer
- * \returns a reference to the stream
+ * @param os the stream
+ * @param trailer the trailer
+ * @returns a reference to the stream
  */
 std::ostream& operator<<(std::ostream& os, const Trailer& trailer);
 

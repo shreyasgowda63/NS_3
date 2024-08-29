@@ -27,8 +27,8 @@
 #include <utility>
 
 /**
- * \file
- * \ingroup scheduler
+ * @file
+ * @ingroup scheduler
  * ns3::ListScheduler implementation.
  */
 

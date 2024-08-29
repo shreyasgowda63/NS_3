@@ -26,13 +26,13 @@
 using namespace ns3;
 
 /**
- * \ingroup dot11s-test
+ * @ingroup dot11s-test
  *
- * \brief Peering Management Protocol regression test
+ * @brief Peering Management Protocol regression test
  *
  * Initiate scenario with 2 stations. Procedure of opening peer link
  * is the following:
- * \verbatim
+ * @verbatim
  * |----------->|  Beacon
  * |----------->|  Peer Link Open frame
  * |<-----------|  Peer Link Confirm frame
@@ -40,7 +40,7 @@ using namespace ns3;
  * |----------->|  Peer Link Confirm frame
  * |............|
  * |<---------->|  Other beacons
- * \endverbatim
+ * @endverbatim
  */
 class PeerManagementProtocolRegressionTest : public TestCase
 {
@@ -49,7 +49,7 @@ class PeerManagementProtocolRegressionTest : public TestCase
     ~PeerManagementProtocolRegressionTest() override;
 
   private:
-    /// \internal It is important to have pointers here
+    /// @internal It is important to have pointers here
     NodeContainer* m_nodes;
     /// Simulation time
     Time m_time;

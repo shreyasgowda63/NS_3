@@ -41,8 +41,8 @@
 #include <numbers>
 
 /**
- * \file
- * \ingroup randomvariable
+ * @file
+ * @ingroup randomvariable
  * ns3::RandomVariableStream and related implementations
  */
 

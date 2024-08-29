@@ -27,8 +27,8 @@
 #include "ns3/rocketfuel-topology-reader.h"
 
 /**
- * \file
- * \ingroup topology
+ * @file
+ * @ingroup topology
  * ns3::TopologyHelper implementation.
  */
 

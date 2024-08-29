@@ -31,10 +31,10 @@
 using namespace ns3;
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief PacketSocket apps Unit Test
+ * @brief PacketSocket apps Unit Test
  */
 class PacketSocketAppsTest : public TestCase
 {
@@ -47,8 +47,8 @@ class PacketSocketAppsTest : public TestCase
 
     /**
      * Receive a packet
-     * \param packet The packet
-     * \param from Address of the sender
+     * @param packet The packet
+     * @param from Address of the sender
      */
     void ReceivePkt(Ptr<const Packet> packet, const Address& from);
 };
@@ -121,10 +121,10 @@ PacketSocketAppsTest::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief PacketSocket apps TestSuite
+ * @brief PacketSocket apps TestSuite
  */
 class PacketSocketAppsTestSuite : public TestSuite
 {

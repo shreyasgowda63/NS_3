@@ -24,8 +24,8 @@
 #include <sstream>
 
 /**
- * \file
- * \ingroup buildversion
+ * @file
+ * @ingroup buildversion
  * ns3::Version implementation
  */
 

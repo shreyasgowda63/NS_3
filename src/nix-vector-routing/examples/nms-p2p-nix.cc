@@ -61,7 +61,7 @@ Progress()
 }
 
 /**
- * \ingroup nix-vector-routing
+ * @ingroup nix-vector-routing
  * 2D array used in nix-vector-routing example "nms-p2p-nix.cc"
  */
 template <typename T>
@@ -70,8 +70,8 @@ class Array2D
   public:
     /**
      * Constructor
-     * \param x number of rows
-     * \param y number of columns
+     * @param x number of rows
+     * @param y number of columns
      */
     Array2D(const size_t x, const size_t y)
         : p(new T*[x]),
@@ -95,8 +95,8 @@ class Array2D
 
     /**
      * Accessor operator
-     * \param i index to be retrieved
-     * \return a pointer to the indexed element
+     * @param i index to be retrieved
+     * @return a pointer to the indexed element
      */
     T* operator[](const size_t i)
     {
@@ -109,7 +109,7 @@ class Array2D
 };
 
 /**
- * \ingroup nix-vector-routing
+ * @ingroup nix-vector-routing
  * 3D array used in nix-vector-routing example "nms-p2p-nix.cc"
  */
 template <typename T>
@@ -118,9 +118,9 @@ class Array3D
   public:
     /**
      * Constructor
-     * \param x number of rows
-     * \param y number of columns
-     * \param z number of layers
+     * @param x number of rows
+     * @param y number of columns
+     * @param z number of layers
      */
     Array3D(const size_t x, const size_t y, const size_t z)
         : p(new Array2D<T>*[x]),
@@ -145,8 +145,8 @@ class Array3D
 
     /**
      * Accessor operator
-     * \param i index to be retrieved
-     * \return a reference to an Array2D of the indexed element
+     * @param i index to be retrieved
+     * @return a reference to an Array2D of the indexed element
      */
     Array2D<T>& operator[](const size_t i)
     {

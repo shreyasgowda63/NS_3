@@ -30,8 +30,8 @@ namespace ns3
 {
 
 /**
- * \ingroup ipv6
- * \ingroup traffic-control
+ * @ingroup ipv6
+ * @ingroup traffic-control
  *
  * Ipv6PacketFilter is the abstract base class for filters defined for IPv6 packets.
  */
@@ -39,8 +39,8 @@ class Ipv6PacketFilter : public PacketFilter
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 

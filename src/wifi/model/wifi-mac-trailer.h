@@ -31,7 +31,7 @@ namespace ns3
 static const uint16_t WIFI_MAC_FCS_LENGTH = 4;
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * Implements the IEEE 802.11 MAC trailer
  */
@@ -42,8 +42,8 @@ class WifiMacTrailer : public Trailer
     ~WifiMacTrailer() override;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;

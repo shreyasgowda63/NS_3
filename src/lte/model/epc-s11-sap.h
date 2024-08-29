@@ -67,7 +67,7 @@ class EpcS11Sap
 };
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * MME side of the S11 Service Access Point (SAP), provides the MME
  * methods to be called when an S11 message is received by the MME.
@@ -97,7 +97,7 @@ class EpcS11SapMme : public EpcS11Sap
     /**
      * send a Create Session Response message
      *
-     * \param msg the message
+     * @param msg the message
      */
     virtual void CreateSessionResponse(CreateSessionResponseMessage msg) = 0;
 
@@ -118,9 +118,9 @@ class EpcS11SapMme : public EpcS11Sap
     };
 
     /**
-     * \brief As per 3GPP TS 29.274 Release 9 V9.3.0, a Delete Bearer Request message shall be sent
+     * @brief As per 3GPP TS 29.274 Release 9 V9.3.0, a Delete Bearer Request message shall be sent
      * on the S11 interface by PGW to SGW and from SGW to MME
-     * \param msg the message
+     * @param msg the message
      */
     virtual void DeleteBearerRequest(DeleteBearerRequestMessage msg) = 0;
 
@@ -144,13 +144,13 @@ class EpcS11SapMme : public EpcS11Sap
     /**
      * Send a Modify Bearer Response message
      *
-     * \param msg the message
+     * @param msg the message
      */
     virtual void ModifyBearerResponse(ModifyBearerResponseMessage msg) = 0;
 };
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * SGW side of the S11 Service Access Point (SAP), provides the SGW
  * methods to be called when an S11 message is received by the SGW.
@@ -181,7 +181,7 @@ class EpcS11SapSgw : public EpcS11Sap
     /**
      * Send a Create Session Request message
      *
-     * \param msg the message
+     * @param msg the message
      */
     virtual void CreateSessionRequest(CreateSessionRequestMessage msg) = 0;
 
@@ -201,9 +201,9 @@ class EpcS11SapSgw : public EpcS11Sap
     };
 
     /**
-     * \brief As per 3GPP TS 29.274 Release 9 V9.3.0, a Delete Bearer Command message shall be sent
+     * @brief As per 3GPP TS 29.274 Release 9 V9.3.0, a Delete Bearer Command message shall be sent
      * on the S11 interface by the MME to the SGW
-     * \param msg the DeleteBearerCommandMessage
+     * @param msg the DeleteBearerCommandMessage
      */
     virtual void DeleteBearerCommand(DeleteBearerCommandMessage msg) = 0;
 
@@ -223,9 +223,9 @@ class EpcS11SapSgw : public EpcS11Sap
     };
 
     /**
-     * \brief As per 3GPP TS 29.274 Release 9 V9.3.0, a Delete Bearer Command message shall be sent
+     * @brief As per 3GPP TS 29.274 Release 9 V9.3.0, a Delete Bearer Command message shall be sent
      * on the S11 interface by the MME to the SGW
-     * \param msg the message
+     * @param msg the message
      */
     virtual void DeleteBearerResponse(DeleteBearerResponseMessage msg) = 0;
 
@@ -240,7 +240,7 @@ class EpcS11SapSgw : public EpcS11Sap
     /**
      * Send a Modify Bearer Request message
      *
-     * \param msg the message
+     * @param msg the message
      */
     virtual void ModifyBearerRequest(ModifyBearerRequestMessage msg) = 0;
 };
@@ -256,7 +256,7 @@ class MemberEpcS11SapMme : public EpcS11SapMme
     /**
      * Constructor
      *
-     * \param owner the owner class
+     * @param owner the owner class
      */
     MemberEpcS11SapMme(C* owner);
 
@@ -310,7 +310,7 @@ class MemberEpcS11SapSgw : public EpcS11SapSgw
     /**
      * Constructor
      *
-     * \param owner the owner class
+     * @param owner the owner class
      */
     MemberEpcS11SapSgw(C* owner);
 

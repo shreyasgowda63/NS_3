@@ -52,7 +52,7 @@ class EnbMacMemberLteEnbCmacSapProvider : public LteEnbCmacSapProvider
     /**
      * Constructor
      *
-     * \param mac the MAC
+     * @param mac the MAC
      */
     EnbMacMemberLteEnbCmacSapProvider(LteEnbMac* mac);
 
@@ -137,7 +137,7 @@ class EnbMacMemberFfMacSchedSapUser : public FfMacSchedSapUser
     /**
      * Constructor
      *
-     * \param mac the MAC
+     * @param mac the MAC
      */
     EnbMacMemberFfMacSchedSapUser(LteEnbMac* mac);
 
@@ -172,7 +172,7 @@ class EnbMacMemberFfMacCschedSapUser : public FfMacCschedSapUser
     /**
      * Constructor
      *
-     * \param mac the MAC
+     * @param mac the MAC
      */
     EnbMacMemberFfMacCschedSapUser(LteEnbMac* mac);
 
@@ -244,7 +244,7 @@ class EnbMacMemberLteEnbPhySapUser : public LteEnbPhySapUser
     /**
      * Constructor
      *
-     * \param mac the MAC
+     * @param mac the MAC
      */
     EnbMacMemberLteEnbPhySapUser(LteEnbMac* mac);
 

@@ -24,8 +24,8 @@
 #include <stdint.h>
 
 /**
- * \file
- * \ingroup events
+ * @file
+ * @ingroup events
  * ns3::EventImpl declarations.
  */
 
@@ -33,8 +33,8 @@ namespace ns3
 {
 
 /**
- * \ingroup events
- * \brief A simulation event.
+ * @ingroup events
+ * @brief A simulation event.
  *
  * Each subclass of this base class represents a simulation event. The
  * Invoke() method will be called by the simulation engine
@@ -61,7 +61,7 @@ class EventImpl : public SimpleRefCount<EventImpl>
      */
     void Cancel();
     /**
-     * \returns true if the event has been canceled.
+     * @returns true if the event has been canceled.
      *
      * Checked by the simulation engine before calling Invoke().
      */

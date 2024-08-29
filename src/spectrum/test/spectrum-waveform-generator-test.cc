@@ -25,9 +25,9 @@ NS_LOG_COMPONENT_DEFINE("WaveformGeneratorTest");
 using namespace ns3;
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
- * \brief Waveform generator Test
+ * @brief Waveform generator Test
  */
 class WaveformGeneratorTestCase : public TestCase
 {
@@ -35,9 +35,9 @@ class WaveformGeneratorTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param period waveform period (seconds)
-     * \param dutyCycle waveform duty cycle
-     * \param stop stop time (seconds)
+     * @param period waveform period (seconds)
+     * @param dutyCycle waveform duty cycle
+     * @param stop stop time (seconds)
      */
     WaveformGeneratorTestCase(double period, double dutyCycle, double stop);
     ~WaveformGeneratorTestCase() override;
@@ -47,7 +47,7 @@ class WaveformGeneratorTestCase : public TestCase
 
     /**
      * Trace if the waveform is active
-     * \param newPkt unused.
+     * @param newPkt unused.
      */
     void TraceWave(Ptr<const Packet> newPkt);
     double m_period;    //!< waveform period (seconds)
@@ -116,9 +116,9 @@ WaveformGeneratorTestCase::DoRun()
 }
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
- * \brief Waveform generator TestSuite
+ * @brief Waveform generator TestSuite
  */
 class WaveformGeneratorTestSuite : public TestSuite
 {

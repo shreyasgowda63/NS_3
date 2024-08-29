@@ -35,9 +35,9 @@ class Socket;
 class Packet;
 
 /**
- * \ingroup udpclientserver
+ * @ingroup udpclientserver
  *
- * \brief A Udp client. Sends UDP packet carrying sequence number and time stamp
+ * @brief A Udp client. Sends UDP packet carrying sequence number and time stamp
  *  in their payloads
  *
  */
@@ -45,8 +45,8 @@ class UdpClient : public Application
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -55,19 +55,19 @@ class UdpClient : public Application
     ~UdpClient() override;
 
     /**
-     * \brief set the remote address and port
-     * \param ip remote IP address
-     * \param port remote port
+     * @brief set the remote address and port
+     * @param ip remote IP address
+     * @param port remote port
      */
     void SetRemote(Address ip, uint16_t port);
     /**
-     * \brief set the remote address
-     * \param addr remote address
+     * @brief set the remote address
+     * @param addr remote address
      */
     void SetRemote(Address addr);
 
     /**
-     * \return the total bytes sent by this app
+     * @return the total bytes sent by this app
      */
     uint64_t GetTotalTx() const;
 
@@ -76,7 +76,7 @@ class UdpClient : public Application
     void StopApplication() override;
 
     /**
-     * \brief Send a packet
+     * @brief Send a packet
      */
     void Send();
 

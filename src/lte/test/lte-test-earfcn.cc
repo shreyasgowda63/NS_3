@@ -26,9 +26,9 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("LteTestEarfcn");
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test case that is testing if the frequency is properly generated
+ * @brief Test case that is testing if the frequency is properly generated
  * from provided EARFCN frequency.
  */
 
@@ -38,9 +38,9 @@ class LteEarfcnTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param str reference name
-     * \param earfcn EARFCN
-     * \param f frequency
+     * @param str reference name
+     * @param earfcn EARFCN
+     * @param f frequency
      */
     LteEarfcnTestCase(const char* str, uint32_t earfcn, double f);
     ~LteEarfcnTestCase() override;
@@ -73,9 +73,9 @@ LteEarfcnTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief
+ * @brief
  * Test case that is testing if the downlink frequency is properly
  * converted from provided downlink EARFCN frequency value.
  */
@@ -86,9 +86,9 @@ class LteEarfcnDlTestCase : public LteEarfcnTestCase
     /**
      * Constructor
      *
-     * \param str reference name
-     * \param earfcn EARFCN
-     * \param f frequency
+     * @param str reference name
+     * @param earfcn EARFCN
+     * @param f frequency
      */
     LteEarfcnDlTestCase(const char* str, uint32_t earfcn, double f);
 
@@ -113,9 +113,9 @@ LteEarfcnDlTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief  Test case that is testing if the uplink frequency is properly
+ * @brief  Test case that is testing if the uplink frequency is properly
  * converted from provided uplink EARFCN frequency value.
  */
 
@@ -125,9 +125,9 @@ class LteEarfcnUlTestCase : public LteEarfcnTestCase
     /**
      * Constructor
      *
-     * \param str reference name
-     * \param earfcn EARFCN
-     * \param f frequency
+     * @param str reference name
+     * @param earfcn EARFCN
+     * @param f frequency
      */
     LteEarfcnUlTestCase(const char* str, uint32_t earfcn, double f);
 
@@ -148,9 +148,9 @@ LteEarfcnUlTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test suite for testing correct conversion of frequencies in
+ * @brief Test suite for testing correct conversion of frequencies in
  * the downlink and the uplink, and general EARFCN frequencies.
  */
 class LteEarfcnTestSuite : public TestSuite
@@ -160,7 +160,7 @@ class LteEarfcnTestSuite : public TestSuite
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteEarfcnTestSuite g_lteEarfcnTestSuite;

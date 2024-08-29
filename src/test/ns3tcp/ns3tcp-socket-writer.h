@@ -25,9 +25,9 @@ namespace ns3
 {
 
 /**
- * \ingroup system-tests-tcp
+ * @ingroup system-tests-tcp
  *
- * \brief Simple class to write data to sockets.
+ * @brief Simple class to write data to sockets.
  */
 class SocketWriter : public Application
 {
@@ -36,14 +36,14 @@ class SocketWriter : public Application
     ~SocketWriter() override;
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
     /**
      * Setup the socket.
-     * \param node The node owning the socket.
-     * \param peer The destination address.
+     * @param node The node owning the socket.
+     * @param peer The destination address.
      */
     void Setup(Ptr<Node> node, Address peer);
     /**
@@ -52,7 +52,7 @@ class SocketWriter : public Application
     void Connect();
     /**
      * Write to the socket.
-     * \param numBytes The number of bytes to write.
+     * @param numBytes The number of bytes to write.
      */
     void Write(uint32_t numBytes);
     /**

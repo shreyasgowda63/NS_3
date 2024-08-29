@@ -23,8 +23,8 @@
 #include <sstream>
 
 /**
- * \file
- * \ingroup object
+ * @file
+ * @ingroup object
  * ns3::ObjectFactory class implementation.
  */
 

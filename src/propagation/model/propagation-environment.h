@@ -26,7 +26,7 @@ namespace ns3
 {
 
 /**
- * \ingroup propagation
+ * @ingroup propagation
  *
  * The type of propagation environment
  *
@@ -39,7 +39,7 @@ enum EnvironmentType
 };
 
 /**
- * \ingroup propagation
+ * @ingroup propagation
  *
  * The size of the city in which propagation takes place
  *

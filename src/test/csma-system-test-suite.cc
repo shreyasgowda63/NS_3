@@ -51,9 +51,9 @@
 using namespace ns3;
 
 /**
- * \ingroup system-tests-csma
+ * @ingroup system-tests-csma
  *
- * \brief CSMA Bridge mode test.
+ * @brief CSMA Bridge mode test.
  */
 class CsmaBridgeTestCase : public TestCase
 {
@@ -66,8 +66,8 @@ class CsmaBridgeTestCase : public TestCase
 
     /**
      * Sink called when a packet is received.
-     * \param p Received packet (unused).
-     * \param ad Sender's address (uused).
+     * @param p Received packet (unused).
+     * @param ad Sender's address (uused).
      */
     void SinkRx(Ptr<const Packet> p, const Address& ad);
     uint32_t m_count; //!< Counter of received packets.
@@ -168,9 +168,9 @@ CsmaBridgeTestCase::DoRun()
 }
 
 /**
- * \ingroup system-tests-csma
+ * @ingroup system-tests-csma
  *
- * \brief CSMA Broadcast mode test.
+ * @brief CSMA Broadcast mode test.
  */
 class CsmaBroadcastTestCase : public TestCase
 {
@@ -183,8 +183,8 @@ class CsmaBroadcastTestCase : public TestCase
 
     /**
      * Sink called when a packet is received by a node.
-     * \param p Received packet (unused).
-     * \param ad Sender's address (uused).
+     * @param p Received packet (unused).
+     * @param ad Sender's address (uused).
      * @{
      */
     void SinkRxNode1(Ptr<const Packet> p, const Address& ad);
@@ -193,7 +193,7 @@ class CsmaBroadcastTestCase : public TestCase
 
     /**
      * Sink called when a packet is dropped.
-     * \param p Received packet (unused).
+     * @param p Received packet (unused).
      */
     void DropEvent(Ptr<const Packet> p);
 
@@ -311,9 +311,9 @@ CsmaBroadcastTestCase::DoRun()
 }
 
 /**
- * \ingroup system-tests-csma
+ * @ingroup system-tests-csma
  *
- * \brief CSMA Multicast mode test.
+ * @brief CSMA Multicast mode test.
  */
 class CsmaMulticastTestCase : public TestCase
 {
@@ -326,14 +326,14 @@ class CsmaMulticastTestCase : public TestCase
 
     /**
      * Sink called when a packet is received by a node.
-     * \param p Received packet (unused).
-     * \param ad Sender's address (uused).
+     * @param p Received packet (unused).
+     * @param ad Sender's address (uused).
      */
     void SinkRx(Ptr<const Packet> p, const Address& ad);
 
     /**
      * Sink called when a packet is dropped.
-     * \param p Received packet (unused).
+     * @param p Received packet (unused).
      */
     void DropEvent(Ptr<const Packet> p);
 
@@ -494,9 +494,9 @@ CsmaMulticastTestCase::DoRun()
 }
 
 /**
- * \ingroup system-tests-csma
+ * @ingroup system-tests-csma
  *
- * \brief CSMA One Subnet mode test.
+ * @brief CSMA One Subnet mode test.
  */
 class CsmaOneSubnetTestCase : public TestCase
 {
@@ -509,8 +509,8 @@ class CsmaOneSubnetTestCase : public TestCase
 
     /**
      * Sink called when a packet is received by a node.
-     * \param p Received packet (unused).
-     * \param ad Sender's address (uused).
+     * @param p Received packet (unused).
+     * @param ad Sender's address (uused).
      * @{
      */
     void SinkRxNode0(Ptr<const Packet> p, const Address& ad);
@@ -519,7 +519,7 @@ class CsmaOneSubnetTestCase : public TestCase
 
     /**
      * Sink called when a packet is dropped.
-     * \param p Received packet (unused).
+     * @param p Received packet (unused).
      */
     void DropEvent(Ptr<const Packet> p);
     uint32_t m_countNode0; //!< Counter of received packets on node 0.
@@ -644,9 +644,9 @@ CsmaOneSubnetTestCase::DoRun()
 }
 
 /**
- * \ingroup system-tests-csma
+ * @ingroup system-tests-csma
  *
- * \brief CSMA PacketSocket test.
+ * @brief CSMA PacketSocket test.
  */
 class CsmaPacketSocketTestCase : public TestCase
 {
@@ -658,15 +658,15 @@ class CsmaPacketSocketTestCase : public TestCase
     void DoRun() override;
     /**
      * Sink called when a packet is received by a node.
-     * \param path Sink path.
-     * \param p Received packet (unused).
-     * \param ad Sender's address (uused).
+     * @param path Sink path.
+     * @param p Received packet (unused).
+     * @param ad Sender's address (uused).
      */
     void SinkRx(std::string path, Ptr<const Packet> p, const Address& ad);
 
     /**
      * Sink called when a packet is dropped.
-     * \param p Received packet (unused).
+     * @param p Received packet (unused).
      */
     void DropEvent(Ptr<const Packet> p);
 
@@ -770,9 +770,9 @@ CsmaPacketSocketTestCase::DoRun()
 }
 
 /**
- * \ingroup system-tests-csma
+ * @ingroup system-tests-csma
  *
- * \brief CSMA PING test.
+ * @brief CSMA PING test.
  */
 class CsmaPingTestCase : public TestCase
 {
@@ -911,9 +911,9 @@ CsmaPingTestCase::DoRun()
 }
 
 /**
- * \ingroup system-tests-csma
+ * @ingroup system-tests-csma
  *
- * \brief CSMA Raw IP test.
+ * @brief CSMA Raw IP test.
  */
 class CsmaRawIpSocketTestCase : public TestCase
 {
@@ -926,14 +926,14 @@ class CsmaRawIpSocketTestCase : public TestCase
 
     /**
      * Sink called when a packet is received by a node.
-     * \param p Received packet (unused).
-     * \param ad Sender's address (uused).
+     * @param p Received packet (unused).
+     * @param ad Sender's address (uused).
      */
     void SinkRx(Ptr<const Packet> p, const Address& ad);
 
     /**
      * Sink called when a packet is dropped.
-     * \param p Received packet (unused).
+     * @param p Received packet (unused).
      */
     void DropEvent(Ptr<const Packet> p);
 
@@ -1029,9 +1029,9 @@ CsmaRawIpSocketTestCase::DoRun()
 }
 
 /**
- * \ingroup system-tests-csma
+ * @ingroup system-tests-csma
  *
- * \brief CSMA star mode test.
+ * @brief CSMA star mode test.
  */
 class CsmaStarTestCase : public TestCase
 {
@@ -1044,14 +1044,14 @@ class CsmaStarTestCase : public TestCase
 
     /**
      * Sink called when a packet is received by a node.
-     * \param p Received packet (unused).
-     * \param ad Sender's address (uused).
+     * @param p Received packet (unused).
+     * @param ad Sender's address (uused).
      */
     void SinkRx(Ptr<const Packet> p, const Address& ad);
 
     /**
      * Sink called when a packet is dropped.
-     * \param p Received packet (unused).
+     * @param p Received packet (unused).
      */
     void DropEvent(Ptr<const Packet> p);
 
@@ -1232,9 +1232,9 @@ CsmaStarTestCase::DoRun()
 }
 
 /**
- * \ingroup system-tests-csma
+ * @ingroup system-tests-csma
  *
- * \brief CSMA TestSuite.
+ * @brief CSMA TestSuite.
  */
 class CsmaSystemTestSuite : public TestSuite
 {

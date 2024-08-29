@@ -21,8 +21,8 @@
 #define ENVIRONMENT_VARIABLE_H
 
 /**
- * \file
- * \ingroup core-environ
+ * @file
+ * @ingroup core-environ
  * Class Environment declaration.
  */
 
@@ -34,7 +34,7 @@
 namespace ns3
 {
 
-/// \todo Reconsider the name?
+/// @todo Reconsider the name?
 /// Rename to just EnvironmentVariableDictionary?
 /// System::EnvironmentVariable?
 
@@ -45,7 +45,7 @@ class EnvVarTestCase;
 }
 
 /**
- * \ingroup core-environ
+ * @ingroup core-environ
  * Hold key,value dictionaries for environment variables.
  *
  * The environment variable can have multiple key,value pairs
@@ -96,10 +96,10 @@ class EnvironmentVariable
      *   (not empty) key exists with no value, or the key was empty and the
      *   environment variable itself is empty.
      *
-     * \param [in] envvar The environment variable.
-     * \param [in] key The key to extract from the environment variable.
-     * \param [in] delim The delimiter between key,value pairs.
-     * \returns Whether the key was found, and its value, as explained above.
+     * @param [in] envvar The environment variable.
+     * @param [in] key The key to extract from the environment variable.
+     * @param [in] delim The delimiter between key,value pairs.
+     * @returns Whether the key was found, and its value, as explained above.
      */
     static KeyFoundType Get(const std::string& envvar,
                             const std::string& key = "",
@@ -114,9 +114,9 @@ class EnvironmentVariable
      * This should be used when one needs to process all key,value
      * pairs, perhaps without knowing the set of possible keys.
      *
-     * \param [in] envvar The environment variable.
-     * \param [in] delim The delimiter between key,value pairs.
-     * \returns The Dictionary.
+     * @param [in] envvar The environment variable.
+     * @param [in] delim The delimiter between key,value pairs.
+     * @returns The Dictionary.
      */
     static std::shared_ptr<Dictionary> GetDictionary(const std::string& envvar,
                                                      const std::string& delim = ";");
@@ -136,16 +136,16 @@ class EnvironmentVariable
          * delimiter will be taken as the value.  If no `=`
          * is given the enpty string will be stored as the value.
          *
-         * \param [in] envvar The environment variable.
-         * \param [in] delim The delimiter between key,value pairs.
+         * @param [in] envvar The environment variable.
+         * @param [in] delim The delimiter between key,value pairs.
          */
         Dictionary(const std::string& envvar, const std::string& delim = ";");
 
         /**
          * Get the value corresponding to a key from this dictionary.
          * If the \p key is empty return the full environment variable value.
-         * \param [in] key The key to extract from the environment variable.
-         * \returns \c true if the key was found, and the associated value.
+         * @param [in] key The key to extract from the environment variable.
+         * @returns \c true if the key was found, and the associated value.
          */
         KeyFoundType Get(const std::string& key = "") const;
 
@@ -153,7 +153,7 @@ class EnvironmentVariable
         using KeyValueStore = std::unordered_map<std::string, std::string>;
 
         /** Get the underlying store, for iterating.
-         * \returns The key, value store.
+         * @returns The key, value store.
          */
         KeyValueStore GetStore() const;
 
@@ -173,7 +173,7 @@ class EnvironmentVariable
      * To set a variable to the empty string use `Set(variable, "")`.
      * Note: empty environment variables are not portable (unsupported on Windows).
      *
-     * \param [in] variable The environment variable to set.  Note this may not contain the `=`
+     * @param [in] variable The environment variable to set.  Note this may not contain the `=`
      * character. \param [in] value The value to set.  Note this must not be an empty string on
      * Windows. \returns \c true if the variable was set successfully
      */
@@ -184,13 +184,13 @@ class EnvironmentVariable
      * This removes the variable from the environment.
      * To set a variable to the empty string use `Set(variable, "")`.
      *
-     * \param [in] variable The environment variable to unset.  Note this may not contain the `=`
+     * @param [in] variable The environment variable to unset.  Note this may not contain the `=`
      * character. \returns \c true if the variable was unset successfully.
      */
     static bool Unset(const std::string& variable);
 
     /**
-     * \name Singleton
+     * @name Singleton
      *
      * This class is a singleton, accessed by static member functions,
      * so the Rule of Five functions are all deleted.
@@ -215,7 +215,7 @@ class EnvironmentVariable
 
     /**
      * Access the DictionaryStore instance.
-     * \returns the DictionaryStore.
+     * @returns the DictionaryStore.
      */
     static DictionaryList& Instance();
 

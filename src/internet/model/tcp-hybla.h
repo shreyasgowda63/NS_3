@@ -28,9 +28,9 @@ namespace ns3
 class TcpSocketState;
 
 /**
- * \ingroup congestionOps
+ * @ingroup congestionOps
  *
- * \brief Implementation of the TCP Hybla algorithm
+ * @brief Implementation of the TCP Hybla algorithm
  *
  * The key idea behind TCP Hybla is to obtain for long RTT connections the same
  * instantaneous transmission rate of a reference TCP connection with lower RTT.
@@ -48,8 +48,8 @@ class TcpHybla : public TcpNewReno
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -59,8 +59,8 @@ class TcpHybla : public TcpNewReno
     TcpHybla();
 
     /**
-     * \brief Copy constructor
-     * \param sock the object to copy
+     * @brief Copy constructor
+     * @param sock the object to copy
      */
     TcpHybla(const TcpHybla& sock);
 
@@ -82,8 +82,8 @@ class TcpHybla : public TcpNewReno
 
   private:
     /**
-     * \brief Recalculate algorithm parameters
-     * \param tcb the socket state.
+     * @brief Recalculate algorithm parameters
+     * @param tcb the socket state.
      */
     void RecalcParam(const Ptr<TcpSocketState>& tcb);
 };

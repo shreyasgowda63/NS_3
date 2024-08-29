@@ -38,9 +38,9 @@ class NetDevice;
 class PacketSocketAddress;
 
 /**
- * \ingroup socket
+ * @ingroup socket
  *
- * \brief A PacketSocket is a link between an application and a net device.
+ * @brief A PacketSocket is a link between an application and a net device.
  *
  * A PacketSocket can be used to connect an application to a net
  * device. The application provides the buffers of data, the socket
@@ -87,16 +87,16 @@ class PacketSocketAddress;
  *
  * - DeviceNameTag:  contains the TypeId string of the relevant NetDevice
  *
- * \see class PacketSocketTag
- * \see class DeviceNameTag
+ * @see class PacketSocketTag
+ * @see class DeviceNameTag
  */
 
 class PacketSocket : public Socket
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -104,8 +104,8 @@ class PacketSocket : public Socket
     ~PacketSocket() override;
 
     /**
-     * \brief Set the associated node.
-     * \param node the node
+     * @brief Set the associated node.
+     * @param node the node
      */
     void SetNode(Ptr<Node> node);
 
@@ -113,27 +113,27 @@ class PacketSocket : public Socket
     SocketType GetSocketType() const override;
     Ptr<Node> GetNode() const override;
     /**
-     * \brief Bind the socket to the NetDevice and register the protocol handler.
+     * @brief Bind the socket to the NetDevice and register the protocol handler.
      *
-     * \warning this will actually bind protocol "0".
+     * @warning this will actually bind protocol "0".
      *
-     * \returns 0 on success, -1 on failure.
+     * @returns 0 on success, -1 on failure.
      */
     int Bind() override;
     /**
-     * \brief Bind the socket to the NetDevice and register the protocol handler.
+     * @brief Bind the socket to the NetDevice and register the protocol handler.
      *
-     * \warning this will actually bind protocol "0".
+     * @warning this will actually bind protocol "0".
      *
-     * \returns 0 on success, -1 on failure.
+     * @returns 0 on success, -1 on failure.
      */
     int Bind6() override;
     /**
-     * \brief Bind the socket to the NetDevice and register the
+     * @brief Bind the socket to the NetDevice and register the
      *        protocol handler specified in the address.
      *
-     * \param address the packet socket address
-     * \returns 0 on success, -1 on failure.
+     * @param address the packet socket address
+     * @returns 0 on success, -1 on failure.
      */
     int Bind(const Address& address) override;
     int Close() override;
@@ -154,14 +154,14 @@ class PacketSocket : public Socket
 
   private:
     /**
-     * \brief Called by the L3 protocol when it received a packet to pass on to TCP.
+     * @brief Called by the L3 protocol when it received a packet to pass on to TCP.
      *
-     * \param device the incoming NetDevice
-     * \param packet the incoming packet
-     * \param protocol the protocol
-     * \param from sender address
-     * \param to destination address
-     * \param packetType packet type
+     * @param device the incoming NetDevice
+     * @param packet the incoming packet
+     * @param protocol the protocol
+     * @param from sender address
+     * @param to destination address
+     * @param packetType packet type
      */
     void ForwardUp(Ptr<NetDevice> device,
                    Ptr<const Packet> packet,
@@ -170,23 +170,23 @@ class PacketSocket : public Socket
                    const Address& to,
                    NetDevice::PacketType packetType);
     /**
-     * \brief Bind the socket to the NetDevice and register the
+     * @brief Bind the socket to the NetDevice and register the
      *        protocol handler specified in the address.
-     * \param address the packet socket address
-     * \returns 0 on success, -1 on failure.
+     * @param address the packet socket address
+     * @returns 0 on success, -1 on failure.
      */
     int DoBind(const PacketSocketAddress& address);
 
     /**
-     * \brief Get the minimum MTU supported by the NetDevices bound to a specific address
-     * \param ad the socket address to check for
-     * \returns The minimum MTU
+     * @brief Get the minimum MTU supported by the NetDevices bound to a specific address
+     * @param ad the socket address to check for
+     * @returns The minimum MTU
      */
     uint32_t GetMinMtu(PacketSocketAddress ad) const;
     void DoDispose() override;
 
     /**
-     * \brief States of the socket
+     * @brief States of the socket
      */
     enum State
     {
@@ -217,7 +217,7 @@ class PacketSocket : public Socket
 };
 
 /**
- * \brief  This class implements a tag that carries the dest address of a packet and the packet
+ * @brief  This class implements a tag that carries the dest address of a packet and the packet
  * type.
  */
 class PacketSocketTag : public Tag
@@ -249,8 +249,8 @@ class PacketSocketTag : public Tag
     Address GetDestAddress() const;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -265,7 +265,7 @@ class PacketSocketTag : public Tag
 };
 
 /**
- * \brief  This class implements a tag that carries the ns3 device name from where a packet is
+ * @brief  This class implements a tag that carries the ns3 device name from where a packet is
  * coming.
  */
 class DeviceNameTag : public Tag
@@ -286,8 +286,8 @@ class DeviceNameTag : public Tag
      */
     std::string GetDeviceName() const;
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;

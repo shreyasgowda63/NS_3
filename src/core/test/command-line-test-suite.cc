@@ -30,16 +30,16 @@
 #include <sstream>
 
 /**
- * \file
- * \ingroup core-tests
- * \ingroup commandline
- * \ingroup commandline-tests
+ * @file
+ * @ingroup core-tests
+ * @ingroup commandline
+ * @ingroup commandline-tests
  * CommandLine test suite.
  */
 
 /**
- * \ingroup core-tests
- * \defgroup commandline-tests CommandLine test suite
+ * @ingroup core-tests
+ * @defgroup commandline-tests CommandLine test suite
  */
 
 namespace ns3
@@ -49,7 +49,7 @@ namespace tests
 {
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * A test base class that drives Command Line parsing
  */
 class CommandLineTestCaseBase : public TestCase
@@ -58,7 +58,7 @@ class CommandLineTestCaseBase : public TestCase
     /**
      * Constructor
      *
-     * \param description purpose of this TestCase
+     * @param description purpose of this TestCase
      */
     CommandLineTestCaseBase(std::string description);
 
@@ -70,8 +70,8 @@ class CommandLineTestCaseBase : public TestCase
     /**
      * Exercise the CommandLine with the provided arguments
      *
-     * \param cmd the configured CommandLine
-     * \param n the number of arguments
+     * @param cmd the configured CommandLine
+     * @param n the number of arguments
      */
     void Parse(CommandLine& cmd, int n, ...);
 
@@ -121,7 +121,7 @@ CommandLineTestCaseBase::Parse(CommandLine& cmd, int n, ...)
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * Test boolean Command Line processing
  */
 class CommandLineBooleanTestCase : public CommandLineTestCaseBase
@@ -191,7 +191,7 @@ CommandLineBooleanTestCase::DoRun()
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * Test \c uint8_t Command Line processing
  */
 class CommandLineUint8tTestCase : public CommandLineTestCaseBase
@@ -230,7 +230,7 @@ CommandLineUint8tTestCase::DoRun()
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * Test int Command Line processing
  */
 class CommandLineIntTestCase : public CommandLineTestCaseBase
@@ -278,7 +278,7 @@ CommandLineIntTestCase::DoRun()
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * Test unsigned int Command Line processing
  */
 class CommandLineUnsignedIntTestCase : public CommandLineTestCaseBase
@@ -323,7 +323,7 @@ CommandLineUnsignedIntTestCase::DoRun()
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * Test string Command Line processing
  */
 class CommandLineStringTestCase : public CommandLineTestCaseBase
@@ -368,7 +368,7 @@ CommandLineStringTestCase::DoRun()
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * Test order of argument parsing
  */
 class CommandLineOrderTestCase : public CommandLineTestCaseBase
@@ -408,7 +408,7 @@ CommandLineOrderTestCase::DoRun()
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * Test ignoring invalid arguments
  */
 class CommandLineInvalidTestCase : public CommandLineTestCaseBase
@@ -448,7 +448,7 @@ CommandLineInvalidTestCase::DoRun()
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * Test non-option arguments
  */
 class CommandLineNonOptionTestCase : public CommandLineTestCaseBase
@@ -512,7 +512,7 @@ CommandLineNonOptionTestCase::DoRun()
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * Test \c char* buffer argument
  */
 class CommandLineCharStarTestCase : public CommandLineTestCaseBase
@@ -553,7 +553,7 @@ CommandLineCharStarTestCase::DoRun()
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * The Test Suite that glues all of the Test Cases together.
  */
 class CommandLineTestSuite : public TestSuite
@@ -578,7 +578,7 @@ CommandLineTestSuite::CommandLineTestSuite()
 }
 
 /**
- * \ingroup commandline-tests
+ * @ingroup commandline-tests
  * CommandLineTestSuite instance variable.
  */
 static CommandLineTestSuite g_commandLineTestSuite;

@@ -97,7 +97,7 @@ LtePrimaryCellChangeTestSuite::LtePrimaryCellChangeTestSuite()
 } // end of LtePrimaryCellChangeTestSuite::LtePrimaryCellChangeTestSuite ()
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LtePrimaryCellChangeTestSuite g_ltePrimaryCellChangeTestSuite;

@@ -60,13 +60,13 @@ sigaction(int sig, struct sigaction* action, struct sigaction* old)
 #endif
 
 /**
- * \file
- * \ingroup fatalimpl
- * \brief ns3::FatalImpl::RegisterStream(), ns3::FatalImpl::UnregisterStream(),
+ * @file
+ * @ingroup fatalimpl
+ * @brief ns3::FatalImpl::RegisterStream(), ns3::FatalImpl::UnregisterStream(),
  * and ns3::FatalImpl::FlushStreams() implementations;
  * see Implementation note!
  *
- * \note Implementation.
+ * @note Implementation.
  *
  * The singleton pattern we use here is tricky because we have to ensure:
  *
@@ -90,7 +90,7 @@ namespace FatalImpl
 {
 
 /**
- * \ingroup fatalimpl
+ * @ingroup fatalimpl
  * Unnamed namespace for fatal streams memory implementation
  * and signal handler.
  */
@@ -98,11 +98,11 @@ namespace
 {
 
 /**
- * \ingroup fatalimpl
- * \brief Static variable pointing to the list of output streams
+ * @ingroup fatalimpl
+ * @brief Static variable pointing to the list of output streams
  * to be flushed on fatal errors.
  *
- * \returns The address of the static pointer.
+ * @returns The address of the static pointer.
  */
 std::list<std::ostream*>**
 PeekStreamList()
@@ -113,10 +113,10 @@ PeekStreamList()
 }
 
 /**
- * \ingroup fatalimpl
- * \brief Get the stream list, initializing it if necessary.
+ * @ingroup fatalimpl
+ * @brief Get the stream list, initializing it if necessary.
  *
- * \returns The stream list.
+ * @returns The stream list.
  */
 std::list<std::ostream*>*
 GetStreamList()
@@ -157,7 +157,7 @@ UnregisterStream(std::ostream* stream)
 }
 
 /**
- * \ingroup fatalimpl
+ * @ingroup fatalimpl
  * Unnamed namespace for fatal streams signal handler.
  *
  * This is private to the fatal implementation.
@@ -166,13 +166,13 @@ namespace
 {
 
 /**
- * \ingroup fatalimpl
- * \brief Overrides normal SIGSEGV handler once the HandleTerminate
+ * @ingroup fatalimpl
+ * @brief Overrides normal SIGSEGV handler once the HandleTerminate
  * function is run.
  *
  * This is private to the fatal implementation.
  *
- * \param [in] sig The signal condition.
+ * @param [in] sig The signal condition.
  */
 void
 sigHandler(int sig)

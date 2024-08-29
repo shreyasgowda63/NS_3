@@ -90,8 +90,8 @@ class Experiment
     Experiment();
     /**
      * Run an experiment with the given parameters
-     * \param params the given parameters
-     * \return the throughput
+     * @param params the given parameters
+     * @return the throughput
      */
     double Run(Parameters params);
 };

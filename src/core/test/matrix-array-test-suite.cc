@@ -22,14 +22,14 @@
 #include "ns3/test.h"
 
 /**
- * \defgroup matrixArray-tests MatrixArray tests
- * \ingroup core-tests
- * \ingroup Matrices
+ * @defgroup matrixArray-tests MatrixArray tests
+ * @ingroup core-tests
+ * @ingroup Matrices
  */
 
 /**
- * \file
- * \ingroup matrixArray-tests
+ * @file
+ * @ingroup matrixArray-tests
  * MatrixArray test suite
  */
 namespace ns3
@@ -41,9 +41,9 @@ namespace tests
 NS_LOG_COMPONENT_DEFINE("MatrixArrayTest");
 
 /**
- * \brief Function casts an input valArray "in" (type IN) to an output valArray "out" (type T)
- * \param in Input valarray to be casted
- * \param out Output valarray to receive casted values
+ * @brief Function casts an input valArray "in" (type IN) to an output valArray "out" (type T)
+ * @param in Input valarray to be casted
+ * @param out Output valarray to receive casted values
  */
 template <typename IN, typename T>
 void
@@ -62,7 +62,7 @@ CastStdValarray(const std::valarray<IN>& in, std::valarray<T>& out)
 }
 
 /**
- * \ingroup matrixArray-tests
+ * @ingroup matrixArray-tests
  *  MatrixArray test case for testing constructors, operators and other functions
  */
 template <class T>
@@ -73,32 +73,32 @@ class MatrixArrayTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param [in] name reference name
+     * @param [in] name reference name
      */
     MatrixArrayTestCase(const std::string& name);
 
     /** Destructor. */
     ~MatrixArrayTestCase() override;
     /**
-     * \brief Copy constructor.
+     * @brief Copy constructor.
      * Instruct the compiler to generate the implicitly declared copy constructor
      */
     MatrixArrayTestCase(const MatrixArrayTestCase<T>&) = default;
     /**
-     * \brief Copy assignment operator.
+     * @brief Copy assignment operator.
      * Instruct the compiler to generate the implicitly declared copy assignment operator.
-     * \return A reference to this MatrixArrayTestCase
+     * @return A reference to this MatrixArrayTestCase
      */
     MatrixArrayTestCase<T>& operator=(const MatrixArrayTestCase<T>&) = default;
     /**
-     * \brief Move constructor.
+     * @brief Move constructor.
      * Instruct the compiler to generate the implicitly declared move constructor
      */
     MatrixArrayTestCase(MatrixArrayTestCase<T>&&) = default;
     /**
-     * \brief Move assignment operator.
+     * @brief Move assignment operator.
      * Instruct the compiler to generate the implicitly declared copy constructor
-     * \return A reference to this MatrixArrayTestCase
+     * @return A reference to this MatrixArrayTestCase
      */
     MatrixArrayTestCase<T>& operator=(MatrixArrayTestCase<T>&&) = default;
 
@@ -615,7 +615,7 @@ MatrixArrayTestCase<T>::DoRun()
 }
 
 /**
- * \ingroup matrixArray-tests
+ * @ingroup matrixArray-tests
  *  Test for testing functions that apply to MatrixArrays that use complex numbers,
  *  such as HermitianTranspose that is only defined for complex type
  */
@@ -627,7 +627,7 @@ class ComplexMatrixArrayTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param [in] name reference name
+     * @param [in] name reference name
      */
     ComplexMatrixArrayTestCase(const std::string& name);
     /** Destructor*/
@@ -692,7 +692,7 @@ ComplexMatrixArrayTestCase::DoRun()
 }
 
 /**
- * \ingroup matrixArray-tests
+ * @ingroup matrixArray-tests
  * MatrixArray test suite
  */
 class MatrixArrayTestSuite : public TestSuite
@@ -713,7 +713,7 @@ MatrixArrayTestSuite::MatrixArrayTestSuite()
 }
 
 /**
- * \ingroup matrixArray-tests
+ * @ingroup matrixArray-tests
  * MatrixArrayTestSuite instance variable.
  */
 static MatrixArrayTestSuite g_matrixArrayTestSuite;

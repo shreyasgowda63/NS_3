@@ -55,7 +55,7 @@ NS_LOG_COMPONENT_DEFINE("LteEnbRrc");
 ///////////////////////////////////////////
 
 /**
- * \brief Class for forwarding CMAC SAP User functions.
+ * @brief Class for forwarding CMAC SAP User functions.
  */
 class EnbRrcMemberLteEnbCmacSapUser : public LteEnbCmacSapUser
 {
@@ -63,8 +63,8 @@ class EnbRrcMemberLteEnbCmacSapUser : public LteEnbCmacSapUser
     /**
      * Constructor
      *
-     * \param rrc ENB RRC
-     * \param componentCarrierId
+     * @param rrc ENB RRC
+     * @param componentCarrierId
      */
     EnbRrcMemberLteEnbCmacSapUser(LteEnbRrc* rrc, uint8_t componentCarrierId);
 
@@ -129,8 +129,8 @@ static const std::string g_ueManagerStateName[UeManager::NUM_STATES] = {
 };
 
 /**
- * \param s The UE manager state.
- * \return The string representation of the given state.
+ * @param s The UE manager state.
+ * @return The string representation of the given state.
  */
 static const std::string&
 ToString(UeManager::State s)

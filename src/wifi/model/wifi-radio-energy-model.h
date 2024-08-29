@@ -35,7 +35,7 @@ namespace ns3
 class WifiTxCurrentModel;
 
 /**
- * \ingroup energy
+ * @ingroup energy
  * A WifiPhy listener class for notifying the WifiRadioEnergyModel of Wifi radio
  * state change.
  *
@@ -52,16 +52,16 @@ class WifiRadioEnergyModelPhyListener : public WifiPhyListener
     ~WifiRadioEnergyModelPhyListener() override;
 
     /**
-     * \brief Sets the change state callback. Used by helper class.
+     * @brief Sets the change state callback. Used by helper class.
      *
-     * \param callback Change state callback.
+     * @param callback Change state callback.
      */
     void SetChangeStateCallback(energy::DeviceEnergyModel::ChangeStateCallback callback);
 
     /**
-     * \brief Sets the update TX current callback.
+     * @brief Sets the update TX current callback.
      *
-     * \param callback Update TX current callback.
+     * @param callback Update TX current callback.
      */
     void SetUpdateTxCurrentCallback(UpdateTxCurrentCallback callback);
 
@@ -100,8 +100,8 @@ class WifiRadioEnergyModelPhyListener : public WifiPhyListener
 };
 
 /**
- * \ingroup energy
- * \brief A WiFi radio energy model.
+ * @ingroup energy
+ * @brief A WiFi radio energy model.
  *
  * 4 states are defined for the radio: TX, RX, IDLE, SLEEP. Default state is
  * IDLE.
@@ -162,24 +162,24 @@ class WifiRadioEnergyModel : public energy::DeviceEnergyModel
     typedef Callback<void> WifiRadioEnergyRechargedCallback;
 
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     WifiRadioEnergyModel();
     ~WifiRadioEnergyModel() override;
 
     /**
-     * \brief Sets pointer to EnergySource installed on node.
+     * @brief Sets pointer to EnergySource installed on node.
      *
-     * \param source Pointer to EnergySource installed on node.
+     * @param source Pointer to EnergySource installed on node.
      *
      * Implements DeviceEnergyModel::SetEnergySource.
      */
     void SetEnergySource(const Ptr<energy::EnergySource> source) override;
 
     /**
-     * \returns Total energy consumption of the wifi device in watts.
+     * @returns Total energy consumption of the wifi device in watts.
      *
      * Implements DeviceEnergyModel::GetTotalEnergyConsumption.
      */
@@ -187,149 +187,149 @@ class WifiRadioEnergyModel : public energy::DeviceEnergyModel
 
     // Setter & getters for state power consumption.
     /**
-     * \brief Gets idle current in Amperes.
+     * @brief Gets idle current in Amperes.
      *
-     * \returns idle current of the wifi device.
+     * @returns idle current of the wifi device.
      */
     double GetIdleCurrentA() const;
     /**
-     * \brief Sets idle current in Amperes.
+     * @brief Sets idle current in Amperes.
      *
-     * \param idleCurrentA the idle current
+     * @param idleCurrentA the idle current
      */
     void SetIdleCurrentA(double idleCurrentA);
     /**
-     * \brief Gets CCA busy current in Amperes.
+     * @brief Gets CCA busy current in Amperes.
      *
-     * \returns CCA Busy current of the wifi device.
+     * @returns CCA Busy current of the wifi device.
      */
     double GetCcaBusyCurrentA() const;
     /**
-     * \brief Sets CCA busy current in Amperes.
+     * @brief Sets CCA busy current in Amperes.
      *
-     * \param ccaBusyCurrentA the CCA busy current
+     * @param ccaBusyCurrentA the CCA busy current
      */
     void SetCcaBusyCurrentA(double ccaBusyCurrentA);
     /**
-     * \brief Gets transmit current in Amperes.
+     * @brief Gets transmit current in Amperes.
      *
-     * \returns transmit current of the wifi device.
+     * @returns transmit current of the wifi device.
      */
     double GetTxCurrentA() const;
     /**
-     * \brief Sets transmit current in Amperes.
+     * @brief Sets transmit current in Amperes.
      *
-     * \param txCurrentA the transmit current
+     * @param txCurrentA the transmit current
      */
     void SetTxCurrentA(double txCurrentA);
     /**
-     * \brief Gets receive current in Amperes.
+     * @brief Gets receive current in Amperes.
      *
-     * \returns receive current of the wifi device.
+     * @returns receive current of the wifi device.
      */
     double GetRxCurrentA() const;
     /**
-     * \brief Sets receive current in Amperes.
+     * @brief Sets receive current in Amperes.
      *
-     * \param rxCurrentA the receive current
+     * @param rxCurrentA the receive current
      */
     void SetRxCurrentA(double rxCurrentA);
     /**
-     * \brief Gets switching current in Amperes.
+     * @brief Gets switching current in Amperes.
      *
-     * \returns switching current of the wifi device.
+     * @returns switching current of the wifi device.
      */
     double GetSwitchingCurrentA() const;
     /**
-     * \brief Sets switching current in Amperes.
+     * @brief Sets switching current in Amperes.
      *
-     * \param switchingCurrentA the switching current
+     * @param switchingCurrentA the switching current
      */
     void SetSwitchingCurrentA(double switchingCurrentA);
     /**
-     * \brief Gets sleep current in Amperes.
+     * @brief Gets sleep current in Amperes.
      *
-     * \returns sleep current of the wifi device.
+     * @returns sleep current of the wifi device.
      */
     double GetSleepCurrentA() const;
     /**
-     * \brief Sets sleep current in Amperes.
+     * @brief Sets sleep current in Amperes.
      *
-     * \param sleepCurrentA the sleep current
+     * @param sleepCurrentA the sleep current
      */
     void SetSleepCurrentA(double sleepCurrentA);
 
     /**
-     * \returns Current state.
+     * @returns Current state.
      */
     WifiPhyState GetCurrentState() const;
 
     /**
-     * \param callback Callback function.
+     * @param callback Callback function.
      *
      * Sets callback for energy depletion handling.
      */
     void SetEnergyDepletionCallback(WifiRadioEnergyDepletionCallback callback);
 
     /**
-     * \param callback Callback function.
+     * @param callback Callback function.
      *
      * Sets callback for energy recharged handling.
      */
     void SetEnergyRechargedCallback(WifiRadioEnergyRechargedCallback callback);
 
     /**
-     * \param model the model used to compute the wifi TX current.
+     * @param model the model used to compute the wifi TX current.
      */
     void SetTxCurrentModel(const Ptr<WifiTxCurrentModel> model);
 
     /**
-     * \brief Calls the CalcTxCurrent method of the TX current model to
+     * @brief Calls the CalcTxCurrent method of the TX current model to
      *        compute the TX current based on such model
      *
-     * \param txPowerDbm the nominal TX power in dBm
+     * @param txPowerDbm the nominal TX power in dBm
      */
     void SetTxCurrentFromModel(double txPowerDbm);
 
     /**
-     * \brief Changes state of the WifiRadioEnergyMode.
+     * @brief Changes state of the WifiRadioEnergyMode.
      *
-     * \param newState New state the wifi radio is in.
+     * @param newState New state the wifi radio is in.
      *
      * Implements DeviceEnergyModel::ChangeState.
      */
     void ChangeState(int newState) override;
 
     /**
-     * \param state the wifi state
+     * @param state the wifi state
      *
-     * \returns the time the radio can stay in that state based on the remaining energy.
+     * @returns the time the radio can stay in that state based on the remaining energy.
      */
     Time GetMaximumTimeInState(WifiPhyState state) const;
 
     /**
-     * \brief Handles energy depletion.
+     * @brief Handles energy depletion.
      *
      * Implements DeviceEnergyModel::HandleEnergyDepletion
      */
     void HandleEnergyDepletion() override;
 
     /**
-     * \brief Handles energy recharged.
+     * @brief Handles energy recharged.
      *
      * Implements DeviceEnergyModel::HandleEnergyRecharged
      */
     void HandleEnergyRecharged() override;
 
     /**
-     * \brief Handles energy changed.
+     * @brief Handles energy changed.
      *
      * Implements DeviceEnergyModel::HandleEnergyChanged
      */
     void HandleEnergyChanged() override;
 
     /**
-     * \returns Pointer to the PHY listener.
+     * @returns Pointer to the PHY listener.
      */
     std::shared_ptr<WifiRadioEnergyModelPhyListener> GetPhyListener();
 
@@ -337,20 +337,20 @@ class WifiRadioEnergyModel : public energy::DeviceEnergyModel
     void DoDispose() override;
 
     /**
-     * \param state the wifi state
-     * \returns draw of device in Amperes, at given state.
+     * @param state the wifi state
+     * @returns draw of device in Amperes, at given state.
      */
     double GetStateA(WifiPhyState state) const;
 
     /**
-     * \returns Current draw of device in Amperes, at current state.
+     * @returns Current draw of device in Amperes, at current state.
      *
      * Implements DeviceEnergyModel::GetCurrentA.
      */
     double DoGetCurrentA() const override;
 
     /**
-     * \param state New state the radio device is currently in.
+     * @param state New state the radio device is currently in.
      *
      * Sets current state. This function is private so that only the energy model
      * can change its own state.

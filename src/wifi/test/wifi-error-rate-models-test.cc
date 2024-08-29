@@ -53,10 +53,10 @@ FromRss(double rssDbw)
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Wifi Error Rate Models Test Case Dsss
+ * @brief Wifi Error Rate Models Test Case Dsss
  */
 class WifiErrorRateModelsTestCaseDsss : public TestCase
 {
@@ -162,10 +162,10 @@ WifiErrorRateModelsTestCaseDsss::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Wifi Error Rate Models Test Case Nist
+ * @brief Wifi Error Rate Models Test Case Nist
  */
 class WifiErrorRateModelsTestCaseNist : public TestCase
 {
@@ -407,10 +407,10 @@ class TestInterferenceHelper : public InterferenceHelper
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Wifi Error Rate Models Test Case MIMO
+ * @brief Wifi Error Rate Models Test Case MIMO
  */
 class WifiErrorRateModelsTestCaseMimo : public TestCase
 {
@@ -948,10 +948,10 @@ std::map<std::pair<uint8_t /* mcs */, uint32_t /* size */>,
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Wifi Table-based Error Rate Models Test Case
+ * @brief Wifi Table-based Error Rate Models Test Case
  */
 class TableBasedErrorRateTestCase : public TestCase
 {
@@ -959,9 +959,9 @@ class TableBasedErrorRateTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param testName the test name
-     * \param mode the WifiMode to use for the test
-     * \param size the number of bytes to use for the test
+     * @param testName the test name
+     * @param mode the WifiMode to use for the test
+     * @param size the number of bytes to use for the test
      */
     TableBasedErrorRateTestCase(const std::string& testName, WifiMode mode, uint32_t size);
     ~TableBasedErrorRateTestCase() override;
@@ -1039,10 +1039,10 @@ TableBasedErrorRateTestCase::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Wifi Error Rate Models Test Suite
+ * @brief Wifi Error Rate Models Test Suite
  */
 class WifiErrorRateModelsTestSuite : public TestSuite
 {

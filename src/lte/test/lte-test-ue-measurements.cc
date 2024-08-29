@@ -233,7 +233,7 @@ LteUeMeasurementsTestSuite::LteUeMeasurementsTestSuite()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteUeMeasurementsTestSuite lteUeMeasurementsTestSuite;
@@ -698,7 +698,7 @@ LteUeMeasurementsPiecewiseTestSuite1::LteUeMeasurementsPiecewiseTestSuite1()
 } // end of LteUeMeasurementsPiecewiseTestSuite1::LteUeMeasurementsPiecewiseTestSuite1
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteUeMeasurementsPiecewiseTestSuite1 lteUeMeasurementsPiecewiseTestSuite1;
@@ -1401,7 +1401,7 @@ LteUeMeasurementsPiecewiseTestSuite2::LteUeMeasurementsPiecewiseTestSuite2()
 } // end of LteUeMeasurementsPiecewiseTestSuite2::LteUeMeasurementsPiecewiseTestSuite2
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteUeMeasurementsPiecewiseTestSuite2 lteUeMeasurementsPiecewiseTestSuite2;
@@ -1728,7 +1728,7 @@ LteUeMeasurementsPiecewiseTestSuite3::LteUeMeasurementsPiecewiseTestSuite3()
 } // end of LteUeMeasurementsPiecewiseTestSuite3::LteUeMeasurementsPiecewiseTestSuite3
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteUeMeasurementsPiecewiseTestSuite3 lteUeMeasurementsPiecewiseTestSuite3;
@@ -2279,7 +2279,7 @@ LteUeMeasurementsHandoverTestSuite::LteUeMeasurementsHandoverTestSuite()
 } // end of LteUeMeasurementsHandoverTestSuite::LteUeMeasurementsHandoverTestSuite
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteUeMeasurementsHandoverTestSuite lteUeMeasurementsHandoverTestSuite;

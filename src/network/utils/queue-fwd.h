@@ -23,8 +23,8 @@
 #include <list>
 
 /**
- * \file
- * \ingroup queue
+ * @file
+ * @ingroup queue
  * Forward declaration of template class Queue.
  */
 

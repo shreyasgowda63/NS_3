@@ -26,8 +26,8 @@ namespace ns3
 {
 
 /**
- * \ingroup wifi
- * \brief use constant rates for data and RTS transmissions
+ * @ingroup wifi
+ * @brief use constant rates for data and RTS transmissions
  *
  * This class uses always the same transmission rate for every
  * packet sent.
@@ -36,8 +36,8 @@ class ConstantRateWifiManager : public WifiRemoteStationManager
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     ConstantRateWifiManager();

@@ -33,14 +33,14 @@ namespace ns3
 {
 
 /**
- * \ingroup nix-vector-routing
+ * @ingroup nix-vector-routing
  *
- * \brief Helper class that adds Nix-vector routing to nodes.
+ * @brief Helper class that adds Nix-vector routing to nodes.
  *
  * This class is expected to be used in conjunction with
  * ns3::InternetStackHelper::SetRoutingHelper
  *
- * \internal
+ * @internal
  * Since this class is meant to be specialized only by Ipv4RoutingHelper or
  * Ipv6RoutingHelper the implementation of this class doesn't need to be
  * exposed here; it is in nix-vector-helper.cc.
@@ -69,10 +69,10 @@ class NixVectorHelper : public std::enable_if_t<std::is_same_v<Ipv4RoutingHelper
     NixVectorHelper();
 
     /**
-     * \brief Construct an NixVectorHelper from another previously
+     * @brief Construct an NixVectorHelper from another previously
      * initialized instance (Copy Constructor).
      *
-     * \param o object to copy
+     * @param o object to copy
      */
     NixVectorHelper(const NixVectorHelper<T>& o);
 
@@ -80,7 +80,7 @@ class NixVectorHelper : public std::enable_if_t<std::is_same_v<Ipv4RoutingHelper
     NixVectorHelper& operator=(const NixVectorHelper&) = delete;
 
     /**
-     * \returns pointer to clone of this NixVectorHelper
+     * @returns pointer to clone of this NixVectorHelper
      *
      * This method is mainly for internal use by the other helpers;
      * clients are expected to free the dynamic memory allocated by this method
@@ -88,22 +88,22 @@ class NixVectorHelper : public std::enable_if_t<std::is_same_v<Ipv4RoutingHelper
     NixVectorHelper<T>* Copy() const override;
 
     /**
-     * \param node the node on which the routing protocol will run
-     * \returns a newly-created routing protocol
+     * @param node the node on which the routing protocol will run
+     * @returns a newly-created routing protocol
      *
      * This method will be called by ns3::InternetStackHelper::Install
      */
     Ptr<IpRoutingProtocol> Create(Ptr<Node> node) const override;
 
     /**
-     * \brief prints the routing path for a source and destination at a particular time.
+     * @brief prints the routing path for a source and destination at a particular time.
      * If the routing path does not exist, it prints that the path does not exist between
      * the nodes in the ostream.
-     * \param printTime the time at which the routing path is supposed to be printed.
-     * \param source the source node pointer to start traversing
-     * \param dest the IP destination address
-     * \param stream the output stream object to use
-     * \param unit the time unit to be used in the report
+     * @param printTime the time at which the routing path is supposed to be printed.
+     * @param source the source node pointer to start traversing
+     * @param dest the IP destination address
+     * @param stream the output stream object to use
+     * @param unit the time unit to be used in the report
      *
      * This method calls the PrintRoutingPath() method of the
      * NixVectorRouting for the source and destination to provide
@@ -119,12 +119,12 @@ class NixVectorHelper : public std::enable_if_t<std::is_same_v<Ipv4RoutingHelper
     ObjectFactory m_agentFactory; //!< Object factory
 
     /**
-     * \brief prints the routing path for the source and destination. If the routing path
+     * @brief prints the routing path for the source and destination. If the routing path
      * does not exist, it prints that the path does not exist between the nodes in the ostream.
-     * \param source the source node pointer to start traversing
-     * \param dest the IP destination address
-     * \param stream the output stream object to use
-     * \param unit the time unit to be used in the report
+     * @param source the source node pointer to start traversing
+     * @param dest the IP destination address
+     * @param stream the output stream object to use
+     * @param unit the time unit to be used in the report
      *
      * This method calls the PrintRoutingPath() method of the
      * NixVectorRouting for the source and destination to provide
@@ -137,7 +137,7 @@ class NixVectorHelper : public std::enable_if_t<std::is_same_v<Ipv4RoutingHelper
 };
 
 /**
- * \ingroup nix-vector-routing
+ * @ingroup nix-vector-routing
  * Create the typedef Ipv4NixVectorHelper with T as Ipv4RoutingHelper
  *
  * Note: This typedef enables also backwards compatibility with original Ipv4RoutingHelper.
@@ -145,7 +145,7 @@ class NixVectorHelper : public std::enable_if_t<std::is_same_v<Ipv4RoutingHelper
 typedef NixVectorHelper<Ipv4RoutingHelper> Ipv4NixVectorHelper;
 
 /**
- * \ingroup nix-vector-routing
+ * @ingroup nix-vector-routing
  * Create the typedef Ipv6NixVectorHelper with T as Ipv6RoutingHelper
  */
 typedef NixVectorHelper<Ipv6RoutingHelper> Ipv6NixVectorHelper;

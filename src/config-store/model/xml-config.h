@@ -33,8 +33,8 @@ namespace ns3
 {
 
 /**
- * \ingroup configstore
- * \brief A class to enable saving of configuration store in an XML file
+ * @ingroup configstore
+ * @brief A class to enable saving of configuration store in an XML file
  *
  */
 class XmlConfigSave : public FileConfig
@@ -53,8 +53,8 @@ class XmlConfigSave : public FileConfig
 };
 
 /**
- * \ingroup configstore
- * \brief A class to enable loading of configuration store from an XML file
+ * @ingroup configstore
+ * @brief A class to enable loading of configuration store from an XML file
  */
 class XmlConfigLoad : public FileConfig
 {

@@ -23,9 +23,9 @@
 using namespace ns3;
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 network number allocator Test
+ * @brief IPv6 network number allocator Test
  */
 class NetworkNumber6AllocatorTestCase : public TestCase
 {
@@ -81,9 +81,9 @@ NetworkNumber6AllocatorTestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 address allocator Test
+ * @brief IPv6 address allocator Test
  */
 class AddressAllocator6TestCase : public TestCase
 {
@@ -145,9 +145,9 @@ AddressAllocator6TestCase::DoTeardown()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 network number and address allocator Test
+ * @brief IPv6 network number and address allocator Test
  */
 class NetworkAndAddress6TestCase : public TestCase
 {
@@ -196,9 +196,9 @@ NetworkAndAddress6TestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 example of an address generator Test
+ * @brief IPv6 example of an address generator Test
  */
 class ExampleAddress6GeneratorTestCase : public TestCase
 {
@@ -260,9 +260,9 @@ ExampleAddress6GeneratorTestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 address collision Test
+ * @brief IPv6 address collision Test
  */
 class AddressCollision6TestCase : public TestCase
 {
@@ -342,9 +342,9 @@ AddressCollision6TestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 address generator TestSuite
+ * @brief IPv6 address generator TestSuite
  */
 class Ipv6AddressGeneratorTestSuite : public TestSuite
 {

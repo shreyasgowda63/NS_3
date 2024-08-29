@@ -32,9 +32,9 @@ namespace ns3
 namespace dot11s
 {
 /**
- * \ingroup dot11s
+ * @ingroup dot11s
  *
- * \brief Routing table for HWMP -- 802.11s routing protocol
+ * @brief Routing table for HWMP -- 802.11s routing protocol
  */
 class HwmpRtable : public Object
 {
@@ -55,11 +55,11 @@ class HwmpRtable : public Object
         /**
          * Lookup result function
          *
-         * \param r the result address
-         * \param i the interface
-         * \param m the metric
-         * \param s the sequence number
-         * \param l the lifetime
+         * @param r the result address
+         * @param i the interface
+         * @param m the metric
+         * @param s the sequence number
+         * @param l the lifetime
          */
         LookupResult(Mac48Address r = Mac48Address::GetBroadcast(),
                      uint32_t i = INTERFACE_ANY,
@@ -67,13 +67,13 @@ class HwmpRtable : public Object
                      uint32_t s = 0,
                      Time l = Seconds(0.0));
         /**
-         * \returns True for valid route
+         * @returns True for valid route
          */
         bool IsValid() const;
         /**
          * Compare route lookup results, used by tests
-         * \param o the lookup result to compare
-         * \returns true if equal
+         * @param o the lookup result to compare
+         * @returns true if equal
          */
         bool operator==(const LookupResult& o) const;
     };
@@ -83,25 +83,25 @@ class HwmpRtable : public Object
 
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     HwmpRtable();
     ~HwmpRtable() override;
     void DoDispose() override;
 
-    /// \name Add/delete paths
+    /// @name Add/delete paths
     ///@{
 
     /**
      * Add a reactive path
-     * \param destination the destination address
-     * \param retransmitter the retransmitter address
-     * \param interface the interface
-     * \param metric  the metric
-     * \param lifetime  the lifetime
-     * \param seqnum  the sequence number
+     * @param destination the destination address
+     * @param retransmitter the retransmitter address
+     * @param interface the interface
+     * @param metric  the metric
+     * @param lifetime  the lifetime
+     * @param seqnum  the sequence number
      */
     void AddReactivePath(Mac48Address destination,
                          Mac48Address retransmitter,
@@ -111,12 +111,12 @@ class HwmpRtable : public Object
                          uint32_t seqnum);
     /**
      * Add a proactive path
-     * \param metric  the metric
-     * \param root the address of the root
-     * \param retransmitter the retransmitter address
-     * \param interface the interface
-     * \param lifetime  the lifetime
-     * \param seqnum  the sequence number
+     * @param metric  the metric
+     * @param root the address of the root
+     * @param retransmitter the retransmitter address
+     * @param interface the interface
+     * @param lifetime  the lifetime
+     * @param seqnum  the sequence number
      */
     void AddProactivePath(uint32_t metric,
                           Mac48Address root,
@@ -126,10 +126,10 @@ class HwmpRtable : public Object
                           uint32_t seqnum);
     /**
      * Add a precursor
-     * \param destination the destination address
-     * \param precursorInterface the precursor interface
-     * \param precursorAddress the address of the precursor
-     * \param lifetime the lifetime
+     * @param destination the destination address
+     * @param precursorInterface the precursor interface
+     * @param precursorAddress the address of the precursor
+     * @param lifetime the lifetime
      */
     void AddPrecursor(Mac48Address destination,
                       uint32_t precursorInterface,
@@ -138,8 +138,8 @@ class HwmpRtable : public Object
 
     /**
      * Get the precursors list
-     * \param destination the destination
-     * \return the precursors list
+     * @param destination the destination
+     * @return the precursors list
      */
     PrecursorList GetPrecursors(Mac48Address destination);
 
@@ -149,39 +149,39 @@ class HwmpRtable : public Object
     void DeleteProactivePath();
     /**
      * Delete all the proactive paths from a given root
-     * \param root the address of the root
+     * @param root the address of the root
      */
     void DeleteProactivePath(Mac48Address root);
     /**
      * Delete the reactive paths toward a destination
-     * \param destination the destination
+     * @param destination the destination
      */
     void DeleteReactivePath(Mac48Address destination);
     ///@}
 
-    /// \name Lookup
+    /// @name Lookup
     ///@{
     /**
      * Lookup path to destination
-     * \param destination the destination
-     * \return The lookup result
+     * @param destination the destination
+     * @return The lookup result
      */
     LookupResult LookupReactive(Mac48Address destination);
     /**
      * Return all reactive paths, including expired
-     * \param destination the destination
-     * \return The lookup result
+     * @param destination the destination
+     * @return The lookup result
      */
     LookupResult LookupReactiveExpired(Mac48Address destination);
     /**
      * Find proactive path to tree root. Note that calling this method has side effect of deleting
      * expired proactive path
-     * \return The lookup result
+     * @return The lookup result
      */
     LookupResult LookupProactive();
     /**
      * Return all proactive paths, including expired
-     * \return The lookup result
+     * @return The lookup result
      */
     LookupResult LookupProactiveExpired();
     ///@}
@@ -189,8 +189,8 @@ class HwmpRtable : public Object
     /**
      * When peer link with a given MAC-address fails - it returns list of unreachable destination
      * addresses
-     * \param peerAddress the peer address
-     * \returns the list of unreachable destinations
+     * @param peerAddress the peer address
+     * @returns the list of unreachable destinations
      */
     std::vector<HwmpProtocol::FailedDestination> GetUnreachableDestinations(
         Mac48Address peerAddress);

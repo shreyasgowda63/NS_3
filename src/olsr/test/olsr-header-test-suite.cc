@@ -25,8 +25,8 @@
 using namespace ns3;
 
 /**
- * \ingroup olsr-test
- * \ingroup tests
+ * @ingroup olsr-test
+ * @ingroup tests
  *
  * Check Emf olsr time conversion
  */
@@ -54,8 +54,8 @@ OlsrEmfTestCase::DoRun()
 }
 
 /**
- * \ingroup olsr-test
- * \ingroup tests
+ * @ingroup olsr-test
+ * @ingroup tests
  *
  * Check Mid olsr messages
  */
@@ -167,8 +167,8 @@ OlsrMidTestCase::DoRun()
 }
 
 /**
- * \ingroup olsr-test
- * \ingroup tests
+ * @ingroup olsr-test
+ * @ingroup tests
  *
  * Check Hello olsr messages
  */
@@ -238,8 +238,8 @@ OlsrHelloTestCase::DoRun()
 }
 
 /**
- * \ingroup olsr-test
- * \ingroup tests
+ * @ingroup olsr-test
+ * @ingroup tests
  *
  * Check Tc olsr messages
  */
@@ -281,8 +281,8 @@ OlsrTcTestCase::DoRun()
 }
 
 /**
- * \ingroup olsr-test
- * \ingroup tests
+ * @ingroup olsr-test
+ * @ingroup tests
  *
  * Check Hna olsr messages
  */
@@ -327,8 +327,8 @@ OlsrHnaTestCase::DoRun()
 }
 
 /**
- * \ingroup olsr-test
- * \ingroup tests
+ * @ingroup olsr-test
+ * @ingroup tests
  *
  * Check olsr header messages
  */

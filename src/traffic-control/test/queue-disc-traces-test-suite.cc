@@ -29,9 +29,9 @@
 using namespace ns3;
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Queue Disc Test Item
+ * @brief Queue Disc Test Item
  */
 class QdTestItem : public QueueDiscItem
 {
@@ -39,8 +39,8 @@ class QdTestItem : public QueueDiscItem
     /**
      * Constructor
      *
-     * \param p the packet
-     * \param addr the address
+     * @param p the packet
+     * @param addr the address
      */
     QdTestItem(Ptr<Packet> p, const Address& addr);
     ~QdTestItem() override;
@@ -69,9 +69,9 @@ QdTestItem::Mark()
 }
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Test Child Queue Disc that may drop packets before enqueue or after dequeue
+ * @brief Test Child Queue Disc that may drop packets before enqueue or after dequeue
  */
 class TestChildQueueDisc : public QueueDisc
 {
@@ -139,9 +139,9 @@ TestChildQueueDisc::InitializeParams()
 }
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Test Parent Queue Disc having a child of type TestChildQueueDisc
+ * @brief Test Parent Queue Disc having a child of type TestChildQueueDisc
  */
 class TestParentQueueDisc : public QueueDisc
 {
@@ -193,9 +193,9 @@ TestParentQueueDisc::InitializeParams()
 }
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Keep statistics based on traces
+ * @brief Keep statistics based on traces
  */
 class TestCounter
 {
@@ -208,31 +208,31 @@ class TestCounter
 
     /**
      * Connect private methods to the queue disc traces
-     * \param qd the queue disc
+     * @param qd the queue disc
      */
     void ConnectTraces(Ptr<QueueDisc> qd);
 
   private:
     /**
      * Update statistics after a packet has been enqueued
-     * \param item the enqueued packet
+     * @param item the enqueued packet
      */
     void PacketEnqueued(Ptr<const QueueDiscItem> item);
     /**
      * Update statistics after a packet has been dequeued
-     * \param item the dequeued packet
+     * @param item the dequeued packet
      */
     void PacketDequeued(Ptr<const QueueDiscItem> item);
     /**
      * Update statistics after a packet has been dropped before enqueue
-     * \param item the dropped packet
-     * \param reason the reason why the packet was dropped
+     * @param item the dropped packet
+     * @param reason the reason why the packet was dropped
      */
     void PacketDbe(Ptr<const QueueDiscItem> item, const char* reason);
     /**
      * Update statistics after a packet has been dropped after dequeue
-     * \param item the dropped packet
-     * \param reason the reason why the packet was dropped
+     * @param item the dropped packet
+     * @param reason the reason why the packet was dropped
      */
     void PacketDad(Ptr<const QueueDiscItem> item, const char* reason);
 
@@ -299,9 +299,9 @@ TestCounter::ConnectTraces(Ptr<QueueDisc> qd)
 }
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Queue Disc Traces Test Case
+ * @brief Queue Disc Traces Test Case
  *
  * This test case makes use of a test queue disc acting as root queue disc and
  * having a single child queue disc, which has a single DropTail queue. The
@@ -321,23 +321,23 @@ class QueueDiscTracesTestCase : public TestCase
 
     /**
      * Check that queued packets/bytes are consistent with what is expected
-     * \param qd the queue disc
-     * \param nPackets the expected number of packets
-     * \param nBytes the expected number of bytes
+     * @param qd the queue disc
+     * @param nPackets the expected number of packets
+     * @param nBytes the expected number of bytes
      */
     void CheckQueued(Ptr<QueueDisc> qd, uint32_t nPackets, uint32_t nBytes);
     /**
      * Check that packets/bytes dropped before enqueue are consistent with what is expected
-     * \param qd the queue disc
-     * \param nDbePackets the expected number of packets
-     * \param nDbeBytes the expected number of bytes
+     * @param qd the queue disc
+     * @param nDbePackets the expected number of packets
+     * @param nDbeBytes the expected number of bytes
      */
     void CheckDroppedBeforeEnqueue(Ptr<QueueDisc> qd, uint32_t nDbePackets, uint32_t nDbeBytes);
     /**
      * Check that packets/bytes dropped after dequeue are consistent with what is expected
-     * \param qd the queue disc
-     * \param nDadPackets the expected number of packets
-     * \param nDadBytes the expected number of bytes
+     * @param qd the queue disc
+     * @param nDadPackets the expected number of packets
+     * @param nDadBytes the expected number of bytes
      */
     void CheckDroppedAfterDequeue(Ptr<QueueDisc> qd, uint32_t nDadPackets, uint32_t nDadBytes);
 
@@ -584,9 +584,9 @@ QueueDiscTracesTestCase::DoRun()
 }
 
 /**
- * \ingroup traffic-control-test
+ * @ingroup traffic-control-test
  *
- * \brief Queue Disc Traces Test Suite
+ * @brief Queue Disc Traces Test Suite
  */
 static class QueueDiscTracesTestSuite : public TestSuite
 {

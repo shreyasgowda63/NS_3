@@ -28,9 +28,9 @@
 using namespace ns3;
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test 1.1 SINR calculation in downlink
+ * @brief Test 1.1 SINR calculation in downlink
  */
 class LteDownlinkSinrTestSuite : public TestSuite
 {
@@ -39,9 +39,9 @@ class LteDownlinkSinrTestSuite : public TestSuite
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief  Test compares if the generated SINR is equal to estimated SINR
+ * @brief  Test compares if the generated SINR is equal to estimated SINR
  *  value. Test generates several calls to LteSpectrumPhy::StartRx corresponding
  *  to several signals. One will be the signal of interest, i.e., the
  *  LteSpectrumSignalParametersDlCtrlFrame of the first signal will have the
@@ -54,9 +54,9 @@ class LteDownlinkDataSinrTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param sv the spectrum value
-     * \param sinr the SINR
-     * \param name the name of the test
+     * @param sv the spectrum value
+     * @param sinr the SINR
+     * @param name the name of the test
      */
     LteDownlinkDataSinrTestCase(Ptr<SpectrumValue> sv, Ptr<SpectrumValue> sinr, std::string name);
     ~LteDownlinkDataSinrTestCase() override;
@@ -70,9 +70,9 @@ class LteDownlinkDataSinrTestCase : public TestCase
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief
+ * @brief
  *  Test compares if the generated SINR is equal to estimated SINR value.
  *  Test generates several calls to LteSpectrumPhy::StartRx corresponding
  *  to several signals. One will be the signal of interest, i.e., the
@@ -86,9 +86,9 @@ class LteDownlinkCtrlSinrTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param sv the spectrum value
-     * \param sinr the SINR
-     * \param name the name of the test
+     * @param sv the spectrum value
+     * @param sinr the SINR
+     * @param name the name of the test
      */
     LteDownlinkCtrlSinrTestCase(Ptr<SpectrumValue> sv, Ptr<SpectrumValue> sinr, std::string name);
     ~LteDownlinkCtrlSinrTestCase() override;

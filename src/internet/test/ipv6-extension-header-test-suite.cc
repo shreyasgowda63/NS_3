@@ -34,9 +34,9 @@ using namespace ns3;
 // ===========================================================================
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 extensions Test: Empty option field.
+ * @brief IPv6 extensions Test: Empty option field.
  */
 class TestEmptyOptionField : public TestCase
 {
@@ -74,9 +74,9 @@ class TestEmptyOptionField : public TestCase
 // ===========================================================================
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 extensions Test: Option without alignment.
+ * @brief IPv6 extensions Test: Option without alignment.
  */
 class OptionWithoutAlignmentHeader : public Ipv6OptionHeader
 {
@@ -97,9 +97,9 @@ class OptionWithoutAlignmentHeader : public Ipv6OptionHeader
 };
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 extensions Test: Test the option without alignment.
+ * @brief IPv6 extensions Test: Test the option without alignment.
  */
 class TestOptionWithoutAlignment : public TestCase
 {
@@ -147,9 +147,9 @@ class TestOptionWithoutAlignment : public TestCase
 // ===========================================================================
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 extensions Test: Option with alignment.
+ * @brief IPv6 extensions Test: Option with alignment.
  */
 class OptionWithAlignmentHeader : public Ipv6OptionHeader
 {
@@ -175,9 +175,9 @@ class OptionWithAlignmentHeader : public Ipv6OptionHeader
 };
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 extensions Test: Test the option with alignment.
+ * @brief IPv6 extensions Test: Test the option with alignment.
  */
 class TestOptionWithAlignment : public TestCase
 {
@@ -232,9 +232,9 @@ class TestOptionWithAlignment : public TestCase
 // ===========================================================================
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 extensions Test: Test an option already aligned.
+ * @brief IPv6 extensions Test: Test an option already aligned.
  */
 class TestFulfilledAlignment : public TestCase
 {
@@ -271,9 +271,9 @@ class TestFulfilledAlignment : public TestCase
 };
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv6 extensions TestSuite.
+ * @brief IPv6 extensions TestSuite.
  */
 class Ipv6ExtensionHeaderTestSuite : public TestSuite
 {

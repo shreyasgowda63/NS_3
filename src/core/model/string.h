@@ -25,8 +25,8 @@
 #include <vector>
 
 /**
- * \file
- * \ingroup attribute_String
+ * @file
+ * @ingroup attribute_String
  * ns3::StringValue attribute value declarations.
  */
 
@@ -39,9 +39,9 @@ using StringVector = std::vector<std::string>;
 /**
  * Split a string on a delimiter.
  * The input string is ummodified.
- * \param [in] str The string.
- * \param [in] delim The delimiter.
- * \returns A vector of the components of \p str which were separated
+ * @param [in] str The string.
+ * @param [in] delim The delimiter.
+ * @returns A vector of the components of \p str which were separated
  * by \p delim.
  */
 StringVector SplitString(const std::string& str, const std::string& delim);

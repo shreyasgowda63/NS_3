@@ -40,9 +40,9 @@
 #include <iomanip>
 
 /**
- * \file
- * \ingroup hash
- * \brief ns3::Hash::Function::Murmur3 implementation.
+ * @file
+ * @ingroup hash
+ * @brief ns3::Hash::Function::Murmur3 implementation.
  */
 
 namespace ns3
@@ -61,8 +61,8 @@ namespace Murmur3Implementation
 {
 
 /**
- * \ingroup hash
- * \defgroup hash_murmur3 Murmur3 Hash Implementation
+ * @ingroup hash
+ * @defgroup hash_murmur3 Murmur3 Hash Implementation
  */
 /**@{*/
 

@@ -97,10 +97,10 @@ AssignWifiRandomStreams(Ptr<WifiMac> mac, int64_t stream)
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Wifi Test
+ * @brief Wifi Test
  */
 class WifiTest : public TestCase
 {
@@ -114,13 +114,13 @@ class WifiTest : public TestCase
     void RunOne();
     /**
      * Create one function
-     * \param pos the position
-     * \param channel the wifi channel
+     * @param pos the position
+     * @param channel the wifi channel
      */
     void CreateOne(Vector pos, Ptr<YansWifiChannel> channel);
     /**
      * Send one packet function
-     * \param dev the device
+     * @param dev the device
      */
     void SendOnePacket(Ptr<WifiNetDevice> dev);
 
@@ -240,10 +240,10 @@ WifiTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Qos Utils Is Old Packet Test
+ * @brief Qos Utils Is Old Packet Test
  */
 class QosUtilsIsOldPacketTest : public TestCase
 {
@@ -297,19 +297,19 @@ class InterferenceHelperSequenceTest : public TestCase
   private:
     /**
      * Create one function
-     * \param pos the position
-     * \param channel the wifi channel
-     * \returns the node
+     * @param pos the position
+     * @param channel the wifi channel
+     * @returns the node
      */
     Ptr<Node> CreateOne(Vector pos, Ptr<YansWifiChannel> channel);
     /**
      * Send one packet function
-     * \param dev the device
+     * @param dev the device
      */
     void SendOnePacket(Ptr<WifiNetDevice> dev);
     /**
      * Switch channel function
-     * \param dev the device
+     * @param dev the device
      */
     void SwitchCh(Ptr<WifiNetDevice> dev);
 
@@ -492,7 +492,7 @@ class DcfImmediateAccessBroadcastTestCase : public TestCase
   private:
     /**
      * Send one packet function
-     * \param dev the device
+     * @param dev the device
      */
     void SendOnePacket(Ptr<WifiNetDevice> dev);
 
@@ -506,8 +506,8 @@ class DcfImmediateAccessBroadcastTestCase : public TestCase
 
     /**
      * Notify Phy transmit begin
-     * \param p the packet
-     * \param txPowerW the tx power
+     * @param p the packet
+     * @param txPowerW the tx power
      */
     void NotifyPhyTxBegin(Ptr<const Packet> p, double txPowerW);
 };
@@ -667,9 +667,9 @@ class Bug730TestCase : public TestCase
 
     /**
      * Receive function
-     * \param context the context
-     * \param p the packet
-     * \param adr the address
+     * @param context the context
+     * @param p the packet
+     * @param adr the address
      */
     void Receive(std::string context, Ptr<const Packet> p, const Address& adr);
 };
@@ -807,17 +807,17 @@ class QosFragmentationTestCase : public TestCase
 
     /**
      * Receive function
-     * \param context the context
-     * \param p the packet
-     * \param adr the address
+     * @param context the context
+     * @param p the packet
+     * @param adr the address
      */
     void Receive(std::string context, Ptr<const Packet> p, const Address& adr);
 
     /**
      * Callback invoked when PHY transmits a packet
-     * \param context the context
-     * \param p the packet
-     * \param power the tx power
+     * @param context the context
+     * @param p the packet
+     * @param power the tx power
      */
     void Transmit(std::string context, Ptr<const Packet> p, double power);
 };
@@ -944,10 +944,10 @@ QosFragmentationTestCase::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Set Channel Frequency Test
+ * @brief Set Channel Frequency Test
  */
 class SetChannelFrequencyTest : public TestCase
 {
@@ -959,8 +959,8 @@ class SetChannelFrequencyTest : public TestCase
   private:
     /**
      * Get yans wifi phy function
-     * \param nc the device collection
-     * \returns the wifi phy
+     * @param nc the device collection
+     * @returns the wifi phy
      */
     Ptr<YansWifiPhy> GetYansWifiPhyPtr(const NetDeviceContainer& nc) const;
 };
@@ -1396,8 +1396,8 @@ class Bug2222TestCase : public TestCase
 
     /**
      * Transmit data failed function
-     * \param context the context
-     * \param adr the MAC address
+     * @param context the context
+     * @param adr the MAC address
      */
     void TxDataFailedTrace(std::string context, Mac48Address adr);
 };
@@ -1544,15 +1544,15 @@ class Bug2843TestCase : public TestCase
     /**
      * Stores the distinct {starting frequency, channelWidth, Number of subbands in SpectrumModel,
      * modulation type} tuples that have been used during the testcase run.
-     * \param context the context
-     * \param txParams spectrum signal parameters set by transmitter
+     * @param context the context
+     * @param txParams spectrum signal parameters set by transmitter
      */
     void StoreDistinctTuple(std::string context, Ptr<SpectrumSignalParameters> txParams);
     /**
      * Triggers the arrival of a burst of 1000 Byte-long packets in the source device
-     * \param numPackets number of packets in burst
-     * \param sourceDevice pointer to the source NetDevice
-     * \param destination address of the destination device
+     * @param numPackets number of packets in burst
+     * @param sourceDevice pointer to the source NetDevice
+     * @param destination address of the destination device
      */
     void SendPacketBurst(uint8_t numPackets,
                          Ptr<NetDevice> sourceDevice,
@@ -1753,9 +1753,9 @@ class Bug2831TestCase : public TestCase
     void ChangeSupportedChannelWidth();
     /**
      * Callback triggered when a packet is received by the PHYs
-     * \param context the context
-     * \param p the received packet
-     * \param rxPowersW the received power per channel band in watts
+     * @param context the context
+     * @param p the received packet
+     * @param rxPowersW the received power per channel band in watts
      */
     void RxCallback(std::string context, Ptr<const Packet> p, RxPowerWattPerChannelBand rxPowersW);
 
@@ -1964,7 +1964,7 @@ Bug2831TestCase::DoRun()
  *     still scanning. STA is expected to associate to the second best AP.
  *
  * See \bugid{2399}
- * \todo Add explicit association refusal test if ns-3 implemented it.
+ * @todo Add explicit association refusal test if ns-3 implemented it.
  */
 
 class StaWifiMacScanningTestCase : public TestCase
@@ -1977,25 +1977,25 @@ class StaWifiMacScanningTestCase : public TestCase
   private:
     /**
      * Callback function on STA assoc event
-     * \param context context string
-     * \param bssid the associated AP's bssid
+     * @param context context string
+     * @param bssid the associated AP's bssid
      */
     void AssocCallback(std::string context, Mac48Address bssid);
     /**
      * Turn beacon generation on the AP node
-     * \param apNode the AP node
+     * @param apNode the AP node
      */
     void TurnBeaconGenerationOn(Ptr<Node> apNode);
     /**
      * Turn the AP node off
-     * \param apNode the AP node
+     * @param apNode the AP node
      */
     void TurnApOff(Ptr<Node> apNode);
     /**
      * Setup test
-     * \param nearestApBeaconGeneration set BeaconGeneration attribute of the nearest AP
-     * \param staActiveProbe set ActiveProbing attribute of the STA
-     * \return node container containing all nodes
+     * @param nearestApBeaconGeneration set BeaconGeneration attribute of the nearest AP
+     * @param staActiveProbe set ActiveProbing attribute of the STA
+     * @return node container containing all nodes
      */
     NodeContainer Setup(bool nearestApBeaconGeneration, bool staActiveProbe);
 
@@ -2180,11 +2180,11 @@ class Bug2470TestCase : public TestCase
   private:
     /**
      * Callback when ADDBA state changed
-     * \param context node context
-     * \param t the time the state changed
-     * \param recipient the MAC address of the recipient
-     * \param tid the TID
-     * \param state the state
+     * @param context node context
+     * @param t the time the state changed
+     * @param recipient the MAC address of the recipient
+     * @param tid the TID
+     * @param state the state
      */
     void AddbaStateChangedCallback(std::string context,
                                    Time t,
@@ -2193,11 +2193,11 @@ class Bug2470TestCase : public TestCase
                                    OriginatorBlockAckAgreement::State state);
     /**
      * Callback when a frame is transmitted.
-     * \param rxErrorModel the post reception error model on the receiver
-     * \param context the context
-     * \param psduMap the PSDU map
-     * \param txVector the TX vector
-     * \param txPowerW the tx power in Watts
+     * @param rxErrorModel the post reception error model on the receiver
+     * @param context the context
+     * @param psduMap the PSDU map
+     * @param txVector the TX vector
+     * @param txPowerW the tx power in Watts
      */
     void TxCallback(Ptr<ListErrorModel> rxErrorModel,
                     std::string context,
@@ -2207,13 +2207,13 @@ class Bug2470TestCase : public TestCase
 
     /**
      * Callback when packet is received
-     * \param context node context
-     * \param p the received packet
-     * \param channelFreqMhz the channel frequency in MHz
-     * \param txVector the TX vector
-     * \param aMpdu the A-MPDU info
-     * \param signalNoise the signal noise in dBm
-     * \param staId the STA-ID
+     * @param context node context
+     * @param p the received packet
+     * @param channelFreqMhz the channel frequency in MHz
+     * @param txVector the TX vector
+     * @param aMpdu the A-MPDU info
+     * @param signalNoise the signal noise in dBm
+     * @param staId the STA-ID
      */
     void RxCallback(std::string context,
                     Ptr<const Packet> p,
@@ -2224,23 +2224,23 @@ class Bug2470TestCase : public TestCase
                     uint16_t staId);
     /**
      * Callback when packet is dropped
-     * \param context node context
-     * \param p the failed packet
-     * \param snr the SNR of the failed packet in linear scale
+     * @param context node context
+     * @param p the failed packet
+     * @param snr the SNR of the failed packet in linear scale
      */
     void RxErrorCallback(std::string context, Ptr<const Packet> p, double snr);
     /**
      * Triggers the arrival of a burst of 1000 Byte-long packets in the source device
-     * \param numPackets number of packets in burst
-     * \param sourceDevice pointer to the source NetDevice
-     * \param destination address of the destination device
+     * @param numPackets number of packets in burst
+     * @param sourceDevice pointer to the source NetDevice
+     * @param destination address of the destination device
      */
     void SendPacketBurst(uint32_t numPackets,
                          Ptr<NetDevice> sourceDevice,
                          Address& destination) const;
     /**
      * Run subtest for this test suite
-     * \param rcvErrorType type of station (STA or AP) to install the post reception error model on
+     * @param rcvErrorType type of station (STA or AP) to install the post reception error model on
      */
     void RunSubtest(TypeOfStation rcvErrorType);
 
@@ -2586,27 +2586,27 @@ class Issue40TestCase : public TestCase
   private:
     /**
      * Run one function
-     * \param useAmpdu flag to indicate whether the test should be run with A-MPDU
+     * @param useAmpdu flag to indicate whether the test should be run with A-MPDU
      */
     void RunOne(bool useAmpdu);
 
     /**
      * Callback when packet is successfully received
-     * \param context node context
-     * \param p the received packet
+     * @param context node context
+     * @param p the received packet
      */
     void RxSuccessCallback(std::string context, Ptr<const Packet> p);
     /**
      * Triggers the arrival of 1000 Byte-long packets in the source device
-     * \param numPackets number of packets in burst
-     * \param sourceDevice pointer to the source NetDevice
-     * \param destination address of the destination device
+     * @param numPackets number of packets in burst
+     * @param sourceDevice pointer to the source NetDevice
+     * @param destination address of the destination device
      */
     void SendPackets(uint8_t numPackets, Ptr<NetDevice> sourceDevice, Address& destination);
     /**
      * Transmit final data failed function
-     * \param context the context
-     * \param address the MAC address
+     * @param context the context
+     * @param address the MAC address
      */
     void TxFinalDataFailedCallback(std::string context, Mac48Address address);
 
@@ -2818,10 +2818,10 @@ class Issue169TestCase : public TestCase
   private:
     /**
      * Triggers the transmission of a 1000 Byte-long data packet from the source device
-     * \param numPackets number of packets in burst
-     * \param sourceDevice pointer to the source NetDevice
-     * \param destination address of the destination device
-     * \param priority the priority of the packets to send
+     * @param numPackets number of packets in burst
+     * @param sourceDevice pointer to the source NetDevice
+     * @param destination address of the destination device
+     * @param priority the priority of the packets to send
      */
     void SendPackets(uint8_t numPackets,
                      Ptr<NetDevice> sourceDevice,
@@ -2830,10 +2830,10 @@ class Issue169TestCase : public TestCase
 
     /**
      * Callback that indicates a PSDU is being transmitted
-     * \param context the context
-     * \param psdus the PSDU map to transmit
-     * \param txVector the TX vector
-     * \param txPowerW the TX power (W)
+     * @param context the context
+     * @param psdus the PSDU map to transmit
+     * @param txVector the TX vector
+     * @param txPowerW the TX power (W)
      */
     void TxCallback(std::string context,
                     WifiConstPsduMap psdus,
@@ -2975,23 +2975,23 @@ class IdealRateManagerChannelWidthTest : public TestCase
   private:
     /**
      * Change the configured channel width for all nodes
-     * \param channelWidth the channel width (in MHz)
+     * @param channelWidth the channel width (in MHz)
      */
     void ChangeChannelWidth(ChannelWidthMhz channelWidth);
 
     /**
      * Triggers the transmission of a 1000 Byte-long data packet from the source device
-     * \param sourceDevice pointer to the source NetDevice
-     * \param destination address of the destination device
+     * @param sourceDevice pointer to the source NetDevice
+     * @param destination address of the destination device
      */
     void SendPacket(Ptr<NetDevice> sourceDevice, Address& destination);
 
     /**
      * Callback that indicates a PSDU is being transmitted
-     * \param context the context
-     * \param psduMap the PSDU map to transmit
-     * \param txVector the TX vector
-     * \param txPowerW the TX power (W)
+     * @param context the context
+     * @param psduMap the PSDU map to transmit
+     * @param txVector the TX vector
+     * @param txPowerW the TX power (W)
      */
     void TxCallback(std::string context,
                     WifiConstPsduMap psduMap,
@@ -3000,7 +3000,7 @@ class IdealRateManagerChannelWidthTest : public TestCase
 
     /**
      * Check if the selected WifiMode is correct
-     * \param expectedMode the expected WifiMode
+     * @param expectedMode the expected WifiMode
      */
     void CheckLastSelectedMode(WifiMode expectedMode);
 
@@ -3170,29 +3170,29 @@ class IdealRateManagerMimoTest : public TestCase
   private:
     /**
      * Change the configured MIMO  settings  for AP node
-     * \param antennas the number of active antennas
-     * \param maxStreams the maximum number of allowed spatial streams
+     * @param antennas the number of active antennas
+     * @param maxStreams the maximum number of allowed spatial streams
      */
     void SetApMimoSettings(uint8_t antennas, uint8_t maxStreams);
     /**
      * Change the configured MIMO  settings  for STA node
-     * \param antennas the number of active antennas
-     * \param maxStreams the maximum number of allowed spatial streams
+     * @param antennas the number of active antennas
+     * @param maxStreams the maximum number of allowed spatial streams
      */
     void SetStaMimoSettings(uint8_t antennas, uint8_t maxStreams);
     /**
      * Triggers the transmission of a 1000 Byte-long data packet from the source device
-     * \param sourceDevice pointer to the source NetDevice
-     * \param destination address of the destination device
+     * @param sourceDevice pointer to the source NetDevice
+     * @param destination address of the destination device
      */
     void SendPacket(Ptr<NetDevice> sourceDevice, Address& destination);
 
     /**
      * Callback that indicates a PSDU is being transmitted
-     * \param context the context
-     * \param psdus the PSDU map to transmit
-     * \param txVector the TX vector
-     * \param txPowerW the TX power (W)
+     * @param context the context
+     * @param psdus the PSDU map to transmit
+     * @param txVector the TX vector
+     * @param txPowerW the TX power (W)
      */
     void TxCallback(std::string context,
                     WifiConstPsduMap psdus,
@@ -3201,12 +3201,12 @@ class IdealRateManagerMimoTest : public TestCase
 
     /**
      * Check if the selected WifiMode is correct
-     * \param expectedMode the expected WifiMode
+     * @param expectedMode the expected WifiMode
      */
     void CheckLastSelectedMode(WifiMode expectedMode);
     /**
      * Check if the selected Nss is correct
-     * \param expectedNss the expected Nss
+     * @param expectedNss the expected Nss
      */
     void CheckLastSelectedNss(uint8_t expectedNss);
 
@@ -3564,10 +3564,10 @@ IdealRateManagerMimoTest::DoRun()
 
 //-----------------------------------------------------------------------------
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Data rate verification test for MCSs of different RU sizes
+ * @brief Data rate verification test for MCSs of different RU sizes
  */
 class HeRuMcsDataRateTestCase : public TestCase
 {
@@ -3577,13 +3577,13 @@ class HeRuMcsDataRateTestCase : public TestCase
   private:
     /**
      * Compare the data rate computed for the provided combination with standard defined one.
-     * \param ruType the RU type
-     * \param mcs the modulation and coding scheme (as a string, e.g. HeMcs0)
-     * \param nss the number of spatial streams
-     * \param guardInterval the guard interval to use
-     * \param expectedDataRate the expected data rate in 100 kbps units (minimum granularity in
+     * @param ruType the RU type
+     * @param mcs the modulation and coding scheme (as a string, e.g. HeMcs0)
+     * @param nss the number of spatial streams
+     * @param guardInterval the guard interval to use
+     * @param expectedDataRate the expected data rate in 100 kbps units (minimum granularity in
      * standard tables)
-     * \returns true if data rates are the same, false otherwise
+     * @returns true if data rates are the same, false otherwise
      */
     bool CheckDataRate(HeRu::RuType ruType,
                        std::string mcs,
@@ -3676,10 +3676,10 @@ using MgtTestElems =
     std::tuple<SupportedRates, std::optional<ExtendedSupportedRatesIE>, std::vector<Ssid>>;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test management header
+ * @brief Test management header
  */
 class MgtTestHeader : public WifiMgtHeader<MgtTestHeader, MgtTestElems>
 {
@@ -3688,12 +3688,12 @@ class MgtTestHeader : public WifiMgtHeader<MgtTestHeader, MgtTestElems>
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
     /**
-     * \return the TypeId for this object.
+     * @return the TypeId for this object.
      */
     TypeId GetInstanceTypeId() const override;
 
@@ -3719,10 +3719,10 @@ MgtTestHeader::GetInstanceTypeId() const
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Mgt header (de)serialization Test Suite
+ * @brief Mgt header (de)serialization Test Suite
  */
 class WifiMgtHeaderTest : public HeaderSerializationTestCase
 {
@@ -3842,8 +3842,8 @@ class DsssModulationTest : public TestCase
 
     /**
      * Trace sink to receive from the PacketSocket; the address parameter is unused
-     * \param context the context
-     * \param p the received packet
+     * @param context the context
+     * @param p the received packet
      */
     void Receive(std::string context, Ptr<const Packet> p, const Address&);
 };
@@ -3968,10 +3968,10 @@ DsssModulationTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Wifi Test Suite
+ * @brief Wifi Test Suite
  */
 class WifiTestSuite : public TestSuite
 {

@@ -26,8 +26,8 @@
 #include <type_traits>
 
 /**
- * \file
- * \ingroup events
+ * @file
+ * @ingroup events
  * ns3::MakeEvent function declarations and template implementation.
  */
 
@@ -37,17 +37,17 @@ namespace ns3
 class EventImpl;
 
 /**
- * \ingroup events
+ * @ingroup events
  * Make an EventImpl from class method members which take
  * varying numbers of arguments.
  *
- * \tparam MEM \deduced The class method function signature.
- * \tparam OBJ \deduced The class type holding the method.
- * \tparam Ts \deduced Type template parameter pack.
- * \param [in] mem_ptr Class method member function pointer
- * \param [in] obj Class instance.
- * \param [in] args Arguments to be bound to the underlying function.
- * \returns The constructed EventImpl.
+ * @tparam MEM \deduced The class method function signature.
+ * @tparam OBJ \deduced The class type holding the method.
+ * @tparam Ts \deduced Type template parameter pack.
+ * @param [in] mem_ptr Class method member function pointer
+ * @param [in] obj Class instance.
+ * @param [in] args Arguments to be bound to the underlying function.
+ * @returns The constructed EventImpl.
  */
 template <typename MEM, typename OBJ, typename... Ts>
 std::enable_if_t<std::is_member_pointer_v<MEM>, EventImpl*> MakeEvent(MEM mem_ptr,
@@ -55,8 +55,8 @@ std::enable_if_t<std::is_member_pointer_v<MEM>, EventImpl*> MakeEvent(MEM mem_pt
                                                                       Ts... args);
 
 /**
- * \ingroup events
- * \defgroup makeeventfnptr MakeEvent from Function Pointers and Lambdas.
+ * @ingroup events
+ * @defgroup makeeventfnptr MakeEvent from Function Pointers and Lambdas.
  *
  * Create EventImpl instances from function pointers or lambdas which take
  * varying numbers of arguments.
@@ -67,11 +67,11 @@ std::enable_if_t<std::is_member_pointer_v<MEM>, EventImpl*> MakeEvent(MEM mem_pt
  * Make an EventImpl from a function pointer taking varying numbers
  * of arguments.
  *
- * \tparam Us \deduced Formal types of the arguments to the function.
- * \tparam Ts \deduced Actual types of the arguments to the function.
- * \param [in] f The function pointer.
- * \param [in] args Arguments to be bound to the function.
- * \returns The constructed EventImpl.
+ * @tparam Us \deduced Formal types of the arguments to the function.
+ * @tparam Ts \deduced Actual types of the arguments to the function.
+ * @param [in] f The function pointer.
+ * @param [in] args Arguments to be bound to the function.
+ * @returns The constructed EventImpl.
  */
 template <typename... Us, typename... Ts>
 EventImpl* MakeEvent(void (*f)(Us...), Ts... args);
@@ -79,8 +79,8 @@ EventImpl* MakeEvent(void (*f)(Us...), Ts... args);
 /**
  * Make an EventImpl from a lambda.
  *
- * \param [in] function The lambda
- * \returns The constructed EventImpl.
+ * @param [in] function The lambda
+ * @returns The constructed EventImpl.
  */
 template <typename T>
 EventImpl* MakeEvent(T function);
@@ -102,34 +102,34 @@ namespace internal
 {
 
 /**
- * \ingroup events
+ * @ingroup events
  * Helper for the MakeEvent functions which take a class method.
  *
  * This helper converts a pointer to a reference.
  *
  * This is the generic template declaration (with empty body).
  *
- * \tparam T \explicit The class type.
+ * @tparam T \explicit The class type.
  */
 template <typename T>
 struct EventMemberImplObjTraits;
 
 /**
- * \ingroup events
+ * @ingroup events
  * Helper for the MakeEvent functions which take a class method.
  *
  * This helper converts a pointer to a reference.
  *
  * This is the specialization for pointer types.
  *
- * \tparam T \explicit The class type.
+ * @tparam T \explicit The class type.
  */
 template <typename T>
 struct EventMemberImplObjTraits<T*>
 {
     /**
-     * \param [in] p Object pointer.
-     * \return A reference to the object pointed to by p.
+     * @param [in] p Object pointer.
+     * @return A reference to the object pointed to by p.
      */
     static T& GetReference(T* p)
     {

@@ -31,22 +31,22 @@
 
 using namespace ns3;
 
-/// \return A const string used to build the test name.
+/// @return A const string used to build the test name.
 const std::string suite("type-id: ");
 
 /**
- * \file
- * \ingroup typeid-tests
+ * @file
+ * @ingroup typeid-tests
  * TypeId test suite
  */
 
 /**
- * \ingroup core-tests
- * \defgroup typeid-tests TypeId class tests
+ * @ingroup core-tests
+ * @defgroup typeid-tests TypeId class tests
  */
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * Test for uniqueness of all TypeIds.
  */
@@ -120,7 +120,7 @@ UniqueTypeIdTestCase::DoRun()
 }
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * Collision test.
  */
@@ -201,7 +201,7 @@ CollisionTestCase::DoRun()
 }
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * Class used to test deprecated Attributes.
  */
@@ -227,8 +227,8 @@ class DeprecatedAttribute : public Object
     }
 
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId()
     {
@@ -284,7 +284,7 @@ class DeprecatedAttribute : public Object
 };
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * Check deprecated Attributes and TraceSources.
  */
@@ -344,7 +344,7 @@ DeprecatedAttributeTestCase::DoRun()
 }
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * Performance test: measure average lookup time.
  */
@@ -359,8 +359,8 @@ class LookupTimeTestCase : public TestCase
     void DoSetup() override;
     /**
      * Report the performance test results.
-     * \param how How the TypeId is searched (name or hash).
-     * \param delta The time required for the lookup.
+     * @param how How the TypeId is searched (name or hash).
+     * @param delta The time required for the lookup.
      */
     void Report(const std::string how, const uint32_t delta) const;
 
@@ -432,7 +432,7 @@ LookupTimeTestCase::Report(const std::string how, const uint32_t delta) const
 }
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * TypeId test suites.
  */
@@ -461,7 +461,7 @@ TypeIdTestSuite::TypeIdTestSuite()
 static TypeIdTestSuite g_TypeIdTestSuite;
 
 /**
- * \ingroup typeid-tests
+ * @ingroup typeid-tests
  *
  * TypeId performance test suites.
  */

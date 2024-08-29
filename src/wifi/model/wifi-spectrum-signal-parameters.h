@@ -31,7 +31,7 @@ namespace ns3
 class WifiPpdu;
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  *
  * Signal parameters for wifi
  */
@@ -47,7 +47,7 @@ struct WifiSpectrumSignalParameters : public SpectrumSignalParameters
     /**
      * copy constructor
      *
-     * \param p the wifi spectrum signal parameters
+     * @param p the wifi spectrum signal parameters
      */
     WifiSpectrumSignalParameters(const WifiSpectrumSignalParameters& p);
 

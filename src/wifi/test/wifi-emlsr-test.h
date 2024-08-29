@@ -35,10 +35,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test EML Operating Mode Notification frame serialization and deserialization
+ * @brief Test EML Operating Mode Notification frame serialization and deserialization
  */
 class EmlOperatingModeNotificationTest : public HeaderSerializationTestCase
 {
@@ -54,10 +54,10 @@ class EmlOperatingModeNotificationTest : public HeaderSerializationTestCase
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Base class for EMLSR Operations tests
+ * @brief Base class for EMLSR Operations tests
  *
  * This base class setups and configures one AP MLD, a variable number of non-AP MLDs with
  * EMLSR activated and a variable number of non-AP MLD with EMLSR deactivated. Every MLD has
@@ -74,7 +74,7 @@ class EmlsrOperationsTestBase : public TestCase
     /**
      * Constructor
      *
-     * \param name The name of the new TestCase created
+     * @param name The name of the new TestCase created
      */
     EmlsrOperationsTestBase(const std::string& name);
     ~EmlsrOperationsTestBase() override = default;
@@ -90,11 +90,11 @@ class EmlsrOperationsTestBase : public TestCase
     /**
      * Callback invoked when a FEM passes PSDUs to the PHY.
      *
-     * \param mac the MAC transmitting the PSDUs
-     * \param phyId the ID of the PHY transmitting the PSDUs
-     * \param psduMap the PSDU map
-     * \param txVector the TX vector
-     * \param txPowerW the tx power in Watts
+     * @param mac the MAC transmitting the PSDUs
+     * @param phyId the ID of the PHY transmitting the PSDUs
+     * @param psduMap the PSDU map
+     * @param txVector the TX vector
+     * @param txPowerW the tx power in Watts
      */
     virtual void Transmit(Ptr<WifiMac> mac,
                           uint8_t phyId,
@@ -103,11 +103,11 @@ class EmlsrOperationsTestBase : public TestCase
                           double txPowerW);
 
     /**
-     * \param dir the traffic direction (downlink/uplink)
-     * \param staId the index (starting at 0) of the non-AP MLD generating/receiving packets
-     * \param count the number of packets to generate
-     * \param pktSize the size of the packets to generate
-     * \return an application generating the given number packets of the given size from/to the
+     * @param dir the traffic direction (downlink/uplink)
+     * @param staId the index (starting at 0) of the non-AP MLD generating/receiving packets
+     * @param count the number of packets to generate
+     * @param pktSize the size of the packets to generate
+     * @return an application generating the given number packets of the given size from/to the
      *         AP MLD to/from the given non-AP MLD
      */
     Ptr<PacketSocketClient> GetApplication(TrafficDirection dir,
@@ -119,13 +119,13 @@ class EmlsrOperationsTestBase : public TestCase
      * Check whether QoS data unicast transmissions addressed to the given destination on the
      * given link are blocked or unblocked for the given reason on the given device.
      *
-     * \param mac the MAC of the given device
-     * \param dest the MAC address of the given destination
-     * \param linkId the ID of the given link
-     * \param reason the reason for blocking transmissions to test
-     * \param blocked whether transmissions are blocked for the given reason
-     * \param description text indicating when this check is performed
-     * \param testUnblockedForOtherReasons whether to test if transmissions are unblocked for
+     * @param mac the MAC of the given device
+     * @param dest the MAC address of the given destination
+     * @param linkId the ID of the given link
+     * @param reason the reason for blocking transmissions to test
+     * @param blocked whether transmissions are blocked for the given reason
+     * @param description text indicating when this check is performed
+     * @param testUnblockedForOtherReasons whether to test if transmissions are unblocked for
      *                                     all the reasons other than the one provided
      */
     void CheckBlockedLink(Ptr<WifiMac> mac,
@@ -177,7 +177,7 @@ class EmlsrOperationsTestBase : public TestCase
      * This method is connected to the ApWifiMac's AssociatedSta trace source.
      * Start generating traffic (if needed) when all stations are associated.
      *
-     * \param aid the AID assigned to the previous associated STA
+     * @param aid the AID assigned to the previous associated STA
      */
     void SetSsid(uint16_t aid, Mac48Address /* addr */);
 
@@ -190,10 +190,10 @@ class EmlsrOperationsTestBase : public TestCase
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the exchange of EML Operating Mode Notification frames.
+ * @brief Test the exchange of EML Operating Mode Notification frames.
  *
  * This test considers an AP MLD and a non-AP MLD with EMLSR activated. Upon association,
  * the non-AP MLD sends an EML Operating Mode Notification frame, which is however corrupted
@@ -217,8 +217,8 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
     /**
      * Constructor
      *
-     * \param linksToEnableEmlsrOn IDs of links on which EMLSR mode should be enabled
-     * \param transitionTimeout the Transition Timeout advertised by the AP MLD
+     * @param linksToEnableEmlsrOn IDs of links on which EMLSR mode should be enabled
+     * @param transitionTimeout the Transition Timeout advertised by the AP MLD
      */
     EmlOmnExchangeTest(const std::set<uint8_t>& linksToEnableEmlsrOn, Time transitionTimeout);
     ~EmlOmnExchangeTest() override = default;
@@ -235,14 +235,14 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
     /**
      * Callback invoked when the non-AP MLD receives the acknowledgment for a transmitted MPDU.
      *
-     * \param mpdu the acknowledged MPDU
+     * @param mpdu the acknowledged MPDU
      */
     void TxOk(Ptr<const WifiMpdu> mpdu);
     /**
      * Callback invoked when the non-AP MLD drops the given MPDU for the given reason.
      *
-     * \param reason the reason why the MPDU was dropped
-     * \param mpdu the dropped MPDU
+     * @param reason the reason why the MPDU was dropped
+     * @param mpdu the dropped MPDU
      */
     void TxDropped(WifiMacDropReason reason, Ptr<const WifiMpdu> mpdu);
 
@@ -250,9 +250,9 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
      * Check the content of the EML Capabilities subfield of the Multi-Link Element included
      * in the Association Request frame sent by the non-AP MLD.
      *
-     * \param mpdu the MPDU containing the Association Request frame
-     * \param txVector the TXVECTOR used to transmit the frame
-     * \param linkId the ID of the link on which the frame was transmitted
+     * @param mpdu the MPDU containing the Association Request frame
+     * @param txVector the TXVECTOR used to transmit the frame
+     * @param linkId the ID of the link on which the frame was transmitted
      */
     void CheckEmlCapabilitiesInAssocReq(Ptr<const WifiMpdu> mpdu,
                                         const WifiTxVector& txVector,
@@ -261,9 +261,9 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
      * Check the content of the EML Capabilities subfield of the Multi-Link Element included
      * in the Association Response frame sent by the AP MLD to the EMLSR client.
      *
-     * \param mpdu the MPDU containing the Association Response frame
-     * \param txVector the TXVECTOR used to transmit the frame
-     * \param linkId the ID of the link on which the frame was transmitted
+     * @param mpdu the MPDU containing the Association Response frame
+     * @param txVector the TXVECTOR used to transmit the frame
+     * @param linkId the ID of the link on which the frame was transmitted
      */
     void CheckEmlCapabilitiesInAssocResp(Ptr<const WifiMpdu> mpdu,
                                          const WifiTxVector& txVector,
@@ -271,9 +271,9 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
     /**
      * Check the content of a received EML Operating Mode Notification frame.
      *
-     * \param psdu the PSDU containing the EML Operating Mode Notification frame
-     * \param txVector the TXVECTOR used to transmit the frame
-     * \param linkId the ID of the link on which the frame was transmitted
+     * @param psdu the PSDU containing the EML Operating Mode Notification frame
+     * @param txVector the TXVECTOR used to transmit the frame
+     * @param linkId the ID of the link on which the frame was transmitted
      */
     void CheckEmlNotification(Ptr<const WifiPsdu> psdu,
                               const WifiTxVector& txVector,
@@ -296,10 +296,10 @@ class EmlOmnExchangeTest : public EmlsrOperationsTestBase
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the transmission of DL frames to EMLSR clients.
+ * @brief Test the transmission of DL frames to EMLSR clients.
  *
  * This test considers an AP MLD and a configurable number of non-AP MLDs that support EMLSR
  * and a configurable number of non-AP MLDs that do not support EMLSR. All MLDs have three
@@ -369,7 +369,7 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
     /**
      * Constructor
      *
-     * \param params parameters for the EMLSR DL TXOP test
+     * @param params parameters for the EMLSR DL TXOP test
      */
     EmlsrDlTxopTest(const Params& params);
     ~EmlsrDlTxopTest() override = default;
@@ -392,7 +392,7 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
      * Check that the AP MLD considers the correct Power Management mode for the links setup
      * with the given non-AP MLD. This method is intended to be called shortly after ML setup.
      *
-     * \param address a link address of the given non-AP MLD
+     * @param address a link address of the given non-AP MLD
      */
     void CheckPmModeAfterAssociation(const Mac48Address& address);
 
@@ -400,9 +400,9 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken when the AP MLD transmits an EML Operating Mode
      * Notification response frame to an EMLSR client on the given link.
      *
-     * \param mpdu the MPDU carrying the EML Operating Mode Notification frame
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param mpdu the MPDU carrying the EML Operating Mode Notification frame
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckApEmlNotificationFrame(Ptr<const WifiMpdu> mpdu,
                                      const WifiTxVector& txVector,
@@ -412,9 +412,9 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken when an EMLSR client transmits an EML Operating
      * Mode Notification frame to the AP MLD on the given link.
      *
-     * \param mpdu the MPDU carrying the EML Operating Mode Notification frame
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param mpdu the MPDU carrying the EML Operating Mode Notification frame
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckStaEmlNotificationFrame(Ptr<const WifiMpdu> mpdu,
                                       const WifiTxVector& txVector,
@@ -424,9 +424,9 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the AP MLD transmitting an initial
      * Control frame to an EMLSR client on the given link.
      *
-     * \param mpdu the MPDU carrying the MU-RTS TF
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param mpdu the MPDU carrying the MU-RTS TF
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckInitialControlFrame(Ptr<const WifiMpdu> mpdu,
                                   const WifiTxVector& txVector,
@@ -436,9 +436,9 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the AP MLD transmitting a PPDU containing
      * QoS data frames to EMLSR clients on the given link.
      *
-     * \param psduMap the PSDU(s) carrying QoS data frames
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param psduMap the PSDU(s) carrying QoS data frames
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckQosFrames(const WifiConstPsduMap& psduMap,
                         const WifiTxVector& txVector,
@@ -448,9 +448,9 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the AP MLD receiving a PPDU containing
      * BlockAck frames from EMLSR clients on the given link.
      *
-     * \param psduMap the PSDU carrying BlockAck frames
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param phyId the ID of the PHY transmitting the PSDU(s)
+     * @param psduMap the PSDU carrying BlockAck frames
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param phyId the ID of the PHY transmitting the PSDU(s)
      */
     void CheckBlockAck(const WifiConstPsduMap& psduMap,
                        const WifiTxVector& txVector,
@@ -474,10 +474,10 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the transmission of UL frames from EMLSR clients.
+ * @brief Test the transmission of UL frames from EMLSR clients.
  *
  * This test considers an AP MLD and a non-AP MLD that support EMLSR. The non-AP MLD setups three
  * links, while the set of EMLSR links is configurable. Block ack agreements (for TID 0) for both
@@ -542,7 +542,7 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
     /**
      * Constructor
      *
-     * \param params parameters for the EMLSR UL TXOP test
+     * @param params parameters for the EMLSR UL TXOP test
      */
     EmlsrUlTxopTest(const Params& params);
     ~EmlsrUlTxopTest() override = default;
@@ -565,9 +565,9 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the EMLSR client when transmitting an RTS
      * frame on the given link.
      *
-     * \param mpdu the MPDU carrying the RTS frame
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param mpdu the MPDU carrying the RTS frame
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckRtsFrames(Ptr<const WifiMpdu> mpdu, const WifiTxVector& txVector, uint8_t linkId);
 
@@ -575,9 +575,9 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the EMLSR client when receiving a CTS
      * frame on the given link.
      *
-     * \param mpdu the MPDU carrying the CTS frame
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param mpdu the MPDU carrying the CTS frame
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckCtsFrames(Ptr<const WifiMpdu> mpdu, const WifiTxVector& txVector, uint8_t linkId);
 
@@ -585,9 +585,9 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken when an MLD transmits a PPDU containing
      * QoS data frames on the given link.
      *
-     * \param psduMap the PSDU(s) carrying QoS data frames
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param psduMap the PSDU(s) carrying QoS data frames
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckQosFrames(const WifiConstPsduMap& psduMap,
                         const WifiTxVector& txVector,
@@ -597,9 +597,9 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken when an MLD transmits a PPDU containing
      * BlockAck frames on the given link.
      *
-     * \param psduMap the PSDU carrying BlockAck frames
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param psduMap the PSDU carrying BlockAck frames
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckBlockAck(const WifiConstPsduMap& psduMap,
                        const WifiTxVector& txVector,
@@ -611,8 +611,8 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
     /**
      * Callback invoked when a new backoff value is generated by the EMLSR client.
      *
-     * \param backoff the generated backoff value
-     * \param linkId the ID of the link for which the backoff value has been generated
+     * @param backoff the generated backoff value
+     * @param linkId the ID of the link for which the backoff value has been generated
      */
     void BackoffGenerated(uint32_t backoff, uint8_t linkId);
 
@@ -643,10 +643,10 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the switching of PHYs on EMLSR clients.
+ * @brief Test the switching of PHYs on EMLSR clients.
  *
  * An AP MLD and an EMLSR client setup 3 links, on which EMLSR mode is enabled. The AP MLD
  * transmits 4 QoS data frames (one after another, each protected by ICF):
@@ -677,7 +677,7 @@ class EmlsrLinkSwitchTest : public EmlsrOperationsTestBase
     /**
      * Constructor
      *
-     * \param params parameters for the EMLSR link switching test
+     * @param params parameters for the EMLSR link switching test
      */
     EmlsrLinkSwitchTest(const Params& params);
 
@@ -701,9 +701,9 @@ class EmlsrLinkSwitchTest : public EmlsrOperationsTestBase
      * Check that the Main PHY (and possibly the Aux PHY) correctly switches channel when the
      * reception of an ICF ends.
      *
-     * \param psduMap the PSDU carrying the MU-RTS TF
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param psduMap the PSDU carrying the MU-RTS TF
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckInitialControlFrame(const WifiConstPsduMap& psduMap,
                                   const WifiTxVector& txVector,
@@ -713,9 +713,9 @@ class EmlsrLinkSwitchTest : public EmlsrOperationsTestBase
      * Check that appropriate actions are taken by the AP MLD transmitting a PPDU containing
      * QoS data frames to the EMLSR client on the given link.
      *
-     * \param psduMap the PSDU(s) carrying QoS data frames
-     * \param txVector the TXVECTOR used to send the PPDU
-     * \param linkId the ID of the given link
+     * @param psduMap the PSDU(s) carrying QoS data frames
+     * @param txVector the TXVECTOR used to send the PPDU
+     * @param linkId the ID of the given link
      */
     void CheckQosFrames(const WifiConstPsduMap& psduMap,
                         const WifiTxVector& txVector,
@@ -732,10 +732,10 @@ class EmlsrLinkSwitchTest : public EmlsrOperationsTestBase
 };
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief wifi EMLSR Test Suite
+ * @brief wifi EMLSR Test Suite
  */
 class WifiEmlsrTestSuite : public TestSuite
 {

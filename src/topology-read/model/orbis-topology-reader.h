@@ -24,8 +24,8 @@
 #include "topology-reader.h"
 
 /**
- * \file
- * \ingroup topology
+ * @file
+ * @ingroup topology
  * ns3::OrbisTopologyReader declaration.
  */
 
@@ -35,9 +35,9 @@ namespace ns3
 // ------------------------------------------------------------
 // --------------------------------------------
 /**
- * \ingroup topology
+ * @ingroup topology
  *
- * \brief Topology file reader (Orbis-format type).
+ * @brief Topology file reader (Orbis-format type).
  *
  * This class takes an input file in Orbis format and extracts all
  * the information needed to build the topology
@@ -49,8 +49,8 @@ class OrbisTopologyReader : public TopologyReader
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId.
+     * @brief Get the type ID.
+     * @return the object TypeId.
      */
     static TypeId GetTypeId();
 
@@ -62,14 +62,14 @@ class OrbisTopologyReader : public TopologyReader
     OrbisTopologyReader& operator=(const OrbisTopologyReader&) = delete;
 
     /**
-     * \brief Main topology reading function.
+     * @brief Main topology reading function.
      *
      * This method opens an input stream and reads the Orbis-format file.
      * Every row represents a topology link (the ids of a couple of nodes),
      * so the input file is read line by line to figure out how many links
      * and nodes are in the topology.
      *
-     * \return The container of the nodes created (or empty container if there was an error)
+     * @return The container of the nodes created (or empty container if there was an error)
      */
     NodeContainer Read() override;
 

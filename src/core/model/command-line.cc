@@ -41,8 +41,8 @@
 #include <sstream>
 
 /**
- * \file
- * \ingroup commandline
+ * @file
+ * @ingroup commandline
  * ns3::CommandLine implementation.
  */
 
@@ -54,8 +54,8 @@ namespace
  * Usage and help strings, which are intended for text-only display,
  * can contain illegal characters for HTML.  This function
  * encodes '&', '\"', '\'',  and '<'.
- * \param [in] source The original string.
- * \returns The HTML-encoded version.
+ * @param [in] source The original string.
+ * @returns The HTML-encoded version.
  */
 std::string
 Encode(const std::string& source)

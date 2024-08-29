@@ -24,9 +24,9 @@ namespace ns3
 {
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 dummy routing class (A)
+ * @brief IPv4 dummy routing class (A)
  */
 class Ipv4ARouting : public Ipv4RoutingProtocol
 {
@@ -76,9 +76,9 @@ class Ipv4ARouting : public Ipv4RoutingProtocol
 };
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 dummy routing class (B)
+ * @brief IPv4 dummy routing class (B)
  */
 class Ipv4BRouting : public Ipv4RoutingProtocol
 {
@@ -128,9 +128,9 @@ class Ipv4BRouting : public Ipv4RoutingProtocol
 };
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 ListRouting negative test.
+ * @brief IPv4 ListRouting negative test.
  */
 class Ipv4ListRoutingNegativeTestCase : public TestCase
 {
@@ -162,9 +162,9 @@ Ipv4ListRoutingNegativeTestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 ListRouting positive test.
+ * @brief IPv4 ListRouting positive test.
  */
 class Ipv4ListRoutingPositiveTestCase : public TestCase
 {
@@ -201,9 +201,9 @@ Ipv4ListRoutingPositiveTestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 ListRouting TestSuite
+ * @brief IPv4 ListRouting TestSuite
  */
 class Ipv4ListRoutingTestSuite : public TestSuite
 {

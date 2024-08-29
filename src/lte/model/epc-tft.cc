@@ -30,9 +30,9 @@ NS_LOG_COMPONENT_DEFINE("EpcTft");
 /**
  * Output stream operator for EPC TFT direction
  *
- * \param os output stream
- * \param d EPC TFT direction
- * \return ostream
+ * @param os output stream
+ * @param d EPC TFT direction
+ * @return ostream
  */
 std::ostream&
 operator<<(std::ostream& os, const EpcTft::Direction& d)
@@ -55,9 +55,9 @@ operator<<(std::ostream& os, const EpcTft::Direction& d)
 /**
  * Output stream for EPC TFT packet filter
  *
- * \param os output stream
- * \param f EPC TFT packet filter
- * \return ostream
+ * @param os output stream
+ * @param f EPC TFT packet filter
+ * @return ostream
  */
 std::ostream&
 operator<<(std::ostream& os, const EpcTft::PacketFilter& f)

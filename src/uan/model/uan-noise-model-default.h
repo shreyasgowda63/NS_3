@@ -29,7 +29,7 @@ namespace ns3
 {
 
 /**
- * \ingroup uan
+ * @ingroup uan
  *
  * Standard ambient acoustic noise model.
  *
@@ -54,7 +54,7 @@ class UanNoiseModelDefault : public UanNoiseModel
 
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 

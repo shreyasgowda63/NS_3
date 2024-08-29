@@ -32,10 +32,10 @@
 using namespace ns3;
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Test the service flow creation.
+ * @brief Test the service flow creation.
  */
 class Ns3WimaxSfCreationTestCase : public TestCase
 {
@@ -151,10 +151,10 @@ Ns3WimaxSfCreationTestCase::DoRun()
 }
 
 /**
- * \ingroup wimax-test
- * \ingroup tests
+ * @ingroup wimax-test
+ * @ingroup tests
  *
- * \brief Ns3 Wimax Service Flow Test Suite
+ * @brief Ns3 Wimax Service Flow Test Suite
  */
 class Ns3WimaxServiceFlowTestSuite : public TestSuite
 {

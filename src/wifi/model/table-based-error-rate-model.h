@@ -34,16 +34,16 @@ namespace ns3
 class WifiTxVector;
 
 /*
- * \ingroup wifi
- * \brief the interface for the table-driven OFDM error model
+ * @ingroup wifi
+ * @brief the interface for the table-driven OFDM error model
  *
  */
 class TableBasedErrorRateModel : public ErrorRateModel
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -51,9 +51,9 @@ class TableBasedErrorRateModel : public ErrorRateModel
     ~TableBasedErrorRateModel() override;
 
     /**
-     * \brief Utility function to convert WifiMode to an MCS value
-     * \param mode the WifiMode
-     * \return the equivalent MCS value, if found
+     * @brief Utility function to convert WifiMode to an MCS value
+     * @param mode the WifiMode
+     * @return the equivalent MCS value, if found
      */
     static std::optional<uint8_t> GetMcsForMode(WifiMode mode);
 
@@ -69,19 +69,19 @@ class TableBasedErrorRateModel : public ErrorRateModel
     /**
      * Round SNR (in dB) to the specified precision
      *
-     * \param snr the SNR to round  (in dB)
-     * \param precision the precision to use
-     * \return the rounded SNR (in dB) to the specified precision
+     * @param snr the SNR to round  (in dB)
+     * @param precision the precision to use
+     * @return the rounded SNR (in dB) to the specified precision
      */
     double RoundSnr(double snr, double precision) const;
 
     /**
      * Fetch the frame success rate for a given Wi-Fi mode, TXVECTOR, SNR and frame size.
-     * \param mode the Wi-Fi mode
-     * \param txVector the TXVECTOR
-     * \param snr the SNR (linear scale)
-     * \param nbits the number of bits
-     * \return the frame success rate for a given Wi-Fi mode, TXVECTOR, SNR and frame size
+     * @param mode the Wi-Fi mode
+     * @param txVector the TXVECTOR
+     * @param snr the SNR (linear scale)
+     * @param nbits the number of bits
+     * @return the frame success rate for a given Wi-Fi mode, TXVECTOR, SNR and frame size
      */
     double FetchFsr(WifiMode mode, const WifiTxVector& txVector, double snr, uint64_t nbits) const;
 

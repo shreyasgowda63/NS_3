@@ -27,17 +27,17 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("TcpDatSentCbTest");
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Socket that the 50% of the times saves the entire packet in the buffer,
+ * @brief Socket that the 50% of the times saves the entire packet in the buffer,
  * while in the other 50% saves only half the packet.
  */
 class TcpSocketHalfAck : public TcpSocketMsgBase
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
 
@@ -88,9 +88,9 @@ TcpSocketHalfAck::ReceivedData(Ptr<Packet> packet, const TcpHeader& tcpHeader)
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief Data Sent callback test
+ * @brief Data Sent callback test
  *
  * The rationale of this test is to check if the dataSent callback advertises
  * to the application all the transmitted bytes. We know in advance how many
@@ -103,9 +103,9 @@ class TcpDataSentCbTestCase : public TcpGeneralTest
   public:
     /**
      * Constructor.
-     * \param desc Test description.
-     * \param size Packet size.
-     * \param packets Number of packets.
+     * @param desc Test description.
+     * @param size Packet size.
+     * @param packets Number of packets.
      */
     TcpDataSentCbTestCase(const std::string& desc, uint32_t size, uint32_t packets)
         : TcpGeneralTest(desc),
@@ -161,9 +161,9 @@ TcpDataSentCbTestCase::CreateReceiverSocket(Ptr<Node> node)
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief TestSuite: Data Sent callback
+ * @brief TestSuite: Data Sent callback
  */
 class TcpDataSentCbTestSuite : public TestSuite
 {

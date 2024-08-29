@@ -27,10 +27,10 @@
 using namespace ns3;
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Bit serialization test
+ * @brief Bit serialization test
  */
 class BitSerializerTest : public TestCase
 {
@@ -77,10 +77,10 @@ BitSerializerTest::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Bit deserialization test
+ * @brief Bit deserialization test
  */
 class BitDeserializerTest : public TestCase
 {
@@ -141,10 +141,10 @@ BitDeserializerTest::DoRun()
 }
 
 /**
- * \ingroup network-test
- * \ingroup tests
+ * @ingroup network-test
+ * @ingroup tests
  *
- * \brief Packet Metadata TestSuite
+ * @brief Packet Metadata TestSuite
  */
 class BitSerializerTestSuite : public TestSuite
 {

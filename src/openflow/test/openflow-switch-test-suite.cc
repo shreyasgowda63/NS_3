@@ -28,9 +28,9 @@
 using namespace ns3;
 
 /**
- * \ingroup openflow-tests
+ * @ingroup openflow-tests
  *
- * \brief OpenFlow Test
+ * @brief OpenFlow Test
  */
 class SwitchFlowTableTestCase : public TestCase
 {
@@ -194,9 +194,9 @@ SwitchFlowTableTestCase::DoRun()
 }
 
 /**
- * \ingroup openflow-tests
+ * @ingroup openflow-tests
  *
- * \brief OpenFlow TestSuite
+ * @brief OpenFlow TestSuite
  */
 class SwitchTestSuite : public TestSuite
 {

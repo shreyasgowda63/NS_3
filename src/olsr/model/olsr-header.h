@@ -38,7 +38,7 @@ double EmfToSeconds(uint8_t emf);
 uint8_t SecondsToEmf(double seconds);
 
 /**
- * \ingroup olsr
+ * @ingroup olsr
  *
  * The basic layout of any packet in OLSR is as follows (omitting IP and
  * UDP headers):
@@ -83,7 +83,7 @@ class PacketHeader : public Header
 
     /**
      * Set the packet total length.
-     * \param length The packet length.
+     * @param length The packet length.
      */
     void SetPacketLength(uint16_t length)
     {
@@ -92,7 +92,7 @@ class PacketHeader : public Header
 
     /**
      * Get the packet total length.
-     * \return The packet length.
+     * @return The packet length.
      */
     uint16_t GetPacketLength() const
     {
@@ -101,7 +101,7 @@ class PacketHeader : public Header
 
     /**
      * Set the packet sequence number.
-     * \param seqnum The packet sequence number.
+     * @param seqnum The packet sequence number.
      */
     void SetPacketSequenceNumber(uint16_t seqnum)
     {
@@ -110,7 +110,7 @@ class PacketHeader : public Header
 
     /**
      * Get the packet sequence number.
-     * \returns The packet sequence number.
+     * @returns The packet sequence number.
      */
     uint16_t GetPacketSequenceNumber() const
     {
@@ -123,8 +123,8 @@ class PacketHeader : public Header
 
   public:
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -135,7 +135,7 @@ class PacketHeader : public Header
 };
 
 /**
- * \ingroup olsr
+ * @ingroup olsr
  *
  * This header can store HELP, TC, MID and HNA messages.
  * The header size is variable, and depends on the
@@ -176,7 +176,7 @@ class MessageHeader : public Header
 
     /**
      * Set the message type.
-     * \param messageType The message type.
+     * @param messageType The message type.
      */
     void SetMessageType(MessageType messageType)
     {
@@ -185,7 +185,7 @@ class MessageHeader : public Header
 
     /**
      * Get the message type.
-     * \return The message type.
+     * @return The message type.
      */
     MessageType GetMessageType() const
     {
@@ -194,7 +194,7 @@ class MessageHeader : public Header
 
     /**
      * Set the validity time.
-     * \param time The validity time.
+     * @param time The validity time.
      */
     void SetVTime(Time time)
     {
@@ -203,7 +203,7 @@ class MessageHeader : public Header
 
     /**
      * Get the validity time.
-     * \return The validity time.
+     * @return The validity time.
      */
     Time GetVTime() const
     {
@@ -212,7 +212,7 @@ class MessageHeader : public Header
 
     /**
      * Set the originator address.
-     * \param originatorAddress The originator address.
+     * @param originatorAddress The originator address.
      */
     void SetOriginatorAddress(Ipv4Address originatorAddress)
     {
@@ -221,7 +221,7 @@ class MessageHeader : public Header
 
     /**
      * Get the originator address.
-     * \return The originator address.
+     * @return The originator address.
      */
     Ipv4Address GetOriginatorAddress() const
     {
@@ -230,7 +230,7 @@ class MessageHeader : public Header
 
     /**
      * Set the time to live.
-     * \param timeToLive The time to live.
+     * @param timeToLive The time to live.
      */
     void SetTimeToLive(uint8_t timeToLive)
     {
@@ -239,7 +239,7 @@ class MessageHeader : public Header
 
     /**
      * Get the time to live.
-     * \return The time to live.
+     * @return The time to live.
      */
     uint8_t GetTimeToLive() const
     {
@@ -248,7 +248,7 @@ class MessageHeader : public Header
 
     /**
      * Set the hop count.
-     * \param hopCount The hop count.
+     * @param hopCount The hop count.
      */
     void SetHopCount(uint8_t hopCount)
     {
@@ -257,7 +257,7 @@ class MessageHeader : public Header
 
     /**
      * Get the hop count.
-     * \return The hop count.
+     * @return The hop count.
      */
     uint8_t GetHopCount() const
     {
@@ -266,7 +266,7 @@ class MessageHeader : public Header
 
     /**
      * Set the message sequence number.
-     * \param messageSequenceNumber The message sequence number.
+     * @param messageSequenceNumber The message sequence number.
      */
     void SetMessageSequenceNumber(uint16_t messageSequenceNumber)
     {
@@ -275,7 +275,7 @@ class MessageHeader : public Header
 
     /**
      * Get the message sequence number.
-     * \return The message sequence number.
+     * @return The message sequence number.
      */
     uint16_t GetMessageSequenceNumber() const
     {
@@ -293,8 +293,8 @@ class MessageHeader : public Header
 
   public:
     /**
-     * \brief Get the type ID.
-     * \return The object TypeId.
+     * @brief Get the type ID.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -304,7 +304,7 @@ class MessageHeader : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
 
     /**
-     * \ingroup olsr
+     * @ingroup olsr
      * MID Message Format
      *
     \verbatim
@@ -324,19 +324,19 @@ class MessageHeader : public Header
         std::vector<Ipv4Address> interfaceAddresses; //!< Interface Address container.
         /**
          * This method is used to print the content of a MID message.
-         * \param os output stream
+         * @param os output stream
          */
         void Print(std::ostream& os) const;
         /**
          * Returns the expected size of the header.
-         * \returns the expected size of the header.
+         * @returns the expected size of the header.
          */
         uint32_t GetSerializedSize() const;
         /**
          * This method is used by Packet::AddHeader to
          * store a header into the byte buffer of a packet.
          *
-         * \param start an iterator which points to where the header should
+         * @param start an iterator which points to where the header should
          *        be written.
          */
         void Serialize(Buffer::Iterator start) const;
@@ -344,16 +344,16 @@ class MessageHeader : public Header
          * This method is used by Packet::RemoveHeader to
          * re-create a header from the byte buffer of a packet.
          *
-         * \param start an iterator which points to where the header should
+         * @param start an iterator which points to where the header should
          *        read from.
-         * \param messageSize the message size.
-         * \returns the number of bytes read.
+         * @param messageSize the message size.
+         * @returns the number of bytes read.
          */
         uint32_t Deserialize(Buffer::Iterator start, uint32_t messageSize);
     };
 
     /**
-     * \ingroup olsr
+     * @ingroup olsr
      * HELLO Message Format
      *
     \verbatim
@@ -398,7 +398,7 @@ class MessageHeader : public Header
 
         /**
          * Set the HELLO emission interval.
-         * \param time The HELLO emission interval.
+         * @param time The HELLO emission interval.
          */
         void SetHTime(Time time)
         {
@@ -407,7 +407,7 @@ class MessageHeader : public Header
 
         /**
          * Get the HELLO emission interval.
-         * \return The HELLO emission interval.
+         * @return The HELLO emission interval.
          */
         Time GetHTime() const
         {
@@ -420,19 +420,19 @@ class MessageHeader : public Header
 
         /**
          * This method is used to print the content of a Hello message.
-         * \param os output stream
+         * @param os output stream
          */
         void Print(std::ostream& os) const;
         /**
          * Returns the expected size of the header.
-         * \returns the expected size of the header.
+         * @returns the expected size of the header.
          */
         uint32_t GetSerializedSize() const;
         /**
          * This method is used by Packet::AddHeader to
          * store a header into the byte buffer of a packet.
          *
-         * \param start an iterator which points to where the header should
+         * @param start an iterator which points to where the header should
          *        be written.
          */
         void Serialize(Buffer::Iterator start) const;
@@ -440,16 +440,16 @@ class MessageHeader : public Header
          * This method is used by Packet::RemoveHeader to
          * re-create a header from the byte buffer of a packet.
          *
-         * \param start an iterator which points to where the header should
+         * @param start an iterator which points to where the header should
          *        read from.
-         * \param messageSize the message size.
-         * \returns the number of bytes read.
+         * @param messageSize the message size.
+         * @returns the number of bytes read.
          */
         uint32_t Deserialize(Buffer::Iterator start, uint32_t messageSize);
     };
 
     /**
-     * \ingroup olsr
+     * @ingroup olsr
      * TC Message Format
      *
      \verbatim
@@ -473,19 +473,19 @@ class MessageHeader : public Header
 
         /**
          * This method is used to print the content of a Tc message.
-         * \param os output stream
+         * @param os output stream
          */
         void Print(std::ostream& os) const;
         /**
          * Returns the expected size of the header.
-         * \returns the expected size of the header.
+         * @returns the expected size of the header.
          */
         uint32_t GetSerializedSize() const;
         /**
          * This method is used by Packet::AddHeader to
          * store a header into the byte buffer of a packet.
          *
-         * \param start an iterator which points to where the header should
+         * @param start an iterator which points to where the header should
          *        be written.
          */
         void Serialize(Buffer::Iterator start) const;
@@ -493,16 +493,16 @@ class MessageHeader : public Header
          * This method is used by Packet::RemoveHeader to
          * re-create a header from the byte buffer of a packet.
          *
-         * \param start an iterator which points to where the header should
+         * @param start an iterator which points to where the header should
          *        read from.
-         * \param messageSize the message size.
-         * \returns the number of bytes read.
+         * @param messageSize the message size.
+         * @returns the number of bytes read.
          */
         uint32_t Deserialize(Buffer::Iterator start, uint32_t messageSize);
     };
 
     /**
-     * \ingroup olsr
+     * @ingroup olsr
      * HNA (Host Network Association) Message Format
      *
      \verbatim
@@ -536,19 +536,19 @@ class MessageHeader : public Header
 
         /**
          * This method is used to print the content of a Hna message.
-         * \param os output stream
+         * @param os output stream
          */
         void Print(std::ostream& os) const;
         /**
          * Returns the expected size of the header.
-         * \returns the expected size of the header.
+         * @returns the expected size of the header.
          */
         uint32_t GetSerializedSize() const;
         /**
          * This method is used by Packet::AddHeader to
          * store a header into the byte buffer of a packet.
          *
-         * \param start an iterator which points to where the header should
+         * @param start an iterator which points to where the header should
          *        be written.
          */
         void Serialize(Buffer::Iterator start) const;
@@ -556,10 +556,10 @@ class MessageHeader : public Header
          * This method is used by Packet::RemoveHeader to
          * re-create a header from the byte buffer of a packet.
          *
-         * \param start an iterator which points to where the header should
+         * @param start an iterator which points to where the header should
          *        read from.
-         * \param messageSize the message size.
-         * \returns the number of bytes read.
+         * @param messageSize the message size.
+         * @returns the number of bytes read.
          */
         uint32_t Deserialize(Buffer::Iterator start, uint32_t messageSize);
     };
@@ -579,7 +579,7 @@ class MessageHeader : public Header
   public:
     /**
      * Set the message type to MID and return the message content.
-     * \returns The MID message.
+     * @returns The MID message.
      */
     Mid& GetMid()
     {
@@ -596,7 +596,7 @@ class MessageHeader : public Header
 
     /**
      * Set the message type to HELLO and return the message content.
-     * \returns The HELLO message.
+     * @returns The HELLO message.
      */
     Hello& GetHello()
     {
@@ -613,7 +613,7 @@ class MessageHeader : public Header
 
     /**
      * Set the message type to TC and return the message content.
-     * \returns The TC message.
+     * @returns The TC message.
      */
     Tc& GetTc()
     {
@@ -630,7 +630,7 @@ class MessageHeader : public Header
 
     /**
      * Set the message type to HNA and return the message content.
-     * \returns The HNA message.
+     * @returns The HNA message.
      */
     Hna& GetHna()
     {
@@ -647,7 +647,7 @@ class MessageHeader : public Header
 
     /**
      * Get the MID message.
-     * \returns The MID message.
+     * @returns The MID message.
      */
     const Mid& GetMid() const
     {
@@ -657,7 +657,7 @@ class MessageHeader : public Header
 
     /**
      * Get the HELLO message.
-     * \returns The HELLO message.
+     * @returns The HELLO message.
      */
     const Hello& GetHello() const
     {
@@ -667,7 +667,7 @@ class MessageHeader : public Header
 
     /**
      * Get the TC message.
-     * \returns The TC message.
+     * @returns The TC message.
      */
     const Tc& GetTc() const
     {
@@ -677,7 +677,7 @@ class MessageHeader : public Header
 
     /**
      * Get the HNA message.
-     * \returns The HNA message.
+     * @returns The HNA message.
      */
     const Hna& GetHna() const
     {

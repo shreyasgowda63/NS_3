@@ -55,7 +55,7 @@ LteAggregationThroughputScaleTestSuite::LteAggregationThroughputScaleTestSuite()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LteAggregationThroughputScaleTestSuite g_lteAggregationThroughputScaleTestSuite;

@@ -25,8 +25,8 @@
 #include <iomanip>
 
 /**
- * \file
- * \ingroup simulator
+ * @file
+ * @ingroup simulator
  * ns3::DefaultNodePrinter implementation.
  */
 

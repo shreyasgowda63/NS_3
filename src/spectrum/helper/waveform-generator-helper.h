@@ -35,7 +35,7 @@ class SpectrumValue;
 class SpectrumChannel;
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
  * Create a Waveform generator, which can be used to inject specific noise in the channel.
  */
@@ -83,9 +83,9 @@ class WaveformGeneratorHelper
     void SetDeviceAttribute(std::string n1, const AttributeValue& v1);
 
     /**
-     * \tparam Ts \deduced Argument types
-     * \param type the type of the model to set
-     * \param [in] args Name and AttributeValue pairs to set.
+     * @tparam Ts \deduced Argument types
+     * @param type the type of the model to set
+     * @param [in] args Name and AttributeValue pairs to set.
      *
      * Configure the AntennaModel instance for each new device to be created
      */
@@ -99,7 +99,7 @@ class WaveformGeneratorHelper
     NetDeviceContainer Install(NodeContainer c) const;
     /**
      * @param node the node on which a device must be created
-     * \returns a device container which contains all the devices created by this method.
+     * @returns a device container which contains all the devices created by this method.
      */
     NetDeviceContainer Install(Ptr<Node> node) const;
     /**

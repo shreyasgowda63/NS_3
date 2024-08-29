@@ -22,8 +22,8 @@
 #include "log.h"
 
 /**
- * \file
- * \ingroup callback
+ * @file
+ * @ingroup callback
  * ns3::CallbackValue implementation.
  */
 

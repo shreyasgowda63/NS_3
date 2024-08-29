@@ -23,14 +23,14 @@ namespace ns3
 {
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  * Spectrum model logger for frequencies in the 2.4 GHz ISM band
  * with 1 MHz resolution.
  */
 Ptr<SpectrumModel> SpectrumModelIsm2400MhzRes1Mhz;
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
  * Static initializer class for Spectrum model logger for
  * frequencies in the 2.4 GHz ISM band with 1 MHz resolution.
@@ -52,7 +52,7 @@ class static_SpectrumModelIsm2400MhzRes1Mhz_initializer
 };
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  * Static variable for analyzer initialization
  */
 static_SpectrumModelIsm2400MhzRes1Mhz_initializer

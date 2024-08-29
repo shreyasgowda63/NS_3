@@ -35,7 +35,7 @@ namespace ns3
 {
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * Takes care of storing the information generated at MAC layer. Metrics saved are:
  *   - Timestamp (in seconds)
@@ -63,14 +63,14 @@ class MacStatsCalculator : public LteStatsCalculator
     // Inherited from ns3::Object
     /**
      * Register this type.
-     * \return The object TypeId.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
     /**
      * Set the name of the file where the uplink statistics will be stored.
      *
-     * \param outputFilename string with the name of the file
+     * @param outputFilename string with the name of the file
      */
     void SetUlOutputFilename(std::string outputFilename);
 
@@ -135,9 +135,9 @@ class MacStatsCalculator : public LteStatsCalculator
     /**
      * Trace sink for the ns3::LteEnbMac::DlScheduling trace source
      *
-     * \param macStats
-     * \param path
-     * \param dlSchedulingCallbackInfo DlSchedulingCallbackInfo structure containing all downlink
+     * @param macStats
+     * @param path
+     * @param dlSchedulingCallbackInfo DlSchedulingCallbackInfo structure containing all downlink
      * information that is generated what DlScheduling traces is fired
      */
     static void DlSchedulingCallback(Ptr<MacStatsCalculator> macStats,
@@ -147,14 +147,14 @@ class MacStatsCalculator : public LteStatsCalculator
     /**
      * Trace sink for the ns3::LteEnbMac::UlScheduling trace source
      *
-     * \param macStats
-     * \param path
-     * \param frameNo
-     * \param subframeNo
-     * \param rnti
-     * \param mcs
-     * \param size
-     * \param componentCarrierId
+     * @param macStats
+     * @param path
+     * @param frameNo
+     * @param subframeNo
+     * @param rnti
+     * @param mcs
+     * @param size
+     * @param componentCarrierId
      */
     static void UlSchedulingCallback(Ptr<MacStatsCalculator> macStats,
                                      std::string path,

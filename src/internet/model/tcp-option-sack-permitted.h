@@ -31,7 +31,7 @@ namespace ns3
 {
 
 /**
- * \brief Defines the TCP option of kind 4 (selective acknowledgment permitted
+ * @brief Defines the TCP option of kind 4 (selective acknowledgment permitted
  * option) as in \RFC{2018}
  *
  * TCP Sack-Permitted Option is 2-byte in length and sent in a SYN segment by a
@@ -43,8 +43,8 @@ class TcpOptionSackPermitted : public TcpOption
 {
   public:
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * @brief Get the type ID.
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;

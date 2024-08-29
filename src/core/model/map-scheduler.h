@@ -27,8 +27,8 @@
 #include <utility>
 
 /**
- * \file
- * \ingroup scheduler
+ * @file
+ * @ingroup scheduler
  * ns3::MapScheduler declaration.
  */
 
@@ -36,13 +36,13 @@ namespace ns3
 {
 
 /**
- * \ingroup scheduler
- * \brief a std::map event scheduler
+ * @ingroup scheduler
+ * @brief a std::map event scheduler
  *
  * This class implements the an event scheduler using an std::map
  * data structure.
  *
- * \par Time Complexity
+ * @par Time Complexity
  *
  * Operation    | Amortized %Time | Reason
  * :----------- | :-------------- | :-----
@@ -52,7 +52,7 @@ namespace ns3
  * Remove()     | Logarithmic     | `std::map::find()`
  * RemoveNext() | Constant        | `std::map::begin()`
  *
- * \par Memory Complexity
+ * @par Memory Complexity
  *
  * Category  | Memory                           | Reason
  * :-------- | :------------------------------- | :-----
@@ -65,7 +65,7 @@ class MapScheduler : public Scheduler
   public:
     /**
      *  Register this type.
-     *  \return The object TypeId.
+     *  @return The object TypeId.
      */
     static TypeId GetTypeId();
 

@@ -22,8 +22,8 @@
 #include "log.h"
 
 /**
- * \file
- * \ingroup events
+ * @file
+ * @ingroup events
  * ns3::EventImpl definitions.
  */
 

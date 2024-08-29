@@ -31,7 +31,7 @@ class UanPhy;
 class UanTxMode;
 
 /**
- * \ingroup uan
+ * @ingroup uan
  *
  * ALOHA MAC Protocol, the simplest MAC protocol for wireless networks.
  *
@@ -48,7 +48,7 @@ class UanMacAloha : public UanMac
     ~UanMacAloha() override;
     /**
      * Register this type.
-     * \return The TypeId.
+     * @return The TypeId.
      */
     static TypeId GetTypeId();
 
@@ -70,17 +70,17 @@ class UanMacAloha : public UanMac
     /**
      * Receive packet from lower layer (passed to PHY as callback).
      *
-     * \param pkt Packet being received.
-     * \param sinr SINR of received packet.
-     * \param txMode Mode of received packet.
+     * @param pkt Packet being received.
+     * @param sinr SINR of received packet.
+     * @param txMode Mode of received packet.
      */
     void RxPacketGood(Ptr<Packet> pkt, double sinr, UanTxMode txMode);
 
     /**
      * Packet received at lower layer in error.
      *
-     * \param pkt Packet received in error.
-     * \param sinr SINR of received packet.
+     * @param pkt Packet received in error.
+     * @param sinr SINR of received packet.
      */
     void RxPacketError(Ptr<Packet> pkt, double sinr);
 

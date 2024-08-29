@@ -18,9 +18,9 @@
  */
 
 /**
- * \file
- * \ingroup wifi-test
- * \ingroup tests
+ * @file
+ * @ingroup wifi-test
+ * @ingroup tests
  *
  * This program is used to generate plots found in the paper
  * Guangyu Pei and Tom Henderson, "Validation of ns-3 802.11b PHY model",
@@ -38,8 +38,8 @@
  */
 
 /**
- * \ingroup wifi
- * \defgroup wifi-test wifi module tests
+ * @ingroup wifi
+ * @defgroup wifi-test wifi module tests
  */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

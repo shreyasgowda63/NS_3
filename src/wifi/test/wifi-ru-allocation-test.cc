@@ -25,10 +25,10 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("WifiRuAllocationTest");
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief Test the WifiPhyOperatingChannel::Get20MHzIndicesCoveringRu() method.
+ * @brief Test the WifiPhyOperatingChannel::Get20MHzIndicesCoveringRu() method.
  */
 class Wifi20MHzIndicesCoveringRuTest : public TestCase
 {
@@ -43,11 +43,11 @@ class Wifi20MHzIndicesCoveringRuTest : public TestCase
      * Check that the indices of the 20 MHz channels covering the given RU as computed
      * by WifiPhyOperatingChannel::Get20MHzIndicesCoveringRu() are correct.
      *
-     * \param primary20 the index of the primary20 channel to configure
-     * \param ru the given RU
-     * \param width the width in MHz of the channel to which the given RU refers to; normally,
+     * @param primary20 the index of the primary20 channel to configure
+     * @param ru the given RU
+     * @param width the width in MHz of the channel to which the given RU refers to; normally,
      *              it is the width in MHz of the PPDU for which the RU is allocated
-     * \param indices the expected indices
+     * @param indices the expected indices
      */
     void RunOne(uint8_t primary20,
                 HeRu::RuSpec ru,
@@ -676,10 +676,10 @@ Wifi20MHzIndicesCoveringRuTest::DoRun()
 }
 
 /**
- * \ingroup wifi-test
- * \ingroup tests
+ * @ingroup wifi-test
+ * @ingroup tests
  *
- * \brief wifi primary channels test suite
+ * @brief wifi primary channels test suite
  */
 class WifiRuAllocationTestSuite : public TestSuite
 {

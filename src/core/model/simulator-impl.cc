@@ -21,8 +21,8 @@
 #include "log.h"
 
 /**
- * \file
- * \ingroup simulator
+ * @file
+ * @ingroup simulator
  * ns3::SimulatorImpl implementation.
  */
 

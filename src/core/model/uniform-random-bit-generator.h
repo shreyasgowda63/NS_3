@@ -41,7 +41,7 @@ class UniformRandomBitGenerator
     }
 
     /**
-     * \return the ns-3 style uniform random variable
+     * @return the ns-3 style uniform random variable
      */
     Ptr<UniformRandomVariable> GetRv() const
     {
@@ -52,7 +52,7 @@ class UniformRandomBitGenerator
     using result_type = uint32_t;
 
     /**
-     * \return the smallest value that operator() may return
+     * @return the smallest value that operator() may return
      */
     static constexpr result_type min()
     {
@@ -60,7 +60,7 @@ class UniformRandomBitGenerator
     }
 
     /**
-     * \return the largest value that operator() may return
+     * @return the largest value that operator() may return
      */
     static constexpr result_type max()
     {
@@ -68,7 +68,7 @@ class UniformRandomBitGenerator
     }
 
     /**
-     * \return a value in the closed interval [min(), max()]
+     * @return a value in the closed interval [min(), max()]
      */
     result_type operator()()
     {

@@ -29,7 +29,7 @@ namespace ns3
 {
 
 /**
- * \ingroup lte
+ * @ingroup lte
  *
  * Base class for ***StatsCalculator classes. Provides
  * basic functionality to parse and store IMSI and CellId.
@@ -51,14 +51,14 @@ class LteStatsCalculator : public Object
 
     /**
      * Register this type.
-     * \return The object TypeId.
+     * @return The object TypeId.
      */
     static TypeId GetTypeId();
 
     /**
      * Set the name of the file where the uplink statistics will be stored.
      *
-     * \param outputFilename string with the name of the file
+     * @param outputFilename string with the name of the file
      */
     void SetUlOutputFilename(std::string outputFilename);
 

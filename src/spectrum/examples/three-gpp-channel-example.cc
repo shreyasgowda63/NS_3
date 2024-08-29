@@ -54,7 +54,7 @@ static Ptr<ThreeGppSpectrumPropagationLossModel>
     m_spectrumLossModel; //!< the SpectrumPropagationLossModel object
 
 /**
- * \brief A structure that holds the parameters for the
+ * @brief A structure that holds the parameters for the
  * ComputeSnr function. In this way the problem with the limited
  * number of parameters of method Schedule is avoided.
  */
@@ -70,9 +70,9 @@ struct ComputeSnrParams
 
 /**
  * Perform the beamforming using the DFT beamforming method
- * \param thisDevice the device performing the beamforming
- * \param thisAntenna the antenna object associated to thisDevice
- * \param otherDevice the device towards which point the beam
+ * @param thisDevice the device performing the beamforming
+ * @param thisAntenna the antenna object associated to thisDevice
+ * @param otherDevice the device towards which point the beam
  */
 static void
 DoBeamforming(Ptr<NetDevice> thisDevice,
@@ -117,7 +117,7 @@ DoBeamforming(Ptr<NetDevice> thisDevice,
 
 /**
  * Compute the average SNR
- * \param params A structure that holds the parameters that are needed to perform calculations in
+ * @param params A structure that holds the parameters that are needed to perform calculations in
  * ComputeSnr
  */
 static void

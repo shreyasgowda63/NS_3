@@ -123,7 +123,7 @@ LenaTestPhyErrorModelSuite::LenaTestPhyErrorModelSuite()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  * Static variable for test initialization
  */
 static LenaTestPhyErrorModelSuite lenaTestPhyErrorModelSuite;

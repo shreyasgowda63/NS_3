@@ -43,24 +43,24 @@
 using namespace ns3;
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 Forwarding Test
+ * @brief IPv4 Forwarding Test
  */
 class Ipv4ForwardingTest : public TestCase
 {
     Ptr<Packet> m_receivedPacket; //!< Received packet
 
     /**
-     * \brief Send data.
-     * \param socket The sending socket.
-     * \param to Destination address.
+     * @brief Send data.
+     * @param socket The sending socket.
+     * @param to Destination address.
      */
     void DoSendData(Ptr<Socket> socket, std::string to);
     /**
-     * \brief Send data.
-     * \param socket The sending socket.
-     * \param to Destination address.
+     * @brief Send data.
+     * @param socket The sending socket.
+     * @param to Destination address.
      */
     void SendData(Ptr<Socket> socket, std::string to);
 
@@ -69,8 +69,8 @@ class Ipv4ForwardingTest : public TestCase
     Ipv4ForwardingTest();
 
     /**
-     * \brief Receive data.
-     * \param socket The receiving socket.
+     * @brief Receive data.
+     * @param socket The receiving socket.
      */
     void ReceivePkt(Ptr<Socket> socket);
 };
@@ -225,9 +225,9 @@ Ipv4ForwardingTest::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 Forwarding TestSuite
+ * @brief IPv4 Forwarding TestSuite
  */
 class Ipv4ForwardingTestSuite : public TestSuite
 {

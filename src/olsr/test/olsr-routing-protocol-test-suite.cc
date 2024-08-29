@@ -25,16 +25,16 @@
 #include "ns3/test.h"
 
 /**
- * \ingroup olsr
- * \defgroup olsr-test olsr module tests
+ * @ingroup olsr
+ * @defgroup olsr-test olsr module tests
  */
 
 using namespace ns3;
 using namespace olsr;
 
 /**
- * \ingroup olsr-test
- * \ingroup tests
+ * @ingroup olsr-test
+ * @ingroup tests
  *
  * Testcase for MPR computation mechanism
  */
@@ -175,8 +175,8 @@ OlsrMprTestCase::DoRun()
 }
 
 /**
- * \ingroup olsr-test
- * \ingroup tests
+ * @ingroup olsr-test
+ * @ingroup tests
  *
  * OLSR protocol test suite
  */

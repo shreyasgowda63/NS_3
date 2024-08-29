@@ -26,7 +26,7 @@ namespace ns3
 {
 
 /**
- * \ingroup spectrum
+ * @ingroup spectrum
  *
  * This class provides methods for the creation of SpectrumValue
  * instances that mimic the Power Spectral Density of commercial

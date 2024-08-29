@@ -31,9 +31,9 @@
 using namespace ns3;
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 Test
+ * @brief IPv4 Test
  */
 class Ipv4L3ProtocolTestCase : public TestCase
 {
@@ -121,9 +121,9 @@ Ipv4L3ProtocolTestCase::DoRun()
 }
 
 /**
- * \ingroup internet-test
+ * @ingroup internet-test
  *
- * \brief IPv4 TestSuite
+ * @brief IPv4 TestSuite
  */
 class IPv4L3ProtocolTestSuite : public TestSuite
 {

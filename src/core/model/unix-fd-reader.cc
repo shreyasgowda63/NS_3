@@ -32,8 +32,8 @@
 #include <unistd.h> // close()
 
 /**
- * \file
- * \ingroup system
+ * @file
+ * @ingroup system
  * ns3::FdReader implementation.
  */
 

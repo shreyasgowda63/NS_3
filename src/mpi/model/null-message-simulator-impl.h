@@ -18,8 +18,8 @@
  */
 
 /**
- * \file
- * \ingroup mpi
+ * @file
+ * @ingroup mpi
  * Declaration of class ns3::NullMessageSimulatorImpl.
  */
 
@@ -43,16 +43,16 @@ class NullMessageMpiInterface;
 class RemoteChannelBundle;
 
 /**
- * \ingroup mpi
+ * @ingroup mpi
  *
- * \brief Simulator implementation using MPI and a Null Message algorithm.
+ * @brief Simulator implementation using MPI and a Null Message algorithm.
  */
 class NullMessageSimulatorImpl : public SimulatorImpl
 {
   public:
     /**
      *  Register this type.
-     *  \return The object TypeId.
+     *  @return The object TypeId.
      */
     static TypeId GetTypeId();
 
@@ -85,7 +85,7 @@ class NullMessageSimulatorImpl : public SimulatorImpl
     uint64_t GetEventCount() const override;
 
     /**
-     * \return singleton instance
+     * @return singleton instance
      *
      * Singleton accessor.
      */
@@ -120,7 +120,7 @@ class NullMessageSimulatorImpl : public SimulatorImpl
     void ProcessOneEvent();
 
     /**
-     * \return next local event time.
+     * @return next local event time.
      */
     Time Next() const;
 
@@ -133,19 +133,19 @@ class NullMessageSimulatorImpl : public SimulatorImpl
      * Get the current SafeTime; the maximum time that events can
      * be processed based on information received from neighboring
      * MPI tasks.
-     * \return the current SafeTime
+     * @return the current SafeTime
      */
     Time GetSafeTime();
 
     /**
-     * \param bundle Bundle to schedule Null Message event for
+     * @param bundle Bundle to schedule Null Message event for
      *
      * Schedule Null Message event for the specified RemoteChannelBundle.
      */
     void ScheduleNullMessageEvent(Ptr<RemoteChannelBundle> bundle);
 
     /**
-     * \param bundle Bundle to reschedule Null Message event for
+     * @param bundle Bundle to reschedule Null Message event for
      *
      * Reschedule Null Message event for the specified
      * RemoteChannelBundle.  Existing event will be canceled.
@@ -153,7 +153,7 @@ class NullMessageSimulatorImpl : public SimulatorImpl
     void RescheduleNullMessageEvent(Ptr<RemoteChannelBundle> bundle);
 
     /**
-     * \param nodeSysId SystemID to reschedule null event for
+     * @param nodeSysId SystemID to reschedule null event for
      *
      * Reschedule Null Message event for the RemoteChannelBundle to the
      * task nodeSysId.  Existing event will be canceled.
@@ -161,9 +161,9 @@ class NullMessageSimulatorImpl : public SimulatorImpl
     void RescheduleNullMessageEvent(uint32_t nodeSysId);
 
     /**
-     * \param systemId SystemID to compute guarantee time for
+     * @param systemId SystemID to compute guarantee time for
      *
-     * \return Guarantee time
+     * @return Guarantee time
      *
      * Calculate the guarantee time for incoming RemoteChannelBundle
      * from task nodeSysId.  No message should arrive from task
@@ -172,7 +172,7 @@ class NullMessageSimulatorImpl : public SimulatorImpl
     Time CalculateGuaranteeTime(uint32_t systemId);
 
     /**
-     * \param bundle remote channel bundle to schedule an event for.
+     * @param bundle remote channel bundle to schedule an event for.
      *
      * Null message event handler.   Scheduled to send a null message
      * for the specified bundle at regular intervals.   Will canceled

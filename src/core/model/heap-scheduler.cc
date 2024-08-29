@@ -26,8 +26,8 @@
 #include "log.h"
 
 /**
- * \file
- * \ingroup scheduler
+ * @file
+ * @ingroup scheduler
  * Implementation of ns3::HeapScheduler class.
  */
 

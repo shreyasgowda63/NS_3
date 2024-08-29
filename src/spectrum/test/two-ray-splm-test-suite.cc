@@ -41,7 +41,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("TwoRaySplmTestSuite");
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
  * Test case for the TwoRaySpectrumPropagationLossModel class.
  *
@@ -69,8 +69,8 @@ class FtrFadingModelAverageTest : public TestCase
 
     /**
      * Compute the average of the FTR squared norm.
-     * \param [in] ftrParams The FTR parameters.
-     * \returns The average of \c N_MEASUREMENTS FTR samples.
+     * @param [in] ftrParams The FTR parameters.
+     * @returns The average of \c N_MEASUREMENTS FTR samples.
      */
     double FtrSquaredNormAverage(
         const TwoRaySpectrumPropagationLossModel::FtrParams& ftrParams) const;
@@ -89,9 +89,9 @@ class FtrFadingModelAverageTest : public TestCase
      * Two-Ray Fading Model for mmWave Communications," 2016 IEEE Globecom Workshops (GC Wkshps) for
      * further details.
      *
-     * \param [in] sigma The sigma parameter of the FTR model.
-     * \param [in] k The k parameter of the FTR model.
-     * \returns The expected mean.
+     * @param [in] sigma The sigma parameter of the FTR model.
+     * @param [in] k The k parameter of the FTR model.
+     * @returns The expected mean.
      */
     constexpr double FtrSquaredNormExpectedMean(double sigma, double k) const;
 
@@ -188,7 +188,7 @@ FtrFadingModelAverageTest::DoRun()
 }
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
  * Test case for the TwoRaySpectrumPropagationLossModel class.
  *
@@ -200,15 +200,15 @@ class ArrayResponseTest : public TestCase
   public:
     /**
      * The constructor of the test case
-     * \param txAntElem the antenna element of the TX antenna panel
-     * \param rxAntElem the antenna element of the RX antenna panel
-     * \param txNumAntennas the number of antenna elements of the TX antenna panel
-     * \param rxNumAntennas the number of antenna elements of the RX antenna panel
-     * \param txPosVec the position of the TX
-     * \param rxPosVec the position of the RX
-     * \param txBearing the bearing angle of the TX antenna panel
-     * \param rxBearing the bearing angle of the RX antenna panel
-     * \param expectedGain the theoretically expected gain for the above parameters
+     * @param txAntElem the antenna element of the TX antenna panel
+     * @param rxAntElem the antenna element of the RX antenna panel
+     * @param txNumAntennas the number of antenna elements of the TX antenna panel
+     * @param rxNumAntennas the number of antenna elements of the RX antenna panel
+     * @param txPosVec the position of the TX
+     * @param rxPosVec the position of the RX
+     * @param txBearing the bearing angle of the TX antenna panel
+     * @param rxBearing the bearing angle of the RX antenna panel
+     * @param expectedGain the theoretically expected gain for the above parameters
      */
     ArrayResponseTest(Ptr<AntennaModel> txAntElem,
                       Ptr<AntennaModel> rxAntElem,
@@ -327,7 +327,7 @@ ArrayResponseTest::DoRun()
 }
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
  * Test case for the TwoRaySpectrumPropagationLossModel class.
  *
@@ -341,12 +341,12 @@ class OverallGainAverageTest : public TestCase
   public:
     /**
      * The constructor of the test case
-     * \param txAntElem the antenna element of the TX antenna panel
-     * \param rxAntElem the antenna element of the RX antenna panel
-     * \param txNumAntennas the number of antenna elements of the TX antenna panel
-     * \param rxNumAntennas the number of antenna elements of the RX antenna panel
-     * \param fc the carrier frequency
-     * \param threeGppScenario the 3GPP scenario
+     * @param txAntElem the antenna element of the TX antenna panel
+     * @param rxAntElem the antenna element of the RX antenna panel
+     * @param txNumAntennas the number of antenna elements of the TX antenna panel
+     * @param rxNumAntennas the number of antenna elements of the RX antenna panel
+     * @param fc the carrier frequency
+     * @param threeGppScenario the 3GPP scenario
      */
     OverallGainAverageTest(Ptr<AntennaModel> txAntElem,
                            Ptr<AntennaModel> rxAntElem,
@@ -358,8 +358,8 @@ class OverallGainAverageTest : public TestCase
     /**
      * Computes the overall power of a PSD
      *
-     * \param psd the PSD
-     * \returns the overall power of the PSD, obtained as the integral of the
+     * @param psd the PSD
+     * @returns the overall power of the PSD, obtained as the integral of the
      *          sub-bands power over the PSD domain
      */
     double ComputePowerSpectralDensityOverallPower(Ptr<const SpectrumValue> psd);
@@ -368,8 +368,8 @@ class OverallGainAverageTest : public TestCase
      * Creates a PSD centered at fc, of bandwidth bw and sub-bands of
      * width rbWidth
      *
-     * \param fc the central frequency of the PSD
-     * \returns a PSD centered at fc, of bandwidth bw and sub-bands of
+     * @param fc the central frequency of the PSD
+     * @returns a PSD centered at fc, of bandwidth bw and sub-bands of
      *          width rbWidths
      */
     Ptr<SpectrumValue> CreateTxPowerSpectralDensity(double fc);
@@ -583,7 +583,7 @@ OverallGainAverageTest::DoRun()
 }
 
 /**
- * \ingroup spectrum-tests
+ * @ingroup spectrum-tests
  *
  * Test suite for the TwoRaySpectrumPropagationLossModel class
  */

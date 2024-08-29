@@ -45,15 +45,15 @@
 using namespace ns3;
 
 /**
- * \ingroup dsdv
- * \ingroup tests
- * \defgroup dsdv-test DSDV module tests
+ * @ingroup dsdv
+ * @ingroup tests
+ * @defgroup dsdv-test DSDV module tests
  */
 
 /**
- * \ingroup dsdv-test
+ * @ingroup dsdv-test
  *
- * \brief DSDV test case to verify the DSDV header
+ * @brief DSDV test case to verify the DSDV header
  *
  */
 class DsdvHeaderTestCase : public TestCase
@@ -109,9 +109,9 @@ DsdvHeaderTestCase::DoRun()
 }
 
 /**
- * \ingroup dsdv-test
+ * @ingroup dsdv-test
  *
- * \brief DSDV routing table tests (adding and looking up routes)
+ * @brief DSDV routing table tests (adding and looking up routes)
  */
 class DsdvTableTestCase : public TestCase
 {
@@ -210,9 +210,9 @@ DsdvTableTestCase::DoRun()
 }
 
 /**
- * \ingroup dsdv-test
+ * @ingroup dsdv-test
  *
- * \brief DSDV test suite
+ * @brief DSDV test suite
  */
 class DsdvTestSuite : public TestSuite
 {

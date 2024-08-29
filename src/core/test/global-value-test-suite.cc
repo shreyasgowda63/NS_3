@@ -21,16 +21,16 @@
 #include "ns3/uinteger.h"
 
 /**
- * \file
- * \ingroup core
- * \ingroup core-tests
- * \ingroup global-value-tests
+ * @file
+ * @ingroup core
+ * @ingroup core-tests
+ * @ingroup global-value-tests
  * GlobalValue test suite
  */
 
 /**
- * \ingroup core-tests
- * \defgroup global-value-tests GlobalValue test suite
+ * @ingroup core-tests
+ * @defgroup global-value-tests GlobalValue test suite
  */
 
 namespace ns3
@@ -40,7 +40,7 @@ namespace tests
 {
 
 /**
- * \ingroup global-value-tests
+ * @ingroup global-value-tests
  * Test for the ability to get at a GlobalValue.
  */
 class GlobalValueTestCase : public TestCase
@@ -95,7 +95,7 @@ GlobalValueTestCase::DoRun()
 }
 
 /**
- * \ingroup global-value-tests
+ * @ingroup global-value-tests
  * The Test Suite that glues all of the Test Cases together.
  */
 class GlobalValueTestSuite : public TestSuite
@@ -112,7 +112,7 @@ GlobalValueTestSuite::GlobalValueTestSuite()
 }
 
 /**
- * \ingroup global-value-tests
+ * @ingroup global-value-tests
  * GlobalValueTestSuite instance variable.
  */
 static GlobalValueTestSuite g_globalValueTestSuite;

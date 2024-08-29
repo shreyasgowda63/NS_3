@@ -33,7 +33,7 @@ namespace ns3
 class WifiMpdu;
 
 /**
- * \ingroup wifi
+ * @ingroup wifi
  * Type of elements stored in a WifiMacQueue container.
  *
  * Such elements can be accessed by the WifiMacQueue (via iterators) and
@@ -59,7 +59,7 @@ struct WifiMacQueueElem
 
     /**
      * Constructor.
-     * \param item the MPDU stored by this queue element
+     * @param item the MPDU stored by this queue element
      */
     WifiMacQueueElem(Ptr<WifiMpdu> item);
 

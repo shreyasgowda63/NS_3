@@ -26,9 +26,9 @@
 #include <type_traits>
 
 /**
- * \file
- * \ingroup timer
- * \ingroup timerimpl
+ * @file
+ * @ingroup timer
+ * @ingroup timerimpl
  * ns3::TimerImpl declaration and implementation.
  */
 
@@ -39,7 +39,7 @@ namespace internal
 {
 
 /**
- * \ingroup timer
+ * @ingroup timer
  * The timer implementation underlying Timer and Watchdog.
  */
 class TimerImpl
@@ -53,8 +53,8 @@ class TimerImpl
     /**
      * Set the arguments to be used when invoking the expire function.
      *
-     * \tparam Args \deduced Type template parameter pack
-     * \param [in] args The arguments to pass to the invoked method
+     * @tparam Args \deduced Type template parameter pack
+     * @param [in] args The arguments to pass to the invoked method
      */
     template <typename... Args>
     void SetArgs(Args... args);
@@ -62,8 +62,8 @@ class TimerImpl
     /**
      * Schedule the callback for a future time.
      *
-     * \param [in] delay The amount of time until the timer expires.
-     * \returns The scheduled EventId.
+     * @param [in] delay The amount of time until the timer expires.
+     * @returns The scheduled EventId.
      */
     virtual EventId Schedule(const Time& delay) = 0;
     /** Invoke the expire function. */
@@ -75,8 +75,8 @@ class TimerImpl
  ********************************************************************/
 
 /**
- * \ingroup timer
- * \defgroup timerimpl TimerImpl Implementation
+ * @ingroup timer
+ * @defgroup timerimpl TimerImpl Implementation
  * @{
  */
 /** TimerImpl specialization class for varying numbers of arguments. */
@@ -86,7 +86,7 @@ struct TimerImplX : public TimerImpl
     /**
      * Bind the arguments to be used when the callback function is invoked.
      *
-     * \param [in] args The arguments to pass to the invoked method.
+     * @param [in] args The arguments to pass to the invoked method.
      */
     virtual void SetArguments(Args... args) = 0;
 };
@@ -94,9 +94,9 @@ struct TimerImplX : public TimerImpl
 /**
  * Make a TimerImpl from a function pointer taking varying numbers of arguments.
  *
- * \tparam U \deduced Return type of the callback function.
- * \tparam Ts \deduced Argument types of the callback function.
- * \returns The TimerImpl.
+ * @tparam U \deduced Return type of the callback function.
+ * @tparam Ts \deduced Argument types of the callback function.
+ * @returns The TimerImpl.
  */
 template <typename U, typename... Ts>
 TimerImpl*
@@ -137,13 +137,13 @@ MakeTimerImpl(U(fn)(Ts...))
  * Make a TimerImpl from a class method pointer taking
  * a varying number of arguments.
  *
- * \tparam OBJ_PTR \deduced Class type.
- * \tparam U \deduced Class method function return type.
- * \tparam V \deduced Class method function class type.
- * \tparam Ts \deduced Class method function argument types.
- * \param [in] memPtr Class method to invoke when the timer expires.
- * \param [in] objPtr Object instance pointer.
- * \returns The TimerImpl.
+ * @tparam OBJ_PTR \deduced Class type.
+ * @tparam U \deduced Class method function return type.
+ * @tparam V \deduced Class method function class type.
+ * @tparam Ts \deduced Class method function argument types.
+ * @param [in] memPtr Class method to invoke when the timer expires.
+ * @param [in] objPtr Object instance pointer.
+ * @returns The TimerImpl.
  */
 template <typename OBJ_PTR, typename U, typename V, typename... Ts>
 TimerImpl*

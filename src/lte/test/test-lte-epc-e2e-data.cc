@@ -43,7 +43,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("LteEpcE2eData");
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  */
 
 /// BearerTestData structure
@@ -52,9 +52,9 @@ struct BearerTestData
     /**
      * Constructor
      *
-     * \param n the number of packets
-     * \param s the packet size
-     * \param i the inter packet interval in seconds
+     * @param n the number of packets
+     * @param s the packet size
+     * @param i the inter packet interval in seconds
      */
     BearerTestData(uint32_t n, uint32_t s, double i);
 
@@ -89,9 +89,9 @@ struct EnbTestData
 };
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test that e2e packet flow is correct. Compares the data send and the
+ * @brief Test that e2e packet flow is correct. Compares the data send and the
  * data received. Test uses mostly the PDCP stats to check the performance.
  */
 
@@ -101,8 +101,8 @@ class LteEpcE2eDataTestCase : public TestCase
     /**
      * Constructor
      *
-     * \param name the reference name
-     * \param v the ENB test data
+     * @param name the reference name
+     * @param v the ENB test data
      */
     LteEpcE2eDataTestCase(std::string name, std::vector<EnbTestData> v);
     ~LteEpcE2eDataTestCase() override;
@@ -368,9 +368,9 @@ LteEpcE2eDataTestCase::DoRun()
 }
 
 /**
- * \ingroup lte-test
+ * @ingroup lte-test
  *
- * \brief Test that the S1-U interface implementation works correctly
+ * @brief Test that the S1-U interface implementation works correctly
  */
 class LteEpcE2eDataTestSuite : public TestSuite
 {

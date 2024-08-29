@@ -27,8 +27,8 @@
 #include <utility>
 
 /**
- * \file
- * \ingroup scheduler
+ * @file
+ * @ingroup scheduler
  * ns3::ListScheduler declaration.
  */
 
@@ -38,13 +38,13 @@ namespace ns3
 class EventImpl;
 
 /**
- * \ingroup scheduler
- * \brief a std::list event scheduler
+ * @ingroup scheduler
+ * @brief a std::list event scheduler
  *
  * This class implements an event scheduler using an std::list
  * data structure, that is, a double linked-list.
  *
- * \par Time Complexity
+ * @par Time Complexity
  *
  * Operation    | Amortized %Time | Reason
  * :----------- | :-------------- | :-----
@@ -54,7 +54,7 @@ class EventImpl;
  * Remove()     | Linear          | Linear search in `std::list`
  * RemoveNext() | Constant        | `std::list::pop_front()`
  *
- * \par Memory Complexity
+ * @par Memory Complexity
  *
  * Category  | Memory                           | Reason
  * :-------- | :------------------------------- | :-----
@@ -67,7 +67,7 @@ class ListScheduler : public Scheduler
   public:
     /**
      *  Register this type.
-     *  \return The object TypeId.
+     *  @return The object TypeId.
      */
     static TypeId GetTypeId();
 
