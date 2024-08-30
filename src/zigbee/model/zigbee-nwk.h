@@ -687,6 +687,7 @@ class ZigbeeNwk : public Object
      * \return the object TypeId
      */
     static TypeId GetTypeId();
+    TypeId GetInstanceTypeId() const override;
 
     /**
      * Default constructor.

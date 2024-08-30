@@ -34,13 +34,12 @@ namespace ns3
 namespace zigbee
 {
 NS_LOG_COMPONENT_DEFINE("ZigbeeStack");
-
 NS_OBJECT_ENSURE_REGISTERED(ZigbeeStack);
 
 TypeId
 ZigbeeStack::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::ZigbeeStack")
+    static TypeId tid = TypeId("ns3::zigbee::ZigbeeStack")
                             .SetParent<NetDevice>()
                             .SetGroupName("Zigbee")
                             .AddConstructor<ZigbeeStack>();
@@ -54,6 +53,9 @@ ZigbeeStack::ZigbeeStack()
     m_nwk = CreateObject<zigbee::ZigbeeNwk>();
     // TODO: Create  APS layer here.
     //  m_aps = CreateObject<ZigbeeAps> ();
+
+    // Automatically calls m_nwk initialize and dispose functions
+    AggregateObject(m_nwk);
 }
 
 ZigbeeStack::~ZigbeeStack()
@@ -107,6 +109,14 @@ ZigbeeStack::DoDispose()
     m_node = nullptr;
     m_nwk = nullptr;
     m_mac = nullptr;
+    Object::DoDispose();
+}
+
+void
+ZigbeeStack::DoInitialize()
+{
+    NS_LOG_FUNCTION(this);
+    Object::DoInitialize();
 }
 
 Ptr<Channel>

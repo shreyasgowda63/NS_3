@@ -132,31 +132,14 @@ RreqRetryTable::Delete(uint8_t rreqId)
     std::erase_if(m_rreqRetryTable, [&rreqId](Ptr<RreqRetryTableEntry> entry) {
         return entry->GetRreqId() == rreqId;
     });
-
-    /*std::deque<Ptr<RreqRetryTableEntry>>::iterator it;
-    it = m_rreqRetryTable.begin();
-    while (it != m_rreqRetryTable.end())
-    {
-        if ((*it)->GetRreqId() == rreqId)
-        {
-            (*it) = nullptr;
-            it = m_rreqRetryTable.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }*/
 }
 
 void
 RreqRetryTable::Dispose()
 {
-    std::deque<Ptr<RreqRetryTableEntry>>::iterator it;
-    it = m_rreqRetryTable.begin();
-    while (it != m_rreqRetryTable.end())
+    for (auto element : m_rreqRetryTable)
     {
-        (*it) = nullptr;
+        element = nullptr;
     }
     m_rreqRetryTable.clear();
 }
@@ -395,21 +378,6 @@ RoutingTable::Delete(Mac16Address dst)
 {
     std::erase_if(m_routingTable,
                   [&dst](Ptr<RoutingTableEntry> entry) { return entry->GetDestination() == dst; });
-
-    /*std::deque<Ptr<RoutingTableEntry>>::iterator it;
-    it = m_routingTable.begin();
-    while (it != m_routingTable.end())
-    {
-        if ((*it)->GetDestination() == dst)
-        {
-            (*it) = nullptr;
-            it = m_routingTable.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }*/
 }
 
 bool
@@ -455,11 +423,9 @@ RoutingTable::Print(Ptr<OutputStreamWrapper> stream) const
 void
 RoutingTable::Dispose()
 {
-    std::deque<Ptr<RoutingTableEntry>>::iterator it;
-    it = m_routingTable.begin();
-    while (it != m_routingTable.end())
+    for (auto element : m_routingTable)
     {
-        (*it) = nullptr;
+        element = nullptr;
     }
     m_routingTable.clear();
 }
@@ -683,11 +649,9 @@ RouteDiscoveryTable::Print(Ptr<OutputStreamWrapper> stream)
 void
 RouteDiscoveryTable::Dispose()
 {
-    std::deque<Ptr<RouteDiscoveryTableEntry>>::iterator it;
-    it = m_routeDscTable.begin();
-    while (it != m_routeDscTable.end())
+    for (auto element : m_routeDscTable)
     {
-        (*it) = nullptr;
+        element = nullptr;
     }
     m_routeDscTable.clear();
 }
@@ -1087,21 +1051,6 @@ NeighborTable::Delete(Mac64Address extAddr)
     std::erase_if(m_neighborTable, [&extAddr](Ptr<NeighborTableEntry> entry) {
         return entry->GetExtAddr() == extAddr;
     });
-
-    /*std::deque<Ptr<NeighborTableEntry>>::iterator it;
-    it = m_neighborTable.begin();
-    while (it != m_neighborTable.end())
-    {
-        if ((*it)->GetExtAddr() == extAddr)
-        {
-            (*it) = nullptr;
-            it = m_neighborTable.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }*/
 }
 
 bool
@@ -1276,11 +1225,9 @@ NeighborTable::GetLinkCost(uint8_t lqi) const
 void
 NeighborTable::Dispose()
 {
-    std::deque<Ptr<NeighborTableEntry>>::iterator it;
-    it = m_neighborTable.begin();
-    while (it != m_neighborTable.end())
+    for (auto element : m_neighborTable)
     {
-        (*it) = nullptr;
+        element = nullptr;
     }
     m_neighborTable.clear();
 }

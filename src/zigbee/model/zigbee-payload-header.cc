@@ -45,7 +45,7 @@ ZigbeePayloadType::ZigbeePayloadType(enum NwkCommandType nwkCmdType)
 TypeId
 ZigbeePayloadType::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::ZigbeePayloadType")
+    static TypeId tid = TypeId("ns3::zigbee::ZigbeePayloadType")
                             .SetParent<Header>()
                             .SetGroupName("Zigbee")
                             .AddConstructor<ZigbeePayloadType>();
@@ -158,7 +158,7 @@ ZigbeePayloadRouteRequestCommand::ZigbeePayloadRouteRequestCommand()
 TypeId
 ZigbeePayloadRouteRequestCommand::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::ZigbeePayloadRouteRequestCommand")
+    static TypeId tid = TypeId("ns3::zigbee::ZigbeePayloadRouteRequestCommand")
                             .SetParent<Header>()
                             .SetGroupName("Zigbee")
                             .AddConstructor<ZigbeePayloadRouteRequestCommand>();
@@ -347,7 +347,7 @@ ZigbeePayloadRouteReplyCommand::ZigbeePayloadRouteReplyCommand()
 TypeId
 ZigbeePayloadRouteReplyCommand::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::ZigbeePayloadRouteReplyCommand")
+    static TypeId tid = TypeId("ns3::zigbee::ZigbeePayloadRouteReplyCommand")
                             .SetParent<Header>()
                             .SetGroupName("Zigbee")
                             .AddConstructor<ZigbeePayloadRouteReplyCommand>();
@@ -534,7 +534,7 @@ ZigbeeBeaconPayload::ZigbeeBeaconPayload()
 TypeId
 ZigbeeBeaconPayload::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::ZigbeeBeaconPayload")
+    static TypeId tid = TypeId("ns3::zigbee::ZigbeeBeaconPayload")
                             .SetParent<Header>()
                             .SetGroupName("Zigbee")
                             .AddConstructor<ZigbeeBeaconPayload>();

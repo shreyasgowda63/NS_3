@@ -1292,7 +1292,7 @@ class BroadcastTransactionTable
      * Look up for broadcast transaction record in the broadcast transaction table.
      *
      * @param seq The sequence number of the broadcasted frame.
-     * @param The returned entry if found in the table
+     * @param entryFound The returned entry if found in the table
      *
      * @return True if a searched entry is found
      */

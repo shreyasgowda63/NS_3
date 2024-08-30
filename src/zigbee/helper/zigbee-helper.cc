@@ -35,7 +35,7 @@ NS_LOG_COMPONENT_DEFINE("ZigbeeHelper");
 ZigbeeHelper::ZigbeeHelper()
 {
     NS_LOG_FUNCTION(this);
-    m_stackFactory.SetTypeId("ns3::ZigbeeStack");
+    m_stackFactory.SetTypeId("ns3::zigbee::ZigbeeStack");
 }
 
 void

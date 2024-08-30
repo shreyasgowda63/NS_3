@@ -46,7 +46,7 @@ TypeId
 ZigbeeNwk::GetTypeId()
 {
     static TypeId tid =
-        TypeId("ns3::ZigbeeNwk")
+        TypeId("ns3::zigbee::ZigbeeNwk")
             .SetParent<Object>()
             .SetGroupName("Zigbee")
             .AddConstructor<ZigbeeNwk>()
@@ -109,12 +109,22 @@ ZigbeeNwk::GetTypeId()
                             "reached the maximum allowed number of RREQ retries during a "
                             "route discovery request",
                             MakeTraceSourceAccessor(&ZigbeeNwk::m_rreqRetriesExhaustedTrace),
-                            "ns3::ZigbeeNwk::RreqRetriesExhaustedTracedCallback");
+                            "ns3::zigbee::ZigbeeNwk::RreqRetriesExhaustedTracedCallback");
     return tid;
+}
+
+TypeId
+ZigbeeNwk::GetInstanceTypeId() const
+{
+    return GetTypeId();
 }
 
 ZigbeeNwk::ZigbeeNwk()
 {
+    // Collect the values from Attributes before initializing
+    // objects in the constructor (Requires GetInstanceTypeId and GetTypeId)
+    ObjectBase::ConstructSelf(AttributeConstructionList());
+
     m_scanEnergyThreshold = 127;
     m_pendPrimitiveNwk = NLDE_NLME_NONE;
     m_netFormParams = {};

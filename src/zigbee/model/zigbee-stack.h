@@ -111,6 +111,11 @@ class ZigbeeStack : public Object
      */
     void DoDispose() override;
 
+    /**
+     * Initialize of the Objects used by the ZigbeeStack
+     */
+    void DoInitialize() override;
+
   private:
     /**
      * Configure NWK, APS layers, connect to the underlying MAC layer.

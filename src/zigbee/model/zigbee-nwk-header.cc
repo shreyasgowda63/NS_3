@@ -344,7 +344,7 @@ ZigbeeNwkHeader::GetSerializedSize() const
 TypeId
 ZigbeeNwkHeader::GetTypeId()
 {
-    static TypeId tid = TypeId("ns3::ZigbeeNwkHeader")
+    static TypeId tid = TypeId("ns3::zigbee::ZigbeeNwkHeader")
                             .SetParent<Header>()
                             .SetGroupName("Zigbee")
                             .AddConstructor<ZigbeeNwkHeader>();
