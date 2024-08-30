@@ -720,7 +720,7 @@ class ZigbeeNwk : public Object
      *
      * \param stream The stream object used to print.
      */
-    void PrintRouteDiscoveryTable(Ptr<OutputStreamWrapper> stream) const;
+    void PrintRouteDiscoveryTable(Ptr<OutputStreamWrapper> stream);
 
     /**
      * Print the entries in the neighbor table.

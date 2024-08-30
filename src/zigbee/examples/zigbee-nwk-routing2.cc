@@ -346,7 +346,7 @@ main(int argc, char* argv[])
 
     Simulator::Schedule(Seconds(501), &TraceRoute, Mac16Address("b6:24"), Mac16Address("00:00"));
 
-    /*Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
+    Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
     Simulator::ScheduleWithContext(zigbeeStacks.Get(7)->GetNode()->GetId(),
                                    Seconds(502),
                                    &ZigbeeNwk::PrintRoutingTable,
@@ -363,7 +363,7 @@ main(int argc, char* argv[])
                                    Seconds(502),
                                    &ZigbeeNwk::PrintNeighborTable,
                                    zigbeeStacks.Get(7)->GetNwk(),
-                                   stream);*/
+                                   stream);
 
     Simulator::Stop(Seconds(1500));
     Simulator::Run();

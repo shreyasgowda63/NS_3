@@ -365,7 +365,7 @@ RoutingTableEntry::Print(Ptr<OutputStreamWrapper> stream) const
 
 RoutingTable::RoutingTable()
 {
-    m_maxTableSize = 2000;
+    m_maxTableSize = 32;
 }
 
 bool
@@ -385,20 +385,9 @@ RoutingTable::AddEntry(Ptr<RoutingTableEntry> rt)
 void
 RoutingTable::Purge()
 {
-    std::deque<Ptr<RoutingTableEntry>>::iterator it;
-    it = m_routingTable.begin();
-    while (it != m_routingTable.end())
-    {
-        if ((*it)->GetStatus() == ROUTE_INACTIVE)
-        {
-            (*it) = nullptr;
-            it = m_routingTable.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
+    std::erase_if(m_routingTable, [](Ptr<RoutingTableEntry> entry) {
+        return Simulator::Now() >= entry->GetLifeTime();
+    });
 }
 
 void
@@ -571,7 +560,13 @@ RouteDiscoveryTableEntry::SetResidualCost(uint8_t pathcost)
 Time
 RouteDiscoveryTableEntry::GetExpTime() const
 {
-    return m_expirationTime - Simulator::Now();
+    return m_expirationTime;
+}
+
+void
+RouteDiscoveryTableEntry::SetExpTime(Time exp)
+{
+    m_expirationTime = exp;
 }
 
 void
@@ -587,7 +582,7 @@ RouteDiscoveryTableEntry::Print(Ptr<OutputStreamWrapper> stream) const
 
     sourceAddr << m_sourceAddr;
     senderAddr << m_senderAddr;
-    expTime << (m_expirationTime - Simulator::Now()).As(Time::S);
+    expTime << m_expirationTime.As(Time::S);
 
     *os << std::resetiosflags(std::ios::adjustfield) << std::setiosflags(std::ios::left);
     *os << std::setw(10) << static_cast<uint32_t>(m_routeRequestId);
@@ -607,12 +602,14 @@ RouteDiscoveryTableEntry::Print(Ptr<OutputStreamWrapper> stream) const
 
 RouteDiscoveryTable::RouteDiscoveryTable()
 {
-    m_maxTableSize = 2000;
+    m_maxTableSize = 32;
 }
 
 bool
 RouteDiscoveryTable::AddEntry(Ptr<RouteDiscoveryTableEntry> rt)
 {
+    Purge();
+
     if (m_routeDscTable.size() < m_maxTableSize)
     {
         m_routeDscTable.emplace_back(rt);
@@ -630,7 +627,7 @@ RouteDiscoveryTable::LookUpEntry(uint8_t id,
                                  Ptr<RouteDiscoveryTableEntry>& entryFound)
 {
     NS_LOG_FUNCTION(this << id);
-    // Purge();
+    Purge();
     for (const auto& entry : m_routeDscTable)
     {
         if (entry->GetRreqId() == id && entry->GetSourceAddr() == src)
@@ -645,20 +642,9 @@ RouteDiscoveryTable::LookUpEntry(uint8_t id,
 void
 RouteDiscoveryTable::Purge()
 {
-    std::deque<Ptr<RouteDiscoveryTableEntry>>::iterator it;
-    it = m_routeDscTable.begin();
-    while (it != m_routeDscTable.end())
-    {
-        if ((*it)->GetExpTime() < Simulator::Now())
-        {
-            (*it) = nullptr;
-            it = m_routeDscTable.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
+    std::erase_if(m_routeDscTable, [](Ptr<RouteDiscoveryTableEntry> entry) {
+        return entry->GetExpTime() < Simulator::Now();
+    });
 }
 
 void
@@ -667,26 +653,13 @@ RouteDiscoveryTable::Delete(uint8_t id, Mac16Address src)
     std::erase_if(m_routeDscTable, [&id, &src](Ptr<RouteDiscoveryTableEntry> entry) {
         return (entry->GetRreqId() == id && entry->GetSourceAddr() == src);
     });
-
-    /*std::deque<Ptr<RouteDiscoveryTableEntry>>::iterator it;
-    it = m_routeDscTable.begin();
-    while (it != m_routeDscTable.end())
-    {
-        if ((*it)->GetRreqId() == id && (*it)->GetSourceAddr() == src)
-        {
-            (*it) = nullptr;
-            it = m_routeDscTable.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }*/
 }
 
 void
-RouteDiscoveryTable::Print(Ptr<OutputStreamWrapper> stream) const
+RouteDiscoveryTable::Print(Ptr<OutputStreamWrapper> stream)
 {
+    Purge();
+
     std::ostream* os = stream->GetStream();
     std::ios oldState(nullptr);
     oldState.copyfmt(*os);
@@ -1068,7 +1041,7 @@ NeighborTableEntry::Print(Ptr<OutputStreamWrapper> stream) const
         break;
     }
 
-    *os << std::setw(20) << static_cast<uint32_t>(m_txFailure);
+    *os << std::setw(14) << static_cast<uint32_t>(m_txFailure);
     *os << std::setw(5) << static_cast<uint32_t>(m_lqi);
     *os << std::setw(16) << static_cast<uint32_t>(m_outgoingCost);
     *os << std::setw(8) << static_cast<uint32_t>(m_age);
@@ -1083,7 +1056,7 @@ NeighborTableEntry::Print(Ptr<OutputStreamWrapper> stream) const
 
 NeighborTable::NeighborTable()
 {
-    m_maxTableSize = 2000;
+    m_maxTableSize = 32;
 }
 
 bool
@@ -1103,20 +1076,9 @@ NeighborTable::AddEntry(Ptr<NeighborTableEntry> entry)
 void
 NeighborTable::Purge()
 {
-    std::deque<Ptr<NeighborTableEntry>>::iterator it;
-    it = m_neighborTable.begin();
-    while (it != m_neighborTable.end())
-    {
-        if ((*it)->GetTimeoutCounter() < Simulator::Now())
-        {
-            (*it) = nullptr;
-            it = m_neighborTable.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
+    std::erase_if(m_neighborTable, [](Ptr<NeighborTableEntry> entry) {
+        return Simulator::Now() >= entry->GetTimeoutCounter();
+    });
 }
 
 void
@@ -1240,11 +1202,11 @@ NeighborTable::Print(Ptr<OutputStreamWrapper> stream) const
     *os << std::setw(16) << "Device Timeout";
     *os << std::setw(16) << "Relationship";
     *os << std::setw(16) << "Device type";
-    *os << std::setw(20) << "Transmit Failure";
+    *os << std::setw(14) << "Tx Failure";
     *os << std::setw(5) << "LQI";
     *os << std::setw(16) << "Outgoing Cost";
     *os << std::setw(8) << "Age";
-    *os << std::setw(16) << "Extendend PAN ID";
+    *os << std::setw(10) << "Ext PAN ID";
     *os << std::endl;
 
     for (const auto& entry : m_neighborTable)

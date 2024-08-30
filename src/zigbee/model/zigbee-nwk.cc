@@ -196,7 +196,6 @@ void
 ZigbeeNwk::SetMac(Ptr<LrWpanMacBase> mac)
 {
     m_mac = mac;
-    //  m_nwkIeeeAddress = m_mac->GetExtendedAddress();
     // Update IEEE Nwk Address
     m_mac->MlmeGetRequest(MacPibAttributeIdentifier::macExtendedAddress);
 }
@@ -227,7 +226,7 @@ ZigbeeNwk::PrintRoutingTable(Ptr<OutputStreamWrapper> stream) const
 }
 
 void
-ZigbeeNwk::PrintRouteDiscoveryTable(Ptr<OutputStreamWrapper> stream) const
+ZigbeeNwk::PrintRouteDiscoveryTable(Ptr<OutputStreamWrapper> stream)
 {
     std::ostream* os = stream->GetStream();
     std::ios oldState(nullptr);
@@ -740,6 +739,7 @@ ZigbeeNwk::FindNextHop(Mac16Address macSrcAddr,
             // More optimal route found, update route discovery values.
             discEntry->SetSenderAddr(macSrcAddr);
             discEntry->SetForwardCost(pathCost);
+            discEntry->SetExpTime(Simulator::Now() + m_nwkcRouteDiscoveryTime);
             return ROUTE_UPDATED;
         }
         else
@@ -756,7 +756,7 @@ ZigbeeNwk::FindNextHop(Mac16Address macSrcAddr,
                                              macSrcAddr, // macSrcAddr,
                                              pathCost,   // payload.GetPathCost(), // Forward cost
                                              0xff,       // Residual cost
-                                             Time(Simulator::Now() + m_nwkcRouteDiscoveryTime));
+                                             (Simulator::Now() + m_nwkcRouteDiscoveryTime));
 
         if (!m_nwkRouteDiscoveryTable.AddEntry(newDiscEntry))
         {
@@ -788,6 +788,7 @@ ZigbeeNwk::ProcessManyToOneRoute(Mac16Address macSrcAddr,
                     // Update with a better route.
                     routeEntry->SetNextHopAddr(macSrcAddr);
                     discEntry->SetForwardCost(pathCost);
+                    discEntry->SetExpTime(Simulator::Now() + m_nwkcRouteDiscoveryTime);
                     return ROUTE_UPDATED;
                 }
                 return NO_ROUTE_CHANGE;
@@ -808,7 +809,7 @@ ZigbeeNwk::ProcessManyToOneRoute(Mac16Address macSrcAddr,
                                              macSrcAddr, // previous hop address
                                              pathCost,   // Forward cost
                                              0xff,       // Residual cost (not used by Many-to-One)
-                                             Time(Simulator::Now() + m_nwkcRouteDiscoveryTime));
+                                             (Simulator::Now() + m_nwkcRouteDiscoveryTime));
 
         // TODO: what to do if route discovery table is full?
         m_nwkRouteDiscoveryTable.AddEntry(newDiscEntry);

@@ -308,6 +308,13 @@ class RouteDiscoveryTableEntry : public SimpleRefCount<RouteDiscoveryTableEntry>
     Time GetExpTime() const;
 
     /**
+     * Set the expiration time of the route discovery entry.
+     *
+     * @param exp The expiration time.
+     */
+    void SetExpTime(Time exp);
+
+    /**
      * Print the values of the route discovery table entry
      *
      * \param stream The stream object used to print.
@@ -326,9 +333,8 @@ class RouteDiscoveryTableEntry : public SimpleRefCount<RouteDiscoveryTableEntry>
                                //!< current device.
     uint8_t m_residualCost;    //!< The accumulated path cost from the current device to the
                                //!< destination device.
-    Time m_expirationTime;     //!< A countdown timer indicating the number of milliseconds until
-                               //!< the route discovery expires.
-                               //!< The initial value is nwkcRouteDiscoveryTime.
+    Time m_expirationTime;     //!< A time stamp indicating the expiration time. The default value
+                               //!< of the entry is equals to current time + nwkcRouteDiscoveryTime.
 };
 
 /**
@@ -847,6 +853,96 @@ class RreqRetryTableEntry : public SimpleRefCount<RreqRetryTableEntry>
 };
 
 /**
+ * A broadcast Transaction Record (BTR)
+ * As described in Table 3-70
+ */
+class BroadcastTransactionRecord : public SimpleRefCount<BroadcastTransactionRecord>
+{
+  public:
+    BroadcastTransactionRecord();
+    ~BroadcastTransactionRecord();
+
+    /**
+     * Construct a new Broadcast Transaction Record (BTR) entry.
+     *
+     * @param srcAddr The source address of the BTR.
+     * @param seq The sequence number of the BTR.
+     * @param exp The expiration time of the BTR.
+     * @param count The number of time this data has been broadcasted.
+     */
+    BroadcastTransactionRecord(Mac16Address srcAddr, uint8_t seq, Time exp, uint8_t count);
+
+    /**
+     * Get the source address of the BTR.
+     *
+     * @return The source address.
+     */
+    Mac16Address GetSrcAddr() const;
+
+    /**
+     * Get the sequence number of the BTR.
+     *
+     * @return The sequence number.
+     */
+    uint8_t GetSeqNum() const;
+
+    /**
+     * Get the value of the expiration time in the BTR.
+     *
+     * @return The expiration time
+     */
+    Time GetExpirationTime() const;
+
+    /**
+     * Get the broadcast retry count value
+     *
+     * @return The broadcast retry count value
+     */
+    uint8_t GetBcstRetryCount() const;
+
+    /**
+     * Set the source address of the BTR
+     *
+     * @param srcAddr The source address of the BTR
+     */
+    void SetSrcAddr(Mac16Address srcAddr);
+
+    /**
+     * Set the sequence number of the BTR
+     *
+     * @param seq The sequence number of the BTR
+     */
+    void SetSeqNum(uint8_t seq);
+
+    /**
+     * Set the expiration time object
+     *
+     * @param exp The expiration time of the BTR
+     */
+    void SetExpirationTime(Time exp);
+
+    /**
+     * Set the Broadcast retry count object
+     *
+     * @param count  The value of the counter
+     */
+    void SetBcstRetryCount(uint8_t count);
+
+    /**
+     * Print the values of the BTR.
+     *
+     * @param stream The stream object used to print.
+     */
+    void Print(Ptr<OutputStreamWrapper> stream) const;
+
+  private:
+    Mac16Address m_srcAddr;        //!< The 16-bit network address of the broadcast initiator.
+    uint8_t m_sequenceNumber;      //!< The NWK layer sequence number of the initiator's broadcast.
+    Time m_expirationTime;         //!< An indicator of when the entry expires
+    uint8_t m_broadcastRetryCount; //!< The number of times this BCST has been retried.
+};
+
+/**
  *  The network layer Routing Table.
  *  See Zigbee specification r22.1.0, 3.6.3.2
  */
@@ -975,7 +1071,7 @@ class RouteDiscoveryTable
      *
      * \param stream The stream object used to print the table.
      */
-    void Print(Ptr<OutputStreamWrapper> stream) const;
+    void Print(Ptr<OutputStreamWrapper> stream);
 
     /**
      * Dispose of the table and all its elements
@@ -1152,93 +1248,86 @@ class RreqRetryTable
 };
 
 /**
- * A broadcast Transaction Record (BTR)
- * As described in Table 3-70
+ * The Broadcast Transaction Table (BTT)
+ * The BTT is used to keep track of data broadcast transactions.
+ * The broadcast of link status request and route requests (RREQ) commands
+ * are handled differently and not recorded by this table.
+ * See Zigbee specification r22.1.0, Section 3.6.5
  */
-class BroadcastTransactionRecord : public SimpleRefCount<BroadcastTransactionRecord>
+class BroadcastTransactionTable
 {
   public:
-    BroadcastTransactionRecord();
-    ~BroadcastTransactionRecord();
+    BroadcastTransactionTable();
 
     /**
-     * Construct a new Broadcast Transaction Record (BTR) entry.
+     * Add a broadcast transaction record (BTR) to the broadcast transaction table(BTT).
      *
-     * @param srcAddr The source address of the BTR.
-     * @param seq The sequence number of the BTR.
-     * @param exp The expiration time of the BTR.
-     * @param count The number of time this data has been broadcasted.
+     * @param entry The object representing the BTR
+     * @return True if the object was added.
      */
-    BroadcastTransactionRecord(Mac16Address srcAddr, uint8_t seq, Time exp, uint8_t count);
+    bool AddEntry(Ptr<BroadcastTransactionRecord> entry);
 
     /**
-     * Get the source address of the BTR.
+     * Get the current Size of the BTT.
      *
-     * @return The source address.
+     * @return uint32_t
      */
-    Mac16Address GetSrcAddr() const;
+    uint32_t GetSize();
 
     /**
-     * Get the sequence number of the BTR.
+     * Set the maximum size of the BTT
      *
-     * @return The sequence number.
+     * @param size The size of the BTT.
      */
-    uint8_t GetSeqNum() const;
+    void SetMaxTableSize(uint32_t size);
 
     /**
-     * Get the value of the expiration time in the BTR.
+     *  Get the maximum size of the BTT
      *
-     * @return The expiration time
+     *  @return The maximum size of the BTT.
      */
-    Time GetExpirationTime() const;
+    uint32_t GetMaxTableSize() const;
 
     /**
-     * Get the broadcast retry count value
+     * Look up for broadcast transaction record in the broadcast transaction table.
      *
-     * @return The broadcast retry count value
+     * @param seq The sequence number of the broadcasted frame.
+     * @param The returned entry if found in the table
+     *
+     * @return True if a searched entry is found
      */
-    uint8_t GetBcstRetryCount() const;
+    bool LookUpEntry(uint8_t seq, Ptr<BroadcastTransactionRecord>& entryFound);
 
     /**
-     * Set the source address of the BTR
-     *
-     * @param srcAddr The source address of the BTR
+     * Purge expired entries from the BTT.
      */
-    void SetSrcAddr(Mac16Address srcAddr);
+    void Purge();
 
     /**
-     * Set the sequence number of the BTR
+     * Delete an entry from the BTT.
      *
-     * @param seq The sequence number of the BTR
+     * @param src The address of the broadcast initiator
+     * @param seq The sequence number of the broadcast
      */
-    void SetSeqNum(uint8_t seq);
+    void Delete(Mac16Address src, uint8_t seq);
 
     /**
-     * Set the expiration time object
-     *
-     * @param exp The expiration time of the BTR
+     * Dispose of the table and all its elements
      */
-    void SetExpirationTime(Time exp);
+    void Dispose();
 
     /**
-     * Set the Broadcast retry count object
+     * Print the broadcast transaction table (BTT)
      *
-     * @param count  The value of the counter
+     * @param stream The output stream where the table is printed
      */
-    void SetBcstRetryCount(uint8_t count);
-
-    /**
-     * Print the values of the BTR.
-     *
-     * @param stream The stream object used to print.
-     */
-    void Print(Ptr<OutputStreamWrapper> stream) const;
+    void Print(Ptr<OutputStreamWrapper> stream);
 
   private:
-    Mac16Address m_srcAddr;        //!< The 16-bit network address of the broadcast initiator.
-    uint8_t m_sequenceNumber;      //!< The NWK layer sequence number of the initiator's broadcast.
-    Time m_expirationTime;         //!< An indicator of when the entry expires
-    uint8_t m_broadcastRetryCount; //!< The number of times this BCST has been retried.
+    uint32_t m_maxTableSize; //!< The maximum size of the Broadcast Transaction table
+    std::deque<Ptr<BroadcastTransactionRecord>>
+        m_broadcastTransactionTable; //!< The list object representing the broadcast transaction
+                                     //!< table (BTT)
 };
 
 } // namespace zigbee
