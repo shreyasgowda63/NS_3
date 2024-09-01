@@ -173,7 +173,10 @@ FrameExchangeManager::SetWifiPhy(Ptr<WifiPhy> phy)
     m_phy = phy;
     m_phy->TraceConnectWithoutContext("PhyRxPayloadBegin",
                                       MakeCallback(&FrameExchangeManager::RxStartIndication, this));
+    m_phy->TraceConnectWithoutContext("PhyRxMacHeaderEnd",
+                                      MakeCallback(&FrameExchangeManager::ReceivedMacHdr, this));
     m_phy->SetReceiveOkCallback(MakeCallback(&FrameExchangeManager::Receive, this));
+    m_phy->SetReceiveErrorCallback(MakeCallback(&FrameExchangeManager::PsduRxError, this));
 }
 
 void
@@ -185,6 +188,9 @@ FrameExchangeManager::ResetPhy()
         m_phy->TraceDisconnectWithoutContext(
             "PhyRxPayloadBegin",
             MakeCallback(&FrameExchangeManager::RxStartIndication, this));
+        m_phy->TraceDisconnectWithoutContext(
+            "PhyRxMacHeaderEnd",
+            MakeCallback(&FrameExchangeManager::ReceivedMacHdr, this));
         if (m_phy->GetState())
         {
             m_phy->SetReceiveOkCallback(MakeNullCallback<void,
@@ -192,8 +198,11 @@ FrameExchangeManager::ResetPhy()
                                                          RxSignalInfo,
                                                          WifiTxVector,
                                                          std::vector<bool>>());
+            m_phy->SetReceiveErrorCallback(MakeNullCallback<void, Ptr<const WifiPsdu>>());
         }
         m_phy = nullptr;
+        m_ongoingRxInfo.macHdr.reset();
+        m_ongoingRxInfo.endOfPsduRx = Time{};
     }
 }
 
@@ -290,6 +299,37 @@ FrameExchangeManager::RxStartIndication(WifiTxVector txVector, Time psduDuration
     {
         m_navResetEvent.Cancel();
     }
+
+    m_ongoingRxInfo = {std::nullopt, txVector, Simulator::Now() + psduDuration};
+}
+
+void
+FrameExchangeManager::ReceivedMacHdr(const WifiMacHeader& macHdr,
+                                     const WifiTxVector& txVector,
+                                     Time psduDuration)
+{
+    NS_LOG_FUNCTION(this << macHdr << txVector << psduDuration.As(Time::MS));
+    m_ongoingRxInfo = {macHdr, txVector, Simulator::Now() + psduDuration};
+}
+
+std::optional<std::reference_wrapper<const FrameExchangeManager::OngoingRxInfo>>
+FrameExchangeManager::GetOngoingRxInfo() const
+{
+    if (m_ongoingRxInfo.endOfPsduRx >= Simulator::Now())
+    {
+        return m_ongoingRxInfo;
+    }
+    return std::nullopt;
+}
+
+std::optional<std::reference_wrapper<const WifiMacHeader>>
+FrameExchangeManager::GetReceivedMacHdr() const
+{
+    if (auto info = GetOngoingRxInfo(); info.has_value() && info->get().macHdr.has_value())
+    {
+        return info->get().macHdr.value();
+    }
+    return std::nullopt;
 }
 
 bool
@@ -1102,6 +1142,12 @@ FrameExchangeManager::NotifyOffNow()
 {
     NS_LOG_DEBUG("Device is switched off. Cancelling MAC pending events");
     Reset();
+}
+
+void
+FrameExchangeManager::PsduRxError(Ptr<const WifiPsdu> psdu)
+{
+    NS_LOG_FUNCTION(this << psdu);
 }
 
 void

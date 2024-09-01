@@ -517,6 +517,19 @@ class EmlsrDlTxopTest : public EmlsrOperationsTestBase
  *   not transmitted successfully. Specifically, we check that the main PHY is completing the
  *   channel switch when the (unsuccessful) reception of the CTS ends and that a new RTS/CTS
  *   exchange is carried out to protect the transmission of the last data frame.
+ * - While the main PHY is operating on the same link as an aux PHY (which does not switch
+ *   channel), the aux PHY is put in sleep mode as soon as the main PHY starts operating on the
+ *   link, stays in sleep mode until the TXOP ends and is resumed from sleep mode right after the
+ *   end of the DL/UL TXOP.
+ * - When an aux PHY that is not TX capable gains a TXOP, it checks whether the main PHY can switch
+ *   to the non-primary link a start an UL TXOP. If the main PHY is switching, the aux PHY waits
+ *   until the channel switch is completed and checks again; if the remaining backoff time on the
+ *   primary link is greater than the channel switch delay, the main PHY is requested to switch to
+ *   the non-primary link of the aux PHY. When the channel switch is completed, if the medium is
+ *   idle on the non-primary link and the backoff is zero, the main PHY starts an UL TXOP after a
+ *   PIFS period; otherwise, the main PHY starts an UL TXOP when the backoff timer counts down to
+ *   zero. The QoS data frame sent by the main PHY is not protected by RTS and the bandwidth it
+ *   occupies is not affected by possible limitations on the aux PHY TX bandwidth capabilities.
  */
 class EmlsrUlTxopTest : public EmlsrOperationsTestBase
 {
@@ -570,6 +583,18 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
      * \param linkId the ID of the given link
      */
     void CheckRtsFrames(Ptr<const WifiMpdu> mpdu, const WifiTxVector& txVector, uint8_t linkId);
+
+    /**
+     * Check that appropriate actions are taken by the AP MLD transmitting an initial
+     * Control frame to an EMLSR client on the given link.
+     *
+     * \param mpdu the MPDU carrying the MU-RTS TF
+     * \param txVector the TXVECTOR used to send the PPDU
+     * \param linkId the ID of the given link
+     */
+    void CheckInitialControlFrame(Ptr<const WifiMpdu> mpdu,
+                                  const WifiTxVector& txVector,
+                                  uint8_t linkId);
 
     /**
      * Check that appropriate actions are taken by the EMLSR client when receiving a CTS
@@ -640,6 +665,7 @@ class EmlsrUlTxopTest : public EmlsrOperationsTestBase
                                           //!< gains the right to start a TXOP but it does not
                                           //!< transmit any frame
     std::optional<bool> m_corruptCts;     //!< whether the transmitted CTS must be corrupted
+    Time m_5thQosFrameTxTime;             //!< start transmission time of the 5th QoS data frame
 };
 
 /**

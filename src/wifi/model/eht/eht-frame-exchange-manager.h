@@ -28,6 +28,10 @@
 namespace ns3
 {
 
+/// aRxPHYStartDelay value to use when waiting for a new frame in the context of EMLSR operations
+/// (Sec. 35.3.17 of 802.11be D3.1)
+extern const Time EMLSR_RX_PHY_START_DELAY;
+
 class MgtEmlOmn;
 
 /**
@@ -97,6 +101,37 @@ class EhtFrameExchangeManager : public HeFrameExchangeManager
      */
     bool UsingOtherEmlsrLink() const;
 
+    /**
+     * Check if the frame received (or being received) is sent by an EMLSR client to start an
+     * UL TXOP. If so, take the appropriate actions (e.g., block transmission to the EMLSR client
+     * on the other links). This method is intended to be called when an MPDU (possibly within
+     * an A-MPDU) is received or when the reception of the MAC header in an MPDU is notified.
+     *
+     * \param hdr the MAC header of the received (or being received) MPDU
+     * \param txVector the TXVECTOR used to transmit the frame received (or being received)
+     * \return whether the frame received (or being received) is sent by an EMLSR client to start
+     *         an UL TXOP
+     */
+    bool CheckEmlsrClientStartingTxop(const WifiMacHeader& hdr, const WifiTxVector& txVector);
+
+    /**
+     * This method is intended to be called when an AP MLD detects that an EMLSR client previously
+     * involved in the current TXOP will start waiting for the transition delay interval (to switch
+     * back to listening operation) after the given delay.
+     * This method blocks the transmissions on all the EMLSR links of the given EMLSR client until
+     * the transition delay advertised by the EMLSR client expires.
+     *
+     * \param address the link MAC address of the given EMLSR client
+     * \param delay the given delay
+     */
+    void EmlsrSwitchToListening(const Mac48Address& address, const Time& delay);
+
+    /**
+     * \return a reference to the event indicating the possible end of the current TXOP (of
+     *         which this device is not the holder)
+     */
+    EventId& GetOngoingTxopEndEvent();
+
   protected:
     void DoDispose() override;
     void RxStartIndication(WifiTxVector txVector, Time psduDuration) override;
@@ -119,32 +154,18 @@ class EhtFrameExchangeManager : public HeFrameExchangeManager
     void NavResetTimeout() override;
     void IntraBssNavResetTimeout() override;
     void SendCtsAfterRts(const WifiMacHeader& rtsHdr, WifiMode rtsTxMode, double rtsSnr) override;
-
-    /**
-     * This method is intended to be called when an AP MLD detects that an EMLSR client previously
-     * involved in the current TXOP will start waiting for the transition delay interval (to switch
-     * back to listening operation) after the given delay.
-     * This method blocks the transmissions on all the EMLSR links of the given EMLSR client until
-     * the transition delay advertised by the EMLSR client expires.
-     *
-     * \param address the link MAC address of the given EMLSR client
-     * \param delay the given delay
-     */
-    void EmlsrSwitchToListening(const Mac48Address& address, const Time& delay);
+    void PsduRxError(Ptr<const WifiPsdu> psdu) override;
 
   private:
     /**
-     * Check if the frame received (or being received) is sent by an EMLSR client to start an
-     * UL TXOP. If so, take the appropriate actions (e.g., block transmission to the EMLSR client
-     * on the other links). This method is intended to be called when an MPDU (possibly within
-     * an A-MPDU) is received or when the reception of the MAC header in an MPDU is notified.
+     * Generate an in-device interference of the given power on the given link for the given
+     * duration.
      *
-     * \param hdr the MAC header of the received (or being received) MPDU
-     * \param txVector the TXVECTOR used to transmit the frame received (or being received)
-     * \return whether the frame received (or being received) is sent by an EMLSR client to start
-     *         an UL TXOP
+     * \param linkId the ID of the link on which in-device interference is generated
+     * \param duration the duration of the in-device interference
+     * \param txPower the TX power in Watts
      */
-    bool CheckEmlsrClientStartingTxop(const WifiMacHeader& hdr, const WifiTxVector& txVector);
+    void GenerateInDeviceInterference(uint8_t linkId, Time duration, double txPower);
 
     /**
      * Update the TXOP end timer when starting a frame transmission.

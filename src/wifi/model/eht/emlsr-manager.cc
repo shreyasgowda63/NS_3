@@ -104,6 +104,14 @@ EmlsrManager::GetTypeId()
                           MakeBooleanAccessor(&EmlsrManager::SetAuxPhyTxCapable,
                                               &EmlsrManager::GetAuxPhyTxCapable),
                           MakeBooleanChecker())
+            .AddAttribute("InDeviceInterference",
+                          "Whether in-device interference is such that a PHY cannot decode "
+                          "anything and cannot decrease the backoff counter when another PHY "
+                          "of the same device is transmitting.",
+                          BooleanValue(false),
+                          MakeBooleanAccessor(&EmlsrManager::SetInDeviceInterference,
+                                              &EmlsrManager::GetInDeviceInterference),
+                          MakeBooleanChecker())
             .AddAttribute(
                 "EmlsrLinkSet",
                 "IDs of the links on which EMLSR mode will be enabled. An empty set "
@@ -169,6 +177,13 @@ EmlsrManager::SetWifiMac(Ptr<StaWifiMac> mac)
     m_staMac->TraceConnectWithoutContext("AckedMpdu", MakeCallback(&EmlsrManager::TxOk, this));
     m_staMac->TraceConnectWithoutContext("DroppedMpdu",
                                          MakeCallback(&EmlsrManager::TxDropped, this));
+    DoSetWifiMac(mac);
+}
+
+void
+EmlsrManager::DoSetWifiMac(Ptr<StaWifiMac> mac)
+{
+    NS_LOG_FUNCTION(this << mac);
 }
 
 void
@@ -207,6 +222,18 @@ bool
 EmlsrManager::GetAuxPhyTxCapable() const
 {
     return m_auxPhyTxCapable;
+}
+
+void
+EmlsrManager::SetInDeviceInterference(bool enable)
+{
+    m_inDeviceInterference = enable;
+}
+
+bool
+EmlsrManager::GetInDeviceInterference() const
+{
+    return m_inDeviceInterference;
 }
 
 const std::set<uint8_t>&
@@ -366,7 +393,6 @@ EmlsrManager::NotifyIcfReceived(uint8_t linkId)
         if (id != linkId && m_staMac->IsEmlsrLink(id))
         {
             m_staMac->BlockTxOnLink(id, WifiQueueBlockedReason::USING_OTHER_EMLSR_LINK);
-            m_staMac->GetChannelAccessManager(id)->NotifyStartUsingOtherEmlsrLink();
         }
     }
 
@@ -410,7 +436,6 @@ EmlsrManager::NotifyUlTxopStart(uint8_t linkId, std::optional<Time> timeToCtsEnd
         if (id != linkId && m_staMac->IsEmlsrLink(id))
         {
             m_staMac->BlockTxOnLink(id, WifiQueueBlockedReason::USING_OTHER_EMLSR_LINK);
-            m_staMac->GetChannelAccessManager(id)->NotifyStartUsingOtherEmlsrLink();
         }
     }
 
@@ -497,7 +522,6 @@ EmlsrManager::NotifyTxopEnd(uint8_t linkId, bool ulTxopNotStarted, bool ongoingD
         {
             if ((id != linkId) && m_staMac->IsEmlsrLink(id))
             {
-                m_staMac->GetChannelAccessManager(id)->NotifyStopUsingOtherEmlsrLink();
                 linkIds.insert(id);
             }
         }
@@ -620,7 +644,7 @@ EmlsrManager::SwitchMainPhy(uint8_t linkId,
     }
 
     SetCcaEdThresholdOnLinkSwitch(mainPhy, linkId);
-    NotifyMainPhySwitch(*currMainPhyLinkId, linkId);
+    NotifyMainPhySwitch(*currMainPhyLinkId, linkId, timeToSwitchEnd);
 }
 
 void

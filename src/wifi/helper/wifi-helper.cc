@@ -885,7 +885,10 @@ WifiHelper::EnableLogComponents(LogLevel logLevel)
     LogComponentEnable("AarfWifiManager", logLevel);
     LogComponentEnable("AarfcdWifiManager", logLevel);
     LogComponentEnable("AdhocWifiMac", logLevel);
+    LogComponentEnable("AdvancedApEmlsrManager", logLevel);
+    LogComponentEnable("AdvancedEmlsrManager", logLevel);
     LogComponentEnable("AmrrWifiManager", logLevel);
+    LogComponentEnable("ApEmlsrManager", logLevel);
     LogComponentEnable("ApWifiMac", logLevel);
     LogComponentEnable("AparfWifiManager", logLevel);
     LogComponentEnable("ArfWifiManager", logLevel);
@@ -895,6 +898,7 @@ WifiHelper::EnableLogComponents(LogLevel logLevel)
     LogComponentEnable("ChannelAccessManager", logLevel);
     LogComponentEnable("ConstantObssPdAlgorithm", logLevel);
     LogComponentEnable("ConstantRateWifiManager", logLevel);
+    LogComponentEnable("DefaultApEmlsrManager", logLevel);
     LogComponentEnable("DefaultEmlsrManager", logLevel);
     LogComponentEnable("DsssErrorRateModel", logLevel);
     LogComponentEnable("DsssPhy", logLevel);

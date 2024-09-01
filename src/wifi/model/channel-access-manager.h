@@ -158,6 +158,26 @@ class ChannelAccessManager : public Object
     Time GetAccessGrantStart(bool ignoreNav = false) const;
 
     /**
+     * Return the time when the backoff procedure
+     * started for the given Txop.
+     *
+     * \param txop the Txop
+     *
+     * \return the time when the backoff procedure started
+     */
+    Time GetBackoffStartFor(Ptr<Txop> txop) const;
+
+    /**
+     * Return the time when the backoff procedure
+     * ended (or will end) for the given Txop.
+     *
+     * \param txop the Txop
+     *
+     * \return the time when the backoff procedure ended (or will end)
+     */
+    Time GetBackoffEndFor(Ptr<Txop> txop) const;
+
+    /**
      * \param qosTxop a QosTxop that needs to be disabled
      * \param duration the amount of time during which the QosTxop is disabled
      *
@@ -301,15 +321,6 @@ class ChannelAccessManager : public Object
     void NotifyCtsTimeoutResetNow();
 
     /**
-     * Notify that another EMLSR link is being used, hence medium access should be disabled.
-     */
-    void NotifyStartUsingOtherEmlsrLink();
-    /**
-     * Notify that another EMLSR link is no longer being used, hence medium access can be resumed.
-     */
-    void NotifyStopUsingOtherEmlsrLink();
-
-    /**
      * Check if the device is busy sending or receiving,
      * or NAV or CCA busy.
      *
@@ -394,24 +405,6 @@ class ChannelAccessManager : public Object
     Time GetBackoffEndFor(Ptr<Txop> txop, Time accessGrantStart) const;
 
     /**
-     * Return the time when the backoff procedure
-     * started for the given Txop.
-     *
-     * \param txop the Txop
-     *
-     * \return the time when the backoff procedure started
-     */
-    Time GetBackoffStartFor(Ptr<Txop> txop);
-    /**
-     * Return the time when the backoff procedure
-     * ended (or will end) for the given Txop.
-     *
-     * \param txop the Txop
-     *
-     * \return the time when the backoff procedure ended (or will end)
-     */
-    Time GetBackoffEndFor(Ptr<Txop> txop);
-    /**
      * This method determines whether the medium has been idle during a period (of
      * non-null duration) immediately preceding the time this method is called. If
      * so, the last idle start time and end time for each channel type are updated.
@@ -484,7 +477,6 @@ class ChannelAccessManager : public Object
     std::map<WifiChannelListType, Timespan>
         m_lastIdle;               //!< the last idle start and end time for each channel type
     Time m_lastSwitchingEnd;      //!< the last switching end time
-    bool m_usingOtherEmlsrLink;   //!< whether another EMLSR link is being used
     bool m_sleeping;              //!< flag whether it is in sleeping state
     bool m_off;                   //!< flag whether it is in off state
     Time m_eifsNoDifs;            //!< EIFS no DIFS time
@@ -493,6 +485,8 @@ class ChannelAccessManager : public Object
                                   //!< right to start a TXOP but it does not transmit any frame
                                   //!< (e.g., due to constraints associated with EMLSR operations),
                                   //!< provided that the queue is not actually empty
+    bool m_proactiveBackoff; //!< whether a new backoff value is generated when a CCA busy period
+                             //!< starts and the backoff counter is zero
 
     /// Information associated with each PHY that is going to operate on another EMLSR link
     struct EmlsrLinkSwitchInfo

@@ -187,6 +187,15 @@ ChannelAccessManager::GetTypeId()
                           BooleanValue(false),
                           MakeBooleanAccessor(&ChannelAccessManager::SetGenerateBackoffOnNoTx,
                                               &ChannelAccessManager::GetGenerateBackoffOnNoTx),
+                          MakeBooleanChecker())
+            .AddAttribute("ProactiveBackoff",
+                          "Specify whether a new backoff value is generated when a CCA busy "
+                          "period starts, the backoff counter is zero and the station is not a "
+                          "TXOP holder. This is useful to generate a new backoff value when, "
+                          "e.g., the backoff counter reaches zero, the station does not transmit "
+                          "and subsequently the medium becomes busy.",
+                          BooleanValue(false),
+                          MakeBooleanAccessor(&ChannelAccessManager::m_proactiveBackoff),
                           MakeBooleanChecker());
     return tid;
 }
@@ -199,7 +208,6 @@ ChannelAccessManager::ChannelAccessManager()
       m_lastRxReceivedOk(true),
       m_lastTxEnd(0),
       m_lastSwitchingEnd(0),
-      m_usingOtherEmlsrLink(false),
       m_sleeping(false),
       m_off(false),
       m_linkId(0)
@@ -632,7 +640,7 @@ ChannelAccessManager::GetAccessGrantStart(bool ignoreNav) const
 }
 
 Time
-ChannelAccessManager::GetBackoffStartFor(Ptr<Txop> txop)
+ChannelAccessManager::GetBackoffStartFor(Ptr<Txop> txop) const
 {
     return GetBackoffStartFor(txop, GetAccessGrantStart());
 }
@@ -651,7 +659,7 @@ ChannelAccessManager::GetBackoffStartFor(Ptr<Txop> txop, Time accessGrantStart) 
 }
 
 Time
-ChannelAccessManager::GetBackoffEndFor(Ptr<Txop> txop)
+ChannelAccessManager::GetBackoffEndFor(Ptr<Txop> txop) const
 {
     return GetBackoffEndFor(txop, GetAccessGrantStart());
 }
@@ -907,6 +915,21 @@ ChannelAccessManager::NotifyCcaBusyStartNow(Time duration,
             m_lastPer20MHzBusyEnd[chIdx] = now + per20MhzDurations[chIdx];
         }
     }
+
+    if (m_proactiveBackoff)
+    {
+        // have all EDCAFs that are not carrying out a TXOP and have the backoff counter set to
+        // zero proactively generate a new backoff value
+        for (auto txop : m_txops)
+        {
+            if (txop->GetAccessStatus(m_linkId) != Txop::GRANTED &&
+                txop->GetBackoffSlots(m_linkId) == 0)
+            {
+                NS_LOG_DEBUG("Generate backoff for " << txop->GetWifiMacQueue()->GetAc());
+                txop->GenerateBackoff(m_linkId);
+            }
+        }
+    }
 }
 
 void
@@ -1130,20 +1153,6 @@ ChannelAccessManager::NotifyCtsTimeoutResetNow()
     NS_LOG_FUNCTION(this);
     m_lastCtsTimeoutEnd = Simulator::Now();
     DoRestartAccessTimeoutIfNeeded();
-}
-
-void
-ChannelAccessManager::NotifyStartUsingOtherEmlsrLink()
-{
-    NS_LOG_FUNCTION(this);
-    m_usingOtherEmlsrLink = true;
-}
-
-void
-ChannelAccessManager::NotifyStopUsingOtherEmlsrLink()
-{
-    NS_LOG_FUNCTION(this);
-    m_usingOtherEmlsrLink = false;
 }
 
 void
