@@ -644,8 +644,7 @@ class UeManager : public Object
      * Complete from the UE.
      */
     std::list<std::pair<uint8_t, Ptr<Packet>>> m_packetBuffer;
-
-}; // end of `class UeManager`
+};
 
 /**
  * \ingroup lte
@@ -1785,8 +1784,7 @@ class LteEnbRrc : public Object
 
     std::map<uint8_t, Ptr<ComponentCarrierBaseStation>>
         m_componentCarrierPhyConf; ///< component carrier phy configuration
-
-}; // end of `class LteEnbRrc`
+};
 
 } // namespace ns3
 

@@ -86,8 +86,7 @@ class HashTestCase : public TestCase
      */
     void Check(const std::string hashName, const int bits, const uint64_t hash);
     void DoRun() override;
-
-}; // class HashTestCase
+};
 
 HashTestCase::HashTestCase(const std::string name)
     : TestCase(name),

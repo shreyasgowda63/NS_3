@@ -81,7 +81,7 @@ class DsssPpdu : public WifiPpdu
       private:
         uint8_t m_rate;    ///< RATE field
         uint16_t m_length; ///< LENGTH field
-    };                     // class DsssSigHeader
+    };
 
     /**
      * Create a DSSS (HR/DSSS) PPDU.
@@ -133,7 +133,7 @@ class DsssPpdu : public WifiPpdu
                                            const DsssSigHeader& dsssSig) const;
 
     DsssSigHeader m_dsssSig; //!< the DSSS SIG PHY header
-};                           // class DsssPpdu
+};
 
 } // namespace ns3
 

@@ -131,8 +131,7 @@ class UanPacketArrival
     UanTxMode m_txMode;   //!< The transmission mode.
     UanPdp m_pdp;         //!< The propagation delay profile.
     Time m_arrTime;       //!< The arrival time.
-
-}; // class UanPacketArrival
+};
 
 /**
  * \ingroup uan
@@ -261,8 +260,7 @@ class UanTransducer : public Object
      * Clears all pointer references.
      */
     virtual void Clear() = 0;
-
-}; // class UanTransducer
+};
 
 } // namespace ns3
 

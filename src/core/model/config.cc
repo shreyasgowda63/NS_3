@@ -230,8 +230,7 @@ class ArrayMatcher
     bool StringToUint32(std::string str, uint32_t* value) const;
     /** The Config path element. */
     std::string m_element;
-
-}; // class ArrayMatcher
+};
 
 ArrayMatcher::ArrayMatcher(std::string element)
     : m_element(element)
@@ -378,8 +377,7 @@ class Resolver
     std::vector<std::string> m_workStack;
     /** The Config path. */
     std::string m_path;
-
-}; // class Resolver
+};
 
 Resolver::Resolver(std::string path)
     : m_path(path)
@@ -682,8 +680,7 @@ class ConfigImpl : public Singleton<ConfigImpl>
 
     /** The list of Config path roots. */
     Roots m_roots;
-
-}; // class ConfigImpl
+};
 
 void
 ConfigImpl::ParsePath(std::string path, std::string* root, std::string* leaf) const

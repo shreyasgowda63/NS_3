@@ -1070,6 +1070,7 @@ LteRlcAm::DoReceivePdu(LteMacSapUser::ReceivePduParameters rxPduParams)
 
         bool incrementVtA = true;
 
+        // Loop over SN : VT(A) <= SN < ACK SN
         for (sn = m_vtA; sn < ackSn && sn < m_vtS; sn++)
         {
             NS_LOG_LOGIC("sn = " << sn);
@@ -1145,8 +1146,7 @@ LteRlcAm::DoReceivePdu(LteMacSapUser::ReceivePduParameters rxPduParams)
                 ackSn.SetModulusBase(m_vtA);
                 sn.SetModulusBase(m_vtA);
             }
-
-        } // loop over SN : VT(A) <= SN < ACK SN
+        }
 
         return;
     }

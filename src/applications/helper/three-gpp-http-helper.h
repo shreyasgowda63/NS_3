@@ -44,7 +44,7 @@ class ThreeGppHttpClientHelper : public ApplicationHelper
      * \param address The address of the remote server node to send traffic to.
      */
     ThreeGppHttpClientHelper(const Address& address);
-}; // end of `class ThreeGppHttpClientHelper`
+};
 
 /**
  * \ingroup http
@@ -59,7 +59,7 @@ class ThreeGppHttpServerHelper : public ApplicationHelper
      * \param address The address of the server.
      */
     ThreeGppHttpServerHelper(const Address& address);
-}; // end of `class ThreeGppHttpServerHelper`
+};
 
 } // namespace ns3
 

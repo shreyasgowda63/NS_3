@@ -82,7 +82,7 @@ const long double* UNIT_VALUE = InitUnitValue();
 
 /** @} */
 
-} // unnamed namespace
+} // namespace
 
 // The set of marked times
 // static
@@ -318,7 +318,7 @@ Time::ClearMarkedTimes()
         g_markingTimes->erase(g_markingTimes->begin(), g_markingTimes->end());
         g_markingTimes = nullptr;
     }
-} // Time::ClearMarkedTimes
+}
 
 // static
 void
@@ -341,7 +341,7 @@ Time::Mark(Time* const time)
             NS_LOG_WARN("already recorded " << time << "!");
         }
     }
-} // Time::Mark ()
+}
 
 // static
 void
@@ -369,7 +369,7 @@ Time::Clear(Time* const time)
             NS_LOG_LOGIC("\t[" << g_markingTimes->size() << "] removing  " << time);
         }
     }
-} // Time::Clear ()
+}
 
 // static
 void
@@ -400,8 +400,7 @@ Time::ConvertTimes(const Unit unit)
     NS_LOG_LOGIC("clearing MarkedTimes");
     g_markingTimes->erase(g_markingTimes->begin(), g_markingTimes->end());
     g_markingTimes = nullptr;
-
-} // Time::ConvertTimes ()
+}
 
 // static
 Time::Unit

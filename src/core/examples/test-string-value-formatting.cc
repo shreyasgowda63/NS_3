@@ -135,7 +135,7 @@ FormattingTestObjectHelper::CreateFromFactory()
     return m_factory.Create();
 }
 
-} // unnamed namespace
+} // namespace
 
 int
 main(int argc, char* argv[])

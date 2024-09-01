@@ -135,7 +135,7 @@ SortedTraceSourceInfo(const TypeId tid)
     return index;
 }
 
-} // unnamed namespace
+} // namespace
 
 /**
  * Initialize the markup strings, for either doxygen or text.
@@ -234,7 +234,7 @@ SetMarkup()
         templateArgument = "\\tparam ";
         variable = "\\var ";
     }
-} // SetMarkup ()
+}
 
 /***************************************************************
  *        Aggregation and configuration paths
@@ -322,8 +322,7 @@ class StaticInformation
      * before returning it.
      */
     mutable std::vector<std::string> m_noTids;
-
-}; // class StaticInformation
+};
 
 void
 StaticInformation::RecordAggregationInfo(std::string a, std::string b)
@@ -528,7 +527,7 @@ StaticInformation::DoGather(TypeId tid)
             m_currentPath.pop_back();
         }
     }
-} // StaticInformation::DoGather ()
+}
 
 /// Register aggregation relationships that are not automatically
 /// detected by this introspection program.  Statements added here
@@ -590,8 +589,7 @@ GetTypicalAggregations()
     }
 
     return info;
-
-} // GetTypicalAggregations ()
+}
 
 /// Map from TypeId name to tid
 typedef std::map<std::string, int32_t> NameMap;
@@ -648,7 +646,7 @@ GetNameMap()
     }
 
     return nameMap;
-} // GetNameMap ()
+}
 
 /***************************************************************
  *        Docs for a single TypeId
@@ -684,7 +682,7 @@ PrintConfigPaths(std::ostream& os, const TypeId tid)
         }
         os << listStop << std::endl;
     }
-} // PrintConfigPaths ()
+}
 
 /**
  * Print direct Attributes for this TypeId.
@@ -793,7 +791,7 @@ PrintAttributesTid(std::ostream& os, const TypeId tid)
         os << indentHtmlOnly << listStop << std::endl;
     }
     os << listStop << std::endl;
-} // PrintAttributesTid ()
+}
 
 /**
  * Print the Attributes block for tid,
@@ -830,9 +828,8 @@ PrintAttributes(std::ostream& os, const TypeId tid)
             PrintAttributesTid(os, tmp);
         }
         tmp = tmp.GetParent();
-
-    } // Attributes
-} // PrintAttributes ()
+    }
+}
 
 /**
  * Print direct Trace sources for this TypeId.
@@ -862,7 +859,7 @@ PrintTraceSourcesTid(std::ostream& os, const TypeId tid)
         os << listLineStop << std::endl;
     }
     os << listStop << std::endl;
-} // PrintTraceSourcesTid ()
+}
 
 /**
  * Print the Trace sources block for tid,
@@ -900,8 +897,7 @@ PrintTraceSources(std::ostream& os, const TypeId tid)
         }
         tmp = tmp.GetParent();
     }
-
-} // PrintTraceSources ()
+}
 
 /**
  * Print the size of the type represented by this tid.
@@ -919,7 +915,7 @@ PrintSize(std::ostream& os, const TypeId tid)
 
     os << boldStart << "Size" << boldStop << " of this type is " << tid.GetSize() << " bytes (on a "
        << arch << "-bit architecture)." << std::endl;
-} // PrintSize ()
+}
 
 /**
  * Print the doxy block for each TypeId
@@ -957,9 +953,8 @@ PrintTypeIdBlocks(std::ostream& os)
         PrintSize(std::cout, tid);
 
         std::cout << commentStop << std::endl;
-    } // for class documentation
-
-} // PrintTypeIdBlocks
+    }
+}
 
 /***************************************************************
  *        Lists of All things
@@ -1001,8 +996,7 @@ PrintAllTypeIds(std::ostream& os)
     }
     os << listStop << std::endl;
     os << commentStop << std::endl;
-
-} // PrintAllTypeIds ()
+}
 
 /**
  * Print the list of all Attributes.
@@ -1053,8 +1047,7 @@ PrintAllAttributes(std::ostream& os)
         os << listStop << std::endl;
     }
     os << commentStop << std::endl;
-
-} // PrintAllAttributes ()
+}
 
 /**
  * Print the list of all global variables.
@@ -1081,8 +1074,7 @@ PrintAllGlobals(std::ostream& os)
     }
     os << listStop << std::endl;
     os << commentStop << std::endl;
-
-} // PrintAllGlobals ()
+}
 
 /**
  * Print the list of all LogComponents.
@@ -1141,7 +1133,7 @@ PrintAllLogComponents(std::ostream& os)
     }
     os << std::right << std::endl;
     os << commentStop << std::endl;
-} // PrintAllLogComponents ()
+}
 
 /**
  * Print the list of all Trace sources.
@@ -1194,8 +1186,7 @@ PrintAllTraceSources(std::ostream& os)
         os << listStop << std::endl;
     }
     os << commentStop << std::endl;
-
-} // PrintAllTraceSources ()
+}
 
 /***************************************************************
  *        Docs for Attribute classes
@@ -1230,8 +1221,7 @@ PrintAttributeValueSection(std::ostream& os, const std::string& name, const bool
         os << seeAlso << "ns3::" << name << "\n";
     }
     os << commentStop;
-
-} // PrintAttributeValueSection ()
+}
 
 /**
  * Print the AttributeValue documentation for a class.
@@ -1299,8 +1289,7 @@ PrintAttributeValueWithName(std::ostream& os,
     os << commentStart << variable << type << qualClass << "::m_value\n"
        << "The stored " << name << " instance.\n"
        << commentStop << std::endl;
-
-} // PrintAttributeValueWithName ()
+}
 
 /**
  * Print the AttributeValue MakeAccessor documentation for a class.
@@ -1332,7 +1321,7 @@ PrintMakeAccessors(std::ostream& os, const std::string& name)
        << copyDoc << "ns3::MakeAccessorHelper(T1,T2)\n"
        << seeAlso << "AttributeAccessor\n"
        << commentStop;
-} // PrintMakeAccessors ()
+}
 
 /**
  * Print the AttributeValue MakeChecker documentation for a class.
@@ -1366,7 +1355,7 @@ PrintMakeChecker(std::ostream& os, const std::string& name, const std::string& h
        << returns << "The AttributeChecker.\n"
        << seeAlso << "AttributeChecker\n"
        << commentStop;
-} // PrintMakeChecker ()
+}
 
 /**Descriptor for an AttributeValue. */
 struct AttributeDescriptor
@@ -1393,7 +1382,7 @@ PrintAttributeHelper(std::ostream& os, const AttributeDescriptor& attr)
     PrintAttributeValueWithName(os, attr.m_name, attr.m_type, attr.m_header);
     PrintMakeAccessors(os, attr.m_name);
     PrintMakeChecker(os, attr.m_name, attr.m_header);
-} // PrintAttributeHelper ()
+}
 
 /**
  * Print documentation for Attribute implementations.
@@ -1461,8 +1450,7 @@ PrintAttributeImplementations(std::ostream& os)
     PrintAttributeValueSection(os, "ObjectMap", false);
     PrintMakeAccessors(os, "ObjectMap");
     PrintMakeChecker(os, "ObjectMap", "object-map.h");
-
-} // PrintAttributeImplementations ()
+}
 
 /***************************************************************
  *        Main

@@ -76,7 +76,7 @@ class EhtPpdu : public HePpdu
                                                      //!< carried in EHT-SIG common subfields
 
         HeSigBContentChannels m_contentChannels; //!< EHT-SIG Content Channels
-    };                                           // struct EhtMuPhyHeader
+    };
 
     /// type of the EHT PHY header
     using EhtPhyHeader = std::variant<std::monostate, EhtTbPhyHeader, EhtMuPhyHeader>;
@@ -168,7 +168,7 @@ class EhtPpdu : public HePpdu
     void SetEhtPhyHeader(const WifiTxVector& txVector);
 
     EhtPhyHeader m_ehtPhyHeader; //!< the EHT PHY header
-};                               // class EhtPpdu
+};
 
 } // namespace ns3
 

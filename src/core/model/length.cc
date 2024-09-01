@@ -230,7 +230,7 @@ class EnumHash
     }
 };
 
-} // unnamed namespace
+} // namespace
 
 namespace ns3
 {

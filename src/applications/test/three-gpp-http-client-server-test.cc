@@ -287,8 +287,7 @@ class ThreeGppHttpObjectTestCase : public TestCase
     Ptr<MinMaxAvgTotalCalculator<double>> m_delayCalculator;
     /// Keeps statistical information of round-trip delays (in seconds).
     Ptr<MinMaxAvgTotalCalculator<double>> m_rttCalculator;
-
-}; // end of `class HttpClientServerTestCase`
+};
 
 ThreeGppHttpObjectTestCase::ThreeGppHttpObjectTestCase(const std::string& name,
                                                        uint32_t rngRun,
@@ -521,8 +520,7 @@ ThreeGppHttpObjectTestCase::DoRun()
                           "Tracker of embedded objects detected irrelevant packet(s).");
 
     Simulator::Destroy();
-
-} // end of `void HttpClientServerTestCase::DoRun ()`
+}
 
 void
 ThreeGppHttpObjectTestCase::DoTeardown()
@@ -892,8 +890,7 @@ class ThreeGppHttpClientServerTestSuite : public TestSuite
                                                    useIpv6),
                     testDuration);
     }
-
-}; // end of class `ThreeGppHttpClientServerTestSuite`
+};
 
 /// The global instance of the `three-gpp-http-client-server` system test.
 static ThreeGppHttpClientServerTestSuite g_httpClientServerTestSuiteInstance;

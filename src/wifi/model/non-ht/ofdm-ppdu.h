@@ -85,7 +85,7 @@ class OfdmPpdu : public WifiPpdu
       private:
         uint8_t m_rate;    ///< RATE field
         uint16_t m_length; ///< LENGTH field
-    };                     // class LSigHeader
+    };
 
     /**
      * Create an OFDM PPDU.
@@ -139,7 +139,7 @@ class OfdmPpdu : public WifiPpdu
 
     ChannelWidthMhz m_channelWidth; //!< the channel width used to transmit that PPDU in MHz
                                     //!< (needed to distinguish 5 MHz, 10 MHz or 20 MHz PPDUs)
-};                                  // class OfdmPpdu
+};
 
 } // namespace ns3
 

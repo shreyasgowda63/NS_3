@@ -1425,7 +1425,7 @@ RrcAsn1Header::SerializeMeasConfig(LteRrcSap::MeasConfig measConfig) const
                 default:
                     SerializeEnum(16, 15);
                 }
-            } // end trigger type
+            }
 
             // Serialize triggerQuantity
             if (it->reportConfigEutra.triggerQuantity == LteRrcSap::ReportConfigEutra::RSRP)

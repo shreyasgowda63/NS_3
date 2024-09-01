@@ -173,7 +173,7 @@ class Hasher
 
   private:
     Ptr<Hash::Implementation> m_impl; /**< Hash implementation. */
-};                                    // Hasher
+};
 
 /*************************************************
  **  Global functions declarations

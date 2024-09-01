@@ -168,8 +168,7 @@ A3RsrpHandoverAlgorithm::DoReportUeMeas(uint16_t rnti, LteRrcSap::MeasResults me
         NS_LOG_WARN(
             this << " Event A3 received without measurement results from neighbouring cells");
     }
-
-} // end of DoReportUeMeas
+}
 
 bool
 A3RsrpHandoverAlgorithm::IsValidNeighbour(uint16_t cellId)
@@ -185,4 +184,4 @@ A3RsrpHandoverAlgorithm::IsValidNeighbour(uint16_t cellId)
     return true;
 }
 
-} // end of namespace ns3
+} // namespace ns3

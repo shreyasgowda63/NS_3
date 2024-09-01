@@ -113,8 +113,7 @@ ListPositionAllocator::Add(const std::string filePath,
 
         Vector pos(x, y, z);
         Add(pos);
-
-    } // while FetchNextRow
+    }
     NS_LOG_INFO("read " << csv.RowNumber() << " rows");
 }
 

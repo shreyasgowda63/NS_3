@@ -111,8 +111,7 @@ class UanTxMode
     friend std::istream& operator>>(std::istream& is, UanTxMode& mode);
 
     uint32_t m_uid; //!< Mode id
-
-}; // class UanTxMode
+};
 
 /**
  * Writes tx mode entry to stream os.
@@ -245,8 +244,7 @@ class UanTxModeFactory
      * \return A public UanTxMode.
      */
     UanTxMode MakeModeFromItem(const UanTxModeItem& item);
-
-}; // class UanTxModeFactory
+};
 
 /**
  * \ingroup uan
@@ -291,8 +289,7 @@ class UanModesList
 
     friend std::ostream& operator<<(std::ostream& os, const UanModesList& ml);
     friend std::istream& operator>>(std::istream& is, UanModesList& ml);
-
-}; // class UanModesList
+};
 
 /**
  * Write UanModesList to stream os

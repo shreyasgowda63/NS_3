@@ -101,7 +101,7 @@ Encode(const std::string& source)
     return buffer;
 }
 
-} // anonymous namespace
+} // namespace
 
 namespace ns3
 {

@@ -160,8 +160,7 @@ class DesMetrics : public Singleton<DesMetrics>
 
     /** Mutex to control access to the output file. */
     std::mutex m_mutex;
-
-}; // class DesMetrics
+};
 
 } // namespace ns3
 

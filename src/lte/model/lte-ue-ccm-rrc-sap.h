@@ -101,8 +101,7 @@ class LteUeCcmRrcSapProvider
         uint8_t lcid,
         LteUeCmacSapProvider::LogicalChannelConfig lcConfig,
         LteMacSapUser* msu) = 0;
-
-}; // end of class LteUeCcmRrcSapProvider
+};
 
 /// MemberLteUeCcmRrcSapProvider class
 template <class C>
@@ -203,8 +202,7 @@ class LteUeCcmRrcSapUser
      * \param noOfComponentCarriers The number of component carriers
      */
     virtual void SetNumberOfComponentCarriers(uint16_t noOfComponentCarriers) = 0;
-
-}; // end of class LteUeCcmRrcSapUser
+};
 
 /// MemberLteUeCcmRrcSapUser class
 template <class C>
@@ -246,6 +244,6 @@ MemberLteUeCcmRrcSapUser<C>::SetNumberOfComponentCarriers(uint16_t noOfComponent
     m_owner->DoSetNumberOfComponentCarriers(noOfComponentCarriers);
 }
 
-} // end of namespace ns3
+} // namespace ns3
 
 #endif /* LTE_UE_CCM_RRC_SAP_H */

@@ -98,7 +98,7 @@ const std::map<ns3::LogLevel, std::string> LOG_LEVEL_LABELS = {[]() {
     return labels;
 }()};
 
-} // Unnamed namespace
+} // namespace
 
 namespace ns3
 {
@@ -483,9 +483,9 @@ CheckEnvironmentVariables()
                                    << flag << "\" in env variable NS_LOG for component name "
                                    << component);
                 }
-            } // for flag
-        }     // !value.empty
-    }         // for component
+            }
+        }
+    }
 }
 
 void

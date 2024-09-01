@@ -67,8 +67,7 @@ class Tap
   private:
     std::complex<double> m_amplitude; //!< The amplitude.
     Time m_delay;                     //!< The time delay.
-
-}; // class Tap
+};
 
 /**
  * \ingroup uan
@@ -250,8 +249,7 @@ class UanPdp
 
     std::vector<Tap> m_taps; //!< The vector of Taps.
     Time m_resolution;       //!< The time resolution.
-
-}; // class UanPdp
+};
 
 /**
  * \ingroup uan
@@ -321,8 +319,7 @@ class UanPropModel : public Object
     virtual void Clear();
 
     void DoDispose() override;
-
-}; // class UanPropModel
+};
 
 } // namespace ns3
 

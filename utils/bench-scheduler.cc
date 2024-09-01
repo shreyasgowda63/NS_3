@@ -127,8 +127,7 @@ class Bench
     uint64_t m_population;            /**< Event population size. */
     uint64_t m_total;                 /**< Total number of events to execute. */
     uint64_t m_count;                 /**< Count of events executed so far. */
-
-}; // class Bench
+};
 
 Bench::Result
 Bench::Run()
@@ -305,8 +304,7 @@ BenchSuite::BenchSuite(ObjectFactory& factory,
     }
 
     Simulator::Destroy();
-
-} // BenchSuite::Run
+}
 
 void
 BenchSuite::Header() const
@@ -384,8 +382,7 @@ BenchSuite::Log() const
     stdev.Log("stdev");
 
     LOG("");
-
-} // BenchSuite::Log()
+}
 
 /**
  *  Create a RandomVariableStream to generate next event delays.

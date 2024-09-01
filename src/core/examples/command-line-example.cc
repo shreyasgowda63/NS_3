@@ -55,7 +55,7 @@ SetCbArg(const std::string& val)
     return true;
 }
 
-} // unnamed namespace
+} // namespace
 
 /**
  * Print a row containing the name, the default

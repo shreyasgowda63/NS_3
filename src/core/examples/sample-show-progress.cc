@@ -102,10 +102,9 @@ class Hold : public SimpleRefCount<Hold>
     Time m_wait;
     /** Time between switching workloads. */
     Time m_interval;
+};
 
-}; // class HOLD
-
-} // unnamed namespace
+} // namespace
 
 int
 main(int argc, char** argv)

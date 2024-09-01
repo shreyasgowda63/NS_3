@@ -101,7 +101,7 @@ ReadFilesNoThrow(std::string path)
     return std::make_tuple(files, false);
 }
 
-} // unnamed namespace
+} // namespace
 
 namespace SystemPath
 {
@@ -385,8 +385,7 @@ Exists(const std::string path)
 
     NS_LOG_LOGIC("file itself exists: " << file);
     return true;
-
-} // Exists()
+}
 
 std::string
 CreateValidSystemPath(const std::string path)
@@ -403,7 +402,7 @@ CreateValidSystemPath(const std::string path)
                        incompatible_characters,
                        "_");
     return valid_path;
-} // CreateValidSystemPath
+}
 
 } // namespace SystemPath
 

@@ -94,7 +94,7 @@ LtePrimaryCellChangeTestSuite::LtePrimaryCellChangeTestSuite()
                 TestCase::Duration::QUICK);
     AddTestCase(new LtePrimaryCellChangeTestCase("real RRC, RngRun=1", false, 1, 4, 3, 1),
                 TestCase::Duration::QUICK);
-} // end of LtePrimaryCellChangeTestSuite::LtePrimaryCellChangeTestSuite ()
+}
 
 /**
  * \ingroup lte-test
@@ -211,7 +211,7 @@ LtePrimaryCellChangeTestCase::DoRun()
 
     // Destroy simulator.
     Simulator::Destroy();
-} // end of void LtePrimaryCellChangeTestCase::DoRun ()
+}
 
 void
 LtePrimaryCellChangeTestCase::StateTransitionCallback(std::string context,

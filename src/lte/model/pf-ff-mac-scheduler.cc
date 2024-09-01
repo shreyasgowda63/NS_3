@@ -36,13 +36,13 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("PfFfMacScheduler");
 
-/// PF type 0 allocation RBG
+/// PF type 0 allocation RBG (see table 7.1.6.1-1 of 36.213)
 static const int PfType0AllocationRbg[4] = {
     10,  // RBG size 1
     26,  // RBG size 2
     63,  // RBG size 3
     110, // RBG size 4
-};       // see table 7.1.6.1-1 of 36.213
+};
 
 NS_OBJECT_ENSURE_REGISTERED(PfFfMacScheduler);
 
@@ -1000,8 +1000,8 @@ PfFfMacScheduler::DoSchedDlTriggerReq(
                             itMax = it;
                         }
                     }
-                } // end if cqi
-            }     // end for m_rlcBufferReq
+                }
+            }
 
             if (itMax == m_flowStatsDl.end())
             {
@@ -1025,8 +1025,8 @@ PfFfMacScheduler::DoSchedDlTriggerReq(
                 }
                 NS_LOG_INFO(this << " UE assigned " << (*itMax).first);
             }
-        } // end for RBG free
-    }     // end for RBGs
+        }
+    }
 
     // reset TTI stats of users
     for (auto itStats = m_flowStatsDl.begin(); itStats != m_flowStatsDl.end(); itStats++)
@@ -1224,7 +1224,7 @@ PfFfMacScheduler::DoSchedDlTriggerReq(
         }
 
         itMap++;
-    }                               // end while allocation
+    }
     ret.m_nrOfPdcchOfdmSymbols = 1; /// \todo check correct value according the DCIs txed
 
     // update UEs stats

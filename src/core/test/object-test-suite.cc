@@ -163,7 +163,7 @@ NS_OBJECT_ENSURE_REGISTERED(DerivedA);
 NS_OBJECT_ENSURE_REGISTERED(BaseB);
 NS_OBJECT_ENSURE_REGISTERED(DerivedB);
 
-} // unnamed namespace
+} // namespace
 
 namespace ns3
 {

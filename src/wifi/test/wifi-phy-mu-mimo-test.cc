@@ -214,7 +214,7 @@ class MuMimoTestHePhy : public HePhy
 
   private:
     uint16_t m_staId; ///< ID of the STA to which this PHY belongs to
-};                    // class MuMimoTestHePhy
+};
 
 MuMimoTestHePhy::MuMimoTestHePhy(uint16_t staId)
     : HePhy(),
@@ -281,7 +281,7 @@ class MuMimoSpectrumWifiPhy : public SpectrumWifiPhy
     void DoDispose() override;
 
     Ptr<MuMimoTestHePhy> m_ofdmTestHePhy; ///< Pointer to HE PHY instance used for MU-MIMO test
-};                                        // class MuMimoSpectrumWifiPhy
+};
 
 TypeId
 MuMimoSpectrumWifiPhy::GetTypeId()

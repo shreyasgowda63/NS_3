@@ -64,8 +64,7 @@ LteSecondaryCellSelectionTestSuite::LteSecondaryCellSelectionTestSuite()
                 TestCase::Duration::QUICK);
     AddTestCase(new LteSecondaryCellSelectionTestCase("EPC, ideal RRC, RngRun=1", true, 1U, 4),
                 TestCase::Duration::QUICK);
-
-} // end of LteSecondaryCellSelectionTestSuite::LteSecondaryCellSelectionTestSuite ()
+}
 
 /**
  * \ingroup lte-test
@@ -174,7 +173,7 @@ LteSecondaryCellSelectionTestCase::DoRun()
 
     // Destroy simulator.
     Simulator::Destroy();
-} // end of void LteSecondaryCellSelectionTestCase::DoRun ()
+}
 
 void
 LteSecondaryCellSelectionTestCase::StateTransitionCallback(std::string context,

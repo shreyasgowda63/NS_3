@@ -142,8 +142,7 @@ class LteCcmRrcSapProvider
      */
     virtual LteMacSapUser* ConfigureSignalBearer(LteEnbCmacSapProvider::LcInfo lcInfo,
                                                  LteMacSapUser* rlcMacSapUser) = 0;
-
-}; // end of class LteCcmRrcSapProvider
+};
 
 /**
  * \brief Service Access Point (SAP) offered by the eNodeB RRC instance to the
@@ -224,8 +223,7 @@ class LteCcmRrcSapUser
      * \param noOfComponentCarriers The number of component carriers
      */
     virtual void SetNumberOfComponentCarriers(uint16_t noOfComponentCarriers) = 0;
-
-}; // end of class LteCcmRrcSapUser
+};
 
 /// MemberLteCcmRrcSapProvider class
 template <class C>
@@ -395,6 +393,6 @@ MemberLteCcmRrcSapUser<C>::SetNumberOfComponentCarriers(uint16_t noOfComponentCa
     return m_owner->DoSetNumberOfComponentCarriers(noOfComponentCarriers);
 }
 
-} // end of namespace ns3
+} // namespace ns3
 
 #endif /* LTE_CCM_RRC_SAP_H */

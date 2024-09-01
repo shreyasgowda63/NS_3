@@ -138,4 +138,4 @@ ModelCreator::DoEndVisitArrayItem()
     g_free(iter);
     m_iters.pop_back();
 }
-} // end namespace ns3
+} // namespace ns3

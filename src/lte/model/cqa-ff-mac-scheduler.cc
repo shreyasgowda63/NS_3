@@ -45,13 +45,13 @@ namespace ns3
 
 NS_LOG_COMPONENT_DEFINE("CqaFfMacScheduler");
 
-/// CGA Type 0 Allocation
+/// CGA Type 0 Allocation (see table 7.1.6.1-1 of 36.213)
 static const int CqaType0AllocationRbg[4] = {
     10,  // RBG size 1
     26,  // RBG size 2
     63,  // RBG size 3
     110, // RBG size 4
-};       // see table 7.1.6.1-1 of 36.213
+};
 
 NS_OBJECT_ENSURE_REGISTERED(CqaFfMacScheduler);
 
@@ -310,10 +310,10 @@ CqaFfMacScheduler::DoCschedLcConfigReq(
                 m_ueLogicalChannelsConfigList.find(flowid)->second = *lcit;
             }
         }
-
-    } // else new UE is added
+    }
     else
     {
+        // Add new UE
         for (auto lcit = params.m_logicalChannelConfigList.begin();
              lcit != params.m_logicalChannelConfigList.end();
              lcit++)
@@ -1268,8 +1268,8 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
                     }
                     sum += sbCqi;
                 }
-            } // end if cqi
-        }     // end of rbgNum
+            }
+        }
 
         sbCqiSum.insert(std::pair<uint16_t, uint8_t>((*itrbr).first.m_rnti, sum));
     }
@@ -1318,6 +1318,7 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
             break;
         }
 
+        // While there are more users in current group
         while (!availableRBGs.empty() && !itCurrentGroup->second.empty())
         {
             bool currentRBchecked = false;
@@ -1538,9 +1539,8 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
             {
                 itCurrentGroup->second.erase(userWithMaximumMetric);
             }
-
-        } // while there are more users in current group
-    }     // while there are more groups of users
+        }
+    }
 
     // reset TTI stats of users
     for (auto itStats = m_flowStatsDl.begin(); itStats != m_flowStatsDl.end(); itStats++)
@@ -1686,7 +1686,7 @@ CqaFfMacScheduler::DoSchedDlTriggerReq(
         }
 
         itMap++;
-    }                               // end while allocation
+    }
     ret.m_nrOfPdcchOfdmSymbols = 1; // TODO: check correct value according the DCIs txed
 
     // update UEs stats

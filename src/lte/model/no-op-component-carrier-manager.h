@@ -161,8 +161,7 @@ class NoOpComponentCarrierManager : public LteEnbComponentCarrierManager
   protected:
     std::map<uint8_t, double>
         m_ccPrbOccupancy; //!< The physical resource block occupancy per carrier.
-
-}; // end of class NoOpComponentCarrierManager
+};
 
 /**
  * \brief Component carrier manager implementation that splits traffic equally among carriers.
@@ -186,8 +185,8 @@ class RrComponentCarrierManager : public NoOpComponentCarrierManager
 
   private:
     uint8_t m_lastCcIdForSr{0}; //!< Last CCID to which a SR was routed
-};                              // end of class RrComponentCarrierManager
+};
 
-} // end of namespace ns3
+} // namespace ns3
 
 #endif /* NO_OP_COMPONENT_CARRIER_MANAGER_H */
