@@ -507,8 +507,6 @@ class SpectrumWifiPhyFilterTest : public TestCase
 
     ChannelWidthMhz m_txChannelWidth; ///< TX channel width (MHz)
     ChannelWidthMhz m_rxChannelWidth; ///< RX channel width (MHz)
-
-    std::set<WifiSpectrumBandIndices> m_ruBands; ///< spectrum bands associated to all the RUs
 };
 
 SpectrumWifiPhyFilterTest::SpectrumWifiPhyFilterTest()
@@ -555,10 +553,11 @@ SpectrumWifiPhyFilterTest::~SpectrumWifiPhyFilterTest()
 void
 SpectrumWifiPhyFilterTest::RxCallback(Ptr<const Packet> p, RxPowerWattPerChannelBand rxPowersW)
 {
-    for (const auto& pair : rxPowersW)
+    for (const auto& [band, powerW] : rxPowersW)
     {
-        NS_LOG_INFO("band: (" << pair.first << ") -> powerW=" << pair.second << " ("
-                              << WToDbm(pair.second) << " dBm)");
+        NS_LOG_INFO(
+            "band: (" << band << ") -> powerW=" << powerW
+                      << (powerW > 0.0 ? " (" + std::to_string(WToDbm(powerW)) + " dBm)" : ""));
     }
 
     size_t numBands = rxPowersW.size();
@@ -566,7 +565,11 @@ SpectrumWifiPhyFilterTest::RxCallback(Ptr<const Packet> p, RxPowerWattPerChannel
     expectedNumBands += (m_rxChannelWidth / 40);
     expectedNumBands += (m_rxChannelWidth / 80);
     expectedNumBands += (m_rxChannelWidth / 160);
-    expectedNumBands += m_ruBands.size();
+    expectedNumBands += m_rxPhy
+                            ->GetHeRuBands(m_rxPhy->GetCurrentInterface(),
+                                           m_rxPhy->GetGuardBandwidth(
+                                               m_rxPhy->GetCurrentInterface()->GetChannelWidth()))
+                            .size();
 
     NS_TEST_ASSERT_MSG_EQ(numBands,
                           expectedNumBands,
@@ -719,36 +722,6 @@ SpectrumWifiPhyFilterTest::RunOne()
                             ->number;
     m_rxPhy->SetOperatingChannel(
         WifiPhy::ChannelTuple{rxChannelNum, m_rxChannelWidth, WIFI_PHY_BAND_5GHZ, 0});
-
-    m_ruBands.clear();
-    for (ChannelWidthMhz bw = 160; bw >= 20; bw = bw / 2)
-    {
-        for (uint16_t i = 0; i < (m_rxChannelWidth / bw); ++i)
-        {
-            for (unsigned int type = 0; type < 7; type++)
-            {
-                auto ruType = static_cast<HeRu::RuType>(type);
-                for (std::size_t index = 1; index <= HeRu::GetNRus(bw, ruType); index++)
-                {
-                    HeRu::SubcarrierGroup subcarrierGroup =
-                        HeRu::GetSubcarrierGroup(bw, ruType, index);
-                    HeRu::SubcarrierRange subcarrierRange =
-                        std::make_pair(subcarrierGroup.front().first,
-                                       subcarrierGroup.back().second);
-                    const auto band = HePhy::ConvertHeRuSubcarriers(
-                                          bw,
-                                          m_rxPhy->GetGuardBandwidth(m_rxChannelWidth),
-                                          m_rxPhy->GetOperatingChannel().GetFrequencies(),
-                                          m_rxPhy->GetChannelWidth(),
-                                          m_rxPhy->GetSubcarrierSpacing(),
-                                          subcarrierRange,
-                                          i)
-                                          .front();
-                    m_ruBands.insert(band);
-                }
-            }
-        }
-    }
 
     Simulator::Schedule(Seconds(1), &SpectrumWifiPhyFilterTest::SendPpdu, this);
 
@@ -2820,7 +2793,7 @@ class SpectrumWifiPhyTestSuite : public TestSuite
 };
 
 SpectrumWifiPhyTestSuite::SpectrumWifiPhyTestSuite()
-    : TestSuite("wifi-spectrum-wifi-phy", Type::UNIT)
+    : TestSuite("wifi-spectrum-phy", Type::UNIT)
 {
     AddTestCase(new SpectrumWifiPhyBasicTest, TestCase::Duration::QUICK);
     AddTestCase(new SpectrumWifiPhyListenerTest, TestCase::Duration::QUICK);

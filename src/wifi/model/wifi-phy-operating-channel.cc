@@ -708,12 +708,9 @@ WifiPhyOperatingChannel::GetSecondaryChannelCenterFrequency(
     // we assume here that all segments have the same width
     const auto segmentWidth = GetWidth(segmentIndex);
     const auto segmentOffset = (segmentIndex * (segmentWidth / secondaryChannelWidth));
-    const auto primaryChannelIndex = GetPrimaryChannelIndex(secondaryChannelWidth);
-    const auto primaryCenterFrequency =
-        GetFrequency(segmentIndex) - segmentWidth / 2. +
-        (primaryChannelIndex - segmentOffset + 0.5) * secondaryChannelWidth;
-    return (primaryChannelIndex % 2 == 0) ? (primaryCenterFrequency + secondaryChannelWidth)
-                                          : (primaryCenterFrequency - secondaryChannelWidth);
+    return GetFrequency(segmentIndex) - segmentWidth / 2. +
+           (GetSecondaryChannelIndex(secondaryChannelWidth) - segmentOffset + 0.5) *
+               secondaryChannelWidth;
 }
 
 uint8_t
@@ -936,7 +933,15 @@ operator<<(std::ostream& os, const WifiPhyOperatingChannel& channel)
                 os << "segment " << segmentId << " ";
             }
             os << "channel " << +channel.GetNumber() << " frequency " << channel.GetFrequency()
-               << " width " << channel.GetWidth() << " band " << channel.GetPhyBand() << " ";
+               << " width " << channel.GetWidth() << " band " << channel.GetPhyBand();
+            if ((segmentId == 0) && (channel.GetTotalWidth() % 20 == 0))
+            {
+                os << " primary20 " << +channel.GetPrimaryChannelIndex(20);
+            }
+            if (segmentId < numSegments - 1)
+            {
+                os << " ";
+            }
         }
     }
     else

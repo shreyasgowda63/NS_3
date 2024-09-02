@@ -979,7 +979,10 @@ void
 PhyEntity::StartPreambleDetectionPeriod(Ptr<Event> event)
 {
     NS_LOG_FUNCTION(this << *event);
-    NS_LOG_DEBUG("Sync to signal (power=" << WToDbm(GetRxPowerWForPpdu(event)) << "dBm)");
+    const auto rxPower = GetRxPowerWForPpdu(event);
+    NS_LOG_DEBUG("Sync to signal (power=" << (rxPower > 0.0
+                                                  ? std::to_string(WToDbm(rxPower)) + "dBm)"
+                                                  : std::to_string(rxPower) + "W)"));
     m_wifiPhy->m_interference->NotifyRxStart(
         m_wifiPhy->GetCurrentFrequencyRange()); // We need to notify it now so that it starts
                                                 // recording events
@@ -1001,14 +1004,14 @@ PhyEntity::EndPreambleDetectionPeriod(Ptr<Event> event)
     // calculate PER on the measurement channel for PHY headers
     const auto measurementChannelWidth = GetMeasurementChannelWidth(event->GetPpdu());
     auto measurementBand = GetPrimaryBand(measurementChannelWidth);
-    double maxRxPowerW = -1; // in case current event may not be sent on measurement channel
-                             // (rxPowerW would be equal to 0)
+    std::optional<double>
+        maxRxPowerW; // in case current event may not be sent on measurement channel
     Ptr<Event> maxEvent;
     NS_ASSERT(!m_wifiPhy->m_currentPreambleEvents.empty());
     for (auto preambleEvent : m_wifiPhy->m_currentPreambleEvents)
     {
-        double rxPowerW = preambleEvent.second->GetRxPowerW(measurementBand);
-        if (rxPowerW > maxRxPowerW)
+        const auto rxPowerW = preambleEvent.second->GetRxPowerW(measurementBand);
+        if (!maxRxPowerW || (rxPowerW > *maxRxPowerW))
         {
             maxRxPowerW = rxPowerW;
             maxEvent = preambleEvent.second;
@@ -1044,12 +1047,12 @@ PhyEntity::EndPreambleDetectionPeriod(Ptr<Event> event)
                                                          measurementBand);
     NS_LOG_DEBUG("SNR(dB)=" << RatioToDb(snr) << " at end of preamble detection period");
 
-    if ((!m_wifiPhy->m_preambleDetectionModel && maxRxPowerW > 0.0) ||
-        (m_wifiPhy->m_preambleDetectionModel &&
-         m_wifiPhy->m_preambleDetectionModel->IsPreambleDetected(
-             m_wifiPhy->m_currentEvent->GetRxPowerW(measurementBand),
-             snr,
-             measurementChannelWidth)))
+    if (const auto powerW = m_wifiPhy->m_currentEvent->GetRxPowerW(measurementBand);
+        (!m_wifiPhy->m_preambleDetectionModel && maxRxPowerW && (*maxRxPowerW > 0.0)) ||
+        (m_wifiPhy->m_preambleDetectionModel && powerW > 0.0 &&
+         m_wifiPhy->m_preambleDetectionModel->IsPreambleDetected(WToDbm(powerW),
+                                                                 snr,
+                                                                 measurementChannelWidth)))
     {
         // A bit convoluted but it enables to sync all PHYs
         for (auto& it : m_wifiPhy->m_phyEntities)
