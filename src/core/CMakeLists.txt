@@ -116,19 +116,11 @@ if(WIN32)
       wsock32
       ws2_32
   )
-  set(fd-reader-sources
-      model/win32-fd-reader.cc
-  )
-else()
-  set(fd-reader-sources
-      model/unix-fd-reader.cc
-  )
 endif()
 
 # Define core lib sources
 set(source_files
     ${int64x64_sources}
-    ${fd-reader-sources}
     ${example_as_test_sources}
     ${embedded_version_sources}
     helper/csv-reader.cc
@@ -196,6 +188,7 @@ set(source_files
     model/wall-clock-synchronizer.cc
     model/matrix-array.cc
     model/demangle.cc
+    model/fd-reader.cc
 )
 
 # Define core lib headers
