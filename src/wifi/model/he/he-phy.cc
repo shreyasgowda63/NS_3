@@ -238,13 +238,13 @@ HePhy::GetSigBSize(const WifiTxVector& txVector) const
 Time
 HePhy::GetSigBDuration(const WifiTxVector& txVector) const
 {
-    if (auto sigBSize = GetSigBSize(txVector); sigBSize > 0)
+    if (const auto sigBSize = GetSigBSize(txVector); sigBSize > 0)
     {
-        auto symbolDuration = MicroSeconds(4);
+        const auto symbolDuration = MicroSeconds(4);
         // Number of data bits per symbol
-        auto ndbps =
-            GetSigBMode(txVector).GetDataRate(20, 800, 1) * symbolDuration.GetNanoSeconds() / 1e9;
-        auto numSymbols = ceil((sigBSize) / ndbps);
+        const auto ndbps =
+            GetSigBMode(txVector).GetDataRate(20) * symbolDuration.GetNanoSeconds() / 1e9;
+        const auto numSymbols = ceil((sigBSize) / ndbps);
 
         return FemtoSeconds(static_cast<uint64_t>(numSymbols * symbolDuration.GetFemtoSeconds()));
     }
@@ -258,8 +258,8 @@ HePhy::GetSigBDuration(const WifiTxVector& txVector) const
 Time
 HePhy::GetValidPpduDuration(Time ppduDuration, const WifiTxVector& txVector, WifiPhyBand band)
 {
-    Time tSymbol = NanoSeconds(12800 + txVector.GetGuardInterval());
-    Time preambleDuration = WifiPhy::CalculatePhyPreambleAndHeaderDuration(txVector);
+    const auto tSymbol = GetSymbolDuration(txVector.GetGuardInterval());
+    const auto preambleDuration = WifiPhy::CalculatePhyPreambleAndHeaderDuration(txVector);
     uint8_t sigExtension = (band == WIFI_PHY_BAND_2_4GHZ ? 6 : 0);
     uint32_t nSymbols =
         floor(static_cast<double>((ppduDuration - preambleDuration).GetNanoSeconds() -
@@ -329,16 +329,17 @@ HePhy::GetNumberBccEncoders(const WifiTxVector& /* txVector */) const
 Time
 HePhy::GetSymbolDuration(const WifiTxVector& txVector) const
 {
-    uint16_t gi = txVector.GetGuardInterval();
+    const auto guardInterval = txVector.GetGuardInterval();
+    [[maybe_unused]] const auto gi = guardInterval.GetNanoSeconds();
     NS_ASSERT(gi == 800 || gi == 1600 || gi == 3200);
-    return GetSymbolDuration(NanoSeconds(gi));
+    return GetSymbolDuration(guardInterval);
 }
 
 void
 HePhy::SetTrigVector(const WifiTxVector& trigVector, Time validity)
 {
     NS_LOG_FUNCTION(this << trigVector << validity);
-    NS_ASSERT_MSG(trigVector.GetGuardInterval() > 800,
+    NS_ASSERT_MSG(trigVector.GetGuardInterval().GetNanoSeconds() > 800,
                   "Invalid guard interval " << trigVector.GetGuardInterval());
     if (auto mac = m_wifiPhy->GetDevice()->GetMac(); mac && mac->GetTypeOfStation() != AP)
     {
@@ -1230,9 +1231,9 @@ HePhy::GetPer20MHzDurations(const Ptr<const WifiPpdu> ppdu)
 
         if (ppdu)
         {
-            const uint16_t subchannelMinFreq =
+            const double subchannelMinFreq =
                 m_wifiPhy->GetFrequency() - (m_wifiPhy->GetChannelWidth() / 2) + (index * 20);
-            const uint16_t subchannelMaxFreq = subchannelMinFreq + 20;
+            const double subchannelMaxFreq = subchannelMinFreq + 20;
             const auto ppduBw = ppdu->GetTxVector().GetChannelWidth();
 
             if (ppduBw <= m_wifiPhy->GetChannelWidth() &&
@@ -1243,7 +1244,7 @@ HePhy::GetPer20MHzDurations(const Ptr<const WifiPpdu> ppdu)
                 {
                     obssPdLevel = m_obssPdAlgorithm->GetObssPdLevel();
                 }
-                switch (ppduBw)
+                switch (static_cast<uint16_t>(ppduBw))
                 {
                 case 20:
                 case 22:
@@ -1351,7 +1352,7 @@ HePhy::GetTxPowerSpectralDensity(double txPowerW,
     const auto& txVector = ppdu->GetTxVector();
     const auto& centerFrequencies = ppdu->GetTxCenterFreqs();
     auto channelWidth = txVector.GetChannelWidth();
-    auto printFrequencies = [](const std::vector<uint16_t>& v) {
+    auto printFrequencies = [](const std::vector<double>& v) {
         std::stringstream ss;
         for (const auto& centerFrequency : v)
         {
@@ -1443,7 +1444,7 @@ HePhy::GetTxPowerSpectralDensity(double txPowerW,
     }
 }
 
-std::vector<uint16_t>
+std::vector<double>
 HePhy::GetCenterFrequenciesForNonHePart(Ptr<const WifiPpdu> ppdu, uint16_t staId) const
 {
     NS_LOG_FUNCTION(this << ppdu << staId);
@@ -1460,7 +1461,7 @@ HePhy::GetCenterFrequenciesForNonHePart(Ptr<const WifiPpdu> ppdu, uint16_t staId
         HeRu::RuSpec nonOfdmaRu =
             HeRu::FindOverlappingRu(currentWidth, ru, HeRu::GetRuType(nonOfdmaWidth));
 
-        uint16_t startingFrequency = centerFrequencies.front() - (currentWidth / 2);
+        double startingFrequency = centerFrequencies.front() - (currentWidth / 2);
         centerFrequencies.front() =
             startingFrequency +
             nonOfdmaWidth * (nonOfdmaRu.GetPhyIndex(
@@ -1672,13 +1673,10 @@ HePhy::GetConstellationSize(uint8_t mcsValue)
 }
 
 uint64_t
-HePhy::GetPhyRate(uint8_t mcsValue,
-                  ChannelWidthMhz channelWidth,
-                  uint16_t guardInterval,
-                  uint8_t nss)
+HePhy::GetPhyRate(uint8_t mcsValue, ChannelWidthMhz channelWidth, Time guardInterval, uint8_t nss)
 {
-    WifiCodeRate codeRate = GetCodeRate(mcsValue);
-    uint64_t dataRate = GetDataRate(mcsValue, channelWidth, guardInterval, nss);
+    const auto codeRate = GetCodeRate(mcsValue);
+    const auto dataRate = GetDataRate(mcsValue, channelWidth, guardInterval, nss);
     return HtPhy::CalculatePhyRate(codeRate, dataRate);
 }
 
@@ -1711,14 +1709,12 @@ HePhy::GetDataRateFromTxVector(const WifiTxVector& txVector, uint16_t staId /* =
 }
 
 uint64_t
-HePhy::GetDataRate(uint8_t mcsValue,
-                   ChannelWidthMhz channelWidth,
-                   uint16_t guardInterval,
-                   uint8_t nss)
+HePhy::GetDataRate(uint8_t mcsValue, ChannelWidthMhz channelWidth, Time guardInterval, uint8_t nss)
 {
-    NS_ASSERT(guardInterval == 800 || guardInterval == 1600 || guardInterval == 3200);
+    [[maybe_unused]] const auto gi = guardInterval.GetNanoSeconds();
+    NS_ASSERT((gi == 800) || (gi == 1600) || (gi == 3200));
     NS_ASSERT(nss <= 8);
-    return HtPhy::CalculateDataRate(GetSymbolDuration(NanoSeconds(guardInterval)),
+    return HtPhy::CalculateDataRate(GetSymbolDuration(guardInterval),
                                     GetUsableSubcarriers(channelWidth),
                                     static_cast<uint16_t>(log2(GetConstellationSize(mcsValue))),
                                     HtPhy::GetCodeRatio(GetCodeRate(mcsValue)),
@@ -1728,7 +1724,7 @@ HePhy::GetDataRate(uint8_t mcsValue,
 uint16_t
 HePhy::GetUsableSubcarriers(ChannelWidthMhz channelWidth)
 {
-    switch (channelWidth)
+    switch (static_cast<uint16_t>(channelWidth))
     {
     case 2: // 26-tone RU
         return 24;
@@ -1859,9 +1855,9 @@ HePhy::GetRxPpduFromTxPpdu(Ptr<const WifiPpdu> ppdu)
 std::vector<WifiSpectrumBandIndices>
 HePhy::ConvertHeRuSubcarriers(ChannelWidthMhz bandWidth,
                               ChannelWidthMhz guardBandwidth,
-                              const std::vector<uint16_t>& centerFrequencies,
+                              const std::vector<double>& centerFrequencies,
                               ChannelWidthMhz totalWidth,
-                              uint32_t subcarrierSpacing,
+                              double subcarrierSpacing,
                               HeRu::SubcarrierRange subcarrierRange,
                               uint8_t bandIndex)
 {
@@ -1878,7 +1874,7 @@ HePhy::ConvertHeRuSubcarriers(ChannelWidthMhz bandWidth,
         bandWidth /= centerFrequencies.size();
     }
     uint32_t centerFrequencyIndex = 0;
-    switch (bandWidth)
+    switch (static_cast<uint16_t>(bandWidth))
     {
     case 20:
         centerFrequencyIndex = (nGuardBands / 2) + 6 + 122;

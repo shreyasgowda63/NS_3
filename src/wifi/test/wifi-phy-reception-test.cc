@@ -59,10 +59,10 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("WifiPhyReceptionTest");
 
 static const uint8_t CHANNEL_NUMBER = 36;
-static const uint32_t FREQUENCY = 5180;          // MHz
-static const ChannelWidthMhz CHANNEL_WIDTH = 20; // MHz
+static const double FREQUENCY = 5180; // MHz
+static const ChannelWidthMhz CHANNEL_WIDTH = 20;
 static const ChannelWidthMhz GUARD_WIDTH =
-    CHANNEL_WIDTH; // MHz (expanded to channel width to model spectrum mask)
+    CHANNEL_WIDTH; // expanded to channel width to model spectrum mask
 
 /**
  * \ingroup wifi-test
@@ -119,8 +119,15 @@ WifiPhyReceptionTest::WifiPhyReceptionTest(std::string test_name)
 void
 WifiPhyReceptionTest::SendPacket(double rxPowerDbm, uint32_t packetSize, uint8_t mcs)
 {
-    WifiTxVector txVector =
-        WifiTxVector(HePhy::GetHeMcs(mcs), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
+    WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs(mcs),
+                                         0,
+                                         WIFI_PREAMBLE_HE_SU,
+                                         NanoSeconds(800),
+                                         1,
+                                         1,
+                                         0,
+                                         20,
+                                         false);
 
     Ptr<Packet> pkt = Create<Packet>(packetSize);
     WifiMacHeader hdr;
@@ -2773,8 +2780,15 @@ TestAmpduReception::CheckPhyState(WifiPhyState expectedState)
 void
 TestAmpduReception::SendAmpduWithThreeMpdus(double rxPowerDbm, uint32_t referencePacketSize)
 {
-    WifiTxVector txVector =
-        WifiTxVector(HePhy::GetHeMcs0(), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, true);
+    WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs0(),
+                                         0,
+                                         WIFI_PREAMBLE_HE_SU,
+                                         NanoSeconds(800),
+                                         1,
+                                         1,
+                                         0,
+                                         20,
+                                         true);
 
     WifiMacHeader hdr;
     hdr.SetType(WIFI_MAC_QOSDATA);
@@ -4228,7 +4242,7 @@ class TestUnsupportedBandwidthReception : public TestCase
      * \param centerFreqMhz the center frequency used for the transmission of the PPDU (in MHz)
      * \param bandwidthMhz the bandwidth used for the transmission of the PPDU (in MHz)
      */
-    void SendPpdu(uint16_t centerFreqMhz, ChannelWidthMhz bandwidthMhz);
+    void SendPpdu(double centerFreqMhz, ChannelWidthMhz bandwidthMhz);
 
     /**
      * Function called upon a PSDU received successfully
@@ -4298,10 +4312,17 @@ TestUnsupportedBandwidthReception::TestUnsupportedBandwidthReception()
 }
 
 void
-TestUnsupportedBandwidthReception::SendPpdu(uint16_t centerFreqMhz, ChannelWidthMhz bandwidthMhz)
+TestUnsupportedBandwidthReception::SendPpdu(double centerFreqMhz, ChannelWidthMhz bandwidthMhz)
 {
-    auto txVector =
-        WifiTxVector(HePhy::GetHeMcs0(), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, bandwidthMhz, false);
+    auto txVector = WifiTxVector(HePhy::GetHeMcs0(),
+                                 0,
+                                 WIFI_PREAMBLE_HE_SU,
+                                 NanoSeconds(800),
+                                 1,
+                                 1,
+                                 0,
+                                 bandwidthMhz,
+                                 false);
 
     auto pkt = Create<Packet>(1000);
     WifiMacHeader hdr;
@@ -4509,7 +4530,7 @@ class TestPrimary20CoveredByPpdu : public TestCase
      * \param ppduCenterFreqMhz the center frequency used for the transmission of the PPDU (in MHz)
      * \return the created PPDU
      */
-    Ptr<HePpdu> CreatePpdu(uint16_t ppduCenterFreqMhz);
+    Ptr<HePpdu> CreatePpdu(double ppduCenterFreqMhz);
 
     /**
      * Run one function
@@ -4524,9 +4545,9 @@ class TestPrimary20CoveredByPpdu : public TestCase
      * primary 20 MHz channel is expected to overlap with the bandwidth of the incoming PPDU
      */
     void RunOne(WifiPhyBand band,
-                uint16_t phyCenterFreqMhz,
+                double phyCenterFreqMhz,
                 uint8_t p20Index,
-                uint16_t ppduCenterFreqMhz,
+                double ppduCenterFreqMhz,
                 bool expectedP20Overlap,
                 bool expectedP20Covered);
 
@@ -4541,7 +4562,7 @@ TestPrimary20CoveredByPpdu::TestPrimary20CoveredByPpdu()
 }
 
 Ptr<HePpdu>
-TestPrimary20CoveredByPpdu::CreatePpdu(uint16_t ppduCenterFreqMhz)
+TestPrimary20CoveredByPpdu::CreatePpdu(double ppduCenterFreqMhz)
 {
     const auto& channelInfo = (*WifiPhyOperatingChannel::FindFirst(0,
                                                                    ppduCenterFreqMhz,
@@ -4553,7 +4574,7 @@ TestPrimary20CoveredByPpdu::CreatePpdu(uint16_t ppduCenterFreqMhz)
     auto txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                  0,
                                  WIFI_PREAMBLE_HE_SU,
-                                 800,
+                                 NanoSeconds(800),
                                  1,
                                  1,
                                  0,
@@ -4600,9 +4621,9 @@ TestPrimary20CoveredByPpdu::DoTeardown()
 
 void
 TestPrimary20CoveredByPpdu::RunOne(WifiPhyBand band,
-                                   uint16_t phyCenterFreqMhz,
+                                   double phyCenterFreqMhz,
                                    uint8_t p20Index,
-                                   uint16_t ppduCenterFreqMhz,
+                                   double ppduCenterFreqMhz,
                                    bool expectedP20Overlap,
                                    bool expectedP20Covered)
 {
@@ -4756,8 +4777,15 @@ TestSpectrumChannelWithBandwidthFilter::TestSpectrumChannelWithBandwidthFilter(
 void
 TestSpectrumChannelWithBandwidthFilter::Send() const
 {
-    WifiTxVector txVector =
-        WifiTxVector(HePhy::GetHeMcs7(), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
+    WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
+                                         0,
+                                         WIFI_PREAMBLE_HE_SU,
+                                         NanoSeconds(800),
+                                         1,
+                                         1,
+                                         0,
+                                         20,
+                                         false);
 
     Ptr<Packet> pkt = Create<Packet>(1000);
     WifiMacHeader hdr;
@@ -4927,8 +4955,15 @@ TestPhyDropDueToTx::TestPhyDropDueToTx(Time delay, WifiPhyRxfailureReason expect
 void
 TestPhyDropDueToTx::Send(Ptr<WifiPhy> phy) const
 {
-    const auto txVector =
-        WifiTxVector(HePhy::GetHeMcs0(), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false);
+    const auto txVector = WifiTxVector(HePhy::GetHeMcs0(),
+                                       0,
+                                       WIFI_PREAMBLE_HE_SU,
+                                       NanoSeconds(800),
+                                       1,
+                                       1,
+                                       0,
+                                       20,
+                                       false);
 
     auto pkt = Create<Packet>(1000);
     WifiMacHeader hdr;

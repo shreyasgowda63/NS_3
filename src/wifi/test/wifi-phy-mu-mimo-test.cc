@@ -49,8 +49,8 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("WifiPhyMuMimoTest");
 
-constexpr uint32_t DEFAULT_FREQUENCY = 5180;   // MHz
-constexpr uint16_t DEFAULT_CHANNEL_WIDTH = 20; // MHz
+constexpr double DEFAULT_FREQUENCY = 5180; // MHz
+constexpr ChannelWidthMhz DEFAULT_CHANNEL_WIDTH = 20;
 
 /**
  * \ingroup wifi-test
@@ -69,12 +69,12 @@ class TestDlMuTxVector : public TestCase
     /**
      * Build a TXVECTOR for DL MU with the given bandwidth and user information.
      *
-     * \param bw the channel width of the PPDU in MHz
+     * \param bw the channel width of the PPDU
      * \param userInfos the list of HE MU specific user transmission parameters
      *
      * \return the configured MU TXVECTOR
      */
-    static WifiTxVector BuildTxVector(uint16_t bw, const std::list<HeMuUserInfo>& userInfos);
+    static WifiTxVector BuildTxVector(ChannelWidthMhz bw, const std::list<HeMuUserInfo>& userInfos);
 };
 
 TestDlMuTxVector::TestDlMuTxVector()
@@ -83,7 +83,7 @@ TestDlMuTxVector::TestDlMuTxVector()
 }
 
 WifiTxVector
-TestDlMuTxVector::BuildTxVector(uint16_t bw, const std::list<HeMuUserInfo>& userInfos)
+TestDlMuTxVector::BuildTxVector(ChannelWidthMhz bw, const std::list<HeMuUserInfo>& userInfos)
 {
     WifiTxVector txVector;
     txVector.SetPreambleType(WIFI_PREAMBLE_HE_MU);
@@ -494,10 +494,10 @@ class TestDlMuMimoPhyTransmission : public TestCase
     Ptr<MuMimoSpectrumWifiPhy> m_phySta2; ///< PHY of STA 2
     Ptr<MuMimoSpectrumWifiPhy> m_phySta3; ///< PHY of STA 3
 
-    uint8_t m_nss;               ///< number of spatial streams per STA
-    uint16_t m_frequency;        ///< frequency in MHz
-    uint16_t m_channelWidth;     ///< channel width in MHz
-    Time m_expectedPpduDuration; ///< expected duration to send MU PPDU
+    uint8_t m_nss;                  ///< number of spatial streams per STA
+    double m_frequency;             ///< frequency in MHz
+    ChannelWidthMhz m_channelWidth; ///< channel width
+    Time m_expectedPpduDuration;    ///< expected duration to send MU PPDU
 };
 
 TestDlMuMimoPhyTransmission::TestDlMuMimoPhyTransmission()
@@ -541,7 +541,7 @@ TestDlMuMimoPhyTransmission::SendMuPpdu(const std::vector<StaInfo>& staInfos)
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_MU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -1265,10 +1265,10 @@ class TestUlMuMimoPhyTransmission : public TestCase
     std::vector<uint32_t> m_countRxFailureFromStas; ///< count RX failure from STAs
     std::vector<uint32_t> m_countRxBytesFromStas;   ///< count RX bytes from STAs
 
-    Time m_delayStart;           ///< delay between the start of each HE TB PPDUs
-    uint16_t m_frequency;        ///< frequency in MHz
-    uint16_t m_channelWidth;     ///< channel width in MHz
-    Time m_expectedPpduDuration; ///< expected duration to send MU PPDU
+    Time m_delayStart;              ///< delay between the start of each HE TB PPDUs
+    double m_frequency;             ///< frequency in MHz
+    ChannelWidthMhz m_channelWidth; ///< channel width
+    Time m_expectedPpduDuration;    ///< expected duration to send MU PPDU
 };
 
 TestUlMuMimoPhyTransmission::TestUlMuMimoPhyTransmission()
@@ -1295,7 +1295,7 @@ TestUlMuMimoPhyTransmission::SendHeSuPpdu(uint16_t txStaId,
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_SU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -1330,7 +1330,7 @@ TestUlMuMimoPhyTransmission::GetTxVectorForHeTbPpdu(uint16_t txStaId,
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_TB,
-                                         1600,
+                                         NanoSeconds(1600),
                                          1,
                                          nss,
                                          0,
@@ -1354,7 +1354,7 @@ TestUlMuMimoPhyTransmission::SetTrigVector(const std::vector<uint16_t>& staIds, 
     WifiTxVector txVector(HePhy::GetHeMcs7(),
                           0,
                           WIFI_PREAMBLE_HE_TB,
-                          1600,
+                          NanoSeconds(1600),
                           1,
                           1,
                           0,

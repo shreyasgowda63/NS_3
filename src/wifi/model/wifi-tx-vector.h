@@ -26,6 +26,7 @@
 #include "wifi-phy-common.h"
 
 #include "ns3/he-ru.h"
+#include "ns3/nstime.h"
 
 #include <list>
 #include <optional>
@@ -125,7 +126,7 @@ class WifiTxVector
      * \param nTx the number of TX antennas
      * \param nss the number of spatial STBC streams (NSS)
      * \param ness the number of extension spatial streams (NESS)
-     * \param channelWidth the channel width in MHz
+     * \param channelWidth the channel width
      * \param aggregation enable or disable MPDU aggregation
      * \param stbc enable or disable STBC
      * \param ldpc enable or disable LDPC (BCC is used otherwise)
@@ -136,7 +137,7 @@ class WifiTxVector
     WifiTxVector(WifiMode mode,
                  uint8_t powerLevel,
                  WifiPreamble preamble,
-                 uint16_t guardInterval,
+                 Time guardInterval,
                  uint8_t nTx,
                  uint8_t nss,
                  uint8_t ness,
@@ -221,13 +222,13 @@ class WifiTxVector
     /**
      * \returns the guard interval duration (in nanoseconds)
      */
-    uint16_t GetGuardInterval() const;
+    Time GetGuardInterval() const;
     /**
      * Sets the guard interval duration (in nanoseconds)
      *
      * \param guardInterval the guard interval duration (in nanoseconds)
      */
-    void SetGuardInterval(uint16_t guardInterval);
+    void SetGuardInterval(Time guardInterval);
     /**
      * \returns the number of TX antennas
      */
@@ -565,8 +566,8 @@ class WifiTxVector
                                     It is the value that will be passed
                                     to PMD_TXPWRLVL.request */
     WifiPreamble m_preamble;        /**< preamble */
-    ChannelWidthMhz m_channelWidth; /**< channel width in MHz */
-    uint16_t m_guardInterval;       /**< guard interval duration in nanoseconds */
+    ChannelWidthMhz m_channelWidth; /**< channel width */
+    Time m_guardInterval;           /**< guard interval duration */
     uint8_t m_nTx;                  /**< number of TX antennas */
     uint8_t m_nss;                  /**< number of spatial streams */
     uint8_t m_ness;                 /**< number of spatial streams in beamforming */

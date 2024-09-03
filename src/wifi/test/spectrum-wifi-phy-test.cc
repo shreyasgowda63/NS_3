@@ -50,9 +50,9 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("SpectrumWifiPhyTest");
 
 static const uint8_t CHANNEL_NUMBER = 36;
-static const ChannelWidthMhz CHANNEL_WIDTH = 20; // MHz
+static const ChannelWidthMhz CHANNEL_WIDTH = 20;
 static const ChannelWidthMhz GUARD_WIDTH =
-    CHANNEL_WIDTH; // MHz (expanded to channel width to model spectrum mask)
+    CHANNEL_WIDTH; // expanded to channel width to model spectrum mask
 
 /**
  * Extended SpectrumWifiPhy class for the purpose of the tests.
@@ -194,7 +194,7 @@ SpectrumWifiPhyBasicTest::MakeSignal(double txPowerWatts, const WifiPhyOperating
     WifiTxVector txVector = WifiTxVector(OfdmPhy::GetOfdmRate6Mbps(),
                                          0,
                                          WIFI_PREAMBLE_LONG,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -505,8 +505,8 @@ class SpectrumWifiPhyFilterTest : public TestCase
     Ptr<ExtSpectrumWifiPhy> m_txPhy; ///< TX PHY
     Ptr<ExtSpectrumWifiPhy> m_rxPhy; ///< RX PHY
 
-    ChannelWidthMhz m_txChannelWidth; ///< TX channel width (MHz)
-    ChannelWidthMhz m_rxChannelWidth; ///< RX channel width (MHz)
+    ChannelWidthMhz m_txChannelWidth; ///< TX channel width
+    ChannelWidthMhz m_rxChannelWidth; ///< RX channel width
 };
 
 SpectrumWifiPhyFilterTest::SpectrumWifiPhyFilterTest()
@@ -527,7 +527,7 @@ SpectrumWifiPhyFilterTest::SendPpdu()
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs0(),
                                          0,
                                          WIFI_PREAMBLE_HE_SU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -561,7 +561,8 @@ SpectrumWifiPhyFilterTest::RxCallback(Ptr<const Packet> p, RxPowerWattPerChannel
     }
 
     size_t numBands = rxPowersW.size();
-    size_t expectedNumBands = std::max(1, (m_rxChannelWidth / 20));
+    const std::size_t num20MhzSubchannels = m_rxChannelWidth / 20;
+    size_t expectedNumBands = std::max(1UL, num20MhzSubchannels);
     expectedNumBands += (m_rxChannelWidth / 40);
     expectedNumBands += (m_rxChannelWidth / 80);
     expectedNumBands += (m_rxChannelWidth / 160);
@@ -671,8 +672,8 @@ SpectrumWifiPhyFilterTest::DoTeardown()
 void
 SpectrumWifiPhyFilterTest::RunOne()
 {
-    uint16_t txFrequency;
-    switch (m_txChannelWidth)
+    double txFrequency;
+    switch (static_cast<uint16_t>(m_txChannelWidth))
     {
     case 20:
     default:
@@ -697,8 +698,8 @@ SpectrumWifiPhyFilterTest::RunOne()
     m_txPhy->SetOperatingChannel(
         WifiPhy::ChannelTuple{txChannelNum, m_txChannelWidth, WIFI_PHY_BAND_5GHZ, 0});
 
-    uint16_t rxFrequency;
-    switch (m_rxChannelWidth)
+    double rxFrequency;
+    switch (static_cast<uint16_t>(m_rxChannelWidth))
     {
     case 20:
     default:
@@ -940,8 +941,8 @@ SpectrumWifiPhyGetBandTest::DoRun()
                 expectedStartIndice + (indicesPer20MhzBand * (bandWidth / 20)) - 1;
             std::vector<WifiSpectrumBandIndices> expectedIndices{
                 {expectedStartIndice, expectedStopIndice}};
-            const uint64_t expectedStartFrequency = 5170 * 1e6;
-            const uint64_t expectedStopFrequency = (5170 + bandWidth) * 1e6;
+            const double expectedStartFrequency = 5170 * 1e6;
+            const double expectedStopFrequency = (5170 + bandWidth) * 1e6;
             std::vector<WifiSpectrumBandFrequencies> expectedFrequencies{
                 {expectedStartFrequency, expectedStopFrequency}};
             const std::size_t numBands = (channelWidth / bandWidth);
@@ -1256,13 +1257,13 @@ class SpectrumWifiPhy80Plus80Test : public TestCase
      * Run one function
      * \param channelNumbers the channel number for each segment of the operating channel
      * \param interferenceCenterFrequency the center frequency (in MHz) of the interference signal
-     * to generate \param interferenceBandWidth the band width (in MHz) of the interference signal
-     * to generate \param expectSuccess flag to indicate whether reception is expected to be
-     * successful
+     * to generate
+     * \param interferenceBandWidth the band width of the interference signal to generate
+     * \param expectSuccess flag to indicate whether reception is expected to be successful
      */
     void RunOne(const std::vector<uint8_t>& channelNumbers,
-                uint16_t interferenceCenterFrequency,
-                uint16_t interferenceBandWidth,
+                double interferenceCenterFrequency,
+                ChannelWidthMhz interferenceBandWidth,
                 bool expectSuccess);
 
     /**
@@ -1356,7 +1357,7 @@ SpectrumWifiPhy80Plus80Test::Send160MhzPpdu()
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_SU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -1484,8 +1485,8 @@ SpectrumWifiPhy80Plus80Test::DoTeardown()
 
 void
 SpectrumWifiPhy80Plus80Test::RunOne(const std::vector<uint8_t>& channelNumbers,
-                                    uint16_t interferenceCenterFrequency,
-                                    uint16_t interferenceBandWidth,
+                                    double interferenceCenterFrequency,
+                                    ChannelWidthMhz interferenceBandWidth,
                                     bool expectSuccess)
 {
     // reset counters
@@ -1824,8 +1825,16 @@ SpectrumWifiPhyMultipleInterfacesTest::SendPpdu(Ptr<SpectrumWifiPhy> phy,
     NS_LOG_FUNCTION(this << phy << txPowerDbm << payloadSize << phy->GetCurrentFrequencyRange()
                          << phy->GetChannelWidth() << phy->GetChannelNumber());
 
-    WifiTxVector txVector =
-        WifiTxVector(HePhy::GetHeMcs11(), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, 20, false, false);
+    WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs11(),
+                                         0,
+                                         WIFI_PREAMBLE_HE_SU,
+                                         NanoSeconds(800),
+                                         1,
+                                         1,
+                                         0,
+                                         20,
+                                         false,
+                                         false);
     Ptr<Packet> pkt = Create<Packet>(payloadSize);
     WifiMacHeader hdr;
     hdr.SetType(WIFI_MAC_QOSDATA);

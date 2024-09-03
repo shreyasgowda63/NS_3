@@ -40,8 +40,8 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("WifiPhyThresholdsTest");
 
 static const uint8_t CHANNEL_NUMBER = 36;
-static const uint32_t FREQUENCY = 5180;   // MHz
-static const uint16_t CHANNEL_WIDTH = 20; // MHz
+static const double FREQUENCY = 5180; // MHz
+static const ChannelWidthMhz CHANNEL_WIDTH = 20;
 
 /**
  * \ingroup wifi-test
@@ -150,7 +150,7 @@ WifiPhyThresholdsTest::MakeWifiSignal(double txPowerWatts, const WifiPhyOperatin
     WifiTxVector txVector = WifiTxVector(OfdmPhy::GetOfdmRate6Mbps(),
                                          0,
                                          WIFI_PREAMBLE_LONG,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,

@@ -341,7 +341,7 @@ WifiPrimaryChannelsTest::DoSetup()
 
     // we create as many stations per BSS as the number of 26-tone RUs in a channel
     // of the configured width
-    switch (m_channelWidth)
+    switch (static_cast<uint16_t>(m_channelWidth))
     {
     case 20:
         m_nStationsPerBss = 9;
@@ -480,7 +480,7 @@ WifiPrimaryChannelsTest::DoSetup()
     m_triggerTxVector = WifiTxVector(OfdmPhy::GetOfdmRate6Mbps(),
                                      0,
                                      WIFI_PREAMBLE_LONG,
-                                     800,
+                                     NanoSeconds(800),
                                      1,
                                      1,
                                      0,
@@ -784,7 +784,7 @@ WifiPrimaryChannelsTest::SendDlSuPpdu(uint8_t bss, ChannelWidthMhz txChannelWidt
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs8(),
                                          0,
                                          WIFI_PREAMBLE_HE_SU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -820,7 +820,7 @@ WifiPrimaryChannelsTest::SendDlMuPpdu(uint8_t bss,
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs8(),
                                          0,
                                          WIFI_PREAMBLE_HE_MU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -851,7 +851,7 @@ WifiPrimaryChannelsTest::SendDlMuPpdu(uint8_t bss,
     }
     txVector.SetSigBMode(VhtPhy::GetVhtMcs5());
     RuAllocation ruAllocations;
-    auto numRuAllocs = txChannelWidth / 20;
+    const std::size_t numRuAllocs = txChannelWidth / 20;
     ruAllocations.resize(numRuAllocs);
     auto IsOddNum = (nRus / numRuAllocs) % 2 == 1;
     auto ruAlloc = HeRu::GetEqualizedRuAllocation(ruType, IsOddNum);
@@ -906,7 +906,7 @@ WifiPrimaryChannelsTest::DoSendHeTbPpdu(uint8_t bss,
     WifiTxVector trigVector(HePhy::GetHeMcs8(),
                             0,
                             WIFI_PREAMBLE_HE_TB,
-                            3200,
+                            NanoSeconds(3200),
                             1,
                             1,
                             0,
@@ -931,7 +931,7 @@ WifiPrimaryChannelsTest::DoSendHeTbPpdu(uint8_t bss,
         WifiTxVector txVector(HePhy::GetHeMcs8(),
                               0,
                               WIFI_PREAMBLE_HE_TB,
-                              3200,
+                              NanoSeconds(3200),
                               1,
                               1,
                               0,

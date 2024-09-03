@@ -61,11 +61,11 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("WifiPhyOfdmaTest");
 
 static const uint8_t DEFAULT_CHANNEL_NUMBER = 36;
-static const uint32_t DEFAULT_FREQUENCY = 5180; // MHz
+static const double DEFAULT_FREQUENCY = 5180; // MHz
 static const WifiPhyBand DEFAULT_WIFI_BAND = WIFI_PHY_BAND_5GHZ;
-static const ChannelWidthMhz DEFAULT_CHANNEL_WIDTH = 20; // MHz
+static const ChannelWidthMhz DEFAULT_CHANNEL_WIDTH = 20;
 static const ChannelWidthMhz DEFAULT_GUARD_WIDTH =
-    DEFAULT_CHANNEL_WIDTH; // MHz (expanded to channel width to model spectrum mask)
+    DEFAULT_CHANNEL_WIDTH; // expanded to channel width to model spectrum mask
 
 /**
  * HE PHY slightly modified so as to return a given
@@ -486,7 +486,7 @@ TestDlOfdmaPhyTransmission::SendMuPpdu(uint16_t rxStaId1, uint16_t rxStaId2)
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_MU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -1361,7 +1361,7 @@ TestDlOfdmaPhyPuncturing::SendMuPpdu(uint16_t rxStaId1,
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_MU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -1746,7 +1746,8 @@ TestDlOfdmaPhyPuncturing::RunOne()
     // Send MU PPDU with two PSDUs addressed to STA 1 and STA 2 with preamble puncturing:
     // the punctured 20 MHz subchannel is the one that has interference
     std::vector<bool> puncturedSubchannels;
-    for (std::size_t i = 0; i < (m_channelWidth / 20); ++i)
+    const std::size_t num20MhzSubchannels = m_channelWidth / 20;
+    for (std::size_t i = 0; i < num20MhzSubchannels; ++i)
     {
         if (i == m_indexSubchannel)
         {
@@ -2053,7 +2054,7 @@ TestUlOfdmaPpduUid::SendMuPpdu()
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_MU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -2105,7 +2106,7 @@ TestUlOfdmaPpduUid::SendTbPpdu()
     WifiTxVector txVector1 = WifiTxVector(HePhy::GetHeMcs7(),
                                           0,
                                           WIFI_PREAMBLE_HE_TB,
-                                          1600,
+                                          NanoSeconds(1600),
                                           1,
                                           1,
                                           0,
@@ -2182,7 +2183,7 @@ TestUlOfdmaPpduUid::SendSuPpdu(uint16_t txStaId)
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_SU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -2335,7 +2336,7 @@ TestMultipleHeTbPreambles::TestMultipleHeTbPreambles()
       m_trigVector(HePhy::GetHeMcs7(),
                    0,
                    WIFI_PREAMBLE_HE_TB,
-                   1600,
+                   NanoSeconds(1600),
                    1,
                    1,
                    0,
@@ -2400,7 +2401,7 @@ TestMultipleHeTbPreambles::RxHeTbPpdu(uint64_t uid,
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_TB,
-                                         1600,
+                                         NanoSeconds(1600),
                                          1,
                                          1,
                                          0,
@@ -3199,7 +3200,7 @@ class TestUlOfdmaPhyTransmission : public TestCase
     uint32_t m_countRxBytesFromSta1;   ///< count RX bytes from STA 1
     uint32_t m_countRxBytesFromSta2;   ///< count RX bytes from STA 2
 
-    uint16_t m_frequency;           ///< frequency in MHz
+    double m_frequency;             ///< frequency in MHz
     ChannelWidthMhz m_channelWidth; ///< channel width in MHz
     Time m_expectedPpduDuration;    ///< expected duration to send MU PPDU
 };
@@ -3230,7 +3231,7 @@ TestUlOfdmaPhyTransmission::SendHeSuPpdu(uint16_t txStaId,
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_SU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,
@@ -3281,7 +3282,7 @@ TestUlOfdmaPhyTransmission::GetTxVectorForHeTbPpdu(uint16_t txStaId,
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_TB,
-                                         1600,
+                                         NanoSeconds(1600),
                                          1,
                                          1,
                                          0,
@@ -3338,7 +3339,7 @@ TestUlOfdmaPhyTransmission::SetTrigVector(uint8_t bssColor, TrigVectorInfo error
     WifiTxVector txVector(HePhy::GetHeMcs7(),
                           0,
                           WIFI_PREAMBLE_HE_TB,
-                          1600,
+                          NanoSeconds(1600),
                           1,
                           1,
                           0,
@@ -4891,7 +4892,7 @@ TestPhyPaddingExclusion::SendHeTbPpdu(uint16_t txStaId,
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_TB,
-                                         1600,
+                                         NanoSeconds(1600),
                                          1,
                                          1,
                                          0,
@@ -5190,7 +5191,7 @@ TestPhyPaddingExclusion::SetTrigVector(Time ppduDuration)
     WifiTxVector trigVector(HePhy::GetHeMcs7(),
                             0,
                             WIFI_PREAMBLE_HE_TB,
-                            1600,
+                            NanoSeconds(1600),
                             1,
                             1,
                             0,
@@ -5457,7 +5458,7 @@ TestUlOfdmaPowerControl::SendMuBar(std::vector<uint16_t> staIds)
     muBar.SetMoreTF(true);
     muBar.SetCsRequired(true);
     muBar.SetUlBandwidth(DEFAULT_CHANNEL_WIDTH);
-    muBar.SetGiAndLtfType(1600, 2);
+    muBar.SetGiAndLtfType(NanoSeconds(1600), 2);
     muBar.SetApTxPower(static_cast<int8_t>(m_txPowerAp));
     muBar.SetUlSpatialReuse(60500);
 
@@ -5506,7 +5507,7 @@ TestUlOfdmaPowerControl::SendMuBar(std::vector<uint16_t> staIds)
     WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs7(),
                                          0,
                                          WIFI_PREAMBLE_HE_SU,
-                                         800,
+                                         NanoSeconds(800),
                                          1,
                                          1,
                                          0,

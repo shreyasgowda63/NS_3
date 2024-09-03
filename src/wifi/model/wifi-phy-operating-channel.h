@@ -49,7 +49,7 @@ struct FrequencyChannelInfo
      */
     auto operator<=>(const FrequencyChannelInfo& info) const = default;
     uint8_t number{0};                                        ///< the channel number
-    uint16_t frequency{0};                                    ///< the center frequency
+    double frequency{0};                                      ///< the center frequency
     ChannelWidthMhz width{0};                                 ///< the channel width in MHz
     WifiPhyBand band{WifiPhyBand::WIFI_PHY_BAND_UNSPECIFIED}; ///< the PHY band
     FrequencyChannelType type{FrequencyChannelType::OFDM};    ///< the frequency channel type
@@ -204,7 +204,7 @@ class WifiPhyOperatingChannel
      * \param segment the index of the frequency segment (if operating channel is non-contiguous)
      * \return the center frequency for a given frequency segment (in MHz)
      */
-    uint16_t GetFrequency(std::size_t segment = 0) const;
+    double GetFrequency(std::size_t segment = 0) const;
     /**
      * Return the channel width for a given frequency segment (in MHz).
      * Segments are ordered by increasing frequencies, hence by default
@@ -234,7 +234,7 @@ class WifiPhyOperatingChannel
      *
      * \return the center frequency per segment (in MHz)
      */
-    std::vector<uint16_t> GetFrequencies() const;
+    std::vector<double> GetFrequencies() const;
     /**
      * Return the channel width per segment (in MHz).
      * Segments are ordered by increasing frequencies.
@@ -278,7 +278,7 @@ class WifiPhyOperatingChannel
      * primary channel of the given width within the operating channel (0 indicates
      * the 20 MHz subchannel with the lowest center frequency). Otherwise, return 0.
      *
-     * \param primaryChannelWidth the width of the primary channel in MHz
+     * \param primaryChannelWidth the width of the primary channel
      * \return the index of the requested primary channel within the operating channel
      */
     uint8_t GetPrimaryChannelIndex(ChannelWidthMhz primaryChannelWidth) const;
@@ -288,7 +288,7 @@ class WifiPhyOperatingChannel
      * secondary channel of the given width within the operating channel (0 indicates
      * the 20 MHz subchannel with the lowest center frequency). Otherwise, return 0.
      *
-     * \param secondaryChannelWidth the width of the secondary channel in MHz
+     * \param secondaryChannelWidth the width of the secondary channel
      * \return the index of the requested secondary channel within the operating channel
      */
     uint8_t GetSecondaryChannelIndex(ChannelWidthMhz secondaryChannelWidth) const;
@@ -307,7 +307,7 @@ class WifiPhyOperatingChannel
      * \param primaryChannelWidth the width of the primary channel in MHz
      * \return the center frequency of the primary channel of the given width
      */
-    uint16_t GetPrimaryChannelCenterFrequency(ChannelWidthMhz primaryChannelWidth) const;
+    double GetPrimaryChannelCenterFrequency(ChannelWidthMhz primaryChannelWidth) const;
 
     /**
      * Get the center frequency of the secondary channel of the given width.
@@ -315,7 +315,7 @@ class WifiPhyOperatingChannel
      * \param secondaryChannelWidth the width of the secondary channel in MHz
      * \return the center frequency of the secondary channel of the given width
      */
-    uint16_t GetSecondaryChannelCenterFrequency(ChannelWidthMhz secondaryChannelWidth) const;
+    double GetSecondaryChannelCenterFrequency(ChannelWidthMhz secondaryChannelWidth) const;
 
     /**
      * Get the channel indices of all the 20 MHz channels included in the primary
@@ -358,7 +358,7 @@ class WifiPhyOperatingChannel
      *
      * \param number the channel number (use 0 to leave it unspecified)
      * \param frequency the channel center frequency in MHz (use 0 to leave it unspecified)
-     * \param width the channel width in MHz (use 0 to leave it unspecified)
+     * \param width the channel width (use 0 to leave it unspecified)
      * \param standard the standard (use WIFI_STANDARD_UNSPECIFIED not to check whether a
      *                 channel is suitable for a specific standard)
      * \param band the PHY band
@@ -367,7 +367,7 @@ class WifiPhyOperatingChannel
      *         of the set of available channels
      */
     static ConstIterator FindFirst(uint8_t number,
-                                   uint16_t frequency,
+                                   double frequency,
                                    ChannelWidthMhz width,
                                    WifiStandard standard,
                                    WifiPhyBand band,

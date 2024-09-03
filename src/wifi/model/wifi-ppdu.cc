@@ -37,7 +37,7 @@ namespace
  * \param channelWidth the channel width in MHz
  * \return the center frequency (in MHz) of each segment covered by the given width
  */
-std::vector<uint16_t>
+std::vector<double>
 GetChannelCenterFrequenciesPerSegment(const ns3::WifiPhyOperatingChannel& channel,
                                       ns3::ChannelWidthMhz channelWidth)
 {
@@ -45,7 +45,7 @@ GetChannelCenterFrequenciesPerSegment(const ns3::WifiPhyOperatingChannel& channe
     {
         return {};
     }
-    std::vector<uint16_t> freqs{};
+    std::vector<double> freqs{};
     const auto width = std::min(channelWidth, channel.GetWidth(0));
     const auto primarySegmentIndex = channel.GetPrimarySegmentIndex(width);
     const auto secondarySegmentIndex = channel.GetSecondarySegmentIndex(width);
@@ -58,7 +58,8 @@ GetChannelCenterFrequenciesPerSegment(const ns3::WifiPhyOperatingChannel& channe
     {
         const auto segmentFrequency = channel.GetFrequency(segmentIndex);
         const auto segmentWidth = channel.GetWidth(segmentIndex);
-        const auto segmentOffset = (primarySegmentIndex * (segmentWidth / channelWidth));
+        // segmentOffset has to be an (unsigned) integer to ensure correct calculation
+        const uint8_t segmentOffset = (primarySegmentIndex * (segmentWidth / channelWidth));
         const auto freq =
             segmentFrequency - (segmentWidth / 2.) + (primaryIndex - segmentOffset + 0.5) * width;
         freqs.push_back(freq);
@@ -187,14 +188,14 @@ WifiPpdu::GetTxChannelWidth() const
     return m_txChannelWidth;
 }
 
-std::vector<uint16_t>
+std::vector<double>
 WifiPpdu::GetTxCenterFreqs() const
 {
     return m_txCenterFreqs;
 }
 
 bool
-WifiPpdu::DoesOverlapChannel(uint16_t minFreq, uint16_t maxFreq) const
+WifiPpdu::DoesOverlapChannel(double minFreq, double maxFreq) const
 {
     NS_LOG_FUNCTION(this << minFreq << maxFreq);
     // all segments have the same width

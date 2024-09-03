@@ -50,13 +50,13 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("WifiPhyCcaTest");
 
-constexpr uint32_t P20_CENTER_FREQUENCY = 5180; // MHz
-constexpr uint32_t S20_CENTER_FREQUENCY = P20_CENTER_FREQUENCY + 20;
-constexpr uint32_t P40_CENTER_FREQUENCY = P20_CENTER_FREQUENCY + 10;
-constexpr uint32_t S40_CENTER_FREQUENCY = P40_CENTER_FREQUENCY + 40;
-constexpr uint32_t P80_CENTER_FREQUENCY = P40_CENTER_FREQUENCY + 20;
-constexpr uint32_t S80_CENTER_FREQUENCY = P80_CENTER_FREQUENCY + 80;
-constexpr uint32_t P160_CENTER_FREQUENCY = P80_CENTER_FREQUENCY + 40;
+constexpr double P20_CENTER_FREQUENCY = 5180; // MHz
+constexpr double S20_CENTER_FREQUENCY = P20_CENTER_FREQUENCY + 20;
+constexpr double P40_CENTER_FREQUENCY = P20_CENTER_FREQUENCY + 10;
+constexpr double S40_CENTER_FREQUENCY = P40_CENTER_FREQUENCY + 40;
+constexpr double P80_CENTER_FREQUENCY = P40_CENTER_FREQUENCY + 20;
+constexpr double S80_CENTER_FREQUENCY = P80_CENTER_FREQUENCY + 80;
+constexpr double P160_CENTER_FREQUENCY = P80_CENTER_FREQUENCY + 40;
 const Time smallDelta = NanoSeconds(1);
 // add small delta to be right after aCCATime, since test checks are scheduled before wifi events
 const Time aCcaTime = MicroSeconds(4) + smallDelta;
@@ -176,8 +176,15 @@ WifiPhyCcaThresholdsTest::CreateDummyPsdu()
 Ptr<OfdmPpdu>
 WifiPhyCcaThresholdsTest::CreateDummyNonHtPpdu(const WifiPhyOperatingChannel& channel)
 {
-    WifiTxVector txVector =
-        WifiTxVector(OfdmPhy::GetOfdmRate6Mbps(), 0, WIFI_PREAMBLE_LONG, 800, 1, 1, 0, 20, false);
+    WifiTxVector txVector = WifiTxVector(OfdmPhy::GetOfdmRate6Mbps(),
+                                         0,
+                                         WIFI_PREAMBLE_LONG,
+                                         NanoSeconds(800),
+                                         1,
+                                         1,
+                                         0,
+                                         20,
+                                         false);
     Ptr<WifiPsdu> psdu = CreateDummyPsdu();
     return Create<OfdmPpdu>(psdu, txVector, channel, 0);
 }
@@ -186,8 +193,15 @@ Ptr<HtPpdu>
 WifiPhyCcaThresholdsTest::CreateDummyHtPpdu(ChannelWidthMhz bandwidth,
                                             const WifiPhyOperatingChannel& channel)
 {
-    WifiTxVector txVector =
-        WifiTxVector(HtPhy::GetHtMcs0(), 0, WIFI_PREAMBLE_HT_MF, 800, 1, 1, 0, bandwidth, false);
+    WifiTxVector txVector = WifiTxVector(HtPhy::GetHtMcs0(),
+                                         0,
+                                         WIFI_PREAMBLE_HT_MF,
+                                         NanoSeconds(800),
+                                         1,
+                                         1,
+                                         0,
+                                         bandwidth,
+                                         false);
     Ptr<WifiPsdu> psdu = CreateDummyPsdu();
     return Create<HtPpdu>(psdu, txVector, channel, MicroSeconds(100), 0);
 }
@@ -196,8 +210,15 @@ Ptr<VhtPpdu>
 WifiPhyCcaThresholdsTest::CreateDummyVhtPpdu(ChannelWidthMhz bandwidth,
                                              const WifiPhyOperatingChannel& channel)
 {
-    WifiTxVector txVector =
-        WifiTxVector(VhtPhy::GetVhtMcs0(), 0, WIFI_PREAMBLE_VHT_SU, 800, 1, 1, 0, bandwidth, false);
+    WifiTxVector txVector = WifiTxVector(VhtPhy::GetVhtMcs0(),
+                                         0,
+                                         WIFI_PREAMBLE_VHT_SU,
+                                         NanoSeconds(800),
+                                         1,
+                                         1,
+                                         0,
+                                         bandwidth,
+                                         false);
     Ptr<WifiPsdu> psdu = CreateDummyPsdu();
     return Create<VhtPpdu>(psdu, txVector, channel, MicroSeconds(100), 0);
 }
@@ -206,8 +227,15 @@ Ptr<HePpdu>
 WifiPhyCcaThresholdsTest::CreateDummyHePpdu(ChannelWidthMhz bandwidth,
                                             const WifiPhyOperatingChannel& channel)
 {
-    WifiTxVector txVector =
-        WifiTxVector(HePhy::GetHeMcs0(), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, bandwidth, false);
+    WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs0(),
+                                         0,
+                                         WIFI_PREAMBLE_HE_SU,
+                                         NanoSeconds(800),
+                                         1,
+                                         1,
+                                         0,
+                                         bandwidth,
+                                         false);
     Ptr<WifiPsdu> psdu = CreateDummyPsdu();
     return Create<HePpdu>(psdu, txVector, channel, MicroSeconds(100), 0);
 }
@@ -695,7 +723,7 @@ class WifiPhyCcaIndicationTest : public TestCase
      * \param frequency the center frequency the transmitter is operating on
      * \param bandwidth the bandwidth to use for the transmission in MHz
      */
-    void SendHeSuPpdu(double txPowerDbm, uint16_t frequency, ChannelWidthMhz bandwidth);
+    void SendHeSuPpdu(double txPowerDbm, double frequency, ChannelWidthMhz bandwidth);
 
     /**
      * Start to generate a signal
@@ -707,7 +735,7 @@ class WifiPhyCcaIndicationTest : public TestCase
      */
     void StartSignal(Ptr<WaveformGenerator> signalGenerator,
                      double txPowerDbm,
-                     uint16_t frequency,
+                     double frequency,
                      ChannelWidthMhz bandwidth,
                      Time duration);
     /**
@@ -749,8 +777,8 @@ class WifiPhyCcaIndicationTest : public TestCase
         double power{0.0};            //!< transmit power to use in dBm
         Time startTime{Seconds(0)};   //!< time at which transmission will be started
         Time duration{Seconds(0)};    //!< the duration of the transmission
-        uint16_t centerFreq{0};       //!< center frequency to use in MHz
-        ChannelWidthMhz bandwidth{0}; //!< bandwidth to use in MHz
+        double centerFreq{0};         //!< center frequency to use in MHz
+        ChannelWidthMhz bandwidth{0}; //!< bandwidth to use
     };
 
     /**
@@ -760,8 +788,8 @@ class WifiPhyCcaIndicationTest : public TestCase
     {
         double power{0.0};            //!< transmit power to use in dBm
         Time startTime{Seconds(0)};   //!< time at which transmission will be started
-        uint16_t centerFreq{0};       //!< center frequency to use in MHz
-        ChannelWidthMhz bandwidth{0}; //!< bandwidth to use in MHz
+        double centerFreq{0};         //!< center frequency to use in MHz
+        ChannelWidthMhz bandwidth{0}; //!< bandwidth to use
     };
 
     /**
@@ -819,8 +847,8 @@ class WifiPhyCcaIndicationTest : public TestCase
     std::shared_ptr<CcaTestPhyListener>
         m_rxPhyStateListener; ///< Listener for PHY state transitions
 
-    uint16_t m_frequency;           ///< Operating frequency in MHz
-    ChannelWidthMhz m_channelWidth; ///< Operating channel width in MHz
+    double m_frequency;             ///< Operating frequency in MHz
+    ChannelWidthMhz m_channelWidth; ///< Operating channel width
 };
 
 WifiPhyCcaIndicationTest::WifiPhyCcaIndicationTest()
@@ -834,7 +862,7 @@ WifiPhyCcaIndicationTest::WifiPhyCcaIndicationTest()
 void
 WifiPhyCcaIndicationTest::StartSignal(Ptr<WaveformGenerator> signalGenerator,
                                       double txPowerDbm,
-                                      uint16_t frequency,
+                                      double frequency,
                                       ChannelWidthMhz bandwidth,
                                       Time duration)
 {
@@ -866,7 +894,7 @@ WifiPhyCcaIndicationTest::StopSignal(Ptr<WaveformGenerator> signalGenerator)
 
 void
 WifiPhyCcaIndicationTest::SendHeSuPpdu(double txPowerDbm,
-                                       uint16_t frequency,
+                                       double frequency,
                                        ChannelWidthMhz bandwidth)
 {
     NS_LOG_FUNCTION(this << txPowerDbm);
@@ -880,8 +908,15 @@ WifiPhyCcaIndicationTest::SendHeSuPpdu(double txPowerDbm,
     m_txPhy->SetOperatingChannel(
         WifiPhy::ChannelTuple{channelNum, bandwidth, WIFI_PHY_BAND_5GHZ, 0});
 
-    WifiTxVector txVector =
-        WifiTxVector(HePhy::GetHeMcs0(), 0, WIFI_PREAMBLE_HE_SU, 800, 1, 1, 0, bandwidth, false);
+    WifiTxVector txVector = WifiTxVector(HePhy::GetHeMcs0(),
+                                         0,
+                                         WIFI_PREAMBLE_HE_SU,
+                                         NanoSeconds(800),
+                                         1,
+                                         1,
+                                         0,
+                                         bandwidth,
+                                         false);
 
     Ptr<Packet> pkt = Create<Packet>(1000);
     WifiMacHeader hdr;
