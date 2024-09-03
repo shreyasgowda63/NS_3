@@ -74,37 +74,37 @@ class ZigbeeNwkHeader : public Header
 
     /**
      * Set the Frame type used (Data or Command)
-     * \param zigbeeNwkType The frame type
+     * @param zigbeeNwkType The frame type
      */
     void SetFrameType(enum ZigbeeNwkType zigbeeNwkType);
 
     /**
      * Set the Frame Control field "Frame Type" bits
-     * \return The frame type
+     * @return The frame type
      */
     ZigbeeNwkType GetFrameType() const;
 
     /**
      * Set the Protocol version
-     * \param ver The protocol version
+     * @param ver The protocol version
      */
     void SetProtocolVer(uint8_t ver);
 
     /**
      * Get Frame protocol version
-     * \return The protocol version used by the frame
+     * @return The protocol version used by the frame
      */
     uint8_t GetProtocolVer() const;
 
     /**
      *  Suppress or enable route discovery for this frame
-     * \param discoverRoute Suppress or enable route discovery
+     * @param discoverRoute Suppress or enable route discovery
      */
     void SetDiscoverRoute(enum DiscoverRouteType discoverRoute);
 
     /**
      * Get the status of frame discovery route (suppress or enabled)
-     * \return The discovery route status
+     * @return The discovery route status
      */
     DiscoverRouteType GetDiscoverRoute() const;
 
@@ -115,13 +115,13 @@ class ZigbeeNwkHeader : public Header
 
     /**
      * Inform whether or not the current frame is used in multicast.
-     * \return  True = MCST false = UCST or BCST
+     * @return  True = MCST false = UCST or BCST
      */
     bool IsMulticast() const;
 
     /**
      * Inform whether or not security is enabled.
-     * \return True security enabled.
+     * @return True security enabled.
      */
     bool IsSecurityEnabled() const;
 
@@ -134,79 +134,79 @@ class ZigbeeNwkHeader : public Header
 
     /**
      * Get whether or not the source of this message was an end device.
-     * \return True of the source of the message was an end device.
+     * @return True of the source of the message was an end device.
      */
     bool GetEndDeviceInitiator() const;
 
     /**
      * Set Destination address
-     * \param addr The destination address (16 bit)
+     * @param addr The destination address (16 bit)
      */
     void SetDstAddr(Mac16Address addr);
 
     /**
      * Get the Destination address
-     * \return the Destination address (16bits)
+     * @return the Destination address (16bits)
      */
     Mac16Address GetDstAddr() const;
 
     /**
      * Set Source address
-     * \param addr The source address (16 bit)
+     * @param addr The source address (16 bit)
      */
     void SetSrcAddr(Mac16Address addr);
 
     /**
      * Get the Source address
-     * \return the Source address (16bits)
+     * @return the Source address (16bits)
      */
     Mac16Address GetSrcAddr() const;
 
     /**
      * Set the Radius
-     * \param radius radius
+     * @param radius radius
      */
     void SetRadius(uint8_t radius);
 
     /**
      * Get the Radius
-     * \return the Radius
+     * @return the Radius
      */
     uint8_t GetRadius() const;
 
     /**
      * Set the Sequence number
-     * \param seqNum sequence number
+     * @param seqNum sequence number
      */
     void SetSeqNum(uint8_t seqNum);
 
     /**
      * Get the frame Sequence number
-     * \return the sequence number
+     * @return the sequence number
      */
     uint8_t GetSeqNum() const;
 
     /**
      *  Set the destination IEEE address
-     *  \param dst The destination IEEE address (64 bits)
+     *  @param dst The destination IEEE address (64 bits)
      */
     void SetDstIeeeAddr(Mac64Address dst);
 
     /**
      * Get the destination IEEE address
-     * \return The destination IEEE address (64bits)
+     * @return The destination IEEE address (64bits)
      */
     Mac64Address GetDstIeeeAddr() const;
 
     /**
      * Set the source IEEE address
-     * \param src The source IEEE address
+     * @param src The source IEEE address
      */
     void SetSrcIeeeAddr(Mac64Address src);
 
     /**
      * Get the source IEEE address
-     * \return The source IEEE address (64bits)
+     * @return The source IEEE address (64bits)
      */
     Mac64Address GetSrcIeeeAddr() const;
 
@@ -214,8 +214,9 @@ class ZigbeeNwkHeader : public Header
     uint32_t Deserialize(Buffer::Iterator start) override;
     uint32_t GetSerializedSize() const override;
     /**
-     * \brief Get the type ID.
-     * \return the object TypeId
+     * Get the type ID.
+     *
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -224,22 +225,22 @@ class ZigbeeNwkHeader : public Header
   private:
     /**
      * Set the Frame control field
-     * \param frameControl 16 bits representing the frame control
+     * @param frameControl 16 bits representing the frame control
      */
     void SetFrameControl(uint16_t frameControl);
     /**
      * Get the Frame control field
-     * \return The 16 bits of the Frame control field
+     * @return The 16 bits of the Frame control field
      */
     uint16_t GetFrameControl() const;
     /**
      * Set the Multicast control field
-     * \param multicastControl 8 bits representing the multicast control field
+     * @param multicastControl 8 bits representing the multicast control field
      */
     void SetMulticastControl(uint8_t multicastControl);
     /**
      * Get The Multicast control field
-     * \return The 8 bits representing the multicast control field
+     * @return The 8 bits representing the multicast control field
      */
     uint8_t GetMulticastControl() const;
 

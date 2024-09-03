@@ -42,7 +42,7 @@ namespace zigbee
 
 /**
  * \ingroup zigbee
- * \brief Route record states
+ *  Route record states
  */
 enum RouteStatus
 {
@@ -89,13 +89,13 @@ class RoutingTableEntry : public SimpleRefCount<RoutingTableEntry>
     /**
      * The constructor the routing table entry.
      *
-     * \param dst The destination nwkAddress (MAC 16-bit Address).
-     * \param status The status of the current entry.
-     * \param noRouteCache The value of the route cache flag.
-     * \param manyToOne The value of the manyToOne flag.
-     * \param routeRecordReq The value of the Route record required flag.
-     * \param groupId The value of the group id flag.
-     * \param nextHopAddr The value of the 16 bit next hop address.
+     * @param dst The destination nwkAddress (MAC 16-bit Address).
+     * @param status The status of the current entry.
+     * @param noRouteCache The value of the route cache flag.
+     * @param manyToOne The value of the manyToOne flag.
+     * @param routeRecordReq The value of the Route record required flag.
+     * @param groupId The value of the group id flag.
+     * @param nextHopAddr The value of the 16 bit next hop address.
      */
     RoutingTableEntry(Mac16Address dst,
                       RouteStatus status,
@@ -111,87 +111,87 @@ class RoutingTableEntry : public SimpleRefCount<RoutingTableEntry>
     /**
      * Set the entry destination nwkAddress (MAC 16-bit address)
      *
-     * \param dst The value of the destination nwkAddress
+     * @param dst The value of the destination nwkAddress
      */
     void SetDestination(Mac16Address dst);
 
     /**
      * Get the entry destination nwkAddress(MAC 16-bit address)
      *
-     * \return The value of the nwkAddress stored in this entry.
+     * @return The value of the nwkAddress stored in this entry.
      */
     Mac16Address GetDestination() const;
 
     /**
      * Indicates if the No Route Cache flag is active.
      *
-     * \return The value of the no route cache flag.
+     * @return The value of the no route cache flag.
      */
     bool IsNoRouteCache() const;
 
     /**
      * Indicates if the Many-to-One flag is active.
      *
-     * \return The value of the Many-to-one flag.
+     * @return The value of the Many-to-one flag.
      */
     bool IsManyToOne() const;
 
     /**
      * Indicate if the route record request is active.
      *
-     * \return The value of the route record request flag.
+     * @return The value of the route record request flag.
      */
     bool IsRouteRecordReq() const;
 
     /**
      * Indicates if the Group Id flag is active.
      *
-     * \return The value of the Group id flag.
+     * @return The value of the Group id flag.
      */
     bool IsGroupIdPresent() const;
 
     /**
      * Set the value of the next hop address.
      *
-     * \param nextHopAddr The next hop 16-bit nwkAddress
+     * @param nextHopAddr The next hop 16-bit nwkAddress
      */
     void SetNextHopAddr(Mac16Address nextHopAddr);
 
     /**
      * Get the value of the next hop address.
      *
-     * \return Mac16Address The 16 bit next hop address.
+     * @return Mac16Address The 16 bit next hop address.
      */
     Mac16Address GetNextHopAddr() const;
 
     /**
      * Set the lifetime of the entry
-     * \param lt The time used in the entry lifetime
+     * @param lt The time used in the entry lifetime
      */
     void SetLifeTime(Time lt);
 
     /**
      * Get the value of the entry lifetime.
-     * \return the lifetime
+     * @return the lifetime
      */
     Time GetLifeTime() const;
 
     /**
      * Set the status of the routing table entry.
-     * \param status the status of the routing table entry.
+     * @param status the status of the routing table entry.
      */
     void SetStatus(RouteStatus status);
 
     /**
      * Get the status of the routing table entry.
-     * \return The status of the routing table entry.
+     * @return The status of the routing table entry.
      */
     RouteStatus GetStatus() const;
 
     /**
      * Print the values of the routing table entry.
      *
-     * \param stream The stream object used to print.
+     * @param stream The stream object used to print.
      */
     void Print(Ptr<OutputStreamWrapper> stream) const;
 
@@ -247,28 +247,28 @@ class RouteDiscoveryTableEntry : public SimpleRefCount<RouteDiscoveryTableEntry>
     /**
      * Get the route request id (The sequence number used by the RREQ command frame).
      *
-     * \return The route request id (RREQ command frame sequence number).
+     * @return The route request id (RREQ command frame sequence number).
      */
     uint8_t GetRreqId() const;
 
     /**
      * Get the source address of the entry's RREQ initiator.
      *
-     * \return The address of the RREQ initiator.
+     * @return The address of the RREQ initiator.
      */
     Mac16Address GetSourceAddr() const;
 
     /**
      * Get the sender address of the entry.
      *
-     * \return The sender address
+     * @return The sender address
      */
     Mac16Address GetSenderAddr() const;
 
     /**
      * Get the forward cost of this entry.
      *
-     * \return The forward cost
+     * @return The forward cost
      */
     uint8_t GetForwardCost() const;
 
@@ -276,34 +276,34 @@ class RouteDiscoveryTableEntry : public SimpleRefCount<RouteDiscoveryTableEntry>
      * Get the value of a residual cost (pathcost) updated by a RREP
      * in this entry.
      *
-     * \return The residual cost.
+     * @return The residual cost.
      */
     uint8_t GetResidualCost() const;
 
     /**
      * Set the forward cost of this entry
      *
-     * \param pathCost The pathCost of the most optimal route found.
+     * @param pathCost The pathCost of the most optimal route found.
      */
     void SetForwardCost(uint8_t pathCost);
 
     /**
      * Set the sender address of this entry
-     * \param sender The last hop sender of the last optimal route found.
+     * @param sender The last hop sender of the last optimal route found.
      */
     void SetSenderAddr(Mac16Address sender);
 
     /**
      * Set the resulting pathcost on a reception of a RREP previously requested.
      *
-     * \param pathcost The pathcost contained in the RREP
+     * @param pathcost The pathcost contained in the RREP
      */
     void SetResidualCost(uint8_t pathcost);
 
     /**
      * Get the expiration time of this entry
      *
-     * \return The expiration time of this entry.
+     * @return The expiration time of this entry.
      */
     Time GetExpTime() const;
 
@@ -317,7 +317,7 @@ class RouteDiscoveryTableEntry : public SimpleRefCount<RouteDiscoveryTableEntry>
     /**
      * Print the values of the route discovery table entry
      *
-     * \param stream The stream object used to print.
+     * @param stream The stream object used to print.
      */
     void Print(Ptr<OutputStreamWrapper> stream) const;
 
@@ -351,21 +351,21 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Construct a new Neighbor Table Entry object. This constructor do not include
      * the optional or additional fields.
      *
-     * \param extAddr The EUI-64 address of the device to register (IEEEaddress)
-     * \param nwkAddr The short address of the device to register (The MAC 16 address)
-     * \param deviceType The type of neighbor device
-     * \param rxOnWhenIdle Indication of whether the neighbor enabled during idle periods.
-     * \param endDevConfig The end device configuration
-     * \param timeoutCounter The remaining current time in seconds.
-     * \param devTimeout The timeout in seconds of the end device
-     * \param relationship The relationship between the neighbor and the current device
-     * \param txFailure Indicates whether or not a previous Tx to the device was successful.
-     * \param lqi The link quality indicator (LQI) value
-     * \param outgoingCost Cost of the link measured by the neighbor
-     * \param age Num of nwkLinkStatusPeriods since the link status cmd was received.
-     * \param keepaliveRx Indicates if at least one keep alive was received since the router was
+     * @param extAddr The EUI-64 address of the device to register (IEEEaddress)
+     * @param nwkAddr The short address of the device to register (The MAC 16 address)
+     * @param deviceType The type of neighbor device
+     * @param rxOnWhenIdle Indication of whether the neighbor enabled during idle periods.
+     * @param endDevConfig The end device configuration
+     * @param timeoutCounter The remaining current time in seconds.
+     * @param devTimeout The timeout in seconds of the end device
+     * @param relationship The relationship between the neighbor and the current device
+     * @param txFailure Indicates whether or not a previous Tx to the device was successful.
+     * @param lqi The link quality indicator (LQI) value
+     * @param outgoingCost Cost of the link measured by the neighbor
+     * @param age Num of nwkLinkStatusPeriods since the link status cmd was received.
+     * @param keepaliveRx Indicates if at least one keep alive was received since the router was
      * rebooted.
-     * \param macInterfaceIndex The MAC interface index
+     * @param macInterfaceIndex The MAC interface index
      */
     NeighborTableEntry(Mac64Address extAddr,
                        Mac16Address nwkAddr,
@@ -385,77 +385,77 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
     /**
      * Get the entry registered IEEE address (EUI-64 address).
      *
-     * \return The entry EUI-64 address.
+     * @return The entry EUI-64 address.
      */
     Mac64Address GetExtAddr() const;
 
     /**
      * Get the entry registered Network address (MAC short address).
      *
-     * \return The 16 bit address registered in this entry.
+     * @return The 16 bit address registered in this entry.
      */
     Mac16Address GetNwkAddr() const;
 
     /**
      * Get the device type of this neighbor device.
      *
-     * \return The type of device registered for this neighbor.
+     * @return The type of device registered for this neighbor.
      */
     NwkDeviceType GetDeviceType() const;
 
     /**
      * Return true is neighboring device is on when idle.
      *
-     * \return True if device is on when idle.
+     * @return True if device is on when idle.
      */
     bool IsRxOnWhenIdle() const;
 
     /**
      * Get the end device configuration object.
      *
-     * \return The end device configuration in this entry.
+     * @return The end device configuration in this entry.
      */
     uint16_t GetEndDevConfig() const;
 
     /**
      * Get the timeout counter object.
      *
-     * \return The extended PAN Id registered to this entry.
+     * @return The extended PAN Id registered to this entry.
      */
     Time GetTimeoutCounter() const;
 
     /**
      * Get the device timeout object.
      *
-     * \return The device timeout time
+     * @return The device timeout time
      */
     Time GetDevTimeout() const;
 
     /**
      * Get the relationship object.
      *
-     * \return The relationship between the neighbor and current device.
+     * @return The relationship between the neighbor and current device.
      */
     uint8_t GetRelationship() const;
 
     /**
      * Get the Tx Failure object
      *
-     * \return A value indicating if a prev Tx to the device was successful.
+     * @return A value indicating if a prev Tx to the device was successful.
      */
     uint8_t GetTxFailure() const;
 
     /**
      * Get the LQI value from this device to an entry neighbor
      *
-     * \return The LQI value
+     * @return The LQI value
      */
     uint8_t GetLqi() const;
 
     /**
      * Get the outgoing cost object.
      *
-     * \return The cost of the outgoing link as measured by a neighbor.
+     * @return The cost of the outgoing link as measured by a neighbor.
      */
     uint8_t GetOutgoingCost() const;
 
@@ -463,7 +463,7 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Get the number of nwkLinkStatusPeriod intervals since the
      * link status command was received.
      *
-     * \return The number of nwkLinkStatusPeriod intervals
+     * @return The number of nwkLinkStatusPeriod intervals
      */
     uint8_t GetAge() const;
 
@@ -471,7 +471,7 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Get the time in symbols at which the last beacon frame
      * was received from the neighbor.
      *
-     * \return time in symbols since last beacon frame.
+     * @return time in symbols since last beacon frame.
      */
     uint64_t GetIncBeaconTimestamp() const;
 
@@ -479,14 +479,14 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Get the transmission time difference in symbols, between the
      * neighbor's beacon and its parent beacon.
      *
-     * \return Time difference (symbols) between beacon and parent beacon.
+     * @return Time difference (symbols) between beacon and parent beacon.
      */
     uint64_t GetBeaconTxTimeOffset() const;
 
     /**
      * Get the MAC Interface Index object
      *
-     * \return The MAC interface index registered for this entry
+     * @return The MAC interface index registered for this entry
      */
     uint8_t GetMacInterfaceIndex() const;
 
@@ -494,7 +494,7 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Get the number of unicast bytes transmitted to the neighbor
      * registered in this entry.
      *
-     * \return Unicast transmitted bytes.
+     * @return Unicast transmitted bytes.
      */
     uint32_t GetMacUcstBytesTx() const;
 
@@ -502,28 +502,28 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Get the number of unicast bytes received to the neighbor
      * registered in this entry.
      *
-     * \return Unicast transmitted bytes.
+     * @return Unicast transmitted bytes.
      */
     uint32_t GetMacUcstBytesRx() const;
 
     /**
      * Get the extended PAN identifier
      *
-     * \return The extended PAN identifier.
+     * @return The extended PAN identifier.
      */
     uint64_t GetExtPanId() const;
 
     /**
      * Get the logical channel used by the the neighbor in this entry.
      *
-     * \return The channel number used by this neighbor.
+     * @return The channel number used by this neighbor.
      */
     uint8_t GetLogicalCh() const;
 
     /**
      * The depth of the neighbor device.
      *
-     * \return The depth of the neighbor device in this entryj
+     * @return The depth of the neighbor device in this entryj
      */
     uint8_t GetDepth() const;
 
@@ -531,84 +531,84 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Get the value of the beacon order set in this neighbor.
      * See IEEE 802.15.4-2011.
      *
-     * \return The value of the beacon order registered for this neighbor entry.
+     * @return The value of the beacon order registered for this neighbor entry.
      */
     uint8_t GetBeaconOrder() const;
 
     /**
      * Get the the value of the potential parent field.
      *
-     * \return A confirmation of whether of not the device has been discarded a potential parent.
+     * @return A confirmation of whether of not the device has been discarded a potential parent.
      */
     uint8_t IsPotentialParent() const;
 
     /**
      * Set the entry registered Network address (MAC short address).
      *
-     * \param nwkAddr The 16 bit address to set in this entry.
+     * @param nwkAddr The 16 bit address to set in this entry.
      */
     void SetNwkAddr(Mac16Address nwkAddr);
 
     /**
      * Set the device type of this neighbor device.
      *
-     * \param devType The device to set for this entry.
+     * @param devType The device to set for this entry.
      */
     void SetDeviceType(NwkDeviceType devType);
 
     /**
      * Set the device is on when idle flag.
      *
-     * \param onWhenIdle Set if device is on when idle.
+     * @param onWhenIdle Set if device is on when idle.
      */
     void SetRxOnWhenIdle(bool onWhenIdle);
 
     /**
      * Set the end device configuration.
      *
-     * \param conf The end device configuration to set in this entry.
+     * @param conf The end device configuration to set in this entry.
      */
     void SetEndDevConfig(uint16_t conf);
 
     /**
      * Set the timeout counter object.
      *
-     * \param counter The timeout counter used by this entry.
+     * @param counter The timeout counter used by this entry.
      */
     void SetTimeoutCounter(Time counter);
 
     /**
      * Set the device timeout object.
      *
-     * \param timeout The device timeout time
+     * @param timeout The device timeout time
      */
     void SetDevTimeout(Time timeout);
 
     /**
      * Set the relationship object.
      *
-     * \param relationship The relationship between the neighbor and current device.
+     * @param relationship The relationship between the neighbor and current device.
      */
     void SetRelationship(Relationship relationship);
 
     /**
      * Set the Tx Failure object
      *
-     * \param failure A value indicating if a prev Tx to the device was successful.
+     * @param failure A value indicating if a prev Tx to the device was successful.
      */
     void SetTxFailure(uint8_t failure);
 
     /**
      * Set the Link quality indicator value from this device to an entry neighbor
      *
-     * \param lqi The LQI value
+     * @param lqi The LQI value
      */
     void SetLqi(uint8_t lqi);
 
     /**
      * Set the outgoing cost object.
      *
-     * \param cost The cost of the outgoing link as measured by a neighbor.
+     * @param cost The cost of the outgoing link as measured by a neighbor.
      */
     void SetOutgoingCost(uint8_t cost);
 
@@ -616,7 +616,7 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Set the number of nwkLinkStatusPeriod intervals since the
      * link status command was received.
      *
-     * \param age The number of nwkLinkStatusPeriod intervals
+     * @param age The number of nwkLinkStatusPeriod intervals
      */
     void SetAge(uint8_t age);
 
@@ -624,7 +624,7 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Set the time in symbols at which the last beacon frame
      * was received from the neighbor.
      *
-     * \param timestamp time in symbols since last beacon frame.
+     * @param timestamp time in symbols since last beacon frame.
      */
     void SetIncBeaconTimestamp(uint64_t timestamp);
 
@@ -632,14 +632,14 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Set the transmission time difference in symbols, between the
      * neighbor's beacon and its parent beacon.
      *
-     * \param offset Time difference (symbols) between beacon and parent beacon.
+     * @param offset Time difference (symbols) between beacon and parent beacon.
      */
     void SetBeaconTxTimeOffset(uint64_t offset);
 
     /**
      * Set the MAC Interface Index object
      *
-     * \param index The MAC interface index registered for this entry
+     * @param index The MAC interface index registered for this entry
      */
     void SetMacInterfaceIndex(uint8_t index);
 
@@ -647,7 +647,7 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Set the number of unicast bytes transmitted to the neighbor
      * registered in this entry.
      *
-     * \param txBytes Unicast transmitted bytes.
+     * @param txBytes Unicast transmitted bytes.
      */
     void SetMacUcstBytesTx(uint32_t txBytes);
 
@@ -655,28 +655,28 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Set the number of unicast bytes received to the neighbor
      * registered in this entry.
      *
-     * \param rxBytes Unicast transmitted bytes.
+     * @param rxBytes Unicast transmitted bytes.
      */
     void SetMacUcstBytesRx(uint32_t rxBytes);
 
     /**
      * Set the extended PAN identifier
      *
-     * \param extPanId The extended PAN identifier.
+     * @param extPanId The extended PAN identifier.
      */
     void SetExtPanId(uint64_t extPanId);
 
     /**
      * Set the logical channel used by the the neighbor in this entry.
      *
-     * \param channel The channel number used by this neighbor.
+     * @param channel The channel number used by this neighbor.
      */
     void SetLogicalCh(uint8_t channel);
 
     /**
      * Set the depth of the neighbor device.
      *
-     * \param depth The depth of the neighbor device in this entryj
+     * @param depth The depth of the neighbor device in this entryj
      */
     void SetDepth(uint8_t depth);
 
@@ -684,21 +684,21 @@ class NeighborTableEntry : public SimpleRefCount<NeighborTableEntry>
      * Set the value of the beacon order set in this neighbor.
      * See IEEE 802.15.4-2011.
      *
-     * \param bo The value of the beacon order registered for this neighbor entry.
+     * @param bo The value of the beacon order registered for this neighbor entry.
      */
     void SetBeaconOrder(uint8_t bo);
 
     /**
      * Set the the value of the potential parent field.
      *
-     * \param confirm A confirm of whether or not the device has been discarded a potential parent.
+     * @param confirm A confirm of whether or not the device has been discarded a potential parent.
      */
     void SetPotentialParent(bool confirm);
 
     /**
      * Print the values of the neighbor table entry.
      *
-     * \param stream The stream object used to print.
+     * @param stream The stream object used to print.
      */
     void Print(Ptr<OutputStreamWrapper> stream) const;
 
@@ -764,17 +764,17 @@ class PanIdTable
     /**
      * Add an entry to the PAN Id table.
      *
-     * \param extPanId The extended PAN identifier (64 bits).
-     * \param panId The 16 bit PAN id used by the MAC layer .
+     * @param extPanId The extended PAN identifier (64 bits).
+     * @param panId The 16 bit PAN id used by the MAC layer .
      */
     void AddEntry(uint64_t extPanId, uint16_t panId);
 
     /**
      *  Get the 16 bit MAC PAN id based on the reference extended PAN id.
      *
-     * \param extPanId The NWK extended PAN identifier (64 bits).
-     * \param panId The returned 16 bit PAN Id.
-     * \return True if the entry was found
+     * @param extPanId The NWK extended PAN identifier (64 bits).
+     * @param panId The returned 16 bit PAN Id.
+     * @return True if the entry was found
      */
     bool GetEntry(uint64_t extPanId, uint16_t& panId);
 
@@ -798,51 +798,51 @@ class RreqRetryTableEntry : public SimpleRefCount<RreqRetryTableEntry>
     /**
      * The constructor of the RREQ retry table entry
      *
-     * \param rreqId The RREQ ID
-     * \param rreqRetryEvent The EventId of the next RREQ retry callback
-     * \param rreqRetryCount The current number of RREQ retries for this RREQ ID
+     * @param rreqId The RREQ ID
+     * @param rreqRetryEvent The EventId of the next RREQ retry callback
+     * @param rreqRetryCount The current number of RREQ retries for this RREQ ID
      */
     RreqRetryTableEntry(uint8_t rreqId, EventId rreqRetryEvent, uint8_t rreqRetryCount);
 
     /**
      * Get the RREQ Id from the entry
      *
-     * \return The RREQ ID from the entry
+     * @return The RREQ ID from the entry
      */
     uint8_t GetRreqId() const;
 
     /**
      * Set the RREQ retry count from the entry
      *
-     * \param rreqRetryCount The value of the RREQ retry count
+     * @param rreqRetryCount The value of the RREQ retry count
      */
     void SetRreqRetryCount(uint8_t rreqRetryCount);
 
     /**
      * Get the RREQ retry count from the entry
      *
-     * \return The RREQ retry count
+     * @return The RREQ retry count
      */
     uint8_t GetRreqRetryCount() const;
 
     /**
      *  Set the event id of the RREQ retry
      *
-     * \param eventId The event id corresponding to the next RREQ retry callback
+     * @param eventId The event id corresponding to the next RREQ retry callback
      */
     void SetRreqEventId(EventId eventId);
 
     /**
      * Get the RREQ id of the RREQ retry
      *
-     * \return The event id
+     * @return The event id
      */
     EventId GetRreqEventId();
 
     /**
      * Print the values of the RREQ retry table entry.
      *
-     * \param stream The stream object used to print.
+     * @param stream The stream object used to print.
      */
     void Print(Ptr<OutputStreamWrapper> stream) const;
 
@@ -957,17 +957,17 @@ class RoutingTable
     /**
      * Adds an entry to the routing table.
      *
-     * \param rt The routing table entry
-     * \return True if the entry was added to the table.
+     * @param rt The routing table entry
+     * @return True if the entry was added to the table.
      */
     bool AddEntry(Ptr<RoutingTableEntry> rt);
 
     /**
      * Look for an specific entry in the routing table.
      *
-     * \param dstAddr The value of the destination address used to look for an entry.
-     * \param entryFound The returned entry if found
-     * \return True if the entry was found in the routing table.
+     * @param dstAddr The value of the destination address used to look for an entry.
+     * @param entryFound The returned entry if found
+     * @return True if the entry was found in the routing table.
      */
     bool LookUpEntry(Mac16Address dstAddr, Ptr<RoutingTableEntry>& entryFound);
 
@@ -979,14 +979,14 @@ class RoutingTable
     /**
      * Remove an entry from the routing table.
      *
-     * \param dst The MAC 16 bit destination address of the entry to remove.
+     * @param dst The MAC 16 bit destination address of the entry to remove.
      */
     void Delete(Mac16Address dst);
 
     /**
      * Print the Routing table.
      *
-     * \param stream The stream object used to print the routing table.
+     * @param stream The stream object used to print the routing table.
      */
     void Print(Ptr<OutputStreamWrapper> stream) const;
 
@@ -998,21 +998,21 @@ class RoutingTable
     /**
      * Get the size of the routing table.
      *
-     * \return The current size of the routing table
+     * @return The current size of the routing table
      */
     uint32_t GetSize();
 
     /**
      * Set the maximum size of the routing table
      *
-     * \param size The size of the routing table.
+     * @param size The size of the routing table.
      */
     void SetMaxTableSize(uint32_t size);
 
     /**
      *  Get the maximum size of the routing table.
      *
-     *  \return The maximum size of the routing table.
+     *  @return The maximum size of the routing table.
      */
     uint32_t GetMaxTableSize() const;
 
@@ -1037,8 +1037,8 @@ class RouteDiscoveryTable
     /**
      * Add an entry to the route discovery table, in essence the contents of a RREQ command.
      *
-     * \param rt The route discovery table entry.
-     * \return True if the entry was added successfully
+     * @param rt The route discovery table entry.
+     * @return True if the entry was added successfully
      */
     bool AddEntry(Ptr<RouteDiscoveryTableEntry> rt);
 
@@ -1046,10 +1046,10 @@ class RouteDiscoveryTable
      * Look up for a route discovery table entry, the seareched entry must match the id
      * and the src address of the initiator.
      *
-     * \param id The RREQ id (RREQ command sequence number)
-     * \param src The 16 bit address of the initiator device.
-     * \param entryFound The returned entry if found
-     * \return True if element found
+     * @param id The RREQ id (RREQ command sequence number)
+     * @param src The 16 bit address of the initiator device.
+     * @param entryFound The returned entry if found
+     * @return True if element found
      */
     bool LookUpEntry(uint8_t id, Mac16Address src, Ptr<RouteDiscoveryTableEntry>& entryFound);
 
@@ -1061,15 +1061,15 @@ class RouteDiscoveryTable
     /**
      * Delete an entry from the route discovery table.
      *
-     * \param id The RREQ id of the entry to delete.
-     * \param src The src address of the initiator of the entry to delete.
+     * @param id The RREQ id of the entry to delete.
+     * @param src The src address of the initiator of the entry to delete.
      */
     void Delete(uint8_t id, Mac16Address src);
 
     /**
      * Print the contents of the route discovery table
      *
-     * \param stream The stream object used to print the table.
+     * @param stream The stream object used to print the table.
      */
     void Print(Ptr<OutputStreamWrapper> stream);
 
@@ -1098,34 +1098,34 @@ class NeighborTable
     /**
      * Add an entry to the neighbor table.
      *
-     * \param entry The entry to be added to the neighbor table.
-     * \return True if the entry was added to the table.
+     * @param entry The entry to be added to the neighbor table.
+     * @return True if the entry was added to the table.
      */
     bool AddEntry(Ptr<NeighborTableEntry> entry);
 
     /**
      *  Look and return and entry if exists in the neighbor table.
      *
-     * \param nwkAddr The network address used to look for an element in the table.
-     * \param entryFound The returned entry if found in the neighbor table.
-     * \return True if the entry was found false otherwise.
+     * @param nwkAddr The network address used to look for an element in the table.
+     * @param entryFound The returned entry if found in the neighbor table.
+     * @return True if the entry was found false otherwise.
      */
     bool LookUpEntry(Mac16Address nwkAddr, Ptr<NeighborTableEntry>& entryFound);
 
     /**
      *  Look and return and entry if exists in the neighbor table.
      *
-     * \param extAddr The extended address (EUI-64) used to look for an element in the table.
-     * \param entryFound The returned entry if found in the neighbor table.
-     * \return True if the entry was found false otherwise.
+     * @param extAddr The extended address (EUI-64) used to look for an element in the table.
+     * @param entryFound The returned entry if found in the neighbor table.
+     * @return True if the entry was found false otherwise.
      */
     bool LookUpEntry(Mac64Address extAddr, Ptr<NeighborTableEntry>& entryFound);
 
     /**
      *  Look for this device Parent neighbor (A.K.A coordinator).
      *
-     * \param entryFound The returned entry if found in the neighbor table.
-     * \return True if the parent was found in the neighbor table.
+     * @param entryFound The returned entry if found in the neighbor table.
+     * @return True if the parent was found in the neighbor table.
      */
     bool GetParent(Ptr<NeighborTableEntry>& entryFound);
 
@@ -1133,9 +1133,9 @@ class NeighborTable
      * Perform a search for the best candidate parent based on some attributes.
      * See Association Join process , Zigbee specification R21, Section 3.6.1.4.1
      *
-     * \param epid The extended PAN id of the network in which we look for parent candidates.
-     * \param entryFound The returned entry if found
-     * \return True if element found
+     * @param epid The extended PAN id of the network in which we look for parent candidates.
+     * @param entryFound The returned entry if found
+     * @return True if element found
      */
     bool LookUpForBestParent(uint64_t epid, Ptr<NeighborTableEntry>& entryFound);
 
@@ -1147,35 +1147,35 @@ class NeighborTable
     /**
      * Delete the specified entry from the neighbor table.
      *
-     * \param extAddr The EUI-64 of the entry to be removed from the neighbor table
+     * @param extAddr The EUI-64 of the entry to be removed from the neighbor table
      */
     void Delete(Mac64Address extAddr);
 
     /**
      * Print the neighbor table
      *
-     * \param stream The output stream where the table is printed
+     * @param stream The output stream where the table is printed
      */
     void Print(Ptr<OutputStreamWrapper> stream) const;
 
     /**
      * Get the size of the neighbor table.
      *
-     * \return The current size of the neighbor table
+     * @return The current size of the neighbor table
      */
     uint32_t GetSize();
 
     /**
      * Set the maximum size of the neighbor table
      *
-     * \param size The size of the neighbor table.
+     * @param size The size of the neighbor table.
      */
     void SetMaxTableSize(uint32_t size);
 
     /**
      *  Get the maximum size of the neighbor table.
      *
-     *  \return The maximum size of the neighbor table.
+     *  @return The maximum size of the neighbor table.
      */
     uint32_t GetMaxTableSize() const;
 
@@ -1190,8 +1190,8 @@ class NeighborTable
      *  The calculation of the link cost is based on a non-linear mapping of
      *  the lqi. A link cost of 1 is the best possible value (equivalent to 255 LQI).
      *
-     *  \param lqi The link quality indicator value (0-255)
-     *  \return The link cost value (1-7)
+     *  @param lqi The link quality indicator value (0-255)
+     *  @return The link cost value (1-7)
      */
     uint8_t GetLinkCost(uint8_t lqi) const;
 
@@ -1209,31 +1209,31 @@ class RreqRetryTable
     /**
      * Adds an entry to the table
      *
-     * \param entry The RREQ retry table entry
-     * \return True if the entry was added to the table.
+     * @param entry The RREQ retry table entry
+     * @return True if the entry was added to the table.
      */
     bool AddEntry(Ptr<RreqRetryTableEntry> entry);
 
     /**
      *  Look up for an entry in the table
      *
-     *  \param rreqId The RREQ ID used to look up for an entry in the table
-     *  \param entryFound The returned entry if found in the table
-     *  \return True if a searched entry is found
+     *  @param rreqId The RREQ ID used to look up for an entry in the table
+     *  @param entryFound The returned entry if found in the table
+     *  @return True if a searched entry is found
      */
     bool LookUpEntry(uint8_t rreqId, Ptr<RreqRetryTableEntry>& entryFound);
 
     /**
      *  Delete an entry from the table using the RREQ ID
      *
-     *  \param rreqId The RREQ ID use to delete an entry from the table
+     *  @param rreqId The RREQ ID use to delete an entry from the table
      */
     void Delete(uint8_t rreqId);
 
     /**
      * Print the neighbor table
      *
-     * \param stream The output stream where the table is printed
+     * @param stream The output stream where the table is printed
      */
     void Print(Ptr<OutputStreamWrapper> stream) const;
 

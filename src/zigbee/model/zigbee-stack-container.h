@@ -32,7 +32,7 @@ namespace zigbee
 {
 
 /**
- * \brief holds a vector of ns3::ZigbeeStack pointers
+ * Holds a vector of ns3::ZigbeeStack pointers
  *
  * Typically ZigbeeStacks are installed on top of a pre-existing NetDevice
  * (an LrWpanNetDevice) which on itself has already being aggregated to a node.
@@ -58,7 +58,7 @@ class ZigbeeStackContainer
      * Create a ZigbeeStackContainer with exactly one ZigbeeStack that has previously
      * been instantiated
      *
-     * \param stack A ZigbeeStack to add to the container
+     * @param stack A ZigbeeStack to add to the container
      */
     ZigbeeStackContainer(Ptr<ZigbeeStack> stack);
     /**
@@ -66,50 +66,50 @@ class ZigbeeStackContainer
      * previously instantiated and assigned a name using the Object name
      * service.  This ZigbeeStack is specified by its assigned name.
      *
-     * \param stackName The name of the ZigbeeStack to add to the container
+     * @param stackName The name of the ZigbeeStack to add to the container
      *
      * Create a ZigbeeStackContainer with exactly one device
      */
     ZigbeeStackContainer(std::string stackName);
     /**
      * Get and iterator which refers to the first ZigbeeStack in the container.
-     * \return An iterator referring to the first ZigbeeStack in the container.
+     * @return An iterator referring to the first ZigbeeStack in the container.
      */
     Iterator Begin() const;
     /**
      * Get an iterator which indicates past the last ZigbeeStack in the container.
-     * \return An iterator referring to the past the last ZigbeeStack in the container.
+     * @return An iterator referring to the past the last ZigbeeStack in the container.
      */
     Iterator End() const;
     /**
      * Get the number of stacks present in the stack container.
-     * \return The number of stacks in the container.
+     * @return The number of stacks in the container.
      */
     uint32_t GetN() const;
     /**
      * Get a stack element from the container.
-     * \param i The element number in the container
-     * \return The zigbee stack element matching the i index in the container.
+     * @param i The element number in the container
+     * @return The zigbee stack element matching the i index in the container.
      */
     Ptr<ZigbeeStack> Get(uint32_t i) const;
     /**
      * Append the contents of another ZigbeeStackContainer to the end of
      * this container.
      *
-     * \param other The ZigbeeStackContainer to append.
+     * @param other The ZigbeeStackContainer to append.
      */
     void Add(ZigbeeStackContainer other);
     /**
      * Append a single Ptr<ZigbeeStack> to this container.
      *
-     * \param stack The Ptr<ZigbeeStack> to append.
+     * @param stack The Ptr<ZigbeeStack> to append.
      */
     void Add(Ptr<ZigbeeStack> stack);
     /**
      * Append to this container the single Ptr<ZigbeeStack> referred to
      * via its object name service registered name.
      *
-     * \param stackName The name of the ZigbeeStack object to add to the container.
+     * @param stackName The name of the ZigbeeStack object to add to the container.
      */
     void Add(std::string stackName);
 

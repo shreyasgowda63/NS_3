@@ -43,7 +43,7 @@ NS_LOG_COMPONENT_DEFINE("zigbee-rreq-test");
  * \ingroup zigbee-test
  * \ingroup tests
  *
- * \brief Zigbee RREQ transmission retries test case
+ * Zigbee RREQ transmission retries test case
  */
 class ZigbeeRreqRetryTestCase : public TestCase
 {
@@ -55,9 +55,9 @@ class ZigbeeRreqRetryTestCase : public TestCase
     /**
      * Called in response to a NLME-NETWORK-DISCOVERY.request
      *
-     * \param testcase The pointer to the testcase
-     * \param stack The zigbee stack of the device originating the callback
-     * \param params The NLME-NETWORK-DISCOVERY.confirm parameters
+     * @param testcase The pointer to the testcase
+     * @param stack The zigbee stack of the device originating the callback
+     * @param params The NLME-NETWORK-DISCOVERY.confirm parameters
      */
     static void NwkNetworkDiscoveryConfirm(ZigbeeRreqRetryTestCase* testcase,
                                            Ptr<ZigbeeStack> stack,
@@ -66,9 +66,9 @@ class ZigbeeRreqRetryTestCase : public TestCase
     /**
      * Called in response to a NLME-JOIN.request
      *
-     * \param testcase The pointer to the testcase
-     * \param stack The zigbee stack of the device originating the callback
-     * \param params The NLME-JOIN.confirm parameters
+     * @param testcase The pointer to the testcase
+     * @param stack The zigbee stack of the device originating the callback
+     * @param params The NLME-JOIN.confirm parameters
      */
     static void NwkJoinConfirm(ZigbeeRreqRetryTestCase* testcase,
                                Ptr<ZigbeeStack> stack,
@@ -77,11 +77,11 @@ class ZigbeeRreqRetryTestCase : public TestCase
     /**
      * Called when a maximum RREQ retries are reached
      *
-     * \param testcase The pointer to the testcase
-     * \param stack The zigbee stack of the device originating the callback
-     * \param rreqid The RREQ ID
-     * \param dst The destination Mac16Address of the RREQ
-     * \param rreqRetriesNum Maximum number of retries reached
+     * @param testcase The pointer to the testcase
+     * @param stack The zigbee stack of the device originating the callback
+     * @param rreqid The RREQ ID
+     * @param dst The destination Mac16Address of the RREQ
+     * @param rreqRetriesNum Maximum number of retries reached
      */
     static void RreqRetriesExhausted(ZigbeeRreqRetryTestCase* testcase,
                                      Ptr<ZigbeeStack> stack,
@@ -367,7 +367,7 @@ ZigbeeRreqRetryTestCase::DoRun()
  * \ingroup zigbee-test
  * \ingroup tests
  *
- * \brief Zigbee RREQ TestSuite
+ * Zigbee RREQ TestSuite
  */
 class ZigbeeRreqTestSuite : public TestSuite
 {

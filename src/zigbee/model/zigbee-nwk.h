@@ -684,7 +684,7 @@ class ZigbeeNwk : public Object
     /**
      * Get the type ID.
      *
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -698,42 +698,42 @@ class ZigbeeNwk : public Object
     /**
      * Set the underlying MAC to use in this Zigbee NWK
      *
-     * \param mac The pointer to the underlying LrWpan MAC to set to this Zigbee NWK
+     * @param mac The pointer to the underlying LrWpan MAC to set to this Zigbee NWK
      */
     void SetMac(Ptr<lrwpan::LrWpanMacBase> mac);
 
     /**
      * Get the underlying MAC used by the current Zigbee NWK.
      *
-     * \return The pointer to the underlying MAC object currently connected to the Zigbee NWK.
+     * @return The pointer to the underlying MAC object currently connected to the Zigbee NWK.
      */
     Ptr<lrwpan::LrWpanMacBase> GetMac();
 
     /**
      * Print the entries in the routing table.
      *
-     * \param stream The stream object used to print.
+     * @param stream The stream object used to print.
      */
     void PrintRoutingTable(Ptr<OutputStreamWrapper> stream) const;
 
     /**
      * Print the entries in the route discovery table.
      *
-     * \param stream The stream object used to print.
+     * @param stream The stream object used to print.
      */
     void PrintRouteDiscoveryTable(Ptr<OutputStreamWrapper> stream);
 
     /**
      * Print the entries in the neighbor table.
      *
-     * \param stream The stream object used to print.
+     * @param stream The stream object used to print.
      */
     void PrintNeighborTable(Ptr<OutputStreamWrapper> stream) const;
 
     /**
      * Print the entries in the RREQ retry table.
      *
-     * \param stream The stream object used to print.
+     * @param stream The stream object used to print.
      */
     void PrintRREQRetryTable(Ptr<OutputStreamWrapper> stream) const;
 
@@ -777,8 +777,8 @@ class ZigbeeNwk : public Object
      *  MCPS-DATA.indication
      *  Indicates the reception of an MSDU from MAC to NWK (receiving)
      *
-     *  \param params The MCPS-DATA.indication parameters.
-     *  \param msdu The set of octets forming the MSDU.
+     *  @param params The MCPS-DATA.indication parameters.
+     *  @param msdu The set of octets forming the MSDU.
      */
     void McpsDataIndication(lrwpan::McpsDataIndicationParams params, Ptr<Packet> msdu);
 
@@ -787,7 +787,7 @@ class ZigbeeNwk : public Object
      *  MCPS-DATA.confirm
      *  Reports the results of a request to a transfer data to another device.
      *
-     *  \param params The MCPS-DATA.confirm parameters.
+     *  @param params The MCPS-DATA.confirm parameters.
      */
     void McpsDataConfirm(lrwpan::McpsDataConfirmParams params);
 
@@ -796,7 +796,7 @@ class ZigbeeNwk : public Object
      *  MLME-SCAN.confirm
      *  Reports the results of a scan request.
      *
-     *  \param params The MLME-SCAN.confirm parameters.
+     *  @param params The MLME-SCAN.confirm parameters.
      */
     void MlmeScanConfirm(lrwpan::MlmeScanConfirmParams params);
 
@@ -805,7 +805,7 @@ class ZigbeeNwk : public Object
      * MlME-ASSOCIATE.confirm
      * Report the results of an associate request attempt.
      *
-     *  \param params The MLME-ASSOCIATE.confirm parameters.
+     *  @param params The MLME-ASSOCIATE.confirm parameters.
      */
     void MlmeAssociateConfirm(lrwpan::MlmeAssociateConfirmParams params);
 
@@ -814,7 +814,7 @@ class ZigbeeNwk : public Object
      *  MLME-START.confirm
      *  Reports the results of a network start request.
      *
-     *  \param params The MLME-START.confirm parameters.
+     *  @param params The MLME-START.confirm parameters.
      */
     void MlmeStartConfirm(lrwpan::MlmeStartConfirmParams params);
 
@@ -823,7 +823,7 @@ class ZigbeeNwk : public Object
      * MLME-SET.confirm
      * Reports the result of an attempt to change a MAC PIB attribute.
      *
-     * \param params The MLME-SET.confirm params
+     * @param params The MLME-SET.confirm params
      */
     void MlmeSetConfirm(lrwpan::MlmeSetConfirmParams params);
 
@@ -832,9 +832,9 @@ class ZigbeeNwk : public Object
      * MLME-GET.confirm
      * Reports the result of an attempt to obtain a MAC PIB attribute.
      *
-     * \param status The status as a result of a MLME-GET.request operation
-     * \param id The identififier of the attribute requested
-     * \param attribute The value of of the attribute requested
+     * @param status The status as a result of a MLME-GET.request operation
+     * @param id The identififier of the attribute requested
+     * @param attribute The value of of the attribute requested
      */
     void MlmeGetConfirm(lrwpan::MacStatus status,
                         lrwpan::MacPibAttributeIdentifier id,
@@ -848,7 +848,7 @@ class ZigbeeNwk : public Object
      *  layer on receipt of an orphan notification command, as defined
      *  in 5.3.6.
      *
-     *  \param params The MLME-ORPHAN.indication parameters
+     *  @param params The MLME-ORPHAN.indication parameters
      */
     void MlmeOrphanIndication(lrwpan::MlmeOrphanIndicationParams params);
 
@@ -857,7 +857,7 @@ class ZigbeeNwk : public Object
      *  MLME-COMM-STATUS.indication
      *  Allows the MAC MLME to indicate a communication status.
      *
-     *  \param params The MLME-COMM-STATUS.indication parameters
+     *  @param params The MLME-COMM-STATUS.indication parameters
      */
     void MlmeCommStatusIndication(lrwpan::MlmeCommStatusIndicationParams params);
 
@@ -866,7 +866,7 @@ class ZigbeeNwk : public Object
      *  MLME-BEACON-NOTIFY.indication
      *  Allows the MAC MLME to indicate the reception of a beacon with payload.
      *
-     *  \param params The MLME-BEACON-NOTIFY.indication parameters
+     *  @param params The MLME-BEACON-NOTIFY.indication parameters
      */
     void MlmeBeaconNotifyIndication(lrwpan::MlmeBeaconNotifyIndicationParams params);
 
@@ -878,7 +878,7 @@ class ZigbeeNwk : public Object
      *  the parent procedure when a device join a network through association
      *  (See Zigbee specification r22.1.0, Section 3.6.1.4.1)
      *
-     *  \param params The MLME-ASSOCIATE.indication parameters
+     *  @param params The MLME-ASSOCIATE.indication parameters
      */
     void MlmeAssociateIndication(lrwpan::MlmeAssociateIndicationParams params);
 
@@ -887,8 +887,8 @@ class ZigbeeNwk : public Object
      *  NLDE-DATA.request
      *  Request to transfer a NSDU.
      *
-     *  \param params the request parameters
-     *  \param packet the NSDU to be transmitted
+     *  @param params the request parameters
+     *  @param packet the NSDU to be transmitted
      */
     void NldeDataRequest(NldeDataRequestParams params, Ptr<Packet> packet);
 
@@ -897,7 +897,7 @@ class ZigbeeNwk : public Object
      *  NLME-NETWORK-FORMATION.request
      *  Request the formation of a network in a capable device.
      *
-     *  \param params the network formation request params
+     *  @param params the network formation request params
      */
     void NlmeNetworkFormationRequest(NlmeNetworkFormationRequestParams params);
 
@@ -906,7 +906,7 @@ class ZigbeeNwk : public Object
      *  NLME-ROUTE-DISCOVERY.request
      *  Allows the next higher layer to initiate route discovery.
      *
-     *  \param params the route discovery request params
+     *  @param params the route discovery request params
      */
     void NlmeRouteDiscoveryRequest(NlmeRouteDiscoveryRequestParams params);
 
@@ -916,7 +916,7 @@ class ZigbeeNwk : public Object
      *  Allows the next higher layer to request that the NWK layer discover
      *  networks currently operating within the personal operating space (POS).
      *
-     *  \param params the network discovery request params
+     *  @param params the network discovery request params
      */
     void NlmeNetworkDiscoveryRequest(NlmeNetworkDiscoveryRequestParams params);
 
@@ -926,7 +926,7 @@ class ZigbeeNwk : public Object
      *  Allows the next layer of a Zigbee coordinator or router to request to
      *  directly join another device to its network
      *
-     *  \param params the direct join request params
+     *  @param params the direct join request params
      */
     void NlmeDirectJoinRequest(NlmeDirectJoinRequestParams params);
 
@@ -937,7 +937,7 @@ class ZigbeeNwk : public Object
      *  network, or to change the operating channel for the device while within an
      *  operating network.
      *
-     *  \param params the join request params
+     *  @param params the join request params
      */
     void NlmeJoinRequest(NlmeJoinRequestParams params);
 
@@ -949,7 +949,7 @@ class ZigbeeNwk : public Object
      *  framaes, route discovery, and the accepting of request to join the network
      *  from other devices.
      *
-     *  \param params the join request params
+     *  @param params the join request params
      */
     void NlmeStartRouterRequest(NlmeStartRouterRequestParams params);
 
@@ -957,7 +957,7 @@ class ZigbeeNwk : public Object
      *  Set the callback for the end of a RX, as part of the
      *  interconnections between the NWK and the APS sublayer. The callback
      *  implements the callback used in a NLDE-DATA.indication.
-     *  \param c the NldeDataIndication callback
+     *  @param c the NldeDataIndication callback
      */
     void SetNldeDataIndicationCallback(NldeDataIndicationCallback c);
 
@@ -966,7 +966,7 @@ class ZigbeeNwk : public Object
      *  the APS sublayer (or any other higher layer). The callback
      *  implements the callback used in a NLDE-DATA.confirm
      *
-     *  \param c the NldeDataConfirm callback
+     *  @param c the NldeDataConfirm callback
      */
     void SetNldeDataConfirmCallback(NldeDataConfirmCallback c);
 
@@ -974,7 +974,7 @@ class ZigbeeNwk : public Object
      *  Set the callback as part of the interconnections between the NWK and the
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-NETWORK-FORMATION.confirm
-     *  \param c the NlmeNetworkFormationConfirm callback
+     *  @param c the NlmeNetworkFormationConfirm callback
      */
     void SetNlmeNetworkFormationConfirmCallback(NlmeNetworkFormationConfirmCallback c);
 
@@ -982,7 +982,7 @@ class ZigbeeNwk : public Object
      *  Set the callback as part of the interconnections between the NWK and the
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-NETWORK-DISCOVERY.confirm
-     *  \param c the NlmeNetworkDiscoveryConfirm callback
+     *  @param c the NlmeNetworkDiscoveryConfirm callback
      */
     void SetNlmeNetworkDiscoveryConfirmCallback(NlmeNetworkDiscoveryConfirmCallback c);
 
@@ -991,7 +991,7 @@ class ZigbeeNwk : public Object
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-ROUTE-DISCOVERY.confirm
      *
-     *  \param c the NlmeRouteDiscoveryConfirm callback
+     *  @param c the NlmeRouteDiscoveryConfirm callback
      */
     void SetNlmeRouteDiscoveryConfirmCallback(NlmeRouteDiscoveryConfirmCallback c);
 
@@ -1000,7 +1000,7 @@ class ZigbeeNwk : public Object
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-DIRECT-JOIN.confirm
      *
-     *  \param c the NlmeDirectJoinConfirm callback
+     *  @param c the NlmeDirectJoinConfirm callback
      */
     void SetNlmeDirectJoinConfirmCallback(NlmeDirectJoinConfirmCallback c);
 
@@ -1009,7 +1009,7 @@ class ZigbeeNwk : public Object
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-JOIN.confirm
      *
-     *  \param c the NlmeJoinConfirm callback
+     *  @param c the NlmeJoinConfirm callback
      */
     void SetNlmeJoinConfirmCallback(NlmeJoinConfirmCallback c);
 
@@ -1018,7 +1018,7 @@ class ZigbeeNwk : public Object
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-JOIN.indication
      *
-     *  \param c the NlmeJoinIndication callback
+     *  @param c the NlmeJoinIndication callback
      */
     void SetNlmeJoinIndicationCallback(NlmeJoinIndicationCallback c);
 
@@ -1027,7 +1027,7 @@ class ZigbeeNwk : public Object
      *  APS sublayer (or any other higher layer). The callback implements the callback
      *  used in a NLME-START-ROUTER.confirm
      *
-     *  \param c the NlmeStartRouterConfirm callback
+     *  @param c the NlmeStartRouterConfirm callback
      */
     void SetNlmeStartRouterConfirmCallback(NlmeStartRouterConfirmCallback c);
 
@@ -1036,17 +1036,17 @@ class ZigbeeNwk : public Object
      *  used by this model.  Return the number of streams (possibly zero) that
      *  have been assigned.
      *
-     *  \param stream first stream index to use
-     *  \return the number of stream indices assigned by this model
+     *  @param stream first stream index to use
+     *  @return the number of stream indices assigned by this model
      */
     int64_t AssignStreams(int64_t stream);
 
     /**
      * TracedCallback signature for RreqRetriesExhaustedTrace events.
      *
-     * \param rreqId The RREQ id used in the retries
-     * \param dst The destination address of the RREQ retries
-     * \param rreqRetriesNum The number of rreq retries attempted
+     * @param rreqId The RREQ id used in the retries
+     * @param dst The destination address of the RREQ retries
+     * @param rreqRetriesNum The number of rreq retries attempted
      *
      */
     typedef void (*RreqRetriesExhaustedTracedCallback)(uint8_t rreqId,
@@ -1238,18 +1238,18 @@ class ZigbeeNwk : public Object
      * Enqueue a packet in the pending transaction queue until
      * a route is discovered for its destination.
      *
-     * \param p The packet to enqueue.
-     * \param nsduHandle The handle associated to this packet
+     * @param p The packet to enqueue.
+     * @param nsduHandle The handle associated to this packet
      */
     void EnqueueTx(Ptr<Packet> p, uint8_t nsduHandle);
 
     /**
      * Dequeue a packet in the pending transaction queue.
      *
-     * \param dst The destination of the packet
-     * \param entry The pending packet element
+     * @param dst The destination of the packet
+     * @param entry The pending packet element
      *
-     * \return True if successfully dequeued
+     * @return True if successfully dequeued
      */
     bool DequeueTx(Mac16Address dst, Ptr<PendingTxPkt> entry);
 
@@ -1258,7 +1258,7 @@ class ZigbeeNwk : public Object
      *  16 bit address (A.K.A short address or network address)
      *  to its associated device upon request.
      *
-     *  \return The allocated 16 bit address by this router or Zigbee coordinator.
+     *  @return The allocated 16 bit address by this router or Zigbee coordinator.
      */
     Mac16Address AllocateNetworkAddress();
 
@@ -1286,8 +1286,8 @@ class ZigbeeNwk : public Object
      * See Zigbee specification r22.1.0, 3.6.3.1
      * See NXP Zigbee 3.0 Stack User Guide (JN-UG-3113, revision 1.5), page 108.
      *
-     * \param lqi The lqi value (1-255) used to calculate the link cost.
-     * \return The link cost (1-7).
+     * @param lqi The lqi value (1-255) used to calculate the link cost.
+     * @return The link cost (1-7).
      */
     uint8_t GetLinkCost(uint8_t lqi) const;
 
@@ -1295,9 +1295,9 @@ class ZigbeeNwk : public Object
      *  Send a route request command.
      *  See Zigbee specification r22.1.0, Section 3.4.1
      *
-     *  \param nwkHeader The network header of the RREQ packet to send
-     *  \param payload The payload header of the RREQ packet to send
-     *  \param rreqRetries The maximum number of retries the broadcast transmission of a route
+     *  @param nwkHeader The network header of the RREQ packet to send
+     *  @param payload The payload header of the RREQ packet to send
+     *  @param rreqRetries The maximum number of retries the broadcast transmission of a route
      * request command frame is retried. Only valid for non Many-To-One RREQs.
      */
     void SendRREQ(ZigbeeNwkHeader nwkHeader,
@@ -1308,10 +1308,10 @@ class ZigbeeNwk : public Object
      * Handles the reception of a route request command.
      * See Zigbee specification r22.1.0, Section 3.6.3.5.2
      *
-     * \param macSrcAddr The MAC header source address
-     * \param nwkHeader The received network Header
-     * \param payload The received route request command payload
-     * \param linkCost The link cost associated to the received RREQ
+     * @param macSrcAddr The MAC header source address
+     * @param nwkHeader The received network Header
+     * @param payload The received route request command payload
+     * @param linkCost The link cost associated to the received RREQ
      */
     void ReceiveRREQ(Mac16Address macSrcAddr,
                      uint8_t linkCost,
@@ -1322,11 +1322,11 @@ class ZigbeeNwk : public Object
      *  Construct and send a route reply command.
      *  See Zigbee specification r22.1.0, Section 3.4.2
      *
-     *  \param nextHop The address of the next hop in the path back to the RREQ originator.
-     *  \param originator The address of the originator device of the first RREQ.
-     *  \param responder The address of the first device responding to the RREQ with a RREP.
-     *  \param rreqId The RREQ identifier of the originator RREQ.
-     *  \param pathcost The sum value of link costs along the way.
+     *  @param nextHop The address of the next hop in the path back to the RREQ originator.
+     *  @param originator The address of the originator device of the first RREQ.
+     *  @param responder The address of the first device responding to the RREQ with a RREP.
+     *  @param rreqId The RREQ identifier of the originator RREQ.
+     *  @param pathcost The sum value of link costs along the way.
      */
     void SendRREP(Mac16Address nextHop,
                   Mac16Address originator,
@@ -1338,10 +1338,10 @@ class ZigbeeNwk : public Object
      * Handles the reception of a route reply command.
      * See Zigbee specification r22.1.0, Section 3.6.3.5.3
      *
-     * \param macSrcAddr The MAC source address of this reply (a.k.a. previous hop)
-     * \param nwkHeader The received network Header
-     * \param payload The received route reply command payload
-     * \param linkCost The link cost associated to the received RREP
+     * @param macSrcAddr The MAC source address of this reply (a.k.a. previous hop)
+     * @param nwkHeader The received network Header
+     * @param payload The received route reply command payload
+     * @param linkCost The link cost associated to the received RREP
      */
     void ReceiveRREP(Mac16Address macSrcAddr,
                      uint8_t linkCost,
@@ -1352,8 +1352,8 @@ class ZigbeeNwk : public Object
      *  Returns true if the address is a broadcast address according to
      *  Zigbee specification r22.1.0, Section 3.6.5, Table 3-69
      *
-     *  \param address The address to compare to a broadcast address
-     *  \return True if the address in a broadcast address
+     *  @param address The address to compare to a broadcast address
+     *  @return True if the address in a broadcast address
      */
     bool IsBroadcastAddress(Mac16Address address);
 
@@ -1361,8 +1361,8 @@ class ZigbeeNwk : public Object
      * Send a Unicasta packet, and if necessary look for the next hop route
      * and store the pending data transmission until a route is found.
      *
-     * \param packet The NPDU (nwkHeader + payload) to transmit.
-     * \param handle The MSDU handle.
+     * @param packet The NPDU (nwkHeader + payload) to transmit.
+     * @param handle The MSDU handle.
      */
     void SendUnicast(Ptr<Packet> packet, uint8_t handle);
 
@@ -1371,14 +1371,14 @@ class ZigbeeNwk : public Object
      *
      * See RouteDiscoveryStatus enumeration for full information on the returned status.
      *
-     * \param macSrcAddr The MAC address received from the previous hop.
-     * \param pathCost The path cost accumulated in the route discovery so far.
-     * \param nwkHeader The network header created at the initiator or the received RREQ.
-     * \param payload The payload header of the initiator or the received RREQ.
-     * \param nextHop If the destination is found in the routing or neighbor tables
+     * @param macSrcAddr The MAC address received from the previous hop.
+     * @param pathCost The path cost accumulated in the route discovery so far.
+     * @param nwkHeader The network header created at the initiator or the received RREQ.
+     * @param payload The payload header of the initiator or the received RREQ.
+     * @param nextHop If the destination is found in the routing or neighbor tables
      * it contains the address of the next hop towards the destination.
      *
-     * \return The RouteDiscoveryStatus of the route search attempt
+     * @return The RouteDiscoveryStatus of the route search attempt
      */
     RouteDiscoveryStatus FindNextHop(Mac16Address macSrcAddr,
                                      uint8_t pathCost,

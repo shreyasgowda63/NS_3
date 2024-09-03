@@ -43,7 +43,7 @@ class ZigbeeNwk;
 /**
  * \ingroup zigbee
  *
- * \brief Zigbee protocol stack to device interface.
+ *  Zigbee protocol stack to device interface.
  *
  * This class is an encapsulating class representing the protocol stack as described
  * by the Zigbee Specification. In the current implementation only the Zigbee
@@ -59,7 +59,7 @@ class ZigbeeStack : public Object
     /**
      * Get the type ID.
      *
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     /**
@@ -69,39 +69,39 @@ class ZigbeeStack : public Object
     ~ZigbeeStack() override;
     /**
      * Get the Channel object of the underlying LrWpanNetDevice
-     * \return The LrWpanNetDevice Channel Object
+     * @return The LrWpanNetDevice Channel Object
      */
     Ptr<Channel> GetChannel() const;
     /**
      * Get the node currently using this ZigbeeStack.
-     * \return The reference to the node object using this ZigbeeStack.
+     * @return The reference to the node object using this ZigbeeStack.
      */
     Ptr<Node> GetNode() const;
 
     /**
      * Get the NWK layer used by this ZigbeeStack.
      *
-     * \return the NWK object
+     * @return the NWK object
      */
     Ptr<ZigbeeNwk> GetNwk() const;
     /**
      * Set the NWK layer used by this ZigbeeStack.
      *
-     * \param nwk The NWK layer object
+     * @param nwk The NWK layer object
      */
     void SetNwk(Ptr<ZigbeeNwk> nwk);
     /**
-     * \brief Returns a smart pointer to the underlying LrWpanNetDevice.
+     *  Returns a smart pointer to the underlying LrWpanNetDevice.
      *
-     * \return A smart pointer to the underlying LrWpanNetDevice.
+     * @return A smart pointer to the underlying LrWpanNetDevice.
      */
     Ptr<lrwpan::LrWpanNetDevice> GetLrWpanNetDevice() const;
     /**
-     * \brief Setup Zigbee to be the next set of higher layers for the specified LrWpanNetDevice.
+     *  Setup Zigbee to be the next set of higher layers for the specified LrWpanNetDevice.
      * All the packets incoming and outgoing from the LrWpanNetDevice will be
      * processed ZigbeeNetDevice.
      *
-     * \param [in] lrwpanDevice A smart pointer to the LrWpanNetDevice used by Zigbee.
+     * @param [in] lrwpanDevice A smart pointer to the LrWpanNetDevice used by Zigbee.
      */
     void SetLrWpanNetDevice(Ptr<lrwpan::LrWpanNetDevice> lrwpanDevice);
 

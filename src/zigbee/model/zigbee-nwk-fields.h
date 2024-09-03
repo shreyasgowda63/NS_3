@@ -75,14 +75,14 @@ class CapabilityInformation
     /**
      * Constructor using the capability in a bitmap form.
      *
-     * \param bitmap The bitmap representing the capability.
+     * @param bitmap The bitmap representing the capability.
      */
     CapabilityInformation(uint8_t bitmap);
 
     /**
      * Used to obtain the complete capability information bit map.
      *
-     * \return The bit map with the capability information
+     * @return The bit map with the capability information
      */
     uint8_t GetCapability() const;
 
@@ -90,7 +90,7 @@ class CapabilityInformation
      * This field will always have a value of false in implementations of
      * this specification.
      *
-     * \return false for implementations of this specification.
+     * @return false for implementations of this specification.
      */
     bool IsAlternatePanCoord() const;
 
@@ -100,7 +100,7 @@ class CapabilityInformation
      * Zigbee end device or else a router-capable device that is joining  as
      * an end device.
      *
-     * \return The device type used
+     * @return The device type used
      */
     MacDeviceType GetDeviceType() const;
 
@@ -108,7 +108,7 @@ class CapabilityInformation
      * This field will be set to the value of lowest-order bit of the
      * PowerSource parameter passed to the NLME-JOIN.request primitive.
      *
-     * \return MAINPOWER or OTHER_POWER_SOURCE
+     * @return MAINPOWER or OTHER_POWER_SOURCE
      */
     PowerSource GetPowerSource() const;
 
@@ -116,7 +116,7 @@ class CapabilityInformation
      * This field will be set to the value of the lowest-order bit of the
      * RxOnWhenIdle parameter passed  to the NLME-JOIN.request primitive
      *
-     * \return True Rx enabled when the device is idle | False = the receiver is disabled when idle.
+     * @return True Rx enabled when the device is idle | False = the receiver is disabled when idle.
      *
      */
     bool IsReceiverOnWhenIdle() const;
@@ -128,42 +128,42 @@ class CapabilityInformation
      * NWK rejoin command to join a network for the first time in a secure manner.
      * In this case, it shall have a value of false.
      *
-     * \return True = The device require a 16 bit address allocation, False = otherwise.
+     * @return True = The device require a 16 bit address allocation, False = otherwise.
      */
     bool IsAllocateAddrOn() const;
 
     /**
      * Set the Capability Information bit map
      *
-     * \param capability The 8 bit map representing the full capability
+     * @param capability The 8 bit map representing the full capability
      */
     void SetCapability(uint8_t capability);
 
     /**
      * Set the device type bit for the capability information field.
      *
-     * \param devType The device type field to set in the capability information.
+     * @param devType The device type field to set in the capability information.
      */
     void SetDeviceType(MacDeviceType devType);
 
     /**
      * Set the power source bit for the capability information field.
      *
-     * \param powerSource The power source field to set in the capability information.
+     * @param powerSource The power source field to set in the capability information.
      */
     void SetPowerSource(PowerSource powerSource);
 
     /**
      * Set the Receiver On When Idle bit for the capability information field.
      *
-     * \param value True if the receiver should remain on when idle.
+     * @param value True if the receiver should remain on when idle.
      */
     void SetReceiverOnWhenIdle(bool value);
 
     /**
      * Set the Allocate Addr On for the capability information field.
      *
-     * \param value True if the device requires to have its 16 bit network address allocated.
+     * @param value True if the device requires to have its 16 bit network address allocated.
      */
     void SetAllocateAddrOn(bool value);
 
@@ -190,37 +190,37 @@ class SuperframeInformation
      * Create a superframe Specification Information field with
      * the information specified in the bitmap.
      *
-     * \param bitmap The superframe in bitmap form
+     * @param bitmap The superframe in bitmap form
      */
     SuperframeInformation(uint16_t bitmap);
 
     /**
      * Set the whole Superframe Specification Information field.
-     * \param superFrm The Superframe Specification information field.
+     * @param superFrm The Superframe Specification information field.
      */
     void SetSuperframe(uint16_t superFrm);
 
     /**
      * Get the Superframe Specification Beacon Order field.
-     * \return the Superframe Specification Beacon Order field.
+     * @return the Superframe Specification Beacon Order field.
      */
     uint8_t GetBeaconOrder() const;
 
     /**
      * Get the Superframe Specification Frame Order field.
-     * \return The Superframe Specification Frame Order field.
+     * @return The Superframe Specification Frame Order field.
      */
     uint8_t GetFrameOrder() const;
 
     /**
      * Check if the PAN Coordinator bit is enabled.
-     * \returns true if the PAN Coordinator bit is enabled
+     * @returns true if the PAN Coordinator bit is enabled
      */
     bool IsPanCoor() const;
 
     /**
      * Check if the Association Permit bit is enabled.
-     * \returns true if the Association Permit bit is enabled
+     * @returns true if the Association Permit bit is enabled
      */
     bool IsAssocPermit() const;
 

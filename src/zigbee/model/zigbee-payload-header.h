@@ -72,12 +72,12 @@ class ZigbeePayloadType : public Header
     ZigbeePayloadType();
     /**
      * Constructor
-     * \param nwkCmd the command type of this command header
+     * @param nwkCmd the command type of this command header
      */
     ZigbeePayloadType(enum NwkCommandType nwkCmd);
     /**
      * \brief Get the type ID.
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -88,12 +88,12 @@ class ZigbeePayloadType : public Header
 
     /**
      * Set the command frame type
-     * \param nwkCmd the command frame type
+     * @param nwkCmd the command frame type
      */
     void SetCmdType(enum NwkCommandType nwkCmd);
     /**
      * Get the command frame type
-     * \return The command type from the command payload header
+     * @return The command type from the command payload header
      */
     NwkCommandType GetCmdType() const;
 
@@ -112,7 +112,7 @@ class ZigbeePayloadRouteRequestCommand : public Header
     ZigbeePayloadRouteRequestCommand();
     /**
      * \brief Get the type ID.
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -124,82 +124,82 @@ class ZigbeePayloadRouteRequestCommand : public Header
     /**
      * Set the command option field Many To One
      *
-     * \param manyToOne  The Many To One field ()
+     * @param manyToOne  The Many To One field ()
      */
     void SetCmdOptManyToOneField(enum ManyToOne manyToOne);
 
     /**
      * Get the command option field Many To One
      *
-     * \return The command option field
+     * @return The command option field
      */
     uint8_t GetCmdOptManyToOneField() const;
 
     /**
      * Set the Route request identifier
-     * \param id the route request identifier
+     * @param id the route request identifier
      */
     void SetRouteReqId(uint8_t id);
 
     /**
      * Get the Route request identifier
-     * \return the route request identifier
+     * @return the route request identifier
      */
     uint8_t GetRouteReqId() const;
 
     /**
      * Set Destination address
-     * \param addr The destination address (16 bit)
+     * @param addr The destination address (16 bit)
      */
     void SetDstAddr(Mac16Address addr);
 
     /**
      * Get the Destination address
-     * \return the Destination address (16bits)
+     * @return the Destination address (16bits)
      */
     Mac16Address GetDstAddr() const;
 
     /**
      * Set the path cost
-     * \param cost the path cost
+     * @param cost the path cost
      */
     void SetPathCost(uint8_t cost);
 
     /**
      * Set the path cost
-     * \return the path cost
+     * @return the path cost
      */
     uint8_t GetPathCost() const;
 
     /**
      * Describe whether or not the destination IEEE Address field is present in the Route Request
      *
-     * \return True if the command option destination IEEE Address field is active
+     * @return True if the command option destination IEEE Address field is active
      */
     bool IsDstIeeeAddressPresent() const;
 
     /**
      *  Set the destination IEEE address
-     *  \param dst The destination IEEE address (64 bits)
+     *  @param dst The destination IEEE address (64 bits)
      */
     void SetDstIeeeAddr(Mac64Address dst);
 
     /**
      * Get the destination IEEE address
-     * \return The destination IEEE address (64bits)
+     * @return The destination IEEE address (64bits)
      */
     Mac64Address GetDstIeeeAddr() const;
 
   private:
     /**
      * Set the complete command option field of the route request command.
-     * \param cmdOptionField The 8 bits representing the complete command option field.
+     * @param cmdOptionField The 8 bits representing the complete command option field.
      */
     void SetCmdOptionField(uint8_t cmdOptionField);
 
     /**
      * Get the 8bits representing the complete command option field of the route request command.
-     * \return The command option field (8 bits)
+     * @return The command option field (8 bits)
      */
     uint8_t GetCmdOptionField() const;
 
@@ -228,7 +228,7 @@ class ZigbeePayloadRouteReplyCommand : public Header
 
     /**
      * \brief Get the type ID.
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -239,72 +239,72 @@ class ZigbeePayloadRouteReplyCommand : public Header
 
     /**
      * Set the command option
-     * \param option the command option
+     * @param option the command option
      */
     void SetCmdOption(uint8_t option);
     /**
      * Get the command option
-     * \return the command option
+     * @return the command option
      */
     uint8_t GetCmdOption() const;
     /**
      * Set the Route request identifier
-     * \param rid the route request identifier
+     * @param rid the route request identifier
      */
     void SetRouteReqId(uint8_t rid);
     /**
      * Get the Route request identifier
-     * \return the Radius
+     * @return the Radius
      */
     uint8_t GetRouteReqId() const;
     /**
      * Set Originator address
-     * \param addr The originator address (16 bit)
+     * @param addr The originator address (16 bit)
      */
     void SetOrigAddr(Mac16Address addr);
     /**
      * Get the Originator address
-     * \return the originator address (16bits)
+     * @return the originator address (16bits)
      */
     Mac16Address GetOrigAddr() const;
     /**
      * Set Responder address
-     * \param addr the responder address (16 bit)
+     * @param addr the responder address (16 bit)
      */
     void SetRespAddr(Mac16Address addr);
     /**
      * Get the Responder address
-     * \return the responder address (16bits)
+     * @return the responder address (16bits)
      */
     Mac16Address GetRespAddr() const;
     /**
      * Set the path cost
-     * \param cost the path cost
+     * @param cost the path cost
      */
     void SetPathCost(uint8_t cost);
     /**
      * Get the path cost
-     * \return the path cost
+     * @return the path cost
      */
     uint8_t GetPathCost() const;
     /**
      *  Set the Originator IEEE address
-     *  \param orig The originator IEEE address (64 bits)
+     *  @param orig The originator IEEE address (64 bits)
      */
     void SetOrigIeeeAddr(Mac64Address orig);
     /**
      * Get the Originator IEEE address
-     * \return The originator IEEE address (64bits)
+     * @return The originator IEEE address (64bits)
      */
     Mac64Address GetOrigIeeeAddr() const;
     /**
      *  Set the Responder IEEE address
-     *  \param resp The responder IEEE address (64 bits)
+     *  @param resp The responder IEEE address (64 bits)
      */
     void SetRespIeeeAddr(Mac64Address resp);
     /**
      * Get the Responder IEEE address
-     * \return The responder IEEE address (64bits)
+     * @return The responder IEEE address (64bits)
      */
     Mac64Address GetRespIeeeAddr() const;
 
@@ -336,7 +336,7 @@ class ZigbeeBeaconPayload : public Header
 
     /**
      * \brief Get the type ID.
-     * \return the object TypeId
+     * @return the object TypeId
      */
     static TypeId GetTypeId();
     TypeId GetInstanceTypeId() const override;
@@ -348,7 +348,7 @@ class ZigbeeBeaconPayload : public Header
     /**
      * Set the network profile identifier.
      *
-     * \param stackProfile the stack Profile in use
+     * @param stackProfile the stack Profile in use
      */
     void SetStackProfile(uint8_t stackProfile);
 
@@ -356,14 +356,14 @@ class ZigbeeBeaconPayload : public Header
      * Get the Protocol Id used.
      * In this standard this value is always 0.
      *
-     * \return The protocol id used in this standard.
+     * @return The protocol id used in this standard.
      */
     uint8_t GetProtocolId() const;
 
     /**
      * Get the Stack Profile used.
      *
-     * \return The stack profile identifier used.
+     * @return The stack profile identifier used.
      */
     uint8_t GetStackProfile() const;
 
@@ -372,14 +372,14 @@ class ZigbeeBeaconPayload : public Header
      * True = The device is able to accept join.request
      * from router-capable devices
      *
-     * \param routerCapacity The router capacity capability
+     * @param routerCapacity The router capacity capability
      */
     void SetRouterCapacity(bool routerCapacity);
 
     /**
      * Get the router capacity capability.
      *
-     * \return Whether or not is cabable of accepting join request
+     * @return Whether or not is cabable of accepting join request
      *         from router-capable devices.
      */
     bool GetRouterCapacity() const;
@@ -387,28 +387,28 @@ class ZigbeeBeaconPayload : public Header
     /**
      * Set the cevice depth object
      *
-     * \param deviceDepth The current device depth.
+     * @param deviceDepth The current device depth.
      */
     void SetDeviceDepth(uint8_t deviceDepth);
 
     /**
      * Get the device depth.
      *
-     * \return The device depth
+     * @return The device depth
      */
     uint8_t GetDeviceDepth() const;
 
     /**
      * Set the end device Capacity
      *
-     * \param endDevCapacity  The end device capacity
+     * @param endDevCapacity  The end device capacity
      */
     void SetEndDevCapacity(bool endDevCapacity);
 
     /**
      * Get the end dev capacity
      *
-     * \return Whether or not the device is capable of accepting
+     * @return Whether or not the device is capable of accepting
      *         join requests from end devices.
      */
     bool GetEndDevCapacity() const;
@@ -417,42 +417,42 @@ class ZigbeeBeaconPayload : public Header
      * Set the extended PAN id. This should be the value of the
      * zigbee coordinator EUI-64 address (IEEE address).
      *
-     * \param extPanId The extended PAN id
+     * @param extPanId The extended PAN id
      */
     void SetExtPanId(uint64_t extPanId);
 
     /**
      * Get the extended PAN identifier
      *
-     * \return The extended PAN identifier
+     * @return The extended PAN identifier
      */
     uint64_t GetExtPanId() const;
 
     /**
      * Set the Tx Offset time in symbols
      *
-     * \param txOffset The Tx offset time in symbols
+     * @param txOffset The Tx offset time in symbols
      */
     void SetTxOffset(uint32_t txOffset);
 
     /**
      * Get the Tx Offset time in symbols
      *
-     * \return uint32_t The Tx offset time in symbols
+     * @return uint32_t The Tx offset time in symbols
      */
     uint32_t GetTxOffset() const;
 
     /**
      * Set the value of the nwkUpdateId to this beacon payload
      *
-     * \param nwkUpdateId The nwkUpdateId to set to the beacon payload.
+     * @param nwkUpdateId The nwkUpdateId to set to the beacon payload.
      */
     void SetNwkUpdateId(uint8_t nwkUpdateId);
 
     /**
      * Get the value of the nwkUpdateId set to this beacon payload
      *
-     * \return The value of the nwkUpdateId in the beacon payload.
+     * @return The value of the nwkUpdateId in the beacon payload.
      */
     uint8_t GetNwkUpdateId() const;
 
