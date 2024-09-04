@@ -906,12 +906,10 @@ ExponentialTestCase::DoRun()
     NS_TEST_ASSERT_MSG_LT(sum, maxStatistic, "Chi-squared statistic out of range");
 
     double mean = 3.14;
-    double bound = 0.0;
 
     // Create the RNG with the specified range.
     Ptr<ExponentialRandomVariable> x = CreateObject<ExponentialRandomVariable>();
     x->SetAttribute("Mean", DoubleValue(mean));
-    x->SetAttribute("Bound", DoubleValue(bound));
 
     // Calculate the mean of these values.
     double valueMean = Average(x);
@@ -987,12 +985,10 @@ ExponentialAntitheticTestCase::DoRun()
     NS_TEST_ASSERT_MSG_LT(sum, maxStatistic, "Chi-squared statistic out of range");
 
     double mean = 3.14;
-    double bound = 0.0;
 
     // Create the RNG with the specified range.
     Ptr<ExponentialRandomVariable> x = CreateObject<ExponentialRandomVariable>();
     x->SetAttribute("Mean", DoubleValue(mean));
-    x->SetAttribute("Bound", DoubleValue(bound));
 
     // Make this generate antithetic values.
     x->SetAttribute("Antithetic", BooleanValue(true));

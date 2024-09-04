@@ -374,9 +374,12 @@ SequentialRandomVariable::GetValue()
 
 NS_OBJECT_ENSURE_REGISTERED(ExponentialRandomVariable);
 
+const double ExponentialRandomVariable::INFINITE_VALUE = 1e307;
+
 TypeId
 ExponentialRandomVariable::GetTypeId()
 {
+    NS_WARNING_PUSH_DEPRECATED;
     static TypeId tid =
         TypeId("ns3::ExponentialRandomVariable")
             .SetParent<RandomVariableStream>()
@@ -387,17 +390,34 @@ ExponentialRandomVariable::GetTypeId()
                           DoubleValue(1.0),
                           MakeDoubleAccessor(&ExponentialRandomVariable::m_mean),
                           MakeDoubleChecker<double>())
-            .AddAttribute("Bound",
-                          "The upper bound on the values returned by this RNG stream.",
+            .AddAttribute(
+                "Bound",
+                "The upper bound on the values returned by this RNG stream.",
+                DoubleValue(0.0),
+                MakeDoubleAccessor(&ExponentialRandomVariable::SetBound,
+                                   &ExponentialRandomVariable::GetBound),
+                MakeDoubleChecker<double>(),
+                TypeId::DEPRECATED,
+                "DEPRECATED since ns-3.43. Use the LowerBound and UpperBound attributes instead.")
+            .AddAttribute("LowerBound",
+                          "The lower bound on the values returned by this RNG stream.",
                           DoubleValue(0.0),
-                          MakeDoubleAccessor(&ExponentialRandomVariable::m_bound),
+                          MakeDoubleAccessor(&ExponentialRandomVariable::SetLowerBound,
+                                             &ExponentialRandomVariable::GetLowerBound),
+                          MakeDoubleChecker<double>())
+            .AddAttribute("UpperBound",
+                          "The upper bound on the values returned by this RNG stream.",
+                          DoubleValue(INFINITE_VALUE),
+                          MakeDoubleAccessor(&ExponentialRandomVariable::SetUpperBound,
+                                             &ExponentialRandomVariable::GetUpperBound),
                           MakeDoubleChecker<double>());
+    NS_WARNING_POP;
     return tid;
 }
 
 ExponentialRandomVariable::ExponentialRandomVariable()
 {
-    // m_mean and m_bound are initialized after constructor by attributes
+    // m_mean, m_lowerBound, and m_upperBound are initialized after constructor by attributes
     NS_LOG_FUNCTION(this);
 }
 
@@ -410,12 +430,78 @@ ExponentialRandomVariable::GetMean() const
 double
 ExponentialRandomVariable::GetBound() const
 {
-    return m_bound;
+    return m_upperBound;
+}
+
+void
+ExponentialRandomVariable::SetBound(double bound)
+{
+    if (bound < 0.0)
+    {
+        NS_FATAL_ERROR("Upper bound must be non-negative. Upper bound: " << bound);
+    }
+    else
+    {
+        m_lowerBound = 0.0;
+        m_upperBound = bound;
+    }
+}
+
+void
+ExponentialRandomVariable::SetLowerBound(double lowerBound)
+{
+    if (lowerBound < 0.0)
+    {
+        NS_FATAL_ERROR("Lower bound must be non-negative. Lower bound: " << lowerBound);
+    }
+    else
+    {
+        m_lowerBound = lowerBound;
+    }
 }
 
 double
-ExponentialRandomVariable::GetValue(double mean, double bound)
+ExponentialRandomVariable::GetLowerBound() const
 {
+    return m_lowerBound;
+}
+
+void
+ExponentialRandomVariable::SetUpperBound(double upperBound)
+{
+    if (upperBound < 0.0)
+    {
+        NS_FATAL_ERROR("Upper bound must be non-negative. Upper bound: " << upperBound);
+    }
+    else
+    {
+        m_upperBound = upperBound;
+    }
+}
+
+double
+ExponentialRandomVariable::GetUpperBound() const
+{
+    if (m_upperBound < m_lowerBound)
+    {
+        NS_FATAL_ERROR("Upper bound must be greater than or equal to lower bound. LowerBound: "
+                       << m_lowerBound << ", UpperBound: " << m_upperBound);
+    }
+    else
+    {
+        return m_upperBound;
+    }
+}
+
+double
+ExponentialRandomVariable::GetValue(double mean, double lowerBound, double upperBound)
+{
+    if (lowerBound > upperBound || lowerBound < 0.0 || upperBound < 0.0)
+    {
+        NS_FATAL_ERROR("Lower bound must be less than or equal to upper bound and both bounds must "
+                       "be non-negative. LowerBound: "
+                       << lowerBound << ", UpperBound: " << upperBound);
+    }
     while (true)
     {
         // Get a uniform random variable in [0,1].
@@ -429,10 +515,11 @@ ExponentialRandomVariable::GetValue(double mean, double bound)
         double r = -mean * std::log(v);
 
         // Use this value if it's acceptable.
-        if (bound == 0 || r <= bound)
+        if (r >= lowerBound && r <= upperBound)
         {
             NS_LOG_DEBUG("value: " << r << " stream: " << GetStream() << " mean: " << mean
-                                   << " bound: " << bound);
+                                   << " lower bound: " << lowerBound
+                                   << " upper bound: " << upperBound);
             return r;
         }
     }
@@ -442,16 +529,27 @@ uint32_t
 ExponentialRandomVariable::GetInteger(uint32_t mean, uint32_t bound)
 {
     NS_LOG_FUNCTION(this << mean << bound);
-    auto v = static_cast<uint32_t>(GetValue(mean, bound));
+    auto v = static_cast<uint32_t>(GetValue(mean, 0.0, bound));
     NS_LOG_DEBUG("integer value: " << v << " stream: " << GetStream() << " mean: " << mean
                                    << " bound: " << bound);
+    return v;
+}
+
+uint32_t
+ExponentialRandomVariable::GetInteger(uint32_t mean, uint32_t lowerBound, uint32_t upperBound)
+{
+    NS_LOG_FUNCTION(this << mean << lowerBound << upperBound);
+    auto v = static_cast<uint32_t>(GetValue(mean, lowerBound, upperBound));
+    NS_LOG_DEBUG("integer value: " << v << " stream: " << GetStream() << " mean: " << mean
+                                   << " lower bound: " << lowerBound
+                                   << " upper bound: " << upperBound);
     return v;
 }
 
 double
 ExponentialRandomVariable::GetValue()
 {
-    return GetValue(m_mean, m_bound);
+    return GetValue(m_mean, m_lowerBound, m_upperBound);
 }
 
 NS_OBJECT_ENSURE_REGISTERED(ParetoRandomVariable);
