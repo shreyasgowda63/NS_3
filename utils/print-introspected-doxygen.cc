@@ -260,9 +260,10 @@ class StaticInformation
      */
     void Gather(TypeId tid);
     /**
-     * Print output in "a -> b" form on std::cout
+     * Print output in "a -> b" form on the stream.
+     * \param [in,out] os The output stream.
      */
-    void Print() const;
+    void Print(std::ostream& os) const;
 
     /**
      * \return the configuration paths for tid
@@ -348,12 +349,12 @@ StaticInformation::RecordAggregationInfo(std::string a, std::string b)
 }
 
 void
-StaticInformation::Print() const
+StaticInformation::Print(std::ostream& os) const
 {
     NS_LOG_FUNCTION(this);
     for (const auto& item : m_output)
     {
-        std::cout << item.first.GetName() << " -> " << item.second << std::endl;
+        os << item.first.GetName() << " -> " << item.second << std::endl;
     }
 }
 
