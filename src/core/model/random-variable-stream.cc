@@ -554,9 +554,12 @@ ExponentialRandomVariable::GetValue()
 
 NS_OBJECT_ENSURE_REGISTERED(ParetoRandomVariable);
 
+const double ParetoRandomVariable::INFINITE_VALUE = 1e307;
+
 TypeId
 ParetoRandomVariable::GetTypeId()
 {
+    NS_WARNING_PUSH_DEPRECATED;
     static TypeId tid =
         TypeId("ns3::ParetoRandomVariable")
             .SetParent<RandomVariableStream>()
@@ -566,7 +569,8 @@ ParetoRandomVariable::GetTypeId()
                 "Scale",
                 "The scale parameter for the Pareto distribution returned by this RNG stream.",
                 DoubleValue(1.0),
-                MakeDoubleAccessor(&ParetoRandomVariable::m_scale),
+                MakeDoubleAccessor(&ParetoRandomVariable::GetScale,
+                                   &ParetoRandomVariable::SetScale),
                 MakeDoubleChecker<double>())
             .AddAttribute(
                 "Shape",
@@ -578,14 +582,30 @@ ParetoRandomVariable::GetTypeId()
                 "Bound",
                 "The upper bound on the values returned by this RNG stream (if non-zero).",
                 DoubleValue(0.0),
-                MakeDoubleAccessor(&ParetoRandomVariable::m_bound),
-                MakeDoubleChecker<double>());
+                MakeDoubleAccessor(&ParetoRandomVariable::SetBound,
+                                   &ParetoRandomVariable::GetBound),
+                MakeDoubleChecker<double>(),
+                TypeId::DEPRECATED,
+                "DEPRECATED since ns-3.43. Use the LowerBound and UpperBound attributes instead.")
+            .AddAttribute("LowerBound",
+                          "The lower bound on the values returned by this RNG stream.",
+                          DoubleValue(1.0),
+                          MakeDoubleAccessor(&ParetoRandomVariable::SetLowerBound,
+                                             &ParetoRandomVariable::GetLowerBound),
+                          MakeDoubleChecker<double>())
+            .AddAttribute("UpperBound",
+                          "The upper bound on the values returned by this RNG stream.",
+                          DoubleValue(INFINITE_VALUE),
+                          MakeDoubleAccessor(&ParetoRandomVariable::SetUpperBound,
+                                             &ParetoRandomVariable::GetUpperBound),
+                          MakeDoubleChecker<double>());
+    NS_WARNING_POP;
     return tid;
 }
 
 ParetoRandomVariable::ParetoRandomVariable()
 {
-    // m_shape, m_shape, and m_bound are initialized after constructor
+    // m_shape, m_shape, m_lowerBound, and m_upperBound are initialized after constructor
     // by attributes
     NS_LOG_FUNCTION(this);
 }
@@ -594,6 +614,13 @@ double
 ParetoRandomVariable::GetScale() const
 {
     return m_scale;
+}
+
+void
+ParetoRandomVariable::SetScale(double scale)
+{
+    m_scale = scale;
+    m_lowerBound = scale;
 }
 
 double
@@ -605,12 +632,50 @@ ParetoRandomVariable::GetShape() const
 double
 ParetoRandomVariable::GetBound() const
 {
-    return m_bound;
+    return m_upperBound;
+}
+
+void
+ParetoRandomVariable::SetBound(double bound)
+{
+    m_lowerBound = m_scale;
+    m_upperBound = bound;
 }
 
 double
-ParetoRandomVariable::GetValue(double scale, double shape, double bound)
+ParetoRandomVariable::GetLowerBound() const
 {
+    return m_lowerBound;
+}
+
+void
+ParetoRandomVariable::SetLowerBound(double lowerBound)
+{
+    m_lowerBound = lowerBound;
+}
+
+double
+ParetoRandomVariable::GetUpperBound() const
+{
+    return m_upperBound;
+}
+
+void
+ParetoRandomVariable::SetUpperBound(double upperBound)
+{
+    m_upperBound = upperBound;
+}
+
+double
+ParetoRandomVariable::GetValue(double scale, double shape, double lowerBound, double upperBound)
+{
+    if (lowerBound > upperBound || lowerBound < scale)
+    {
+        NS_FATAL_ERROR("Lower bound must be less than or equal to upper bound and both bounds must "
+                       "be greater than or equal to scale. Scale: "
+                       << scale << " Lower bound: " << lowerBound
+                       << " Upper bound: " << upperBound);
+    }
     while (true)
     {
         // Get a uniform random variable in [0,1].
@@ -624,19 +689,33 @@ ParetoRandomVariable::GetValue(double scale, double shape, double bound)
         double r = (scale * (1.0 / std::pow(v, 1.0 / shape)));
 
         // Use this value if it's acceptable.
-        if (bound == 0 || r <= bound)
+        if (r >= lowerBound && r <= upperBound)
         {
             NS_LOG_DEBUG("value: " << r << " stream: " << GetStream() << " scale: " << scale
-                                   << " shape: " << shape << " bound: " << bound);
+                                   << " shape: " << shape << " lower bound: " << lowerBound
+                                   << " upper bound: " << upperBound);
             return r;
         }
     }
 }
 
 uint32_t
+ParetoRandomVariable::GetInteger(uint32_t scale,
+                                 uint32_t shape,
+                                 uint32_t lowerBound,
+                                 uint32_t upperBound)
+{
+    auto v = static_cast<uint32_t>(GetValue(scale, shape, lowerBound, upperBound));
+    NS_LOG_DEBUG("integer value: " << v << " stream: " << GetStream() << " scale: " << scale
+                                   << " shape: " << shape << " lower bound: " << lowerBound
+                                   << " upper bound: " << upperBound);
+    return v;
+}
+
+uint32_t
 ParetoRandomVariable::GetInteger(uint32_t scale, uint32_t shape, uint32_t bound)
 {
-    auto v = static_cast<uint32_t>(GetValue(scale, shape, bound));
+    auto v = static_cast<uint32_t>(GetValue(scale, shape, scale, bound));
     NS_LOG_DEBUG("integer value: " << v << " stream: " << GetStream() << " scale: " << scale
                                    << " shape: " << shape << " bound: " << bound);
     return v;
@@ -645,7 +724,7 @@ ParetoRandomVariable::GetInteger(uint32_t scale, uint32_t shape, uint32_t bound)
 double
 ParetoRandomVariable::GetValue()
 {
-    return GetValue(m_scale, m_shape, m_bound);
+    return GetValue(m_scale, m_shape, m_lowerBound, m_upperBound);
 }
 
 NS_OBJECT_ENSURE_REGISTERED(WeibullRandomVariable);
