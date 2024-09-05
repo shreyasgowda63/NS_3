@@ -729,9 +729,12 @@ ParetoRandomVariable::GetValue()
 
 NS_OBJECT_ENSURE_REGISTERED(WeibullRandomVariable);
 
+const double WeibullRandomVariable::INFINITE_VALUE = 1e307;
+
 TypeId
 WeibullRandomVariable::GetTypeId()
 {
+    NS_WARNING_PUSH_DEPRECATED;
     static TypeId tid =
         TypeId("ns3::WeibullRandomVariable")
             .SetParent<RandomVariableStream>()
@@ -752,14 +755,31 @@ WeibullRandomVariable::GetTypeId()
             .AddAttribute("Bound",
                           "The upper bound on the values returned by this RNG stream.",
                           DoubleValue(0.0),
-                          MakeDoubleAccessor(&WeibullRandomVariable::m_bound),
+                          MakeDoubleAccessor(&WeibullRandomVariable::SetBound,
+                                             &WeibullRandomVariable::GetBound),
+                          MakeDoubleChecker<double>(),
+                          TypeId::DEPRECATED,
+                          "DEPRECATED since ns-3.43. Use the LowerBound and UpperBound attributes "
+                          "instead.")
+            .AddAttribute("LowerBound",
+                          "The lower bound on the values returned by this RNG stream.",
+                          DoubleValue(0.0),
+                          MakeDoubleAccessor(&WeibullRandomVariable::SetLowerBound,
+                                             &WeibullRandomVariable::GetLowerBound),
+                          MakeDoubleChecker<double>())
+            .AddAttribute("UpperBound",
+                          "The upper bound on the values returned by this RNG stream.",
+                          DoubleValue(INFINITE_VALUE),
+                          MakeDoubleAccessor(&WeibullRandomVariable::SetUpperBound,
+                                             &WeibullRandomVariable::GetUpperBound),
                           MakeDoubleChecker<double>());
+    NS_WARNING_POP;
     return tid;
 }
 
 WeibullRandomVariable::WeibullRandomVariable()
 {
-    // m_scale, m_shape, and m_bound are initialized after constructor
+    // m_scale, m_shape, m_lowerBound, and m_upperBound are initialized after constructor
     // by attributes
     NS_LOG_FUNCTION(this);
 }
@@ -779,7 +799,59 @@ WeibullRandomVariable::GetShape() const
 double
 WeibullRandomVariable::GetBound() const
 {
-    return m_bound;
+    return m_upperBound;
+}
+
+void
+WeibullRandomVariable::SetBound(double bound)
+{
+    if (bound < 0.0)
+    {
+        NS_FATAL_ERROR("Upper bound must be non-negative. Upper bound: " << bound);
+    }
+    else
+    {
+        m_lowerBound = 0.0;
+        m_upperBound = bound;
+    }
+}
+
+void
+WeibullRandomVariable::SetLowerBound(double lowerBound)
+{
+    if (lowerBound < 0.0)
+    {
+        NS_FATAL_ERROR("Lower bound must be non-negative. Lower bound: " << lowerBound);
+    }
+    else
+    {
+        m_lowerBound = lowerBound;
+    }
+}
+
+double
+WeibullRandomVariable::GetLowerBound() const
+{
+    return m_lowerBound;
+}
+
+void
+WeibullRandomVariable::SetUpperBound(double upperBound)
+{
+    if (upperBound < 0.0)
+    {
+        NS_FATAL_ERROR("Upper bound must be non-negative. Upper bound: " << upperBound);
+    }
+    else
+    {
+        m_upperBound = upperBound;
+    }
+}
+
+double
+WeibullRandomVariable::GetUpperBound() const
+{
+    return m_upperBound;
 }
 
 double
@@ -797,8 +869,14 @@ WeibullRandomVariable::GetMean() const
 }
 
 double
-WeibullRandomVariable::GetValue(double scale, double shape, double bound)
+WeibullRandomVariable::GetValue(double scale, double shape, double lowerBound, double upperBound)
 {
+    if (lowerBound > upperBound || lowerBound < 0.0 || upperBound < 0.0)
+    {
+        NS_FATAL_ERROR("Lower bound must be less than or equal to upper bound and both bounds must "
+                       "be non-negative. Lower bound: "
+                       << lowerBound << " Upper bound: " << upperBound);
+    }
     double exponent = 1.0 / shape;
     while (true)
     {
@@ -813,10 +891,11 @@ WeibullRandomVariable::GetValue(double scale, double shape, double bound)
         double r = scale * std::pow(-std::log(v), exponent);
 
         // Use this value if it's acceptable.
-        if (bound == 0 || r <= bound)
+        if (r >= lowerBound && r <= upperBound)
         {
             NS_LOG_DEBUG("value: " << r << " stream: " << GetStream() << " scale: " << scale
-                                   << " shape: " << shape << " bound: " << bound);
+                                   << " shape: " << shape << " lower bound: " << lowerBound
+                                   << " upper bound: " << upperBound);
             return r;
         }
     }
@@ -825,9 +904,22 @@ WeibullRandomVariable::GetValue(double scale, double shape, double bound)
 uint32_t
 WeibullRandomVariable::GetInteger(uint32_t scale, uint32_t shape, uint32_t bound)
 {
-    auto v = static_cast<uint32_t>(GetValue(scale, shape, bound));
+    auto v = static_cast<uint32_t>(GetValue(scale, shape, 0.0, bound));
     NS_LOG_DEBUG("integer value: " << v << " stream: " << GetStream() << " scale: " << scale
                                    << " shape: " << shape << " bound: " << bound);
+    return v;
+}
+
+uint32_t
+WeibullRandomVariable::GetInteger(uint32_t scale,
+                                  uint32_t shape,
+                                  uint32_t lowerBound,
+                                  uint32_t upperBound)
+{
+    auto v = static_cast<uint32_t>(GetValue(scale, shape, lowerBound, upperBound));
+    NS_LOG_DEBUG("integer value: " << v << " stream: " << GetStream() << " scale: " << scale
+                                   << " shape: " << shape << " lower bound: " << lowerBound
+                                   << " upper bound: " << upperBound);
     return v;
 }
 
@@ -835,7 +927,7 @@ double
 WeibullRandomVariable::GetValue()
 {
     NS_LOG_FUNCTION(this);
-    return GetValue(m_scale, m_shape, m_bound);
+    return GetValue(m_scale, m_shape, m_lowerBound, m_upperBound);
 }
 
 NS_OBJECT_ENSURE_REGISTERED(NormalRandomVariable);
