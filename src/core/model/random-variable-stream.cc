@@ -2230,9 +2230,12 @@ BernoulliRandomVariable::GetValue()
 
 NS_OBJECT_ENSURE_REGISTERED(LaplacianRandomVariable);
 
+const double LaplacianRandomVariable::INFINITE_VALUE = 1e307;
+
 TypeId
 LaplacianRandomVariable::GetTypeId()
 {
+    NS_WARNING_PUSH_DEPRECATED;
     static TypeId tid =
         TypeId("ns3::LaplacianRandomVariable")
             .SetParent<RandomVariableStream>()
@@ -2250,11 +2253,28 @@ LaplacianRandomVariable::GetTypeId()
                 DoubleValue(1.0),
                 MakeDoubleAccessor(&LaplacianRandomVariable::m_scale),
                 MakeDoubleChecker<double>())
-            .AddAttribute("Bound",
-                          "The bound on the values returned by this RNG stream.",
-                          DoubleValue(0.0),
-                          MakeDoubleAccessor(&LaplacianRandomVariable::m_bound),
+            .AddAttribute(
+                "Bound",
+                "The bound on the values returned by this RNG stream.",
+                DoubleValue(INFINITE_VALUE),
+                MakeDoubleAccessor(&LaplacianRandomVariable::SetBound,
+                                   &LaplacianRandomVariable::GetBound),
+                MakeDoubleChecker<double>(),
+                TypeId::DEPRECATED,
+                "DEPRECATED since ns-3.43. Use the LowerBound and UpperBound attributes instead.")
+            .AddAttribute("LowerBound",
+                          "The lower bound on the values returned by this RNG stream.",
+                          DoubleValue(-INFINITE_VALUE),
+                          MakeDoubleAccessor(&LaplacianRandomVariable::SetLowerBound,
+                                             &LaplacianRandomVariable::GetLowerBound),
+                          MakeDoubleChecker<double>())
+            .AddAttribute("UpperBound",
+                          "The upper bound on the values returned by this RNG stream.",
+                          DoubleValue(INFINITE_VALUE),
+                          MakeDoubleAccessor(&LaplacianRandomVariable::SetUpperBound,
+                                             &LaplacianRandomVariable::GetUpperBound),
                           MakeDoubleChecker<double>());
+    NS_WARNING_POP;
     return tid;
 }
 
@@ -2275,17 +2295,65 @@ LaplacianRandomVariable::GetScale() const
     return m_scale;
 }
 
-double
-LaplacianRandomVariable::GetBound() const
+void
+LaplacianRandomVariable::SetBound(double bound)
 {
-    return m_bound;
+    m_lowerBound = m_location - std::abs(bound);
+    m_upperBound = m_location + std::abs(bound);
 }
 
 double
-LaplacianRandomVariable::GetValue(double location, double scale, double bound)
+LaplacianRandomVariable::GetBound() const
 {
-    NS_LOG_FUNCTION(this << location << scale << bound);
+    if (m_location - m_lowerBound == m_upperBound - m_location)
+    {
+        return m_location - m_lowerBound;
+    }
+    else
+    {
+        NS_FATAL_ERROR("Bounds must be symmetrical with respect to the location. Location: "
+                       << m_location << " Lower bound: " << m_lowerBound
+                       << " Upper bound: " << m_upperBound);
+    }
+}
+
+void
+LaplacianRandomVariable::SetLowerBound(double lowerBound)
+{
+    m_lowerBound = lowerBound;
+}
+
+double
+LaplacianRandomVariable::GetLowerBound() const
+{
+    return m_lowerBound;
+}
+
+void
+LaplacianRandomVariable::SetUpperBound(double upperBound)
+{
+    m_upperBound = upperBound;
+}
+
+double
+LaplacianRandomVariable::GetUpperBound() const
+{
+    return m_upperBound;
+}
+
+double
+LaplacianRandomVariable::GetValue(double location,
+                                  double scale,
+                                  double lowerBound,
+                                  double upperBound)
+{
+    NS_LOG_FUNCTION(this << location << scale << lowerBound << upperBound);
     NS_ABORT_MSG_IF(scale <= 0, "Scale parameter should be larger than 0");
+    if (lowerBound > upperBound)
+    {
+        NS_FATAL_ERROR("Lower bound must be less than or equal to upper bound. LowerBound: "
+                       << lowerBound << " UpperBound: " << upperBound);
+    }
 
     while (true)
     {
@@ -2301,7 +2369,7 @@ LaplacianRandomVariable::GetValue(double location, double scale, double bound)
         const auto r = location - (scale * sgn * std::log(1.0 - (2.0 * std::abs(v))));
 
         // Use this value if it's acceptable.
-        if (bound == 0.0 || std::fabs(r - location) <= bound)
+        if (r >= lowerBound && r <= upperBound)
         {
             return r;
         }
@@ -2312,14 +2380,24 @@ uint32_t
 LaplacianRandomVariable::GetInteger(uint32_t location, uint32_t scale, uint32_t bound)
 {
     NS_LOG_FUNCTION(this << location << scale << bound);
-    return static_cast<uint32_t>(GetValue(location, scale, bound));
+    return static_cast<uint32_t>(GetValue(location, scale, location - bound, location + bound));
+}
+
+uint32_t
+LaplacianRandomVariable::GetInteger(uint32_t location,
+                                    uint32_t scale,
+                                    uint32_t lowerBound,
+                                    uint32_t upperBound)
+{
+    NS_LOG_FUNCTION(this << location << scale << lowerBound << upperBound);
+    return static_cast<uint32_t>(GetValue(location, scale, lowerBound, upperBound));
 }
 
 double
 LaplacianRandomVariable::GetValue()
 {
     NS_LOG_FUNCTION(this);
-    return GetValue(m_location, m_scale, m_bound);
+    return GetValue(m_location, m_scale, m_lowerBound, m_upperBound);
 }
 
 double
