@@ -923,6 +923,33 @@ PrintSize(std::ostream& os, const TypeId tid)
 } // PrintSize()
 
 /**
+ * Print the doxy block for a single TypeId
+ *
+ * \param [in,out] os The output stream.
+ * \param [in] tid the TypeId
+ */
+void
+PrintTypeIdBlock(std::ostream& os, const TypeId tid)
+{
+    NS_LOG_FUNCTION(tid);
+
+    std::string name = tid.GetName();
+
+    os << commentStart << std::endl;
+
+    os << classStart << name << std::endl;
+    os << std::endl;
+
+    PrintConfigPaths(os, tid);
+    PrintAttributes(os, tid);
+    PrintTraceSources(os, tid);
+    PrintSize(os, tid);
+
+    os << commentStop << std::endl;
+
+} // PrintTypeIdBlock()
+
+/**
  * Print the doxy block for each TypeId
  *
  * \param [in,out] os The output stream.
@@ -945,19 +972,7 @@ PrintTypeIdBlocks(std::ostream& os)
         }
         // Get the class's index out of the map;
         TypeId tid = TypeId::GetRegistered(item.second);
-        std::string name = tid.GetName();
-
-        std::cout << commentStart << std::endl;
-
-        std::cout << classStart << name << std::endl;
-        std::cout << std::endl;
-
-        PrintConfigPaths(std::cout, tid);
-        PrintAttributes(std::cout, tid);
-        PrintTraceSources(std::cout, tid);
-        PrintSize(std::cout, tid);
-
-        std::cout << commentStop << std::endl;
+        PrintTypeIdBlock(os, tid);
     } // for class documentation
 
 } // PrintTypeIdBlocks()
@@ -1473,11 +1488,44 @@ main(int argc, char* argv[])
 {
     NS_LOG_FUNCTION_NOARGS();
 
+    std::string typeId;
+
     CommandLine cmd(__FILE__);
     cmd.Usage("Generate documentation for all ns-3 registered types, "
               "trace sources, attributes and global variables.");
     cmd.AddValue("output-text", "format output as plain text", outputText);
+    cmd.AddValue("TypeId", "Print docs for just the given TypeId", typeId);
     cmd.Parse(argc, argv);
+
+    if (!typeId.empty())
+    {
+        outputText = true;
+        SetMarkup();
+
+        TypeId tid;
+
+        bool validTypeId = TypeId::LookupByNameFailSafe(typeId, &tid);
+        if (!validTypeId)
+        {
+            auto fqTypeId = "ns3::" + typeId;
+            validTypeId = TypeId::LookupByNameFailSafe(fqTypeId, &tid);
+            if (validTypeId)
+            {
+                std::cout << "\nFound fully qualified name " << fqTypeId << "\n\n";
+            }
+        }
+        if (validTypeId)
+        {
+            PrintTypeIdBlock(std::cout, tid);
+            return 0;
+        }
+        else
+        {
+            std::cerr << "Invalid TypeId name: " << typeId << "\n" << std::endl;
+            std::cerr << cmd;
+            exit(1);
+        }
+    }
 
     SetMarkup();
 
