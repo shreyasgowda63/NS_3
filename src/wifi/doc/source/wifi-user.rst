@@ -272,6 +272,10 @@ settings as described above are allowed. For instance, a channel in the 2.4 GHz
 band cannot be configured if the standard is 802.11ac, or a channel in the 6 GHz
 band can only be configured if the standard is 802.11ax (or beyond).
 
+``WifiHelper::SetStandard ()`` can also be called by passing a string with the
+standard name. For example any of the strings "802.11ax", "11ax" or "HE" can
+be passed in order to set the standard as ``WIFI_STANDARD_80211ax``.
+
 The following values for WifiStandard are defined in
 ``src/wifi/model/wifi-standards.h``:
 
