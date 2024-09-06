@@ -1147,7 +1147,8 @@ EMLSRTestCase::DoRun()
 
     /* Assert that total duration on all links is close enough to simulation duration */
     Time totalSimulationDuration = Seconds(3.0);
-    Time sumOnLink0, sumOnLink1;
+    Time sumOnLink0;
+    Time sumOnLink1;
     for (auto& it : durationOnLink0)
     {
         sumOnLink0 += it.second;
