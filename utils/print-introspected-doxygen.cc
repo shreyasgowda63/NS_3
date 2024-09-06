@@ -1261,6 +1261,9 @@ PrintAttributeValueWithName(std::ostream& os,
     os << classStart << qualClass << " \"" << header << "\"" << std::endl;
     os << "AttributeValue implementation for " << name << "." << std::endl;
     os << seeAlso << "AttributeValue" << std::endl;
+    os << "Call graph was not generated because of its size.\n";
+    os << "\\hidecallergraph\n";
+    os << "\\hidecallgraph\n";
     os << commentStop;
 
     // Ctor: <name>Value::<name>Value
@@ -1323,6 +1326,9 @@ PrintMakeAccessors(std::ostream& os, const std::string& name)
        << make << "(T1 a1)\n"
        << copyDoc << "ns3::MakeAccessorHelper(T1)\n"
        << seeAlso << "AttributeAccessor\n"
+       << "Call graph was not generated because of its size.\n"
+       << "\\hidecallergraph\n"
+       << "\\hidecallgraph\n"
        << commentStop;
 
     // \ingroup attribute_<name>Value
@@ -1331,6 +1337,9 @@ PrintMakeAccessors(std::ostream& os, const std::string& name)
        << make << "(T1 a1, T2 a2)\n"
        << copyDoc << "ns3::MakeAccessorHelper(T1,T2)\n"
        << seeAlso << "AttributeAccessor\n"
+       << "Call graph was not generated because of its size.\n"
+       << "\\hidecallergraph\n"
+       << "\\hidecallgraph\n"
        << commentStop;
 } // PrintMakeAccessors ()
 
@@ -1365,6 +1374,9 @@ PrintMakeChecker(std::ostream& os, const std::string& name, const std::string& h
        << make << "()\n"
        << returns << "The AttributeChecker.\n"
        << seeAlso << "AttributeChecker\n"
+       << "Call graph was not generated because of its size.\n"
+       << "\\hidecallergraph\n"
+       << "\\hidecallgraph\n"
        << commentStop;
 } // PrintMakeChecker ()
 

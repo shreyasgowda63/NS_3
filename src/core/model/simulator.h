@@ -547,6 +547,10 @@ class Simulator
  *   Simulator::Schedule (Seconds (2.0) - Now (), &my_function);
  * @endcode
  * @return The current simulation time.
+ *
+ * Call graph was not generated because of its size.
+ * \hidecallergraph
+ * \hidecallgraph
  */
 Time Now();
 

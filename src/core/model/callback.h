@@ -350,6 +350,9 @@ class CallbackImpl : public CallbackImplBase
  * \ingroup callbackimpl
  * Base class for Callback class.
  * Provides pimpl abstraction.
+ *
+ * Inheritance graph was not generated because of its size.
+ * \hideinheritancegraph
  */
 class CallbackBase
 {
@@ -427,6 +430,9 @@ class CallbackBase
  *
  * \tparam R \explicit The return type of the Callback.
  * \tparam UArgs \explicit The types of any arguments to the Callback.
+ *
+ * Inheritance graph was not generated because of its size.
+ * \hideinheritancegraph
  */
 template <typename R, typename... UArgs>
 class Callback : public CallbackBase
@@ -715,6 +721,10 @@ MakeCallback(R (T::*memPtr)(Args...) const, OBJ objPtr)
  *
  * Build Callbacks for functions which take varying numbers of arguments
  * and potentially returning a value.
+ *
+ * Call graph was not generated because of its size.
+ * \hidecallergraph
+ * \hidecallgraph
  */
 template <typename R, typename... Args>
 Callback<R, Args...>
@@ -750,6 +760,10 @@ MakeNullCallback()
  * \param [in] fnPtr Function pointer
  * \param [in] bargs Bound arguments
  * \return A bound Callback
+ *
+ * Call graph was not generated because of its size.
+ * \hidecallergraph
+ * \hidecallgraph
  */
 template <typename R, typename... Args, typename... BArgs>
 auto
@@ -771,6 +785,10 @@ MakeBoundCallback(R (*fnPtr)(Args...), BArgs&&... bargs)
  *
  * Build Callbacks for class method members which take varying numbers of arguments
  * and potentially returning a value.
+ *
+ * Call graph was not generated because of its size.
+ * \hidecallergraph
+ * \hidecallgraph
  */
 template <typename T, typename OBJ, typename R, typename... Args, typename... BArgs>
 auto
