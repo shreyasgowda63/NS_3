@@ -461,12 +461,14 @@ class Timelines:
         @param self this object
         @return the keys for all ranges
         """
-        range_values = {}
+        range_values = []
         for timeline in self.timelines:
             for ranges in timeline.get_ranges():
                 for ran in ranges.get_all():
-                    range_values[ran.value] = 1
-        return range_values.keys()
+                    if ran.value not in range_values: 
+                        range_values.append(ran.value)
+        range_values.sort()
+        return range_values
 
 
 ## Color class
@@ -1525,7 +1527,7 @@ class GtkGraphicRenderer(gtk.DrawingArea):
         @return true if moving otherwise false
         """
         (x, y, width, height) = self.__data.get_selection_rectangle()
-        if self.__moving_left:
+        if bool(self.__moving_left):
             if event.x <= 0:
                 self.__moving_left_cur = 0
             elif event.x >= x + width:
@@ -1534,7 +1536,7 @@ class GtkGraphicRenderer(gtk.DrawingArea):
                 self.__moving_left_cur = event.x
             self.queue_draw_area(0, int(y), int(self.__width), int(height))
             return True
-        if self.__moving_right:
+        if bool(self.__moving_right):
             if event.x >= self.__width:
                 self.__moving_right = self.__width
             elif event.x < x:
@@ -1543,7 +1545,7 @@ class GtkGraphicRenderer(gtk.DrawingArea):
                 self.__moving_right_cur = event.x
             self.queue_draw_area(0, int(y), int(self.__width), int(height))
             return True
-        if self.__moving_both:
+        if bool(self.__moving_both):
             cur_e = self.__width - (x + width - self.__moving_both_start)
             cur_s = self.__moving_both_start - x
             if event.x < cur_s:
@@ -1554,7 +1556,7 @@ class GtkGraphicRenderer(gtk.DrawingArea):
                 self.__moving_both_cur = event.x
             self.queue_draw_area(0, int(y), int(self.__width), int(height))
             return True
-        if self.__moving_top:
+        if bool(self.__moving_top):
             self.__moving_top_cur = event.x
             delta = self.__data.scale_data(self.__moving_top_start - self.__moving_top_cur)
             (left, right) = self.__data.get_range()
