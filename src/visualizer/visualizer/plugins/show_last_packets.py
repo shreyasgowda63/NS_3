@@ -258,16 +258,16 @@ class ShowLastPackets(InformationWindow):
                 self.visualizer.simulation.lock.release()
 
         def sel_all_cb(bt):
-            for c in self.packet_filter_list:
-                if c is not None:
-                    c.selected = True
+            # ugly, but the better version generates Doxygen warnings.
+            for index in range(len(self.packet_filter_list)):
+                self.packet_filter_list[index].selected = True
             self.packet_filter_widget.refresh()
             update_capture_options()
 
         def sel_none_cb(bt):
-            for c in self.packet_filter_list:
-                if c is not None:
-                    c.selected = False
+            # ugly, but the better version generates Doxygen warnings.
+            for index in range(len(self.packet_filter_list)):
+                self.packet_filter_list[index].selected = False
             self.packet_filter_widget.refresh()
             update_capture_options()
 
