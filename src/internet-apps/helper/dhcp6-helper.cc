@@ -35,8 +35,8 @@ NS_LOG_COMPONENT_DEFINE("Dhcp6Helper");
 
 Dhcp6Helper::Dhcp6Helper()
 {
-    m_clientFactory.SetTypeId(internetapps::Dhcp6Client::GetTypeId());
-    m_serverFactory.SetTypeId(internetapps::Dhcp6Server::GetTypeId());
+    m_clientFactory.SetTypeId(Dhcp6Client::GetTypeId());
+    m_serverFactory.SetTypeId(Dhcp6Server::GetTypeId());
 }
 
 void
@@ -52,54 +52,43 @@ Dhcp6Helper::SetServerAttribute(std::string name, const AttributeValue& value)
 }
 
 ApplicationContainer
-Dhcp6Helper::InstallDhcp6Client(Ptr<NetDevice> netDevice) const
-{
-    return ApplicationContainer(InstallDhcp6ClientPriv(netDevice));
-}
-
-ApplicationContainer
 Dhcp6Helper::InstallDhcp6Client(NetDeviceContainer netDevices) const
 {
-    ApplicationContainer apps;
-    for (auto i = netDevices.Begin(); i != netDevices.End(); ++i)
+    Ptr<Dhcp6Client> app = m_clientFactory.Create<Dhcp6Client>();
+
+    for (auto itr = netDevices.Begin(); itr != netDevices.End(); itr++)
     {
-        apps.Add(InstallDhcp6ClientPriv(*i));
-    }
-    return apps;
-}
+        Ptr<NetDevice> netDevice = *itr;
+        Ptr<Node> node = netDevice->GetNode();
+        NS_ASSERT_MSG(node, "Dhcp6Helper: NetDevice is not associated with any node -> fail");
 
-Ptr<Application>
-Dhcp6Helper::InstallDhcp6ClientPriv(Ptr<NetDevice> netDevice) const
-{
-    Ptr<Node> node = netDevice->GetNode();
-    NS_ASSERT_MSG(node, "Dhcp6ClientHelper: NetDevice is not associated with any node -> fail");
+        Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
+        NS_ASSERT_MSG(ipv6,
+                      "Dhcp6Helper: NetDevice is associated"
+                      " with a node without IPv6 stack installed -> fail "
+                      "(maybe need to use InternetStackHelper?)");
 
-    Ptr<Ipv6> ipv6 = node->GetObject<Ipv6>();
-    NS_ASSERT_MSG(ipv6,
-                  "DhcpHelper: NetDevice is associated"
-                  " with a node without IPv6 stack installed -> fail "
-                  "(maybe need to use InternetStackHelper?)");
+        int32_t interface = ipv6->GetInterfaceForDevice(netDevice);
+        if (interface == -1)
+        {
+            interface = ipv6->AddInterface(netDevice);
+        }
 
-    int32_t interface = ipv6->GetInterfaceForDevice(netDevice);
-    if (interface == -1)
-    {
-        interface = ipv6->AddInterface(netDevice);
+        ipv6->SetMetric(interface, 1);
+        ipv6->SetUp(interface);
     }
 
-    ipv6->SetMetric(interface, 1);
-    ipv6->SetUp(interface);
-
-    Ptr<internetapps::Dhcp6Client> app = m_clientFactory.Create<internetapps::Dhcp6Client>();
-    app->SetDhcp6ClientNetDevice(netDevice);
+    Ptr<Node> node = netDevices.Get(0)->GetNode();
+    app->SetDhcp6ClientNetDevice(netDevices);
     node->AddApplication(app);
 
-    return app;
+    return ApplicationContainer(app);
 }
 
 ApplicationContainer
 Dhcp6Helper::InstallDhcp6Server(NetDeviceContainer netDevices)
 {
-    Ptr<internetapps::Dhcp6Server> app = m_serverFactory.Create<internetapps::Dhcp6Server>();
+    Ptr<Dhcp6Server> app = m_serverFactory.Create<Dhcp6Server>();
 
     for (auto itr = netDevices.Begin(); itr != netDevices.End(); itr++)
     {

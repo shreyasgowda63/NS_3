@@ -33,7 +33,6 @@
 #include "ns3/trace-helper.h"
 
 using namespace ns3;
-using namespace ns3::internetapps;
 
 /**
  * \ingroup dhcp6
@@ -125,20 +124,26 @@ Dhcp6TestCase::DoRun()
     dhcpServerApp.Start(Seconds(0.0));
     dhcpServerApp.Stop(Seconds(20.0));
 
-    NetDeviceContainer dhcpClientNetDevs;
-    dhcpClientNetDevs.Add(devNet.Get(1));
-    dhcpClientNetDevs.Add(devNet.Get(2));
+    NetDeviceContainer dhcpClientNetDevs1;
+    dhcpClientNetDevs1.Add(devNet.Get(1));
 
-    ApplicationContainer dhcpClientApps = dhcpHelper.InstallDhcp6Client(dhcpClientNetDevs);
-    dhcpClientApps.Start(Seconds(1.0));
-    dhcpClientApps.Stop(Seconds(20.0));
+    NetDeviceContainer dhcpClientNetDevs2;
+    dhcpClientNetDevs2.Add(devNet.Get(2));
 
-    dhcpClientApps.Get(0)->TraceConnect("NewLease",
-                                        "0",
-                                        MakeCallback(&Dhcp6TestCase::LeaseObtained, this));
-    dhcpClientApps.Get(1)->TraceConnect("NewLease",
-                                        "1",
-                                        MakeCallback(&Dhcp6TestCase::LeaseObtained, this));
+    ApplicationContainer dhcpClient1 = dhcpHelper.InstallDhcp6Client(dhcpClientNetDevs1);
+    dhcpClient1.Start(Seconds(1.0));
+    dhcpClient1.Stop(Seconds(20.0));
+
+    ApplicationContainer dhcpClient2 = dhcpHelper.InstallDhcp6Client(dhcpClientNetDevs2);
+    dhcpClient2.Start(Seconds(1.0));
+    dhcpClient2.Stop(Seconds(20.0));
+
+    dhcpClient1.Get(0)->TraceConnect("NewLease",
+                                     "0",
+                                     MakeCallback(&Dhcp6TestCase::LeaseObtained, this));
+    dhcpClient2.Get(0)->TraceConnect("NewLease",
+                                     "1",
+                                     MakeCallback(&Dhcp6TestCase::LeaseObtained, this));
 
     Simulator::Stop(Seconds(21.0));
     Simulator::Run();

@@ -62,13 +62,6 @@ class Dhcp6Helper
     void SetServerAttribute(std::string name, const AttributeValue& value);
 
     /**
-     * @brief Install DHCPv6 client on a node / NetDevice
-     * @param netDevice The NetDevice that the client will use
-     * @return The application container with DHCPv6 client installed
-     */
-    ApplicationContainer InstallDhcp6Client(Ptr<NetDevice> netDevice) const;
-
-    /**
      * @brief Install DHCP client on a set of nodes / NetDevices
      * @param netDevices The NetDevices that the DHCP client will use
      * @return The application container with DHCP client installed
@@ -84,13 +77,6 @@ class Dhcp6Helper
     ApplicationContainer InstallDhcp6Server(NetDeviceContainer netDevices);
 
   private:
-    /**
-     * @brief Function to install DHCPv6 client on a node
-     * @param netDevice The NetDevice on which DHCPv6 client application has to be installed
-     * @return The pointer to the installed DHCPv6 client
-     */
-    Ptr<Application> InstallDhcp6ClientPriv(Ptr<NetDevice> netDevice) const;
-
     ObjectFactory m_clientFactory; //!< DHCPv6 client factory.
     ObjectFactory m_serverFactory; //!< DHCPv6 server factory.
 };

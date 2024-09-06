@@ -93,7 +93,6 @@
 #include "ns3/yans-wifi-helper.h"
 
 using namespace ns3;
-using namespace ns3::internetapps;
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Example");
 
@@ -198,16 +197,21 @@ main(int argc, char* argv[])
     dhcp6Helper.SetServerAttribute("ValidLifetime", StringValue("20s"));
 
     // DHCP clients
-    NetDeviceContainer dhcpClientNetDevs;
-    dhcpClientNetDevs.Add(nonRouterDevices.Get(1));
-    dhcpClientNetDevs.Add(nonRouterDevices.Get(2));
+    NetDeviceContainer dhcpClientNetDevs1;
+    NetDeviceContainer dhcpClientNetDevs2;
+    dhcpClientNetDevs1.Add(nonRouterDevices.Get(1));
+    dhcpClientNetDevs2.Add(nonRouterDevices.Get(2));
 
-    dhcpClientNetDevs.Add(staDevices.Get(1));
-    dhcpClientNetDevs.Add(staDevices.Get(2));
+    dhcpClientNetDevs1.Add(staDevices.Get(1));
+    dhcpClientNetDevs2.Add(staDevices.Get(2));
 
-    ApplicationContainer dhcpClients = dhcp6Helper.InstallDhcp6Client(dhcpClientNetDevs);
-    dhcpClients.Start(Seconds(1.0));
-    dhcpClients.Stop(stopTime);
+    ApplicationContainer dhcpClient1 = dhcp6Helper.InstallDhcp6Client(dhcpClientNetDevs1);
+    dhcpClient1.Start(Seconds(1.0));
+    dhcpClient1.Stop(stopTime);
+
+    ApplicationContainer dhcpClient2 = dhcp6Helper.InstallDhcp6Client(dhcpClientNetDevs2);
+    dhcpClient2.Start(Seconds(1.0));
+    dhcpClient2.Stop(stopTime);
 
     // DHCP server
     NetDeviceContainer serverNetDevices;
