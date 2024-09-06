@@ -183,7 +183,7 @@ class WifiCoTraceHelper
      * @param end2 End of second interval
      * @return Return the time duration common between the two intervals.
      */
-    Time computeOverlappingDuration(Time beg1, Time end1, Time beg2, Time end2);
+    Time ComputeOverlappingDuration(Time beg1, Time end1, Time beg2, Time end2);
     /**
      * A helper function used by PrintStatistics method. It converts absolute statistics to
      * percentages.

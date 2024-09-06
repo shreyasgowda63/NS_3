@@ -322,12 +322,12 @@ WifiCoTraceHelper::NotifyWifiPhyState(std::size_t idx,
     {
         // Overlapping duration should be negative because duration is negative.
         overlappingDuration =
-            -1 * computeOverlappingDuration(m_startTime, m_stopTime, start + duration, start);
+            -1 * ComputeOverlappingDuration(m_startTime, m_stopTime, start + duration, start);
     }
     else
     {
         overlappingDuration =
-            computeOverlappingDuration(m_startTime, m_stopTime, start, start + duration);
+            ComputeOverlappingDuration(m_startTime, m_stopTime, start, start + duration);
     }
 
     if (!overlappingDuration.IsZero())
@@ -356,7 +356,7 @@ WifiCoTraceHelper::NotifyWifiPhyState(std::size_t idx,
 }
 
 Time
-WifiCoTraceHelper::computeOverlappingDuration(Time beg1, Time end1, Time beg2, Time end2)
+WifiCoTraceHelper::ComputeOverlappingDuration(Time beg1, Time end1, Time beg2, Time end2)
 {
     const Time Zero{Seconds(0)};
 
