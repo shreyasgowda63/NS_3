@@ -31,8 +31,6 @@
 
 namespace ns3
 {
-namespace internetapps
-{
 
 NS_LOG_COMPONENT_DEFINE("Dhcp6Duid");
 
@@ -282,5 +280,4 @@ Duid::DuidHash::operator()(const Duid& x) const noexcept
     std::string s(buffer.begin(), buffer.begin() + duidLen);
     return std::hash<std::string>{}(s);
 }
-} // namespace internetapps
 } // namespace ns3
