@@ -259,13 +259,15 @@ class ShowLastPackets(InformationWindow):
 
         def sel_all_cb(bt):
             for c in self.packet_filter_list:
-                c.selected = True
+                if c is not None:
+                    c.selected = True
             self.packet_filter_widget.refresh()
             update_capture_options()
 
         def sel_none_cb(bt):
             for c in self.packet_filter_list:
-                c.selected = False
+                if c is not None:
+                    c.selected = False
             self.packet_filter_widget.refresh()
             update_capture_options()
 
