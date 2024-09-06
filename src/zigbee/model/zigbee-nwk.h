@@ -1083,6 +1083,27 @@ class ZigbeeNwk : public Object
      */
     uint32_t m_maxPendingTxQueueSize;
 
+    /**
+     * Structure representing an element in the Tx Buffer.
+     */
+    struct TxPkt : public SimpleRefCount<TxPkt>
+    {
+        uint8_t macHandle; //!< The mac handle (msdu handle).
+        uint8_t nwkHandle; //!< The nwk handle (nsdu handle).
+        Ptr<Packet> txPkt; //!< The buffered packet.
+    };
+
+    /**
+     * The transmission buffer. Copies of DATA packets are stored here
+     * for post transmission handling.
+     */
+    std::deque<Ptr<TxPkt>> m_txBuffer;
+
+    /**
+     * The maximum size of the transmission buffer
+     */
+    uint8_t m_txBufferMaxSize;
+
     ///////////////
     // Callbacks //
     ///////////////
@@ -1235,23 +1256,65 @@ class ZigbeeNwk : public Object
     RreqRetryTable m_rreqRetryTable;
 
     /**
-     * Enqueue a packet in the pending transaction queue until
+     * Enqueue a packet in the pending transmission queue until
      * a route is discovered for its destination.
      *
      * @param p The packet to enqueue.
      * @param nsduHandle The handle associated to this packet
      */
-    void EnqueueTx(Ptr<Packet> p, uint8_t nsduHandle);
+    void EnqueuePendingTx(Ptr<Packet> p, uint8_t nsduHandle);
 
     /**
-     * Dequeue a packet in the pending transaction queue.
+     * Dequeue a packet previously enqueued in the pending transmission queue.
+     * This is called after a route has successfully be found and the DATA
+     * packet is ready to be transmitted.
      *
      * @param dst The destination of the packet
      * @param entry The pending packet element
      *
      * @return True if successfully dequeued
      */
-    bool DequeueTx(Mac16Address dst, Ptr<PendingTxPkt> entry);
+    bool DequeuePendingTx(Mac16Address dst, Ptr<PendingTxPkt> entry);
+
+    /**
+     * Dispose of all PendingTxPkt accumulated in the pending transmission queue.
+     */
+    void DisposePendingTx();
+
+    /**
+     * Buffer a copy of a DATA frame for post transmission handling
+     * (Transmission failure counts, retransmission of DATA broadcasts,
+     * push of confirm notifications to the next layer)
+     *
+     * @param p The DATA packet to be buffered in the TxPkt buffer.
+     * @param macHandle The mac layer handle (msdu handle) associated to this frame.
+     * @param nwkHandle The nwk layer handle (nsdu handle) associated to this frame.
+     */
+    void BufferTxPkt(Ptr<Packet> p, uint8_t macHandle, uint8_t nwkHandle);
+
+    /**
+     * Retrieves a previously DATA frame buffered in the TxPkt buffer.
+     * If the frame is successfully retrieved, the entry is removed from the
+     * TxPkt buffer.
+     *
+     * @param macHandle The mac layer handle (msdu handle) associated to this frame.
+     * @param txPkt The packet buffered in the TxPkt buffer.
+     * @return True if the txPkt is successfully retrieved.
+     */
+    bool RetrieveTxPkt(uint8_t macHandle, Ptr<TxPkt>& txPkt);
+
+    /**
+     * Dispose of all the entries in the TxPkt Buffer.
+     */
+    void DisposeTxPktBuffer();
+
+    /**
+     * Cast a Mac layer status to a NWK layer status.
+     *
+     * @param macStatus The Mac layer status to be casted.
+     * @return The ZigbeeNwkStatus resulting from the cast.
+     */
+    ZigbeeNwkStatus GetNwkStatus(lrwpan::MacStatus macStatus);
 
     /**
      *  Used by a Zigbee coordinator or router to allocate a
@@ -1362,9 +1425,9 @@ class ZigbeeNwk : public Object
      * and store the pending data transmission until a route is found.
      *
      * @param packet The NPDU (nwkHeader + payload) to transmit.
-     * @param handle The MSDU handle.
+     * @param macHandle The Mac handle associated to this packet (msdu handle).
      */
-    void SendUnicast(Ptr<Packet> packet, uint8_t handle);
+    void SendUnicast(Ptr<Packet> packet, uint8_t macHandle);
 
     /**
      * Find the next hop in route to a destination.
@@ -1655,6 +1718,18 @@ class ZigbeeNwk : public Object
      * The handle assigned during a data transmission
      */
     SequenceNumber8 m_dataHandle;
+
+    /**
+     * The handle assigned when doing a transmission request
+     * to the MAC layer
+     */
+    SequenceNumber8 m_macHandle;
+
+    /**
+     * The expiration time of routing table entry.
+     * This value is not standardized and it is implementation dependent.
+     */
+    Time m_routeExpiryTime;
 };
 
 } // namespace zigbee

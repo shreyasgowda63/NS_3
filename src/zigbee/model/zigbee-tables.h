@@ -937,7 +937,7 @@ class BroadcastTransactionRecord : public SimpleRefCount<BroadcastTransactionRec
 
   private:
     Mac16Address m_srcAddr;        //!< The 16-bit network address of the broadcast initiator.
-    uint8_t m_sequenceNumber;      //!< The NWK layer sequence number of the initiator's broadcast.
+    uint8_t m_sequenceNumber;      //!< The RREQ sequence number of the initiator's broadcast.
     Time m_expirationTime;         //!< An indicator of when the entry expires
     uint8_t m_broadcastRetryCount; //!< The number of times this BCST has been retried.
 };
@@ -977,11 +977,22 @@ class RoutingTable
     void Purge();
 
     /**
+     * Identify and mark entries as ROUTE_INACTIVE status for entries who
+     * have exceeded their lifetimes.
+     */
+    void IdentifyExpiredEntries();
+
+    /**
      * Remove an entry from the routing table.
      *
      * @param dst The MAC 16 bit destination address of the entry to remove.
      */
     void Delete(Mac16Address dst);
+
+    /**
+     * Delete the first occrurance of an expired entry (ROUTE_INACTIVE status)
+     */
+    void DeleteExpiredEntry();
 
     /**
      * Print the Routing table.
@@ -1268,28 +1279,28 @@ class BroadcastTransactionTable
     bool AddEntry(Ptr<BroadcastTransactionRecord> entry);
 
     /**
-     * Get the current Size of the BTT.
+     * Get the current Size of the broadcast transaction table (BTT).
      *
      * @return uint32_t
      */
     uint32_t GetSize();
 
     /**
-     * Set the maximum size of the BTT
+     * Set the maximum size of the broadcast transaction table (BTT)
      *
-     * @param size The size of the BTT.
+     * @param size The size of the broadcast transaction table (BTT).
      */
     void SetMaxTableSize(uint32_t size);
 
     /**
-     *  Get the maximum size of the BTT
+     *  Get the maximum size of the broadcast transaction table (BTT)
      *
-     *  @return The maximum size of the BTT.
+     *  @return The maximum size of the broadcast transaction table (BTT).
      */
     uint32_t GetMaxTableSize() const;
 
     /**
-     * Look up for broadcast transaction record in the broadcast transaction table.
+     * Look up for broadcast transaction record in the broadcast transaction table (BTT).
      *
      * @param seq The sequence number of the broadcasted frame.
      * @param entryFound The returned entry if found in the table
@@ -1299,22 +1310,22 @@ class BroadcastTransactionTable
     bool LookUpEntry(uint8_t seq, Ptr<BroadcastTransactionRecord>& entryFound);
 
     /**
-     * Purge expired entries from the BTT.
+     * Purge expired entries from the broadcast transaction table (BTT).
      */
     void Purge();
 
     /**
-     * Delete an entry from the BTT.
+     * Dispose of all broadcast transaction records (BTR) in the broadcast transaction table(BTT).
+     */
+    void Dispose();
+
+    /**
+     * Delete an entry from the broadcast transaction table (BTT).
      *
      * @param src The address of the broadcast initiator
      * @param seq The sequence number of the broadcast
      */
     void Delete(Mac16Address src, uint8_t seq);
-
-    /**
-     * Dispose of the table and all its elements
-     */
-    void Dispose();
 
     /**
      * Print the broadcast transaction table (BTT)

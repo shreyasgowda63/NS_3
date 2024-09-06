@@ -69,10 +69,12 @@ using namespace ns3::zigbee;
 
 ZigbeeStackContainer zigbeeStacks;
 
-static void
+/*static void
 TraceRoute(Mac16Address src, Mac16Address dst)
 {
-    std::cout << "Traceroute to destination [" << dst << "]:\n";
+    std::cout << "\n";
+    std::cout << "Traceroute to destination [" << dst
+              << "] (Time: " << Simulator::Now().As(Time::S) <<"):\n";
     Mac16Address target = src;
     uint32_t count = 1;
     while (target != Mac16Address("FF:FF") && target != dst)
@@ -114,7 +116,8 @@ TraceRoute(Mac16Address src, Mac16Address dst)
             count++;
         }
     }
-}
+    std::cout << "\n";
+}*/
 
 static void
 NwkDataIndication(Ptr<ZigbeeStack> stack, NldeDataIndicationParams params, Ptr<Packet> p)
@@ -210,10 +213,10 @@ int
 main(int argc, char* argv[])
 {
     LogComponentEnableAll(LogLevel(LOG_PREFIX_TIME | LOG_PREFIX_FUNC | LOG_PREFIX_NODE));
-    LogComponentEnable("ZigbeeNwk", LOG_LEVEL_DEBUG);
-    // LogComponentEnable("LrWpanCsmaCa", LOG_LEVEL_DEBUG);
-    // LogComponentEnable("LrWpanMac", LOG_LEVEL_DEBUG);
-    // LogComponentEnable("LrWpanPhy", LOG_LEVEL_DEBUG);
+    // LogComponentEnable("ZigbeeNwk", LOG_LEVEL_DEBUG);
+    //  LogComponentEnable("LrWpanCsmaCa", LOG_LEVEL_DEBUG);
+    //  LogComponentEnable("LrWpanMac", LOG_LEVEL_DEBUG);
+    //  LogComponentEnable("LrWpanPhy", LOG_LEVEL_DEBUG);
 
     NodeContainer nodes;
     nodes.Create(50);
@@ -320,6 +323,20 @@ main(int argc, char* argv[])
         }
     }
 
+    // 5- Find a route and send a packet  (data request with route discovery)
+    Ptr<Packet> p = Create<Packet>(5);
+    NldeDataRequestParams dataReqParams;
+    dataReqParams.m_dstAddrMode = UCST_BCST;
+    dataReqParams.m_dstAddr = Mac16Address("30:56");
+    dataReqParams.m_nsduHandle = 25;
+    dataReqParams.m_discoverRoute = ENABLE_ROUTE_DISCOVERY;
+    Simulator::ScheduleWithContext(zigbeeStacks.Get(0)->GetNode()->GetId(),
+                                   Seconds(500),
+                                   &ZigbeeNwk::NldeDataRequest,
+                                   zigbeeStacks.Get(0)->GetNwk(),
+                                   dataReqParams,
+                                   p);
+
     // 5- Find a route to the given device short address
     /* NlmeRouteDiscoveryRequestParams routeDiscParams;
      routeDiscParams.m_dstAddrMode = UCST_BCST;
@@ -330,11 +347,13 @@ main(int argc, char* argv[])
                                     zigbeeStacks.Get(0)->GetNwk(),
                                     routeDiscParams);
 
+      // make sure the route is formed before using traceroute
      Simulator::Schedule(Seconds(501),
                          &TraceRoute,
                          Mac16Address("00:00"),
                          Mac16Address("30:56"));*/
 
+    /*
     // 5- Many-To-One route discovery
     NlmeRouteDiscoveryRequestParams routeDiscParams;
     routeDiscParams.m_dstAddrMode = NO_ADDRESS;
@@ -344,9 +363,12 @@ main(int argc, char* argv[])
                                    zigbeeStacks.Get(0)->GetNwk(),
                                    routeDiscParams);
 
-    Simulator::Schedule(Seconds(501), &TraceRoute, Mac16Address("b6:24"), Mac16Address("00:00"));
+    Simulator::Schedule(Seconds(501),
+                        &TraceRoute,
+                        Mac16Address("b6:24"),
+                        Mac16Address("00:00"));*/
 
-    Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
+    /*Ptr<OutputStreamWrapper> stream = Create<OutputStreamWrapper>(&std::cout);
     Simulator::ScheduleWithContext(zigbeeStacks.Get(7)->GetNode()->GetId(),
                                    Seconds(502),
                                    &ZigbeeNwk::PrintRoutingTable,
@@ -363,7 +385,7 @@ main(int argc, char* argv[])
                                    Seconds(502),
                                    &ZigbeeNwk::PrintNeighborTable,
                                    zigbeeStacks.Get(7)->GetNwk(),
-                                   stream);
+                                   stream);*/
 
     Simulator::Stop(Seconds(1500));
     Simulator::Run();

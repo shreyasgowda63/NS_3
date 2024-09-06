@@ -374,17 +374,45 @@ RoutingTable::Purge()
 }
 
 void
+RoutingTable::IdentifyExpiredEntries()
+{
+    for (const auto& entry : m_routingTable)
+    {
+        if (Simulator::Now() >= entry->GetLifeTime())
+        {
+            entry->SetStatus(ROUTE_INACTIVE);
+        }
+    }
+}
+
+void
 RoutingTable::Delete(Mac16Address dst)
 {
     std::erase_if(m_routingTable,
                   [&dst](Ptr<RoutingTableEntry> entry) { return entry->GetDestination() == dst; });
 }
 
+void
+RoutingTable::DeleteExpiredEntry()
+{
+    auto it = std::find_if(
+        m_routingTable.begin(),
+        m_routingTable.end(),
+        [](Ptr<RoutingTableEntry> entry) { return entry->GetStatus() == ROUTE_INACTIVE; });
+
+    if (it != m_routingTable.end())
+    {
+        m_routingTable.erase(it);
+    }
+}
+
 bool
 RoutingTable::LookUpEntry(Mac16Address dstAddr, Ptr<RoutingTableEntry>& entryFound)
 {
     NS_LOG_FUNCTION(this << dstAddr);
-    // Purge();
+
+    IdentifyExpiredEntries();
+
     for (const auto& entry : m_routingTable)
     {
         if (entry->GetDestination() == dstAddr)
