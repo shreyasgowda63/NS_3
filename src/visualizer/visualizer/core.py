@@ -449,6 +449,7 @@ class Node(PyVizObject):
         if self.svg_item is not None:
             self._update_svg_position(x, y)
 
+        # ugly, but the better version generates Doxygen warnings.
         for index in range(len(self.links)):
             self.links[index].update_points()
 
