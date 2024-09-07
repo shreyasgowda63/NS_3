@@ -86,6 +86,12 @@ class Dhcp6Client : public Application
     void StartApplication() override;
     void StopApplication() override;
 
+    /**
+     * @ingroup dhcp6
+     *
+     * @class InterfaceConfig
+     * @brief DHCPv6 client config details about each interface on the node.
+     */
     class InterfaceConfig : public SimpleRefCount<InterfaceConfig>
     {
       public:
@@ -233,6 +239,7 @@ class Dhcp6Client : public Application
      */
     std::vector<uint32_t> GetIaids();
 
+    /// Map each interface to its corresponding configuration details.
     std::unordered_map<Ptr<NetDevice>, Ptr<InterfaceConfig>> m_interfaces;
 
     Duid m_clientDuid;                             //!< Store client DUID.

@@ -417,7 +417,16 @@ class ServerUnicastOption : public Options
     Ipv6Address m_serverAddress;
 };
 
+/**
+ * \ingroup dhcp6
+ * Create the typedef PreferenceOption with T as uint8_t
+ */
 typedef IntegerOptions<uint8_t> PreferenceOption;
+
+/**
+ * \ingroup dhcp6
+ * Create the typedef ElapsedTimeOption with T as uint16_t
+ */
 typedef IntegerOptions<uint16_t> ElapsedTimeOption;
 
 } // namespace ns3
