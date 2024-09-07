@@ -9,6 +9,8 @@
 #ifndef FF_MAC_COMMON_H
 #define FF_MAC_COMMON_H
 
+#include "eps-bearer.h"
+
 #include <ns3/ptr.h>
 #include <ns3/simple-ref-count.h>
 
@@ -208,7 +210,7 @@ struct LogicalChannelConfigListElement_s
         NotValid_QosBearerType
     } m_qosBearerType{NotValid_QosBearerType}; ///< the QOS bearer type
 
-    uint8_t m_qci{UINT8_MAX};                       ///< QCI
+    EpsBearer::Qci m_qci{UINT8_MAX};                ///< QCI
     uint64_t m_eRabMaximulBitrateUl{UINT64_MAX};    ///< ERAB maximum bit rate UL
     uint64_t m_eRabMaximulBitrateDl{UINT64_MAX};    ///< ERAB maximum bit rate DL
     uint64_t m_eRabGuaranteedBitrateUl{UINT64_MAX}; ///< ERAB guaranteed bit rate UL
