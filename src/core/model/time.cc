@@ -558,8 +558,7 @@ MakeTimeChecker(const Time min, const Time max)
         {
             NS_LOG_FUNCTION_NOARGS();
             std::ostringstream oss;
-            oss << "Time"
-                << " " << m_minValue << ":" << m_maxValue;
+            oss << "Time " << m_minValue << ":" << m_maxValue;
             return oss.str();
         }
 
