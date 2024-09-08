@@ -37,6 +37,7 @@ been tested on Linux. As of this release, the latest known version to work with 
 - (lr-wpan) !2082 - MAC SET GET attributes added
 - (core) !1904 - Added support for Laplacian and Largest Extreme Value random variables (`LaplacianRandomVariable`, `LargestExtremeValueRandomVariable`)
 - (wifi) - Added support for 80+80 MHz
+- (tcp) !2059 - Aligns PRR implementation with RFC 6937 bis-08. Added a new param `isDupAck` to `DoRecovery` method, removed `ReductionBound` attribute from `TcpPrrRecovery`.
 
 ### Bugs fixed
 
