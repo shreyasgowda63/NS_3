@@ -407,11 +407,11 @@ class Node(PyVizObject):
         self.canvas_item.set_properties(
             radius_x=size, radius_y=size, fill_color_rgba=fill_color_rgba
         )
-        if self._selected:
+        if bool(self._selected):
             line_width = size * 0.3
         else:
             line_width = size * 0.15
-        if self.highlighted:
+        if bool(self.highlighted):
             stroke_color = "yellow"
         else:
             stroke_color = "black"
@@ -449,8 +449,9 @@ class Node(PyVizObject):
         if self.svg_item is not None:
             self._update_svg_position(x, y)
 
-        for link in self.links:
-            link.update_points()
+        # ugly, but the better version generates Doxygen warnings.
+        for index in range(len(self.links)):
+            self.links[index].update_points()
 
         if self._label_canvas_item is not None:
             self._label_canvas_item.set_properties(x=x, y=(y + self._size * 3))

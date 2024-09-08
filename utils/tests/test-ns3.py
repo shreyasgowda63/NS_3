@@ -272,9 +272,7 @@ class NS3UnusedSourcesTestCase(unittest.TestCase):
                 if name.endswith(".cc"):
                     path = os.path.join(root, name)
                     directory = os.path.dirname(path)
-                    if directory not in self.directory_and_files:
-                        self.directory_and_files[directory] = []
-                    self.directory_and_files[directory].append(path)
+                    self.directory_and_files.setdefault(directory, []).append(path)
 
     def test_01_UnusedExampleSources(self):
         """!
@@ -1036,7 +1034,7 @@ class NS3ConfigureTestCase(NS3BaseTestCase):
 
             def format(self, **args):
                 # Convert arguments from python-based ns3rc format to CMake
-                if self.type == "cmake":
+                if self.type in ("cmake"):
                     args["modules"] = (
                         args["modules"].replace("'", "").replace('"', "").replace(",", " ")
                     )

@@ -208,7 +208,7 @@ class IterableIPShell:
                 self.IP.input_splitter.push(line)
                 self.iter_more = self.IP.input_splitter.push_accepts_more()
             if not self.iter_more:
-                if self.no_input_splitter:
+                if bool(self.no_input_splitter):
                     source_raw = "\n".join(self.lines)
                     self.lines = []
                 else:
