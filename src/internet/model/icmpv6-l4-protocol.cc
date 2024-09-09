@@ -140,7 +140,11 @@ Icmpv6L4Protocol::GetTypeId()
                 "DadSuccess",
                 "Duplicate Address not detected during DAD, the address is now PREFERRED",
                 MakeTraceSourceAccessor(&Icmpv6L4Protocol::m_dadSuccessAddressTrace),
-                "ns3::Ipv6Address::TracedCallback");
+                "ns3::Ipv6Address::TracedCallback")
+            .AddTraceSource("RxRouterAdvertisement",
+                            "A router advertisement has been received",
+                            MakeTraceSourceAccessor(&Icmpv6L4Protocol::m_raReceived),
+                            "ns3::Ipv6Address::TracedCallback");
     return tid;
 }
 
@@ -429,6 +433,7 @@ Icmpv6L4Protocol::HandleRA(Ptr<Packet> packet,
     Ptr<Packet> p = packet->Copy();
     Icmpv6RA raHeader;
     Ptr<Ipv6L3Protocol> ipv6 = m_node->GetObject<Ipv6L3Protocol>();
+
     Icmpv6OptionPrefixInformation prefixHdr;
     Icmpv6OptionMtu mtuHdr;
     Icmpv6OptionLinkLayerAddress llaHdr;
@@ -438,6 +443,8 @@ Icmpv6L4Protocol::HandleRA(Ptr<Packet> packet,
     Ipv6Address defaultRouter = Ipv6Address::GetZero();
 
     p->RemoveHeader(raHeader);
+
+    m_raReceived(raHeader, ipv6->GetInterfaceForDevice(interface->GetDevice()));
 
     if (raHeader.GetLifeTime())
     {

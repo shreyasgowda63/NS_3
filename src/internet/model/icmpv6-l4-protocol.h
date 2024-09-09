@@ -700,6 +700,12 @@ class Icmpv6L4Protocol : public IpL4Protocol
      * Includes the address whose state has been changed.
      */
     ns3::TracedCallback<const Ipv6Address&> m_dadSuccessAddressTrace;
+
+    /**
+     * The trace fired when a Router Advertisement is received.
+     * Includes the RA header and the interface on which it is received.
+     */
+    ns3::TracedCallback<const Icmpv6RA&, uint32_t> m_raReceived;
 };
 
 } /* namespace ns3 */
