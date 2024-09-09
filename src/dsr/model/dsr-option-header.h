@@ -36,14 +36,25 @@ namespace dsr
 {
 /**
  * \ingroup dsr
- * \brief header for Dsr Options.
+ * \brief Header for DSR Options.
+ * \verbatim
+   DSR Option Header
+
+   |      0        |      1        |      2...
+   0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7...
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+   |  Option Type  |  Opt Data Len |  Option Data...
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+  \endverbatim
+ *
+ * Specific sub-classes set the `Option Type` value for their type.
  */
 class DsrOptionHeader : public Header
 {
   public:
     /**
      * \struct Alignment
-     * \brief Represents the alignment requirements of an option header
+     * \brief Represents the alignment requirements of an option header.
      */
     struct Alignment
     {
@@ -111,7 +122,7 @@ class DsrOptionHeader : public Header
      */
     uint32_t Deserialize(Buffer::Iterator start) override;
     /**
-     * \brief Get the Alignment requirement of this option header
+     * \brief Get the Alignment requirement of this option header.
      * \return The required alignment
      *
      * Subclasses should only implement this method, if special alignment is
@@ -129,14 +140,25 @@ class DsrOptionHeader : public Header
      */
     uint8_t m_length;
     /**
-     * \brief The anonymous data of this option
+     * \brief The anonymous data of this option.
      */
     Buffer m_data;
 };
 
 /**
  * \ingroup dsr
- * \brief Header of Dsr Option Pad1
+ * \brief Header of DSR Option PAD1.
+ * \verbatim
+   DSR Option PAD1
+
+   |      0        |
+   0 1 2 3 4 5 6 7
+   +-+-+-+-+-+-+-+-+
+   |  Option Type  |
+   +-+-+-+-+-+-+-+-+
+   \endverbatim
+ *
+ * The `Option Type` value for PAD1 is `224`.
  */
 class DsrOptionPad1Header : public DsrOptionHeader
 {
@@ -184,7 +206,22 @@ class DsrOptionPad1Header : public DsrOptionHeader
 
 /**
  * \ingroup dsr
- * \brief Header of Dsr Option Padn
+ * \brief Header of DSR Option PADN.
+ *
+ * The minimum value of `N` is 2 (the Option Type and Pad Length fields),
+ * which results in a `Pad Length` of `0`.
+ *
+ * \verbatim
+   DSR Option PADN
+
+   |      0        |      1        |      2...
+   0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7...
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+   |  Option Type  |  Pad Length   |  (N - 2) x '0'...
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+   \endverbatim
+ *
+ * The `Option Type` value for PADN is `0`.
  */
 class DsrOptionPadnHeader : public DsrOptionHeader
 {
@@ -233,7 +270,7 @@ class DsrOptionPadnHeader : public DsrOptionHeader
 
 /**
  * \ingroup dsr
- * \brief Header of Dsr Option Route Request
+ * \brief Header of DSR Option Route Request.
  *
  * \verbatim
    Route Request (RREQ) Message Format
@@ -254,6 +291,8 @@ class DsrOptionPadnHeader : public DsrOptionHeader
    |                            Address[n]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * The `Option Type` value for RREQ is `1`.
  */
 class DsrOptionRreqHeader : public DsrOptionHeader
 {
@@ -292,22 +331,22 @@ class DsrOptionRreqHeader : public DsrOptionHeader
      */
     void SetTarget(Ipv4Address target);
     /**
-     * \brief Set the vector of ipv4 address
+     * \brief Set the vector of ipv4 address.
      * \param ipv4Address the vector of ipv4 address
      */
     void SetNodesAddress(std::vector<Ipv4Address> ipv4Address);
     /**
-     * \brief Get the vector of ipv4 address
+     * \brief Get the vector of ipv4 address.
      * \return the vector of ipv4 address
      */
     std::vector<Ipv4Address> GetNodesAddresses() const;
     /**
-     * \brief Get the number of nodes
+     * \brief Get the number of nodes.
      * \return the number of nodes
      */
     uint32_t GetNodesNumber() const;
     /**
-     * \brief Add one node address
+     * \brief Add one node address.
      * \param ipv4 The ip address to add
      */
     void AddNodeAddress(Ipv4Address ipv4);
@@ -355,7 +394,7 @@ class DsrOptionRreqHeader : public DsrOptionHeader
      */
     uint32_t Deserialize(Buffer::Iterator start) override;
     /**
-     * \brief Get the Alignment requirement of this option header
+     * \brief Get the Alignment requirement of this option header.
      * \return The required alignment
      */
     Alignment GetAlignment() const override;
@@ -385,15 +424,18 @@ class DsrOptionRreqHeader : public DsrOptionHeader
 
 /**
  * \ingroup dsr
- * \brief Header of Dsr Option Route Reply
+ * \brief Header of DSR Option Route Reply.
+ *
+ * \RFC{4728} specifies the following format for the Route Reply (RREP)
+ * Option:
  *
  * \verbatim
    Standard Route Reply (RREP) Message Format
 
    |      0        |      1        |      2        |      3        |
    0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
-                  -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-                  |  Option Type  |  Opt Data Len |L|   Reserved   |
+                   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+                   |  Option Type  |  Opt Data Len |L| Reserved '0'|
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                            Address[1]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -413,17 +455,21 @@ class DsrOptionRreqHeader : public DsrOptionHeader
    |      0        |      1        |      2        |      3        |
    0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  Option Type  |  Opt Data Len |L|   Reserved   |   Reserved   |
+   |  Option Type  |  Opt Data Len | Reserved '0'  | Reserved '0'  |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                            Address[1]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                            Address[2]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                               ...                             |
+   .                               ...                             .
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                            Address[n]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * The `L` Last Hop External bit is not encoded.
+ *
+ * The `Option Type` value for RREP is `2`.
  */
 class DsrOptionRrepHeader : public DsrOptionHeader
 {
@@ -452,17 +498,17 @@ class DsrOptionRrepHeader : public DsrOptionHeader
      */
     void SetNumberAddress(uint8_t n);
     /**
-     * \brief Set the vector of ipv4 address
+     * \brief Set the vector of ipv4 address.
      * \param ipv4Address the vector of ipv4 address
      */
     void SetNodesAddress(std::vector<Ipv4Address> ipv4Address);
     /**
-     * \brief Get the vector of ipv4 address
+     * \brief Get the vector of ipv4 address.
      * \return the vector of ipv4 address
      */
     std::vector<Ipv4Address> GetNodesAddress() const;
     /**
-     * \brief Get the target node Ip address
+     * \brief Get the target node Ip address.
      * \param ipv4Address target address
      * \return the target address
      */
@@ -501,7 +547,7 @@ class DsrOptionRrepHeader : public DsrOptionHeader
      */
     uint32_t Deserialize(Buffer::Iterator start) override;
     /**
-     * \brief Get the Alignment requirement of this option header
+     * \brief Get the Alignment requirement of this option header.
      * \return The required alignment
      */
     Alignment GetAlignment() const override;
@@ -523,7 +569,10 @@ class DsrOptionRrepHeader : public DsrOptionHeader
 
 /**
  * \ingroup dsr
- * \brief Header of Dsr Option Source Route
+ * \brief Header of DSR Option Source Route.
+ *
+ * \RFC{4728} specifies the following format for the Source Route
+ * option:
  *
  * \verbatim
    Source Route (SR) Message Format
@@ -542,6 +591,31 @@ class DsrOptionRrepHeader : public DsrOptionHeader
    |                            Address[n]                         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * ns-3 uses this modified version:
+ *
+ * \verbatim
+   Source Route (SR) Message Format
+
+   |      0        |      1        |      2        |      3        |
+   0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  Option Type |  Opt Data Len |     Salvage    |   Segs Left   |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                            Address[1]                         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                            Address[2]                         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               ...                             |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                            Address[n]                         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   \endverbatim
+ *
+ * The `Salvage` field is encoded in 8 bits; the `F` First Hop External
+ * and `L` Last Hop External flags are not encoded.
+ *
+ * The `Option Type` value for SR is `96`.
  */
 class DsrOptionSRHeader : public DsrOptionHeader
 {
@@ -565,12 +639,12 @@ class DsrOptionSRHeader : public DsrOptionHeader
      */
     ~DsrOptionSRHeader() override;
     /**
-     * \brief Set the number of segments left to send
+     * \brief Set the number of segments left to send.
      * \param segmentsLeft The segments left
      */
     void SetSegmentsLeft(uint8_t segmentsLeft);
     /**
-     * \brief Get the number of segments left to send
+     * \brief Get the number of segments left to send.
      * \return The segments left
      */
     uint8_t GetSegmentsLeft() const;
@@ -580,17 +654,17 @@ class DsrOptionSRHeader : public DsrOptionHeader
      */
     void SetNumberAddress(uint8_t n);
     /**
-     * \brief Set the vector of ipv4 address
+     * \brief Set the vector of ipv4 address.
      * \param ipv4Address the vector of ipv4 address
      */
     void SetNodesAddress(std::vector<Ipv4Address> ipv4Address);
     /**
-     * \brief Get the vector of ipv4 address
+     * \brief Get the vector of ipv4 address.
      * \return the vector of ipv4 address
      */
     std::vector<Ipv4Address> GetNodesAddress() const;
     /**
-     * \brief Get the node list size which is the number of ip address of the route
+     * \brief Get the node list size which is the number of ip address of the route.
      * \return the node list size
      */
     uint8_t GetNodeListSize() const;
@@ -607,12 +681,12 @@ class DsrOptionSRHeader : public DsrOptionHeader
      */
     Ipv4Address GetNodeAddress(uint8_t index) const;
     /**
-     * \brief Set the salvage value for a packet
+     * \brief Set the salvage value for a packet.
      * \param salvage The salvage value of the packet
      */
     void SetSalvage(uint8_t salvage);
     /**
-     * \brief Get the salvage value for a packet
+     * \brief Get the salvage value for a packet.
      * \return The salvage value of the packet
      */
     uint8_t GetSalvage() const;
@@ -638,7 +712,7 @@ class DsrOptionSRHeader : public DsrOptionHeader
      */
     uint32_t Deserialize(Buffer::Iterator start) override;
     /**
-     * \brief Get the Alignment requirement of this option header
+     * \brief Get the Alignment requirement of this option header.
      * \return The required alignment
      */
     Alignment GetAlignment() const override;
@@ -652,7 +726,7 @@ class DsrOptionSRHeader : public DsrOptionHeader
 
   private:
     /**
-     * \brief The ip address header deserialize to
+     * \brief The ip address header deserialize to.
      */
     Ipv4Address m_address;
     /**
@@ -676,7 +750,7 @@ class DsrOptionSRHeader : public DsrOptionHeader
 /**
  * \ingroup dsr
  * \enum ErrorType
- * \brief Error type used in several DSR Option Headers
+ * \brief Error type used in several DSR Option Headers.
  */
 enum ErrorType
 {
@@ -687,7 +761,9 @@ enum ErrorType
 
 /**
  * \ingroup dsr
- * \brief Header of Dsr Option Route Error
+ * \brief Header of DSR Option Route Error.
+ *
+ * \RFC{4728} specifies the following format for the RERR Option Header:
  *
  * \verbatim
    Route Error (RERR) Message Format
@@ -695,7 +771,7 @@ enum ErrorType
    |      0        |      1        |      2        |      3        |
    0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  Option Type |  Opt Data Len |   Error Type  |Reservd| Salvage|
+   |  Option Type  |  Opt Data Len |   Error Type  |Reservd|Salvage|
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                      Error Source Address                     |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -707,8 +783,34 @@ enum ErrorType
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
  *
+ *
+ * ns-3 uses this modified version:
+ *
+ * \verbatim
+   ns-3 Route Error (RERR) Message Format
+
+   |      0        |      1        |      2        |      3        |
+   0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  Option Type  |  Opt Data Len |   Error Type  |    Salvage    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                      Error Source Address                     |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                    Error Destination Address                  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   .                                                               .
+   .                    Type-Specific Information                  .
+   .                                                               .
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   \endverbatim
+ *
+ * The `Salvage` field is encoded in 8 bits; the `Reservd` field is
+ * not included.
+ *
  * The type-specific information field varies by type of error,
  * as detailed in the derived classes.
+ *
+ * The `Option Type` value for RERR is `3`.
  */
 class DsrOptionRerrHeader : public DsrOptionHeader
 {
@@ -732,42 +834,42 @@ class DsrOptionRerrHeader : public DsrOptionHeader
      */
     ~DsrOptionRerrHeader() override;
     /**
-     * \brief Set the route error type
+     * \brief Set the route error type.
      * \param errorType The error type
      */
     void SetErrorType(uint8_t errorType);
     /**
-     * \brief Get the route error type
+     * \brief Get the route error type.
      * \return The error type
      */
     uint8_t GetErrorType() const;
     /**
-     * \brief Set the route error source address
+     * \brief Set the route error source address.
      * \param errorSrcAddress The error source address
      */
     virtual void SetErrorSrc(Ipv4Address errorSrcAddress);
     /**
-     * \brief Get the route error source address
+     * \brief Get the route error source address.
      * \return The error source address
      */
     virtual Ipv4Address GetErrorSrc() const;
     /**
-     * \brief Set the salvage value of the packet
+     * \brief Set the salvage value of the packet.
      * \param salvage The salvage value of the packet
      */
     virtual void SetSalvage(uint8_t salvage);
     /**
-     * \brief Get the salvage value of the packet
+     * \brief Get the salvage value of the packet.
      * \return The salvage value of the packet
      */
     virtual uint8_t GetSalvage() const;
     /**
-     * \brief Set the error destination ip address
+     * \brief Set the error destination ip address.
      * \param errorDstAddress The error destination address
      */
     virtual void SetErrorDst(Ipv4Address errorDstAddress);
     /**
-     * \brief Get the error destination ip address
+     * \brief Get the error destination ip address.
      * \return The error destination address
      */
     virtual Ipv4Address GetErrorDst() const;
@@ -793,41 +895,41 @@ class DsrOptionRerrHeader : public DsrOptionHeader
      */
     uint32_t Deserialize(Buffer::Iterator start) override;
     /**
-     * \brief Get the Alignment requirement of this option header
+     * \brief Get the Alignment requirement of this option header.
      * \return The required alignment
      */
     Alignment GetAlignment() const override;
 
   private:
     /**
-     * \brief The error type or route error option
+     * \brief The error type or route error option.
      */
     uint8_t m_errorType;
     /**
-     * \brief The salvage field
+     * \brief The salvage field.
      */
     uint8_t m_salvage;
     /**
-     * \brief The specific error message length
+     * \brief The specific error message length.
      */
     uint16_t m_errorLength;
     /**
-     * \brief The error source address
+     * \brief The error source address.
      */
     Ipv4Address m_errorSrcAddress;
     /**
-     * \brief The error destination address
+     * \brief The error destination address.
      */
     Ipv4Address m_errorDstAddress;
     /**
-     * \brief The anonymous data of this option
+     * \brief The anonymous data of this option.
      */
     Buffer m_errorData;
 };
 
 /**
  * \ingroup dsr
- * \brief Route Error (RERR) Unreachable node address option Message Format
+ * \brief Route Error (RERR) Unreachable node address option Message Format.
  *
  * \verbatim
    Route Error Unreachable type-specific info field
@@ -837,7 +939,14 @@ class DsrOptionRerrHeader : public DsrOptionHeader
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                    Unreachable Node Address                   |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                      Original Destination                     |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * This differs from \RFC{4728} in including the original destination,
+ * in addition to the unreachable node address.
+ *
+ * The `Option Type` value for RERR Unreachable is `3` with ErrorType `1`.
  */
 class DsrOptionRerrUnreachHeader : public DsrOptionRerrHeader
 {
@@ -861,52 +970,52 @@ class DsrOptionRerrUnreachHeader : public DsrOptionRerrHeader
      */
     ~DsrOptionRerrUnreachHeader() override;
     /**
-     * \brief Set the route error source address
+     * \brief Set the route error source address.
      * \param errorSrcAddress The error source address
      */
     void SetErrorSrc(Ipv4Address errorSrcAddress) override;
     /**
-     * \brief Get the route error source address
+     * \brief Get the route error source address.
      * \return The error source address
      */
     Ipv4Address GetErrorSrc() const override;
     /**
-     * \brief Set the salvage value of the packet
+     * \brief Set the salvage value of the packet.
      * \param salvage The salvage value of the packet
      */
     void SetSalvage(uint8_t salvage) override;
     /**
-     * \brief Get the salvage value of the packet
+     * \brief Get the salvage value of the packet.
      * \return The salvage value of the packet
      */
     uint8_t GetSalvage() const override;
     /**
-     * \brief Set the error destination ip address
+     * \brief Set the error destination ip address.
      * \param errorDstAddress The error destination address
      */
     void SetErrorDst(Ipv4Address errorDstAddress) override;
     /**
-     * \brief Get the error destination ip address
+     * \brief Get the error destination ip address.
      * \return The error destination address
      */
     Ipv4Address GetErrorDst() const override;
     /**
-     * \brief Set the unreachable node ip address
+     * \brief Set the unreachable node ip address.
      * \param unreachNode The unreachable ip address
      */
     void SetUnreachNode(Ipv4Address unreachNode);
     /**
-     * \brief Get the unreachable node ip address
+     * \brief Get the unreachable node ip address.
      * \return The unreachable ip address
      */
     Ipv4Address GetUnreachNode() const;
     /**
-     * \brief Set the unreachable node ip address
+     * \brief Set the unreachable node ip address.
      * \param originalDst The unreachable ip address
      */
     void SetOriginalDst(Ipv4Address originalDst);
     /**
-     * \brief Get the unreachable node ip address
+     * \brief Get the unreachable node ip address.
      * \return The unreachable ip address
      */
     Ipv4Address GetOriginalDst() const;
@@ -932,41 +1041,41 @@ class DsrOptionRerrUnreachHeader : public DsrOptionRerrHeader
      */
     uint32_t Deserialize(Buffer::Iterator start) override;
     /**
-     * \brief Get the Alignment requirement of this option header
+     * \brief Get the Alignment requirement of this option header.
      * \return The required alignment
      */
     Alignment GetAlignment() const override;
 
   private:
     /**
-     * \brief The error type or route error option
+     * \brief The error type or route error option.
      */
     uint8_t m_errorType;
     /**
-     * \brief The salvage field
+     * \brief The salvage field.
      */
     uint8_t m_salvage;
     /**
-     * \brief The error source address
+     * \brief The error source address.
      */
     Ipv4Address m_errorSrcAddress;
     /**
-     * \brief The error destination address
+     * \brief The error destination address.
      */
     Ipv4Address m_errorDstAddress;
     /**
-     * \brief The unreachable node address
+     * \brief The unreachable node address.
      */
     Ipv4Address m_unreachNode;
     /**
-     * \brief The original destination address
+     * \brief The original destination address.
      */
     Ipv4Address m_originalDst;
 };
 
 /**
  * \ingroup dsr
- * \brief Route Error (RERR) Unsupported option Message Format
+ * \brief Route Error (RERR) Unsupported option Message Format.
  *
  * The type-specific info field of DsrOptionRerrHeader contains
  *
@@ -979,6 +1088,8 @@ class DsrOptionRerrUnreachHeader : public DsrOptionRerrHeader
    |Unsupported Opt|
    +-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * The `Option Type` value for RERR Unreachable is `3` with ErrorType `3`.
  */
 class DsrOptionRerrUnsupportedHeader : public DsrOptionRerrHeader
 {
@@ -1002,42 +1113,42 @@ class DsrOptionRerrUnsupportedHeader : public DsrOptionRerrHeader
      */
     ~DsrOptionRerrUnsupportedHeader() override;
     /**
-     * \brief Set the route error source address
+     * \brief Set the route error source address.
      * \param errorSrcAddress The error source address
      */
     void SetErrorSrc(Ipv4Address errorSrcAddress) override;
     /**
-     * \brief Get the route error source address
+     * \brief Get the route error source address.
      * \return The error source address
      */
     Ipv4Address GetErrorSrc() const override;
     /**
-     * \brief Set the salvage value of the packet
+     * \brief Set the salvage value of the packet.
      * \param salvage the salvage value
      */
     void SetSalvage(uint8_t salvage) override;
     /**
-     * \brief Get the salvage value of the packet
+     * \brief Get the salvage value of the packet.
      * \return The salvage value of the packet
      */
     uint8_t GetSalvage() const override;
     /**
-     * \brief Set the error destination ip address
+     * \brief Set the error destination ip address.
      * \param errorDstAddress The error destination address
      */
     void SetErrorDst(Ipv4Address errorDstAddress) override;
     /**
-     * \brief Get the error destination ip address
+     * \brief Get the error destination ip address.
      * \return The error destination address
      */
     Ipv4Address GetErrorDst() const override;
     /**
-     * \brief Set the unsupported option type value
+     * \brief Set the unsupported option type value.
      * \param optionType The unsupported option type value
      */
     void SetUnsupported(uint16_t optionType);
     /**
-     * \brief Get the unsupported option type value
+     * \brief Get the unsupported option type value.
      * \return The unsupported option type value
      */
     uint16_t GetUnsupported() const;
@@ -1063,37 +1174,37 @@ class DsrOptionRerrUnsupportedHeader : public DsrOptionRerrHeader
      */
     uint32_t Deserialize(Buffer::Iterator start) override;
     /**
-     * \brief Get the Alignment requirement of this option header
+     * \brief Get the Alignment requirement of this option header.
      * \return The required alignment
      */
     Alignment GetAlignment() const override;
 
   private:
     /**
-     * \brief The error type or route error option
+     * \brief The error type or route error option.
      */
     uint8_t m_errorType;
     /**
-     * \brief The salvage field
+     * \brief The salvage field.
      */
     uint8_t m_salvage;
     /**
-     * \brief The error source address
+     * \brief The error source address.
      */
     Ipv4Address m_errorSrcAddress;
     /**
-     * \brief The error destination address
+     * \brief The error destination address.
      */
     Ipv4Address m_errorDstAddress;
     /**
-     * \brief The unsupported option
+     * \brief The unsupported option.
      */
     uint16_t m_unsupported;
 };
 
 /**
  * \ingroup dsr
- * \brief Header of Dsr Option ack request
+ * \brief Header of Dsr Option ack request.
  *
  * \verbatim
    Acknowledgement Request (ACK_RREQ) Message Format
@@ -1104,6 +1215,8 @@ class DsrOptionRerrUnsupportedHeader : public DsrOptionRerrHeader
    |  Option Type |  Opt Data Len |         Identification         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * The `Option Type` value for ACK_RREQ is `160`.
  */
 class DsrOptionAckReqHeader : public DsrOptionHeader
 {
@@ -1158,7 +1271,7 @@ class DsrOptionAckReqHeader : public DsrOptionHeader
      */
     uint32_t Deserialize(Buffer::Iterator start) override;
     /**
-     * \brief Get the Alignment requirement of this option header
+     * \brief Get the Alignment requirement of this option header.
      * \return The required alignment
      */
     Alignment GetAlignment() const override;
@@ -1172,7 +1285,7 @@ class DsrOptionAckReqHeader : public DsrOptionHeader
 
 /**
  * \ingroup dsr
- * \brief Header of Dsr Option ack
+ * \brief Header of Dsr Option ack.
  *
  * \verbatim
    Acknowledgement (ACK) Message Format
@@ -1187,6 +1300,8 @@ class DsrOptionAckReqHeader : public DsrOptionHeader
    |                     ACK Destination Address                   |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    \endverbatim
+ *
+ * The `Option Type` value for ACK is `32`.
  */
 class DsrOptionAckHeader : public DsrOptionHeader
 {
@@ -1261,22 +1376,22 @@ class DsrOptionAckHeader : public DsrOptionHeader
      */
     uint32_t Deserialize(Buffer::Iterator start) override;
     /**
-     * \brief Get the Alignment requirement of this option header
+     * \brief Get the Alignment requirement of this option header.
      * \return The required alignment
      */
     Alignment GetAlignment() const override;
 
   private:
     /**
-     * \brief Identification field
+     * \brief Identification field.
      */
     uint16_t m_identification;
     /**
-     * \brief Ack source address
+     * \brief Ack source address.
      */
     Ipv4Address m_realSrcAddress;
     /**
-     * \brief Ack destination address
+     * \brief Ack destination address.
      */
     Ipv4Address m_realDstAddress;
 };

@@ -34,38 +34,42 @@ namespace ns3
 namespace dsr
 {
 /**
- * \class DsrHeader
- * \brief Header for Dsr Routing.
- */
+ * \ingroup dsr
+ * \brief Header for DSR Routing.
+ *
+ * \RFC{4728} specifies the following format for the fixed portion of
+ * the DSR Options Header:
+ *
+ * \verbatim
+   Fixed Portion of the DSR Options Header
 
-/**
-* \ingroup dsr
-* \brief Dsr fixed size header Format
-  \verbatim
    |      0        |      1        |      2        |      3        |
    0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  Next Header |F|     Reservd    |       Payload Length       |
+   |  Next Header |F|   Reserved   |       Payload Length          |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                            Options                           |
+   .                            Options                            .
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  \endverbatim
-*/
+   \endverbatim
+ *
+ * ns-3 uses this modified version for the fixed portion of the DSR
+ * Options Header:
+ *
+ * \verbatim
+   ns-3 Format of the Fixed Portion of the DSR Options Header
 
-/**
-* \ingroup dsr
-* \brief The modified version of Dsr fixed size header Format
-  \verbatim
    |      0        |      1        |      2        |      3        |
    0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  Next Header |F|  Message Type  |       Payload Length       |
+   |  Next Header  |  Message Type |           Source Id           |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |             Source Id           |            Dest Id         |
+   |            Dest Id            |         Payload Length        |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                            Options                           |
+   .                            Options                            .
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   \endverbatim
+*
+* The `F` Flow State Header Flag is not included.
 */
 class DsrFsHeader : public Header
 {
@@ -174,11 +178,11 @@ class DsrFsHeader : public Header
      */
     uint16_t m_payloadLen;
     /**
-     * \brief The source node id
+     * \brief The source node id.
      */
     uint16_t m_sourceId;
     /**
-     * \brief The destination node id
+     * \brief The destination node id.
      */
     uint16_t m_destId;
     /**
@@ -189,13 +193,15 @@ class DsrFsHeader : public Header
 
 /**
  * \class DsrOptionField
- * \brief Option field for an DsrFsHeader
+ * \brief Option field for an DsrFsHeader.
  * Enables adding options to an DsrFsHeader
  *
- * Implementor's note: Make sure to add the result of
- * OptionField::GetSerializedSize () to your DsrFsHeader::GetSerializedSize ()
- * return value. Call OptionField::Serialize and OptionField::Deserialize at the
- * end of your corresponding DsrFsHeader methods.
+ * \internal Implementor's note
+ *
+ * Make sure to add the result of OptionField::GetSerializedSize() to
+ * your DsrFsHeader::GetSerializedSize() return value. Call
+ * OptionField::Serialize() and OptionField::Deserialize() at the end
+ * of your corresponding DsrFsHeader methods.
  */
 class DsrOptionField
 {
@@ -227,12 +233,12 @@ class DsrOptionField
      */
     uint32_t Deserialize(Buffer::Iterator start, uint32_t length);
     /**
-     * \brief Serialize the option, prepending pad1 or padn option as necessary
+     * \brief Serialize the option, prepending pad1 or padn option as necessary.
      * \param option the option header to serialize
      */
     void AddDsrOption(const DsrOptionHeader& option);
     /**
-     * \brief Get the offset where the options begin, measured from the start of
+     * \brief Get the offset where the options begin, measured from the start of.
      * the extension header.
      * \return the offset from the start of the extension header
      */
@@ -262,7 +268,7 @@ class DsrOptionField
 
 /**
  * \class DsrRoutingHeader
- * \brief Header of Dsr Routing
+ * \brief Header of Dsr Routing.
  */
 class DsrRoutingHeader : public DsrFsHeader, public DsrOptionField
 {
