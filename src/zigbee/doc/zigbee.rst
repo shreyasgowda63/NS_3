@@ -2,25 +2,19 @@
 .. highlight:: cpp
 
 
-Zigbee Pro Specification
-------------------------
+Zigbee
+------
 
 This chapter describes the implementation of |ns3| models for Zigbee
 protocol stack (Zigbee Pro) as specified by
 the CSA Zigbee Specification Revision 22 1.0 (2017).
 
-
-Model Description
-*****************
-
-The source code for the new module lives in the directory ``zigbee``.
-
 The model described in the present document, represents the uncertified simulation models of Zigbee (TM)
 technology to be used in |ns3| for research and educational purposes. The objective is to provide
 |ns3| with a non-IP dependent layer 3 routing alternative to be used with the ``lr-wpan`` (IEEE 802.15.4-2011) module.
 
-Design
-======
+
+The source code for the new module lives in the directory ``src\zigbee``.
 
 .. _fig-ZigbeeStackArch:
 
@@ -28,64 +22,27 @@ Design
 
     Zigbee Stack Architecture in ns-3
 
-The Zigbee stack implementation is meant to be use on top of an existing LrWpan netdevice (IEEE 802.15.4-2011 PHY & MAC stack).
+The Zigbee stack implementation is meant to be use on top of an existing |ns3| ``LrWpanNetDevice`` (IEEE 802.15.4-2011 PHY & MAC stack).
 The current scope of the project includes only the NWK layer in the Zigbee stack. However, the project can be later extended
 to support higher layers like the Application Sublayer (APS) and the Zigbee Cluster Library (ZCL). Communication between layers
-is done via "primitives". These primitives are implemented in |ns3| using callbacks.
+is done via "primitives". These primitives are implemented in |ns3|  with a combination of functions and callbacks.
 
-Scope and Limitations
-=====================
+The following is a list of NWK primitives supported:
 
-The current implementation focus on adding the Zigbee NWK layer to |ns3| to provide a non-IP dependent routing alternative to the lr-wpan module.
-At the moment, the Zigbee Application Support Sub-Layer (APS) is not planned but future support is considered.
-Likewise, higher layers such s Zigbee Device Profile (ZDP) or Zigbee Cluster Library (ZCL) are not planned at the moment.
+- NLME-NETWORK-DISCOVERY (Request, Confirm)
+- NLME-ROUTE-DISCOVERY (Request, Confirm)
+- NLME-NETWORK-FORMATION (Request, Confirm)
+- NLME-JOIN (Request, Confirm, Indication)
+- NLME-DIRECT-JOIN primitives (Request, Confirm)
+- NLME-START-ROUTER primitives (Request, Confirm)
+- NLDE-DATA primitives (Request, Confirm, Indication)
 
-In no particular order, the summary of goals for the current implementation are:
-
-- [x] Implement `ZigbeeStack` to serve as an encapsulating class for easy management of Zigbee layers.
-- [x] Implement `ZigbeeHelper` for easy installation and configuration of the ZigbeeStack with the underlying LrWpan MAC layer.
-- [x] Creation of `ZigbeeStackContainer` used by the `ZigbeeHelper` for quick installation of ZigbeeStacks on top LrWpanNetDevices.
-- [x] Implement the Zigbee network header (`ZigbeeNwkHeader`) used by all the frames passing through the NWK layer.
-- [x] Implementation of Zigbee network payload headers (Currently, only RREQ and RREP command frames).
-- [x] Creation of routing tables and neighbor tables to support routing discovery and route creation.
-- [ ] Implement Network Layer Data Entity (NLDE) and the Network Layer Management Entity (NLME) primitives:
-  - [x] Implementation of NLME-NETWORK-DISCOVERY primitives (Request, Confirm)
-  - [ ] Implementation of NLME-ROUTE-DISCOVERY primitives (Request, Confirm)
-  - [x] Implementation of NLME-NETWORK-FORMATION primitives (Request, Confirm)
-  - [ ] Implementation of NLME-ED-SCAN primitives (Request, Confirm)
-  - [x] Implementation of NLME-JOIN primitives (Request, Confirm, Indication)
-       * [x] Using MAC association procedure
-       * [x] Using the orphaning procedure
-  - [x] Implementation of NLME-DIRECT-JOIN primitives (Request, Confirm)
-  - [x] Implementation of NLME-START-ROUTER primitives (Request, Confirm)
-  - [ ] Implementation of NLDE-DATA primitives (Request, Confirm, Indication)
-- [ ] Examples of model use and test NWK routing capabilities (UNICAST)
-
-Not considered for the initial implementation of the module:
-- Multicast support of any kind.
-- Security.
-- Zigbee Application Support Sub-Layer (APS)
-- Zigbee Cluster Library (ZCL)
-- Zigbee Device Object (ZDO)
-- Application layer
-- Zigbee Stack profile 0x01 (Tree topology and distributed address assignment)
-
-References
-==========
-
-* Zigbee Pro Specification 2017, https://csa-iot.org/developer-resource/specifications-download-request/
-
-Usage
-*****
-
-Enabling Zigbee
-================
-
-Add ``zigbee`` to the list of modules built with |ns3|.
+The network layer (NWK)
+***********************
 
 
 Helpers
-=======
+*******
 
 The model includes a ``ZigbeeHelper`` used to quickly configure and install the NWK layer
 on top of an existing Lr-wpan MAC layer. In essence, ``ZigbeeHelper`` creates a  ``ZigbeeNwk`` object
@@ -94,19 +51,35 @@ wraps it in a ``ZigbeeStack`` and connects this stack to another existing
 the Zigbee NWK layer and the Lr-wpan MAC layer is possible.
 
 
-Examples
-========
+Examples and Test
+*****************
 
 * ``zigbee-direct-join.cc``:  A simple example showing the NWK join process of devices using the orphaning procedure (direct join).
 * ``zigbee-association-join.cc``:  A simple example showing the NWK join process of 3 devices in a zigbee network (MAC association).
 
-Troubleshooting
-===============
-
-Zigbee stack is designed to work on top of IEEE 802.15.4-2011. In ns-3, this means that the zigbee module will only work on top of a correctly
-installed and configured lr-wpan module.
 
 Validation
 **********
 
 No formal validation has been done.
+
+Scope and Limitations
+*********************
+
+- Multicast is not supported
+- Security is not supported.
+- Zigbee Application Support Sub-Layer (APS) is not implemented.
+- Zigbee Cluster Library (ZCL) is not implemented.
+- Zigbee Device Object (ZDO) is not implemented.
+- Application layer is not implemented.
+- Zigbee Stack profile 0x01 (Tree topology and distributed address assignment) is not supported.
+- NLME-ED-SCAN primitives (Request, Confirm) not supported.
+- NLME-SET and NLME-GET (Request, Confirm) not supported.
+
+References
+**********
+
+[`1 <https://csa-iot.org/developer-resource/specifications-download-request/>`_] Zigbee Pro Specification 2017 (R22 1.0)
+
+[`2 <https://dsr-iot.com/downloads/open-source-zigbee/>`_] DSR Z-boss stack 1.0
+
