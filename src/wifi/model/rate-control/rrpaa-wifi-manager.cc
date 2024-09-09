@@ -252,7 +252,7 @@ RrpaaWifiManager::CheckInit(RrpaaWifiRemoteStation* station)
         WifiMode mode = GetSupported(station, 0);
         auto channelWidth = GetChannelWidth(station);
         DataRate rate(mode.GetDataRate(channelWidth));
-        double power = GetPhy()->GetPowerDbm(station->m_powerLevel);
+        double power = GetPhy()->GetPowerDbm(station->m_powerLevel).to<double>();
         m_rateChange(rate, rate, station->m_state->m_address);
         m_powerChange(power, power, station->m_state->m_address);
 
@@ -399,8 +399,8 @@ RrpaaWifiManager::DoGetDataTxVector(WifiRemoteStation* st, ChannelWidthMhz allow
     WifiMode mode = GetSupported(station, station->m_rateIndex);
     DataRate rate(mode.GetDataRate(channelWidth));
     DataRate prevRate(GetSupported(station, station->m_prevRateIndex).GetDataRate(channelWidth));
-    double power = GetPhy()->GetPowerDbm(station->m_powerLevel);
-    double prevPower = GetPhy()->GetPowerDbm(station->m_prevPowerLevel);
+    double power = GetPhy()->GetPowerDbm(station->m_powerLevel).to<double>();
+    double prevPower = GetPhy()->GetPowerDbm(station->m_prevPowerLevel).to<double>();
     if (station->m_prevRateIndex != station->m_rateIndex)
     {
         m_rateChange(prevRate, rate, station->m_state->m_address);

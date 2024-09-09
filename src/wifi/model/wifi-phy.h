@@ -15,7 +15,9 @@
 #include "wifi-phy-state-helper.h"
 #include "wifi-standards.h"
 
+#include "ns3/decibel.h"
 #include "ns3/error-model.h"
+#include "ns3/units.h"
 
 #include <limits>
 
@@ -828,25 +830,25 @@ class WifiPhy : public Object
      *
      * \param start the minimum transmission power level (dBm)
      */
-    void SetTxPowerStart(double start);
+    void SetTxPowerStart(units::power::dBm_t start);
     /**
      * Return the minimum available transmission power level (dBm).
      *
      * \return the minimum available transmission power level (dBm)
      */
-    double GetTxPowerStart() const;
+    units::power::dBm_t GetTxPowerStart() const;
     /**
      * Sets the maximum available transmission power level (dBm).
      *
      * \param end the maximum transmission power level (dBm)
      */
-    void SetTxPowerEnd(double end);
+    void SetTxPowerEnd(units::power::dBm_t end);
     /**
      * Return the maximum available transmission power level (dBm).
      *
      * \return the maximum available transmission power level (dBm)
      */
-    double GetTxPowerEnd() const;
+    units::power::dBm_t GetTxPowerEnd() const;
     /**
      * Sets the number of transmission power levels available between the
      * minimum level and the maximum level. Transmission power levels are
@@ -862,29 +864,29 @@ class WifiPhy : public Object
      */
     uint8_t GetNTxPower() const;
     /**
-     * Sets the transmission gain (dB).
+     * Sets the transmission gain.
      *
      * \param gain the transmission gain in dB
      */
-    void SetTxGain(double gain);
+    void SetTxGain(units::dimensionless::dB_t gain);
     /**
-     * Return the transmission gain (dB).
+     * Return the transmission gain.
      *
      * \return the transmission gain in dB
      */
-    double GetTxGain() const;
+    units::dimensionless::dB_t GetTxGain() const;
     /**
-     * Sets the reception gain (dB).
+     * Sets the reception gain.
      *
      * \param gain the reception gain in dB
      */
-    void SetRxGain(double gain);
+    void SetRxGain(units::dimensionless::dB_t gain);
     /**
-     * Return the reception gain (dB).
+     * Return the reception gain.
      *
      * \return the reception gain in dB
      */
-    double GetRxGain() const;
+    units::dimensionless::dB_t GetRxGain() const;
 
     /**
      * Sets the device this PHY is associated with.
@@ -1099,7 +1101,7 @@ class WifiPhy : public Object
      *
      * \return the transmission power in dBm at the given power level
      */
-    double GetPowerDbm(uint8_t power) const;
+    units::power::dBm_t GetPowerDbm(uint8_t power) const;
 
     /**
      * Reset PHY to IDLE, with some potential TX power restrictions for the next transmission.
@@ -1604,12 +1606,12 @@ class WifiPhy : public Object
     double m_ccaSensitivityThresholdDbm; //!< Clear channel assessment (CCA) modulation and coding
                                          //!< rate sensitivity threshold in dBm
 
-    double m_txGainDb;          //!< Transmission gain (dB)
-    double m_rxGainDb;          //!< Reception gain (dB)
-    double m_txPowerBaseDbm;    //!< Minimum transmission power (dBm)
-    double m_txPowerEndDbm;     //!< Maximum transmission power (dBm)
-    uint8_t m_nTxPower;         //!< Number of available transmission power levels
-    double m_powerDensityLimit; //!< the power density limit (dBm/MHz)
+    units::dimensionless::dB_t m_txGain; //!< Transmission gain
+    units::dimensionless::dB_t m_rxGain; //!< Reception gain
+    units::power::dBm_t m_txPowerBase;   //!< Minimum transmission power (dBm)
+    units::power::dBm_t m_txPowerEnd;    //!< Maximum transmission power (dBm)
+    uint8_t m_nTxPower;                  //!< Number of available transmission power levels
+    double m_powerDensityLimit;          //!< the power density limit (dBm/MHz)
 
     bool m_powerRestricted; //!< Flag whether transmit power is restricted by OBSS PD SR
     double

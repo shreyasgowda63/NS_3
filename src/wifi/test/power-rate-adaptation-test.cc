@@ -94,8 +94,8 @@ PowerRateAdaptationTest::ConfigureNode()
      * Configure power control parameters.
      */
     phy->SetNTxPower(18);
-    phy->SetTxPowerStart(0);
-    phy->SetTxPowerEnd(17);
+    phy->SetTxPowerStart(units::power::dBW_t(-30));
+    phy->SetTxPowerEnd(units::power::dBm_t(17));
 
     /*
      * Create manager.
