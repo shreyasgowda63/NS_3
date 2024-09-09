@@ -98,10 +98,10 @@ WifiSpectrumPhyInterface::SetChannel(const Ptr<SpectrumChannel> c)
 }
 
 void
-WifiSpectrumPhyInterface::SetRxSpectrumModel(const std::vector<double>& centerFrequencies,
-                                             ChannelWidthMhz channelWidth,
-                                             uint32_t bandBandwidth,
-                                             ChannelWidthMhz guardBandwidth)
+WifiSpectrumPhyInterface::SetRxSpectrumModel(const std::vector<MHz_u>& centerFrequencies,
+                                             MHz_u channelWidth,
+                                             Hz_u bandBandwidth,
+                                             MHz_u guardBandwidth)
 {
     std::stringstream ss;
     for (const auto& centerFrequency : centerFrequencies)
@@ -141,13 +141,13 @@ WifiSpectrumPhyInterface::GetFrequencyRange() const
     return m_frequencyRange;
 }
 
-const std::vector<double>&
+const std::vector<MHz_u>&
 WifiSpectrumPhyInterface::GetCenterFrequencies() const
 {
     return m_centerFrequencies;
 }
 
-ChannelWidthMhz
+MHz_u
 WifiSpectrumPhyInterface::GetChannelWidth() const
 {
     return m_channelWidth;

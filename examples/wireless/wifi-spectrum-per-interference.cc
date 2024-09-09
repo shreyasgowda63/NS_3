@@ -169,14 +169,14 @@ int
 main(int argc, char* argv[])
 {
     bool udp{true};
-    double distance{50};
+    meter_u distance{50};
     Time simulationTime{"10s"};
     uint16_t index{256};
     std::string wifiType{"ns3::SpectrumWifiPhy"};
     std::string errorModelType{"ns3::NistErrorRateModel"};
     bool enablePcap{false};
     const uint32_t tcpPacketSize{1448};
-    double waveformPower{0};
+    Watt_u waveformPower{0};
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("simulationTime", "Simulation time", simulationTime);

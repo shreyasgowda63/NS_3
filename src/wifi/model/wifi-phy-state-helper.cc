@@ -310,10 +310,10 @@ WifiPhyStateHelper::LogPreviousIdleAndCcaBusyStates()
 void
 WifiPhyStateHelper::SwitchToTx(Time txDuration,
                                const WifiConstPsduMap& psdus,
-                               double txPowerDbm,
+                               dBm_u txPower,
                                const WifiTxVector& txVector)
 {
-    NS_LOG_FUNCTION(this << txDuration << psdus << txPowerDbm << txVector);
+    NS_LOG_FUNCTION(this << txDuration << psdus << txPower << txVector);
     if (!m_txTrace.IsEmpty())
     {
         for (const auto& psdu : psdus)
@@ -324,7 +324,7 @@ WifiPhyStateHelper::SwitchToTx(Time txDuration,
                       txVector.GetTxPowerLevel());
         }
     }
-    Time now = Simulator::Now();
+    const auto now = Simulator::Now();
     switch (GetState())
     {
     case WifiPhyState::RX:
@@ -347,7 +347,7 @@ WifiPhyStateHelper::SwitchToTx(Time txDuration,
     m_previousStateChangeTime = now;
     m_endTx = now + txDuration;
     m_startTx = now;
-    NotifyListeners(&WifiPhyListener::NotifyTxStart, txDuration, txPowerDbm);
+    NotifyListeners(&WifiPhyListener::NotifyTxStart, txDuration, txPower);
 }
 
 void
@@ -562,7 +562,7 @@ WifiPhyStateHelper::SwitchFromSleep()
 }
 
 void
-WifiPhyStateHelper::SwitchFromRxAbort(ChannelWidthMhz operatingWidth)
+WifiPhyStateHelper::SwitchFromRxAbort(MHz_u operatingWidth)
 {
     NS_LOG_FUNCTION(this << operatingWidth);
     NS_ASSERT(IsStateCcaBusy()); // abort is called (with OBSS_PD_CCA_RESET reason) before RX is set

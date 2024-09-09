@@ -150,8 +150,8 @@ int
 main(int argc, char* argv[])
 {
     std::string phyMode{"DsssRate1Mbps"};
-    double Prss{-80}; // -dBm
-    double Irss{-95}; // -dBm
+    dBm_u Prss{-80};
+    dBm_u Irss{-95};
     Time delta{"0ns"};
     uint32_t PpacketSize{1000}; // bytes
     uint32_t IpacketSize{1000}; // bytes
@@ -161,7 +161,7 @@ main(int argc, char* argv[])
     uint32_t numPackets{1};
     Time interPacketInterval{"1s"};
     Time startTime{"10s"};
-    double distanceToRx{100.0}; // meters
+    meter_u distanceToRx{100.0};
 
     double offset{91}; // This is a magic number used to set the
                        // transmit power, based on other configuration

@@ -65,19 +65,19 @@ SpectrumWifiPhy::GetTypeId()
                 "Minimum rejection (dBr) for the inner band of the transmit spectrum mask",
                 DoubleValue(-20.0),
                 MakeDoubleAccessor(&SpectrumWifiPhy::m_txMaskInnerBandMinimumRejection),
-                MakeDoubleChecker<double>())
+                MakeDoubleChecker<dBr_u>())
             .AddAttribute(
                 "TxMaskOuterBandMinimumRejection",
                 "Minimum rejection (dBr) for the outer band of the transmit spectrum mask",
                 DoubleValue(-28.0),
                 MakeDoubleAccessor(&SpectrumWifiPhy::m_txMaskOuterBandMinimumRejection),
-                MakeDoubleChecker<double>())
+                MakeDoubleChecker<dBr_u>())
             .AddAttribute(
                 "TxMaskOuterBandMaximumRejection",
                 "Maximum rejection (dBr) for the outer band of the transmit spectrum mask",
                 DoubleValue(-40.0),
                 MakeDoubleAccessor(&SpectrumWifiPhy::m_txMaskOuterBandMaximumRejection),
-                MakeDoubleChecker<double>())
+                MakeDoubleChecker<dBr_u>())
             .AddTraceSource(
                 "SignalArrival",
                 "Trace start of all signal arrivals, including weak and foreign signals",
@@ -130,7 +130,7 @@ SpectrumWifiPhy::ComputeBands(Ptr<WifiSpectrumPhyInterface> spectrumPhyInterface
     }
     else
     {
-        for (ChannelWidthMhz bw = channelWidth; bw >= 20; bw = bw / 2)
+        for (MHz_u bw = channelWidth; bw >= 20; bw = bw / 2)
         {
             for (uint16_t i = 0; i < (channelWidth / bw); ++i)
             {
@@ -143,11 +143,11 @@ SpectrumWifiPhy::ComputeBands(Ptr<WifiSpectrumPhyInterface> spectrumPhyInterface
 
 HeRuBands
 SpectrumWifiPhy::GetHeRuBands(Ptr<WifiSpectrumPhyInterface> spectrumPhyInterface,
-                              ChannelWidthMhz guardBandwidth)
+                              MHz_u guardBandwidth)
 {
     HeRuBands heRuBands{};
     const auto channelWidth = spectrumPhyInterface->GetChannelWidth();
-    for (ChannelWidthMhz bw = channelWidth; bw >= 20; bw = bw / 2)
+    for (MHz_u bw = channelWidth; bw >= 20; bw = bw / 2)
     {
         for (uint32_t i = 0; i < (channelWidth / bw); ++i)
         {
@@ -264,8 +264,8 @@ SpectrumWifiPhy::AddChannel(const Ptr<SpectrumChannel> channel, const FrequencyR
 
 void
 SpectrumWifiPhy::ResetSpectrumModel(Ptr<WifiSpectrumPhyInterface> spectrumPhyInterface,
-                                    const std::vector<double>& centerFrequencies,
-                                    ChannelWidthMhz channelWidth)
+                                    const std::vector<MHz_u>& centerFrequencies,
+                                    MHz_u channelWidth)
 {
     std::stringstream ss;
     for (const auto& centerFrequency : centerFrequencies)
@@ -299,9 +299,9 @@ SpectrumWifiPhy::DoChannelSwitch()
     NS_LOG_FUNCTION(this);
     m_frequenciesBeforeSwitch = GetOperatingChannel().IsSet()
                                     ? GetOperatingChannel().GetFrequencies()
-                                    : std::vector<double>{};
-    m_widthsBeforeSwitch = GetOperatingChannel().IsSet() ? GetOperatingChannel().GetWidths()
-                                                         : std::vector<ChannelWidthMhz>{};
+                                    : std::vector<MHz_u>{};
+    m_widthsBeforeSwitch =
+        GetOperatingChannel().IsSet() ? GetOperatingChannel().GetWidths() : std::vector<MHz_u>{};
     WifiPhy::DoChannelSwitch();
 }
 
@@ -403,7 +403,7 @@ SpectrumWifiPhy::NotifyChannelSwitched()
 }
 
 void
-SpectrumWifiPhy::ConfigureInterface(const std::vector<double>& frequencies, ChannelWidthMhz width)
+SpectrumWifiPhy::ConfigureInterface(const std::vector<MHz_u>& frequencies, MHz_u width)
 {
     std::stringstream ss;
     for (const auto& centerFrequency : frequencies)
@@ -489,38 +489,38 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
     const auto channelWidth = interface ? interface->GetChannelWidth() : GetChannelWidth();
     const auto& bands =
         interface ? interface->GetBands() : m_currentSpectrumPhyInterface->GetBands();
-    double totalRxPowerW = 0;
-    RxPowerWattPerChannelBand rxPowerW;
+    Watt_u totalRxPower = 0.0;
+    RxPowerWattPerChannelBand rxPowers;
 
     const auto rxGainRatio = DbToRatio(GetRxGain());
 
     std::size_t index = 0;
-    ChannelWidthMhz prevBw = 0;
+    MHz_u prevBw = 0;
     for (const auto& band : bands)
     {
         const auto bw =
             std::accumulate(band.frequencies.cbegin(),
                             band.frequencies.cend(),
                             0,
-                            [](ChannelWidthMhz sum, const auto& startStopFreqs) {
+                            [](MHz_u sum, const auto& startStopFreqs) {
                                 return sum + ((startStopFreqs.second - startStopFreqs.first) / 1e6);
                             });
         NS_ASSERT(bw <= channelWidth);
         index = ((bw != prevBw) ? 0 : (index + 1));
-        double rxPowerPerBandW =
+        auto rxPowerPerBand =
             WifiSpectrumValueHelper::GetBandPowerW(receivedSignalPsd, band.indices);
         NS_LOG_DEBUG("Signal power received (watts) before antenna gain for "
                      << bw << " MHz channel band " << index << ": " << band);
-        rxPowerPerBandW *= rxGainRatio;
-        rxPowerW.insert({band, rxPowerPerBandW});
+        rxPowerPerBand *= rxGainRatio;
+        rxPowers.insert({band, rxPowerPerBand});
         NS_LOG_DEBUG("Signal power received after antenna gain for "
-                     << bw << " MHz channel band " << index << ": " << rxPowerPerBandW << " W"
-                     << (rxPowerPerBandW > 0.0
-                             ? " (" + std::to_string(WToDbm(rxPowerPerBandW)) + " dBm)"
+                     << bw << " MHz channel band " << index << ": " << rxPowerPerBand << " W"
+                     << (rxPowerPerBand > 0.0
+                             ? " (" + std::to_string(WToDbm(rxPowerPerBand)) + " dBm)"
                              : ""));
         if (bw <= 20)
         {
-            totalRxPowerW += rxPowerPerBandW;
+            totalRxPower += rxPowerPerBand;
         }
         prevBw = bw;
     }
@@ -532,25 +532,25 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
         NS_ASSERT(!heRuBands.empty());
         for (const auto& [band, ru] : heRuBands)
         {
-            double rxPowerPerBandW =
+            auto rxPowerPerBand =
                 WifiSpectrumValueHelper::GetBandPowerW(receivedSignalPsd, band.indices);
-            rxPowerPerBandW *= rxGainRatio;
-            rxPowerW.insert({band, rxPowerPerBandW});
+            rxPowerPerBand *= rxGainRatio;
+            rxPowers.insert({band, rxPowerPerBand});
         }
     }
 
     NS_LOG_DEBUG(
         "Total signal power received after antenna gain: "
-        << totalRxPowerW << " W"
-        << (totalRxPowerW > 0.0 ? " (" + std::to_string(WToDbm(totalRxPowerW)) + " dBm)" : ""));
+        << totalRxPower << " W"
+        << (totalRxPower > 0.0 ? " (" + std::to_string(WToDbm(totalRxPower)) + " dBm)" : ""));
 
     Ptr<WifiSpectrumSignalParameters> wifiRxParams =
         DynamicCast<WifiSpectrumSignalParameters>(rxParams);
 
     // Log the signal arrival to the trace source
-    if (totalRxPowerW > 0.0)
+    if (totalRxPower > 0.0)
     {
-        m_signalCb(rxParams, senderNodeId, WToDbm(totalRxPowerW), rxDuration);
+        m_signalCb(rxParams, senderNodeId, WToDbm(totalRxPower), rxDuration);
     }
 
     if (m_trackSignalsInactiveInterfaces && interface &&
@@ -558,7 +558,7 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
     {
         NS_LOG_INFO("Received Wi-Fi signal from a non-active PHY interface "
                     << interface->GetFrequencyRange());
-        m_interference->AddForeignSignal(rxDuration, rxPowerW, interface->GetFrequencyRange());
+        m_interference->AddForeignSignal(rxDuration, rxPowers, interface->GetFrequencyRange());
         return;
     }
 
@@ -566,7 +566,7 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
     {
         NS_LOG_INFO("Received non Wi-Fi signal");
         m_interference->AddForeignSignal(rxDuration,
-                                         rxPowerW,
+                                         rxPowers,
                                          interface ? interface->GetFrequencyRange()
                                                    : GetCurrentFrequencyRange());
         SwitchMaybeToCcaBusy(nullptr);
@@ -577,7 +577,7 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
     {
         NS_LOG_INFO("Received Wi-Fi signal but blocked from syncing");
         NS_ASSERT(interface);
-        m_interference->AddForeignSignal(rxDuration, rxPowerW, interface->GetFrequencyRange());
+        m_interference->AddForeignSignal(rxDuration, rxPowers, interface->GetFrequencyRange());
         SwitchMaybeToCcaBusy(nullptr);
         return;
     }
@@ -586,13 +586,13 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
     // Current implementation assumes constant RX power over the PPDU duration
     // Compare received TX power per MHz to normalized RX sensitivity
     const auto ppdu = GetRxPpduFromTxPpdu(wifiRxParams->ppdu);
-    if (totalRxPowerW < DbmToW(GetRxSensitivity()) * (ppdu->GetTxChannelWidth() / 20.0))
+    if (totalRxPower < DbmToW(GetRxSensitivity()) * (ppdu->GetTxChannelWidth() / 20.0))
     {
         NS_LOG_INFO(
             "Received signal too weak to process: "
-            << totalRxPowerW << " W"
-            << (totalRxPowerW > 0.0 ? " (" + std::to_string(WToDbm(totalRxPowerW)) + " dBm)" : ""));
-        m_interference->Add(ppdu, rxDuration, rxPowerW, GetCurrentFrequencyRange());
+            << totalRxPower << " W"
+            << (totalRxPower > 0.0 ? " (" + std::to_string(WToDbm(totalRxPower)) + " dBm)" : ""));
+        m_interference->Add(ppdu, rxDuration, rxPowers, GetCurrentFrequencyRange());
         SwitchMaybeToCcaBusy(nullptr);
         return;
     }
@@ -602,14 +602,14 @@ SpectrumWifiPhy::StartRx(Ptr<SpectrumSignalParameters> rxParams,
         if (!CanStartRx(ppdu))
         {
             NS_LOG_INFO("Cannot start reception of the PPDU, consider it as interference");
-            m_interference->Add(ppdu, rxDuration, rxPowerW, GetCurrentFrequencyRange());
+            m_interference->Add(ppdu, rxDuration, rxPowers, GetCurrentFrequencyRange());
             SwitchMaybeToCcaBusy(ppdu);
             return;
         }
     }
 
     NS_LOG_INFO("Received Wi-Fi signal");
-    StartReceivePreamble(ppdu, rxPowerW, rxDuration);
+    StartReceivePreamble(ppdu, rxPowers, rxDuration);
 }
 
 Ptr<const WifiPpdu>
@@ -658,10 +658,10 @@ SpectrumWifiPhy::Transmit(Ptr<WifiSpectrumSignalParameters> txParams)
     m_currentSpectrumPhyInterface->StartTx(txParams);
 }
 
-ChannelWidthMhz
-SpectrumWifiPhy::GetGuardBandwidth(ChannelWidthMhz currentChannelWidth) const
+MHz_u
+SpectrumWifiPhy::GetGuardBandwidth(MHz_u currentChannelWidth) const
 {
-    ChannelWidthMhz guardBandwidth = 0;
+    MHz_u guardBandwidth = 0;
     if (currentChannelWidth == 22)
     {
         // handle case of DSSS transmission
@@ -681,8 +681,8 @@ SpectrumWifiPhy::GetGuardBandwidth(ChannelWidthMhz currentChannelWidth) const
 }
 
 uint32_t
-SpectrumWifiPhy::GetNumBandsBetweenSegments(const std::vector<double>& centerFrequencies,
-                                            ChannelWidthMhz totalWidth,
+SpectrumWifiPhy::GetNumBandsBetweenSegments(const std::vector<MHz_u>& centerFrequencies,
+                                            MHz_u totalWidth,
                                             uint32_t subcarrierSpacing)
 {
     const auto numSegments = centerFrequencies.size();
@@ -702,7 +702,7 @@ SpectrumWifiPhy::GetNumBandsBetweenSegments(const std::vector<double>& centerFre
 
 WifiSpectrumBandInfo
 SpectrumWifiPhy::GetBandForInterface(Ptr<WifiSpectrumPhyInterface> spectrumPhyInterface,
-                                     ChannelWidthMhz bandWidth,
+                                     MHz_u bandWidth,
                                      uint8_t bandIndex /* = 0 */)
 {
     const auto channelWidth = spectrumPhyInterface->GetChannelWidth();
@@ -765,7 +765,7 @@ SpectrumWifiPhy::GetBandForInterface(Ptr<WifiSpectrumPhyInterface> spectrumPhyIn
 }
 
 WifiSpectrumBandInfo
-SpectrumWifiPhy::GetBand(ChannelWidthMhz bandWidth, uint8_t bandIndex /* = 0 */)
+SpectrumWifiPhy::GetBand(MHz_u bandWidth, uint8_t bandIndex /* = 0 */)
 {
     NS_ABORT_IF(!m_currentSpectrumPhyInterface);
     return GetBandForInterface(m_currentSpectrumPhyInterface, bandWidth, bandIndex);
@@ -791,7 +791,7 @@ SpectrumWifiPhy::ConvertIndicesToFrequenciesForInterface(
     return {startChannel->fc, endChannel->fc};
 }
 
-std::tuple<double, double, double>
+std::tuple<dBr_u, dBr_u, dBr_u>
 SpectrumWifiPhy::GetTxMaskRejectionParams() const
 {
     return std::make_tuple(m_txMaskInnerBandMinimumRejection,
@@ -813,7 +813,7 @@ SpectrumWifiPhy::GetSpectrumPhyInterfaces() const
 }
 
 Ptr<WifiSpectrumPhyInterface>
-SpectrumWifiPhy::GetInterfaceCoveringChannelBand(double frequency, ChannelWidthMhz width) const
+SpectrumWifiPhy::GetInterfaceCoveringChannelBand(MHz_u frequency, MHz_u width) const
 {
     const auto lowFreq = frequency - (width / 2);
     const auto highFreq = frequency + (width / 2);

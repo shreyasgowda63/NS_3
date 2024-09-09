@@ -179,7 +179,7 @@ AparfWifiManager::CheckInit(AparfWifiRemoteStation* station)
         WifiMode mode = GetSupported(station, station->m_rateIndex);
         auto channelWidth = GetChannelWidth(station);
         DataRate rate(mode.GetDataRate(channelWidth));
-        double power = GetPhy()->GetPowerDbm(m_maxPower);
+        const auto power = GetPhy()->GetPowerDbm(m_maxPower);
         m_powerChange(power, power, station->m_state->m_address);
         m_rateChange(rate, rate, station->m_state->m_address);
         station->m_initialized = true;
@@ -256,7 +256,7 @@ AparfWifiManager::DoReportDataOk(WifiRemoteStation* st,
                                  double ackSnr,
                                  WifiMode ackMode,
                                  double dataSnr,
-                                 ChannelWidthMhz dataChannelWidth,
+                                 MHz_u dataChannelWidth,
                                  uint8_t dataNss)
 {
     NS_LOG_FUNCTION(this << st << ackSnr << ackMode << dataSnr << dataChannelWidth << +dataNss);
@@ -337,7 +337,7 @@ AparfWifiManager::DoReportFinalDataFailed(WifiRemoteStation* station)
 }
 
 WifiTxVector
-AparfWifiManager::DoGetDataTxVector(WifiRemoteStation* st, ChannelWidthMhz allowedWidth)
+AparfWifiManager::DoGetDataTxVector(WifiRemoteStation* st, MHz_u allowedWidth)
 {
     NS_LOG_FUNCTION(this << st << allowedWidth);
     auto station = static_cast<AparfWifiRemoteStation*>(st);
@@ -350,8 +350,8 @@ AparfWifiManager::DoGetDataTxVector(WifiRemoteStation* st, ChannelWidthMhz allow
     WifiMode mode = GetSupported(station, station->m_rateIndex);
     DataRate rate(mode.GetDataRate(channelWidth));
     DataRate prevRate(GetSupported(station, station->m_prevRateIndex).GetDataRate(channelWidth));
-    double power = GetPhy()->GetPowerDbm(station->m_powerLevel);
-    double prevPower = GetPhy()->GetPowerDbm(station->m_prevPowerLevel);
+    const auto power = GetPhy()->GetPowerDbm(station->m_powerLevel);
+    const auto prevPower = GetPhy()->GetPowerDbm(station->m_prevPowerLevel);
     if (station->m_prevPowerLevel != station->m_powerLevel)
     {
         m_powerChange(prevPower, power, station->m_state->m_address);

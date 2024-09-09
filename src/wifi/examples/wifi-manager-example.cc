@@ -94,7 +94,7 @@ RateChange(uint64_t oldVal, uint64_t newVal)
 /// Step structure
 struct Step
 {
-    double stepSize; ///< step size in dBm
+    dBm_u stepSize;  ///< step size
     double stepTime; ///< step size in seconds
 };
 
@@ -122,9 +122,9 @@ struct StandardInfo
     StandardInfo(std::string name,
                  WifiStandard standard,
                  WifiPhyBand band,
-                 ChannelWidthMhz width,
-                 double snrLow,
-                 double snrHigh,
+                 MHz_u width,
+                 dB_u snrLow,
+                 dB_u snrHigh,
                  double xMin,
                  double xMax,
                  double yMax)
@@ -143,9 +143,9 @@ struct StandardInfo
     std::string m_name;      ///< name
     WifiStandard m_standard; ///< standard
     WifiPhyBand m_band;      ///< PHY band
-    ChannelWidthMhz m_width; ///< channel width in MHz
-    double m_snrLow;         ///< lowest SNR
-    double m_snrHigh;        ///< highest SNR
+    MHz_u m_width;           ///< channel width
+    dB_u m_snrLow;           ///< lowest SNR
+    dB_u m_snrHigh;          ///< highest SNR
     double m_xMin;           ///< X minimum
     double m_xMax;           ///< X maximum
     double m_yMax;           ///< Y maximum
@@ -156,21 +156,21 @@ struct StandardInfo
  *
  * \param rssModel The new RSS model.
  * \param step The step to use.
- * \param rss The RSS in dBm.
- * \param noise The noise in dBm.
+ * \param rss The RSS.
+ * \param noise The noise.
  * \param rateDataset The rate dataset.
  * \param actualDataset The actual dataset.
  */
 void
 ChangeSignalAndReportRate(Ptr<FixedRssLossModel> rssModel,
                           Step step,
-                          double rss,
-                          double noise,
+                          dBm_u rss,
+                          dBm_u noise,
                           Gnuplot2dDataset& rateDataset,
                           Gnuplot2dDataset& actualDataset)
 {
     NS_LOG_FUNCTION(rssModel << step.stepSize << step.stepTime << rss);
-    double snr = rss - noise;
+    dB_u snr = rss - noise;
     rateDataset.Add(snr, g_intervalRate / 1e6);
     // Calculate received rate since last interval
     double currentRate = ((g_intervalBytes * 8) / step.stepTime) / 1e6; // Mb/s
@@ -198,7 +198,7 @@ main(int argc, char* argv[])
     uint32_t steps;
     uint32_t rtsThreshold = 999999; // disabled even for large A-MPDU
     uint32_t maxAmpduSize = 65535;
-    double stepSize = 1;        // dBm
+    dBm_u stepSize = 1;
     double stepTime = 1;        // seconds
     uint32_t packetSize = 1024; // bytes
     bool broadcast = false;
@@ -730,13 +730,13 @@ main(int argc, char* argv[])
 
     // Configure signal and noise, and schedule first iteration
     const auto BOLTZMANN = 1.3803e-23;
-    const auto noiseDensity = WToDbm(BOLTZMANN * 290); // 290K @ 20 MHz
-    const auto noise = noiseDensity + (10 * log10(clientSelectedStandard.m_width * 1000000));
+    const dBm_per_Hz_u noiseDensity = WToDbm(BOLTZMANN * 290); // 290K @ 20 MHz
+    const dBm_u noise = noiseDensity + (10 * log10(clientSelectedStandard.m_width * 1000000));
 
     NS_LOG_DEBUG("Channel width " << wifiPhyPtrClient->GetChannelWidth() << " noise " << noise);
     NS_LOG_DEBUG("NSS " << wifiPhyPtrClient->GetMaxSupportedTxSpatialStreams());
 
-    const auto rssCurrent = (clientSelectedStandard.m_snrHigh + noise);
+    const dBm_u rssCurrent = (clientSelectedStandard.m_snrHigh + noise);
     rssLossModel->SetRss(rssCurrent);
     NS_LOG_INFO("Setting initial Rss to " << rssCurrent);
     // Move the STA by stepsSize meters every stepTime seconds

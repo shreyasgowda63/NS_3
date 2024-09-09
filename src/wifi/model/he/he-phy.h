@@ -42,7 +42,7 @@ class ObssPdAlgorithm;
  */
 struct HeSigAParameters
 {
-    double rssiDbm;   ///< RSSI in dBm
+    dBm_u rssi;       ///< RSSI
     uint8_t bssColor; ///< BSS color
 };
 
@@ -95,14 +95,14 @@ class HePhy : public VhtPhy
                               Time rxDuration) override;
     void CancelAllEvents() override;
     uint16_t GetStaId(const Ptr<const WifiPpdu> ppdu) const override;
-    ChannelWidthMhz GetMeasurementChannelWidth(const Ptr<const WifiPpdu> ppdu) const override;
+    MHz_u GetMeasurementChannelWidth(const Ptr<const WifiPpdu> ppdu) const override;
     void StartTx(Ptr<const WifiPpdu> ppdu) override;
     Time CalculateTxDuration(WifiConstPsduMap psduMap,
                              const WifiTxVector& txVector,
                              WifiPhyBand band) const override;
     void SwitchMaybeToCcaBusy(const Ptr<const WifiPpdu> ppdu) override;
-    double GetCcaThreshold(const Ptr<const WifiPpdu> ppdu,
-                           WifiChannelListType channelType) const override;
+    dBm_u GetCcaThreshold(const Ptr<const WifiPpdu> ppdu,
+                          WifiChannelListType channelType) const override;
     void NotifyCcaBusy(const Ptr<const WifiPpdu> ppdu,
                        Time duration,
                        WifiChannelListType channelType) override;
@@ -183,12 +183,12 @@ class HePhy : public VhtPhy
      */
     WifiSpectrumBandInfo GetNonOfdmaBand(const WifiTxVector& txVector, uint16_t staId) const;
     /**
-     * Get the width in MHz of the non-OFDMA portion of an HE TB PPDU
+     * Get the width of the non-OFDMA portion of an HE TB PPDU
      *
      * \param ru the RU in which the HE TB PPDU is sent
-     * \return the width in MHz of the non-OFDMA portion of an HE TB PPDU
+     * \return the width of the non-OFDMA portion of an HE TB PPDU
      */
-    ChannelWidthMhz GetNonOfdmaWidth(HeRu::RuSpec ru) const;
+    MHz_u GetNonOfdmaWidth(HeRu::RuSpec ru) const;
 
     /**
      * \return the UID of the HE TB PPDU being received
@@ -210,10 +210,10 @@ class HePhy : public VhtPhy
      *
      * \param ppdu the PPDU
      * \param staId the STA-ID of the station taking part of the UL MU
-     * \return the center frequency in MHz corresponding to the non-HE portion of the HE TB PPDU
+     * \return the center frequency corresponding to the non-HE portion of the HE TB PPDU
      */
-    std::vector<double> GetCenterFrequenciesForNonHePart(const Ptr<const WifiPpdu> ppdu,
-                                                         uint16_t staId) const;
+    std::vector<MHz_u> GetCenterFrequenciesForNonHePart(const Ptr<const WifiPpdu> ppdu,
+                                                        uint16_t staId) const;
 
     /**
      * Sets the OBSS-PD algorithm.
@@ -356,14 +356,14 @@ class HePhy : public VhtPhy
      * and is mainly used as a callback for WifiMode operation.
      *
      * \param mcsValue the HE MCS index
-     * \param channelWidth the considered channel width in MHz
+     * \param channelWidth the considered channel width
      * \param guardInterval the considered guard interval duration
      * \param nss the considered number of stream
      *
      * \return the physical bit rate of this signal in bps.
      */
     static uint64_t GetPhyRate(uint8_t mcsValue,
-                               ChannelWidthMhz channelWidth,
+                               MHz_u channelWidth,
                                Time guardInterval,
                                uint8_t nss);
     /**
@@ -393,13 +393,13 @@ class HePhy : public VhtPhy
      * streams.
      *
      * \param mcsValue the MCS index
-     * \param channelWidth the channel width in MHz
+     * \param channelWidth the channel width
      * \param guardInterval the guard interval duration
      * \param nss the number of spatial streams
      * \return the data bit rate in bps.
      */
     static uint64_t GetDataRate(uint8_t mcsValue,
-                                ChannelWidthMhz channelWidth,
+                                MHz_u channelWidth,
                                 Time guardInterval,
                                 uint8_t nss);
     /**
@@ -437,12 +437,12 @@ class HePhy : public VhtPhy
     static Time GetSymbolDuration(Time guardInterval);
 
     /**
-     * \param bandWidth the width (MHz) of the band used for the OFDMA transmission. Must be
-     *                  a multiple of 20 MHz
-     * \param guardBandwidth width of the guard band (MHz)
-     * \param centerFrequencies the center frequency of each segment in MHz
-     * \param totalWidth the width of the operating channel in MHz
-     * \param subcarrierSpacing the subcarrier spacing (MHz)
+     * \param bandWidth the width of the band used for the OFDMA transmission. Must be a multiple of
+     * 20 MHz
+     * \param guardBandwidth width of the guard band
+     * \param centerFrequencies the center frequency of each segment
+     * \param totalWidth the width of the operating channel
+     * \param subcarrierSpacing the subcarrier spacing
      * \param subcarrierRange the subcarrier range of the HE RU
      * \param bandIndex the index (starting at 0) of the band within the operating channel
      * \return the converted subcarriers
@@ -452,11 +452,11 @@ class HePhy : public VhtPhy
      * vector corresponds to the number of segments covered by the HE RU.
      */
     static std::vector<WifiSpectrumBandIndices> ConvertHeRuSubcarriers(
-        ChannelWidthMhz bandWidth,
-        ChannelWidthMhz guardBandwidth,
-        const std::vector<double>& centerFrequencies,
-        ChannelWidthMhz totalWidth,
-        double subcarrierSpacing,
+        MHz_u bandWidth,
+        MHz_u guardBandwidth,
+        const std::vector<MHz_u>& centerFrequencies,
+        MHz_u totalWidth,
+        Hz_u subcarrierSpacing,
         HeRu::SubcarrierRange subcarrierRange,
         uint8_t bandIndex = 0);
 
@@ -467,9 +467,8 @@ class HePhy : public VhtPhy
     Ptr<Event> DoGetEvent(Ptr<const WifiPpdu> ppdu, RxPowerWattPerChannelBand& rxPowersW) override;
     bool IsConfigSupported(Ptr<const WifiPpdu> ppdu) const override;
     Time DoStartReceivePayload(Ptr<Event> event) override;
-    std::pair<ChannelWidthMhz, WifiSpectrumBandInfo> GetChannelWidthAndBand(
-        const WifiTxVector& txVector,
-        uint16_t staId) const override;
+    std::pair<MHz_u, WifiSpectrumBandInfo> GetChannelWidthAndBand(const WifiTxVector& txVector,
+                                                                  uint16_t staId) const override;
     void RxPayloadSucceeded(Ptr<const WifiPsdu> psdu,
                             RxSignalInfo rxSignalInfo,
                             const WifiTxVector& txVector,
@@ -483,7 +482,7 @@ class HePhy : public VhtPhy
     void DoAbortCurrentReception(WifiPhyRxfailureReason reason) override;
     uint64_t ObtainNextUid(const WifiTxVector& txVector) override;
     Time GetMaxDelayPpduSameUid(const WifiTxVector& txVector) override;
-    Ptr<SpectrumValue> GetTxPowerSpectralDensity(double txPowerW,
+    Ptr<SpectrumValue> GetTxPowerSpectralDensity(Watt_u txPower,
                                                  Ptr<const WifiPpdu> ppdu) const override;
     uint32_t GetMaxPsduSize() const override;
     WifiConstPsduMap GetWifiConstPsduMap(Ptr<const WifiPsdu> psdu,
@@ -545,10 +544,10 @@ class HePhy : public VhtPhy
     static uint64_t CalculateNonHtReferenceRate(WifiCodeRate codeRate, uint16_t constellationSize);
 
     /**
-     * \param channelWidth the channel width in MHz
+     * \param channelWidth the channel width
      * \return the number of usable subcarriers for data
      */
-    static uint16_t GetUsableSubcarriers(ChannelWidthMhz channelWidth);
+    static uint16_t GetUsableSubcarriers(MHz_u channelWidth);
 
     uint64_t m_previouslyTxPpduUid; //!< UID of the previously sent PPDU, used by AP to recognize
                                     //!< response HE TB PPDUs
@@ -572,12 +571,12 @@ class HePhy : public VhtPhy
     /**
      * This is a helper function to create the TX PSD of the non-HE and HE portions.
      *
-     * \param txPowerW power in W to spread across the bands
+     * \param txPower power to spread across the bands
      * \param ppdu the PPDU that will be transmitted
      * \param flag flag indicating whether the PSD is for non-HE portion or HE portion
      * \return Pointer to SpectrumValue
      */
-    Ptr<SpectrumValue> GetTxPowerSpectralDensity(double txPowerW,
+    Ptr<SpectrumValue> GetTxPowerSpectralDensity(Watt_u txPower,
                                                  Ptr<const WifiPpdu> ppdu,
                                                  HePpdu::TxPsdFlag flag) const;
 
@@ -585,12 +584,12 @@ class HePhy : public VhtPhy
      * Start the transmission of the HE portion of the MU PPDU.
      *
      * \param ppdu the PPDU
-     * \param txPowerDbm the total TX power in dBm
+     * \param txPower the total TX power
      * \param txPowerSpectrum the TX PSD
      * \param hePortionDuration the duration of the HE portion
      */
     void StartTxHePortion(Ptr<const WifiPpdu> ppdu,
-                          double txPowerDbm,
+                          dBm_u txPower,
                           Ptr<SpectrumValue> txPowerSpectrum,
                           Time hePortionDuration);
 

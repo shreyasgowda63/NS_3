@@ -54,12 +54,12 @@ LinearWifiTxCurrentModel::GetTypeId()
                           "The supply voltage (in Volts).",
                           DoubleValue(3.0),
                           MakeDoubleAccessor(&LinearWifiTxCurrentModel::m_voltage),
-                          MakeDoubleChecker<double>())
+                          MakeDoubleChecker<volt_u>())
             .AddAttribute("IdleCurrent",
                           "The current in the IDLE state (in Ampere).",
                           DoubleValue(0.273333),
                           MakeDoubleAccessor(&LinearWifiTxCurrentModel::m_idleCurrent),
-                          MakeDoubleChecker<double>());
+                          MakeDoubleChecker<ampere_u>());
     return tid;
 }
 
@@ -73,11 +73,11 @@ LinearWifiTxCurrentModel::~LinearWifiTxCurrentModel()
     NS_LOG_FUNCTION(this);
 }
 
-double
-LinearWifiTxCurrentModel::CalcTxCurrent(double txPowerDbm) const
+ampere_u
+LinearWifiTxCurrentModel::CalcTxCurrent(dBm_u txPower) const
 {
-    NS_LOG_FUNCTION(this << txPowerDbm);
-    return DbmToW(txPowerDbm) / (m_voltage * m_eta) + m_idleCurrent;
+    NS_LOG_FUNCTION(this << txPower);
+    return DbmToW(txPower) / (m_voltage * m_eta) + m_idleCurrent;
 }
 
 } // namespace ns3

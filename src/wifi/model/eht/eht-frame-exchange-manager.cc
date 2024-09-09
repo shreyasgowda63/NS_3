@@ -165,7 +165,7 @@ EhtFrameExchangeManager::UsingOtherEmlsrLink() const
 }
 
 bool
-EhtFrameExchangeManager::StartTransmission(Ptr<Txop> edca, ChannelWidthMhz allowedWidth)
+EhtFrameExchangeManager::StartTransmission(Ptr<Txop> edca, MHz_u allowedWidth)
 {
     NS_LOG_FUNCTION(this << edca << allowedWidth);
 
@@ -511,7 +511,7 @@ EhtFrameExchangeManager::ForwardPsduMapDown(WifiConstPsduMap psduMap, WifiTxVect
 }
 
 void
-EhtFrameExchangeManager::GenerateInDeviceInterference(uint8_t linkId, Time duration, double txPower)
+EhtFrameExchangeManager::GenerateInDeviceInterference(uint8_t linkId, Time duration, Watt_u txPower)
 {
     NS_LOG_FUNCTION(this << linkId << duration.As(Time::US) << txPower);
 
@@ -680,7 +680,7 @@ EhtFrameExchangeManager::SendEmlOmn(const Mac48Address& dest, const MgtEmlOmn& f
     m_mac->GetQosTxop(AC_VO)->Queue(Create<WifiMpdu>(packet, hdr));
 }
 
-std::optional<double>
+std::optional<dBm_u>
 EhtFrameExchangeManager::GetMostRecentRssi(const Mac48Address& address) const
 {
     auto optRssi = HeFrameExchangeManager::GetMostRecentRssi(address);

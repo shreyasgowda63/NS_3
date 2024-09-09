@@ -102,14 +102,14 @@ main(int argc, char* argv[])
     DataRate dataRate{"1Mb/s"};
     uint32_t packetSize{1000}; // bytes
     Time duration{"10s"};
-    double initialEnergy{7.5}; // joule
-    double voltage{3.0};       // volts
-    double txPowerStart{0.0};  // dbm
-    double txPowerEnd{15.0};   // dbm
+    joule_u initialEnergy{7.5};
+    volt_u voltage{3.0};
+    dBm_u txPowerStart{0.0};
+    dBm_u txPowerEnd{15.0};
     uint32_t nTxPowerLevels{16};
     uint32_t txPowerLevel{0};
-    double idleCurrent{0.273}; // Ampere
-    double txCurrent{0.380};   // Ampere
+    ampere_u idleCurrent{0.273};
+    ampere_u txCurrent{0.380};
     bool verbose{false};
 
     CommandLine cmd(__FILE__);
