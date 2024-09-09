@@ -29,6 +29,7 @@ LiIonEnergySource::GetTypeId()
 {
     static TypeId tid =
         TypeId("ns3::energy::LiIonEnergySource")
+            .AddAlias("ns3::LiIonEnergySource")
             .SetParent<EnergySource>()
             .SetGroupName("Energy")
             .AddConstructor<LiIonEnergySource>()
