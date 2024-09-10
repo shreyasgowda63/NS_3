@@ -172,6 +172,19 @@ class TypeId
     explicit TypeId(const std::string& name);
 
     /**
+     * Add an aliased name for a TypeId.
+     *
+     * \param [in] name An alias for the name.
+     * \return This TypeId instance.
+     *
+     * To allow for deprecations (such as moving a TypeId into a namespace
+     * but wishing to preserve the original string from namespace ns3),
+     * additional names can be registered for a TypeId.  An aliased name
+     * is not retrievable by GetName().
+     */
+    TypeId AddAlias(const std::string& name);
+
+    /**
      * Get the parent of this TypeId.
      *
      * \returns The parent of this TypeId

@@ -74,6 +74,12 @@ class IidManager : public Singleton<IidManager>
      */
     uint16_t AllocateUid(std::string name);
     /**
+     * Add an aliased name for the type id.
+     * \param [in] uid The id.
+     * \param [in] name The aliased name.
+     */
+    void AddAlias(uint16_t uid, const std::string& name);
+    /**
      * Set the parent of a type id.
      * \param [in] uid The id.
      * \param [in] parent The id of the parent.
@@ -453,6 +459,14 @@ IidManager::LookupInformation(uint16_t uid) const
 }
 
 void
+IidManager::AddAlias(uint16_t uid, const std::string& name)
+{
+    NS_LOG_FUNCTION(IID << uid << name);
+    const auto [it, success] = m_namemap.insert(std::make_pair(name, uid));
+    NS_ASSERT_MSG(success, "Alias " << name << " insertion failed (possibly a duplicate?)");
+}
+
+void
 IidManager::SetParent(uint16_t uid, uint16_t parent)
 {
     NS_LOG_FUNCTION(IID << uid << parent);
@@ -819,6 +833,15 @@ TypeId::TypeId(uint16_t tid)
     : m_tid(tid)
 {
     NS_LOG_FUNCTION(this << tid);
+}
+
+TypeId
+TypeId::AddAlias(const std::string& name)
+{
+    NS_LOG_FUNCTION(this << name);
+    IidManager::Get()->AddAlias(m_tid, name);
+    NS_LOG_INFO("Set alias " << name << " for TypeId " << IidManager::Get()->GetName(m_tid));
+    return *this;
 }
 
 TypeId
