@@ -442,9 +442,22 @@ misplacedWarns=$(                             \
     sed 's/^[ \t]*//;s/[ \t]*$//'             \
     )
 
+# This is to catch LaTeX formula errors.
+# In this case the output is of the form:
+# "error: Problems running latex." followed by
+# "Check your installation or look for typos in _formulas.tex and check _formulas.log!"
+# and
+# "Check your installation or look for typos in _formulas_dark.tex and check _formulas_dark.log!"
+# Hence, the count can be two.
+latexRawWarns=$(                              \
+    grep "Problems running latex" "$LOG"    | \
+    wc -l                                   | \
+    sed 's/^[ \t]*//;s/[ \t]*$//'             \
+    )
+latexWarns=$((latexRawWarns > 0))
 
 # Total number of warnings
-warncount=$((modwarncount + addlparam + misplacedWarns))
+warncount=$((modwarncount + addlparam + misplacedWarns + latexWarns))
 
 # List of files appearing in the log
 if [ ! -z "$filter_log_results" ]
@@ -529,6 +542,13 @@ echo "----------------------------------------"
 printf "%6d files with warnings\n" $filecount
 echo
 echo
+if [ $latexWarns -ne 0 ] ; then
+    echo "----------------------------------------"
+    echo "There are LaTeX warnings, probably math"
+    echo "----------------------------------------"
+    echo
+    echo
+fi
 echo "Doxygen Warnings Summary"
 echo "----------------------------------------"
 printf "%6d directories\n" $modcount
