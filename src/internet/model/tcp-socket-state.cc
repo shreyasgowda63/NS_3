@@ -119,7 +119,6 @@ TcpSocketState::TcpSocketState(const TcpSocketState& other)
       m_useEcn(other.m_useEcn),
       m_ectCodePoint(other.m_ectCodePoint),
       m_lastAckedSackedBytes(other.m_lastAckedSackedBytes)
-
 {
 }
 
