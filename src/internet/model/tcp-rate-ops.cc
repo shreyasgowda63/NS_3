@@ -44,12 +44,17 @@ TcpRateLinux::GetTypeId()
 
 const TcpRateOps::TcpRateSample&
 TcpRateLinux::GenerateSample(uint32_t delivered,
+                             uint32_t appLimited,
                              uint32_t lost,
                              bool is_sack_reneg,
                              uint32_t priorInFlight,
                              const Time& minRtt)
 {
     NS_LOG_FUNCTION(this << delivered << lost << is_sack_reneg);
+    if (appLimited != 0)
+    {
+        m_rate.m_appLimited = appLimited;
+    }
 
     /* Clear app limited if bubble is acked and gone. */
     if (m_rate.m_appLimited != 0 && m_rate.m_delivered > m_rate.m_appLimited)

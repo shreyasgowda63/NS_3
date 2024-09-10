@@ -1910,6 +1910,7 @@ TcpSocketBase::ReceivedAck(Ptr<Packet> packet, const TcpHeader& tcpHeader)
         uint32_t lost =
             (currentLost > previousLost) ? currentLost - previousLost : previousLost - currentLost;
         auto rateSample = m_rateOps->GenerateSample(currentDelivered,
+                                                    m_congestionControl->GetAppLimited(),
                                                     lost,
                                                     false,
                                                     priorInFlight,
