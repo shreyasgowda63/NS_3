@@ -133,6 +133,12 @@ WifiMac::GetTypeId()
                 MakeObjectVectorAccessor(&WifiMac::GetChannelAccessManager, &WifiMac::GetNLinks),
                 MakeObjectVectorChecker<ChannelAccessManager>())
             .AddAttribute(
+                "FrameExchangeManagers",
+                "The Frame Exchange Manager(s) attached to this device.",
+                ObjectVectorValue(),
+                MakeObjectVectorAccessor(&WifiMac::GetFrameExchangeManager, &WifiMac::GetNLinks),
+                MakeObjectVectorChecker<FrameExchangeManager>())
+            .AddAttribute(
                 "MpduBufferSize",
                 "The size (in number of MPDUs) of the buffer used for each BlockAck "
                 "agreement in which this node is a recipient. The provided value is "
@@ -1132,7 +1138,12 @@ WifiMac::SwapLinks(std::map<uint8_t, uint8_t> links)
 {
     NS_LOG_FUNCTION(this);
 
-    std::map<uint8_t, uint8_t> actualPairs;
+    // save the initial mapping between link IDs and link Entities
+    std::map<uint8_t, std::reference_wrapper<const LinkEntity>> origLinkRefMap;
+    for (const auto& [id, link] : m_links)
+    {
+        origLinkRefMap.insert_or_assign(id, *link.get());
+    }
 
     while (!links.empty())
     {
@@ -1156,8 +1167,6 @@ WifiMac::SwapLinks(std::map<uint8_t, uint8_t> links)
             auto [it, inserted] =
                 m_links.emplace(to, nullptr); // insert an element with key to if not present
             m_links[to].swap(linkToMove);     // to is the link to move now
-            actualPairs.emplace(from, to);
-            UpdateLinkId(to);
             links.erase(from);
             if (!linkToMove)
             {
@@ -1173,7 +1182,6 @@ WifiMac::SwapLinks(std::map<uint8_t, uint8_t> links)
             {
                 // no new position specified for 'to', use the current empty cell
                 m_links[empty].swap(linkToMove);
-                actualPairs.emplace(to, empty);
                 break;
             }
 
@@ -1187,6 +1195,22 @@ WifiMac::SwapLinks(std::map<uint8_t, uint8_t> links)
     {
         m_linkIds.insert(id);
     }
+
+    std::map<uint8_t, uint8_t> actualPairs;
+    for (const auto& [from, ref] : origLinkRefMap)
+    {
+        // find the pointer in the current link map
+        for (const auto& [to, link] : m_links)
+        {
+            if (link.get() == &ref.get())
+            {
+                actualPairs[from] = to; // link 'from' became link 'to'
+                UpdateLinkId(to);
+                break;
+            }
+        }
+    }
+    NS_ASSERT_MSG(actualPairs.size() == m_links.size(), "Missing some link(s)");
 
     if (m_txop)
     {
@@ -1612,6 +1636,25 @@ WifiMac::UnblockUnicastTxOnLinks(WifiQueueBlockedReason reason,
                                    Txop::CHECK_MEDIUM_BUSY); // generate backoff if medium busy
         }
     }
+}
+
+bool
+WifiMac::GetTxBlockedOnLink(AcIndex ac,
+                            const WifiContainerQueueId& queueId,
+                            uint8_t linkId,
+                            WifiQueueBlockedReason reason) const
+{
+    auto mask = m_scheduler->GetQueueLinkMask(ac, queueId, linkId);
+
+    if (!mask.has_value())
+    {
+        return true; // the link may have not been setup
+    }
+    if (reason == WifiQueueBlockedReason::REASONS_COUNT)
+    {
+        return mask->any();
+    }
+    return mask->test(static_cast<std::size_t>(reason));
 }
 
 void

@@ -1259,8 +1259,22 @@ WifiPhy::DoChannelSwitch()
 
     m_band = static_cast<WifiPhyBand>(std::get<2>(m_channelSettings.front()));
 
+    NS_LOG_DEBUG("switching channel");
+    std::vector<FrequencyChannelInfo> segments{};
+    std::transform(m_channelSettings.cbegin(),
+                   m_channelSettings.cend(),
+                   std::back_inserter(segments),
+                   [this](const auto& channelTuple) {
+                       return FrequencyChannelInfo{std::get<0>(channelTuple),
+                                                   0,
+                                                   std::get<1>(channelTuple),
+                                                   m_band};
+                   });
+    m_operatingChannel.Set(segments, m_standard);
+    m_operatingChannel.SetPrimary20Index(std::get<3>(m_channelSettings.front()));
+
     // check that the channel width is supported
-    const auto chWidth = std::get<1>(m_channelSettings.front());
+    const auto chWidth = GetChannelWidth();
 
     if (m_device)
     {
@@ -1280,20 +1294,6 @@ WifiPhy::DoChannelSwitch()
                                                    "a station supporting up to 80 MHz operation");
         }
     }
-
-    NS_LOG_DEBUG("switching channel");
-    std::vector<FrequencyChannelInfo> segments{};
-    std::transform(m_channelSettings.cbegin(),
-                   m_channelSettings.cend(),
-                   std::back_inserter(segments),
-                   [this](const auto& channelTuple) {
-                       return FrequencyChannelInfo{std::get<0>(channelTuple),
-                                                   0,
-                                                   std::get<1>(channelTuple),
-                                                   m_band};
-                   });
-    m_operatingChannel.Set(segments, m_standard);
-    m_operatingChannel.SetPrimary20Index(std::get<3>(m_channelSettings.front()));
 
     if (changingPhyBand)
     {
@@ -1426,13 +1426,7 @@ WifiPhy::SetSleepMode()
         // The PHY object may be in CCA_BUSY state because it is receiving a preamble. Cancel
         // preamble events before switching to sleep state
         Reset();
-        // It may happen that we request to switch to sleep at the same time the reception of
-        // a PPDU ends. In such a case, WifiPhyStateHelper::GetState() does not return RX
-        // (m_endRx equals now), we get here and set the state to SLEEP. However,
-        // WifiPhyStateHelper::DoSwitchFromRx() may be called after this function (at the same
-        // simulation time), thus hitting the assert that checks that the state is IDLE or
-        // CCA_BUSY.
-        Simulator::ScheduleNow(&WifiPhyStateHelper::SwitchToSleep, m_state);
+        m_state->SwitchToSleep();
         break;
     case WifiPhyState::SLEEP:
         NS_LOG_DEBUG("already in sleep mode");

@@ -144,7 +144,9 @@ RrMultiUserScheduler::SelectTxFormat()
         return SU_TX;
     }
 
-    if (m_enableUlOfdma && m_enableBsrp && (GetLastTxFormat(m_linkId) == DL_MU_TX || !mpdu))
+    if (m_enableUlOfdma && m_enableBsrp &&
+        (GetLastTxFormat(m_linkId) == DL_MU_TX ||
+         ((m_initialFrame || m_trigger.GetType() != TriggerFrameType::BSRP_TRIGGER) && !mpdu)))
     {
         TxFormat txFormat = TrySendingBsrpTf();
 
@@ -167,9 +169,8 @@ RrMultiUserScheduler::SelectTxFormat()
     return TrySendingDlMuPpdu();
 }
 
-template <class Func>
 WifiTxVector
-RrMultiUserScheduler::GetTxVectorForUlMu(Func canBeSolicited)
+RrMultiUserScheduler::GetTxVectorForUlMu(std::function<bool(const MasterInfo&)> canBeSolicited)
 {
     NS_LOG_FUNCTION(this);
 
@@ -277,6 +278,59 @@ RrMultiUserScheduler::GetTxVectorForUlMu(Func canBeSolicited)
     return txVector;
 }
 
+bool
+RrMultiUserScheduler::CanSolicitStaInBsrpTf(const MasterInfo& info) const
+{
+    // check if station has setup the current link
+    if (!m_apMac->GetStaList(m_linkId).contains(info.aid))
+    {
+        NS_LOG_INFO("STA with AID " << info.aid << " has not setup link " << +m_linkId);
+        return false;
+    }
+
+    auto mldAddr = GetWifiRemoteStationManager(m_linkId)->GetMldAddress(info.address);
+
+    // remaining checks are for MLDs only
+    if (!mldAddr)
+    {
+        return true;
+    }
+
+    // check if at least one TID is mapped on the current link in the UL direction
+    bool mapped = false;
+    for (uint8_t tid = 0; tid < 8; ++tid)
+    {
+        if (m_apMac->TidMappedOnLink(*mldAddr, WifiDirection::UPLINK, tid, m_linkId))
+        {
+            mapped = true;
+            break;
+        }
+    }
+
+    if (!mapped)
+    {
+        NS_LOG_DEBUG("MLD " << *mldAddr << " has not mapped any TID on link " << +m_linkId);
+        return false;
+    }
+
+    // check if the station is an EMLSR client that is using another link
+    if (GetWifiRemoteStationManager(m_linkId)->GetEmlsrEnabled(info.address) &&
+        (m_apMac->GetTxBlockedOnLink(AC_BE,
+                                     {WIFI_QOSDATA_QUEUE, WIFI_UNICAST, *mldAddr, 0},
+                                     m_linkId,
+                                     WifiQueueBlockedReason::USING_OTHER_EMLSR_LINK) ||
+         m_apMac->GetTxBlockedOnLink(AC_BE,
+                                     {WIFI_QOSDATA_QUEUE, WIFI_UNICAST, *mldAddr, 0},
+                                     m_linkId,
+                                     WifiQueueBlockedReason::WAITING_EMLSR_TRANSITION_DELAY)))
+    {
+        NS_LOG_INFO("EMLSR client " << *mldAddr << " is using another link");
+        return false;
+    }
+
+    return true;
+}
+
 MultiUserScheduler::TxFormat
 RrMultiUserScheduler::TrySendingBsrpTf()
 {
@@ -288,11 +342,8 @@ RrMultiUserScheduler::TrySendingBsrpTf()
         return TxFormat::SU_TX;
     }
 
-    // only consider stations that have setup the current link
-    WifiTxVector txVector = GetTxVectorForUlMu([this](const MasterInfo& info) {
-        const auto& staList = m_apMac->GetStaList(m_linkId);
-        return staList.contains(info.aid);
-    });
+    auto txVector = GetTxVectorForUlMu(
+        std::bind(&RrMultiUserScheduler::CanSolicitStaInBsrpTf, this, std::placeholders::_1));
 
     if (txVector.GetHeMuUserInfoMap().empty())
     {
@@ -361,6 +412,19 @@ RrMultiUserScheduler::TrySendingBsrpTf()
     return UL_MU_TX;
 }
 
+bool
+RrMultiUserScheduler::CanSolicitStaInBasicTf(const MasterInfo& info) const
+{
+    // in addition to the checks performed when sending a BSRP TF, also check if the station
+    // has reported a null queue size
+    if (!CanSolicitStaInBsrpTf(info))
+    {
+        return false;
+    }
+
+    return m_apMac->GetMaxBufferStatus(info.address) > 0;
+}
+
 MultiUserScheduler::TxFormat
 RrMultiUserScheduler::TrySendingBasicTf()
 {
@@ -375,12 +439,8 @@ RrMultiUserScheduler::TrySendingBasicTf()
     // check if an UL OFDMA transmission is possible after a DL OFDMA transmission
     NS_ABORT_MSG_IF(m_ulPsduSize == 0, "The UlPsduSize attribute must be set to a non-null value");
 
-    // only consider stations that have setup the current link and do not have
-    // reported a null queue size
-    WifiTxVector txVector = GetTxVectorForUlMu([this](const MasterInfo& info) {
-        const auto& staList = m_apMac->GetStaList(m_linkId);
-        return staList.contains(info.aid) && m_apMac->GetMaxBufferStatus(info.address) > 0;
-    });
+    auto txVector = GetTxVectorForUlMu(
+        std::bind(&RrMultiUserScheduler::CanSolicitStaInBasicTf, this, std::placeholders::_1));
 
     if (txVector.GetHeMuUserInfoMap().empty())
     {
