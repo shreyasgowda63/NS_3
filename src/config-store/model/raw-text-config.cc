@@ -151,34 +151,30 @@ RawTextConfigSave::Attributes()
         void DoVisitAttribute(Ptr<Object> object, std::string name) override
         {
             StringValue str;
-
-            ns3::TypeId::SupportLevel supportLevel = TypeId::SupportLevel::SUPPORTED;
             TypeId tid = object->GetInstanceTypeId();
 
-            for (std::size_t i = 0; i < tid.GetAttributeN(); i++)
+            auto [found, inTid, attr] = TypeId::FindAttribute(tid, name);
+
+            if (found)
             {
-                TypeId::AttributeInformation tmp = tid.GetAttribute(i);
-                if (tmp.name == name)
+                auto supportLevel = attr.supportLevel;
+                if (supportLevel == TypeId::SupportLevel::OBSOLETE)
                 {
-                    supportLevel = tmp.supportLevel;
-                    break;
+                    NS_LOG_WARN("Attribute " << GetCurrentPath()
+                                             << " was not saved because it is OBSOLETE");
                 }
-            }
-            if (supportLevel == TypeId::SupportLevel::OBSOLETE)
-            {
-                NS_LOG_WARN("Attribute " << GetCurrentPath()
-                                         << " was not saved because it is OBSOLETE");
-            }
-            else if (supportLevel == TypeId::SupportLevel::DEPRECATED && !m_saveDeprecated)
-            {
-                NS_LOG_WARN("Attribute " << GetCurrentPath()
-                                         << " was not saved because it is DEPRECATED");
-            }
-            else
-            {
-                object->GetAttribute(name, str);
-                NS_LOG_DEBUG("Saving " << GetCurrentPath());
-                *m_os << "value " << GetCurrentPath() << " \"" << str.Get() << "\"" << std::endl;
+                else if (supportLevel == TypeId::SupportLevel::DEPRECATED && !m_saveDeprecated)
+                {
+                    NS_LOG_WARN("Attribute " << GetCurrentPath()
+                                             << " was not saved because it is DEPRECATED");
+                }
+                else
+                {
+                    object->GetAttribute(name, str, true);
+                    NS_LOG_DEBUG("Saving " << GetCurrentPath());
+                    *m_os << "value " << GetCurrentPath() << " \"" << str.Get() << "\""
+                          << std::endl;
+                }
             }
         }
 

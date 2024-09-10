@@ -196,31 +196,29 @@ XmlConfigSave::Attributes()
       private:
         void DoVisitAttribute(Ptr<Object> object, std::string name) override
         {
+            StringValue str;
             TypeId tid = object->GetInstanceTypeId();
-            ns3::TypeId::SupportLevel supportLevel = TypeId::SupportLevel::SUPPORTED;
-            for (std::size_t i = 0; i < tid.GetAttributeN(); i++)
+
+            auto [found, inTid, attr] = TypeId::FindAttribute(tid, name);
+
+            if (found)
             {
-                TypeId::AttributeInformation tmp = tid.GetAttribute(i);
-                if (tmp.name == name)
+                auto supportLevel = attr.supportLevel;
+                if (supportLevel == TypeId::SupportLevel::OBSOLETE)
                 {
-                    supportLevel = tmp.supportLevel;
-                    break;
+                    NS_LOG_WARN("Attribute " << GetCurrentPath()
+                                             << " was not saved because it is OBSOLETE");
+                    return;
+                }
+                else if (supportLevel == TypeId::SupportLevel::DEPRECATED && !m_saveDeprecated)
+                {
+                    NS_LOG_WARN("Attribute " << GetCurrentPath()
+                                             << " was not saved because it is DEPRECATED");
+                    return;
                 }
             }
-            if (supportLevel == TypeId::SupportLevel::OBSOLETE)
-            {
-                NS_LOG_WARN("Attribute " << GetCurrentPath()
-                                         << " was not saved because it is OBSOLETE");
-                return;
-            }
-            else if (supportLevel == TypeId::SupportLevel::DEPRECATED && !m_saveDeprecated)
-            {
-                NS_LOG_WARN("Attribute " << GetCurrentPath()
-                                         << " was not saved because it is DEPRECATED");
-                return;
-            }
-            StringValue str;
-            object->GetAttribute(name, str);
+
+            object->GetAttribute(name, str, true);
             int rc;
             rc = xmlTextWriterStartElement(m_writer, BAD_CAST "value");
             if (rc < 0)
