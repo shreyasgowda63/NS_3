@@ -370,7 +370,9 @@ SOURCEFIGS = \
 	$(SRC)/energy/doc/figures/leadacid.png \
 	$(SRC)/energy/doc/figures/liion.png \
 	$(SRC)/energy/doc/figures/nicd.png \
-	$(SRC)/energy/doc/figures/nimh.png
+	$(SRC)/energy/doc/figures/nimh.png \
+	$(SRC)/internet-apps/doc/figures/stateful-dhcpv6-format.png \
+	$(SRC)/internet-apps/doc/figures/dhcpv6-message-exchange.png \
 
 # specify figures from which .png and .pdf figures need to be
 # generated (all dia and eps figures)
